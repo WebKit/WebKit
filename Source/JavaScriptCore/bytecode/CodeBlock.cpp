@@ -1972,7 +1972,7 @@ void CodeBlock::propagateTransitions(SlotVisitor& visitor)
     Interpreter* interpreter = m_vm->interpreter;
     if (jitType() == JITCode::InterpreterThunk) {
         const Vector<unsigned>& propertyAccessInstructions = m_unlinkedCode->propertyAccessInstructions();
-        for (size_t i = propertyAccessInstructions.size(); i--;) {
+        for (size_t i = 0; i < propertyAccessInstructions.size(); ++i) {
             Instruction* instruction = &instructions()[propertyAccessInstructions[i]];
             switch (interpreter->getOpcodeID(instruction[0].u.opcode)) {
             case op_put_by_id_transition_direct:
@@ -1994,7 +1994,7 @@ void CodeBlock::propagateTransitions(SlotVisitor& visitor)
 
 #if ENABLE(JIT)
     if (JITCode::isJIT(jitType())) {
-        for (unsigned i = m_structureStubInfos.size(); i--;) {
+        for (unsigned i = 0; i < m_structureStubInfos.size(); ++i) {
             StructureStubInfo& stubInfo = m_structureStubInfos[i];
             switch (stubInfo.accessType) {
             case access_put_by_id_transition_normal:

@@ -1,3 +1,20 @@
+2013-06-22  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: GC's put_by_id transition fixpoint should converge more quickly
+        https://bugs.webkit.org/show_bug.cgi?id=117912
+
+        Reviewed by Mark Hahnenberg.
+
+        This was a rookie mistake. The GC does a classic forward data flow fixpoint. These work well so long as you
+        iterate the program in program order, or at least something close to program order. Because I enjoy reverse
+        loops ("while (n--) blah"), I ended up iterating in *reverse* of program order which ensured worst-case
+        pathologies every single time. And unsurprisingly, this slowed down a program, namely pdfjs.
+
+        Flipping the loops to iterate forward fixes a 90% regression in Octane/pdfjs and is otherwise neutral.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::propagateTransitions):
+
 2013-06-21  Filip Pizlo  <fpizlo@apple.com>
 
         fourthTier: DFG should CSE MakeRope
