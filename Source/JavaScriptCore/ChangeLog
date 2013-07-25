@@ -1,3 +1,10 @@
+2013-07-25  Ádám Kallai  <kadam@inf.u-szeged.hu>
+
+        Unreviewed buildfix after FTL upstream.
+
+        * runtime/JSScope.h:
+        (JSC::needsVarInjectionChecks):
+
 2013-07-25  Csaba Osztrogonác  <ossy@webkit.org>
 
         One more fix after FTL upstream.

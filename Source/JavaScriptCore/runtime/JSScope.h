@@ -85,6 +85,9 @@ inline bool needsVarInjectionChecks(ResolveType type)
     case ClosureVarWithVarInjectionChecks:
     case Dynamic:
         return true;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        return true;
     }
 }
 
