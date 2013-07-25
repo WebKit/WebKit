@@ -78,6 +78,14 @@ inline PropertyOffset Structure::get(VM& vm, const WTF::String& name)
     return entry ? entry->offset : invalidOffset;
 }
     
+inline PropertyOffset Structure::getWithoutMaterializing(VM& vm, PropertyName propertyName)
+{
+    unsigned attributesIgnored;
+    JSCell* specificValueIgnored;
+    return getWithoutMaterializing(
+        vm, propertyName, attributesIgnored, specificValueIgnored);
+}
+
 inline bool Structure::masqueradesAsUndefined(JSGlobalObject* lexicalGlobalObject)
 {
     return typeInfo().masqueradesAsUndefined() && globalObject() == lexicalGlobalObject;

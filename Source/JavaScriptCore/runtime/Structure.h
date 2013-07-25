@@ -235,6 +235,9 @@ public:
     PropertyOffset get(VM&, const WTF::String& name);
     JS_EXPORT_PRIVATE PropertyOffset get(VM&, PropertyName, unsigned& attributes, JSCell*& specificValue);
 
+    PropertyOffset getWithoutMaterializing(VM&, PropertyName);
+    PropertyOffset getWithoutMaterializing(VM&, PropertyName, unsigned& attributes, JSCell*& specificValue);
+
     bool hasGetterSetterProperties() const { return m_hasGetterSetterProperties; }
     bool hasReadOnlyOrGetterSetterPropertiesExcludingProto() const { return m_hasReadOnlyOrGetterSetterPropertiesExcludingProto; }
     void setHasGetterSetterProperties(bool is__proto__)
@@ -353,6 +356,8 @@ private:
 
     static Structure* create(VM&, const Structure*);
         
+    void findStructuresAndMapForMaterialization(Vector<Structure*, 8>& structures, PropertyTable*&);
+    
     typedef enum { 
         NoneDictionaryKind = 0,
         CachedDictionaryKind = 1,

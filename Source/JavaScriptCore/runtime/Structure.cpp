@@ -236,34 +236,38 @@ void Structure::destroy(JSCell* cell)
     static_cast<Structure*>(cell)->Structure::~Structure();
 }
 
+void Structure::findStructuresAndMapForMaterialization(Vector<Structure*, 8>& structures, PropertyTable*& table)
+{
+    ASSERT(structures.isEmpty());
+    table = 0;
+
+    for (Structure* structure = this; structure; structure = structure->previousID()) {
+        if (structure->propertyTable()) {
+            table = structure->propertyTable().get();
+            return;
+        }
+        
+        structures.append(structure);
+    }
+}
+
 void Structure::materializePropertyMap(VM& vm)
 {
     ASSERT(structure()->classInfo() == &s_info);
     ASSERT(!propertyTable());
 
     Vector<Structure*, 8> structures;
-    structures.append(this);
-
-    Structure* structure = this;
-
-    // Search for the last Structure with a property table.
-    while ((structure = structure->previousID())) {
-        if (structure->m_isPinnedPropertyTable) {
-            ASSERT(structure->propertyTable());
-            ASSERT(!structure->previousID());
-
-            propertyTable().set(vm, this, structure->propertyTable()->copy(vm, 0, numberOfSlotsForLastOffset(m_offset, m_inlineCapacity)));
-            break;
-        }
-
-        structures.append(structure);
-    }
-
-    if (!propertyTable())
+    PropertyTable* table;
+    
+    findStructuresAndMapForMaterialization(structures, table);
+    
+    if (!table)
         createPropertyMap(vm, numberOfSlotsForLastOffset(m_offset, m_inlineCapacity));
+    else
+        propertyTable().set(vm, this, table->copy(vm, 0, numberOfSlotsForLastOffset(m_offset, m_inlineCapacity)));
 
-    for (ptrdiff_t i = structures.size() - 1; i >= 0; --i) {
-        structure = structures[i];
+    for (size_t i = structures.size(); i--;) {
+        Structure* structure = structures[i];
         if (!structure->m_nameInPrevious)
             continue;
         PropertyMapEntry entry(vm, this, structure->m_nameInPrevious.get(), structure->m_offset, structure->m_attributesInPrevious, structure->m_specificValueInPrevious.get());
@@ -741,6 +745,35 @@ PropertyTable* Structure::copyPropertyTableForPinning(VM& vm, Structure* owner)
     if (propertyTable())
         return PropertyTable::clone(vm, owner, *propertyTable().get());
     return PropertyTable::create(vm, numberOfSlotsForLastOffset(m_offset, m_inlineCapacity));
+}
+
+PropertyOffset Structure::getWithoutMaterializing(VM&, PropertyName propertyName, unsigned& attributes, JSCell*& specificValue)
+{
+    Vector<Structure*, 8> structures;
+    PropertyTable* table;
+    
+    findStructuresAndMapForMaterialization(structures, table);
+    
+    if (table) {
+        PropertyMapEntry* entry = table->find(propertyName.uid()).first;
+        if (entry) {
+            attributes = entry->attributes;
+            specificValue = entry->specificValue.get();
+            return entry->offset;
+        }
+    }
+    
+    for (unsigned i = structures.size(); i--;) {
+        Structure* structure = structures[i];
+        if (structure->m_nameInPrevious.get() != propertyName.uid())
+            continue;
+        
+        attributes = structure->m_attributesInPrevious;
+        specificValue = structure->m_specificValueInPrevious.get();
+        return structure->m_offset;
+    }
+    
+    return invalidOffset;
 }
 
 PropertyOffset Structure::get(VM& vm, PropertyName propertyName, unsigned& attributes, JSCell*& specificValue)

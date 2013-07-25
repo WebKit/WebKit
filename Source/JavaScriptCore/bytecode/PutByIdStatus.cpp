@@ -49,7 +49,7 @@ PutByIdStatus PutByIdStatus::computeFromLLInt(CodeBlock* profiledBlock, unsigned
     
     if (instruction[0].u.opcode == LLInt::getOpcode(llint_op_put_by_id)
         || instruction[0].u.opcode == LLInt::getOpcode(llint_op_put_by_id_out_of_line)) {
-        PropertyOffset offset = structure->get(*profiledBlock->vm(), ident);
+        PropertyOffset offset = structure->getWithoutMaterializing(*profiledBlock->vm(), ident);
         if (!isValidOffset(offset))
             return PutByIdStatus(NoInformation, 0, 0, 0, invalidOffset);
         
@@ -68,7 +68,7 @@ PutByIdStatus PutByIdStatus::computeFromLLInt(CodeBlock* profiledBlock, unsigned
     ASSERT(newStructure);
     ASSERT(chain);
     
-    PropertyOffset offset = newStructure->get(*profiledBlock->vm(), ident);
+    PropertyOffset offset = newStructure->getWithoutMaterializing(*profiledBlock->vm(), ident);
     if (!isValidOffset(offset))
         return PutByIdStatus(NoInformation, 0, 0, 0, invalidOffset);
     
@@ -103,8 +103,9 @@ PutByIdStatus PutByIdStatus::computeFor(CodeBlock* profiledBlock, unsigned bytec
         return PutByIdStatus(TakesSlowPath, 0, 0, 0, invalidOffset);
         
     case access_put_by_id_replace: {
-        PropertyOffset offset = stubInfo.u.putByIdReplace.baseObjectStructure->get(
-            *profiledBlock->vm(), ident);
+        PropertyOffset offset =
+            stubInfo.u.putByIdReplace.baseObjectStructure->getWithoutMaterializing(
+                *profiledBlock->vm(), ident);
         if (isValidOffset(offset)) {
             return PutByIdStatus(
                 SimpleReplace,
@@ -118,8 +119,9 @@ PutByIdStatus PutByIdStatus::computeFor(CodeBlock* profiledBlock, unsigned bytec
     case access_put_by_id_transition_normal:
     case access_put_by_id_transition_direct: {
         ASSERT(stubInfo.u.putByIdTransition.previousStructure->transitionWatchpointSetHasBeenInvalidated());
-        PropertyOffset offset = stubInfo.u.putByIdTransition.structure->get(
-            *profiledBlock->vm(), ident);
+        PropertyOffset offset = 
+            stubInfo.u.putByIdTransition.structure->getWithoutMaterializing(
+                *profiledBlock->vm(), ident);
         if (isValidOffset(offset)) {
             return PutByIdStatus(
                 SimpleTransition,
@@ -152,7 +154,8 @@ PutByIdStatus PutByIdStatus::computeFor(VM& vm, JSGlobalObject* globalObject, St
     
     unsigned attributes;
     JSCell* specificValue;
-    PropertyOffset offset = structure->get(vm, ident, attributes, specificValue);
+    PropertyOffset offset = structure->getWithoutMaterializing(
+        vm, ident, attributes, specificValue);
     if (isValidOffset(offset)) {
         if (attributes & (Accessor | ReadOnly))
             return PutByIdStatus(TakesSlowPath);
