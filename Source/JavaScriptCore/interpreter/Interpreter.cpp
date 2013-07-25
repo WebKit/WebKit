@@ -63,6 +63,7 @@
 #include "RegExpPrototype.h"
 #include "Register.h"
 #include "SamplingTool.h"
+#include "StackIterator.h"
 #include "StrictEvalActivation.h"
 #include "StrongInlines.h"
 #include "VMStackBounds.h"
@@ -99,8 +100,6 @@ Interpreter::ErrorHandlingMode::~ErrorHandlingMode()
     if (!m_interpreter.m_errorHandlingModeReentry)
         m_interpreter.stack().disableErrorStackReserve();
 }
-
-static CallFrame* getCallerInfo(VM*, CallFrame*, unsigned& bytecodeOffset, CodeBlock*& callerOut);
 
 // Returns the depth of the scope chain within a given call frame.
 static int depth(CodeBlock* codeBlock, JSScope* sc)
@@ -321,13 +320,15 @@ void Interpreter::dumpRegisters(CallFrame* callFrame)
     if (pc.hasJITReturnAddress())
         dataLogF("[ReturnJITPC]              | %10p | %p \n", it, pc.jitReturnAddress().value());
 #endif
-    unsigned bytecodeOffset = 0;
-    int line = 0;
-    CodeBlock* callerCodeBlock = 0;
-    getCallerInfo(&callFrame->vm(), callFrame, bytecodeOffset, callerCodeBlock);
-    line = callerCodeBlock->lineNumberForBytecodeOffset(bytecodeOffset);
-    dataLogF("[ReturnVPC]                | %10p | %d (line %d)\n", it, bytecodeOffset, line);
-    ++it;
+    StackIterator iter = callFrame->begin();
+    ++iter;
+    if (iter != callFrame->end()) {
+        unsigned line = 0;
+        unsigned unusedColumn = 0;
+        iter->computeLineAndColumn(line, unusedColumn);
+        dataLogF("[ReturnVPC]                | %10p | %d (line %d)\n", it, iter->bytecodeOffset(), line);
+        ++it;
+    }
     dataLogF("[CodeBlock]                | %10p | %p \n", it, callFrame->codeBlock());
     ++it;
     dataLogF("-----------------------------------------------------------------------------\n");
@@ -376,8 +377,10 @@ bool Interpreter::isOpcode(Opcode opcode)
 #endif
 }
 
-NEVER_INLINE bool Interpreter::unwindCallFrame(CallFrame*& callFrame, JSValue exceptionValue, unsigned& bytecodeOffset, CodeBlock*& codeBlock)
+NEVER_INLINE bool Interpreter::unwindCallFrame(StackIterator& iter, JSValue exceptionValue)
 {
+    CallFrame* callFrame = iter->callFrame();
+    CodeBlock* codeBlock = iter->codeBlock();
     CodeBlock* oldCodeBlock = codeBlock;
     JSScope* scope = callFrame->scope();
 
@@ -407,10 +410,7 @@ NEVER_INLINE bool Interpreter::unwindCallFrame(CallFrame*& callFrame, JSValue ex
 
     CallFrame* callerFrame = callFrame->callerFrame();
     callFrame->vm().topCallFrame = callerFrame;
-    if (callerFrame->hasHostCallFrameFlag())
-        return false;
-    callFrame = getCallerInfo(&callFrame->vm(), callFrame, bytecodeOffset, codeBlock);
-    return true;
+    return !callerFrame->hasHostCallFrameFlag();
 }
 
 static void appendSourceToError(CallFrame* callFrame, ErrorInstance* exception, unsigned bytecodeOffset)
@@ -467,61 +467,24 @@ static void appendSourceToError(CallFrame* callFrame, ErrorInstance* exception, 
     exception->putDirect(*vm, vm->propertyNames->message, jsString(vm, message));
 }
 
-static unsigned getBytecodeOffsetForCallFrame(CallFrame* callFrame)
-{
-    callFrame = callFrame->removeHostCallFrameFlag();
-    CodeBlock* codeBlock = callFrame->codeBlock();
-    if (!codeBlock)
-        return 0;
-#if ENABLE(DFG_JIT)
-    if (JITCode::isOptimizingJIT(codeBlock->jitType()))
-        return codeBlock->codeOrigin(callFrame->locationAsCodeOriginIndex()).bytecodeIndex;
-#endif
-    return callFrame->locationAsBytecodeOffset();
-}
-
-static CallFrame* getCallerInfo(VM* vm, CallFrame* callFrame, unsigned& bytecodeOffset, CodeBlock*& caller)
-{
-    ASSERT_UNUSED(vm, vm);
-    bytecodeOffset = 0;
-    ASSERT(!callFrame->hasHostCallFrameFlag());
-    CallFrame* trueCallerFrame = callFrame->trueCallerFrame();
-    ASSERT(!trueCallerFrame->hasHostCallFrameFlag());
-
-    if (trueCallerFrame == CallFrame::noCaller() || !trueCallerFrame || !trueCallerFrame->codeBlock()) {
-        caller = 0;
-        return trueCallerFrame;
-    }
-    
-    CodeBlock* callerCodeBlock = trueCallerFrame->codeBlock();
-#if ENABLE(DFG_JIT)
-    if (trueCallerFrame->hasLocationAsCodeOriginIndex())
-        bytecodeOffset = trueCallerFrame->bytecodeOffsetFromCodeOriginIndex();
-    else
-#endif // ENABLE(DFG_JIT)
-        bytecodeOffset = trueCallerFrame->locationAsBytecodeOffset();
-
-    caller = callerCodeBlock;
-    return trueCallerFrame;
-}
-
 static ALWAYS_INLINE const String getSourceURLFromCallFrame(CallFrame* callFrame)
 {
     ASSERT(!callFrame->hasHostCallFrameFlag());
     return callFrame->codeBlock()->ownerExecutable()->sourceURL();
 }
 
-static StackFrameCodeType getStackFrameCodeType(CallFrame* callFrame)
+static StackFrameCodeType getStackFrameCodeType(StackIterator iter)
 {
-    ASSERT(!callFrame->hasHostCallFrameFlag());
-
-    switch (callFrame->codeBlock()->codeType()) {
-    case EvalCode:
+    switch (iter->codeType()) {
+    case StackIterator::Frame::Eval:
         return StackFrameEvalCode;
-    case FunctionCode:
+    case StackIterator::Frame::Function:
         return StackFrameFunctionCode;
-    case GlobalCode:
+    case StackIterator::Frame::Global:
         return StackFrameGlobalCode;
+    case StackIterator::Frame::Native:
+        ASSERT_NOT_REACHED();
+        return StackFrameNativeCode;
     }
     RELEASE_ASSERT_NOT_REACHED();
     return StackFrameGlobalCode;
@@ -576,40 +539,33 @@ String StackFrame::toString(CallFrame* callFrame)
     return traceBuild.toString().impl();
 }
 
-void Interpreter::getStackTrace(VM* vm, Vector<StackFrame>& results, size_t maxStackSize)
+void Interpreter::getStackTrace(Vector<StackFrame>& results, size_t maxStackSize)
 {
-    CallFrame* callFrame = vm->topCallFrame->removeHostCallFrameFlag();
-    if (!callFrame || callFrame == CallFrame::noCaller()) 
-        return;
-    unsigned bytecodeOffset = getBytecodeOffsetForCallFrame(callFrame);
-    callFrame = callFrame->trueCallFrame();
+    VM& vm = m_vm;
+    CallFrame* callFrame = vm.topCallFrame->removeHostCallFrameFlag();
     if (!callFrame)
         return;
-    CodeBlock* callerCodeBlock = callFrame->codeBlock();
-
-    while (callFrame && callFrame != CallFrame::noCaller() && maxStackSize--) {
-        String sourceURL;
-        if (callerCodeBlock) {
-            sourceURL = getSourceURLFromCallFrame(callFrame);
+    StackIterator iter = callFrame->begin();
+    for (; iter != callFrame->end() && maxStackSize--; ++iter) {
+        if (iter->isJSFrame()) {
+            CodeBlock* codeBlock = iter->codeBlock();
             StackFrame s = {
-                Strong<JSObject>(*vm, callFrame->callee()),
-                getStackFrameCodeType(callFrame),
-                Strong<ExecutableBase>(*vm, callerCodeBlock->ownerExecutable()),
-                Strong<UnlinkedCodeBlock>(*vm, callerCodeBlock->unlinkedCodeBlock()),
-                callerCodeBlock->source(),
-                callerCodeBlock->ownerExecutable()->lineNo(),
-                callerCodeBlock->firstLineColumnOffset(),
-                callerCodeBlock->sourceOffset(),
-                bytecodeOffset,
-                sourceURL
+                Strong<JSObject>(vm, iter->callee()),
+                getStackFrameCodeType(iter),
+                Strong<ExecutableBase>(vm, codeBlock->ownerExecutable()),
+                Strong<UnlinkedCodeBlock>(vm, codeBlock->unlinkedCodeBlock()),
+                codeBlock->source(),
+                codeBlock->ownerExecutable()->lineNo(),
+                codeBlock->firstLineColumnOffset(),
+                codeBlock->sourceOffset(),
+                iter->bytecodeOffset(),
+                iter->sourceURL()
             };
-
             results.append(s);
         } else {
-            StackFrame s = { Strong<JSObject>(*vm, callFrame->callee()), StackFrameNativeCode, Strong<ExecutableBase>(), Strong<UnlinkedCodeBlock>(), 0, 0, 0, 0, 0, String()};
+            StackFrame s = { Strong<JSObject>(vm, iter->callee()), StackFrameNativeCode, Strong<ExecutableBase>(), Strong<UnlinkedCodeBlock>(), 0, 0, 0, 0, 0, String()};
             results.append(s);
         }
-        callFrame = getCallerInfo(vm, callFrame, bytecodeOffset, callerCodeBlock);
     }
 }
 
@@ -624,7 +580,7 @@ void Interpreter::addStackTraceIfNecessary(CallFrame* callFrame, JSValue error)
     }
     
     Vector<StackFrame> stackTrace;
-    getStackTrace(&callFrame->vm(), stackTrace);
+    vm->interpreter->getStackTrace(stackTrace);
     vm->exceptionStack() = RefCountedArray<StackFrame>(stackTrace);
     if (stackTrace.isEmpty() || !error.isObject())
         return;
@@ -676,7 +632,7 @@ NEVER_INLINE HandlerInfo* Interpreter::throwException(CallFrame*& callFrame, JSV
     } else {
         if (!callFrame->vm().exceptionStack().size()) {
             Vector<StackFrame> stack;
-            Interpreter::getStackTrace(&callFrame->vm(), stack);
+            callFrame->vm().interpreter->getStackTrace(stack);
             callFrame->vm().exceptionStack() = RefCountedArray<StackFrame>(stack);
         }
     }
@@ -689,12 +645,21 @@ NEVER_INLINE HandlerInfo* Interpreter::throwException(CallFrame*& callFrame, JSV
 
     // Calculate an exception handler vPC, unwinding call frames as necessary.
     HandlerInfo* handler = 0;
-    while (isTermination || !(handler = codeBlock->handlerForBytecodeOffset(bytecodeOffset))) {
-        if (!unwindCallFrame(callFrame, exceptionValue, bytecodeOffset, codeBlock)) {
-            if (LegacyProfiler* profiler = callFrame->vm().enabledProfiler())
-                profiler->exceptionUnwind(callFrame);
-            return 0;
-        }
+    VM& vm = callFrame->vm();
+    ASSERT(callFrame == vm.topCallFrame);
+    for (StackIterator iter = callFrame->begin(); iter != callFrame->end(); ++iter) {
+        callFrame = iter->callFrame();
+        codeBlock = iter->codeBlock();
+        bytecodeOffset = iter->bytecodeOffset();
+
+        if (isTermination || !(handler = codeBlock->handlerForBytecodeOffset(bytecodeOffset))) {
+            if (!unwindCallFrame(iter, exceptionValue)) {
+                if (LegacyProfiler* profiler = vm.enabledProfiler())
+                    profiler->exceptionUnwind(callFrame);
+                return 0;
+            }
+        } else
+            break;
     }
 
     if (LegacyProfiler* profiler = callFrame->vm().enabledProfiler())
@@ -1287,57 +1252,7 @@ NEVER_INLINE void Interpreter::debug(CallFrame* callFrame, DebugHookID debugHook
             debugger->didReachBreakpoint(callFrame, callFrame->codeBlock()->ownerExecutable()->sourceID(), lastLine, column);
             return;
     }
-}
-    
-JSValue Interpreter::retrieveArgumentsFromVMCode(CallFrame* callFrame, JSFunction* function) const
-{
-    CallFrame* functionCallFrame = findFunctionCallFrameFromVMCode(callFrame, function);
-    if (!functionCallFrame)
-        return jsNull();
-
-    Arguments* arguments = Arguments::create(functionCallFrame->vm(), functionCallFrame);
-    arguments->tearOff(functionCallFrame);
-    return JSValue(arguments);
-}
-
-JSValue Interpreter::retrieveCallerFromVMCode(CallFrame* callFrame, JSFunction* function) const
-{
-    CallFrame* functionCallFrame = findFunctionCallFrameFromVMCode(callFrame, function);
-
-    if (!functionCallFrame)
-        return jsNull();
-    
-    unsigned bytecodeOffset;
-    CodeBlock* unusedCallerCodeBlock = 0;
-    CallFrame* callerFrame = getCallerInfo(&callFrame->vm(), functionCallFrame, bytecodeOffset, unusedCallerCodeBlock);
-    if (!callerFrame)
-        return jsNull();
-    JSValue caller = callerFrame->callee();
-    if (!caller)
-        return jsNull();
-
-    // Skip over function bindings.
-    ASSERT(caller.isObject());
-    while (asObject(caller)->inherits(&JSBoundFunction::s_info)) {
-        callerFrame = getCallerInfo(&callFrame->vm(), callerFrame, bytecodeOffset, unusedCallerCodeBlock);
-        if (!callerFrame)
-            return jsNull();
-        caller = callerFrame->callee();
-        if (!caller)
-            return jsNull();
-    }
-
-    return caller;
-}
-
-CallFrame* Interpreter::findFunctionCallFrameFromVMCode(CallFrame* callFrame, JSFunction* function)
-{
-    for (CallFrame* candidate = callFrame->trueCallFrame(); candidate; candidate = candidate->trueCallerFrame()) {
-        if (candidate->callee() == function)
-            return candidate;
-    }
-    return 0;
-}
+}    
 
 void Interpreter::enableSampler()
 {

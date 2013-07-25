@@ -25,13 +25,16 @@
 #include "config.h"
 #include "JSFunction.h"
 
+#include "Arguments.h"
 #include "CodeBlock.h"
 #include "CommonIdentifiers.h"
 #include "CallFrame.h"
+#include "CallFrameInlines.h"
 #include "ExceptionHelpers.h"
 #include "FunctionPrototype.h"
 #include "GetterSetter.h"
 #include "JSArray.h"
+#include "JSBoundFunction.h" 
 #include "JSGlobalObject.h"
 #include "JSNotAnObject.h"
 #include "Interpreter.h"
@@ -40,6 +43,7 @@
 #include "Operations.h"
 #include "Parser.h"
 #include "PropertyNameArray.h"
+#include "StackIterator.h"
 
 using namespace WTF;
 using namespace Unicode;
@@ -178,18 +182,40 @@ CallType JSFunction::getCallData(JSCell* cell, CallData& callData)
     return CallTypeJS;
 }
 
+static JSValue retrieveArguments(ExecState* exec, JSFunction* functionObj)
+{
+    StackIterator iter = exec->find(functionObj);
+    return iter != exec->end() ? JSValue(iter->arguments()) : jsNull();
+}
+
 JSValue JSFunction::argumentsGetter(ExecState* exec, JSValue slotBase, PropertyName)
 {
     JSFunction* thisObj = jsCast<JSFunction*>(slotBase);
     ASSERT(!thisObj->isHostFunction());
-    return exec->interpreter()->retrieveArgumentsFromVMCode(exec, thisObj);
+
+    return retrieveArguments(exec, thisObj);
+}
+
+static bool skipOverBoundFunctions(StackIterator::Frame* frame)
+{
+    JSObject* callee = frame->callee();
+    bool shouldSkip = callee ? callee->inherits(&JSBoundFunction::s_info) : false;
+    return shouldSkip;
+}
+
+static JSValue retrieveCallerFunction(ExecState* exec, JSFunction* functionObj)
+{
+    StackIterator iter = exec->find(functionObj, skipOverBoundFunctions);
+    if (iter != exec->end())
+        ++iter;
+    return iter != exec->end() && iter->callee() ? iter->callee() : jsNull();
 }
 
 JSValue JSFunction::callerGetter(ExecState* exec, JSValue slotBase, PropertyName)
 {
     JSFunction* thisObj = jsCast<JSFunction*>(slotBase);
     ASSERT(!thisObj->isHostFunction());
-    JSValue caller = exec->interpreter()->retrieveCallerFromVMCode(exec, thisObj);
+    JSValue caller = retrieveCallerFunction(exec, thisObj);
 
     // See ES5.1 15.3.5.4 - Function.caller may not be used to retrieve a strict caller.
     if (!caller.isObject() || !asObject(caller)->inherits(&JSFunction::s_info))
@@ -297,7 +323,7 @@ bool JSFunction::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, Pro
             }
             return result;
         }
-        descriptor.setDescriptor(exec->interpreter()->retrieveArgumentsFromVMCode(exec, thisObject), ReadOnly | DontEnum | DontDelete);
+        descriptor.setDescriptor(retrieveArguments(exec, thisObject), ReadOnly | DontEnum | DontDelete);
         return true;
     }
     
@@ -321,7 +347,7 @@ bool JSFunction::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, Pro
             }
             return result;
         }
-        descriptor.setDescriptor(exec->interpreter()->retrieveCallerFromVMCode(exec, thisObject), ReadOnly | DontEnum | DontDelete);
+        descriptor.setDescriptor(retrieveCallerFunction(exec, thisObject), ReadOnly | DontEnum | DontDelete);
         return true;
     }
     
@@ -415,14 +441,14 @@ bool JSFunction::defineOwnProperty(JSObject* object, ExecState* exec, PropertyNa
                 thisObject->putDirectAccessor(exec, propertyName, thisObject->globalObject()->throwTypeErrorGetterSetter(exec), DontDelete | DontEnum | Accessor);
             return Base::defineOwnProperty(object, exec, propertyName, descriptor, throwException);
         }
-        valueCheck = !descriptor.value() || sameValue(exec, descriptor.value(), exec->interpreter()->retrieveArgumentsFromVMCode(exec, thisObject));
+        valueCheck = !descriptor.value() || sameValue(exec, descriptor.value(), retrieveArguments(exec, thisObject));
     } else if (propertyName == exec->propertyNames().caller) {
         if (thisObject->jsExecutable()->isStrictMode()) {
             if (!Base::getOwnPropertyDescriptor(thisObject, exec, propertyName, descriptor))
                 thisObject->putDirectAccessor(exec, propertyName, thisObject->globalObject()->throwTypeErrorGetterSetter(exec), DontDelete | DontEnum | Accessor);
             return Base::defineOwnProperty(object, exec, propertyName, descriptor, throwException);
         }
-        valueCheck = !descriptor.value() || sameValue(exec, descriptor.value(), exec->interpreter()->retrieveCallerFromVMCode(exec, thisObject));
+        valueCheck = !descriptor.value() || sameValue(exec, descriptor.value(), retrieveCallerFunction(exec, thisObject));
     } else if (propertyName == exec->propertyNames().length)
         valueCheck = !descriptor.value() || sameValue(exec, descriptor.value(), jsNumber(thisObject->jsExecutable()->parameterCount()));
     else if (propertyName == exec->propertyNames().name)

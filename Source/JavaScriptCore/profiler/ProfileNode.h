@@ -40,7 +40,6 @@ namespace JSC {
     class ExecState;
     class ProfileNode;
 
-    typedef Vector<RefPtr<ProfileNode> >::const_iterator StackIterator;
     typedef HashCountedSet<StringImpl*> FunctionCallHashCount;
 
     class ProfileNode : public RefCounted<ProfileNode> {
@@ -131,6 +130,8 @@ namespace JSC {
 #endif
 
     private:
+        typedef Vector<RefPtr<ProfileNode> >::const_iterator StackIterator;
+
         ProfileNode(ExecState* callerCallFrame, const CallIdentifier&, ProfileNode* headNode, ProfileNode* parentNode);
         ProfileNode(ExecState* callerCallFrame, ProfileNode* headNode, ProfileNode* nodeToCopy);
 

@@ -1,3 +1,152 @@
+2013-06-10  Mark Lam  <mark.lam@apple.com>
+
+        Introducing the StackIterator class.
+        https://bugs.webkit.org/show_bug.cgi?id=117390.
+
+        Reviewed by Geoffrey Garen.
+
+        The StackIterator class is meant to unify the way we iterate the JS
+        stack. It also makes it so that we don't have to copy the frame data
+        into the intermediate StackFrame struct before processing it.
+        Unfortunately we still can't get rid of StackFrame because it is used
+        to record frame information for the Exception stack that is expected
+        to persist beyond when the frames have been popped off the JS stack.
+
+        The StackIterator will iterate over all "logical" frames (i.e. including
+        inlined frames). As it iterates the JS stack, if it encounters a DFG
+        frame that has inlined frames, the iterator will canonicalize the
+        inlined frames before returning. Once canonicalized, the frame can be
+        read like any other frame.
+
+        The StackIterator implements a Frame class that inherits from CallFrame.
+        The StackIterator::Frame serves as reader of the CallFrame that makes
+        it easier to access information about the frame. The StackIterator::Frame
+        only adds functions, and no additional data fields.
+
+        * API/JSContextRef.cpp:
+        (JSContextCreateBacktrace):
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * interpreter/CallFrame.cpp:
+        (JSC::CallFrame::begin):
+        (JSC::CallFrame::beginAt):
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::setInlineCallFrame):
+        (ExecState):
+        (JSC::ExecState::end):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::dumpRegisters):
+        (JSC::Interpreter::unwindCallFrame):
+        (JSC::Interpreter::getStackTrace):
+        (JSC::Interpreter::throwException):
+        (JSC::Interpreter::debug):
+        * interpreter/Interpreter.h:
+        (Interpreter):
+        * interpreter/StackIterator.cpp: Added.
+        (JSC::StackIterator::StackIterator):
+        (JSC::StackIterator::beginAt):
+        (JSC::StackIterator::gotoNextFrame):
+        - Based on the deleted Interpreter::findFunctionCallFrameFromVMCode().
+        (JSC::StackIterator::findFrameForFunction):
+        - Based on the deleted Interpreter::retrieveCallerFromVMCode().
+        (JSC::StackIterator::Frame::codeType):
+        - Based on the deleted getStackFrameCodeType().
+        (JSC::StackIterator::Frame::functionName):
+        - Based on StackFrame::friendlyFunctionName().
+        (JSC::StackIterator::Frame::sourceURL):
+        - Based on StackFrame::friendlySourceURL().
+        (JSC::StackIterator::Frame::toString):
+        - Based on StackFrame::toString().
+        (JSC::StackIterator::Frame::bytecodeOffset):
+        (JSC::StackIterator::Frame::line):
+        - Based on StackFrame::line().
+        (JSC::StackIterator::Frame::column):
+        - Based on StackFrame::column().
+        (JSC::StackIterator::Frame::arguments):
+        - Based on the deleted Interpreter::retrieveArgumentsFromVMCode().
+        (JSC::StackIterator::Frame::retrieveExpressionInfo):
+        - Based on StackFrame::expressionInfo().
+        (JSC::StackIterator::Frame::logicalFrame):
+        - Based on the now deleted CallFrame::trueCallFrame().
+        (JSC::StackIterator::Frame::logicalCallerFrame):
+        - Based on the now deleted CallFrame::trueCallerFrame().
+        (JSC::jitTypeName):
+        (JSC::printIndents):
+        (JSC::printif):
+        (JSC::StackIterator::Frame::print):
+        (debugPrintCallFrame):
+        - Prints the contents of the frame for debugging purposes.
+          There are 2 versions that can be used as follows:
+
+          1. When you have a valid StackIterator, you can print
+             the current frame's content using the print instance
+             method:
+                 iter->print(indentLevel);
+
+          2. When you have a CallFrame* that you want to dump from a debugger
+             console, you can print its content as follows:
+                 (gdb) call debugPrintCallFrame(callFrame)
+
+          A sample of the output looks like this:
+
+              frame 0x1510c70b0 {
+                 name 'shouldBe'
+                 sourceURL 'testapi.js'
+                 hostFlag 0
+                 isInlinedFrame 0
+                 callee 0x15154efb0
+                 returnPC 0x10ed0786d
+                 callerFrame 0x1510c7058
+                 logicalCallerFrame 0x1510c7058
+                 rawLocationBits 27 0x1b
+                 codeBlock 0x7fe79b037200
+                    bytecodeOffset 27 0x1b / 210
+                    line 46
+                    column 20
+                    jitType 3 <BaselineJIT> isOptimizingJIT 0
+                    hasCodeOrigins 0
+              }
+
+        * interpreter/StackIterator.h: Added.
+        (StackIterator::Frame):
+        (JSC::StackIterator::Frame::create):
+        (JSC::StackIterator::Frame::isJSFrame):
+        (JSC::StackIterator::Frame::callFrame):
+        * interpreter/StackIteratorPrivate.h: Added.
+        (StackIterator):
+        (JSC::StackIterator::operator*):
+        (JSC::StackIterator::operator->):
+        (JSC::StackIterator::operator==):
+        (JSC::StackIterator::operator!=):
+        (JSC::StackIterator::operator++):
+        (JSC::StackIterator::end):
+        (JSC::StackIterator::empty):
+        * jsc.cpp:
+        (functionJSCStack):
+        * profiler/ProfileGenerator.cpp:
+        (JSC::ProfileGenerator::addParentForConsoleStart):
+        * profiler/ProfileNode.h:
+        (ProfileNode):
+        * runtime/JSFunction.cpp:
+        (JSC::retrieveArguments):
+        (JSC::JSFunction::argumentsGetter):
+        (JSC::skipOverBoundFunctions):
+        (JSC::retrieveCallerFunction):
+        (JSC::JSFunction::callerGetter):
+        (JSC::JSFunction::getOwnPropertyDescriptor):
+        (JSC::JSFunction::defineOwnProperty):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncProtoGetter):
+        (JSC::globalFuncProtoSetter):
+        * runtime/ObjectConstructor.cpp:
+        (JSC::objectConstructorGetPrototypeOf):
+        * runtime/Operations.h:
+
 2013-06-09  Filip Pizlo  <fpizlo@apple.com>
 
         Marge trunk r146653.

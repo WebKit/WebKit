@@ -67,98 +67,6 @@ void CallFrame::setCurrentVPC(Instruction* vpc)
 #endif
     
 #if ENABLE(DFG_JIT)
-CallFrame* CallFrame::trueCallFrame()
-{
-    // Am I an inline call frame? If so, we're done.
-    if (isInlinedFrame())
-        return this;
-    
-    // If I don't have a code block, then I'm not DFG code, so I'm the true call frame.
-    CodeBlock* machineCodeBlock = codeBlock();
-    if (!machineCodeBlock)
-        return this;
-    
-    // If the code block does not have any code origins, then there was no inlining, so
-    // I'm done.
-    if (!machineCodeBlock->hasCodeOrigins())
-        return this;
-    
-    // Try to determine the CodeOrigin. If we don't have a pc set then the only way
-    // that this makes sense is if the CodeOrigin index was set in the call frame.
-    CodeOrigin codeOrigin;
-    unsigned index = locationAsCodeOriginIndex();
-    ASSERT(machineCodeBlock->canGetCodeOrigin(index));
-    if (!machineCodeBlock->canGetCodeOrigin(index)) {
-        // See above. In release builds, we try to protect ourselves from crashing even
-        // though stack walking will be goofed up.
-        return 0;
-    }
-    codeOrigin = machineCodeBlock->codeOrigin(index);
-
-    if (!codeOrigin.inlineCallFrame)
-        return this; // Not currently in inlined code.
-
-    CodeOrigin innerMostCodeOrigin = codeOrigin;
-
-    for (InlineCallFrame* inlineCallFrame = codeOrigin.inlineCallFrame; inlineCallFrame;) {
-        InlineCallFrame* nextInlineCallFrame = inlineCallFrame->caller.inlineCallFrame;
-        
-        CallFrame* inlinedCaller = this + inlineCallFrame->stackOffset;
-        
-        JSFunction* calleeAsFunction = inlineCallFrame->callee.get();
-        
-        // Fill in the inlinedCaller
-        inlinedCaller->setCodeBlock(inlineCallFrame->baselineCodeBlock());
-        if (calleeAsFunction)
-            inlinedCaller->setScope(calleeAsFunction->scope());
-        if (nextInlineCallFrame)
-            inlinedCaller->setCallerFrame(this + nextInlineCallFrame->stackOffset);
-        else
-            inlinedCaller->setCallerFrame(this);
-        
-        inlinedCaller->setInlineCallFrame(inlineCallFrame);
-        inlinedCaller->setArgumentCountIncludingThis(inlineCallFrame->arguments.size());
-        inlinedCaller->setLocationAsBytecodeOffset(codeOrigin.bytecodeIndex);
-        inlinedCaller->setIsInlinedFrame();
-        if (calleeAsFunction)
-            inlinedCaller->setCallee(calleeAsFunction);
-        
-        codeOrigin = inlineCallFrame->caller;
-        inlineCallFrame = nextInlineCallFrame;
-    }
-    
-    return this + innerMostCodeOrigin.inlineCallFrame->stackOffset;
-}
-        
-CallFrame* CallFrame::trueCallerFrame()
-{
-    CallFrame* callerFrame = this->callerFrame()->removeHostCallFrameFlag();
-    if (!codeBlock())
-        return callerFrame;
-
-    // this -> The callee; this is either an inlined callee in which case it already has
-    //    a pointer to the true caller. Otherwise it contains current PC in the machine
-    //    caller.
-    //
-    // machineCaller -> The caller according to the machine, which may be zero or
-    //    more frames above the true caller due to inlining.
-
-    // Am I an inline call frame? If so, we're done.
-    if (isInlinedFrame())
-        return callerFrame;
-    
-    // I am a machine call frame, so the question is: is my caller a machine call frame
-    // that has inlines or a machine call frame that doesn't?
-    if (!callerFrame)
-        return 0;
-
-    if (!callerFrame->codeBlock())
-        return callerFrame;
-    ASSERT(!callerFrame->isInlinedFrame());
-    
-    return callerFrame->trueCallFrame()->removeHostCallFrameFlag();
-}
-
 unsigned CallFrame::bytecodeOffsetFromCodeOriginIndex()
 {
     ASSERT(hasLocationAsCodeOriginIndex());
@@ -187,6 +95,25 @@ Register* CallFrame::frameExtentInternal()
     CodeBlock* codeBlock = this->codeBlock();
     ASSERT(codeBlock);
     return registers() + codeBlock->m_numCalleeRegisters;
+}
+
+StackIterator CallFrame::begin(StackIterator::FrameFilter filter)
+{
+    ASSERT(this);
+    return StackIterator(this, filter);
+}
+
+StackIterator CallFrame::find(JSFunction* calleeFunctionObj, StackIterator::FrameFilter filter)
+{
+    ASSERT(this);
+    StackIterator iter = StackIterator(this, filter);
+    iter.find(calleeFunctionObj);
+    return iter;
+}
+
+StackIterator::Frame* CallFrame::end()
+{
+    return StackIterator::end();
 }
 
 }

@@ -40,7 +40,8 @@
 #include "ScriptCallStack.h"
 #include "ScriptValue.h"
 #include <interpreter/CallFrame.h>
-#include <interpreter/Interpreter.h>
+#include <interpreter/CallFrameInlines.h>
+#include <interpreter/StackIterator.h>
 #include <runtime/ArgList.h>
 #include <runtime/JSCJSValue.h>
 #include <runtime/JSFunction.h>
@@ -57,13 +58,12 @@ PassRefPtr<ScriptCallStack> createScriptCallStack(size_t maxStackSize, bool empt
 {
     Vector<ScriptCallFrame> frames;
     if (JSC::ExecState* exec = JSMainThreadExecState::currentState()) {
-        Vector<StackFrame> stackTrace;
-        Interpreter::getStackTrace(&exec->vm(), stackTrace, maxStackSize);
-        for (size_t i = 0; i < stackTrace.size(); i++) {
+        CallFrame* frame = exec->vm().topCallFrame;
+        for (StackIterator iter = frame->begin(); iter != frame->end() && maxStackSize--; ++iter) {
             unsigned line;
             unsigned column;
-            stackTrace[i].computeLineAndColumn(line, column);
-            frames.append(ScriptCallFrame(stackTrace[i].friendlyFunctionName(exec), stackTrace[i].friendlySourceURL(), line, column));
+            iter->computeLineAndColumn(line, column);
+            frames.append(ScriptCallFrame(iter->functionName(), iter->sourceURL(), line, column));
         }
     }
     if (frames.isEmpty() && !emptyIsAllowed) {
@@ -78,22 +78,20 @@ PassRefPtr<ScriptCallStack> createScriptCallStack(size_t maxStackSize, bool empt
 PassRefPtr<ScriptCallStack> createScriptCallStack(JSC::ExecState* exec, size_t maxStackSize)
 {
     Vector<ScriptCallFrame> frames;
-    Vector<StackFrame> stackTrace;
-    Interpreter::getStackTrace(&exec->vm(), stackTrace, maxStackSize + 1);
-    for (size_t i = stackTrace.size() == 1 ? 0 : 1; i < stackTrace.size(); i++) {
+    ASSERT(exec);
+    CallFrame* frame = exec->vm().topCallFrame;
+    StackIterator iter = frame->begin();
+    for (++iter; iter != frame->end() && maxStackSize--; ++iter) {
         // This early exit is necessary to maintain our old behaviour
         // but the stack trace we produce now is complete and handles all
         // ways in which code may be running
-        if (!stackTrace[i].callee && frames.size())
+        if (!iter->callee() && frames.size())
             break;
-
-        String functionName = stackTrace[i].friendlyFunctionName(exec);
         unsigned line;
         unsigned column;
-        stackTrace[i].computeLineAndColumn(line, column);
-        frames.append(ScriptCallFrame(functionName, stackTrace[i].sourceURL, line, column));
+        iter->computeLineAndColumn(line, column);
+        frames.append(ScriptCallFrame(iter->functionName(), iter->sourceURL(), line, column));
     }
-
     return ScriptCallStack::create(frames);
 }
 

@@ -22,6 +22,7 @@
 #include "ObjectConstructor.h"
 
 #include "ButterflyInlines.h"
+#include "CallFrameInlines.h"
 #include "CopiedSpaceInlines.h"
 #include "Error.h"
 #include "ExceptionHelpers.h"
@@ -33,6 +34,7 @@
 #include "Operations.h"
 #include "PropertyDescriptor.h"
 #include "PropertyNameArray.h"
+#include "StackIterator.h"
 
 namespace JSC {
 
@@ -139,7 +141,9 @@ EncodedJSValue JSC_HOST_CALL objectConstructorGetPrototypeOf(ExecState* exec)
     if (!exec->argument(0).isObject())
         return throwVMError(exec, createTypeError(exec, ASCIILiteral("Requested prototype of a value that is not an object.")));
     JSObject* object = asObject(exec->argument(0));
-    if (!object->allowsAccessFrom(exec->trueCallerFrame()))
+    StackIterator iter = exec->begin();
+    ++iter;
+    if ((iter == exec->end()) || !object->allowsAccessFrom(iter->callFrame()))
         return JSValue::encode(jsUndefined());
     return JSValue::encode(object->prototype());
 }

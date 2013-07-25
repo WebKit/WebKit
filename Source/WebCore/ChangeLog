@@ -1,3 +1,18 @@
+2013-06-10  Mark Lam  <mark.lam@apple.com>
+
+        Introducing the StackIterator class.
+        https://bugs.webkit.org/show_bug.cgi?id=117390.
+
+        Reviewed by Geoffrey Garen.
+
+        No new tests.
+
+        * ForwardingHeaders/interpreter/StackIterator.h: Added.
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        (WebCore::JSXMLHttpRequest::send):
+        * bindings/js/ScriptCallStackFactory.cpp:
+        (WebCore::createScriptCallStack):
+
 2013-06-09  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, fix build. Use at() instead of operator[] because of ambiguity on some compilers.

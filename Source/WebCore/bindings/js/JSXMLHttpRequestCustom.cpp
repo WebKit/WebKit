@@ -47,8 +47,7 @@
 #include "JSEvent.h"
 #include "JSEventListener.h"
 #include "XMLHttpRequest.h"
-#include <interpreter/Interpreter.h>
-#include <parser/SourceProvider.h>
+#include <interpreter/StackIterator.h>
 #include <runtime/Error.h>
 #include <wtf/ArrayBuffer.h>
 
@@ -134,14 +133,17 @@ JSValue JSXMLHttpRequest::send(ExecState* exec)
             impl()->send(val.toString(exec)->value(exec), ec);
     }
 
-    Vector<StackFrame> stackTrace(2);
-    Interpreter::getStackTrace(&exec->vm(), stackTrace, 2);
-    if (stackTrace.size() == 2) {
+    StackIterator iter = exec->begin();
+    ++iter;
+    if (iter != exec->end()) {
         unsigned line = 0;
         unsigned unusuedColumn = 0;
-        stackTrace[1].computeLineAndColumn(line, unusuedColumn);
+        iter->computeLineAndColumn(line, unusuedColumn);
         impl()->setLastSendLineNumber(line);
-        impl()->setLastSendURL(stackTrace[1].sourceURL);
+        impl()->setLastSendURL(iter->sourceURL());
+    } else {
+        impl()->setLastSendLineNumber(0);
+        impl()->setLastSendURL(String());
     }
     setDOMException(exec, ec);
     return jsUndefined();

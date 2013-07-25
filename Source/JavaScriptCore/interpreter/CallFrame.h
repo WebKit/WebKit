@@ -28,6 +28,7 @@
 #include "JSStack.h"
 #include "MacroAssemblerCodeRef.h"
 #include "Register.h"
+#include "StackIteratorPrivate.h"
 
 namespace JSC  {
 
@@ -274,20 +275,12 @@ namespace JSC  {
         
 #if ENABLE(DFG_JIT)
         void setInlineCallFrame(InlineCallFrame* inlineCallFrame) { static_cast<Register*>(this)[JSStack::ReturnPC] = inlineCallFrame; }
-
-        // Call this to get the semantically correct JS CallFrame* for the
-        // currently executing function.
-        CallFrame* trueCallFrame();
-
-        // Call this to get the semantically correct JS CallFrame* corresponding
-        // to the caller. This resolves issues surrounding inlining and the
-        // HostCallFrameFlag stuff.
-        CallFrame* trueCallerFrame();
-#else
-        CallFrame* trueCallFrame() { return this; }
-        CallFrame* trueCallerFrame() { return callerFrame()->removeHostCallFrameFlag(); }
 #endif
         CallFrame* callerFrameNoFlags() { return callerFrame()->removeHostCallFrameFlag(); }
+
+        JS_EXPORT_PRIVATE StackIterator begin(StackIterator::FrameFilter = nullptr);
+        JS_EXPORT_PRIVATE StackIterator find(JSFunction* calleeFunctionObj, StackIterator::FrameFilter = nullptr);
+        JS_EXPORT_PRIVATE StackIterator::Frame* end();
 
     private:
         static const intptr_t HostCallFrameFlag = 1;

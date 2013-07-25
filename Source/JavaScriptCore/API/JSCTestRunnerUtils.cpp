@@ -53,8 +53,12 @@ JSValueRef numberOfDFGCompiles(JSContextRef context, JSValueRef theFunctionValue
         
         if (!baselineCodeBlock)
             return JSValueMakeNumber(context, 0);
-        
+
+#if ENABLE(DFG_JIT)        
         return JSValueMakeNumber(context, baselineCodeBlock->numberOfDFGCompiles());
+#else
+        return JSValueMakeNumber(context, 1000000.0);
+#endif
     }
     
     return JSValueMakeUndefined(context);

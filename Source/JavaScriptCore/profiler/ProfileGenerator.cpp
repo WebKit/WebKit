@@ -27,14 +27,15 @@
 #include "ProfileGenerator.h"
 
 #include "CallFrame.h"
+#include "CallFrameInlines.h"
 #include "CodeBlock.h"
 #include "JSGlobalObject.h"
 #include "JSStringRef.h"
 #include "JSFunction.h"
-#include "Interpreter.h"
 #include "LegacyProfiler.h"
 #include "Operations.h"
 #include "Profile.h"
+#include "StackIterator.h"
 #include "Tracing.h"
 
 namespace JSC {
@@ -58,14 +59,17 @@ ProfileGenerator::ProfileGenerator(ExecState* exec, const String& title, unsigne
 
 void ProfileGenerator::addParentForConsoleStart(ExecState* exec)
 {
-    Vector<StackFrame> stackTrace;
-    Interpreter::getStackTrace(&exec->vm(), stackTrace, 2);
-    if (stackTrace.size() < 2)
+    StackIterator iter = exec->begin();
+    ++iter;
+    if (iter == exec->end()) {
+        m_currentNode = ProfileNode::create(exec, LegacyProfiler::createCallIdentifier(exec, JSValue(), String(), 0), m_head.get(), m_head.get());
+        m_head->insertNode(m_currentNode.get());
         return;
+    }
     unsigned line = 0;
     unsigned unusedColumn = 0;
-    stackTrace[1].computeLineAndColumn(line, unusedColumn);
-    m_currentNode = ProfileNode::create(exec, LegacyProfiler::createCallIdentifier(exec, stackTrace[1].callee.get(), stackTrace[1].sourceURL, line), m_head.get(), m_head.get());
+    iter->computeLineAndColumn(line, unusedColumn);
+    m_currentNode = ProfileNode::create(exec, LegacyProfiler::createCallIdentifier(exec, iter->callee(), iter->sourceURL(), line), m_head.get(), m_head.get());
     m_head->insertNode(m_currentNode.get());
 }
 

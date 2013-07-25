@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2004, 2005, 2006, 2007, 2008, 2012 Apple Inc. All rights reserved.
+ *  Copyright (C) 2004, 2005, 2006, 2007, 2008, 2012, 2013 Apple Inc. All rights reserved.
  *  Copyright (C) 2006 Bjoern Graf (bjoern.graf@gmail.com)
  *
  *  This library is free software; you can redistribute it and/or
@@ -25,6 +25,7 @@
 #include "APIShims.h"
 #include "ButterflyInlines.h"
 #include "BytecodeGenerator.h"
+#include "CallFrameInlines.h"
 #include "Completion.h"
 #include "CopiedSpaceInlines.h"
 #include "ExceptionHelpers.h"
@@ -39,6 +40,7 @@
 #include "JSString.h"
 #include "Operations.h"
 #include "SamplingTool.h"
+#include "StackIterator.h"
 #include "StructureRareDataInlines.h"
 #include <math.h>
 #include <stdio.h>
@@ -340,15 +342,9 @@ EncodedJSValue JSC_HOST_CALL functionJSCStack(ExecState* exec)
     StringBuilder trace;
     trace.appendLiteral("--> Stack trace:\n");
 
-    Vector<StackFrame> stackTrace;
-    Interpreter::getStackTrace(&exec->vm(), stackTrace);
     int i = 0;
-
-    for (Vector<StackFrame>::iterator iter = stackTrace.begin(); iter < stackTrace.end(); iter++) {
-        StackFrame level = *iter;
-        trace.append(String::format("    %i   %s\n", i, level.toString(exec).utf8().data()));
-        i++;
-    }
+    for (StackIterator iter = exec->begin(); iter != exec->end(); ++iter, ++i)
+        trace.append(String::format("    %i   %s\n", i, iter->toString().utf8().data()));
     fprintf(stderr, "%s", trace.toString().utf8().data());
     return JSValue::encode(jsUndefined());
 }

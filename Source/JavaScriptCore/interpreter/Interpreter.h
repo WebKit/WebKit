@@ -55,6 +55,7 @@ namespace JSC {
     class Register;
     class JSScope;
     class SamplingTool;
+    class StackIterator;
     struct CallFrameClosure;
     struct HandlerInfo;
     struct Instruction;
@@ -210,9 +211,6 @@ namespace JSC {
         JSObject* executeConstruct(CallFrame*, JSObject* function, ConstructType, const ConstructData&, const ArgList&);
         JSValue execute(EvalExecutable*, CallFrame*, JSValue thisValue, JSScope*);
 
-        JSValue retrieveArgumentsFromVMCode(CallFrame*, JSFunction*) const;
-        JSValue retrieveCallerFromVMCode(CallFrame*, JSFunction*) const;
-        
         void getArgumentsData(CallFrame*, JSFunction*&, ptrdiff_t& firstParameterIndex, Register*& argv, int& argc);
         
         SamplingTool* sampler() { return m_sampler.get(); }
@@ -221,8 +219,6 @@ namespace JSC {
 
         NEVER_INLINE HandlerInfo* throwException(CallFrame*&, JSValue&, unsigned bytecodeOffset);
         NEVER_INLINE void debug(CallFrame*, DebugHookID, int firstLine, int lastLine, int column);
-        static const String getTraceLine(CallFrame*, StackFrameCodeType, const String&, int);
-        JS_EXPORT_PRIVATE static void getStackTrace(VM*, Vector<StackFrame>& results, size_t maxStackSize = std::numeric_limits<size_t>::max());
         static void addStackTraceIfNecessary(CallFrame*, JSValue error);
 
         void dumpSampleData(ExecState* exec);
@@ -238,9 +234,8 @@ namespace JSC {
         void endRepeatCall(CallFrameClosure&);
         JSValue execute(CallFrameClosure&);
 
-        NEVER_INLINE bool unwindCallFrame(CallFrame*&, JSValue, unsigned& bytecodeOffset, CodeBlock*&);
-
-        static CallFrame* findFunctionCallFrameFromVMCode(CallFrame*, JSFunction*);
+        void getStackTrace(Vector<StackFrame>& results, size_t maxStackSize = std::numeric_limits<size_t>::max());
+        NEVER_INLINE bool unwindCallFrame(StackIterator&, JSValue);
 
         void dumpRegisters(CallFrame*);
         

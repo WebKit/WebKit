@@ -28,15 +28,16 @@
 #include "JSContextRefPrivate.h"
 
 #include "APICast.h"
+#include "CallFrameInlines.h"
 #include "InitializeThreading.h"
 #include <interpreter/CallFrame.h>
-#include <interpreter/Interpreter.h>
 #include "JSCallbackObject.h"
 #include "JSClassRef.h"
 #include "JSGlobalObject.h"
 #include "JSObject.h"
 #include "Operations.h"
 #include "SourceProvider.h"
+#include "StackIterator.h"
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringHash.h>
 
@@ -221,38 +222,33 @@ JSStringRef JSContextCreateBacktrace(JSContextRef ctx, unsigned maxStackSize)
     ExecState* exec = toJS(ctx);
     JSLockHolder lock(exec);
     StringBuilder builder;
-    Vector<StackFrame> stackTrace;
-    Interpreter::getStackTrace(&exec->vm(), stackTrace, maxStackSize);
+    CallFrame* frame = exec->vm().topCallFrame;
+    size_t i = 0;
+    ASSERT(maxStackSize);
+    for (StackIterator iter = frame->begin(); iter != frame->end() && maxStackSize--; ++iter, ++i) {
+        JSObject* callee = iter->callee();
+        // If callee is unknown, but we've not added any frame yet, we should
+        // still add the frame, because something called us, and gave us arguments.
+        if (!callee && i)
+            break;
 
-    for (size_t i = 0; i < stackTrace.size(); i++) {
-        String urlString;
-        String functionName;
-        StackFrame& frame = stackTrace[i];
-        JSValue function = frame.callee.get();
-        if (frame.callee)
-            functionName = frame.friendlyFunctionName(exec);
-        else {
-            // Caller is unknown, but if frame is empty we should still add the frame, because
-            // something called us, and gave us arguments.
-            if (i)
-                break;
-        }
-        unsigned lineNumber;
-        unsigned column;
-        frame.computeLineAndColumn(lineNumber, column);
         if (!builder.isEmpty())
             builder.append('\n');
         builder.append('#');
         builder.appendNumber(i);
         builder.append(' ');
-        builder.append(stackTrace[i].friendlyFunctionName(exec));
+        builder.append(iter->functionName());
         builder.appendLiteral("() at ");
-        builder.append(urlString);
-        if (frame.codeType != StackFrameNativeCode) {
+        builder.append(iter->sourceURL());
+        if (iter->isJSFrame()) {
             builder.append(':');
+            unsigned lineNumber;
+            unsigned unusedColumn;
+            iter->computeLineAndColumn(lineNumber, unusedColumn);
             builder.appendNumber(lineNumber);
         }
-        if (!function)
+
+        if (!callee)
             break;
     }
 

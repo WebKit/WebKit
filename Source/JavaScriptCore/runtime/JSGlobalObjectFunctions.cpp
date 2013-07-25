@@ -26,6 +26,7 @@
 #include "JSGlobalObjectFunctions.h"
 
 #include "CallFrame.h"
+#include "CallFrameInlines.h"
 #include "Interpreter.h"
 #include "JSFunction.h"
 #include "JSGlobalObject.h"
@@ -36,6 +37,7 @@
 #include "Nodes.h"
 #include "Operations.h"
 #include "Parser.h"
+#include "StackIterator.h"
 #include <wtf/dtoa.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -712,7 +714,9 @@ EncodedJSValue JSC_HOST_CALL globalFuncProtoGetter(ExecState* exec)
     if (!thisObject)
         return JSValue::encode(exec->thisValue().synthesizePrototype(exec));
 
-    if (!thisObject->allowsAccessFrom(exec->trueCallerFrame()))
+    StackIterator iter = exec->begin();
+    ++iter;
+    if ((iter == exec->end()) || !thisObject->allowsAccessFrom(iter->callFrame()))
         return JSValue::encode(jsUndefined());
 
     return JSValue::encode(thisObject->prototype());
@@ -728,7 +732,9 @@ EncodedJSValue JSC_HOST_CALL globalFuncProtoSetter(ExecState* exec)
     if (!thisObject)
         return JSValue::encode(jsUndefined());
 
-    if (!thisObject->allowsAccessFrom(exec->trueCallerFrame()))
+    StackIterator iter = exec->begin();
+    ++iter;
+    if ((iter == exec->end()) || !thisObject->allowsAccessFrom(iter->callFrame()))
         return JSValue::encode(jsUndefined());
 
     // Setting __proto__ to a non-object, non-null value is silently ignored to match Mozilla.

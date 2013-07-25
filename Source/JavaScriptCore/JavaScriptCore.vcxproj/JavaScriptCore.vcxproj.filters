@@ -291,6 +291,9 @@
     <ClCompile Include="..\interpreter\JSStack.cpp">
       <Filter>interpreter</Filter>
     </ClCompile>
+    <ClCompile Include="..\interpreter\StackIterator.cpp">
+      <Filter>interpreter</Filter>
+    </ClCompile>
     <ClCompile Include="..\interpreter\VMInspector.cpp">
       <Filter>interpreter</Filter>
     </ClCompile>
@@ -1227,6 +1230,12 @@
       <Filter>interpreter</Filter>
     </ClInclude>
     <ClInclude Include="..\interpreter\Register.h">
+      <Filter>interpreter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\interpreter\StackIterator.h">
+      <Filter>interpreter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\interpreter\StackIteratorPrivate.h">
       <Filter>interpreter</Filter>
     </ClInclude>
     <ClInclude Include="..\interpreter\VMInspector.h">

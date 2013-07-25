@@ -354,6 +354,7 @@
     <ClCompile Include="..\interpreter\CallFrame.cpp" />
     <ClCompile Include="..\interpreter\Interpreter.cpp" />
     <ClCompile Include="..\interpreter\JSStack.cpp" />
+    <ClCompile Include="..\interpreter\StackIterator.cpp" />
     <ClCompile Include="..\interpreter\VMInspector.cpp" />
     <ClCompile Include="..\jit\ClosureCallStubRoutine.cpp" />
     <ClCompile Include="..\jit\ExecutableAllocator.cpp" />
@@ -691,6 +692,8 @@
     <ClInclude Include="..\interpreter\JSStack.h" />
     <ClInclude Include="..\interpreter\JSStackInlines.h" />
     <ClInclude Include="..\interpreter\Register.h" />
+    <ClInclude Include="..\interpreter\StackIterator.h" />
+    <ClInclude Include="..\interpreter\StackIteratorPrivate.h" />
     <ClInclude Include="..\interpreter\VMInspector.h" />
     <ClInclude Include="..\jit\ClosureCallStubRoutine.h" />
     <ClInclude Include="..\jit\CompactJITCodeMap.h" />
