@@ -303,22 +303,20 @@ class CodeBlock : public ThreadSafeRefCounted<CodeBlock>, public UnconditionalFi
         PassRefPtr<JITCode> getJITCode() { return m_jitCode; }
         MacroAssemblerCodePtr getJITCodeWithArityCheck() { return m_jitCodeWithArityCheck; }
         JITCode::JITType getJITType() const { return JITCode::jitTypeFor(m_jitCode.get()); }
-        virtual JSObject* compileOptimized(ExecState*, JSScope*, unsigned bytecodeIndex) = 0;
+        virtual JSObject* compileOptimized(ExecState*, JSScope*, CompilationResult&, unsigned bytecodeIndex) = 0;
+        virtual CompilationResult replaceWithDeferredOptimizedCode(PassRefPtr<DFG::Plan>) = 0;
         void jettison();
-        enum JITCompilationResult { AlreadyCompiled, CouldNotCompile, CompiledSuccessfully };
-        JITCompilationResult jitCompile(ExecState* exec)
+        CompilationResult jitCompile(ExecState* exec)
         {
             if (getJITType() != JITCode::InterpreterThunk) {
                 ASSERT(getJITType() == JITCode::BaselineJIT);
-                return AlreadyCompiled;
+                return CompilationNotNeeded;
             }
 #if ENABLE(JIT)
-            if (jitCompileImpl(exec))
-                return CompiledSuccessfully;
-            return CouldNotCompile;
+            return jitCompileImpl(exec);
 #else
             UNUSED_PARAM(exec);
-            return CouldNotCompile;
+            return CompilationFailed;
 #endif
         }
         virtual CodeBlock* replacement() = 0;
@@ -943,7 +941,7 @@ class CodeBlock : public ThreadSafeRefCounted<CodeBlock>, public UnconditionalFi
 
     protected:
 #if ENABLE(JIT)
-        virtual bool jitCompileImpl(ExecState*) = 0;
+        virtual CompilationResult jitCompileImpl(ExecState*) = 0;
         virtual void jettisonImpl() = 0;
 #endif
         virtual void visitWeakReferences(SlotVisitor&);
@@ -1175,9 +1173,10 @@ class CodeBlock : public ThreadSafeRefCounted<CodeBlock>, public UnconditionalFi
 
 #if ENABLE(JIT)
     protected:
-        virtual JSObject* compileOptimized(ExecState*, JSScope*, unsigned bytecodeIndex);
+        virtual JSObject* compileOptimized(ExecState*, JSScope*, CompilationResult&, unsigned bytecodeIndex);
+        virtual CompilationResult replaceWithDeferredOptimizedCode(PassRefPtr<DFG::Plan>);
         virtual void jettisonImpl();
-        virtual bool jitCompileImpl(ExecState*);
+        virtual CompilationResult jitCompileImpl(ExecState*);
         virtual CodeBlock* replacement();
         virtual DFG::CapabilityLevel canCompileWithDFGInternal();
 #endif
@@ -1200,9 +1199,10 @@ class CodeBlock : public ThreadSafeRefCounted<CodeBlock>, public UnconditionalFi
         
 #if ENABLE(JIT)
     protected:
-        virtual JSObject* compileOptimized(ExecState*, JSScope*, unsigned bytecodeIndex);
+        virtual JSObject* compileOptimized(ExecState*, JSScope*, CompilationResult&, unsigned bytecodeIndex);
+        virtual CompilationResult replaceWithDeferredOptimizedCode(PassRefPtr<DFG::Plan>);
         virtual void jettisonImpl();
-        virtual bool jitCompileImpl(ExecState*);
+        virtual CompilationResult jitCompileImpl(ExecState*);
         virtual CodeBlock* replacement();
         virtual DFG::CapabilityLevel canCompileWithDFGInternal();
 #endif
@@ -1225,9 +1225,10 @@ class CodeBlock : public ThreadSafeRefCounted<CodeBlock>, public UnconditionalFi
         
 #if ENABLE(JIT)
     protected:
-        virtual JSObject* compileOptimized(ExecState*, JSScope*, unsigned bytecodeIndex);
+        virtual JSObject* compileOptimized(ExecState*, JSScope*, CompilationResult&, unsigned bytecodeIndex);
+        virtual CompilationResult replaceWithDeferredOptimizedCode(PassRefPtr<DFG::Plan>);
         virtual void jettisonImpl();
-        virtual bool jitCompileImpl(ExecState*);
+        virtual CompilationResult jitCompileImpl(ExecState*);
         virtual CodeBlock* replacement();
         virtual DFG::CapabilityLevel canCompileWithDFGInternal();
 #endif

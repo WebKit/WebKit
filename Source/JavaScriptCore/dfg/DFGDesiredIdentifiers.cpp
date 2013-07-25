@@ -28,6 +28,8 @@
 
 #if ENABLE(DFG_JIT)
 
+#include "CodeBlock.h"
+
 namespace JSC { namespace DFG {
 
 DesiredIdentifiers::DesiredIdentifiers(CodeBlock* codeBlock)
@@ -39,9 +41,25 @@ DesiredIdentifiers::~DesiredIdentifiers()
 {
 }
 
+unsigned DesiredIdentifiers::numberOfIdentifiers()
+{
+    return m_codeBlock->numberOfIdentifiers() + m_addedIdentifiers.size();
+}
+
 void DesiredIdentifiers::addLazily(StringImpl* rep)
 {
     m_addedIdentifiers.append(rep);
+}
+
+StringImpl* DesiredIdentifiers::at(unsigned index) const
+{
+    StringImpl* result;
+    if (index < m_codeBlock->numberOfIdentifiers())
+        result = m_codeBlock->identifier(index).impl();
+    else
+        result = m_addedIdentifiers[index - m_codeBlock->numberOfIdentifiers()];
+    ASSERT(result->hasAtLeastOneRef());
+    return result;
 }
 
 void DesiredIdentifiers::reallyAdd(VM& vm)

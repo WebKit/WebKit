@@ -58,7 +58,7 @@ bool JITFinalizer::finalizeFunction(RefPtr<JSC::JITCode>& entry, MacroAssemblerC
         m_jitCode->initializeExitThunks(
             FINALIZE_DFG_CODE(
                 *m_exitThunksLinkBuffer,
-                ("FTL exit thunks for %s", toCString(CodeBlockWithJITType(m_plan.codeBlock, JITCode::FTLJIT)).data())));
+                ("FTL exit thunks for %s", toCString(CodeBlockWithJITType(m_plan.codeBlock.get(), JITCode::FTLJIT)).data())));
     } // else this function had no OSR exits, so no exit thunks.
     
     withArityCheck = m_entrypointLinkBuffer->locationOf(m_arityCheck);
@@ -66,7 +66,7 @@ bool JITFinalizer::finalizeFunction(RefPtr<JSC::JITCode>& entry, MacroAssemblerC
         m_engine,
         FINALIZE_DFG_CODE(
             *m_entrypointLinkBuffer,
-            ("FTL entrypoint thunk for %s with LLVM generated code at %p", toCString(CodeBlockWithJITType(m_plan.codeBlock, JITCode::FTLJIT)).data(), m_function)));
+            ("FTL entrypoint thunk for %s with LLVM generated code at %p", toCString(CodeBlockWithJITType(m_plan.codeBlock.get(), JITCode::FTLJIT)).data(), m_function)));
     entry = m_jitCode;
     
     m_engine = 0; // We don't own it anymore.

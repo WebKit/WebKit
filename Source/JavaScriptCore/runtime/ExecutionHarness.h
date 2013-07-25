@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,42 +30,125 @@
 
 #if ENABLE(JIT)
 
+#include "CompilationResult.h"
+#include "DFGDriver.h"
+#include "DFGPlan.h"
 #include "JITDriver.h"
 #include "LLIntEntrypoints.h"
 
 namespace JSC {
 
 template<typename CodeBlockType>
-inline bool prepareForExecution(ExecState* exec, CodeBlockType* codeBlock, RefPtr<JITCode>& jitCode, JITCode::JITType jitType, unsigned bytecodeIndex)
+inline CompilationResult prepareForExecutionImpl(
+    ExecState* exec, CodeBlockType* codeBlock, RefPtr<JITCode>& jitCode,
+    JITCode::JITType jitType, unsigned bytecodeIndex)
 {
 #if ENABLE(LLINT)
     if (JITCode::isBaselineCode(jitType)) {
         // Start off in the low level interpreter.
         LLInt::getEntrypoint(exec->vm(), codeBlock, jitCode);
-        codeBlock->setJITCode(jitCode, MacroAssemblerCodePtr());
         if (exec->vm().m_perBytecodeProfiler)
             exec->vm().m_perBytecodeProfiler->ensureBytecodesFor(codeBlock);
-        return true;
+        return CompilationSuccessful;
     }
 #endif // ENABLE(LLINT)
-    return jitCompileIfAppropriate(exec, codeBlock, jitCode, jitType, bytecodeIndex, JITCode::isBaselineCode(jitType) ? JITCompilationMustSucceed : JITCompilationCanFail);
+#if ENABLE(JIT)
+    return jitCompileIfAppropriateImpl(
+        exec, codeBlock, jitCode, jitType, bytecodeIndex,
+        JITCode::isBaselineCode(jitType) ? JITCompilationMustSucceed : JITCompilationCanFail);
+#endif
+    RELEASE_ASSERT_NOT_REACHED();
+    return CompilationFailed;
 }
 
-inline bool prepareFunctionForExecution(ExecState* exec, FunctionCodeBlock* codeBlock, RefPtr<JITCode>& jitCode, MacroAssemblerCodePtr& jitCodeWithArityCheck, JITCode::JITType jitType, unsigned bytecodeIndex, CodeSpecializationKind kind)
+inline CompilationResult prepareFunctionForExecutionImpl(
+    ExecState* exec, FunctionCodeBlock* codeBlock, RefPtr<JITCode>& jitCode,
+    MacroAssemblerCodePtr& jitCodeWithArityCheck, JITCode::JITType jitType,
+    unsigned bytecodeIndex, CodeSpecializationKind kind)
 {
 #if ENABLE(LLINT)
     if (JITCode::isBaselineCode(jitType)) {
         // Start off in the low level interpreter.
         LLInt::getFunctionEntrypoint(exec->vm(), kind, jitCode, jitCodeWithArityCheck);
-        codeBlock->setJITCode(jitCode, jitCodeWithArityCheck);
         if (exec->vm().m_perBytecodeProfiler)
             exec->vm().m_perBytecodeProfiler->ensureBytecodesFor(codeBlock);
-        return true;
+        return CompilationSuccessful;
     }
 #else
     UNUSED_PARAM(kind);
 #endif // ENABLE(LLINT)
-    return jitCompileFunctionIfAppropriate(exec, codeBlock, jitCode, jitCodeWithArityCheck, jitType, bytecodeIndex, JITCode::isBaselineCode(jitType) ? JITCompilationMustSucceed : JITCompilationCanFail);
+#if ENABLE(JIT)
+    return jitCompileFunctionIfAppropriateImpl(
+        exec, codeBlock, jitCode, jitCodeWithArityCheck, jitType, bytecodeIndex,
+        JITCode::isBaselineCode(jitType) ? JITCompilationMustSucceed : JITCompilationCanFail);
+#endif
+    RELEASE_ASSERT_NOT_REACHED();
+    return CompilationFailed;
+}
+
+template<typename CodeBlockType>
+inline CompilationResult installOptimizedCode(
+    CompilationResult result, RefPtr<CodeBlockType>& sink, CodeBlockType* codeBlock,
+    PassRefPtr<JITCode> jitCode, MacroAssemblerCodePtr jitCodeWithArityCheck,
+    int* numParameters)
+{
+    if (result != CompilationSuccessful)
+        return result;
+    
+    codeBlock->setJITCode(jitCode, jitCodeWithArityCheck);
+    
+    sink = codeBlock;
+    
+    if (numParameters)
+        *numParameters = codeBlock->numParameters();
+    
+    if (jitCode)
+        codeBlock->vm()->heap.reportExtraMemoryCost(sizeof(*codeBlock) + jitCode->size());
+    else
+        codeBlock->vm()->heap.reportExtraMemoryCost(sizeof(*codeBlock));
+    
+    if (sink != codeBlock) {
+        // This can happen if we GC and decide that the code is invalid.
+        return CompilationInvalidated;
+    }
+    
+    return result;
+}
+
+template<typename CodeBlockType>
+inline CompilationResult prepareForExecution(
+    ExecState* exec, RefPtr<CodeBlockType>& sink, CodeBlockType* codeBlock,
+    RefPtr<JITCode>& jitCode, JITCode::JITType jitType, unsigned bytecodeIndex)
+{
+    return installOptimizedCode(
+        prepareForExecutionImpl(
+            exec, codeBlock, jitCode, jitType, bytecodeIndex),
+        sink, codeBlock, jitCode, MacroAssemblerCodePtr(), 0);
+}
+
+inline CompilationResult prepareFunctionForExecution(
+    ExecState* exec, RefPtr<FunctionCodeBlock>& sink, FunctionCodeBlock* codeBlock,
+    RefPtr<JITCode>& jitCode, MacroAssemblerCodePtr& jitCodeWithArityCheck,
+    int& numParameters, JITCode::JITType jitType, unsigned bytecodeIndex,
+    CodeSpecializationKind kind)
+{
+    return installOptimizedCode(
+        prepareFunctionForExecutionImpl(
+            exec, codeBlock, jitCode, jitCodeWithArityCheck, jitType,
+            bytecodeIndex, kind),
+        sink, codeBlock, jitCode, jitCodeWithArityCheck, &numParameters);
+}
+
+template<typename CodeBlockType>
+inline CompilationResult replaceWithDeferredOptimizedCode(
+    PassRefPtr<DFG::Plan> plan, RefPtr<CodeBlockType>& sink, RefPtr<JITCode>& jitCode,
+    MacroAssemblerCodePtr* jitCodeWithArityCheck, int* numParameters)
+{
+    return installOptimizedCode(
+        DFG::tryFinalizePlan(plan, jitCode, jitCodeWithArityCheck),
+        sink, static_cast<CodeBlockType*>(plan->codeBlock.get()), jitCode,
+        jitCodeWithArityCheck ? *jitCodeWithArityCheck : MacroAssemblerCodePtr(),
+        numParameters);
 }
 
 } // namespace JSC

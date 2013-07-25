@@ -31,6 +31,7 @@
 #if ENABLE(JIT)
 
 #include "BytecodeGenerator.h"
+#include "CompilationResult.h"
 #include "DFGDriver.h"
 #include "JIT.h"
 #include "LLIntEntrypoints.h"
@@ -38,49 +39,54 @@
 namespace JSC {
 
 template<typename CodeBlockType>
-inline bool jitCompileIfAppropriate(ExecState* exec, CodeBlockType* codeBlock, RefPtr<JITCode>& jitCode, JITCode::JITType jitType, unsigned bytecodeIndex, JITCompilationEffort effort)
+inline CompilationResult jitCompileIfAppropriateImpl(
+    ExecState* exec, CodeBlockType* codeBlock, RefPtr<JITCode>& jitCode,
+    JITCode::JITType jitType, unsigned bytecodeIndex, JITCompilationEffort effort)
 {
     VM& vm = exec->vm();
     
     if (jitType == codeBlock->getJITType())
-        return true;
+        return CompilationNotNeeded;
     
     if (!vm.canUseJIT())
-        return true;
+        return CompilationNotNeeded; // FIXME: Investigate if this is right. https://bugs.webkit.org/show_bug.cgi?id=116246
     
     codeBlock->unlinkIncomingCalls();
     
     RefPtr<JITCode> oldJITCode = jitCode;
     
     if (JITCode::isOptimizingJIT(jitType)) {
-        if (DFG::tryCompile(exec, codeBlock, jitCode, bytecodeIndex))
+        CompilationResult result =
+            DFG::tryCompile(exec, codeBlock, jitCode, bytecodeIndex);
+        if (result == CompilationSuccessful)
             codeBlock->alternative()->unlinkIncomingCalls();
         else {
             ASSERT(oldJITCode == jitCode);
-            return false;
+            return result;
         }
     } else {
         RefPtr<JITCode> result = JIT::compile(&vm, codeBlock, effort);
         if (result)
             jitCode = result;
         else
-            return false;
+            return CompilationFailed;
     }
     
-    codeBlock->setJITCode(jitCode, MacroAssemblerCodePtr());
-    
-    return true;
+    return CompilationSuccessful;
 }
 
-inline bool jitCompileFunctionIfAppropriate(ExecState* exec, FunctionCodeBlock* codeBlock, RefPtr<JITCode>& jitCode, MacroAssemblerCodePtr& jitCodeWithArityCheck, JITCode::JITType jitType, unsigned bytecodeIndex, JITCompilationEffort effort)
+inline CompilationResult jitCompileFunctionIfAppropriateImpl(
+    ExecState* exec, FunctionCodeBlock* codeBlock, RefPtr<JITCode>& jitCode,
+    MacroAssemblerCodePtr& jitCodeWithArityCheck, JITCode::JITType jitType,
+    unsigned bytecodeIndex, JITCompilationEffort effort)
 {
     VM& vm = exec->vm();
     
     if (jitType == codeBlock->getJITType())
-        return true;
+        return CompilationNotNeeded;
     
     if (!vm.canUseJIT())
-        return true;
+        return CompilationNotNeeded; // FIXME: Investigate if this is right. https://bugs.webkit.org/show_bug.cgi?id=116246
     
     codeBlock->unlinkIncomingCalls();
     
@@ -88,12 +94,14 @@ inline bool jitCompileFunctionIfAppropriate(ExecState* exec, FunctionCodeBlock* 
     MacroAssemblerCodePtr oldJITCodeWithArityCheck = jitCodeWithArityCheck;
     
     if (JITCode::isOptimizingJIT(jitType)) {
-        if (DFG::tryCompileFunction(exec, codeBlock, jitCode, jitCodeWithArityCheck, bytecodeIndex))
+        CompilationResult result = DFG::tryCompileFunction(
+            exec, codeBlock, jitCode, jitCodeWithArityCheck, bytecodeIndex);
+        if (result == CompilationSuccessful)
             codeBlock->alternative()->unlinkIncomingCalls();
         else {
             ASSERT(oldJITCode == jitCode);
             ASSERT_UNUSED(oldJITCodeWithArityCheck, oldJITCodeWithArityCheck == jitCodeWithArityCheck);
-            return false;
+            return result;
         }
     } else {
         RefPtr<JITCode> result =
@@ -102,13 +110,39 @@ inline bool jitCompileFunctionIfAppropriate(ExecState* exec, FunctionCodeBlock* 
             jitCode = result;
         else {
             ASSERT_UNUSED(oldJITCodeWithArityCheck, oldJITCodeWithArityCheck == jitCodeWithArityCheck);
-            return false;
+            return CompilationFailed;
         }
     }
 
-    codeBlock->setJITCode(jitCode, jitCodeWithArityCheck);
-    
-    return true;
+    return CompilationSuccessful;
+}
+
+template<typename CodeBlockType>
+inline CompilationResult jitCompileIfAppropriate(
+    ExecState* exec, CodeBlockType* codeBlock, RefPtr<JITCode>& jitCode,
+    JITCode::JITType jitType, unsigned bytecodeIndex, JITCompilationEffort effort)
+{
+    CompilationResult result = jitCompileIfAppropriateImpl(
+        exec, codeBlock, jitCode, jitType, bytecodeIndex, effort);
+    if (result == CompilationSuccessful) {
+        codeBlock->setJITCode(jitCode, MacroAssemblerCodePtr());
+        codeBlock->vm()->heap.reportExtraMemoryCost(jitCode->size());
+    }
+    return result;
+}    
+
+inline CompilationResult jitCompileFunctionIfAppropriate(
+    ExecState* exec, FunctionCodeBlock* codeBlock, RefPtr<JITCode>& jitCode,
+    MacroAssemblerCodePtr& jitCodeWithArityCheck, JITCode::JITType jitType,
+    unsigned bytecodeIndex, JITCompilationEffort effort)
+{
+    CompilationResult result = jitCompileFunctionIfAppropriateImpl(
+        exec, codeBlock, jitCode, jitCodeWithArityCheck, jitType, bytecodeIndex, effort);
+    if (result == CompilationSuccessful) {
+        codeBlock->setJITCode(jitCode, jitCodeWithArityCheck);
+        codeBlock->vm()->heap.reportExtraMemoryCost(jitCode->size());
+    }
+    return result;
 }
 
 } // namespace JSC

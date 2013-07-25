@@ -24,55 +24,33 @@
  */
 
 #include "config.h"
-#include "DFGJITFinalizer.h"
+#include "CompilationResult.h"
 
-#if ENABLE(DFG_JIT)
+namespace WTF {
 
-#include "DFGCommon.h"
-#include "DFGPlan.h"
+using namespace JSC;
 
-namespace JSC { namespace DFG {
-
-JITFinalizer::JITFinalizer(Plan& plan, PassRefPtr<JITCode> jitCode, PassOwnPtr<LinkBuffer> linkBuffer, MacroAssembler::Label arityCheck)
-    : Finalizer(plan)
-    , m_jitCode(jitCode)
-    , m_linkBuffer(linkBuffer)
-    , m_arityCheck(arityCheck)
+void printInternal(PrintStream& out, CompilationResult result)
 {
-}
-
-JITFinalizer::~JITFinalizer()
-{
-}
-
-bool JITFinalizer::finalize(RefPtr<JSC::JITCode>& entry)
-{
-    finalizeCommon();
+    switch (result) {
+    case CompilationFailed:
+        out.print("CompilationFailed");
+        return;
+    case CompilationInvalidated:
+        out.print("CompilationInvalidated");
+        return;
+    case CompilationSuccessful:
+        out.print("CompilationSuccessful");
+        return;
+    case CompilationNotNeeded:
+        out.print("CompilationNotNeeded");
+        return;
+    case CompilationDeferred:
+        out.print("CompilationDeferred");
+        return;
+    }
     
-    m_jitCode->initializeCodeRef(m_linkBuffer->finalizeCodeWithoutDisassembly());
-    entry = m_jitCode;
-    
-    return true;
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
-bool JITFinalizer::finalizeFunction(RefPtr<JSC::JITCode>& entry, MacroAssemblerCodePtr& withArityCheck)
-{
-    finalizeCommon();
-    
-    withArityCheck = m_linkBuffer->locationOf(m_arityCheck);
-    m_jitCode->initializeCodeRef(m_linkBuffer->finalizeCodeWithoutDisassembly());
-    entry = m_jitCode;
-    
-    return true;
-}
-
-void JITFinalizer::finalizeCommon()
-{
-    if (m_plan.compilation)
-        m_plan.vm.m_perBytecodeProfiler->addCompilation(m_plan.compilation);
-}
-
-} } // namespace JSC::DFG
-
-#endif // ENABLE(DFG_JIT)
-
+} // namespace WTF

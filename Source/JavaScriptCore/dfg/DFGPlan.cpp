@@ -68,15 +68,16 @@ static void dumpAndVerifyGraph(Graph& graph, const char* text)
 }
 
 Plan::Plan(
-    CompileMode compileMode, CodeBlock* codeBlock, unsigned osrEntryBytecodeIndex,
+    CompileMode compileMode, PassRefPtr<CodeBlock> passedCodeBlock, unsigned osrEntryBytecodeIndex,
     unsigned numVarsWithValues)
     : compileMode(compileMode)
-    , codeBlock(codeBlock)
+    , vm(*passedCodeBlock->vm())
+    , codeBlock(passedCodeBlock)
     , osrEntryBytecodeIndex(osrEntryBytecodeIndex)
     , numVarsWithValues(numVarsWithValues)
     , mustHandleValues(codeBlock->numParameters(), numVarsWithValues)
-    , compilation(codeBlock->vm()->m_perBytecodeProfiler ? adoptRef(new Profiler::Compilation(codeBlock->vm()->m_perBytecodeProfiler->ensureBytecodesFor(codeBlock), Profiler::DFG)) : 0)
-    , identifiers(codeBlock)
+    , compilation(codeBlock->vm()->m_perBytecodeProfiler ? adoptRef(new Profiler::Compilation(codeBlock->vm()->m_perBytecodeProfiler->ensureBytecodesFor(codeBlock.get()), Profiler::DFG)) : 0)
+    , identifiers(codeBlock.get())
 {
 }
 
@@ -89,7 +90,7 @@ void Plan::compileInThread()
     SamplingRegion samplingRegion("DFG Compilation (Plan)");
     CompilationScope compilationScope;
 
-    Graph dfg(vm(), *this);
+    Graph dfg(vm, *this);
     
     if (!parse(dfg)) {
         finalizer = adoptPtr(new FailedFinalizer(*this));
@@ -176,7 +177,7 @@ bool Plan::isStillValid()
 void Plan::reallyAdd()
 {
     watchpoints.reallyAdd();
-    identifiers.reallyAdd(vm());
+    identifiers.reallyAdd(vm);
 }
 
 CompilationResult Plan::finalize(RefPtr<JSC::JITCode>& jitCode, MacroAssemblerCodePtr* jitCodeWithArityCheck)

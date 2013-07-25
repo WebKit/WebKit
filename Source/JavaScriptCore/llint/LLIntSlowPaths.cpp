@@ -288,29 +288,30 @@ inline bool jitCompileAndSetHeuristics(CodeBlock* codeBlock, ExecState* exec)
         return false;
     }
     
-    CodeBlock::JITCompilationResult result = codeBlock->jitCompile(exec);
+    CompilationResult result = codeBlock->jitCompile(exec);
     switch (result) {
-    case CodeBlock::AlreadyCompiled:
+    case CompilationNotNeeded:
 #if ENABLE(JIT_VERBOSE_OSR)
         dataLogF("    Code was already compiled.\n");
 #endif
         codeBlock->jitSoon();
         return true;
-    case CodeBlock::CouldNotCompile:
+    case CompilationFailed:
 #if ENABLE(JIT_VERBOSE_OSR)
         dataLogF("    JIT compilation failed.\n");
 #endif
         codeBlock->dontJITAnytimeSoon();
         return false;
-    case CodeBlock::CompiledSuccessfully:
+    case CompilationSuccessful:
 #if ENABLE(JIT_VERBOSE_OSR)
         dataLogF("    JIT compilation successful.\n");
 #endif
         codeBlock->jitSoon();
         return true;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        return false;
     }
-    RELEASE_ASSERT_NOT_REACHED();
-    return false;
 }
 
 enum EntryKind { Prologue, ArityCheck };

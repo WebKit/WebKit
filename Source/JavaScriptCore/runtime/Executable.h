@@ -29,6 +29,8 @@
 #include "CallData.h"
 #include "CodeBlockHash.h"
 #include "CodeSpecializationKind.h"
+#include "CompilationResult.h"
+#include "DFGPlan.h"
 #include "HandlerInfo.h"
 #include "JSFunction.h"
 #include "Interpreter.h"
@@ -382,7 +384,7 @@ namespace JSC {
         bool isStrictMode() const { return m_features & StrictModeFeature; }
 
         void unlinkCalls();
-
+        
         CodeFeatures features() const { return m_features; }
         
         static const ClassInfo s_info;
@@ -433,11 +435,12 @@ namespace JSC {
             return error;
         }
         
-        JSObject* compileOptimized(ExecState*, JSScope*, unsigned bytecodeIndex);
+        JSObject* compileOptimized(ExecState*, JSScope*, CompilationResult&, unsigned bytecodeIndex);
+        CompilationResult replaceWithDeferredOptimizedCode(PassRefPtr<DFG::Plan>);
         
 #if ENABLE(JIT)
         void jettisonOptimizedCode(VM&);
-        bool jitCompile(ExecState*);
+        CompilationResult jitCompile(ExecState*);
 #endif
 
         EvalCodeBlock& generatedBytecode()
@@ -476,7 +479,7 @@ namespace JSC {
         static const unsigned StructureFlags = OverridesVisitChildren | ScriptExecutable::StructureFlags;
         EvalExecutable(ExecState*, PassRefPtr<CodeCache>, const SourceCode&, bool);
 
-        JSObject* compileInternal(ExecState*, JSScope*, JITCode::JITType, unsigned bytecodeIndex = UINT_MAX);
+        JSObject* compileInternal(ExecState*, JSScope*, JITCode::JITType, CompilationResult* = 0, unsigned bytecodeIndex = UINT_MAX);
         static void visitChildren(JSCell*, SlotVisitor&);
 
         RefPtr<EvalCodeBlock> m_evalCodeBlock;
@@ -511,11 +514,12 @@ namespace JSC {
             return error;
         }
 
-        JSObject* compileOptimized(ExecState*, JSScope*, unsigned bytecodeIndex);
+        JSObject* compileOptimized(ExecState*, JSScope*, CompilationResult&, unsigned bytecodeIndex);
+        CompilationResult replaceWithDeferredOptimizedCode(PassRefPtr<DFG::Plan>);
         
 #if ENABLE(JIT)
         void jettisonOptimizedCode(VM&);
-        bool jitCompile(ExecState*);
+        CompilationResult jitCompile(ExecState*);
 #endif
 
         ProgramCodeBlock& generatedBytecode()
@@ -555,7 +559,7 @@ namespace JSC {
         enum FunctionMode { IsFunctionToSpecialize, NotFunctionOrNotSpecializable };
         int addGlobalVar(JSGlobalObject*, const Identifier&, ConstantMode, FunctionMode);
 
-        JSObject* compileInternal(ExecState*, JSScope*, JITCode::JITType, unsigned bytecodeIndex = UINT_MAX);
+        JSObject* compileInternal(ExecState*, JSScope*, JITCode::JITType, CompilationResult* = 0, unsigned bytecodeIndex = UINT_MAX);
         static void visitChildren(JSCell*, SlotVisitor&);
 
         WriteBarrier<UnlinkedProgramCodeBlock> m_unlinkedProgramCodeBlock;
@@ -606,11 +610,12 @@ namespace JSC {
             return error;
         }
 
-        JSObject* compileOptimizedForCall(ExecState*, JSScope*, unsigned bytecodeIndex);
+        JSObject* compileOptimizedForCall(ExecState*, JSScope*, CompilationResult&, unsigned bytecodeIndex);
+        CompilationResult replaceWithDeferredOptimizedCodeForCall(PassRefPtr<DFG::Plan>);
         
 #if ENABLE(JIT)
         void jettisonOptimizedCodeForCall(VM&);
-        bool jitCompileForCall(ExecState*);
+        CompilationResult jitCompileForCall(ExecState*);
 #endif
 
         bool isGeneratedForCall() const
@@ -634,11 +639,12 @@ namespace JSC {
             return error;
         }
 
-        JSObject* compileOptimizedForConstruct(ExecState*, JSScope*, unsigned bytecodeIndex);
+        JSObject* compileOptimizedForConstruct(ExecState*, JSScope*, CompilationResult&, unsigned bytecodeIndex);
+        CompilationResult replaceWithDeferredOptimizedCodeForConstruct(PassRefPtr<DFG::Plan>);
         
 #if ENABLE(JIT)
         void jettisonOptimizedCodeForConstruct(VM&);
-        bool jitCompileForConstruct(ExecState*);
+        CompilationResult jitCompileForConstruct(ExecState*);
 #endif
 
         bool isGeneratedForConstruct() const
@@ -664,18 +670,25 @@ namespace JSC {
             return compileForConstruct(exec, scope);
         }
         
-        JSObject* compileOptimizedFor(ExecState* exec, JSScope* scope, unsigned bytecodeIndex, CodeSpecializationKind kind)
+        JSObject* compileOptimizedFor(ExecState* exec, JSScope* scope, CompilationResult& result, unsigned bytecodeIndex, CodeSpecializationKind kind)
         {
             ASSERT(exec->callee());
             ASSERT(exec->callee()->inherits(&JSFunction::s_info));
             ASSERT(jsCast<JSFunction*>(exec->callee())->jsExecutable() == this);
             
             if (kind == CodeForCall)
-                return compileOptimizedForCall(exec, scope, bytecodeIndex);
+                return compileOptimizedForCall(exec, scope, result, bytecodeIndex);
             ASSERT(kind == CodeForConstruct);
-            return compileOptimizedForConstruct(exec, scope, bytecodeIndex);
+            return compileOptimizedForConstruct(exec, scope, result, bytecodeIndex);
         }
         
+        CompilationResult replaceWithDeferredOptimizedCodeFor(PassRefPtr<DFG::Plan> plan, CodeSpecializationKind kind)
+        {
+            if (kind == CodeForCall)
+                return replaceWithDeferredOptimizedCodeForCall(plan);
+            return replaceWithDeferredOptimizedCodeForConstruct(plan);
+        }
+
 #if ENABLE(JIT)
         void jettisonOptimizedCodeFor(VM& vm, CodeSpecializationKind kind)
         {
@@ -687,7 +700,7 @@ namespace JSC {
             }
         }
         
-        bool jitCompileFor(ExecState* exec, CodeSpecializationKind kind)
+        CompilationResult jitCompileFor(ExecState* exec, CodeSpecializationKind kind)
         {
             if (kind == CodeForCall)
                 return jitCompileForCall(exec);
@@ -743,8 +756,8 @@ namespace JSC {
     private:
         FunctionExecutable(VM&, const SourceCode&, UnlinkedFunctionExecutable*, unsigned firstLine, unsigned lastLine, unsigned startColumn);
 
-        JSObject* compileForCallInternal(ExecState*, JSScope*, JITCode::JITType, unsigned bytecodeIndex = UINT_MAX);
-        JSObject* compileForConstructInternal(ExecState*, JSScope*, JITCode::JITType, unsigned bytecodeIndex = UINT_MAX);
+        JSObject* compileForCallInternal(ExecState*, JSScope*, JITCode::JITType, CompilationResult* = 0, unsigned bytecodeIndex = UINT_MAX);
+        JSObject* compileForConstructInternal(ExecState*, JSScope*, JITCode::JITType, CompilationResult* = 0, unsigned bytecodeIndex = UINT_MAX);
         
         RefPtr<FunctionCodeBlock>& codeBlockFor(CodeSpecializationKind kind)
         {

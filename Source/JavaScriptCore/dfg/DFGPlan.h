@@ -28,35 +28,38 @@
 
 #include <wtf/Platform.h>
 
-#if ENABLE(DFG_JIT)
-
-#include "CodeBlock.h"
+#include "CompilationResult.h"
 #include "DFGDesiredIdentifiers.h"
 #include "DFGDesiredStructureChains.h"
 #include "DFGDesiredWatchpoints.h"
 #include "DFGFinalizer.h"
+#include "Operands.h"
 #include "ProfilerCompilation.h"
 #include <wtf/ThreadSafeRefCounted.h>
 
-namespace JSC { namespace DFG {
+namespace JSC {
+
+class CodeBlock;
+
+namespace DFG {
 
 enum CompileMode { CompileFunction, CompileOther };
-enum CompilationResult { CompilationFailed, CompilationInvalidated, CompilationSuccessful };
+
+#if ENABLE(DFG_JIT)
 
 struct Plan : public ThreadSafeRefCounted<Plan> {
     Plan(
-        CompileMode compileMode, CodeBlock* codeBlock, unsigned osrEntryBytecodeIndex,
-        unsigned numVarsWithValues);
+        CompileMode compileMode, PassRefPtr<CodeBlock> codeBlock,
+        unsigned osrEntryBytecodeIndex, unsigned numVarsWithValues);
     ~Plan();
     
     void compileInThread();
     
     CompilationResult finalize(RefPtr<JSC::JITCode>& jitCode, MacroAssemblerCodePtr* jitCodeWithArityCheck);
     
-    VM& vm() { return *codeBlock->vm(); }
-
     const CompileMode compileMode;
-    CodeBlock* const codeBlock;
+    VM& vm;
+    RefPtr<CodeBlock> codeBlock;
     const unsigned osrEntryBytecodeIndex;
     const unsigned numVarsWithValues;
     Operands<JSValue> mustHandleValues;
@@ -74,9 +77,15 @@ private:
     void reallyAdd();
 };
 
-} } // namespace JSC::DFG
+#else // ENABLE(DFG_JIT)
+
+class Plan : public RefCounted<Plan> {
+    // Dummy class to allow !ENABLE(DFG_JIT) to build.
+};
 
 #endif // ENABLE(DFG_JIT)
+
+} } // namespace JSC::DFG
 
 #endif // DFGPlan_h
 

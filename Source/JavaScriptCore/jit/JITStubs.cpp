@@ -1019,21 +1019,39 @@ DEFINE_STUB_FUNCTION(void, optimize)
 #endif
         
         JSScope* scope = callFrame->scope();
-        JSObject* error = codeBlock->compileOptimized(callFrame, scope, bytecodeIndex);
+        CompilationResult result;
+        JSObject* error = codeBlock->compileOptimized(callFrame, scope, result, bytecodeIndex);
+        if (Options::verboseCompilation()
+            || Options::showDisassembly()
+            || Options::showDFGDisassembly())
+            dataLog("Optimizing compilation of ", *codeBlock, " result: ", result, "\n");
 #if ENABLE(JIT_VERBOSE_OSR)
         if (error)
-            dataLog("WARNING: optimized compilation failed.\n");
+            dataLog("WARNING: optimized compilation failed with a JS error.\n");
 #else
         UNUSED_PARAM(error);
 #endif
         
-        if (codeBlock->replacement() == codeBlock) {
+        RELEASE_ASSERT((result == CompilationSuccessful) == (codeBlock->replacement() != codeBlock));
+        switch (result) {
+        case CompilationSuccessful:
+            break;
+        case CompilationFailed:
+        case CompilationDeferred:
 #if ENABLE(JIT_VERBOSE_OSR)
             dataLog("Optimizing ", *codeBlock, " failed.\n");
 #endif
-            
             ASSERT(codeBlock->getJITType() == JITCode::BaselineJIT);
             codeBlock->dontOptimizeAnytimeSoon();
+            return;
+        case CompilationInvalidated:
+            ASSERT(codeBlock->getJITType() == JITCode::BaselineJIT);
+            // Retry with exponential backoff.
+            codeBlock->countReoptimization();
+            codeBlock->optimizeAfterWarmUp();
+            return;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
             return;
         }
     }

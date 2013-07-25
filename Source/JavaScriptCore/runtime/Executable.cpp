@@ -157,19 +157,21 @@ void FunctionExecutable::destroy(JSCell* cell)
     static_cast<FunctionExecutable*>(cell)->FunctionExecutable::~FunctionExecutable();
 }
 
-JSObject* EvalExecutable::compileOptimized(ExecState* exec, JSScope* scope, unsigned bytecodeIndex)
+JSObject* EvalExecutable::compileOptimized(ExecState* exec, JSScope* scope, CompilationResult& result, unsigned bytecodeIndex)
 {
     ASSERT(exec->vm().dynamicGlobalObject);
     ASSERT(!!m_evalCodeBlock);
     JSObject* error = 0;
     if (!JITCode::isOptimizingJIT(m_evalCodeBlock->getJITType()))
-        error = compileInternal(exec, scope, JITCode::nextTierJIT(m_evalCodeBlock->getJITType()), bytecodeIndex);
+        error = compileInternal(exec, scope, JITCode::nextTierJIT(m_evalCodeBlock->getJITType()), &result, bytecodeIndex);
+    else
+        result = CompilationNotNeeded;
     ASSERT(!!m_evalCodeBlock);
     return error;
 }
 
 #if ENABLE(JIT)
-bool EvalExecutable::jitCompile(ExecState* exec)
+CompilationResult EvalExecutable::jitCompile(ExecState* exec)
 {
     return jitCompileIfAppropriate(exec, m_evalCodeBlock.get(), m_jitCodeForCall, JITCode::bottomTierJIT(), UINT_MAX, JITCompilationCanFail);
 }
@@ -192,9 +194,12 @@ inline const char* samplingDescription(JITCode::JITType jitType)
     }
 }
 
-JSObject* EvalExecutable::compileInternal(ExecState* exec, JSScope* scope, JITCode::JITType jitType, unsigned bytecodeIndex)
+JSObject* EvalExecutable::compileInternal(ExecState* exec, JSScope* scope, JITCode::JITType jitType, CompilationResult* result, unsigned bytecodeIndex)
 {
     SamplingRegion samplingRegion(samplingDescription(jitType));
+    
+    if (result)
+        *result = CompilationFailed;
     
 #if !ENABLE(JIT)
     UNUSED_PARAM(jitType);
@@ -226,20 +231,17 @@ JSObject* EvalExecutable::compileInternal(ExecState* exec, JSScope* scope, JITCo
         newCodeBlock = adoptRef(new EvalCodeBlock(this, unlinkedEvalCode, lexicalGlobalObject, source().provider(), scope->localDepth()));
     }
 
-#if ENABLE(JIT)
-    if (!prepareForExecution(exec, newCodeBlock.get(), m_jitCodeForCall, jitType, bytecodeIndex))
-        return 0;
-#endif
-    
-    m_evalCodeBlock = newCodeBlock;
-
-#if ENABLE(JIT)
-    Heap::heap(this)->reportExtraMemoryCost(sizeof(*m_evalCodeBlock) + m_jitCodeForCall->size());
-#else
-    Heap::heap(this)->reportExtraMemoryCost(sizeof(*m_evalCodeBlock));
-#endif
-
+    CompilationResult theResult = prepareForExecution(
+        exec, m_evalCodeBlock, newCodeBlock.get(), m_jitCodeForCall, jitType, bytecodeIndex);
+    if (result)
+        *result = theResult;
     return 0;
+}
+
+CompilationResult EvalExecutable::replaceWithDeferredOptimizedCode(PassRefPtr<DFG::Plan> plan)
+{
+    return JSC::replaceWithDeferredOptimizedCode(
+        plan, m_evalCodeBlock, m_jitCodeForCall, 0, 0);
 }
 
 #if ENABLE(JIT)
@@ -292,27 +294,32 @@ JSObject* ProgramExecutable::checkSyntax(ExecState* exec)
     return error.toErrorObject(lexicalGlobalObject, m_source);
 }
 
-JSObject* ProgramExecutable::compileOptimized(ExecState* exec, JSScope* scope, unsigned bytecodeIndex)
+JSObject* ProgramExecutable::compileOptimized(ExecState* exec, JSScope* scope, CompilationResult& result, unsigned bytecodeIndex)
 {
     RELEASE_ASSERT(exec->vm().dynamicGlobalObject);
     ASSERT(!!m_programCodeBlock);
     JSObject* error = 0;
     if (!JITCode::isOptimizingJIT(m_programCodeBlock->getJITType()))
-        error = compileInternal(exec, scope, JITCode::nextTierJIT(m_programCodeBlock->getJITType()), bytecodeIndex);
+        error = compileInternal(exec, scope, JITCode::nextTierJIT(m_programCodeBlock->getJITType()), &result, bytecodeIndex);
+    else
+        result = CompilationNotNeeded;
     ASSERT(!!m_programCodeBlock);
     return error;
 }
 
 #if ENABLE(JIT)
-bool ProgramExecutable::jitCompile(ExecState* exec)
+CompilationResult ProgramExecutable::jitCompile(ExecState* exec)
 {
     return jitCompileIfAppropriate(exec, m_programCodeBlock.get(), m_jitCodeForCall, JITCode::bottomTierJIT(), UINT_MAX, JITCompilationCanFail);
 }
 #endif
 
-JSObject* ProgramExecutable::compileInternal(ExecState* exec, JSScope* scope, JITCode::JITType jitType, unsigned bytecodeIndex)
+JSObject* ProgramExecutable::compileInternal(ExecState* exec, JSScope* scope, JITCode::JITType jitType, CompilationResult* result, unsigned bytecodeIndex)
 {
     SamplingRegion samplingRegion(samplingDescription(jitType));
+    
+    if (result)
+        *result = CompilationFailed;
     
 #if !ENABLE(JIT)
     UNUSED_PARAM(exec);
@@ -330,20 +337,17 @@ JSObject* ProgramExecutable::compileInternal(ExecState* exec, JSScope* scope, JI
         newCodeBlock = adoptRef(new ProgramCodeBlock(this, m_unlinkedProgramCodeBlock.get(), globalObject, source().provider(), source().startColumn()));
     }
 
-#if ENABLE(JIT)
-    if (!prepareForExecution(exec, newCodeBlock.get(), m_jitCodeForCall, jitType, bytecodeIndex))
-        return 0;
-#endif
-
-    m_programCodeBlock = newCodeBlock;
-    
-#if ENABLE(JIT)
-    Heap::heap(this)->reportExtraMemoryCost(sizeof(*m_programCodeBlock) + m_jitCodeForCall->size());
-#else
-    Heap::heap(this)->reportExtraMemoryCost(sizeof(*m_programCodeBlock));
-#endif
-
+    CompilationResult theResult = prepareForExecution(
+        exec, m_programCodeBlock, newCodeBlock.get(), m_jitCodeForCall, jitType, bytecodeIndex);
+    if (result)
+        *result = theResult;
     return 0;
+}
+
+CompilationResult ProgramExecutable::replaceWithDeferredOptimizedCode(PassRefPtr<DFG::Plan> plan)
+{
+    return JSC::replaceWithDeferredOptimizedCode(
+        plan, m_programCodeBlock, m_jitCodeForCall, 0, 0);
 }
 
 #if ENABLE(JIT)
@@ -464,35 +468,39 @@ FunctionCodeBlock* FunctionExecutable::baselineCodeBlockFor(CodeSpecializationKi
     return result;
 }
 
-JSObject* FunctionExecutable::compileOptimizedForCall(ExecState* exec, JSScope* scope, unsigned bytecodeIndex)
+JSObject* FunctionExecutable::compileOptimizedForCall(ExecState* exec, JSScope* scope, CompilationResult& result, unsigned bytecodeIndex)
 {
     RELEASE_ASSERT(exec->vm().dynamicGlobalObject);
     ASSERT(!!m_codeBlockForCall);
     JSObject* error = 0;
     if (!JITCode::isOptimizingJIT(m_codeBlockForCall->getJITType()))
-        error = compileForCallInternal(exec, scope, JITCode::nextTierJIT(m_codeBlockForCall->getJITType()), bytecodeIndex);
+        error = compileForCallInternal(exec, scope, JITCode::nextTierJIT(m_codeBlockForCall->getJITType()), &result, bytecodeIndex);
+    else
+        result = CompilationNotNeeded;
     ASSERT(!!m_codeBlockForCall);
     return error;
 }
 
-JSObject* FunctionExecutable::compileOptimizedForConstruct(ExecState* exec, JSScope* scope, unsigned bytecodeIndex)
+JSObject* FunctionExecutable::compileOptimizedForConstruct(ExecState* exec, JSScope* scope, CompilationResult& result, unsigned bytecodeIndex)
 {
     RELEASE_ASSERT(exec->vm().dynamicGlobalObject);
     ASSERT(!!m_codeBlockForConstruct);
     JSObject* error = 0;
-    if (JITCode::isOptimizingJIT(m_codeBlockForConstruct->getJITType()))
-        error = compileForConstructInternal(exec, scope, JITCode::nextTierJIT(m_codeBlockForConstruct->getJITType()), bytecodeIndex);
+    if (!JITCode::isOptimizingJIT(m_codeBlockForConstruct->getJITType()))
+        error = compileForConstructInternal(exec, scope, JITCode::nextTierJIT(m_codeBlockForConstruct->getJITType()), &result, bytecodeIndex);
+    else
+        result = CompilationNotNeeded;
     ASSERT(!!m_codeBlockForConstruct);
     return error;
 }
 
 #if ENABLE(JIT)
-bool FunctionExecutable::jitCompileForCall(ExecState* exec)
+CompilationResult FunctionExecutable::jitCompileForCall(ExecState* exec)
 {
     return jitCompileFunctionIfAppropriate(exec, m_codeBlockForCall.get(), m_jitCodeForCall, m_jitCodeForCallWithArityCheck, JITCode::bottomTierJIT(), UINT_MAX, JITCompilationCanFail);
 }
 
-bool FunctionExecutable::jitCompileForConstruct(ExecState* exec)
+CompilationResult FunctionExecutable::jitCompileForConstruct(ExecState* exec)
 {
     return jitCompileFunctionIfAppropriate(exec, m_codeBlockForConstruct.get(), m_jitCodeForConstruct, m_jitCodeForConstructWithArityCheck, JITCode::bottomTierJIT(), UINT_MAX, JITCompilationCanFail);
 }
@@ -529,9 +537,12 @@ PassRefPtr<FunctionCodeBlock> FunctionExecutable::produceCodeBlockFor(JSScope* s
 }
 
 
-JSObject* FunctionExecutable::compileForCallInternal(ExecState* exec, JSScope* scope, JITCode::JITType jitType, unsigned bytecodeIndex)
+JSObject* FunctionExecutable::compileForCallInternal(ExecState* exec, JSScope* scope, JITCode::JITType jitType, CompilationResult* result, unsigned bytecodeIndex)
 {
     SamplingRegion samplingRegion(samplingDescription(jitType));
+    
+    if (result)
+        *result = CompilationFailed;
     
 #if !ENABLE(JIT)
     UNUSED_PARAM(exec);
@@ -546,28 +557,28 @@ JSObject* FunctionExecutable::compileForCallInternal(ExecState* exec, JSScope* s
     if (!newCodeBlock)
         return exception;
     
-#if ENABLE(JIT)
-    if (!prepareFunctionForExecution(exec, newCodeBlock.get(), m_jitCodeForCall, m_jitCodeForCallWithArityCheck, jitType, bytecodeIndex, CodeForCall))
-        return 0;
-#endif
-
-    m_codeBlockForCall = newCodeBlock;
-    
-    m_numParametersForCall = m_codeBlockForCall->numParameters();
-    RELEASE_ASSERT(m_numParametersForCall);
-
-#if ENABLE(JIT)
-    Heap::heap(this)->reportExtraMemoryCost(sizeof(*m_codeBlockForCall) + m_jitCodeForCall->size());
-#else
-    Heap::heap(this)->reportExtraMemoryCost(sizeof(*m_codeBlockForCall));
-#endif
-
+    CompilationResult theResult = prepareFunctionForExecution(
+        exec, m_codeBlockForCall, newCodeBlock.get(), m_jitCodeForCall,
+        m_jitCodeForCallWithArityCheck, m_numParametersForCall, jitType,
+        bytecodeIndex, CodeForCall);
+    if (result)
+        *result = theResult;
     return 0;
 }
 
-JSObject* FunctionExecutable::compileForConstructInternal(ExecState* exec, JSScope* scope, JITCode::JITType jitType, unsigned bytecodeIndex)
+CompilationResult FunctionExecutable::replaceWithDeferredOptimizedCodeForCall(PassRefPtr<DFG::Plan> plan)
+{
+    return JSC::replaceWithDeferredOptimizedCode(
+        plan, m_codeBlockForCall, m_jitCodeForCall, &m_jitCodeForCallWithArityCheck,
+        &m_numParametersForCall);
+}
+
+JSObject* FunctionExecutable::compileForConstructInternal(ExecState* exec, JSScope* scope, JITCode::JITType jitType, CompilationResult* result, unsigned bytecodeIndex)
 {
     SamplingRegion samplingRegion(samplingDescription(jitType));
+    
+    if (result)
+        *result = CompilationFailed;
     
 #if !ENABLE(JIT)
     UNUSED_PARAM(jitType);
@@ -581,23 +592,20 @@ JSObject* FunctionExecutable::compileForConstructInternal(ExecState* exec, JSSco
     if (!newCodeBlock)
         return exception;
 
-#if ENABLE(JIT)
-    if (!prepareFunctionForExecution(exec, newCodeBlock.get(), m_jitCodeForConstruct, m_jitCodeForConstructWithArityCheck, jitType, bytecodeIndex, CodeForConstruct))
-        return 0;
-#endif
-
-    m_codeBlockForConstruct = newCodeBlock;
-    
-    m_numParametersForConstruct = m_codeBlockForConstruct->numParameters();
-    RELEASE_ASSERT(m_numParametersForConstruct);
-
-#if ENABLE(JIT)
-    Heap::heap(this)->reportExtraMemoryCost(sizeof(*m_codeBlockForConstruct) + m_jitCodeForConstruct->size());
-#else
-    Heap::heap(this)->reportExtraMemoryCost(sizeof(*m_codeBlockForConstruct));
-#endif
-
+    CompilationResult theResult = prepareFunctionForExecution(
+        exec, m_codeBlockForConstruct, newCodeBlock.get(), m_jitCodeForConstruct,
+        m_jitCodeForConstructWithArityCheck, m_numParametersForConstruct, jitType,
+        bytecodeIndex, CodeForConstruct);
+    if (result)
+        *result = theResult;
     return 0;
+}
+
+CompilationResult FunctionExecutable::replaceWithDeferredOptimizedCodeForConstruct(PassRefPtr<DFG::Plan> plan)
+{
+    return JSC::replaceWithDeferredOptimizedCode(
+        plan, m_codeBlockForConstruct, m_jitCodeForConstruct,
+        &m_jitCodeForConstructWithArityCheck, &m_numParametersForConstruct);
 }
 
 #if ENABLE(JIT)

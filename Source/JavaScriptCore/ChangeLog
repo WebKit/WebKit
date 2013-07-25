@@ -1,3 +1,122 @@
+2013-05-17  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: Executable and CodeBlock should be aware of DFG::Plans that complete asynchronously
+        https://bugs.webkit.org/show_bug.cgi?id=116350
+
+        Reviewed by Oliver Hunt.
+        
+        This refactors compilation so that:
+        
+        - JITStubs knows exactly what the result of compilation was. For example, if
+          compilation was deferred, it will now know this.
+        
+        - The set of things that has to happen to install compiled code is now factored
+          out into JSC::installOptimizedCode().
+        
+        - A bunch of the code in Executable.cpp is now made more common to reduce code
+          duplication. For example, the heap heuristics stuff is now in one place.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CodeBlock.cpp:
+        (JSC::ProgramCodeBlock::compileOptimized):
+        (JSC::ProgramCodeBlock::replaceWithDeferredOptimizedCode):
+        (JSC):
+        (JSC::EvalCodeBlock::compileOptimized):
+        (JSC::EvalCodeBlock::replaceWithDeferredOptimizedCode):
+        (JSC::FunctionCodeBlock::compileOptimized):
+        (JSC::FunctionCodeBlock::replaceWithDeferredOptimizedCode):
+        (JSC::ProgramCodeBlock::jitCompileImpl):
+        (JSC::EvalCodeBlock::jitCompileImpl):
+        (JSC::FunctionCodeBlock::jitCompileImpl):
+        * bytecode/CodeBlock.h:
+        (CodeBlock):
+        (JSC::CodeBlock::jitCompile):
+        (ProgramCodeBlock):
+        (EvalCodeBlock):
+        (FunctionCodeBlock):
+        * dfg/DFGDesiredIdentifiers.cpp:
+        (JSC::DFG::DesiredIdentifiers::numberOfIdentifiers):
+        (DFG):
+        (JSC::DFG::DesiredIdentifiers::at):
+        * dfg/DFGDesiredIdentifiers.h:
+        (JSC):
+        (DesiredIdentifiers):
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compile):
+        (JSC::DFG::tryCompile):
+        (JSC::DFG::tryCompileFunction):
+        (JSC::DFG::tryFinalizePlan):
+        (DFG):
+        * dfg/DFGDriver.h:
+        (DFG):
+        (JSC::DFG::tryCompile):
+        (JSC::DFG::tryCompileFunction):
+        (JSC::DFG::tryFinalizePlan):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::Graph):
+        * dfg/DFGJITFinalizer.cpp:
+        (JSC::DFG::JITFinalizer::finalizeCommon):
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::Plan):
+        (JSC::DFG::Plan::compileInThread):
+        (JSC::DFG::Plan::reallyAdd):
+        * dfg/DFGPlan.h:
+        (JSC):
+        (Plan):
+        (DFG):
+        * ftl/FTLJITFinalizer.cpp:
+        (JSC::FTL::JITFinalizer::finalizeFunction):
+        * jit/JITDriver.h:
+        (JSC::jitCompileIfAppropriateImpl):
+        (JSC::jitCompileFunctionIfAppropriateImpl):
+        (JSC):
+        (JSC::jitCompileIfAppropriate):
+        (JSC::jitCompileFunctionIfAppropriate):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::jitCompileAndSetHeuristics):
+        * runtime/CompilationResult.cpp: Added.
+        (WTF):
+        (WTF::printInternal):
+        * runtime/CompilationResult.h: Added.
+        (JSC):
+        (WTF):
+        * runtime/Executable.cpp:
+        (JSC::EvalExecutable::compileOptimized):
+        (JSC::EvalExecutable::jitCompile):
+        (JSC::EvalExecutable::compileInternal):
+        (JSC::EvalExecutable::replaceWithDeferredOptimizedCode):
+        (JSC):
+        (JSC::ProgramExecutable::compileOptimized):
+        (JSC::ProgramExecutable::jitCompile):
+        (JSC::ProgramExecutable::compileInternal):
+        (JSC::ProgramExecutable::replaceWithDeferredOptimizedCode):
+        (JSC::FunctionExecutable::compileOptimizedForCall):
+        (JSC::FunctionExecutable::compileOptimizedForConstruct):
+        (JSC::FunctionExecutable::jitCompileForCall):
+        (JSC::FunctionExecutable::jitCompileForConstruct):
+        (JSC::FunctionExecutable::compileForCallInternal):
+        (JSC::FunctionExecutable::replaceWithDeferredOptimizedCodeForCall):
+        (JSC::FunctionExecutable::compileForConstructInternal):
+        (JSC::FunctionExecutable::replaceWithDeferredOptimizedCodeForConstruct):
+        * runtime/Executable.h:
+        (ScriptExecutable):
+        (EvalExecutable):
+        (ProgramExecutable):
+        (FunctionExecutable):
+        (JSC::FunctionExecutable::compileOptimizedFor):
+        (JSC::FunctionExecutable::replaceWithDeferredOptimizedCodeFor):
+        (JSC::FunctionExecutable::jitCompileFor):
+        * runtime/ExecutionHarness.h:
+        (JSC::prepareForExecutionImpl):
+        (JSC::prepareFunctionForExecutionImpl):
+        (JSC):
+        (JSC::installOptimizedCode):
+        (JSC::prepareForExecution):
+        (JSC::prepareFunctionForExecution):
+        (JSC::replaceWithDeferredOptimizedCode):
+
 2013-05-16  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         observeUseKindOnNode doesn't contain a case for KnownCellUse

@@ -23,56 +23,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "DFGJITFinalizer.h"
+#ifndef CompilationResult_h
+#define CompilationResult_h
 
-#if ENABLE(DFG_JIT)
+#include <wtf/PrintStream.h>
 
-#include "DFGCommon.h"
-#include "DFGPlan.h"
+namespace JSC {
 
-namespace JSC { namespace DFG {
+enum CompilationResult { CompilationFailed, CompilationInvalidated, CompilationSuccessful, CompilationNotNeeded, CompilationDeferred };
 
-JITFinalizer::JITFinalizer(Plan& plan, PassRefPtr<JITCode> jitCode, PassOwnPtr<LinkBuffer> linkBuffer, MacroAssembler::Label arityCheck)
-    : Finalizer(plan)
-    , m_jitCode(jitCode)
-    , m_linkBuffer(linkBuffer)
-    , m_arityCheck(arityCheck)
-{
-}
+} // namespace JSC
 
-JITFinalizer::~JITFinalizer()
-{
-}
+namespace WTF {
 
-bool JITFinalizer::finalize(RefPtr<JSC::JITCode>& entry)
-{
-    finalizeCommon();
-    
-    m_jitCode->initializeCodeRef(m_linkBuffer->finalizeCodeWithoutDisassembly());
-    entry = m_jitCode;
-    
-    return true;
-}
+void printInternal(PrintStream&, JSC::CompilationResult);
 
-bool JITFinalizer::finalizeFunction(RefPtr<JSC::JITCode>& entry, MacroAssemblerCodePtr& withArityCheck)
-{
-    finalizeCommon();
-    
-    withArityCheck = m_linkBuffer->locationOf(m_arityCheck);
-    m_jitCode->initializeCodeRef(m_linkBuffer->finalizeCodeWithoutDisassembly());
-    entry = m_jitCode;
-    
-    return true;
-}
+} // namespace WTF
 
-void JITFinalizer::finalizeCommon()
-{
-    if (m_plan.compilation)
-        m_plan.vm.m_perBytecodeProfiler->addCompilation(m_plan.compilation);
-}
-
-} } // namespace JSC::DFG
-
-#endif // ENABLE(DFG_JIT)
+#endif // CompilationResult_h
 

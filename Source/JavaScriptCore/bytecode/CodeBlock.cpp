@@ -2808,28 +2808,49 @@ CodeBlock* FunctionCodeBlock::replacement()
     return &static_cast<FunctionExecutable*>(ownerExecutable())->generatedBytecodeFor(m_isConstructor ? CodeForConstruct : CodeForCall);
 }
 
-JSObject* ProgramCodeBlock::compileOptimized(ExecState* exec, JSScope* scope, unsigned bytecodeIndex)
+JSObject* ProgramCodeBlock::compileOptimized(ExecState* exec, JSScope* scope, CompilationResult& result, unsigned bytecodeIndex)
 {
-    if (JITCode::isHigherTier(replacement()->getJITType(), getJITType()))
+    if (JITCode::isHigherTier(replacement()->getJITType(), getJITType())) {
+        result = CompilationNotNeeded;
         return 0;
-    JSObject* error = static_cast<ProgramExecutable*>(ownerExecutable())->compileOptimized(exec, scope, bytecodeIndex);
+    }
+    JSObject* error = static_cast<ProgramExecutable*>(ownerExecutable())->compileOptimized(exec, scope, result, bytecodeIndex);
     return error;
 }
 
-JSObject* EvalCodeBlock::compileOptimized(ExecState* exec, JSScope* scope, unsigned bytecodeIndex)
+CompilationResult ProgramCodeBlock::replaceWithDeferredOptimizedCode(PassRefPtr<DFG::Plan> plan)
 {
-    if (JITCode::isHigherTier(replacement()->getJITType(), getJITType()))
+    return static_cast<ProgramExecutable*>(ownerExecutable())->replaceWithDeferredOptimizedCode(plan);
+}
+
+JSObject* EvalCodeBlock::compileOptimized(ExecState* exec, JSScope* scope, CompilationResult& result, unsigned bytecodeIndex)
+{
+    if (JITCode::isHigherTier(replacement()->getJITType(), getJITType())) {
+        result = CompilationNotNeeded;
         return 0;
-    JSObject* error = static_cast<EvalExecutable*>(ownerExecutable())->compileOptimized(exec, scope, bytecodeIndex);
+    }
+    JSObject* error = static_cast<EvalExecutable*>(ownerExecutable())->compileOptimized(exec, scope, result, bytecodeIndex);
     return error;
 }
 
-JSObject* FunctionCodeBlock::compileOptimized(ExecState* exec, JSScope* scope, unsigned bytecodeIndex)
+CompilationResult EvalCodeBlock::replaceWithDeferredOptimizedCode(PassRefPtr<DFG::Plan> plan)
 {
-    if (JITCode::isHigherTier(replacement()->getJITType(), getJITType()))
+    return static_cast<EvalExecutable*>(ownerExecutable())->replaceWithDeferredOptimizedCode(plan);
+}
+
+JSObject* FunctionCodeBlock::compileOptimized(ExecState* exec, JSScope* scope, CompilationResult& result, unsigned bytecodeIndex)
+{
+    if (JITCode::isHigherTier(replacement()->getJITType(), getJITType())) {
+        result = CompilationNotNeeded;
         return 0;
-    JSObject* error = static_cast<FunctionExecutable*>(ownerExecutable())->compileOptimizedFor(exec, scope, bytecodeIndex, m_isConstructor ? CodeForConstruct : CodeForCall);
+    }
+    JSObject* error = static_cast<FunctionExecutable*>(ownerExecutable())->compileOptimizedFor(exec, scope, result, bytecodeIndex, m_isConstructor ? CodeForConstruct : CodeForCall);
     return error;
+}
+
+CompilationResult FunctionCodeBlock::replaceWithDeferredOptimizedCode(PassRefPtr<DFG::Plan> plan)
+{
+    return static_cast<FunctionExecutable*>(ownerExecutable())->replaceWithDeferredOptimizedCodeFor(plan, m_isConstructor ? CodeForConstruct : CodeForCall);
 }
 
 DFG::CapabilityLevel ProgramCodeBlock::canCompileWithDFGInternal()
@@ -2875,21 +2896,21 @@ void FunctionCodeBlock::jettisonImpl()
     static_cast<FunctionExecutable*>(ownerExecutable())->jettisonOptimizedCodeFor(*vm(), m_isConstructor ? CodeForConstruct : CodeForCall);
 }
 
-bool ProgramCodeBlock::jitCompileImpl(ExecState* exec)
+CompilationResult ProgramCodeBlock::jitCompileImpl(ExecState* exec)
 {
     ASSERT(getJITType() == JITCode::InterpreterThunk);
     ASSERT(this == replacement());
     return static_cast<ProgramExecutable*>(ownerExecutable())->jitCompile(exec);
 }
 
-bool EvalCodeBlock::jitCompileImpl(ExecState* exec)
+CompilationResult EvalCodeBlock::jitCompileImpl(ExecState* exec)
 {
     ASSERT(getJITType() == JITCode::InterpreterThunk);
     ASSERT(this == replacement());
     return static_cast<EvalExecutable*>(ownerExecutable())->jitCompile(exec);
 }
 
-bool FunctionCodeBlock::jitCompileImpl(ExecState* exec)
+CompilationResult FunctionCodeBlock::jitCompileImpl(ExecState* exec)
 {
     ASSERT(getJITType() == JITCode::InterpreterThunk);
     ASSERT(this == replacement());

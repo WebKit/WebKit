@@ -47,7 +47,7 @@ static const char* dfgOpNames[] = {
 Graph::Graph(VM& vm, Plan& plan)
     : m_vm(vm)
     , m_plan(plan)
-    , m_codeBlock(m_plan.codeBlock)
+    , m_codeBlock(m_plan.codeBlock.get())
     , m_profiledBlock(m_codeBlock->alternative())
     , m_allocator(vm.m_dfgState->m_allocator)
     , m_hasArguments(false)

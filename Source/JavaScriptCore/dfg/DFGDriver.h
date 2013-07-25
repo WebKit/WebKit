@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 #define DFGDriver_h
 
 #include "CallFrame.h"
+#include "DFGPlan.h"
 #include <wtf/Platform.h>
 
 namespace JSC {
@@ -41,11 +42,17 @@ namespace DFG {
 JS_EXPORT_PRIVATE unsigned getNumCompilations();
 
 #if ENABLE(DFG_JIT)
-bool tryCompile(ExecState*, CodeBlock*, RefPtr<JSC::JITCode>&, unsigned bytecodeIndex);
-bool tryCompileFunction(ExecState*, CodeBlock*, RefPtr<JSC::JITCode>&, MacroAssemblerCodePtr& jitCodeWithArityCheck, unsigned bytecodeIndex);
+CompilationResult tryCompile(ExecState*, CodeBlock*, RefPtr<JSC::JITCode>&, unsigned bytecodeIndex);
+CompilationResult tryCompileFunction(ExecState*, CodeBlock*, RefPtr<JSC::JITCode>&, MacroAssemblerCodePtr& jitCodeWithArityCheck, unsigned bytecodeIndex);
+CompilationResult tryFinalizePlan(PassRefPtr<Plan>, RefPtr<JSC::JITCode>&, MacroAssemblerCodePtr* jitCodeWithArityCheck);
 #else
-inline bool tryCompile(ExecState*, CodeBlock*, RefPtr<JSC::JITCode>&, unsigned) { return false; }
-inline bool tryCompileFunction(ExecState*, CodeBlock*, RefPtr<JSC::JITCode>&, MacroAssemblerCodePtr&, unsigned) { return false; }
+inline CompilationResult tryCompile(ExecState*, CodeBlock*, RefPtr<JSC::JITCode>&, unsigned) { return false; }
+inline CompilationResult tryCompileFunction(ExecState*, CodeBlock*, RefPtr<JSC::JITCode>&, MacroAssemblerCodePtr&, unsigned) { return false; }
+inline CompilationResult tryFinalizePlan(PassRefPtr<Plan>, RefPtr<JSC::JITCode>&, MacroAssemblerCodePtr*)
+{
+    UNREACHABLE_FOR_PLATFORM();
+    return CompilationFailed;
+}
 #endif
 
 } } // namespace JSC::DFG

@@ -31,6 +31,7 @@
 
 #if ENABLE(DFG_JIT)
 
+#include "CodeBlock.h"
 #include "DFGJITCode.h"
 #include "DFGPlan.h"
 #include "DFGThunks.h"
@@ -38,6 +39,7 @@
 #include "JITCode.h"
 #include "Operations.h"
 #include "Options.h"
+#include "SamplingTool.h"
 
 namespace JSC { namespace DFG {
 
@@ -48,7 +50,7 @@ unsigned getNumCompilations()
     return numCompilations;
 }
 
-static bool compile(CompileMode compileMode, ExecState* exec, CodeBlock* codeBlock, RefPtr<JSC::JITCode>& jitCode, MacroAssemblerCodePtr* jitCodeWithArityCheck, unsigned osrEntryBytecodeIndex)
+static CompilationResult compile(CompileMode compileMode, ExecState* exec, CodeBlock* codeBlock, RefPtr<JSC::JITCode>& jitCode, MacroAssemblerCodePtr* jitCodeWithArityCheck, unsigned osrEntryBytecodeIndex)
 {
     SamplingRegion samplingRegion("DFG Compilation (Driver)");
     
@@ -61,10 +63,10 @@ static bool compile(CompileMode compileMode, ExecState* exec, CodeBlock* codeBlo
     ASSERT(osrEntryBytecodeIndex != UINT_MAX);
 
     if (!Options::useDFGJIT())
-        return false;
+        return CompilationFailed;
 
     if (!Options::bytecodeRangeToDFGCompile().isInRange(codeBlock->instructionCount()))
-        return false;
+        return CompilationFailed;
 
     if (logCompilationChanges())
         dataLog("DFG compiling ", *codeBlock, ", number of instructions = ", codeBlock->instructionCount(), "\n");
@@ -89,9 +91,10 @@ static bool compile(CompileMode compileMode, ExecState* exec, CodeBlock* codeBlo
         numVarsWithValues = codeBlock->m_numVars;
     else
         numVarsWithValues = 0;
-    Plan plan(compileMode, codeBlock, osrEntryBytecodeIndex, numVarsWithValues);
-    for (size_t i = 0; i < plan.mustHandleValues.size(); ++i) {
-        int operand = plan.mustHandleValues.operandForIndex(i);
+    RefPtr<Plan> plan = adoptRef(
+        new Plan(compileMode, codeBlock, osrEntryBytecodeIndex, numVarsWithValues));
+    for (size_t i = 0; i < plan->mustHandleValues.size(); ++i) {
+        int operand = plan->mustHandleValues.operandForIndex(i);
         if (operandIsArgument(operand)
             && !operandToArgument(operand)
             && compileMode == CompileFunction
@@ -100,25 +103,28 @@ static bool compile(CompileMode compileMode, ExecState* exec, CodeBlock* codeBlo
             // also never be used. It doesn't matter what we put into the value for this,
             // but it has to be an actual value that can be grokked by subsequent DFG passes,
             // so we sanitize it here by turning it into Undefined.
-            plan.mustHandleValues[i] = jsUndefined();
+            plan->mustHandleValues[i] = jsUndefined();
         } else
-            plan.mustHandleValues[i] = exec->uncheckedR(operand).jsValue();
+            plan->mustHandleValues[i] = exec->uncheckedR(operand).jsValue();
     }
     
-    plan.compileInThread();
-    if (plan.finalize(jitCode, jitCodeWithArityCheck) != CompilationSuccessful)
-        return false;
-    return true;
+    plan->compileInThread();
+    return plan->finalize(jitCode, jitCodeWithArityCheck);
 }
 
-bool tryCompile(ExecState* exec, CodeBlock* codeBlock, RefPtr<JSC::JITCode>& jitCode, unsigned bytecodeIndex)
+CompilationResult tryCompile(ExecState* exec, CodeBlock* codeBlock, RefPtr<JSC::JITCode>& jitCode, unsigned bytecodeIndex)
 {
     return compile(CompileOther, exec, codeBlock, jitCode, 0, bytecodeIndex);
 }
 
-bool tryCompileFunction(ExecState* exec, CodeBlock* codeBlock, RefPtr<JSC::JITCode>& jitCode, MacroAssemblerCodePtr& jitCodeWithArityCheck, unsigned bytecodeIndex)
+CompilationResult tryCompileFunction(ExecState* exec, CodeBlock* codeBlock, RefPtr<JSC::JITCode>& jitCode, MacroAssemblerCodePtr& jitCodeWithArityCheck, unsigned bytecodeIndex)
 {
     return compile(CompileFunction, exec, codeBlock, jitCode, &jitCodeWithArityCheck, bytecodeIndex);
+}
+
+CompilationResult tryFinalizePlan(PassRefPtr<Plan> plan, RefPtr<JSC::JITCode>& jitCode, MacroAssemblerCodePtr* jitCodeWithArityCheck)
+{
+    return plan->finalize(jitCode, jitCodeWithArityCheck);
 }
 
 } } // namespace JSC::DFG

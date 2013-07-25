@@ -30,33 +30,23 @@
 
 #if ENABLE(DFG_JIT)
 
-#include "CodeBlock.h"
 #include "Identifier.h"
 
-namespace JSC { namespace DFG {
+namespace JSC {
+
+class CodeBlock;
+
+namespace DFG {
 
 class DesiredIdentifiers {
 public:
     DesiredIdentifiers(CodeBlock*);
     ~DesiredIdentifiers();
     
-    unsigned numberOfIdentifiers()
-    {
-        return m_codeBlock->numberOfIdentifiers() + m_addedIdentifiers.size();
-    }
-    
+    unsigned numberOfIdentifiers();
     void addLazily(StringImpl*);
     
-    StringImpl* at(unsigned index) const
-    {
-        StringImpl* result;
-        if (index < m_codeBlock->numberOfIdentifiers())
-            result = m_codeBlock->identifier(index).impl();
-        else
-            result = m_addedIdentifiers[index - m_codeBlock->numberOfIdentifiers()];
-        ASSERT(result->hasAtLeastOneRef());
-        return result;
-    }
+    StringImpl* at(unsigned index) const;
     
     StringImpl* operator[](unsigned index) const { return at(index); }
     
