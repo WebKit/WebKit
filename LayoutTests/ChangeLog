@@ -1,3 +1,17 @@
+2013-06-07  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: don't insert ForceOSRExits except for inadequate coverage
+        https://bugs.webkit.org/show_bug.cgi?id=117363
+
+        Reviewed by Mark Hahnenberg.
+        
+        Convert this test, since this was the test originally added for
+        ConstantFoldingPhase::paintUnreachableCode(). I wanted to make sure that I had good coverage
+        for this since I am removing that method.
+
+        * fast/js/dfg-force-exit-then-sparse-conditional-constant-prop-in-loop-expected.txt:
+        * fast/js/script-tests/dfg-force-exit-then-sparse-conditional-constant-prop-in-loop.js:
+
 2013-06-03  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, unbreak all of the tests.

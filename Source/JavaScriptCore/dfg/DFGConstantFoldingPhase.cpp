@@ -56,8 +56,6 @@ public:
             BasicBlock* block = m_graph.m_blocks[blockIndex].get();
             if (!block)
                 continue;
-            if (!block->cfaDidFinish)
-                changed |= paintUnreachableCode(blockIndex);
             if (block->cfaFoundConstants)
                 changed |= foldConstants(blockIndex);
         }
@@ -103,7 +101,7 @@ private:
                 else
                     set = node->structureSet();
                 if (value.m_currentKnownStructure.isSubsetOf(set)) {
-                    m_state.execute(indexInBlock, AbstractState::CleanFiltration); // Catch the fact that we may filter on cell.
+                    m_state.execute(indexInBlock); // Catch the fact that we may filter on cell.
                     node->convertToPhantom();
                     eliminated = true;
                     break;
@@ -112,7 +110,7 @@ private:
                 if (structureValue.isSubsetOf(set)
                     && structureValue.hasSingleton()) {
                     Structure* structure = structureValue.singleton();
-                    m_state.execute(indexInBlock, AbstractState::CleanFiltration); // Catch the fact that we may filter on cell.
+                    m_state.execute(indexInBlock); // Catch the fact that we may filter on cell.
                     AdjacencyList children = node->children;
                     children.removeEdge(0);
                     if (!!children.child1()) {
@@ -181,7 +179,7 @@ private:
                 // Now before we do anything else, push the CFA forward over the GetById
                 // and make sure we signal to the loop that it should continue and not
                 // do any eliminations.
-                m_state.execute(indexInBlock, AbstractState::CleanFiltration);
+                m_state.execute(indexInBlock);
                 eliminated = true;
                 
                 if (needsWatchpoint) {
@@ -245,7 +243,7 @@ private:
                 // Now before we do anything else, push the CFA forward over the PutById
                 // and make sure we signal to the loop that it should continue and not
                 // do any eliminations.
-                m_state.execute(indexInBlock, AbstractState::CleanFiltration);
+                m_state.execute(indexInBlock);
                 eliminated = true;
                 
                 if (needsWatchpoint) {
@@ -334,7 +332,7 @@ private:
                 continue;
             }
                 
-            m_state.execute(indexInBlock, AbstractState::CleanFiltration);
+            m_state.execute(indexInBlock);
             if (!node->shouldGenerate() || m_state.didClobber() || node->hasConstant())
                 continue;
             JSValue value = m_state.forNode(node).value();
@@ -422,54 +420,6 @@ private:
             OpInfo(m_graph.addStructureSet(cell->structure())), Edge(weakConstant, CellUse));
     }
     
-    // This is necessary because the CFA may reach conclusions about constants based on its
-    // assumption that certain code must exit, but then those constants may lead future
-    // reexecutions of the CFA to believe that the same code will now no longer exit. Thus
-    // to ensure soundness, we must paint unreachable code as such, by inserting an
-    // unconditional ForceOSRExit wherever we find that a node would have always exited.
-    // This will only happen in cases where we are making static speculations, or we're
-    // making totally wrong speculations due to imprecision in the prediction propagator.
-    bool paintUnreachableCode(BlockIndex blockIndex)
-    {
-        bool changed = false;
-        
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLogF("Painting unreachable code in Block #%u.\n", blockIndex);
-#endif
-        BasicBlock* block = m_graph.m_blocks[blockIndex].get();
-        m_state.beginBasicBlock(block);
-        
-        for (unsigned indexInBlock = 0; indexInBlock < block->size(); ++indexInBlock) {
-            m_state.execute(indexInBlock, AbstractState::AfterConvergence);
-            if (m_state.isValid())
-                continue;
-            
-            Node* node = block->at(indexInBlock);
-            switch (node->op()) {
-            case Return:
-            case Throw:
-            case ThrowReferenceError:
-            case ForceOSRExit:
-            case ForwardForceOSRExit:
-                // Do nothing. These nodes will already do the right thing.
-                break;
-                
-            default:
-                m_insertionSet.insertNode(
-                    indexInBlock, SpecNone,
-                    (node->flags() & NodeExitsForward) ? ForwardForceOSRExit : ForceOSRExit,
-                    node->codeOrigin);
-                changed = true;
-                break;
-            }
-            break;
-        }
-        m_state.reset();
-        m_insertionSet.execute(block);
-        
-        return changed;
-    }
-
     AbstractState m_state;
     InsertionSet m_insertionSet;
 };

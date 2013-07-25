@@ -18,5 +18,8 @@ function foo(a) {
 
 var array = [54, 5432, 1234, 54, 1235, 64, 75, 532, 64, 2];
 
-for (var i = 0; i < 200; ++i)
+silentTestPass = true;
+noInline(foo);
+
+for (var i = 0; i < 2; i = dfgIncrement({f:foo, i:i + 1, n:1}))
     shouldBe("foo(array)", "8746");

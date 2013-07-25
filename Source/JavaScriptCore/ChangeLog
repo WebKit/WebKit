@@ -1,3 +1,63 @@
+2013-06-08  Mark Lam  <mark.lam@apple.com>
+
+        Removed bogus assertion in CallFrame::setLocationAsBytecodeOffset().
+        https://bugs.webkit.org/show_bug.cgi?id=117373.
+
+        Reviewed by Oliver Hunt.
+
+        The assertion wrongly assumes that the incoming offset argument is in
+        units of bytes. This is not true. It is in units of Instruction*. Hence,
+        the assertion which checks for the low 2 bits to be clear can fail.
+
+        * interpreter/CallFrame.cpp:
+        (JSC::CallFrame::setLocationAsBytecodeOffset):
+
+2013-06-07  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: don't insert ForceOSRExits except for inadequate coverage
+        https://bugs.webkit.org/show_bug.cgi?id=117363
+
+        Reviewed by Mark Hahnenberg.
+        
+        Previously (in http://trac.webkit.org/changeset/151303) I made it so that we
+        inserted ForceOSRExits more eagerly.  I now think it's better to have
+        contradictions execute normally and exit with full OSR exit profiling.  It's
+        better at catching the few cases where the DFG will end up with different
+        types than the baseline engines.
+        
+        This simplifies a bunch of code. For example it gets rid of
+        ConstantFoldingPhase::paintUnreachableCode().
+        
+        You can think of this as a partial roll-out of r151303, except that it uses
+        the facilities introduced by that patch to give us run-time assertions that
+        check the CFA's correctness: if the CFA thought that something was a
+        contradiction but the code didn't exit, we'll now trap.
+
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::AbstractState):
+        (JSC::DFG::AbstractState::startExecuting):
+        (JSC::DFG::AbstractState::executeEffects):
+        (JSC::DFG::AbstractState::execute):
+        (JSC::DFG::AbstractState::filter):
+        (JSC::DFG::AbstractState::filterArrayModes):
+        (JSC::DFG::AbstractState::filterByValue):
+        (DFG):
+        * dfg/DFGAbstractState.h:
+        (AbstractState):
+        (JSC::DFG::AbstractState::filter):
+        (JSC::DFG::AbstractState::filterArrayModes):
+        (JSC::DFG::AbstractState::filterByValue):
+        * dfg/DFGCFAPhase.cpp:
+        (JSC::DFG::CFAPhase::performBlockCFA):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::run):
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        (ConstantFoldingPhase):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+
 2013-06-07  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, fix release build.

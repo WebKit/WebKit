@@ -93,21 +93,6 @@ public:
         MergeToSuccessors
     };
     
-    enum ExecutionMode {
-        // If we encounter a contradiction, assume that this might just
-        // be because we haven't converged yet.
-        StillConverging,
-        
-        // If we encounter a contradition, assume that this contradiction
-        // is real and report it to the profiling infrastructure as if it
-        // happened at run time.
-        AfterConvergence,
-        
-        // Assume that there cannot be any contradictions other than
-        // ForceOSRExit because we have already cleaned the graph.
-        CleanFiltration
-    };
-    
     AbstractState(Graph&);
     
     ~AbstractState();
@@ -191,12 +176,12 @@ public:
     //
     // This is guaranteed to be equivalent to doing:
     //
-    // if (state.startExecuting(index, executionMode)) {
+    // if (state.startExecuting(index)) {
     //     state.executeEdges(index);
     //     result = state.executeEffects(index);
     // } else
     //     result = true;
-    bool execute(unsigned indexInBlock, ExecutionMode);
+    bool execute(unsigned indexInBlock);
     
     // Indicate the start of execution of the node. It resets any state in the node,
     // that is progressively built up by executeEdges() and executeEffects(). In
@@ -204,8 +189,8 @@ public:
     // startExecuting() and executeEdges()/Effects() whether the last run of the
     // analysis concluded that the node can exit, you should probably set that
     // information aside prior to calling startExecuting().
-    bool startExecuting(Node*, ExecutionMode);
-    bool startExecuting(unsigned indexInBlock, ExecutionMode);
+    bool startExecuting(Node*);
+    bool startExecuting(unsigned indexInBlock);
     
     // Abstractly execute the edges of the given node. This runs filterEdgeByUse()
     // on all edges of the node. You can skip this step, if you have already used
@@ -247,36 +232,33 @@ public:
     void dump(PrintStream& out);
     
     template<typename T>
-    FiltrationResult filter(T node, const StructureSet& set, ExitKind exitKind)
+    FiltrationResult filter(T node, const StructureSet& set)
     {
-        return filter(forNode(node), set, exitKind);
+        return filter(forNode(node), set);
     }
     
     template<typename T>
-    FiltrationResult filterArrayModes(
-        T node, ArrayModes arrayModes, ExitKind exitKind = BadIndexingType)
+    FiltrationResult filterArrayModes(T node, ArrayModes arrayModes)
     {
-        return filterArrayModes(forNode(node), arrayModes, exitKind);
+        return filterArrayModes(forNode(node), arrayModes);
     }
     
     template<typename T>
-    FiltrationResult filter(T node, SpeculatedType type, ExitKind exitKind = BadType)
+    FiltrationResult filter(T node, SpeculatedType type)
     {
-        return filter(forNode(node), type, exitKind);
+        return filter(forNode(node), type);
     }
     
     template<typename T>
-    FiltrationResult filterByValue(T node, JSValue value, ExitKind exitKind)
+    FiltrationResult filterByValue(T node, JSValue value)
     {
-        return filterByValue(forNode(node), value, exitKind);
+        return filterByValue(forNode(node), value);
     }
     
-    FiltrationResult filter(AbstractValue&, const StructureSet&, ExitKind);
-    FiltrationResult filterArrayModes(AbstractValue&, ArrayModes, ExitKind = BadIndexingType);
-    FiltrationResult filter(AbstractValue&, SpeculatedType, ExitKind = BadType);
-    FiltrationResult filterByValue(AbstractValue&, JSValue, ExitKind);
-    
-    void bail(ExitKind);
+    FiltrationResult filter(AbstractValue&, const StructureSet&);
+    FiltrationResult filterArrayModes(AbstractValue&, ArrayModes);
+    FiltrationResult filter(AbstractValue&, SpeculatedType);
+    FiltrationResult filterByValue(AbstractValue&, JSValue);
     
 private:
     void clobberWorld(const CodeOrigin&, unsigned indexInBlock);
@@ -332,7 +314,6 @@ private:
     Operands<AbstractValue> m_variables;
     BasicBlock* m_block;
     Node* m_currentNode;
-    ExecutionMode m_executionMode;
     
     bool m_haveStructures;
     bool m_foundConstants;

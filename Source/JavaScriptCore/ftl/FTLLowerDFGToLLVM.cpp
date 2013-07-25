@@ -265,7 +265,7 @@ private:
         if (verboseCompilationEnabled())
             dataLog("Lowering ", m_node, "\n");
         
-        bool shouldExecuteEffects = m_state.startExecuting(m_node, AbstractState::CleanFiltration);
+        bool shouldExecuteEffects = m_state.startExecuting(m_node);
         
         m_direction = (m_node->flags() & NodeExitsForward) ? ForwardSpeculation : BackwardSpeculation;
         

@@ -52,7 +52,6 @@ unsigned CallFrame::locationAsBytecodeOffset() const
 void CallFrame::setLocationAsBytecodeOffset(unsigned offset)
 {
     ASSERT(codeBlock());
-    ASSERT(Location::isBytecodeLocation(offset));
     setCurrentVPC(codeBlock()->instructions().begin() + offset);
     ASSERT(hasLocationAsBytecodeOffset());
 }

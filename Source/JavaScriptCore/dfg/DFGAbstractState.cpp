@@ -43,7 +43,6 @@ AbstractState::AbstractState(Graph& graph)
     , m_variables(m_codeBlock->numParameters(), graph.m_localVars)
     , m_block(0)
     , m_currentNode(0)
-    , m_executionMode(CleanFiltration)
 {
 }
 
@@ -233,7 +232,7 @@ AbstractState::BooleanResult AbstractState::booleanResult(Node* node, AbstractVa
     return UnknownBooleanResult;
 }
 
-bool AbstractState::startExecuting(Node* node, ExecutionMode executionMode)
+bool AbstractState::startExecuting(Node* node)
 {
     ASSERT(m_block);
     ASSERT(m_isValid);
@@ -244,18 +243,16 @@ bool AbstractState::startExecuting(Node* node, ExecutionMode executionMode)
     
     if (!node->shouldGenerate()) {
         m_currentNode = 0;
-        m_executionMode = CleanFiltration;
         return false;
     }
     
     m_currentNode = node;
-    m_executionMode = executionMode;
     return true;
 }
 
-bool AbstractState::startExecuting(unsigned indexInBlock, ExecutionMode executionMode)
+bool AbstractState::startExecuting(unsigned indexInBlock)
 {
-    return startExecuting(m_block->at(indexInBlock), executionMode);
+    return startExecuting(m_block->at(indexInBlock));
 }
 
 void AbstractState::executeEdges(Node* node)
@@ -1105,8 +1102,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
             // structure.
             filter(
                 node->child1(),
-                m_graph.globalObjectFor(node->codeOrigin)->stringObjectStructure(),
-                NotStringObject);
+                m_graph.globalObjectFor(node->codeOrigin)->stringObjectStructure());
             node->setCanExit(true); // We could be more precise but it's likely not worth it.
             break;
         case StringOrStringObjectUse:
@@ -1325,7 +1321,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
                         forNode(node).set(m_graph, status.specificValue());
                     else
                         forNode(node).makeTop();
-                    filter(node->child1(), status.structureSet(), BadCache);
+                    filter(node->child1(), status.structureSet());
                     
                     m_foundConstants = true;
                     break;
@@ -1363,12 +1359,6 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
             break;
         }
 
-        ExitKind exitKind;
-        if (node->child1()->op() == WeakJSConstant)
-            exitKind = BadWeakConstantCache;
-        else
-            exitKind = BadCache;
-
         node->setCanExit(true);
 
         // If this structure check is attempting to prove knowledge already held in
@@ -1377,11 +1367,11 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
         if (value.m_futurePossibleStructure.isSubsetOf(set)
             && value.m_futurePossibleStructure.hasSingleton()) {
             m_foundConstants = true;
-            filter(value, value.m_futurePossibleStructure.singleton(), exitKind);
+            filter(value, value.m_futurePossibleStructure.singleton());
             break;
         }
 
-        filter(value, set, exitKind);
+        filter(value, set);
         m_haveStructures = true;
         break;
     }
@@ -1389,12 +1379,6 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
     case StructureTransitionWatchpoint:
     case ForwardStructureTransitionWatchpoint: {
         AbstractValue& value = forNode(node->child1());
-
-        ExitKind exitKind;
-        if (node->child1()->op() == WeakJSConstant)
-            exitKind = BadWeakConstantCache;
-        else
-            exitKind = BadCache;
 
         // It's only valid to issue a structure transition watchpoint if we already
         // know that the watchpoint covers a superset of the structures known to
@@ -1406,7 +1390,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
             value.m_futurePossibleStructure.isSubsetOf(StructureSet(node->structure()))
             || m_graph.watchpoints().shouldAssumeMixedState(node->structure()->transitionWatchpointSet()));
         
-        filter(value, node->structure(), exitKind);
+        filter(value, node->structure());
         m_haveStructures = true;
         node->setCanExit(true);
         break;
@@ -1501,7 +1485,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
             m_foundConstants = true;
         node->setCanExit(true);
         clobberStructures(indexInBlock);
-        filter(value, set, BadIndexingType);
+        filter(value, set);
         m_haveStructures = true;
         break;
     }
@@ -1527,7 +1511,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
         }
         
         node->setCanExit(true); // Lies! We can do better.
-        filterByValue(node->child1(), node->function(), BadFunction);
+        filterByValue(node->child1(), node->function());
         break;
     }
         
@@ -1542,7 +1526,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
                 m_graph.identifiers()[node->identifierNumber()],
                 node->op() == PutByIdDirect);
             if (status.isSimpleReplace()) {
-                filter(node->child1(), structure, BadCache);
+                filter(node->child1(), structure);
                 m_foundConstants = true;
                 break;
             }
@@ -1631,10 +1615,10 @@ bool AbstractState::executeEffects(unsigned indexInBlock)
     return executeEffects(indexInBlock, m_block->at(indexInBlock));
 }
 
-bool AbstractState::execute(unsigned indexInBlock, ExecutionMode executionMode)
+bool AbstractState::execute(unsigned indexInBlock)
 {
     Node* node = m_block->at(indexInBlock);
-    if (!startExecuting(node, executionMode))
+    if (!startExecuting(node))
         return true;
     
     executeEdges(node);
@@ -1868,61 +1852,39 @@ void AbstractState::dump(PrintStream& out)
     }
 }
 
-FiltrationResult AbstractState::filter(
-    AbstractValue& value, const StructureSet& set, ExitKind exitKind)
+FiltrationResult AbstractState::filter(AbstractValue& value, const StructureSet& set)
 {
     if (value.filter(m_graph, set) == FiltrationOK)
         return FiltrationOK;
-    bail(exitKind);
+    m_isValid = false;
     return Contradiction;
 }
     
-FiltrationResult AbstractState::filterArrayModes(
-    AbstractValue& value, ArrayModes arrayModes, ExitKind exitKind)
+FiltrationResult AbstractState::filterArrayModes(AbstractValue& value, ArrayModes arrayModes)
 {
     if (value.filterArrayModes(arrayModes) == FiltrationOK)
         return FiltrationOK;
-    bail(exitKind);
+    m_isValid = false;
     return Contradiction;
 }
     
-FiltrationResult AbstractState::filter(
-    AbstractValue& value, SpeculatedType type, ExitKind exitKind)
+FiltrationResult AbstractState::filter(AbstractValue& value, SpeculatedType type)
 {
     if (value.filter(type) == FiltrationOK)
         return FiltrationOK;
-    bail(exitKind);
+    m_isValid = false;
     return Contradiction;
 }
     
 FiltrationResult AbstractState::filterByValue(
-    AbstractValue& abstractValue, JSValue concreteValue, ExitKind exitKind)
+    AbstractValue& abstractValue, JSValue concreteValue)
 {
     if (abstractValue.filterByValue(concreteValue) == FiltrationOK)
         return FiltrationOK;
-    bail(exitKind);
+    m_isValid = false;
     return Contradiction;
 }
 
-void AbstractState::bail(ExitKind exitKind)
-{
-    ASSERT(m_currentNode);
-    m_isValid = false;
-    switch (m_executionMode) {
-    case StillConverging:
-        return;
-    case AfterConvergence: {
-        m_graph.baselineCodeBlockFor(m_currentNode->codeOrigin)->addFrequentExitSite(
-            FrequentExitSite(m_currentNode->codeOrigin.bytecodeIndex, exitKind));
-        return;
-    }
-    case CleanFiltration:
-        RELEASE_ASSERT_NOT_REACHED();
-        return;
-    }
-    RELEASE_ASSERT_NOT_REACHED();
-}
-    
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)

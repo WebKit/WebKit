@@ -1674,11 +1674,15 @@ void SpeculativeJIT::compile(BasicBlock& block)
     for (m_indexInBlock = 0; m_indexInBlock < block.size(); ++m_indexInBlock) {
         m_currentNode = block[m_indexInBlock];
         
-        // If there was a contradiction then the constant folder ought to have caught it.
-        RELEASE_ASSERT(m_state.isValid());
+        // We may have his a contradiction that the CFA was aware of but that the JIT
+        // didn't cause directly.
+        if (!m_state.isValid()) {
+            bail();
+            return;
+        }
         
         m_canExit = m_currentNode->canExit();
-        bool shouldExecuteEffects = m_state.startExecuting(m_currentNode, AbstractState::CleanFiltration);
+        bool shouldExecuteEffects = m_state.startExecuting(m_currentNode);
         m_jit.setForNode(m_currentNode);
         m_codeOriginForOSR = m_currentNode->codeOrigin;
         if (!m_currentNode->shouldGenerate()) {
