@@ -51,20 +51,25 @@ using namespace std;
 
 namespace JSC {
 
-void JIT::emit_op_call_put_result(Instruction* instruction)
+void JIT::emitPutCallResult(Instruction* instruction)
 {
     int dst = instruction[1].u.operand;
     emitValueProfilingSite();
     emitPutVirtualRegister(dst);
-    if (canBeOptimizedOrInlined())
-        killLastResultRegister(); // Make lastResultRegister tracking simpler in the DFG.
+    if (canBeOptimizedOrInlined()) {
+        // Make lastResultRegister tracking simpler in the DFG. This is needed because
+        // the DFG may have the SetLocal corresponding to this Call's return value in
+        // a different basic block, if inlining happened. The DFG isn't smart enough to
+        // track the baseline JIT's last result register across basic blocks.
+        killLastResultRegister();
+    }
 }
 
 void JIT::compileLoadVarargs(Instruction* instruction)
 {
-    int thisValue = instruction[2].u.operand;
-    int arguments = instruction[3].u.operand;
-    int firstFreeRegister = instruction[4].u.operand;
+    int thisValue = instruction[3].u.operand;
+    int arguments = instruction[4].u.operand;
+    int firstFreeRegister = instruction[5].u.operand;
 
     killLastResultRegister();
 
@@ -124,7 +129,7 @@ void JIT::compileLoadVarargs(Instruction* instruction)
         end.link(this);
 }
 
-void JIT::compileCallEval()
+void JIT::compileCallEval(Instruction* instruction)
 {
     JITStubCall stubCall(this, cti_op_call_eval); // Initializes ScopeChain; ReturnPC; CodeBlock.
     stubCall.call();
@@ -132,9 +137,11 @@ void JIT::compileCallEval()
     emitGetFromCallFrameHeaderPtr(JSStack::CallerFrame, callFrameRegister);
 
     sampleCodeBlock(m_codeBlock);
+    
+    emitPutCallResult(instruction);
 }
 
-void JIT::compileCallEvalSlowCase(Vector<SlowCaseEntry>::iterator& iter)
+void JIT::compileCallEvalSlowCase(Instruction* instruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     linkSlowCase(iter);
 
@@ -142,11 +149,13 @@ void JIT::compileCallEvalSlowCase(Vector<SlowCaseEntry>::iterator& iter)
     emitNakedCall(m_vm->getCTIStub(virtualCallGenerator).code());
 
     sampleCodeBlock(m_codeBlock);
+    
+    emitPutCallResult(instruction);
 }
 
 void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned callLinkInfoIndex)
 {
-    int callee = instruction[1].u.operand;
+    int callee = instruction[2].u.operand;
 
     /* Caller always:
         - Updates callFrameRegister to callee callFrame.
@@ -165,14 +174,14 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned ca
     if (opcodeID == op_call_varargs)
         compileLoadVarargs(instruction);
     else {
-        int argCount = instruction[2].u.operand;
-        int registerOffset = instruction[3].u.operand;
+        int argCount = instruction[3].u.operand;
+        int registerOffset = instruction[4].u.operand;
 
         if (opcodeID == op_call && shouldEmitProfiling()) {
             emitGetVirtualRegister(registerOffset + CallFrame::argumentOffsetIncludingThis(0), regT0);
             Jump done = emitJumpIfNotJSCell(regT0);
             loadPtr(Address(regT0, JSCell::structureOffset()), regT0);
-            storePtr(regT0, instruction[5].u.arrayProfile->addressOfLastSeenStructure());
+            storePtr(regT0, instruction[6].u.arrayProfile->addressOfLastSeenStructure());
             done.link(this);
         }
     
@@ -188,7 +197,7 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned ca
     move(regT1, callFrameRegister);
 
     if (opcodeID == op_call_eval) {
-        compileCallEval();
+        compileCallEval(instruction);
         return;
     }
 
@@ -209,12 +218,14 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned ca
     m_callStructureStubCompilationInfo[callLinkInfoIndex].hotPathOther = emitNakedCall();
 
     sampleCodeBlock(m_codeBlock);
+    
+    emitPutCallResult(instruction);
 }
 
-void JIT::compileOpCallSlowCase(OpcodeID opcodeID, Instruction*, Vector<SlowCaseEntry>::iterator& iter, unsigned callLinkInfoIndex)
+void JIT::compileOpCallSlowCase(OpcodeID opcodeID, Instruction* instruction, Vector<SlowCaseEntry>::iterator& iter, unsigned callLinkInfoIndex)
 {
     if (opcodeID == op_call_eval) {
-        compileCallEvalSlowCase(iter);
+        compileCallEvalSlowCase(instruction, iter);
         return;
     }
 
@@ -223,6 +234,8 @@ void JIT::compileOpCallSlowCase(OpcodeID opcodeID, Instruction*, Vector<SlowCase
     m_callStructureStubCompilationInfo[callLinkInfoIndex].callReturnLocation = emitNakedCall(opcodeID == op_construct ? m_vm->getCTIStub(linkConstructGenerator).code() : m_vm->getCTIStub(linkCallGenerator).code());
 
     sampleCodeBlock(m_codeBlock);
+    
+    emitPutCallResult(instruction);
 }
 
 void JIT::privateCompileClosureCall(CallLinkInfo* callLinkInfo, CodeBlock* calleeCodeBlock, Structure* expectedStructure, ExecutableBase* expectedExecutable, MacroAssemblerCodePtr codePtr)
@@ -269,6 +282,46 @@ void JIT::privateCompileClosureCall(CallLinkInfo* callLinkInfo, CodeBlock* calle
     repatchBuffer.relink(callLinkInfo->callReturnLocation, m_vm->getCTIStub(virtualCallGenerator).code());
     
     callLinkInfo->stub = stubRoutine.release();
+}
+
+void JIT::emit_op_call(Instruction* currentInstruction)
+{
+    compileOpCall(op_call, currentInstruction, m_callLinkInfoIndex++);
+}
+
+void JIT::emit_op_call_eval(Instruction* currentInstruction)
+{
+    compileOpCall(op_call_eval, currentInstruction, m_callLinkInfoIndex);
+}
+
+void JIT::emit_op_call_varargs(Instruction* currentInstruction)
+{
+    compileOpCall(op_call_varargs, currentInstruction, m_callLinkInfoIndex++);
+}
+
+void JIT::emit_op_construct(Instruction* currentInstruction)
+{
+    compileOpCall(op_construct, currentInstruction, m_callLinkInfoIndex++);
+}
+
+void JIT::emitSlow_op_call(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    compileOpCallSlowCase(op_call, currentInstruction, iter, m_callLinkInfoIndex++);
+}
+
+void JIT::emitSlow_op_call_eval(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    compileOpCallSlowCase(op_call_eval, currentInstruction, iter, m_callLinkInfoIndex);
+}
+ 
+void JIT::emitSlow_op_call_varargs(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    compileOpCallSlowCase(op_call_varargs, currentInstruction, iter, m_callLinkInfoIndex++);
+}
+
+void JIT::emitSlow_op_construct(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    compileOpCallSlowCase(op_construct, currentInstruction, iter, m_callLinkInfoIndex++);
 }
 
 } // namespace JSC

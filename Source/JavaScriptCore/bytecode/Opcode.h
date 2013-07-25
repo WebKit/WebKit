@@ -177,16 +177,15 @@ namespace JSC {
     \
     macro(op_new_func, 4) \
     macro(op_new_func_exp, 3) \
-    macro(op_call, 6) \
-    macro(op_call_eval, 6) \
-    macro(op_call_varargs, 6) \
+    macro(op_call, 8) /* has value profiling */ \
+    macro(op_call_eval, 8) /* has value profiling */ \
+    macro(op_call_varargs, 8) /* has value profiling */ \
     macro(op_tear_off_activation, 2) \
     macro(op_tear_off_arguments, 3) \
     macro(op_ret, 2) \
-    macro(op_call_put_result, 3) /* has value profiling */ \
     macro(op_ret_object_or_this, 3) \
     \
-    macro(op_construct, 6) \
+    macro(op_construct, 8) \
     macro(op_strcat, 4) \
     macro(op_to_primitive, 3) \
     \

@@ -101,8 +101,8 @@ void compileOSRExit(ExecState* exec)
         exit.m_code = FINALIZE_CODE_IF(
             shouldShowDisassembly(),
             patchBuffer,
-            ("DFG OSR exit #%u (bc#%u, %s) from %s",
-                exitIndex, exit.m_codeOrigin.bytecodeIndex,
+            ("DFG OSR exit #%u (%s, %s) from %s",
+                exitIndex, toCString(exit.m_codeOrigin).data(),
                 exitKindToString(exit.m_kind), toCString(*codeBlock).data()));
     }
     

@@ -101,7 +101,12 @@ end
 
 macro dispatchAfterCall()
     loadi ArgumentCount + TagOffset[cfr], PC
-    dispatch(6)
+    loadi 4[PC], t2
+    loadi 28[PC], t3
+    storei t1, TagOffset[cfr, t2, 8]
+    storei t0, PayloadOffset[cfr, t2, 8]
+    valueProfile(t1, t0, t3)
+    dispatch(8)
 end
 
 macro cCall2(function, arg1, arg2)
@@ -1576,29 +1581,29 @@ _llint_op_new_func:
 
 macro arrayProfileForCall()
     if VALUE_PROFILER
-        loadi 12[PC], t3
+        loadi 16[PC], t3
         bineq ThisArgumentOffset + TagOffset[cfr, t3, 8], CellTag, .done
         loadi ThisArgumentOffset + PayloadOffset[cfr, t3, 8], t0
         loadp JSCell::m_structure[t0], t0
-        loadp 20[PC], t1
+        loadp 24[PC], t1
         storep t0, ArrayProfile::m_lastSeenStructure[t1]
     .done:
     end
 end
 
 macro doCall(slowPath)
-    loadi 4[PC], t0
-    loadi 16[PC], t1
+    loadi 8[PC], t0
+    loadi 20[PC], t1
     loadp LLIntCallLinkInfo::callee[t1], t2
     loadConstantOrVariablePayload(t0, CellTag, t3, .opCallSlow)
     bineq t3, t2, .opCallSlow
-    loadi 12[PC], t3
+    loadi 16[PC], t3
     lshifti 3, t3
     addp cfr, t3  # t3 contains the new value of cfr
     loadp JSFunction::m_scope[t2], t0
     storei t2, Callee + PayloadOffset[t3]
     storei t0, ScopeChain + PayloadOffset[t3]
-    loadi 8[PC], t2
+    loadi 12[PC], t2
     storei PC, ArgumentCount + TagOffset[cfr]
     storep cfr, CallerFrame[t3]
     storei t2, ArgumentCount + PayloadOffset[t3]
@@ -1637,16 +1642,6 @@ _llint_op_ret:
     loadi 4[PC], t2
     loadConstantOrVariable(t2, t1, t0)
     doReturn()
-
-
-_llint_op_call_put_result:
-    loadi 4[PC], t2
-    loadi 8[PC], t3
-    storei t1, TagOffset[cfr, t2, 8]
-    storei t0, PayloadOffset[cfr, t2, 8]
-    valueProfile(t1, t0, t3)
-    traceExecution() # Needs to be here because it would clobber t1, t0
-    dispatch(3)
 
 
 _llint_op_ret_object_or_this:

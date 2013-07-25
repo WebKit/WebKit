@@ -463,11 +463,10 @@ JSValue CLoop::execute(CallFrame* callFrame, OpcodeID bootstrapOpcodeId,
         // from ArgumentCount.tag() (see the dispatchAfterCall() macro used in
         // the callTargetFunction() macro in the llint asm files).
         //
-        // For the C loop, we don't have the JIT stub to this work for us.
-        // So, we need to implement the equivalent of dispatchAfterCall() here
-        // before dispatching to the PC.
+        // For the C loop, we don't have the JIT stub to this work for us. So,
+        // we jump to llint_generic_return_point.
 
-        vPC = callFrame->currentVPC() + OPCODE_LENGTH(op_call);
+        vPC = callFrame->currentVPC();
 
 #if USE(JSVALUE64)
         // Based on LowLevelInterpreter64.asm's dispatchAfterCall():
@@ -490,7 +489,7 @@ JSValue CLoop::execute(CallFrame* callFrame, OpcodeID bootstrapOpcodeId,
         rBasePC.vp = codeBlock->instructions().begin();
 #endif // USE(JSVALUE64)
 
-        NEXT_INSTRUCTION();
+        goto op_generic_return_point;
 
     } // END doReturnHelper.
 

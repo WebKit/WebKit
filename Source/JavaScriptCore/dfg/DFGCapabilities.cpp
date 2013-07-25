@@ -184,7 +184,6 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, Instruc
     case op_loop_hint:
     case op_ret:
     case op_end:
-    case op_call_put_result:
     case op_new_object:
     case op_new_array:
     case op_new_array_with_size:
@@ -208,7 +207,7 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, Instruc
         return CanCompileAndInline;
         
     case op_call_varargs:
-        if (codeBlock->usesArguments() && pc[3].u.operand == codeBlock->argumentsRegister())
+        if (codeBlock->usesArguments() && pc[4].u.operand == codeBlock->argumentsRegister())
             return CanInline;
         return CannotCompile;
 

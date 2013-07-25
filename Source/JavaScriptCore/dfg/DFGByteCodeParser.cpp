@@ -128,7 +128,6 @@ public:
         , m_graph(graph)
         , m_currentBlock(0)
         , m_currentIndex(0)
-        , m_currentProfilingIndex(0)
         , m_constantUndefined(UINT_MAX)
         , m_constantNull(UINT_MAX)
         , m_constantNaN(UINT_MAX)
@@ -160,19 +159,17 @@ private:
     void parseCodeBlock();
 
     // Helper for min and max.
-    bool handleMinMax(bool usesResult, int resultOperand, NodeType op, int registerOffset, int argumentCountIncludingThis);
+    bool handleMinMax(int resultOperand, NodeType op, int registerOffset, int argumentCountIncludingThis);
     
     // Handle calls. This resolves issues surrounding inlining and intrinsics.
-    void handleCall(Interpreter*, Instruction* currentInstruction, NodeType op, CodeSpecializationKind);
+    void handleCall(Instruction* currentInstruction, NodeType op, CodeSpecializationKind);
     void emitFunctionChecks(const CallLinkStatus&, Node* callTarget, int registerOffset, CodeSpecializationKind);
     void emitArgumentPhantoms(int registerOffset, int argumentCountIncludingThis, CodeSpecializationKind);
     // Handle inlining. Return true if it succeeded, false if we need to plant a call.
-    bool handleInlining(bool usesResult, Node* callTargetNode, int resultOperand, const CallLinkStatus&, int registerOffset, int argumentCountIncludingThis, unsigned nextOffset, CodeSpecializationKind);
-    // Handle setting the result of an intrinsic.
-    void setIntrinsicResult(bool usesResult, int resultOperand, Node*);
+    bool handleInlining(Node* callTargetNode, int resultOperand, const CallLinkStatus&, int registerOffset, int argumentCountIncludingThis, unsigned nextOffset, CodeSpecializationKind);
     // Handle intrinsic functions. Return true if it succeeded, false if we need to plant a call.
-    bool handleIntrinsic(bool usesResult, int resultOperand, Intrinsic, int registerOffset, int argumentCountIncludingThis, SpeculatedType prediction);
-    bool handleConstantInternalFunction(bool usesResult, int resultOperand, InternalFunction*, int registerOffset, int argumentCountIncludingThis, SpeculatedType prediction, CodeSpecializationKind);
+    bool handleIntrinsic(int resultOperand, Intrinsic, int registerOffset, int argumentCountIncludingThis, SpeculatedType prediction);
+    bool handleConstantInternalFunction(int resultOperand, InternalFunction*, int registerOffset, int argumentCountIncludingThis, SpeculatedType prediction, CodeSpecializationKind);
     Node* handleGetByOffset(SpeculatedType, Node* base, unsigned identifierNumber, PropertyOffset);
     void handleGetByOffset(
         int destinationOperand, SpeculatedType, Node* base, unsigned identifierNumber,
@@ -689,7 +686,7 @@ private:
 
     CodeOrigin currentCodeOrigin()
     {
-        return CodeOrigin(m_currentIndex, inlineCallFrame(), m_currentProfilingIndex - m_currentIndex);
+        return CodeOrigin(m_currentIndex, inlineCallFrame(), 0);
     }
     
     bool canFold(Node* node)
@@ -760,29 +757,22 @@ private:
         m_numPassedVarArgs++;
     }
     
-    Node* addCall(Interpreter* interpreter, Instruction* currentInstruction, NodeType op)
+    Node* addCall(Instruction* currentInstruction, NodeType op)
     {
-        Instruction* putInstruction = currentInstruction + OPCODE_LENGTH(op_call);
-
-        SpeculatedType prediction = SpecNone;
-        if (interpreter->getOpcodeID(putInstruction->u.opcode) == op_call_put_result) {
-            m_currentProfilingIndex = m_currentIndex + OPCODE_LENGTH(op_call);
-            prediction = getPrediction();
-        }
+        SpeculatedType prediction = getPrediction();
         
-        addVarArgChild(get(currentInstruction[1].u.operand));
-        int argCount = currentInstruction[2].u.operand;
+        addVarArgChild(get(currentInstruction[2].u.operand));
+        int argCount = currentInstruction[3].u.operand;
         if (JSStack::CallFrameHeaderSize + (unsigned)argCount > m_parameterSlots)
             m_parameterSlots = JSStack::CallFrameHeaderSize + argCount;
 
-        int registerOffset = currentInstruction[3].u.operand;
+        int registerOffset = currentInstruction[4].u.operand;
         int dummyThisArgument = op == Call ? 0 : 1;
         for (int i = 0 + dummyThisArgument; i < argCount; ++i)
             addVarArgChild(get(registerOffset + argumentToOperand(i)));
 
         Node* call = addToGraph(Node::VarArg, op, OpInfo(0), OpInfo(prediction));
-        if (interpreter->getOpcodeID(putInstruction->u.opcode) == op_call_put_result)
-            set(putInstruction[1].u.operand, call);
+        set(currentInstruction[1].u.operand, call);
         return call;
     }
     
@@ -829,12 +819,12 @@ private:
     
     SpeculatedType getPredictionWithoutOSRExit()
     {
-        return getPredictionWithoutOSRExit(m_currentProfilingIndex);
+        return getPredictionWithoutOSRExit(m_currentIndex);
     }
     
     SpeculatedType getPrediction()
     {
-        return getPrediction(m_currentProfilingIndex);
+        return getPrediction(m_currentIndex);
     }
     
     ArrayMode getArrayMode(ArrayProfile* profile, Array::Action action)
@@ -975,8 +965,6 @@ private:
     BasicBlock* m_currentBlock;
     // The bytecode index of the current instruction being generated.
     unsigned m_currentIndex;
-    // The bytecode index of the value profile of the current instruction being generated.
-    unsigned m_currentProfilingIndex;
 
     // We use these values during code generation, and to avoid the need for
     // special handling we make sure they are available as constants in the
@@ -1147,11 +1135,11 @@ private:
     return shouldContinueParsing
 
 
-void ByteCodeParser::handleCall(Interpreter* interpreter, Instruction* currentInstruction, NodeType op, CodeSpecializationKind kind)
+void ByteCodeParser::handleCall(Instruction* currentInstruction, NodeType op, CodeSpecializationKind kind)
 {
     ASSERT(OPCODE_LENGTH(op_call) == OPCODE_LENGTH(op_construct));
     
-    Node* callTarget = get(currentInstruction[1].u.operand);
+    Node* callTarget = get(currentInstruction[2].u.operand);
     
     CallLinkStatus callLinkStatus;
 
@@ -1172,29 +1160,19 @@ void ByteCodeParser::handleCall(Interpreter* interpreter, Instruction* currentIn
         // Oddly, this conflates calls that haven't executed with calls that behaved sufficiently polymorphically
         // that we cannot optimize them.
         
-        addCall(interpreter, currentInstruction, op);
+        addCall(currentInstruction, op);
         return;
     }
     
-    int argumentCountIncludingThis = currentInstruction[2].u.operand;
-    int registerOffset = currentInstruction[3].u.operand;
+    int argumentCountIncludingThis = currentInstruction[3].u.operand;
+    int registerOffset = currentInstruction[4].u.operand;
 
-    // Do we have a result?
-    bool usesResult = false;
-    int resultOperand = 0; // make compiler happy
+    int resultOperand = currentInstruction[1].u.operand;
     unsigned nextOffset = m_currentIndex + OPCODE_LENGTH(op_call);
-    Instruction* putInstruction = currentInstruction + OPCODE_LENGTH(op_call);
-    SpeculatedType prediction = SpecNone;
-    if (interpreter->getOpcodeID(putInstruction->u.opcode) == op_call_put_result) {
-        resultOperand = putInstruction[1].u.operand;
-        usesResult = true;
-        m_currentProfilingIndex = nextOffset;
-        prediction = getPrediction();
-        nextOffset += OPCODE_LENGTH(op_call_put_result);
-    }
+    SpeculatedType prediction = getPrediction();
 
     if (InternalFunction* function = callLinkStatus.internalFunction()) {
-        if (handleConstantInternalFunction(usesResult, resultOperand, function, registerOffset, argumentCountIncludingThis, prediction, kind)) {
+        if (handleConstantInternalFunction(resultOperand, function, registerOffset, argumentCountIncludingThis, prediction, kind)) {
             // This phantoming has to be *after* the code for the intrinsic, to signify that
             // the inputs must be kept alive whatever exits the intrinsic may do.
             addToGraph(Phantom, callTarget);
@@ -1203,7 +1181,7 @@ void ByteCodeParser::handleCall(Interpreter* interpreter, Instruction* currentIn
         }
         
         // Can only handle this using the generic call handler.
-        addCall(interpreter, currentInstruction, op);
+        addCall(currentInstruction, op);
         return;
     }
         
@@ -1211,7 +1189,7 @@ void ByteCodeParser::handleCall(Interpreter* interpreter, Instruction* currentIn
     if (intrinsic != NoIntrinsic) {
         emitFunctionChecks(callLinkStatus, callTarget, registerOffset, kind);
             
-        if (handleIntrinsic(usesResult, resultOperand, intrinsic, registerOffset, argumentCountIncludingThis, prediction)) {
+        if (handleIntrinsic(resultOperand, intrinsic, registerOffset, argumentCountIncludingThis, prediction)) {
             // This phantoming has to be *after* the code for the intrinsic, to signify that
             // the inputs must be kept alive whatever exits the intrinsic may do.
             addToGraph(Phantom, callTarget);
@@ -1220,13 +1198,13 @@ void ByteCodeParser::handleCall(Interpreter* interpreter, Instruction* currentIn
                 m_graph.compilation()->noticeInlinedCall();
             return;
         }
-    } else if (handleInlining(usesResult, callTarget, resultOperand, callLinkStatus, registerOffset, argumentCountIncludingThis, nextOffset, kind)) {
+    } else if (handleInlining(callTarget, resultOperand, callLinkStatus, registerOffset, argumentCountIncludingThis, nextOffset, kind)) {
         if (m_graph.compilation())
             m_graph.compilation()->noticeInlinedCall();
         return;
     }
     
-    addCall(interpreter, currentInstruction, op);
+    addCall(currentInstruction, op);
 }
 
 void ByteCodeParser::emitFunctionChecks(const CallLinkStatus& callLinkStatus, Node* callTarget, int registerOffset, CodeSpecializationKind kind)
@@ -1261,7 +1239,7 @@ void ByteCodeParser::emitArgumentPhantoms(int registerOffset, int argumentCountI
         addToGraph(Phantom, get(registerOffset + argumentToOperand(i)));
 }
 
-bool ByteCodeParser::handleInlining(bool usesResult, Node* callTargetNode, int resultOperand, const CallLinkStatus& callLinkStatus, int registerOffset, int argumentCountIncludingThis, unsigned nextOffset, CodeSpecializationKind kind)
+bool ByteCodeParser::handleInlining(Node* callTargetNode, int resultOperand, const CallLinkStatus& callLinkStatus, int registerOffset, int argumentCountIncludingThis, unsigned nextOffset, CodeSpecializationKind kind)
 {
     // First, the really simple checks: do we have an actual JS function?
     if (!callLinkStatus.executable())
@@ -1329,16 +1307,13 @@ bool ByteCodeParser::handleInlining(bool usesResult, Node* callTargetNode, int r
     size_t argumentPositionStart = m_graph.m_argumentPositions.size();
 
     InlineStackEntry inlineStackEntry(
-        this, codeBlock, codeBlock, m_graph.m_blocks.size() - 1,
-        callLinkStatus.function(), (VirtualRegister)m_inlineStackTop->remapOperand(
-            usesResult ? resultOperand : InvalidVirtualRegister),
+        this, codeBlock, codeBlock, m_graph.m_blocks.size() - 1, callLinkStatus.function(),
+        (VirtualRegister)m_inlineStackTop->remapOperand(resultOperand),
         (VirtualRegister)inlineCallFrameStart, argumentCountIncludingThis, kind);
     
     // This is where the actual inlining really happens.
     unsigned oldIndex = m_currentIndex;
-    unsigned oldProfilingIndex = m_currentProfilingIndex;
     m_currentIndex = 0;
-    m_currentProfilingIndex = 0;
 
     addToGraph(InlineStart, OpInfo(argumentPositionStart));
     if (callLinkStatus.isClosureCall()) {
@@ -1349,7 +1324,6 @@ bool ByteCodeParser::handleInlining(bool usesResult, Node* callTargetNode, int r
     parseCodeBlock();
     
     m_currentIndex = oldIndex;
-    m_currentProfilingIndex = oldProfilingIndex;
     
     // If the inlined code created some new basic blocks, then we have linking to do.
     if (inlineStackEntry.m_callsiteBlockHead != m_graph.m_blocks.size() - 1) {
@@ -1445,29 +1419,22 @@ bool ByteCodeParser::handleInlining(bool usesResult, Node* callTargetNode, int r
     return true;
 }
 
-void ByteCodeParser::setIntrinsicResult(bool usesResult, int resultOperand, Node* node)
-{
-    if (!usesResult)
-        return;
-    set(resultOperand, node);
-}
-
-bool ByteCodeParser::handleMinMax(bool usesResult, int resultOperand, NodeType op, int registerOffset, int argumentCountIncludingThis)
+bool ByteCodeParser::handleMinMax(int resultOperand, NodeType op, int registerOffset, int argumentCountIncludingThis)
 {
     if (argumentCountIncludingThis == 1) { // Math.min()
-        setIntrinsicResult(usesResult, resultOperand, constantNaN());
+        set(resultOperand, constantNaN());
         return true;
     }
      
     if (argumentCountIncludingThis == 2) { // Math.min(x)
         Node* result = get(registerOffset + argumentToOperand(1));
         addToGraph(Phantom, Edge(result, NumberUse));
-        setIntrinsicResult(usesResult, resultOperand, result);
+        set(resultOperand, result);
         return true;
     }
     
     if (argumentCountIncludingThis == 3) { // Math.min(x, y)
-        setIntrinsicResult(usesResult, resultOperand, addToGraph(op, get(registerOffset + argumentToOperand(1)), get(registerOffset + argumentToOperand(2))));
+        set(resultOperand, addToGraph(op, get(registerOffset + argumentToOperand(1)), get(registerOffset + argumentToOperand(2))));
         return true;
     }
     
@@ -1477,12 +1444,12 @@ bool ByteCodeParser::handleMinMax(bool usesResult, int resultOperand, NodeType o
 
 // FIXME: We dead-code-eliminate unused Math intrinsics, but that's invalid because
 // they need to perform the ToNumber conversion, which can have side-effects.
-bool ByteCodeParser::handleIntrinsic(bool usesResult, int resultOperand, Intrinsic intrinsic, int registerOffset, int argumentCountIncludingThis, SpeculatedType prediction)
+bool ByteCodeParser::handleIntrinsic(int resultOperand, Intrinsic intrinsic, int registerOffset, int argumentCountIncludingThis, SpeculatedType prediction)
 {
     switch (intrinsic) {
     case AbsIntrinsic: {
         if (argumentCountIncludingThis == 1) { // Math.abs()
-            setIntrinsicResult(usesResult, resultOperand, constantNaN());
+            set(resultOperand, constantNaN());
             return true;
         }
 
@@ -1492,26 +1459,26 @@ bool ByteCodeParser::handleIntrinsic(bool usesResult, int resultOperand, Intrins
         Node* node = addToGraph(ArithAbs, get(registerOffset + argumentToOperand(1)));
         if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Overflow))
             node->mergeFlags(NodeMayOverflow);
-        setIntrinsicResult(usesResult, resultOperand, node);
+        set(resultOperand, node);
         return true;
     }
 
     case MinIntrinsic:
-        return handleMinMax(usesResult, resultOperand, ArithMin, registerOffset, argumentCountIncludingThis);
+        return handleMinMax(resultOperand, ArithMin, registerOffset, argumentCountIncludingThis);
         
     case MaxIntrinsic:
-        return handleMinMax(usesResult, resultOperand, ArithMax, registerOffset, argumentCountIncludingThis);
+        return handleMinMax(resultOperand, ArithMax, registerOffset, argumentCountIncludingThis);
         
     case SqrtIntrinsic: {
         if (argumentCountIncludingThis == 1) { // Math.sqrt()
-            setIntrinsicResult(usesResult, resultOperand, constantNaN());
+            set(resultOperand, constantNaN());
             return true;
         }
         
         if (!MacroAssembler::supportsFloatingPointSqrt())
             return false;
-        
-        setIntrinsicResult(usesResult, resultOperand, addToGraph(ArithSqrt, get(registerOffset + argumentToOperand(1))));
+
+        set(resultOperand, addToGraph(ArithSqrt, get(registerOffset + argumentToOperand(1))));
         return true;
     }
         
@@ -1519,7 +1486,7 @@ bool ByteCodeParser::handleIntrinsic(bool usesResult, int resultOperand, Intrins
         if (argumentCountIncludingThis != 2)
             return false;
         
-        ArrayMode arrayMode = getArrayMode(m_currentInstruction[5].u.arrayProfile);
+        ArrayMode arrayMode = getArrayMode(m_currentInstruction[6].u.arrayProfile);
         if (!arrayMode.isJSArray())
             return false;
         switch (arrayMode.type()) {
@@ -1529,8 +1496,7 @@ bool ByteCodeParser::handleIntrinsic(bool usesResult, int resultOperand, Intrins
         case Array::Contiguous:
         case Array::ArrayStorage: {
             Node* arrayPush = addToGraph(ArrayPush, OpInfo(arrayMode.asWord()), OpInfo(prediction), get(registerOffset + argumentToOperand(0)), get(registerOffset + argumentToOperand(1)));
-            if (usesResult)
-                set(resultOperand, arrayPush);
+            set(resultOperand, arrayPush);
             
             return true;
         }
@@ -1544,7 +1510,7 @@ bool ByteCodeParser::handleIntrinsic(bool usesResult, int resultOperand, Intrins
         if (argumentCountIncludingThis != 1)
             return false;
         
-        ArrayMode arrayMode = getArrayMode(m_currentInstruction[5].u.arrayProfile);
+        ArrayMode arrayMode = getArrayMode(m_currentInstruction[6].u.arrayProfile);
         if (!arrayMode.isJSArray())
             return false;
         switch (arrayMode.type()) {
@@ -1553,8 +1519,7 @@ bool ByteCodeParser::handleIntrinsic(bool usesResult, int resultOperand, Intrins
         case Array::Contiguous:
         case Array::ArrayStorage: {
             Node* arrayPop = addToGraph(ArrayPop, OpInfo(arrayMode.asWord()), OpInfo(prediction), get(registerOffset + argumentToOperand(0)));
-            if (usesResult)
-                set(resultOperand, arrayPop);
+            set(resultOperand, arrayPop);
             return true;
         }
             
@@ -1571,8 +1536,7 @@ bool ByteCodeParser::handleIntrinsic(bool usesResult, int resultOperand, Intrins
         int indexOperand = registerOffset + argumentToOperand(1);
         Node* charCode = addToGraph(StringCharCodeAt, OpInfo(ArrayMode(Array::String).asWord()), get(thisOperand), getToInt32(indexOperand));
 
-        if (usesResult)
-            set(resultOperand, charCode);
+        set(resultOperand, charCode);
         return true;
     }
 
@@ -1584,8 +1548,7 @@ bool ByteCodeParser::handleIntrinsic(bool usesResult, int resultOperand, Intrins
         int indexOperand = registerOffset + argumentToOperand(1);
         Node* charCode = addToGraph(StringCharAt, OpInfo(ArrayMode(Array::String).asWord()), get(thisOperand), getToInt32(indexOperand));
 
-        if (usesResult)
-            set(resultOperand, charCode);
+        set(resultOperand, charCode);
         return true;
     }
     case FromCharCodeIntrinsic: {
@@ -1595,8 +1558,7 @@ bool ByteCodeParser::handleIntrinsic(bool usesResult, int resultOperand, Intrins
         int indexOperand = registerOffset + argumentToOperand(1);
         Node* charCode = addToGraph(StringFromCharCode, getToInt32(indexOperand));
 
-        if (usesResult)
-            set(resultOperand, charCode);
+        set(resultOperand, charCode);
 
         return true;
     }
@@ -1606,8 +1568,7 @@ bool ByteCodeParser::handleIntrinsic(bool usesResult, int resultOperand, Intrins
             return false;
         
         Node* regExpExec = addToGraph(RegExpExec, OpInfo(0), OpInfo(prediction), get(registerOffset + argumentToOperand(0)), get(registerOffset + argumentToOperand(1)));
-        if (usesResult)
-            set(resultOperand, regExpExec);
+        set(resultOperand, regExpExec);
         
         return true;
     }
@@ -1617,8 +1578,7 @@ bool ByteCodeParser::handleIntrinsic(bool usesResult, int resultOperand, Intrins
             return false;
         
         Node* regExpExec = addToGraph(RegExpTest, OpInfo(0), OpInfo(prediction), get(registerOffset + argumentToOperand(0)), get(registerOffset + argumentToOperand(1)));
-        if (usesResult)
-            set(resultOperand, regExpExec);
+        set(resultOperand, regExpExec);
         
         return true;
     }
@@ -1630,7 +1590,7 @@ bool ByteCodeParser::handleIntrinsic(bool usesResult, int resultOperand, Intrins
         int rightOperand = registerOffset + argumentToOperand(2);
         Node* left = getToInt32(leftOperand);
         Node* right = getToInt32(rightOperand);
-        setIntrinsicResult(usesResult, resultOperand, addToGraph(ArithIMul, left, right));
+        set(resultOperand, addToGraph(ArithIMul, left, right));
         return true;
     }
         
@@ -1640,7 +1600,7 @@ bool ByteCodeParser::handleIntrinsic(bool usesResult, int resultOperand, Intrins
 }
 
 bool ByteCodeParser::handleConstantInternalFunction(
-    bool usesResult, int resultOperand, InternalFunction* function, int registerOffset,
+    int resultOperand, InternalFunction* function, int registerOffset,
     int argumentCountIncludingThis, SpeculatedType prediction, CodeSpecializationKind kind)
 {
     // If we ever find that we have a lot of internal functions that we specialize for,
@@ -1654,16 +1614,14 @@ bool ByteCodeParser::handleConstantInternalFunction(
     
     if (function->classInfo() == &ArrayConstructor::s_info) {
         if (argumentCountIncludingThis == 2) {
-            setIntrinsicResult(
-                usesResult, resultOperand,
+            set(resultOperand,
                 addToGraph(NewArrayWithSize, OpInfo(ArrayWithUndecided), get(registerOffset + argumentToOperand(1))));
             return true;
         }
         
         for (int i = 1; i < argumentCountIncludingThis; ++i)
             addVarArgChild(get(registerOffset + argumentToOperand(i)));
-        setIntrinsicResult(
-            usesResult, resultOperand,
+        set(resultOperand,
             addToGraph(Node::VarArg, NewArray, OpInfo(ArrayWithUndecided), OpInfo(0)));
         return true;
     } else if (function->classInfo() == &StringConstructor::s_info) {
@@ -1677,7 +1635,7 @@ bool ByteCodeParser::handleConstantInternalFunction(
         if (kind == CodeForConstruct)
             result = addToGraph(NewStringObject, OpInfo(function->globalObject()->stringObjectStructure()), result);
         
-        setIntrinsicResult(usesResult, resultOperand, result);
+        set(resultOperand, result);
         return true;
     }
     
@@ -1991,8 +1949,6 @@ bool ByteCodeParser::parseBlock(unsigned limit)
     }
 
     while (true) {
-        m_currentProfilingIndex = m_currentIndex;
-
         // Don't extend over jump destinations.
         if (m_currentIndex == limit) {
             // Ordinarily we want to plant a jump. But refuse to do this if the block is
@@ -2017,7 +1973,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         m_currentInstruction = currentInstruction; // Some methods want to use this, and we'd rather not thread it through calls.
         OpcodeID opcodeID = interpreter->getOpcodeID(currentInstruction->u.opcode);
         
-        if (m_graph.compilation() && opcodeID != op_call_put_result) {
+        if (m_graph.compilation()) {
             addToGraph(CountExecution, OpInfo(m_graph.compilation()->executionCounterFor(
                 Profiler::OriginStack(*m_vm->m_perBytecodeProfiler, m_codeBlock, currentCodeOrigin()))));
         }
@@ -2037,10 +1993,10 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             if (op1->op() != ToThis) {
                 ConcurrentJITLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
                 ValueProfile* profile =
-                    m_inlineStackTop->m_profiledBlock->valueProfileForBytecodeOffset(m_currentProfilingIndex);
+                    m_inlineStackTop->m_profiledBlock->valueProfileForBytecodeOffset(m_currentIndex);
                 profile->computeUpdatedPrediction(locker);
 #if DFG_ENABLE(DEBUG_VERBOSE)
-                dataLogF("[bc#%u]: profile %p: ", m_currentProfilingIndex, profile);
+                dataLogF("[bc#%u]: profile %p: ", m_currentIndex, profile);
                 profile->dump(WTF::dataFile());
                 dataLogF("\n");
 #endif
@@ -3014,8 +2970,8 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         case op_ret:
             flushArgumentsAndCapturedVariables();
             if (inlineCallFrame()) {
-                if (m_inlineStackTop->m_returnValue != InvalidVirtualRegister)
-                    setDirect(m_inlineStackTop->m_returnValue, get(currentInstruction[1].u.operand));
+                ASSERT(m_inlineStackTop->m_returnValue != InvalidVirtualRegister);
+                setDirect(m_inlineStackTop->m_returnValue, get(currentInstruction[1].u.operand));
                 m_inlineStackTop->m_didReturn = true;
                 if (m_inlineStackTop->m_unlinkedBlocks.isEmpty()) {
                     // If we're returning from the first block, then we're done parsing.
@@ -3056,29 +3012,23 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             LAST_OPCODE(op_throw_static_error);
             
         case op_call:
-            handleCall(interpreter, currentInstruction, Call, CodeForCall);
+            handleCall(currentInstruction, Call, CodeForCall);
             NEXT_OPCODE(op_call);
             
         case op_construct:
-            handleCall(interpreter, currentInstruction, Construct, CodeForConstruct);
+            handleCall(currentInstruction, Construct, CodeForConstruct);
             NEXT_OPCODE(op_construct);
             
         case op_call_varargs: {
             ASSERT(inlineCallFrame());
-            ASSERT(currentInstruction[3].u.operand == m_inlineStackTop->m_codeBlock->argumentsRegister());
+            ASSERT(currentInstruction[4].u.operand == m_inlineStackTop->m_codeBlock->argumentsRegister());
             ASSERT(!m_inlineStackTop->m_codeBlock->symbolTable()->slowArguments());
             // It would be cool to funnel this into handleCall() so that it can handle
             // inlining. But currently that won't be profitable anyway, since none of the
             // uses of call_varargs will be inlineable. So we set this up manually and
             // without inline/intrinsic detection.
             
-            Instruction* putInstruction = currentInstruction + OPCODE_LENGTH(op_call_varargs);
-            
-            SpeculatedType prediction = SpecNone;
-            if (interpreter->getOpcodeID(putInstruction->u.opcode) == op_call_put_result) {
-                m_currentProfilingIndex = m_currentIndex + OPCODE_LENGTH(op_call_varargs);
-                prediction = getPrediction();
-            }
+            SpeculatedType prediction = getPrediction();
             
             addToGraph(CheckArgumentsNotCreated);
             
@@ -3086,20 +3036,16 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             if (JSStack::CallFrameHeaderSize + argCount > m_parameterSlots)
                 m_parameterSlots = JSStack::CallFrameHeaderSize + argCount;
             
-            addVarArgChild(get(currentInstruction[1].u.operand)); // callee
-            addVarArgChild(get(currentInstruction[2].u.operand)); // this
+            addVarArgChild(get(currentInstruction[2].u.operand)); // callee
+            addVarArgChild(get(currentInstruction[3].u.operand)); // this
             for (unsigned argument = 1; argument < argCount; ++argument)
                 addVarArgChild(get(argumentToOperand(argument)));
             
-            Node* call = addToGraph(Node::VarArg, Call, OpInfo(0), OpInfo(prediction));
-            if (interpreter->getOpcodeID(putInstruction->u.opcode) == op_call_put_result)
-                set(putInstruction[1].u.operand, call);
+            set(currentInstruction[1].u.operand,
+                addToGraph(Node::VarArg, Call, OpInfo(0), OpInfo(prediction)));
             
             NEXT_OPCODE(op_call_varargs);
         }
-            
-        case op_call_put_result:
-            NEXT_OPCODE(op_call_put_result);
             
         case op_jneq_ptr:
             // Statically speculate for now. It makes sense to let speculate-only jneq_ptr

@@ -1459,16 +1459,16 @@ inline SlowPathReturnType genericCall(ExecState* exec, Instruction* pc, CodeSpec
     // - If possible, link the call's inline cache.
     // - Return a tuple of machine code address to call and the new call frame.
     
-    JSValue calleeAsValue = LLINT_OP_C(1).jsValue();
+    JSValue calleeAsValue = LLINT_OP_C(2).jsValue();
     
-    ExecState* execCallee = exec + pc[3].u.operand;
+    ExecState* execCallee = exec + pc[4].u.operand;
     
-    execCallee->setArgumentCountIncludingThis(pc[2].u.operand);
+    execCallee->setArgumentCountIncludingThis(pc[3].u.operand);
     execCallee->uncheckedR(JSStack::Callee) = calleeAsValue;
     execCallee->setCallerFrame(exec);
     
-    ASSERT(pc[4].u.callLinkInfo);
-    return setUpCall(execCallee, pc, kind, calleeAsValue, pc[4].u.callLinkInfo);
+    ASSERT(pc[5].u.callLinkInfo);
+    return setUpCall(execCallee, pc, kind, calleeAsValue, pc[5].u.callLinkInfo);
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_call)
@@ -1491,11 +1491,11 @@ LLINT_SLOW_PATH_DECL(slow_path_call_varargs)
     // - Figure out what to call and compile it if necessary.
     // - Return a tuple of machine code address to call and the new call frame.
     
-    JSValue calleeAsValue = LLINT_OP_C(1).jsValue();
+    JSValue calleeAsValue = LLINT_OP_C(2).jsValue();
     
     ExecState* execCallee = loadVarargs(
         exec, &vm.interpreter->stack(),
-        LLINT_OP_C(2).jsValue(), LLINT_OP_C(3).jsValue(), pc[4].u.operand);
+        LLINT_OP_C(3).jsValue(), LLINT_OP_C(4).jsValue(), pc[5].u.operand);
     LLINT_CALL_CHECK_EXCEPTION(exec, pc);
     
     execCallee->uncheckedR(JSStack::Callee) = calleeAsValue;
@@ -1508,11 +1508,11 @@ LLINT_SLOW_PATH_DECL(slow_path_call_varargs)
 LLINT_SLOW_PATH_DECL(slow_path_call_eval)
 {
     LLINT_BEGIN_NO_SET_PC();
-    JSValue calleeAsValue = LLINT_OP(1).jsValue();
+    JSValue calleeAsValue = LLINT_OP(2).jsValue();
     
-    ExecState* execCallee = exec + pc[3].u.operand;
+    ExecState* execCallee = exec + pc[4].u.operand;
     
-    execCallee->setArgumentCountIncludingThis(pc[2].u.operand);
+    execCallee->setArgumentCountIncludingThis(pc[3].u.operand);
     execCallee->setCallerFrame(exec);
     execCallee->uncheckedR(JSStack::Callee) = calleeAsValue;
     execCallee->setScope(exec->scope());

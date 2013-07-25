@@ -1,3 +1,115 @@
+2013-05-31  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: get rid of op_call_put_result
+        https://bugs.webkit.org/show_bug.cgi?id=117047
+
+        Reviewed by Gavin Barraclough.
+        
+        Work in progress. This still makes like 20 tests crash.
+        
+        op_call_put_result is an oddball. Its semantics are that it takes the return
+        value of a call instruction, which is set aside in regT0/regT1, and places them
+        into some stack slot. This is weird since there is an implicit contract with the
+        preceding bytecode instruction, and it's even weirder since it means that it
+        doesn't make sense to jump to it; for example OSR exit from the preceding call
+        instruction must make sure to jump over the op_call_put_result.
+        
+        So this patch gets rid of op_call_put_result:
+        
+        - In bytecode, all calls return a value and we always allocate a temporary for
+          that value even if it isn't used.
+        
+        - The LLInt does the return value saving as part of dispatchAfterCall().
+        
+        - The JIT and DFG do the return value saving as part of normal code generation.
+          The DFG already did the right thing.
+        
+        - DFG->JIT OSR exit in the case of inlining will make the return PC's point at
+          the CallLinkInfo::callReturnLocation, rather than the machine PC associated
+          with the op_call_put_result instruction.
+        
+        - Tons of code gets removed. The DFG had to track whether or not a call had a
+          return value in a bunch of places. It had to track the fact that we would
+          exit to after the op_call_put_result. It was a mess. That mess is now gone.
+
+        * bytecode/CallLinkStatus.cpp:
+        (JSC::CallLinkStatus::computeFromLLInt):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::printCallOp):
+        (JSC::CodeBlock::dumpArrayProfiling):
+        (JSC::CodeBlock::dumpBytecode):
+        (JSC::CodeBlock::CodeBlock):
+        * bytecode/CodeBlock.h:
+        * bytecode/Opcode.h:
+        (JSC):
+        (JSC::padOpcodeName):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitCall):
+        (JSC::BytecodeGenerator::emitCallVarargs):
+        (JSC::BytecodeGenerator::emitConstruct):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::NewExprNode::emitBytecode):
+        (JSC::FunctionCallValueNode::emitBytecode):
+        (JSC::FunctionCallResolveNode::emitBytecode):
+        (JSC::FunctionCallBracketNode::emitBytecode):
+        (JSC::FunctionCallDotNode::emitBytecode):
+        (JSC::CallFunctionCallDotNode::emitBytecode):
+        (JSC::ApplyFunctionCallDotNode::emitBytecode):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::ByteCodeParser):
+        (ByteCodeParser):
+        (JSC::DFG::ByteCodeParser::currentCodeOrigin):
+        (JSC::DFG::ByteCodeParser::addCall):
+        (JSC::DFG::ByteCodeParser::getPredictionWithoutOSRExit):
+        (JSC::DFG::ByteCodeParser::getPrediction):
+        (JSC::DFG::ByteCodeParser::handleCall):
+        (JSC::DFG::ByteCodeParser::handleInlining):
+        (JSC::DFG::ByteCodeParser::handleMinMax):
+        (JSC::DFG::ByteCodeParser::handleIntrinsic):
+        (JSC::DFG::ByteCodeParser::handleConstantInternalFunction):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGOSRExitCompiler.cpp:
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+        (JSC::DFG::reifyInlinedCallFrames):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JIT.h:
+        (JIT):
+        * jit/JITCall.cpp:
+        (JSC::JIT::emitPutCallResult):
+        (JSC::JIT::compileLoadVarargs):
+        (JSC::JIT::compileCallEval):
+        (JSC::JIT::compileCallEvalSlowCase):
+        (JSC::JIT::compileOpCall):
+        (JSC::JIT::compileOpCallSlowCase):
+        (JSC::JIT::emit_op_call):
+        (JSC):
+        (JSC::JIT::emit_op_call_eval):
+        (JSC::JIT::emit_op_call_varargs):
+        (JSC::JIT::emit_op_construct):
+        (JSC::JIT::emitSlow_op_call):
+        (JSC::JIT::emitSlow_op_call_eval):
+        (JSC::JIT::emitSlow_op_call_varargs):
+        (JSC::JIT::emitSlow_op_construct):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::emitPutCallResult):
+        (JSC::JIT::compileLoadVarargs):
+        (JSC::JIT::compileCallEval):
+        (JSC::JIT::compileCallEvalSlowCase):
+        (JSC::JIT::compileOpCall):
+        (JSC::JIT::compileOpCallSlowCase):
+        * jit/JITOpcodes.cpp:
+        (JSC):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::genericCall):
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LowLevelInterpreter.cpp:
+        (JSC::CLoop::execute):
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+
 2013-05-30  Filip Pizlo  <fpizlo@apple.com>
 
         fourthTier: LLInt shouldn't store an offset call PC during op_call-like calls

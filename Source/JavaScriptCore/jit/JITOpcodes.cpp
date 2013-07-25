@@ -241,26 +241,6 @@ void JIT::emit_op_is_string(Instruction* currentInstruction)
     emitPutVirtualRegister(dst);
 }
 
-void JIT::emit_op_call(Instruction* currentInstruction)
-{
-    compileOpCall(op_call, currentInstruction, m_callLinkInfoIndex++);
-}
-
-void JIT::emit_op_call_eval(Instruction* currentInstruction)
-{
-    compileOpCall(op_call_eval, currentInstruction, m_callLinkInfoIndex);
-}
-
-void JIT::emit_op_call_varargs(Instruction* currentInstruction)
-{
-    compileOpCall(op_call_varargs, currentInstruction, m_callLinkInfoIndex++);
-}
-
-void JIT::emit_op_construct(Instruction* currentInstruction)
-{
-    compileOpCall(op_construct, currentInstruction, m_callLinkInfoIndex++);
-}
-
 void JIT::emit_op_tear_off_activation(Instruction* currentInstruction)
 {
     int activation = currentInstruction[1].u.operand;
@@ -1089,26 +1069,6 @@ void JIT::emitSlow_op_instanceof(Instruction* currentInstruction, Vector<SlowCas
     stubCall.addArgument(value, regT2);
     stubCall.addArgument(proto, regT2);
     stubCall.call(dst);
-}
-
-void JIT::emitSlow_op_call(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
-{
-    compileOpCallSlowCase(op_call, currentInstruction, iter, m_callLinkInfoIndex++);
-}
-
-void JIT::emitSlow_op_call_eval(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
-{
-    compileOpCallSlowCase(op_call_eval, currentInstruction, iter, m_callLinkInfoIndex);
-}
- 
-void JIT::emitSlow_op_call_varargs(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
-{
-    compileOpCallSlowCase(op_call_varargs, currentInstruction, iter, m_callLinkInfoIndex++);
-}
-
-void JIT::emitSlow_op_construct(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
-{
-    compileOpCallSlowCase(op_construct, currentInstruction, iter, m_callLinkInfoIndex++);
 }
 
 void JIT::emitSlow_op_to_number(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)

@@ -55,7 +55,11 @@ macro dispatchAfterCall()
     loadi ArgumentCount + TagOffset[cfr], PC
     loadp CodeBlock[cfr], PB
     loadp CodeBlock::m_instructions[PB], PB
-    dispatch(6)
+    loadisFromInstruction(1, t1)
+    loadpFromInstruction(7, t2)
+    storeq t0, [cfr, t1, 8]
+    valueProfile(t0, t2)
+    dispatch(8)
 end
 
 macro cCall2(function, arg1, arg2)
@@ -1414,29 +1418,29 @@ _llint_op_new_func:
 
 macro arrayProfileForCall()
     if VALUE_PROFILER
-        loadisFromInstruction(3, t3)
+        loadisFromInstruction(4, t3)
         loadq ThisArgumentOffset[cfr, t3, 8], t0
         btqnz t0, tagMask, .done
         loadp JSCell::m_structure[t0], t0
-        loadpFromInstruction(5, t1)
+        loadpFromInstruction(6, t1)
         storep t0, ArrayProfile::m_lastSeenStructure[t1]
     .done:
     end
 end
 
 macro doCall(slowPath)
-    loadisFromInstruction(1, t0)
-    loadpFromInstruction(4, t1)
+    loadisFromInstruction(2, t0)
+    loadpFromInstruction(5, t1)
     loadp LLIntCallLinkInfo::callee[t1], t2
     loadConstantOrVariable(t0, t3)
     bqneq t3, t2, .opCallSlow
-    loadisFromInstruction(3, t3)
+    loadisFromInstruction(4, t3)
     lshifti 3, t3
     addp cfr, t3
     loadp JSFunction::m_scope[t2], t0
     storeq t2, Callee[t3]
     storeq t0, ScopeChain[t3]
-    loadisFromInstruction(2, t2)
+    loadisFromInstruction(3, t2)
     storei PC, ArgumentCount + TagOffset[cfr]
     storeq cfr, CallerFrame[t3]
     storei t2, ArgumentCount + PayloadOffset[t3]
@@ -1473,15 +1477,6 @@ _llint_op_ret:
     loadisFromInstruction(1, t2)
     loadConstantOrVariable(t2, t0)
     doReturn()
-
-
-_llint_op_call_put_result:
-    loadisFromInstruction(1, t2)
-    loadpFromInstruction(2, t3)
-    storeq t0, [cfr, t2, 8]
-    valueProfile(t0, t3)
-    traceExecution()
-    dispatch(3)
 
 
 _llint_op_ret_object_or_this:

@@ -1845,7 +1845,10 @@ RegisterID* BytecodeGenerator::emitCall(OpcodeID opcodeID, RegisterID* dst, Regi
     
     // Emit call.
     UnlinkedArrayProfile arrayProfile = newArrayProfile();
-    emitOpcode(opcodeID);
+    UnlinkedValueProfile profile = emitProfiledOpcode(opcodeID);
+    ASSERT(dst);
+    ASSERT(dst != ignoredResult());
+    instructions().append(dst->index()); // result
     instructions().append(func->index()); // func
     instructions().append(callArguments.argumentCountIncludingThis()); // argCount
     instructions().append(callArguments.registerOffset()); // registerOffset
@@ -1855,11 +1858,7 @@ RegisterID* BytecodeGenerator::emitCall(OpcodeID opcodeID, RegisterID* dst, Regi
     instructions().append(0);
 #endif
     instructions().append(arrayProfile);
-    if (dst != ignoredResult()) {
-        UnlinkedValueProfile profile = emitProfiledOpcode(op_call_put_result);
-        instructions().append(kill(dst));
-        instructions().append(profile);
-    }
+    instructions().append(profile);
     
     if (expectedFunction != NoExpectedFunction)
         emitLabel(done.get());
@@ -1883,17 +1882,15 @@ RegisterID* BytecodeGenerator::emitCallVarargs(RegisterID* dst, RegisterID* func
     emitExpressionInfo(divot, startOffset, endOffset, line, lineStart);
 
     // Emit call.
-    emitOpcode(op_call_varargs);
+    UnlinkedValueProfile profile = emitProfiledOpcode(op_call_varargs);
+    ASSERT(dst != ignoredResult());
+    instructions().append(dst->index());
     instructions().append(func->index());
     instructions().append(thisRegister->index());
     instructions().append(arguments->index());
     instructions().append(firstFreeRegister->index());
     instructions().append(0); // Pad to make it as big as an op_call.
-    if (dst != ignoredResult()) {
-        UnlinkedValueProfile profile = emitProfiledOpcode(op_call_put_result);
-        instructions().append(kill(dst));
-        instructions().append(profile);
-    }
+    instructions().append(profile);
     if (m_shouldEmitProfileHooks) {
         emitOpcode(op_profile_did_call);
         instructions().append(profileHookRegister->index());
@@ -1962,7 +1959,9 @@ RegisterID* BytecodeGenerator::emitConstruct(RegisterID* dst, RegisterID* func, 
     RefPtr<Label> done = newLabel();
     expectedFunction = emitExpectedFunctionSnippet(dst, func, expectedFunction, callArguments, done.get());
 
-    emitOpcode(op_construct);
+    UnlinkedValueProfile profile = emitProfiledOpcode(op_construct);
+    ASSERT(dst != ignoredResult());
+    instructions().append(dst->index());
     instructions().append(func->index()); // func
     instructions().append(callArguments.argumentCountIncludingThis()); // argCount
     instructions().append(callArguments.registerOffset()); // registerOffset
@@ -1972,11 +1971,7 @@ RegisterID* BytecodeGenerator::emitConstruct(RegisterID* dst, RegisterID* func, 
     instructions().append(0);
 #endif
     instructions().append(0);
-    if (dst != ignoredResult()) {
-        UnlinkedValueProfile profile = emitProfiledOpcode(op_call_put_result);
-        instructions().append(kill(dst));
-        instructions().append(profile);
-    }
+    instructions().append(profile);
 
     if (expectedFunction != NoExpectedFunction)
         emitLabel(done.get());

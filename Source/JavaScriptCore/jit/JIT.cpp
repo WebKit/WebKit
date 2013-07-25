@@ -199,7 +199,7 @@ void JIT::privateCompileMainPass()
         
         OpcodeID opcodeID = m_interpreter->getOpcodeID(currentInstruction->u.opcode);
 
-        if (m_compilation && opcodeID != op_call_put_result) {
+        if (m_compilation) {
             add64(
                 TrustedImm32(1),
                 AbsoluteAddress(m_compilation->executionCounterFor(Profiler::OriginStack(Profiler::Origin(
@@ -325,7 +325,6 @@ void JIT::privateCompileMainPass()
         DEFINE_OP(op_resolve_with_base)
         DEFINE_OP(op_resolve_with_this)
         DEFINE_OP(op_ret)
-        DEFINE_OP(op_call_put_result)
         DEFINE_OP(op_ret_object_or_this)
         DEFINE_OP(op_rshift)
         DEFINE_OP(op_urshift)

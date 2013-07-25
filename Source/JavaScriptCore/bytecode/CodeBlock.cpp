@@ -417,12 +417,13 @@ void CodeBlock::printGetByIdCacheStatus(PrintStream& out, ExecState* exec, int l
 #endif
 }
 
-void CodeBlock::printCallOp(PrintStream& out, ExecState*, int location, const Instruction*& it, const char* op, CacheDumpMode cacheDumpMode)
+void CodeBlock::printCallOp(PrintStream& out, ExecState*, int location, const Instruction*& it, const char* op, CacheDumpMode cacheDumpMode, bool& hasPrintedProfiling)
 {
+    int dst = (++it)->u.operand;
     int func = (++it)->u.operand;
     int argCount = (++it)->u.operand;
     int registerOffset = (++it)->u.operand;
-    out.printf("[%4d] %s\t %s, %d, %d", location, op, registerName(func).data(), argCount, registerOffset);
+    out.printf("[%4d] %s %s, %s, %d, %d", location, op, registerName(dst).data(), registerName(func).data(), argCount, registerOffset);
     if (cacheDumpMode == DumpCaches) {
 #if ENABLE(LLINT)
         LLIntCallLinkInfo* callLinkInfo = it[1].u.callLinkInfo;
@@ -442,7 +443,9 @@ void CodeBlock::printCallOp(PrintStream& out, ExecState*, int location, const In
 #endif
         out.print(" status(", CallLinkStatus::computeFor(this, location), ")");
     }
-    it += 2;
+    ++it;
+    dumpArrayProfiling(out, it, hasPrintedProfiling);
+    dumpValueProfiling(out, it, hasPrintedProfiling);
 }
 
 void CodeBlock::printPutByIdOp(PrintStream& out, ExecState*, int location, const Instruction*& it, const char* op)
@@ -662,6 +665,8 @@ void CodeBlock::dumpArrayProfiling(PrintStream& out, const Instruction*& it, boo
     
     ++it;
 #if ENABLE(VALUE_PROFILER)
+    if (!it->u.arrayProfile)
+        return;
     CString description = it->u.arrayProfile->briefDescription(locker, this);
     if (!description.length())
         return;
@@ -1275,20 +1280,22 @@ void CodeBlock::dumpBytecode(PrintStream& out, ExecState* exec, const Instructio
             break;
         }
         case op_call: {
-            printCallOp(out, exec, location, it, "call", DumpCaches);
+            printCallOp(out, exec, location, it, "call", DumpCaches, hasPrintedProfiling);
             break;
         }
         case op_call_eval: {
-            printCallOp(out, exec, location, it, "call_eval", DontDumpCaches);
+            printCallOp(out, exec, location, it, "call_eval", DontDumpCaches, hasPrintedProfiling);
             break;
         }
         case op_call_varargs: {
+            int result = (++it)->u.operand;
             int callee = (++it)->u.operand;
             int thisValue = (++it)->u.operand;
             int arguments = (++it)->u.operand;
             int firstFreeRegister = (++it)->u.operand;
             ++it;
-            out.printf("[%4d] call_varargs\t %s, %s, %s, %d", location, registerName(callee).data(), registerName(thisValue).data(), registerName(arguments).data(), firstFreeRegister);
+            out.printf("[%4d] call_varargs\t %s, %s, %s, %s, %d", location, registerName(result).data(), registerName(callee).data(), registerName(thisValue).data(), registerName(arguments).data(), firstFreeRegister);
+            dumpValueProfiling(out, it, hasPrintedProfiling);
             break;
         }
         case op_tear_off_activation: {
@@ -1307,12 +1314,6 @@ void CodeBlock::dumpBytecode(PrintStream& out, ExecState* exec, const Instructio
             out.printf("[%4d] ret\t\t %s", location, registerName(r0).data());
             break;
         }
-        case op_call_put_result: {
-            int r0 = (++it)->u.operand;
-            out.printf("[%4d] call_put_result\t\t %s", location, registerName(r0).data());
-            dumpValueProfiling(out, it, hasPrintedProfiling);
-            break;
-        }
         case op_ret_object_or_this: {
             int r0 = (++it)->u.operand;
             int r1 = (++it)->u.operand;
@@ -1320,7 +1321,7 @@ void CodeBlock::dumpBytecode(PrintStream& out, ExecState* exec, const Instructio
             break;
         }
         case op_construct: {
-            printCallOp(out, exec, location, it, "construct", DumpCaches);
+            printCallOp(out, exec, location, it, "construct", DumpCaches, hasPrintedProfiling);
             break;
         }
         case op_strcat: {
@@ -1783,7 +1784,7 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
         }
         case op_to_this:
         case op_get_by_id:
-        case op_call_put_result:
+        case op_call_varargs:
         case op_get_callee: {
             ValueProfile* profile = &m_valueProfiles[pc[i + opLength - 1].u.operand];
             ASSERT(profile->m_bytecodeOffset == -1);
@@ -1883,20 +1884,31 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
         case op_call:
         case op_call_eval: {
 #if ENABLE(DFG_JIT)
-            int arrayProfileIndex = pc[i + opLength - 1].u.operand;
+            ValueProfile* profile = &m_valueProfiles[pc[i + opLength - 1].u.operand];
+            ASSERT(profile->m_bytecodeOffset == -1);
+            profile->m_bytecodeOffset = i;
+            instructions[i + opLength - 1] = profile;
+            int arrayProfileIndex = pc[i + opLength - 2].u.operand;
             m_arrayProfiles[arrayProfileIndex] = ArrayProfile(i);
-            instructions[i + opLength - 1] = &m_arrayProfiles[arrayProfileIndex];
+            instructions[i + opLength - 2] = &m_arrayProfiles[arrayProfileIndex];
 #endif
 #if ENABLE(LLINT)
-            instructions[i + 4] = &m_llintCallLinkInfos[pc[i + 4].u.operand];
+            instructions[i + 5] = &m_llintCallLinkInfos[pc[i + 5].u.operand];
 #endif
             break;
         }
-        case op_construct:
+        case op_construct: {
 #if ENABLE(LLINT)
-            instructions[i + 4] = &m_llintCallLinkInfos[pc[i + 4].u.operand];
+            instructions[i + 5] = &m_llintCallLinkInfos[pc[i + 5].u.operand];
+#endif
+#if ENABLE(DFG_JIT)
+            ValueProfile* profile = &m_valueProfiles[pc[i + opLength - 1].u.operand];
+            ASSERT(profile->m_bytecodeOffset == -1);
+            profile->m_bytecodeOffset = i;
+            instructions[i + opLength - 1] = profile;
 #endif
             break;
+        }
         case op_get_by_id_out_of_line:
         case op_get_by_id_self:
         case op_get_by_id_proto:

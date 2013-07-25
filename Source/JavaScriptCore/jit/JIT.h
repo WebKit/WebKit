@@ -431,8 +431,9 @@ namespace JSC {
         void compileOpCall(OpcodeID, Instruction*, unsigned callLinkInfoIndex);
         void compileOpCallSlowCase(OpcodeID, Instruction*, Vector<SlowCaseEntry>::iterator&, unsigned callLinkInfoIndex);
         void compileLoadVarargs(Instruction*);
-        void compileCallEval();
-        void compileCallEvalSlowCase(Vector<SlowCaseEntry>::iterator&);
+        void compileCallEval(Instruction*);
+        void compileCallEvalSlowCase(Instruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitPutCallResult(Instruction*);
 
         enum CompileOpStrictEqType { OpStrictEq, OpNStrictEq };
         void compileOpStrictEq(Instruction* instruction, CompileOpStrictEqType type);
@@ -643,7 +644,6 @@ namespace JSC {
         void emit_op_call(Instruction*);
         void emit_op_call_eval(Instruction*);
         void emit_op_call_varargs(Instruction*);
-        void emit_op_call_put_result(Instruction*);
         void emit_op_catch(Instruction*);
         void emit_op_construct(Instruction*);
         void emit_op_get_callee(Instruction*);

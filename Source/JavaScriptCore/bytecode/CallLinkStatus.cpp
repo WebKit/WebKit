@@ -87,7 +87,7 @@ CallLinkStatus CallLinkStatus::computeFromLLInt(CodeBlock* profiledBlock, unsign
     UNUSED_PARAM(bytecodeIndex);
 #if ENABLE(LLINT)
     Instruction* instruction = profiledBlock->instructions().begin() + bytecodeIndex;
-    LLIntCallLinkInfo* callLinkInfo = instruction[4].u.callLinkInfo;
+    LLIntCallLinkInfo* callLinkInfo = instruction[5].u.callLinkInfo;
     
     return CallLinkStatus(callLinkInfo->lastSeenCallee.get());
 #else

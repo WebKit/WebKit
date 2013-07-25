@@ -77,7 +77,6 @@ void handleExitCounts(CCallHelpers& jit, const OSRExitBase& exit)
 
 void reifyInlinedCallFrames(CCallHelpers& jit, const OSRExitBase& exit)
 {
-#if USE(JSVALUE64)
     ASSERT(jit.baselineCodeBlock()->jitType() == JITCode::BaselineJIT);
     jit.storePtr(AssemblyHelpers::TrustedImmPtr(jit.baselineCodeBlock()), AssemblyHelpers::addressFor((VirtualRegister)JSStack::CodeBlock));
     
@@ -85,15 +84,12 @@ void reifyInlinedCallFrames(CCallHelpers& jit, const OSRExitBase& exit)
         InlineCallFrame* inlineCallFrame = codeOrigin.inlineCallFrame;
         CodeBlock* baselineCodeBlock = jit.baselineCodeBlockFor(codeOrigin);
         CodeBlock* baselineCodeBlockForCaller = jit.baselineCodeBlockFor(inlineCallFrame->caller);
-        Vector<BytecodeAndMachineOffset>& decodedCodeMap = jit.decodedCodeMapFor(baselineCodeBlockForCaller);
-        unsigned returnBytecodeIndex = inlineCallFrame->caller.bytecodeIndex + OPCODE_LENGTH(op_call);
-        BytecodeAndMachineOffset* mapping = binarySearch<BytecodeAndMachineOffset, unsigned>(decodedCodeMap, decodedCodeMap.size(), returnBytecodeIndex, BytecodeAndMachineOffset::getBytecodeIndex);
+        unsigned callBytecodeIndex = inlineCallFrame->caller.bytecodeIndex;
+        CallLinkInfo& callLinkInfo = baselineCodeBlockForCaller->getCallLinkInfo(callBytecodeIndex);
         
-        ASSERT(mapping);
-        ASSERT(mapping->m_bytecodeIndex == returnBytecodeIndex);
-        
-        void* jumpTarget = baselineCodeBlockForCaller->jitCode()->executableAddressAtOffset(mapping->m_machineCodeOffset);
+        void* jumpTarget = callLinkInfo.callReturnLocation.executableAddress();
 
+#if USE(JSVALUE64)
         GPRReg callerFrameGPR;
         if (inlineCallFrame->caller.inlineCallFrame) {
             jit.addPtr(AssemblyHelpers::TrustedImm32(inlineCallFrame->caller.inlineCallFrame->stackOffset * sizeof(EncodedJSValue)), GPRInfo::callFrameRegister, GPRInfo::regT3);
@@ -109,24 +105,7 @@ void reifyInlinedCallFrames(CCallHelpers& jit, const OSRExitBase& exit)
         jit.store32(AssemblyHelpers::TrustedImm32(inlineCallFrame->arguments.size()), AssemblyHelpers::payloadFor((VirtualRegister)(inlineCallFrame->stackOffset + JSStack::ArgumentCount)));
         if (!inlineCallFrame->isClosureCall())
             jit.store64(AssemblyHelpers::TrustedImm64(JSValue::encode(JSValue(inlineCallFrame->callee.get()))), AssemblyHelpers::addressFor((VirtualRegister)(inlineCallFrame->stackOffset + JSStack::Callee)));
-    }
 #else // USE(JSVALUE64) // so this is the 32-bit part
-    ASSERT(jit.baselineCodeBlock()->jitType() == JITCode::BaselineJIT);
-    jit.storePtr(AssemblyHelpers::TrustedImmPtr(jit.baselineCodeBlock()), AssemblyHelpers::addressFor((VirtualRegister)JSStack::CodeBlock));
-    
-    for (CodeOrigin codeOrigin = exit.m_codeOrigin; codeOrigin.inlineCallFrame; codeOrigin = codeOrigin.inlineCallFrame->caller) {
-        InlineCallFrame* inlineCallFrame = codeOrigin.inlineCallFrame;
-        CodeBlock* baselineCodeBlock = jit.baselineCodeBlockFor(codeOrigin);
-        CodeBlock* baselineCodeBlockForCaller = jit.baselineCodeBlockFor(inlineCallFrame->caller);
-        Vector<BytecodeAndMachineOffset>& decodedCodeMap = jit.decodedCodeMapFor(baselineCodeBlockForCaller);
-        unsigned returnBytecodeIndex = inlineCallFrame->caller.bytecodeIndex + OPCODE_LENGTH(op_call);
-        BytecodeAndMachineOffset* mapping = binarySearch<BytecodeAndMachineOffset, unsigned>(decodedCodeMap, decodedCodeMap.size(), returnBytecodeIndex, BytecodeAndMachineOffset::getBytecodeIndex);
-        
-        ASSERT(mapping);
-        ASSERT(mapping->m_bytecodeIndex == returnBytecodeIndex);
-        
-        void* jumpTarget = baselineCodeBlockForCaller->jitCode()->executableAddressAtOffset(mapping->m_machineCodeOffset);
-
         GPRReg callerFrameGPR;
         if (inlineCallFrame->caller.inlineCallFrame) {
             jit.add32(AssemblyHelpers::TrustedImm32(inlineCallFrame->caller.inlineCallFrame->stackOffset * sizeof(EncodedJSValue)), GPRInfo::callFrameRegister, GPRInfo::regT3);
@@ -145,8 +124,8 @@ void reifyInlinedCallFrames(CCallHelpers& jit, const OSRExitBase& exit)
         jit.store32(AssemblyHelpers::TrustedImm32(JSValue::CellTag), AssemblyHelpers::tagFor((VirtualRegister)(inlineCallFrame->stackOffset + JSStack::Callee)));
         if (!inlineCallFrame->isClosureCall())
             jit.storePtr(AssemblyHelpers::TrustedImmPtr(inlineCallFrame->callee.get()), AssemblyHelpers::payloadFor((VirtualRegister)(inlineCallFrame->stackOffset + JSStack::Callee)));
-    }
 #endif // USE(JSVALUE64) // ending the #else part, so directly above is the 32-bit part
+    }
 }
 
 void adjustAndJumpToTarget(CCallHelpers& jit, const OSRExitBase& exit)
