@@ -67,18 +67,18 @@ void StackIterator::find(JSFunction* functionObj)
 StackIterator::Frame::CodeType StackIterator::Frame::codeType() const
 {
     if (!isJSFrame())
-        return CodeType::Native;
+        return StackIterator::Frame::Native;
 
     switch (codeBlock()->codeType()) {
     case EvalCode:
-        return CodeType::Eval;
+        return StackIterator::Frame::Eval;
     case FunctionCode:
-        return CodeType::Function;
+        return StackIterator::Frame::Function;
     case GlobalCode:
-        return CodeType::Global;
+        return StackIterator::Frame::Global;
     }
     RELEASE_ASSERT_NOT_REACHED();
-    return CodeType::Global;
+    return StackIterator::Frame::Global;
 }
 
 String StackIterator::Frame::functionName()
@@ -87,17 +87,17 @@ String StackIterator::Frame::functionName()
     JSObject* callee = this->callee();
 
     switch (codeType()) {
-    case CodeType::Eval:
+    case StackIterator::Frame::Eval:
         traceLine = "eval code";
         break;
-    case CodeType::Native:
+    case StackIterator::Frame::Native:
         if (callee)
             traceLine = getCalculatedDisplayName(callFrame(), callee).impl();
         break;
-    case CodeType::Function:
+    case StackIterator::Frame::Function:
         traceLine = getCalculatedDisplayName(callFrame(), callee).impl();
         break;
-    case CodeType::Global:
+    case StackIterator::Frame::Global:
         traceLine = "global code";
         break;
     }
@@ -109,15 +109,15 @@ String StackIterator::Frame::sourceURL()
     String traceLine;
 
     switch (codeType()) {
-    case CodeType::Eval:
-    case CodeType::Function:
-    case CodeType::Global: {
+    case StackIterator::Frame::Eval:
+    case StackIterator::Frame::Function:
+    case StackIterator::Frame::Global: {
         String sourceURL = codeBlock()->ownerExecutable()->sourceURL();
         if (!sourceURL.isEmpty())
             traceLine = sourceURL.impl();
         break;
     }
-    case CodeType::Native:
+    case StackIterator::Frame::Native:
         traceLine = "[native code]";
         break;
     }
@@ -219,7 +219,7 @@ StackIterator::Frame* StackIterator::Frame::logicalFrame()
     if (!outerMostCodeBlock->canGetCodeOrigin(index)) {
         // See above. In release builds, we try to protect ourselves from crashing even
         // though stack walking will be goofed up.
-        return nullptr;
+        return 0;
     }
 
     CodeOrigin codeOrigin = outerMostCodeBlock->codeOrigin(index);
