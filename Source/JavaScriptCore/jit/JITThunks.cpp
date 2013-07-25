@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -63,14 +63,20 @@ MacroAssemblerCodePtr JITThunks::ctiNativeConstruct(VM* vm)
 
 MacroAssemblerCodeRef JITThunks::ctiStub(VM* vm, ThunkGenerator generator)
 {
+    Locker locker(m_lock);
     CTIStubMap::AddResult entry = m_ctiStubMap.add(generator, MacroAssemblerCodeRef());
-    if (entry.isNewEntry)
+    if (entry.isNewEntry) {
+        // Compilation thread can only retrieve existing entries.
+        ASSERT(!isCompilationThread());
         entry.iterator->value = generator(vm);
+    }
     return entry.iterator->value;
 }
 
 NativeExecutable* JITThunks::hostFunctionStub(VM* vm, NativeFunction function, NativeFunction constructor)
 {
+    ASSERT(!isCompilationThread());
+
     if (NativeExecutable* nativeExecutable = m_hostFunctionStubMap->get(std::make_pair(function, constructor)))
         return nativeExecutable;
 
@@ -81,6 +87,8 @@ NativeExecutable* JITThunks::hostFunctionStub(VM* vm, NativeFunction function, N
 
 NativeExecutable* JITThunks::hostFunctionStub(VM* vm, NativeFunction function, ThunkGenerator generator, Intrinsic intrinsic)
 {
+    ASSERT(!isCompilationThread());    
+
     if (NativeExecutable* nativeExecutable = m_hostFunctionStubMap->get(std::make_pair(function, &callHostFunctionAsConstructor)))
         return nativeExecutable;
 
