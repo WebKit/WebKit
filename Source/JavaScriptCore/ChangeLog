@@ -1,5 +1,23 @@
 2013-07-18  Filip Pizlo  <fpizlo@apple.com>
 
+        fourthTier: AbstractInterpreter should explicitly ask AbstractState to create new AbstractValues for newly born nodes
+        https://bugs.webkit.org/show_bug.cgi?id=118880
+
+        Reviewed by Sam Weinig.
+        
+        It should be possible to have an AbstractState that is backed by a HashMap. But to
+        do this, the AbstractInterpreter should explicitly ask for new nodes to be added to
+        the map, since otherwise the idiom of getting a reference to the AbstractValue
+        returned by forNode() would cause really subtle memory corruption bugs.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::::executeEffects):
+        * dfg/DFGInPlaceAbstractState.h:
+        (JSC::DFG::InPlaceAbstractState::createValueForNode):
+        (InPlaceAbstractState):
+
+2013-07-18  Filip Pizlo  <fpizlo@apple.com>
+
         fourthTier: Decouple the way that CFA stores its state from the way it does abstract interpretation
         https://bugs.webkit.org/show_bug.cgi?id=118835
 

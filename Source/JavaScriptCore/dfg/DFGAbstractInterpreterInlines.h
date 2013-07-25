@@ -124,6 +124,8 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned indexInBloc
     if (!ASSERT_DISABLED)
         verifyEdges(node);
     
+    m_state.createValueForNode(node);
+    
     switch (node->op()) {
     case JSConstant:
     case WeakJSConstant:
@@ -1471,6 +1473,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned indexInBloc
         break;
         
     case Upsilon: {
+        m_state.createValueForNode(node->phi());
         AbstractValue& value = forNode(node->child1());
         forNode(node) = value;
         forNode(node->phi()) = value;

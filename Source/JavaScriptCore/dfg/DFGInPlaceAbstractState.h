@@ -44,6 +44,8 @@ public:
     
     ~InPlaceAbstractState();
     
+    void createValueForNode(Node*) { }
+    
     AbstractValue& forNode(Node* node)
     {
         return node->value;
