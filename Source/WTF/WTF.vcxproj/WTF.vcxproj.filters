@@ -213,8 +213,15 @@
     <ClCompile Include="..\wtf\SchedulePairCF.cpp">
       <Filter>wtf</Filter>
     </ClCompile>
-    <ClCompile Include="..\wtf\FunctionDispatcher.cpp" />
-    <ClCompile Include="..\wtf\text\AtomicStringTable.cpp" />
+    <ClCompile Include="..\wtf\FunctionDispatcher.cpp">
+      <Filter>wtf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\wtf\text\AtomicStringTable.cpp">
+      <Filter>text</Filter>
+    </ClCompile>
+    <ClCompile Include="..\wtf\CompilationThread.cpp">
+      <Filter>wtf</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\wtf\dtoa\utils.h">
@@ -695,8 +702,13 @@
       <Filter>wtf</Filter>
     </ClInclude>
     <ClInclude Include="..\WTF\config.h" />
-    <ClInclude Include="..\wtf\FunctionDispatcher.h" />
     <ClInclude Include="..\wtf\FeatureDefines.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\FunctionDispatcher.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\CompilationThread.h">
       <Filter>wtf</Filter>
     </ClInclude>
   </ItemGroup>

@@ -55,6 +55,7 @@
     <ClCompile Include="..\wtf\ArrayBufferView.cpp" />
     <ClCompile Include="..\wtf\Assertions.cpp" />
     <ClCompile Include="..\wtf\BitVector.cpp" />
+    <ClCompile Include="..\wtf\CompilationThread.cpp" />
     <ClCompile Include="..\wtf\CryptographicallyRandomNumber.cpp" />
     <ClCompile Include="..\wtf\CurrentTime.cpp" />
     <ClCompile Include="..\wtf\DataLog.cpp" />
@@ -117,6 +118,7 @@
     <ClCompile Include="..\wtf\SchedulePairCF.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\wtf\CompilationThread.h" />
     <ClInclude Include="..\WTF\config.h" />
     <ClInclude Include="..\wtf\Alignment.h" />
     <ClInclude Include="..\wtf\ArrayBuffer.h" />

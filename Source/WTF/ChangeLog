@@ -1,3 +1,10 @@
+2013-07-25  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Unreviewed build fix.
+
+        * WTF.vcxproj/WTF.vcxproj: Add missing CompilationThread.h,.cpp
+        * WTF.vcxproj/WTF.vcxproj.filters: Ditto.
+
 2013-07-25  Michael Brüning  <michael.bruning@digia.com>
 
         Fix Windows build after r153134.
