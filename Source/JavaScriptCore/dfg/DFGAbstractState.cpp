@@ -1540,6 +1540,13 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
         }
         clobberWorld(node->codeOrigin, indexInBlock);
         break;
+        
+    case In:
+        // FIXME: We can determine when the property definitely exists based on abstract
+        // value information.
+        clobberWorld(node->codeOrigin, indexInBlock);
+        forNode(node).setType(SpecBoolean);
+        break;
             
     case GetGlobalVar:
         forNode(node).makeTop();

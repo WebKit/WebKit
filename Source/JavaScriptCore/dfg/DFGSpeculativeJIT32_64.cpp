@@ -4804,6 +4804,10 @@ void SpeculativeJIT::compile(Node* node)
     case NewFunctionExpression:
         compileNewFunctionExpression(node);
         break;
+        
+    case In:
+        compileIn(node);
+        break;
 
     case ForceOSRExit:
     case ForwardForceOSRExit: {

@@ -178,7 +178,7 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
         codeOrigins[i] = record.m_codeOrigin;
     }
     
-    m_codeBlock->setNumberOfStructureStubInfos(m_propertyAccesses.size());
+    m_codeBlock->setNumberOfStructureStubInfos(m_propertyAccesses.size() + m_ins.size());
     for (unsigned i = 0; i < m_propertyAccesses.size(); ++i) {
         StructureStubInfo& info = m_codeBlock->structureStubInfo(i);
         CodeLocationCall callReturnLocation = linkBuffer.locationOf(m_propertyAccesses[i].m_slowPathGenerator->call());
@@ -205,6 +205,20 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
         m_propertyAccesses[i].m_usedRegisters.copyInfo(info.patch.dfg.usedRegisters);
         info.patch.dfg.registersFlushed = m_propertyAccesses[i].m_registerMode == PropertyAccessRecord::RegistersFlushed;
     }
+    for (unsigned i = 0; i < m_ins.size(); ++i) {
+        StructureStubInfo& info = m_codeBlock->structureStubInfo(m_propertyAccesses.size() + i);
+        CodeLocationLabel jump = linkBuffer.locationOf(m_ins[i].m_jump);
+        CodeLocationCall callReturnLocation = linkBuffer.locationOf(m_ins[i].m_slowPathGenerator->call());
+        info.codeOrigin = m_ins[i].m_codeOrigin;
+        info.hotPathBegin = jump;
+        info.callReturnLocation = callReturnLocation;
+        info.patch.dfg.deltaCallToSlowCase = differenceBetweenCodePtr(callReturnLocation, linkBuffer.locationOf(m_ins[i].m_slowPathGenerator->label()));
+        info.patch.dfg.baseGPR = m_ins[i].m_baseGPR;
+        info.patch.dfg.valueGPR = m_ins[i].m_resultGPR;
+        m_ins[i].m_usedRegisters.copyInfo(info.patch.dfg.usedRegisters);
+        info.patch.dfg.registersFlushed = false;
+    }
+    m_codeBlock->sortStructureStubInfos();
     
     m_codeBlock->setNumberOfCallLinkInfos(m_jsCalls.size());
     for (unsigned i = 0; i < m_jsCalls.size(); ++i) {

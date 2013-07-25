@@ -204,10 +204,18 @@ void JSValue::dump(PrintStream& out) const
     } else if (isCell()) {
         if (asCell()->inherits(&JSString::s_info)) {
             JSString* string = jsCast<JSString*>(asCell());
-            out.print("String: ");
+            out.print("String");
             if (string->isRope())
-                out.print("(rope) ");
-            out.print(string->tryGetValue());
+                out.print(" (rope)");
+            const StringImpl* impl = string->tryGetValueImpl();
+            if (impl) {
+                if (impl->isAtomic())
+                    out.print(" (atomic)");
+                if (impl->isIdentifier())
+                    out.print(" (identifier)");
+            } else
+                out.print(" (unresolved)");
+            out.print(": ", impl);
         } else if (asCell()->inherits(&Structure::s_info)) {
             Structure* structure = jsCast<Structure*>(asCell());
             out.print(

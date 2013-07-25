@@ -137,6 +137,9 @@ EncodedJSValue DFG_OPERATION operationGetByValArrayInt(ExecState*, JSArray*, int
 EncodedJSValue DFG_OPERATION operationGetById(ExecState*, EncodedJSValue, StringImpl*) WTF_INTERNAL;
 EncodedJSValue DFG_OPERATION operationGetByIdBuildList(ExecState*, EncodedJSValue, StringImpl*) WTF_INTERNAL;
 EncodedJSValue DFG_OPERATION operationGetByIdOptimize(ExecState*, EncodedJSValue, StringImpl*) WTF_INTERNAL;
+EncodedJSValue DFG_OPERATION operationInOptimize(ExecState*, JSCell*, StringImpl*);
+EncodedJSValue DFG_OPERATION operationIn(ExecState*, JSCell*, StringImpl*);
+EncodedJSValue DFG_OPERATION operationGenericIn(ExecState*, JSCell*, EncodedJSValue);
 EncodedJSValue DFG_OPERATION operationCallCustomGetter(ExecState*, JSCell*, PropertySlot::GetValueFunc, StringImpl*) WTF_INTERNAL;
 EncodedJSValue DFG_OPERATION operationCallGetter(ExecState*, JSCell*, JSCell*) WTF_INTERNAL;
 EncodedJSValue DFG_OPERATION operationToPrimitive(ExecState*, EncodedJSValue) WTF_INTERNAL;

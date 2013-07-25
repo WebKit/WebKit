@@ -1,3 +1,104 @@
+2013-06-11  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: DFG should support op_in and it should use patching to make it fast
+        https://bugs.webkit.org/show_bug.cgi?id=117385
+
+        Reviewed by Geoffrey Garen.
+        
+        Implement op_in in the DFG and give it patching. The code we generate is just
+        a jump on the hot path, and the slow paths generate stubs and link the jump to
+        them. I didn't want to bother with patching structures and load offsets and
+        the like, although I probably could have.
+        
+        This is a ginormous speed-up on microbenchmarks for "in", obviously.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpAssumingJITType):
+        (JSC::CodeBlock::resetStubInternal):
+        (JSC::structureStubInfoLessThan):
+        (JSC):
+        (JSC::CodeBlock::sortStructureStubInfos):
+        * bytecode/CodeBlock.h:
+        (CodeBlock):
+        * bytecode/StructureStubInfo.cpp:
+        (JSC::StructureStubInfo::deref):
+        (JSC::StructureStubInfo::visitWeakReferences):
+        * bytecode/StructureStubInfo.h:
+        (JSC::isInAccess):
+        (JSC):
+        (StructureStubInfo):
+        (JSC::StructureStubInfo::initInList):
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCCallHelpers.h:
+        (JSC::DFG::CCallHelpers::setupResults):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGGPRInfo.h:
+        (JSC::DFG::JSValueRegs::payloadOnly):
+        (JSValueRegs):
+        (JSC::DFG::JSValueRegs::JSValueRegs):
+        (JSC::DFG::JSValueRegs::operator!):
+        (JSC::DFG::JSValueSource::operator!):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::link):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::InRecord::InRecord):
+        (InRecord):
+        (DFG):
+        (JITCompiler):
+        (JSC::DFG::JITCompiler::addIn):
+        * dfg/DFGNodeType.h:
+        (DFG):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGRepatch.cpp:
+        (JSC::DFG::tryRepatchIn):
+        (DFG):
+        (JSC::DFG::dfgRepatchIn):
+        (JSC::DFG::dfgResetIn):
+        * dfg/DFGRepatch.h:
+        (DFG):
+        (JSC::DFG::dfgResetIn):
+        * dfg/DFGSlowPathGenerator.h:
+        (JSC::DFG::CallSlowPathGenerator::CallSlowPathGenerator):
+        (JSC::DFG::CallSlowPathGenerator::tearDown):
+        (JSC::DFG::CallResultAndNoArgumentsSlowPathGenerator::generateInternal):
+        (JSC::DFG::CallResultAndOneArgumentSlowPathGenerator::generateInternal):
+        (JSC::DFG::CallResultAndTwoArgumentsSlowPathGenerator::generateInternal):
+        (JSC::DFG::CallResultAndThreeArgumentsSlowPathGenerator::generateInternal):
+        (JSC::DFG::CallResultAndFourArgumentsSlowPathGenerator::generateInternal):
+        (JSC::DFG::CallResultAndFiveArgumentsSlowPathGenerator::generateInternal):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileIn):
+        (DFG):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::extractResult):
+        (DFG):
+        (SpeculativeJIT):
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        (JSC::DFG::SpeculativeJIT::appendCallWithExceptionCheckSetResult):
+        (JSC::DFG::SpeculativeJIT::appendCallSetResult):
+        (JSC::DFG::JSValueOperand::tagGPR):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * runtime/JSCJSValue.cpp:
+        (JSC::JSValue::dump):
+        * runtime/JSString.h:
+        (JSString):
+        (JSC::JSString::tryGetValueImpl):
+        (JSC):
+        * runtime/Operations.h:
+        (JSC::normalizePrototypeChainForChainAccess):
+
 2013-06-12  Geoffrey Garen  <ggaren@apple.com>
 
         The Math object should not be polymorphic

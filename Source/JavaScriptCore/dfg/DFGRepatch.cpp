@@ -1111,6 +1111,122 @@ void dfgBuildPutByIdList(ExecState* exec, JSValue baseValue, const Identifier& p
         dfgRepatchCall(exec->codeBlock(), stubInfo.callReturnLocation, appropriateGenericPutByIdFunction(slot, putKind));
 }
 
+static bool tryRepatchIn(
+    ExecState* exec, JSCell* base, const Identifier& ident, bool wasFound,
+    const PropertySlot& slot, StructureStubInfo& stubInfo)
+{
+    if (!base->structure()->propertyAccessesAreCacheable())
+        return false;
+    
+    if (wasFound) {
+        if (!slot.isCacheable())
+            return false;
+    }
+    
+    CodeBlock* codeBlock = exec->codeBlock();
+    VM* vm = &exec->vm();
+    Structure* structure = base->structure();
+    
+    PropertyOffset offsetIgnored;
+    size_t count = normalizePrototypeChainForChainAccess(exec, base, wasFound ? slot.slotBase() : JSValue(), ident, offsetIgnored);
+    if (count == InvalidPrototypeChain)
+        return false;
+    
+    PolymorphicAccessStructureList* polymorphicStructureList;
+    int listIndex;
+    
+    CodeLocationLabel successLabel = stubInfo.hotPathBegin;
+    CodeLocationLabel slowCaseLabel;
+    
+    if (stubInfo.accessType == access_unset) {
+        polymorphicStructureList = new PolymorphicAccessStructureList();
+        stubInfo.initInList(polymorphicStructureList, 0);
+        slowCaseLabel = stubInfo.callReturnLocation.labelAtOffset(
+            stubInfo.patch.dfg.deltaCallToSlowCase);
+        listIndex = 0;
+    } else {
+        RELEASE_ASSERT(stubInfo.accessType == access_in_list);
+        polymorphicStructureList = stubInfo.u.inList.structureList;
+        listIndex = stubInfo.u.inList.listSize;
+        slowCaseLabel = CodeLocationLabel(polymorphicStructureList->list[listIndex - 1].stubRoutine->code().code());
+        
+        if (listIndex == POLYMORPHIC_LIST_CACHE_SIZE)
+            return false;
+    }
+    
+    StructureChain* chain = structure->prototypeChain(exec);
+    RefPtr<JITStubRoutine> stubRoutine;
+    
+    {
+        GPRReg baseGPR = static_cast<GPRReg>(stubInfo.patch.dfg.baseGPR);
+        GPRReg resultGPR = static_cast<GPRReg>(stubInfo.patch.dfg.valueGPR);
+        GPRReg scratchGPR = RegisterSet(stubInfo.patch.dfg.usedRegisters).getFreeGPR();
+        
+        CCallHelpers stubJit(vm);
+        
+        bool needToRestoreScratch;
+        if (scratchGPR == InvalidGPRReg) {
+            scratchGPR = SpeculativeJIT::selectScratchGPR(baseGPR, resultGPR);
+            stubJit.push(scratchGPR);
+            needToRestoreScratch = true;
+        } else
+            needToRestoreScratch = false;
+        
+        MacroAssembler::JumpList failureCases;
+        failureCases.append(stubJit.branchPtr(
+            MacroAssembler::NotEqual,
+            MacroAssembler::Address(baseGPR, JSCell::structureOffset()),
+            MacroAssembler::TrustedImmPtr(structure)));
+        
+        Structure* currStructure = structure;
+        WriteBarrier<Structure>* it = chain->head();
+        for (unsigned i = 0; i < count; ++i, ++it) {
+            JSObject* prototype = asObject(currStructure->prototypeForLookup(exec));
+            addStructureTransitionCheck(
+                prototype, prototype->structure(), exec->codeBlock(), stubInfo, stubJit,
+                failureCases, scratchGPR);
+            currStructure = it->get();
+        }
+        
+#if USE(JSVALUE64)
+        stubJit.move(MacroAssembler::TrustedImm64(JSValue::encode(jsBoolean(wasFound))), resultGPR);
+#else
+        stubJit.move(MacroAssembler::TrustedImm32(wasFound), resultGPR);
+#endif
+        
+        MacroAssembler::Jump success, fail;
+        
+        emitRestoreScratch(stubJit, needToRestoreScratch, scratchGPR, success, fail, failureCases);
+        
+        LinkBuffer patchBuffer(*vm, &stubJit, exec->codeBlock());
+
+        linkRestoreScratch(patchBuffer, needToRestoreScratch, success, fail, failureCases, successLabel, slowCaseLabel);
+        
+        stubRoutine = FINALIZE_CODE_FOR_DFG_STUB(
+            patchBuffer,
+            ("DFG In (found = %s) stub for %s, return point %p",
+                wasFound ? "yes" : "no", toCString(*exec->codeBlock()).data(),
+                successLabel.executableAddress()));
+    }
+    
+    polymorphicStructureList->list[listIndex].set(*vm, codeBlock->ownerExecutable(), stubRoutine, structure, true);
+    stubInfo.u.inList.listSize++;
+    
+    RepatchBuffer repatchBuffer(codeBlock);
+    repatchBuffer.relink(stubInfo.hotPathBegin.jumpAtOffset(0), CodeLocationLabel(stubRoutine->code().code()));
+    
+    return listIndex < (POLYMORPHIC_LIST_CACHE_SIZE - 1);
+}
+
+void dfgRepatchIn(
+    ExecState* exec, JSCell* base, const Identifier& ident, bool wasFound,
+    const PropertySlot& slot, StructureStubInfo& stubInfo)
+{
+    if (tryRepatchIn(exec, base, ident, wasFound, slot, stubInfo))
+        return;
+    dfgRepatchCall(exec->codeBlock(), stubInfo.callReturnLocation, operationIn);
+}
+
 static void linkSlowFor(RepatchBuffer& repatchBuffer, VM* vm, CallLinkInfo& callLinkInfo, CodeSpecializationKind kind)
 {
     if (kind == CodeForCall) {
@@ -1303,6 +1419,11 @@ void dfgResetPutByID(RepatchBuffer& repatchBuffer, StructureStubInfo& stubInfo)
     repatchBuffer.repatch(stubInfo.callReturnLocation.dataLabel32AtOffset(stubInfo.patch.dfg.deltaCallToPayloadLoadOrStore), 0);
 #endif
     repatchBuffer.relink(stubInfo.callReturnLocation.jumpAtOffset(stubInfo.patch.dfg.deltaCallToStructCheck), stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.dfg.deltaCallToSlowCase));
+}
+
+void dfgResetIn(RepatchBuffer& repatchBuffer, StructureStubInfo& stubInfo)
+{
+    repatchBuffer.relink(stubInfo.hotPathBegin.jumpAtOffset(0), stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.dfg.deltaCallToSlowCase));
 }
 
 } } // namespace JSC::DFG

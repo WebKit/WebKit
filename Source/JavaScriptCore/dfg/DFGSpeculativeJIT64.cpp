@@ -3178,7 +3178,7 @@ void SpeculativeJIT::compile(Node* node)
     case Branch:
         emitBranch(node);
         break;
-
+        
     case Return: {
         ASSERT(GPRInfo::callFrameRegister != GPRInfo::regT1);
         ASSERT(GPRInfo::regT1 != GPRInfo::returnValueGPR);
@@ -4661,6 +4661,10 @@ void SpeculativeJIT::compile(Node* node)
         
     case NewFunctionExpression:
         compileNewFunctionExpression(node);
+        break;
+        
+    case In:
+        compileIn(node);
         break;
         
     case CountExecution:

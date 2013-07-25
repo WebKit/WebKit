@@ -212,7 +212,7 @@ inline size_t normalizePrototypeChainForChainAccess(CallFrame* callFrame, JSValu
     JSCell* cell = base.asCell();
     size_t count = 0;
         
-    while (slotBase != cell) {
+    while (!slotBase || slotBase != cell) {
         if (cell->isProxy())
             return InvalidPrototypeChain;
             
@@ -224,8 +224,11 @@ inline size_t normalizePrototypeChainForChainAccess(CallFrame* callFrame, JSValu
         // If we didn't find slotBase in base's prototype chain, then base
         // must be a proxy for another object.
 
-        if (v.isNull())
+        if (v.isNull()) {
+            if (!slotBase)
+                return count;
             return InvalidPrototypeChain;
+        }
 
         cell = v.asCell();
 
@@ -240,7 +243,6 @@ inline size_t normalizePrototypeChainForChainAccess(CallFrame* callFrame, JSValu
         ++count;
     }
         
-    ASSERT(count);
     return count;
 }
 

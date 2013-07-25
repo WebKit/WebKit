@@ -411,6 +411,7 @@ public:
 
 #if ENABLE(JIT)
     void setNumberOfStructureStubInfos(size_t size) { m_structureStubInfos.grow(size); }
+    void sortStructureStubInfos();
     size_t numberOfStructureStubInfos() const { return m_structureStubInfos.size(); }
     StructureStubInfo& structureStubInfo(int index) { return m_structureStubInfos[index]; }
 

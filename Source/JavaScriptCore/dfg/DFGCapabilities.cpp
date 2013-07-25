@@ -166,6 +166,7 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, Instruc
     case op_jneq_ptr:
     case op_typeof:
     case op_to_number:
+    case op_in:
     case op_get_from_scope:
     case op_put_to_scope:
         return CanCompileAndInline;

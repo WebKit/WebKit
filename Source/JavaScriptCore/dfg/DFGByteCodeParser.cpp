@@ -3083,6 +3083,12 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 addToGraph(Identity, Edge(get(currentInstruction[2].u.operand), NumberUse)));
             NEXT_OPCODE(op_to_number);
         }
+            
+        case op_in: {
+            set(currentInstruction[1].u.operand,
+                addToGraph(In, get(currentInstruction[2].u.operand), get(currentInstruction[3].u.operand)));
+            NEXT_OPCODE(op_in);
+        }
 
         default:
             // Parse failed! This should not happen because the capabilities checker

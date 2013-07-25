@@ -976,7 +976,11 @@ public:
         GPRReg srcA = GPRInfo::returnValueGPR;
         GPRReg srcB = GPRInfo::returnValueGPR2;
 
-        if (srcB != destA) {
+        if (destA == InvalidGPRReg)
+            move(srcB, destB);
+        else if (destB == InvalidGPRReg)
+            move(srcA, destA);
+        else if (srcB != destA) {
             // Handle the easy cases - two simple moves.
             move(srcA, destA);
             move(srcB, destB);

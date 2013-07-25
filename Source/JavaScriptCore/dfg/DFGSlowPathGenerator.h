@@ -107,7 +107,7 @@ public:
         , m_result(result)
     {
         if (m_spillMode == NeedToSpill)
-            jit->silentSpillAllRegistersImpl(false, m_plans, result);
+            jit->silentSpillAllRegistersImpl(false, m_plans, extractResult(result));
     }
     
     virtual MacroAssembler::Call call() const
@@ -133,7 +133,7 @@ protected:
     void tearDown(SpeculativeJIT* jit)
     {
         if (m_spillMode == NeedToSpill) {
-            GPRReg canTrample = SpeculativeJIT::pickCanTrample(m_result);
+            GPRReg canTrample = SpeculativeJIT::pickCanTrample(extractResult(m_result));
             for (unsigned i = m_plans.size(); i--;)
                 jit->silentFill(m_plans[i], canTrample);
         }
@@ -163,7 +163,7 @@ protected:
     void generateInternal(SpeculativeJIT* jit)
     {
         this->setUp(jit);
-        this->recordCall(jit->callOperation(this->m_function, this->m_result));
+        this->recordCall(jit->callOperation(this->m_function, extractResult(this->m_result)));
         this->tearDown(jit);
     }
 };
@@ -187,7 +187,7 @@ protected:
     void generateInternal(SpeculativeJIT* jit)
     {
         this->setUp(jit);
-        this->recordCall(jit->callOperation(this->m_function, this->m_result, m_argument1));
+        this->recordCall(jit->callOperation(this->m_function, extractResult(this->m_result), m_argument1));
         this->tearDown(jit);
     }
 
@@ -215,7 +215,7 @@ protected:
     void generateInternal(SpeculativeJIT* jit)
     {
         this->setUp(jit);
-        this->recordCall(jit->callOperation(this->m_function, this->m_result, m_argument1, m_argument2));
+        this->recordCall(jit->callOperation(this->m_function, extractResult(this->m_result), m_argument1, m_argument2));
         this->tearDown(jit);
     }
 
@@ -247,7 +247,7 @@ protected:
         this->setUp(jit);
         this->recordCall(
             jit->callOperation(
-                this->m_function, this->m_result, m_argument1, m_argument2,
+                this->m_function, extractResult(this->m_result), m_argument1, m_argument2,
                 m_argument3));
         this->tearDown(jit);
     }
@@ -283,7 +283,7 @@ protected:
         this->setUp(jit);
         this->recordCall(
             jit->callOperation(
-                this->m_function, this->m_result, m_argument1, m_argument2,
+                this->m_function, extractResult(this->m_result), m_argument1, m_argument2,
                 m_argument3, m_argument4));
         this->tearDown(jit);
     }
@@ -322,7 +322,7 @@ protected:
         this->setUp(jit);
         this->recordCall(
             jit->callOperation(
-                this->m_function, this->m_result, m_argument1, m_argument2,
+                this->m_function, extractResult(this->m_result), m_argument1, m_argument2,
                 m_argument3, m_argument4, m_argument5));
         this->tearDown(jit);
     }

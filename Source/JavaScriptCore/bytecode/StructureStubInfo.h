@@ -60,6 +60,7 @@ enum AccessType {
     access_put_by_id_generic,
     access_get_array_length,
     access_get_string_length,
+    access_in_list
 };
 
 inline bool isGetByIdAccess(AccessType accessType)
@@ -87,6 +88,16 @@ inline bool isPutByIdAccess(AccessType accessType)
     case access_put_by_id_replace:
     case access_put_by_id_list:
     case access_put_by_id_generic:
+        return true;
+    default:
+        return false;
+    }
+}
+
+inline bool isInAccess(AccessType accessType)
+{
+    switch (accessType) {
+    case access_in_list:
         return true;
     default:
         return false;
@@ -169,6 +180,13 @@ struct StructureStubInfo {
     {
         accessType = access_put_by_id_list;
         u.putByIdList.list = list;
+    }
+    
+    void initInList(PolymorphicAccessStructureList* list, int listSize)
+    {
+        accessType = access_in_list;
+        u.inList.structureList = list;
+        u.inList.listSize = listSize;
     }
         
     void reset()
@@ -296,6 +314,10 @@ struct StructureStubInfo {
         struct {
             PolymorphicPutByIdList* list;
         } putByIdList;
+        struct {
+            PolymorphicAccessStructureList* structureList;
+            int listSize;
+        } inList;
     } u;
 
     RefPtr<JITStubRoutine> stubRoutine;

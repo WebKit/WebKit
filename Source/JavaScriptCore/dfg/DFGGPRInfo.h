@@ -51,6 +51,11 @@ public:
     {
     }
     
+    static JSValueRegs payloadOnly(GPRReg gpr)
+    {
+        return JSValueRegs(gpr);
+    }
+    
     bool operator!() const { return m_gpr == InvalidGPRReg; }
     
     GPRReg gpr() const { return m_gpr; }
@@ -137,10 +142,18 @@ public:
         : m_tagGPR(tagGPR)
         , m_payloadGPR(payloadGPR)
     {
-        ASSERT((static_cast<GPRReg>(m_tagGPR) == InvalidGPRReg) == (static_cast<GPRReg>(payloadGPR) == InvalidGPRReg));
     }
     
-    bool operator!() const { return static_cast<GPRReg>(m_tagGPR) == InvalidGPRReg; }
+    static JSValueRegs payloadOnly(GPRReg gpr)
+    {
+        return JSValueRegs(InvalidGPRReg, gpr);
+    }
+    
+    bool operator!() const
+    {
+        return static_cast<GPRReg>(m_tagGPR) == InvalidGPRReg
+            && static_cast<GPRReg>(m_payloadGPR) == InvalidGPRReg;
+    }
     
     GPRReg tagGPR() const { return static_cast<GPRReg>(m_tagGPR); }
     GPRReg payloadGPR() const { return static_cast<GPRReg>(m_payloadGPR); }
@@ -196,7 +209,11 @@ public:
         return result;
     }
     
-    bool operator!() const { return static_cast<GPRReg>(m_baseOrTag) == InvalidGPRReg && static_cast<GPRReg>(m_payload) == InvalidGPRReg; }
+    bool operator!() const
+    {
+        return static_cast<GPRReg>(m_baseOrTag) == InvalidGPRReg
+            && static_cast<GPRReg>(m_payload) == InvalidGPRReg;
+    }
     
     bool isAddress() const
     {

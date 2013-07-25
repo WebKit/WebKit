@@ -235,6 +235,28 @@ struct PropertyAccessRecord {
     RegisterMode m_registerMode;
 };
 
+struct InRecord {
+    InRecord(
+        CodeOrigin codeOrigin, MacroAssembler::PatchableJump jump,
+        SlowPathGenerator* slowPathGenerator, int8_t baseGPR, int8_t resultGPR,
+        const RegisterSet& usedRegisters)
+        : m_codeOrigin(codeOrigin)
+        , m_jump(jump)
+        , m_slowPathGenerator(slowPathGenerator)
+        , m_baseGPR(baseGPR)
+        , m_resultGPR(resultGPR)
+        , m_usedRegisters(usedRegisters)
+    {
+    }
+    
+    CodeOrigin m_codeOrigin;
+    MacroAssembler::PatchableJump m_jump;
+    SlowPathGenerator* m_slowPathGenerator;
+    int8_t m_baseGPR;
+    int8_t m_resultGPR;
+    RegisterSet m_usedRegisters;
+};
+
 // === JITCompiler ===
 //
 // DFG::JITCompiler is responsible for generating JIT code from the dataflow graph.
@@ -376,6 +398,11 @@ public:
     {
         m_propertyAccesses.append(record);
     }
+    
+    void addIn(const InRecord& record)
+    {
+        m_ins.append(record);
+    }
 
     void addJSCall(Call fastCall, Call slowCall, DataLabelPtr targetToCheck, CallLinkInfo::CallType callType, GPRReg callee, CodeOrigin codeOrigin)
     {
@@ -481,6 +508,7 @@ private:
     };
     
     Vector<PropertyAccessRecord, 4> m_propertyAccesses;
+    Vector<InRecord, 4> m_ins;
     Vector<JSCallRecord, 4> m_jsCalls;
     Vector<OSRExitCompilationInfo> m_exitCompilationInfo;
     Vector<Vector<Label> > m_exitSiteLabels;

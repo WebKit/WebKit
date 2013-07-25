@@ -113,7 +113,7 @@ void CodeBlock::dumpAssumingJITType(PrintStream& out, JITCode::JITType jitType) 
     out.print(inferredName(), "#", hash(), ":[", RawPointer(this), "->", RawPointer(ownerExecutable()), ", ", jitType, codeType());
     if (codeType() == FunctionCode)
         out.print(specializationKind());
-    if (m_shouldAlwaysBeInlined)
+    if (this->jitType() == JITCode::BaselineJIT && m_shouldAlwaysBeInlined)
         out.print(" (SABI)");
     if (ownerExecutable()->neverInline())
         out.print(" (NeverInline)");
@@ -2282,14 +2282,20 @@ void CodeBlock::resetStubInternal(RepatchBuffer& repatchBuffer, StructureStubInf
     case JITCode::BaselineJIT:
         if (isGetByIdAccess(accessType))
             JIT::resetPatchGetById(repatchBuffer, &stubInfo);
-        else
+        else {
+            RELEASE_ASSERT(isPutByIdAccess(accessType));
             JIT::resetPatchPutById(repatchBuffer, &stubInfo);
+        }
         break;
     case JITCode::DFGJIT:
         if (isGetByIdAccess(accessType))
             DFG::dfgResetGetByID(repatchBuffer, stubInfo);
-        else
+        else if (isPutByIdAccess(accessType))
             DFG::dfgResetPutByID(repatchBuffer, stubInfo);
+        else {
+            RELEASE_ASSERT(isInAccess(accessType));
+            DFG::dfgResetIn(repatchBuffer, stubInfo);
+        }
         break;
     default:
         RELEASE_ASSERT_NOT_REACHED();
@@ -3106,6 +3112,16 @@ void CodeBlock::setOptimizationThresholdBasedOnCompilationResult(CompilationResu
         RELEASE_ASSERT_NOT_REACHED();
         break;
     }
+}
+
+static bool structureStubInfoLessThan(const StructureStubInfo& a, const StructureStubInfo& b)
+{
+    return a.callReturnLocation.executableAddress() < b.callReturnLocation.executableAddress();
+}
+
+void CodeBlock::sortStructureStubInfos()
+{
+    std::sort(m_structureStubInfos.begin(), m_structureStubInfos.end(), structureStubInfoLessThan);
 }
 
 uint32_t CodeBlock::adjustedExitCountThreshold(uint32_t desiredThreshold)

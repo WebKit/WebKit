@@ -29,6 +29,7 @@
 #include "Arguments.h"
 #include "ButterflyInlines.h"
 #include "CodeBlock.h"
+#include "CommonSlowPaths.h"
 #include "CopiedSpaceInlines.h"
 #include "DFGOSRExit.h"
 #include "DFGRepatch.h"
@@ -538,6 +539,56 @@ EncodedJSValue DFG_OPERATION operationGetByIdOptimizeWithReturnAddress(ExecState
     }
 
     return JSValue::encode(result);
+}
+
+J_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_ECI(operationInOptimize);
+EncodedJSValue DFG_OPERATION operationInOptimizeWithReturnAddress(ExecState* exec, JSCell* base, StringImpl* key, ReturnAddressPtr returnAddress)
+{
+    VM* vm = &exec->vm();
+    NativeCallFrameTracer tracer(vm, exec);
+    
+    if (!base->isObject()) {
+        vm->exception = createInvalidParameterError(exec, "in", base);
+        return jsUndefined();
+    }
+    
+    StructureStubInfo& stubInfo = exec->codeBlock()->getStubInfo(returnAddress);
+    AccessType accessType = static_cast<AccessType>(stubInfo.accessType);
+
+    Identifier ident(vm, key);
+    PropertySlot slot(base);
+    bool result = asObject(base)->getPropertySlot(exec, ident, slot);
+    
+    RELEASE_ASSERT(accessType == stubInfo.accessType);
+    
+    if (stubInfo.seen)
+        dfgRepatchIn(exec, base, ident, result, slot, stubInfo);
+    else
+        stubInfo.seen = true;
+    
+    return JSValue::encode(jsBoolean(result));
+}
+
+EncodedJSValue DFG_OPERATION operationIn(ExecState* exec, JSCell* base, StringImpl* key)
+{
+    VM* vm = &exec->vm();
+    NativeCallFrameTracer tracer(vm, exec);
+
+    if (!base->isObject()) {
+        vm->exception = createInvalidParameterError(exec, "in", base);
+        return jsUndefined();
+    }
+
+    Identifier ident(vm, key);
+    return JSValue::encode(jsBoolean(asObject(base)->hasProperty(exec, ident)));
+}
+
+EncodedJSValue DFG_OPERATION operationGenericIn(ExecState* exec, JSCell* base, EncodedJSValue key)
+{
+    VM* vm = &exec->vm();
+    NativeCallFrameTracer tracer(vm, exec);
+
+    return JSValue::encode(jsBoolean(CommonSlowPaths::opIn(exec, JSValue::decode(key), base)));
 }
 
 EncodedJSValue DFG_OPERATION operationCallCustomGetter(ExecState* exec, JSCell* base, PropertySlot::GetValueFunc function, StringImpl* uid)

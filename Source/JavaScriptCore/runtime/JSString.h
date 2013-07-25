@@ -138,6 +138,7 @@ public:
 
     const String& value(ExecState*) const;
     const String& tryGetValue() const;
+    const StringImpl* tryGetValueImpl() const;
     unsigned length() { return m_length; }
 
     JSValue toPrimitive(ExecState*, PreferredPrimitiveType) const;
@@ -327,6 +328,12 @@ private:
 
     mutable FixedArray<WriteBarrier<JSString>, s_maxInternalRopeLength> m_fibers;
 };
+
+
+inline const StringImpl* JSString::tryGetValueImpl() const
+{
+    return m_value.impl();
+}
 
 JSString* asString(JSValue);
 

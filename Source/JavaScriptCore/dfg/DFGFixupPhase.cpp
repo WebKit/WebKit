@@ -801,6 +801,14 @@ private:
             setUseKindAndUnboxIfProfitable<CellUse>(node->child2());
             break;
         }
+            
+        case In: {
+            // FIXME: We should at some point have array profiling on op_in, in which
+            // case we would be able to turn this into a kind of GetByVal.
+            
+            setUseKindAndUnboxIfProfitable<CellUse>(node->child2());
+            break;
+        }
 
         case Phantom:
         case Identity: {

@@ -930,6 +930,65 @@ void SpeculativeJIT::writeBarrier(JSCell* owner, GPRReg valueGPR, Edge valueUse,
 #endif
 }
 
+void SpeculativeJIT::compileIn(Node* node)
+{
+    SpeculateCellOperand base(this, node->child2());
+    GPRReg baseGPR = base.gpr();
+        
+    if (isConstant(node->child1().node())) {
+        JSString* string =
+            jsDynamicCast<JSString*>(valueOfJSConstant(node->child1().node()));
+        if (string && string->tryGetValueImpl()
+            && string->tryGetValueImpl()->isIdentifier()) {
+            GPRTemporary result(this);
+            GPRReg resultGPR = result.gpr();
+
+            use(node->child1());
+                
+            MacroAssembler::PatchableJump jump = m_jit.patchableJump();
+            
+            OwnPtr<SlowPathGenerator> slowPath = slowPathCall(
+                jump.m_jump, this, operationInOptimize,
+                JSValueRegs::payloadOnly(resultGPR), baseGPR,
+                string->tryGetValueImpl());
+                
+            m_jit.addIn(InRecord(
+                node->codeOrigin, jump, slowPath.get(), safeCast<int8_t>(baseGPR),
+                safeCast<int8_t>(resultGPR), usedRegisters()));
+            addSlowPathGenerator(slowPath.release());
+                
+            base.use();
+                
+#if USE(JSVALUE64)
+            jsValueResult(
+                resultGPR, node, DataFormatJSBoolean, UseChildrenCalledExplicitly);
+#else
+            booleanResult(resultGPR, node, UseChildrenCalledExplicitly);
+#endif
+            return;
+        }
+    }
+        
+    JSValueOperand key(this, node->child1());
+    JSValueRegs regs = key.jsValueRegs();
+        
+    GPRResult result(this);
+    GPRReg resultGPR = result.gpr();
+        
+    base.use();
+    key.use();
+        
+    flushRegisters();
+    callOperation(
+        operationGenericIn, extractResult(JSValueRegs::payloadOnly(resultGPR)),
+        baseGPR, regs);
+#if USE(JSVALUE64)
+    jsValueResult(resultGPR, node, DataFormatJSBoolean, UseChildrenCalledExplicitly);
+#else
+    booleanResult(resultGPR, node, UseChildrenCalledExplicitly);
+#endif
+}
+
 bool SpeculativeJIT::nonSpeculativeCompare(Node* node, MacroAssembler::RelationalCondition cond, S_DFGOperation_EJJ helperFunction)
 {
     unsigned branchIndexInBlock = detectPeepHoleBranch();

@@ -64,6 +64,8 @@ void printInternal(PrintStream& out, const String& string)
 
 void printInternal(PrintStream& out, const StringImpl* string)
 {
+    if (!string)
+        out.print("(null StringImpl*)");
     out.print(string->utf8());
 }
 

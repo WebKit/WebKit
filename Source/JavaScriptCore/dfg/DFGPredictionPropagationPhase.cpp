@@ -496,6 +496,10 @@ private:
         case GetScope:
             changed |= setPrediction(SpecCellOther);
             break;
+            
+        case In:
+            changed |= setPrediction(SpecBoolean);
+            break;
 
         case Identity:
             changed |= mergePrediction(node->child1()->prediction());

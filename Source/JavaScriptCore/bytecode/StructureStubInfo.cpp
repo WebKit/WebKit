@@ -49,6 +49,11 @@ void StructureStubInfo::deref()
     case access_put_by_id_list:
         delete u.putByIdList.list;
         return;
+    case access_in_list: {
+        PolymorphicAccessStructureList* polymorphicStructures = u.inList.structureList;
+        delete polymorphicStructures;
+        return;
+    }
     case access_get_by_id_self:
     case access_get_by_id_proto:
     case access_get_by_id_chain:
@@ -111,6 +116,12 @@ bool StructureStubInfo::visitWeakReferences()
         if (!u.putByIdList.list->visitWeak())
             return false;
         break;
+    case access_in_list: {
+        PolymorphicAccessStructureList* polymorphicStructures = u.inList.structureList;
+        if (!polymorphicStructures->visitWeak(u.inList.listSize))
+            return false;
+        break;
+    }
     default:
         // The rest of the instructions don't require references, so there is no need to
         // do anything.

@@ -1,3 +1,17 @@
+2013-06-11  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: DFG should support op_in and it should use patching to make it fast
+        https://bugs.webkit.org/show_bug.cgi?id=117385
+
+        Reviewed by Geoffrey Garen.
+        
+        Now if you pass a null StringImpl* then something will still get printed instead
+        of crashing. I figure that this is broadly useful for debug code, and I make use
+        of it in the JSC portion of this patch.
+
+        * wtf/PrintStream.cpp:
+        (WTF::printInternal):
+
 2013-06-09  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, fix build. On some compilers the automatic coercion from WTF::String to NSString*
