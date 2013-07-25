@@ -91,6 +91,7 @@ bool BlockInsertionSet::execute()
     
     // And finally, invalidate all analyses that rely on the CFG.
     m_graph.invalidateCFG();
+    m_graph.dethread();
     
     return true;
 }

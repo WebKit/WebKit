@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGAnalysis_h
-#define DFGAnalysis_h
+#ifndef DFGLoopPreHeaderCreationPhase_h
+#define DFGLoopPreHeaderCreationPhase_h
 
 #include <wtf/Platform.h>
 
@@ -34,42 +34,14 @@ namespace JSC { namespace DFG {
 
 class Graph;
 
-// Use this as a mixin for DFG analyses. The analysis itself implements a public
-// compute(Graph&) method. Clients call computeIfNecessary() when they want
-// results.
+// Inserts dummy basic blocks before any loop headers that don't already have
+// a single non-loop predecessor.
 
-template<typename T>
-class Analysis {
-public:
-    Analysis()
-        : m_valid(false)
-    {
-    }
-    
-    void invalidate()
-    {
-        m_valid = false;
-    }
-    
-    void computeIfNecessary(Graph& graph)
-    {
-        if (m_valid)
-            return;
-        // Set to true early, since the analysis may choose to call its own methods in
-        // compute() and it may want to ASSERT() validity in those methods.
-        m_valid = true;
-        static_cast<T*>(this)->compute(graph);
-    }
-    
-    bool isValid() const { return m_valid; }
-
-private:
-    bool m_valid;
-};
+bool performLoopPreHeaderCreation(Graph&);
 
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
 
-#endif // DFGAnalysis_h
+#endif // DFGLoopPreHeaderCreationPhase_h
 

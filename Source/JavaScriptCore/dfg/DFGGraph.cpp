@@ -419,7 +419,7 @@ void Graph::dump(PrintStream& out)
 
 void Graph::dethread()
 {
-    if (m_form == LoadStore)
+    if (m_form == LoadStore || m_form == SSA)
         return;
     
     if (logCompilationChanges())

@@ -1,5 +1,62 @@
 2013-07-16  Filip Pizlo  <fpizlo@apple.com>
 
+        fourthTier: Add a phase to create loop pre-headers
+        https://bugs.webkit.org/show_bug.cgi?id=118778
+
+        Reviewed by Oliver Hunt.
+        
+        Add a loop pre-header creation phase. Any loop that doesn't already have
+        just one predecessor that isn't part of the loop has a pre-header
+        prepended. All non-loop predecessors then jump to that pre-header.
+        
+        Also fix a handful of bugs:
+        
+        - DFG::Analysis should set m_valid before running the analysis, since that
+          makes it easier to use ASSERT(m_valid) in the analysis' methods, which
+          may be called by the analysis before the analysis completes. NaturalLoops
+          does this with loopsOf().
+        
+        - NaturalLoops::headerOf() was missing a check for innerMostLoopOf()
+          returning 0, since that'll happen if the block isn't in any loop.
+        
+        - Change BlockInsertionSet to dethread the graph, since anyone using it
+          will want to do so.
+        
+        - Change dethreading to ignore SSA form graphs.
+        
+        This also adds NaturalLoops::belongsTo(), which I always used in the
+        pre-header creation phase. I didn't end up using it but I'll probably use
+        it in the near future.
+        
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGAnalysis.h:
+        (JSC::DFG::Analysis::computeIfNecessary):
+        * dfg/DFGBlockInsertionSet.cpp:
+        (JSC::DFG::BlockInsertionSet::execute):
+        * dfg/DFGCriticalEdgeBreakingPhase.cpp:
+        (JSC::DFG::CriticalEdgeBreakingPhase::breakCriticalEdge):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dethread):
+        * dfg/DFGLoopPreHeaderCreationPhase.cpp: Added.
+        (DFG):
+        (LoopPreHeaderCreationPhase):
+        (JSC::DFG::LoopPreHeaderCreationPhase::LoopPreHeaderCreationPhase):
+        (JSC::DFG::LoopPreHeaderCreationPhase::run):
+        (JSC::DFG::performLoopPreHeaderCreation):
+        * dfg/DFGLoopPreHeaderCreationPhase.h: Added.
+        (DFG):
+        * dfg/DFGNaturalLoops.h:
+        (NaturalLoop):
+        (JSC::DFG::NaturalLoops::headerOf):
+        (JSC::DFG::NaturalLoops::innerMostLoopOf):
+        (JSC::DFG::NaturalLoops::innerMostOuterLoop):
+        (JSC::DFG::NaturalLoops::belongsTo):
+        (NaturalLoops):
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThreadImpl):
+
+2013-07-16  Filip Pizlo  <fpizlo@apple.com>
+
         fourthTier: Rationalize Node::replacement
         https://bugs.webkit.org/show_bug.cgi?id=118774
 

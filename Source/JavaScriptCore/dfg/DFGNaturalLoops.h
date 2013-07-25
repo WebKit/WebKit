@@ -58,7 +58,11 @@ public:
     unsigned size() const { return m_body.size(); }
     BasicBlock* at(unsigned i) const { return m_body[i]; }
     BasicBlock* operator[](unsigned i) const { return at(i); }
-    
+
+    // This is the slower, but simpler, way of asking if a block belongs to
+    // a natural loop. It's faster to call NaturalLoops::belongsTo(), which
+    // tries to be O(loop depth) rather than O(loop size). Loop depth is
+    // almost always smaller than loop size. A *lot* smaller.
     bool contains(BasicBlock* block) const
     {
         for (unsigned i = m_body.size(); i--;) {
@@ -108,7 +112,10 @@ public:
     // loop it belongs to.
     const NaturalLoop* headerOf(BasicBlock* block) const
     {
+        ASSERT(isValid());
         const NaturalLoop* loop = innerMostLoopOf(block);
+        if (!loop)
+            return 0;
         if (loop->header() == block)
             return loop;
         if (!ASSERT_DISABLED) {
@@ -120,6 +127,7 @@ public:
     
     const NaturalLoop* innerMostLoopOf(BasicBlock* block) const
     {
+        ASSERT(isValid());
         unsigned index = block->innerMostLoopIndices[0];
         if (index == UINT_MAX)
             return 0;
@@ -128,9 +136,24 @@ public:
     
     const NaturalLoop* innerMostOuterLoop(const NaturalLoop& loop) const
     {
+        ASSERT(isValid());
         if (loop.m_outerLoopIndex == UINT_MAX)
             return 0;
         return &m_loops[loop.m_outerLoopIndex];
+    }
+    
+    bool belongsTo(BasicBlock* block, const NaturalLoop& candidateLoop) const
+    {
+        ASSERT(isValid());
+        // It's faster to do this test using the loop itself, if it's small.
+        if (candidateLoop.size() < 4)
+            return candidateLoop.contains(block);
+        
+        for (const NaturalLoop* loop = innerMostLoopOf(block); loop; loop = innerMostOuterLoop(*loop)) {
+            if (loop == &candidateLoop)
+                return true;
+        }
+        return false;
     }
     
     // Return the indices of all loops this belongs to.

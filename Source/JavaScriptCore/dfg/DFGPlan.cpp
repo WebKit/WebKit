@@ -43,6 +43,7 @@
 #include "DFGFixupPhase.h"
 #include "DFGJITCompiler.h"
 #include "DFGLivenessAnalysisPhase.h"
+#include "DFGLoopPreHeaderCreationPhase.h"
 #include "DFGOSRAvailabilityAnalysisPhase.h"
 #include "DFGPredictionInjectionPhase.h"
 #include "DFGPredictionPropagationPhase.h"
@@ -201,6 +202,7 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
         && FTL::canCompile(dfg)) {
         
         performCriticalEdgeBreaking(dfg);
+        performLoopPreHeaderCreation(dfg);
         performCPSRethreading(dfg);
         performSSAConversion(dfg);
         performLivenessAnalysis(dfg);
