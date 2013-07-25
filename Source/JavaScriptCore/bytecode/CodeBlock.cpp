@@ -1592,7 +1592,7 @@ CodeBlock::CodeBlock(CopyParsedBlockTag, CodeBlock& other)
     , m_resolveOperations(other.m_resolveOperations)
     , m_putToBaseOperations(other.m_putToBaseOperations)
 #if ENABLE(JIT)
-    , m_canCompileWithDFGState(DFG::CapabilityLevelNotSet)
+    , m_capabilityLevelState(DFG::CapabilityLevelNotSet)
 #endif
 {
     setNumParameters(other.numParameters());
@@ -2884,21 +2884,21 @@ CompilationResult FunctionCodeBlock::replaceWithDeferredOptimizedCode(PassRefPtr
     return static_cast<FunctionExecutable*>(ownerExecutable())->replaceWithDeferredOptimizedCodeFor(plan, m_isConstructor ? CodeForConstruct : CodeForCall);
 }
 
-DFG::CapabilityLevel ProgramCodeBlock::canCompileWithDFGInternal()
+DFG::CapabilityLevel ProgramCodeBlock::capabilityLevelInternal()
 {
-    return DFG::canCompileProgram(this);
+    return DFG::programCapabilityLevel(this);
 }
 
-DFG::CapabilityLevel EvalCodeBlock::canCompileWithDFGInternal()
+DFG::CapabilityLevel EvalCodeBlock::capabilityLevelInternal()
 {
-    return DFG::canCompileEval(this);
+    return DFG::evalCapabilityLevel(this);
 }
 
-DFG::CapabilityLevel FunctionCodeBlock::canCompileWithDFGInternal()
+DFG::CapabilityLevel FunctionCodeBlock::capabilityLevelInternal()
 {
     if (m_isConstructor)
-        return DFG::canCompileFunctionForConstruct(this);
-    return DFG::canCompileFunctionForCall(this);
+        return DFG::functionForConstructCapabilityLevel(this);
+    return DFG::functionForCallCapabilityLevel(this);
 }
 
 void CodeBlock::jettison()

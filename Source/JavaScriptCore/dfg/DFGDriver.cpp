@@ -64,7 +64,7 @@ static CompilationResult compile(CompileMode compileMode, ExecState* exec, CodeB
     
     ASSERT(osrEntryBytecodeIndex != UINT_MAX);
 
-    if (!Options::useDFGJIT())
+    if (!Options::useDFGJIT() || !MacroAssembler::supportsFloatingPoint())
         return CompilationFailed;
 
     if (!Options::bytecodeRangeToDFGCompile().isInRange(codeBlock->instructionCount()))

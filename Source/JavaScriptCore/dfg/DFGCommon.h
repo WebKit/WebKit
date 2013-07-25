@@ -261,7 +261,60 @@ namespace JSC { namespace DFG {
 
 // Put things here that must be defined even if ENABLE(DFG_JIT) is false.
 
-enum CapabilityLevel { CannotCompile, MayInline, CanCompile, CapabilityLevelNotSet };
+enum CapabilityLevel { CannotCompile, CanInline, CanCompile, CanCompileAndInline, CapabilityLevelNotSet };
+
+inline bool canCompile(CapabilityLevel level)
+{
+    switch (level) {
+    case CanCompile:
+    case CanCompileAndInline:
+        return true;
+    default:
+        return false;
+    }
+}
+
+inline bool canInline(CapabilityLevel level)
+{
+    switch (level) {
+    case CanInline:
+    case CanCompileAndInline:
+        return true;
+    default:
+        return false;
+    }
+}
+
+inline CapabilityLevel leastUpperBound(CapabilityLevel a, CapabilityLevel b)
+{
+    switch (a) {
+    case CannotCompile:
+        return CannotCompile;
+    case CanInline:
+        switch (b) {
+        case CanInline:
+        case CanCompileAndInline:
+            return CanInline;
+        default:
+            return CannotCompile;
+        }
+    case CanCompile:
+        switch (b) {
+        case CanCompile:
+        case CanCompileAndInline:
+            return CanCompile;
+        default:
+            return CannotCompile;
+        }
+    case CanCompileAndInline:
+        return b;
+    case CapabilityLevelNotSet:
+        ASSERT_NOT_REACHED();
+        return CannotCompile;
+    }
+    ASSERT_NOT_REACHED();
+    return CannotCompile;
+}
 
 // Unconditionally disable DFG disassembly support if the DFG is not compiled in.
 inline bool shouldShowDisassembly()

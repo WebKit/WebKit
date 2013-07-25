@@ -648,7 +648,7 @@ void JIT::privateCompilePutByIdTransition(StructureStubInfo* stubInfo, Structure
     // If we succeed in all of our checks, and the code was optimizable, then make sure we
     // decrement the rare case counter.
 #if ENABLE(VALUE_PROFILER)
-    if (m_codeBlock->canCompileWithDFG() >= DFG::MayInline) {
+    if (m_codeBlock->capabilityLevelState() != DFG::CannotCompile) {
         sub32(
             TrustedImm32(1),
             AbsoluteAddress(&m_codeBlock->rareCaseProfileForBytecodeOffset(stubInfo->bytecodeIndex)->m_counter));

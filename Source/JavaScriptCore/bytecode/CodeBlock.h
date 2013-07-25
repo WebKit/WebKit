@@ -311,14 +311,14 @@ public:
     }
     virtual CodeBlock* replacement() = 0;
 
-    virtual DFG::CapabilityLevel canCompileWithDFGInternal() = 0;
-    DFG::CapabilityLevel canCompileWithDFG()
+    virtual DFG::CapabilityLevel capabilityLevelInternal() = 0;
+    DFG::CapabilityLevel capabilityLevel()
     {
-        DFG::CapabilityLevel result = canCompileWithDFGInternal();
-        m_canCompileWithDFGState = result;
+        DFG::CapabilityLevel result = capabilityLevelInternal();
+        m_capabilityLevelState = result;
         return result;
     }
-    DFG::CapabilityLevel canCompileWithDFGState() { return m_canCompileWithDFGState; }
+    DFG::CapabilityLevel capabilityLevelState() { return m_capabilityLevelState; }
 
     bool hasOptimizedReplacement();
 #else
@@ -919,7 +919,7 @@ public:
     // without holding any locks, because the GC is guaranteed to wait until any
     // concurrent compilation threads finish what they're doing.
     ConcurrentJITLock m_lock;
-
+    
 protected:
 #if ENABLE(JIT)
     virtual CompilationResult jitCompileImpl(ExecState*) = 0;
@@ -1120,7 +1120,7 @@ private:
 #endif
     OwnPtr<RareData> m_rareData;
 #if ENABLE(JIT)
-    DFG::CapabilityLevel m_canCompileWithDFGState;
+    DFG::CapabilityLevel m_capabilityLevelState;
 #endif
 };
 
@@ -1159,7 +1159,7 @@ protected:
     virtual void jettisonImpl();
     virtual CompilationResult jitCompileImpl(ExecState*);
     virtual CodeBlock* replacement();
-    virtual DFG::CapabilityLevel canCompileWithDFGInternal();
+    virtual DFG::CapabilityLevel capabilityLevelInternal();
 #endif
 };
 
@@ -1185,7 +1185,7 @@ protected:
     virtual void jettisonImpl();
     virtual CompilationResult jitCompileImpl(ExecState*);
     virtual CodeBlock* replacement();
-    virtual DFG::CapabilityLevel canCompileWithDFGInternal();
+    virtual DFG::CapabilityLevel capabilityLevelInternal();
 #endif
     
 private:
@@ -1211,7 +1211,7 @@ protected:
     virtual void jettisonImpl();
     virtual CompilationResult jitCompileImpl(ExecState*);
     virtual CodeBlock* replacement();
-    virtual DFG::CapabilityLevel canCompileWithDFGInternal();
+    virtual DFG::CapabilityLevel capabilityLevelInternal();
 #endif
 };
 

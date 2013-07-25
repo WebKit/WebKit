@@ -565,18 +565,20 @@ ALWAYS_INLINE void PropertyStubCompilationInfo::copyToStubInfo(StructureStubInfo
 PassRefPtr<JITCode> JIT::privateCompile(CodePtr* functionEntryArityCheck, JITCompilationEffort effort)
 {
 #if ENABLE(VALUE_PROFILER)
-    DFG::CapabilityLevel level = m_codeBlock->canCompileWithDFG();
+    DFG::CapabilityLevel level = m_codeBlock->capabilityLevel();
     switch (level) {
     case DFG::CannotCompile:
         m_canBeOptimized = false;
+        m_canBeOptimizedOrInlined = false;
         m_shouldEmitProfiling = false;
         break;
-    case DFG::MayInline:
+    case DFG::CanInline:
         m_canBeOptimized = false;
         m_canBeOptimizedOrInlined = true;
         m_shouldEmitProfiling = true;
         break;
     case DFG::CanCompile:
+    case DFG::CanCompileAndInline:
         m_canBeOptimized = true;
         m_canBeOptimizedOrInlined = true;
         m_shouldEmitProfiling = true;

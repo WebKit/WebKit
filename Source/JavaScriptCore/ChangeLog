@@ -1,3 +1,59 @@
+2013-05-23  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: rationalize DFG::CapabilityLevel and DFGCapabilities.[h|cpp]
+        https://bugs.webkit.org/show_bug.cgi?id=116696
+
+        Reviewed by Sam Weinig.
+        
+        Make it so that all capability calculation is funneled through one function, which tells
+        you everything you wanted to know: can it be inlined, and can it be compiled.
+        
+        This work will help with https://bugs.webkit.org/show_bug.cgi?id=116557, since now the
+        JIT has a fairly authoritative answer to the "can it be inlined" question.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::ProgramCodeBlock::capabilityLevelInternal):
+        (JSC::EvalCodeBlock::capabilityLevelInternal):
+        (JSC::FunctionCodeBlock::capabilityLevelInternal):
+        * bytecode/CodeBlock.h:
+        (CodeBlock):
+        (JSC::CodeBlock::capabilityLevel):
+        (JSC::CodeBlock::capabilityLevelState):
+        (ProgramCodeBlock):
+        (EvalCodeBlock):
+        (FunctionCodeBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::debugFail):
+        (DFG):
+        (JSC::DFG::canInlineResolveOperations):
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGCapabilities.h:
+        (DFG):
+        (JSC::DFG::capabilityLevel):
+        (JSC::DFG::evalCapabilityLevel):
+        (JSC::DFG::programCapabilityLevel):
+        (JSC::DFG::functionForCallCapabilityLevel):
+        (JSC::DFG::functionForConstructCapabilityLevel):
+        (JSC::DFG::canInlineFunctionForCall):
+        (JSC::DFG::canInlineFunctionForClosureCall):
+        (JSC::DFG::canInlineFunctionForConstruct):
+        * dfg/DFGCommon.h:
+        (JSC::DFG::canCompile):
+        (DFG):
+        (JSC::DFG::canInline):
+        (JSC::DFG::leastUpperBound):
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compile):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompile):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::privateCompilePutByIdTransition):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::privateCompilePutByIdTransition):
+        * tools/CodeProfile.cpp:
+        (JSC::CodeProfile::sample):
+
 2013-05-22  Filip Pizlo  <fpizlo@apple.com>
 
         Rename getJITCode and getJITType to jitCode and jitType.
