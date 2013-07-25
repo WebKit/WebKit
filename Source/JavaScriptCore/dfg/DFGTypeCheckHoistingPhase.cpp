@@ -236,7 +236,7 @@ public:
 
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
         for (HashMap<VariableAccessData*, CheckData>::iterator it = m_map.begin();
-            it != m_map.end(); ++it) {
+             it != m_map.end(); ++it) {
             if (!it->value.m_structure) {
                 dataLog(
                     "Not hoisting checks for ", VariableAccessDataDump(m_graph, it->key),
