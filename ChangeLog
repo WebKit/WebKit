@@ -1,3 +1,12 @@
+2013-07-25  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Unreviewed EFL build fix after r153315.
+
+        Use -std=gnu++0x instead of -std=c++0x as we rely on GNU extensions such as
+        typeof().
+
+        * Source/cmake/WebKitHelpers.cmake:
+
 2013-07-25  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [CMAKE] Enforce c++0x for cmake based ports
