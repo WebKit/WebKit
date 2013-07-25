@@ -102,7 +102,7 @@ CallLinkStatus CallLinkStatus::computeFor(CodeBlock* profiledBlock, unsigned byt
     UNUSED_PARAM(profiledBlock);
     UNUSED_PARAM(bytecodeIndex);
 #if ENABLE(JIT) && ENABLE(VALUE_PROFILER)
-    if (!profiledBlock->numberOfCallLinkInfos())
+    if (!profiledBlock->hasBaselineJITProfiling())
         return computeFromLLInt(profiledBlock, bytecodeIndex);
     
     if (profiledBlock->couldTakeSlowCase(bytecodeIndex))

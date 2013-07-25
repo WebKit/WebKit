@@ -1,5 +1,55 @@
 2013-05-22  Filip Pizlo  <fpizlo@apple.com>
 
+        fourthTier: Race between LLInt->Baseline tier-up and DFG reading Baseline profiling data
+        https://bugs.webkit.org/show_bug.cgi?id=116633
+
+        Reviewed by Mark Hahnenberg.
+        
+        Previously we would check if we had Baseline JIT profiling data by seeing if the
+        appropriate vector was non-empty. This is horrible if we're doing LLInt->Baseline
+        tier-up at the same time. This will happen for code we are inlining, if we're
+        deciding to inline it before the LLInt->Baseline tier-up happened for that code.
+        
+        This changes things to take advantage of the fact that the very last thing that
+        LLInt->Baseline tier-up will do (in JITDriver.h) is setJITCode(). We now precede
+        the actual work in setJITCode() with a store-store fence to ensure that all
+        stores to modify the CodeBlock happen before setting the JITCode, and we modify
+        CodeBlock::getJITType() to use load-load fences to ensure that if you see
+        JITCode::BaselineJIT then you will also see all of those vectors. Then this
+        changes all of the code that scrapes Baseline JIT profiles to check if
+        getJITType() returns JITCode::BaselineJIT instead of checking vector sizes.
+        
+        The outcome is that for the non-racy cases we behave as we did before (we fall
+        back on LLInt profiling if the tier-up hasn't happened) and for racy cases we
+        use LLInt profiling conservatively.
+        
+        Note that for some (but not all!) of the cases where we scrape Baseline JIT
+        profiling, we would have anyway been holding the CodeBlock::m_lock so we can also
+        fix those cases by just having setJITCode graph that lock. This patch does that
+        also, mainly because although we only call setJITCode() from the main thread, in
+        general it's dangerous to have a pointer to a ref-counted object being modified
+        in a racy way. So, this patch just does the most conservative thing possible that
+        does we can afford to do.
+
+        * bytecode/CallLinkStatus.cpp:
+        (JSC::CallLinkStatus::computeFor):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::setJITCode):
+        (JSC::CodeBlock::getJITType):
+        (JSC::CodeBlock::hasBaselineJITProfiling):
+        (JSC::CodeBlock::likelyToTakeSlowCase):
+        (JSC::CodeBlock::couldTakeSlowCase):
+        (JSC::CodeBlock::likelyToTakeSpecialFastCase):
+        (JSC::CodeBlock::couldTakeSpecialFastCase):
+        (JSC::CodeBlock::likelyToTakeDeepestSlowCase):
+        (JSC::CodeBlock::likelyToTakeAnySlowCase):
+        * bytecode/GetByIdStatus.cpp:
+        (JSC::GetByIdStatus::computeFor):
+        * bytecode/PutByIdStatus.cpp:
+        (JSC::PutByIdStatus::computeFor):
+
+2013-05-22  Filip Pizlo  <fpizlo@apple.com>
+
         fourthTier: It should be possible to use more than one compiler thread
         https://bugs.webkit.org/show_bug.cgi?id=116630
 

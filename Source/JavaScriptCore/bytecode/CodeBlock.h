@@ -275,6 +275,8 @@ class CodeBlock : public ThreadSafeRefCounted<CodeBlock>, public UnconditionalFi
 #if ENABLE(JIT)
         void setJITCode(PassRefPtr<JITCode> code, MacroAssemblerCodePtr codeWithArityCheck)
         {
+            ConcurrentJITLocker locker(m_lock);
+            WTF::storeStoreFence(); // This is probably not needed because the lock will also do something similar, but it's good to be paranoid.
             m_jitCode = code;
             m_jitCodeWithArityCheck = codeWithArityCheck;
 #if ENABLE(DFG_JIT)
@@ -284,7 +286,18 @@ class CodeBlock : public ThreadSafeRefCounted<CodeBlock>, public UnconditionalFi
         }
         PassRefPtr<JITCode> getJITCode() { return m_jitCode; }
         MacroAssemblerCodePtr getJITCodeWithArityCheck() { return m_jitCodeWithArityCheck; }
-        JITCode::JITType getJITType() const { return JITCode::jitTypeFor(m_jitCode.get()); }
+        JITCode::JITType getJITType() const
+        {
+            JITCode* jitCode = m_jitCode.get();
+            WTF::loadLoadFence();
+            JITCode::JITType result = JITCode::jitTypeFor(jitCode);
+            WTF::loadLoadFence(); // This probably isn't needed. Oh well, paranoia is good.
+            return result;
+        }
+        bool hasBaselineJITProfiling() const
+        {
+            return getJITType() == JITCode::BaselineJIT;
+        }
         virtual JSObject* compileOptimized(ExecState*, JSScope*, CompilationResult&, unsigned bytecodeIndex) = 0;
         virtual CompilationResult replaceWithDeferredOptimizedCode(PassRefPtr<DFG::Plan>) = 0;
         void jettison();
@@ -480,7 +493,7 @@ class CodeBlock : public ThreadSafeRefCounted<CodeBlock>, public UnconditionalFi
 
         bool likelyToTakeSlowCase(int bytecodeOffset)
         {
-            if (!numberOfRareCaseProfiles())
+            if (!hasBaselineJITProfiling())
                 return false;
             unsigned value = rareCaseProfileForBytecodeOffset(bytecodeOffset)->m_counter;
             return value >= Options::likelyToTakeSlowCaseMinimumCount();
@@ -488,7 +501,7 @@ class CodeBlock : public ThreadSafeRefCounted<CodeBlock>, public UnconditionalFi
 
         bool couldTakeSlowCase(int bytecodeOffset)
         {
-            if (!numberOfRareCaseProfiles())
+            if (!hasBaselineJITProfiling())
                 return false;
             unsigned value = rareCaseProfileForBytecodeOffset(bytecodeOffset)->m_counter;
             return value >= Options::couldTakeSlowCaseMinimumCount();
@@ -510,7 +523,7 @@ class CodeBlock : public ThreadSafeRefCounted<CodeBlock>, public UnconditionalFi
 
         bool likelyToTakeSpecialFastCase(int bytecodeOffset)
         {
-            if (!numberOfRareCaseProfiles())
+            if (!hasBaselineJITProfiling())
                 return false;
             unsigned specialFastCaseCount = specialFastCaseProfileForBytecodeOffset(bytecodeOffset)->m_counter;
             return specialFastCaseCount >= Options::likelyToTakeSlowCaseMinimumCount();
@@ -518,7 +531,7 @@ class CodeBlock : public ThreadSafeRefCounted<CodeBlock>, public UnconditionalFi
 
         bool couldTakeSpecialFastCase(int bytecodeOffset)
         {
-            if (!numberOfRareCaseProfiles())
+            if (!hasBaselineJITProfiling())
                 return false;
             unsigned specialFastCaseCount = specialFastCaseProfileForBytecodeOffset(bytecodeOffset)->m_counter;
             return specialFastCaseCount >= Options::couldTakeSlowCaseMinimumCount();
@@ -526,7 +539,7 @@ class CodeBlock : public ThreadSafeRefCounted<CodeBlock>, public UnconditionalFi
 
         bool likelyToTakeDeepestSlowCase(int bytecodeOffset)
         {
-            if (!numberOfRareCaseProfiles())
+            if (!hasBaselineJITProfiling())
                 return false;
             unsigned slowCaseCount = rareCaseProfileForBytecodeOffset(bytecodeOffset)->m_counter;
             unsigned specialFastCaseCount = specialFastCaseProfileForBytecodeOffset(bytecodeOffset)->m_counter;
@@ -536,7 +549,7 @@ class CodeBlock : public ThreadSafeRefCounted<CodeBlock>, public UnconditionalFi
 
         bool likelyToTakeAnySlowCase(int bytecodeOffset)
         {
-            if (!numberOfRareCaseProfiles())
+            if (!hasBaselineJITProfiling())
                 return false;
             unsigned slowCaseCount = rareCaseProfileForBytecodeOffset(bytecodeOffset)->m_counter;
             unsigned specialFastCaseCount = specialFastCaseProfileForBytecodeOffset(bytecodeOffset)->m_counter;

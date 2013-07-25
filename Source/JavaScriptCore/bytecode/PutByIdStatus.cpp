@@ -89,7 +89,7 @@ PutByIdStatus PutByIdStatus::computeFor(CodeBlock* profiledBlock, unsigned bytec
     UNUSED_PARAM(bytecodeIndex);
     UNUSED_PARAM(uid);
 #if ENABLE(JIT) && ENABLE(VALUE_PROFILER)
-    if (!profiledBlock->numberOfStructureStubInfos())
+    if (!profiledBlock->hasBaselineJITProfiling())
         return computeFromLLInt(profiledBlock, bytecodeIndex, uid);
     
     if (profiledBlock->likelyToTakeSlowCase(bytecodeIndex))

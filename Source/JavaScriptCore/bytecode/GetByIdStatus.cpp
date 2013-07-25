@@ -113,7 +113,7 @@ GetByIdStatus GetByIdStatus::computeFor(CodeBlock* profiledBlock, unsigned bytec
     UNUSED_PARAM(bytecodeIndex);
     UNUSED_PARAM(uid);
 #if ENABLE(JIT) && ENABLE(VALUE_PROFILER)
-    if (!profiledBlock->numberOfStructureStubInfos())
+    if (!profiledBlock->hasBaselineJITProfiling())
         return computeFromLLInt(profiledBlock, bytecodeIndex, uid);
     
     // First check if it makes either calls, in which case we want to be super careful, or
