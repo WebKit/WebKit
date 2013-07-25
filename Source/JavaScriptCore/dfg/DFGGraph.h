@@ -445,7 +445,7 @@ public:
         }
         
         if (node->hasHeapPrediction())
-            return profiledBlock->valueProfileForBytecodeOffset(node->codeOrigin.bytecodeIndexForValueProfile());
+            return profiledBlock->valueProfileForBytecodeOffset(node->codeOrigin.bytecodeIndex);
         
         return 0;
     }

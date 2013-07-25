@@ -1,5 +1,20 @@
 2013-05-31  Filip Pizlo  <fpizlo@apple.com>
 
+        Remove CodeOrigin::valueProfileOffset since it was only needed for op_call_put_result.
+
+        Rubber stamped by Mark Hahnenberg.
+
+        * bytecode/CodeOrigin.h:
+        (CodeOrigin):
+        (JSC::CodeOrigin::CodeOrigin):
+        (JSC::CodeOrigin::isSet):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::currentCodeOrigin):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::valueProfileFor):
+
+2013-05-31  Filip Pizlo  <fpizlo@apple.com>
+
         Remove finalDestinationOrIgnored since it isn't called anymore.
 
         Rubber stamped by Mark Hahnenberg.
@@ -13,8 +28,6 @@
         https://bugs.webkit.org/show_bug.cgi?id=117047
 
         Reviewed by Gavin Barraclough.
-        
-        Work in progress. This still makes like 20 tests crash.
         
         op_call_put_result is an oddball. Its semantics are that it takes the return
         value of a call instruction, which is set aside in regT0/regT1, and places them

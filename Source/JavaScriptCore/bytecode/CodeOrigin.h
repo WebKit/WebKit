@@ -43,38 +43,30 @@ class ScriptExecutable;
 class JSFunction;
 
 struct CodeOrigin {
-    static const unsigned maximumBytecodeIndex = (1u << 29) - 1;
+    static const unsigned invalidBytecodeIndex = UINT_MAX;
     
-    // Bytecode offset that you'd use to re-execute this instruction.
-    unsigned bytecodeIndex : 29;
-    // Bytecode offset corresponding to the opcode that gives the result (needed to handle
-    // op_call/op_call_put_result and op_method_check/op_get_by_id).
-    unsigned valueProfileOffset : 3;
+    // Bytecode offset that you'd use to re-execute this instruction, and the
+    // bytecode index of the bytecode instruction that produces some result that
+    // you're interested in (used for mapping Nodes whose values you're using
+    // to bytecode instructions that have the appropriate value profile).
+    unsigned bytecodeIndex;
     
     InlineCallFrame* inlineCallFrame;
     
     CodeOrigin()
-        : bytecodeIndex(maximumBytecodeIndex)
-        , valueProfileOffset(0)
+        : bytecodeIndex(invalidBytecodeIndex)
         , inlineCallFrame(0)
     {
     }
     
-    explicit CodeOrigin(unsigned bytecodeIndex, InlineCallFrame* inlineCallFrame = 0, unsigned valueProfileOffset = 0)
+    explicit CodeOrigin(unsigned bytecodeIndex, InlineCallFrame* inlineCallFrame = 0)
         : bytecodeIndex(bytecodeIndex)
-        , valueProfileOffset(valueProfileOffset)
         , inlineCallFrame(inlineCallFrame)
     {
-        RELEASE_ASSERT(bytecodeIndex <= maximumBytecodeIndex);
-        RELEASE_ASSERT(valueProfileOffset < (1u << 3));
+        ASSERT(bytecodeIndex < invalidBytecodeIndex);
     }
     
-    bool isSet() const { return bytecodeIndex != maximumBytecodeIndex; }
-    
-    unsigned bytecodeIndexForValueProfile() const
-    {
-        return bytecodeIndex + valueProfileOffset;
-    }
+    bool isSet() const { return bytecodeIndex != invalidBytecodeIndex; }
     
     // The inline depth is the depth of the inline stack, so 1 = not inlined,
     // 2 = inlined one deep, etc.

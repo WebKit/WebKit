@@ -686,7 +686,7 @@ private:
 
     CodeOrigin currentCodeOrigin()
     {
-        return CodeOrigin(m_currentIndex, inlineCallFrame(), 0);
+        return CodeOrigin(m_currentIndex, inlineCallFrame());
     }
     
     bool canFold(Node* node)
