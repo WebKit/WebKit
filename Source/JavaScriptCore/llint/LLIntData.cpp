@@ -31,8 +31,10 @@
 #include "BytecodeConventions.h"
 #include "CodeType.h"
 #include "Instruction.h"
+#include "JSScope.h"
 #include "LLIntCLoop.h"
 #include "Opcode.h"
+#include "PropertyOffset.h"
 
 namespace JSC { namespace LLInt {
 
@@ -112,7 +114,17 @@ void Data::performAssertions(VM& vm)
     ASSERT(GlobalCode == 0);
     ASSERT(EvalCode == 1);
     ASSERT(FunctionCode == 2);
+
+    ASSERT(GlobalProperty == 0);
+    ASSERT(GlobalVar == 1);
+    ASSERT(ClosureVar == 2);
+    ASSERT(GlobalPropertyWithVarInjectionChecks == 3);
+    ASSERT(GlobalVarWithVarInjectionChecks == 4);
+    ASSERT(ClosureVarWithVarInjectionChecks == 5);
+    ASSERT(Dynamic == 6);
     
+    ASSERT(ResolveModeAndType::mask == 0xffff);
+
     // FIXME: make these assertions less horrible.
 #if !ASSERT_DISABLED
     Vector<int> testVector;

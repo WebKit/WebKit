@@ -260,10 +260,13 @@ GetByIdStatus GetByIdStatus::computeFor(VM& vm, Structure* structure, StringImpl
     // For now we only handle the super simple self access case. We could handle the
     // prototype case in the future.
     
+    if (!structure)
+        return GetByIdStatus(TakesSlowPath);
+
     if (toUInt32FromStringImpl(uid) != PropertyName::NotAnIndex)
         return GetByIdStatus(TakesSlowPath);
     
-    if (structure->typeInfo().overridesGetOwnPropertySlot())
+    if (structure->typeInfo().overridesGetOwnPropertySlot() && structure->typeInfo().type() != GlobalObjectType)
         return GetByIdStatus(TakesSlowPath);
     
     if (!structure->propertyAccessesAreCacheable())

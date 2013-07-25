@@ -186,11 +186,7 @@ private:
         case Call:
         case Construct:
         case GetGlobalVar:
-        case GetScopedVar:
-        case Resolve:
-        case ResolveBase:
-        case ResolveBaseStrictPut:
-        case ResolveGlobal: {
+        case GetClosureVar: {
             changed |= setPrediction(node->getHeapPrediction());
             break;
         }
@@ -372,7 +368,7 @@ private:
             break;
         }
 
-        case GetScopeRegisters:            
+        case GetClosureRegisters:            
         case GetButterfly: 
         case GetIndexedPropertyStorage:
         case AllocatePropertyStorage:
@@ -508,7 +504,7 @@ private:
 #ifndef NDEBUG
         // These get ignored because they don't return anything.
         case PutByVal:
-        case PutScopedVar:
+        case PutClosureVar:
         case Return:
         case Throw:
         case PutById:
@@ -535,11 +531,10 @@ private:
         case TearOffArguments:
         case CheckArgumentsNotCreated:
         case GlobalVarWatchpoint:
-        case GarbageValue:
+        case VarInjectionWatchpoint:
         case AllocationProfileWatchpoint:
         case Phantom:
         case PutGlobalVar:
-        case PutGlobalVarCheck:
         case CheckWatchdogTimer:
             break;
             

@@ -75,41 +75,6 @@ inline void debugFail(CodeBlock* codeBlock, OpcodeID opcodeID, CapabilityLevel r
         dataLog("Cannot compile code block ", *codeBlock, " because of opcode ", opcodeNames[opcodeID], "\n");
 }
 
-// Opcode checking.
-inline bool canInlineResolveOperations(ResolveOperations* operations)
-{
-    for (unsigned i = 0; i < operations->size(); i++) {
-        switch (operations->data()[i].m_operation) {
-        case ResolveOperation::ReturnGlobalObjectAsBase:
-        case ResolveOperation::SetBaseToGlobal:
-        case ResolveOperation::SetBaseToUndefined:
-        case ResolveOperation::GetAndReturnGlobalProperty:
-        case ResolveOperation::GetAndReturnGlobalVar:
-        case ResolveOperation::GetAndReturnGlobalVarWatchable:
-        case ResolveOperation::SkipScopes:
-        case ResolveOperation::SetBaseToScope:
-        case ResolveOperation::ReturnScopeAsBase:
-        case ResolveOperation::GetAndReturnScopedVar:
-            continue;
-
-        case ResolveOperation::Fail:
-            // Fall-back resolves don't know how to deal with the ExecState* having a different
-            // global object (and scope) than the inlined code that is invoking that resolve.
-            return false;
-
-        case ResolveOperation::SkipTopScopeNode:
-            // We don't inline code blocks that create activations. Creation of
-            // activations is the only thing that leads to SkipTopScopeNode.
-            return false;
-
-        case ResolveOperation::CheckForDynamicEntriesBeforeGlobalScope:
-            // This would be easy to support in all cases.
-            return false;
-        }
-    }
-    return true;
-}
-
 CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, Instruction* pc)
 {
     switch (opcodeID) {
@@ -167,7 +132,6 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, Instruc
     case op_put_by_id_transition_normal_out_of_line:
     case op_init_global_const_nop:
     case op_init_global_const:
-    case op_init_global_const_check:
     case op_jmp:
     case op_jtrue:
     case op_jfalse:
@@ -200,43 +164,24 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, Instruc
     case op_get_argument_by_val:
     case op_get_arguments_length:
     case op_jneq_ptr:
-    case op_put_to_base_variable:
-    case op_put_to_base:
     case op_typeof:
     case op_to_number:
+    case op_get_from_scope:
+    case op_put_to_scope:
         return CanCompileAndInline;
-        
+
+    case op_resolve_scope: {
+        // We don't compile 'catch' or 'with', so there's no point in compiling variable resolution within them.
+        ResolveType resolveType = static_cast<ResolveType>(pc[3].u.operand);
+        if (resolveType == Dynamic)
+            return CannotCompile;
+        return CanCompileAndInline;
+    }
+
     case op_call_varargs:
         if (codeBlock->usesArguments() && pc[4].u.operand == codeBlock->argumentsRegister())
             return CanInline;
         return CannotCompile;
-
-    case op_resolve:
-    case op_resolve_global_property:
-    case op_resolve_global_var:
-    case op_resolve_scoped_var:
-    case op_resolve_scoped_var_on_top_scope:
-    case op_resolve_scoped_var_with_top_scope_check:
-        if (canInlineResolveOperations(pc[3].u.resolveOperations))
-            return CanCompileAndInline;
-        return CanCompile;
-
-    case op_get_scoped_var:
-    case op_put_scoped_var:
-        if (!codeBlock->needsFullScopeChain())
-            return CanCompileAndInline;
-        return CanCompile;
-
-    case op_resolve_base_to_global:
-    case op_resolve_base_to_global_dynamic:
-    case op_resolve_base_to_scope:
-    case op_resolve_base_to_scope_with_top_scope_check:
-    case op_resolve_base:
-    case op_resolve_with_base:
-    case op_resolve_with_this:
-        if (canInlineResolveOperations(pc[4].u.resolveOperations))
-            return CanCompileAndInline;
-        return CanCompile;
 
     case op_new_regexp: 
     case op_create_activation:

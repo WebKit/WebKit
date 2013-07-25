@@ -314,6 +314,8 @@ struct Node {
     void convertToStructureTransitionWatchpoint(Structure* structure)
     {
         ASSERT(m_op == CheckStructure || m_op == ForwardCheckStructure || m_op == ArrayifyToStructure);
+        ASSERT(!child2());
+        ASSERT(!child3());
         m_opInfo = bitwise_cast<uintptr_t>(structure);
         if (m_op == CheckStructure || m_op == ArrayifyToStructure)
             m_op = StructureTransitionWatchpoint;
@@ -486,18 +488,6 @@ struct Node {
         return m_opInfo;
     }
     
-    unsigned resolveGlobalDataIndex()
-    {
-        ASSERT(op() == ResolveGlobal);
-        return m_opInfo;
-    }
-
-    unsigned resolveOperationsDataIndex()
-    {
-        ASSERT(op() == Resolve || op() == ResolveBase || op() == ResolveBaseStrictPut);
-        return m_opInfo;
-    }
-
     bool hasArithNodeFlags()
     {
         switch (op()) {
@@ -600,7 +590,7 @@ struct Node {
     
     bool hasVarNumber()
     {
-        return op() == GetScopedVar || op() == PutScopedVar;
+        return op() == GetClosureVar || op() == PutClosureVar;
     }
 
     unsigned varNumber()
@@ -611,7 +601,7 @@ struct Node {
     
     bool hasIdentifierNumberForCheck()
     {
-        return op() == GlobalVarWatchpoint || op() == PutGlobalVarCheck;
+        return op() == GlobalVarWatchpoint;
     }
     
     unsigned identifierNumberForCheck()
@@ -622,7 +612,7 @@ struct Node {
     
     bool hasRegisterPointer()
     {
-        return op() == GetGlobalVar || op() == PutGlobalVar || op() == GlobalVarWatchpoint || op() == PutGlobalVarCheck;
+        return op() == GetGlobalVar || op() == PutGlobalVar || op() == GlobalVarWatchpoint;
     }
     
     WriteBarrier<Unknown>* registerPointer()
@@ -762,11 +752,7 @@ struct Node {
         case Call:
         case Construct:
         case GetByOffset:
-        case GetScopedVar:
-        case Resolve:
-        case ResolveBase:
-        case ResolveBaseStrictPut:
-        case ResolveGlobal:
+        case GetClosureVar:
         case ArrayPop:
         case ArrayPush:
         case RegExpExec:

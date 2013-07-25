@@ -78,7 +78,6 @@ JIT::JIT(VM* vm, CodeBlock* codeBlock)
     , m_bytecodeOffset((unsigned)-1)
     , m_propertyAccessInstructionIndex(UINT_MAX)
     , m_byValInstructionIndex(UINT_MAX)
-    , m_globalResolveInfoIndex(UINT_MAX)
     , m_callLinkInfoIndex(UINT_MAX)
 #if USE(JSVALUE32_64)
     , m_jumpTargetIndex(0)
@@ -172,7 +171,6 @@ void JIT::privateCompileMainPass()
     Instruction* instructionsBegin = m_codeBlock->instructions().begin();
     unsigned instructionCount = m_codeBlock->instructions().size();
 
-    m_globalResolveInfoIndex = 0;
     m_callLinkInfoIndex = 0;
 
     for (m_bytecodeOffset = 0; m_bytecodeOffset < instructionCount; ) {
@@ -304,26 +302,7 @@ void JIT::privateCompileMainPass()
         case op_init_global_const_nop:
             NEXT_OPCODE(op_init_global_const_nop);
         DEFINE_OP(op_init_global_const)
-        DEFINE_OP(op_init_global_const_check)
 
-        case op_resolve_global_property:
-        case op_resolve_global_var:
-        case op_resolve_scoped_var:
-        case op_resolve_scoped_var_on_top_scope:
-        case op_resolve_scoped_var_with_top_scope_check:
-        DEFINE_OP(op_resolve)
-
-        case op_resolve_base_to_global:
-        case op_resolve_base_to_global_dynamic:
-        case op_resolve_base_to_scope:
-        case op_resolve_base_to_scope_with_top_scope_check:
-        DEFINE_OP(op_resolve_base)
-
-        case op_put_to_base_variable:
-        DEFINE_OP(op_put_to_base)
-
-        DEFINE_OP(op_resolve_with_base)
-        DEFINE_OP(op_resolve_with_this)
         DEFINE_OP(op_ret)
         DEFINE_OP(op_ret_object_or_this)
         DEFINE_OP(op_rshift)
@@ -341,8 +320,9 @@ void JIT::privateCompileMainPass()
         DEFINE_OP(op_to_number)
         DEFINE_OP(op_to_primitive)
 
-        DEFINE_OP(op_get_scoped_var)
-        DEFINE_OP(op_put_scoped_var)
+        DEFINE_OP(op_resolve_scope)
+        DEFINE_OP(op_get_from_scope)
+        DEFINE_OP(op_put_to_scope)
 
         case op_get_by_id_chain:
         case op_get_by_id_generic:
@@ -384,7 +364,6 @@ void JIT::privateCompileSlowCases()
 
     m_propertyAccessInstructionIndex = 0;
     m_byValInstructionIndex = 0;
-    m_globalResolveInfoIndex = 0;
     m_callLinkInfoIndex = 0;
     
 #if ENABLE(VALUE_PROFILER)
@@ -471,7 +450,6 @@ void JIT::privateCompileSlowCases()
         case op_put_by_id_transition_normal_out_of_line:
         DEFINE_SLOWCASE_OP(op_put_by_id)
         DEFINE_SLOWCASE_OP(op_put_by_val)
-        DEFINE_SLOWCASE_OP(op_init_global_const_check);
         DEFINE_SLOWCASE_OP(op_rshift)
         DEFINE_SLOWCASE_OP(op_urshift)
         DEFINE_SLOWCASE_OP(op_stricteq)
@@ -479,23 +457,9 @@ void JIT::privateCompileSlowCases()
         DEFINE_SLOWCASE_OP(op_to_number)
         DEFINE_SLOWCASE_OP(op_to_primitive)
 
-        case op_resolve_global_property:
-        case op_resolve_global_var:
-        case op_resolve_scoped_var:
-        case op_resolve_scoped_var_on_top_scope:
-        case op_resolve_scoped_var_with_top_scope_check:
-        DEFINE_SLOWCASE_OP(op_resolve)
-
-        case op_resolve_base_to_global:
-        case op_resolve_base_to_global_dynamic:
-        case op_resolve_base_to_scope:
-        case op_resolve_base_to_scope_with_top_scope_check:
-        DEFINE_SLOWCASE_OP(op_resolve_base)
-        DEFINE_SLOWCASE_OP(op_resolve_with_base)
-        DEFINE_SLOWCASE_OP(op_resolve_with_this)
-
-        case op_put_to_base_variable:
-        DEFINE_SLOWCASE_OP(op_put_to_base)
+        DEFINE_SLOWCASE_OP(op_resolve_scope)
+        DEFINE_SLOWCASE_OP(op_get_from_scope)
+        DEFINE_SLOWCASE_OP(op_put_to_scope)
 
         default:
             RELEASE_ASSERT_NOT_REACHED();

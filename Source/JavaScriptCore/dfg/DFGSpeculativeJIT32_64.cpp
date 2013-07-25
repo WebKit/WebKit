@@ -3811,7 +3811,7 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
         
-    case GetScopeRegisters: {
+    case GetClosureRegisters: {
         SpeculateCellOperand scope(this, node->child1());
         GPRTemporary result(this);
         GPRReg scopeGPR = scope.gpr();
@@ -3821,7 +3821,7 @@ void SpeculativeJIT::compile(Node* node)
         storageResult(resultGPR, node);
         break;
     }
-    case GetScopedVar: {
+    case GetClosureVar: {
         StorageOperand registers(this, node->child1());
         GPRTemporary resultTag(this);
         GPRTemporary resultPayload(this);
@@ -3833,7 +3833,7 @@ void SpeculativeJIT::compile(Node* node)
         jsValueResult(resultTagGPR, resultPayloadGPR, node);
         break;
     }
-    case PutScopedVar: {
+    case PutClosureVar: {
         SpeculateCellOperand scope(this, node->child1());
         StorageOperand registers(this, node->child2());
         JSValueOperand value(this, node->child3());
@@ -4192,37 +4192,6 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
-    case PutGlobalVarCheck: {
-        JSValueOperand value(this, node->child1());
-        
-        WatchpointSet* watchpointSet =
-            m_jit.globalObjectFor(node->codeOrigin)->symbolTable()->get(
-                identifierUID(node->identifierNumberForCheck())).watchpointSet();
-        addSlowPathGenerator(
-            slowPathCall(
-                m_jit.branchTest8(
-                    JITCompiler::NonZero,
-                    JITCompiler::AbsoluteAddress(watchpointSet->addressOfIsWatched())),
-                this, operationNotifyGlobalVarWrite, NoResult, watchpointSet));
-        
-        if (Heap::isWriteBarrierEnabled()) {
-            GPRTemporary scratch(this);
-            GPRReg scratchReg = scratch.gpr();
-            
-            writeBarrier(m_jit.globalObjectFor(node->codeOrigin), value.tagGPR(), node->child1(), WriteBarrierForVariableAccess, scratchReg);
-        }
-
-        // FIXME: if we happen to have a spare register - and _ONLY_ if we happen to have
-        // a spare register - a good optimization would be to put the register pointer into
-        // a register and then do a zero offset store followed by a four-offset store (or
-        // vice-versa depending on endianness).
-        m_jit.store32(value.tagGPR(), node->registerPointer()->tagPointer());
-        m_jit.store32(value.payloadGPR(), node->registerPointer()->payloadPointer());
-
-        noResult(node);
-        break;
-    }
-        
     case GlobalVarWatchpoint: {
         WatchpointSet* set = m_jit.globalObjectFor(node->codeOrigin)->symbolTable()->get(
             identifierUID(node->identifierNumberForCheck())).watchpointSet();
@@ -4243,6 +4212,14 @@ void SpeculativeJIT::compile(Node* node)
         m_jit.breakpoint();
         ok.link(&m_jit);
 #endif
+        
+        noResult(node);
+        break;
+    }
+
+    case VarInjectionWatchpoint: {
+        WatchpointSet* set = m_jit.globalObjectFor(node->codeOrigin)->varInjectionWatchpoint();
+        m_jit.addLazily(speculationWatchpoint(), set);
         
         noResult(node);
         break;
@@ -4440,80 +4417,6 @@ void SpeculativeJIT::compile(Node* node)
     case Construct:
         emitCall(node);
         break;
-
-    case Resolve: {
-        flushRegisters();
-        GPRResult resultPayload(this);
-        GPRResult2 resultTag(this);
-        ResolveOperationData& data = m_jit.graph().m_resolveOperationsData[node->resolveOperationsDataIndex()];
-        callOperation(operationResolve, resultTag.gpr(), resultPayload.gpr(), identifierUID(data.identifierNumber), data.resolveOperations);
-        jsValueResult(resultTag.gpr(), resultPayload.gpr(), node);
-        break;
-    }
-
-    case ResolveBase: {
-        flushRegisters();
-        GPRResult resultPayload(this);
-        GPRResult2 resultTag(this);
-        ResolveOperationData& data = m_jit.graph().m_resolveOperationsData[node->resolveOperationsDataIndex()];
-        callOperation(operationResolveBase, resultTag.gpr(), resultPayload.gpr(), identifierUID(data.identifierNumber), data.resolveOperations, data.putToBaseOperation);
-        jsValueResult(resultTag.gpr(), resultPayload.gpr(), node);
-        break;
-    }
-
-    case ResolveBaseStrictPut: {
-        flushRegisters();
-        GPRResult resultPayload(this);
-        GPRResult2 resultTag(this);
-        ResolveOperationData& data = m_jit.graph().m_resolveOperationsData[node->resolveOperationsDataIndex()];
-        callOperation(operationResolveBaseStrictPut, resultTag.gpr(), resultPayload.gpr(), identifierUID(data.identifierNumber), data.resolveOperations, data.putToBaseOperation);
-        jsValueResult(resultTag.gpr(), resultPayload.gpr(), node);
-        break;
-    }
-
-    case ResolveGlobal: {
-        GPRTemporary globalObject(this);
-        GPRTemporary resolveInfo(this);
-        GPRTemporary resultTag(this);
-        GPRTemporary resultPayload(this);
-
-        GPRReg globalObjectGPR = globalObject.gpr();
-        GPRReg resolveInfoGPR = resolveInfo.gpr();
-        GPRReg resultTagGPR = resultTag.gpr();
-        GPRReg resultPayloadGPR = resultPayload.gpr();
-
-        ResolveGlobalData& data = m_jit.graph().m_resolveGlobalData[node->resolveGlobalDataIndex()];
-        ResolveOperation* resolveOperationAddress = &(data.resolveOperations->data()[data.resolvePropertyIndex]);
-
-        // Check Structure of global object
-        m_jit.move(JITCompiler::TrustedImmPtr(m_jit.globalObjectFor(node->codeOrigin)), globalObjectGPR);
-        m_jit.move(JITCompiler::TrustedImmPtr(resolveOperationAddress), resolveInfoGPR);
-        m_jit.loadPtr(JITCompiler::Address(resolveInfoGPR, OBJECT_OFFSETOF(ResolveOperation, m_structure)), resultPayloadGPR);
-
-        JITCompiler::Jump structuresNotMatch = m_jit.branchPtr(JITCompiler::NotEqual, resultPayloadGPR, JITCompiler::Address(globalObjectGPR, JSCell::structureOffset()));
-
-        // Fast case
-        m_jit.loadPtr(JITCompiler::Address(globalObjectGPR, JSObject::butterflyOffset()), resultPayloadGPR);
-        m_jit.load32(JITCompiler::Address(resolveInfoGPR, OBJECT_OFFSETOF(ResolveOperation, m_offset)), resolveInfoGPR);
-#if DFG_ENABLE(JIT_ASSERT)
-        JITCompiler::Jump isOutOfLine = m_jit.branch32(JITCompiler::GreaterThanOrEqual, resolveInfoGPR, TrustedImm32(firstOutOfLineOffset));
-        m_jit.breakpoint();
-        isOutOfLine.link(&m_jit);
-#endif
-        m_jit.neg32(resolveInfoGPR);
-        m_jit.signExtend32ToPtr(resolveInfoGPR, resolveInfoGPR);
-        m_jit.load32(JITCompiler::BaseIndex(resultPayloadGPR, resolveInfoGPR, JITCompiler::TimesEight, OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag) + (firstOutOfLineOffset - 2) * static_cast<ptrdiff_t>(sizeof(JSValue))), resultTagGPR);
-        m_jit.load32(JITCompiler::BaseIndex(resultPayloadGPR, resolveInfoGPR, JITCompiler::TimesEight, OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload) + (firstOutOfLineOffset - 2) * static_cast<ptrdiff_t>(sizeof(JSValue))), resultPayloadGPR);
-
-        addSlowPathGenerator(
-            slowPathCall(
-                structuresNotMatch, this, operationResolveGlobal,
-                JSValueRegs(resultTagGPR, resultPayloadGPR), resolveInfoGPR, globalObjectGPR,
-                identifierUID(data.identifierNumber)));
-
-        jsValueResult(resultTagGPR, resultPayloadGPR, node);
-        break;
-    }
 
     case CreateActivation: {
         JSValueOperand value(this, node->child1());
@@ -4900,11 +4803,6 @@ void SpeculativeJIT::compile(Node* node)
         
     case NewFunctionExpression:
         compileNewFunctionExpression(node);
-        break;
-
-    case GarbageValue:
-        // We should never get to the point of code emission for a GarbageValue
-        CRASH();
         break;
 
     case ForceOSRExit:

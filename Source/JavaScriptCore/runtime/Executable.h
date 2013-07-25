@@ -250,12 +250,10 @@ namespace JSC {
         ExecutableBase* m_prev;
         ExecutableBase* m_next;
 
-#if ENABLE(JIT)
         RefPtr<JITCode> m_jitCodeForCall;
         RefPtr<JITCode> m_jitCodeForConstruct;
         MacroAssemblerCodePtr m_jitCodeForCallWithArityCheck;
         MacroAssemblerCodePtr m_jitCodeForConstructWithArityCheck;
-#endif
     };
 
     class NativeExecutable : public ExecutableBase {
@@ -458,12 +456,7 @@ namespace JSC {
             return *m_evalCodeBlock;
         }
 
-        static EvalExecutable* create(ExecState* exec, PassRefPtr<CodeCache> cache, const SourceCode& source, bool isInStrictContext)
-        {
-            EvalExecutable* executable = new (NotNull, allocateCell<EvalExecutable>(*exec->heap())) EvalExecutable(exec, cache, source, isInStrictContext);
-            executable->finishCreation(exec->vm());
-            return executable;
-        }
+        static EvalExecutable* create(ExecState*, const SourceCode&, bool isInStrictContext);
 
 #if ENABLE(JIT)
         PassRefPtr<JITCode> generatedJITCode()
@@ -484,16 +477,18 @@ namespace JSC {
 
         ExecutableInfo executableInfo() const { return ExecutableInfo(needsActivation(), usesEval(), isStrictMode(), false); }
 
+        unsigned numVariables() { return m_unlinkedEvalCodeBlock->numVariables(); }
+        unsigned numberOfFunctionDecls() { return m_unlinkedEvalCodeBlock->numberOfFunctionDecls(); }
+
     private:
         static const unsigned StructureFlags = OverridesVisitChildren | ScriptExecutable::StructureFlags;
-        EvalExecutable(ExecState*, PassRefPtr<CodeCache>, const SourceCode&, bool);
+        EvalExecutable(ExecState*, const SourceCode&, bool);
 
         JSObject* compileInternal(ExecState*, JSScope*, JITCode::JITType, CompilationResult* = 0, unsigned bytecodeIndex = UINT_MAX);
         static void visitChildren(JSCell*, SlotVisitor&);
 
         RefPtr<EvalCodeBlock> m_evalCodeBlock;
         WriteBarrier<UnlinkedEvalCodeBlock> m_unlinkedEvalCodeBlock;
-        RefPtr<CodeCache> m_codeCache;
     };
 
     class ProgramExecutable : public ScriptExecutable {

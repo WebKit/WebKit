@@ -767,155 +767,6 @@ LLINT_SLOW_PATH_DECL(slow_path_in)
     LLINT_RETURN(jsBoolean(CommonSlowPaths::opIn(exec, LLINT_OP_C(2).jsValue(), LLINT_OP_C(3).jsValue())));
 }
 
-LLINT_SLOW_PATH_DECL(slow_path_resolve)
-{
-    LLINT_BEGIN();
-    Identifier ident = exec->codeBlock()->identifier(pc[2].u.operand);
-    ResolveOperations* operations = pc[3].u.resolveOperations;
-    JSValue result = JSScope::resolve(exec, ident, operations);
-    ASSERT(operations->size());
-    if (operations->isEmpty())
-        LLINT_RETURN_PROFILED(op_resolve, result);
-
-    switch (operations->data()[0].m_operation) {
-    case ResolveOperation::GetAndReturnGlobalProperty:
-        pc[0].u.opcode = LLInt::getOpcode(llint_op_resolve_global_property);
-        break;
-
-    case ResolveOperation::GetAndReturnGlobalVar:
-        pc[0].u.opcode = LLInt::getOpcode(llint_op_resolve_global_var);
-        break;
-
-    case ResolveOperation::SkipTopScopeNode:
-        pc[0].u.opcode = LLInt::getOpcode(llint_op_resolve_scoped_var_with_top_scope_check);
-        break;
-
-    case ResolveOperation::SkipScopes:
-        if (operations->data()[0].m_scopesToSkip)
-            pc[0].u.opcode = LLInt::getOpcode(llint_op_resolve_scoped_var);
-        else
-            pc[0].u.opcode = LLInt::getOpcode(llint_op_resolve_scoped_var_on_top_scope);
-        break;
-
-    default:
-        break;
-    }
-    
-    {
-        ConcurrentJITLocker locker(exec->codeBlock()->m_lock);
-        operations->m_ready = true;
-    }
-    
-    LLINT_RETURN_PROFILED(op_resolve, result);
-}
-
-LLINT_SLOW_PATH_DECL(slow_path_put_to_base)
-{
-    LLINT_BEGIN();
-    PutToBaseOperation* operation = pc[4].u.putToBaseOperation;
-    JSScope::resolvePut(exec, LLINT_OP_C(1).jsValue(), exec->codeBlock()->identifier(pc[2].u.operand), LLINT_OP_C(3).jsValue(), operation);
-    switch (operation->m_kind) {
-    case PutToBaseOperation::VariablePut:
-        pc[0].u.opcode = LLInt::getOpcode(llint_op_put_to_base_variable);
-        break;
-
-    default:
-        break;
-    }
-
-    {
-        ConcurrentJITLocker locker(exec->codeBlock()->m_lock);
-        operation->m_ready = true;
-    }
-    
-    LLINT_END();
-}
-
-LLINT_SLOW_PATH_DECL(slow_path_resolve_base)
-{
-    LLINT_BEGIN();
-    Identifier& ident = exec->codeBlock()->identifier(pc[2].u.operand);
-    ResolveOperations* operations = pc[4].u.resolveOperations;
-    JSValue result;
-    if (pc[3].u.operand) {
-        result = JSScope::resolveBase(exec, ident, true, operations, pc[5].u.putToBaseOperation);
-        if (!result)
-            LLINT_THROW(vm.exception);
-    } else
-        result = JSScope::resolveBase(exec, ident, false, operations, pc[5].u.putToBaseOperation);
-
-    ASSERT(operations->size());
-    if (operations->isEmpty()) {
-        LLINT_PROFILE_VALUE(op_resolve_base, result);
-        LLINT_RETURN(result);
-    }
-
-    switch (operations->data()[0].m_operation) {
-    case ResolveOperation::ReturnGlobalObjectAsBase:
-        pc[0].u.opcode = LLInt::getOpcode(llint_op_resolve_base_to_global);
-        break;
-
-    case ResolveOperation::SkipTopScopeNode:
-        pc[0].u.opcode = LLInt::getOpcode(llint_op_resolve_base_to_scope_with_top_scope_check);
-        break;
-
-    case ResolveOperation::SkipScopes:
-        pc[0].u.opcode = LLInt::getOpcode(llint_op_resolve_base_to_scope);
-        break;
-
-    default:
-        break;
-    }
-    
-    {
-        ConcurrentJITLocker locker(exec->codeBlock()->m_lock);
-        operations->m_ready = true;
-    }
-    
-    LLINT_PROFILE_VALUE(op_resolve_base, result);
-    LLINT_RETURN(result);
-}
-
-LLINT_SLOW_PATH_DECL(slow_path_resolve_with_base)
-{
-    LLINT_BEGIN();
-    ResolveOperations* operations = pc[4].u.resolveOperations;
-    bool willReify = operations->isEmpty();
-    JSValue result = JSScope::resolveWithBase(exec, exec->codeBlock()->identifier(pc[3].u.operand), &LLINT_OP(1), operations, pc[5].u.putToBaseOperation);
-    if (willReify) {
-        ConcurrentJITLocker locker(exec->codeBlock()->m_lock);
-        operations->m_ready = true;
-    }
-    LLINT_CHECK_EXCEPTION();
-    LLINT_OP(2) = result;
-    LLINT_PROFILE_VALUE(op_resolve_with_base, result);
-    LLINT_END();
-}
-
-LLINT_SLOW_PATH_DECL(slow_path_resolve_with_this)
-{
-    LLINT_BEGIN();
-    ResolveOperations* operations = pc[4].u.resolveOperations;
-    bool willReify = operations->isEmpty();
-    JSValue result = JSScope::resolveWithThis(exec, exec->codeBlock()->identifier(pc[3].u.operand), &LLINT_OP(1), operations);
-    if (willReify) {
-        ConcurrentJITLocker locker(exec->codeBlock()->m_lock);
-        operations->m_ready = true;
-    }
-    LLINT_CHECK_EXCEPTION();
-    LLINT_OP(2) = result;
-    LLINT_PROFILE_VALUE(op_resolve_with_this, result);
-    LLINT_END();
-}
-
-LLINT_SLOW_PATH_DECL(slow_path_init_global_const_check)
-{
-    LLINT_BEGIN();
-    CodeBlock* codeBlock = exec->codeBlock();
-    symbolTablePut(codeBlock->globalObject(), exec, codeBlock->identifier(pc[4].u.operand), LLINT_OP_C(2).jsValue(), true);
-    LLINT_END();
-}
-
 LLINT_SLOW_PATH_DECL(slow_path_get_by_id)
 {
     LLINT_BEGIN();
@@ -1679,6 +1530,67 @@ LLINT_SLOW_PATH_DECL(throw_from_native_call)
 {
     LLINT_BEGIN();
     ASSERT(vm.exception);
+    LLINT_END();
+}
+
+LLINT_SLOW_PATH_DECL(slow_path_resolve_scope)
+{
+    LLINT_BEGIN();
+    Identifier& ident = exec->codeBlock()->identifier(pc[2].u.operand);
+    LLINT_RETURN(JSScope::resolve(exec, exec->scope(), ident));
+}
+
+LLINT_SLOW_PATH_DECL(slow_path_get_from_scope)
+{
+    LLINT_BEGIN();
+    Identifier& ident = exec->codeBlock()->identifier(pc[3].u.operand);
+    JSObject* scope = jsCast<JSObject*>(LLINT_OP(2).jsValue());
+    ResolveModeAndType modeAndType(pc[4].u.operand);
+
+    PropertySlot slot(scope);
+    if (!scope->getPropertySlot(exec, ident, slot)) {
+        if (modeAndType.mode() == ThrowIfNotFound)
+            LLINT_RETURN(throwError(exec, createUndefinedVariableError(exec, ident)));
+        LLINT_RETURN(jsUndefined());
+    }
+
+    // Covers implicit globals. Since they don't exist until they first execute, we didn't know how to cache them at compile time.
+    if (slot.isCacheableValue() && slot.slotBase() == scope && scope->structure()->propertyAccessesAreCacheable()) {
+        if (modeAndType.type() == GlobalProperty || modeAndType.type() == GlobalPropertyWithVarInjectionChecks) {
+            CodeBlock* codeBlock = exec->codeBlock();
+            ConcurrentJITLocker locker(codeBlock->m_lock);
+            pc[5].u.structure.set(exec->vm(), codeBlock->ownerExecutable(), scope->structure());
+            pc[6].u.operand = slot.cachedOffset();
+        }
+    }
+
+    LLINT_RETURN(slot.getValue(exec, ident));
+}
+
+LLINT_SLOW_PATH_DECL(slow_path_put_to_scope)
+{
+    LLINT_BEGIN();
+    CodeBlock* codeBlock = exec->codeBlock();
+    Identifier& ident = codeBlock->identifier(pc[2].u.operand);
+    JSObject* scope = jsCast<JSObject*>(LLINT_OP(1).jsValue());
+    JSValue value = LLINT_OP_C(3).jsValue();
+    ResolveModeAndType modeAndType = ResolveModeAndType(pc[4].u.operand);
+
+    if (modeAndType.mode() == ThrowIfNotFound && !scope->hasProperty(exec, ident))
+        LLINT_THROW(createUndefinedVariableError(exec, ident));
+
+    PutPropertySlot slot(codeBlock->isStrictMode());
+    scope->methodTable()->put(scope, exec, ident, value, slot);
+
+    // Covers implicit globals. Since they don't exist until they first execute, we didn't know how to cache them at compile time.
+    if (modeAndType.type() == GlobalProperty || modeAndType.type() == GlobalPropertyWithVarInjectionChecks) {
+        if (slot.isCacheable() && slot.base() == scope && scope->structure()->propertyAccessesAreCacheable()) {
+            ConcurrentJITLocker locker(codeBlock->m_lock);
+            pc[5].u.structure.set(exec->vm(), codeBlock->ownerExecutable(), scope->structure());
+            pc[6].u.operand = slot.cachedOffset();
+        }
+    }
+
     LLINT_END();
 }
 

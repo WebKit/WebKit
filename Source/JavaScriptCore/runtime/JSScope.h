@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2012, 2013 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,11 +27,107 @@
 #define JSScope_h
 
 #include "JSObject.h"
-#include "ResolveOperation.h"
 
 namespace JSC {
 
 class ScopeChainIterator;
+
+enum ResolveMode {
+    ThrowIfNotFound,
+    DoNotThrowIfNotFound
+};
+
+enum ResolveType {
+    // Lexical scope guaranteed a certain type of variable access.
+    GlobalProperty,
+    GlobalVar,
+    ClosureVar,
+
+    // Ditto, but at least one intervening scope used non-strict eval, which
+    // can inject an intercepting var delcaration at runtime.
+    GlobalPropertyWithVarInjectionChecks,
+    GlobalVarWithVarInjectionChecks,
+    ClosureVarWithVarInjectionChecks,
+
+    // Lexical scope didn't prove anything -- probably because of a 'with' scope.
+    Dynamic
+};
+
+inline ResolveType makeType(ResolveType type, bool needsVarInjectionChecks)
+{
+    if (!needsVarInjectionChecks)
+        return type;
+
+    switch (type) {
+    case GlobalProperty:
+        return GlobalPropertyWithVarInjectionChecks;
+    case GlobalVar:
+        return GlobalVarWithVarInjectionChecks;
+    case ClosureVar:
+        return ClosureVarWithVarInjectionChecks;
+    case GlobalPropertyWithVarInjectionChecks:
+    case GlobalVarWithVarInjectionChecks:
+    case ClosureVarWithVarInjectionChecks:
+    case Dynamic:
+        return type;
+    }
+}
+
+inline bool needsVarInjectionChecks(ResolveType type)
+{
+    switch (type) {
+    case GlobalProperty:
+    case GlobalVar:
+    case ClosureVar:
+        return false;
+    case GlobalPropertyWithVarInjectionChecks:
+    case GlobalVarWithVarInjectionChecks:
+    case ClosureVarWithVarInjectionChecks:
+    case Dynamic:
+        return true;
+    }
+}
+
+struct ResolveOp {
+    ResolveOp(ResolveType type, size_t depth, Structure* structure, uintptr_t operand)
+        : type(type)
+        , depth(depth)
+        , structure(structure)
+        , operand(operand)
+    {
+    }
+
+    ResolveType type;
+    size_t depth;
+    Structure* structure;
+    uintptr_t operand;
+};
+
+class ResolveModeAndType {
+    typedef unsigned Operand;
+public:
+    static const size_t shift = sizeof(Operand) * 8 / 2;
+    static const unsigned mask = (1 << shift) - 1;
+
+    ResolveModeAndType(ResolveMode resolveMode, ResolveType resolveType)
+        : m_operand((resolveMode << shift) | resolveType)
+    {
+    }
+
+    explicit ResolveModeAndType(unsigned operand)
+        : m_operand(operand)
+    {
+    }
+
+    ResolveMode mode() { return static_cast<ResolveMode>(m_operand >> shift); }
+    ResolveType type() { return static_cast<ResolveType>(m_operand & mask); }
+    unsigned operand() { return m_operand; }
+
+private:
+    Operand m_operand;
+};
+
+enum GetOrPut { Get, Put };
 
 class JSScope : public JSNonFinalObject {
 public:
@@ -42,21 +138,15 @@ public:
 
     JS_EXPORT_PRIVATE static JSObject* objectAtScope(JSScope*);
 
-    static JSValue resolve(CallFrame*, const Identifier&, ResolveOperations*);
-    static JSValue resolveBase(CallFrame*, const Identifier&, bool isStrict, ResolveOperations*, PutToBaseOperation*);
-    static JSValue resolveWithBase(CallFrame*, const Identifier&, Register* base, ResolveOperations*, PutToBaseOperation*);
-    static JSValue resolveWithThis(CallFrame*, const Identifier&, Register* base, ResolveOperations*);
-    static JSValue resolveGlobal(CallFrame*, const Identifier&, JSGlobalObject*, ResolveOperation*);
-    static void resolvePut(CallFrame*, JSValue base, const Identifier&, JSValue, PutToBaseOperation*);
+    static JSValue resolve(ExecState*, JSScope*, const Identifier&);
+    static ResolveOp abstractResolve(ExecState*, JSScope*, const Identifier&, GetOrPut, ResolveType);
 
     static void visitChildren(JSCell*, SlotVisitor&);
-
-    bool isDynamicScope(bool& requiresDynamicChecks) const;
 
     ScopeChainIterator begin();
     ScopeChainIterator end();
     JSScope* next();
-    int localDepth();
+    int depth();
 
     JSGlobalObject* globalObject();
     VM* vm();
@@ -68,16 +158,6 @@ protected:
 
 private:
     WriteBarrier<JSScope> m_next;
-    enum ReturnValues {
-        ReturnValue = 1,
-        ReturnBase = 2,
-        ReturnThis = 4,
-        ReturnBaseAndValue = ReturnValue | ReturnBase,
-        ReturnThisAndValue = ReturnValue | ReturnThis,
-    };
-    enum LookupMode { UnknownResolve, KnownResolve };
-    template <LookupMode, ReturnValues> static JSObject* resolveContainingScopeInternal(CallFrame*, const Identifier&, PropertySlot&, ResolveOperations*, PutToBaseOperation*, bool isStrict);
-    template <ReturnValues> static JSObject* resolveContainingScope(CallFrame*, const Identifier&, PropertySlot&, ResolveOperations*, PutToBaseOperation*, bool isStrict);
 };
 
 inline JSScope::JSScope(VM& vm, Structure* structure, JSScope* next)

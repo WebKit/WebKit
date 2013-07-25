@@ -91,7 +91,7 @@ Array.prototype.join = function() { return 'array-join' };
 shouldBe("[0, 1, 2].toString()", '"array-join"');
 Array.prototype.join = arrayJoin;
 
-shouldThrow("Array.prototype.toLocaleString.call({})");
+shouldBe("Array.prototype.toLocaleString.call({})", '"' + '"');
 
 shouldBe("Array.prototype.concat.call(x = { length:2, 0:'b', 1:'a' })", "[x]");
 

@@ -715,14 +715,6 @@ namespace JSC {
         void emit_op_put_by_val(Instruction*);
         void emit_op_put_getter_setter(Instruction*);
         void emit_op_init_global_const(Instruction*);
-        void emit_op_init_global_const_check(Instruction*);
-        void emit_resolve_operations(ResolveOperations*, const int* base, const int* value);
-        void emitSlow_link_resolve_operations(ResolveOperations*, Vector<SlowCaseEntry>::iterator&);
-        void emit_op_resolve(Instruction*);
-        void emit_op_resolve_base(Instruction*);
-        void emit_op_resolve_with_base(Instruction*);
-        void emit_op_resolve_with_this(Instruction*);
-        void emit_op_put_to_base(Instruction*);
         void emit_op_ret(Instruction*);
         void emit_op_ret_object_or_this(Instruction*);
         void emit_op_rshift(Instruction*);
@@ -740,8 +732,6 @@ namespace JSC {
         void emit_op_to_primitive(Instruction*);
         void emit_op_unexpected_load(Instruction*);
         void emit_op_urshift(Instruction*);
-        void emit_op_get_scoped_var(Instruction*);
-        void emit_op_put_scoped_var(Instruction*);
 
         void emitSlow_op_add(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_bitand(Instruction*, Vector<SlowCaseEntry>::iterator&);
@@ -785,7 +775,6 @@ namespace JSC {
         void emitSlow_op_inc(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_put_by_id(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_put_by_val(Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_init_global_const_check(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_rshift(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_stricteq(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_sub(Instruction*, Vector<SlowCaseEntry>::iterator&);
@@ -793,14 +782,25 @@ namespace JSC {
         void emitSlow_op_to_primitive(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_urshift(Instruction*, Vector<SlowCaseEntry>::iterator&);
 
-        void emitSlow_op_resolve(Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_resolve_base(Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_resolve_with_base(Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_resolve_with_this(Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_put_to_base(Instruction*, Vector<SlowCaseEntry>::iterator&);
+        void emit_op_resolve_scope(Instruction*);
+        void emit_op_get_from_scope(Instruction*);
+        void emit_op_put_to_scope(Instruction*);
+        void emitSlow_op_resolve_scope(Instruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_get_from_scope(Instruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_put_to_scope(Instruction*, Vector<SlowCaseEntry>::iterator&);
 
         void emitRightShift(Instruction*, bool isUnsigned);
         void emitRightShiftSlowCase(Instruction*, Vector<SlowCaseEntry>::iterator&, bool isUnsigned);
+
+        void emitVarInjectionCheck(bool needsVarInjectionChecks);
+        void emitResolveClosure(unsigned dst, bool needsVarInjectionChecks, unsigned depth);
+        void emitLoadWithStructureCheck(unsigned scope, Structure** structureSlot);
+        void emitGetGlobalProperty(uintptr_t* operandSlot);
+        void emitGetGlobalVar(uintptr_t operand);
+        void emitGetClosureVar(unsigned scope, uintptr_t operand);
+        void emitPutGlobalProperty(uintptr_t* operandSlot, unsigned value);
+        void emitPutGlobalVar(uintptr_t operand, unsigned value);
+        void emitPutClosureVar(unsigned scope, uintptr_t operand, unsigned value);
 
         void emitInitRegister(unsigned dst);
 
@@ -901,7 +901,6 @@ namespace JSC {
 
         unsigned m_propertyAccessInstructionIndex;
         unsigned m_byValInstructionIndex;
-        unsigned m_globalResolveInfoIndex;
         unsigned m_callLinkInfoIndex;
 
 #if USE(JSVALUE32_64)

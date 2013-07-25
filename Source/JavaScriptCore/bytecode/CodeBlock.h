@@ -65,7 +65,6 @@
 #include "LineInfo.h"
 #include "ProfilerCompilation.h"
 #include "RegExpObject.h"
-#include "ResolveOperation.h"
 #include "StructureStubInfo.h"
 #include "UnconditionalFinalizer.h"
 #include "ValueProfile.h"
@@ -98,8 +97,8 @@ public:
     enum CopyParsedBlockTag { CopyParsedBlock };
 protected:
     CodeBlock(CopyParsedBlockTag, CodeBlock& other);
-
-    CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock*, JSGlobalObject*, unsigned baseScopeDepth, PassRefPtr<SourceProvider>, unsigned sourceOffset, unsigned firstLineColumnOffset);
+        
+    CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock*, JSScope*, PassRefPtr<SourceProvider>, unsigned sourceOffset, unsigned firstLineColumnOffset);
 
     WriteBarrier<JSGlobalObject> m_globalObject;
     Heap* m_heap;
@@ -363,7 +362,7 @@ public:
 
     bool needsActivation() const
     {
-        return needsFullScopeChain() && codeType() != GlobalCode;
+        return m_needsActivation;
     }
 
     bool isCaptured(int operand, InlineCallFrame* inlineCallFrame = 0) const
@@ -979,9 +978,7 @@ private:
 #if ENABLE(VALUE_PROFILER)
     void dumpRareCaseProfile(PrintStream&, const char* name, RareCaseProfile*, bool& hasPrintedProfiling);
 #endif
-
-    void visitStructures(SlotVisitor&, Instruction* vPC);
-
+        
 #if ENABLE(DFG_JIT)
     bool shouldImmediatelyAssumeLivenessDuringScan()
     {
@@ -1091,9 +1088,6 @@ private:
     uint16_t m_optimizationDelayCounter;
     uint16_t m_reoptimizationRetryCounter;
 
-    Vector<ResolveOperations> m_resolveOperations;
-    Vector<PutToBaseOperation, 1> m_putToBaseOperations;
-
     struct RareData {
         WTF_MAKE_FAST_ALLOCATED;
     public:
@@ -1135,9 +1129,9 @@ protected:
     : CodeBlock(CopyParsedBlock, other)
     {
     }
-
-    GlobalCodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlinkedCodeBlock, JSGlobalObject* globalObject, unsigned baseScopeDepth, PassRefPtr<SourceProvider> sourceProvider, unsigned sourceOffset, unsigned firstLineColumnOffset)
-    : CodeBlock(ownerExecutable, unlinkedCodeBlock, globalObject, baseScopeDepth, sourceProvider, sourceOffset, firstLineColumnOffset)
+        
+    GlobalCodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlinkedCodeBlock, JSScope* scope, PassRefPtr<SourceProvider> sourceProvider, unsigned sourceOffset, unsigned firstLineColumnOffset)
+        : CodeBlock(ownerExecutable, unlinkedCodeBlock, scope, sourceProvider, sourceOffset, firstLineColumnOffset)
     {
     }
 };
@@ -1149,8 +1143,8 @@ public:
     {
     }
 
-    ProgramCodeBlock(ProgramExecutable* ownerExecutable, UnlinkedProgramCodeBlock* unlinkedCodeBlock, JSGlobalObject* globalObject, PassRefPtr<SourceProvider> sourceProvider, unsigned firstLineColumnOffset)
-    : GlobalCodeBlock(ownerExecutable, unlinkedCodeBlock, globalObject, 0, sourceProvider, 0, firstLineColumnOffset)
+    ProgramCodeBlock(ProgramExecutable* ownerExecutable, UnlinkedProgramCodeBlock* unlinkedCodeBlock, JSScope* scope, PassRefPtr<SourceProvider> sourceProvider, unsigned firstLineColumnOffset)
+        : GlobalCodeBlock(ownerExecutable, unlinkedCodeBlock, scope, sourceProvider, 0, firstLineColumnOffset)
     {
     }
 
@@ -1174,9 +1168,9 @@ public:
     : GlobalCodeBlock(CopyParsedBlock, other)
     {
     }
-    
-    EvalCodeBlock(EvalExecutable* ownerExecutable, UnlinkedEvalCodeBlock* unlinkedCodeBlock, JSGlobalObject* globalObject, PassRefPtr<SourceProvider> sourceProvider, int baseScopeDepth)
-    : GlobalCodeBlock(ownerExecutable, unlinkedCodeBlock, globalObject, baseScopeDepth, sourceProvider, 0, 1)
+        
+    EvalCodeBlock(EvalExecutable* ownerExecutable, UnlinkedEvalCodeBlock* unlinkedCodeBlock, JSScope* scope, PassRefPtr<SourceProvider> sourceProvider)
+        : GlobalCodeBlock(ownerExecutable, unlinkedCodeBlock, scope, sourceProvider, 0, 1)
     {
     }
     
@@ -1206,9 +1200,9 @@ public:
     : CodeBlock(CopyParsedBlock, other)
     {
     }
-    
-    FunctionCodeBlock(FunctionExecutable* ownerExecutable, UnlinkedFunctionCodeBlock* unlinkedCodeBlock, JSGlobalObject* globalObject, PassRefPtr<SourceProvider> sourceProvider, unsigned sourceOffset, unsigned firstLineColumnOffset)
-    : CodeBlock(ownerExecutable, unlinkedCodeBlock, globalObject, 0, sourceProvider, sourceOffset, firstLineColumnOffset)
+
+    FunctionCodeBlock(FunctionExecutable* ownerExecutable, UnlinkedFunctionCodeBlock* unlinkedCodeBlock, JSScope* scope, PassRefPtr<SourceProvider> sourceProvider, unsigned sourceOffset, unsigned firstLineColumnOffset)
+        : CodeBlock(ownerExecutable, unlinkedCodeBlock, scope, sourceProvider, sourceOffset, firstLineColumnOffset)
     {
     }
     

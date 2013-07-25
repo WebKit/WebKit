@@ -62,8 +62,6 @@ namespace JSC {
 
         static void visitChildren(JSCell*, SlotVisitor&);
 
-        bool isDynamicScope(bool& requiresDynamicChecks) const;
-
         static bool getOwnPropertySlot(JSCell*, ExecState*, PropertyName, PropertySlot&);
         static void getOwnNonIndexPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
         JS_EXPORT_PRIVATE static bool getOwnPropertyDescriptor(JSObject*, ExecState*, PropertyName, PropertyDescriptor&);
@@ -136,12 +134,6 @@ namespace JSC {
     ALWAYS_INLINE JSActivation* Register::activation() const
     {
         return asActivation(jsValue());
-    }
-
-    inline bool JSActivation::isDynamicScope(bool& requiresDynamicChecks) const
-    {
-        requiresDynamicChecks = symbolTable()->usesNonStrictEval();
-        return false;
     }
 
     inline int JSActivation::registersOffset(SharedSymbolTable* symbolTable)

@@ -173,6 +173,7 @@ protected:
 
     RefPtr<WatchpointSet> m_masqueradesAsUndefinedWatchpoint;
     RefPtr<WatchpointSet> m_havingABadTimeWatchpoint;
+    RefPtr<WatchpointSet> m_varInjectionWatchpoint;
 
     OwnPtr<JSGlobalObjectRareData> m_rareData;
 
@@ -338,6 +339,7 @@ public:
 
     WatchpointSet* masqueradesAsUndefinedWatchpoint() { return m_masqueradesAsUndefinedWatchpoint.get(); }
     WatchpointSet* havingABadTimeWatchpoint() { return m_havingABadTimeWatchpoint.get(); }
+    WatchpointSet* varInjectionWatchpoint() { return m_varInjectionWatchpoint.get(); }
         
     bool isHavingABadTime() const
     {
@@ -369,8 +371,6 @@ public:
 
     static bool shouldInterruptScript(const JSGlobalObject*) { return true; }
     static bool javaScriptExperimentsEnabled(const JSGlobalObject*) { return false; }
-
-    bool isDynamicScope(bool& requiresDynamicChecks) const;
 
     bool evalEnabled() const { return m_evalEnabled; }
     const String& evalDisabledErrorMessage() const { return m_evalDisabledErrorMessage; }
@@ -413,7 +413,7 @@ public:
     unsigned weakRandomInteger() { return m_weakRandom.getUint32(); }
 
     UnlinkedProgramCodeBlock* createProgramCodeBlock(CallFrame*, ProgramExecutable*, JSObject** exception);
-    UnlinkedEvalCodeBlock* createEvalCodeBlock(CodeCache*, CallFrame*, JSScope*, EvalExecutable*, JSObject** exception);
+    UnlinkedEvalCodeBlock* createEvalCodeBlock(CallFrame*, EvalExecutable*);
 
 protected:
 
@@ -525,11 +525,6 @@ private:
     JSGlobalObject*& m_dynamicGlobalObjectSlot;
     JSGlobalObject* m_savedDynamicGlobalObject;
 };
-
-inline bool JSGlobalObject::isDynamicScope(bool&) const
-{
-    return true;
-}
 
 inline JSObject* JSScope::globalThis()
 { 

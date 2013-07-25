@@ -248,12 +248,12 @@ private:
         for (unsigned i = m_indexInBlock; i--;) {
             Node* node = m_currentBlock->at(i);
             switch (node->op()) {
-            case GetScopedVar: {
+            case GetClosureVar: {
                 if (node->child1() == registers && node->varNumber() == varNumber)
                     return node;
                 break;
             } 
-            case PutScopedVar: {
+            case PutClosureVar: {
                 if (node->child2() == registers && node->varNumber() == varNumber)
                     return node->child3().node();
                 break;
@@ -295,6 +295,18 @@ private:
         }
         return false;
     }
+
+    bool varInjectionWatchpointElimination()
+    {
+        for (unsigned i = m_indexInBlock; i--;) {
+            Node* node = m_currentBlock->at(i);
+            if (node->op() == VarInjectionWatchpoint)
+                return true;
+            if (m_graph.clobbersWorld(node))
+                break;
+        }
+        return false;
+    }
     
     Node* globalVarStoreElimination(WriteBarrier<Unknown>* registerPointer)
     {
@@ -302,7 +314,6 @@ private:
             Node* node = m_currentBlock->at(i);
             switch (node->op()) {
             case PutGlobalVar:
-            case PutGlobalVarCheck:
                 if (node->registerPointer() == registerPointer)
                     return node;
                 break;
@@ -326,13 +337,13 @@ private:
         for (unsigned i = m_indexInBlock; i--;) {
             Node* node = m_currentBlock->at(i);
             switch (node->op()) {
-            case PutScopedVar: {
+            case PutClosureVar: {
                 if (node->child1() == scope && node->child2() == registers && node->varNumber() == varNumber)
                     return node;
                 break;
             }
                 
-            case GetScopedVar: {
+            case GetClosureVar: {
                 // Let's be conservative.
                 if (node->varNumber() == varNumber)
                     return 0;
@@ -852,7 +863,7 @@ private:
                 }
                 break;
                 
-            case PutScopedVar:
+            case PutClosureVar:
                 if (static_cast<VirtualRegister>(node->varNumber()) == local)
                     return 0;
                 break;
@@ -904,7 +915,7 @@ private:
                 return result;
             }
                 
-            case GetScopedVar:
+            case GetClosureVar:
                 if (static_cast<VirtualRegister>(node->varNumber()) == local)
                     result.mayBeAccessed = true;
                 break;
@@ -1079,7 +1090,7 @@ private:
         case LogicalNot:
         case SkipTopScope:
         case SkipScope:
-        case GetScopeRegisters:
+        case GetClosureRegisters:
         case GetScope:
         case TypeOf:
         case CompareEqConstant:
@@ -1236,7 +1247,7 @@ private:
             setReplacement(globalVarLoadElimination(node->registerPointer()));
             break;
 
-        case GetScopedVar: {
+        case GetClosureVar: {
             if (cseMode == StoreElimination)
                 break;
             setReplacement(scopedVarLoadElimination(node->child1().node(), node->varNumber()));
@@ -1250,14 +1261,20 @@ private:
                 eliminate();
             break;
             
+        case VarInjectionWatchpoint:
+            if (cseMode == StoreElimination)
+                break;
+            if (varInjectionWatchpointElimination())
+                eliminate();
+            break;
+            
         case PutGlobalVar:
-        case PutGlobalVarCheck:
             if (cseMode == NormalCSE)
                 break;
             eliminate(globalVarStoreElimination(node->registerPointer()));
             break;
             
-        case PutScopedVar: {
+        case PutClosureVar: {
             if (cseMode == NormalCSE)
                 break;
             eliminate(scopedVarStoreElimination(node->child1().node(), node->child2().node(), node->varNumber()));

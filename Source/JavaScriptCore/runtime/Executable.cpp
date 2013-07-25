@@ -116,9 +116,28 @@ void ScriptExecutable::destroy(JSCell* cell)
 
 const ClassInfo EvalExecutable::s_info = { "EvalExecutable", &ScriptExecutable::s_info, 0, 0, CREATE_METHOD_TABLE(EvalExecutable) };
 
-EvalExecutable::EvalExecutable(ExecState* exec, PassRefPtr<CodeCache> codeCache, const SourceCode& source, bool inStrictContext)
+EvalExecutable* EvalExecutable::create(ExecState* exec, const SourceCode& source, bool isInStrictContext) 
+{
+    JSGlobalObject* globalObject = exec->lexicalGlobalObject();
+    if (!globalObject->evalEnabled()) {
+        throwError(exec, createEvalError(exec, globalObject->evalDisabledErrorMessage()));
+        return 0;
+    }
+
+    EvalExecutable* executable = new (NotNull, allocateCell<EvalExecutable>(*exec->heap())) EvalExecutable(exec, source, isInStrictContext);
+    executable->finishCreation(exec->vm());
+
+    UnlinkedEvalCodeBlock* unlinkedEvalCode = globalObject->createEvalCodeBlock(exec, executable);
+    if (!unlinkedEvalCode)
+        return 0;
+
+    executable->m_unlinkedEvalCodeBlock.set(exec->vm(), executable, unlinkedEvalCode);
+
+    return executable;
+}
+
+EvalExecutable::EvalExecutable(ExecState* exec, const SourceCode& source, bool inStrictContext)
     : ScriptExecutable(exec->vm().evalExecutableStructure.get(), exec, source, inStrictContext)
-    , m_codeCache(codeCache)
 {
 }
 
@@ -203,40 +222,21 @@ JSObject* EvalExecutable::compileInternal(ExecState* exec, JSScope* scope, JITCo
     if (result)
         *result = CompilationFailed;
     
-#if !ENABLE(JIT)
-    UNUSED_PARAM(jitType);
-    UNUSED_PARAM(bytecodeIndex);
-#endif
-    VM* vm = &exec->vm();
-    JSGlobalObject* lexicalGlobalObject = exec->lexicalGlobalObject();
-    
     RefPtr<EvalCodeBlock> newCodeBlock;
     
     if (!!m_evalCodeBlock) {
         newCodeBlock = adoptRef(new EvalCodeBlock(CodeBlock::CopyParsedBlock, *m_evalCodeBlock));
         newCodeBlock->setAlternative(static_pointer_cast<CodeBlock>(m_evalCodeBlock));
     } else {
-        UNUSED_PARAM(scope);
-        UNUSED_PARAM(vm);
-        UNUSED_PARAM(lexicalGlobalObject);
-        if (!lexicalGlobalObject->evalEnabled())
-            return throwError(exec, createEvalError(exec, lexicalGlobalObject->evalDisabledErrorMessage()));
-
-        JSObject* exception = 0;
-        UnlinkedEvalCodeBlock* unlinkedEvalCode = lexicalGlobalObject->createEvalCodeBlock(m_codeCache.get(), exec, scope, this, &exception);
-        if (!unlinkedEvalCode)
-            return exception;
-
-        m_unlinkedEvalCodeBlock.set(*vm, this, unlinkedEvalCode);
+        newCodeBlock = adoptRef(new EvalCodeBlock(this, m_unlinkedEvalCodeBlock.get(), scope, source().provider()));
         ASSERT((jitType == JITCode::bottomTierJIT()) == !m_evalCodeBlock);
-
-        newCodeBlock = adoptRef(new EvalCodeBlock(this, unlinkedEvalCode, lexicalGlobalObject, source().provider(), scope->localDepth()));
     }
 
     CompilationResult theResult = prepareForExecution(
         exec, m_evalCodeBlock, newCodeBlock.get(), m_jitCodeForCall, jitType, bytecodeIndex);
     if (result)
         *result = theResult;
+
     return 0;
 }
 
@@ -255,7 +255,7 @@ void EvalExecutable::jettisonOptimizedCode(VM& vm)
     m_jitCodeForCall = m_evalCodeBlock->jitCode();
     ASSERT(!m_jitCodeForCallWithArityCheck);
 }
-#endif
+#endif // ENABLE(JIT)
 
 void EvalExecutable::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
@@ -327,26 +327,20 @@ JSObject* ProgramExecutable::compileInternal(ExecState* exec, JSScope* scope, JI
     if (result)
         *result = CompilationFailed;
     
-#if !ENABLE(JIT)
-    UNUSED_PARAM(exec);
-    UNUSED_PARAM(jitType);
-    UNUSED_PARAM(bytecodeIndex);
-#endif
-    
     RefPtr<ProgramCodeBlock> newCodeBlock;
     
     if (!!m_programCodeBlock) {
         newCodeBlock = adoptRef(new ProgramCodeBlock(CodeBlock::CopyParsedBlock, *m_programCodeBlock));
         newCodeBlock->setAlternative(static_pointer_cast<CodeBlock>(m_programCodeBlock));
     } else {
-        JSGlobalObject* globalObject = scope->globalObject();
-        newCodeBlock = adoptRef(new ProgramCodeBlock(this, m_unlinkedProgramCodeBlock.get(), globalObject, source().provider(), source().startColumn()));
+        newCodeBlock = adoptRef(new ProgramCodeBlock(this, m_unlinkedProgramCodeBlock.get(), scope, source().provider(), source().startColumn()));
     }
 
     CompilationResult theResult = prepareForExecution(
         exec, m_programCodeBlock, newCodeBlock.get(), m_jitCodeForCall, jitType, bytecodeIndex);
     if (result)
         *result = theResult;
+
     return 0;
 }
 
@@ -531,7 +525,7 @@ PassRefPtr<FunctionCodeBlock> FunctionExecutable::produceCodeBlockFor(JSScope* s
     ParserError error;
     DebuggerMode debuggerMode = globalObject->hasDebugger() ? DebuggerOn : DebuggerOff;
     ProfilerMode profilerMode = globalObject->hasProfiler() ? ProfilerOn : ProfilerOff;
-    UnlinkedFunctionCodeBlock* unlinkedCodeBlock = m_unlinkedExecutable->codeBlockFor(*vm, scope, m_source, specializationKind, debuggerMode, profilerMode, error);
+    UnlinkedFunctionCodeBlock* unlinkedCodeBlock = m_unlinkedExecutable->codeBlockFor(*vm, m_source, specializationKind, debuggerMode, profilerMode, error);
     recordParse(m_unlinkedExecutable->features(), m_unlinkedExecutable->hasCapturedVariables(), lineNo(), lastLine(), startColumn());
 
     if (!unlinkedCodeBlock) {
@@ -543,7 +537,7 @@ PassRefPtr<FunctionCodeBlock> FunctionExecutable::produceCodeBlockFor(JSScope* s
     unsigned sourceOffset = source().startOffset();
     unsigned startColumn = source().startColumn();
 
-    return adoptRef(new FunctionCodeBlock(this, unlinkedCodeBlock, globalObject, provider, sourceOffset, startColumn));
+    return adoptRef(new FunctionCodeBlock(this, unlinkedCodeBlock, scope, provider, sourceOffset, startColumn));
 }
 
 
@@ -554,12 +548,6 @@ JSObject* FunctionExecutable::compileForCallInternal(ExecState* exec, JSScope* s
     if (result)
         *result = CompilationFailed;
     
-#if !ENABLE(JIT)
-    UNUSED_PARAM(exec);
-    UNUSED_PARAM(jitType);
-    UNUSED_PARAM(exec);
-    UNUSED_PARAM(bytecodeIndex);
-#endif
     ASSERT((jitType == JITCode::bottomTierJIT()) == !m_codeBlockForCall);
     JSObject* exception = 0;
     
@@ -592,12 +580,6 @@ JSObject* FunctionExecutable::compileForConstructInternal(ExecState* exec, JSSco
     if (result)
         *result = CompilationFailed;
     
-#if !ENABLE(JIT)
-    UNUSED_PARAM(jitType);
-    UNUSED_PARAM(exec);
-    UNUSED_PARAM(bytecodeIndex);
-#endif
-    
     ASSERT((jitType == JITCode::bottomTierJIT()) == !m_codeBlockForConstruct);
     JSObject* exception = 0;
     RefPtr<FunctionCodeBlock> newCodeBlock = produceCodeBlockFor(scope, CodeForConstruct, exception);
@@ -610,6 +592,7 @@ JSObject* FunctionExecutable::compileForConstructInternal(ExecState* exec, JSSco
         bytecodeIndex, CodeForConstruct);
     if (result)
         *result = theResult;
+
     return 0;
 }
 

@@ -130,7 +130,7 @@ JSValue evaluateInGlobalCallFrame(const String& script, JSValue& exception, JSGl
     CallFrame* globalCallFrame = globalObject->globalExec();
     VM& vm = globalObject->vm();
 
-    EvalExecutable* eval = EvalExecutable::create(globalCallFrame, vm.codeCache(), makeSource(script), false);
+    EvalExecutable* eval = EvalExecutable::create(globalCallFrame, makeSource(script), false);
     if (!eval) {
         exception = vm.exception;
         vm.exception = JSValue();

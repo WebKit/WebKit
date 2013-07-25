@@ -310,8 +310,6 @@ private:
                     m_graph.voteChildren(node, VoteOther);
                     break;
                 }
-                case GarbageValue:
-                    break;
                     
                 default:
                     m_graph.voteChildren(node, VoteOther);
@@ -420,8 +418,6 @@ private:
                     m_graph.voteChildren(node, VoteOther);
                     break;
                 }
-                case GarbageValue:
-                    break;
                     
                 default:
                     m_graph.voteChildren(node, VoteOther);

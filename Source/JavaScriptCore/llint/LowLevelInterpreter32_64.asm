@@ -102,10 +102,9 @@ end
 macro dispatchAfterCall()
     loadi ArgumentCount + TagOffset[cfr], PC
     loadi 4[PC], t2
-    loadi 28[PC], t3
     storei t1, TagOffset[cfr, t2, 8]
     storei t0, PayloadOffset[cfr, t2, 8]
-    valueProfile(t1, t0, t3)
+    valueProfile(t1, t0, 28, t3)
     dispatch(8)
 end
 
@@ -213,6 +212,12 @@ macro checkSwitchToJITForLoop()
         end)
 end
 
+macro loadVariable(operand, index, tag, payload)
+    loadisFromInstruction(operand, index)
+    loadi TagOffset[cfr, index, 8], tag
+    loadi PayloadOffset[cfr, index, 8], payload
+end
+
 # Index, tag, and payload must be different registers. Index is not
 # changed.
 macro loadConstantOrVariable(index, tag, payload)
@@ -299,10 +304,11 @@ macro writeBarrier(tag, payload)
     # Nothing to do, since we don't have a generational or incremental collector.
 end
 
-macro valueProfile(tag, payload, profile)
+macro valueProfile(tag, payload, operand, scratch)
     if VALUE_PROFILER
-        storei tag, ValueProfile::m_buckets + TagOffset[profile]
-        storei payload, ValueProfile::m_buckets + PayloadOffset[profile]
+        loadp operand[PC], scratch
+        storei tag, ValueProfile::m_buckets + TagOffset[scratch]
+        storei payload, ValueProfile::m_buckets + PayloadOffset[scratch]
     end
 end
 
@@ -393,8 +399,7 @@ _llint_op_get_callee:
     traceExecution()
     loadi 4[PC], t0
     loadp PayloadOffset + Callee[cfr], t1
-    loadp 8[PC], t2
-    valueProfile(CellTag, t1, t2)
+    valueProfile(CellTag, t1, 8, t2)
     storei CellTag, TagOffset[cfr, t0, 8]
     storei t1, PayloadOffset[cfr, t0, 8]
     dispatch(3)
@@ -407,8 +412,7 @@ _llint_op_to_this:
     loadi PayloadOffset[cfr, t0, 8], t0
     loadp JSCell::m_structure[t0], t0
     bbneq Structure::m_typeInfo + TypeInfo::m_type[t0], FinalObjectType, .opToThisSlow
-    loadi 8[PC], t1
-    valueProfile(CellTag, t0, t1)
+    valueProfile(CellTag, t0, 8, t1)
     dispatch(3)
 
 .opToThisSlow:
@@ -954,24 +958,18 @@ macro loadPropertyAtVariableOffset(propertyOffset, objectAndStorage, tag, payloa
     loadi PayloadOffset + (firstOutOfLineOffset - 2) * 8[objectAndStorage, propertyOffset, 8], payload
 end
 
-macro resolveGlobal(size, slow)
-    # Operands are as follows:
-    # 4[PC]   Destination for the load.
-    # 8[PC]   Property identifier index in the code block.
-    # 12[PC]  Structure pointer, initialized to 0 by bytecode generator.
-    # 16[PC]  Offset in global object, initialized to 0 by bytecode generator.
-    loadp CodeBlock[cfr], t0
-    loadp CodeBlock::m_globalObject[t0], t0
-    loadp JSCell::m_structure[t0], t1
-    bpneq t1, 12[PC], slow
-    loadi 16[PC], t1
-    loadPropertyAtVariableOffsetKnownNotInline(t1, t0, t2, t3)
-    loadi 4[PC], t0
-    storei t2, TagOffset[cfr, t0, 8]
-    storei t3, PayloadOffset[cfr, t0, 8]
-    loadi (size - 1) * 4[PC], t0
-    valueProfile(t2, t3, t0)
+macro storePropertyAtVariableOffset(propertyOffsetAsInt, objectAndStorage, tag, payload)
+    bilt propertyOffsetAsInt, firstOutOfLineOffset, .isInline
+    loadp JSObject::m_butterfly[objectAndStorage], objectAndStorage
+    negi propertyOffsetAsInt
+    jmp .ready
+.isInline:
+    addp sizeof JSObject - (firstOutOfLineOffset - 2) * 8, objectAndStorage
+.ready:
+    storei tag, TagOffset + (firstOutOfLineOffset - 2) * 8[objectAndStorage, propertyOffsetAsInt, 8]
+    storei payload, PayloadOffset + (firstOutOfLineOffset - 2) * 8[objectAndStorage, propertyOffsetAsInt, 8]
 end
+
 
 _llint_op_init_global_const:
     traceExecution()
@@ -983,21 +981,6 @@ _llint_op_init_global_const:
     storei t3, PayloadOffset[t0]
     dispatch(5)
 
-
-_llint_op_init_global_const_check:
-    traceExecution()
-    loadp 12[PC], t2
-    loadi 8[PC], t1
-    loadi 4[PC], t0
-    btbnz [t2], .opInitGlobalConstCheckSlow
-    loadConstantOrVariable(t1, t2, t3)
-    writeBarrier(t2, t3)
-    storei t2, TagOffset[t0]
-    storei t3, PayloadOffset[t0]
-    dispatch(5)
-.opInitGlobalConstCheckSlow:
-    callSlowPath(_llint_slow_path_init_global_const_check)
-    dispatch(5)
 
 # We only do monomorphic get_by_id caching for now, and we do not modify the
 # opcode. We do, however, allow for the cache to change anytime if fails, since
@@ -1021,8 +1004,7 @@ macro getById(getPropertyStorage)
             loadi PayloadOffset[propertyStorage, t2], t2
             storei scratch, TagOffset[cfr, t1, 8]
             storei t2, PayloadOffset[cfr, t1, 8]
-            loadi 32[PC], t1
-            valueProfile(scratch, t2, t1)
+            valueProfile(scratch, t2, 32, t1)
             dispatch(9)
         end)
 
@@ -1049,11 +1031,10 @@ _llint_op_get_array_length:
     btiz t2, IsArray, .opGetArrayLengthSlow
     btiz t2, IndexingShapeMask, .opGetArrayLengthSlow
     loadi 4[PC], t1
-    loadp 32[PC], t2
     loadp JSObject::m_butterfly[t3], t0
     loadi -sizeof IndexingHeader + IndexingHeader::u.lengths.publicLength[t0], t0
     bilt t0, 0, .opGetArrayLengthSlow
-    valueProfile(Int32Tag, t0, t2)
+    valueProfile(Int32Tag, t0, 32, t2)
     storep t0, PayloadOffset[cfr, t1, 8]
     storep Int32Tag, TagOffset[cfr, t1, 8]
     dispatch(9)
@@ -1214,8 +1195,7 @@ _llint_op_get_by_val:
 .opGetByValNotEmpty:
     storei t2, TagOffset[cfr, t0, 8]
     storei t1, PayloadOffset[cfr, t0, 8]
-    loadi 20[PC], t0
-    valueProfile(t2, t1, t0)
+    valueProfile(t2, t1, 20, t0)
     dispatch(6)
 
 .opGetByValOutOfBounds:
@@ -1243,10 +1223,9 @@ _llint_op_get_argument_by_val:
     loadi 4[PC], t3
     loadi ThisArgumentOffset + TagOffset[cfr, t2, 8], t0
     loadi ThisArgumentOffset + PayloadOffset[cfr, t2, 8], t1
-    loadi 20[PC], t2
     storei t0, TagOffset[cfr, t3, 8]
     storei t1, PayloadOffset[cfr, t3, 8]
-    valueProfile(t0, t1, t2)
+    valueProfile(t0, t1, 20, t2)
     dispatch(6)
 
 .opGetArgumentByValSlow:
@@ -1773,37 +1752,6 @@ macro getDeBruijnScope(deBruijinIndexOperand, scopeCheck)
 
 end
 
-_llint_op_get_scoped_var:
-    traceExecution()
-    # Operands are as follows:
-    # 4[PC]   Destination for the load.
-    # 8[PC]   Index of register in the scope.
-    # 12[PC]  De Bruijin index.
-    getDeBruijnScope(12[PC], macro (scope, scratch) end)
-    loadi 4[PC], t1
-    loadi 8[PC], t2
-    loadp JSVariableObject::m_registers[t0], t0
-    loadi TagOffset[t0, t2, 8], t3
-    loadi PayloadOffset[t0, t2, 8], t0
-    storei t3, TagOffset[cfr, t1, 8]
-    storei t0, PayloadOffset[cfr, t1, 8]
-    loadi 16[PC], t1
-    valueProfile(t3, t0, t1)
-    dispatch(5)
-
-
-_llint_op_put_scoped_var:
-    traceExecution()
-    getDeBruijnScope(8[PC], macro (scope, scratch) end)
-    loadi 12[PC], t1
-    loadConstantOrVariable(t1, t3, t2)
-    loadi 4[PC], t1
-    writeBarrier(t3, t2)
-    loadp JSVariableObject::m_registers[t0], t0
-    storei t3, TagOffset[t0, t1, 8]
-    storei t2, PayloadOffset[t0, t1, 8]
-    dispatch(4)
-
 _llint_op_end:
     traceExecution()
     checkSwitchToJITForEpilogue()
@@ -1914,3 +1862,238 @@ macro nativeCallTrampoline(executableOffsetToFunction)
     jmp _llint_throw_from_slow_path_trampoline
 end
 
+
+macro getGlobalObject(dst)
+    loadp CodeBlock[cfr], t0
+    loadp CodeBlock::m_globalObject[t0], t0
+    loadisFromInstruction(dst, t1)
+    storei CellTag, TagOffset[cfr, t1, 8]
+    storei t0, PayloadOffset[cfr, t1, 8]
+end
+
+macro varInjectionCheck(slowPath)
+    loadp CodeBlock[cfr], t0
+    loadp CodeBlock::m_globalObject[t0], t0
+    loadp JSGlobalObject::m_varInjectionWatchpoint[t0], t0
+    btbnz WatchpointSet::m_isInvalidated[t0], slowPath
+end
+
+macro resolveScope()
+    loadp CodeBlock[cfr], t0
+    loadisFromInstruction(4, t2)
+    btbz CodeBlock::m_needsActivation[t0], .resolveScopeAfterActivationCheck
+    loadis CodeBlock::m_activationRegister[t0], t1
+    btpz PayloadOffset[cfr, t1, 8], .resolveScopeAfterActivationCheck
+    addi 1, t2
+
+.resolveScopeAfterActivationCheck:
+    loadp ScopeChain[cfr], t0
+    btiz t2, .resolveScopeLoopEnd
+
+.resolveScopeLoop:
+    loadp JSScope::m_next[t0], t0
+    subi 1, t2
+    btinz t2, .resolveScopeLoop
+
+.resolveScopeLoopEnd:
+    loadisFromInstruction(1, t1)
+    storei CellTag, TagOffset[cfr, t1, 8]
+    storei t0, PayloadOffset[cfr, t1, 8]
+end
+
+
+_llint_op_resolve_scope:
+    traceExecution()
+    loadisFromInstruction(3, t0)
+
+#rGlobalProperty:
+    bineq t0, GlobalProperty, .rGlobalVar
+    getGlobalObject(1)
+    dispatch(5)
+
+.rGlobalVar:
+    bineq t0, GlobalVar, .rClosureVar
+    getGlobalObject(1)
+    dispatch(5)
+
+.rClosureVar:
+    bineq t0, ClosureVar, .rGlobalPropertyWithVarInjectionChecks
+    resolveScope()
+    dispatch(5)
+
+.rGlobalPropertyWithVarInjectionChecks:
+    bineq t0, GlobalPropertyWithVarInjectionChecks, .rGlobalVarWithVarInjectionChecks
+    varInjectionCheck(.rDynamic)
+    getGlobalObject(1)
+    dispatch(5)
+
+.rGlobalVarWithVarInjectionChecks:
+    bineq t0, GlobalVarWithVarInjectionChecks, .rClosureVarWithVarInjectionChecks
+    varInjectionCheck(.rDynamic)
+    getGlobalObject(1)
+    dispatch(5)
+
+.rClosureVarWithVarInjectionChecks:
+    bineq t0, ClosureVarWithVarInjectionChecks, .rDynamic
+    varInjectionCheck(.rDynamic)
+    resolveScope()
+    dispatch(5)
+
+.rDynamic:
+    callSlowPath(_llint_slow_path_resolve_scope)
+    dispatch(5)
+
+
+macro loadWithStructureCheck(operand, slowPath)
+    loadisFromInstruction(operand, t0)
+    loadp [cfr, t0, 8], t0
+    loadpFromInstruction(5, t1)
+    bpneq JSCell::m_structure[t0], t1, slowPath
+end
+
+macro getProperty()
+    loadisFromInstruction(6, t3)
+    loadPropertyAtVariableOffset(t3, t0, t1, t2)
+    valueProfile(t1, t2, 28, t0)
+    loadisFromInstruction(1, t0)
+    storei t1, TagOffset[cfr, t0, 8]
+    storei t2, PayloadOffset[cfr, t0, 8]
+end
+
+macro getGlobalVar()
+    loadpFromInstruction(6, t0)
+    loadp TagOffset[t0], t1
+    loadp PayloadOffset[t0], t2
+    valueProfile(t1, t2, 28, t0)
+    loadisFromInstruction(1, t0)
+    storei t1, TagOffset[cfr, t0, 8]
+    storei t2, PayloadOffset[cfr, t0, 8]
+end
+
+macro getClosureVar()
+    loadp JSVariableObject::m_registers[t0], t0
+    loadisFromInstruction(6, t3)
+    loadp TagOffset[t0, t3, 8], t1
+    loadp PayloadOffset[t0, t3, 8], t2
+    valueProfile(t1, t2, 28, t0)
+    loadisFromInstruction(1, t0)
+    storei t1, TagOffset[cfr, t0, 8]
+    storei t2, PayloadOffset[cfr, t0, 8]
+end
+
+_llint_op_get_from_scope:
+    traceExecution()
+    loadisFromInstruction(4, t0)
+    andi ResolveModeMask, t0
+
+#gGlobalProperty:
+    bineq t0, GlobalProperty, .gGlobalVar
+    loadWithStructureCheck(2, .gDynamic)
+    getProperty()
+    dispatch(8)
+
+.gGlobalVar:
+    bineq t0, GlobalVar, .gClosureVar
+    getGlobalVar()
+    dispatch(8)
+
+.gClosureVar:
+    bineq t0, ClosureVar, .gGlobalPropertyWithVarInjectionChecks
+    loadVariable(2, t2, t1, t0)
+    getClosureVar()
+    dispatch(8)
+
+.gGlobalPropertyWithVarInjectionChecks:
+    bineq t0, GlobalPropertyWithVarInjectionChecks, .gGlobalVarWithVarInjectionChecks
+    loadWithStructureCheck(2, .gDynamic)
+    getProperty()
+    dispatch(8)
+
+.gGlobalVarWithVarInjectionChecks:
+    bineq t0, GlobalVarWithVarInjectionChecks, .gClosureVarWithVarInjectionChecks
+    varInjectionCheck(.gDynamic)
+    loadVariable(2, t2, t1, t0)
+    getGlobalVar()
+    dispatch(8)
+
+.gClosureVarWithVarInjectionChecks:
+    bineq t0, ClosureVarWithVarInjectionChecks, .gDynamic
+    varInjectionCheck(.gDynamic)
+    loadVariable(2, t2, t1, t0)
+    getClosureVar()
+    dispatch(8)
+
+.gDynamic:
+    callSlowPath(_llint_slow_path_get_from_scope)
+    dispatch(8)
+
+
+macro putProperty()
+    loadisFromInstruction(3, t1)
+    loadConstantOrVariable(t1, t2, t3)
+    loadisFromInstruction(6, t1)
+    storePropertyAtVariableOffset(t1, t0, t2, t3)
+end
+
+macro putGlobalVar()
+    loadisFromInstruction(3, t0)
+    loadConstantOrVariable(t0, t1, t2)
+    loadpFromInstruction(6, t0)
+    storei t1, TagOffset[t0]
+    storei t2, PayloadOffset[t0]
+end
+
+macro putClosureVar()
+    loadisFromInstruction(3, t1)
+    loadConstantOrVariable(t1, t2, t3)
+    loadp JSVariableObject::m_registers[t0], t0
+    loadisFromInstruction(6, t1)
+    storei t2, TagOffset[t0, t1, 8]
+    storei t3, PayloadOffset[t0, t1, 8]
+end
+
+
+_llint_op_put_to_scope:
+    traceExecution()
+    loadisFromInstruction(4, t0)
+    andi ResolveModeMask, t0
+
+#pGlobalProperty:
+    bineq t0, GlobalProperty, .pGlobalVar
+    loadWithStructureCheck(1, .pDynamic)
+    putProperty()
+    dispatch(7)
+
+.pGlobalVar:
+    bineq t0, GlobalVar, .pClosureVar
+    putGlobalVar()
+    dispatch(7)
+
+.pClosureVar:
+    bineq t0, ClosureVar, .pGlobalPropertyWithVarInjectionChecks
+    loadVariable(1, t2, t1, t0)
+    putClosureVar()
+    dispatch(7)
+
+.pGlobalPropertyWithVarInjectionChecks:
+    bineq t0, GlobalPropertyWithVarInjectionChecks, .pGlobalVarWithVarInjectionChecks
+    loadWithStructureCheck(1, .pDynamic)
+    putProperty()
+    dispatch(7)
+
+.pGlobalVarWithVarInjectionChecks:
+    bineq t0, GlobalVarWithVarInjectionChecks, .pClosureVarWithVarInjectionChecks
+    varInjectionCheck(.pDynamic)
+    putGlobalVar()
+    dispatch(7)
+
+.pClosureVarWithVarInjectionChecks:
+    bineq t0, ClosureVarWithVarInjectionChecks, .pDynamic
+    varInjectionCheck(.pDynamic)
+    loadVariable(1, t2, t1, t0)
+    putClosureVar()
+    dispatch(7)
+
+.pDynamic:
+    callSlowPath(_llint_slow_path_put_to_scope)
+    dispatch(7)

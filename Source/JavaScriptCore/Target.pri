@@ -72,7 +72,6 @@ SOURCES += \
     bytecode/PreciseJumpTargets.cpp \
     bytecode/PutByIdStatus.cpp \
     bytecode/ReduceWhitespace.cpp \
-    bytecode/ResolveGlobalStatus.cpp \
     bytecode/SamplingTool.cpp \
     bytecode/SpecialPointer.cpp \
     bytecode/SpeculatedType.cpp \

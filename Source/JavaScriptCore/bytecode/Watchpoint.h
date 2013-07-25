@@ -50,6 +50,7 @@ enum InitialWatchpointSetMode { InitializedWatching, InitializedBlind };
 class InlineWatchpointSet;
 
 class WatchpointSet : public ThreadSafeRefCounted<WatchpointSet> {
+    friend class LLIntOffsetsExtractor;
 public:
     WatchpointSet(InitialWatchpointSetMode);
     ~WatchpointSet();
@@ -88,6 +89,7 @@ public:
     }
     
     bool* addressOfIsWatched() { return &m_isWatched; }
+    bool* addressOfIsInvalidated() { return &m_isInvalidated; }
     
     JS_EXPORT_PRIVATE void notifyWriteSlow(); // Call only if you've checked isWatched.
     

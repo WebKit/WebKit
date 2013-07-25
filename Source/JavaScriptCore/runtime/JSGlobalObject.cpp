@@ -109,6 +109,7 @@ JSGlobalObject::JSGlobalObject(VM& vm, Structure* structure, const GlobalObjectM
     : Base(vm, structure, 0)
     , m_masqueradesAsUndefinedWatchpoint(adoptRef(new WatchpointSet(InitializedWatching)))
     , m_havingABadTimeWatchpoint(adoptRef(new WatchpointSet(InitializedWatching)))
+    , m_varInjectionWatchpoint(adoptRef(new WatchpointSet(InitializedWatching)))
     , m_weakRandom(Options::forceWeakRandomSeed() ? Options::forcedWeakRandomSeed() : static_cast<unsigned>(randomNumber() * (std::numeric_limits<unsigned>::max() + 1.0)))
     , m_evalEnabled(true)
     , m_globalObjectMethodTable(globalObjectMethodTable ? globalObjectMethodTable : &s_globalObjectMethodTable)
@@ -622,19 +623,19 @@ UnlinkedProgramCodeBlock* JSGlobalObject::createProgramCodeBlock(CallFrame* call
     return unlinkedCode;
 }
 
-UnlinkedEvalCodeBlock* JSGlobalObject::createEvalCodeBlock(CodeCache* cache, CallFrame* callFrame, JSScope* scope, EvalExecutable* executable, JSObject** exception)
+UnlinkedEvalCodeBlock* JSGlobalObject::createEvalCodeBlock(CallFrame* callFrame, EvalExecutable* executable)
 {
     ParserError error;
     JSParserStrictness strictness = executable->isStrictMode() ? JSParseStrict : JSParseNormal;
     DebuggerMode debuggerMode = hasDebugger() ? DebuggerOn : DebuggerOff;
     ProfilerMode profilerMode = hasProfiler() ? ProfilerOn : ProfilerOff;
-    UnlinkedEvalCodeBlock* unlinkedCode = cache->getEvalCodeBlock(vm(), scope, executable, executable->source(), strictness, debuggerMode, profilerMode, error);
+    UnlinkedEvalCodeBlock* unlinkedCode = vm().codeCache()->getEvalCodeBlock(vm(), executable, executable->source(), strictness, debuggerMode, profilerMode, error);
 
     if (hasDebugger())
         debugger()->sourceParsed(callFrame, executable->source().provider(), error.m_line, error.m_message);
 
     if (error.m_type != ParserError::ErrorNone) {
-        *exception = error.toErrorObject(this, executable->source());
+        throwVMError(callFrame, error.toErrorObject(this, executable->source()));
         return 0;
     }
 

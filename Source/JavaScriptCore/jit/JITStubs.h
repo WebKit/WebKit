@@ -35,7 +35,6 @@
 #include "LowLevelInterpreter.h"
 #include "MacroAssemblerCodeRef.h"
 #include "Register.h"
-#include "ResolveOperation.h"
 
 namespace JSC {
 
@@ -82,9 +81,8 @@ union JITStubArg {
     JSString* jsString() { return static_cast<JSString*>(asPointer); }
     Structure* structure() { return static_cast<Structure*>(asPointer); }
     ReturnAddressPtr returnAddress() { return ReturnAddressPtr(asPointer); }
-    ResolveOperations* resolveOperations() { return static_cast<ResolveOperations*>(asPointer); }
-    PutToBaseOperation* putToBaseOperation() { return static_cast<PutToBaseOperation*>(asPointer); }
     ArrayAllocationProfile* arrayAllocationProfile() { return static_cast<ArrayAllocationProfile*>(asPointer); }
+    Instruction* pc() { return static_cast<Instruction*>(asPointer); }
 };
     
 #if !OS(WINDOWS) && CPU(X86_64)
@@ -423,7 +421,6 @@ void JIT_STUB cti_op_put_by_index(STUB_ARGS_DECLARATION) WTF_INTERNAL;
 void JIT_STUB cti_op_put_by_val(STUB_ARGS_DECLARATION) WTF_INTERNAL;
 void JIT_STUB cti_op_put_by_val_generic(STUB_ARGS_DECLARATION) WTF_INTERNAL;
 void JIT_STUB cti_op_put_getter_setter(STUB_ARGS_DECLARATION) WTF_INTERNAL;
-void JIT_STUB cti_op_init_global_const_check(STUB_ARGS_DECLARATION) WTF_INTERNAL;
 void JIT_STUB cti_op_tear_off_activation(STUB_ARGS_DECLARATION) WTF_INTERNAL;
 void JIT_STUB cti_op_tear_off_arguments(STUB_ARGS_DECLARATION) WTF_INTERNAL;
 void JIT_STUB cti_op_throw_static_error(STUB_ARGS_DECLARATION) WTF_INTERNAL;
@@ -443,6 +440,10 @@ void* JIT_STUB cti_vm_lazyLinkCall(STUB_ARGS_DECLARATION) WTF_INTERNAL;
 void* JIT_STUB cti_vm_lazyLinkClosureCall(STUB_ARGS_DECLARATION) WTF_INTERNAL;
 void* JIT_STUB cti_vm_lazyLinkConstruct(STUB_ARGS_DECLARATION) WTF_INTERNAL;
 void* JIT_STUB cti_vm_throw(STUB_ARGS_DECLARATION) REFERENCED_FROM_ASM WTF_INTERNAL;
+
+EncodedJSValue JIT_STUB cti_op_resolve_scope(STUB_ARGS_DECLARATION) WTF_INTERNAL;
+EncodedJSValue JIT_STUB cti_op_get_from_scope(STUB_ARGS_DECLARATION) WTF_INTERNAL;
+void JIT_STUB cti_op_put_to_scope(STUB_ARGS_DECLARATION) WTF_INTERNAL;
 } // extern "C"
 
 #elif ENABLE(LLINT_C_LOOP)

@@ -122,7 +122,7 @@ public:
 
     void clear() { m_cell = 0; }
     
-    JSCell** slot() { return &m_cell; }
+    T** slot() { return reinterpret_cast<T**>(&m_cell); }
     
     typedef T* (WriteBarrierBase::*UnspecifiedBoolType);
     operator UnspecifiedBoolType*() const { return m_cell ? reinterpret_cast<UnspecifiedBoolType*>(1) : 0; }

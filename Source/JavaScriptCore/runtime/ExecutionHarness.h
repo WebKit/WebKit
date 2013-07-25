@@ -28,8 +28,6 @@
 
 #include <wtf/Platform.h>
 
-#if ENABLE(JIT)
-
 #include "CompilationResult.h"
 #include "DFGDriver.h"
 #include "DFGPlan.h"
@@ -43,6 +41,7 @@ inline CompilationResult prepareForExecutionImpl(
     ExecState* exec, CodeBlockType* codeBlock, RefPtr<JITCode>& jitCode,
     JITCode::JITType jitType, unsigned bytecodeIndex)
 {
+    UNUSED_PARAM(bytecodeIndex);
 #if ENABLE(LLINT)
     if (JITCode::isBaselineCode(jitType)) {
         // Start off in the low level interpreter.
@@ -66,6 +65,8 @@ inline CompilationResult prepareFunctionForExecutionImpl(
     MacroAssemblerCodePtr& jitCodeWithArityCheck, JITCode::JITType jitType,
     unsigned bytecodeIndex, CodeSpecializationKind kind)
 {
+    UNUSED_PARAM(bytecodeIndex);
+    UNUSED_PARAM(jitCodeWithArityCheck);
 #if ENABLE(LLINT)
     if (JITCode::isBaselineCode(jitType)) {
         // Start off in the low level interpreter.
@@ -92,11 +93,14 @@ inline CompilationResult installOptimizedCode(
     PassRefPtr<JITCode> jitCode, MacroAssemblerCodePtr jitCodeWithArityCheck,
     int* numParameters)
 {
+    UNUSED_PARAM(jitCodeWithArityCheck);
     if (result != CompilationSuccessful)
         return result;
     
+#if ENABLE(JIT)
     codeBlock->setJITCode(jitCode, jitCodeWithArityCheck);
-    
+#endif
+
     sink = codeBlock;
     
     if (numParameters)
@@ -162,8 +166,6 @@ inline CompilationResult replaceWithDeferredOptimizedCode(
 #endif // ENABLE(DFG_JIT)
 
 } // namespace JSC
-
-#endif // ENABLE(JIT)
 
 #endif // ExecutionHarness_h
 

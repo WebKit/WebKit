@@ -525,9 +525,9 @@ class Instruction
     
     def handleX86IntCompare(opcodeSuffix, kind)
         if operands[0].is_a? Immediate and operands[0].value == 0 and operands[1].is_a? RegisterID and (opcodeSuffix == "e" or opcodeSuffix == "ne")
-            $asm.puts "test#{x86Suffix(kind)} #{operands[1].x86Operand(kind)}"
+            $asm.puts "test#{x86Suffix(kind)} #{operands[1].x86Operand(kind)}, #{operands[1].x86Operand(kind)}"
         elsif operands[1].is_a? Immediate and operands[1].value == 0 and operands[0].is_a? RegisterID and (opcodeSuffix == "e" or opcodeSuffix == "ne")
-            $asm.puts "test#{x86Suffix(kind)} #{operands[0].x86Operand(kind)}"
+            $asm.puts "test#{x86Suffix(kind)}  #{operands[0].x86Operand(kind)}, #{operands[0].x86Operand(kind)}"
         else
             $asm.puts "cmp#{x86Suffix(kind)} #{operands[1].x86Operand(kind)}, #{operands[0].x86Operand(kind)}"
         end

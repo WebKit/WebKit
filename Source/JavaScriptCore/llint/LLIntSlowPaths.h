@@ -154,12 +154,6 @@ LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_typeof);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_is_object);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_is_function);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_in);
-LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_resolve);
-LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_put_to_base);
-LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_resolve_base);
-LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_resolve_with_base);
-LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_resolve_with_this);
-LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_init_global_const_check);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_get_by_id);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_get_arguments_length);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_put_by_id);
@@ -206,6 +200,9 @@ LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_debug);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_profile_will_call);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_profile_did_call);
 LLINT_SLOW_PATH_HIDDEN_DECL(throw_from_native_call);
+LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_resolve_scope);
+LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_get_from_scope);
+LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_put_to_scope);
 
 } } // namespace JSC::LLInt
 

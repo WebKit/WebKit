@@ -1575,54 +1575,6 @@ DEFINE_STUB_FUNCTION(JSObject*, op_new_array_buffer)
     return constructArray(stackFrame.callFrame, stackFrame.args[2].arrayAllocationProfile(), stackFrame.callFrame->codeBlock()->constantBuffer(stackFrame.args[0].int32()), stackFrame.args[1].int32());
 }
 
-DEFINE_STUB_FUNCTION(void, op_init_global_const_check)
-{
-    STUB_INIT_STACK_FRAME(stackFrame);
-    
-    CallFrame* callFrame = stackFrame.callFrame;
-    CodeBlock* codeBlock = callFrame->codeBlock();
-    symbolTablePut(codeBlock->globalObject(), callFrame, codeBlock->identifier(stackFrame.args[1].int32()), stackFrame.args[0].jsValue(), true);
-}
-
-DEFINE_STUB_FUNCTION(EncodedJSValue, op_resolve)
-{
-    STUB_INIT_STACK_FRAME(stackFrame);
-
-    CallFrame* callFrame = stackFrame.callFrame;
-    
-    ResolveOperations* operations = stackFrame.args[1].resolveOperations();
-    bool willReify = operations->isEmpty();
-    
-    JSValue result = JSScope::resolve(callFrame, stackFrame.args[0].identifier(), operations);
-    
-    if (willReify) {
-        ConcurrentJITLocker locker(callFrame->codeBlock()->m_lock);
-        operations->m_ready = true;
-    }
-    
-    CHECK_FOR_EXCEPTION_AT_END();
-    return JSValue::encode(result);
-}
-
-DEFINE_STUB_FUNCTION(void, op_put_to_base)
-{
-    STUB_INIT_STACK_FRAME(stackFrame);
-
-    CallFrame* callFrame = stackFrame.callFrame;
-    JSValue base = callFrame->r(stackFrame.args[0].int32()).jsValue();
-    JSValue value = callFrame->r(stackFrame.args[2].int32()).jsValue();
-    PutToBaseOperation* operation = stackFrame.args[3].putToBaseOperation();
-    bool firstTime = !operation->m_ready;
-    JSScope::resolvePut(callFrame, base, stackFrame.args[1].identifier(), value, operation);
-    
-    if (firstTime) {
-        ConcurrentJITLocker locker(callFrame->codeBlock()->m_lock);
-        operation->m_ready = true;
-    }
-
-    CHECK_FOR_EXCEPTION_AT_END();
-}
-
 DEFINE_STUB_FUNCTION(EncodedJSValue, op_construct_NotJSConstruct)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
@@ -1944,42 +1896,6 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_negate)
     return JSValue::encode(result);
 }
 
-DEFINE_STUB_FUNCTION(EncodedJSValue, op_resolve_base)
-{
-    STUB_INIT_STACK_FRAME(stackFrame);
-    
-    ResolveOperations* operations = stackFrame.args[1].resolveOperations();
-    bool willReify = operations->isEmpty();
-    
-    JSValue result = JSScope::resolveBase(stackFrame.callFrame, stackFrame.args[0].identifier(), false, operations, stackFrame.args[2].putToBaseOperation());
-    
-    if (willReify) {
-        ConcurrentJITLocker locker(stackFrame.callFrame->codeBlock()->m_lock);
-        operations->m_ready = true;
-    }
-    
-    return JSValue::encode(result);
-}
-
-DEFINE_STUB_FUNCTION(EncodedJSValue, op_resolve_base_strict_put)
-{
-    STUB_INIT_STACK_FRAME(stackFrame);
-
-    ResolveOperations* operations = stackFrame.args[1].resolveOperations();
-    bool willReify = operations->isEmpty();
-    
-    if (JSValue result = JSScope::resolveBase(stackFrame.callFrame, stackFrame.args[0].identifier(), true, operations, stackFrame.args[2].putToBaseOperation())) {
-        
-        if (willReify) {
-            ConcurrentJITLocker locker(stackFrame.callFrame->codeBlock()->m_lock);
-            operations->m_ready = true;
-        }
-        
-        return JSValue::encode(result);
-    }
-    VM_THROW_EXCEPTION();
-}
-
 DEFINE_STUB_FUNCTION(EncodedJSValue, op_div)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
@@ -2235,38 +2151,6 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_rshift)
     CallFrame* callFrame = stackFrame.callFrame;
     JSValue result = jsNumber((val.toInt32(callFrame)) >> (shift.toUInt32(callFrame) & 0x1f));
 
-    CHECK_FOR_EXCEPTION_AT_END();
-    return JSValue::encode(result);
-}
-
-DEFINE_STUB_FUNCTION(EncodedJSValue, op_resolve_with_base)
-{
-    STUB_INIT_STACK_FRAME(stackFrame);
-
-    CallFrame* callFrame = stackFrame.callFrame;
-    ResolveOperations* operations = stackFrame.args[2].resolveOperations();
-    bool willReify = operations->isEmpty();
-    JSValue result = JSScope::resolveWithBase(callFrame, stackFrame.args[0].identifier(), &callFrame->registers()[stackFrame.args[1].int32()], operations, stackFrame.args[3].putToBaseOperation());
-    if (willReify) {
-        ConcurrentJITLocker locker(stackFrame.callFrame->codeBlock()->m_lock);
-        operations->m_ready = true;
-    }
-    CHECK_FOR_EXCEPTION_AT_END();
-    return JSValue::encode(result);
-}
-
-DEFINE_STUB_FUNCTION(EncodedJSValue, op_resolve_with_this)
-{
-    STUB_INIT_STACK_FRAME(stackFrame);
-
-    CallFrame* callFrame = stackFrame.callFrame;
-    ResolveOperations* operations = stackFrame.args[2].resolveOperations();
-    bool willReify = operations->isEmpty();
-    JSValue result = JSScope::resolveWithThis(callFrame, stackFrame.args[0].identifier(), &callFrame->registers()[stackFrame.args[1].int32()], operations);
-    if (willReify) {
-        ConcurrentJITLocker locker(stackFrame.callFrame->codeBlock()->m_lock);
-        operations->m_ready = true;
-    }
     CHECK_FOR_EXCEPTION_AT_END();
     return JSValue::encode(result);
 }
@@ -2700,6 +2584,79 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, to_object)
 
     CallFrame* callFrame = stackFrame.callFrame;
     return JSValue::encode(stackFrame.args[0].jsValue().toObject(callFrame));
+}
+
+DEFINE_STUB_FUNCTION(EncodedJSValue, op_resolve_scope)
+{
+    STUB_INIT_STACK_FRAME(stackFrame);
+    ExecState* exec = stackFrame.callFrame;
+    Instruction* pc = stackFrame.args[0].pc();
+
+    Identifier& ident = exec->codeBlock()->identifier(pc[2].u.operand);
+    return JSValue::encode(JSScope::resolve(exec, exec->scope(), ident));
+}
+
+DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_from_scope)
+{
+    STUB_INIT_STACK_FRAME(stackFrame);
+    ExecState* exec = stackFrame.callFrame;
+    Instruction* pc = stackFrame.args[0].pc();
+
+    Identifier& ident = exec->codeBlock()->identifier(pc[3].u.operand);
+    JSObject* scope = jsCast<JSObject*>(exec->uncheckedR(pc[2].u.operand).jsValue());
+    ResolveModeAndType modeAndType(pc[4].u.operand);
+
+    PropertySlot slot(scope);
+    if (!scope->getPropertySlot(exec, ident, slot)) {
+        if (modeAndType.mode() == ThrowIfNotFound) {
+            throwError(exec, createUndefinedVariableError(exec, ident));
+            VM_THROW_EXCEPTION();
+        }
+        return JSValue::encode(jsUndefined());
+    }
+
+    // Covers implicit globals. Since they don't exist until they first execute, we didn't know how to cache them at compile time.
+    if (slot.isCacheableValue() && slot.slotBase() == scope && scope->structure()->propertyAccessesAreCacheable()) {
+        if (modeAndType.type() == GlobalProperty || modeAndType.type() == GlobalPropertyWithVarInjectionChecks) {
+            CodeBlock* codeBlock = exec->codeBlock();
+            ConcurrentJITLocker locker(codeBlock->m_lock);
+            pc[5].u.structure.set(exec->vm(), codeBlock->ownerExecutable(), scope->structure());
+            pc[6].u.operand = slot.cachedOffset();
+        }
+    }
+
+    return JSValue::encode(slot.getValue(exec, ident));
+}
+
+DEFINE_STUB_FUNCTION(void, op_put_to_scope)
+{
+    STUB_INIT_STACK_FRAME(stackFrame);
+    ExecState* exec = stackFrame.callFrame;
+    Instruction* pc = stackFrame.args[0].pc();
+
+    CodeBlock* codeBlock = exec->codeBlock();
+    Identifier& ident = codeBlock->identifier(pc[2].u.operand);
+    JSObject* scope = jsCast<JSObject*>(exec->uncheckedR(pc[1].u.operand).jsValue());
+    JSValue value = exec->r(pc[3].u.operand).jsValue();
+    ResolveModeAndType modeAndType = ResolveModeAndType(pc[4].u.operand);
+
+    if (modeAndType.mode() == ThrowIfNotFound && !scope->hasProperty(exec, ident)) {
+        throwError(exec, createUndefinedVariableError(exec, ident));
+        VM_THROW_EXCEPTION_AT_END();
+        return;
+    }
+
+    PutPropertySlot slot(codeBlock->isStrictMode());
+    scope->methodTable()->put(scope, exec, ident, value, slot);
+
+    // Covers implicit globals. Since they don't exist until they first execute, we didn't know how to cache them at compile time.
+    if (modeAndType.type() == GlobalProperty || modeAndType.type() == GlobalPropertyWithVarInjectionChecks) {
+        if (slot.isCacheable() && slot.base() == scope && scope->structure()->propertyAccessesAreCacheable()) {
+            ConcurrentJITLocker locker(codeBlock->m_lock);
+            pc[5].u.structure.set(exec->vm(), codeBlock->ownerExecutable(), scope->structure());
+            pc[6].u.operand = slot.cachedOffset();
+        }
+    }
 }
 
 } // namespace JSC

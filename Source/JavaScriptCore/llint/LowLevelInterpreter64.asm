@@ -56,9 +56,8 @@ macro dispatchAfterCall()
     loadp CodeBlock[cfr], PB
     loadp CodeBlock::m_instructions[PB], PB
     loadisFromInstruction(1, t1)
-    loadpFromInstruction(7, t2)
     storeq t0, [cfr, t1, 8]
-    valueProfile(t0, t2)
+    valueProfile(t0, 7, t2)
     dispatch(8)
 end
 
@@ -158,6 +157,11 @@ macro checkSwitchToJITForLoop()
         end)
 end
 
+macro loadVariable(operand, value)
+    loadisFromInstruction(operand, value)
+    loadq [cfr, value, 8], value
+end
+
 # Index and value must be different registers. Index may be clobbered.
 macro loadConstantOrVariable(index, value)
     bpgteq index, FirstConstantRegisterIndex, .constant
@@ -185,9 +189,10 @@ macro writeBarrier(value)
     # Nothing to do, since we don't have a generational or incremental collector.
 end
 
-macro valueProfile(value, profile)
+macro valueProfile(value, operand, scratch)
     if VALUE_PROFILER
-        storeq value, ValueProfile::m_buckets[profile]
+        loadpFromInstruction(operand, scratch)
+        storeq value, ValueProfile::m_buckets[scratch]
     end
 end
 
@@ -275,9 +280,8 @@ _llint_op_create_this:
 _llint_op_get_callee:
     traceExecution()
     loadisFromInstruction(1, t0)
-    loadpFromInstruction(2, t2)
     loadp Callee[cfr], t1
-    valueProfile(t1, t2)
+    valueProfile(t1, 2, t2)
     storep t1, [cfr, t0, 8]
     dispatch(3)
 
@@ -289,8 +293,7 @@ _llint_op_to_this:
     btqnz t0, tagMask, .opToThisSlow
     loadp JSCell::m_structure[t0], t0
     bbneq Structure::m_typeInfo + TypeInfo::m_type[t0], FinalObjectType, .opToThisSlow
-    loadpFromInstruction(2, t1)
-    valueProfile(t0, t1)
+    valueProfile(t0, 2, t1)
     dispatch(3)
 
 .opToThisSlow:
@@ -800,13 +803,6 @@ _llint_op_is_string:
     dispatch(3)
 
 
-macro loadPropertyAtVariableOffsetKnownNotInline(propertyOffsetAsPointer, objectAndStorage, value)
-    assert(macro (ok) bigteq propertyOffsetAsPointer, firstOutOfLineOffset, ok end)
-    negp propertyOffsetAsPointer
-    loadp JSObject::m_butterfly[objectAndStorage], objectAndStorage
-    loadq (firstOutOfLineOffset - 2) * 8[objectAndStorage, propertyOffsetAsPointer, 8], value
-end
-
 macro loadPropertyAtVariableOffset(propertyOffsetAsInt, objectAndStorage, value)
     bilt propertyOffsetAsInt, firstOutOfLineOffset, .isInline
     loadp JSObject::m_butterfly[objectAndStorage], objectAndStorage
@@ -819,6 +815,19 @@ macro loadPropertyAtVariableOffset(propertyOffsetAsInt, objectAndStorage, value)
     loadq (firstOutOfLineOffset - 2) * 8[objectAndStorage, propertyOffsetAsInt, 8], value
 end
 
+
+macro storePropertyAtVariableOffset(propertyOffsetAsInt, objectAndStorage, value)
+    bilt propertyOffsetAsInt, firstOutOfLineOffset, .isInline
+    loadp JSObject::m_butterfly[objectAndStorage], objectAndStorage
+    negi propertyOffsetAsInt
+    sxi2q propertyOffsetAsInt, propertyOffsetAsInt
+    jmp .ready
+.isInline:
+    addp sizeof JSObject - (firstOutOfLineOffset - 2) * 8, objectAndStorage
+.ready:
+    storeq value, (firstOutOfLineOffset - 2) * 8[objectAndStorage, propertyOffsetAsInt, 8]
+end
+
 _llint_op_init_global_const:
     traceExecution()
     loadisFromInstruction(2, t1)
@@ -828,20 +837,6 @@ _llint_op_init_global_const:
     storeq t2, [t0]
     dispatch(5)
 
-
-_llint_op_init_global_const_check:
-    traceExecution()
-    loadpFromInstruction(3, t2)
-    loadisFromInstruction(2, t1)
-    loadpFromInstruction(1, t0)
-    btbnz [t2], .opInitGlobalConstCheckSlow
-    loadConstantOrVariable(t1, t2)
-    writeBarrier(t2)
-    storeq t2, [t0]
-    dispatch(5)
-.opInitGlobalConstCheckSlow:
-    callSlowPath(_llint_slow_path_init_global_const_check)
-    dispatch(5)
 
 macro getById(getPropertyStorage)
     traceExecution()
@@ -862,8 +857,7 @@ macro getById(getPropertyStorage)
             loadisFromInstruction(1, t1)
             loadq [propertyStorage, t2], scratch
             storeq scratch, [cfr, t1, 8]
-            loadpFromInstruction(8, t1)
-            valueProfile(scratch, t1)
+            valueProfile(scratch, 8, t1)
             dispatch(9)
         end)
             
@@ -890,12 +884,11 @@ _llint_op_get_array_length:
     btiz t2, IsArray, .opGetArrayLengthSlow
     btiz t2, IndexingShapeMask, .opGetArrayLengthSlow
     loadisFromInstruction(1, t1)
-    loadpFromInstruction(8, t2)
     loadp JSObject::m_butterfly[t3], t0
     loadi -sizeof IndexingHeader + IndexingHeader::u.lengths.publicLength[t0], t0
     bilt t0, 0, .opGetArrayLengthSlow
     orq tagTypeNumber, t0
-    valueProfile(t0, t2)
+    valueProfile(t0, 8, t2)
     storeq t0, [cfr, t1, 8]
     dispatch(9)
 
@@ -1051,8 +1044,7 @@ _llint_op_get_by_val:
 
 .opGetByValDone:
     storeq t2, [cfr, t0, 8]
-    loadpFromInstruction(5, t0)
-    valueProfile(t2, t0)
+    valueProfile(t2, 5, t0)
     dispatch(6)
 
 .opGetByValOutOfBounds:
@@ -1082,7 +1074,7 @@ _llint_op_get_argument_by_val:
     loadpFromInstruction(5, t1)
     loadq ThisArgumentOffset[cfr, t2, 8], t0
     storeq t0, [cfr, t3, 8]
-    valueProfile(t0, t1)
+    valueProfile(t0, 5, t1)
     dispatch(6)
 
 .opGetArgumentByValSlow:
@@ -1601,67 +1593,6 @@ _llint_throw_during_call_trampoline:
     loadp VM::callFrameForThrow[t1], t0
     jmp VM::targetMachinePCForThrow[t1]
 
-# Gives you the scope in t0, while allowing you to optionally perform additional checks on the
-# scopes as they are traversed. scopeCheck() is called with two arguments: the register
-# holding the scope, and a register that can be used for scratch. Note that this does not
-# use t3, so you can hold stuff in t3 if need be.
-macro getDeBruijnScope(deBruijinIndexOperand, scopeCheck)
-    loadp ScopeChain[cfr], t0
-    loadis deBruijinIndexOperand, t2
-
-    btiz t2, .done
-
-    loadp CodeBlock[cfr], t1
-    bineq CodeBlock::m_codeType[t1], FunctionCode, .loop
-    btbz CodeBlock::m_needsActivation[t1], .loop
-
-    loadis CodeBlock::m_activationRegister[t1], t1
-
-    # Need to conditionally skip over one scope.
-    btpz [cfr, t1, 8], .noActivation
-    scopeCheck(t0, t1)
-    loadp JSScope::m_next[t0], t0
-.noActivation:
-    subi 1, t2
-
-    btiz t2, .done
-.loop:
-    scopeCheck(t0, t1)
-    loadp JSScope::m_next[t0], t0
-    subi 1, t2
-    btinz t2, .loop
-
-.done:
-end
-
-_llint_op_get_scoped_var:
-    traceExecution()
-    # Operands are as follows:
-    # pc[1]: Destination for the load
-    # pc[2]: Index of register in the scope
-    # 24[PB, PC, 8]  De Bruijin index.
-    getDeBruijnScope(24[PB, PC, 8], macro (scope, scratch) end)
-    loadisFromInstruction(1, t1)
-    loadisFromInstruction(2, t2)
-
-    loadp JSVariableObject::m_registers[t0], t0
-    loadp [t0, t2, 8], t3
-    storep t3, [cfr, t1, 8]
-    loadp 32[PB, PC, 8], t1
-    valueProfile(t3, t1)
-    dispatch(5)
-
-
-_llint_op_put_scoped_var:
-    traceExecution()
-    getDeBruijnScope(16[PB, PC, 8], macro (scope, scratch) end)
-    loadis 24[PB, PC, 8], t1
-    loadConstantOrVariable(t1, t3)
-    loadis 8[PB, PC, 8], t1
-    writeBarrier(t3)
-    loadp JSVariableObject::m_registers[t0], t0
-    storep t3, [t0, t1, 8]
-    dispatch(4)
 
 macro nativeCallTrampoline(executableOffsetToFunction)
     storep 0, CodeBlock[cfr]
@@ -1718,3 +1649,229 @@ macro nativeCallTrampoline(executableOffsetToFunction)
     jmp _llint_throw_from_slow_path_trampoline
 end
 
+
+macro getGlobalObject(dst)
+    loadp CodeBlock[cfr], t0
+    loadp CodeBlock::m_globalObject[t0], t0
+    loadisFromInstruction(dst, t1)
+    storeq t0, [cfr, t1, 8]
+end
+
+macro varInjectionCheck(slowPath)
+    loadp CodeBlock[cfr], t0
+    loadp CodeBlock::m_globalObject[t0], t0
+    loadp JSGlobalObject::m_varInjectionWatchpoint[t0], t0
+    btbnz WatchpointSet::m_isInvalidated[t0], slowPath
+end
+
+macro resolveScope()
+    loadp CodeBlock[cfr], t0
+    loadisFromInstruction(4, t2)
+    btbz CodeBlock::m_needsActivation[t0], .resolveScopeAfterActivationCheck
+    loadis CodeBlock::m_activationRegister[t0], t1
+    btpz [cfr, t1, 8], .resolveScopeAfterActivationCheck
+    addi 1, t2
+
+.resolveScopeAfterActivationCheck:
+    loadp ScopeChain[cfr], t0
+    btiz t2, .resolveScopeLoopEnd
+
+.resolveScopeLoop:
+    loadp JSScope::m_next[t0], t0
+    subi 1, t2
+    btinz t2, .resolveScopeLoop
+
+.resolveScopeLoopEnd:
+    loadisFromInstruction(1, t1)
+    storeq t0, [cfr, t1, 8]
+end
+
+
+_llint_op_resolve_scope:
+    traceExecution()
+    loadisFromInstruction(3, t0)
+
+#rGlobalProperty:
+    bineq t0, GlobalProperty, .rGlobalVar
+    getGlobalObject(1)
+    dispatch(5)
+
+.rGlobalVar:
+    bineq t0, GlobalVar, .rClosureVar
+    getGlobalObject(1)
+    dispatch(5)
+
+.rClosureVar:
+    bineq t0, ClosureVar, .rGlobalPropertyWithVarInjectionChecks
+    resolveScope()
+    dispatch(5)
+
+.rGlobalPropertyWithVarInjectionChecks:
+    bineq t0, GlobalPropertyWithVarInjectionChecks, .rGlobalVarWithVarInjectionChecks
+    varInjectionCheck(.rDynamic)
+    getGlobalObject(1)
+    dispatch(5)
+
+.rGlobalVarWithVarInjectionChecks:
+    bineq t0, GlobalVarWithVarInjectionChecks, .rClosureVarWithVarInjectionChecks
+    varInjectionCheck(.rDynamic)
+    getGlobalObject(1)
+    dispatch(5)
+
+.rClosureVarWithVarInjectionChecks:
+    bineq t0, ClosureVarWithVarInjectionChecks, .rDynamic
+    varInjectionCheck(.rDynamic)
+    resolveScope()
+    dispatch(5)
+
+.rDynamic:
+    callSlowPath(_llint_slow_path_resolve_scope)
+    dispatch(5)
+
+
+macro loadWithStructureCheck(operand, slowPath)
+    loadisFromInstruction(operand, t0)
+    loadq [cfr, t0, 8], t0
+    loadpFromInstruction(5, t1)
+    bpneq JSCell::m_structure[t0], t1, slowPath
+end
+
+macro getProperty()
+    loadisFromInstruction(6, t1)
+    loadPropertyAtVariableOffset(t1, t0, t2)
+    valueProfile(t2, 7, t0)
+    loadisFromInstruction(1, t0)
+    storeq t2, [cfr, t0, 8]
+end
+
+macro getGlobalVar()
+    loadpFromInstruction(6, t0)
+    loadq [t0], t0
+    valueProfile(t0, 7, t1)
+    loadisFromInstruction(1, t1)
+    storeq t0, [cfr, t1, 8]
+end
+
+macro getClosureVar()
+    loadp JSVariableObject::m_registers[t0], t0
+    loadisFromInstruction(6, t1)
+    loadq [t0, t1, 8], t0
+    valueProfile(t0, 7, t1)
+    loadisFromInstruction(1, t1)
+    storeq t0, [cfr, t1, 8]
+end
+
+_llint_op_get_from_scope:
+    traceExecution()
+    loadisFromInstruction(4, t0)
+    andi ResolveModeMask, t0
+
+#gGlobalProperty:
+    bineq t0, GlobalProperty, .gGlobalVar
+    loadWithStructureCheck(2, .gDynamic)
+    getProperty()
+    dispatch(8)
+
+.gGlobalVar:
+    bineq t0, GlobalVar, .gClosureVar
+    getGlobalVar()
+    dispatch(8)
+
+.gClosureVar:
+    bineq t0, ClosureVar, .gGlobalPropertyWithVarInjectionChecks
+    loadVariable(2, t0)
+    getClosureVar()
+    dispatch(8)
+
+.gGlobalPropertyWithVarInjectionChecks:
+    bineq t0, GlobalPropertyWithVarInjectionChecks, .gGlobalVarWithVarInjectionChecks
+    loadWithStructureCheck(2, .gDynamic)
+    getProperty()
+    dispatch(8)
+
+.gGlobalVarWithVarInjectionChecks:
+    bineq t0, GlobalVarWithVarInjectionChecks, .gClosureVarWithVarInjectionChecks
+    varInjectionCheck(.gDynamic)
+    loadVariable(2, t0)
+    getGlobalVar()
+    dispatch(8)
+
+.gClosureVarWithVarInjectionChecks:
+    bineq t0, ClosureVarWithVarInjectionChecks, .gDynamic
+    varInjectionCheck(.gDynamic)
+    loadVariable(2, t0)
+    getClosureVar()
+    dispatch(8)
+
+.gDynamic:
+    callSlowPath(_llint_slow_path_get_from_scope)
+    dispatch(8)
+
+
+macro putProperty()
+    loadisFromInstruction(3, t1)
+    loadConstantOrVariable(t1, t2)
+    loadisFromInstruction(6, t1)
+    storePropertyAtVariableOffset(t1, t0, t2)
+end
+
+macro putGlobalVar()
+    loadisFromInstruction(3, t0)
+    loadConstantOrVariable(t0, t1)
+    loadpFromInstruction(6, t0)
+    storeq t1, [t0]
+end
+
+macro putClosureVar()
+    loadisFromInstruction(3, t1)
+    loadConstantOrVariable(t1, t2)
+    loadp JSVariableObject::m_registers[t0], t0
+    loadisFromInstruction(6, t1)
+    storeq t2, [t0, t1, 8]
+end
+
+
+_llint_op_put_to_scope:
+    traceExecution()
+    loadisFromInstruction(4, t0)
+    andi ResolveModeMask, t0
+
+#pGlobalProperty:
+    bineq t0, GlobalProperty, .pGlobalVar
+    loadWithStructureCheck(1, .pDynamic)
+    putProperty()
+    dispatch(7)
+
+.pGlobalVar:
+    bineq t0, GlobalVar, .pClosureVar
+    putGlobalVar()
+    dispatch(7)
+
+.pClosureVar:
+    bineq t0, ClosureVar, .pGlobalPropertyWithVarInjectionChecks
+    loadVariable(1, t0)
+    putClosureVar()
+    dispatch(7)
+
+.pGlobalPropertyWithVarInjectionChecks:
+    bineq t0, GlobalPropertyWithVarInjectionChecks, .pGlobalVarWithVarInjectionChecks
+    loadWithStructureCheck(1, .pDynamic)
+    putProperty()
+    dispatch(7)
+
+.pGlobalVarWithVarInjectionChecks:
+    bineq t0, GlobalVarWithVarInjectionChecks, .pClosureVarWithVarInjectionChecks
+    varInjectionCheck(.pDynamic)
+    putGlobalVar()
+    dispatch(7)
+
+.pClosureVarWithVarInjectionChecks:
+    bineq t0, ClosureVarWithVarInjectionChecks, .pDynamic
+    varInjectionCheck(.pDynamic)
+    loadVariable(1, t0)
+    putClosureVar()
+    dispatch(7)
+
+.pDynamic:
+    callSlowPath(_llint_slow_path_put_to_scope)
+    dispatch(7)

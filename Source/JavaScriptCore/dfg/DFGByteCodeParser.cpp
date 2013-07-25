@@ -38,7 +38,6 @@
 #include "Operations.h"
 #include "PreciseJumpTargets.h"
 #include "PutByIdStatus.h"
-#include "ResolveGlobalStatus.h"
 #include "StringConstructor.h"
 #include <wtf/CommaPrinter.h>
 #include <wtf/HashMap.h>
@@ -170,6 +169,7 @@ private:
     // Handle intrinsic functions. Return true if it succeeded, false if we need to plant a call.
     bool handleIntrinsic(int resultOperand, Intrinsic, int registerOffset, int argumentCountIncludingThis, SpeculatedType prediction);
     bool handleConstantInternalFunction(int resultOperand, InternalFunction*, int registerOffset, int argumentCountIncludingThis, SpeculatedType prediction, CodeSpecializationKind);
+    Node* handlePutByOffset(Node* base, unsigned identifier, PropertyOffset, Node* value);
     Node* handleGetByOffset(SpeculatedType, Node* base, unsigned identifierNumber, PropertyOffset);
     void handleGetByOffset(
         int destinationOperand, SpeculatedType, Node* base, unsigned identifierNumber,
@@ -180,9 +180,6 @@ private:
 
     Node* getScope(bool skipTop, unsigned skipCount);
     
-    // Convert a set of ResolveOperations into graph nodes
-    bool parseResolveOperations(SpeculatedType, unsigned identifierNumber, ResolveOperations*, PutToBaseOperation*, Node** base, Node** value);
-
     // Prepare to parse a block.
     void prepareToParseBlock();
     // Parse a single basic block of bytecode instructions.
@@ -244,17 +241,6 @@ private:
     void set(int operand, Node* value, SetMode setMode = NormalSet)
     {
         setDirect(m_inlineStackTop->remapOperand(operand), value, setMode);
-    }
-    
-    void setPair(int operand1, Node* value1, int operand2, Node* value2)
-    {
-        // First emit dead SetLocals for the benefit of OSR.
-        set(operand1, value1);
-        set(operand2, value2);
-        
-        // Now emit the real SetLocals.
-        set(operand1, value1);
-        set(operand2, value2);
     }
     
     Node* injectLazyOperandSpeculation(Node* node)
@@ -776,28 +762,18 @@ private:
         return call;
     }
     
-    Node* addStructureTransitionCheck(JSCell* object, Structure* structure)
+    Node* cellConstantWithStructureCheck(JSCell* object, Structure* structure)
     {
-        // Add a weak JS constant for the object regardless, since the code should
-        // be jettisoned if the object ever dies.
         Node* objectNode = cellConstant(object);
-        
-        if (object->structure() == structure
-            && m_graph.watchpoints().isStillValid(structure->transitionWatchpointSet())) {
-            addToGraph(StructureTransitionWatchpoint, OpInfo(structure), objectNode);
-            return objectNode;
-        }
-        
         addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(structure)), objectNode);
-        
         return objectNode;
     }
     
-    Node* addStructureTransitionCheck(JSCell* object)
+    Node* cellConstantWithStructureCheck(JSCell* object)
     {
-        return addStructureTransitionCheck(object, object->structure());
+        return cellConstantWithStructureCheck(object, object->structure());
     }
-    
+
     SpeculatedType getPredictionWithoutOSRExit(unsigned bytecodeIndex)
     {
         ConcurrentJITLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
@@ -1670,6 +1646,23 @@ void ByteCodeParser::handleGetByOffset(
     set(destinationOperand, handleGetByOffset(prediction, base, identifierNumber, offset));
 }
 
+Node* ByteCodeParser::handlePutByOffset(Node* base, unsigned identifier, PropertyOffset offset, Node* value)
+{
+    Node* propertyStorage;
+    if (isInlineOffset(offset))
+        propertyStorage = base;
+    else
+        propertyStorage = addToGraph(GetButterfly, base);
+    Node* result = addToGraph(PutByOffset, OpInfo(m_graph.m_storageAccessData.size()), propertyStorage, base, value);
+    
+    StorageAccessData storageAccessData;
+    storageAccessData.offset = indexRelativeToBase(offset);
+    storageAccessData.identifierNumber = identifier;
+    m_graph.m_storageAccessData.append(storageAccessData);
+
+    return result;
+}
+
 void ByteCodeParser::handleGetById(
     int destinationOperand, SpeculatedType prediction, Node* base, unsigned identifierNumber,
     const GetByIdStatus& getByIdStatus)
@@ -1704,7 +1697,7 @@ void ByteCodeParser::handleGetById(
         for (unsigned i = 0; i < getByIdStatus.chain()->size(); ++i) {
             currentObject = asObject(currentStructure->prototypeForLookup(m_inlineStackTop->m_codeBlock));
             currentStructure = getByIdStatus.chain()->at(i);
-            base = addStructureTransitionCheck(currentObject, currentStructure);
+            base = cellConstantWithStructureCheck(currentObject, currentStructure);
         }
     }
     
@@ -1750,175 +1743,6 @@ Node* ByteCodeParser::getScope(bool skipTop, unsigned skipCount)
     for (unsigned n = skipCount; n--;)
         localBase = addToGraph(SkipScope, localBase);
     return localBase;
-}
-
-bool ByteCodeParser::parseResolveOperations(SpeculatedType prediction, unsigned identifier, ResolveOperations* resolveOperations, PutToBaseOperation* putToBaseOperation, Node** base, Node** value)
-{
-    {
-        ConcurrentJITLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
-     
-        if (!resolveOperations->m_ready) {
-            addToGraph(ForceOSRExit);
-            return false;
-        }
-    }
-
-    ASSERT(!resolveOperations->isEmpty());
-
-    JSGlobalObject* globalObject = m_inlineStackTop->m_codeBlock->globalObject();
-    int skipCount = 0;
-    bool skipTop = false;
-    bool skippedScopes = false;
-    bool setBase = false;
-    ResolveOperation* pc = resolveOperations->data();
-    Node* localBase = 0;
-    bool resolvingBase = true;
-    while (resolvingBase) {
-        switch (pc->m_operation) {
-        case ResolveOperation::ReturnGlobalObjectAsBase:
-            *base = cellConstant(globalObject);
-            ASSERT(!value);
-            return true;
-
-        case ResolveOperation::SetBaseToGlobal:
-            *base = cellConstant(globalObject);
-            setBase = true;
-            resolvingBase = false;
-            ++pc;
-            break;
-
-        case ResolveOperation::SetBaseToUndefined:
-            *base = constantUndefined();
-            setBase = true;
-            resolvingBase = false;
-            ++pc;
-            break;
-
-        case ResolveOperation::SetBaseToScope:
-            localBase = getScope(skipTop, skipCount);
-            *base = localBase;
-            setBase = true;
-
-            resolvingBase = false;
-
-            // Reset the scope skipping as we've already loaded it
-            skippedScopes = false;
-            ++pc;
-            break;
-        case ResolveOperation::ReturnScopeAsBase:
-            *base = getScope(skipTop, skipCount);
-            ASSERT(!value);
-            return true;
-
-        case ResolveOperation::SkipTopScopeNode:
-            ASSERT(!inlineCallFrame());
-            skipTop = true;
-            skippedScopes = true;
-            ++pc;
-            break;
-
-        case ResolveOperation::SkipScopes:
-            skipCount += pc->m_scopesToSkip;
-            skippedScopes = true;
-            ++pc;
-            break;
-
-        case ResolveOperation::CheckForDynamicEntriesBeforeGlobalScope:
-            return false;
-
-        case ResolveOperation::Fail:
-            return false;
-
-        default:
-            resolvingBase = false;
-        }
-    }
-    if (skippedScopes)
-        localBase = getScope(skipTop, skipCount);
-
-    if (base && !setBase)
-        *base = localBase;
-
-    ASSERT(value);
-    ResolveOperation* resolveValueOperation = pc;
-    switch (resolveValueOperation->m_operation) {
-    case ResolveOperation::GetAndReturnGlobalProperty: {
-        ResolveGlobalStatus status = ResolveGlobalStatus::computeFor(m_inlineStackTop->m_profiledBlock, m_currentIndex, resolveValueOperation, m_graph.identifiers()[identifier]);
-        if (status.isSimple()) {
-            ASSERT(status.structure());
-
-            Node* globalObjectNode = addStructureTransitionCheck(globalObject, status.structure());
-
-            if (status.specificValue()) {
-                ASSERT(status.specificValue().isCell());
-                *value = cellConstant(status.specificValue().asCell());
-            } else
-                *value = handleGetByOffset(prediction, globalObjectNode, identifier, status.offset());
-            return true;
-        }
-
-        Node* resolve = addToGraph(ResolveGlobal, OpInfo(m_graph.m_resolveGlobalData.size()), OpInfo(prediction));
-        m_graph.m_resolveGlobalData.append(ResolveGlobalData());
-        ResolveGlobalData& data = m_graph.m_resolveGlobalData.last();
-        data.identifierNumber = identifier;
-        data.resolveOperations = resolveOperations;
-        data.putToBaseOperation = putToBaseOperation;
-        data.resolvePropertyIndex = resolveValueOperation - resolveOperations->data();
-        *value = resolve;
-        return true;
-    }
-    case ResolveOperation::GetAndReturnGlobalVar: {
-        *value = addToGraph(
-            GetGlobalVar,
-            OpInfo(globalObject->assertRegisterIsInThisObject(pc->m_registerAddress)),
-            OpInfo(prediction));
-        return true;
-    }
-    case ResolveOperation::GetAndReturnGlobalVarWatchable: {
-        SpeculatedType prediction = getPrediction();
-
-        JSGlobalObject* globalObject = m_inlineStackTop->m_codeBlock->globalObject();
-
-        StringImpl* uid = m_graph.identifiers()[identifier];
-        SymbolTableEntry entry = globalObject->symbolTable()->get(uid);
-        if (!m_graph.watchpoints().isStillValid(entry.watchpointSet())) {
-            *value = addToGraph(GetGlobalVar, OpInfo(globalObject->assertRegisterIsInThisObject(pc->m_registerAddress)), OpInfo(prediction));
-            return true;
-        }
-
-        // The watchpoint is still intact! This means that we will get notified if the
-        // current value in the global variable changes. So, we can inline that value.
-        // Moreover, currently we can assume that this value is a JSFunction*, which
-        // implies that it's a cell. This simplifies things, since in general we'd have
-        // to use a JSConstant for non-cells and a WeakJSConstant for cells. So instead
-        // of having both cases we just assert that the value is a cell.
-
-        // NB. If it wasn't for CSE, GlobalVarWatchpoint would have no need for the
-        // register pointer. But CSE tracks effects on global variables by comparing
-        // register pointers. Because CSE executes multiple times while the backend
-        // executes once, we use the following performance trade-off:
-        // - The node refers directly to the register pointer to make CSE super cheap.
-        // - To perform backend code generation, the node only contains the identifier
-        //   number, from which it is possible to get (via a few average-time O(1)
-        //   lookups) to the WatchpointSet.
-
-        addToGraph(GlobalVarWatchpoint, OpInfo(globalObject->assertRegisterIsInThisObject(pc->m_registerAddress)), OpInfo(identifier));
-
-        JSValue specificValue = globalObject->registerAt(entry.getIndex()).get();
-        ASSERT(specificValue.isCell());
-        *value = cellConstant(specificValue.asCell());
-        return true;
-    }
-    case ResolveOperation::GetAndReturnScopedVar: {
-        Node* getScopeRegisters = addToGraph(GetScopeRegisters, localBase);
-        *value = addToGraph(GetScopedVar, OpInfo(resolveValueOperation->m_offset), OpInfo(prediction), getScopeRegisters);
-        return true;
-    }
-    default:
-        CRASH();
-        return false;
-    }
-
 }
 
 bool ByteCodeParser::parseBlock(unsigned limit)
@@ -2569,17 +2393,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             
             if (!hasExitSite && putByIdStatus.isSimpleReplace()) {
                 addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(putByIdStatus.oldStructure())), base);
-                Node* propertyStorage;
-                if (isInlineOffset(putByIdStatus.offset()))
-                    propertyStorage = base;
-                else
-                    propertyStorage = addToGraph(GetButterfly, base);
-                addToGraph(PutByOffset, OpInfo(m_graph.m_storageAccessData.size()), propertyStorage, base, value);
-                
-                StorageAccessData storageAccessData;
-                storageAccessData.offset = indexRelativeToBase(putByIdStatus.offset());
-                storageAccessData.identifierNumber = identifierNumber;
-                m_graph.m_storageAccessData.append(storageAccessData);
+                handlePutByOffset(base, identifierNumber, putByIdStatus.offset(), value);
             } else if (
                 !hasExitSite
                 && putByIdStatus.isSimpleTransition()
@@ -2591,7 +2405,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(putByIdStatus.oldStructure())), base);
                 if (!direct) {
                     if (!putByIdStatus.oldStructure()->storedPrototype().isNull()) {
-                        addStructureTransitionCheck(
+                        cellConstantWithStructureCheck(
                             putByIdStatus.oldStructure()->storedPrototype().asCell());
                     }
                     
@@ -2599,8 +2413,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                         JSValue prototype = putByIdStatus.structureChain()->at(i)->storedPrototype();
                         if (prototype.isNull())
                             continue;
-                        ASSERT(prototype.isCell());
-                        addStructureTransitionCheck(prototype.asCell());
+                        cellConstantWithStructureCheck(prototype.asCell());
                     }
                 }
                 ASSERT(putByIdStatus.oldStructure()->transitionWatchpointSetHasBeenInvalidated());
@@ -2673,29 +2486,6 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 value);
             NEXT_OPCODE(op_init_global_const);
         }
-
-        case op_init_global_const_check: {
-            Node* value = get(currentInstruction[2].u.operand);
-            CodeBlock* codeBlock = m_inlineStackTop->m_codeBlock;
-            JSGlobalObject* globalObject = codeBlock->globalObject();
-            unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[currentInstruction[4].u.operand];
-            StringImpl* uid = m_graph.identifiers()[identifierNumber];
-            SymbolTableEntry entry = globalObject->symbolTable()->get(uid);
-            if (!entry.couldBeWatched()) {
-                addToGraph(
-                    PutGlobalVar,
-                    OpInfo(globalObject->assertRegisterIsInThisObject(currentInstruction[1].u.registerPointer)),
-                    value);
-                NEXT_OPCODE(op_init_global_const_check);
-            }
-            addToGraph(
-                PutGlobalVarCheck,
-                OpInfo(codeBlock->globalObject()->assertRegisterIsInThisObject(currentInstruction[1].u.registerPointer)),
-                OpInfo(identifierNumber),
-                value);
-            NEXT_OPCODE(op_init_global_const_check);
-        }
-
 
         // === Block terminators. ===
 
@@ -3059,207 +2849,142 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             addToGraph(Jump, OpInfo(m_currentIndex + OPCODE_LENGTH(op_jneq_ptr)));
             LAST_OPCODE(op_jneq_ptr);
 
-        case op_get_scoped_var: {
-            SpeculatedType prediction = getPrediction();
-            int dst = currentInstruction[1].u.operand;
-            int slot = currentInstruction[2].u.operand;
-            int depth = currentInstruction[3].u.operand;
-            bool hasTopScope = m_codeBlock->codeType() == FunctionCode && m_inlineStackTop->m_codeBlock->needsFullScopeChain();
-            ASSERT(!hasTopScope || depth >= 1);
-            Node* scope = getScope(hasTopScope, depth - hasTopScope);
-            Node* getScopeRegisters = addToGraph(GetScopeRegisters, scope);
-            Node* getScopedVar = addToGraph(GetScopedVar, OpInfo(slot), OpInfo(prediction), getScopeRegisters);
-            set(dst, getScopedVar);
-            NEXT_OPCODE(op_get_scoped_var);
-        }
+        case op_resolve_scope: {
+            unsigned dst = currentInstruction[1].u.operand;
+            ResolveType resolveType = static_cast<ResolveType>(currentInstruction[3].u.operand);
+            unsigned depth = currentInstruction[4].u.operand;
 
-        case op_put_scoped_var: {
-            int slot = currentInstruction[1].u.operand;
-            int depth = currentInstruction[2].u.operand;
-            int source = currentInstruction[3].u.operand;
-            bool hasTopScope = m_codeBlock->codeType() == FunctionCode && m_inlineStackTop->m_codeBlock->needsFullScopeChain();
-            ASSERT(!hasTopScope || depth >= 1);
-            Node* scope = getScope(hasTopScope, depth - hasTopScope);
-            Node* scopeRegisters = addToGraph(GetScopeRegisters, scope);
-            addToGraph(PutScopedVar, OpInfo(slot), scope, scopeRegisters, get(source));
-            NEXT_OPCODE(op_put_scoped_var);
-        }
+            // get_from_scope and put_to_scope depend on this watchpoint forcing OSR exit, so they don't add their own watchpoints.
+            if (needsVarInjectionChecks(resolveType))
+                addToGraph(VarInjectionWatchpoint);
 
-        case op_resolve:
-        case op_resolve_global_property:
-        case op_resolve_global_var:
-        case op_resolve_scoped_var:
-        case op_resolve_scoped_var_on_top_scope:
-        case op_resolve_scoped_var_with_top_scope_check: {
-            SpeculatedType prediction = getPrediction();
-            
-            unsigned identifier = m_inlineStackTop->m_identifierRemap[currentInstruction[2].u.operand];
-            ResolveOperations* operations = currentInstruction[3].u.resolveOperations;
-            Node* value = 0;
-            if (parseResolveOperations(prediction, identifier, operations, 0, 0, &value)) {
-                set(currentInstruction[1].u.operand, value);
-                NEXT_OPCODE(op_resolve);
+            switch (resolveType) {
+            case GlobalProperty:
+            case GlobalVar:
+            case GlobalPropertyWithVarInjectionChecks:
+            case GlobalVarWithVarInjectionChecks:
+                set(dst, cellConstant(m_inlineStackTop->m_codeBlock->globalObject()));
+                break;
+            case ClosureVar:
+            case ClosureVarWithVarInjectionChecks:
+                set(dst, getScope(m_inlineStackTop->m_codeBlock->needsActivation(), depth));
+                break;
+            case Dynamic:
+                RELEASE_ASSERT_NOT_REACHED();
+                break;
             }
-
-            Node* resolve = addToGraph(Resolve, OpInfo(m_graph.m_resolveOperationsData.size()), OpInfo(prediction));
-            m_graph.m_resolveOperationsData.append(ResolveOperationData());
-            ResolveOperationData& data = m_graph.m_resolveOperationsData.last();
-            data.identifierNumber = identifier;
-            data.resolveOperations = operations;
-
-            set(currentInstruction[1].u.operand, resolve);
-
-            NEXT_OPCODE(op_resolve);
+            NEXT_OPCODE(op_resolve_scope);
         }
 
-        case op_put_to_base_variable:
-        case op_put_to_base: {
-            unsigned base = currentInstruction[1].u.operand;
-            unsigned identifier = m_inlineStackTop->m_identifierRemap[currentInstruction[2].u.operand];
-            unsigned value = currentInstruction[3].u.operand;
-            PutToBaseOperation* putToBase = currentInstruction[4].u.putToBaseOperation;
-            
+        case op_get_from_scope: {
+            unsigned dst = currentInstruction[1].u.operand;
+            unsigned scope = currentInstruction[2].u.operand;
+            unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[currentInstruction[3].u.operand];
+            StringImpl* uid = m_graph.identifiers()[identifierNumber];
+            ResolveType resolveType = ResolveModeAndType(currentInstruction[4].u.operand).type();
+
+            Structure* structure;
+            uintptr_t operand;
             {
                 ConcurrentJITLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
-                
-                if (!putToBase->m_ready) {
-                    locker.unlockEarly();
-                    addToGraph(ForceOSRExit);
-                    addToGraph(Phantom, get(base));
-                    addToGraph(Phantom, get(value));
-                    NEXT_OPCODE(op_put_to_base);
-                }
+                structure = currentInstruction[5].u.structure.get();
+                operand = reinterpret_cast<uintptr_t>(currentInstruction[6].u.pointer);
             }
 
-            if (putToBase->m_isDynamic) {
-                addToGraph(PutById, OpInfo(identifier), get(base), get(value));
-                NEXT_OPCODE(op_put_to_base);
-            }
+            SpeculatedType prediction = getPrediction();
+            JSGlobalObject* globalObject = m_inlineStackTop->m_codeBlock->globalObject();
 
-            switch (putToBase->m_kind) {
-            case PutToBaseOperation::Uninitialised:
-                addToGraph(ForceOSRExit);
-                addToGraph(Phantom, get(base));
-                addToGraph(Phantom, get(value));
-                break;
-
-            case PutToBaseOperation::GlobalVariablePutChecked: {
-                CodeBlock* codeBlock = m_inlineStackTop->m_codeBlock;
-                JSGlobalObject* globalObject = codeBlock->globalObject();
-                SymbolTableEntry entry = globalObject->symbolTable()->get(m_graph.identifiers()[identifier]);
-                if (entry.couldBeWatched()) {
-                    addToGraph(PutGlobalVarCheck,
-                               OpInfo(codeBlock->globalObject()->assertRegisterIsInThisObject(putToBase->m_registerAddress)),
-                               OpInfo(identifier),
-                               get(value));
+            switch (resolveType) {
+            case GlobalProperty:
+            case GlobalPropertyWithVarInjectionChecks: {
+                GetByIdStatus status = GetByIdStatus::computeFor(*m_vm, structure, uid);
+                if (status.takesSlowPath()) {
+                    set(dst, addToGraph(GetByIdFlush, OpInfo(identifierNumber), OpInfo(prediction), get(scope)));
                     break;
                 }
-            }
-            case PutToBaseOperation::GlobalVariablePut:
-                addToGraph(PutGlobalVar,
-                           OpInfo(m_inlineStackTop->m_codeBlock->globalObject()->assertRegisterIsInThisObject(putToBase->m_registerAddress)),
-                           get(value));
-                break;
-            case PutToBaseOperation::VariablePut: {
-                Node* scope = get(base);
-                Node* scopeRegisters = addToGraph(GetScopeRegisters, scope);
-                addToGraph(PutScopedVar, OpInfo(putToBase->m_offset), scope, scopeRegisters, get(value));
-                break;
-            }
-            case PutToBaseOperation::GlobalPropertyPut: {
-                if (!putToBase->m_structure) {
-                    addToGraph(ForceOSRExit);
-                    addToGraph(Phantom, get(base));
-                    addToGraph(Phantom, get(value));
-                    NEXT_OPCODE(op_put_to_base);
-                }
-                Node* baseNode = get(base);
-                addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(putToBase->m_structure.get())), baseNode);
-                Node* propertyStorage;
-                if (isInlineOffset(putToBase->m_offset))
-                    propertyStorage = baseNode;
+                Node* base = cellConstantWithStructureCheck(globalObject, status.structureSet().singletonStructure());
+                if (JSValue specificValue = status.specificValue())
+                    set(dst, cellConstant(specificValue.asCell()));
                 else
-                    propertyStorage = addToGraph(GetButterfly, baseNode);
-                addToGraph(PutByOffset, OpInfo(m_graph.m_storageAccessData.size()), propertyStorage, baseNode, get(value));
-
-                StorageAccessData storageAccessData;
-                storageAccessData.offset = indexRelativeToBase(putToBase->m_offset);
-                storageAccessData.identifierNumber = identifier;
-                m_graph.m_storageAccessData.append(storageAccessData);
+                    set(dst, handleGetByOffset(prediction, base, identifierNumber, operand));
                 break;
             }
-            case PutToBaseOperation::Readonly:
-            case PutToBaseOperation::Generic:
-                addToGraph(PutById, OpInfo(identifier), get(base), get(value));
+            case GlobalVar:
+            case GlobalVarWithVarInjectionChecks: {
+                SymbolTableEntry entry = globalObject->symbolTable()->get(uid);
+                if (!entry.couldBeWatched() || !m_graph.watchpoints().isStillValid(entry.watchpointSet())) {
+                    set(dst, addToGraph(GetGlobalVar, OpInfo(operand), OpInfo(prediction)));
+                    break;
+                }
+
+                addToGraph(GlobalVarWatchpoint, OpInfo(operand), OpInfo(identifierNumber));
+                JSValue specificValue = globalObject->registerAt(entry.getIndex()).get();
+                set(dst, cellConstant(specificValue.asCell()));
+                break;
             }
-            NEXT_OPCODE(op_put_to_base);
+            case ClosureVar:
+            case ClosureVarWithVarInjectionChecks:
+                set(dst, 
+                    addToGraph(GetClosureVar, OpInfo(operand), OpInfo(prediction), 
+                        addToGraph(GetClosureRegisters, get(scope))));
+                break;
+            case Dynamic:
+                RELEASE_ASSERT_NOT_REACHED();
+                break;
+            }
+            NEXT_OPCODE(op_get_from_scope);
         }
 
-        case op_resolve_base_to_global:
-        case op_resolve_base_to_global_dynamic:
-        case op_resolve_base_to_scope:
-        case op_resolve_base_to_scope_with_top_scope_check:
-        case op_resolve_base: {
-            SpeculatedType prediction = getPrediction();
-            
-            unsigned identifier = m_inlineStackTop->m_identifierRemap[currentInstruction[2].u.operand];
-            ResolveOperations* operations = currentInstruction[4].u.resolveOperations;
-            PutToBaseOperation* putToBaseOperation = currentInstruction[5].u.putToBaseOperation;
+        case op_put_to_scope: {
+            unsigned scope = currentInstruction[1].u.operand;
+            unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[currentInstruction[2].u.operand];
+            unsigned value = currentInstruction[3].u.operand;
+            ResolveType resolveType = ResolveModeAndType(currentInstruction[4].u.operand).type();
+            StringImpl* uid = m_graph.identifiers()[identifierNumber];
 
-            Node* base = 0;
-            if (parseResolveOperations(prediction, identifier, operations, 0, &base, 0)) {
-                set(currentInstruction[1].u.operand, base);
-                NEXT_OPCODE(op_resolve_base);
+            Structure* structure;
+            uintptr_t operand;
+            {
+                ConcurrentJITLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
+                structure = currentInstruction[5].u.structure.get();
+                operand = reinterpret_cast<uintptr_t>(currentInstruction[6].u.pointer);
             }
 
-            Node* resolve = addToGraph(currentInstruction[3].u.operand ? ResolveBaseStrictPut : ResolveBase, OpInfo(m_graph.m_resolveOperationsData.size()), OpInfo(prediction));
-            m_graph.m_resolveOperationsData.append(ResolveOperationData());
-            ResolveOperationData& data = m_graph.m_resolveOperationsData.last();
-            data.identifierNumber = identifier;
-            data.resolveOperations = operations;
-            data.putToBaseOperation = putToBaseOperation;
-        
-            set(currentInstruction[1].u.operand, resolve);
+            JSGlobalObject* globalObject = m_inlineStackTop->m_codeBlock->globalObject();
 
-            NEXT_OPCODE(op_resolve_base);
-        }
-        case op_resolve_with_base: {
-            SpeculatedType prediction = getPrediction();
-            unsigned baseDst = currentInstruction[1].u.operand;
-            unsigned valueDst = currentInstruction[2].u.operand;
-            unsigned identifier = m_inlineStackTop->m_identifierRemap[currentInstruction[3].u.operand];
-            ResolveOperations* operations = currentInstruction[4].u.resolveOperations;
-            PutToBaseOperation* putToBaseOperation = currentInstruction[5].u.putToBaseOperation;
-
-            Node* base = 0;
-            Node* value = 0;
-            if (parseResolveOperations(prediction, identifier, operations, putToBaseOperation, &base, &value))
-                setPair(baseDst, base, valueDst, value);
-            else {
-                addToGraph(ForceOSRExit);
-                setPair(baseDst, addToGraph(GarbageValue), valueDst, addToGraph(GarbageValue));
+            switch (resolveType) {
+            case GlobalProperty:
+            case GlobalPropertyWithVarInjectionChecks: {
+                PutByIdStatus status = PutByIdStatus::computeFor(*m_vm, globalObject, structure, uid, false);
+                if (!status.isSimpleReplace()) {
+                    addToGraph(PutById, OpInfo(identifierNumber), get(scope), get(value));
+                    break;
+                }
+                Node* base = cellConstantWithStructureCheck(globalObject, status.oldStructure());
+                handlePutByOffset(base, identifierNumber, static_cast<PropertyOffset>(operand), get(value));
+                break;
             }
-
-            NEXT_OPCODE(op_resolve_with_base);
-        }
-        case op_resolve_with_this: {
-            SpeculatedType prediction = getPrediction();
-            unsigned baseDst = currentInstruction[1].u.operand;
-            unsigned valueDst = currentInstruction[2].u.operand;
-            unsigned identifier = m_inlineStackTop->m_identifierRemap[currentInstruction[3].u.operand];
-            ResolveOperations* operations = currentInstruction[4].u.resolveOperations;
-
-            Node* base = 0;
-            Node* value = 0;
-            if (parseResolveOperations(prediction, identifier, operations, 0, &base, &value))
-                setPair(baseDst, base, valueDst, value);
-            else {
-                addToGraph(ForceOSRExit);
-                setPair(baseDst, addToGraph(GarbageValue), valueDst, addToGraph(GarbageValue));
+            case GlobalVar:
+            case GlobalVarWithVarInjectionChecks: {
+                SymbolTableEntry entry = globalObject->symbolTable()->get(uid);
+                ASSERT(!entry.couldBeWatched() || !m_graph.watchpoints().isStillValid(entry.watchpointSet()));
+                addToGraph(PutGlobalVar, OpInfo(operand), get(value));
+                break;
             }
-
-            NEXT_OPCODE(op_resolve_with_this);
+            case ClosureVar:
+            case ClosureVarWithVarInjectionChecks: {
+                Node* scopeNode = get(scope);
+                Node* scopeRegisters = addToGraph(GetClosureRegisters, scopeNode);
+                addToGraph(PutClosureVar, OpInfo(operand), scopeNode, scopeRegisters, get(value));
+                break;
+            }
+            case Dynamic:
+                RELEASE_ASSERT_NOT_REACHED();
+                break;
+            }
+            NEXT_OPCODE(op_put_to_scope);
         }
+
         case op_loop_hint: {
             // Baseline->DFG OSR jumps between loop hints. The DFG assumes that Baseline->DFG
             // OSR can only happen at basic block boundaries. Assert that these two statements

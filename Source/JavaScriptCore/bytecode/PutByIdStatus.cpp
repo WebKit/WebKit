@@ -152,8 +152,11 @@ PutByIdStatus PutByIdStatus::computeFor(VM& vm, JSGlobalObject* globalObject, St
 {
     if (toUInt32FromStringImpl(uid) != PropertyName::NotAnIndex)
         return PutByIdStatus(TakesSlowPath);
+
+    if (!structure)
+        return PutByIdStatus(TakesSlowPath);
     
-    if (structure->typeInfo().overridesGetOwnPropertySlot())
+    if (structure->typeInfo().overridesGetOwnPropertySlot() && structure->typeInfo().type() != GlobalObjectType)
         return PutByIdStatus(TakesSlowPath);
 
     if (!structure->propertyAccessesAreCacheable())

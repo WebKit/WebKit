@@ -1204,52 +1204,208 @@ void JIT::privateCompileGetByIdChain(StructureStubInfo* stubInfo, Structure* str
     repatchBuffer.relinkCallerToFunction(returnAddress, FunctionPtr(cti_op_get_by_id_proto_list));
 }
 
-void JIT::emit_op_get_scoped_var(Instruction* currentInstruction)
+void JIT::emitVarInjectionCheck(bool needsVarInjectionChecks)
 {
-    int skip = currentInstruction[3].u.operand;
-
-    emitGetFromCallFrameHeaderPtr(JSStack::ScopeChain, regT0);
-    bool checkTopLevel = m_codeBlock->codeType() == FunctionCode && m_codeBlock->needsFullScopeChain();
-    ASSERT(skip || !checkTopLevel);
-    if (checkTopLevel && skip--) {
-        Jump activationNotCreated;
-        if (checkTopLevel)
-            activationNotCreated = branchTestPtr(Zero, addressFor(m_codeBlock->activationRegister()));
-        loadPtr(Address(regT0, JSScope::offsetOfNext()), regT0);
-        activationNotCreated.link(this);
-    }
-    while (skip--)
-        loadPtr(Address(regT0, JSScope::offsetOfNext()), regT0);
-
-    loadPtr(Address(regT0, JSVariableObject::offsetOfRegisters()), regT0);
-    loadPtr(Address(regT0, currentInstruction[2].u.operand * sizeof(Register)), regT0);
-    emitValueProfilingSite();
-    emitPutVirtualRegister(currentInstruction[1].u.operand);
+    if (!needsVarInjectionChecks)
+        return;
+    addSlowCase(branchTest8(NonZero, AbsoluteAddress(m_codeBlock->globalObject()->varInjectionWatchpoint()->addressOfIsInvalidated())));
 }
 
-void JIT::emit_op_put_scoped_var(Instruction* currentInstruction)
+void JIT::emitResolveClosure(unsigned dst, bool needsVarInjectionChecks, unsigned depth)
 {
-    int skip = currentInstruction[2].u.operand;
-
-    emitGetVirtualRegister(currentInstruction[3].u.operand, regT0);
-
-    emitGetFromCallFrameHeaderPtr(JSStack::ScopeChain, regT1);
-    bool checkTopLevel = m_codeBlock->codeType() == FunctionCode && m_codeBlock->needsFullScopeChain();
-    ASSERT(skip || !checkTopLevel);
-    if (checkTopLevel && skip--) {
-        Jump activationNotCreated;
-        if (checkTopLevel)
-            activationNotCreated = branchTestPtr(Zero, addressFor(m_codeBlock->activationRegister()));
-        loadPtr(Address(regT1, JSScope::offsetOfNext()), regT1);
-        activationNotCreated.link(this);
+    emitVarInjectionCheck(needsVarInjectionChecks);
+    emitGetVirtualRegister(JSStack::ScopeChain, regT0);
+    if (m_codeBlock->needsActivation()) {
+        emitGetVirtualRegister(m_codeBlock->activationRegister(), regT1);
+        Jump noActivation = branchTestPtr(Zero, regT1);
+        loadPtr(Address(regT0, JSScope::offsetOfNext()), regT0);
+        noActivation.link(this);
     }
-    while (skip--)
-        loadPtr(Address(regT1, JSScope::offsetOfNext()), regT1);
+    for (unsigned i = 0; i < depth; ++i)
+        loadPtr(Address(regT0, JSScope::offsetOfNext()), regT0);
+    emitPutVirtualRegister(dst);
+}
 
-    emitWriteBarrier(regT1, regT0, regT2, regT3, ShouldFilterImmediates, WriteBarrierForVariableAccess);
+void JIT::emit_op_resolve_scope(Instruction* currentInstruction)
+{
+    unsigned dst = currentInstruction[1].u.operand;
+    ResolveType resolveType = static_cast<ResolveType>(currentInstruction[3].u.operand);
+    unsigned depth = currentInstruction[4].u.operand;
 
-    loadPtr(Address(regT1, JSVariableObject::offsetOfRegisters()), regT1);
-    storePtr(regT0, Address(regT1, currentInstruction[1].u.operand * sizeof(Register)));
+    switch (resolveType) {
+    case GlobalProperty:
+    case GlobalVar:
+    case GlobalPropertyWithVarInjectionChecks:
+    case GlobalVarWithVarInjectionChecks:
+        emitVarInjectionCheck(needsVarInjectionChecks(resolveType));
+        move(TrustedImmPtr(m_codeBlock->globalObject()), regT0);
+        emitPutVirtualRegister(dst);
+        break;
+    case ClosureVar:
+    case ClosureVarWithVarInjectionChecks:
+        emitResolveClosure(dst, needsVarInjectionChecks(resolveType), depth);
+        break;
+    case Dynamic:
+        killLastResultRegister();
+        addSlowCase(jump());
+        break;
+    }
+}
+
+void JIT::emitSlow_op_resolve_scope(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    unsigned dst = currentInstruction[1].u.operand;
+    ResolveType resolveType = static_cast<ResolveType>(currentInstruction[3].u.operand);
+
+    if (resolveType == GlobalProperty || resolveType == GlobalVar || resolveType == ClosureVar)
+        return;
+
+    linkSlowCase(iter);
+
+    JITStubCall stubCall(this, cti_op_resolve_scope);
+    stubCall.addArgument(TrustedImmPtr(currentInstruction));
+    stubCall.call(dst);
+}
+
+void JIT::emitLoadWithStructureCheck(unsigned scope, Structure** structureSlot)
+{
+    emitGetVirtualRegister(scope, regT0);
+    loadPtr(structureSlot, regT1);
+    addSlowCase(branchPtr(NotEqual, Address(regT0, JSCell::structureOffset()), regT1));
+}
+
+void JIT::emitGetGlobalProperty(uintptr_t* operandSlot)
+{
+    load32(operandSlot, regT1);
+    compileGetDirectOffset(regT0, regT0, regT1, regT2, KnownNotFinal);
+}
+
+void JIT::emitGetGlobalVar(uintptr_t operand)
+{
+    loadPtr(reinterpret_cast<void*>(operand), regT0);
+}
+
+void JIT::emitGetClosureVar(unsigned scope, uintptr_t operand)
+{
+    emitGetVirtualRegister(scope, regT0);
+    loadPtr(Address(regT0, JSVariableObject::offsetOfRegisters()), regT0);
+    loadPtr(Address(regT0, operand * sizeof(Register)), regT0);
+}
+
+void JIT::emit_op_get_from_scope(Instruction* currentInstruction)
+{
+    unsigned dst = currentInstruction[1].u.operand;
+    unsigned scope = currentInstruction[2].u.operand;
+    ResolveType resolveType = ResolveModeAndType(currentInstruction[4].u.operand).type();
+    Structure** structureSlot = currentInstruction[5].u.structure.slot();
+    uintptr_t* operandSlot = reinterpret_cast<uintptr_t*>(&currentInstruction[6].u.pointer);
+
+    switch (resolveType) {
+    case GlobalProperty:
+    case GlobalPropertyWithVarInjectionChecks:
+        emitLoadWithStructureCheck(scope, structureSlot); // Structure check covers var injection.
+        emitGetGlobalProperty(operandSlot);
+        break;
+    case GlobalVar:
+    case GlobalVarWithVarInjectionChecks:
+        emitVarInjectionCheck(needsVarInjectionChecks(resolveType));
+        emitGetGlobalVar(*operandSlot);
+        break;
+    case ClosureVar:
+    case ClosureVarWithVarInjectionChecks:
+        emitVarInjectionCheck(needsVarInjectionChecks(resolveType));
+        emitGetClosureVar(scope, *operandSlot);
+        break;
+    case Dynamic:
+        killLastResultRegister();
+        addSlowCase(jump());
+        break;
+    }
+    emitPutVirtualRegister(dst);
+    emitValueProfilingSite();
+}
+
+void JIT::emitSlow_op_get_from_scope(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    unsigned dst = currentInstruction[1].u.operand;
+    ResolveType resolveType = ResolveModeAndType(currentInstruction[4].u.operand).type();
+
+    if (resolveType == GlobalVar || resolveType == ClosureVar)
+        return;
+
+    linkSlowCase(iter);
+
+    JITStubCall stubCall(this, cti_op_get_from_scope);
+    stubCall.addArgument(TrustedImmPtr(currentInstruction));
+    stubCall.call(dst);
+    emitValueProfilingSite();
+}
+
+void JIT::emitPutGlobalProperty(uintptr_t* operandSlot, unsigned value)
+{
+    loadPtr(Address(regT0, JSObject::butterflyOffset()), regT0);
+    loadPtr(operandSlot, regT1);
+    negPtr(regT1);
+    emitGetVirtualRegister(value, regT2);
+    storePtr(regT2, BaseIndex(regT0, regT1, TimesEight, (firstOutOfLineOffset - 2) * sizeof(EncodedJSValue)));
+}
+
+void JIT::emitPutGlobalVar(uintptr_t operand, unsigned value)
+{
+    emitGetVirtualRegister(value, regT0);
+    storePtr(regT0, reinterpret_cast<void*>(operand));
+}
+
+void JIT::emitPutClosureVar(unsigned scope, uintptr_t operand, unsigned value)
+{
+    emitGetVirtualRegister(value, regT1);
+    emitGetVirtualRegister(scope, regT0);
+    loadPtr(Address(regT0, JSVariableObject::offsetOfRegisters()), regT0);
+    storePtr(regT1, Address(regT0, operand * sizeof(Register)));
+}
+
+void JIT::emit_op_put_to_scope(Instruction* currentInstruction)
+{
+    unsigned scope = currentInstruction[1].u.operand;
+    unsigned value = currentInstruction[3].u.operand;
+    ResolveType resolveType = ResolveModeAndType(currentInstruction[4].u.operand).type();
+    Structure** structureSlot = currentInstruction[5].u.structure.slot();
+    uintptr_t* operandSlot = reinterpret_cast<uintptr_t*>(&currentInstruction[6].u.pointer);
+
+    switch (resolveType) {
+    case GlobalProperty:
+    case GlobalPropertyWithVarInjectionChecks:
+        emitLoadWithStructureCheck(scope, structureSlot); // Structure check covers var injection.
+        emitPutGlobalProperty(operandSlot, value);
+        break;
+    case GlobalVar:
+    case GlobalVarWithVarInjectionChecks:
+        emitVarInjectionCheck(needsVarInjectionChecks(resolveType));
+        emitPutGlobalVar(*operandSlot, value);
+        break;
+    case ClosureVar:
+    case ClosureVarWithVarInjectionChecks:
+        emitVarInjectionCheck(needsVarInjectionChecks(resolveType));
+        emitPutClosureVar(scope, *operandSlot, value);
+        break;
+    case Dynamic:
+        killLastResultRegister();
+        addSlowCase(jump());
+        break;
+    }
+}
+
+void JIT::emitSlow_op_put_to_scope(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    ResolveType resolveType = ResolveModeAndType(currentInstruction[4].u.operand).type();
+    if (resolveType == GlobalVar || resolveType == ClosureVar)
+        return;
+
+    linkSlowCase(iter);
+
+    JITStubCall stubCall(this, cti_op_put_to_scope);
+    stubCall.addArgument(TrustedImmPtr(currentInstruction));
+    stubCall.call();
 }
 
 void JIT::emit_op_init_global_const(Instruction* currentInstruction)
@@ -1261,29 +1417,6 @@ void JIT::emit_op_init_global_const(Instruction* currentInstruction)
     store64(regT0, currentInstruction[1].u.registerPointer);
     if (Heap::isWriteBarrierEnabled())
         emitWriteBarrier(globalObject, regT0, regT2, ShouldFilterImmediates, WriteBarrierForVariableAccess);
-}
-
-void JIT::emit_op_init_global_const_check(Instruction* currentInstruction)
-{
-    emitGetVirtualRegister(currentInstruction[2].u.operand, regT0);
-
-    addSlowCase(branchTest8(NonZero, AbsoluteAddress(currentInstruction[3].u.predicatePointer)));
-
-    JSGlobalObject* globalObject = m_codeBlock->globalObject();
-
-    store64(regT0, currentInstruction[1].u.registerPointer);
-    if (Heap::isWriteBarrierEnabled())
-        emitWriteBarrier(globalObject, regT0, regT2, ShouldFilterImmediates, WriteBarrierForVariableAccess);
-}
-
-void JIT::emitSlow_op_init_global_const_check(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
-{
-    linkSlowCase(iter);
-
-    JITStubCall stubCall(this, cti_op_init_global_const_check);
-    stubCall.addArgument(regT0);
-    stubCall.addArgument(TrustedImm32(currentInstruction[4].u.operand));
-    stubCall.call();
 }
 
 void JIT::resetPatchGetById(RepatchBuffer& repatchBuffer, StructureStubInfo* stubInfo)

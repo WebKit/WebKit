@@ -1,3 +1,9 @@
+2013-06-11  Geoffrey Garen  <ggaren@apple.com>
+
+        Rolled back in <http://trac.webkit.org/changeset/151363>.
+
+        Rubber stamped by Phil Pizlo.
+
 2013-06-09  Filip Pizlo  <fpizlo@apple.com>
 
         Merge trunk r146653.

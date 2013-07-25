@@ -463,7 +463,7 @@ JSValue CLoop::execute(CallFrame* callFrame, OpcodeID bootstrapOpcodeId,
         // from ArgumentCount.tag() (see the dispatchAfterCall() macro used in
         // the callTargetFunction() macro in the llint asm files).
         //
-        // For the C loop, we don't have the JIT stub to this work for us. So,
+        // For the C loop, we don't have the JIT stub to do this work for us. So,
         // we jump to llint_generic_return_point.
 
         vPC = callFrame->currentVPC();
@@ -489,11 +489,12 @@ JSValue CLoop::execute(CallFrame* callFrame, OpcodeID bootstrapOpcodeId,
         rBasePC.vp = codeBlock->instructions().begin();
 #endif // USE(JSVALUE64)
 
-        goto op_generic_return_point;
+        goto llint_generic_return_point;
 
     } // END doReturnHelper.
 
 
+#if ENABLE(COMPUTED_GOTO_OPCODES)
     // Keep the compiler happy so that it doesn't complain about unused
     // labels for the LLInt trampoline glue. The labels are automatically
     // emitted by label macros above, and some of them are referenced by
@@ -504,7 +505,7 @@ JSValue CLoop::execute(CallFrame* callFrame, OpcodeID bootstrapOpcodeId,
         UNUSED_LABEL(__opcode);
         FOR_EACH_OPCODE_ID(LLINT_OPCODE_ENTRY);
     #undef LLINT_OPCODE_ENTRY
-
+#endif
 
     #undef NEXT_INSTRUCTION
     #undef DEFINE_OPCODE

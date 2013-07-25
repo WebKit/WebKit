@@ -56,7 +56,6 @@ extern "C" {
     Z: int32_t
     D: double
     I: StringImpl*
-    G: GlobalResolveInfo*
 */
 typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_E)(ExecState*);
 typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_EA)(ExecState*, JSArray*);
@@ -66,10 +65,7 @@ typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_ECC)(ExecState*, JSCell*, 
 typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_ECI)(ExecState*, JSCell*, StringImpl*);
 typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_ECJ)(ExecState*, JSCell*, EncodedJSValue);
 typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_EDA)(ExecState*, double, JSArray*);
-typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_EGriJsgI)(ExecState*, ResolveOperation*, JSGlobalObject*, StringImpl*);
 typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_EI)(ExecState*, StringImpl*);
-typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_EIRo)(ExecState*, StringImpl*, ResolveOperations*);
-typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_EIRoPtbo)(ExecState*, StringImpl*, ResolveOperations*, PutToBaseOperation*);
 typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_EJ)(ExecState*, EncodedJSValue);
 typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_EJA)(ExecState*, EncodedJSValue, JSArray*);
 typedef EncodedJSValue DFG_OPERATION (*J_DFGOperation_EJI)(ExecState*, EncodedJSValue, StringImpl*);
@@ -143,11 +139,6 @@ EncodedJSValue DFG_OPERATION operationGetByIdBuildList(ExecState*, EncodedJSValu
 EncodedJSValue DFG_OPERATION operationGetByIdOptimize(ExecState*, EncodedJSValue, StringImpl*) WTF_INTERNAL;
 EncodedJSValue DFG_OPERATION operationCallCustomGetter(ExecState*, JSCell*, PropertySlot::GetValueFunc, StringImpl*) WTF_INTERNAL;
 EncodedJSValue DFG_OPERATION operationCallGetter(ExecState*, JSCell*, JSCell*) WTF_INTERNAL;
-void DFG_OPERATION operationNotifyGlobalVarWrite(WatchpointSet* watchpointSet) WTF_INTERNAL;
-EncodedJSValue DFG_OPERATION operationResolve(ExecState*, StringImpl*, ResolveOperations*) WTF_INTERNAL;
-EncodedJSValue DFG_OPERATION operationResolveBase(ExecState*, StringImpl*, ResolveOperations*, PutToBaseOperation*) WTF_INTERNAL;
-EncodedJSValue DFG_OPERATION operationResolveBaseStrictPut(ExecState*, StringImpl*, ResolveOperations*, PutToBaseOperation*) WTF_INTERNAL;
-EncodedJSValue DFG_OPERATION operationResolveGlobal(ExecState*, ResolveOperation*, JSGlobalObject*, StringImpl*) WTF_INTERNAL;
 EncodedJSValue DFG_OPERATION operationToPrimitive(ExecState*, EncodedJSValue) WTF_INTERNAL;
 char* DFG_OPERATION operationNewArray(ExecState*, Structure*, void*, size_t) WTF_INTERNAL;
 char* DFG_OPERATION operationNewArrayBuffer(ExecState*, Structure*, size_t, size_t) WTF_INTERNAL;

@@ -194,7 +194,7 @@ VM::VM(VMType vmType, HeapType heapType)
     , m_initializingObjectClass(0)
 #endif
     , m_inDefineOwnProperty(false)
-    , m_codeCache(CodeCache::create(CodeCache::GlobalCodeCache))
+    , m_codeCache(CodeCache::create())
 {
     interpreter = new Interpreter(*this);
 

@@ -27,7 +27,6 @@
 #define UnlinkedCodeBlock_h
 
 #include "BytecodeConventions.h"
-#include "CodeCache.h"
 #include "CodeSpecializationKind.h"
 #include "CodeType.h"
 #include "ExpressionRangeInfo.h"
@@ -109,7 +108,7 @@ public:
 
     String paramString() const;
 
-    UnlinkedFunctionCodeBlock* codeBlockFor(VM&, JSScope*, const SourceCode&, CodeSpecializationKind, DebuggerMode, ProfilerMode, ParserError&);
+    UnlinkedFunctionCodeBlock* codeBlockFor(VM&, const SourceCode&, CodeSpecializationKind, DebuggerMode, ProfilerMode, ParserError&);
 
     static UnlinkedFunctionExecutable* fromGlobalCode(const Identifier&, ExecState*, Debugger*, const SourceCode&, JSObject** exception);
 
@@ -389,11 +388,6 @@ public:
 
     VM* vm() const { return m_vm; }
 
-    unsigned addResolve() { return m_resolveOperationCount++; }
-    unsigned numberOfResolveOperations() const { return m_resolveOperationCount; }
-    unsigned addPutToBase() { return m_putToBaseOperationCount++; }
-    unsigned numberOfPutToBaseOperations() const { return m_putToBaseOperationCount; }
-
     UnlinkedArrayProfile addArrayProfile() { return m_arrayProfileCount++; }
     unsigned numberOfArrayProfiles() { return m_arrayProfileCount; }
     UnlinkedArrayAllocationProfile addArrayAllocationProfile() { return m_arrayAllocationProfileCount++; }
@@ -463,16 +457,6 @@ public:
     unsigned firstLine() const { return m_firstLine; }
     unsigned lineCount() const { return m_lineCount; }
 
-    PassRefPtr<CodeCache> codeCacheForEval()
-    {
-        if (m_codeType == GlobalCode)
-            return m_vm->codeCache();
-        createRareDataIfNecessary();
-        if (!m_rareData->m_evalCodeCache)
-            m_rareData->m_evalCodeCache = CodeCache::create(CodeCache::NonGlobalCodeCache);
-        return m_rareData->m_evalCodeCache.get();
-    }
-
 protected:
     UnlinkedCodeBlock(VM*, Structure*, CodeType, const ExecutableInfo&);
     ~UnlinkedCodeBlock();
@@ -533,8 +517,6 @@ private:
     size_t m_bytecodeCommentIterator;
 #endif
 
-    unsigned m_resolveOperationCount;
-    unsigned m_putToBaseOperationCount;
     unsigned m_arrayProfileCount;
     unsigned m_arrayAllocationProfileCount;
     unsigned m_objectAllocationProfileCount;
@@ -557,7 +539,6 @@ public:
         Vector<UnlinkedSimpleJumpTable> m_immediateSwitchJumpTables;
         Vector<UnlinkedSimpleJumpTable> m_characterSwitchJumpTables;
         Vector<UnlinkedStringJumpTable> m_stringSwitchJumpTables;
-        RefPtr<CodeCache> m_evalCodeCache;
 
         Vector<ExpressionRangeInfo::FatPosition> m_expressionInfoFatPositions;
     };

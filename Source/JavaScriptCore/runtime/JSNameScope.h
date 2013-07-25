@@ -51,7 +51,6 @@ public:
     }
 
     static void visitChildren(JSCell*, SlotVisitor&);
-    bool isDynamicScope(bool& requiresDynamicChecks) const;
     static JSValue toThis(JSCell*, ExecState*, ECMAMode);
     static bool getOwnPropertySlot(JSCell*, ExecState*, PropertyName, PropertySlot&);
     static void put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
@@ -83,11 +82,6 @@ private:
 
     WriteBarrier<Unknown> m_registerStore;
 };
-
-inline bool JSNameScope::isDynamicScope(bool&) const
-{
-    return false;
-}
 
 }
 

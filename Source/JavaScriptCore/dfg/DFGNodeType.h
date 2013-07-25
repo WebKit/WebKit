@@ -162,13 +162,13 @@ namespace JSC { namespace DFG {
     macro(SetMyScope, NodeMustGenerate) \
     macro(SkipTopScope, NodeResultJS) \
     macro(SkipScope, NodeResultJS) \
-    macro(GetScopeRegisters, NodeResultStorage) \
-    macro(GetScopedVar, NodeResultJS) \
-    macro(PutScopedVar, NodeMustGenerate) \
+    macro(GetClosureRegisters, NodeResultStorage) \
+    macro(GetClosureVar, NodeResultJS) \
+    macro(PutClosureVar, NodeMustGenerate) \
     macro(GetGlobalVar, NodeResultJS) \
     macro(PutGlobalVar, NodeMustGenerate) \
     macro(GlobalVarWatchpoint, NodeMustGenerate) \
-    macro(PutGlobalVarCheck, NodeMustGenerate) \
+    macro(VarInjectionWatchpoint, NodeMustGenerate) \
     macro(CheckFunction, NodeMustGenerate) \
     macro(AllocationProfileWatchpoint, NodeMustGenerate) \
     \
@@ -205,12 +205,6 @@ namespace JSC { namespace DFG {
     macro(NewArrayWithSize, NodeResultJS) \
     macro(NewArrayBuffer, NodeResultJS) \
     macro(NewRegexp, NodeResultJS) \
-    \
-    /* Resolve nodes. */\
-    macro(Resolve, NodeResultJS | NodeMustGenerate | NodeClobbersWorld) \
-    macro(ResolveBase, NodeResultJS | NodeMustGenerate | NodeClobbersWorld) \
-    macro(ResolveBaseStrictPut, NodeResultJS | NodeMustGenerate | NodeClobbersWorld) \
-    macro(ResolveGlobal, NodeResultJS | NodeMustGenerate | NodeClobbersWorld) \
     \
     /* Nodes for misc operations. */\
     macro(Breakpoint, NodeMustGenerate | NodeClobbersWorld) \
@@ -257,8 +251,6 @@ namespace JSC { namespace DFG {
     macro(Return, NodeMustGenerate) \
     macro(Throw, NodeMustGenerate) \
     macro(ThrowReferenceError, NodeMustGenerate) \
-    \
-    macro(GarbageValue, NodeResultJS | NodeClobbersWorld) \
     \
     /* Count execution. */\
     macro(CountExecution, NodeMustGenerate) \

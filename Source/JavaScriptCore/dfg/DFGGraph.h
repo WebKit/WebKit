@@ -59,23 +59,6 @@ struct StorageAccessData {
     unsigned identifierNumber;
 };
 
-struct ResolveGlobalData {
-    unsigned identifierNumber;
-    ResolveOperations* resolveOperations;
-    PutToBaseOperation* putToBaseOperation;
-    unsigned resolvePropertyIndex;
-};
-
-struct ResolveOperationData {
-    unsigned identifierNumber;
-    ResolveOperations* resolveOperations;
-    PutToBaseOperation* putToBaseOperation;
-};
-
-struct PutToBaseOperationData {
-    PutToBaseOperation* putToBaseOperation;
-};
-
 enum AddSpeculationMode {
     DontSpeculateInteger,
     SpeculateIntegerAndTruncateConstants,
@@ -715,9 +698,6 @@ public:
     Vector< OwnPtr<BasicBlock> , 8> m_blocks;
     Vector<Edge, 16> m_varArgChildren;
     Vector<StorageAccessData> m_storageAccessData;
-    Vector<ResolveGlobalData> m_resolveGlobalData;
-    Vector<ResolveOperationData> m_resolveOperationsData;
-    Vector<PutToBaseOperationData> m_putToBaseOperationData;
     Vector<Node*, 8> m_arguments;
     SegmentedVector<VariableAccessData, 16> m_variableAccessData;
     SegmentedVector<ArgumentPosition, 8> m_argumentPositions;

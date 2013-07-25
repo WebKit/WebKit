@@ -1216,47 +1216,6 @@ char* DFG_OPERATION operationVirtualConstruct(ExecState* execCallee)
     return virtualFor(execCallee, CodeForConstruct);
 }
 
-void DFG_OPERATION operationNotifyGlobalVarWrite(WatchpointSet* watchpointSet)
-{
-    watchpointSet->notifyWrite();
-}
-
-EncodedJSValue DFG_OPERATION operationResolve(ExecState* exec, StringImpl* uid, ResolveOperations* operations)
-{
-    VM* vm = &exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
-    Identifier ident(vm, uid);
-    return JSValue::encode(JSScope::resolve(exec, ident, operations));
-}
-
-EncodedJSValue DFG_OPERATION operationResolveBase(ExecState* exec, StringImpl* uid, ResolveOperations* operations, PutToBaseOperation* putToBaseOperations)
-{
-    VM* vm = &exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
-    Identifier ident(vm, uid);
-    return JSValue::encode(JSScope::resolveBase(exec, ident, false, operations, putToBaseOperations));
-}
-
-EncodedJSValue DFG_OPERATION operationResolveBaseStrictPut(ExecState* exec, StringImpl* uid, ResolveOperations* operations, PutToBaseOperation* putToBaseOperations)
-{
-    VM* vm = &exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
-    Identifier ident(vm, uid);
-    return JSValue::encode(JSScope::resolveBase(exec, ident, true, operations, putToBaseOperations));
-}
-
-EncodedJSValue DFG_OPERATION operationResolveGlobal(ExecState* exec, ResolveOperation* resolveOperation, JSGlobalObject* globalObject, StringImpl* uid)
-{
-    VM* vm = &exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
-    ASSERT(globalObject);
-    UNUSED_PARAM(resolveOperation);
-    UNUSED_PARAM(globalObject);
-    ASSERT(resolveOperation->m_operation == ResolveOperation::GetAndReturnGlobalProperty);
-    Identifier ident(vm, uid);
-    return JSValue::encode(JSScope::resolveGlobal(exec, ident, globalObject, resolveOperation));
-}
-
 EncodedJSValue DFG_OPERATION operationToPrimitive(ExecState* exec, EncodedJSValue value)
 {
     VM* vm = &exec->vm();

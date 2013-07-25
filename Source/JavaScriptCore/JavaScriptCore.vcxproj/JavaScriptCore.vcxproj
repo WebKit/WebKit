@@ -592,7 +592,6 @@
     <ClInclude Include="..\bytecode\ExitKind.h" />
     <ClInclude Include="..\bytecode\ExpressionRangeInfo.h" />
     <ClInclude Include="..\bytecode\GetByIdStatus.h" />
-    <ClInclude Include="..\bytecode\GlobalResolveInfo.h" />
     <ClInclude Include="..\bytecode\HandlerInfo.h" />
     <ClInclude Include="..\bytecode\Instruction.h" />
     <ClInclude Include="..\bytecode\JumpTable.h" />

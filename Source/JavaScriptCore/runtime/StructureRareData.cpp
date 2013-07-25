@@ -26,6 +26,7 @@
 #include "config.h"
 #include "StructureRareData.h"
 
+#include "JSPropertyNameIterator.h"
 #include "JSString.h"
 #include "Operations.h"
 

@@ -101,14 +101,6 @@ Interpreter::ErrorHandlingMode::~ErrorHandlingMode()
         m_interpreter.stack().disableErrorStackReserve();
 }
 
-// Returns the depth of the scope chain within a given call frame.
-static int depth(CodeBlock* codeBlock, JSScope* sc)
-{
-    if (!codeBlock->needsFullScopeChain())
-        return 0;
-    return sc->localDepth();
-}
-
 JSValue eval(CallFrame* callFrame)
 {
     if (!callFrame->argumentCount())
@@ -146,12 +138,9 @@ JSValue eval(CallFrame* callFrame)
         // If the literal parser bailed, it should not have thrown exceptions.
         ASSERT(!callFrame->vm().exception);
 
-        JSValue exceptionValue;
-        eval = callerCodeBlock->evalCodeCache().getSlow(callFrame, callerCodeBlock->unlinkedCodeBlock()->codeCacheForEval().get(), callerCodeBlock->ownerExecutable(), callerCodeBlock->isStrictMode(), programSource, callerScopeChain, exceptionValue);
-        
-        ASSERT(!eval == exceptionValue);
-        if (UNLIKELY(!eval))
-            return throwError(callFrame, exceptionValue);
+        eval = callerCodeBlock->evalCodeCache().getSlow(callFrame, callerCodeBlock->ownerExecutable(), callerCodeBlock->isStrictMode(), programSource, callerScopeChain);
+        if (!eval)
+            return jsUndefined();
     }
 
     JSValue thisValue = callerFrame->thisValue();
@@ -666,15 +655,14 @@ NEVER_INLINE HandlerInfo* Interpreter::throwException(CallFrame*& callFrame, JSV
         profiler->exceptionUnwind(callFrame);
 
     // Unwind the scope chain within the exception handler's call frame.
+    int targetScopeDepth = handler->scopeDepth;
+    if (codeBlock->needsActivation() && callFrame->uncheckedR(codeBlock->activationRegister()).jsValue())
+        ++targetScopeDepth;
+
     JSScope* scope = callFrame->scope();
-    int scopeDelta = 0;
-    if (!codeBlock->needsFullScopeChain() || codeBlock->codeType() != FunctionCode 
-        || callFrame->uncheckedR(codeBlock->activationRegister()).jsValue()) {
-        int currentDepth = depth(codeBlock, scope);
-        int targetDepth = handler->scopeDepth;
-        scopeDelta = currentDepth - targetDepth;
-        RELEASE_ASSERT(scopeDelta >= 0);
-    }
+    int scopeDelta = scope->depth() - targetScopeDepth;
+    RELEASE_ASSERT(scopeDelta >= 0);
+
     while (scopeDelta--)
         scope = scope->next();
     callFrame->setScope(scope);
@@ -1151,30 +1139,32 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
     if (!vmStackBounds.isSafeToRecurse())
         return checkedReturn(throwStackOverflowError(callFrame));
 
-    // Compile the callee:
+    unsigned numVariables = eval->numVariables();
+    int numFunctions = eval->numberOfFunctionDecls();
+
+    JSScope* variableObject;
+    if ((numVariables || numFunctions) && eval->isStrictMode()) {
+        scope = StrictEvalActivation::create(callFrame);
+        variableObject = scope;
+    } else {
+        for (JSScope* node = scope; ; node = node->next()) {
+            RELEASE_ASSERT(node);
+            if (node->isVariableObject() && !node->isNameScopeObject()) {
+                variableObject = node;
+                break;
+            }
+        }
+    }
+
     JSObject* compileError = eval->compile(callFrame, scope);
     if (UNLIKELY(!!compileError))
         return checkedReturn(throwError(callFrame, compileError));
     EvalCodeBlock* codeBlock = &eval->generatedBytecode();
 
-    JSObject* variableObject;
-    for (JSScope* node = scope; ; node = node->next()) {
-        RELEASE_ASSERT(node);
-        if (node->isVariableObject() && !node->isNameScopeObject()) {
-            variableObject = node;
-            break;
-        }
-    }
-
-    unsigned numVariables = codeBlock->numVariables();
-    int numFunctions = codeBlock->numberOfFunctionDecls();
     if (numVariables || numFunctions) {
-        if (codeBlock->isStrictMode()) {
-            scope = StrictEvalActivation::create(callFrame);
-            variableObject = scope;
-        }
-        // Scope for BatchedTransitionOptimizer
         BatchedTransitionOptimizer optimizer(vm, variableObject);
+        if (variableObject->next())
+            variableObject->globalObject()->varInjectionWatchpoint()->notifyWrite();
 
         for (unsigned i = 0; i < numVariables; ++i) {
             const Identifier& ident = codeBlock->variable(i);

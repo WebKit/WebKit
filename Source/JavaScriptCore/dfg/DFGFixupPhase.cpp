@@ -673,8 +673,8 @@ private:
             break;
         }
             
-        case GetScopeRegisters:
-        case PutScopedVar:
+        case GetClosureRegisters:
+        case PutClosureVar:
         case SkipTopScope:
         case SkipScope:
         case SetCallee:
@@ -841,21 +841,17 @@ private:
         case GetLocalUnlinked:
         case InlineStart:
         case GetMyScope:
-        case GetScopedVar:
+        case GetClosureVar:
         case GetGlobalVar:
         case PutGlobalVar:
         case GlobalVarWatchpoint:
-        case PutGlobalVarCheck:
+        case VarInjectionWatchpoint:
         case AllocationProfileWatchpoint:
         case Call:
         case Construct:
         case NewObject:
         case NewArrayBuffer:
         case NewRegexp:
-        case Resolve:
-        case ResolveBase:
-        case ResolveBaseStrictPut:
-        case ResolveGlobal:
         case Breakpoint:
         case IsUndefined:
         case IsBoolean:
@@ -878,7 +874,6 @@ private:
         case Return:
         case Throw:
         case ThrowReferenceError:
-        case GarbageValue:
         case CountExecution:
         case ForceOSRExit:
         case ForwardForceOSRExit:

@@ -1287,15 +1287,15 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
         break;
     }
 
-    case GetScopeRegisters:
+    case GetClosureRegisters:
         forNode(node).clear(); // The result is not a JS value.
         break;
 
-    case GetScopedVar:
+    case GetClosureVar:
         forNode(node).makeTop();
         break;
             
-    case PutScopedVar:
+    case PutClosureVar:
         clobberCapturedVars(node->codeOrigin);
         break;
             
@@ -1546,11 +1546,11 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
         break;
         
     case GlobalVarWatchpoint:
+    case VarInjectionWatchpoint:
         node->setCanExit(true);
         break;
             
     case PutGlobalVar:
-    case PutGlobalVarCheck:
         break;
             
     case CheckHasInstance:
@@ -1572,16 +1572,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
             
     case Call:
     case Construct:
-    case Resolve:
-    case ResolveBase:
-    case ResolveBaseStrictPut:
-    case ResolveGlobal:
         node->setCanExit(true);
-        clobberWorld(node->codeOrigin, indexInBlock);
-        forNode(node).makeTop();
-        break;
-
-    case GarbageValue:
         clobberWorld(node->codeOrigin, indexInBlock);
         forNode(node).makeTop();
         break;
