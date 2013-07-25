@@ -157,6 +157,7 @@ void FunctionExecutable::destroy(JSCell* cell)
     static_cast<FunctionExecutable*>(cell)->FunctionExecutable::~FunctionExecutable();
 }
 
+#if ENABLE(DFG_JIT)
 JSObject* EvalExecutable::compileOptimized(ExecState* exec, JSScope* scope, CompilationResult& result, unsigned bytecodeIndex)
 {
     ASSERT(exec->vm().dynamicGlobalObject);
@@ -169,6 +170,7 @@ JSObject* EvalExecutable::compileOptimized(ExecState* exec, JSScope* scope, Comp
     ASSERT(!!m_evalCodeBlock);
     return error;
 }
+#endif // ENABLE(DFG_JIT)
 
 #if ENABLE(JIT)
 CompilationResult EvalExecutable::jitCompile(ExecState* exec)
@@ -238,11 +240,13 @@ JSObject* EvalExecutable::compileInternal(ExecState* exec, JSScope* scope, JITCo
     return 0;
 }
 
+#if ENABLE(DFG_JIT)
 CompilationResult EvalExecutable::replaceWithDeferredOptimizedCode(PassRefPtr<DFG::Plan> plan)
 {
     return JSC::replaceWithDeferredOptimizedCode(
         plan, m_evalCodeBlock, m_jitCodeForCall, 0, 0);
 }
+#endif // ENABLE(DFG_JIT)
 
 #if ENABLE(JIT)
 void EvalExecutable::jettisonOptimizedCode(VM& vm)
@@ -294,6 +298,7 @@ JSObject* ProgramExecutable::checkSyntax(ExecState* exec)
     return error.toErrorObject(lexicalGlobalObject, m_source);
 }
 
+#if ENABLE(DFG_JIT)
 JSObject* ProgramExecutable::compileOptimized(ExecState* exec, JSScope* scope, CompilationResult& result, unsigned bytecodeIndex)
 {
     RELEASE_ASSERT(exec->vm().dynamicGlobalObject);
@@ -306,6 +311,7 @@ JSObject* ProgramExecutable::compileOptimized(ExecState* exec, JSScope* scope, C
     ASSERT(!!m_programCodeBlock);
     return error;
 }
+#endif // ENABLE(DFG_JIT)
 
 #if ENABLE(JIT)
 CompilationResult ProgramExecutable::jitCompile(ExecState* exec)
@@ -344,11 +350,13 @@ JSObject* ProgramExecutable::compileInternal(ExecState* exec, JSScope* scope, JI
     return 0;
 }
 
+#if ENABLE(DFG_JIT)
 CompilationResult ProgramExecutable::replaceWithDeferredOptimizedCode(PassRefPtr<DFG::Plan> plan)
 {
     return JSC::replaceWithDeferredOptimizedCode(
         plan, m_programCodeBlock, m_jitCodeForCall, 0, 0);
 }
+#endif // ENABLE(DFG_JIT)
 
 #if ENABLE(JIT)
 void ProgramExecutable::jettisonOptimizedCode(VM& vm)
@@ -468,6 +476,7 @@ FunctionCodeBlock* FunctionExecutable::baselineCodeBlockFor(CodeSpecializationKi
     return result;
 }
 
+#if ENABLE(DFG_JIT)
 JSObject* FunctionExecutable::compileOptimizedForCall(ExecState* exec, JSScope* scope, CompilationResult& result, unsigned bytecodeIndex)
 {
     RELEASE_ASSERT(exec->vm().dynamicGlobalObject);
@@ -493,6 +502,7 @@ JSObject* FunctionExecutable::compileOptimizedForConstruct(ExecState* exec, JSSc
     ASSERT(!!m_codeBlockForConstruct);
     return error;
 }
+#endif // ENABLE(DFG_JIT)
 
 #if ENABLE(JIT)
 CompilationResult FunctionExecutable::jitCompileForCall(ExecState* exec)
@@ -566,12 +576,14 @@ JSObject* FunctionExecutable::compileForCallInternal(ExecState* exec, JSScope* s
     return 0;
 }
 
+#if ENABLE(DFG_JIT)
 CompilationResult FunctionExecutable::replaceWithDeferredOptimizedCodeForCall(PassRefPtr<DFG::Plan> plan)
 {
     return JSC::replaceWithDeferredOptimizedCode(
         plan, m_codeBlockForCall, m_jitCodeForCall, &m_jitCodeForCallWithArityCheck,
         &m_numParametersForCall);
 }
+#endif // ENABLE(DFG_JIT)
 
 JSObject* FunctionExecutable::compileForConstructInternal(ExecState* exec, JSScope* scope, JITCode::JITType jitType, CompilationResult* result, unsigned bytecodeIndex)
 {
@@ -601,12 +613,14 @@ JSObject* FunctionExecutable::compileForConstructInternal(ExecState* exec, JSSco
     return 0;
 }
 
+#if ENABLE(DFG_JIT)
 CompilationResult FunctionExecutable::replaceWithDeferredOptimizedCodeForConstruct(PassRefPtr<DFG::Plan> plan)
 {
     return JSC::replaceWithDeferredOptimizedCode(
         plan, m_codeBlockForConstruct, m_jitCodeForConstruct,
         &m_jitCodeForConstructWithArityCheck, &m_numParametersForConstruct);
 }
+#endif // ENABLE(DFG_JIT)
 
 #if ENABLE(JIT)
 void FunctionExecutable::jettisonOptimizedCodeForCall(VM& vm)

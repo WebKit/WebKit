@@ -162,7 +162,9 @@ namespace JSC  {
         void setLocationAsRawBits(unsigned);
         void setLocationAsBytecodeOffset(unsigned);
 
+#if ENABLE(DFG_JIT)
         unsigned bytecodeOffsetFromCodeOriginIndex();
+#endif
 
         Register* frameExtent()
         {
@@ -282,7 +284,7 @@ namespace JSC  {
         // HostCallFrameFlag stuff.
         CallFrame* trueCallerFrame();
 #else
-        CallFrame* trueCallFrame(AbstractPC) { return this; }
+        CallFrame* trueCallFrame() { return this; }
         CallFrame* trueCallerFrame() { return callerFrame()->removeHostCallFrameFlag(); }
 #endif
         CallFrame* callerFrameNoFlags() { return callerFrame()->removeHostCallFrameFlag(); }

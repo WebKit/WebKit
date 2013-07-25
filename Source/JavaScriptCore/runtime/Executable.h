@@ -442,8 +442,10 @@ namespace JSC {
             return error;
         }
         
+#if ENABLE(DFG_JIT)
         JSObject* compileOptimized(ExecState*, JSScope*, CompilationResult&, unsigned bytecodeIndex);
         CompilationResult replaceWithDeferredOptimizedCode(PassRefPtr<DFG::Plan>);
+#endif // ENABLE(DFG_JIT)
         
 #if ENABLE(JIT)
         void jettisonOptimizedCode(VM&);
@@ -521,8 +523,10 @@ namespace JSC {
             return error;
         }
 
+#if ENABLE(DFG_JIT)
         JSObject* compileOptimized(ExecState*, JSScope*, CompilationResult&, unsigned bytecodeIndex);
         CompilationResult replaceWithDeferredOptimizedCode(PassRefPtr<DFG::Plan>);
+#endif // ENABLE(DFG_JIT)
         
 #if ENABLE(JIT)
         void jettisonOptimizedCode(VM&);
@@ -617,8 +621,10 @@ namespace JSC {
             return error;
         }
 
+#if ENABLE(DFG_JIT)
         JSObject* compileOptimizedForCall(ExecState*, JSScope*, CompilationResult&, unsigned bytecodeIndex);
         CompilationResult replaceWithDeferredOptimizedCodeForCall(PassRefPtr<DFG::Plan>);
+#endif // ENABLE(DFG_JIT)
         
 #if ENABLE(JIT)
         void jettisonOptimizedCodeForCall(VM&);
@@ -646,8 +652,10 @@ namespace JSC {
             return error;
         }
 
+#if ENABLE(DFG_JIT)
         JSObject* compileOptimizedForConstruct(ExecState*, JSScope*, CompilationResult&, unsigned bytecodeIndex);
         CompilationResult replaceWithDeferredOptimizedCodeForConstruct(PassRefPtr<DFG::Plan>);
+#endif // ENABLE(DFG_JIT)
         
 #if ENABLE(JIT)
         void jettisonOptimizedCodeForConstruct(VM&);
@@ -677,6 +685,7 @@ namespace JSC {
             return compileForConstruct(exec, scope);
         }
         
+#if ENABLE(DFG_JIT)
         JSObject* compileOptimizedFor(ExecState* exec, JSScope* scope, CompilationResult& result, unsigned bytecodeIndex, CodeSpecializationKind kind)
         {
             ASSERT(exec->callee());
@@ -695,6 +704,7 @@ namespace JSC {
                 return replaceWithDeferredOptimizedCodeForCall(plan);
             return replaceWithDeferredOptimizedCodeForConstruct(plan);
         }
+#endif // ENABLE(DFG_JIT)
 
 #if ENABLE(JIT)
         void jettisonOptimizedCodeFor(VM& vm, CodeSpecializationKind kind)

@@ -91,7 +91,7 @@ void DFGCodeBlocks::traceMarkedCodeBlocks(SlotVisitor& visitor)
 
 #else // ENABLE(DFG_JIT)
 
-void DFGCodeBlocks::jettison(PassOwnPtr<CodeBlock>)
+void DFGCodeBlocks::jettison(PassRefPtr<CodeBlock>)
 {
 }
 

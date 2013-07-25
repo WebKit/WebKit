@@ -494,9 +494,11 @@ static CallFrame* getCallerInfo(VM* vm, CallFrame* callFrame, unsigned& bytecode
     }
     
     CodeBlock* callerCodeBlock = trueCallerFrame->codeBlock();
+#if ENABLE(DFG_JIT)
     if (trueCallerFrame->hasLocationAsCodeOriginIndex())
         bytecodeOffset = trueCallerFrame->bytecodeOffsetFromCodeOriginIndex();
     else
+#endif // ENABLE(DFG_JIT)
         bytecodeOffset = trueCallerFrame->locationAsBytecodeOffset();
 
     caller = callerCodeBlock;

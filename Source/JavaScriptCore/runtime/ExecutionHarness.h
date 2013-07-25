@@ -139,6 +139,7 @@ inline CompilationResult prepareFunctionForExecution(
         sink, codeBlock, jitCode, jitCodeWithArityCheck, &numParameters);
 }
 
+#if ENABLE(DFG_JIT)
 template<typename CodeBlockType>
 inline CompilationResult replaceWithDeferredOptimizedCode(
     PassRefPtr<DFG::Plan> passedPlan, RefPtr<CodeBlockType>& sink, RefPtr<JITCode>& jitCode,
@@ -158,6 +159,7 @@ inline CompilationResult replaceWithDeferredOptimizedCode(
         jitCodeWithArityCheck ? *jitCodeWithArityCheck : MacroAssemblerCodePtr(),
         numParameters);
 }
+#endif // ENABLE(DFG_JIT)
 
 } // namespace JSC
 

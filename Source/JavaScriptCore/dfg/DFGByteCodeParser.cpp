@@ -3123,6 +3123,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 ConcurrentJITLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
                 
                 if (!putToBase->m_ready) {
+                    locker.unlockEarly();
                     addToGraph(ForceOSRExit);
                     addToGraph(Phantom, get(base));
                     addToGraph(Phantom, get(value));

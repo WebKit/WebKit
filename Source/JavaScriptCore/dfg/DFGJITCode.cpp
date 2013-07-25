@@ -26,6 +26,8 @@
 #include "config.h"
 #include "DFGJITCode.h"
 
+#if ENABLE(DFG_JIT)
+
 namespace JSC { namespace DFG {
 
 JITCode::JITCode()
@@ -59,3 +61,4 @@ void JITCode::shrinkToFit()
 
 } } // namespace JSC::DFG
 
+#endif // ENABLE(DFG_JIT)

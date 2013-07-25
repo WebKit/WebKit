@@ -46,8 +46,8 @@ CompilationResult tryCompile(ExecState*, CodeBlock*, RefPtr<JSC::JITCode>&, unsi
 CompilationResult tryCompileFunction(ExecState*, CodeBlock*, RefPtr<JSC::JITCode>&, MacroAssemblerCodePtr& jitCodeWithArityCheck, unsigned bytecodeIndex);
 CompilationResult tryFinalizePlan(PassRefPtr<Plan>, RefPtr<JSC::JITCode>&, MacroAssemblerCodePtr* jitCodeWithArityCheck);
 #else
-inline CompilationResult tryCompile(ExecState*, CodeBlock*, RefPtr<JSC::JITCode>&, unsigned) { return false; }
-inline CompilationResult tryCompileFunction(ExecState*, CodeBlock*, RefPtr<JSC::JITCode>&, MacroAssemblerCodePtr&, unsigned) { return false; }
+inline CompilationResult tryCompile(ExecState*, CodeBlock*, RefPtr<JSC::JITCode>&, unsigned) { return CompilationFailed; }
+inline CompilationResult tryCompileFunction(ExecState*, CodeBlock*, RefPtr<JSC::JITCode>&, MacroAssemblerCodePtr&, unsigned) { return CompilationFailed; }
 inline CompilationResult tryFinalizePlan(PassRefPtr<Plan>, RefPtr<JSC::JITCode>&, MacroAssemblerCodePtr*)
 {
     UNREACHABLE_FOR_PLATFORM();

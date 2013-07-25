@@ -1,3 +1,52 @@
+2013-06-09  Mark Lam  <mark.lam@apple.com>
+
+        Fix broken no-DFG build.
+        https://bugs.webkit.org/show_bug.cgi?id=117381.
+
+        Reviewed by Geoffrey Garen.
+
+        * bytecode/CodeBlock.cpp:
+        * bytecode/CodeBlock.h:
+        (CodeBlock):
+        (ProgramCodeBlock):
+        (EvalCodeBlock):
+        (FunctionCodeBlock):
+        * dfg/DFGCapabilities.h:
+        * dfg/DFGDriver.h:
+        (JSC::DFG::tryCompile):
+        (JSC::DFG::tryCompileFunction):
+        * dfg/DFGJITCode.cpp:
+        * dfg/DFGRepatch.h:
+        (JSC::DFG::dfgResetGetByID):
+        (JSC::DFG::dfgResetPutByID):
+        * heap/DFGCodeBlocks.cpp:
+        (JSC::DFGCodeBlocks::jettison):
+        * interpreter/CallFrame.h:
+        (ExecState):
+        (JSC::ExecState::trueCallFrame):
+        * interpreter/Interpreter.cpp:
+        (JSC::getCallerInfo):
+        * runtime/Executable.cpp:
+        * runtime/Executable.h:
+        (EvalExecutable):
+        (ProgramExecutable):
+        (FunctionExecutable):
+        * runtime/ExecutionHarness.h:
+        * runtime/VM.cpp:
+        (JSC::VM::~VM):
+
+2013-06-08  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: Recursive deadlock in DFG::ByteCodeParser
+        https://bugs.webkit.org/show_bug.cgi?id=117376
+
+        Reviewed by Mark Hahnenberg.
+        
+        Leave the lock early to prevent a deadlock beneath get().
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+
 2013-06-08  Mark Lam  <mark.lam@apple.com>
 
         Removed bogus assertion in CallFrame::setLocationAsBytecodeOffset().

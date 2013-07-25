@@ -287,8 +287,10 @@ public:
     {
         return jitType() == JITCode::BaselineJIT;
     }
+#if ENABLE(DFG_JIT)
     virtual JSObject* compileOptimized(ExecState*, JSScope*, CompilationResult&, unsigned bytecodeIndex) = 0;
     virtual CompilationResult replaceWithDeferredOptimizedCode(PassRefPtr<DFG::Plan>) = 0;
+#endif // ENABLE(DFG_JIT)
     void jettison();
     CompilationResult jitCompile(ExecState* exec)
     {
@@ -1154,8 +1156,11 @@ public:
 
 #if ENABLE(JIT)
 protected:
+#if ENABLE(DFG_JIT)
     virtual JSObject* compileOptimized(ExecState*, JSScope*, CompilationResult&, unsigned bytecodeIndex);
     virtual CompilationResult replaceWithDeferredOptimizedCode(PassRefPtr<DFG::Plan>);
+#endif // ENABLE(DFG_JIT)
+
     virtual void jettisonImpl();
     virtual CompilationResult jitCompileImpl(ExecState*);
     virtual CodeBlock* replacement();
@@ -1180,8 +1185,11 @@ public:
     
 #if ENABLE(JIT)
 protected:
+#if ENABLE(DFG_JIT)
     virtual JSObject* compileOptimized(ExecState*, JSScope*, CompilationResult&, unsigned bytecodeIndex);
     virtual CompilationResult replaceWithDeferredOptimizedCode(PassRefPtr<DFG::Plan>);
+#endif // ENABLE(DFG_JIT)
+
     virtual void jettisonImpl();
     virtual CompilationResult jitCompileImpl(ExecState*);
     virtual CodeBlock* replacement();
@@ -1206,8 +1214,11 @@ public:
     
 #if ENABLE(JIT)
 protected:
+#if ENABLE(DFG_JIT)
     virtual JSObject* compileOptimized(ExecState*, JSScope*, CompilationResult&, unsigned bytecodeIndex);
     virtual CompilationResult replaceWithDeferredOptimizedCode(PassRefPtr<DFG::Plan>);
+#endif // ENABLE(DFG_JIT)
+
     virtual void jettisonImpl();
     virtual CompilationResult jitCompileImpl(ExecState*);
     virtual CodeBlock* replacement();

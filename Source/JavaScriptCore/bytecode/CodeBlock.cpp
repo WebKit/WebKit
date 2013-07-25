@@ -2875,6 +2875,7 @@ CodeBlock* FunctionCodeBlock::replacement()
     return &static_cast<FunctionExecutable*>(ownerExecutable())->generatedBytecodeFor(m_isConstructor ? CodeForConstruct : CodeForCall);
 }
 
+#if ENABLE(DFG_JIT)
 JSObject* ProgramCodeBlock::compileOptimized(ExecState* exec, JSScope* scope, CompilationResult& result, unsigned bytecodeIndex)
 {
     if (JITCode::isHigherTier(replacement()->jitType(), jitType())) {
@@ -2919,6 +2920,7 @@ CompilationResult FunctionCodeBlock::replaceWithDeferredOptimizedCode(PassRefPtr
 {
     return static_cast<FunctionExecutable*>(ownerExecutable())->replaceWithDeferredOptimizedCodeFor(plan, m_isConstructor ? CodeForConstruct : CodeForCall);
 }
+#endif // ENABLE(DFG_JIT)
 
 DFG::CapabilityLevel ProgramCodeBlock::capabilityLevelInternal()
 {

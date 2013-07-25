@@ -266,12 +266,14 @@ VM::VM(VMType vmType, HeapType heapType)
 
 VM::~VM()
 {
+#if ENABLE(DFG_JIT)
     // Make sure concurrent compilations are done, but don't install them, since installing
     // them might cause a GC. We don't want to GC right now.
     if (worklist) {
         worklist->waitUntilAllPlansForVMAreReady(*this);
         worklist->removeAllReadyPlansForVM(*this);
     }
+#endif // ENABLE(DFG_JIT)
     
     // Clear this first to ensure that nobody tries to remove themselves from it.
     m_perBytecodeProfiler.clear();
