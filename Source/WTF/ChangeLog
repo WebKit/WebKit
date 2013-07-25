@@ -1,3 +1,17 @@
+2013-06-23  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: DFG should optimize identifier string equality
+        https://bugs.webkit.org/show_bug.cgi?id=117920
+
+        Reviewed by Sam Weinig.
+
+        Note that this ChangeLog was supposed to be committed in r151890.
+        
+        Expose the IsIdentifier bit to the JIT.
+        
+        * wtf/text/StringImpl.h:
+        (WTF::StringImpl::flagIsIdentifier):
+
 2013-06-18  Filip Pizlo  <fpizlo@apple.com>
 
         fourthTier: DFG should have switch_char
