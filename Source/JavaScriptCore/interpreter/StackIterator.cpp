@@ -341,7 +341,7 @@ void StackIterator::Frame::print(int indentLevel)
     printif(i, "frame %p {\n", this);
 
     CallFrame* callerFrame = this->callerFrame();
-    void* returnPC = hasReturnPC()? this->returnPC().value() : nullptr;
+    void* returnPC = hasReturnPC() ? this->returnPC().value() : 0;
 
     printif(i, "   name '%s'\n", functionName().utf8().data());
     printif(i, "   sourceURL '%s'\n", sourceURL().utf8().data());

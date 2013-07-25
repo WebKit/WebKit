@@ -367,6 +367,7 @@ SOURCES += \
 
 linux-*:if(isEqual(QT_ARCH, "i386")|isEqual(QT_ARCH, "x86_64")) {
     SOURCES += \
+        disassembler/X86Disassembler.cpp \
         disassembler/UDis86Disassembler.cpp \
         disassembler/udis86/udis86.c \
         disassembler/udis86/udis86_decode.c \
