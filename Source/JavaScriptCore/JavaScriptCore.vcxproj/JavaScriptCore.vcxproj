@@ -533,6 +533,7 @@
     <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\StringConstructor.lut.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\API\APICallbackFunction.h" />
     <ClInclude Include="..\API\APICast.h" />
     <ClInclude Include="..\API\JavaScript.h" />
     <ClInclude Include="..\API\JavaScriptCore.h" />

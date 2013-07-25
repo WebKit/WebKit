@@ -32,10 +32,7 @@
 namespace JSC {
 
 class JSCallbackFunction : public InternalFunction {
-protected:
-    JSCallbackFunction(JSGlobalObject*, Structure*, JSObjectCallAsFunctionCallback);
-    void finishCreation(VM&, const String& name);
-
+    friend struct APICallbackFunction;
 public:
     typedef InternalFunction Base;
 
@@ -50,11 +47,11 @@ public:
         return Structure::create(vm, globalObject, proto, TypeInfo(ObjectType, StructureFlags), &s_info); 
     }
 
-protected:
-    static CallType getCallData(JSCell*, CallData&);
-
 private:
-    static EncodedJSValue JSC_HOST_CALL call(ExecState*);
+    JSCallbackFunction(JSGlobalObject*, Structure*, JSObjectCallAsFunctionCallback);
+    void finishCreation(VM&, const String& name);
+
+    static CallType getCallData(JSCell*, CallData&);
 
     JSObjectCallAsFunctionCallback m_callback;
 };

@@ -26,8 +26,9 @@
 #include "config.h"
 #include "JSCallbackFunction.h"
 
-#include "APIShims.h"
+#include "APICallbackFunction.h"
 #include "APICast.h"
+#include "APIShims.h"
 #include "CodeBlock.h"
 #include "Error.h"
 #include "ExceptionHelpers.h"
@@ -63,37 +64,9 @@ JSCallbackFunction* JSCallbackFunction::create(ExecState* exec, JSGlobalObject* 
     return function;
 }
 
-EncodedJSValue JSCallbackFunction::call(ExecState* exec)
-{
-    JSContextRef execRef = toRef(exec);
-    JSObjectRef functionRef = toRef(exec->callee());
-    JSObjectRef thisObjRef = toRef(jsCast<JSObject*>(exec->hostThisValue().toThis(exec, NotStrictMode)));
-
-    size_t argumentCount = exec->argumentCount();
-    Vector<JSValueRef, 16> arguments;
-    arguments.reserveInitialCapacity(argumentCount);
-    for (size_t i = 0; i < argumentCount; ++i)
-        arguments.uncheckedAppend(toRef(exec, exec->argument(i)));
-
-    JSValueRef exception = 0;
-    JSValueRef result;
-    {
-        APICallbackShim callbackShim(exec);
-        result = jsCast<JSCallbackFunction*>(toJS(functionRef))->m_callback(execRef, functionRef, thisObjRef, argumentCount, arguments.data(), &exception);
-    }
-    if (exception)
-        throwError(exec, toJS(exec, exception));
-
-    // result must be a valid JSValue.
-    if (!result)
-        return JSValue::encode(jsUndefined());
-
-    return JSValue::encode(toJS(exec, result));
-}
-
 CallType JSCallbackFunction::getCallData(JSCell*, CallData& callData)
 {
-    callData.native.function = call;
+    callData.native.function = APICallbackFunction::call<JSCallbackFunction>;
     return CallTypeHost;
 }
 

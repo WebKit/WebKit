@@ -32,6 +32,7 @@ javascriptcore_built_nosources += \
 	DerivedSources/JavaScriptCore/LLIntAssembly.h
 
 javascriptcore_sources += \
+    Source/JavaScriptCore/API/APICallbackFunction.h \
 	Source/JavaScriptCore/API/APICast.h \
 	Source/JavaScriptCore/API/APIShims.h \
 	Source/JavaScriptCore/API/JSAPIWrapperObject.h \

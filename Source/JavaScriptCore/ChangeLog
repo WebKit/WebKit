@@ -1,3 +1,27 @@
+2013-06-19  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Refactor ObjCCallbackFunction to inherit directly from InternalFunction
+        https://bugs.webkit.org/show_bug.cgi?id=117595
+
+        Reviewed by Geoffrey Garen.
+
+        * API/APICallbackFunction.h: Added. New struct that allows JSCallbackFunction and 
+        ObjCCallbackFunction to share their host call() implementation through the magic of 
+        templates.
+        (JSC::APICallbackFunction::call):
+        * API/JSCallbackFunction.cpp:
+        (JSC::JSCallbackFunction::getCallData): Changed to get the template-ized version of 
+        the host function.
+        * API/JSCallbackFunction.h:
+        * API/ObjCCallbackFunction.h: Now inherits directly from InternalFunction.
+        * API/ObjCCallbackFunction.mm:
+        (JSC::ObjCCallbackFunction::ObjCCallbackFunction):
+        (JSC::ObjCCallbackFunction::getCallData): Ditto.
+        * GNUmakefile.list.am: Build files!
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2013-06-19  Michael Saboff  <msaboff@apple.com>
 
         fourthTier: Arity fixup should be done while on same stack

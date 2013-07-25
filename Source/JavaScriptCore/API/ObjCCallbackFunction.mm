@@ -28,6 +28,7 @@
 
 #if JSC_OBJC_API_ENABLED
 
+#import "APICallbackFunction.h"
 #import "APICast.h"
 #import "APIShims.h"
 #import "Error.h"
@@ -469,7 +470,8 @@ static JSValueRef objCCallbackFunctionCallAsFunction(JSContextRef callerContext,
 const JSC::ClassInfo ObjCCallbackFunction::s_info = { "CallbackFunction", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(ObjCCallbackFunction) };
 
 ObjCCallbackFunction::ObjCCallbackFunction(JSC::JSGlobalObject* globalObject, JSObjectCallAsFunctionCallback callback, PassOwnPtr<ObjCCallbackFunctionImpl> impl)
-    : Base(globalObject, globalObject->objcCallbackFunctionStructure(), callback)
+    : Base(globalObject, globalObject->objcCallbackFunctionStructure())
+    , m_callback(callback)
     , m_impl(impl)
 {
 }
@@ -484,6 +486,12 @@ ObjCCallbackFunction* ObjCCallbackFunction::create(JSC::ExecState* exec, JSC::JS
 void ObjCCallbackFunction::destroy(JSCell* cell)
 {
     static_cast<ObjCCallbackFunction*>(cell)->ObjCCallbackFunction::~ObjCCallbackFunction();
+}
+
+CallType ObjCCallbackFunction::getCallData(JSCell*, CallData& callData)
+{
+    callData.native.function = APICallbackFunction::call<ObjCCallbackFunction>;
+    return CallTypeHost;
 }
 
 JSValueRef ObjCCallbackFunctionImpl::call(JSContext *context, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)

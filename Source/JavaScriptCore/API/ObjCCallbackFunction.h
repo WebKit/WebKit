@@ -42,9 +42,10 @@ namespace JSC {
 
 class ObjCCallbackFunctionImpl;
 
-class ObjCCallbackFunction : public JSCallbackFunction {
+class ObjCCallbackFunction : public InternalFunction {
+    friend struct APICallbackFunction;
 public:
-    typedef JSCallbackFunction Base;
+    typedef InternalFunction Base;
 
     static ObjCCallbackFunction* create(ExecState*, JSGlobalObject*, const String& name, PassOwnPtr<ObjCCallbackFunctionImpl>);
     static void destroy(JSCell*);
@@ -63,6 +64,9 @@ protected:
     ObjCCallbackFunction(JSGlobalObject*, JSObjectCallAsFunctionCallback, PassOwnPtr<ObjCCallbackFunctionImpl>);
 
 private:
+    static CallType getCallData(JSCell*, CallData&);
+
+    JSObjectCallAsFunctionCallback m_callback;
     OwnPtr<ObjCCallbackFunctionImpl> m_impl;
 };
 
