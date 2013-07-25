@@ -119,8 +119,9 @@ namespace JSC {
         MarkedAllocator& allocatorForObjectWithNormalDestructor(size_t bytes) { return m_objectSpace.normalDestructorAllocatorFor(bytes); }
         MarkedAllocator& allocatorForObjectWithImmortalStructureDestructor(size_t bytes) { return m_objectSpace.immortalStructureDestructorAllocatorFor(bytes); }
         CopiedAllocator& storageAllocator() { return m_storageSpace.allocator(); }
-        CheckedBoolean tryAllocateStorage(size_t, void**);
-        CheckedBoolean tryReallocateStorage(void**, size_t, size_t);
+        CheckedBoolean tryAllocateStorage(JSCell* intendedOwner, size_t, void**);
+        CheckedBoolean tryReallocateStorage(JSCell* intendedOwner, void**, size_t, size_t);
+        void ascribeOwner(JSCell* intendedOwner, void*);
 
         typedef void (*Finalizer)(JSCell*);
         JS_EXPORT_PRIVATE void addFinalizer(JSCell*, Finalizer);
@@ -384,30 +385,64 @@ namespace JSC {
 
     inline void* Heap::allocateWithNormalDestructor(size_t bytes)
     {
+#if ENABLE(ALLOCATION_LOGGING)
+        dataLogF("JSC GC allocating %lu bytes with normal destructor.\n", bytes);
+#endif
         ASSERT(isValidAllocation(bytes));
         return m_objectSpace.allocateWithNormalDestructor(bytes);
     }
     
     inline void* Heap::allocateWithImmortalStructureDestructor(size_t bytes)
     {
+#if ENABLE(ALLOCATION_LOGGING)
+        dataLogF("JSC GC allocating %lu bytes with immortal structure destructor.\n", bytes);
+#endif
         ASSERT(isValidAllocation(bytes));
         return m_objectSpace.allocateWithImmortalStructureDestructor(bytes);
     }
     
     inline void* Heap::allocateWithoutDestructor(size_t bytes)
     {
+#if ENABLE(ALLOCATION_LOGGING)
+        dataLogF("JSC GC allocating %lu bytes without destructor.\n", bytes);
+#endif
         ASSERT(isValidAllocation(bytes));
         return m_objectSpace.allocateWithoutDestructor(bytes);
     }
    
-    inline CheckedBoolean Heap::tryAllocateStorage(size_t bytes, void** outPtr)
+    inline CheckedBoolean Heap::tryAllocateStorage(JSCell* intendedOwner, size_t bytes, void** outPtr)
     {
-        return m_storageSpace.tryAllocate(bytes, outPtr);
+        CheckedBoolean result = m_storageSpace.tryAllocate(bytes, outPtr);
+#if ENABLE(ALLOCATION_LOGGING)
+        dataLogF("JSC GC allocating %lu bytes of storage for %p: %p.\n", bytes, intendedOwner, *outPtr);
+#else
+        UNUSED_PARAM(intendedOwner);
+#endif
+        return result;
     }
     
-    inline CheckedBoolean Heap::tryReallocateStorage(void** ptr, size_t oldSize, size_t newSize)
+    inline CheckedBoolean Heap::tryReallocateStorage(JSCell* intendedOwner, void** ptr, size_t oldSize, size_t newSize)
     {
-        return m_storageSpace.tryReallocate(ptr, oldSize, newSize);
+#if ENABLE(ALLOCATION_LOGGING)
+        void* oldPtr = *ptr;
+#endif
+        CheckedBoolean result = m_storageSpace.tryReallocate(ptr, oldSize, newSize);
+#if ENABLE(ALLOCATION_LOGGING)
+        dataLogF("JSC GC reallocating %lu -> %lu bytes of storage for %p: %p -> %p.\n", oldSize, newSize, intendedOwner, oldPtr, *ptr);
+#else
+        UNUSED_PARAM(intendedOwner);
+#endif
+        return result;
+    }
+
+    inline void Heap::ascribeOwner(JSCell* intendedOwner, void* storage)
+    {
+#if ENABLE(ALLOCATION_LOGGING)
+        dataLogF("JSC GC ascribing %p as owner of storage %p.\n", intendedOwner, storage);
+#else
+        UNUSED_PARAM(intendedOwner);
+        UNUSED_PARAM(storage);
+#endif
     }
 
     inline BlockAllocator& Heap::blockAllocator()

@@ -174,21 +174,22 @@ private:
     void compactForSorting(unsigned& numDefined, unsigned& newRelevantLength);
 };
 
-inline Butterfly* createContiguousArrayButterfly(VM& vm, unsigned length, unsigned& vectorLength)
+inline Butterfly* createContiguousArrayButterfly(VM& vm, JSCell* intendedOwner, unsigned length, unsigned& vectorLength)
 {
     IndexingHeader header;
     vectorLength = std::max(length, BASE_VECTOR_LEN);
     header.setVectorLength(vectorLength);
     header.setPublicLength(length);
     Butterfly* result = Butterfly::create(
-        vm, 0, 0, true, header, vectorLength * sizeof(EncodedJSValue));
+        vm, intendedOwner, 0, 0, true, header, vectorLength * sizeof(EncodedJSValue));
     return result;
 }
 
-inline Butterfly* createArrayButterfly(VM& vm, unsigned initialLength)
+inline Butterfly* createArrayButterfly(VM& vm, JSCell* intendedOwner, unsigned initialLength)
 {
     Butterfly* butterfly = Butterfly::create(
-        vm, 0, 0, true, baseIndexingHeaderForArray(initialLength), ArrayStorage::sizeFor(BASE_VECTOR_LEN));
+        vm, intendedOwner, 0, 0, true, baseIndexingHeaderForArray(initialLength),
+        ArrayStorage::sizeFor(BASE_VECTOR_LEN));
     ArrayStorage* storage = butterfly->arrayStorage();
     storage->m_indexBias = 0;
     storage->m_sparseMap.clear();
@@ -196,7 +197,8 @@ inline Butterfly* createArrayButterfly(VM& vm, unsigned initialLength)
     return butterfly;
 }
 
-Butterfly* createArrayButterflyInDictionaryIndexingMode(VM&, unsigned initialLength);
+Butterfly* createArrayButterflyInDictionaryIndexingMode(
+    VM&, JSCell* intendedOwner, unsigned initialLength);
 
 inline JSArray* JSArray::create(VM& vm, Structure* structure, unsigned initialLength)
 {
@@ -208,7 +210,7 @@ inline JSArray* JSArray::create(VM& vm, Structure* structure, unsigned initialLe
             || hasDouble(structure->indexingType())
             || hasContiguous(structure->indexingType()));
         unsigned vectorLength;
-        butterfly = createContiguousArrayButterfly(vm, initialLength, vectorLength);
+        butterfly = createContiguousArrayButterfly(vm, 0, initialLength, vectorLength);
         ASSERT(initialLength < MIN_SPARSE_ARRAY_INDEX);
         if (hasDouble(structure->indexingType())) {
             for (unsigned i = 0; i < vectorLength; ++i)
@@ -218,7 +220,7 @@ inline JSArray* JSArray::create(VM& vm, Structure* structure, unsigned initialLe
         ASSERT(
             structure->indexingType() == ArrayWithSlowPutArrayStorage
             || structure->indexingType() == ArrayWithArrayStorage);
-        butterfly = createArrayButterfly(vm, initialLength);
+        butterfly = createArrayButterfly(vm, 0, initialLength);
     }
     JSArray* array = new (NotNull, allocateCell<JSArray>(vm.heap)) JSArray(vm, structure, butterfly);
     array->finishCreation(vm);
@@ -240,7 +242,7 @@ inline JSArray* JSArray::tryCreateUninitialized(VM& vm, Structure* structure, un
             || hasContiguous(structure->indexingType()));
 
         void* temp;
-        if (!vm.heap.tryAllocateStorage(Butterfly::totalSize(0, 0, true, vectorLength * sizeof(EncodedJSValue)), &temp))
+        if (!vm.heap.tryAllocateStorage(0, Butterfly::totalSize(0, 0, true, vectorLength * sizeof(EncodedJSValue)), &temp))
             return 0;
         butterfly = Butterfly::fromBase(temp, 0, 0);
         butterfly->setVectorLength(vectorLength);
@@ -251,7 +253,7 @@ inline JSArray* JSArray::tryCreateUninitialized(VM& vm, Structure* structure, un
         }
     } else {
         void* temp;
-        if (!vm.heap.tryAllocateStorage(Butterfly::totalSize(0, 0, true, ArrayStorage::sizeFor(vectorLength)), &temp))
+        if (!vm.heap.tryAllocateStorage(0, Butterfly::totalSize(0, 0, true, ArrayStorage::sizeFor(vectorLength)), &temp))
             return 0;
         butterfly = Butterfly::fromBase(temp, 0, 0);
         *butterfly->indexingHeader() = indexingHeaderForArray(initialLength, vectorLength);

@@ -109,27 +109,6 @@ inline bool Structure::masqueradesAsUndefined(JSGlobalObject* lexicalGlobalObjec
     return typeInfo().masqueradesAsUndefined() && globalObject() == lexicalGlobalObject;
 }
 
-ALWAYS_INLINE void SlotVisitor::internalAppend(JSCell* cell)
-{
-    ASSERT(!m_isCheckingForDefaultMarkViolation);
-    if (!cell)
-        return;
-#if ENABLE(GC_VALIDATION)
-    validate(cell);
-#endif
-    if (Heap::testAndSetMarked(cell) || !cell->structure())
-        return;
-
-    m_visitCount++;
-        
-    MARK_LOG_CHILD(*this, cell);
-
-    // Should never attempt to mark something that is zapped.
-    ASSERT(!cell->isZapped());
-        
-    m_stack.append(cell);
-}
-
 inline bool Structure::transitivelyTransitionedFrom(Structure* structureToFind)
 {
     for (Structure* current = this; current; current = current->previousID()) {

@@ -31,12 +31,12 @@
 
 #import "APICast.h"
 #import "Heap.h"
-#import "JSCJSValueInlines.h"
 #import "JSContextInternal.h"
 #import "JSValueInternal.h"
 #import "Weak.h"
 #import "WeakHandleOwner.h"
 #import "ObjcRuntimeExtras.h"
+#import "Operations.h"
 
 class JSManagedValueHandleOwner : public JSC::WeakHandleOwner {
 public:

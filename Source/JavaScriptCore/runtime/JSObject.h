@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2012 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2012, 2013 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -39,7 +39,6 @@
 #include "Structure.h"
 #include "VM.h"
 #include "JSString.h"
-#include "SlotVisitorInlines.h"
 #include "SparseArrayValueMap.h"
 #include <wtf/StdLibExtras.h>
 
@@ -1145,6 +1144,7 @@ inline JSObject::JSObject(VM& vm, Structure* structure, Butterfly* butterfly)
     : JSCell(vm, structure)
     , m_butterfly(butterfly)
 {
+    vm.heap.ascribeOwner(this, butterfly);
 }
 
 inline JSValue JSObject::prototype() const

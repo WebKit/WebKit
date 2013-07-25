@@ -104,10 +104,10 @@ public:
     static ptrdiff_t offsetOfPublicLength() { return offsetOfIndexingHeader() + IndexingHeader::offsetOfPublicLength(); }
     static ptrdiff_t offsetOfVectorLength() { return offsetOfIndexingHeader() + IndexingHeader::offsetOfVectorLength(); }
     
-    static Butterfly* createUninitialized(VM&, size_t preCapacity, size_t propertyCapacity, bool hasIndexingHeader, size_t indexingPayloadSizeInBytes);
+    static Butterfly* createUninitialized(VM&, JSCell* intendedOwner, size_t preCapacity, size_t propertyCapacity, bool hasIndexingHeader, size_t indexingPayloadSizeInBytes);
 
-    static Butterfly* create(VM&, size_t preCapacity, size_t propertyCapacity, bool hasIndexingHeader, const IndexingHeader&, size_t indexingPayloadSizeInBytes);
-    static Butterfly* create(VM&, Structure*);
+    static Butterfly* create(VM&, JSCell* intendedOwner, size_t preCapacity, size_t propertyCapacity, bool hasIndexingHeader, const IndexingHeader&, size_t indexingPayloadSizeInBytes);
+    static Butterfly* create(VM&, JSCell* intendedOwner, Structure*);
     static Butterfly* createUninitializedDuringCollection(CopyVisitor&, size_t preCapacity, size_t propertyCapacity, bool hasIndexingHeader, size_t indexingPayloadSizeInBytes);
     
     IndexingHeader* indexingHeader() { return IndexingHeader::from(this); }
@@ -147,20 +147,23 @@ public:
     void* base(size_t preCapacity, size_t propertyCapacity) { return propertyStorage() - propertyCapacity - preCapacity; }
     void* base(Structure*);
 
-    static Butterfly* createOrGrowArrayRight(Butterfly*, VM&, Structure* oldStructure, size_t propertyCapacity, bool hadIndexingHeader, size_t oldIndexingPayloadSizeInBytes, size_t newIndexingPayloadSizeInBytes); 
+    static Butterfly* createOrGrowArrayRight(
+        Butterfly*, VM&, JSCell* intendedOwner, Structure* oldStructure,
+        size_t propertyCapacity, bool hadIndexingHeader,
+        size_t oldIndexingPayloadSizeInBytes, size_t newIndexingPayloadSizeInBytes); 
 
     // The butterfly reallocation methods perform the reallocation itself but do not change any
     // of the meta-data to reflect that the reallocation occurred. Note that this set of
     // methods is not exhaustive and is not intended to encapsulate all possible allocation
     // modes of butterflies - there are code paths that allocate butterflies by calling
     // directly into Heap::tryAllocateStorage.
-    Butterfly* growPropertyStorage(VM&, size_t preCapacity, size_t oldPropertyCapacity, bool hasIndexingHeader, size_t indexingPayloadSizeInBytes, size_t newPropertyCapacity);
-    Butterfly* growPropertyStorage(VM&, Structure* oldStructure, size_t oldPropertyCapacity, size_t newPropertyCapacity);
-    Butterfly* growPropertyStorage(VM&, Structure* oldStructure, size_t newPropertyCapacity);
-    Butterfly* growArrayRight(VM&, Structure* oldStructure, size_t propertyCapacity, bool hadIndexingHeader, size_t oldIndexingPayloadSizeInBytes, size_t newIndexingPayloadSizeInBytes); // Assumes that preCapacity is zero, and asserts as much.
-    Butterfly* growArrayRight(VM&, Structure*, size_t newIndexingPayloadSizeInBytes);
-    Butterfly* resizeArray(VM&, size_t propertyCapacity, bool oldHasIndexingHeader, size_t oldIndexingPayloadSizeInBytes, size_t newPreCapacity, bool newHasIndexingHeader, size_t newIndexingPayloadSizeInBytes);
-    Butterfly* resizeArray(VM&, Structure*, size_t newPreCapacity, size_t newIndexingPayloadSizeInBytes); // Assumes that you're not changing whether or not the object has an indexing header.
+    Butterfly* growPropertyStorage(VM&, JSCell* intendedOwner, size_t preCapacity, size_t oldPropertyCapacity, bool hasIndexingHeader, size_t indexingPayloadSizeInBytes, size_t newPropertyCapacity);
+    Butterfly* growPropertyStorage(VM&, JSCell* intendedOwner, Structure* oldStructure, size_t oldPropertyCapacity, size_t newPropertyCapacity);
+    Butterfly* growPropertyStorage(VM&, JSCell* intendedOwner, Structure* oldStructure, size_t newPropertyCapacity);
+    Butterfly* growArrayRight(VM&, JSCell* intendedOwner, Structure* oldStructure, size_t propertyCapacity, bool hadIndexingHeader, size_t oldIndexingPayloadSizeInBytes, size_t newIndexingPayloadSizeInBytes); // Assumes that preCapacity is zero, and asserts as much.
+    Butterfly* growArrayRight(VM&, JSCell* intendedOwner, Structure*, size_t newIndexingPayloadSizeInBytes);
+    Butterfly* resizeArray(VM&, JSCell* intendedOwner, size_t propertyCapacity, bool oldHasIndexingHeader, size_t oldIndexingPayloadSizeInBytes, size_t newPreCapacity, bool newHasIndexingHeader, size_t newIndexingPayloadSizeInBytes);
+    Butterfly* resizeArray(VM&, JSCell* intendedOwner, Structure*, size_t newPreCapacity, size_t newIndexingPayloadSizeInBytes); // Assumes that you're not changing whether or not the object has an indexing header.
     Butterfly* unshift(Structure*, size_t numberOfSlots);
     Butterfly* shift(Structure*, size_t numberOfSlots);
 };

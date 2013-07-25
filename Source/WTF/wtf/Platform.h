@@ -803,6 +803,16 @@
 #define ENABLE_WRITE_BARRIER_PROFILING 0
 #endif
 
+/* Logs all allocation-related activity that goes through fastMalloc or the
+   JSC GC (both cells and butterflies). Also logs marking. Note that this
+   isn't a completely accurate view of the heap since it doesn't include all
+   butterfly resize operations, doesn't tell you what is going on with weak
+   references (other than to tell you when they're marked), and doesn't
+   track direct mmap() allocations or things like JIT allocation. */
+#if !defined(ENABLE_ALLOCATION_LOGGING)
+#define ENABLE_ALLOCATION_LOGGING 0
+#endif
+
 /* Enable verification that that register allocations are not made within generated control flow.
    Turned on for debug builds. */
 #if !defined(ENABLE_DFG_REGISTER_ALLOCATION_VALIDATION) && ENABLE(DFG_JIT)

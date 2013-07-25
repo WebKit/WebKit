@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,7 +39,7 @@ ALWAYS_INLINE void SlotVisitor::append(JSValue* slot, size_t count)
 {
     for (size_t i = 0; i < count; ++i) {
         JSValue& value = slot[i];
-        internalAppend(value);
+        internalAppend(&value, value);
     }
 }
 
@@ -48,25 +48,25 @@ inline void SlotVisitor::appendUnbarrieredPointer(T** slot)
 {
     ASSERT(slot);
     JSCell* cell = *slot;
-    internalAppend(cell);
+    internalAppend(slot, cell);
 }
 
 ALWAYS_INLINE void SlotVisitor::append(JSValue* slot)
 {
     ASSERT(slot);
-    internalAppend(*slot);
+    internalAppend(slot, *slot);
 }
 
 ALWAYS_INLINE void SlotVisitor::appendUnbarrieredValue(JSValue* slot)
 {
     ASSERT(slot);
-    internalAppend(*slot);
+    internalAppend(slot, *slot);
 }
 
 ALWAYS_INLINE void SlotVisitor::append(JSCell** slot)
 {
     ASSERT(slot);
-    internalAppend(*slot);
+    internalAppend(slot, *slot);
 }
 
 template<typename T>
@@ -74,14 +74,50 @@ ALWAYS_INLINE void SlotVisitor::appendUnbarrieredWeak(Weak<T>* weak)
 {
     ASSERT(weak);
     if (weak->get())
-        internalAppend(weak->get());
+        internalAppend(0, weak->get());
 }
 
-ALWAYS_INLINE void SlotVisitor::internalAppend(JSValue value)
+ALWAYS_INLINE void SlotVisitor::internalAppend(void* from, JSValue value)
 {
     if (!value || !value.isCell())
         return;
-    internalAppend(value.asCell());
+    internalAppend(from, value.asCell());
+}
+
+ALWAYS_INLINE void SlotVisitor::internalAppend(void* from, JSCell* cell)
+{
+    ASSERT(!m_isCheckingForDefaultMarkViolation);
+    if (!cell)
+        return;
+#if ENABLE(ALLOCATION_LOGGING)
+    dataLogF("JSC GC noticing reference from %p to %p.\n", from, cell);
+#else
+    UNUSED_PARAM(from);
+#endif
+#if ENABLE(GC_VALIDATION)
+    validate(cell);
+#endif
+    if (Heap::testAndSetMarked(cell) || !cell->structure())
+        return;
+
+    m_visitCount++;
+        
+    MARK_LOG_CHILD(*this, cell);
+
+    // Should never attempt to mark something that is zapped.
+    ASSERT(!cell->isZapped());
+        
+    m_stack.append(cell);
+}
+
+template<typename T> inline void SlotVisitor::append(WriteBarrierBase<T>* slot)
+{
+    internalAppend(slot, *slot->slot());
+}
+
+ALWAYS_INLINE void SlotVisitor::appendValues(WriteBarrierBase<Unknown>* barriers, size_t count)
+{
+    append(barriers->slot(), count);
 }
 
 inline void SlotVisitor::addWeakReferenceHarvester(WeakReferenceHarvester* weakReferenceHarvester)

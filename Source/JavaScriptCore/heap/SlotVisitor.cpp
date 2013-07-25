@@ -65,7 +65,7 @@ void SlotVisitor::append(ConservativeRoots& conservativeRoots)
     JSCell** roots = conservativeRoots.roots();
     size_t size = conservativeRoots.size();
     for (size_t i = 0; i < size; ++i)
-        internalAppend(roots[i]);
+        internalAppend(0, roots[i]);
 }
 
 ALWAYS_INLINE static void visitChildren(SlotVisitor& visitor, const JSCell* cell)
@@ -279,7 +279,7 @@ ALWAYS_INLINE bool JSString::shouldTryHashCons()
     return ((length() > 1) && !isRope() && !isHashConsSingleton());
 }
 
-ALWAYS_INLINE void SlotVisitor::internalAppend(JSValue* slot)
+ALWAYS_INLINE void SlotVisitor::internalAppend(void* from, JSValue* slot)
 {
     // This internalAppend is only intended for visits to object and array backing stores.
     // as it can change the JSValue pointed to be the argument when the original JSValue
@@ -316,7 +316,7 @@ ALWAYS_INLINE void SlotVisitor::internalAppend(JSValue* slot)
         }
     }
 
-    internalAppend(cell);
+    internalAppend(from, cell);
 }
 
 void SlotVisitor::harvestWeakReferences()

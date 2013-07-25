@@ -1486,7 +1486,7 @@ char* DFG_OPERATION operationAllocatePropertyStorageWithInitialCapacity(ExecStat
     NativeCallFrameTracer tracer(&vm, exec);
 
     return reinterpret_cast<char*>(
-        Butterfly::createUninitialized(vm, 0, initialOutOfLineCapacity, false, 0));
+        Butterfly::createUninitialized(vm, 0, 0, initialOutOfLineCapacity, false, 0));
 }
 
 char* DFG_OPERATION operationAllocatePropertyStorage(ExecState* exec, size_t newSize)
@@ -1495,7 +1495,7 @@ char* DFG_OPERATION operationAllocatePropertyStorage(ExecState* exec, size_t new
     NativeCallFrameTracer tracer(&vm, exec);
 
     return reinterpret_cast<char*>(
-        Butterfly::createUninitialized(vm, 0, newSize, false, 0));
+        Butterfly::createUninitialized(vm, 0, 0, newSize, false, 0));
 }
 
 char* DFG_OPERATION operationReallocateButterflyToHavePropertyStorageWithInitialCapacity(ExecState* exec, JSObject* object)

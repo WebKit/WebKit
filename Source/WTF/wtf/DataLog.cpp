@@ -56,6 +56,8 @@ static pthread_once_t initializeLogFileOnceKey = PTHREAD_ONCE_INIT;
 
 static FilePrintStream* file;
 
+static uint64_t fileData[(sizeof(FilePrintStream) + 7) / 8];
+
 static void initializeLogFileOnce()
 {
 #if DATA_LOG_TO_FILE
@@ -78,8 +80,11 @@ static void initializeLogFileOnce()
             fprintf(stderr, "Warning: Could not open log file %s for writing.\n", actualFilename);
     }
 #endif // DATA_LOG_TO_FILE
-    if (!file)
-        file = new FilePrintStream(stderr, FilePrintStream::Borrow);
+    if (!file) {
+        // Use placement new; this makes it easier to use dataLog() to debug
+        // fastMalloc.
+        file = new (fileData) FilePrintStream(stderr, FilePrintStream::Borrow);
+    }
     
     setvbuf(file->file(), 0, _IONBF, 0); // Prefer unbuffered output, so that we get a full log upon crash or deadlock.
 }

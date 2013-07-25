@@ -48,10 +48,11 @@ ASSERT_HAS_TRIVIAL_DESTRUCTOR(JSArray);
 
 const ClassInfo JSArray::s_info = {"Array", &JSNonFinalObject::s_info, 0, 0, CREATE_METHOD_TABLE(JSArray)};
 
-Butterfly* createArrayButterflyInDictionaryIndexingMode(VM& vm, unsigned initialLength)
+Butterfly* createArrayButterflyInDictionaryIndexingMode(
+    VM& vm, JSCell* intendedOwner, unsigned initialLength)
 {
     Butterfly* butterfly = Butterfly::create(
-        vm, 0, 0, true, IndexingHeader(), ArrayStorage::sizeFor(0));
+        vm, intendedOwner, 0, 0, true, IndexingHeader(), ArrayStorage::sizeFor(0));
     ArrayStorage* storage = butterfly->arrayStorage();
     storage->setLength(initialLength);
     storage->setVectorLength(0);
@@ -286,7 +287,7 @@ bool JSArray::unshiftCountSlowCase(VM& vm, bool addToFront, unsigned count)
         newStorageCapacity = currentCapacity;
     } else {
         size_t newSize = Butterfly::totalSize(0, propertyCapacity, true, ArrayStorage::sizeFor(desiredCapacity));
-        if (!vm.heap.tryAllocateStorage(newSize, &newAllocBase))
+        if (!vm.heap.tryAllocateStorage(this, newSize, &newAllocBase))
             return false;
         newStorageCapacity = desiredCapacity;
     }

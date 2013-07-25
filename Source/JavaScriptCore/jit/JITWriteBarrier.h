@@ -137,7 +137,7 @@ public:
 
 template<typename T> inline void SlotVisitor::append(JITWriteBarrier<T>* slot)
 {
-    internalAppend(slot->get());
+    internalAppend(0, slot->get());
 }
 
 }

@@ -87,6 +87,7 @@
 #include <pthread.h>
 #endif
 #include <string.h>
+#include <wtf/DataLog.h>
 #include <wtf/StdLibExtras.h>
 
 #if OS(DARWIN)
@@ -4171,12 +4172,22 @@ ALWAYS_INLINE void* malloc(size_t);
 
 void* fastMalloc(size_t size)
 {
-    return malloc<true>(size);
+    void* result = malloc<true>(size);
+#if ENABLE(ALLOCATION_LOGGING)
+    dataLogF("fastMalloc allocating %lu bytes (fastMalloc): %p.\n", size, result);
+#endif
+    return result;
 }
 
 TryMallocReturnValue tryFastMalloc(size_t size)
 {
-    return malloc<false>(size);
+    TryMallocReturnValue result = malloc<false>(size);
+#if ENABLE(ALLOCATION_LOGGING)
+    void* pointer;
+    (void)result.getValue(pointer);
+    dataLogF("fastMalloc allocating %lu bytes (tryFastMalloc): %p.\n", size, pointer);
+#endif
+    return result;
 }
 
 template <bool crashOnFailure>
@@ -4211,6 +4222,10 @@ void* malloc(size_t size) {
 extern "C" 
 #endif
 void free(void* ptr) {
+#if ENABLE(ALLOCATION_LOGGING)
+    dataLogF("fastFree freeing %p.\n", ptr);
+#endif
+    
 #ifndef WTF_CHANGES
   MallocHook::InvokeDeleteHook(ptr);
 #endif
@@ -4240,6 +4255,9 @@ void* fastCalloc(size_t n, size_t elem_size)
 #if ENABLE(WTF_MALLOC_VALIDATION)
     fastMallocValidate(result);
 #endif
+#if ENABLE(ALLOCATION_LOGGING)
+    dataLogF("fastMalloc contiguously allocating %lu * %lu bytes (fastCalloc): %p.\n", n, elem_size, result);
+#endif
     return result;
 }
 
@@ -4248,6 +4266,9 @@ TryMallocReturnValue tryFastCalloc(size_t n, size_t elem_size)
     void* result = calloc<false>(n, elem_size);
 #if ENABLE(WTF_MALLOC_VALIDATION)
     fastMallocValidate(result);
+#endif
+#if ENABLE(ALLOCATION_LOGGING)
+    dataLogF("fastMalloc contiguously allocating %lu * %lu bytes (tryFastCalloc): %p.\n", n, elem_size, result);
 #endif
     return result;
 }
@@ -4310,6 +4331,9 @@ void* fastRealloc(void* old_ptr, size_t new_size)
 #if ENABLE(WTF_MALLOC_VALIDATION)
     fastMallocValidate(result);
 #endif
+#if ENABLE(ALLOCATION_LOGGING)
+    dataLogF("fastMalloc reallocating %lu bytes (fastRealloc): %p -> %p.\n", new_size, old_ptr, result);
+#endif
     return result;
 }
 
@@ -4321,6 +4345,9 @@ TryMallocReturnValue tryFastRealloc(void* old_ptr, size_t new_size)
     void* result = realloc<false>(old_ptr, new_size);
 #if ENABLE(WTF_MALLOC_VALIDATION)
     fastMallocValidate(result);
+#endif
+#if ENABLE(ALLOCATION_LOGGING)
+    dataLogF("fastMalloc reallocating %lu bytes (tryFastRealloc): %p -> %p.\n", new_size, old_ptr, result);
 #endif
     return result;
 }

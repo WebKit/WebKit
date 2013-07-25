@@ -1,5 +1,80 @@
 2013-05-27  Filip Pizlo  <fpizlo@apple.com>
 
+        It should be possible to record heap operations (both FastMalloc and JSC GC)
+        https://bugs.webkit.org/show_bug.cgi?id=116848
+
+        Reviewed by Mark Hahnenberg.
+        
+        Record GC heap operations if ENABLE(ALLOCATION_LOGGING).
+
+        * API/JSManagedValue.mm:
+        * dfg/DFGOperations.cpp:
+        * heap/Heap.cpp:
+        (JSC::Heap::collect):
+        * heap/Heap.h:
+        (Heap):
+        (JSC::Heap::allocateWithNormalDestructor):
+        (JSC::Heap::allocateWithImmortalStructureDestructor):
+        (JSC::Heap::allocateWithoutDestructor):
+        (JSC::Heap::tryAllocateStorage):
+        (JSC::Heap::tryReallocateStorage):
+        (JSC):
+        (JSC::Heap::ascribeOwner):
+        * heap/SlotVisitor.cpp:
+        (JSC::SlotVisitor::append):
+        (JSC::SlotVisitor::internalAppend):
+        * heap/SlotVisitor.h:
+        (SlotVisitor):
+        * heap/SlotVisitorInlines.h:
+        (JSC::SlotVisitor::append):
+        (JSC::SlotVisitor::appendUnbarrieredPointer):
+        (JSC::SlotVisitor::appendUnbarrieredValue):
+        (JSC::SlotVisitor::appendUnbarrieredWeak):
+        (JSC::SlotVisitor::internalAppend):
+        (JSC):
+        (JSC::SlotVisitor::appendValues):
+        * jit/JITWriteBarrier.h:
+        (JSC::SlotVisitor::append):
+        * llint/LLIntCommon.h:
+        * runtime/Butterfly.h:
+        (Butterfly):
+        * runtime/ButterflyInlines.h:
+        (JSC::Butterfly::createUninitialized):
+        (JSC::Butterfly::create):
+        (JSC::Butterfly::growPropertyStorage):
+        (JSC::Butterfly::createOrGrowArrayRight):
+        (JSC):
+        (JSC::Butterfly::growArrayRight):
+        (JSC::Butterfly::resizeArray):
+        * runtime/JSArray.cpp:
+        (JSC::createArrayButterflyInDictionaryIndexingMode):
+        (JSC::JSArray::unshiftCountSlowCase):
+        * runtime/JSArray.h:
+        (JSC::createContiguousArrayButterfly):
+        (JSC::createArrayButterfly):
+        (JSC):
+        (JSC::JSArray::create):
+        (JSC::JSArray::tryCreateUninitialized):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::enterDictionaryIndexingModeWhenArrayStorageAlreadyExists):
+        (JSC::JSObject::createInitialIndexedStorage):
+        (JSC::JSObject::createArrayStorage):
+        (JSC::JSObject::constructConvertedArrayStorageWithoutCopyingElements):
+        (JSC::JSObject::increaseVectorLength):
+        (JSC::JSObject::ensureLengthSlow):
+        (JSC::JSObject::growOutOfLineStorage):
+        * runtime/JSObject.h:
+        (JSC::JSObject::JSObject):
+        * runtime/Operations.h:
+        * runtime/RegExpMatchesArray.cpp:
+        (JSC::RegExpMatchesArray::create):
+        * runtime/StructureInlines.h:
+        (JSC):
+        * runtime/WriteBarrier.h:
+        (JSC):
+
+2013-05-27  Filip Pizlo  <fpizlo@apple.com>
+
         testRunner should be able to tell you if a function is DFG compiled
         https://bugs.webkit.org/show_bug.cgi?id=116847
 

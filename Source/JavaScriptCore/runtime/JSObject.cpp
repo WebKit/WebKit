@@ -543,7 +543,7 @@ ArrayStorage* JSObject::enterDictionaryIndexingModeWhenArrayStorageAlreadyExists
             map->add(this, i).iterator->value.set(vm, this, value);
     }
 
-    Butterfly* newButterfly = storage->butterfly()->resizeArray(vm, structure(), 0, ArrayStorage::sizeFor(0));
+    Butterfly* newButterfly = storage->butterfly()->resizeArray(vm, this, structure(), 0, ArrayStorage::sizeFor(0));
     RELEASE_ASSERT(newButterfly);
     
     m_butterfly = newButterfly;
@@ -596,8 +596,8 @@ Butterfly* JSObject::createInitialIndexedStorage(VM& vm, unsigned length, size_t
     ASSERT(!structure()->needsSlowPutIndexing());
     ASSERT(!indexingShouldBeSparse());
     unsigned vectorLength = std::max(length, BASE_VECTOR_LEN);
-    Butterfly* newButterfly = Butterfly::createOrGrowArrayRight(m_butterfly, 
-        vm, structure(), structure()->outOfLineCapacity(), false, 0,
+    Butterfly* newButterfly = Butterfly::createOrGrowArrayRight(
+        m_butterfly, vm, this, structure(), structure()->outOfLineCapacity(), false, 0,
         elementSize * vectorLength);
     newButterfly->setPublicLength(length);
     newButterfly->setVectorLength(vectorLength);
@@ -642,8 +642,8 @@ ArrayStorage* JSObject::createArrayStorage(VM& vm, unsigned length, unsigned vec
 {
     IndexingType oldType = structure()->indexingType();
     ASSERT_UNUSED(oldType, !hasIndexedProperties(oldType));
-    Butterfly* newButterfly = Butterfly::createOrGrowArrayRight(m_butterfly, 
-        vm, structure(), structure()->outOfLineCapacity(), false, 0,
+    Butterfly* newButterfly = Butterfly::createOrGrowArrayRight(
+        m_butterfly, vm, this, structure(), structure()->outOfLineCapacity(), false, 0,
         ArrayStorage::sizeFor(vectorLength));
     RELEASE_ASSERT(newButterfly);
 
@@ -695,7 +695,7 @@ ArrayStorage* JSObject::constructConvertedArrayStorageWithoutCopyingElements(VM&
     unsigned propertySize = structure()->outOfLineSize();
     
     Butterfly* newButterfly = Butterfly::createUninitialized(
-        vm, 0, propertyCapacity, true, ArrayStorage::sizeFor(neededLength));
+        vm, this, 0, propertyCapacity, true, ArrayStorage::sizeFor(neededLength));
     
     memcpy(
         newButterfly->propertyStorage() - propertySize,
@@ -2310,7 +2310,9 @@ bool JSObject::increaseVectorLength(VM& vm, unsigned newLength)
 
     // Fast case - there is no precapacity. In these cases a realloc makes sense.
     if (LIKELY(!indexBias)) {
-        Butterfly* newButterfly = storage->butterfly()->growArrayRight(vm, structure(), structure()->outOfLineCapacity(), true, ArrayStorage::sizeFor(vectorLength), ArrayStorage::sizeFor(newVectorLength));
+        Butterfly* newButterfly = storage->butterfly()->growArrayRight(
+            vm, this, structure(), structure()->outOfLineCapacity(), true,
+            ArrayStorage::sizeFor(vectorLength), ArrayStorage::sizeFor(newVectorLength));
         if (!newButterfly)
             return false;
         m_butterfly = newButterfly;
@@ -2321,7 +2323,7 @@ bool JSObject::increaseVectorLength(VM& vm, unsigned newLength)
     // Remove some, but not all of the precapacity. Atomic decay, & capped to not overflow array length.
     unsigned newIndexBias = std::min(indexBias >> 1, MAX_STORAGE_VECTOR_LENGTH - newVectorLength);
     Butterfly* newButterfly = storage->butterfly()->resizeArray(
-        vm,
+        vm, this,
         structure()->outOfLineCapacity(), true, ArrayStorage::sizeFor(vectorLength),
         newIndexBias, true, ArrayStorage::sizeFor(newVectorLength));
     if (!newButterfly)
@@ -2344,7 +2346,7 @@ void JSObject::ensureLengthSlow(VM& vm, unsigned length)
         MAX_STORAGE_VECTOR_LENGTH);
     unsigned oldVectorLength = m_butterfly->vectorLength();
     m_butterfly = m_butterfly->growArrayRight(
-        vm, structure(), structure()->outOfLineCapacity(), true,
+        vm, this, structure(), structure()->outOfLineCapacity(), true,
         oldVectorLength * sizeof(EncodedJSValue),
         newVectorLength * sizeof(EncodedJSValue));
     if (hasDouble(structure()->indexingType())) {
@@ -2361,7 +2363,7 @@ Butterfly* JSObject::growOutOfLineStorage(VM& vm, size_t oldSize, size_t newSize
     // It's important that this function not rely on structure(), for the property
     // capacity, since we might have already mutated the structure in-place.
     
-    return m_butterfly->growPropertyStorage(vm, structure(), oldSize, newSize);
+    return m_butterfly->growPropertyStorage(vm, this, structure(), oldSize, newSize);
 }
 
 bool JSObject::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)

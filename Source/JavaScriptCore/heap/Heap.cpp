@@ -702,6 +702,10 @@ static double minute = 60.0;
 
 void Heap::collect(SweepToggle sweepToggle)
 {
+#if ENABLE(ALLOCATION_LOGGING)
+    dataLogF("JSC GC starting collection.\n");
+#endif
+    
     SamplingRegion samplingRegion("Garbage Collection");
     
     RELEASE_ASSERT(!m_deferralDepth);
@@ -814,6 +818,10 @@ void Heap::collect(SweepToggle sweepToggle)
 
     if (Options::showObjectStatistics())
         HeapStatistics::showObjectStatistics(this);
+
+#if ENABLE(ALLOCATION_LOGGING)
+    dataLogF("JSC GC finishing collection.\n");
+#endif
 }
 
 bool Heap::collectIfNecessaryOrDefer()
