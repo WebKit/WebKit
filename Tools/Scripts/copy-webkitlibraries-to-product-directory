@@ -108,7 +108,11 @@ if ($ENV{ENABLE_FTL_JIT}) {
         $llvmIncludePackage = "WebKitLibraries/LLVMIncludesMountainLion.tar.bz2";
     } else {
         print "Don't know where to find LLVM!\n";
+        print "\n";
         print "Try defining LLVM_LIBRARY_PACKAGE and LLVM_INCLUDE_PACKAGE.\n";
+        print "\n";
+        print "Alternatively, you can check out llvm trunk into the WebKit directory:\n";
+        print "svn co http://llvm.org/svn/llvm-project/llvm/trunk llvm\n";
         exit 1;
     }
 
@@ -134,6 +138,14 @@ if ($ENV{ENABLE_FTL_JIT}) {
     my $shouldUpdateLLVMLibraryToken = 0;
 
     if ($useOwnLLVM) {
+
+        chdir $ownLLVMDirectory;
+
+        if (!-e "Makefile.config") {
+            print("Configuring LLVM.\n");
+            (system("./configure --enable-optimized=yes --enable-backtraces=no --enable-targets=x86_64 --enable-libcpp=yes")==0) or die;
+        }
+
         print("Building LLVM.\n");
         chdir $ownLLVMDirectory;
         my $numCPUString = `sysctl hw.ncpu`;
