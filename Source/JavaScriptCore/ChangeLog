@@ -1,5 +1,13 @@
 2013-07-25  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
+        [Qt] Fix test build after FTL upstream
+
+        Unreviewed build fix.
+
+        * Target.pri:
+
+2013-07-25  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
         [Qt] Build fix after FTL.
 
         Un Reviewed build fix.

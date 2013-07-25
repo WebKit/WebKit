@@ -391,6 +391,11 @@ win32:!win32-g++*:isEqual(QT_ARCH, "x86_64"):{
     ASM_SOURCES += jit/JITStubsMSVC64.asm
 }
 
+build?(qttestsupport) {
+    HEADERS += API/JSCTestRunnerUtils.h
+    SOURCES += API/JSCTestRunnerUtils.cpp
+}
+
 HEADERS += $$files(*.h, true)
 
 *sh4* {
