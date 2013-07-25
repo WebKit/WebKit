@@ -1,3 +1,70 @@
+2013-07-24  Ruth Fong  <ruth_fong@apple.com>
+
+        Rename WebColorChooserProxy
+        <rdar://problem/14528039> and https://bugs.webkit.org/show_bug.cgi?id=119025
+
+        Reviewed by Brady Eidson.
+
+        Renamed WebColorChooserProxy to WebColorPicker since the name WebColorChoooserProxy
+        implies that it represents the same object as WebColorChooser, which is not true.
+        Also, renamed createColorChooserProxy to createColorPicker in WebPageProxy and 
+        platform-equivalent versions of it.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::createColorPicker):
+        * UIProcess/API/gtk/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::createColorPicker):
+        * UIProcess/API/qt/raw/qrawwebview.cpp:
+        (QRawWebViewPrivate::createColorPicker):
+        * UIProcess/API/qt/raw/qrawwebview_p_p.h:
+        * UIProcess/CoordinatedGraphics/WebView.cpp:
+        (WebKit::WebView::createColorPicker):
+        * UIProcess/CoordinatedGraphics/WebView.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebColorChooserProxy.cpp: Removed.
+        * UIProcess/WebColorChooserProxy.h: Removed.
+        * UIProcess/WebColorPicker.cpp: Copied from Source/WebKit2/UIProcess/WebColorChooserProxy.cpp.
+        (WebKit::WebColorPicker::WebColorPicker):
+        (WebKit::WebColorPicker::~WebColorPicker):
+        (WebKit::WebColorPicker::endChooser):
+        (WebKit::WebColorPicker::setSelectedColor):
+        * UIProcess/WebColorPicker.h: Copied from Source/WebKit2/UIProcess/WebColorChooserProxy.h.
+        (WebKit::WebColorPicker::create):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::close):
+        (WebKit::WebPageProxy::showColorChooser):
+        (WebKit::WebPageProxy::setColorChooserColor):
+        (WebKit::WebPageProxy::endColorChooser):
+        (WebKit::WebPageProxy::didEndColorChooser):
+        (WebKit::WebPageProxy::resetStateAfterProcessExited):
+        * UIProcess/WebPageProxy.h: Renamed m_colorChooser to m_colorPicker.
+        * UIProcess/qt/QtPageClient.cpp:
+        (WebKit::QtPageClient::createColorPicker):
+        * UIProcess/qt/QtPageClient.h:
+        * UIProcess/qt/WebColorChooserProxyQt.cpp: Removed.
+        * UIProcess/qt/WebColorChooserProxyQt.h: Removed.
+        * UIProcess/qt/WebColorPickerQt.cpp: Added.
+        (WebKit::ColorChooserContextObject::ColorChooserContextObject):
+        (WebKit::ColorChooserContextObject::currentColor):
+        (WebKit::ColorChooserContextObject::elementRect):
+        (WebKit::ColorChooserContextObject::accept):
+        (WebKit::ColorChooserContextObject::reject):
+        (WebKit::WebColorPickerQt::WebColorPickerQt):
+        (WebKit::WebColorPickerQt::~WebColorPickerQt):
+        (WebKit::WebColorPickerQt::createItem):
+        (WebKit::WebColorPickerQt::createContext):
+        (WebKit::WebColorPickerQt::setSelectedColor):
+        (WebKit::WebColorPickerQt::notifyColorSelected):
+        (WebKit::WebColorPickerQt::endChooser):
+        * UIProcess/qt/WebColorPickerQt.h: Added.
+        (WebKit::WebColorPickerQt::create):
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2013-07-24  Anders Carlsson  <andersca@apple.com>
 
         Crash when calling WKPageGetProcessIdentifier after aborted process launch

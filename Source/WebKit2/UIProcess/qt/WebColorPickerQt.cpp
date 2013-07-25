@@ -20,7 +20,7 @@
  */
 
 #include "config.h"
-#include "WebColorChooserProxyQt.h"
+#include "WebColorPickerQt.h"
 
 #include "qquickwebview_p.h"
 #include "qquickwebview_p_p.h"
@@ -58,8 +58,8 @@ private:
     QRectF m_rect;
 };
 
-WebColorChooserProxyQt::WebColorChooserProxyQt(WebColorChooserProxy::Client* client, QQuickWebView* webView, const Color& initialColor, const IntRect& elementRect)
-    : WebColorChooserProxy(client)
+WebColorPickerQt::WebColorPickerQt(WebColorPicker::Client* client, QQuickWebView* webView, const Color& initialColor, const IntRect& elementRect)
+    : WebColorPicker(client)
     , m_webView(webView)
 {
     const QRectF mappedRect= m_webView->mapRectFromWebContent(QRect(elementRect));
@@ -67,11 +67,11 @@ WebColorChooserProxyQt::WebColorChooserProxyQt(WebColorChooserProxy::Client* cli
     createItem(contextObject);
 }
 
-WebColorChooserProxyQt::~WebColorChooserProxyQt()
+WebColorPickerQt::~WebColorPickerQt()
 {
 }
 
-void WebColorChooserProxyQt::createItem(QObject* contextObject)
+void WebColorPickerQt::createItem(QObject* contextObject)
 {
     QQmlComponent* component = m_webView->experimental()->colorChooser();
     if (!component) {
@@ -102,7 +102,7 @@ void WebColorChooserProxyQt::createItem(QObject* contextObject)
     component->completeCreate();
 }
 
-void WebColorChooserProxyQt::createContext(QQmlComponent* component, QObject* contextObject)
+void WebColorPickerQt::createContext(QQmlComponent* component, QObject* contextObject)
 {
     QQmlContext* baseContext = component->creationContext();
     if (!baseContext)
@@ -114,7 +114,7 @@ void WebColorChooserProxyQt::createContext(QQmlComponent* component, QObject* co
     m_context->setContextObject(contextObject);
 }
 
-void WebColorChooserProxyQt::setSelectedColor(const Color&)
+void WebColorPickerQt::setSelectedColor(const Color&)
 {
     // This is suppose to be used to react to DOM changes. When
     // a user script changes the input value, the method gives the
@@ -123,7 +123,7 @@ void WebColorChooserProxyQt::setSelectedColor(const Color&)
     // And yes, the name sounds misleading but comes from WebCore.
 }
 
-void WebColorChooserProxyQt::notifyColorSelected(const QColor& color)
+void WebColorPickerQt::notifyColorSelected(const QColor& color)
 {
     if (!m_client)
         return;
@@ -135,7 +135,7 @@ void WebColorChooserProxyQt::notifyColorSelected(const QColor& color)
     endChooser();
 }
 
-void WebColorChooserProxyQt::endChooser()
+void WebColorPickerQt::endChooser()
 {
     m_colorChooser.clear();
     m_context.clear();
@@ -148,5 +148,5 @@ void WebColorChooserProxyQt::endChooser()
 
 } // namespace WebKit
 
-#include "WebColorChooserProxyQt.moc"
-#include "moc_WebColorChooserProxyQt.cpp"
+#include "WebColorPickerQt.moc"
+#include "moc_WebColorPickerQt.cpp"

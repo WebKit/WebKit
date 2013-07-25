@@ -39,7 +39,7 @@
 #include "ShareableBitmap.h"
 #include "WKBase.h"
 #include "WKPagePrivate.h"
-#include "WebColorChooserProxy.h"
+#include "WebColorPicker.h"
 #include "WebContextMenuItemData.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebFindClient.h"
@@ -232,7 +232,7 @@ private:
 class WebPageProxy
     : public TypedAPIObject<APIObject::TypePage>
 #if ENABLE(INPUT_TYPE_COLOR)
-    , public WebColorChooserProxy::Client
+    , public WebColorPicker::Client
 #endif
     , public WebPopupMenuProxy::Client
     , public CoreIPC::MessageReceiver {
@@ -1199,7 +1199,7 @@ private:
     Deque<QueuedTouchEvents> m_touchEventQueue;
 #endif
 #if ENABLE(INPUT_TYPE_COLOR)
-    RefPtr<WebColorChooserProxy> m_colorChooser;
+    RefPtr<WebColorPicker> m_colorPicker;
     RefPtr<WebColorPickerResultListenerProxy> m_colorPickerResultListener;
 #endif
 

@@ -84,7 +84,7 @@ private:
     virtual PassRefPtr<WebPopupMenuProxy> createPopupMenuProxy(WebPageProxy*);
     virtual PassRefPtr<WebContextMenuProxy> createContextMenuProxy(WebPageProxy*);
 #if ENABLE(INPUT_TYPE_COLOR)
-    virtual PassRefPtr<WebColorChooserProxy> createColorChooserProxy(WebPageProxy*, const WebCore::Color& intialColor, const WebCore::IntRect&);
+    virtual PassRefPtr<WebColorPicker> createColorPicker(WebPageProxy*, const WebCore::Color& intialColor, const WebCore::IntRect&);
 #endif
     virtual void setFindIndicator(PassRefPtr<FindIndicator>, bool fadeOut, bool animate);
     virtual void flashBackingStoreUpdates(const Vector<WebCore::IntRect>& updateRects);

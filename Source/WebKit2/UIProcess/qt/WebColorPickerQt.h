@@ -18,11 +18,11 @@
  *
  */
 
-#ifndef WebColorChooserProxyQt_h
-#define WebColorChooserProxyQt_h
+#ifndef WebColorPickerQt_h
+#define WebColorPickerQt_h
 
 #include "IntRect.h"
-#include "WebColorChooserProxy.h"
+#include "WebColorPicker.h"
 #include <QtCore/QObject>
 #include <wtf/OwnPtr.h>
 
@@ -40,15 +40,15 @@ class Color;
 
 namespace WebKit {
 
-class WebColorChooserProxyQt : public QObject, public WebColorChooserProxy {
+class WebColorPickerQt : public QObject, public WebColorPicker {
     Q_OBJECT
 
 public:
-    static PassRefPtr<WebColorChooserProxy> create(WebColorChooserProxy::Client* client, QQuickWebView* webView, const WebCore::Color& initialColor, const WebCore::IntRect& elementRect)
+    static PassRefPtr<WebColorPicker> create(WebColorPicker::Client* client, QQuickWebView* webView, const WebCore::Color& initialColor, const WebCore::IntRect& elementRect)
     {
-        return adoptRef(new WebColorChooserProxyQt(client, webView, initialColor, elementRect));
+        return adoptRef(new WebColorPickerQt(client, webView, initialColor, elementRect));
     }
-    ~WebColorChooserProxyQt();
+    ~WebColorPickerQt();
 
     virtual void setSelectedColor(const WebCore::Color&);
 
@@ -59,7 +59,7 @@ private Q_SLOTS:
     void notifyColorSelected(const QColor&);
 
 private:
-    WebColorChooserProxyQt(WebColorChooserProxy::Client*, QQuickWebView*, const WebCore::Color&, const WebCore::IntRect&);
+    WebColorPickerQt(WebColorPicker::Client*, QQuickWebView*, const WebCore::Color&, const WebCore::IntRect&);
 
     void createItem(QObject*);
     void createContext(QQmlComponent*, QObject*);
@@ -72,4 +72,4 @@ private:
 
 } // namespace WebKit
 
-#endif // WebColorChooserProxyQt_h
+#endif // WebColorPickerQt_h

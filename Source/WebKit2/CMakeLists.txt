@@ -265,7 +265,7 @@ set(WebKit2_SOURCES
     UIProcess/WebBackForwardList.cpp
     UIProcess/WebBatteryManagerProxy.cpp
     UIProcess/WebBatteryProvider.cpp
-    UIProcess/WebColorChooserProxy.cpp
+    UIProcess/WebColorPicker.cpp
     UIProcess/WebColorPickerResultListenerProxy.cpp
     UIProcess/WebConnectionToWebProcess.cpp
     UIProcess/WebContext.cpp

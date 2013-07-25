@@ -406,7 +406,7 @@
 		37F90DE31376560E0051CF68 /* HTTPCookieAcceptPolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = F638954F133BEF38008941D5 /* HTTPCookieAcceptPolicy.h */; };
 		3F87B9BD158940120090FF62 /* WebColorChooser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3F87B9BA15893F630090FF62 /* WebColorChooser.cpp */; };
 		3F87B9BE158940190090FF62 /* WebColorChooser.h in Headers */ = {isa = PBXBuildFile; fileRef = 3F87B9BB15893F630090FF62 /* WebColorChooser.h */; };
-		3F87B9C0158940D80090FF62 /* WebColorChooserProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 3F87B9BF158940D80090FF62 /* WebColorChooserProxy.h */; };
+		3F87B9C0158940D80090FF62 /* WebColorPicker.h in Headers */ = {isa = PBXBuildFile; fileRef = 3F87B9BF158940D80090FF62 /* WebColorPicker.h */; };
 		4F601432155C5AA2001FBDE0 /* BlockingResponseMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F601430155C5A32001FBDE0 /* BlockingResponseMap.h */; };
 		51021E9C12B16788005C033C /* WebContextMenuClientMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51021E9B12B16788005C033C /* WebContextMenuClientMac.mm */; };
 		510AFFB916542048001BA05E /* WebResourceLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 510AFFB716542048001BA05E /* WebResourceLoader.cpp */; };
@@ -1196,7 +1196,7 @@
 		EDCA71B7128DDA8C00201B26 /* WKBundlePageOverlay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A22F1001289FCD90085E74F /* WKBundlePageOverlay.cpp */; };
 		F036978515F4BE6B00C3A80E /* WKColorPickerResultListener.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F036978315F4BE6B00C3A80E /* WKColorPickerResultListener.cpp */; };
 		F036978615F4BE6B00C3A80E /* WKColorPickerResultListener.h in Headers */ = {isa = PBXBuildFile; fileRef = F036978415F4BE6B00C3A80E /* WKColorPickerResultListener.h */; };
-		F036978815F4BF0500C3A80E /* WebColorChooserProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F036978715F4BF0500C3A80E /* WebColorChooserProxy.cpp */; };
+		F036978815F4BF0500C3A80E /* WebColorPicker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F036978715F4BF0500C3A80E /* WebColorPicker.cpp */; };
 		F036978B15F4BF1300C3A80E /* WebColorPickerResultListenerProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F036978915F4BF1300C3A80E /* WebColorPickerResultListenerProxy.cpp */; };
 		F6113E25126CE1820057D0A7 /* WebUserContentURLPattern.h in Headers */ = {isa = PBXBuildFile; fileRef = F6113E24126CE1820057D0A7 /* WebUserContentURLPattern.h */; };
 		F6113E28126CE19B0057D0A7 /* WKUserContentURLPattern.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F6113E26126CE19B0057D0A7 /* WKUserContentURLPattern.cpp */; };
@@ -1871,7 +1871,7 @@
 		37F623B712A57B6200E3FDF6 /* WKFindOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKFindOptions.h; sourceTree = "<group>"; };
 		3F87B9BA15893F630090FF62 /* WebColorChooser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebColorChooser.cpp; sourceTree = "<group>"; };
 		3F87B9BB15893F630090FF62 /* WebColorChooser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebColorChooser.h; sourceTree = "<group>"; };
-		3F87B9BF158940D80090FF62 /* WebColorChooserProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebColorChooserProxy.h; sourceTree = "<group>"; };
+		3F87B9BF158940D80090FF62 /* WebColorPicker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebColorPicker.h; sourceTree = "<group>"; };
 		4F601430155C5A32001FBDE0 /* BlockingResponseMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlockingResponseMap.h; sourceTree = "<group>"; };
 		510031F61379CACB00C8DFE4 /* SecItemShim.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = SecItemShim.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		51021E9B12B16788005C033C /* WebContextMenuClientMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebContextMenuClientMac.mm; sourceTree = "<group>"; };
@@ -2724,7 +2724,7 @@
 		E1EE53E611F8CFFB00CCBEE4 /* InjectedBundlePageEditorClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundlePageEditorClient.cpp; sourceTree = "<group>"; };
 		F036978315F4BE6B00C3A80E /* WKColorPickerResultListener.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKColorPickerResultListener.cpp; sourceTree = "<group>"; };
 		F036978415F4BE6B00C3A80E /* WKColorPickerResultListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKColorPickerResultListener.h; sourceTree = "<group>"; };
-		F036978715F4BF0500C3A80E /* WebColorChooserProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebColorChooserProxy.cpp; sourceTree = "<group>"; };
+		F036978715F4BF0500C3A80E /* WebColorPicker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebColorPicker.cpp; sourceTree = "<group>"; };
 		F036978915F4BF1300C3A80E /* WebColorPickerResultListenerProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebColorPickerResultListenerProxy.cpp; sourceTree = "<group>"; };
 		F036978A15F4BF1300C3A80E /* WebColorPickerResultListenerProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebColorPickerResultListenerProxy.h; sourceTree = "<group>"; };
 		F6113E24126CE1820057D0A7 /* WebUserContentURLPattern.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebUserContentURLPattern.h; sourceTree = "<group>"; };
@@ -4046,8 +4046,8 @@
 				512E35F0130B638C00ABD19A /* WebApplicationCacheManagerProxy.messages.in */,
 				BC72BA1B11E64907001EB4EA /* WebBackForwardList.cpp */,
 				BC72BA1C11E64907001EB4EA /* WebBackForwardList.h */,
-				F036978715F4BF0500C3A80E /* WebColorChooserProxy.cpp */,
-				3F87B9BF158940D80090FF62 /* WebColorChooserProxy.h */,
+				F036978715F4BF0500C3A80E /* WebColorPicker.cpp */,
+				3F87B9BF158940D80090FF62 /* WebColorPicker.h */,
 				F036978915F4BF1300C3A80E /* WebColorPickerResultListenerProxy.cpp */,
 				F036978A15F4BF1300C3A80E /* WebColorPickerResultListenerProxy.h */,
 				BC4A62A514744EC6006C681A /* WebConnectionToWebProcess.cpp */,
@@ -5542,7 +5542,7 @@
 				BCF50728124329AA005955AE /* WebCertificateInfo.h in Headers */,
 				BC032D7510F4378D0058C15A /* WebChromeClient.h in Headers */,
 				3F87B9BE158940190090FF62 /* WebColorChooser.h in Headers */,
-				3F87B9C0158940D80090FF62 /* WebColorChooserProxy.h in Headers */,
+				3F87B9C0158940D80090FF62 /* WebColorPicker.h in Headers */,
 				BC4A6290147312BE006C681A /* WebConnection.h in Headers */,
 				BC4A6292147312BE006C681A /* WebConnectionClient.h in Headers */,
 				1A1FEC1D1627B45700700F6D /* WebConnectionMessages.h in Headers */,
@@ -6814,7 +6814,7 @@
 				BC72B9FA11E6476B001EB4EA /* WebBackForwardListProxy.cpp in Sources */,
 				BC111A5A112F4FBB00337BAB /* WebChromeClient.cpp in Sources */,
 				3F87B9BD158940120090FF62 /* WebColorChooser.cpp in Sources */,
-				F036978815F4BF0500C3A80E /* WebColorChooserProxy.cpp in Sources */,
+				F036978815F4BF0500C3A80E /* WebColorPicker.cpp in Sources */,
 				F036978B15F4BF1300C3A80E /* WebColorPickerResultListenerProxy.cpp in Sources */,
 				BC4A628F147312BE006C681A /* WebConnection.cpp in Sources */,
 				BC4A6291147312BE006C681A /* WebConnectionClient.cpp in Sources */,

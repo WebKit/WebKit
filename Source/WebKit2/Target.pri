@@ -242,7 +242,7 @@ HEADERS += \
     UIProcess/WebBackForwardList.h \
     UIProcess/WebBatteryManagerProxy.h \
     UIProcess/WebBatteryProvider.h \
-    UIProcess/WebColorChooserProxy.h \
+    UIProcess/WebColorPicker.h \
     UIProcess/WebColorPickerResultListenerProxy.h \
     UIProcess/WebConnectionToWebProcess.h \
     UIProcess/WebContext.h \
@@ -600,7 +600,7 @@ SOURCES += \
     UIProcess/WebBackForwardList.cpp \
     UIProcess/WebBatteryManagerProxy.cpp \
     UIProcess/WebBatteryProvider.cpp \
-    UIProcess/WebColorChooserProxy.cpp \
+    UIProcess/WebColorPicker.cpp \
     UIProcess/WebColorPickerResultListenerProxy.cpp \
     UIProcess/WebConnectionToWebProcess.cpp \
     UIProcess/WebContext.cpp \
@@ -847,9 +847,9 @@ have?(QTQUICK) {
 
     enable?(INPUT_TYPE_COLOR) {
         HEADERS += \
-            UIProcess/qt/WebColorChooserProxyQt.h
+            UIProcess/qt/WebColorPickerQt.h
         SOURCES += \
-            UIProcess/qt/WebColorChooserProxyQt.cpp
+            UIProcess/qt/WebColorPickerQt.cpp
     }
 }
 

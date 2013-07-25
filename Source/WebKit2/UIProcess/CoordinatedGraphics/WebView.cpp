@@ -412,7 +412,7 @@ PassRefPtr<WebContextMenuProxy> WebView::createContextMenuProxy(WebPageProxy*)
 }
 
 #if ENABLE(INPUT_TYPE_COLOR)
-PassRefPtr<WebColorChooserProxy> WebView::createColorChooserProxy(WebPageProxy*, const WebCore::Color&, const WebCore::IntRect&)
+PassRefPtr<WebColorPicker> WebView::createColorPicker(WebPageProxy*, const WebCore::Color&, const WebCore::IntRect&)
 {
     notImplemented();
     return 0;

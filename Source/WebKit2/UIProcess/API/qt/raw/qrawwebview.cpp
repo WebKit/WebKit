@@ -190,10 +190,10 @@ PassRefPtr<WebKit::WebContextMenuProxy> QRawWebViewPrivate::createContextMenuPro
 }
 
 #if ENABLE(INPUT_TYPE_COLOR)
-PassRefPtr<WebKit::WebColorChooserProxy> QRawWebViewPrivate::createColorChooserProxy(WebKit::WebPageProxy*, const WebCore::Color& intialColor, const WebCore::IntRect&)
+PassRefPtr<WebKit::WebColorPicker> QRawWebViewPrivate::createColorPicker(WebKit::WebPageProxy*, const WebCore::Color& intialColor, const WebCore::IntRect&)
 {
     notImplemented();
-    return PassRefPtr<WebKit::WebColorChooserProxy>();
+    return PassRefPtr<WebKit::WebColorPicker>();
 }
 #endif
 

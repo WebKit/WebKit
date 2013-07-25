@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Samsung Electronics. All rights reserved.
+ * Copyright (C) 2012 Intel Corporation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -10,7 +10,7 @@
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS AS IS''
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
  * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
  * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
@@ -23,38 +23,53 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebColorChooserProxy.h"
+#ifndef WebColorPicker_h
+#define WebColorPicker_h
 
 #if ENABLE(INPUT_TYPE_COLOR)
 
+#include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
+
+namespace WebCore {
+class Color;
+}
+
 namespace WebKit {
 
-WebColorChooserProxy::WebColorChooserProxy(Client* client)
-    : m_client(client)
-{
-}
+class WebPageProxy;
 
-WebColorChooserProxy::~WebColorChooserProxy()
-{
-}
+class WebColorPicker : public RefCounted<WebColorPicker> {
+public:
+    class Client {
+    protected:
+        virtual ~Client() { }
 
-void WebColorChooserProxy::endChooser()
-{
-    if (!m_client)
-        return;
+    public:
+        virtual void didChooseColor(const WebCore::Color&) = 0;
+        virtual void didEndColorChooser() = 0;
+    };
 
-    m_client->didEndColorChooser();
-}
+    static PassRefPtr<WebColorPicker> create(Client* client)
+    {
+        return adoptRef(new WebColorPicker(client));
+    }
 
-void WebColorChooserProxy::setSelectedColor(const WebCore::Color& color)
-{
-    if (!m_client)
-        return;
+    virtual ~WebColorPicker();
 
-    m_client->didChooseColor(color);
-}
+    void invalidate() { m_client = 0; }
+
+    virtual void endChooser();
+    virtual void setSelectedColor(const WebCore::Color&);
+
+protected:
+    explicit WebColorPicker(Client*);
+
+    Client* m_client;
+};
 
 } // namespace WebKit
 
 #endif // ENABLE(INPUT_TYPE_COLOR)
+
+#endif // WebColorPicker_h
