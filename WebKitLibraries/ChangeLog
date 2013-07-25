@@ -1,3 +1,12 @@
+2013-04-30  Filip Pizlo  <fpizlo@apple.com>
+
+        Updated LLVM drops to include MCJIT fixes and newly exposed API.
+
+        Rubber stamped by Mark Hahnenberg.
+
+        * LLVMIncludesMountainLion.tar.bz2:
+        * LLVMLibrariesMountainLion.tar.bz2:
+
 2013-04-16  Filip Pizlo  <fpizlo@apple.com>
 
         Updated LLVM drops to include MCJIT fixes.
