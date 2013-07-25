@@ -49,7 +49,15 @@ public:
 
     // hasAutoZIndex only returns true if the element is positioned or a flex-item since
     // position:static elements that are not flex-items get their z-index coerced to auto.
-    virtual bool requiresLayer() const OVERRIDE { return isRoot() || isPositioned() || createsGroup() || hasClipPath() || hasOverflowClip() || hasTransform() || hasHiddenBackface() || hasReflection() || style()->specifiesColumns() || !style()->hasAutoZIndex() || isFloatingWithShapeOutside(); }
+    virtual bool requiresLayer() const OVERRIDE
+    {
+        return isRoot() || isPositioned() || createsGroup() || hasClipPath() || hasOverflowClip()
+            || hasTransform() || hasHiddenBackface() || hasReflection() || style()->specifiesColumns()
+#if ENABLE(CSS_SHAPES)
+            || isFloatingWithShapeOutside()
+#endif
+            || !style()->hasAutoZIndex();
+    }
 
     virtual bool backgroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect) const OVERRIDE;
 

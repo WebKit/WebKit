@@ -136,10 +136,12 @@ public:
 
     LengthSize m_pageSize;
 
+#if ENABLE(CSS_SHAPES)
     RefPtr<ShapeValue> m_shapeInside;
     RefPtr<ShapeValue> m_shapeOutside;
     Length m_shapeMargin;
     Length m_shapePadding;
+#endif
 
     RefPtr<ClipPathOperation> m_clipPath;
 

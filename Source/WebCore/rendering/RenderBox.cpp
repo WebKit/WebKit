@@ -1224,8 +1224,12 @@ static bool isCandidateForOpaquenessTest(RenderBox* childBox)
     RenderStyle* childStyle = childBox->style();
     if (childStyle->position() != StaticPosition && childBox->containingBlock() != childBox->parent())
         return false;
-    if (childStyle->visibility() != VISIBLE || childStyle->shapeOutside())
+    if (childStyle->visibility() != VISIBLE)
         return false;
+#if ENABLE(CSS_SHAPES)
+    if (childStyle->shapeOutside())
+        return false;
+#endif
     if (!childBox->width() || !childBox->height())
         return false;
     if (RenderLayer* childLayer = childBox->layer()) {

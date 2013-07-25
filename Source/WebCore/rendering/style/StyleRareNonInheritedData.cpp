@@ -46,10 +46,12 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
 #endif
     , m_mask(FillLayer(MaskFillLayer))
     , m_pageSize()
+#if ENABLE(CSS_SHAPES)
     , m_shapeInside(RenderStyle::initialShapeInside())
     , m_shapeOutside(RenderStyle::initialShapeOutside())
     , m_shapeMargin(RenderStyle::initialShapeMargin())
     , m_shapePadding(RenderStyle::initialShapePadding())
+#endif
     , m_clipPath(RenderStyle::initialClipPath())
     , m_visitedLinkBackgroundColor(RenderStyle::initialBackgroundColor())
     , m_order(RenderStyle::initialOrder())
@@ -120,10 +122,12 @@ StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonInherited
     , m_mask(o.m_mask)
     , m_maskBoxImage(o.m_maskBoxImage)
     , m_pageSize(o.m_pageSize)
+#if ENABLE(CSS_SHAPES)
     , m_shapeInside(o.m_shapeInside)
     , m_shapeOutside(o.m_shapeOutside)
     , m_shapeMargin(o.m_shapeMargin)
     , m_shapePadding(o.m_shapePadding)
+#endif
     , m_clipPath(o.m_clipPath)
 #if ENABLE(CSS3_TEXT)
     , m_textDecorationColor(o.m_textDecorationColor)
@@ -209,10 +213,12 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && m_mask == o.m_mask
         && m_maskBoxImage == o.m_maskBoxImage
         && m_pageSize == o.m_pageSize
+#if ENABLE(CSS_SHAPES)
         && m_shapeInside == o.m_shapeInside
         && m_shapeOutside == o.m_shapeOutside
         && m_shapeMargin == o.m_shapeMargin
         && m_shapePadding == o.m_shapePadding
+#endif
         && m_clipPath == o.m_clipPath
 #if ENABLE(CSS3_TEXT)
         && m_textDecorationColor == o.m_textDecorationColor

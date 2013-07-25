@@ -1,3 +1,32 @@
+2013-07-25  Bear Travis  <betravis@adobe.com>
+
+        [CSS Shapes] Shape methods and member variables should be guarded with the CSS_SHAPES flag
+        https://bugs.webkit.org/show_bug.cgi?id=117277
+
+        Reviewed by Alexandru Chiculita.
+
+        This patch adds some compile guards that were missing from the RenderStyle and
+        StyleRareNonInheritedData files. When the compile guard caused parameters to
+        not be used, the parameters were marked using UNUSED_PARAM.
+
+        * css/CSSPropertyNames.in: Inserting a line to trigger build.
+        * rendering/RenderBlock.cpp:
+        (WebCore::shapeInfoRequiresRelayout):
+        (WebCore::RenderBlock::updateRegionsAndShapesBeforeChildLayout):
+        (WebCore::RenderBlock::logicalRightFloatOffsetForLine):
+        * rendering/RenderBox.cpp:
+        (WebCore::isCandidateForOpaquenessTest):
+        * rendering/RenderBox.h:
+        * rendering/RenderObject.h:
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::changeRequiresLayout):
+        (WebCore::RenderStyle::changeRequiresRepaint):
+        * rendering/style/RenderStyle.h:
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator==):
+        * rendering/style/StyleRareNonInheritedData.h:
+
 2013-07-24  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Introduce toSVGPatternElement(), use it

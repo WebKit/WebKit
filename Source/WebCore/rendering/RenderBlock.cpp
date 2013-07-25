@@ -1468,28 +1468,27 @@ void RenderBlock::markShapeInsideDescendantsForLayout()
 }
 #endif
 
+#if ENABLE(CSS_SHAPES)
 static inline bool shapeInfoRequiresRelayout(const RenderBlock* block)
 {
-#if !ENABLE(CSS_SHAPES)
-    return false;
-#else
     ShapeInsideInfo* info = block->shapeInsideInfo();
     if (info)
         info->setNeedsLayout(info->shapeSizeDirty());
     else
         info = block->layoutShapeInsideInfo();
     return info && info->needsLayout();
-#endif
 }
+#endif
 
 bool RenderBlock::updateRegionsAndShapesBeforeChildLayout(RenderFlowThread* flowThread)
 {
 #if ENABLE(CSS_SHAPES)
     if (!flowThread && !shapeInsideInfo())
+        return shapeInfoRequiresRelayout(this);
 #else
     if (!flowThread)
+        return false;
 #endif
-        return shapeInfoRequiresRelayout(this);
 
     LayoutUnit oldHeight = logicalHeight();
     LayoutUnit oldTop = logicalTop();
@@ -1509,8 +1508,12 @@ bool RenderBlock::updateRegionsAndShapesBeforeChildLayout(RenderFlowThread* flow
 
     setLogicalHeight(oldHeight);
     setLogicalTop(oldTop);
-    
+
+#if ENABLE(CSS_SHAPES)
     return shapeInfoRequiresRelayout(this);
+#else
+    return false;
+#endif
 }
 
 #if ENABLE(CSS_SHAPES)
@@ -4549,6 +4552,8 @@ LayoutUnit RenderBlock::logicalRightFloatOffsetForLine(LayoutUnit logicalTop, La
                 rightFloatOffset += shapeOutside->leftSegmentMarginBoxDelta();
             }
         }
+#else
+        UNUSED_PARAM(offsetMode);
 #endif
 
         right = min(right, rightFloatOffset);

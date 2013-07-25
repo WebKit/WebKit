@@ -402,10 +402,14 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle* other, unsigned& chang
             return true;
 
         if (rareNonInheritedData->m_wrapFlow != other->rareNonInheritedData->m_wrapFlow
-            || rareNonInheritedData->m_wrapThrough != other->rareNonInheritedData->m_wrapThrough
-            || rareNonInheritedData->m_shapeMargin != other->rareNonInheritedData->m_shapeMargin
+            || rareNonInheritedData->m_wrapThrough != other->rareNonInheritedData->m_wrapThrough)
+            return true;
+
+#if ENABLE(CSS_SHAPES)
+        if (rareNonInheritedData->m_shapeMargin != other->rareNonInheritedData->m_shapeMargin
             || rareNonInheritedData->m_shapePadding != other->rareNonInheritedData->m_shapePadding)
             return true;
+#endif
 
         if (rareNonInheritedData->m_deprecatedFlexibleBox.get() != other->rareNonInheritedData->m_deprecatedFlexibleBox.get()
             && *rareNonInheritedData->m_deprecatedFlexibleBox.get() != *other->rareNonInheritedData->m_deprecatedFlexibleBox.get())
@@ -695,7 +699,8 @@ bool RenderStyle::changeRequiresRepaint(const RenderStyle* other, unsigned&) con
         || rareNonInheritedData->m_borderFit != other->rareNonInheritedData->m_borderFit
         || rareInheritedData->m_imageRendering != other->rareInheritedData->m_imageRendering)
         return true;
-        
+
+#if ENABLE(CSS_SHAPES)
     // FIXME: The current spec is being reworked to remove dependencies between exclusions and affected 
     // content. There's a proposal to use floats instead. In that case, wrap-shape should actually relayout 
     // the parent container. For sure, I will have to revisit this code, but for now I've added this in order 
@@ -703,6 +708,7 @@ bool RenderStyle::changeRequiresRepaint(const RenderStyle* other, unsigned&) con
     // Tracking bug: https://bugs.webkit.org/show_bug.cgi?id=62991
     if (rareNonInheritedData->m_shapeOutside != other->rareNonInheritedData->m_shapeOutside)
         return true;
+#endif
 
     if (rareNonInheritedData->m_clipPath != other->rareNonInheritedData->m_clipPath)
         return true;
@@ -1738,11 +1744,13 @@ void RenderStyle::setBorderImageOutset(LengthBox outset)
     surround.access()->border.m_image.setOutset(outset);
 }
 
+#if ENABLE(CSS_SHAPES)
 ShapeValue* RenderStyle::initialShapeInside()
 {
     DEFINE_STATIC_LOCAL(RefPtr<ShapeValue>, sOutsideValue, (ShapeValue::createOutsideValue()));
     return sOutsideValue.get();
 }
+#endif
 
 void RenderStyle::setColumnStylesFromPaginationMode(const Pagination::Mode& paginationMode)
 {
