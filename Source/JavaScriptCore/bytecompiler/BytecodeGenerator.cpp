@@ -137,9 +137,10 @@ ParserError BytecodeGenerator::generate()
 
 bool BytecodeGenerator::addVar(const Identifier& ident, bool isConstant, RegisterID*& r0)
 {
+    SymbolTable::Locker locker(symbolTable().m_lock);
     int index = m_calleeRegisters.size();
     SymbolTableEntry newEntry(index, isConstant ? ReadOnly : 0);
-    SymbolTable::AddResult result = symbolTable().add(ident.impl(), newEntry);
+    SymbolTable::Map::AddResult result = symbolTable().add(locker, ident.impl(), newEntry);
 
     if (!result.isNewEntry) {
         r0 = &registerFor(result.iterator->value.getIndex());

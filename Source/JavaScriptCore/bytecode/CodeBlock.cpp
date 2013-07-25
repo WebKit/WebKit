@@ -3373,10 +3373,14 @@ bool CodeBlock::usesOpcode(OpcodeID opcodeID)
 
 String CodeBlock::nameForRegister(int registerNumber)
 {
-    SymbolTable::iterator end = symbolTable()->end();
-    for (SymbolTable::iterator ptr = symbolTable()->begin(); ptr != end; ++ptr) {
-        if (ptr->value.getIndex() == registerNumber)
+    SymbolTable::Locker locker(symbolTable()->m_lock);
+    SymbolTable::Map::iterator end = symbolTable()->end(locker);
+    for (SymbolTable::Map::iterator ptr = symbolTable()->begin(locker); ptr != end; ++ptr) {
+        if (ptr->value.getIndex() == registerNumber) {
+            // FIXME: This won't work from the compilation thread.
+            // https://bugs.webkit.org/show_bug.cgi?id=115300
             return String(ptr->key);
+        }
     }
     if (needsActivation() && registerNumber == activationRegister())
         return ASCIILiteral("activation");

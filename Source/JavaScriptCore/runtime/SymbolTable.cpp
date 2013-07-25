@@ -98,5 +98,8 @@ SymbolTableEntry::FatEntry* SymbolTableEntry::inflateSlow()
     return entry;
 }
 
+SymbolTable::SymbolTable() { }
+SymbolTable::~SymbolTable() { }
+
 } // namespace JSC
 

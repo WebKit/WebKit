@@ -113,13 +113,16 @@ void JSActivation::getOwnNonIndexPropertyNames(JSObject* object, ExecState* exec
     if (mode == IncludeDontEnumProperties && !thisObject->isTornOff())
         propertyNames.add(exec->propertyNames().arguments);
 
-    SymbolTable::const_iterator end = thisObject->symbolTable()->end();
-    for (SymbolTable::const_iterator it = thisObject->symbolTable()->begin(); it != end; ++it) {
-        if (it->value.getAttributes() & DontEnum && mode != IncludeDontEnumProperties)
-            continue;
-        if (!thisObject->isValid(it->value))
-            continue;
-        propertyNames.add(Identifier(exec, it->key.get()));
+    {
+        SymbolTable::Locker locker(thisObject->symbolTable()->m_lock);
+        SymbolTable::Map::iterator end = thisObject->symbolTable()->end(locker);
+        for (SymbolTable::Map::iterator it = thisObject->symbolTable()->begin(locker); it != end; ++it) {
+            if (it->value.getAttributes() & DontEnum && mode != IncludeDontEnumProperties)
+                continue;
+            if (!thisObject->isValid(it->value))
+                continue;
+            propertyNames.add(Identifier(exec, it->key.get()));
+        }
     }
     // Skip the JSVariableObject implementation of getOwnNonIndexPropertyNames
     JSObject::getOwnNonIndexPropertyNames(thisObject, exec, propertyNames, mode);
@@ -129,16 +132,21 @@ inline bool JSActivation::symbolTablePutWithAttributes(VM& vm, PropertyName prop
 {
     ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(this));
     
-    SymbolTable::iterator iter = symbolTable()->find(propertyName.publicName());
-    if (iter == symbolTable()->end())
-        return false;
-    SymbolTableEntry& entry = iter->value;
-    ASSERT(!entry.isNull());
-    if (!isValid(entry))
-        return false;
-
-    entry.setAttributes(attributes);
-    registerAt(entry.getIndex()).set(vm, this, value);
+    WriteBarrierBase<Unknown>* reg;
+    {
+        SymbolTable::Locker locker(symbolTable()->m_lock);
+        SymbolTable::Map::iterator iter = symbolTable()->find(locker, propertyName.publicName());
+        if (iter == symbolTable()->end(locker))
+            return false;
+        SymbolTableEntry& entry = iter->value;
+        ASSERT(!entry.isNull());
+        if (!isValid(entry))
+            return false;
+        
+        entry.setAttributes(attributes);
+        reg = &registerAt(entry.getIndex());
+    }
+    reg->set(vm, this, value);
     return true;
 }
 

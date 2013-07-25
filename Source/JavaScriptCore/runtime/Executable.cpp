@@ -365,11 +365,12 @@ int ProgramExecutable::addGlobalVar(JSGlobalObject* globalObject, const Identifi
     // Try to share the symbolTable if possible
     SharedSymbolTable* symbolTable = globalObject->symbolTable();
     UNUSED_PARAM(functionMode);
-    int index = symbolTable->size();
+    SymbolTable::Locker locker(symbolTable->m_lock);
+    int index = symbolTable->size(locker);
     SymbolTableEntry newEntry(index, (constantMode == IsConstant) ? ReadOnly : 0);
     if (functionMode == IsFunctionToSpecialize)
         newEntry.attemptToWatch();
-    SymbolTable::AddResult result = symbolTable->add(ident.impl(), newEntry);
+    SymbolTable::Map::AddResult result = symbolTable->add(locker, ident.impl(), newEntry);
     if (!result.isNewEntry) {
         result.iterator->value.notifyWrite();
         index = result.iterator->value.getIndex();
