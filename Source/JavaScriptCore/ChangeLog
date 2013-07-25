@@ -1,3 +1,17 @@
+2013-05-14  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        fourthTier: Segfault in jsc with simple test program when running with profile dumping enabled
+        https://bugs.webkit.org/show_bug.cgi?id=116082
+
+        It's crashing because CodeBlock::baselineVersion() doesn't know how to handle the case where 'this' is the 
+        baseline version but it hasn't been assigned to the m_blahCodeBlock field in BlahExecutable. The fix is to 
+        check if we're the baseline version in baselineVersion() and return this if so.
+
+        Reviewed by Filip Pizlo.
+
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::baselineVersion):
+
 2013-05-11  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Rename StructureCheckHoistingPhase to TypeCheckHoistingPhase

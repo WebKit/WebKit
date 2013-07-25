@@ -134,9 +134,10 @@ class CodeBlock : public RefCounted<CodeBlock>, public UnconditionalFinalizer, p
 #if ENABLE(JIT)
         CodeBlock* baselineVersion()
         {
+            if (JITCode::isBaselineCode(getJITType()))
+                return this;
             CodeBlock* result = replacement();
-            if (!result)
-                return 0; // This can happen if we're in the process of creating the baseline version.
+            ASSERT(result);
             while (result->alternative())
                 result = result->alternative();
             ASSERT(result);
