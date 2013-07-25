@@ -949,6 +949,10 @@
 		FED94F2E171E3E2300BE77A4 /* Watchdog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FED94F2B171E3E2300BE77A4 /* Watchdog.cpp */; };
 		FED94F2F171E3E2300BE77A4 /* Watchdog.h in Headers */ = {isa = PBXBuildFile; fileRef = FED94F2C171E3E2300BE77A4 /* Watchdog.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FED94F30171E3E2300BE77A4 /* WatchdogMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FED94F2D171E3E2300BE77A4 /* WatchdogMac.cpp */; };
+		FEF6835E174343CC00A32E25 /* JITStubsARM.h in Headers */ = {isa = PBXBuildFile; fileRef = FEF6835A174343CC00A32E25 /* JITStubsARM.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FEF6835F174343CC00A32E25 /* JITStubsARMv7.h in Headers */ = {isa = PBXBuildFile; fileRef = FEF6835B174343CC00A32E25 /* JITStubsARMv7.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FEF68360174343CC00A32E25 /* JITStubsX86_64.h in Headers */ = {isa = PBXBuildFile; fileRef = FEF6835C174343CC00A32E25 /* JITStubsX86_64.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FEF68361174343CC00A32E25 /* JITStubsX86.h in Headers */ = {isa = PBXBuildFile; fileRef = FEF6835D174343CC00A32E25 /* JITStubsX86.h */; settings = {ATTRIBUTES = (Private, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1969,6 +1973,10 @@
 		FED94F2B171E3E2300BE77A4 /* Watchdog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Watchdog.cpp; sourceTree = "<group>"; };
 		FED94F2C171E3E2300BE77A4 /* Watchdog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Watchdog.h; sourceTree = "<group>"; };
 		FED94F2D171E3E2300BE77A4 /* WatchdogMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WatchdogMac.cpp; sourceTree = "<group>"; };
+		FEF6835A174343CC00A32E25 /* JITStubsARM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITStubsARM.h; sourceTree = "<group>"; };
+		FEF6835B174343CC00A32E25 /* JITStubsARMv7.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITStubsARMv7.h; sourceTree = "<group>"; };
+		FEF6835C174343CC00A32E25 /* JITStubsX86_64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITStubsX86_64.h; sourceTree = "<group>"; };
+		FEF6835D174343CC00A32E25 /* JITStubsX86.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITStubsX86.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -2290,6 +2298,10 @@
 				0F766D1C15A5028D008F363E /* JITStubRoutine.h */,
 				14A23D6C0F4E19CE0023CDAD /* JITStubs.cpp */,
 				14A6581A0F4E36F4000150FD /* JITStubs.h */,
+				FEF6835A174343CC00A32E25 /* JITStubsARM.h */,
+				FEF6835B174343CC00A32E25 /* JITStubsARMv7.h */,
+				FEF6835C174343CC00A32E25 /* JITStubsX86_64.h */,
+				FEF6835D174343CC00A32E25 /* JITStubsX86.h */,
 				0F5EF91B16878F78003E5C25 /* JITThunks.cpp */,
 				0F5EF91C16878F78003E5C25 /* JITThunks.h */,
 				A76F54A213B28AAB00EF2BCE /* JITWriteBarrier.h */,
@@ -3223,6 +3235,11 @@
 				0FB7F39515ED8E4600F167B2 /* ArrayConventions.h in Headers */,
 				0F63945515D07057006A597C /* ArrayProfile.h in Headers */,
 				BC18C3E70E16F5CD00B34460 /* ArrayPrototype.h in Headers */,
+				FEF6835F174343CC00A32E25 /* JITStubsARMv7.h in Headers */,
+				FEF68360174343CC00A32E25 /* JITStubsX86_64.h in Headers */,
+				FEF6835E174343CC00A32E25 /* JITStubsARM.h in Headers */,
+				FEF68361174343CC00A32E25 /* JITStubsX86.h in Headers */,
+				86E3C61D167BABEE006D760A /* JSVirtualMachineInternal.h in Headers */,
 				BC18C5240E16FC8A00B34460 /* ArrayPrototype.lut.h in Headers */,
 				0FB7F39615ED8E4600F167B2 /* ArrayStorage.h in Headers */,
 				9688CB150ED12B4E001D649F /* AssemblerBuffer.h in Headers */,

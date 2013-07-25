@@ -1,3 +1,37 @@
+2013-05-14  Mark Lam  <mark.lam@apple.com>
+
+        Refactor JITStubs.cpp to move CPU specific parts out into their own files.
+        https://bugs.webkit.org/show_bug.cgi?id=116135.
+
+        Reviewed by Michael Saboff.
+
+        This mod only moves the CPU specific parts out. There is no code change.
+        Tested on debug builds of X86, X86_64, ARM and ARMv7. The SH4 and MIPS
+        ports are untested. Windows port also not tested.
+
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * jit/JITStubs.cpp:
+        (JSC::performPlatformSpecificJITAssertions):
+        * jit/JITStubsARM.h: Added.
+        (JSC::ctiTrampoline):
+        (JSC::ctiTrampolineEnd):
+        (JSC::ctiVMThrowTrampoline):
+        (JSC::ctiOpThrowNotCaught):
+        (JSC::performARMJITAssertions):
+        * jit/JITStubsARMv7.h: Added.
+        (JSC::ctiTrampoline):
+        (JSC::ctiVMThrowTrampoline):
+        (JSC::ctiOpThrowNotCaught):
+        (JSC::performARMv7JITAssertions):
+        * jit/JITStubsMIPS.h: Added.
+        (JSC::performMIPSJITAssertions):
+        * jit/JITStubsSH4.h: Added.
+        * jit/JITStubsX86.h: Added.
+        * jit/JITStubsX86_64.h: Added.
+
 2013-05-14  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         fourthTier: Segfault in jsc with simple test program when running with profile dumping enabled

@@ -705,6 +705,8 @@
     <ClInclude Include="..\jit\JITStubCall.h" />
     <ClInclude Include="..\jit\JITStubRoutine.h" />
     <ClInclude Include="..\jit\JITStubs.h" />
+    <ClInclude Include="..\jit\JITStubsX86.h" />
+    <ClInclude Include="..\jit\JITStubsX86_64.h" />
     <ClInclude Include="..\jit\JITThunks.h" />
     <ClInclude Include="..\jit\JITWriteBarrier.h" />
     <ClInclude Include="..\jit\JSInterfaceJIT.h" />

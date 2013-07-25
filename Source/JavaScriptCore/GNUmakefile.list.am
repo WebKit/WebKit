@@ -477,6 +477,12 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/jit/JITStubRoutine.h \
 	Source/JavaScriptCore/jit/JITStubs.cpp \
 	Source/JavaScriptCore/jit/JITStubs.h \
+	Source/JavaScriptCore/jit/JITStubsARM.h \
+	Source/JavaScriptCore/jit/JITStubsARMv7.h \
+	Source/JavaScriptCore/jit/JITStubsMIPS.h \
+	Source/JavaScriptCore/jit/JITStubsSH4.h \
+	Source/JavaScriptCore/jit/JITStubsX86.h \
+	Source/JavaScriptCore/jit/JITStubsX86_64.h \
 	Source/JavaScriptCore/jit/JITThunks.cpp \
 	Source/JavaScriptCore/jit/JITThunks.h \
 	Source/JavaScriptCore/jit/JITWriteBarrier.h \
