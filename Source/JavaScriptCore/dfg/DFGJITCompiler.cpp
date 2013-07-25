@@ -48,7 +48,7 @@ JITCompiler::JITCompiler(Graph& dfg)
     : CCallHelpers(&dfg.m_vm, dfg.m_codeBlock)
     , m_graph(dfg)
     , m_jitCode(adoptRef(new JITCode()))
-    , m_blockHeads(dfg.m_blocks.size())
+    , m_blockHeads(dfg.numBlocks())
     , m_currentCodeOriginIndex(0)
 {
     if (shouldShowDisassembly() || m_graph.m_vm.m_perBytecodeProfiler)
@@ -170,13 +170,13 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
         
         usedJumpTables.set(data.switchTableIndex);
         SimpleJumpTable& table = m_codeBlock->switchJumpTable(data.switchTableIndex);
-        table.ctiDefault = linkBuffer.locationOf(m_blockHeads[data.fallThrough]);
+        table.ctiDefault = linkBuffer.locationOf(m_blockHeads[data.fallThrough->index]);
         for (unsigned j = table.ctiOffsets.size(); j--;)
             table.ctiOffsets[j] = table.ctiDefault;
         for (unsigned j = data.cases.size(); j--;) {
             SwitchCase& myCase = data.cases[j];
             table.ctiOffsets[myCase.value.switchLookupValue() - table.min] =
-                linkBuffer.locationOf(m_blockHeads[myCase.target]);
+                linkBuffer.locationOf(m_blockHeads[myCase.target->index]);
         }
     }
     
@@ -199,7 +199,7 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
             continue;
         
         StringJumpTable& table = m_codeBlock->stringSwitchJumpTable(data.switchTableIndex);
-        table.ctiDefault = linkBuffer.locationOf(m_blockHeads[data.fallThrough]);
+        table.ctiDefault = linkBuffer.locationOf(m_blockHeads[data.fallThrough->index]);
         StringJumpTable::StringOffsetTable::iterator iter;
         StringJumpTable::StringOffsetTable::iterator end = table.offsetTable.end();
         for (iter = table.offsetTable.begin(); iter != end; ++iter)
@@ -208,7 +208,7 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
             SwitchCase& myCase = data.cases[j];
             iter = table.offsetTable.find(myCase.value.stringImpl());
             RELEASE_ASSERT(iter != end);
-            iter->value.ctiOffset = linkBuffer.locationOf(m_blockHeads[myCase.target]);
+            iter->value.ctiOffset = linkBuffer.locationOf(m_blockHeads[myCase.target->index]);
         }
     }
 

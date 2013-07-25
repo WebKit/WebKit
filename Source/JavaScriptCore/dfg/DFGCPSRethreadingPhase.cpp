@@ -69,8 +69,8 @@ private:
     {
         SamplingRegion samplingRegion("DFG CPS Rethreading: freeUnnecessaryNodes");
         
-        for (BlockIndex blockIndex = m_graph.m_blocks.size(); blockIndex--;) {
-            BasicBlock* block = m_graph.m_blocks[blockIndex].get();
+        for (BlockIndex blockIndex = m_graph.numBlocks(); blockIndex--;) {
+            BasicBlock* block = m_graph.block(blockIndex);
             if (!block)
                 continue;
             ASSERT(block->isReachable);
@@ -387,8 +387,8 @@ private:
     {
         SamplingRegion samplingRegion("DFG CPS Rethreading: canonicalizeLocalsInBlocks");
         
-        for (m_blockIndex = m_graph.m_blocks.size(); m_blockIndex--;) {
-            m_block = m_graph.m_blocks[m_blockIndex].get();
+        for (BlockIndex blockIndex = m_graph.numBlocks(); blockIndex--;) {
+            m_block = m_graph.block(blockIndex);
             canonicalizeLocalsInBlock();
         }
     }
@@ -402,20 +402,19 @@ private:
         
         // Ensure that attempts to use this fail instantly.
         m_block = 0;
-        m_blockIndex = NoBlock;
         
         while (!phiStack.isEmpty()) {
             PhiStackEntry entry = phiStack.last();
             phiStack.removeLast();
             
             BasicBlock* block = entry.m_block;
-            PredecessorList& predecessors = block->m_predecessors;
+            PredecessorList& predecessors = block->predecessors;
             Node* currentPhi = entry.m_phi;
             VariableAccessData* variable = currentPhi->variableAccessData();
             size_t index = entry.m_index;
             
             for (size_t i = predecessors.size(); i--;) {
-                BasicBlock* predecessorBlock = m_graph.m_blocks[predecessors[i]].get();
+                BasicBlock* predecessorBlock = predecessors[i];
                 
                 Node* variableInPrevious = predecessorBlock->variablesAtTail.atFor<operandKind>(index);
                 if (!variableInPrevious) {
@@ -481,7 +480,6 @@ private:
         return m_localPhiStack;
     }
     
-    BlockIndex m_blockIndex;
     BasicBlock* m_block;
     Vector<PhiStackEntry, 128> m_argumentPhiStack;
     Vector<PhiStackEntry, 128> m_localPhiStack;

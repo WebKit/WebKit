@@ -48,6 +48,8 @@
 
 namespace JSC { namespace DFG {
 
+struct BasicBlock;
+
 struct StructureTransitionData {
     Structure* previousStructure;
     Structure* newStructure;
@@ -80,18 +82,28 @@ struct NewArrayBufferData {
 // values.
 struct SwitchCase {
     SwitchCase()
-        : target(NoBlock)
+        : target(0)
     {
     }
     
-    SwitchCase(LazyJSValue value, BlockIndex target)
+    SwitchCase(LazyJSValue value, BasicBlock* target)
         : value(value)
         , target(target)
     {
     }
     
+    static SwitchCase withBytecodeIndex(LazyJSValue value, unsigned bytecodeIndex)
+    {
+        SwitchCase result;
+        result.value = value;
+        result.target = bitwise_cast<BasicBlock*>(static_cast<uintptr_t>(bytecodeIndex));
+        return result;
+    }
+    
+    unsigned targetBytecodeIndex() const { return bitwise_cast<uintptr_t>(target); }
+    
     LazyJSValue value;
-    BlockIndex target;
+    BasicBlock* target;
 };
 
 enum SwitchKind {
@@ -105,15 +117,21 @@ struct SwitchData {
     // constructing this should make sure to initialize everything they
     // care about manually.
     SwitchData()
-        : fallThrough(NoBlock)
+        : fallThrough(0)
         , kind(static_cast<SwitchKind>(-1))
         , switchTableIndex(UINT_MAX)
         , didUseJumpTable(false)
     {
     }
     
+    void setFallThroughBytecodeIndex(unsigned bytecodeIndex)
+    {
+        fallThrough = bitwise_cast<BasicBlock*>(static_cast<uintptr_t>(bytecodeIndex));
+    }
+    unsigned fallThroughBytecodeIndex() const { return bitwise_cast<uintptr_t>(fallThrough); }
+    
     Vector<SwitchCase> cases;
-    BlockIndex fallThrough;
+    BasicBlock* fallThrough;
     SwitchKind kind;
     unsigned switchTableIndex;
     bool didUseJumpTable;
@@ -745,28 +763,28 @@ struct Node {
         return m_opInfo2;
     }
     
-    void setTakenBlockIndex(BlockIndex blockIndex)
+    void setTakenBlock(BasicBlock* block)
     {
         ASSERT(isBranch() || isJump());
-        m_opInfo = blockIndex;
+        m_opInfo = bitwise_cast<uintptr_t>(block);
     }
     
-    void setNotTakenBlockIndex(BlockIndex blockIndex)
+    void setNotTakenBlock(BasicBlock* block)
     {
         ASSERT(isBranch());
-        m_opInfo2 = blockIndex;
+        m_opInfo2 = bitwise_cast<uintptr_t>(block);
     }
     
-    BlockIndex takenBlockIndex()
+    BasicBlock* takenBlock()
     {
         ASSERT(isBranch() || isJump());
-        return m_opInfo;
+        return bitwise_cast<BasicBlock*>(m_opInfo);
     }
     
-    BlockIndex notTakenBlockIndex()
+    BasicBlock* notTakenBlock()
     {
         ASSERT(isBranch());
-        return m_opInfo2;
+        return bitwise_cast<BasicBlock*>(m_opInfo2);
     }
     
     SwitchData* switchData()
@@ -789,7 +807,7 @@ struct Node {
         }
     }
     
-    BlockIndex successor(unsigned index)
+    BasicBlock* successor(unsigned index)
     {
         if (isSwitch()) {
             if (index < switchData()->cases.size())
@@ -799,19 +817,19 @@ struct Node {
         }
         switch (index) {
         case 0:
-            return takenBlockIndex();
+            return takenBlock();
         case 1:
-            return notTakenBlockIndex();
+            return notTakenBlock();
         default:
             RELEASE_ASSERT_NOT_REACHED();
-            return NoBlock;
+            return 0;
         }
     }
     
-    BlockIndex successorForCondition(bool condition)
+    BasicBlock* successorForCondition(bool condition)
     {
         ASSERT(isBranch());
-        return condition ? takenBlockIndex() : notTakenBlockIndex();
+        return condition ? takenBlock() : notTakenBlock();
     }
     
     bool hasHeapPrediction()

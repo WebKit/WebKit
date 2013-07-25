@@ -46,8 +46,8 @@ public:
     bool run()
     {
         // First reset the counts to 0 for all nodes.
-        for (BlockIndex blockIndex = 0; blockIndex < m_graph.m_blocks.size(); ++blockIndex) {
-            BasicBlock* block = m_graph.m_blocks[blockIndex].get();
+        for (BlockIndex blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex) {
+            BasicBlock* block = m_graph.block(blockIndex);
             if (!block)
                 continue;
             for (unsigned indexInBlock = block->size(); indexInBlock--;)
@@ -60,8 +60,8 @@ public:
         // - Nodes that are must-generate.
         // - Nodes that are reachable from type checks.
         // Set their ref counts to 1 and put them on the worklist.
-        for (BlockIndex blockIndex = 0; blockIndex < m_graph.m_blocks.size(); ++blockIndex) {
-            BasicBlock* block = m_graph.m_blocks[blockIndex].get();
+        for (BlockIndex blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex) {
+            BasicBlock* block = m_graph.block(blockIndex);
             if (!block)
                 continue;
             for (unsigned indexInBlock = block->size(); indexInBlock--;) {
@@ -81,8 +81,8 @@ public:
             DFG_NODE_DO_TO_CHILDREN(m_graph, node, countEdge);
         }
         
-        for (BlockIndex blockIndex = 0; blockIndex < m_graph.m_blocks.size(); ++blockIndex) {
-            BasicBlock* block = m_graph.m_blocks[blockIndex].get();
+        for (BlockIndex blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex) {
+            BasicBlock* block = m_graph.block(blockIndex);
             if (!block)
                 continue;
 

@@ -39,12 +39,14 @@
 namespace JSC { namespace DFG {
 
 class Graph;
+class InsertionSet;
 
-typedef Vector <BlockIndex, 2> PredecessorList;
+typedef Vector<BasicBlock*, 2> PredecessorList;
 
-struct BasicBlock : Vector<Node*, 8> {
+struct BasicBlock : RefCounted<BasicBlock> {
     BasicBlock(unsigned bytecodeBegin, unsigned numArguments, unsigned numLocals)
         : bytecodeBegin(bytecodeBegin)
+        , index(NoBlock)
         , isOSRTarget(false)
         , cfaHasVisited(false)
         , cfaShouldRevisit(false)
@@ -74,6 +76,17 @@ struct BasicBlock : Vector<Node*, 8> {
         valuesAtTail.ensureLocals(newNumLocals);
     }
     
+    size_t size() const { return m_nodes.size(); }
+    bool isEmpty() const { return !size(); }
+    Node*& at(size_t i) { return m_nodes[i]; }
+    Node* at(size_t i) const { return m_nodes[i]; }
+    Node* operator[](size_t i) const { return at(i); }
+    Node* last() const { return at(size() - 1); }
+    void resize(size_t size) { m_nodes.resize(size); }
+    void grow(size_t size) { m_nodes.grow(size); }
+    
+    void append(Node* node) { m_nodes.append(node); }
+    
     size_t numNodes() const { return phis.size() + size(); }
     Node* node(size_t i) const
     {
@@ -101,14 +114,32 @@ struct BasicBlock : Vector<Node*, 8> {
         return false;
     }
     
+    unsigned numSuccessors() { return last()->numSuccessors(); }
+    
+    BasicBlock* successor(unsigned index)
+    {
+        return last()->successor(index);
+    }
+    BasicBlock* successorForCondition(bool condition)
+    {
+        return last()->successorForCondition(condition);
+    }
+
 #define DFG_DEFINE_APPEND_NODE(templatePre, templatePost, typeParams, valueParamsComma, valueParams, valueArgs) \
     templatePre typeParams templatePost Node* appendNode(Graph&, SpeculatedType valueParamsComma valueParams);
     DFG_VARIADIC_TEMPLATE_FUNCTION(DFG_DEFINE_APPEND_NODE)
 #undef DFG_DEFINE_APPEND_NODE
     
+    void dump(PrintStream& out) const
+    {
+        out.print("#", index);
+    }
+    
     // This value is used internally for block linking and OSR entry. It is mostly meaningless
     // for other purposes due to inlining.
     unsigned bytecodeBegin;
+    
+    BlockIndex index;
     
     bool isOSRTarget;
     bool cfaHasVisited;
@@ -122,30 +153,44 @@ struct BasicBlock : Vector<Node*, 8> {
     bool isReachable;
     
     Vector<Node*> phis;
-    PredecessorList m_predecessors;
+    PredecessorList predecessors;
     
     Operands<Node*, NodePointerTraits> variablesAtHead;
     Operands<Node*, NodePointerTraits> variablesAtTail;
     
     Operands<AbstractValue> valuesAtHead;
     Operands<AbstractValue> valuesAtTail;
+
+private:
+    friend class InsertionSet;
+    Vector<Node*, 8> m_nodes;
 };
 
 struct UnlinkedBlock {
-    BlockIndex m_blockIndex;
+    BasicBlock* m_block;
     bool m_needsNormalLinking;
     bool m_needsEarlyReturnLinking;
     
     UnlinkedBlock() { }
     
-    explicit UnlinkedBlock(BlockIndex blockIndex)
-        : m_blockIndex(blockIndex)
+    explicit UnlinkedBlock(BasicBlock* block)
+        : m_block(block)
         , m_needsNormalLinking(true)
         , m_needsEarlyReturnLinking(false)
     {
     }
 };
     
+static inline unsigned getBytecodeBeginForBlock(BasicBlock** basicBlock)
+{
+    return (*basicBlock)->bytecodeBegin;
+}
+
+static inline BasicBlock* blockForBytecodeOffset(Vector<BasicBlock*>& linkingTargets, unsigned bytecodeBegin)
+{
+    return *binarySearch<BasicBlock*, unsigned>(linkingTargets, linkingTargets.size(), bytecodeBegin, getBytecodeBeginForBlock);
+}
+
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)

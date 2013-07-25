@@ -227,7 +227,7 @@ public:
     // successors. Returns true if any of the successors' states changed. Note
     // that this is automatically called in endBasicBlock() if MergeMode is
     // MergeToSuccessors.
-    bool mergeToSuccessors(Graph&, BasicBlock*);
+    bool mergeToSuccessors(BasicBlock*);
     
     void dump(PrintStream& out);
     

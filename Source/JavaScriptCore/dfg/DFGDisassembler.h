@@ -47,7 +47,7 @@ public:
     Disassembler(Graph&);
     
     void setStartOfCode(MacroAssembler::Label label) { m_startOfCode = label; }
-    void setForBlock(BlockIndex blockIndex, MacroAssembler::Label label)
+    void setForBlockIndex(BlockIndex blockIndex, MacroAssembler::Label label)
     {
         m_labelForBlockIndex[blockIndex] = label;
     }

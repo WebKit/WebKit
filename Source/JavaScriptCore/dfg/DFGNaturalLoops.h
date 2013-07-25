@@ -31,6 +31,7 @@
 #if ENABLE(DFG_JIT)
 
 #include "DFGAnalysis.h"
+#include "DFGBasicBlock.h"
 #include "DFGCommon.h"
 
 namespace JSC { namespace DFG {
@@ -38,24 +39,24 @@ namespace JSC { namespace DFG {
 class NaturalLoop {
 public:
     NaturalLoop()
-        : m_header(NoBlock)
+        : m_header(0)
     {
     }
     
-    NaturalLoop(BlockIndex header)
+    NaturalLoop(BasicBlock* header)
         : m_header(header)
     {
     }
     
-    void addBlock(BlockIndex block) { m_body.append(block); }
+    void addBlock(BasicBlock* block) { m_body.append(block); }
     
-    BlockIndex header() const { return m_header; }
+    BasicBlock* header() const { return m_header; }
     
     unsigned size() const { return m_body.size(); }
-    BlockIndex at(unsigned i) const { return m_body[i]; }
-    BlockIndex operator[](unsigned i) const { return at(i); }
+    BasicBlock* at(unsigned i) const { return m_body[i]; }
+    BasicBlock* operator[](unsigned i) const { return at(i); }
     
-    bool contains(BlockIndex block) const
+    bool contains(BasicBlock* block) const
     {
         for (unsigned i = m_body.size(); i--;) {
             if (m_body[i] == block)
@@ -67,8 +68,8 @@ public:
     
     void dump(PrintStream&) const;
 private:
-    BlockIndex m_header;
-    Vector<BlockIndex, 4> m_body;
+    BasicBlock* m_header;
+    Vector<BasicBlock*, 4> m_body;
 };
 
 class NaturalLoops : public Analysis<NaturalLoops> {
@@ -91,17 +92,17 @@ public:
     
     // Return either null if the block isn't a loop header, or the
     // loop it belongs to.
-    const NaturalLoop* headerOf(BlockIndex blockIndex) const
+    const NaturalLoop* headerOf(BasicBlock* block) const
     {
         for (unsigned i = m_loops.size(); i--;) {
-            if (m_loops[i].header() == blockIndex)
+            if (m_loops[i].header() == block)
                 return &m_loops[i];
         }
         return 0;
     }
     
     // Return the indices of all loops this belongs to.
-    Vector<const NaturalLoop*> loopsOf(BlockIndex blockIndex) const;
+    Vector<const NaturalLoop*> loopsOf(BasicBlock*) const;
 
     void dump(PrintStream&) const;
 private:

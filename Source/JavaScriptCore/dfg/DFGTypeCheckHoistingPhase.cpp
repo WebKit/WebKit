@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -104,8 +104,8 @@ public:
 
         // Place CheckStructure's at SetLocal sites.
         InsertionSet insertionSet(m_graph);
-        for (BlockIndex blockIndex = 0; blockIndex < m_graph.m_blocks.size(); ++blockIndex) {
-            BasicBlock* block = m_graph.m_blocks[blockIndex].get();
+        for (BlockIndex blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex) {
+            BasicBlock* block = m_graph.block(blockIndex);
             if (!block)
                 continue;
             for (unsigned indexInBlock = 0; indexInBlock < block->size(); ++indexInBlock) {
@@ -217,8 +217,8 @@ private:
     // checks. For now, only consider monomorphic structure checks (one structure).
     void identifyRedundantStructureChecks()
     {    
-        for (BlockIndex blockIndex = 0; blockIndex < m_graph.m_blocks.size(); ++blockIndex) {
-            BasicBlock* block = m_graph.m_blocks[blockIndex].get();
+        for (BlockIndex blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex) {
+            BasicBlock* block = m_graph.block(blockIndex);
             if (!block)
                 continue;
             for (unsigned indexInBlock = 0; indexInBlock < block->size(); ++indexInBlock) {
@@ -321,8 +321,8 @@ private:
         
     void identifyRedundantArrayChecks()
     {
-        for (BlockIndex blockIndex = 0; blockIndex < m_graph.m_blocks.size(); ++blockIndex) {
-            BasicBlock* block = m_graph.m_blocks[blockIndex].get();
+        for (BlockIndex blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex) {
+            BasicBlock* block = m_graph.block(blockIndex);
             if (!block)
                 continue;
             for (unsigned indexInBlock = 0; indexInBlock < block->size(); ++indexInBlock) {
@@ -451,8 +451,8 @@ private:
     template <typename TypeCheck>
     void disableHoistingAcrossOSREntries()
     {
-        for (BlockIndex blockIndex = 0; blockIndex < m_graph.m_blocks.size(); ++blockIndex) {
-            BasicBlock* block = m_graph.m_blocks[blockIndex].get();
+        for (BlockIndex blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex) {
+            BasicBlock* block = m_graph.block(blockIndex);
             if (!block)
                 continue;
             ASSERT(block->isReachable);

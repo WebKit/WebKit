@@ -174,8 +174,8 @@ inline bool canCompile(Node* node)
 
 bool canCompile(Graph& graph)
 {
-    for (BlockIndex blockIndex = graph.m_blocks.size(); blockIndex--;) {
-        BasicBlock* block = graph.m_blocks[blockIndex].get();
+    for (BlockIndex blockIndex = graph.numBlocks(); blockIndex--;) {
+        BasicBlock* block = graph.block(blockIndex);
         if (!block)
             continue;
         

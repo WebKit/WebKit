@@ -31,6 +31,7 @@
 #if ENABLE(DFG_JIT)
 
 #include "DFGAnalysis.h"
+#include "DFGBasicBlock.h"
 #include "DFGCommon.h"
 #include <wtf/FastBitVector.h>
 
@@ -48,7 +49,12 @@ public:
     bool dominates(BlockIndex from, BlockIndex to) const
     {
         ASSERT(isValid());
-        return m_results[to].get(from);
+        return m_results[from].get(to);
+    }
+    
+    bool dominates(BasicBlock* from, BasicBlock* to) const
+    {
+        return dominates(from->index, to->index);
     }
     
 private:

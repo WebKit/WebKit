@@ -169,7 +169,7 @@ public:
     // CodeBlock is optional, but may allow additional information to be dumped (e.g. Identifier names).
     void dump(PrintStream& = WTF::dataFile());
     enum PhiNodeDumpMode { DumpLivePhisOnly, DumpAllPhis };
-    void dumpBlockHeader(PrintStream&, const char* prefix, BlockIndex, PhiNodeDumpMode);
+    void dumpBlockHeader(PrintStream&, const char* prefix, BasicBlock*, PhiNodeDumpMode);
     void dump(PrintStream&, Edge);
     void dump(PrintStream&, const char* prefix, Node*);
     static int amountOfNodeWhiteSpace(Node*);
@@ -178,8 +178,6 @@ public:
     // Dump the code origin of the given node as a diff from the code origin of the
     // preceding node. Returns true if anything was printed.
     bool dumpCodeOrigin(PrintStream&, const char* prefix, Node* previousNode, Node* currentNode);
-
-    BlockIndex blockIndexForBytecodeOffset(Vector<BlockIndex>& blocks, unsigned bytecodeBegin);
 
     SpeculatedType getJSConstantSpeculation(Node* node)
     {
@@ -460,17 +458,24 @@ public:
         return m_codeBlock->usesArguments();
     }
     
-    unsigned numSuccessors(BasicBlock* block)
+    BlockIndex numBlocks() const { return m_blocks.size(); }
+    BasicBlock* block(BlockIndex blockIndex) const { return m_blocks[blockIndex].get(); }
+    BasicBlock* lastBlock() const { return block(numBlocks() - 1); }
+
+    void appendBlock(PassRefPtr<BasicBlock> basicBlock)
     {
-        return block->last()->numSuccessors();
+        basicBlock->index = m_blocks.size();
+        m_blocks.append(basicBlock);
     }
-    BlockIndex successor(BasicBlock* block, unsigned index)
+    
+    void killBlock(BlockIndex blockIndex)
     {
-        return block->last()->successor(index);
+        m_blocks[blockIndex].clear();
     }
-    BlockIndex successorForCondition(BasicBlock* block, bool condition)
+    
+    void killBlock(BasicBlock* basicBlock)
     {
-        return block->last()->successorForCondition(condition);
+        killBlock(basicBlock->index);
     }
     
     bool isPredictedNumerical(Node* node)
@@ -664,7 +669,7 @@ public:
     
     NodeAllocator& m_allocator;
 
-    Vector< OwnPtr<BasicBlock> , 8> m_blocks;
+    Vector< RefPtr<BasicBlock> , 8> m_blocks;
     Vector<Edge, 16> m_varArgChildren;
     Vector<StorageAccessData> m_storageAccessData;
     Vector<Node*, 8> m_arguments;
@@ -688,7 +693,7 @@ public:
     RefCountState m_refCountState;
 private:
     
-    void handleSuccessor(Vector<BlockIndex, 16>& worklist, BlockIndex blockIndex, BlockIndex successorIndex);
+    void handleSuccessor(Vector<BasicBlock*, 16>& worklist, BasicBlock*, BasicBlock* successor);
     
     AddSpeculationMode addImmediateShouldSpeculateInteger(Node* add, bool variableShouldSpeculateInteger, Node* immediate)
     {
@@ -736,27 +741,6 @@ private:
         return mul->canSpeculateInteger();
     }
 };
-
-class GetBytecodeBeginForBlock {
-public:
-    GetBytecodeBeginForBlock(Graph& graph)
-        : m_graph(graph)
-    {
-    }
-    
-    unsigned operator()(BlockIndex* blockIndex) const
-    {
-        return m_graph.m_blocks[*blockIndex]->bytecodeBegin;
-    }
-
-private:
-    Graph& m_graph;
-};
-
-inline BlockIndex Graph::blockIndexForBytecodeOffset(Vector<BlockIndex>& linkingTargets, unsigned bytecodeBegin)
-{
-    return *binarySearch<BlockIndex, unsigned>(linkingTargets, linkingTargets.size(), bytecodeBegin, GetBytecodeBeginForBlock(*this));
-}
 
 #define DFG_NODE_DO_TO_CHILDREN(graph, node, thingToDo) do {            \
         Node* _node = (node);                                           \

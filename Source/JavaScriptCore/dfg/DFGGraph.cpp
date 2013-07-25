@@ -253,15 +253,15 @@ void Graph::dump(PrintStream& out, const char* prefix, Node* node)
     if (op == WeakJSConstant)
         out.print(comma, RawPointer(node->weakConstant()), " (structure: ", *node->weakConstant()->structure(), ")");
     if (node->isBranch() || node->isJump())
-        out.print(comma, "T:#", node->takenBlockIndex());
+        out.print(comma, "T:", *node->takenBlock());
     if (node->isBranch())
-        out.print(comma, "F:#", node->notTakenBlockIndex());
+        out.print(comma, "F:", *node->notTakenBlock());
     if (node->isSwitch()) {
         SwitchData* data = node->switchData();
         out.print(comma, data->kind);
         for (unsigned i = 0; i < data->cases.size(); ++i)
-            out.print(comma, data->cases[i].value, ":#", data->cases[i].target);
-        out.print(comma, "default:#", data->fallThrough);
+            out.print(comma, data->cases[i].value, ":", *data->cases[i].target);
+        out.print(comma, "default:", *data->fallThrough);
     }
     out.print(comma, "bc#", node->codeOrigin.bytecodeIndex);
     
@@ -277,37 +277,35 @@ void Graph::dump(PrintStream& out, const char* prefix, Node* node)
     out.print("\n");
 }
 
-void Graph::dumpBlockHeader(PrintStream& out, const char* prefix, BlockIndex blockIndex, PhiNodeDumpMode phiNodeDumpMode)
+void Graph::dumpBlockHeader(PrintStream& out, const char* prefix, BasicBlock* block, PhiNodeDumpMode phiNodeDumpMode)
 {
-    BasicBlock* block = m_blocks[blockIndex].get();
-
-    out.print(prefix, "Block #", blockIndex, " (", block->at(0)->codeOrigin, "): ", block->isReachable ? "" : "(skipped)", block->isOSRTarget ? " (OSR target)" : "", "\n");
+    out.print(prefix, "Block ", *block, " (", block->at(0)->codeOrigin, "): ", block->isReachable ? "" : "(skipped)", block->isOSRTarget ? " (OSR target)" : "", "\n");
     out.print(prefix, "  Predecessors:");
-    for (size_t i = 0; i < block->m_predecessors.size(); ++i)
-        out.print(" #", block->m_predecessors[i]);
+    for (size_t i = 0; i < block->predecessors.size(); ++i)
+        out.print(" ", *block->predecessors[i]);
     out.print("\n");
     if (m_dominators.isValid()) {
         out.print(prefix, "  Dominated by:");
         for (size_t i = 0; i < m_blocks.size(); ++i) {
-            if (!m_dominators.dominates(i, blockIndex))
+            if (!m_dominators.dominates(i, block->index))
                 continue;
             out.print(" #", i);
         }
         out.print("\n");
         out.print(prefix, "  Dominates:");
         for (size_t i = 0; i < m_blocks.size(); ++i) {
-            if (!m_dominators.dominates(blockIndex, i))
+            if (!m_dominators.dominates(block->index, i))
                 continue;
             out.print(" #", i);
         }
         out.print("\n");
     }
     if (m_naturalLoops.isValid()) {
-        if (const NaturalLoop* loop = m_naturalLoops.headerOf(blockIndex)) {
+        if (const NaturalLoop* loop = m_naturalLoops.headerOf(block)) {
             out.print(prefix, "  Loop header, contains:");
             Vector<BlockIndex> sortedBlockList;
             for (unsigned i = 0; i < loop->size(); ++i)
-                sortedBlockList.append(loop->at(i));
+                sortedBlockList.append(loop->at(i)->index);
             std::sort(sortedBlockList.begin(), sortedBlockList.end());
             for (unsigned i = 0; i < sortedBlockList.size(); ++i)
                 out.print(" #", sortedBlockList[i]);
@@ -315,11 +313,11 @@ void Graph::dumpBlockHeader(PrintStream& out, const char* prefix, BlockIndex blo
         }
         
         Vector<const NaturalLoop*> containingLoops =
-            m_naturalLoops.loopsOf(blockIndex);
+            m_naturalLoops.loopsOf(block);
         if (!containingLoops.isEmpty()) {
             out.print(prefix, "  Containing loop headers:");
             for (unsigned i = 0; i < containingLoops.size(); ++i)
-                out.print(" #", containingLoops[i]->header());
+                out.print(" ", *containingLoops[i]->header());
             out.print("\n");
         }
     }
@@ -359,7 +357,7 @@ void Graph::dump(PrintStream& out)
         BasicBlock* block = m_blocks[b].get();
         if (!block)
             continue;
-        dumpBlockHeader(out, "", b, DumpAllPhis);
+        dumpBlockHeader(out, "", block, DumpAllPhis);
         out.print("  vars before: ");
         if (block->cfaHasVisited)
             dumpOperands(block->valuesAtHead, out);
@@ -409,29 +407,25 @@ void Graph::dethread()
     m_form = LoadStore;
 }
 
-void Graph::handleSuccessor(Vector<BlockIndex, 16>& worklist, BlockIndex blockIndex, BlockIndex successorIndex)
+void Graph::handleSuccessor(Vector<BasicBlock*, 16>& worklist, BasicBlock* block, BasicBlock* successor)
 {
-    BasicBlock* successor = m_blocks[successorIndex].get();
     if (!successor->isReachable) {
         successor->isReachable = true;
-        worklist.append(successorIndex);
+        worklist.append(successor);
     }
     
-    successor->m_predecessors.append(blockIndex);
+    successor->predecessors.append(block);
 }
 
 void Graph::determineReachability()
 {
-    Vector<BlockIndex, 16> worklist;
-    worklist.append(0);
-    m_blocks[0]->isReachable = true;
+    Vector<BasicBlock*, 16> worklist;
+    worklist.append(block(0));
+    block(0)->isReachable = true;
     while (!worklist.isEmpty()) {
-        BlockIndex index = worklist.last();
-        worklist.removeLast();
-        
-        BasicBlock* block = m_blocks[index].get();
-        for (unsigned i = numSuccessors(block); i--;)
-            handleSuccessor(worklist, index, successor(block, i));
+        BasicBlock* block = worklist.takeLast();
+        for (unsigned i = block->numSuccessors(); i--;)
+            handleSuccessor(worklist, block, block->successor(i));
     }
 }
 
@@ -442,7 +436,7 @@ void Graph::resetReachability()
         if (!block)
             continue;
         block->isReachable = false;
-        block->m_predecessors.clear();
+        block->predecessors.clear();
     }
     
     determineReachability();

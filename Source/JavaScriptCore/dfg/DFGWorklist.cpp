@@ -135,7 +135,8 @@ void Worklist::removeAllReadyPlansForVM(VM& vm, Vector<RefPtr<Plan>, 8>& myReady
         if (!plan->isCompiled)
             continue;
         myReadyPlans.append(plan);
-        m_readyPlans[i--] = m_readyPlans.takeLast();
+        m_readyPlans[i--] = m_readyPlans.last();
+        m_readyPlans.removeLast();
         m_plans.remove(plan->key());
     }
 }

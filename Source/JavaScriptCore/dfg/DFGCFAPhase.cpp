@@ -79,15 +79,14 @@ public:
     }
     
 private:
-    void performBlockCFA(BlockIndex blockIndex)
+    void performBlockCFA(BasicBlock* block)
     {
-        BasicBlock* block = m_graph.m_blocks[blockIndex].get();
         if (!block)
             return;
         if (!block->cfaShouldRevisit)
             return;
         if (verbose)
-            dataLogF("   Block #%u (bc#%u):\n", blockIndex, block->bytecodeBegin);
+            dataLog("   Block ", *block, ":\n");
         m_state.beginBasicBlock(block);
         if (verbose) {
             dataLogF("      head vars: ");
@@ -127,8 +126,8 @@ private:
         if (verbose)
             dataLogF("CFA [%u]\n", ++m_count);
         
-        for (BlockIndex block = 0; block < m_graph.m_blocks.size(); ++block)
-            performBlockCFA(block);
+        for (BlockIndex blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex)
+            performBlockCFA(m_graph.block(blockIndex));
     }
 
 private:

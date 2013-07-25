@@ -61,11 +61,11 @@ public:
         , m_ftlState(state)
         , m_heaps(state.context)
         , m_out(state.context)
-        , m_localsBoolean(OperandsLike, state.graph.m_blocks[0]->variablesAtHead)
-        , m_locals32(OperandsLike, state.graph.m_blocks[0]->variablesAtHead)
-        , m_locals64(OperandsLike, state.graph.m_blocks[0]->variablesAtHead)
-        , m_localsDouble(OperandsLike, state.graph.m_blocks[0]->variablesAtHead)
-        , m_valueSources(OperandsLike, state.graph.m_blocks[0]->variablesAtHead)
+        , m_localsBoolean(OperandsLike, state.graph.block(0)->variablesAtHead)
+        , m_locals32(OperandsLike, state.graph.block(0)->variablesAtHead)
+        , m_locals64(OperandsLike, state.graph.block(0)->variablesAtHead)
+        , m_localsDouble(OperandsLike, state.graph.block(0)->variablesAtHead)
+        , m_valueSources(OperandsLike, state.graph.block(0)->variablesAtHead)
         , m_lastSetOperand(std::numeric_limits<int>::max())
         , m_exitThunkGenerator(state)
         , m_state(state.graph)
@@ -99,23 +99,23 @@ public:
         m_tagTypeNumber = m_out.constInt64(TagTypeNumber);
         m_tagMask = m_out.constInt64(TagMask);
         
-        for (BlockIndex blockIndex = 0; blockIndex < m_graph.m_blocks.size(); ++blockIndex) {
-            m_highBlock = m_graph.m_blocks[blockIndex].get();
+        for (BlockIndex blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex) {
+            m_highBlock = m_graph.block(blockIndex);
             if (!m_highBlock)
                 continue;
-            m_blocks.add(m_highBlock, FTL_NEW_BLOCK(m_out, ("Block #", blockIndex)));
+            m_blocks.add(m_highBlock, FTL_NEW_BLOCK(m_out, ("Block ", *m_highBlock)));
             addFlushedLocalOpRoots();
         }
         
         closeOverFlushedLocalOps();
         
-        m_out.appendTo(m_argumentChecks, lowBlock(0));
+        m_out.appendTo(m_argumentChecks, lowBlock(m_graph.block(0)));
 
         transferAndCheckArguments();
         
-        m_out.jump(lowBlock(0));
+        m_out.jump(lowBlock(m_graph.block(0)));
         
-        for (BlockIndex blockIndex = 0; blockIndex < m_graph.m_blocks.size(); ++blockIndex)
+        for (BlockIndex blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex)
             compileBlock(blockIndex);
         
         // And now complete the initialization block.
@@ -214,15 +214,15 @@ private:
     
     void compileBlock(BlockIndex blockIndex)
     {
-        m_highBlock = m_graph.m_blocks[blockIndex].get();
+        m_highBlock = m_graph.block(blockIndex);
         if (!m_highBlock)
             return;
         
         LBasicBlock lowBlock = m_blocks.get(m_highBlock);
         
         m_nextHighBlock = 0;
-        for (BlockIndex nextBlockIndex = blockIndex + 1; nextBlockIndex < m_graph.m_blocks.size(); ++nextBlockIndex) {
-            m_nextHighBlock = m_graph.m_blocks[nextBlockIndex].get();
+        for (BlockIndex nextBlockIndex = blockIndex + 1; nextBlockIndex < m_graph.numBlocks(); ++nextBlockIndex) {
+            m_nextHighBlock = m_graph.block(nextBlockIndex);
             if (m_nextHighBlock)
                 break;
         }
@@ -1582,15 +1582,15 @@ private:
     
     void compileJump()
     {
-        m_out.jump(lowBlock(m_node->takenBlockIndex()));
+        m_out.jump(lowBlock(m_node->takenBlock()));
     }
     
     void compileBranch()
     {
         m_out.branch(
             boolify(m_node->child1()),
-            lowBlock(m_node->takenBlockIndex()),
-            lowBlock(m_node->notTakenBlockIndex()));
+            lowBlock(m_node->takenBlock()),
+            lowBlock(m_node->notTakenBlock()));
     }
     
     void compileSwitch()
@@ -2454,9 +2454,9 @@ private:
         use(edge);
     }
     
-    LBasicBlock lowBlock(BlockIndex blockIndex)
+    LBasicBlock lowBlock(BasicBlock* block)
     {
-        return m_blocks.get(m_graph.m_blocks[blockIndex].get());
+        return m_blocks.get(block);
     }
     
     void initializeOSRExitStateForBlock()

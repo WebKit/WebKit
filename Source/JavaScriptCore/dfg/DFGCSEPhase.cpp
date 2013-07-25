@@ -52,8 +52,8 @@ public:
         
         m_changed = false;
         
-        for (unsigned block = 0; block < m_graph.m_blocks.size(); ++block)
-            performBlockCSE(m_graph.m_blocks[block].get());
+        for (unsigned blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex)
+            performBlockCSE(m_graph.block(blockIndex));
         
         return m_changed;
     }

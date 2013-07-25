@@ -224,7 +224,7 @@ JumpReplacementWatchpoint* SpeculativeJIT::speculationWatchpoint(ExitKind kind)
 void SpeculativeJIT::convertLastOSRExitToForward(const ValueRecovery& valueRecovery)
 {
     m_jit.jitCode()->lastOSRExit().convertToForward(
-        m_jit.graph().m_blocks[m_block].get(), m_currentNode, m_indexInBlock, valueRecovery);
+        m_block, m_currentNode, m_indexInBlock, valueRecovery);
 }
 
 void SpeculativeJIT::forwardSpeculationCheck(ExitKind kind, JSValueSource jsValueSource, Node* node, MacroAssembler::Jump jumpToFail, const ValueRecovery& valueRecovery)
@@ -993,7 +993,7 @@ bool SpeculativeJIT::nonSpeculativeCompare(Node* node, MacroAssembler::Relationa
 {
     unsigned branchIndexInBlock = detectPeepHoleBranch();
     if (branchIndexInBlock != UINT_MAX) {
-        Node* branchNode = m_jit.graph().m_blocks[m_block]->at(branchIndexInBlock);
+        Node* branchNode = m_block->at(branchIndexInBlock);
 
         ASSERT(node->adjustedRefCount() == 1);
         
@@ -1014,7 +1014,7 @@ bool SpeculativeJIT::nonSpeculativeStrictEq(Node* node, bool invert)
 {
     unsigned branchIndexInBlock = detectPeepHoleBranch();
     if (branchIndexInBlock != UINT_MAX) {
-        Node* branchNode = m_jit.graph().m_blocks[m_block]->at(branchIndexInBlock);
+        Node* branchNode = m_block->at(branchIndexInBlock);
 
         ASSERT(node->adjustedRefCount() == 1);
         
@@ -1379,8 +1379,8 @@ FPRTemporary::FPRTemporary(SpeculativeJIT* jit, JSValueOperand& op1)
 
 void SpeculativeJIT::compilePeepHoleDoubleBranch(Node* node, Node* branchNode, JITCompiler::DoubleCondition condition)
 {
-    BlockIndex taken = branchNode->takenBlockIndex();
-    BlockIndex notTaken = branchNode->notTakenBlockIndex();
+    BasicBlock* taken = branchNode->takenBlock();
+    BasicBlock* notTaken = branchNode->notTakenBlock();
     
     SpeculateDoubleOperand op1(this, node->child1());
     SpeculateDoubleOperand op2(this, node->child2());
@@ -1391,14 +1391,14 @@ void SpeculativeJIT::compilePeepHoleDoubleBranch(Node* node, Node* branchNode, J
 
 void SpeculativeJIT::compilePeepHoleObjectEquality(Node* node, Node* branchNode)
 {
-    BlockIndex taken = branchNode->takenBlockIndex();
-    BlockIndex notTaken = branchNode->notTakenBlockIndex();
+    BasicBlock* taken = branchNode->takenBlock();
+    BasicBlock* notTaken = branchNode->notTakenBlock();
 
     MacroAssembler::RelationalCondition condition = MacroAssembler::Equal;
     
     if (taken == nextBlock()) {
         condition = MacroAssembler::NotEqual;
-        BlockIndex tmp = taken;
+        BasicBlock* tmp = taken;
         taken = notTaken;
         notTaken = tmp;
     }
@@ -1469,14 +1469,14 @@ void SpeculativeJIT::compilePeepHoleObjectEquality(Node* node, Node* branchNode)
 
 void SpeculativeJIT::compilePeepHoleBooleanBranch(Node* node, Node* branchNode, JITCompiler::RelationalCondition condition)
 {
-    BlockIndex taken = branchNode->takenBlockIndex();
-    BlockIndex notTaken = branchNode->notTakenBlockIndex();
+    BasicBlock* taken = branchNode->takenBlock();
+    BasicBlock* notTaken = branchNode->notTakenBlock();
 
     // The branch instruction will branch to the taken block.
     // If taken is next, switch taken with notTaken & invert the branch condition so we can fall through.
     if (taken == nextBlock()) {
         condition = JITCompiler::invert(condition);
-        BlockIndex tmp = taken;
+        BasicBlock* tmp = taken;
         taken = notTaken;
         notTaken = tmp;
     }
@@ -1500,14 +1500,14 @@ void SpeculativeJIT::compilePeepHoleBooleanBranch(Node* node, Node* branchNode, 
 
 void SpeculativeJIT::compilePeepHoleIntegerBranch(Node* node, Node* branchNode, JITCompiler::RelationalCondition condition)
 {
-    BlockIndex taken = branchNode->takenBlockIndex();
-    BlockIndex notTaken = branchNode->notTakenBlockIndex();
+    BasicBlock* taken = branchNode->takenBlock();
+    BasicBlock* notTaken = branchNode->notTakenBlock();
 
     // The branch instruction will branch to the taken block.
     // If taken is next, switch taken with notTaken & invert the branch condition so we can fall through.
     if (taken == nextBlock()) {
         condition = JITCompiler::invert(condition);
-        BlockIndex tmp = taken;
+        BasicBlock* tmp = taken;
         taken = notTaken;
         notTaken = tmp;
     }
@@ -1535,7 +1535,7 @@ bool SpeculativeJIT::compilePeepHoleBranch(Node* node, MacroAssembler::Relationa
     // Fused compare & branch.
     unsigned branchIndexInBlock = detectPeepHoleBranch();
     if (branchIndexInBlock != UINT_MAX) {
-        Node* branchNode = m_jit.graph().m_blocks[m_block]->at(branchIndexInBlock);
+        Node* branchNode = m_block->at(branchIndexInBlock);
 
         // detectPeepHoleBranch currently only permits the branch to be the very next node,
         // so can be no intervening nodes to also reference the compare. 
@@ -1657,14 +1657,16 @@ void SpeculativeJIT::bail()
     clearGenerationInfo();
 }
 
-void SpeculativeJIT::compile(BasicBlock& block)
+void SpeculativeJIT::compileCurrentBlock()
 {
     ASSERT(m_compileOkay);
     
-    if (!block.isReachable)
+    if (!m_block)
         return;
     
-    if (!block.cfaHasVisited) {
+    ASSERT(m_block->isReachable);
+    
+    if (!m_block->cfaHasVisited) {
         // Don't generate code for basic blocks that are unreachable according to CFA.
         // But to be sure that nobody has generated a jump to this block, drop in a
         // breakpoint here.
@@ -1672,20 +1674,20 @@ void SpeculativeJIT::compile(BasicBlock& block)
         return;
     }
 
-    m_jit.blockHeads()[m_block] = m_jit.label();
+    m_jit.blockHeads()[m_block->index] = m_jit.label();
 #if DFG_ENABLE(JIT_BREAK_ON_EVERY_BLOCK)
     m_jit.breakpoint();
 #endif
     
 #if DFG_ENABLE(DEBUG_VERBOSE)
-    dataLogF("Setting up state for block #%u: ", m_block);
+    dataLog("Setting up state for block ", *m_block, ": ");
 #endif
     
     m_stream->appendAndLog(VariableEvent::reset());
     
     m_jit.jitAssertHasValidCallFrame();
 
-    ASSERT(m_arguments.size() == block.variablesAtHead.numberOfArguments());
+    ASSERT(m_arguments.size() == m_block->variablesAtHead.numberOfArguments());
     for (size_t i = 0; i < m_arguments.size(); ++i) {
         ValueSource valueSource = ValueSource(ValueInJSStack);
         m_arguments[i] = valueSource;
@@ -1693,11 +1695,11 @@ void SpeculativeJIT::compile(BasicBlock& block)
     }
     
     m_state.reset();
-    m_state.beginBasicBlock(&block);
+    m_state.beginBasicBlock(m_block);
     
-    ASSERT(m_variables.size() == block.variablesAtHead.numberOfLocals());
+    ASSERT(m_variables.size() == m_block->variablesAtHead.numberOfLocals());
     for (size_t i = 0; i < m_variables.size(); ++i) {
-        Node* node = block.variablesAtHead.local(i);
+        Node* node = m_block->variablesAtHead.local(i);
         ValueSource valueSource;
         if (!node)
             valueSource = ValueSource(SourceIsDead);
@@ -1723,8 +1725,8 @@ void SpeculativeJIT::compile(BasicBlock& block)
     dataLogF("\n");
 #endif
 
-    for (m_indexInBlock = 0; m_indexInBlock < block.size(); ++m_indexInBlock) {
-        m_currentNode = block[m_indexInBlock];
+    for (m_indexInBlock = 0; m_indexInBlock < m_block->size(); ++m_indexInBlock) {
+        m_currentNode = m_block->at(m_indexInBlock);
         
         // We may have his a contradiction that the CFA was aware of but that the JIT
         // didn't cause directly.
@@ -1904,11 +1906,10 @@ bool SpeculativeJIT::compile()
     checkArgumentTypes();
 
     ASSERT(!m_currentNode);
-    for (m_block = 0; m_block < m_jit.graph().m_blocks.size(); ++m_block) {
-        m_jit.setForBlock(m_block);
-        BasicBlock* block = m_jit.graph().m_blocks[m_block].get();
-        if (block)
-            compile(*block);
+    for (BlockIndex blockIndex = 0; blockIndex < m_jit.graph().numBlocks(); ++blockIndex) {
+        m_jit.setForBlockIndex(blockIndex);
+        m_block = m_jit.graph().block(blockIndex);
+        compileCurrentBlock();
     }
     linkBranches();
     return true;
@@ -1916,8 +1917,8 @@ bool SpeculativeJIT::compile()
 
 void SpeculativeJIT::createOSREntries()
 {
-    for (BlockIndex blockIndex = 0; blockIndex < m_jit.graph().m_blocks.size(); ++blockIndex) {
-        BasicBlock* block = m_jit.graph().m_blocks[blockIndex].get();
+    for (BlockIndex blockIndex = 0; blockIndex < m_jit.graph().numBlocks(); ++blockIndex) {
+        BasicBlock* block = m_jit.graph().block(blockIndex);
         if (!block)
             continue;
         if (!block->isOSRTarget)
@@ -1932,8 +1933,8 @@ void SpeculativeJIT::createOSREntries()
 void SpeculativeJIT::linkOSREntries(LinkBuffer& linkBuffer)
 {
     unsigned osrEntryIndex = 0;
-    for (BlockIndex blockIndex = 0; blockIndex < m_jit.graph().m_blocks.size(); ++blockIndex) {
-        BasicBlock* block = m_jit.graph().m_blocks[blockIndex].get();
+    for (BlockIndex blockIndex = 0; blockIndex < m_jit.graph().numBlocks(); ++blockIndex) {
+        BasicBlock* block = m_jit.graph().block(blockIndex);
         if (!block)
             continue;
         if (!block->isOSRTarget)
@@ -3721,16 +3722,16 @@ bool SpeculativeJIT::compileStrictEqForConstant(Node* node, Edge value, JSValue 
     
     unsigned branchIndexInBlock = detectPeepHoleBranch();
     if (branchIndexInBlock != UINT_MAX) {
-        Node* branchNode = m_jit.graph().m_blocks[m_block]->at(branchIndexInBlock);
-        BlockIndex taken = branchNode->takenBlockIndex();
-        BlockIndex notTaken = branchNode->notTakenBlockIndex();
+        Node* branchNode = m_block->at(branchIndexInBlock);
+        BasicBlock* taken = branchNode->takenBlock();
+        BasicBlock* notTaken = branchNode->notTakenBlock();
         MacroAssembler::RelationalCondition condition = MacroAssembler::Equal;
         
         // The branch instruction will branch to the taken block.
         // If taken is next, switch taken with notTaken & invert the branch condition so we can fall through.
         if (taken == nextBlock()) {
             condition = MacroAssembler::NotEqual;
-            BlockIndex tmp = taken;
+            BasicBlock* tmp = taken;
             taken = notTaken;
             notTaken = tmp;
         }
@@ -3793,7 +3794,7 @@ bool SpeculativeJIT::compileStrictEq(Node* node)
     case BooleanUse: {
         unsigned branchIndexInBlock = detectPeepHoleBranch();
         if (branchIndexInBlock != UINT_MAX) {
-            Node* branchNode = m_jit.graph().m_blocks[m_block]->at(branchIndexInBlock);
+            Node* branchNode = m_block->at(branchIndexInBlock);
             compilePeepHoleBooleanBranch(node, branchNode, MacroAssembler::Equal);
             use(node->child1());
             use(node->child2());
@@ -3808,7 +3809,7 @@ bool SpeculativeJIT::compileStrictEq(Node* node)
     case Int32Use: {
         unsigned branchIndexInBlock = detectPeepHoleBranch();
         if (branchIndexInBlock != UINT_MAX) {
-            Node* branchNode = m_jit.graph().m_blocks[m_block]->at(branchIndexInBlock);
+            Node* branchNode = m_block->at(branchIndexInBlock);
             compilePeepHoleIntegerBranch(node, branchNode, MacroAssembler::Equal);
             use(node->child1());
             use(node->child2());
@@ -3823,7 +3824,7 @@ bool SpeculativeJIT::compileStrictEq(Node* node)
     case NumberUse: {
         unsigned branchIndexInBlock = detectPeepHoleBranch();
         if (branchIndexInBlock != UINT_MAX) {
-            Node* branchNode = m_jit.graph().m_blocks[m_block]->at(branchIndexInBlock);
+            Node* branchNode = m_block->at(branchIndexInBlock);
             compilePeepHoleDoubleBranch(node, branchNode, MacroAssembler::DoubleEqual);
             use(node->child1());
             use(node->child2());
@@ -3848,7 +3849,7 @@ bool SpeculativeJIT::compileStrictEq(Node* node)
     case ObjectUse: {
         unsigned branchIndexInBlock = detectPeepHoleBranch();
         if (branchIndexInBlock != UINT_MAX) {
-            Node* branchNode = m_jit.graph().m_blocks[m_block]->at(branchIndexInBlock);
+            Node* branchNode = m_block->at(branchIndexInBlock);
             compilePeepHoleObjectEquality(node, branchNode);
             use(node->child1());
             use(node->child2());
@@ -4220,16 +4221,16 @@ bool SpeculativeJIT::compileRegExpExec(Node* node)
     unsigned branchIndexInBlock = detectPeepHoleBranch();
     if (branchIndexInBlock == UINT_MAX)
         return false;
-    Node* branchNode = m_jit.graph().m_blocks[m_block]->at(branchIndexInBlock);
+    Node* branchNode = m_block->at(branchIndexInBlock);
     ASSERT(node->adjustedRefCount() == 1);
 
-    BlockIndex taken = branchNode->takenBlockIndex();
-    BlockIndex notTaken = branchNode->notTakenBlockIndex();
+    BasicBlock* taken = branchNode->takenBlock();
+    BasicBlock* notTaken = branchNode->notTakenBlock();
     
     bool invert = false;
     if (taken == nextBlock()) {
         invert = true;
-        BlockIndex tmp = taken;
+        BasicBlock* tmp = taken;
         taken = notTaken;
         notTaken = tmp;
     }
@@ -5264,7 +5265,7 @@ void SpeculativeJIT::emitSwitch(Node* node)
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-void SpeculativeJIT::addBranch(const MacroAssembler::JumpList& jump, BlockIndex destination)
+void SpeculativeJIT::addBranch(const MacroAssembler::JumpList& jump, BasicBlock* destination)
 {
     for (unsigned i = jump.jumps().size(); i--;)
         addBranch(jump.jumps()[i], destination);
@@ -5274,7 +5275,7 @@ void SpeculativeJIT::linkBranches()
 {
     for (size_t i = 0; i < m_branches.size(); ++i) {
         BranchRecord& branch = m_branches[i];
-        branch.jump.linkTo(m_jit.blockHeads()[branch.destination], &m_jit);
+        branch.jump.linkTo(m_jit.blockHeads()[branch.destination->index], &m_jit);
     }
 }
 

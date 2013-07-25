@@ -185,8 +185,8 @@ private:
     // Parse a single basic block of bytecode instructions.
     bool parseBlock(unsigned limit);
     // Link block successors.
-    void linkBlock(BasicBlock*, Vector<BlockIndex>& possibleTargets);
-    void linkBlocks(Vector<UnlinkedBlock>& unlinkedBlocks, Vector<BlockIndex>& possibleTargets);
+    void linkBlock(BasicBlock*, Vector<BasicBlock*>& possibleTargets);
+    void linkBlocks(Vector<UnlinkedBlock>& unlinkedBlocks, Vector<BasicBlock*>& possibleTargets);
     
     VariableAccessData* newVariableAccessData(int operand, bool isCaptured)
     {
@@ -1021,13 +1021,13 @@ private:
         // Potential block linking targets. Must be sorted by bytecodeBegin, and
         // cannot have two blocks that have the same bytecodeBegin. For this very
         // reason, this is not equivalent to 
-        Vector<BlockIndex> m_blockLinkingTargets;
+        Vector<BasicBlock*> m_blockLinkingTargets;
         
         // If the callsite's basic block was split into two, then this will be
         // the head of the callsite block. It needs its successors linked to the
         // m_unlinkedBlocks, but not the other way around: there's no way for
         // any blocks in m_unlinkedBlocks to jump back into this block.
-        BlockIndex m_callsiteBlockHead;
+        BasicBlock* m_callsiteBlockHead;
         
         // Does the callsite block head need linking? This is typically true
         // but will be false for the machine code block's inline stack entry
@@ -1058,7 +1058,7 @@ private:
             ByteCodeParser*,
             CodeBlock*,
             CodeBlock* profiledBlock,
-            BlockIndex callsiteBlockHead,
+            BasicBlock* callsiteBlockHead,
             JSFunction* callee, // Null if this is a closure call.
             VirtualRegister returnValueVR,
             VirtualRegister inlineCallFrameStart,
@@ -1277,14 +1277,14 @@ bool ByteCodeParser::handleInlining(Node* callTargetNode, int resultOperand, con
     unsigned newNumLocals = inlineCallFrameStart + JSStack::CallFrameHeaderSize + codeBlock->m_numCalleeRegisters;
     if (newNumLocals > m_numLocals) {
         m_numLocals = newNumLocals;
-        for (size_t i = 0; i < m_graph.m_blocks.size(); ++i)
-            m_graph.m_blocks[i]->ensureLocals(newNumLocals);
+        for (size_t i = 0; i < m_graph.numBlocks(); ++i)
+            m_graph.block(i)->ensureLocals(newNumLocals);
     }
     
     size_t argumentPositionStart = m_graph.m_argumentPositions.size();
 
     InlineStackEntry inlineStackEntry(
-        this, codeBlock, codeBlock, m_graph.m_blocks.size() - 1, callLinkStatus.function(),
+        this, codeBlock, codeBlock, m_graph.lastBlock(), callLinkStatus.function(),
         (VirtualRegister)m_inlineStackTop->remapOperand(resultOperand),
         (VirtualRegister)inlineCallFrameStart, argumentCountIncludingThis, kind);
     
@@ -1303,19 +1303,19 @@ bool ByteCodeParser::handleInlining(Node* callTargetNode, int resultOperand, con
     m_currentIndex = oldIndex;
     
     // If the inlined code created some new basic blocks, then we have linking to do.
-    if (inlineStackEntry.m_callsiteBlockHead != m_graph.m_blocks.size() - 1) {
+    if (inlineStackEntry.m_callsiteBlockHead != m_graph.lastBlock()) {
         
         ASSERT(!inlineStackEntry.m_unlinkedBlocks.isEmpty());
         if (inlineStackEntry.m_callsiteBlockHeadNeedsLinking)
-            linkBlock(m_graph.m_blocks[inlineStackEntry.m_callsiteBlockHead].get(), inlineStackEntry.m_blockLinkingTargets);
+            linkBlock(inlineStackEntry.m_callsiteBlockHead, inlineStackEntry.m_blockLinkingTargets);
         else
-            ASSERT(m_graph.m_blocks[inlineStackEntry.m_callsiteBlockHead]->isLinked);
+            ASSERT(inlineStackEntry.m_callsiteBlockHead->isLinked);
         
         // It's possible that the callsite block head is not owned by the caller.
         if (!inlineStackEntry.m_caller->m_unlinkedBlocks.isEmpty()) {
             // It's definitely owned by the caller, because the caller created new blocks.
             // Assert that this all adds up.
-            ASSERT(inlineStackEntry.m_caller->m_unlinkedBlocks.last().m_blockIndex == inlineStackEntry.m_callsiteBlockHead);
+            ASSERT(inlineStackEntry.m_caller->m_unlinkedBlocks.last().m_block == inlineStackEntry.m_callsiteBlockHead);
             ASSERT(inlineStackEntry.m_caller->m_unlinkedBlocks.last().m_needsNormalLinking);
             inlineStackEntry.m_caller->m_unlinkedBlocks.last().m_needsNormalLinking = false;
         } else {
@@ -1330,7 +1330,7 @@ bool ByteCodeParser::handleInlining(Node* callTargetNode, int resultOperand, con
     } else
         ASSERT(inlineStackEntry.m_unlinkedBlocks.isEmpty());
     
-    BasicBlock* lastBlock = m_graph.m_blocks.last().get();
+    BasicBlock* lastBlock = m_graph.lastBlock();
     // If there was a return, but no early returns, then we're done. We allow parsing of
     // the caller to continue in whatever basic block we're in right now.
     if (!inlineStackEntry.m_didEarlyReturn && inlineStackEntry.m_didReturn) {
@@ -1346,11 +1346,11 @@ bool ByteCodeParser::handleInlining(Node* callTargetNode, int resultOperand, con
             // for release builds because this block will never serve as a potential target
             // in the linker's binary search.
             lastBlock->bytecodeBegin = m_currentIndex;
-            m_inlineStackTop->m_caller->m_unlinkedBlocks.append(UnlinkedBlock(m_graph.m_blocks.size() - 1));
+            m_inlineStackTop->m_caller->m_unlinkedBlocks.append(UnlinkedBlock(m_graph.lastBlock()));
         }
         
-        m_currentBlock = m_graph.m_blocks.last().get();
-
+        m_currentBlock = m_graph.lastBlock();
+        
 #if DFG_ENABLE(DEBUG_VERBOSE)
         dataLogF("Done inlining executable %p, continuing code generation at epilogue.\n", executable);
 #endif
@@ -1360,32 +1360,35 @@ bool ByteCodeParser::handleInlining(Node* callTargetNode, int resultOperand, con
     // If we get to this point then all blocks must end in some sort of terminals.
     ASSERT(lastBlock->last()->isTerminal());
     
+
+    // Need to create a new basic block for the continuation at the caller.
+    RefPtr<BasicBlock> block = adoptRef(new BasicBlock(nextOffset, m_numArguments, m_numLocals));
+
+#if DFG_ENABLE(DEBUG_VERBOSE)
+    dataLogF("Creating inline epilogue basic block %p, #%zu for %p bc#%u at inline depth %u.\n", block.get(), m_graph.numBlocks(), m_inlineStackTop->executable(), m_currentIndex, CodeOrigin::inlineDepthForCallFrame(inlineCallFrame()));
+#endif
+
     // Link the early returns to the basic block we're about to create.
     for (size_t i = 0; i < inlineStackEntry.m_unlinkedBlocks.size(); ++i) {
         if (!inlineStackEntry.m_unlinkedBlocks[i].m_needsEarlyReturnLinking)
             continue;
-        BasicBlock* block = m_graph.m_blocks[inlineStackEntry.m_unlinkedBlocks[i].m_blockIndex].get();
-        ASSERT(!block->isLinked);
-        Node* node = block->last();
+        BasicBlock* blockToLink = inlineStackEntry.m_unlinkedBlocks[i].m_block;
+        ASSERT(!blockToLink->isLinked);
+        Node* node = blockToLink->last();
         ASSERT(node->op() == Jump);
-        ASSERT(node->takenBlockIndex() == NoBlock);
-        node->setTakenBlockIndex(m_graph.m_blocks.size());
+        ASSERT(node->takenBlock() == 0);
+        node->setTakenBlock(block.get());
         inlineStackEntry.m_unlinkedBlocks[i].m_needsEarlyReturnLinking = false;
 #if !ASSERT_DISABLED
-        block->isLinked = true;
+        blockToLink->isLinked = true;
 #endif
     }
     
-    // Need to create a new basic block for the continuation at the caller.
-    OwnPtr<BasicBlock> block = adoptPtr(new BasicBlock(nextOffset, m_numArguments, m_numLocals));
-#if DFG_ENABLE(DEBUG_VERBOSE)
-    dataLogF("Creating inline epilogue basic block %p, #%zu for %p bc#%u at inline depth %u.\n", block.get(), m_graph.m_blocks.size(), m_inlineStackTop->executable(), m_currentIndex, CodeOrigin::inlineDepthForCallFrame(inlineCallFrame()));
-#endif
     m_currentBlock = block.get();
-    ASSERT(m_inlineStackTop->m_caller->m_blockLinkingTargets.isEmpty() || m_graph.m_blocks[m_inlineStackTop->m_caller->m_blockLinkingTargets.last()]->bytecodeBegin < nextOffset);
-    m_inlineStackTop->m_caller->m_unlinkedBlocks.append(UnlinkedBlock(m_graph.m_blocks.size()));
-    m_inlineStackTop->m_caller->m_blockLinkingTargets.append(m_graph.m_blocks.size());
-    m_graph.m_blocks.append(block.release());
+    ASSERT(m_inlineStackTop->m_caller->m_blockLinkingTargets.isEmpty() || m_inlineStackTop->m_caller->m_blockLinkingTargets.last()->bytecodeBegin < nextOffset);
+    m_inlineStackTop->m_caller->m_unlinkedBlocks.append(UnlinkedBlock(block.get()));
+    m_inlineStackTop->m_caller->m_blockLinkingTargets.append(block.get());
+    m_graph.appendBlock(block);
     prepareToParseBlock();
     
     // At this point we return and continue to generate code for the caller, but
@@ -1757,7 +1760,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
     // If we are the first basic block, introduce markers for arguments. This allows
     // us to track if a use of an argument may use the actual argument passed, as
     // opposed to using a value we set explicitly.
-    if (m_currentBlock == m_graph.m_blocks[0].get() && !inlineCallFrame()) {
+    if (m_currentBlock == m_graph.block(0) && !inlineCallFrame()) {
         m_graph.m_arguments.resize(m_numArguments);
         for (unsigned argument = 0; argument < m_numArguments; ++argument) {
             VariableAccessData* variable = newVariableAccessData(
@@ -2762,15 +2765,15 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             SwitchData data;
             data.kind = SwitchImm;
             data.switchTableIndex = m_inlineStackTop->m_switchRemap[currentInstruction[1].u.operand];
-            data.fallThrough = m_currentIndex + currentInstruction[2].u.operand;
+            data.setFallThroughBytecodeIndex(m_currentIndex + currentInstruction[2].u.operand);
             SimpleJumpTable& table = m_codeBlock->switchJumpTable(data.switchTableIndex);
             for (unsigned i = 0; i < table.branchOffsets.size(); ++i) {
                 if (!table.branchOffsets[i])
                     continue;
                 unsigned target = m_currentIndex + table.branchOffsets[i];
-                if (target == data.fallThrough)
+                if (target == data.fallThroughBytecodeIndex())
                     continue;
-                data.cases.append(SwitchCase(jsNumber(table.min + i), target));
+                data.cases.append(SwitchCase::withBytecodeIndex(jsNumber(table.min + i), target));
             }
             m_graph.m_switchData.append(data);
             addToGraph(Switch, OpInfo(&m_graph.m_switchData.last()), get(currentInstruction[3].u.operand));
@@ -2781,16 +2784,16 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             SwitchData data;
             data.kind = SwitchChar;
             data.switchTableIndex = m_inlineStackTop->m_switchRemap[currentInstruction[1].u.operand];
-            data.fallThrough = m_currentIndex + currentInstruction[2].u.operand;
+            data.setFallThroughBytecodeIndex(m_currentIndex + currentInstruction[2].u.operand);
             SimpleJumpTable& table = m_codeBlock->switchJumpTable(data.switchTableIndex);
             for (unsigned i = 0; i < table.branchOffsets.size(); ++i) {
                 if (!table.branchOffsets[i])
                     continue;
                 unsigned target = m_currentIndex + table.branchOffsets[i];
-                if (target == data.fallThrough)
+                if (target == data.fallThroughBytecodeIndex())
                     continue;
                 data.cases.append(
-                    SwitchCase(LazyJSValue::singleCharacterString(table.min + i), target));
+                    SwitchCase::withBytecodeIndex(LazyJSValue::singleCharacterString(table.min + i), target));
             }
             m_graph.m_switchData.append(data);
             addToGraph(Switch, OpInfo(&m_graph.m_switchData.last()), get(currentInstruction[3].u.operand));
@@ -2801,16 +2804,16 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             SwitchData data;
             data.kind = SwitchString;
             data.switchTableIndex = currentInstruction[1].u.operand;
-            data.fallThrough = m_currentIndex + currentInstruction[2].u.operand;
+            data.setFallThroughBytecodeIndex(m_currentIndex + currentInstruction[2].u.operand);
             StringJumpTable& table = m_codeBlock->stringSwitchJumpTable(data.switchTableIndex);
             StringJumpTable::StringOffsetTable::iterator iter;
             StringJumpTable::StringOffsetTable::iterator end = table.offsetTable.end();
             for (iter = table.offsetTable.begin(); iter != end; ++iter) {
                 unsigned target = m_currentIndex + iter->value.branchOffset;
-                if (target == data.fallThrough)
+                if (target == data.fallThroughBytecodeIndex())
                     continue;
                 data.cases.append(
-                    SwitchCase(LazyJSValue::knownStringImpl(iter->key.get()), target));
+                    SwitchCase::withBytecodeIndex(LazyJSValue::knownStringImpl(iter->key.get()), target));
             }
             m_graph.m_switchData.append(data);
             addToGraph(Switch, OpInfo(&m_graph.m_switchData.last()), get(currentInstruction[3].u.operand));
@@ -2825,18 +2828,18 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 m_inlineStackTop->m_didReturn = true;
                 if (m_inlineStackTop->m_unlinkedBlocks.isEmpty()) {
                     // If we're returning from the first block, then we're done parsing.
-                    ASSERT(m_inlineStackTop->m_callsiteBlockHead == m_graph.m_blocks.size() - 1);
+                    ASSERT(m_inlineStackTop->m_callsiteBlockHead == m_graph.lastBlock());
                     shouldContinueParsing = false;
                     LAST_OPCODE(op_ret);
                 } else {
                     // If inlining created blocks, and we're doing a return, then we need some
                     // special linking.
-                    ASSERT(m_inlineStackTop->m_unlinkedBlocks.last().m_blockIndex == m_graph.m_blocks.size() - 1);
+                    ASSERT(m_inlineStackTop->m_unlinkedBlocks.last().m_block == m_graph.lastBlock());
                     m_inlineStackTop->m_unlinkedBlocks.last().m_needsNormalLinking = false;
                 }
                 if (m_currentIndex + OPCODE_LENGTH(op_ret) != m_inlineStackTop->m_codeBlock->instructions().size() || m_inlineStackTop->m_didEarlyReturn) {
                     ASSERT(m_currentIndex + OPCODE_LENGTH(op_ret) <= m_inlineStackTop->m_codeBlock->instructions().size());
-                    addToGraph(Jump, OpInfo(NoBlock));
+                    addToGraph(Jump, OpInfo(0));
                     m_inlineStackTop->m_unlinkedBlocks.last().m_needsEarlyReturnLinking = true;
                     m_inlineStackTop->m_didEarlyReturn = true;
                 }
@@ -3159,7 +3162,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
     }
 }
 
-void ByteCodeParser::linkBlock(BasicBlock* block, Vector<BlockIndex>& possibleTargets)
+void ByteCodeParser::linkBlock(BasicBlock* block, Vector<BasicBlock*>& possibleTargets)
 {
     ASSERT(!block->isLinked);
     ASSERT(!block->isEmpty());
@@ -3168,24 +3171,24 @@ void ByteCodeParser::linkBlock(BasicBlock* block, Vector<BlockIndex>& possibleTa
     
     switch (node->op()) {
     case Jump:
-        node->setTakenBlockIndex(m_graph.blockIndexForBytecodeOffset(possibleTargets, node->takenBytecodeOffsetDuringParsing()));
+        node->setTakenBlock(blockForBytecodeOffset(possibleTargets, node->takenBytecodeOffsetDuringParsing()));
 #if DFG_ENABLE(DEBUG_VERBOSE)
-        dataLogF("Linked basic block %p to %p, #%u.\n", block, m_graph.m_blocks[node->takenBlockIndex()].get(), node->takenBlockIndex());
+        dataLogF("Linked basic block %p to %p, #%u.\n", block, node->takenBlock(), node->takenBlock()->index);
 #endif
         break;
         
     case Branch:
-        node->setTakenBlockIndex(m_graph.blockIndexForBytecodeOffset(possibleTargets, node->takenBytecodeOffsetDuringParsing()));
-        node->setNotTakenBlockIndex(m_graph.blockIndexForBytecodeOffset(possibleTargets, node->notTakenBytecodeOffsetDuringParsing()));
+        node->setTakenBlock(blockForBytecodeOffset(possibleTargets, node->takenBytecodeOffsetDuringParsing()));
+        node->setNotTakenBlock(blockForBytecodeOffset(possibleTargets, node->notTakenBytecodeOffsetDuringParsing()));
 #if DFG_ENABLE(DEBUG_VERBOSE)
-        dataLogF("Linked basic block %p to %p, #%u and %p, #%u.\n", block, m_graph.m_blocks[node->takenBlockIndex()].get(), node->takenBlockIndex(), m_graph.m_blocks[node->notTakenBlockIndex()].get(), node->notTakenBlockIndex());
+        dataLogF("Linked basic block %p to %p, #%u and %p, #%u.\n", block, node->takenBlock(), node->takenBlock()->index, node->notTakenBlock(), node->notTakenBlock()->index);
 #endif
         break;
         
     case Switch:
         for (unsigned i = node->switchData()->cases.size(); i--;)
-            node->switchData()->cases[i].target = m_graph.blockIndexForBytecodeOffset(possibleTargets, node->switchData()->cases[i].target);
-        node->switchData()->fallThrough = m_graph.blockIndexForBytecodeOffset(possibleTargets, node->switchData()->fallThrough);
+            node->switchData()->cases[i].target = blockForBytecodeOffset(possibleTargets, node->switchData()->cases[i].targetBytecodeIndex());
+        node->switchData()->fallThrough = blockForBytecodeOffset(possibleTargets, node->switchData()->fallThroughBytecodeIndex());
         break;
         
     default:
@@ -3200,11 +3203,11 @@ void ByteCodeParser::linkBlock(BasicBlock* block, Vector<BlockIndex>& possibleTa
 #endif
 }
 
-void ByteCodeParser::linkBlocks(Vector<UnlinkedBlock>& unlinkedBlocks, Vector<BlockIndex>& possibleTargets)
+void ByteCodeParser::linkBlocks(Vector<UnlinkedBlock>& unlinkedBlocks, Vector<BasicBlock*>& possibleTargets)
 {
     for (size_t i = 0; i < unlinkedBlocks.size(); ++i) {
         if (unlinkedBlocks[i].m_needsNormalLinking) {
-            linkBlock(m_graph.m_blocks[unlinkedBlocks[i].m_blockIndex].get(), possibleTargets);
+            linkBlock(unlinkedBlocks[i].m_block, possibleTargets);
             unlinkedBlocks[i].m_needsNormalLinking = false;
         }
     }
@@ -3232,7 +3235,7 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(
     ByteCodeParser* byteCodeParser,
     CodeBlock* codeBlock,
     CodeBlock* profiledBlock,
-    BlockIndex callsiteBlockHead,
+    BasicBlock* callsiteBlockHead,
     JSFunction* callee, // Null if this is a closure call.
     VirtualRegister returnValueVR,
     VirtualRegister inlineCallFrameStart,
@@ -3270,7 +3273,7 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(
         // Inline case.
         ASSERT(codeBlock != byteCodeParser->m_codeBlock);
         ASSERT(inlineCallFrameStart != InvalidVirtualRegister);
-        ASSERT(callsiteBlockHead != NoBlock);
+        ASSERT(callsiteBlockHead);
         
         InlineCallFrame inlineCallFrame;
         inlineCallFrame.executable.set(*byteCodeParser->m_vm, byteCodeParser->m_codeBlock->ownerExecutable(), codeBlock->ownerExecutable());
@@ -3365,7 +3368,7 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(
         ASSERT(!callee);
         ASSERT(returnValueVR == InvalidVirtualRegister);
         ASSERT(inlineCallFrameStart == InvalidVirtualRegister);
-        ASSERT(callsiteBlockHead == NoBlock);
+        ASSERT(!callsiteBlockHead);
 
         m_inlineCallFrame = 0;
 
@@ -3443,27 +3446,27 @@ void ByteCodeParser::parseCodeBlock()
         do {
             if (!m_currentBlock) {
                 // Check if we can use the last block.
-                if (!m_graph.m_blocks.isEmpty() && m_graph.m_blocks.last()->isEmpty()) {
+                if (m_graph.numBlocks() && m_graph.lastBlock()->isEmpty()) {
                     // This must be a block belonging to us.
-                    ASSERT(m_inlineStackTop->m_unlinkedBlocks.last().m_blockIndex == m_graph.m_blocks.size() - 1);
+                    ASSERT(m_inlineStackTop->m_unlinkedBlocks.last().m_block == m_graph.lastBlock());
                     // Either the block is linkable or it isn't. If it's linkable then it's the last
                     // block in the blockLinkingTargets list. If it's not then the last block will
                     // have a lower bytecode index that the one we're about to give to this block.
-                    if (m_inlineStackTop->m_blockLinkingTargets.isEmpty() || m_graph.m_blocks[m_inlineStackTop->m_blockLinkingTargets.last()]->bytecodeBegin != m_currentIndex) {
+                    if (m_inlineStackTop->m_blockLinkingTargets.isEmpty() || m_inlineStackTop->m_blockLinkingTargets.last()->bytecodeBegin != m_currentIndex) {
                         // Make the block linkable.
-                        ASSERT(m_inlineStackTop->m_blockLinkingTargets.isEmpty() || m_graph.m_blocks[m_inlineStackTop->m_blockLinkingTargets.last()]->bytecodeBegin < m_currentIndex);
-                        m_inlineStackTop->m_blockLinkingTargets.append(m_graph.m_blocks.size() - 1);
+                        ASSERT(m_inlineStackTop->m_blockLinkingTargets.isEmpty() || m_inlineStackTop->m_blockLinkingTargets.last()->bytecodeBegin < m_currentIndex);
+                        m_inlineStackTop->m_blockLinkingTargets.append(m_graph.lastBlock());
                     }
                     // Change its bytecode begin and continue.
-                    m_currentBlock = m_graph.m_blocks.last().get();
+                    m_currentBlock = m_graph.lastBlock();
 #if DFG_ENABLE(DEBUG_VERBOSE)
                     dataLogF("Reascribing bytecode index of block %p from bc#%u to bc#%u (peephole case).\n", m_currentBlock, m_currentBlock->bytecodeBegin, m_currentIndex);
 #endif
                     m_currentBlock->bytecodeBegin = m_currentIndex;
                 } else {
-                    OwnPtr<BasicBlock> block = adoptPtr(new BasicBlock(m_currentIndex, m_numArguments, m_numLocals));
+                    RefPtr<BasicBlock> block = adoptRef(new BasicBlock(m_currentIndex, m_numArguments, m_numLocals));
 #if DFG_ENABLE(DEBUG_VERBOSE)
-                    dataLogF("Creating basic block %p, #%zu for %p bc#%u at inline depth %u.\n", block.get(), m_graph.m_blocks.size(), m_inlineStackTop->executable(), m_currentIndex, CodeOrigin::inlineDepthForCallFrame(inlineCallFrame()));
+                    dataLogF("Creating basic block %p, #%zu for %p bc#%u at inline depth %u.\n", block.get(), m_graph.numBlocks(), m_inlineStackTop->executable(), m_currentIndex, CodeOrigin::inlineDepthForCallFrame(inlineCallFrame()));
 #endif
                     m_currentBlock = block.get();
                     // This assertion checks two things:
@@ -3472,13 +3475,13 @@ void ByteCodeParser::parseCodeBlock()
                     // 2) If the bytecodeBegin is equal to the currentIndex, then we failed to do
                     //    a peephole coalescing of this block in the if statement above. So, we're
                     //    generating suboptimal code and leaving more work for the CFG simplifier.
-                    ASSERT(m_inlineStackTop->m_unlinkedBlocks.isEmpty() || m_graph.m_blocks[m_inlineStackTop->m_unlinkedBlocks.last().m_blockIndex]->bytecodeBegin < m_currentIndex);
-                    m_inlineStackTop->m_unlinkedBlocks.append(UnlinkedBlock(m_graph.m_blocks.size()));
-                    m_inlineStackTop->m_blockLinkingTargets.append(m_graph.m_blocks.size());
+                    ASSERT(m_inlineStackTop->m_unlinkedBlocks.isEmpty() || m_inlineStackTop->m_unlinkedBlocks.last().m_block->bytecodeBegin < m_currentIndex);
+                    m_inlineStackTop->m_unlinkedBlocks.append(UnlinkedBlock(block.get()));
+                    m_inlineStackTop->m_blockLinkingTargets.append(block.get());
                     // The first block is definitely an OSR target.
-                    if (!m_graph.m_blocks.size())
+                    if (!m_graph.numBlocks())
                         block->isOSRTarget = true;
-                    m_graph.m_blocks.append(block.release());
+                    m_graph.appendBlock(block);
                     prepareToParseBlock();
                 }
             }
@@ -3517,7 +3520,7 @@ bool ByteCodeParser::parse()
 #endif
     
     InlineStackEntry inlineStackEntry(
-        this, m_codeBlock, m_profiledBlock, NoBlock, 0, InvalidVirtualRegister, InvalidVirtualRegister,
+        this, m_codeBlock, m_profiledBlock, 0, 0, InvalidVirtualRegister, InvalidVirtualRegister,
         m_codeBlock->numParameters(), CodeForCall);
     
     parseCodeBlock();
@@ -3534,11 +3537,11 @@ bool ByteCodeParser::parse()
         }
     }
     
-    for (BlockIndex blockIndex = 0; blockIndex < m_graph.m_blocks.size(); ++blockIndex) {
-        BasicBlock* block = m_graph.m_blocks[blockIndex].get();
+    for (BlockIndex blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex) {
+        BasicBlock* block = m_graph.block(blockIndex);
         ASSERT(block);
         if (!block->isReachable) {
-            m_graph.m_blocks[blockIndex].clear();
+            m_graph.killBlock(block);
             continue;
         }
         

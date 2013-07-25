@@ -296,11 +296,11 @@ public:
         m_disassembler->setStartOfCode(labelIgnoringWatchpoints());
     }
     
-    void setForBlock(BlockIndex blockIndex)
+    void setForBlockIndex(BlockIndex blockIndex)
     {
         if (LIKELY(!m_disassembler))
             return;
-        m_disassembler->setForBlock(blockIndex, labelIgnoringWatchpoints());
+        m_disassembler->setForBlockIndex(blockIndex, labelIgnoringWatchpoints());
     }
     
     void setForNode(Node* node)

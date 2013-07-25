@@ -142,8 +142,8 @@ public:
         
         // Figure out which variables are live, using a conservative approximation of
         // liveness.
-        for (BlockIndex blockIndex = 0; blockIndex < m_graph.m_blocks.size(); ++blockIndex) {
-            BasicBlock* block = m_graph.m_blocks[blockIndex].get();
+        for (BlockIndex blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex) {
+            BasicBlock* block = m_graph.block(blockIndex);
             if (!block)
                 continue;
             for (unsigned indexInBlock = 0; indexInBlock < block->size(); ++indexInBlock) {
@@ -164,8 +164,8 @@ public:
         // used only for GetByVal and GetArrayLength accesses. At the same time,
         // identify uses of CreateArguments that are not consistent with the arguments
         // being aliased only to variables that satisfy these constraints.
-        for (BlockIndex blockIndex = 0; blockIndex < m_graph.m_blocks.size(); ++blockIndex) {
-            BasicBlock* block = m_graph.m_blocks[blockIndex].get();
+        for (BlockIndex blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex) {
+            BasicBlock* block = m_graph.block(blockIndex);
             if (!block)
                 continue;
             for (unsigned indexInBlock = 0; indexInBlock < block->size(); ++indexInBlock) {
@@ -352,8 +352,8 @@ public:
         // the arguments as requiring creation. This is a property of SetLocals to
         // variables that are neither the correct arguments register nor are marked as
         // being arguments-aliased.
-        for (BlockIndex blockIndex = 0; blockIndex < m_graph.m_blocks.size(); ++blockIndex) {
-            BasicBlock* block = m_graph.m_blocks[blockIndex].get();
+        for (BlockIndex blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex) {
+            BasicBlock* block = m_graph.block(blockIndex);
             if (!block)
                 continue;
             for (unsigned indexInBlock = 0; indexInBlock < block->size(); ++indexInBlock) {
@@ -428,8 +428,8 @@ public:
         
         InsertionSet insertionSet(m_graph);
         
-        for (BlockIndex blockIndex = 0; blockIndex < m_graph.m_blocks.size(); ++blockIndex) {
-            BasicBlock* block = m_graph.m_blocks[blockIndex].get();
+        for (BlockIndex blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex) {
+            BasicBlock* block = m_graph.block(blockIndex);
             if (!block)
                 continue;
             for (unsigned indexInBlock = 0; indexInBlock < block->size(); indexInBlock++) {
@@ -661,8 +661,8 @@ public:
             insertionSet.execute(block);
         }
         
-        for (BlockIndex blockIndex = 0; blockIndex < m_graph.m_blocks.size(); ++blockIndex) {
-            BasicBlock* block = m_graph.m_blocks[blockIndex].get();
+        for (BlockIndex blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex) {
+            BasicBlock* block = m_graph.block(blockIndex);
             if (!block)
                 continue;
             for (unsigned indexInBlock = 0; indexInBlock < block->size(); ++indexInBlock) {

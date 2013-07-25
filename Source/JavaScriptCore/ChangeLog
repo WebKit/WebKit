@@ -1,5 +1,228 @@
 2013-07-04  Filip Pizlo  <fpizlo@apple.com>
 
+        fourthTier: DFG should refer to BasicBlocks by BasicBlock* and not BlockIndex
+        https://bugs.webkit.org/show_bug.cgi?id=118339
+
+        Reviewed by Michael Saboff.
+        
+        This accomplishes two goals:
+
+        1) Simplifies a bunch of code. You can now much more directly get to a successor
+           or predecessor, since you just get the pointer directly. The backend(s) always
+           hold onto a pointer to the block they're on, so you don't have to do work to
+           get the block from the index.
+        
+        2) It allows for the possibility of inserting blocks into the program.
+           Previously, if you did that, you'd have to edit all references to blocks since
+           those references would have outdated indexing after an insertion. Now, if you
+           change the indexing, you just have to invalidate some analyses and make sure
+           that you change each block's BasicBlock::index accordingly.
+
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::initialize):
+        (JSC::DFG::AbstractState::endBasicBlock):
+        (JSC::DFG::AbstractState::mergeToSuccessors):
+        * dfg/DFGAbstractState.h:
+        (AbstractState):
+        * dfg/DFGArgumentsSimplificationPhase.cpp:
+        (JSC::DFG::ArgumentsSimplificationPhase::run):
+        * dfg/DFGBackwardsPropagationPhase.cpp:
+        (JSC::DFG::BackwardsPropagationPhase::run):
+        * dfg/DFGBasicBlock.h:
+        (DFG):
+        (JSC::DFG::BasicBlock::BasicBlock):
+        (JSC::DFG::BasicBlock::size):
+        (JSC::DFG::BasicBlock::isEmpty):
+        (JSC::DFG::BasicBlock::at):
+        (JSC::DFG::BasicBlock::operator[]):
+        (JSC::DFG::BasicBlock::last):
+        (JSC::DFG::BasicBlock::resize):
+        (JSC::DFG::BasicBlock::grow):
+        (BasicBlock):
+        (JSC::DFG::BasicBlock::append):
+        (JSC::DFG::BasicBlock::numSuccessors):
+        (JSC::DFG::BasicBlock::successor):
+        (JSC::DFG::BasicBlock::successorForCondition):
+        (JSC::DFG::BasicBlock::dump):
+        (UnlinkedBlock):
+        (JSC::DFG::UnlinkedBlock::UnlinkedBlock):
+        (JSC::DFG::getBytecodeBeginForBlock):
+        (JSC::DFG::blockForBytecodeOffset):
+        * dfg/DFGByteCodeParser.cpp:
+        (ByteCodeParser):
+        (InlineStackEntry):
+        (JSC::DFG::ByteCodeParser::handleInlining):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::linkBlock):
+        (JSC::DFG::ByteCodeParser::linkBlocks):
+        (JSC::DFG::ByteCodeParser::InlineStackEntry::InlineStackEntry):
+        (JSC::DFG::ByteCodeParser::parseCodeBlock):
+        (JSC::DFG::ByteCodeParser::parse):
+        * dfg/DFGCFAPhase.cpp:
+        (JSC::DFG::CFAPhase::performBlockCFA):
+        (JSC::DFG::CFAPhase::performForwardCFA):
+        * dfg/DFGCFGSimplificationPhase.cpp:
+        (JSC::DFG::CFGSimplificationPhase::run):
+        (JSC::DFG::CFGSimplificationPhase::convertToJump):
+        * dfg/DFGCPSRethreadingPhase.cpp:
+        (JSC::DFG::CPSRethreadingPhase::freeUnnecessaryNodes):
+        (JSC::DFG::CPSRethreadingPhase::canonicalizeLocalsInBlocks):
+        (JSC::DFG::CPSRethreadingPhase::propagatePhis):
+        (CPSRethreadingPhase):
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::run):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::run):
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGDCEPhase.cpp:
+        (JSC::DFG::DCEPhase::run):
+        * dfg/DFGDisassembler.cpp:
+        (JSC::DFG::Disassembler::Disassembler):
+        (JSC::DFG::Disassembler::createDumpList):
+        * dfg/DFGDisassembler.h:
+        (JSC::DFG::Disassembler::setForBlockIndex):
+        * dfg/DFGDominators.cpp:
+        (JSC::DFG::Dominators::compute):
+        (JSC::DFG::Dominators::iterateForBlock):
+        * dfg/DFGDominators.h:
+        (JSC::DFG::Dominators::dominates):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::run):
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        (JSC::DFG::Graph::dumpBlockHeader):
+        (JSC::DFG::Graph::handleSuccessor):
+        (JSC::DFG::Graph::determineReachability):
+        (JSC::DFG::Graph::resetReachability):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::numBlocks):
+        (JSC::DFG::Graph::block):
+        (JSC::DFG::Graph::lastBlock):
+        (Graph):
+        (JSC::DFG::Graph::appendBlock):
+        (JSC::DFG::Graph::killBlock):
+        (DFG):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::JITCompiler):
+        (JSC::DFG::JITCompiler::link):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::setForBlockIndex):
+        * dfg/DFGNaturalLoops.cpp:
+        (JSC::DFG::NaturalLoop::dump):
+        (JSC::DFG::NaturalLoops::compute):
+        (JSC::DFG::NaturalLoops::loopsOf):
+        * dfg/DFGNaturalLoops.h:
+        (JSC::DFG::NaturalLoop::NaturalLoop):
+        (JSC::DFG::NaturalLoop::addBlock):
+        (JSC::DFG::NaturalLoop::header):
+        (JSC::DFG::NaturalLoop::at):
+        (JSC::DFG::NaturalLoop::operator[]):
+        (JSC::DFG::NaturalLoop::contains):
+        (NaturalLoop):
+        (JSC::DFG::NaturalLoops::headerOf):
+        (NaturalLoops):
+        * dfg/DFGNode.h:
+        (DFG):
+        (JSC::DFG::SwitchCase::SwitchCase):
+        (JSC::DFG::SwitchCase::withBytecodeIndex):
+        (SwitchCase):
+        (JSC::DFG::SwitchCase::targetBytecodeIndex):
+        (JSC::DFG::SwitchData::SwitchData):
+        (JSC::DFG::SwitchData::setFallThroughBytecodeIndex):
+        (JSC::DFG::SwitchData::fallThroughBytecodeIndex):
+        (SwitchData):
+        (JSC::DFG::Node::setTakenBlock):
+        (JSC::DFG::Node::setNotTakenBlock):
+        (JSC::DFG::Node::takenBlock):
+        (JSC::DFG::Node::notTakenBlock):
+        (JSC::DFG::Node::successor):
+        (JSC::DFG::Node::successorForCondition):
+        * dfg/DFGPredictionInjectionPhase.cpp:
+        (JSC::DFG::PredictionInjectionPhase::run):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagateForward):
+        (JSC::DFG::PredictionPropagationPhase::propagateBackward):
+        (JSC::DFG::PredictionPropagationPhase::doRoundOfDoubleVoting):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::convertLastOSRExitToForward):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeCompare):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeStrictEq):
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleDoubleBranch):
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleObjectEquality):
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleIntegerBranch):
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleBranch):
+        (JSC::DFG::SpeculativeJIT::compileCurrentBlock):
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::createOSREntries):
+        (JSC::DFG::SpeculativeJIT::linkOSREntries):
+        (JSC::DFG::SpeculativeJIT::compileStrictEqForConstant):
+        (JSC::DFG::SpeculativeJIT::compileStrictEq):
+        (JSC::DFG::SpeculativeJIT::compileRegExpExec):
+        (JSC::DFG::SpeculativeJIT::addBranch):
+        (JSC::DFG::SpeculativeJIT::linkBranches):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::nextBlock):
+        (SpeculativeJIT):
+        (JSC::DFG::SpeculativeJIT::detectPeepHoleBranch):
+        (JSC::DFG::SpeculativeJIT::branchDouble):
+        (JSC::DFG::SpeculativeJIT::branchDoubleNonZero):
+        (JSC::DFG::SpeculativeJIT::branch32):
+        (JSC::DFG::SpeculativeJIT::branchTest32):
+        (JSC::DFG::SpeculativeJIT::branch64):
+        (JSC::DFG::SpeculativeJIT::branch8):
+        (JSC::DFG::SpeculativeJIT::branchPtr):
+        (JSC::DFG::SpeculativeJIT::branchTestPtr):
+        (JSC::DFG::SpeculativeJIT::branchTest8):
+        (JSC::DFG::SpeculativeJIT::jump):
+        (JSC::DFG::SpeculativeJIT::addBranch):
+        (JSC::DFG::SpeculativeJIT::StringSwitchCase::StringSwitchCase):
+        (StringSwitchCase):
+        (JSC::DFG::SpeculativeJIT::BranchRecord::BranchRecord):
+        (BranchRecord):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeBranchNull):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeCompareNull):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeBranch):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeStrictEq):
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleObjectToObjectOrOtherEquality):
+        (JSC::DFG::SpeculativeJIT::emitObjectOrOtherBranch):
+        (JSC::DFG::SpeculativeJIT::emitBranch):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeBranchNull):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeCompareNull):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeBranch):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeStrictEq):
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleObjectToObjectOrOtherEquality):
+        (JSC::DFG::SpeculativeJIT::emitObjectOrOtherBranch):
+        (JSC::DFG::SpeculativeJIT::emitBranch):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGTypeCheckHoistingPhase.cpp:
+        (JSC::DFG::TypeCheckHoistingPhase::run):
+        (JSC::DFG::TypeCheckHoistingPhase::identifyRedundantStructureChecks):
+        (JSC::DFG::TypeCheckHoistingPhase::identifyRedundantArrayChecks):
+        (JSC::DFG::TypeCheckHoistingPhase::disableHoistingAcrossOSREntries):
+        * dfg/DFGUnificationPhase.cpp:
+        (JSC::DFG::UnificationPhase::run):
+        * dfg/DFGValidate.cpp:
+        (JSC::DFG::Validate::validate):
+        (JSC::DFG::Validate::checkOperand):
+        (JSC::DFG::Validate::reportValidationContext):
+        * dfg/DFGVirtualRegisterAllocationPhase.cpp:
+        (JSC::DFG::VirtualRegisterAllocationPhase::run):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::LowerDFGToLLVM):
+        (JSC::FTL::LowerDFGToLLVM::lower):
+        (JSC::FTL::LowerDFGToLLVM::compileBlock):
+        (JSC::FTL::LowerDFGToLLVM::compileJump):
+        (JSC::FTL::LowerDFGToLLVM::compileBranch):
+        (JSC::FTL::LowerDFGToLLVM::lowBlock):
+
+2013-07-04  Filip Pizlo  <fpizlo@apple.com>
+
         Unreviewed, add a helpful comment for why DCE is needed in the FTL.
 
         I believe I've now twice down the experiment of disabling DCE in the FTL,

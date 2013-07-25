@@ -44,9 +44,9 @@ void Dominators::compute(Graph& graph)
 {
     // This implements a naive dominator solver.
     
-    ASSERT(graph.m_blocks[0]->m_predecessors.isEmpty());
+    ASSERT(graph.block(0)->predecessors.isEmpty());
     
-    unsigned numBlocks = graph.m_blocks.size();
+    unsigned numBlocks = graph.numBlocks();
     
     if (numBlocks > m_results.size()) {
         m_results.grow(numBlocks);
@@ -60,13 +60,13 @@ void Dominators::compute(Graph& graph)
     
     m_scratch.clearAll();
     for (unsigned i = numBlocks; i--;) {
-        if (!graph.m_blocks[i])
+        if (!graph.block(i))
             continue;
         m_scratch.set(i);
     }
     
     for (unsigned i = numBlocks; i-- > 1;) {
-        if (!graph.m_blocks[i] || graph.m_blocks[i]->m_predecessors.isEmpty())
+        if (!graph.block(i) || graph.block(i)->predecessors.isEmpty())
             m_results[i].clearAll();
         else
             m_results[i].set(m_scratch);
@@ -88,14 +88,14 @@ void Dominators::compute(Graph& graph)
 
 bool Dominators::iterateForBlock(Graph& graph, BlockIndex i)
 {
-    BasicBlock* block = graph.m_blocks[i].get();
+    BasicBlock* block = graph.block(i);
     if (!block)
         return false;
-    if (block->m_predecessors.isEmpty())
+    if (block->predecessors.isEmpty())
         return false;
-    m_scratch.set(m_results[block->m_predecessors[0]]);
-    for (unsigned j = block->m_predecessors.size(); j-- > 1;)
-        m_scratch.filter(m_results[block->m_predecessors[j]]);
+    m_scratch.set(m_results[block->predecessors[0]->index]);
+    for (unsigned j = block->predecessors.size(); j-- > 1;)
+        m_scratch.filter(m_results[block->predecessors[j]->index]);
     m_scratch.set(i);
     return m_results[i].setAndCheck(m_scratch);
 }

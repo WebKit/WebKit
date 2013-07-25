@@ -52,24 +52,23 @@ public:
     {
         bool changed = false;
         
-        for (BlockIndex blockIndex = 0; blockIndex < m_graph.m_blocks.size(); ++blockIndex) {
-            BasicBlock* block = m_graph.m_blocks[blockIndex].get();
+        for (BlockIndex blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex) {
+            BasicBlock* block = m_graph.block(blockIndex);
             if (!block)
                 continue;
             if (block->cfaFoundConstants)
-                changed |= foldConstants(blockIndex);
+                changed |= foldConstants(block);
         }
         
         return changed;
     }
 
 private:
-    bool foldConstants(BlockIndex blockIndex)
+    bool foldConstants(BasicBlock* block)
     {
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLogF("Constant folding considering Block #%u.\n", blockIndex);
+        dataLog("Constant folding considering Block ", *block, ".\n");
 #endif
-        BasicBlock* block = m_graph.m_blocks[blockIndex].get();
         bool changed = false;
         m_state.beginBasicBlock(block);
         for (unsigned indexInBlock = 0; indexInBlock < block->size(); ++indexInBlock) {

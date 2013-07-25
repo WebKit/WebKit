@@ -36,7 +36,7 @@ namespace JSC { namespace DFG {
 Disassembler::Disassembler(Graph& graph)
     : m_graph(graph)
 {
-    m_labelForBlockIndex.resize(graph.m_blocks.size());
+    m_labelForBlockIndex.resize(graph.numBlocks());
 }
 
 void Disassembler::dump(PrintStream& out, LinkBuffer& linkBuffer)
@@ -97,13 +97,13 @@ Vector<Disassembler::DumpedOp> Disassembler::createDumpList(LinkBuffer& linkBuff
     
     Node* lastNode = 0;
     MacroAssembler::Label previousLabel = m_startOfCode;
-    for (size_t blockIndex = 0; blockIndex < m_graph.m_blocks.size(); ++blockIndex) {
-        BasicBlock* block = m_graph.m_blocks[blockIndex].get();
+    for (size_t blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex) {
+        BasicBlock* block = m_graph.block(blockIndex);
         if (!block)
             continue;
         dumpDisassembly(out, disassemblyPrefix, linkBuffer, previousLabel, m_labelForBlockIndex[blockIndex], lastNode);
         append(result, out, previousOrigin);
-        m_graph.dumpBlockHeader(out, prefix, blockIndex, Graph::DumpLivePhisOnly);
+        m_graph.dumpBlockHeader(out, prefix, block, Graph::DumpLivePhisOnly);
         append(result, out, previousOrigin);
         Node* lastNodeForDisassembly = block->at(0);
         for (size_t i = 0; i < block->size(); ++i) {
@@ -118,7 +118,7 @@ Vector<Disassembler::DumpedOp> Disassembler::createDumpList(LinkBuffer& linkBuff
                 // as the end point. This case is hit either during peephole compare
                 // optimizations (the Branch won't have its own label) or if we have a
                 // forced OSR exit.
-                if (blockIndex + 1 < m_graph.m_blocks.size())
+                if (blockIndex + 1 < m_graph.numBlocks())
                     currentLabel = m_labelForBlockIndex[blockIndex + 1];
                 else
                     currentLabel = m_endOfMainPath;

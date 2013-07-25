@@ -435,12 +435,12 @@ void SpeculativeJIT::nonSpeculativeNonPeepholeCompareNull(Edge operand, bool inv
 
 void SpeculativeJIT::nonSpeculativePeepholeBranchNull(Edge operand, Node* branchNode, bool invert)
 {
-    BlockIndex taken = branchNode->takenBlockIndex();
-    BlockIndex notTaken = branchNode->notTakenBlockIndex();
+    BasicBlock* taken = branchNode->takenBlock();
+    BasicBlock* notTaken = branchNode->notTakenBlock();
     
     if (taken == nextBlock()) {
         invert = !invert;
-        BlockIndex tmp = taken;
+        BasicBlock* tmp = taken;
         taken = notTaken;
         notTaken = tmp;
     }
@@ -495,7 +495,7 @@ bool SpeculativeJIT::nonSpeculativeCompareNull(Node* node, Edge operand, bool in
 {
     unsigned branchIndexInBlock = detectPeepHoleBranch();
     if (branchIndexInBlock != UINT_MAX) {
-        Node* branchNode = m_jit.graph().m_blocks[m_block]->at(branchIndexInBlock);
+        Node* branchNode = m_block->at(branchIndexInBlock);
 
         ASSERT(node->adjustedRefCount() == 1);
         
@@ -516,8 +516,8 @@ bool SpeculativeJIT::nonSpeculativeCompareNull(Node* node, Edge operand, bool in
 
 void SpeculativeJIT::nonSpeculativePeepholeBranch(Node* node, Node* branchNode, MacroAssembler::RelationalCondition cond, S_DFGOperation_EJJ helperFunction)
 {
-    BlockIndex taken = branchNode->takenBlockIndex();
-    BlockIndex notTaken = branchNode->notTakenBlockIndex();
+    BasicBlock* taken = branchNode->takenBlock();
+    BasicBlock* notTaken = branchNode->notTakenBlock();
 
     JITCompiler::ResultCondition callResultCondition = JITCompiler::NonZero;
 
@@ -526,7 +526,7 @@ void SpeculativeJIT::nonSpeculativePeepholeBranch(Node* node, Node* branchNode, 
     if (taken == nextBlock()) {
         cond = JITCompiler::invert(cond);
         callResultCondition = JITCompiler::Zero;
-        BlockIndex tmp = taken;
+        BasicBlock* tmp = taken;
         taken = notTaken;
         notTaken = tmp;
     }
@@ -580,7 +580,7 @@ void SpeculativeJIT::nonSpeculativePeepholeBranch(Node* node, Node* branchNode, 
 
     jump(notTaken);
     
-    m_indexInBlock = m_jit.graph().m_blocks[m_block]->size() - 1;
+    m_indexInBlock = m_block->size() - 1;
     m_currentNode = branchNode;
 }
 
@@ -669,14 +669,14 @@ void SpeculativeJIT::nonSpeculativeNonPeepholeCompare(Node* node, MacroAssembler
 
 void SpeculativeJIT::nonSpeculativePeepholeStrictEq(Node* node, Node* branchNode, bool invert)
 {
-    BlockIndex taken = branchNode->takenBlockIndex();
-    BlockIndex notTaken = branchNode->notTakenBlockIndex();
+    BasicBlock* taken = branchNode->takenBlock();
+    BasicBlock* notTaken = branchNode->notTakenBlock();
 
     // The branch instruction will branch to the taken block.
     // If taken is next, switch taken with notTaken & invert the branch condition so we can fall through.
     if (taken == nextBlock()) {
         invert = !invert;
-        BlockIndex tmp = taken;
+        BasicBlock* tmp = taken;
         taken = notTaken;
         notTaken = tmp;
     }
@@ -1445,8 +1445,8 @@ void SpeculativeJIT::compileObjectToObjectOrOtherEquality(Edge leftChild, Edge r
 
 void SpeculativeJIT::compilePeepHoleObjectToObjectOrOtherEquality(Edge leftChild, Edge rightChild, Node* branchNode)
 {
-    BlockIndex taken = branchNode->takenBlockIndex();
-    BlockIndex notTaken = branchNode->notTakenBlockIndex();
+    BasicBlock* taken = branchNode->takenBlock();
+    BasicBlock* notTaken = branchNode->notTakenBlock();
     
     SpeculateCellOperand op1(this, leftChild);
     JSValueOperand op2(this, rightChild, ManualOperandSpeculation);
@@ -1737,7 +1737,7 @@ void SpeculativeJIT::compileLogicalNot(Node* node)
     }
 }
 
-void SpeculativeJIT::emitObjectOrOtherBranch(Edge nodeUse, BlockIndex taken, BlockIndex notTaken)
+void SpeculativeJIT::emitObjectOrOtherBranch(Edge nodeUse, BasicBlock* taken, BasicBlock* notTaken)
 {
     JSValueOperand value(this, nodeUse, ManualOperandSpeculation);
     GPRTemporary scratch(this);
@@ -1794,8 +1794,8 @@ void SpeculativeJIT::emitObjectOrOtherBranch(Edge nodeUse, BlockIndex taken, Blo
 
 void SpeculativeJIT::emitBranch(Node* node)
 {
-    BlockIndex taken = node->takenBlockIndex();
-    BlockIndex notTaken = node->notTakenBlockIndex();
+    BasicBlock* taken = node->takenBlock();
+    BasicBlock* notTaken = node->notTakenBlock();
 
     switch (node->child1().useKind()) {
     case BooleanUse: {
@@ -1804,7 +1804,7 @@ void SpeculativeJIT::emitBranch(Node* node)
 
         if (taken == nextBlock()) {
             condition = MacroAssembler::Zero;
-            BlockIndex tmp = taken;
+            BasicBlock* tmp = taken;
             taken = notTaken;
             notTaken = tmp;
         }
@@ -1828,7 +1828,7 @@ void SpeculativeJIT::emitBranch(Node* node)
             
             if (taken == nextBlock()) {
                 invert = true;
-                BlockIndex tmp = taken;
+                BasicBlock* tmp = taken;
                 taken = notTaken;
                 notTaken = tmp;
             }
@@ -3225,8 +3225,7 @@ void SpeculativeJIT::compile(Node* node)
     }
 
     case DFG::Jump: {
-        BlockIndex taken = node->takenBlockIndex();
-        jump(taken);
+        jump(node->takenBlock());
         noResult(node);
         break;
     }

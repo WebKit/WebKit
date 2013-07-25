@@ -35,9 +35,9 @@ namespace JSC { namespace DFG {
 
 void NaturalLoop::dump(PrintStream& out) const
 {
-    out.print("[Header: #", header(), ", Body:");
+    out.print("[Header: ", *header(), ", Body:");
     for (unsigned i = 0; i < m_body.size(); ++i)
-        out.print(" #", m_body[i]);
+        out.print(" ", *m_body[i]);
     out.print("]");
 }
 
@@ -60,26 +60,26 @@ void NaturalLoops::compute(Graph& graph)
     
     m_loops.resize(0);
     
-    for (BlockIndex blockIndex = graph.m_blocks.size(); blockIndex--;) {
-        BasicBlock* block = graph.m_blocks[blockIndex].get();
+    for (BlockIndex blockIndex = graph.numBlocks(); blockIndex--;) {
+        BasicBlock* block = graph.block(blockIndex);
         if (!block)
             continue;
         
-        for (unsigned i = graph.numSuccessors(block); i--;) {
-            BlockIndex successorIndex = graph.successor(block, i);
-            if (!graph.m_dominators.dominates(successorIndex, blockIndex))
+        for (unsigned i = block->numSuccessors(); i--;) {
+            BasicBlock* successor = block->successor(i);
+            if (!graph.m_dominators.dominates(successor, block))
                 continue;
             bool found = false;
             for (unsigned j = m_loops.size(); j--;) {
-                if (m_loops[i].header() == successorIndex) {
-                    m_loops[i].addBlock(blockIndex);
+                if (m_loops[i].header() == successor) {
+                    m_loops[i].addBlock(block);
                     found = true;
                 }
             }
             if (found)
                 continue;
-            NaturalLoop loop(successorIndex);
-            loop.addBlock(blockIndex);
+            NaturalLoop loop(successor);
+            loop.addBlock(block);
             m_loops.append(loop);
         }
     }
@@ -88,8 +88,8 @@ void NaturalLoops::compute(Graph& graph)
         dataLog("After bootstrap: ", *this, "\n");
     
     FastBitVector seenBlocks;
-    Vector<BlockIndex, 4> blockWorklist;
-    seenBlocks.resize(graph.m_blocks.size());
+    Vector<BasicBlock*, 4> blockWorklist;
+    seenBlocks.resize(graph.numBlocks());
     
     for (unsigned i = m_loops.size(); i--;) {
         NaturalLoop& loop = m_loops[i];
@@ -101,30 +101,27 @@ void NaturalLoops::compute(Graph& graph)
             dataLog("Dealing with loop ", loop, "\n");
         
         for (unsigned j = loop.size(); j--;) {
-            seenBlocks.set(loop[j]);
+            seenBlocks.set(loop[j]->index);
             blockWorklist.append(loop[j]);
         }
         
         while (!blockWorklist.isEmpty()) {
-            BlockIndex blockIndex = blockWorklist.takeLast();
+            BasicBlock* block = blockWorklist.takeLast();
             
             if (verbose)
-                dataLog("    Dealing with #", blockIndex, "\n");
+                dataLog("    Dealing with ", *block, "\n");
             
-            if (blockIndex == loop.header())
+            if (block == loop.header())
                 continue;
             
-            BasicBlock* block = graph.m_blocks[blockIndex].get();
-            ASSERT(block);
-            
-            for (unsigned j = block->m_predecessors.size(); j--;) {
-                BlockIndex predecessorIndex = block->m_predecessors[j];
-                if (seenBlocks.get(predecessorIndex))
+            for (unsigned j = block->predecessors.size(); j--;) {
+                BasicBlock* predecessor = block->predecessors[j];
+                if (seenBlocks.get(predecessor->index))
                     continue;
                 
-                loop.addBlock(predecessorIndex);
-                blockWorklist.append(predecessorIndex);
-                seenBlocks.set(predecessorIndex);
+                loop.addBlock(predecessor);
+                blockWorklist.append(predecessor);
+                seenBlocks.set(predecessor->index);
             }
         }
     }
@@ -133,12 +130,12 @@ void NaturalLoops::compute(Graph& graph)
         dataLog("Results: ", *this, "\n");
 }
 
-Vector<const NaturalLoop*> NaturalLoops::loopsOf(BlockIndex blockIndex) const
+Vector<const NaturalLoop*> NaturalLoops::loopsOf(BasicBlock* block) const
 {
     Vector<const NaturalLoop*> result;
     
     for (unsigned i = m_loops.size(); i--;) {
-        if (m_loops[i].contains(blockIndex))
+        if (m_loops[i].contains(block))
             result.append(&m_loops[i]);
     }
     

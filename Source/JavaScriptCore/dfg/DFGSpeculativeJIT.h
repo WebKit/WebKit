@@ -119,12 +119,12 @@ public:
     void createOSREntries();
     void linkOSREntries(LinkBuffer&);
 
-    BlockIndex nextBlock()
+    BasicBlock* nextBlock()
     {
-        for (BlockIndex result = m_block + 1; ; result++) {
-            if (result >= m_jit.graph().m_blocks.size())
-                return NoBlock;
-            if (m_jit.graph().m_blocks[result])
+        for (BlockIndex resultIndex = m_block->index + 1; ; resultIndex++) {
+            if (resultIndex >= m_jit.graph().numBlocks())
+                return 0;
+            if (BasicBlock* result = m_jit.graph().block(resultIndex))
                 return result;
         }
     }
@@ -344,7 +344,7 @@ public:
     void compile(Node*);
     void noticeOSRBirth(Node*);
     void bail();
-    void compile(BasicBlock&);
+    void compileCurrentBlock();
 
     void checkArgumentTypes();
 
@@ -704,18 +704,16 @@ public:
     // Returns the index of the branch node if peephole is okay, UINT_MAX otherwise.
     unsigned detectPeepHoleBranch()
     {
-        BasicBlock* block = m_jit.graph().m_blocks[m_block].get();
-
         // Check that no intervening nodes will be generated.
-        for (unsigned index = m_indexInBlock + 1; index < block->size() - 1; ++index) {
-            Node* node = block->at(index);
+        for (unsigned index = m_indexInBlock + 1; index < m_block->size() - 1; ++index) {
+            Node* node = m_block->at(index);
             if (node->shouldGenerate())
                 return UINT_MAX;
         }
 
         // Check if the lastNode is a branch on this node.
-        Node* lastNode = block->last();
-        return lastNode->op() == Branch && lastNode->child1() == m_currentNode ? block->size() - 1 : UINT_MAX;
+        Node* lastNode = m_block->last();
+        return lastNode->op() == Branch && lastNode->child1() == m_currentNode ? m_block->size() - 1 : UINT_MAX;
     }
     
     void compileMovHint(Node*);
@@ -1754,74 +1752,74 @@ public:
     }
 #endif
     
-    void branchDouble(JITCompiler::DoubleCondition cond, FPRReg left, FPRReg right, BlockIndex destination)
+    void branchDouble(JITCompiler::DoubleCondition cond, FPRReg left, FPRReg right, BasicBlock* destination)
     {
         return addBranch(m_jit.branchDouble(cond, left, right), destination);
     }
     
-    void branchDoubleNonZero(FPRReg value, FPRReg scratch, BlockIndex destination)
+    void branchDoubleNonZero(FPRReg value, FPRReg scratch, BasicBlock* destination)
     {
         return addBranch(m_jit.branchDoubleNonZero(value, scratch), destination);
     }
     
     template<typename T, typename U>
-    void branch32(JITCompiler::RelationalCondition cond, T left, U right, BlockIndex destination)
+    void branch32(JITCompiler::RelationalCondition cond, T left, U right, BasicBlock* destination)
     {
         return addBranch(m_jit.branch32(cond, left, right), destination);
     }
     
     template<typename T, typename U>
-    void branchTest32(JITCompiler::ResultCondition cond, T value, U mask, BlockIndex destination)
+    void branchTest32(JITCompiler::ResultCondition cond, T value, U mask, BasicBlock* destination)
     {
         return addBranch(m_jit.branchTest32(cond, value, mask), destination);
     }
     
     template<typename T>
-    void branchTest32(JITCompiler::ResultCondition cond, T value, BlockIndex destination)
+    void branchTest32(JITCompiler::ResultCondition cond, T value, BasicBlock* destination)
     {
         return addBranch(m_jit.branchTest32(cond, value), destination);
     }
     
 #if USE(JSVALUE64)
     template<typename T, typename U>
-    void branch64(JITCompiler::RelationalCondition cond, T left, U right, BlockIndex destination)
+    void branch64(JITCompiler::RelationalCondition cond, T left, U right, BasicBlock* destination)
     {
         return addBranch(m_jit.branch64(cond, left, right), destination);
     }
 #endif
     
     template<typename T, typename U>
-    void branch8(JITCompiler::RelationalCondition cond, T left, U right, BlockIndex destination)
+    void branch8(JITCompiler::RelationalCondition cond, T left, U right, BasicBlock* destination)
     {
         return addBranch(m_jit.branch8(cond, left, right), destination);
     }
     
     template<typename T, typename U>
-    void branchPtr(JITCompiler::RelationalCondition cond, T left, U right, BlockIndex destination)
+    void branchPtr(JITCompiler::RelationalCondition cond, T left, U right, BasicBlock* destination)
     {
         return addBranch(m_jit.branchPtr(cond, left, right), destination);
     }
     
     template<typename T, typename U>
-    void branchTestPtr(JITCompiler::ResultCondition cond, T value, U mask, BlockIndex destination)
+    void branchTestPtr(JITCompiler::ResultCondition cond, T value, U mask, BasicBlock* destination)
     {
         return addBranch(m_jit.branchTestPtr(cond, value, mask), destination);
     }
     
     template<typename T>
-    void branchTestPtr(JITCompiler::ResultCondition cond, T value, BlockIndex destination)
+    void branchTestPtr(JITCompiler::ResultCondition cond, T value, BasicBlock* destination)
     {
         return addBranch(m_jit.branchTestPtr(cond, value), destination);
     }
     
     template<typename T, typename U>
-    void branchTest8(JITCompiler::ResultCondition cond, T value, U mask, BlockIndex destination)
+    void branchTest8(JITCompiler::ResultCondition cond, T value, U mask, BasicBlock* destination)
     {
         return addBranch(m_jit.branchTest8(cond, value, mask), destination);
     }
     
     template<typename T>
-    void branchTest8(JITCompiler::ResultCondition cond, T value, BlockIndex destination)
+    void branchTest8(JITCompiler::ResultCondition cond, T value, BasicBlock* destination)
     {
         return addBranch(m_jit.branchTest8(cond, value), destination);
     }
@@ -1830,7 +1828,7 @@ public:
         AtFallThroughPoint,
         ForceJump
     };
-    void jump(BlockIndex destination, FallThroughMode fallThroughMode = AtFallThroughPoint)
+    void jump(BasicBlock* destination, FallThroughMode fallThroughMode = AtFallThroughPoint)
     {
         if (destination == nextBlock()
             && fallThroughMode == AtFallThroughPoint)
@@ -1838,18 +1836,13 @@ public:
         addBranch(m_jit.jump(), destination);
     }
     
-    void addBranch(const MacroAssembler::Jump& jump, BlockIndex destination)
+    void addBranch(const MacroAssembler::Jump& jump, BasicBlock* destination)
     {
         m_branches.append(BranchRecord(jump, destination));
     }
-    void addBranch(const MacroAssembler::JumpList& jump, BlockIndex destination);
+    void addBranch(const MacroAssembler::JumpList& jump, BasicBlock* destination);
 
     void linkBranches();
-
-    BasicBlock* block()
-    {
-        return m_jit.graph().m_blocks[m_block].get();
-    }
 
 #ifndef NDEBUG
     void dump(const char* label = 0);
@@ -1889,13 +1882,13 @@ public:
     void compileLogicalNot(Node*);
     void compileStringEquality(Node*);
     void compileStringIdentEquality(Node*);
-    void emitObjectOrOtherBranch(Edge value, BlockIndex taken, BlockIndex notTaken);
+    void emitObjectOrOtherBranch(Edge value, BasicBlock* taken, BasicBlock* notTaken);
     void emitBranch(Node*);
     
     struct StringSwitchCase {
         StringSwitchCase() { }
         
-        StringSwitchCase(StringImpl* string, BlockIndex target)
+        StringSwitchCase(StringImpl* string, BasicBlock* target)
             : string(string)
             , target(target)
         {
@@ -1904,7 +1897,7 @@ public:
         bool operator<(const StringSwitchCase& other) const;
         
         StringImpl* string;
-        BlockIndex target;
+        BasicBlock* target;
     };
     
     void emitSwitchIntJump(SwitchData*, GPRReg value, GPRReg scratch);
@@ -2172,7 +2165,7 @@ public:
     JITCompiler& m_jit;
 
     // The current node being generated.
-    BlockIndex m_block;
+    BasicBlock* m_block;
     Node* m_currentNode;
     SpeculationDirection m_speculationDirection;
     bool m_canExit;
@@ -2185,14 +2178,14 @@ public:
     Vector<MacroAssembler::Label> m_osrEntryHeads;
     
     struct BranchRecord {
-        BranchRecord(MacroAssembler::Jump jump, BlockIndex destination)
+        BranchRecord(MacroAssembler::Jump jump, BasicBlock* destination)
             : jump(jump)
             , destination(destination)
         {
         }
 
         MacroAssembler::Jump jump;
-        BlockIndex destination;
+        BasicBlock* destination;
     };
     Vector<BranchRecord, 8> m_branches;
 

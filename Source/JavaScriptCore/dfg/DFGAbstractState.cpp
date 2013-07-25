@@ -85,7 +85,7 @@ void AbstractState::beginBasicBlock(BasicBlock* basicBlock)
 
 void AbstractState::initialize(Graph& graph)
 {
-    BasicBlock* root = graph.m_blocks[0].get();
+    BasicBlock* root = graph.block(0);
     root->cfaShouldRevisit = true;
     root->cfaHasVisited = false;
     root->cfaFoundConstants = false;
@@ -118,8 +118,8 @@ void AbstractState::initialize(Graph& graph)
             root->valuesAtHead.local(i).clear();
         root->valuesAtTail.local(i).clear();
     }
-    for (BlockIndex blockIndex = 1 ; blockIndex < graph.m_blocks.size(); ++blockIndex) {
-        BasicBlock* block = graph.m_blocks[blockIndex].get();
+    for (BlockIndex blockIndex = 1 ; blockIndex < graph.numBlocks(); ++blockIndex) {
+        BasicBlock* block = graph.block(blockIndex);
         if (!block)
             continue;
         if (!block->isReachable)
@@ -200,7 +200,7 @@ bool AbstractState::endBasicBlock(MergeMode mergeMode)
     if (mergeMode != MergeToSuccessors)
         return changed;
     
-    return mergeToSuccessors(m_graph, block);
+    return mergeToSuccessors(block);
 }
 
 void AbstractState::reset()
@@ -1816,7 +1816,7 @@ inline bool AbstractState::merge(BasicBlock* from, BasicBlock* to)
     return changed;
 }
 
-inline bool AbstractState::mergeToSuccessors(Graph& graph, BasicBlock* basicBlock)
+inline bool AbstractState::mergeToSuccessors(BasicBlock* basicBlock)
 {
     Node* terminal = basicBlock->last();
     
@@ -1826,24 +1826,24 @@ inline bool AbstractState::mergeToSuccessors(Graph& graph, BasicBlock* basicBloc
     case Jump: {
         ASSERT(basicBlock->cfaBranchDirection == InvalidBranchDirection);
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLogF("        Merging to block #%u.\n", terminal->takenBlockIndex());
+        dataLog("        Merging to block ", *terminal->takenBlock(), ".\n");
 #endif
-        return merge(basicBlock, graph.m_blocks[terminal->takenBlockIndex()].get());
+        return merge(basicBlock, terminal->takenBlock());
     }
         
     case Branch: {
         ASSERT(basicBlock->cfaBranchDirection != InvalidBranchDirection);
         bool changed = false;
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLogF("        Merging to block #%u.\n", terminal->takenBlockIndex());
+        dataLog("        Merging to block ", *terminal->takenBlock(), ".\n");
 #endif
         if (basicBlock->cfaBranchDirection != TakeFalse)
-            changed |= merge(basicBlock, graph.m_blocks[terminal->takenBlockIndex()].get());
+            changed |= merge(basicBlock, terminal->takenBlock());
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLogF("        Merging to block #%u.\n", terminal->notTakenBlockIndex());
+        dataLog("        Merging to block ", *terminal->notTakenBlock(), ".\n");
 #endif
         if (basicBlock->cfaBranchDirection != TakeTrue)
-            changed |= merge(basicBlock, graph.m_blocks[terminal->notTakenBlockIndex()].get());
+            changed |= merge(basicBlock, terminal->notTakenBlock());
         return changed;
     }
         
@@ -1852,9 +1852,9 @@ inline bool AbstractState::mergeToSuccessors(Graph& graph, BasicBlock* basicBloc
         // we're not. However I somehow doubt that this will ever be a big deal.
         ASSERT(basicBlock->cfaBranchDirection == InvalidBranchDirection);
         SwitchData* data = terminal->switchData();
-        bool changed = merge(basicBlock, graph.m_blocks[data->fallThrough].get());
+        bool changed = merge(basicBlock, data->fallThrough);
         for (unsigned i = data->cases.size(); i--;)
-            changed |= merge(basicBlock, graph.m_blocks[data->cases[i].target].get());
+            changed |= merge(basicBlock, data->cases[i].target);
         return changed;
     }
         

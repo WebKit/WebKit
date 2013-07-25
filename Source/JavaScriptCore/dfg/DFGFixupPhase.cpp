@@ -51,8 +51,8 @@ public:
         ASSERT(m_graph.m_form == ThreadedCPS);
         
         m_profitabilityChanged = false;
-        for (BlockIndex blockIndex = 0; blockIndex < m_graph.m_blocks.size(); ++blockIndex)
-            fixupBlock(m_graph.m_blocks[blockIndex].get());
+        for (BlockIndex blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex)
+            fixupBlock(m_graph.block(blockIndex));
         
         while (m_profitabilityChanged) {
             m_profitabilityChanged = false;
@@ -60,8 +60,8 @@ public:
             for (unsigned i = m_graph.m_argumentPositions.size(); i--;)
                 m_graph.m_argumentPositions[i].mergeArgumentUnboxingAwareness();
             
-            for (BlockIndex blockIndex = 0; blockIndex < m_graph.m_blocks.size(); ++blockIndex)
-                fixupSetLocalsInBlock(m_graph.m_blocks[blockIndex].get());
+            for (BlockIndex blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex)
+                fixupSetLocalsInBlock(m_graph.block(blockIndex));
         }
         
         return true;
@@ -589,10 +589,10 @@ private:
                     if (newChildEdge->hasBooleanResult()) {
                         node->children.setChild1(newChildEdge);
                         
-                        BlockIndex toBeTaken = node->notTakenBlockIndex();
-                        BlockIndex toBeNotTaken = node->takenBlockIndex();
-                        node->setTakenBlockIndex(toBeTaken);
-                        node->setNotTakenBlockIndex(toBeNotTaken);
+                        BasicBlock* toBeTaken = node->notTakenBlock();
+                        BasicBlock* toBeNotTaken = node->takenBlock();
+                        node->setTakenBlock(toBeTaken);
+                        node->setNotTakenBlock(toBeNotTaken);
                     }
                 }
             }

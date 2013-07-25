@@ -572,8 +572,8 @@ private:
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
         dataLogF("Propagating predictions forward [%u]\n", ++m_count);
 #endif
-        for (BlockIndex blockIndex = 0; blockIndex < m_graph.m_blocks.size(); ++blockIndex) {
-            BasicBlock* block = m_graph.m_blocks[blockIndex].get();
+        for (BlockIndex blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex) {
+            BasicBlock* block = m_graph.block(blockIndex);
             if (!block)
                 continue;
             ASSERT(block->isReachable);
@@ -589,8 +589,8 @@ private:
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
         dataLogF("Propagating predictions backward [%u]\n", ++m_count);
 #endif
-        for (BlockIndex blockIndex = m_graph.m_blocks.size(); blockIndex--;) {
-            BasicBlock* block = m_graph.m_blocks[blockIndex].get();
+        for (BlockIndex blockIndex = m_graph.numBlocks(); blockIndex--;) {
+            BasicBlock* block = m_graph.block(blockIndex);
             if (!block)
                 continue;
             ASSERT(block->isReachable);
@@ -714,8 +714,8 @@ private:
 #endif
         for (unsigned i = 0; i < m_graph.m_variableAccessData.size(); ++i)
             m_graph.m_variableAccessData[i].find()->clearVotes();
-        for (BlockIndex blockIndex = 0; blockIndex < m_graph.m_blocks.size(); ++blockIndex) {
-            BasicBlock* block = m_graph.m_blocks[blockIndex].get();
+        for (BlockIndex blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex) {
+            BasicBlock* block = m_graph.block(blockIndex);
             if (!block)
                 continue;
             ASSERT(block->isReachable);
