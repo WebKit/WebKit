@@ -139,7 +139,11 @@ struct ResolveOperation {
     }
 };
 
-typedef Vector<ResolveOperation> ResolveOperations;
+struct ResolveOperations : Vector<ResolveOperation> {
+    ResolveOperations() : m_ready(false) { }
+    
+    bool m_ready;
+};
 
 struct PutToBaseOperation {
     PutToBaseOperation(bool isStrict)
@@ -147,6 +151,7 @@ struct PutToBaseOperation {
         , m_isDynamic(false)
         , m_isStrict(isStrict)
         , m_predicatePointer(0)
+        , m_ready(false)
     {
 
     }
@@ -172,6 +177,7 @@ struct PutToBaseOperation {
             int32_t m_offsetInButterfly;
         };
     };
+    bool m_ready;
 };
 }
 

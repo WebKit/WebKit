@@ -196,7 +196,7 @@ static bool executeResolveOperations(CallFrame* callFrame, JSScope* scope, const
     }
 }
 
-template <JSScope::LookupMode mode, JSScope::ReturnValues returnValues> JSObject* JSScope::resolveContainingScopeInternal(CallFrame* callFrame, const Identifier& identifier, PropertySlot& slot, Vector<ResolveOperation>* operations, PutToBaseOperation* putToBaseOperation, bool )
+template <JSScope::LookupMode mode, JSScope::ReturnValues returnValues> JSObject* JSScope::resolveContainingScopeInternal(CallFrame* callFrame, const Identifier& identifier, PropertySlot& slot, ResolveOperations* operations, PutToBaseOperation* putToBaseOperation, bool )
 {
     JSScope* scope = callFrame->scope();
     ASSERT(scope);
@@ -301,6 +301,8 @@ template <JSScope::LookupMode mode, JSScope::ReturnValues returnValues> JSObject
                             operations->append(ResolveOperation::checkForDynamicEntriesBeforeGlobalScope());
 
                         if (putToBaseOperation) {
+                            CodeBlock::Locker locker(callFrame->codeBlock()->m_lock);
+                            
                             putToBaseOperation->m_isDynamic = requiresDynamicChecks;
                             putToBaseOperation->m_kind = PutToBaseOperation::GlobalPropertyPut;
                             putToBaseOperation->m_structure.set(callFrame->vm(), callFrame->codeBlock()->ownerExecutable(), globalObject->structure());
@@ -345,6 +347,8 @@ template <JSScope::LookupMode mode, JSScope::ReturnValues returnValues> JSObject
                         goto fail;
 
                     if (putToBaseOperation) {
+                        CodeBlock::Locker locker(callFrame->codeBlock()->m_lock);
+                        
                         putToBaseOperation->m_kind = entry.isReadOnly() ? PutToBaseOperation::Readonly : PutToBaseOperation::VariablePut;
                         putToBaseOperation->m_structure.set(callFrame->vm(), callFrame->codeBlock()->ownerExecutable(), callFrame->lexicalGlobalObject()->activationStructure());
                         putToBaseOperation->m_offset = entry.getIndex();
@@ -421,7 +425,7 @@ template <JSScope::LookupMode mode, JSScope::ReturnValues returnValues> JSObject
     return 0;
 }
 
-template <JSScope::ReturnValues returnValues> JSObject* JSScope::resolveContainingScope(CallFrame* callFrame, const Identifier& identifier, PropertySlot& slot, Vector<ResolveOperation>* operations, PutToBaseOperation* putToBaseOperation, bool isStrict)
+template <JSScope::ReturnValues returnValues> JSObject* JSScope::resolveContainingScope(CallFrame* callFrame, const Identifier& identifier, PropertySlot& slot, ResolveOperations* operations, PutToBaseOperation* putToBaseOperation, bool isStrict)
 {
     if (operations->size())
         return resolveContainingScopeInternal<KnownResolve, returnValues>(callFrame, identifier, slot, operations, putToBaseOperation, isStrict);
@@ -607,6 +611,8 @@ void JSScope::resolvePut(CallFrame* callFrame, JSValue base, const Identifier& p
     if (slot.base() != baseObject)
         return;
     ASSERT(!baseObject->hasInlineStorage());
+    CodeBlock::Locker locker(callFrame->codeBlock()->m_lock);
+    
     operation->m_structure.set(callFrame->vm(), callFrame->codeBlock()->ownerExecutable(), baseObject->structure());
     setPutPropertyAccessOffset(operation, slot.cachedOffset());
     return;

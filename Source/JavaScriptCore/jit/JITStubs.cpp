@@ -914,6 +914,8 @@ void performPlatformSpecificJITAssertions(VM* vm)
 
 NEVER_INLINE static void tryCachePutByID(CallFrame* callFrame, CodeBlock* codeBlock, ReturnAddressPtr returnAddress, JSValue baseValue, const PutPropertySlot& slot, StructureStubInfo* stubInfo, bool direct)
 {
+    CodeBlock::Locker locker(codeBlock->m_lock);
+    
     // The interpreter checks for recursion here; I do not believe this can occur in CTI.
 
     if (!baseValue.isCell())
@@ -968,6 +970,8 @@ NEVER_INLINE static void tryCachePutByID(CallFrame* callFrame, CodeBlock* codeBl
 
 NEVER_INLINE static void tryCacheGetByID(CallFrame* callFrame, CodeBlock* codeBlock, ReturnAddressPtr returnAddress, JSValue baseValue, const Identifier& propertyName, const PropertySlot& slot, StructureStubInfo* stubInfo)
 {
+    CodeBlock::Locker locker(codeBlock->m_lock);
+    
     // FIXME: Write a test that proves we need to check for recursion here just
     // like the interpreter does, then add a check for recursion.
 
@@ -1708,6 +1712,8 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_id_self_fail)
 
     CHECK_FOR_EXCEPTION();
 
+    CodeBlock::Locker locker(codeBlock->m_lock);
+    
     if (baseValue.isCell()
         && slot.isCacheable()
         && !baseValue.asCell()->structure()->isUncacheableDictionary()
@@ -1828,6 +1834,8 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_id_proto_list)
         return JSValue::encode(result);
     }
 
+    CodeBlock::Locker locker(codeBlock->m_lock);
+    
     Structure* structure = baseValue.asCell()->structure();
 
     ASSERT(slot.slotBase().isObject());
@@ -2291,6 +2299,7 @@ inline void* lazyLinkFor(CallFrame* callFrame, CodeSpecializationKind kind)
             codePtr = functionExecutable->generatedJITCodeFor(kind)->addressForCall();
     }
 
+    CodeBlock::Locker locker(callFrame->callerFrame()->codeBlock()->m_lock);
     if (!callLinkInfo->seenOnce())
         callLinkInfo->setSeen();
     else
@@ -2366,6 +2375,7 @@ DEFINE_STUB_FUNCTION(void*, vm_lazyLinkClosureCall)
     
     if (shouldLink) {
         ASSERT(codePtr);
+        CodeBlock::Locker locker(callerCodeBlock->m_lock);
         JIT::compileClosureCall(vm, callLinkInfo, callerCodeBlock, calleeCodeBlock, structure, executable, codePtr);
         callLinkInfo->hasSeenClosure = true;
     } else
@@ -2506,8 +2516,17 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_resolve)
     STUB_INIT_STACK_FRAME(stackFrame);
 
     CallFrame* callFrame = stackFrame.callFrame;
-
-    JSValue result = JSScope::resolve(callFrame, stackFrame.args[0].identifier(), stackFrame.args[1].resolveOperations());
+    
+    ResolveOperations* operations = stackFrame.args[1].resolveOperations();
+    bool willReify = operations->isEmpty();
+    
+    JSValue result = JSScope::resolve(callFrame, stackFrame.args[0].identifier(), operations);
+    
+    if (willReify) {
+        CodeBlock::Locker locker(callFrame->codeBlock()->m_lock);
+        operations->m_ready = true;
+    }
+    
     CHECK_FOR_EXCEPTION_AT_END();
     return JSValue::encode(result);
 }
@@ -2519,7 +2538,15 @@ DEFINE_STUB_FUNCTION(void, op_put_to_base)
     CallFrame* callFrame = stackFrame.callFrame;
     JSValue base = callFrame->r(stackFrame.args[0].int32()).jsValue();
     JSValue value = callFrame->r(stackFrame.args[2].int32()).jsValue();
-    JSScope::resolvePut(callFrame, base, stackFrame.args[1].identifier(), value, stackFrame.args[3].putToBaseOperation());
+    PutToBaseOperation* operation = stackFrame.args[3].putToBaseOperation();
+    bool firstTime = !operation->m_ready;
+    JSScope::resolvePut(callFrame, base, stackFrame.args[1].identifier(), value, operation);
+    
+    if (firstTime) {
+        CodeBlock::Locker locker(callFrame->codeBlock()->m_lock);
+        operation->m_ready = true;
+    }
+
     CHECK_FOR_EXCEPTION_AT_END();
 }
 
@@ -2847,16 +2874,36 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_negate)
 DEFINE_STUB_FUNCTION(EncodedJSValue, op_resolve_base)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
-
-    return JSValue::encode(JSScope::resolveBase(stackFrame.callFrame, stackFrame.args[0].identifier(), false, stackFrame.args[1].resolveOperations(), stackFrame.args[2].putToBaseOperation()));
+    
+    ResolveOperations* operations = stackFrame.args[1].resolveOperations();
+    bool willReify = operations->isEmpty();
+    
+    JSValue result = JSScope::resolveBase(stackFrame.callFrame, stackFrame.args[0].identifier(), false, operations, stackFrame.args[2].putToBaseOperation());
+    
+    if (willReify) {
+        CodeBlock::Locker locker(stackFrame.callFrame->codeBlock()->m_lock);
+        operations->m_ready = true;
+    }
+    
+    return JSValue::encode(result);
 }
 
 DEFINE_STUB_FUNCTION(EncodedJSValue, op_resolve_base_strict_put)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
 
-    if (JSValue result = JSScope::resolveBase(stackFrame.callFrame, stackFrame.args[0].identifier(), true, stackFrame.args[1].resolveOperations(), stackFrame.args[2].putToBaseOperation()))
+    ResolveOperations* operations = stackFrame.args[1].resolveOperations();
+    bool willReify = operations->isEmpty();
+    
+    if (JSValue result = JSScope::resolveBase(stackFrame.callFrame, stackFrame.args[0].identifier(), true, operations, stackFrame.args[2].putToBaseOperation())) {
+        
+        if (willReify) {
+            CodeBlock::Locker locker(stackFrame.callFrame->codeBlock()->m_lock);
+            operations->m_ready = true;
+        }
+        
         return JSValue::encode(result);
+    }
     VM_THROW_EXCEPTION();
 }
 
@@ -3124,7 +3171,13 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_resolve_with_base)
     STUB_INIT_STACK_FRAME(stackFrame);
 
     CallFrame* callFrame = stackFrame.callFrame;
-    JSValue result = JSScope::resolveWithBase(callFrame, stackFrame.args[0].identifier(), &callFrame->registers()[stackFrame.args[1].int32()], stackFrame.args[2].resolveOperations(), stackFrame.args[3].putToBaseOperation());
+    ResolveOperations* operations = stackFrame.args[2].resolveOperations();
+    bool willReify = operations->isEmpty();
+    JSValue result = JSScope::resolveWithBase(callFrame, stackFrame.args[0].identifier(), &callFrame->registers()[stackFrame.args[1].int32()], operations, stackFrame.args[3].putToBaseOperation());
+    if (willReify) {
+        CodeBlock::Locker locker(stackFrame.callFrame->codeBlock()->m_lock);
+        operations->m_ready = true;
+    }
     CHECK_FOR_EXCEPTION_AT_END();
     return JSValue::encode(result);
 }
@@ -3134,7 +3187,13 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_resolve_with_this)
     STUB_INIT_STACK_FRAME(stackFrame);
 
     CallFrame* callFrame = stackFrame.callFrame;
-    JSValue result = JSScope::resolveWithThis(callFrame, stackFrame.args[0].identifier(), &callFrame->registers()[stackFrame.args[1].int32()], stackFrame.args[2].resolveOperations());
+    ResolveOperations* operations = stackFrame.args[2].resolveOperations();
+    bool willReify = operations->isEmpty();
+    JSValue result = JSScope::resolveWithThis(callFrame, stackFrame.args[0].identifier(), &callFrame->registers()[stackFrame.args[1].int32()], operations);
+    if (willReify) {
+        CodeBlock::Locker locker(stackFrame.callFrame->codeBlock()->m_lock);
+        operations->m_ready = true;
+    }
     CHECK_FOR_EXCEPTION_AT_END();
     return JSValue::encode(result);
 }

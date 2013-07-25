@@ -35,10 +35,10 @@
 		143F61201565F0F900DB514A /* RAMSize.h in Headers */ = {isa = PBXBuildFile; fileRef = 143F611E1565F0F900DB514A /* RAMSize.h */; settings = {ATTRIBUTES = (); }; };
 		1469419216EAAF6D0024E146 /* RunLoopTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1469419016EAAF6D0024E146 /* RunLoopTimer.h */; settings = {ATTRIBUTES = (); }; };
 		1469419316EAAF6D0024E146 /* RunLoopTimerCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1469419116EAAF6D0024E146 /* RunLoopTimerCF.cpp */; };
-		1469419616EAAFF80024E146 /* SchedulePair.h in Headers */ = {isa = PBXBuildFile; fileRef = 1469419416EAAFF80024E146 /* SchedulePair.h */; settings = {ATTRIBUTES = (); }; };
+		1469419616EAAFF80024E146 /* SchedulePair.h in Headers */ = {isa = PBXBuildFile; fileRef = 1469419416EAAFF80024E146 /* SchedulePair.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1469419716EAAFF80024E146 /* SchedulePairMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1469419516EAAFF80024E146 /* SchedulePairMac.mm */; };
 		1469419916EAB0410024E146 /* SchedulePairCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1469419816EAB0410024E146 /* SchedulePairCF.cpp */; };
-		1469419C16EAB10A0024E146 /* AutodrainedPool.h in Headers */ = {isa = PBXBuildFile; fileRef = 1469419A16EAB10A0024E146 /* AutodrainedPool.h */; settings = {ATTRIBUTES = (); }; };
+		1469419C16EAB10A0024E146 /* AutodrainedPool.h in Headers */ = {isa = PBXBuildFile; fileRef = 1469419A16EAB10A0024E146 /* AutodrainedPool.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1469419D16EAB10A0024E146 /* AutodrainedPoolMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1469419B16EAB10A0024E146 /* AutodrainedPoolMac.mm */; };
 		149EF16316BBFE0D000A4331 /* TriState.h in Headers */ = {isa = PBXBuildFile; fileRef = 149EF16216BBFE0D000A4331 /* TriState.h */; settings = {ATTRIBUTES = (); }; };
 		14F3B0F715E45E4600210069 /* SaturatedArithmetic.h in Headers */ = {isa = PBXBuildFile; fileRef = 14F3B0F615E45E4600210069 /* SaturatedArithmetic.h */; settings = {ATTRIBUTES = (); }; };
@@ -295,6 +295,7 @@
 		0FD81AC4154FB22E00983E72 /* FastBitVector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FastBitVector.h; sourceTree = "<group>"; };
 		0FDDBFA51666DFA300C55FEF /* StringPrintStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StringPrintStream.cpp; sourceTree = "<group>"; };
 		0FDDBFA61666DFA300C55FEF /* StringPrintStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringPrintStream.h; sourceTree = "<group>"; };
+		0FEC3EE4171B834700FDAC8D /* ByteSpinLock.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ByteSpinLock.h; sourceTree = "<group>"; };
 		143F611D1565F0F900DB514A /* RAMSize.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RAMSize.cpp; sourceTree = "<group>"; };
 		143F611E1565F0F900DB514A /* RAMSize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RAMSize.h; sourceTree = "<group>"; };
 		1469419016EAAF6D0024E146 /* RunLoopTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RunLoopTimer.h; sourceTree = "<group>"; };
@@ -626,6 +627,7 @@
 				A8A47266151A825A004123FF /* BoundsCheckedPointer.h */,
 				A8A47267151A825A004123FF /* BumpPointerAllocator.h */,
 				EB95E1EF161A72410089A2F5 /* ByteOrder.h */,
+				0FEC3EE4171B834700FDAC8D /* ByteSpinLock.h */,
 				A8A4726A151A825A004123FF /* CheckedArithmetic.h */,
 				A8A4726B151A825A004123FF /* CheckedBoolean.h */,
 				0FC4EDE51696149600F65041 /* CommaPrinter.h */,

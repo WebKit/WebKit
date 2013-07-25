@@ -1,3 +1,32 @@
+2013-04-17  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: all inline caches should thread-safe enough to allow a concurrent compilation thread to read them safely
+        https://bugs.webkit.org/show_bug.cgi?id=114762
+
+        Reviewed by Mark Hahnenberg.
+        
+        Implemented a new spinlock that is optimized for compactness, by using just a byte.
+        This will be useful as we start using fine-grained locking on a bunch of places.
+        
+        At some point I'll make these byte-sized spinlocks into adaptive mutexes, but for
+        now I think it's fine to do the evil thing and use spinning particularly since we
+        only use them for short critical sections.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/Atomics.h:
+        (WTF):
+        (WTF::weakCompareAndSwap):
+        * wtf/ByteSpinLock.h: Added.
+        (WTF):
+        (ByteSpinLock):
+        (WTF::ByteSpinLock::ByteSpinLock):
+        (WTF::ByteSpinLock::lock):
+        (WTF::ByteSpinLock::unlock):
+        (WTF::ByteSpinLock::isHeld):
+        * wtf/ThreadingPrimitives.h:
+        (WTF::pauseBriefly):
+        (WTF):
+
 2013-04-12  Filip Pizlo  <fpizlo@apple.com>
 
         fourthTier: FTL should have OSR exit

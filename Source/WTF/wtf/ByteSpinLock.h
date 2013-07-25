@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,39 +23,46 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "ResolveGlobalStatus.h"
+#ifndef ByteSpinLock_h
+#define ByteSpinLock_h
 
-#include "CodeBlock.h"
-#include "JSCJSValue.h"
-#include "Operations.h"
-#include "Structure.h"
+#include <wtf/Assertions.h>
+#include <wtf/Atomics.h>
+#include <wtf/Locker.h>
 
-namespace JSC {
+namespace WTF {
 
-static ResolveGlobalStatus computeForStructure(CodeBlock* codeBlock, Structure* structure, Identifier& identifier)
-{
-    unsigned attributesIgnored;
-    JSCell* specificValue;
-    PropertyOffset offset = structure->get(*codeBlock->vm(), identifier, attributesIgnored, specificValue);
-    if (structure->isDictionary())
-        specificValue = 0;
-    if (!isValidOffset(offset))
-        return ResolveGlobalStatus();
+class ByteSpinLock {
+public:
+    ByteSpinLock()
+        : m_lock(0)
+    {
+    }
+
+    void lock()
+    {
+        while (!weakCompareAndSwap(&m_lock, 0, 1))
+            pauseBriefly();
+        memoryBarrierAfterLock();
+    }
     
-    return ResolveGlobalStatus(ResolveGlobalStatus::Simple, structure, offset, specificValue);
-}
-
-ResolveGlobalStatus ResolveGlobalStatus::computeFor(CodeBlock* codeBlock, int, ResolveOperation* operation, Identifier& identifier)
-{
-    CodeBlock::Locker locker(codeBlock->m_lock);
+    void unlock()
+    {
+        memoryBarrierBeforeUnlock();
+        m_lock = 0;
+    }
     
-    ASSERT(operation->m_operation == ResolveOperation::GetAndReturnGlobalProperty);
-    if (!operation->m_structure)
-        return ResolveGlobalStatus();
+    bool isHeld() const { return !!m_lock; }
     
-    return computeForStructure(codeBlock, operation->m_structure.get(), identifier);
-}
+private:
+    uint8_t m_lock;
+};
 
-} // namespace JSC
+typedef Locker<ByteSpinLock> ByteSpinLocker;
 
+} // namespace WTF
+
+using WTF::ByteSpinLock;
+using WTF::ByteSpinLocker;
+
+#endif // ByteSpinLock_h

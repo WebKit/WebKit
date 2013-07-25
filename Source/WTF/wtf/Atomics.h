@@ -270,6 +270,47 @@ inline void memoryBarrierBeforeUnlock() { compilerFence(); }
 
 #endif
 
+inline bool weakCompareAndSwap(uint8_t* location, uint8_t expected, uint8_t newValue)
+{
+#if ENABLE(COMPARE_AND_SWAP)
+#if CPU(X86) || CPU(X86_64)
+    unsigned char result;
+    asm volatile(
+        "lock; cmpxchgb %3, %2\n\t"
+        "sete %1"
+        : "+a"(expected), "=q"(result), "+m"(*location)
+        : "r"(newValue)
+        : "memory"
+        );
+    return result;
+#else
+    uintptr_t locationValue = bitwise_cast<uintptr_t>(location);
+    uintptr_t alignedLocationValue = locationValue & ~(sizeof(unsigned) - 1);
+    uintptr_t locationOffset = locationValue - alignedLocationValue;
+    ASSERT(locationOffset < sizeof(unsigned));
+    unsigned* alignedLocation = bitwise_cast<unsigned*>(alignedLocationValue);
+    // Make sure that this load is always issued and never optimized away.
+    unsigned oldAlignedValue = *const_cast<volatile unsigned*>(alignedLocation);
+    union {
+        uint8_t bytes[sizeof(unsigned)];
+        unsigned word;
+    } u;
+    u.word = oldAlignedValue;
+    if (u.bytes[locationOffset] != expected)
+        return false;
+    u.bytes[locationOffset] = newValue;
+    unsigned newAlignedValue = u.word;
+    return weakCompareAndSwap(alignedLocation, oldAlignedValue, newAlignedValue);
+#endif
+#else
+    UNUSED_PARAM(location);
+    UNUSED_PARAM(expected);
+    UNUSED_PARAM(newValue);
+    CRASH();
+    return false;
+#endif
+}
+
 } // namespace WTF
 
 #if USE(LOCKFREE_THREADSAFEREFCOUNTED)

@@ -1,3 +1,60 @@
+2013-04-17  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: all inline caches should thread-safe enough to allow a concurrent compilation thread to read them safely
+        https://bugs.webkit.org/show_bug.cgi?id=114762
+
+        Reviewed by Mark Hahnenberg.
+        
+        For most inline caches this is easy: the inline cache has a clean temporal
+        separation between doing the requested action (which may take an unbounded
+        amount of time, may recurse, and may do arbitrary things) and recording the
+        relevant information in the cache. So, we just put locks around the
+        recording bit. That part is always O(1) and does not recurse. The lock we
+        use is per-CodeBlock to achieve a good balance between locking granularity
+        and low space overhead. So a concurrent compilation thread will only block
+        if an inline cache ping-pongs in the code block being compiled (or inlined)
+        and never when other inline caches do things.
+        
+        For resolve operations, it's a bit tricky. The global resolve bit works
+        like any other IC in that it has the clean temporal separation. But the
+        operations vector itself doesn't have this separation, since we will be
+        filling it in tandem with actions that may take a long time. This patch
+        gets around this by having a m_ready bit in the ResolveOperations and
+        PutToBaseOperation. This is set while holding the CodeBlock's lock. If the
+        DFG observes the m_ready bit not set (while holding the lock) then it
+        conservatively assumes that the resolve hasn't happened yet and just
+        plants a ForceOSRExit.
+
+        * bytecode/CallLinkStatus.cpp:
+        (JSC::CallLinkStatus::computeFor):
+        * bytecode/CodeBlock.h:
+        (CodeBlock):
+        * bytecode/GetByIdStatus.cpp:
+        (JSC::GetByIdStatus::computeFor):
+        * bytecode/PutByIdStatus.cpp:
+        (JSC::PutByIdStatus::computeFor):
+        * bytecode/ResolveGlobalStatus.cpp:
+        (JSC::ResolveGlobalStatus::computeFor):
+        * bytecode/ResolveOperation.h:
+        (JSC::ResolveOperations::ResolveOperations):
+        (ResolveOperations):
+        (JSC::PutToBaseOperation::PutToBaseOperation):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseResolveOperations):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * jit/JITStubs.cpp:
+        (JSC::tryCachePutByID):
+        (JSC::tryCacheGetByID):
+        (JSC::DEFINE_STUB_FUNCTION):
+        (JSC::lazyLinkFor):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        (JSC::LLInt::setUpCall):
+        * runtime/JSScope.cpp:
+        (JSC::JSScope::resolveContainingScopeInternal):
+        (JSC::JSScope::resolveContainingScope):
+        (JSC::JSScope::resolvePut):
+
 2013-04-16  Filip Pizlo  <fpizlo@apple.com>
 
         fourthTier: DFG should be able to query Structure without modifying it

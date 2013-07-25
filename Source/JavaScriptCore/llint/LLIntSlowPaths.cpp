@@ -800,6 +800,12 @@ LLINT_SLOW_PATH_DECL(slow_path_resolve)
     default:
         break;
     }
+    
+    {
+        CodeBlock::Locker locker(exec->codeBlock()->m_lock);
+        operations->m_ready = true;
+    }
+    
     LLINT_RETURN_PROFILED(op_resolve, result);
 }
 
@@ -816,6 +822,12 @@ LLINT_SLOW_PATH_DECL(slow_path_put_to_base)
     default:
         break;
     }
+
+    {
+        CodeBlock::Locker locker(exec->codeBlock()->m_lock);
+        operation->m_ready = true;
+    }
+    
     LLINT_END();
 }
 
@@ -854,6 +866,12 @@ LLINT_SLOW_PATH_DECL(slow_path_resolve_base)
     default:
         break;
     }
+    
+    {
+        CodeBlock::Locker locker(exec->codeBlock()->m_lock);
+        operations->m_ready = true;
+    }
+    
     LLINT_PROFILE_VALUE(op_resolve_base, result);
     LLINT_RETURN(result);
 }
@@ -862,7 +880,12 @@ LLINT_SLOW_PATH_DECL(slow_path_resolve_with_base)
 {
     LLINT_BEGIN();
     ResolveOperations* operations = pc[4].u.resolveOperations;
+    bool willReify = operations->isEmpty();
     JSValue result = JSScope::resolveWithBase(exec, exec->codeBlock()->identifier(pc[3].u.operand), &LLINT_OP(1), operations, pc[5].u.putToBaseOperation);
+    if (willReify) {
+        CodeBlock::Locker locker(exec->codeBlock()->m_lock);
+        operations->m_ready = true;
+    }
     LLINT_CHECK_EXCEPTION();
     LLINT_OP(2) = result;
     LLINT_PROFILE_VALUE(op_resolve_with_base, result);
@@ -873,7 +896,12 @@ LLINT_SLOW_PATH_DECL(slow_path_resolve_with_this)
 {
     LLINT_BEGIN();
     ResolveOperations* operations = pc[4].u.resolveOperations;
+    bool willReify = operations->isEmpty();
     JSValue result = JSScope::resolveWithThis(exec, exec->codeBlock()->identifier(pc[3].u.operand), &LLINT_OP(1), operations);
+    if (willReify) {
+        CodeBlock::Locker locker(exec->codeBlock()->m_lock);
+        operations->m_ready = true;
+    }
     LLINT_CHECK_EXCEPTION();
     LLINT_OP(2) = result;
     LLINT_PROFILE_VALUE(op_resolve_with_this, result);
@@ -911,6 +939,8 @@ LLINT_SLOW_PATH_DECL(slow_path_get_by_id)
         
         if (!structure->isUncacheableDictionary()
             && !structure->typeInfo().prohibitsPropertyCaching()) {
+            CodeBlock::Locker locker(codeBlock->m_lock);
+            
             pc[4].u.structure.set(
                 vm, codeBlock->ownerExecutable(), structure);
             if (isInlineOffset(slot.cachedOffset())) {
@@ -976,6 +1006,8 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_id)
             && baseCell == slot.base()) {
             
             if (slot.type() == PutPropertySlot::NewProperty) {
+                CodeBlock::Locker locker(codeBlock->m_lock);
+            
                 if (!structure->isDictionary() && structure->previousID()->outOfLineCapacity() == structure->outOfLineCapacity()) {
                     ASSERT(structure->previousID()->transitionWatchpointSetHasBeenInvalidated());
                     
@@ -1401,9 +1433,12 @@ inline SlowPathReturnType setUpCall(ExecState* execCallee, Instruction* pc, Code
     }
     
     if (!LLINT_ALWAYS_ACCESS_SLOW && callLinkInfo) {
+        ExecState* execCaller = execCallee->callerFrame();
+
+        CodeBlock::Locker locker(execCaller->codeBlock()->m_lock);
+        
         if (callLinkInfo->isOnList())
             callLinkInfo->remove();
-        ExecState* execCaller = execCallee->callerFrame();
         callLinkInfo->callee.set(vm, execCaller->codeBlock()->ownerExecutable(), callee);
         callLinkInfo->lastSeenCallee.set(vm, execCaller->codeBlock()->ownerExecutable(), callee);
         callLinkInfo->machineCodeTarget = codePtr;

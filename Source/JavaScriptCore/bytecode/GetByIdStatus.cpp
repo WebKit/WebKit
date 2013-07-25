@@ -112,6 +112,8 @@ void GetByIdStatus::computeForChain(GetByIdStatus& result, CodeBlock* profiledBl
 
 GetByIdStatus GetByIdStatus::computeFor(CodeBlock* profiledBlock, unsigned bytecodeIndex, Identifier& ident)
 {
+    CodeBlock::Locker locker(profiledBlock->m_lock);
+    
     UNUSED_PARAM(profiledBlock);
     UNUSED_PARAM(bytecodeIndex);
     UNUSED_PARAM(ident);

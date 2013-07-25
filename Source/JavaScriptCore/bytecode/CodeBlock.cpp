@@ -3247,12 +3247,12 @@ void CodeBlock::tallyFrequentExitSites()
         }
         break;
     }
-        
+
+#if ENABLE(FTL_JIT)
     case JITCode::FTLJIT: {
         // There is no easy way to avoid duplicating this code since the FTL::JITCode::osrExit
         // vector contains a totally different type, that just so happens to behave like
         // DFG::JITCode::osrExit.
-#if ENABLE(FTL_JIT)
         FTL::JITCode* jitCode = m_jitCode->ftl();
         for (unsigned i = 0; i < jitCode->osrExit.size(); ++i) {
             FTL::OSRExit& exit = jitCode->osrExit[i];
@@ -3264,9 +3264,9 @@ void CodeBlock::tallyFrequentExitSites()
             dataLog("OSR exit #", i, " (bc#", exit.m_codeOrigin.bytecodeIndex, ", ", exit.m_kind, ") for ", *this, " occurred frequently: counting as frequent exit site.\n");
 #endif
         }
-#endif
         break;
-    }        
+    }
+#endif
         
     default:
         RELEASE_ASSERT_NOT_REACHED();

@@ -1786,10 +1786,17 @@ Node* ByteCodeParser::getScope(bool skipTop, unsigned skipCount)
 
 bool ByteCodeParser::parseResolveOperations(SpeculatedType prediction, unsigned identifier, ResolveOperations* resolveOperations, PutToBaseOperation* putToBaseOperation, Node** base, Node** value)
 {
-    if (resolveOperations->isEmpty()) {
-        addToGraph(ForceOSRExit);
-        return false;
+    {
+        CodeBlock::Locker locker(m_inlineStackTop->m_profiledBlock->m_lock);
+     
+        if (!resolveOperations->m_ready) {
+            addToGraph(ForceOSRExit);
+            return false;
+        }
     }
+
+    ASSERT(!resolveOperations->isEmpty());
+
     JSGlobalObject* globalObject = m_inlineStackTop->m_codeBlock->globalObject();
     int skipCount = 0;
     bool skipTop = false;
@@ -3150,6 +3157,17 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             unsigned identifier = m_inlineStackTop->m_identifierRemap[currentInstruction[2].u.operand];
             unsigned value = currentInstruction[3].u.operand;
             PutToBaseOperation* putToBase = currentInstruction[4].u.putToBaseOperation;
+            
+            {
+                CodeBlock::Locker locker(m_inlineStackTop->m_profiledBlock->m_lock);
+                
+                if (!putToBase->m_ready) {
+                    addToGraph(ForceOSRExit);
+                    addToGraph(Phantom, get(base));
+                    addToGraph(Phantom, get(value));
+                    NEXT_OPCODE(op_put_to_base);
+                }
+            }
 
             if (putToBase->m_isDynamic) {
                 addToGraph(PutById, OpInfo(identifier), get(base), get(value));

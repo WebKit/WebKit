@@ -97,6 +97,8 @@ CallLinkStatus CallLinkStatus::computeFromLLInt(CodeBlock* profiledBlock, unsign
 
 CallLinkStatus CallLinkStatus::computeFor(CodeBlock* profiledBlock, unsigned bytecodeIndex)
 {
+    CodeBlock::Locker locker(profiledBlock->m_lock);
+    
     UNUSED_PARAM(profiledBlock);
     UNUSED_PARAM(bytecodeIndex);
 #if ENABLE(JIT) && ENABLE(VALUE_PROFILER)

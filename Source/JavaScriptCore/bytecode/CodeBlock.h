@@ -69,6 +69,7 @@
 #include "UnconditionalFinalizer.h"
 #include "ValueProfile.h"
 #include "Watchpoint.h"
+#include <wtf/ByteSpinLock.h>
 #include <wtf/RefCountedArray.h>
 #include <wtf/FastAllocBase.h>
 #include <wtf/PassOwnPtr.h>
@@ -920,6 +921,26 @@ namespace JSC {
         int m_numCalleeRegisters;
         int m_numVars;
         bool m_isConstructor;
+        
+        // This is intentionally public; it's the responsibility of anyone doing any
+        // of the following to hold the lock:
+        //
+        // - Modifying any inline cache in this code block.
+        //
+        // - Quering any inline cache in this code block, from a thread other than
+        //   the main thread.
+        //
+        // Additionally, it's only legal to modify the inline cache on the main
+        // thread. This means that the main thread can query the inline cache without
+        // locking. This is crucial since executing the inline cache is effectively
+        // "querying" it.
+        //
+        // Another exception to the rules is that the GC can do whatever it wants
+        // without holding any locks, because the GC is guaranteed to wait until any
+        // concurrent compilation threads finish what they're doing.
+        typedef ByteSpinLock Lock;
+        typedef ByteSpinLocker Locker;
+        Lock m_lock;
 
     protected:
 #if ENABLE(JIT)
