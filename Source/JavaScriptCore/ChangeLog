@@ -1,3 +1,19 @@
+2013-07-08  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: DFG::AbstractState::beginBasicBlock() should set m_haveStructures if any of the valuesAtHead have either a current known structure or a non-top/non-bottom array modes
+        https://bugs.webkit.org/show_bug.cgi?id=118489
+
+        Reviewed by Mark Hahnenberg.
+
+        * bytecode/ArrayProfile.h:
+        (JSC::arrayModesAreClearOrTop):
+        (JSC):
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::beginBasicBlock):
+        * dfg/DFGAbstractValue.h:
+        (JSC::DFG::AbstractValue::hasClobberableState):
+        (AbstractValue):
+
 2013-07-08  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         CheckArray should call the right version of filterArrayModes

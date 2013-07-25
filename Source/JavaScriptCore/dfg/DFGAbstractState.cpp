@@ -62,13 +62,13 @@ void AbstractState::beginBasicBlock(BasicBlock* basicBlock)
     m_variables = basicBlock->valuesAtHead;
     m_haveStructures = false;
     for (size_t i = 0; i < m_variables.numberOfArguments(); ++i) {
-        if (m_variables.argument(i).m_currentKnownStructure.isNeitherClearNorTop()) {
+        if (m_variables.argument(i).hasClobberableState()) {
             m_haveStructures = true;
             break;
         }
     }
     for (size_t i = 0; i < m_variables.numberOfLocals(); ++i) {
-        if (m_variables.local(i).m_currentKnownStructure.isNeitherClearNorTop()) {
+        if (m_variables.local(i).hasClobberableState()) {
             m_haveStructures = true;
             break;
         }

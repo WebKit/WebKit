@@ -80,6 +80,11 @@ inline bool mergeArrayModes(ArrayModes& left, ArrayModes right)
     return true;
 }
 
+inline bool arrayModesAreClearOrTop(ArrayModes modes)
+{
+    return !modes || modes == ALL_ARRAY_MODES;
+}
+
 // Checks if proven is a subset of expected.
 inline bool arrayModesAlreadyChecked(ArrayModes proven, ArrayModes expected)
 {

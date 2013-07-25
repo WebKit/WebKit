@@ -243,6 +243,12 @@ struct AbstractValue {
         return 0;
     }
     
+    bool hasClobberableState() const
+    {
+        return m_currentKnownStructure.isNeitherClearNorTop()
+            || !arrayModesAreClearOrTop(m_arrayModes);
+    }
+    
     void checkConsistency() const;
     
     void dump(PrintStream&) const;
