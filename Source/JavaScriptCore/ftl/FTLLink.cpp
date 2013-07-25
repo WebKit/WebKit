@@ -86,7 +86,7 @@ void link(State& state)
         OBJECT_OFFSETOF(struct JITStackFrame, callFrame) / sizeof(void*));
         
     jit.store32(
-        CCallHelpers::TrustedImm32(0),
+        CCallHelpers::TrustedImm32(CallFrame::Location::encodeAsBytecodeOffset(0)),
         CCallHelpers::tagFor(static_cast<VirtualRegister>(JSStack::ArgumentCount)));
     CCallHelpers::Call callStackCheck = jit.call();
     // FIXME: need to make this call register with exception handling somehow. This is
@@ -108,7 +108,7 @@ void link(State& state)
         GPRInfo::callFrameRegister,
         OBJECT_OFFSETOF(struct JITStackFrame, callFrame) / sizeof(void*));
     jit.store32(
-        CCallHelpers::TrustedImm32(0),
+        CCallHelpers::TrustedImm32(CallFrame::Location::encodeAsBytecodeOffset(0)),
         CCallHelpers::tagFor(static_cast<VirtualRegister>(JSStack::ArgumentCount)));
     CCallHelpers::Call callArityCheck = jit.call();
     // FIXME: need to make this call register with exception handling somehow. This is

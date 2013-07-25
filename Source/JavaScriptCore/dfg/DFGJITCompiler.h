@@ -314,7 +314,7 @@ public:
     void beginCall(CodeOrigin codeOrigin, CallBeginToken& token)
     {
         unsigned index = m_exceptionChecks.size();
-        unsigned locationBits = CallFrame::Location::encode(CallFrame::Location::CodeOriginIndex, index);
+        unsigned locationBits = CallFrame::Location::encodeAsCodeOriginIndex(index);
         store32(TrustedImm32(locationBits), tagFor(static_cast<VirtualRegister>(JSStack::ArgumentCount)));
         token.set(codeOrigin, index);
     }

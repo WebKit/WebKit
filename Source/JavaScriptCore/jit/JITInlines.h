@@ -29,6 +29,8 @@
 
 #if ENABLE(JIT)
 
+#include "CallFrameInlines.h"
+
 namespace JSC {
 
 ALWAYS_INLINE bool JIT::isOperandConstantImmediateDouble(unsigned src)
@@ -180,10 +182,12 @@ ALWAYS_INLINE void JIT::updateTopCallFrame()
 {
     ASSERT(static_cast<int>(m_bytecodeOffset) >= 0);
 #if USE(JSVALUE32_64)
-    storePtr(TrustedImmPtr(m_codeBlock->instructions().begin() + m_bytecodeOffset + 1), intTagFor(JSStack::ArgumentCount));
+    Instruction* instruction = m_codeBlock->instructions().begin() + m_bytecodeOffset + 1; 
+    uint32_t locationBits = CallFrame::Location::encodeAsBytecodeInstruction(instruction);
 #else
-    store32(TrustedImm32(m_bytecodeOffset + 1), intTagFor(JSStack::ArgumentCount));
+    uint32_t locationBits = CallFrame::Location::encodeAsBytecodeOffset(m_bytecodeOffset + 1);
 #endif
+    store32(TrustedImm32(locationBits), intTagFor(JSStack::ArgumentCount));
     storePtr(callFrameRegister, &m_vm->topCallFrame);
 }
 

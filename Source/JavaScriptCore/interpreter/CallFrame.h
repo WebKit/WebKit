@@ -116,19 +116,30 @@ namespace JSC  {
 
         class Location {
         public:
-            enum Type {
-                BytecodeOffset = 0,
-                CodeOriginIndex = (1 << 0),
-                IsInlinedCode = (1 << 1),
-            };
-
-            static inline uint32_t encode(Type, uint32_t bits);
             static inline uint32_t decode(uint32_t bits);
-            static inline bool isBytecodeOffset(uint32_t bits);
+
+            static inline bool isBytecodeLocation(uint32_t bits);
+#if USE(JSVALUE64)
+            static inline uint32_t encodeAsBytecodeOffset(uint32_t bits);
+#else
+            static inline uint32_t encodeAsBytecodeInstruction(Instruction*);
+#endif
+
             static inline bool isCodeOriginIndex(uint32_t bits);
+            static inline uint32_t encodeAsCodeOriginIndex(uint32_t bits);
+
             static inline bool isInlinedCode(uint32_t bits);
+            static inline uint32_t encodeAsInlinedCode(uint32_t bits);
 
         private:
+            enum TypeTag {
+                BytecodeLocationTag = 0,
+                CodeOriginIndexTag = 1,
+                IsInlinedCodeTag = 2,
+            };
+
+            static inline uint32_t encode(TypeTag, uint32_t bits);
+
             static const uint32_t s_mask = 0x3;
 #if USE(JSVALUE64)
             static const uint32_t s_shift = 30;

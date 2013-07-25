@@ -261,7 +261,8 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned ca
         store32(TrustedImm32(argCount), payloadFor(JSStack::ArgumentCount, regT3));
     } // regT3 holds newCallFrame with ArgumentCount initialized.
     
-    storePtr(TrustedImmPtr(instruction), tagFor(JSStack::ArgumentCount, callFrameRegister));
+    uint32_t locationBits = CallFrame::Location::encodeAsBytecodeInstruction(instruction);
+    store32(TrustedImm32(locationBits), tagFor(JSStack::ArgumentCount, callFrameRegister));
     emitLoad(callee, regT1, regT0); // regT1, regT0 holds callee.
 
     storePtr(callFrameRegister, Address(regT3, JSStack::CallerFrame * static_cast<int>(sizeof(Register))));

@@ -189,7 +189,9 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned ca
         store32(TrustedImm32(argCount), Address(regT1, JSStack::ArgumentCount * static_cast<int>(sizeof(Register)) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload)));
     } // regT1 holds newCallFrame with ArgumentCount initialized.
     
-    store32(TrustedImm32(instruction - m_codeBlock->instructions().begin()), Address(callFrameRegister, JSStack::ArgumentCount * static_cast<int>(sizeof(Register)) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag)));
+    uint32_t bytecodeOffset = instruction - m_codeBlock->instructions().begin();
+    uint32_t locationBits = CallFrame::Location::encodeAsBytecodeOffset(bytecodeOffset);
+    store32(TrustedImm32(locationBits), Address(callFrameRegister, JSStack::ArgumentCount * static_cast<int>(sizeof(Register)) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag)));
     emitGetVirtualRegister(callee, regT0); // regT0 holds callee.
 
     store64(callFrameRegister, Address(regT1, JSStack::CallerFrame * static_cast<int>(sizeof(Register))));

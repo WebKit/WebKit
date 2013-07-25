@@ -1,3 +1,48 @@
+2013-06-07  Mark Lam  <mark.lam@apple.com>
+
+        32-bit CallFrame::Location should use Instruction* for BytecodeLocation, not bytecodeOffset.
+        https://bugs.webkit.org/show_bug.cgi?id=117327.
+
+        Reviewed by Michael Saboff.
+
+        - Renamed CallFrame::Location's Type to TypeTag.
+        - Made the CallFrame::Location::TypeTag private, and provided type
+          specific encoder functions. This reduces verbosity in client code.
+        - Fixed the DFG's reifyInlinedCallFrames() on 32-bit ports to store a
+          bytecode Instruction* in the CallFrame location instead of a bytecode
+          offset.
+        - Fixed places in JIT and FTL code which populate the CallFrame location
+          (i.e. ArgumentCount tag) to use a Location encoder instead of storing
+          the bytecodeOffset directly. This doesn't make any semantic difference,
+          but it does assert that the stored value does not have bits where we
+          would expect Location TypeTags to be.
+
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::beginCall):
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+        (JSC::DFG::reifyInlinedCallFrames):
+        * ftl/FTLLink.cpp:
+        (JSC::FTL::link):
+        * interpreter/CallFrame.cpp:
+        (JSC::CallFrame::setLocationAsBytecodeOffset):
+        * interpreter/CallFrame.h:
+        (Location):
+        * interpreter/CallFrameInlines.h:
+        (JSC::CallFrame::Location::encodeAsBytecodeOffset):
+        (JSC::CallFrame::Location::encodeAsBytecodeInstruction):
+        (JSC::CallFrame::Location::encodeAsCodeOriginIndex):
+        (JSC::CallFrame::Location::encodeAsInlinedCode):
+        (JSC::CallFrame::Location::isBytecodeLocation):
+        (JSC::CallFrame::setIsInlinedFrame):
+        (JSC::CallFrame::hasLocationAsBytecodeOffset):
+        (JSC::CallFrame::setLocationAsBytecodeOffset):
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCall):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::compileOpCall):
+        * jit/JITInlines.h:
+        (JSC::JIT::updateTopCallFrame):
+
 2013-06-06  Mark Lam  <mark.lam@apple.com>
 
         Encode CallFrame::Location flags in the low bits when USE(JSVALUE32_64).

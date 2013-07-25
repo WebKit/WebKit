@@ -30,18 +30,18 @@
 
 namespace JSC  {
 
-inline uint32_t CallFrame::Location::encode(CallFrame::Location::Type type, uint32_t bits)
+inline uint32_t CallFrame::Location::encode(CallFrame::Location::TypeTag tag, uint32_t bits)
 {
 #if USE(JSVALUE64)
     ASSERT(!(bits & s_shiftedMask));
-    ASSERT(!(type & ~s_mask));
-    return bits | (type << s_shift);
+    ASSERT(!(tag & ~s_mask));
+    return bits | (tag << s_shift);
 #else
-    ASSERT(!(type & ~s_mask));
-    if (type & CodeOriginIndex)
+    ASSERT(!(tag & ~s_mask));
+    if (tag & CodeOriginIndexTag)
         bits = (bits << s_shift);
     ASSERT(!(bits & s_mask));
-    bits |= type;
+    bits |= tag;
     return bits;
 #endif
 }
@@ -57,7 +57,37 @@ inline uint32_t CallFrame::Location::decode(uint32_t bits)
 #endif
 }
 
-inline bool CallFrame::Location::isBytecodeOffset(uint32_t bits)
+#if USE(JSVALUE64)
+inline uint32_t CallFrame::Location::encodeAsBytecodeOffset(uint32_t bits)
+{
+    uint32_t encodedBits = encode(BytecodeLocationTag, bits);
+    ASSERT(isBytecodeLocation(encodedBits));
+    return encodedBits;
+}
+#else
+inline uint32_t CallFrame::Location::encodeAsBytecodeInstruction(Instruction* instruction)
+{
+    uint32_t encodedBits = encode(BytecodeLocationTag, reinterpret_cast<uint32_t>(instruction));
+    ASSERT(isBytecodeLocation(encodedBits));
+    return encodedBits;
+}
+#endif
+
+inline uint32_t CallFrame::Location::encodeAsCodeOriginIndex(uint32_t bits)
+{
+    uint32_t encodedBits = encode(CodeOriginIndexTag, bits);
+    ASSERT(isCodeOriginIndex(encodedBits));
+    return encodedBits;
+}
+
+inline uint32_t CallFrame::Location::encodeAsInlinedCode(uint32_t bits)
+{
+    uint32_t encodedBits = encode(IsInlinedCodeTag, bits);
+    ASSERT(isInlinedCode(encodedBits));
+    return encodedBits;
+}
+
+inline bool CallFrame::Location::isBytecodeLocation(uint32_t bits)
 {
     return !isCodeOriginIndex(bits);
 }
@@ -65,20 +95,20 @@ inline bool CallFrame::Location::isBytecodeOffset(uint32_t bits)
 inline bool CallFrame::Location::isCodeOriginIndex(uint32_t bits)
 {
 #if USE(JSVALUE64)
-    Type type = static_cast<Type>(bits >> s_shift);
-    return !!(type & CodeOriginIndex);
+    TypeTag tag = static_cast<TypeTag>(bits >> s_shift);
+    return !!(tag & CodeOriginIndexTag);
 #else
-    return !!(bits & CodeOriginIndex);
+    return !!(bits & CodeOriginIndexTag);
 #endif
 }
 
 inline bool CallFrame::Location::isInlinedCode(uint32_t bits)
 {
 #if USE(JSVALUE64)
-    Type type = static_cast<Type>(bits >> s_shift);
-    return !!(type & IsInlinedCode);
+    TypeTag tag = static_cast<TypeTag>(bits >> s_shift);
+    return !!(tag & IsInlinedCodeTag);
 #else
-    return !!(bits & IsInlinedCode);
+    return !!(bits & IsInlinedCodeTag);
 #endif
 }
 
@@ -90,14 +120,14 @@ inline bool CallFrame::isInlinedFrame() const
 inline void CallFrame::setIsInlinedFrame()
 {
     ASSERT(codeBlock());
-    uint32_t bits = Location::encode(Location::IsInlinedCode, locationAsRawBits());
+    uint32_t bits = Location::encodeAsInlinedCode(locationAsRawBits());
     setLocationAsRawBits(bits);
     ASSERT(isInlinedFrame());
 }
 
 inline bool CallFrame::hasLocationAsBytecodeOffset() const
 {
-    return Location::isBytecodeOffset(locationAsRawBits());
+    return Location::isBytecodeLocation(locationAsRawBits());
 }
 
 inline bool CallFrame::hasLocationAsCodeOriginIndex() const
@@ -126,7 +156,7 @@ inline unsigned CallFrame::locationAsBytecodeOffset() const
 inline void CallFrame::setLocationAsBytecodeOffset(unsigned offset)
 {
     ASSERT(codeBlock());
-    setLocationAsRawBits(Location::encode(Location::BytecodeOffset, offset));
+    setLocationAsRawBits(Location::encodeAsBytecodeOffset(offset));
     ASSERT(hasLocationAsBytecodeOffset());
 }
 #endif // USE(JSVALUE64)
