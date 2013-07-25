@@ -92,11 +92,8 @@ protected:
         Base::finishCreation(vm);
     }
     
-    typedef ConcurrentJITLock Lock;
-    typedef ConcurrentJITLocker Locker;
-
     SegmentedVector<WriteBarrier<Unknown>, 16> m_registers;
-    Lock m_lock;
+    ConcurrentJITLock m_lock;
 };
 
 } // namespace JSC

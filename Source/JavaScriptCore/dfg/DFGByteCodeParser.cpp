@@ -264,7 +264,7 @@ private:
     {
         ASSERT(node->op() == GetLocal);
         ASSERT(node->codeOrigin.bytecodeIndex == m_currentIndex);
-        CodeBlockLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
+        ConcurrentJITLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
         LazyOperandValueProfileKey key(m_currentIndex, node->local());
         SpeculatedType prediction = m_inlineStackTop->m_lazyOperands.prediction(locker, key);
 #if DFG_ENABLE(DEBUG_VERBOSE)
@@ -810,7 +810,7 @@ private:
     
     SpeculatedType getPredictionWithoutOSRExit(unsigned bytecodeIndex)
     {
-        CodeBlockLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
+        ConcurrentJITLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
         return m_inlineStackTop->m_profiledBlock->valueProfilePredictionForBytecodeOffset(locker, bytecodeIndex);
     }
 
@@ -839,7 +839,7 @@ private:
     
     ArrayMode getArrayMode(ArrayProfile* profile, Array::Action action)
     {
-        CodeBlockLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
+        ConcurrentJITLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
         profile->computeUpdatedPrediction(locker, m_inlineStackTop->m_profiledBlock);
         return ArrayMode::fromObserved(locker, profile, action, false);
     }
@@ -851,7 +851,7 @@ private:
     
     ArrayMode getArrayModeAndEmitChecks(ArrayProfile* profile, Array::Action action, Node* base)
     {
-        CodeBlockLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
+        ConcurrentJITLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
         
         profile->computeUpdatedPrediction(locker, m_inlineStackTop->m_profiledBlock);
         
@@ -1797,7 +1797,7 @@ Node* ByteCodeParser::getScope(bool skipTop, unsigned skipCount)
 bool ByteCodeParser::parseResolveOperations(SpeculatedType prediction, unsigned identifier, ResolveOperations* resolveOperations, PutToBaseOperation* putToBaseOperation, Node** base, Node** value)
 {
     {
-        CodeBlockLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
+        ConcurrentJITLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
      
         if (!resolveOperations->m_ready) {
             addToGraph(ForceOSRExit);
@@ -2035,7 +2035,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         case op_to_this: {
             Node* op1 = getThis();
             if (op1->op() != ToThis) {
-                CodeBlockLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
+                ConcurrentJITLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
                 ValueProfile* profile =
                     m_inlineStackTop->m_profiledBlock->valueProfileForBytecodeOffset(m_currentProfilingIndex);
                 profile->computeUpdatedPrediction(locker);
@@ -2136,7 +2136,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         }
             
         case op_get_callee: {
-            CodeBlockLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
+            ConcurrentJITLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
             ValueProfile* profile = currentInstruction[2].u.profile;
             profile->computeUpdatedPrediction(locker);
             if (profile->m_singletonValueIsTop
@@ -3174,7 +3174,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             PutToBaseOperation* putToBase = currentInstruction[4].u.putToBaseOperation;
             
             {
-                CodeBlockLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
+                ConcurrentJITLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
                 
                 if (!putToBase->m_ready) {
                     addToGraph(ForceOSRExit);
@@ -3505,7 +3505,7 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(
     , m_caller(byteCodeParser->m_inlineStackTop)
 {
     {
-        CodeBlockLocker locker(m_profiledBlock->m_lock);
+        ConcurrentJITLocker locker(m_profiledBlock->m_lock);
         m_lazyOperands.initialize(locker, m_profiledBlock->lazyOperandValueProfiles());
     }
     

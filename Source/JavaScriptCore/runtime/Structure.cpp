@@ -278,7 +278,7 @@ void Structure::materializePropertyMap(VM& vm)
     // Must hold the lock on this structure, since we will be modifying this structure's
     // property map. We don't want getConcurrently() to see the property map in a half-baked
     // state.
-    Locker locker(m_lock);
+    ConcurrentJITLocker locker(m_lock);
     if (!table)
         createPropertyMap(locker, vm, numberOfSlotsForLastOffset(m_offset, m_inlineCapacity));
     else
@@ -346,7 +346,7 @@ Structure* Structure::addPropertyTransitionToExistingStructure(Structure* struct
 
 Structure* Structure::addPropertyTransitionToExistingStructureConcurrently(Structure* structure, StringImpl* uid, unsigned attributes, JSCell* specificValue, PropertyOffset& offset)
 {
-    Locker locker(structure->m_lock);
+    ConcurrentJITLocker locker(structure->m_lock);
     return addPropertyTransitionToExistingStructureImpl(structure, uid, attributes, specificValue, offset);
 }
 
@@ -418,7 +418,7 @@ Structure* Structure::addPropertyTransition(VM& vm, Structure* structure, Proper
 
     checkOffset(transition->m_offset, transition->inlineCapacity());
     {
-        Locker locker(structure->m_lock);
+        ConcurrentJITLocker locker(structure->m_lock);
         structure->m_transitionTable.add(vm, transition);
     }
     transition->checkOffsetConsistency();
@@ -584,7 +584,7 @@ PropertyTable* Structure::takePropertyTableOrCloneIfPinned(VM& vm, Structure* ow
     // Hold the lock while stealing the table - so that getConcurrently() on another thread
     // will either have to bypass this structure, or will get to use the property table
     // before it is stolen.
-    Locker locker(m_lock);
+    ConcurrentJITLocker locker(m_lock);
     PropertyTable* takenPropertyTable = propertyTable().get();
     propertyTable().clear();
     return takenPropertyTable;
@@ -620,7 +620,7 @@ Structure* Structure::nonPropertyTransition(VM& vm, Structure* structure, NonPro
     checkOffset(transition->m_offset, transition->inlineCapacity());
     
     {
-        Locker locker(structure->m_lock);
+        ConcurrentJITLocker locker(structure->m_lock);
         structure->m_transitionTable.add(vm, transition);
     }
     transition->checkOffsetConsistency();
@@ -868,7 +868,7 @@ void Structure::despecifyAllFunctions(VM& vm)
 
 PropertyOffset Structure::putSpecificValue(VM& vm, PropertyName propertyName, unsigned attributes, JSCell* specificValue)
 {
-    Locker locker(m_lock);
+    ConcurrentJITLocker locker(m_lock);
     
     ASSERT(!JSC::isValidOffset(get(vm, propertyName)));
 
@@ -891,7 +891,7 @@ PropertyOffset Structure::putSpecificValue(VM& vm, PropertyName propertyName, un
 
 PropertyOffset Structure::remove(PropertyName propertyName)
 {
-    Locker locker(m_lock);
+    ConcurrentJITLocker locker(m_lock);
     
     checkConsistency();
 
@@ -913,7 +913,7 @@ PropertyOffset Structure::remove(PropertyName propertyName)
     return offset;
 }
 
-void Structure::createPropertyMap(const Locker&, VM& vm, unsigned capacity)
+void Structure::createPropertyMap(const ConcurrentJITLocker&, VM& vm, unsigned capacity)
 {
     ASSERT(!propertyTable());
 

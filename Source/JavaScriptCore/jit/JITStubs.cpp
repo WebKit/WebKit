@@ -116,7 +116,7 @@ void performPlatformSpecificJITAssertions(VM* vm)
 
 NEVER_INLINE static void tryCachePutByID(CallFrame* callFrame, CodeBlock* codeBlock, ReturnAddressPtr returnAddress, JSValue baseValue, const PutPropertySlot& slot, StructureStubInfo* stubInfo, bool direct)
 {
-    CodeBlockLocker locker(codeBlock->m_lock);
+    ConcurrentJITLocker locker(codeBlock->m_lock);
     
     // The interpreter checks for recursion here; I do not believe this can occur in CTI.
 
@@ -172,7 +172,7 @@ NEVER_INLINE static void tryCachePutByID(CallFrame* callFrame, CodeBlock* codeBl
 
 NEVER_INLINE static void tryCacheGetByID(CallFrame* callFrame, CodeBlock* codeBlock, ReturnAddressPtr returnAddress, JSValue baseValue, const Identifier& propertyName, const PropertySlot& slot, StructureStubInfo* stubInfo)
 {
-    CodeBlockLocker locker(codeBlock->m_lock);
+    ConcurrentJITLocker locker(codeBlock->m_lock);
     
     // FIXME: Write a test that proves we need to check for recursion here just
     // like the interpreter does, then add a check for recursion.
@@ -709,7 +709,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_id_self_fail)
 
     CHECK_FOR_EXCEPTION();
 
-    CodeBlockLocker locker(codeBlock->m_lock);
+    ConcurrentJITLocker locker(codeBlock->m_lock);
     
     if (baseValue.isCell()
         && slot.isCacheable()
@@ -825,7 +825,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_id_proto_list)
         return JSValue::encode(result);
     }
 
-    CodeBlockLocker locker(codeBlock->m_lock);
+    ConcurrentJITLocker locker(codeBlock->m_lock);
     
     Structure* structure = baseValue.asCell()->structure();
 
@@ -1337,7 +1337,7 @@ inline void* lazyLinkFor(CallFrame* callFrame, CodeSpecializationKind kind)
             codePtr = functionExecutable->generatedJITCodeFor(kind)->addressForCall();
     }
 
-    CodeBlockLocker locker(callFrame->callerFrame()->codeBlock()->m_lock);
+    ConcurrentJITLocker locker(callFrame->callerFrame()->codeBlock()->m_lock);
     if (!callLinkInfo->seenOnce())
         callLinkInfo->setSeen();
     else
@@ -1413,7 +1413,7 @@ DEFINE_STUB_FUNCTION(void*, vm_lazyLinkClosureCall)
     
     if (shouldLink) {
         ASSERT(codePtr);
-        CodeBlockLocker locker(callerCodeBlock->m_lock);
+        ConcurrentJITLocker locker(callerCodeBlock->m_lock);
         JIT::compileClosureCall(vm, callLinkInfo, callerCodeBlock, calleeCodeBlock, structure, executable, codePtr);
         callLinkInfo->hasSeenClosure = true;
     } else
@@ -1561,7 +1561,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_resolve)
     JSValue result = JSScope::resolve(callFrame, stackFrame.args[0].identifier(), operations);
     
     if (willReify) {
-        CodeBlockLocker locker(callFrame->codeBlock()->m_lock);
+        ConcurrentJITLocker locker(callFrame->codeBlock()->m_lock);
         operations->m_ready = true;
     }
     
@@ -1581,7 +1581,7 @@ DEFINE_STUB_FUNCTION(void, op_put_to_base)
     JSScope::resolvePut(callFrame, base, stackFrame.args[1].identifier(), value, operation);
     
     if (firstTime) {
-        CodeBlockLocker locker(callFrame->codeBlock()->m_lock);
+        ConcurrentJITLocker locker(callFrame->codeBlock()->m_lock);
         operation->m_ready = true;
     }
 
@@ -1919,7 +1919,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_resolve_base)
     JSValue result = JSScope::resolveBase(stackFrame.callFrame, stackFrame.args[0].identifier(), false, operations, stackFrame.args[2].putToBaseOperation());
     
     if (willReify) {
-        CodeBlockLocker locker(stackFrame.callFrame->codeBlock()->m_lock);
+        ConcurrentJITLocker locker(stackFrame.callFrame->codeBlock()->m_lock);
         operations->m_ready = true;
     }
     
@@ -1936,7 +1936,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_resolve_base_strict_put)
     if (JSValue result = JSScope::resolveBase(stackFrame.callFrame, stackFrame.args[0].identifier(), true, operations, stackFrame.args[2].putToBaseOperation())) {
         
         if (willReify) {
-            CodeBlockLocker locker(stackFrame.callFrame->codeBlock()->m_lock);
+            ConcurrentJITLocker locker(stackFrame.callFrame->codeBlock()->m_lock);
             operations->m_ready = true;
         }
         
@@ -2213,7 +2213,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_resolve_with_base)
     bool willReify = operations->isEmpty();
     JSValue result = JSScope::resolveWithBase(callFrame, stackFrame.args[0].identifier(), &callFrame->registers()[stackFrame.args[1].int32()], operations, stackFrame.args[3].putToBaseOperation());
     if (willReify) {
-        CodeBlockLocker locker(stackFrame.callFrame->codeBlock()->m_lock);
+        ConcurrentJITLocker locker(stackFrame.callFrame->codeBlock()->m_lock);
         operations->m_ready = true;
     }
     CHECK_FOR_EXCEPTION_AT_END();
@@ -2229,7 +2229,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_resolve_with_this)
     bool willReify = operations->isEmpty();
     JSValue result = JSScope::resolveWithThis(callFrame, stackFrame.args[0].identifier(), &callFrame->registers()[stackFrame.args[1].int32()], operations);
     if (willReify) {
-        CodeBlockLocker locker(stackFrame.callFrame->codeBlock()->m_lock);
+        ConcurrentJITLocker locker(stackFrame.callFrame->codeBlock()->m_lock);
         operations->m_ready = true;
     }
     CHECK_FOR_EXCEPTION_AT_END();

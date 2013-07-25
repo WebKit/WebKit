@@ -374,7 +374,7 @@ int ProgramExecutable::addGlobalVar(JSGlobalObject* globalObject, const Identifi
     // Try to share the symbolTable if possible
     SharedSymbolTable* symbolTable = globalObject->symbolTable();
     UNUSED_PARAM(functionMode);
-    SymbolTable::Locker locker(symbolTable->m_lock);
+    ConcurrentJITLocker locker(symbolTable->m_lock);
     int index = symbolTable->size(locker);
     SymbolTableEntry newEntry(index, (constantMode == IsConstant) ? ReadOnly : 0);
     if (functionMode == IsFunctionToSpecialize)

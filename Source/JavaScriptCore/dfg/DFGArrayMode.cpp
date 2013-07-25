@@ -34,7 +34,7 @@
 
 namespace JSC { namespace DFG {
 
-ArrayMode ArrayMode::fromObserved(const CodeBlockLocker& locker, ArrayProfile* profile, Array::Action action, bool makeSafe)
+ArrayMode ArrayMode::fromObserved(const ConcurrentJITLocker& locker, ArrayProfile* profile, Array::Action action, bool makeSafe)
 {
     ArrayModes observed = profile->observedArrayModes(locker);
     switch (observed) {

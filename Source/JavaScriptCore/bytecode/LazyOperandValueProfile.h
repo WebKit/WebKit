@@ -30,7 +30,7 @@
 
 #if ENABLE(VALUE_PROFILER)
 
-#include "CodeBlockLock.h"
+#include "ConcurrentJITLock.h"
 #include "ValueProfile.h"
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
@@ -156,10 +156,10 @@ public:
     CompressedLazyOperandValueProfileHolder();
     ~CompressedLazyOperandValueProfileHolder();
     
-    void computeUpdatedPredictions(const CodeBlockLocker&, OperationInProgress);
+    void computeUpdatedPredictions(const ConcurrentJITLocker&, OperationInProgress);
     
     LazyOperandValueProfile* add(
-        const CodeBlockLocker&, const LazyOperandValueProfileKey& key);
+        const ConcurrentJITLocker&, const LazyOperandValueProfileKey& key);
     
 private:
     friend class LazyOperandValueProfileParser;
@@ -173,13 +173,13 @@ public:
     ~LazyOperandValueProfileParser();
     
     void initialize(
-        const CodeBlockLocker&, CompressedLazyOperandValueProfileHolder& holder);
+        const ConcurrentJITLocker&, CompressedLazyOperandValueProfileHolder& holder);
     
     LazyOperandValueProfile* getIfPresent(
         const LazyOperandValueProfileKey& key) const;
     
     SpeculatedType prediction(
-        const CodeBlockLocker&, const LazyOperandValueProfileKey& key) const;
+        const ConcurrentJITLocker&, const LazyOperandValueProfileKey& key) const;
 private:
     HashMap<LazyOperandValueProfileKey, LazyOperandValueProfile*> m_map;
 };

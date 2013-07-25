@@ -107,7 +107,7 @@ void GetByIdStatus::computeForChain(GetByIdStatus& result, CodeBlock* profiledBl
 
 GetByIdStatus GetByIdStatus::computeFor(CodeBlock* profiledBlock, unsigned bytecodeIndex, StringImpl* uid)
 {
-    CodeBlockLocker locker(profiledBlock->m_lock);
+    ConcurrentJITLocker locker(profiledBlock->m_lock);
     
     UNUSED_PARAM(profiledBlock);
     UNUSED_PARAM(bytecodeIndex);

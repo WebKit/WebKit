@@ -35,7 +35,7 @@ namespace JSC {
 
 int JSSegmentedVariableObject::findRegisterIndex(void* registerAddress)
 {
-    Locker locker(m_lock);
+    ConcurrentJITLocker locker(m_lock);
     
     for (int i = m_registers.size(); i--;) {
         if (&m_registers[i] != registerAddress)
@@ -48,7 +48,7 @@ int JSSegmentedVariableObject::findRegisterIndex(void* registerAddress)
 
 int JSSegmentedVariableObject::addRegisters(int numberOfRegistersToAdd)
 {
-    Locker locker(m_lock);
+    ConcurrentJITLocker locker(m_lock);
     
     ASSERT(numberOfRegistersToAdd >= 0);
     

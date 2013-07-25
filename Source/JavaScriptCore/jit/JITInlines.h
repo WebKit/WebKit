@@ -437,7 +437,7 @@ static inline bool arrayProfileSaw(ArrayModes arrayModes, IndexingType capabilit
 inline JITArrayMode JIT::chooseArrayMode(ArrayProfile* profile)
 {
 #if ENABLE(VALUE_PROFILER)
-    CodeBlockLocker locker(m_codeBlock->m_lock);
+    ConcurrentJITLocker locker(m_codeBlock->m_lock);
     profile->computeUpdatedPrediction(locker, m_codeBlock);
     ArrayModes arrayModes = profile->observedArrayModes(locker);
     if (arrayProfileSaw(arrayModes, DoubleShape))

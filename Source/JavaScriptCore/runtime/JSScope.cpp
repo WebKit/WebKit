@@ -301,7 +301,7 @@ template <JSScope::LookupMode mode, JSScope::ReturnValues returnValues> JSObject
                             operations->append(ResolveOperation::checkForDynamicEntriesBeforeGlobalScope());
 
                         if (putToBaseOperation) {
-                            CodeBlockLocker locker(callFrame->codeBlock()->m_lock);
+                            ConcurrentJITLocker locker(callFrame->codeBlock()->m_lock);
                             
                             putToBaseOperation->m_isDynamic = requiresDynamicChecks;
                             putToBaseOperation->m_kind = PutToBaseOperation::GlobalPropertyPut;
@@ -347,7 +347,7 @@ template <JSScope::LookupMode mode, JSScope::ReturnValues returnValues> JSObject
                         goto fail;
 
                     if (putToBaseOperation) {
-                        CodeBlockLocker locker(callFrame->codeBlock()->m_lock);
+                        ConcurrentJITLocker locker(callFrame->codeBlock()->m_lock);
                         
                         putToBaseOperation->m_kind = entry.isReadOnly() ? PutToBaseOperation::Readonly : PutToBaseOperation::VariablePut;
                         putToBaseOperation->m_structure.set(callFrame->vm(), callFrame->codeBlock()->ownerExecutable(), callFrame->lexicalGlobalObject()->activationStructure());
@@ -611,7 +611,7 @@ void JSScope::resolvePut(CallFrame* callFrame, JSValue base, const Identifier& p
     if (slot.base() != baseObject)
         return;
     ASSERT(!baseObject->hasInlineStorage());
-    CodeBlockLocker locker(callFrame->codeBlock()->m_lock);
+    ConcurrentJITLocker locker(callFrame->codeBlock()->m_lock);
     
     operation->m_structure.set(callFrame->vm(), callFrame->codeBlock()->ownerExecutable(), baseObject->structure());
     setPutPropertyAccessOffset(operation, slot.cachedOffset());

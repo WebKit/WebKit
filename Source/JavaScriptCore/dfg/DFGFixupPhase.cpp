@@ -701,7 +701,7 @@ private:
                 profiledBlock->getArrayProfile(node->codeOrigin.bytecodeIndex);
             ArrayMode arrayMode = ArrayMode(Array::SelectUsingPredictions);
             if (arrayProfile) {
-                CodeBlockLocker locker(profiledBlock->m_lock);
+                ConcurrentJITLocker locker(profiledBlock->m_lock);
                 arrayProfile->computeUpdatedPrediction(locker, profiledBlock);
                 arrayMode = ArrayMode::fromObserved(locker, arrayProfile, Array::Read, false);
                 arrayMode = arrayMode.refine(node->child1()->prediction(), node->prediction());

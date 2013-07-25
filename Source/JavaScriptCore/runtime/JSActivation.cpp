@@ -114,7 +114,7 @@ void JSActivation::getOwnNonIndexPropertyNames(JSObject* object, ExecState* exec
         propertyNames.add(exec->propertyNames().arguments);
 
     {
-        SymbolTable::Locker locker(thisObject->symbolTable()->m_lock);
+        ConcurrentJITLocker locker(thisObject->symbolTable()->m_lock);
         SymbolTable::Map::iterator end = thisObject->symbolTable()->end(locker);
         for (SymbolTable::Map::iterator it = thisObject->symbolTable()->begin(locker); it != end; ++it) {
             if (it->value.getAttributes() & DontEnum && mode != IncludeDontEnumProperties)
@@ -134,7 +134,7 @@ inline bool JSActivation::symbolTablePutWithAttributes(VM& vm, PropertyName prop
     
     WriteBarrierBase<Unknown>* reg;
     {
-        SymbolTable::Locker locker(symbolTable()->m_lock);
+        ConcurrentJITLocker locker(symbolTable()->m_lock);
         SymbolTable::Map::iterator iter = symbolTable()->find(locker, propertyName.publicName());
         if (iter == symbolTable()->end(locker))
             return false;

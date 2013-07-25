@@ -74,7 +74,7 @@ void dumpArrayModes(PrintStream& out, ArrayModes arrayModes)
         out.print("ArrayWithSlowPutArrayStorage");
 }
 
-void ArrayProfile::computeUpdatedPrediction(const CodeBlockLocker& locker, CodeBlock* codeBlock, OperationInProgress operation)
+void ArrayProfile::computeUpdatedPrediction(const ConcurrentJITLocker& locker, CodeBlock* codeBlock, OperationInProgress operation)
 {
     if (m_lastSeenStructure) {
         m_observedArrayModes |= arrayModeFromStructure(m_lastSeenStructure);
@@ -100,7 +100,7 @@ void ArrayProfile::computeUpdatedPrediction(const CodeBlockLocker& locker, CodeB
         m_expectedStructure = polymorphicStructure();
 }
 
-CString ArrayProfile::briefDescription(const CodeBlockLocker& locker, CodeBlock* codeBlock)
+CString ArrayProfile::briefDescription(const ConcurrentJITLocker& locker, CodeBlock* codeBlock)
 {
     computeUpdatedPrediction(locker, codeBlock);
     

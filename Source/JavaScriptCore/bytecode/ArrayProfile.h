@@ -26,7 +26,7 @@
 #ifndef ArrayProfile_h
 #define ArrayProfile_h
 
-#include "CodeBlockLock.h"
+#include "ConcurrentJITLock.h"
 #include "JSArray.h"
 #include "Structure.h"
 #include <wtf/HashMap.h>
@@ -164,31 +164,31 @@ public:
         m_lastSeenStructure = structure;
     }
     
-    void computeUpdatedPrediction(const CodeBlockLocker&, CodeBlock*, OperationInProgress = NoOperation);
+    void computeUpdatedPrediction(const ConcurrentJITLocker&, CodeBlock*, OperationInProgress = NoOperation);
     
-    Structure* expectedStructure(const CodeBlockLocker& locker) const
+    Structure* expectedStructure(const ConcurrentJITLocker& locker) const
     {
         if (structureIsPolymorphic(locker))
             return 0;
         return m_expectedStructure;
     }
-    bool structureIsPolymorphic(const CodeBlockLocker&) const
+    bool structureIsPolymorphic(const ConcurrentJITLocker&) const
     {
         return m_expectedStructure == polymorphicStructure();
     }
-    bool hasDefiniteStructure(const CodeBlockLocker& locker) const
+    bool hasDefiniteStructure(const ConcurrentJITLocker& locker) const
     {
         return !structureIsPolymorphic(locker) && m_expectedStructure;
     }
-    ArrayModes observedArrayModes(const CodeBlockLocker&) const { return m_observedArrayModes; }
-    bool mayInterceptIndexedAccesses(const CodeBlockLocker&) const { return m_mayInterceptIndexedAccesses; }
+    ArrayModes observedArrayModes(const ConcurrentJITLocker&) const { return m_observedArrayModes; }
+    bool mayInterceptIndexedAccesses(const ConcurrentJITLocker&) const { return m_mayInterceptIndexedAccesses; }
     
-    bool mayStoreToHole(const CodeBlockLocker&) const { return m_mayStoreToHole; }
-    bool outOfBounds(const CodeBlockLocker&) const { return m_outOfBounds; }
+    bool mayStoreToHole(const ConcurrentJITLocker&) const { return m_mayStoreToHole; }
+    bool outOfBounds(const ConcurrentJITLocker&) const { return m_outOfBounds; }
     
-    bool usesOriginalArrayStructures(const CodeBlockLocker&) const { return m_usesOriginalArrayStructures; }
+    bool usesOriginalArrayStructures(const ConcurrentJITLocker&) const { return m_usesOriginalArrayStructures; }
     
-    CString briefDescription(const CodeBlockLocker&, CodeBlock*);
+    CString briefDescription(const ConcurrentJITLocker&, CodeBlock*);
     
 private:
     friend class LLIntOffsetsExtractor;

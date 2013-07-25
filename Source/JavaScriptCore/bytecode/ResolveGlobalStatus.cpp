@@ -48,7 +48,7 @@ static ResolveGlobalStatus computeForStructure(CodeBlock* codeBlock, Structure* 
 
 ResolveGlobalStatus ResolveGlobalStatus::computeFor(CodeBlock* codeBlock, int, ResolveOperation* operation, StringImpl* uid)
 {
-    CodeBlockLocker locker(codeBlock->m_lock);
+    ConcurrentJITLocker locker(codeBlock->m_lock);
     
     ASSERT(operation->m_operation == ResolveOperation::GetAndReturnGlobalProperty);
     if (!operation->m_structure)

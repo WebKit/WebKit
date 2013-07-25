@@ -137,7 +137,7 @@ ParserError BytecodeGenerator::generate()
 
 bool BytecodeGenerator::addVar(const Identifier& ident, bool isConstant, RegisterID*& r0)
 {
-    SymbolTable::Locker locker(symbolTable().m_lock);
+    ConcurrentJITLocker locker(symbolTable().m_lock);
     int index = m_calleeRegisters.size();
     SymbolTableEntry newEntry(index, isConstant ? ReadOnly : 0);
     SymbolTable::Map::AddResult result = symbolTable().add(locker, ident.impl(), newEntry);

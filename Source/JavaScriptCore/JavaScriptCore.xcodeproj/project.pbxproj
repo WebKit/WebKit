@@ -73,7 +73,6 @@
 		0F0B83B914BCF95F00885B4F /* CallReturnOffsetToBytecodeOffset.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F0B83B814BCF95B00885B4F /* CallReturnOffsetToBytecodeOffset.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F0CD4C215F1A6070032F1C0 /* PutDirectIndexMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F0CD4C015F1A6040032F1C0 /* PutDirectIndexMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F0CD4C415F6B6BB0032F1C0 /* SparseArrayValueMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F0CD4C315F6B6B50032F1C0 /* SparseArrayValueMap.cpp */; };
-		0F0D85B21723455400338210 /* CodeBlockLock.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F0D85B11723455100338210 /* CodeBlockLock.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F0FC45A14BD15F500B81154 /* LLIntCallLinkInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F0FC45814BD15F100B81154 /* LLIntCallLinkInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F136D4D174AD69E0075B354 /* DeferGC.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F136D4B174AD69B0075B354 /* DeferGC.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F13912916771C33009CCB07 /* ProfilerBytecodeSequence.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F13912416771C30009CCB07 /* ProfilerBytecodeSequence.cpp */; };
@@ -1083,7 +1082,6 @@
 		0F0B83B814BCF95B00885B4F /* CallReturnOffsetToBytecodeOffset.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallReturnOffsetToBytecodeOffset.h; sourceTree = "<group>"; };
 		0F0CD4C015F1A6040032F1C0 /* PutDirectIndexMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PutDirectIndexMode.h; sourceTree = "<group>"; };
 		0F0CD4C315F6B6B50032F1C0 /* SparseArrayValueMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SparseArrayValueMap.cpp; sourceTree = "<group>"; };
-		0F0D85B11723455100338210 /* CodeBlockLock.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CodeBlockLock.h; sourceTree = "<group>"; };
 		0F0FC45814BD15F100B81154 /* LLIntCallLinkInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LLIntCallLinkInfo.h; sourceTree = "<group>"; };
 		0F136D4B174AD69B0075B354 /* DeferGC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeferGC.h; sourceTree = "<group>"; };
 		0F13912416771C30009CCB07 /* ProfilerBytecodeSequence.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ProfilerBytecodeSequence.cpp; path = profiler/ProfilerBytecodeSequence.cpp; sourceTree = "<group>"; };
@@ -3198,7 +3196,6 @@
 				969A07910ED1D3AE00F1F681 /* CodeBlock.h */,
 				0F8F943D1667632D00D61971 /* CodeBlockHash.cpp */,
 				0F8F943E1667632D00D61971 /* CodeBlockHash.h */,
-				0F0D85B11723455100338210 /* CodeBlockLock.h */,
 				0F96EBB116676EF4008BADE3 /* CodeBlockWithJITType.h */,
 				0F8F9445166764EE00D61971 /* CodeOrigin.cpp */,
 				0FBD7E671447998F00481315 /* CodeOrigin.h */,

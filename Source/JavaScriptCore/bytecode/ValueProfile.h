@@ -33,7 +33,7 @@
 
 #if ENABLE(VALUE_PROFILER)
 
-#include "CodeBlockLock.h"
+#include "ConcurrentJITLock.h"
 #include "Heap.h"
 #include "JSArray.h"
 #include "SpeculatedType.h"
@@ -112,7 +112,7 @@ struct ValueProfileBase {
         return false;
     }
     
-    CString briefDescription(const CodeBlockLocker& locker)
+    CString briefDescription(const ConcurrentJITLocker& locker)
     {
         computeUpdatedPrediction(locker);
         
@@ -150,7 +150,7 @@ struct ValueProfileBase {
     
     // Updates the prediction and returns the new one. Never call this from any thread
     // that isn't executing the code.
-    SpeculatedType computeUpdatedPrediction(const CodeBlockLocker&, OperationInProgress operation = NoOperation)
+    SpeculatedType computeUpdatedPrediction(const ConcurrentJITLocker&, OperationInProgress operation = NoOperation)
     {
         for (unsigned i = 0; i < totalNumberOfBuckets; ++i) {
             JSValue value = JSValue::decode(m_buckets[i]);

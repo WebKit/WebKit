@@ -1,3 +1,128 @@
+2013-05-21  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: should use ConcurrentJITLock[er] directly and not through typedef
+        https://bugs.webkit.org/show_bug.cgi?id=116561
+
+        Rubber stamped by Geoffrey Garen.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/ArrayProfile.cpp:
+        (JSC::ArrayProfile::computeUpdatedPrediction):
+        (JSC::ArrayProfile::briefDescription):
+        * bytecode/ArrayProfile.h:
+        (ArrayProfile):
+        (JSC::ArrayProfile::expectedStructure):
+        (JSC::ArrayProfile::structureIsPolymorphic):
+        (JSC::ArrayProfile::hasDefiniteStructure):
+        (JSC::ArrayProfile::observedArrayModes):
+        (JSC::ArrayProfile::mayInterceptIndexedAccesses):
+        (JSC::ArrayProfile::mayStoreToHole):
+        (JSC::ArrayProfile::outOfBounds):
+        (JSC::ArrayProfile::usesOriginalArrayStructures):
+        * bytecode/CallLinkStatus.cpp:
+        (JSC::CallLinkStatus::computeFor):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpValueProfiling):
+        (JSC::CodeBlock::dumpArrayProfiling):
+        (JSC::CodeBlock::updateAllPredictionsAndCountLiveness):
+        (JSC::CodeBlock::updateAllArrayPredictions):
+        (JSC::CodeBlock::nameForRegister):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::valueProfilePredictionForBytecodeOffset):
+        (CodeBlock):
+        * bytecode/CodeBlockLock.h: Removed.
+        * bytecode/GetByIdStatus.cpp:
+        (JSC::GetByIdStatus::computeFor):
+        * bytecode/LazyOperandValueProfile.cpp:
+        (JSC::CompressedLazyOperandValueProfileHolder::computeUpdatedPredictions):
+        (JSC::CompressedLazyOperandValueProfileHolder::add):
+        (JSC::LazyOperandValueProfileParser::initialize):
+        (JSC::LazyOperandValueProfileParser::prediction):
+        * bytecode/LazyOperandValueProfile.h:
+        (CompressedLazyOperandValueProfileHolder):
+        (LazyOperandValueProfileParser):
+        * bytecode/MethodOfGettingAValueProfile.cpp:
+        (JSC::MethodOfGettingAValueProfile::getSpecFailBucket):
+        * bytecode/PutByIdStatus.cpp:
+        (JSC::PutByIdStatus::computeFor):
+        * bytecode/ResolveGlobalStatus.cpp:
+        (JSC::ResolveGlobalStatus::computeFor):
+        * bytecode/ValueProfile.h:
+        (JSC::ValueProfileBase::briefDescription):
+        (JSC::ValueProfileBase::computeUpdatedPrediction):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::addVar):
+        * dfg/DFGArrayMode.cpp:
+        (JSC::DFG::ArrayMode::fromObserved):
+        * dfg/DFGArrayMode.h:
+        (ArrayMode):
+        (JSC::DFG::ArrayMode::withProfile):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::injectLazyOperandSpeculation):
+        (JSC::DFG::ByteCodeParser::getPredictionWithoutOSRExit):
+        (JSC::DFG::ByteCodeParser::getArrayMode):
+        (JSC::DFG::ByteCodeParser::getArrayModeAndEmitChecks):
+        (JSC::DFG::ByteCodeParser::parseResolveOperations):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::InlineStackEntry::InlineStackEntry):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGPredictionInjectionPhase.cpp:
+        (JSC::DFG::PredictionInjectionPhase::run):
+        * jit/JITInlines.h:
+        (JSC::JIT::chooseArrayMode):
+        * jit/JITStubs.cpp:
+        (JSC::tryCachePutByID):
+        (JSC::tryCacheGetByID):
+        (JSC::DEFINE_STUB_FUNCTION):
+        (JSC::lazyLinkFor):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        (JSC::LLInt::setUpCall):
+        * profiler/ProfilerBytecodeSequence.cpp:
+        (JSC::Profiler::BytecodeSequence::BytecodeSequence):
+        * runtime/Executable.cpp:
+        (JSC::ProgramExecutable::addGlobalVar):
+        * runtime/JSActivation.cpp:
+        (JSC::JSActivation::getOwnNonIndexPropertyNames):
+        (JSC::JSActivation::symbolTablePutWithAttributes):
+        * runtime/JSScope.cpp:
+        (JSC::JSScope::resolveContainingScopeInternal):
+        (JSC::JSScope::resolvePut):
+        * runtime/JSSegmentedVariableObject.cpp:
+        (JSC::JSSegmentedVariableObject::findRegisterIndex):
+        (JSC::JSSegmentedVariableObject::addRegisters):
+        * runtime/JSSegmentedVariableObject.h:
+        (JSSegmentedVariableObject):
+        * runtime/JSSymbolTableObject.cpp:
+        (JSC::JSSymbolTableObject::getOwnNonIndexPropertyNames):
+        * runtime/JSSymbolTableObject.h:
+        (JSC::symbolTableGet):
+        (JSC::symbolTablePut):
+        (JSC::symbolTablePutWithAttributes):
+        * runtime/Structure.cpp:
+        (JSC::Structure::materializePropertyMap):
+        (JSC::Structure::addPropertyTransitionToExistingStructureConcurrently):
+        (JSC::Structure::addPropertyTransition):
+        (JSC::Structure::takePropertyTableOrCloneIfPinned):
+        (JSC::Structure::nonPropertyTransition):
+        (JSC::Structure::putSpecificValue):
+        (JSC::Structure::remove):
+        (JSC::Structure::createPropertyMap):
+        * runtime/Structure.h:
+        (Structure):
+        * runtime/SymbolTable.h:
+        (SymbolTable):
+        (JSC::SymbolTable::find):
+        (JSC::SymbolTable::get):
+        (JSC::SymbolTable::inlineGet):
+        (JSC::SymbolTable::begin):
+        (JSC::SymbolTable::end):
+        (JSC::SymbolTable::size):
+        (JSC::SymbolTable::add):
+        (JSC::SymbolTable::set):
+        (JSC::SymbolTable::contains):
+
 2013-05-20  Filip Pizlo  <fpizlo@apple.com>
 
         fourthTier: DFG should be able to run on a separate thread

@@ -40,7 +40,7 @@ BytecodeSequence::BytecodeSequence(CodeBlock* codeBlock)
     
 #if ENABLE(VALUE_PROFILER)
     for (unsigned i = 0; i < codeBlock->numberOfArgumentValueProfiles(); ++i) {
-        CodeBlockLocker locker(codeBlock->m_lock);
+        ConcurrentJITLocker locker(codeBlock->m_lock);
         CString description = codeBlock->valueProfileForArgument(i)->briefDescription(locker);
         if (!description.length())
             continue;

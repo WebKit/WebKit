@@ -55,7 +55,7 @@ EncodedJSValue* MethodOfGettingAValueProfile::getSpecFailBucket(unsigned index) 
     case LazyOperand: {
         LazyOperandValueProfileKey key(u.lazyOperand.bytecodeOffset, u.lazyOperand.operand);
         
-        CodeBlockLocker locker(u.lazyOperand.codeBlock->m_lock);
+        ConcurrentJITLocker locker(u.lazyOperand.codeBlock->m_lock);
         LazyOperandValueProfile* profile =
             u.lazyOperand.codeBlock->lazyOperandValueProfiles().add(locker, key);
         return profile->specFailBucket(index);

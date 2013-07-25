@@ -36,7 +36,7 @@
 #include "CallLinkInfo.h"
 #include "CallReturnOffsetToBytecodeOffset.h"
 #include "CodeBlockHash.h"
-#include "CodeBlockLock.h"
+#include "ConcurrentJITLock.h"
 #include "CodeOrigin.h"
 #include "CodeType.h"
 #include "CompactJITCodeMap.h"
@@ -448,7 +448,7 @@ class CodeBlock : public ThreadSafeRefCounted<CodeBlock>, public UnconditionalFi
                                                                                                               bytecodeOffset].u.opcode)) - 1].u.profile == result);
             return result;
         }
-        SpeculatedType valueProfilePredictionForBytecodeOffset(const CodeBlockLocker& locker, int bytecodeOffset)
+        SpeculatedType valueProfilePredictionForBytecodeOffset(const ConcurrentJITLocker& locker, int bytecodeOffset)
         {
             return valueProfileForBytecodeOffset(bytecodeOffset)->computeUpdatedPrediction(locker);
         }
@@ -905,7 +905,7 @@ class CodeBlock : public ThreadSafeRefCounted<CodeBlock>, public UnconditionalFi
         // Another exception to the rules is that the GC can do whatever it wants
         // without holding any locks, because the GC is guaranteed to wait until any
         // concurrent compilation threads finish what they're doing.
-        CodeBlockLock m_lock;
+        ConcurrentJITLock m_lock;
 
     protected:
 #if ENABLE(JIT)

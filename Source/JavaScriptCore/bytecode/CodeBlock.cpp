@@ -637,7 +637,7 @@ void CodeBlock::beginDumpProfiling(PrintStream& out, bool& hasPrintedProfiling)
 
 void CodeBlock::dumpValueProfiling(PrintStream& out, const Instruction*& it, bool& hasPrintedProfiling)
 {
-    CodeBlockLocker locker(m_lock);
+    ConcurrentJITLocker locker(m_lock);
     
     ++it;
 #if ENABLE(VALUE_PROFILER)
@@ -654,7 +654,7 @@ void CodeBlock::dumpValueProfiling(PrintStream& out, const Instruction*& it, boo
 
 void CodeBlock::dumpArrayProfiling(PrintStream& out, const Instruction*& it, bool& hasPrintedProfiling)
 {
-    CodeBlockLocker locker(m_lock);
+    ConcurrentJITLocker locker(m_lock);
     
     ++it;
 #if ENABLE(VALUE_PROFILER)
@@ -3234,7 +3234,7 @@ ArrayProfile* CodeBlock::getOrAddArrayProfile(unsigned bytecodeOffset)
 void CodeBlock::updateAllPredictionsAndCountLiveness(
     OperationInProgress operation, unsigned& numberOfLiveNonArgumentValueProfiles, unsigned& numberOfSamplesInProfiles)
 {
-    CodeBlockLocker locker(m_lock);
+    ConcurrentJITLocker locker(m_lock);
     
     numberOfLiveNonArgumentValueProfiles = 0;
     numberOfSamplesInProfiles = 0; // If this divided by ValueProfile::numberOfBuckets equals numberOfValueProfiles() then value profiles are full.
@@ -3266,7 +3266,7 @@ void CodeBlock::updateAllValueProfilePredictions(OperationInProgress operation)
 
 void CodeBlock::updateAllArrayPredictions(OperationInProgress operation)
 {
-    CodeBlockLocker locker(m_lock);
+    ConcurrentJITLocker locker(m_lock);
     
     for (unsigned i = m_arrayProfiles.size(); i--;)
         m_arrayProfiles[i].computeUpdatedPrediction(locker, this, operation);
@@ -3462,7 +3462,7 @@ bool CodeBlock::usesOpcode(OpcodeID opcodeID)
 
 String CodeBlock::nameForRegister(int registerNumber)
 {
-    SymbolTable::Locker locker(symbolTable()->m_lock);
+    ConcurrentJITLocker locker(symbolTable()->m_lock);
     SymbolTable::Map::iterator end = symbolTable()->end(locker);
     for (SymbolTable::Map::iterator ptr = symbolTable()->begin(locker); ptr != end; ++ptr) {
         if (ptr->value.getIndex() == registerNumber) {

@@ -73,7 +73,7 @@ inline bool symbolTableGet(
     SymbolTableObjectType* object, PropertyName propertyName, PropertySlot& slot)
 {
     SymbolTable& symbolTable = *object->symbolTable();
-    SymbolTable::Locker locker(symbolTable.m_lock);
+    ConcurrentJITLocker locker(symbolTable.m_lock);
     SymbolTable::Map::iterator iter = symbolTable.find(locker, propertyName.publicName());
     if (iter == symbolTable.end(locker))
         return false;
@@ -88,7 +88,7 @@ inline bool symbolTableGet(
     SymbolTableObjectType* object, PropertyName propertyName, PropertyDescriptor& descriptor)
 {
     SymbolTable& symbolTable = *object->symbolTable();
-    SymbolTable::Locker locker(symbolTable.m_lock);
+    ConcurrentJITLocker locker(symbolTable.m_lock);
     SymbolTable::Map::iterator iter = symbolTable.find(locker, propertyName.publicName());
     if (iter == symbolTable.end(locker))
         return false;
@@ -105,7 +105,7 @@ inline bool symbolTableGet(
     bool& slotIsWriteable)
 {
     SymbolTable& symbolTable = *object->symbolTable();
-    SymbolTable::Locker locker(symbolTable.m_lock);
+    ConcurrentJITLocker locker(symbolTable.m_lock);
     SymbolTable::Map::iterator iter = symbolTable.find(locker, propertyName.publicName());
     if (iter == symbolTable.end(locker))
         return false;
@@ -127,7 +127,7 @@ inline bool symbolTablePut(
     WriteBarrierBase<Unknown>* reg;
     {
         SymbolTable& symbolTable = *object->symbolTable();
-        SymbolTable::Locker locker(symbolTable.m_lock);
+        ConcurrentJITLocker locker(symbolTable.m_lock);
         SymbolTable::Map::iterator iter = symbolTable.find(locker, propertyName.publicName());
         if (iter == symbolTable.end(locker))
             return false;
@@ -160,7 +160,7 @@ inline bool symbolTablePutWithAttributes(
     WriteBarrierBase<Unknown>* reg;
     {
         SymbolTable& symbolTable = *object->symbolTable();
-        SymbolTable::Locker locker(symbolTable.m_lock);
+        ConcurrentJITLocker locker(symbolTable.m_lock);
         SymbolTable::Map::iterator iter = symbolTable.find(locker, propertyName.publicName());
         if (iter == symbolTable.end(locker))
             return false;

@@ -72,9 +72,6 @@ public:
 
     typedef JSCell Base;
     
-    typedef ConcurrentJITLock Lock;
-    typedef ConcurrentJITLocker Locker;
-
     static Structure* create(VM&, JSGlobalObject*, JSValue prototype, const TypeInfo&, const ClassInfo*, IndexingType = NonArray, unsigned inlineCapacity = 0);
 
 protected:
@@ -388,7 +385,7 @@ private:
     PropertyOffset putSpecificValue(VM&, PropertyName, unsigned attributes, JSCell* specificValue);
     PropertyOffset remove(PropertyName);
 
-    void createPropertyMap(const Locker&, VM&, unsigned keyCount = 0);
+    void createPropertyMap(const ConcurrentJITLocker&, VM&, unsigned keyCount = 0);
     void checkConsistency();
 
     bool despecifyFunction(VM&, PropertyName);
@@ -490,7 +487,7 @@ private:
     IndexingType m_indexingType;
     uint8_t m_inlineCapacity;
     
-    Lock m_lock;
+    ConcurrentJITLock m_lock;
     
     unsigned m_dictionaryKind : 2;
     bool m_isPinnedPropertyTable : 1;

@@ -83,7 +83,7 @@ PutByIdStatus PutByIdStatus::computeFromLLInt(CodeBlock* profiledBlock, unsigned
 
 PutByIdStatus PutByIdStatus::computeFor(CodeBlock* profiledBlock, unsigned bytecodeIndex, StringImpl* uid)
 {
-    CodeBlockLocker locker(profiledBlock->m_lock);
+    ConcurrentJITLocker locker(profiledBlock->m_lock);
     
     UNUSED_PARAM(profiledBlock);
     UNUSED_PARAM(bytecodeIndex);
