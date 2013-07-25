@@ -149,6 +149,8 @@ wtf_sources += \
     Source/WTF/wtf/SentinelLinkedList.h \
     Source/WTF/wtf/SimpleStats.h \
     Source/WTF/wtf/SinglyLinkedList.h \
+    Source/WTF/wtf/SixCharacterHash.cpp \
+    Source/WTF/wtf/SixCharacterHash.h \
     Source/WTF/wtf/Spectrum.h \
     Source/WTF/wtf/StackBounds.cpp \
     Source/WTF/wtf/StackBounds.h \

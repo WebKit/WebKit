@@ -1,3 +1,10 @@
+2013-07-25  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed, further GTK build fixing.
+
+        * GNUmakefile.am: Make libWTF.la depend on any changes made to the build targets list.
+        * GNUmakefile.list.am: Add SixCharacterHash source files to the build.
+
 2013-07-25  Csaba Osztrogonác  <ossy@webkit.org>
 
         [GTK] Similar fix to r153304.

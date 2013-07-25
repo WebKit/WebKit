@@ -3,6 +3,9 @@ include $(srcdir)/Source/WTF/GNUmakefile.list.am
 noinst_LTLIBRARIES += \
 	libWTF.la
 
+wtf_lib_for_dep = libWTF.la
+$(wtf_lib_for_dep): $(srcdir)/Source/WTF/GNUmakefile.list.am
+
 libWTF_la_LDFLAGS = \
 	$(no_undefined)
 
