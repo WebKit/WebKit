@@ -251,6 +251,10 @@ def sh4LowerSimpleBranchOps(list)
                         newList << Instruction.new(node.codeOrigin, "storei", [tmpVal, addr])
                         newList << Instruction.new(node.codeOrigin, "bs", [tmpVal, node.operands[2]])
                     end
+                elsif bc == "nz"
+                    raise "Invalid operands number (#{node.operands.size})" unless node.operands.size == 3
+                    newList << Instruction.new(node.codeOrigin, op, node.operands[0..1])
+                    newList << Instruction.new(node.codeOrigin, "btinz", node.operands[1..2])
                 else
                     newList << node
                 end

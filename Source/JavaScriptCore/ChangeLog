@@ -1,3 +1,12 @@
+2013-07-25  Julien Brianceau  <jbrianceau@nds.com>
+
+        Add missing implementation of bxxxnz in sh4 LLINT.
+        https://bugs.webkit.org/show_bug.cgi?id=119079
+
+        Reviewed by Allan Sandfeld Jensen.
+
+        * offlineasm/sh4.rb:
+
 2013-07-25  Gabor Rapcsanyi  <rgabor@webkit.org>
 
         Unreviewed, build fix on the Qt port.
