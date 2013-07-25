@@ -1520,21 +1520,31 @@ static PassRefPtr<CSSPrimitiveValue> fontWeightFromStyle(RenderStyle* style)
     return cssValuePool().createIdentifierValue(CSSValueNormal);
 }
 
-static bool isLayoutDependentProperty(CSSPropertyID propertyID)
+typedef Length (RenderStyle::*RenderStyleLengthGetter)() const;
+typedef LayoutUnit (RenderBoxModelObject::*RenderBoxComputedCSSValueGetter)() const;
+
+template<RenderStyleLengthGetter lengthGetter, RenderBoxComputedCSSValueGetter computedCSSValueGetter>
+inline PassRefPtr<CSSValue> zoomAdjustedPaddingOrMarginPixelValue(RenderStyle* style, RenderObject* renderer)
+{
+    Length unzoomzedLength = (style->*lengthGetter)();
+    if (!renderer || !renderer->isBox() || unzoomzedLength.isFixed())
+        return zoomAdjustedPixelValueForLength(unzoomzedLength, style);
+    return zoomAdjustedPixelValue((toRenderBox(renderer)->*computedCSSValueGetter)(), style);
+}
+
+template<RenderStyleLengthGetter lengthGetter>
+inline bool paddingOrMarginIsRendererDependent(RenderStyle* style, RenderObject* renderer)
+{
+    if (!renderer || !renderer->isBox())
+        return false;
+    return !(style && (style->*lengthGetter)().isFixed());
+}
+
+static bool isLayoutDependent(CSSPropertyID propertyID, RenderStyle* style, RenderObject* renderer)
 {
     switch (propertyID) {
     case CSSPropertyWidth:
     case CSSPropertyHeight:
-    case CSSPropertyMargin:
-    case CSSPropertyMarginTop:
-    case CSSPropertyMarginBottom:
-    case CSSPropertyMarginLeft:
-    case CSSPropertyMarginRight:
-    case CSSPropertyPadding:
-    case CSSPropertyPaddingTop:
-    case CSSPropertyPaddingBottom:
-    case CSSPropertyPaddingLeft:
-    case CSSPropertyPaddingRight:
     case CSSPropertyWebkitPerspectiveOrigin:
     case CSSPropertyWebkitTransformOrigin:
     case CSSPropertyWebkitTransform:
@@ -1542,6 +1552,34 @@ static bool isLayoutDependentProperty(CSSPropertyID propertyID)
     case CSSPropertyWebkitFilter:
 #endif
         return true;
+    case CSSPropertyMargin: {
+        if (!renderer || !renderer->isBox())
+            return false;
+        return !(style && style->marginTop().isFixed() && style->marginRight().isFixed()
+            && style->marginBottom().isFixed() && style->marginLeft().isFixed());
+    }
+    case CSSPropertyMarginTop:
+        return paddingOrMarginIsRendererDependent<&RenderStyle::marginTop>(style, renderer);
+    case CSSPropertyMarginRight:
+        return paddingOrMarginIsRendererDependent<&RenderStyle::marginRight>(style, renderer);
+    case CSSPropertyMarginBottom:
+        return paddingOrMarginIsRendererDependent<&RenderStyle::marginBottom>(style, renderer);
+    case CSSPropertyMarginLeft:
+        return paddingOrMarginIsRendererDependent<&RenderStyle::marginLeft>(style, renderer);
+    case CSSPropertyPadding: {
+        if (!renderer || !renderer->isBox())
+            return false;
+        return !(style && style->paddingTop().isFixed() && style->paddingRight().isFixed()
+            && style->paddingBottom().isFixed() && style->paddingLeft().isFixed());
+    }
+    case CSSPropertyPaddingTop:
+        return paddingOrMarginIsRendererDependent<&RenderStyle::paddingTop>(style, renderer);
+    case CSSPropertyPaddingRight:
+        return paddingOrMarginIsRendererDependent<&RenderStyle::paddingRight>(style, renderer);
+    case CSSPropertyPaddingBottom:
+        return paddingOrMarginIsRendererDependent<&RenderStyle::paddingBottom>(style, renderer);
+    case CSSPropertyPaddingLeft:
+        return paddingOrMarginIsRendererDependent<&RenderStyle::paddingLeft>(style, renderer); 
     default:
         return false;
     }
@@ -1596,47 +1634,48 @@ static inline PassRefPtr<RenderStyle> computeRenderStyleForProperty(Node* styled
     return styledNode->computedStyle(styledNode->isPseudoElement() ? NOPSEUDO : pseudoElementSpecifier);
 }
 
-typedef Length (RenderStyle::*RenderStyleLengthGetter)() const;
-typedef LayoutUnit (RenderBoxModelObject::*RenderBoxComputedCSSValueGetter)() const;
-
-template<RenderStyleLengthGetter lengthGetter, RenderBoxComputedCSSValueGetter computedCSSValueGetter>
-inline PassRefPtr<CSSValue> zoomAdjustedPaddingOrMarginPixelValue(RenderStyle* style, RenderObject* renderer)
-{
-    Length unzoomedLength = (style->*lengthGetter)();
-    if (unzoomedLength.isFixed() || !renderer || !renderer->isBox())
-        return zoomAdjustedPixelValueForLength(unzoomedLength, style);
-    return zoomAdjustedPixelValue((toRenderBox(renderer)->*computedCSSValueGetter)(), style);
-}
-
 PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID, EUpdateLayout updateLayout) const
 {
     Node* styledNode = this->styledNode();
     if (!styledNode)
         return 0;
 
+    RefPtr<RenderStyle> style;
+    RenderObject* renderer;
+    bool forceFullLayout = false;
     if (updateLayout) {
         Document* document = styledNode->document();
+
+        if (nodeOrItsAncestorNeedsStyleRecalc(styledNode)) {
+            document->updateStyleIfNeeded();
+            // The style recalc could have caused the styled node to be discarded or replaced
+            // if it was a PseudoElement so we need to update it.
+            styledNode = this->styledNode();
+        }
+
+        style = computeRenderStyleForProperty(styledNode, m_pseudoElementSpecifier, propertyID);
+        renderer = styledNode->renderer();
+
         // FIXME: Some of these cases could be narrowed down or optimized better.
-        bool forceFullLayout = isLayoutDependentProperty(propertyID)
+        forceFullLayout = isLayoutDependent(propertyID, style.get(), renderer)
             || styledNode->isInShadowTree()
             || (document->styleResolverIfExists() && document->styleResolverIfExists()->hasViewportDependentMediaQueries() && document->ownerElement())
             || document->seamlessParentIFrame();
 
-        if (forceFullLayout)
+        if (forceFullLayout) {
             document->updateLayoutIgnorePendingStylesheets();
-        else if (nodeOrItsAncestorNeedsStyleRecalc(styledNode))
-            document->updateStyleIfNeeded();
-
-        // The style recalc could have caused the styled node to be discarded or replaced
-        // if it was a PseudoElement so we need to update it.
-        styledNode = this->styledNode();
+            styledNode = this->styledNode();
+        }
     }
 
-    RefPtr<RenderStyle> style = computeRenderStyleForProperty(styledNode, m_pseudoElementSpecifier, propertyID);
+    if (!updateLayout || forceFullLayout) {
+        style = computeRenderStyleForProperty(styledNode, m_pseudoElementSpecifier, propertyID);
+        renderer = styledNode->renderer();
+    }
+
     if (!style)
         return 0;
 
-    RenderObject* renderer = styledNode->renderer();
     propertyID = CSSProperty::resolveDirectionAwareProperty(propertyID, style->direction(), style->writingMode());
 
     switch (propertyID) {

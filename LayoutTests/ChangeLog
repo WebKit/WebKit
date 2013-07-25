@@ -1,3 +1,16 @@
+2013-07-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Don't force layout when querying a fixed or non-box margin/padding property
+        https://bugs.webkit.org/show_bug.cgi?id=118032
+
+        Reviewed by David Hyatt.
+
+        Add a regression test inspired by the one added in
+        https://chromium.googlesource.com/chromium/blink/+/ff234b1593b2b493d47f38f687d09a87bc42c9eb.
+
+        * fast/css/computed-width-without-renderer-expected.txt: Added.
+        * fast/css/computed-width-without-renderer.html: Added.
+
 2013-07-25  Bear Travis  <betravis@adobe.com>
 
         [CSS Shapes] Fix typo in simple-polygon.js

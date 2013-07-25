@@ -1,3 +1,27 @@
+2013-07-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Don't force layout when querying a fixed or non-box margin/padding property
+        https://bugs.webkit.org/show_bug.cgi?id=118032
+
+        Reviewed by David Hyatt.
+
+        Merge https://chromium.googlesource.com/chromium/blink/+/66427d0825fcc2975bd50220cdcaa2504d6f36e5.
+
+        This patch avoids layout in ComputedStyleExtractor::propertyValue for margin and padding properties
+        when they are of fixed length. According to the Blink patch's author, this improves the page load
+        time of economist.com by 27%.
+
+        The actual code change is significantly different from the original Blink patch since we've done
+        some refactorins in r152938 and r153067 to make this change more self-contained.
+
+        Test: fast/css/computed-width-without-renderer.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::zoomAdjustedPaddingOrMarginPixelValue):
+        (WebCore::paddingOrMarginIsRendererDependent):
+        (WebCore::isLayoutDependent):
+        (WebCore::ComputedStyleExtractor::propertyValue):
+
 2013-07-25  Sam Weinig  <sam@webkit.org>
 
         -[WebHTMLView attributedSubstringForProposedRange:actualRange:] does not include strikethrough attribute in the returned attributed string
