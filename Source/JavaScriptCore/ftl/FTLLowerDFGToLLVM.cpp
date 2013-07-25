@@ -314,6 +314,10 @@ private:
         case ArithMod:
             compileArithMod();
             break;
+        case ArithMin:
+        case ArithMax:
+            compileArithMinOrMax();
+            break;
         case ArithNegate:
             compileArithNegate();
             break;
@@ -870,6 +874,58 @@ private:
             m_doubleValues.add(
                 m_node,
                 m_out.doubleRem(lowDouble(m_node->child1()), lowDouble(m_node->child2())));
+            break;
+        }
+            
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+        }
+    }
+
+    void compileArithMinOrMax()
+    {
+        switch (m_node->binaryUseKind()) {
+        case Int32Use: {
+            LValue left = lowInt32(m_node->child1());
+            LValue right = lowInt32(m_node->child2());
+            
+            m_int32Values.add(
+                m_node,
+                m_out.select(
+                    m_node->op() == ArithMin
+                        ? m_out.lessThan(left, right)
+                        : m_out.lessThan(right, left),
+                    left, right));
+            break;
+        }
+            
+        case NumberUse: {
+            LValue left = lowDouble(m_node->child1());
+            LValue right = lowDouble(m_node->child2());
+            
+            LBasicBlock notLessThan = FTL_NEW_BLOCK(m_out, ("ArithMin/ArithMax not less than"));
+            LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("ArithMin/ArithMax continuation"));
+            
+            Vector<ValueFromBlock, 2> results;
+            
+            results.append(m_out.anchor(left));
+            m_out.branch(
+                m_node->op() == ArithMin
+                    ? m_out.doubleLessThan(left, right)
+                    : m_out.doubleGreaterThan(left, right),
+                continuation, notLessThan);
+            
+            LBasicBlock lastNext = m_out.appendTo(notLessThan, continuation);
+            results.append(m_out.anchor(m_out.select(
+                m_node->op() == ArithMin
+                    ? m_out.doubleGreaterThanOrEqual(left, right)
+                    : m_out.doubleLessThanOrEqual(left, right),
+                right, m_out.constDouble(0.0 / 0.0))));
+            m_out.jump(continuation);
+            
+            m_out.appendTo(continuation, lastNext);
+            m_doubleValues.add(m_node, m_out.phi(m_out.doubleType, results));
             break;
         }
             
