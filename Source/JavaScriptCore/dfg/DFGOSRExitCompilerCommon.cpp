@@ -45,8 +45,16 @@ void handleExitCounts(CCallHelpers& jit, const OSRExitBase& exit)
     jit.load32(AssemblyHelpers::Address(GPRInfo::regT0, CodeBlock::offsetOfOSRExitCounter()), GPRInfo::regT2);
     jit.add32(AssemblyHelpers::TrustedImm32(1), GPRInfo::regT2);
     jit.store32(GPRInfo::regT2, AssemblyHelpers::Address(GPRInfo::regT0, CodeBlock::offsetOfOSRExitCounter()));
+    
     jit.move(AssemblyHelpers::TrustedImmPtr(jit.baselineCodeBlock()), GPRInfo::regT0);
+    AssemblyHelpers::Jump reoptimizeNow = jit.branch32(
+        AssemblyHelpers::GreaterThanOrEqual,
+        AssemblyHelpers::Address(GPRInfo::regT0, CodeBlock::offsetOfJITExecuteCounter()),
+        AssemblyHelpers::TrustedImm32(0));
+        
     tooFewFails = jit.branch32(AssemblyHelpers::BelowOrEqual, GPRInfo::regT2, AssemblyHelpers::TrustedImm32(jit.codeBlock()->exitCountThresholdForReoptimization()));
+    
+    reoptimizeNow.link(&jit);
     
     // Reoptimize as soon as possible.
 #if !NUMBER_OF_ARGUMENT_REGISTERS

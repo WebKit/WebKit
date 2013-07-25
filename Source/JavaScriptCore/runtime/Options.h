@@ -114,6 +114,8 @@ typedef OptionRange optionRange;
     v(bool, verboseCompilationQueue, false) \
     v(bool, reportCompileTimes, false) \
     \
+    v(bool, enableOSREntryInLoops, true) \
+    \
     v(bool, useExperimentalFTL, false) \
     v(bool, useFTLTBAA, true) \
     v(bool, enableLLVMFastISel, false) \

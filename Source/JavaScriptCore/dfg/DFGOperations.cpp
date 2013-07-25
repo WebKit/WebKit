@@ -1759,13 +1759,32 @@ extern "C" void DFG_OPERATION triggerReoptimizationNow(CodeBlock* codeBlock)
 
     // If I am my own replacement, then reoptimization has already been triggered.
     // This can happen in recursive functions.
-    if (codeBlock->replacement() == codeBlock)
+    if (codeBlock->replacement() == codeBlock) {
+        if (Options::verboseOSR())
+            dataLog(*codeBlock, ": Not reoptimizing because we've already been jettisoned.\n");
         return;
-
+    }
+    
     // Otherwise, the replacement must be optimized code. Use this as an opportunity
     // to check our logic.
     ASSERT(codeBlock->hasOptimizedReplacement());
-    ASSERT(JITCode::isOptimizingJIT(codeBlock->replacement()->jitType()));
+    CodeBlock* optimizedCodeBlock = codeBlock->replacement();
+    ASSERT(JITCode::isOptimizingJIT(optimizedCodeBlock->jitType()));
+
+    // In order to trigger reoptimization, one of two things must have happened:
+    // 1) We exited more than some number of times.
+    // 2) We exited and got stuck in a loop, and now we're exiting again.
+    bool didExitABunch = optimizedCodeBlock->shouldReoptimizeNow();
+    bool didGetStuckInLoop =
+        codeBlock->checkIfOptimizationThresholdReached()
+        && optimizedCodeBlock->shouldReoptimizeFromLoopNow();
+    
+    if (!didExitABunch && !didGetStuckInLoop) {
+        if (Options::verboseOSR())
+            dataLog(*codeBlock, ": Not reoptimizing ", *optimizedCodeBlock, " because it either didn't exit enough or didn't loop enough after exit.\n");
+        codeBlock->optimizeAfterLongWarmUp();
+        return;
+    }
 
     codeBlock->reoptimize();
 }

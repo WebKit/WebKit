@@ -1149,9 +1149,22 @@ void JIT::emitSlow_op_get_argument_by_val(Instruction* currentInstruction, Vecto
 void JIT::emit_op_loop_hint(Instruction*)
 {
     // Emit the JIT optimization check: 
-    if (canBeOptimized())
-        addSlowCase(branchAdd32(PositiveOrZero, TrustedImm32(Options::executionCounterIncrementForLoop()),
-            AbsoluteAddress(m_codeBlock->addressOfJITExecuteCounter())));
+    if (canBeOptimized()) {
+        if (Options::enableOSREntryInLoops()) {
+            addSlowCase(branchAdd32(PositiveOrZero, TrustedImm32(Options::executionCounterIncrementForLoop()),
+                AbsoluteAddress(m_codeBlock->addressOfJITExecuteCounter())));
+        } else {
+            // Add with saturation.
+            move(TrustedImmPtr(m_codeBlock->addressOfJITExecuteCounter()), regT3);
+            load32(regT3, regT2);
+            Jump dontAdd = branch32(
+                GreaterThan, regT2,
+                TrustedImm32(std::numeric_limits<int32_t>::max() - Options::executionCounterIncrementForLoop()));
+            add32(TrustedImm32(Options::executionCounterIncrementForLoop()), regT2);
+            store32(regT2, regT3);
+            dontAdd.link(this);
+        }
+    }
 
     // Emit the watchdog timer check:
     if (m_vm->watchdog.isEnabled())
@@ -1162,13 +1175,13 @@ void JIT::emitSlow_op_loop_hint(Instruction*, Vector<SlowCaseEntry>::iterator& i
 {
 #if ENABLE(DFG_JIT)
     // Emit the slow path for the JIT optimization check:
-    if (canBeOptimized()) {
+    if (canBeOptimized() && Options::enableOSREntryInLoops()) {
         linkSlowCase(iter);
-
+        
         JITStubCall stubCall(this, cti_optimize);
         stubCall.addArgument(TrustedImm32(m_bytecodeOffset));
         stubCall.call();
-
+        
         emitJumpSlowToHot(jump(), OPCODE_LENGTH(op_loop_hint));
     }
 #endif

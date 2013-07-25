@@ -1,5 +1,25 @@
 2013-07-02  Filip Pizlo  <fpizlo@apple.com>
 
+        fourthTier: add option to disable OSR entry in loops
+        https://bugs.webkit.org/show_bug.cgi?id=118329
+
+        Reviewed by Mark Hahnenberg.
+        
+        This adds that option, and also makes the OSR exit reoptimization trigger rely less on
+        OSR entry failing. Now even if we never attempt OSR entry but our execution counter gets
+        high after a small number of OSR exits, we will recompile.
+
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+        (JSC::DFG::handleExitCounts):
+        * dfg/DFGOperations.cpp:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_loop_hint):
+        (JSC::JIT::emitSlow_op_loop_hint):
+        * runtime/Options.h:
+        (JSC):
+
+2013-07-02  Filip Pizlo  <fpizlo@apple.com>
+
         fourthTier: since the FTL disassembly hacks cannot distinguish between code and data, the LLVM disassembler symbol table callback should be able to deal gracefully with arbitrary garbage
         https://bugs.webkit.org/show_bug.cgi?id=118313
 
