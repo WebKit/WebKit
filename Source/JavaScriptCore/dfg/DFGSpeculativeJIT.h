@@ -2193,7 +2193,8 @@ public:
     Vector<ValueSource, 0> m_arguments;
     Vector<ValueSource, 0> m_variables;
     int m_lastSetOperand;
-    CodeOrigin m_codeOriginForOSR;
+    CodeOrigin m_codeOriginForExitTarget;
+    CodeOrigin m_codeOriginForExitProfile;
     
     InPlaceAbstractState m_state;
     AbstractInterpreter<InPlaceAbstractState> m_interpreter;

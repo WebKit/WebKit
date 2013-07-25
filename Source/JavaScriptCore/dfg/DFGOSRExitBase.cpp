@@ -53,7 +53,7 @@ bool OSRExitBase::doSearchForForwardConversion(
         && !currentNode->containsMovHint()) {
         Node* setLocal = block->at(nodeIndex - 1);
         ASSERT_UNUSED(setLocal, setLocal->containsMovHint());
-        ASSERT_UNUSED(setLocal, setLocal->codeOrigin == currentNode->codeOrigin);
+        ASSERT_UNUSED(setLocal, setLocal->codeOriginForExitTarget == currentNode->codeOriginForExitTarget);
     }
     
     // Find the first node for the next bytecode instruction. Also track the last mov hint
@@ -72,12 +72,12 @@ bool OSRExitBase::doSearchForForwardConversion(
         node = block->at(indexInBlock);
         if (node->containsMovHint() && node->child1() == currentNode)
             lastMovHint = node;
-        if (node->codeOrigin != currentNode->codeOrigin)
+        if (node->codeOriginForExitTarget != currentNode->codeOriginForExitTarget)
             break;
         indexInBlock++;
     }
     
-    ASSERT(node->codeOrigin != currentNode->codeOrigin);
+    ASSERT(node->codeOriginForExitTarget != currentNode->codeOriginForExitTarget);
     return true;
 }
 

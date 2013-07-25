@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,7 +36,7 @@
 namespace JSC { namespace DFG {
 
 OSRExit::OSRExit(ExitKind kind, JSValueSource jsValueSource, MethodOfGettingAValueProfile valueProfile, SpeculativeJIT* jit, unsigned streamIndex, unsigned recoveryIndex)
-    : OSRExitBase(kind, jit->m_codeOriginForOSR)
+    : OSRExitBase(kind, jit->m_codeOriginForExitTarget, jit->m_codeOriginForExitProfile)
     , m_jsValueSource(jsValueSource)
     , m_valueProfile(valueProfile)
     , m_patchableCodeOffset(0)

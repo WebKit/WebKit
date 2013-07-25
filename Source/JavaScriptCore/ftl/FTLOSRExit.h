@@ -144,8 +144,8 @@ namespace JSC { namespace FTL {
 struct OSRExit : public DFG::OSRExitBase {
     OSRExit(
         ExitKind, ValueFormat profileValueFormat, MethodOfGettingAValueProfile,
-        CodeOrigin, int lastSetOperand, unsigned numberOfArguments,
-        unsigned numberOfLocals);
+        CodeOrigin, CodeOrigin originForProfile, int lastSetOperand,
+        unsigned numberOfArguments, unsigned numberOfLocals);
     
     MacroAssemblerCodeRef m_code;
     

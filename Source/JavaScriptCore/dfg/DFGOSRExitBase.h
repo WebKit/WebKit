@@ -42,11 +42,11 @@ struct Node;
 // and the FTL.
 
 struct OSRExitBase {
-    OSRExitBase(ExitKind kind, CodeOrigin origin)
+    OSRExitBase(ExitKind kind, CodeOrigin origin, CodeOrigin originForProfile)
         : m_kind(kind)
         , m_count(0)
         , m_codeOrigin(origin)
-        , m_codeOriginForExitProfile(origin)
+        , m_codeOriginForExitProfile(originForProfile)
     {
     }
     

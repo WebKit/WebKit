@@ -1722,7 +1722,8 @@ void SpeculativeJIT::compileCurrentBlock()
     }
     
     m_lastSetOperand = std::numeric_limits<int>::max();
-    m_codeOriginForOSR = CodeOrigin();
+    m_codeOriginForExitTarget = CodeOrigin();
+    m_codeOriginForExitProfile = CodeOrigin();
     
 #if DFG_ENABLE(DEBUG_VERBOSE)
     dataLogF("\n");
@@ -1741,7 +1742,8 @@ void SpeculativeJIT::compileCurrentBlock()
         m_canExit = m_currentNode->canExit();
         bool shouldExecuteEffects = m_interpreter.startExecuting(m_currentNode);
         m_jit.setForNode(m_currentNode);
-        m_codeOriginForOSR = m_currentNode->codeOrigin;
+        m_codeOriginForExitTarget = m_currentNode->codeOriginForExitTarget;
+        m_codeOriginForExitProfile = m_currentNode->codeOrigin;
         if (!m_currentNode->shouldGenerate()) {
 #if DFG_ENABLE(DEBUG_VERBOSE)
             dataLogF("SpeculativeJIT skipping Node @%d (bc#%u) at JIT offset 0x%x     ", m_currentNode->index(), m_currentNode->codeOrigin.bytecodeIndex, m_jit.debugOffset());
@@ -1858,7 +1860,8 @@ void SpeculativeJIT::checkArgumentTypes()
     ASSERT(!m_currentNode);
     m_isCheckingArgumentTypes = true;
     m_speculationDirection = BackwardSpeculation;
-    m_codeOriginForOSR = CodeOrigin(0);
+    m_codeOriginForExitTarget = CodeOrigin(0);
+    m_codeOriginForExitProfile = CodeOrigin(0);
 
     for (size_t i = 0; i < m_arguments.size(); ++i)
         m_arguments[i] = ValueSource(ValueInJSStack);

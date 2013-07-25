@@ -43,8 +43,9 @@ using namespace DFG;
 OSRExit::OSRExit(
     ExitKind exitKind, ValueFormat profileValueFormat,
     MethodOfGettingAValueProfile valueProfile, CodeOrigin codeOrigin,
-    int lastSetOperand, unsigned numberOfArguments, unsigned numberOfLocals)
-    : OSRExitBase(exitKind, codeOrigin)
+    CodeOrigin originForProfile, int lastSetOperand, unsigned numberOfArguments,
+    unsigned numberOfLocals)
+    : OSRExitBase(exitKind, codeOrigin, originForProfile)
     , m_profileValueFormat(profileValueFormat)
     , m_valueProfile(valueProfile)
     , m_patchableCodeOffset(0)

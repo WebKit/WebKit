@@ -162,6 +162,7 @@ struct Node {
     
     Node(NodeType op, CodeOrigin codeOrigin, const AdjacencyList& children)
         : codeOrigin(codeOrigin)
+        , codeOriginForExitTarget(codeOrigin)
         , children(children)
         , m_virtualRegister(InvalidVirtualRegister)
         , m_refCount(1)
@@ -174,6 +175,7 @@ struct Node {
     // Construct a node with up to 3 children, no immediate value.
     Node(NodeType op, CodeOrigin codeOrigin, Edge child1 = Edge(), Edge child2 = Edge(), Edge child3 = Edge())
         : codeOrigin(codeOrigin)
+        , codeOriginForExitTarget(codeOrigin)
         , children(AdjacencyList::Fixed, child1, child2, child3)
         , m_virtualRegister(InvalidVirtualRegister)
         , m_refCount(1)
@@ -187,6 +189,7 @@ struct Node {
     // Construct a node with up to 3 children and an immediate value.
     Node(NodeType op, CodeOrigin codeOrigin, OpInfo imm, Edge child1 = Edge(), Edge child2 = Edge(), Edge child3 = Edge())
         : codeOrigin(codeOrigin)
+        , codeOriginForExitTarget(codeOrigin)
         , children(AdjacencyList::Fixed, child1, child2, child3)
         , m_virtualRegister(InvalidVirtualRegister)
         , m_refCount(1)
@@ -201,6 +204,7 @@ struct Node {
     // Construct a node with up to 3 children and two immediate values.
     Node(NodeType op, CodeOrigin codeOrigin, OpInfo imm1, OpInfo imm2, Edge child1 = Edge(), Edge child2 = Edge(), Edge child3 = Edge())
         : codeOrigin(codeOrigin)
+        , codeOriginForExitTarget(codeOrigin)
         , children(AdjacencyList::Fixed, child1, child2, child3)
         , m_virtualRegister(InvalidVirtualRegister)
         , m_refCount(1)
@@ -216,6 +220,7 @@ struct Node {
     // Construct a node with a variable number of children and two immediate values.
     Node(VarArgTag, NodeType op, CodeOrigin codeOrigin, OpInfo imm1, OpInfo imm2, unsigned firstChild, unsigned numChildren)
         : codeOrigin(codeOrigin)
+        , codeOriginForExitTarget(codeOrigin)
         , children(AdjacencyList::Variable, firstChild, numChildren)
         , m_virtualRegister(InvalidVirtualRegister)
         , m_refCount(1)
@@ -1383,8 +1388,11 @@ struct Node {
     
     // NB. This class must have a trivial destructor.
     
-    // Used to look up exception handling information (currently implemented as a bytecode index).
+    // Used for determining what bytecode this came from. This is important for
+    // debugging, exceptions, and even basic execution semantics.
     CodeOrigin codeOrigin;
+    // Code origin for where the node exits to.
+    CodeOrigin codeOriginForExitTarget;
     // References to up to 3 children, or links to a variable length set of children.
     AdjacencyList children;
 

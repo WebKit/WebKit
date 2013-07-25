@@ -216,7 +216,8 @@ private:
         }
         
         m_node = m_highBlock->at(nodeIndex);
-        m_codeOrigin = m_node->codeOrigin;
+        m_codeOriginForExitProfile = m_node->codeOrigin;
+        m_codeOriginForExitTarget = m_node->codeOriginForExitTarget;
         
         if (verboseCompilationEnabled())
             dataLog("Lowering ", m_node, "\n");
@@ -2481,8 +2482,8 @@ private:
         
         m_ftlState.jitCode->osrExit.append(OSRExit(
             kind, lowValue.format(), m_graph.methodOfGettingAValueProfileFor(highValue),
-            m_codeOrigin, m_lastSetOperand, m_valueSources.numberOfArguments(),
-            m_valueSources.numberOfLocals()));
+            m_codeOriginForExitTarget, m_codeOriginForExitProfile, m_lastSetOperand,
+            m_valueSources.numberOfArguments(), m_valueSources.numberOfLocals()));
         m_ftlState.osrExit.append(OSRExitCompilationInfo());
         
         OSRExit& exit = m_ftlState.jitCode->osrExit.last();
@@ -2889,7 +2890,8 @@ private:
     BasicBlock* m_nextHighBlock;
     LBasicBlock m_nextLowBlock;
     
-    CodeOrigin m_codeOrigin;
+    CodeOrigin m_codeOriginForExitTarget;
+    CodeOrigin m_codeOriginForExitProfile;
     unsigned m_nodeIndex;
     Node* m_node;
     SpeculationDirection m_direction;

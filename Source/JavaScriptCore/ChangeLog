@@ -1,3 +1,64 @@
+2013-07-21  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: It should be possible for a DFG::Node to claim to exit to one CodeOrigin, but then claim that it belongs to a different CodeOrigin for all other purposes
+        https://bugs.webkit.org/show_bug.cgi?id=118946
+
+        Reviewed by Geoffrey Garen.
+        
+        We want to decouple the exit target code origin of a node from the code origin
+        for all other purposes. The purposes of code origins are:
+        
+        - Where the node will exit, if it exits. The exit target should be consistent with
+          the surrounding nodes, in that if you just looked at the code origins of nodes in
+          the graph, they would be consistent with the code origins in bytecode. This is
+          necessary for live-at-bytecode analyses to work, and to preserve the original
+          bytecode semantics when exiting.
+        
+        - What kind of code the node came from, for semantics thingies. For example, we
+          might use the code origin to find the node's global object for doing an original
+          array check. Or we might use it to determine if the code is in strict mode. Or
+          other similar things. When we use the code origin in this way, we're basically
+          using it as a way of describing the node's meta-data without putting it into the
+          node directly, to save space. In the absurd extreme you could imagine nodes not
+          even having NodeTypes or NodeFlags, and just using the CodeOrigin to determine
+          what bytecode the node originated from. We won't do that, but you can think of
+          this use of code origins as just a way of compressing meta-data.
+        
+        - What code origin we should supply profiling to, if we exit. This is closely
+          related to the semantics thingies, in that the exit profiling is a persistent
+          kind of semantic meta-data that survives between recompiles, and the only way to
+          do that is to ascribe it to the original bytecode via the code origin.
+        
+        If we hoist a node, we need to change the exit target code origin, but we must not
+        change the code origin for other purposes. The best way to do this is to decouple
+        the two kinds of code origin.
+        
+        OSR exit data structures already do this, because they may edit the exit target
+        code origin while keeping the code origin for profiling intact. This happens for
+        forward exits. So, we just need to thread separation all the way back to DFG::Node.
+        That's what this patch does.
+
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::Node):
+        (Node):
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::OSRExit::OSRExit):
+        * dfg/DFGOSRExitBase.h:
+        (JSC::DFG::OSRExitBase::OSRExitBase):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileCurrentBlock):
+        (JSC::DFG::SpeculativeJIT::checkArgumentTypes):
+        * dfg/DFGSpeculativeJIT.h:
+        (SpeculativeJIT):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::appendOSRExit):
+        (LowerDFGToLLVM):
+        * ftl/FTLOSRExit.cpp:
+        (JSC::FTL::OSRExit::OSRExit):
+        * ftl/FTLOSRExit.h:
+        (OSRExit):
+
 2013-07-20  Filip Pizlo  <fpizlo@apple.com>
 
         fourthTier: each DFG node that relies on other nodes to do their type checks should be able to tell you if those type checks happened
