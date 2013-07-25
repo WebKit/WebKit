@@ -1,3 +1,9 @@
+2013-07-25  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [GTK] Similar fix to r153304.
+
+        * GNUmakefile.list.am:
+
 2013-07-25  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         Build break in debug after r153134: StringImpl.h:640: undefined reference to `WTF::isCompilationThread()
