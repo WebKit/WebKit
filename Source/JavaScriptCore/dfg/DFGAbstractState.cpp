@@ -98,11 +98,11 @@ void AbstractState::initialize(Graph& graph)
         SpeculatedType prediction =
             node->variableAccessData()->argumentAwarePrediction();
         if (isInt32Speculation(prediction))
-            root->valuesAtHead.argument(i).set(SpecInt32);
+            root->valuesAtHead.argument(i).setType(SpecInt32);
         else if (isBooleanSpeculation(prediction))
-            root->valuesAtHead.argument(i).set(SpecBoolean);
+            root->valuesAtHead.argument(i).setType(SpecBoolean);
         else if (isCellSpeculation(prediction))
-            root->valuesAtHead.argument(i).set(SpecCell);
+            root->valuesAtHead.argument(i).setType(SpecCell);
         else
             root->valuesAtHead.argument(i).makeTop();
         
@@ -139,7 +139,7 @@ void AbstractState::initialize(Graph& graph)
             continue;
         for (size_t i = 0; i < graph.m_mustHandleValues.size(); ++i) {
             AbstractValue value;
-            value.setMostSpecific(graph.m_mustHandleValues[i]);
+            value.setMostSpecific(graph, graph.m_mustHandleValues[i]);
             int operand = graph.m_mustHandleValues.operandForIndex(i);
             block->valuesAtHead.operand(operand).merge(value);
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
@@ -278,7 +278,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
     case JSConstant:
     case WeakJSConstant:
     case PhantomArguments: {
-        forNode(node).set(m_graph.valueOfJSConstant(node));
+        forNode(node).set(m_graph, m_graph.valueOfJSConstant(node));
         break;
     }
         
@@ -374,7 +374,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
                 break;
             }
         }
-        forNode(node).set(SpecInt32);
+        forNode(node).setType(SpecInt32);
         break;
     }
         
@@ -388,9 +388,9 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
             }
         }
         if (!node->canSpeculateInteger())
-            forNode(node).set(SpecDouble);
+            forNode(node).setType(SpecDouble);
         else {
-            forNode(node).set(SpecInt32);
+            forNode(node).setType(SpecInt32);
             node->setCanExit(true);
         }
         break;
@@ -408,7 +408,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
             }
         }
         node->setCanExit(true);
-        forNode(node).set(SpecInt32);
+        forNode(node).setType(SpecInt32);
         break;
     }
             
@@ -426,7 +426,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
             }
         }
         
-        forNode(node).set(SpecInt32);
+        forNode(node).setType(SpecInt32);
         break;
     }
 
@@ -439,9 +439,9 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
             break;
         }
         if (isInt32Speculation(forNode(node->child1()).m_type))
-            forNode(node).set(SpecDoubleReal);
+            forNode(node).setType(SpecDoubleReal);
         else
-            forNode(node).set(SpecDouble);
+            forNode(node).setType(SpecDouble);
         break;
     }
         
@@ -456,28 +456,28 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
         }
         switch (node->binaryUseKind()) {
         case Int32Use:
-            forNode(node).set(SpecInt32);
+            forNode(node).setType(SpecInt32);
             if (!nodeCanTruncateInteger(node->arithNodeFlags()))
                 node->setCanExit(true);
             break;
         case NumberUse:
             if (isRealNumberSpeculation(forNode(node->child1()).m_type)
                 && isRealNumberSpeculation(forNode(node->child2()).m_type))
-                forNode(node).set(SpecDoubleReal);
+                forNode(node).setType(SpecDoubleReal);
             else
-                forNode(node).set(SpecDouble);
+                forNode(node).setType(SpecDouble);
             break;
         default:
             RELEASE_ASSERT(node->op() == ValueAdd);
             clobberWorld(node->codeOrigin, indexInBlock);
-            forNode(node).set(SpecString | SpecInt32 | SpecNumber);
+            forNode(node).setType(SpecString | SpecInt32 | SpecNumber);
             break;
         }
         break;
     }
         
     case MakeRope: {
-        forNode(node).set(m_graph.m_vm.stringStructure.get());
+        forNode(node).set(m_graph, m_graph.m_vm.stringStructure.get());
         break;
     }
             
@@ -491,12 +491,12 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
         }
         switch (node->binaryUseKind()) {
         case Int32Use:
-            forNode(node).set(SpecInt32);
+            forNode(node).setType(SpecInt32);
             if (!nodeCanTruncateInteger(node->arithNodeFlags()))
                 node->setCanExit(true);
             break;
         case NumberUse:
-            forNode(node).set(SpecDouble);
+            forNode(node).setType(SpecDouble);
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED();
@@ -514,12 +514,12 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
         }
         switch (node->child1().useKind()) {
         case Int32Use:
-            forNode(node).set(SpecInt32);
+            forNode(node).setType(SpecInt32);
             if (!nodeCanTruncateInteger(node->arithNodeFlags()))
                 node->setCanExit(true);
             break;
         case NumberUse:
-            forNode(node).set(SpecDouble);
+            forNode(node).setType(SpecDouble);
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED();
@@ -538,7 +538,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
         }
         switch (node->binaryUseKind()) {
         case Int32Use:
-            forNode(node).set(SpecInt32);
+            forNode(node).setType(SpecInt32);
             if (!nodeCanTruncateInteger(node->arithNodeFlags())
                 || !nodeCanIgnoreNegativeZero(node->arithNodeFlags()))
                 node->setCanExit(true);
@@ -546,9 +546,9 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
         case NumberUse:
             if (isRealNumberSpeculation(forNode(node->child1()).m_type)
                 || isRealNumberSpeculation(forNode(node->child2()).m_type))
-                forNode(node).set(SpecDoubleReal);
+                forNode(node).setType(SpecDoubleReal);
             else
-                forNode(node).set(SpecDouble);
+                forNode(node).setType(SpecDouble);
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED();
@@ -597,11 +597,11 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
         }
         switch (node->binaryUseKind()) {
         case Int32Use:
-            forNode(node).set(SpecInt32);
+            forNode(node).setType(SpecInt32);
             node->setCanExit(true);
             break;
         case NumberUse:
-            forNode(node).set(SpecDouble);
+            forNode(node).setType(SpecDouble);
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED();
@@ -619,11 +619,11 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
         }
         switch (node->child1().useKind()) {
         case Int32Use:
-            forNode(node).set(SpecInt32);
+            forNode(node).setType(SpecInt32);
             node->setCanExit(true);
             break;
         case NumberUse:
-            forNode(node).set(SpecDouble);
+            forNode(node).setType(SpecDouble);
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED();
@@ -639,7 +639,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
             m_foundConstants = true;
             break;
         }
-        forNode(node).set(SpecDouble);
+        forNode(node).setType(SpecDouble);
         break;
     }
             
@@ -672,7 +672,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
             RELEASE_ASSERT_NOT_REACHED();
             break;
         }
-        forNode(node).set(SpecBoolean);
+        forNode(node).setType(SpecBoolean);
         break;
     }
         
@@ -724,7 +724,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
             }
         }
 
-        forNode(node).set(SpecBoolean);
+        forNode(node).setType(SpecBoolean);
         break;
     }
 
@@ -781,7 +781,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
             RELEASE_ASSERT_NOT_REACHED();
             break;
         }
-        forNode(node).set(m_graph.m_vm.stringStructure.get());
+        forNode(node).set(m_graph, m_graph.m_vm.stringStructure.get());
         break;
     }
             
@@ -834,7 +834,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
             break;
         }
         
-        forNode(node).set(SpecBoolean);
+        forNode(node).setType(SpecBoolean);
         
         // This is overly conservative. But the only thing this prevents is store elimination,
         // and how likely is it, really, that you'll have redundant stores across a comparison
@@ -857,14 +857,14 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
             m_foundConstants = true;
             break;
         }
-        forNode(node).set(SpecBoolean);
+        forNode(node).setType(SpecBoolean);
         node->setCanExit(true); // This is overly conservative.
         break;
     }
         
     case StringCharCodeAt:
         node->setCanExit(true);
-        forNode(node).set(SpecInt32);
+        forNode(node).setType(SpecInt32);
         break;
         
     case StringFromCharCode:
@@ -873,7 +873,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
 
     case StringCharAt:
         node->setCanExit(true);
-        forNode(node).set(m_graph.m_vm.stringStructure.get());
+        forNode(node).set(m_graph, m_graph.m_vm.stringStructure.get());
         break;
             
     case GetByVal: {
@@ -892,7 +892,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
             forNode(node).makeTop();
             break;
         case Array::String:
-            forNode(node).set(m_graph.m_vm.stringStructure.get());
+            forNode(node).set(m_graph, m_graph.m_vm.stringStructure.get());
             break;
         case Array::Arguments:
             forNode(node).makeTop();
@@ -902,16 +902,16 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
                 clobberWorld(node->codeOrigin, indexInBlock);
                 forNode(node).makeTop();
             } else
-                forNode(node).set(SpecInt32);
+                forNode(node).setType(SpecInt32);
             break;
         case Array::Double:
             if (node->arrayMode().isOutOfBounds()) {
                 clobberWorld(node->codeOrigin, indexInBlock);
                 forNode(node).makeTop();
             } else if (node->arrayMode().isSaneChain())
-                forNode(node).set(SpecDouble);
+                forNode(node).setType(SpecDouble);
             else
-                forNode(node).set(SpecDoubleReal);
+                forNode(node).setType(SpecDoubleReal);
             break;
         case Array::Contiguous:
         case Array::ArrayStorage:
@@ -921,34 +921,34 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
             forNode(node).makeTop();
             break;
         case Array::Int8Array:
-            forNode(node).set(SpecInt32);
+            forNode(node).setType(SpecInt32);
             break;
         case Array::Int16Array:
-            forNode(node).set(SpecInt32);
+            forNode(node).setType(SpecInt32);
             break;
         case Array::Int32Array:
-            forNode(node).set(SpecInt32);
+            forNode(node).setType(SpecInt32);
             break;
         case Array::Uint8Array:
-            forNode(node).set(SpecInt32);
+            forNode(node).setType(SpecInt32);
             break;
         case Array::Uint8ClampedArray:
-            forNode(node).set(SpecInt32);
+            forNode(node).setType(SpecInt32);
             break;
         case Array::Uint16Array:
-            forNode(node).set(SpecInt32);
+            forNode(node).setType(SpecInt32);
             break;
         case Array::Uint32Array:
             if (node->shouldSpeculateInteger())
-                forNode(node).set(SpecInt32);
+                forNode(node).setType(SpecInt32);
             else
-                forNode(node).set(SpecDouble);
+                forNode(node).setType(SpecDouble);
             break;
         case Array::Float32Array:
-            forNode(node).set(SpecDouble);
+            forNode(node).setType(SpecDouble);
             break;
         case Array::Float64Array:
-            forNode(node).set(SpecDouble);
+            forNode(node).setType(SpecDouble);
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED();
@@ -993,7 +993,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
     case ArrayPush:
         node->setCanExit(true);
         clobberWorld(node->codeOrigin, indexInBlock);
-        forNode(node).set(SpecNumber);
+        forNode(node).setType(SpecNumber);
         break;
             
     case ArrayPop:
@@ -1083,7 +1083,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
             type &= (SpecNumber | SpecString | SpecBoolean);
             type |= SpecString;
         }
-        destination.set(type);
+        destination.setType(type);
         break;
     }
         
@@ -1092,7 +1092,8 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
         case StringObjectUse:
             // This also filters that the StringObject has the primordial StringObject
             // structure.
-            forNode(node->child1()).filter(m_graph.globalObjectFor(node->codeOrigin)->stringObjectStructure());
+            forNode(node->child1()).filter(
+                m_graph, m_graph.globalObjectFor(node->codeOrigin)->stringObjectStructure());
             node->setCanExit(true); // We could be more precise but it's likely not worth it.
             break;
         case StringOrStringObjectUse:
@@ -1106,36 +1107,40 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
             RELEASE_ASSERT_NOT_REACHED();
             break;
         }
-        forNode(node).set(m_graph.m_vm.stringStructure.get());
+        forNode(node).set(m_graph, m_graph.m_vm.stringStructure.get());
         break;
     }
         
     case NewStringObject: {
         ASSERT(node->structure()->classInfo() == &StringObject::s_info);
-        forNode(node).set(node->structure());
+        forNode(node).set(m_graph, node->structure());
         break;
     }
             
     case NewArray:
         node->setCanExit(true);
-        forNode(node).set(m_graph.globalObjectFor(node->codeOrigin)->arrayStructureForIndexingTypeDuringAllocation(node->indexingType()));
+        forNode(node).set(
+            m_graph,
+            m_graph.globalObjectFor(node->codeOrigin)->arrayStructureForIndexingTypeDuringAllocation(node->indexingType()));
         m_haveStructures = true;
         break;
         
     case NewArrayBuffer:
         node->setCanExit(true);
-        forNode(node).set(m_graph.globalObjectFor(node->codeOrigin)->arrayStructureForIndexingTypeDuringAllocation(node->indexingType()));
+        forNode(node).set(
+            m_graph,
+            m_graph.globalObjectFor(node->codeOrigin)->arrayStructureForIndexingTypeDuringAllocation(node->indexingType()));
         m_haveStructures = true;
         break;
 
     case NewArrayWithSize:
         node->setCanExit(true);
-        forNode(node).set(SpecArray);
+        forNode(node).setType(SpecArray);
         m_haveStructures = true;
         break;
             
     case NewRegexp:
-        forNode(node).set(m_graph.globalObjectFor(node->codeOrigin)->regExpStructure());
+        forNode(node).set(m_graph, m_graph.globalObjectFor(node->codeOrigin)->regExpStructure());
         m_haveStructures = true;
         break;
             
@@ -1149,7 +1154,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
     }
 
     case CreateThis: {
-        forNode(node).set(SpecFinalObject);
+        forNode(node).setType(SpecFinalObject);
         break;
     }
         
@@ -1158,17 +1163,19 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
         break;
 
     case NewObject:
-        forNode(node).set(node->structure());
+        forNode(node).set(m_graph, node->structure());
         m_haveStructures = true;
         break;
         
     case CreateActivation:
-        forNode(node).set(m_codeBlock->globalObjectFor(node->codeOrigin)->activationStructure());
+        forNode(node).set(
+            m_graph, m_codeBlock->globalObjectFor(node->codeOrigin)->activationStructure());
         m_haveStructures = true;
         break;
         
     case CreateArguments:
-        forNode(node).set(m_codeBlock->globalObjectFor(node->codeOrigin)->argumentsStructure());
+        forNode(node).set(
+            m_graph, m_codeBlock->globalObjectFor(node->codeOrigin)->argumentsStructure());
         m_haveStructures = true;
         break;
         
@@ -1191,10 +1198,11 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
         // the arguments a bit. Note that this is not sufficient to force constant folding
         // of GetMyArgumentsLength, because GetMyArgumentsLength is a clobbering operation.
         // We perform further optimizations on this later on.
-        if (node->codeOrigin.inlineCallFrame)
-            forNode(node).set(jsNumber(node->codeOrigin.inlineCallFrame->arguments.size() - 1));
-        else
-            forNode(node).set(SpecInt32);
+        if (node->codeOrigin.inlineCallFrame) {
+            forNode(node).set(
+                m_graph, jsNumber(node->codeOrigin.inlineCallFrame->arguments.size() - 1));
+        } else
+            forNode(node).setType(SpecInt32);
         node->setCanExit(
             !isEmptySpeculation(
                 m_variables.operand(
@@ -1242,11 +1250,12 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
 
     case NewFunctionExpression:
     case NewFunctionNoCheck:
-        forNode(node).set(m_codeBlock->globalObjectFor(node->codeOrigin)->functionStructure());
+        forNode(node).set(
+            m_graph, m_codeBlock->globalObjectFor(node->codeOrigin)->functionStructure());
         break;
         
     case GetCallee:
-        forNode(node).set(SpecFunction);
+        forNode(node).setType(SpecFunction);
         break;
         
     case SetCallee:
@@ -1256,7 +1265,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
     case GetScope: // FIXME: We could get rid of these if we know that the JSFunction is a constant. https://bugs.webkit.org/show_bug.cgi?id=106202
     case GetMyScope:
     case SkipTopScope:
-        forNode(node).set(SpecCellOther);
+        forNode(node).setType(SpecCellOther);
         break;
 
     case SkipScope: {
@@ -1265,7 +1274,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
             m_foundConstants = true;
             break;
         }
-        forNode(node).set(SpecCellOther);
+        forNode(node).setType(SpecCellOther);
         break;
     }
 
@@ -1300,10 +1309,10 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
                     ASSERT(status.chain().isEmpty());
                     
                     if (status.specificValue())
-                        forNode(node).set(status.specificValue());
+                        forNode(node).set(m_graph, status.specificValue());
                     else
                         forNode(node).makeTop();
-                    forNode(node->child1()).filter(status.structureSet());
+                    forNode(node->child1()).filter(m_graph, status.structureSet());
                     
                     m_foundConstants = true;
                     break;
@@ -1316,7 +1325,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
             
     case GetArrayLength:
         node->setCanExit(true); // Lies, but it's true for the common case of JSArray, so it's good enough.
-        forNode(node).set(SpecInt32);
+        forNode(node).setType(SpecInt32);
         break;
         
     case CheckExecutable: {
@@ -1342,7 +1351,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
             m_foundConstants = true;
         if (!value.m_currentKnownStructure.isSubsetOf(set))
             node->setCanExit(true);
-        value.filter(set);
+        value.filter(m_graph, set);
         m_haveStructures = true;
         break;
     }
@@ -1359,7 +1368,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
         // infinity of structures.
         ASSERT(value.m_futurePossibleStructure.isSubsetOf(StructureSet(node->structure())));
         
-        value.filter(node->structure());
+        value.filter(m_graph, node->structure());
         m_haveStructures = true;
         node->setCanExit(true);
         break;
@@ -1369,7 +1378,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
     case PhantomPutStructure:
         if (!forNode(node->child1()).m_currentKnownStructure.isClear()) {
             clobberStructures(indexInBlock);
-            forNode(node->child1()).set(node->structureTransitionData().newStructure);
+            forNode(node->child1()).set(m_graph, node->structureTransitionData().newStructure);
             m_haveStructures = true;
         }
         break;
@@ -1453,7 +1462,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
             m_foundConstants = true;
         node->setCanExit(true);
         clobberStructures(indexInBlock);
-        value.filter(set);
+        value.filter(m_graph, set);
         m_haveStructures = true;
         break;
     }
@@ -1494,13 +1503,13 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
                 m_graph.m_codeBlock->identifier(node->identifierNumber()),
                 node->op() == PutByIdDirect);
             if (status.isSimpleReplace()) {
-                forNode(node->child1()).filter(structure);
+                forNode(node->child1()).filter(m_graph, structure);
                 m_foundConstants = true;
                 break;
             }
             if (status.isSimpleTransition()) {
                 clobberStructures(indexInBlock);
-                forNode(node->child1()).set(status.newStructure());
+                forNode(node->child1()).set(m_graph, status.newStructure());
                 m_haveStructures = true;
                 m_foundConstants = true;
                 break;
@@ -1529,7 +1538,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
     case InstanceOf:
         node->setCanExit(true);
         // Again, sadly, we don't propagate the fact that we've done InstanceOf
-        forNode(node).set(SpecBoolean);
+        forNode(node).setType(SpecBoolean);
         break;
             
     case Phi:
@@ -1687,7 +1696,7 @@ inline bool AbstractState::mergeStateAtTail(AbstractValue& destination, Abstract
             // before and after setting it.
             if (node->variableAccessData()->shouldUseDoubleFormat()) {
                 // FIXME: This unnecessarily loses precision.
-                source.set(SpecDouble);
+                source.setType(SpecDouble);
             } else
                 source = forNode(node->child1());
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)

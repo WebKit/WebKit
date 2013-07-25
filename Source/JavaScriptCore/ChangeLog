@@ -1,3 +1,41 @@
+2013-04-23  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: AbstractValue methods that deal with watchpoints should have access to Graph, so that in debug mode, Graph can track the history of watchpoint states and detect races
+        https://bugs.webkit.org/show_bug.cgi?id=115084
+
+        Reviewed by Geoffrey Garen.
+        
+        The idea is that as part of https://bugs.webkit.org/show_bug.cgi?id=115083, I'll have
+        Graph record the initial state of a watchpoint at the time that we decide to take
+        advantage of it; then I will use this to disable any watchpoint-related assertions
+        in debug mode. Note that this "watchpoint cache" will only be maintained in debug
+        mode, so there will be no release performance implications. But to do this, I need to
+        ensure that all of the places that reason about watchpoints have access to Graph.
+        For example, I'll want AbstractValue::setFuturePossibleStructure to record the state
+        of the watchpoint in Graph so that subsequent assertions can check if the watchpoint's
+        state had changed since that decision was made.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::initialize):
+        (JSC::DFG::AbstractState::executeEffects):
+        (JSC::DFG::AbstractState::mergeStateAtTail):
+        * dfg/DFGAbstractState.h:
+        (JSC::DFG::AbstractState::trySetConstant):
+        * dfg/DFGAbstractValue.cpp: Added.
+        (DFG):
+        (JSC::DFG::AbstractValue::setMostSpecific):
+        (JSC::DFG::AbstractValue::set):
+        (JSC::DFG::AbstractValue::filter):
+        (JSC::DFG::AbstractValue::setFuturePossibleStructure):
+        (JSC::DFG::AbstractValue::filterFuturePossibleStructure):
+        (JSC::DFG::AbstractValue::dump):
+        * dfg/DFGAbstractValue.h:
+        (DFG):
+        (AbstractValue):
+        (JSC::DFG::AbstractValue::setType):
+        (JSC::DFG::AbstractValue::filterByValue):
+
 2013-07-16  Oliver Hunt <oliver@apple.com>
 
         Merge dfgFourthTier r148936

@@ -38,6 +38,8 @@
 
 namespace JSC { namespace DFG {
 
+class Graph;
+
 struct AbstractValue {
     AbstractValue()
         : m_type(SpecNone)
@@ -112,57 +114,11 @@ struct AbstractValue {
         return result;
     }
     
-    void setMostSpecific(JSValue value)
-    {
-        if (!!value && value.isCell()) {
-            Structure* structure = value.asCell()->structure();
-            m_currentKnownStructure = structure;
-            setFuturePossibleStructure(structure);
-            m_arrayModes = asArrayModes(structure->indexingType());
-        } else {
-            m_currentKnownStructure.clear();
-            m_futurePossibleStructure.clear();
-            m_arrayModes = 0;
-        }
-        
-        m_type = speculationFromValue(value);
-        m_value = value;
-        
-        checkConsistency();
-    }
+    void setMostSpecific(Graph&, JSValue);
+    void set(Graph&, JSValue);
+    void set(Graph&, Structure*);
     
-    void set(JSValue value)
-    {
-        if (!!value && value.isCell()) {
-            m_currentKnownStructure.makeTop();
-            Structure* structure = value.asCell()->structure();
-            setFuturePossibleStructure(structure);
-            m_arrayModes = asArrayModes(structure->indexingType());
-            clobberArrayModes();
-        } else {
-            m_currentKnownStructure.clear();
-            m_futurePossibleStructure.clear();
-            m_arrayModes = 0;
-        }
-        
-        m_type = speculationFromValue(value);
-        m_value = value;
-        
-        checkConsistency();
-    }
-    
-    void set(Structure* structure)
-    {
-        m_currentKnownStructure = structure;
-        setFuturePossibleStructure(structure);
-        m_arrayModes = asArrayModes(structure->indexingType());
-        m_type = speculationFromStructure(structure);
-        m_value = JSValue();
-        
-        checkConsistency();
-    }
-    
-    void set(SpeculatedType type)
+    void setType(SpeculatedType type)
     {
         if (type & SpecCell) {
             m_currentKnownStructure.makeTop();
@@ -232,32 +188,7 @@ struct AbstractValue {
         checkConsistency();
     }
     
-    void filter(const StructureSet& other)
-    {
-        // FIXME: This could be optimized for the common case of m_type not
-        // having structures, array modes, or a specific value.
-        // https://bugs.webkit.org/show_bug.cgi?id=109663
-        m_type &= other.speculationFromStructures();
-        m_arrayModes &= other.arrayModesFromStructures();
-        m_currentKnownStructure.filter(other);
-        if (m_currentKnownStructure.isClear())
-            m_futurePossibleStructure.clear();
-        else if (m_currentKnownStructure.hasSingleton())
-            filterFuturePossibleStructure(m_currentKnownStructure.singleton());
-        
-        // It's possible that prior to the above two statements we had (Foo, TOP), where
-        // Foo is a SpeculatedType that is disjoint with the passed StructureSet. In that
-        // case, we will now have (None, [someStructure]). In general, we need to make
-        // sure that new information gleaned from the SpeculatedType needs to be fed back
-        // into the information gleaned from the StructureSet.
-        m_currentKnownStructure.filter(m_type);
-        m_futurePossibleStructure.filter(m_type);
-        
-        filterArrayModesByType();
-        filterValueByType();
-        
-        checkConsistency();
-    }
+    void filter(Graph&, const StructureSet&);
     
     void filterArrayModes(ArrayModes arrayModes)
     {
@@ -369,15 +300,7 @@ struct AbstractValue {
         // complexity of the code.
     }
     
-    void dump(PrintStream& out) const
-    {
-        out.print(
-            "(", SpeculationDump(m_type), ", ", ArrayModesDump(m_arrayModes), ", ",
-            m_currentKnownStructure, ", ", m_futurePossibleStructure);
-        if (!!m_value)
-            out.print(", ", m_value);
-        out.print(")");
-    }
+    void dump(PrintStream&) const;
     
     // A great way to think about the difference between m_currentKnownStructure and
     // m_futurePossibleStructure is to consider these four examples:
@@ -486,19 +409,8 @@ private:
         m_arrayModes = ALL_ARRAY_MODES;
     }
     
-    void setFuturePossibleStructure(Structure* structure)
-    {
-        if (structure->transitionWatchpointSetIsStillValid())
-            m_futurePossibleStructure = structure;
-        else
-            m_futurePossibleStructure.makeTop();
-    }
-    
-    void filterFuturePossibleStructure(Structure* structure)
-    {
-        if (structure->transitionWatchpointSetIsStillValid())
-            m_futurePossibleStructure.filter(StructureAbstractValue(structure));
-    }
+    void setFuturePossibleStructure(Graph&, Structure* structure);
+    void filterFuturePossibleStructure(Graph&, Structure* structure);
 
     // We could go further, and ensure that if the futurePossibleStructure contravenes
     // the value, then we could clear both of those things. But that's unlikely to help

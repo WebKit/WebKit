@@ -260,7 +260,7 @@ private:
         if (mergeSpeculations(speculationFromValue(value), oldType) != oldType)
             return false;
         
-        forNode(node).set(value);
+        forNode(node).set(m_graph, value);
         return true;
     }
     
