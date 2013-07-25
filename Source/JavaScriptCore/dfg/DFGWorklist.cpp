@@ -35,24 +35,34 @@
 namespace JSC { namespace DFG {
 
 Worklist::Worklist()
+    : m_numberOfActiveThreads(0)
 {
 }
 
 Worklist::~Worklist()
 {
-    m_queue.append(nullptr); // Use null plan to indicate that we want the thread to terminate.
-    waitForThreadCompletion(m_thread);
+    {
+        MutexLocker locker(m_lock);
+        for (unsigned i = m_threads.size(); i--;)
+            m_queue.append(nullptr); // Use null plan to indicate that we want the thread to terminate.
+        m_planEnqueued.broadcast();
+    }
+    for (unsigned i = m_threads.size(); i--;)
+        waitForThreadCompletion(m_threads[i]);
+    ASSERT(!m_numberOfActiveThreads);
 }
 
-void Worklist::finishCreation()
+void Worklist::finishCreation(unsigned numberOfThreads)
 {
-    m_thread = createThread(threadFunction, this, "JSC Compilation Thread");
+    RELEASE_ASSERT(numberOfThreads);
+    for (unsigned i = numberOfThreads; i--;)
+        m_threads.append(createThread(threadFunction, this, "JSC Compilation Thread"));
 }
 
-PassRefPtr<Worklist> Worklist::create()
+PassRefPtr<Worklist> Worklist::create(unsigned numberOfThreads)
 {
     RefPtr<Worklist> result = adoptRef(new Worklist());
-    result->finishCreation();
+    result->finishCreation(numberOfThreads);
     return result;
 }
 
@@ -67,7 +77,7 @@ void Worklist::enqueue(PassRefPtr<Plan> passedPlan)
     ASSERT(m_plans.find(plan->key()) == m_plans.end());
     m_plans.add(plan->key(), plan);
     m_queue.append(plan);
-    m_condition.broadcast();
+    m_planEnqueued.signal();
 }
 
 Worklist::State Worklist::compilationState(CodeBlock* profiledBlock)
@@ -110,7 +120,7 @@ void Worklist::waitUntilAllPlansForVMAreReady(VM& vm)
         if (allAreCompiled)
             break;
         
-        m_condition.wait(m_lock);
+        m_planCompiled.wait(m_lock);
     }
 }
 
@@ -195,11 +205,15 @@ void Worklist::dump(const MutexLocker&, PrintStream& out) const
 {
     out.print(
         "Worklist(", RawPointer(this), ")[Queue Length = ", m_queue.size(),
-        ", Map Size = ", m_plans.size(), "]");
+        ", Map Size = ", m_plans.size(), ", Num Ready = ", m_readyPlans.size(),
+        ", Num Active Threads = ", m_numberOfActiveThreads, "/", m_threads.size(), "]");
 }
 
 void Worklist::runThread()
 {
+    if (Options::verboseCompilationQueue())
+        dataLog(*this, ": Thread started\n");
+    
     LongLivedState longLivedState;
     
     for (;;) {
@@ -207,12 +221,20 @@ void Worklist::runThread()
         {
             MutexLocker locker(m_lock);
             while (m_queue.isEmpty())
-                m_condition.wait(m_lock);
+                m_planEnqueued.wait(m_lock);
             plan = m_queue.takeFirst();
+            if (plan)
+                m_numberOfActiveThreads++;
         }
         
-        if (!plan)
+        if (!plan) {
+            if (Options::verboseCompilationQueue())
+                dataLog(*this, ": Thread shutting down\n");
             return;
+        }
+        
+        if (Options::verboseCompilationQueue())
+            dataLog(*this, ": Compiling ", *plan->key(), " asynchronously\n");
         
         plan->compileInThread(longLivedState);
         
@@ -228,7 +250,8 @@ void Worklist::runThread()
             
             m_readyPlans.append(plan);
             
-            m_condition.broadcast();
+            m_planCompiled.broadcast();
+            m_numberOfActiveThreads--;
         }
     }
 }
@@ -243,7 +266,14 @@ static Worklist* theGlobalWorklist;
 
 static void initializeGlobalWorklistOnce()
 {
-    theGlobalWorklist = Worklist::create().leakRef();
+    unsigned numberOfThreads;
+    
+    if (Options::useExperimentalFTL())
+        numberOfThreads = 1; // We don't yet use LLVM in a thread-safe way.
+    else
+        numberOfThreads = Options::numberOfCompilerThreads();
+    
+    theGlobalWorklist = Worklist::create(numberOfThreads).leakRef();
 }
 
 Worklist* globalWorklist()

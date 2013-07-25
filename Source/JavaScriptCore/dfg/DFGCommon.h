@@ -139,7 +139,7 @@ inline bool validationEnabled()
 inline bool enableConcurrentJIT()
 {
 #if ENABLE(CONCURRENT_JIT)
-    return Options::enableConcurrentJIT();
+    return Options::enableConcurrentJIT() && Options::numberOfCompilerThreads();
 #else
     return false;
 #endif

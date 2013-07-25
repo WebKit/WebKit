@@ -45,7 +45,7 @@ public:
 
     ~Worklist();
     
-    static PassRefPtr<Worklist> create();
+    static PassRefPtr<Worklist> create(unsigned numberOfThreads);
     
     void enqueue(PassRefPtr<Plan>);
     
@@ -65,7 +65,7 @@ public:
     
 private:
     Worklist();
-    void finishCreation();
+    void finishCreation(unsigned numberOfThreads);
     
     void runThread();
     static void threadFunction(void* argument);
@@ -89,11 +89,10 @@ private:
     Vector<RefPtr<Plan>, 16> m_readyPlans;
     
     mutable Mutex m_lock;
-    // We broadcast on this condition whenever:
-    // - Something is enqueued.
-    // - Something is completed.
-    ThreadCondition m_condition;
-    ThreadIdentifier m_thread;
+    ThreadCondition m_planEnqueued;
+    ThreadCondition m_planCompiled;
+    Vector<ThreadIdentifier> m_threads;
+    unsigned m_numberOfActiveThreads;
 };
 
 // For now we use a single global worklist. It's not clear that this

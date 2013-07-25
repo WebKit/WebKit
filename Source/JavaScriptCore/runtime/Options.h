@@ -121,6 +121,7 @@ typedef OptionRange optionRange;
     v(unsigned, llvmOptimizationLevel, 2) \
     \
     v(bool, enableConcurrentJIT, true) \
+    v(unsigned, numberOfCompilerThreads, computeNumberOfWorkerThreads(2) - 1) \
     \
     v(bool, enableProfiler, false) \
     \

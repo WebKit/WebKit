@@ -91,22 +91,26 @@ void overrideOptionWithHeuristic(T& variable, const char* name)
 #endif
 }
 
-static unsigned computeNumberOfGCMarkers(int maxNumberOfGCMarkers)
+static unsigned computeNumberOfWorkerThreads(int maxNumberOfWorkerThreads)
 {
-    int cpusToUse = 1;
-
-#if ENABLE(PARALLEL_GC)
-    cpusToUse = std::min(WTF::numberOfProcessorCores(), maxNumberOfGCMarkers);
+    int cpusToUse = std::min(WTF::numberOfProcessorCores(), maxNumberOfWorkerThreads);
 
     // Be paranoid, it is the OS we're dealing with, after all.
     ASSERT(cpusToUse >= 1);
     if (cpusToUse < 1)
         cpusToUse = 1;
+    
+    return cpusToUse;
+}
+
+static unsigned computeNumberOfGCMarkers(unsigned maxNumberOfGCMarkers)
+{
+#if ENABLE(PARALLEL_GC)
+    return computeNumberOfWorkerThreads(maxNumberOfGCMarkers);
 #else
     UNUSED_PARAM(maxNumberOfGCMarkers);
+    return 1;
 #endif
-
-    return cpusToUse;
 }
 
 bool OptionRange::init(const char* rangeString)

@@ -1,5 +1,49 @@
 2013-05-22  Filip Pizlo  <fpizlo@apple.com>
 
+        fourthTier: It should be possible to use more than one compiler thread
+        https://bugs.webkit.org/show_bug.cgi?id=116630
+
+        Reviewed by Mark Hahnenberg.
+        
+        This gives us the ability to use more compiler threads, but doesn't actually
+        enable the functionality because it isn't a speed-up on any benchmark. It can
+        even be a slow-down. This also adds the ability to disable concurrent
+        compilation if we're on a uniprocessor machine, and adds more logging to the
+        worklist code to allow us to investigate how many threads are active. It
+        appears that even on the most compiler-heavy benchmarks, we never have enough
+        work for more than 4 threads, and even then the 4 threads are all active for
+        a short time.
+        
+        Something that having more threads does accomplish is that it shakes out bugs.
+        This patch fixes a bug with Watchpoint not being thread-safe ref-counted,
+        which enabling 7 compilation threads did catch.
+        
+        As it stands, this patch is performance-neutral and just fixes bugs and adds
+        some options.
+
+        * bytecode/Watchpoint.h:
+        * dfg/DFGCommon.h:
+        (JSC::DFG::enableConcurrentJIT):
+        * dfg/DFGWorklist.cpp:
+        (JSC::DFG::Worklist::Worklist):
+        (JSC::DFG::Worklist::~Worklist):
+        (JSC::DFG::Worklist::finishCreation):
+        (JSC::DFG::Worklist::create):
+        (JSC::DFG::Worklist::enqueue):
+        (JSC::DFG::Worklist::waitUntilAllPlansForVMAreReady):
+        (JSC::DFG::Worklist::dump):
+        (JSC::DFG::Worklist::runThread):
+        (JSC::DFG::initializeGlobalWorklistOnce):
+        * dfg/DFGWorklist.h:
+        * runtime/Options.cpp:
+        (JSC::computeNumberOfWorkerThreads):
+        (JSC):
+        (JSC::computeNumberOfGCMarkers):
+        * runtime/Options.h:
+        (JSC):
+
+2013-05-22  Filip Pizlo  <fpizlo@apple.com>
+
         fourthTier: FTL shouldn't use the LLVM global context, and should instead create its own context for each compilation
         https://bugs.webkit.org/show_bug.cgi?id=116631
 

@@ -26,8 +26,8 @@
 #ifndef Watchpoint_h
 #define Watchpoint_h
 
-#include <wtf/RefCounted.h>
 #include <wtf/SentinelLinkedList.h>
+#include <wtf/ThreadSafeRefCounted.h>
 
 namespace JSC {
 
@@ -49,7 +49,7 @@ enum InitialWatchpointSetMode { InitializedWatching, InitializedBlind };
 
 class InlineWatchpointSet;
 
-class WatchpointSet : public RefCounted<WatchpointSet> {
+class WatchpointSet : public ThreadSafeRefCounted<WatchpointSet> {
 public:
     WatchpointSet(InitialWatchpointSetMode);
     ~WatchpointSet();
