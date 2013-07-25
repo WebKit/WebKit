@@ -870,7 +870,7 @@ LLINT_SLOW_PATH_DECL(slow_path_switch_imm)
     int defaultOffset = pc[2].u.operand;
     if (value == intValue) {
         CodeBlock* codeBlock = exec->codeBlock();
-        pc += codeBlock->immediateSwitchJumpTable(pc[1].u.operand).offsetForValue(intValue, defaultOffset);
+        pc += codeBlock->switchJumpTable(pc[1].u.operand).offsetForValue(intValue, defaultOffset);
     } else
         pc += defaultOffset;
     LLINT_END();
@@ -886,7 +886,7 @@ LLINT_SLOW_PATH_DECL(slow_path_switch_char)
     int defaultOffset = pc[2].u.operand;
     StringImpl* impl = string->value(exec).impl();
     CodeBlock* codeBlock = exec->codeBlock();
-    pc += codeBlock->characterSwitchJumpTable(pc[1].u.operand).offsetForValue((*impl)[0], defaultOffset);
+    pc += codeBlock->switchJumpTable(pc[1].u.operand).offsetForValue((*impl)[0], defaultOffset);
     LLINT_END();
 }
 

@@ -1862,8 +1862,7 @@ public:
     void compileStringEquality(Node*);
     void emitObjectOrOtherBranch(Edge value, BlockIndex taken, BlockIndex notTaken);
     void emitBranch(Node*);
-    void emitSwitchIntJump(SwitchData*, SimpleJumpTable&, GPRReg value, GPRReg scratch);
-    void emitSwitchImmIntJump(SwitchData*, GPRReg value, GPRReg scratch);
+    void emitSwitchIntJump(SwitchData*, GPRReg value, GPRReg scratch);
     void emitSwitchImm(Node*, SwitchData*);
     void emitSwitchCharStringJump(SwitchData*, GPRReg value, GPRReg scratch);
     void emitSwitchChar(Node*, SwitchData*);

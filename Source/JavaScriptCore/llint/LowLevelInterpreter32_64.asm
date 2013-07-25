@@ -1504,7 +1504,7 @@ _llint_op_switch_imm:
     loadp CodeBlock[cfr], t2
     loadp CodeBlock::m_rareData[t2], t2
     muli sizeof SimpleJumpTable, t3   # FIXME: would be nice to peephole this!
-    loadp CodeBlock::RareData::m_immediateSwitchJumpTables + VectorBufferOffset[t2], t2
+    loadp CodeBlock::RareData::m_switchJumpTables + VectorBufferOffset[t2], t2
     addp t3, t2
     bineq t1, Int32Tag, .opSwitchImmNotInt
     subi SimpleJumpTable::min[t2], t0
@@ -1532,7 +1532,7 @@ _llint_op_switch_char:
     loadp CodeBlock[cfr], t2
     loadp CodeBlock::m_rareData[t2], t2
     muli sizeof SimpleJumpTable, t3
-    loadp CodeBlock::RareData::m_characterSwitchJumpTables + VectorBufferOffset[t2], t2
+    loadp CodeBlock::RareData::m_switchJumpTables + VectorBufferOffset[t2], t2
     addp t3, t2
     bineq t1, CellTag, .opSwitchCharFallThrough
     loadp JSCell::m_structure[t0], t1

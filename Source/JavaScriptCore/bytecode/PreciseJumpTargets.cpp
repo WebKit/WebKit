@@ -28,12 +28,6 @@
 
 namespace JSC {
 
-static void addSimpleSwitchTargets(SimpleJumpTable& jumpTable, unsigned bytecodeOffset, Vector<unsigned, 32>& out)
-{
-    for (unsigned i = jumpTable.branchOffsets.size(); i--;)
-        out.append(bytecodeOffset + jumpTable.branchOffsets[i]);
-}
-
 void computePreciseJumpTargets(CodeBlock* codeBlock, Vector<unsigned, 32>& out)
 {
     ASSERT(out.isEmpty());
@@ -74,13 +68,13 @@ void computePreciseJumpTargets(CodeBlock* codeBlock, Vector<unsigned, 32>& out)
             out.append(bytecodeOffset + current[3].u.operand);
             break;
         case op_switch_imm:
-            addSimpleSwitchTargets(codeBlock->immediateSwitchJumpTable(current[1].u.operand), bytecodeOffset, out);
+        case op_switch_char: {
+            SimpleJumpTable& table = codeBlock->switchJumpTable(current[1].u.operand);
+            for (unsigned i = table.branchOffsets.size(); i--;)
+                out.append(bytecodeOffset + table.branchOffsets[i]);
             out.append(bytecodeOffset + current[2].u.operand);
             break;
-        case op_switch_char:
-            addSimpleSwitchTargets(codeBlock->characterSwitchJumpTable(current[1].u.operand), bytecodeOffset, out);
-            out.append(bytecodeOffset + current[2].u.operand);
-            break;
+        }
         case op_switch_string: {
             StringJumpTable& table = codeBlock->stringSwitchJumpTable(current[1].u.operand);
             StringJumpTable::StringOffsetTable::iterator iter = table.offsetTable.begin();

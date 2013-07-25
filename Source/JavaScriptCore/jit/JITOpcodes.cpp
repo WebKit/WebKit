@@ -692,7 +692,7 @@ void JIT::emit_op_switch_imm(Instruction* currentInstruction)
     unsigned scrutinee = currentInstruction[3].u.operand;
 
     // create jump table for switch destinations, track this switch statement.
-    SimpleJumpTable* jumpTable = &m_codeBlock->immediateSwitchJumpTable(tableIndex);
+    SimpleJumpTable* jumpTable = &m_codeBlock->switchJumpTable(tableIndex);
     m_switches.append(SwitchRecord(jumpTable, m_bytecodeOffset, defaultOffset, SwitchRecord::Immediate));
     jumpTable->ctiOffsets.grow(jumpTable->branchOffsets.size());
 
@@ -710,7 +710,7 @@ void JIT::emit_op_switch_char(Instruction* currentInstruction)
     unsigned scrutinee = currentInstruction[3].u.operand;
 
     // create jump table for switch destinations, track this switch statement.
-    SimpleJumpTable* jumpTable = &m_codeBlock->characterSwitchJumpTable(tableIndex);
+    SimpleJumpTable* jumpTable = &m_codeBlock->switchJumpTable(tableIndex);
     m_switches.append(SwitchRecord(jumpTable, m_bytecodeOffset, defaultOffset, SwitchRecord::Character));
     jumpTable->ctiOffsets.grow(jumpTable->branchOffsets.size());
 

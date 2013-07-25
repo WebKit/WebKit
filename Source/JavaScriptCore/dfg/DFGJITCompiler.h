@@ -473,10 +473,6 @@ private:
     void compileBody();
     void link(LinkBuffer&);
     
-    SimpleJumpTable& jumpTable(SwitchKind, unsigned);
-    unsigned numberOfJumpTables(SwitchKind);
-    void linkSwitches(LinkBuffer&, SwitchKind);
-
     void exitSpeculativeWithOSR(const OSRExit&, SpeculationRecovery*);
     void compileExceptionHandlers();
     void linkOSRExits();

@@ -535,40 +535,21 @@ void CodeBlock::dumpBytecode(PrintStream& out)
         } while (i < m_rareData->m_exceptionHandlers.size());
     }
     
-    if (m_rareData && !m_rareData->m_immediateSwitchJumpTables.isEmpty()) {
-        out.printf("Immediate Switch Jump Tables:\n");
+    if (m_rareData && !m_rareData->m_switchJumpTables.isEmpty()) {
+        out.printf("Switch Jump Tables:\n");
         unsigned i = 0;
         do {
             out.printf("  %1d = {\n", i);
             int entry = 0;
-            Vector<int32_t>::const_iterator end = m_rareData->m_immediateSwitchJumpTables[i].branchOffsets.end();
-            for (Vector<int32_t>::const_iterator iter = m_rareData->m_immediateSwitchJumpTables[i].branchOffsets.begin(); iter != end; ++iter, ++entry) {
+            Vector<int32_t>::const_iterator end = m_rareData->m_switchJumpTables[i].branchOffsets.end();
+            for (Vector<int32_t>::const_iterator iter = m_rareData->m_switchJumpTables[i].branchOffsets.begin(); iter != end; ++iter, ++entry) {
                 if (!*iter)
                     continue;
-                out.printf("\t\t%4d => %04d\n", entry + m_rareData->m_immediateSwitchJumpTables[i].min, *iter);
+                out.printf("\t\t%4d => %04d\n", entry + m_rareData->m_switchJumpTables[i].min, *iter);
             }
             out.printf("      }\n");
             ++i;
-        } while (i < m_rareData->m_immediateSwitchJumpTables.size());
-    }
-    
-    if (m_rareData && !m_rareData->m_characterSwitchJumpTables.isEmpty()) {
-        out.printf("\nCharacter Switch Jump Tables:\n");
-        unsigned i = 0;
-        do {
-            out.printf("  %1d = {\n", i);
-            int entry = 0;
-            Vector<int32_t>::const_iterator end = m_rareData->m_characterSwitchJumpTables[i].branchOffsets.end();
-            for (Vector<int32_t>::const_iterator iter = m_rareData->m_characterSwitchJumpTables[i].branchOffsets.begin(); iter != end; ++iter, ++entry) {
-                if (!*iter)
-                    continue;
-                ASSERT(!((i + m_rareData->m_characterSwitchJumpTables[i].min) & ~0xFFFF));
-                UChar ch = static_cast<UChar>(entry + m_rareData->m_characterSwitchJumpTables[i].min);
-                out.printf("\t\t\"%s\" => %04d\n", StringImpl::utf8ForCharacters(&ch, 1).data(), *iter);
-            }
-            out.printf("      }\n");
-            ++i;
-        } while (i < m_rareData->m_characterSwitchJumpTables.size());
+        } while (i < m_rareData->m_switchJumpTables.size());
     }
     
     if (m_rareData && !m_rareData->m_stringSwitchJumpTables.isEmpty()) {
@@ -1369,8 +1350,7 @@ static HashSet<CodeBlock*> liveCodeBlockSet;
     macro(regexps) \
     macro(functions) \
     macro(exceptionHandlers) \
-    macro(immediateSwitchJumpTables) \
-    macro(characterSwitchJumpTables) \
+    macro(switchJumpTables) \
     macro(stringSwitchJumpTables) \
     macro(evalCodeCache) \
     macro(expressionInfo) \
@@ -1516,8 +1496,7 @@ CodeBlock::CodeBlock(CopyParsedBlockTag, CodeBlock& other)
         
         m_rareData->m_exceptionHandlers = other.m_rareData->m_exceptionHandlers;
         m_rareData->m_constantBuffers = other.m_rareData->m_constantBuffers;
-        m_rareData->m_immediateSwitchJumpTables = other.m_rareData->m_immediateSwitchJumpTables;
-        m_rareData->m_characterSwitchJumpTables = other.m_rareData->m_characterSwitchJumpTables;
+        m_rareData->m_switchJumpTables = other.m_rareData->m_switchJumpTables;
         m_rareData->m_stringSwitchJumpTables = other.m_rareData->m_stringSwitchJumpTables;
     }
 }
@@ -1625,21 +1604,11 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
             }
         }
 
-        if (size_t count = unlinkedCodeBlock->numberOfImmediateSwitchJumpTables()) {
-            m_rareData->m_immediateSwitchJumpTables.grow(count);
+        if (size_t count = unlinkedCodeBlock->numberOfSwitchJumpTables()) {
+            m_rareData->m_switchJumpTables.grow(count);
             for (size_t i = 0; i < count; i++) {
-                UnlinkedSimpleJumpTable& sourceTable = unlinkedCodeBlock->immediateSwitchJumpTable(i);
-                SimpleJumpTable& destTable = m_rareData->m_immediateSwitchJumpTables[i];
-                destTable.branchOffsets = sourceTable.branchOffsets;
-                destTable.min = sourceTable.min;
-            }
-        }
-
-        if (size_t count = unlinkedCodeBlock->numberOfCharacterSwitchJumpTables()) {
-            m_rareData->m_characterSwitchJumpTables.grow(count);
-            for (size_t i = 0; i < count; i++) {
-                UnlinkedSimpleJumpTable& sourceTable = unlinkedCodeBlock->characterSwitchJumpTable(i);
-                SimpleJumpTable& destTable = m_rareData->m_characterSwitchJumpTables[i];
+                UnlinkedSimpleJumpTable& sourceTable = unlinkedCodeBlock->switchJumpTable(i);
+                SimpleJumpTable& destTable = m_rareData->m_switchJumpTables[i];
                 destTable.branchOffsets = sourceTable.branchOffsets;
                 destTable.min = sourceTable.min;
             }
@@ -2474,8 +2443,7 @@ void CodeBlock::shrinkToFit(ShrinkMode shrinkMode)
         m_constantRegisters.shrinkToFit();
         
         if (m_rareData) {
-            m_rareData->m_immediateSwitchJumpTables.shrinkToFit();
-            m_rareData->m_characterSwitchJumpTables.shrinkToFit();
+            m_rareData->m_switchJumpTables.shrinkToFit();
             m_rareData->m_stringSwitchJumpTables.shrinkToFit();
         }
     } // else don't shrink these, because we would have already pointed pointers into these tables.

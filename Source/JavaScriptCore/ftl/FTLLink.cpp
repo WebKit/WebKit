@@ -53,8 +53,7 @@ void link(State& state)
     CodeBlock* codeBlock = state.graph.m_codeBlock;
     
     // LLVM will create its own jump tables as needed.
-    codeBlock->clearImmediateSwitchJumpTables();
-    codeBlock->clearCharacterSwitchJumpTables();
+    codeBlock->clearSwitchJumpTables();
     
     // Create the entrypoint.
     // FIXME: This is a total kludge - LLVM should just use our calling convention.

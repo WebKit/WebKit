@@ -1,5 +1,70 @@
 2013-06-20  Filip Pizlo  <fpizlo@apple.com>
 
+        fourthTier: There should only be one table of SimpleJumpTables
+        https://bugs.webkit.org/show_bug.cgi?id=117856
+
+        Reviewed by Geoffrey Garen.
+        
+        Having multiple tables of SimpleJumpTables just means we have to duplicate a
+        ton of code. This patch deduplicates all of it.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        (JSC):
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::CodeBlock::shrinkToFit):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::numberOfSwitchJumpTables):
+        (JSC::CodeBlock::addSwitchJumpTable):
+        (JSC::CodeBlock::switchJumpTable):
+        (JSC::CodeBlock::clearSwitchJumpTables):
+        (RareData):
+        * bytecode/PreciseJumpTargets.cpp:
+        (JSC):
+        (JSC::computePreciseJumpTargets):
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedCodeBlock::shrinkToFit):
+        (JSC::UnlinkedCodeBlock::numberOfSwitchJumpTables):
+        (JSC::UnlinkedCodeBlock::addSwitchJumpTable):
+        (JSC::UnlinkedCodeBlock::switchJumpTable):
+        (RareData):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC):
+        (JSC::prepareJumpTableForSwitch):
+        (JSC::BytecodeGenerator::endSwitch):
+        * dfg/DFGByteCodeParser.cpp:
+        (InlineStackEntry):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::InlineStackEntry::InlineStackEntry):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::link):
+        * dfg/DFGJITCompiler.h:
+        (JITCompiler):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::emitSwitchIntJump):
+        (DFG):
+        (JSC::DFG::SpeculativeJIT::emitSwitchImm):
+        (JSC::DFG::SpeculativeJIT::emitSwitchCharStringJump):
+        * dfg/DFGSpeculativeJIT.h:
+        (SpeculativeJIT):
+        * ftl/FTLLink.cpp:
+        (JSC::FTL::link):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_switch_imm):
+        (JSC::JIT::emit_op_switch_char):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_switch_imm):
+        (JSC::JIT::emit_op_switch_char):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+
+2013-06-20  Filip Pizlo  <fpizlo@apple.com>
+
         fourthTier: FTL should clear character switch jump tables
         https://bugs.webkit.org/show_bug.cgi?id=117852
 

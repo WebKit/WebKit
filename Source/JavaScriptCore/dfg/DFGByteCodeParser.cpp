@@ -1009,8 +1009,7 @@ private:
         Vector<unsigned> m_identifierRemap;
         Vector<unsigned> m_constantRemap;
         Vector<unsigned> m_constantBufferRemap;
-        Vector<unsigned> m_switchImmRemap;
-        Vector<unsigned> m_switchCharRemap;
+        Vector<unsigned> m_switchRemap;
         
         // Blocks introduced by this code block, which need successor linking.
         // May include up to one basic block that includes the continuation after
@@ -2762,9 +2761,9 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         case op_switch_imm: {
             SwitchData data;
             data.kind = SwitchImm;
-            data.switchTableIndex = m_inlineStackTop->m_switchImmRemap[currentInstruction[1].u.operand];
+            data.switchTableIndex = m_inlineStackTop->m_switchRemap[currentInstruction[1].u.operand];
             data.fallThrough = m_currentIndex + currentInstruction[2].u.operand;
-            SimpleJumpTable& table = m_codeBlock->immediateSwitchJumpTable(data.switchTableIndex);
+            SimpleJumpTable& table = m_codeBlock->switchJumpTable(data.switchTableIndex);
             for (unsigned i = 0; i < table.branchOffsets.size(); ++i) {
                 if (!table.branchOffsets[i])
                     continue;
@@ -2781,9 +2780,9 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         case op_switch_char: {
             SwitchData data;
             data.kind = SwitchChar;
-            data.switchTableIndex = m_inlineStackTop->m_switchCharRemap[currentInstruction[1].u.operand];
+            data.switchTableIndex = m_inlineStackTop->m_switchRemap[currentInstruction[1].u.operand];
             data.fallThrough = m_currentIndex + currentInstruction[2].u.operand;
-            SimpleJumpTable& table = m_codeBlock->characterSwitchJumpTable(data.switchTableIndex);
+            SimpleJumpTable& table = m_codeBlock->switchJumpTable(data.switchTableIndex);
             for (unsigned i = 0; i < table.branchOffsets.size(); ++i) {
                 if (!table.branchOffsets[i])
                     continue;
@@ -3294,8 +3293,7 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(
         m_identifierRemap.resize(codeBlock->numberOfIdentifiers());
         m_constantRemap.resize(codeBlock->numberOfConstantRegisters());
         m_constantBufferRemap.resize(codeBlock->numberOfConstantBuffers());
-        m_switchImmRemap.resize(codeBlock->numberOfImmediateSwitchJumpTables());
-        m_switchCharRemap.resize(codeBlock->numberOfCharacterSwitchJumpTables());
+        m_switchRemap.resize(codeBlock->numberOfSwitchJumpTables());
 
         for (size_t i = 0; i < codeBlock->numberOfIdentifiers(); ++i) {
             StringImpl* rep = codeBlock->identifier(i).impl();
@@ -3336,13 +3334,9 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(
             m_constantBufferRemap[i] = newIndex;
             byteCodeParser->m_constantBufferCache.add(ConstantBufferKey(codeBlock, i), newIndex);
         }
-        for (unsigned i = 0; i < codeBlock->numberOfImmediateSwitchJumpTables(); ++i) {
-            m_switchImmRemap[i] = byteCodeParser->m_codeBlock->numberOfImmediateSwitchJumpTables();
-            byteCodeParser->m_codeBlock->addImmediateSwitchJumpTable() = codeBlock->immediateSwitchJumpTable(i);
-        }
-        for (unsigned i = 0; i < codeBlock->numberOfCharacterSwitchJumpTables(); ++i) {
-            m_switchCharRemap[i] = byteCodeParser->m_codeBlock->numberOfCharacterSwitchJumpTables();
-            byteCodeParser->m_codeBlock->addCharacterSwitchJumpTable() = codeBlock->characterSwitchJumpTable(i);
+        for (unsigned i = 0; i < codeBlock->numberOfSwitchJumpTables(); ++i) {
+            m_switchRemap[i] = byteCodeParser->m_codeBlock->numberOfSwitchJumpTables();
+            byteCodeParser->m_codeBlock->addSwitchJumpTable() = codeBlock->switchJumpTable(i);
         }
         m_callsiteBlockHeadNeedsLinking = true;
     } else {
@@ -3358,18 +3352,15 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(
         m_identifierRemap.resize(codeBlock->numberOfIdentifiers());
         m_constantRemap.resize(codeBlock->numberOfConstantRegisters());
         m_constantBufferRemap.resize(codeBlock->numberOfConstantBuffers());
-        m_switchImmRemap.resize(codeBlock->numberOfImmediateSwitchJumpTables());
-        m_switchCharRemap.resize(codeBlock->numberOfCharacterSwitchJumpTables());
+        m_switchRemap.resize(codeBlock->numberOfSwitchJumpTables());
         for (size_t i = 0; i < codeBlock->numberOfIdentifiers(); ++i)
             m_identifierRemap[i] = i;
         for (size_t i = 0; i < codeBlock->numberOfConstantRegisters(); ++i)
             m_constantRemap[i] = i + FirstConstantRegisterIndex;
         for (size_t i = 0; i < codeBlock->numberOfConstantBuffers(); ++i)
             m_constantBufferRemap[i] = i;
-        for (size_t i = 0; i < codeBlock->numberOfImmediateSwitchJumpTables(); ++i)
-            m_switchImmRemap[i] = i;
-        for (size_t i = 0; i < codeBlock->numberOfCharacterSwitchJumpTables(); ++i)
-            m_switchCharRemap[i] = i;
+        for (size_t i = 0; i < codeBlock->numberOfSwitchJumpTables(); ++i)
+            m_switchRemap[i] = i;
         m_callsiteBlockHeadNeedsLinking = false;
     }
     

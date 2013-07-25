@@ -707,24 +707,14 @@ public:
 
     // Jump Tables
 
-    size_t numberOfImmediateSwitchJumpTables() const { return m_rareData ? m_rareData->m_immediateSwitchJumpTables.size() : 0; }
-    SimpleJumpTable& addImmediateSwitchJumpTable() { createRareDataIfNecessary(); m_rareData->m_immediateSwitchJumpTables.append(SimpleJumpTable()); return m_rareData->m_immediateSwitchJumpTables.last(); }
-    SimpleJumpTable& immediateSwitchJumpTable(int tableIndex) { RELEASE_ASSERT(m_rareData); return m_rareData->m_immediateSwitchJumpTables[tableIndex]; }
-    void clearImmediateSwitchJumpTables()
+    size_t numberOfSwitchJumpTables() const { return m_rareData ? m_rareData->m_switchJumpTables.size() : 0; }
+    SimpleJumpTable& addSwitchJumpTable() { createRareDataIfNecessary(); m_rareData->m_switchJumpTables.append(SimpleJumpTable()); return m_rareData->m_switchJumpTables.last(); }
+    SimpleJumpTable& switchJumpTable(int tableIndex) { RELEASE_ASSERT(m_rareData); return m_rareData->m_switchJumpTables[tableIndex]; }
+    void clearSwitchJumpTables()
     {
         if (!m_rareData)
             return;
-        m_rareData->m_immediateSwitchJumpTables.clear();
-    }
-
-    size_t numberOfCharacterSwitchJumpTables() const { return m_rareData ? m_rareData->m_characterSwitchJumpTables.size() : 0; }
-    SimpleJumpTable& addCharacterSwitchJumpTable() { createRareDataIfNecessary(); m_rareData->m_characterSwitchJumpTables.append(SimpleJumpTable()); return m_rareData->m_characterSwitchJumpTables.last(); }
-    SimpleJumpTable& characterSwitchJumpTable(int tableIndex) { RELEASE_ASSERT(m_rareData); return m_rareData->m_characterSwitchJumpTables[tableIndex]; }
-    void clearCharacterSwitchJumpTables()
-    {
-        if (!m_rareData)
-            return;
-        m_rareData->m_characterSwitchJumpTables.clear();
+        m_rareData->m_switchJumpTables.clear();
     }
 
     size_t numberOfStringSwitchJumpTables() const { return m_rareData ? m_rareData->m_stringSwitchJumpTables.size() : 0; }
@@ -1120,8 +1110,7 @@ private:
         Vector<Vector<JSValue> > m_constantBuffers;
 
         // Jump Tables
-        Vector<SimpleJumpTable> m_immediateSwitchJumpTables;
-        Vector<SimpleJumpTable> m_characterSwitchJumpTables;
+        Vector<SimpleJumpTable> m_switchJumpTables;
         Vector<StringJumpTable> m_stringSwitchJumpTables;
 
         EvalCodeCache m_evalCodeCache;

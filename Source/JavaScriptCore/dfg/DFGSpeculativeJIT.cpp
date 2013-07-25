@@ -4635,8 +4635,9 @@ void SpeculativeJIT::speculate(Node*, Edge edge)
 }
 
 void SpeculativeJIT::emitSwitchIntJump(
-    SwitchData* data, SimpleJumpTable& table, GPRReg value, GPRReg scratch)
+    SwitchData* data, GPRReg value, GPRReg scratch)
 {
+    SimpleJumpTable& table = m_jit.codeBlock()->switchJumpTable(data->switchTableIndex);
     m_jit.sub32(Imm32(table.min), value);
     addBranch(
         m_jit.branch32(JITCompiler::AboveOrEqual, value, Imm32(table.ctiOffsets.size())),
@@ -4647,21 +4648,13 @@ void SpeculativeJIT::emitSwitchIntJump(
     data->didUseJumpTable = true;
 }
 
-void SpeculativeJIT::emitSwitchImmIntJump(
-    SwitchData* data, GPRReg value, GPRReg scratch)
-{
-    emitSwitchIntJump(
-        data, m_jit.codeBlock()->immediateSwitchJumpTable(data->switchTableIndex),
-        value, scratch);
-}
-
 void SpeculativeJIT::emitSwitchImm(Node* node, SwitchData* data)
 {
     switch (node->child1().useKind()) {
     case Int32Use: {
         SpeculateIntegerOperand value(this, node->child1());
         GPRTemporary temp(this);
-        emitSwitchImmIntJump(data, value.gpr(), temp.gpr());
+        emitSwitchIntJump(data, value.gpr(), temp.gpr());
         noResult(node);
         break;
     }
@@ -4677,7 +4670,7 @@ void SpeculativeJIT::emitSwitchImm(Node* node, SwitchData* data)
 #if USE(JSVALUE64)
         JITCompiler::Jump notInt = m_jit.branch64(
             JITCompiler::Below, valueRegs.gpr(), GPRInfo::tagTypeNumberRegister);
-        emitSwitchImmIntJump(data, valueRegs.gpr(), scratch);
+        emitSwitchIntJump(data, valueRegs.gpr(), scratch);
         notInt.link(&m_jit);
         addBranch(
             m_jit.branchTest64(
@@ -4690,7 +4683,7 @@ void SpeculativeJIT::emitSwitchImm(Node* node, SwitchData* data)
 #else
         JITCompiler::Jump notInt = m_jit.branch32(
             JITCompiler::NotEqual, valueRegs.tagGPR(), TrustedImm32(JSValue::Int32Tag));
-        emitSwitchImmIntJump(data, valueRegs.payloadGPR(), scratch);
+        emitSwitchIntJump(data, valueRegs.payloadGPR(), scratch);
         notInt.link(&m_jit);
         addBranch(
             m_jit.branch32(
@@ -4744,9 +4737,7 @@ void SpeculativeJIT::emitSwitchCharStringJump(
     m_jit.load8(MacroAssembler::Address(value), scratch);
     
     ready.link(&m_jit);
-    emitSwitchIntJump(
-        data, m_jit.codeBlock()->characterSwitchJumpTable(data->switchTableIndex),
-        scratch, value);
+    emitSwitchIntJump(data, scratch, value);
 }
 
 void SpeculativeJIT::emitSwitchChar(Node* node, SwitchData* data)

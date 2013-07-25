@@ -1616,7 +1616,7 @@ char* DFG_OPERATION operationFindSwitchImmTargetForDouble(
     ExecState* exec, EncodedJSValue encodedValue, size_t tableIndex)
 {
     CodeBlock* codeBlock = exec->codeBlock();
-    SimpleJumpTable& table = codeBlock->immediateSwitchJumpTable(tableIndex);
+    SimpleJumpTable& table = codeBlock->switchJumpTable(tableIndex);
     JSValue value = JSValue::decode(encodedValue);
     ASSERT(value.isDouble());
     double asDouble = value.asDouble();

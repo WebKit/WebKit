@@ -331,8 +331,7 @@ public:
             m_rareData->m_exceptionHandlers.shrinkToFit();
             m_rareData->m_regexps.shrinkToFit();
             m_rareData->m_constantBuffers.shrinkToFit();
-            m_rareData->m_immediateSwitchJumpTables.shrinkToFit();
-            m_rareData->m_characterSwitchJumpTables.shrinkToFit();
+            m_rareData->m_switchJumpTables.shrinkToFit();
             m_rareData->m_stringSwitchJumpTables.shrinkToFit();
             m_rareData->m_expressionInfoFatPositions.shrinkToFit();
         }
@@ -348,13 +347,9 @@ public:
 
     // Jump Tables
 
-    size_t numberOfImmediateSwitchJumpTables() const { return m_rareData ? m_rareData->m_immediateSwitchJumpTables.size() : 0; }
-    UnlinkedSimpleJumpTable& addImmediateSwitchJumpTable() { createRareDataIfNecessary(); m_rareData->m_immediateSwitchJumpTables.append(UnlinkedSimpleJumpTable()); return m_rareData->m_immediateSwitchJumpTables.last(); }
-    UnlinkedSimpleJumpTable& immediateSwitchJumpTable(int tableIndex) { ASSERT(m_rareData); return m_rareData->m_immediateSwitchJumpTables[tableIndex]; }
-
-    size_t numberOfCharacterSwitchJumpTables() const { return m_rareData ? m_rareData->m_characterSwitchJumpTables.size() : 0; }
-    UnlinkedSimpleJumpTable& addCharacterSwitchJumpTable() { createRareDataIfNecessary(); m_rareData->m_characterSwitchJumpTables.append(UnlinkedSimpleJumpTable()); return m_rareData->m_characterSwitchJumpTables.last(); }
-    UnlinkedSimpleJumpTable& characterSwitchJumpTable(int tableIndex) { ASSERT(m_rareData); return m_rareData->m_characterSwitchJumpTables[tableIndex]; }
+    size_t numberOfSwitchJumpTables() const { return m_rareData ? m_rareData->m_switchJumpTables.size() : 0; }
+    UnlinkedSimpleJumpTable& addSwitchJumpTable() { createRareDataIfNecessary(); m_rareData->m_switchJumpTables.append(UnlinkedSimpleJumpTable()); return m_rareData->m_switchJumpTables.last(); }
+    UnlinkedSimpleJumpTable& switchJumpTable(int tableIndex) { ASSERT(m_rareData); return m_rareData->m_switchJumpTables[tableIndex]; }
 
     size_t numberOfStringSwitchJumpTables() const { return m_rareData ? m_rareData->m_stringSwitchJumpTables.size() : 0; }
     UnlinkedStringJumpTable& addStringSwitchJumpTable() { createRareDataIfNecessary(); m_rareData->m_stringSwitchJumpTables.append(UnlinkedStringJumpTable()); return m_rareData->m_stringSwitchJumpTables.last(); }
@@ -536,8 +531,7 @@ public:
         Vector<ConstantBuffer> m_constantBuffers;
 
         // Jump Tables
-        Vector<UnlinkedSimpleJumpTable> m_immediateSwitchJumpTables;
-        Vector<UnlinkedSimpleJumpTable> m_characterSwitchJumpTables;
+        Vector<UnlinkedSimpleJumpTable> m_switchJumpTables;
         Vector<UnlinkedStringJumpTable> m_stringSwitchJumpTables;
 
         Vector<ExpressionRangeInfo::FatPosition> m_expressionInfoFatPositions;

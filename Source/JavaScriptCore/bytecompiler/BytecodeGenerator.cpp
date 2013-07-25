@@ -2240,19 +2240,6 @@ static int32_t keyForImmediateSwitch(ExpressionNode* node, int32_t min, int32_t 
     return key - min;
 }
 
-static void prepareJumpTableForImmediateSwitch(UnlinkedSimpleJumpTable& jumpTable, int32_t switchAddress, uint32_t clauseCount, RefPtr<Label>* labels, ExpressionNode** nodes, int32_t min, int32_t max)
-{
-    jumpTable.min = min;
-    jumpTable.branchOffsets.resize(max - min + 1);
-    jumpTable.branchOffsets.fill(0);
-    for (uint32_t i = 0; i < clauseCount; ++i) {
-        // We're emitting this after the clause labels should have been fixed, so 
-        // the labels should not be "forward" references
-        ASSERT(!labels[i]->isForward());
-        jumpTable.add(keyForImmediateSwitch(nodes[i], min, max), labels[i]->bind(switchAddress, switchAddress + 3)); 
-    }
-}
-
 static int32_t keyForCharacterSwitch(ExpressionNode* node, int32_t min, int32_t max)
 {
     UNUSED_PARAM(max);
@@ -2266,7 +2253,10 @@ static int32_t keyForCharacterSwitch(ExpressionNode* node, int32_t min, int32_t 
     return key - min;
 }
 
-static void prepareJumpTableForCharacterSwitch(UnlinkedSimpleJumpTable& jumpTable, int32_t switchAddress, uint32_t clauseCount, RefPtr<Label>* labels, ExpressionNode** nodes, int32_t min, int32_t max)
+static void prepareJumpTableForSwitch(
+    UnlinkedSimpleJumpTable& jumpTable, int32_t switchAddress, uint32_t clauseCount,
+    RefPtr<Label>* labels, ExpressionNode** nodes, int32_t min, int32_t max,
+    int32_t (*keyGetter)(ExpressionNode*, int32_t min, int32_t max))
 {
     jumpTable.min = min;
     jumpTable.branchOffsets.resize(max - min + 1);
@@ -2275,7 +2265,7 @@ static void prepareJumpTableForCharacterSwitch(UnlinkedSimpleJumpTable& jumpTabl
         // We're emitting this after the clause labels should have been fixed, so 
         // the labels should not be "forward" references
         ASSERT(!labels[i]->isForward());
-        jumpTable.add(keyForCharacterSwitch(nodes[i], min, max), labels[i]->bind(switchAddress, switchAddress + 3)); 
+        jumpTable.add(keyGetter(nodes[i], min, max), labels[i]->bind(switchAddress, switchAddress + 3)); 
     }
 }
 
@@ -2296,25 +2286,34 @@ void BytecodeGenerator::endSwitch(uint32_t clauseCount, RefPtr<Label>* labels, E
 {
     SwitchInfo switchInfo = m_switchContextStack.last();
     m_switchContextStack.removeLast();
-    if (switchInfo.switchType == SwitchInfo::SwitchImmediate) {
-        instructions()[switchInfo.bytecodeOffset + 1] = m_codeBlock->numberOfImmediateSwitchJumpTables();
+    
+    switch (switchInfo.switchType) {
+    case SwitchInfo::SwitchImmediate:
+    case SwitchInfo::SwitchCharacter: {
+        instructions()[switchInfo.bytecodeOffset + 1] = m_codeBlock->numberOfSwitchJumpTables();
         instructions()[switchInfo.bytecodeOffset + 2] = defaultLabel->bind(switchInfo.bytecodeOffset, switchInfo.bytecodeOffset + 3);
 
-        UnlinkedSimpleJumpTable& jumpTable = m_codeBlock->addImmediateSwitchJumpTable();
-        prepareJumpTableForImmediateSwitch(jumpTable, switchInfo.bytecodeOffset, clauseCount, labels, nodes, min, max);
-    } else if (switchInfo.switchType == SwitchInfo::SwitchCharacter) {
-        instructions()[switchInfo.bytecodeOffset + 1] = m_codeBlock->numberOfCharacterSwitchJumpTables();
-        instructions()[switchInfo.bytecodeOffset + 2] = defaultLabel->bind(switchInfo.bytecodeOffset, switchInfo.bytecodeOffset + 3);
+        UnlinkedSimpleJumpTable& jumpTable = m_codeBlock->addSwitchJumpTable();
+        prepareJumpTableForSwitch(
+            jumpTable, switchInfo.bytecodeOffset, clauseCount, labels, nodes, min, max,
+            switchInfo.switchType == SwitchInfo::SwitchImmediate
+                ? keyForImmediateSwitch
+                : keyForCharacterSwitch); 
+        break;
+    }
         
-        UnlinkedSimpleJumpTable& jumpTable = m_codeBlock->addCharacterSwitchJumpTable();
-        prepareJumpTableForCharacterSwitch(jumpTable, switchInfo.bytecodeOffset, clauseCount, labels, nodes, min, max);
-    } else {
-        ASSERT(switchInfo.switchType == SwitchInfo::SwitchString);
+    case SwitchInfo::SwitchString: {
         instructions()[switchInfo.bytecodeOffset + 1] = m_codeBlock->numberOfStringSwitchJumpTables();
         instructions()[switchInfo.bytecodeOffset + 2] = defaultLabel->bind(switchInfo.bytecodeOffset, switchInfo.bytecodeOffset + 3);
 
         UnlinkedStringJumpTable& jumpTable = m_codeBlock->addStringSwitchJumpTable();
         prepareJumpTableForStringSwitch(jumpTable, switchInfo.bytecodeOffset, clauseCount, labels, nodes);
+        break;
+    }
+        
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        break;
     }
 }
 

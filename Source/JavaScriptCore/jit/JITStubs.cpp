@@ -2055,10 +2055,10 @@ DEFINE_STUB_FUNCTION(void*, op_switch_imm)
     CodeBlock* codeBlock = callFrame->codeBlock();
 
     if (scrutinee.isInt32())
-        return codeBlock->immediateSwitchJumpTable(tableIndex).ctiForValue(scrutinee.asInt32()).executableAddress();
+        return codeBlock->switchJumpTable(tableIndex).ctiForValue(scrutinee.asInt32()).executableAddress();
     if (scrutinee.isDouble() && scrutinee.asDouble() == static_cast<int32_t>(scrutinee.asDouble()))
-        return codeBlock->immediateSwitchJumpTable(tableIndex).ctiForValue(static_cast<int32_t>(scrutinee.asDouble())).executableAddress();
-    return codeBlock->immediateSwitchJumpTable(tableIndex).ctiDefault.executableAddress();
+        return codeBlock->switchJumpTable(tableIndex).ctiForValue(static_cast<int32_t>(scrutinee.asDouble())).executableAddress();
+    return codeBlock->switchJumpTable(tableIndex).ctiDefault.executableAddress();
 }
 
 DEFINE_STUB_FUNCTION(void*, op_switch_char)
@@ -2070,12 +2070,12 @@ DEFINE_STUB_FUNCTION(void*, op_switch_char)
     CallFrame* callFrame = stackFrame.callFrame;
     CodeBlock* codeBlock = callFrame->codeBlock();
 
-    void* result = codeBlock->characterSwitchJumpTable(tableIndex).ctiDefault.executableAddress();
+    void* result = codeBlock->switchJumpTable(tableIndex).ctiDefault.executableAddress();
 
     if (scrutinee.isString()) {
         StringImpl* value = asString(scrutinee)->value(callFrame).impl();
         if (value->length() == 1)
-            result = codeBlock->characterSwitchJumpTable(tableIndex).ctiForValue((*value)[0]).executableAddress();
+            result = codeBlock->switchJumpTable(tableIndex).ctiForValue((*value)[0]).executableAddress();
     }
 
     CHECK_FOR_EXCEPTION_AT_END();
