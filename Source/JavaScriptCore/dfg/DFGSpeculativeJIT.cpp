@@ -48,8 +48,8 @@ SpeculativeJIT::SpeculativeJIT(JITCompiler& jit)
     , m_variables(jit.graph().m_localVars)
     , m_lastSetOperand(std::numeric_limits<int>::max())
     , m_state(m_jit.graph())
-    , m_stream(&jit.codeBlock()->variableEventStream())
-    , m_minifiedGraph(&jit.codeBlock()->minifiedDFG())
+    , m_stream(&jit.jitCode()->variableEventStream)
+    , m_minifiedGraph(&jit.jitCode()->minifiedDFG)
     , m_isCheckingArgumentTypes(false)
 {
 }
@@ -109,7 +109,7 @@ void SpeculativeJIT::backwardSpeculationCheck(ExitKind kind, JSValueSource jsVal
         return;
     ASSERT(m_isCheckingArgumentTypes || m_canExit);
     m_jit.appendExitInfo(jumpToFail);
-    m_jit.codeBlock()->appendOSRExit(OSRExit(kind, jsValueSource, m_jit.graph().methodOfGettingAValueProfileFor(node), this, m_stream->size()));
+    m_jit.jitCode()->appendOSRExit(OSRExit(kind, jsValueSource, m_jit.graph().methodOfGettingAValueProfileFor(node), this, m_stream->size()));
 }
 
 void SpeculativeJIT::backwardSpeculationCheck(ExitKind kind, JSValueSource jsValueSource, Node* node, const MacroAssembler::JumpList& jumpsToFail)
@@ -118,7 +118,7 @@ void SpeculativeJIT::backwardSpeculationCheck(ExitKind kind, JSValueSource jsVal
         return;
     ASSERT(m_isCheckingArgumentTypes || m_canExit);
     m_jit.appendExitInfo(jumpsToFail);
-    m_jit.codeBlock()->appendOSRExit(OSRExit(kind, jsValueSource, m_jit.graph().methodOfGettingAValueProfileFor(node), this, m_stream->size()));
+    m_jit.jitCode()->appendOSRExit(OSRExit(kind, jsValueSource, m_jit.graph().methodOfGettingAValueProfileFor(node), this, m_stream->size()));
 }
 
 void SpeculativeJIT::speculationCheck(ExitKind kind, JSValueSource jsValueSource, Node* node, MacroAssembler::Jump jumpToFail)
@@ -141,9 +141,9 @@ OSRExitJumpPlaceholder SpeculativeJIT::backwardSpeculationCheck(ExitKind kind, J
     if (!m_compileOkay)
         return OSRExitJumpPlaceholder();
     ASSERT(m_isCheckingArgumentTypes || m_canExit);
-    unsigned index = m_jit.codeBlock()->numberOfOSRExits();
+    unsigned index = m_jit.jitCode()->osrExit.size();
     m_jit.appendExitInfo();
-    m_jit.codeBlock()->appendOSRExit(OSRExit(kind, jsValueSource, m_jit.graph().methodOfGettingAValueProfileFor(node), this, m_stream->size()));
+    m_jit.jitCode()->appendOSRExit(OSRExit(kind, jsValueSource, m_jit.graph().methodOfGettingAValueProfileFor(node), this, m_stream->size()));
     return OSRExitJumpPlaceholder(index);
 }
 
@@ -173,9 +173,9 @@ void SpeculativeJIT::backwardSpeculationCheck(ExitKind kind, JSValueSource jsVal
     if (!m_compileOkay)
         return;
     ASSERT(m_isCheckingArgumentTypes || m_canExit);
-    m_jit.codeBlock()->appendSpeculationRecovery(recovery);
+    unsigned recoveryIndex = m_jit.jitCode()->appendSpeculationRecovery(recovery);
     m_jit.appendExitInfo(jumpToFail);
-    m_jit.codeBlock()->appendOSRExit(OSRExit(kind, jsValueSource, m_jit.graph().methodOfGettingAValueProfileFor(node), this, m_stream->size(), m_jit.codeBlock()->numberOfSpeculationRecoveries()));
+    m_jit.jitCode()->appendOSRExit(OSRExit(kind, jsValueSource, m_jit.graph().methodOfGettingAValueProfileFor(node), this, m_stream->size(), recoveryIndex));
 }
 
 void SpeculativeJIT::backwardSpeculationCheck(ExitKind kind, JSValueSource jsValueSource, Edge nodeUse, MacroAssembler::Jump jumpToFail, const SpeculationRecovery& recovery)
@@ -204,16 +204,16 @@ JumpReplacementWatchpoint* SpeculativeJIT::speculationWatchpoint(ExitKind kind, 
         return 0;
     ASSERT(m_isCheckingArgumentTypes || m_canExit);
     m_jit.appendExitInfo(JITCompiler::JumpList());
-    OSRExit& exit = m_jit.codeBlock()->osrExit(
-        m_jit.codeBlock()->appendOSRExit(OSRExit(
+    OSRExit& exit = m_jit.jitCode()->osrExit[
+        m_jit.jitCode()->appendOSRExit(OSRExit(
             kind, jsValueSource,
             m_jit.graph().methodOfGettingAValueProfileFor(node),
-            this, m_stream->size())));
-    exit.m_watchpointIndex = m_jit.codeBlock()->appendWatchpoint(
+            this, m_stream->size()))];
+    exit.m_watchpointIndex = m_jit.jitCode()->appendWatchpoint(
         JumpReplacementWatchpoint(m_jit.watchpointLabel()));
     if (m_speculationDirection == ForwardSpeculation)
         convertLastOSRExitToForward();
-    return &m_jit.codeBlock()->watchpoint(exit.m_watchpointIndex);
+    return &m_jit.jitCode()->watchpoints[exit.m_watchpointIndex];
 }
 
 JumpReplacementWatchpoint* SpeculativeJIT::speculationWatchpoint(ExitKind kind)
@@ -223,7 +223,7 @@ JumpReplacementWatchpoint* SpeculativeJIT::speculationWatchpoint(ExitKind kind)
 
 void SpeculativeJIT::convertLastOSRExitToForward(const ValueRecovery& valueRecovery)
 {
-    m_jit.codeBlock()->lastOSRExit().convertToForward(
+    m_jit.jitCode()->lastOSRExit().convertToForward(
         m_jit.graph().m_blocks[m_block].get(), m_currentNode, m_indexInBlock, valueRecovery);
 }
 

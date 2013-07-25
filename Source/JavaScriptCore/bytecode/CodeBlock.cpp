@@ -62,10 +62,6 @@
 
 namespace JSC {
 
-#if ENABLE(DFG_JIT)
-using namespace DFG;
-#endif
-
 String CodeBlock::inferredName() const
 {
     switch (codeType()) {
@@ -1442,7 +1438,7 @@ void CodeBlock::dumpBytecode(PrintStream& out, ExecState* exec, const Instructio
 #endif
     
 #if ENABLE(DFG_JIT)
-    Vector<FrequentExitSite> exitSites = exitProfile().exitSitesFor(location);
+    Vector<DFG::FrequentExitSite> exitSites = exitProfile().exitSitesFor(location);
     if (!exitSites.isEmpty()) {
         out.print(" !! frequent exits: ");
         CommaPrinter comma;
@@ -2076,13 +2072,15 @@ void EvalCodeCache::visitAggregate(SlotVisitor& visitor)
 void CodeBlock::visitAggregate(SlotVisitor& visitor)
 {
 #if ENABLE(PARALLEL_GC) && ENABLE(DFG_JIT)
-    if (!!m_dfgData) {
+    if (JITCode::isOptimizingJIT(getJITType())) {
+        DFG::CommonData* dfgCommon = m_jitCode->dfgCommon();
+        
         // I may be asked to scan myself more than once, and it may even happen concurrently.
         // To this end, use a CAS loop to check if I've been called already. Only one thread
         // may proceed past this point - whichever one wins the CAS race.
         unsigned oldValue;
         do {
-            oldValue = m_dfgData->visitAggregateHasBeenCalled;
+            oldValue = dfgCommon->visitAggregateHasBeenCalled;
             if (oldValue) {
                 // Looks like someone else won! Return immediately to ensure that we don't
                 // trace the same CodeBlock concurrently. Doing so is hazardous since we will
@@ -2097,7 +2095,7 @@ void CodeBlock::visitAggregate(SlotVisitor& visitor)
                 // termination.
                 return;
             }
-        } while (!WTF::weakCompareAndSwap(&m_dfgData->visitAggregateHasBeenCalled, 0, 1));
+        } while (!WTF::weakCompareAndSwap(&dfgCommon->visitAggregateHasBeenCalled, 0, 1));
     }
 #endif // ENABLE(PARALLEL_GC) && ENABLE(DFG_JIT)
     
@@ -2129,15 +2127,15 @@ void CodeBlock::visitAggregate(SlotVisitor& visitor)
     // other reasons, that this iteration should run again; it will notify us of this
     // decision by calling harvestWeakReferences().
     
-    m_dfgData->livenessHasBeenProved = false;
-    m_dfgData->allTransitionsHaveBeenMarked = false;
+    m_jitCode->dfgCommon()->livenessHasBeenProved = false;
+    m_jitCode->dfgCommon()->allTransitionsHaveBeenMarked = false;
     
     performTracingFixpointIteration(visitor);
 
     // GC doesn't have enough information yet for us to decide whether to keep our DFG
     // data, so we need to register a handler to run again at the end of GC, when more
     // information is available.
-    if (!(m_dfgData->livenessHasBeenProved && m_dfgData->allTransitionsHaveBeenMarked))
+    if (!(m_jitCode->dfgCommon()->livenessHasBeenProved && m_jitCode->dfgCommon()->allTransitionsHaveBeenMarked))
         visitor.addWeakReferenceHarvester(this);
     
 #else // ENABLE(DFG_JIT)
@@ -2151,12 +2149,13 @@ void CodeBlock::performTracingFixpointIteration(SlotVisitor& visitor)
     
 #if ENABLE(DFG_JIT)
     // Evaluate our weak reference transitions, if there are still some to evaluate.
-    if (!m_dfgData->allTransitionsHaveBeenMarked) {
+    DFG::CommonData* dfgCommon = m_jitCode->dfgCommon();
+    if (!dfgCommon->allTransitionsHaveBeenMarked) {
         bool allAreMarkedSoFar = true;
-        for (unsigned i = 0; i < m_dfgData->transitions.size(); ++i) {
-            if ((!m_dfgData->transitions[i].m_codeOrigin
-                 || Heap::isMarked(m_dfgData->transitions[i].m_codeOrigin.get()))
-                && Heap::isMarked(m_dfgData->transitions[i].m_from.get())) {
+        for (unsigned i = 0; i < dfgCommon->transitions.size(); ++i) {
+            if ((!dfgCommon->transitions[i].m_codeOrigin
+                 || Heap::isMarked(dfgCommon->transitions[i].m_codeOrigin.get()))
+                && Heap::isMarked(dfgCommon->transitions[i].m_from.get())) {
                 // If the following three things are live, then the target of the
                 // transition is also live:
                 // - This code block. We know it's live already because otherwise
@@ -2168,25 +2167,25 @@ void CodeBlock::performTracingFixpointIteration(SlotVisitor& visitor)
                 // - The source of the transition. The transition checks if some
                 //   heap location holds the source, and if so, stores the target.
                 //   Hence the source must be live for the transition to be live.
-                visitor.append(&m_dfgData->transitions[i].m_to);
+                visitor.append(&dfgCommon->transitions[i].m_to);
             } else
                 allAreMarkedSoFar = false;
         }
         
         if (allAreMarkedSoFar)
-            m_dfgData->allTransitionsHaveBeenMarked = true;
+            dfgCommon->allTransitionsHaveBeenMarked = true;
     }
     
     // Check if we have any remaining work to do.
-    if (m_dfgData->livenessHasBeenProved)
+    if (dfgCommon->livenessHasBeenProved)
         return;
     
     // Now check all of our weak references. If all of them are live, then we
     // have proved liveness and so we scan our strong references. If at end of
     // GC we still have not proved liveness, then this code block is toast.
     bool allAreLiveSoFar = true;
-    for (unsigned i = 0; i < m_dfgData->weakReferences.size(); ++i) {
-        if (!Heap::isMarked(m_dfgData->weakReferences[i].get())) {
+    for (unsigned i = 0; i < dfgCommon->weakReferences.size(); ++i) {
+        if (!Heap::isMarked(dfgCommon->weakReferences[i].get())) {
             allAreLiveSoFar = false;
             break;
         }
@@ -2199,7 +2198,7 @@ void CodeBlock::performTracingFixpointIteration(SlotVisitor& visitor)
     
     // All weak references are live. Record this information so we don't
     // come back here again, and scan the strong references.
-    m_dfgData->livenessHasBeenProved = true;
+    dfgCommon->livenessHasBeenProved = true;
     stronglyVisitStrongReferences(visitor);
 #endif // ENABLE(DFG_JIT)
 }
@@ -2275,14 +2274,15 @@ void CodeBlock::finalizeUnconditionally()
 
 #if ENABLE(DFG_JIT)
     // Check if we're not live. If we are, then jettison.
-    if (!(shouldImmediatelyAssumeLivenessDuringScan() || m_dfgData->livenessHasBeenProved)) {
+    if (!(shouldImmediatelyAssumeLivenessDuringScan() || m_jitCode->dfgCommon()->livenessHasBeenProved)) {
         if (verboseUnlinking)
             dataLog(*this, " has dead weak references, jettisoning during GC.\n");
 
         if (DFG::shouldShowDisassembly()) {
             dataLog(*this, " will be jettisoned because of the following dead references:\n");
-            for (unsigned i = 0; i < m_dfgData->transitions.size(); ++i) {
-                WeakReferenceTransition& transition = m_dfgData->transitions[i];
+            DFG::CommonData* dfgCommon = m_jitCode->dfgCommon();
+            for (unsigned i = 0; i < dfgCommon->transitions.size(); ++i) {
+                DFG::WeakReferenceTransition& transition = dfgCommon->transitions[i];
                 JSCell* origin = transition.m_codeOrigin.get();
                 JSCell* from = transition.m_from.get();
                 JSCell* to = transition.m_to.get();
@@ -2290,8 +2290,8 @@ void CodeBlock::finalizeUnconditionally()
                     continue;
                 dataLog("    Transition under ", JSValue(origin), ", ", JSValue(from), " -> ", JSValue(to), ".\n");
             }
-            for (unsigned i = 0; i < m_dfgData->weakReferences.size(); ++i) {
-                JSCell* weak = m_dfgData->weakReferences[i].get();
+            for (unsigned i = 0; i < dfgCommon->weakReferences.size(); ++i) {
+                JSCell* weak = dfgCommon->weakReferences[i].get();
                 if (Heap::isMarked(weak))
                     continue;
                 dataLog("    Weak reference ", JSValue(weak), ".\n");
@@ -2438,18 +2438,20 @@ void CodeBlock::stronglyVisitWeakReferences(SlotVisitor& visitor)
     UNUSED_PARAM(visitor);
 
 #if ENABLE(DFG_JIT)
-    if (!m_dfgData)
+    if (!JITCode::isOptimizingJIT(getJITType()))
         return;
+    
+    DFG::CommonData* dfgCommon = m_jitCode->dfgCommon();
 
-    for (unsigned i = 0; i < m_dfgData->transitions.size(); ++i) {
-        if (!!m_dfgData->transitions[i].m_codeOrigin)
-            visitor.append(&m_dfgData->transitions[i].m_codeOrigin); // Almost certainly not necessary, since the code origin should also be a weak reference. Better to be safe, though.
-        visitor.append(&m_dfgData->transitions[i].m_from);
-        visitor.append(&m_dfgData->transitions[i].m_to);
+    for (unsigned i = 0; i < dfgCommon->transitions.size(); ++i) {
+        if (!!dfgCommon->transitions[i].m_codeOrigin)
+            visitor.append(&dfgCommon->transitions[i].m_codeOrigin); // Almost certainly not necessary, since the code origin should also be a weak reference. Better to be safe, though.
+        visitor.append(&dfgCommon->transitions[i].m_from);
+        visitor.append(&dfgCommon->transitions[i].m_to);
     }
     
-    for (unsigned i = 0; i < m_dfgData->weakReferences.size(); ++i)
-        visitor.append(&m_dfgData->weakReferences[i]);
+    for (unsigned i = 0; i < dfgCommon->weakReferences.size(); ++i)
+        visitor.append(&dfgCommon->weakReferences[i]);
 #endif    
 }
 
@@ -2530,18 +2532,6 @@ void CodeBlock::shrinkToFit(ShrinkMode shrinkMode)
         m_rareData->m_codeOrigins.shrinkToFit();
 #endif
     }
-    
-#if ENABLE(DFG_JIT)
-    if (m_dfgData) {
-        m_dfgData->osrEntry.shrinkToFit();
-        m_dfgData->osrExit.shrinkToFit();
-        m_dfgData->speculationRecovery.shrinkToFit();
-        m_dfgData->weakReferences.shrinkToFit();
-        m_dfgData->transitions.shrinkToFit();
-        m_dfgData->minifiedDFG.prepareAndShrink();
-        m_dfgData->variableEventStream.shrinkToFit();
-    }
-#endif
 }
 
 void CodeBlock::createActivation(CallFrame* callFrame)
@@ -3238,12 +3228,12 @@ void CodeBlock::tallyFrequentExitSites()
 {
     ASSERT(JITCode::isOptimizingJIT(getJITType()));
     ASSERT(alternative()->getJITType() == JITCode::BaselineJIT);
-    ASSERT(!!m_dfgData);
     
     CodeBlock* profiledBlock = alternative();
     
-    for (unsigned i = 0; i < m_dfgData->osrExit.size(); ++i) {
-        DFG::OSRExit& exit = m_dfgData->osrExit[i];
+    DFG::JITCode* jitCode = m_jitCode->dfg();
+    for (unsigned i = 0; i < jitCode->osrExit.size(); ++i) {
+        DFG::OSRExit& exit = jitCode->osrExit[i];
         
         if (!exit.considerAddingAsFrequentExitSite(profiledBlock))
             continue;

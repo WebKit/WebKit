@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,32 +23,35 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGDriver_h
-#define DFGDriver_h
-
-#include "CallFrame.h"
-#include <wtf/Platform.h>
-
-namespace JSC {
-
-class CodeBlock;
-class JITCode;
-class VM;
-class MacroAssemblerCodePtr;
-
-namespace DFG {
-
-JS_EXPORT_PRIVATE unsigned getNumCompilations();
+#include "config.h"
+#include "DFGCommonData.h"
 
 #if ENABLE(DFG_JIT)
-bool tryCompile(ExecState*, CodeBlock*, RefPtr<JSC::JITCode>&, unsigned bytecodeIndex);
-bool tryCompileFunction(ExecState*, CodeBlock*, RefPtr<JSC::JITCode>&, MacroAssemblerCodePtr& jitCodeWithArityCheck, unsigned bytecodeIndex);
-#else
-inline bool tryCompile(ExecState*, CodeBlock*, RefPtr<JSC::JITCode>&, unsigned) { return false; }
-inline bool tryCompileFunction(ExecState*, CodeBlock*, RefPtr<JSC::JITCode>&, MacroAssemblerCodePtr&, unsigned) { return false; }
-#endif
+
+#include "CodeBlock.h"
+#include "DFGNode.h"
+#include "Operations.h"
+#include "VM.h"
+
+namespace JSC { namespace DFG {
+
+void CommonData::notifyCompilingStructureTransition(CodeBlock* codeBlock, Node* node)
+{
+    transitions.append(
+        WeakReferenceTransition(
+            *codeBlock->vm(), codeBlock->ownerExecutable(),
+            node->codeOrigin.codeOriginOwner(),
+            node->structureTransitionData().previousStructure,
+            node->structureTransitionData().newStructure));
+}
+
+void CommonData::shrinkToFit()
+{
+    weakReferences.shrinkToFit();
+    transitions.shrinkToFit();
+}
 
 } } // namespace JSC::DFG
 
-#endif
+#endif // ENABLE(DFG_JIT)
 

@@ -38,12 +38,14 @@ DFGCodeBlocks::DFGCodeBlocks() { }
 
 DFGCodeBlocks::~DFGCodeBlocks()
 {
-    Vector<OwnPtr<CodeBlock>, 16> toRemove;
+    Vector<CodeBlock*, 16> toRemove;
     
     for (HashSet<CodeBlock*>::iterator iter = m_set.begin(); iter != m_set.end(); ++iter) {
-        if ((*iter)->m_dfgData->isJettisoned)
-            toRemove.append(adoptPtr(*iter));
+        if ((*iter)->getJITCode()->dfgCommon()->isJettisoned)
+            toRemove.append(*iter);
     }
+    
+    WTF::deleteAllValues(toRemove);
 }
 
 void DFGCodeBlocks::jettison(PassOwnPtr<CodeBlock> codeBlockPtr)
@@ -55,36 +57,38 @@ void DFGCodeBlocks::jettison(PassOwnPtr<CodeBlock> codeBlockPtr)
     ASSERT(JITCode::isOptimizingJIT(codeBlock->getJITType()));
     
     // It should not have already been jettisoned.
-    ASSERT(!codeBlock->m_dfgData->isJettisoned);
+    ASSERT(!codeBlock->getJITCode()->dfgCommon()->isJettisoned);
 
     // We should have this block already.
     ASSERT(m_set.find(codeBlock) != m_set.end());
     
-    codeBlock->m_dfgData->isJettisoned = true;
+    codeBlock->getJITCode()->dfgCommon()->isJettisoned = true;
 }
 
 void DFGCodeBlocks::clearMarks()
 {
     for (HashSet<CodeBlock*>::iterator iter = m_set.begin(); iter != m_set.end(); ++iter) {
-        (*iter)->m_dfgData->mayBeExecuting = false;
-        (*iter)->m_dfgData->visitAggregateHasBeenCalled = false;
+        (*iter)->getJITCode()->dfgCommon()->mayBeExecuting = false;
+        (*iter)->getJITCode()->dfgCommon()->visitAggregateHasBeenCalled = false;
     }
 }
 
 void DFGCodeBlocks::deleteUnmarkedJettisonedCodeBlocks()
 {
-    Vector<OwnPtr<CodeBlock>, 16> toRemove;
+    Vector<CodeBlock*, 16> toRemove;
     
     for (HashSet<CodeBlock*>::iterator iter = m_set.begin(); iter != m_set.end(); ++iter) {
-        if ((*iter)->m_dfgData->isJettisoned && !(*iter)->m_dfgData->mayBeExecuting)
-            toRemove.append(adoptPtr(*iter));
+        if ((*iter)->getJITCode()->dfgCommon()->isJettisoned && !(*iter)->getJITCode()->dfgCommon()->mayBeExecuting)
+            toRemove.append(*iter);
     }
+    
+    WTF::deleteAllValues(toRemove);
 }
 
 void DFGCodeBlocks::traceMarkedCodeBlocks(SlotVisitor& visitor)
 {
     for (HashSet<CodeBlock*>::iterator iter = m_set.begin(); iter != m_set.end(); ++iter) {
-        if ((*iter)->m_dfgData->mayBeExecuting)
+        if ((*iter)->getJITCode()->dfgCommon()->mayBeExecuting)
             (*iter)->visitAggregate(visitor);
     }
 }

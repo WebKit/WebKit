@@ -29,6 +29,7 @@
 #if ENABLE(DFG_JIT)
 
 #include "CodeBlock.h"
+#include "DFGJITCode.h"
 #include "DFGValueSource.h"
 #include "Operations.h"
 #include <wtf/DataLog.h>

@@ -119,6 +119,7 @@ SOURCES += \
     dfg/DFGByteCodeParser.cpp \
     dfg/DFGCapabilities.cpp \
     dfg/DFGCommon.cpp \
+    dfg/DFGCommonData.cpp \
     dfg/DFGCFAPhase.cpp \
     dfg/DFGCFGSimplificationPhase.cpp \
     dfg/DFGCPSRethreadingPhase.cpp \
@@ -131,6 +132,7 @@ SOURCES += \
     dfg/DFGEdge.cpp \
     dfg/DFGFixupPhase.cpp \
     dfg/DFGGraph.cpp \
+    dfg/DFGJITCode.cpp \
     dfg/DFGJITCompiler.cpp \
     dfg/DFGLongLivedState.cpp \
     dfg/DFGMinifiedNode.cpp \

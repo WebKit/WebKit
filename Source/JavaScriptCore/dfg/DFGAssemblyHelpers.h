@@ -33,6 +33,7 @@
 #include "CodeBlock.h"
 #include "DFGFPRInfo.h"
 #include "DFGGPRInfo.h"
+#include "DFGJITCode.h"
 #include "DFGNode.h"
 #include "VM.h"
 #include "MacroAssembler.h"

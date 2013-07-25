@@ -1,5 +1,132 @@
 2013-07-15  Oliver Hunt  <oliver@apple.com>
 
+        Merged dfgFourthTier r147609
+
+    2013-04-03  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: put DFG data into a DFG::JITCode, and put common DFG and FTL data into something accessible from both DFG::JITCode and FTL::JITCode
+        https://bugs.webkit.org/show_bug.cgi?id=113905
+
+        Reviewed by Geoffrey Garen.
+        
+        This removes one pointer from CodeBlock.
+        
+        It also gives us a framework for having JITType-specific data in CodeBlock, by
+        putting it into the appropriate JITCode class (either DFG::JITCode or
+        FTL::JITCode). And it allows us to have DFG and FTL share some common data,
+        via DFG::CommonData, which is stored in both DFG::JITCode and FTL::JITCode and
+        always accessible via JITCode::dfgCommon().
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * bytecode/CodeBlock.cpp:
+        (JSC):
+        (JSC::CodeBlock::dumpBytecode):
+        (JSC::CodeBlock::visitAggregate):
+        (JSC::CodeBlock::performTracingFixpointIteration):
+        (JSC::CodeBlock::finalizeUnconditionally):
+        (JSC::CodeBlock::stronglyVisitWeakReferences):
+        (JSC::CodeBlock::shrinkToFit):
+        (JSC::CodeBlock::tallyFrequentExitSites):
+        * bytecode/CodeBlock.h:
+        (CodeBlock):
+        (JSC::CodeBlock::setJITCode):
+        (JSC::CodeBlock::shouldImmediatelyAssumeLivenessDuringScan):
+        (JSC::DFGCodeBlocks::mark):
+        * dfg/DFGAssemblyHelpers.h:
+        * dfg/DFGCommonData.cpp: Added.
+        (DFG):
+        (JSC::DFG::CommonData::notifyCompilingStructureTransition):
+        (JSC::DFG::CommonData::shrinkToFit):
+        * dfg/DFGCommonData.h: Added.
+        (JSC):
+        (DFG):
+        (JSC::DFG::WeakReferenceTransition::WeakReferenceTransition):
+        (WeakReferenceTransition):
+        (CommonData):
+        (JSC::DFG::CommonData::CommonData):
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compile):
+        (JSC::DFG::tryCompile):
+        (JSC::DFG::tryCompileFunction):
+        * dfg/DFGDriver.h:
+        (DFG):
+        (JSC::DFG::tryCompile):
+        (JSC::DFG::tryCompileFunction):
+        * dfg/DFGGraph.h:
+        (Graph):
+        * dfg/DFGJITCode.cpp: Added.
+        (DFG):
+        (JSC::DFG::JITCode::JITCode):
+        (JSC::DFG::JITCode::~JITCode):
+        (JSC::DFG::JITCode::dfgCommon):
+        (JSC::DFG::JITCode::dfg):
+        (JSC::DFG::JITCode::shrinkToFit):
+        * dfg/DFGJITCode.h: Added.
+        (DFG):
+        (JITCode):
+        (JSC::DFG::JITCode::appendOSREntryData):
+        (JSC::DFG::JITCode::osrEntryDataForBytecodeIndex):
+        (JSC::DFG::JITCode::appendOSRExit):
+        (JSC::DFG::JITCode::lastOSRExit):
+        (JSC::DFG::JITCode::appendSpeculationRecovery):
+        (JSC::DFG::JITCode::appendWatchpoint):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::JITCompiler):
+        (JSC::DFG::JITCompiler::linkOSRExits):
+        (JSC::DFG::JITCompiler::link):
+        (JSC::DFG::JITCompiler::compile):
+        (JSC::DFG::JITCompiler::compileFunction):
+        * dfg/DFGJITCompiler.h:
+        (JITCompiler):
+        (JSC::DFG::JITCompiler::addWeakReference):
+        (JSC::DFG::JITCompiler::noticeOSREntry):
+        (JSC::DFG::JITCompiler::jitCode):
+        * dfg/DFGOSREntry.cpp:
+        (JSC::DFG::prepareOSREntry):
+        * dfg/DFGOSRExit.h:
+        (OSRExit):
+        * dfg/DFGOSRExitCompiler.cpp:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::SpeculativeJIT):
+        (JSC::DFG::SpeculativeJIT::backwardSpeculationCheck):
+        (JSC::DFG::SpeculativeJIT::speculationWatchpoint):
+        (JSC::DFG::SpeculativeJIT::convertLastOSRExitToForward):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGVariableEventStream.cpp:
+        * heap/DFGCodeBlocks.cpp:
+        (JSC::DFGCodeBlocks::~DFGCodeBlocks):
+        (JSC::DFGCodeBlocks::jettison):
+        (JSC::DFGCodeBlocks::clearMarks):
+        (JSC::DFGCodeBlocks::deleteUnmarkedJettisonedCodeBlocks):
+        (JSC::DFGCodeBlocks::traceMarkedCodeBlocks):
+        * jit/JITCode.cpp:
+        (JSC::JITCode::dfgCommon):
+        (JSC):
+        (JSC::JITCode::dfg):
+        (JSC::JITCode::ftl):
+        (JSC::DirectJITCode::DirectJITCode):
+        (JSC::DirectJITCode::initializeCodeRef):
+        (JSC::DirectJITCode::addressForCall):
+        (JSC::DirectJITCode::executableAddressAtOffset):
+        (JSC::DirectJITCode::dataAddressAtOffset):
+        (JSC::DirectJITCode::offsetOf):
+        (JSC::DirectJITCode::size):
+        (JSC::DirectJITCode::contains):
+        * jit/JITCode.h:
+        (DFG):
+        (FTL):
+        (JSC):
+        (JITCode):
+        (DirectJITCode):
+
+2013-07-15  Oliver Hunt  <oliver@apple.com>
+
         Merge dfgFourthTier r147587
 
     2013-04-03  Filip Pizlo  <fpizlo@apple.com>

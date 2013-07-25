@@ -30,6 +30,7 @@
 
 #include "CallFrame.h"
 #include "DFGCommon.h"
+#include "DFGJITCode.h"
 #include "LinkBuffer.h"
 #include "Operations.h"
 #include "RepatchBuffer.h"
@@ -51,7 +52,7 @@ void compileOSRExit(ExecState* exec)
     VM* vm = &exec->vm();
     
     uint32_t exitIndex = vm->osrExitIndex;
-    OSRExit& exit = codeBlock->osrExit(exitIndex);
+    OSRExit& exit = codeBlock->getJITCode()->dfg()->osrExit[exitIndex];
     
     // Make sure all code on our inline stack is JIT compiled. This is necessary since
     // we may opt to inline a code block even before it had ever been compiled by the
@@ -70,7 +71,7 @@ void compileOSRExit(ExecState* exec)
     
     // Compute the value recoveries.
     Operands<ValueRecovery> operands;
-    codeBlock->variableEventStream().reconstruct(codeBlock, exit.m_codeOrigin, codeBlock->minifiedDFG(), exit.m_streamIndex, operands);
+    codeBlock->getJITCode()->dfg()->variableEventStream.reconstruct(codeBlock, exit.m_codeOrigin, codeBlock->getJITCode()->dfg()->minifiedDFG, exit.m_streamIndex, operands);
     
     // There may be an override, for forward speculations.
     if (!!exit.m_valueRecoveryOverride) {
@@ -79,8 +80,8 @@ void compileOSRExit(ExecState* exec)
     }
     
     SpeculationRecovery* recovery = 0;
-    if (exit.m_recoveryIndex)
-        recovery = &codeBlock->speculationRecovery(exit.m_recoveryIndex - 1);
+    if (exit.m_recoveryIndex != UINT_MAX)
+        recovery = &codeBlock->getJITCode()->dfg()->speculationRecovery[exit.m_recoveryIndex];
 
 #if DFG_ENABLE(DEBUG_VERBOSE)
     dataLog(
@@ -95,9 +96,9 @@ void compileOSRExit(ExecState* exec)
 
         jit.jitAssertHasValidCallFrame();
         
-        if (vm->m_perBytecodeProfiler && codeBlock->compilation()) {
+        if (vm->m_perBytecodeProfiler && codeBlock->getJITCode()->dfgCommon()->compilation) {
             Profiler::Database& database = *vm->m_perBytecodeProfiler;
-            Profiler::Compilation* compilation = codeBlock->compilation();
+            Profiler::Compilation* compilation = codeBlock->getJITCode()->dfgCommon()->compilation.get();
             
             Profiler::OSRExit* profilerExit = compilation->addOSRExit(
                 exitIndex, Profiler::OriginStack(database, codeBlock, exit.m_codeOrigin),

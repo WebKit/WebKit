@@ -34,6 +34,7 @@
 #include "DFGFPRInfo.h"
 #include "DFGGPRInfo.h"
 #include "DFGGraph.h"
+#include "DFGJITCode.h"
 #include "DFGOSRExitCompilationInfo.h"
 #include "DFGRegisterBank.h"
 #include "DFGRegisterSet.h"
@@ -245,8 +246,8 @@ class JITCompiler : public CCallHelpers {
 public:
     JITCompiler(Graph& dfg);
     
-    bool compile(RefPtr<JITCode>& entry);
-    bool compileFunction(RefPtr<JITCode>& entry, MacroAssemblerCodePtr& entryWithArityCheck);
+    bool compile(RefPtr<JSC::JITCode>& entry);
+    bool compileFunction(RefPtr<JSC::JITCode>& entry, MacroAssemblerCodePtr& entryWithArityCheck);
 
     // Accessors for properties.
     Graph& graph() { return m_graph; }
@@ -368,18 +369,13 @@ public:
     
     void addWeakReference(JSCell* target)
     {
-        m_codeBlock->appendWeakReference(target);
+        m_jitCode->common.weakReferences.append(WriteBarrier<JSCell>(m_graph.m_vm, codeBlock()->ownerExecutable(), target));
     }
     
     void addWeakReferences(const StructureSet& structureSet)
     {
         for (unsigned i = structureSet.size(); i--;)
             addWeakReference(structureSet[i]);
-    }
-    
-    void addWeakReferenceTransition(JSCell* codeOrigin, JSCell* from, JSCell* to)
-    {
-        m_codeBlock->appendWeakReferenceTransition(codeOrigin, from, to);
     }
     
     template<typename T>
@@ -397,7 +393,7 @@ public:
         if (!basicBlock.cfaHasVisited)
             return;
         
-        OSREntryData* entry = codeBlock()->appendDFGOSREntryData(basicBlock.bytecodeBegin, linkBuffer.offsetOf(blockHead));
+        OSREntryData* entry = m_jitCode->appendOSREntryData(basicBlock.bytecodeBegin, linkBuffer.offsetOf(blockHead));
         
         entry->m_expectedValues = basicBlock.valuesAtHead;
         
@@ -422,6 +418,8 @@ public:
         UNUSED_PARAM(linkBuffer);
 #endif
     }
+    
+    PassRefPtr<JITCode> jitCode() { return m_jitCode; }
 
 private:
     friend class OSRExitJumpPlaceholder;
@@ -439,6 +437,8 @@ private:
     Graph& m_graph;
 
     OwnPtr<Disassembler> m_disassembler;
+    
+    RefPtr<JITCode> m_jitCode;
     
     // Vector of calls out from JIT code, including exception handler information.
     // Count of the number of CallRecords with exception handlers.

@@ -280,6 +280,10 @@
 		0FDDBFB61666EEDA00C55FEF /* DFGVariableAccessDataDump.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FDDBFB31666EED500C55FEF /* DFGVariableAccessDataDump.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FE228ED1436AB2700196C48 /* Options.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FE228EB1436AB2300196C48 /* Options.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FE228EE1436AB2C00196C48 /* Options.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FE228EA1436AB2300196C48 /* Options.cpp */; };
+        0FEA0A31170D40BF00BB722C /* DFGCommonData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FEA0A2D170D40BF00BB722C /* DFGCommonData.cpp */; };
+		0FEA0A32170D40BF00BB722C /* DFGCommonData.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEA0A2E170D40BF00BB722C /* DFGCommonData.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0FEA0A33170D40BF00BB722C /* DFGJITCode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FEA0A2F170D40BF00BB722C /* DFGJITCode.cpp */; };
+		0FEA0A34170D40BF00BB722C /* DFGJITCode.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEA0A30170D40BF00BB722C /* DFGJITCode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FEB3ECD16237F4D00AB67AD /* TypedArrayDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEB3ECB16237F4700AB67AD /* TypedArrayDescriptor.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FEB3ECF16237F6C00AB67AD /* MacroAssembler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FEB3ECE16237F6700AB67AD /* MacroAssembler.cpp */; };
 		0FEFC9AA1681A3B300567F53 /* DFGOSRExitJumpPlaceholder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FEFC9A71681A3B000567F53 /* DFGOSRExitJumpPlaceholder.cpp */; };
@@ -1207,6 +1211,10 @@
 		0FDDBFB31666EED500C55FEF /* DFGVariableAccessDataDump.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGVariableAccessDataDump.h; path = dfg/DFGVariableAccessDataDump.h; sourceTree = "<group>"; };
 		0FE228EA1436AB2300196C48 /* Options.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Options.cpp; sourceTree = "<group>"; };
 		0FE228EB1436AB2300196C48 /* Options.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Options.h; sourceTree = "<group>"; };
+		0FEA0A2D170D40BF00BB722C /* DFGCommonData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGCommonData.cpp; path = dfg/DFGCommonData.cpp; sourceTree = "<group>"; };
+		0FEA0A2E170D40BF00BB722C /* DFGCommonData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGCommonData.h; path = dfg/DFGCommonData.h; sourceTree = "<group>"; };
+		0FEA0A2F170D40BF00BB722C /* DFGJITCode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGJITCode.cpp; path = dfg/DFGJITCode.cpp; sourceTree = "<group>"; };
+		0FEA0A30170D40BF00BB722C /* DFGJITCode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGJITCode.h; path = dfg/DFGJITCode.h; sourceTree = "<group>"; };
 		0FEB3ECB16237F4700AB67AD /* TypedArrayDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TypedArrayDescriptor.h; sourceTree = "<group>"; };
 		0FEB3ECE16237F6700AB67AD /* MacroAssembler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MacroAssembler.cpp; sourceTree = "<group>"; };
 		0FEFC9A71681A3B000567F53 /* DFGOSRExitJumpPlaceholder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGOSRExitJumpPlaceholder.cpp; path = dfg/DFGOSRExitJumpPlaceholder.cpp; sourceTree = "<group>"; };
@@ -2700,6 +2708,8 @@
 				0F3B3A251544C991003ED0FF /* DFGCFGSimplificationPhase.h */,
 				0FB4B51A16B62772003F696B /* DFGCommon.cpp */,
 				0FC0977E1469EBC400CF2442 /* DFGCommon.h */,
+				0FEA0A2D170D40BF00BB722C /* DFGCommonData.cpp */,
+				0FEA0A2E170D40BF00BB722C /* DFGCommonData.h */,
 				0F3B3A17153E68EF003ED0FF /* DFGConstantFoldingPhase.cpp */,
 				0F3B3A18153E68EF003ED0FF /* DFGConstantFoldingPhase.h */,
 				0FBE0F6B16C1DB010082C5E8 /* DFGCPSRethreadingPhase.cpp */,
@@ -2725,6 +2735,8 @@
 				86EC9DB71328DF82002B2AD7 /* DFGGraph.cpp */,
 				86EC9DB81328DF82002B2AD7 /* DFGGraph.h */,
 				0F2BDC1F151E803800CD8910 /* DFGInsertionSet.h */,
+				0FEA0A2F170D40BF00BB722C /* DFGJITCode.cpp */,
+				0FEA0A30170D40BF00BB722C /* DFGJITCode.h */,
 				86EC9DBB1328DF82002B2AD7 /* DFGJITCompiler.cpp */,
 				86EC9DBC1328DF82002B2AD7 /* DFGJITCompiler.h */,
 				0FB4B51C16B62772003F696B /* DFGLongLivedState.cpp */,
@@ -3132,6 +3144,7 @@
 				0F2BDC491522809600CD8910 /* DFGVariableEvent.h in Headers */,
 				0F2BDC4B1522809D00CD8910 /* DFGVariableEventStream.h in Headers */,
 				0FFB921E16D02F470055A5DB /* DFGVariadicFunction.h in Headers */,
+				0FEA0A32170D40BF00BB722C /* DFGCommonData.h in Headers */,
 				0FFFC96014EF90BD00C72532 /* DFGVirtualRegisterAllocationPhase.h in Headers */,
 				0FF42731158EBD54004CB9FF /* Disassembler.h in Headers */,
 				BC3046070E1F497F003232CF /* Error.h in Headers */,
@@ -3320,6 +3333,7 @@
 				BC18C4440E16F5CD00B34460 /* NumberPrototype.h in Headers */,
 				142D3939103E4560007DCB52 /* NumericStrings.h in Headers */,
 				86F3EEBD168CDE930077B92A /* ObjCCallbackFunction.h in Headers */,
+				0FEA0A34170D40BF00BB722C /* DFGJITCode.h in Headers */,
 				86F3EEBF168CDE930077B92A /* ObjcRuntimeExtras.h in Headers */,
 				14CA958D16AB50FA00938A06 /* ObjectAllocationProfile.h in Headers */,
 				BC18C4450E16F5CD00B34460 /* ObjectConstructor.h in Headers */,
@@ -3907,6 +3921,7 @@
 				86DB64640F95C6FC00D7D921 /* ExecutableAllocatorFixedVMPool.cpp in Sources */,
 				0F56A1D515001CF4002992B1 /* ExecutionCounter.cpp in Sources */,
 				0FB105851675480F00F8AB6E /* ExitKind.cpp in Sources */,
+				0FEA0A31170D40BF00BB722C /* DFGCommonData.cpp in Sources */,
 				147F39CB107EC37600427A48 /* FunctionConstructor.cpp in Sources */,
 				0FF0F19F16B72A17005DF95B /* FunctionExecutableDump.cpp in Sources */,
 				147F39CC107EC37600427A48 /* FunctionPrototype.cpp in Sources */,
@@ -4043,6 +4058,7 @@
 				0F13912916771C33009CCB07 /* ProfilerBytecodeSequence.cpp in Sources */,
 				0FF729AF166AD35C000F5BA3 /* ProfilerCompilation.cpp in Sources */,
 				0FF729B0166AD35C000F5BA3 /* ProfilerCompilationKind.cpp in Sources */,
+				0FEA0A33170D40BF00BB722C /* DFGJITCode.cpp in Sources */,
 				0FF729B1166AD35C000F5BA3 /* ProfilerCompiledBytecode.cpp in Sources */,
 				0FF729B2166AD35C000F5BA3 /* ProfilerDatabase.cpp in Sources */,
 				0FF729B3166AD35C000F5BA3 /* ProfilerOrigin.cpp in Sources */,

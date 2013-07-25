@@ -29,6 +29,7 @@
 #if ENABLE(DFG_JIT)
 
 #include "CodeBlock.h"
+#include "DFGJITCode.h"
 #include "DFGOSRExitCompiler.h"
 #include "DFGOperations.h"
 #include "DFGRegisterBank.h"
@@ -44,6 +45,7 @@ namespace JSC { namespace DFG {
 JITCompiler::JITCompiler(Graph& dfg)
     : CCallHelpers(&dfg.m_vm, dfg.m_codeBlock)
     , m_graph(dfg)
+    , m_jitCode(adoptRef(new JITCode()))
     , m_currentCodeOriginIndex(0)
 {
     if (shouldShowDisassembly() || m_graph.m_vm.m_perBytecodeProfiler)
@@ -52,29 +54,29 @@ JITCompiler::JITCompiler(Graph& dfg)
 
 void JITCompiler::linkOSRExits()
 {
-    ASSERT(codeBlock()->numberOfOSRExits() == m_exitCompilationInfo.size());
+    ASSERT(m_jitCode->osrExit.size() == m_exitCompilationInfo.size());
     if (m_graph.m_compilation) {
-        for (unsigned i = 0; i < codeBlock()->numberOfOSRExits(); ++i) {
-            OSRExit& exit = codeBlock()->osrExit(i);
+        for (unsigned i = 0; i < m_jitCode->osrExit.size(); ++i) {
+            OSRExit& exit = m_jitCode->osrExit[i];
             Vector<Label> labels;
             if (exit.m_watchpointIndex == std::numeric_limits<unsigned>::max()) {
                 OSRExitCompilationInfo& info = m_exitCompilationInfo[i];
                 for (unsigned j = 0; j < info.m_failureJumps.jumps().size(); ++j)
                     labels.append(info.m_failureJumps.jumps()[j].label());
             } else
-                labels.append(codeBlock()->watchpoint(exit.m_watchpointIndex).sourceLabel());
+                labels.append(m_jitCode->watchpoints[exit.m_watchpointIndex].sourceLabel());
             m_exitSiteLabels.append(labels);
         }
     }
     
-    for (unsigned i = 0; i < codeBlock()->numberOfOSRExits(); ++i) {
-        OSRExit& exit = codeBlock()->osrExit(i);
+    for (unsigned i = 0; i < m_jitCode->osrExit.size(); ++i) {
+        OSRExit& exit = m_jitCode->osrExit[i];
         JumpList& failureJumps = m_exitCompilationInfo[i].m_failureJumps;
         ASSERT(failureJumps.empty() == (exit.m_watchpointIndex != std::numeric_limits<unsigned>::max()));
         if (exit.m_watchpointIndex == std::numeric_limits<unsigned>::max())
             failureJumps.link(this);
         else
-            codeBlock()->watchpoint(exit.m_watchpointIndex).setDestination(label());
+            m_jitCode->watchpoints[exit.m_watchpointIndex].setDestination(label());
         jitAssertHasValidCallFrame();
         store32(TrustedImm32(i), &vm()->osrExitIndex);
         exit.setPatchableCodeOffset(patchableJump());
@@ -215,16 +217,16 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
     
     MacroAssemblerCodeRef osrExitThunk = vm()->getCTIStub(osrExitGenerationThunkGenerator);
     CodeLocationLabel target = CodeLocationLabel(osrExitThunk.code());
-    for (unsigned i = 0; i < codeBlock()->numberOfOSRExits(); ++i) {
-        OSRExit& exit = codeBlock()->osrExit(i);
+    for (unsigned i = 0; i < m_jitCode->osrExit.size(); ++i) {
+        OSRExit& exit = m_jitCode->osrExit[i];
         linkBuffer.link(exit.getPatchableCodeOffsetAsJump(), target);
         exit.correctJump(linkBuffer);
         if (exit.m_watchpointIndex != std::numeric_limits<unsigned>::max())
-            codeBlock()->watchpoint(exit.m_watchpointIndex).correctLabels(linkBuffer);
+            m_jitCode->watchpoints[exit.m_watchpointIndex].correctLabels(linkBuffer);
     }
     
     if (m_graph.m_compilation) {
-        ASSERT(m_exitSiteLabels.size() == codeBlock()->numberOfOSRExits());
+        ASSERT(m_exitSiteLabels.size() == m_jitCode->osrExit.size());
         for (unsigned i = 0; i < m_exitSiteLabels.size(); ++i) {
             Vector<Label>& labels = m_exitSiteLabels[i];
             Vector<const void*> addresses;
@@ -235,10 +237,10 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
     } else
         ASSERT(!m_exitSiteLabels.size());
     
-    codeBlock()->saveCompilation(m_graph.m_compilation);
+    m_jitCode->common.compilation = m_graph.m_compilation;
 }
 
-bool JITCompiler::compile(RefPtr<JITCode>& entry)
+bool JITCompiler::compile(RefPtr<JSC::JITCode>& entry)
 {
     SamplingRegion samplingRegion("DFG Backend");
 
@@ -263,6 +265,8 @@ bool JITCompiler::compile(RefPtr<JITCode>& entry)
         return false;
     link(linkBuffer);
     speculative.linkOSREntries(linkBuffer);
+    
+    m_jitCode->shrinkToFit();
     codeBlock()->shrinkToFit(CodeBlock::LateShrink);
 
     if (shouldShowDisassembly())
@@ -270,13 +274,12 @@ bool JITCompiler::compile(RefPtr<JITCode>& entry)
     if (m_graph.m_compilation)
         m_disassembler->reportToProfiler(m_graph.m_compilation.get(), linkBuffer);
 
-    entry = adoptRef(new DirectJITCode(
-        linkBuffer.finalizeCodeWithoutDisassembly(),
-        JITCode::DFGJIT));
+    m_jitCode->initializeCodeRef(linkBuffer.finalizeCodeWithoutDisassembly());
+    entry = m_jitCode;
     return true;
 }
 
-bool JITCompiler::compileFunction(RefPtr<JITCode>& entry, MacroAssemblerCodePtr& entryWithArityCheck)
+bool JITCompiler::compileFunction(RefPtr<JSC::JITCode>& entry, MacroAssemblerCodePtr& entryWithArityCheck)
 {
     SamplingRegion samplingRegion("DFG Backend");
     
@@ -353,6 +356,8 @@ bool JITCompiler::compileFunction(RefPtr<JITCode>& entry, MacroAssemblerCodePtr&
         return false;
     link(linkBuffer);
     speculative.linkOSREntries(linkBuffer);
+    
+    m_jitCode->shrinkToFit();
     codeBlock()->shrinkToFit(CodeBlock::LateShrink);
     
     // FIXME: switch the stack check & arity check over to DFGOpertaion style calls, not JIT stubs.
@@ -365,9 +370,8 @@ bool JITCompiler::compileFunction(RefPtr<JITCode>& entry, MacroAssemblerCodePtr&
         m_disassembler->reportToProfiler(m_graph.m_compilation.get(), linkBuffer);
 
     entryWithArityCheck = linkBuffer.locationOf(arityCheck);
-    entry = adoptRef(new DirectJITCode(
-        linkBuffer.finalizeCodeWithoutDisassembly(),
-        JITCode::DFGJIT));
+    m_jitCode->initializeCodeRef(linkBuffer.finalizeCodeWithoutDisassembly());
+    entry = m_jitCode;
     return true;
 }
 

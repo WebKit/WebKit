@@ -201,6 +201,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/dfg/DFGCPSRethreadingPhase.h \
 	Source/JavaScriptCore/dfg/DFGCommon.cpp \
 	Source/JavaScriptCore/dfg/DFGCommon.h \
+	Source/JavaScriptCore/dfg/DFGCommonData.cpp \
+	Source/JavaScriptCore/dfg/DFGCommonData.h \
 	Source/JavaScriptCore/dfg/DFGConstantFoldingPhase.cpp \
 	Source/JavaScriptCore/dfg/DFGConstantFoldingPhase.h \
 	Source/JavaScriptCore/dfg/DFGCSEPhase.cpp \
@@ -224,6 +226,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/dfg/DFGGraph.cpp \
 	Source/JavaScriptCore/dfg/DFGGraph.h \
 	Source/JavaScriptCore/dfg/DFGInsertionSet.h \
+	Source/JavaScriptCore/dfg/DFGJITCode.cpp \
+	Source/JavaScriptCore/dfg/DFGJITCode.h \
 	Source/JavaScriptCore/dfg/DFGJITCompiler.cpp \
 	Source/JavaScriptCore/dfg/DFGJITCompiler.h \
 	Source/JavaScriptCore/dfg/DFGLongLivedState.cpp \

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,32 +23,39 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGDriver_h
-#define DFGDriver_h
+#include "config.h"
+#include "DFGJITCode.h"
 
-#include "CallFrame.h"
-#include <wtf/Platform.h>
+namespace JSC { namespace DFG {
 
-namespace JSC {
+JITCode::JITCode()
+    : DirectJITCode(DFGJIT)
+{
+}
 
-class CodeBlock;
-class JITCode;
-class VM;
-class MacroAssemblerCodePtr;
+JITCode::~JITCode()
+{
+}
 
-namespace DFG {
+CommonData* JITCode::dfgCommon()
+{
+    return &common;
+}
 
-JS_EXPORT_PRIVATE unsigned getNumCompilations();
+JITCode* JITCode::dfg()
+{
+    return this;
+}
 
-#if ENABLE(DFG_JIT)
-bool tryCompile(ExecState*, CodeBlock*, RefPtr<JSC::JITCode>&, unsigned bytecodeIndex);
-bool tryCompileFunction(ExecState*, CodeBlock*, RefPtr<JSC::JITCode>&, MacroAssemblerCodePtr& jitCodeWithArityCheck, unsigned bytecodeIndex);
-#else
-inline bool tryCompile(ExecState*, CodeBlock*, RefPtr<JSC::JITCode>&, unsigned) { return false; }
-inline bool tryCompileFunction(ExecState*, CodeBlock*, RefPtr<JSC::JITCode>&, MacroAssemblerCodePtr&, unsigned) { return false; }
-#endif
+void JITCode::shrinkToFit()
+{
+    common.shrinkToFit();
+    osrEntry.shrinkToFit();
+    osrExit.shrinkToFit();
+    speculationRecovery.shrinkToFit();
+    minifiedDFG.prepareAndShrink();
+    variableEventStream.shrinkToFit();
+}
 
 } } // namespace JSC::DFG
-
-#endif
 

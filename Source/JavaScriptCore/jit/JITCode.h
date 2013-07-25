@@ -37,6 +37,14 @@
 
 namespace JSC {
 
+namespace DFG {
+class CommonData;
+class JITCode;
+}
+namespace FTL {
+class JITCode;
+}
+
 #if ENABLE(JIT)
     class VM;
     class JSStack;
@@ -140,6 +148,10 @@ public:
     virtual void* dataAddressAtOffset(size_t offset) = 0;
     virtual unsigned offsetOf(void* pointerIntoCode) = 0;
     
+    virtual DFG::CommonData* dfgCommon();
+    virtual DFG::JITCode* dfg();
+    virtual FTL::JITCode* ftl();
+    
     JSValue execute(JSStack*, CallFrame*, VM*);
     
     void* start() { return dataAddressAtOffset(0); }
@@ -156,9 +168,12 @@ private:
 
 class DirectJITCode : public JITCode {
 public:
+    DirectJITCode(JITType);
     DirectJITCode(const CodeRef, JITType);
     ~DirectJITCode();
     
+    void initializeCodeRef(CodeRef ref);
+
     CodePtr addressForCall();
     void* executableAddressAtOffset(size_t offset);
     void* dataAddressAtOffset(size_t offset);

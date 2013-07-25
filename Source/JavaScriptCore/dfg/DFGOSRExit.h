@@ -85,7 +85,7 @@ private:
 // This structure describes how to exit the speculative path by
 // going into baseline code.
 struct OSRExit {
-    OSRExit(ExitKind, JSValueSource, MethodOfGettingAValueProfile, SpeculativeJIT*, unsigned streamIndex, unsigned recoveryIndex = 0);
+    OSRExit(ExitKind, JSValueSource, MethodOfGettingAValueProfile, SpeculativeJIT*, unsigned streamIndex, unsigned recoveryIndex = UINT_MAX);
     
     MacroAssemblerCodeRef m_code;
     

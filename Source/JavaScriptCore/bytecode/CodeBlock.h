@@ -41,6 +41,7 @@
 #include "CompactJITCodeMap.h"
 #include "DFGCodeBlocks.h"
 #include "DFGCommon.h"
+#include "DFGCommonData.h"
 #include "DFGExitProfile.h"
 #include "DFGMinifiedGraph.h"
 #include "DFGOSREntry.h"
@@ -267,144 +268,6 @@ public:
     }
 #endif
         
-#if ENABLE(DFG_JIT)
-    void createDFGDataIfNecessary()
-    {
-        if (!!m_dfgData)
-            return;
-            
-        m_dfgData = adoptPtr(new DFGData);
-    }
-        
-    void saveCompilation(PassRefPtr<Profiler::Compilation> compilation)
-    {
-        createDFGDataIfNecessary();
-        m_dfgData->compilation = compilation;
-    }
-        
-    Profiler::Compilation* compilation()
-    {
-        if (!m_dfgData)
-            return 0;
-        return m_dfgData->compilation.get();
-    }
-        
-    DFG::OSREntryData* appendDFGOSREntryData(unsigned bytecodeIndex, unsigned machineCodeOffset)
-    {
-        createDFGDataIfNecessary();
-        DFG::OSREntryData entry;
-        entry.m_bytecodeIndex = bytecodeIndex;
-        entry.m_machineCodeOffset = machineCodeOffset;
-        m_dfgData->osrEntry.append(entry);
-        return &m_dfgData->osrEntry.last();
-    }
-    unsigned numberOfDFGOSREntries() const
-    {
-        if (!m_dfgData)
-            return 0;
-        return m_dfgData->osrEntry.size();
-    }
-    DFG::OSREntryData* dfgOSREntryData(unsigned i) { return &m_dfgData->osrEntry[i]; }
-    DFG::OSREntryData* dfgOSREntryDataForBytecodeIndex(unsigned bytecodeIndex)
-    {
-        if (!m_dfgData)
-            return 0;
-        return tryBinarySearch<DFG::OSREntryData, unsigned>(
-            m_dfgData->osrEntry, m_dfgData->osrEntry.size(), bytecodeIndex,
-            DFG::getOSREntryDataBytecodeIndex);
-    }
-        
-    unsigned appendOSRExit(const DFG::OSRExit& osrExit)
-    {
-        createDFGDataIfNecessary();
-        unsigned result = m_dfgData->osrExit.size();
-        m_dfgData->osrExit.append(osrExit);
-        return result;
-    }
-        
-    DFG::OSRExit& lastOSRExit()
-    {
-        return m_dfgData->osrExit.last();
-    }
-        
-    unsigned appendSpeculationRecovery(const DFG::SpeculationRecovery& recovery)
-    {
-        createDFGDataIfNecessary();
-        unsigned result = m_dfgData->speculationRecovery.size();
-        m_dfgData->speculationRecovery.append(recovery);
-        return result;
-    }
-        
-    unsigned appendWatchpoint(const JumpReplacementWatchpoint& watchpoint)
-    {
-        createDFGDataIfNecessary();
-        unsigned result = m_dfgData->watchpoints.size();
-        m_dfgData->watchpoints.append(watchpoint);
-        return result;
-    }
-        
-    unsigned numberOfOSRExits()
-    {
-        if (!m_dfgData)
-            return 0;
-        return m_dfgData->osrExit.size();
-    }
-        
-    unsigned numberOfSpeculationRecoveries()
-    {
-        if (!m_dfgData)
-            return 0;
-        return m_dfgData->speculationRecovery.size();
-    }
-        
-    unsigned numberOfWatchpoints()
-    {
-        if (!m_dfgData)
-            return 0;
-        return m_dfgData->watchpoints.size();
-    }
-        
-    DFG::OSRExit& osrExit(unsigned index)
-    {
-        return m_dfgData->osrExit[index];
-    }
-        
-    DFG::SpeculationRecovery& speculationRecovery(unsigned index)
-    {
-        return m_dfgData->speculationRecovery[index];
-    }
-        
-    JumpReplacementWatchpoint& watchpoint(unsigned index)
-    {
-        return m_dfgData->watchpoints[index];
-    }
-        
-    void appendWeakReference(JSCell* target)
-    {
-        createDFGDataIfNecessary();
-        m_dfgData->weakReferences.append(WriteBarrier<JSCell>(*vm(), ownerExecutable(), target));
-    }
-        
-    void appendWeakReferenceTransition(JSCell* codeOrigin, JSCell* from, JSCell* to)
-    {
-        createDFGDataIfNecessary();
-        m_dfgData->transitions.append(
-            WeakReferenceTransition(*vm(), ownerExecutable(), codeOrigin, from, to));
-    }
-        
-    DFG::MinifiedGraph& minifiedDFG()
-    {
-        createDFGDataIfNecessary();
-        return m_dfgData->minifiedDFG;
-    }
-        
-    DFG::VariableEventStream& variableEventStream()
-    {
-        createDFGDataIfNecessary();
-        return m_dfgData->variableEventStream;
-    }
-#endif
-
     unsigned bytecodeOffset(Instruction* returnAddress)
     {
         RELEASE_ASSERT(returnAddress >= instructions().begin() && returnAddress < instructions().end());
@@ -431,10 +294,8 @@ public:
         m_jitCode = code;
         m_jitCodeWithArityCheck = codeWithArityCheck;
 #if ENABLE(DFG_JIT)
-        if (JITCode::isOptimizingJIT(JITCode::jitTypeFor(m_jitCode))) {
-            createDFGDataIfNecessary();
+        if (JITCode::isOptimizingJIT(JITCode::jitTypeFor(m_jitCode)))
             m_vm->heap.m_dfgCodeBlocks.m_set.add(this);
-        }
 #endif
     }
     PassRefPtr<JITCode> getJITCode() { return m_jitCode; }
@@ -1128,13 +989,13 @@ private:
         // CodeBlocks don't need to be jettisoned when their weak references go
         // stale. So if a basline JIT CodeBlock gets scanned, we can assume that
         // this means that it's live.
-        if (!m_dfgData)
+        if (!JITCode::isOptimizingJIT(getJITType()))
             return true;
             
         // For simplicity, we don't attempt to jettison code blocks during GC if
         // they are executing. Instead we strongly mark their weak references to
         // allow them to continue to execute soundly.
-        if (m_dfgData->mayBeExecuting)
+        if (m_jitCode->dfgCommon()->mayBeExecuting)
             return true;
             
         if (Options::forceDFGCodeBlockLiveness())
@@ -1195,47 +1056,6 @@ private:
     OwnPtr<CompactJITCodeMap> m_jitCodeMap;
 #endif
 #if ENABLE(DFG_JIT)
-    struct WeakReferenceTransition {
-        WeakReferenceTransition() { }
-            
-        WeakReferenceTransition(VM& vm, JSCell* owner, JSCell* codeOrigin, JSCell* from, JSCell* to)
-            : m_from(vm, owner, from)
-            , m_to(vm, owner, to)
-        {
-            if (!!codeOrigin)
-                m_codeOrigin.set(vm, owner, codeOrigin);
-        }
-
-        WriteBarrier<JSCell> m_codeOrigin;
-        WriteBarrier<JSCell> m_from;
-        WriteBarrier<JSCell> m_to;
-    };
-        
-    struct DFGData {
-        DFGData()
-            : mayBeExecuting(false)
-            , isJettisoned(false)
-        {
-        }
-            
-        Vector<DFG::OSREntryData> osrEntry;
-        SegmentedVector<DFG::OSRExit, 8> osrExit;
-        Vector<DFG::SpeculationRecovery> speculationRecovery;
-        SegmentedVector<JumpReplacementWatchpoint, 1, 0> watchpoints;
-        Vector<WeakReferenceTransition> transitions;
-        Vector<WriteBarrier<JSCell> > weakReferences;
-        DFG::VariableEventStream variableEventStream;
-        DFG::MinifiedGraph minifiedDFG;
-        RefPtr<Profiler::Compilation> compilation;
-        bool mayBeExecuting;
-        bool isJettisoned;
-        bool livenessHasBeenProved; // Initialized and used on every GC.
-        bool allTransitionsHaveBeenMarked; // Initialized and used on every GC.
-        unsigned visitAggregateHasBeenCalled; // Unsigned to make it work seamlessly with the broadest set of CAS implementations.
-    };
-        
-    OwnPtr<DFGData> m_dfgData;
-        
     // This is relevant to non-DFG code blocks that serve as the profiled code block
     // for DFG code blocks.
     DFG::ExitProfile m_exitProfile;
@@ -1471,7 +1291,7 @@ inline void DFGCodeBlocks::mark(void* candidateCodeBlock)
     if (iter == m_set.end())
         return;
         
-    (*iter)->m_dfgData->mayBeExecuting = true;
+    (*iter)->m_jitCode->dfgCommon()->mayBeExecuting = true;
 }
 #endif
     

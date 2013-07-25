@@ -30,6 +30,7 @@
 
 #include "CallFrame.h"
 #include "CodeBlock.h"
+#include "DFGJITCode.h"
 #include "DFGNode.h"
 #include "JIT.h"
 #include "Operations.h"
@@ -49,7 +50,7 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
 #endif
     
     VM* vm = &exec->vm();
-    OSREntryData* entry = codeBlock->dfgOSREntryDataForBytecodeIndex(bytecodeIndex);
+    OSREntryData* entry = codeBlock->getJITCode()->dfg()->osrEntryDataForBytecodeIndex(bytecodeIndex);
     
     if (!entry) {
 #if ENABLE(JIT_VERBOSE_OSR)
