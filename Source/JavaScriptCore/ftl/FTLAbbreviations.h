@@ -177,6 +177,7 @@ static inline LValue buildFAdd(LBuilder builder, LValue left, LValue right) { re
 static inline LValue buildFSub(LBuilder builder, LValue left, LValue right) { return LLVMBuildFSub(builder, left, right, ""); }
 static inline LValue buildFMul(LBuilder builder, LValue left, LValue right) { return LLVMBuildFMul(builder, left, right, ""); }
 static inline LValue buildFDiv(LBuilder builder, LValue left, LValue right) { return LLVMBuildFDiv(builder, left, right, ""); }
+static inline LValue buildFRem(LBuilder builder, LValue left, LValue right) { return LLVMBuildFRem(builder, left, right, ""); }
 static inline LValue buildFNeg(LBuilder builder, LValue value) { return LLVMBuildFNeg(builder, value, ""); }
 static inline LValue buildAnd(LBuilder builder, LValue left, LValue right) { return LLVMBuildAnd(builder, left, right, ""); }
 static inline LValue buildOr(LBuilder builder, LValue left, LValue right) { return LLVMBuildOr(builder, left, right, ""); }

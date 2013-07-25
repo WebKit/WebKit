@@ -141,6 +141,7 @@ public:
     LValue doubleSub(LValue left, LValue right) { return buildFSub(m_builder, left, right); }
     LValue doubleMul(LValue left, LValue right) { return buildFMul(m_builder, left, right); }
     LValue doubleDiv(LValue left, LValue right) { return buildFDiv(m_builder, left, right); }
+    LValue doubleRem(LValue left, LValue right) { return buildFRem(m_builder, left, right); }
     LValue doubleNeg(LValue value) { return buildFNeg(m_builder, value); }
 
     LValue bitAnd(LValue left, LValue right) { return buildAnd(m_builder, left, right); }
