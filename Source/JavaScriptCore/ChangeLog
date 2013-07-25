@@ -1,5 +1,17 @@
 2013-06-27  Filip Pizlo  <fpizlo@apple.com>
 
+        Make Graph::substituteGetLocal() out-of-line
+
+        Rubber stamped by Geoffrey Garen.
+
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::substituteGetLocal):
+        (DFG):
+        * dfg/DFGGraph.h:
+        (Graph):
+
+2013-06-27  Filip Pizlo  <fpizlo@apple.com>
+
         fourthTier: DFG should know how to find natural loops
         https://bugs.webkit.org/show_bug.cgi?id=118152
 

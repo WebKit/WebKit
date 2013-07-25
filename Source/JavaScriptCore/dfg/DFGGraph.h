@@ -647,40 +647,7 @@ public:
     // any GetLocals in the basic block.
     // FIXME: it may be appropriate, in the future, to generalize this to handle GetLocals
     // introduced anywhere in the basic block.
-    void substituteGetLocal(BasicBlock& block, unsigned startIndexInBlock, VariableAccessData* variableAccessData, Node* newGetLocal)
-    {
-        if (variableAccessData->isCaptured()) {
-            // Let CSE worry about this one.
-            return;
-        }
-        for (unsigned indexInBlock = startIndexInBlock; indexInBlock < block.size(); ++indexInBlock) {
-            Node* node = block[indexInBlock];
-            bool shouldContinue = true;
-            switch (node->op()) {
-            case SetLocal: {
-                if (node->local() == variableAccessData->local())
-                    shouldContinue = false;
-                break;
-            }
-                
-            case GetLocal: {
-                if (node->variableAccessData() != variableAccessData)
-                    continue;
-                substitute(block, indexInBlock, node, newGetLocal);
-                Node* oldTailNode = block.variablesAtTail.operand(variableAccessData->local());
-                if (oldTailNode == node)
-                    block.variablesAtTail.operand(variableAccessData->local()) = newGetLocal;
-                shouldContinue = false;
-                break;
-            }
-                
-            default:
-                break;
-            }
-            if (!shouldContinue)
-                break;
-        }
-    }
+    void substituteGetLocal(BasicBlock& block, unsigned startIndexInBlock, VariableAccessData* variableAccessData, Node* newGetLocal);
     
     void invalidateCFG();
     

@@ -465,6 +465,41 @@ void Graph::invalidateCFG()
     m_naturalLoops.invalidate();
 }
 
+void Graph::substituteGetLocal(BasicBlock& block, unsigned startIndexInBlock, VariableAccessData* variableAccessData, Node* newGetLocal)
+{
+    if (variableAccessData->isCaptured()) {
+        // Let CSE worry about this one.
+        return;
+    }
+    for (unsigned indexInBlock = startIndexInBlock; indexInBlock < block.size(); ++indexInBlock) {
+        Node* node = block[indexInBlock];
+        bool shouldContinue = true;
+        switch (node->op()) {
+        case SetLocal: {
+            if (node->local() == variableAccessData->local())
+                shouldContinue = false;
+            break;
+        }
+                
+        case GetLocal: {
+            if (node->variableAccessData() != variableAccessData)
+                continue;
+            substitute(block, indexInBlock, node, newGetLocal);
+            Node* oldTailNode = block.variablesAtTail.operand(variableAccessData->local());
+            if (oldTailNode == node)
+                block.variablesAtTail.operand(variableAccessData->local()) = newGetLocal;
+            shouldContinue = false;
+            break;
+        }
+                
+        default:
+            break;
+        }
+        if (!shouldContinue)
+            break;
+    }
+}
+    
 } } // namespace JSC::DFG
 
 #endif
