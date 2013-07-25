@@ -92,7 +92,6 @@ namespace JSC  {
         static const HashTable* errorPrototypeTable(CallFrame* callFrame) { return callFrame->vm().errorPrototypeTable; }
         static const HashTable* globalObjectTable(CallFrame* callFrame) { return callFrame->vm().globalObjectTable; }
         static const HashTable* jsonTable(CallFrame* callFrame) { return callFrame->vm().jsonTable; }
-        static const HashTable* mathTable(CallFrame* callFrame) { return callFrame->vm().mathTable; }
         static const HashTable* numberConstructorTable(CallFrame* callFrame) { return callFrame->vm().numberConstructorTable; }
         static const HashTable* numberPrototypeTable(CallFrame* callFrame) { return callFrame->vm().numberPrototypeTable; }
         static const HashTable* objectConstructorTable(CallFrame* callFrame) { return callFrame->vm().objectConstructorTable; }

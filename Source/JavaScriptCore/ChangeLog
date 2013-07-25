@@ -1,3 +1,35 @@
+2013-06-12  Geoffrey Garen  <ggaren@apple.com>
+
+        The Math object should not be polymorphic
+        https://bugs.webkit.org/show_bug.cgi?id=117576
+
+        Reviewed by Oliver Hunt.
+
+        Fill in the Math object eagerly, to avoid its structure changing during
+        execution. There are lots of ways to skin this cat; this one seemed
+        easiest, and justified given the relative hotness of math operations.
+
+        20% speedup on DSP-filtrr tests, small speedups on a few Kraken tests.
+
+        * DerivedSources.make:
+        * JavaScriptCore.order:
+        * create_hash_table:
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::jsonTable): Removed the Math object's static table.
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::putDirectNativeFunctionWithoutTransition):
+        * runtime/JSObject.h:
+        * runtime/MathObject.cpp:
+        (JSC::MathObject::finishCreation):
+        * runtime/MathObject.h:
+        (JSC::MathObject::create): Set up the Math object at construction time.
+
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        (JSC::VM::~VM):
+        * runtime/VM.h: Removed the Math object's static table.
+
 2013-06-09  Geoffrey Garen  <ggaren@apple.com>
 
         Unreviewed, rolled back in http://trac.webkit.org/changeset/151342.

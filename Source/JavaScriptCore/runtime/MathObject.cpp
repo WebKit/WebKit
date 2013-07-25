@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2007, 2008 Apple Inc. All Rights Reserved.
+ *  Copyright (C) 2007, 2008, 2013 Apple Inc. All Rights Reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -56,35 +56,9 @@ static EncodedJSValue JSC_HOST_CALL mathProtoFuncIMul(ExecState*);
 
 }
 
-#include "MathObject.lut.h"
-
 namespace JSC {
 
-const ClassInfo MathObject::s_info = { "Math", &Base::s_info, 0, ExecState::mathTable, CREATE_METHOD_TABLE(MathObject) };
-
-/* Source for MathObject.lut.h
-@begin mathTable
-  abs           mathProtoFuncAbs               DontEnum|Function 1
-  acos          mathProtoFuncACos              DontEnum|Function 1
-  asin          mathProtoFuncASin              DontEnum|Function 1
-  atan          mathProtoFuncATan              DontEnum|Function 1
-  atan2         mathProtoFuncATan2             DontEnum|Function 2
-  ceil          mathProtoFuncCeil              DontEnum|Function 1
-  cos           mathProtoFuncCos               DontEnum|Function 1
-  exp           mathProtoFuncExp               DontEnum|Function 1
-  floor         mathProtoFuncFloor             DontEnum|Function 1
-  log           mathProtoFuncLog               DontEnum|Function 1
-  max           mathProtoFuncMax               DontEnum|Function 2
-  min           mathProtoFuncMin               DontEnum|Function 2
-  pow           mathProtoFuncPow               DontEnum|Function 2
-  random        mathProtoFuncRandom            DontEnum|Function 0 
-  round         mathProtoFuncRound             DontEnum|Function 1
-  sin           mathProtoFuncSin               DontEnum|Function 1
-  sqrt          mathProtoFuncSqrt              DontEnum|Function 1
-  tan           mathProtoFuncTan               DontEnum|Function 1
-  imul          mathProtoFuncIMul              DontEnum|Function 2
-@end
-*/
+const ClassInfo MathObject::s_info = { "Math", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(MathObject) };
 
 MathObject::MathObject(JSGlobalObject* globalObject, Structure* structure)
     : JSNonFinalObject(globalObject->vm(), structure)
@@ -100,20 +74,30 @@ void MathObject::finishCreation(ExecState* exec, JSGlobalObject* globalObject)
     putDirectWithoutTransition(exec->vm(), Identifier(exec, "LN2"), jsNumber(log(2.0)), DontDelete | DontEnum | ReadOnly);
     putDirectWithoutTransition(exec->vm(), Identifier(exec, "LN10"), jsNumber(log(10.0)), DontDelete | DontEnum | ReadOnly);
     putDirectWithoutTransition(exec->vm(), Identifier(exec, "LOG2E"), jsNumber(1.0 / log(2.0)), DontDelete | DontEnum | ReadOnly);
-    putDirectWithoutTransition(exec->vm(), Identifier(exec, "LOG10E"), jsNumber(0.4342944819032518), DontDelete | DontEnum | ReadOnly); // See ECMA-262 15.8.1.5
+    putDirectWithoutTransition(exec->vm(), Identifier(exec, "LOG10E"), jsNumber(0.4342944819032518), DontDelete | DontEnum | ReadOnly);
     putDirectWithoutTransition(exec->vm(), Identifier(exec, "PI"), jsNumber(piDouble), DontDelete | DontEnum | ReadOnly);
     putDirectWithoutTransition(exec->vm(), Identifier(exec, "SQRT1_2"), jsNumber(sqrt(0.5)), DontDelete | DontEnum | ReadOnly);
     putDirectWithoutTransition(exec->vm(), Identifier(exec, "SQRT2"), jsNumber(sqrt(2.0)), DontDelete | DontEnum | ReadOnly);
-}
 
-bool MathObject::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot &slot)
-{
-    return getStaticFunctionSlot<JSObject>(exec, ExecState::mathTable(exec), jsCast<MathObject*>(cell), propertyName, slot);
-}
-
-bool MathObject::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)
-{
-    return getStaticFunctionDescriptor<JSObject>(exec, ExecState::mathTable(exec), jsCast<MathObject*>(object), propertyName, descriptor);
+    putDirectNativeFunctionWithoutTransition(exec, globalObject, Identifier(exec, "abs"), 1, mathProtoFuncAbs, AbsIntrinsic, DontEnum | Function);
+    putDirectNativeFunctionWithoutTransition(exec, globalObject, Identifier(exec, "acos"), 1, mathProtoFuncACos, NoIntrinsic, DontEnum | Function);
+    putDirectNativeFunctionWithoutTransition(exec, globalObject, Identifier(exec, "asin"), 1, mathProtoFuncASin, NoIntrinsic, DontEnum | Function);
+    putDirectNativeFunctionWithoutTransition(exec, globalObject, Identifier(exec, "atan"), 1, mathProtoFuncATan, NoIntrinsic, DontEnum | Function);
+    putDirectNativeFunctionWithoutTransition(exec, globalObject, Identifier(exec, "atan2"), 2, mathProtoFuncATan2, NoIntrinsic, DontEnum | Function);
+    putDirectNativeFunctionWithoutTransition(exec, globalObject, Identifier(exec, "ceil"), 1, mathProtoFuncCeil, CeilIntrinsic, DontEnum | Function);
+    putDirectNativeFunctionWithoutTransition(exec, globalObject, Identifier(exec, "cos"), 1, mathProtoFuncCos, NoIntrinsic, DontEnum | Function);
+    putDirectNativeFunctionWithoutTransition(exec, globalObject, Identifier(exec, "exp"), 1, mathProtoFuncExp, ExpIntrinsic, DontEnum | Function);
+    putDirectNativeFunctionWithoutTransition(exec, globalObject, Identifier(exec, "floor"), 1, mathProtoFuncFloor, FloorIntrinsic, DontEnum | Function);
+    putDirectNativeFunctionWithoutTransition(exec, globalObject, Identifier(exec, "log"), 1, mathProtoFuncLog, LogIntrinsic, DontEnum | Function);
+    putDirectNativeFunctionWithoutTransition(exec, globalObject, Identifier(exec, "max"), 2, mathProtoFuncMax, MaxIntrinsic, DontEnum | Function);
+    putDirectNativeFunctionWithoutTransition(exec, globalObject, Identifier(exec, "min"), 2, mathProtoFuncMin, MinIntrinsic, DontEnum | Function);
+    putDirectNativeFunctionWithoutTransition(exec, globalObject, Identifier(exec, "pow"), 2, mathProtoFuncPow, PowIntrinsic, DontEnum | Function);
+    putDirectNativeFunctionWithoutTransition(exec, globalObject, Identifier(exec, "random"), 0, mathProtoFuncRandom, NoIntrinsic, DontEnum | Function);
+    putDirectNativeFunctionWithoutTransition(exec, globalObject, Identifier(exec, "round"), 1, mathProtoFuncRound, RoundIntrinsic, DontEnum | Function);
+    putDirectNativeFunctionWithoutTransition(exec, globalObject, Identifier(exec, "sin"), 1, mathProtoFuncSin, NoIntrinsic, DontEnum | Function);
+    putDirectNativeFunctionWithoutTransition(exec, globalObject, Identifier(exec, "sqrt"), 1, mathProtoFuncSqrt, SqrtIntrinsic, DontEnum | Function);
+    putDirectNativeFunctionWithoutTransition(exec, globalObject, Identifier(exec, "tan"), 1, mathProtoFuncTan, NoIntrinsic, DontEnum | Function);
+    putDirectNativeFunctionWithoutTransition(exec, globalObject, Identifier(exec, "imul"), 1, mathProtoFuncIMul, IMulIntrinsic, DontEnum | Function);
 }
 
 // ------------------------------ Functions --------------------------------

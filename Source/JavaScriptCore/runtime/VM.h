@@ -226,7 +226,6 @@ namespace JSC {
         const HashTable* errorPrototypeTable;
         const HashTable* globalObjectTable;
         const HashTable* jsonTable;
-        const HashTable* mathTable;
         const HashTable* numberConstructorTable;
         const HashTable* numberPrototypeTable;
         const HashTable* objectConstructorTable;

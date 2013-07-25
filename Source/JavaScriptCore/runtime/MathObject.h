@@ -38,8 +38,6 @@ namespace JSC {
             object->finishCreation(exec, globalObject);
             return object;
         }
-        static bool getOwnPropertySlot(JSCell*, ExecState*, PropertyName, PropertySlot&);
-        static bool getOwnPropertyDescriptor(JSObject*, ExecState*, PropertyName, PropertyDescriptor&);
 
         static const ClassInfo s_info;
 

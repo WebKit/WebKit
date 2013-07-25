@@ -272,19 +272,6 @@ sub output() {
 
         my $intrinsic = "NoIntrinsic";
         $intrinsic = "FromCharCodeIntrinsic" if ($key eq "fromCharCode");
-        if ($name eq "mathTable") {
-            $intrinsic = "MinIntrinsic" if ($key eq "min");
-            $intrinsic = "MaxIntrinsic" if ($key eq "max");
-            $intrinsic = "SqrtIntrinsic" if ($key eq "sqrt");
-            $intrinsic = "PowIntrinsic" if ($key eq "pow");
-            $intrinsic = "AbsIntrinsic" if ($key eq "abs");
-            $intrinsic = "FloorIntrinsic" if ($key eq "floor");
-            $intrinsic = "CeilIntrinsic" if ($key eq "ceil");
-            $intrinsic = "RoundIntrinsic" if ($key eq "round");
-            $intrinsic = "ExpIntrinsic" if ($key eq "exp");
-            $intrinsic = "LogIntrinsic" if ($key eq "log");
-            $intrinsic = "IMulIntrinsic" if ($key eq "imul");
-        }
         if ($name eq "arrayPrototypeTable") {
             $intrinsic = "ArrayPushIntrinsic" if ($key eq "push");
             $intrinsic = "ArrayPopIntrinsic" if ($key eq "pop");

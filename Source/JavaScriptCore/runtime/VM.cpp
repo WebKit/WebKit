@@ -91,7 +91,6 @@ extern const HashTable dateTable;
 extern const HashTable dateConstructorTable;
 extern const HashTable errorPrototypeTable;
 extern const HashTable globalObjectTable;
-extern const HashTable mathTable;
 extern const HashTable numberConstructorTable;
 extern const HashTable numberPrototypeTable;
 JS_EXPORTDATA extern const HashTable objectConstructorTable;
@@ -151,7 +150,6 @@ VM::VM(VMType vmType, HeapType heapType)
     , errorPrototypeTable(fastNew<HashTable>(JSC::errorPrototypeTable))
     , globalObjectTable(fastNew<HashTable>(JSC::globalObjectTable))
     , jsonTable(fastNew<HashTable>(JSC::jsonTable))
-    , mathTable(fastNew<HashTable>(JSC::mathTable))
     , numberConstructorTable(fastNew<HashTable>(JSC::numberConstructorTable))
     , numberPrototypeTable(fastNew<HashTable>(JSC::numberPrototypeTable))
     , objectConstructorTable(fastNew<HashTable>(JSC::objectConstructorTable))
@@ -295,7 +293,6 @@ VM::~VM()
     errorPrototypeTable->deleteTable();
     globalObjectTable->deleteTable();
     jsonTable->deleteTable();
-    mathTable->deleteTable();
     numberConstructorTable->deleteTable();
     numberPrototypeTable->deleteTable();
     objectConstructorTable->deleteTable();
@@ -313,7 +310,6 @@ VM::~VM()
     fastDelete(const_cast<HashTable*>(errorPrototypeTable));
     fastDelete(const_cast<HashTable*>(globalObjectTable));
     fastDelete(const_cast<HashTable*>(jsonTable));
-    fastDelete(const_cast<HashTable*>(mathTable));
     fastDelete(const_cast<HashTable*>(numberConstructorTable));
     fastDelete(const_cast<HashTable*>(numberPrototypeTable));
     fastDelete(const_cast<HashTable*>(objectConstructorTable));

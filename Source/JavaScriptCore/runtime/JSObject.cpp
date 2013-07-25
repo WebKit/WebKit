@@ -2199,9 +2199,17 @@ void JSObject::putDirectNativeFunction(ExecState* exec, JSGlobalObject* globalOb
     StringImpl* name = propertyName.publicName();
     ASSERT(name);
     
-    JSFunction* function =
-        JSFunction::create(exec, globalObject, functionLength, name, nativeFunction, intrinsic);
+    JSFunction* function = JSFunction::create(exec, globalObject, functionLength, name, nativeFunction, intrinsic);
     putDirect(exec->vm(), propertyName, function, attributes);
+}
+
+void JSObject::putDirectNativeFunctionWithoutTransition(ExecState* exec, JSGlobalObject* globalObject, const PropertyName& propertyName, unsigned functionLength, NativeFunction nativeFunction, Intrinsic intrinsic, unsigned attributes)
+{
+    StringImpl* name = propertyName.publicName();
+    ASSERT(name);
+    
+    JSFunction* function = JSFunction::create(exec, globalObject, functionLength, name, nativeFunction, intrinsic);
+    putDirectWithoutTransition(exec->vm(), propertyName, function, attributes);
 }
 
 ALWAYS_INLINE unsigned JSObject::getNewVectorLength(unsigned currentVectorLength, unsigned currentLength, unsigned desiredLength)
