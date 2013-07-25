@@ -2897,19 +2897,11 @@ void ProgramCodeBlock::jettisonImpl()
 
 void EvalCodeBlock::jettisonImpl()
 {
-    ASSERT(JITCode::isOptimizingJIT(jitType()));
-    ASSERT(this == replacement());
-    if (DFG::shouldShowDisassembly())
-        dataLog("Jettisoning ", *this, ".\n");
     static_cast<EvalExecutable*>(ownerExecutable())->jettisonOptimizedCode(*vm());
 }
 
 void FunctionCodeBlock::jettisonImpl()
 {
-    ASSERT(JITCode::isOptimizingJIT(jitType()));
-    ASSERT(this == replacement());
-    if (DFG::shouldShowDisassembly())
-        dataLog("Jettisoning ", *this, ".\n");
     static_cast<FunctionExecutable*>(ownerExecutable())->jettisonOptimizedCodeFor(*vm(), m_isConstructor ? CodeForConstruct : CodeForCall);
 }
 
@@ -3410,7 +3402,7 @@ void CodeBlock::tallyFrequentExitSites()
         for (unsigned i = 0; i < jitCode->osrExit.size(); ++i) {
             FTL::OSRExit& exit = jitCode->osrExit[i];
             
-            if (!exit.considerAddingAsFrequentExitSite(this, profiledBlock))
+            if (!exit.considerAddingAsFrequentExitSite(profiledBlock))
                 continue;
             
 #if DFG_ENABLE(DEBUG_VERBOSE)

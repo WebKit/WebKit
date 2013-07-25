@@ -937,7 +937,7 @@ private:
 #if ENABLE(JIT)
     ClosureCallStubRoutine* findClosureCallForReturnPC(ReturnAddressPtr);
 #endif
-
+        
 #if ENABLE(VALUE_PROFILER)
     void updateAllPredictionsAndCountLiveness(OperationInProgress, unsigned& numberOfLiveNonArgumentValueProfiles, unsigned& numberOfSamplesInProfiles);
 #endif
