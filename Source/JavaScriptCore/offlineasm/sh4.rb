@@ -777,7 +777,7 @@ class Instruction
             # This special opcode always generates an illegal instruction exception.
             $asm.puts ".word 0xfffd"
         else
-            raise "Unhandled opcode #{opcode} at #{codeOriginString}"
+            lowerDefault
         end
     end
 end

@@ -886,7 +886,7 @@ class Instruction
             $asm.putStr("OFFLINE_ASM_CPLOAD($31)")
             $asm.puts "move $s4, $gp"
         else
-            raise "Unhandled opcode #{opcode} at #{codeOriginString}"
+            lowerDefault
         end
     end
 end
