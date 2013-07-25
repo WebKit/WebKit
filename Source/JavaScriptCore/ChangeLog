@@ -1,5 +1,24 @@
 2013-05-10  Filip Pizlo  <fpizlo@apple.com>
 
+        fourthTier: FTL should support CompareStrictEqConstant
+        https://bugs.webkit.org/show_bug.cgi?id=115941
+
+        Reviewed by Mark Hahnenberg.
+        
+        Pretty simple, but factors out the craziness of comparing against null or undefined
+        in a way that is reusable for both == and ===.
+
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::compileCompareEqConstant):
+        (JSC::FTL::LowerDFGToLLVM::compileCompareStrictEqConstant):
+        (LowerDFGToLLVM):
+        (JSC::FTL::LowerDFGToLLVM::equalNullOrUndefined):
+
+2013-05-10  Filip Pizlo  <fpizlo@apple.com>
+
         fourthTier: FTL should support CompareEqConstant
         https://bugs.webkit.org/show_bug.cgi?id=115939
 

@@ -370,6 +370,9 @@ private:
         case CompareStrictEq:
             compileCompareStrictEq();
             break;
+        case CompareStrictEqConstant:
+            compileCompareStrictEqConstant();
+            break;
         case CompareLess:
             compileCompareLess();
             break;
@@ -971,57 +974,8 @@ private:
     void compileCompareEqConstant()
     {
         ASSERT(m_graph.valueOfJSConstant(m_node->child2().node()).isNull());
-        
-        bool validWatchpoint = masqueradesAsUndefinedWatchpointIfIsStillValid();
-        
-        LValue value = lowJSValue(m_node->child1());
-        
-        LBasicBlock cellCase = FTL_NEW_BLOCK(m_out, ("CompareEqConstant cell case"));
-        LBasicBlock primitiveCase = FTL_NEW_BLOCK(m_out, ("CompareEqConstant primitive case"));
-        LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("CompareEqConstant continuation"));
-        
-        m_out.branch(isNotCell(value), primitiveCase, cellCase);
-        
-        LBasicBlock lastNext = m_out.appendTo(cellCase, primitiveCase);
-        
-        Vector<ValueFromBlock, 3> results;
-        
-        if (validWatchpoint) {
-            results.append(m_out.anchor(m_out.booleanFalse));
-            m_out.jump(continuation);
-        } else {
-            LBasicBlock masqueradesCase =
-                FTL_NEW_BLOCK(m_out, ("CompareEqConstant masquerades case"));
-                
-            LValue structure = m_out.loadPtr(value, m_heaps.JSCell_structure);
-            
-            results.append(m_out.anchor(m_out.booleanFalse));
-            
-            m_out.branch(
-                m_out.testNonZero8(
-                    m_out.load8(structure, m_heaps.Structure_typeInfoFlags),
-                    m_out.constInt8(MasqueradesAsUndefined)),
-                masqueradesCase, continuation);
-            
-            m_out.appendTo(masqueradesCase, primitiveCase);
-            
-            results.append(m_out.anchor(
-                m_out.equal(
-                    m_out.constIntPtr(m_graph.globalObjectFor(m_node->codeOrigin)),
-                    m_out.loadPtr(structure, m_heaps.Structure_globalObject))));
-            m_out.jump(continuation);
-        }
-        
-        m_out.appendTo(primitiveCase, continuation);
-        
-        results.append(m_out.anchor(m_out.equal(
-            m_out.bitAnd(value, m_out.constInt64(~TagBitUndefined)),
-            m_out.constInt64(ValueNull))));
-        m_out.jump(continuation);
-        
-        m_out.appendTo(continuation, lastNext);
-        
-        m_booleanValues.add(m_node, m_out.phi(m_out.boolean, results));
+        masqueradesAsUndefinedWatchpointIfIsStillValid();
+        equalNullOrUndefined(m_node->child1(), EqualNullOrUndefined);
     }
     
     void compileCompareStrictEq()
@@ -1050,6 +1004,29 @@ private:
         }
         
         RELEASE_ASSERT_NOT_REACHED();
+    }
+    
+    void compileCompareStrictEqConstant()
+    {
+        JSValue constant = m_graph.valueOfJSConstant(m_node->child2().node());
+
+        if (constant.isUndefinedOrNull()
+            && !masqueradesAsUndefinedWatchpointIfIsStillValid()) {
+            if (constant.isNull()) {
+                equalNullOrUndefined(m_node->child1(), EqualNull);
+                return;
+            }
+        
+            ASSERT(constant.isUndefined());
+            equalNullOrUndefined(m_node->child1(), EqualUndefined);
+            return;
+        }
+        
+        m_booleanValues.add(
+            m_node,
+            m_out.equal(
+                lowJSValue(m_node->child1()),
+                m_out.constInt64(JSValue::encode(constant))));
     }
     
     void compileCompareLess()
@@ -1161,6 +1138,73 @@ private:
             RELEASE_ASSERT_NOT_REACHED();
             break;
         }
+    }
+    
+    enum EqualNullOrUndefinedMode { EqualNull, EqualUndefined, EqualNullOrUndefined };
+    void equalNullOrUndefined(Edge edge, EqualNullOrUndefinedMode mode)
+    {
+        bool validWatchpoint = masqueradesAsUndefinedWatchpointIsStillValid();
+        
+        LValue value = lowJSValue(edge);
+        
+        LBasicBlock cellCase = FTL_NEW_BLOCK(m_out, ("CompareEqConstant cell case"));
+        LBasicBlock primitiveCase = FTL_NEW_BLOCK(m_out, ("CompareEqConstant primitive case"));
+        LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("CompareEqConstant continuation"));
+        
+        m_out.branch(isNotCell(value), primitiveCase, cellCase);
+        
+        LBasicBlock lastNext = m_out.appendTo(cellCase, primitiveCase);
+        
+        Vector<ValueFromBlock, 3> results;
+        
+        if (validWatchpoint) {
+            results.append(m_out.anchor(m_out.booleanFalse));
+            m_out.jump(continuation);
+        } else {
+            LBasicBlock masqueradesCase =
+                FTL_NEW_BLOCK(m_out, ("CompareEqConstant masquerades case"));
+                
+            LValue structure = m_out.loadPtr(value, m_heaps.JSCell_structure);
+            
+            results.append(m_out.anchor(m_out.booleanFalse));
+            
+            m_out.branch(
+                m_out.testNonZero8(
+                    m_out.load8(structure, m_heaps.Structure_typeInfoFlags),
+                    m_out.constInt8(MasqueradesAsUndefined)),
+                masqueradesCase, continuation);
+            
+            m_out.appendTo(masqueradesCase, primitiveCase);
+            
+            results.append(m_out.anchor(
+                m_out.equal(
+                    m_out.constIntPtr(m_graph.globalObjectFor(m_node->codeOrigin)),
+                    m_out.loadPtr(structure, m_heaps.Structure_globalObject))));
+            m_out.jump(continuation);
+        }
+        
+        m_out.appendTo(primitiveCase, continuation);
+        
+        LValue primitiveResult;
+        switch (mode) {
+        case EqualNull:
+            primitiveResult = m_out.equal(value, m_out.constInt64(ValueNull));
+            break;
+        case EqualUndefined:
+            primitiveResult = m_out.equal(value, m_out.constInt64(ValueUndefined));
+            break;
+        case EqualNullOrUndefined:
+            primitiveResult = m_out.equal(
+                m_out.bitAnd(value, m_out.constInt64(~TagBitUndefined)),
+                m_out.constInt64(ValueNull));
+            break;
+        }
+        results.append(m_out.anchor(primitiveResult));
+        m_out.jump(continuation);
+        
+        m_out.appendTo(continuation, lastNext);
+        
+        m_booleanValues.add(m_node, m_out.phi(m_out.boolean, results));
     }
     
     void speculateBackward(
