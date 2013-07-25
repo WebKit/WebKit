@@ -28,6 +28,7 @@
 
 #if ENABLE(DFG_JIT)
 
+#include "DFGEdgeUsesStructure.h"
 #include "DFGGraph.h"
 #include "DFGPhase.h"
 #include "JSCellInlines.h"
@@ -610,6 +611,8 @@ private:
                 break;
             }
             if (m_graph.clobbersWorld(node) || node->canExit())
+                return 0;
+            if (edgesUseStructure(m_graph, node))
                 return 0;
         }
         return 0;

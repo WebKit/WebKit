@@ -159,6 +159,19 @@ ALWAYS_INLINE bool isCell(UseKind kind)
     }
 }
 
+// Returns true if it uses structure in a way that could be clobbered by
+// things that change the structure.
+ALWAYS_INLINE bool usesStructure(UseKind kind)
+{
+    switch (kind) {
+    case StringObjectUse:
+    case StringOrStringObjectUse:
+        return true;
+    default:
+        return false;
+    }
+}
+
 } } // namespace JSC::DFG
 
 namespace WTF {

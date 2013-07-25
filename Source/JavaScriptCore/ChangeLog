@@ -1,5 +1,28 @@
 2013-07-19  Filip Pizlo  <fpizlo@apple.com>
 
+        fourthTier: StringObjectUse uses structures, and CSE should know that
+        https://bugs.webkit.org/show_bug.cgi?id=118940
+
+        Reviewed by Geoffrey Garen.
+        
+        This is asymptomatic right now, but we should fix it.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::putStructureStoreElimination):
+        * dfg/DFGEdgeUsesStructure.h: Added.
+        (DFG):
+        (EdgeUsesStructure):
+        (JSC::DFG::EdgeUsesStructure::EdgeUsesStructure):
+        (JSC::DFG::EdgeUsesStructure::operator()):
+        (JSC::DFG::EdgeUsesStructure::result):
+        (JSC::DFG::edgesUseStructure):
+        * dfg/DFGUseKind.h:
+        (DFG):
+        (JSC::DFG::usesStructure):
+
+2013-07-19  Filip Pizlo  <fpizlo@apple.com>
+
         fourthTier: String GetByVal out-of-bounds handling is so wrong
         https://bugs.webkit.org/show_bug.cgi?id=118935
 

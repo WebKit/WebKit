@@ -797,6 +797,7 @@
 		A78A977F179738D5009DF744 /* FTLGeneratedFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = A78A977C179738D5009DF744 /* FTLGeneratedFunction.h */; };
 		A78A9780179738D5009DF744 /* FTLJITFinalizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A78A977D179738D5009DF744 /* FTLJITFinalizer.cpp */; };
 		A78A9781179738D5009DF744 /* FTLJITFinalizer.h in Headers */ = {isa = PBXBuildFile; fileRef = A78A977E179738D5009DF744 /* FTLJITFinalizer.h */; };
+		A7986D5717A0BB1E00A95DD0 /* DFGEdgeUsesStructure.h in Headers */ = {isa = PBXBuildFile; fileRef = A7986D5617A0BB1E00A95DD0 /* DFGEdgeUsesStructure.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A7A4AE0817973B26005612B1 /* MacroAssemblerX86Common.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7A4AE0717973B26005612B1 /* MacroAssemblerX86Common.cpp */; };
 		A7A4AE0D17973B4D005612B1 /* JITStubsMIPS.h in Headers */ = {isa = PBXBuildFile; fileRef = A7A4AE0917973B4D005612B1 /* JITStubsMIPS.h */; };
 		A7A4AE0F17973B4D005612B1 /* JITStubsSH4.h in Headers */ = {isa = PBXBuildFile; fileRef = A7A4AE0B17973B4D005612B1 /* JITStubsSH4.h */; };
@@ -1859,6 +1860,7 @@
 		A78A977C179738D5009DF744 /* FTLGeneratedFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLGeneratedFunction.h; path = ftl/FTLGeneratedFunction.h; sourceTree = "<group>"; };
 		A78A977D179738D5009DF744 /* FTLJITFinalizer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLJITFinalizer.cpp; path = ftl/FTLJITFinalizer.cpp; sourceTree = "<group>"; };
 		A78A977E179738D5009DF744 /* FTLJITFinalizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLJITFinalizer.h; path = ftl/FTLJITFinalizer.h; sourceTree = "<group>"; };
+		A7986D5617A0BB1E00A95DD0 /* DFGEdgeUsesStructure.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGEdgeUsesStructure.h; path = dfg/DFGEdgeUsesStructure.h; sourceTree = "<group>"; };
 		A79E781E15EECBA80047C855 /* UnlinkedCodeBlock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnlinkedCodeBlock.cpp; sourceTree = "<group>"; };
 		A79E781F15EECBA80047C855 /* UnlinkedCodeBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnlinkedCodeBlock.h; sourceTree = "<group>"; };
 		A79EDB0811531CD60019E912 /* JSObjectRefPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSObjectRefPrivate.h; sourceTree = "<group>"; };
@@ -2167,9 +2169,9 @@
 		034768DFFF38A50411DB9C8B /* Products */ = {
 			isa = PBXGroup;
 			children = (
+				932F5BE10822A1C700736975 /* jsc */,
 				0FF922CF14F46B130041A24E /* JSCLLIntOffsetsExtractor */,
 				932F5BD90822A1C700736975 /* JavaScriptCore.framework */,
-				932F5BE10822A1C700736975 /* jsc */,
 				141211200A48793C00480255 /* minidom */,
 				14BD59BF0A3E8F9000BAF59C /* testapi */,
 				6511230514046A4C002B101D /* testRegExp */,
@@ -3104,6 +3106,7 @@
 				0FD3C82214115D0E00FD81CB /* DFGDriver.h */,
 				0FB4B51B16B62772003F696B /* DFGEdge.cpp */,
 				0F66E16914DF3F1300B7B2E4 /* DFGEdge.h */,
+				A7986D5617A0BB1E00A95DD0 /* DFGEdgeUsesStructure.h */,
 				A78A976C179738B8009DF744 /* DFGFailedFinalizer.cpp */,
 				A78A976D179738B8009DF744 /* DFGFailedFinalizer.h */,
 				A7BFF3BF179868940002F462 /* DFGFiltrationResult.h */,
@@ -3525,6 +3528,7 @@
 				0F1E3A471534CBB9000F9456 /* DFGDoubleFormatState.h in Headers */,
 				0FD3C82814115D4F00FD81CB /* DFGDriver.h in Headers */,
 				0F66E16C14DF3F1600B7B2E4 /* DFGEdge.h in Headers */,
+				A7986D5717A0BB1E00A95DD0 /* DFGEdgeUsesStructure.h in Headers */,
 				0FBC0AE81496C7C700D4FBDD /* DFGExitProfile.h in Headers */,
 				A78A9775179738B8009DF744 /* DFGFailedFinalizer.h in Headers */,
 				A7BFF3C0179868940002F462 /* DFGFiltrationResult.h in Headers */,
