@@ -405,7 +405,6 @@ private:
             case Array::Double:
                 if (arrayMode.arrayClass() == Array::OriginalArray
                     && arrayMode.speculation() == Array::InBounds
-                    && arrayMode.conversion() == Array::AsIs
                     && m_graph.globalObjectFor(node->codeOrigin)->arrayPrototypeChainIsSane()
                     && !(node->flags() & NodeUsedAsOther))
                     node->setArrayMode(arrayMode.withSpeculation(Array::SaneChain));

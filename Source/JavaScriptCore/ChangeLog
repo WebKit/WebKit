@@ -1,5 +1,31 @@
 2013-06-25  Filip Pizlo  <fpizlo@apple.com>
 
+        fourthTier: Convert versus AsIs should have no bearing on whether we can do the SaneChain optimization for double array GetByVals
+        https://bugs.webkit.org/show_bug.cgi?id=118028
+
+        Reviewed by Sam Weinig.
+        
+        The SaneChain optimization allows us to get rid of the NaN check on loading from
+        a double array, if the result is used in an arithmetic op that wouldn't
+        distinguish between NaN and undefined. Normally the NaN check would be needed
+        because NaN is the hole marker.
+        
+        The SaneChain optimization definitely requires that you're an Original array,
+        since we need to watchpoint the array prototype chain. And so it also needs to
+        be a JSArray, and not an object that has indexed double properties. We also
+        require an in-bounds access, since the backend is only capable of the
+        optimization in the in-bounds case (though we could extend it to OOB in the
+        future). But whether the array is being converted or is as-is isn't relevant.
+        Either way, if it's a double original array in-bounds access by the time that
+        the array check (or conversion!) completes, we can do the optimization.
+        
+        Ever-so-slight speed-up on Kraken/imaging-gaussian-blur.
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+
+2013-06-25  Filip Pizlo  <fpizlo@apple.com>
+
         fourthTier: DFG should support switch_string
         https://bugs.webkit.org/show_bug.cgi?id=117967
 
