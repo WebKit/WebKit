@@ -414,6 +414,9 @@ private:
         case Branch:
             compileBranch();
             break;
+        case Switch:
+            compileSwitch();
+            break;
         case Return:
             compileReturn();
             break;
@@ -1426,6 +1429,76 @@ private:
             boolify(m_node->child1()),
             m_blocks.get(m_graph.m_blocks[m_node->takenBlockIndex()].get()),
             m_blocks.get(m_graph.m_blocks[m_node->notTakenBlockIndex()].get()));
+    }
+    
+    void compileSwitch()
+    {
+        SwitchData* data = m_node->switchData();
+        switch (data->kind) {
+        case SwitchImm: {
+            Vector<ValueFromBlock, 2> intValues;
+            LBasicBlock switchOnInts = FTL_NEW_BLOCK(m_out, ("Switch/SwitchImm int case"));
+            
+            LBasicBlock lastNext = m_out.appendTo(m_out.m_block, switchOnInts);
+            
+            switch (m_node->child1().useKind()) {
+            case Int32Use: {
+                intValues.append(m_out.anchor(lowInt32(m_node->child1())));
+                m_out.jump(switchOnInts);
+                break;
+            }
+                
+            case UntypedUse: {
+                LBasicBlock isInt = FTL_NEW_BLOCK(m_out, ("Switch/SwitchImm is int"));
+                LBasicBlock isNotInt = FTL_NEW_BLOCK(m_out, ("Switch/SwitchImm is not int"));
+                LBasicBlock isDouble = FTL_NEW_BLOCK(m_out, ("Switch/SwitchImm is double"));
+                
+                LValue boxedValue = lowJSValue(m_node->child1());
+                m_out.branch(isNotInt32(boxedValue), isNotInt, isInt);
+                
+                LBasicBlock innerLastNext = m_out.appendTo(isInt, isNotInt);
+                
+                intValues.append(m_out.anchor(unboxInt32(boxedValue)));
+                m_out.jump(switchOnInts);
+                
+                m_out.appendTo(isNotInt, isDouble);
+                m_out.branch(
+                    isCellOrMisc(boxedValue),
+                    m_blocks.get(m_graph.m_blocks[data->fallThrough].get()),
+                    isDouble);
+                
+                m_out.appendTo(isDouble, innerLastNext);
+                LValue doubleValue = unboxDouble(boxedValue);
+                LValue intInDouble = m_out.fpToInt32(doubleValue);
+                intValues.append(m_out.anchor(intInDouble));
+                m_out.branch(
+                    m_out.doubleEqual(m_out.intToDouble(intInDouble), doubleValue),
+                    switchOnInts,
+                    m_blocks.get(m_graph.m_blocks[data->fallThrough].get()));
+                break;
+            }
+                
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+                break;
+            }
+            
+            m_out.appendTo(switchOnInts, lastNext);
+            LValue intValue = m_out.phi(m_out.int32, intValues);
+            
+            Vector<SwitchCase> cases;
+            for (unsigned i = 0; i < data->cases.size(); ++i) {
+                cases.append(SwitchCase(
+                    m_out.constInt32(data->cases[i].value.asInt32()),
+                    m_blocks.get(m_graph.m_blocks[data->cases[i].target].get())));
+            }
+            
+            m_out.switchInstruction(
+                intValue, cases,
+                m_blocks.get(m_graph.m_blocks[data->fallThrough].get()));
+            return;
+        } }
+        RELEASE_ASSERT_NOT_REACHED();
     }
     
     void compileReturn()

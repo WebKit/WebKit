@@ -50,10 +50,15 @@ static void compileEntry(CCallHelpers& jit)
 
 void link(State& state)
 {
+    CodeBlock* codeBlock = state.graph.m_codeBlock;
+    
+    // LLVM will create its own jump tables as needed.
+    codeBlock->clearImmediateSwitchJumpTables();
+    
     // Create the entrypoint.
     // FIXME: This is a total kludge - LLVM should just use our calling convention.
     // https://bugs.webkit.org/show_bug.cgi?id=113621
-    CCallHelpers jit(&state.graph.m_vm, state.graph.m_codeBlock);
+    CCallHelpers jit(&state.graph.m_vm, codeBlock);
     
     compileEntry(jit);
     
@@ -64,7 +69,7 @@ void link(State& state)
     // Plant a check that sufficient space is available in the JSStack.
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=56291
     jit.addPtr(
-        CCallHelpers::TrustedImm32(state.graph.m_codeBlock->m_numCalleeRegisters * sizeof(Register)),
+        CCallHelpers::TrustedImm32(codeBlock->m_numCalleeRegisters * sizeof(Register)),
         GPRInfo::callFrameRegister, GPRInfo::regT1);
     CCallHelpers::Jump stackCheck = jit.branchPtr(
         CCallHelpers::Below,
@@ -102,7 +107,7 @@ void link(State& state)
         GPRInfo::regT1);
     jit.branch32(
         CCallHelpers::AboveOrEqual, GPRInfo::regT1,
-        CCallHelpers::TrustedImm32(state.graph.m_codeBlock->numParameters()))
+        CCallHelpers::TrustedImm32(codeBlock->numParameters()))
         .linkTo(fromArityCheck, &jit);
     jit.move(CCallHelpers::stackPointerRegister, GPRInfo::argumentGPR0);
     jit.poke(
@@ -118,9 +123,9 @@ void link(State& state)
     jit.move(GPRInfo::regT0, GPRInfo::callFrameRegister);
     jit.jump(fromArityCheck);
         
-    OwnPtr<LinkBuffer> linkBuffer = adoptPtr(new LinkBuffer(state.graph.m_vm, &jit, state.graph.m_codeBlock, JITCompilationMustSucceed));
+    OwnPtr<LinkBuffer> linkBuffer = adoptPtr(new LinkBuffer(state.graph.m_vm, &jit, codeBlock, JITCompilationMustSucceed));
     linkBuffer->link(callStackCheck, cti_stack_check);
-    linkBuffer->link(callArityCheck, state.graph.m_codeBlock->m_isConstructor ? cti_op_construct_arityCheck : cti_op_call_arityCheck);
+    linkBuffer->link(callArityCheck, codeBlock->m_isConstructor ? cti_op_construct_arityCheck : cti_op_call_arityCheck);
     
     state.finalizer->initializeEntrypointLinkBuffer(linkBuffer.release());
     state.finalizer->initializeFunction(state.generatedFunction);

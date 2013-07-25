@@ -31,6 +31,7 @@
 #if ENABLE(FTL_JIT)
 
 #include "FTLAbbreviatedTypes.h"
+#include "FTLSwitchCase.h"
 #include "FTLValueFromBlock.h"
 
 namespace JSC { namespace FTL {
@@ -189,6 +190,7 @@ static inline LValue buildNot(LBuilder builder, LValue value) { return LLVMBuild
 static inline LValue buildLoad(LBuilder builder, LValue pointer) { return LLVMBuildLoad(builder, pointer, ""); }
 static inline LValue buildStore(LBuilder builder, LValue value, LValue pointer) { return LLVMBuildStore(builder, value, pointer); }
 static inline LValue buildZExt(LBuilder builder, LValue value, LType type) { return LLVMBuildZExt(builder, value, type, ""); }
+static inline LValue buildFPToSI(LBuilder builder, LValue value, LType type) { return LLVMBuildFPToSI(builder, value, type, ""); }
 static inline LValue buildSIToFP(LBuilder builder, LValue value, LType type) { return LLVMBuildSIToFP(builder, value, type, ""); }
 static inline LValue buildUIToFP(LBuilder builder, LValue value, LType type) { return LLVMBuildUIToFP(builder, value, type, ""); }
 static inline LValue buildIntCast(LBuilder builder, LValue value, LType type) { return LLVMBuildIntCast(builder, value, type, ""); }
@@ -225,6 +227,16 @@ static inline LValue buildExtractValue(LBuilder builder, LValue aggVal, unsigned
 static inline LValue buildSelect(LBuilder builder, LValue condition, LValue taken, LValue notTaken) { return LLVMBuildSelect(builder, condition, taken, notTaken, ""); }
 static inline LValue buildBr(LBuilder builder, LBasicBlock destination) { return LLVMBuildBr(builder, destination); }
 static inline LValue buildCondBr(LBuilder builder, LValue condition, LBasicBlock taken, LBasicBlock notTaken) { return LLVMBuildCondBr(builder, condition, taken, notTaken); }
+static inline LValue buildSwitch(LBuilder builder, LValue value, LBasicBlock fallThrough, unsigned numCases) { return LLVMBuildSwitch(builder, value, fallThrough, numCases); }
+static inline void addCase(LValue switchInst, LValue value, LBasicBlock target) { LLVMAddCase(switchInst, value, target); }
+template<typename VectorType>
+static inline LValue buildSwitch(LBuilder builder, LValue value, const VectorType& cases, LBasicBlock fallThrough)
+{
+    LValue result = buildSwitch(builder, value, fallThrough, cases.size());
+    for (unsigned i = 0; i < cases.size(); ++i)
+        addCase(result, cases[i].value(), cases[i].target());
+    return result;
+}
 static inline LValue buildRet(LBuilder builder, LValue value) { return LLVMBuildRet(builder, value); }
 static inline LValue buildUnreachable(LBuilder builder) { return LLVMBuildUnreachable(builder); }
 

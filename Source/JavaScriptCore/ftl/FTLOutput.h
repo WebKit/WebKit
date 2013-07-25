@@ -170,6 +170,8 @@ public:
     }
     
     LValue zeroExt(LValue value, LType type) { return buildZExt(m_builder, value, type); }
+    LValue fpToInt(LValue value, LType type) { return buildFPToSI(m_builder, value, type); }
+    LValue fpToInt32(LValue value) { return fpToInt(value, int32); }
     LValue intToFP(LValue value, LType type) { return buildSIToFP(m_builder, value, type); }
     LValue intToDouble(LValue value) { return intToFP(value, doubleType); }
     LValue unsignedToFP(LValue value, LType type) { return buildUIToFP(m_builder, value, type); }
@@ -325,6 +327,8 @@ public:
     
     void jump(LBasicBlock destination) { buildBr(m_builder, destination); }
     void branch(LValue condition, LBasicBlock taken, LBasicBlock notTaken) { buildCondBr(m_builder, condition, taken, notTaken); }
+    template<typename VectorType>
+    void switchInstruction(LValue value, const VectorType& cases, LBasicBlock fallThrough) { buildSwitch(m_builder, value, cases, fallThrough); }
     void ret(LValue value) { buildRet(m_builder, value); }
     
     void unreachable() { buildUnreachable(m_builder); }

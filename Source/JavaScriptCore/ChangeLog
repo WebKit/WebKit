@@ -1,3 +1,37 @@
+2013-06-17  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: FTL should support Switch
+        https://bugs.webkit.org/show_bug.cgi?id=117704
+
+        Reviewed by Oliver Hunt.
+
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::clearImmediateSwitchJumpTables):
+        * ftl/FTLAbbreviations.h:
+        (JSC::FTL::buildFPToSI):
+        (JSC::FTL::buildSwitch):
+        (JSC::FTL::addCase):
+        (FTL):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLink.cpp:
+        (JSC::FTL::link):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileNode):
+        (JSC::FTL::LowerDFGToLLVM::compileSwitch):
+        (LowerDFGToLLVM):
+        * ftl/FTLOutput.h:
+        (JSC::FTL::Output::fpToInt):
+        (JSC::FTL::Output::fpToInt32):
+        (Output):
+        (JSC::FTL::Output::switchInstruction):
+        * ftl/FTLSwitchCase.h: Added.
+        (FTL):
+        (SwitchCase):
+        (JSC::FTL::SwitchCase::SwitchCase):
+        (JSC::FTL::SwitchCase::value):
+        (JSC::FTL::SwitchCase::target):
+
 2013-06-15  Filip Pizlo  <fpizlo@apple.com>
 
         fourthTier: Add CFG simplification for Switch
