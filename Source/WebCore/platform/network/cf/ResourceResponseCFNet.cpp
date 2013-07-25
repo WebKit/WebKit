@@ -69,13 +69,6 @@ static inline bool filenameHasSaneExtension(const String& filename)
     return dot > 0 && dot < length - 1;
 }
 
-static time_t toTimeT(CFAbsoluteTime time)
-{
-    static const double maxTimeAsDouble = std::numeric_limits<time_t>::max();
-    static const double minTimeAsDouble = std::numeric_limits<time_t>::min();
-    return static_cast<time_t>(min(max(minTimeAsDouble, time + kCFAbsoluteTimeIntervalSince1970), maxTimeAsDouble));
-}
-
 void ResourceResponse::platformLazyInit(InitLevel initLevel)
 {
     if (m_initLevel > initLevel)

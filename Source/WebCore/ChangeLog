@@ -1,3 +1,9 @@
+2013-07-25  Pratik Solanki  <psolanki@apple.com>
+
+        Unreviewed build fix after r153333.
+
+        * platform/network/cf/ResourceResponseCFNet.cpp: Remove toTimeT since it is no longer called.
+
 2013-07-25  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Unreviewed EFL build fix after r153315.
