@@ -79,8 +79,9 @@ void reifyInlinedCallFrames(CCallHelpers& jit, const OSRExitBase& exit)
 {
     ASSERT(jit.baselineCodeBlock()->jitType() == JITCode::BaselineJIT);
     jit.storePtr(AssemblyHelpers::TrustedImmPtr(jit.baselineCodeBlock()), AssemblyHelpers::addressFor((VirtualRegister)JSStack::CodeBlock));
-    
-    for (CodeOrigin codeOrigin = exit.m_codeOrigin; codeOrigin.inlineCallFrame; codeOrigin = codeOrigin.inlineCallFrame->caller) {
+
+    CodeOrigin codeOrigin;
+    for (codeOrigin = exit.m_codeOrigin; codeOrigin.inlineCallFrame; codeOrigin = codeOrigin.inlineCallFrame->caller) {
         InlineCallFrame* inlineCallFrame = codeOrigin.inlineCallFrame;
         CodeBlock* baselineCodeBlock = jit.baselineCodeBlockFor(codeOrigin);
         CodeBlock* baselineCodeBlockForCaller = jit.baselineCodeBlockFor(inlineCallFrame->caller);
@@ -125,7 +126,11 @@ void reifyInlinedCallFrames(CCallHelpers& jit, const OSRExitBase& exit)
         if (!inlineCallFrame->isClosureCall())
             jit.storePtr(AssemblyHelpers::TrustedImmPtr(inlineCallFrame->callee.get()), AssemblyHelpers::payloadFor((VirtualRegister)(inlineCallFrame->stackOffset + JSStack::Callee)));
 #endif // USE(JSVALUE64) // ending the #else part, so directly above is the 32-bit part
+
+        jit.store32(AssemblyHelpers::TrustedImm32(codeOrigin.bytecodeIndex), AssemblyHelpers::tagFor((VirtualRegister)(inlineCallFrame->stackOffset + JSStack::ArgumentCount)));
     }
+
+    jit.store32(AssemblyHelpers::TrustedImm32(codeOrigin.bytecodeIndex), AssemblyHelpers::tagFor((VirtualRegister)(JSStack::ArgumentCount)));
 }
 
 void adjustAndJumpToTarget(CCallHelpers& jit, const OSRExitBase& exit)

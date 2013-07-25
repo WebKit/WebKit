@@ -1,3 +1,13 @@
+2013-06-04  Mark Lam  <mark.lam@apple.com>
+
+        The DFG JIT should populate frame bytecodeOffsets on OSR exit.
+        https://bugs.webkit.org/show_bug.cgi?id=117103.
+
+        Reviewed by Geoffrey Garen.
+
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+        (JSC::DFG::reifyInlinedCallFrames):
+
 2013-06-03  Filip Pizlo  <fpizlo@apple.com>
 
         fourthTier: all cached put_by_id transitions, even ones that weren't inlined by the DFG, should be propagated by the GC
