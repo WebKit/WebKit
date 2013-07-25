@@ -28,6 +28,7 @@
 
 #include "CodeBlock.h"
 #include "CodeBlockWithJITType.h"
+#include "DFGClobberSet.h"
 #include "DFGVariableAccessDataDump.h"
 #include "FunctionExecutableDump.h"
 #include "Operations.h"
@@ -266,6 +267,13 @@ void Graph::dump(PrintStream& out, const char* prefix, Node* node)
             out.print(comma, data->cases[i].value, ":", *data->cases[i].target);
         out.print(comma, "default:", *data->fallThrough);
     }
+    ClobberSet reads;
+    ClobberSet writes;
+    addReadsAndWrites(*this, node, reads, writes);
+    if (!reads.isEmpty())
+        out.print(comma, "R:", sortedListDump(reads.direct(), ","));
+    if (!writes.isEmpty())
+        out.print(comma, "W:", sortedListDump(writes.direct(), ","));
     out.print(comma, "bc#", node->codeOrigin.bytecodeIndex);
     
     out.print(")");

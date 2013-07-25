@@ -1,5 +1,188 @@
 2013-07-21  Filip Pizlo  <fpizlo@apple.com>
 
+        fourthTier: DFG Nodes should be able to abstractly tell you what they read and what they write
+        https://bugs.webkit.org/show_bug.cgi?id=118910
+
+        Reviewed by Sam Weinig.
+        
+        Add the notion of AbstractHeap to the DFG. This is analogous to the AbstractHeap in
+        the FTL, except that the FTL's AbstractHeaps are used during LLVM lowering and are
+        engineered to obey LLVM TBAA logic. The FTL's AbstractHeaps are also engineered to
+        be inexpensive to use (they just give you a TBAA node) but expensive to create (you
+        create them all up front). FTL AbstractHeaps also don't actually give you the
+        ability to reason about aliasing; they are *just* a mechanism for lowering to TBAA.
+        The DFG's AbstractHeaps are engineered to be both cheap to create and cheap to use.
+        They also give you aliasing machinery. The DFG AbstractHeaps are represented
+        internally by a int64_t. Many comparisons between them are just integer comaprisons.
+        AbstractHeaps form a three-level hierarchy (World is the supertype of everything,
+        Kind with a TOP payload is a direct subtype of World, and Kind with a non-TOP
+        payload is the direct subtype of its corresponding TOP Kind).
+        
+        Add the notion of a ClobberSet. This is the set of AbstractHeaps that you had
+        clobbered. It represents the set that results from unifying a bunch of
+        AbstractHeaps, and is intended to quickly answer overlap questions: does the given
+        AbstractHeap overlap any AbstractHeap in the ClobberSet? To this end, if you add an
+        AbstractHeap to a set, it "directly" adds the heap itself, and "super" adds all of
+        its ancestors. An AbstractHeap is said to overlap a set if any direct or super
+        member is equal to it, or if any of its ancestors are equal to a direct member.
+        
+        Example #1:
+        
+            - I add Variables(5). I.e. Variables is the Kind and 5 is the payload. This
+              is a subtype of Variables, which is a subtype of World.
+            - You query Variables. I.e. Variables with a TOP payload, which is the
+              supertype of Variables(X) for any X, and a subtype of World.
+            
+            The set will have Variables(5) as a direct member, and Variables and World as
+            super members. The Variables query will immediately return true, because
+            Variables is indeed a super member.
+        
+        Example #2:
+        
+            - I add Variables(5)
+            - You query NamedProperties
+            
+            NamedProperties is not a member at all (neither direct or super). We next
+            query World. World is a member, but it's a super member, so we return false.
+        
+        Example #3:
+        
+            - I add Variables
+            - You query Variables(5)
+            
+            The set will have Variables as a direct member, and World as a super member.
+            The Variables(5) query will not find Variables(5) in the set, but then it
+            will query Variables. Variables is a direct member, so we return true.
+        
+        Example #4:
+        
+            - I add Variables
+            - You query NamedProperties(5)
+            
+            Neither NamedProperties nor NamedProperties(5) are members. We next query
+            World. World is a member, but it's a super member, so we return false.
+        
+        Overlap queries require that either the heap being queried is in the set (either
+        direct or super), or that one of its ancestors is a direct member. Another way to
+        think about how this works is that two heaps A and B are said to overlap if
+        A.isSubtypeOf(B) or B.isSubtypeOf(A). This is sound since heaps form a
+        single-inheritance heirarchy. Consider that we wanted to implement a set that holds
+        heaps and answers the question, "is any member in the set an ancestor (i.e.
+        supertype) of some other heap". We would have the set contain the heaps themselves,
+        and we would satisfy the query "A.isSubtypeOfAny(set)" by walking the ancestor
+        chain of A, and repeatedly querying its membership in the set. This is what the
+        "direct" members of our set do. Now consider the other part, where we want to ask if
+        any member of the set is a descendent of a heap, or "A.isSupertypeOfAny(set)". We
+        would implement this by implementing set.add(B) as adding not just B but also all of
+        B's ancestors; then we would answer A.isSupertypeOfAny(set) by just checking if A is
+        in the set. With two such sets - one that answers isSubtypeOfAny() and another that
+        answers isSupertypeOfAny() - we could answer the "do any of my heaps overlap your
+        heap" question. ClobberSet does this, but combines the two sets into a single
+        HashMap. The HashMap's value, "direct", means that the key is a member of both the
+        supertype set and the subtype set; if it's false then it's only a member of one of
+        them.
+        
+        Finally, this adds a functorized clobberize() method that adds the read and write
+        clobbers of a DFG::Node to read and write functors. Common functors for adding to
+        ClobberSets, querying overlap, and doing nothing are provided. Convenient wrappers
+        are also provided. This allows you to say things like:
+        
+            ClobberSet set;
+            addWrites(graph, node1, set);
+            if (readsOverlap(graph, node2, set))
+                // We know that node1 may write to something that node2 may read from.
+        
+        Currently this facility is only used to improve graph dumping, but it will be
+        instrumental in both LICM and GVN. In the future, I want to completely kill the
+        NodeClobbersWorld and NodeMightClobber flags, and eradicate CSEPhase's hackish way
+        of accomplishing almost exactly what AbstractHeap gives you.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGAbstractHeap.cpp: Added.
+        (DFG):
+        (JSC::DFG::AbstractHeap::Payload::dump):
+        (JSC::DFG::AbstractHeap::dump):
+        (WTF):
+        (WTF::printInternal):
+        * dfg/DFGAbstractHeap.h: Added.
+        (DFG):
+        (AbstractHeap):
+        (Payload):
+        (JSC::DFG::AbstractHeap::Payload::Payload):
+        (JSC::DFG::AbstractHeap::Payload::top):
+        (JSC::DFG::AbstractHeap::Payload::isTop):
+        (JSC::DFG::AbstractHeap::Payload::value):
+        (JSC::DFG::AbstractHeap::Payload::valueImpl):
+        (JSC::DFG::AbstractHeap::Payload::operator==):
+        (JSC::DFG::AbstractHeap::Payload::operator!=):
+        (JSC::DFG::AbstractHeap::Payload::operator<):
+        (JSC::DFG::AbstractHeap::Payload::isDisjoint):
+        (JSC::DFG::AbstractHeap::Payload::overlaps):
+        (JSC::DFG::AbstractHeap::AbstractHeap):
+        (JSC::DFG::AbstractHeap::operator!):
+        (JSC::DFG::AbstractHeap::kind):
+        (JSC::DFG::AbstractHeap::payload):
+        (JSC::DFG::AbstractHeap::isDisjoint):
+        (JSC::DFG::AbstractHeap::overlaps):
+        (JSC::DFG::AbstractHeap::supertype):
+        (JSC::DFG::AbstractHeap::hash):
+        (JSC::DFG::AbstractHeap::operator==):
+        (JSC::DFG::AbstractHeap::operator!=):
+        (JSC::DFG::AbstractHeap::operator<):
+        (JSC::DFG::AbstractHeap::isHashTableDeletedValue):
+        (JSC::DFG::AbstractHeap::payloadImpl):
+        (JSC::DFG::AbstractHeap::encode):
+        (JSC::DFG::AbstractHeapHash::hash):
+        (JSC::DFG::AbstractHeapHash::equal):
+        (AbstractHeapHash):
+        (WTF):
+        * dfg/DFGClobberSet.cpp: Added.
+        (DFG):
+        (JSC::DFG::ClobberSet::ClobberSet):
+        (JSC::DFG::ClobberSet::~ClobberSet):
+        (JSC::DFG::ClobberSet::add):
+        (JSC::DFG::ClobberSet::addAll):
+        (JSC::DFG::ClobberSet::contains):
+        (JSC::DFG::ClobberSet::overlaps):
+        (JSC::DFG::ClobberSet::clear):
+        (JSC::DFG::ClobberSet::direct):
+        (JSC::DFG::ClobberSet::super):
+        (JSC::DFG::ClobberSet::dump):
+        (JSC::DFG::ClobberSet::setOf):
+        (JSC::DFG::addReads):
+        (JSC::DFG::addWrites):
+        (JSC::DFG::addReadsAndWrites):
+        (JSC::DFG::readsOverlap):
+        (JSC::DFG::writesOverlap):
+        * dfg/DFGClobberSet.h: Added.
+        (DFG):
+        (ClobberSet):
+        (JSC::DFG::ClobberSet::isEmpty):
+        (ClobberSetAdd):
+        (JSC::DFG::ClobberSetAdd::ClobberSetAdd):
+        (JSC::DFG::ClobberSetAdd::operator()):
+        (ClobberSetOverlaps):
+        (JSC::DFG::ClobberSetOverlaps::ClobberSetOverlaps):
+        (JSC::DFG::ClobberSetOverlaps::operator()):
+        (JSC::DFG::ClobberSetOverlaps::result):
+        * dfg/DFGClobberize.cpp: Added.
+        (DFG):
+        (JSC::DFG::didWrites):
+        * dfg/DFGClobberize.h: Added.
+        (DFG):
+        (JSC::DFG::clobberize):
+        (NoOpClobberize):
+        (JSC::DFG::NoOpClobberize::NoOpClobberize):
+        (JSC::DFG::NoOpClobberize::operator()):
+        (CheckClobberize):
+        (JSC::DFG::CheckClobberize::CheckClobberize):
+        (JSC::DFG::CheckClobberize::operator()):
+        (JSC::DFG::CheckClobberize::result):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+
+2013-07-21  Filip Pizlo  <fpizlo@apple.com>
+
         fourthTier: It should be easy to figure out which blocks nodes belong to
         https://bugs.webkit.org/show_bug.cgi?id=118957
 

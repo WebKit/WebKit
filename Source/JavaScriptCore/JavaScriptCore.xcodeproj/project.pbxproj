@@ -779,6 +779,13 @@
 		A76C51761182748D00715B05 /* JSInterfaceJIT.h in Headers */ = {isa = PBXBuildFile; fileRef = A76C51741182748D00715B05 /* JSInterfaceJIT.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A76F279415F13C9600517D67 /* UnlinkedCodeBlock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A79E781E15EECBA80047C855 /* UnlinkedCodeBlock.cpp */; };
 		A76F54A313B28AAB00EF2BCE /* JITWriteBarrier.h in Headers */ = {isa = PBXBuildFile; fileRef = A76F54A213B28AAB00EF2BCE /* JITWriteBarrier.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A77A423D17A0BBFD00A8DB81 /* DFGAbstractHeap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A77A423617A0BBFD00A8DB81 /* DFGAbstractHeap.cpp */; };
+		A77A423E17A0BBFD00A8DB81 /* DFGAbstractHeap.h in Headers */ = {isa = PBXBuildFile; fileRef = A77A423717A0BBFD00A8DB81 /* DFGAbstractHeap.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A77A423F17A0BBFD00A8DB81 /* DFGClobberize.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A77A423817A0BBFD00A8DB81 /* DFGClobberize.cpp */; };
+		A77A424017A0BBFD00A8DB81 /* DFGClobberize.h in Headers */ = {isa = PBXBuildFile; fileRef = A77A423917A0BBFD00A8DB81 /* DFGClobberize.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A77A424117A0BBFD00A8DB81 /* DFGClobberSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A77A423A17A0BBFD00A8DB81 /* DFGClobberSet.cpp */; };
+		A77A424217A0BBFD00A8DB81 /* DFGClobberSet.h in Headers */ = {isa = PBXBuildFile; fileRef = A77A423B17A0BBFD00A8DB81 /* DFGClobberSet.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A77A424317A0BBFD00A8DB81 /* DFGSafeToExecute.h in Headers */ = {isa = PBXBuildFile; fileRef = A77A423C17A0BBFD00A8DB81 /* DFGSafeToExecute.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A77F1821164088B200640A47 /* CodeCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A77F181F164088B200640A47 /* CodeCache.cpp */; };
 		A77F1822164088B200640A47 /* CodeCache.h in Headers */ = {isa = PBXBuildFile; fileRef = A77F1820164088B200640A47 /* CodeCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A77F1825164192C700640A47 /* ParserModes.h in Headers */ = {isa = PBXBuildFile; fileRef = A77F18241641925400640A47 /* ParserModes.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1846,6 +1853,13 @@
 		A767FF9F14F4502900789059 /* JSCTypedArrayStubs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCTypedArrayStubs.h; sourceTree = "<group>"; };
 		A76C51741182748D00715B05 /* JSInterfaceJIT.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSInterfaceJIT.h; sourceTree = "<group>"; };
 		A76F54A213B28AAB00EF2BCE /* JITWriteBarrier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITWriteBarrier.h; sourceTree = "<group>"; };
+		A77A423617A0BBFD00A8DB81 /* DFGAbstractHeap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGAbstractHeap.cpp; path = dfg/DFGAbstractHeap.cpp; sourceTree = "<group>"; };
+		A77A423717A0BBFD00A8DB81 /* DFGAbstractHeap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGAbstractHeap.h; path = dfg/DFGAbstractHeap.h; sourceTree = "<group>"; };
+		A77A423817A0BBFD00A8DB81 /* DFGClobberize.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGClobberize.cpp; path = dfg/DFGClobberize.cpp; sourceTree = "<group>"; };
+		A77A423917A0BBFD00A8DB81 /* DFGClobberize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGClobberize.h; path = dfg/DFGClobberize.h; sourceTree = "<group>"; };
+		A77A423A17A0BBFD00A8DB81 /* DFGClobberSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGClobberSet.cpp; path = dfg/DFGClobberSet.cpp; sourceTree = "<group>"; };
+		A77A423B17A0BBFD00A8DB81 /* DFGClobberSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGClobberSet.h; path = dfg/DFGClobberSet.h; sourceTree = "<group>"; };
+		A77A423C17A0BBFD00A8DB81 /* DFGSafeToExecute.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGSafeToExecute.h; path = dfg/DFGSafeToExecute.h; sourceTree = "<group>"; };
 		A77F181F164088B200640A47 /* CodeCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CodeCache.cpp; sourceTree = "<group>"; };
 		A77F1820164088B200640A47 /* CodeCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeCache.h; sourceTree = "<group>"; };
 		A77F18241641925400640A47 /* ParserModes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ParserModes.h; sourceTree = "<group>"; };
@@ -3048,6 +3062,8 @@
 		86EC9DB31328DF44002B2AD7 /* dfg */ = {
 			isa = PBXGroup;
 			children = (
+				A77A423617A0BBFD00A8DB81 /* DFGAbstractHeap.cpp */,
+				A77A423717A0BBFD00A8DB81 /* DFGAbstractHeap.h */,
 				A704D8FE17A0BAA8006BA554 /* DFGAbstractInterpreter.h */,
 				A704D8FF17A0BAA8006BA554 /* DFGAbstractInterpreterInlines.h */,
 				0F55C19317276E4600CEABFD /* DFGAbstractValue.cpp */,
@@ -3083,6 +3099,10 @@
 				0FFFC94C14EF909500C72532 /* DFGCFAPhase.h */,
 				0F3B3A241544C991003ED0FF /* DFGCFGSimplificationPhase.cpp */,
 				0F3B3A251544C991003ED0FF /* DFGCFGSimplificationPhase.h */,
+				A77A423817A0BBFD00A8DB81 /* DFGClobberize.cpp */,
+				A77A423917A0BBFD00A8DB81 /* DFGClobberize.h */,
+				A77A423A17A0BBFD00A8DB81 /* DFGClobberSet.cpp */,
+				A77A423B17A0BBFD00A8DB81 /* DFGClobberSet.h */,
 				0FB4B51A16B62772003F696B /* DFGCommon.cpp */,
 				0FC0977E1469EBC400CF2442 /* DFGCommon.h */,
 				0FEA0A2D170D40BF00BB722C /* DFGCommonData.cpp */,
@@ -3192,6 +3212,7 @@
 				0F766D4215B2A3BD008F363E /* DFGRegisterSet.h */,
 				86BB09BE138E381B0056702F /* DFGRepatch.cpp */,
 				86BB09BF138E381B0056702F /* DFGRepatch.h */,
+				A77A423C17A0BBFD00A8DB81 /* DFGSafeToExecute.h */,
 				A741017E179DAF80002EB8BA /* DFGSaneStringGetByValSlowPathGenerator.h */,
 				86ECA3F9132DF25A002B2AD7 /* DFGScoreBoard.h */,
 				0F766D4515B3701D008F363E /* DFGScratchRegisterAllocator.h */,
@@ -3495,6 +3516,7 @@
 				BC3135640F302FA3003DFD3A /* DebuggerActivation.h in Headers */,
 				BC18C3FB0E16F5CD00B34460 /* DebuggerCallFrame.h in Headers */,
 				0F136D4D174AD69E0075B354 /* DeferGC.h in Headers */,
+				A77A423E17A0BBFD00A8DB81 /* DFGAbstractHeap.h in Headers */,
 				A704D90317A0BAA8006BA554 /* DFGAbstractInterpreter.h in Headers */,
 				A704D90417A0BAA8006BA554 /* DFGAbstractInterpreterInlines.h in Headers */,
 				0F620177143FCD3F0068B77C /* DFGAbstractValue.h in Headers */,
@@ -3518,6 +3540,8 @@
 				0F7B294A14C3CD29007C3DB1 /* DFGCCallHelpers.h in Headers */,
 				0FFFC95814EF90A200C72532 /* DFGCFAPhase.h in Headers */,
 				0F3B3A281544C997003ED0FF /* DFGCFGSimplificationPhase.h in Headers */,
+				A77A424017A0BBFD00A8DB81 /* DFGClobberize.h in Headers */,
+				A77A424217A0BBFD00A8DB81 /* DFGClobberSet.h in Headers */,
 				0F2C556F14738F3100121E4F /* DFGCodeBlocks.h in Headers */,
 				0F7B294D14C3CD4C007C3DB1 /* DFGCommon.h in Headers */,
 				0FEA0A32170D40BF00BB722C /* DFGCommonData.h in Headers */,
@@ -3581,6 +3605,7 @@
 				86EC9DD11328DF82002B2AD7 /* DFGRegisterBank.h in Headers */,
 				0F766D4415B2A3C0008F363E /* DFGRegisterSet.h in Headers */,
 				86BB09C1138E381B0056702F /* DFGRepatch.h in Headers */,
+				A77A424317A0BBFD00A8DB81 /* DFGSafeToExecute.h in Headers */,
 				A741017F179DAF80002EB8BA /* DFGSaneStringGetByValSlowPathGenerator.h in Headers */,
 				86ECA3FA132DF25A002B2AD7 /* DFGScoreBoard.h in Headers */,
 				0F766D4615B3701F008F363E /* DFGScratchRegisterAllocator.h in Headers */,
@@ -4364,6 +4389,7 @@
 				14280823107EC02C0013E7B2 /* Debugger.cpp in Sources */,
 				BC3135650F302FA3003DFD3A /* DebuggerActivation.cpp in Sources */,
 				149559EE0DDCDDF700648087 /* DebuggerCallFrame.cpp in Sources */,
+				A77A423D17A0BBFD00A8DB81 /* DFGAbstractHeap.cpp in Sources */,
 				0F55C19417276E4600CEABFD /* DFGAbstractValue.cpp in Sources */,
 				0F16015D156198C900C2587C /* DFGArgumentsSimplificationPhase.cpp in Sources */,
 				0F63948415E48118006A597C /* DFGArrayMode.cpp in Sources */,
@@ -4376,6 +4402,8 @@
 				0FD82E2114172CE300179C94 /* DFGCapabilities.cpp in Sources */,
 				0FFFC95714EF90A000C72532 /* DFGCFAPhase.cpp in Sources */,
 				0F3B3A271544C995003ED0FF /* DFGCFGSimplificationPhase.cpp in Sources */,
+				A77A423F17A0BBFD00A8DB81 /* DFGClobberize.cpp in Sources */,
+				A77A424117A0BBFD00A8DB81 /* DFGClobberSet.cpp in Sources */,
 				0F2C557014738F3500121E4F /* DFGCodeBlocks.cpp in Sources */,
 				0FF0F19D16B72A08005DF95B /* DFGCommon.cpp in Sources */,
 				0FEA0A31170D40BF00BB722C /* DFGCommonData.cpp in Sources */,

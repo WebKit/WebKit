@@ -1,3 +1,15 @@
+2013-07-21  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: DFG Nodes should be able to abstractly tell you what they read and what they write
+        https://bugs.webkit.org/show_bug.cgi?id=118910
+
+        Reviewed by Sam Weinig.
+        
+        Fix compile goof in sortedListDump().
+
+        * wtf/ListDump.h:
+        (WTF::sortedListDump):
+
 2013-07-16  Filip Pizlo  <fpizlo@apple.com>
 
         fourthTier: NaturalLoops should be able to quickly answer questions like "what loops own this basic block"
