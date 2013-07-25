@@ -1,3 +1,11 @@
+2013-04-30  Filip Pizlo  <fpizlo@apple.com>
+
+        fourthTier: Use hw.availcpu instead of hw.ncpu, and configure LLVM with --enable-zlib=no
+
+        Rubber stamped by Mark Rowe.
+
+        * Scripts/copy-webkitlibraries-to-product-directory:
+
 2013-07-16  Oliver Hunt <oliver@apple.com>
 
         Merge dfgFourthTier r148853

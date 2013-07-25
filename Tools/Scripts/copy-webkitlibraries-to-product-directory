@@ -140,18 +140,14 @@ if ($ENV{ENABLE_FTL_JIT}) {
     if ($useOwnLLVM) {
 
         chdir $ownLLVMDirectory;
-
         if (!-e "Makefile.config") {
             print("Configuring LLVM.\n");
-            (system("./configure --enable-optimized=yes --enable-backtraces=no --enable-targets=x86_64 --enable-libcpp=yes")==0) or die;
+            (system("./configure --enable-optimized=yes --enable-backtraces=no --enable-targets=x86_64 --enable-libcpp=yes --enable-zlib=no")==0) or die;
         }
 
         print("Building LLVM.\n");
         chdir $ownLLVMDirectory;
-        my $numCPUString = `sysctl hw.ncpu`;
-        $numCPUString =~ /: /;
-        my $numCPUs = $';
-        (system("make -j $numCPUs") == 0) or die;
+        (system("make -j `sysctl -n hw.availcpu`") == 0) or die;
         chdirWebKit();
         
         my $ownLLVMBuildMode = "";
