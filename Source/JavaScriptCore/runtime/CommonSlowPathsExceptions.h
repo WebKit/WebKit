@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,41 +23,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef LLIntExceptions_h
-#define LLIntExceptions_h
+#ifndef CommonSlowPathExceptions_h
+#define CommonSlowPathExceptions_h
 
 #include <wtf/Platform.h>
-#include <wtf/StdLibExtras.h>
-
-#if ENABLE(LLINT)
 
 #include "MacroAssemblerCodeRef.h"
 
 namespace JSC {
 
 class ExecState;
-struct Instruction;
 
-namespace LLInt {
+namespace CommonSlowPaths {
 
-// Tells you where to jump to if you want to return-to-throw, after you've already
-// set up all information needed to throw the exception.
-Instruction* returnToThrowForThrownException(ExecState*);
+// Throw the currently active exception in the context of the caller's call frame.
+void interpreterThrowInCaller(ExecState* callerFrame, ReturnAddressPtr);
 
-// Saves the current PC in the global data for safe-keeping, and gives you a PC
-// that you can tell the interpreter to go to, which when advanced between 1
-// and 9 slots will give you an "instruction" that threads to the interpreter's
-// exception handler. Note that if you give it the PC for exception handling,
-// it's smart enough to just return that PC without doing anything else; this
-// lets you thread exception handling through common helper functions used by
-// other helpers.
-Instruction* returnToThrow(ExecState*, Instruction*);
+} } // namespace JSC::CommonSlowPaths
 
-// Use this when you're throwing to a call thunk.
-void* callToThrow(ExecState*, Instruction*);
-
-} } // namespace JSC::LLInt
-
-#endif // ENABLE(LLINT)
-
-#endif // LLIntExceptions_h
+#endif // CommonSlowPathExceptions_h

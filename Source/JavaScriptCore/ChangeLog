@@ -1,3 +1,21 @@
+2013-07-25  Michael Saboff  <msaboff@apple.com>
+
+        [Windows] Speculative build fix.
+
+        Moved interpreterThrowInCaller() out of LLintExceptions.cpp into new CommonSlowPathsExceptions.cpp
+        that is always compiled.  Made LLInt::returnToThrow() conditional on LLINT being enabled.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * llint/LLIntExceptions.cpp:
+        * llint/LLIntExceptions.h:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/CommonSlowPathsExceptions.cpp: Added.
+        (JSC::CommonSlowPaths::interpreterThrowInCaller):
+        * runtime/CommonSlowPathsExceptions.h: Added.
+
 2013-07-25  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Unreviewed build fix.

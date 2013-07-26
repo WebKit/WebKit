@@ -590,6 +590,8 @@
 		651122FE14046A4C002B101D /* libedit.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D5D8AD00E0D0EBE00F9C692 /* libedit.dylib */; };
 		6511230714046B0A002B101D /* testRegExp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 651122E5140469BA002B101D /* testRegExp.cpp */; };
 		65303D641447B9E100D3F904 /* ParserTokens.h in Headers */ = {isa = PBXBuildFile; fileRef = 65303D631447B9E100D3F904 /* ParserTokens.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		6553A33117A1F1EE008CF6F3 /* CommonSlowPathsExceptions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6553A32F17A1F1EE008CF6F3 /* CommonSlowPathsExceptions.cpp */; };
+		6553A33217A1F1EE008CF6F3 /* CommonSlowPathsExceptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 6553A33017A1F1EE008CF6F3 /* CommonSlowPathsExceptions.h */; };
 		655EB29B10CE2581001A990E /* NodesCodegen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 655EB29A10CE2581001A990E /* NodesCodegen.cpp */; };
 		65C02850171795E200351E35 /* ARMv7Disassembler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65C0284F171795E200351E35 /* ARMv7Disassembler.cpp */; };
 		65C0285C1717966800351E35 /* ARMv7DOpcode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65C0285A1717966800351E35 /* ARMv7DOpcode.cpp */; };
@@ -1631,6 +1633,8 @@
 		65303D631447B9E100D3F904 /* ParserTokens.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParserTokens.h; sourceTree = "<group>"; };
 		65400C0F0A69BAF200509887 /* PropertyNameArray.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = PropertyNameArray.cpp; sourceTree = "<group>"; };
 		65400C100A69BAF200509887 /* PropertyNameArray.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PropertyNameArray.h; sourceTree = "<group>"; };
+		6553A32F17A1F1EE008CF6F3 /* CommonSlowPathsExceptions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CommonSlowPathsExceptions.cpp; sourceTree = "<group>"; };
+		6553A33017A1F1EE008CF6F3 /* CommonSlowPathsExceptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommonSlowPathsExceptions.h; sourceTree = "<group>"; };
 		655EB29A10CE2581001A990E /* NodesCodegen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NodesCodegen.cpp; sourceTree = "<group>"; };
 		6560A4CF04B3B3E7008AE952 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = /System/Library/Frameworks/CoreFoundation.framework; sourceTree = "<absolute>"; };
 		65621E6B089E859700760F35 /* PropertySlot.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PropertySlot.cpp; sourceTree = "<group>"; tabWidth = 8; };
@@ -2791,6 +2795,8 @@
 		7EF6E0BB0EB7A1EC0079AFAF /* runtime */ = {
 			isa = PBXGroup;
 			children = (
+				6553A32F17A1F1EE008CF6F3 /* CommonSlowPathsExceptions.cpp */,
+				6553A33017A1F1EE008CF6F3 /* CommonSlowPathsExceptions.h */,
 				BCF605110E203EF800B9A64D /* ArgList.cpp */,
 				BCF605120E203EF800B9A64D /* ArgList.h */,
 				BC257DE50E1F51C50016B6C9 /* Arguments.cpp */,
@@ -3965,6 +3971,7 @@
 				E49DC16D12EF295300184A1F /* SourceProviderCacheItem.h in Headers */,
 				0FB7F39E15ED8E4600F167B2 /* SparseArrayValueMap.h in Headers */,
 				A7386554118697B400540279 /* SpecializedThunkJIT.h in Headers */,
+				6553A33217A1F1EE008CF6F3 /* CommonSlowPathsExceptions.h in Headers */,
 				0F5541B21613C1FB00CE3E25 /* SpecialPointer.h in Headers */,
 				0FD82E54141DAEEE00179C94 /* SpeculatedType.h in Headers */,
 				A7C1EAF217987AB600299DB2 /* StackIterator.h in Headers */,
@@ -4677,6 +4684,7 @@
 				0FF729AF166AD35C000F5BA3 /* ProfilerCompilation.cpp in Sources */,
 				0FF729B0166AD35C000F5BA3 /* ProfilerCompilationKind.cpp in Sources */,
 				0FF729B1166AD35C000F5BA3 /* ProfilerCompiledBytecode.cpp in Sources */,
+				6553A33117A1F1EE008CF6F3 /* CommonSlowPathsExceptions.cpp in Sources */,
 				0FF729B2166AD35C000F5BA3 /* ProfilerDatabase.cpp in Sources */,
 				0FF729B3166AD35C000F5BA3 /* ProfilerOrigin.cpp in Sources */,
 				0FF729B4166AD35C000F5BA3 /* ProfilerOriginStack.cpp in Sources */,

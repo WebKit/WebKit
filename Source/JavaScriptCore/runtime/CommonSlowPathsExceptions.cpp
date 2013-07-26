@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,53 +24,25 @@
  */
 
 #include "config.h"
-#include "LLIntExceptions.h"
-
-#if ENABLE(LLINT)
+#include "CommonSlowPathsExceptions.h"
 
 #include "CallFrame.h"
 #include "CodeBlock.h"
-#include "Instruction.h"
 #include "JITExceptions.h"
 #include "LLIntCommon.h"
-#include "LowLevelInterpreter.h"
-#include "Operations.h"
 
-namespace JSC { namespace LLInt {
+namespace JSC { namespace CommonSlowPaths {
 
-Instruction* returnToThrowForThrownException(ExecState* exec)
-{
-    UNUSED_PARAM(exec);
-    return LLInt::exceptionInstructions();
-}
-
-static void doThrow(ExecState* exec, Instruction* pc)
+void interpreterThrowInCaller(ExecState* exec, ReturnAddressPtr pc)
 {
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
-    genericThrow(vm, exec, vm->exception, pc - exec->codeBlock()->instructions().begin());
-}
-
-Instruction* returnToThrow(ExecState* exec, Instruction* pc)
-{
 #if LLINT_SLOW_PATH_TRACING
-    VM* vm = &exec->vm();
-    dataLog("Throwing exception ", vm->exception, " (returnToThrow).\n");
+    dataLog("Throwing exception ", vm->exception, ".\n");
 #endif
-    doThrow(exec, pc);
-    return LLInt::exceptionInstructions();
-}
-
-void* callToThrow(ExecState* exec, Instruction* pc)
-{
-#if LLINT_SLOW_PATH_TRACING
-    VM* vm = &exec->vm();
-    dataLog("Throwing exception ", vm->exception, " (callToThrow).\n");
-#endif
-    doThrow(exec, pc);
-    return LLInt::getCodePtr(llint_throw_during_call_trampoline);
+    genericThrow(
+        vm, exec, vm->exception,
+        exec->codeBlock()->bytecodeOffset(exec, pc));
 }
 
 } } // namespace JSC::LLInt
-
-#endif // ENABLE(LLINT)

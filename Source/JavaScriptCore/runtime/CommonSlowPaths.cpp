@@ -32,6 +32,7 @@
 #include "ArrayConstructor.h"
 #include "CallFrame.h"
 #include "CodeProfiling.h"
+#include "CommonSlowPathsExceptions.h"
 #include "GetterSetter.h"
 #include "HostCallReturnValue.h"
 #include "Interpreter.h"
@@ -70,6 +71,12 @@ namespace JSC {
     } while (false)
 #endif
 
+#if ENABLE(LLINT)
+#define RETURN_TO_THROW(exec, pc)   pc = LLInt::returnToThrow(exec, pc)
+#else
+#define RETURN_TO_THROW(exec, pc)
+#endif
+
 #define BEGIN()                           \
     BEGIN_NO_SET_PC();                    \
     SET_PC_FOR_STUBS()
@@ -85,13 +92,13 @@ namespace JSC {
 
 #define THROW(exceptionToThrow) do {                        \
         vm.exception = (exceptionToThrow);                \
-        pc = LLInt::returnToThrow(exec, pc);                             \
+        RETURN_TO_THROW(exec, pc);                             \
         END_IMPL();                                         \
     } while (false)
 
 #define CHECK_EXCEPTION() do {                    \
         if (UNLIKELY(vm.exception)) {           \
-            pc = LLInt::returnToThrow(exec, pc);               \
+            RETURN_TO_THROW(exec, pc);               \
             END_IMPL();                           \
         }                                               \
     } while (false)
@@ -171,7 +178,7 @@ SLOW_PATH_DECL(slow_path_call_arityCheck)
         ReturnAddressPtr returnPC = exec->returnPC();
         exec = exec->callerFrame();
         vm.exception = createStackOverflowError(exec);
-        LLInt::interpreterThrowInCaller(exec, returnPC);
+        CommonSlowPaths::interpreterThrowInCaller(exec, returnPC);
         RETURN_TWO(bitwise_cast<void*>(static_cast<uintptr_t>(1)), exec);
     }
     RETURN_TWO(0, reinterpret_cast<ExecState*>(SlotsToAdd));
@@ -185,7 +192,7 @@ SLOW_PATH_DECL(slow_path_construct_arityCheck)
         ReturnAddressPtr returnPC = exec->returnPC();
         exec = exec->callerFrame();
         vm.exception = createStackOverflowError(exec);
-        LLInt::interpreterThrowInCaller(exec, returnPC);
+        CommonSlowPaths::interpreterThrowInCaller(exec, returnPC);
         RETURN_TWO(bitwise_cast<void*>(static_cast<uintptr_t>(1)), exec);
     }
     RETURN_TWO(0, reinterpret_cast<ExecState*>(SlotsToAdd));

@@ -32,6 +32,7 @@
 #include "ArrayConstructor.h"
 #include "CallFrame.h"
 #include "CommonSlowPaths.h"
+#include "CommonSlowPathsExceptions.h"
 #include "GetterSetter.h"
 #include "HostCallReturnValue.h"
 #include "Interpreter.h"
@@ -422,7 +423,7 @@ LLINT_SLOW_PATH_DECL(stack_check)
         ReturnAddressPtr returnPC = exec->returnPC();
         exec = exec->callerFrame();
         vm.exception = createStackOverflowError(exec);
-        interpreterThrowInCaller(exec, returnPC);
+        CommonSlowPaths::interpreterThrowInCaller(exec, returnPC);
         pc = returnToThrowForThrownException(exec);
     }
     LLINT_END_IMPL();
