@@ -195,6 +195,7 @@ FrameView::FrameView(Frame* frame)
     , m_shouldAutoSize(false)
     , m_inAutoSize(false)
     , m_didRunAutosize(false)
+    , m_autoSizeFixedMinimumHeight(0)
     , m_headerHeight(0)
     , m_footerHeight(0)
     , m_milestonesPendingPaint(0)
@@ -2967,7 +2968,25 @@ void FrameView::autoSizeIfEnabled()
         setHorizontalScrollbarLock(false);
         setScrollbarModes(horizonalScrollbarMode, verticalScrollbarMode, true, true);
     }
+
+    m_autoSizeContentSize = contentsSize();
+
+    if (m_autoSizeFixedMinimumHeight) {
+        resize(m_autoSizeContentSize.width(), max(m_autoSizeFixedMinimumHeight, m_autoSizeContentSize.height()));
+        document->updateLayoutIgnorePendingStylesheets();
+    }
+
     m_didRunAutosize = true;
+}
+
+void FrameView::setAutoSizeFixedMinimumHeight(int fixedMinimumHeight)
+{
+    if (m_autoSizeFixedMinimumHeight == fixedMinimumHeight)
+        return;
+
+    m_autoSizeFixedMinimumHeight = fixedMinimumHeight;
+
+    setNeedsLayout();
 }
 
 void FrameView::updateOverflowStatus(bool horizontalOverflow, bool verticalOverflow)

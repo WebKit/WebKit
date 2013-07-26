@@ -278,6 +278,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     , m_canShortCircuitHorizontalWheelEvents(false)
     , m_numWheelEventHandlers(0)
     , m_cachedPageCount(0)
+    , m_autoSizingShouldExpandToViewHeight(false)
 #if ENABLE(CONTEXT_MENUS)
     , m_isShowingContextMenu(false)
 #endif
@@ -380,6 +381,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     setIsInWindow(parameters.isInWindow);
 
     setMinimumLayoutSize(parameters.minimumLayoutSize);
+    setAutoSizingShouldExpandToViewHeight(parameters.autoSizingShouldExpandToViewHeight);
     
     setScrollPinningBehavior(parameters.scrollPinningBehavior);
 
@@ -3898,6 +3900,16 @@ void WebPage::setMinimumLayoutSize(const IntSize& minimumLayoutSize)
     int maximumSize = std::numeric_limits<int>::max();
 
     corePage()->mainFrame()->view()->enableAutoSizeMode(true, IntSize(minimumLayoutWidth, minimumLayoutHeight), IntSize(maximumSize, maximumSize));
+}
+
+void WebPage::setAutoSizingShouldExpandToViewHeight(bool shouldExpand)
+{
+    if (m_autoSizingShouldExpandToViewHeight == shouldExpand)
+        return;
+
+    m_autoSizingShouldExpandToViewHeight = shouldExpand;
+
+    corePage()->mainFrame()->view()->setAutoSizeFixedMinimumHeight(shouldExpand ? m_viewSize.height() : 0);
 }
 
 bool WebPage::isSmartInsertDeleteEnabled()

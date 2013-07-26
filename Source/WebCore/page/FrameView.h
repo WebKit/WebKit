@@ -298,6 +298,8 @@ public:
     void updateIsVisuallyNonEmpty();
     bool isVisuallyNonEmpty() const { return m_isVisuallyNonEmpty; }
     void enableAutoSizeMode(bool enable, const IntSize& minSize, const IntSize& maxSize);
+    void setAutoSizeFixedMinimumHeight(int fixedMinimumHeight);
+    IntSize autoSizingIntrinsicContentSize() const { return m_autoSizeContentSize; }
 
     void forceLayout(bool allowSubtree = false);
     void forceLayoutForPagination(const FloatSize& pageSize, const FloatSize& originalPageSize, float maximumShrinkFactor, AdjustViewSizeOrNot);
@@ -636,6 +638,10 @@ private:
     IntSize m_minAutoSize;
     // The upper bound on the size when autosizing.
     IntSize m_maxAutoSize;
+    // The fixed height to resize the view to after autosizing is complete.
+    int m_autoSizeFixedMinimumHeight;
+    // The intrinsic content size decided by autosizing.
+    IntSize m_autoSizeContentSize;
 
     OwnPtr<ScrollableAreaSet> m_scrollableAreas;
     OwnPtr<ViewportConstrainedObjectSet> m_viewportConstrainedObjects;

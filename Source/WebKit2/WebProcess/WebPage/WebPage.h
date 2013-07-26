@@ -639,6 +639,9 @@ public:
     void setMinimumLayoutSize(const WebCore::IntSize&);
     WebCore::IntSize minimumLayoutSize() const { return m_minimumLayoutSize; }
 
+    void setAutoSizingShouldExpandToViewHeight(bool shouldExpand);
+    bool autoSizingShouldExpandToViewHeight() { return m_autoSizingShouldExpandToViewHeight; }
+
     bool canShowMIMEType(const String& MIMEType) const;
 
     void addTextCheckingRequest(uint64_t requestID, PassRefPtr<WebCore::TextCheckingRequest>);
@@ -1003,6 +1006,7 @@ private:
     unsigned m_cachedPageCount;
 
     WebCore::IntSize m_minimumLayoutSize;
+    bool m_autoSizingShouldExpandToViewHeight;
 
 #if ENABLE(CONTEXT_MENUS)
     bool m_isShowingContextMenu;

@@ -1,3 +1,60 @@
+2013-07-26  Tim Horton  <timothy_horton@apple.com>
+
+        Add a mode where autosizing fixes the FrameView height to at least the WKView height
+        https://bugs.webkit.org/show_bug.cgi?id=119104
+        <rdar://problem/14549021>
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        Add autoSizingShouldExpandToViewHeight parameter.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView minimumWidthForAutoLayout]):
+        (-[WKView setMinimumWidthForAutoLayout:]):
+        Un-deprecate these as they're still useful if not sending a height.
+
+        (-[WKView shouldExpandToViewHeightForAutoLayout]):
+        (-[WKView setShouldExpandToViewHeightForAutoLayout:]):
+        * UIProcess/API/mac/WKViewPrivate.h:
+        New property, forward to WebPageProxy.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::creationParameters):
+        (WebKit::WebPageProxy::setAutoSizingShouldExpandToViewHeight):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::autoSizingShouldExpandToViewHeight):
+        New property, forward to WebPage.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::transitionToCommittedForNewPage):
+        If enabled, update the FrameView's autoSizeFixedMinimumHeight.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        (WebKit::WebPage::setAutoSizingShouldExpandToViewHeight):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::autoSizingShouldExpandToViewHeight):
+        New property; if enabled, set FrameView's autoSizeFixedMinimumHeight,
+        otherwise reset it to 0.
+
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::updateIntrinsicContentSizeTimerFired):
+        (WebKit::TiledCoreAnimationDrawingArea::updateGeometry):
+        Retrieve intrinsic content size explicitly from the FrameView, as
+        it may not have used it as its final contentsSize if
+        autoSizeFixedMinimumHeight is set.
+
+        Set the WebPage's size in case the load is committed so that the
+        WebFrameLoaderClient doesn't reset us to the wrong size.
+
+        Update autoSizeFixedMinimumHeight if enabled when the view size changes.
+
 2013-07-25  Andreas Kling  <akling@apple.com>
 
         ChromeClient::focusedNodeChanged() should be focusedElementChanged().

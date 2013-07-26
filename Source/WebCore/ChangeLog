@@ -1,3 +1,25 @@
+2013-07-26  Tim Horton  <timothy_horton@apple.com>
+
+        Add a mode where autosizing fixes the FrameView height to at least the WKView height
+        https://bugs.webkit.org/show_bug.cgi?id=119104
+        <rdar://problem/14549021>
+
+        Reviewed by Anders Carlsson.
+
+        * WebCore.exp.in: Export FrameView::setAutoSizeFixedMinimumHeight.
+        * page/FrameView.cpp:
+        (WebCore::FrameView::FrameView):
+        Initialize m_autoSizeFixedMinimumHeight to 0.
+
+        (WebCore::FrameView::autoSizeIfEnabled):
+        Increase the FrameView height to m_autoSizeFixedMinimumHeight if necessary,
+        and do another layout. Store the computed intrinsic content size.
+
+        (WebCore::FrameView::setAutoSizeFixedMinimumHeight): Added.
+
+        * page/FrameView.h:
+        (WebCore::FrameView::autoSizingIntrinsicContentSize): Added.
+
 2013-07-26  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Remove workarounds now that rdar://problem/14390466 is fixed.

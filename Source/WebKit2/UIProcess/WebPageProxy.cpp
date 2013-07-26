@@ -306,6 +306,7 @@ WebPageProxy::WebPageProxy(PageClient* pageClient, PassRefPtr<WebProcessProxy> p
     , m_renderTreeSize(0)
     , m_shouldSendEventsSynchronously(false)
     , m_suppressVisibilityUpdates(false)
+    , m_autoSizingShouldExpandToViewHeight(false)
     , m_mediaVolume(1)
     , m_mayStartMediaWhenInWindow(true)
     , m_waitingForDidUpdateInWindowState(false)
@@ -3955,6 +3956,7 @@ WebPageCreationParameters WebPageProxy::creationParameters() const
     parameters.mediaVolume = m_mediaVolume;
     parameters.mayStartMediaWhenInWindow = m_mayStartMediaWhenInWindow;
     parameters.minimumLayoutSize = m_minimumLayoutSize;
+    parameters.autoSizingShouldExpandToViewHeight = m_autoSizingShouldExpandToViewHeight;
     parameters.scrollPinningBehavior = m_scrollPinningBehavior;
 
 #if PLATFORM(MAC)
@@ -4347,6 +4349,19 @@ void WebPageProxy::setMinimumLayoutSize(const IntSize& minimumLayoutSize)
     if (m_minimumLayoutSize.width() <= 0)
         intrinsicContentSizeDidChange(IntSize(-1, -1));
 #endif
+}
+
+void WebPageProxy::setAutoSizingShouldExpandToViewHeight(bool shouldExpand)
+{
+    if (m_autoSizingShouldExpandToViewHeight == shouldExpand)
+        return;
+
+    m_autoSizingShouldExpandToViewHeight = shouldExpand;
+
+    if (!isValid())
+        return;
+
+    m_process->send(Messages::WebPage::SetAutoSizingShouldExpandToViewHeight(shouldExpand), m_pageID, 0);
 }
 
 #if PLATFORM(MAC)

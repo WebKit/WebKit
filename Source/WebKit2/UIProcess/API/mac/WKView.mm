@@ -3229,25 +3229,11 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 
 - (CGFloat)minimumWidthForAutoLayout
 {
-    static BOOL loggedDeprecationWarning = NO;
-
-    if (!loggedDeprecationWarning) {
-        NSLog(@"Please use minimumSizeForAutoLayout instead of minimumWidthForAutoLayout.");
-        loggedDeprecationWarning = YES;
-    }
-
     return self.minimumSizeForAutoLayout.width;
 }
 
 - (void)setMinimumWidthForAutoLayout:(CGFloat)minimumLayoutWidth
 {
-    static BOOL loggedDeprecationWarning = NO;
-
-    if (!loggedDeprecationWarning) {
-        NSLog(@"Please use setMinimumSizeForAutoLayout: instead of setMinimumWidthForAutoLayout:");
-        loggedDeprecationWarning = YES;
-    }
-
     self.minimumSizeForAutoLayout = NSMakeSize(minimumLayoutWidth, self.minimumSizeForAutoLayout.height);
 }
 
@@ -3264,6 +3250,16 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     _data->_page->setMainFrameIsScrollable(!expandsToFit);
 
     [self setShouldClipToVisibleRect:expandsToFit];
+}
+
+- (BOOL)shouldExpandToViewHeightForAutoLayout
+{
+    return _data->_page->autoSizingShouldExpandToViewHeight();
+}
+
+- (void)setShouldExpandToViewHeightForAutoLayout:(BOOL)shouldExpand
+{
+    return _data->_page->setAutoSizingShouldExpandToViewHeight(shouldExpand);
 }
 
 - (BOOL)shouldClipToVisibleRect

@@ -756,6 +756,9 @@ public:
     WebCore::IntSize minimumLayoutSize() const { return m_minimumLayoutSize; }
     void setMinimumLayoutSize(const WebCore::IntSize&);
 
+    bool autoSizingShouldExpandToViewHeight() const { return m_autoSizingShouldExpandToViewHeight; }
+    void setAutoSizingShouldExpandToViewHeight(bool);
+
     bool mainFrameInViewSourceMode() const { return m_mainFrameInViewSourceMode; }
     void setMainFrameInViewSourceMode(bool);
 
@@ -1252,6 +1255,7 @@ private:
     bool m_shouldSendEventsSynchronously;
 
     bool m_suppressVisibilityUpdates;
+    bool m_autoSizingShouldExpandToViewHeight;
     WebCore::IntSize m_minimumLayoutSize;
 
     float m_mediaVolume;

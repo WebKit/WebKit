@@ -62,6 +62,7 @@ typedef enum {
 @property (readwrite) CGFloat minimumWidthForAutoLayout;
 @property (readwrite) NSSize minimumSizeForAutoLayout;
 @property (readwrite) BOOL shouldClipToVisibleRect;
+@property (readwrite) BOOL shouldExpandToViewHeightForAutoLayout;
 
 @property(copy, nonatomic) NSColor *underlayColor;
 
