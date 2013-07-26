@@ -1,3 +1,15 @@
+2013-07-26  Anders Carlsson  <andersca@apple.com>
+
+        Add another method that we need to set aside subviews for
+        https://bugs.webkit.org/show_bug.cgi?id=119157
+        <rdar://problem/14554723>
+
+        Reviewed by Beth Dakin.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _recursive:displayRectIgnoringOpacity:inContext:topView:]):
+        (-[WebHTMLView _recursive:displayRectIgnoringOpacity:inGraphicsContext:CGContext:topView:shouldChangeFontReferenceColor:]):
+
 2013-07-25  Andreas Kling  <akling@apple.com>
 
         ChromeClient::focusedNodeChanged() should be focusedElementChanged().
