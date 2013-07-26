@@ -1,3 +1,46 @@
+2013-07-19  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Setting a large numeric property on an object causes it to allocate a huge backing store
+        https://bugs.webkit.org/show_bug.cgi?id=118914
+
+        Reviewed by Geoffrey Garen.
+
+        There are two distinct actions that we're trying to optimize for:
+
+        new Array(100000);
+
+        and:
+
+        a = [];
+        a[100000] = 42;
+        
+        In the first case, the programmer has indicated that they expect this Array to be very big, 
+        so they should get a contiguous array up until some threshold, above which we perform density 
+        calculations to see if it is indeed dense enough to warrant being contiguous.
+        
+        In the second case, the programmer hasn't indicated anything about the size of the Array, so 
+        we should be more conservative and assume it should be sparse until we've proven otherwise.
+        
+        Currently both of those cases are handled by MIN_SPARSE_ARRAY_INDEX. We should distinguish 
+        between them for the purposes of not over-allocating large backing stores like we see on 
+        http://www.peekanalytics.com/burgerjoints/
+        
+        The way that we'll do this is to keep the MIN_SPARSE_ARRAY_INDEX for the first case, and 
+        introduce a new heuristic for the second case. If we are putting to an index above a certain 
+        threshold (say, 1000) and it is beyond the length of the array, then we will use a sparse 
+        map instead. So for example, in the second case above the empty array has a blank indexing 
+        type and a length of 0. We put-by-val to an index > 1000 and > a.length, so we'll use a sparse map.
+
+        This fix is ~800x speedup on the accompanying regression test :-o
+
+        * runtime/ArrayConventions.h:
+        (JSC::indexIsSufficientlyBeyondLengthForSparseMap):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::putByIndexBeyondVectorLengthWithoutAttributes):
+        (JSC::JSObject::putByIndexBeyondVectorLengthWithArrayStorage):
+        (JSC::JSObject::putByIndexBeyondVectorLength):
+        (JSC::JSObject::putDirectIndexBeyondVectorLengthWithArrayStorage):
+
 2013-07-26  Julien Brianceau  <jbrianceau@nds.com>
 
         REGRESSION(FTL): Fix lots of crashes in sh4 baseline JIT.

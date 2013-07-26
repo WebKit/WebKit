@@ -71,6 +71,8 @@ namespace JSC {
 // is added.
 #define FIRST_VECTOR_GROW 4U
 
+#define MIN_BEYOND_LENGTH_SPARSE_INDEX 1000
+
 // Our policy for when to use a vector and when to use a sparse map.
 // For all array indices under MIN_SPARSE_ARRAY_INDEX, we always use a vector.
 // When indices greater than MIN_SPARSE_ARRAY_INDEX are involved, we use a vector
@@ -80,6 +82,11 @@ static const unsigned minDensityMultiplier = 8;
 inline bool isDenseEnoughForVector(unsigned length, unsigned numValues)
 {
     return length / minDensityMultiplier <= numValues;
+}
+
+inline bool indexIsSufficientlyBeyondLengthForSparseMap(unsigned i, unsigned length)
+{
+    return i >= MIN_BEYOND_LENGTH_SPARSE_INDEX && i > length;
 }
 
 inline IndexingHeader indexingHeaderForArray(unsigned length, unsigned vectorLength)

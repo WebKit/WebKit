@@ -1853,7 +1853,8 @@ void JSObject::putByIndexBeyondVectorLengthWithoutAttributes(ExecState* exec, un
     
     if (i >= MAX_ARRAY_INDEX - 1
         || (i >= MIN_SPARSE_ARRAY_INDEX
-            && !isDenseEnoughForVector(i, countElements<indexingShape>(m_butterfly)))) {
+            && !isDenseEnoughForVector(i, countElements<indexingShape>(m_butterfly)))
+        || indexIsSufficientlyBeyondLengthForSparseMap(i, m_butterfly->vectorLength())) {
         ASSERT(i <= MAX_ARRAY_INDEX);
         ensureArrayStorageSlow(vm);
         SparseArrayValueMap* map = allocateSparseIndexMap(vm);
@@ -1901,7 +1902,7 @@ void JSObject::putByIndexBeyondVectorLengthWithArrayStorage(ExecState* exec, uns
     
     // First, handle cases where we don't currently have a sparse map.
     if (LIKELY(!map)) {
-        // If the array is not extensible, we should have entered dictionary mode, and created the spare map.
+        // If the array is not extensible, we should have entered dictionary mode, and created the sparse map.
         ASSERT(isExtensible());
     
         // Update m_length if necessary.
@@ -1909,7 +1910,9 @@ void JSObject::putByIndexBeyondVectorLengthWithArrayStorage(ExecState* exec, uns
             storage->setLength(i + 1);
 
         // Check that it is sensible to still be using a vector, and then try to grow the vector.
-        if (LIKELY((isDenseEnoughForVector(i, storage->m_numValuesInVector)) && increaseVectorLength(vm, i + 1))) {
+        if (LIKELY(!indexIsSufficientlyBeyondLengthForSparseMap(i, storage->vectorLength()) 
+            && isDenseEnoughForVector(i, storage->m_numValuesInVector)
+            && increaseVectorLength(vm, i + 1))) {
             // success! - reread m_storage since it has likely been reallocated, and store to the vector.
             storage = arrayStorage();
             storage->m_vector[i].set(vm, this, value);
@@ -1976,7 +1979,7 @@ void JSObject::putByIndexBeyondVectorLength(ExecState* exec, unsigned i, JSValue
                 ensureArrayStorageExistsAndEnterDictionaryIndexingMode(vm));
             break;
         }
-        if (i >= MIN_SPARSE_ARRAY_INDEX) {
+        if (indexIsSufficientlyBeyondLengthForSparseMap(i, 0) || i >= MIN_SPARSE_ARRAY_INDEX) {
             putByIndexBeyondVectorLengthWithArrayStorage(
                 exec, i, value, shouldThrow, createArrayStorage(vm, 0, 0));
             break;
@@ -2056,7 +2059,8 @@ bool JSObject::putDirectIndexBeyondVectorLengthWithArrayStorage(ExecState* exec,
         if (LIKELY(
                 !attributes
                 && (isDenseEnoughForVector(i, storage->m_numValuesInVector))
-                && increaseVectorLength(vm, i + 1))) {
+                && increaseVectorLength(vm, i + 1)
+                && !indexIsSufficientlyBeyondLengthForSparseMap(i, storage->vectorLength()))) {
             // success! - reread m_storage since it has likely been reallocated, and store to the vector.
             storage = arrayStorage();
             storage->m_vector[i].set(vm, this, value);
