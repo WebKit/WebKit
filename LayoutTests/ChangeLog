@@ -1,3 +1,25 @@
+2013-07-26  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        [CSS Shapes] New positioning model: support for polygon shape-outside
+        https://bugs.webkit.org/show_bug.cgi?id=118085
+
+        Reviewed by Dirk Schulze.
+
+        Update polygon tests to work for new positioning model and migrate
+        them to be W3C spec tests. Thus, they have been imported from the
+        CSSWG repository now.
+
+        * TestExpectations: Remove skip for replaced test.
+        * csswg/submitted/shapes/shape-outside/shape-outside-floats-polygon-000-expected.html: Added.
+        * csswg/submitted/shapes/shape-outside/shape-outside-floats-polygon-000.html: Added.
+        * csswg/submitted/shapes/shape-outside/shape-outside-floats-polygon-001-expected.html: Added.
+        * csswg/submitted/shapes/shape-outside/shape-outside-floats-polygon-001.html: Added.
+        * csswg/submitted/shapes/shape-outside/shape-outside-floats-polygon-002-expected.html: Added.
+        * csswg/submitted/shapes/shape-outside/shape-outside-floats-polygon-002.html: Added.
+        * csswg/submitted/shapes/shape-outside/w3c-import.log:
+        * fast/shapes/shape-outside-floats/shape-outside-floats-simple-polygon-expected.html: Removed.
+        * fast/shapes/shape-outside-floats/shape-outside-floats-simple-polygon.html: Removed.
+
 2013-07-26  Oliver Hunt  <oliver@apple.com>
 
         REGRESSION(FTL?): Crashes in plugin tests
