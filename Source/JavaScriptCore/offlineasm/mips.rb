@@ -139,7 +139,7 @@ end
 
 class Immediate
     def mipsOperand
-        raise "Invalid immediate #{value} at #{codeOriginString}" if value < -0x7fff or value > 0x7fff
+        raise "Invalid immediate #{value} at #{codeOriginString}" if value < -0x7fff or value > 0xffff
         "#{value}"
     end
 end
@@ -378,6 +378,8 @@ def mipsLowerMisplacedImmediates(list)
                 else
                     newList << node
                 end
+            when /^(addi|subi)/
+                newList << node.riscLowerMalformedImmediatesRecurse(newList, -0x7fff..0x7fff)
             else
                 newList << node
             end

@@ -1,3 +1,12 @@
+2013-07-26  Balazs Kilvady  <kilvadyb@homejinni.com>
+
+        [mips] Fix LLINT build for mips backend
+        https://bugs.webkit.org/show_bug.cgi?id=119152
+
+        Reviewed by Oliver Hunt.
+
+        * offlineasm/mips.rb:
+
 2013-07-19  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Setting a large numeric property on an object causes it to allocate a huge backing store
