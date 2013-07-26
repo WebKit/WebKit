@@ -36,7 +36,11 @@
 #include "FloatConversion.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
+#if HAVE(AVFOUNDATION_LEGIBLE_OUTPUT_SUPPORT)
 #include "InbandTextTrackPrivateAVCF.h"
+#else
+#include "InbandTextTrackPrivateLegacyAVCF.h"
+#endif
 #include "KURL.h"
 #include "Logging.h"
 #include "PlatformCALayer.h"
@@ -44,7 +48,9 @@
 #include "TimeRanges.h"
 
 #include <AVFoundationCF/AVCFPlayerItem.h>
+#if HAVE(AVFOUNDATION_LEGIBLE_OUTPUT_SUPPORT)
 #include <AVFoundationCF/AVCFPlayerItemLegibleOutput.h>
+#endif
 #include <AVFoundationCF/AVCFPlayerLayer.h>
 #include <AVFoundationCF/AVFoundationCF.h>
 #include <CoreMedia/CoreMedia.h>
@@ -949,7 +955,9 @@ void MediaPlayerPrivateAVFoundationCF::sizeChanged()
 #if !HAVE(AVFOUNDATION_LEGIBLE_OUTPUT_SUPPORT)
 void MediaPlayerPrivateAVFoundationCF::processLegacyClosedCaptionsTracks()
 {
+#if HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP)
     AVCFPlayerItemSelectMediaOptionInMediaSelectionGroup(avPlayerItem(m_avfWrapper), 0, safeMediaSelectionGroupForLegibleMedia(m_avfWrapper));
+#endif
 
     Vector<RefPtr<InbandTextTrackPrivateAVF> > removedTextTracks = m_textTracks;
     RetainPtr<CFArrayRef> tracks = adoptCF(AVCFPlayerItemCopyTracks(avPlayerItem(m_avfWrapper)));
@@ -1451,6 +1459,7 @@ void AVFWrapper::seekToTime(float time)
         kCMTimeZero, kCMTimeZero, &seekCompletedCallback, callbackContext());
 }
 
+#if HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP) && HAVE(AVFOUNDATION_LEGIBLE_OUTPUT_SUPPORT)
 struct LegibleOutputData {
     RetainPtr<CFArrayRef> m_attributedStrings;
     double m_time;
@@ -1503,6 +1512,7 @@ void AVFWrapper::legibleOutputCallback(void* context, AVCFPlayerItemLegibleOutpu
 
     dispatch_async_f(dispatch_get_main_queue(), legibleOutputData.leakPtr(), processCue);
 }
+#endif
 
 void AVFWrapper::setAsset(AVCFURLAssetRef asset)
 {
@@ -1615,7 +1625,7 @@ RetainPtr<CGImageRef> AVFWrapper::createImageForTimeInRect(float time, const Int
     return image;
 }
 
-#if HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP) && HAVE(AVFOUNDATION_LEGIBLE_OUTPUT_SUPPORT)
+#if HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP)
 AVCFMediaSelectionGroupRef AVFWrapper::safeMediaSelectionGroupForLegibleMedia() const
 {
     if (!avAsset())

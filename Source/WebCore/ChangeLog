@@ -1,3 +1,17 @@
+2013-07-26  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Unreviewed build fix.
+
+        Correct build when targeting a release that does not have the AVCF
+        Legible Output infrastructure.
+
+        * platform/graphics/avfoundation/cf/AVFoundationCFSoftLinking.h: Exclude
+        a soft-link target when the API doesn't exist.
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+        Correct include options for non-Legible Output supporting environments.
+        (WebCore::MediaPlayerPrivateAVFoundationCF::processLegacyClosedCaptionsTracks):
+        Prevent build failure when building with legacy caption support.
+
 2013-07-26  Andreas Kling  <akling@apple.com>
 
         Apply FINAL to the RenderObject hierarchy.

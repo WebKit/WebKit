@@ -165,9 +165,6 @@ SOFT_LINK_DLL_IMPORT(AVFoundationCF, AVCFPlayerItemIsPlaybackLikelyToKeepUp, Boo
 SOFT_LINK_DLL_IMPORT(AVFoundationCF, AVCFPlayerItemLegibleOutputGetTypeID, CFTypeID, __cdecl, (), ())
 #define AVCFPlayerItemLegibleOutputGetTypeID softLink_AVCFPlayerItemLegibleOutputGetTypeID
 
-SOFT_LINK_DLL_IMPORT(AVFoundationCF, AVCFPlayerItemRemoveOutput, void, __cdecl, (AVCFPlayerItemRef playerItem, AVCFPlayerItemOutputRef output), (playerItem, output))
-#define AVCFPlayerItemRemoveOutput softLink_AVCFPlayerItemRemoveOutput
-
 SOFT_LINK_DLL_IMPORT(AVFoundationCF, AVCFPlayerItemSeekToTimeWithToleranceAndCompletionCallback, AVCFAssetRef, __cdecl, (AVCFPlayerItemRef playerItem, CMTime time, CMTime toleranceBefore, CMTime toleranceAfter, AVCFPlayerItemSeekCompletionCallback completionCallback, void *context), (playerItem, time, toleranceBefore, toleranceAfter, completionCallback, context))
 #define AVCFPlayerItemSeekToTimeWithToleranceAndCompletionCallback softLink_AVCFPlayerItemSeekToTimeWithToleranceAndCompletionCallback
 
@@ -261,6 +258,9 @@ SOFT_LINK_DLL_IMPORT(AVFoundationCF, AVCFPlayerItemLegibleOutputSetTextStylingRe
 
 SOFT_LINK_DLL_IMPORT(AVFoundationCF, AVCFPlayerItemOutputSetSuppressPlayerRendering, void, __cdecl, (AVCFPlayerItemOutputRef output, Boolean suppressed), (output, suppressed))
 #define AVCFPlayerItemOutputSetSuppressPlayerRendering softLink_AVCFPlayerItemOutputSetSuppressPlayerRendering
+
+SOFT_LINK_DLL_IMPORT(AVFoundationCF, AVCFPlayerItemRemoveOutput, void, __cdecl, (AVCFPlayerItemRef playerItem, AVCFPlayerItemOutputRef output), (playerItem, output))
+#define AVCFPlayerItemRemoveOutput softLink_AVCFPlayerItemRemoveOutput
 
 SOFT_LINK_DLL_IMPORT(AVFoundationCF, AVCFPlayerItemSelectMediaOptionInMediaSelectionGroup, void, __cdecl, (AVCFPlayerItemRef playerItem, AVCFMediaSelectionOptionRef selectionOption, AVCFMediaSelectionGroupRef selectionGroup), (playerItem, selectionOption, selectionGroup))
 #define AVCFPlayerItemSelectMediaOptionInMediaSelectionGroup softLink_AVCFPlayerItemSelectMediaOptionInMediaSelectionGroup
