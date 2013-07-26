@@ -1,3 +1,15 @@
+2013-07-25  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r153353
+
+    2013-07-25  Mark Rowe  <mrowe@apple.com>
+
+            Fix build of DumpRenderTree and WebKitTestRunner when building against an SDK.
+
+            * DumpRenderTree/mac/Configurations/Base.xcconfig: Fix framework search path when building against an SDK.
+            * WebKitTestRunner/Configurations/Base.xcconfig: Ditto. Also fix where our scripts look for WebCore.framework
+            so they pull the version out of the SDK.
+
 2013-07-23  Lucas Forschler  <lforschler@apple.com>
 
         Merge r153072
