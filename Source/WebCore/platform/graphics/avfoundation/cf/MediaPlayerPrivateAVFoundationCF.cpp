@@ -210,7 +210,9 @@ static CFArrayRef createMetadataKeyNames()
         AVCFAssetPropertyPreferredRate,
         AVCFAssetPropertyPlayable,
         AVCFAssetPropertyTracks,
-        AVCFAssetPropertyAvailableMediaCharacteristicsWithMediaSelectionOptions
+#if HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP)
+        AVCFAssetPropertyAvailableMediaCharacteristicsWithMediaSelectionOptions,
+#endif
     };
     
     return CFArrayCreate(0, (const void**)keyNames, sizeof(keyNames) / sizeof(keyNames[0]), &kCFTypeArrayCallBacks);

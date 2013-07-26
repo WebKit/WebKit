@@ -1,3 +1,11 @@
+2013-07-26  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Unreviewed build fix.
+
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+        (WebCore::createMetadataKeyNames): Do not include Media Selection
+        synbols when building without Media Selection API.
+
 2013-07-26  Oliver Hunt  <oliver@apple.com>
 
         REGRESSION(FTL?): Crashes in plugin tests
