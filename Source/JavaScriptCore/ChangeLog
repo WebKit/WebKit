@@ -1,5 +1,17 @@
 2013-07-26  Julien Brianceau  <jbrianceau@nds.com>
 
+        REGRESSION(FTL): Fix lots of crashes in sh4 baseline JIT.
+        https://bugs.webkit.org/show_bug.cgi?id=119148
+
+        Reviewed by Csaba Osztrogonác.
+
+        * jit/JSInterfaceJIT.h: "secondArgumentRegister" is wrong for sh4.
+        * llint/LowLevelInterpreter32_64.asm: "move t0, a0" is missing
+        in nativeCallTrampoline for sh4. Reuse MIPS implementation to avoid
+        code duplication.
+
+2013-07-26  Julien Brianceau  <jbrianceau@nds.com>
+
         REGRESSION(FTL): Crash in sh4 baseline JIT.
         https://bugs.webkit.org/show_bug.cgi?id=119138
 

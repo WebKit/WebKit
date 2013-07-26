@@ -158,8 +158,8 @@ namespace JSC {
         static const RegisterID regT5 = SH4Registers::r5;
         static const RegisterID regT6 = SH4Registers::r6;
         static const RegisterID regT7 = SH4Registers::r7;
-        static const RegisterID firstArgumentRegister =regT4;
-        static const RegisterID secondArgumentRegister =regT4;
+        static const RegisterID firstArgumentRegister = regT4;
+        static const RegisterID secondArgumentRegister = regT5;
 
         static const RegisterID returnValueRegister = SH4Registers::r0;
         static const RegisterID cachedResultRegister = SH4Registers::r0;
