@@ -1109,16 +1109,17 @@ void ApplyStyleCommand::removeInlineStyle(EditingStyle* style, const Position &s
     Position s = start.isNull() || start.isOrphan() ? pushDownStart : start;
     Position e = end.isNull() || end.isOrphan() ? pushDownEnd : end;
 
-    Node* node = start.deprecatedNode();
+    RefPtr<Node> node = start.deprecatedNode();
     while (node) {
         RefPtr<Node> next;
-        if (editingIgnoresContent(node)) {
+        if (editingIgnoresContent(node.get())) {
             ASSERT(node == end.deprecatedNode() || !node->contains(end.deprecatedNode()));
-            next = NodeTraversal::nextSkippingChildren(node);
+            next = NodeTraversal::nextSkippingChildren(node.get());
         } else
-            next = NodeTraversal::next(node);
-        if (node->isHTMLElement() && nodeFullySelected(node, start, end)) {
-            RefPtr<HTMLElement> elem = toHTMLElement(node);
+            next = NodeTraversal::next(node.get());
+
+        if (node->isHTMLElement() && nodeFullySelected(node.get(), start, end)) {
+            RefPtr<HTMLElement> elem = toHTMLElement(node.get());
             RefPtr<Node> prev = NodeTraversal::previousPostOrder(elem.get());
             RefPtr<Node> next = NodeTraversal::next(elem.get());
             RefPtr<EditingStyle> styleToPushDown;
