@@ -1,3 +1,9 @@
+2013-07-25  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed, fix build break after r153360.
+
+        * CMakeLists.txt: Add CommonSlowPathsExceptions.cpp.
+
 2013-07-25  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed build fix, AppleWin port.
