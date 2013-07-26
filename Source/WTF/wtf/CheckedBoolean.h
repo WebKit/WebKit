@@ -30,10 +30,19 @@
 
 class CheckedBoolean {
 public:
-    CheckedBoolean(bool value)
-    : m_value(value)
 #if !ASSERT_DISABLED
-    , m_checked(false)
+    CheckedBoolean(const CheckedBoolean& other)
+        : m_value(other.m_value)
+        , m_checked(false)
+    {
+        other.m_checked = true;
+    }
+#endif
+
+    CheckedBoolean(bool value)
+        : m_value(value)
+#if !ASSERT_DISABLED
+        , m_checked(false)
 #endif
     {
     }
@@ -54,7 +63,7 @@ public:
 private:
     bool m_value;
 #if !ASSERT_DISABLED
-    bool m_checked;
+    mutable bool m_checked;
 #endif
 };
 

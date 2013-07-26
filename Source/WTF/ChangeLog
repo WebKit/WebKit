@@ -1,3 +1,15 @@
+2013-07-26  Oliver Hunt <oliver@apple.com>
+
+        ASSERT failure in wtf/CheckedBoolean.h line 43 on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=119170
+
+        Reviewed by Michael Saboff.
+
+        Added a copy constructor to CheckedBoolean.
+
+        * wtf/CheckedBoolean.h:
+        (CheckedBoolean::CheckedBoolean):
+
 2013-07-25  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Unreviewed build fix.
