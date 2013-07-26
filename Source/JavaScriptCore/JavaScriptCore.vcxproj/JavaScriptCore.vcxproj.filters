@@ -762,6 +762,12 @@
     <ClCompile Include="..\runtime\VM.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
+    <ClCompile Include="..\parser\SourceCode.cpp">
+      <Filter>parser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\runtime\IntendedStructureChain.cpp">
+      <Filter>runtime</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\API\APICallbackFunction.h">
@@ -1949,6 +1955,9 @@
     </ClInclude>
     <ClInclude Include="..\assembler\MacroAssemblerX86Common.cpp">
       <Filter>assembler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\runtime\IntendedStructureChain.h">
+      <Filter>runtime</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

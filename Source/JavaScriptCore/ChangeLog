@@ -1,3 +1,11 @@
+2013-07-25  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Unreviewed build fix.
+
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj: Add missing IntendedStructureChange.h,.cpp and
+        parser/SourceCode.h,.cpp.
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters: Ditto.
+
 2013-07-25  Anders Carlsson  <andersca@apple.com>
 
         ASSERT(m_vm->apiLock().currentThreadIsHoldingLock()); fails for Safari on current ToT
