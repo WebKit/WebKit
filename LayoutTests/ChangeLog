@@ -1,3 +1,24 @@
+2013-07-25  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        [CSS Shapes] New positioning model: support for inset rectangle shape-outside
+        https://bugs.webkit.org/show_bug.cgi?id=118083
+
+        Reviewed by Dirk Schulze.
+
+        Update inset-rectangle tests to work with new positioning model.
+        Removed some test cases that aren't really needed or aren't applicable
+        with the new model. These test cases live in the CSS WG's repo now, so
+        they've been imported here.
+
+        * TestExpectations: Remove skip lines for replaced tests.
+        * csswg/submitted/shapes/shape-outside/shape-outside-floats-inset-rectangle-000-expected.html: Added.
+        * csswg/submitted/shapes/shape-outside/shape-outside-floats-inset-rectangle-000.html: Added.
+        * csswg/submitted/shapes/shape-outside/shape-outside-floats-inset-rectangle-001-expected.html: Renamed from LayoutTests/fast/shapes/shape-outside-floats/shape-outside-floats-simple-rounded-inset-rectangle-expected.html.
+        * csswg/submitted/shapes/shape-outside/shape-outside-floats-inset-rectangle-001.html: Renamed from LayoutTests/fast/shapes/shape-outside-floats/shape-outside-floats-simple-rounded-inset-rectangle.html.
+        * csswg/submitted/shapes/shape-outside/w3c-import.log:
+        * fast/shapes/shape-outside-floats/shape-outside-floats-simple-inset-rectangle-expected.html: Removed.
+        * fast/shapes/shape-outside-floats/shape-outside-floats-simple-inset-rectangle.html: Removed.
+
 2013-07-25  Zoltan Horvath  <zoltan@webkit.org>
 
         [CSS Shapes] Add missing includes to shape-inside polygon tests

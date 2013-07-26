@@ -31,9 +31,6 @@ webkit.org/b/118085 fast/shapes/shape-outside-floats/shape-outside-floats-simple
 webkit.org/b/118086 fast/shapes/shape-outside-floats/shape-outside-floats-simple-rectangle-percentage.html [ Skip ]
 webkit.org/b/118086 fast/shapes/shape-outside-floats/shape-outside-floats-simple-inset-rectangle-percentage.html [ Skip ]
 
-webkit.org/b/118083 fast/shapes/shape-outside-floats/shape-outside-floats-simple-rounded-inset-rectangle.html [ Skip ]
-webkit.org/b/118083 fast/shapes/shape-outside-floats/shape-outside-floats-simple-inset-rectangle.html [ Skip ]
-
 webkit.org/b/118087 fast/shapes/shape-outside-floats/shape-outside-floats-stacked.html [ Skip ]
 webkit.org/b/118087 fast/shapes/shape-outside-floats/shape-outside-floats-simple-rectangle-horizontal-multiple.html [ Skip ]
 
