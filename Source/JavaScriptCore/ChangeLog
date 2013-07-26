@@ -1,3 +1,9 @@
+2013-07-26  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed.
+
+        * Target.pri: Adding missing DFG files to the Qt build.
+
 2013-07-25  Csaba Osztrogonác  <ossy@webkit.org>
 
         GTK and Qt buildfix after the intrusive win buildfix r153360.

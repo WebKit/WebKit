@@ -146,6 +146,7 @@ SOURCES += \
     dfg/DFGFinalizer.cpp \
     dfg/DFGFixupPhase.cpp \
     dfg/DFGFlushFormat.cpp \
+    dfg/DFGFlushLivenessAnalysisPhase.cpp \
     dfg/DFGGraph.cpp \
     dfg/DFGInPlaceAbstractState.cpp \
     dfg/DFGJITCode.cpp \
@@ -176,6 +177,7 @@ SOURCES += \
     dfg/DFGPredictionPropagationPhase.cpp \
     dfg/DFGPredictionInjectionPhase.cpp \
     dfg/DFGRepatch.cpp \
+    dfg/DFGSSAConversionPhase.cpp \
     dfg/DFGSpeculativeJIT.cpp \
     dfg/DFGSpeculativeJIT32_64.cpp \
     dfg/DFGSpeculativeJIT64.cpp \
