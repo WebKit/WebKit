@@ -129,8 +129,6 @@ private:
     // Called in dispatchBlurEvent(), after placeholder process, before calling parent's dispatchBlurEvent().
     virtual void handleBlurEvent() { }
 
-    RenderTextControl* textRendererAfterUpdateLayout();
-
     String m_textAsOfLastFormControlChangeEvent;
     bool m_lastChangeWasUserEdit;
     

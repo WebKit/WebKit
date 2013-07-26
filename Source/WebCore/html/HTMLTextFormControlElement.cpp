@@ -187,14 +187,6 @@ void HTMLTextFormControlElement::fixPlaceholderRenderer(HTMLElement* placeholder
     parentRenderer->addChild(placeholderRenderer, siblingRenderer);
 }
 
-RenderTextControl* HTMLTextFormControlElement::textRendererAfterUpdateLayout()
-{
-    if (!isTextFormControl())
-        return 0;
-    document()->updateLayoutIgnorePendingStylesheets();
-    return toRenderTextControl(renderer());
-}
-
 void HTMLTextFormControlElement::setSelectionStart(int start)
 {
     setSelectionRange(start, max(start, selectionEnd()), selectionDirection());

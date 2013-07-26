@@ -1,5 +1,17 @@
 2013-07-25  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Remove unused HTMLTextFormControlElement::textRendererAfterUpdateLayout
+        https://bugs.webkit.org/show_bug.cgi?id=119121
+
+        Reviewed by Andreas Kling.
+
+        Merge https://chromium.googlesource.com/chromium/blink/+/3255ce725711707fe1fd18be91a6d06789517220.
+
+        * html/HTMLTextFormControlElement.cpp:
+        * html/HTMLTextFormControlElement.h:
+
+2013-07-25  Ryosuke Niwa  <rniwa@webkit.org>
+
         Fix document leak when selection is created inside the document
         https://bugs.webkit.org/show_bug.cgi?id=119122
 
