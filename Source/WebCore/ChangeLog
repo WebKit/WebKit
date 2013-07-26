@@ -1,5 +1,23 @@
 2013-07-26  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r153349
+
+    2013-07-25  Tim Horton  <timothy_horton@apple.com>
+
+            Null check m_frame in maximum and minimumScrollPosition
+            https://bugs.webkit.org/show_bug.cgi?id=119109
+            <rdar://problem/14545393>
+
+            Reviewed by Darin Adler.
+
+            * page/FrameView.cpp:
+            (WebCore::FrameView::minimumScrollPosition):
+            (WebCore::FrameView::maximumScrollPosition):
+            Null-check m_frame (and move the early-return after the clamp-to-0
+            as the revert in r152911 should have).
+
+2013-07-26  Lucas Forschler  <lforschler@apple.com>
+
         Merge r153366
 
     2013-07-25  Ryosuke Niwa  <rniwa@webkit.org>

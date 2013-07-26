@@ -1636,7 +1636,7 @@ IntPoint FrameView::minimumScrollPosition() const
 {
     IntPoint minimumPosition(ScrollView::minimumScrollPosition());
 
-    if (!m_frame->page())
+    if (!m_frame || !m_frame->page())
         return minimumPosition;
 
     if (m_frame == m_frame->page()->mainFrame() && m_scrollPinningBehavior == PinToBottom)
@@ -1649,10 +1649,10 @@ IntPoint FrameView::maximumScrollPosition() const
 {
     IntPoint maximumOffset(contentsWidth() - visibleWidth() - scrollOrigin().x(), totalContentsSize().height() - visibleHeight() - scrollOrigin().y());
 
-    if (!m_frame->page())
-        return maximumOffset;
-
     maximumOffset.clampNegativeToZero();
+
+    if (!m_frame || !m_frame->page())
+        return maximumOffset;
 
     if (m_frame == m_frame->page()->mainFrame() && m_scrollPinningBehavior == PinToTop)
         maximumOffset.setY(minimumScrollPosition().y());
