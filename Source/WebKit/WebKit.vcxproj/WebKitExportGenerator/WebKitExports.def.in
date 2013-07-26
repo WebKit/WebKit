@@ -324,7 +324,6 @@ EXPORTS
         symbolWithPointer(?treeScope@Node@WebCore@@QBEPAVTreeScope@2@XZ, ?treeScope@Node@WebCore@@QEBAPEAVTreeScope@2@XZ)
         symbolWithPointer(?isTreeScope@Node@WebCore@@QBE_NXZ, ?isTreeScope@Node@WebCore@@QEBA_NXZ)
         symbolWithPointer(?updateLayoutIgnorePendingStylesheets@Document@WebCore@@QAEXXZ, ?updateLayoutIgnorePendingStylesheets@Document@WebCore@@QEAAXXZ)
-        symbolWithPointer(?utf8@String@WTF@@QBE?AVCString@2@W4ConversionMode@12@@Z, ?utf8@String@WTF@@QEBA?AVCString@2@W4ConversionMode@12@@Z)
         symbolWithPointer(?view@Document@WebCore@@QBEPAVFrameView@2@XZ, ?view@Document@WebCore@@QEBAPEAVFrameView@2@XZ)
         symbolWithPointer(??1ContextDestructionObserver@WebCore@@MAE@XZ, ??1ContextDestructionObserver@WebCore@@MEAA@XZ)
         symbolWithPointer(?contextDestroyed@ContextDestructionObserver@WebCore@@UAEXXZ, ?contextDestroyed@ContextDestructionObserver@WebCore@@UEAAXXZ)

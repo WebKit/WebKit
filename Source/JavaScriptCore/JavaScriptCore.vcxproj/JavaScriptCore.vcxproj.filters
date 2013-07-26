@@ -771,6 +771,12 @@
     <ClCompile Include="..\runtime\CommonSlowPathsExceptions.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
+    <ClCompile Include="..\runtime\CommonSlowPaths.cpp">
+      <Filter>runtime</Filter>
+    </ClCompile>
+    <ClCompile Include="..\API\JSCTestRunnerUtils.cpp">
+      <Filter>API</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\API\APICallbackFunction.h">
@@ -1964,6 +1970,9 @@
     </ClInclude>
     <ClInclude Include="..\runtime\CommonSlowPathsExceptions.h">
       <Filter>runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="..\API\JSCTestRunnerUtils.h">
+      <Filter>API</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

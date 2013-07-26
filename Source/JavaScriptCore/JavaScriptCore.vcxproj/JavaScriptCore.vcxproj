@@ -281,6 +281,7 @@
     <ClCompile Include="..\API\JSCallbackObject.cpp" />
     <ClCompile Include="..\API\JSClassRef.cpp" />
     <ClCompile Include="..\API\JSContextRef.cpp" />
+    <ClCompile Include="..\API\JSCTestRunnerUtils.cpp" />
     <ClCompile Include="..\API\JSObjectRef.cpp" />
     <ClCompile Include="..\API\JSScriptRef.cpp" />
     <ClCompile Include="..\API\JSStringRef.cpp" />
@@ -291,6 +292,7 @@
     <ClCompile Include="..\API\OpaqueJSString.cpp" />
     <ClCompile Include="..\assembler\LinkBuffer.cpp" />
     <ClCompile Include="..\assembler\MacroAssembler.cpp" />
+    <ClInclude Include="..\API\JSCTestRunnerUtils.h" />
     <ClInclude Include="..\assembler\MacroAssemblerX86Common.cpp" />
     <ClCompile Include="..\bytecode\ArrayAllocationProfile.cpp" />
     <ClCompile Include="..\bytecode\ArrayProfile.cpp" />
@@ -419,6 +421,7 @@
     <ClCompile Include="..\runtime\CodeCache.cpp" />
     <ClCompile Include="..\runtime\CodeSpecializationKind.cpp" />
     <ClCompile Include="..\runtime\CommonIdentifiers.cpp" />
+    <ClCompile Include="..\runtime\CommonSlowPaths.cpp" />
     <ClCompile Include="..\runtime\CommonSlowPathsExceptions.cpp" />
     <ClCompile Include="..\runtime\Completion.cpp" />
     <ClCompile Include="..\runtime\ConstructData.cpp" />

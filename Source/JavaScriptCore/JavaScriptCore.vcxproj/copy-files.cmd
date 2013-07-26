@@ -16,6 +16,7 @@ for %%f in (
     JSClassRef.h
     JSContextRef.h
     JSContextRefPrivate.h
+	JSCTestRunnerUtils.h
     JSObjectRef.h
     JSObjectRefPrivate.h
     JSRetainPtr.h

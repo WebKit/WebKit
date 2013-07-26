@@ -1,3 +1,9 @@
+2013-07-25  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed build fix, AppleWin port.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
+
 2013-07-25  Alex Christensen  <achristensen@apple.com>
 
         Made Windows build system for ANGLE.

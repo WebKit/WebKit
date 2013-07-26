@@ -1,5 +1,13 @@
 2013-07-25  Roger Fong  <roger_fong@apple.com>
 
+        Unreviewed build fix, AppleWin port.
+
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.vcxproj/copy-files.cmd:
+
+2013-07-25  Roger Fong  <roger_fong@apple.com>
+
         Unreviewed. Followup to r153360.
 
         * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
