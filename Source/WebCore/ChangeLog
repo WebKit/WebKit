@@ -1,5 +1,19 @@
 2013-07-26  Brent Fulgham  <bfulgham@apple.com>
 
+        [Windows] Remove workarounds now that rdar://problem/14390466 is fixed.
+        https://bugs.webkit.org/show_bug.cgi?id=119150
+
+        Reviewed by Anders Carlsson.
+
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+        (WebCore::AVFWrapper::createPlayer): Remove workaround to add legible output
+        after player is created.
+        (WebCore::AVFWrapper::createPlayerItem): Remove workaround to delay adding
+        legible output until player is created.
+        (WebCore::AVFWrapper::platformLayer): Get rid of unused temporary.
+
+2013-07-26  Brent Fulgham  <bfulgham@apple.com>
+
         [Windows] Unreviewed gardening.
 
         * WebCore.vcxproj/WebCore.vcxproj: Add missing header file to ease code viewing.
