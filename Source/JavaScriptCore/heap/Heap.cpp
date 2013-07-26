@@ -167,7 +167,7 @@ static inline size_t proportionalHeapSize(size_t heapSize, size_t ramSize)
 
 static inline bool isValidSharedInstanceThreadState(VM* vm)
 {
-    return vm->apiLock().currentThreadIsHoldingLock();
+    return vm->currentThreadIsHoldingAPILock();
 }
 
 static inline bool isValidThreadState(VM* vm)
@@ -334,7 +334,7 @@ void Heap::didAbandon(size_t bytes)
 void Heap::protect(JSValue k)
 {
     ASSERT(k);
-    ASSERT(m_vm->apiLock().currentThreadIsHoldingLock());
+    ASSERT(m_vm->currentThreadIsHoldingAPILock());
 
     if (!k.isCell())
         return;
@@ -345,7 +345,7 @@ void Heap::protect(JSValue k)
 bool Heap::unprotect(JSValue k)
 {
     ASSERT(k);
-    ASSERT(m_vm->apiLock().currentThreadIsHoldingLock());
+    ASSERT(m_vm->currentThreadIsHoldingAPILock());
 
     if (!k.isCell())
         return false;
@@ -711,7 +711,7 @@ void Heap::collect(SweepToggle sweepToggle)
     
     RELEASE_ASSERT(!m_deferralDepth);
     GCPHASE(Collect);
-    ASSERT(vm()->apiLock().currentThreadIsHoldingLock());
+    ASSERT(vm()->currentThreadIsHoldingAPILock());
     RELEASE_ASSERT(vm()->identifierTable == wtfThreadData().currentIdentifierTable());
     ASSERT(m_isSafeToCollect);
     JAVASCRIPTCORE_GC_BEGIN();

@@ -69,7 +69,7 @@ CheckedBoolean CopiedSpace::tryAllocateSlowCase(size_t bytes, void** outPtr)
     if (isOversize(bytes))
         return tryAllocateOversize(bytes, outPtr);
     
-    ASSERT(m_heap->vm()->apiLock().currentThreadIsHoldingLock());
+    ASSERT(m_heap->vm()->currentThreadIsHoldingAPILock());
     m_heap->didAllocate(m_allocator.currentCapacity());
 
     allocateBlock();

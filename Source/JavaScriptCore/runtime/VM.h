@@ -468,6 +468,11 @@ namespace JSC {
             }
         }
 
+        bool currentThreadIsHoldingAPILock() const
+        {
+            return m_apiLock->currentThreadIsHoldingLock() || exclusiveThread == currentThread();
+        }
+
         JSLock& apiLock() { return *m_apiLock; }
         CodeCache* codeCache() { return m_codeCache.get(); }
 

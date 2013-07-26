@@ -1,3 +1,25 @@
+2013-07-25  Anders Carlsson  <andersca@apple.com>
+
+        ASSERT(m_vm->apiLock().currentThreadIsHoldingLock()); fails for Safari on current ToT
+        https://bugs.webkit.org/show_bug.cgi?id=119108
+
+        Reviewed by Mark Hahnenberg.
+
+        Add a currentThreadIsHoldingAPILock() function to VM that checks if the current thread is the exclusive API thread.
+
+        * heap/CopiedSpace.cpp:
+        (JSC::CopiedSpace::tryAllocateSlowCase):
+        * heap/Heap.cpp:
+        (JSC::Heap::protect):
+        (JSC::Heap::unprotect):
+        (JSC::Heap::collect):
+        * heap/MarkedAllocator.cpp:
+        (JSC::MarkedAllocator::allocateSlowCase):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * runtime/VM.h:
+        (JSC::VM::currentThreadIsHoldingAPILock):
+
 2013-07-25  Zan Dobersek  <zdobersek@igalia.com>
 
         REGRESSION(FTL): Most layout tests crashes
