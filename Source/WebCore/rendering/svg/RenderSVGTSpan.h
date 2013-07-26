@@ -26,7 +26,7 @@
 #include "RenderSVGInline.h"
 
 namespace WebCore {
-class RenderSVGTSpan : public RenderSVGInline {
+class RenderSVGTSpan FINAL : public RenderSVGInline {
 public:
     explicit RenderSVGTSpan(Element*);
     virtual const char* renderName() const { return "RenderSVGTSpan"; }

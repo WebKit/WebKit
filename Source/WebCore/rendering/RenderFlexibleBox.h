@@ -44,16 +44,16 @@ public:
 
     virtual const char* renderName() const OVERRIDE;
 
-    virtual bool isFlexibleBox() const OVERRIDE { return true; }
-    virtual bool avoidsFloats() const OVERRIDE { return true; }
-    virtual bool canCollapseAnonymousBlockChild() const OVERRIDE { return false; }
-    virtual void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0) OVERRIDE;
+    virtual bool isFlexibleBox() const OVERRIDE FINAL { return true; }
+    virtual bool avoidsFloats() const OVERRIDE FINAL { return true; }
+    virtual bool canCollapseAnonymousBlockChild() const OVERRIDE FINAL { return false; }
+    virtual void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0) OVERRIDE FINAL;
 
     virtual int baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const OVERRIDE;
     virtual int firstLineBoxBaseline() const OVERRIDE;
     virtual int inlineBlockBaseline(LineDirectionMode) const OVERRIDE;
 
-    virtual void paintChildren(PaintInfo& forSelf, const LayoutPoint&, PaintInfo& forChild, bool usePrintRect) OVERRIDE;
+    virtual void paintChildren(PaintInfo& forSelf, const LayoutPoint&, PaintInfo& forChild, bool usePrintRect) OVERRIDE FINAL;
 
     bool isHorizontalFlow() const;
 

@@ -31,7 +31,7 @@ namespace WebCore {
 
 class Position;
 
-class RenderBR : public RenderText {
+class RenderBR FINAL : public RenderText {
 public:
     explicit RenderBR(Node*);
     virtual ~RenderBR();

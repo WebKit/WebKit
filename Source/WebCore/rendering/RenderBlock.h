@@ -103,7 +103,7 @@ public:
     bool beingDestroyed() const { return m_beingDestroyed; }
 
     // These two functions are overridden for inline-block.
-    virtual LayoutUnit lineHeight(bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const;
+    virtual LayoutUnit lineHeight(bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const OVERRIDE FINAL;
     virtual int baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const;
 
     RenderLineBoxList* lineBoxes() { return &m_lineBoxes; }
@@ -159,7 +159,7 @@ public:
     void markAllDescendantsWithFloatsForLayout(RenderBox* floatToRemove = 0, bool inLayout = true);
     void markSiblingsWithFloatsForLayout(RenderBox* floatToRemove = 0);
     void markPositionedObjectsForLayout();
-    virtual void markForPaginationRelayoutIfNeeded();
+    virtual void markForPaginationRelayoutIfNeeded() OVERRIDE FINAL;
     
     bool containsFloats() const { return m_floatingObjects && !m_floatingObjects->set().isEmpty(); }
     bool containsFloat(RenderBox*) const;
@@ -231,7 +231,7 @@ public:
     virtual VisiblePosition positionForPoint(const LayoutPoint&);
     
     // Block flows subclass availableWidth to handle multi column layout (shrinking the width available to children when laying out.)
-    virtual LayoutUnit availableLogicalWidth() const;
+    virtual LayoutUnit availableLogicalWidth() const OVERRIDE FINAL;
 
     LayoutPoint flipForWritingModeIncludingColumns(const LayoutPoint&) const;
     void adjustStartEdgeForWritingModeIncludingColumns(LayoutRect&) const;
@@ -258,13 +258,13 @@ public:
     void clearTruncation();
 
     void adjustRectForColumns(LayoutRect&) const;
-    virtual void adjustForColumns(LayoutSize&, const LayoutPoint&) const;
+    virtual void adjustForColumns(LayoutSize&, const LayoutPoint&) const OVERRIDE FINAL;
     void adjustForColumnRect(LayoutSize& offset, const LayoutPoint& locationInContainer) const;
 
     void addContinuationWithOutline(RenderInline*);
     bool paintsContinuationOutline(RenderInline*);
 
-    virtual RenderBoxModelObject* virtualContinuation() const { return continuation(); }
+    virtual RenderBoxModelObject* virtualContinuation() const OVERRIDE FINAL { return continuation(); }
     bool isAnonymousBlockContinuation() const { return continuation() && isAnonymousBlock(); }
     RenderInline* inlineElementContinuation() const;
     RenderBlock* blockElementContinuation() const;
@@ -617,29 +617,29 @@ private:
 
     virtual const char* renderName() const;
 
-    virtual bool isRenderBlock() const { return true; }
-    virtual bool isBlockFlow() const { return (!isInline() || isReplaced()) && !isTable(); }
-    virtual bool isInlineBlockOrInlineTable() const { return isInline() && isReplaced(); }
+    virtual bool isRenderBlock() const OVERRIDE FINAL { return true; }
+    virtual bool isBlockFlow() const OVERRIDE FINAL { return (!isInline() || isReplaced()) && !isTable(); }
+    virtual bool isInlineBlockOrInlineTable() const OVERRIDE FINAL { return isInline() && isReplaced(); }
 
     void makeChildrenNonInline(RenderObject* insertionPoint = 0);
     virtual void removeLeftoverAnonymousBlock(RenderBlock* child);
 
     void moveAllChildrenIncludingFloatsTo(RenderBlock* toBlock, bool fullRemoveInsert);
 
-    virtual void dirtyLinesFromChangedChild(RenderObject* child) { m_lineBoxes.dirtyLinesFromChangedChild(this, child); }
+    virtual void dirtyLinesFromChangedChild(RenderObject* child) OVERRIDE FINAL { m_lineBoxes.dirtyLinesFromChangedChild(this, child); }
 
     void addChildToContinuation(RenderObject* newChild, RenderObject* beforeChild);
     void addChildIgnoringContinuation(RenderObject* newChild, RenderObject* beforeChild);
     void addChildToAnonymousColumnBlocks(RenderObject* newChild, RenderObject* beforeChild);
 
-    virtual void addChildIgnoringAnonymousColumnBlocks(RenderObject* newChild, RenderObject* beforeChild = 0);
+    void addChildIgnoringAnonymousColumnBlocks(RenderObject* newChild, RenderObject* beforeChild = 0);
     
-    virtual bool isSelfCollapsingBlock() const;
+    virtual bool isSelfCollapsingBlock() const OVERRIDE FINAL;
 
-    virtual LayoutUnit collapsedMarginBefore() const { return maxPositiveMarginBefore() - maxNegativeMarginBefore(); }
-    virtual LayoutUnit collapsedMarginAfter() const { return maxPositiveMarginAfter() - maxNegativeMarginAfter(); }
+    virtual LayoutUnit collapsedMarginBefore() const OVERRIDE FINAL { return maxPositiveMarginBefore() - maxNegativeMarginBefore(); }
+    virtual LayoutUnit collapsedMarginAfter() const OVERRIDE FINAL { return maxPositiveMarginAfter() - maxNegativeMarginAfter(); }
 
-    virtual void repaintOverhangingFloats(bool paintAllDescendants) OVERRIDE;
+    virtual void repaintOverhangingFloats(bool paintAllDescendants) OVERRIDE FINAL;
 
     void layoutBlockChildren(bool relayoutChildren, LayoutUnit& maxFloatLogicalBottom);
     void layoutInlineChildren(bool relayoutChildren, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom);
@@ -920,7 +920,7 @@ private:
     LayoutUnit lowestFloatLogicalBottom(FloatingObject::Type = FloatingObject::FloatLeftRight) const; 
     LayoutUnit nextFloatLogicalBottomBelow(LayoutUnit) const;
     
-    virtual bool hitTestColumns(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction);
+    bool hitTestColumns(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction);
     virtual bool hitTestContents(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction);
     bool hitTestFloats(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset);
 
@@ -932,20 +932,20 @@ private:
 
     // Obtains the nearest enclosing block (including this block) that contributes a first-line style to our inline
     // children.
-    virtual RenderBlock* firstLineBlock() const;
+    virtual RenderBlock* firstLineBlock() const OVERRIDE;
 
-    virtual LayoutRect rectWithOutlineForRepaint(const RenderLayerModelObject* repaintContainer, LayoutUnit outlineWidth) const OVERRIDE;
-    virtual RenderStyle* outlineStyleForRepaint() const;
+    virtual LayoutRect rectWithOutlineForRepaint(const RenderLayerModelObject* repaintContainer, LayoutUnit outlineWidth) const OVERRIDE FINAL;
+    virtual RenderStyle* outlineStyleForRepaint() const OVERRIDE FINAL;
     
-    virtual RenderObject* hoverAncestor() const;
-    virtual void updateDragState(bool dragOn);
-    virtual void childBecameNonInline(RenderObject* child);
+    virtual RenderObject* hoverAncestor() const OVERRIDE FINAL;
+    virtual void updateDragState(bool dragOn) OVERRIDE FINAL;
+    virtual void childBecameNonInline(RenderObject* child) OVERRIDE FINAL;
 
-    virtual LayoutRect selectionRectForRepaint(const RenderLayerModelObject* repaintContainer, bool /*clipToVisibleContent*/) OVERRIDE
+    virtual LayoutRect selectionRectForRepaint(const RenderLayerModelObject* repaintContainer, bool /*clipToVisibleContent*/) OVERRIDE FINAL
     {
         return selectionGapRectsForRepaint(repaintContainer);
     }
-    virtual bool shouldPaintSelectionGaps() const;
+    virtual bool shouldPaintSelectionGaps() const OVERRIDE FINAL;
     bool isSelectionRoot() const;
     GapRects selectionGaps(RenderBlock* rootBlock, const LayoutPoint& rootBlockPhysicalPosition, const LayoutSize& offsetFromRootBlock,
         LayoutUnit& lastLogicalTop, LayoutUnit& lastLogicalLeft, LayoutUnit& lastLogicalRight, const LogicalSelectionOffsetCaches&, const PaintInfo* = 0);
@@ -968,7 +968,7 @@ private:
 
     void paintContinuationOutlines(PaintInfo&, const LayoutPoint&);
 
-    virtual LayoutRect localCaretRect(InlineBox*, int caretOffset, LayoutUnit* extraWidthToEndOfLine = 0);
+    virtual LayoutRect localCaretRect(InlineBox*, int caretOffset, LayoutUnit* extraWidthToEndOfLine = 0) OVERRIDE FINAL;
 
     void adjustPointToColumnContents(LayoutPoint&) const;
     

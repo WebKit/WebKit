@@ -38,7 +38,7 @@ public:
     virtual ~RenderText();
 #endif
 
-    virtual const char* renderName() const;
+    virtual const char* renderName() const OVERRIDE;
 
     virtual bool isTextFragment() const;
     virtual bool isWordBreak() const;
@@ -55,10 +55,10 @@ public:
     InlineTextBox* createInlineTextBox();
     void dirtyLineBoxes(bool fullLayout);
 
-    virtual void absoluteRects(Vector<IntRect>&, const LayoutPoint& accumulatedOffset) const;
+    virtual void absoluteRects(Vector<IntRect>&, const LayoutPoint& accumulatedOffset) const OVERRIDE FINAL;
     void absoluteRectsForRange(Vector<IntRect>&, unsigned startOffset = 0, unsigned endOffset = UINT_MAX, bool useSelectionHeight = false, bool* wasFixed = 0);
 
-    virtual void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const;
+    virtual void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const OVERRIDE FINAL;
     void absoluteQuadsForRange(Vector<FloatQuad>&, unsigned startOffset = 0, unsigned endOffset = UINT_MAX, bool useSelectionHeight = false, bool* wasFixed = 0);
 
     enum ClippingOption { NoClipping, ClipToEllipsis };
@@ -101,25 +101,25 @@ public:
     virtual void transformText();
 
     virtual bool canBeSelectionLeaf() const { return true; }
-    virtual void setSelectionState(SelectionState s);
+    virtual void setSelectionState(SelectionState s) OVERRIDE FINAL;
     virtual LayoutRect selectionRectForRepaint(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent = true) OVERRIDE;
     virtual LayoutRect localCaretRect(InlineBox*, int caretOffset, LayoutUnit* extraWidthToEndOfLine = 0);
 
-    virtual LayoutUnit marginLeft() const { return minimumValueForLength(style()->marginLeft(), 0, view()); }
-    virtual LayoutUnit marginRight() const { return minimumValueForLength(style()->marginRight(), 0, view()); }
+    LayoutUnit marginLeft() const { return minimumValueForLength(style()->marginLeft(), 0, view()); }
+    LayoutUnit marginRight() const { return minimumValueForLength(style()->marginRight(), 0, view()); }
 
-    virtual LayoutRect clippedOverflowRectForRepaint(const RenderLayerModelObject* repaintContainer) const OVERRIDE;
+    virtual LayoutRect clippedOverflowRectForRepaint(const RenderLayerModelObject* repaintContainer) const OVERRIDE FINAL;
 
     InlineTextBox* firstTextBox() const { return m_firstTextBox; }
     InlineTextBox* lastTextBox() const { return m_lastTextBox; }
 
     virtual int caretMinOffset() const;
     virtual int caretMaxOffset() const;
-    virtual unsigned renderedTextLength() const;
+    unsigned renderedTextLength() const;
 
-    virtual int previousOffset(int current) const;
-    virtual int previousOffsetForBackwardDeletion(int current) const;
-    virtual int nextOffset(int current) const;
+    virtual int previousOffset(int current) const OVERRIDE FINAL;
+    virtual int previousOffsetForBackwardDeletion(int current) const OVERRIDE FINAL;
+    virtual int nextOffset(int current) const OVERRIDE FINAL;
 
     bool containsReversedText() const { return m_containsReversedText; }
 
@@ -141,7 +141,7 @@ protected:
     virtual void computePreferredLogicalWidths(float leadWidth);
     virtual void willBeDestroyed();
 
-    virtual void styleWillChange(StyleDifference, const RenderStyle*) { }
+    virtual void styleWillChange(StyleDifference, const RenderStyle*) OVERRIDE FINAL { }
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 
     virtual void setTextInternal(PassRefPtr<StringImpl>);
@@ -157,11 +157,11 @@ private:
     // Make length() private so that callers that have a RenderText*
     // will use the more efficient textLength() instead, while
     // callers with a RenderObject* can continue to use length().
-    virtual unsigned length() const { return textLength(); }
+    virtual unsigned length() const OVERRIDE FINAL { return textLength(); }
 
-    virtual void paint(PaintInfo&, const LayoutPoint&) { ASSERT_NOT_REACHED(); }
-    virtual void layout() { ASSERT_NOT_REACHED(); }
-    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint&, HitTestAction) OVERRIDE { ASSERT_NOT_REACHED(); return false; }
+    virtual void paint(PaintInfo&, const LayoutPoint&) OVERRIDE FINAL { ASSERT_NOT_REACHED(); }
+    virtual void layout() OVERRIDE FINAL { ASSERT_NOT_REACHED(); }
+    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint&, HitTestAction) OVERRIDE FINAL { ASSERT_NOT_REACHED(); return false; }
 
     void deleteTextBoxes();
     bool containsOnlyWhitespace(unsigned from, unsigned len) const;

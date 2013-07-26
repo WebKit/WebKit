@@ -34,7 +34,7 @@ namespace WebCore {
 class AffineTransform;
 class SVGStyledElement;
 
-class RenderSVGRoot : public RenderReplaced {
+class RenderSVGRoot FINAL : public RenderReplaced {
 public:
     explicit RenderSVGRoot(SVGStyledElement*);
     virtual ~RenderSVGRoot();

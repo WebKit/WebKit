@@ -71,9 +71,9 @@ public:
     virtual ~RenderSVGShape();
 
     void setNeedsShapeUpdate() { m_needsShapeUpdate = true; }
-    virtual void setNeedsBoundariesUpdate() { m_needsBoundariesUpdate = true; }
-    virtual bool needsBoundariesUpdate() OVERRIDE { return m_needsBoundariesUpdate; }
-    virtual void setNeedsTransformUpdate() { m_needsTransformUpdate = true; }
+    virtual void setNeedsBoundariesUpdate() OVERRIDE FINAL { m_needsBoundariesUpdate = true; }
+    virtual bool needsBoundariesUpdate() OVERRIDE FINAL { return m_needsBoundariesUpdate; }
+    virtual void setNeedsTransformUpdate() OVERRIDE FINAL { m_needsTransformUpdate = true; }
     virtual void fillShape(GraphicsContext*) const;
     virtual void strokeShape(GraphicsContext*) const;
 
@@ -104,22 +104,22 @@ private:
     bool fillContains(const FloatPoint&, bool requiresFill = true, const WindRule fillRule = RULE_NONZERO);
     bool strokeContains(const FloatPoint&, bool requiresStroke = true);
 
-    virtual FloatRect repaintRectInLocalCoordinates() const { return m_repaintBoundingBox; }
-    virtual FloatRect repaintRectInLocalCoordinatesExcludingSVGShadow() const OVERRIDE { return m_repaintBoundingBoxExcludingShadow; }
-    virtual const AffineTransform& localToParentTransform() const { return m_localTransform; }
-    virtual AffineTransform localTransform() const { return m_localTransform; }
+    virtual FloatRect repaintRectInLocalCoordinates() const OVERRIDE FINAL { return m_repaintBoundingBox; }
+    virtual FloatRect repaintRectInLocalCoordinatesExcludingSVGShadow() const OVERRIDE FINAL { return m_repaintBoundingBoxExcludingShadow; }
+    virtual const AffineTransform& localToParentTransform() const OVERRIDE FINAL { return m_localTransform; }
+    virtual AffineTransform localTransform() const OVERRIDE FINAL { return m_localTransform; }
 
-    virtual bool isSVGShape() const { return true; }
+    virtual bool isSVGShape() const OVERRIDE FINAL { return true; }
     virtual const char* renderName() const { return "RenderSVGShape"; }
 
-    virtual void layout();
-    virtual void paint(PaintInfo&, const LayoutPoint&);
-    virtual void addFocusRingRects(Vector<IntRect>&, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer = 0) OVERRIDE;
+    virtual void layout() OVERRIDE FINAL;
+    virtual void paint(PaintInfo&, const LayoutPoint&) OVERRIDE FINAL;
+    virtual void addFocusRingRects(Vector<IntRect>&, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer = 0) OVERRIDE FINAL;
 
-    virtual bool nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const FloatPoint& pointInParent, HitTestAction);
+    virtual bool nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const FloatPoint& pointInParent, HitTestAction) OVERRIDE FINAL;
 
-    virtual FloatRect objectBoundingBox() const { return m_fillBoundingBox; }
-    virtual FloatRect strokeBoundingBox() const { return m_strokeBoundingBox; }
+    virtual FloatRect objectBoundingBox() const OVERRIDE FINAL { return m_fillBoundingBox; }
+    virtual FloatRect strokeBoundingBox() const OVERRIDE FINAL { return m_strokeBoundingBox; }
     FloatRect calculateObjectBoundingBox() const;
     FloatRect calculateStrokeBoundingBox() const;
     void updateRepaintBoundingBox();

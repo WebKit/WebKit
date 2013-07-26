@@ -46,7 +46,7 @@ class RenderRegion : public RenderBlock {
 public:
     explicit RenderRegion(Element*, RenderFlowThread*);
 
-    virtual bool isRenderRegion() const { return true; }
+    virtual bool isRenderRegion() const OVERRIDE FINAL { return true; }
 
     virtual bool hitTestContents(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) OVERRIDE;
 

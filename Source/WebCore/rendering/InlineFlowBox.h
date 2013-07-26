@@ -80,7 +80,7 @@ public:
     InlineBox* firstChild() const { checkConsistency(); return m_firstChild; }
     InlineBox* lastChild() const { checkConsistency(); return m_lastChild; }
 
-    virtual bool isLeaf() const FINAL { return false; }
+    virtual bool isLeaf() const OVERRIDE FINAL { return false; }
     
     InlineBox* firstLeafChild() const;
     InlineBox* lastLeafChild() const;
@@ -88,7 +88,7 @@ public:
     typedef void (*CustomInlineBoxRangeReverse)(void* userData, Vector<InlineBox*>::iterator first, Vector<InlineBox*>::iterator last);
     void collectLeafBoxesInLogicalOrder(Vector<InlineBox*>&, CustomInlineBoxRangeReverse customReverseImplementation = 0, void* userData = 0) const;
 
-    virtual void setConstructed() FINAL
+    virtual void setConstructed() OVERRIDE FINAL
     {
         InlineBox::setConstructed();
         for (InlineBox* child = firstChild(); child; child = child->nextOnLine())
@@ -96,9 +96,9 @@ public:
     }
 
     void addToLine(InlineBox* child);
-    virtual void deleteLine(RenderArena*) FINAL;
-    virtual void extractLine() FINAL;
-    virtual void attachLine() FINAL;
+    virtual void deleteLine(RenderArena*) OVERRIDE FINAL;
+    virtual void extractLine() OVERRIDE FINAL;
+    virtual void attachLine() OVERRIDE FINAL;
     virtual void adjustPosition(float dx, float dy);
 
     virtual void extractLineBoxFromRenderObject();
@@ -109,8 +109,8 @@ public:
 
     IntRect roundedFrameRect() const;
     
-    virtual void paintBoxDecorations(PaintInfo&, const LayoutPoint&) FINAL;
-    virtual void paintMask(PaintInfo&, const LayoutPoint&) FINAL;
+    void paintBoxDecorations(PaintInfo&, const LayoutPoint&);
+    void paintMask(PaintInfo&, const LayoutPoint&);
     void paintFillLayers(const PaintInfo&, const Color&, const FillLayer*, const LayoutRect&, CompositeOperator = CompositeSourceOver);
     void paintFillLayer(const PaintInfo&, const Color&, const FillLayer*, const LayoutRect&, CompositeOperator = CompositeSourceOver);
     void paintBoxShadow(const PaintInfo&, RenderStyle*, ShadowStyle, const LayoutRect&);
@@ -299,7 +299,7 @@ private:
 protected:
     OwnPtr<RenderOverflow> m_overflow;
 
-    virtual bool isInlineFlowBox() const FINAL { return true; }
+    virtual bool isInlineFlowBox() const OVERRIDE FINAL { return true; }
 
     InlineBox* m_firstChild;
     InlineBox* m_lastChild;

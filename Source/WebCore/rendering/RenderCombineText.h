@@ -26,7 +26,7 @@
 
 namespace WebCore {
 
-class RenderCombineText : public RenderText {
+class RenderCombineText FINAL : public RenderText {
 public:
     RenderCombineText(Node*, PassRefPtr<StringImpl>);
 

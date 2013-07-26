@@ -57,13 +57,13 @@ public:
     RenderFlowThread();
     virtual ~RenderFlowThread() { };
     
-    virtual bool isRenderFlowThread() const { return true; }
+    virtual bool isRenderFlowThread() const OVERRIDE FINAL { return true; }
 
-    virtual void layout();
+    virtual void layout() OVERRIDE FINAL;
 
     // Always create a RenderLayer for the RenderFlowThread so that we 
     // can easily avoid drawing the children directly.
-    virtual bool requiresLayer() const { return true; }
+    virtual bool requiresLayer() const OVERRIDE FINAL { return true; }
     
     void removeFlowChildInfo(RenderObject*);
 #ifndef NDEBUG
@@ -74,7 +74,7 @@ public:
     virtual void removeRegionFromThread(RenderRegion*);
     const RenderRegionList& renderRegionList() const { return m_regionList; }
 
-    virtual void updateLogicalWidth() OVERRIDE;
+    virtual void updateLogicalWidth() OVERRIDE FINAL;
     virtual void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const OVERRIDE;
 
     void paintFlowThreadPortionInRegion(PaintInfo&, RenderRegion*, const LayoutRect& flowThreadPortionRect, const LayoutRect& flowThreadPortionOverflowRect, const LayoutPoint&) const;

@@ -1,3 +1,14 @@
+2013-07-26  Andreas Kling  <akling@apple.com>
+
+        Apply FINAL to the RenderObject hierarchy.
+        <http://webkit.org/b/115977>
+
+        Mostly from Blink r148795 by <cevans@chromium.org>
+        <http://src.chromium.org/viewvc/blink?view=revision&revision=148795>
+
+        * rendering/: Beat things with the FINAL stick.
+        * WebCore.exp.in: Export a now-needed symbol.
+
 2013-07-26  Tim Horton  <timothy_horton@apple.com>
 
         Add a mode where autosizing fixes the FrameView height to at least the WKView height

@@ -47,12 +47,12 @@ class RenderSVGResourceGradient : public RenderSVGResourceContainer {
 public:
     RenderSVGResourceGradient(SVGGradientElement*);
 
-    virtual void removeAllClientsFromCache(bool markForInvalidation = true);
-    virtual void removeClientFromCache(RenderObject*, bool markForInvalidation = true);
+    virtual void removeAllClientsFromCache(bool markForInvalidation = true) OVERRIDE FINAL;
+    virtual void removeClientFromCache(RenderObject*, bool markForInvalidation = true) OVERRIDE FINAL;
 
-    virtual bool applyResource(RenderObject*, RenderStyle*, GraphicsContext*&, unsigned short resourceMode);
-    virtual void postApplyResource(RenderObject*, GraphicsContext*&, unsigned short resourceMode, const Path*, const RenderSVGShape*);
-    virtual FloatRect resourceBoundingBox(RenderObject*) { return FloatRect(); }
+    virtual bool applyResource(RenderObject*, RenderStyle*, GraphicsContext*&, unsigned short resourceMode) OVERRIDE FINAL;
+    virtual void postApplyResource(RenderObject*, GraphicsContext*&, unsigned short resourceMode, const Path*, const RenderSVGShape*) OVERRIDE FINAL;
+    virtual FloatRect resourceBoundingBox(RenderObject*) OVERRIDE FINAL { return FloatRect(); }
 
 protected:
     void addStops(GradientData*, const Vector<Gradient::ColorStop>&) const;

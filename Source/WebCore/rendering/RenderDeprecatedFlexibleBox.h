@@ -29,7 +29,7 @@ namespace WebCore {
 
 class FlexBoxIterator;
 
-class RenderDeprecatedFlexibleBox : public RenderBlock {
+class RenderDeprecatedFlexibleBox FINAL : public RenderBlock {
 public:
     RenderDeprecatedFlexibleBox(Element*);
     virtual ~RenderDeprecatedFlexibleBox();

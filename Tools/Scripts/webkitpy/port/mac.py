@@ -140,6 +140,7 @@ class MacPort(ApplePort):
         return min(supportable_instances, default_count)
 
     def _build_java_test_support(self):
+        return True
         java_tests_path = self._filesystem.join(self.layout_tests_dir(), "java")
         build_java = [self.make_command(), "-C", java_tests_path]
         if self._executive.run_command(build_java, return_exit_code=True):  # Paths are absolute, so we don't need to set a cwd.

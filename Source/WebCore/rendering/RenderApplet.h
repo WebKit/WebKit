@@ -28,7 +28,7 @@ namespace WebCore {
 
 class HTMLAppletElement;
 
-class RenderApplet : public RenderEmbeddedObject {
+class RenderApplet FINAL : public RenderEmbeddedObject {
 public:
     explicit RenderApplet(HTMLAppletElement*);
     virtual ~RenderApplet();

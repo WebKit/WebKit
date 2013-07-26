@@ -57,7 +57,7 @@ public:
     {
     }
 
-    virtual void destroy(RenderArena*) FINAL;
+    virtual void destroy(RenderArena*) OVERRIDE FINAL;
 
     InlineTextBox* prevTextBox() const { return m_prevTextBox; }
     InlineTextBox* nextTextBox() const { return m_nextTextBox; }
@@ -85,8 +85,8 @@ public:
 
     static inline bool compareByStart(const InlineTextBox* first, const InlineTextBox* second) { return first->start() < second->start(); }
 
-    virtual int baselinePosition(FontBaseline) const FINAL;
-    virtual LayoutUnit lineHeight() const FINAL;
+    virtual int baselinePosition(FontBaseline) const OVERRIDE FINAL;
+    virtual LayoutUnit lineHeight() const OVERRIDE FINAL;
 
     bool getEmphasisMarkPosition(RenderStyle*, TextEmphasisPosition&) const;
 
@@ -125,19 +125,19 @@ public:
     RenderText* textRenderer() const;
 
 private:
-    virtual void deleteLine(RenderArena*) FINAL;
-    virtual void extractLine() FINAL;
-    virtual void attachLine() FINAL;
+    virtual void deleteLine(RenderArena*) OVERRIDE FINAL;
+    virtual void extractLine() OVERRIDE FINAL;
+    virtual void attachLine() OVERRIDE FINAL;
 
 public:
-    virtual RenderObject::SelectionState selectionState() FINAL;
+    virtual RenderObject::SelectionState selectionState() OVERRIDE FINAL;
 
 private:
-    virtual void clearTruncation() FINAL { m_truncation = cNoTruncation; }
+    virtual void clearTruncation() OVERRIDE FINAL { m_truncation = cNoTruncation; }
     virtual float placeEllipsisBox(bool flowIsLTR, float visibleLeftEdge, float visibleRightEdge, float ellipsisWidth, float &truncatedWidth, bool& foundBox) OVERRIDE FINAL;
 
 public:
-    virtual bool isLineBreak() const FINAL;
+    virtual bool isLineBreak() const OVERRIDE FINAL;
 
     void setExpansion(int newExpansion)
     {
@@ -147,11 +147,11 @@ public:
     }
 
 private:
-    virtual bool isInlineTextBox() const FINAL { return true; }
+    virtual bool isInlineTextBox() const OVERRIDE FINAL { return true; }
 
 public:
-    virtual int caretMinOffset() const FINAL;
-    virtual int caretMaxOffset() const FINAL;
+    virtual int caretMinOffset() const OVERRIDE FINAL;
+    virtual int caretMaxOffset() const OVERRIDE FINAL;
 
 private:
     float textPos() const; // returns the x position relative to the left start of the text line.

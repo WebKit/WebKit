@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-class RenderReplica : public RenderBox {
+class RenderReplica FINAL : public RenderBox {
 public:
     static RenderReplica* createAnonymous(Document*);
 

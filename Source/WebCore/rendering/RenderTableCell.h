@@ -35,7 +35,7 @@ static const unsigned maxColumnIndex = 0x1FFFFFFE; // 536,870,910
 
 enum IncludeBorderColorOrNot { DoNotIncludeBorderColor, IncludeBorderColor };
 
-class RenderTableCell : public RenderBlock {
+class RenderTableCell FINAL : public RenderBlock {
 public:
     explicit RenderTableCell(Element*);
     

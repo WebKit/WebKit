@@ -30,7 +30,7 @@ namespace WebCore {
 
 class HTMLMeterElement;
 
-class RenderMeter : public RenderBlock {
+class RenderMeter FINAL : public RenderBlock {
 public:
     explicit RenderMeter(HTMLElement*);
     virtual ~RenderMeter();
