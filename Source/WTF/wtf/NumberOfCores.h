@@ -23,7 +23,7 @@
 
 namespace WTF {
 
-int numberOfProcessorCores();
+WTF_EXPORT_PRIVATE int numberOfProcessorCores();
 
 }
 

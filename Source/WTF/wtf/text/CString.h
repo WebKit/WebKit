@@ -81,7 +81,7 @@ public:
     
     bool isHashTableDeletedValue() const { return m_buffer.isHashTableDeletedValue(); }
     
-    unsigned hash() const;
+    WTF_EXPORT_PRIVATE unsigned hash() const;
 
 private:
     void copyBufferIfNeeded();
@@ -96,8 +96,8 @@ inline bool operator!=(const CString& a, const char* b) { return !(a == b); }
 bool operator<(const CString& a, const CString& b);
 
 struct CStringHash {
-    static unsigned hash(const CString& string) { return string.hash(); }
-    static bool equal(const CString& a, const CString& b);
+    WTF_EXPORT_PRIVATE static unsigned hash(const CString& string) { return string.hash(); }
+    WTF_EXPORT_PRIVATE static bool equal(const CString& a, const CString& b);
     static const bool safeToCompareToEmptyOrDeleted = true;
 };
 

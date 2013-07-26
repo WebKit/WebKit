@@ -33,11 +33,11 @@ namespace WTF {
 // Takes a six-character string that encodes a 32-bit integer, and returns that
 // integer. RELEASE_ASSERT's that the string represents a valid six-character
 // hash.
-unsigned sixCharacterHashStringToInteger(const char*);
+WTF_EXPORT_PRIVATE unsigned sixCharacterHashStringToInteger(const char*);
 
 // Takes a 32-bit integer and constructs a six-character string that contains
 // the character hash.
-FixedArray<char, 7> integerToSixCharacterHashString(unsigned);
+WTF_EXPORT_PRIVATE FixedArray<char, 7> integerToSixCharacterHashString(unsigned);
 
 } // namespace WTF
 

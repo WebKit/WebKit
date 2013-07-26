@@ -1,3 +1,16 @@
+2013-07-25  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Unreviewed build fix.
+
+        * WTF.vcxproj/WTF.vcxproj: Add missing SixCharacterHash.h,.cpp files.
+        * WTF.vcxproj/WTF.vcxproj.filters: Ditto.
+        * wtf/NumberOfCores.h: Add export macro to numberOfProcessorCores.
+        * wtf/PrintStream.h: Add export macro to dumpCharacter.
+        * wtf/SixCharacterHash.h: Add export macro to sixCharacterHashStringToInteger
+        and integerToSixCharacterHashString.
+        * wtf/text/CString.h: Add export macro to hash and equal methods.
+        (WTF::CStringHash::hash): Add export macro.
+
 2013-07-25  peavo@outlook.com  <peavo@outlook.com>
 
         [Windows] Provide ASM implemenation of 8-bit compare-and-swap

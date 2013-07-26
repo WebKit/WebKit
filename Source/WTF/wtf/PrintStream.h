@@ -310,7 +310,7 @@ void printInternal(PrintStream& out, const T& value)
 // Use an adaptor-based dumper for characters to avoid situations where
 // you've "compressed" an integer to a character and it ends up printing
 // as ASCII when you wanted it to print as a number.
-void dumpCharacter(PrintStream&, char);
+WTF_EXPORT_PRIVATE void dumpCharacter(PrintStream&, char);
 MAKE_PRINT_ADAPTOR(CharacterDump, char, dumpCharacter);
 
 template<typename T>
