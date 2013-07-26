@@ -1,3 +1,23 @@
+2013-07-26  Filip Pizlo  <fpizlo@apple.com>
+
+        REGRESSION: Crash when opening a message on Gmail
+        https://bugs.webkit.org/show_bug.cgi?id=119105
+
+        Reviewed by Oliver Hunt and Mark Hahnenberg.
+        
+        - GetById patching in the DFG needs to be more disciplined about how it derives the
+          slow path.
+        
+        - Fix some dumping code thread safety issues.
+
+        * bytecode/CallLinkStatus.cpp:
+        (JSC::CallLinkStatus::dump):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        * dfg/DFGRepatch.cpp:
+        (JSC::DFG::getPolymorphicStructureList):
+        (JSC::DFG::tryBuildGetByIDList):
+
 2013-07-26  Balazs Kilvady  <kilvadyb@homejinni.com>
 
         [mips] Fix LLINT build for mips backend

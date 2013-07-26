@@ -143,8 +143,11 @@ void CallLinkStatus::dump(PrintStream& out) const
     if (m_callTarget)
         out.print(comma, "Known target: ", m_callTarget);
     
-    if (m_executable)
-        out.print(comma, "Executable/CallHash: ", RawPointer(m_executable), "/", m_executable->hashFor(CodeForCall));
+    if (m_executable) {
+        out.print(comma, "Executable/CallHash: ", RawPointer(m_executable));
+        if (!isCompilationThread())
+            out.print("/", m_executable->hashFor(CodeForCall));
+    }
     
     if (m_structure)
         out.print(comma, "Structure: ", RawPointer(m_structure));

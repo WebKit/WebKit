@@ -1,3 +1,24 @@
+2013-07-26  Filip Pizlo  <fpizlo@apple.com>
+
+        REGRESSION: Crash when opening a message on Gmail
+        https://bugs.webkit.org/show_bug.cgi?id=119105
+
+        Reviewed by Oliver Hunt and Mark Hahnenberg.
+
+        * fast/js/dfg-get-by-id-unset-then-proto-less-warmup.html: Added.
+        * fast/js/dfg-get-by-id-unset-then-proto-more-warmup.html: Added.
+        * fast/js/dfg-get-by-id-unset-then-proto.html: Added.
+        * fast/js/jsc-test-list
+        * fast/js/script-tests/dfg-get-by-id-unset-then-proto-less-warmup.js: Added.
+        (foo):
+        (Blah):
+        * fast/js/script-tests/dfg-get-by-id-unset-then-proto-more-warmup.js: Added.
+        (foo):
+        (Blah):
+        * fast/js/script-tests/dfg-get-by-id-unset-then-proto.js: Added.
+        (foo):
+        (Blah):
+
 2013-07-19  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Setting a large numeric property on an object causes it to allocate a huge backing store

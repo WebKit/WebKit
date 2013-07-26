@@ -370,8 +370,11 @@ void dfgRepatchGetByID(ExecState* exec, JSValue baseValue, const Identifier& pro
 
 static bool getPolymorphicStructureList(
     VM* vm, CodeBlock* codeBlock, StructureStubInfo& stubInfo,
-    PolymorphicAccessStructureList*& polymorphicStructureList, int& listIndex)
+    PolymorphicAccessStructureList*& polymorphicStructureList, int& listIndex,
+    CodeLocationLabel& slowCase)
 {
+    slowCase = stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.dfg.deltaCallToSlowCase);
+    
     if (stubInfo.accessType == access_unset) {
         RELEASE_ASSERT(!stubInfo.stubRoutine);
         polymorphicStructureList = new PolymorphicAccessStructureList();
@@ -379,11 +382,12 @@ static bool getPolymorphicStructureList(
         listIndex = 0;
     } else if (stubInfo.accessType == access_get_by_id_self) {
         RELEASE_ASSERT(!stubInfo.stubRoutine);
-        polymorphicStructureList = new PolymorphicAccessStructureList(*vm, codeBlock->ownerExecutable(), JITStubRoutine::createSelfManagedRoutine(stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.dfg.deltaCallToSlowCase)), stubInfo.u.getByIdSelf.baseObjectStructure.get(), true);
+        polymorphicStructureList = new PolymorphicAccessStructureList(*vm, codeBlock->ownerExecutable(), JITStubRoutine::createSelfManagedRoutine(slowCase), stubInfo.u.getByIdSelf.baseObjectStructure.get(), true);
         stubInfo.initGetByIdSelfList(polymorphicStructureList, 1, true);
         listIndex = 1;
     } else if (stubInfo.accessType == access_get_by_id_chain) {
         RELEASE_ASSERT(!!stubInfo.stubRoutine);
+        slowCase = CodeLocationLabel(stubInfo.stubRoutine->code().code());
         polymorphicStructureList = new PolymorphicAccessStructureList(*vm, codeBlock->ownerExecutable(), stubInfo.stubRoutine, stubInfo.u.getByIdChain.baseObjectStructure.get(), stubInfo.u.getByIdChain.chain.get(), true);
         stubInfo.stubRoutine.clear();
         stubInfo.initGetByIdSelfList(polymorphicStructureList, 1, false);
@@ -392,6 +396,7 @@ static bool getPolymorphicStructureList(
         RELEASE_ASSERT(stubInfo.accessType == access_get_by_id_self_list);
         polymorphicStructureList = stubInfo.u.getByIdSelfList.structureList;
         listIndex = stubInfo.u.getByIdSelfList.listSize;
+        slowCase = CodeLocationLabel(polymorphicStructureList->list[listIndex - 1].stubRoutine->code().code());
     }
     
     if (listIndex == POLYMORPHIC_LIST_CACHE_SIZE)
@@ -441,8 +446,9 @@ static bool tryBuildGetByIDList(ExecState* exec, JSValue baseValue, const Identi
     
         PolymorphicAccessStructureList* polymorphicStructureList;
         int listIndex;
+        CodeLocationLabel slowCase;
 
-        if (!getPolymorphicStructureList(vm, codeBlock, stubInfo, polymorphicStructureList, listIndex))
+        if (!getPolymorphicStructureList(vm, codeBlock, stubInfo, polymorphicStructureList, listIndex, slowCase))
             return false;
         
         stubInfo.u.getByIdSelfList.listSize++;
@@ -545,14 +551,7 @@ static bool tryBuildGetByIDList(ExecState* exec, JSValue baseValue, const Identi
 
         LinkBuffer patchBuffer(*vm, &stubJit, codeBlock);
         
-        CodeLocationLabel lastProtoBegin;
-        if (listIndex)
-            lastProtoBegin = CodeLocationLabel(polymorphicStructureList->list[listIndex - 1].stubRoutine->code().code());
-        else
-            lastProtoBegin = stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.dfg.deltaCallToSlowCase);
-        ASSERT(!!lastProtoBegin);
-        
-        patchBuffer.link(wrongStruct, lastProtoBegin);
+        patchBuffer.link(wrongStruct, slowCase);
         patchBuffer.link(success, stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.dfg.deltaCallToDone));
         if (!isDirect) {
             patchBuffer.link(operationCall, operationFunction);
@@ -592,17 +591,15 @@ static bool tryBuildGetByIDList(ExecState* exec, JSValue baseValue, const Identi
     
     PolymorphicAccessStructureList* polymorphicStructureList;
     int listIndex;
-    if (!getPolymorphicStructureList(vm, codeBlock, stubInfo, polymorphicStructureList, listIndex))
+    CodeLocationLabel slowCase;
+    if (!getPolymorphicStructureList(vm, codeBlock, stubInfo, polymorphicStructureList, listIndex, slowCase))
         return false;
     
     stubInfo.u.getByIdProtoList.listSize++;
     
-    CodeLocationLabel lastProtoBegin = CodeLocationLabel(polymorphicStructureList->list[listIndex - 1].stubRoutine->code().code());
-    ASSERT(!!lastProtoBegin);
-    
     RefPtr<JITStubRoutine> stubRoutine;
     
-    generateProtoChainAccessStub(exec, stubInfo, prototypeChain, count, offset, structure, stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.dfg.deltaCallToDone), lastProtoBegin, stubRoutine);
+    generateProtoChainAccessStub(exec, stubInfo, prototypeChain, count, offset, structure, stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.dfg.deltaCallToDone), slowCase, stubRoutine);
     
     polymorphicStructureList->list[listIndex].set(*vm, codeBlock->ownerExecutable(), stubRoutine, structure, true);
     

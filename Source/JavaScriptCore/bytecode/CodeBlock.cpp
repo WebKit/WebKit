@@ -487,7 +487,6 @@ void CodeBlock::dumpBytecode(PrintStream& out)
     }
     if (needsFullScopeChain() && codeType() == FunctionCode)
         out.printf("; activation in r%d", activationRegister());
-    out.print("\n\nSource: ", sourceCodeOnOneLine(), "\n\n");
 
     const Instruction* begin = instructions().begin();
     const Instruction* end = instructions().end();
