@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<body onload="runTest()">
+<p>This test only runs on DumpRenderTree, as it requires existence of window.internals and cross-domain resource access check disabled.</p>
+<iframe id="frame" src='about:blank'></iframe>
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script>
+description("This test asserts that document doesn't leak when a selection is created inside the document.");
+
+if (window.internals)
+    jsTestIsAsync = true;
+
+var originalNumberOfLiveDocuments = 0;
+
+var frame = document.getElementById('frame');
+frame.onload = function() {
+    if (frame.src === 'about:blank')
+        return true;
+
+    (function() {
+        var contentWindow = frame.contentWindow;
+        var element = contentWindow.document.getElementById("t");
+        contentWindow.getSelection().setPosition(element, 0);
+    })();
+
+    frame.onload = function() {
+        gc();
+        setTimeout(function () {
+            shouldBe("internals.numberOfLiveDocuments()", "originalNumberOfLiveDocuments");
+            finishJSTest();
+        }, 0);
+    }
+    frame.src = 'about:blank';
+}
+
+function runTest() {
+    if (!window.internals)
+        return;
+    originalNumberOfLiveDocuments = internals.numberOfLiveDocuments();
+    frame.src = 'data:text/html;charset=utf-8,<span id="t"></span>';
+}
+
+var successfullyParsed = true;
+
+</script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

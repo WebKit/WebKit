@@ -1210,6 +1210,7 @@ void FrameSelection::prepareForDestruction()
         view->clearSelection();
 
     setSelection(VisibleSelection(), CloseTyping | ClearTypingStyle | DoNotUpdateAppearance);
+    m_previousCaretNode.clear();
 }
 
 void FrameSelection::setStart(const VisiblePosition &pos, EUserTriggered trigger)
