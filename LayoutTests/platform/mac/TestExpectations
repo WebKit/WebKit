@@ -47,8 +47,7 @@ accessibility/multiselect-list-reports-active-option.html
 fast/history/back-forward-reset-after-error-handling.html
 
 # Need to implement this in plugins code in WebKit
-# Skipped for fourthTier, see https://bugs.webkit.org/show_bug.cgi?id=113915
-plugins/reloadplugins-and-pages.html [ Skip ]
+plugins/reloadplugins-and-pages.html
 
 # This test requires ogg codecs
 media/media-can-play-ogg.html
@@ -73,8 +72,7 @@ http/tests/misc/image-checks-for-accept.html
 fast/dom/HTMLProgressElement/progress-element.html
 
 # eventSender needs to propagate the event to the calling window, not the main frame always.
-# Skipped for fourthTier, see https://bugs.webkit.org/show_bug.cgi?id=113915
-http/tests/plugins/plugin-document-has-focus.html [ Skip ]
+http/tests/plugins/plugin-document-has-focus.html
 
 # Requires testRunner.setMediaType() and implementation
 fast/media/print-restores-previous-mediatype.html
@@ -303,13 +301,9 @@ http/tests/websocket/tests/hybi/send-file-blob-fail.html
 fast/dom/MutationObserver/filesystem-callback-delivery.html
 
 # The WebKit plugin implementation does not support iframe shims.
-# Skipped for fourthTier, see https://bugs.webkit.org/show_bug.cgi?id=113915
-webkit.org/b/46223 plugins/iframe-shims.html [ Skip ]
+webkit.org/b/46223 plugins/iframe-shims.html
 
-# This new test runs differently on the buildbot than it doesn on user
-# machines.  I'll ask jnd to fix it once he's back from vacation.
-# Skipped for fourthTier, see https://bugs.webkit.org/show_bug.cgi?id=113915
-webkit.org/b/116640 plugins/plugin-initiate-popup-window.html [ Skip ]
+webkit.org/b/116640 plugins/plugin-initiate-popup-window.html
 
 # Requires WebP support.
 fast/canvas/canvas-toDataURL-webp.html
@@ -320,9 +314,8 @@ fast/images/webp-color-profile-lossy.html
 http/tests/images/webp-partial-load.html
 http/tests/images/webp-progressive-load.html
 
-# Times out because plugins aren't allowed to execute JS after NPP_Destroy has been called in WebKit1's OOP plugins implementation http://webkit.org/b/48929
-# Skipped for fourthTier, see https://bugs.webkit.org/show_bug.cgi?id=113915
-webkit.org/b/48929 plugins/evaluate-js-after-removing-plugin-element.html [ Skip ]
+# Times out because plugins aren't allowed to execute JS after NPP_Destroy has been called in WebKit1's OOP plugins implementation
+webkit.org/b/48929 plugins/evaluate-js-after-removing-plugin-element.html
 
 webkit.org/b/49182 animations/stop-animation-on-suspend.html [ Pass Failure ]
 
@@ -376,8 +369,7 @@ fast/dom/HTMLAnchorElement/anchor-download-unset.html
 
 # Timing out for unknown reasons.  Passes on Chromium, QT and GTK+.
 # https://bugs.webkit.org/show_bug.cgi?id=58924
-# Skipped for fourthTier, see https://bugs.webkit.org/show_bug.cgi?id=113915
-# plugins/mouse-click-iframe-to-plugin.html [ Skip ]
+plugins/mouse-click-iframe-to-plugin.html
 
 # HTTP 204 (No Content) should be ignored
 # https://bugs.webkit.org/show_bug.cgi?id=60206
@@ -576,10 +568,6 @@ webkit.org/b/82665 webarchive/test-css-url-resources-in-stylesheets.html [ Failu
 webkit.org/b/82665 webarchive/test-css-url-resources-inline-styles.html [ Failure ]
 
 webkit.org/b/82671 http/tests/inspector/resource-har-conversion.html [ Failure ]
-# https://bugs.webkit.org/show_bug.cgi?id=82668
-# Skipped for fourthTier, see https://bugs.webkit.org/show_bug.cgi?id=113915
-plugins/mouse-events.html [ Skip ]
-plugins/mouse-move-over-plugin-in-frame.html [ Skip ]
 
 webkit.org/b/82672 http/tests/xmlhttprequest/range-test.html [ Failure ]
 
@@ -612,12 +600,6 @@ webkit.org/b/82978 inspector/styles/svg-style.xhtml [ Pass Failure ]
 
 webkit.org/b/82979 fast/canvas/2d.text.draw.fill.maxWidth.gradient.html [ Pass Failure ]
 webkit.org/b/82979 canvas/philip/tests/2d.text.draw.align.center.html [ Pass Failure ]
-# https://bugs.webkit.org/show_bug.cgi?id=82972
-# Skipped for fourthTier, see https://bugs.webkit.org/show_bug.cgi?id=113915
-plugins/keyboard-events.html [ Skip ]
-plugins/layout-in-beforeload-listener-affects-plugin-loading.html [ Skip ]
-plugins/mouse-events-fixedpos.html [ Skip ]
-plugins/multiple-plugins.html [ Skip ]
 
 webkit.org/b/82980 http/tests/navigation/back-twice-without-commit.html [ Timeout ]
 
@@ -659,11 +641,9 @@ webkit.org/b/85969 http/tests/loading/post-in-iframe-with-back-navigation.html
 webkit.org/b/85709 inspector/extensions/extensions-eval-content-script.html
 webkit.org/b/85709 inspector/extensions/extensions-audits-content-script.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=86480
-# Skipped for fourthTier, see https://bugs.webkit.org/show_bug.cgi?id=113915
-webkit.org/b/86480 plugins/npruntime/delete-plugin-within-setProperty.html [ Skip ]
-webkit.org/b/86480 plugins/npruntime/delete-plugin-within-hasProperty-return-true.html [ Skip ]
-webkit.org/b/86480 plugins/npruntime/delete-plugin-within-hasProperty-return-false.html [ Skip ]
+webkit.org/b/86480 plugins/npruntime/delete-plugin-within-setProperty.html [ Failure ]
+webkit.org/b/86480 plugins/npruntime/delete-plugin-within-hasProperty-return-true.html [ Failure ]
+webkit.org/b/86480 plugins/npruntime/delete-plugin-within-hasProperty-return-false.html [ Failure ]
 
 webkit.org/b/87347 fast/frames/flattening/iframe-tiny.html [ Pass Failure ]
 
@@ -693,33 +673,6 @@ webkit.org/b/90724 compositing/iframes/iframe-size-from-zero.html [ Pass Failure
 compositing/iframes/overlapped-nested-iframes.html [ Pass Failure ]
 
 webkit.org/b/90725 media/media-blocked-by-beforeload.html [ Pass Failure ]
-
-# https://bugs.webkit.org/show_bug.cgi?id=90711
-fast/canvas/webgl/gl-vertexattribpointer.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=90722
-inspector/profiler/heap-snapshot-comparison-show-next.html
-inspector/profiler/heap-snapshot-comparison-shown-node-count-preserved-when-sorting.html
-inspector/profiler/heap-snapshot-comparison-sorting.html
-inspector/profiler/heap-snapshot-containment-expansion-preserved-when-sorting.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=90723
-inspector/debugger/set-breakpoint.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=90724
-compositing/iframes/iframe-size-from-zero.html
-
-compositing/iframes/overlapped-nested-iframes.html [ Failure Pass ]
-
-# https://bugs.webkit.org/show_bug.cgi?id=90725
-media/media-blocked-by-beforeload.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=90833
-fast/js/global-constructors.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=91505
-# Skipped for fourthTier, see https://bugs.webkit.org/show_bug.cgi?id=113915
-platform/mac/plugins/root-object-premature-delete-crash.html [ Skip ]
 
 # This test depends on subpixel layout.
 webkit.org/b/92352 css3/flexbox/flex-rounding.html
@@ -927,20 +880,17 @@ platform/mac/fast/overflow/overflow-scrollbar-hit-test.html
 
 # --- Plugins ---
 # WebKit1 OOP plug-ins: Can't evaluate JavaScript from NPP_Destroy.
-# Skipped for fourthTier, see https://bugs.webkit.org/show_bug.cgi?id=113915
-plugins/document-open.html [ Skip ]
-plugins/geturlnotify-during-document-teardown.html [ Skip ]
-plugins/nested-plugin-objects.html [ Skip ]
-plugins/netscape-destroy-plugin-script-objects.html [ Skip ]
-plugins/open-and-close-window-with-plugin.html [ Skip ]
+plugins/document-open.html
+plugins/geturlnotify-during-document-teardown.html
+plugins/nested-plugin-objects.html
+plugins/netscape-destroy-plugin-script-objects.html
+plugins/open-and-close-window-with-plugin.html
 
 # WebKit1 OOP plug-ins: No support for getting the form value.
-# Skipped for fourthTier, see https://bugs.webkit.org/show_bug.cgi?id=113915
-plugins/form-value.html [ Skip ]
+plugins/form-value.html
 
 # WebKit1 OOP plug-ins: Exceptions aren't thrown on invoke failure.
-# Skipped for fourthTier, see https://bugs.webkit.org/show_bug.cgi?id=113915
-plugins/npruntime/invoke-failure.html [ Skip ]
+plugins/npruntime/invoke-failure.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=93589
 # Very flaky, often failing on retry, too.
@@ -994,29 +944,24 @@ webkit.org/b/57688 fast/text/international/bidi-CS-after-AN.html [ Failure Pass 
 webkit.org/b/57688 fast/text/international/thai-line-breaks.html [ Failure Pass ]
 
 # Fails on WK1, but passes on WK2.  (No syntax available for this situation.)
-# Skipped for fourthTier, see https://bugs.webkit.org/show_bug.cgi?id=113915
-webkit.org/b/58192 plugins/npp-set-window-called-during-destruction.html [ Skip ]
+webkit.org/b/58192 plugins/npp-set-window-called-during-destruction.html [ Failure Pass ]
 
-# Skipped for fourthTier, see https://bugs.webkit.org/show_bug.cgi?id=113915
-webkit.org/b/112646 plugins/private-browsing-mode.html [ Skip ]
-webkit.org/b/112616 plugins/plugin-clip-subframe.html [ Skip ]
+webkit.org/b/112646 plugins/private-browsing-mode.html [ Failure Pass ]
+webkit.org/b/112616 plugins/plugin-clip-subframe.html [ Failure Pass ]
 
 # Occasional assertion in JSNPObject::invalidate()
-# Skipped for fourthTier, see https://bugs.webkit.org/show_bug.cgi?id=113915
-webkit.org/b/112518 [ Debug ] plugins/object-onfocus-mutation-crash.html [ Skip ]
-webkit.org/b/112518 [ Debug ] plugins/npruntime/evaluate.html [ Skip ]
+webkit.org/b/112518 [ Debug ] plugins/object-onfocus-mutation-crash.html [ Crash Pass ]
+webkit.org/b/112518 [ Debug ] plugins/npruntime/evaluate.html [ Crash Pass ]
 
 # https://bugs.webkit.org/show_bug.cgi?id=104054
 webkit.org/b/104054 svg/custom/use-href-update-crash.svg [ Failure Pass ]
 
 # Flakey plugin tests
-# Skipped for fourthTier, see https://bugs.webkit.org/show_bug.cgi?id=113915
-webkit.org/b/82752 plugins/netscape-dom-access-and-reload.html [ Skip ]
+webkit.org/b/82752 plugins/netscape-dom-access-and-reload.html [ Failure Pass ]
 
 # Asserts sometimes
 webkit.org/b/111902 [ Debug ] fast/frames/sandboxed-iframe-navigation-allowed.html [ Crash Pass ]
-# Skipped for fourthTier, see https://bugs.webkit.org/show_bug.cgi?id=113915
-webkit.org/b/111902 [ Debug ] fast/frames/sandboxed-iframe-plugins.html [ Skip ]
+webkit.org/b/111902 [ Debug ] fast/frames/sandboxed-iframe-plugins.html [ Crash Pass ]
 webkit.org/b/111902 [ Debug ] http/tests/security/XFrameOptions/x-frame-options-deny-multiple-clients.html [ Crash Pass ]
 
 # Flaky tests when run multi-process
@@ -1252,8 +1197,7 @@ webkit.org/b/111647 [ Debug ] sputnik/Conformance/13_Function_Definition/S13_A4_
 webkit.org/b/111647 [ Debug ] sputnik/Unicode/Unicode_218/S7.6_A5.3_T2.html [ Slow ]
 
 webkit.org/b/111650 http/tests/cookies/third-party-cookie-relaxing.html [ Failure Pass ]
-# Skipped for fourthTier, see https://bugs.webkit.org/show_bug.cgi?id=113915
-webkit.org/b/111650 http/tests/plugins/third-party-cookie-accept-policy.html [ Skip ]
+webkit.org/b/111650 http/tests/plugins/third-party-cookie-accept-policy.html [ Failure Pass ]
 
 webkit.org/b/111754 inspector/debugger/debugger-expand-scope.html [ Crash Pass ]
 
@@ -1362,10 +1306,3 @@ webkit.org/b/118856 mathml/presentation/fenced-mi.html [ ImageOnlyFailure ]
 
 # Plug-in blocking callback doesn't exist in WebKit1, so skip and re-enable for WebKit2.
 plugins/unavailable-plugin-indicator-obscurity.html
-
-# fourthTier: Just linking LLVM into JSC causes all plugin tests to fail
-# https://bugs.webkit.org/show_bug.cgi?id=113915
-plugins [ Skip ]
-plugins/npruntime [ Skip ]
-http/tests/plugins [ Skip ]
-platform/mac/plugins [ Skip ]

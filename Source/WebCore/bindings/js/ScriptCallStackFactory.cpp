@@ -78,20 +78,22 @@ PassRefPtr<ScriptCallStack> createScriptCallStack(size_t maxStackSize, bool empt
 PassRefPtr<ScriptCallStack> createScriptCallStack(JSC::ExecState* exec, size_t maxStackSize)
 {
     Vector<ScriptCallFrame> frames;
-    ASSERT(exec);
-    CallFrame* frame = exec->vm().topCallFrame;
-    StackIterator iter = frame->begin();
-    for (++iter; iter != frame->end() && maxStackSize--; ++iter) {
+    Vector<StackFrame> stackTrace;
+    exec->vm().interpreter->getStackTrace(stackTrace, maxStackSize + 1);
+    for (size_t i = stackTrace.size() == 1 ? 0 : 1; i < stackTrace.size(); i++) {
         // This early exit is necessary to maintain our old behaviour
         // but the stack trace we produce now is complete and handles all
         // ways in which code may be running
-        if (!iter->callee() && frames.size())
+        if (!stackTrace[i].callee && frames.size())
             break;
+
+        String functionName = stackTrace[i].friendlyFunctionName(exec);
         unsigned line;
         unsigned column;
-        iter->computeLineAndColumn(line, column);
-        frames.append(ScriptCallFrame(iter->functionName(), iter->sourceURL(), line, column));
+        stackTrace[i].computeLineAndColumn(line, column);
+        frames.append(ScriptCallFrame(functionName, stackTrace[i].sourceURL, line, column));
     }
+    
     return ScriptCallStack::create(frames);
 }
 

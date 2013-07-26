@@ -1,3 +1,14 @@
+2013-07-26  Oliver Hunt  <oliver@apple.com>
+
+        REGRESSION(FTL?): Crashes in plugin tests
+        https://bugs.webkit.org/show_bug.cgi?id=119141
+
+        Reviewed by Michael Saboff.
+
+        Re-export getStackTrace
+
+        * interpreter/Interpreter.h:
+
 2013-07-26  Filip Pizlo  <fpizlo@apple.com>
 
         REGRESSION: Crash when opening a message on Gmail
