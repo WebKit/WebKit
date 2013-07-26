@@ -276,6 +276,9 @@ public:
     void queueNonLoadingScript(JSStringRef script);
 
     bool secureEventInputIsEnabled() const;
+    
+    JSValueRef numberOfDFGCompiles(JSValueRef theFunction);
+    JSValueRef neverInlineFunction(JSValueRef theFunction);
 
 private:
     static const double waitToDumpWatchdogTimerInterval;

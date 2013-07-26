@@ -32,6 +32,7 @@
 #include "PlatformWebView.h"
 #include "StringFunctions.h"
 #include "TestController.h"
+#include <JavaScriptCore/JSCTestRunnerUtils.h>
 #include <WebKit2/WKBundle.h>
 #include <WebKit2/WKBundleBackForwardList.h>
 #include <WebKit2/WKBundleFrame.h>
@@ -817,6 +818,20 @@ void TestRunner::setBlockAllPlugins(bool shouldBlock)
     WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("SetBlockAllPlugins"));
     WKRetainPtr<WKBooleanRef> messageBody(AdoptWK, WKBooleanCreate(shouldBlock));
     WKBundlePostMessage(InjectedBundle::shared().bundle(), messageName.get(), messageBody.get());
+}
+
+JSValueRef TestRunner::numberOfDFGCompiles(JSValueRef theFunction)
+{
+    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::shared().page()->page());
+    JSContextRef context = WKBundleFrameGetJavaScriptContext(mainFrame);
+    return JSC::numberOfDFGCompiles(context, theFunction);
+}
+
+JSValueRef TestRunner::neverInlineFunction(JSValueRef theFunction)
+{
+    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::shared().page()->page());
+    JSContextRef context = WKBundleFrameGetJavaScriptContext(mainFrame);
+    return JSC::setNeverInline(context, theFunction);
 }
 
 } // namespace WTR
