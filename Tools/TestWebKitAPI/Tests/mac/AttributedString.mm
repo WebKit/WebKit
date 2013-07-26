@@ -23,71 +23,88 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "PlatformUtilities.h"
-#include "PlatformWebView.h"
-#include <wtf/RetainPtr.h>
+#import "config.h"
+#import "Test.h"
 
-
-@interface AttributedStringTest : NSObject {
-}
-@end
-
-static bool didFinishLoad;
-
-@implementation AttributedStringTest
-
-- (void)webView:(WebView *)sender didFinishLoadForFrame:(WebFrame *)frame
-{
-    didFinishLoad = true;
-}
-@end
+#import "PlatformUtilities.h"
+#import "PlatformWebView.h"
+#import "WebKitAgnosticTest.h"
+#import <wtf/RetainPtr.h>
 
 namespace TestWebKitAPI {
 
-static void didFinishLoadForFrame(WKPageRef, WKFrameRef, WKTypeRef, const void*)
+static NSAttributedString *attributedString(WebView *webView, NSRange range)
 {
-    didFinishLoad = true;
+    return [(NSView <NSTextInput> *)[[[webView mainFrame] frameView] documentView] attributedSubstringFromRange:range];
 }
 
-TEST(WebKit1, AttributedStringTest)
+static NSAttributedString *attributedString(WKView *wkView, NSRange range)
 {
-    RetainPtr<WebView> webView = adoptNS([[WebView alloc] initWithFrame:NSMakeRect(0, 0, 120, 200) frameName:nil groupName:nil]);
-    RetainPtr<AttributedStringTest> testController = adoptNS([AttributedStringTest new]);
-    
-    webView.get().frameLoadDelegate = testController.get();
-    [[webView.get() mainFrame] loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"attributedStringCustomFont" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
-    
-    Util::run(&didFinishLoad);
-    didFinishLoad = false;
-        
-    NSAttributedString *attrString = [(NSView <NSTextInput> *)[[[webView.get() mainFrame] frameView] documentView] attributedSubstringFromRange:NSMakeRange(0, 5)];
-
-    EXPECT_WK_STREQ("Lorem", [attrString string]);
-}
-
-TEST(WebKit2, AttributedStringTest)
-{
-    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
-    PlatformWebView webView(context.get());
-    
-    WKPageLoaderClient loaderClient;
-    memset(&loaderClient, 0, sizeof(loaderClient));
-    loaderClient.version = 0;
-    loaderClient.didFinishLoadForFrame = didFinishLoadForFrame;
-    WKPageSetPageLoaderClient(webView.page(), &loaderClient);
-    
-    WKPageLoadURL(webView.page(), adoptWK(Util::createURLForResource("attributedStringCustomFont", "html")).get());
-
-    Util::run(&didFinishLoad);
-    didFinishLoad = false;
-    
-    NSRange range = NSMakeRange(0, 5);
     NSRange actualRange;
-    NSAttributedString *attrString = [webView.platformView() attributedSubstringForProposedRange:range actualRange:&actualRange];
+    return [wkView attributedSubstringForProposedRange:range actualRange:&actualRange];
+}
 
+
+class AttributedStringTest_CustomFont : public WebKitAgnosticTest {
+public:
+    template <typename View> void runTest(View);
+
+    // WebKitAgnosticTest
+    virtual void didLoadURL(WebView *webView) { runTest(webView); }
+    virtual void didLoadURL(WKView *wkView) { runTest(wkView); }
+
+    virtual NSURL *url() const { return [[NSBundle mainBundle] URLForResource:@"attributedStringCustomFont" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]; }
+};
+
+template <typename View>
+void AttributedStringTest_CustomFont::runTest(View view)
+{
+    NSAttributedString *attrString = attributedString(view, NSMakeRange(0, 5));
     EXPECT_WK_STREQ("Lorem", [attrString string]);
 }
 
+TEST_F(AttributedStringTest_CustomFont, WebKit)
+{
+    runWebKit1Test();
+}
+
+TEST_F(AttributedStringTest_CustomFont, WebKit2)
+{
+    runWebKit2Test();
+}
+
+class AttributedStringTest_Strikethrough : public WebKitAgnosticTest {
+public:
+    template <typename View> void runTest(View);
+
+    // WebKitAgnosticTest
+    virtual void didLoadURL(WebView *webView) { runTest(webView); }
+    virtual void didLoadURL(WKView *wkView) { runTest(wkView); }
+
+    virtual NSURL *url() const { return [[NSBundle mainBundle] URLForResource:@"attributedStringStrikethrough" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]; }
+};
+
+template <typename View>
+void AttributedStringTest_Strikethrough::runTest(View view)
+{
+    NSAttributedString *attrString = attributedString(view, NSMakeRange(0, 5));
+
+    EXPECT_WK_STREQ("Lorem", [attrString string]);
     
+    NSDictionary *attributes = [attrString attributesAtIndex:0 effectiveRange:0];
+    ASSERT_NOT_NULL([attributes objectForKey:NSStrikethroughStyleAttributeName]);
+    ASSERT_TRUE([[attributes objectForKey:NSStrikethroughStyleAttributeName] isKindOfClass:[NSNumber class]]);
+    ASSERT_EQ(NSUnderlineStyleSingle, [(NSNumber *)[attributes objectForKey:NSStrikethroughStyleAttributeName] intValue]);
+}
+
+TEST_F(AttributedStringTest_Strikethrough, WebKit)
+{
+    runWebKit1Test();
+}
+
+TEST_F(AttributedStringTest_Strikethrough, WebKit2)
+{
+    runWebKit2Test();
+}
+
 } // namespace TestWebKitAPI
