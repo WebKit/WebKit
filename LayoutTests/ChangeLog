@@ -1,3 +1,15 @@
+2013-07-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Fix document leak when selection is created inside the document
+        https://bugs.webkit.org/show_bug.cgi?id=119122
+
+        Reviewed by Andreas Kling.
+
+        Added a regression test.
+
+        * editing/selection/leak-document-with-selection-inside-expected.txt: Added.
+        * editing/selection/leak-document-with-selection-inside.html: Added.
+
 2013-07-25  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         [CSS Shapes] New positioning model: support for inset rectangle shape-outside
