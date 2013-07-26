@@ -419,6 +419,7 @@
     <ClCompile Include="..\runtime\CodeCache.cpp" />
     <ClCompile Include="..\runtime\CodeSpecializationKind.cpp" />
     <ClCompile Include="..\runtime\CommonIdentifiers.cpp" />
+    <ClCompile Include="..\runtime\CommonSlowPathsExceptions.cpp" />
     <ClCompile Include="..\runtime\Completion.cpp" />
     <ClCompile Include="..\runtime\ConstructData.cpp" />
     <ClCompile Include="..\runtime\DateConstructor.cpp" />
@@ -786,6 +787,7 @@
     <ClInclude Include="..\runtime\CodeSpecializationKind.h" />
     <ClInclude Include="..\runtime\CommonIdentifiers.h" />
     <ClInclude Include="..\runtime\CommonSlowPaths.h" />
+    <ClInclude Include="..\runtime\CommonSlowPathsExceptions.h" />
     <ClInclude Include="..\runtime\Completion.h" />
     <ClInclude Include="..\runtime\ConstructData.h" />
     <ClInclude Include="..\runtime\DateConstructor.h" />

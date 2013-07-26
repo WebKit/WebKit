@@ -768,6 +768,9 @@
     <ClCompile Include="..\runtime\IntendedStructureChain.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
+    <ClCompile Include="..\runtime\CommonSlowPathsExceptions.cpp">
+      <Filter>runtime</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\API\APICallbackFunction.h">
@@ -1957,6 +1960,9 @@
       <Filter>assembler</Filter>
     </ClInclude>
     <ClInclude Include="..\runtime\IntendedStructureChain.h">
+      <Filter>runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="..\runtime\CommonSlowPathsExceptions.h">
       <Filter>runtime</Filter>
     </ClInclude>
   </ItemGroup>
