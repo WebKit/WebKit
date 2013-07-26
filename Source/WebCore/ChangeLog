@@ -1,3 +1,41 @@
+2013-07-26  Arvid Nilsson  <anilsson@rim.com>
+
+        [BlackBerry] LayerTiler fails to render layer after waking up
+        https://bugs.webkit.org/show_bug.cgi?id=119146
+
+        Reviewed by George Staikos.
+
+        When the application is backgrounded, all tiles are freed up to
+        release memory back to the system. We also mark the contents as dirty
+        in LayerTiler::deleteTextures() so tiles will be repopulated when
+        waking up again.
+
+        The problem was caused by an optimization to avoid re-rendering tiles
+        repeatedly until the UI thread catches up with the fact that we have
+        indeed rendered those tiles (which will happen when the UI thread next
+        composites a frame).
+
+        When contents are dirty, we're not supposed to perform this
+        optimization (i.e. we're not supposed to skip rendering) because the
+        appearance of the layer has changed, so we do need to render those
+        tiles. Unfortunately, the code that was supposed to forget the list of
+        tiles rendered was in a conditional, "if (frontVisibility)", which
+        happened to be false sometimes when the app woke up again. So we ended
+        up perpetually skipping those render jobs, and the UI thread kept
+        yelling at us to render them.
+
+        Fixed by unconditionally dropping the list of tiles rendered when
+        contents are dirty.
+
+        This can't be detected without pixel tests, which BB DRT currently
+        doesn't support.
+
+        JIRA 452460
+
+        * platform/graphics/blackberry/LayerTiler.cpp:
+        (WebCore::LayerVisibility::clearTilesRendered):
+        (WebCore::LayerTiler::updateTextureContentsIfNeeded):
+
 2013-07-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove unused HTMLTextFormControlElement::textRendererAfterUpdateLayout

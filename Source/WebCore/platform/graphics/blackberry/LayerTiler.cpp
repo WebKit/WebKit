@@ -62,6 +62,7 @@ public:
     bool tileNeedsRender(const TileIndex& index) const { return m_tilesNeedingRender.contains(index); }
     void markTileAsRendered(const TileIndex& index) { m_tilesNeedingRender.remove(index); m_tilesRendered.add(index); }
     void swapTilesNeedingRender(HashSet<TileIndex>& tilesNeedingRender) { m_tilesNeedingRender.swap(tilesNeedingRender); }
+    void clearTilesRendered() { m_tilesRendered.clear(); }
 
     void merge(LayerVisibility* visibility)
     {
@@ -152,17 +153,19 @@ void LayerTiler::updateTextureContentsIfNeeded(double scale)
 {
     updateTileSize();
 
-    LayerVisibility* frontVisibility = takeFrontVisibility();
-    if (frontVisibility) {
-        // If we're dirty, start fresh. Otherwise, keep track of tiles rendered so far, to avoid re-rendering the same content.
-        if (!m_contentsDirty)
-            frontVisibility->merge(m_backVisibility);
+    // If we're dirty, start fresh. Otherwise, we keep track of tiles rendered so far by merging
+    // them into the new visibility object further down, to avoid re-rendering the same content.
+    if (m_contentsDirty && m_backVisibility)
+        m_backVisibility->clearTilesRendered();
+
+    // Swap in the new visibility object and merge old visibility object into it.
+    if (LayerVisibility* frontVisibility = takeFrontVisibility()) {
+        frontVisibility->merge(m_backVisibility);
         delete m_backVisibility;
         m_backVisibility = frontVisibility;
     }
-    bool needsRender = m_backVisibility && m_backVisibility->needsRender();
 
-    // Check if update is needed
+    bool needsRender = m_backVisibility && m_backVisibility->needsRender();
     if (!m_contentsDirty && !needsRender)
         return;
 
@@ -171,8 +174,7 @@ void LayerTiler::updateTextureContentsIfNeeded(double scale)
         printf("Layer 0x%p local visible rect %s\n", m_layer, BlackBerry::Platform::FloatRect(m_backVisibility->visibleRect()).toString().c_str());
 #endif
 
-    // There's no point in drawing contents at a higher resolution for scale
-    // invariant layers.
+    // There's no point in drawing contents at a higher resolution for scale invariant layers.
     if (m_layer->sizeIsScaleInvariant())
         scale = 1;
 
