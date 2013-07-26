@@ -269,6 +269,7 @@ SOURCES += \
     runtime/CodeSpecializationKind.cpp \
     runtime/CommonIdentifiers.cpp \
     runtime/CommonSlowPaths.cpp \
+    runtime/CommonSlowPathsExceptions.cpp \
     runtime/CompilationResult.cpp \
     runtime/Completion.cpp \
     runtime/ConstructData.cpp \

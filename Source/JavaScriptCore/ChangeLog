@@ -1,3 +1,10 @@
+2013-07-25  Csaba Osztrogonác  <ossy@webkit.org>
+
+        GTK and Qt buildfix after the intrusive win buildfix r153360.
+
+        * GNUmakefile.list.am:
+        * Target.pri:
+
 2013-07-25  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed, fix build break after r153360.
