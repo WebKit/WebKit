@@ -1,3 +1,10 @@
+2013-07-26  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Unreviewed gardening.
+
+        * WebCore.vcxproj/WebCore.vcxproj: Add missing header file to ease code viewing.
+        * WebCore.vcxproj/WebCore.vcxproj.filters: Ditto.
+
 2013-07-26  Arvid Nilsson  <anilsson@rim.com>
 
         [BlackBerry] LayerTiler fails to render layer after waking up

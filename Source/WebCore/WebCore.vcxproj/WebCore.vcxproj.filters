@@ -14835,6 +14835,9 @@
     <ClInclude Include="..\platform\graphics\avfoundation\cf\InbandTextTrackPrivateLegacyAVCF.h">
       <Filter>platform\graphics\avfoundation\cf</Filter>
     </ClInclude>
+    <ClInclude Include="..\platform\graphics\MediaPlayerPrivate.h">
+      <Filter>platform\graphics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\css\CSSGrammar.y.in">

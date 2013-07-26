@@ -19250,6 +19250,7 @@
     <ClInclude Include="..\platform\graphics\gpu\Texture.h" />
     <ClInclude Include="..\platform\graphics\gpu\TilingData.h" />
     <ClInclude Include="..\platform\graphics\GraphicsContext3D.h" />
+    <ClInclude Include="..\platform\graphics\MediaPlayerPrivate.h" />
     <ClInclude Include="..\platform\graphics\OpenGLShims.h" />
     <ClInclude Include="..\platform\graphics\opengl\Extensions3DOpenGL.h" />
     <ClInclude Include="..\platform\graphics\opengl\Extensions3DOpenGLCommon.h" />
