@@ -1,3 +1,14 @@
+2013-07-27  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r153403
+
+    2013-07-27  Mark Rowe  <mrowe@apple.com>
+
+            Fix builds against an SDK.
+
+            * gtest/xcode/Config/FrameworkTarget.xcconfig: Ensure that gtest.framework is installed
+            in a location compatible with the SDK generation process.
+
 2013-07-22  Lucas Forschler  <lforschler@apple.com>
 
         Merge r152874
