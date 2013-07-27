@@ -1,3 +1,10 @@
+2013-07-27  Mark Rowe  <mrowe@apple.com>
+
+        Fix builds against an SDK.
+
+        * gtest/xcode/Config/FrameworkTarget.xcconfig: Ensure that gtest.framework is installed
+        in a location compatible with the SDK generation process.
+
 2013-07-19  Alex Christensen  <achristensen@apple.com>
 
         Added x64 configuration to Visual Studio build.
