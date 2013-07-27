@@ -112,8 +112,7 @@ static void updatePathFromPolylineElement(SVGElement* element, Path& path)
 
 static void updatePathFromRectElement(SVGElement* element, Path& path)
 {
-    ASSERT(element->hasTagName(SVGNames::rectTag));
-    SVGRectElement* rect = static_cast<SVGRectElement*>(element);
+    SVGRectElement* rect = toSVGRectElement(element);
 
     SVGLengthContext lengthContext(element);
     float width = rect->width().value(lengthContext);

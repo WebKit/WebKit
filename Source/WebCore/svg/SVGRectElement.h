@@ -26,6 +26,7 @@
 #include "SVGAnimatedLength.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGGraphicsElement.h"
+#include "SVGNames.h"
 
 namespace WebCore {
 
@@ -58,6 +59,12 @@ private:
         DECLARE_ANIMATED_BOOLEAN(ExternalResourcesRequired, externalResourcesRequired)
     END_DECLARE_ANIMATED_PROPERTIES
 };
+
+inline SVGRectElement* toSVGRectElement(Node* node)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(!node || node->hasTagName(SVGNames::rectTag));
+    return static_cast<SVGRectElement*>(node);
+}
 
 } // namespace WebCore
 

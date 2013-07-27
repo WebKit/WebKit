@@ -1,3 +1,24 @@
+2013-07-26  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Introduce toSVGRectElement(), use it
+        https://bugs.webkit.org/show_bug.cgi?id=119126
+
+        Reviewed by Andreas Kling.
+
+        As a step to change static_cast with toSVGXXX, static_cast<SVGRectElement*> can
+        be changed with toSVGRectElement().
+
+        No new tests, no behavior change.
+
+        * rendering/svg/RenderSVGRect.cpp:
+        (WebCore::RenderSVGRect::updateShapeFromElement):
+        * rendering/svg/SVGPathData.cpp:
+        (WebCore::updatePathFromRectElement):
+        * rendering/svg/SVGRenderTreeAsText.cpp:
+        (WebCore::operator<<):
+        * svg/SVGRectElement.h:
+        (WebCore::toSVGRectElement):
+
 2013-07-26  Yongjun Zhang  <yongjun_zhang@apple.com>
 
         With frame flattening on, too many resize events fired if document is resized in onresize handler.
