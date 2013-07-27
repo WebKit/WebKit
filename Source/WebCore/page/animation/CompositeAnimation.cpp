@@ -44,7 +44,7 @@ namespace WebCore {
 CompositeAnimation::CompositeAnimation(AnimationControllerPrivate* animationController)
     : m_animationController(animationController)
 {
-    m_suspended = animationController->isSuspended();
+    m_suspended = animationController->isSuspended() && !animationController->allowsNewAnimationsWhileSuspended();
 }
 
 CompositeAnimation::~CompositeAnimation()

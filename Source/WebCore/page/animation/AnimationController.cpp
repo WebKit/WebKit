@@ -59,6 +59,7 @@ AnimationControllerPrivate::AnimationControllerPrivate(Frame* frame)
     , m_animationsWaitingForStartTimeResponse()
     , m_waitingForAsyncStartNotification(false)
     , m_isSuspended(false)
+    , m_allowsNewAnimationsWhileSuspended(false)
 {
 }
 
@@ -322,8 +323,13 @@ void AnimationControllerPrivate::resumeAnimationsForDocument(Document* document)
 
 void AnimationControllerPrivate::startAnimationsIfNotSuspended(Document* document)
 {
-    if (!isSuspended())
+    if (!isSuspended() || allowsNewAnimationsWhileSuspended())
         resumeAnimationsForDocument(document);
+}
+
+void AnimationControllerPrivate::setAllowsNewAnimationsWhileSuspended(bool allowed)
+{
+    m_allowsNewAnimationsWhileSuspended = allowed;
 }
 
 bool AnimationControllerPrivate::pauseAnimationAtTime(RenderObject* renderer, const AtomicString& name, double t)
@@ -601,6 +607,16 @@ void AnimationController::resumeAnimations()
 {
     LOG(Animations, "controller is resuming animations");
     m_data->resumeAnimations();
+}
+
+bool AnimationController::allowsNewAnimationsWhileSuspended() const
+{
+    return m_data->allowsNewAnimationsWhileSuspended();
+}
+
+void AnimationController::setAllowsNewAnimationsWhileSuspended(bool allowed)
+{
+    m_data->setAllowsNewAnimationsWhileSuspended(allowed);
 }
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)

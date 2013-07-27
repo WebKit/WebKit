@@ -1,3 +1,14 @@
+2013-07-26  Dean Jackson  <dino@apple.com>
+
+        Allow new transitions to run even when controller is suspended
+        https://bugs.webkit.org/show_bug.cgi?id=119171
+        <rdar://problem/14511404>
+
+        Reviewed by Simon Fraser.
+
+        This is actually a test to make sure this fix didn't break anything. There is no
+        way to trigger the new behaviour from the test system (or from Safari).
+
 2013-07-26  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         [CSS Shapes] New positioning model: support for polygon shape-outside

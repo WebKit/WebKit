@@ -2790,6 +2790,22 @@ static Vector<String> toStringVector(NSArray* patterns)
     pageGroup->removeAllUserContent();
 }
 
+- (BOOL)allowsNewCSSAnimationsWhileSuspended
+{
+    Frame* frame = core([self mainFrame]);
+    if (frame)
+        return frame->animation()->allowsNewAnimationsWhileSuspended();
+
+    return false;
+}
+
+- (void)setAllowsNewCSSAnimationsWhileSuspended:(BOOL)allowed
+{
+    Frame* frame = core([self mainFrame]);
+    if (frame)
+        frame->animation()->setAllowsNewAnimationsWhileSuspended(allowed);
+}
+
 - (BOOL)cssAnimationsSuspended
 {
     // should ask the page!

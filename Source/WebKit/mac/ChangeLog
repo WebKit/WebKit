@@ -1,3 +1,24 @@
+2013-07-26  Dean Jackson  <dino@apple.com>
+
+        Allow new transitions to run even when controller is suspended
+        https://bugs.webkit.org/show_bug.cgi?id=119171
+        <rdar://problem/14511404>
+
+        Reviewed by Simon Fraser.
+
+        Expose a new SPI on WebView that triggers the (buggy) old behaviour
+        for animations, such that any newly created animations will start even
+        when the document is supposedly suspended. It turns out that client content was
+        unknowingly relying on this behaviour - e.g. suspending a view, loading a
+        bunch of new content, bringing the view on screen and then unsuspending. In this
+        situation, we were not running CSS transitions, because the page was suspended.
+        However, JS was still triggering them, and content was expecting a transitionEnd event.
+
+        * WebView/WebView.mm:
+        (-[WebView allowsNewCSSAnimationsWhileSuspended]): Calls into AnimationController.
+        (-[WebView setAllowsNewCSSAnimationsWhileSuspended:]): Ditto.
+        * WebView/WebViewPrivate.h: New methods listed above.
+
 2013-07-26  Anders Carlsson  <andersca@apple.com>
 
         Add another method that we need to set aside subviews for

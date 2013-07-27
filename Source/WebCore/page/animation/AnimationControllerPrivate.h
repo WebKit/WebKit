@@ -109,7 +109,10 @@ public:
     void animationWillBeRemoved(AnimationBase*);
 
     void updateAnimationTimerForRenderer(RenderObject*);
-    
+
+    bool allowsNewAnimationsWhileSuspended() const { return m_allowsNewAnimationsWhileSuspended; }
+    void setAllowsNewAnimationsWhileSuspended(bool);
+
 private:
     void animationTimerFired(Timer<AnimationControllerPrivate>*);
 
@@ -142,6 +145,11 @@ private:
     WaitingAnimationsSet m_animationsWaitingForStartTimeResponse;
     bool m_waitingForAsyncStartNotification;
     bool m_isSuspended;
+
+    // Used to flag whether we should revert to previous buggy
+    // behavior of allowing new transitions and animations to
+    // run even when this object is suspended.
+    bool m_allowsNewAnimationsWhileSuspended;
 };
 
 } // namespace WebCore

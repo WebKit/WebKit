@@ -76,6 +76,9 @@ public:
 
     void beginAnimationUpdate();
     void endAnimationUpdate();
+
+    bool allowsNewAnimationsWhileSuspended() const;
+    void setAllowsNewAnimationsWhileSuspended(bool);
     
     static bool supportsAcceleratedAnimationOfProperty(CSSPropertyID);
 

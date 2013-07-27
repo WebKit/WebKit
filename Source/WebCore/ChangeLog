@@ -1,3 +1,31 @@
+2013-07-26  Dean Jackson  <dino@apple.com>
+
+        Allow new transitions to run even when controller is suspended
+        https://bugs.webkit.org/show_bug.cgi?id=119171
+        <rdar://problem/14511404>
+
+        Reviewed by Simon Fraser.
+
+        Expose a new property on AnimationController that allows newly created
+        animations to run even if the controller says it is suspended. See WebKit
+        ChangeLog for more details.
+
+        Test: transitions/created-while-suspended.html
+
+        * WebCore.exp.in: Export the new methods so WebView can use them.
+        * page/animation/AnimationController.cpp:
+        (WebCore::AnimationControllerPrivate::AnimationControllerPrivate): Initialize new flag to false.
+        (WebCore::AnimationControllerPrivate::startAnimationsIfNotSuspended): Check new flag is not true.
+        (WebCore::AnimationControllerPrivate::setAllowsNewAnimationsWhileSuspended): Expose setter.
+        (WebCore::AnimationController::allowsNewAnimationsWhileSuspended): "Public" getter.
+        (WebCore::AnimationController::setAllowsNewAnimationsWhileSuspended): "Public" setter.
+        * page/animation/AnimationController.h:
+        * page/animation/AnimationControllerPrivate.h:
+        (WebCore::AnimationControllerPrivate::allowsNewAnimationsWhileSuspended):
+        * page/animation/CompositeAnimation.cpp:
+        (WebCore::CompositeAnimation::CompositeAnimation): Only suspend if new flag is false. Everything else
+        relies on the m_suspended flag, so the real code change is this one line.
+
 2013-07-26  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Unreviewed build fix.

@@ -564,6 +564,14 @@ Could be worth adding to the API.
 */
 - (void)setCSSAnimationsSuspended:(BOOL)suspended;
 
+/*
+    SPI to revert back to buggy behavior that would allow new transitions
+    and animations to run even when the view is suspended (e.g. loading a
+    new document).
+*/
+- (BOOL)allowsNewCSSAnimationsWhileSuspended;
+- (void)setAllowsNewCSSAnimationsWhileSuspended:(BOOL)allowed;
+
 + (void)_setDomainRelaxationForbidden:(BOOL)forbidden forURLScheme:(NSString *)scheme;
 + (void)_registerURLSchemeAsSecure:(NSString *)scheme;
 + (void)_registerURLSchemeAsAllowingLocalStorageAccessInPrivateBrowsing:(NSString *)scheme;
