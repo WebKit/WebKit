@@ -90,6 +90,7 @@ struct WebPageCreationParameters {
     bool mayStartMediaWhenInWindow;
 
     WebCore::IntSize minimumLayoutSize;
+    bool autoSizingShouldExpandToViewHeight;
     
     WebCore::ScrollPinningBehavior scrollPinningBehavior;
 

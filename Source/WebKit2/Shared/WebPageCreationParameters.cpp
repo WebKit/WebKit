@@ -60,6 +60,7 @@ void WebPageCreationParameters::encode(CoreIPC::ArgumentEncoder& encoder) const
     encoder << mediaVolume;
     encoder << mayStartMediaWhenInWindow;
     encoder << minimumLayoutSize;
+    encoder << autoSizingShouldExpandToViewHeight;
     encoder.encodeEnum(scrollPinningBehavior);
 
 #if PLATFORM(MAC)
@@ -123,6 +124,8 @@ bool WebPageCreationParameters::decode(CoreIPC::ArgumentDecoder& decoder, WebPag
     if (!decoder.decode(parameters.mayStartMediaWhenInWindow))
         return false;
     if (!decoder.decode(parameters.minimumLayoutSize))
+        return false;
+    if (!decoder.decode(parameters.autoSizingShouldExpandToViewHeight))
         return false;
     if (!decoder.decodeEnum(parameters.scrollPinningBehavior))
         return false;
