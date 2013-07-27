@@ -1,3 +1,119 @@
+2013-07-27  Sam Weinig  <sam@webkit.org>
+
+        Add assertions for CSSPrimitiveValue's m_value.valueID accessor
+        https://bugs.webkit.org/show_bug.cgi?id=119180
+
+        Reviewed by Andreas Kling.
+
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::operator CSSReflectionDirection):
+        (WebCore::CSSPrimitiveValue::operator ColumnSpan):
+        (WebCore::CSSPrimitiveValue::operator PrintColorAdjust):
+        (WebCore::CSSPrimitiveValue::operator EBorderStyle):
+        (WebCore::CSSPrimitiveValue::operator OutlineIsAuto):
+        (WebCore::CSSPrimitiveValue::operator CompositeOperator):
+        (WebCore::CSSPrimitiveValue::operator ControlPart):
+        (WebCore::CSSPrimitiveValue::operator EBackfaceVisibility):
+        (WebCore::CSSPrimitiveValue::operator EFillAttachment):
+        (WebCore::CSSPrimitiveValue::operator EFillBox):
+        (WebCore::CSSPrimitiveValue::operator EFillRepeat):
+        (WebCore::CSSPrimitiveValue::operator EBoxPack):
+        (WebCore::CSSPrimitiveValue::operator EBoxAlignment):
+        (WebCore::CSSPrimitiveValue::operator EBoxDecorationBreak):
+        (WebCore::CSSPrimitiveValue::operator BackgroundEdgeOrigin):
+        (WebCore::CSSPrimitiveValue::operator EBoxSizing):
+        (WebCore::CSSPrimitiveValue::operator EBoxDirection):
+        (WebCore::CSSPrimitiveValue::operator EBoxLines):
+        (WebCore::CSSPrimitiveValue::operator EBoxOrient):
+        (WebCore::CSSPrimitiveValue::operator ECaptionSide):
+        (WebCore::CSSPrimitiveValue::operator EClear):
+        (WebCore::CSSPrimitiveValue::operator ECursor):
+        (WebCore::CSSPrimitiveValue::operator CursorVisibility):
+        (WebCore::CSSPrimitiveValue::operator EDisplay):
+        (WebCore::CSSPrimitiveValue::operator EEmptyCell):
+        (WebCore::CSSPrimitiveValue::operator EAlignItems):
+        (WebCore::CSSPrimitiveValue::operator EJustifyContent):
+        (WebCore::CSSPrimitiveValue::operator EFlexDirection):
+        (WebCore::CSSPrimitiveValue::operator EAlignContent):
+        (WebCore::CSSPrimitiveValue::operator EFlexWrap):
+        (WebCore::CSSPrimitiveValue::operator EFloat):
+        (WebCore::CSSPrimitiveValue::operator LineBreak):
+        (WebCore::CSSPrimitiveValue::operator EListStylePosition):
+        (WebCore::CSSPrimitiveValue::operator EListStyleType):
+        (WebCore::CSSPrimitiveValue::operator EMarginCollapse):
+        (WebCore::CSSPrimitiveValue::operator EMarqueeBehavior):
+        (WebCore::CSSPrimitiveValue::operator RegionFragment):
+        (WebCore::CSSPrimitiveValue::operator EMarqueeDirection):
+        (WebCore::CSSPrimitiveValue::operator ENBSPMode):
+        (WebCore::CSSPrimitiveValue::operator EOverflow):
+        (WebCore::CSSPrimitiveValue::operator EPageBreak):
+        (WebCore::CSSPrimitiveValue::operator EPosition):
+        (WebCore::CSSPrimitiveValue::operator EResize):
+        (WebCore::CSSPrimitiveValue::operator ETableLayout):
+        (WebCore::CSSPrimitiveValue::operator ETextAlign):
+        (WebCore::CSSPrimitiveValue::operator TextAlignLast):
+        (WebCore::CSSPrimitiveValue::operator TextJustify):
+        (WebCore::CSSPrimitiveValue::operator TextDecoration):
+        (WebCore::CSSPrimitiveValue::operator TextDecorationStyle):
+        (WebCore::CSSPrimitiveValue::operator TextUnderlinePosition):
+        (WebCore::CSSPrimitiveValue::operator ETextSecurity):
+        (WebCore::CSSPrimitiveValue::operator ETextTransform):
+        (WebCore::CSSPrimitiveValue::operator EUnicodeBidi):
+        (WebCore::CSSPrimitiveValue::operator EUserDrag):
+        (WebCore::CSSPrimitiveValue::operator EUserModify):
+        (WebCore::CSSPrimitiveValue::operator EUserSelect):
+        (WebCore::CSSPrimitiveValue::operator EVerticalAlign):
+        (WebCore::CSSPrimitiveValue::operator EVisibility):
+        (WebCore::CSSPrimitiveValue::operator EWhiteSpace):
+        (WebCore::CSSPrimitiveValue::operator EWordBreak):
+        (WebCore::CSSPrimitiveValue::operator EOverflowWrap):
+        (WebCore::CSSPrimitiveValue::operator TextDirection):
+        (WebCore::CSSPrimitiveValue::operator WritingMode):
+        (WebCore::CSSPrimitiveValue::operator TextCombine):
+        (WebCore::CSSPrimitiveValue::operator RubyPosition):
+        (WebCore::CSSPrimitiveValue::operator TextEmphasisPosition):
+        (WebCore::CSSPrimitiveValue::operator TextOverflow):
+        (WebCore::CSSPrimitiveValue::operator TextEmphasisFill):
+        (WebCore::CSSPrimitiveValue::operator TextEmphasisMark):
+        (WebCore::CSSPrimitiveValue::operator TextOrientation):
+        (WebCore::CSSPrimitiveValue::operator EPointerEvents):
+        (WebCore::CSSPrimitiveValue::operator FontDescription::Kerning):
+        (WebCore::CSSPrimitiveValue::operator FontSmoothingMode):
+        (WebCore::CSSPrimitiveValue::operator FontWeight):
+        (WebCore::CSSPrimitiveValue::operator FontItalic):
+        (WebCore::CSSPrimitiveValue::operator FontSmallCaps):
+        (WebCore::CSSPrimitiveValue::operator TextRenderingMode):
+        (WebCore::CSSPrimitiveValue::operator ColorSpace):
+        (WebCore::CSSPrimitiveValue::operator Hyphens):
+        (WebCore::CSSPrimitiveValue::operator LineSnap):
+        (WebCore::CSSPrimitiveValue::operator LineAlign):
+        (WebCore::CSSPrimitiveValue::operator Order):
+        (WebCore::CSSPrimitiveValue::operator ESpeak):
+        (WebCore::CSSPrimitiveValue::operator BlendMode):
+        (WebCore::CSSPrimitiveValue::operator LineCap):
+        (WebCore::CSSPrimitiveValue::operator LineJoin):
+        (WebCore::CSSPrimitiveValue::operator WindRule):
+        (WebCore::CSSPrimitiveValue::operator EAlignmentBaseline):
+        (WebCore::CSSPrimitiveValue::operator EBorderCollapse):
+        (WebCore::CSSPrimitiveValue::operator EBorderFit):
+        (WebCore::CSSPrimitiveValue::operator EImageRendering):
+        (WebCore::CSSPrimitiveValue::operator ETransformStyle3D):
+        (WebCore::CSSPrimitiveValue::operator ColumnAxis):
+        (WebCore::CSSPrimitiveValue::operator ColumnProgression):
+        (WebCore::CSSPrimitiveValue::operator WrapFlow):
+        (WebCore::CSSPrimitiveValue::operator WrapThrough):
+        (WebCore::CSSPrimitiveValue::operator GridAutoFlow):
+        (WebCore::CSSPrimitiveValue::operator EBufferedRendering):
+        (WebCore::CSSPrimitiveValue::operator EColorInterpolation):
+        (WebCore::CSSPrimitiveValue::operator EColorRendering):
+        (WebCore::CSSPrimitiveValue::operator EDominantBaseline):
+        (WebCore::CSSPrimitiveValue::operator EShapeRendering):
+        (WebCore::CSSPrimitiveValue::operator ETextAnchor):
+        (WebCore::CSSPrimitiveValue::operator SVGWritingMode):
+        (WebCore::CSSPrimitiveValue::operator EVectorEffect):
+        (WebCore::CSSPrimitiveValue::operator EMaskType):
+        Assert that the CSSPrimitiveValue is holding a CSSValueID before accessing it.
+
 2013-07-26  Sam Weinig  <sam@webkit.org>
 
         Stop pretending to support <string> for text-align.
