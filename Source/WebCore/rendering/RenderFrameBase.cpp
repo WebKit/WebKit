@@ -65,6 +65,8 @@ void RenderFrameBase::layoutWithFlattening(bool hasFixedWidth, bool hasFixedHeig
         return;
     }
 
+    childFrameView->setResizeEventAllowed(false);
+
     // need to update to calculate min/max correctly
     updateWidgetPosition();
 
@@ -93,6 +95,7 @@ void RenderFrameBase::layoutWithFlattening(bool hasFixedWidth, bool hasFixedHeig
         setWidth(max<LayoutUnit>(width(), childFrameView->contentsWidth() + hBorder));
 
     updateWidgetPosition();
+    childFrameView->setResizeEventAllowed(true);
 
     ASSERT(!childFrameView->layoutPending());
     ASSERT(!childRoot->needsLayout());

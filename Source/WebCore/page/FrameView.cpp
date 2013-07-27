@@ -204,6 +204,7 @@ FrameView::FrameView(Frame* frame)
 #endif
     , m_visualUpdatesAllowedByClient(true)
     , m_scrollPinningBehavior(DoNotPin)
+    , m_resizeEventAllowed(true)
 {
     init();
 
@@ -481,7 +482,8 @@ void FrameView::setFrameRect(const IntRect& newRect)
     }
 #endif
 
-    sendResizeEventIfNeeded();
+    if (m_resizeEventAllowed)
+        sendResizeEventIfNeeded();
 }
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)

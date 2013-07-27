@@ -1,3 +1,27 @@
+2013-07-26  Yongjun Zhang  <yongjun_zhang@apple.com>
+
+        With frame flattening on, too many resize events fired if document is resized in onresize handler.
+        https://bugs.webkit.org/show_bug.cgi?id=119075
+
+        Reviewed by Simon Fraser.
+
+        With http://trac.webkit.org/changeset/149287, WebCore also sends resize event in FrameView::setFrameRect.  When
+        flattening an iframe, setFrameRect could be called multiple times from RenderFrameBase::layoutWithFlattening and
+        we could get multiple resize events.  This patch adds a flag in FrameView to disallow sending resize events if
+        we are inside layoutWithFlattening.  The resize event will be sent in performPostLayoutTasks after the iframe
+        is done laying out.
+
+        Manually tested by verifying the rendering slowness in www.hi-pda.com is fixed when frame flattening is enabled.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::FrameView):
+        (WebCore::FrameView::setFrameRect):
+        * page/FrameView.h:
+        (WebCore::FrameView::setResizeEventAllowed):
+        (WebCore::FrameView::resizeEventAllowed):
+        * rendering/RenderFrameBase.cpp:
+        (WebCore::RenderFrameBase::layoutWithFlattening):
+
 2013-07-26  Dean Jackson  <dino@apple.com>
 
         Allow new transitions to run even when controller is suspended
