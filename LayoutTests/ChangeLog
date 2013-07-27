@@ -1,3 +1,13 @@
+2013-07-27  Sam Weinig  <sam@webkit.org>
+
+        Stop pretending to support <string> for text-align.
+        https://bugs.webkit.org/show_bug.cgi?id=119107
+
+        Reviewed by Andreas Kling.
+
+        * fast/css/text-align-string-crash-expected.txt: Added.
+        * fast/css/text-align-string-crash.html: Added.
+
 2013-07-26  Dean Jackson  <dino@apple.com>
 
         Allow new transitions to run even when controller is suspended

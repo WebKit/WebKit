@@ -1,3 +1,20 @@
+2013-07-26  Sam Weinig  <sam@webkit.org>
+
+        Stop pretending to support <string> for text-align.
+        https://bugs.webkit.org/show_bug.cgi?id=119107
+
+        Reviewed by Andreas Kling.
+
+        Test: fast/css/text-align-string-crash.html
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        Stop pretending to support <string> for text-align.
+
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::ApplyPropertyTextAlign::applyValue):
+        ASSERT that only value IDs get passed.
+
 2013-07-26  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Introduce toSVGRectElement(), use it
