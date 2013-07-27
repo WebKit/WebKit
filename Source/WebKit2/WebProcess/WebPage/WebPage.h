@@ -662,6 +662,9 @@ public:
     WebCore::ScrollPinningBehavior scrollPinningBehavior() { return m_scrollPinningBehavior; }
     void setScrollPinningBehavior(uint32_t /* WebCore::ScrollPinningBehavior */ pinning);
 
+    WKTypeRef pageOverlayCopyAccessibilityAttributeValue(WKStringRef attribute, WKTypeRef parameter);
+    WKArrayRef pageOverlayCopyAccessibilityAttributesNames(bool parameterizedNames);
+    
 private:
     WebPage(uint64_t pageID, const WebPageCreationParameters&);
 

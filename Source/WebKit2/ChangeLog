@@ -1,3 +1,39 @@
+2013-07-27  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: VoiceOver not working with data detection page overlays
+        https://bugs.webkit.org/show_bug.cgi?id=118680
+
+        Reviewed by Sam Weinig.
+
+        Expose API in BundlePageOverlay so that accessibility attributes can be retrieved through the overlay.
+        This requires two methods in a new callback struct. One to copy the attribute names, and the other to 
+        copy the attribute values. I've folded both parameterized and non-parameterized attribute names into one method
+        with a boolean to determine which one should be used. The non-parameterized attributes are not used or passed to the
+        overlay at this time as there are no clients with such a need.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePageOverlay.cpp:
+        (PageOverlayClientImpl::setAccessibilityClient):
+        (PageOverlayClientImpl::PageOverlayClientImpl):
+        (PageOverlayClientImpl::copyAccessibilityAttributeValue):
+        (PageOverlayClientImpl::copyAccessibilityAttributeNames):
+        (WKBundlePageOverlaySetAccessibilityClient):
+        * WebProcess/InjectedBundle/API/c/WKBundlePageOverlay.h:
+        * WebProcess/WebPage/PageOverlay.cpp:
+        (WebKit::PageOverlay::copyAccessibilityAttributeValue):
+        (WebKit::PageOverlay::copyAccessibilityAttributeNames):
+        * WebProcess/WebPage/PageOverlay.h:
+        (WebKit::PageOverlay::Client::copyAccessibilityAttributeValue):
+        (WebKit::PageOverlay::Client::copyAccessibilityAttributeNames):
+        (WebKit::PageOverlay::client):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::pageOverlayCopyAccessibilityAttributeValue):
+        (WebKit::WebPage::pageOverlayCopyAccessibilityAttributesNames):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/mac/WKAccessibilityWebPageObject.mm:
+        (-[WKAccessibilityWebPageObject accessibilityParameterizedAttributeNames]):
+        (-[WKAccessibilityWebPageObject _convertScreenPointToWindow:]):
+        (-[WKAccessibilityWebPageObject accessibilityAttributeValue:forParameter:]):
+
 2013-07-27  Simon Fraser  <simon.fraser@apple.com>
 
         If entering fullscreen for a window fails, don't leave things in a bad state

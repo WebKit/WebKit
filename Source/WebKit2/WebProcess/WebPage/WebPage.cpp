@@ -1837,6 +1837,32 @@ void WebPage::gestureEvent(const WebGestureEvent& gestureEvent)
     send(Messages::WebPageProxy::DidReceiveEvent(static_cast<uint32_t>(gestureEvent.type()), handled));
 }
 #endif
+    
+WKTypeRef WebPage::pageOverlayCopyAccessibilityAttributeValue(WKStringRef attribute, WKTypeRef parameter)
+{
+    if (!m_pageOverlays.size())
+        return 0;
+    PageOverlayList::reverse_iterator end = m_pageOverlays.rend();
+    for (PageOverlayList::reverse_iterator it = m_pageOverlays.rbegin(); it != end; ++it) {
+        WKTypeRef value = (*it)->copyAccessibilityAttributeValue(attribute, parameter);
+        if (value)
+            return value;
+    }
+    return 0;
+}
+
+WKArrayRef WebPage::pageOverlayCopyAccessibilityAttributesNames(bool parameterizedNames)
+{
+    if (!m_pageOverlays.size())
+        return 0;
+    PageOverlayList::reverse_iterator end = m_pageOverlays.rend();
+    for (PageOverlayList::reverse_iterator it = m_pageOverlays.rbegin(); it != end; ++it) {
+        WKArrayRef value = (*it)->copyAccessibilityAttributeNames(parameterizedNames);
+        if (value)
+            return value;
+    }
+    return 0;
+}
 
 void WebPage::validateCommand(const String& commandName, uint64_t callbackID)
 {
