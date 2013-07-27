@@ -1,3 +1,19 @@
+2013-07-27  Simon Fraser  <simon.fraser@apple.com>
+
+        If entering fullscreen for a window fails, don't leave things in a bad state
+        https://bugs.webkit.org/show_bug.cgi?id=119179
+
+        Reviewed by Sam Weinig.
+        
+        On Lion, attempting to take a video fullscreen when the Safari window is already
+        fullscreen can sometimes fail, and AppKit informs us via windowDidFailToEnterFullScreen:
+        
+        When this happens we have to undo the work done when entering fullscreen, to
+        avoid leaving things in a bad state.
+
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController finishedEnterFullScreenAnimation:]):
+
 2013-07-26  Tim Horton  <timothy_horton@apple.com>
 
         Add a mode where autosizing fixes the FrameView height to at least the WKView height
