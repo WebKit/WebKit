@@ -89,12 +89,6 @@ Vector<String> listDirectory(const String& path, const String& filter)
     const char *f_name;
 
     Eina_Iterator* it = eina_file_ls(path.utf8().data());
-    // FIXME: Early return if the iterator is null to avoid error messages from eina_iterator_free().
-    // This check can be removed once the magic check on _free() removed in Eina.
-    // http://www.mail-archive.com/enlightenment-devel@lists.sourceforge.net/msg42944.html
-    if (!it)
-        return matchingEntries;
-
     EINA_ITERATOR_FOREACH(it, f_name) {
         if (!fnmatch(cfilter.data(), f_name, 0))
             matchingEntries.append(String::fromUTF8(f_name));

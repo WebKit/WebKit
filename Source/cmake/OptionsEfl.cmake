@@ -124,26 +124,19 @@ if (ENABLE_ECORE_X)
     add_definitions(-DMOZ_X11)
 endif ()
 
-# Allow building the EFL port using EFL version 1.6+ to build on Tizen trunk
-find_package(Eina 1.6 REQUIRED)
-find_package(Evas 1.6 REQUIRED)
-find_package(Ecore 1.6 COMPONENTS Evas File Input Imf Imf_Evas ${ECORE_ADDITIONAL_COMPONENTS})
-find_package(Edje 1.6 REQUIRED)
-find_package(Eet 1.6 REQUIRED)
-find_package(Eeze 1.6 REQUIRED)
-find_package(Efreet 1.6 REQUIRED)
-find_package(E_DBus 1.6 COMPONENTS EUKit)
+find_package(Eina 1.7 REQUIRED)
+find_package(Evas 1.7 REQUIRED)
+find_package(Ecore 1.7 COMPONENTS Evas File Input Imf Imf_Evas ${ECORE_ADDITIONAL_COMPONENTS})
+find_package(Edje 1.7 REQUIRED)
+find_package(Eet 1.7 REQUIRED)
+find_package(Eeze 1.7 REQUIRED)
+find_package(Efreet 1.7 REQUIRED)
+find_package(E_DBus 1.7 COMPONENTS EUKit)
 
 # Add Eo dependency if EFL version is 1.8
 if (${EVAS_VERSION} VERSION_EQUAL 1.8 AND ${ECORE_VERSION} VERSION_EQUAL 1.8)
     find_package(Eo)
     add_definitions(-DWTF_USE_EO=1)
-endif ()
-
-# Prefer and promote EFL version 1.7+ as the reference configuration
-if ((${EINA_VERSION} STRLESS 1.7) OR (${EVAS_VERSION} STRLESS 1.7) OR (${ECORE_VERSION} STRLESS 1.7) OR (${EDJE_VERSION} STRLESS 1.7) OR
-    (${EET_VERSION} STRLESS 1.7) OR (${EEZE_VERSION} STRLESS 1.7) OR (${EFREET_VERSION} STRLESS 1.7) OR (${E_DBUS_VERSION} STRLESS 1.7))
-    message("Consider updating all EFL libaries to v1.7")
 endif ()
 
 find_package(Freetype 2.4.2 REQUIRED)

@@ -1,3 +1,12 @@
+2013-07-27  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Bump required version of EFL to 1.7
+        https://bugs.webkit.org/show_bug.cgi?id=119144
+
+        Reviewed by Christophe Dumez.
+
+        * MiniBrowser/efl/CMakeLists.txt: Bumped EFL to 1.7
+
 2013-07-26  Filip Pizlo  <fpizlo@apple.com>
 
         WKTR should know about the JSC extensions to testRunner

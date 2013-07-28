@@ -1,3 +1,16 @@
+2013-07-27  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Bump required version of EFL to 1.7
+        https://bugs.webkit.org/show_bug.cgi?id=119144
+
+        Reviewed by Christophe Dumez.
+
+        We have supported 1.6 for Tizen build since r137203.
+        But Tizen now supports 1.7+ after Tizen released 2.0.
+
+        * Source/cmake/OptionsEfl.cmake:
+        Bumped EFL to 1.7 and removed promotion.
+
 2013-07-25  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Unreviewed EFL build fix after r153315.
