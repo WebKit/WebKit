@@ -392,7 +392,7 @@ private:
         case GetMyScope:
         case SkipTopScope:
         case SkipScope: {
-            changed |= setPrediction(SpecCellOther);
+            changed |= setPrediction(SpecObjectOther);
             break;
         }
             
@@ -498,7 +498,7 @@ private:
             break;
 
         case GetScope:
-            changed |= setPrediction(SpecCellOther);
+            changed |= setPrediction(SpecObjectOther);
             break;
             
         case In:

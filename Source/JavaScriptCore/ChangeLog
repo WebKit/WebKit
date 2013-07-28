@@ -1,3 +1,19 @@
+2013-07-28  Oliver Hunt  <oliver@apple.com>
+
+        REGRESSION: Crash when opening Facebook.com
+        https://bugs.webkit.org/show_bug.cgi?id=119155
+
+        Reviewed by Andreas Kling.
+
+        Scope nodes are always objects, so we should be using SpecObjectOther
+        rather than SpecCellOther.  Marking Scopes as CellOther leads to a
+        contradiction in the CFA, resulting in bogus codegen.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::::executeEffects):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+
 2013-07-26  Oliver Hunt  <oliver@apple.com>
 
         REGRESSION(FTL?): Crashes in plugin tests
