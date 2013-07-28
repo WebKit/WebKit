@@ -1382,14 +1382,11 @@ bool CSSPrimitiveValue::equals(const CSSPrimitiveValue& other) const
     case CSS_PAIR:
         return m_value.pair && other.m_value.pair && m_value.pair->equals(*other.m_value.pair);
 #if ENABLE(DASHBOARD_SUPPORT)
-    case CSS_DASHBOARD_REGION: {
-        DashboardRegion* region = getDashboardRegionValue();
-        DashboardRegion* otherRegion = other.getDashboardRegionValue();
-        return region ? otherRegion && region->equals(*otherRegion) : !otherRegion;
-    }
+    case CSS_DASHBOARD_REGION:
+        return m_value.region && other.m_value.region && m_value.region->equals(*other.m_value.region);
 #endif
     case CSS_PARSER_OPERATOR:
-        return m_value.valueID == other.m_value.valueID;
+        return m_value.parserOperator == other.m_value.parserOperator;
     case CSS_CALC:
         return m_value.calc && other.m_value.calc && m_value.calc->equals(*other.m_value.calc);
     case CSS_SHAPE:
