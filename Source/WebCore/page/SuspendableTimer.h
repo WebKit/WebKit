@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2013 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,27 +32,43 @@
 
 namespace WebCore {
 
-class SuspendableTimer : public TimerBase, public ActiveDOMObject {
+class SuspendableTimer : private TimerBase, public ActiveDOMObject {
 public:
     explicit SuspendableTimer(ScriptExecutionContext*);
     virtual ~SuspendableTimer();
 
     // ActiveDOMObject
-    virtual bool hasPendingActivity() const;
-    virtual void stop();
-    virtual bool canSuspend() const;
-    virtual void suspend(ReasonForSuspension);
-    virtual void resume();
+    virtual bool hasPendingActivity() const FINAL OVERRIDE;
+    virtual void stop() FINAL OVERRIDE;
+    virtual bool canSuspend() const FINAL OVERRIDE;
+    virtual void suspend(ReasonForSuspension) FINAL OVERRIDE;
+    virtual void resume() FINAL OVERRIDE;
+
+    // A hook for derived classes to perform cleanup.
+    virtual void didStop();
+
+    // Part of TimerBase interface used by SuspendableTimer clients, modified to work when suspended.
+    bool isActive() const { return TimerBase::isActive() || (m_suspended && m_savedIsActive); }
+    bool isSuspended() const { return m_suspended; }
+    void startRepeating(double repeatInterval);
+    void startOneShot(double interval);
+    double repeatInterval() const;
+    void augmentFireInterval(double delta);
+    void augmentRepeatInterval(double delta);
+    using TimerBase::didChangeAlignmentInterval;
+    using TimerBase::operator new;
+    using TimerBase::operator delete;
+
+    void cancel(); // Equivalent to TimerBase::stop(), whose name conflicts with ActiveDOMObject::stop().
 
 private:
     virtual void fired() = 0;
 
-    double m_nextFireInterval;
-    double m_repeatInterval;
-    bool m_active;
-#if !ASSERT_DISABLED
     bool m_suspended;
-#endif
+
+    double m_savedNextFireInterval;
+    double m_savedRepeatInterval;
+    bool m_savedIsActive;
 };
 
 } // namespace WebCore

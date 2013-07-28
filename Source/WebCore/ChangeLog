@@ -1,3 +1,62 @@
+2013-07-27  Alexey Proskuryakov  <ap@apple.com>
+
+        Make SuspendableTimer safer
+        https://bugs.webkit.org/show_bug.cgi?id=119127
+
+        Reviewed by Sam Weinig.
+
+        SuspendableTimer now enforces that it stays suspended until resumed (or until stopped
+        and started again). To ensure this, TimerBase is now a private base class, and parts of
+        its interface that clients use are reimplemented with suspend/resume in mind.
+
+        Derived classes are still allowed to override TimerBase virtual functions (notably
+        fired() and alignedFireTime()).
+
+        * dom/DocumentEventQueue.cpp:
+        (WebCore::DocumentEventQueueTimer): Removed an extraneous WTF_MAKE_NONCOPYABLE,
+        TimerBase has it already.
+        (WebCore::DocumentEventQueueTimer::create): Use our normal create() pattern.
+        (WebCore::DocumentEventQueue::DocumentEventQueue): Made the constructor private, accordingly.
+        (WebCore::DocumentEventQueue::cancelEvent): Use SuspendableTimer::cancel(), which
+        is a new name to disambiguate TimerBase::stop() and ActiveDOMObject::stop().
+        (WebCore::DocumentEventQueue::close): Ditto.
+
+        * page/DOMTimer.cpp:
+        (WebCore::DOMTimer::fired): Now that SuspendableTimer knows whether it's currently
+        suspended, assert that it's not.
+        (WebCore::DOMTimer::didStop): Separated ActiveDOMObject::stop() implementation from
+        additional cleanup, allowing for better SuspendableTimer encapsulation.
+
+        * page/DOMTimer.h: Added FINAL and OVVERIDE specifiers as appropriate.
+
+        * page/SuspendableTimer.h: Added FINAL (and OVERRIDE) qualifiers to ActiveDOMObject
+        methods. A derived class that wants to override current behavior is most likely not
+        a timer, and thus shouldn't be a derived class.
+        (WebCore::SuspendableTimer::isActive): SuspendableTimer with a next fire time is
+        active even if suspended, we shouldn't overwrite its saved data thinking that it's
+        inactive.
+        (WebCore::SuspendableTimer::isSuspended): Exposed to clients (m_suspended is no
+        longer debug only).
+
+        * page/SuspendableTimer.cpp:
+        (WebCore::SuspendableTimer::SuspendableTimer): Updated for new variable names.
+        (WebCore::SuspendableTimer::stop): This is ActiveDOMObject::stop(), which is called
+        before final destruction. We don't track this state directly, but can approximate
+        with setting m_suspended, so even if someone tries to start the timer afterwards,
+        it won't fire.
+        (WebCore::SuspendableTimer::suspend): Updated for new names.
+        (WebCore::SuspendableTimer::resume): Ditto.
+        (WebCore::SuspendableTimer::didStop): No-op default implementation for client hook.
+        (WebCore::SuspendableTimer::cancel): Equivalent of TimerBase::stop(), which also
+        works when suspended. 
+        (WebCore::SuspendableTimer::startRepeating): Replacement for TimerBase function with
+        the same name, which works correctly when suspended. We don't want to actually start
+        the timer in this case.
+        (WebCore::SuspendableTimer::startOneShot): Ditto.
+        (WebCore::SuspendableTimer::repeatInterval): Ditto.
+        (WebCore::SuspendableTimer::augmentFireInterval): Ditto.
+        (WebCore::SuspendableTimer::augmentRepeatInterval): Ditto.
+
 2013-07-27  Sam Weinig  <sam@webkit.org>
 
         Add assertions for CSSPrimitiveValue's m_value.valueID accessor

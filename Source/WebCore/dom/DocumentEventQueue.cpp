@@ -37,15 +37,24 @@
 
 namespace WebCore {
     
-class DocumentEventQueueTimer : public SuspendableTimer {
-    WTF_MAKE_NONCOPYABLE(DocumentEventQueueTimer);
+class DocumentEventQueueTimer FINAL : public SuspendableTimer {
 public:
+    static PassOwnPtr<DocumentEventQueueTimer> create(DocumentEventQueue* eventQueue, ScriptExecutionContext* context)
+    {
+        return adoptPtr(new DocumentEventQueueTimer(eventQueue, context));
+    }
+
+private:
     DocumentEventQueueTimer(DocumentEventQueue* eventQueue, ScriptExecutionContext* context)
         : SuspendableTimer(context)
         , m_eventQueue(eventQueue) { }
 
-private:
-    virtual void fired() { m_eventQueue->pendingEventTimerFired(); }
+    virtual void fired() OVERRIDE
+    {
+        ASSERT(!isSuspended());
+        m_eventQueue->pendingEventTimerFired();
+    }
+
     DocumentEventQueue* m_eventQueue;
 };
 
@@ -55,7 +64,7 @@ PassRefPtr<DocumentEventQueue> DocumentEventQueue::create(ScriptExecutionContext
 }
 
 DocumentEventQueue::DocumentEventQueue(ScriptExecutionContext* context)
-    : m_pendingEventTimer(adoptPtr(new DocumentEventQueueTimer(this, context)))
+    : m_pendingEventTimer(DocumentEventQueueTimer::create(this, context))
     , m_isClosed(false)
 {
     m_pendingEventTimer->suspendIfNeeded();
@@ -103,14 +112,14 @@ bool DocumentEventQueue::cancelEvent(Event* event)
     if (found)
         m_queuedEvents.remove(it);
     if (m_queuedEvents.isEmpty())
-        m_pendingEventTimer->stop();
+        m_pendingEventTimer->cancel();
     return found;
 }
 
 void DocumentEventQueue::close()
 {
     m_isClosed = true;
-    m_pendingEventTimer->stop();
+    m_pendingEventTimer->cancel();
     m_queuedEvents.clear();
 }
 

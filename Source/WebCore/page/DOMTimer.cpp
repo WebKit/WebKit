@@ -107,6 +107,7 @@ void DOMTimer::fired()
 {
     ScriptExecutionContext* context = scriptExecutionContext();
     timerNestingLevel = m_nestingLevel;
+    ASSERT(!isSuspended());
     ASSERT(!context->activeDOMObjectsAreSuspended());
     UserGestureIndicator gestureIndicator(m_shouldForwardUserGesture ? DefinitelyProcessingUserGesture : PossiblyProcessingUserGesture);
     // Only the first execution of a multi-shot timer should get an affirmative user gesture indicator.
@@ -150,9 +151,8 @@ void DOMTimer::contextDestroyed()
     delete this;
 }
 
-void DOMTimer::stop()
+void DOMTimer::didStop()
 {
-    SuspendableTimer::stop();
     // Need to release JS objects potentially protected by ScheduledAction
     // because they can form circular references back to the ScriptExecutionContext
     // which will cause a memory leak.
