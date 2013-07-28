@@ -4816,7 +4816,12 @@ void Document::suspendScheduledTasks(ActiveDOMObject::ReasonForSuspension reason
     suspendActiveDOMObjects(reason);
     scriptRunner()->suspend();
     m_pendingTasksTimer.stop();
-    if (m_parser)
+
+    // Deferring loading and suspending parser is necessary when we need to prevent re-entrant JavaScript execution
+    // (e.g. while displaying an alert).
+    // It is not currently possible to suspend parser unless loading is deferred, because new data arriving from network
+    // will trigger parsing, and leave the scheduler in an inconsistent state where it doesn't know whether it's suspended or not.
+    if (reason == ActiveDOMObject::WillDeferLoading && m_parser)
         m_parser->suspendScheduledTasks();
 
     m_scheduledTasksAreSuspended = true;
@@ -4829,7 +4834,7 @@ void Document::resumeScheduledTasks(ActiveDOMObject::ReasonForSuspension reason)
 
     ASSERT(m_scheduledTasksAreSuspended);
 
-    if (m_parser)
+    if (reason == ActiveDOMObject::WillDeferLoading && m_parser)
         m_parser->resumeScheduledTasks();
     if (!m_pendingTasks.isEmpty())
         m_pendingTasksTimer.startOneShot(0);

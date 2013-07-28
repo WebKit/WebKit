@@ -1,5 +1,47 @@
 2013-07-27  Alexey Proskuryakov  <ap@apple.com>
 
+        HTMLParserScheduler gets into an inconsistent state when suspended for reasons
+        other than WillDeferLoading
+        https://bugs.webkit.org/show_bug.cgi?id=119172
+
+        Reviewed by Sam Weinig.
+
+        When loading is not deferred, even a suspended parser will be processing new data
+        from network, potentially starting its next chunk timer.
+
+        Limit suspending to when we can actually enforce it.
+
+        Here is what happens for each ReasonForSuspension:
+        - JavaScriptDebuggerPaused: continuing to parse is probably wrong, but in practice,
+        this is unlikely to happen while debugging, and wasn't properly prevented before
+        this patch anyway.
+        - WillDeferLoading: No change in behavior.
+        - DocumentWillBecomeInactive: This is about page cache, and documents are only allowed
+        to be cached when fully loaded.
+        - PageWillBeSuspended: This appears to be part of Frame::suspendActiveDOMObjectsAndAnimations()
+        implementation, I'm guessing that it is appropriate to continue loading.
+
+        * dom/Document.cpp:
+        (WebCore::Document::suspendScheduledTasks):
+        (WebCore::Document::resumeScheduledTasks):
+        Only suspend/resume parsing when loading is deferred. This is not expressed directly,
+        but it's important to do this to avoid executing JS behind alerts and other modal dialogs.
+
+        * html/parser/HTMLParserScheduler.h: Added m_suspended member variable for assertions.
+
+        * html/parser/HTMLParserScheduler.cpp:
+        (WebCore::HTMLParserScheduler::HTMLParserScheduler):
+        (WebCore::HTMLParserScheduler::continueNextChunkTimerFired):
+        (WebCore::HTMLParserScheduler::scheduleForResume):
+        (WebCore::HTMLParserScheduler::suspend):
+        (WebCore::HTMLParserScheduler::resume):
+        Update m_suspended and assert as appropriate. No behavior changes for release mode.
+
+        * page/Frame.cpp: (WebCore::Frame::suspendActiveDOMObjectsAndAnimations):
+        Added a FIXME.
+
+2013-07-27  Alexey Proskuryakov  <ap@apple.com>
+
         Make SuspendableTimer safer
         https://bugs.webkit.org/show_bug.cgi?id=119127
 

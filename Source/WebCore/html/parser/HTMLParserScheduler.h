@@ -103,6 +103,9 @@ private:
     int m_parserChunkSize;
     Timer<HTMLParserScheduler> m_continueNextChunkTimer;
     bool m_isSuspendedWithActiveTimer;
+#if !ASSERT_DISABLED
+    bool m_suspended;
+#endif
 };
 
 }

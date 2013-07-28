@@ -963,6 +963,7 @@ void Frame::suspendActiveDOMObjectsAndAnimations()
     if (wasSuspended)
         return;
 
+    // FIXME: Suspend/resume calls will not match if the frame is navigated, and gets a new document.
     if (document()) {
         document()->suspendScriptedAnimationControllerCallbacks();
         animation()->suspendAnimationsForDocument(document());

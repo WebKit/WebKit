@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Google, Inc. All Rights Reserved.
+ * Copyright (C) 2013 Apple, Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -99,6 +100,9 @@ HTMLParserScheduler::HTMLParserScheduler(HTMLDocumentParser* parser)
     , m_parserChunkSize(parserChunkSize(m_parser->document()->page()))
     , m_continueNextChunkTimer(this, &HTMLParserScheduler::continueNextChunkTimerFired)
     , m_isSuspendedWithActiveTimer(false)
+#if !ASSERT_DISABLED
+    , m_suspended(false)
+#endif
 {
 }
 
@@ -109,6 +113,7 @@ HTMLParserScheduler::~HTMLParserScheduler()
 
 void HTMLParserScheduler::continueNextChunkTimerFired(Timer<HTMLParserScheduler>* timer)
 {
+    ASSERT(!m_suspended);
     ASSERT_UNUSED(timer, timer == &m_continueNextChunkTimer);
     // FIXME: The timer class should handle timer priorities instead of this code.
     // If a layout is scheduled, wait again to let the layout timer run first.
@@ -132,13 +137,18 @@ void HTMLParserScheduler::checkForYieldBeforeScript(PumpSession& session)
 
 void HTMLParserScheduler::scheduleForResume()
 {
+    ASSERT(!m_suspended);
     m_continueNextChunkTimer.startOneShot(0);
 }
 
-
 void HTMLParserScheduler::suspend()
 {
+    ASSERT(!m_suspended);
     ASSERT(!m_isSuspendedWithActiveTimer);
+#if !ASSERT_DISABLED
+    m_suspended = true;
+#endif
+
     if (!m_continueNextChunkTimer.isActive())
         return;
     m_isSuspendedWithActiveTimer = true;
@@ -147,7 +157,12 @@ void HTMLParserScheduler::suspend()
 
 void HTMLParserScheduler::resume()
 {
+    ASSERT(m_suspended);
     ASSERT(!m_continueNextChunkTimer.isActive());
+#if !ASSERT_DISABLED
+    m_suspended = false;
+#endif
+
     if (!m_isSuspendedWithActiveTimer)
         return;
     m_isSuspendedWithActiveTimer = false;
