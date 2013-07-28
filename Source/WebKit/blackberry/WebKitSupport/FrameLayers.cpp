@@ -78,7 +78,7 @@ void FrameLayers::addLayer(Frame* frame, LayerWebKitThread* layer)
     calculateRootLayer();
     if (!m_rootLayer) {
         ASSERT(!m_rootGraphicsLayer);
-        m_rootGraphicsLayer = GraphicsLayer::create(0);
+        m_rootGraphicsLayer = GraphicsLayer::create(m_pagePrivate->graphicsLayerFactory(), 0);
         m_rootLayer = m_rootGraphicsLayer->platformLayer();
     }
 

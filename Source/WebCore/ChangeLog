@@ -1,3 +1,20 @@
+2013-07-27  Jacky Jiang  <zhajiang@blackberry.com>
+
+        Replace all uses of GraphicsLayer::create function with the one that takes a GraphicsLayerFactory
+        https://bugs.webkit.org/show_bug.cgi?id=119186
+
+        Reviewed by Anders Carlsson.
+
+        Remove GraphicsLayer::create(GraphicsLayerClient*) function since it's
+        been deprecated by r130072.
+
+        * WebCore.exp.in:
+        * WebCore.order:
+        * platform/graphics/GraphicsLayer.h:
+        * platform/graphics/blackberry/GraphicsLayerBlackBerry.cpp:
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.cpp:
+
 2013-07-27  Alexey Proskuryakov  <ap@apple.com>
 
         HTMLParserScheduler gets into an inconsistent state when suspended for reasons

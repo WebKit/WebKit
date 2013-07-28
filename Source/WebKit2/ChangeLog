@@ -1,3 +1,13 @@
+2013-07-27  Jacky Jiang  <zhajiang@blackberry.com>
+
+        Replace all uses of GraphicsLayer::create function with the one that takes a GraphicsLayerFactory
+        https://bugs.webkit.org/show_bug.cgi?id=119186
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/mac/RemoteLayerTreeHost.mm:
+        (WebKit::RemoteLayerTreeHost::getOrCreateLayer):
+
 2013-07-27  Chris Fleizach  <cfleizach@apple.com>
 
         AX: VoiceOver not working with data detection page overlays

@@ -5243,10 +5243,15 @@ LayerRenderingResults WebPagePrivate::lastCompositingResults() const
     return LayerRenderingResults();
 }
 
+WebCore::GraphicsLayerFactory* WebPagePrivate::graphicsLayerFactory() const
+{
+    return m_page->chrome().client()->graphicsLayerFactory();
+}
+
 GraphicsLayer* WebPagePrivate::overlayLayer()
 {
     if (!m_overlayLayer)
-        m_overlayLayer = GraphicsLayer::create(0, this);
+        m_overlayLayer = GraphicsLayer::create(graphicsLayerFactory(), this);
 
     return m_overlayLayer.get();
 }

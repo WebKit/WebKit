@@ -88,11 +88,6 @@ PassOwnPtr<GraphicsLayer> GraphicsLayer::create(GraphicsLayerFactory* factory, G
     return factory->createGraphicsLayer(client);
 }
 
-PassOwnPtr<GraphicsLayer> GraphicsLayer::create(GraphicsLayerClient* client)
-{
-    return adoptPtr(new GraphicsLayerBlackBerry(client));
-}
-
 GraphicsLayerBlackBerry::GraphicsLayerBlackBerry(GraphicsLayerClient* client)
     : GraphicsLayer(client)
     , m_suspendTime(0)

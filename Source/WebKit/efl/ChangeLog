@@ -1,3 +1,13 @@
+2013-07-27  Jacky Jiang  <zhajiang@blackberry.com>
+
+        Replace all uses of GraphicsLayer::create function with the one that takes a GraphicsLayerFactory
+        https://bugs.webkit.org/show_bug.cgi?id=119186
+
+        Reviewed by Anders Carlsson.
+
+        * WebCoreSupport/AcceleratedCompositingContextEfl.cpp:
+        (WebCore::AcceleratedCompositingContext::attachRootGraphicsLayer):
+
 2013-07-25  Andreas Kling  <akling@apple.com>
 
         ChromeClient::focusedNodeChanged() should be focusedElementChanged().

@@ -54,7 +54,7 @@ void SelectionOverlay::draw(const Selection& selection)
     m_selection = selection;
 
     while (m_layers.size() < static_cast<size_t>(m_selection.size()))
-        m_layers.append(GraphicsLayer::create(this));
+        m_layers.append(GraphicsLayer::create(m_page->graphicsLayerFactory(), this));
 
     m_layers.resize(m_selection.size());
 

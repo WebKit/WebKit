@@ -64,7 +64,7 @@ TextureMapperLayer* TextureMapperLayerClientQt::rootLayer()
 void TextureMapperLayerClientQt::setRootGraphicsLayer(GraphicsLayer* layer)
 {
     if (layer) {
-        m_rootGraphicsLayer = GraphicsLayer::create(0);
+        m_rootGraphicsLayer = GraphicsLayer::create(0, 0);
         m_rootTextureMapperLayer = toTextureMapperLayer(m_rootGraphicsLayer.get());
         m_rootGraphicsLayer->addChild(layer);
         m_rootGraphicsLayer->setDrawsContent(false);

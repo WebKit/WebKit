@@ -376,6 +376,7 @@ public:
     void rootLayerCommitTimerFired(WebCore::Timer<WebPagePrivate>*);
     bool commitRootLayerIfNeeded();
     WebCore::LayerRenderingResults lastCompositingResults() const;
+    WebCore::GraphicsLayerFactory* graphicsLayerFactory() const;
     WebCore::GraphicsLayer* overlayLayer();
 
     // Fallback GraphicsLayerClient implementation, used for various overlay layers.

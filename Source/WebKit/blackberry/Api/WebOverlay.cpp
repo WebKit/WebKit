@@ -247,7 +247,7 @@ void WebOverlayPrivate::scheduleCompositingRun()
 }
 
 WebOverlayPrivateWebKitThread::WebOverlayPrivateWebKitThread(GraphicsLayerClient* client)
-    : m_layer(GraphicsLayer::create(client ? client : this))
+    : m_layer(GraphicsLayer::create(0, client ? client : this))
 {
     m_layerCompositingThread = m_layer->platformLayer()->layerCompositingThread();
 }

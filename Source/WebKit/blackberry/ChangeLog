@@ -1,3 +1,23 @@
+2013-07-27  Jacky Jiang  <zhajiang@blackberry.com>
+
+        Replace all uses of GraphicsLayer::create function with the one that takes a GraphicsLayerFactory
+        https://bugs.webkit.org/show_bug.cgi?id=119186
+
+        Reviewed by Anders Carlsson.
+
+        Replace GraphicsLayer::create calls and add a new function WebPagePrivate::graphicsLayerFactory().
+
+        * Api/WebOverlay.cpp:
+        (BlackBerry::WebKit::WebOverlayPrivateWebKitThread::WebOverlayPrivateWebKitThread):
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::graphicsLayerFactory):
+        (BlackBerry::WebKit::WebPagePrivate::overlayLayer):
+        * Api/WebPage_p.h:
+        * WebKitSupport/FrameLayers.cpp:
+        (BlackBerry::WebKit::FrameLayers::addLayer):
+        * WebKitSupport/SelectionOverlay.cpp:
+        (BlackBerry::WebKit::SelectionOverlay::draw):
+
 2013-07-25  Andreas Kling  <akling@apple.com>
 
         ChromeClient::focusedNodeChanged() should be focusedElementChanged().

@@ -101,7 +101,7 @@ void AcceleratedCompositingContext::attachRootGraphicsLayer(GraphicsLayer* rootL
         return;
     }
 
-    m_rootGraphicsLayer = WebCore::GraphicsLayer::create(0);
+    m_rootGraphicsLayer = WebCore::GraphicsLayer::create(0, 0);
     m_rootTextureMapperLayer = toTextureMapperLayer(m_rootGraphicsLayer.get());
     m_rootGraphicsLayer->addChild(rootLayer);
     m_rootGraphicsLayer->setDrawsContent(false);

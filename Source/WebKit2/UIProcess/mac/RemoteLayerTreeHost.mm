@@ -78,7 +78,7 @@ GraphicsLayer* RemoteLayerTreeHost::getOrCreateLayer(uint64_t layerID)
 {
     auto addResult = m_layers.add(layerID, nullptr);
     if (addResult.isNewEntry)
-        addResult.iterator->value = GraphicsLayer::create(this);
+        addResult.iterator->value = GraphicsLayer::create(0, this);
 
     return addResult.iterator->value.get();
 }
