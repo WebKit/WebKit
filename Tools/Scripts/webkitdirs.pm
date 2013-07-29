@@ -1,4 +1,4 @@
-# Copyright (C) 2005, 2006, 2007, 2010, 2011, 2012 Apple Inc. All rights reserved.
+# Copyright (C) 2005, 2006, 2007, 2010, 2011, 2012, 2013 Apple Inc. All rights reserved.
 # Copyright (C) 2009 Google Inc. All rights reserved.
 # Copyright (C) 2011 Research In Motion Limited. All rights reserved.
 #
@@ -413,6 +413,16 @@ sub xcodeSDK
     return $xcodeSDK;
 }
 
+sub xcodeSDKPlatformName()
+{
+    determineXcodeSDK();
+    return "" if !defined $xcodeSDK;
+    return "iphoneos" if $xcodeSDK =~ /iphoneos/i;
+    return "iphonesimulator" if $xcodeSDK =~ /iphonesimulator/i;
+    return "macosx" if $xcodeSDK =~ /macosx/i;
+    die "Couldn't determine platform name from Xcode SDK";
+}
+
 sub programFilesPath
 {
     return $programFilesPath if defined $programFilesPath;
@@ -478,6 +488,7 @@ sub determineConfigurationProductDir
             $configurationProductDir = "$baseProductDir";
         } else {
             $configurationProductDir = "$baseProductDir/$configuration";
+            $configurationProductDir .= "-" . xcodeSDKPlatformName() if isIOSWebKit();
         }
     }
 }
@@ -843,6 +854,9 @@ sub builtDylibPathForName
     }
     if (isWinCE()) {
         return "$configurationProductDir/$libraryName";
+    }
+    if (isIOSWebKit()) {
+        return "$configurationProductDir/$libraryName.framework/$libraryName";
     }
     if (isAppleMacWebKit()) {
         return "$configurationProductDir/$libraryName.framework/Versions/A/$libraryName";
@@ -1287,6 +1301,22 @@ sub isAppleWinWebKit()
     return isAppleWebKit() && (isCygwin() || isWindows());
 }
 
+sub willUseIOSDeviceSDKWhenBuilding()
+{
+    return xcodeSDKPlatformName() eq "iphoneos";
+}
+
+sub willUseIOSSimulatorSDKWhenBuilding()
+{
+    return xcodeSDKPlatformName() eq "iphonesimulator";
+}
+
+sub isIOSWebKit()
+{
+    determineXcodeSDK();
+    return isAppleMacWebKit() && (willUseIOSDeviceSDKWhenBuilding() || willUseIOSSimulatorSDKWhenBuilding());
+}
+
 sub isPerianInstalled()
 {
     if (!isAppleWebKit()) {
@@ -1686,7 +1716,11 @@ sub copyInspectorFrontendFiles
     }
 
     if (isAppleMacWebKit()) {
-        $inspectorResourcesDirPath = $productDir . "/WebCore.framework/Resources/inspector";
+        if (isIOSWebKit()) {
+            $inspectorResourcesDirPath = $productDir . "/WebCore.framework/inspector";
+        } else {
+            $inspectorResourcesDirPath = $productDir . "/WebCore.framework/Resources/inspector";
+        }
     } elsif (isAppleWinWebKit()) {
         $inspectorResourcesDirPath = $productDir . "/WebKit.resources/inspector";
     } elsif (isQt() || isGtk()) {
@@ -1710,11 +1744,24 @@ sub copyInspectorFrontendFiles
 
     if (isAppleMacWebKit()) {
         my $sourceLocalizedStrings = sourceDir() . "/Source/WebCore/English.lproj/localizedStrings.js";
-        my $destinationLocalizedStrings = $productDir . "/WebCore.framework/Resources/English.lproj/localizedStrings.js";
+        my $destinationLocalizedStrings;
+        if (isIOSWebKit()) {
+            $destinationLocalizedStrings = $productDir . "/WebCore.framework/English.lproj/localizedStrings.js";
+        } else {
+            $destinationLocalizedStrings = $productDir . "/WebCore.framework/Resources/English.lproj/localizedStrings.js";
+        }
         system "ditto", $sourceLocalizedStrings, $destinationLocalizedStrings;
     }
 
-    return system "rsync", "-aut", "--exclude=/.DS_Store", "--exclude=*.re2js", "--exclude=.svn/", !isQt() ? "--exclude=/WebKit.qrc" : "", $sourceInspectorPath, $inspectorResourcesDirPath;
+    my $exitStatus = system "rsync", "-aut", "--exclude=/.DS_Store", "--exclude=*.re2js", "--exclude=.svn/", !isQt() ? "--exclude=/WebKit.qrc" : "", $sourceInspectorPath, $inspectorResourcesDirPath;
+    return $exitStatus if $exitStatus;
+
+    if (isIOSWebKit()) {
+        chdir($productDir . "/WebCore.framework");
+        return system "zip", "--quiet", "--exclude=*.qrc", "-r", "inspector-remote.zip", "inspector";
+    }
+
+    return 0; # Success; did copy files.
 }
 
 sub buildXCodeProject($$@)
