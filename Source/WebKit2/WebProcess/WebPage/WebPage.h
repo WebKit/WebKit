@@ -273,8 +273,6 @@ public:
     InjectedBundlePageFullScreenClient& injectedBundleFullScreenClient() { return m_fullScreenClient; }
 #endif
 
-    void setUnderlayPage(PassRefPtr<WebPage> underlayPage) { m_underlayPage = underlayPage; }
-
     bool findStringFromInjectedBundle(const String&, FindOptions);
 
     WebFrame* mainWebFrame() const { return m_mainFrame.get(); }
@@ -960,8 +958,6 @@ private:
     TapHighlightController m_tapHighlightController;
 #endif
     PageOverlayList m_pageOverlays;
-
-    RefPtr<WebPage> m_underlayPage;
 
 #if ENABLE(INSPECTOR)
     RefPtr<WebInspector> m_inspector;

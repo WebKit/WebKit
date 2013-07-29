@@ -869,7 +869,6 @@ void WebPage::close()
 #endif
     m_logDiagnosticMessageClient.initialize(0);
 
-    m_underlayPage = nullptr;
     m_printContext = nullptr;
     m_mainFrame->coreFrame()->loader()->detachFromParent();
     m_page = nullptr;
@@ -1067,11 +1066,6 @@ void WebPage::layoutIfNeeded()
 {
     if (m_mainFrame->coreFrame()->view())
         m_mainFrame->coreFrame()->view()->updateLayoutAndStyleIfNeededRecursive();
-
-    if (m_underlayPage) {
-        if (FrameView *frameView = m_underlayPage->mainFrameView())
-            frameView->updateLayoutAndStyleIfNeededRecursive();
-    }
 }
 
 WebPage* WebPage::fromCorePage(Page* page)
@@ -1177,15 +1171,6 @@ void WebPage::drawRect(GraphicsContext& graphicsContext, const IntRect& rect)
 {
     GraphicsContextStateSaver stateSaver(graphicsContext);
     graphicsContext.clip(rect);
-
-    if (m_underlayPage) {
-        m_underlayPage->drawRect(graphicsContext, rect);
-
-        graphicsContext.beginTransparencyLayer(1);
-        m_mainFrame->coreFrame()->view()->paint(&graphicsContext, rect);
-        graphicsContext.endTransparencyLayer();
-        return;
-    }
 
     m_mainFrame->coreFrame()->view()->paint(&graphicsContext, rect);
 }
