@@ -1,3 +1,14 @@
+2013-07-29  Antoine Quint  <graouts@apple.com>
+
+        fast/spatial-navigation test fail on mac-wk2
+        https://bugs.webkit.org/show_bug.cgi?id=96438
+
+        This test now passes on Mac so we don't need to skip it any longer.
+
+        Reviewed by Antonio Gomes.
+
+        * platform/mac/TestExpectations:
+
 2013-07-28  Antoine Quint  <graouts@apple.com>
 
         fast/forms/input-in-table-cell-no-value.html fails on platform without ENABLE(INPUT_TYPE_DATE)
