@@ -1,3 +1,14 @@
+2013-07-29  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        [ATK] Issues with edge cases when getting offsets for a text range in AtkText
+        https://bugs.webkit.org/show_bug.cgi?id=118908
+
+        Reviewed by Martin Robinson.
+
+        * tests/testatk.c:
+        (runGetTextTests): Updated unit tests to check more cases of
+        calling the atk_text_get_text_*_offset() functions for WORD.
+
 2013-07-25  Andreas Kling  <akling@apple.com>
 
         ChromeClient::focusedNodeChanged() should be focusedElementChanged().

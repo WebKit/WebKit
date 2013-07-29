@@ -138,11 +138,20 @@ static void runGetTextTests(AtkText* textObject)
     testGetTextFunction(textObject, atk_text_get_text_at_offset, ATK_TEXT_BOUNDARY_WORD_START,
                         58, "third.", 58, 64);
 
+    testGetTextFunction(textObject, atk_text_get_text_at_offset, ATK_TEXT_BOUNDARY_WORD_START,
+                        64, "third.", 58, 64);
+
+    testGetTextFunction(textObject, atk_text_get_text_before_offset, ATK_TEXT_BOUNDARY_WORD_START,
+                        0, "", 0, 0);
+
     testGetTextFunction(textObject, atk_text_get_text_before_offset, ATK_TEXT_BOUNDARY_WORD_START,
                         5, "This ", 0, 5);
 
     testGetTextFunction(textObject, atk_text_get_text_before_offset, ATK_TEXT_BOUNDARY_WORD_START,
                         7, "This ", 0, 5);
+
+    testGetTextFunction(textObject, atk_text_get_text_before_offset, ATK_TEXT_BOUNDARY_WORD_START,
+                        64, "the ", 54, 58);
 
     testGetTextFunction(textObject, atk_text_get_text_after_offset, ATK_TEXT_BOUNDARY_WORD_START,
                         0, "is ", 5, 8);
@@ -152,6 +161,9 @@ static void runGetTextTests(AtkText* textObject)
 
     testGetTextFunction(textObject, atk_text_get_text_after_offset, ATK_TEXT_BOUNDARY_WORD_START,
                         3, "is ", 5, 8);
+
+    testGetTextFunction(textObject, atk_text_get_text_after_offset, ATK_TEXT_BOUNDARY_WORD_START,
+                        64, "", 64, 64);
 
     /* ATK_TEXT_BOUNDARY_WORD_END */
     testGetTextFunction(textObject, atk_text_get_text_at_offset, ATK_TEXT_BOUNDARY_WORD_END,
@@ -166,6 +178,15 @@ static void runGetTextTests(AtkText* textObject)
     testGetTextFunction(textObject, atk_text_get_text_at_offset, ATK_TEXT_BOUNDARY_WORD_END,
                         9, " test", 9, 14);
 
+    testGetTextFunction(textObject, atk_text_get_text_at_offset, ATK_TEXT_BOUNDARY_WORD_END,
+                        58, " third", 57, 63);
+
+    testGetTextFunction(textObject, atk_text_get_text_at_offset, ATK_TEXT_BOUNDARY_WORD_END,
+                        64, ".", 63, 64);
+
+    testGetTextFunction(textObject, atk_text_get_text_before_offset, ATK_TEXT_BOUNDARY_WORD_END,
+                        0, "", 0, 0);
+
     testGetTextFunction(textObject, atk_text_get_text_before_offset, ATK_TEXT_BOUNDARY_WORD_END,
                         5, "This", 0, 4);
 
@@ -175,14 +196,20 @@ static void runGetTextTests(AtkText* textObject)
     testGetTextFunction(textObject, atk_text_get_text_before_offset, ATK_TEXT_BOUNDARY_WORD_END,
                         7, " is", 4, 7);
 
+    testGetTextFunction(textObject, atk_text_get_text_before_offset, ATK_TEXT_BOUNDARY_WORD_END,
+                        64, " third", 57, 63);
+
+    testGetTextFunction(textObject, atk_text_get_text_after_offset, ATK_TEXT_BOUNDARY_WORD_END,
+                        0, " is", 4, 7);
+
     testGetTextFunction(textObject, atk_text_get_text_after_offset, ATK_TEXT_BOUNDARY_WORD_END,
                         5, " a", 7, 9);
 
     testGetTextFunction(textObject, atk_text_get_text_after_offset, ATK_TEXT_BOUNDARY_WORD_END,
                         4, " a", 7, 9);
 
-    testGetTextFunction(textObject, atk_text_get_text_at_offset, ATK_TEXT_BOUNDARY_WORD_END,
-                        58, " third", 57, 63);
+    testGetTextFunction(textObject, atk_text_get_text_after_offset, ATK_TEXT_BOUNDARY_WORD_END,
+                        64, "", 64, 64);
 
     /* ATK_TEXT_BOUNDARY_SENTENCE_START */
     testGetTextFunction(textObject, atk_text_get_text_at_offset, ATK_TEXT_BOUNDARY_SENTENCE_START,

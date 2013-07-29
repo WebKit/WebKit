@@ -501,53 +501,65 @@ static int atkOffsetToWebCoreOffset(AtkText* text, int offset)
     return offset - offsetAdjustmentForListItem(coreObject);
 }
 
+static Node* getNodeForAccessibilityObject(AccessibilityObject* coreObject)
+{
+    if (!coreObject->isNativeTextControl())
+        return coreObject->node();
+
+    // For text controls, we get the first visible position on it (which will
+    // belong to its inner element, unreachable from the DOM) and return its
+    // parent node, so we have a "bounding node" for the accessibility object.
+    VisiblePosition positionInTextControlInnerElement = coreObject->visiblePositionForIndex(0, true);
+    Node* innerMostNode = positionInTextControlInnerElement.deepEquivalent().anchorNode();
+    if (!innerMostNode)
+        return 0;
+
+    return innerMostNode->parentNode();
+}
+
 static void getSelectionOffsetsForObject(AccessibilityObject* coreObject, VisibleSelection& selection, gint& startOffset, gint& endOffset)
 {
-    if (!coreObject->isAccessibilityRenderObject())
+    // Default values, unless the contrary is proved.
+    startOffset = 0;
+    endOffset = 0;
+
+    Node* node = getNodeForAccessibilityObject(coreObject);
+    if (!node)
         return;
 
-    // Early return if the selection doesn't affect the selected node.
-    if (!selectionBelongsToObject(coreObject, selection))
+    if (selection.isNone())
         return;
 
-    // We need to find the exact start and end positions in the
-    // selected node that intersects the selection, to later on get
-    // the right values for the effective start and end offsets.
-    Position nodeRangeStart;
-    Position nodeRangeEnd;
-    Node* node = coreObject->node();
-    RefPtr<Range> selRange = selection.toNormalizedRange();
+    // We need to limit our search to positions that fall inside the domain of the current object.
+    Position firstValidPosition = firstPositionInOrBeforeNode(node->firstDescendant());
+    Position lastValidPosition = lastPositionInOrAfterNode(node->lastDescendant());
 
-    // If the selection affects the selected node and its first
-    // possible position is also in the selection, we must set
-    // nodeRangeStart to that position, otherwise to the selection's
-    // start position (it would belong to the node anyway).
-    Node* firstLeafNode = node->firstDescendant();
-    if (selRange->isPointInRange(firstLeafNode, 0, IGNORE_EXCEPTION))
-        nodeRangeStart = firstPositionInOrBeforeNode(firstLeafNode);
-    else
-        nodeRangeStart = selRange->startPosition();
+    // Early return with proper values if the selection falls entirely out of the object.
+    if (!selectionBelongsToObject(coreObject, selection)) {
+        startOffset = comparePositions(selection.start(), firstValidPosition) < 0 ? 0 : accessibilityObjectLength(coreObject);
+        endOffset = startOffset;
+        return;
+    }
 
-    // If the selection affects the selected node and its last
-    // possible position is also in the selection, we must set
-    // nodeRangeEnd to that position, otherwise to the selection's
-    // end position (it would belong to the node anyway).
-    Node* lastLeafNode = node->lastDescendant();
-    if (selRange->isPointInRange(lastLeafNode, lastOffsetInNode(lastLeafNode), IGNORE_EXCEPTION))
-        nodeRangeEnd = lastPositionInOrAfterNode(lastLeafNode);
-    else
-        nodeRangeEnd = selRange->endPosition();
+    // Find the proper range for the selection that falls inside the object.
+    Position nodeRangeStart = selection.start();
+    if (comparePositions(nodeRangeStart, firstValidPosition) < 0)
+        nodeRangeStart = firstValidPosition;
+
+    Position nodeRangeEnd = selection.end();
+    if (comparePositions(nodeRangeEnd, lastValidPosition) > 0)
+        nodeRangeEnd = lastValidPosition;
 
     // Calculate position of the selected range inside the object.
     Position parentFirstPosition = firstPositionInOrBeforeNode(node);
     RefPtr<Range> rangeInParent = Range::create(node->document(), parentFirstPosition, nodeRangeStart);
 
-
-    // Set values for start and end offsets.
+    // Set values for start offsets and calculate initial range length.
+    // These values might be adjusted later to cover special cases.
     startOffset = webCoreOffsetToAtkOffset(coreObject, TextIterator::rangeLength(rangeInParent.get(), true));
-
     RefPtr<Range> nodeRange = Range::create(node->document(), nodeRangeStart, nodeRangeEnd);
-    endOffset = startOffset + TextIterator::rangeLength(nodeRange.get(), true);
+    int rangeLength = TextIterator::rangeLength(nodeRange.get(), true);
+    endOffset = std::min(startOffset + rangeLength, static_cast<int>(accessibilityObjectLength(coreObject)));
 }
 
 static gchar* webkitAccessibleTextGetText(AtkText* text, gint startOffset, gint endOffset)

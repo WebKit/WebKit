@@ -1,3 +1,26 @@
+2013-07-29  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        [ATK] Issues with edge cases when getting offsets for a text range in AtkText
+        https://bugs.webkit.org/show_bug.cgi?id=118908
+
+        Reviewed by Martin Robinson.
+
+        Reimplement getSelectionOffsetsForObject() just in term of
+        Positions instead of using ranges, which makes it simpler and
+        works better. Also, make sure we use the right Node as reference
+        for the accessibility object by getting the proper one both for
+        text control objects (e.g. input, text area) and normal ones.
+
+        * accessibility/atk/WebKitAccessibleInterfaceText.cpp:
+        (getNodeForAccessibilityObject): New helper function to ensure we
+        always get the relevant object from the DOM tree for a given
+        accessibility object, in the context of the implementation of
+        AtkText, so it works both with Text Controls and other elements.
+        (getSelectionOffsetsForObject): Rewritten this function in terms
+        of VisiblePositions and avoiding weird operations with ranges, so
+        we have more control to fine tune the results and give more
+        accurate ones. Besides, now it works better with edge cases.
+
 2013-07-29  Zan Dobersek  <zdobersek@igalia.com>
 
         Clean up DragImage
