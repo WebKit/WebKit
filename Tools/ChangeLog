@@ -1,3 +1,14 @@
+2013-07-29  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r152860.
+        http://trac.webkit.org/changeset/152860
+        https://bugs.webkit.org/show_bug.cgi?id=119227
+
+        Disable WinEWS tests until tests stop crashing (Requested by
+        rfong on #webkit).
+
+        * Scripts/webkitpy/common/config/ews.json:
+
 2013-07-29  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Add WestonDriver, use it when appropriate
