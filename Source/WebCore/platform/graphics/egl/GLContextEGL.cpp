@@ -217,7 +217,9 @@ GLContextEGL::GLContextEGL(EGLContext context, EGLSurface surface, EGLSurfaceTyp
     : m_context(context)
     , m_surface(surface)
     , m_type(type)
+#if USE(CAIRO)
     , m_cairoDevice(0)
+#endif
 {
 }
 
@@ -279,6 +281,7 @@ void GLContextEGL::waitNative()
     eglWaitNative(EGL_CORE_NATIVE_ENGINE);
 }
 
+#if USE(CAIRO)
 cairo_device_t* GLContextEGL::cairoDevice()
 {
     if (m_cairoDevice)
@@ -290,6 +293,7 @@ cairo_device_t* GLContextEGL::cairoDevice()
 
     return m_cairoDevice;
 }
+#endif
 
 #if ENABLE(WEBGL)
 PlatformGraphicsContext3D GLContextEGL::platformContext()

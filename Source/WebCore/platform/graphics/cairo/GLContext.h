@@ -25,7 +25,9 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/PassOwnPtr.h>
 
+#if USE(CAIRO)
 typedef struct _cairo_device cairo_device_t;
+#endif
 
 #if PLATFORM(X11)
 typedef struct _XDisplay Display;
@@ -48,7 +50,10 @@ public:
     virtual void waitNative() = 0;
     virtual bool canRenderToDefaultFramebuffer() = 0;
     virtual IntSize defaultFrameBufferSize() = 0;
+
+#if USE(CAIRO)
     virtual cairo_device_t* cairoDevice() = 0;
+#endif
 
 #if PLATFORM(X11)
     static Display* sharedX11Display();
