@@ -79,8 +79,6 @@ webkit.org/b/98348 accessibility/internal-link-anchors2.html [ WontFix Missing ]
 webkit.org/b/98348 accessibility/radio-button-group-members.html [ WontFix Missing ]
 webkit.org/b/98348 accessibility/table-attributes.html [ WontFix Missing ]
 webkit.org/b/98348 accessibility/table-sections.html [ WontFix Missing ]
-webkit.org/b/98348 accessibility/table-with-aria-role.html [ WontFix Missing ]
-webkit.org/b/98348 accessibility/plugin.html [ WontFix Missing ]
 
 # Feature disabled, see: https://bugs.webkit.org/show_bug.cgi?id=85425
 webkit.org/b/98925 fast/viewport/viewport-legacy-handheldfriendly.html [ Skip ]
@@ -863,9 +861,6 @@ webkit.org/b/98378 accessibility/textarea-line-for-index.html [ Failure ]
 webkit.org/b/98379 accessibility/textarea-selected-text-range.html [ Failure ]
 webkit.org/b/98380 accessibility/th-as-title-ui.html [ Failure ]
 webkit.org/b/98382 accessibility/visible-elements.html [ Failure ]
-
-# No platform-specific expectations available until we implement attributesOfChildren().
-webkit.org/b/118967 accessibility/lists.html [ Failure Missing ]
 
 # Blur and focus events are not received for the following tests.
 Bug(GTK) fast/events/blur-focus-window-should-blur-focus-element.html [ Failure ]

@@ -522,8 +522,16 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::attributesOfDocumentLinks()
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::attributesOfChildren()
 {
-    // FIXME: implement
-    return JSStringCreateWithCharacters(0, 0);
+    Vector<RefPtr<AccessibilityUIElement> > children;
+    getChildren(children);
+
+    StringBuilder builder;
+    for (Vector<RefPtr<AccessibilityUIElement> >::iterator it = children.begin(); it != children.end(); ++it) {
+        builder.append(attributesOfElement(it->get()));
+        builder.append("\n------------\n");
+    }
+
+    return JSStringCreateWithUTF8CString(builder.toString().utf8().data());
 }
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::allAttributes()

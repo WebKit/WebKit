@@ -437,8 +437,16 @@ AccessibilityUIElement AccessibilityUIElement::parentElement()
 
 JSStringRef AccessibilityUIElement::attributesOfChildren()
 {
-    // FIXME: implement
-    return JSStringCreateWithCharacters(0, 0);
+    Vector<AccessibilityUIElement> children;
+    getChildren(children);
+
+    StringBuilder builder;
+    for (Vector<AccessibilityUIElement>::iterator it = children.begin(); it != children.end(); ++it) {
+        builder.append(attributesOfElement(it));
+        builder.append("\n------------\n");
+    }
+
+    return JSStringCreateWithUTF8CString(builder.toString().utf8().data());
 }
 
 JSStringRef AccessibilityUIElement::parameterizedAttributeNames()

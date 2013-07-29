@@ -1,5 +1,21 @@
 2013-07-29  Mario Sanchez Prada  <mario.prada@samsung.com>
 
+        [ATK] Implement attributesOfChildren() for AccessibilityUIElement
+        https://bugs.webkit.org/show_bug.cgi?id=118967
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Implemented AccessibilityUIElement::attributesOfChildren() both
+        in DumpRenderTree and the WebKitTestRunner.
+
+        * DumpRenderTree/atk/AccessibilityUIElementAtk.cpp:
+        (AccessibilityUIElement::attributesOfChildren): Implemented.
+
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        (WTR::AccessibilityUIElement::attributesOfChildren): Implemented.
+
+2013-07-29  Mario Sanchez Prada  <mario.prada@samsung.com>
+
         [ATK] Implement allAttributes() for AccessibilityUIElement
         https://bugs.webkit.org/show_bug.cgi?id=118966
 
