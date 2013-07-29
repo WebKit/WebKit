@@ -1,0 +1,20 @@
+<strike align="''">
+<html>
+    <head>
+        <script>
+            if (window.testRunner)
+                testRunner.dumpAsText();
+
+            function test()
+            {
+                var sel = window.getSelection();
+                sel.setPosition(document.getElementById('dv'), 0);
+                document.execCommand("Delete");
+            }
+        </script>
+    </head>
+    <body onload="test()">
+        <p>This test passes if it doesn't crash.</p>
+        <div contenteditable>X<div id="dv"></div></div>
+    </body>
+</html>
