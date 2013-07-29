@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: http://bugs.webkit.org\n"
-"POT-Creation-Date: 2013-04-25 22:42+0000\n"
-"PO-Revision-Date: 2013-05-09 17:19+0530\n"
+"POT-Creation-Date: 2013-05-24 23:51+0000\n"
+"PO-Revision-Date: 2013-06-11 13:45+0530\n"
 "Last-Translator: Krishnababu Krothapalli <kkrothap@redhat.com>\n"
 "Language-Team: Telugu <Fedora-trans-te@redhat.com>\n"
 "Language: te\n"
@@ -825,7 +825,7 @@ msgstr "దర్శన విండోకు సంభందించిన ఘ
 #: ../../../../WebKit/gtk/webkit/webkitwebframe.cpp:467
 #: ../../../../WebKit/gtk/webkit/webkitwebhistoryitem.cpp:176
 #: ../../../../WebKit/gtk/webkit/webkitwebresource.cpp:209
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3239
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3238
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIRequest.cpp:95
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:99
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebResource.cpp:109
@@ -1003,10 +1003,6 @@ msgstr "పరికర పిగ్జెల్ నిష్పత్తి"
 msgid "The device pixel ratio of the viewport."
 msgstr "వ్యూపోర్ట్ యొక్క పరికర పిగ్జెల్ నిష్పత్తి."
 
-#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:387
-msgid "user-scalable"
-msgstr "యూజర్-స్కేలబుల్"
-
 #: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:388
 msgid "User Scalable"
 msgstr "యూజర్ స్కేలబుల్"
@@ -1014,10 +1010,6 @@ msgstr "యూజర్ స్కేలబుల్"
 #: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:389
 msgid "Determines whether or not the user can zoom in and out."
 msgstr "వాడుకరి జూమ్ చేయగలగాలా వద్దా అనేది నిర్ణయించును."
-
-#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:406
-msgid "valid"
-msgstr "చెల్లునటువంటి"
 
 #: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:407
 msgid "Valid"
@@ -1083,7 +1075,7 @@ msgstr "చట్రం యొక్క పేరు"
 
 #: ../../../../WebKit/gtk/webkit/webkitwebframe.cpp:460
 #: ../../../../WebKit/gtk/webkit/webkitwebhistoryitem.cpp:144
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3225
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3224
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:645
 msgid "Title"
 msgstr "శీర్షిక"
@@ -1217,11 +1209,11 @@ msgstr "లక్ష్యపు చట్రం"
 msgid "The target frame for the navigation"
 msgstr "నావిగేషన్ కొరకు లక్ష్యపు రకం"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebplugin.cpp:115
+#: ../../../../WebKit/gtk/webkit/webkitwebplugin.cpp:113
 msgid "Enabled"
 msgstr "చేతనంచేసిన"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebplugin.cpp:116
+#: ../../../../WebKit/gtk/webkit/webkitwebplugin.cpp:114
 msgid "Whether the plugin is enabled"
 msgstr "చొప్పింత చేతనం చేయవలెనా"
 
@@ -1239,7 +1231,7 @@ msgid "The MIME type of the resource"
 msgstr "వనరు యొక్క MIME రకం"
 
 #: ../../../../WebKit/gtk/webkit/webkitwebresource.cpp:239
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3374
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3373
 msgid "Encoding"
 msgstr "ఎన్కోడింగ్"
 
@@ -1316,7 +1308,7 @@ msgid "Default Font Size"
 msgstr "అప్రమేయ ఫాంట్ ఫ్యామిలీ"
 
 #: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:214
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:715
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:729
 msgid "The default font size used to display text."
 msgstr "పాఠం ప్రదర్శించుటకు వుపయోగించు అప్రమేయ ఫాంట్ పరిమాణం."
 
@@ -1325,7 +1317,7 @@ msgid "Default Monospace Font Size"
 msgstr "అప్రమేయ మోనోస్పేస్ ఫాంట్ పరిమాణం"
 
 #: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:223
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:729
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:743
 msgid "The default font size used to display monospace text."
 msgstr "మోనోస్పేస్ పాఠం ప్రదర్శించుటకు వుపయోగించు అప్రమేయ ఫాంట్ పరిమాణం."
 
@@ -1334,7 +1326,7 @@ msgid "Minimum Font Size"
 msgstr "కనీస ఫాంట్ పరిమాణం"
 
 #: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:232
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:744
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:758
 msgid "The minimum font size used to display text."
 msgstr "పాఠం ప్రదర్శించుటకు వుపయోగించు కనీసపు ఫాంట్ పరిమాణం."
 
@@ -1359,7 +1351,7 @@ msgid "Auto Load Images"
 msgstr "స్వయంచాలక లోడ్ ప్రతిబింబాలను"
 
 #: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:270
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:456
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:470
 msgid "Load images automatically."
 msgstr "ప్రతిబింబాలను స్వయంచాలకంగా లోడ్‌చేయి."
 
@@ -1380,7 +1372,7 @@ msgid "Whether WebKit should respect image orientation."
 msgstr "వెబ్‌కిట్ ప్రతిబింబ వోరియంటేషన్‌ను అనుసరించాలా."
 
 #: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:296
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:868
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:882
 msgid "Print Backgrounds"
 msgstr "బ్యాక్‌గ్రౌండ్స్ ముద్రించు"
 
@@ -1401,7 +1393,7 @@ msgid "Enable Plugins"
 msgstr "చొప్పింతలను చేతనంచేయి"
 
 #: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:315
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:566
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:580
 msgid "Enable embedded plugin objects."
 msgstr "ఎంబెడెడ్ చొప్పింత ఆబ్జక్ట్సు చేతనంచేయి."
 
@@ -1463,12 +1455,12 @@ msgid "Comma separated list of languages to use for spell checking"
 msgstr "పదనిర్మాణ పరిశీలన నందు వుపయోగించుటకు కామాతో వేరుచేసిన భాషల జాబితా"
 
 #: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:442
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:839
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:853
 msgid "Enable Caret Browsing"
 msgstr "కారెట్ బ్రౌజింగ్ చేతనంచేయి"
 
 #: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:443
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:840
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:854
 msgid "Whether to enable accessibility enhanced keyboard navigation"
 msgstr "ఏక్సెస్‌బిలికీ విస్తరిత కీబోర్డ్ నావిగేషన్ చేతనం చాయాలా"
 
@@ -1529,7 +1521,7 @@ msgid "The User-Agent string used by WebKitGtk"
 msgstr "WebKitGtk చేత వుపయోగించబడిన వాడుకరి-యేజెంట్ స్ట్రింగ్"
 
 #: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:577
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:592
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:606
 msgid "JavaScript can open windows automatically"
 msgstr "జావాస్క్రిప్ట్ అనునది విండోలను స్వయంచాలకంగా తెరువగలదు"
 
@@ -1542,12 +1534,12 @@ msgid "JavaScript can access Clipboard"
 msgstr "జావాస్క్రిప్ట్ క్లిప్‌బోర్డ్ యాక్సెస్ చేయగలదు"
 
 #: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:593
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:952
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:966
 msgid "Whether JavaScript can access Clipboard"
 msgstr "జావాస్క్రిప్ట్ క్లిప్‌బోర్డ్ యాక్సెస్ చెయగలగాలా"
 
 #: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:609
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:487
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:501
 msgid "Enable offline web application cache"
 msgstr "అఫ్‌లైన్ వెబ్‌ అనువర్తన క్యాచీ చేతనంచేయి"
 
@@ -1598,22 +1590,22 @@ msgid ""
 msgstr "అప్రమేయ సందర్భ మెనూ యొక్క సృష్టికి కుడి-నొక్కుల సంభాలనను చేతనంచేయును"
 
 #: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:731
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1016
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1030
 msgid "Enable Site Specific Quirks"
 msgstr "సైట్ ప్రత్యేక క్విర్క్స్ చేతనంచేయును"
 
 #: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:732
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1017
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1031
 msgid "Enables the site-specific compatibility workarounds"
 msgstr "సైట్-ప్రత్యేక సారూప్యతా పరిష్కారాలను చేతనంచేయును"
 
 #: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:754
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1037
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1051
 msgid "Enable page cache"
 msgstr "పేజీ క్యాజీ చేతనంచేయును"
 
 #: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:755
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1038
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1052
 msgid "Whether the page cache should be used"
 msgstr "పేజీ క్యాచీ వుపయోగించాలా"
 
@@ -1643,7 +1635,7 @@ msgid "Whether <a ping> should be able to send pings"
 msgstr "<a ping> అనునది పింగ్‌లను పంపగలగాలా"
 
 #: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:832
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:855
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:869
 msgid "Enable Fullscreen"
 msgstr "పూర్తితెర చేతనంచేయి"
 
@@ -1652,12 +1644,12 @@ msgid "Whether the Mozilla style API should be enabled."
 msgstr "మొజిల్లా తరహా API చేతనం చేయాలా."
 
 #: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:848
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:902
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:916
 msgid "Enable WebGL"
 msgstr "WebGL చేతనంచేయి"
 
 #: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:849
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:903
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:917
 msgid "Whether WebGL content should be rendered"
 msgstr "WebGL ‌విషయం సరిగా రెండర్ కావాలా"
 
@@ -1670,12 +1662,12 @@ msgid "Whether accelerated compositing should be enabled"
 msgstr "ఏగ్జలరేటెడ్ కంపోజిటింగ్ చేతనం చేయాలా"
 
 #: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:884
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:887
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:901
 msgid "Enable WebAudio"
 msgstr "WebAudio చేతనం చేయాలా"
 
 #: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:885
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:888
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:902
 msgid "Whether WebAudio content should be handled"
 msgstr "WebAudio విషయం సంభాలించబడాలా"
 
@@ -1696,32 +1688,32 @@ msgid "Whether Media Stream should be enabled"
 msgstr "మాధ్యమ స్ట్రీమ్ చేతనం చేయాలా"
 
 #: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:936
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1070
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1084
 msgid "Enable smooth scrolling"
 msgstr "సున్నిత స్క్రాలింగ్ చేతనంచేయి"
 
 #: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:937
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1071
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1085
 msgid "Whether to enable smooth scrolling"
 msgstr "సున్నిత స్క్రాలింగ్ చేతనంచేయాలా"
 
 #: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:955
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:968
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:982
 msgid "Media playback requires user gesture"
 msgstr "మాధ్యమ ప్లేబ్యాక్‌కు వాడుకరి మార్గదర్శి కావాలి"
 
 #: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:956
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:969
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:983
 msgid "Whether media playback requires user gesture"
 msgstr "మాధ్యమ ప్లేబ్యాక్‌కు వాడుకరి గెస్ట్చర్ అవసరమా"
 
 #: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:972
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:983
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:997
 msgid "Media playback allows inline"
 msgstr "మాధ్యమ ప్లేబాక్ యిన్‌లైన్ అనుమతించును"
 
 #: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:973
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:984
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:998
 msgid "Whether media playback allows inline"
 msgstr "మాధ్యమ ప్లేబ్యాక్ యిన్‌లైన్ అనుమతించాలా"
 
@@ -1749,117 +1741,117 @@ msgstr "సురక్షితంకాని విషయాన్ని న�
 msgid "Whether non-HTTPS resources can run on HTTPS pages."
 msgstr "నాన్-HTTPS వనరులు HTTPS పేజీలపై నడువగలగాలా."
 
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:1315
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:1307
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:455
 msgid "Select Files"
 msgstr "ఫైళ్ళను యెంపికచేయి"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:1315
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:1307
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:455
 msgid "Select File"
 msgstr "ఫైలును యెంపికచేయి"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3226
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3225
 msgid "Returns the @web_view's document title"
 msgstr "@web_view యొక్క పత్రము శీర్షికను తిప్పియిచ్చును"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3240
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3239
 msgid "Returns the current URI of the contents displayed by the @web_view"
 msgstr "@web_view ద్వారా ప్రదర్శితమైన విషయాల యొక్క ప్రస్తుత URI తిప్పియిచ్చును"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3253
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3252
 msgid "Copy target list"
 msgstr "లక్ష్యపు జాబితా నకలుతీయి"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3254
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3253
 msgid "The list of targets this web view supports for clipboard copying"
 msgstr ""
 "క్లిప్‌బోర్డ్ కాపీయింగ్ కొరకు యీ వెబ్ దర్శనం తోడ్పాటునిచ్చు లక్ష్యాల జాబితా"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3267
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3266
 msgid "Paste target list"
 msgstr "లక్ష్యపు జాబితా అతికించు"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3268
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3267
 msgid "The list of targets this web view supports for clipboard pasting"
 msgstr ""
 "క్లిప్‌బోర్డు అతికింపు కొరకు యీ వెబ్ వ్యూ తోడ్పాటునిచ్చు లక్ష్యాల జాబితా"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3274
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3273
 msgid "Settings"
 msgstr "అమరికలు"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3275
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3274
 msgid "An associated WebKitWebSettings instance"
 msgstr "సంబందిత WebKitWebSettings సంభవం"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3288
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3287
 #: ../../../../WebKit2/UIProcess/gtk/WebInspectorProxyGtk.cpp:92
 #: ../../../../WebKit2/UIProcess/gtk/WebInspectorProxyGtk.cpp:157
 msgid "Web Inspector"
 msgstr "వెబ్ యిన్‌స్పెక్టర్"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3289
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3288
 msgid "The associated WebKitWebInspector instance"
 msgstr "సంభందిత WebKitWebInspector సంభవం"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3302
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3301
 msgid "Viewport Attributes"
 msgstr "వ్యూపోర్టు యాట్రిబ్యూట్‌లు"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3303
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3302
 msgid "The associated WebKitViewportAttributes instance"
 msgstr "సంభందిత WebKitViewportAttributes సంభవం"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3323
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3322
 msgid "Editable"
 msgstr "సరికూర్చదగిన"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3324
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3323
 msgid "Whether content can be modified by the user"
 msgstr "విషయం అనునది వాడుకరి చేత సవరించదగునట్లు వుండాలా"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3330
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3329
 msgid "Transparent"
 msgstr "పారదృశ్యమైన"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3331
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3330
 msgid "Whether content has a transparent background"
 msgstr "విషయం అనునది పారదృశ్య బ్యాక్‌గ్రౌండ్ కలిగివుందా"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3344
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3343
 msgid "Zoom level"
 msgstr "జూమ్ స్థాయి"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3345
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3344
 msgid "The level of zoom of the content"
 msgstr "విషయం జూమ్ చేయు స్థాయి"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3360
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3359
 msgid "Full content zoom"
 msgstr "పూర్తి విషయ జూమ్"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3361
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3360
 msgid "Whether the full content is scaled when zooming"
 msgstr "జూమింగ్ అప్పుడు పూర్తి విషయం జూమైనదా"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3375
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3374
 msgid "The default encoding of the web view"
 msgstr "వెబ్ వ్యూ యొక్క అప్రమేయ యెన్కోడింగ్"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3388
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3387
 msgid "Custom Encoding"
 msgstr "వినియోగదారి యెన్కోడింగ్"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3389
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3388
 msgid "The custom encoding of the web view"
 msgstr "వెబ్ వ్యూ యొక్క వినియోగదారి యెన్కోడింగ్"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3441
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3440
 msgid "Icon URI"
 msgstr "ప్రతిమ URI"
 
-#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3442
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3441
 msgid "The URI for the favicon for the #WebKitWebView."
 msgstr "#WebKitWebView కు అభీష్టప్రతిమ కొరకు URI."
 
@@ -1906,35 +1898,35 @@ msgstr "పేజీ %s అభీష్టప్రతిమ కలిగిల�
 msgid "Favicons database not initialized yet"
 msgstr "అభీష్టప్రతిమల డాటాబేస్ యింకా సిద్దీకరించలేదు"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:174
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:175
 msgid "Search text"
 msgstr "అన్వేషణ పాఠం"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:175
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:176
 msgid "Text to search for in the view"
 msgstr "దర్శనం నందు అన్వేషించుటకు పాఠం"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:187
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:188
 msgid "Search Options"
 msgstr "అన్వేషణా ఐచ్చికాలు"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:188
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:189
 msgid "Search options to be used in the search operation"
 msgstr "అన్వేషణ కార్యక్రమమునందు వుపయోగించుటకు అన్వేషణ ఐచ్చికాలు"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:201
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:202
 msgid "Maximum matches count"
 msgstr "జోడీల గరిష్ట లెక్క"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:202
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:203
 msgid "The maximum number of matches in a given text to report"
 msgstr "ఇచ్చిన పాఠం నందు నివేదించుటకు జోడీల గరిష్ట సంఖ్య"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:214
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:215
 msgid "WebView"
 msgstr "వెబ్ దర్శనం"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:215
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:216
 msgid "The WebView associated with this find controller"
 msgstr "ఈ కనుగొను నియంత్రికతో సంభందించివున్న వెబ్‌దర్శనం"
 
@@ -2046,169 +2038,169 @@ msgstr "URI ప్రతిస్పందన"
 msgid "The URI response that is associated with this policy decision"
 msgstr "ఈ విధాన నిర్ణయంతో సంభందించివున్న URI ప్రతిస్పందన"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:440
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:454
 msgid "Enable JavaScript"
 msgstr "జావాస్క్రిప్ట్స్ చేతనంచేయి"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:441
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:455
 msgid "Enable JavaScript."
 msgstr "జావాస్క్రిప్టు చేతనంచేయి."
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:455
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:469
 msgid "Auto load images"
 msgstr "స్వయంచాలకంగా లోడగు ప్రతిబింబాలు"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:469
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:483
 msgid "Load icons ignoring image load setting"
 msgstr "ప్రతిబింబ లోడ్ అమరికను విస్మరించి ప్రతిమలు లోడ్ చేయి"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:470
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:484
 msgid "Whether to load site icons ignoring image load setting."
 msgstr "ప్రతిబింబ లోడ్ అమరికను విస్మరించి సైటు ప్రతిమలను లోడు చేయాలా."
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:488
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:502
 msgid "Whether to enable offline web application cache."
 msgstr "ఆఫ్‌లైన్ వెబ్ అనువర్తనం క్యాచీ చేతనం చేయాలా."
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:504
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:518
 msgid "Enable HTML5 local storage"
 msgstr "HTML5 స్థానిక నిల్వ చేతనంచేయి"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:505
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:519
 msgid "Whether to enable HTML5 Local Storage support."
 msgstr "HTML5 స్థానిక నిల్వ తోడ్పాటు చేతనంచేయాలా."
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:522
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:536
 msgid "Enable HTML5 database"
 msgstr "HTML5 డాటాబేస్ చేతనంచేయి"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:523
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:537
 msgid "Whether to enable HTML5 database support."
 msgstr "HTML5 డాటాబేస్ తోడ్పాటు చేతనంచేయాలా."
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:536
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:550
 msgid "Enable XSS auditor"
 msgstr "XSS ఆడిటర్ చేతనంచేయి"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:537
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:551
 msgid "Whether to enable the XSS auditor."
 msgstr "XSS ఆడిటర్ చేతనం చేయాలా."
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:552
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:566
 msgid "Enable frame flattening"
 msgstr "చట్రం ప్లాటెనింగ్ చేతనంచేయి"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:553
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:567
 msgid "Whether to enable frame flattening."
 msgstr "చట్రం ఫ్లాటెనింగ్ చేతనం చేయాలా."
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:565
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:579
 msgid "Enable plugins"
 msgstr "చొప్పింతలను చేతనంచేయి"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:578
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:592
 msgid "Enable Java"
 msgstr "జావా చేతనంచేయి"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:579
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:593
 msgid "Whether Java support should be enabled."
 msgstr "జావా తోడ్పాటు చేతనం కావాలా."
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:593
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:607
 msgid "Whether JavaScript can open windows automatically."
 msgstr "జావాస్క్రిప్ట్ విండోలను స్వయంచాలనంగా తెరువగలదా."
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:608
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:622
 msgid "Enable hyperlink auditing"
 msgstr "హైపర్‌లింక్ ఆడిటింగ్ చేతనంచేయి"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:609
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:623
 msgid "Whether <a ping> should be able to send pings."
 msgstr "<a ping> అనునది పింగ్‌లను పంపగలగాలా."
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:621
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:635
 msgid "Default font family"
 msgstr "అప్రమేయ ఫాంట్ ఫ్యామిలీ"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:622
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:636
 msgid ""
 "The font family to use as the default for content that does not specify a "
 "font."
 msgstr "ఫాంటు తెలుపని కాంటెంట్ అప్రమేయంగా వుపయోగించుటకు ఫాంట్ ఫ్యామిలీ."
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:635
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:649
 msgid "Monospace font family"
 msgstr "మోనోస్పేస్ ఫాంట్ ఫ్యామిలీ"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:636
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:650
 msgid "The font family used as the default for content using monospace font."
 msgstr ""
 "మోనోస్పేస్ ఫాంట్ వుపయోగించు కాంటెంట్ అప్రమేయంగా వుపయోగించుటకు ఫాంట్ ఫ్యామిలీ."
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:648
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:662
 msgid "Serif font family"
 msgstr "సెరీఫ్ ఫాంట్ ఫ్యామిలీ"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:649
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:663
 msgid "The font family used as the default for content using serif font."
 msgstr ""
 "సెరీఫ్ ఫాంట్ వుపయోగించు కాంటెంట్ అప్రమేయంగా వుపయోగించుటకు ఫాంట్ ఫ్యామిలీ."
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:661
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:675
 msgid "Sans-serif font family"
 msgstr "సాన్స్ సెరిఫ్ ఫాంట్ ఫ్యామిలీ"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:662
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:676
 msgid "The font family used as the default for content using sans-serif font."
 msgstr ""
 "సాన్స్-సెరీఫ్ ఫాంట్ వుపయోగించు కాంటెంట్ అప్రమేయంగా వుపయోగించుటకు ఫాంట్ "
 "ఫ్యామిలీ."
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:674
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:688
 msgid "Cursive font family"
 msgstr "కర్సివ్ ఫాంట్ ఫ్యామిలీ"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:675
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:689
 msgid "The font family used as the default for content using cursive font."
 msgstr ""
 "కర్సివ్ ఫాంట్ వుపయోగించు కాంటెంట్ అప్రమేయంగా వుపయోగించుటకు ఫాంట్ ఫ్యామిలీ."
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:687
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:701
 msgid "Fantasy font family"
 msgstr "ఫాంటసీ ఫాంట్ ప్యామిలీ"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:688
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:702
 msgid "The font family used as the default for content using fantasy font."
 msgstr ""
 "ఫాంటసీ ఫాంట్ వుపయోగించు కాంటెంట్ అప్రమేయంగా వుపయోగించుటకు ఫాంట్ ఫ్యామిలీ."
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:700
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:714
 msgid "Pictograph font family"
 msgstr "పిక్టోగ్రాఫ్ ఫాంట్ ఫ్యామిలీ"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:701
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:715
 msgid "The font family used as the default for content using pictograph font."
 msgstr ""
 "పిక్టోగ్రాఫ్ ఫాంట్ వుపయోగించు కాంటెంట్ అప్రమేయంగా వుపయోగించుటకు ఫాంట్ "
 "ఫ్యామిలీ."
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:714
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:728
 msgid "Default font size"
 msgstr "అప్రమేయ ఫాంట్ ఫ్యామిలీ"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:728
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:742
 msgid "Default monospace font size"
 msgstr "అప్రమేయ మోనోస్పేస్ ఫాంట్ పరిమాణం"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:743
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:757
 msgid "Minimum font size"
 msgstr "కనీస ఫాంట్ పరిమాణం"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:756
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:770
 msgid "Default charset"
 msgstr "అప్రమేయ అక్షరసమితి"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:757
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:771
 msgid ""
 "The default text charset used when interpreting content with unspecified "
 "charset."
@@ -2216,89 +2208,108 @@ msgstr ""
 "తెలుపబడని అక్షరసమితితో కాంటెంట్ యింటర్‌ప్రెట్ చేయునప్పుడు వుపయోగించుటకు "
 "అప్రమేయ పాఠ అక్షరసమితి."
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:770
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:784
 msgid "Enable private browsing"
 msgstr "వ్యక్తిగత బ్రౌజింగ్ చేతనంచేయి"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:771
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:785
 msgid "Whether to enable private browsing"
 msgstr "వ్యక్తిగత బ్రౌజింగ్ చేతనంచేయాలా"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:783
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:797
 msgid "Enable developer extras"
 msgstr "అభివృద్దికారి అధికాలను చేతనంచేయి"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:784
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:798
 msgid "Whether to enable developer extras"
 msgstr "అభివృద్దికారి అధికాలను చేతనంచేయాలా"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:796
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:810
 msgid "Enable resizable text areas"
 msgstr "పునఃపరిమాణం చేయగల పాఠం ప్రాంతములు చేతనంచేయి"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:797
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:811
 msgid "Whether to enable resizable text areas"
 msgstr "పునఃపరిమాణం చేయగల పాఠం ప్రాంతములు చేతనంచేయాలా"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:812
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:826
 msgid "Enable tabs to links"
 msgstr "లింకులకు టాబ్స్ చేతనంచేయి"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:813
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:827
 msgid "Whether to enable tabs to links"
 msgstr "లింకులకు టాబ్స్ చేతనం చేయాలా"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:826
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:840
 msgid "Enable DNS prefetching"
 msgstr "DNS ప్రిఫెచింగ్ చేతనం చేయి"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:827
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:841
 msgid "Whether to enable DNS prefetching"
 msgstr "DNS ప్రిఫెచింగ్ చేతనం చేయాలా"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:856
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:870
 msgid "Whether to enable the Javascriipt Fullscreen API"
 msgstr "జావాస్క్రిప్ట్ పూర్తితెర API చేతనంచేయాలా"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:869
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:883
 msgid "Whether background images should be drawn during printing"
 msgstr "ముద్రణనందు బ్యాక్‌గ్రౌండ్ ప్రతిబింబాలు గీయాలా"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:920
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:934
 msgid "Allow modal dialogs"
 msgstr "మోడల్ డైలాగ్స్ అనుమతించు"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:921
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:935
 msgid "Whether it is possible to create modal dialogs"
 msgstr "మోడల్ డైలాగ్స్ సృష్టించుటకు సాధ్యమేనా"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:936
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:950
 msgid "Zoom Text Only"
 msgstr "పాఠం మాత్రమే జూమ్‌చేయి"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:937
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:951
 msgid "Whether zoom level of web view changes only the text size"
 msgstr "వెబ్ దర్శనం యొక్క జూమ్ స్థాయి పాఠం పరిమాణం మాత్రమే మార్చాలా"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:951
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:965
 msgid "JavaScript can access clipboard"
 msgstr "జావాస్క్రిప్ట్ క్లిప్‌బోర్డ్ యాక్సెస్ చేయగలదు"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:998
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1012
 msgid "Draw compositing indicators"
 msgstr "కంపోజిటింగ్ సూచకిలు గీయి"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:999
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1013
 msgid "Whether to draw compositing borders and repaint counters"
 msgstr "కంపోజిటింగ్ హద్దులు మరియు రిపెయింట్ కౌంటర్స్ గీయాలా"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1057
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1071
 msgid "User agent string"
 msgstr "వాడుకరి ఏజెంట్ స్ట్రింగ్"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1058
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1072
 msgid "The user agent string"
 msgstr "వాడుకరి యేజెంట్ స్ట్రింగ్"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1102
+#| msgid "Enable accelerated compositing"
+msgid "Enable accelerated 2D canvas"
+msgstr "ఏగ్జెలరేటెడ్ 2D కాన్వాస్ చేతనంచేయి"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1103
+#| msgid "Whether to enable resizable text areas"
+msgid "Whether to enable accelerated 2D canvas"
+msgstr "ఏగ్జెలరేటెడ్ 2D కాన్వాస్ చేతనంచేయాలా"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1118
+msgid "Write console messages on stdout"
+msgstr "stdout పైన కన్సోల్ సందేశాలను వ్రాయి"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1119
+#| msgid "Whether to load site icons ignoring image load setting."
+msgid "Whether to write console messages on stdout"
+msgstr "కన్సోల్ సందేశాలను stdout పైన వ్రాయాలా"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:100
 msgid "The URI for which the response was made."
@@ -2402,7 +2413,7 @@ msgstr "వెబ్ వీక్షణ విషయాల ప్రదర్శ
 msgid "An exception was raised in JavaScript"
 msgstr "జావాస్క్రిప్టు నందు వొక అక్షేపణ లేవనెత్తబడింది"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:3040
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:3041
 msgid "There was an error creating the snapshot"
 msgstr "స్నాప్‌షాట్ సృష్టించుటలో అక్కడ ఒక దోషం ఉంది"
 
@@ -2475,6 +2486,12 @@ msgstr "విండో పూర్తితెర నందు ప్రదర
 
 #~ msgid "video element controller"
 #~ msgstr "వీడియో మూలకం నియంత్రకి"
+
+#~ msgid "user-scalable"
+#~ msgstr "యూజర్-స్కేలబుల్"
+
+#~ msgid "valid"
+#~ msgstr "చెల్లునటువంటి"
 
 #~ msgid "A username and password are being requested by the site %s"
 #~ msgstr "వాడుకరిపేరు మరియు సంకేతపదం సైట్ %s ద్వారా అభ్యర్ధించబడింది"
