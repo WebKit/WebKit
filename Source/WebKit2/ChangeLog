@@ -1,3 +1,30 @@
+2013-07-28  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        [EFL][WK2] Simplify context_menu_spelling_items_availability unit test
+        https://bugs.webkit.org/show_bug.cgi?id=119085
+
+        Reviewed by Gyuyoung Kim.
+
+        Use findContextMenuItem method to check whether the item
+        appears in context menu.
+
+        * UIProcess/API/efl/tests/test_ewk2_text_checker.cpp:
+        (EWK2TextCheckerTest::findContextMenuItem):
+        Do not report failure inside the method.
+        It doesn't allow to test the negative test cases.
+
+        (EWK2TextCheckerTest::checkCorrectnessOfSpellingItems):
+        Use findContextMenuItem method.
+
+        (EWK2TextCheckerTest::toogleCheckSpellingWhileTyping):
+        (EWK2TextCheckerTest::selectLearnSpelling):
+        (EWK2TextCheckerTest::selectIgnoreSpelling):
+        Verify the return value of findContextMenuItem.
+
+        (TEST_F):
+        Reset wasContextMenuShown variable, it's needed after r152153.
+        Use waitUntilTrue method.
+
 2013-07-27  Jacky Jiang  <zhajiang@blackberry.com>
 
         Replace all uses of GraphicsLayer::create function with the one that takes a GraphicsLayerFactory

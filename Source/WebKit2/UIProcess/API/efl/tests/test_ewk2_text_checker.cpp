@@ -46,9 +46,6 @@ static Ecore_Timer* timeoutTimer = 0;
 static double defaultTimeoutInSeconds = 0.5;
 
 static bool wasContextMenuShown = false;
-static const char noGuessesString[] = "No Guesses Found";
-static const char ignoreSpellingString[] = "Ignore Spelling";
-static const char learnSpellingString[] = "Learn Spelling";
 
 static const char* clientSuggestionsForWord[] = { "clientSuggestion1", "clientSuggestion2", "clientSuggestion3" };
 static unsigned contextMenuItemsNumber = 0;
@@ -270,33 +267,19 @@ public:
                 return item;
         }
 
-        ADD_FAILURE();
         return 0;
     }
 
     static Eina_Bool checkCorrectnessOfSpellingItems(Ewk_View_Smart_Data*, Evas_Coord, Evas_Coord, Ewk_Context_Menu* contextMenu)
     {
-        const Eina_List* contextMenuItems = ewk_context_menu_items_get(contextMenu);
+        Ewk_Context_Menu_Item* noGuessesItem = findContextMenuItem(contextMenu, EWK_CONTEXT_MENU_ITEM_TAG_NO_GUESSES_FOUND, EWK_ACTION_TYPE);
+        EXPECT_FALSE(noGuessesItem);
 
-        bool noGuessesAvailable = false;
-        bool isIgnoreSpellingAvailable = false;
-        bool isLearnSpellingAvailable = false;
+        Ewk_Context_Menu_Item* ignoreSpellingItem = findContextMenuItem(contextMenu, EWK_CONTEXT_MENU_ITEM_TAG_IGNORE_SPELLING, EWK_ACTION_TYPE);
+        EXPECT_TRUE(ignoreSpellingItem);
 
-        const Eina_List* listIterator;
-        void* itemData;
-        EINA_LIST_FOREACH(contextMenuItems, listIterator, itemData) {
-            Ewk_Context_Menu_Item* item = static_cast<Ewk_Context_Menu_Item*>(itemData);
-            if (!strcmp(ewk_context_menu_item_title_get(item), noGuessesString))
-                noGuessesAvailable = true;
-            else if (!strcmp(ewk_context_menu_item_title_get(item), ignoreSpellingString))
-                isIgnoreSpellingAvailable = true;
-            else if (!strcmp(ewk_context_menu_item_title_get(item), learnSpellingString))
-                isLearnSpellingAvailable = true;
-        }
-
-        EXPECT_FALSE(noGuessesAvailable);
-        EXPECT_TRUE(isIgnoreSpellingAvailable);
-        EXPECT_TRUE(isLearnSpellingAvailable);
+        Ewk_Context_Menu_Item* learnSpellingItem = findContextMenuItem(contextMenu, EWK_CONTEXT_MENU_ITEM_TAG_LEARN_SPELLING, EWK_ACTION_TYPE);
+        EXPECT_TRUE(learnSpellingItem);
 
         wasContextMenuShown = true;
         return true;
@@ -305,8 +288,11 @@ public:
     static Eina_Bool toogleCheckSpellingWhileTyping(Ewk_View_Smart_Data*, Evas_Coord, Evas_Coord, Ewk_Context_Menu* contextMenu)
     {
         Ewk_Context_Menu_Item* spellingAndGrammarItem = findContextMenuItem(contextMenu, EWK_CONTEXT_MENU_ITEM_TAG_SPELLING_MENU, EWK_SUBMENU_TYPE);
+        EXPECT_TRUE(spellingAndGrammarItem);
+
         Ewk_Context_Menu* spellingAndGrammarSubmenu = ewk_context_menu_item_submenu_get(spellingAndGrammarItem);
         Ewk_Context_Menu_Item* checkSpellingWhileTypingItem = findContextMenuItem(spellingAndGrammarSubmenu, EWK_CONTEXT_MENU_ITEM_TAG_CHECK_SPELLING_WHILE_TYPING, EWK_CHECKABLE_ACTION_TYPE);
+        EXPECT_TRUE(checkSpellingWhileTypingItem);
 
         return ewk_context_menu_item_select(spellingAndGrammarSubmenu, checkSpellingWhileTypingItem);
     }
@@ -334,12 +320,18 @@ public:
 
     static Eina_Bool selectLearnSpelling(Ewk_View_Smart_Data*, Evas_Coord, Evas_Coord, Ewk_Context_Menu* contextMenu)
     {
-        return ewk_context_menu_item_select(contextMenu, findContextMenuItem(contextMenu, EWK_CONTEXT_MENU_ITEM_TAG_LEARN_SPELLING, EWK_ACTION_TYPE));
+        Ewk_Context_Menu_Item* learnSpellingItem = findContextMenuItem(contextMenu, EWK_CONTEXT_MENU_ITEM_TAG_LEARN_SPELLING, EWK_ACTION_TYPE);
+        EXPECT_TRUE(learnSpellingItem);
+
+        return ewk_context_menu_item_select(contextMenu, learnSpellingItem);
     }
 
     static Eina_Bool selectIgnoreSpelling(Ewk_View_Smart_Data*, Evas_Coord, Evas_Coord, Ewk_Context_Menu* contextMenu)
     {
-        return ewk_context_menu_item_select(contextMenu, findContextMenuItem(contextMenu, EWK_CONTEXT_MENU_ITEM_TAG_IGNORE_SPELLING, EWK_ACTION_TYPE));
+        Ewk_Context_Menu_Item* ignoreSpellingItem = findContextMenuItem(contextMenu, EWK_CONTEXT_MENU_ITEM_TAG_IGNORE_SPELLING, EWK_ACTION_TYPE);
+        EXPECT_TRUE(ignoreSpellingItem);
+
+        return ewk_context_menu_item_select(contextMenu, ignoreSpellingItem);
     }
 
     /**
@@ -549,14 +541,15 @@ TEST_F(EWK2TextCheckerTest, ewk_text_checker_spell_checking_languages_get)
  */
 TEST_F(EWK2TextCheckerTest, context_menu_spelling_items_availability)
 {
+    wasContextMenuShown = false;
+
     ewk_text_checker_continuous_spell_checking_enabled_set(false);
     ewkViewClass()->context_menu_show = checkCorrectnessOfSpellingItems;
 
     ASSERT_TRUE(loadUrlSync(environment->urlForResource("spelling_test.html").data()));
     showContextMenu(FirstLine);
 
-    while (!wasContextMenuShown)
-        ecore_main_loop_iterate();
+    ASSERT_TRUE(waitUntilTrue(wasContextMenuShown));
 }
 
 /**
