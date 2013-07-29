@@ -1,3 +1,18 @@
+2013-07-29  Dean Jackson  <dino@apple.com>
+
+        Max IOSurfaceDimension should be an inclusive upper bound
+        https://bugs.webkit.org/show_bug.cgi?id=119206
+        <rdar://problem/14555311>
+
+        Reviewed by Simon Fraser.
+
+        The maxIOSurfaceDimension value should be an inclusive upper bound.
+        Change the greater than or equal to into a greater than. This will
+        allow canvas elements of this dimension to be accelerated.
+
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        (WebCore::ImageBuffer::ImageBuffer): Change >= to >
+
 2013-07-29  Renata Hodovan  <reni@webkit.org>
 
         ASSERT_NOT_REACHED was touched in WebCore::SVGAnimatedType::valueAsString
