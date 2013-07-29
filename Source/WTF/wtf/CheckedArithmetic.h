@@ -712,10 +712,28 @@ template <typename U, typename V, typename OverflowHandler> static inline Checke
     return Checked<U, OverflowHandler>(lhs) * rhs;
 }
 
+// Convenience typedefs.
+typedef Checked<int8_t, RecordOverflow> CheckedInt8;
+typedef Checked<uint8_t, RecordOverflow> CheckedUint8;
+typedef Checked<int16_t, RecordOverflow> CheckedInt16;
+typedef Checked<uint16_t, RecordOverflow> CheckedUint16;
+typedef Checked<int32_t, RecordOverflow> CheckedInt32;
+typedef Checked<uint32_t, RecordOverflow> CheckedUint32;
+typedef Checked<int64_t, RecordOverflow> CheckedInt64;
+typedef Checked<uint64_t, RecordOverflow> CheckedUint64;
+
 }
 
 using WTF::Checked;
 using WTF::CheckedState;
 using WTF::RecordOverflow;
+using WTF::CheckedInt8;
+using WTF::CheckedUint8;
+using WTF::CheckedInt16;
+using WTF::CheckedUint16;
+using WTF::CheckedInt32;
+using WTF::CheckedUint32;
+using WTF::CheckedInt64;
+using WTF::CheckedUint64;
 
 #endif
