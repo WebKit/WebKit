@@ -1,3 +1,21 @@
+2013-07-29  Renata Hodovan  <reni@webkit.org>
+
+        ASSERT_NOT_REACHED was touched in WebCore::SVGAnimatedType::valueAsString
+        https://bugs.webkit.org/show_bug.cgi?id=118744
+
+        Reviewed by Philip Rogers.
+
+        If we have an <animateTransform> tag that sets the attributeName and attributeType
+        properties however they are not consistent and we shouldn't try to apply it.
+        It is already checked and catched in SVGAnimateElement::resetAnimatedType() but
+        DontApplyAnimation case isn't handled properly. The patch forces an early return
+        in this case.
+
+        Test: svg/animations/attributeNameAndAttributeTypeMissmatch.svg
+
+        * svg/SVGAnimateElement.cpp:
+        (WebCore::SVGAnimateElement::resetAnimatedType):
+
 2013-07-29  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         REGRESSION(148300) GIFs not reanimated after resumeActiveDOMObjectAndAnimations

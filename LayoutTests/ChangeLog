@@ -1,3 +1,15 @@
+2013-07-29  Renata Hodovan  <reni@webkit.org>
+
+        ASSERT_NOT_REACHED was touched in WebCore::SVGAnimatedType::valueAsString
+        https://bugs.webkit.org/show_bug.cgi?id=118744
+
+        Reviewed by Philip Rogers.
+
+        Adding test to check whether attributeName and attributeType are consistent in <animateTransform>.
+
+        * platform/qt/svg/animations/attributeNameAndAttributeTypeMissmatch-expected.txt: Added.
+        * svg/animations/attributeNameAndAttributeTypeMissmatch.svg: Added.
+
 2013-07-29  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         [ATK] Implement allAttributes() for AccessibilityUIElement

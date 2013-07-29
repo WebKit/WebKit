@@ -205,6 +205,10 @@ void SVGAnimateElement::resetAnimatedType()
     SVGElement* targetElement = this->targetElement();
     const QualifiedName& attributeName = this->attributeName();
     ShouldApplyAnimation shouldApply = shouldApplyAnimation(targetElement, attributeName);
+
+    if (shouldApply == DontApplyAnimation)
+        return;
+
     if (shouldApply == ApplyXMLAnimation) {
         // SVG DOM animVal animation code-path.
         m_animatedProperties = animator->findAnimatedPropertiesForAttributeName(targetElement, attributeName);
