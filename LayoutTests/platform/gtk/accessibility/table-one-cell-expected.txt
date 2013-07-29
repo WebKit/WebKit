@@ -1,0 +1,20 @@
+Pick Your Location!
+Get specific content for your area. 
+http://web.apple.com
+AXRole: AXTable
+AXParent: AXWebArea
+AXChildren: 1
+AXPosition: { 8.000000, 8.000000 }
+AXSize: { 138.000000, 91.000000 }
+AXTitle: 
+AXDescription: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: layout-guess:true, toolkit:WebKitGtk

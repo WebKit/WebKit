@@ -33,11 +33,13 @@
 #include "InjectedBundlePage.h"
 #include "NotImplemented.h"
 #include <JavaScriptCore/JSStringRef.h>
+#include <JavaScriptCore/OpaqueJSString.h>
 #include <atk/atk.h>
 #include <wtf/Assertions.h>
 #include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GRefPtr.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
 #include <wtf/unicode/CharacterNames.h>
 
@@ -71,21 +73,21 @@ static String getAttributeSetValueForId(AtkObject* accessible, const char* id)
     return atkAttributeValue;
 }
 
-static char* getAtkAttributeSetAsString(AtkObject* accessible)
+static String getAtkAttributeSetAsString(AtkObject* accessible)
 {
-    GString* str = g_string_new(0);
+    StringBuilder builder;
 
     AtkAttributeSet* attributeSet = atk_object_get_attributes(accessible);
     for (AtkAttributeSet* attributes = attributeSet; attributes; attributes = attributes->next) {
         AtkAttribute* attribute = static_cast<AtkAttribute*>(attributes->data);
         GOwnPtr<gchar> attributeData(g_strconcat(attribute->name, ":", attribute->value, NULL));
-        g_string_append(str, attributeData.get());
+        builder.append(attributeData.get());
         if (attributes->next)
-            g_string_append(str, ", ");
+            builder.append(", ");
     }
     atk_attribute_set_free(attributeSet);
 
-    return g_string_free(str, FALSE);
+    return builder.toString();
 }
 
 static bool checkElementState(PlatformUIElement element, AtkStateType stateType)
@@ -177,108 +179,159 @@ static const gchar* roleToString(AtkRole role)
 {
     switch (role) {
     case ATK_ROLE_ALERT:
-        return "AXRole: AXAlert";
+        return "AXAlert";
     case ATK_ROLE_CANVAS:
-        return "AXRole: AXCanvas";
+        return "AXCanvas";
     case ATK_ROLE_CHECK_BOX:
-        return "AXRole: AXCheckBox";
+        return "AXCheckBox";
     case ATK_ROLE_COLUMN_HEADER:
-        return "AXRole: AXColumnHeader";
+        return "AXColumnHeader";
     case ATK_ROLE_COMBO_BOX:
-        return "AXRole: AXComboBox";
+        return "AXComboBox";
     case ATK_ROLE_DOCUMENT_FRAME:
-        return "AXRole: AXWebArea";
+        return "AXWebArea";
     case ATK_ROLE_ENTRY:
-        return "AXRole: AXTextField";
+        return "AXTextField";
     case ATK_ROLE_FOOTER:
-        return "AXRole: AXFooter";
+        return "AXFooter";
     case ATK_ROLE_FORM:
-        return "AXRole: AXForm";
+        return "AXForm";
     case ATK_ROLE_GROUPING:
-        return "AXRole: AXGroup";
+        return "AXGroup";
     case ATK_ROLE_HEADING:
-        return "AXRole: AXHeading";
+        return "AXHeading";
     case ATK_ROLE_IMAGE:
-        return "AXRole: AXImage";
+        return "AXImage";
     case ATK_ROLE_IMAGE_MAP:
-        return "AXRole: AXImageMap";
+        return "AXImageMap";
     case ATK_ROLE_LABEL:
-        return "AXRole: AXLabel";
+        return "AXLabel";
     case ATK_ROLE_LINK:
-        return "AXRole: AXLink";
+        return "AXLink";
     case ATK_ROLE_LIST:
-        return "AXRole: AXList";
+        return "AXList";
     case ATK_ROLE_LIST_BOX:
-        return "AXRole: AXListBox";
+        return "AXListBox";
     case ATK_ROLE_LIST_ITEM:
-        return "AXRole: AXListItem";
+        return "AXListItem";
     case ATK_ROLE_MENU:
-        return "AXRole: AXMenu";
+        return "AXMenu";
     case ATK_ROLE_MENU_BAR:
-        return "AXRole: AXMenuBar";
+        return "AXMenuBar";
     case ATK_ROLE_MENU_ITEM:
-        return "AXRole: AXMenuItem";
+        return "AXMenuItem";
     case ATK_ROLE_PAGE_TAB:
-        return "AXRole: AXTab";
+        return "AXTab";
     case ATK_ROLE_PAGE_TAB_LIST:
-        return "AXRole: AXTabGroup";
+        return "AXTabGroup";
     case ATK_ROLE_PANEL:
-        return "AXRole: AXGroup";
+        return "AXGroup";
     case ATK_ROLE_PARAGRAPH:
-        return "AXRole: AXParagraph";
+        return "AXParagraph";
     case ATK_ROLE_PASSWORD_TEXT:
-        return "AXRole: AXPasswordField";
+        return "AXPasswordField";
     case ATK_ROLE_PUSH_BUTTON:
-        return "AXRole: AXButton";
+        return "AXButton";
     case ATK_ROLE_RADIO_BUTTON:
-        return "AXRole: AXRadioButton";
+        return "AXRadioButton";
     case ATK_ROLE_ROW_HEADER:
-        return "AXRole: AXRowHeader";
+        return "AXRowHeader";
     case ATK_ROLE_RULER:
-        return "AXRole: AXRuler";
+        return "AXRuler";
     case ATK_ROLE_SCROLL_BAR:
-        return "AXRole: AXScrollBar";
+        return "AXScrollBar";
     case ATK_ROLE_SCROLL_PANE:
-        return "AXRole: AXScrollArea";
+        return "AXScrollArea";
     case ATK_ROLE_SECTION:
-        return "AXRole: AXDiv";
+        return "AXDiv";
     case ATK_ROLE_SEPARATOR:
-        return "AXRole: AXHorizontalRule";
+        return "AXHorizontalRule";
     case ATK_ROLE_SLIDER:
-        return "AXRole: AXSlider";
+        return "AXSlider";
     case ATK_ROLE_SPIN_BUTTON:
-        return "AXRole: AXSpinButton";
+        return "AXSpinButton";
     case ATK_ROLE_TABLE:
-        return "AXRole: AXTable";
+        return "AXTable";
     case ATK_ROLE_TABLE_CELL:
-        return "AXRole: AXCell";
+        return "AXCell";
     case ATK_ROLE_TABLE_COLUMN_HEADER:
-        return "AXRole: AXColumnHeader";
+        return "AXColumnHeader";
     case ATK_ROLE_TABLE_ROW:
-        return "AXRole: AXRow";
+        return "AXRow";
     case ATK_ROLE_TABLE_ROW_HEADER:
-        return "AXRole: AXRowHeader";
+        return "AXRowHeader";
     case ATK_ROLE_TOGGLE_BUTTON:
-        return "AXRole: AXToggleButton";
+        return "AXToggleButton";
     case ATK_ROLE_TOOL_BAR:
-        return "AXRole: AXToolbar";
+        return "AXToolbar";
     case ATK_ROLE_TOOL_TIP:
-        return "AXRole: AXUserInterfaceTooltip";
+        return "AXUserInterfaceTooltip";
     case ATK_ROLE_TREE:
-        return "AXRole: AXTree";
+        return "AXTree";
     case ATK_ROLE_TREE_TABLE:
-        return "AXRole: AXTreeGrid";
+        return "AXTreeGrid";
     case ATK_ROLE_TREE_ITEM:
-        return "AXRole: AXTreeItem";
+        return "AXTreeItem";
     case ATK_ROLE_WINDOW:
-        return "AXRole: AXWindow";
+        return "AXWindow";
     case ATK_ROLE_UNKNOWN:
-        return "AXRole: AXUnknown";
+        return "AXUnknown";
     default:
         // We want to distinguish ATK_ROLE_UNKNOWN from a known AtkRole which
         // our DRT isn't properly handling.
-        return "AXRole: FIXME not identified";
+        return "FIXME not identified";
     }
+}
+
+static String attributesOfElement(AccessibilityUIElement* element)
+{
+    StringBuilder builder;
+
+    builder.append(String::format("%s\n", element->role()->string().utf8().data()));
+
+    // For the parent we print its role and its name, if available.
+    builder.append("AXParent: ");
+    AccessibilityUIElement* parent = element->parentElement().get();
+    if (AtkObject* atkParent = parent->platformUIElement().get()) {
+        builder.append(roleToString(atk_object_get_role(atkParent)));
+        const char* parentName = atk_object_get_name(atkParent);
+        if (parentName && g_utf8_strlen(parentName, -1))
+            builder.append(String::format(": %s", parentName));
+    } else
+        builder.append("(null)");
+    builder.append("\n");
+
+    builder.append(String::format("AXChildren: %d\n", element->childrenCount()));
+    builder.append(String::format("AXPosition: { %f, %f }\n", element->x(), element->y()));
+    builder.append(String::format("AXSize: { %f, %f }\n", element->width(), element->height()));
+
+    String title = element->title()->string();
+    if (!title.isEmpty())
+        builder.append(String::format("%s\n", title.utf8().data()));
+
+    String description = element->description()->string();
+    if (!description.isEmpty())
+        builder.append(String::format("%s\n", description.utf8().data()));
+
+    String value = element->stringValue()->string();
+    if (!value.isEmpty())
+        builder.append(String::format("%s\n", value.utf8().data()));
+
+    builder.append(String::format("AXFocusable: %d\n", element->isFocusable()));
+    builder.append(String::format("AXFocused: %d\n", element->isFocused()));
+    builder.append(String::format("AXSelectable: %d\n", element->isSelectable()));
+    builder.append(String::format("AXSelected: %d\n", element->isSelected()));
+    builder.append(String::format("AXMultiSelectable: %d\n", element->isMultiSelectable()));
+    builder.append(String::format("AXEnabled: %d\n", element->isEnabled()));
+    builder.append(String::format("AXExpanded: %d\n", element->isExpanded()));
+    builder.append(String::format("AXRequired: %d\n", element->isRequired()));
+    builder.append(String::format("AXChecked: %d\n", element->isChecked()));
+
+    // We append the ATK specific attributes as a single line at the end.
+    builder.append("AXPlatformAttributes: ");
+    builder.append(getAtkAttributeSetAsString(element->platformUIElement().get()));
+
+    return builder.toString();
 }
 
 AccessibilityUIElement::AccessibilityUIElement(PlatformUIElement element)
@@ -478,8 +531,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::allAttributes()
     if (!m_element || !ATK_IS_OBJECT(m_element.get()))
         return JSStringCreateWithCharacters(0, 0);
 
-    GOwnPtr<char> attributeData(getAtkAttributeSetAsString(ATK_OBJECT(m_element.get())));
-    return JSStringCreateWithUTF8CString(attributeData.get());
+    return JSStringCreateWithUTF8CString(attributesOfElement(this).utf8().data());
 }
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::stringAttributeValue(JSStringRef attribute)
@@ -540,8 +592,8 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::role()
     if (!role)
         return JSStringCreateWithCharacters(0, 0);
 
-    GOwnPtr<gchar> axRole(g_strdup(roleToString(role)));
-    return JSStringCreateWithUTF8CString(axRole.get());
+    GOwnPtr<char> roleStringWithPrefix(g_strdup_printf("AXRole: %s", roleToString(role)));
+    return JSStringCreateWithUTF8CString(roleStringWithPrefix.get());
 }
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::subrole()

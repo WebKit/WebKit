@@ -1,0 +1,457 @@
+
+This should be a table because it has a thead.
+
+AXRole: AXTable
+AXParent: AXWebArea
+AXChildren: 4
+AXPosition: { 8.000000, 54.000000 }
+AXSize: { 62.000000, 47.000000 }
+AXTitle: 
+AXDescription: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: toolkit:WebKitGtk
+
+asdf	asdf
+asdf	asdf
+
+This should be a table because cells have borders.
+
+AXRole: AXTable
+AXParent: AXWebArea
+AXChildren: 2
+AXPosition: { 8.000000, 486.000000 }
+AXSize: { 68.000000, 28.000000 }
+AXTitle: 
+AXDescription: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: toolkit:WebKitGtk
+
+asdf	asdf
+
+This should not be a table because its cells do not have borders.
+
+AXRole: AXTable
+AXParent: AXWebArea
+AXChildren: 2
+AXPosition: { 8.000000, 332.000000 }
+AXSize: { 64.000000, 26.000000 }
+AXTitle: 
+AXDescription: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: layout-guess:true, toolkit:WebKitGtk
+
+asdf	asdf
+
+This should be a table because a cell has a special attribute
+
+AXRole: AXTable
+AXParent: AXWebArea
+AXChildren: 2
+AXPosition: { 8.000000, 333.000000 }
+AXSize: { 58.000000, 22.000000 }
+AXTitle: 
+AXDescription: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: toolkit:WebKitGtk
+
+asdf	asdf
+
+This should be a table because a cell has a special attribute.
+
+AXRole: AXTable
+AXParent: AXWebArea
+AXChildren: 2
+AXPosition: { 8.000000, 333.000000 }
+AXSize: { 58.000000, 22.000000 }
+AXTitle: 
+AXDescription: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: toolkit:WebKitGtk
+
+asdf	asdf
+
+This should be a table because a cell has a special attribute.
+
+AXRole: AXTable
+AXParent: AXWebArea
+AXChildren: 4
+AXPosition: { 8.000000, 333.000000 }
+AXSize: { 58.000000, 41.000000 }
+AXTitle: 
+AXDescription: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: toolkit:WebKitGtk
+
+asdf	asdf
+asdf	asdf
+
+This should be a table because cells have different colors.
+
+AXRole: AXTable
+AXParent: AXWebArea
+AXChildren: 2
+AXPosition: { 8.000000, 333.000000 }
+AXSize: { 58.000000, 22.000000 }
+AXTitle: 
+AXDescription: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: toolkit:WebKitGtk
+
+asdf	asdf
+
+This should not be a table because cells have different but no spacing.
+
+AXRole: AXTable
+AXParent: AXWebArea
+AXChildren: 2
+AXPosition: { 8.000000, 333.000000 }
+AXSize: { 52.000000, 18.000000 }
+AXTitle: 
+AXDescription: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: layout-guess:true, toolkit:WebKitGtk
+
+asdf	asdf
+
+This should not be a table because cells have the same colors even though there is spacing.
+
+AXRole: AXTable
+AXParent: AXWebArea
+AXChildren: 2
+AXPosition: { 8.000000, 346.000000 }
+AXSize: { 61.000000, 24.000000 }
+AXTitle: 
+AXDescription: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: layout-guess:true, toolkit:WebKitGtk
+
+asdf	asdf
+
+This should be a table because it has the "rules" attr.
+
+AXRole: AXTable
+AXParent: AXWebArea
+AXChildren: 2
+AXPosition: { 8.000000, 333.000000 }
+AXSize: { 53.000000, 18.000000 }
+AXTitle: 
+AXDescription: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: toolkit:WebKitGtk
+
+asdf	asdf
+
+This should not be a table because it only has one valid cell (need more than one).
+
+AXRole: AXTable
+AXParent: AXWebArea
+AXChildren: 2
+AXPosition: { 8.000000, 346.000000 }
+AXSize: { 769.000000, 26.000000 }
+AXTitle: 
+AXDescription: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: layout-guess:true, toolkit:WebKitGtk
+
+Contributions
+
+This should not be a table because it does not have enough cell borders or background colors
+
+AXRole: AXTable
+AXParent: AXWebArea
+AXChildren: 7
+AXPosition: { 8.000000, 346.000000 }
+AXSize: { 130.000000, 86.000000 }
+AXTitle: 
+AXDescription: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: layout-guess:true, toolkit:WebKitGtk
+
+Politics
+Decision '08
+The debates
+The White House
+Capitol Hill
+National Journal
+New York Times
+
+This should be a table because it's editable.
+
+AXRole: AXTable
+AXParent: AXWebArea
+AXChildren: 2
+AXPosition: { 8.000000, 333.000000 }
+AXSize: { 64.000000, 26.000000 }
+AXTitle: 
+AXDescription: 
+AXFocusable: 1
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: toolkit:WebKitGtk
+
+asdf	asdf
+
+This should be a table because most cells have a top border.
+
+AXRole: AXTable
+AXParent: AXWebArea
+AXChildren: 4
+AXPosition: { 8.000000, 333.000000 }
+AXSize: { 62.000000, 47.000000 }
+AXTitle: 
+AXDescription: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: toolkit:WebKitGtk
+
+asdf	asdf
+asdf	asdf
+
+This should not be a table because cells have different borders.
+
+AXRole: AXTable
+AXParent: AXWebArea
+AXChildren: 4
+AXPosition: { 8.000000, 333.000000 }
+AXSize: { 62.000000, 45.000000 }
+AXTitle: 
+AXDescription: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: layout-guess:true, toolkit:WebKitGtk
+
+asdf	asdf
+asdf	asdf
+
+This should be a table because it sets empty-cells: hide on the table.
+
+AXRole: AXTable
+AXParent: AXWebArea
+AXChildren: 6
+AXPosition: { 8.000000, 333.000000 }
+AXSize: { 64.000000, 67.000000 }
+AXTitle: 
+AXDescription: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: toolkit:WebKitGtk
+
+asdf	asdf
+asdf
+asdf	asdf
+
+This should be a table because it sets empty-cells: hide on a cell.
+
+AXRole: AXTable
+AXParent: AXWebArea
+AXChildren: 6
+AXPosition: { 8.000000, 333.000000 }
+AXSize: { 64.000000, 68.000000 }
+AXTitle: 
+AXDescription: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: toolkit:WebKitGtk
+
+asdf	asdf
+asdf
+asdf	asdf
+
+This should be a table because it has a col.
+
+AXRole: AXTable
+AXParent: AXWebArea
+AXChildren: 4
+AXPosition: { 8.000000, 333.000000 }
+AXSize: { 62.000000, 45.000000 }
+AXTitle: 
+AXDescription: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: toolkit:WebKitGtk
+
+asdf	asdf
+asdf	asdf
+
+This should be a table because it has at least 20 rows
+
+AXRole: AXTable
+AXParent: AXWebArea
+AXChildren: 24
+AXPosition: { 8.000000, 332.000000 }
+AXSize: { 32.000000, 507.000000 }
+AXTitle: 
+AXDescription: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: toolkit:WebKitGtk
+
+asdf
+asdf
+asdf
+asdf
+asdf
+asdf
+asdf
+asdf
+asdf
+asdf
+asdf
+asdf
+asdf
+asdf
+asdf
+asdf
+asdf
+asdf
+asdf
+asdf
+asdf
+asdf
+asdf
+asdf
+

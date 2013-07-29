@@ -1,3 +1,22 @@
+2013-07-29  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        [ATK] Implement allAttributes() for AccessibilityUIElement
+        https://bugs.webkit.org/show_bug.cgi?id=118966
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Removed fixed tests from TestExpectations and added/updated expected
+        results for tests that are now dumping more useful information.
+
+        * platform/gtk/TestExpectations: Removed four fixed tests.
+        * platform/gtk/accessibility/image-link-expected.txt: Updated.
+        * platform/gtk/accessibility/table-cell-spans-expected.txt: Updated
+        * platform/gtk/accessibility/table-cells-expected.txt: Updated
+        * platform/gtk/accessibility/table-detection-expected.txt: Added.
+        * platform/gtk/accessibility/table-one-cell-expected.txt: Added.
+        * platform/gtk/accessibility/table-with-rules-expected.txt: Added.
+        * platform/gtk/accessibility/transformed-element-expected.txt: Added.
+
 2013-07-29  Antoine Quint  <graouts@apple.com>
 
         fast/spatial-navigation test fail on mac-wk2
