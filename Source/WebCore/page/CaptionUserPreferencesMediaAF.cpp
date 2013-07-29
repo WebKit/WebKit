@@ -235,9 +235,8 @@ void CaptionUserPreferencesMediaAF::setInterestedInCaptionPreferenceChanges()
     if (!m_listeningForPreferenceChanges) {
         m_listeningForPreferenceChanges = true;
         CFNotificationCenterAddObserver(CFNotificationCenterGetLocalCenter(), this, userCaptionPreferencesChangedNotificationCallback, kMAXCaptionAppearanceSettingsChangedNotification, 0, CFNotificationSuspensionBehaviorCoalesce);
+        updateCaptionStyleSheetOveride();
     }
-    
-    updateCaptionStyleSheetOveride();
 }
 
 void CaptionUserPreferencesMediaAF::captionPreferencesChanged()

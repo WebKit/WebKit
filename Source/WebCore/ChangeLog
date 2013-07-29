@@ -1,3 +1,17 @@
+2013-07-28  Andreas Kling  <akling@apple.com>
+
+        Don't update the text track override CSS every time a media element is created.
+        <http://webkit.org/b/119199>
+        <rdar://problem/14572855>
+
+        Reviewed by Darin Adler.
+
+        We should only have to update the CSS if the accessibility caption preferences are changed.
+        This was forcing a full style recalc in every Document any time a media element is instantiated.
+
+        * page/CaptionUserPreferencesMediaAF.cpp:
+        (WebCore::CaptionUserPreferencesMediaAF::setInterestedInCaptionPreferenceChanges):
+
 2013-07-28  Andy Estes  <aestes@apple.com>
 
         Stop exporting Widget::frameRectsChanged()
