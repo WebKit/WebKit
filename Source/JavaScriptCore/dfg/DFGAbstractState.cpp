@@ -1255,7 +1255,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
     case GetScope: // FIXME: We could get rid of these if we know that the JSFunction is a constant. https://bugs.webkit.org/show_bug.cgi?id=106202
     case GetMyScope:
     case SkipTopScope:
-        forNode(node).set(SpecCellOther);
+        forNode(node).set(SpecObjectOther);
         break;
 
     case SkipScope: {
@@ -1264,7 +1264,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
             m_foundConstants = true;
             break;
         }
-        forNode(node).set(SpecCellOther);
+        forNode(node).set(SpecObjectOther);
         break;
     }
 
