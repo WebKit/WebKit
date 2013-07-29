@@ -52,7 +52,6 @@ namespace WebCore {
 
     class Image;
     class KURL;
-    class Range;
 
 #if PLATFORM(MAC)
     typedef RetainPtr<NSImage> DragImageRef;

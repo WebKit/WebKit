@@ -1,3 +1,17 @@
+2013-07-29  Zan Dobersek  <zdobersek@igalia.com>
+
+        Clean up DragImage
+        https://bugs.webkit.org/show_bug.cgi?id=118981
+
+        Reviewed by Anders Carlsson.
+
+        * dom/Clipboard.h: Add forward declaration for the Range class. This was not necessary until now as the forward
+        declaration was introduced in the DragImage header, from where it's being removed due to not being required in that class.
+        * page/Frame.h: Ditto.
+        * platform/DragImage.cpp: Remove the unnecessary DragController and FontRenderingMode header inclusions.
+        The latter is already included in the header.
+        * platform/DragImage.h: Remove the forward declaration for the Range class - it's not used by the DragImage class at all.
+
 2013-07-29  Kwang Yul Seo  <skyul@company100.net>
 
         [EFL] Improve string use in ErrorsEfl

@@ -27,9 +27,6 @@
 #include "DragImage.h"
 
 #if ENABLE(DRAG_SUPPORT)
-#include "DragController.h"
-
-#include "FontRenderingMode.h"
 
 namespace WebCore {
     

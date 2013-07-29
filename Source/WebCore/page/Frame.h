@@ -64,6 +64,7 @@ namespace WebCore {
     class HTMLTableCellElement;
     class IntRect;
     class Node;
+    class Range;
     class RegularExpression;
     class RenderPart;
     class RenderView;

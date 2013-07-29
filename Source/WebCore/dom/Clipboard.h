@@ -57,6 +57,7 @@ namespace WebCore {
     class FileList;
     class Frame;
     class Pasteboard;
+    class Range;
 
     // State available during IE's events for drag and drop and copy/paste
     class Clipboard : public RefCounted<Clipboard> {
