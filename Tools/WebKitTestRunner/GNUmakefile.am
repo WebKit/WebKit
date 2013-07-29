@@ -43,7 +43,6 @@ Programs_WebKitTestRunner_CPPFLAGS = \
 	$(global_cppflags) \
 	$(javascriptcore_cppflags) \
 	$(webcore_cppflags) \
-	$(GLOBALDEPS_CFLAGS) \
 	$(CAIRO_CFLAGS) \
 	$(GTK_CFLAGS) \
 	$(LIBSOUP_CFLAGS)
@@ -53,7 +52,6 @@ Programs_WebKitTestRunner_CFLAGS = $(global_cflags)
 Programs_WebKitTestRunner_LDADD = \
 	libjavascriptcoregtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
 	libwebkit2gtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
-	$(GLOBALDEPS_LIBS) \
 	$(CAIRO_LIBS) \
 	$(GTK_LIBS) \
 	$(GLIB_LIBS) \
@@ -140,7 +138,6 @@ Libraries_libTestRunnerInjectedBundle_la_CPPFLAGS = \
 	$(global_cppflags) \
 	$(javascriptcore_cppflags) \
 	$(webcore_cppflags) \
-	$(GLOBALDEPS_CFLAGS) \
 	$(CAIRO_CFLAGS) \
 	$(GLIB_CFLAGS) \
 	$(GTK_CFLAGS) \

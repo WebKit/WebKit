@@ -142,7 +142,6 @@ Programs_TestWebKitAPI_TestWebCore_LDADD = \
 	libWTF.la \
 	WebCoreLayer.a \
 	$(CAIRO_LIBS) \
-	$(CLUTTER_LIBS) \
 	$(FREETYPE_LIBS) \
 	$(GAMEPAD_LIBS) \
 	$(GEOCLUE_LIBS) \

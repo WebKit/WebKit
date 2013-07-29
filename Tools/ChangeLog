@@ -1,3 +1,15 @@
+2013-07-29  Zan Dobersek  <zdobersek@igalia.com>
+
+        [Automake] Remove references to non-existent *_CFLAGS and *_LIBS variables
+        https://bugs.webkit.org/show_bug.cgi?id=119212
+
+        Reviewed by Carlos Garcia Campos.
+
+        * GNUmakefile.am: Remove references to GLOBALDEPS_(CFLAGS|LIBS) and CLUTTER_(CFLAGS|LIBS)
+        variables that are not defined during the configuration process.
+        * TestWebKitAPI/GNUmakefile.am: Ditto.
+        * WebKitTestRunner/GNUmakefile.am: Ditto.
+
 2013-07-28  Andy Estes  <aestes@apple.com>
 
         Include <stdio.h> to declare perror()

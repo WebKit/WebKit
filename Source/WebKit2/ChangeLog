@@ -1,3 +1,13 @@
+2013-07-29  Zan Dobersek  <zdobersek@igalia.com>
+
+        [Automake] Remove references to non-existent *_CFLAGS and *_LIBS variables
+        https://bugs.webkit.org/show_bug.cgi?id=119212
+
+        Reviewed by Carlos Garcia Campos.
+
+        * GNUmakefile.am: Remove references to GLOBALDEPS_(CFLAGS|LIBS) and CLUTTER_(CFLAGS|LIBS)
+        variables that are not defined during the configuration process.
+
 2013-07-28  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         [EFL][WK2] Simplify context_menu_spelling_items_availability unit test

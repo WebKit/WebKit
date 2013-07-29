@@ -182,7 +182,6 @@ Programs_DumpRenderTree_CXXFLAGS = \
 Programs_DumpRenderTree_CFLAGS = \
 	-fno-strict-aliasing \
 	$(global_cflags) \
-	$(GLOBALDEPS_CFLAGS) \
 	$(CAIRO_CFLAGS) \
 	$(GTK_CFLAGS) \
 	$(LIBSOUP_CFLAGS)
@@ -195,7 +194,6 @@ Programs_DumpRenderTree_LDADD = \
 	libWebCorePlatform.la \
 	libWebCoreModules.la \
 	libWebCoreInternals.la \
-	$(GLOBALDEPS_LIBS) \
 	$(CAIRO_LIBS) \
 	$(GTK_LIBS) \
 	$(GLIB_LIBS) \
@@ -223,7 +221,6 @@ Programs_ImageDiff_CXXFLAGS = \
 Programs_ImageDiff_CFLAGS = \
    -fno-strict-aliasing \
    $(global_cflags) \
-   $(GLOBALDEPS_CFLAGS) \
    $(GTK_CFLAGS)
 
 Programs_ImageDiff_LDADD = \
