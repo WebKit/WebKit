@@ -278,9 +278,10 @@ static RetainPtr<CGImageRef> createImageWithCopiedData(CGImageRef sourceImage)
 {
     if (_fullScreenState != EnteringFullScreen)
         return;
-    _fullScreenState = InFullScreen;
-
+    
     if (completed) {
+        _fullScreenState = InFullScreen;
+
         // Screen updates to be re-enabled ta the end of the current block.
         NSDisableScreenUpdates();
         [self _manager]->didEnterFullScreen();
@@ -299,9 +300,30 @@ static RetainPtr<CGImageRef> createImageWithCopiedData(CGImageRef sourceImage)
 
         [_webViewPlaceholder.get() setExitWarningVisible:YES];
         [_webViewPlaceholder.get() setTarget:self];
-        NSEnableScreenUpdates();
-    } else
+    } else {
+        // Transition to fullscreen failed. Clean up.
+        _fullScreenState = NotInFullScreen;
+
         [_scaleAnimation.get() stopAnimation];
+
+        [_backgroundWindow.get() orderOut:self];
+        [_backgroundWindow.get() setFrame:NSZeroRect display:YES];
+
+        [[self window] setAutodisplay:YES];
+        [_webView _setSuppressVisibilityUpdates:NO];
+
+        NSResponder *firstResponder = [[self window] firstResponder];
+        [self _replaceView:_webViewPlaceholder.get() with:_webView];
+        [[_webView window] makeResponder:firstResponder firstResponderIfDescendantOfView:_webView];
+        [[_webView window] makeKeyAndOrderFront:self];
+
+        [self _manager]->didExitFullScreen();
+        [self _manager]->setAnimatingFullScreen(false);
+        [self _page]->scalePage(_savedScale, IntPoint());
+        [self _manager]->restoreScrollPosition();
+    }
+
+    NSEnableScreenUpdates();
 }
 
 - (void)exitFullScreen
