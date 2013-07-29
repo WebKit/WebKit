@@ -130,6 +130,16 @@ bool PageOverlay::mouseEvent(const WebMouseEvent& mouseEvent)
     return m_client->mouseEvent(this, mouseEvent);
 }
 
+WKTypeRef PageOverlay::copyAccessibilityAttributeValue(WKStringRef attribute, WKTypeRef parameter)
+{
+    return m_client->copyAccessibilityAttributeValue(this, attribute, parameter);
+}
+
+WKArrayRef PageOverlay::copyAccessibilityAttributeNames(bool parameterizedNames)
+{
+    return m_client->copyAccessibilityAttributeNames(this, parameterizedNames);
+}
+
 void PageOverlay::startFadeInAnimation()
 {
     m_fractionFadedIn = 0.0;

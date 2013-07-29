@@ -62,13 +62,27 @@ struct WKBundlePageOverlayClient {
 };
 typedef struct WKBundlePageOverlayClient WKBundlePageOverlayClient;
 
-enum { kWKBundlePageOverlayClientCurrentVersion = 0 };
+enum { kWKBundlePageOverlayClientCurrentVersion = 0 };    
+    
+typedef WKTypeRef (*WKAccessibilityAttributeValueCallback)(WKBundlePageOverlayRef pageOverlay, WKStringRef attribute, WKTypeRef parameter, const void* clientInfo);
+typedef WKArrayRef (*WKAccessibilityAttributeNamesCallback)(WKBundlePageOverlayRef pageOverlay, bool parameterizedNames, const void* clientInfo);
+    
+struct WKBundlePageOverlayAccessibilityClient {
+    int                                                                 version;
+    const void *                                                        clientInfo;
+    WKAccessibilityAttributeValueCallback                               copyAccessibilityAttributeValue;
+    WKAccessibilityAttributeNamesCallback                               copyAccessibilityAttributeNames;
+};
+typedef struct WKBundlePageOverlayAccessibilityClient WKBundlePageOverlayAccessibilityClient;
+    
+enum { kWKBundlePageOverlayAccessibilityClientCurrentVersion = 0 };
     
 WK_EXPORT WKTypeID WKBundlePageOverlayGetTypeID();
 
 WK_EXPORT WKBundlePageOverlayRef WKBundlePageOverlayCreate(WKBundlePageOverlayClient* client);
 WK_EXPORT void WKBundlePageOverlaySetNeedsDisplay(WKBundlePageOverlayRef bundlePageOverlay, WKRect rect);
 WK_EXPORT float WKBundlePageOverlayFractionFadedIn(WKBundlePageOverlayRef bundlePageOverlay);
+WK_EXPORT void WKBundlePageOverlaySetAccessibilityClient(WKBundlePageOverlayRef bundlePageOverlay, WKBundlePageOverlayAccessibilityClient* client);
 
 #ifdef __cplusplus
 }

@@ -27,11 +27,13 @@
 #define PageOverlay_h
 
 #include "APIObject.h"
+#include "WKBase.h"
 #include <WebCore/RunLoop.h>
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {
     class GraphicsContext;
+    class IntPoint;
     class IntRect;
 }
 
@@ -52,6 +54,9 @@ public:
         virtual void didMoveToWebPage(PageOverlay*, WebPage*) = 0;
         virtual void drawRect(PageOverlay*, WebCore::GraphicsContext&, const WebCore::IntRect& dirtyRect) = 0;
         virtual bool mouseEvent(PageOverlay*, const WebMouseEvent&) = 0;
+
+        virtual WKTypeRef copyAccessibilityAttributeValue(PageOverlay*, WKStringRef attribute, WKTypeRef parameter) { return 0; }
+        virtual WKArrayRef copyAccessibilityAttributeNames(PageOverlay*, bool parameterizedNames) { return 0; }
     };
 
     static PassRefPtr<PageOverlay> create(Client*);
@@ -64,12 +69,16 @@ public:
     void drawRect(WebCore::GraphicsContext&, const WebCore::IntRect& dirtyRect);
     bool mouseEvent(const WebMouseEvent&);
 
+    WKTypeRef copyAccessibilityAttributeValue(WKStringRef attribute, WKTypeRef parameter);
+    WKArrayRef copyAccessibilityAttributeNames(bool parameterizedNames);
+    
     void startFadeInAnimation();
     void startFadeOutAnimation();
     void stopFadeOutAnimation();
 
     float fractionFadedIn() const { return m_fractionFadedIn; }
-
+    Client* client() const { return m_client; }
+    
 protected:
     explicit PageOverlay(Client*);
 
