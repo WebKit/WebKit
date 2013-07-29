@@ -57,6 +57,9 @@ public:
     void setSize(const WebCore::IntSize&);
     const WebCore::IntSize& size() const { return m_size; }
 
+    bool isActive() const;
+    void setActive(bool);
+
     bool isFocused() const { return m_focused; }
     void setFocused(bool);
 

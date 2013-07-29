@@ -77,6 +77,8 @@ public:
     // The painting thread must lock the main thread to use below two methods, because two methods access members that the main thread manages. See m_client.
     // Currently, QQuickWebPage::updatePaintNode() locks the main thread before calling both methods.
     void purgeGLResources();
+
+    bool isActive() const { return m_isActive; }
     void setActive(bool);
 
     void commitSceneState(const CoordinatedGraphicsState&);

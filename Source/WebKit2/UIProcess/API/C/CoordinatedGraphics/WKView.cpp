@@ -55,6 +55,16 @@ void WKViewSetViewClient(WKViewRef viewRef, const WKViewClient* client)
     toImpl(viewRef)->initializeClient(client);
 }
 
+bool WKViewIsActive(WKViewRef viewRef)
+{
+    return toImpl(viewRef)->isActive();
+}
+
+void WKViewSetIsActive(WKViewRef viewRef, bool isActive)
+{
+    toImpl(viewRef)->setActive(isActive);
+}
+
 bool WKViewIsFocused(WKViewRef viewRef)
 {
     return toImpl(viewRef)->isFocused();

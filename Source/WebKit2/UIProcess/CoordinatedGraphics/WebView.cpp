@@ -73,8 +73,17 @@ WebView::~WebView()
 void WebView::initialize()
 {
     m_page->initializeWebPage();
-    if (CoordinatedGraphicsScene* scene = coordinatedGraphicsScene())
-        scene->setActive(true);
+    setActive(true);
+}
+
+void WebView::setActive(bool active)
+{
+    CoordinatedGraphicsScene* scene = coordinatedGraphicsScene();
+    if (!scene || scene->isActive() == active)
+        return;
+
+    scene->setActive(active);
+    m_page->viewStateDidChange(WebPageProxy::ViewWindowIsActive);
 }
 
 void WebView::setSize(const WebCore::IntSize& size)
@@ -298,6 +307,15 @@ WebCore::IntSize WebView::viewSize()
     return roundedIntSize(dipSize());
 }
 
+bool WebView::isActive() const
+{
+    const CoordinatedGraphicsScene* scene = const_cast<WebView*>(this)->coordinatedGraphicsScene();
+    if (!scene)
+        return false;
+
+    return scene->isActive();
+}
+
 bool WebView::isViewWindowActive()
 {
     notImplemented();
@@ -426,14 +444,12 @@ void WebView::setFindIndicator(PassRefPtr<FindIndicator>, bool, bool)
 
 void WebView::enterAcceleratedCompositingMode(const LayerTreeContext&)
 {
-    if (CoordinatedGraphicsScene* scene = coordinatedGraphicsScene())
-        scene->setActive(true);
+    setActive(true);
 }
 
 void WebView::exitAcceleratedCompositingMode()
 {
-    if (CoordinatedGraphicsScene* scene = coordinatedGraphicsScene())
-        scene->setActive(false);
+    setActive(false);
 }
 
 void WebView::updateAcceleratedCompositingMode(const LayerTreeContext&)
