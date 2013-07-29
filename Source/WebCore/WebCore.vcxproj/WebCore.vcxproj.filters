@@ -7076,6 +7076,9 @@
     <ClCompile Include="..\platform\graphics\avfoundation\cf\InbandTextTrackPrivateLegacyAVCF.cpp">
       <Filter>platform\graphics\avfoundation\cf</Filter>
     </ClCompile>
+    <ClCompile Include="..\platform\graphics\win\GraphicsContext3DWin.cpp">
+      <Filter>platform\graphics\win</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Modules\filesystem\AsyncFileWriter.h">
