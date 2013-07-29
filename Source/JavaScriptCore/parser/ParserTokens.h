@@ -161,26 +161,19 @@ union JSTokenData {
 };
 
 struct JSTokenLocation {
-    JSTokenLocation(unsigned _sourceOffset = UINT_MAX) : line(0), lineStartOffset(0), startOffset(0), sourceOffset(_sourceOffset) { }
+    JSTokenLocation() : line(0), lineStartOffset(0), startOffset(0) { }
     JSTokenLocation(const JSTokenLocation& location)
     {
         line = location.line;
         lineStartOffset = location.lineStartOffset;
         startOffset = location.startOffset;
         endOffset = location.endOffset;
-        sourceOffset = location.sourceOffset;
-        ASSERT(sourceOffset != UINT_MAX);
     }
-
-    ALWAYS_INLINE unsigned lineStartPosition() const { ASSERT(sourceOffset != UINT_MAX); return lineStartOffset - sourceOffset; }
-    ALWAYS_INLINE unsigned startPosition() const { ASSERT(sourceOffset != UINT_MAX); return startOffset - sourceOffset; }
-    ALWAYS_INLINE unsigned endPosition() const { ASSERT(sourceOffset != UINT_MAX); return endOffset - sourceOffset; }
 
     int line;
     unsigned lineStartOffset;
     unsigned startOffset;
     unsigned endOffset;
-    unsigned sourceOffset;
 };
 
 struct JSToken {

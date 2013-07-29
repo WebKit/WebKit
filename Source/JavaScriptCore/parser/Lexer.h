@@ -370,7 +370,6 @@ ALWAYS_INLINE JSTokenType Lexer<T>::lexExpectIdentifier(JSTokenData* tokenData, 
     tokenLocation->lineStartOffset = currentLineStartOffset();
     tokenLocation->startOffset = offsetFromSourcePtr(start);
     tokenLocation->endOffset = currentOffset();
-    tokenLocation->sourceOffset = m_sourceOffset;
     ASSERT(tokenLocation->startOffset >= tokenLocation->lineStartOffset);
     m_lastToken = IDENT;
     return IDENT;

@@ -1323,7 +1323,6 @@ start:
         return EOFTOK;
     
     tokenLocation->startOffset = currentOffset();
-    tokenLocation->sourceOffset = m_sourceOffset;
     ASSERT(currentOffset() >= currentLineStartOffset());
 
     CharacterType type;
