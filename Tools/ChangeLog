@@ -1,3 +1,14 @@
+2013-07-28  Andy Estes  <aestes@apple.com>
+
+        Include <stdio.h> to declare perror()
+        https://bugs.webkit.org/show_bug.cgi?id=119198
+
+        Reviewed by Andreas Kling.
+
+        Silences an implicit declaration warning.
+
+        * DumpRenderTree/mac/PerlSupport/DumpRenderTreeSupport.c:
+
 2013-07-27  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Bump required version of EFL to 1.7
