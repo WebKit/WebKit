@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: webkit.HEAD.mr\n"
 "Report-Msgid-Bugs-To: http://bugs.webkit.org\n"
-"POT-Creation-Date: 2013-05-24 23:51+0000\n"
-"PO-Revision-Date: 2013-06-06 10:15+0530\n"
+"POT-Creation-Date: 2013-07-18 11:12+0000\n"
+"PO-Revision-Date: 2013-07-25 19:30+0530\n"
 "Last-Translator: Sandeep Shedmake <sshedmak@redhat.com>\n"
 "Language-Team: Marathi <kde-i18n-doc@kde.org>\n"
 "Language: mr\n"
@@ -123,466 +123,486 @@ msgid "Open _Audio in New Window"
 msgstr "नवीन पटलात ऑडिओ उघडा (_A)"
 
 #: ../LocalizedStringsGtk.cpp:146
+#| msgid "_Download Linked File"
+msgid "Download _Video"
+msgstr "व्हिडीओ डाऊनलोड करा (_V)"
+
+#: ../LocalizedStringsGtk.cpp:151
+#| msgid "_Download Linked File"
+msgid "Download _Audio"
+msgstr "ऑडीओ डाऊनलोड करा (_A)"
+
+#: ../LocalizedStringsGtk.cpp:156
 msgid "Cop_y Video Link Location"
 msgstr "व्हिडीओ दुवा ठिकाणाचे प्रत बनवा (_y)"
 
-#: ../LocalizedStringsGtk.cpp:151
+#: ../LocalizedStringsGtk.cpp:161
 msgid "Cop_y Audio Link Location"
 msgstr "ऑडीओ दुवा ठिकाणाचे प्रत बनवा (_y)"
 
-#: ../LocalizedStringsGtk.cpp:156
+#: ../LocalizedStringsGtk.cpp:166
 msgid "_Toggle Media Controls"
 msgstr "मिडीया कंट्रोल्स् बदलवा (_T)"
 
-#: ../LocalizedStringsGtk.cpp:161
+#: ../LocalizedStringsGtk.cpp:171
+#| msgid "_Toggle Media Controls"
+msgid "_Show Media Controls"
+msgstr "मिडीया कंट्रोल्स दाखवा (_S)"
+
+#: ../LocalizedStringsGtk.cpp:176
+#| msgid "_Toggle Media Controls"
+msgid "_Hide Media Controls"
+msgstr "मिडीया कंट्रोल्स लपवा (_H)"
+
+#: ../LocalizedStringsGtk.cpp:181
 msgid "Toggle Media _Loop Playback"
 msgstr "मिडीया लूप प्लेबॅक बदला (_L)"
 
-#: ../LocalizedStringsGtk.cpp:166
+#: ../LocalizedStringsGtk.cpp:186
 msgid "Switch Video to _Fullscreen"
 msgstr "व्हिडीओ पडदाभर वापरा (_F)"
 
-#: ../LocalizedStringsGtk.cpp:171
+#: ../LocalizedStringsGtk.cpp:191
 msgid "_Play"
 msgstr "चालवा (_P)"
 
-#: ../LocalizedStringsGtk.cpp:176
+#: ../LocalizedStringsGtk.cpp:196
 msgid "_Pause"
 msgstr "थांबवा (_P)"
 
-#: ../LocalizedStringsGtk.cpp:181
+#: ../LocalizedStringsGtk.cpp:201
 msgid "_Mute"
 msgstr "मंद करा (_M)"
 
-#: ../LocalizedStringsGtk.cpp:186
+#: ../LocalizedStringsGtk.cpp:206
 msgid "Open _Frame in New Window"
 msgstr "फ्रेमला नविन पटलात उघडा (_F)"
 
-#: ../LocalizedStringsGtk.cpp:209
+#: ../LocalizedStringsGtk.cpp:229
 msgid "_Insert Unicode Control Character"
 msgstr "युनिकोड कंट्रोल कॅरेक्टर द्या (_I)"
 
-#: ../LocalizedStringsGtk.cpp:214
+#: ../LocalizedStringsGtk.cpp:234
 msgid "Input _Methods"
 msgstr "इंपुट पद्धती (_M)"
 
-#: ../LocalizedStringsGtk.cpp:237
+#: ../LocalizedStringsGtk.cpp:257
 msgid "_Reload"
 msgstr "पुनःलोड करा (_R)"
 
-#: ../LocalizedStringsGtk.cpp:254
+#: ../LocalizedStringsGtk.cpp:274
 msgid "No Guesses Found"
 msgstr "अनुमान आढळले नाही"
 
-#: ../LocalizedStringsGtk.cpp:259
+#: ../LocalizedStringsGtk.cpp:279
 msgid "_Ignore Spelling"
 msgstr "वर्णलेखनकडे दुर्लक्ष करा (_I)"
 
-#: ../LocalizedStringsGtk.cpp:264
+#: ../LocalizedStringsGtk.cpp:284
 msgid "_Learn Spelling"
 msgstr "शुध्दलेखन शिका (_L)"
 
-#: ../LocalizedStringsGtk.cpp:269
+#: ../LocalizedStringsGtk.cpp:289
 msgid "_Search the Web"
 msgstr "वेब शोधा (_S)"
 
-#: ../LocalizedStringsGtk.cpp:274
+#: ../LocalizedStringsGtk.cpp:294
 msgid "_Look Up in Dictionary"
 msgstr "शब्दकोषात पहा (_L)"
 
-#: ../LocalizedStringsGtk.cpp:279
+#: ../LocalizedStringsGtk.cpp:299
 msgid "_Open Link"
 msgstr "दुवा उघडा (_O)"
 
-#: ../LocalizedStringsGtk.cpp:284
+#: ../LocalizedStringsGtk.cpp:304
 msgid "Ignore _Grammar"
 msgstr "व्याकरणकडे दुर्लक्ष करा (_G)"
 
-#: ../LocalizedStringsGtk.cpp:289
+#: ../LocalizedStringsGtk.cpp:309
 msgid "Spelling and _Grammar"
 msgstr "शुध्दलेखन व व्याकरण (_G)"
 
-#: ../LocalizedStringsGtk.cpp:294
+#: ../LocalizedStringsGtk.cpp:314
 msgid "_Show Spelling and Grammar"
 msgstr "शुध्दलेखन व व्याकरण दाखवा (_S)"
 
-#: ../LocalizedStringsGtk.cpp:294
+#: ../LocalizedStringsGtk.cpp:314
 msgid "_Hide Spelling and Grammar"
 msgstr "शुध्दलेखन व व्याकरण लपवा (_H)"
 
-#: ../LocalizedStringsGtk.cpp:299
+#: ../LocalizedStringsGtk.cpp:319
 msgid "_Check Document Now"
 msgstr "आत्ता दस्तऐवज तपासा (_C)"
 
-#: ../LocalizedStringsGtk.cpp:304
+#: ../LocalizedStringsGtk.cpp:324
 msgid "Check Spelling While _Typing"
 msgstr "टाइपिंग करतेवेळी शुध्दलेखन तपासा (_T)"
 
-#: ../LocalizedStringsGtk.cpp:309
+#: ../LocalizedStringsGtk.cpp:329
 msgid "Check _Grammar With Spelling"
 msgstr "शुध्दलेखनसह व्याकरण तपासा (_G)"
 
-#: ../LocalizedStringsGtk.cpp:314
+#: ../LocalizedStringsGtk.cpp:334
 msgid "_Font"
 msgstr "फाँट (_F)"
 
-#: ../LocalizedStringsGtk.cpp:337
+#: ../LocalizedStringsGtk.cpp:357
 msgid "_Outline"
 msgstr "रूपरेषा (_O)"
 
-#: ../LocalizedStringsGtk.cpp:342
+#: ../LocalizedStringsGtk.cpp:362
 msgid "Inspect _Element"
 msgstr "एलिमेंटची चौकशी करा (_E)"
 
-#: ../LocalizedStringsGtk.cpp:347
+#: ../LocalizedStringsGtk.cpp:367
 msgid "LRM _Left-to-right mark"
 msgstr "LRM डावे-ते-उजवे चिन्ह (_L)"
 
-#: ../LocalizedStringsGtk.cpp:352
+#: ../LocalizedStringsGtk.cpp:372
 msgid "RLM _Right-to-left mark"
 msgstr "RLM उजवे-ते-डावे चिन्ह (_R)"
 
-#: ../LocalizedStringsGtk.cpp:357
+#: ../LocalizedStringsGtk.cpp:377
 msgid "LRE Left-to-right _embedding"
 msgstr "LRE डावे-ते-उजवे एम्बेडिंग (_e)"
 
-#: ../LocalizedStringsGtk.cpp:362
+#: ../LocalizedStringsGtk.cpp:382
 msgid "RLE Right-to-left e_mbedding"
 msgstr "RLE उजवे-ते-डावे एम्बेडिंग (_m)"
 
-#: ../LocalizedStringsGtk.cpp:367
+#: ../LocalizedStringsGtk.cpp:387
 msgid "LRO Left-to-right _override"
 msgstr "LRO डावे-ते-उजवे ओव्हरराइड (_o)"
 
-#: ../LocalizedStringsGtk.cpp:372
+#: ../LocalizedStringsGtk.cpp:392
 msgid "RLO Right-to-left o_verride"
 msgstr "RLO उजवे-ते-डावे ओव्हरराइड (_v)"
 
-#: ../LocalizedStringsGtk.cpp:377
+#: ../LocalizedStringsGtk.cpp:397
 msgid "PDF _Pop directional formatting"
 msgstr "PDF पॉप डाइरेक्शनल रूपण (_P)"
 
-#: ../LocalizedStringsGtk.cpp:382
+#: ../LocalizedStringsGtk.cpp:402
 msgid "ZWS _Zero width space"
 msgstr "ZWS झिरो विड्थ् स्पेस् (_Z)"
 
-#: ../LocalizedStringsGtk.cpp:387
+#: ../LocalizedStringsGtk.cpp:407
 msgid "ZWJ Zero width _joiner"
 msgstr "ZWJ झिरो विड्थ् जाइनर (_j)"
 
-#: ../LocalizedStringsGtk.cpp:392
+#: ../LocalizedStringsGtk.cpp:412
 msgid "ZWNJ Zero width _non-joiner"
 msgstr "ZWNJ झिरो विड्थ् नॉन जॉइनर (_n)"
 
-#: ../LocalizedStringsGtk.cpp:397
+#: ../LocalizedStringsGtk.cpp:417
 msgid "No recent searches"
 msgstr "नविन शोध आढळले नाही"
 
-#: ../LocalizedStringsGtk.cpp:402
+#: ../LocalizedStringsGtk.cpp:422
 msgid "Recent searches"
 msgstr "नविन शोध"
 
-#: ../LocalizedStringsGtk.cpp:407
+#: ../LocalizedStringsGtk.cpp:427
 msgid "_Clear recent searches"
 msgstr "नविन शोध नष्ट करा (_C)"
 
-#: ../LocalizedStringsGtk.cpp:412
+#: ../LocalizedStringsGtk.cpp:432
 msgid "definition"
 msgstr "वर्णन"
 
-#: ../LocalizedStringsGtk.cpp:417
+#: ../LocalizedStringsGtk.cpp:437
 #| msgid "description"
 msgid "description list"
 msgstr "वर्णन सूची"
 
-#: ../LocalizedStringsGtk.cpp:422
+#: ../LocalizedStringsGtk.cpp:442
 msgid "term"
 msgstr "संज्ञा"
 
-#: ../LocalizedStringsGtk.cpp:427
+#: ../LocalizedStringsGtk.cpp:447
 msgid "description"
 msgstr "वर्णन"
 
-#: ../LocalizedStringsGtk.cpp:432
+#: ../LocalizedStringsGtk.cpp:452
 msgid "footer"
 msgstr "फूटर"
 
-#: ../LocalizedStringsGtk.cpp:437
+#: ../LocalizedStringsGtk.cpp:457
 msgid "press"
 msgstr "दाबा"
 
-#: ../LocalizedStringsGtk.cpp:442
+#: ../LocalizedStringsGtk.cpp:462
 msgid "select"
 msgstr "निवडा"
 
-#: ../LocalizedStringsGtk.cpp:447
+#: ../LocalizedStringsGtk.cpp:467
 msgid "activate"
 msgstr "सुरू करा"
 
-#: ../LocalizedStringsGtk.cpp:452
+#: ../LocalizedStringsGtk.cpp:472
 msgid "uncheck"
 msgstr "निवड अशक्य करा"
 
-#: ../LocalizedStringsGtk.cpp:457
+#: ../LocalizedStringsGtk.cpp:477
 msgid "check"
 msgstr "तपासणी करा"
 
-#: ../LocalizedStringsGtk.cpp:462
+#: ../LocalizedStringsGtk.cpp:482
 msgid "jump"
 msgstr "येथे जा"
 
-#: ../LocalizedStringsGtk.cpp:477
+#: ../LocalizedStringsGtk.cpp:502
 msgid "Missing Plug-in"
 msgstr "प्लगइन आढळले नाही"
 
-#: ../LocalizedStringsGtk.cpp:483
+#: ../LocalizedStringsGtk.cpp:508
 msgid "Plug-in Failure"
 msgstr "प्लगइन अपयश"
 
 #. FIXME: If this file gets localized, this should really be localized as one string with a wildcard for the number.
-#: ../LocalizedStringsGtk.cpp:507
+#: ../LocalizedStringsGtk.cpp:532
 msgid " files"
 msgstr " फाइल्स्"
 
-#: ../LocalizedStringsGtk.cpp:512
+#: ../LocalizedStringsGtk.cpp:537
 msgid "Unknown"
 msgstr "अपरिचीत"
 
-#: ../LocalizedStringsGtk.cpp:517
+#: ../LocalizedStringsGtk.cpp:542
 #, c-format
 msgctxt "Title string for images"
 msgid "%s  (%dx%d pixels)"
 msgstr "%s  (%dx%d पिक्सेल्स्)"
 
-#: ../LocalizedStringsGtk.cpp:529
+#: ../LocalizedStringsGtk.cpp:554
 msgid "Loading..."
 msgstr "लोड करत आहे..."
 
-#: ../LocalizedStringsGtk.cpp:534
+#: ../LocalizedStringsGtk.cpp:559
 msgid "Live Broadcast"
 msgstr "लाइव्ह ब्रॉडकास्ट"
 
-#: ../LocalizedStringsGtk.cpp:540
+#: ../LocalizedStringsGtk.cpp:565
 #| msgid "pause playback"
 msgid "audio playback"
-msgstr "ऑडीओ प्लेबॅक"
+msgstr "ऑडिओ प्लेबॅक"
 
-#: ../LocalizedStringsGtk.cpp:542
+#: ../LocalizedStringsGtk.cpp:567
 #| msgid "begin playback"
 msgid "video playback"
 msgstr "व्हिडीओ प्लेबॅक"
 
-#: ../LocalizedStringsGtk.cpp:544
+#: ../LocalizedStringsGtk.cpp:569
 msgid "mute"
 msgstr "मंद करा"
 
-#: ../LocalizedStringsGtk.cpp:546
+#: ../LocalizedStringsGtk.cpp:571
 msgid "unmute"
 msgstr "मंद अशक्य करा"
 
-#: ../LocalizedStringsGtk.cpp:548
+#: ../LocalizedStringsGtk.cpp:573
 msgid "play"
 msgstr "चालवा"
 
-#: ../LocalizedStringsGtk.cpp:550
+#: ../LocalizedStringsGtk.cpp:575
 msgid "pause"
 msgstr "थांबा"
 
-#: ../LocalizedStringsGtk.cpp:552
+#: ../LocalizedStringsGtk.cpp:577
 msgid "movie time"
 msgstr "चित्रपट वेळ"
 
-#: ../LocalizedStringsGtk.cpp:554
+#: ../LocalizedStringsGtk.cpp:579
 msgid "timeline slider thumb"
 msgstr "टाइमलाइन स्लाइडर थंब"
 
-#: ../LocalizedStringsGtk.cpp:556
+#: ../LocalizedStringsGtk.cpp:581
 msgid "back 30 seconds"
 msgstr "मागे 30 सेकंद"
 
-#: ../LocalizedStringsGtk.cpp:558
+#: ../LocalizedStringsGtk.cpp:583
 msgid "return to realtime"
 msgstr "रिअलटाइमकडे जा"
 
-#: ../LocalizedStringsGtk.cpp:560
+#: ../LocalizedStringsGtk.cpp:585
 msgid "elapsed time"
 msgstr "गेलेला वेळ"
 
-#: ../LocalizedStringsGtk.cpp:562
+#: ../LocalizedStringsGtk.cpp:587
 msgid "remaining time"
 msgstr "उर्वरित वेळ"
 
-#: ../LocalizedStringsGtk.cpp:564
+#: ../LocalizedStringsGtk.cpp:589
 msgid "status"
 msgstr "स्थिती"
 
-#: ../LocalizedStringsGtk.cpp:566
+#: ../LocalizedStringsGtk.cpp:591
 msgid "enter fullscreen"
 msgstr "पडदाभर वापर करा"
 
-#: ../LocalizedStringsGtk.cpp:568
+#: ../LocalizedStringsGtk.cpp:593
 msgid "exit fullscreen"
 msgstr "पडदाभरपासून बाहेर पडा"
 
-#: ../LocalizedStringsGtk.cpp:570
+#: ../LocalizedStringsGtk.cpp:595
 msgid "fast forward"
 msgstr "फास्ट फॉरवर्ड"
 
-#: ../LocalizedStringsGtk.cpp:572
+#: ../LocalizedStringsGtk.cpp:597
 msgid "fast reverse"
 msgstr "फास्ट रिव्हर्स्"
 
-#: ../LocalizedStringsGtk.cpp:574
+#: ../LocalizedStringsGtk.cpp:599
 msgid "show closed captions"
 msgstr "क्लोस्ड कॅपशन्स् दाखवा"
 
-#: ../LocalizedStringsGtk.cpp:576
+#: ../LocalizedStringsGtk.cpp:601
 msgid "hide closed captions"
 msgstr "क्लोस्ड् कॅप्शन्स् लपवा"
 
-#: ../LocalizedStringsGtk.cpp:578
+#: ../LocalizedStringsGtk.cpp:603
 msgid "media controls"
 msgstr "मिडीया कंट्रोल्स्"
 
-#: ../LocalizedStringsGtk.cpp:587
+#: ../LocalizedStringsGtk.cpp:612
 msgid "audio element playback controls and status display"
 msgstr "ऑडिओ एलिमेंट प्लेबॅक कंट्रोल्स् व स्थिती डिस्पले"
 
-#: ../LocalizedStringsGtk.cpp:589
+#: ../LocalizedStringsGtk.cpp:614
 msgid "video element playback controls and status display"
 msgstr "व्हिडीओ एलिमेंट प्लेबॅक कंट्रोल्स् व स्थिती डिस्पले"
 
-#: ../LocalizedStringsGtk.cpp:591
+#: ../LocalizedStringsGtk.cpp:616
 msgid "mute audio tracks"
 msgstr "ऑडिओ ट्रॅक्स् मंद करा"
 
-#: ../LocalizedStringsGtk.cpp:593
+#: ../LocalizedStringsGtk.cpp:618
 msgid "unmute audio tracks"
 msgstr "ऑडिओ ट्रॅक्स् मंद अशक्य करा"
 
-#: ../LocalizedStringsGtk.cpp:595
+#: ../LocalizedStringsGtk.cpp:620
 msgid "begin playback"
 msgstr "प्लेबॅक सुरू करा"
 
-#: ../LocalizedStringsGtk.cpp:597
+#: ../LocalizedStringsGtk.cpp:622
 msgid "pause playback"
 msgstr "प्लेबॅक थांबवा"
 
-#: ../LocalizedStringsGtk.cpp:599
+#: ../LocalizedStringsGtk.cpp:624
 msgid "movie time scrubber"
 msgstr "चित्रपट वेळ स्क्रुबर"
 
-#: ../LocalizedStringsGtk.cpp:601
+#: ../LocalizedStringsGtk.cpp:626
 msgid "movie time scrubber thumb"
 msgstr "चित्रपट वेळ स्क्रुबर थंब"
 
-#: ../LocalizedStringsGtk.cpp:603
+#: ../LocalizedStringsGtk.cpp:628
 msgid "seek movie back 30 seconds"
 msgstr "सीक मुव्हि मागे 30 सेकंद"
 
-#: ../LocalizedStringsGtk.cpp:605
+#: ../LocalizedStringsGtk.cpp:630
 msgid "return streaming movie to real time"
 msgstr "स्ट्रिमिंग मुव्हि ते रिअल टाइम पुरवा"
 
-#: ../LocalizedStringsGtk.cpp:607
+#: ../LocalizedStringsGtk.cpp:632
 msgid "current movie time in seconds"
 msgstr "सध्याचे सेकंदातील मुव्हि वेळ"
 
-#: ../LocalizedStringsGtk.cpp:609
+#: ../LocalizedStringsGtk.cpp:634
 msgid "number of seconds of movie remaining"
 msgstr "उर्वरित चित्रपटकरीता सेकंदातील वेळ"
 
-#: ../LocalizedStringsGtk.cpp:611
+#: ../LocalizedStringsGtk.cpp:636
 msgid "current movie status"
 msgstr "चित्रपटची सध्याची स्थिती"
 
-#: ../LocalizedStringsGtk.cpp:613
+#: ../LocalizedStringsGtk.cpp:638
 msgid "seek quickly back"
 msgstr "पटकन मागे सीक करा"
 
-#: ../LocalizedStringsGtk.cpp:615
+#: ../LocalizedStringsGtk.cpp:640
 msgid "seek quickly forward"
 msgstr "पटकन पुढे सीक करा"
 
-#: ../LocalizedStringsGtk.cpp:617
+#: ../LocalizedStringsGtk.cpp:642
 msgid "Play movie in fullscreen mode"
 msgstr "चित्रपटला पडदाभर मोडमध्ये चालवा"
 
-#: ../LocalizedStringsGtk.cpp:619
+#: ../LocalizedStringsGtk.cpp:644
 msgid "Exit fullscreen mode"
 msgstr "पडदाभर मोडपासून बाहेर पडा"
 
-#: ../LocalizedStringsGtk.cpp:621
+#: ../LocalizedStringsGtk.cpp:646
 msgid "start displaying closed captions"
 msgstr "बंद कॅपशन्स् दाखवायला सुरू करा"
 
-#: ../LocalizedStringsGtk.cpp:623
+#: ../LocalizedStringsGtk.cpp:648
 msgid "stop displaying closed captions"
 msgstr "बंद कॅपशन्स् दाखवणे बंद करा"
 
-#: ../LocalizedStringsGtk.cpp:632
+#: ../LocalizedStringsGtk.cpp:657
 msgid "indefinite time"
 msgstr "अमर्यादीत वेळ"
 
-#: ../LocalizedStringsGtk.cpp:662
+#: ../LocalizedStringsGtk.cpp:687
 msgid "value missing"
 msgstr "मूल्य आढळले नाही"
 
-#: ../LocalizedStringsGtk.cpp:698
+#: ../LocalizedStringsGtk.cpp:723
 msgid "type mismatch"
 msgstr "टाइप जुळले नाही"
 
-#: ../LocalizedStringsGtk.cpp:721
+#: ../LocalizedStringsGtk.cpp:746
 msgid "pattern mismatch"
 msgstr "पॅटर्न जुळले नाही"
 
-#: ../LocalizedStringsGtk.cpp:726
+#: ../LocalizedStringsGtk.cpp:751
 msgid "too long"
 msgstr "खूपच लांब"
 
-#: ../LocalizedStringsGtk.cpp:731
+#: ../LocalizedStringsGtk.cpp:756
 msgid "range underflow"
 msgstr "रेंज अंडरफ्लो"
 
-#: ../LocalizedStringsGtk.cpp:736
+#: ../LocalizedStringsGtk.cpp:761
 msgid "range overflow"
 msgstr "रेंज ओव्हरफ्लो"
 
-#: ../LocalizedStringsGtk.cpp:741
+#: ../LocalizedStringsGtk.cpp:766
 msgid "step mismatch"
 msgstr "स्टेप जुळले नाही"
 
-#: ../LocalizedStringsGtk.cpp:746
+#: ../LocalizedStringsGtk.cpp:771
 msgid "Unacceptable TLS certificate"
 msgstr "अस्वीकार्य TLS प्रमाणपत्र"
 
-#: ../LocalizedStringsGtk.cpp:763
+#: ../LocalizedStringsGtk.cpp:788
 msgctxt "Closed Captions"
 msgid "Menu section heading for closed captions"
 msgstr "बंद कॅपशन्सकरीता मेन्यु विभाग शीर्षक"
 
-#: ../LocalizedStringsGtk.cpp:768
+#: ../LocalizedStringsGtk.cpp:793
 msgctxt "Subtitles"
 msgid "Menu section heading for subtitles"
 msgstr "उपशीर्षककरीता मेन्यु विभाग"
 
-#: ../LocalizedStringsGtk.cpp:773
+#: ../LocalizedStringsGtk.cpp:798
 msgctxt "Off"
 msgid "Menu item label for the track that represents disabling closed captions"
 msgstr ""
 "ट्रॅककरिता मेन्यु घटकाचे लेबल जे अकार्यान्वित बंद कॅपशन्सचे प्रतिनिधित्व करते"
 
-#: ../LocalizedStringsGtk.cpp:778
+#: ../LocalizedStringsGtk.cpp:803
 msgctxt "No label"
 msgid "Menu item label for a closed captions track that has no other name"
 msgstr "इतर नाव नसणाऱ्या बंद कॅपशन्सकरीता मेन्यु घटकाचे लेबल"
 
-#: ../LocalizedStringsGtk.cpp:784
+#: ../LocalizedStringsGtk.cpp:809
 msgctxt "Snapshotted Plug-In"
 msgid "Title of the label to show on a snapshotted plug-in"
 msgstr "स्नॅपशॉटेड प्लगइनवरील दाखवण्याजोगी लेबलचे शीर्षक"
 
-#: ../LocalizedStringsGtk.cpp:789
+#: ../LocalizedStringsGtk.cpp:814
 msgctxt "Click to restart"
 msgid "Subtitle of the label to show on a snapshotted plug-in"
 msgstr "स्नॅपशॉटेड प्लगइनवरील दाखवण्याजोगी लेबलचे उपशीर्षक"
@@ -674,7 +694,7 @@ msgid "Progress"
 msgstr "प्रगती"
 
 #: ../../../../WebKit/gtk/webkit/webkitdownload.cpp:340
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:171
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:176
 msgid "Determines the current progress of the download"
 msgstr "डाऊनलोडची सध्याची प्रगती ओळखतो"
 
@@ -1862,40 +1882,40 @@ msgid ""
 "Cannot determine destination URI for download with suggested filename %s"
 msgstr "शिफारसीय फाइलना %s सह डाउनलोडकरीता लक्ष्य URI ओळखणे अशक्य आहे"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:139
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:144
 msgid "Destination"
 msgstr "लक्ष्य"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:140
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:145
 msgid "The local URI to where the download will be saved"
 msgstr "डाउनलोड जाथे साठवले जाईल ते स्थानीय URI"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:152
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:157
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebResource.cpp:122
 msgid "Response"
 msgstr "प्रतिसाद"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:153
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:158
 msgid "The response of the download"
 msgstr "डाउनलोडचे प्रतिसाद"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:170
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:175
 msgid "Estimated Progress"
 msgstr "अंदाजे प्रगती"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitFaviconDatabase.cpp:141
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFaviconDatabase.cpp:255
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFaviconDatabase.cpp:319
 #, c-format
 msgid "Unknown favicon for page %s"
 msgstr "पान %s करीता अपरिचीत फॅविकॉन"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitFaviconDatabase.cpp:147
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFaviconDatabase.cpp:251
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFaviconDatabase.cpp:275
 #, c-format
 msgid "Page %s does not have a favicon"
 msgstr "पान %s कडे फॅविकॉन नाही"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFaviconDatabase.cpp:247
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFaviconDatabase.cpp:269
 msgid "Favicons database not initialized yet"
 msgstr "फॅविकॉन डाटाबेस अजूनही सुरू केले नाही"
 
@@ -2316,12 +2336,12 @@ msgstr "ॲक्सिलरेटेड 2D कँवास सुरू कर
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1118
 msgid "Write console messages on stdout"
-msgstr "stdout वर कंसोल संदेश लिहा"
+msgstr "stdoutवर कंसोल संदेश लिहा"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1119
 #| msgid "Whether to load site icons ignoring image load setting."
 msgid "Whether to write console messages on stdout"
-msgstr "stdout वर कंसोल संदेश लिहायचे किंवा नाही"
+msgstr "stdoutवर कंसोल संदेश लिहायचे किंवा नाही"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:100
 msgid "The URI for which the response was made."
@@ -2378,12 +2398,12 @@ msgstr "दृष्यकरीता वेब संदर्भ"
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:631
 #| msgid "WebView"
 msgid "WebView Group"
-msgstr "WebView गट"
+msgstr "वेबव्युऊ ग्रुप"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:632
 #| msgid "The device pixel ratio of the viewport."
 msgid "The WebKitWebViewGroup of the view"
-msgstr "अवलोकनचे WebKitWebViewGroup"
+msgstr "दृष्यचे WebKitWebViewGroup"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:646
 msgid "Main frame document title"
@@ -2421,13 +2441,13 @@ msgstr "दृष्य पान लोड करत आहे किंवा"
 msgid "The view mode to display the web view contents"
 msgstr "वेब दृष्य अंतर्भुत माहिती दाखवण्याकरीता दृष्य मोड"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:2512
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:2472
 msgid "An exception was raised in JavaScript"
 msgstr "जावास्क्रिप्टमध्ये अपवाद आढळले"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:3041
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:2950
 msgid "There was an error creating the snapshot"
-msgstr "स्नॅपशॉट निर्माण करतेवेळी त्रुटी आढळली"
+msgstr "स्नॅपशॉट निर्माण करतेवेली त्रुटी आढळली"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:209
 msgid "Geometry"
