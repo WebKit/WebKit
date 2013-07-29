@@ -43,7 +43,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{5B3A6DB8-1E7E-40D7-92B9-DA8AAE619FAD}</ProjectGuid>
+    <ProjectGuid>{74D9486C-8F75-46FD-B2B7-6142E09AE3A8}</ProjectGuid>
     <RootNamespace>compiler</RootNamespace>
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
@@ -123,140 +123,29 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <ItemGroup>
-    <ClCompile Include="..\src\compiler\BuiltInFunctionEmulator.cpp" />
     <ClCompile Include="..\src\compiler\CodeGenGLSL.cpp" />
-    <ClCompile Include="..\src\compiler\Compiler.cpp" />
-    <ClCompile Include="..\src\compiler\debug.cpp" />
-    <ClCompile Include="..\src\compiler\DetectCallDepth.cpp" />
     <ClCompile Include="..\src\compiler\DetectDiscontinuity.cpp" />
-    <ClCompile Include="..\src\compiler\Diagnostics.cpp" />
-    <ClCompile Include="..\src\compiler\DirectiveHandler.cpp" />
-    <ClCompile Include="..\src\compiler\ForLoopUnroll.cpp" />
-    <ClCompile Include="..\src\compiler\InfoSink.cpp" />
-    <ClCompile Include="..\src\compiler\Initialize.cpp" />
-    <ClCompile Include="..\src\compiler\InitializeDll.cpp" />
-    <ClCompile Include="..\src\compiler\InitializeParseContext.cpp" />
-    <ClCompile Include="..\src\compiler\Intermediate.cpp" />
-    <ClCompile Include="..\src\compiler\intermOut.cpp" />
-    <ClCompile Include="..\src\compiler\IntermTraverse.cpp" />
-    <ClCompile Include="..\src\compiler\MapLongVariableNames.cpp" />
-    <ClCompile Include="..\src\compiler\ossource_win.cpp" />
     <ClCompile Include="..\src\compiler\OutputESSL.cpp" />
     <ClCompile Include="..\src\compiler\OutputGLSL.cpp" />
     <ClCompile Include="..\src\compiler\OutputGLSLBase.cpp" />
-    <ClCompile Include="..\src\compiler\parseConst.cpp" />
-    <ClCompile Include="..\src\compiler\ParseHelper.cpp" />
-    <ClCompile Include="..\src\compiler\PoolAlloc.cpp" />
-    <ClCompile Include="..\src\compiler\preprocessor\DiagnosticsBase.cpp" />
-    <ClCompile Include="..\src\compiler\preprocessor\DirectiveHandlerBase.cpp" />
-    <ClCompile Include="..\src\compiler\preprocessor\DirectiveParser.cpp" />
-    <ClCompile Include="..\src\compiler\preprocessor\ExpressionParser.cpp" />
-    <ClCompile Include="..\src\compiler\preprocessor\Input.cpp" />
-    <ClCompile Include="..\src\compiler\preprocessor\Lexer.cpp" />
-    <ClCompile Include="..\src\compiler\preprocessor\Macro.cpp" />
-    <ClCompile Include="..\src\compiler\preprocessor\MacroExpander.cpp" />
-    <ClCompile Include="..\src\compiler\preprocessor\Preprocessor.cpp" />
-    <ClCompile Include="..\src\compiler\preprocessor\Token.cpp" />
-    <ClCompile Include="..\src\compiler\preprocessor\Tokenizer.cpp" />
-    <ClCompile Include="..\src\compiler\QualifierAlive.cpp" />
-    <ClCompile Include="..\src\compiler\RemoveTree.cpp" />
     <ClCompile Include="..\src\compiler\SearchSymbol.cpp" />
-    <ClCompile Include="..\src\compiler\ShaderLang.cpp" />
-    <ClCompile Include="..\src\compiler\SymbolTable.cpp" />
     <ClCompile Include="..\src\compiler\TranslatorESSL.cpp" />
     <ClCompile Include="..\src\compiler\TranslatorGLSL.cpp" />
     <ClCompile Include="..\src\compiler\UnfoldShortCircuit.cpp" />
     <ClCompile Include="..\src\compiler\Uniform.cpp" />
-    <ClCompile Include="..\src\compiler\util.cpp" />
-    <ClCompile Include="..\src\compiler\ValidateLimitations.cpp" />
-    <ClCompile Include="..\src\compiler\VariableInfo.cpp" />
-    <ClCompile Include="..\src\compiler\VariablePacker.cpp" />
-    <ClCompile Include="..\src\compiler\glslang_lex.cpp" />
-    <ClCompile Include="..\src\compiler\glslang_tab.cpp" />
-    <ClCompile Include="..\src\compiler\depgraph\DependencyGraph.cpp" />
-    <ClCompile Include="..\src\compiler\depgraph\DependencyGraphBuilder.cpp" />
-    <ClCompile Include="..\src\compiler\depgraph\DependencyGraphOutput.cpp" />
-    <ClCompile Include="..\src\compiler\depgraph\DependencyGraphTraverse.cpp" />
-    <ClCompile Include="..\src\compiler\timing\RestrictFragmentShaderTiming.cpp" />
-    <ClCompile Include="..\src\compiler\timing\RestrictVertexShaderTiming.cpp" />
     <ClCompile Include="..\src\compiler\VersionGLSL.cpp" />
-    <ClCompile Include="..\src\third_party\compiler\ArrayBoundsClamper.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="..\src\compiler\glslang.l">
-    </CustomBuild>
-    <CustomBuild Include="..\src\compiler\glslang.y">
-    </CustomBuild>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\src\compiler\BaseTypes.h" />
-    <ClInclude Include="..\src\compiler\BuiltInFunctionEmulator.h" />
-    <ClInclude Include="..\src\compiler\Common.h" />
-    <ClInclude Include="..\src\compiler\ConstantUnion.h" />
-    <ClInclude Include="..\src\compiler\debug.h" />
-    <ClInclude Include="..\src\compiler\DetectCallDepth.h" />
     <ClInclude Include="..\src\compiler\DetectDiscontinuity.h" />
-    <ClInclude Include="..\src\compiler\Diagnostics.h" />
-    <ClInclude Include="..\src\compiler\DirectiveHandler.h" />
-    <ClInclude Include="..\src\compiler\ForLoopUnroll.h" />
-    <ClInclude Include="..\src\compiler\HashNames.h" />
-    <ClInclude Include="..\src\compiler\InfoSink.h" />
-    <ClInclude Include="..\src\compiler\Initialize.h" />
-    <ClInclude Include="..\src\compiler\InitializeDll.h" />
-    <ClInclude Include="..\src\compiler\InitializeGlobals.h" />
-    <ClInclude Include="..\src\compiler\InitializeParseContext.h" />
-    <ClInclude Include="..\src\compiler\intermediate.h" />
-    <ClInclude Include="..\src\compiler\localintermediate.h" />
-    <ClInclude Include="..\src\compiler\MapLongVariableNames.h" />
-    <ClInclude Include="..\src\compiler\MMap.h" />
-    <ClInclude Include="..\src\compiler\osinclude.h" />
     <ClInclude Include="..\src\compiler\OutputESSL.h" />
     <ClInclude Include="..\src\compiler\OutputGLSL.h" />
     <ClInclude Include="..\src\compiler\OutputGLSLBase.h" />
-    <ClInclude Include="..\src\compiler\ParseHelper.h" />
-    <ClInclude Include="..\src\compiler\PoolAlloc.h" />
-    <ClInclude Include="..\src\compiler\preprocessor\DiagnosticsBase.h" />
-    <ClInclude Include="..\src\compiler\preprocessor\DirectiveHandlerBase.h" />
-    <ClInclude Include="..\src\compiler\preprocessor\DirectiveParser.h" />
-    <ClInclude Include="..\src\compiler\preprocessor\ExpressionParser.h" />
-    <ClInclude Include="..\src\compiler\preprocessor\Input.h" />
-    <ClInclude Include="..\src\compiler\preprocessor\length_limits.h" />
-    <ClInclude Include="..\src\compiler\preprocessor\Lexer.h" />
-    <ClInclude Include="..\src\compiler\preprocessor\Macro.h" />
-    <ClInclude Include="..\src\compiler\preprocessor\MacroExpander.h" />
-    <ClInclude Include="..\src\compiler\preprocessor\numeric_lex.h" />
-    <ClInclude Include="..\src\compiler\preprocessor\pp_utils.h" />
-    <ClInclude Include="..\src\compiler\preprocessor\Preprocessor.h" />
-    <ClInclude Include="..\src\compiler\preprocessor\SourceLocation.h" />
-    <ClInclude Include="..\src\compiler\preprocessor\Token.h" />
-    <ClInclude Include="..\src\compiler\preprocessor\Tokenizer.h" />
-    <ClInclude Include="..\src\compiler\QualifierAlive.h" />
-    <ClInclude Include="..\src\compiler\RemoveTree.h" />
-    <ClInclude Include="..\src\compiler\RenameFunction.h" />
-    <ClInclude Include="..\include\GLSLANG\ShaderLang.h" />
     <ClInclude Include="..\src\compiler\SearchSymbol.h" />
-    <ClInclude Include="..\src\compiler\ShHandle.h" />
-    <ClInclude Include="..\src\compiler\SymbolTable.h" />
     <ClInclude Include="..\src\compiler\TranslatorESSL.h" />
     <ClInclude Include="..\src\compiler\TranslatorGLSL.h" />
-    <ClInclude Include="..\src\compiler\Types.h" />
     <ClInclude Include="..\src\compiler\UnfoldShortCircuit.h" />
     <ClInclude Include="..\src\compiler\Uniform.h" />
-    <ClInclude Include="..\src\compiler\util.h" />
-    <ClInclude Include="..\src\compiler\ValidateLimitations.h" />
-    <ClInclude Include="..\src\compiler\VariableInfo.h" />
-    <ClInclude Include="..\src\compiler\VariablePacker.h" />
-    <ClInclude Include="..\src\compiler\glslang_tab.h" />
-    <ClInclude Include="..\src\compiler\timing\RestrictFragmentShaderTiming.h" />
-    <ClInclude Include="..\src\compiler\timing\RestrictVertexShaderTiming.h" />
-    <ClInclude Include="..\src\compiler\depgraph\DependencyGraph.h" />
-    <ClInclude Include="..\src\compiler\depgraph\DependencyGraphBuilder.h" />
-    <ClInclude Include="..\src\compiler\depgraph\DependencyGraphOutput.h" />
     <ClInclude Include="..\src\compiler\VersionGLSL.h" />
-    <ClInclude Include="..\src\third_party\compiler\ArrayBoundsClamper.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\src\compiler\preprocessor\Tokenizer.l" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

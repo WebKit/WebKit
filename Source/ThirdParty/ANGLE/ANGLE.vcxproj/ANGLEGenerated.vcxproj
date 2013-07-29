@@ -111,27 +111,21 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <NMakeOutput>
     </NMakeOutput>
-    <NMakePreprocessorDefinitions>WIN32;NDEBUG;</NMakePreprocessorDefinitions>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <NMakeOutput />
-    <NMakePreprocessorDefinitions>WIN32;NDEBUG;</NMakePreprocessorDefinitions>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">
     <NMakeOutput />
-    <NMakePreprocessorDefinitions>WIN32;NDEBUG;</NMakePreprocessorDefinitions>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|x64'">
     <NMakeOutput />
-    <NMakePreprocessorDefinitions>WIN32;NDEBUG;</NMakePreprocessorDefinitions>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">
     <NMakeOutput />
-    <NMakePreprocessorDefinitions>WIN32;NDEBUG;</NMakePreprocessorDefinitions>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Production|x64'">
     <NMakeOutput />
-    <NMakePreprocessorDefinitions>WIN32;NDEBUG;</NMakePreprocessorDefinitions>
   </PropertyGroup>
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>

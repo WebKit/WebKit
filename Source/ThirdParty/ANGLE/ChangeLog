@@ -1,3 +1,30 @@
+2013-07-29  Alex Christensen  <achristensen@apple.com>
+
+        Separated translator into preprocessor, translator_common,
+        translator_hlsl (for libGLESv2), and translator_glsl
+        (for ANGLEWebKitBridge).
+        https://bugs.webkit.org/show_bug.cgi?id=119221
+
+        Reviewed by Brent Fulgham.
+
+        * ANGLE.vcxproj/ANGLEGenerated.vcxproj:
+        Removed unused preprocessor definitions.
+        * ANGLE.vcxproj/libEGL.vcxproj:
+        * ANGLE.vcxproj/libGLESv2.vcxproj:
+        Removed dependency on removed translator project.
+        * ANGLE.vcxproj/libGLESv2Common.props:
+        Link to translator_hlsl libraries.
+        * ANGLE.vcxproj/preprocessor.vcxproj: Added.
+        * ANGLE.vcxproj/preprocessor.vcxproj.filters: Added.
+        * ANGLE.vcxproj/translator.vcxproj: Removed.
+        * ANGLE.vcxproj/translator.vcxproj.filters: Removed.
+        * ANGLE.vcxproj/translator_common.vcxproj: Added.
+        * ANGLE.vcxproj/translator_common.vcxproj.filters: Added.
+        * ANGLE.vcxproj/translator_glsl.vcxproj: Added.
+        * ANGLE.vcxproj/translator_glsl.vcxproj.filters: Added.
+        * ANGLE.vcxproj/translator_hlsl.vcxproj: Added.
+        * ANGLE.vcxproj/translator_hlsl.vcxproj.filters: Added.
+
 2013-07-26  Alex Christensen  <achristensen@apple.com>
 
         Added module definition file for building libEGL.

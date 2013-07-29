@@ -320,11 +320,6 @@
   <ItemGroup>
     <ResourceCompile Include="..\src\libGLESv2\libGLESv2.rc" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="translator.vcxproj">
-      <Project>{5b3a6db8-1e7e-40d7-92b9-da8aae619fad}</Project>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

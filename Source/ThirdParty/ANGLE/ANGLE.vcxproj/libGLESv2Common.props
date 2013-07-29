@@ -9,7 +9,7 @@
     </ClCompile>
     <Link>
       <ModuleDefinitionFile>../src/libGLESv2/libGLESv2.def</ModuleDefinitionFile>
-      <AdditionalDependencies>d3d9.lib;dxguid.lib;translator.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d9.lib;dxguid.lib;translator_common.lib;translator_hlsl.lib;preprocessor.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(DXSDK_DIR)Lib\$(PlatformShortName)\;$(CONFIGURATIONBUILDDIR)\lib$(PlatformArchitecture)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>

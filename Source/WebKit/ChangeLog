@@ -1,3 +1,15 @@
+2013-07-29  Alex Christensen  <achristensen@apple.com>
+
+        Separated translator into preprocessor, translator_common,
+        translator_hlsl (for libGLESv2), and translator_glsl (for ANGLEWebKitBridge).
+        These projects are still not built by default.
+        https://bugs.webkit.org/show_bug.cgi?id=119221
+
+        Reviewed by Brent Fulgham.
+
+        * WebKit.vcxproj/WebKit.sln:
+        Added separate ANGLE translator projects.
+
 2013-07-25  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed build fix, AppleWin port.
