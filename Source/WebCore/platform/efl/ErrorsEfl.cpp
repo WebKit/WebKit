@@ -38,37 +38,37 @@ namespace WebCore {
 
 ResourceError cancelledError(const ResourceRequest& request)
 {
-    return ResourceError(errorDomainNetwork, NetworkErrorCancelled, request.url().string(), "Load request cancelled");
+    return ResourceError(errorDomainNetwork, NetworkErrorCancelled, request.url().string(), ASCIILiteral("Load request cancelled"));
 }
 
 ResourceError blockedError(const ResourceRequest& request)
 {
-    return ResourceError(errorDomainPolicy, PolicyErrorCannotUseRestrictedPort, request.url().string(), "Not allowed to use restricted network port");
+    return ResourceError(errorDomainPolicy, PolicyErrorCannotUseRestrictedPort, request.url().string(), ASCIILiteral("Not allowed to use restricted network port"));
 }
 
 ResourceError cannotShowURLError(const ResourceRequest& request)
 {
-    return ResourceError(errorDomainPolicy, PolicyErrorCannotShowURL, request.url().string(), "URL cannot be shown");
+    return ResourceError(errorDomainPolicy, PolicyErrorCannotShowURL, request.url().string(), ASCIILiteral("URL cannot be shown"));
 }
 
 ResourceError interruptedForPolicyChangeError(const ResourceRequest& request)
 {
-    return ResourceError(errorDomainPolicy, PolicyErrorFrameLoadInterruptedByPolicyChange, request.url().string(), "Frame load was interrupted");
+    return ResourceError(errorDomainPolicy, PolicyErrorFrameLoadInterruptedByPolicyChange, request.url().string(), ASCIILiteral("Frame load was interrupted"));
 }
 
 ResourceError cannotShowMIMETypeError(const ResourceResponse& response)
 {
-    return ResourceError(errorDomainPolicy, PolicyErrorCannotShowMimeType, response.url().string(), "Content with the specified MIME type cannot be shown");
+    return ResourceError(errorDomainPolicy, PolicyErrorCannotShowMimeType, response.url().string(), ASCIILiteral("Content with the specified MIME type cannot be shown"));
 }
 
 ResourceError fileDoesNotExistError(const ResourceResponse& response)
 {
-    return ResourceError(errorDomainNetwork, NetworkErrorFileDoesNotExist, response.url().string(), "File does not exist");
+    return ResourceError(errorDomainNetwork, NetworkErrorFileDoesNotExist, response.url().string(), ASCIILiteral("File does not exist"));
 }
 
 ResourceError pluginWillHandleLoadError(const ResourceResponse& response)
 {
-    return ResourceError(errorDomainPlugin, PluginErrorWillHandleLoad, response.url().string(), "Plugin will handle load");
+    return ResourceError(errorDomainPlugin, PluginErrorWillHandleLoad, response.url().string(), ASCIILiteral("Plugin will handle load"));
 }
 
 ResourceError downloadNetworkError(const ResourceError& networkError)
@@ -78,7 +78,7 @@ ResourceError downloadNetworkError(const ResourceError& networkError)
 
 ResourceError downloadCancelledByUserError(const ResourceResponse& response)
 {
-    return ResourceError(errorDomainDownload, DownloadErrorCancelledByUser, response.url().string(), "User cancelled the download");
+    return ResourceError(errorDomainDownload, DownloadErrorCancelledByUser, response.url().string(), ASCIILiteral("User cancelled the download"));
 }
 
 ResourceError downloadDestinationError(const ResourceResponse& response, const String& errorMessage)
@@ -97,14 +97,14 @@ ResourceError printerNotFoundError(const PrintContext* printContext)
 {
     DocumentLoader* documentLoader = printContext->frame()->loader()->documentLoader();
 
-    return ResourceError(errorDomainPrint, PrintErrorPrinterNotFound, documentLoader ? documentLoader->url() : KURL(), "Printer not found");
+    return ResourceError(errorDomainPrint, PrintErrorPrinterNotFound, documentLoader ? documentLoader->url() : KURL(), ASCIILiteral("Printer not found"));
 }
 
 ResourceError invalidPageRangeToPrint(const PrintContext* printContext)
 {
     DocumentLoader* documentLoader = printContext->frame()->loader()->documentLoader();
 
-    return ResourceError(errorDomainPrint, PrintErrorInvalidPageRange, documentLoader ? documentLoader->url() : KURL(), "Invalid page range");
+    return ResourceError(errorDomainPrint, PrintErrorInvalidPageRange, documentLoader ? documentLoader->url() : KURL(), ASCIILiteral("Invalid page range"));
 }
 
 } // namespace WebCore

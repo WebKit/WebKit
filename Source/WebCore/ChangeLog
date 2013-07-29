@@ -1,3 +1,26 @@
+2013-07-29  Kwang Yul Seo  <skyul@company100.net>
+
+        [EFL] Improve string use in ErrorsEfl
+        https://bugs.webkit.org/show_bug.cgi?id=119207
+
+        Reviewed by Christophe Dumez.
+
+        Use ASCIILiteral for constant strings becoming WTFStrings.
+
+        No behavior change.
+
+        * platform/efl/ErrorsEfl.cpp:
+        (WebCore::cancelledError):
+        (WebCore::blockedError):
+        (WebCore::cannotShowURLError):
+        (WebCore::interruptedForPolicyChangeError):
+        (WebCore::cannotShowMIMETypeError):
+        (WebCore::fileDoesNotExistError):
+        (WebCore::pluginWillHandleLoadError):
+        (WebCore::downloadCancelledByUserError):
+        (WebCore::printerNotFoundError):
+        (WebCore::invalidPageRangeToPrint):
+
 2013-07-28  Andreas Kling  <akling@apple.com>
 
         Don't update the text track override CSS every time a media element is created.
