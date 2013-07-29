@@ -108,12 +108,10 @@ protected:
 #endif
 };
 
-#if !USE(COORDINATED_GRAPHICS)
 inline bool LayerTreeHost::supportsAcceleratedCompositing()
 {
     return true;
 }
-#endif
 
 } // namespace WebKit
 

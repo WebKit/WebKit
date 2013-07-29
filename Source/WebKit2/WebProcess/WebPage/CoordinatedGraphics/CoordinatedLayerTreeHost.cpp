@@ -371,11 +371,6 @@ PassRefPtr<CoordinatedSurface> CoordinatedLayerTreeHost::createCoordinatedSurfac
     return WebCoordinatedSurface::create(size, flags);
 }
 
-bool LayerTreeHost::supportsAcceleratedCompositing()
-{
-    return true;
-}
-
 void CoordinatedLayerTreeHost::deviceOrPageScaleFactorChanged()
 {
     m_coordinator->deviceOrPageScaleFactorChanged();

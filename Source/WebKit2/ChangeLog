@@ -1,3 +1,14 @@
+2013-07-29  Jae Hyun Park  <jae.park@company100.net>
+
+        Remove duplicated LayerTreeHost::supportsAcceleratedCompositing
+        https://bugs.webkit.org/show_bug.cgi?id=118949
+
+        Reviewed by Noam Rosenthal.
+
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp:
+        * WebProcess/WebPage/LayerTreeHost.h:
+        (WebKit::LayerTreeHost::supportsAcceleratedCompositing):
+
 2013-07-29  Zan Dobersek  <zdobersek@igalia.com>
 
         [Automake] Remove references to non-existent *_CFLAGS and *_LIBS variables
