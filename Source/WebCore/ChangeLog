@@ -1,5 +1,18 @@
 2013-07-29  Alex Christensen  <achristensen@apple.com>
 
+        Moved GLTransportSurface.h and .cpp out of efl-specific directory.
+        https://bugs.webkit.org/show_bug.cgi?id=119163
+
+        Reviewed by Alexis Menard.
+
+        * PlatformEfl.cmake: Changed directory of GLTransportSurface.cpp.
+        * platform/graphics/surfaces/GLTransportSurface.cpp: Copied from WebCore/platform/graphics/surfaces/efl/GLTransportSurface.cpp.
+        * platform/graphics/surfaces/GLTransportSurface.h: Copied from WebCore/platform/graphics/surfaces/efl/GLTransportSurface.h.
+        * platform/graphics/surfaces/efl/GLTransportSurface.cpp: Removed.
+        * platform/graphics/surfaces/efl/GLTransportSurface.h: Removed.
+
+2013-07-29  Alex Christensen  <achristensen@apple.com>
+
         Speculative implementation of missing GraphicsContext3D methods on Windows.
         https://bugs.webkit.org/show_bug.cgi?id=119167
 
