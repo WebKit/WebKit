@@ -881,6 +881,7 @@ class Port(object):
             'LD_LIBRARY_PATH',
             'DBUS_SESSION_BUS_ADDRESS',
             'XDG_DATA_DIRS',
+            'XDG_RUNTIME_DIR',
 
             # Darwin:
             'DYLD_LIBRARY_PATH',

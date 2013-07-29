@@ -29,10 +29,12 @@
 import os
 import subprocess
 
+from webkitpy.common.memoized import memoized
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration
 from webkitpy.port.base import Port
 from webkitpy.port.pulseaudio_sanitizer import PulseAudioSanitizer
 from webkitpy.port.xvfbdriver import XvfbDriver
+from webkitpy.port.westondriver import WestonDriver
 
 
 class GtkPort(Port):
@@ -48,7 +50,10 @@ class GtkPort(Port):
     def _port_flag_for_scripts(self):
         return "--gtk"
 
+    @memoized
     def _driver_class(self):
+        if os.environ.get("WAYLAND_DISPLAY"):
+            return WestonDriver
         return XvfbDriver
 
     def default_timeout_ms(self):
@@ -128,7 +133,7 @@ class GtkPort(Port):
         self._run_script("run-launcher", run_launcher_args)
 
     def check_sys_deps(self, needs_http):
-        return super(GtkPort, self).check_sys_deps(needs_http) and XvfbDriver.check_xvfb(self)
+        return super(GtkPort, self).check_sys_deps(needs_http) and self._driver_class().check_driver(self)
 
     def _get_gdb_output(self, coredump_path):
         cmd = ['gdb', '-ex', 'thread apply all bt 1024', '--batch', str(self._path_to_driver()), coredump_path]

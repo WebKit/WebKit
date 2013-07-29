@@ -1,3 +1,37 @@
+2013-07-29  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Add WestonDriver, use it when appropriate
+        https://bugs.webkit.org/show_bug.cgi?id=119100
+
+        Reviewed by Dirk Pranke.
+
+        Introduce the WestonDriver, a Driver-implementing class that sets up an instance of Weston, the Wayland compositor,
+        and sets up an environment that enables the test runner to run inside it.
+
+        The design very much mimics the XvfbDriver class. It is currently used by the GTK port when the WAYLAND_DISPLAY
+        environment variable is set, that is when NRWT is being run under a Wayland display.
+
+        * Scripts/webkitpy/port/base.py:
+        (Port.to.setup_environ_for_server): Also copy the XDG_RUNTIME_DIR env from the original environment for Linux-using ports.
+        * Scripts/webkitpy/port/gtk.py:
+        (GtkPort):
+        (GtkPort._driver_class): Make the method memoized - the display type is not going to change during the testing, so we
+        should only check once for the presence of the WAYLAND_DISPLAY env and determine the proper driver class to use based on that.
+        (GtkPort.check_sys_deps): Call the static check_driver method on the class as returned by the _driver_class method
+        instead of hard-coding the XvfbDriver class in the check.
+        * Scripts/webkitpy/port/westondriver.py: Added.
+        (WestonDriver):
+        (WestonDriver.check_driver): Similarly to XvfbDriver, this checks for existance of the weston executable.
+        (WestonDriver.__init__): Again, like in XvfbDriver, we use a small delay between launching the Weston display and launching the driver.
+        (WestonDriver._start): Sets up the driver-specific temporary directory, launches the Weston display, sets up the environment for the
+        driver and then launches the driver in said environment, using the driver's Weston display.
+        (WestonDriver.stop): Cleans up the Weston instance and the temporary directory.
+        (WestonDriver._ensure_driver_tmpdir_subdirectory): A helper function that creates a subdirectory in the driver's temporary directory
+        and returns the absolute path to it.
+        * Scripts/webkitpy/port/xvfbdriver.py:
+        (XvfbDriver.check_driver): Renamed from check_xvfb.
+        (XvfbDriver._start): Access the FileSystem object through the Port's Host object, instead of the Port's private member.
+
 2013-07-29  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         [ATK] Implement attributesOfChildren() for AccessibilityUIElement
