@@ -1,4 +1,5 @@
 var SubPixelLayout = (function() {
+    var SUBPIXELS_PER_PIXEL = 64;
     var enabled = undefined;
 
     function isEnabled()
@@ -17,10 +18,10 @@ var SubPixelLayout = (function() {
     return {
         isEnabled: isEnabled,
         snapToLayoutUnit: function(f) {
-            return isEnabled() ? Math.floor(f * 64) / 64 : Math.floor(f); // as in LayoutUnit(f).toFloat()
+            return isEnabled() ? Math.floor(f * SUBPIXELS_PER_PIXEL) / SUBPIXELS_PER_PIXEL : Math.floor(f); // as in LayoutUnit(f).toFloat()
         },
         ceilSnapToLayoutUnit: function(f) {
-            return isEnabled() ? Math.ceil(f * 64) / 64 : Math.ceil(f); // see ceiledLayoutUnit(), LayoutUnit.h
+            return isEnabled() ? Math.ceil(f * SUBPIXELS_PER_PIXEL) / SUBPIXELS_PER_PIXEL : Math.ceil(f); // see ceiledLayoutUnit(), LayoutUnit.h
         }
     }
 }());

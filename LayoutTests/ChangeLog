@@ -1,3 +1,27 @@
+2013-07-29  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        [CSS Shapes] New positioning model: update percentage rectangle and inset rectangle tests
+        https://bugs.webkit.org/show_bug.cgi?id=118086
+
+        Reviewed by Dirk Schulze.
+
+        Update percentage based tests to work with the new positioning model.
+        Also move the tests to be W3C spec tests, so they have been impored
+        back here from the CSSWG repo.
+
+        * TestExpectations: Remove skipping for replaced tests.
+        * csswg/submitted/shapes/shape-outside/shape-outside-floats-horizontal-rectangle-003-expected.html: Added.
+        * csswg/submitted/shapes/shape-outside/shape-outside-floats-horizontal-rectangle-003.html: Added.
+        * csswg/submitted/shapes/shape-outside/shape-outside-floats-horizontal-rectangle-004-expected.html: Added.
+        * csswg/submitted/shapes/shape-outside/shape-outside-floats-horizontal-rectangle-004.html: Added.
+        * csswg/submitted/shapes/shape-outside/shape-outside-floats-inset-rectangle-002-expected.html: Added.
+        * csswg/submitted/shapes/shape-outside/shape-outside-floats-inset-rectangle-002.html: Added.
+        * csswg/submitted/shapes/shape-outside/w3c-import.log:
+        * fast/shapes/shape-outside-floats/shape-outside-floats-simple-inset-rectangle-percentage-expected.html: Removed.
+        * fast/shapes/shape-outside-floats/shape-outside-floats-simple-inset-rectangle-percentage.html: Removed.
+        * fast/shapes/shape-outside-floats/shape-outside-floats-simple-rectangle-percentage-expected.html: Removed.
+        * fast/shapes/shape-outside-floats/shape-outside-floats-simple-rectangle-percentage.html: Removed.
+
 2013-07-29  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         [ATK] Implement attributesOfChildren() for AccessibilityUIElement

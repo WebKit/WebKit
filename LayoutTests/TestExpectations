@@ -26,9 +26,6 @@ webkit.org/b/118088 fast/shapes/shape-outside-floats/shape-outside-floats-ellips
 webkit.org/b/118088 fast/shapes/shape-outside-floats/shape-outside-floats-left-margin-polygon.html [ Skip ]
 webkit.org/b/118088 fast/shapes/shape-outside-floats/shape-outside-floats-right-margin-polygon.html [ Skip ]
 
-webkit.org/b/118086 fast/shapes/shape-outside-floats/shape-outside-floats-simple-rectangle-percentage.html [ Skip ]
-webkit.org/b/118086 fast/shapes/shape-outside-floats/shape-outside-floats-simple-inset-rectangle-percentage.html [ Skip ]
-
 webkit.org/b/118087 fast/shapes/shape-outside-floats/shape-outside-floats-stacked.html [ Skip ]
 webkit.org/b/118087 fast/shapes/shape-outside-floats/shape-outside-floats-simple-rectangle-horizontal-multiple.html [ Skip ]
 

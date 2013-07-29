@@ -8,7 +8,7 @@ Then run the Tools/Scripts/import-w3c-tests in Webkit to reimport
 Do NOT modify or remove this file
 
 ------------------------------------------------------------------------
-Last Import: 2013-07-25 9:12
+Last Import: 2013-07-26 15:53
 W3C Mercurial changeset: Not Available
 Test status at time of import: unknown
 ------------------------------------------------------------------------
@@ -55,5 +55,11 @@ List of files:
 /LayoutTests/csswg/submitted/shapes/shape-outside/shape-outside-floats-polygon-001-expected.html
 /LayoutTests/csswg/submitted/shapes/shape-outside/shape-outside-floats-polygon-002.html
 /LayoutTests/csswg/submitted/shapes/shape-outside/shape-outside-floats-polygon-002-expected.html
+/LayoutTests/csswg/submitted/shapes/shape-outside/shape-outside-floats-inset-rectangle-002-expected.html
+/LayoutTests/csswg/submitted/shapes/shape-outside/shape-outside-floats-inset-rectangle-002.html
+/LayoutTests/csswg/submitted/shapes/shape-outside/shape-outside-floats-horizontal-rectangle-003-expected.html
+/LayoutTests/csswg/submitted/shapes/shape-outside/shape-outside-floats-horizontal-rectangle-003.html
+/LayoutTests/csswg/submitted/shapes/shape-outside/shape-outside-floats-horizontal-rectangle-004-expected.html
+/LayoutTests/csswg/submitted/shapes/shape-outside/shape-outside-floats-horizontal-rectangle-004.html
 /LayoutTests/csswg/submitted/shapes/shape-outside/resources/rounded-rectangle.js
 /LayoutTests/csswg/submitted/shapes/shape-outside/resources/subpixel-utils.js
