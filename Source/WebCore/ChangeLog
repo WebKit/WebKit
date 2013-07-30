@@ -1,3 +1,16 @@
+2013-07-30  Simon Hausmann  <simon.hausmann@digia.com>
+
+        [Qt][Win] Extend disabling of whole-program-optimizations to MSVC 2012
+        https://bugs.webkit.org/show_bug.cgi?id=119238
+
+        Reviewed by Jocelyn Turcotte.
+
+        As suggested in https://bugreports.qt-project.org/browse/QTBUG-20556,
+        the WebKit build with MSVC 2012 is affected by the same size
+        limitations.
+
+        * WebCore.pri:
+
 2013-07-30  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         REGRESION(r151091) ASSERTION FAILED: m_readableData || m_writableData
