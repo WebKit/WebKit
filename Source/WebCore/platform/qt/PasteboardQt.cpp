@@ -243,7 +243,6 @@ void Pasteboard::setSelectionMode(bool selectionMode)
 const QMimeData* Pasteboard::readData() const
 {
     ASSERT(!(m_readableData && m_writableData));
-    ASSERT(m_readableData || m_writableData);
     return m_readableData ? m_readableData : m_writableData;
 }
 

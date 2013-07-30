@@ -1,3 +1,17 @@
+2013-07-30  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        REGRESION(r151091) ASSERTION FAILED: m_readableData || m_writableData
+        https://bugs.webkit.org/show_bug.cgi?id=119142
+
+        Reviewed by Jocelyn Turcotte.
+
+        Remove invalid assert.
+
+        Covered by existing tests.
+
+        * platform/qt/PasteboardQt.cpp:
+        (WebCore::Pasteboard::readData):
+
 2013-07-29  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix make distcheck.
