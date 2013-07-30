@@ -1,3 +1,13 @@
+2013-07-30  Patrick Gansterer  <paroga@webkit.org>
+
+        Remove unused Download*.cpp files
+        https://bugs.webkit.org/show_bug.cgi?id=119248
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/Downloads/cfnet/DownloadCFNet.cpp: Removed.
+        * Shared/Downloads/curl/DownloadCurl.cpp: Removed.
+
 2013-07-30  Jeff Miller  <jeffm@apple.com>
 
         Page for WKPageLoaderClient processDidCrash callback always reports a process identifier of 0
