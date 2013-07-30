@@ -133,4 +133,4 @@ class EflPort(Port):
         self._run_script("run-launcher", run_launcher_args)
 
     def check_sys_deps(self, needs_http):
-        return super(EflPort, self).check_sys_deps(needs_http) and XvfbDriver.check_xvfb(self)
+        return super(EflPort, self).check_sys_deps(needs_http) and self._driver_class().check_driver(self)
