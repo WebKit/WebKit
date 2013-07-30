@@ -1,3 +1,13 @@
+2013-07-30  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [GTK] fast/regions/firstletter-inside-flowthread.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=106592
+
+        Unreviewed gardening.
+
+        * platform/gtk/TestExpectations: Unflag test as it is passing without
+        problems now.
+
 2013-07-30  Antoine Quint  <graouts@apple.com>
 
         [Mac] can-read-in-dragstart-event.html and can-read-in-copy-and-cut-events.html fail

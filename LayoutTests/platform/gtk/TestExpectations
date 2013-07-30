@@ -596,8 +596,6 @@ webkit.org/b/104809 fast/dom/beforeload/remove-video-in-beforeload-listener.html
 
 webkit.org/b/106415 fast/workers/worker-close-more.html [ Timeout Pass ]
 
-webkit.org/b/106592 fast/regions/firstletter-inside-flowthread.html [ ImageOnlyFailure Pass ]
-
 webkit.org/b/107258 fast/canvas/2d.text.draw.fill.maxWidth.gradient.html [ Failure Pass ]
 
 webkit.org/b/107194 storage/indexeddb/deletedatabase-delayed-by-open-and-versionchange-workers.html  [ Failure Pass ]
