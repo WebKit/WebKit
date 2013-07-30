@@ -1,3 +1,29 @@
+2013-07-30  Andy Estes  <aestes@apple.com>  
+
+        Content filter replacement data uses the encoding from the blocked page's response headers
+        https://bugs.webkit.org/show_bug.cgi?id=119237
+
+        Reviewed by Darin Adler.
+
+        When a document specifies an encoding in an HTTP response header, or
+        when the embedder specifies an override encoding, and the content filter
+        blocks the document, we interpret the content filter's replacement data
+        using this encoding. This might be the wrong.
+
+        Forget about encodings determined from these sources. The replacement
+        data will specify an encoding in a <meta charset>, so let that be used
+        instead.
+
+        No new tests. We don't currently have a mechanism for testing the
+        content filter from WebKit.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::commitData): Pretend as if no encoding is
+        specified if the content filter blocked the load.
+        (WebCore::DocumentLoader::dataReceived): Stopped calling commitLoad()
+        before early-returning if the content filter needs more data. This isn't
+        necessary.
+
 2013-07-30  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Add 'colno' attribute to ErrorEvent interface

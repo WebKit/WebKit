@@ -782,16 +782,28 @@ void DocumentLoader::commitData(const char* bytes, size_t length)
         if (!isMultipartReplacingLoad())
             frameLoader()->receivedFirstData();
 
-        bool userChosen = true;
-        String encoding = overrideEncoding();
-        if (encoding.isNull()) {
+        bool userChosen;
+        String encoding;
+#if USE(CONTENT_FILTERING)
+        // The content filter's replacement data has a known encoding that might
+        // differ from the response's encoding.
+        if (m_contentFilter && m_contentFilter->didBlockData()) {
+            ASSERT(!m_contentFilter->needsMoreData());
+            userChosen = false;
+        } else
+#endif
+        if (overrideEncoding().isNull()) {
             userChosen = false;
             encoding = response().textEncodingName();
 #if ENABLE(WEB_ARCHIVE)
             if (m_archive && m_archive->type() == Archive::WebArchive)
                 encoding = m_archive->mainResource()->textEncoding();
 #endif
+        } else {
+            userChosen = true;
+            encoding = overrideEncoding();
         }
+
         m_writer.setEncoding(encoding, userChosen);
     }
     ASSERT(m_frame->document()->parsing());
@@ -824,9 +836,8 @@ void DocumentLoader::dataReceived(CachedResource* resource, const char* data, in
 
         if (m_contentFilter->needsMoreData()) {
             // Since the filter still needs more data to make a decision,
-            // transition back to the committed state so that we don't partially
-            // load content that might later be blocked.
-            commitLoad(0, 0);
+            // avoid committing this data to prevent partial rendering of
+            // content that might later be blocked.
             return;
         }
 
