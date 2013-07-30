@@ -1,5 +1,14 @@
 2013-07-30  Antoine Quint  <graouts@apple.com>
 
+        [Mac] can-read-in-dragstart-event.html and can-read-in-copy-and-cut-events.html fail
+        https://bugs.webkit.org/show_bug.cgi?id=113094
+
+        The test can-read-in-copy-and-cut-events.html now passes on mac-wk2.
+
+        * platform/mac/TestExpectations:
+
+2013-07-30  Antoine Quint  <graouts@apple.com>
+
         Mark compositing/patterns tests as passing for mac-wk2
         https://bugs.webkit.org/show_bug.cgi?id=119246
 
