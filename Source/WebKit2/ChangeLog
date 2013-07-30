@@ -1,5 +1,18 @@
 2013-07-30  Tim Horton  <timothy_horton@apple.com>
 
+        Null deref under WebPage::scaledSnapshotWithOptions
+        https://bugs.webkit.org/show_bug.cgi?id=119243
+        <rdar://problem/14502050>
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::scaledSnapshotWithOptions):
+        WebFrame::coreFrame() can be null (if the Frame is already torn down),
+        so we should check it.
+
+2013-07-30  Tim Horton  <timothy_horton@apple.com>
+
         Null deref under PluginView::handlesPageScaleFactor()
         https://bugs.webkit.org/show_bug.cgi?id=119231
         <rdar://problem/14440207>

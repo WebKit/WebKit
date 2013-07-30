@@ -1500,7 +1500,11 @@ void WebPage::showPageBanners()
 
 PassRefPtr<WebImage> WebPage::scaledSnapshotWithOptions(const IntRect& rect, double scaleFactor, SnapshotOptions options)
 {
-    FrameView* frameView = m_mainFrame->coreFrame()->view();
+    Frame* coreFrame = m_mainFrame->coreFrame();
+    if (!coreFrame)
+        return 0;
+
+    FrameView* frameView = coreFrame->view();
     if (!frameView)
         return 0;
 
