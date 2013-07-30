@@ -318,7 +318,7 @@ PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame* frame, PassRefP
     chosePlainText = false;
 
     if (m_dataObject->hasMarkup()) {
-        RefPtr<DocumentFragment> fragment = createFragmentFromMarkup(frame->document(), m_dataObject->markup(), "", DisallowScriptingAndPluginContent);
+        RefPtr<DocumentFragment> fragment = createFragmentFromMarkup(frame->document(), m_dataObject->markup(), emptyString(), DisallowScriptingAndPluginContent);
         if (fragment)
             return fragment.release();
     }
@@ -368,21 +368,21 @@ ListHashSet<String> Pasteboard::types()
 
     ListHashSet<String> types;
     if (m_dataObject->hasText()) {
-        types.add("text/plain");
-        types.add("Text");
-        types.add("text");
+        types.add(ASCIILiteral("text/plain"));
+        types.add(ASCIILiteral("Text"));
+        types.add(ASCIILiteral("text"));
     }
 
     if (m_dataObject->hasMarkup())
-        types.add("text/html");
+        types.add(ASCIILiteral("text/html"));
 
     if (m_dataObject->hasURIList()) {
-        types.add("text/uri-list");
-        types.add("URL");
+        types.add(ASCIILiteral("text/uri-list"));
+        types.add(ASCIILiteral("URL"));
     }
 
     if (m_dataObject->hasFilenames())
-        types.add("Files");
+        types.add(ASCIILiteral("Files"));
 
     return types;
 }

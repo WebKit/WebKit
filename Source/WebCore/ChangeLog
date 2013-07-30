@@ -1,3 +1,20 @@
+2013-07-29  Kwang Yul Seo  <skyul@company100.net>
+
+        [Gtk] Improve string use in PasteboardGtk
+        https://bugs.webkit.org/show_bug.cgi?id=119204
+
+        Reviewed by Martin Robinson.
+
+        Use emptyString() instead of "" and use ASCIILiteral where appropriate.
+
+        No behavior change, no new tests needed.
+
+        * platform/gtk/PasteboardGtk.cpp:
+        (WebCore::Pasteboard::documentFragment):
+        Use emptyString() instead of "".
+        (WebCore::Pasteboard::types):
+        Use ASCIILiteral where appropriate.
+
 2013-07-29  Simon Fraser  <simon.fraser@apple.com>
 
         Page count can be incorrect if there is a pending style recalc
