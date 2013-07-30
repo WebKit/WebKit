@@ -1,4 +1,30 @@
 =================
+WebKitGTK+  2.1.4
+=================
+
+What's new in WebKitGTK+ 2.1.4?
+
+  - Implement attributesOfChildren() for AccessibilityUIElement.
+  - Implement allAttributes() for AccessibilityUIElement.
+  - Fix issues with edge cases when getting offsets for a text range
+    in AtkText.
+  - Remote inspector server now notifies about errors when loading
+    resurces.
+  - Fix the final position when receiving several seek calls in a row,
+    in GStreamer media backend.
+  - When rendering accelerated video, upload onto the texture only the
+    buffer to be painted.
+  - Fix a crash in WebKit1 when the WebView is created and destroyed
+    too fast.
+  - Fix a crash in UI process when the web process crashes.
+  - Fix a crash in WebKit2 when a context menu item is selected after
+    the page has been closed.
+  - Fix a crash when getting the editor command for a key event
+    initiated by the web inspector.
+  - Fix the build when building with GTK+ 2.
+  - Fix several memory leaks.
+
+=================
 WebKitGTK+  2.1.3
 =================
 

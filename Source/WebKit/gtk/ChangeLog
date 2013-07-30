@@ -1,3 +1,9 @@
+2013-07-30  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update NEWS and Versions.m4 for 2.1.4 release.
+
+        * NEWS: Added release notes for 2.1.4.
+
 2013-07-29  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         [ATK] Issues with edge cases when getting offsets for a text range in AtkText

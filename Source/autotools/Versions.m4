@@ -1,6 +1,6 @@
 m4_define([webkit_major_version], [2])
 m4_define([webkit_minor_version], [1])
-m4_define([webkit_micro_version], [3])
+m4_define([webkit_micro_version], [4])
 
 # This is the version we'll be using as part of our User-Agent string,
 # e.g., AppleWebKit/$(webkit_user_agent_version) ...
@@ -11,9 +11,9 @@ m4_define([webkit_user_agent_minor_version], [1])
 
 # Libtool library version, not to confuse with API version.
 # See http://www.gnu.org/software/libtool/manual/html_node/Libtool-versioning.html
-m4_define([libwebkitgtk_version], [19:2:19])
-m4_define([libjavascriptcoregtk_version], [14:2:14])
-m4_define([libwebkit2gtk_version], [26:2:1])
+m4_define([libwebkitgtk_version], [19:3:19])
+m4_define([libjavascriptcoregtk_version], [14:3:14])
+m4_define([libwebkit2gtk_version], [26:3:1])
 
 m4_define([gtk2_required_version], [2.24.10])
 m4_define([gail2_required_version], [1.8])
