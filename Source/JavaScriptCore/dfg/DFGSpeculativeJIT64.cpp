@@ -1168,6 +1168,11 @@ GPRReg SpeculativeJIT::fillSpeculateCell(Edge edge)
     case DataFormatJSCell: {
         GPRReg gpr = info.gpr();
         m_gprs.lock(gpr);
+#if DFG_ENABLE(JIT_ASSERT)
+        MacroAssembler::Jump checkCell = m_jit.branchTest64(MacroAssembler::Zero, gpr, GPRInfo::tagMaskRegister);
+        m_jit.breakpoint();
+        checkCell.link(&m_jit);
+#endif
         return gpr;
     }
 
@@ -3597,7 +3602,7 @@ void SpeculativeJIT::compile(Node* node)
         
         GPRResult result(this);
         callOperation(operationToThis, result.gpr(), thisValueGPR);
-        
+
         cellResult(result.gpr(), node);
         break;
     }

@@ -1,3 +1,16 @@
+2013-07-30  Oliver Hunt  <oliver@apple.com>
+
+        Add an assertion to SpeculateCellOperand
+        https://bugs.webkit.org/show_bug.cgi?id=119276
+
+        Reviewed by Michael Saboff.
+
+        More assertions are better
+
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillSpeculateCell):
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2013-07-30  Mark Lam  <mark.lam@apple.com>
 
         Fix problems with divot and lineStart mismatches.
