@@ -1,3 +1,12 @@
+2013-07-29  Mark Rowe  <mrowe@apple.com>
+
+        <rdar://problem/14528244> Tons of FastMalloc leaks reported by leaks of objects that have already been deallocated
+
+        Reviewed by Sam Weinig.
+
+        * wtf/FastMalloc.cpp:
+        (WTF::TCMalloc_Central_FreeList::enumerateFreeObjects): Mark objects in the transfer cache as being free.
+
 2013-07-29  Zan Dobersek  <zdobersek@igalia.com>
 
         Reintroduce convenience CheckedInt*, CheckedUint* types
