@@ -1,3 +1,21 @@
+2013-07-30  Kwang Yul Seo  <skyul@company100.net>
+
+        [WK2] Move the implementation of WebEditorClient::checkTextOfParagraph to WebEditorClient.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=119034
+
+        Reviewed by Anders Carlsson.
+
+        The Mac and EFL ports use the same implementation of
+        WebEditorClient::checkTextOfParagraph and GTK will use the same
+        implementation too. So rather than duplicating the same code in
+        platform specific files, move the implementation to platform agnostic
+        WebProcess/WebCoreSupport/WebEditorClient.cpp.
+
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::checkTextOfParagraph):
+        * WebProcess/WebCoreSupport/efl/WebEditorClientEfl.cpp:
+        * WebProcess/WebCoreSupport/mac/WebEditorClientMac.mm:
+
 2013-07-30  Brian Holt  <brian.holt@samsung.com>
 
         [WebKit2] [Gtk] WebKitResponsePolicyDecision URI response property incorrect
