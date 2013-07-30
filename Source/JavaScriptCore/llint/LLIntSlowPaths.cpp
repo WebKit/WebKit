@@ -515,7 +515,7 @@ LLINT_SLOW_PATH_DECL(slow_path_get_by_id)
         && baseValue.isCell()
         && slot.isCacheable()
         && slot.slotBase() == baseValue
-        && slot.cachedPropertyType() == PropertySlot::Value) {
+        && slot.isCacheableValue()) {
         
         JSCell* baseCell = baseValue.asCell();
         Structure* structure = baseCell->structure();

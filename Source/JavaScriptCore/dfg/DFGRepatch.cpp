@@ -324,7 +324,7 @@ static bool tryCacheGetByID(ExecState* exec, JSValue baseValue, const Identifier
 
     // Optimize self access.
     if (slot.slotBase() == baseValue) {
-        if ((slot.cachedPropertyType() != PropertySlot::Value)
+        if (!slot.isCacheableValue()
             || !MacroAssembler::isCompactPtrAlignedAddressOffset(maxOffsetRelativeToPatchedStorage(slot.cachedOffset()))) {
             dfgRepatchCall(codeBlock, stubInfo.callReturnLocation, operationGetByIdBuildList);
             return true;
@@ -339,7 +339,7 @@ static bool tryCacheGetByID(ExecState* exec, JSValue baseValue, const Identifier
         return false;
     
     // FIXME: optimize getters and setters
-    if (slot.cachedPropertyType() != PropertySlot::Value)
+    if (!slot.isCacheableValue())
         return false;
     
     PropertyOffset offset = slot.cachedOffset();
@@ -438,7 +438,7 @@ static bool tryBuildGetByIDList(ExecState* exec, JSValue baseValue, const Identi
             // We cannot do as much inline caching if the registers were not flushed prior to this GetById. In particular,
             // non-Value cached properties require planting calls, which requires registers to have been flushed. Thus,
             // if registers were not flushed, don't do non-Value caching.
-            if (slot.cachedPropertyType() != PropertySlot::Value)
+            if (!slot.isCacheableValue())
                 return false;
         }
     
@@ -475,9 +475,8 @@ static bool tryBuildGetByIDList(ExecState* exec, JSValue baseValue, const Identi
         FunctionPtr operationFunction;
         MacroAssembler::Jump success;
         
-        if (slot.cachedPropertyType() == PropertySlot::Getter
-            || slot.cachedPropertyType() == PropertySlot::Custom) {
-            if (slot.cachedPropertyType() == PropertySlot::Getter) {
+        if (slot.isCacheableGetter() || slot.isCacheableCustom()) {
+            if (slot.isCacheableGetter()) {
                 ASSERT(scratchGPR != InvalidGPRReg);
                 ASSERT(baseGPR != scratchGPR);
                 if (isInlineOffset(slot.cachedOffset())) {
@@ -567,8 +566,7 @@ static bool tryBuildGetByIDList(ExecState* exec, JSValue baseValue, const Identi
                          stubInfo.patch.dfg.deltaCallToDone).executableAddress())),
                 *vm,
                 codeBlock->ownerExecutable(),
-                slot.cachedPropertyType() == PropertySlot::Getter
-                || slot.cachedPropertyType() == PropertySlot::Custom);
+                slot.isCacheableGetter() || slot.isCacheableCustom());
         
         polymorphicStructureList->list[listIndex].set(*vm, codeBlock->ownerExecutable(), stubRoutine, structure, isDirect);
         
@@ -576,8 +574,7 @@ static bool tryBuildGetByIDList(ExecState* exec, JSValue baseValue, const Identi
         return listIndex < (POLYMORPHIC_LIST_CACHE_SIZE - 1);
     }
     
-    if (baseValue.asCell()->structure()->typeInfo().prohibitsPropertyCaching()
-        || slot.cachedPropertyType() != PropertySlot::Value)
+    if (baseValue.asCell()->structure()->typeInfo().prohibitsPropertyCaching() || !slot.isCacheableValue())
         return false;
 
     ASSERT(slot.slotBase().isObject());

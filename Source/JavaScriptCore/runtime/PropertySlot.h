@@ -30,212 +30,201 @@
 
 namespace JSC {
 
-    class ExecState;
-    class GetterSetter;
+class ExecState;
+class GetterSetter;
 
-#define JSC_VALUE_MARKER 0
-#define INDEX_GETTER_MARKER reinterpret_cast<GetValueFunc>(2)
-#define GETTER_FUNCTION_MARKER reinterpret_cast<GetValueFunc>(3)
-
-    class PropertySlot {
-    public:
-        enum CachedPropertyType {
-            Uncacheable,
-            Getter,
-            Custom,
-            Value
-        };
-
-        PropertySlot()
-            : m_cachedPropertyType(Uncacheable)
-        {
-            clearBase();
-            clearOffset();
-            clearValue();
-        }
-
-        explicit PropertySlot(const JSValue base)
-            : m_slotBase(base)
-            , m_cachedPropertyType(Uncacheable)
-        {
-            clearOffset();
-            clearValue();
-        }
-
-        typedef JSValue (*GetValueFunc)(ExecState*, JSValue slotBase, PropertyName);
-        typedef JSValue (*GetIndexValueFunc)(ExecState*, JSValue slotBase, unsigned);
-
-        JSValue getValue(ExecState* exec, PropertyName propertyName) const
-        {
-            if (m_getValue == JSC_VALUE_MARKER)
-                return m_value;
-            if (m_getValue == INDEX_GETTER_MARKER)
-                return m_getIndexValue(exec, slotBase(), index());
-            if (m_getValue == GETTER_FUNCTION_MARKER)
-                return functionGetter(exec);
-            return m_getValue(exec, slotBase(), propertyName);
-        }
-
-        JSValue getValue(ExecState* exec, unsigned propertyName) const
-        {
-            if (m_getValue == JSC_VALUE_MARKER)
-                return m_value;
-            if (m_getValue == INDEX_GETTER_MARKER)
-                return m_getIndexValue(exec, m_slotBase, m_data.index);
-            if (m_getValue == GETTER_FUNCTION_MARKER)
-                return functionGetter(exec);
-            return m_getValue(exec, slotBase(), Identifier::from(exec, propertyName));
-        }
-
-        CachedPropertyType cachedPropertyType() const { return m_cachedPropertyType; }
-        bool isCacheable() const { return m_cachedPropertyType != Uncacheable; }
-        bool isCacheableValue() const { return m_cachedPropertyType == Value; }
-        PropertyOffset cachedOffset() const
-        {
-            ASSERT(isCacheable());
-            return m_offset;
-        }
-
-        void setValue(JSValue slotBase, JSValue value)
-        {
-            ASSERT(value);
-            clearOffset();
-            m_getValue = JSC_VALUE_MARKER;
-            m_slotBase = slotBase;
-            m_value = value;
-        }
-        
-        void setValue(JSValue slotBase, JSValue value, PropertyOffset offset)
-        {
-            ASSERT(value);
-            m_getValue = JSC_VALUE_MARKER;
-            m_slotBase = slotBase;
-            m_value = value;
-            m_offset = offset;
-            m_cachedPropertyType = Value;
-        }
-
-        void setValue(JSValue value)
-        {
-            ASSERT(value);
-            clearBase();
-            clearOffset();
-            m_getValue = JSC_VALUE_MARKER;
-            m_value = value;
-        }
-
-        void setCustom(JSValue slotBase, GetValueFunc getValue)
-        {
-            ASSERT(slotBase);
-            ASSERT(getValue);
-            m_getValue = getValue;
-            m_getIndexValue = 0;
-            m_slotBase = slotBase;
-        }
-        
-        void setCacheableCustom(JSValue slotBase, GetValueFunc getValue)
-        {
-            ASSERT(slotBase);
-            ASSERT(getValue);
-            m_getValue = getValue;
-            m_getIndexValue = 0;
-            m_slotBase = slotBase;
-            m_cachedPropertyType = Custom;
-        }
-
-        void setCustomIndex(JSValue slotBase, unsigned index, GetIndexValueFunc getIndexValue)
-        {
-            ASSERT(slotBase);
-            ASSERT(getIndexValue);
-            m_getValue = INDEX_GETTER_MARKER;
-            m_getIndexValue = getIndexValue;
-            m_slotBase = slotBase;
-            m_data.index = index;
-        }
-
-        void setGetterSlot(GetterSetter* getterSetter)
-        {
-            ASSERT(getterSetter);
-            m_thisValue = m_slotBase;
-            m_getValue = GETTER_FUNCTION_MARKER;
-            m_data.getterSetter = getterSetter;
-        }
-
-        void setCacheableGetterSlot(JSValue slotBase, GetterSetter* getterSetter, PropertyOffset offset)
-        {
-            ASSERT(getterSetter);
-            m_getValue = GETTER_FUNCTION_MARKER;
-            m_thisValue = m_slotBase;
-            m_slotBase = slotBase;
-            m_data.getterSetter = getterSetter;
-            m_offset = offset;
-            m_cachedPropertyType = Getter;
-        }
-
-        void setUndefined()
-        {
-            setValue(jsUndefined());
-        }
-
-        JSValue slotBase() const
-        {
-            return m_slotBase;
-        }
-
-        void setBase(JSValue base)
-        {
-            ASSERT(m_slotBase);
-            ASSERT(base);
-            m_slotBase = base;
-        }
-
-        void clearBase()
-        {
-#ifndef NDEBUG
-            m_slotBase = JSValue();
-#endif
-        }
-
-        void clearValue()
-        {
-#ifndef NDEBUG
-            m_value = JSValue();
-#endif
-        }
-
-        void clearOffset()
-        {
-            // Clear offset even in release builds, in case this PropertySlot has been used before.
-            // (For other data members, we don't need to clear anything because reuse would meaningfully overwrite them.)
-            m_offset = invalidOffset;
-            m_cachedPropertyType = Uncacheable;
-        }
-
-        unsigned index() const { return m_data.index; }
-
-        GetValueFunc customGetter() const
-        {
-            ASSERT(m_cachedPropertyType == Custom);
-            return m_getValue;
-        }
-    private:
-        JS_EXPORT_PRIVATE JSValue functionGetter(ExecState*) const;
-
-        GetValueFunc m_getValue;
-        GetIndexValueFunc m_getIndexValue;
-        
-        JSValue m_slotBase;
-        union {
-            GetterSetter* getterSetter;
-            unsigned index;
-        } m_data;
-
-        JSValue m_value;
-        JSValue m_thisValue;
-
-        PropertyOffset m_offset;
-        CachedPropertyType m_cachedPropertyType;
+class PropertySlot {
+    enum PropertyType {
+        TypeUnset,
+        TypeValue,
+        TypeGetter,
+        TypeCustom,
+        TypeCustomIndex
     };
+
+public:
+    PropertySlot()
+        : m_propertyType(TypeUnset)
+        , m_offset(invalidOffset)
+    {
+    }
+
+    explicit PropertySlot(const JSValue base)
+        : m_slotBase(base)
+        , m_propertyType(TypeUnset)
+        , m_offset(invalidOffset)
+    {
+    }
+
+    typedef JSValue (*GetValueFunc)(ExecState*, JSValue slotBase, PropertyName);
+    typedef JSValue (*GetIndexValueFunc)(ExecState*, JSValue slotBase, unsigned);
+
+    JSValue getValue(ExecState* exec, PropertyName propertyName) const
+    {
+        if (m_propertyType == TypeValue)
+            return JSValue::decode(m_data.value);
+        if (m_propertyType == TypeCustomIndex)
+            return m_data.customIndex.getIndexValue(exec, slotBase(), m_data.customIndex.index);
+        if (m_propertyType == TypeGetter)
+            return functionGetter(exec);
+        return m_data.custom.getValue(exec, slotBase(), propertyName);
+    }
+
+    JSValue getValue(ExecState* exec, unsigned propertyName) const
+    {
+        if (m_propertyType == TypeValue)
+            return JSValue::decode(m_data.value);
+        if (m_propertyType == TypeCustomIndex)
+            return m_data.customIndex.getIndexValue(exec, slotBase(), m_data.customIndex.index);
+        if (m_propertyType == TypeGetter)
+            return functionGetter(exec);
+        return m_data.custom.getValue(exec, slotBase(), Identifier::from(exec, propertyName));
+    }
+
+    bool isCacheable() const { return m_offset != invalidOffset; }
+    bool isCacheableValue() const { return isCacheable() && m_propertyType == TypeValue; }
+    bool isCacheableGetter() const { return isCacheable() && m_propertyType == TypeGetter; }
+    bool isCacheableCustom() const { return isCacheable() && m_propertyType == TypeCustom; }
+
+    PropertyOffset cachedOffset() const
+    {
+        ASSERT(isCacheable());
+        return m_offset;
+    }
+
+    GetValueFunc customGetter() const
+    {
+        ASSERT(isCacheableCustom());
+        return m_data.custom.getValue;
+    }
+
+    void setValue(JSValue slotBase, JSValue value)
+    {
+        ASSERT(value);
+        m_data.value = JSValue::encode(value);
+
+        ASSERT(slotBase);
+        m_slotBase = slotBase;
+        m_propertyType = TypeValue;
+        m_offset = invalidOffset;
+    }
+    
+    void setValue(JSValue slotBase, JSValue value, PropertyOffset offset)
+    {
+        ASSERT(value);
+        m_data.value = JSValue::encode(value);
+
+        ASSERT(slotBase);
+        m_slotBase = slotBase;
+        m_propertyType = TypeValue;
+        m_offset = offset;
+    }
+
+    void setValue(JSValue value)
+    {
+        ASSERT(value);
+        m_data.value = JSValue::encode(value);
+
+        m_slotBase = JSValue();
+        m_propertyType = TypeValue;
+        m_offset = invalidOffset;
+    }
+
+    void setCustom(JSValue slotBase, GetValueFunc getValue)
+    {
+        ASSERT(getValue);
+        m_data.custom.getValue = getValue;
+
+        ASSERT(slotBase);
+        m_slotBase = slotBase;
+        m_propertyType = TypeCustom;
+        m_offset = invalidOffset;
+    }
+    
+    void setCacheableCustom(JSValue slotBase, GetValueFunc getValue)
+    {
+        ASSERT(getValue);
+        m_data.custom.getValue = getValue;
+
+        ASSERT(slotBase);
+        m_slotBase = slotBase;
+        m_propertyType = TypeCustom;
+        m_offset = !invalidOffset;
+    }
+
+    void setCustomIndex(JSValue slotBase, unsigned index, GetIndexValueFunc getIndexValue)
+    {
+        ASSERT(getIndexValue);
+        m_data.customIndex.getIndexValue = getIndexValue;
+        m_data.customIndex.index = index;
+
+        ASSERT(slotBase);
+        m_slotBase = slotBase;
+        m_propertyType = TypeCustomIndex;
+        m_offset = invalidOffset;
+    }
+
+    void setGetterSlot(GetterSetter* getterSetter)
+    {
+        ASSERT(getterSetter);
+        m_data.getter.thisValue = JSValue::encode(m_slotBase);
+        m_data.getter.getterSetter = getterSetter;
+
+        m_propertyType = TypeGetter;
+        m_offset = invalidOffset;
+    }
+
+    void setCacheableGetterSlot(JSValue slotBase, GetterSetter* getterSetter, PropertyOffset offset)
+    {
+        ASSERT(getterSetter);
+        m_data.getter.thisValue = JSValue::encode(m_slotBase);
+        m_data.getter.getterSetter = getterSetter;
+
+        ASSERT(slotBase);
+        m_slotBase = slotBase;
+        m_propertyType = TypeGetter;
+        m_offset = offset;
+    }
+
+    void setUndefined()
+    {
+        setValue(jsUndefined());
+    }
+
+    JSValue slotBase() const
+    {
+        return m_slotBase;
+    }
+
+    void setBase(JSValue base)
+    {
+        ASSERT(m_slotBase);
+        ASSERT(base);
+        m_slotBase = base;
+    }
+
+private:
+    JS_EXPORT_PRIVATE JSValue functionGetter(ExecState*) const;
+
+    union {
+        EncodedJSValue value;
+        struct {
+            EncodedJSValue thisValue;
+            GetterSetter* getterSetter;
+        } getter;
+        struct {
+            GetValueFunc getValue;
+        } custom;
+        struct {
+            GetIndexValueFunc getIndexValue;
+            unsigned index;
+        } customIndex;
+    } m_data;
+
+    JSValue m_slotBase;
+    PropertyType m_propertyType;
+    PropertyOffset m_offset;
+};
 
 } // namespace JSC
 

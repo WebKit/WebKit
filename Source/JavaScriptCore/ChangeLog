@@ -1,3 +1,70 @@
+2013-07-29  Gavin Barraclough  <barraclough@apple.com>
+
+        Some cleanup in PropertySlot
+        https://bugs.webkit.org/show_bug.cgi?id=119189
+
+        Reviewed by Geoff Garen.
+
+        PropertySlot represents a property in one of four states - value, getter, custom, or custom-index.
+        The state is currently tracked redundantly by two mechanisms - the custom getter function (m_getValue)
+        is set to a special value to indicate the type (other than custom), and the type is also tracked by
+        an enum - but only if cacheable. Cacheability can typically be determined by the value of m_offset
+        (this is invalidOffset if not cacheable).
+
+            * Internally, always track the type of the property using an enum value, PropertyType.
+            * Use m_offset to indicate cacheable.
+            * Keep the external interface (CachedPropertyType) unchanged.
+            * Better pack data into the m_data union.
+
+        Performance neutral.
+
+        * dfg/DFGRepatch.cpp:
+        (JSC::DFG::tryCacheGetByID):
+        (JSC::DFG::tryBuildGetByIDList):
+            - cachedPropertyType() -> isCacheable*()
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::privateCompileGetByIdProto):
+        (JSC::JIT::privateCompileGetByIdSelfList):
+        (JSC::JIT::privateCompileGetByIdProtoList):
+        (JSC::JIT::privateCompileGetByIdChainList):
+        (JSC::JIT::privateCompileGetByIdChain):
+            - cachedPropertyType() -> isCacheable*()
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::privateCompileGetByIdProto):
+        (JSC::JIT::privateCompileGetByIdSelfList):
+        (JSC::JIT::privateCompileGetByIdProtoList):
+        (JSC::JIT::privateCompileGetByIdChainList):
+        (JSC::JIT::privateCompileGetByIdChain):
+            - cachedPropertyType() -> isCacheable*()
+        * jit/JITStubs.cpp:
+        (JSC::tryCacheGetByID):
+            - cachedPropertyType() -> isCacheable*()
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+            - cachedPropertyType() -> isCacheable*()
+        * runtime/PropertySlot.cpp:
+        (JSC::PropertySlot::functionGetter):
+            - refactoring described above.
+        * runtime/PropertySlot.h:
+        (JSC::PropertySlot::PropertySlot):
+        (JSC::PropertySlot::getValue):
+        (JSC::PropertySlot::isCacheable):
+        (JSC::PropertySlot::isCacheableValue):
+        (JSC::PropertySlot::isCacheableGetter):
+        (JSC::PropertySlot::isCacheableCustom):
+        (JSC::PropertySlot::cachedOffset):
+        (JSC::PropertySlot::customGetter):
+        (JSC::PropertySlot::setValue):
+        (JSC::PropertySlot::setCustom):
+        (JSC::PropertySlot::setCacheableCustom):
+        (JSC::PropertySlot::setCustomIndex):
+        (JSC::PropertySlot::setGetterSlot):
+        (JSC::PropertySlot::setCacheableGetterSlot):
+        (JSC::PropertySlot::setUndefined):
+        (JSC::PropertySlot::slotBase):
+        (JSC::PropertySlot::setBase):
+            - refactoring described above.
+
 2013-07-28  Oliver Hunt  <oliver@apple.com>
 
         REGRESSION: Crash when opening Facebook.com
