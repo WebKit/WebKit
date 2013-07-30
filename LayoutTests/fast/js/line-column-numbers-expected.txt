@@ -141,65 +141,65 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
     0   global code at line-column-numbers.js:3:28
 
 --> Case 2 Stack Trace:
-    0   global code at line-column-numbers.js:7:32
+    0   global code at line-column-numbers.js:7:30
 
 --> Case 3 Stack Trace:
-    0   global code at line-column-numbers.js:11:24
+    0   global code at line-column-numbers.js:11:22
 
 --> Case 3 Stack Trace:
-    0   global code at line-column-numbers.js:11:88
+    0   global code at line-column-numbers.js:11:86
 
 --> Case 4 Stack Trace:
-    0   doThrow4b at line-column-numbers.js:16:45
+    0   doThrow4b at line-column-numbers.js:16:43
     1   global code at line-column-numbers.js:17:14
 
 --> Case 5 Stack Trace:
-    0   innerFunc at line-column-numbers.js:24:70
+    0   innerFunc at line-column-numbers.js:24:68
     1   doThrow5b at line-column-numbers.js:24:83
     2   global code at line-column-numbers.js:24:135
 
 --> Case 6 Stack Trace:
-    0   innerFunc at line-column-numbers.js:28:70
+    0   innerFunc at line-column-numbers.js:28:68
     1   doThrow6b at line-column-numbers.js:28:83
     2   global code at line-column-numbers.js:28:135
 
 --> Case 7 Stack Trace:
-    0    at line-column-numbers.js:32:43
+    0    at line-column-numbers.js:32:41
     1   global code at line-column-numbers.js:32:47
 
 --> Case 8 Stack Trace:
-    0    at line-column-numbers.js:36:47
+    0    at line-column-numbers.js:36:45
     1   global code at line-column-numbers.js:36:51
 
 --> Case 9 Stack Trace:
-    0    at line-column-numbers.js:40:39
+    0    at line-column-numbers.js:40:37
     1   global code at line-column-numbers.js:40:43
 
 --> Case 9 Stack Trace:
-    0    at line-column-numbers.js:40:124
+    0    at line-column-numbers.js:40:122
     1   global code at line-column-numbers.js:40:128
 
 --> Case 10 Stack Trace:
-    0    at line-column-numbers.js:46:26
+    0    at line-column-numbers.js:46:24
     1   global code at line-column-numbers.js:47:8
 
 --> Case 11 Stack Trace:
-    0    at line-column-numbers.js:56:41
+    0    at line-column-numbers.js:56:39
     1   doThrow11b at line-column-numbers.js:56:45
     2   global code at line-column-numbers.js:58:15
 
 --> Case 12 Stack Trace:
-    0    at line-column-numbers.js:65:53
+    0    at line-column-numbers.js:65:51
     1    at line-column-numbers.js:65:57
     2   global code at line-column-numbers.js:65:62
 
 --> Case 13 Stack Trace:
-    0    at line-column-numbers.js:69:53
+    0    at line-column-numbers.js:69:51
     1    at line-column-numbers.js:69:57
     2   global code at line-column-numbers.js:69:62
 
 --> Case 14 Stack Trace:
-    0    at line-column-numbers.js:73:77
+    0    at line-column-numbers.js:73:75
     1    at line-column-numbers.js:73:81
     2   doThrow14b at line-column-numbers.js:73:86
     3   global code at line-column-numbers.js:73:101

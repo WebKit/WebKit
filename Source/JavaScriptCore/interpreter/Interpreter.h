@@ -220,6 +220,7 @@ namespace JSC {
         NEVER_INLINE HandlerInfo* throwException(CallFrame*&, JSValue&, unsigned bytecodeOffset);
         NEVER_INLINE void debug(CallFrame*, DebugHookID, int firstLine, int lastLine, int column);
         static void addStackTraceIfNecessary(CallFrame*, JSValue error);
+        JSString* stackTraceAsString(ExecState*, Vector<StackFrame>);
 
         void dumpSampleData(ExecState* exec);
         void startSampling();

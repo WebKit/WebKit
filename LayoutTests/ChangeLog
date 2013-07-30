@@ -1,3 +1,41 @@
+2013-07-29  Chris Curtis  <chris_curtis@apple.com>
+
+        Eager stack trace for error objects.
+        https://bugs.webkit.org/show_bug.cgi?id=118918
+
+        Reviewed by Geoffrey Garen.
+        
+        Added tests to ensure that the stack property was present at creation for all 
+        error Objects. This test will fail without this patch.
+
+        * fast/js/script-tests/stack-at-creation-for-error-objects.js: Added.
+        (checkStack):
+        * fast/js/stack-at-creation-for-error-objects-expected.txt: Added.
+        * fast/js/stack-at-creation-for-error-objects.html: Added.
+
+        * inspector/console/console-format-expected.txt:
+        * inspector/console/console-format.html:
+        This test was modified by removing the error object from being evaluated. Prior to this patch 
+        error objects did not have the stack property, so the stack information was not being 
+        displayed. The stack trace includes a file path specific to the machine that is running 
+        the test. The results would have differed from one computer to the next. There
+        is not an easy way to capture the error object to treat it differently. By removing 
+        the error object there is no need to add extra code to treat it differently.
+        Also there are other tests inside inspector/console that test the  stack trace, 
+        so the testing suite does not lose error testing by removing it.
+        
+        The .stack property was added to the error objects at creation time.
+        * fast/js/exception-properties-expected.txt:
+        * fast/js/script-tests/exception-properties.js:
+       
+        The column numbers are modified in the following test. When error objects are explicitly
+        invoked, the column number points to the beginning "(" instead of end ")". 
+        Functionality between browsers do not match either. Firefox does not output column 
+        numbers. Chrome points columns numbers to the beginning of the "new" call.
+        
+        * fast/js/line-column-numbers-expected.txt:
+        * fast/js/stack-trace-expected.txt:
+
 2013-07-29  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         [CSS Shapes] New positioning model: update percentage rectangle and inset rectangle tests

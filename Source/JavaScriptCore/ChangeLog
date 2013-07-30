@@ -1,3 +1,43 @@
+2013-07-29  Chris Curtis  <chris_curtis@apple.com>
+
+        Eager stack trace for error objects.
+        https://bugs.webkit.org/show_bug.cgi?id=118918
+
+        Reviewed by Geoffrey Garen.
+        
+        Chrome and Firefox give error objects the stack property and we wanted to match
+        that functionality. This allows developers to see the stack without throwing an object.
+
+        * runtime/ErrorInstance.cpp:
+        (JSC::ErrorInstance::finishCreation):
+         For error objects that are not thrown as an exception, we pass the stackTrace in 
+         as a parameter. This allows the error object to have the stack property.
+        
+        * interpreter/Interpreter.cpp:
+        (JSC::stackTraceAsString):
+        Helper function used to eliminate duplicate code.
+
+        (JSC::Interpreter::addStackTraceIfNecessary):
+        When an error object is created by the user the vm->exceptionStack is not set.
+        If the user throws this error object later the stack that is in the error object 
+        may not be the correct stack for the throw, so when we set the vm->exception stack,
+        the stack property on the error object is set as well.
+        
+        * runtime/ErrorConstructor.cpp:
+        (JSC::constructWithErrorConstructor):
+        (JSC::callErrorConstructor):
+        * runtime/NativeErrorConstructor.cpp:
+        (JSC::constructWithNativeErrorConstructor):
+        (JSC::callNativeErrorConstructor):
+        These functions indicate that the user created an error object. For all error objects 
+        that the user explicitly creates, the topCallFrame is at a new frame created to 
+        handle the user's call. In this case though, the error object needs the caller's 
+        frame to create the stack trace correctly.
+        
+        * interpreter/Interpreter.h:
+        * runtime/ErrorInstance.h:
+        (JSC::ErrorInstance::create):
+
 2013-07-29  Gavin Barraclough  <barraclough@apple.com>
 
         Some cleanup in PropertySlot

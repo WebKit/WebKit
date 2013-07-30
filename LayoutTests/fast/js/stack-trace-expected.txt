@@ -24,11 +24,11 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
     5   global code at stack-trace.js:40:13
 
 --> Stack Trace:
-    0   inner at stack-trace.js:28:69
+    0   inner at stack-trace.js:28:44
     1   global code at stack-trace.js:43:23
 
 --> Stack Trace:
-    0   inner at stack-trace.js:28:69
+    0   inner at stack-trace.js:28:44
     1   outer at stack-trace.js:27:34
     2   global code at stack-trace.js:44:23
 
@@ -38,12 +38,12 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
     2   global code at stack-trace.js:47:18
 
 --> Stack Trace:
-    0   htmlInner at stack-trace.html:10:56
+    0   htmlInner at stack-trace.html:10:39
     1   scripterInner at stack-trace.js:32:37
     2   global code at stack-trace.js:49:20
 
 --> Stack Trace:
-    0   htmlInner at stack-trace.html:10:56
+    0   htmlInner at stack-trace.html:10:39
     1   htmlOuter at stack-trace.html:11:33
     2   scripterOuter at stack-trace.js:33:37
     3   global code at stack-trace.js:50:20

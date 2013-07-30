@@ -21,7 +21,9 @@
 #ifndef ErrorInstance_h
 #define ErrorInstance_h
 
+#include "Interpreter.h"
 #include "JSObject.h"
+#include "SourceProvider.h"
 
 namespace JSC {
 
@@ -36,16 +38,16 @@ namespace JSC {
             return Structure::create(vm, globalObject, prototype, TypeInfo(ErrorInstanceType, StructureFlags), &s_info);
         }
 
-        static ErrorInstance* create(VM& vm, Structure* structure, const String& message)
+        static ErrorInstance* create(VM& vm, Structure* structure, const String& message, Vector<StackFrame> stackTrace = Vector<StackFrame>())
         {
             ErrorInstance* instance = new (NotNull, allocateCell<ErrorInstance>(vm.heap)) ErrorInstance(vm, structure);
-            instance->finishCreation(vm, message);
+            instance->finishCreation(vm, message, stackTrace);
             return instance;
         }
 
-        static ErrorInstance* create(ExecState* exec, Structure* structure, JSValue message)
+        static ErrorInstance* create(ExecState* exec, Structure* structure, JSValue message, Vector<StackFrame> stackTrace = Vector<StackFrame>())
         {
-            return create(exec->vm(), structure, message.isUndefined() ? String() : message.toString(exec)->value(exec));
+            return create(exec->vm(), structure, message.isUndefined() ? String() : message.toString(exec)->value(exec), stackTrace);
         }
 
         bool appendSourceToMessage() { return m_appendSourceToMessage; }
@@ -55,13 +57,7 @@ namespace JSC {
     protected:
         explicit ErrorInstance(VM&, Structure*);
 
-        void finishCreation(VM& vm, const String& message)
-        {
-            Base::finishCreation(vm);
-            ASSERT(inherits(&s_info));
-            if (!message.isNull())
-                putDirect(vm, vm.propertyNames->message, jsString(&vm, message), DontEnum);
-        }
+        void finishCreation(VM&, const String&, Vector<StackFrame> = Vector<StackFrame>());
 
         bool m_appendSourceToMessage;
     };

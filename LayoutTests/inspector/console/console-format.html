@@ -26,7 +26,6 @@ function onload()
     var regex2 = new RegExp("foo\\\\bar\\sbaz", "i");
     var str = "test";
     var str2 = "test named \"test\"";
-    var error = new Error;
     var node = document.getElementById("p");
     var func = function() { return 1; };
     var multilinefunc = function() {
@@ -41,7 +40,7 @@ function onload()
     var throwingLengthGetter = {get length() { throw "Length called"; }};
 
     globals = [
-        regex1, regex2, str, str2, error, node, func, multilinefunc, num, linkify,
+        regex1, regex2, str, str2, node, func, multilinefunc, num, linkify,
         null, undefined, valuelessAttribute, valuedAttribute, existingAttribute, throwingLengthGetter,
         NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY, array, {}, [function() {}], bar 
     ];
