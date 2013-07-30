@@ -454,9 +454,17 @@ void PluginView::setPageScaleFactor(double scaleFactor, IntPoint)
     pageScaleFactorDidChange();
 }
 
-double PluginView::pageScaleFactor()
+double PluginView::pageScaleFactor() const
 {
     return m_pageScaleFactor;
+}
+
+bool PluginView::handlesPageScaleFactor() const
+{
+    if (!m_plugin || !m_isInitialized)
+        return false;
+
+    return m_plugin->handlesPageScaleFactor();
 }
 
 void PluginView::webPageDestroyed()

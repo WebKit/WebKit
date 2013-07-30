@@ -86,8 +86,8 @@ public:
     WebCore::RenderBoxModelObject* renderer() const;
     
     void setPageScaleFactor(double scaleFactor, WebCore::IntPoint origin);
-    double pageScaleFactor();
-    bool handlesPageScaleFactor() { return m_plugin->handlesPageScaleFactor(); }
+    double pageScaleFactor() const;
+    bool handlesPageScaleFactor() const;
 
     void pageScaleFactorDidChange();
     void webPageDestroyed();
