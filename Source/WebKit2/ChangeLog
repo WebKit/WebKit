@@ -1,3 +1,17 @@
+2013-07-29  Tim Horton  <timothy_horton@apple.com>
+
+        Null deref under PluginView::handlesPageScaleFactor()
+        https://bugs.webkit.org/show_bug.cgi?id=119231
+        <rdar://problem/14440207>
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::handlesPageScaleFactor):
+        * WebProcess/Plugins/PluginView.h:
+        Null-check m_plugin and check m_isInitialized.
+        Make pageScaleFactor() and handlesPageScaleFactor const.
+
 2013-07-29  Anders Carlsson  <andersca@apple.com>
 
         Remove setUnderlayPage() and associated code
