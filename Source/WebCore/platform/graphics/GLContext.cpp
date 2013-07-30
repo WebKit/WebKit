@@ -147,7 +147,7 @@ void GLContext::cleanupActiveContextsAtExit()
 
 
 
-PassOwnPtr<GLContext> GLContext::createContextForWindow(uint64_t windowHandle, GLContext* sharingContext)
+PassOwnPtr<GLContext> GLContext::createContextForWindow(GLNativeWindowType windowHandle, GLContext* sharingContext)
 {
 #if PLATFORM(GTK) && defined(GDK_WINDOWING_WAYLAND) && USE(EGL)
     GdkDisplay* display = gdk_display_manager_get_default_display(gdk_display_manager_get());

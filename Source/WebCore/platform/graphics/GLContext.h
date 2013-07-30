@@ -25,6 +25,13 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/PassOwnPtr.h>
 
+#if USE(EGL) && !PLATFORM(GTK)
+#include "eglplatform.h"
+typedef EGLNativeWindowType GLNativeWindowType;
+#else
+typedef uint64_t GLNativeWindowType;
+#endif
+
 #if USE(CAIRO)
 typedef struct _cairo_device cairo_device_t;
 #endif
@@ -38,7 +45,7 @@ namespace WebCore {
 class GLContext {
     WTF_MAKE_NONCOPYABLE(GLContext);
 public:
-    static PassOwnPtr<GLContext> createContextForWindow(uint64_t windowHandle, GLContext* sharingContext);
+    static PassOwnPtr<GLContext> createContextForWindow(GLNativeWindowType windowHandle, GLContext* sharingContext);
     static PassOwnPtr<GLContext> createOffscreenContext(GLContext* sharing = 0);
     static GLContext* getCurrent();
     static GLContext* sharingContext();

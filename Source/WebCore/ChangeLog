@@ -1,3 +1,16 @@
+2013-07-30  Alex Christensen  <achristensen@apple.com>
+
+        Compile fix for WebGL on 32-bit Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=119235
+
+        Reviewed by Darin Adler.
+
+        * platform/graphics/GLContext.cpp:
+        Created GLNativeWindowType typedef.
+        (WebCore::GLContext::createContextForWindow):
+        * platform/graphics/GLContext.h:
+        Replaced uint64_t with GLNativeWindowType.
+
 2013-07-30  Patrick Gansterer  <paroga@webkit.org>
 
         [WIN] Remove dependency on CoreFoundation from DownloadBundle
