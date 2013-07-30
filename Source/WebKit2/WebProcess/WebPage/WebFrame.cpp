@@ -485,8 +485,7 @@ bool WebFrame::handlesPageScaleGesture() const
 
     PluginDocument* pluginDocument = static_cast<PluginDocument*>(m_coreFrame->document());
     PluginView* pluginView = static_cast<PluginView*>(pluginDocument->pluginWidget());
-
-    return pluginView->handlesPageScaleFactor();
+    return pluginView && pluginView->handlesPageScaleFactor();
 }
 
 IntRect WebFrame::contentBounds() const
