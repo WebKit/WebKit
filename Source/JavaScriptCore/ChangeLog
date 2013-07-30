@@ -1,3 +1,13 @@
+2013-07-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck.
+
+        * GNUmakefile.list.am: Add missing files to compilation.
+        * bytecode/CodeBlock.cpp: Add a ENABLE(FTL_JIT) #if block to
+        include FTL header files not included in the compilation.
+        * dfg/DFGDriver.cpp: Ditto.
+        * dfg/DFGPlan.cpp: Ditto.
+
 2013-07-29  Chris Curtis  <chris_curtis@apple.com>
 
         Eager stack trace for error objects.

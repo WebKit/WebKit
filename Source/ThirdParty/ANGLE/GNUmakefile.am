@@ -20,6 +20,8 @@ nodist_libANGLE_la_SOURCES = \
 libANGLE_la_SOURCES = \
 	Source/ThirdParty/ANGLE/include/EGL/egl.h \
 	Source/ThirdParty/ANGLE/include/EGL/eglplatform.h \
+	Source/ThirdParty/ANGLE/include/GLES2/gl2.h \
+	Source/ThirdParty/ANGLE/include/GLES2/gl2platform.h \
 	Source/ThirdParty/ANGLE/include/GLSLANG/ShaderLang.h \
 	Source/ThirdParty/ANGLE/include/KHR/khrplatform.h \
 	Source/ThirdParty/ANGLE/src/common/angleutils.h \
@@ -122,6 +124,7 @@ libANGLE_la_SOURCES = \
 	Source/ThirdParty/ANGLE/src/compiler/ShHandle.h \
 	Source/ThirdParty/ANGLE/src/compiler/SymbolTable.cpp \
 	Source/ThirdParty/ANGLE/src/compiler/SymbolTable.h \
+	Source/ThirdParty/ANGLE/src/compiler/Uniform.h \
 	Source/ThirdParty/ANGLE/src/compiler/VariablePacker.cpp \
 	Source/ThirdParty/ANGLE/src/compiler/VariablePacker.h \
 	Source/ThirdParty/ANGLE/src/compiler/VersionGLSL.cpp \

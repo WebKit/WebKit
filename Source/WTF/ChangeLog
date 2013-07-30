@@ -1,3 +1,9 @@
+2013-07-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck.
+
+        * GNUmakefile.list.am: Add missing files to compilation.
+
 2013-07-29  Mark Rowe  <mrowe@apple.com>
 
         <rdar://problem/14528244> Tons of FastMalloc leaks reported by leaks of objects that have already been deallocated

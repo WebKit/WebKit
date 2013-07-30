@@ -53,14 +53,17 @@
 #include "DFGUnificationPhase.h"
 #include "DFGValidate.h"
 #include "DFGVirtualRegisterAllocationPhase.h"
+#include "Operations.h"
+#include <wtf/CurrentTime.h>
+
+#if ENABLE(FTL_JIT)
 #include "FTLCapabilities.h"
 #include "FTLCompile.h"
 #include "FTLFail.h"
 #include "FTLLink.h"
 #include "FTLLowerDFGToLLVM.h"
 #include "FTLState.h"
-#include "Operations.h"
-#include <wtf/CurrentTime.h>
+#endif
 
 namespace JSC { namespace DFG {
 

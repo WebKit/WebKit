@@ -22,6 +22,7 @@ wtf_sources += \
     Source/WTF/wtf/BoundsCheckedPointer.h \
     Source/WTF/wtf/BumpPointerAllocator.h \
     Source/WTF/wtf/ByteOrder.h \
+    Source/WTF/wtf/ByteSpinLock.h \
     Source/WTF/wtf/CheckedArithmetic.h \
     Source/WTF/wtf/CheckedBoolean.h \
     Source/WTF/wtf/CommaPrinter.h \
@@ -74,11 +75,14 @@ wtf_sources += \
     Source/WTF/wtf/HashTraits.h \
     Source/WTF/wtf/HexNumber.h \
     Source/WTF/wtf/InlineASM.h \
+    Source/WTF/wtf/Insertion.h \
     Source/WTF/wtf/Int16Array.h \
     Source/WTF/wtf/Int32Array.h \
     Source/WTF/wtf/Int8Array.h \
     Source/WTF/wtf/IntegralTypedArrayBase.h \
+    Source/WTF/wtf/ListDump.h \
     Source/WTF/wtf/ListHashSet.h \
+    Source/WTF/wtf/LLVMHeaders.h \
     Source/WTF/wtf/Locker.h \
     Source/WTF/wtf/MD5.cpp \
     Source/WTF/wtf/MD5.h \
@@ -92,6 +96,7 @@ wtf_sources += \
     Source/WTF/wtf/MetaAllocator.h \
     Source/WTF/wtf/MetaAllocatorHandle.h \
     Source/WTF/wtf/NeverDestroyed.h \
+    Source/WTF/wtf/NoLock.h \
     Source/WTF/wtf/NonCopyingSort.h \
     Source/WTF/wtf/Noncopyable.h \
     Source/WTF/wtf/NotFound.h \
@@ -159,6 +164,7 @@ wtf_sources += \
     Source/WTF/wtf/StdLibExtras.h \
     Source/WTF/wtf/StreamBuffer.h \
     Source/WTF/wtf/StringExtras.h \
+    Source/WTF/wtf/StringHashDumpContext.h \
     Source/WTF/wtf/StringPrintStream.cpp \
     Source/WTF/wtf/StringPrintStream.h \
     Source/WTF/wtf/StringHasher.h \
@@ -234,6 +240,7 @@ wtf_sources += \
     Source/WTF/wtf/text/AtomicStringTable.h \
     Source/WTF/wtf/text/Base64.cpp \
     Source/WTF/wtf/text/Base64.h \
+    Source/WTF/wtf/text/ConversionMode.h \
     Source/WTF/wtf/text/CString.cpp \
     Source/WTF/wtf/text/CString.h \
     Source/WTF/wtf/text/IntegerToStringConversion.h \

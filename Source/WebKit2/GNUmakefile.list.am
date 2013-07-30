@@ -815,6 +815,7 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/GeolocationPermissionRequestProxy.h \
 	Source/WebKit2/UIProcess/cairo/BackingStoreCairo.cpp \
 	Source/WebKit2/UIProcess/gtk/ExperimentalFeatures.cpp \
+	Source/WebKit2/UIProcess/gtk/ExperimentalFeatures.h \
 	Source/WebKit2/UIProcess/gtk/TextCheckerGtk.cpp \
 	Source/WebKit2/UIProcess/gtk/WebContextGtk.cpp \
 	Source/WebKit2/UIProcess/gtk/WebContextMenuProxyGtk.cpp \

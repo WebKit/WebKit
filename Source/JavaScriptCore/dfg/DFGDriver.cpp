@@ -36,12 +36,15 @@
 #include "DFGPlan.h"
 #include "DFGThunks.h"
 #include "DFGWorklist.h"
-#include "FTLThunks.h"
 #include "JITCode.h"
 #include "Operations.h"
 #include "Options.h"
 #include "SamplingTool.h"
 #include <wtf/Atomics.h>
+
+#if ENABLE(FTL_JIT)
+#include "FTLThunks.h"
+#endif
 
 namespace JSC { namespace DFG {
 

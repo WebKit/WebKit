@@ -1,3 +1,9 @@
+2013-07-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck.
+
+        * GNUmakefile.am: Add missing header files to compilation.
+
 2013-07-29  Alex Christensen  <achristensen@apple.com>
 
         Separated translator into preprocessor, translator_common,

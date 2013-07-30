@@ -5289,6 +5289,7 @@ webcore_svg_sources += \
 	Source/WebCore/svg/SVGPathUtilities.h \
 	Source/WebCore/svg/SVGPatternElement.cpp \
 	Source/WebCore/svg/SVGPatternElement.h \
+	Source/WebCore/svg/SVGPoint.h \
 	Source/WebCore/svg/SVGPointList.cpp \
 	Source/WebCore/svg/SVGPointList.h \
 	Source/WebCore/svg/SVGPolyElement.cpp \

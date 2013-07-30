@@ -38,7 +38,6 @@
 #include "DFGRepatch.h"
 #include "DFGWorklist.h"
 #include "Debugger.h"
-#include "FTLJITCode.h"
 #include "Interpreter.h"
 #include "JIT.h"
 #include "JITStubs.h"
@@ -59,6 +58,10 @@
 
 #if ENABLE(DFG_JIT)
 #include "DFGOperations.h"
+#endif
+
+#if ENABLE(FTL_JIT)
+#include "FTLJITCode.h"
 #endif
 
 #define DUMP_CODE_BLOCK_STATISTICS 0

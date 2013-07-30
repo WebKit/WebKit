@@ -1,3 +1,9 @@
+2013-07-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck.
+
+        * GNUmakefile.list.am: Add missing header file to compilation.
+
 2013-07-29  Tim Horton  <timothy_horton@apple.com>
 
         [wk2] Flush the WebProcess’ implicit transaction when using endDeferringViewInWindowChangesSync
