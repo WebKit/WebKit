@@ -1,3 +1,14 @@
+2013-07-30  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION: Crash when opening a message on Gmail
+        https://bugs.webkit.org/show_bug.cgi?id=119105
+
+        Landing missing test results.
+
+        * fast/js/dfg-get-by-id-unset-then-proto-expected.txt: Added.
+        * fast/js/dfg-get-by-id-unset-then-proto-less-warmup-expected.txt: Added.
+        * fast/js/dfg-get-by-id-unset-then-proto-more-warmup-expected.txt: Added.
+
 2013-07-30  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         GetByVal on Arguments does the wrong size load when checking the Arguments object length
