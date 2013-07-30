@@ -16,9 +16,9 @@ function lastPathComponent(url) {
     return url ? url.match( /[^\/]+\/?$/ )[0] : url;
 }
 
-window.onerror = function(msg, url, line)
+window.onerror = function(msg, url, line, column)
 {
-    log("Main frame window.onerror: " + msg + " at " + lastPathComponent(url) + ":" + line);
+    log("Main frame window.onerror: " + msg + " at " + lastPathComponent(url) + ", line: " + line + ", column: " + column);
     log("window.event.type = " + window.event.type);
     log("window.event.message = " + window.event.message);
     log("window.event.filename = " + lastPathComponent(window.event.filename));

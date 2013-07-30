@@ -50,9 +50,9 @@ public:
     {
         return adoptRef(new ErrorEvent);
     }
-    static PassRefPtr<ErrorEvent> create(const String& message, const String& fileName, unsigned lineNumber)
+    static PassRefPtr<ErrorEvent> create(const String& message, const String& fileName, unsigned lineNumber, unsigned columnNumber)
     {
-        return adoptRef(new ErrorEvent(message, fileName, lineNumber));
+        return adoptRef(new ErrorEvent(message, fileName, lineNumber, columnNumber));
     }
     static PassRefPtr<ErrorEvent> create(const AtomicString& type, const ErrorEventInit& initializer)
     {
@@ -63,17 +63,19 @@ public:
     const String& message() const { return m_message; }
     const String& filename() const { return m_fileName; }
     unsigned lineno() const { return m_lineNumber; }
+    unsigned colno() const { return m_columnNumber; }
 
     virtual const AtomicString& interfaceName() const;
 
 private:
     ErrorEvent();
-    ErrorEvent(const String& message, const String& fileName, unsigned lineNumber);
+    ErrorEvent(const String& message, const String& fileName, unsigned lineNumber, unsigned columnNumber);
     ErrorEvent(const AtomicString&, const ErrorEventInit&);
 
     String m_message;
     String m_fileName;
     unsigned m_lineNumber;
+    unsigned m_columnNumber;
 };
 
 } // namespace WebCore

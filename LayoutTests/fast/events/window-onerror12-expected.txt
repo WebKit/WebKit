@@ -4,5 +4,6 @@ Main frame window.onerror:
 msg: [object Event]
 url: undefined
 line: undefined
+column: undefined
 DONE.
 

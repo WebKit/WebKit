@@ -1,3 +1,40 @@
+2013-07-30  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Pass column as 4th argument to WorkerGlobalScope.onerror and Window.onerror handlers
+        https://bugs.webkit.org/show_bug.cgi?id=119251
+
+        Reviewed by Geoffrey Garen.
+
+        Update several tests to make use of the new column argument passed to
+        WorkerGlobalScope.onerror and Window.onerror handlers.
+
+        * fast/events/window-onerror1-expected.txt:
+        * fast/events/window-onerror1.html:
+        * fast/events/window-onerror11-expected.txt:
+        * fast/events/window-onerror11.html:
+        * fast/events/window-onerror12-expected.txt:
+        * fast/events/window-onerror12.html:
+        * fast/events/window-onerror13.html:
+        * fast/events/window-onerror14.html:
+        * fast/events/window-onerror16.html:
+        * fast/events/window-onerror2-expected.txt:
+        * fast/events/window-onerror2.html:
+        * fast/events/window-onerror4-expected.txt:
+        * fast/events/window-onerror4.html:
+        * fast/events/window-onerror5-expected.txt:
+        * fast/events/window-onerror5.html:
+        * fast/events/window-onerror6-expected.txt:
+        * fast/events/window-onerror6.html:
+        * fast/events/window-onerror7-expected.txt:
+        * fast/events/window-onerror7.html:
+        * fast/events/window-onerror8-expected.txt:
+        * fast/events/window-onerror8.html:
+        * fast/events/window-onerror9-expected.txt:
+        * fast/events/window-onerror9.html:
+        * fast/workers/resources/worker-script-error-handled.js:
+        (onerror):
+        * fast/workers/worker-script-error-expected.txt:
+
 2013-07-30  Mark Lam  <mark.lam@apple.com>
 
         Fix problems with divot and lineStart mismatches.

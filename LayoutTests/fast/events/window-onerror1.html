@@ -17,9 +17,9 @@ function print(message, color)
 function test()
 {
     // must be last because the exception ends JavaScript execution
-    window.onerror = function (error, url, line) {
+    window.onerror = function (error, url, line, column) {
         url = url ? url.match( /[^\/]+\/?$/ )[0] : url;
-        print("PASS: caught global error: " + error + " at " + url + ":" + line, "green");
+        print("PASS: caught global error: " + error + " at " + url + ", line: " + line + ", column: " + column, "green");
         return true;
     };
     hahaha_good_luck_finding_me(); // caught by window.onerror

@@ -1,4 +1,4 @@
 Test that syntax error will be reported to the window.onerror handler. Bug 8519.
 
-Main frame window.onerror: SyntaxError: Unexpected token ')' at window-onerror6.html:22
+Main frame window.onerror: SyntaxError: Unexpected token ')' at window-onerror6.html, line: 22, column: 0
 

@@ -15,7 +15,7 @@ function log(msg) {
     document.getElementById("console").innerHTML += msg + "<br>";
 }
 
-window.onerror = function(msg, url, line)
+window.onerror = function(msg, url, line, column)
 {
   log("Uncaught error should be printed in console when window.onerror returns not true.");
   log("DONE.");

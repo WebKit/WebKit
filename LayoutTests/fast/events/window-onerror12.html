@@ -14,12 +14,13 @@ function log(msg) {
     document.getElementById("console").innerHTML += msg + "<br>";
 }
 
-window.onerror = function(msg, url, line)
+window.onerror = function(msg, url, line, column)
 {
     log("Main frame window.onerror: ");
     log("msg: " + msg);
     log("url: " + url);
     log("line: " + line);
+    log("column: " + column);
     return true;
 }
 

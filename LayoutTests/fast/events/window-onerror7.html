@@ -10,10 +10,10 @@ function log(msg) {
     document.getElementById("console").innerHTML += msg + "<br>";
 }
 
-window.onerror = function(msg, url, line)
+window.onerror = function(msg, url, line, column)
 {
     url = url ? url.match( /[^\/]+\/?$/ )[0] : url;
-    log("Main frame window.onerror: " + msg + " at " + url + ":" + line);
+    log("Main frame window.onerror: " + msg + " at " + url + ", line: " + line + ", column: " + column);
     throw new Error("Nested error");
 }
 

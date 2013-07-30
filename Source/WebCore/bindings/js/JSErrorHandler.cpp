@@ -88,6 +88,7 @@ void JSErrorHandler::handleEvent(ScriptExecutionContext* scriptExecutionContext,
         args.append(jsStringWithCache(exec, errorEvent->message()));
         args.append(jsStringWithCache(exec, errorEvent->filename()));
         args.append(jsNumber(errorEvent->lineno()));
+        args.append(jsNumber(errorEvent->colno()));
 
         VM& vm = globalObject->vm();
         DynamicGlobalObjectScope globalObjectScope(vm, vm.dynamicGlobalObject ? vm.dynamicGlobalObject : globalObject);
