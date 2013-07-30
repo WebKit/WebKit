@@ -7057,7 +7057,7 @@
     <ClCompile Include="..\html\canvas\CanvasContextAttributes.cpp">
       <Filter>html\canvas</Filter>
     </ClCompile>
-    <ClCompile Include="..\platform\graphics\cairo\GLContext.cpp">
+    <ClCompile Include="..\platform\graphics\GLContext.cpp">
       <Filter>platform\graphics\cairo</Filter>
     </ClCompile>
     <ClCompile Include="..\platform\graphics\opengl\GraphicsContext3DOpenGLES.cpp">
@@ -14823,7 +14823,7 @@
     <ClInclude Include="..\html\canvas\CanvasContextAttributes.h">
       <Filter>html\canvas</Filter>
     </ClInclude>
-    <ClInclude Include="..\platform\graphics\cairo\GLContext.h">
+    <ClInclude Include="..\platform\graphics\GLContext.h">
       <Filter>platform\graphics\cairo</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\graphics\egl\GLContextEGL.h">

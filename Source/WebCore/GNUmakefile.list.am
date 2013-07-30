@@ -6304,8 +6304,8 @@ platformgtk_sources += \
 	Source/WebCore/platform/cairo/WidgetBackingStoreCairo.cpp
 if USE_OPENGL
 platformgtk_sources += \
-	Source/WebCore/platform/graphics/cairo/GLContext.cpp \
-	Source/WebCore/platform/graphics/cairo/GLContext.h \
+	Source/WebCore/platform/graphics/GLContext.cpp \
+	Source/WebCore/platform/graphics/GLContext.h \
 	Source/WebCore/platform/gtk/RedirectedXCompositeWindow.cpp \
 	Source/WebCore/platform/gtk/RedirectedXCompositeWindow.h
 endif # END USE_OPENGL

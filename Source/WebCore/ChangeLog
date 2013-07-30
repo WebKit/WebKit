@@ -1,3 +1,20 @@
+2013-07-29  Alex Christensen  <achristensen@apple.com>
+
+        Moved GLContext.cpp and .h out of cairo directory to be used by non-cairo ports.
+        https://bugs.webkit.org/show_bug.cgi?id=119223
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * GNUmakefile.list.am:
+        * PlatformGTK.cmake:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        Changed location of GLContext.cpp and GLContext.h.
+        * platform/graphics/GLContext.cpp: Copied from WebCore/platform/graphics/cairo/GLContext.cpp.
+        * platform/graphics/GLContext.h: Copied from WebCore/platform/graphics/cairo/GLContext.h.
+        * platform/graphics/cairo/GLContext.cpp: Removed.
+        * platform/graphics/cairo/GLContext.h: Removed.
+
 2013-07-29  Jer Noble  <jer.noble@apple.com>
 
         TextTrackRepresentation captions often disappear then appear again.

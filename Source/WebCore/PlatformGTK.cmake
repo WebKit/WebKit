@@ -119,7 +119,7 @@ list(APPEND WebCore_SOURCES
     platform/graphics/cairo/DrawingBufferCairo.cpp
     platform/graphics/cairo/FontCairo.cpp
     platform/graphics/cairo/FontCairoHarfbuzzNG.cpp
-    platform/graphics/cairo/GLContext.cpp
+    platform/graphics/GLContext.cpp
     platform/graphics/cairo/GradientCairo.cpp
     platform/graphics/cairo/GraphicsContext3DCairo.cpp
     platform/graphics/cairo/GraphicsContext3DPrivate.cpp

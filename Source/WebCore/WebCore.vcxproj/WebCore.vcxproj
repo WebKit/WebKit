@@ -7368,7 +7368,7 @@
     <ClCompile Include="..\platform\graphics\avfoundation\cf\InbandTextTrackPrivateAVCF.cpp" />
     <ClCompile Include="..\platform\graphics\avfoundation\cf\InbandTextTrackPrivateLegacyAVCF.cpp" />
     <ClCompile Include="..\platform\graphics\avfoundation\InbandTextTrackPrivateAVF.cpp" />
-    <ClCompile Include="..\platform\graphics\cairo\GLContext.cpp">
+    <ClCompile Include="..\platform\graphics\GLContext.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
@@ -19232,7 +19232,7 @@
     <ClInclude Include="..\platform\graphics\avfoundation\cf\InbandTextTrackPrivateAVCF.h" />
     <ClInclude Include="..\platform\graphics\avfoundation\cf\InbandTextTrackPrivateLegacyAVCF.h" />
     <ClInclude Include="..\platform\graphics\avfoundation\InbandTextTrackPrivateAVF.h" />
-    <ClInclude Include="..\platform\graphics\cairo\GLContext.h" />
+    <ClInclude Include="..\platform\graphics\GLContext.h" />
     <ClInclude Include="..\platform\graphics\cairo\GraphicsContext3DPrivate.h" />
     <ClInclude Include="..\platform\graphics\cg\SubimageCacheWithTimer.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">true</ExcludedFromBuild>
