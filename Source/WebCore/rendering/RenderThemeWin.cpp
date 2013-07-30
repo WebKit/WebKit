@@ -694,23 +694,21 @@ static void drawControl(GraphicsContext* context, RenderObject* o, HANDLE theme,
             ::DrawEdge(hdc, &widgetRect, EDGE_RAISED, BF_RECT | BF_SOFT | BF_MIDDLE | BF_ADJUST);
             if (themeData.m_state == TUS_DISABLED) {
                 static WORD patternBits[8] = {0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55};
-                HBITMAP patternBmp = ::CreateBitmap(8, 8, 1, 1, patternBits);
+                OwnPtr<HBITMAP> patternBmp = adoptPtr(::CreateBitmap(8, 8, 1, 1, patternBits));
                 if (patternBmp) {
-                    HBRUSH brush = (HBRUSH) ::CreatePatternBrush(patternBmp);
+                    OwnPtr<HBRUSH> brush = adoptPtr(::CreatePatternBrush(patternBmp.get()));
                     COLORREF oldForeColor = ::SetTextColor(hdc, ::GetSysColor(COLOR_3DFACE));
                     COLORREF oldBackColor = ::SetBkColor(hdc, ::GetSysColor(COLOR_3DHILIGHT));
                     POINT p;
                     ::GetViewportOrgEx(hdc, &p);
                     ::SetBrushOrgEx(hdc, p.x + widgetRect.left, p.y + widgetRect.top, NULL);
-                    HBRUSH oldBrush = (HBRUSH) ::SelectObject(hdc, brush);
-                    ::FillRect(hdc, &widgetRect, brush);
+                    HGDIOBJ oldBrush = ::SelectObject(hdc, brush.get());
+                    ::FillRect(hdc, &widgetRect, brush.get());
                     ::SetTextColor(hdc, oldForeColor);
                     ::SetBkColor(hdc, oldBackColor);
                     ::SelectObject(hdc, oldBrush);
-                    ::DeleteObject(brush); 
                 } else
                     ::FillRect(hdc, &widgetRect, (HBRUSH)COLOR_3DHILIGHT);
-                ::DeleteObject(patternBmp);
             }
         } else {
             // Push buttons, buttons, checkboxes and radios, and the dropdown arrow in menulists.

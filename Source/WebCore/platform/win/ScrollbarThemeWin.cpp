@@ -256,17 +256,15 @@ void ScrollbarThemeWin::paintTrackPiece(GraphicsContext* context, ScrollbarTheme
             ::FillRect(hdc, &themeRect, HBRUSH(COLOR_SCROLLBAR+1));
         else {
             static WORD patternBits[8] = { 0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55 };
-            HBITMAP patternBitmap = ::CreateBitmap(8, 8, 1, 1, patternBits);
-            HBRUSH brush = ::CreatePatternBrush(patternBitmap);
+            OwnPtr<HBITMAP> patternBitmap = adoptPtr(::CreateBitmap(8, 8, 1, 1, patternBits));
+            OwnPtr<HBRUSH> brush = adoptPtr(::CreatePatternBrush(patternBitmap.get()));
             SaveDC(hdc);
             ::SetTextColor(hdc, ::GetSysColor(COLOR_3DHILIGHT));
             ::SetBkColor(hdc, ::GetSysColor(COLOR_3DFACE));
             ::SetBrushOrgEx(hdc, rect.x(), rect.y(), NULL);
-            ::SelectObject(hdc, brush);
-            ::FillRect(hdc, &themeRect, brush);
+            ::SelectObject(hdc, brush.get());
+            ::FillRect(hdc, &themeRect, brush.get());
             ::RestoreDC(hdc, -1);
-            ::DeleteObject(brush);  
-            ::DeleteObject(patternBitmap);
         }
     }
 
