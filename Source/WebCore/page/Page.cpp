@@ -904,9 +904,8 @@ unsigned Page::pageCount() const
     if (m_pagination.mode == Pagination::Unpaginated)
         return 0;
 
-    FrameView* frameView = mainFrame()->view();
-    if (frameView->needsLayout())
-        frameView->layout();
+    if (Document* document = mainFrame()->document())
+        document->updateLayoutIgnorePendingStylesheets();
 
     RenderView* contentRenderer = mainFrame()->contentRenderer();
     return contentRenderer ? contentRenderer->columnCount(contentRenderer->columnInfo()) : 0;

@@ -1,3 +1,22 @@
+2013-07-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Page count can be incorrect if there is a pending style recalc
+        https://bugs.webkit.org/show_bug.cgi?id=119232
+
+        Reviewed by Beth Dakin.
+
+        If style is changed in a way that schedules a style recalc on the Document,
+        and then Page::pageCount() is called, we may give the wrong answer because
+        the existing code only checked FrameView::needsLayout(), not whether a style
+        recale was pending.
+        
+        Fix by having Page::pageCount() call updateLayoutIgnorePendingStylesheets()
+        as we do for other properties that require layer, and are exposed to JS
+        or via API.
+
+        * page/Page.cpp:
+        (WebCore::Page::pageCount):
+
 2013-07-29  Alex Christensen  <achristensen@apple.com>
 
         Moved GLContext.cpp and .h out of cairo directory to be used by non-cairo ports.
