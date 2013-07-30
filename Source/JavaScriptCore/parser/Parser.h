@@ -475,8 +475,7 @@ private:
     String parseInner();
 
     void didFinishParsing(SourceElements*, ParserArenaData<DeclarationStacks::VarStack>*, 
-                          ParserArenaData<DeclarationStacks::FunctionStack>*, CodeFeatures,
-                          int, int, IdentifierSet&);
+        ParserArenaData<DeclarationStacks::FunctionStack>*, CodeFeatures, int, IdentifierSet&);
 
     // Used to determine type of error to report.
     bool isFunctionBodyNode(ScopeNode*) { return false; }
@@ -484,20 +483,22 @@ private:
 
     ALWAYS_INLINE void next(unsigned lexerFlags = 0)
     {
-        m_lastLine = m_token.m_location.line;
-        m_lastTokenEnd = m_token.m_location.endOffset;
-        m_lastTokenLineStart = m_token.m_location.lineStartOffset;
-        m_lexer->setLastLineNumber(m_lastLine);
-        m_token.m_type = m_lexer->lex(&m_token.m_data, &m_token.m_location, lexerFlags, strictMode());
+        int lastLine = m_token.m_location.line;
+        int lastTokenEnd = m_token.m_location.endOffset;
+        int lastTokenLineStart = m_token.m_location.lineStartOffset;
+        m_lastTokenEndPosition = JSTextPosition(lastLine, lastTokenEnd, lastTokenLineStart);
+        m_lexer->setLastLineNumber(lastLine);
+        m_token.m_type = m_lexer->lex(&m_token, lexerFlags, strictMode());
     }
 
     ALWAYS_INLINE void nextExpectIdentifier(unsigned lexerFlags = 0)
     {
-        m_lastLine = m_token.m_location.line;
-        m_lastTokenEnd = m_token.m_location.endOffset;
-        m_lastTokenLineStart = m_token.m_location.lineStartOffset;
-        m_lexer->setLastLineNumber(m_lastLine);
-        m_token.m_type = m_lexer->lexExpectIdentifier(&m_token.m_data, &m_token.m_location, lexerFlags, strictMode());
+        int lastLine = m_token.m_location.line;
+        int lastTokenEnd = m_token.m_location.endOffset;
+        int lastTokenLineStart = m_token.m_location.lineStartOffset;
+        m_lastTokenEndPosition = JSTextPosition(lastLine, lastTokenEnd, lastTokenLineStart);
+        m_lexer->setLastLineNumber(lastLine);
+        m_token.m_type = m_lexer->lexExpectIdentifier(&m_token, lexerFlags, strictMode());
     }
 
     ALWAYS_INLINE bool nextTokenIsColon()
@@ -515,7 +516,7 @@ private:
     
     ALWAYS_INLINE String getToken() {
         SourceProvider* sourceProvider = m_source->provider();
-        return sourceProvider->getRange(tokenStart(), tokenEnd());
+        return sourceProvider->getRange(tokenStart(), tokenEndPosition().offset);
     }
     
     ALWAYS_INLINE bool match(JSTokenType expected)
@@ -528,6 +529,11 @@ private:
         return m_token.m_location.startOffset;
     }
     
+    ALWAYS_INLINE const JSTextPosition& tokenStartPosition()
+    {
+        return m_token.m_startPosition;
+    }
+
     ALWAYS_INLINE int tokenLine()
     {
         return m_token.m_location.line;
@@ -538,9 +544,9 @@ private:
         return tokenStart() - tokenLineStart();
     }
 
-    ALWAYS_INLINE unsigned tokenEnd()
+    ALWAYS_INLINE const JSTextPosition& tokenEndPosition()
     {
-        return m_token.m_location.endOffset;
+        return m_token.m_endPosition;
     }
     
     ALWAYS_INLINE unsigned tokenLineStart()
@@ -915,7 +921,7 @@ private:
     template <bool strict, class TreeBuilder> ALWAYS_INLINE TreeProperty parseProperty(TreeBuilder&);
     template <class TreeBuilder> ALWAYS_INLINE TreeFunctionBody parseFunctionBody(TreeBuilder&);
     template <class TreeBuilder> ALWAYS_INLINE TreeFormalParameterList parseFormalParameters(TreeBuilder&);
-    template <class TreeBuilder> ALWAYS_INLINE TreeExpression parseVarDeclarationList(TreeBuilder&, int& declarations, const Identifier*& lastIdent, TreeExpression& lastInitializer, int& identStart, int& initStart, int& initEnd);
+    template <class TreeBuilder> ALWAYS_INLINE TreeExpression parseVarDeclarationList(TreeBuilder&, int& declarations, const Identifier*& lastIdent, TreeExpression& lastInitializer, JSTextPosition& identStart, JSTextPosition& initStart, JSTextPosition& initEnd);
     template <class TreeBuilder> ALWAYS_INLINE TreeConstDeclList parseConstDeclarationList(TreeBuilder& context);
     template <FunctionRequirements, bool nameIsInContainingScope, class TreeBuilder> bool parseFunctionInfo(TreeBuilder&, const Identifier*&, TreeFormalParameterList&, TreeFunctionBody&, unsigned& openBraceOffset, unsigned& closeBraceOffset, int& bodyStartLine, unsigned& bodyStartColumn);
     ALWAYS_INLINE int isBinaryOperator(JSTokenType);
@@ -935,19 +941,9 @@ private:
         return m_stack.isSafeToRecurse();
     }
     
-    int lastTokenEnd() const
+    const JSTextPosition& lastTokenEndPosition() const
     {
-        return m_lastTokenEnd;
-    }
-
-    unsigned lastTokenLine() const
-    {
-        return m_lastLine;
-    }
-
-    unsigned lastTokenLineStart() const
-    {
-        return m_lastTokenLineStart;
+        return m_lastTokenEndPosition;
     }
 
     bool hasError() const
@@ -965,10 +961,7 @@ private:
     String m_errorMessage;
     JSToken m_token;
     bool m_allowsIn;
-    unsigned m_lastLine;
-    int m_lastTokenEnd;
-    unsigned m_lastTokenLine;
-    unsigned m_lastTokenLineStart;
+    JSTextPosition m_lastTokenEndPosition;
     int m_assignmentCount;
     int m_nonLHSCount;
     bool m_syntaxAlreadyValidated;
@@ -1051,7 +1044,7 @@ PassRefPtr<ParsedNode> Parser<LexerType>::parse(ParserError& error)
                                     *m_source,
                                     m_features,
                                     m_numConstants);
-        result->setLoc(m_source->firstLine(), m_lastLine, m_lexer->currentOffset(), m_lexer->currentLineStartOffset());
+        result->setLoc(m_source->firstLine(), m_lastTokenEndPosition.line, m_lexer->currentOffset(), m_lexer->currentLineStartOffset());
     } else {
         // We can never see a syntax error when reparsing a function, since we should have
         // reported the error when parsing the containing program or eval code. So if we're

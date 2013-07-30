@@ -134,4 +134,29 @@ try {
     printStack(e.stack);
 }
 
+// Case 21: Regression test from https://bugs.webkit.org/show_bug.cgi?id=118662
+testId++;
+try {
+    function toFuzz21b() {
+        if (PriorityQueue.prototype.doSort() instanceof (this ^= function() {
+        })) return 2; 
+    }
+    toFuzz21b();
+} catch(e) {
+    printStack(e.stack);
+}
+
+// Case 22: Regression test from https://bugs.webkit.org/show_bug.cgi?id=118664
+testId++;
+try {
+    function toFuzz22b() {
+        for (var conf = new ConfigObject({
+        }) in str1.localeCompare) {
+        }
+    }
+    toFuzz22b();
+} catch(e) {
+    printStack(e.stack);
+}
+
 successfullyParsed = true;

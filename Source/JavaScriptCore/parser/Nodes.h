@@ -129,14 +129,13 @@ namespace JSC {
     public:
         virtual ~Node() { }
 
-        int lineNo() const { return m_lineNumber; }
-        int startOffset() const { return m_startOffset; }
-        int lineStartOffset() const { return m_lineStartOffset; }
+        int lineNo() const { return m_position.line; }
+        int startOffset() const { return m_position.offset; }
+        int lineStartOffset() const { return m_position.lineStartOffset; }
+        const JSTextPosition& position() const { return m_position; }
 
     protected:
-        int m_lineNumber;
-        int m_startOffset;
-        int m_lineStartOffset;
+        JSTextPosition m_position;
     };
 
     class ExpressionNode : public Node {
@@ -254,49 +253,43 @@ namespace JSC {
     class ThrowableExpressionData {
     public:
         ThrowableExpressionData()
-            : m_divot(static_cast<uint32_t>(-1))
-            , m_divotStartOffset(static_cast<uint16_t>(-1))
-            , m_divotEndOffset(static_cast<uint16_t>(-1))
-            , m_divotLine(static_cast<uint32_t>(-1))
-            , m_divotLineStart(static_cast<uint32_t>(-1))
+            : m_divot(-1, -1, -1)
+            , m_divotStart(-1, -1, -1)
+            , m_divotEnd(-1, -1, -1)
         {
         }
         
-        ThrowableExpressionData(unsigned divot, unsigned startOffset, unsigned endOffset, unsigned divotLine, unsigned divotLineStart)
+        ThrowableExpressionData(const JSTextPosition& divot, const JSTextPosition& start, const JSTextPosition& end)
             : m_divot(divot)
-            , m_divotStartOffset(startOffset)
-            , m_divotEndOffset(endOffset)
-            , m_divotLine(divotLine)
-            , m_divotLineStart(divotLineStart)
+            , m_divotStart(start)
+            , m_divotEnd(end)
         {
-            ASSERT(m_divot >= m_divotLineStart);
-        }
-        
-        void setExceptionSourceCode(unsigned divot, unsigned startOffset, unsigned endOffset, unsigned divotLine, unsigned divotLineStart)
-        {
-            ASSERT(divot >= divotLineStart);
-            m_divot = divot;
-            m_divotStartOffset = startOffset;
-            m_divotEndOffset = endOffset;
-            m_divotLine = divotLine;
-            m_divotLineStart = divotLineStart;
+            ASSERT(m_divot.offset >= m_divot.lineStartOffset);
+            ASSERT(m_divotStart.offset >= m_divotStart.lineStartOffset);
+            ASSERT(m_divotEnd.offset >= m_divotEnd.lineStartOffset);
         }
 
-        uint32_t divot() const { return m_divot; }
-        uint16_t divotStartOffset() const { return m_divotStartOffset; }
-        uint16_t divotEndOffset() const { return m_divotEndOffset; }
-        uint32_t divotLine() const { return m_divotLine; }
-        uint32_t divotLineStart() const { return m_divotLineStart; }
+        void setExceptionSourceCode(const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd)
+        {
+            ASSERT(divot.offset >= divot.lineStartOffset);
+            ASSERT(divotStart.offset >= divotStart.lineStartOffset);
+            ASSERT(divotEnd.offset >= divotEnd.lineStartOffset);
+            m_divot = divot;
+            m_divotStart = divotStart;
+            m_divotEnd = divotEnd;
+        }
+
+        const JSTextPosition& divot() const { return m_divot; }
+        const JSTextPosition& divotStart() const { return m_divotStart; }
+        const JSTextPosition& divotEnd() const { return m_divotEnd; }
 
     protected:
         RegisterID* emitThrowReferenceError(BytecodeGenerator&, const String& message);
 
     private:
-        uint32_t m_divot;
-        uint16_t m_divotStartOffset;
-        uint16_t m_divotEndOffset;
-        uint32_t m_divotLine;
-        uint32_t m_divotLineStart;
+        JSTextPosition m_divot;
+        JSTextPosition m_divotStart;
+        JSTextPosition m_divotEnd;
     };
 
     class ThrowableSubExpressionData : public ThrowableExpressionData {
@@ -309,8 +302,8 @@ namespace JSC {
         {
         }
 
-        ThrowableSubExpressionData(unsigned divot, unsigned startOffset, unsigned endOffset, unsigned divotLine, unsigned divotLineStart)
-            : ThrowableExpressionData(divot, startOffset, endOffset, divotLine, divotLineStart)
+        ThrowableSubExpressionData(const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd)
+            : ThrowableExpressionData(divot, divotStart, divotEnd)
             , m_subexpressionDivotOffset(0)
             , m_subexpressionEndOffset(0)
             , m_subexpressionLineOffset(0)
@@ -318,28 +311,34 @@ namespace JSC {
         {
         }
 
-        void setSubexpressionInfo(uint32_t subexpressionDivot, uint16_t subexpressionOffset, uint32_t subexpressionLine, uint32_t subexpressionLineStart)
+        void setSubexpressionInfo(const JSTextPosition& subexpressionDivot, int subexpressionOffset)
         {
-            ASSERT(subexpressionDivot <= divot());
+            ASSERT(subexpressionDivot.offset <= divot().offset);
             // Overflow means we can't do this safely, so just point at the primary divot,
             // divotLine, or divotLineStart.
-            if ((divot() - subexpressionDivot) & ~0xFFFF)
+            if ((divot() - subexpressionDivot.offset) & ~0xFFFF)
                 return;
-            if ((divotLine() - subexpressionLine) & ~0xFFFF)
+            if ((divot().line - subexpressionDivot.line) & ~0xFFFF)
                 return;
-            if ((divotLineStart() - subexpressionLineStart) & ~0xFFFF)
+            if ((divot().lineStartOffset - subexpressionDivot.lineStartOffset) & ~0xFFFF)
                 return;
-            m_subexpressionDivotOffset = divot() - subexpressionDivot;
-            m_subexpressionEndOffset = subexpressionOffset;
-            m_subexpressionLineOffset = divotLine() - subexpressionLine;
-            m_subexpressionLineStartOffset = divotLineStart() - subexpressionLineStart;
+            if ((divotEnd() - subexpressionOffset) & ~0xFFFF)
+                return;
+            m_subexpressionDivotOffset = divot() - subexpressionDivot.offset;
+            m_subexpressionEndOffset = divotEnd() - subexpressionOffset;
+            m_subexpressionLineOffset = divot().line - subexpressionDivot.line;
+            m_subexpressionLineStartOffset = divot().lineStartOffset - subexpressionDivot.lineStartOffset;
         }
 
-        unsigned subexpressionDivot() { return divot() - m_subexpressionDivotOffset; }
-        unsigned subexpressionStartOffset() { return divotStartOffset() - m_subexpressionDivotOffset; }
-        unsigned subexpressionEndOffset() { return m_subexpressionEndOffset; }
-        unsigned subexpressionLine() { return divotLine() - m_subexpressionLineOffset; }
-        unsigned subexpressionLineStart() { return divotLineStart() - m_subexpressionLineStartOffset; }
+        JSTextPosition subexpressionDivot()
+        {
+            int newLine = divot().line - m_subexpressionLineOffset;
+            int newOffset = divot().offset - m_subexpressionDivotOffset;
+            int newLineStartOffset = divot().lineStartOffset - m_subexpressionLineStartOffset;
+            return JSTextPosition(newLine, newOffset, newLineStartOffset);
+        }
+        JSTextPosition subexpressionStart() { return divotStart(); }
+        JSTextPosition subexpressionEnd() { return divotEnd() - static_cast<int>(m_subexpressionEndOffset); }
 
     protected:
         uint16_t m_subexpressionDivotOffset;
@@ -358,8 +357,8 @@ namespace JSC {
         {
         }
 
-        ThrowablePrefixedSubExpressionData(unsigned divot, unsigned startOffset, unsigned endOffset, unsigned divotLine, unsigned divotLineStart)
-            : ThrowableExpressionData(divot, startOffset, endOffset, divotLine, divotLineStart)
+        ThrowablePrefixedSubExpressionData(const JSTextPosition& divot, const JSTextPosition& start, const JSTextPosition& end)
+            : ThrowableExpressionData(divot, start, end)
             , m_subexpressionDivotOffset(0)
             , m_subexpressionStartOffset(0)
             , m_subexpressionLineOffset(0)
@@ -367,28 +366,34 @@ namespace JSC {
         {
         }
 
-        void setSubexpressionInfo(uint32_t subexpressionDivot, uint16_t subexpressionOffset, uint32_t subexpressionLine, uint32_t subexpressionLineStart)
+        void setSubexpressionInfo(const JSTextPosition& subexpressionDivot, int subexpressionOffset)
         {
-            ASSERT(subexpressionDivot >= divot());
+            ASSERT(subexpressionDivot.offset >= divot().offset);
             // Overflow means we can't do this safely, so just point at the primary divot,
             // divotLine, or divotLineStart.
-            if ((subexpressionDivot - divot()) & ~0xFFFF) 
+            if ((subexpressionDivot.offset - divot()) & ~0xFFFF) 
                 return;
-            if ((subexpressionLine - divotLine()) & ~0xFFFF)
+            if ((subexpressionDivot.line - divot().line) & ~0xFFFF)
                 return;
-            if ((subexpressionLineStart - divotLineStart()) & ~0xFFFF)
+            if ((subexpressionDivot.lineStartOffset - divot().lineStartOffset) & ~0xFFFF)
                 return;
-            m_subexpressionDivotOffset = subexpressionDivot - divot();
-            m_subexpressionStartOffset = subexpressionOffset;
-            m_subexpressionLineOffset = subexpressionLine - divotLine();
-            m_subexpressionLineStartOffset = subexpressionLineStart - divotLineStart();
+            if ((subexpressionOffset - divotStart()) & ~0xFFFF) 
+                return;
+            m_subexpressionDivotOffset = subexpressionDivot.offset - divot();
+            m_subexpressionStartOffset = subexpressionOffset - divotStart();
+            m_subexpressionLineOffset = subexpressionDivot.line - divot().line;
+            m_subexpressionLineStartOffset = subexpressionDivot.lineStartOffset - divot().lineStartOffset;
         }
 
-        unsigned subexpressionDivot() { return divot() + m_subexpressionDivotOffset; }
-        unsigned subexpressionStartOffset() { return m_subexpressionStartOffset; }
-        unsigned subexpressionEndOffset() { return divotEndOffset() + m_subexpressionDivotOffset; }
-        unsigned subexpressionLine() { return divotLine() + m_subexpressionLineOffset; }
-        unsigned subexpressionLineStart() { return divotLineStart() + m_subexpressionLineStartOffset; }
+        JSTextPosition subexpressionDivot()
+        {
+            int newLine = divot().line + m_subexpressionLineOffset;
+            int newOffset = divot().offset + m_subexpressionDivotOffset;
+            int newLineStartOffset = divot().lineStartOffset + m_subexpressionLineStartOffset;
+            return JSTextPosition(newLine, newOffset, newLineStartOffset);
+        }
+        JSTextPosition subexpressionStart() { return divotStart() + static_cast<int>(m_subexpressionStartOffset); }
+        JSTextPosition subexpressionEnd() { return divotEnd(); }
 
     protected:
         uint16_t m_subexpressionDivotOffset;
@@ -418,7 +423,7 @@ namespace JSC {
 
     class ResolveNode : public ExpressionNode {
     public:
-        ResolveNode(const JSTokenLocation&, const Identifier&, unsigned startOffset, unsigned divotLine, unsigned divotLineStart);
+        ResolveNode(const JSTokenLocation&, const Identifier&, const JSTextPosition& start);
 
         const Identifier& identifier() const { return m_ident; }
 
@@ -430,9 +435,7 @@ namespace JSC {
         virtual bool isResolveNode() const { return true; }
 
         const Identifier& m_ident;
-        uint32_t m_startOffset;
-        uint32_t m_divotLine;
-        uint32_t m_divotLineStart;
+        JSTextPosition m_start;
     };
 
     class ElementNode : public ParserArenaFreeable {
@@ -579,7 +582,7 @@ namespace JSC {
 
     class EvalFunctionCallNode : public ExpressionNode, public ThrowableExpressionData {
     public:
-        EvalFunctionCallNode(const JSTokenLocation&, ArgumentsNode*, unsigned divot, unsigned startOffset, unsigned endOffset, unsigned divotLine, unsigned divotLineStart);
+        EvalFunctionCallNode(const JSTokenLocation&, ArgumentsNode*, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd);
 
     private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0);
@@ -589,7 +592,7 @@ namespace JSC {
 
     class FunctionCallValueNode : public ExpressionNode, public ThrowableExpressionData {
     public:
-        FunctionCallValueNode(const JSTokenLocation&, ExpressionNode*, ArgumentsNode*, unsigned divot, unsigned startOffset, unsigned endOffset, unsigned divotLine, unsigned divotLineStart);
+        FunctionCallValueNode(const JSTokenLocation&, ExpressionNode*, ArgumentsNode*, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd);
 
     private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0);
@@ -600,7 +603,7 @@ namespace JSC {
 
     class FunctionCallResolveNode : public ExpressionNode, public ThrowableExpressionData {
     public:
-        FunctionCallResolveNode(const JSTokenLocation&, const Identifier&, ArgumentsNode*, unsigned divot, unsigned startOffset, unsigned endOffset, unsigned divotLine, unsigned divotLineStart);
+        FunctionCallResolveNode(const JSTokenLocation&, const Identifier&, ArgumentsNode*, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd);
 
     private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0);
@@ -611,7 +614,7 @@ namespace JSC {
     
     class FunctionCallBracketNode : public ExpressionNode, public ThrowableSubExpressionData {
     public:
-        FunctionCallBracketNode(const JSTokenLocation&, ExpressionNode* base, ExpressionNode* subscript, ArgumentsNode*, unsigned divot, unsigned startOffset, unsigned endOffset, unsigned divotLine, unsigned divotLineStart);
+        FunctionCallBracketNode(const JSTokenLocation&, ExpressionNode* base, ExpressionNode* subscript, ArgumentsNode*, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd);
 
     private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0);
@@ -623,7 +626,7 @@ namespace JSC {
 
     class FunctionCallDotNode : public ExpressionNode, public ThrowableSubExpressionData {
     public:
-        FunctionCallDotNode(const JSTokenLocation&, ExpressionNode* base, const Identifier&, ArgumentsNode*, unsigned divot, unsigned startOffset, unsigned endOffset, unsigned divotLine, unsigned divotLineStart);
+        FunctionCallDotNode(const JSTokenLocation&, ExpressionNode* base, const Identifier&, ArgumentsNode*, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd);
 
     private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0);
@@ -636,7 +639,7 @@ namespace JSC {
 
     class CallFunctionCallDotNode : public FunctionCallDotNode {
     public:
-        CallFunctionCallDotNode(const JSTokenLocation&, ExpressionNode* base, const Identifier&, ArgumentsNode*, unsigned divot, unsigned startOffset, unsigned endOffset, unsigned divotLine, unsigned divotLineStart);
+        CallFunctionCallDotNode(const JSTokenLocation&, ExpressionNode* base, const Identifier&, ArgumentsNode*, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd);
 
     private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0);
@@ -644,7 +647,7 @@ namespace JSC {
     
     class ApplyFunctionCallDotNode : public FunctionCallDotNode {
     public:
-        ApplyFunctionCallDotNode(const JSTokenLocation&, ExpressionNode* base, const Identifier&, ArgumentsNode*, unsigned divot, unsigned startOffset, unsigned endOffset, unsigned divotLine, unsigned divotLineStart);
+        ApplyFunctionCallDotNode(const JSTokenLocation&, ExpressionNode* base, const Identifier&, ArgumentsNode*, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd);
 
     private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0);
@@ -652,7 +655,7 @@ namespace JSC {
 
     class DeleteResolveNode : public ExpressionNode, public ThrowableExpressionData {
     public:
-        DeleteResolveNode(const JSTokenLocation&, const Identifier&, unsigned divot, unsigned startOffset, unsigned endOffset, unsigned divotLine, unsigned divotLineStart);
+        DeleteResolveNode(const JSTokenLocation&, const Identifier&, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd);
 
     private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0);
@@ -662,7 +665,7 @@ namespace JSC {
 
     class DeleteBracketNode : public ExpressionNode, public ThrowableExpressionData {
     public:
-        DeleteBracketNode(const JSTokenLocation&, ExpressionNode* base, ExpressionNode* subscript, unsigned divot, unsigned startOffset, unsigned endOffset, unsigned divotLine, unsigned divotLineStart);
+        DeleteBracketNode(const JSTokenLocation&, ExpressionNode* base, ExpressionNode* subscript, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd);
 
     private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0);
@@ -673,7 +676,7 @@ namespace JSC {
 
     class DeleteDotNode : public ExpressionNode, public ThrowableExpressionData {
     public:
-        DeleteDotNode(const JSTokenLocation&, ExpressionNode* base, const Identifier&, unsigned divot, unsigned startOffset, unsigned endOffset, unsigned divotLine, unsigned divotLineStart);
+        DeleteDotNode(const JSTokenLocation&, ExpressionNode* base, const Identifier&, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd);
 
     private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0);
@@ -726,7 +729,7 @@ namespace JSC {
 
     class PrefixNode : public ExpressionNode, public ThrowablePrefixedSubExpressionData {
     public:
-        PrefixNode(const JSTokenLocation&, ExpressionNode*, Operator, unsigned divot, unsigned startOffset, unsigned endOffset, unsigned divotLine, unsigned divotLineStart);
+        PrefixNode(const JSTokenLocation&, ExpressionNode*, Operator, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd);
 
     protected:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0);
@@ -740,7 +743,7 @@ namespace JSC {
 
     class PostfixNode : public PrefixNode {
     public:
-        PostfixNode(const JSTokenLocation&, ExpressionNode*, Operator, unsigned divot, unsigned startOffset, unsigned endOffset, unsigned divotLine, unsigned divotLineStart);
+        PostfixNode(const JSTokenLocation&, ExpressionNode*, Operator, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd);
 
     private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0);
@@ -983,7 +986,7 @@ namespace JSC {
 
     class ReadModifyResolveNode : public ExpressionNode, public ThrowableExpressionData {
     public:
-        ReadModifyResolveNode(const JSTokenLocation&, const Identifier&, Operator, ExpressionNode*  right, bool rightHasAssignments, unsigned divot, unsigned startOffset, unsigned endOffset, unsigned line, unsigned lineStart);
+        ReadModifyResolveNode(const JSTokenLocation&, const Identifier&, Operator, ExpressionNode*  right, bool rightHasAssignments, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd);
 
     private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0);
@@ -1007,7 +1010,7 @@ namespace JSC {
 
     class ReadModifyBracketNode : public ExpressionNode, public ThrowableSubExpressionData {
     public:
-        ReadModifyBracketNode(const JSTokenLocation&, ExpressionNode* base, ExpressionNode* subscript, Operator, ExpressionNode* right, bool subscriptHasAssignments, bool rightHasAssignments, unsigned divot, unsigned startOffset, unsigned endOffset, unsigned divotLine, unsigned divotLineStart);
+        ReadModifyBracketNode(const JSTokenLocation&, ExpressionNode* base, ExpressionNode* subscript, Operator, ExpressionNode* right, bool subscriptHasAssignments, bool rightHasAssignments, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd);
 
     private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0);
@@ -1022,7 +1025,7 @@ namespace JSC {
 
     class AssignBracketNode : public ExpressionNode, public ThrowableExpressionData {
     public:
-        AssignBracketNode(const JSTokenLocation&, ExpressionNode* base, ExpressionNode* subscript, ExpressionNode* right, bool subscriptHasAssignments, bool rightHasAssignments, unsigned divot, unsigned startOffset, unsigned endOffset, unsigned divotLine, unsigned divotLineStart);
+        AssignBracketNode(const JSTokenLocation&, ExpressionNode* base, ExpressionNode* subscript, ExpressionNode* right, bool subscriptHasAssignments, bool rightHasAssignments, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd);
 
     private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0);
@@ -1036,7 +1039,7 @@ namespace JSC {
 
     class AssignDotNode : public ExpressionNode, public ThrowableExpressionData {
     public:
-        AssignDotNode(const JSTokenLocation&, ExpressionNode* base, const Identifier&, ExpressionNode* right, bool rightHasAssignments, unsigned divot, unsigned startOffset, unsigned endOffset, unsigned divotLine, unsigned divotLineStart);
+        AssignDotNode(const JSTokenLocation&, ExpressionNode* base, const Identifier&, ExpressionNode* right, bool rightHasAssignments, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd);
 
     private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0);
@@ -1049,7 +1052,7 @@ namespace JSC {
 
     class ReadModifyDotNode : public ExpressionNode, public ThrowableSubExpressionData {
     public:
-        ReadModifyDotNode(const JSTokenLocation&, ExpressionNode* base, const Identifier&, Operator, ExpressionNode* right, bool rightHasAssignments, unsigned divot, unsigned startOffset, unsigned endOffset, unsigned divotLine, unsigned divotLineStart);
+        ReadModifyDotNode(const JSTokenLocation&, ExpressionNode* base, const Identifier&, Operator, ExpressionNode* right, bool rightHasAssignments, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd);
 
     private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0);
@@ -1063,7 +1066,7 @@ namespace JSC {
 
     class AssignErrorNode : public ExpressionNode, public ThrowableExpressionData {
     public:
-        AssignErrorNode(const JSTokenLocation&, unsigned divot, unsigned startOffset, unsigned endOffset, unsigned divotLine, unsigned divotLineStart);
+        AssignErrorNode(const JSTokenLocation&, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd);
 
     private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0);
@@ -1239,7 +1242,7 @@ namespace JSC {
     class ForInNode : public StatementNode, public ThrowableExpressionData {
     public:
         ForInNode(const JSTokenLocation&, ExpressionNode*, ExpressionNode*, StatementNode*);
-        ForInNode(VM*, const JSTokenLocation&, const Identifier&, ExpressionNode*, ExpressionNode*, StatementNode*, unsigned divot, int startOffset, int endOffset, unsigned divotLine, unsigned divotLineStart);
+        ForInNode(VM*, const JSTokenLocation&, const Identifier&, ExpressionNode*, ExpressionNode*, StatementNode*, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd);
 
     private:
         virtual void emitBytecode(BytecodeGenerator&, RegisterID* = 0);
@@ -1292,16 +1295,14 @@ namespace JSC {
 
     class WithNode : public StatementNode {
     public:
-        WithNode(const JSTokenLocation&, ExpressionNode*, StatementNode*, uint32_t divot, unsigned divotLine, unsigned divotLineStart, uint32_t expressionLength);
+        WithNode(const JSTokenLocation&, ExpressionNode*, StatementNode*, const JSTextPosition& divot, uint32_t expressionLength);
 
     private:
         virtual void emitBytecode(BytecodeGenerator&, RegisterID* = 0);
 
         ExpressionNode* m_expr;
         StatementNode* m_statement;
-        uint32_t m_divot;
-        uint32_t m_divotLine;
-        uint32_t m_divotLineStart;
+        JSTextPosition m_divot;
         uint32_t m_expressionLength;
     };
 

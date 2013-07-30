@@ -265,27 +265,32 @@ namespace JSC {
             n->emitBytecodeInConditionContext(*this, trueTarget, falseTarget, fallThroughMode);
         }
 
-        void emitExpressionInfo(int divot, int startOffset, int endOffset, unsigned line, int lineStart)
-        {
+        void emitExpressionInfo(const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd)
+        {            
+            ASSERT(divot.offset >= divotStart.offset);
+            ASSERT(divotEnd.offset >= divot.offset);
+
             int sourceOffset = m_scopeNode->source().startOffset();
             unsigned firstLine = m_scopeNode->source().firstLine();
 
-            ASSERT(divot >= lineStart);
-            ASSERT(divot >= sourceOffset);
-            divot -= sourceOffset;
+            int divotOffset = divot.offset - sourceOffset;
+            int startOffset = divot.offset - divotStart.offset;
+            int endOffset = divotEnd.offset - divot.offset;
 
+            unsigned line = divot.line;
+            ASSERT(line >= firstLine);
+            line -= firstLine;
+
+            int lineStart = divot.lineStartOffset;
             if (lineStart > sourceOffset)
                 lineStart -= sourceOffset;
             else
                 lineStart = 0;
-
-            ASSERT(line >= firstLine);
-            line -= firstLine;
+            ASSERT(divotOffset >= lineStart);
+            unsigned column = divotOffset - lineStart;
 
             unsigned instructionOffset = instructions().size();
-            ASSERT(divot >= lineStart);
-            unsigned column = divot - lineStart;
-            m_codeBlock->addExpressionInfo(instructionOffset, divot, startOffset, endOffset, line, column);
+            m_codeBlock->addExpressionInfo(instructionOffset, divotOffset, startOffset, endOffset, line, column);
         }
 
         ALWAYS_INLINE bool leftHandSideNeedsCopy(bool rightHasAssignments, bool rightIsPure)
@@ -351,15 +356,15 @@ namespace JSC {
         void emitPutGetterSetter(RegisterID* base, const Identifier& property, RegisterID* getter, RegisterID* setter);
         
         ExpectedFunction expectedFunctionForIdentifier(const Identifier&);
-        RegisterID* emitCall(RegisterID* dst, RegisterID* func, ExpectedFunction, CallArguments&, unsigned divot, unsigned startOffset, unsigned endOffset, unsigned line, unsigned lineStart);
-        RegisterID* emitCallEval(RegisterID* dst, RegisterID* func, CallArguments&, unsigned divot, unsigned startOffset, unsigned endOffset, unsigned line, unsigned lineStart);
-        RegisterID* emitCallVarargs(RegisterID* dst, RegisterID* func, RegisterID* thisRegister, RegisterID* arguments, RegisterID* firstFreeRegister, RegisterID* profileHookRegister, unsigned divot, unsigned startOffset, unsigned endOffset, unsigned line, unsigned lineStart);
+        RegisterID* emitCall(RegisterID* dst, RegisterID* func, ExpectedFunction, CallArguments&, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd);
+        RegisterID* emitCallEval(RegisterID* dst, RegisterID* func, CallArguments&, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd);
+        RegisterID* emitCallVarargs(RegisterID* dst, RegisterID* func, RegisterID* thisRegister, RegisterID* arguments, RegisterID* firstFreeRegister, RegisterID* profileHookRegister, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd);
         RegisterID* emitLoadVarargs(RegisterID* argCountDst, RegisterID* thisRegister, RegisterID* args);
 
         RegisterID* emitReturn(RegisterID* src);
         RegisterID* emitEnd(RegisterID* src) { return emitUnaryNoDstOp(op_end, src); }
 
-        RegisterID* emitConstruct(RegisterID* dst, RegisterID* func, ExpectedFunction, CallArguments&, unsigned divot, unsigned startOffset, unsigned endOffset, unsigned line, unsigned lineStart);
+        RegisterID* emitConstruct(RegisterID* dst, RegisterID* func, ExpectedFunction, CallArguments&, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd);
         RegisterID* emitStrcat(RegisterID* dst, RegisterID* src, int count);
         void emitToPrimitive(RegisterID* dst, RegisterID* src);
 
@@ -462,7 +467,7 @@ namespace JSC {
         // (i.e. "Object()" is identical to "new Object()").
         ExpectedFunction emitExpectedFunctionSnippet(RegisterID* dst, RegisterID* func, ExpectedFunction, CallArguments&, Label* done);
         
-        RegisterID* emitCall(OpcodeID, RegisterID* dst, RegisterID* func, ExpectedFunction, CallArguments&, unsigned divot, unsigned startOffset, unsigned endOffset, unsigned line, unsigned lineStart);
+        RegisterID* emitCall(OpcodeID, RegisterID* dst, RegisterID* func, ExpectedFunction, CallArguments&, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd);
 
         RegisterID* newRegister();
 

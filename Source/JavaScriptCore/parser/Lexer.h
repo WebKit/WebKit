@@ -86,11 +86,15 @@ public:
     void setIsReparsing() { m_isReparsing = true; }
     bool isReparsing() const { return m_isReparsing; }
 
-    JSTokenType lex(JSTokenData*, JSTokenLocation*, unsigned, bool strictMode);
+    JSTokenType lex(JSToken*, unsigned, bool strictMode);
     bool nextTokenIsColon();
     int lineNumber() const { return m_lineNumber; }
     ALWAYS_INLINE int currentOffset() const { return offsetFromSourcePtr(m_code); }
     ALWAYS_INLINE int currentLineStartOffset() const { return offsetFromSourcePtr(m_lineStart); }
+    ALWAYS_INLINE JSTextPosition currentPosition() const
+    {
+        return JSTextPosition(m_lineNumber, currentOffset(), currentLineStartOffset());
+    }
     void setLastLineNumber(int lastLineNumber) { m_lastLineNumber = lastLineNumber; }
     int lastLineNumber() const { return m_lastLineNumber; }
     bool prevTerminator() const { return m_terminator; }
@@ -125,7 +129,7 @@ public:
 
     SourceProvider* sourceProvider() const { return m_source->provider(); }
 
-    JSTokenType lexExpectIdentifier(JSTokenData*, JSTokenLocation*, unsigned, bool strictMode);
+    JSTokenType lexExpectIdentifier(JSToken*, unsigned, bool strictMode);
 
 private:
     void record8(int);
@@ -331,12 +335,15 @@ ALWAYS_INLINE const Identifier* Lexer<T>::makeLCharIdentifier(const UChar* chara
 }
 
 template <typename T>
-ALWAYS_INLINE JSTokenType Lexer<T>::lexExpectIdentifier(JSTokenData* tokenData, JSTokenLocation* tokenLocation, unsigned lexerFlags, bool strictMode)
+ALWAYS_INLINE JSTokenType Lexer<T>::lexExpectIdentifier(JSToken* tokenRecord, unsigned lexerFlags, bool strictMode)
 {
+    JSTokenData* tokenData = &tokenRecord->m_data;
+    JSTokenLocation* tokenLocation = &tokenRecord->m_location;
     ASSERT((lexerFlags & LexerFlagsIgnoreReservedWords));
     const T* start = m_code;
     const T* ptr = start;
     const T* end = m_codeEnd;
+    JSTextPosition startPosition = currentPosition();
     if (ptr >= end) {
         ASSERT(ptr == end);
         goto slowCase;
@@ -371,11 +378,13 @@ ALWAYS_INLINE JSTokenType Lexer<T>::lexExpectIdentifier(JSTokenData* tokenData, 
     tokenLocation->startOffset = offsetFromSourcePtr(start);
     tokenLocation->endOffset = currentOffset();
     ASSERT(tokenLocation->startOffset >= tokenLocation->lineStartOffset);
+    tokenRecord->m_startPosition = startPosition;
+    tokenRecord->m_endPosition = currentPosition();
     m_lastToken = IDENT;
     return IDENT;
     
 slowCase:
-    return lex(tokenData, tokenLocation, lexerFlags, strictMode);
+    return lex(tokenRecord, lexerFlags, strictMode);
 }
 
 } // namespace JSC

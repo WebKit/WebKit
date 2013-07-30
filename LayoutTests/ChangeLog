@@ -1,3 +1,19 @@
+2013-07-30  Mark Lam  <mark.lam@apple.com>
+
+        Fix problems with divot and lineStart mismatches.
+        https://bugs.webkit.org/show_bug.cgi?id=118662.
+
+        Reviewed by Oliver Hunt.
+
+        Added regression test cases from https://bugs.webkit.org/show_bug.cgi?id=118662
+        and https://bugs.webkit.org/show_bug.cgi?id=118664.
+
+        * fast/js/line-column-numbers-expected.txt:
+        * fast/js/line-column-numbers.html:
+        * fast/js/script-tests/line-column-numbers.js:
+        (try.toFuzz1):
+        (try.toFuzz2):
+
 2013-07-30  Simon Pena  <simon.pena@samsung.com>
 
         [GTK] Unreviewed gardening. Updated TestExpectations

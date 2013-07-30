@@ -1306,8 +1306,10 @@ bool Lexer<T>::nextTokenIsColon()
 }
 
 template <typename T>
-JSTokenType Lexer<T>::lex(JSTokenData* tokenData, JSTokenLocation* tokenLocation, unsigned lexerFlags, bool strictMode)
+JSTokenType Lexer<T>::lex(JSToken* tokenRecord, unsigned lexerFlags, bool strictMode)
 {
+    JSTokenData* tokenData = &tokenRecord->m_data;
+    JSTokenLocation* tokenLocation = &tokenRecord->m_location;
     ASSERT(!m_error);
     ASSERT(m_buffer8.isEmpty());
     ASSERT(m_buffer16.isEmpty());
@@ -1324,6 +1326,7 @@ start:
     
     tokenLocation->startOffset = currentOffset();
     ASSERT(currentOffset() >= currentLineStartOffset());
+    tokenRecord->m_startPosition = currentPosition();
 
     CharacterType type;
     if (LIKELY(isLatin1(m_current)))
@@ -1699,6 +1702,7 @@ returnToken:
     tokenLocation->endOffset = currentOffset();
     tokenLocation->lineStartOffset = currentLineStartOffset();
     ASSERT(tokenLocation->endOffset >= tokenLocation->lineStartOffset);
+    tokenRecord->m_endPosition = currentPosition();
     m_lastToken = token;
     return token;
 
@@ -1708,6 +1712,7 @@ returnError:
     tokenLocation->endOffset = currentOffset();
     tokenLocation->lineStartOffset = currentLineStartOffset();
     ASSERT(tokenLocation->endOffset >= tokenLocation->lineStartOffset);
+    tokenRecord->m_endPosition = currentPosition();
     RELEASE_ASSERT(token & ErrorTokenFlag);
     return token;
 }

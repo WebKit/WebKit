@@ -54,11 +54,9 @@ namespace JSC {
 
 void StatementNode::setLoc(unsigned firstLine, unsigned lastLine, int startOffset, int lineStartOffset)
 {
-    m_lineNumber = firstLine;
     m_lastLine = lastLine;
-    m_startOffset = startOffset;
-    m_lineStartOffset = lineStartOffset;
-    ASSERT(m_startOffset >= m_lineStartOffset);
+    m_position = JSTextPosition(firstLine, startOffset, lineStartOffset);
+    ASSERT(m_position.offset >= m_position.lineStartOffset);
 }
 
 // ------------------------------ SourceElements --------------------------------

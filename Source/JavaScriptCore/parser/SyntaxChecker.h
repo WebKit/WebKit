@@ -119,21 +119,21 @@ public:
     static const unsigned DontBuildStrings = LexerFlagsDontBuildStrings;
 
     int createSourceElements() { return 1; }
-    ExpressionType makeFunctionCallNode(const JSTokenLocation&, int, int, int, int, int, int, int) { return CallExpr; }
+    ExpressionType makeFunctionCallNode(const JSTokenLocation&, int, int, int, int, int) { return CallExpr; }
     void appendToComma(ExpressionType& base, ExpressionType right) { base = right; }
     ExpressionType createCommaExpr(const JSTokenLocation&, ExpressionType, ExpressionType right) { return right; }
-    ExpressionType makeAssignNode(const JSTokenLocation&, ExpressionType, Operator, ExpressionType, bool, bool, int, int, int, int, int) { return AssignmentExpr; }
-    ExpressionType makePrefixNode(const JSTokenLocation&, ExpressionType, Operator, int, int, int, int, int) { return PreExpr; }
-    ExpressionType makePostfixNode(const JSTokenLocation&, ExpressionType, Operator, int, int, int, int, int) { return PostExpr; }
+    ExpressionType makeAssignNode(const JSTokenLocation&, ExpressionType, Operator, ExpressionType, bool, bool, int, int, int) { return AssignmentExpr; }
+    ExpressionType makePrefixNode(const JSTokenLocation&, ExpressionType, Operator, int, int, int) { return PreExpr; }
+    ExpressionType makePostfixNode(const JSTokenLocation&, ExpressionType, Operator, int, int, int) { return PostExpr; }
     ExpressionType makeTypeOfNode(const JSTokenLocation&, ExpressionType) { return TypeofExpr; }
-    ExpressionType makeDeleteNode(const JSTokenLocation&, ExpressionType, int, int, int, int, int) { return DeleteExpr; }
+    ExpressionType makeDeleteNode(const JSTokenLocation&, ExpressionType, int, int, int) { return DeleteExpr; }
     ExpressionType makeNegateNode(const JSTokenLocation&, ExpressionType) { return UnaryExpr; }
     ExpressionType makeBitwiseNotNode(const JSTokenLocation&, ExpressionType) { return UnaryExpr; }
     ExpressionType createLogicalNot(const JSTokenLocation&, ExpressionType) { return UnaryExpr; }
     ExpressionType createUnaryPlus(const JSTokenLocation&, ExpressionType) { return UnaryExpr; }
     ExpressionType createVoid(const JSTokenLocation&, ExpressionType) { return UnaryExpr; }
     ExpressionType thisExpr(const JSTokenLocation&) { return ThisExpr; }
-    ExpressionType createResolve(const JSTokenLocation&, const Identifier*, int, int, int) { return ResolveExpr; }
+    ExpressionType createResolve(const JSTokenLocation&, const Identifier*, int) { return ResolveExpr; }
     ExpressionType createObjectLiteral(const JSTokenLocation&) { return ObjectLiteralExpr; }
     ExpressionType createObjectLiteral(const JSTokenLocation&, int) { return ObjectLiteralExpr; }
     ExpressionType createArray(const JSTokenLocation&, int) { return ArrayLiteralExpr; }
@@ -142,13 +142,13 @@ public:
     ExpressionType createString(const JSTokenLocation&, const Identifier*) { return StringExpr; }
     ExpressionType createBoolean(const JSTokenLocation&, bool) { return BoolExpr; }
     ExpressionType createNull(const JSTokenLocation&) { return NullExpr; }
-    ExpressionType createBracketAccess(const JSTokenLocation&, ExpressionType, ExpressionType, bool, int, int, int, int, int) { return BracketExpr; }
-    ExpressionType createDotAccess(const JSTokenLocation&, ExpressionType, const Identifier*, int, int, int, int, int) { return DotExpr; }
-    ExpressionType createRegExp(const JSTokenLocation&, const Identifier& pattern, const Identifier&, int, int, int) { return Yarr::checkSyntax(pattern.string()) ? 0 : RegExpExpr; }
-    ExpressionType createNewExpr(const JSTokenLocation&, ExpressionType, int, int, int, int, int, int) { return NewExpr; }
+    ExpressionType createBracketAccess(const JSTokenLocation&, ExpressionType, ExpressionType, bool, int, int, int) { return BracketExpr; }
+    ExpressionType createDotAccess(const JSTokenLocation&, ExpressionType, const Identifier*, int, int, int) { return DotExpr; }
+    ExpressionType createRegExp(const JSTokenLocation&, const Identifier& pattern, const Identifier&, int) { return Yarr::checkSyntax(pattern.string()) ? 0 : RegExpExpr; }
     ExpressionType createNewExpr(const JSTokenLocation&, ExpressionType, int, int, int, int) { return NewExpr; }
+    ExpressionType createNewExpr(const JSTokenLocation&, ExpressionType, int, int) { return NewExpr; }
     ExpressionType createConditionalExpr(const JSTokenLocation&, ExpressionType, ExpressionType, ExpressionType) { return ConditionalExpr; }
-    ExpressionType createAssignResolve(const JSTokenLocation&, const Identifier&, ExpressionType, int, int, int, int, int) { return AssignmentExpr; }
+    ExpressionType createAssignResolve(const JSTokenLocation&, const Identifier&, ExpressionType, int, int, int) { return AssignmentExpr; }
     ExpressionType createFunctionExpr(const JSTokenLocation&, const Identifier*, int, int, int, int, int, int, int) { return FunctionExpr; }
     int createFunctionBody(const JSTokenLocation&, const JSTokenLocation&, int, bool) { return 1; }
     void setFunctionStart(int, int) { }
@@ -185,22 +185,22 @@ public:
     int createIfStatement(const JSTokenLocation&, int, int, int, int) { return 1; }
     int createIfStatement(const JSTokenLocation&, int, int, int, int, int) { return 1; }
     int createForLoop(const JSTokenLocation&, int, int, int, int, int, int) { return 1; }
-    int createForInLoop(const JSTokenLocation&, const Identifier*, int, int, int, int, int, int, int, int, int, int, int, int) { return 1; }
-    int createForInLoop(const JSTokenLocation&, int, int, int, int, int, int, int, int, int, int) { return 1; }
+    int createForInLoop(const JSTokenLocation&, const Identifier*, int, int, int, int, int, int, int, int, int, int) { return 1; }
+    int createForInLoop(const JSTokenLocation&, int, int, int, int, int, int, int, int) { return 1; }
     int createEmptyStatement(const JSTokenLocation&) { return 1; }
     int createVarStatement(const JSTokenLocation&, int, int, int) { return 1; }
-    int createReturnStatement(const JSTokenLocation&, int, int, int, int, int, int, int) { return 1; }
-    int createBreakStatement(const JSTokenLocation&, int, int, int, int, int) { return 1; }
-    int createBreakStatement(const JSTokenLocation&, const Identifier*, int, int, int, int, int) { return 1; }
-    int createContinueStatement(const JSTokenLocation&, int, int, int, int, int) { return 1; }
-    int createContinueStatement(const JSTokenLocation&, const Identifier*, int, int, int, int, int) { return 1; }
+    int createReturnStatement(const JSTokenLocation&, int, int, int) { return 1; }
+    int createBreakStatement(const JSTokenLocation&, int, int) { return 1; }
+    int createBreakStatement(const JSTokenLocation&, const Identifier*, int, int) { return 1; }
+    int createContinueStatement(const JSTokenLocation&, int, int) { return 1; }
+    int createContinueStatement(const JSTokenLocation&, const Identifier*, int, int) { return 1; }
     int createTryStatement(const JSTokenLocation&, int, const Identifier*, int, int, int, int) { return 1; }
     int createSwitchStatement(const JSTokenLocation&, int, int, int, int, int, int) { return 1; }
     int createWhileStatement(const JSTokenLocation&, int, int, int, int) { return 1; }
-    int createWithStatement(const JSTokenLocation&, int, int, int, int, int, int, int, int) { return 1; }
+    int createWithStatement(const JSTokenLocation&, int, int, int, int, int, int) { return 1; }
     int createDoWhileStatement(const JSTokenLocation&, int, int, int, int) { return 1; }
-    int createLabelStatement(const JSTokenLocation&, const Identifier*, int, int, int, int, int) { return 1; }
-    int createThrowStatement(const JSTokenLocation&, int, int, int, int, int, int, int) { return 1; }
+    int createLabelStatement(const JSTokenLocation&, const Identifier*, int, int, int) { return 1; }
+    int createThrowStatement(const JSTokenLocation&, int, int, int) { return 1; }
     int createDebugger(const JSTokenLocation&, int, int) { return 1; }
     int createConstStatement(const JSTokenLocation&, int, int, int) { return 1; }
     int appendConstDecl(const JSTokenLocation&, int, const Identifier*, int) { return 1; }
@@ -222,7 +222,7 @@ public:
     void addVar(const Identifier*, bool) { }
     int combineCommaNodes(const JSTokenLocation&, int, int) { return 1; }
     int evalCount() const { return 0; }
-    void appendBinaryExpressionInfo(int& operandStackDepth, int expr, int, int, int, int, int, bool)
+    void appendBinaryExpressionInfo(int& operandStackDepth, int expr, int, int, int, bool)
     {
         if (!m_topBinaryExpr)
             m_topBinaryExpr = expr;
@@ -240,13 +240,12 @@ public:
     void operatorStackAppend(int& operatorStackDepth, int, int) { operatorStackDepth++; }
     int popOperandStack(int&) { int res = m_topBinaryExpr; m_topBinaryExpr = 0; return res; }
     
-    void appendUnaryToken(int& stackDepth, int tok, int, int, int) { stackDepth = 1; m_topUnaryToken = tok; }
+    void appendUnaryToken(int& stackDepth, int tok, int) { stackDepth = 1; m_topUnaryToken = tok; }
     int unaryTokenStackLastType(int&) { return m_topUnaryToken; }
-    unsigned unaryTokenStackLastStart(int&) { return 0; }
-    unsigned unaryTokenStackLastLineStartPosition(int&) { return 0; }
+    JSTextPosition unaryTokenStackLastStart(int&) { return JSTextPosition(0, 0, 0); }
     void unaryTokenStackRemoveLast(int& stackDepth) { stackDepth = 0; }
     
-    void assignmentStackAppend(int, int, int, int, int, int, int, Operator) { }
+    void assignmentStackAppend(int, int, int, int, int, Operator) { }
     int createAssignment(const JSTokenLocation&, int, int, int, int, int) { RELEASE_ASSERT_NOT_REACHED(); return 1; }
     const Identifier& getName(const Property& property) const { ASSERT(property.name); return *property.name; }
     PropertyNode::Type getType(const Property& property) const { return property.type; }

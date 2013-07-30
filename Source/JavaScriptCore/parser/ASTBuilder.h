@@ -33,20 +33,12 @@
 namespace JSC {
 
 class ASTBuilder {
-    struct PositionInfo {
-        unsigned startPos;
-        unsigned line;
-        unsigned lineStartPos;
-    };
-
     struct BinaryOpInfo {
         BinaryOpInfo() {}
-        BinaryOpInfo(int otherStart, int otherDivot, int otherEnd, unsigned otherDivotLine, unsigned otherDivotLineStart, bool rhsHasAssignment)
+        BinaryOpInfo(const JSTextPosition& otherStart, const JSTextPosition& otherDivot, const JSTextPosition& otherEnd, bool rhsHasAssignment)
             : start(otherStart)
             , divot(otherDivot)
             , end(otherEnd)
-            , divotLine(otherDivotLine)
-            , divotLineStart(otherDivotLineStart)
             , hasAssignment(rhsHasAssignment)
         {
         }
@@ -54,39 +46,31 @@ class ASTBuilder {
             : start(lhs.start)
             , divot(rhs.start)
             , end(rhs.end)
-            , divotLine(rhs.divotLine)
-            , divotLineStart(rhs.divotLineStart)
             , hasAssignment(lhs.hasAssignment || rhs.hasAssignment)
         {
         }
-        int start;
-        int divot;
-        int end;
-        unsigned divotLine;
-        unsigned divotLineStart;
+        JSTextPosition start;
+        JSTextPosition divot;
+        JSTextPosition end;
         bool hasAssignment;
     };
     
     
     struct AssignmentInfo {
         AssignmentInfo() {}
-        AssignmentInfo(ExpressionNode* node, unsigned start, unsigned divot, unsigned divotLine, unsigned divotLineStart, int initAssignments, Operator op)
+        AssignmentInfo(ExpressionNode* node, const JSTextPosition& start, const JSTextPosition& divot, int initAssignments, Operator op)
             : m_node(node)
             , m_start(start)
             , m_divot(divot)
-            , m_divotLine(divotLine)
-            , m_divotLineStart(divotLineStart)
             , m_initAssignments(initAssignments)
             , m_op(op)
         {
-            ASSERT(m_divot >= m_divotLineStart);
-            ASSERT(m_start >= m_divotLineStart);
+            ASSERT(m_divot.offset >= m_divot.lineStartOffset);
+            ASSERT(m_start.offset >= m_start.lineStartOffset);
         }
         ExpressionNode* m_node;
-        unsigned m_start;
-        unsigned m_divot;
-        unsigned m_divotLine;
-        unsigned m_divotLineStart;
+        JSTextPosition m_start;
+        JSTextPosition m_divot;
         int m_initAssignments;
         Operator m_op;
     };
@@ -131,7 +115,7 @@ public:
     static const int  DontBuildStrings = 0;
 
     ExpressionNode* makeBinaryNode(const JSTokenLocation&, int token, std::pair<ExpressionNode*, BinaryOpInfo>, std::pair<ExpressionNode*, BinaryOpInfo>);
-    ExpressionNode* makeFunctionCallNode(const JSTokenLocation&, ExpressionNode* func, ArgumentsNode* args, int start, unsigned divot, int end, unsigned divotLine, unsigned divotLineStart);
+    ExpressionNode* makeFunctionCallNode(const JSTokenLocation&, ExpressionNode* func, ArgumentsNode* args, const JSTextPosition& divotStart, const JSTextPosition& divot, const JSTextPosition& divotEnd);
 
     JSC::SourceElements* createSourceElements() { return new (m_vm) JSC::SourceElements(); }
 
@@ -144,11 +128,11 @@ public:
 
     CommaNode* createCommaExpr(const JSTokenLocation& location, ExpressionNode* lhs, ExpressionNode* rhs) { return new (m_vm) CommaNode(location, lhs, rhs); }
 
-    ExpressionNode* makeAssignNode(const JSTokenLocation&, ExpressionNode* left, Operator, ExpressionNode* right, bool leftHasAssignments, bool rightHasAssignments, int start, int divot, int end, unsigned divotLine, unsigned divotLineStart);
-    ExpressionNode* makePrefixNode(const JSTokenLocation&, ExpressionNode*, Operator, int start, int divot, int end, unsigned divotLine, unsigned divotLineStart);
-    ExpressionNode* makePostfixNode(const JSTokenLocation&, ExpressionNode*, Operator, int start, int divot, int end, unsigned divotLine, unsigned divotLineStart);
+    ExpressionNode* makeAssignNode(const JSTokenLocation&, ExpressionNode* left, Operator, ExpressionNode* right, bool leftHasAssignments, bool rightHasAssignments, const JSTextPosition& start, const JSTextPosition& divot, const JSTextPosition& end);
+    ExpressionNode* makePrefixNode(const JSTokenLocation&, ExpressionNode*, Operator, const JSTextPosition& start, const JSTextPosition& divot, const JSTextPosition& end);
+    ExpressionNode* makePostfixNode(const JSTokenLocation&, ExpressionNode*, Operator, const JSTextPosition& start, const JSTextPosition& divot, const JSTextPosition& end);
     ExpressionNode* makeTypeOfNode(const JSTokenLocation&, ExpressionNode*);
-    ExpressionNode* makeDeleteNode(const JSTokenLocation&, ExpressionNode*, int start, int divot, int end, unsigned divotLine, unsigned divotLineStart); 
+    ExpressionNode* makeDeleteNode(const JSTokenLocation&, ExpressionNode*, const JSTextPosition& start, const JSTextPosition& divot, const JSTextPosition& end);
     ExpressionNode* makeNegateNode(const JSTokenLocation&, ExpressionNode*);
     ExpressionNode* makeBitwiseNotNode(const JSTokenLocation&, ExpressionNode*);
     ExpressionNode* makeMultNode(const JSTokenLocation&, ExpressionNode* left, ExpressionNode* right, bool rightHasAssignments);
@@ -181,11 +165,11 @@ public:
         usesThis();
         return new (m_vm) ThisNode(location);
     }
-    ExpressionNode* createResolve(const JSTokenLocation& location, const Identifier* ident, unsigned start, unsigned divotLine, unsigned divotLineStart)
+    ExpressionNode* createResolve(const JSTokenLocation& location, const Identifier* ident, const JSTextPosition& start)
     {
         if (m_vm->propertyNames->arguments == *ident)
             usesArguments();
-        return new (m_vm) ResolveNode(location, *ident, start, divotLine, divotLineStart);
+        return new (m_vm) ResolveNode(location, *ident, start);
     }
     ExpressionNode* createObjectLiteral(const JSTokenLocation& location) { return new (m_vm) ObjectLiteralNode(location); }
     ExpressionNode* createObjectLiteral(const JSTokenLocation& location, PropertyListNode* properties) { return new (m_vm) ObjectLiteralNode(location, properties); }
@@ -228,41 +212,42 @@ public:
         return new (m_vm) NullNode(location);
     }
 
-    ExpressionNode* createBracketAccess(const JSTokenLocation& location, ExpressionNode* base, ExpressionNode* property, bool propertyHasAssignments, int start, int divot, int end, unsigned divotLine, unsigned divotLineStart)
+    ExpressionNode* createBracketAccess(const JSTokenLocation& location, ExpressionNode* base, ExpressionNode* property, bool propertyHasAssignments, const JSTextPosition& start, const JSTextPosition& divot, const JSTextPosition& end)
     {
         BracketAccessorNode* node = new (m_vm) BracketAccessorNode(location, base, property, propertyHasAssignments);
-        setExceptionLocation(node, start, divot, end, divotLine, divotLineStart);
+        setExceptionLocation(node, start, divot, end);
         return node;
     }
 
-    ExpressionNode* createDotAccess(const JSTokenLocation& location, ExpressionNode* base, const Identifier* property, int start, int divot, int end, unsigned divotLine, unsigned divotLineStart)
+    ExpressionNode* createDotAccess(const JSTokenLocation& location, ExpressionNode* base, const Identifier* property, const JSTextPosition& start, const JSTextPosition& divot, const JSTextPosition& end)
     {
         DotAccessorNode* node = new (m_vm) DotAccessorNode(location, base, *property);
-        setExceptionLocation(node, start, divot, end, divotLine, divotLineStart);
+        setExceptionLocation(node, start, divot, end);
         return node;
     }
 
-    ExpressionNode* createRegExp(const JSTokenLocation& location, const Identifier& pattern, const Identifier& flags, int start, unsigned divotLine, unsigned divotLineStart)
+    ExpressionNode* createRegExp(const JSTokenLocation& location, const Identifier& pattern, const Identifier& flags, const JSTextPosition& start)
     {
         if (Yarr::checkSyntax(pattern.string()))
             return 0;
         RegExpNode* node = new (m_vm) RegExpNode(location, pattern, flags);
         int size = pattern.length() + 2; // + 2 for the two /'s
-        setExceptionLocation(node, start, start + size, start + size, divotLine, divotLineStart);
+        JSTextPosition end = start + size;
+        setExceptionLocation(node, start, end, end);
         return node;
     }
 
-    ExpressionNode* createNewExpr(const JSTokenLocation& location, ExpressionNode* expr, ArgumentsNode* arguments, int start, int divot, int end, unsigned divotLine, unsigned divotLineStart)
+    ExpressionNode* createNewExpr(const JSTokenLocation& location, ExpressionNode* expr, ArgumentsNode* arguments, const JSTextPosition& start, const JSTextPosition& divot, const JSTextPosition& end)
     {
         NewExprNode* node = new (m_vm) NewExprNode(location, expr, arguments);
-        setExceptionLocation(node, start, divot, end, divotLine, divotLineStart);
+        setExceptionLocation(node, start, divot, end);
         return node;
     }
 
-    ExpressionNode* createNewExpr(const JSTokenLocation& location, ExpressionNode* expr, int start, int end, unsigned divotLine, unsigned divotLineStart)
+    ExpressionNode* createNewExpr(const JSTokenLocation& location, ExpressionNode* expr, const JSTextPosition& start, const JSTextPosition& end)
     {
         NewExprNode* node = new (m_vm) NewExprNode(location, expr);
-        setExceptionLocation(node, start, end, end, divotLine, divotLineStart);
+        setExceptionLocation(node, start, end, end);
         return node;
     }
 
@@ -271,12 +256,12 @@ public:
         return new (m_vm) ConditionalNode(location, condition, lhs, rhs);
     }
 
-    ExpressionNode* createAssignResolve(const JSTokenLocation& location, const Identifier& ident, ExpressionNode* rhs, int start, int divot, int end, unsigned divotLine, unsigned divotLineStart)
+    ExpressionNode* createAssignResolve(const JSTokenLocation& location, const Identifier& ident, ExpressionNode* rhs, const JSTextPosition& start, const JSTextPosition& divot, const JSTextPosition& end)
     {
         if (rhs->isFuncExprNode())
             static_cast<FuncExprNode*>(rhs)->body()->setInferredName(ident);
         AssignResolveNode* node = new (m_vm) AssignResolveNode(location, ident, rhs);
-        setExceptionLocation(node, start, divot, end, divotLine, divotLineStart);
+        setExceptionLocation(node, start, divot, end);
         return node;
     }
 
@@ -355,10 +340,10 @@ public:
         return block;
     }
 
-    StatementNode* createExprStatement(const JSTokenLocation& location, ExpressionNode* expr, int start, int end)
+    StatementNode* createExprStatement(const JSTokenLocation& location, ExpressionNode* expr, const JSTextPosition& start, int end)
     {
         ExprStatementNode* result = new (m_vm) ExprStatementNode(location, expr);
-        result->setLoc(start, end, location.startOffset, location.lineStartOffset);
+        result->setLoc(start.line, end, start.offset, start.lineStartOffset);
         return result;
     }
 
@@ -376,19 +361,19 @@ public:
         return result;
     }
 
-    StatementNode* createForInLoop(const JSTokenLocation& location, const Identifier* ident, ExpressionNode* initializer, ExpressionNode* iter, StatementNode* statements, int start, int divot, int end, int initStart, int initEnd, int startLine, int endLine, unsigned divotLine, unsigned divotLineStart)
+    StatementNode* createForInLoop(const JSTokenLocation& location, const Identifier* ident, ExpressionNode* initializer, ExpressionNode* iter, StatementNode* statements, const JSTextPosition& start, const JSTextPosition& divot, const JSTextPosition& end, const JSTextPosition& initStart, const JSTextPosition& initEnd, int startLine, int endLine)
     {
-        ForInNode* result = new (m_vm) ForInNode(m_vm, location, *ident, initializer, iter, statements, initStart, initStart - start, initEnd - initStart, divotLine, divotLineStart);
+        ForInNode* result = new (m_vm) ForInNode(m_vm, location, *ident, initializer, iter, statements, initStart, start, initEnd);
         result->setLoc(startLine, endLine, location.startOffset, location.lineStartOffset);
-        setExceptionLocation(result, start, divot + 1, end, divotLine, divotLineStart);
+        setExceptionLocation(result, start, divot + 1, end);
         return result;
     }
 
-    StatementNode* createForInLoop(const JSTokenLocation& location, ExpressionNode* lhs, ExpressionNode* iter, StatementNode* statements, int eStart, int eDivot, int eEnd, int start, int end, unsigned divotLine, unsigned divotLineStart)
+    StatementNode* createForInLoop(const JSTokenLocation& location, ExpressionNode* lhs, ExpressionNode* iter, StatementNode* statements, const JSTextPosition& eStart, const JSTextPosition& eDivot, const JSTextPosition& eEnd, int start, int end)
     {
         ForInNode* result = new (m_vm) ForInNode(location, lhs, iter, statements);
         result->setLoc(start, end, location.startOffset, location.lineStartOffset);
-        setExceptionLocation(result, eStart, eDivot, eEnd, divotLine, divotLineStart);
+        setExceptionLocation(result, eStart, eDivot, eEnd);
         return result;
     }
 
@@ -405,43 +390,43 @@ public:
         return result;
     }
 
-    StatementNode* createReturnStatement(const JSTokenLocation& location, ExpressionNode* expression, int eStart, int eEnd, int startLine, int endLine, unsigned divotLine, unsigned divotLineStart)
+    StatementNode* createReturnStatement(const JSTokenLocation& location, ExpressionNode* expression, const JSTextPosition& start, const JSTextPosition& end)
     {
         ReturnNode* result = new (m_vm) ReturnNode(location, expression);
-        setExceptionLocation(result, eStart, eEnd, eEnd, divotLine, divotLineStart);
-        result->setLoc(startLine, endLine, location.startOffset, location.lineStartOffset);
+        setExceptionLocation(result, start, end, end);
+        result->setLoc(start.line, end.line, start.offset, start.lineStartOffset);
         return result;
     }
 
-    StatementNode* createBreakStatement(const JSTokenLocation& location, int eStart, int eEnd, int startLine, int endLine, unsigned endLineStart)
+    StatementNode* createBreakStatement(const JSTokenLocation& location, const JSTextPosition& start, const JSTextPosition& end)
     {
         BreakNode* result = new (m_vm) BreakNode(m_vm, location);
-        setExceptionLocation(result, eStart, eEnd, eEnd, endLine, endLineStart);
-        result->setLoc(startLine, endLine, location.startOffset, location.lineStartOffset);
+        setExceptionLocation(result, start, end, end);
+        result->setLoc(start.line, end.line, start.offset, start.lineStartOffset);
         return result;
     }
 
-    StatementNode* createBreakStatement(const JSTokenLocation& location, const Identifier* ident, int eStart, int eEnd, int startLine, int endLine, unsigned endLineStart)
+    StatementNode* createBreakStatement(const JSTokenLocation& location, const Identifier* ident, const JSTextPosition& start, const JSTextPosition& end)
     {
         BreakNode* result = new (m_vm) BreakNode(location, *ident);
-        setExceptionLocation(result, eStart, eEnd, eEnd, endLine, endLineStart);
-        result->setLoc(startLine, endLine, location.startOffset, location.lineStartOffset);
+        setExceptionLocation(result, start, end, end);
+        result->setLoc(start.line, end.line, start.offset, start.lineStartOffset);
         return result;
     }
 
-    StatementNode* createContinueStatement(const JSTokenLocation& location, int eStart, int eEnd, int startLine, int endLine, unsigned endLineStart)
+    StatementNode* createContinueStatement(const JSTokenLocation& location, const JSTextPosition& start, const JSTextPosition& end)
     {
         ContinueNode* result = new (m_vm) ContinueNode(m_vm, location);
-        setExceptionLocation(result, eStart, eEnd, eEnd, endLine, endLineStart);
-        result->setLoc(startLine, endLine, location.startOffset, location.lineStartOffset);
+        setExceptionLocation(result, start, end, end);
+        result->setLoc(start.line, end.line, start.offset, start.lineStartOffset);
         return result;
     }
 
-    StatementNode* createContinueStatement(const JSTokenLocation& location, const Identifier* ident, int eStart, int eEnd, int startLine, int endLine, unsigned endLineStart)
+    StatementNode* createContinueStatement(const JSTokenLocation& location, const Identifier* ident, const JSTextPosition& start, const JSTextPosition& end)
     {
         ContinueNode* result = new (m_vm) ContinueNode(location, *ident);
-        setExceptionLocation(result, eStart, eEnd, eEnd, endLine, endLineStart);
-        result->setLoc(startLine, endLine, location.startOffset, location.lineStartOffset);
+        setExceptionLocation(result, start, end, end);
+        result->setLoc(start.line, end.line, start.offset, start.lineStartOffset);
         return result;
     }
 
@@ -476,26 +461,26 @@ public:
         return result;
     }
 
-    StatementNode* createLabelStatement(const JSTokenLocation& location, const Identifier* ident, StatementNode* statement, unsigned start, unsigned end, unsigned divotLine, unsigned divotLineStart)
+    StatementNode* createLabelStatement(const JSTokenLocation& location, const Identifier* ident, StatementNode* statement, const JSTextPosition& start, const JSTextPosition& end)
     {
         LabelNode* result = new (m_vm) LabelNode(location, *ident, statement);
-        setExceptionLocation(result, start, end, end, divotLine, divotLineStart);
+        setExceptionLocation(result, start, end, end);
         return result;
     }
 
-    StatementNode* createWithStatement(const JSTokenLocation& location, ExpressionNode* expr, StatementNode* statement, unsigned start, unsigned end, unsigned startLine, unsigned endLine, unsigned divotLine, unsigned divotLineStart)
+    StatementNode* createWithStatement(const JSTokenLocation& location, ExpressionNode* expr, StatementNode* statement, unsigned start, const JSTextPosition& end, unsigned startLine, unsigned endLine)
     {
         usesWith();
-        WithNode* result = new (m_vm) WithNode(location, expr, statement, end, divotLine, divotLineStart, end - start);
+        WithNode* result = new (m_vm) WithNode(location, expr, statement, end, end - start);
         result->setLoc(startLine, endLine, location.startOffset, location.lineStartOffset);
         return result;
     }    
     
-    StatementNode* createThrowStatement(const JSTokenLocation& location, ExpressionNode* expr, int start, int end, int startLine, int endLine, unsigned divotLine, unsigned divotLineStart)
+    StatementNode* createThrowStatement(const JSTokenLocation& location, ExpressionNode* expr, const JSTextPosition& start, const JSTextPosition& end)
     {
         ThrowNode* result = new (m_vm) ThrowNode(location, expr);
-        result->setLoc(startLine, endLine, location.startOffset, location.lineStartOffset);
-        setExceptionLocation(result, start, end, end, divotLine, divotLineStart);
+        result->setLoc(start.line, end.line, start.offset, start.lineStartOffset);
+        setExceptionLocation(result, start, end, end);
         return result;
     }
     
@@ -546,10 +531,10 @@ public:
 
     int evalCount() const { return m_evalCount; }
 
-    void appendBinaryExpressionInfo(int& operandStackDepth, ExpressionNode* current, int exprStart, int lhs, int rhs, unsigned divotLine, unsigned divotLineStart, bool hasAssignments)
+    void appendBinaryExpressionInfo(int& operandStackDepth, ExpressionNode* current, const JSTextPosition& exprStart, const JSTextPosition& lhs, const JSTextPosition& rhs, bool hasAssignments)
     {
         operandStackDepth++;
-        m_binaryOperandStack.append(std::make_pair(current, BinaryOpInfo(exprStart, lhs, rhs, divotLine, divotLineStart, hasAssignments)));
+        m_binaryOperandStack.append(std::make_pair(current, BinaryOpInfo(exprStart, lhs, rhs, hasAssignments)));
     }
 
     // Logic to handle datastructures used during parsing of binary expressions
@@ -586,11 +571,10 @@ public:
         return result;
     }
     
-    void appendUnaryToken(int& tokenStackDepth, int type, unsigned start, unsigned divotLine, unsigned divotLineStart)
+    void appendUnaryToken(int& tokenStackDepth, int type, const JSTextPosition& start)
     {
         tokenStackDepth++;
-        PositionInfo position = { start, divotLine, divotLineStart };
-        m_unaryTokenStack.append(std::make_pair(type, position));
+        m_unaryTokenStack.append(std::make_pair(type, start));
     }
 
     int unaryTokenStackLastType(int&)
@@ -598,34 +582,29 @@ public:
         return m_unaryTokenStack.last().first;
     }
     
-    unsigned unaryTokenStackLastStart(int&)
+    const JSTextPosition& unaryTokenStackLastStart(int&)
     {
-        return m_unaryTokenStack.last().second.startPos;
+        return m_unaryTokenStack.last().second;
     }
     
-    unsigned unaryTokenStackLastLineStartPosition(int&)
-    {
-        return m_unaryTokenStack.last().second.lineStartPos;
-    }
-
     void unaryTokenStackRemoveLast(int& tokenStackDepth)
     {
         tokenStackDepth--;
         m_unaryTokenStack.removeLast();
     }
     
-    void assignmentStackAppend(int& assignmentStackDepth, ExpressionNode* node, unsigned start, unsigned divot, unsigned divotLine, unsigned divotLineStart, int assignmentCount, Operator op)
+    void assignmentStackAppend(int& assignmentStackDepth, ExpressionNode* node, const JSTextPosition& start, const JSTextPosition& divot, int assignmentCount, Operator op)
     {
         assignmentStackDepth++;
-        ASSERT(start >= divotLineStart);
-        ASSERT(divot >= divotLineStart);
-        m_assignmentInfoStack.append(AssignmentInfo(node, start, divot, divotLine, divotLineStart, assignmentCount, op));
+        ASSERT(start.offset >= start.lineStartOffset);
+        ASSERT(divot.offset >= divot.lineStartOffset);
+        m_assignmentInfoStack.append(AssignmentInfo(node, start, divot, assignmentCount, op));
     }
 
-    ExpressionNode* createAssignment(const JSTokenLocation& location, int& assignmentStackDepth, ExpressionNode* rhs, int initialAssignmentCount, int currentAssignmentCount, int lastTokenEnd)
+    ExpressionNode* createAssignment(const JSTokenLocation& location, int& assignmentStackDepth, ExpressionNode* rhs, int initialAssignmentCount, int currentAssignmentCount, const JSTextPosition& lastTokenEnd)
     {
         AssignmentInfo& info = m_assignmentInfoStack.last();
-        ExpressionNode* result = makeAssignNode(location, info.m_node, info.m_op, rhs, info.m_initAssignments != initialAssignmentCount, info.m_initAssignments != currentAssignmentCount, info.m_start, info.m_divot + 1, lastTokenEnd, info.m_divotLine, info.m_divotLineStart);
+        ExpressionNode* result = makeAssignNode(location, info.m_node, info.m_op, rhs, info.m_initAssignments != initialAssignmentCount, info.m_initAssignments != currentAssignmentCount, info.m_start, info.m_divot + 1, lastTokenEnd);
         m_assignmentInfoStack.removeLast();
         assignmentStackDepth--;
         return result;
@@ -651,10 +630,10 @@ private:
         int m_numConstants;
     };
 
-    static void setExceptionLocation(ThrowableExpressionData* node, unsigned start, unsigned divot, unsigned end, unsigned divotLine, unsigned divotLineStart)
+    static void setExceptionLocation(ThrowableExpressionData* node, const JSTextPosition& divotStart, const JSTextPosition& divot, const JSTextPosition& divotEnd)
     {
-        ASSERT(divot >= divotLineStart);
-        node->setExceptionSourceCode(divot, divot - start, end - divot, divotLine, divotLineStart);
+        ASSERT(divot.offset >= divot.lineStartOffset);
+        node->setExceptionSourceCode(divot, divotStart, divotEnd);
     }
 
     void incConstants() { m_scope.m_numConstants++; }
@@ -678,7 +657,7 @@ private:
     Vector<BinaryOperand, 10, UnsafeVectorOverflow> m_binaryOperandStack;
     Vector<AssignmentInfo, 10, UnsafeVectorOverflow> m_assignmentInfoStack;
     Vector<pair<int, int>, 10, UnsafeVectorOverflow> m_binaryOperatorStack;
-    Vector<pair<int, PositionInfo>, 10, UnsafeVectorOverflow> m_unaryTokenStack;
+    Vector<pair<int, JSTextPosition>, 10, UnsafeVectorOverflow> m_unaryTokenStack;
     int m_evalCount;
 };
 
@@ -691,21 +670,21 @@ ExpressionNode* ASTBuilder::makeTypeOfNode(const JSTokenLocation& location, Expr
     return new (m_vm) TypeOfValueNode(location, expr);
 }
 
-ExpressionNode* ASTBuilder::makeDeleteNode(const JSTokenLocation& location, ExpressionNode* expr, int start, int divot, int end, unsigned divotLine, unsigned divotLineStart)
+ExpressionNode* ASTBuilder::makeDeleteNode(const JSTokenLocation& location, ExpressionNode* expr, const JSTextPosition& start, const JSTextPosition& divot, const JSTextPosition& end)
 {
     if (!expr->isLocation())
         return new (m_vm) DeleteValueNode(location, expr);
     if (expr->isResolveNode()) {
         ResolveNode* resolve = static_cast<ResolveNode*>(expr);
-        return new (m_vm) DeleteResolveNode(location, resolve->identifier(), divot, divot - start, end - divot, divotLine, divotLineStart);
+        return new (m_vm) DeleteResolveNode(location, resolve->identifier(), divot, start, end);
     }
     if (expr->isBracketAccessorNode()) {
         BracketAccessorNode* bracket = static_cast<BracketAccessorNode*>(expr);
-        return new (m_vm) DeleteBracketNode(location, bracket->base(), bracket->subscript(), divot, divot - start, end - divot, divotLine, divotLineStart);
+        return new (m_vm) DeleteBracketNode(location, bracket->base(), bracket->subscript(), divot, start, end);
     }
     ASSERT(expr->isDotAccessorNode());
     DotAccessorNode* dot = static_cast<DotAccessorNode*>(expr);
-    return new (m_vm) DeleteDotNode(location, dot->base(), dot->identifier(), divot, divot - start, end - divot, divotLine, divotLineStart);
+    return new (m_vm) DeleteDotNode(location, dot->base(), dot->identifier(), divot, start, end);
 }
 
 ExpressionNode* ASTBuilder::makeNegateNode(const JSTokenLocation& location, ExpressionNode* n)
@@ -822,36 +801,36 @@ ExpressionNode* ASTBuilder::makeBitXOrNode(const JSTokenLocation& location, Expr
     return new (m_vm) BitXOrNode(location, expr1, expr2, rightHasAssignments);
 }
 
-ExpressionNode* ASTBuilder::makeFunctionCallNode(const JSTokenLocation& location, ExpressionNode* func, ArgumentsNode* args, int start, unsigned divot, int end, unsigned divotLine, unsigned divotLineStart)
+ExpressionNode* ASTBuilder::makeFunctionCallNode(const JSTokenLocation& location, ExpressionNode* func, ArgumentsNode* args, const JSTextPosition& divotStart, const JSTextPosition& divot, const JSTextPosition& divotEnd)
 {
-    ASSERT(divot >= divotLineStart);
+    ASSERT(divot.offset >= divot.lineStartOffset);
     if (!func->isLocation())
-        return new (m_vm) FunctionCallValueNode(location, func, args, divot, divot - start, end - divot, divotLine, divotLineStart);
+        return new (m_vm) FunctionCallValueNode(location, func, args, divot, divotStart, divotEnd);
     if (func->isResolveNode()) {
         ResolveNode* resolve = static_cast<ResolveNode*>(func);
         const Identifier& identifier = resolve->identifier();
         if (identifier == m_vm->propertyNames->eval) {
             usesEval();
-            return new (m_vm) EvalFunctionCallNode(location, args, divot, divot - start, end - divot, divotLine, divotLineStart);
+            return new (m_vm) EvalFunctionCallNode(location, args, divot, divotStart, divotEnd);
         }
-        return new (m_vm) FunctionCallResolveNode(location, identifier, args, divot, divot - start, end - divot, divotLine, divotLineStart);
+        return new (m_vm) FunctionCallResolveNode(location, identifier, args, divot, divotStart, divotEnd);
     }
     if (func->isBracketAccessorNode()) {
         BracketAccessorNode* bracket = static_cast<BracketAccessorNode*>(func);
-        FunctionCallBracketNode* node = new (m_vm) FunctionCallBracketNode(location, bracket->base(), bracket->subscript(), args, divot, divot - start, end - divot, divotLine, divotLineStart);
-        node->setSubexpressionInfo(bracket->divot(), bracket->divotEndOffset(), bracket->divotLine(), bracket->divotLineStart());
+        FunctionCallBracketNode* node = new (m_vm) FunctionCallBracketNode(location, bracket->base(), bracket->subscript(), args, divot, divotStart, divotEnd);
+        node->setSubexpressionInfo(bracket->divot(), bracket->divotEnd().offset);
         return node;
     }
     ASSERT(func->isDotAccessorNode());
     DotAccessorNode* dot = static_cast<DotAccessorNode*>(func);
     FunctionCallDotNode* node;
     if (dot->identifier() == m_vm->propertyNames->call)
-        node = new (m_vm) CallFunctionCallDotNode(location, dot->base(), dot->identifier(), args, divot, divot - start, end - divot, divotLine, divotLineStart);
+        node = new (m_vm) CallFunctionCallDotNode(location, dot->base(), dot->identifier(), args, divot, divotStart, divotEnd);
     else if (dot->identifier() == m_vm->propertyNames->apply)
-        node = new (m_vm) ApplyFunctionCallDotNode(location, dot->base(), dot->identifier(), args, divot, divot - start, end - divot, divotLine, divotLineStart);
+        node = new (m_vm) ApplyFunctionCallDotNode(location, dot->base(), dot->identifier(), args, divot, divotStart, divotEnd);
     else
-        node = new (m_vm) FunctionCallDotNode(location, dot->base(), dot->identifier(), args, divot, divot - start, end - divot, divotLine, divotLineStart);
-    node->setSubexpressionInfo(dot->divot(), dot->divotEndOffset(), dot->divotLine(), dot->divotLineStart());
+        node = new (m_vm) FunctionCallDotNode(location, dot->base(), dot->identifier(), args, divot, divotStart, divotEnd);
+    node->setSubexpressionInfo(dot->divot(), dot->divotEnd().offset);
     return node;
 }
 
@@ -899,13 +878,13 @@ ExpressionNode* ASTBuilder::makeBinaryNode(const JSTokenLocation& location, int 
 
     case INSTANCEOF: {
         InstanceOfNode* node = new (m_vm) InstanceOfNode(location, lhs.first, rhs.first, rhs.second.hasAssignment);
-        setExceptionLocation(node, lhs.second.start, rhs.second.start, rhs.second.end, rhs.second.divotLine, rhs.second.divotLineStart);
+        setExceptionLocation(node, lhs.second.start, rhs.second.start, rhs.second.end);
         return node;
     }
 
     case INTOKEN: {
         InNode* node = new (m_vm) InNode(location, lhs.first, rhs.first, rhs.second.hasAssignment);
-        setExceptionLocation(node, lhs.second.start, rhs.second.start, rhs.second.end, rhs.second.divotLine, rhs.second.divotLineStart);
+        setExceptionLocation(node, lhs.second.start, rhs.second.start, rhs.second.end);
         return node;
     }
 
@@ -937,10 +916,10 @@ ExpressionNode* ASTBuilder::makeBinaryNode(const JSTokenLocation& location, int 
     return 0;
 }
 
-ExpressionNode* ASTBuilder::makeAssignNode(const JSTokenLocation& location, ExpressionNode* loc, Operator op, ExpressionNode* expr, bool locHasAssignments, bool exprHasAssignments, int start, int divot, int end, unsigned divotLine, unsigned divotLineStart)
+ExpressionNode* ASTBuilder::makeAssignNode(const JSTokenLocation& location, ExpressionNode* loc, Operator op, ExpressionNode* expr, bool locHasAssignments, bool exprHasAssignments, const JSTextPosition& start, const JSTextPosition& divot, const JSTextPosition& end)
 {
     if (!loc->isLocation())
-        return new (m_vm) AssignErrorNode(location, divot, divot - start, end - divot, divotLine, divotLineStart);
+        return new (m_vm) AssignErrorNode(location, divot, start, end);
 
     if (loc->isResolveNode()) {
         ResolveNode* resolve = static_cast<ResolveNode*>(loc);
@@ -948,17 +927,17 @@ ExpressionNode* ASTBuilder::makeAssignNode(const JSTokenLocation& location, Expr
             if (expr->isFuncExprNode())
                 static_cast<FuncExprNode*>(expr)->body()->setInferredName(resolve->identifier());
             AssignResolveNode* node = new (m_vm) AssignResolveNode(location, resolve->identifier(), expr);
-            setExceptionLocation(node, start, divot, end, divotLine, divotLineStart);
+            setExceptionLocation(node, start, divot, end);
             return node;
         }
-        return new (m_vm) ReadModifyResolveNode(location, resolve->identifier(), op, expr, exprHasAssignments, divot, divot - start, end - divot, divotLine, divotLineStart);
+        return new (m_vm) ReadModifyResolveNode(location, resolve->identifier(), op, expr, exprHasAssignments, divot, start, end);
     }
     if (loc->isBracketAccessorNode()) {
         BracketAccessorNode* bracket = static_cast<BracketAccessorNode*>(loc);
         if (op == OpEqual)
-            return new (m_vm) AssignBracketNode(location, bracket->base(), bracket->subscript(), expr, locHasAssignments, exprHasAssignments, bracket->divot(), bracket->divot() - start, end - bracket->divot(), bracket->divotLine(), bracket->divotLineStart());
-        ReadModifyBracketNode* node = new (m_vm) ReadModifyBracketNode(location, bracket->base(), bracket->subscript(), op, expr, locHasAssignments, exprHasAssignments, divot, divot - start, end - divot, divotLine, divotLineStart);
-        node->setSubexpressionInfo(bracket->divot(), bracket->divotEndOffset(), bracket->divotLine(), bracket->divotLineStart());
+            return new (m_vm) AssignBracketNode(location, bracket->base(), bracket->subscript(), expr, locHasAssignments, exprHasAssignments, bracket->divot(), start, end);
+        ReadModifyBracketNode* node = new (m_vm) ReadModifyBracketNode(location, bracket->base(), bracket->subscript(), op, expr, locHasAssignments, exprHasAssignments, divot, start, end);
+        node->setSubexpressionInfo(bracket->divot(), bracket->divotEnd().offset);
         return node;
     }
     ASSERT(loc->isDotAccessorNode());
@@ -966,22 +945,22 @@ ExpressionNode* ASTBuilder::makeAssignNode(const JSTokenLocation& location, Expr
     if (op == OpEqual) {
         if (expr->isFuncExprNode())
             static_cast<FuncExprNode*>(expr)->body()->setInferredName(dot->identifier());
-        return new (m_vm) AssignDotNode(location, dot->base(), dot->identifier(), expr, exprHasAssignments, dot->divot(), dot->divot() - start, end - dot->divot(), dot->divotLine(), dot->divotLineStart());
+        return new (m_vm) AssignDotNode(location, dot->base(), dot->identifier(), expr, exprHasAssignments, dot->divot(), start, end);
     }
 
-    ReadModifyDotNode* node = new (m_vm) ReadModifyDotNode(location, dot->base(), dot->identifier(), op, expr, exprHasAssignments, divot, divot - start, end - divot, divotLine, divotLineStart);
-    node->setSubexpressionInfo(dot->divot(), dot->divotEndOffset(), dot->divotLine(), dot->divotLineStart());
+    ReadModifyDotNode* node = new (m_vm) ReadModifyDotNode(location, dot->base(), dot->identifier(), op, expr, exprHasAssignments, divot, start, end);
+    node->setSubexpressionInfo(dot->divot(), dot->divotEnd().offset);
     return node;
 }
 
-ExpressionNode* ASTBuilder::makePrefixNode(const JSTokenLocation& location, ExpressionNode* expr, Operator op, int start, int divot, int end, unsigned divotLine, unsigned divotLineStart)
+ExpressionNode* ASTBuilder::makePrefixNode(const JSTokenLocation& location, ExpressionNode* expr, Operator op, const JSTextPosition& start, const JSTextPosition& divot, const JSTextPosition& end)
 {
-    return new (m_vm) PrefixNode(location, expr, op, divot, divot - start, end - divot, divotLine, divotLineStart);
+    return new (m_vm) PrefixNode(location, expr, op, divot, start, end);
 }
 
-ExpressionNode* ASTBuilder::makePostfixNode(const JSTokenLocation& location, ExpressionNode* expr, Operator op, int start, int divot, int end, unsigned divotLine, unsigned divotLineStart)
+ExpressionNode* ASTBuilder::makePostfixNode(const JSTokenLocation& location, ExpressionNode* expr, Operator op, const JSTextPosition& start, const JSTextPosition& divot, const JSTextPosition& end)
 {
-    return new (m_vm) PostfixNode(location, expr, op, divot, divot - start, end - divot, divotLine, divotLineStart);
+    return new (m_vm) PostfixNode(location, expr, op, divot, start, end);
 }
 
 }

@@ -1,3 +1,227 @@
+2013-07-30  Mark Lam  <mark.lam@apple.com>
+
+        Fix problems with divot and lineStart mismatches.
+        https://bugs.webkit.org/show_bug.cgi?id=118662.
+
+        Reviewed by Oliver Hunt.
+
+        r152494 added the recording of lineStart values for divot positions.
+        This is needed for the computation of column numbers. Similarly, it also
+        added the recording of line numbers for the divot positions. One problem
+        with the approach taken was that the line and lineStart values were
+        recorded independently, and hence were not always guaranteed to be
+        sampled at the same place that the divot position is recorded. This
+        resulted in potential mismatches that cause some assertions to fail.
+
+        The solution is to introduce a JSTextPosition abstraction that records
+        the divot position, line, and lineStart as a single quantity. Wherever
+        we record the divot position as an unsigned int previously, we now record
+        its JSTextPosition which captures all 3 values in one go. This ensures
+        that the captured line and lineStart will always match the captured divot
+        position.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitCall):
+        (JSC::BytecodeGenerator::emitCallEval):
+        (JSC::BytecodeGenerator::emitCallVarargs):
+        (JSC::BytecodeGenerator::emitConstruct):
+        (JSC::BytecodeGenerator::emitDebugHook):
+        - Use JSTextPosition instead of passing line and lineStart explicitly.
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::emitExpressionInfo):
+        - Use JSTextPosition instead of passing line and lineStart explicitly.
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ThrowableExpressionData::emitThrowReferenceError):
+        (JSC::ResolveNode::emitBytecode):
+        (JSC::BracketAccessorNode::emitBytecode):
+        (JSC::DotAccessorNode::emitBytecode):
+        (JSC::NewExprNode::emitBytecode):
+        (JSC::EvalFunctionCallNode::emitBytecode):
+        (JSC::FunctionCallValueNode::emitBytecode):
+        (JSC::FunctionCallResolveNode::emitBytecode):
+        (JSC::FunctionCallBracketNode::emitBytecode):
+        (JSC::FunctionCallDotNode::emitBytecode):
+        (JSC::CallFunctionCallDotNode::emitBytecode):
+        (JSC::ApplyFunctionCallDotNode::emitBytecode):
+        (JSC::PostfixNode::emitResolve):
+        (JSC::PostfixNode::emitBracket):
+        (JSC::PostfixNode::emitDot):
+        (JSC::DeleteResolveNode::emitBytecode):
+        (JSC::DeleteBracketNode::emitBytecode):
+        (JSC::DeleteDotNode::emitBytecode):
+        (JSC::PrefixNode::emitResolve):
+        (JSC::PrefixNode::emitBracket):
+        (JSC::PrefixNode::emitDot):
+        (JSC::UnaryOpNode::emitBytecode):
+        (JSC::BinaryOpNode::emitStrcat):
+        (JSC::BinaryOpNode::emitBytecode):
+        (JSC::ThrowableBinaryOpNode::emitBytecode):
+        (JSC::InstanceOfNode::emitBytecode):
+        (JSC::emitReadModifyAssignment):
+        (JSC::ReadModifyResolveNode::emitBytecode):
+        (JSC::AssignResolveNode::emitBytecode):
+        (JSC::AssignDotNode::emitBytecode):
+        (JSC::ReadModifyDotNode::emitBytecode):
+        (JSC::AssignBracketNode::emitBytecode):
+        (JSC::ReadModifyBracketNode::emitBytecode):
+        (JSC::ForInNode::emitBytecode):
+        (JSC::WithNode::emitBytecode):
+        (JSC::ThrowNode::emitBytecode):
+        - Use JSTextPosition instead of passing line and lineStart explicitly.
+        * parser/ASTBuilder.h:
+        - Replaced ASTBuilder::PositionInfo with JSTextPosition.
+        (JSC::ASTBuilder::BinaryOpInfo::BinaryOpInfo):
+        (JSC::ASTBuilder::AssignmentInfo::AssignmentInfo):
+        (JSC::ASTBuilder::createResolve):
+        (JSC::ASTBuilder::createBracketAccess):
+        (JSC::ASTBuilder::createDotAccess):
+        (JSC::ASTBuilder::createRegExp):
+        (JSC::ASTBuilder::createNewExpr):
+        (JSC::ASTBuilder::createAssignResolve):
+        (JSC::ASTBuilder::createExprStatement):
+        (JSC::ASTBuilder::createForInLoop):
+        (JSC::ASTBuilder::createReturnStatement):
+        (JSC::ASTBuilder::createBreakStatement):
+        (JSC::ASTBuilder::createContinueStatement):
+        (JSC::ASTBuilder::createLabelStatement):
+        (JSC::ASTBuilder::createWithStatement):
+        (JSC::ASTBuilder::createThrowStatement):
+        (JSC::ASTBuilder::appendBinaryExpressionInfo):
+        (JSC::ASTBuilder::appendUnaryToken):
+        (JSC::ASTBuilder::unaryTokenStackLastStart):
+        (JSC::ASTBuilder::assignmentStackAppend):
+        (JSC::ASTBuilder::createAssignment):
+        (JSC::ASTBuilder::setExceptionLocation):
+        (JSC::ASTBuilder::makeDeleteNode):
+        (JSC::ASTBuilder::makeFunctionCallNode):
+        (JSC::ASTBuilder::makeBinaryNode):
+        (JSC::ASTBuilder::makeAssignNode):
+        (JSC::ASTBuilder::makePrefixNode):
+        (JSC::ASTBuilder::makePostfixNode):
+        - Use JSTextPosition instead of passing line and lineStart explicitly.
+        * parser/Lexer.cpp:
+        (JSC::::lex):
+        - Added support for capturing the appropriate JSTextPositions instead
+          of just the character offset.
+        * parser/Lexer.h:
+        (JSC::Lexer::currentPosition):
+        (JSC::::lexExpectIdentifier):
+        - Added support for capturing the appropriate JSTextPositions instead
+          of just the character offset.
+        * parser/NodeConstructors.h:
+        (JSC::Node::Node):
+        (JSC::ResolveNode::ResolveNode):
+        (JSC::EvalFunctionCallNode::EvalFunctionCallNode):
+        (JSC::FunctionCallValueNode::FunctionCallValueNode):
+        (JSC::FunctionCallResolveNode::FunctionCallResolveNode):
+        (JSC::FunctionCallBracketNode::FunctionCallBracketNode):
+        (JSC::FunctionCallDotNode::FunctionCallDotNode):
+        (JSC::CallFunctionCallDotNode::CallFunctionCallDotNode):
+        (JSC::ApplyFunctionCallDotNode::ApplyFunctionCallDotNode):
+        (JSC::PostfixNode::PostfixNode):
+        (JSC::DeleteResolveNode::DeleteResolveNode):
+        (JSC::DeleteBracketNode::DeleteBracketNode):
+        (JSC::DeleteDotNode::DeleteDotNode):
+        (JSC::PrefixNode::PrefixNode):
+        (JSC::ReadModifyResolveNode::ReadModifyResolveNode):
+        (JSC::ReadModifyBracketNode::ReadModifyBracketNode):
+        (JSC::AssignBracketNode::AssignBracketNode):
+        (JSC::AssignDotNode::AssignDotNode):
+        (JSC::ReadModifyDotNode::ReadModifyDotNode):
+        (JSC::AssignErrorNode::AssignErrorNode):
+        (JSC::WithNode::WithNode):
+        (JSC::ForInNode::ForInNode):
+        - Use JSTextPosition instead of passing line and lineStart explicitly.
+        * parser/Nodes.cpp:
+        (JSC::StatementNode::setLoc):
+        - Use JSTextPosition instead of passing line and lineStart explicitly.
+        * parser/Nodes.h:
+        (JSC::Node::lineNo):
+        (JSC::Node::startOffset):
+        (JSC::Node::lineStartOffset):
+        (JSC::Node::position):
+        (JSC::ThrowableExpressionData::ThrowableExpressionData):
+        (JSC::ThrowableExpressionData::setExceptionSourceCode):
+        (JSC::ThrowableExpressionData::divot):
+        (JSC::ThrowableExpressionData::divotStart):
+        (JSC::ThrowableExpressionData::divotEnd):
+        (JSC::ThrowableSubExpressionData::ThrowableSubExpressionData):
+        (JSC::ThrowableSubExpressionData::setSubexpressionInfo):
+        (JSC::ThrowableSubExpressionData::subexpressionDivot):
+        (JSC::ThrowableSubExpressionData::subexpressionStart):
+        (JSC::ThrowableSubExpressionData::subexpressionEnd):
+        (JSC::ThrowablePrefixedSubExpressionData::ThrowablePrefixedSubExpressionData):
+        (JSC::ThrowablePrefixedSubExpressionData::setSubexpressionInfo):
+        (JSC::ThrowablePrefixedSubExpressionData::subexpressionDivot):
+        (JSC::ThrowablePrefixedSubExpressionData::subexpressionStart):
+        (JSC::ThrowablePrefixedSubExpressionData::subexpressionEnd):
+        - Use JSTextPosition instead of passing line and lineStart explicitly.
+        * parser/Parser.cpp:
+        (JSC::::Parser):
+        (JSC::::parseInner):
+        - Use JSTextPosition instead of passing line and lineStart explicitly.
+        (JSC::::didFinishParsing):
+        - Remove setting of m_lastLine value. We always pass in the value from
+          m_lastLine anyway. So, this assignment is effectively a nop.
+        (JSC::::parseVarDeclaration):
+        (JSC::::parseVarDeclarationList):
+        (JSC::::parseForStatement):
+        (JSC::::parseBreakStatement):
+        (JSC::::parseContinueStatement):
+        (JSC::::parseReturnStatement):
+        (JSC::::parseThrowStatement):
+        (JSC::::parseWithStatement):
+        (JSC::::parseTryStatement):
+        (JSC::::parseBlockStatement):
+        (JSC::::parseFunctionDeclaration):
+        (JSC::LabelInfo::LabelInfo):
+        (JSC::::parseExpressionOrLabelStatement):
+        (JSC::::parseExpressionStatement):
+        (JSC::::parseAssignmentExpression):
+        (JSC::::parseBinaryExpression):
+        (JSC::::parseProperty):
+        (JSC::::parsePrimaryExpression):
+        (JSC::::parseMemberExpression):
+        (JSC::::parseUnaryExpression):
+        - Use JSTextPosition instead of passing line and lineStart explicitly.
+        * parser/Parser.h:
+        (JSC::Parser::next):
+        (JSC::Parser::nextExpectIdentifier):
+        (JSC::Parser::getToken):
+        (JSC::Parser::tokenStartPosition):
+        (JSC::Parser::tokenEndPosition):
+        (JSC::Parser::lastTokenEndPosition):
+        (JSC::::parse):
+        - Use JSTextPosition instead of passing line and lineStart explicitly.
+        * parser/ParserTokens.h:
+        (JSC::JSTextPosition::JSTextPosition):
+        (JSC::JSTextPosition::operator+):
+        (JSC::JSTextPosition::operator-):
+        (JSC::JSTextPosition::operator int):
+        - Added JSTextPosition.
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::makeFunctionCallNode):
+        (JSC::SyntaxChecker::makeAssignNode):
+        (JSC::SyntaxChecker::makePrefixNode):
+        (JSC::SyntaxChecker::makePostfixNode):
+        (JSC::SyntaxChecker::makeDeleteNode):
+        (JSC::SyntaxChecker::createResolve):
+        (JSC::SyntaxChecker::createBracketAccess):
+        (JSC::SyntaxChecker::createDotAccess):
+        (JSC::SyntaxChecker::createRegExp):
+        (JSC::SyntaxChecker::createNewExpr):
+        (JSC::SyntaxChecker::createAssignResolve):
+        (JSC::SyntaxChecker::createForInLoop):
+        (JSC::SyntaxChecker::createReturnStatement):
+        (JSC::SyntaxChecker::createBreakStatement):
+        (JSC::SyntaxChecker::createContinueStatement):
+        (JSC::SyntaxChecker::createWithStatement):
+        (JSC::SyntaxChecker::createLabelStatement):
+        (JSC::SyntaxChecker::createThrowStatement):
+        (JSC::SyntaxChecker::appendBinaryExpressionInfo):
+        (JSC::SyntaxChecker::operatorStackPop):
+        - Use JSTextPosition instead of passing line and lineStart explicitly.
+
 2013-07-29  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix make distcheck.
