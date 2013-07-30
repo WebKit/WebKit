@@ -1,3 +1,11 @@
+2013-07-30  Simon Pena  <simon.pena@samsung.com>
+
+        [GTK] Unreviewed gardening. Update TestExpectations
+
+        Some GTK tests are flaky or time out after the FTL merge.
+
+        * platform/gtk/TestExpectations:
+
 2013-07-30  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [GTK] fast/regions/firstletter-inside-flowthread.html is flaky

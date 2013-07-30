@@ -490,6 +490,9 @@ webkit.org/b/118423 http/tests/misc/iframe-reparenting-id-collision.html [ Crash
 
 webkit.org/b/118902 svg/animations/svgenum-animation-6.html [ Crash Pass ]
 
+# Crashing after the FTL merge
+webkit.org/b/119255 [ Debug ] fast/workers/stress-js-execution.html [ Crash Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -594,7 +597,8 @@ webkit.org/b/104809 media/W3C/video/events/event_loadstart_manual.html [ Crash P
 webkit.org/b/104809 media/W3C/audio/events/event_pause_manual.html [ Crash Pass ]
 webkit.org/b/104809 fast/dom/beforeload/remove-video-in-beforeload-listener.html [ Crash Pass ]
 
-webkit.org/b/106415 fast/workers/worker-close-more.html [ Timeout Pass ]
+# This test also crashes after the FTL merge
+webkit.org/b/106415 webkit.org/b/119255 fast/workers/worker-close-more.html [ Timeout Crash Pass ]
 
 webkit.org/b/107258 fast/canvas/2d.text.draw.fill.maxWidth.gradient.html [ Failure Pass ]
 
@@ -677,6 +681,14 @@ webkit.org/b/119040 perf/nested-combined-selectors.html [ Failure Pass ]
 webkit.org/b/119041 css3/calc/img-size.html [ ImageOnlyFailure Pass ]
 
 webkit.org/b/119042 animations/resume-after-page-cache.html [ Failure Pass ]
+
+# These tests started to time out (or time out more often) since the FTL merge
+webkit.org/b/119253 [ Release ] css3/autoclose-braces-and-parentheses.html [ Timeout Pass ]
+webkit.org/b/119253 [ Debug ] fast/js/dfg-osr-entry-hoisted-clobbered-structure-check.html [ Timeout Pass ]
+webkit.org/b/119253 [ Debug ] fast/js/regress/nested-function-parsing.html [ Timeout Pass ]
+webkit.org/b/119253 [ Debug ] fast/js/regress/new-array-buffer-dead.html [ Timeout Pass ]
+webkit.org/b/119253 [ Debug ] fast/media/update-media-query-css-parser.html [ Timeout Pass ]
+webkit.org/b/119253 fast/workers/dedicated-worker-lifecycle.html [ Timeout Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
@@ -807,6 +819,10 @@ webkit.org/b/116957 media/track/track-automatic-subtitles.html [ Timeout ]
 webkit.org/b/116958 http/tests/navigation/redirect-to-random-url-versus-memory-cache.html [ Timeout ]
 webkit.org/b/116958 http/tests/navigation/scrollstate-after-http-equiv-refresh.html [ Timeout ]
 webkit.org/b/116958 http/tests/navigation/scrollstate-after-location-reload.html [ Timeout ]
+
+# These tests time out after the FTL merge
+webkit.org/b/119254 fast/js/regress/marsaglia.html [ Timeout ]
+webkit.org/b/119254 fast/workers/worker-call.html [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
