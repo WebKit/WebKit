@@ -424,6 +424,9 @@ compositing/geometry/fixed-position-flipped-writing-mode.html [ Pass ]
 # Plug-in blocking callback doesn't exist in WebKit1, so reenabling.
 plugins/unavailable-plugin-indicator-obscurity.html [ Pass ]
 
+# Fails in WebKit1 only, so re-enabling.
+editing/pasteboard/can-read-in-copy-and-cut-events.html [ Pass ] 
+
 ### END OF (5) Features that are not supported in WebKit1, so skipped in mac/TestExpectations then re-enabled here
 ########################################
 
