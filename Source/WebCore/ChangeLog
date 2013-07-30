@@ -1,3 +1,27 @@
+2013-07-30  Andreas Kling  <akling@apple.com>
+
+        Inactive style sheets should not trigger style recalc when loaded.
+        <http://webkit.org/b/119236>
+        <rdar://problem/14588132>
+
+        Reviewed by Antti Koivisto.
+
+        Style sheets that are either alternate sheets or are excluded by their media query should not trigger
+        a full style recalc when they finish loading, since the end result will not be observably different.
+
+        The sheets are still inspectable through document.styleSheets.
+
+        Changed enums from Blocking/NonBlocking to ActiveSheet/InactiveSheet to clarify what's going on.
+
+        * html/HTMLLinkElement.h:
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::HTMLLinkElement):
+        (WebCore::HTMLLinkElement::setDisabledState):
+        (WebCore::HTMLLinkElement::process):
+        (WebCore::HTMLLinkElement::startLoadingDynamicSheet):
+        (WebCore::HTMLLinkElement::addPendingSheet):
+        (WebCore::HTMLLinkElement::removePendingSheet):
+
 2013-07-30  Tim Horton  <timothy_horton@apple.com>
 
         Fix typo in enum name ("SelectionInSnaphot" -> "SelectionInSnapshot")
