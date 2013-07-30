@@ -10,6 +10,8 @@ description("This test asserts that document doesn't leak when a selection is cr
 if (window.internals)
     jsTestIsAsync = true;
 
+gc();
+
 var originalNumberOfLiveDocuments = 0;
 
 var frame = document.getElementById('frame');
