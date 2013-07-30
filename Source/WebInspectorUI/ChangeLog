@@ -1,3 +1,17 @@
+2013-07-30  Roland Takács  <rtakacs@inf.u-szeged.hu>
+
+        Web Inspector: doesn't use localized user interface at remote inspector
+        https://bugs.webkit.org/show_bug.cgi?id=119252
+
+        Reviewed by Timothy Hatcher.
+
+        Added a flag in order to not use localizedStrings in remote inspector.
+
+        * UserInterface/InspectorFrontendHostStub.js:
+        * UserInterface/LoadLocalizedStrings.js:
+        * UserInterface/Main.js:
+        (WebInspector.UIString):
+
 2013-07-24  Antoine Quint  <graouts@apple.com>
 
         Web Inspector: control+clicking on a numeric token should not show the context menu

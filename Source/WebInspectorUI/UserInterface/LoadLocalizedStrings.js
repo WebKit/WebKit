@@ -24,6 +24,9 @@
  */
 
 (function() {
+    if (WebInspector.dontLocalizeUserInterface)
+        return;
+
     var localizedStringsURL = InspectorFrontendHost.localizedStringsURL();
     console.assert(localizedStringsURL);
     if (localizedStringsURL)

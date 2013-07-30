@@ -655,6 +655,9 @@ WebInspector.toggleConsoleView = function()
 
 WebInspector.UIString = function(string, vararg)
 {
+    if (WebInspector.dontLocalizeUserInterface)
+        return string;
+
     if (window.localizedStrings && string in window.localizedStrings)
         return window.localizedStrings[string];
 
