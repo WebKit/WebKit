@@ -51,7 +51,7 @@ function testScriptErrorUnhandled()
     try {
         var worker = new Worker("resources/worker-script-error-unhandled.js");
         worker.onerror = function(evt) {
-            log("PASS: onerror invoked for a script that has script error '" + evt.message + "' at line " + evt.lineno + ".");
+            log("PASS: onerror invoked for a script that has script error '" + evt.message + "' at line " + evt.lineno + " and column " + evt.colno + ".");
             runNextTest();
             return false;
         }
@@ -67,7 +67,7 @@ function testScriptErrorAddEventListener()
         var worker = new Worker("resources/worker-script-error-unhandled.js");
         worker.addEventListener("error",
             function(evt) {
-                log("PASS: event listener invoked for a script that has script error '" + evt.message + "' at line " + evt.lineno + ".");
+                log("PASS: event listener invoked for a script that has script error '" + evt.message + "' at line " + evt.lineno + " and column " + evt.colno + ".");
                 runNextTest();
                 evt.preventDefault();
             }, false);
@@ -83,7 +83,7 @@ function testErrorInHandlingScriptError()
         var worker = new Worker("resources/worker-error-in-handling-script-error.js");
         var errorCount = 0;
         worker.onerror = function(evt) {
-            log("PASS: onerror invoked for a script that has script error '" + evt.message + "' at line " + evt.lineno + ".");
+            log("PASS: onerror invoked for a script that has script error '" + evt.message + "' at line " + evt.lineno + " and column " + evt.colno + ".");
             ++errorCount;
             // Second error happens in the onerror handler. Run next test only when it's reported.
             if (errorCount == 2)
@@ -104,7 +104,7 @@ function testScriptErrorBubbledAndHandledInWorker()
             log("message from worker: \"" + evt.data + "\".");
         }
         worker.onerror = function(evt) {
-            log("PASS: onerror invoked for a script that has script error '" + evt.message + "' at line " + evt.lineno + ".");
+            log("PASS: onerror invoked for a script that has script error '" + evt.message + "' at line " + evt.lineno + " and column " + evt.colno + ".");
             runNextTest();
             return false;
         }
@@ -119,7 +119,7 @@ function testScriptErrorBubbledAndReportedToUser()
     try {
         var worker = new Worker("resources/worker-script-error-bubbled.js");
         worker.onerror = function(evt) {
-            log("PASS: onerror invoked for a script that has script error '" + evt.message + "' at line " + evt.lineno + ".");
+            log("PASS: onerror invoked for a script that has script error '" + evt.message + "' at line " + evt.lineno + " and column " + evt.colno + ".");
             runNextTest();
             return true;
         }
@@ -134,7 +134,7 @@ function testScriptErrorHandled()
     try {
         var worker = new Worker("resources/worker-script-error-handled.js");
         worker.onerror = function(evt) {
-            log("FAIL: onerror invoked for a script that has script error '" + evt.message + "' at line " + evt.lineno + ".");
+            log("FAIL: onerror invoked for a script that has script error '" + evt.message + "' at line " + evt.lineno + " and column " + evt.colno + ".");
             runNextTest();
             return false;
         }

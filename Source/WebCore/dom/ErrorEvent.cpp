@@ -39,6 +39,7 @@ ErrorEventInit::ErrorEventInit()
     : message()
     , filename()
     , lineno(0)
+    , colno(0)
 {
 }
 
@@ -51,7 +52,7 @@ ErrorEvent::ErrorEvent(const AtomicString& type, const ErrorEventInit& initializ
     , m_message(initializer.message)
     , m_fileName(initializer.filename)
     , m_lineNumber(initializer.lineno)
-    , m_columnNumber(0)
+    , m_columnNumber(initializer.colno)
 {
 }
 

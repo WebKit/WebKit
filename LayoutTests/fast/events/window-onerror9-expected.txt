@@ -1,8 +1,9 @@
 Test that when window.onerror handler is called, window.event is the corresponding ErrorEvent object. Bug 8519.
 
-Main frame window.onerror: Error: 2010 at window-onerror9.html, line: 31, column: 22
+Main frame window.onerror: Error: 2010 at window-onerror9.html, line: 32, column: 22
 window.event.type = error
 window.event.message = Error: 2010
 window.event.filename = window-onerror9.html
-window.event.lineno = 31
+window.event.lineno = 32
+window.event.colno = 22
 

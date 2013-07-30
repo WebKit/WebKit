@@ -1,5 +1,23 @@
 2013-07-30  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
+        Add 'colno' attribute to ErrorEvent interface
+        https://bugs.webkit.org/show_bug.cgi?id=119257
+
+        Reviewed by Darin Adler.
+
+        Update several test cases to check the new ErrorEvent.colno
+        attribute.
+
+        * fast/events/constructors/error-event-constructor-expected.txt:
+        * fast/events/constructors/error-event-constructor.html:
+        * fast/events/window-onerror9-expected.txt:
+        * fast/events/window-onerror9.html:
+        * fast/workers/worker-script-error-expected.txt:
+        * fast/workers/worker-script-error.html:
+        * http/tests/workers/worker-importScriptsOnError-expected.txt:
+
+2013-07-30  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
         Pass column as 4th argument to WorkerGlobalScope.onerror and Window.onerror handlers
         https://bugs.webkit.org/show_bug.cgi?id=119251
 

@@ -23,6 +23,7 @@ window.onerror = function(msg, url, line, column)
     log("window.event.message = " + window.event.message);
     log("window.event.filename = " + lastPathComponent(window.event.filename));
     log("window.event.lineno = " + window.event.lineno);
+    log("window.event.colno = " + window.event.colno);
     if (window.testRunner)
         testRunner.notifyDone();
     return true;

@@ -42,6 +42,7 @@ struct ErrorEventInit : public EventInit {
     String message;
     String filename;
     unsigned lineno;
+    unsigned colno;
 };
 
 class ErrorEvent : public Event {

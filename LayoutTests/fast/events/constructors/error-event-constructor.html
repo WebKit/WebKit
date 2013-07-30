@@ -74,12 +74,44 @@ shouldBe("new ErrorEvent('eventType', { lineno: {} }).lineno", "0");
 shouldBe("new ErrorEvent('eventType', { lineno: {moemoe: 12345} }).lineno", "0");
 shouldBe("new ErrorEvent('eventType', { lineno: {valueOf: function () { return 12345; }} }).lineno", "12345");
 
+// colno is passed.
+// numbers within the unsigned long range.
+shouldBe("new ErrorEvent('eventType', { colno: 0 }).colno", "0");
+shouldBe("new ErrorEvent('eventType', { colno: 1 }).colno", "1");
+shouldBe("new ErrorEvent('eventType', { colno: 4294967294 }).colno", "4294967294");
+shouldBe("new ErrorEvent('eventType', { colno: 4294967295 }).colno", "4294967295");
+
+// numbers out of the unsigned long range.
+// 2^{53}-1, the largest number that can be exactly represented by double.
+shouldBe("new ErrorEvent('eventType', { colno: 9007199254740991 }).colno", "4294967295");
+// 2^{64}-1
+shouldBe("new ErrorEvent('eventType', { colno: 18446744073709551615 }).colno", "0");
+shouldBe("new ErrorEvent('eventType', { colno: 12345678901234567890 }).colno", "3944679424");
+shouldBe("new ErrorEvent('eventType', { colno: -1 }).colno", "4294967295");
+shouldBe("new ErrorEvent('eventType', { colno: 123.45 }).colno", "123");
+shouldBe("new ErrorEvent('eventType', { colno: NaN }).colno", "0");
+
+// Non-numeric values.
+shouldBe("new ErrorEvent('eventType', { colno: undefined }).colno", "0");
+shouldBe("new ErrorEvent('eventType', { colno: null }).colno", "0");
+shouldBe("new ErrorEvent('eventType', { colno: '' }).colno", "0");
+shouldBe("new ErrorEvent('eventType', { colno: '12345' }).colno", "12345");
+shouldBe("new ErrorEvent('eventType', { colno: '12345a' }).colno", "0");
+shouldBe("new ErrorEvent('eventType', { colno: 'abc' }).colno", "0");
+shouldBe("new ErrorEvent('eventType', { colno: [] }).colno", "0");
+shouldBe("new ErrorEvent('eventType', { colno: [12345] }).colno", "12345");
+shouldBe("new ErrorEvent('eventType', { colno: [12345, 67890] }).colno", "0");
+shouldBe("new ErrorEvent('eventType', { colno: {} }).colno", "0");
+shouldBe("new ErrorEvent('eventType', { colno: {moemoe: 12345} }).colno", "0");
+shouldBe("new ErrorEvent('eventType', { colno: {valueOf: function () { return 12345; }} }).colno", "12345");
+
 // All initializers are passed.
-shouldBe("new ErrorEvent('eventType', { bubbles: true, cancelable: true, message: 'sakuranbo', filename: 'amaenbo', lineno: 12345 }).bubbles", "true");
-shouldBe("new ErrorEvent('eventType', { bubbles: true, cancelable: true, message: 'sakuranbo', filename: 'amaenbo', lineno: 12345 }).cancelable", "true");
-shouldBeEqualToString("new ErrorEvent('eventType', { bubbles: true, cancelable: true, message: 'sakuranbo', filename: 'amaenbo', lineno: 12345 }).message", "sakuranbo");
-shouldBeEqualToString("new ErrorEvent('eventType', { bubbles: true, cancelable: true, message: 'sakuranbo', filename: 'amaenbo', lineno: 12345 }).filename", "amaenbo");
-shouldBe("new ErrorEvent('eventType', { bubbles: true, cancelable: true, message: 'sakuranbo', filename: 'amaenbo', lineno: 12345 }).lineno", "12345");
+shouldBe("new ErrorEvent('eventType', { bubbles: true, cancelable: true, message: 'sakuranbo', filename: 'amaenbo', lineno: 12345, colno: 23456 }).bubbles", "true");
+shouldBe("new ErrorEvent('eventType', { bubbles: true, cancelable: true, message: 'sakuranbo', filename: 'amaenbo', lineno: 12345, colno: 23456 }).cancelable", "true");
+shouldBeEqualToString("new ErrorEvent('eventType', { bubbles: true, cancelable: true, message: 'sakuranbo', filename: 'amaenbo', lineno: 12345, colno: 23456 }).message", "sakuranbo");
+shouldBeEqualToString("new ErrorEvent('eventType', { bubbles: true, cancelable: true, message: 'sakuranbo', filename: 'amaenbo', lineno: 12345, colno: 23456 }).filename", "amaenbo");
+shouldBe("new ErrorEvent('eventType', { bubbles: true, cancelable: true, message: 'sakuranbo', filename: 'amaenbo', lineno: 12345, colno: 23456 }).lineno", "12345");
+shouldBe("new ErrorEvent('eventType', { bubbles: true, cancelable: true, message: 'sakuranbo', filename: 'amaenbo', lineno: 12345, colno: 23456 }).colno", "23456");
 </script>
 <script src="../../js/resources/js-test-post.js"></script>
 </body>
