@@ -1,5 +1,22 @@
 2013-07-30  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r153486
+
+    2013-07-30  Tim Horton  <timothy_horton@apple.com>
+
+            Null deref under PluginView::handlesPageScaleFactor()
+            https://bugs.webkit.org/show_bug.cgi?id=119231
+            <rdar://problem/14440207>
+
+            Reviewed by Darin Adler.
+
+            Null-check the PluginView in the caller as well.
+
+            * WebProcess/WebPage/WebFrame.cpp:
+            (WebKit::WebFrame::handlesPageScaleGesture):
+
+2013-07-30  Lucas Forschler  <lforschler@apple.com>
+
         Merge r153449
 
     2013-07-29  Tim Horton  <timothy_horton@apple.com>
