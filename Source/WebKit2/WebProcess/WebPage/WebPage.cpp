@@ -1523,7 +1523,7 @@ PassRefPtr<WebImage> WebPage::scaledSnapshotWithOptions(const IntRect& rect, dou
     graphicsContext->applyDeviceScaleFactor(combinedScaleFactor);
     graphicsContext->translate(-rect.x(), -rect.y());
 
-    FrameView::SelectionInSnaphot shouldPaintSelection = FrameView::IncludeSelection;
+    FrameView::SelectionInSnapshot shouldPaintSelection = FrameView::IncludeSelection;
     if (options & SnapshotOptionsExcludeSelectionHighlighting)
         shouldPaintSelection = FrameView::ExcludeSelection;
 

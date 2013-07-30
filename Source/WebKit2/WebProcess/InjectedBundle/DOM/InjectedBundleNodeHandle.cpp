@@ -139,7 +139,7 @@ static PassRefPtr<WebImage> imageForRect(FrameView* frameView, const IntRect& re
     graphicsContext->applyDeviceScaleFactor(scaleFactor);
     graphicsContext->translate(-rect.x(), -rect.y());
 
-    FrameView::SelectionInSnaphot shouldPaintSelection = FrameView::IncludeSelection;
+    FrameView::SelectionInSnapshot shouldPaintSelection = FrameView::IncludeSelection;
     if (options & SnapshotOptionsExcludeSelectionHighlighting)
         shouldPaintSelection = FrameView::ExcludeSelection;
 
