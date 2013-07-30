@@ -376,7 +376,7 @@ WebProcessProxy* WebPageProxy::process() const
 
 PlatformProcessIdentifier WebPageProxy::processIdentifier() const
 {
-    if (!isValid())
+    if (m_isClosed)
         return 0;
 
     return m_process->processIdentifier();
