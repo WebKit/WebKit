@@ -36,11 +36,9 @@ class HTMLAreaElement;
 class IntRect;
 class RenderObject;
 
-using namespace std;
-
 inline long long maxDistance()
 {
-    return numeric_limits<long long>::max();
+    return std::numeric_limits<long long>::max();
 }
 
 inline int fudgeFactor()

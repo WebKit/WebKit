@@ -1,3 +1,21 @@
+2013-07-30  Kwang Yul Seo  <skyul@company100.net>
+
+        Remove using namespace std from SpatialNavigation
+        https://bugs.webkit.org/show_bug.cgi?id=119242
+
+        Reviewed by Antonio Gomes.
+
+        "using namespace" statements in headers are dangerous and should be
+        avoided. check-webkit-style has been changed to flag them as an error
+        since r152719. Use explicit std:: qualifiers instead.
+
+        No behavior change, no new tests needed.
+
+        * page/SpatialNavigation.cpp:
+        (WebCore::scrollInDirection):
+        * page/SpatialNavigation.h:
+        (WebCore::maxDistance):
+
 2013-07-30  Simon Hausmann  <simon.hausmann@digia.com>
 
         [Qt][Win] Extend disabling of whole-program-optimizations to MSVC 2012
