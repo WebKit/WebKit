@@ -896,11 +896,6 @@ plugins/npruntime/invoke-failure.html
 # Very flaky, often failing on retry, too.
 svg/dom/SVGScriptElement/script-change-externalResourcesRequired-while-loading.svg
 
-# Unknown failures.
-http/tests/multipart/invalid-image-data-standalone.html
-webkit.org/b/76478 compositing/iframes/repaint-after-losing-scrollbars.html [ ImageOnlyFailure ]
-webkit.org/b/76489 compositing/webgl/webgl-reflection.html [ ImageOnlyFailure ]
-
 # Needs ENABLE_SHADOW_DOM
 webkit.org/b/76439 [ Debug ] fast/dom/shadow/content-element-api.html [ Failure ]
 webkit.org/b/76439 [ Debug ] fast/dom/shadow/content-element-outside-shadow.html [ Failure ]
