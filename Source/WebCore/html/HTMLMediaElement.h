@@ -291,7 +291,8 @@ public:
     void setSelectedTextTrack(TextTrack*);
 
     bool textTracksAreReady() const;
-    void configureTextTrackDisplay();
+    enum TextTrackVisibilityCheckType { CheckTextTrackVisibility, AssumeTextTrackVisibilityChanged };
+    void configureTextTrackDisplay(TextTrackVisibilityCheckType checkType = CheckTextTrackVisibility);
     void updateTextTrackDisplay();
 
     // AudioTrackClient

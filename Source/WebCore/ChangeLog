@@ -1,3 +1,24 @@
+2013-07-29  Jer Noble  <jer.noble@apple.com>
+
+        TextTrackRepresentation captions often disappear then appear again.
+        https://bugs.webkit.org/show_bug.cgi?id=119228
+
+        Reviewed by Simon Fraser.
+
+        Calling updateTextTrackDisplay() will cause the entire DOM subtree containing the active cues
+        to be torn down and rebuilt. Only call into this method when text tracks have actually changed.
+
+        Add an enum parameter to configureTextTrackDisplay() which allows the caller to specify that
+        method should assume that the list of visible text tracks has changed, forcing a call to
+        updateTextTrackDisplay().
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::updateActiveTextTrackCues): Remove the unnecessary call to updateTextTrackDisplay().
+        (WebCore::HTMLMediaElement::textTrackModeChanged): Pass AssumeVisibleTextTracksChanged to configureTextTrackDisplay().
+        (WebCore::HTMLMediaElement::configureTextTrackDisplay): Check the passed flags and exit early only if
+            AssumeVisibleTextTracksChanged is not set.
+        * html/HTMLMediaElement.h:
+
 2013-07-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         Fix crash due to unexpected Node deletion during MutationObserver registration book-keeping

@@ -1242,16 +1242,8 @@ void HTMLMediaElement::updateActiveTextTrackCues(double movieTime)
             activeSetChanged = true;
     }
 
-    if (!activeSetChanged) {
-        // Even though the active set has not changed, it is possible that the
-        // the mode of a track has changed from 'hidden' to 'showing' and the
-        // cues have not yet been rendered.
-        // Note: don't call updateTextTrackDisplay() unless we have controls because it will
-        // create them.
-        if (hasMediaControls())
-            updateTextTrackDisplay();
+    if (!activeSetChanged)
         return;
-    }
 
     // 7 - If the time was reached through the usual monotonic increase of the
     // current playback position during normal playback, and there are cues in
@@ -1459,8 +1451,7 @@ void HTMLMediaElement::textTrackModeChanged(TextTrack* track)
         platformTextTrackMenu()->trackWasSelected(track->platformTextTrack());
 #endif
     
-    configureTextTrackDisplay();
-    updateActiveTextTrackCues(currentTime());
+    configureTextTrackDisplay(AssumeTextTrackVisibilityChanged);
 }
 
 void HTMLMediaElement::videoTrackSelectedChanged(VideoTrack*)
@@ -4689,7 +4680,7 @@ void HTMLMediaElement::configureMediaControls()
 }
 
 #if ENABLE(VIDEO_TRACK)
-void HTMLMediaElement::configureTextTrackDisplay()
+void HTMLMediaElement::configureTextTrackDisplay(TextTrackVisibilityCheckType checkType)
 {
     ASSERT(m_textTracks);
 
@@ -4706,7 +4697,7 @@ void HTMLMediaElement::configureTextTrackDisplay()
         }
     }
 
-    if (m_haveVisibleTextTrack == haveVisibleTextTrack) {
+    if (checkType == CheckTextTrackVisibility && m_haveVisibleTextTrack == haveVisibleTextTrack) {
         updateActiveTextTrackCues(currentTime());
         return;
     }
