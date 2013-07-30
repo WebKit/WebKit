@@ -143,7 +143,8 @@ void PluginControllerProxy::destroy()
 {
     ASSERT(m_plugin);
 
-    if (m_pluginDestructionProtectCount) {
+    // FIXME: Consider removing m_pluginDestructionProtectCount and always use inSendSync here.
+    if (m_pluginDestructionProtectCount || m_connection->connection()->inSendSync()) {
         // We have plug-in code on the stack so we can't destroy it right now.
         // Destroy it later.
         m_pluginDestroyTimer.startOneShot(0);

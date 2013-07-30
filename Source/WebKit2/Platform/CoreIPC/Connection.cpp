@@ -225,6 +225,7 @@ Connection::Connection(Identifier identifier, bool isServer, Client* client, Run
     , m_isConnected(false)
     , m_connectionQueue(WorkQueue::create("com.apple.CoreIPC.ReceiveQueue"))
     , m_clientRunLoop(clientRunLoop)
+    , m_inSendSyncCount(0)
     , m_inDispatchMessageCount(0)
     , m_inDispatchMessageMarkedDispatchWhenWaitingForSyncReplyCount(0)
     , m_didReceiveInvalidMessage(false)
@@ -460,6 +461,8 @@ PassOwnPtr<MessageDecoder> Connection::sendSyncMessage(uint64_t syncRequestID, P
         m_pendingSyncReplies.append(PendingSyncReply(syncRequestID));
     }
 
+    ++m_inSendSyncCount;
+
     // First send the message.
     sendMessage(encoder, DispatchMessageEvenWhenWaitingForSyncReply);
 
@@ -467,6 +470,8 @@ PassOwnPtr<MessageDecoder> Connection::sendSyncMessage(uint64_t syncRequestID, P
     // keep an extra reference to the connection here in case it's invalidated.
     RefPtr<Connection> protect(this);
     OwnPtr<MessageDecoder> reply = waitForSyncReply(syncRequestID, timeout, syncSendFlags);
+
+    --m_inSendSyncCount;
 
     // Finally, pop the pending sync reply information.
     {

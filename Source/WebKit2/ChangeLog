@@ -1,3 +1,26 @@
+2013-07-30  Anders Carlsson  <andersca@apple.com>
+
+        Plug-in process crashes if plug-in is destroyed as a result of sending NPObjectMessageReceiver::Deallocate
+        https://bugs.webkit.org/show_bug.cgi?id=119270
+        <rdar://problem/13368226>
+
+        Reviewed by Darin Adler.
+
+        Normally we use the PluginDestructionProtector RAII object to prevent plug-ins from being destroyed while
+        they're executing code. However, in the case of the NPObjectMessageReceiver::Deallocate message, we can't do this
+        since we don't know the plug-in or connection. 
+        
+        Instead, add a counter to Connection that keeps track of whether sendSync is currently called and defer plug-in
+        destruction if it is. (This approach is actually more robust and we should investigate getting rid of the destruction protector).
+
+        * Platform/CoreIPC/Connection.cpp:
+        (CoreIPC::Connection::Connection):
+        (CoreIPC::Connection::sendSyncMessage):
+        * Platform/CoreIPC/Connection.h:
+        (CoreIPC::Connection::inSendSync):
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::destroy):
+
 2013-07-30  Tim Horton  <timothy_horton@apple.com>
 
         Null deref under WebPage::scaledSnapshotWithOptions
