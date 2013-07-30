@@ -98,10 +98,11 @@ void MutationObserverRegistration::clearTransientRegistrations()
     m_registrationNodeKeepAlive = 0; // Balanced in observeSubtreeNodeWillDetach.
 }
 
-void MutationObserverRegistration::unregister()
+void MutationObserverRegistration::unregisterAndDelete(MutationObserverRegistration* registry)
 {
-    m_registrationNode->unregisterMutationObserver(this);
-    // The above line will cause this object to be deleted, so don't do any more in this function.
+    RefPtr<Node> registrationNode(registry->m_registrationNode);
+    registrationNode->unregisterMutationObserver(registry);
+    // The above line will cause registry to be deleted, so don't do any more in this function.
 }
 
 bool MutationObserverRegistration::shouldReceiveMutationFrom(Node* node, MutationObserver::MutationType type, const QualifiedName* attributeName) const

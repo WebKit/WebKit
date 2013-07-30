@@ -49,7 +49,7 @@ public:
     void observedSubtreeNodeWillDetach(Node*);
     void clearTransientRegistrations();
     bool hasTransientRegistrations() const { return m_transientRegistrationNodes && !m_transientRegistrationNodes->isEmpty(); }
-    void unregister();
+    static void unregisterAndDelete(MutationObserverRegistration*);
 
     bool shouldReceiveMutationFrom(Node*, MutationObserver::MutationType, const QualifiedName* attributeName) const;
     bool isSubtree() const { return m_options & MutationObserver::Subtree; }
