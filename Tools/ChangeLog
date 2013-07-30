@@ -1,3 +1,9 @@
+2013-07-30  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Unreviewed, add my new email to contributors.json.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2013-07-30  Krzysztof Czech  <k.czech@samsung.com>
 
         [EFL] REGRESSION after r153439: layout tests do not run.
