@@ -1,5 +1,48 @@
 2013-07-29  Tim Horton  <timothy_horton@apple.com>
 
+        [wk2] Flush the WebProcess’ implicit transaction when using endDeferringViewInWindowChangesSync
+        https://bugs.webkit.org/show_bug.cgi?id=119225
+        <rdar://problem/14568841>
+
+        Reviewed by Simon Fraser.
+
+        Tell CoreAnimation to flush the implicit transaction before replying
+        when using endDeferringViewInWindowChangesSync, as that method's contract
+        is that the WebProcess is totally ready to be in-window when it returns.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView endDeferringViewInWindowChanges]):
+        Adopt viewInWindowStateDidChange.
+
+        (-[WKView endDeferringViewInWindowChangesSync]):
+        Adopt viewInWindowStateDidChange, asking it to send a reply only if we're going to wait for one.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::viewInWindowStateDidChange):
+        (WebKit::WebPageProxy::viewStateDidChange):
+        Pull viewInWindowStateDidChange out of viewStateDidChange.
+        Request a reply from SetIsInWindow if we're told to.
+
+        * UIProcess/WebPageProxy.h: Add WantsReplyOrNot and viewInWindowStateDidChange.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didUpdateInWindowStateTimerFired):
+        Don't build this version on Mac, we'll have a WebPageMac version.
+
+        (WebKit::WebPage::setIsInWindow):
+        Only start the timer to send the didUpdateInWindowState reply if we're asked to.
+
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        Add an argument to the SetIsInWindow message for whether the WebProcess
+        should inform the UIProcess when SetIsInWindow completes or not.
+
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::didUpdateInWindowStateTimerFired):
+        Tell CA to flush the implicit transaction before telling the UIProcess that
+        we're finished moving in-window.
+
+2013-07-29  Tim Horton  <timothy_horton@apple.com>
+
         Null deref under PluginView::handlesPageScaleFactor()
         https://bugs.webkit.org/show_bug.cgi?id=119231
         <rdar://problem/14440207>

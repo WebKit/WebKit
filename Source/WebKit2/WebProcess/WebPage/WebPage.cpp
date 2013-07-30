@@ -2113,10 +2113,12 @@ void WebPage::setCanStartMediaTimerFired()
         m_page->setCanStartMedia(true);
 }
 
+#if !PLATFORM(MAC)
 void WebPage::didUpdateInWindowStateTimerFired()
 {
     send(Messages::WebPageProxy::DidUpdateInWindowState());
 }
+#endif
 
 inline bool WebPage::canHandleUserEvents() const
 {
@@ -2127,7 +2129,7 @@ inline bool WebPage::canHandleUserEvents() const
     return true;
 }
 
-void WebPage::setIsInWindow(bool isInWindow)
+void WebPage::setIsInWindow(bool isInWindow, bool wantsDidUpdateViewInWindowState)
 {
     bool pageWasInWindow = m_page->isInWindow();
     
@@ -2152,7 +2154,9 @@ void WebPage::setIsInWindow(bool isInWindow)
     }
 
     m_page->setIsInWindow(isInWindow);
-    m_sendDidUpdateInWindowStateTimer.startOneShot(0);
+
+    if (wantsDidUpdateViewInWindowState)
+        m_sendDidUpdateInWindowStateTimer.startOneShot(0);
 }
 
 void WebPage::didReceivePolicyDecision(uint64_t frameID, uint64_t listenerID, uint32_t policyAction, uint64_t downloadID)

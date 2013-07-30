@@ -24,7 +24,7 @@ messages -> WebPage LegacyReceiver {
     SetActive(bool active)
     SetFocused(bool focused)
     SetInitialFocus(bool forward, bool isKeyboardEventValid, WebKit::WebKeyboardEvent event)
-    SetIsInWindow(bool isInWindow)
+    SetIsInWindow(bool isInWindow, bool wantsDidUpdateViewInWindowState)
 
     SetDrawsBackground(bool drawsBackground)
     SetDrawsTransparentBackground(bool drawsTransparentBackground)

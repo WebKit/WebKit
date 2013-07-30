@@ -709,7 +709,7 @@ private:
     void setFocused(bool);
     void setInitialFocus(bool forward, bool isKeyboardEventValid, const WebKeyboardEvent&);
     void setWindowResizerSize(const WebCore::IntSize&);
-    void setIsInWindow(bool);
+    void setIsInWindow(bool isInWindow, bool wantsDidUpdateViewInWindowState = false);
     void validateCommand(const String&, uint64_t);
     void executeEditCommand(const String&);
 

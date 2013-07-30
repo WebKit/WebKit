@@ -1040,6 +1040,26 @@ void WebPageProxy::scrollView(const IntRect& scrollRect, const IntSize& scrollOf
     m_pageClient->scrollView(scrollRect, scrollOffset);
 }
 
+void WebPageProxy::viewInWindowStateDidChange(WantsReplyOrNot wantsReply)
+{
+    if (!isValid())
+        return;
+
+    bool isInWindow = m_pageClient->isViewInWindow();
+    if (m_isInWindow != isInWindow) {
+        m_isInWindow = isInWindow;
+        m_process->send(Messages::WebPage::SetIsInWindow(isInWindow, wantsReply == WantsReplyOrNot::DoesWantReply), m_pageID);
+    }
+
+    if (isInWindow) {
+        LayerHostingMode layerHostingMode = m_pageClient->viewLayerHostingMode();
+        if (m_layerHostingMode != layerHostingMode) {
+            m_layerHostingMode = layerHostingMode;
+            m_drawingArea->layerHostingModeDidChange();
+        }
+    }
+}
+
 void WebPageProxy::viewStateDidChange(ViewStateFlags flags)
 {
     if (!isValid())
@@ -1072,21 +1092,8 @@ void WebPageProxy::viewStateDidChange(ViewStateFlags flags)
         }
     }
 
-    if (flags & ViewIsInWindow) {
-        bool isInWindow = m_pageClient->isViewInWindow();
-        if (m_isInWindow != isInWindow) {
-            m_isInWindow = isInWindow;
-            m_process->send(Messages::WebPage::SetIsInWindow(isInWindow), m_pageID);
-        }
-
-        if (isInWindow) {
-            LayerHostingMode layerHostingMode = m_pageClient->viewLayerHostingMode();
-            if (m_layerHostingMode != layerHostingMode) {
-                m_layerHostingMode = layerHostingMode;
-                m_drawingArea->layerHostingModeDidChange();
-            }
-        }
-    }
+    if (flags & ViewIsInWindow)
+        viewInWindowStateDidChange();
 
 #if ENABLE(PAGE_VISIBILITY_API)
     PageVisibilityState visibilityState = PageVisibilityStateHidden;
