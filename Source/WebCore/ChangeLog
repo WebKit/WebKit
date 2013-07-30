@@ -1,5 +1,19 @@
 2013-07-30  Patrick Gansterer  <paroga@webkit.org>
 
+        [WIN] Remove dependency on CoreFoundation from DownloadBundle
+        https://bugs.webkit.org/show_bug.cgi?id=119247
+
+        Reviewed by Anders Carlsson.
+
+        * platform/network/cf/DownloadBundle.h:
+        * platform/network/curl/DownloadBundle.h:
+        * platform/network/win/DownloadBundleWin.cpp:
+        (WebCore::DownloadBundle::magicNumber):
+        (WebCore::DownloadBundle::appendResumeData):
+        (WebCore::DownloadBundle::extractResumeData):
+
+2013-07-30  Patrick Gansterer  <paroga@webkit.org>
+
         Move WindowsExtras.h from WebCore to WTF
         https://bugs.webkit.org/show_bug.cgi?id=118125
 

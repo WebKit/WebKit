@@ -166,10 +166,14 @@ HRESULT STDMETHODCALLTYPE WebDownload::initToResumeWithBundle(
 {
     LOG(Download, "Attempting resume of download bundle %s", String(bundlePath, SysStringLen(bundlePath)).ascii().data());
 
-    RetainPtr<CFDataRef> resumeData = adoptCF(DownloadBundle::extractResumeData(String(bundlePath, SysStringLen(bundlePath))));
-
-    if (!resumeData)
+    Vector<char> buffer;
+    if (!DownloadBundle::extractResumeData(String(bundlePath, SysStringLen(bundlePath)), buffer))
         return E_FAIL;
+
+    // It is possible by some twist of fate the bundle magic number was naturally at the end of the file and its not actually a valid bundle.
+    // That, or someone engineered it that way to try to attack us. In that cause, this CFData will successfully create but when we actually
+    // try to start the CFURLDownload using this bogus data, it will fail and we will handle that gracefully.
+    RetainPtr<CFDataRef> resumeData = adoptCF(CFDataCreate(0, reinterpret_cast<const UInt8*>(buffer.data()), buffer.size()));
 
     if (!delegate)
         return E_FAIL;
@@ -254,7 +258,9 @@ HRESULT STDMETHODCALLTYPE WebDownload::cancelForResume()
         goto exit;
     }
 
-    DownloadBundle::appendResumeData(resumeData.get(), m_bundlePath);
+    const char* resumeBytes = reinterpret_cast<const char*>(CFDataGetBytePtr(resumeData.get()));
+    uint32_t resumeLength = CFDataGetLength(resumeData.get());
+    DownloadBundle::appendResumeData(resumeBytes, resumeLength, m_bundlePath);
 
 exit:
     m_download = 0;

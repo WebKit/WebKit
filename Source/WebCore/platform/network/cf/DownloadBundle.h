@@ -27,14 +27,13 @@
 #define DownloadBundle_h
 
 #include <wtf/Forward.h>
-
-typedef const struct __CFData* CFDataRef;
+#include <wtf/Vector.h>
 
 namespace WebCore {
 namespace DownloadBundle {
 
-bool appendResumeData(CFDataRef resumeData, const String& bundlePath);
-CFDataRef extractResumeData(const String& bundlePath);
+bool appendResumeData(const char*, uint32_t, const String& bundlePath);
+bool extractResumeData(const String& bundlePath, Vector<char>& resumeData);
 const String& fileExtension();
 
 } // namespace DownloadBundle
