@@ -1,5 +1,12 @@
 2013-07-30  Simon Pena  <simon.pena@samsung.com>
 
+        [GTK] Unreviewed gardening. Updated TestExpectations
+
+        * platform/gtk/TestExpectations: Mark transitions/created-while-suspended.html
+        as slow after r153396.
+
+2013-07-30  Simon Pena  <simon.pena@samsung.com>
+
         [GTK] Unreviewed gardening. Update TestExpectations
 
         Some GTK tests are flaky or time out after the FTL merge.
