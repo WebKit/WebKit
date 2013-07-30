@@ -1,3 +1,17 @@
+2013-07-30  Brian Holt  <brian.holt@samsung.com>
+
+        [WebKit2] [Gtk] WebKitResponsePolicyDecision URI response property incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=119258
+
+        Reviewed by Martin Robinson.
+
+        Corrected the installed URI response property from PROP_REQUEST to
+        PROP_RESPONSE and type from WEBKIT_TYPE_URI_REQUEST to
+        WEBKIT_TYPE_URI_RESPONSE.
+
+        * UIProcess/API/gtk/WebKitResponsePolicyDecision.cpp:
+        (webkit_response_policy_decision_class_init):
+
 2013-07-29  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix make distcheck.
