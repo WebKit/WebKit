@@ -129,7 +129,7 @@ void MutationObserver::disconnect()
     m_records.clear();
     HashSet<MutationObserverRegistration*> registrations(m_registrations);
     for (HashSet<MutationObserverRegistration*>::iterator iter = registrations.begin(); iter != registrations.end(); ++iter)
-        (*iter)->unregister();
+        MutationObserverRegistration::unregisterAndDelete(*iter);
 }
 
 void MutationObserver::observationStarted(MutationObserverRegistration* registration)

@@ -1,3 +1,25 @@
+2013-07-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Fix crash due to unexpected Node deletion during MutationObserver registration book-keeping
+        https://bugs.webkit.org/show_bug.cgi?id=119124
+
+        Reviewed by Sam Weinig.
+
+        Merge https://chromium.googlesource.com/chromium/blink/+/b6afb927695b3acf2c75c25f05e99682660993e2
+
+        No new tests since I could not reproduce the crash with the test attached in the Blink change.
+
+        The bug was caused by Node::unregisterMutationObserver removing the MutationObserverRegistration
+        that holds the last ref to the node. Avoid that by explicitly allocating a local RefPtr to the node
+        in MutationObserverRegistration::unregister. Also rename it to unregisterAndDelete to clarify
+        the semantics and make it a static member function to be even safer.
+
+        * dom/MutationObserver.cpp:
+        (WebCore::MutationObserver::disconnect):
+        * dom/MutationObserverRegistration.cpp:
+        (WebCore::MutationObserverRegistration::unregisterAndDelete):
+        * dom/MutationObserverRegistration.h:
+
 2013-07-29  Alex Christensen  <achristensen@apple.com>
 
         Moved GLTransportSurface.h and .cpp out of efl-specific directory.
