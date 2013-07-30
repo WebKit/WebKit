@@ -1,3 +1,19 @@
+2013-07-30  Patrick Gansterer  <paroga@webkit.org>
+
+        Move WindowsExtras.h from WebCore to WTF
+        https://bugs.webkit.org/show_bug.cgi?id=118125
+
+        Reviewed by Anders Carlsson.
+
+        Move it to WTF to be able to use the functions in WTF too.
+
+        * wtf/WindowsExtras.h: Renamed from Source/WebCore/platform/win/WindowsExtras.h.
+        (WTF::getRegistryValue):
+        (WTF::getWindowPointer):
+        (WTF::setWindowPointer):
+        * wtf/win/MainThreadWin.cpp:
+        (WTF::initializeMainThreadPlatform):
+
 2013-07-29  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix make distcheck.

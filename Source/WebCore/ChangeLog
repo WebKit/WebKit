@@ -1,3 +1,24 @@
+2013-07-30  Patrick Gansterer  <paroga@webkit.org>
+
+        Move WindowsExtras.h from WebCore to WTF
+        https://bugs.webkit.org/show_bug.cgi?id=118125
+
+        Reviewed by Anders Carlsson.
+
+        Move it to WTF to be able to use the functions in WTF too.
+
+        * platform/PlatformKeyboardEvent.h:
+        * platform/PlatformMouseEvent.h:
+        * platform/PlatformWheelEvent.h:
+        * platform/graphics/win/MediaPlayerPrivateFullscreenWindow.h:
+        * platform/win/MIMETypeRegistryWin.cpp:
+        * platform/win/PasteboardWin.cpp:
+        * platform/win/PopupMenuWin.cpp:
+        * platform/win/RunLoopWin.cpp:
+        * platform/win/SharedTimerWin.cpp:
+        * platform/win/WindowMessageListener.h:
+        * plugins/win/PluginDatabaseWin.cpp:
+
 2013-07-30  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Pass column as 4th argument to WorkerGlobalScope.onerror and Window.onerror handlers

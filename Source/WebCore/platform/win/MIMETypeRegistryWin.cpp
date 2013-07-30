@@ -26,10 +26,10 @@
 #include "config.h"
 #include "MIMETypeRegistry.h"
 
-#include "WindowsExtras.h"
 #include <wtf/Assertions.h>
 #include <wtf/HashMap.h>
 #include <wtf/MainThread.h>
+#include <wtf/WindowsExtras.h>
 
 namespace WebCore {
 

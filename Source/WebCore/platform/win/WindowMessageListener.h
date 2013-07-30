@@ -29,9 +29,7 @@
 #ifndef WindowMessageListener_h
 #define WindowMessageListener_h
 
-#if OS(WINDOWS)
-#include "WindowsExtras.h"
-#endif
+#include <windows.h>
 
 namespace WebCore {
 

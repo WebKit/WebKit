@@ -45,7 +45,7 @@
 #include "SimpleFontData.h"
 #include "TextRun.h"
 #include "WebCoreInstanceHandle.h"
-#include "WindowsExtras.h"
+#include <wtf/WindowsExtras.h>
 
 #include <windows.h>
 #include <windowsx.h>

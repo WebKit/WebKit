@@ -48,8 +48,8 @@
 #include "SharedBuffer.h"
 #include "TextEncoding.h"
 #include "WebCoreInstanceHandle.h"
-#include "WindowsExtras.h"
 #include "markup.h"
+#include <wtf/WindowsExtras.h>
 #include <wtf/text/CString.h>
 
 namespace WebCore {

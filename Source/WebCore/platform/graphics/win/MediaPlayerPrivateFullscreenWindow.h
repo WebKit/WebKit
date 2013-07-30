@@ -26,10 +26,8 @@
 #ifndef MediaPlayerPrivateFullscreenWindow_h
 #define MediaPlayerPrivateFullscreenWindow_h
 
-#if OS(WINDOWS)
-#include "WindowsExtras.h"
-#endif
 #include <wtf/RefPtr.h>
+#include <wtf/WindowsExtras.h>
 
 #if USE(ACCELERATED_COMPOSITING)
 #include "CACFLayerTreeHostClient.h"

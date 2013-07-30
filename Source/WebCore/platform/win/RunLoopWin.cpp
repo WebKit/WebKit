@@ -26,8 +26,8 @@
 #include "config.h"
 #include "RunLoop.h"
 
-#include "WindowsExtras.h"
 #include <wtf/CurrentTime.h>
+#include <wtf/WindowsExtras.h>
 
 using namespace std;
 

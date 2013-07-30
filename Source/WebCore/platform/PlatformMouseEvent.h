@@ -28,9 +28,7 @@
 
 #include "IntPoint.h"
 #include "PlatformEvent.h"
-#if OS(WINDOWS)
-#include "WindowsExtras.h"
-#endif
+#include <wtf/WindowsExtras.h>
 
 #if PLATFORM(GTK)
 typedef struct _GdkEventButton GdkEventButton;

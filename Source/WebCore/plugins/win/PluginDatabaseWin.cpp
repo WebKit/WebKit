@@ -31,7 +31,7 @@
 #include "Frame.h"
 #include "KURL.h"
 #include "PluginPackage.h"
-#include "WindowsExtras.h"
+#include <wtf/WindowsExtras.h>
 
 #if OS(WINCE)
 // WINCE doesn't support Registry Key Access Rights. The parameter should always be 0

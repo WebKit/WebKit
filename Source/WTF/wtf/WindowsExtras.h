@@ -25,15 +25,17 @@
 #ifndef WindowsExtras_h
 #define WindowsExtras_h
 
+#if OS(WINDOWS)
+
 #include <windows.h>
 #include <objbase.h>
 #include <shlwapi.h>
 
-namespace WebCore {
-
 #ifndef HWND_MESSAGE
 const HWND HWND_MESSAGE = 0;
 #endif
+
+namespace WTF {
 
 inline HRESULT getRegistryValue(HKEY hkey, LPCWSTR pszSubKey, LPCWSTR pszValue, LPDWORD pdwType, LPVOID pvData, LPDWORD pcbData)
 {
@@ -67,6 +69,12 @@ inline void* setWindowPointer(HWND hWnd, int index, void* value)
 #endif
 }
 
-} // namespace WebCore
+} // namespace WTF
+
+using WTF::getRegistryValue;
+using WTF::getWindowPointer;
+using WTF::setWindowPointer;
+
+#endif // OS(WINDOWS)
 
 #endif // WindowsExtras_h
