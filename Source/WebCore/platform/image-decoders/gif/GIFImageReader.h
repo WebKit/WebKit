@@ -282,12 +282,10 @@ public:
         return frame->isLocalColormapDefined ? frame->localColormapSize : 0;
     }
 
-    const GIFFrameContext* frameContext(size_t index) const
+    const GIFFrameContext* frameContext() const
     {
-        return index < m_frames.size() ? m_frames[index].get() : 0;
+        return m_currentDecodingFrame < m_frames.size() ? m_frames[m_currentDecodingFrame].get() : 0;
     }
-
-    bool parseCompleted() const { return m_parseCompleted; }
 
 private:
     bool parse(size_t dataPosition, size_t len, bool parseSizeOnly);

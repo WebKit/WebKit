@@ -127,19 +127,6 @@ ImageFrame* GIFImageDecoder::frameBufferAtIndex(size_t index)
     return &frame;
 }
 
-
-bool GIFImageDecoder::frameIsCompleteAtIndex(size_t index) const
-{
-    return m_reader && (index < m_reader->imagesCount()) && m_reader->frameContext(index)->isComplete();
-}
-
-float GIFImageDecoder::frameDurationAtIndex(size_t index) const
-{
-    return (m_reader && (index < m_reader->imagesCount()) && m_reader->frameContext(index)->isHeaderDefined())
-        ? m_reader->frameContext(index)->delayTime : 0;
-}
-
-
 bool GIFImageDecoder::setFailed()
 {
     m_reader.clear();
@@ -198,7 +185,7 @@ void GIFImageDecoder::clearFrameBufferCache(size_t clearBeforeFrame)
 
 bool GIFImageDecoder::haveDecodedRow(unsigned frameIndex, const Vector<unsigned char>& rowBuffer, size_t width, size_t rowNumber, unsigned repeatCount, bool writeTransparentPixels)
 {
-    const GIFFrameContext* frameContext = m_reader->frameContext(frameIndex);
+    const GIFFrameContext* frameContext = m_reader->frameContext();
     // The pixel data and coordinates supplied to us are relative to the frame's
     // origin within the entire image size, i.e.
     // (frameContext->xOffset, frameContext->yOffset). There is no guarantee
@@ -310,6 +297,8 @@ void GIFImageDecoder::gifComplete()
     // Cache the repetition count, which is now as authoritative as it's ever
     // going to be.
     repetitionCount();
+
+    m_reader.clear();
 }
 
 void GIFImageDecoder::decode(unsigned haltAtFrame, GIFQuery query)
@@ -346,16 +335,16 @@ void GIFImageDecoder::decode(unsigned haltAtFrame, GIFQuery query)
         return;
     }
 
-    // It is also a fatal error if all data is received and we have decoded all
-    // frames available but the file is truncated.
-    if (haltAtFrame >= m_frameBufferCache.size() && isAllDataReceived() && m_reader && !m_reader->parseCompleted())
+    // It is also a fatal error if all data is received but we failed to decode
+    // all frames completely.
+    if (isAllDataReceived() && haltAtFrame >= m_frameBufferCache.size() && m_reader)
         setFailed();
 }
 
 bool GIFImageDecoder::initFrameBuffer(unsigned frameIndex)
 {
     // Initialize the frame rect in our buffer.
-    const GIFFrameContext* frameContext = m_reader->frameContext(frameIndex);
+    const GIFFrameContext* frameContext = m_reader->frameContext();
     IntRect frameRect(frameContext->xOffset, frameContext->yOffset, frameContext->width, frameContext->height);
 
     // Make sure the frameRect doesn't extend outside the buffer.

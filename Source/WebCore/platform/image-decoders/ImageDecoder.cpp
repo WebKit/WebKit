@@ -284,12 +284,11 @@ template <MatchType type> int getScaledValue(const Vector<int>& scaledValues, in
 
 bool ImageDecoder::frameHasAlphaAtIndex(size_t index) const
 {
-    return !frameIsCompleteAtIndex(index) || m_frameBufferCache[index].hasAlpha();
-}
-
-bool ImageDecoder::frameIsCompleteAtIndex(size_t index) const
-{
-    return (index < m_frameBufferCache.size()) && (m_frameBufferCache[index].status() == ImageFrame::FrameComplete);
+    if (m_frameBufferCache.size() <= index)
+        return true;
+    if (m_frameBufferCache[index].status() == ImageFrame::FrameComplete)
+        return m_frameBufferCache[index].hasAlpha();
+    return true;
 }
 
 unsigned ImageDecoder::frameBytesAtIndex(size_t index) const
