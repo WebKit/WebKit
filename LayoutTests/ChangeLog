@@ -1,3 +1,9 @@
+2013-07-23  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed gardening. AppleWin port.
+
+        * platform/win/editing/selection/move-left-right-expected.txt:
+
 2013-07-31  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         [CSS Shapes] Stop using internals in shape-outside tests

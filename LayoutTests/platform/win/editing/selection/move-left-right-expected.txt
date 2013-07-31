@@ -159,11 +159,11 @@ WARNING: Moved in the wrong direction in step 8: from (136, 799) to (55, 781).
 WARNING: Moved in the wrong direction in step 20: from (136, 781) to (59, 763).
 Test 22, LTR:
   Moving right: "\n        This is JF[Y WY OJ[Y the boxes. \n    "[9, 10, 11, 12, 13, 14, 15, 16, 17, 20, 19, 18, 21, 22, 28, 27, 26, 25, 24, 23, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40]
-WARNING: Moved in the wrong direction in step 13: from (121, 831) to (37, 849).
+WARNING: Moved in the wrong direction in step 13: from (122, 831) to (37, 849).
 WARNING: Moved in the wrong direction in step 25: from (124, 849) to (37, 867).
   Moving left:  "\n        This is JF[Y WY OJ[Y the boxes. \n    "[40, 39, 38, 37, 36, 35, 34, 33, 32, 31, 30, 29, 23, 24, 25, 26, 27, 28, 22, 21, 18, 19, 20, 17, 16, 15, 14, 13, 12, 11, 10, 9]
 WARNING: Moved in the wrong direction in step 7: from (37, 867) to (124, 849).
-WARNING: Moved in the wrong direction in step 19: from (37, 849) to (121, 831).
+WARNING: Moved in the wrong direction in step 19: from (37, 849) to (122, 831).
 Test 22, RTL:
   Moving left: "\n        This is JF[Y WY OJ[Y the boxes. \n    "[9, 15, 14, 13, 12, 11, 10, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 32, 31, 33, 34, 38, 37, 36, 35, 39, 40]
 WARNING: Moved in the wrong direction in step 13: from (51, 831) to (136, 849).
@@ -294,9 +294,9 @@ WARNING: Moved in the wrong direction in step 4: from (64, 1603) to (37, 1621).
 WARNING: Moved in the wrong direction in step 4: from (37, 1621) to (64, 1603).
 Test 41, RTL:
   Moving left: "abc"[0, 2, 1, 3], "def"[0, 2, 1, 3]
-WARNING: Moved in the wrong direction in step 4: from (740, 1603) to (767, 1621).
+WARNING: Moved in the wrong direction in step 4: from (741, 1603) to (767, 1621).
   Moving right:  "def"[3, 1, 2, 0], "abc"[3, 1, 2, 0]
-WARNING: Moved in the wrong direction in step 4: from (767, 1621) to (740, 1603).
+WARNING: Moved in the wrong direction in step 4: from (767, 1621) to (741, 1603).
 Test 42, LTR:
   Moving right: "ABC"[0, 2, 1, 3], "DEF"[0, 2, 1, 3]
 WARNING: Moved in the wrong direction in step 4: from (63, 1653) to (37, 1671).
@@ -304,9 +304,9 @@ WARNING: Moved in the wrong direction in step 4: from (63, 1653) to (37, 1671).
 WARNING: Moved in the wrong direction in step 4: from (37, 1671) to (63, 1653).
 Test 42, RTL:
   Moving left: "ABC"[0, 1, 2, 3], "DEF"[0, 1, 2, 3]
-WARNING: Moved in the wrong direction in step 4: from (741, 1653) to (767, 1671).
+WARNING: Moved in the wrong direction in step 4: from (742, 1653) to (767, 1671).
   Moving right:  "DEF"[3, 2, 1, 0], "ABC"[3, 2, 1, 0]
-WARNING: Moved in the wrong direction in step 4: from (767, 1671) to (741, 1653).
+WARNING: Moved in the wrong direction in step 4: from (767, 1671) to (742, 1653).
 Test 43, LTR:
   Moving right: "abcXXX123QQQdef"[0, 13, 14, 11, 10, 6, 7, 8, 9, 5, 4, 1, 2, 15]
   Moving left:  "abcXXX123QQQdef"[15, 2, 1, 4, 5, 9, 8, 7, 6, 10, 11, 14, 13, 0]
