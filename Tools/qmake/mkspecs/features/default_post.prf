@@ -26,7 +26,11 @@ root_project_file: finalizeConfigure()
     # Removing debug_and_release causes issues with lib suffixes when building debug on Windows.
     # Work around it by only removing build_all, and still create the Makefiles for both configurations.
     win32*: CONFIG -= build_all
-    else: CONFIG -= debug_and_release
+    else: {
+        CONFIG -= debug_and_release
+        # Default to release
+        !debug:!release: CONFIG += release
+    }
 } else:debug_and_release {
     # Only build a single instance of each application
     contains(TEMPLATE, app):!force_build_all {

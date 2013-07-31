@@ -1,3 +1,14 @@
+2013-07-31  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt] ASSERTS trigger in release builds
+        https://bugs.webkit.org/show_bug.cgi?id=119336
+
+        Reviewed by Jocelyn Turcotte.
+
+        Ensure the qmake also defaults to release if no configuration is known.
+
+        * qmake/mkspecs/features/default_post.prf:
+
 2013-07-31  Zan Dobersek  <zdobersek@igalia.com>
 
         [texmap][GStreamer][GTK] composited video shows tearing
