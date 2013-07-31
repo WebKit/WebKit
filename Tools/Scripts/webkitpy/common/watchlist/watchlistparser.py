@@ -154,7 +154,7 @@ class WatchListParser(object):
             for email in intructions_copy:
                 if not accounts.contributor_by_email(email):
                     cc_rule.remove_instruction(email)
-                    self._log_error("The email alias %s which is in the watchlist is not listed as a contributor in committers.py" % email)
+                    self._log_error("The email alias %s which is in the watchlist is not listed as a contributor in contributors.json" % email)
                     continue
 
     def _verify_all_definitions_are_used(self, watch_list, used_definitions):

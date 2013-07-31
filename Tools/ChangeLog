@@ -1,3 +1,30 @@
+2013-07-31  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        Update scripts to reference contributors.json instead of committers.py in messaging
+        https://bugs.webkit.org/show_bug.cgi?id=119342
+
+        Reviewed by Ryosuke Niwa.
+
+        Change the scripts to point people to contributors.json instead of
+        committers.py since the latter no longer contains the list of
+        contributors.
+
+        * Scripts/webkitpy/common/config/committervalidator.py:
+        (CommitterValidator._contributors_json_path):
+        (CommitterValidator._flag_permission_rejection_message):
+        * Scripts/webkitpy/common/config/committervalidator_unittest.py:
+        (CommitterValidatorTest.test_flag_permission_rejection_message):
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla.py:
+        (Bugzilla._commit_queue_flag):
+        * Scripts/webkitpy/common/watchlist/watchlistparser.py:
+        (WatchListParser._validate):
+        * Scripts/webkitpy/common/watchlist/watchlistparser_unittest.py:
+        (WatchListParserTest.test_cc_rule_with_invalid_email):
+        * Scripts/webkitpy/tool/bot/feeders_unittest.py:
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+        * Scripts/webkitpy/tool/steps/validatereviewer.py:
+        (ValidateReviewer.run):
+
 2013-07-31  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Re-enable WinEWS tests following r153527.

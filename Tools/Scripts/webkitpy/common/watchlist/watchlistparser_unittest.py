@@ -183,7 +183,7 @@ class WatchListParserTest(webkitunittest.TestCase):
 
         OutputCapture().assert_outputs(self, self._watch_list_parser.parse, args=[watch_list],
                                        expected_logs='The email alias levin+bad+email@chromium.org which is'
-                                       + ' in the watchlist is not listed as a contributor in committers.py\n')
+                                       + ' in the watchlist is not listed as a contributor in contributors.json\n')
 
     def test_cc_rule_with_secondary_email(self):
         # FIXME: We should provide a mock of CommitterList so that we can test this on fake data.

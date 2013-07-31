@@ -55,6 +55,6 @@ class ValidateReviewer(AbstractStep):
                 continue
             reviewer_text = changelog_entry.reviewer_text()
             if reviewer_text:
-                _log.info("%s found in %s does not appear to be a valid reviewer according to committers.py." % (reviewer_text, changelog_path))
+                _log.info("%s found in %s does not appear to be a valid reviewer according to contributors.json." % (reviewer_text, changelog_path))
             _log.error('%s neither lists a valid reviewer nor contains the string "Unreviewed" or "Rubber stamp" (case insensitive).' % changelog_path)
             sys.exit(1)

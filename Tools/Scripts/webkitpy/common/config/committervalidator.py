@@ -35,17 +35,16 @@ class CommitterValidator(object):
     def __init__(self, host):
         self.host = host
 
-    def _committers_py_path(self):
-        # extension can sometimes be .pyc, we always want .py
-        committers_path = self.host.filesystem.path_to_module(committers.__name__)
-        (path, extension) = self.host.filesystem.splitext(committers_path)
-        path = self.host.filesystem.relpath(path, self.host.scm().checkout_root)
-        return ".".join([path, "py"])
+    def _contributors_json_path(self):
+        # contributors.json resides in the same directory as committers.py
+        dirname = self.host.filesystem.dirname(self.host.filesystem.path_to_module(committers.__name__))
+        path = self.host.filesystem.join(dirname, 'contributors.json')
+        return self.host.filesystem.relpath(path, self.host.scm().checkout_root)
 
     def _flag_permission_rejection_message(self, setter_email, flag_name):
         # This could be queried from the tool.
         queue_name = "commit-queue"
-        committers_list = self._committers_py_path()
+        committers_list = self._contributors_json_path()
         message = "%s does not have %s permissions according to %s." % (
                         setter_email,
                         flag_name,

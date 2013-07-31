@@ -534,10 +534,10 @@ class Bugzilla(object):
             user = self.committers.contributor_by_email(self.username)
             mark_for_commit_queue = True
             if not user:
-                _log.warning("Your Bugzilla login is not listed in committers.py. Uploading with cq? instead of cq+")
+                _log.warning("Your Bugzilla login is not listed in contributors.json. Uploading with cq? instead of cq+")
                 mark_for_landing = False
             elif not user.can_commit:
-                _log.warning("You're not a committer yet or haven't updated committers.py yet. Uploading with cq? instead of cq+")
+                _log.warning("You're not a committer yet or haven't updated contributors.json yet. Uploading with cq? instead of cq+")
                 mark_for_landing = False
 
         if mark_for_landing:

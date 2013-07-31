@@ -35,10 +35,10 @@ from .committervalidator import CommitterValidator
 class CommitterValidatorTest(unittest.TestCase):
     def test_flag_permission_rejection_message(self):
         validator = CommitterValidator(MockHost())
-        self.assertEqual(validator._committers_py_path(), "Tools/Scripts/webkitpy/common/config/committers.py")
-        expected_messsage = """foo@foo.com does not have review permissions according to http://trac.webkit.org/browser/trunk/Tools/Scripts/webkitpy/common/config/committers.py.
+        self.assertEqual(validator._contributors_json_path(), "Tools/Scripts/webkitpy/common/config/contributors.json")
+        expected_messsage = """foo@foo.com does not have review permissions according to http://trac.webkit.org/browser/trunk/Tools/Scripts/webkitpy/common/config/contributors.json.
 
 - If you do not have review rights please read http://webkit.org/coding/contributing.html for instructions on how to use bugzilla flags.
 
-- If you have review rights please correct the error in Tools/Scripts/webkitpy/common/config/committers.py by adding yourself to the file (no review needed).  The commit-queue restarts itself every 2 hours.  After restart the commit-queue will correctly respect your review rights."""
+- If you have review rights please correct the error in Tools/Scripts/webkitpy/common/config/contributors.json by adding yourself to the file (no review needed).  The commit-queue restarts itself every 2 hours.  After restart the commit-queue will correctly respect your review rights."""
         self.assertMultiLineEqual(validator._flag_permission_rejection_message("foo@foo.com", "review"), expected_messsage)
