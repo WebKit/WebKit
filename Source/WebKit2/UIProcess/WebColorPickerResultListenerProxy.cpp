@@ -51,8 +51,8 @@ void WebColorPickerResultListenerProxy::setColor(const String& color)
     if (!m_page)
         return;
 
-    m_page->setColorChooserColor(WebCore::Color(color));
-    m_page->endColorChooser();
+    m_page->setColorPickerColor(WebCore::Color(color));
+    m_page->endColorPicker();
 }
 
 } // namespace WebKit

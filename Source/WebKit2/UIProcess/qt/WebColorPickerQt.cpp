@@ -94,7 +94,7 @@ void WebColorPickerQt::createItem(QObject* contextObject)
 
     // Needs to be enqueue because it might trigger deletion.
     connect(contextObject, SIGNAL(accepted(QColor)), SLOT(notifyColorSelected(QColor)), Qt::QueuedConnection);
-    connect(contextObject, SIGNAL(rejected()), SLOT(endChooser()), Qt::QueuedConnection);
+    connect(contextObject, SIGNAL(rejected()), SLOT(endPicker()), Qt::QueuedConnection);
 
     QQuickWebViewPrivate::get(m_webView)->addAttachedPropertyTo(m_colorChooser.get());
     m_colorChooser->setParentItem(m_webView);
@@ -132,10 +132,10 @@ void WebColorPickerQt::notifyColorSelected(const QColor& color)
     Color coreColor = makeRGB(color.red(), color.green(), color.blue());
     m_client->didChooseColor(coreColor);
 
-    endChooser();
+    endPicker();
 }
 
-void WebColorPickerQt::endChooser()
+void WebColorPickerQt::endPicker()
 {
     m_colorChooser.clear();
     m_context.clear();
@@ -143,7 +143,7 @@ void WebColorPickerQt::endChooser()
     if (!m_client)
         return;
 
-    m_client->didEndColorChooser();
+    m_client->didEndColorPicker();
 }
 
 } // namespace WebKit

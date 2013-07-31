@@ -2844,7 +2844,7 @@ void WebPage::setActiveColorChooser(WebColorChooser* colorChooser)
     m_activeColorChooser = colorChooser;
 }
 
-void WebPage::didEndColorChooser()
+void WebPage::didEndColorPicker()
 {
     m_activeColorChooser->didEndChooser();
 }

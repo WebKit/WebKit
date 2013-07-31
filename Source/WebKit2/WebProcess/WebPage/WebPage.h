@@ -235,7 +235,7 @@ public:
     WebColorChooser* activeColorChooser() const { return m_activeColorChooser; }
     void setActiveColorChooser(WebColorChooser*);
     void didChooseColor(const WebCore::Color&);
-    void didEndColorChooser();
+    void didEndColorPicker();
 #endif
 
     WebOpenPanelResultListener* activeOpenPanelResultListener() const { return m_activeOpenPanelResultListener.get(); }

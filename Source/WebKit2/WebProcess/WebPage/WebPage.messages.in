@@ -48,7 +48,7 @@ messages -> WebPage LegacyReceiver {
 #endif
 
 #if ENABLE(INPUT_TYPE_COLOR)
-    DidEndColorChooser()
+    DidEndColorPicker()
     DidChooseColor(WebCore::Color color)
 #endif
 

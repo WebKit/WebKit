@@ -53,7 +53,7 @@ public:
     virtual void setSelectedColor(const WebCore::Color&);
 
 public Q_SLOTS:
-    virtual void endChooser();
+    virtual void endPicker();
 
 private Q_SLOTS:
     void notifyColorSelected(const QColor&);

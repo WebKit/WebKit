@@ -95,9 +95,9 @@ messages -> WebPageProxy {
 #endif
 
 #if ENABLE(INPUT_TYPE_COLOR)
-    ShowColorChooser(WebCore::Color initialColor, WebCore::IntRect elementRect);
-    SetColorChooserColor(WebCore::Color color);
-    EndColorChooser();
+    ShowColorPicker(WebCore::Color initialColor, WebCore::IntRect elementRect);
+    SetColorPickerColor(WebCore::Color color);
+    EndColorPicker();
 #endif
 
     # Policy messages

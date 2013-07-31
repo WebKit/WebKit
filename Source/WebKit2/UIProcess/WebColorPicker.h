@@ -47,7 +47,7 @@ public:
 
     public:
         virtual void didChooseColor(const WebCore::Color&) = 0;
-        virtual void didEndColorChooser() = 0;
+        virtual void didEndColorPicker() = 0;
     };
 
     static PassRefPtr<WebColorPicker> create(Client* client)
@@ -59,7 +59,7 @@ public:
 
     void invalidate() { m_client = 0; }
 
-    virtual void endChooser();
+    virtual void endPicker();
     virtual void setSelectedColor(const WebCore::Color&);
 
 protected:

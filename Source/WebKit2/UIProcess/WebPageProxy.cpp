@@ -2926,7 +2926,7 @@ void WebPageProxy::needTouchEvents(bool needTouchEvents)
 #endif
 
 #if ENABLE(INPUT_TYPE_COLOR)
-void WebPageProxy::showColorChooser(const WebCore::Color& initialColor, const IntRect& elementRect)
+void WebPageProxy::showColorPicker(const WebCore::Color& initialColor, const IntRect& elementRect)
 {
     ASSERT(!m_colorPicker);
 
@@ -2943,21 +2943,21 @@ void WebPageProxy::showColorChooser(const WebCore::Color& initialColor, const In
 
     m_colorPicker = m_pageClient->createColorPicker(this, initialColor, elementRect);
     if (!m_colorPicker)
-        didEndColorChooser();
+        didEndColorPicker();
 }
 
-void WebPageProxy::setColorChooserColor(const WebCore::Color& color)
+void WebPageProxy::setColorPickerColor(const WebCore::Color& color)
 {
     ASSERT(m_colorPicker);
 
     m_colorPicker->setSelectedColor(color);
 }
 
-void WebPageProxy::endColorChooser()
+void WebPageProxy::endColorPicker()
 {
     ASSERT(m_colorPicker);
 
-    m_colorPicker->endChooser();
+    m_colorPicker->endPicker();
 }
 
 void WebPageProxy::didChooseColor(const WebCore::Color& color)
@@ -2968,7 +2968,7 @@ void WebPageProxy::didChooseColor(const WebCore::Color& color)
     m_process->send(Messages::WebPage::DidChooseColor(color), m_pageID);
 }
 
-void WebPageProxy::didEndColorChooser()
+void WebPageProxy::didEndColorPicker()
 {
     if (!isValid())
         return;
@@ -2978,7 +2978,7 @@ void WebPageProxy::didEndColorChooser()
         m_colorPicker = nullptr;
     }
 
-    m_process->send(Messages::WebPage::DidEndColorChooser(), m_pageID);
+    m_process->send(Messages::WebPage::DidEndColorPicker(), m_pageID);
 
     m_colorPickerResultListener->invalidate();
     m_colorPickerResultListener = nullptr;
