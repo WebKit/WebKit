@@ -1,3 +1,14 @@
+2013-07-31  Zan Dobersek  <zdobersek@igalia.com>
+
+        [texmap][GStreamer][GTK] composited video shows tearing
+        https://bugs.webkit.org/show_bug.cgi?id=118253
+
+        Reviewed by Martin Robinson.
+
+        * gtk/jhbuild.modules: Bump the Jhbuild versions of the Gdk-Pixbuf and GTK+ packages to 2.27.3 and 3.8.2, respectively.
+        The first is required by the second, and the GTK+ bump introduces proper display framerate synchronization that removes
+        screen tearing when enabling accelerated compositing and performing graphically heavy operations like viewing HD videos.
+
 2013-07-30  Ruth Fong  <ruth_fong@apple.com>
 
         Unreviewed: Adding myself to the committers' list.
