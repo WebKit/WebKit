@@ -61,6 +61,9 @@ namespace WebKit {
 static PassRefPtr<ShareableBitmap> convertImageToBitmap(NSImage *image, const IntSize& size)
 {
     RefPtr<ShareableBitmap> bitmap = ShareableBitmap::createShareable(size, ShareableBitmap::SupportsAlpha);
+    if (!bitmap)
+        return nullptr;
+
     OwnPtr<GraphicsContext> graphicsContext = bitmap->createGraphicsContext();
 
     RetainPtr<NSGraphicsContext> savedContext = [NSGraphicsContext currentContext];
