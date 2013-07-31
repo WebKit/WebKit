@@ -1,3 +1,25 @@
+2013-07-30  Vani Hegde  <vani.hegde@samsung.com>
+
+        Gmail reply email - Bold and Italic style  get stuck
+        https://bugs.webkit.org/show_bug.cgi?id=118185
+
+        Reviewed by Ryosuke Niwa.
+
+        Layout tests added to test bold/italic style toggling on a content
+        with mixed editability.
+
+        * editing/editing.js:
+        (runDumpAsTextEditingTest): Replaced markupResultList with
+        elementsForDumpingMarkupList to store all markup data to be logged
+        at the end of test.
+        (debugForDumpAsText): Changed to use elementsForDumpingMarkupList.
+        (startNewMarkupGroup): Added utility function to hold intermediate
+        data by separating <ol>.
+        * editing/style/toggle-style-bold-italic-expected.txt: Added.
+        * editing/style/toggle-style-bold-italic-mixed-editability-expected.txt: Added.
+        * editing/style/toggle-style-bold-italic-mixed-editability.html: Added.
+        * editing/style/toggle-style-bold-italic.html: Added.
+
 2013-07-30  Rob Buis  <rwlbuis@webkit.org>
 
         XMLSerializer should reset default namespace when necessary

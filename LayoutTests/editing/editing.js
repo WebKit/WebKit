@@ -904,7 +904,7 @@ function runEditingTest() {
 }
 
 var dumpAsText = false;
-var markupResultList = document.createElement('ol');
+var elementsForDumpingMarkupList = [document.createElement('ol')];
 
 function runDumpAsTextEditingTest(enableCallbacks) {
     if (window.testRunner) {
@@ -920,15 +920,24 @@ function runDumpAsTextEditingTest(enableCallbacks) {
     selection.setPosition(elem, 0);
     editingTest();
 
-    document.body.appendChild(markupResultList);
+    for (var i = 0; i < elementsForDumpingMarkupList.length; i++)
+        document.body.appendChild(elementsForDumpingMarkupList[i]);
 }
 
 function debugForDumpAsText(name) {
     if (dumpAsText && document.getElementById("root")) {
         var newItem = document.createElement('li');
         newItem.appendChild(document.createTextNode(name+": "+document.getElementById("root").innerHTML));
-        markupResultList.appendChild(newItem);
+        elementsForDumpingMarkupList[elementsForDumpingMarkupList.length - 1].appendChild(newItem);
     }
+}
+
+function startNewMarkupGroup(label) {
+    if (!elementsForDumpingMarkupList[elementsForDumpingMarkupList.length - 1].hasChildNodes())
+        elementsForDumpingMarkupList.pop();
+    elementsForDumpingMarkupList.push(document.createElement('br'));
+    elementsForDumpingMarkupList.push(document.createTextNode(label));
+    elementsForDumpingMarkupList.push(document.createElement('ol'));
 }
 
 //-------------------------------------------------------------------------------------------------------

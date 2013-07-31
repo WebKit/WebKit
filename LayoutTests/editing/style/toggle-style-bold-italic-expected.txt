@@ -1,0 +1,71 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 3 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > DIV > BODY > HTML > #document toDOMRange:range from 0 of #text > DIV > DIV > DIV > BODY > HTML > #document to 14 of #text > P > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of DIV > DIV > DIV > BODY > HTML > #document to 14 of #text > B > P > DIV > DIV > BODY > HTML > #document toDOMRange:range from 0 of #text > B > DIV > DIV > DIV > BODY > HTML > #document to 14 of #text > B > P > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of B > DIV > DIV > DIV > BODY > HTML > #document to 14 of #text > I > B > P > DIV > DIV > BODY > HTML > #document toDOMRange:range from 0 of #text > I > B > DIV > DIV > DIV > BODY > HTML > #document to 14 of #text > I > B > P > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of DIV > DIV > DIV > BODY > HTML > #document to 14 of #text > I > P > DIV > DIV > BODY > HTML > #document toDOMRange:range from 0 of #text > I > DIV > DIV > DIV > BODY > HTML > #document to 14 of #text > I > P > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of DIV > DIV > DIV > BODY > HTML > #document to 14 of #text > P > DIV > DIV > BODY > HTML > #document toDOMRange:range from 0 of #text > DIV > DIV > DIV > BODY > HTML > #document to 14 of #text > P > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > DIV > BODY > HTML > #document toDOMRange:range from 0 of #text > DIV > DIV > DIV > BODY > HTML > #document to 14 of #text > P > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of DIV > DIV > DIV > BODY > HTML > #document to 14 of #text > B > P > DIV > DIV > BODY > HTML > #document toDOMRange:range from 0 of #text > B > DIV > DIV > DIV > BODY > HTML > #document to 14 of #text > B > P > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of B > DIV > DIV > DIV > BODY > HTML > #document to 14 of #text > I > B > P > DIV > DIV > BODY > HTML > #document toDOMRange:range from 0 of #text > I > B > DIV > DIV > DIV > BODY > HTML > #document to 14 of #text > I > B > P > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of DIV > DIV > DIV > BODY > HTML > #document to 14 of #text > I > P > DIV > DIV > BODY > HTML > #document toDOMRange:range from 0 of #text > I > DIV > DIV > DIV > BODY > HTML > #document to 14 of #text > I > P > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of DIV > DIV > DIV > BODY > HTML > #document to 14 of #text > P > DIV > DIV > BODY > HTML > #document toDOMRange:range from 0 of #text > DIV > DIV > DIV > BODY > HTML > #document to 14 of #text > P > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > DIV > BODY > HTML > #document toDOMRange:range from 0 of #text > DIV > DIV > DIV > BODY > HTML > #document to 14 of #text > P > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of DIV > DIV > DIV > BODY > HTML > #document to 14 of #text > B > P > DIV > DIV > BODY > HTML > #document toDOMRange:range from 0 of #text > B > DIV > DIV > DIV > BODY > HTML > #document to 14 of #text > B > P > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of B > DIV > DIV > DIV > BODY > HTML > #document to 14 of #text > I > B > P > DIV > DIV > BODY > HTML > #document toDOMRange:range from 0 of #text > I > B > DIV > DIV > DIV > BODY > HTML > #document to 14 of #text > I > B > P > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of DIV > DIV > DIV > BODY > HTML > #document to 14 of #text > I > P > DIV > DIV > BODY > HTML > #document toDOMRange:range from 0 of #text > I > DIV > DIV > DIV > BODY > HTML > #document to 14 of #text > I > P > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of DIV > DIV > DIV > BODY > HTML > #document to 14 of #text > P > DIV > DIV > BODY > HTML > #document toDOMRange:range from 0 of #text > DIV > DIV > DIV > BODY > HTML > #document to 14 of #text > P > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+Tests bold/italic style toggling on a content that has text node without renderer (Ex: Tab/Space used for indentation)
+
+Some text
+Some more text
+
+
+Test for mac
+execBoldCommand: <div id="test"> <div><b>Some text</b></div> <p><b>Some more text</b></p> </div>
+execItalicCommand: <div id="test"> <div><b><i>Some text</i></b></div> <p><b><i>Some more text</i></b></p> </div>
+execBoldCommand: <div id="test"> <div><i>Some text</i></div> <p><i>Some more text</i></p> </div>
+execItalicCommand: <div id="test"> <div>Some text</div> <p>Some more text</p> </div>
+
+Test for win
+execBoldCommand: <div id="test"> <div><b>Some text</b></div> <p><b>Some more text</b></p> </div>
+execItalicCommand: <div id="test"> <div><b><i>Some text</i></b></div> <p><b><i>Some more text</i></b></p> </div>
+execBoldCommand: <div id="test"> <div><i>Some text</i></div> <p><i>Some more text</i></p> </div>
+execItalicCommand: <div id="test"> <div>Some text</div> <p>Some more text</p> </div>
+
+Test for unix
+execBoldCommand: <div id="test"> <div><b>Some text</b></div> <p><b>Some more text</b></p> </div>
+execItalicCommand: <div id="test"> <div><b><i>Some text</i></b></div> <p><b><i>Some more text</i></b></p> </div>
+execBoldCommand: <div id="test"> <div><i>Some text</i></div> <p><i>Some more text</i></p> </div>
+execItalicCommand: <div id="test"> <div>Some text</div> <p>Some more text</p> </div>
+

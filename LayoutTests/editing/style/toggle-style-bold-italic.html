@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p id="description">Tests bold/italic style toggling on a content that has text node without renderer (Ex: Tab/Space used for indentation)</p>
+<div contenteditable id="root">
+<div id="test">
+<div>Some text</div>
+<p>Some more text</p>
+</div>
+</div>
+<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+<script>
+test('mac');
+test('win');
+test('unix');
+function test(platform) {
+    if (window.internals)
+        internals.settings.setEditingBehavior(platform);
+    startNewMarkupGroup('Test for '+platform);
+    runDumpAsTextEditingTest(true);
+}
+function editingTest() {
+    execSelectAllCommand();
+    execBoldCommand();
+    execItalicCommand();
+    execBoldCommand();
+    execItalicCommand();
+}
+</script>
+</body>
+</html>

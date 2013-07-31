@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p id="description">This tests bold/italic style toggling for a content with mixed editability</p>
+<div contenteditable id="root">
+<div id="test">
+Editable <span contenteditable=false>Non-editable</span> Editable
+</div>
+</div>
+<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+<script>
+test('mac');
+test('win');
+test('unix');
+function test(platform) {
+    if (window.internals)
+        internals.settings.setEditingBehavior(platform);
+    startNewMarkupGroup('Test for '+platform);
+    runDumpAsTextEditingTest(true);
+}
+function editingTest() {
+    execSelectAllCommand();
+    execBoldCommand();
+    execItalicCommand();
+    execBoldCommand();
+    execItalicCommand();
+}
+</script>
+</body>
+</html>

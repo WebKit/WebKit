@@ -683,15 +683,20 @@ TriState EditingStyle::triStateOfStyle(const VisibleSelection& selection) const
         return triStateOfStyle(EditingStyle::styleAtSelectionStart(selection).get());
 
     TriState state = FalseTriState;
+    bool nodeIsStart = true;
     for (Node* node = selection.start().deprecatedNode(); node; node = NodeTraversal::next(node)) {
-        ComputedStyleExtractor computedStyle(node);
-        TriState nodeState = triStateOfStyle(&computedStyle, node->isTextNode() ? EditingStyle::DoNotIgnoreTextOnlyProperties : EditingStyle::IgnoreTextOnlyProperties);
-        if (node == selection.start().deprecatedNode())
-            state = nodeState;
-        else if (state != nodeState && node->isTextNode()) {
-            state = MixedTriState;
-            break;
+        if (node->renderer() && node->rendererIsEditable()) {
+            ComputedStyleExtractor computedStyle(node);
+            TriState nodeState = triStateOfStyle(&computedStyle, node->isTextNode() ? EditingStyle::DoNotIgnoreTextOnlyProperties : EditingStyle::IgnoreTextOnlyProperties);
+            if (nodeIsStart) {
+                state = nodeState;
+                nodeIsStart = false;
+            } else if (state != nodeState && node->isTextNode()) {
+                state = MixedTriState;
+                break;
+            }
         }
+
         if (node == selection.end().deprecatedNode())
             break;
     }

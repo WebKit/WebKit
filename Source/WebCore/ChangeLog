@@ -1,3 +1,32 @@
+2013-07-30  Vani Hegde  <vani.hegde@samsung.com>
+
+        Gmail reply email - Bold and Italic style  get stuck
+        https://bugs.webkit.org/show_bug.cgi?id=118185
+
+        Reviewed by Ryosuke Niwa.
+
+        When bold/italic style is applied to a content with mixed editability,
+        style is applied appropriately for the first time.
+        But after this, style toggling does not work any more. Same behavior
+        can be observed when the content on which style is applied contains
+        text node without renderer (Ex: text node corresponding to tab/space etc)
+
+        When bold/italic style is applied on a selection, we actually apply the
+        style only for text nodes that have renderers and also are contenteditable.
+        Similarly during style toggling, to check whether a style has been already
+        applied on a selection
+
+        Tests: editing/style/toggle-style-bold-italic-mixed-editability.html
+               editing/style/toggle-style-bold-italic.html
+
+        * editing/EditingStyle.cpp:
+        (WebCore::EditingStyle::triStateOfStyle):
+        A particular selection on which style is applied may contain text nodes
+        without renderers(text nodes corresponding to tab/space) or text nodes
+        that are not contenteditable. We do not apply style to such text nodes.
+        Hence, even during style toggling we should not consider the styles
+        present in such nodes.
+
 2013-07-30  Rob Buis  <rwlbuis@webkit.org>
 
         XMLSerializer should reset default namespace when necessary
