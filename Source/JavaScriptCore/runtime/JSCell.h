@@ -118,11 +118,6 @@ public:
     void zap() { *reinterpret_cast<uintptr_t**>(this) = 0; }
     bool isZapped() const { return !*reinterpret_cast<uintptr_t* const*>(this); }
 
-    // FIXME: Rename getOwnPropertySlot to virtualGetOwnPropertySlot, and
-    // fastGetOwnPropertySlot to getOwnPropertySlot. Callers should always
-    // call this function, not its slower virtual counterpart. (For integer
-    // property names, we want a similar interface with appropriate optimizations.)
-    bool fastGetOwnPropertySlot(ExecState*, PropertyName, PropertySlot&);
     JSValue fastGetOwnProperty(ExecState*, const String&);
 
     static ptrdiff_t structureOffset()
@@ -145,10 +140,6 @@ protected:
     void finishCreation(VM&);
     void finishCreation(VM&, Structure*, CreatingEarlyCellTag);
 
-    // Base implementation; for non-object classes implements getPropertySlot.
-    static bool getOwnPropertySlot(JSCell*, ExecState*, PropertyName, PropertySlot&);
-    static bool getOwnPropertySlotByIndex(JSCell*, ExecState*, unsigned propertyName, PropertySlot&);
-
     // Dummy implementations of override-able static functions for classes to put in their MethodTable
     static JSValue defaultValue(const JSObject*, ExecState*, PreferredPrimitiveType);
     static NO_RETURN_DUE_TO_CRASH void getOwnPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
@@ -159,6 +150,8 @@ protected:
     static NO_RETURN_DUE_TO_CRASH void putDirectVirtual(JSObject*, ExecState*, PropertyName, JSValue, unsigned attributes);
     static bool defineOwnProperty(JSObject*, ExecState*, PropertyName, PropertyDescriptor&, bool shouldThrow);
     static bool getOwnPropertyDescriptor(JSObject*, ExecState*, PropertyName, PropertyDescriptor&);
+    static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
+    static bool getOwnPropertySlotByIndex(JSObject*, ExecState*, unsigned propertyName, PropertySlot&);
 
 private:
     friend class LLIntOffsetsExtractor;

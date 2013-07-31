@@ -122,9 +122,9 @@ String JSCallbackObject<Parent>::className(const JSObject* object)
 }
 
 template <class Parent>
-bool JSCallbackObject<Parent>::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
+bool JSCallbackObject<Parent>::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
-    JSCallbackObject* thisObject = jsCast<JSCallbackObject*>(cell);
+    JSCallbackObject* thisObject = jsCast<JSCallbackObject*>(object);
     JSContextRef ctx = toRef(exec);
     JSObjectRef thisRef = toRef(thisObject);
     RefPtr<OpaqueJSString> propertyNameRef;
@@ -183,9 +183,9 @@ bool JSCallbackObject<Parent>::getOwnPropertySlot(JSCell* cell, ExecState* exec,
 }
 
 template <class Parent>
-bool JSCallbackObject<Parent>::getOwnPropertySlotByIndex(JSCell* cell, ExecState* exec, unsigned propertyName, PropertySlot& slot)
+bool JSCallbackObject<Parent>::getOwnPropertySlotByIndex(JSObject* object, ExecState* exec, unsigned propertyName, PropertySlot& slot)
 {
-    return cell->methodTable()->getOwnPropertySlot(cell, exec, Identifier::from(exec, propertyName), slot);
+    return object->methodTable()->getOwnPropertySlot(object, exec, Identifier::from(exec, propertyName), slot);
 }
 
 template <class Parent>

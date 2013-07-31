@@ -54,7 +54,7 @@ namespace JSC {
         static ConstructType getConstructData(JSCell*, ConstructData&);
         static CallType getCallData(JSCell*, CallData&);
 
-        static bool getOwnPropertySlot(JSCell*, ExecState*, PropertyName, PropertySlot&);
+        static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
         static bool getOwnPropertyDescriptor(JSObject*, ExecState*, PropertyName, PropertyDescriptor&);
     };
     

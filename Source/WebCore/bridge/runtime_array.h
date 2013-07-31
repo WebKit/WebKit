@@ -53,8 +53,8 @@ public:
     static const bool needsDestruction = false;
 
     static void getOwnPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
-    static bool getOwnPropertySlot(JSCell*, ExecState*, PropertyName, PropertySlot&);
-    static bool getOwnPropertySlotByIndex(JSCell*, ExecState*, unsigned, PropertySlot&);
+    static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
+    static bool getOwnPropertySlotByIndex(JSObject*, ExecState*, unsigned, PropertySlot&);
     static bool getOwnPropertyDescriptor(JSObject*, ExecState*, PropertyName, PropertyDescriptor&);
     static void put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
     static void putByIndex(JSCell*, ExecState*, unsigned propertyName, JSValue, bool shouldThrow);

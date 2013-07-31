@@ -75,9 +75,9 @@ void JSNameScope::put(JSCell* cell, ExecState* exec, PropertyName propertyName, 
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-bool JSNameScope::getOwnPropertySlot(JSCell* cell, ExecState*, PropertyName propertyName, PropertySlot& slot)
+bool JSNameScope::getOwnPropertySlot(JSObject* object, ExecState*, PropertyName propertyName, PropertySlot& slot)
 {
-    return symbolTableGet(jsCast<JSNameScope*>(cell), propertyName, slot);
+    return symbolTableGet(jsCast<JSNameScope*>(object), propertyName, slot);
 }
 
 } // namespace JSC

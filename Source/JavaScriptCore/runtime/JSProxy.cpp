@@ -70,15 +70,15 @@ String JSProxy::className(const JSObject* object)
     return thisObject->target()->methodTable()->className(thisObject->target());
 }
 
-bool JSProxy::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
+bool JSProxy::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
-    JSProxy* thisObject = jsCast<JSProxy*>(cell);
+    JSProxy* thisObject = jsCast<JSProxy*>(object);
     return thisObject->target()->methodTable()->getOwnPropertySlot(thisObject->target(), exec, propertyName, slot);
 }
 
-bool JSProxy::getOwnPropertySlotByIndex(JSCell* cell, ExecState* exec, unsigned propertyName, PropertySlot& slot)
+bool JSProxy::getOwnPropertySlotByIndex(JSObject* object, ExecState* exec, unsigned propertyName, PropertySlot& slot)
 {
-    JSProxy* thisObject = jsCast<JSProxy*>(cell);
+    JSProxy* thisObject = jsCast<JSProxy*>(object);
     return thisObject->target()->methodTable()->getOwnPropertySlotByIndex(thisObject->target(), exec, propertyName, slot);
 }
 

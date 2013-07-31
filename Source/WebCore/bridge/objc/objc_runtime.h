@@ -124,7 +124,7 @@ private:
     ObjcFallbackObjectImp(JSGlobalObject*, Structure*, ObjcInstance*, const String& propertyName);
     static void destroy(JSCell*);
     static const unsigned StructureFlags = OverridesGetOwnPropertySlot | JSObject::StructureFlags;
-    static bool getOwnPropertySlot(JSCell*, ExecState*, PropertyName, PropertySlot&);
+    static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
     static bool getOwnPropertyDescriptor(JSObject*, ExecState*, PropertyName, PropertyDescriptor&);
     static void put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
     static CallType getCallData(JSCell*, CallData&);

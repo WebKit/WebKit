@@ -65,9 +65,9 @@ String DebuggerActivation::className(const JSObject* object)
     return thisObject->m_activation->methodTable()->className(thisObject->m_activation.get());
 }
 
-bool DebuggerActivation::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
+bool DebuggerActivation::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
-    DebuggerActivation* thisObject = jsCast<DebuggerActivation*>(cell);
+    DebuggerActivation* thisObject = jsCast<DebuggerActivation*>(object);
     return thisObject->m_activation->methodTable()->getOwnPropertySlot(thisObject->m_activation.get(), exec, propertyName, slot);
 }
 

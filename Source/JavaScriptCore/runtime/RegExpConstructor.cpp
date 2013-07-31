@@ -153,9 +153,9 @@ JSValue RegExpConstructor::getRightContext(ExecState* exec)
     return m_cachedResult.lastResult(exec, this)->rightContext(exec);
 }
     
-bool RegExpConstructor::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
+bool RegExpConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
-    return getStaticValueSlot<RegExpConstructor, InternalFunction>(exec, ExecState::regExpConstructorTable(exec), jsCast<RegExpConstructor*>(cell), propertyName, slot);
+    return getStaticValueSlot<RegExpConstructor, InternalFunction>(exec, ExecState::regExpConstructorTable(exec), jsCast<RegExpConstructor*>(object), propertyName, slot);
 }
 
 bool RegExpConstructor::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)

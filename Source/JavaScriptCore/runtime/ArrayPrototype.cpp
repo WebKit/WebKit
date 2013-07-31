@@ -136,9 +136,9 @@ void ArrayPrototype::finishCreation(JSGlobalObject* globalObject)
     vm.prototypeMap.addPrototype(this);
 }
 
-bool ArrayPrototype::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
+bool ArrayPrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
-    return getStaticFunctionSlot<JSArray>(exec, ExecState::arrayPrototypeTable(exec), jsCast<ArrayPrototype*>(cell), propertyName, slot);
+    return getStaticFunctionSlot<JSArray>(exec, ExecState::arrayPrototypeTable(exec), jsCast<ArrayPrototype*>(object), propertyName, slot);
 }
 
 bool ArrayPrototype::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)

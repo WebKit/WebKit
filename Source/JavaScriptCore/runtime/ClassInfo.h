@@ -60,10 +60,10 @@ struct MethodTable {
     typedef bool (*DeletePropertyByIndexFunctionPtr)(JSCell*, ExecState*, unsigned);
     DeletePropertyByIndexFunctionPtr deletePropertyByIndex;
 
-    typedef bool (*GetOwnPropertySlotFunctionPtr)(JSCell*, ExecState*, PropertyName, PropertySlot&);
+    typedef bool (*GetOwnPropertySlotFunctionPtr)(JSObject*, ExecState*, PropertyName, PropertySlot&);
     GetOwnPropertySlotFunctionPtr getOwnPropertySlot;
 
-    typedef bool (*GetOwnPropertySlotByIndexFunctionPtr)(JSCell*, ExecState*, unsigned, PropertySlot&);
+    typedef bool (*GetOwnPropertySlotByIndexFunctionPtr)(JSObject*, ExecState*, unsigned, PropertySlot&);
     GetOwnPropertySlotByIndexFunctionPtr getOwnPropertySlotByIndex;
 
     typedef JSValue (*ToThisFunctionPtr)(JSCell*, ExecState*, ECMAMode);

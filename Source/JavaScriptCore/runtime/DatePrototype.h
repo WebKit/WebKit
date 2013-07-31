@@ -40,7 +40,7 @@ namespace JSC {
             prototype->finishCreation(exec, globalObject);
             return prototype;
         }
-        static bool getOwnPropertySlot(JSCell*, ExecState*, PropertyName, PropertySlot&);
+        static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
 
         static bool getOwnPropertyDescriptor(JSObject*, ExecState*, PropertyName, PropertyDescriptor&);
 

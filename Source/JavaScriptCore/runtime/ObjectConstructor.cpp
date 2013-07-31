@@ -94,9 +94,9 @@ void ObjectConstructor::finishCreation(ExecState* exec, ObjectPrototype* objectP
     putDirectWithoutTransition(exec->vm(), exec->propertyNames().length, jsNumber(1), ReadOnly | DontEnum | DontDelete);
 }
 
-bool ObjectConstructor::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot &slot)
+bool ObjectConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot &slot)
 {
-    return getStaticFunctionSlot<JSObject>(exec, ExecState::objectConstructorTable(exec), jsCast<ObjectConstructor*>(cell), propertyName, slot);
+    return getStaticFunctionSlot<JSObject>(exec, ExecState::objectConstructorTable(exec), jsCast<ObjectConstructor*>(object), propertyName, slot);
 }
 
 bool ObjectConstructor::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)

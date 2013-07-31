@@ -790,9 +790,9 @@ sub GenerateHeader
 
     # Getters
     if ($hasGetter) {
-        push(@headerContent, "    static bool getOwnPropertySlot(JSC::JSCell*, JSC::ExecState*, JSC::PropertyName, JSC::PropertySlot&);\n");
+        push(@headerContent, "    static bool getOwnPropertySlot(JSC::JSObject*, JSC::ExecState*, JSC::PropertyName, JSC::PropertySlot&);\n");
         push(@headerContent, "    static bool getOwnPropertyDescriptor(JSC::JSObject*, JSC::ExecState*, JSC::PropertyName, JSC::PropertyDescriptor&);\n");
-        push(@headerContent, "    static bool getOwnPropertySlotByIndex(JSC::JSCell*, JSC::ExecState*, unsigned propertyName, JSC::PropertySlot&);\n") if ($hasComplexGetter);
+        push(@headerContent, "    static bool getOwnPropertySlotByIndex(JSC::JSObject*, JSC::ExecState*, unsigned propertyName, JSC::PropertySlot&);\n") if ($hasComplexGetter);
         push(@headerContent, "    bool getOwnPropertySlotDelegate(JSC::ExecState*, JSC::PropertyName, JSC::PropertySlot&);\n") if $interface->extendedAttributes->{"JSCustomGetOwnPropertySlotAndDescriptor"};
         push(@headerContent, "    bool getOwnPropertyDescriptorDelegate(JSC::ExecState*, JSC::PropertyName, JSC::PropertyDescriptor&);\n") if $interface->extendedAttributes->{"JSCustomGetOwnPropertySlotAndDescriptor"};
         $structureFlags{"JSC::OverridesGetOwnPropertySlot"} = 1;
@@ -1019,9 +1019,9 @@ sub GenerateHeader
     push(@headerContent, "};\n\n");
 
     if ($interface->extendedAttributes->{"JSInlineGetOwnPropertySlot"} && !$interface->extendedAttributes->{"CustomGetOwnPropertySlot"}) {
-        push(@headerContent, "ALWAYS_INLINE bool ${className}::getOwnPropertySlot(JSC::JSCell* cell, JSC::ExecState* exec, JSC::PropertyName propertyName, JSC::PropertySlot& slot)\n");
+        push(@headerContent, "ALWAYS_INLINE bool ${className}::getOwnPropertySlot(JSC::JSObject* object, JSC::ExecState* exec, JSC::PropertyName propertyName, JSC::PropertySlot& slot)\n");
         push(@headerContent, "{\n");
-        push(@headerContent, "    ${className}* thisObject = JSC::jsCast<${className}*>(cell);\n");
+        push(@headerContent, "    ${className}* thisObject = JSC::jsCast<${className}*>(object);\n");
         push(@headerContent, "    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);\n");
         push(@headerContent, GenerateGetOwnPropertySlotBody($interface, $interfaceName, $className, $numAttributes > 0, 1));
         push(@headerContent, "}\n\n");
@@ -1097,7 +1097,7 @@ sub GenerateHeader
 
     push(@headerContent, "    static const JSC::ClassInfo s_info;\n");
     if ($numFunctions > 0 || $numConstants > 0) {
-        push(@headerContent, "    static bool getOwnPropertySlot(JSC::JSCell*, JSC::ExecState*, JSC::PropertyName, JSC::PropertySlot&);\n");
+        push(@headerContent, "    static bool getOwnPropertySlot(JSC::JSObject*, JSC::ExecState*, JSC::PropertyName, JSC::PropertySlot&);\n");
         push(@headerContent, "    static bool getOwnPropertyDescriptor(JSC::JSObject*, JSC::ExecState*, JSC::PropertyName, JSC::PropertyDescriptor&);\n");
         $structureFlags{"JSC::OverridesGetOwnPropertySlot"} = 1;
     }
@@ -1768,9 +1768,9 @@ sub GenerateImplementation
     }
 
     if ($numConstants > 0 || $numFunctions > 0) {
-        push(@implContent, "bool ${className}Prototype::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)\n");
+        push(@implContent, "bool ${className}Prototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)\n");
         push(@implContent, "{\n");
-        push(@implContent, "    ${className}Prototype* thisObject = jsCast<${className}Prototype*>(cell);\n");
+        push(@implContent, "    ${className}Prototype* thisObject = jsCast<${className}Prototype*>(object);\n");
 
         if ($numConstants eq 0 && $numFunctions eq 0) {
             push(@implContent, "    return Base::getOwnPropertySlot(thisObject, exec, propertyName, slot);\n");        
@@ -1920,9 +1920,9 @@ sub GenerateImplementation
     # Attributes
     if ($hasGetter) {
         if (!$interface->extendedAttributes->{"JSInlineGetOwnPropertySlot"} && !$interface->extendedAttributes->{"CustomGetOwnPropertySlot"}) {
-            push(@implContent, "bool ${className}::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)\n");
+            push(@implContent, "bool ${className}::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)\n");
             push(@implContent, "{\n");
-            push(@implContent, "    ${className}* thisObject = jsCast<${className}*>(cell);\n");
+            push(@implContent, "    ${className}* thisObject = jsCast<${className}*>(object);\n");
             push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);\n");
             push(@implContent, GenerateGetOwnPropertySlotBody($interface, $interfaceName, $className, $numAttributes > 0, 0));
             push(@implContent, "}\n\n");
@@ -1937,9 +1937,9 @@ sub GenerateImplementation
         if ($indexedGetterFunction || $namedGetterFunction
                 || $interface->extendedAttributes->{"CustomNamedGetter"}
                 || $interface->extendedAttributes->{"JSCustomGetOwnPropertySlotAndDescriptor"}) {
-            push(@implContent, "bool ${className}::getOwnPropertySlotByIndex(JSCell* cell, ExecState* exec, unsigned index, PropertySlot& slot)\n");
+            push(@implContent, "bool ${className}::getOwnPropertySlotByIndex(JSObject* object, ExecState* exec, unsigned index, PropertySlot& slot)\n");
             push(@implContent, "{\n");
-            push(@implContent, "    ${className}* thisObject = jsCast<${className}*>(cell);\n");
+            push(@implContent, "    ${className}* thisObject = jsCast<${className}*>(object);\n");
             push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);\n");
 
             # Sink the int-to-string conversion that happens when we create a PropertyName
@@ -3882,7 +3882,7 @@ sub GenerateConstructorDeclaration
     push(@$outputArray, "        return ptr;\n");
     push(@$outputArray, "    }\n\n");
 
-    push(@$outputArray, "    static bool getOwnPropertySlot(JSC::JSCell*, JSC::ExecState*, JSC::PropertyName, JSC::PropertySlot&);\n");
+    push(@$outputArray, "    static bool getOwnPropertySlot(JSC::JSObject*, JSC::ExecState*, JSC::PropertyName, JSC::PropertySlot&);\n");
     push(@$outputArray, "    static bool getOwnPropertyDescriptor(JSC::JSObject*, JSC::ExecState*, JSC::PropertyName, JSC::PropertyDescriptor&);\n");
     push(@$outputArray, "    static const JSC::ClassInfo s_info;\n");
 
@@ -4264,9 +4264,9 @@ sub GenerateConstructorHelperMethods
 
         my $kind = $hasStaticFunctions ? "Property" : "Value";
 
-        push(@$outputArray, "bool ${constructorClassName}::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)\n");
+        push(@$outputArray, "bool ${constructorClassName}::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)\n");
         push(@$outputArray, "{\n");
-        push(@$outputArray, "    return getStatic${kind}Slot<${constructorClassName}, JSDOMWrapper>(exec, " . constructorHashTableAccessor($interface->extendedAttributes->{"JSNoStaticTables"}, $constructorClassName) . ", jsCast<${constructorClassName}*>(cell), propertyName, slot);\n");
+        push(@$outputArray, "    return getStatic${kind}Slot<${constructorClassName}, JSDOMWrapper>(exec, " . constructorHashTableAccessor($interface->extendedAttributes->{"JSNoStaticTables"}, $constructorClassName) . ", jsCast<${constructorClassName}*>(object), propertyName, slot);\n");
         push(@$outputArray, "}\n\n");
 
         push(@$outputArray, "bool ${constructorClassName}::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)\n");

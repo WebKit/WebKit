@@ -82,30 +82,6 @@ ConstructType JSCell::getConstructData(JSCell*, ConstructData& constructData)
     return ConstructTypeNone;
 }
 
-bool JSCell::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName identifier, PropertySlot& slot)
-{
-    // This is not a general purpose implementation of getOwnPropertySlot.
-    // It should only be called by JSValue::get.
-    // It calls getPropertySlot, not getOwnPropertySlot.
-    JSObject* object = cell->toObject(exec, exec->lexicalGlobalObject());
-    slot.setBase(object);
-    if (!object->getPropertySlot(exec, identifier, slot))
-        slot.setUndefined();
-    return true;
-}
-
-bool JSCell::getOwnPropertySlotByIndex(JSCell* cell, ExecState* exec, unsigned identifier, PropertySlot& slot)
-{
-    // This is not a general purpose implementation of getOwnPropertySlot.
-    // It should only be called by JSValue::get.
-    // It calls getPropertySlot, not getOwnPropertySlot.
-    JSObject* object = cell->toObject(exec, exec->lexicalGlobalObject());
-    slot.setBase(object);
-    if (!object->getPropertySlot(exec, identifier, slot))
-        slot.setUndefined();
-    return true;
-}
-
 void JSCell::put(JSCell* cell, ExecState* exec, PropertyName identifier, JSValue value, PutPropertySlot& slot)
 {
     if (cell->isString()) {
@@ -184,6 +160,18 @@ JSValue JSCell::defaultValue(const JSObject*, ExecState*, PreferredPrimitiveType
 {
     RELEASE_ASSERT_NOT_REACHED();
     return jsUndefined();
+}
+
+bool JSCell::getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&)
+{
+    RELEASE_ASSERT_NOT_REACHED();
+    return false;
+}
+
+bool JSCell::getOwnPropertySlotByIndex(JSObject*, ExecState*, unsigned, PropertySlot&)
+{
+    RELEASE_ASSERT_NOT_REACHED();
+    return false;
 }
 
 void JSCell::getOwnPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode)

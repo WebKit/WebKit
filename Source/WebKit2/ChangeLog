@@ -1,3 +1,15 @@
+2013-07-30  Gavin Barraclough  <barraclough@apple.com>
+
+        Some cleanup in JSValue::get
+        https://bugs.webkit.org/show_bug.cgi?id=119343
+
+        Reviewed by Geoff Garen.
+
+        * WebProcess/Plugins/Netscape/JSNPObject.cpp:
+        (WebKit::JSNPObject::getOwnPropertySlot):
+        * WebProcess/Plugins/Netscape/JSNPObject.h:
+            - getOwnPropertySlot, JSCell -> JSObject
+
 2013-07-31  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt] Build WebKit with C++11

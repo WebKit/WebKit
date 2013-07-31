@@ -116,9 +116,9 @@ JSValue RuntimeObject::methodGetter(ExecState* exec, JSValue slotBase, PropertyN
     return method;
 }
 
-bool RuntimeObject::getOwnPropertySlot(JSCell* cell, ExecState *exec, PropertyName propertyName, PropertySlot& slot)
+bool RuntimeObject::getOwnPropertySlot(JSObject* object, ExecState *exec, PropertyName propertyName, PropertySlot& slot)
 {
-    RuntimeObject* thisObject = jsCast<RuntimeObject*>(cell);
+    RuntimeObject* thisObject = jsCast<RuntimeObject*>(object);
     if (!thisObject->m_instance) {
         throwInvalidAccessError(exec);
         return false;

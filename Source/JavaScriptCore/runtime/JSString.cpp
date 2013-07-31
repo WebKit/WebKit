@@ -230,7 +230,7 @@ void JSRopeString::outOfMemory(ExecState* exec) const
         throwOutOfMemoryError(exec);
 }
 
-JSString* JSRopeString::getIndexSlowCase(ExecState* exec, unsigned i)
+JS_EXPORT JSString* JSRopeString::getIndexSlowCase(ExecState* exec, unsigned i)
 {
     ASSERT(isRope());
     resolveRope(exec);
@@ -283,24 +283,6 @@ JSValue JSString::toThis(JSCell* cell, ExecState* exec, ECMAMode ecmaMode)
     return StringObject::create(exec, exec->lexicalGlobalObject(), jsCast<JSString*>(cell));
 }
 
-bool JSString::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
-{
-    JSString* thisObject = jsCast<JSString*>(cell);
-    // The semantics here are really getPropertySlot, not getOwnPropertySlot.
-    // This function should only be called by JSValue::get.
-    if (thisObject->getStringPropertySlot(exec, propertyName, slot))
-        return true;
-    slot.setBase(thisObject);
-    JSObject* object;
-    for (JSValue prototype = exec->lexicalGlobalObject()->stringPrototype(); !prototype.isNull(); prototype = object->prototype()) {
-        object = asObject(prototype);
-        if (object->methodTable()->getOwnPropertySlot(object, exec, propertyName, slot))
-            return true;
-    }
-    slot.setUndefined();
-    return true;
-}
-
 bool JSString::getStringPropertyDescriptor(ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)
 {
     if (propertyName == exec->propertyNames().length) {
@@ -316,16 +298,6 @@ bool JSString::getStringPropertyDescriptor(ExecState* exec, PropertyName propert
     }
     
     return false;
-}
-
-bool JSString::getOwnPropertySlotByIndex(JSCell* cell, ExecState* exec, unsigned propertyName, PropertySlot& slot)
-{
-    JSString* thisObject = jsCast<JSString*>(cell);
-    // The semantics here are really getPropertySlot, not getOwnPropertySlot.
-    // This function should only be called by JSValue::get.
-    if (thisObject->getStringPropertySlot(exec, propertyName, slot))
-        return true;
-    return JSString::getOwnPropertySlot(thisObject, exec, Identifier::from(exec, propertyName), slot);
 }
 
 } // namespace JSC

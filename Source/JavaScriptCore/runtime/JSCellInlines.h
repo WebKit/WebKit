@@ -165,13 +165,6 @@ inline bool JSCell::inherits(const ClassInfo* info) const
     return classInfo()->isSubClassOf(info);
 }
 
-ALWAYS_INLINE bool JSCell::fastGetOwnPropertySlot(ExecState* exec, PropertyName propertyName, PropertySlot& slot)
-{
-    if (!structure()->typeInfo().overridesGetOwnPropertySlot())
-        return asObject(this)->inlineGetOwnPropertySlot(exec, propertyName, slot);
-    return methodTable()->getOwnPropertySlot(this, exec, propertyName, slot);
-}
-
 // Fast call to get a property where we may not yet have converted the string to an
 // identifier. The first time we perform a property access with a given string, try
 // performing the property map lookup without forming an identifier. We detect this

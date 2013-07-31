@@ -55,7 +55,7 @@ public:
 
     JS_EXPORT_PRIVATE static bool defineOwnProperty(JSObject*, ExecState*, PropertyName, PropertyDescriptor&, bool throwException);
 
-    static bool getOwnPropertySlot(JSCell*, ExecState*, PropertyName, PropertySlot&);
+    static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
     static bool getOwnPropertyDescriptor(JSObject*, ExecState*, PropertyName, PropertyDescriptor&);
 
     static JS_EXPORTDATA const ClassInfo s_info;

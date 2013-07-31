@@ -170,7 +170,7 @@ namespace JSC {
 
         ObjectAllocationProfile* createAllocationProfile(ExecState*, size_t inlineCapacity);
 
-        static bool getOwnPropertySlot(JSCell*, ExecState*, PropertyName, PropertySlot&);
+        static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
         static bool getOwnPropertyDescriptor(JSObject*, ExecState*, PropertyName, PropertyDescriptor&);
         static void getOwnNonIndexPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode = ExcludeDontEnumProperties);
         static bool defineOwnProperty(JSObject*, ExecState*, PropertyName, PropertyDescriptor&, bool shouldThrow);

@@ -72,9 +72,9 @@ void NumberConstructor::finishCreation(ExecState* exec, NumberPrototype* numberP
     putDirectWithoutTransition(exec->vm(), exec->propertyNames().length, jsNumber(1), ReadOnly | DontEnum | DontDelete);
 }
 
-bool NumberConstructor::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
+bool NumberConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
-    return getStaticValueSlot<NumberConstructor, InternalFunction>(exec, ExecState::numberConstructorTable(exec), jsCast<NumberConstructor*>(cell), propertyName, slot);
+    return getStaticValueSlot<NumberConstructor, InternalFunction>(exec, ExecState::numberConstructorTable(exec), jsCast<NumberConstructor*>(object), propertyName, slot);
 }
 
 bool NumberConstructor::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)

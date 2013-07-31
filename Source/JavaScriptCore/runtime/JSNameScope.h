@@ -52,7 +52,7 @@ public:
 
     static void visitChildren(JSCell*, SlotVisitor&);
     static JSValue toThis(JSCell*, ExecState*, ECMAMode);
-    static bool getOwnPropertySlot(JSCell*, ExecState*, PropertyName, PropertySlot&);
+    static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
     static void put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto) { return Structure::create(vm, globalObject, proto, TypeInfo(NameScopeObjectType, StructureFlags), &s_info); }

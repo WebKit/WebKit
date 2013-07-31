@@ -1,3 +1,27 @@
+2013-07-30  Gavin Barraclough  <barraclough@apple.com>
+
+        Some cleanup in JSValue::get
+        https://bugs.webkit.org/show_bug.cgi?id=119343
+
+        Reviewed by Geoff Garen.
+
+        JSValue::get is implemented to:
+            1) Check if the value is a cell – if not, synthesize a prototype to search,
+            2) call getOwnPropertySlot on the cell,
+            3) if this returns false, cast to JSObject to get the prototype, and walk the prototype chain.
+        By all rights this should crash when passed a string and accessing a property that does not exist, because
+        the string is a cell, getOwnPropertySlot should return false, and the cast to JSObject should be unsafe.
+        To work around this, JSString::getOwnPropertySlot actually implements 'get' functionality - searching the
+        prototype chain, and faking out a return value of undefined if no property is found.
+
+        This is a huge hazard, since fixing JSString::getOwnPropertySlot or calling getOwnPropertySlot on cells
+        from elsewhere would introduce bugs. Fortunately it is only ever called in this one place.
+
+        The fix here is to move getOwnPropertySlot onto JSObjecte and end this madness - cells don't have property
+        slots anyway.
+
+        Interesting changes are in JSCJSValueInlines.h, JSString.cpp - the rest is pretty much all JSCell -> JSObject.
+
 2013-07-31  Michael Saboff  <msaboff@apple.com>
 
         [Win] JavaScript crash.

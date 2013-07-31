@@ -61,9 +61,9 @@ void ErrorPrototype::finishCreation(ExecState* exec, JSGlobalObject*)
     putDirect(exec->vm(), exec->propertyNames().name, jsNontrivialString(exec, String(ASCIILiteral("Error"))), DontEnum);
 }
 
-bool ErrorPrototype::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot &slot)
+bool ErrorPrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot &slot)
 {
-    return getStaticFunctionSlot<ErrorInstance>(exec, ExecState::errorPrototypeTable(exec), jsCast<ErrorPrototype*>(cell), propertyName, slot);
+    return getStaticFunctionSlot<ErrorInstance>(exec, ExecState::errorPrototypeTable(exec), jsCast<ErrorPrototype*>(object), propertyName, slot);
 }
 
 bool ErrorPrototype::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)

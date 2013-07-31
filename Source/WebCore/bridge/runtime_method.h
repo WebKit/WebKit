@@ -64,7 +64,7 @@ protected:
     static const unsigned StructureFlags = OverridesGetOwnPropertySlot | InternalFunction::StructureFlags;
     static CallType getCallData(JSCell*, CallData&);
 
-    static bool getOwnPropertySlot(JSCell*, ExecState*, PropertyName, PropertySlot&);
+    static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
     static bool getOwnPropertyDescriptor(JSObject*, ExecState*, PropertyName, PropertyDescriptor&);
 
 private:

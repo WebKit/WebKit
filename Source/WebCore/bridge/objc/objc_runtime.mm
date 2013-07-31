@@ -208,7 +208,7 @@ void ObjcFallbackObjectImp::finishCreation(JSGlobalObject* globalObject)
     ASSERT(inherits(&s_info));
 }
 
-bool ObjcFallbackObjectImp::getOwnPropertySlot(JSCell*, ExecState*, PropertyName, PropertySlot& slot)
+bool ObjcFallbackObjectImp::getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot& slot)
 {
     // keep the prototype from getting called instead of just returning false
     slot.setUndefined();

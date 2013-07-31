@@ -46,13 +46,13 @@ JSValue JSNotAnObject::defaultValue(const JSObject*, ExecState* exec, PreferredP
 }
 
 // JSObject methods
-bool JSNotAnObject::getOwnPropertySlot(JSCell*, ExecState* exec, PropertyName, PropertySlot&)
+bool JSNotAnObject::getOwnPropertySlot(JSObject*, ExecState* exec, PropertyName, PropertySlot&)
 {
     ASSERT_UNUSED(exec, exec->hadException());
     return false;
 }
 
-bool JSNotAnObject::getOwnPropertySlotByIndex(JSCell*, ExecState* exec, unsigned, PropertySlot&)
+bool JSNotAnObject::getOwnPropertySlotByIndex(JSObject*, ExecState* exec, unsigned, PropertySlot&)
 {
     ASSERT_UNUSED(exec, exec->hadException());
     return false;

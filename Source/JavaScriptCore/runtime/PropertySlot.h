@@ -196,13 +196,6 @@ public:
         return m_slotBase;
     }
 
-    void setBase(JSValue base)
-    {
-        ASSERT(m_slotBase);
-        ASSERT(base);
-        m_slotBase = base;
-    }
-
 private:
     JS_EXPORT_PRIVATE JSValue functionGetter(ExecState*) const;
 

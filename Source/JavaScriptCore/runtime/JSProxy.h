@@ -74,8 +74,8 @@ protected:
     JS_EXPORT_PRIVATE void setTarget(VM&, JSGlobalObject*);
 
     JS_EXPORT_PRIVATE static String className(const JSObject*);
-    JS_EXPORT_PRIVATE static bool getOwnPropertySlot(JSCell*, ExecState*, PropertyName, PropertySlot&);
-    JS_EXPORT_PRIVATE static bool getOwnPropertySlotByIndex(JSCell*, ExecState*, unsigned, PropertySlot&);
+    JS_EXPORT_PRIVATE static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
+    JS_EXPORT_PRIVATE static bool getOwnPropertySlotByIndex(JSObject*, ExecState*, unsigned, PropertySlot&);
     JS_EXPORT_PRIVATE static bool getOwnPropertyDescriptor(JSObject*, ExecState*, PropertyName, PropertyDescriptor&);
     JS_EXPORT_PRIVATE static void put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
     JS_EXPORT_PRIVATE static void putByIndex(JSCell*, ExecState*, unsigned, JSValue, bool shouldThrow);

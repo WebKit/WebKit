@@ -1,3 +1,34 @@
+2013-07-30  Gavin Barraclough  <barraclough@apple.com>
+
+        Some cleanup in JSValue::get
+        https://bugs.webkit.org/show_bug.cgi?id=119343
+
+        Reviewed by Geoff Garen.
+
+        * WebCore.exp.in:
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::getOwnPropertySlot):
+        (WebCore::JSDOMWindow::getOwnPropertySlotByIndex):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        (GenerateImplementation):
+        (GenerateConstructorDeclaration):
+        (GenerateConstructorHelperMethods):
+        * bridge/objc/objc_runtime.h:
+        * bridge/objc/objc_runtime.mm:
+        (JSC::Bindings::ObjcFallbackObjectImp::getOwnPropertySlot):
+        * bridge/runtime_array.cpp:
+        (JSC::RuntimeArray::getOwnPropertySlot):
+        (JSC::RuntimeArray::getOwnPropertySlotByIndex):
+        * bridge/runtime_array.h:
+        * bridge/runtime_method.cpp:
+        (JSC::RuntimeMethod::getOwnPropertySlot):
+        * bridge/runtime_method.h:
+        * bridge/runtime_object.cpp:
+        (JSC::Bindings::RuntimeObject::getOwnPropertySlot):
+        * bridge/runtime_object.h:
+            - getOwnPropertySlot, JSCell -> JSObject
+
 2013-07-31  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION (r153406): DOM intervals are not properly restarted when resumed

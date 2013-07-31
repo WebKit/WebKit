@@ -49,7 +49,7 @@ namespace JSC {
         static const unsigned StructureFlags = OverridesGetOwnPropertySlot | RegExpObject::StructureFlags;
 
     private:
-        static bool getOwnPropertySlot(JSCell*, ExecState*, PropertyName, PropertySlot&);
+        static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
         static bool getOwnPropertyDescriptor(JSObject*, ExecState*, PropertyName, PropertyDescriptor&);
     };
 

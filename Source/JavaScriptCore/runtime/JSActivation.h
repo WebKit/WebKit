@@ -62,7 +62,7 @@ namespace JSC {
 
         static void visitChildren(JSCell*, SlotVisitor&);
 
-        static bool getOwnPropertySlot(JSCell*, ExecState*, PropertyName, PropertySlot&);
+        static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
         static void getOwnNonIndexPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
         JS_EXPORT_PRIVATE static bool getOwnPropertyDescriptor(JSObject*, ExecState*, PropertyName, PropertyDescriptor&);
 

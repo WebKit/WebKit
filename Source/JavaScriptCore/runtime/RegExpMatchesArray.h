@@ -67,16 +67,16 @@ namespace JSC {
                 reifyMatchProperty(exec);
         }
 
-        static bool getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
+        static bool getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
         {
-            RegExpMatchesArray* thisObject = jsCast<RegExpMatchesArray*>(cell);
+            RegExpMatchesArray* thisObject = jsCast<RegExpMatchesArray*>(object);
             thisObject->reifyAllPropertiesIfNecessary(exec);
             return JSArray::getOwnPropertySlot(thisObject, exec, propertyName, slot);
         }
 
-        static bool getOwnPropertySlotByIndex(JSCell* cell, ExecState* exec, unsigned propertyName, PropertySlot& slot)
+        static bool getOwnPropertySlotByIndex(JSObject* object, ExecState* exec, unsigned propertyName, PropertySlot& slot)
         {
-            RegExpMatchesArray* thisObject = jsCast<RegExpMatchesArray*>(cell);
+            RegExpMatchesArray* thisObject = jsCast<RegExpMatchesArray*>(object);
             if (propertyName)
                 thisObject->reifyAllPropertiesIfNecessary(exec);
             else

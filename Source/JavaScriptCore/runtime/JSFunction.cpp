@@ -240,9 +240,9 @@ JSValue JSFunction::nameGetter(ExecState*, JSValue slotBase, PropertyName)
     return thisObj->jsExecutable()->nameValue();
 }
 
-bool JSFunction::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
+bool JSFunction::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
-    JSFunction* thisObject = jsCast<JSFunction*>(cell);
+    JSFunction* thisObject = jsCast<JSFunction*>(object);
     if (thisObject->isHostFunction())
         return Base::getOwnPropertySlot(thisObject, exec, propertyName, slot);
 

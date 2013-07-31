@@ -258,9 +258,9 @@ ConstructType JSNPObject::getConstructData(JSCell* cell, ConstructData& construc
     return ConstructTypeHost;
 }
 
-bool JSNPObject::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
+bool JSNPObject::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
-    JSNPObject* thisObject = JSC::jsCast<JSNPObject*>(cell);
+    JSNPObject* thisObject = JSC::jsCast<JSNPObject*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     if (!thisObject->m_npObject) {
         throwInvalidAccessError(exec);

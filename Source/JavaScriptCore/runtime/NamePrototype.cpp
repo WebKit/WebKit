@@ -58,9 +58,9 @@ void NamePrototype::finishCreation(ExecState* exec)
     ASSERT(inherits(&s_info));
 }
 
-bool NamePrototype::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot &slot)
+bool NamePrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot &slot)
 {
-    return getStaticFunctionSlot<Base>(exec, ExecState::privateNamePrototypeTable(exec), jsCast<NamePrototype*>(cell), propertyName, slot);
+    return getStaticFunctionSlot<Base>(exec, ExecState::privateNamePrototypeTable(exec), jsCast<NamePrototype*>(object), propertyName, slot);
 }
 
 bool NamePrototype::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)

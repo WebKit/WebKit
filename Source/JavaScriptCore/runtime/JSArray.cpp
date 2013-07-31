@@ -177,9 +177,9 @@ bool JSArray::defineOwnProperty(JSObject* object, ExecState* exec, PropertyName 
     return array->JSObject::defineOwnNonIndexProperty(exec, propertyName, descriptor, throwException);
 }
 
-bool JSArray::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
+bool JSArray::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
-    JSArray* thisObject = jsCast<JSArray*>(cell);
+    JSArray* thisObject = jsCast<JSArray*>(object);
     if (propertyName == exec->propertyNames().length) {
         slot.setValue(jsNumber(thisObject->length()));
         return true;

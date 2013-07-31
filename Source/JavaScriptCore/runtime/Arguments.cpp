@@ -90,9 +90,9 @@ void Arguments::fillArgList(ExecState* exec, MarkedArgumentBuffer& args)
     }
 }
 
-bool Arguments::getOwnPropertySlotByIndex(JSCell* cell, ExecState* exec, unsigned i, PropertySlot& slot)
+bool Arguments::getOwnPropertySlotByIndex(JSObject* object, ExecState* exec, unsigned i, PropertySlot& slot)
 {
-    Arguments* thisObject = jsCast<Arguments*>(cell);
+    Arguments* thisObject = jsCast<Arguments*>(object);
     if (JSValue value = thisObject->tryGetArgument(i)) {
         slot.setValue(value);
         return true;
@@ -123,9 +123,9 @@ void Arguments::createStrictModeCalleeIfNecessary(ExecState* exec)
     methodTable()->defineOwnProperty(this, exec, exec->propertyNames().callee, descriptor, false);
 }
 
-bool Arguments::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
+bool Arguments::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
-    Arguments* thisObject = jsCast<Arguments*>(cell);
+    Arguments* thisObject = jsCast<Arguments*>(object);
     unsigned i = propertyName.asIndex();
     if (JSValue value = thisObject->tryGetArgument(i)) {
         RELEASE_ASSERT(i < PropertyName::NotAnIndex);

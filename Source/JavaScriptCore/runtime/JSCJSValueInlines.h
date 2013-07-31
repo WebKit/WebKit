@@ -627,21 +627,19 @@ inline JSValue JSValue::get(ExecState* exec, PropertyName propertyName) const
 
 inline JSValue JSValue::get(ExecState* exec, PropertyName propertyName, PropertySlot& slot) const
 {
-    if (UNLIKELY(!isCell())) {
-        JSObject* prototype = synthesizePrototype(exec);
-        if (!prototype->getPropertySlot(exec, propertyName, slot))
-            return jsUndefined();
-        return slot.getValue(exec, propertyName);
-    }
-    JSCell* cell = asCell();
-    while (true) {
-        if (cell->fastGetOwnPropertySlot(exec, propertyName, slot))
+    // If this is a primitive, we'll need to synthesize the prototype -
+    // and if it's a string there are special properties to check first.
+    JSObject* object;
+    if (UNLIKELY(!isObject())) {
+        if (isCell() && asString(*this)->getStringPropertySlot(exec, propertyName, slot))
             return slot.getValue(exec, propertyName);
-        JSValue prototype = asObject(cell)->prototype();
-        if (!prototype.isObject())
-            return jsUndefined();
-        cell = asObject(prototype);
-    }
+        object = synthesizePrototype(exec);
+    } else
+        object = asObject(asCell());
+    
+    if (object->getPropertySlot(exec, propertyName, slot))
+        return slot.getValue(exec, propertyName);
+    return jsUndefined();
 }
 
 inline JSValue JSValue::get(ExecState* exec, unsigned propertyName) const
@@ -652,21 +650,19 @@ inline JSValue JSValue::get(ExecState* exec, unsigned propertyName) const
 
 inline JSValue JSValue::get(ExecState* exec, unsigned propertyName, PropertySlot& slot) const
 {
-    if (UNLIKELY(!isCell())) {
-        JSObject* prototype = synthesizePrototype(exec);
-        if (!prototype->getPropertySlot(exec, propertyName, slot))
-            return jsUndefined();
-        return slot.getValue(exec, propertyName);
-    }
-    JSCell* cell = const_cast<JSCell*>(asCell());
-    while (true) {
-        if (cell->methodTable()->getOwnPropertySlotByIndex(cell, exec, propertyName, slot))
+    // If this is a primitive, we'll need to synthesize the prototype -
+    // and if it's a string there are special properties to check first.
+    JSObject* object;
+    if (UNLIKELY(!isObject())) {
+        if (isCell() && asString(*this)->getStringPropertySlot(exec, propertyName, slot))
             return slot.getValue(exec, propertyName);
-        JSValue prototype = asObject(cell)->prototype();
-        if (!prototype.isObject())
-            return jsUndefined();
-        cell = prototype.asCell();
-    }
+        object = synthesizePrototype(exec);
+    } else
+        object = asObject(asCell());
+    
+    if (object->getPropertySlot(exec, propertyName, slot))
+        return slot.getValue(exec, propertyName);
+    return jsUndefined();
 }
 
 inline void JSValue::put(ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)

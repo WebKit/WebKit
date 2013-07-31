@@ -110,9 +110,9 @@ static JSValue namedItemGetter(ExecState* exec, JSValue slotBase, PropertyName p
     return toJS(exec, thisObj->globalObject(), node);
 }
 
-bool JSDOMWindow::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
+bool JSDOMWindow::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
-    JSDOMWindow* thisObject = jsCast<JSDOMWindow*>(cell);
+    JSDOMWindow* thisObject = jsCast<JSDOMWindow*>(object);
     // When accessing a Window cross-domain, functions are always the native built-in ones, and they
     // are not affected by properties changed on the Window or anything in its prototype chain.
     // This is consistent with the behavior of Firefox.
@@ -256,9 +256,9 @@ bool JSDOMWindow::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName
     return Base::getOwnPropertySlot(thisObject, exec, propertyName, slot);
 }
 
-bool JSDOMWindow::getOwnPropertySlotByIndex(JSCell* cell, ExecState* exec, unsigned index, PropertySlot& slot)
+bool JSDOMWindow::getOwnPropertySlotByIndex(JSObject* object, ExecState* exec, unsigned index, PropertySlot& slot)
 {
-    JSDOMWindow* thisObject = jsCast<JSDOMWindow*>(cell);
+    JSDOMWindow* thisObject = jsCast<JSDOMWindow*>(object);
     
     if (!thisObject->impl()->frame()) {
         // FIXME: We should have a message here that explains why the property access/function call was

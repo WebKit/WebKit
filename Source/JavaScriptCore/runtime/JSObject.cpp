@@ -262,13 +262,11 @@ String JSObject::className(const JSObject* object)
     return info->className;
 }
 
-bool JSObject::getOwnPropertySlotByIndex(JSCell* cell, ExecState* exec, unsigned i, PropertySlot& slot)
+bool JSObject::getOwnPropertySlotByIndex(JSObject* thisObject, ExecState* exec, unsigned i, PropertySlot& slot)
 {
     // NB. The fact that we're directly consulting our indexed storage implies that it is not
     // legal for anyone to override getOwnPropertySlot() without also overriding
     // getOwnPropertySlotByIndex().
-    
-    JSObject* thisObject = jsCast<JSObject*>(cell);
     
     if (i > MAX_ARRAY_INDEX)
         return thisObject->methodTable()->getOwnPropertySlot(thisObject, exec, Identifier::from(exec, i), slot);

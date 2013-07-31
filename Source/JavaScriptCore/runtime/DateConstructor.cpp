@@ -86,9 +86,9 @@ void DateConstructor::finishCreation(ExecState* exec, DatePrototype* datePrototy
     putDirectWithoutTransition(exec->vm(), exec->propertyNames().length, jsNumber(7), ReadOnly | DontEnum | DontDelete);
 }
 
-bool DateConstructor::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot &slot)
+bool DateConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot &slot)
 {
-    return getStaticFunctionSlot<InternalFunction>(exec, ExecState::dateConstructorTable(exec), jsCast<DateConstructor*>(cell), propertyName, slot);
+    return getStaticFunctionSlot<InternalFunction>(exec, ExecState::dateConstructorTable(exec), jsCast<DateConstructor*>(object), propertyName, slot);
 }
 
 bool DateConstructor::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)

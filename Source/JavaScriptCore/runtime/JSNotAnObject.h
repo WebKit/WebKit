@@ -68,8 +68,8 @@ namespace JSC {
         static JSValue defaultValue(const JSObject*, ExecState*, PreferredPrimitiveType);
 
         // JSObject methods
-        static bool getOwnPropertySlot(JSCell*, ExecState*, PropertyName, PropertySlot&);
-        static bool getOwnPropertySlotByIndex(JSCell*, ExecState*, unsigned propertyName, PropertySlot&);
+        static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
+        static bool getOwnPropertySlotByIndex(JSObject*, ExecState*, unsigned propertyName, PropertySlot&);
         static bool getOwnPropertyDescriptor(JSObject*, ExecState*, PropertyName, PropertyDescriptor&);
 
         static void put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);

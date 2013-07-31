@@ -89,14 +89,14 @@ void RegExpObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(&thisObject->m_lastIndex);
 }
 
-bool RegExpObject::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
+bool RegExpObject::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
     if (propertyName == exec->propertyNames().lastIndex) {
-        RegExpObject* regExp = asRegExpObject(cell);
+        RegExpObject* regExp = asRegExpObject(object);
         slot.setValue(regExp, regExp->getLastIndex());
         return true;
     }
-    return getStaticValueSlot<RegExpObject, JSObject>(exec, ExecState::regExpTable(exec), jsCast<RegExpObject*>(cell), propertyName, slot);
+    return getStaticValueSlot<RegExpObject, JSObject>(exec, ExecState::regExpTable(exec), jsCast<RegExpObject*>(object), propertyName, slot);
 }
 
 bool RegExpObject::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)
