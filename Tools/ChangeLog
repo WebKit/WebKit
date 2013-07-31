@@ -1,3 +1,9 @@
+2013-07-31  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Re-enable WinEWS tests following r153527.
+
+        * Scripts/webkitpy/common/config/ews.json:
+
 2013-07-31  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         Unreviewed: Adding myself to the committers' list.
