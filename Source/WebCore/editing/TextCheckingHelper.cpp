@@ -510,7 +510,7 @@ String TextCheckingHelper::findFirstBadGrammar(GrammarDetail& outGrammarDetail, 
 }
 
 
-bool TextCheckingHelper::isUngrammatical(Vector<String>& guessesVector) const
+bool TextCheckingHelper::isUngrammatical() const
 {
     if (!m_client)
         return false;
@@ -521,7 +521,6 @@ bool TextCheckingHelper::isUngrammatical(Vector<String>& guessesVector) const
     // Returns true only if the passed range exactly corresponds to a bad grammar detail range. This is analogous
     // to isSelectionMisspelled. It's not good enough for there to be some bad grammar somewhere in the range,
     // or overlapping the range; the ranges must exactly match.
-    guessesVector.clear();
     int grammarPhraseOffset;
     
     GrammarDetail grammarDetail;

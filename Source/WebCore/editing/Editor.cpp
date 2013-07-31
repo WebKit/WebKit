@@ -1856,28 +1856,12 @@ String Editor::misspelledSelectionString() const
 bool Editor::isSelectionUngrammatical()
 {
 #if USE(GRAMMAR_CHECKING)
-    Vector<String> ignoredGuesses;
     RefPtr<Range> range = frame()->selection()->toNormalizedRange();
     if (!range)
         return false;
-    return TextCheckingHelper(client(), range).isUngrammatical(ignoredGuesses);
+    return TextCheckingHelper(client(), range).isUngrammatical();
 #else
     return false;
-#endif
-}
-
-Vector<String> Editor::guessesForUngrammaticalSelection()
-{
-#if USE(GRAMMAR_CHECKING)
-    Vector<String> guesses;
-    RefPtr<Range> range = frame()->selection()->toNormalizedRange();
-    if (!range)
-        return guesses;
-    // Ignore the result of isUngrammatical; we just want the guesses, whether or not there are any
-    TextCheckingHelper(client(), range).isUngrammatical(guesses);
-    return guesses;
-#else
-    return Vector<String>();
 #endif
 }
 
@@ -1909,16 +1893,11 @@ Vector<String> Editor::guessesForMisspelledOrUngrammatical(bool& misspelled, boo
 
     String misspelledWord = behavior().shouldAllowSpellingSuggestionsWithoutSelection() ? misspelledWordAtCaretOrRange(m_frame->document()->focusedElement()) : misspelledSelectionString();
     misspelled = !misspelledWord.isEmpty();
-
-    if (misspelled) {
-        ungrammatical = false;
-        return guessesForMisspelledWord(misspelledWord);
-    }
-    if (isGrammarCheckingEnabled() && isSelectionUngrammatical()) {
-        ungrammatical = true;
-        return guessesForUngrammaticalSelection();
-    }
+    // Only unified text checker supports guesses for ungrammatical phrases.
     ungrammatical = false;
+
+    if (misspelled)
+        return guessesForMisspelledWord(misspelledWord);
     return Vector<String>();
 }
 

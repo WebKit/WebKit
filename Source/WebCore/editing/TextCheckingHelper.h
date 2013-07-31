@@ -89,7 +89,7 @@ public:
 #if USE(GRAMMAR_CHECKING)
     String findFirstBadGrammar(GrammarDetail& outGrammarDetail, int& outGrammarPhraseOffset, bool markAll) const;
     void markAllBadGrammar();
-    bool isUngrammatical(Vector<String>& guessesVector) const;
+    bool isUngrammatical() const;
 #endif
     Vector<String> guessesForMisspelledOrUngrammaticalRange(bool checkGrammar, bool& misspelled, bool& ungrammatical) const;
 

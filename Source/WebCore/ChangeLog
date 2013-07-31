@@ -1,5 +1,35 @@
 2013-07-31  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
+        Remove guessesVector param from isUngrammatical
+        https://bugs.webkit.org/show_bug.cgi?id=119241
+
+        Reviewed by Ryosuke Niwa.
+
+        TextCheckingHelper::isUngrammatical(Vector<String>& guessesVector) doesn't return
+        guesses for ungrammatical phrases through its parameter.
+        Editor::isSelectionUngrammatical() uses it to check whether the selection
+        is ungrammatical.
+
+        r71009 showed that isUngrammatical(Vector<String>& guessesVector) had not supported
+        grammar guesses.
+
+        The grammar guesses can be retrieved by guessesForMisspelledOrUngrammaticalRange
+        when UNIFIED_TEXT_CHECKING is on.
+
+        No new tests, this is dead code due to no WebKit port implements grammar using
+        legacy text checker.
+
+        * WebCore.exp.in: Removed __ZN7WebCore6Editor32guessesForUngrammaticalSelectionEv.
+        * editing/Editor.cpp:
+        (WebCore::Editor::isSelectionUngrammatical):
+        (WebCore::Editor::guessesForMisspelledOrUngrammatical):
+        * editing/Editor.h: Removed guessesForUngrammaticalSelection. Dead code.
+        * editing/TextCheckingHelper.cpp:
+        (WebCore::TextCheckingHelper::isUngrammatical):
+        * editing/TextCheckingHelper.h:
+
+2013-07-31  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
         Unnecessary const_cast<TextCheckingHelper*>(this)->findFirstBadGrammar
         https://bugs.webkit.org/show_bug.cgi?id=119244
 
