@@ -1,3 +1,13 @@
+2013-07-31  Benjamin Poulain  <benjamin@webkit.org>
+
+        Upload images for a potential blog post
+
+        * blog-files/size-matters: Added.
+        * blog-files/size-matters/JavaScript-growth.png: Added.
+        * blog-files/size-matters/WebCore-growth-baseline.png: Added.
+        * blog-files/size-matters/WebCore-growth.png: Added.
+        * blog-files/size-matters/WebKit-growth.png: Added.
+
 2013-07-14  Kwang Yul Seo  <skyul@company100.net>
 
         Add Company100 to team.html
