@@ -1,3 +1,22 @@
+2013-07-31  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt] Images are down-scaled badly
+        https://bugs.webkit.org/show_bug.cgi?id=119263
+
+        Reviewed by Jocelyn Turcotte.
+
+        QPainter only does bilinear filtering, which means it will downscaling beyond
+        0.5x will start skipping pixel and start to degrade the end result. Scaling in
+        QImage and QPixmap however uses a better but much more expensive sampling that
+        counts all pixels.
+
+        To get the high quality downscaling we must therefore prescale the images before
+        painting them. To avoid a performance impact on repeated paints the prescaled
+        image are saved in the QPixmapCache.
+
+        * platform/graphics/qt/ImageQt.cpp:
+        (WebCore::BitmapImage::draw):
+
 2013-07-31  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         Remove guessesVector param from isUngrammatical

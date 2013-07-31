@@ -47,7 +47,9 @@
 #include <QImageReader>
 #include <QPainter>
 #include <QPixmap>
+#include <QPixmapCache>
 #include <QTransform>
+#include <private/qhexstring_p.h>
 
 #include <math.h>
 
@@ -245,6 +247,7 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dst,
     QPixmap* image = nativeImageForCurrentFrame();
     if (!image)
         return;
+    QPixmap prescaled;
 
     if (mayFillWithSolidColor()) {
         fillWithSolidColor(ctxt, normalizedDst, solidColor(), styleColorSpace, op);
@@ -254,6 +257,37 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dst,
 #if ENABLE(IMAGE_DECODER_DOWN_SAMPLING)
     normalizedSrc = adjustSourceRectForDownSampling(normalizedSrc, image->size());
 #endif
+
+    QPainter* painter = ctxt->platformContext();
+    // The quality of down scaling at 0.5x and below in QPainter is not very good
+    // due only using bilinear sampling, so for high quality scaling we need to
+    // perform scaling ourselves.
+#if QT_VERSION >= QT_VERSION_CHECK(5, 1, 0)
+    const float pixelRatio = painter->device()->devicePixelRatio();
+#else
+    const float pixelRatio = 1;
+#endif
+    if (painter->renderHints() & QPainter::SmoothPixmapTransform
+        && (normalizedDst.width() * 2 * pixelRatio < normalizedSrc.width()
+            || normalizedDst.height() * 2 * pixelRatio < normalizedSrc.height())) {
+        // This may not work right with subpixel positions, but that can not currently happen.
+        QRect pixelSrc = normalizedSrc.toRect();
+        QSize scaledSize(normalizedDst.width() * pixelRatio, normalizedDst.height() * pixelRatio);
+        QString key = QStringLiteral("qtwebkit_prescaled_")
+            % HexString<qint64>(image->cacheKey())
+            % HexString<int>(pixelSrc.x()) % HexString<int>(pixelSrc.y())
+            % HexString<int>(pixelSrc.width()) % HexString<int>(pixelSrc.height())
+            % HexString<int>(scaledSize.width()) % HexString<int>(scaledSize.height());
+        if (!QPixmapCache::find(key, &prescaled)) {
+            if (pixelSrc != image->rect())
+                prescaled = image->copy(pixelSrc).scaled(scaledSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+            else
+                prescaled = image->scaled(scaledSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+            QPixmapCache::insert(key, prescaled);
+        }
+        normalizedSrc = QRectF(QPointF(), prescaled.size());
+        image = &prescaled;
+    }
 
     CompositeOperator previousOperator = ctxt->compositeOperation();
     ctxt->setCompositeOperation(!image->hasAlpha() && op == CompositeSourceOver ? CompositeCopy : op);
