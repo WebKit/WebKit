@@ -25,7 +25,7 @@
 
 class QWebSecurityOriginPrivate : public QSharedData {
 public:
-    QWebSecurityOriginPrivate(WebCore::SecurityOrigin* o)
+    QWebSecurityOriginPrivate(WTF::PassRefPtr<WebCore::SecurityOrigin> o)
     {
         Q_ASSERT(o);
         origin = o;

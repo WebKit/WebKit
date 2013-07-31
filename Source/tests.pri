@@ -20,6 +20,7 @@ SUBDIRS += \
     $$WEBKIT_TESTS_DIR/qwebview \
     $$WEBKIT_TESTS_DIR/qwebhistory \
     $$WEBKIT_TESTS_DIR/qwebinspector \
+    $$WEBKIT_TESTS_DIR/qwebsecurityorigin \
     $$WEBKIT_TESTS_DIR/hybridPixmap
 
 linux-* {

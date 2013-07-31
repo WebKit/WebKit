@@ -36,11 +36,20 @@ class QWebFrame;
 
 class QWEBKIT_EXPORT QWebSecurityOrigin {
 public:
+    enum SubdomainSetting {
+        AllowSubdomains,
+        DisallowSubdomains
+    };
+    
     static QList<QWebSecurityOrigin> allOrigins();
     static void addLocalScheme(const QString& scheme);
     static void removeLocalScheme(const QString& scheme);
     static QStringList localSchemes();
 
+    void addAccessWhitelistEntry(const QString& scheme, const QString& host, SubdomainSetting subdomainSetting);
+    void removeAccessWhitelistEntry(const QString& scheme, const QString& host, SubdomainSetting subdomainSetting);
+
+    explicit QWebSecurityOrigin(const QUrl& url);
     ~QWebSecurityOrigin();
 
     QString scheme() const;

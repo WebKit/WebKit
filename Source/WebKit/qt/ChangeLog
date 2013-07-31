@@ -1,3 +1,32 @@
+2013-07-31  Deepjyoti Saha  <deesaha@cisco.com>
+
+        [Qt] Add interface API for origin whitelisting
+        https://bugs.webkit.org/show_bug.cgi?id=117823
+
+        Reviewed by Jocelyn Turcotte.
+
+        Adding interface APIs in QWebSecurityOrigin to add and remove whiteList entires.
+
+        Re-used most of the test cases written by Carol Szabo  <carol.szabo@nokia.com> 
+        for https://bugs.webkit.org/show_bug.cgi?id=31875 and added the same.
+
+        * Api/qwebsecurityorigin.cpp:
+        (QWebSecurityOrigin::addAccessWhitelistEntry):
+        (QWebSecurityOrigin::removeAccessWhitelistEntry):
+        * Api/qwebsecurityorigin.h:
+        * tests/qwebsecurityorigin: Added.
+        * tests/qwebsecurityorigin/qwebsecurityorigin.pro: Added.
+        * tests/qwebsecurityorigin/resources: Added.
+        * tests/qwebsecurityorigin/resources/test.html: Added.
+        * tests/qwebsecurityorigin/tst_qwebsecurityorigin.cpp: Added.
+        (tst_QWebSecurityOrigin::tst_QWebSecurityOrigin):
+        (tst_QWebSecurityOrigin::~tst_QWebSecurityOrigin):
+        (tst_QWebSecurityOrigin::init):
+        (tst_QWebSecurityOrigin::cleanup):
+        (tst_QWebSecurityOrigin::whiteList_data):
+        (tst_QWebSecurityOrigin::whiteList):
+        * tests/qwebsecurityorigin/tst_qwebsecurityorigin.qrc: Added.
+
 2013-07-27  Jacky Jiang  <zhajiang@blackberry.com>
 
         Replace all uses of GraphicsLayer::create function with the one that takes a GraphicsLayerFactory

@@ -25,6 +25,7 @@
 #include "KURL.h"
 #include "SchemeRegistry.h"
 #include "SecurityOrigin.h"
+#include "SecurityPolicy.h"
 #include "qwebdatabase.h"
 #include "qwebdatabase_p.h"
 #include "qwebsecurityorigin_p.h"
@@ -265,3 +266,35 @@ QStringList QWebSecurityOrigin::localSchemes()
     }
     return list;
 }
+
+
+/*!
+    Allows contruction of QWebSecurityOrigin() as per the specified \a url.
+*/
+QWebSecurityOrigin::QWebSecurityOrigin(const QUrl& url)
+{
+    d = new QWebSecurityOriginPrivate(SecurityOrigin::create(KURL(url)));
+}
+
+/*!
+    Allows the origin to access the specified \a host using the specified \a scheme.
+    Specifying AllowSubdomains in \a subdomainSetting will allow the source origin to access
+    the \a host's subdomains as well, whereas passing DisallowSubdomains would prevent this.
+    
+    Such cross origin requests are otherwise restricted as per the same-origin-policy.
+*/
+void QWebSecurityOrigin::addAccessWhitelistEntry(const QString& scheme, const QString& host, SubdomainSetting subdomainSetting)
+{
+    SecurityPolicy::addOriginAccessWhitelistEntry(*(d->origin), scheme, host, subdomainSetting == AllowSubdomains);
+}
+
+/*!
+    Removes the origin's whitelisted access to the specified \a host using the specified \a scheme
+    as per the specified \a subdomainSetting.
+*/
+void QWebSecurityOrigin::removeAccessWhitelistEntry(const QString& scheme, const QString& host, SubdomainSetting subdomainSetting)
+{
+    SecurityPolicy::removeOriginAccessWhitelistEntry(*(d->origin), scheme, host, subdomainSetting == AllowSubdomains);
+}
+
+
