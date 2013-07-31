@@ -1,3 +1,21 @@
+2013-07-30  Chris Fleizach  <cfleizach@apple.com>
+
+        Don't post accessibility notification on object in detached document.
+        https://bugs.webkit.org/show_bug.cgi?id=119286
+
+        Reviewed by Ryosuke Niwa.
+
+        Merge https://chromium.googlesource.com/chromium/blink/+/ef9fc9e70202dcf33e5cf2f0f0a2135945ffe17e%5E%21/#F0
+
+        Don't post accessibility notification on object in detached document.
+
+        This can happen if an accessibility notification is queued on a node,
+        then that node is reparented to a different document that's not attached
+        anywhere before the accessibility notification is fired.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::notificationPostTimerFired):
+
 2013-07-30  Andy Estes  <aestes@apple.com>  
 
         Content filter replacement data uses the encoding from the blocked page's response headers
