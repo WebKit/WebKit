@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<select id="tags">
+<option selected="selected" value="marquee">marquee</option>
+<option value="blink">blink</option>
+</select>
+<script>
+description('Check if an option is removed when it is assigned null.');
+var tags = document.getElementById('tags');
+shouldBe("tags.options.length", "2");
+
+tags[0] = null;
+shouldBe("tags.options.length", "1");
+
+tags[tags.length] = new Option("bgsound", "bgsound");
+shouldBe("tags.options.length", "2");
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

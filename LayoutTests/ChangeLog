@@ -1,3 +1,16 @@
+2013-07-31  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add a test to ensure SelectElement removes an option when null is assigned by indexed setter
+        https://bugs.webkit.org/show_bug.cgi?id=119311
+
+        Reviewed by Alexey Proskuryakov.
+
+        Merge a test in https://chromium.googlesource.com/chromium/blink/+/da5c8d908b87f75c5ba3d1457c2353642e999963
+        even though the regression never existed in WebKit.
+
+        * fast/forms/select/select-assign-null-expected.txt: Added.
+        * fast/forms/select/select-assign-null.html: Added.
+
 2013-07-31  Simon Pena  <simon.pena@samsung.com>
 
         [GTK] Unreviewed gardening. Remove flaky tests from TestExpectations.
