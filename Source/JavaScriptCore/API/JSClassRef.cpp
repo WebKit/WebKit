@@ -66,7 +66,7 @@ OpaqueJSClass::OpaqueJSClass(const JSClassDefinition* definition, OpaqueJSClass*
         while (staticValue->name) {
             String valueName = String::fromUTF8(staticValue->name);
             if (!valueName.isNull())
-                m_staticValues->set(valueName.impl(), adoptPtr(new StaticValueEntry(staticValue->getProperty, staticValue->setProperty, staticValue->attributes)));
+                m_staticValues->set(valueName.impl(), adoptPtr(new StaticValueEntry(staticValue->getProperty, staticValue->setProperty, staticValue->attributes, valueName)));
             ++staticValue;
         }
     }
@@ -135,7 +135,8 @@ OpaqueJSClassContextData::OpaqueJSClassContextData(JSC::VM&, OpaqueJSClass* jsCl
         OpaqueJSClassStaticValuesTable::const_iterator end = jsClass->m_staticValues->end();
         for (OpaqueJSClassStaticValuesTable::const_iterator it = jsClass->m_staticValues->begin(); it != end; ++it) {
             ASSERT(!it->key->isIdentifier());
-            staticValues->add(it->key->isolatedCopy(), adoptPtr(new StaticValueEntry(it->value->getProperty, it->value->setProperty, it->value->attributes)));
+            String valueName = it->key->isolatedCopy();
+            staticValues->add(valueName.impl(), adoptPtr(new StaticValueEntry(it->value->getProperty, it->value->setProperty, it->value->attributes, valueName)));
         }
     }
 

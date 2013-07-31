@@ -1,3 +1,22 @@
+2013-07-31  Yi Shen  <max.hong.shen@gmail.com>
+
+        Reduce JSC API static value setter/getter overhead.
+        https://bugs.webkit.org/show_bug.cgi?id=119277
+
+        Reviewed by Geoffrey Garen.
+
+        Add property name to the static value entry, so that OpaqueJSString::create() doesn't
+        need to get called every time when set or get the static value.
+
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::::put):
+        (JSC::::putByIndex):
+        (JSC::::getStaticValue):
+        * API/JSClassRef.cpp:
+        (OpaqueJSClassContextData::OpaqueJSClassContextData):
+        * API/JSClassRef.h:
+        (StaticValueEntry::StaticValueEntry):
+
 2013-07-31  Kwang Yul Seo  <skyul@company100.net>
 
         Use emptyString instead of String("")
