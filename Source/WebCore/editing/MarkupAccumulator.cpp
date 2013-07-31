@@ -293,11 +293,18 @@ bool MarkupAccumulator::shouldAddNamespaceAttribute(const Attribute& attribute, 
     return true;
 }
 
-void MarkupAccumulator::appendNamespace(StringBuilder& result, const AtomicString& prefix, const AtomicString& namespaceURI, Namespaces& namespaces)
+void MarkupAccumulator::appendNamespace(StringBuilder& result, const AtomicString& prefix, const AtomicString& namespaceURI, Namespaces& namespaces, bool allowEmptyDefaultNS)
 {
     namespaces.checkConsistency();
-    if (namespaceURI.isEmpty())
+    if (namespaceURI.isEmpty()) {
+        // http://www.whatwg.org/specs/web-apps/current-work/multipage/the-xhtml-syntax.html#xml-fragment-serialization-algorithm
+        if (allowEmptyDefaultNS && namespaces.get(emptyAtom.impl())) {
+            result.append(' ');
+            result.append(xmlnsAtom.string());
+            result.appendLiteral("=\"\"");
+        }
         return;
+    }
 
     // Use emptyAtoms's impl() for both null and empty strings since the HashMap can't handle 0 as a key
     AtomicStringImpl* pre = prefix.isEmpty() ? emptyAtom.impl() : prefix.impl();
@@ -439,7 +446,7 @@ void MarkupAccumulator::appendOpenTag(StringBuilder& result, Element* element, N
     }
     result.append(element->nodeNamePreservingCase());
     if ((inXMLFragmentSerialization() || !element->document()->isHTMLDocument()) && namespaces && shouldAddNamespaceElement(element))
-        appendNamespace(result, element->prefix(), element->namespaceURI(), *namespaces);
+        appendNamespace(result, element->prefix(), element->namespaceURI(), *namespaces, inXMLFragmentSerialization());
 }
 
 void MarkupAccumulator::appendCloseTag(StringBuilder& result, Element* element)

@@ -1,3 +1,19 @@
+2013-07-30  Rob Buis  <rwlbuis@webkit.org>
+
+        XMLSerializer should reset default namespace when necessary
+        https://bugs.webkit.org/show_bug.cgi?id=16739
+        XMLSerializer's handling of namespaces seems to be pretty broken
+        https://bugs.webkit.org/show_bug.cgi?id=106531
+
+        Reviewed by Ryosuke Niwa.
+
+        Add tests based on the testcases of both bugs.
+
+        * fast/dom/XMLSerializer-element-empty-namespace-expected.txt: Added.
+        * fast/dom/XMLSerializer-element-empty-namespace.html: Added.
+        * fast/dom/XMLSerializer-element-empty-namespace2-expected.txt: Added.
+        * fast/dom/XMLSerializer-element-empty-namespace2.html: Added.
+
 2013-07-30  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION: Crash when opening a message on Gmail

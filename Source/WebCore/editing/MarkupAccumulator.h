@@ -88,7 +88,7 @@ protected:
     void appendNodeValue(StringBuilder&, const Node*, const Range*, EntityMask);
     bool shouldAddNamespaceElement(const Element*);
     bool shouldAddNamespaceAttribute(const Attribute&, Namespaces&);
-    void appendNamespace(StringBuilder&, const AtomicString& prefix, const AtomicString& namespaceURI, Namespaces&);
+    void appendNamespace(StringBuilder&, const AtomicString& prefix, const AtomicString& namespaceURI, Namespaces&, bool allowEmptyDefaultNS = false);
     EntityMask entityMaskForText(Text*) const;
     virtual void appendText(StringBuilder&, Text*);
     void appendXMLDeclaration(StringBuilder&, const Document*);
