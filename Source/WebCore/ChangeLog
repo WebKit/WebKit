@@ -1,3 +1,18 @@
+2013-07-30  Tim Horton  <timothy_horton@apple.com>
+
+        DHTML drag can result in a null-deref under WebDragClient::startDrag
+        https://bugs.webkit.org/show_bug.cgi?id=119297
+        <rdar://problem/14213012>
+
+        Reviewed by Simon Fraser.
+
+        Test: fast/events/setDragImage-in-document-element-crash.html
+
+        * page/mac/FrameSnapshottingMac.mm:
+        (WebCore::snapshotDragImage):
+        We shouldn't waste time painting an empty image, nor should we return
+        an image with no size.
+
 2013-07-30  Pravin D  <pravind@samsung.com>
 
         Dotted borders render w/ artifacts and sometimes as solid lines

@@ -1,3 +1,15 @@
+2013-07-30  Tim Horton  <timothy_horton@apple.com>
+
+        DHTML drag can result in a null-deref under WebDragClient::startDrag
+        https://bugs.webkit.org/show_bug.cgi?id=119297
+        <rdar://problem/14213012>
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/WebCoreSupport/mac/WebDragClientMac.mm:
+        (WebKit::convertImageToBitmap):
+        ShareableBitmap::createShareable can return null, but shouldn't dereference that.
+
 2013-07-30  Ruth Fong  <ruth_fong@apple.com>
 
         Rename <input type='color'> functions in WebPageProxy, WebColorPicker

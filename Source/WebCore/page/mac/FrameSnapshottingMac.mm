@@ -143,6 +143,9 @@ NSImage* snapshotDragImage(Frame* frame, Node* node, NSRect* imageRect, NSRect* 
     LayoutRect topLevelRect;
     NSRect paintingRect = pixelSnappedIntRect(renderer->paintingRootRect(topLevelRect));
 
+    if (NSIsEmptyRect(paintingRect))
+        return nil;
+
     frame->view()->setNodeToDraw(node); // invoke special sub-tree drawing mode
     NSImage* result = imageFromRect(frame, paintingRect);
     renderer->updateDragState(false);
