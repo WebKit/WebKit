@@ -4,11 +4,6 @@
 <link rel="help" href="http://www.w3.org/TR/css-shapes-1/#shape-outside-property">
 <link rel="match" href="shape-outside-floats-horizontal-rectangle-000-ref.html">
 <meta name="flags" content="ahem">
-<script>
-// This is required to run the tests in WebKit's test infrastructure.
-if (window.internals)
-    window.internals.settings.setCSSShapesEnabled(true);
-</script>
 <style>
 .container {
     width: 100px;
@@ -29,15 +24,15 @@ if (window.internals)
 
 .left {
     float: left;
-    width: 100px;
-    height: 75px;
+    width: 100%;
+    height: 100%;
     -webkit-shape-outside: rectangle(0px, 0px, 75%, 66%);
 }
 
 .right {
     float: right;
-    width: 100px;
-    height: 75px;
+    width: 100%;
+    height: 100%;
     -webkit-shape-outside: rectangle(25%, 0px, 75%, 66%);
 }
 </style>

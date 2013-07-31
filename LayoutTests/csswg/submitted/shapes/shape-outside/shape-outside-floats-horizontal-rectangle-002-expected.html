@@ -1,18 +1,16 @@
 <!DOCTYPE html>
-<title>
- CSS RefTest Reference
-</title>
-<link rel="author" title="Bem Jones-Bey" href="mailto:bjonesbe@adobe.com" />
-<meta name="flags" content="ahem" />
+<title>CSS RefTest Reference</title>
+<link rel="author" title="Bem Jones-Bey" href="mailto:bjonesbe@adobe.com">
+<meta name="flags" content="ahem">
 <style>
- .container {
+.container {
     width: 75px;
     height: 100px;
     font: 25px/1 Ahem;
     line-height: 25px;
     border: 10px solid black;
     display: inline-block;
-   -webkit-writing-mode: vertical-rl;
+    -webkit-writing-mode: vertical-rl;
 }
 
 .left-text {
@@ -35,28 +33,20 @@
     height: 75px;
 }
 </style>
+</head>
 <body>
- <p>
-  Test passes if you see two black rectangle boxes with a smaller white rectangle in one corner of each.
- </p>
- <div class="container left-text">
-  <div class="left">
-  </div>
-  X
-  <br />
-  X
-  <br />
-  XXXX
-  <br />
- </div>
- <div class="container right-text">
-  <div class="right">
-  </div>
-  X
-  <br />
-  X
-  <br />
-  XXXX
-  <br />
- </div>
+    <p>Test passes if you see two black rectangle boxes with a smaller white rectangle in one corner of each.</p>
+    <div class="container left-text">
+        <div class="left"></div>
+        X<br/>
+        X<br/>
+        XXXX<br/>
+    </div>
+
+    <div class="container right-text">
+        <div class="right"></div>
+        X<br/>
+        X<br/>
+        XXXX<br/>
+    </div>
 </body>
