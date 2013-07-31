@@ -1,3 +1,13 @@
+2013-07-31  Michael Saboff  <msaboff@apple.com>
+
+        [Win] JavaScript crash.
+        https://bugs.webkit.org/show_bug.cgi?id=119339
+
+        Reviewed by Mark Hahnenberg.
+
+        * jit/JITStubsX86.h: Implement ctiVMThrowTrampoline and
+        ctiVMThrowTrampolineSlowpath the same way as the gcc x86 version does.
+
 2013-07-30  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         GetByVal on Arguments does the wrong size load when checking the Arguments object length

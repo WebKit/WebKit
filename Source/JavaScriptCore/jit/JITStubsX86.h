@@ -300,12 +300,7 @@ extern "C" {
         __asm {
             mov ecx, esp;
             call cti_vm_throw;
-            add esp, 0x3c;
-            pop ebx;
-            pop edi;
-            pop esi;
-            pop ebp;
-            ret;
+            int 3;
         }
     }
 
@@ -315,13 +310,7 @@ extern "C" {
             mov ecx, edi;
             call cti_vm_throw_slowpath;
             // When cti_vm_throw_slowpath returns, eax has callFrame and edx has handler address
-            add esp, 0x3c;
-            pop ebx;
-            pop edi;
-            pop esi;
-            pop ebp;
             jmp edx
-            ret;
         }
     }
 
