@@ -1,3 +1,9 @@
+2013-07-31  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        Unreviewed: Adding myself to the committers' list.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2013-07-31  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt] Build WebKit with C++11
