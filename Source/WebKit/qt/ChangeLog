@@ -1,3 +1,22 @@
+2013-07-31  Michael Brüning  <michael.bruning@digia.com>
+
+        [Qt][WK1] navigator.plugins shows too few entries.
+        https://bugs.webkit.org/show_bug.cgi?id=119332
+
+        Reviewed by Jocelyn Turcotte.
+
+        Based on input by Choon Sik Cho.
+
+        PlatformStrategiesQt::getPluginInfo was using the
+        WTF::Vector::resize method wrongly.
+
+        This patch removes the call to Vector::resize as
+        Vector::append will take care of increasing capacity
+        if needed.
+
+        * WebCoreSupport/PlatformStrategiesQt.cpp:
+        (PlatformStrategiesQt::getPluginInfo):
+
 2013-07-31  Deepjyoti Saha  <deesaha@cisco.com>
 
         [Qt] Add interface API for origin whitelisting
