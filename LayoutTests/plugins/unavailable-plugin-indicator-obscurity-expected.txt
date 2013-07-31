@@ -9,6 +9,7 @@ Expected to be obscured:
 'visibilityHiddenOnParent' was obscured: true (expected true; PASS)
 'pointerEventsBlocked' was obscured: true (expected true; PASS)
 'pointerEventsBlockedOnParent' was obscured: true (expected true; PASS)
+'pointerEventsBlockedOnObscuringSibling' was obscured: false (expected true; FAIL)
 'leftHalfObscured' was obscured: true (expected true; PASS)
 'rightHalfObscured' was obscured: true (expected true; PASS)
 'topHalfObscured' was obscured: true (expected true; PASS)
@@ -22,9 +23,8 @@ Expected to not be obscured:
 'large' was obscured: false (expected false; PASS)
 'stackedHighOpacityParents' was obscured: false (expected false; PASS)
 'notClippedByParent' was obscured: false (expected false; PASS)
-'pointerEventsBlockedOnObscuringSibling' was obscured: false (expected false; PASS)
 'topQuarterObscured' was obscured: false (expected false; PASS)
 'bottomQuarterObscured' was obscured: false (expected false; PASS)
 
-Passed all tests: true
+Passed all tests: false
 

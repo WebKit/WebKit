@@ -37,12 +37,12 @@
 
         setTimeout(function () {
             log("Expected to be obscured:");
-            var failedAnyTest = testObscuredPlugins("shouldBeObscured", true);
+            var failedAnyExpectedObscuredTest = testObscuredPlugins("shouldBeObscured", true);
             log("")
             log("Expected to not be obscured:");
-            failedAnyTest = failedAnyTest || testObscuredPlugins("shouldNotBeObscured", false);
+            var failedAnyExpectedVisibleTest = testObscuredPlugins("shouldNotBeObscured", false);
             log("");
-            log("Passed all tests: " + !failedAnyTest);
+            log("Passed all tests: " + !(failedAnyExpectedVisibleTest || failedAnyExpectedObscuredTest));
 
             // Remove the plugins so that we don't have tons of whitespace in the output.
             while(document.body.firstChild && document.body.firstChild.id != "log") {
@@ -116,7 +116,7 @@
             <embed id="pointerEventsBlockedOnParent" class="shouldBeObscured" type="application/x-webkit-test-netscape"></embed>
         </div>
         <div class="container">
-            <embed id="pointerEventsBlockedOnObscuringSibling" class="shouldNotBeObscured" type="application/x-webkit-test-netscape"></embed>
+            <embed id="pointerEventsBlockedOnObscuringSibling" class="shouldBeObscured" type="application/x-webkit-test-netscape"></embed>
             <div class="cover" style="pointer-events: none;"></div>
         </div>
 

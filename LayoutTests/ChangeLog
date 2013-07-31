@@ -1,3 +1,20 @@
+2013-07-31  Tim Horton  <timothy_horton@apple.com>
+
+        RenderEmbeddedObject::isReplacementObscured is wrong if an obscuring element has pointer-events: none set
+        https://bugs.webkit.org/show_bug.cgi?id=119348
+
+        Reviewed by Dean Jackson.
+
+        Change the expected outcome of the test to want a visually-obscured
+        but clickable embed (because the obscuring element has pointer-events: none)
+        to be considered obscured.
+
+        Also, adjust the test so that it runs all of the subtests even if
+        some of them fail.
+
+        * plugins/unavailable-plugin-indicator-obscurity-expected.txt:
+        * plugins/unavailable-plugin-indicator-obscurity.html:
+
 2013-07-23  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed gardening. AppleWin port.
