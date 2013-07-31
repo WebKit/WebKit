@@ -69,8 +69,8 @@ void SuspendableTimer::suspend(ReasonForSuspension)
 
     m_savedIsActive = TimerBase::isActive();
     if (m_savedIsActive) {
-        m_savedNextFireInterval = nextUnalignedFireInterval();
-        m_savedRepeatInterval = repeatInterval();
+        m_savedNextFireInterval = TimerBase::nextUnalignedFireInterval();
+        m_savedRepeatInterval = TimerBase::repeatInterval();
         TimerBase::stop();
     }
 }
