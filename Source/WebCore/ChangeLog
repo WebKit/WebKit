@@ -1,3 +1,20 @@
+2013-07-30  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        findFirstGrammarDetail doesn't need to be exposed.
+        https://bugs.webkit.org/show_bug.cgi?id=119249
+
+        Reviewed by Darin Adler.
+
+        Make TextCheckingHelper::findFirstGrammarDetail private.
+        Remove badGrammarPhraseLength param. It's not used any longer.
+
+        No new tests, no behavior change.
+
+        * editing/TextCheckingHelper.cpp:
+        (WebCore::TextCheckingHelper::findFirstGrammarDetail):
+        (WebCore::TextCheckingHelper::findFirstBadGrammar):
+        * editing/TextCheckingHelper.h:
+
 2013-07-30  Tim Horton  <timothy_horton@apple.com>
 
         DHTML drag can result in a null-deref under WebDragClient::startDrag
