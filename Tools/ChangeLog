@@ -1,5 +1,18 @@
 2013-07-31  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
+        [Qt] Build WebKit with C++11
+        https://bugs.webkit.org/show_bug.cgi?id=119337
+
+        Reviewed by Csaba Osztrogonác.
+
+        Enable building with C++11.
+
+        * qmake/mkspecs/features/default_pre.prf:
+        * qmake/mkspecs/features/unix/default_post.prf:
+        * qmake/mkspecs/features/unix/default_pre.prf:
+
+2013-07-31  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
         [Qt] ASSERTS trigger in release builds
         https://bugs.webkit.org/show_bug.cgi?id=119336
 

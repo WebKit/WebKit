@@ -97,6 +97,9 @@ if(win32|mac):!macx-xcode {
     contains(QT_CONFIG, build_all): CONFIG += build_all
 }
 
+# WebKit depends on C++11 now.
+CONFIG += c++11
+
 # A newer version of flex is required on Windows. At the moment the only
 # one that appears to provide binaries and is not cygwin is winflex.
 FLEX = flex

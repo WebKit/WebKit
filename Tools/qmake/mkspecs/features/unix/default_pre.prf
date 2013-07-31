@@ -18,6 +18,5 @@ contains(QT_CONFIG, qpa)|contains(QT_CONFIG, embedded): CONFIG += embedded
 
 # Reduce linking memory pressure on 32-bit debug builds on Linux
 linux-g++*:CONFIG(debug, debug|release):isEqual(QT_ARCH,i386): CONFIG += use_all_in_one_files
-*clang: CONFIG += c++11
 
 load(default_pre)

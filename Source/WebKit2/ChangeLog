@@ -1,3 +1,14 @@
+2013-07-31  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt] Build WebKit with C++11
+        https://bugs.webkit.org/show_bug.cgi?id=119337
+
+        Reviewed by Csaba Osztrogonác.
+
+        We no longer need to enable C++11 specifically for WebKit2.
+
+        * WebKit2.pri:
+
 2013-07-30  Tim Horton  <timothy_horton@apple.com>
 
         DHTML drag can result in a null-deref under WebDragClient::startDrag
