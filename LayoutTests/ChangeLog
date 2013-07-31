@@ -1,3 +1,14 @@
+2013-07-30  Pravin D  <pravind@samsung.com>
+
+        Dotted borders render w/ artifacts and sometimes as solid lines
+        https://bugs.webkit.org/show_bug.cgi?id=3964
+
+        Reviewed by Elliott Sprehn.
+
+        * fast/table/border-collapsing/dotted-collapsed-border-expected.txt: Added.
+        * fast/table/border-collapsing/dotted-collapsed-border.html: Added.
+        * platform/qt/fast/table/border-collapsing/dotted-collapsed-border-expected.png: Added.
+
 2013-07-30  Vani Hegde  <vani.hegde@samsung.com>
 
         Gmail reply email - Bold and Italic style  get stuck

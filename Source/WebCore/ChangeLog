@@ -1,3 +1,27 @@
+2013-07-30  Pravin D  <pravind@samsung.com>
+
+        Dotted borders render w/ artifacts and sometimes as solid lines
+        https://bugs.webkit.org/show_bug.cgi?id=3964
+
+        Reviewed by Elliott Sprehn.
+
+        While drawing the dotted border, the common borders are drawn by the cells sharing them. The dotted borders
+        become(tend) solid when the starting and the end points of the border drawn by the two cells don't match. This
+        fixes the same. 
+
+        Test: fast/table/border-collapsing/dotted-collapsed-border.html
+
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::alignLeftRightBorderPaintRect):
+        (WebCore::RenderTableCell::alignTopBottomBorderPaintRect):
+         Helper function to decide if border's start point requires any adjustment.
+
+        (WebCore::RenderTableCell::paintCollapsedBorders):
+        Added logic to handle dotted borders so that they do not become solid.
+
+        * rendering/RenderTableCell.h:
+         Helper function declarations.
+
 2013-07-30  Vani Hegde  <vani.hegde@samsung.com>
 
         Gmail reply email - Bold and Italic style  get stuck
