@@ -415,7 +415,7 @@ String TextCheckingHelper::findFirstMisspellingOrBadGrammar(bool checkGrammar, b
 }
 
 #if USE(GRAMMAR_CHECKING)
-int TextCheckingHelper::findFirstGrammarDetail(const Vector<GrammarDetail>& grammarDetails, int badGrammarPhraseLocation, int startOffset, int endOffset, bool markAll)
+int TextCheckingHelper::findFirstGrammarDetail(const Vector<GrammarDetail>& grammarDetails, int badGrammarPhraseLocation, int startOffset, int endOffset, bool markAll) const
 {
     // Found some bad grammar. Find the earliest detail range that starts in our search range (if any).
     // Optionally add a DocumentMarker for each detail in the range.
@@ -450,7 +450,7 @@ int TextCheckingHelper::findFirstGrammarDetail(const Vector<GrammarDetail>& gram
     return earliestDetailIndex;
 }
 
-String TextCheckingHelper::findFirstBadGrammar(GrammarDetail& outGrammarDetail, int& outGrammarPhraseOffset, bool markAll)
+String TextCheckingHelper::findFirstBadGrammar(GrammarDetail& outGrammarDetail, int& outGrammarPhraseOffset, bool markAll) const
 {
     // Initialize out parameters; these will be updated if we find something to return.
     outGrammarDetail.location = -1;
@@ -525,7 +525,7 @@ bool TextCheckingHelper::isUngrammatical(Vector<String>& guessesVector) const
     int grammarPhraseOffset;
     
     GrammarDetail grammarDetail;
-    String badGrammarPhrase = const_cast<TextCheckingHelper*>(this)->findFirstBadGrammar(grammarDetail, grammarPhraseOffset, false);    
+    String badGrammarPhrase = findFirstBadGrammar(grammarDetail, grammarPhraseOffset, false);
     
     // No bad grammar in these parts at all.
     if (badGrammarPhrase.isEmpty())

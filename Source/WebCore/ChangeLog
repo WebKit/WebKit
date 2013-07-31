@@ -1,3 +1,25 @@
+2013-07-31  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        Unnecessary const_cast<TextCheckingHelper*>(this)->findFirstBadGrammar
+        https://bugs.webkit.org/show_bug.cgi?id=119244
+
+        Reviewed by Ryosuke Niwa.
+
+        Added missing const modifier to findFirstBadGrammar (and findFirstGrammarDetail
+        respectively) to call it in 'isUngrammatical() const' without const casting.
+
+        No new tests, no behavior change.
+
+        * editing/TextCheckingHelper.cpp:
+        (WebCore::TextCheckingHelper::findFirstGrammarDetail):
+        (WebCore::TextCheckingHelper::findFirstBadGrammar):
+        Added const.
+
+        (WebCore::TextCheckingHelper::isUngrammatical):
+        Now const_cast can be removed.
+
+        * editing/TextCheckingHelper.h:
+
 2013-07-30  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         findFirstGrammarDetail doesn't need to be exposed.

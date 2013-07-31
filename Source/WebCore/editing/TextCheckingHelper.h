@@ -87,7 +87,7 @@ public:
     String findFirstMisspellingOrBadGrammar(bool checkGrammar, bool& outIsSpelling, int& outFirstFoundOffset, GrammarDetail& outGrammarDetail);
     void markAllMisspellings(RefPtr<Range>& firstMisspellingRange);
 #if USE(GRAMMAR_CHECKING)
-    String findFirstBadGrammar(GrammarDetail& outGrammarDetail, int& outGrammarPhraseOffset, bool markAll);
+    String findFirstBadGrammar(GrammarDetail& outGrammarDetail, int& outGrammarPhraseOffset, bool markAll) const;
     void markAllBadGrammar();
     bool isUngrammatical(Vector<String>& guessesVector) const;
 #endif
@@ -99,7 +99,7 @@ private:
 
     bool unifiedTextCheckerEnabled() const;
 #if USE(GRAMMAR_CHECKING)
-    int findFirstGrammarDetail(const Vector<GrammarDetail>&, int badGrammarPhraseLocation, int startOffset, int endOffset, bool markAll);
+    int findFirstGrammarDetail(const Vector<GrammarDetail>&, int badGrammarPhraseLocation, int startOffset, int endOffset, bool markAll) const;
 #endif
 };
 
