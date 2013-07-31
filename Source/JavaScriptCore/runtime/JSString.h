@@ -320,7 +320,7 @@ namespace JSC {
         void resolveRopeSlowCase(UChar*) const;
         void outOfMemory(ExecState*) const;
             
-        JSString* getIndexSlowCase(ExecState*, unsigned);
+        JS_EXPORT_PRIVATE JSString* getIndexSlowCase(ExecState*, unsigned);
 
         mutable FixedArray<WriteBarrier<JSString>, s_maxInternalRopeLength> m_fibers;
     };

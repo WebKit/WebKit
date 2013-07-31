@@ -1,3 +1,13 @@
+2013-07-31  Gavin Barraclough  <barraclough@apple.com>
+
+        Speculative Windows build fix.
+
+        Reviewed by NOBODY
+
+        * runtime/JSString.cpp:
+        (JSC::JSRopeString::getIndexSlowCase):
+        * runtime/JSString.h:
+
 2013-07-30  Gavin Barraclough  <barraclough@apple.com>
 
         Some cleanup in JSValue::get

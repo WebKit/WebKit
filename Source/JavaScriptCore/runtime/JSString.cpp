@@ -230,7 +230,7 @@ void JSRopeString::outOfMemory(ExecState* exec) const
         throwOutOfMemoryError(exec);
 }
 
-JS_EXPORT JSString* JSRopeString::getIndexSlowCase(ExecState* exec, unsigned i)
+JSString* JSRopeString::getIndexSlowCase(ExecState* exec, unsigned i)
 {
     ASSERT(isRope());
     resolveRope(exec);
