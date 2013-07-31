@@ -1,3 +1,17 @@
+2013-07-31  Rob Buis  <rwlbuis@webkit.org>
+
+        Convert SVG test from r153433 to a reftest
+        https://bugs.webkit.org/show_bug.cgi?id=119346
+
+        Reviewed by Philip Rogers.
+
+        Reftest taken from https://chromium.googlesource.com/chromium/blink/+/ac10e305a870c8fd500b42e90075aee3aa48da8d.
+
+        * platform/qt/svg/animations/attributeNameAndAttributeTypeMissmatch-expected.txt: Removed.
+        * svg/animations/attributeNameAndAttributeTypeMismatch-expected.html: Added.
+        * svg/animations/attributeNameAndAttributeTypeMismatch.html: Added.
+        * svg/animations/attributeNameAndAttributeTypeMissmatch.svg: Removed.
+
 2013-07-31  Ruth Fong  <ruth_fong@apple.com>
 
         <input type=color> Mac UI behaviour
