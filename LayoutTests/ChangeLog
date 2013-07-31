@@ -1,5 +1,17 @@
 2013-07-31  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Test assignment to indexed window properties
+        https://bugs.webkit.org/show_bug.cgi?id=119307
+
+        Reviewed by Geoffrey Garen.
+
+        Merge https://chromium.googlesource.com/chromium/blink/+/bdeca10fa79477f669cab1e5b081a480e743fd3f
+
+        * http/tests/security/xss-DENIED-window-index-assign-expected.txt: Added.
+        * http/tests/security/xss-DENIED-window-index-assign.html: Added.
+
+2013-07-31  Ryosuke Niwa  <rniwa@webkit.org>
+
         Add a test to ensure SelectElement removes an option when null is assigned by indexed setter
         https://bugs.webkit.org/show_bug.cgi?id=119311
 

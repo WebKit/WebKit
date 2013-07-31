@@ -1,0 +1,13 @@
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+window[0] = {
+    a: "1",
+    f: function() {
+        alert("FAIL: Child called parent.f()");
+    }
+};
+</script>
+<iframe src="data:text/html,<script>alert(parent[0].a);</script><script>parent[0].f();</script>"></iframe><br>
+This test passes if the access is forbidden.

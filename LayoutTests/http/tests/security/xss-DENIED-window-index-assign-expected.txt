@@ -1,0 +1,4 @@
+ALERT: undefined
+CONSOLE MESSAGE: line 1: TypeError: undefined is not a function (evaluating 'parent[0].f()')
+
+This test passes if the access is forbidden.
