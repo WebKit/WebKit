@@ -34,9 +34,9 @@ namespace WebCore {
 
 class CoordinatedCustomFilterProgram : public CustomFilterProgram {
 public:
-    static PassRefPtr<CoordinatedCustomFilterProgram> create(String vertexShaderString, String m_fragmentShaderString, CustomFilterProgramType programType, CustomFilterProgramMixSettings mixSettings, CustomFilterMeshType meshType)
+    static PassRefPtr<CoordinatedCustomFilterProgram> create(const String& vertexShaderString, const String& fragmentShaderString, CustomFilterProgramType programType, const CustomFilterProgramMixSettings& mixSettings, CustomFilterMeshType meshType)
     {
-        return adoptRef(new CoordinatedCustomFilterProgram(vertexShaderString, m_fragmentShaderString, programType, mixSettings, meshType));
+        return adoptRef(new CoordinatedCustomFilterProgram(vertexShaderString, fragmentShaderString, programType, mixSettings, meshType));
     }
 
     virtual bool isLoaded() const OVERRIDE { return true; }
@@ -49,7 +49,7 @@ protected:
     virtual void didRemoveLastClient() OVERRIDE { }
 
 private:
-    CoordinatedCustomFilterProgram(String vertexShaderString, String fragmentShaderString, CustomFilterProgramType programType, CustomFilterProgramMixSettings mixSettings, CustomFilterMeshType meshType)
+    CoordinatedCustomFilterProgram(const String& vertexShaderString, const String& fragmentShaderString, CustomFilterProgramType programType, const CustomFilterProgramMixSettings& mixSettings, CustomFilterMeshType meshType)
         : CustomFilterProgram(programType, mixSettings, meshType)
         , m_vertexShaderString(vertexShaderString)
         , m_fragmentShaderString(fragmentShaderString)
