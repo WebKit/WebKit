@@ -1,3 +1,16 @@
+2013-07-31  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        DFG doesn't account for inlining of functions with switch statements that haven't been executed by the baseline JIT
+        https://bugs.webkit.org/show_bug.cgi?id=119349
+
+        Reviewed by Geoffrey Garen.
+
+        * fast/js/dfg-inline-switch-imm-expected.txt: Added.
+        * fast/js/dfg-inline-switch-imm.html: Added.
+        * fast/js/script-tests/dfg-inline-switch-imm.js: Added.
+        (foo):
+        (bar):
+
 2013-07-31  Tim Horton  <timothy_horton@apple.com>
 
         RenderEmbeddedObject::isReplacementObscured is wrong if an obscuring element has pointer-events: none set

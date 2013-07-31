@@ -1,3 +1,21 @@
+2013-07-31  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        DFG doesn't account for inlining of functions with switch statements that haven't been executed by the baseline JIT
+        https://bugs.webkit.org/show_bug.cgi?id=119349
+
+        Reviewed by Geoffrey Garen.
+
+        Prior to this patch, the baseline JIT was responsible for resizing the ctiOffsets Vector for 
+        SimpleJumpTables to be equal to the size of the branchOffsets Vector. The DFG implicitly relied
+        on code it compiled with any switch statements to have been run in the baseline JIT first. 
+        However, if the DFG chooses to inline a function that has never been compiled by the baseline 
+        JIT then this resizing never happens and we crash at link time in the DFG.
+
+        We can fix this by also doing the resize in the DFG to catch this case.
+
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::link):
+
 2013-07-31  Gavin Barraclough  <barraclough@apple.com>
 
         Speculative Windows build fix.

@@ -171,6 +171,7 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
         usedJumpTables.set(data.switchTableIndex);
         SimpleJumpTable& table = m_codeBlock->switchJumpTable(data.switchTableIndex);
         table.ctiDefault = linkBuffer.locationOf(m_blockHeads[data.fallThrough->index]);
+        table.ctiOffsets.grow(table.branchOffsets.size());
         for (unsigned j = table.ctiOffsets.size(); j--;)
             table.ctiOffsets[j] = table.ctiDefault;
         for (unsigned j = data.cases.size(); j--;) {
