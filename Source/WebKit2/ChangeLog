@@ -1,3 +1,18 @@
+2013-07-31  Kwang Yul Seo  <skyul@company100.net>
+
+        Use emptyString instead of String("")
+        https://bugs.webkit.org/show_bug.cgi?id=119335
+
+        Reviewed by Darin Adler.
+
+        Use emptyString() instead of String("") because it is better style and
+        faster. This is a followup to r116908, removing all occurrences of
+        String("") from WebKit.
+
+        * Shared/mac/WebEventFactory.mm:
+        (WebKit::textFromEvent):
+        (WebKit::unmodifiedTextFromEvent):
+
 2013-07-31  Ruth Fong  <ruth_fong@apple.com>
 
         <input type=color> Mac UI behaviour

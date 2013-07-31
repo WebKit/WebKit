@@ -59,7 +59,7 @@ public:
     String name() const
     {
         if (m_name.isEmpty())
-            return String("");
+            return emptyString();
         return String(m_name);
     }
 

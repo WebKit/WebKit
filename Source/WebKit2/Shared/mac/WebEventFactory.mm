@@ -255,14 +255,14 @@ static WebEvent::Type gestureEventTypeForEvent(NSEvent *event)
 static inline String textFromEvent(NSEvent* event)
 {
     if ([event type] == NSFlagsChanged)
-        return String("");
+        return emptyString();
     return String([event characters]);
 }
 
 static inline String unmodifiedTextFromEvent(NSEvent* event)
 {
     if ([event type] == NSFlagsChanged)
-        return String("");
+        return emptyString();
     return String([event charactersIgnoringModifiers]);
 }
 

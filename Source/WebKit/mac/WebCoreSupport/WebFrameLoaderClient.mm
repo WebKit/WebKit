@@ -1334,7 +1334,7 @@ String WebFrameLoaderClient::userAgent(const KURL& url)
     // Most other call sites are tolerant of nil because of Objective-C behavior, but this one
     // is not because the return value of _userAgentForURL is a const KURL&.
     if (!webView)
-        return String("");
+        return emptyString();
 
     return [webView _userAgentString];
 }
