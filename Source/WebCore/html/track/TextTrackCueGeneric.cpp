@@ -70,7 +70,7 @@ void TextTrackCueGenericBoxElement::applyCSSProperties(const IntSize& videoSize)
 
     float size = static_cast<float>(cue->getCSSSize());
     if (cue->useDefaultPosition()) {
-        setInlineStyleProperty(CSSPropertyBottom, "0");
+        setInlineStyleProperty(CSSPropertyBottom, 0, CSSPrimitiveValue::CSS_PX);
         setInlineStyleProperty(CSSPropertyMarginBottom, 1.0, CSSPrimitiveValue::CSS_PERCENTAGE);
     } else {
         setInlineStyleProperty(CSSPropertyLeft, static_cast<float>(cue->position()), CSSPrimitiveValue::CSS_PERCENTAGE);
@@ -147,7 +147,7 @@ void TextTrackCueGeneric::setFontSize(int fontSize, const IntSize& videoSize, bo
     double size = videoSize.height() * baseFontSizeRelativeToVideoHeight() / 100;
     if (fontSizeMultiplier())
         size *= fontSizeMultiplier() / 100;
-    displayTreeInternal()->setInlineStyleProperty(CSSPropertyFontSize, String::number(lround(size)) + "px");
+    displayTreeInternal()->setInlineStyleProperty(CSSPropertyFontSize, lround(size), CSSPrimitiveValue::CSS_PX);
 
     LOG(Media, "TextTrackCueGeneric::setFontSize - setting cue font size to %li", lround(size));
 }

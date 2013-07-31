@@ -1212,7 +1212,7 @@ void TextTrackCue::setFontSize(int fontSize, const IntSize&, bool important)
     
     LOG(Media, "TextTrackCue::setFontSize - setting cue font size to %i", fontSize);
 
-    displayTreeInternal()->setInlineStyleProperty(CSSPropertyFontSize, String::number(fontSize) + "px", important);
+    displayTreeInternal()->setInlineStyleProperty(CSSPropertyFontSize, fontSize, CSSPrimitiveValue::CSS_PX, important);
 }
 
 } // namespace WebCore

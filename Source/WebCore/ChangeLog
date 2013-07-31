@@ -1,3 +1,32 @@
+2013-07-31  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Convert most callers of setInlineStyleProperty passing strings to enums or doubles instead
+        https://bugs.webkit.org/show_bug.cgi?id=119304
+
+        Reviewed by Andreas Kling.
+
+        Merge https://chromium.googlesource.com/chromium/blink/+/8157dd9381716759f183fabbfed29c52962be746
+
+        * editing/DeleteButtonController.cpp:
+        (WebCore::DeleteButtonController::createDeletionUI):
+        (WebCore::DeleteButtonController::show):
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::updatePlaceholderVisibility):
+        * html/ImageDocument.cpp:
+        (WebCore::ImageDocument::resizeImageToFit):
+        (WebCore::ImageDocument::restoreImageSize):
+        (WebCore::ImageDocument::windowSizeChanged):
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlTextTrackContainerElement::updateDisplay):
+        (WebCore::MediaControlTextTrackContainerElement::updateTimerFired):
+        * html/track/TextTrackCue.cpp:
+        (WebCore::TextTrackCue::setFontSize):
+        * html/track/TextTrackCueGeneric.cpp:
+        (WebCore::TextTrackCueGenericBoxElement::applyCSSProperties):
+        (WebCore::TextTrackCueGeneric::setFontSize):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::resize):
+
 2013-07-31  Jae Hyun Park  <jae.park@company100.net>
 
         [Coordinated Graphics] Use m_ prefix only for member variable
