@@ -95,11 +95,6 @@ static wstring applePathFromRegistry(const wstring& key, const wstring& value)
     return path;
 }
 
-static wstring appleApplicationSupportDirectory()
-{
-    return applePathFromRegistry(L"SOFTWARE\\Apple Inc.\\Apple Application Support", L"InstallDir");
-}
-
 static wstring copyEnvironmentVariable(const wstring& variable)
 {
     DWORD length = ::GetEnvironmentVariableW(variable.c_str(), 0, 0);
@@ -126,26 +121,24 @@ static int fatalError(const wstring& programName, const wstring& message)
     return 1;
 }
 
+static bool directoryExists(const wstring& path)
+{
+    DWORD attrib = ::GetFileAttributes(path.c_str());
+
+    return ((attrib != INVALID_FILE_ATTRIBUTES) && (attrib & FILE_ATTRIBUTE_DIRECTORY));
+}
+
 static bool modifyPath(const wstring& programName)
 {
-    struct {
-        wstring softwareSubKey;
-        wstring productName;
-    } products[] = {
-        { L"Apple Inc.", L"Apple Application Support" },
-        { L"Apple Computer, Inc.", L"Safari" },
-    };
+#if defined(_M_X64)
+    static const wstring pathPrefix = L"C:\\Program Files\\Common Files\\Apple\\Apple Application Support";
+#else
+    static const wstring pathPrefix = L"C:\\Program Files (x86)\\Common Files\\Apple\\Apple Application Support";
+#endif
 
-    wstring pathPrefix;
-    for (size_t i = 0; i < _countof(products); ++i) {
-        wstring directory = applePathFromRegistry(L"SOFTWARE\\" + products[i].softwareSubKey + L"\\" + products[i].productName, L"InstallDir");
-        if (directory.empty()) {
-            fatalError(programName, L"Failed to determine path to " + products[i].productName + L" directory.");
-            return false;
-        }
-        if (i)
-            pathPrefix += L';';
-        pathPrefix += directory;
+    if (!directoryExists(pathPrefix)) {
+        fatalError(programName, L"Failed to determine path to AAS directory.");
+        return false;
     }
 
     if (prependPath(pathPrefix))

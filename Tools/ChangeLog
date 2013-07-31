@@ -1,3 +1,14 @@
+2013-07-31  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Winlauncher shouldn't look for Safari Install Directory
+        https://bugs.webkit.org/show_bug.cgi?id=119351
+
+        Reviewed by Darin Adler.
+
+        * win/DLLLauncher/DLLLauncherMain.cpp: Don't check registry for
+        the Safari install location. Instead, use the proper support
+        library path for the build architecture.
+
 2013-07-31  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         Update scripts to reference contributors.json instead of committers.py in messaging
