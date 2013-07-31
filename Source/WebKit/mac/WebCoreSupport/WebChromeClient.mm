@@ -54,6 +54,7 @@
 #import "WebViewInternal.h"
 #import <Foundation/Foundation.h>
 #import <WebCore/BlockExceptions.h>
+#import <WebCore/ColorChooser.h>
 #import <WebCore/Console.h>
 #import <WebCore/ContextMenu.h>
 #import <WebCore/ContextMenuController.h>
@@ -720,6 +721,15 @@ void WebChromeClient::paintCustomHighlight(Node* node, const AtomicString& type,
 
     END_BLOCK_OBJC_EXCEPTIONS;
 }
+
+#if ENABLE(INPUT_TYPE_COLOR)
+PassOwnPtr<ColorChooser> WebChromeClient::createColorChooser(ColorChooserClient* client, const Color& initialColor)
+{
+    // FIXME: Implement <input type='color'> for WK1 (Bug 119094).
+    ASSERT_NOT_REACHED();
+    return nullptr;
+}
+#endif
 
 void WebChromeClient::runOpenPanel(Frame*, PassRefPtr<FileChooser> chooser)
 {

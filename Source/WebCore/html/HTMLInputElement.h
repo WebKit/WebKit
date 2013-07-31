@@ -367,6 +367,9 @@ private:
     virtual bool isOutOfRange() const;
 
     virtual void documentDidResumeFromPageCache();
+#if ENABLE(INPUT_TYPE_COLOR)
+    virtual void documentWillSuspendForPageCache() OVERRIDE;
+#endif
 
     virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
 

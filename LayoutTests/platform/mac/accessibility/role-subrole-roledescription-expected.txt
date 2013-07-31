@@ -205,9 +205,9 @@ PASS: input[type='button']
       AXRoleDescription: button
       
 PASS: input[type='color']
-      AXRole: AXTextField
+      AXRole: AXColorWell
       AXSubrole: 
-      AXRoleDescription: text field
+      AXRoleDescription: color well
       
 PASS: input[type='checkbox']
       AXRole: AXCheckBox

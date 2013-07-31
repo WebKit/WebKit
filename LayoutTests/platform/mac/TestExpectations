@@ -157,9 +157,6 @@ webkit.org/b/61827 fast/events/drag-image-filename.html
 # Datalist is not yet enabled.
 fast/forms/datalist
 
-# Color input is not yet enabled.
-fast/forms/color
-
 # Times out only in non-wk2 Mac, possibly because of platform-specific behavior
 # interfering with how the test is executed.
 webkit.org/b/113220 fast/forms/select/popup-closes-on-blur.html [ Timeout Pass ]

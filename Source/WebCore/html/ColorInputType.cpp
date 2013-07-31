@@ -150,9 +150,12 @@ void ColorInputType::handleDOMActivateEvent(Event* event)
     if (!ScriptController::processingUserGesture())
         return;
 
-    Chrome* chrome = this->chrome();
-    if (chrome && !m_chooser)
-        m_chooser = chrome->createColorChooser(this, valueAsColor());
+    if (Chrome* chrome = this->chrome()) {
+        if (!m_chooser)
+            m_chooser = chrome->createColorChooser(this, valueAsColor());
+        else
+            m_chooser->reattachColorChooser(valueAsColor());
+    }
 
     event->setDefaultHandled();
 }
@@ -170,6 +173,11 @@ bool ColorInputType::shouldRespectListAttribute()
 bool ColorInputType::typeMismatchFor(const String& value) const
 {
     return !isValidColorString(value);
+}
+
+bool ColorInputType::shouldResetOnDocumentActivation()
+{
+    return true;
 }
 
 void ColorInputType::didChooseColor(const Color& color)

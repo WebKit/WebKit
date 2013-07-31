@@ -129,6 +129,10 @@ public:
     virtual WebCore::FloatRect customHighlightRect(WebCore::Node*, const WTF::AtomicString& type, const WebCore::FloatRect& lineRect) OVERRIDE;
     virtual void paintCustomHighlight(WebCore::Node*, const WTF::AtomicString& type, const WebCore::FloatRect& boxRect, const WebCore::FloatRect& lineRect, bool behindText, bool entireLine) OVERRIDE;
 
+#if ENABLE(INPUT_TYPE_COLOR)
+    virtual PassOwnPtr<WebCore::ColorChooser> createColorChooser(WebCore::ColorChooserClient*, const WebCore::Color&) OVERRIDE;
+#endif
+
     virtual WebCore::KeyboardUIMode keyboardUIMode() OVERRIDE;
 
     virtual NSResponder *firstResponder() OVERRIDE;

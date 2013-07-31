@@ -57,10 +57,11 @@ public:
 
     virtual ~WebColorPicker();
 
-    void invalidate() { m_client = 0; }
+    void invalidate();
 
     virtual void endPicker();
     virtual void setSelectedColor(const WebCore::Color&);
+    virtual void showColorPicker(const WebCore::Color&);
 
 protected:
     explicit WebColorPicker(Client*);

@@ -39,6 +39,7 @@
 #import "WKStringCF.h"
 #import "WKViewInternal.h"
 #import "StringUtilities.h"
+#import "WebColorPickerMac.h"
 #import "WebContextMenuProxyMac.h"
 #import "WebEditCommandProxy.h"
 #import "WebPopupMenuProxyMac.h"
@@ -393,10 +394,9 @@ PassRefPtr<WebContextMenuProxy> PageClientImpl::createContextMenuProxy(WebPagePr
 }
 
 #if ENABLE(INPUT_TYPE_COLOR)
-PassRefPtr<WebColorPicker> PageClientImpl::createColorPicker(WebPageProxy*, const WebCore::Color&,  const WebCore::IntRect&)
+PassRefPtr<WebColorPicker> PageClientImpl::createColorPicker(WebPageProxy* page, const WebCore::Color& initialColor,  const WebCore::IntRect&)
 {
-    notImplemented();
-    return 0;
+    return WebColorPickerMac::create(page, initialColor);
 }
 #endif
 

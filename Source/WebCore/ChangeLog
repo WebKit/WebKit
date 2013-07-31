@@ -1,3 +1,40 @@
+2013-07-31  Ruth Fong  <ruth_fong@apple.com>
+
+        <input type=color> Mac UI behaviour
+        <rdar://problem/10269922> and https://bugs.webkit.org/show_bug.cgi?id=61276
+
+        Reviewed by Brady Eidson.
+
+        This patch turns on INPUT_TYPE_COLOR and implements it using the native
+        Mac color panel.
+
+        No new tests added.
+    
+        Currently, there are no automated ways to test the types of changes made in this patch. (i.e. checking 
+        which color is being displayed in the color panel, checking which color element is currently 
+        associated to the color panel, checking the state of color elements after directing away and 
+        being directed back to its page, etc.)
+
+        * Configurations/FeatureDefines.xcconfig: Enabled INPUT_TYPE_COLOR.
+        * WebCore.exp.in:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        * html/ColorInputType.cpp:
+        (WebCore::ColorInputType::handleDOMActivateEvent): Reattaches the color picker if
+          a color picker has already been shown for an element
+        (WebCore::ColorInputType::shouldResetOnDocumentActivation): Always returns true, needed to
+          detach the color picker when caching a page.
+        * html/ColorInputType.h:
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::documentDidResumeFromPageCache): For <input type='color'>,
+          don't reset the element.
+        (WebCore::HTMLInputElement::documentWillSuspendForPageCache): For <input type='color'>, call detach().
+        * html/HTMLInputElement.h:
+
+        * platform/ColorChooser.h:
+        (WebCore::ColorChooser::reattachColorChooser): Added definition.
+
 2013-07-30  Gavin Barraclough  <barraclough@apple.com>
 
         Some cleanup in JSValue::get

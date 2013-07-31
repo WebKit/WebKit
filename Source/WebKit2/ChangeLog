@@ -1,3 +1,67 @@
+2013-07-31  Ruth Fong  <ruth_fong@apple.com>
+
+        <input type=color> Mac UI behaviour
+        <rdar://problem/10269922> and https://bugs.webkit.org/show_bug.cgi?id=61276
+
+        Implemented <input type='color'> on Mac using the native color picker. 
+
+        Reviewed by Brady Eidson.
+
+        Code for WebColorPickerMac is derived from Chromium's color_chooser_mac.mm:
+        https://code.google.com/p/chromium/codesearch#chromium/src/chrome/browser/ui/cocoa/color_chooser_mac.mm
+
+        * Configurations/FeatureDefines.xcconfig: Enabled INPUT_TYPE_COLOR.
+
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::createColorPicker): Replaced stub implementation
+          and return a WebColorPickerMac object.
+
+        * UIProcess/WebColorPicker.cpp:
+        (WebKit::WebColorPicker::invalidate): Updated to call endChooser().
+        (WebKit::WebColorPicker::showColorPicker): Added stub implementation.
+        * UIProcess/WebColorPicker.h:
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::close): Removed invalidation of removed color picker objects.
+        (WebKit::WebPageProxy::showColorPicker): Updated so that it works for
+          multiple <input type='color'> elements on a page.
+        (WebKit::WebPageProxy::didEndColorPicker): Removed cleanup of removed color picker objects.
+        (WebKit::WebPageProxy::resetStateAfterProcessExited): Removed cleanup of removed color picker objects.
+
+        * UIProcess/mac/WebColorPickerMac.h: Added.
+        * UIProcess/mac/WebColorPickerMac.mm: Added.
+        (WebKit::WebColorPickerMac::create):
+        (WebKit::WebColorPickerMac::~WebColorPickerMac):
+        (WebKit::WebColorPickerMac::WebColorPickerMac):
+        (WebKit::WebColorPickerMac::endPicker):
+        (WebKit::WebColorPickerMac::setSelectedColor):
+        (WebKit::WebColorPickerMac::didChooseColor):
+        (WebKit::WebColorPickerMac::showColorPicker):
+        WebColorPickerMac contains a reference to a WKColorPanelMac object
+          and is responsible for maintaining the color picker UI.
+
+        (-[WKColorPanelMac setAndShowPicker:withColor:]):
+        (-[WKColorPanelMac invalidate]):
+        (-[WKColorPanelMac windowWillClose:]):
+        (-[WKColorPanelMac didChooseColor:]):
+        (-[WKColorPanelMac setColor:]):
+        WKColorPanelMac is a wrapper for a NSColorPanel object and 
+          is responsible for the color picker UI.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::createColorChooser): Updated to always create a 
+          WebColorChooser object.
+
+        * WebProcess/WebCoreSupport/WebColorChooser.cpp:
+        (WebKit::WebColorChooser::reattachColorChooser): Sets the page's 
+          active color chooser to the current object and pings the UIProcess
+          to show the color picker.
+        (WebKit::WebColorChooser::setSelectedColor): Only sets the color in the
+          color picker if the WebColorChooser object is the active color element.
+        * WebProcess/WebCoreSupport/WebColorChooser.h:
+
 2013-07-30  Gavin Barraclough  <barraclough@apple.com>
 
         Some cleanup in JSValue::get

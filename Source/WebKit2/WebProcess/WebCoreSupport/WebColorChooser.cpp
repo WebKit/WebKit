@@ -69,9 +69,21 @@ void WebColorChooser::disconnectFromPage()
     m_page = 0;
 }
 
+void WebColorChooser::reattachColorChooser(const Color& color)
+{
+    ASSERT(m_page);
+    m_page->setActiveColorChooser(this);
+
+    ASSERT(m_colorChooserClient);
+    WebProcess::shared().parentProcessConnection()->send(Messages::WebPageProxy::ShowColorPicker(color, m_colorChooserClient->elementRectRelativeToRootView()), m_page->pageID());
+}
+
 void WebColorChooser::setSelectedColor(const Color& color)
 {
     if (!m_page)
+        return;
+    
+    if (m_page->activeColorChooser() != this)
         return;
 
     WebProcess::shared().parentProcessConnection()->send(Messages::WebPageProxy::SetColorPickerColor(color), m_page->pageID());

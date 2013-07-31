@@ -48,6 +48,7 @@ public:
     void didEndChooser();
     void disconnectFromPage();
 
+    virtual void reattachColorChooser(const WebCore::Color&) OVERRIDE;
     virtual void setSelectedColor(const WebCore::Color&) OVERRIDE;
     virtual void endChooser() OVERRIDE;
 

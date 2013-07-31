@@ -1,3 +1,12 @@
+2013-07-31  Ruth Fong  <ruth_fong@apple.com>
+
+        <input type=color> Mac UI behaviour
+        <rdar://problem/10269922> and https://bugs.webkit.org/show_bug.cgi?id=61276
+
+        Reviewed by Brady Eidson.
+
+        * Configurations/FeatureDefines.xcconfig: Enabled INPUT_TYPE_COLOR.
+
 2013-07-31  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         DFG doesn't account for inlining of functions with switch statements that haven't been executed by the baseline JIT

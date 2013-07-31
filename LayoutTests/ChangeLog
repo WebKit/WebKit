@@ -1,3 +1,23 @@
+2013-07-31  Ruth Fong  <ruth_fong@apple.com>
+
+        <input type=color> Mac UI behaviour
+        <rdar://problem/10269922> and https://bugs.webkit.org/show_bug.cgi?id=61276
+
+        Reviewed by Brady Eidson.
+
+        Updated tests to reflect <input type='color'> being implemented with a native color picker.
+
+        * fast/forms/color/input-color-onchange-event-expected.txt:
+
+        * platform/mac/TestExpectations: Enabled fast/form/color tests on Mac.
+
+        * platform/mac/accessibility/color-well-expected.txt:
+        * platform/mac/accessibility/role-subrole-roledescription-expected.txt:
+        * platform/mac/accessibility/role-subrole-roledescription.html:
+
+        * platform/mac/fast/forms/color/input-appearance-color-expected.txt: Updated test expectations
+        on Mac to reflect the fact that the list attribute for <input type='color'> is not yet supported.
+
 2013-07-31  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         DFG doesn't account for inlining of functions with switch statements that haven't been executed by the baseline JIT

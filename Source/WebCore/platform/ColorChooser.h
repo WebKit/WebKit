@@ -40,6 +40,7 @@ class ColorChooser {
 public:
     virtual ~ColorChooser() { }
 
+    virtual void reattachColorChooser(const Color&) { }
     virtual void setSelectedColor(const Color&) { }
     virtual void endChooser() { }
 };

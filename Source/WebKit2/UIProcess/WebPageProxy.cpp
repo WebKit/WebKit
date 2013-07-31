@@ -581,11 +581,6 @@ void WebPageProxy::close()
         m_colorPicker->invalidate();
         m_colorPicker = nullptr;
     }
-
-    if (m_colorPickerResultListener) {
-        m_colorPickerResultListener->invalidate();
-        m_colorPickerResultListener = nullptr;
-    }
 #endif
 
 #if ENABLE(GEOLOCATION)
@@ -2928,22 +2923,9 @@ void WebPageProxy::needTouchEvents(bool needTouchEvents)
 #if ENABLE(INPUT_TYPE_COLOR)
 void WebPageProxy::showColorPicker(const WebCore::Color& initialColor, const IntRect& elementRect)
 {
-    ASSERT(!m_colorPicker);
-
-    if (m_colorPickerResultListener) {
-        m_colorPickerResultListener->invalidate();
-        m_colorPickerResultListener = nullptr;
-    }
-
-    m_colorPickerResultListener = WebColorPickerResultListenerProxy::create(this);
-    m_colorPicker = WebColorPicker::create(this);
-
-    if (m_uiClient.showColorPicker(this, initialColor.serialized(), m_colorPickerResultListener.get()))
-        return;
-
-    m_colorPicker = m_pageClient->createColorPicker(this, initialColor, elementRect);
     if (!m_colorPicker)
-        didEndColorPicker();
+        m_colorPicker = m_pageClient->createColorPicker(this, initialColor, elementRect);
+    m_colorPicker->showColorPicker(initialColor);
 }
 
 void WebPageProxy::setColorPickerColor(const WebCore::Color& color)
@@ -2979,11 +2961,6 @@ void WebPageProxy::didEndColorPicker()
     }
 
     m_process->send(Messages::WebPage::DidEndColorPicker(), m_pageID);
-
-    m_colorPickerResultListener->invalidate();
-    m_colorPickerResultListener = nullptr;
-
-    m_uiClient.hideColorPicker(this);
 }
 #endif
 
@@ -3847,11 +3824,6 @@ void WebPageProxy::resetStateAfterProcessExited()
     if (m_colorPicker) {
         m_colorPicker->invalidate();
         m_colorPicker = nullptr;
-    }
-
-    if (m_colorPickerResultListener) {
-        m_colorPickerResultListener->invalidate();
-        m_colorPickerResultListener = nullptr;
     }
 #endif
 

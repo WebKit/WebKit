@@ -64,6 +64,7 @@ private:
     virtual void detach() OVERRIDE;
     virtual bool shouldRespectListAttribute() OVERRIDE;
     virtual bool typeMismatchFor(const String&) const OVERRIDE;
+    virtual bool shouldResetOnDocumentActivation() OVERRIDE;
 
     Color valueAsColor() const;
     void endColorChooser();

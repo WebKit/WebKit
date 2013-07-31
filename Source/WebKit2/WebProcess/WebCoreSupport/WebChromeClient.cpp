@@ -661,9 +661,6 @@ bool WebChromeClient::paintCustomOverhangArea(GraphicsContext* context, const In
 #if ENABLE(INPUT_TYPE_COLOR)
 PassOwnPtr<ColorChooser> WebChromeClient::createColorChooser(ColorChooserClient* client, const Color& initialColor)
 {
-    if (m_page->activeColorChooser())
-        return nullptr;
-
     return adoptPtr(new WebColorChooser(m_page, client, initialColor));
 }
 #endif
