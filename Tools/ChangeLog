@@ -1,3 +1,37 @@
+2013-07-31  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        Update location of w3c shapes tests to reflect new import location
+        https://bugs.webkit.org/show_bug.cgi?id=118156
+
+        Reviewed by Dirk Pranke.
+
+        Partial imports should not be imported to the same place as the full
+        import, so this adds an option to allow importing to a different
+        location than the default. In doing that, I found that imports from
+        contributor directories didn't seem to be working correctly, so I
+        updated the import to be smarter about both contributor directories
+        and the test status directories. It should now be more likely that the
+        script guesses the root directory properly.
+
+        * Scripts/webkitpy/w3c/test_importer.py: Remove comment about the
+            script not working with the full set of contributors, as that is
+            no longer true, and I didn't see a good way to keep that behavior.
+            Also update documentation to properly explain what happens when a
+            contributor dir is imported.
+        (main): Attempt to find the proper repo dir by looking at the
+            directory above the "test status" in the given path, this is still
+            not exactly right, but is less error prone than just trimming.
+        (parse_args): Add -d option to set the import directory.
+        (TestImporter.__init__): Stop appending the subdirs to the
+            destination_directory because it was making things more complex
+            and isn't really needed.
+        (TestImporter.update_test_status): Remove hardcoded strings and use
+            the TEST_STATUS constants instead.
+        * Scripts/webkitpy/w3c/test_importer_unittest.py:
+        (TestImporterTest.test_import_dir_with_no_tests_and_no_hg): Add
+            support for new option.
+        (TestImporterTest.test_import_dir_with_no_tests): Ditto.
+
 2013-07-31  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Winlauncher shouldn't look for Safari Install Directory

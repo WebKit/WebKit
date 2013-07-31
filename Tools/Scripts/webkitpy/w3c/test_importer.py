@@ -42,20 +42,16 @@
       mirrors the CSS Mercurial repo. For example, <csswg_repo_root>/approved/css2.1 is brought in
       as LayoutTests/csswg/approved/css2.1, maintaining the entire directory structure under that
 
-    - If the tests are submitted, they'll be brought in as LayoutTests/csswg/submitted and will also
-      maintain their directory structure under that. For example, everything under
-      <csswg_repo_root>/contributors/adobe/submitted is brought into submitted, mirroring its
-      directory structure in the csswg repo
+    - If the tests are submitted, they'll maintain their directory structure under
+      LayoutTests/csswg. For example, everything under
+      <csswg_repo_root>/contributors/adobe/submitted is brought into
+      LayoutTests/csswg/contributors/adobe/submitted, mirroring its directory structure in the
+      csswg repo
 
     - If the import directory specified is just a contributor folder, only the submitted folder
       for that contributor is brought in. For example, to import all of Mozilla's tests, either
       <csswg_repo_root>/contributors/mozilla or <csswg_repo_root>/contributors/mozilla/submitted
-      will work and are equivalent
-
-    - For the time being, this script won't work if you try to import the full set of submitted
-      tests under contributors/*/submitted. Since these are awaiting review, this is just a small
-      control mechanism to enforce carefully selecting what non-approved tests are imported.
-      It can obviously and easily be changed.
+      will work and are equivalent.
 
     - By default, only reftests and jstest are imported. This can be overridden with a -a or --all
       argument
@@ -106,6 +102,9 @@ from webkitpy.w3c.test_converter import W3CTestConverter
 TEST_STATUS_UNKNOWN = 'unknown'
 TEST_STATUS_APPROVED = 'approved'
 TEST_STATUS_SUBMITTED = 'submitted'
+VALID_TEST_STATUSES = [TEST_STATUS_APPROVED, TEST_STATUS_SUBMITTED]
+
+CONTRIBUTOR_DIR_NAME = 'contributors'
 
 CHANGESET_NOT_AVAILABLE = 'Not Available'
 
@@ -117,7 +116,13 @@ def main(_argv, _stdout, _stderr):
     options, args = parse_args()
     import_dir = args[0]
     if len(args) == 1:
-        repo_dir = os.path.dirname(import_dir)
+        repo_dir_parts = []
+        for part in import_dir.split(os.path.sep):
+            if part in VALID_TEST_STATUSES:
+                break
+            else:
+                repo_dir_parts.append(part)
+        repo_dir = os.path.sep.join(repo_dir_parts)
     else:
         repo_dir = args[1]
 
@@ -157,6 +162,8 @@ def parse_args():
         help='Flag to prevent duplicate test files from overwriting existing tests. By default, they will be overwritten')
     parser.add_option('-a', '--all', action='store_true', default=False,
         help='Import all tests including reftests, JS tests, and manual/pixel tests. By default, only reftests and JS tests are imported')
+    parser.add_option('-d', '--dest-dir', dest='destination', default='w3c',
+        help='Import into a specified directory relative to the LayoutTests root. By default, imports into w3c')
 
     options, args = parser.parse_args()
     if len(args) not in (1, 2):
@@ -176,9 +183,8 @@ class TestImporter(object):
         webkit_finder = WebKitFinder(self.filesystem)
         self._webkit_root = webkit_finder.webkit_base()
         self.repo_dir = repo_dir
-        subdirs = os.path.dirname(os.path.relpath(source_directory, repo_dir))
 
-        self.destination_directory = webkit_finder.path_from_webkit_base("LayoutTests", 'w3c', *subdirs)
+        self.destination_directory = webkit_finder.path_from_webkit_base("LayoutTests", options.destination)
 
         self.changeset = CHANGESET_NOT_AVAILABLE
         self.test_status = TEST_STATUS_UNKNOWN
@@ -389,10 +395,10 @@ class TestImporter(object):
 
         status = TEST_STATUS_UNKNOWN
 
-        if 'approved' in self.source_directory.split(os.path.sep):
-            status = TEST_STATUS_APPROVED
-        elif 'submitted' in self.source_directory.split(os.path.sep):
-            status = TEST_STATUS_SUBMITTED
+        directory_parts = self.source_directory.split(os.path.sep)
+        for test_status in VALID_TEST_STATUSES:
+            if test_status in directory_parts:
+                status = test_status
 
         self.test_status = status
 

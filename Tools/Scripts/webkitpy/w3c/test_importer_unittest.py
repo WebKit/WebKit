@@ -54,7 +54,7 @@ class TestImporterTest(unittest.TestCase):
         host.executive = MockExecutive2(exception=OSError())
         host.filesystem = MockFileSystem(files=FAKE_FILES)
 
-        importer = TestImporter(host, FAKE_SOURCE_DIR, FAKE_REPO_DIR, optparse.Values({"overwrite": False}))
+        importer = TestImporter(host, FAKE_SOURCE_DIR, FAKE_REPO_DIR, optparse.Values({"overwrite": False, 'destination': 'w3c'}))
 
         oc = OutputCapture()
         oc.capture_output()
@@ -68,7 +68,7 @@ class TestImporterTest(unittest.TestCase):
         host.executive = MockExecutive2(exception=ScriptError("abort: no repository found in '/Volumes/Source/src/wk/Tools/Scripts/webkitpy/w3c' (.hg not found)!"))
         host.filesystem = MockFileSystem(files=FAKE_FILES)
 
-        importer = TestImporter(host, FAKE_SOURCE_DIR, FAKE_REPO_DIR, optparse.Values({"overwrite": False}))
+        importer = TestImporter(host, FAKE_SOURCE_DIR, FAKE_REPO_DIR, optparse.Values({"overwrite": False, 'destination': 'w3c'}))
         oc = OutputCapture()
         oc.capture_output()
         try:
