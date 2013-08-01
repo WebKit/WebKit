@@ -1,3 +1,12 @@
+2013-07-31  Mark Lam  <mark.lam@apple.com>
+
+        Gardening: changing expectation for fast/forms/color/input-color-onchange-event.html
+        to "Crash Pass" instead of "Skip".
+
+        Not reviewed.
+
+        * TestExpectations:
+
 2013-07-31  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reuse of XMLHttpRequests causes character corruption in response text
