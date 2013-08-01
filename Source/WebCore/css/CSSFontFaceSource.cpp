@@ -143,7 +143,7 @@ PassRefPtr<SimpleFontData> CSSFontFaceSource::getFontData(const FontDescription&
                 // Select first <font-face> child
                 for (Node* fontChild = m_externalSVGFontElement->firstChild(); fontChild; fontChild = fontChild->nextSibling()) {
                     if (fontChild->hasTagName(SVGNames::font_faceTag)) {
-                        fontFaceElement = static_cast<SVGFontFaceElement*>(fontChild);
+                        fontFaceElement = toSVGFontFaceElement(fontChild);
                         break;
                     }
                 }

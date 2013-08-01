@@ -79,7 +79,7 @@ void SVGFontFaceUriElement::childrenChanged(bool changedByParser, Node* beforeCh
     
     ContainerNode* grandparent = parentNode()->parentNode();
     if (grandparent && grandparent->hasTagName(font_faceTag))
-        static_cast<SVGFontFaceElement*>(grandparent)->rebuildFontFace();
+        toSVGFontFaceElement(grandparent)->rebuildFontFace();
 }
 
 Node::InsertionNotificationRequest SVGFontFaceUriElement::insertedInto(ContainerNode* rootParent)

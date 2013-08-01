@@ -1,5 +1,28 @@
 2013-07-31  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
+        Introduce toSVGFontFaceElement, and use it
+        https://bugs.webkit.org/show_bug.cgi?id=119330
+
+        Reviewed by Andreas Kling.
+
+        As a step to change static_cast with toSVGXXX, static_cast<SVGFontFaceElement*> can
+        be changed with toSVGFontFaceElement().
+
+        Blink merge from https://src.chromium.org/viewvc/blink?view=rev&revision=155082
+
+        * css/CSSFontFaceSource.cpp:
+        (WebCore::CSSFontFaceSource::getFontData):
+        * svg/SVGFontFaceElement.h:
+        (WebCore::toSVGFontFaceElement):
+        * svg/SVGFontFaceFormatElement.cpp:
+        (WebCore::SVGFontFaceFormatElement::childrenChanged):
+        * svg/SVGFontFaceSrcElement.cpp:
+        (WebCore::SVGFontFaceSrcElement::childrenChanged):
+        * svg/SVGFontFaceUriElement.cpp:
+        (WebCore::SVGFontFaceUriElement::childrenChanged):
+
+2013-07-31  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
         Introduce toSVGSMILElement, and use it
         https://bugs.webkit.org/show_bug.cgi?id=119260
 
