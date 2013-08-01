@@ -1160,7 +1160,8 @@ webkit.org/b/114470 editing/spelling/spelling-should-select-multiple-words.html 
 
 webkit.org/b/110027 compositing/transitions/transform-on-large-layer.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/110173 media/video-controls-captions-trackmenu.html [ Crash Pass ]
+# see also webkit.org/b/119376
+webkit.org/b/110173 media/video-controls-captions-trackmenu.html [ Failure Crash Pass ]
 
 webkit.org/b/110186 inspector-protocol/page/javascriptDialogEvents.html [ Skip ]
 

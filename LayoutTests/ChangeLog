@@ -1,5 +1,12 @@
 2013-07-31  Simon Fraser  <simon.fraser@apple.com>
 
+        media/video-controls-captions-trackmenu.html either crashes,
+        fails or passes.
+
+        * platform/mac/TestExpectations:
+
+2013-07-31  Simon Fraser  <simon.fraser@apple.com>
+
         Gardening:
         
         webkit.org/b/119374 fast/workers/termination-early.html [ Pass Crash ]
