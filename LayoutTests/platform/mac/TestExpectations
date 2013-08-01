@@ -1079,6 +1079,16 @@ webkit.org/b/98837 http/tests/security/svg-image-leak.html [ Skip ]
 # Should never have been a ref test.
 webkit.org/b/98456 compositing/images/truncated-direct-png-image.html [ ImageOnlyFailure ]
 
+# Ref tests suffering from colorspace issues
+compositing/images/positioned-image-content-rect.html [ ImageOnlyFailure ]
+compositing/patterns/direct-pattern-compositing-add-text.html [ ImageOnlyFailure ]
+compositing/patterns/direct-pattern-compositing-contain.html [ ImageOnlyFailure ]
+compositing/patterns/direct-pattern-compositing-cover.html [ ImageOnlyFailure ]
+compositing/patterns/direct-pattern-compositing-padding.html [ ImageOnlyFailure ]
+compositing/patterns/direct-pattern-compositing-position.html [ ImageOnlyFailure ]
+compositing/patterns/direct-pattern-compositing-size.html [ ImageOnlyFailure ]
+compositing/patterns/direct-pattern-compositing.html [ ImageOnlyFailure ]
+
 webkit.org/b/99096 fast/canvas/webgl/arraybuffer-transfer-of-control.html [ Failure ]
 
 # Timing out on Mountain Lion WK1 release sometimes

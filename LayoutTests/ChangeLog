@@ -1,5 +1,12 @@
 2013-07-31  Simon Fraser  <simon.fraser@apple.com>
 
+        compositing/patterns/direct-pattern-compositing tests suffer
+        from colorspace issues that cause image failures on some machines.
+
+        * platform/mac/TestExpectations:
+
+2013-07-31  Simon Fraser  <simon.fraser@apple.com>
+
         media/video-controls-captions-trackmenu.html either crashes,
         fails or passes.
 
