@@ -369,9 +369,9 @@ public:
 
     ConstantUnion* getUnionArrayPointer() const { return unionArrayPointer; }
     
-    int getIConst(int index) const { return unionArrayPointer ? unionArrayPointer[index].getIConst() : 0; }
-    float getFConst(int index) const { return unionArrayPointer ? unionArrayPointer[index].getFConst() : 0.0f; }
-    bool getBConst(int index) const { return unionArrayPointer ? unionArrayPointer[index].getBConst() : false; }
+    int getIConst(size_t index) const { return unionArrayPointer ? unionArrayPointer[index].getIConst() : 0; }
+    float getFConst(size_t index) const { return unionArrayPointer ? unionArrayPointer[index].getFConst() : 0.0f; }
+    bool getBConst(size_t index) const { return unionArrayPointer ? unionArrayPointer[index].getBConst() : false; }
 
     virtual TIntermConstantUnion* getAsConstantUnion()  { return this; }
     virtual void traverse(TIntermTraverser*);
