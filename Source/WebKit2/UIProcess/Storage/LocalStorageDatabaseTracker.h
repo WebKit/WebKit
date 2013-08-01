@@ -59,7 +59,7 @@ public:
 private:
     explicit LocalStorageDatabaseTracker(PassRefPtr<WorkQueue>);
 
-    void setLocalStorageDirectoryInternal(const String&);
+    void setLocalStorageDirectoryInternal(StringImpl*);
 
     String databasePath(const String& filename) const;
     String trackerDatabasePath() const;

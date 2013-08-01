@@ -52,7 +52,10 @@ LocalStorageDatabaseTracker::~LocalStorageDatabaseTracker()
 
 void LocalStorageDatabaseTracker::setLocalStorageDirectory(const String& localStorageDirectory)
 {
-    m_queue->dispatch(bind(&LocalStorageDatabaseTracker::setLocalStorageDirectoryInternal, this, localStorageDirectory.isolatedCopy()));
+    // FIXME: We should come up with a better idiom for safely copying strings across threads.
+    RefPtr<StringImpl> copiedLocalStorageDirectory = localStorageDirectory.impl() ? localStorageDirectory.impl()->isolatedCopy() : nullptr;
+
+    m_queue->dispatch(bind(&LocalStorageDatabaseTracker::setLocalStorageDirectoryInternal, this, copiedLocalStorageDirectory.release()));
 }
 
 String LocalStorageDatabaseTracker::databasePath(SecurityOrigin* securityOrigin) const
@@ -129,7 +132,7 @@ Vector<RefPtr<WebCore::SecurityOrigin>> LocalStorageDatabaseTracker::origins() c
     return origins;
 }
 
-void LocalStorageDatabaseTracker::setLocalStorageDirectoryInternal(const String& localStorageDirectory)
+void LocalStorageDatabaseTracker::setLocalStorageDirectoryInternal(StringImpl* localStorageDirectory)
 {
     if (m_database.isOpen())
         m_database.close();
