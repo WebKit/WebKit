@@ -152,22 +152,22 @@ AXSubrole: (null)
 AXRoleDescription: group
 AXChildren: <array of size 2>
 AXHelp: 
-AXParent: <AXGroup>
+AXParent: <AXGroup: 'test 1'>
 AXSize: NSSize: {729, 18}
-AXTitle: 
+AXTitle: test 1
 AXDescription: 
 AXValue: 
 AXFocused: 0
 AXEnabled: 1
-AXWindow: <AXGroup>
+AXWindow: <AXGroup: 'test 1'>
 AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: <AXGroup>
-AXEndTextMarker: <AXGroup>
+AXStartTextMarker: <AXGroup: 'test 1'>
+AXEndTextMarker: <AXGroup: 'test 1'>
 AXVisited: 0
 AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
-AXTopLevelUIElement: <AXGroup>
+AXTopLevelUIElement: <AXGroup: 'test 1'>
 AXTitleUIElement: (null)
 AXARIABusy: 0
 
@@ -177,22 +177,22 @@ AXSubrole: (null)
 AXRoleDescription: group
 AXChildren: <array of size 2>
 AXHelp: 
-AXParent: <AXGroup>
+AXParent: <AXGroup: 'test 2'>
 AXSize: NSSize: {729, 18}
-AXTitle: 
+AXTitle: test 2
 AXDescription: 
 AXValue: 
 AXFocused: 0
 AXEnabled: 1
-AXWindow: <AXGroup>
+AXWindow: <AXGroup: 'test 2'>
 AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: <AXGroup>
-AXEndTextMarker: <AXGroup>
+AXStartTextMarker: <AXGroup: 'test 2'>
+AXEndTextMarker: <AXGroup: 'test 2'>
 AXVisited: 0
 AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
-AXTopLevelUIElement: <AXGroup>
+AXTopLevelUIElement: <AXGroup: 'test 2'>
 AXTitleUIElement: (null)
 AXARIABusy: 0
 
@@ -204,22 +204,22 @@ AXSubrole: (null)
 AXRoleDescription: group
 AXChildren: <array of size 2>
 AXHelp: 
-AXParent: <AXGroup>
+AXParent: <AXGroup: 'test 1'>
 AXSize: NSSize: {729, 18}
-AXTitle: 
+AXTitle: test 1
 AXDescription: 
 AXValue: 
 AXFocused: 0
 AXEnabled: 1
-AXWindow: <AXGroup>
+AXWindow: <AXGroup: 'test 1'>
 AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: <AXGroup>
-AXEndTextMarker: <AXGroup>
+AXStartTextMarker: <AXGroup: 'test 1'>
+AXEndTextMarker: <AXGroup: 'test 1'>
 AXVisited: 0
 AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
-AXTopLevelUIElement: <AXGroup>
+AXTopLevelUIElement: <AXGroup: 'test 1'>
 AXTitleUIElement: (null)
 AXARIABusy: 0
 
@@ -229,22 +229,22 @@ AXSubrole: (null)
 AXRoleDescription: group
 AXChildren: <array of size 2>
 AXHelp: 
-AXParent: <AXGroup>
+AXParent: <AXGroup: 'test 2'>
 AXSize: NSSize: {729, 18}
-AXTitle: 
+AXTitle: test 2
 AXDescription: 
 AXValue: 
 AXFocused: 0
 AXEnabled: 1
-AXWindow: <AXGroup>
+AXWindow: <AXGroup: 'test 2'>
 AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: <AXGroup>
-AXEndTextMarker: <AXGroup>
+AXStartTextMarker: <AXGroup: 'test 2'>
+AXEndTextMarker: <AXGroup: 'test 2'>
 AXVisited: 0
 AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
-AXTopLevelUIElement: <AXGroup>
+AXTopLevelUIElement: <AXGroup: 'test 2'>
 AXTitleUIElement: (null)
 AXARIABusy: 0
 
