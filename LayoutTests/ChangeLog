@@ -1,3 +1,10 @@
+2013-08-01  Simon Fraser  <simon.fraser@apple.com>
+
+        http/tests/multipart/invalid-image-data-standalone.html needs to skipped, not
+        just marked as failing, otherwise it gets listed as a test that times out.
+
+        * platform/mac/TestExpectations:
+
 2013-08-01  Andrei Parvu  <parvu@adobe.com>
 
         mask-repeat: round bug
