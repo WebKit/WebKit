@@ -1,3 +1,16 @@
+2013-08-01  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION(r145592): AutodrainedPool.h. RunLoopTimer.h, SchedulePair.h are being copied into the wrong location
+        https://bugs.webkit.org/show_bug.cgi?id=112833
+
+        Reviewed by Sam Weinig.
+        
+        AutodrainedPool.h and SchedulePair.h should just be project headers, not
+        private headers, so they get copied into <build dir>/usr/local/include/wtf
+        not <build dir>/usr/local/include
+
+        * WTF.xcodeproj/project.pbxproj:
+
 2013-07-31  Ruth Fong  <ruth_fong@apple.com>
 
         <input type=color> Mac UI behaviour
