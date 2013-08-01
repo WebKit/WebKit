@@ -1133,6 +1133,16 @@
             "jpu@apple.com"
          ]
       },
+      "Jinwoo Song" : {
+         "emails" : [
+            "jinwoo7.song@samsung.com",
+            "fantaros77@gmail.com"
+         ],
+         "expertise" : "The EFLWebKit port",
+         "nicks" : [
+            "jinwoo"
+         ]
+      },
       "Joanmarie Diggs" : {
          "emails" : [
             "jdiggs@igalia.com"
