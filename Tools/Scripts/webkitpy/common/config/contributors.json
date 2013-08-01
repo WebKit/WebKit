@@ -2022,6 +2022,16 @@
             "sky"
          ]
       },
+      "Seokju Kwon" : {
+         "emails" : [
+            "seokju@webkit.org",
+            "seokju.kwon@gmail.com",
+            "seokju.kwon@samsung.com"
+         ],
+         "nicks" : [
+            "seokju"
+         ]
+      },
       "Sergio Villar Senin" : {
          "emails" : [
             "svillar@igalia.com",
