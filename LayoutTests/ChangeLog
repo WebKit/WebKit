@@ -1,3 +1,20 @@
+2013-07-31  Simon Fraser  <simon.fraser@apple.com>
+
+        Merge r152847
+
+    2013-07-18  Zalan Bujtas  <zalan@apple.com>
+    
+            fullscreen/full-screen-iframe-with-max-width-height.html is flaky
+            https://bugs.webkit.org/show_bug.cgi?id=118820
+    
+            Reviewed by Andreas Kling.
+    
+            Don't start the test until after the iframe has finished loading.
+    
+            * fullscreen/full-screen-iframe-with-max-width-height-expected.txt:
+            * fullscreen/full-screen-iframe-with-max-width-height.html:
+            * platform/mac/TestExpectations:
+
 2013-07-31  Lucas Forschler  <lforschler@apple.com>
 
         Merge r153511
