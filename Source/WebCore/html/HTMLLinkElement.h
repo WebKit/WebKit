@@ -102,8 +102,8 @@ private:
     virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
 
     virtual void finishParsingChildren();
-    
-    enum PendingSheetType { None, NonBlocking, Blocking };
+
+    enum PendingSheetType { Unknown, ActiveSheet, InactiveSheet };
     void addPendingSheet(PendingSheetType);
 
     enum RemovePendingSheetNotificationType {

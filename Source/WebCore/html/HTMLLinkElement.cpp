@@ -71,7 +71,7 @@ inline HTMLLinkElement::HTMLLinkElement(const QualifiedName& tagName, Document* 
     , m_isInShadowTree(false)
     , m_firedLoad(false)
     , m_loadedSheet(false)
-    , m_pendingSheetType(None)
+    , m_pendingSheetType(Unknown)
 {
     ASSERT(hasTagName(linkTag));
 }
@@ -109,7 +109,7 @@ void HTMLLinkElement::setDisabledState(bool disabled)
 
             // Check #2: An alternate sheet becomes enabled while it is still loading.
             if (m_relAttribute.m_isAlternate && m_disabledState == EnabledViaScript)
-                addPendingSheet(Blocking);
+                addPendingSheet(ActiveSheet);
 
             // Check #3: A main sheet becomes enabled while it was still loading and
             // after it was disabled via script. It takes really terrible code to make this
@@ -117,7 +117,7 @@ void HTMLLinkElement::setDisabledState(bool disabled)
             // virtualplastic.net, which manages to do about 12 enable/disables on only 3
             // sheets. :)
             if (!m_relAttribute.m_isAlternate && m_disabledState == EnabledViaScript && oldDisabledState == Disabled)
-                addPendingSheet(Blocking);
+                addPendingSheet(ActiveSheet);
 
             // If the sheet is already loading just bail.
             return;
@@ -212,11 +212,11 @@ void HTMLLinkElement::process()
 
         // Don't hold up render tree construction and script execution on stylesheets
         // that are not needed for the rendering at the moment.
-        bool blocking = mediaQueryMatches && !isAlternate();
-        addPendingSheet(blocking ? Blocking : NonBlocking);
+        bool isActive = mediaQueryMatches && !isAlternate();
+        addPendingSheet(isActive ? ActiveSheet : InactiveSheet);
 
         // Load stylesheets that are not needed for the rendering immediately with low priority.
-        ResourceLoadPriority priority = blocking ? ResourceLoadPriorityUnresolved : ResourceLoadPriorityVeryLow;
+        ResourceLoadPriority priority = isActive ? ResourceLoadPriorityUnresolved : ResourceLoadPriorityVeryLow;
         CachedResourceRequest request(ResourceRequest(document()->completeURL(url)), charset, priority);
         request.setInitiator(this);
         m_cachedSheet = document()->cachedResourceLoader()->requestCSSStyleSheet(request);
@@ -383,9 +383,9 @@ void HTMLLinkElement::notifyLoadedSheetAndAllCriticalSubresources(bool errorOccu
 
 void HTMLLinkElement::startLoadingDynamicSheet()
 {
-    // We don't support multiple blocking sheets.
-    ASSERT(m_pendingSheetType < Blocking);
-    addPendingSheet(Blocking);
+    // We don't support multiple active sheets.
+    ASSERT(m_pendingSheetType < ActiveSheet);
+    addPendingSheet(ActiveSheet);
 }
 
 bool HTMLLinkElement::isURLAttribute(const Attribute& attribute) const
@@ -448,7 +448,7 @@ void HTMLLinkElement::addPendingSheet(PendingSheetType type)
         return;
     m_pendingSheetType = type;
 
-    if (m_pendingSheetType == NonBlocking)
+    if (m_pendingSheetType == InactiveSheet)
         return;
     document()->styleSheetCollection()->addPendingSheet();
 }
@@ -456,13 +456,14 @@ void HTMLLinkElement::addPendingSheet(PendingSheetType type)
 void HTMLLinkElement::removePendingSheet(RemovePendingSheetNotificationType notification)
 {
     PendingSheetType type = m_pendingSheetType;
-    m_pendingSheetType = None;
+    m_pendingSheetType = Unknown;
 
-    if (type == None)
+    if (type == Unknown)
         return;
-    if (type == NonBlocking) {
-        // Document::removePendingSheet() triggers the style selector recalc for blocking sheets.
-        document()->styleResolverChanged(RecalcStyleImmediately);
+
+    if (type == InactiveSheet) {
+        // Document just needs to know about the sheet for exposure through document.styleSheets
+        document()->styleSheetCollection()->updateActiveStyleSheets(DocumentStyleSheetCollection::OptimizedUpdate);
         return;
     }
 
