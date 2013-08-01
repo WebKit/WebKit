@@ -247,6 +247,12 @@ public:
     // Various scale factors.
     double currentScale() const { return m_transformationMatrix->m11(); }
     double zoomToFitScale() const;
+
+    // When layoutSize is rounded from FloatSize to IntSize, it happens that contents
+    // can not be zoomed to fit the visible viewport both horizontally and vertically
+    // due to rounding error only and causes unexpected scroll.
+    bool hasFloatLayoutSizeRoundingError() const;
+
     bool respectViewport() const;
     double initialScale() const;
     void setInitialScale(double scale) { m_initialScale = scale; }

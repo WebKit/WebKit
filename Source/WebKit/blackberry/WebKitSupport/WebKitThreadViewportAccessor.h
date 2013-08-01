@@ -36,6 +36,8 @@ public:
 
     virtual double scale() const;
 
+    virtual bool cannotScrollIfHasFloatLayoutSizeRoundingError() const;
+
 private:
     Platform::ViewportAccessor* m_originalAccessor;
     WebPagePrivate* m_webPagePrivate;

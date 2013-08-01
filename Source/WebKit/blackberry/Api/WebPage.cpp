@@ -1695,6 +1695,17 @@ double WebPagePrivate::zoomToFitScale() const
     return std::min(zoomToFitScale, maximumImageDocumentZoomToFitScale);
 }
 
+bool WebPagePrivate::hasFloatLayoutSizeRoundingError() const
+{
+    int contentsWidth = contentsSize().width();
+    int contentsHeight = contentsSize().height();
+    float devicePixelRatio = m_webSettings->devicePixelRatio();
+    float idealContentsWidth = static_cast<float>(transformedActualVisibleSize().width()) / devicePixelRatio;
+    float idealContentsHeight = static_cast<float>(transformedActualVisibleSize().height()) / devicePixelRatio;
+    return devicePixelRatio > 1 && contentsWidth < idealContentsWidth && (contentsWidth + 1) > idealContentsWidth
+        && contentsHeight < idealContentsHeight && (contentsHeight + 1) > idealContentsHeight;
+}
+
 bool WebPagePrivate::respectViewport() const
 {
     return m_forceRespectViewportArguments || contentsSize().width() <= m_virtualViewportSize.width() + 1;

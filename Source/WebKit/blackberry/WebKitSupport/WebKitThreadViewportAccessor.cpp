@@ -88,5 +88,15 @@ double WebKitThreadViewportAccessor::scale() const
     return m_webPagePrivate->currentScale();
 }
 
+bool WebKitThreadViewportAccessor::cannotScrollIfHasFloatLayoutSizeRoundingError() const
+{
+    ASSERT(Platform::webKitThreadMessageClient()->isCurrentThread());
+
+    // floatLayoutSizeRoundingError can cause inaccurate pixelContentsSize and result in
+    // unexpected scroll only when the current scale is zoomToFitScale. We have to exclude this case.
+    return m_webPagePrivate->hasFloatLayoutSizeRoundingError()
+        && fabsf(m_webPagePrivate->currentScale() - m_webPagePrivate->zoomToFitScale()) < FLT_EPSILON;
+}
+
 } // namespace WebKit
 } // namespace BlackBerry

@@ -1,3 +1,32 @@
+2013-07-31  Jacky Jiang  <zhajiang@blackberry.com>
+
+        [BlackBerry] Page scrolls when width equals device width and initial scale is greater than 0.92
+        https://bugs.webkit.org/show_bug.cgi?id=119365
+
+        Reviewed by Rob Buis.
+        Internally reviewed by Gen Mak and Konrad Piascik.
+
+        JIRA 445423
+        layoutSize (deviceScreenSize/devicePixelRatio) is FloatSize as devicePixelRatio
+        is float. We have to round that to IntSize as ScrollView needs IntSize
+        fixedLayoutSize. Based on conversion result, zoomToFitWidthScale will
+        hardly equal to zoomToFitHeightScale in this case. And unfortunately
+        zoomToFitHeightScale is a little bit greater than zoomToFitWidthScale
+        in this case so that we have to pick up zoomToFitHeightScale which makes
+        the page scollable horizontally.
+        The way to fix that is to define an accurate contentsSize area which
+        potentially has float layoutSize rounding error and can cause upexpected
+        scroll based on the ideal contentsSize area first, and then don't scroll
+        only if the scale is zoomToFitScale as "contentsSize > visibleViewportSize"
+        still works well if the scale is larger than zoomToFitScale.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::hasFloatLayoutSizeRoundingError):
+        * Api/WebPage_p.h:
+        * WebKitSupport/WebKitThreadViewportAccessor.cpp:
+        (BlackBerry::WebKit::WebKitThreadViewportAccessor::cannotScrollIfHasFloatLayoutSizeRoundingError):
+        * WebKitSupport/WebKitThreadViewportAccessor.h:
+
 2013-07-27  Jacky Jiang  <zhajiang@blackberry.com>
 
         Replace all uses of GraphicsLayer::create function with the one that takes a GraphicsLayerFactory
