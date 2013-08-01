@@ -124,9 +124,10 @@
     <dependencies>
       <dep package="glib"/>
     </dependencies>
-    <branch module="/pub/GNOME/sources/gdk-pixbuf/2.27/gdk-pixbuf-2.27.3.tar.xz" version="2.27.3"
+    <branch module="/pub/GNOME/sources/gdk-pixbuf/2.26/gdk-pixbuf-2.26.5.tar.xz" version="2.26.5"
             repo="ftp.gnome.org"
-            hash="sha256:843d55b8e0e27285a3e5267555d2827a206e93faf2a44c0fa322622177216fb2"/>
+            hash="sha256:77696fd163bca95a130a1883dbd78d0ae4d782de2fc85a9a38556d13681f5c84"
+            md5sum="339329e6d619ee3e1cb93979111b04c0"/>
   </autotools>
 
   <autotools id="librsvg" autogen-sh="configure"
@@ -148,9 +149,9 @@
       <dep package="at-spi2-atk"/>
       <dep package="gdk-pixbuf"/>
     </dependencies>
-    <branch module="/pub/GNOME/sources/gtk+/3.8/gtk+-3.8.2.tar.xz" version="3.8.2"
+    <branch module="/pub/GNOME/sources/gtk+/3.6/gtk+-3.6.0.tar.xz" version="3.6.0"
             repo="ftp.gnome.org"
-            hash="sha256:1ca80c9c15a1df95d74cefb8c2afe4682ba272a4b489106f04877be2a7aff297"/>
+            hash="sha256:e13f45225a795ebe9e4047486fa57b3232e6a21539983775db6cd4ae9046b049"/>
   </autotools>
 
   <autotools id="glib"
