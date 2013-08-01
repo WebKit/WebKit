@@ -2852,7 +2852,7 @@ void SpeculativeJIT::compile(Node* node)
             // Two really lame checks.
             speculationCheck(
                 Uncountable, JSValueSource(), 0,
-                m_jit.branchPtr(
+                m_jit.branch32(
                     MacroAssembler::AboveOrEqual, propertyReg,
                     MacroAssembler::Address(baseReg, OBJECT_OFFSETOF(Arguments, m_numArguments))));
             speculationCheck(
