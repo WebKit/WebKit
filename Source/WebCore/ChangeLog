@@ -1,3 +1,18 @@
+2013-08-01  Andreas Kling  <akling@apple.com>
+
+        Layout should force a StyleResolver rebuild if there isn't one at all.
+        <http://webkit.org/b/119378>
+
+        Reviewed by Antti Koivisto.
+
+        We can't tell if viewport-dependent media queries have been invalidated at layout,
+        unless we have a StyleResolver to ask about this.
+        In case there isn't one, take the same path as we would with an invalidated query
+        instead of relying on ensureStyleResolver() to build it.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout):
+
 2013-08-01  Jacky Jiang  <zhajiang@blackberry.com>
 
         [BlackBerry] Crash at absoluteClippedOverflowRect() in PluginView::calculateClipRect()
