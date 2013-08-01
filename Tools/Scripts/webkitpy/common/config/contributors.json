@@ -71,6 +71,16 @@
             "ajwong@chromium.org"
          ]
       },
+      "Alberto Garcia" : {
+         "emails" : [
+            "berto@igalia.com",
+            "agarcia@igalia.com"
+         ],
+         "nicks" : [
+            "bertogg",
+            "berto"
+         ]
+      },
       "Alec Flett" : {
          "emails" : [
             "alecflett@chromium.org",
