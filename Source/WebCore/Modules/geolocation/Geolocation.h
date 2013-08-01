@@ -54,7 +54,6 @@ public:
     static PassRefPtr<Geolocation> create(ScriptExecutionContext*);
     ~Geolocation();
 
-    virtual void stop() OVERRIDE;
     Document* document() const;
     Frame* frame() const;
 
@@ -69,11 +68,14 @@ public:
     void setError(GeolocationError*);
 
 private:
+    explicit Geolocation(ScriptExecutionContext*);
+
     Geoposition* lastPosition();
 
-    bool isDenied() const { return m_allowGeolocation == No; }
+    // ActiveDOMObject
+    virtual void stop() OVERRIDE;
 
-    explicit Geolocation(ScriptExecutionContext*);
+    bool isDenied() const { return m_allowGeolocation == No; }
 
     Page* page() const;
 

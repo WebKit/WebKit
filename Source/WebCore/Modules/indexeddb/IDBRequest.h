@@ -96,7 +96,6 @@ public:
 
     // ActiveDOMObject
     virtual bool hasPendingActivity() const OVERRIDE;
-    virtual void stop() OVERRIDE;
 
     // EventTarget
     virtual const AtomicString& interfaceName() const;
@@ -132,6 +131,9 @@ protected:
     bool m_requestAborted; // May be aborted by transaction then receive async onsuccess; ignore vs. assert.
 
 private:
+    // ActiveDOMObject
+    virtual void stop() OVERRIDE;
+
     // EventTarget
     virtual void refEventTarget() { ref(); }
     virtual void derefEventTarget() { deref(); }

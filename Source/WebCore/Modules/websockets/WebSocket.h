@@ -100,13 +100,6 @@ public:
     virtual const AtomicString& interfaceName() const OVERRIDE;
     virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE;
 
-    // ActiveDOMObject functions.
-    virtual void contextDestroyed() OVERRIDE;
-    virtual bool canSuspend() const OVERRIDE;
-    virtual void suspend(ReasonForSuspension) OVERRIDE;
-    virtual void resume() OVERRIDE;
-    virtual void stop() OVERRIDE;
-
     using RefCounted<WebSocket>::ref;
     using RefCounted<WebSocket>::deref;
 
@@ -121,6 +114,13 @@ public:
 
 private:
     explicit WebSocket(ScriptExecutionContext*);
+
+    // ActiveDOMObject functions.
+    virtual void contextDestroyed() OVERRIDE;
+    virtual bool canSuspend() const OVERRIDE;
+    virtual void suspend(ReasonForSuspension) OVERRIDE;
+    virtual void resume() OVERRIDE;
+    virtual void stop() OVERRIDE;
 
     virtual void refEventTarget() { ref(); }
     virtual void derefEventTarget() { deref(); }

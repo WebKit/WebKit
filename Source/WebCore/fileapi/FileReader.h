@@ -76,10 +76,6 @@ public:
     PassRefPtr<ArrayBuffer> arrayBufferResult() const;
     String stringResult();
 
-    // ActiveDOMObject
-    virtual bool canSuspend() const;
-    virtual void stop();
-
     // EventTarget
     virtual const AtomicString& interfaceName() const;
     virtual ScriptExecutionContext* scriptExecutionContext() const { return ActiveDOMObject::scriptExecutionContext(); }
@@ -102,6 +98,10 @@ public:
 
 private:
     FileReader(ScriptExecutionContext*);
+
+    // ActiveDOMObject
+    virtual bool canSuspend() const OVERRIDE;
+    virtual void stop() OVERRIDE;
 
     // EventTarget
     virtual void refEventTarget() { ref(); }

@@ -321,11 +321,7 @@ public:
     
     unsigned getMaxVertexAttribs() const { return m_maxVertexAttribs; }
 
-    // ActiveDOMObject notifications
-    virtual bool hasPendingActivity() const;
-    virtual void stop();
-
-  private:
+private:
     friend class EXTDrawBuffers;
     friend class WebGLFramebuffer;
     friend class WebGLObject;
@@ -340,6 +336,10 @@ public:
     WebGLRenderingContext(HTMLCanvasElement*, PassRefPtr<GraphicsContext3D>, GraphicsContext3D::Attributes);
     void initializeNewContext();
     void setupFlags();
+
+    // ActiveDOMObject
+    virtual bool hasPendingActivity() const OVERRIDE;
+    virtual void stop() OVERRIDE;
 
     void addSharedObject(WebGLSharedObject*);
     void addContextObject(WebGLContextObject*);

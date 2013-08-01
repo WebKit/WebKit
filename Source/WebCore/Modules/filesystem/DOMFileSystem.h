@@ -55,9 +55,7 @@ public:
     PassRefPtr<DirectoryEntry> root();
 
     // ActiveDOMObject methods.
-    virtual void stop();
-    virtual bool hasPendingActivity() const;
-    virtual void contextDestroyed();
+    virtual bool hasPendingActivity() const OVERRIDE;
 
     void createWriter(const FileEntry*, PassRefPtr<FileWriterCallback>, PassRefPtr<ErrorCallback>);
     void createFile(const FileEntry*, PassRefPtr<FileCallback>, PassRefPtr<ErrorCallback>);
@@ -75,6 +73,10 @@ public:
 
 private:
     DOMFileSystem(ScriptExecutionContext*, const String& name, FileSystemType, const KURL& rootURL, PassOwnPtr<AsyncFileSystem>);
+
+    // ActiveDOMObject methods.
+    virtual void stop() OVERRIDE;
+    virtual void contextDestroyed() OVERRIDE;
 
     // A helper template to schedule a callback task.
     template <typename CB, typename CBArg>

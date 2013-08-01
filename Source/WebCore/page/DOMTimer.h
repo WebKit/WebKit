@@ -43,9 +43,6 @@ namespace WebCore {
         static int install(ScriptExecutionContext*, PassOwnPtr<ScheduledAction>, int timeout, bool singleShot);
         static void removeById(ScriptExecutionContext*, int timeoutId);
 
-        // ActiveDOMObject
-        virtual void contextDestroyed() OVERRIDE;
-
         // Adjust to a change in the ScriptExecutionContext's minimum timer interval.
         // This allows the minimum allowable interval time to be changed in response
         // to events like moving a tab to the background.
@@ -54,6 +51,9 @@ namespace WebCore {
     private:
         DOMTimer(ScriptExecutionContext*, PassOwnPtr<ScheduledAction>, int interval, bool singleShot);
         virtual void fired() OVERRIDE;
+
+        // ActiveDOMObject
+        virtual void contextDestroyed() OVERRIDE;
 
         // SuspendableTimer
         virtual void didStop() OVERRIDE;

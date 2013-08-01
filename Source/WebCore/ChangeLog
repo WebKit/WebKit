@@ -1,3 +1,33 @@
+2013-07-31  Alexey Proskuryakov  <ap@apple.com>
+
+        Make ActiveDOMObject overrides private
+        https://bugs.webkit.org/show_bug.cgi?id=119352
+
+        Reviewed by Sam Weinig.
+
+        There is no need to call these through derived classes. And it's quite harmful for
+        anyone except for ScriptExecutionContext to call suspend/resume in particular -
+        ScriptExecutionContext won't know, and it will try to manage the state on its own.
+
+        * Modules/filesystem/DOMFileSystem.h:
+        * Modules/filesystem/FileWriter.h:
+        * Modules/geolocation/Geolocation.h:
+        * Modules/indexeddb/IDBDatabase.h:
+        * Modules/indexeddb/IDBRequest.h:
+        * Modules/indexeddb/IDBTransaction.h:
+        * Modules/mediasource/MediaSource.h:
+        * Modules/notifications/Notification.h:
+        * Modules/notifications/NotificationCenter.h:
+        * Modules/websockets/WebSocket.h:
+        * fileapi/FileReader.h:
+        * html/HTMLMediaElement.h:
+        * html/canvas/WebGLRenderingContext.h:
+        * page/DOMTimer.h:
+        * page/EventSource.h:
+        * page/SuspendableTimer.h:
+        * workers/AbstractWorker.h:
+        * xml/XMLHttpRequest.h:
+
 2013-07-31  Tim Horton  <timothy_horton@apple.com>
 
         Remove didFinishLoad order quirk

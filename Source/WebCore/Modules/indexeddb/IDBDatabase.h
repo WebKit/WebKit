@@ -82,7 +82,6 @@ public:
 
     // ActiveDOMObject
     virtual bool hasPendingActivity() const OVERRIDE;
-    virtual void stop() OVERRIDE;
 
     // EventTarget
     virtual const AtomicString& interfaceName() const;
@@ -111,6 +110,9 @@ public:
 
 private:
     IDBDatabase(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendInterface>, PassRefPtr<IDBDatabaseCallbacks>);
+
+    // ActiveDOMObject
+    virtual void stop() OVERRIDE;
 
     // EventTarget
     virtual void refEventTarget() { ref(); }

@@ -114,8 +114,6 @@ public:
 
     // ActiveDOMObject
     virtual bool hasPendingActivity() const OVERRIDE;
-    virtual bool canSuspend() const OVERRIDE;
-    virtual void stop() OVERRIDE;
 
     using RefCounted<IDBTransaction>::ref;
     using RefCounted<IDBTransaction>::deref;
@@ -128,6 +126,10 @@ private:
 
     void registerOpenCursor(IDBCursor*);
     void unregisterOpenCursor(IDBCursor*);
+
+    // ActiveDOMObject
+    virtual bool canSuspend() const OVERRIDE;
+    virtual void stop() OVERRIDE;
 
     // EventTarget
     virtual void refEventTarget() { ref(); }

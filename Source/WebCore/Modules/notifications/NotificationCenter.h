@@ -71,10 +71,11 @@ public:
     void requestPermission(PassRefPtr<VoidCallback> = 0);
 #endif
 
-    virtual void stop() OVERRIDE;
-
 private:
     NotificationCenter(ScriptExecutionContext*, NotificationClient*);
+
+    // ActiveDOMObject
+    virtual void stop() OVERRIDE;
 
     class NotificationRequestCallback : public RefCounted<NotificationRequestCallback> {
     public:

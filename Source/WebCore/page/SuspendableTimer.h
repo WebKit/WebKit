@@ -37,13 +37,6 @@ public:
     explicit SuspendableTimer(ScriptExecutionContext*);
     virtual ~SuspendableTimer();
 
-    // ActiveDOMObject
-    virtual bool hasPendingActivity() const FINAL OVERRIDE;
-    virtual void stop() FINAL OVERRIDE;
-    virtual bool canSuspend() const FINAL OVERRIDE;
-    virtual void suspend(ReasonForSuspension) FINAL OVERRIDE;
-    virtual void resume() FINAL OVERRIDE;
-
     // A hook for derived classes to perform cleanup.
     virtual void didStop();
 
@@ -63,6 +56,13 @@ public:
 
 private:
     virtual void fired() = 0;
+
+    // ActiveDOMObject
+    virtual bool hasPendingActivity() const FINAL OVERRIDE;
+    virtual void stop() FINAL OVERRIDE;
+    virtual bool canSuspend() const FINAL OVERRIDE;
+    virtual void suspend(ReasonForSuspension) FINAL OVERRIDE;
+    virtual void resume() FINAL OVERRIDE;
 
     bool m_suspended;
 

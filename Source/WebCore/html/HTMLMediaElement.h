@@ -444,10 +444,10 @@ private:
     virtual void willStopBeingFullscreenElement();
 
     // ActiveDOMObject functions.
-    virtual bool canSuspend() const;
-    virtual void suspend(ReasonForSuspension);
-    virtual void resume();
-    virtual void stop();
+    virtual bool canSuspend() const OVERRIDE;
+    virtual void suspend(ReasonForSuspension) OVERRIDE;
+    virtual void resume() OVERRIDE;
+    virtual void stop() OVERRIDE;
     
     virtual void mediaVolumeDidChange();
 

@@ -69,14 +69,9 @@ public:
         ResponseTypeArrayBuffer
     };
 
-    virtual void contextDestroyed();
 #if ENABLE(XHR_TIMEOUT)
     virtual void didTimeout();
 #endif
-    virtual bool canSuspend() const;
-    virtual void suspend(ReasonForSuspension);
-    virtual void resume();
-    virtual void stop();
 
     virtual const AtomicString& interfaceName() const;
     virtual ScriptExecutionContext* scriptExecutionContext() const;
@@ -150,6 +145,13 @@ public:
 
 private:
     XMLHttpRequest(ScriptExecutionContext*);
+
+    // ActiveDOMObject
+    virtual void contextDestroyed() OVERRIDE;
+    virtual bool canSuspend() const OVERRIDE;
+    virtual void suspend(ReasonForSuspension) OVERRIDE;
+    virtual void resume() OVERRIDE;
+    virtual void stop() OVERRIDE;
 
     virtual void refEventTarget() { ref(); }
     virtual void derefEventTarget() { deref(); }

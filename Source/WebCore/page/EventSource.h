@@ -78,8 +78,6 @@ public:
     virtual const AtomicString& interfaceName() const;
     virtual ScriptExecutionContext* scriptExecutionContext() const;
 
-    virtual void stop();
-
 private:
     EventSource(ScriptExecutionContext*, const KURL&, const Dictionary&);
 
@@ -94,6 +92,8 @@ private:
     virtual void didFail(const ResourceError&);
     virtual void didFailAccessControlCheck(const ResourceError&);
     virtual void didFailRedirectCheck();
+
+    virtual void stop() OVERRIDE;
 
     void connect();
     void networkRequestEnded();
