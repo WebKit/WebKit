@@ -1,3 +1,36 @@
+2013-08-01  Andrei Parvu  <parvu@adobe.com>
+
+        mask-repeat: round bug
+
+        Added tests for the -webkit-mask-repeat: round property.
+        https://bugs.webkit.org/show_bug.cgi?id=119080
+
+        Reviewed by Dirk Schulze.
+
+        * css3/masking/mask-repeat-round-auto1-expected.html: Added.
+        * css3/masking/mask-repeat-round-auto1.html: Added.
+        * css3/masking/mask-repeat-round-auto2-expected.html: Added.
+        * css3/masking/mask-repeat-round-auto2.html: Added.
+        * css3/masking/mask-repeat-round-border-expected.html: Added.
+        * css3/masking/mask-repeat-round-border.html: Added.
+        * css3/masking/mask-repeat-round-content-expected.html: Added.
+        * css3/masking/mask-repeat-round-content.html: Added.
+        * css3/masking/mask-repeat-round-padding-expected.html: Added.
+        * css3/masking/mask-repeat-round-padding.html: Added.
+        * css3/masking/resources/circle.png: Added.
+        * css3/background/background-repeat-round-auto1-expected.html: Added.
+        * css3/background/background-repeat-round-auto1.html: Added.
+        * css3/background/background-repeat-round-auto2-expected.html: Added.
+        * css3/background/background-repeat-round-auto2.html: Added.
+        * css3/background/background-repeat-round-border-expected.html: Added.
+        * css3/background/background-repeat-round-border.html: Added.
+        * css3/background/background-repeat-round-content-expected.html: Added.
+        * css3/background/background-repeat-round-content.html: Added.
+        * css3/background/background-repeat-round-padding-expected.html: Added.
+        * css3/background/background-repeat-round-padding.html: Added.
+        * css3/background/resources/circle.png: Added.
+
+
 2013-08-01  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
 
         [Qt] Unreviewed expected pixel test result update after r153522.
