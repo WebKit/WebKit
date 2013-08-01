@@ -1,3 +1,19 @@
+2013-08-01  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r153553
+
+    2013-07-31  Ryosuke Niwa  <rniwa@webkit.org>
+
+            Reuse of XMLHttpRequests causes character corruption in response text
+            https://bugs.webkit.org/show_bug.cgi?id=119358
+
+            Reviewed by Anders Carlsson.
+
+            * http/tests/xmlhttprequest/reopen-encoding-expected.txt: Added.
+            * http/tests/xmlhttprequest/reopen-encoding.html: Added.
+            * http/tests/xmlhttprequest/resources/get-utf-8.cgi: Added.
+            * http/tests/xmlhttprequest/resources/get-windows-1251.cgi: Added.
+
 2013-08-01  Beth Dakin  <bdakin@apple.com>
 
         <rdar://problem/14616729> REGRESSION (r144350): Overflow bounding boxes are way 
