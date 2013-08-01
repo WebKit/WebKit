@@ -1,3 +1,10 @@
+2013-08-01  Simon Fraser  <simon.fraser@apple.com>
+
+        Mark some ref tests that sometimes file becaues of colorspace
+        issues as both Pass and ImageOnlyFailure.
+
+        * platform/mac/TestExpectations:
+
 2013-08-01  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION (r153448) video-controls-captions-trackmenu.html is failing
