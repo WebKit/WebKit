@@ -30,6 +30,7 @@
 #define AudioArray_h
 
 #include <string.h>
+#include <wtf/CheckedArithmetic.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/Vector.h>
 
@@ -51,14 +52,9 @@ public:
 
     // It's OK to call allocate() multiple times, but data will *not* be copied from an initial allocation
     // if re-allocated. Allocations are zero-initialized.
-    void allocate(size_t n)
+    void allocate(Checked<size_t> n)
     {
-        // Although n is a size_t, its true limit is max unsigned because we use unsigned in zeroRange()
-        // and copyToRange(). Also check for integer overflow.
-        if (n > std::numeric_limits<unsigned>::max() / sizeof(T))
-            CRASH();
-      
-        unsigned initialSize = sizeof(T) * n;
+        Checked<unsigned> initialSize = sizeof(T) * n;
 
 #if USE(WEBAUDIO_FFMPEG) || USE(WEBAUDIO_OPENMAX_DL_FFT)
         const size_t alignment = 32;
@@ -76,11 +72,7 @@ public:
             // then we'll have to reallocate and from then on allocate extra.
             static size_t extraAllocationBytes = 0;
 
-            // Again, check for integer overflow.
-            if (initialSize + extraAllocationBytes < initialSize)
-                CRASH();
-
-            T* allocation = static_cast<T*>(fastMalloc(initialSize + extraAllocationBytes));
+            T* allocation = static_cast<T*>(fastMalloc((initialSize + extraAllocationBytes).unsafeGet()));
             if (!allocation)
                 CRASH();
             T* alignedData = alignedAddress(allocation, alignment);
@@ -88,7 +80,7 @@ public:
             if (alignedData == allocation || extraAllocationBytes == alignment) {
                 m_allocation = allocation;
                 m_alignedData = alignedData;
-                m_size = n;
+                m_size = n.unsafeGet();
                 isAllocationGood = true;
                 zero();
             } else {

@@ -1,5 +1,22 @@
 2013-07-31  Kwang Yul Seo  <skyul@company100.net>
 
+        Replace CRASH() on overflow with Checked<>
+        https://bugs.webkit.org/show_bug.cgi?id=119327
+
+        Reviewed by Oliver Hunt.
+
+        Use a checked type that allows us to automate bound checks. We use a
+        non-recording Checked<> to keep the behavior.
+
+        No behavior change, no new tests needed.
+
+        * dom/Text.cpp:
+        (WebCore::Text::wholeText):
+        * platform/audio/AudioArray.h:
+        (WebCore::AudioArray::allocate):
+
+2013-07-31  Kwang Yul Seo  <skyul@company100.net>
+
         Use emptyString instead of String("")
         https://bugs.webkit.org/show_bug.cgi?id=119335
 

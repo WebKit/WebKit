@@ -37,6 +37,7 @@
 
 #include "StyleInheritedData.h"
 #include "StyleResolver.h"
+#include <wtf/CheckedArithmetic.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -126,25 +127,23 @@ String Text::wholeText() const
     const Text* endText = latestLogicallyAdjacentTextNode(this);
 
     Node* onePastEndText = endText->nextSibling();
-    unsigned resultLength = 0;
+    Checked<unsigned> resultLength = 0;
     for (const Node* n = startText; n != onePastEndText; n = n->nextSibling()) {
         if (!n->isTextNode())
             continue;
         const Text* t = static_cast<const Text*>(n);
         const String& data = t->data();
-        if (std::numeric_limits<unsigned>::max() - data.length() < resultLength)
-            CRASH();
         resultLength += data.length();
     }
     StringBuilder result;
-    result.reserveCapacity(resultLength);
+    result.reserveCapacity(resultLength.unsafeGet());
     for (const Node* n = startText; n != onePastEndText; n = n->nextSibling()) {
         if (!n->isTextNode())
             continue;
         const Text* t = static_cast<const Text*>(n);
         result.append(t->data());
     }
-    ASSERT(result.length() == resultLength);
+    ASSERT(result.length() == resultLength.unsafeGet());
 
     return result.toString();
 }
