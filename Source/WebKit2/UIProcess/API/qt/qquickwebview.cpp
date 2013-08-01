@@ -364,6 +364,8 @@ void QQuickWebViewPrivate::initialize(WKContextRef contextRef, WKPageGroupRef pa
         loadClient.didChangeProgress = didChangeProgress;
         loadClient.didFinishProgress = didFinishProgress;
         loadClient.didChangeBackForwardList = didChangeBackForwardList;
+        loadClient.processDidBecomeUnresponsive = processDidBecomeUnresponsive;
+        loadClient.processDidBecomeResponsive = processDidBecomeResponsive;
         WKPageSetPageLoaderClient(webPage.get(), &loadClient);
     }
 
@@ -598,10 +600,14 @@ void QQuickWebViewPrivate::processDidCrash()
         loadProgressDidChange(100);
         emit q->loadingChanged(&loadRequest);
     }
+
+    emit q->experimental()->processDidCrash();
 }
 
 void QQuickWebViewPrivate::didRelaunchProcess()
 {
+    Q_Q(QQuickWebView);
+
     qWarning("WARNING: The web process has been successfully restarted.");
 
     if (DrawingAreaProxy *drawingArea = webPageProxy->drawingArea()) {
@@ -611,6 +617,22 @@ void QQuickWebViewPrivate::didRelaunchProcess()
         updateUserScripts();
         updateSchemeDelegates();
     }
+
+    emit q->experimental()->didRelaunchProcess();
+}
+
+void QQuickWebViewPrivate::processDidBecomeUnresponsive(WKPageRef, const void* clientInfo)
+{
+    QQuickWebView* q = toQQuickWebViewPrivate(clientInfo)->q_ptr;
+
+    emit q->experimental()->processDidBecomeUnresponsive();
+}
+
+void QQuickWebViewPrivate::processDidBecomeResponsive(WKPageRef, const void* clientInfo)
+{
+    QQuickWebView* q = toQQuickWebViewPrivate(clientInfo)->q_ptr;
+
+    emit q->experimental()->processDidBecomeResponsive();
 }
 
 PassOwnPtr<DrawingAreaProxy> QQuickWebViewPrivate::createDrawingAreaProxy()

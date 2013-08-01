@@ -174,6 +174,8 @@ protected:
     static void didChangeProgress(WKPageRef, const void* clientInfo);
     static void didFinishProgress(WKPageRef, const void* clientInfo);
     static void didChangeBackForwardList(WKPageRef, WKBackForwardListItemRef, WKArrayRef, const void *clientInfo);
+    static void processDidBecomeUnresponsive(WKPageRef, const void* clientInfo);
+    static void processDidBecomeResponsive(WKPageRef, const void* clientInfo);
 
     QQuickWebViewPrivate(QQuickWebView* viewport);
     RefPtr<WebKit::WebPageProxy> webPageProxy;

@@ -1,3 +1,22 @@
+2013-08-01  Milian Wolff  <milian.wolff@kdab.com>
+
+        [Qt] Enable QML handling of crashed/unresponsive QtWebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=108474
+
+        Forward the processDidCrash, didRelaunchProcess, processDidBecomeUnresponsive
+        and processDidBecomeResponsive signals to QML's WebView.experimental.
+
+        Reviewed by Jocelyn Turcotte.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::processDidCrash):
+        (QQuickWebViewPrivate::didRelaunchProcess):
+        (QQuickWebViewPrivate::processDidBecomeUnresponsive):
+        (QQuickWebViewPrivate::processDidBecomeResponsive):
+        * UIProcess/API/qt/qquickwebview_p.h:
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        (QQuickWebViewPrivate):
+
 2013-07-31  Kwang Yul Seo  <skyul@company100.net>
 
         Use emptyString instead of String("")

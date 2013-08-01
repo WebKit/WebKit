@@ -389,6 +389,11 @@ Q_SIGNALS:
     void remoteInspectorUrlChanged();
     void textFound(int matchCount);
 
+    void processDidCrash();
+    void didRelaunchProcess();
+    void processDidBecomeUnresponsive();
+    void processDidBecomeResponsive();
+
 private:
     QQuickWebViewExperimental(QQuickWebView* webView, QQuickWebViewPrivate* webViewPrivate);
     QQuickWebView* q_ptr;
