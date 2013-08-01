@@ -27,23 +27,14 @@
 #include "Frame.h"
 #include "FrameWin.h"
 
-#include "EditorClient.h"
 #include "NotImplemented.h"
-
-using std::min;
 
 namespace WebCore {
 
-HBITMAP imageFromSelection(Frame* frame, bool forceBlackText)
+PassOwnPtr<HBITMAP> imageFromRect(const Frame*, IntRect&)
 {
     notImplemented();
-    return 0;
-}
-
-DragImageRef Frame::nodeImage(Node*)
-{
-    notImplemented();
-    return 0;
+    return nullptr;
 }
 
 } // namespace WebCore

@@ -26,16 +26,13 @@
 #include "config.h"
 #include "FrameWin.h"
 
-#include "BridgeJSC.h"
 #include "Document.h"
 #include "FloatRect.h"
 #include "Frame.h"
 #include "FrameSelection.h"
+#include "FrameView.h"
 #include "PrintContext.h"
-#include "Range.h"
-#include "RenderView.h"
-#include "Settings.h"
-#include "TransformationMatrix.h"
+#include "RenderObject.h"
 
 namespace WebCore {
 
@@ -48,12 +45,42 @@ void computePageRectsForFrame(Frame* frame, const IntRect& printRect, float head
     outPages = printContext.pageRects();
 }
 
+PassOwnPtr<HBITMAP> imageFromSelection(Frame* frame, bool forceBlackText)
+{
+    frame->document()->updateLayout();
+
+    frame->view()->setPaintBehavior(PaintBehaviorSelectionOnly | (forceBlackText ? PaintBehaviorForceBlackText : 0));
+    FloatRect fr = frame->selection()->bounds();
+    IntRect ir(static_cast<int>(fr.x()), static_cast<int>(fr.y()), static_cast<int>(fr.width()), static_cast<int>(fr.height()));
+    OwnPtr<HBITMAP> image = imageFromRect(frame, ir);
+    frame->view()->setPaintBehavior(PaintBehaviorNormal);
+    return image.release();
+}
+
 DragImageRef Frame::dragImageForSelection()
-{    
+{
     if (selection()->isRange())
-        return imageFromSelection(this, false);
+        return imageFromSelection(this, false).leakPtr();
 
     return 0;
+}
+
+DragImageRef Frame::nodeImage(Node* node)
+{
+    document()->updateLayout();
+
+    RenderObject* renderer = node->renderer();
+    if (!renderer)
+        return 0;
+
+    LayoutRect topLevelRect;
+    IntRect paintingRect = pixelSnappedIntRect(renderer->paintingRootRect(topLevelRect));
+
+    m_view->setNodeToDraw(node); // invoke special sub-tree drawing mode
+    OwnPtr<HBITMAP> result = imageFromRect(this, paintingRect);
+    m_view->setNodeToDraw(0);
+
+    return result.leakPtr();
 }
 
 } // namespace WebCore

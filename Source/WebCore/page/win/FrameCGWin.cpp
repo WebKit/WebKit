@@ -49,7 +49,7 @@ static void drawRectIntoContext(IntRect rect, FrameView* view, GraphicsContext* 
     view->paint(gc, rect);
 }
 
-static HBITMAP imageFromRect(const Frame* frame, IntRect& ir)
+PassOwnPtr<HBITMAP> imageFromRect(const Frame* frame, IntRect& ir)
 {
     PaintBehavior oldPaintBehavior = frame->view()->paintBehavior();
     frame->view()->setPaintBehavior(oldPaintBehavior | PaintBehaviorFlattenCompositingLayers);
@@ -60,8 +60,8 @@ static HBITMAP imageFromRect(const Frame* frame, IntRect& ir)
     int h = ir.height();
     BitmapInfo bmp = BitmapInfo::create(IntSize(w, h));
 
-    HBITMAP hbmp = CreateDIBSection(0, &bmp, DIB_RGB_COLORS, static_cast<void**>(&bits), 0, 0);
-    HBITMAP hbmpOld = static_cast<HBITMAP>(SelectObject(hdc, hbmp));
+    OwnPtr<HBITMAP> hbmp = adoptPtr(CreateDIBSection(0, &bmp, DIB_RGB_COLORS, static_cast<void**>(&bits), 0, 0));
+    HGDIOBJ hbmpOld = SelectObject(hdc, hbmp.get());
     CGContextRef context = CGBitmapContextCreate(static_cast<void*>(bits), w, h,
         8, w * sizeof(RGBQUAD), deviceRGBColorSpaceRef(), kCGBitmapByteOrder32Little | kCGImageAlphaPremultipliedFirst);
     CGContextSaveGState(context);
@@ -76,38 +76,7 @@ static HBITMAP imageFromRect(const Frame* frame, IntRect& ir)
 
     frame->view()->setPaintBehavior(oldPaintBehavior);
 
-    return hbmp;
-}
-
-HBITMAP imageFromSelection(Frame* frame, bool forceBlackText)
-{
-    frame->document()->updateLayout();
-
-    frame->view()->setPaintBehavior(PaintBehaviorSelectionOnly | (forceBlackText ? PaintBehaviorForceBlackText : 0));
-    FloatRect fr = frame->selection()->bounds();
-    IntRect ir(static_cast<int>(fr.x()), static_cast<int>(fr.y()),
-               static_cast<int>(fr.width()), static_cast<int>(fr.height()));
-    HBITMAP image = imageFromRect(frame, ir);
-    frame->view()->setPaintBehavior(PaintBehaviorNormal);
-    return image;
-}
-
-DragImageRef Frame::nodeImage(Node* node)
-{
-    document()->updateLayout();
-
-    RenderObject* renderer = node->renderer();
-    if (!renderer)
-        return 0;
-
-    LayoutRect topLevelRect;
-    IntRect paintingRect = pixelSnappedIntRect(renderer->paintingRootRect(topLevelRect));
-
-    m_view->setNodeToDraw(node); // invoke special sub-tree drawing mode
-    HBITMAP result = imageFromRect(this, paintingRect);
-    m_view->setNodeToDraw(0);
-
-    return result;
+    return hbmp.release();
 }
 
 } // namespace WebCore

@@ -3563,8 +3563,8 @@ HRESULT STDMETHODCALLTYPE WebView::generateSelectionImage(BOOL forceWhiteText, O
     WebCore::Frame* frame = m_page->focusController()->focusedOrMainFrame();
 
     if (frame) {
-        HBITMAP bitmap = imageFromSelection(frame, forceWhiteText ? TRUE : FALSE);
-        *hBitmap = (OLE_HANDLE)(ULONG64)bitmap;
+        OwnPtr<HBITMAP> bitmap = imageFromSelection(frame, forceWhiteText ? TRUE : FALSE);
+        *hBitmap = static_cast<OLE_HANDLE>(reinterpret_cast<ULONG64>(bitmap.leakPtr()));
     }
 
     return S_OK;

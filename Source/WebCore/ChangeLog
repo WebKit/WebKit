@@ -1,3 +1,25 @@
+2013-08-01  Patrick Gansterer  <paroga@webkit.org>
+
+        Rearrange the code of FrameWin
+        https://bugs.webkit.org/show_bug.cgi?id=117984
+
+        Reviewed by Brent Fulgham.
+
+        Move code from the CG implementation into the general file so we can
+        share the code with Windows CE port in a next step. In a first step
+        it only shares more code between the CG and Cairo implementations.
+        Also use OwnPtr instead of plain pointers to make ownership more clear.
+
+        * page/win/FrameCGWin.cpp:
+        (WebCore::imageFromRect):
+        * page/win/FrameCairoWin.cpp:
+        (WebCore::imageFromRect):
+        * page/win/FrameWin.cpp:
+        (WebCore::imageFromSelection):
+        (WebCore::Frame::dragImageForSelection):
+        (WebCore::Frame::nodeImage):
+        * page/win/FrameWin.h:
+
 2013-08-01  Andrei Parvu  <parvu@adobe.com>
 
         mask-repeat: round bug
