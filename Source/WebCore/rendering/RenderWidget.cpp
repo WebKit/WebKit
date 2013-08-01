@@ -288,7 +288,7 @@ void RenderWidget::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     }
 
     if ((paintInfo.phase == PaintPhaseOutline || paintInfo.phase == PaintPhaseSelfOutline) && hasOutline())
-        paintOutline(paintInfo, LayoutRect(adjustedPaintOffset, size()));
+        paintOutline(paintInfo.context, LayoutRect(adjustedPaintOffset, size()));
 
     if (!m_frameView || paintInfo.phase != PaintPhaseForeground)
         return;

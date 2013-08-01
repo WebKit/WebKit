@@ -1,3 +1,65 @@
+2013-08-01  Beth Dakin  <bdakin@apple.com>
+
+        <rdar://problem/14616729> REGRESSION (r144350): Overflow bounding boxes are way 
+        too big; prevents VoiceOver taps from activating the right elements
+
+        Reviewed by Darin Adler.
+
+        This is a partial-rollout of http://trac.webkit.org/changeset/144350 which is the 
+        change that caused this regression. This patch rolls out most of that patch, and 
+        it only leaves in the part that added a paintContainer variable to PaintInfo since 
+        that is now used in other places in the code. All uses of the paintContainer that 
+        were added with this patch have been removed since they contribute to the 
+        regression.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintObject):
+        (WebCore::RenderBlock::paintContinuationOutlines):
+        (WebCore::RenderBlock::addFocusRingRects):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::addFocusRingRects):
+        * rendering/RenderBox.h:
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::addFocusRingRects):
+        (WebCore::RenderInline::paintOutline):
+        * rendering/RenderInline.h:
+        * rendering/RenderLineBoxList.cpp:
+        (WebCore::RenderLineBoxList::paint):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::addFocusRingRects):
+        * rendering/RenderListBox.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::paintFocusRing):
+        (WebCore::RenderObject::paintOutline):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::addFocusRingRects):
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::paint):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::paintObject):
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::paintOutlineForRowIfNeeded):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::paint):
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::addFocusRingRects):
+        * rendering/RenderTextControl.h:
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::paint):
+        * rendering/svg/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::paint):
+        (WebCore::RenderSVGContainer::addFocusRingRects):
+        * rendering/svg/RenderSVGContainer.h:
+        * rendering/svg/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::paint):
+        (WebCore::RenderSVGImage::addFocusRingRects):
+        * rendering/svg/RenderSVGImage.h:
+        * rendering/svg/RenderSVGShape.cpp:
+        (WebCore::RenderSVGShape::paint):
+        (WebCore::RenderSVGShape::addFocusRingRects):
+        * rendering/svg/RenderSVGShape.h:
+
 2013-07-31  Lucas Forschler  <lforschler@apple.com>
 
         Merge r153511

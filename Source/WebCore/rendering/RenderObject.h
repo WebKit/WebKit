@@ -978,7 +978,7 @@ public:
     // return true if this object requires a new stacking context
     bool createsGroup() const { return isTransparent() || hasMask() || hasFilter() || hasBlendMode(); } 
     
-    virtual void addFocusRingRects(Vector<IntRect>&, const LayoutPoint& /* additionalOffset */, const RenderLayerModelObject* /* paintContainer */ = 0) { };
+    virtual void addFocusRingRects(Vector<IntRect>&, const LayoutPoint&) { };
 
     LayoutRect absoluteOutlineBounds() const
     {
@@ -1002,8 +1002,8 @@ protected:
     void drawLineForBoxSide(GraphicsContext*, int x1, int y1, int x2, int y2, BoxSide,
                             Color, EBorderStyle, int adjbw1, int adjbw2, bool antialias = false);
 
-    void paintFocusRing(PaintInfo&, const LayoutPoint&, RenderStyle*);
-    void paintOutline(PaintInfo&, const LayoutRect&);
+    void paintFocusRing(GraphicsContext*, const LayoutPoint&, RenderStyle*);
+    void paintOutline(GraphicsContext*, const LayoutRect&);
     void addPDFURLRect(GraphicsContext*, const LayoutRect&);
     
     virtual LayoutRect viewRect() const;

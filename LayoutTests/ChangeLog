@@ -1,3 +1,15 @@
+2013-08-01  Beth Dakin  <bdakin@apple.com>
+
+        <rdar://problem/14616729> REGRESSION (r144350): Overflow bounding boxes are way 
+        too big; prevents VoiceOver taps from activating the right elements
+
+        Reviewed by Darin Adler.
+
+        Rollout http://trac.webkit.org/changeset/144350
+
+        * compositing/sub-layer-focus-ring-expected.html: Removed.
+        * compositing/sub-layer-focus-ring.html: Removed.
+
 2013-07-31  Simon Fraser  <simon.fraser@apple.com>
 
         Merge r153498.
