@@ -1,5 +1,20 @@
 2013-07-31  Simon Fraser  <simon.fraser@apple.com>
 
+        Merge r153498.
+
+    2013-07-30  Alexey Proskuryakov  <ap@apple.com>
+    
+            REGRESSION(r139282): Fix document leak when selection is created inside the document
+            https://bugs.webkit.org/show_bug.cgi?id=119122
+    
+            OK'd by Ryosuke Niwa.
+    
+            The added test was very flaky. Trying to make it better with a gc() call at the beginning.
+    
+            * editing/selection/leak-document-with-selection-inside.html:
+
+2013-07-31  Simon Fraser  <simon.fraser@apple.com>
+
         Merge r151893
 
     2013-06-23  Brent Fulgham  <bfulgham@gmail.com>
