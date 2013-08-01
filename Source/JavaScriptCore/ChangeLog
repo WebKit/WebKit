@@ -1,3 +1,17 @@
+2013-08-01  Oliver Hunt  <oliver@apple.com>
+
+        DFG is not enforcing correct ordering of ToString conversion in MakeRope
+        https://bugs.webkit.org/show_bug.cgi?id=119408
+
+        Reviewed by Filip Pizlo.
+
+        Construct ToString and Phantom nodes in advance of MakeRope
+        nodes to ensure that ordering is ensured, and correct values
+        will be reified on OSR exit.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+
 2013-08-01  Michael Saboff  <msaboff@apple.com>
 
         REGRESSION: Crash beneath cti_vm_throw_slowpath due to invalid CallFrame pointer
