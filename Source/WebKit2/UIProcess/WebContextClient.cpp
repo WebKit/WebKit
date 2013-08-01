@@ -51,6 +51,9 @@ void WebContextClient::plugInInformationBecameAvailable(WebContext* context, Imm
     if (!m_client.plugInInformationBecameAvailable)
         return;
 
+    // FIXME: The API contract expects us to hand a reference to the array here. This is wrong.
+    plugInInfo->ref();
+
     m_client.plugInInformationBecameAvailable(toAPI(context), toAPI(plugInInfo), m_client.clientInfo);
 }
 

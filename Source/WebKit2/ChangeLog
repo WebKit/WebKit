@@ -1,3 +1,19 @@
+2013-08-01  Anders Carlsson  <andersca@apple.com>
+
+        Lots of leaks under WebContext::pluginInfoStoreDidLoadPlugins()
+        https://bugs.webkit.org/show_bug.cgi?id=119412
+
+        Reviewed by Simon Fraser.
+
+        For some sick reason, the WKContextClient plugInInformationBecameAvailable callback function
+        expects a +1 reference to the plug-in array. Isolate that hack to WebContextClient so that
+        we don't leak the array if there is no WKContextClient.
+        
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::pluginInfoStoreDidLoadPlugins):
+        * UIProcess/WebContextClient.cpp:
+        (WebKit::WebContextClient::plugInInformationBecameAvailable):
+
 2013-08-01  Kwang Yul Seo  <skyul@company100.net>
 
         Remove return statement in void function

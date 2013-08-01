@@ -1248,7 +1248,7 @@ void WebContext::pluginInfoStoreDidLoadPlugins(PluginInfoStore* store)
         pluginArray.append(ImmutableDictionary::adopt(map));
     }
 
-    m_client.plugInInformationBecameAvailable(this, ImmutableArray::adopt(pluginArray).leakRef());
+    m_client.plugInInformationBecameAvailable(this, ImmutableArray::adopt(pluginArray).get());
 }
 #endif
 
