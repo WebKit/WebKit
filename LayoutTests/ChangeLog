@@ -1,3 +1,17 @@
+2013-08-01  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        Update polygon shape-outside tests for upstream changes
+        https://bugs.webkit.org/show_bug.cgi?id=119414
+
+        Reviewed by Alexandru Chiculita.
+
+        The refs were updated upstream to make them work properly in Blink.
+        This pulls in that change to keep things in sync.
+
+        * csswg/submitted/shapes/shape-outside/shape-outside-floats-polygon-001-expected.html:
+        * csswg/submitted/shapes/shape-outside/shape-outside-floats-polygon-001.html:
+        * csswg/submitted/shapes/shape-outside/shape-outside-floats-polygon-002-expected.html:
+
 2013-08-01  Oliver Hunt  <oliver@apple.com>
 
         DFG is not enforcing correct ordering of ToString conversion in MakeRope
