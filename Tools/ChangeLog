@@ -1,5 +1,33 @@
 2013-07-31  Bem Jones-Bey  <bjonesbe@adobe.com>
 
+        W3C test import script prefixes some properties that it shouldn't
+        https://bugs.webkit.org/show_bug.cgi?id=119357
+
+        Reviewed by Dirk Pranke.
+
+        Some prefixed properties also have unprefixed implemetations, but when
+        the implementations aren't identical, they aren't declared in
+        CSSPropertyNames.in on the same line. This fixes the import script so
+        that it catches all instances of prefixed properties that have an
+        unprefixed variant, and does not add the prefix in those cases.
+
+        * Scripts/webkitpy/w3c/test_converter.py:
+        (W3CTestConverter.read_webkit_prefixed_css_property_list): Read all of
+        the properties on every line and record if they are prefixed or not.
+        Use this information to only return prefixed properties that do not
+        have any unprefixed variant. The prefixed property list has also
+        changed to not include the '-webkit-' prefix, making it much easier to
+        do the comparison, and removing the need to remove the prefix later.
+        (W3CTestConverter.add_webkit_prefix_to_unprefixed_properties): This no
+        longer needs to remove the '-webkit-' prefix, but needs to add it in
+        the case where a property that needs a prefix is found.
+        * Scripts/webkitpy/w3c/test_converter_unittest.py:
+        (W3CTestConverterTest.test_read_prefixed_property_list): Remove assert
+        for '-webkit-' prefix, as it is no longer included in the properties
+        in the prefixed property list.
+
+2013-07-31  Bem Jones-Bey  <bjonesbe@adobe.com>
+
         Update location of w3c shapes tests to reflect new import location
         https://bugs.webkit.org/show_bug.cgi?id=118156
 

@@ -56,20 +56,24 @@ class W3CTestConverter(object):
 
     def read_webkit_prefixed_css_property_list(self):
         prefixed_properties = []
+        unprefixed_properties = set()
 
         contents = self._filesystem.read_text_file(self._css_property_file)
         for line in contents.splitlines():
-            # Find lines starting with the -webkit- prefix.
-            match = re.match('-webkit-[\w|-]*', line)
-            if match:
-                # Ignore lines where both the prefixed and non-prefixed property
-                # are supported - denoted by -webkit-some-property = some-property.
-                fields = line.split(self._css_property_split_string)
-                if len(fields) == 2 and fields[1].strip() in fields[0].strip():
-                    continue
-                prefixed_properties.append(match.group(0))
+            if re.match('^(#|//)', line):
+                # skip comments and preprocessor directives
+                continue
+            fields = line.split(self._css_property_split_string)
+            for prop in fields:
+                # Find properties starting with the -webkit- prefix.
+                match = re.match('-webkit-([\w|-]*)', prop)
+                if match:
+                    prefixed_properties.append(match.group(1))
+                else:
+                    unprefixed_properties.add(prop.strip())
 
-        return prefixed_properties
+        # Ignore any prefixed properties for which an unprefixed version is supported
+        return [prop for prop in prefixed_properties if prop not in unprefixed_properties]
 
     def convert_for_webkit(self, new_path, filename):
         """ Converts a file's |contents| so it will function correctly in its |new_path| in Webkit.
@@ -169,20 +173,19 @@ class W3CTestConverter(object):
 
         converted_properties = []
 
-        for prefixed_property in self.prefixed_properties:
+        for raw_property in self.prefixed_properties:
             # FIXME: add in both the prefixed and unprefixed versions, rather than just replacing them?
             # That might allow the imported test to work in other browsers more easily.
-
-            unprefixed_property = prefixed_property.replace('-webkit-', '')
 
             # Look for the various ways it might be in the CSS
             # Match the the property preceded by either whitespace or left curly brace
             # or at the beginning of the string (for inline style attribute)
-            pattern = '([\s{]|^)' + unprefixed_property + '(\s+:|:)'
+            pattern = '([\s{]|^)' + raw_property + '(\s+:|:)'
             if re.search(pattern, text):
-                _log.info('converting %s -> %s' % (unprefixed_property, prefixed_property))
-                converted_properties.append(prefixed_property)
-                text = re.sub(pattern, prefixed_property + ':', text)
+                replacement_property = '-webkit-%s' % raw_property
+                _log.info('converting %s -> %s' % (raw_property, replacement_property))
+                converted_properties.append(replacement_property)
+                text = re.sub(pattern, replacement_property + ':', text)
 
         # FIXME: Handle the JS versions of these properties and GetComputedStyle, too.
         return (converted_properties, text)

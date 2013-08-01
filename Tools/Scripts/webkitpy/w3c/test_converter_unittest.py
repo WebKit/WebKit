@@ -50,8 +50,6 @@ class W3CTestConverterTest(unittest.TestCase):
         converter = W3CTestConverter()
         prop_list = converter.prefixed_properties
         self.assertTrue(prop_list, 'No prefixed properties found')
-        for prop in prop_list:
-            self.assertTrue(prop.startswith('-webkit-'))
 
     def test_convert_for_webkit_nothing_to_convert(self):
         """ Tests convert_for_webkit() using a basic test that has nothing to convert """
