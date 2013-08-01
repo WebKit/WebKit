@@ -811,9 +811,11 @@ static inline void addCaseFoldedCharacters(StringHasher& hasher, const String& s
 {
     if (string.isEmpty())
         return;
-    if (string.is8Bit())
-        return hasher.addCharacters<LChar, CaseFoldingHash::foldCase<LChar>>(string.characters8(), string.length());
-    return hasher.addCharacters<UChar, CaseFoldingHash::foldCase<UChar>>(string.characters16(), string.length());
+    if (string.is8Bit()) {
+        hasher.addCharacters<LChar, CaseFoldingHash::foldCase<LChar>>(string.characters8(), string.length());
+        return;
+    }
+    hasher.addCharacters<UChar, CaseFoldingHash::foldCase<UChar>>(string.characters16(), string.length());
 }
 
 static unsigned hashForPlugInOrigin(const String& pageOrigin, const String& pluginOrigin, const String& mimeType)

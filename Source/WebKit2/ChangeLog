@@ -1,5 +1,17 @@
 2013-08-01  Kwang Yul Seo  <skyul@company100.net>
 
+        Remove return statement in void function
+        https://bugs.webkit.org/show_bug.cgi?id=119379
+
+        Reviewed by Darin Adler.
+
+        It does not make sense to return a value in void function.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::addCaseFoldedCharacters):
+
+2013-08-01  Kwang Yul Seo  <skyul@company100.net>
+
         [WK2] Add USE(SOUP) guard in WebProcess::destroyPrivateBrowsingSession
         https://bugs.webkit.org/show_bug.cgi?id=119381
 
