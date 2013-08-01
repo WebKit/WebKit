@@ -427,6 +427,9 @@ plugins/unavailable-plugin-indicator-obscurity.html [ Pass ]
 # Fails in WebKit1 only, so re-enabling.
 editing/pasteboard/can-read-in-copy-and-cut-events.html [ Pass ] 
 
+# Color input is enabled on Mac WK2 but not on WK1.
+fast/forms/color/input-color-onchange-event.html [ Pass ]
+
 ### END OF (5) Features that are not supported in WebKit1, so skipped in mac/TestExpectations then re-enabled here
 ########################################
 

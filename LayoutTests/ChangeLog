@@ -1,3 +1,13 @@
+2013-08-01  Ruth Fong  <ruth_fong@apple.com>
+
+        Crashing Test: fast/forms/color/input-color-onchange-event.html
+        <rdar://problem/14621667> and https://bugs.webkit.org/show_bug.cgi?id=119403
+
+        Reviewed by Tim Horton.
+
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2013-08-01  Simon Fraser  <simon.fraser@apple.com>
 
         http/tests/multipart/invalid-image-data-standalone.html needs to skipped, not
