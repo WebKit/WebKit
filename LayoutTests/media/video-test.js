@@ -1,7 +1,7 @@
 
 var video = null;
 var mediaElement = document; // If not set, an event from any element will trigger a waitForEvent() callback.
-var console = null;
+var consoleElement = null;
 var printFullTestDetails = true; // This is optionaly switched of by test whose tested values can differ. (see disableFullTestDetailsPrinting())
 var Failed = false;
 
@@ -33,11 +33,11 @@ function enableFullTestDetailsPrinting()
 
 function logConsole()
 {
-    if (!console && document.body) {
-        console = document.createElement('div');
-        document.body.appendChild(console);
+    if (!consoleElement && document.body) {
+        consoleElement = document.createElement('div');
+        document.body.appendChild(consoleElement);
     }
-    return console;
+    return consoleElement;
 }
 
 function findMediaElement()

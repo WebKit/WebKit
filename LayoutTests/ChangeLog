@@ -1,5 +1,13 @@
 2013-07-31  Simon Fraser  <simon.fraser@apple.com>
 
+        Clobbering window.console is not cool because it makes debugging tests
+        harder.
+
+        * media/video-test.js:
+        (logConsole):
+
+2013-07-31  Simon Fraser  <simon.fraser@apple.com>
+
         r153462 erroneously unskipped http/tests/multipart/invalid-image-data-standalone.html
         so put it back.
 
