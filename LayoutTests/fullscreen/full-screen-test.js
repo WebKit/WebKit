@@ -1,4 +1,4 @@
-var console = null;
+var consoleDiv = null;
 var printFullTestDetails = true; // This is optionaly switched of by test whose tested values can differ. (see disableFullTestDetailsPrinting())
 var runPixelTests;
 
@@ -31,11 +31,11 @@ function runWithKeyDown(fn)
 
 function logConsole()
 {
-    if (!console && document.body) {
-        console = document.createElement('div');
-        document.body.appendChild(console);
+    if (!consoleDiv && document.body) {
+        consoleDiv = document.createElement('div');
+        document.body.appendChild(consoleDiv);
     }
-    return console;
+    return consoleDiv;
 }
 
 function testAndEnd(testFuncString)

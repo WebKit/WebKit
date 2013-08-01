@@ -1,3 +1,17 @@
+2013-07-31  Simon Fraser  <simon.fraser@apple.com>
+
+        Clobbering window.console is not cool
+        https://bugs.webkit.org/show_bug.cgi?id=119364
+
+        Reviewed by Tim Horton.
+        
+        full-screen-test.js overrides window.console, which is hella
+        confusing if you're trying to use console.log to debug a fullscreen test.
+
+        * fullscreen/full-screen-test.js:
+        (logConsole):
+        * fullscreen/resources/not-allowed.html:
+
 2013-07-31  Mark Lam  <mark.lam@apple.com>
 
         Gardening: changing expectation for fast/forms/color/input-color-onchange-event.html
