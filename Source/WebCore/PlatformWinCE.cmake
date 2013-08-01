@@ -23,7 +23,8 @@ list(APPEND WebCore_SOURCES
 
     page/win/DragControllerWin.cpp
     page/win/EventHandlerWin.cpp
-    page/wince/FrameWinCE.cpp
+    page/win/FrameGdiWin.cpp
+    page/win/FrameWin.cpp
 
     rendering/RenderThemeWince.cpp
 

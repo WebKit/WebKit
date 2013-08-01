@@ -1,3 +1,17 @@
+2013-08-01  Patrick Gansterer  <paroga@webkit.org>
+
+        Merge FrameWinCE into FrameWin
+        https://bugs.webkit.org/show_bug.cgi?id=117988
+
+        Reviewed by Brent Fulgham.
+
+        Reuse the code from FrameWin.cpp instead of duplicating it.
+
+        * PlatformWinCE.cmake:
+        * page/win/FrameGdiWin.cpp: Added.
+        (WebCore::imageFromRect):
+        * page/wince/FrameWinCE.cpp: Removed.
+
 2013-08-01  Alex Christensen  <achristensen@apple.com>
 
         Made OESTextureHalfFloat work on Windows.
