@@ -1,5 +1,25 @@
 2013-08-01  Bem Jones-Bey  <bjonesbe@adobe.com>
 
+        [CSS Shapes] New positioning model: support for stacked floats with shape-outside
+        https://bugs.webkit.org/show_bug.cgi?id=118087
+
+        Reviewed by Alexandru Chiculita.
+
+        Import new test for stacked floats from the CSSWG's repository to
+        replace the old tests. The simple horizontal rectangle test is no
+        longer applicable now that float stacking ignores shapes, so it has
+        just been removed.
+
+        * TestExpectations: Remove skipping for replaced tests.
+        * csswg/submitted/shapes/shape-outside/shape-outside-floats-stacked-000-expected.html: Added.
+        * csswg/submitted/shapes/shape-outside/shape-outside-floats-stacked-000.html: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-floats-simple-rectangle-horizontal-multiple-expected.html: Removed.
+        * fast/shapes/shape-outside-floats/shape-outside-floats-simple-rectangle-horizontal-multiple.html: Removed.
+        * fast/shapes/shape-outside-floats/shape-outside-floats-stacked-expected.html: Removed.
+        * fast/shapes/shape-outside-floats/shape-outside-floats-stacked.html: Removed.
+
+2013-08-01  Bem Jones-Bey  <bjonesbe@adobe.com>
+
         Update polygon shape-outside tests for upstream changes
         https://bugs.webkit.org/show_bug.cgi?id=119414
 

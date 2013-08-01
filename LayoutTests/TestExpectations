@@ -26,9 +26,6 @@ webkit.org/b/118088 fast/shapes/shape-outside-floats/shape-outside-floats-ellips
 webkit.org/b/118088 fast/shapes/shape-outside-floats/shape-outside-floats-left-margin-polygon.html [ Skip ]
 webkit.org/b/118088 fast/shapes/shape-outside-floats/shape-outside-floats-right-margin-polygon.html [ Skip ]
 
-webkit.org/b/118087 fast/shapes/shape-outside-floats/shape-outside-floats-stacked.html [ Skip ]
-webkit.org/b/118087 fast/shapes/shape-outside-floats/shape-outside-floats-simple-rectangle-horizontal-multiple.html [ Skip ]
-
 webkit.org/b/118301 fast/dom/timer-throttling-hidden-page.html [ Skip ]
 
 webkit.org/b/119094 fast/forms/color/input-color-onchange-event.html [ Crash Pass ]
