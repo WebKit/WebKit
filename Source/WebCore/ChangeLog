@@ -1,3 +1,25 @@
+2013-07-31  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Introduce toSVGSMILElement, and use it
+        https://bugs.webkit.org/show_bug.cgi?id=119260
+
+        Reviewed by Darin Adler.
+
+        As a step to change static_cast with toSVGXXX, static_cast<SVGSMILElement*> can
+        be changed with toSVGSMILElement().
+
+        Blink merge from https://src.chromium.org/viewvc/blink?view=rev&revision=155048
+
+        * svg/SVGAElement.cpp:
+        (WebCore::SVGAElement::defaultEventHandler):
+        * svg/animation/SMILTimeContainer.cpp:
+        (WebCore::SMILTimeContainer::updateDocumentOrderIndexes):
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::SVGSMILElement::connectConditions):
+        (WebCore::SVGSMILElement::disconnectConditions):
+        * svg/animation/SVGSMILElement.h:
+        (WebCore::toSVGSMILElement):
+
 2013-07-31  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reuse of XMLHttpRequests causes character corruption in response text

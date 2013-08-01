@@ -224,7 +224,7 @@ void SMILTimeContainer::updateDocumentOrderIndexes()
     unsigned timingElementCount = 0;
     for (Element* element = m_ownerSVGElement; element; element = ElementTraversal::next(element, m_ownerSVGElement)) {
         if (SVGSMILElement::isSMILElement(element))
-            static_cast<SVGSMILElement*>(element)->setDocumentOrderIndex(timingElementCount++);
+            toSVGSMILElement(element)->setDocumentOrderIndex(timingElementCount++);
     }
     m_documentOrderIndexesDirty = false;
 }

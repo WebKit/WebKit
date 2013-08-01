@@ -234,6 +234,12 @@ private:
     friend class ConditionEventListener;
 };
 
+inline SVGSMILElement* toSVGSMILElement(Element* element)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(!element || SVGSMILElement::isSMILElement(element));
+    return static_cast<SVGSMILElement*>(element);
+}
+
 }
 
 #endif // ENABLE(SVG)
