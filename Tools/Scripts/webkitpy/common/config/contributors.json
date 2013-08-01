@@ -464,6 +464,16 @@
             "caryclark"
          ]
       },
+      "ChangSeok Oh" : {
+         "emails" : [
+            "changseok.oh@collabora.com",
+            "kevin.cs.oh@gmail.com"
+         ],
+         "expertise" : "The WebKitGTK+ port, H/W acceleration",
+         "nicks" : [
+            "changseok"
+         ]
+      },
       "Charles Reis" : {
          "emails" : [
             "creis@chromium.org"
