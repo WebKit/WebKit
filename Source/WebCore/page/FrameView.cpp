@@ -1189,8 +1189,10 @@ void FrameView::layout(bool allowSubtree)
         }
 
         // Viewport-dependent media queries may cause us to need completely different style information.
-        if (document->ensureStyleResolver()->affectedByViewportChange()) {
+        if (!document->styleResolverIfExists() || document->styleResolverIfExists()->affectedByViewportChange()) {
             document->styleResolverChanged(DeferRecalcStyle);
+            // FIXME: This instrumentation event is not strictly accurate since cached media query results
+            //        do not persist across StyleResolver rebuilds.
             InspectorInstrumentation::mediaQueryResultChanged(document);
         } else
             document->evaluateMediaQueryList();
