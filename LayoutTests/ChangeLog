@@ -1,3 +1,75 @@
+2013-08-01  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
+        [Qt] Unreviewed expected pixel test result update after r153522.
+
+        * platform/qt-5.0-wk2/compositing/overflow/overflow-compositing-descendant-expected.png:
+        * platform/qt-5.0-wk2/compositing/overflow/scroll-ancestor-update-expected.png:
+        * platform/qt-5.0-wk2/compositing/visibility/visibility-simple-video-layer-expected.png:
+        * platform/qt-5.0-wk2/css2.1/20110323/replaced-min-max-001-expected.png:
+        * platform/qt-5.0-wk2/css2.1/t170602-bdr-conflct-w-14-d-expected.png:
+        * platform/qt-5.0-wk2/css2.1/t170602-bdr-conflct-w-24-d-expected.png:
+        * platform/qt-5.0-wk2/css2.1/t170602-bdr-conflct-w-34-d-expected.png:
+        * platform/qt-5.0-wk2/css2.1/t170602-bdr-conflct-w-44-d-expected.png:
+        * platform/qt-5.0-wk2/css2.1/t170602-bdr-conflct-w-54-d-expected.png:
+        * platform/qt-5.0-wk2/css2.1/t170602-bdr-conflct-w-64-d-expected.png:
+        * platform/qt-5.0-wk2/css2.1/t170602-bdr-conflct-w-74-d-expected.png:
+        * platform/qt-5.0-wk2/css2.1/t170602-bdr-conflct-w-84-d-expected.png:
+        * platform/qt-5.0-wk2/css3/compositing/effect-background-blend-mode-expected.png: Added.
+        * platform/qt-5.0-wk2/css3/compositing/effect-background-blend-mode-stacking-expected.png:
+        * platform/qt-5.0-wk2/fast/backgrounds/size/backgroundSize09-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/backgrounds/size/backgroundSize10-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/backgrounds/size/backgroundSize11-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/backgrounds/size/contain-and-cover-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/backgrounds/size/contain-and-cover-zoomed-expected.png:
+        * platform/qt-5.0-wk2/fast/borders/border-image-side-reduction-expected.png:
+        * platform/qt-5.0-wk2/fast/fast-mobile-scrolling/no-fixed-position-elements-expected.png: Added.
+        * platform/qt-5.0-wk2/fast/repaint/block-layout-inline-children-replaced-expected.png:
+        * platform/qt-5.0-wk2/fast/repaint/fixed-position-transparency-with-overflow-expected.png:
+        * platform/qt-5.0-wk2/fast/replaced/width100percent-image-expected.png:
+        * platform/qt-5.0-wk2/scrollbars/overflow-scrollbar-combinations-expected.png:
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/animate-elem-30-t-expected.png:
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/animate-elem-40-t-expected.png:
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/coords-viewattr-02-b-expected.png:
+        * platform/qt-5.0-wk2/svg/custom/createImageElement-expected.png:
+        * platform/qt-5.0-wk2/svg/custom/createImageElement2-expected.png:
+        * platform/qt-5.0-wk2/svg/custom/image-parent-translation-expected.png:
+        * platform/qt-5.0-wk2/svg/custom/js-update-image-and-display-expected.png:
+        * platform/qt-5.0-wk2/svg/custom/js-update-image-and-display2-expected.png:
+        * platform/qt-5.0-wk2/svg/custom/js-update-image-and-display3-expected.png:
+        * platform/qt-5.0-wk2/svg/custom/js-update-image-expected.png:
+        * platform/qt-5.0-wk2/svg/custom/pointer-events-image-css-transform-expected.png:
+        * platform/qt-5.0-wk2/svg/custom/pointer-events-image-expected.png:
+        * platform/qt-5.0-wk2/svg/custom/text-image-opacity-expected.png:
+        * platform/qt-5.0-wk2/svg/custom/use-on-g-containing-foreignObject-and-image-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGImageElement-dom-height-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGImageElement-dom-preserveAspectRatio-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGImageElement-dom-width-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGImageElement-dom-x-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGImageElement-dom-y-attr-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGImageElement-svgdom-height-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGImageElement-svgdom-preserveAspectRatio-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGImageElement-svgdom-width-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGImageElement-svgdom-x-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGImageElement-svgdom-y-prop-expected.png:
+        * platform/qt-5.0-wk2/svg/hixie/perf/004-expected.png:
+        * platform/qt-5.0-wk2/svg/transforms/animated-path-inside-transformed-html-expected.png:
+        * platform/qt-5.0-wk2/svg/wicd/test-rightsizing-b-expected.png:
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug101674-expected.png:
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug11026-expected.png:
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug1188-expected.png:
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug1296-expected.png:
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug1430-expected.png:
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug2981-2-expected.png:
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug4284-expected.png:
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug4427-expected.png:
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug56563-expected.png:
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug625-expected.png:
+        * platform/qt-5.0-wk2/tables/mozilla/bugs/bug97383-expected.png:
+        * platform/qt-5.0-wk2/tables/mozilla/core/bloomberg-expected.png:
+        * platform/qt-5.0-wk2/tables/mozilla/core/misc-expected.png:
+        * platform/qt-5.0-wk2/tables/mozilla/other/cell_widths-expected.png:
+        * platform/qt-5.0-wk2/tables/mozilla_expected_failures/bugs/bug6933-expected.png:
+
 2013-07-31  Seokju Kwon  <seokju@webkit.org>
 
         [GTK] Unreviewed gardening
