@@ -8,5 +8,6 @@ set AngleHeadersDirectory=%CONFIGURATIONBUILDDIR%\include\private
 mkdir "%AngleHeadersDirectory%" 2>NUL
 xcopy /y /d /s "%ProjectDir%..\..\ThirdParty\ANGLE\include" "%AngleHeadersDirectory%"
 xcopy /y /d "%AngleHeadersDirectory%\KHR\khrplatform.h" "%AngleHeadersDirectory%"
+xcopy /y /d "%AngleHeadersDirectory%\EGL\eglplatform.h" "%AngleHeadersDirectory%"
 xcopy /y /d /s "%ProjectDir%..\platform\graphics\win\GL" "%AngleHeadersDirectory%"
 exit /b

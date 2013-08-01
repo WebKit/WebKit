@@ -1,3 +1,12 @@
+2013-08-01  Alex Christensen  <achristensen@apple.com>
+
+        Copy eglplatform.h to be found by Windows WebGL build.
+        https://bugs.webkit.org/show_bug.cgi?id=119299
+
+        Reviewed by Brent Fulgham.
+
+        * WebCore.vcxproj/WebCorePreBuild.cmd: Copy eglplatform.h.
+
 2013-08-01  Jer Noble  <jer.noble@apple.com>
 
         Crash in WebCore:  WebCore::AudioSession::beganAudioInterruption + 62
