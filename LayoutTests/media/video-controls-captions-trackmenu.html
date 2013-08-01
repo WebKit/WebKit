@@ -14,6 +14,7 @@
             {
                 consoleWrite("<br>*** Add another text track.");
                 run('video.addTextTrack("captions", "Commentary", "ru")');
+                showTrackMenu()
                 window.setTimeout(turnCaptionsOn, 100);
                 consoleWrite("");
             }
