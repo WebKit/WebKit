@@ -1,3 +1,14 @@
+2013-08-01  Julien Brianceau  <jbrianceau@nds.com>
+
+        REGRESSION(FTL): Fix sh4 implementation of ctiVMThrowTrampolineSlowpath.
+        https://bugs.webkit.org/show_bug.cgi?id=119391
+
+        Reviewed by Csaba Osztrogonác.
+
+        * jit/JITStubsSH4.h: Fix ctiVMThrowTrampolineSlowpath implementation:
+            - Call frame is in r14 register.
+            - Do not restore registers from JIT stack frame here.
+
 2013-07-31  Gavin Barraclough  <barraclough@apple.com>
 
         More cleanup in PropertySlot
