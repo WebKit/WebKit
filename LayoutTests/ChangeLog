@@ -1,5 +1,13 @@
 2013-07-31  Simon Fraser  <simon.fraser@apple.com>
 
+        Skip media/track/track-language-preference.html and media/track/track-prefer-captions.html
+        rather than just marking them as [ Pass Fail ] since they timeout so often and slow
+        everything down.
+
+        * platform/mac/TestExpectations:
+
+2013-07-31  Simon Fraser  <simon.fraser@apple.com>
+
         Clobbering window.console is not cool because it makes debugging tests
         harder.
 
