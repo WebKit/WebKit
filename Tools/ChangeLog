@@ -1,3 +1,9 @@
+2013-08-01  ChangSeok Oh  <changseok.oh@collabora.com>
+
+        Unreviewed. Add an alternative address to show my affiliation in team.html.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2013-08-01  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         Duplicate property names can cause test to fail
