@@ -44,7 +44,7 @@ class StyleSheetContents;
 
 typedef int ExceptionCode;
 
-class CSSStyleSheet : public StyleSheet {
+class CSSStyleSheet FINAL : public StyleSheet {
 public:
     static PassRefPtr<CSSStyleSheet> create(PassRefPtr<StyleSheetContents>, CSSImportRule* ownerRule = 0);
     static PassRefPtr<CSSStyleSheet> create(PassRefPtr<StyleSheetContents>, Node* ownerNode);

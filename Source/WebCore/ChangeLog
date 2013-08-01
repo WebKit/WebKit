@@ -1,3 +1,15 @@
+2013-07-31  Andreas Kling  <akling@apple.com>
+
+        FINALize StyleSheet subclasses.
+        <http://webkit.org/b/119370>
+
+        Reviewed by Anders Carlsson.
+
+        CSSStyleSheet and XSLStyleSheet have no further subclasses so make them final.
+
+        * css/CSSStyleSheet.h:
+        * xml/XSLStyleSheet.h:
+
 2013-07-31  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Introduce toSVGFontFaceElement, and use it
