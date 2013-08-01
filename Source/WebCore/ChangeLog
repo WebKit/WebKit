@@ -1,3 +1,18 @@
+2013-07-31  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reuse of XMLHttpRequests causes character corruption in response text
+        https://bugs.webkit.org/show_bug.cgi?id=119358
+
+        Reviewed by Anders Carlsson.
+
+        Merge https://chromium.googlesource.com/chromium/blink/+/6496e7bb9a0b46bc79032b86d5993b25f127a4cb
+
+        Test: http/tests/xmlhttprequest/reopen-encoding.html
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::clearResponseBuffers):
+        (WebCore::XMLHttpRequest::didFinishLoading):
+
 2013-07-31  Alexey Proskuryakov  <ap@apple.com>
 
         Make ActiveDOMObject overrides private
