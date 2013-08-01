@@ -1,3 +1,152 @@
+2013-08-01  Alexis Menard  <alexis@webkit.org>
+
+        Reduce CSSProperty's StylePropertyMetadata memory footprint by half when used inside a ImmutableStylePropertySet.
+        https://bugs.webkit.org/show_bug.cgi?id=117715
+
+        Reviewed by Andreas Kling.
+
+        Today CSSProperty holds its metadata in the following way :
+
+        --------------------------------------------------------------------------------------------
+        | m_propertyID : 14 We use 14 bits because CSSPropertyIDs start at 1001.                    | 
+        | m_shorthandID : 14 id of the shorthand this property was set, 0 if not part of a shorthand|
+        | m_important : 1                                                                           |
+        | m_implicit : 1                                                                            |
+        | m_inherited : 1                                                                           |
+        --------------------------------------------------------------------------------------------
+
+        The proposal to decrease the memory footprint on CSSProperty's metadata
+        only stand when stored inside ImmutableStylePropertySet which uses a custom
+        way to allocate and lay out the StylePropertyMetadata and the CSSValues in
+        memory because the idea behind is that the content will not change.
+        The MutableStylePropertySet uses a regular vector to retrieve, remove
+        and modify the CSSProperties. ImmutableStylePropertySet is used by default
+        when parsing up until someone start to access the CSSOM like
+        div.style which will convert the immutable to a mutable set. It is also good
+        to note that a CSSProperty is created for every single statement inside a block
+        in a stylesheet so we do have quite a bunch around. Another consideration is
+        that the only client to the m_shorthandID is the inspector which uses it
+        to group the longhands into a shorthand drop down list.
+
+        The new proposal is the following one :
+        - Reduce m_propertyID to 10 bits by not starting the CSSPropertyIDs from
+        1001 but rather 0 (or 3 as two are hardcoded CSSPropertyInvalid and CSSPropertyVariable).
+        - Use the fact that we statically know which longhand belong to which shorthand. So
+        we create a static mapping between longhands and shorthands.
+
+        Here is the new layout :
+        ------------------------------------------------------------------------------
+        | m_propertyID : 10 (up to 1024 properties), we have less than 400 today      |
+        | m_isSetFromShorthand : 1 and then use the mapping in StylePropertyShorthand |
+        | m_indexInShorthandsVector : 2                                               |
+        | m_important : 1 (unchanged)                                                 |
+        | m_implicit : 1  (unchanged)                                                 |
+        | m_inherited : 1 (unchanged)                                                 |
+        ------------------------------------------------------------------------------
+
+        it was set from using the new code in StylePropertyShorthand.
+        - m_indexInShorthandsVector : 2 bits, unfortunately there are few longhands which belong to multiple
+        shorthands so we need to store which was this longhand was part at parsing time. Notice
+        that it does not store the CSSPropertyID of the matching shorthand but rather its position
+        in the vector of matching shorthands. CSSProperty::m_shorthandID() method make it transparent
+        for call sites and return the actual CSSPropertyID of the shorthand. So far 2 bits seems
+        enough as there is only few longhands with ambiguity and they belong to 3 shorthands.
+
+        Profiling the benchmark with Intel Vtune to find out the performance regression
+        showed that copying uint16_t, so StylePropertyMetadata, is not
+        a fast operation in term of assembly code and has a big penalty on Windows 
+        MSVC over unsigned for example. The latter produces a much faster code 
+        when using unsigned over uint16_t (45% difference in the benchmark).
+
+        The patch avoid the copies of StylePropertyMetadata when applicable (by using const ref).
+
+        The second part of the fix is avoiding the conversion from an int (enum) to
+        an uint16_t in a tight loop such as StylePropertySet::findPropertyIndex 
+        (which is the hotspot of the benchmark).
+
+        On my Windows 7 64 bits Core i5 machine CSSPropertySetterGetter results are :
+        - avg : 2714 runs/s with the patch
+        - avg : 2696 runs/s without the patch
+
+        According to Andreas Kling this patch save up ~1.8Mb on membuster.
+
+        No new tests : refactor, old ones should cover.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::getBackgroundShorthandValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::addPropertyWithPrefixingVariant):
+        (WebCore::CSSParser::addProperty):
+        * css/CSSProperty.cpp:
+        (WebCore::StylePropertyMetadata::shorthandID):
+        (WebCore::borderDirections):
+        * css/CSSProperty.h:
+        (WebCore::StylePropertyMetadata::StylePropertyMetadata): Use uint16_t type for bitfields so sizeof() returns 2 bytes.
+        (WebCore::CSSProperty::CSSProperty):
+        (WebCore::CSSProperty::isSetFromShorthand):
+        (WebCore::CSSProperty::shorthandID):
+        * css/StylePropertySet.cpp:
+        (WebCore::ImmutableStylePropertySet::ImmutableStylePropertySet):
+        (WebCore::getIndexInShorthandVectorForPrefixingVariant):
+        (WebCore::MutableStylePropertySet::appendPrefixingVariantProperty):
+        (WebCore::MutableStylePropertySet::setPrefixingVariantProperty):
+        * css/StylePropertySet.h:
+        (WebCore::StylePropertySet::PropertyReference::shorthandID):
+        * css/StylePropertyShorthand.cpp:
+        (WebCore::backgroundShorthand):
+        (WebCore::backgroundPositionShorthand):
+        (WebCore::backgroundRepeatShorthand):
+        (WebCore::borderShorthand):
+        (WebCore::borderAbridgedShorthand):
+        (WebCore::borderBottomShorthand):
+        (WebCore::borderColorShorthand):
+        (WebCore::borderImageShorthand):
+        (WebCore::borderLeftShorthand):
+        (WebCore::borderRadiusShorthand):
+        (WebCore::webkitBorderRadiusShorthand):
+        (WebCore::borderRightShorthand):
+        (WebCore::borderSpacingShorthand):
+        (WebCore::borderStyleShorthand):
+        (WebCore::borderTopShorthand):
+        (WebCore::borderWidthShorthand):
+        (WebCore::listStyleShorthand):
+        (WebCore::fontShorthand):
+        (WebCore::marginShorthand):
+        (WebCore::markerShorthand):
+        (WebCore::outlineShorthand):
+        (WebCore::overflowShorthand):
+        (WebCore::paddingShorthand):
+        (WebCore::transitionShorthand):
+        (WebCore::webkitAnimationShorthand):
+        (WebCore::webkitAnimationShorthandForParsing):
+        (WebCore::webkitBorderAfterShorthand):
+        (WebCore::webkitBorderBeforeShorthand):
+        (WebCore::webkitBorderEndShorthand):
+        (WebCore::webkitBorderStartShorthand):
+        (WebCore::webkitColumnsShorthand):
+        (WebCore::webkitColumnRuleShorthand):
+        (WebCore::webkitFlexFlowShorthand):
+        (WebCore::webkitFlexShorthand):
+        (WebCore::webkitMarginCollapseShorthand):
+        (WebCore::webkitGridColumnShorthand):
+        (WebCore::webkitGridRowShorthand):
+        (WebCore::webkitMarqueeShorthand):
+        (WebCore::webkitMaskShorthand):
+        (WebCore::webkitMaskPositionShorthand):
+        (WebCore::webkitMaskRepeatShorthand):
+        (WebCore::webkitTextEmphasisShorthand):
+        (WebCore::webkitTextStrokeShorthand):
+        (WebCore::webkitTransitionShorthand):
+        (WebCore::webkitTransformOriginShorthand):
+        (WebCore::widthShorthand):
+        (WebCore::heightShorthand):
+        (WebCore::matchingShorthandsForLonghand):
+        (WebCore::indexOfShorthandForLonghand):
+        * css/StylePropertyShorthand.h:
+        (WebCore::StylePropertyShorthand::StylePropertyShorthand):
+        (WebCore::StylePropertyShorthand::id):
+        * css/makeprop.pl:
+
 2013-07-31  Andreas Kling  <akling@apple.com>
 
         FINALize StyleSheet subclasses.

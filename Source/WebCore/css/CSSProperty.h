@@ -1,6 +1,7 @@
 /*
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
  * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2013 Intel Corporation. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -31,30 +32,31 @@
 
 namespace WebCore {
 
-union StylePropertyMetadata {
-    StylePropertyMetadata(CSSPropertyID propertyID, CSSPropertyID shorthandID, bool important, bool implicit, bool inherited)
+struct StylePropertyMetadata {
+    StylePropertyMetadata(CSSPropertyID propertyID, bool isSetFromShorthand, int indexInShorthandsVector, bool important, bool implicit, bool inherited)
         : m_propertyID(propertyID)
-        , m_shorthandID(shorthandID)
+        , m_isSetFromShorthand(isSetFromShorthand)
+        , m_indexInShorthandsVector(indexInShorthandsVector)
         , m_important(important)
         , m_implicit(implicit)
         , m_inherited(inherited)
     {
     }
 
-    unsigned m_bits;
-    struct {
-        unsigned m_propertyID : 14;
-        unsigned m_shorthandID : 14; // If this property was set as part of a shorthand, gives the shorthand.
-        unsigned m_important : 1;
-        unsigned m_implicit : 1; // Whether or not the property was set implicitly as the result of a shorthand.
-        unsigned m_inherited : 1;
-    };
+    CSSPropertyID shorthandID() const;
+
+    uint16_t m_propertyID : 10;
+    uint16_t m_isSetFromShorthand : 1;
+    uint16_t m_indexInShorthandsVector : 2; // If this property was set as part of an ambiguous shorthand, gives the index in the shorthands vector.
+    uint16_t m_important : 1;
+    uint16_t m_implicit : 1; // Whether or not the property was set implicitly as the result of a shorthand.
+    uint16_t m_inherited : 1;
 };
 
 class CSSProperty {
 public:
-    CSSProperty(CSSPropertyID propertyID, PassRefPtr<CSSValue> value, bool important = false, CSSPropertyID shorthandID = CSSPropertyInvalid, bool implicit = false)
-        : m_metadata(propertyID, shorthandID, important, implicit, isInheritedProperty(propertyID))
+    CSSProperty(CSSPropertyID propertyID, PassRefPtr<CSSValue> value, bool important = false, bool isSetFromShorthand = false, int indexInShorthandsVector = 0, bool implicit = false)
+        : m_metadata(propertyID, isSetFromShorthand, indexInShorthandsVector, important, implicit, isInheritedProperty(propertyID))
         , m_value(value)
     {
 #if ENABLE(CSS_VARIABLES)
@@ -73,7 +75,8 @@ public:
     }
 
     CSSPropertyID id() const { return static_cast<CSSPropertyID>(m_metadata.m_propertyID); }
-    CSSPropertyID shorthandID() const { return static_cast<CSSPropertyID>(m_metadata.m_shorthandID); }
+    bool isSetFromShorthand() const { return m_metadata.m_isSetFromShorthand; };
+    CSSPropertyID shorthandID() const { return m_metadata.shorthandID(); };
     bool isImportant() const { return m_metadata.m_important; }
 
     CSSValue* value() const { return m_value.get(); }
@@ -83,7 +86,7 @@ public:
     static CSSPropertyID resolveDirectionAwareProperty(CSSPropertyID, TextDirection, WritingMode);
     static bool isInheritedProperty(CSSPropertyID);
 
-    StylePropertyMetadata metadata() const { return m_metadata; }
+    const StylePropertyMetadata& metadata() const { return m_metadata; }
 
 private:
     StylePropertyMetadata m_metadata;

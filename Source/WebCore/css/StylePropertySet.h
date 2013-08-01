@@ -1,6 +1,7 @@
 /*
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
  * Copyright (C) 2004, 2005, 2006, 2008, 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Intel Corporation. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -59,7 +60,7 @@ public:
         }
 
         CSSPropertyID id() const { return static_cast<CSSPropertyID>(propertyMetadata().m_propertyID); }
-        CSSPropertyID shorthandID() const { return static_cast<CSSPropertyID>(propertyMetadata().m_shorthandID); }
+        CSSPropertyID shorthandID() const { return propertyMetadata().shorthandID(); }
 
         bool isImportant() const { return propertyMetadata().m_important; }
         bool isInherited() const { return propertyMetadata().m_inherited; }
@@ -74,9 +75,9 @@ public:
 
         // FIXME: Remove this.
         CSSProperty toCSSProperty() const { return CSSProperty(propertyMetadata(), const_cast<CSSValue*>(propertyValue())); }
+        const StylePropertyMetadata& propertyMetadata() const;
 
     private:
-        StylePropertyMetadata propertyMetadata() const;
         const CSSValue* propertyValue() const;
 
         const StylePropertySet& m_propertySet;
@@ -170,12 +171,12 @@ private:
 
 inline const CSSValue** ImmutableStylePropertySet::valueArray() const
 {
-    return reinterpret_cast<const CSSValue**>(const_cast<const void**>((&static_cast<const ImmutableStylePropertySet*>(this)->m_storage)));
+    return reinterpret_cast<const CSSValue**>(const_cast<const void**>((&(this->m_storage))));
 }
 
 inline const StylePropertyMetadata* ImmutableStylePropertySet::metadataArray() const
 {
-    return reinterpret_cast<const StylePropertyMetadata*>(&reinterpret_cast<const char*>((&static_cast<const ImmutableStylePropertySet*>(this)->m_storage))[m_arraySize * sizeof(CSSValue*)]);
+    return reinterpret_cast<const StylePropertyMetadata*>(&reinterpret_cast<const char*>(&(this->m_storage))[m_arraySize * sizeof(CSSValue*)]);
 }
 
 class MutableStylePropertySet : public StylePropertySet {
@@ -234,7 +235,7 @@ private:
     friend class StylePropertySet;
 };
 
-inline StylePropertyMetadata StylePropertySet::PropertyReference::propertyMetadata() const
+inline const StylePropertyMetadata& StylePropertySet::PropertyReference::propertyMetadata() const
 {
     if (m_propertySet.isMutable())
         return static_cast<const MutableStylePropertySet&>(m_propertySet).m_propertyVector.at(m_index).metadata();

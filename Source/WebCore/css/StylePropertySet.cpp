@@ -2,6 +2,7 @@
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
  * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2013 Apple Inc. All rights reserved.
  * Copyright (C) 2011 Research In Motion Limited. All rights reserved.
+ * Copyright (C) 2013 Intel Corporation. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -705,21 +706,31 @@ void MutableStylePropertySet::setProperty(const CSSProperty& property, CSSProper
     appendPrefixingVariantProperty(property);
 }
 
+static unsigned getIndexInShorthandVectorForPrefixingVariant(const CSSProperty& property, CSSPropertyID prefixingVariant)
+{
+    if (!property.isSetFromShorthand())
+        return 0;
+
+    CSSPropertyID prefixedShorthand = prefixingVariantForPropertyId(property.shorthandID());
+    return indexOfShorthandForLonghand(prefixedShorthand, matchingShorthandsForLonghand(prefixingVariant));
+}
+
 void MutableStylePropertySet::appendPrefixingVariantProperty(const CSSProperty& property)
 {
     m_propertyVector.append(property);
     CSSPropertyID prefixingVariant = prefixingVariantForPropertyId(property.id());
     if (prefixingVariant == property.id())
         return;
-    m_propertyVector.append(CSSProperty(prefixingVariant, property.value(), property.isImportant(), property.shorthandID(), property.metadata().m_implicit));
+
+    m_propertyVector.append(CSSProperty(prefixingVariant, property.value(), property.isImportant(), property.isSetFromShorthand(), getIndexInShorthandVectorForPrefixingVariant(property, prefixingVariant), property.metadata().m_implicit));
 }
 
 void MutableStylePropertySet::setPrefixingVariantProperty(const CSSProperty& property)
 {
     CSSPropertyID prefixingVariant = prefixingVariantForPropertyId(property.id());
     CSSProperty* toReplace = findCSSPropertyWithID(prefixingVariant);
-    if (toReplace)
-        *toReplace = CSSProperty(prefixingVariant, property.value(), property.isImportant(), property.shorthandID(), property.metadata().m_implicit);
+    if (toReplace && prefixingVariant != property.id())
+        *toReplace = CSSProperty(prefixingVariant, property.value(), property.isImportant(), property.isSetFromShorthand(), getIndexInShorthandVectorForPrefixingVariant(property, prefixingVariant), property.metadata().m_implicit);
 }
 
 bool MutableStylePropertySet::setProperty(CSSPropertyID propertyID, CSSValueID identifier, bool important)
@@ -1127,8 +1138,11 @@ bool MutableStylePropertySet::removePropertiesInSet(const CSSPropertyID* set, un
 
 int StylePropertySet::findPropertyIndex(CSSPropertyID propertyID) const
 {
+    // Convert here propertyID into an uint16_t to compare it with the metadata's m_propertyID to avoid
+    // the compiler converting it to an int multiple times in the loop.
+    uint16_t id = static_cast<uint16_t>(propertyID);
     for (int n = propertyCount() - 1 ; n >= 0; --n) {
-        if (propertyID == propertyAt(n).id())
+        if (id == propertyAt(n).propertyMetadata().m_propertyID)
             return n;
     }
     return -1;
