@@ -1,3 +1,15 @@
+2013-08-01  Jer Noble  <jer.noble@apple.com>
+
+        Crash in WebCore:  WebCore::AudioSession::beganAudioInterruption + 62
+        https://bugs.webkit.org/show_bug.cgi?id=119406
+
+        Reviewed by Eric Carlson.
+
+        Unregister for AudioSession interruption events when being destroyed.
+
+        * platform/audio/ios/AudioDestinationIOS.cpp:
+        (WebCore::AudioDestinationIOS::~AudioDestinationIOS):
+
 2013-08-01  Andreas Kling  <akling@apple.com>
 
         Layout should force a StyleResolver rebuild if there isn't one at all.

@@ -150,6 +150,7 @@ AudioDestinationIOS::AudioDestinationIOS(AudioIOCallback& callback, double sampl
 
 AudioDestinationIOS::~AudioDestinationIOS()
 {
+    AudioSession::sharedSession().removeListener(this);
     audioDestinations().remove(this);
     if (!audioDestinations().size())
         AudioSession::sharedSession().setActive(0);
