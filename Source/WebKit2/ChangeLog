@@ -1,3 +1,16 @@
+2013-08-01  Kwang Yul Seo  <skyul@company100.net>
+
+        [WK2] Add USE(SOUP) guard in WebProcess::destroyPrivateBrowsingSession
+        https://bugs.webkit.org/show_bug.cgi?id=119381
+
+        Reviewed by Darin Adler.
+
+        The is a followup to r153355. I missed to add USE(SOUP) guard in
+        WebProcess::destroyPrivateBrowsingSession.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::destroyPrivateBrowsingSession):
+
 2013-08-01  Milian Wolff  <milian.wolff@kdab.com>
 
         [Qt] Enable QML handling of crashed/unresponsive QtWebProcess

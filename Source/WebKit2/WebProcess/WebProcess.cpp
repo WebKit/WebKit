@@ -460,7 +460,7 @@ void WebProcess::ensurePrivateBrowsingSession()
 
 void WebProcess::destroyPrivateBrowsingSession()
 {
-#if PLATFORM(MAC) || USE(CFNETWORK)
+#if PLATFORM(MAC) || USE(CFNETWORK) || USE(SOUP)
     WebFrameNetworkingContext::destroyPrivateBrowsingSession();
 #endif
 }
