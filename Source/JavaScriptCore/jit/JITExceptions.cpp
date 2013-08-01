@@ -51,6 +51,13 @@ static unsigned getExceptionLocation(VM* vm, CallFrame* callFrame)
     return callFrame->locationAsBytecodeOffset();
 }
 
+EncodedExceptionHandler encode(ExceptionHandler handler)
+{
+    ExceptionHandlerUnion u;
+    u.handler = handler;
+    return u.encodedHandler;
+}
+
 ExceptionHandler genericThrow(VM* vm, ExecState* callFrame, JSValue exceptionValue, unsigned vPCIndex)
 {
     RELEASE_ASSERT(exceptionValue);
