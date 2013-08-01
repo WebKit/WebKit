@@ -122,7 +122,7 @@ bool SparseArrayValueMap::putDirect(ExecState* exec, JSObject* array, unsigned i
     return true;
 }
 
-void SparseArrayEntry::get(PropertySlot& slot) const
+void SparseArrayEntry::get(JSObject* thisObject, PropertySlot& slot) const
 {
     JSValue value = Base::get();
     ASSERT(value);
@@ -132,7 +132,7 @@ void SparseArrayEntry::get(PropertySlot& slot) const
         return;
     }
 
-    slot.setGetterSlot(jsCast<GetterSetter*>(value));
+    slot.setGetterSlot(thisObject, jsCast<GetterSetter*>(value));
 }
 
 void SparseArrayEntry::get(PropertyDescriptor& descriptor) const

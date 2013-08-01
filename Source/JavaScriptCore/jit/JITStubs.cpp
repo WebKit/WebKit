@@ -236,8 +236,6 @@ NEVER_INLINE static void tryCacheGetByID(CallFrame* callFrame, CodeBlock* codeBl
     }
 
     if (slot.slotBase() == structure->prototypeForLookup(callFrame)) {
-        ASSERT(slot.slotBase().isObject());
-        
         JSObject* slotBaseObject = asObject(slot.slotBase());
         size_t offset = slot.cachedOffset();
 
@@ -653,8 +651,6 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_id_self_fail)
         && !baseValue.asCell()->structure()->isUncacheableDictionary()
         && slot.slotBase() == baseValue) {
 
-        ASSERT(slot.slotBase().isObject());
-
         PolymorphicAccessStructureList* polymorphicStructureList;
         int listIndex = 1;
 
@@ -766,7 +762,6 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_id_proto_list)
     
     Structure* structure = baseValue.asCell()->structure();
 
-    ASSERT(slot.slotBase().isObject());
     JSObject* slotBaseObject = asObject(slot.slotBase());
     
     PropertyOffset offset = slot.cachedOffset();

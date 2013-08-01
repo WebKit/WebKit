@@ -1,3 +1,49 @@
+2013-07-31  Gavin Barraclough  <barraclough@apple.com>
+
+        More cleanup in PropertySlot
+        https://bugs.webkit.org/show_bug.cgi?id=119359
+
+        Reviewed by Geoff Garen.
+
+        m_slotBase is overloaded to store the (receiver) thisValue and the object that contains the property,
+        This is confusing, and means that slotBase cannot be typed correctly (can only be a JSObject).
+
+        * dfg/DFGRepatch.cpp:
+        (JSC::DFG::tryCacheGetByID):
+        (JSC::DFG::tryBuildGetByIDList):
+            - No need to ASSERT slotBase is an object.
+        * jit/JITStubs.cpp:
+        (JSC::tryCacheGetByID):
+        (JSC::DEFINE_STUB_FUNCTION):
+            - No need to ASSERT slotBase is an object.
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::getOwnPropertySlotByIndex):
+        (JSC::JSObject::fillGetterPropertySlot):
+            - Pass an object through to setGetterSlot.
+        * runtime/JSObject.h:
+        (JSC::PropertySlot::getValue):
+            - Moved from PropertySlot (need to know anout JSObject).
+        * runtime/PropertySlot.cpp:
+        (JSC::PropertySlot::functionGetter):
+            - update per member name changes
+        * runtime/PropertySlot.h:
+        (JSC::PropertySlot::PropertySlot):
+            - Argument to constructor set to 'thisValue'.
+        (JSC::PropertySlot::slotBase):
+            - This returns a JSObject*.
+        (JSC::PropertySlot::setValue):
+        (JSC::PropertySlot::setCustom):
+        (JSC::PropertySlot::setCacheableCustom):
+        (JSC::PropertySlot::setCustomIndex):
+        (JSC::PropertySlot::setGetterSlot):
+        (JSC::PropertySlot::setCacheableGetterSlot):
+            - slotBase is a JSObject*, make setGetterSlot set slotBase for consistency.
+        * runtime/SparseArrayValueMap.cpp:
+        (JSC::SparseArrayEntry::get):
+            - Pass an object through to setGetterSlot.
+        * runtime/SparseArrayValueMap.h:
+            - Pass an object through to setGetterSlot.
+
 2013-07-31  Yi Shen  <max.hong.shen@gmail.com>
 
         Reduce JSC API static value setter/getter overhead.

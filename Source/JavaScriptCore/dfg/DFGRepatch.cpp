@@ -349,8 +349,6 @@ static bool tryCacheGetByID(ExecState* exec, JSValue baseValue, const Identifier
 
     StructureChain* prototypeChain = structure->prototypeChain(exec);
     
-    ASSERT(slot.slotBase().isObject());
-    
     generateProtoChainAccessStub(exec, stubInfo, prototypeChain, count, offset, structure, stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.dfg.deltaCallToDone), stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.dfg.deltaCallToSlowCase), stubInfo.stubRoutine);
     
     RepatchBuffer repatchBuffer(codeBlock);
@@ -441,8 +439,6 @@ static bool tryBuildGetByIDList(ExecState* exec, JSValue baseValue, const Identi
             if (!slot.isCacheableValue())
                 return false;
         }
-    
-        ASSERT(slot.slotBase().isObject());
     
         PolymorphicAccessStructureList* polymorphicStructureList;
         int listIndex;
@@ -577,8 +573,6 @@ static bool tryBuildGetByIDList(ExecState* exec, JSValue baseValue, const Identi
     if (baseValue.asCell()->structure()->typeInfo().prohibitsPropertyCaching() || !slot.isCacheableValue())
         return false;
 
-    ASSERT(slot.slotBase().isObject());
-    
     PropertyOffset offset = slot.cachedOffset();
     size_t count = normalizePrototypeChainForChainAccess(exec, baseValue, slot.slotBase(), ident, offset);
     if (count == InvalidPrototypeChain)

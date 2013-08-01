@@ -1491,6 +1491,28 @@ ALWAYS_INLINE Identifier makeIdentifier(ExecState*, const Identifier& name)
 #define JSC_NATIVE_FUNCTION(jsName, cppName, attributes, length) \
     JSC_NATIVE_INTRINSIC_FUNCTION(jsName, cppName, (attributes), (length), NoIntrinsic)
 
+ALWAYS_INLINE JSValue PropertySlot::getValue(ExecState* exec, PropertyName propertyName) const
+{
+    if (m_propertyType == TypeValue)
+        return JSValue::decode(m_data.value);
+    if (m_propertyType == TypeCustomIndex)
+        return m_data.customIndex.getIndexValue(exec, slotBase(), m_data.customIndex.index);
+    if (m_propertyType == TypeGetter)
+        return functionGetter(exec);
+    return m_data.custom.getValue(exec, slotBase(), propertyName);
+}
+
+ALWAYS_INLINE JSValue PropertySlot::getValue(ExecState* exec, unsigned propertyName) const
+{
+    if (m_propertyType == TypeValue)
+        return JSValue::decode(m_data.value);
+    if (m_propertyType == TypeCustomIndex)
+        return m_data.customIndex.getIndexValue(exec, slotBase(), m_data.customIndex.index);
+    if (m_propertyType == TypeGetter)
+        return functionGetter(exec);
+    return m_data.custom.getValue(exec, slotBase(), Identifier::from(exec, propertyName));
+}
+
 } // namespace JSC
 
 #endif // JSObject_h

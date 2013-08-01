@@ -319,7 +319,7 @@ bool JSObject::getOwnPropertySlotByIndex(JSObject* thisObject, ExecState* exec, 
         } else if (SparseArrayValueMap* map = storage->m_sparseMap.get()) {
             SparseArrayValueMap::iterator it = map->find(i);
             if (it != map->notFound()) {
-                it->value.get(slot);
+                it->value.get(thisObject, slot);
                 return true;
             }
         }
@@ -1623,7 +1623,7 @@ bool JSObject::removeDirect(VM& vm, PropertyName propertyName)
 NEVER_INLINE void JSObject::fillGetterPropertySlot(PropertySlot& slot, JSValue getterSetter, PropertyOffset offset)
 {
     if (structure()->isDictionary()) {
-        slot.setGetterSlot(jsCast<GetterSetter*>(getterSetter));
+        slot.setGetterSlot(this, jsCast<GetterSetter*>(getterSetter));
         return;
     }
 
