@@ -271,14 +271,6 @@
             "piman"
          ]
       },
-      "Antoine Quint" : {
-         "emails" : [
-            "graouts@apple.com"
-         ],
-         "nicks" : [
-            "graouts"
-         ]
-      },
       "Anton D'Auria" : {
          "emails" : [
             "adauria@apple.com"
@@ -3189,6 +3181,14 @@
          "expertise" : "{BlackBerry, EFL, Qt}WebKit ports, Hit testing, Touch/Event handling, Rendering and scrolling",
          "nicks" : [
             "tonikitoo"
+         ]
+      },
+      "Antoine Quint" : {
+         "emails" : [
+            "graouts@apple.com"
+         ],
+         "nicks" : [
+            "graouts"
          ]
       },
       "Antti Koivisto" : {
