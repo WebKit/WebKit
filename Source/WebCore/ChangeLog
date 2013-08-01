@@ -1,3 +1,16 @@
+2013-08-01  Tim Horton  <timothy_horton@apple.com>
+
+        Unavailable plug-in indicator arrow should be inside the rounded rect, not in its own circle
+        https://bugs.webkit.org/show_bug.cgi?id=119400
+        <rdar://problem/14616012>
+
+        Reviewed by Anders Carlsson.
+
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::getReplacementTextGeometry):
+        Shift the arrow in by 9px, and make the text's rounded rect include it,
+        instead of having the arrow in a separate circle.
+
 2013-08-01  Patrick Gansterer  <paroga@webkit.org>
 
         Merge FrameWinCE into FrameWin

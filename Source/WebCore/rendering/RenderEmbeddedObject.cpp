@@ -71,7 +71,7 @@ static const float replacementTextRoundedRectLeftRightTextMargin = 6;
 static const float replacementTextRoundedRectBottomTextPadding = 1;
 static const float replacementTextRoundedRectOpacity = 0.8f;
 static const float replacementTextRoundedRectRadius = 5;
-static const float replacementArrowLeftMargin = 5;
+static const float replacementArrowLeftMargin = -4;
 static const float replacementArrowPadding = 4;
 
 static const Color& replacementTextRoundedRectPressedColor()
@@ -325,16 +325,21 @@ bool RenderEmbeddedObject::getReplacementTextGeometry(const LayoutPoint& accumul
 
     replacementTextRect.setHeight(replacementTextRect.height() + replacementTextRoundedRectBottomTextPadding);
 
-    path.addRoundedRect(replacementTextRect, FloatSize(replacementTextRoundedRectRadius, replacementTextRoundedRectRadius));
+    FloatRect indicatorRect(replacementTextRect);
 
+    // Expand the background rect to include the arrow, if it will be used.
     if (shouldUnavailablePluginMessageBeButton(document(), m_pluginUnavailabilityReason)) {
-        arrowRect = path.boundingRect();
+        arrowRect = indicatorRect;
         arrowRect.setX(ceilf(arrowRect.maxX() + replacementArrowLeftMargin));
         arrowRect.setWidth(arrowRect.height());
+        indicatorRect.unite(arrowRect);
         arrowRect.inflate(-0.5);
-        path.addEllipse(arrowRect);
-        addReplacementArrowPath(path, arrowRect);
     }
+
+    path.addRoundedRect(indicatorRect, FloatSize(replacementTextRoundedRectRadius, replacementTextRoundedRectRadius));
+
+    if (shouldUnavailablePluginMessageBeButton(document(), m_pluginUnavailabilityReason))
+        addReplacementArrowPath(path, arrowRect);
 
     return true;
 }
