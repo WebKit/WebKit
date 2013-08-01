@@ -1,3 +1,17 @@
+2013-08-01  Alex Christensen  <achristensen@apple.com>
+
+        Made OESTextureHalfFloat work on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=119298
+
+        Reviewed by Christophe Dumez.
+
+        * DerivedSources.cpp: Added JSOESTextureHalfFloat.cpp inside of #if ENABLE(WEBGL).
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        Added JSOESTextureHalfFloat.cpp and JSOESTextureHalfFloat.h.
+        * html/canvas/OESTextureHalfFloat.idl: Added newline to end of file.
+        * html/canvas/WebGLObject.cpp: Removed unused #includes.
+
 2013-08-01  Patrick Gansterer  <paroga@webkit.org>
 
         Rearrange the code of FrameWin
