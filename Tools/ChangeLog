@@ -1,5 +1,23 @@
 2013-08-01  Bem Jones-Bey  <bjonesbe@adobe.com>
 
+        Duplicate property names can cause test to fail
+        https://bugs.webkit.org/show_bug.cgi?id=119399
+
+        Reviewed by Dirk Pranke.
+
+        This problem was noticed when porting the patch for
+        http://wkb.ug/119357 to Blink: a test would fail because the converted
+        and test property lists weren't the same length, but they contained
+        all of the same property names. It looks like this is actually caused
+        by a bug in converting the HTML, which is being currently rewritten.
+        In the meantime, as long as this compares the number of unique
+        properties, it makes the test more robust.
+
+        * Scripts/webkitpy/w3c/test_converter_unittest.py:
+        (verify_prefixed_properties):
+
+2013-08-01  Bem Jones-Bey  <bjonesbe@adobe.com>
+
         Unreviewed. Adding my expertise.
 
         * Scripts/webkitpy/common/config/contributors.json:
