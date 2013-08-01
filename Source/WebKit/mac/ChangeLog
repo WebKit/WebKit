@@ -1,3 +1,16 @@
+2013-07-31  Tim Horton  <timothy_horton@apple.com>
+
+        Remove didFinishLoad order quirk
+        https://bugs.webkit.org/show_bug.cgi?id=119354
+        <rdar://problem/11510686>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Misc/WebKitVersionChecks.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+        Don't set the now-removed preference.
+
 2013-07-31  Kwang Yul Seo  <skyul@company100.net>
 
         Use emptyString instead of String("")
