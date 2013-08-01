@@ -500,14 +500,15 @@ IntRect PluginView::calculateClipRect() const
 {
     FrameView* frameView = toFrameView(parent());
     bool visible = frameView && isVisible();
+    RenderObject* renderer = m_element->renderer();
 
-    if (visible && frameView->width() && frameView->height()) {
+    if (visible && frameView->width() && frameView->height() && renderer) {
         IntSize windowSize = frameView->hostWindow()->platformPageClient()->viewportSize();
 
         // Get the clipped rectangle for this player within the current frame.
         IntRect visibleContentRect;
-        IntRect contentRect = m_element->renderer()->absoluteClippedOverflowRect();
-        FloatPoint contentLocal = m_element->renderer()->absoluteToLocal(FloatPoint(contentRect.location()));
+        IntRect contentRect = renderer->absoluteClippedOverflowRect();
+        FloatPoint contentLocal = renderer->absoluteToLocal(FloatPoint(contentRect.location()));
 
         contentRect.setLocation(roundedIntPoint(contentLocal));
         contentRect.move(frameRect().x(), frameRect().y());
