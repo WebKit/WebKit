@@ -1,3 +1,12 @@
+2013-07-31  Seokju Kwon  <seokju@webkit.org>
+
+        [GTK] Unreviewed gardening
+        https://bugs.webkit.org/show_bug.cgi?id=119283
+
+        Unreviewed GTK gardening.
+
+        * platform/gtk/TestExpectations: Remove duplicated entry.
+
 2013-07-31  Simon Fraser  <simon.fraser@apple.com>
 
         Skip media/track/track-language-preference.html and media/track/track-prefer-captions.html
