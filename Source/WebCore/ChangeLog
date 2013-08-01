@@ -1,3 +1,19 @@
+2013-08-01  Morten Stenshorne  <mstensho@opera.com>
+
+        REGRESSION (Safari 6 - ToT): Incorrectly assumes that RenderStyle data can be shared
+        https://bugs.webkit.org/show_bug.cgi?id=113058
+
+        Before sharing CSS properties with an element in the cache, we need to
+        check that the new element is suitable for this, just like we check
+        elements before inserting them into the cache.
+
+        Reviewed by Andreas Kling.
+
+        Test: fast/css/identical-logical-height-decl.html
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::applyMatchedProperties):
+
 2013-08-01  Mark Lam  <mark.lam@apple.com>
 
         Fixed expected test results for run-bindings-tests after r153532, r153537.
