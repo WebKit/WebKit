@@ -63,9 +63,9 @@ void JSTestNamedConstructorConstructor::finishCreation(ExecState* exec, JSDOMGlo
     putDirect(exec->vm(), exec->propertyNames().length, jsNumber(0), ReadOnly | DontDelete | DontEnum);
 }
 
-bool JSTestNamedConstructorConstructor::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
+bool JSTestNamedConstructorConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
-    return getStaticValueSlot<JSTestNamedConstructorConstructor, JSDOMWrapper>(exec, &JSTestNamedConstructorConstructorTable, jsCast<JSTestNamedConstructorConstructor*>(cell), propertyName, slot);
+    return getStaticValueSlot<JSTestNamedConstructorConstructor, JSDOMWrapper>(exec, &JSTestNamedConstructorConstructorTable, jsCast<JSTestNamedConstructorConstructor*>(object), propertyName, slot);
 }
 
 bool JSTestNamedConstructorConstructor::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)
@@ -162,9 +162,9 @@ JSTestNamedConstructor::~JSTestNamedConstructor()
     releaseImplIfNotNull();
 }
 
-bool JSTestNamedConstructor::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
+bool JSTestNamedConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
-    JSTestNamedConstructor* thisObject = jsCast<JSTestNamedConstructor*>(cell);
+    JSTestNamedConstructor* thisObject = jsCast<JSTestNamedConstructor*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     return getStaticValueSlot<JSTestNamedConstructor, Base>(exec, &JSTestNamedConstructorTable, thisObject, propertyName, slot);
 }

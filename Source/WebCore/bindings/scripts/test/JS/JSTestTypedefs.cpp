@@ -96,9 +96,9 @@ void JSTestTypedefsConstructor::finishCreation(ExecState* exec, JSDOMGlobalObjec
     putDirect(exec->vm(), exec->propertyNames().length, jsNumber(2), ReadOnly | DontDelete | DontEnum);
 }
 
-bool JSTestTypedefsConstructor::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
+bool JSTestTypedefsConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
-    return getStaticValueSlot<JSTestTypedefsConstructor, JSDOMWrapper>(exec, &JSTestTypedefsConstructorTable, jsCast<JSTestTypedefsConstructor*>(cell), propertyName, slot);
+    return getStaticValueSlot<JSTestTypedefsConstructor, JSDOMWrapper>(exec, &JSTestTypedefsConstructorTable, jsCast<JSTestTypedefsConstructor*>(object), propertyName, slot);
 }
 
 bool JSTestTypedefsConstructor::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)
@@ -136,9 +136,9 @@ JSObject* JSTestTypedefsPrototype::self(ExecState* exec, JSGlobalObject* globalO
     return getDOMPrototype<JSTestTypedefs>(exec, globalObject);
 }
 
-bool JSTestTypedefsPrototype::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
+bool JSTestTypedefsPrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
-    JSTestTypedefsPrototype* thisObject = jsCast<JSTestTypedefsPrototype*>(cell);
+    JSTestTypedefsPrototype* thisObject = jsCast<JSTestTypedefsPrototype*>(object);
     return getStaticFunctionSlot<JSObject>(exec, &JSTestTypedefsPrototypeTable, thisObject, propertyName, slot);
 }
 
@@ -178,9 +178,9 @@ JSTestTypedefs::~JSTestTypedefs()
     releaseImplIfNotNull();
 }
 
-bool JSTestTypedefs::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
+bool JSTestTypedefs::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
-    JSTestTypedefs* thisObject = jsCast<JSTestTypedefs*>(cell);
+    JSTestTypedefs* thisObject = jsCast<JSTestTypedefs*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     return getStaticValueSlot<JSTestTypedefs, Base>(exec, &JSTestTypedefsTable, thisObject, propertyName, slot);
 }

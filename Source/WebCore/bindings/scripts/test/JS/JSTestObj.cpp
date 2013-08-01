@@ -237,9 +237,9 @@ void JSTestObjConstructor::finishCreation(ExecState* exec, JSDOMGlobalObject* gl
     putDirect(exec->vm(), exec->propertyNames().length, jsNumber(1), ReadOnly | DontDelete | DontEnum);
 }
 
-bool JSTestObjConstructor::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
+bool JSTestObjConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
-    return getStaticPropertySlot<JSTestObjConstructor, JSDOMWrapper>(exec, &JSTestObjConstructorTable, jsCast<JSTestObjConstructor*>(cell), propertyName, slot);
+    return getStaticPropertySlot<JSTestObjConstructor, JSDOMWrapper>(exec, &JSTestObjConstructorTable, jsCast<JSTestObjConstructor*>(object), propertyName, slot);
 }
 
 bool JSTestObjConstructor::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)
@@ -348,9 +348,9 @@ JSObject* JSTestObjPrototype::self(ExecState* exec, JSGlobalObject* globalObject
     return getDOMPrototype<JSTestObj>(exec, globalObject);
 }
 
-bool JSTestObjPrototype::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
+bool JSTestObjPrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
-    JSTestObjPrototype* thisObject = jsCast<JSTestObjPrototype*>(cell);
+    JSTestObjPrototype* thisObject = jsCast<JSTestObjPrototype*>(object);
     return getStaticPropertySlot<JSTestObjPrototype, JSObject>(exec, &JSTestObjPrototypeTable, thisObject, propertyName, slot);
 }
 
@@ -390,9 +390,9 @@ JSTestObj::~JSTestObj()
     releaseImplIfNotNull();
 }
 
-bool JSTestObj::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
+bool JSTestObj::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
-    JSTestObj* thisObject = jsCast<JSTestObj*>(cell);
+    JSTestObj* thisObject = jsCast<JSTestObj*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     return getStaticValueSlot<JSTestObj, Base>(exec, &JSTestObjTable, thisObject, propertyName, slot);
 }

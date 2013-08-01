@@ -1,3 +1,80 @@
+2013-08-01  Mark Lam  <mark.lam@apple.com>
+
+        Fixed expected test results for run-bindings-tests after r153532, r153537.
+        https://bugs.webkit.org/show_bug.cgi?id=119410.
+
+        Reviewed by Simon Fraser.
+
+        No new tests.
+
+        * bindings/scripts/test/JS/JSFloat64Array.cpp:
+        (WebCore::JSFloat64ArrayConstructor::getOwnPropertySlot):
+        (WebCore::JSFloat64ArrayPrototype::getOwnPropertySlot):
+        (WebCore::JSFloat64Array::getOwnPropertySlot):
+        (WebCore::JSFloat64Array::getOwnPropertySlotByIndex):
+        * bindings/scripts/test/JS/JSFloat64Array.h:
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.cpp:
+        (WebCore::JSTestActiveDOMObjectConstructor::getOwnPropertySlot):
+        (WebCore::JSTestActiveDOMObjectPrototype::getOwnPropertySlot):
+        (WebCore::JSTestActiveDOMObject::getOwnPropertySlot):
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.h:
+        * bindings/scripts/test/JS/JSTestCustomNamedGetter.cpp:
+        (WebCore::JSTestCustomNamedGetterConstructor::getOwnPropertySlot):
+        (WebCore::JSTestCustomNamedGetterPrototype::getOwnPropertySlot):
+        (WebCore::JSTestCustomNamedGetter::getOwnPropertySlot):
+        (WebCore::JSTestCustomNamedGetter::getOwnPropertySlotByIndex):
+        * bindings/scripts/test/JS/JSTestCustomNamedGetter.h:
+        * bindings/scripts/test/JS/JSTestEventConstructor.cpp:
+        (WebCore::JSTestEventConstructorConstructor::getOwnPropertySlot):
+        (WebCore::JSTestEventConstructor::getOwnPropertySlot):
+        * bindings/scripts/test/JS/JSTestEventConstructor.h:
+        * bindings/scripts/test/JS/JSTestEventTarget.cpp:
+        (WebCore::JSTestEventTargetConstructor::getOwnPropertySlot):
+        (WebCore::JSTestEventTargetPrototype::getOwnPropertySlot):
+        (WebCore::JSTestEventTarget::getOwnPropertySlot):
+        (WebCore::JSTestEventTarget::getOwnPropertySlotByIndex):
+        * bindings/scripts/test/JS/JSTestEventTarget.h:
+        * bindings/scripts/test/JS/JSTestException.cpp:
+        (WebCore::JSTestExceptionConstructor::getOwnPropertySlot):
+        (WebCore::JSTestException::getOwnPropertySlot):
+        * bindings/scripts/test/JS/JSTestException.h:
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        (WebCore::JSTestInterfaceConstructor::getOwnPropertySlot):
+        (WebCore::JSTestInterfacePrototype::getOwnPropertySlot):
+        (WebCore::JSTestInterface::getOwnPropertySlot):
+        * bindings/scripts/test/JS/JSTestInterface.h:
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.cpp:
+        (WebCore::JSTestMediaQueryListListenerConstructor::getOwnPropertySlot):
+        (WebCore::JSTestMediaQueryListListenerPrototype::getOwnPropertySlot):
+        (WebCore::JSTestMediaQueryListListener::getOwnPropertySlot):
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.h:
+        * bindings/scripts/test/JS/JSTestNamedConstructor.cpp:
+        (WebCore::JSTestNamedConstructorConstructor::getOwnPropertySlot):
+        (WebCore::JSTestNamedConstructor::getOwnPropertySlot):
+        * bindings/scripts/test/JS/JSTestNamedConstructor.h:
+        * bindings/scripts/test/JS/JSTestNode.cpp:
+        (WebCore::JSTestNodeConstructor::getOwnPropertySlot):
+        (WebCore::JSTestNode::getOwnPropertySlot):
+        * bindings/scripts/test/JS/JSTestNode.h:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::JSTestObjConstructor::getOwnPropertySlot):
+        (WebCore::JSTestObjPrototype::getOwnPropertySlot):
+        (WebCore::JSTestObj::getOwnPropertySlot):
+        * bindings/scripts/test/JS/JSTestObj.h:
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.cpp:
+        (WebCore::JSTestOverloadedConstructorsConstructor::getOwnPropertySlot):
+        (WebCore::JSTestOverloadedConstructors::getOwnPropertySlot):
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.h:
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        (WebCore::JSTestSerializedScriptValueInterfaceConstructor::getOwnPropertySlot):
+        (WebCore::JSTestSerializedScriptValueInterface::getOwnPropertySlot):
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.h:
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        (WebCore::JSTestTypedefsConstructor::getOwnPropertySlot):
+        (WebCore::JSTestTypedefsPrototype::getOwnPropertySlot):
+        (WebCore::JSTestTypedefs::getOwnPropertySlot):
+        * bindings/scripts/test/JS/JSTestTypedefs.h:
+
 2013-08-01  Alex Christensen  <achristensen@apple.com>
 
         Copy eglplatform.h to be found by Windows WebGL build.

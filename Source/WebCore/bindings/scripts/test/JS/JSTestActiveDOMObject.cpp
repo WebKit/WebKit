@@ -66,9 +66,9 @@ void JSTestActiveDOMObjectConstructor::finishCreation(ExecState* exec, JSDOMGlob
     putDirect(exec->vm(), exec->propertyNames().length, jsNumber(0), ReadOnly | DontDelete | DontEnum);
 }
 
-bool JSTestActiveDOMObjectConstructor::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
+bool JSTestActiveDOMObjectConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
-    return getStaticValueSlot<JSTestActiveDOMObjectConstructor, JSDOMWrapper>(exec, &JSTestActiveDOMObjectConstructorTable, jsCast<JSTestActiveDOMObjectConstructor*>(cell), propertyName, slot);
+    return getStaticValueSlot<JSTestActiveDOMObjectConstructor, JSDOMWrapper>(exec, &JSTestActiveDOMObjectConstructorTable, jsCast<JSTestActiveDOMObjectConstructor*>(object), propertyName, slot);
 }
 
 bool JSTestActiveDOMObjectConstructor::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)
@@ -93,9 +93,9 @@ JSObject* JSTestActiveDOMObjectPrototype::self(ExecState* exec, JSGlobalObject* 
     return getDOMPrototype<JSTestActiveDOMObject>(exec, globalObject);
 }
 
-bool JSTestActiveDOMObjectPrototype::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
+bool JSTestActiveDOMObjectPrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
-    JSTestActiveDOMObjectPrototype* thisObject = jsCast<JSTestActiveDOMObjectPrototype*>(cell);
+    JSTestActiveDOMObjectPrototype* thisObject = jsCast<JSTestActiveDOMObjectPrototype*>(object);
     return getStaticFunctionSlot<JSObject>(exec, &JSTestActiveDOMObjectPrototypeTable, thisObject, propertyName, slot);
 }
 
@@ -135,9 +135,9 @@ JSTestActiveDOMObject::~JSTestActiveDOMObject()
     releaseImplIfNotNull();
 }
 
-bool JSTestActiveDOMObject::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
+bool JSTestActiveDOMObject::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
-    JSTestActiveDOMObject* thisObject = jsCast<JSTestActiveDOMObject*>(cell);
+    JSTestActiveDOMObject* thisObject = jsCast<JSTestActiveDOMObject*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     return getStaticValueSlot<JSTestActiveDOMObject, Base>(exec, &JSTestActiveDOMObjectTable, thisObject, propertyName, slot);
 }

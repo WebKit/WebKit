@@ -70,9 +70,9 @@ void JSTestNodeConstructor::finishCreation(ExecState* exec, JSDOMGlobalObject* g
     putDirect(exec->vm(), exec->propertyNames().length, jsNumber(0), ReadOnly | DontDelete | DontEnum);
 }
 
-bool JSTestNodeConstructor::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
+bool JSTestNodeConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
-    return getStaticValueSlot<JSTestNodeConstructor, JSDOMWrapper>(exec, &JSTestNodeConstructorTable, jsCast<JSTestNodeConstructor*>(cell), propertyName, slot);
+    return getStaticValueSlot<JSTestNodeConstructor, JSDOMWrapper>(exec, &JSTestNodeConstructorTable, jsCast<JSTestNodeConstructor*>(object), propertyName, slot);
 }
 
 bool JSTestNodeConstructor::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)
@@ -119,9 +119,9 @@ JSObject* JSTestNode::createPrototype(ExecState* exec, JSGlobalObject* globalObj
     return JSTestNodePrototype::create(exec->vm(), globalObject, JSTestNodePrototype::createStructure(exec->vm(), globalObject, JSNodePrototype::self(exec, globalObject)));
 }
 
-bool JSTestNode::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
+bool JSTestNode::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
-    JSTestNode* thisObject = jsCast<JSTestNode*>(cell);
+    JSTestNode* thisObject = jsCast<JSTestNode*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     return getStaticValueSlot<JSTestNode, Base>(exec, &JSTestNodeTable, thisObject, propertyName, slot);
 }

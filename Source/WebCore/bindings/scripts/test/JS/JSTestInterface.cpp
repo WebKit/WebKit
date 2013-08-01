@@ -170,9 +170,9 @@ void JSTestInterfaceConstructor::finishCreation(ExecState* exec, JSDOMGlobalObje
     putDirect(exec->vm(), exec->propertyNames().length, jsNumber(1), ReadOnly | DontDelete | DontEnum);
 }
 
-bool JSTestInterfaceConstructor::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
+bool JSTestInterfaceConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
-    return getStaticPropertySlot<JSTestInterfaceConstructor, JSDOMWrapper>(exec, &JSTestInterfaceConstructorTable, jsCast<JSTestInterfaceConstructor*>(cell), propertyName, slot);
+    return getStaticPropertySlot<JSTestInterfaceConstructor, JSDOMWrapper>(exec, &JSTestInterfaceConstructorTable, jsCast<JSTestInterfaceConstructor*>(object), propertyName, slot);
 }
 
 bool JSTestInterfaceConstructor::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)
@@ -233,9 +233,9 @@ JSObject* JSTestInterfacePrototype::self(ExecState* exec, JSGlobalObject* global
     return getDOMPrototype<JSTestInterface>(exec, globalObject);
 }
 
-bool JSTestInterfacePrototype::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
+bool JSTestInterfacePrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
-    JSTestInterfacePrototype* thisObject = jsCast<JSTestInterfacePrototype*>(cell);
+    JSTestInterfacePrototype* thisObject = jsCast<JSTestInterfacePrototype*>(object);
     return getStaticPropertySlot<JSTestInterfacePrototype, JSObject>(exec, &JSTestInterfacePrototypeTable, thisObject, propertyName, slot);
 }
 
@@ -275,9 +275,9 @@ JSTestInterface::~JSTestInterface()
     releaseImplIfNotNull();
 }
 
-bool JSTestInterface::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
+bool JSTestInterface::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
-    JSTestInterface* thisObject = jsCast<JSTestInterface*>(cell);
+    JSTestInterface* thisObject = jsCast<JSTestInterface*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     return getStaticValueSlot<JSTestInterface, Base>(exec, &JSTestInterfaceTable, thisObject, propertyName, slot);
 }
