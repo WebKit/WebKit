@@ -145,7 +145,7 @@ void WebColorPickerMac::showColorPicker(const WebCore::Color& color)
     if(!(self = [super init]))
         return self;
 
-    _popoverWell = adoptNS([[NSPopoverColorWell alloc] initWithFrame:NSRectFromCGRect(rect)]);
+    _popoverWell = adoptNS([[NSPopoverColorWell alloc] initWithFrame:[view convertRect:NSRectFromCGRect(rect) toView:nil]]);
     if (!_popoverWell)
         return self;
 

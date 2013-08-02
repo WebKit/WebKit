@@ -1,3 +1,16 @@
+2013-08-02  Ruth Fong  <ruth_fong@apple.com>
+
+        [Forms: color] The positioning of the popover color well is inverted
+        <rdar://problem/14635621> and https://bugs.webkit.org/show_bug.cgi?id=119455
+
+        Reviewed by Tim Horton.
+
+        This patch converts the coordinates of the <input type='color'> element to
+        the window's base coordinate system.
+
+        * UIProcess/mac/WebColorPickerMac.mm:
+        (-[WKColorPopoverMac initWithFrame:inView:]):
+
 2013-08-01  Ruth Fong  <ruth_fong@apple.com>
 
         [Forms: color] <input type='color'> popover color well implementation
