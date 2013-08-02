@@ -277,17 +277,8 @@ HIDE_SYMBOL(ctiVMThrowTrampolineSlowpath) "\n"
 SYMBOL_STRING(ctiVMThrowTrampolineSlowpath) ":" "\n"
     "mov r0, r5" "\n"
     "bl " LOCAL_REFERENCE(cti_vm_throw_slowpath) "\n"
-     // When cti_vm_throw_slowpath returns, r0 has callFrame and r1 has handler address
-    "ldr r11, [sp, #" STRINGIZE_VALUE_OF(PRESERVED_R11_OFFSET) "]" "\n"
-    "ldr r10, [sp, #" STRINGIZE_VALUE_OF(PRESERVED_R10_OFFSET) "]" "\n"
-    "ldr r9, [sp, #" STRINGIZE_VALUE_OF(PRESERVED_R9_OFFSET) "]" "\n"
-    "ldr r8, [sp, #" STRINGIZE_VALUE_OF(PRESERVED_R8_OFFSET) "]" "\n"
-    "ldr r7, [sp, #" STRINGIZE_VALUE_OF(PRESERVED_R7_OFFSET) "]" "\n"
-    "ldr r6, [sp, #" STRINGIZE_VALUE_OF(PRESERVED_R6_OFFSET) "]" "\n"
-    "ldr r5, [sp, #" STRINGIZE_VALUE_OF(PRESERVED_R5_OFFSET) "]" "\n"
-    "ldr r4, [sp, #" STRINGIZE_VALUE_OF(PRESERVED_R4_OFFSET) "]" "\n"
-    "ldr lr, [sp, #" STRINGIZE_VALUE_OF(PRESERVED_RETURN_ADDRESS_OFFSET) "]" "\n"
-    "add sp, sp, #" STRINGIZE_VALUE_OF(FIRST_STACK_ARGUMENT) "\n"
+    // When cti_vm_throw_slowpath returns, r0 has callFrame and r1 has handler address
+    "mov r5, r0" "\n"
     "bx r1" "\n"
 );
 

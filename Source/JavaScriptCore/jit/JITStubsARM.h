@@ -204,11 +204,9 @@ INLINE_ARM_FUNCTION(ctiVMThrowTrampolineSlowpath)
 SYMBOL_STRING(ctiVMThrowTrampolineSlowpath) ":" "\n"
     "mov r0, r5" "\n"
     "bl " SYMBOL_STRING(cti_vm_throw_slowpath) "\n"
-     // When cti_vm_throw_slowpath returns, r0 has callFrame and r1 has handler address
-     "add sp, sp, #" STRINGIZE_VALUE_OF(PRESERVEDR4_OFFSET) "\n"
-     "ldmia sp!, {r4-r6, r8-r11, lr}" "\n"
-     "add sp, sp, #12" "\n"
-     "bx r1" "\n"
+    // When cti_vm_throw_slowpath returns, r0 has callFrame and r1 has handler address
+    "mov r5, r0" "\n"
+    "bx r1" "\n"
 );
 
 #if USE(MASM_PROBE)
