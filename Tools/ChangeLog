@@ -1,3 +1,16 @@
+2013-08-02  Patrick Gansterer  <paroga@webkit.org>
+
+        Add --rmdir option to git svn dcommit
+        https://bugs.webkit.org/show_bug.cgi?id=119398
+
+        Reviewed by Ryosuke Niwa.
+
+        Add this option tells git-svn to remove empty directories
+        from the svn tree so they do not leave over there.
+
+        * Scripts/webkitpy/common/checkout/scm/git.py:
+        (Git.push_local_commits_to_server):
+
 2013-08-01  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] WebKit1 Fullscreen Video Play is Broken
