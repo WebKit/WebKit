@@ -1,3 +1,10 @@
+2013-08-02  Simon Fraser  <simon.fraser@apple.com>
+
+        webaudio/javascriptaudionode-downmix8-2channel-input.html sometimes asserts
+        https://bugs.webkit.org/show_bug.cgi?id=119459
+
+        * platform/mac-wk2/TestExpectations:
+
 2013-08-02  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         compareDocumentPosition() should report PRECEDING or FOLLOWING information even if nodes are disconnected
