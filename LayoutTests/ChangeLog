@@ -1,3 +1,50 @@
+2013-08-01  Romain Perier  <romain.perier@gmail.com>
+
+        Implement img element's srcset attribute
+        https://bugs.webkit.org/show_bug.cgi?id=110252
+
+        Reviewed by Dean Jackson.
+
+        * fast/hidpi/image-srcset-simple.html: Ensures that the good image
+        is selected from srcset by the user agent according to the choosen scale factor.
+        * fast/hidpi/image-srcset-src-selection.html: Ensures that the image
+        from the src attribute is collected by the parsing algorithm and selected by the user agent
+        when no other candidate matches the scale factor.
+        * fast/hidpi/image-srcset-only-src-attribute.html: Ensures that the algorithms used for srcset
+        does not change the behaviour of the src attribute when the srcset attribute is not defined,
+        even using scale factor greater than 1.
+        * fast/hidpi/image-srcset-same-alternative-for-both-attributes.html: Ensures that the good image
+        is selected by the user agent when src and srcset contain an image with a scale factor of 1.
+        * fast/hidpi/image-srcset-invalid-inputs.html: Ensures that the parsing and the selection
+        algorithms support invalid inputs. Theses ones are simply ignored.
+        * fast/hidpi/image-srcset-invalid-inputs-except-one.html: Ensures that a valid image
+        is selected even if this one is part of a set containing invalid inputs.
+        * fast/hidpi/image-srcset-invalid-inputs-correct-src.html: Ensures that the image from
+        the src attribute is choosen when srcset contains only invalid inputs, this selection
+        should not depend on the scale factor.
+        * fast/hidpi/image-srcset-change-dynamically-from-js.html: Ensures that src and srcset attributes
+        can be changed dynamically from javascript.
+        * fast/hidpi/image-srcset-remove-dynamically-from-js.html: Ensures that src attribute
+        can be removed dynamically from javascript.
+        * platform/mac/fast/hidpi/image-srcset-simple-expected.png:
+        * platform/mac/fast/hidpi/image-srcset-simple-expected.txt:
+        * platform/mac/fast/hidpi/image-srcset-src-selection-expected.png:
+        * platform/mac/fast/hidpi/image-srcset-src-selection-expected.txt:
+        * platform/mac/fast/hidpi/image-srcset-only-src-attribute-expected.png:
+        * platform/mac/fast/hidpi/image-srcset-only-src-attribute-expected.txt:
+        * platform/mac/fast/hidpi/image-srcset-same-alternative-for-both-attributes-expected.png:
+        * platform/mac/fast/hidpi/image-srcset-same-alternative-for-both-attributes-expected.txt:
+        * platform/mac/fast/hidpi/image-srcset-invalid-inputs-expected.png:
+        * platform/mac/fast/hidpi/image-srcset-invalid-inputs-expected.txt:
+        * platform/mac/fast/hidpi/image-srcset-invalid-inputs-except-one-expected.png:
+        * platform/mac/fast/hidpi/image-srcset-invalid-inputs-except-one-expected.txt:
+        * platform/mac/fast/hidpi/image-srcset-invalid-inputs-correct-src-expected.png:
+        * platform/mac/fast/hidpi/image-srcset-invalid-inputs-correct-src-expected.txt:
+        * platform/mac/fast/hidpi/image-srcset-change-dynamically-from-js-expected.png:
+        * platform/mac/fast/hidpi/image-srcset-change-dynamically-from-js-expected.txt:
+        * platform/mac/fast/hidpi/image-srcset-remove-dynamically-from-js-expected.png:
+        * platform/mac/fast/hidpi/image-srcset-remove-dynamically-from-js-expected.txt:
+
 2013-08-01  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         [CSS Shapes] New positioning model: support for stacked floats with shape-outside

@@ -1,3 +1,43 @@
+2013-08-01  Romain Perier  <romain.perier@gmail.com>
+
+        Implement img element's srcset attribute
+        https://bugs.webkit.org/show_bug.cgi?id=110252
+
+        Reviewed by Dean Jackson.
+
+        Tests: fast/hidpi/image-srcset-simple.html
+               fast/hidpi/image-srcset-src-selection.html
+               fast/hidpi/image-srcset-simple.html
+               fast/hidpi/image-srcset-src-selection.html
+               fast/hidpi/image-srcset-only-src-attribute.html
+               fast/hidpi/image-srcset-same-alternative-for-both-attributes.html
+               fast/hidpi/image-srcset-invalid-inputs.html
+               fast/hidpi/image-srcset-invalid-inputs-except-one.html
+               fast/hidpi/image-srcset-invalid-inputs-correct-src.html
+               fast/hidpi/image-srcset-change-dynamically-from-js.html
+               fast/hidpi/image-srcset-remove-dynamically-from-js.html
+
+        * html/HTMLAttributeNames.in: Add srcset attribute.
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::HTMLImageElement):
+        Adding initialization for new variables member.
+        (WebCore::HTMLImageElement::imageSourceURL):
+        Override this method to return the choosen image transparently to the ImageLoader.
+        (WebCore::HTMLImageElement::updateBestImageForScaleFactor):
+        New method to select the good image candidate dependending on the scale factor. This method is separated from
+        parsing because it will be useful for selecting a new image candidate on the fly if the device scale factor changes.
+        (WebCore::HTMLImageElement::updateImagesFromSrcSet):
+        New method for parsing the srcset attribute and build a list of images with the corresponding scale factor.
+        (WebCore::HTMLImageElement::parseAttribute):
+        Adding support for processing the image candidates, select the good one and call ImageLoader for rendering.
+        * html/HTMLImageElement.h:
+        - Adding new methods declarations.
+        - Adding new type definition.
+        - Adding new variable member to store the URL of the choosen image.
+        - Adding new variable member to store the index of the src image.
+        - Adding new Vector to store the list of images after parsing.
+        * html/HTMLImageElement.idl: Adding srcset attribute for the differents existing bidings.
+
 2013-08-01  Filip Pizlo  <fpizlo@apple.com>
 
         DFG optimizations don't handle neutered arrays properly

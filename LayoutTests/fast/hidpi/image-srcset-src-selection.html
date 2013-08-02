@@ -1,0 +1,37 @@
+<html>
+<head>
+<script>
+    function runTest() {
+        if (!window.testRunner || !window.sessionStorage)
+            return;
+
+        if (!sessionStorage.scaleFactorIsSet) {
+            testRunner.waitUntilDone();
+            testRunner.setBackingScaleFactor(1, scaleFactorIsSet);
+        }
+        
+        if (sessionStorage.pageReloaded && sessionStorage.scaleFactorIsSet) {
+            delete sessionStorage.pageReloaded;
+            delete sessionStorage.scaleFactorIsSet;
+            testRunner.notifyDone();
+        } else {
+            // Right now there is a bug that image-set does not properly deal with dynamic changes to the scale factor,
+            // so to work around that, we must reload the page to get the 1x image.
+            sessionStorage.pageReloaded = true;
+            document.location.reload(true);
+        }
+    }
+    
+    function scaleFactorIsSet() {
+        sessionStorage.scaleFactorIsSet = true;
+    }
+
+    window.onload = runTest;
+</script>
+</head>
+
+<body id="body">
+    <div>This test passes if the div below is a blue 100px square when the deviceScaleFactor is 1. It simply ensures that the src attribute is taken into account by the selection algorithm when this one is processing the images candidates</div>
+    <img height="100" width="100" src="resources/blue-100-px-square.png" srcset="resources/green-200-px-square.png 2x"></img>
+</body>
+</html>

@@ -76,6 +76,8 @@ public:
 
     virtual bool canContainRangeEndPoint() const { return false; }
 
+    virtual const AtomicString& imageSourceURL() const OVERRIDE;
+
 protected:
     HTMLImageElement(const QualifiedName&, Document*, HTMLFormElement* = 0);
 
@@ -107,9 +109,30 @@ private:
     virtual void setItemValueText(const String&, ExceptionCode&) OVERRIDE;
 #endif
 
+    void updateImagesFromSrcSet(const AtomicString& srcset);
+
+    void updateBestImageForScaleFactor();
+
+    struct ImageWithScale {
+        String imageURL;
+        float scaleFactor;
+        bool operator==(const ImageWithScale& image) const
+        {
+            return scaleFactor == image.scaleFactor && imageURL == image.imageURL;
+        }
+    };
+
+    static inline bool compareByScaleFactor(const ImageWithScale& first, const ImageWithScale& second)
+    {
+        return first.scaleFactor < second.scaleFactor;
+    }
+
     HTMLImageLoader m_imageLoader;
     HTMLFormElement* m_form;
     CompositeOperator m_compositeOperator;
+    AtomicString m_bestFitImageURL;
+    size_t m_srcImageIndex;
+    Vector<ImageWithScale> m_imagesWithScale;
 };
 
 inline bool isHTMLImageElement(Node* node)
