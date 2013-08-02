@@ -982,10 +982,9 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         clobberWorld(node->codeOrigin, clobberLimit);
         
         SpeculatedType type = source.m_type;
-        if (type & ~(SpecNumber | SpecString | SpecBoolean)) {
-            type &= (SpecNumber | SpecString | SpecBoolean);
-            type |= SpecString;
-        }
+        if (type & ~(SpecNumber | SpecString | SpecBoolean))
+            type = (SpecTop & ~SpecCell) | SpecString;
+
         destination.setType(type);
         if (destination.isClear())
             m_state.setIsValid(false);

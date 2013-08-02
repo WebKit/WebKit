@@ -1,3 +1,16 @@
+2013-08-02  Oliver Hunt  <oliver@apple.com>
+
+        Incorrect type speculation reported by ToPrimitive
+        https://bugs.webkit.org/show_bug.cgi?id=119458
+
+        Reviewed by Mark Hahnenberg.
+
+        Make sure that we report the correct type possibilities for the output
+        from ToPrimitive
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::::executeEffects):
+
 2013-08-02  Gavin Barraclough  <barraclough@apple.com>
 
         Remove no-arguments constructor to PropertySlot
