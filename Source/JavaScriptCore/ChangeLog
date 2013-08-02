@@ -1,3 +1,17 @@
+2013-08-02  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        DFG validation can cause assertion failures due to dumping
+        https://bugs.webkit.org/show_bug.cgi?id=119456
+
+        Reviewed by Geoffrey Garen.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::hasHash):
+        (JSC::CodeBlock::isSafeToComputeHash):
+        (JSC::CodeBlock::hash):
+        (JSC::CodeBlock::dumpAssumingJITType):
+        * bytecode/CodeBlock.h:
+
 2013-08-02  Chris Curtis  <chris_curtis@apple.com>
 
         Have vm's exceptionStack match java's vm's exceptionStack.
