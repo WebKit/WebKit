@@ -1,0 +1,105 @@
+Series of tests to ensure correct results on applying different blend modes when drawing an image on top of a color.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Testing blend mode source-over
+PASS successfullyParsed is true
+
+TEST COMPLETE
+PASS 255 is within 5 of 255
+PASS 129 is within 5 of 129
+PASS 129 is within 5 of 129
+PASS 255 is within 5 of 255
+
+Testing blend mode multiply
+PASS 129 is within 5 of 129
+PASS 129 is within 5 of 129
+PASS 65 is within 5 of 65.25882352941176
+PASS 255 is within 5 of 255
+
+Testing blend mode screen
+PASS 255 is within 5 of 255
+PASS 255 is within 5 of 255
+PASS 193 is within 5 of 192.74117647058821
+PASS 255 is within 5 of 255
+
+Testing blend mode overlay
+PASS 255 is within 5 of 255
+PASS 255 is within 5 of 255
+PASS 130 is within 5 of 130.48235294117646
+PASS 255 is within 5 of 255
+
+Testing blend mode darken
+PASS 129 is within 5 of 129
+PASS 129 is within 5 of 129
+PASS 129 is within 5 of 129
+PASS 255 is within 5 of 255
+
+Testing blend mode lighten
+PASS 255 is within 5 of 255
+PASS 255 is within 5 of 255
+PASS 129 is within 5 of 129
+PASS 255 is within 5 of 255
+
+Testing blend mode color-dodge
+PASS 255 is within 5 of 255
+PASS 255 is within 5 of 255
+PASS 255 is within 5 of 255
+PASS 255 is within 5 of 255
+
+Testing blend mode color-burn
+PASS 129 is within 5 of 129
+PASS 255 is within 5 of 255
+PASS 6 is within 5 of 5.930232558139517
+PASS 255 is within 5 of 255
+
+Testing blend mode hard-light
+PASS 255 is within 5 of 255
+PASS 255 is within 5 of 255
+PASS 130 is within 5 of 130.48235294117646
+PASS 255 is within 5 of 255
+
+Testing blend mode soft-light
+PASS 255 is within 5 of 255
+PASS 129 is within 5 of 129
+PASS 129 is within 5 of 129
+PASS 255 is within 5 of 255
+
+Testing blend mode difference
+PASS 126 is within 5 of 126
+PASS 126 is within 5 of 126
+PASS 0 is within 5 of 0
+PASS 255 is within 5 of 255
+
+Testing blend mode exclusion
+PASS 126 is within 5 of 126
+PASS 126 is within 5 of 126
+PASS 127 is within 5 of 127.48235294117649
+PASS 255 is within 5 of 255
+
+Testing blend mode hue
+PASS 255 is within 5 of 255
+PASS 129 is within 5 of 129
+PASS 129 is within 5 of 129
+PASS 255 is within 5 of 255
+
+Testing blend mode saturation
+PASS 255 is within 5 of 255
+PASS 129 is within 5 of 129
+PASS 129 is within 5 of 129
+PASS 255 is within 5 of 255
+
+Testing blend mode color
+PASS 255 is within 5 of 255
+PASS 129 is within 5 of 129
+PASS 129 is within 5 of 129
+PASS 255 is within 5 of 255
+
+Testing blend mode luminosity
+PASS 255 is within 5 of 255
+PASS 129 is within 5 of 129
+PASS 129 is within 5 of 129
+PASS 255 is within 5 of 255
+
+

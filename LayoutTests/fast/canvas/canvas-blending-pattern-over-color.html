@@ -1,0 +1,61 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <script type="text/javascript">
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+    </script>
+</head>
+<body>
+    <script src="../js/resources/js-test-pre.js"></script>
+    <script type="text/javascript" src="canvas-blending-helpers.js"></script>
+    <script type="text/javascript">
+
+        description("Series of tests to ensure correct results on applying different blend modes when drawing a pattern on top of a color.");
+
+        function checkBlendModeResult(i, context, sigma) {
+            var expectedColor = blendColors([129 / 255, 1, 129 / 255, 1], [1, 129 / 255, 129 / 255, 1], i);
+
+            var actualColor = context.getImageData(0, 0, 1, 1).data;
+            shouldBeCloseTo(actualColor[0] + "", expectedColor[0], sigma);
+            shouldBeCloseTo(actualColor[1] + "", expectedColor[1], sigma);
+            shouldBeCloseTo(actualColor[2] + "", expectedColor[2], sigma);
+            shouldBeCloseTo(actualColor[3] + "", expectedColor[3], sigma);
+        }
+
+        function drawElement(context, i) {
+            if (i >= blendModes.length) {
+                if (window.testRunner)
+                    testRunner.notifyDone();
+                return;
+            }
+            debug("Testing blend mode " + blendModes[i]);
+
+            context.clearRect(0, 0, 10, 10);
+            context.save();
+            drawBackdropColorInContext(context);
+            if (blendModes[i] != "soft-light")
+                context.globalCompositeOperation = blendModes[i];
+
+            drawSourceColorPatternInContext(context, function() {
+                checkBlendModeResult(i, context, 5);
+                context.restore();
+                debug('');
+                drawElement(context, ++i);
+            });
+        }
+
+        function runTest() {
+            var canvas = document.createElement("canvas");
+            var sigma = 5;
+            canvas.width = 10;
+            canvas.height = 10;
+            var context = canvas.getContext("2d");
+            drawElement(context, 0);
+        }
+
+        runTest();
+    </script>
+    <script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,3 +1,102 @@
+2013-08-02  Mihai Tica  <mitica@adobe.com>
+
+        Implement canvas blending test that should validate the following scenarios:
+        Validate that all blending operators work as expected for the following layer combinations:
+
+        https://bugs.webkit.org/show_bug.cgi?id=119082
+
+        Reviewed by Dirk Schulze.
+
+        * fast/canvas/canvas-blending-clipping-expected.txt: Added.
+        * fast/canvas/canvas-blending-clipping.html: Added.
+        * fast/canvas/canvas-blending-color-over-color-expected.txt: Added.
+        * fast/canvas/canvas-blending-color-over-color.html: Added.
+        * fast/canvas/canvas-blending-color-over-gradient-expected.txt: Added.
+        * fast/canvas/canvas-blending-color-over-gradient.html: Added.
+        * fast/canvas/canvas-blending-color-over-image-expected.txt: Added.
+        * fast/canvas/canvas-blending-color-over-image.html: Added.
+        * fast/canvas/canvas-blending-color-over-pattern-expected.txt: Added.
+        * fast/canvas/canvas-blending-color-over-pattern.html: Added.
+        * fast/canvas/canvas-blending-fill-style-expected.txt: Added.
+        * fast/canvas/canvas-blending-fill-style.html: Added.
+        * fast/canvas/canvas-blending-global-alpha-expected.txt: Added.
+        * fast/canvas/canvas-blending-global-alpha.html: Added.
+        * fast/canvas/canvas-blending-gradient-over-color-expected.txt: Added.
+        * fast/canvas/canvas-blending-gradient-over-color.html: Added.
+        * fast/canvas/canvas-blending-gradient-over-gradient-expected.txt: Added.
+        * fast/canvas/canvas-blending-gradient-over-gradient.html: Added.
+        * fast/canvas/canvas-blending-gradient-over-image-expected.txt: Added.
+        * fast/canvas/canvas-blending-gradient-over-image.html: Added.
+        * fast/canvas/canvas-blending-gradient-over-pattern-expected.txt: Added.
+        * fast/canvas/canvas-blending-gradient-over-pattern.html: Added.
+        * fast/canvas/canvas-blending-helpers.js: Added.
+        (separateBlendFunctions.normal):
+        (separateBlendFunctions.multiply):
+        (separateBlendFunctions.screen):
+        (separateBlendFunctions.overlay):
+        (separateBlendFunctions.darken):
+        (separateBlendFunctions.lighten):
+        (separateBlendFunctions.colorDodge):
+        (separateBlendFunctions.colorBurn):
+        (separateBlendFunctions.hardLight):
+        (separateBlendFunctions.softLight):
+        (separateBlendFunctions.difference):
+        (separateBlendFunctions.exclusion):
+        (applyBlendMode):
+        (luminosity):
+        (clipColor):
+        (setLuminosity):
+        (saturation):
+        (setSaturation):
+        (nonSeparateBlendFunctions.hue):
+        (nonSeparateBlendFunctions.saturation):
+        (nonSeparateBlendFunctions.color):
+        (nonSeparateBlendFunctions.luminosity):
+        (drawColorInContext):
+        (drawBackdropColorInContext):
+        (drawSourceColorInContext):
+        (fillPathWithColorInContext):
+        (fillPathWithBackdropInContext):
+        (fillPathWithSourceInContext):
+        (applyTransformsToContext):
+        (drawBackdropColorWithShadowInContext):
+        (drawSourceColorRectOverShadow):
+        (.backdropImage.onload):
+        (drawColorImageInContext):
+        (drawBackdropColorImageInContext):
+        (drawSourceColorImageInContext):
+        (drawColorPatternInContext):
+        (drawBackdropColorPatternInContext):
+        (drawSourceColorPatternInContext):
+        (drawGradientInContext):
+        (drawBackdropColorGradientInContext):
+        (drawSourceColorGradientInContext):
+        (blendColors):
+        (separateBlendColors):
+        (nonSeparateBlendColors):
+        * fast/canvas/canvas-blending-image-over-color-expected.txt: Added.
+        * fast/canvas/canvas-blending-image-over-color.html: Added.
+        * fast/canvas/canvas-blending-image-over-gradient-expected.txt: Added.
+        * fast/canvas/canvas-blending-image-over-gradient.html: Added.
+        * fast/canvas/canvas-blending-image-over-image-expected.txt: Added.
+        * fast/canvas/canvas-blending-image-over-image.html: Added.
+        * fast/canvas/canvas-blending-image-over-pattern-expected.txt: Added.
+        * fast/canvas/canvas-blending-image-over-pattern.html: Added.
+        * fast/canvas/canvas-blending-pattern-over-color-expected.txt: Added.
+        * fast/canvas/canvas-blending-pattern-over-color.html: Added.
+        * fast/canvas/canvas-blending-pattern-over-gradient-expected.txt: Added.
+        * fast/canvas/canvas-blending-pattern-over-gradient.html: Added.
+        * fast/canvas/canvas-blending-pattern-over-image-expected.txt: Added.
+        * fast/canvas/canvas-blending-pattern-over-image.html: Added.
+        * fast/canvas/canvas-blending-pattern-over-pattern-expected.txt: Added.
+        * fast/canvas/canvas-blending-pattern-over-pattern.html: Added.
+        * fast/canvas/canvas-blending-shadow-expected.txt: Added.
+        * fast/canvas/canvas-blending-shadow.html: Added.
+        * fast/canvas/canvas-blending-text-expected.txt: Added.
+        * fast/canvas/canvas-blending-text.html: Added.
+        * fast/canvas/canvas-blending-transforms-expected.txt: Added.
+        * fast/canvas/canvas-blending-transforms.html: Added.
+
 2013-08-02  Brady Eidson  <beidson@apple.com>
 
         REGRESSION (r130783): Scrolling is broken going back to a cached page from a page that still has outstanding subresources.
