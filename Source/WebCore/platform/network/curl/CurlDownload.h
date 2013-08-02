@@ -26,9 +26,9 @@
 #ifndef CurlDownload_h
 #define CurlDownload_h
 
-#include <WebCore/FileSystem.h>
-#include <WebCore/ResourceHandle.h>
-#include <WebCore/ResourceResponse.h>
+#include "FileSystem.h"
+#include "ResourceHandle.h"
+#include "ResourceResponse.h"
 
 #if PLATFORM(WIN)
 #include <windows.h>

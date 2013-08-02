@@ -26,10 +26,9 @@
 #include "config.h"
 #include "CurlDownload.h"
 
-#include <WebCore/HTTPParsers.h>
-#include <WebCore/MainThreadTask.h>
-#include <WebCore/ResourceRequest.h>
-
+#include "HTTPParsers.h"
+#include "MainThreadTask.h"
+#include "ResourceRequest.h"
 #include <wtf/MainThread.h>
 #include <wtf/text/CString.h>
 
