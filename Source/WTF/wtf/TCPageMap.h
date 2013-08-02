@@ -158,13 +158,32 @@ class TCMalloc_PageMap2 {
   template<class Visitor, class MemoryReader>
   void visitValues(Visitor& visitor, const MemoryReader& reader)
   {
-    for (int i = 0; i < ROOT_LENGTH; i++) {
-      if (!root_[i])
-        continue;
+    const Number leafIndexMask = LEAF_LENGTH - 1;
 
-      Leaf* l = reader(reinterpret_cast<Leaf*>(root_[i]));
-      for (int j = 0; j < LEAF_LENGTH; j += visitor.visit(l->values[j]))
-        ;
+    const Number maxKey = (1l << BITS) - 1;
+    const Number invalidIndex = maxKey;
+    Number previousRootIndex = invalidIndex;
+
+    Leaf* leaf = 0;
+
+    for (Number key = 0; key < maxKey; ) {
+      const Number rootIndex = key >> LEAF_BITS;
+      const Number leafIndex = key & leafIndexMask;
+
+      if (rootIndex != previousRootIndex) {
+        if (!root_[rootIndex]) {
+          // There's no node at this index. Move on to the next index at the root level,
+          // clearing the leaf index so that we start from the beginning of the next node.
+          key += 1 << LEAF_BITS;
+          key &= ~leafIndexMask;
+          continue;
+        }
+
+        leaf = reader(root_[rootIndex]);
+        previousRootIndex = rootIndex;
+      }
+
+      key += visitor.visit(leaf->values[leafIndex]);
     }
   }
 
@@ -267,20 +286,53 @@ class TCMalloc_PageMap3 {
 #ifdef WTF_CHANGES
   template<class Visitor, class MemoryReader>
   void visitValues(Visitor& visitor, const MemoryReader& reader) {
+    const Number intermediateIndexMask = (INTERIOR_LENGTH - 1) << LEAF_BITS;
+    const Number leafIndexMask = LEAF_LENGTH - 1;
+
+    const Number maxKey = (1l << BITS) - 1;
+    const Number invalidIndex = maxKey;
+    Number previousRootIndex = invalidIndex;
+    Number previousIntermediateIndex = invalidIndex;
+
+    Node* intermediateNode = 0;
+    Leaf* leaf = 0;
+
     Node* root = reader(root_);
-    for (int i = 0; i < INTERIOR_LENGTH; i++) {
-      if (!root->ptrs[i])
-        continue;
+    for (Number key = 0; key < maxKey; ) {
+      const Number rootIndex = key >> (LEAF_BITS + INTERIOR_BITS);
+      const Number intermediateIndex = (key & intermediateIndexMask) >> LEAF_BITS;
+      const Number leafIndex = key & leafIndexMask;
 
-      Node* n = reader(root->ptrs[i]);
-      for (int j = 0; j < INTERIOR_LENGTH; j++) {
-        if (!n->ptrs[j])
+      if (rootIndex != previousRootIndex) {
+        if (!root->ptrs[rootIndex]) {
+          // There's no node at this index. Move on to the next index at the root level, clearing the
+          // intermediate and leaf indices so that we start from the beginning of that next node.
+          key += 1 << (LEAF_BITS + INTERIOR_BITS);
+          key &= ~(leafIndexMask | intermediateIndexMask);
           continue;
+        }
 
-        Leaf* l = reader(reinterpret_cast<Leaf*>(n->ptrs[j]));
-        for (int k = 0; k < LEAF_LENGTH; k += visitor.visit(l->values[k]))
-          ;
+        intermediateNode = reader(root->ptrs[rootIndex]);
+        previousRootIndex = rootIndex;
+
+        // Invalidate the previous intermediate index since we've moved on to a different node.
+        previousIntermediateIndex = invalidIndex;
       }
+
+      if (intermediateIndex != previousIntermediateIndex) {
+        if (!intermediateNode->ptrs[intermediateIndex]) {
+          // There's no node at this index. Move on to the next index at the intermediate level,
+          // clearing the leaf index so that we start from the beginning of the next node.
+          key += 1 << LEAF_BITS;
+          key &= ~leafIndexMask;
+          continue;
+        }
+
+        leaf = reader(reinterpret_cast<Leaf*>(intermediateNode->ptrs[intermediateIndex]));
+        previousIntermediateIndex = intermediateIndex;
+      }
+
+      key += visitor.visit(leaf->values[leafIndex]);
     }
   }
 
