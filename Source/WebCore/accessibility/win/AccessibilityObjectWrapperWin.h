@@ -27,6 +27,7 @@
 #ifndef AccessibilityObjectWrapperWin_h
 #define AccessibilityObjectWrapperWin_h
 
+#include <unknwn.h>
 #include <wtf/text/AtomicString.h>
 
 namespace WebCore {

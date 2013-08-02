@@ -1,3 +1,10 @@
+2013-08-02  Patrick Gansterer  <paroga@webkit.org>
+
+        [WIN] Fix build without precompiled header.
+
+        * accessibility/win/AccessibilityObjectWrapperWin.h: Added missing include.
+        * rendering/RenderThemeWin.cpp: Ditto.
+
 2013-08-02  Byungwoo Lee  <bw80.lee@samsung.com>
 
         Remove redundant call of argsList->current() from loops in CSSParser.
