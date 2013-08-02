@@ -2352,11 +2352,18 @@ bool ByteCodeParser::parseBlock(unsigned limit)
 #else
             const unsigned maxRopeArguments = 3;
 #endif
+            OwnArrayPtr<Node*> toStringNodes = adoptArrayPtr(new Node*[numOperands]);
+            for (int i = 0; i < numOperands; i++)
+                toStringNodes[i] = addToGraph(ToString, get(startOperand + i));
+
+            for (int i = 0; i < numOperands; i++)
+                addToGraph(Phantom, toStringNodes[i]);
+
             Node* operands[AdjacencyList::Size];
             unsigned indexInOperands = 0;
             for (unsigned i = 0; i < AdjacencyList::Size; ++i)
                 operands[i] = 0;
-            for (int operandIdx = startOperand; operandIdx < startOperand + numOperands; ++operandIdx) {
+            for (int operandIdx = 0; operandIdx < numOperands; ++operandIdx) {
                 if (indexInOperands == maxRopeArguments) {
                     operands[0] = addToGraph(MakeRope, operands[0], operands[1], operands[2]);
                     for (unsigned i = 1; i < AdjacencyList::Size; ++i)
@@ -2366,7 +2373,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 
                 ASSERT(indexInOperands < AdjacencyList::Size);
                 ASSERT(indexInOperands < maxRopeArguments);
-                operands[indexInOperands++] = addToGraph(ToString, get(operandIdx));
+                operands[indexInOperands++] = toStringNodes[operandIdx];
             }
             set(currentInstruction[1].u.operand,
                 addToGraph(MakeRope, operands[0], operands[1], operands[2]));

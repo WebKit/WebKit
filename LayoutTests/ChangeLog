@@ -1,5 +1,25 @@
 2013-08-01  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r153615
+
+    2013-08-01  Oliver Hunt  <oliver@apple.com>
+
+            DFG is not enforcing correct ordering of ToString conversion in MakeRope
+            https://bugs.webkit.org/show_bug.cgi?id=119408
+
+            Reviewed by Filip Pizlo.
+
+            Add tests
+
+            * fast/js/dfg-make-rope-side-effects-expected.txt: Added.
+            * fast/js/dfg-make-rope-side-effects.html: Added.
+            * fast/js/script-tests/dfg-make-rope-side-effects.js: Added.
+            (f):
+            (k.valueOf):
+            (k.toString):
+
+2013-08-01  Lucas Forschler  <lforschler@apple.com>
+
         Merge r153553
 
     2013-07-31  Ryosuke Niwa  <rniwa@webkit.org>
