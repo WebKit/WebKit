@@ -1,3 +1,18 @@
+2013-08-02  Michael Saboff  <msaboff@apple.com>
+
+        REGRESSION(r153612): It made jsc and layout tests crash
+        https://bugs.webkit.org/show_bug.cgi?id=119440
+
+        Reviewed by Csaba Osztrogonác.
+
+        Made the changes if changeset r153612 only apply to 32 bit builds.
+
+        * jit/JITExceptions.cpp:
+        * jit/JITExceptions.h:
+        * jit/JITStubs.cpp:
+        (JSC::cti_vm_throw_slowpath):
+        * jit/JITStubs.h:
+
 2013-08-02  Patrick Gansterer  <paroga@webkit.org>
 
         Add JSCTestRunnerUtils to the list of forwarding headers to fix build.

@@ -416,7 +416,12 @@ EncodedJSValue JIT_STUB cti_op_resolve_scope(STUB_ARGS_DECLARATION) WTF_INTERNAL
 EncodedJSValue JIT_STUB cti_op_get_from_scope(STUB_ARGS_DECLARATION) WTF_INTERNAL;
 void JIT_STUB cti_op_put_to_scope(STUB_ARGS_DECLARATION) WTF_INTERNAL;
 
+#if USE(JSVALUE32_64)
 EncodedExceptionHandler JIT_STUB cti_vm_throw_slowpath(CallFrame*) REFERENCED_FROM_ASM WTF_INTERNAL;
+#else
+ExceptionHandler JIT_STUB cti_vm_throw_slowpath(CallFrame*) REFERENCED_FROM_ASM WTF_INTERNAL;
+#endif
+
 } // extern "C"
 
 #elif ENABLE(LLINT_C_LOOP)

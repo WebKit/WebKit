@@ -2156,12 +2156,21 @@ DEFINE_STUB_FUNCTION(void*, vm_throw)
     return handler.callFrame;
 }
 
+#if USE(JSVALUE32_64)
 EncodedExceptionHandler JIT_STUB cti_vm_throw_slowpath(CallFrame* callFrame)
 {
     VM* vm = callFrame->codeBlock()->vm();
     vm->topCallFrame = callFrame;
     return encode(jitThrowNew(vm, callFrame, vm->exception));
 }
+#else
+ExceptionHandler JIT_STUB cti_vm_throw_slowpath(CallFrame* callFrame)
+{
+    VM* vm = callFrame->codeBlock()->vm();
+    vm->topCallFrame = callFrame;
+    return jitThrowNew(vm, callFrame, vm->exception);
+}
+#endif
 
 DEFINE_STUB_FUNCTION(EncodedJSValue, to_object)
 {
