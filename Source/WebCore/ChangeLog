@@ -1,3 +1,23 @@
+2013-08-02  Andreas Kling  <akling@apple.com>
+
+        Removing a <link> element with an empty stylesheet shouldn't trigger style recalc.
+        <http://webkit.org/b/119442>
+        <rdar://problem/14631785>
+
+        Reviewed by Antti Koivisto.
+
+        Let Document decide whether or not to do a style recalc after a <link> element is removed.
+        This avoids unnecessary work when removing a <link> that refers to an empty style sheet.
+
+        Some Facebook pages have a <link rel="stylesheet" href="data:text/css;base64,"> that gets
+        removed during the initial page load, causing style recalc.
+
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::removedFrom):
+
+            Use DeferRecalcStyleIfNeeded. Since the style sheet is being removed, it will either
+            cause a recalc (because it's no longer in the set of active sheets) or do nothing.
+
 2013-08-02  Patrick Gansterer  <paroga@webkit.org>
 
         Remove WebCore folder from include statements
