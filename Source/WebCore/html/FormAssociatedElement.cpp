@@ -179,7 +179,8 @@ void FormAssociatedElement::formAttributeChanged()
         m_formAttributeTargetObserver = nullptr;
     } else {
         resetFormOwner();
-        resetFormAttributeTargetObserver();
+        if (element->inDocument())
+            resetFormAttributeTargetObserver();
     }
 }
 
