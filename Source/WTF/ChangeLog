@@ -1,5 +1,20 @@
 2013-08-01  Mark Rowe  <mrowe@apple.com>
 
+        <rdar://problem/14235491> FastMalloc zone enumerator responding to MALLOC_PTR_REGION_RANGE_TYPE with individual allocations
+
+        Teach PageMapMemoryUsageRecorder::recordPendingRegions to only record data of the type that it's asked for.
+        This also fixes the vmmap output to associate some regions with the FastMalloc malloc zone that were previously
+        associated with it only via the VM tag, meaning they were incorrectly being omitted from the malloc statistics
+        section of the report.
+
+        Reviewed by Dan Bernstein.
+
+        * wtf/FastMalloc.cpp:
+        (WTF::PageMapMemoryUsageRecorder::recordPendingRegions): Report the individual allocations only when requested. Add
+        the ability to report the regions containing pointers separately from the allocations.
+
+2013-08-01  Mark Rowe  <mrowe@apple.com>
+
         <rdar://problem/14528244> False-positive leaks from FastMalloc.
 
         A logic error in the page map enumeration code within FastMalloc could result in a subset of the memory regions

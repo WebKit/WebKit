@@ -4849,19 +4849,26 @@ public:
 
     void recordPendingRegions()
     {
-        if (!(m_typeMask & (MALLOC_PTR_IN_USE_RANGE_TYPE | MALLOC_PTR_REGION_RANGE_TYPE))) {
+        bool recordRegionsContainingPointers = m_typeMask & MALLOC_PTR_REGION_RANGE_TYPE;
+        bool recordAllocations = m_typeMask & MALLOC_PTR_IN_USE_RANGE_TYPE;
+
+        if (!recordRegionsContainingPointers && !recordAllocations) {
             m_coalescedSpans.clear();
             return;
         }
 
+        Vector<vm_range_t, 256> pointerRegions;
         Vector<vm_range_t, 1024> allocatedPointers;
         for (size_t i = 0; i < m_coalescedSpans.size(); ++i) {
             Span *theSpan = m_coalescedSpans[i];
-            if (theSpan->free)
-                continue;
-
             vm_address_t spanStartAddress = theSpan->start << kPageShift;
             vm_size_t spanSizeInBytes = theSpan->length * kPageSize;
+
+            if (recordRegionsContainingPointers)
+                pointerRegions.append((vm_range_t){spanStartAddress, spanSizeInBytes});
+
+            if (theSpan->free || !recordAllocations)
+                continue;
 
             if (!theSpan->sizeclass) {
                 // If it's an allocated large object span, mark it as in use
@@ -4879,7 +4886,11 @@ public:
             }
         }
 
-        (*m_recorder)(m_task, m_context, m_typeMask & (MALLOC_PTR_IN_USE_RANGE_TYPE | MALLOC_PTR_REGION_RANGE_TYPE), allocatedPointers.data(), allocatedPointers.size());
+        if (recordRegionsContainingPointers)
+            (*m_recorder)(m_task, m_context, MALLOC_PTR_REGION_RANGE_TYPE, pointerRegions.data(), pointerRegions.size());
+
+        if (recordAllocations)
+            (*m_recorder)(m_task, m_context, MALLOC_PTR_IN_USE_RANGE_TYPE, allocatedPointers.data(), allocatedPointers.size());
 
         m_coalescedSpans.clear();
     }
