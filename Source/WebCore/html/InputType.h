@@ -166,6 +166,7 @@ public:
     double minimum() const;
     double maximum() const;
     virtual bool sizeShouldIncludeDecoration(int defaultSize, int& preferredSize) const;
+    virtual float decorationWidth() const;
     bool stepMismatch(const String&) const;
     virtual bool getAllowedValueStep(Decimal*) const;
     virtual StepRange createStepRange(AnyStepHandling) const;

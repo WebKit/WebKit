@@ -1,3 +1,60 @@
+2013-08-02  Antoine Quint  <graouts@apple.com>
+
+        <input type="search"> doesn't correctly handle the "size" attribute
+        https://bugs.webkit.org/show_bug.cgi?id=119174
+
+        New test fast/forms/search/search-size-with-decorations.html that checks the different
+        decorations for search fields and the resulting sizes.
+
+        Also rebaselining the following tests since the rendering of search fields changed:
+
+        fast/forms/search-cancel-button-style-sharing.html
+        fast/forms/search-display-none-cancel-button.html
+        fast/forms/searchfield-heights.html
+        fast/forms/control-restrict-line-height.html
+        fast/forms/placeholder-pseudo-style.html
+        fast/forms/search-rtl.html
+        fast/css/text-overflow-input.html
+        fast/forms/placeholder-position.html
+        fast/repaint/search-field-cancel.html
+        fast/forms/input-appearance-height.html
+        fast/forms/search-vertical-alignment.html
+        fast/forms/box-shadow-override.html
+        fast/forms/search/search-size-with-decorations.html
+        fast/css/input-search-padding.html
+        fast/forms/search-styled.html
+
+        Reviewed by Darin Adler.
+
+        * fast/forms/placeholder-position-expected.txt:
+        * fast/forms/search/search-size-with-decorations-expected.txt: Added.
+        * fast/forms/search/search-size-with-decorations.html: Added.
+        * fast/repaint/search-field-cancel-expected.txt:
+        * platform/mac/fast/css/input-search-padding-expected.txt:
+        * platform/mac/fast/css/text-overflow-input-expected.png:
+        * platform/mac/fast/css/text-overflow-input-expected.txt:
+        * platform/mac/fast/forms/box-shadow-override-expected.png:
+        * platform/mac/fast/forms/box-shadow-override-expected.txt:
+        * platform/mac/fast/forms/control-restrict-line-height-expected.png:
+        * platform/mac/fast/forms/control-restrict-line-height-expected.txt:
+        * platform/mac/fast/forms/input-appearance-height-expected.png:
+        * platform/mac/fast/forms/input-appearance-height-expected.txt:
+        * platform/mac/fast/forms/placeholder-position-expected.png:
+        * platform/mac/fast/forms/placeholder-pseudo-style-expected.png:
+        * platform/mac/fast/forms/placeholder-pseudo-style-expected.txt:
+        * platform/mac/fast/forms/search-cancel-button-style-sharing-expected.png:
+        * platform/mac/fast/forms/search-cancel-button-style-sharing-expected.txt:
+        * platform/mac/fast/forms/search-display-none-cancel-button-expected.txt:
+        * platform/mac/fast/forms/search-rtl-expected.png:
+        * platform/mac/fast/forms/search-rtl-expected.txt:
+        * platform/mac/fast/forms/search-styled-expected.txt:
+        * platform/mac/fast/forms/search-vertical-alignment-expected.png:
+        * platform/mac/fast/forms/search-vertical-alignment-expected.txt:
+        * platform/mac/fast/forms/search/search-size-with-decorations-expected.png: Added.
+        * platform/mac/fast/forms/searchfield-heights-expected.png:
+        * platform/mac/fast/forms/searchfield-heights-expected.txt:
+        * platform/mac/fast/repaint/search-field-cancel-expected.png:
+
 2013-08-02  Zalan Bujtas  <zalan@apple.com>
 
         Frame flattening: Change the logic on whether resize event needs to be dispatched.

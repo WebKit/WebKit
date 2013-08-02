@@ -1,3 +1,50 @@
+2013-08-02  Antoine Quint  <graouts@apple.com>
+
+        <input type="search"> doesn't correctly handle the "size" attribute
+        https://bugs.webkit.org/show_bug.cgi?id=119174
+
+        We weren't taking into account the decorations for search fields (results and close buttons)
+        when computing the preferred logical width for these fields based on the "size" attribute
+        and as a result we would not guarantee that we could show the number of characters set by
+        the "size" attribute.
+
+        To make the process of reporting extra width due to decorations cleaner, we add a new decorationWidth()
+        method for InputType subclasses to override and called through HTMLInputElement::decorationWidth()
+        and have NumberInputType and SearchInputType return custom decoration widths.
+
+        Reviewed by Darin Adler.
+
+        Test: fast/forms/search/search-size-with-decorations.html
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::decorationWidth):
+        * html/HTMLInputElement.h:
+        * html/InputType.cpp:
+        (WebCore::InputType::decorationWidth):
+        * html/InputType.h:
+        Expose a new method to get the width for the input's decoration through the InputType.
+
+        * html/NumberInputType.cpp:
+        (WebCore::NumberInputType::decorationWidth):
+        * html/NumberInputType.h:
+        Override InputType::decorationWidth() to return the decoration width for a number input
+        using the same code previously used in RenderTextControlSingleLine::preferredContentLogicalWidth().
+
+        * html/SearchInputType.cpp:
+        (WebCore::SearchInputType::sizeShouldIncludeDecoration):
+        Override InputType::sizeShouldIncludeDecoration() to return true since search fields
+        have custom decoration adding to the size of the field.
+
+        (WebCore::SearchInputType::decorationWidth):
+        Return the combined size of the results and cancel buttons, as available.
+        * html/SearchInputType.h:
+
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::preferredContentLogicalWidth):
+        Remove the code specific to NumberInputType (which was moved to InputType::decorationWidth())
+        and replace it with a call to HTMLInputElement::decorationWidth() since this method will now
+        return the extra decoration width for an input element should it have any.
+
 2013-08-02  Patrick Gansterer  <paroga@webkit.org>
 
         [WIN] Fix build without precompiled header.

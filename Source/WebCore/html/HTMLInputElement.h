@@ -150,6 +150,7 @@ public:
 
     int size() const;
     bool sizeShouldIncludeDecoration(int& preferredSize) const;
+    float decorationWidth() const;
 
     void setType(const String&);
 

@@ -314,6 +314,11 @@ bool InputType::sizeShouldIncludeDecoration(int, int& preferredSize) const
     return false;
 }
 
+float InputType::decorationWidth() const
+{
+    return 0;
+}
+
 bool InputType::isInRange(const String& value) const
 {
     if (!isSteppable())

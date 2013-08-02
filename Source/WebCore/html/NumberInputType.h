@@ -50,6 +50,7 @@ private:
     virtual bool typeMismatchFor(const String&) const OVERRIDE;
     virtual bool typeMismatch() const OVERRIDE;
     virtual bool sizeShouldIncludeDecoration(int defaultSize, int& preferredSize) const OVERRIDE;
+    virtual float decorationWidth() const OVERRIDE;
     virtual bool isSteppable() const OVERRIDE;
     virtual StepRange createStepRange(AnyStepHandling) const OVERRIDE;
     virtual void handleKeydownEvent(KeyboardEvent*) OVERRIDE;

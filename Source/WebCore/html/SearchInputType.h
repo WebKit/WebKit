@@ -60,6 +60,8 @@ private:
     virtual HTMLElement* cancelButtonElement() const OVERRIDE;
     virtual void handleKeydownEvent(KeyboardEvent*) OVERRIDE;
     virtual void didSetValueByUserEdit(ValueChangeState) OVERRIDE;
+    virtual bool sizeShouldIncludeDecoration(int defaultSize, int& preferredSize) const OVERRIDE;
+    virtual float decorationWidth() const OVERRIDE;
 
     void searchEventTimerFired(Timer<SearchInputType>*);
     bool searchEventsShouldBeDispatched() const;

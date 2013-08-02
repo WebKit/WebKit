@@ -337,15 +337,8 @@ LayoutUnit RenderTextControlSingleLine::preferredContentLogicalWidth(float charW
     if (maxCharWidth > 0.f)
         result += maxCharWidth - charWidth;
 
-    if (includesDecoration) {
-        HTMLElement* spinButton = innerSpinButtonElement();
-        if (RenderBox* spinRenderer = spinButton ? spinButton->renderBox() : 0) {
-            result += spinRenderer->borderAndPaddingLogicalWidth();
-            // Since the width of spinRenderer is not calculated yet, spinRenderer->logicalWidth() returns 0.
-            // So computedStyle()->logicalWidth() is used instead.
-            result += spinButton->computedStyle()->logicalWidth().value();
-        }
-    }
+    if (includesDecoration)
+        result += inputElement()->decorationWidth();
 
     return result;
 }

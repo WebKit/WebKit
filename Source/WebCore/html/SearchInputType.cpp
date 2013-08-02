@@ -192,4 +192,20 @@ void SearchInputType::didSetValueByUserEdit(ValueChangeState state)
     TextFieldInputType::didSetValueByUserEdit(state);
 }
 
+bool SearchInputType::sizeShouldIncludeDecoration(int, int& preferredSize) const
+{
+    preferredSize = element()->size();
+    return true;
+}
+
+float SearchInputType::decorationWidth() const
+{
+    float width = 0;
+    if (m_resultsButton)
+        width += m_resultsButton->computedStyle()->logicalWidth().value();
+    if (m_cancelButton)
+        width += m_cancelButton->computedStyle()->logicalWidth().value();
+    return width;
+}
+
 } // namespace WebCore
