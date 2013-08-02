@@ -1,7 +1,7 @@
 2013-08-01  Andreas Kling  <akling@apple.com>
 
         Removing an empty style sheet shouldn't trigger style recalc.
-        <http://webkit.org/b/119248>
+        <http://webkit.org/b/119428>
         <rdar://problem/14629045>
 
         Reviewed by Antti Koivisto.
