@@ -1,3 +1,29 @@
+2013-08-02  Zalan Bujtas  <zalan@apple.com>
+
+        Frame flattening: Change the logic on whether resize event needs to be dispatched.
+        https://bugs.webkit.org/show_bug.cgi?id=119394
+
+        Reviewed by Simon Fraser.
+
+        http://trac.webkit.org/changeset/149287 changed the logic so that resize events are
+        sent out from FrameView::setFrameRect() too. Checking whether frame flattening is
+        enabled is sufficient enough to ensure that no extra resize events are dispatched.
+
+        Test: fast/frames/flattening/iframe-flattening-resize-event-count.html
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::FrameView):
+        (WebCore::FrameView::setFrameRect):
+        (WebCore::FrameView::frameFlatteningEnabled):
+        (WebCore::FrameView::supportsFrameFlattening):
+        (WebCore::FrameView::avoidScrollbarCreation):
+        (WebCore::FrameView::calculateScrollbarModesForLayout):
+        (WebCore::FrameView::layout):
+        (WebCore::FrameView::isInChildFrameWithFrameFlattening):
+        * page/FrameView.h:
+        * rendering/RenderFrameBase.cpp:
+        (WebCore::RenderFrameBase::layoutWithFlattening):
+
 2013-08-01  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r153608.

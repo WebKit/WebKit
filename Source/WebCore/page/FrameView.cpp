@@ -204,7 +204,6 @@ FrameView::FrameView(Frame* frame)
 #endif
     , m_visualUpdatesAllowedByClient(true)
     , m_scrollPinningBehavior(DoNotPin)
-    , m_resizeEventAllowed(true)
 {
     init();
 
@@ -482,7 +481,7 @@ void FrameView::setFrameRect(const IntRect& newRect)
     }
 #endif
 
-    if (m_resizeEventAllowed)
+    if (!frameFlatteningEnabled())
         sendResizeEventIfNeeded();
 }
 
@@ -509,30 +508,35 @@ void FrameView::setMarginHeight(LayoutUnit h)
     m_margins.setHeight(h);
 }
 
-static bool frameFlatteningEnabled(Frame* frame)
+bool FrameView::frameFlatteningEnabled() const
 {
-    return frame && frame->settings() && frame->settings()->frameFlatteningEnabled();
+    Settings* settings = frame() ? frame()->settings() : 0;
+    if (!settings)
+        return false;
+
+    return settings->frameFlatteningEnabled();
 }
 
-static bool supportsFrameFlattening(Frame* frame)
+bool FrameView::isFrameFlatteningValidForThisFrame() const
 {
-    if (!frame)
+    if (!frameFlatteningEnabled())
+        return false;
+
+    HTMLFrameOwnerElement* owner = frame() ? frame()->ownerElement() : 0;
+    if (!owner)
         return false;
 
     // Frame flattening is valid only for <frame> and <iframe>.
-    HTMLFrameOwnerElement* owner = frame->ownerElement();
-    return owner && (owner->hasTagName(frameTag) || owner->hasTagName(iframeTag));
+    return owner->hasTagName(frameTag) || owner->hasTagName(iframeTag);
 }
 
 bool FrameView::avoidScrollbarCreation() const
 {
     ASSERT(m_frame);
-
     // with frame flattening no subframe can have scrollbars
     // but we also cannot turn scrollbars off as we determine
     // our flattening policy using that.
-
-    return frameFlatteningEnabled(frame()) && supportsFrameFlattening(frame());
+    return isFrameFlatteningValidForThisFrame();
 }
 
 void FrameView::setCanHaveScrollbars(bool canHaveScrollbars)
@@ -743,7 +747,7 @@ void FrameView::calculateScrollbarModesForLayout(ScrollbarMode& hMode, Scrollbar
         RenderObject* rootRenderer = documentElement ? documentElement->renderer() : 0;
         Node* body = document->body();
         if (body && body->renderer()) {
-            if (body->hasTagName(framesetTag) && !frameFlatteningEnabled(frame())) {
+            if (body->hasTagName(framesetTag) && !frameFlatteningEnabled()) {
                 vMode = ScrollbarAlwaysOff;
                 hMode = ScrollbarAlwaysOff;
             } else if (body->hasTagName(bodyTag)) {
@@ -1235,7 +1239,7 @@ void FrameView::layout(bool allowSubtree)
             Document* document = m_frame->document();
             Node* body = document->body();
             if (body && body->renderer()) {
-                if (body->hasTagName(framesetTag) && !frameFlatteningEnabled(frame())) {
+                if (body->hasTagName(framesetTag) && !frameFlatteningEnabled()) {
                     body->renderer()->setChildNeedsLayout(true);
                 } else if (body->hasTagName(bodyTag)) {
                     if (!m_firstLayout && m_size.height() != layoutHeight() && body->renderer()->enclosingBox()->stretchesToViewport())
@@ -3464,7 +3468,7 @@ bool FrameView::isInChildFrameWithFrameFlattening() const
             return true;
     }
 
-    if (!frameFlatteningEnabled(frame()))
+    if (!frameFlatteningEnabled())
         return false;
 
     if (m_frame->ownerElement()->hasTagName(frameTag))
