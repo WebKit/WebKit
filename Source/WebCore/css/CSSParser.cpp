@@ -8602,8 +8602,8 @@ PassRefPtr<WebKitCSSMixFunctionValue> CSSParser::parseMixFunction(CSSParserValue
 
     bool hasBlendMode = false;
     bool hasAlphaCompositing = false;
-    CSSParserValue* arg;
-    while ((arg = argsList->current())) {
+
+    for (CSSParserValue* arg = argsList->current(); arg; arg = argsList->next()) {
         RefPtr<CSSValue> value;
 
         unsigned argNumber = argsList->currentIndex();
@@ -8626,8 +8626,6 @@ PassRefPtr<WebKitCSSMixFunctionValue> CSSParser::parseMixFunction(CSSParserValue
             return 0;
 
         mixFunction->append(value.release());
-
-        arg = argsList->next();
     }
 
     return mixFunction;
@@ -8796,7 +8794,7 @@ PassRefPtr<WebKitCSSFilterValue> CSSParser::parseCustomFilterFunctionWithInlineS
     RefPtr<CSSValueList> shadersList = CSSValueList::createSpaceSeparated();
     bool hadAtLeastOneCustomShader = false;
     CSSParserValue* arg;
-    while ((arg = argsList->current())) {
+    for (arg = argsList->current(); arg; arg = argsList->next()) {
         RefPtr<CSSValue> value;
         if (arg->id == CSSValueNone)
             value = cssValuePool().createIdentifierValue(CSSValueNone);
@@ -8813,7 +8811,6 @@ PassRefPtr<WebKitCSSFilterValue> CSSParser::parseCustomFilterFunctionWithInlineS
         if (!value)
             break;
         shadersList->append(value.release());
-        argsList->next();
     }
 
     if (!shadersList->length() || !hadAtLeastOneCustomShader || shadersList->length() > 2 || !acceptCommaOperator(argsList))
@@ -8824,7 +8821,7 @@ PassRefPtr<WebKitCSSFilterValue> CSSParser::parseCustomFilterFunctionWithInlineS
     // 2. Parse the mesh size <vertex-mesh>
     RefPtr<CSSValueList> meshSizeList = CSSValueList::createSpaceSeparated();
     
-    while ((arg = argsList->current())) {
+    for (arg = argsList->current(); arg; arg = argsList->next()) {
         if (!validUnit(arg, FInteger | FNonNeg, CSSStrictMode))
             break;
         int integerValue = clampToInteger(arg->fValue);
@@ -8832,7 +8829,6 @@ PassRefPtr<WebKitCSSFilterValue> CSSParser::parseCustomFilterFunctionWithInlineS
         if (integerValue < 1)
             return 0;
         meshSizeList->append(cssValuePool().createValue(integerValue, CSSPrimitiveValue::CSS_NUMBER));
-        argsList->next();
     }
     
     if (meshSizeList->length() > 2)

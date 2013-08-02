@@ -1,3 +1,21 @@
+2013-08-02  Byungwoo Lee  <bw80.lee@samsung.com>
+
+        Remove redundant call of argsList->current() from loops in CSSParser.
+        https://bugs.webkit.org/show_bug.cgi?id=119432
+
+        Reviewed by Christophe Dumez.
+
+        while loops in CSSParser call argList->current() function at the start
+        of each iteration, but this is redundant because argsList->next() at
+        the end of the iteration calls the argList->current() and returns the
+        result.
+
+        Blink merge from https://src.chromium.org/viewvc/blink?view=rev&revision=155402
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseMixFunction):
+        (WebCore::CSSParser::parseCustomFilterFunctionWithInlineSyntax):
+
 2013-08-01  Andreas Kling  <akling@apple.com>
 
         Removing an empty style sheet shouldn't trigger style recalc.
