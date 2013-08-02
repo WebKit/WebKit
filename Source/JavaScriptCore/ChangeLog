@@ -1,3 +1,9 @@
+2013-08-02  Patrick Gansterer  <paroga@webkit.org>
+
+        Add JSCTestRunnerUtils to the list of forwarding headers to fix build.
+
+        * CMakeLists.txt:
+
 2013-08-01  Ruth Fong  <ruth_fong@apple.com>
 
         [Forms: color] <input type='color'> popover color well implementation

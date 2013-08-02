@@ -536,6 +536,7 @@ set(JavaScriptCore_FORWARDING_HEADERS_FILES
     API/APIShims.h
     API/JavaScript.h
     API/JSBase.h
+    API/JSCTestRunnerUtils.h
     API/JSContextRef.h
     API/JSContextRefPrivate.h
     API/JSObjectRef.h
