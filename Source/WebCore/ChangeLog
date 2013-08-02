@@ -1,3 +1,12 @@
+2013-08-02  Simon Fraser  <simon.fraser@apple.com>
+
+        Revert r153632, since it caused fast/forms/change-form-element-document-crash.html
+        to assert.
+
+        * html/FormAssociatedElement.cpp:
+        (WebCore::FormAssociatedElement::formAttributeChanged):
+        (WebCore::FormAssociatedElement::resetFormAttributeTargetObserver):
+
 2013-08-02  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         Implement atk_text_get_text_*_offset for WORD

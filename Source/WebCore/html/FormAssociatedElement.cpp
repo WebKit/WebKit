@@ -179,8 +179,7 @@ void FormAssociatedElement::formAttributeChanged()
         m_formAttributeTargetObserver = nullptr;
     } else {
         resetFormOwner();
-        if (element->inDocument())
-            resetFormAttributeTargetObserver();
+        resetFormAttributeTargetObserver();
     }
 }
 
@@ -254,7 +253,6 @@ void FormAssociatedElement::setCustomValidity(const String& error)
 
 void FormAssociatedElement::resetFormAttributeTargetObserver()
 {
-    ASSERT(toHTMLElement(this)->inDocument());
     m_formAttributeTargetObserver = FormAttributeTargetObserver::create(toHTMLElement(this)->fastGetAttribute(formAttr), this);
 }
 
