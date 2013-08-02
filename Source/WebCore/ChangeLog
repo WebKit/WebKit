@@ -1,3 +1,47 @@
+2013-08-01  Andreas Kling  <akling@apple.com>
+
+        Removing an empty style sheet shouldn't trigger style recalc.
+        <http://webkit.org/b/119248>
+        <rdar://problem/14629045>
+
+        Reviewed by Antti Koivisto.
+
+        Teach DocumentStyleSheetCollection to filter out empty style sheets when deciding whether
+        or not to trigger a style recalc. We can then be clever when an empty style sheet is removed
+        from the document, and avoid causing extra work.
+
+        Some pages use this pattern:
+
+            (1) Create a <style> element.
+            (2) Add it to the document's <head> element.
+            (3) Insert some CSS as a text child of the <style> element.
+
+        Since the <style> element is already inside the document at (3), we had to treat this as an
+        old style sheet being removed, even though it was just an empty sheet of nothing.
+
+        With this patch, Document gains enough smarts to know that removing/adding an empty sheet
+        won't affect layout/rendering in any meaningful way, thus a style recalc can be avoided.
+
+        * dom/Document.h:
+        * dom/Document.cpp:
+        (WebCore::Document::styleResolverChanged):
+
+            Add a DeferRecalcStyleIfNeeded mode to styleResolverChanged().
+
+        * css/CSSStyleSheet.h:
+        * css/CSSStyleSheet.cpp:
+        (WebCore::CSSStyleSheet::clearOwnerNode):
+
+            Use DeferRecalcStyleIfNeeded when saying bye from a CSSStyleSheet and let Document decide
+            if removing the sheet should trigger style recalc instead of always assuming it should.
+
+        * dom/DocumentStyleSheetCollection.cpp:
+        (WebCore::filterEnabledNonemptyCSSStyleSheets):
+        (WebCore::DocumentStyleSheetCollection::updateActiveStyleSheets):
+
+            Exclude empty sheets from the activeAuthorStyleSheets() collection. They are still
+            visible through CSSOM's document.styleSheets.
+
 2013-08-02  Zalan Bujtas  <zalan@apple.com>
 
         Frame flattening: Change the logic on whether resize event needs to be dispatched.

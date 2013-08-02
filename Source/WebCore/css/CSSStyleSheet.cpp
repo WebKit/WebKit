@@ -163,6 +163,15 @@ void CSSStyleSheet::didMutate()
     owner->styleResolverChanged(DeferRecalcStyle);
 }
 
+void CSSStyleSheet::clearOwnerNode()
+{
+    Document* owner = ownerDocument();
+    m_ownerNode = 0;
+    if (!owner)
+        return;
+    owner->styleResolverChanged(DeferRecalcStyleIfNeeded);
+}
+
 void CSSStyleSheet::reattachChildRuleCSSOMWrappers()
 {
     for (unsigned i = 0; i < m_childRuleCSSOMWrappers.size(); ++i) {
