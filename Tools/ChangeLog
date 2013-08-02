@@ -1,3 +1,15 @@
+2013-08-02  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        [EFL] REGRESSION after r153432: some accessibility tests crash.
+        https://bugs.webkit.org/show_bug.cgi?id=119333
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Add missing null-check to avoid dereferencing a non-existent parent.
+
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        (WTR::attributesOfElement): Ditto.
+
 2013-08-02  Patrick Gansterer  <paroga@webkit.org>
 
         Add --rmdir option to git svn dcommit

@@ -292,7 +292,8 @@ static String attributesOfElement(AccessibilityUIElement* element)
     // For the parent we print its role and its name, if available.
     builder.append("AXParent: ");
     AccessibilityUIElement* parent = element->parentElement().get();
-    if (AtkObject* atkParent = parent->platformUIElement().get()) {
+    AtkObject* atkParent = parent ? parent->platformUIElement().get() : 0;
+    if (atkParent) {
         builder.append(roleToString(atk_object_get_role(atkParent)));
         const char* parentName = atk_object_get_name(atkParent);
         if (parentName && g_utf8_strlen(parentName, -1))
