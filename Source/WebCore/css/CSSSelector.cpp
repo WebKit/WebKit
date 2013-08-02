@@ -712,10 +712,11 @@ String CSSSelector::selectorText(const String& rightSide) const
     return str.toString() + rightSide;
 }
 
-void CSSSelector::setAttribute(const QualifiedName& value)
+void CSSSelector::setAttribute(const QualifiedName& value, bool isCaseInsensitive)
 {
     createRareData();
     m_data.m_rareData->m_attribute = value;
+    m_data.m_rareData->m_attributeCanonicalLocalName = isCaseInsensitive ? value.localName().lower() : value.localName();
 }
 
 void CSSSelector::setArgument(const AtomicString& value)

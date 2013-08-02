@@ -204,11 +204,12 @@ namespace WebCore {
         const QualifiedName& tagQName() const;
         const AtomicString& value() const;
         const QualifiedName& attribute() const;
+        const AtomicString& attributeCanonicalLocalName() const;
         const AtomicString& argument() const { return m_hasRareData ? m_data.m_rareData->m_argument : nullAtom; }
         const CSSSelectorList* selectorList() const { return m_hasRareData ? m_data.m_rareData->m_selectorList.get() : 0; }
 
         void setValue(const AtomicString&);
-        void setAttribute(const QualifiedName&);
+        void setAttribute(const QualifiedName&, bool isCaseInsensitive);
         void setArgument(const AtomicString&);
         void setSelectorList(PassOwnPtr<CSSSelectorList>);
 
@@ -263,6 +264,7 @@ namespace WebCore {
             int m_a; // Used for :nth-*
             int m_b; // Used for :nth-*
             QualifiedName m_attribute; // used for attribute selector
+            AtomicString m_attributeCanonicalLocalName;
             AtomicString m_argument; // Used for :contains, :lang and :nth-*
             OwnPtr<CSSSelectorList> m_selectorList; // Used for :-webkit-any and :not
         
@@ -284,6 +286,13 @@ inline const QualifiedName& CSSSelector::attribute() const
     ASSERT(isAttributeSelector());
     ASSERT(m_hasRareData);
     return m_data.m_rareData->m_attribute;
+}
+
+inline const AtomicString& CSSSelector::attributeCanonicalLocalName() const
+{
+    ASSERT(isAttributeSelector());
+    ASSERT(m_hasRareData);
+    return m_data.m_rareData->m_attributeCanonicalLocalName;
 }
 
 inline bool CSSSelector::matchesPseudoElement() const

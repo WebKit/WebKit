@@ -1347,33 +1347,30 @@ class:
 
 attr_name:
     IDENT maybe_space {
-        CSSParserString& str = $1;
-        if (parser->m_context.isHTMLDocument)
-            str.lower();
-        $$ = str;
+        $$ = $1;
     }
     ;
 
 attrib:
     '[' maybe_space attr_name ']' {
         $$ = parser->createFloatingSelector();
-        $$->setAttribute(QualifiedName(nullAtom, $3, nullAtom));
+        $$->setAttribute(QualifiedName(nullAtom, $3, nullAtom), parser->m_context.isHTMLDocument);
         $$->setMatch(CSSSelector::Set);
     }
     | '[' maybe_space attr_name match maybe_space ident_or_string maybe_space ']' {
         $$ = parser->createFloatingSelector();
-        $$->setAttribute(QualifiedName(nullAtom, $3, nullAtom));
+        $$->setAttribute(QualifiedName(nullAtom, $3, nullAtom), parser->m_context.isHTMLDocument);
         $$->setMatch((CSSSelector::Match)$4);
         $$->setValue($6);
     }
     | '[' maybe_space namespace_selector attr_name ']' {
         $$ = parser->createFloatingSelector();
-        $$->setAttribute(parser->determineNameInNamespace($3, $4));
+        $$->setAttribute(parser->determineNameInNamespace($3, $4), parser->m_context.isHTMLDocument);
         $$->setMatch(CSSSelector::Set);
     }
     | '[' maybe_space namespace_selector attr_name match maybe_space ident_or_string maybe_space ']' {
         $$ = parser->createFloatingSelector();
-        $$->setAttribute(parser->determineNameInNamespace($3, $4));
+        $$->setAttribute(parser->determineNameInNamespace($3, $4), parser->m_context.isHTMLDocument);
         $$->setMatch((CSSSelector::Match)$5);
         $$->setValue($7);
     }

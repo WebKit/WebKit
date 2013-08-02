@@ -1,3 +1,22 @@
+2013-08-01  Rob Buis  <rwlbuis@webkit.org>
+
+        selectors should match attribute name with case sensitivity based on element & document type
+        https://bugs.webkit.org/show_bug.cgi?id=71152
+
+        Reviewed by Darin Adler.
+
+        Results matches FireFox nightly.
+
+        * fast/dom/SelectorAPI/attrname-case-insensitive-expected.txt: Added.
+        * fast/dom/SelectorAPI/attrname-case-insensitive.html: Check that in HTML documents CSS selectors
+        use case-insensitive attribute name matching for HTML elements, case-sensitive otherwise.
+        * fast/dom/SelectorAPI/attrname-case-sensitive-expected.txt: Added.
+        * fast/dom/SelectorAPI/attrname-case-sensitive.xhtml: Check that in XHTML documents CSS selectors
+        always use case-sensitive attribute name matching.
+        * svg/css/case-sensitive-attrname-selectors-expected.txt: Added.
+        * svg/css/case-sensitive-attrname-selectors.html: Check that in HTML documents CSS selectors in stylesheets
+        use case-insensitive attribute name matching for HTML elements, case-sensitive otherwise.
+
 2013-08-01  Alexey Proskuryakov  <ap@apple.com>
 
         <rdar://problem/14625616> http/tests/download/basic-ascii.html and http/tests/download/literal-utf-8.html fails

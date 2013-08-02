@@ -354,16 +354,16 @@ static bool attributeValueMatches(const Attribute* attributeItem, CSSSelector::M
     return true;
 }
 
-static bool anyAttributeMatches(Element* element, CSSSelector::Match match, const QualifiedName& selectorAttr, const AtomicString& selectorValue, bool caseSensitive)
+static bool anyAttributeMatches(Element* element, const CSSSelector* selector, const QualifiedName& selectorAttr, bool caseSensitive)
 {
     ASSERT(element->hasAttributesWithoutUpdate());
     for (size_t i = 0; i < element->attributeCount(); ++i) {
         const Attribute* attributeItem = element->attributeItem(i);
 
-        if (!attributeItem->matches(selectorAttr))
+        if (!attributeItem->matches(selectorAttr.prefix(), element->isHTMLElement() ? selector->attributeCanonicalLocalName() : selectorAttr.localName(), selectorAttr.namespaceURI()))
             continue;
 
-        if (attributeValueMatches(attributeItem, match, selectorValue, caseSensitive))
+        if (attributeValueMatches(attributeItem, static_cast<CSSSelector::Match>(selector->m_match), selector->value(), caseSensitive))
             return true;
     }
 
@@ -387,14 +387,13 @@ bool SelectorChecker::checkOne(const SelectorCheckingContext& context) const
         return element->hasID() && element->idForStyleResolution() == selector->value();
 
     if (selector->isAttributeSelector()) {
-        const QualifiedName& attr = selector->attribute();
-
         if (!element->hasAttributes())
             return false;
 
+        const QualifiedName& attr = selector->attribute();
         bool caseSensitive = !m_documentIsHTML || HTMLDocument::isCaseSensitiveAttribute(attr);
 
-        if (!anyAttributeMatches(element, static_cast<CSSSelector::Match>(selector->m_match), attr, selector->value(), caseSensitive))
+        if (!anyAttributeMatches(element, selector, attr, caseSensitive))
             return false;
     }
 

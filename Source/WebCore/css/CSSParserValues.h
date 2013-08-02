@@ -181,7 +181,7 @@ public:
     PassOwnPtr<CSSSelector> releaseSelector() { return m_selector.release(); }
 
     void setValue(const AtomicString& value) { m_selector->setValue(value); }
-    void setAttribute(const QualifiedName& value) { m_selector->setAttribute(value); }
+    void setAttribute(const QualifiedName& value, bool isCaseInsensitive) { m_selector->setAttribute(value, isCaseInsensitive); }
     void setArgument(const AtomicString& value) { m_selector->setArgument(value); }
     void setMatch(CSSSelector::Match value) { m_selector->m_match = value; }
     void setRelation(CSSSelector::Relation value) { m_selector->m_relation = value; }

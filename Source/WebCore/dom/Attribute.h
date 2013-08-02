@@ -51,7 +51,7 @@ public:
     const QualifiedName& name() const { return m_name; }
 
     bool isEmpty() const { return m_value.isEmpty(); }
-    bool matches(const QualifiedName&) const;
+    bool matches(const AtomicString& prefix, const AtomicString& localName, const AtomicString& namespaceURI) const;
 
     void setValue(const AtomicString& value) { m_value = value; }
     void setPrefix(const AtomicString& prefix) { m_name.setPrefix(prefix); }
@@ -72,11 +72,11 @@ private:
     AtomicString m_value;
 };
 
-inline bool Attribute::matches(const QualifiedName& qualifiedName) const
+inline bool Attribute::matches(const AtomicString& prefix, const AtomicString& localName, const AtomicString& namespaceURI) const
 {
-    if (qualifiedName.localName() != localName())
+    if (localName != this->localName())
         return false;
-    return qualifiedName.prefix() == starAtom || qualifiedName.namespaceURI() == namespaceURI();
+    return prefix == starAtom || namespaceURI == this->namespaceURI();
 }
 
 } // namespace WebCore

@@ -54,7 +54,7 @@ private:
 inline bool SelectorCheckerFastPath::matchesRightmostAttributeSelector() const
 {
     if (m_selector->m_match == CSSSelector::Exact || m_selector->m_match == CSSSelector::Set)
-        return SelectorChecker::checkExactAttribute(m_element, m_selector->attribute(), m_selector->value().impl());
+        return SelectorChecker::checkExactAttribute(m_element, m_selector, m_selector->attribute(), m_selector->value().impl());
     ASSERT(!m_selector->isAttributeSelector());
     return true;
 }

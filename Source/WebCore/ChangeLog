@@ -1,3 +1,38 @@
+2013-08-01  Rob Buis  <rwlbuis@webkit.org>
+
+        selectors should match attribute name with case sensitivity based on element & document type
+        https://bugs.webkit.org/show_bug.cgi?id=71152
+
+        Reviewed by Darin Adler.
+
+        Support case-sensitive attribute name selecting for non HTML. In order to do this we have to
+        store the attribute name in the selector as-is when css parsing, and get the lowercase localName
+        on demand for case-insensitive matching. The only time we want case-insensitive matching is when
+        we try to match a HTML element in a HTML document.
+
+        Tests: fast/dom/SelectorAPI/attrname-case-insensitive.html
+               fast/dom/SelectorAPI/attrname-case-sensitive.xhtml
+               svg/css/case-sensitive-attrname-selectors.html
+
+        * css/CSSGrammar.y.in: do not lowercase attribute selector name.
+        * css/CSSParserValues.h:
+        (WebCore::CSSParserSelector::setAttribute):
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::setAttribute):
+        * css/CSSSelector.h: allow access to lowered version of attribute localName if needed.
+        (WebCore::CSSSelector::attributeCanonicalLocalName):
+        * css/SelectorChecker.cpp:
+        (WebCore::anyAttributeMatches): do only case-insensitive matching for HTML.
+        (WebCore::SelectorChecker::checkOne):
+        * css/SelectorChecker.h:
+        (WebCore::SelectorChecker::checkExactAttribute): do only case-insensitive matching for HTML.
+        * css/SelectorCheckerFastPath.cpp:
+        (WebCore::HTMLNames::checkExactAttributeValue):
+        * css/SelectorCheckerFastPath.h:
+        (WebCore::SelectorCheckerFastPath::matchesRightmostAttributeSelector):
+        * dom/Attribute.h:
+        (WebCore::Attribute::matches): use more convenient parameters.
+
 2013-08-01  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] WebKit1 Fullscreen Video Play is Broken

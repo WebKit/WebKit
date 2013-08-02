@@ -85,7 +85,7 @@ inline bool checkIDValue(const Element* element, const CSSSelector* selector)
 
 inline bool checkExactAttributeValue(const Element* element, const CSSSelector* selector)
 {
-    return SelectorChecker::checkExactAttribute(element, selector->attribute(), selector->value().impl());
+    return SelectorChecker::checkExactAttribute(element, selector, selector->attribute(), selector->value().impl());
 }
 
 inline bool checkTagValue(const Element* element, const CSSSelector* selector)
