@@ -109,9 +109,9 @@ private:
     virtual void setItemValueText(const String&, ExceptionCode&) OVERRIDE;
 #endif
 
-    void updateImagesFromSrcSet(const AtomicString& srcset);
-
-    void updateBestImageForScaleFactor();
+    void collectImageCandidateFromSrc();
+    void collectImageCandidatesFromSrcSet();
+    void determineBestImageForScaleFactor();
 
     struct ImageWithScale {
         String imageURL;
@@ -131,7 +131,6 @@ private:
     HTMLFormElement* m_form;
     CompositeOperator m_compositeOperator;
     AtomicString m_bestFitImageURL;
-    size_t m_srcImageIndex;
     Vector<ImageWithScale> m_imagesWithScale;
 };
 

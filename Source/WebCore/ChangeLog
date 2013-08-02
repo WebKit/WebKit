@@ -1,3 +1,38 @@
+2013-08-01  Dean Jackson  <dino@apple.com>
+
+        srcset algorithm breaks base64 src attributes
+        https://bugs.webkit.org/show_bug.cgi?id=119413
+
+        Reviewed by Darin Adler.
+
+        Base64 encoded src attributes typically have a COMMA
+        character which was breaking in the candidate matching
+        algorithm. Make sure to handle that case, and to unescape
+        any incoming URLs.
+
+        Slight cleanup of the srcset matching algorithm. The
+        candidates are now gathered from a single update
+        method. I've renamed the methods in the process.
+        This means we now reparse the srcset attribute if
+        only the src changes, but I think the code is
+        cleaner this way.
+
+        Tests: fast/hidpi/image-srcset-data-src.html
+               fast/hidpi/image-srcset-data-srcset.html
+               fast/hidpi/image-srcset-nomodifier.html
+               fast/hidpi/image-srcset-viewport-modifiers.html
+
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::HTMLImageElement): No need to initialise m_bestFitImageURL.
+        (WebCore::HTMLImageElement::imageSourceURL): Use isEmpty() rather than checking for nullAtom.
+        (WebCore::HTMLImageElement::determineBestImageForScaleFactor): New renamed method that selects the best
+        candidate for the image source.
+        (WebCore::HTMLImageElement::collectImageCandidatesFromSrcSet): Gather the srcset images. Changes include
+        simplifying the whitespace and skipping candidates that we don't yet support.
+        (WebCore::HTMLImageElement::collectImageCandidateFromSrc): Add the src attribute to the list of candidates.
+        (WebCore::HTMLImageElement::parseAttribute): Now both attributes call determineBestImageForScaleFactor.
+        * html/HTMLImageElement.h: No need for m_srcImageIndex any more.
+
 2013-08-01  Romain Perier  <romain.perier@gmail.com>
 
         Implement img element's srcset attribute

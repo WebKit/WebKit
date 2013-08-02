@@ -1,5 +1,32 @@
 2013-08-01  Dean Jackson  <dino@apple.com>
 
+        srcset algorithm breaks base64 src attributes
+        https://bugs.webkit.org/show_bug.cgi?id=119413
+
+        Reviewed by Darin Adler.
+
+        Four new tests that exercise candidate matching. In particular:
+        - base64 encoded src attributes
+        - base64 encoded srcset attributes that are escaped
+        - attributes without scale modifiers
+        - attributes that have modifiers other than scale
+
+        * fast/hidpi/image-srcset-change-dynamically-from-js.html: Minor change to add scale modifier.
+        * fast/hidpi/image-srcset-data-src.html: Added.
+        * fast/hidpi/image-srcset-data-srcset.html: Added.
+        * fast/hidpi/image-srcset-nomodifier.html: Added.
+        * fast/hidpi/image-srcset-viewport-modifiers.html: Added.
+        * platform/mac/fast/hidpi/image-srcset-data-src-expected.png: Added.
+        * platform/mac/fast/hidpi/image-srcset-data-src-expected.txt: Added.
+        * platform/mac/fast/hidpi/image-srcset-data-srcset-expected.png: Added.
+        * platform/mac/fast/hidpi/image-srcset-data-srcset-expected.txt: Added.
+        * platform/mac/fast/hidpi/image-srcset-nomodifier-expected.png: Added.
+        * platform/mac/fast/hidpi/image-srcset-nomodifier-expected.txt: Added.
+        * platform/mac/fast/hidpi/image-srcset-viewport-modifiers-expected.png: Added.
+        * platform/mac/fast/hidpi/image-srcset-viewport-modifiers-expected.txt: Added.
+
+2013-08-01  Dean Jackson  <dino@apple.com>
+
         Minor cleanup for srcset tests
         https://bugs.webkit.org/show_bug.cgi?id=119407
 
