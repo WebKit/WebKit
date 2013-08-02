@@ -1,3 +1,22 @@
+2013-08-02  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        compareDocumentPosition() should report PRECEDING or FOLLOWING information even if nodes are disconnected
+        https://bugs.webkit.org/show_bug.cgi?id=119316
+
+        Reviewed by Ryosuke Niwa.
+
+        As per the latest specification, compareDocumentPosition() should report PRECEDING or FOLLOWING
+        information even if nodes are disconnected:
+        - http://dom.spec.whatwg.org/#dom-node-comparedocumentposition
+
+        This behavior is consistent with both IE10, Firefox 22 and since recently Blink.
+
+        No new tests, covered by existing tests.
+
+        * dom/Node.cpp:
+        (WebCore::compareDetachedElementsPosition):
+        (WebCore::Node::compareDocumentPosition):
+
 2013-08-02  Simon Fraser  <simon.fraser@apple.com>
 
         Revert r153632, since it caused fast/forms/change-form-element-document-crash.html
