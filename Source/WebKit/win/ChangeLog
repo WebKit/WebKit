@@ -1,3 +1,20 @@
+2013-08-01  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] WebKit1 Fullscreen Video Play is Broken
+        https://bugs.webkit.org/show_bug.cgi?id=119415
+
+        Reviewed by Jer Noble.
+
+        * WebPreferences.cpp:
+        (WebPreferences::initializeDefaultSettings): Set accelerated
+        rendering on by default on systems that support it.
+        * WebView.cpp:
+        (WebView::exitFullscreen): Clean up Fullscreen video controller
+        once it is no longer used. This was preventing users from being
+        able to reenter Fullscreen mode after leaving it.
+        (WebView::fullScreenClientForceRepaint): Change assert to
+        match the member actually being used in the method.
+
 2013-08-01  Patrick Gansterer  <paroga@webkit.org>
 
         Rearrange the code of FrameWin

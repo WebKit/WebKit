@@ -357,7 +357,12 @@ extern "C" __declspec(dllexport) int WINAPI dllLauncherEntryPoint(HINSTANCE, HIN
     standardPreferences->setAcceleratedCompositingEnabled(TRUE);
     standardPreferences->setAVFoundationEnabled(TRUE);
 
-    HRESULT hr = WebKitCreateInstance(CLSID_WebView, 0, IID_IWebView, reinterpret_cast<void**>(&gWebView));
+    IWebPreferencesPrivate* prefsPrivate = 0;
+    HRESULT hr = standardPreferences->QueryInterface(IID_IWebPreferencesPrivate, reinterpret_cast<void**>(&prefsPrivate));
+    if (SUCCEEDED(hr))
+        prefsPrivate->setFullScreenEnabled(TRUE);
+
+    hr = WebKitCreateInstance(CLSID_WebView, 0, IID_IWebView, reinterpret_cast<void**>(&gWebView));
     if (FAILED(hr))
         goto exit;
 

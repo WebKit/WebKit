@@ -1,3 +1,35 @@
+2013-08-01  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] WebKit1 Fullscreen Video Play is Broken
+        https://bugs.webkit.org/show_bug.cgi?id=119415
+
+        Reviewed by Jer Noble.
+
+        * platform/graphics/avfoundation/cf/AVFoundationCFSoftLinking.h: Add
+        call for ACFPlayerLayerSetFrame
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundationCF::platformSetVisible):
+        Tear down video player when leaving Fullscreen mode and not using
+        the newer Fullscreen feature.
+        (WebCore::AVFWrapper::disconnectAndDeleteAVFWrapper):
+        Disconnect from notifications for AVCFPlayerItemPresentationSizeChangedNotification,
+        AVCFPlayerItemDuratoinChangedNotification, and disconnect any
+        LegibleOutput items added to the player item.
+        (WebCore::AVFWrapper::createPlayerItem): Add notifications for
+        AVCFPlayerItemPresentationSizeChanged. 
+        (WebCore::LayerClient::platformCALayerLayoutSublayersOfLayer): Notify
+        the AVCFPLayerLayer when the display size has changed.
+        * platform/graphics/ca/win/CACFLayerTreeHost.h:
+        (WebCore::CACFLayerTreeHost::manualCreateRenderer): Added.
+        * platform/graphics/ca/win/WKCACFViewLayerTreeHost.h:
+        (WebCore::WKCACFViewLayerTreeHost::manualCreateRenderer): Added.
+        * platform/graphics/win/MediaPlayerPrivateFullscreenWindow.cpp:
+        (WebCore::MediaPlayerPrivateFullscreenWindow::createWindow): Minor
+        cleanups.
+        (WebCore::MediaPlayerPrivateFullscreenWindow::setRootChildLayer):
+        Make sure a Direct3D renderer is created when building the full screen
+        window for Video playback.
+
 2013-08-01  Dean Jackson  <dino@apple.com>
 
         srcset algorithm breaks base64 src attributes

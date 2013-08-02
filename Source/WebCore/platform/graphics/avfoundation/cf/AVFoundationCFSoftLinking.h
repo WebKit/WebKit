@@ -186,6 +186,9 @@ SOFT_LINK_DLL_IMPORT(AVFoundationCF, AVCFPlayerLayerCreateWithAVCFPlayer, AVCFPl
 SOFT_LINK_DLL_IMPORT(AVFoundationCF, AVCFPlayerLayerIsReadyForDisplay, Boolean, __cdecl, (AVCFPlayerLayerRef playerLayer), (playerLayer))
 #define AVCFPlayerLayerIsReadyForDisplay softLink_AVCFPlayerLayerIsReadyForDisplay
 
+SOFT_LINK_DLL_IMPORT(AVFoundationCF, AVCFPlayerLayerSetFrame, void, __cdecl, (AVCFPlayerLayerRef playerLayer, CGRect rect), (playerLayer, rect))
+#define AVCFPlayerLayerSetFrame softLink_AVCFPlayerLayerSetFrame
+
 SOFT_LINK_DLL_IMPORT(AVFoundationCF, AVCFPlayerLayerSetPlayer, void, __cdecl, (AVCFPlayerLayerRef playerLayer, AVCFPlayerRef player), (playerLayer, player))
 #define AVCFPlayerLayerSetPlayer softLink_AVCFPlayerLayerSetPlayer
 

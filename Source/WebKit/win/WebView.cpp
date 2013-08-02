@@ -6287,9 +6287,11 @@ void WebView::enterFullscreenForNode(Node* node)
 void WebView::exitFullscreen()
 {
 #if ENABLE(VIDEO)
-    if (m_fullScreenVideoController)
-        m_fullScreenVideoController->exitFullscreen();
+    if (!m_fullScreenVideoController)
+        return;
     
+    m_fullScreenVideoController->exitFullscreen();
+    m_fullScreenVideoController = nullptr;
 #endif
 }
 
@@ -6924,7 +6926,7 @@ void WebView::fullScreenClientDidExitFullScreen()
 
 void WebView::fullScreenClientForceRepaint()
 {
-    ASSERT(m_fullScreenElement);
+    ASSERT(m_fullscreenController);
     RECT windowRect = {0};
     frameRect(&windowRect);
     repaint(windowRect, true /*contentChanged*/, true /*immediate*/, false /*contentOnly*/);
