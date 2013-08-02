@@ -1,3 +1,12 @@
+2013-08-02  Mark Lam  <mark.lam@apple.com>
+
+        Bot greening: changed test to not use test functions not yet available in this branch.
+
+        Not reviewed.
+
+        * fast/js/script-tests/dfg-make-rope-side-effects.js:
+        (f):
+
 2013-08-01  Mark Lam  <mark.lam@apple.com>
 
         Bot greening.  Merge r153629.
