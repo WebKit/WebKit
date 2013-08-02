@@ -37,20 +37,30 @@
 #if USE(APPKIT)
 
 #import "WebColorPicker.h"
+#import "WKView.h"
+#import <WebCore/IntRect.h>
 #include <wtf/RetainPtr.h>
-
-OBJC_CLASS NSColorWell;
-OBJC_CLASS WKColorPanelMac;
 
 namespace WebCore {
 class Color;
 }
 
 namespace WebKit {
+class WebColorPickerMac;
+}
+
+@protocol WKColorPickerUIMac <NSObject>
+- (void)setAndShowPicker:(WebKit::WebColorPickerMac*)picker withColor:(NSColor *)color;
+- (void)invalidate;
+- (void)setColor:(NSColor *)color;
+- (void)didChooseColor:(id)sender;
+@end
+
+namespace WebKit {
     
 class WebColorPickerMac : public WebColorPicker {
 public:        
-    static PassRefPtr<WebColorPickerMac> create(WebColorPicker::Client*, const WebCore::Color&);
+    static PassRefPtr<WebColorPickerMac> create(WebColorPicker::Client*, const WebCore::Color&, const WebCore::IntRect&, WKView*);
     ~WebColorPickerMac();
 
     virtual void endPicker() OVERRIDE;
@@ -60,8 +70,8 @@ public:
     void didChooseColor(const WebCore::Color&);
 
 private:
-    WebColorPickerMac(WebColorPicker::Client*, const WebCore::Color&);
-    RetainPtr<WKColorPanelMac> m_panel;
+    WebColorPickerMac(WebColorPicker::Client*, const WebCore::Color&, const WebCore::IntRect&, WKView*);
+    RetainPtr<NSObject<WKColorPickerUIMac> > m_colorPickerUI;
 };
 
 } // namespace WebKit

@@ -1005,6 +1005,10 @@ void WebPageProxy::viewWillStartLiveResize()
 {
     if (!isValid())
         return;
+#if ENABLE(INPUT_TYPE_COLOR_POPOVER)
+    if (m_colorPicker)
+        endColorPicker();
+#endif
     m_process->send(Messages::WebPage::ViewWillStartLiveResize(), m_pageID);
 }
 
@@ -1053,6 +1057,13 @@ void WebPageProxy::viewInWindowStateDidChange(WantsReplyOrNot wantsReply)
             m_drawingArea->layerHostingModeDidChange();
         }
     }
+#if ENABLE(INPUT_TYPE_COLOR_POPOVER)
+    else {
+        // When leaving the current page, close the popover color well.
+        if (m_colorPicker)
+            endColorPicker();
+    }
+#endif
 }
 
 void WebPageProxy::viewStateDidChange(ViewStateFlags flags)
@@ -2923,6 +2934,11 @@ void WebPageProxy::needTouchEvents(bool needTouchEvents)
 #if ENABLE(INPUT_TYPE_COLOR)
 void WebPageProxy::showColorPicker(const WebCore::Color& initialColor, const IntRect& elementRect)
 {
+#if ENABLE(INPUT_TYPE_COLOR_POPOVER)
+    // A new popover color well needs to be created (and the previous one destroyed) for
+    // each activation of a color element.
+    m_colorPicker = 0;
+#endif
     if (!m_colorPicker)
         m_colorPicker = m_pageClient->createColorPicker(this, initialColor, elementRect);
     m_colorPicker->showColorPicker(initialColor);

@@ -190,6 +190,10 @@
 #define ENABLE_INPUT_TYPE_COLOR 1
 #endif
 
+#if !defined(ENABLE_INPUT_TYPE_COLOR_POPOVER)
+#define ENABLE_INPUT_TYPE_COLOR_POPOVER 1
+#endif
+
 #endif /* PLATFORM(MAC) && !PLATFORM(IOS) */
 
 /* --------- Apple Windows port --------- */
@@ -508,6 +512,10 @@
 
 #if !defined(ENABLE_INPUT_TYPE_COLOR)
 #define ENABLE_INPUT_TYPE_COLOR 0
+#endif
+
+#if !defined(ENABLE_INPUT_TYPE_COLOR_POPOVER)
+#define ENABLE_INPUT_TYPE_COLOR_POPOVER 0
 #endif
 
 #if !defined(ENABLE_INPUT_TYPE_DATE)

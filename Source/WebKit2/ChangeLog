@@ -1,3 +1,50 @@
+2013-08-01  Ruth Fong  <ruth_fong@apple.com>
+
+        [Forms: color] <input type='color'> popover color well implementation
+        <rdar://problem/14411008> and https://bugs.webkit.org/show_bug.cgi?id=119356
+
+        Reviewed by Benjamin Poulain.
+
+        This patch adds an popover implementation of <input type='color'>.
+
+        * Configurations/FeatureDefines.xcconfig: Added and enabled INPUT_TYPE_COLOR_POPOVER.
+
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::createColorPicker): Updated to pass the 
+          coordinates of the <input type='color'> element and the WKView 
+          object for the window.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::viewWillStartLiveResize): Close popover color 
+          picker when the view is resized.
+        (WebKit::WebPageProxy::viewInWindowStateDidChange): Close popover color
+          picker when the view is no longer in the window.
+        (WebKit::WebPageProxy::showColorPicker): Updated to show either a color panel
+          or a popover color picker depending on whether INPUT_TYPE_COLOR_POPOVER is enabled.
+
+        * UIProcess/mac/WebColorPickerMac.h:
+        * UIProcess/mac/WebColorPickerMac.mm:
+        (WebKit::WebColorPickerMac::create):
+        (WebKit::WebColorPickerMac::~WebColorPickerMac):
+        (WebKit::WebColorPickerMac::WebColorPickerMac):
+        (WebKit::WebColorPickerMac::endPicker):
+        (WebKit::WebColorPickerMac::setSelectedColor):
+        (WebKit::WebColorPickerMac::showColorPicker):
+        Methods updated to handle both the color panel implementation and 
+          the popover implementation; also renamed m_panel to m_colorPickerUI. 
+
+        (-[WKColorPopoverMac initWithFrame:WebCore::inView:]):
+        (-[WKColorPopoverMac setAndShowPicker:WebKit::withColor:]):
+        (-[WKColorPopoverMac dealloc]):
+        (-[WKColorPopoverMac invalidate]):
+        (-[WKColorPopoverMac windowWillClose:]):
+        (-[WKColorPopoverMac didChooseColor:]):
+        (-[WKColorPopoverMac setColor:]):
+        WKColorPopoverMac provides the popover implementation of <input type='color'>.
+
+        (-[WKColorPanelMac didChooseColor:]): Updated to match the interface of 
+          WKColorPickerMac::didChooseColor.
+
 2013-08-01  Anders Carlsson  <andersca@apple.com>
 
         Lots of leaks under WebContext::pluginInfoStoreDidLoadPlugins()

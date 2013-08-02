@@ -1,3 +1,12 @@
+2013-08-01  Ruth Fong  <ruth_fong@apple.com>
+
+        [Forms: color] <input type='color'> popover color well implementation
+        <rdar://problem/14411008> and https://bugs.webkit.org/show_bug.cgi?id=119356
+
+        Reviewed by Benjamin Poulain.
+
+        * Configurations/FeatureDefines.xcconfig: Added and enabled INPUT_TYPE_COLOR_POPOVER.
+
 2013-07-31  Ryosuke Niwa  <rniwa@webkit.org>
 
         FormAssociatedElement shouldn't create out-of-tree FormAttributeTargetObserver

@@ -40,54 +40,78 @@
 
 using namespace WebKit;
 
-// A listener class to act as a event target for NSColorPanel and send
-// the results to the C++ class, WebColorPickerMac.
-@interface WKColorPanelMac : NSObject<NSWindowDelegate> {
+#if ENABLE(INPUT_TYPE_COLOR_POPOVER)
+
+// The methods we use from NSPopoverColorWell aren't declared in its header
+// so there's no benefit to trying to include them. Instead we just declare
+// the class and methods here.
+@interface NSPopoverColorWell : NSColorWell
+@end
+
+@interface NSPopoverColorWell (AppKitSecretsIKnow)
+- (void)_showPopover;
+@end
+
+@interface WKColorPopoverMac : NSObject<WKColorPickerUIMac, NSWindowDelegate> {
 @private
     BOOL _lastChangedByUser;
-    WebColorPickerMac* _picker;
+    WebColorPickerMac *_picker;
+    RetainPtr<NSPopoverColorWell> _popoverWell;
 }
-
-- (id)init;
-- (void)setAndShowPicker:(WebKit::WebColorPickerMac*)picker withColor:(NSColor *)color;
-- (void)didChooseColor:(NSColorPanel *)panel;
-- (void)invalidate;
-
-// Sets color to the NSColorPanel as a non user change.
-- (void)setColor:(NSColor *)color;
-
+- (id)initWithFrame:(const WebCore::IntRect &)rect inView:(WKView *)view;
 @end
+
+#else
+
+@interface WKColorPanelMac : NSObject<WKColorPickerUIMac, NSWindowDelegate> {
+@private
+    BOOL _lastChangedByUser;
+    WebColorPickerMac *_picker;
+}
+- (id)init;
+@end
+
+#endif // ENABLE(INPUT_TYPE_COLOR_POPOVER)
 
 namespace WebKit {
 
-PassRefPtr<WebColorPickerMac> WebColorPickerMac::create(WebColorPicker::Client* client, const WebCore::Color& initialColor)
+PassRefPtr<WebColorPickerMac> WebColorPickerMac::create(WebColorPicker::Client* client, const WebCore::Color& initialColor, const WebCore::IntRect& rect, WKView* view)
 {
-    return adoptRef(new WebColorPickerMac(client, initialColor));
+    return adoptRef(new WebColorPickerMac(client, initialColor, rect, view));
 }
 
 WebColorPickerMac::~WebColorPickerMac()
 {
-    ASSERT(!m_panel);
+#if ENABLE(INPUT_TYPE_COLOR_POPOVER)
+    if (m_colorPickerUI)
+        endPicker();
+#else
+    ASSERT(!m_colorPickerUI);
+#endif
 }
 
-WebColorPickerMac::WebColorPickerMac(WebColorPicker::Client* client, const WebCore::Color& initialColor)
+WebColorPickerMac::WebColorPickerMac(WebColorPicker::Client* client, const WebCore::Color& initialColor, const WebCore::IntRect& rect, WKView* view)
     : WebColorPicker(client)
 {
-    m_panel = adoptNS([[WKColorPanelMac alloc] init]);
+#if ENABLE(INPUT_TYPE_COLOR_POPOVER)
+    m_colorPickerUI = adoptNS([[WKColorPopoverMac alloc] initWithFrame:rect inView:view]);
+#else
+    m_colorPickerUI = adoptNS([[WKColorPanelMac alloc] init]);
+#endif
 }
 
 void WebColorPickerMac::endPicker()
 {
-    [m_panel invalidate];
-    m_panel = nullptr;
+    [m_colorPickerUI invalidate];
+    m_colorPickerUI = nil;
 }
 
 void WebColorPickerMac::setSelectedColor(const WebCore::Color& color)
 {
-    if (!m_client || !m_panel)
+    if (!m_client || !m_colorPickerUI)
         return;
     
-    [m_panel setColor:nsColor(color)];
+    [m_colorPickerUI setColor:nsColor(color)];
 }
 
 void WebColorPickerMac::didChooseColor(const WebCore::Color& color)
@@ -97,20 +121,96 @@ void WebColorPickerMac::didChooseColor(const WebCore::Color& color)
     
     m_client->didChooseColor(color);
 }
+
 void WebColorPickerMac::showColorPicker(const WebCore::Color& color)
 {
     if (!m_client)
         return;
 
-    if (!m_panel)
-        m_panel = adoptNS([[WKColorPanelMac alloc] init]);
+#if !ENABLE(INPUT_TYPE_COLOR_POPOVER)
+    if (!m_colorPickerUI)
+        m_colorPickerUI = adoptNS([[WKColorPanelMac alloc] init]);
+#endif
 
-    [m_panel setAndShowPicker:this withColor:nsColor(color)];
+    [m_colorPickerUI setAndShowPicker:this withColor:nsColor(color)];
 }
 
 } // namespace WebKit
 
-using namespace WebKit;
+#if ENABLE(INPUT_TYPE_COLOR_POPOVER)
+
+@implementation WKColorPopoverMac
+- (id)initWithFrame:(const WebCore::IntRect &)rect inView:(WKView *)view
+{
+    if(!(self = [super init]))
+        return self;
+
+    _popoverWell = adoptNS([[NSPopoverColorWell alloc] initWithFrame:NSRectFromCGRect(rect)]);
+    if (!_popoverWell)
+        return self;
+
+    [[view window].contentView addSubview:_popoverWell.get()];
+
+    return self;
+}
+
+- (void)setAndShowPicker:(WebKit::WebColorPickerMac*)picker withColor:(NSColor *)color
+{
+    _picker = picker;
+
+    [_popoverWell setTarget:self];
+    [_popoverWell setAction:@selector(didChooseColor:)];
+    [_popoverWell setColor:color];
+    [_popoverWell _showPopover];
+    
+    _lastChangedByUser = YES;
+}
+- (void)dealloc
+{
+    ASSERT(!_popoverWell);
+    ASSERT(!_picker);
+    [super dealloc];
+}
+
+- (void)invalidate
+{
+    [_popoverWell removeFromSuperviewWithoutNeedingDisplay];
+    [_popoverWell setTarget:nil];
+    [_popoverWell setAction:nil];
+    [_popoverWell deactivate];
+    _popoverWell = nil;
+    _picker = nil;
+}
+
+- (void)windowWillClose:(NSNotification *)notification
+{
+    _lastChangedByUser = YES;
+    _picker->endPicker();
+}
+
+- (void)didChooseColor:(id)sender
+{
+    if (sender != _popoverWell)
+        return;
+
+    // Handle the case where the <input type='color'> value is programmatically set.
+    if (!_lastChangedByUser) {
+        _lastChangedByUser = YES;
+        return;
+    }
+
+    _picker->didChooseColor(WebCore::colorFromNSColor([_popoverWell color]));
+}
+
+- (void)setColor:(NSColor *)color
+{
+    _lastChangedByUser = NO;
+    [_popoverWell setColor:color];
+}
+
+@end
+
+#else
 
 @implementation WKColorPanelMac
 
@@ -154,15 +254,18 @@ using namespace WebKit;
     _picker->endPicker();
 }
 
-- (void)didChooseColor:(NSColorPanel *)panel
+- (void)didChooseColor:(id)sender
 {
+    if (sender != [NSColorPanel sharedColorPanel])
+        return;
+
     // Handle the case where the <input type='color'> value is programmatically set.
     if (!_lastChangedByUser) {
         _lastChangedByUser = YES;
         return;
     }
 
-    _picker->didChooseColor(WebCore::colorFromNSColor([panel color]));
+    _picker->didChooseColor(WebCore::colorFromNSColor([sender color]));
 }
 
 - (void)setColor:(NSColor *)color
@@ -172,6 +275,8 @@ using namespace WebKit;
 }
 
 @end
+
+#endif // ENABLE(INPUT_TYPE_COLOR_POPOVER)
 
 #endif // USE(APPKIT)
 
