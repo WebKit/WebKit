@@ -5,6 +5,7 @@
   <ItemDefinitionGroup>
     <ClCompile>
       <AdditionalIncludeDirectories>../src;../include;../include/KHR</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>ANGLE_WEBKIT_WIN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Lib>
       <OutputFile>$(CONFIGURATIONBUILDDIR)\lib$(PlatformArchitecture)\$(TargetName)$(TargetExt)</OutputFile>

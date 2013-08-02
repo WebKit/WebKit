@@ -484,6 +484,9 @@
     <ClInclude Include="..\src\libGLESv2\precompiled.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\GLES2\gl2softlinking.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\src\libGLESv2\renderer\shaders\Blit.ps">

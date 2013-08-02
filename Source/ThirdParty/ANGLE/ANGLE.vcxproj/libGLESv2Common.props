@@ -5,7 +5,7 @@
   <ItemDefinitionGroup>
     <ClCompile>
       <AdditionalIncludeDirectories>..\src;..\src\libGLESv2;..\include;..\include\KHR;$(DXSDK_DIR)Include</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NOMINMAX;ANGLE_WEBKIT_WIN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <ModuleDefinitionFile>../src/libGLESv2/libGLESv2.def</ModuleDefinitionFile>

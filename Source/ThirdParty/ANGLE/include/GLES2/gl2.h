@@ -471,6 +471,10 @@ typedef khronos_ssize_t  GLsizeiptr;
  * GL core functions.
  *-----------------------------------------------------------------------*/
 
+#if defined(_MSC_VER) && !defined(ANGLE_WEBKIT_WIN)
+#include <GLES2/gl2softlinking.h>
+#else
+
 GL_APICALL void         GL_APIENTRY glActiveTexture (GLenum texture);
 GL_APICALL void         GL_APIENTRY glAttachShader (GLuint program, GLuint shader);
 GL_APICALL void         GL_APIENTRY glBindAttribLocation (GLuint program, GLuint index, const GLchar* name);
@@ -613,6 +617,8 @@ GL_APICALL void         GL_APIENTRY glVertexAttrib4f (GLuint indx, GLfloat x, GL
 GL_APICALL void         GL_APIENTRY glVertexAttrib4fv (GLuint indx, const GLfloat* values);
 GL_APICALL void         GL_APIENTRY glVertexAttribPointer (GLuint indx, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const GLvoid* ptr);
 GL_APICALL void         GL_APIENTRY glViewport (GLint x, GLint y, GLsizei width, GLsizei height);
+
+#endif
 
 #ifdef __cplusplus
 }

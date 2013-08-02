@@ -44,6 +44,9 @@
     <ClInclude Include="..\src\common\version.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\EGL\eglsoftlinking.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\libEGL\Config.cpp">

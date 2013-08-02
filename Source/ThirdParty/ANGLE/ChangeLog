@@ -1,3 +1,25 @@
+2013-08-02  Alex Christensen  <achristensen@apple.com>
+
+        Soft link ANGLE on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=119452
+
+        Reviewed by Dean Jackson.
+
+        * ANGLE.vcxproj/libEGL.vcxproj:
+        * ANGLE.vcxproj/libEGL.vcxproj.filters:
+        * ANGLE.vcxproj/libGLESv2.vcxproj:
+        * ANGLE.vcxproj/libGLESv2.vcxproj.filters:
+        Added soft linking headers.
+        * ANGLE.vcxproj/libEGLCommon.props:
+        * ANGLE.vcxproj/libGLESv2Common.props:
+        * ANGLE.vcxproj/translatorCommon.props:
+        Added ANGLE_WEBKIT_WIN macro definition for egl.h and gl2.h.
+        * include/EGL/egl.h:
+        * include/GLES2/gl2.h:
+        Conditionally include soft linking headers based on ANGLE_WEBKIT_WIN macro.
+        * include/EGL/eglsoftlinking.h: Added.
+        * include/GLES2/gl2softlinking.h: Added.
+
 2013-08-01  Alex Christensen  <achristensen@apple.com>
 
         Fixed wrong static_casting in ANGLE from r153064.

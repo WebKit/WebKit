@@ -6,6 +6,7 @@
   <ItemDefinitionGroup>
     <ClCompile>
       <AdditionalIncludeDirectories>../src;../include</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>ANGLE_WEBKIT_WIN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <AdditionalDependencies>d3d9.lib;libGLESv2.lib;%(AdditionalDependencies)</AdditionalDependencies>

@@ -147,6 +147,7 @@
     <ClInclude Include="..\include\EGL\egl.h" />
     <ClInclude Include="..\include\EGL\eglext.h" />
     <ClInclude Include="..\include\EGL\eglplatform.h" />
+    <ClInclude Include="..\include\EGL\eglsoftlinking.h" />
     <ClInclude Include="..\src\common\version.h" />
     <ClInclude Include="..\src\libEGL\Config.h" />
     <ClInclude Include="..\src\libEGL\Display.h" />
