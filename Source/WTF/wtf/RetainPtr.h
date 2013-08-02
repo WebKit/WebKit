@@ -21,6 +21,8 @@
 #ifndef RetainPtr_h
 #define RetainPtr_h
 
+#if USE(CF) || defined(__OBJC__)
+
 #include <wtf/HashTraits.h>
 #include <wtf/NullPtr.h>
 #include <wtf/TypeTraits.h>
@@ -49,8 +51,28 @@ namespace WTF {
 
     enum AdoptCFTag { AdoptCF };
     enum AdoptNSTag { AdoptNS };
-    
+
+#if USE(CF)
+    inline void retain(CFTypeRef ptr) { CFRetain(ptr); }
+    inline void release(CFTypeRef ptr) { CFRelease(ptr); }
+#endif
+
 #ifdef __OBJC__
+#if __has_feature(objc_arc)
+    inline void adoptNSReference(id) { }
+    inline void retain(id ptr) { }
+    inline void release(id ptr) { }
+#else
+    inline void retain(id ptr)
+    {
+        CFRetain(ptr);
+    }
+
+    inline void release(id ptr)
+    {
+        CFRelease(ptr);
+    }
+
 #ifdef OBJC_NO_GC
     inline void adoptNSReference(id)
     {
@@ -64,7 +86,9 @@ namespace WTF {
         }
     }
 #endif
-#endif
+#endif // __has_feature(objc_arc)
+#endif // __OBJC__
+
 
     template<typename T> class RetainPtr {
     public:
@@ -72,7 +96,7 @@ namespace WTF {
         typedef ValueType* PtrType;
 
         RetainPtr() : m_ptr(0) {}
-        RetainPtr(PtrType ptr) : m_ptr(ptr) { if (ptr) CFRetain(ptr); }
+        RetainPtr(PtrType ptr) : m_ptr(ptr) { if (ptr) retain(ptr); }
 
         RetainPtr(AdoptCFTag, PtrType ptr)
             : m_ptr(ptr)
@@ -88,7 +112,7 @@ namespace WTF {
             adoptNSReference(ptr);
         }
         
-        RetainPtr(const RetainPtr& o) : m_ptr(o.m_ptr) { if (PtrType ptr = m_ptr) CFRetain(ptr); }
+        RetainPtr(const RetainPtr& o) : m_ptr(o.m_ptr) { if (PtrType ptr = m_ptr) retain(ptr); }
 
 #if COMPILER_SUPPORTS(CXX_RVALUE_REFERENCES)
         RetainPtr(RetainPtr&& o) : m_ptr(o.leakRef()) { }
@@ -98,7 +122,7 @@ namespace WTF {
         RetainPtr(HashTableDeletedValueType) : m_ptr(hashTableDeletedValue()) { }
         bool isHashTableDeletedValue() const { return m_ptr == hashTableDeletedValue(); }
         
-        ~RetainPtr() { if (PtrType ptr = m_ptr) CFRelease(ptr); }
+        ~RetainPtr() { if (PtrType ptr = m_ptr) release(ptr); }
         
         template<typename U> RetainPtr(const RetainPtr<U>&);
 
@@ -114,8 +138,9 @@ namespace WTF {
         bool operator!() const { return !m_ptr; }
     
         // This conversion operator allows implicit conversion to bool but not to other integer types.
-        typedef PtrType RetainPtr::*UnspecifiedBoolType;
-        operator UnspecifiedBoolType() const { return m_ptr ? &RetainPtr::m_ptr : 0; }
+        typedef void (RetainPtr::*UnspecifiedBoolType)() const;
+        void ImplicitConversionToBoolIsNotAllowed() const { }
+        operator UnspecifiedBoolType() const { return m_ptr ? &RetainPtr::ImplicitConversionToBoolIsNotAllowed : 0; }
         
         RetainPtr& operator=(const RetainPtr&);
         template<typename U> RetainPtr& operator=(const RetainPtr<U>&);
@@ -143,14 +168,14 @@ namespace WTF {
         : m_ptr(o.get())
     {
         if (PtrType ptr = m_ptr)
-            CFRetain(ptr);
+            retain(ptr);
     }
 
     template<typename T> inline void RetainPtr<T>::clear()
     {
         if (PtrType ptr = m_ptr) {
             m_ptr = 0;
-            CFRelease(ptr);
+            release(ptr);
         }
     }
 
@@ -165,11 +190,11 @@ namespace WTF {
     {
         PtrType optr = o.get();
         if (optr)
-            CFRetain(optr);
+            retain(optr);
         PtrType ptr = m_ptr;
         m_ptr = optr;
         if (ptr)
-            CFRelease(ptr);
+            release(ptr);
         return *this;
     }
 
@@ -177,33 +202,33 @@ namespace WTF {
     {
         PtrType optr = o.get();
         if (optr)
-            CFRetain(optr);
+            retain(optr);
         PtrType ptr = m_ptr;
         m_ptr = optr;
         if (ptr)
-            CFRelease(ptr);
+            release(ptr);
         return *this;
     }
 
     template<typename T> inline RetainPtr<T>& RetainPtr<T>::operator=(PtrType optr)
     {
         if (optr)
-            CFRetain(optr);
+            retain(optr);
         PtrType ptr = m_ptr;
         m_ptr = optr;
         if (ptr)
-            CFRelease(ptr);
+            release(ptr);
         return *this;
     }
 
     template<typename T> template<typename U> inline RetainPtr<T>& RetainPtr<T>::operator=(U* optr)
     {
         if (optr)
-            CFRetain(optr);
+            retain(optr);
         PtrType ptr = m_ptr;
         m_ptr = optr;
         if (ptr)
-            CFRelease(ptr);
+            release(ptr);
         return *this;
     }
 
@@ -213,7 +238,7 @@ namespace WTF {
         PtrType ptr = m_ptr;
         m_ptr = o.leakRef();
         if (ptr)
-            CFRelease(ptr);
+            release(ptr);
 
         return *this;
     }
@@ -223,7 +248,7 @@ namespace WTF {
         PtrType ptr = m_ptr;
         m_ptr = o.leakRef();
         if (ptr)
-            CFRelease(ptr);
+            release(ptr);
         return *this;
     }
 #endif
@@ -269,13 +294,13 @@ namespace WTF {
     }
 
     template<typename T> inline RetainPtr<T> adoptCF(T CF_RELEASES_ARGUMENT) WARN_UNUSED_RETURN;
-    template<typename T> inline RetainPtr<T> adoptCF(T o)
+    template<typename T> inline RetainPtr<T> adoptCF(T CF_RELEASES_ARGUMENT o)
     {
         return RetainPtr<T>(AdoptCF, o);
     }
 
     template<typename T> inline RetainPtr<T> adoptNS(T NS_RELEASES_ARGUMENT) WARN_UNUSED_RETURN;
-    template<typename T> inline RetainPtr<T> adoptNS(T o)
+    template<typename T> inline RetainPtr<T> adoptNS(T NS_RELEASES_ARGUMENT o)
     {
         return RetainPtr<T>(AdoptNS, o);
     }
@@ -330,5 +355,7 @@ using WTF::adoptCF;
 using WTF::adoptNS;
 using WTF::RetainPtr;
 using WTF::retainPtr;
+
+#endif // USE(CF) || defined(__OBJC__)
 
 #endif // WTF_RetainPtr_h

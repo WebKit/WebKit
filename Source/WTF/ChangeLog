@@ -1,3 +1,38 @@
+2013-07-26  Mark Rowe  <mrowe@apple.com>
+
+        <http://webkit.org/b/119169> RetainPtr should support ARC for Objective-C objects.
+
+        While RetainPtr is not necessary under ARC, having it available makes it easier to transition
+        existing code from manual retain / release to ARC.
+
+        Under ARC, the object member of RetainPtr is treated as a strong reference by the compiler.
+        This means that merely assigning to the member variable is sufficient to retain the object,
+        and clearing the member variable is sufficient to release it. We still need to explicitly
+        CFRetain / CFRelease CoreFoundation types so the explicit calls to these functions are
+        moved in to helper functions and overloading is used to have the Objective-C object versions
+        of them be no-ops under ARC.
+
+        Reviewed by Anders Carlsson.
+
+        * wtf/RetainPtr.h:
+        (WTF::retain): Continue to always CFRetain / CFRelease CoreFoundation objects. Only CFRetain / CFRelease
+        Objective-C objects when using manual retain / release.
+        (WTF::release): Ditto.
+        (WTF::adoptNSReference): Adopting references will be handled automatically by the compiler
+        when possible under ARC by eliminating redundant retain / release pairs.
+        (WTF::RetainPtr::ImplicitConversionToBoolIsNotAllowed): A new method that exists only to be used by the
+        conversion to the unspecified bool type.
+        (WTF::RetainPtr::operator UnspecifiedBoolType): Switch to using a pointer to a member function as the
+        unspecified bool type to avoid warnings from the compiler when casting Objective-C object types under ARC.
+
+        (WTF::RetainPtr::RetainPtr): Switch to our retain / release helper functions.
+        (WTF::RetainPtr::~RetainPtr): Ditto.
+        (WTF::::RetainPtr): Ditto.
+        (WTF::::clear): Ditto.
+        (WTF::=): Ditto.
+        (WTF::adoptCF): Annotate the argument with CF_RELEASES_ARGUMENT on both the declaration and the definition.
+        (WTF::adoptNS): Ditto for NS_RELEASES_ARGUMENT.
+
 2013-08-01  Mark Rowe  <mrowe@apple.com>
 
         <rdar://problem/14235491> FastMalloc zone enumerator responding to MALLOC_PTR_REGION_RANGE_TYPE with individual allocations
