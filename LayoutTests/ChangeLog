@@ -1,3 +1,13 @@
+2013-08-01  Alexey Proskuryakov  <ap@apple.com>
+
+        <rdar://problem/14625616> http/tests/download/basic-ascii.html and http/tests/download/literal-utf-8.html fails
+
+        Changed the PHP files to not have a BOM, which confuses some versions of PHP.
+        They are both ASCII anyway.
+
+        * http/tests/download/resources/basic-ascii.php:
+        * http/tests/download/resources/literal-utf-8.php:
+
 2013-08-01  Dean Jackson  <dino@apple.com>
 
         srcset algorithm breaks base64 src attributes
