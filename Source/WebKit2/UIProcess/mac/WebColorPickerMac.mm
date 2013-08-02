@@ -82,12 +82,8 @@ PassRefPtr<WebColorPickerMac> WebColorPickerMac::create(WebColorPicker::Client* 
 
 WebColorPickerMac::~WebColorPickerMac()
 {
-#if ENABLE(INPUT_TYPE_COLOR_POPOVER)
     if (m_colorPickerUI)
         endPicker();
-#else
-    ASSERT(!m_colorPickerUI);
-#endif
 }
 
 WebColorPickerMac::WebColorPickerMac(WebColorPicker::Client* client, const WebCore::Color& initialColor, const WebCore::IntRect& rect, WKView* view)

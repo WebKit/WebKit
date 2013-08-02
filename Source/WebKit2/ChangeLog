@@ -1,5 +1,16 @@
 2013-08-02  Ruth Fong  <ruth_fong@apple.com>
 
+        [Forms: color] WebColorPickerMac deconstructor shouldn't assert a variable
+        <rdar://problem/14627633> and https://bugs.webkit.org/show_bug.cgi?id=119419
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/mac/WebColorPickerMac.mm:
+        (WebKit::WebColorPickerMac::~WebColorPickerMac): If the m_colorPickerUI variable
+          is not null, then properly destroy it first before destroying WebColorPickerMac object.
+
+2013-08-02  Ruth Fong  <ruth_fong@apple.com>
+
         [Forms: color] The positioning of the popover color well is inverted
         <rdar://problem/14635621> and https://bugs.webkit.org/show_bug.cgi?id=119455
 
