@@ -1,3 +1,19 @@
+2013-08-02  Chris Curtis  <chris_curtis@apple.com>
+
+        Have vm's exceptionStack match java's vm's exceptionStack.
+        https://bugs.webkit.org/show_bug.cgi?id=119362
+
+        Reviewed by Geoffrey Garen.
+        
+        All modifications to the tests below are column number changes. If the thrown 
+        object was created by the user the column number references the error object, 
+        otherwise it references the the throw.
+        
+        * fast/events/window-onerror5-expected.txt:
+        * fast/js/line-column-numbers-expected.txt:
+        * fast/js/stack-trace-expected.txt:
+        * http/tests/workers/worker-importScriptsOnError-expected.txt:
+
 2013-08-02  Simon Fraser  <simon.fraser@apple.com>
 
         webaudio/javascriptaudionode-downmix8-2channel-input.html sometimes asserts

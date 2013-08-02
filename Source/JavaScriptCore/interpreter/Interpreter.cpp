@@ -574,20 +574,15 @@ void Interpreter::addStackTraceIfNecessary(CallFrame* callFrame, JSValue error)
     VM* vm = &callFrame->vm();
     ASSERT(callFrame == vm->topCallFrame || callFrame == callFrame->lexicalGlobalObject()->globalExec() || callFrame == callFrame->dynamicGlobalObject()->globalExec());
 
-    if (vm->exceptionStack().size()) {
-        if (!error.isObject() || asObject(error)->hasProperty(callFrame, vm->propertyNames->stack))
-            return;
-    }
-    
     Vector<StackFrame> stackTrace;
     vm->interpreter->getStackTrace(stackTrace);
     vm->exceptionStack() = RefCountedArray<StackFrame>(stackTrace);
     if (stackTrace.isEmpty() || !error.isObject())
         return;
 
-    // Note: 'error' might already have a stack property if it was created by the user (e.g. "new Error"). The stack
-    // now, as the error is thrown, might be different from the stack when it was created, so we overwrite it with
-    // the current stack unconditionally.
+    if (asObject(error)->hasProperty(callFrame, vm->propertyNames->stack))
+        return;
+    
     asObject(error)->putDirect(*vm, vm->propertyNames->stack, vm->interpreter->stackTraceAsString(vm->topCallFrame, stackTrace), ReadOnly | DontDelete);
 
 }

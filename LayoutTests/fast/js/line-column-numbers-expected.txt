@@ -4,68 +4,68 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 --> Case 1 Stack Trace:
-    0   global code at line-column-numbers.html:40:36
+    0   global code at line-column-numbers.html:40:34
 
 --> Case 2 Stack Trace:
-    0   global code at line-column-numbers.html:44:40
+    0   global code at line-column-numbers.html:44:38
 
 --> Case 3 Stack Trace:
-    0   global code at line-column-numbers.html:48:32
+    0   global code at line-column-numbers.html:48:30
 
 --> Case 3 Stack Trace:
-    0   global code at line-column-numbers.html:48:113
+    0   global code at line-column-numbers.html:48:111
 
 --> Case 4 Stack Trace:
-    0   doThrow4 at line-column-numbers.html:54:44
+    0   doThrow4 at line-column-numbers.html:54:42
     1   global code at line-column-numbers.html:55:13
 
 --> Case 5 Stack Trace:
-    0   innerFunc at line-column-numbers.html:64:69
+    0   innerFunc at line-column-numbers.html:64:67
     1   doThrow5 at line-column-numbers.html:64:82
     2   global code at line-column-numbers.html:64:133
 
 --> Case 6 Stack Trace:
-    0   innerFunc at line-column-numbers.html:70:69
+    0   innerFunc at line-column-numbers.html:70:67
     1   doThrow6 at line-column-numbers.html:70:82
     2   global code at line-column-numbers.html:70:133
 
 --> Case 7 Stack Trace:
-    0    at line-column-numbers.html:75:51
+    0    at line-column-numbers.html:75:49
     1   global code at line-column-numbers.html:75:55
 
 --> Case 8 Stack Trace:
-    0    at line-column-numbers.html:78:59
+    0    at line-column-numbers.html:78:57
     1   global code at line-column-numbers.html:78:63
 
 --> Case 9 Stack Trace:
-    0    at line-column-numbers.html:82:55
+    0    at line-column-numbers.html:82:53
     1   global code at line-column-numbers.html:82:59
 
 --> Case 9 Stack Trace:
-    0    at line-column-numbers.html:82:157
+    0    at line-column-numbers.html:82:155
     1   global code at line-column-numbers.html:82:161
 
 --> Case 10 Stack Trace:
-    0    at line-column-numbers.html:89:26
+    0    at line-column-numbers.html:89:24
     1   global code at line-column-numbers.html:90:8
 
 --> Case 11 Stack Trace:
-    0    at line-column-numbers.html:101:41
+    0    at line-column-numbers.html:101:39
     1   doThrow11 at line-column-numbers.html:101:45
     2   global code at line-column-numbers.html:103:14
 
 --> Case 12 Stack Trace:
-    0    at line-column-numbers.html:112:53
+    0    at line-column-numbers.html:112:51
     1    at line-column-numbers.html:112:57
     2   global code at line-column-numbers.html:112:62
 
 --> Case 13 Stack Trace:
-    0    at line-column-numbers.html:118:53
+    0    at line-column-numbers.html:118:51
     1    at line-column-numbers.html:118:57
     2   global code at line-column-numbers.html:118:62
 
 --> Case 14 Stack Trace:
-    0    at line-column-numbers.html:124:76
+    0    at line-column-numbers.html:124:74
     1    at line-column-numbers.html:124:80
     2   doThrow14 at line-column-numbers.html:124:85
     3   global code at line-column-numbers.html:124:99
@@ -146,7 +146,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
     1   global code at line-column-numbers.html:224:13
 
 --> Case 1 Stack Trace:
-    0   global code at line-column-numbers.js:3:28
+    0   global code at line-column-numbers.js:3:26
 
 --> Case 2 Stack Trace:
     0   global code at line-column-numbers.js:7:30

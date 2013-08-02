@@ -9,14 +9,14 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
     2   global code at stack-trace.js:36:18
 
 --> Stack Trace:
-    0   inner at stack-trace.js:28:69
+    0   inner at stack-trace.js:28:44
     1    at eval code
     2   eval at [native code]
     3   evaler at stack-trace.js:29:29
     4   global code at stack-trace.js:39:13
 
 --> Stack Trace:
-    0   inner at stack-trace.js:28:69
+    0   inner at stack-trace.js:28:44
     1   outer at stack-trace.js:27:34
     2    at eval code
     3   eval at [native code]

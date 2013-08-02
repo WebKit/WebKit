@@ -1,3 +1,21 @@
+2013-08-02  Chris Curtis  <chris_curtis@apple.com>
+
+        Have vm's exceptionStack match java's vm's exceptionStack.
+        https://bugs.webkit.org/show_bug.cgi?id=119362
+
+        Reviewed by Geoffrey Garen.
+        
+        The error object's stack is only updated if it does not exist yet. This matches 
+        the functionality of other browsers, and Java VMs. 
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::addStackTraceIfNecessary):
+        (JSC::Interpreter::throwException):
+        * runtime/VM.cpp:
+        (JSC::VM::clearExceptionStack):
+        * runtime/VM.h:
+        (JSC::VM::lastExceptionStack):
+
 2013-08-02  Julien Brianceau  <jbrianceau@nds.com>
 
         REGRESSION(FTL): Fix mips implementation of ctiVMThrowTrampolineSlowpath.
