@@ -315,7 +315,6 @@ static JSValue defineProperties(ExecState* exec, JSObject* object, JSObject* pro
     Vector<PropertyDescriptor> descriptors;
     MarkedArgumentBuffer markBuffer;
     for (size_t i = 0; i < numProperties; i++) {
-        PropertySlot slot;
         JSValue prop = properties->get(exec, propertyNames[i]);
         if (exec->hadException())
             return jsNull();

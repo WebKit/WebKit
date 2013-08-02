@@ -287,7 +287,7 @@ bool Arguments::defineOwnProperty(JSObject* object, ExecState* exec, PropertyNam
     if (i < thisObject->m_numArguments) {
         RELEASE_ASSERT(i < PropertyName::NotAnIndex);
         // If the property is not yet present on the object, and is not yet marked as deleted, then add it now.
-        PropertySlot slot;
+        PropertySlot slot(thisObject);
         if (!thisObject->isDeletedArgument(i) && !JSObject::getOwnPropertySlot(thisObject, exec, propertyName, slot)) {
             JSValue value = thisObject->tryGetArgument(i);
             ASSERT(value);

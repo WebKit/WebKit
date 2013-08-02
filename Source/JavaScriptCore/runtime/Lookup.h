@@ -263,7 +263,7 @@ namespace JSC {
         if (!entry) // not found, forward to parent
             return ParentImp::getOwnPropertyDescriptor(thisObj, exec, propertyName, descriptor);
  
-        PropertySlot slot;
+        PropertySlot slot(thisObj);
         if (entry->attributes() & Function) {
             bool present = setUpStaticFunctionSlot(exec, entry, thisObj, propertyName, slot);
             if (present)
@@ -309,7 +309,7 @@ namespace JSC {
         if (!entry)
             return false;
         
-        PropertySlot slot;
+        PropertySlot slot(thisObj);
         bool present = setUpStaticFunctionSlot(exec, entry, thisObj, propertyName, slot);
         if (present)
             descriptor.setDescriptor(slot.getValue(exec, propertyName), entry->attributes());
@@ -347,7 +347,7 @@ namespace JSC {
             return ParentImp::getOwnPropertyDescriptor(thisObj, exec, propertyName, descriptor);
         
         ASSERT(!(entry->attributes() & Function));
-        PropertySlot slot;
+        PropertySlot slot(thisObj);
         slot.setCustom(thisObj, entry->propertyGetter());
         descriptor.setDescriptor(slot.getValue(exec, propertyName), entry->attributes());
         return true;

@@ -1,3 +1,43 @@
+2013-08-02  Gavin Barraclough  <barraclough@apple.com>
+
+        Remove no-arguments constructor to PropertySlot
+        https://bugs.webkit.org/show_bug.cgi?id=119460
+
+        Reviewed by Geoff Garen.
+
+        This constructor was unsafe if getValue is subsequently called,
+        and the property is a getter. Simplest to just remove it.
+
+        * runtime/Arguments.cpp:
+        (JSC::Arguments::defineOwnProperty):
+        * runtime/JSActivation.cpp:
+        (JSC::JSActivation::getOwnPropertyDescriptor):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::getOwnPropertyDescriptor):
+        (JSC::JSFunction::getOwnNonIndexPropertyNames):
+        (JSC::JSFunction::put):
+        (JSC::JSFunction::defineOwnProperty):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::defineOwnProperty):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::hasOwnPropertyForWrite):
+        * runtime/JSNameScope.cpp:
+        (JSC::JSNameScope::put):
+        * runtime/JSONObject.cpp:
+        (JSC::Stringifier::Holder::appendNextProperty):
+        (JSC::Walker::walk):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::hasProperty):
+        (JSC::JSObject::hasOwnProperty):
+        (JSC::JSObject::reifyStaticFunctionsForDelete):
+        * runtime/Lookup.h:
+        (JSC::getStaticPropertyDescriptor):
+        (JSC::getStaticFunctionDescriptor):
+        (JSC::getStaticValueDescriptor):
+        * runtime/ObjectConstructor.cpp:
+        (JSC::defineProperties):
+        * runtime/PropertySlot.h:
+
 2013-08-02  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         DFG validation can cause assertion failures due to dumping

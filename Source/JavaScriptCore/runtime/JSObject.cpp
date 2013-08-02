@@ -1203,13 +1203,13 @@ void JSObject::putDirectAccessor(ExecState* exec, PropertyName propertyName, JSV
 
 bool JSObject::hasProperty(ExecState* exec, PropertyName propertyName) const
 {
-    PropertySlot slot;
+    PropertySlot slot(this);
     return const_cast<JSObject*>(this)->getPropertySlot(exec, propertyName, slot);
 }
 
 bool JSObject::hasProperty(ExecState* exec, unsigned propertyName) const
 {
-    PropertySlot slot;
+    PropertySlot slot(this);
     return const_cast<JSObject*>(this)->getPropertySlot(exec, propertyName, slot);
 }
 
@@ -1248,7 +1248,7 @@ bool JSObject::deleteProperty(JSCell* cell, ExecState* exec, PropertyName proper
 
 bool JSObject::hasOwnProperty(ExecState* exec, PropertyName propertyName) const
 {
-    PropertySlot slot;
+    PropertySlot slot(this);
     return const_cast<JSObject*>(this)->methodTable()->getOwnPropertySlot(const_cast<JSObject*>(this), exec, propertyName, slot);
 }
 
@@ -1589,7 +1589,7 @@ void JSObject::reifyStaticFunctionsForDelete(ExecState* exec)
         const HashTable* hashTable = info->propHashTable(globalObject()->globalExec());
         if (!hashTable)
             continue;
-        PropertySlot slot;
+        PropertySlot slot(this);
         for (HashTable::ConstIterator iter = hashTable->begin(vm); iter != hashTable->end(vm); ++iter) {
             if (iter->attributes() & Function)
                 setUpStaticFunctionSlot(globalObject()->globalExec(), *iter, this, Identifier(&vm, iter->key()), slot);

@@ -308,7 +308,7 @@ bool JSFunction::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, Pro
         return Base::getOwnPropertyDescriptor(thisObject, exec, propertyName, descriptor);
     
     if (propertyName == exec->propertyNames().prototype) {
-        PropertySlot slot;
+        PropertySlot slot(thisObject);
         thisObject->methodTable()->getOwnPropertySlot(thisObject, exec, propertyName, slot);
         return Base::getOwnPropertyDescriptor(thisObject, exec, propertyName, descriptor);
     }
@@ -359,7 +359,7 @@ void JSFunction::getOwnNonIndexPropertyNames(JSObject* object, ExecState* exec, 
     JSFunction* thisObject = jsCast<JSFunction*>(object);
     if (!thisObject->isHostFunction() && (mode == IncludeDontEnumProperties)) {
         // Make sure prototype has been reified.
-        PropertySlot slot;
+        PropertySlot slot(thisObject);
         thisObject->methodTable()->getOwnPropertySlot(thisObject, exec, exec->propertyNames().prototype, slot);
 
         propertyNames.add(exec->propertyNames().arguments);
@@ -380,7 +380,7 @@ void JSFunction::put(JSCell* cell, ExecState* exec, PropertyName propertyName, J
     if (propertyName == exec->propertyNames().prototype) {
         // Make sure prototype has been reified, such that it can only be overwritten
         // following the rules set out in ECMA-262 8.12.9.
-        PropertySlot slot;
+        PropertySlot slot(thisObject);
         thisObject->methodTable()->getOwnPropertySlot(thisObject, exec, propertyName, slot);
         thisObject->m_allocationProfile.clear();
         thisObject->m_allocationProfileWatchpoint.notifyWrite();
@@ -427,7 +427,7 @@ bool JSFunction::defineOwnProperty(JSObject* object, ExecState* exec, PropertyNa
     if (propertyName == exec->propertyNames().prototype) {
         // Make sure prototype has been reified, such that it can only be overwritten
         // following the rules set out in ECMA-262 8.12.9.
-        PropertySlot slot;
+        PropertySlot slot(thisObject);
         thisObject->methodTable()->getOwnPropertySlot(thisObject, exec, propertyName, slot);
         thisObject->m_allocationProfile.clear();
         thisObject->m_allocationProfileWatchpoint.notifyWrite();

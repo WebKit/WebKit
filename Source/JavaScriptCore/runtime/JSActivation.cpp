@@ -184,7 +184,7 @@ bool JSActivation::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, P
     if (propertyName == exec->propertyNames().arguments) {
         // Defend against the inspector asking for the arguments object after it has been optimized out.
         if (!thisObject->isTornOff()) {
-            PropertySlot slot;
+            PropertySlot slot(thisObject);
             JSActivation::getOwnPropertySlot(thisObject, exec, propertyName, slot);
             descriptor.setDescriptor(slot.getValue(exec, propertyName), DontEnum);
             return true;

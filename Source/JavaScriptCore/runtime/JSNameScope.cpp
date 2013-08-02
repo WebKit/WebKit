@@ -61,7 +61,7 @@ void JSNameScope::put(JSCell* cell, ExecState* exec, PropertyName propertyName, 
         // (a) is unlikely, and (b) is an error.
         // Also with a single entry the symbol table lookup should simply be
         // a pointer compare.
-        PropertySlot slot;
+        PropertySlot slot(thisObject);
         bool isWritable = true;
         symbolTableGet(thisObject, propertyName, slot, isWritable);
         if (!isWritable) {

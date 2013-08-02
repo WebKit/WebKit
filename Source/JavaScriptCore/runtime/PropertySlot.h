@@ -43,12 +43,6 @@ class PropertySlot {
     };
 
 public:
-    PropertySlot()
-        : m_propertyType(TypeUnset)
-        , m_offset(invalidOffset)
-    {
-    }
-
     explicit PropertySlot(const JSValue thisValue)
         : m_propertyType(TypeUnset)
         , m_offset(invalidOffset)

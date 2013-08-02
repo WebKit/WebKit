@@ -459,7 +459,7 @@ inline JSGlobalObject* asGlobalObject(JSValue value)
 
 inline bool JSGlobalObject::hasOwnPropertyForWrite(ExecState* exec, PropertyName propertyName)
 {
-    PropertySlot slot;
+    PropertySlot slot(this);
     if (Base::getOwnPropertySlot(this, exec, propertyName, slot))
         return true;
     bool slotIsWriteable;
