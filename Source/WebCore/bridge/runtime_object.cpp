@@ -178,7 +178,7 @@ bool RuntimeObject::getOwnPropertyDescriptor(JSObject* object, ExecState *exec, 
         // See if the instance has a field with the specified name.
         Field *aField = aClass->fieldNamed(propertyName, instance.get());
         if (aField) {
-            PropertySlot slot;
+            PropertySlot slot(thisObject);
             slot.setCustom(thisObject, fieldGetter);
             instance->end();
             descriptor.setDescriptor(slot.getValue(exec, propertyName), DontDelete);
@@ -187,7 +187,7 @@ bool RuntimeObject::getOwnPropertyDescriptor(JSObject* object, ExecState *exec, 
             // Now check if a method with specified name exists, if so return a function object for
             // that method.
             if (aClass->methodNamed(propertyName, instance.get())) {
-                PropertySlot slot;
+                PropertySlot slot(thisObject);
                 slot.setCustom(thisObject, methodGetter);
                 instance->end();
                 descriptor.setDescriptor(slot.getValue(exec, propertyName), DontDelete | ReadOnly);
@@ -197,7 +197,7 @@ bool RuntimeObject::getOwnPropertyDescriptor(JSObject* object, ExecState *exec, 
         
         // Try a fallback object.
         if (!aClass->fallbackObject(exec, instance.get(), propertyName).isUndefined()) {
-            PropertySlot slot;
+            PropertySlot slot(thisObject);
             slot.setCustom(thisObject, fallbackObjectGetter);
             instance->end();
             descriptor.setDescriptor(slot.getValue(exec, propertyName), DontDelete | ReadOnly | DontEnum);

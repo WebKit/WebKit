@@ -76,7 +76,7 @@ bool RuntimeMethod::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, 
 {
     RuntimeMethod* thisObject = jsCast<RuntimeMethod*>(object);
     if (propertyName == exec->propertyNames().length) {
-        PropertySlot slot;
+        PropertySlot slot(thisObject);
         slot.setCustom(thisObject, lengthGetter);
         descriptor.setDescriptor(slot.getValue(exec, propertyName), ReadOnly | DontDelete | DontEnum);
         return true;

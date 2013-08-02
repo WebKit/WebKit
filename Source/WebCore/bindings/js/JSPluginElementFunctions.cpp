@@ -129,7 +129,7 @@ bool runtimeObjectCustomGetOwnPropertyDescriptor(ExecState* exec, PropertyName p
         return false;
     if (!scriptObject->hasProperty(exec, propertyName))
         return false;
-    PropertySlot slot;
+    PropertySlot slot(element);
     slot.setCustom(element, runtimeObjectPropertyGetter);
     // While we don't know what the plugin allows, we do know that we prevent
     // enumeration or deletion of properties, so we mark plugin properties

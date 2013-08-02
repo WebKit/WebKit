@@ -1,3 +1,16 @@
+2013-08-02  Gavin Barraclough  <barraclough@apple.com>
+
+        Remove no-arguments constructor to PropertySlot
+        https://bugs.webkit.org/show_bug.cgi?id=119460
+
+        Reviewed by Geoff Garen.
+
+        This constructor was unsafe if getValue is subsequently called,
+        and the property is a getter. Simplest to just remove it.
+
+        * WebProcess/Plugins/Netscape/JSNPObject.cpp:
+        (WebKit::JSNPObject::getOwnPropertyDescriptor):
+
 2013-08-02  Ruth Fong  <ruth_fong@apple.com>
 
         [Forms: color] WebColorPickerMac deconstructor shouldn't assert a variable

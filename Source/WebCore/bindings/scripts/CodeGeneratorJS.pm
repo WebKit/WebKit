@@ -384,7 +384,7 @@ sub GenerateGetOwnPropertySlotBody
             push(@getOwnPropertySlotImpl, "    if (index != PropertyName::NotAnIndex && index < static_cast<$interfaceName*>(thisObject->impl())->length()) {\n");
         }
         if ($hasNumericIndexedGetter) {
-            push(@getOwnPropertySlotImpl, "        slot.setValue(thisObject->getByIndex(exec, index));\n");
+            push(@getOwnPropertySlotImpl, "        slot.setValue(thisObject, thisObject->getByIndex(exec, index));\n");
         } else {
             push(@getOwnPropertySlotImpl, "        slot.setCustomIndex(thisObject, index, indexGetter);\n");
         }
@@ -459,7 +459,7 @@ sub GenerateGetOwnPropertyDescriptorBody
         if ($requiresManualLookup) {
             push(@getOwnPropertyDescriptorImpl, "    const ${namespaceMaybe}HashEntry* entry = ${className}Table.entry(exec, propertyName);\n");
             push(@getOwnPropertyDescriptorImpl, "    if (entry) {\n");
-            push(@getOwnPropertyDescriptorImpl, "        PropertySlot slot;\n");
+            push(@getOwnPropertyDescriptorImpl, "        PropertySlot slot(thisObject);\n");
             push(@getOwnPropertyDescriptorImpl, "        slot.setCustom(thisObject, entry->propertyGetter());\n");
             push(@getOwnPropertyDescriptorImpl, "        descriptor.setDescriptor(slot.getValue(exec, propertyName), entry->attributes());\n");
             push(@getOwnPropertyDescriptorImpl, "        return true;\n");
@@ -482,7 +482,7 @@ sub GenerateGetOwnPropertyDescriptorBody
                 push(@getOwnPropertyDescriptorImpl, "        descriptor.setDescriptor(thisObject->getByIndex(exec, index), ${namespaceMaybe}DontDelete | ${namespaceMaybe}ReadOnly);\n");
             }
         } else {
-            push(@getOwnPropertyDescriptorImpl, "        ${namespaceMaybe}PropertySlot slot;\n");
+            push(@getOwnPropertyDescriptorImpl, "        ${namespaceMaybe}PropertySlot slot(thisObject);\n");
             push(@getOwnPropertyDescriptorImpl, "        slot.setCustomIndex(thisObject, index, indexGetter);\n");
             # Assume that if there's a setter, the index will be writable
             if ($interface->extendedAttributes->{"CustomIndexedSetter"}) {
@@ -497,7 +497,7 @@ sub GenerateGetOwnPropertyDescriptorBody
 
     if ($namedGetterFunction || $interface->extendedAttributes->{"CustomNamedGetter"}) {
         push(@getOwnPropertyDescriptorImpl, "    if (canGetItemsForName(exec, static_cast<$interfaceName*>(thisObject->impl()), propertyName)) {\n");
-        push(@getOwnPropertyDescriptorImpl, "        ${namespaceMaybe}PropertySlot slot;\n");
+        push(@getOwnPropertyDescriptorImpl, "        ${namespaceMaybe}PropertySlot slot(thisObject);\n");
         push(@getOwnPropertyDescriptorImpl, "        slot.setCustom(thisObject, nameGetter);\n");
         push(@getOwnPropertyDescriptorImpl, "        descriptor.setDescriptor(slot.getValue(exec, propertyName), ReadOnly | DontDelete | DontEnum);\n");
         push(@getOwnPropertyDescriptorImpl, "        return true;\n");
@@ -1960,7 +1960,7 @@ sub GenerateImplementation
                     push(@implContent, "    if (index < static_cast<$interfaceName*>(thisObject->impl())->length()) {\n");
                 }
                 if ($hasNumericIndexedGetter) {
-                    push(@implContent, "        slot.setValue(thisObject->getByIndex(exec, index));\n");
+                    push(@implContent, "        slot.setValue(thisObject, thisObject->getByIndex(exec, index));\n");
                 } else {
                     push(@implContent, "        slot.setCustomIndex(thisObject, index, thisObject->indexGetter);\n");
                 }

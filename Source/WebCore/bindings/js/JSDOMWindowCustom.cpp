@@ -352,7 +352,7 @@ bool JSDOMWindow::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, Pr
         }
         entry = JSDOMWindowPrototype::s_info.propHashTable(exec)->entry(exec, propertyName);
         if (entry && (entry->attributes() & JSC::Function) && entry->function() == jsDOMWindowPrototypeFunctionClose) {
-            PropertySlot slot;
+            PropertySlot slot(thisObject);
             slot.setCustom(thisObject, nonCachingStaticFunctionGetter<jsDOMWindowPrototypeFunctionClose, 0>);
             descriptor.setDescriptor(slot.getValue(exec, propertyName), ReadOnly | DontDelete | DontEnum);
             return true;
@@ -363,7 +363,7 @@ bool JSDOMWindow::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, Pr
 
     entry = JSDOMWindow::s_info.propHashTable(exec)->entry(exec, propertyName);
     if (entry) {
-        PropertySlot slot;
+        PropertySlot slot(thisObject);
         slot.setCustom(thisObject, entry->propertyGetter());
         descriptor.setDescriptor(slot.getValue(exec, propertyName), entry->attributes());
         return true;
@@ -375,7 +375,7 @@ bool JSDOMWindow::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, Pr
     // are in Moz but not IE. Since we have some of these, we have to do
     // it the Moz way.
     if (thisObject->impl()->frame()->tree()->scopedChild(propertyNameToAtomicString(propertyName))) {
-        PropertySlot slot;
+        PropertySlot slot(thisObject);
         slot.setCustom(thisObject, childFrameGetter);
         descriptor.setDescriptor(slot.getValue(exec, propertyName), ReadOnly | DontDelete | DontEnum);
         return true;
@@ -384,7 +384,7 @@ bool JSDOMWindow::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, Pr
     unsigned i = propertyName.asIndex();
     if (i < thisObject->impl()->frame()->tree()->scopedChildCount()) {
         ASSERT(i != PropertyName::NotAnIndex);
-        PropertySlot slot;
+        PropertySlot slot(thisObject);
         slot.setCustomIndex(thisObject, i, indexGetter);
         descriptor.setDescriptor(slot.getValue(exec, propertyName), ReadOnly | DontDelete | DontEnum);
         return true;
@@ -395,7 +395,7 @@ bool JSDOMWindow::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, Pr
     if (document->isHTMLDocument()) {
         AtomicStringImpl* atomicPropertyName = findAtomicString(propertyName);
         if (atomicPropertyName && toHTMLDocument(document)->windowNamedItemMap().contains(atomicPropertyName)) {
-            PropertySlot slot;
+            PropertySlot slot(thisObject);
             slot.setCustom(thisObject, namedItemGetter);
             descriptor.setDescriptor(slot.getValue(exec, propertyName), ReadOnly | DontDelete | DontEnum);
             return true;
@@ -584,7 +584,7 @@ inline JSValue DialogHandler::returnValue() const
     if (!globalObject)
         return jsUndefined();
     Identifier identifier(m_exec, "returnValue");
-    PropertySlot slot;
+    PropertySlot slot(globalObject);
     if (!JSGlobalObject::getOwnPropertySlot(globalObject, m_exec, identifier, slot))
         return jsUndefined();
     return slot.getValue(m_exec, identifier);

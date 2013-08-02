@@ -107,7 +107,7 @@ bool JSHistory::getOwnPropertyDescriptorDelegate(ExecState* exec, PropertyName p
     // Check for the few functions that we allow, even when called cross-domain.
     const HashEntry* entry = JSHistoryPrototype::s_info.propHashTable(exec)->entry(exec, propertyName);
     if (entry) {
-        PropertySlot slot;
+        PropertySlot slot(this);
         // Allow access to back(), forward() and go() from any frame.
         if (entry->attributes() & JSC::Function) {
             if (entry->function() == jsHistoryPrototypeFunctionBack) {
@@ -127,7 +127,7 @@ bool JSHistory::getOwnPropertyDescriptorDelegate(ExecState* exec, PropertyName p
     } else {
         // Allow access to toString() cross-domain, but always Object.toString.
         if (propertyName == exec->propertyNames().toString) {
-            PropertySlot slot;
+            PropertySlot slot(this);
             slot.setCustom(this, objectToStringFunctionGetter);
             descriptor.setDescriptor(slot.getValue(exec, propertyName), entry->attributes());
             return true;
