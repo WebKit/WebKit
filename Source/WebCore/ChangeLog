@@ -1,3 +1,41 @@
+2013-08-02  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        Implement atk_text_get_text_*_offset for WORD
+        https://bugs.webkit.org/show_bug.cgi?id=114871
+
+        Reviewed by Martin Robinson.
+
+        Re-implement this functions without using GailTextUtil nor Pango.
+
+        * accessibility/atk/WebKitAccessibleInterfaceText.cpp:
+        (textForObject): Made the parameter a const, to avoid warnings.
+        (getSelectionOffsetsForObject): Add special cases for END boundaries.
+        (emptyTextSelectionAtOffset): Convenience function to be used in
+        early returns from functions returning both text and offsets.
+        (webkitAccessibleTextGetChar): Use emptyTextSelectionAtOffset(),
+        and remove checks that are now done outside of this function, in
+        webkitAccessibleTextGetTextForOffset().
+        (nextWordStartPosition): Helper function to reliably find the
+        start of the next word as and user would do it by navigating with
+        Ctrl and the arrows (considering spaces and punctuation).
+        (previousWordEndPosition): Similar to nextWordStartPosition, but
+        written to help find the end of the previous one.
+        (wordAtPositionForAtkBoundary): Helper function to find the word
+        at a given position considering values of AtkTextBoundary.
+        (numberOfReplacedElementsBeforeOffset): Helper function to help
+        figure out how many embedded objects we have exposed for an
+        AtkText object, used to adjust offsets coming from outside.
+        (webkitAccessibleTextGetWordForBoundary): New function,
+        implementing atk_text_get_text_*_offset for WORD.
+        (webkitAccessibleTextGetTextForOffset): Replace usage of Gail for
+        WORD boundaries with webkitAccessibleTextGetWordForBoundary().
+        Also, moved the initialization of the start and end offsets to the
+        bottom, into the gail/pango section, since those values will be
+        from now on initialized in getSelectionOffsetsForObject().
+        (webkitAccessibleTextGetSelection): Removed the initialization of
+        the start and end offsets, since those values will be from now on
+        initialized in getSelectionOffsetsForObject().
+
 2013-08-02  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
 
         Buildfix for !ENABLE(SVG) platforms after r153581.

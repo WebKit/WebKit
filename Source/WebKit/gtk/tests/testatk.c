@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009 Igalia S.L.
+ * Copyright (C) 2013 Samsung Electronics. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -51,6 +52,8 @@ static const char* contentsInTableWithHeaders = "<html><body><table><tr><th>foo<
 static const char* contentsWithExtraneousWhiteSpaces = "<html><head><body><p>This\n                          paragraph\n                                                      is\n                                                                                                                                                                                                                                                                                                                                                                            borked!</p></body></html>";
 
 static const char* contentsWithWrappedLines = "<html><body><p style='max-width:150px;'>This is one line wrapped because of the maximum width of its container.</p><p>This is another line wrapped<br>because of one forced<br>line break in the middle.</body></html>";
+
+static const char* contentsWithEmbeddedObjects = "<html><body>This is one line containing two <img> embedded objects <img> in the middle.</body></html>";
 
 static const char* comboBoxSelector = "<html><body><select><option selected value='foo'>foo</option><option value='bar'>bar</option></select></body></html>";
 
@@ -1051,6 +1054,75 @@ static void testWebkitAtkGetTextAtOffsetWithWrappedLines()
 
     g_object_unref(paragraph2);
 
+    g_object_unref(webView);
+}
+
+static void testWebkitAtkGetTextAtOffsetWithEmbeddedObjects()
+{
+    WebKitWebView* webView = WEBKIT_WEB_VIEW(webkit_web_view_new());
+    g_object_ref_sink(webView);
+    GtkAllocation allocation = { 0, 0, 800, 600 };
+    gtk_widget_size_allocate(GTK_WIDGET(webView), &allocation);
+    webkit_web_view_load_string(webView, contentsWithEmbeddedObjects, 0, 0, 0);
+
+    /* Enable caret browsing. */
+    WebKitWebSettings* settings = webkit_web_view_get_settings(webView);
+    g_object_set(settings, "enable-caret-browsing", TRUE, NULL);
+    webkit_web_view_set_settings(webView, settings);
+
+    /* Get to the inner AtkText object. */
+    AtkObject* object = getWebAreaObject(webView);
+    g_assert(object);
+
+    /* Check the paragraph with the text wrapped because of max-width. */
+    AtkText* paragraph = ATK_TEXT(atk_object_ref_accessible_child(object, 0));
+    g_assert(ATK_IS_TEXT(paragraph));
+
+    gchar* text = atk_text_get_text(paragraph, 0, -1);
+    g_assert_cmpstr(text, ==, "This is one line containing two \357\277\274 embedded objects \357\277\274 in the middle.");
+    g_free(text);
+
+    /* Check right before the first embedded object */
+    testGetTextFunction(paragraph, atk_text_get_text_at_offset, ATK_TEXT_BOUNDARY_CHAR, 32, "\357\277\274", 32, 33);
+    testGetTextFunction(paragraph, atk_text_get_text_at_offset, ATK_TEXT_BOUNDARY_WORD_START, 32, "two \357\277\274 ", 28, 34);
+    testGetTextFunction(paragraph, atk_text_get_text_at_offset, ATK_TEXT_BOUNDARY_WORD_END, 32, " \357\277\274 embedded", 31, 42);
+
+    /* Check right after the first embedded object (and before the first word after it) */
+    testGetTextFunction(paragraph, atk_text_get_text_at_offset, ATK_TEXT_BOUNDARY_CHAR, 33, " ", 33, 34);
+    testGetTextFunction(paragraph, atk_text_get_text_at_offset, ATK_TEXT_BOUNDARY_WORD_START, 33, "two \357\277\274 ", 28, 34);
+    testGetTextFunction(paragraph, atk_text_get_text_at_offset, ATK_TEXT_BOUNDARY_WORD_END, 33, " \357\277\274 embedded", 31, 42);
+
+    /* Check at the beginning of the first word between the two embedded objects */
+    testGetTextFunction(paragraph, atk_text_get_text_at_offset, ATK_TEXT_BOUNDARY_CHAR, 34, "e", 34, 35);
+    testGetTextFunction(paragraph, atk_text_get_text_at_offset, ATK_TEXT_BOUNDARY_WORD_START, 34, "embedded ", 34, 43);
+    testGetTextFunction(paragraph, atk_text_get_text_at_offset, ATK_TEXT_BOUNDARY_WORD_END, 34, " \357\277\274 embedded", 31, 42);
+
+    /* Check at the end of the first word between the two embedded objects */
+    testGetTextFunction(paragraph, atk_text_get_text_at_offset, ATK_TEXT_BOUNDARY_CHAR, 42, " ", 42, 43);
+    testGetTextFunction(paragraph, atk_text_get_text_at_offset, ATK_TEXT_BOUNDARY_WORD_START, 42, "embedded ", 34, 43);
+    testGetTextFunction(paragraph, atk_text_get_text_at_offset, ATK_TEXT_BOUNDARY_WORD_END, 42, " objects", 42, 50);
+
+    /* Check right before the second embedded object */
+    testGetTextFunction(paragraph, atk_text_get_text_at_offset, ATK_TEXT_BOUNDARY_CHAR, 51, "\357\277\274", 51, 52);
+    testGetTextFunction(paragraph, atk_text_get_text_at_offset, ATK_TEXT_BOUNDARY_WORD_START, 51, "objects \357\277\274 ", 43, 53);
+    testGetTextFunction(paragraph, atk_text_get_text_at_offset, ATK_TEXT_BOUNDARY_WORD_END, 51, " \357\277\274 in", 50, 55);
+
+    /* Check right after the second embedded object (and before the first word after it) */
+    testGetTextFunction(paragraph, atk_text_get_text_at_offset, ATK_TEXT_BOUNDARY_CHAR, 52, " ", 52, 53);
+    testGetTextFunction(paragraph, atk_text_get_text_at_offset, ATK_TEXT_BOUNDARY_WORD_START, 52, "objects \357\277\274 ", 43, 53);
+    testGetTextFunction(paragraph, atk_text_get_text_at_offset, ATK_TEXT_BOUNDARY_WORD_END, 52, " \357\277\274 in", 50, 55);
+
+    /* Check at the beginning of the first word after the two embedded objects */
+    testGetTextFunction(paragraph, atk_text_get_text_at_offset, ATK_TEXT_BOUNDARY_CHAR, 53, "i", 53, 54);
+    testGetTextFunction(paragraph, atk_text_get_text_at_offset, ATK_TEXT_BOUNDARY_WORD_START, 53, "in ", 53, 56);
+    testGetTextFunction(paragraph, atk_text_get_text_at_offset, ATK_TEXT_BOUNDARY_WORD_END, 53, " \357\277\274 in", 50, 55);
+
+    /* Check at the end of the first word after the two embedded objects */
+    testGetTextFunction(paragraph, atk_text_get_text_at_offset, ATK_TEXT_BOUNDARY_CHAR, 55, " ", 55, 56);
+    testGetTextFunction(paragraph, atk_text_get_text_at_offset, ATK_TEXT_BOUNDARY_WORD_START, 55, "in ", 53, 56);
+    testGetTextFunction(paragraph, atk_text_get_text_at_offset, ATK_TEXT_BOUNDARY_WORD_END, 55, " the", 55, 59);
+
+    g_object_unref(paragraph);
     g_object_unref(webView);
 }
 
@@ -2125,6 +2197,7 @@ int main(int argc, char** argv)
     g_test_add_func("/webkit/atk/getTextAtOffsetWithPreformattedText", testWebkitAtkGetTextAtOffsetWithPreformattedText);
     g_test_add_func("/webkit/atk/getTextAtOffsetWithSpecialCharacters", testWebkitAtkGetTextAtOffsetWithSpecialCharacters);
     g_test_add_func("/webkit/atk/getTextAtOffsetWithWrappedLines", testWebkitAtkGetTextAtOffsetWithWrappedLines);
+    g_test_add_func("/webkit/atk/getTextAtOffsetWithEmbeddedObjects", testWebkitAtkGetTextAtOffsetWithEmbeddedObjects);
     g_test_add_func("/webkit/atk/getTextInParagraphAndBodySimple", testWebkitAtkGetTextInParagraphAndBodySimple);
     g_test_add_func("/webkit/atk/getTextInParagraphAndBodyModerate", testWebkitAtkGetTextInParagraphAndBodyModerate);
     g_test_add_func("/webkit/atk/getTextInTable", testWebkitAtkGetTextInTable);

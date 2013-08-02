@@ -1,3 +1,17 @@
+2013-08-02  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        Implement atk_text_get_text_*_offset for WORD
+        https://bugs.webkit.org/show_bug.cgi?id=114871
+
+        Reviewed by Martin Robinson.
+
+        Updated current unit tests and add a new one specific for embedded
+        objects, to ensure we are covering even more cases than before.
+
+        * tests/testatk.c:
+        (testWebkitAtkGetTextAtOffsetWithEmbeddedObjects): New.
+        (main): Added new test to the test suite.
+
 2013-07-30  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update NEWS and Versions.m4 for 2.1.4 release.
