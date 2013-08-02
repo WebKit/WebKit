@@ -58,7 +58,7 @@ inline Butterfly* Butterfly::create(VM& vm, JSCell* intendedOwner, Structure* st
 {
     return create(
         vm, intendedOwner, 0, structure->outOfLineCapacity(),
-        hasIndexingHeader(structure->indexingType()), IndexingHeader(), 0);
+        structure->hasIndexingHeader(), IndexingHeader(), 0);
 }
 
 inline Butterfly* Butterfly::createUninitializedDuringCollection(CopyVisitor& visitor, size_t preCapacity, size_t propertyCapacity, bool hasIndexingHeader, size_t indexingPayloadSizeInBytes)
@@ -96,7 +96,7 @@ inline Butterfly* Butterfly::growPropertyStorage(
 {
     return growPropertyStorage(
         vm, intendedOwner, indexingHeader()->preCapacity(structure), oldPropertyCapacity,
-        hasIndexingHeader(structure->indexingType()),
+        structure->hasIndexingHeader(),
         indexingHeader()->indexingPayloadSizeInBytes(structure), newPropertyCapacity);
 }
 
@@ -129,7 +129,7 @@ inline Butterfly* Butterfly::growArrayRight(
     size_t newIndexingPayloadSizeInBytes)
 {
     ASSERT_UNUSED(oldStructure, !indexingHeader()->preCapacity(oldStructure));
-    ASSERT_UNUSED(oldStructure, hadIndexingHeader == hasIndexingHeader(oldStructure->indexingType()));
+    ASSERT_UNUSED(oldStructure, hadIndexingHeader == oldStructure->hasIndexingHeader());
     void* theBase = base(0, propertyCapacity);
     size_t oldSize = totalSize(0, propertyCapacity, hadIndexingHeader, oldIndexingPayloadSizeInBytes);
     size_t newSize = totalSize(0, propertyCapacity, true, newIndexingPayloadSizeInBytes);
@@ -144,8 +144,9 @@ inline Butterfly* Butterfly::growArrayRight(
 {
     return growArrayRight(
         vm, intendedOwner, oldStructure, oldStructure->outOfLineCapacity(),
-        hasIndexingHeader(oldStructure->indexingType()),
-        indexingHeader()->indexingPayloadSizeInBytes(oldStructure), newIndexingPayloadSizeInBytes);
+        oldStructure->hasIndexingHeader(), 
+        indexingHeader()->indexingPayloadSizeInBytes(oldStructure),
+        newIndexingPayloadSizeInBytes);
 }
 
 inline Butterfly* Butterfly::resizeArray(
@@ -171,7 +172,7 @@ inline Butterfly* Butterfly::resizeArray(
     VM& vm, JSCell* intendedOwner, Structure* structure, size_t newPreCapacity,
     size_t newIndexingPayloadSizeInBytes)
 {
-    bool hasIndexingHeader = JSC::hasIndexingHeader(structure->indexingType());
+    bool hasIndexingHeader = structure->hasIndexingHeader();
     return resizeArray(
         vm, intendedOwner, structure->outOfLineCapacity(), hasIndexingHeader,
         indexingHeader()->indexingPayloadSizeInBytes(structure), newPreCapacity,

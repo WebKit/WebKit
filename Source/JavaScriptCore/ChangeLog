@@ -1,3 +1,39 @@
+2013-08-01  Filip Pizlo  <fpizlo@apple.com>
+
+        hasIndexingHeader should be a property of the Structure, not just the IndexingType
+        https://bugs.webkit.org/show_bug.cgi?id=119422
+
+        Reviewed by Oliver Hunt.
+        
+        This simplifies some code and also allows Structure to claim that an object
+        has an indexing header even if it doesn't have indexed properties.
+        
+        I also changed some calls to use hasIndexedProperties() since in some cases,
+        that's what we actually meant. Currently the two are synonyms.
+
+        * dfg/DFGRepatch.cpp:
+        (JSC::DFG::tryCachePutByID):
+        (JSC::DFG::tryBuildPutByIdList):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileAllocatePropertyStorage):
+        (JSC::DFG::SpeculativeJIT::compileReallocatePropertyStorage):
+        * runtime/ButterflyInlines.h:
+        (JSC::Butterfly::create):
+        (JSC::Butterfly::growPropertyStorage):
+        (JSC::Butterfly::growArrayRight):
+        (JSC::Butterfly::resizeArray):
+        * runtime/IndexingType.h:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::copyButterfly):
+        (JSC::JSObject::visitButterfly):
+        (JSC::JSObject::setPrototype):
+        * runtime/JSObject.h:
+        (JSC::JSObject::setButterfly):
+        * runtime/JSPropertyNameIterator.cpp:
+        (JSC::JSPropertyNameIterator::create):
+        * runtime/Structure.h:
+        (JSC::Structure::hasIndexingHeader):
+
 2013-08-02  Julien Brianceau  <jbrianceau@nds.com>
 
         REGRESSION: ARM still crashes after change set r153612.

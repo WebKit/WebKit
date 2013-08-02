@@ -1107,7 +1107,7 @@ inline bool JSObject::isErrorInstance() const
 inline void JSObject::setButterfly(VM& vm, Butterfly* butterfly, Structure* structure)
 {
     ASSERT(structure);
-    ASSERT(!butterfly == (!structure->outOfLineCapacity() && !hasIndexingHeader(structure->indexingType())));
+    ASSERT(!butterfly == (!structure->outOfLineCapacity() && !structure->hasIndexingHeader()));
     setStructure(vm, structure);
     m_butterfly = butterfly;
 }

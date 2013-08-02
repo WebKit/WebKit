@@ -227,6 +227,11 @@ public:
             && offset <= m_offset
             && (offset < m_inlineCapacity || offset >= firstOutOfLineOffset);
     }
+    
+    bool hasIndexingHeader() const
+    {
+        return hasIndexedProperties(indexingType());
+    }
 
     bool masqueradesAsUndefined(JSGlobalObject* lexicalGlobalObject);
 

@@ -102,7 +102,7 @@ ALWAYS_INLINE void JSObject::copyButterfly(CopyVisitor& visitor, Butterfly* butt
     size_t propertyCapacity = structure->outOfLineCapacity();
     size_t preCapacity;
     size_t indexingPayloadSizeInBytes;
-    bool hasIndexingHeader = JSC::hasIndexingHeader(structure->indexingType());
+    bool hasIndexingHeader = structure->hasIndexingHeader();
     if (UNLIKELY(hasIndexingHeader)) {
         preCapacity = butterfly->indexingHeader()->preCapacity(structure);
         indexingPayloadSizeInBytes = butterfly->indexingHeader()->indexingPayloadSizeInBytes(structure);
@@ -148,8 +148,8 @@ ALWAYS_INLINE void JSObject::copyButterfly(CopyVisitor& visitor, Butterfly* butt
                 count = newButterfly->arrayStorage()->vectorLength();
                 break;
             }
+                
             default:
-                CRASH();
                 currentTarget = 0;
                 currentSource = 0;
                 count = 0;
@@ -173,7 +173,7 @@ ALWAYS_INLINE void JSObject::visitButterfly(SlotVisitor& visitor, Butterfly* but
     size_t propertyCapacity = structure->outOfLineCapacity();
     size_t preCapacity;
     size_t indexingPayloadSizeInBytes;
-    bool hasIndexingHeader = JSC::hasIndexingHeader(structure->indexingType());
+    bool hasIndexingHeader = structure->hasIndexingHeader();
     if (UNLIKELY(hasIndexingHeader)) {
         preCapacity = butterfly->indexingHeader()->preCapacity(structure);
         indexingPayloadSizeInBytes = butterfly->indexingHeader()->indexingPayloadSizeInBytes(structure);
@@ -1146,7 +1146,7 @@ void JSObject::setPrototype(VM& vm, JSValue prototype)
         return;
     }
     
-    if (!hasIndexingHeader(structure()->indexingType()))
+    if (!hasIndexedProperties(structure()->indexingType()))
         return;
     
     if (shouldUseSlowPut(structure()->indexingType()))

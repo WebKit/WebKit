@@ -101,11 +101,6 @@ static inline bool hasIndexedProperties(IndexingType indexingType)
     return (indexingType & IndexingShapeMask) != NoIndexingShape;
 }
 
-static inline bool hasIndexingHeader(IndexingType type)
-{
-    return hasIndexedProperties(type);
-}
-
 static inline bool hasUndecided(IndexingType indexingType)
 {
     return (indexingType & IndexingShapeMask) == UndecidedShape;
