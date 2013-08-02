@@ -85,7 +85,9 @@ const StylePropertyShorthand& listStyleShorthand();
 const StylePropertyShorthand& fontShorthand();
 const StylePropertyShorthand& heightShorthand();
 const StylePropertyShorthand& marginShorthand();
+#if ENABLE(SVG)
 const StylePropertyShorthand& markerShorthand();
+#endif
 const StylePropertyShorthand& outlineShorthand();
 const StylePropertyShorthand& overflowShorthand();
 const StylePropertyShorthand& paddingShorthand();

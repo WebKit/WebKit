@@ -230,6 +230,7 @@ const StylePropertyShorthand& marginShorthand()
     return marginLonghands;
 }
 
+#if ENABLE(SVG)
 const StylePropertyShorthand& markerShorthand()
 {
     static const CSSPropertyID markerProperties[] = {
@@ -240,6 +241,7 @@ const StylePropertyShorthand& markerShorthand()
     DEFINE_STATIC_LOCAL(StylePropertyShorthand, markerLonghands, (CSSPropertyMarker, markerProperties, WTF_ARRAY_LENGTH(markerProperties)));
     return markerLonghands;
 }
+#endif
 
 const StylePropertyShorthand& outlineShorthand()
 {
@@ -764,11 +766,13 @@ const Vector<const StylePropertyShorthand*> matchingShorthandsForLonghand(CSSPro
         map.set(CSSPropertyMarginBottom, margin);
         map.set(CSSPropertyMarginLeft, margin);
 
+#if ENABLE(SVG)
         Vector<const StylePropertyShorthand*, 1> marker;
         marker.uncheckedAppend(&markerShorthand());
         map.set(CSSPropertyMarkerStart, marker);
         map.set(CSSPropertyMarkerMid, marker);
         map.set(CSSPropertyMarkerEnd, marker);
+#endif
 
         Vector<const StylePropertyShorthand*, 1> outline;
         outline.uncheckedAppend(&outlineShorthand());
