@@ -54,11 +54,19 @@ struct SameSizeAsRefCounted {
     // Don't add anything here because this should stay small.
 };
 #endif
-template<typename T, unsigned inlineCapacity>
-struct SameSizeAsVectorWithInlineCapacity {
+template<typename T, unsigned inlineCapacity = 0>
+struct SameSizeAsVectorWithInlineCapacity;
+
+template<typename T>
+struct SameSizeAsVectorWithInlineCapacity<T, 0> {
     void* bufferPointer;
     unsigned capacity;
     unsigned size;
+};
+
+template<typename T, unsigned inlineCapacity>
+struct SameSizeAsVectorWithInlineCapacity {
+    SameSizeAsVectorWithInlineCapacity<T, 0> baseCapacity;
     AlignedBuffer<inlineCapacity * sizeof(T), WTF_ALIGN_OF(T)> inlineBuffer;
 };
 
@@ -67,6 +75,7 @@ COMPILE_ASSERT(sizeof(PassRefPtr<RefCounted<int> >) == sizeof(int*), PassRefPtr_
 COMPILE_ASSERT(sizeof(RefCounted<int>) == sizeof(SameSizeAsRefCounted), RefCounted_should_stay_small);
 COMPILE_ASSERT(sizeof(RefCountedCustomAllocated<int>) == sizeof(SameSizeAsRefCounted), RefCountedCustomAllocated_should_stay_small);
 COMPILE_ASSERT(sizeof(RefPtr<RefCounted<int> >) == sizeof(int*), RefPtr_should_stay_small);
+COMPILE_ASSERT(sizeof(Vector<int>) == sizeof(SameSizeAsVectorWithInlineCapacity<int>), Vector_should_stay_small);
 COMPILE_ASSERT(sizeof(Vector<int, 1>) == sizeof(SameSizeAsVectorWithInlineCapacity<int, 1>), Vector_should_stay_small);
 COMPILE_ASSERT(sizeof(Vector<int, 2>) == sizeof(SameSizeAsVectorWithInlineCapacity<int, 2>), Vector_should_stay_small);
 COMPILE_ASSERT(sizeof(Vector<int, 3>) == sizeof(SameSizeAsVectorWithInlineCapacity<int, 3>), Vector_should_stay_small);
