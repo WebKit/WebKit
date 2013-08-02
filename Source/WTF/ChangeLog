@@ -1,3 +1,33 @@
+2013-08-01  Mark Rowe  <mrowe@apple.com>
+
+        <rdar://problem/14528244> False-positive leaks from FastMalloc.
+
+        A logic error in the page map enumeration code within FastMalloc could result in a subset of the memory regions
+        owned by FastMalloc being skipped by the malloc zone enumeration code used by leaks and other performance tools.
+        If the only reference to an allocated object lived within one of the skipped memory regions, leaks would believe
+        it had been leaked since it would not find any references to the object.
+
+        The logic error manifested when a FastMalloc span owned a region of memory that crossed a 16MB address space boundary,
+        and when there was one or more other spans immediately after it in the address space. Crossing the 16MB address space
+        boundary means that the start and end points of the span are in different leaf nodes of the page map trie, and the
+        code within the page map's visitValues method didn't correctly account this case when skipping to the end of the span
+        after visiting it. It would resume iterating from the start of the next leaf node rather than continuing to skip values
+        until the end of the span was passed. The value representing the end of the span would then be processed as if it were
+        the start of a new span, and more values would be skipped even though they may contain actual spans.
+
+        The solution is to rework the algorithm used in visitValues so that it will skip the correct number of values even when
+        some of the values are in different leaf nodes. This is a more involved change than it may seem since it's also necessary
+        to deal with the case where a memory region spans two separate root nodes, which can happen if the region happens to cross
+        a 64GB boundary in the address space.
+
+        Reviewed by Geoff Garen.
+
+        * wtf/TCPageMap.h:
+        (TCMalloc_PageMap3::visitValues): Use a single loop to iterate, with the loop index being the key in to the page map in the
+        same form as used by get and set. This allows us to correctly deal with the index being skipped to a different intermediate or
+        root node as a result of visiting a span that crosses a 16MB boundary in memory.
+        (TCMalloc_PageMap2::visitValues): Ditto, but without having to deal with intermediate nodes.
+
 2013-08-01  Ruth Fong  <ruth_fong@apple.com>
 
         [Forms: color] <input type='color'> popover color well implementation
