@@ -33,8 +33,8 @@ if (window.testRunner) {
 </script>
 
 This test dumps frame load callbacks.  It is only useful inside of WebKitTestRunner.<br><br>
-<a id="linkToSlowPage" href="resources/page-with-slow-loading-subresource.html">This link goes to a page with a slow loading subresource.</a>
-Bug <a href="https://bugs.webkit.org/show_bug.cgi?id=119416">119416 - Going "back" to a cached page from a page with outstanding subresource loads breaks scrolling, amongst other issues.</a><br><br>
+<a id="linkToSlowPage" href="resources/resource-that-goes-back-while-still-loading.php">This link goes to a slow loading page.</a>
+Bug <a href="https://bugs.webkit.org/show_bug.cgi?id=117112">117112 - Going "back" to a cached page from a page where the main resource never finished loading breaks scrolling, amongst other issues.</a><br><br>
 In the broken case, the second page gets a didFinishLoad callback intertwined with the restoration of the cached page, even though it's already gotten a didFailLoad callback.<br>
 The final 4 callbacks look like:<br>
 didFailLoadWithError<br>
