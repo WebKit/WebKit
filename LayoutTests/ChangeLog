@@ -1,3 +1,12 @@
+2013-08-03  Simon Fraser  <simon.fraser@apple.com>
+
+        webaudio/audiobuffersource-loop-points.html always times out
+        https://bugs.webkit.org/show_bug.cgi?id=119467
+
+        Skip this test.
+
+        * platform/mac-wk2/TestExpectations:
+
 2013-08-03  Yoav Weiss  <yoav@yoav.ws>
 
         PreloadScanner preloads external CSS with non-matching media attribute
