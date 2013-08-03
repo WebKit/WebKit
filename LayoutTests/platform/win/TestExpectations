@@ -2827,3 +2827,27 @@ svg/dom/svgpath-out-of-bounds-getPathSeg.html [ Failure ]
 fast/js/global-constructors-attributes-dedicated-worker.html [ Failure ]
 fast/text/split-text-crash.xhtml [ Failure ]
 fast/frames/seamless/seamless-nested-crash.html [ Failure ]
+
+# https://bugs.webkit.org/show_bug.cgi?id=119463
+fast/canvas/canvas-blending-clipping.html
+fast/canvas/canvas-blending-color-over-color.html
+fast/canvas/canvas-blending-color-over-gradient.html
+fast/canvas/canvas-blending-color-over-image.html
+fast/canvas/canvas-blending-color-over-pattern.html
+fast/canvas/canvas-blending-fill-style.html
+fast/canvas/canvas-blending-global-alpha.html
+fast/canvas/canvas-blending-gradient-over-color.html
+fast/canvas/canvas-blending-gradient-over-gradient.html
+fast/canvas/canvas-blending-gradient-over-image.html
+fast/canvas/canvas-blending-gradient-over-pattern.html
+fast/canvas/canvas-blending-image-over-color.html
+fast/canvas/canvas-blending-image-over-gradient.html
+fast/canvas/canvas-blending-image-over-image.html
+fast/canvas/canvas-blending-image-over-pattern.html
+fast/canvas/canvas-blending-pattern-over-color.html
+fast/canvas/canvas-blending-pattern-over-gradient.html
+fast/canvas/canvas-blending-pattern-over-image.html
+fast/canvas/canvas-blending-pattern-over-pattern.html
+fast/canvas/canvas-blending-shadow.html
+fast/canvas/canvas-blending-text.html
+fast/canvas/canvas-blending-transforms.html
