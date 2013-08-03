@@ -1,3 +1,32 @@
+2013-08-02  Benjamin Poulain  <benjamin@webkit.org>
+
+        Remove a bunch of redundant checks for empty string in StringImpl
+        https://bugs.webkit.org/show_bug.cgi?id=118768
+
+        Reviewed by Ryosuke Niwa.
+
+        The first thing done by createUninitialized() is check if the length passed
+        is zero. Internally, there are many cases for which we know the check will never succeed.
+
+        Clang is usually really smart for those kind of things, but there are a few cases where
+        the condition to avoid returning empty() is not simply a check for the length.
+        This patch adds an internal initializer to deal with that.
+
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::createUninitializedInternal):
+        (WTF::StringImpl::createUninitializedInternalNonEmpty):
+        (WTF::StringImpl::createInternal): Create internal has a special case for null pointer
+        for the characters. The test also check length, the second check for length cannot fail.
+        (WTF::StringImpl::create8BitIfPossible): ditto.
+        (WTF::StringImpl::lower): 3 of the calls cannot be reached for empty length. On an empty length,
+        the test for (noUpper && !(ored & ~0x7F)) would have caused the function to return "this".
+
+        For the last createUninitialized(), there is no guarantee the realLength is not zero.
+
+        (WTF::StringImpl::replace): The first thing we do in replace(UChar,UChar) is check if there is anything
+        to replace. The check for length will never succeed as there must be a character to replace at that point.
+        * wtf/text/StringImpl.h:
+
 2013-08-02  Mark Lam  <mark.lam@apple.com>
 
         Gardening: Touched a line in Platform.h to get all bots to do a clean build.

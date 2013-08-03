@@ -807,6 +807,7 @@ private:
     template <typename CharType, class UCharPredicate> PassRefPtr<StringImpl> simplifyMatchedCharactersToSpace(UCharPredicate);
     template <typename CharType> static PassRefPtr<StringImpl> constructInternal(StringImpl*, unsigned);
     template <typename CharType> static PassRefPtr<StringImpl> createUninitializedInternal(unsigned, CharType*&);
+    template <typename CharType> static PassRefPtr<StringImpl> createUninitializedInternalNonEmpty(unsigned, CharType*&);
     template <typename CharType> static PassRefPtr<StringImpl> reallocateInternal(PassRefPtr<StringImpl>, unsigned, CharType*&);
     template <typename CharType> static PassRefPtr<StringImpl> createInternal(const CharType*, unsigned);
     WTF_EXPORT_STRING_API NEVER_INLINE const UChar* getData16SlowCase() const;

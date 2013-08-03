@@ -191,6 +191,13 @@ inline PassRefPtr<StringImpl> StringImpl::createUninitializedInternal(unsigned l
         data = 0;
         return empty();
     }
+    return createUninitializedInternalNonEmpty(length, data);
+}
+
+template <typename CharType>
+inline PassRefPtr<StringImpl> StringImpl::createUninitializedInternalNonEmpty(unsigned length, CharType*& data)
+{
+    ASSERT(length);
 
     // Allocate a single buffer large enough to contain the StringImpl
     // struct as well as the data which it contains. This removes one
@@ -255,7 +262,7 @@ inline PassRefPtr<StringImpl> StringImpl::createInternal(const CharType* charact
         return empty();
 
     CharType* data;
-    RefPtr<StringImpl> string = createUninitialized(length, data);
+    RefPtr<StringImpl> string = createUninitializedInternalNonEmpty(length, data);
     memcpy(data, characters, length * sizeof(CharType));
     return string.release();
 }
@@ -276,7 +283,7 @@ PassRefPtr<StringImpl> StringImpl::create8BitIfPossible(const UChar* characters,
         return empty();
 
     LChar* data;
-    RefPtr<StringImpl> string = createUninitialized(length, data);
+    RefPtr<StringImpl> string = createUninitializedInternalNonEmpty(length, data);
 
     for (size_t i = 0; i < length; ++i) {
         if (characters[i] & 0xff00)
@@ -393,7 +400,6 @@ PassRefPtr<StringImpl> StringImpl::lower()
     // no-op code path up through the first 'return' statement.
 
     // First scan the string for uppercase and non-ASCII characters:
-    bool noUpper = true;
     if (is8Bit()) {
         unsigned failingIndex;
         for (unsigned i = 0; i < m_length; ++i) {
@@ -407,7 +413,7 @@ PassRefPtr<StringImpl> StringImpl::lower()
 
 SlowPath8bitLower:
         LChar* data8;
-        RefPtr<StringImpl> newImpl = createUninitialized(m_length, data8);
+        RefPtr<StringImpl> newImpl = createUninitializedInternalNonEmpty(m_length, data8);
 
         for (unsigned i = 0; i < failingIndex; ++i)
             data8[i] = m_data8[i];
@@ -422,6 +428,7 @@ SlowPath8bitLower:
 
         return newImpl.release();
     }
+    bool noUpper = true;
     unsigned ored = 0;
 
     for (unsigned i = 0; i < m_length; ++i) {
@@ -436,7 +443,7 @@ SlowPath8bitLower:
 
     if (!(ored & ~0x7F)) {
         UChar* data16;
-        RefPtr<StringImpl> newImpl = createUninitialized(m_length, data16);
+        RefPtr<StringImpl> newImpl = createUninitializedInternalNonEmpty(m_length, data16);
         
         for (unsigned i = 0; i < m_length; ++i) {
             UChar c = m_data16[i];
@@ -451,7 +458,7 @@ SlowPath8bitLower:
 
     // Do a slower implementation for cases that include non-ASCII characters.
     UChar* data16;
-    RefPtr<StringImpl> newImpl = createUninitialized(m_length, data16);
+    RefPtr<StringImpl> newImpl = createUninitializedInternalNonEmpty(m_length, data16);
 
     bool error;
     int32_t realLength = Unicode::toLower(data16, length, m_data16, m_length, &error);
@@ -638,7 +645,7 @@ template <class UCharPredicate>
 inline PassRefPtr<StringImpl> StringImpl::stripMatchedCharacters(UCharPredicate predicate)
 {
     if (!m_length)
-        return empty();
+        return this;
 
     unsigned start = 0;
     unsigned end = m_length - 1;
@@ -1334,7 +1341,7 @@ PassRefPtr<StringImpl> StringImpl::replace(UChar oldC, UChar newC)
             LChar oldChar = static_cast<LChar>(oldC);
             LChar newChar = static_cast<LChar>(newC);
 
-            RefPtr<StringImpl> newImpl = createUninitialized(m_length, data);
+            RefPtr<StringImpl> newImpl = createUninitializedInternalNonEmpty(m_length, data);
 
             for (i = 0; i != m_length; ++i) {
                 LChar ch = m_data8[i];
@@ -1348,7 +1355,7 @@ PassRefPtr<StringImpl> StringImpl::replace(UChar oldC, UChar newC)
         // There is the possibility we need to up convert from 8 to 16 bit,
         // create a 16 bit string for the result.
         UChar* data;
-        RefPtr<StringImpl> newImpl = createUninitialized(m_length, data);
+        RefPtr<StringImpl> newImpl = createUninitializedInternalNonEmpty(m_length, data);
 
         for (i = 0; i != m_length; ++i) {
             UChar ch = m_data8[i];
@@ -1361,7 +1368,7 @@ PassRefPtr<StringImpl> StringImpl::replace(UChar oldC, UChar newC)
     }
 
     UChar* data;
-    RefPtr<StringImpl> newImpl = createUninitialized(m_length, data);
+    RefPtr<StringImpl> newImpl = createUninitializedInternalNonEmpty(m_length, data);
 
     for (i = 0; i != m_length; ++i) {
         UChar ch = m_data16[i];
