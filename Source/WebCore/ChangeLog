@@ -1,3 +1,25 @@
+2013-08-03  Andreas Kling  <akling@apple.com>
+
+        RenderBoxModelObject::firstLetterRemainingText should be a RenderTextFragment*.
+        <http://webkit.org/b/119181>
+
+        Reviewed by Sam Weinig.
+
+        De-generalize this code a bit since we know that the firstLetterRemainingText() is always
+        going to be a RenderTextFragment.
+
+        * rendering/RenderBoxModelObject.h:
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::firstLetterRemainingText):
+        (WebCore::RenderBoxModelObject::setFirstLetterRemainingText):
+
+            Make these two deal in RenderTextFragment*.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::updateFirstLetterStyle):
+
+            Tighten up some pointer types so we don't have to cast as much.
+
 2013-08-02  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Introduce toSVGMaskElement(), and use it
