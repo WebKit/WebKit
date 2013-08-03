@@ -168,20 +168,20 @@ bool JSTestEventTarget::getOwnPropertyDescriptor(JSObject* object, ExecState* ex
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     const HashEntry* entry = JSTestEventTargetTable.entry(exec, propertyName);
     if (entry) {
-        PropertySlot slot;
+        PropertySlot slot(thisObject);
         slot.setCustom(thisObject, entry->propertyGetter());
         descriptor.setDescriptor(slot.getValue(exec, propertyName), entry->attributes());
         return true;
     }
     unsigned index = propertyName.asIndex();
     if (index != PropertyName::NotAnIndex && index < static_cast<TestEventTarget*>(thisObject->impl())->length()) {
-        PropertySlot slot;
+        PropertySlot slot(thisObject);
         slot.setCustomIndex(thisObject, index, indexGetter);
         descriptor.setDescriptor(slot.getValue(exec, propertyName), DontDelete | ReadOnly);
         return true;
     }
     if (canGetItemsForName(exec, static_cast<TestEventTarget*>(thisObject->impl()), propertyName)) {
-        PropertySlot slot;
+        PropertySlot slot(thisObject);
         slot.setCustom(thisObject, nameGetter);
         descriptor.setDescriptor(slot.getValue(exec, propertyName), ReadOnly | DontDelete | DontEnum);
         return true;

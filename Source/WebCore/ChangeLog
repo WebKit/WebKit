@@ -1,3 +1,15 @@
+2013-08-02  Oliver Hunt  <oliver@apple.com>
+
+        Update binding test results
+
+        * bindings/scripts/test/JS/JSFloat64Array.cpp:
+        (WebCore::JSFloat64Array::getOwnPropertySlot):
+        (WebCore::JSFloat64Array::getOwnPropertySlotByIndex):
+        * bindings/scripts/test/JS/JSTestCustomNamedGetter.cpp:
+        (WebCore::JSTestCustomNamedGetter::getOwnPropertyDescriptor):
+        * bindings/scripts/test/JS/JSTestEventTarget.cpp:
+        (WebCore::JSTestEventTarget::getOwnPropertyDescriptor):
+
 2013-08-02  Gavin Barraclough  <barraclough@apple.com>
 
         Remove no-arguments constructor to PropertySlot

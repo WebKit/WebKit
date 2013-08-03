@@ -176,7 +176,7 @@ bool JSFloat64Array::getOwnPropertySlot(JSObject* object, ExecState* exec, Prope
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     unsigned index = propertyName.asIndex();
     if (index != PropertyName::NotAnIndex && index < static_cast<Float64Array*>(thisObject->impl())->length()) {
-        slot.setValue(thisObject->getByIndex(exec, index));
+        slot.setValue(thisObject, thisObject->getByIndex(exec, index));
         return true;
     }
     return getStaticValueSlot<JSFloat64Array, Base>(exec, getJSFloat64ArrayTable(exec), thisObject, propertyName, slot);
@@ -199,7 +199,7 @@ bool JSFloat64Array::getOwnPropertySlotByIndex(JSObject* object, ExecState* exec
     JSFloat64Array* thisObject = jsCast<JSFloat64Array*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     if (index < static_cast<Float64Array*>(thisObject->impl())->length()) {
-        slot.setValue(thisObject->getByIndex(exec, index));
+        slot.setValue(thisObject, thisObject->getByIndex(exec, index));
         return true;
     }
     return Base::getOwnPropertySlotByIndex(thisObject, exec, index, slot);

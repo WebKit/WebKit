@@ -148,7 +148,7 @@ bool JSTestCustomNamedGetter::getOwnPropertyDescriptor(JSObject* object, ExecSta
     JSTestCustomNamedGetter* thisObject = jsCast<JSTestCustomNamedGetter*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     if (canGetItemsForName(exec, static_cast<TestCustomNamedGetter*>(thisObject->impl()), propertyName)) {
-        PropertySlot slot;
+        PropertySlot slot(thisObject);
         slot.setCustom(thisObject, nameGetter);
         descriptor.setDescriptor(slot.getValue(exec, propertyName), ReadOnly | DontDelete | DontEnum);
         return true;
