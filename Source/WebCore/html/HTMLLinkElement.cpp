@@ -280,7 +280,7 @@ void HTMLLinkElement::removedFrom(ContainerNode* insertionPoint)
         removePendingSheet(RemovePendingSheetNotifyLater);
 
     if (document()->renderer())
-        document()->styleResolverChanged(DeferRecalcStyle);
+        document()->styleResolverChanged(DeferRecalcStyleIfNeeded);
 }
 
 void HTMLLinkElement::finishParsingChildren()
