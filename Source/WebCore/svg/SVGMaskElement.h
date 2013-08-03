@@ -25,6 +25,7 @@
 #include "SVGAnimatedEnumeration.h"
 #include "SVGAnimatedLength.h"
 #include "SVGExternalResourcesRequired.h"
+#include "SVGNames.h"
 #include "SVGStyledElement.h"
 #include "SVGTests.h"
 #include "SVGUnitTypes.h"
@@ -67,6 +68,12 @@ private:
     virtual void synchronizeRequiredExtensions() { SVGTests::synchronizeRequiredExtensions(this); }
     virtual void synchronizeSystemLanguage() { SVGTests::synchronizeSystemLanguage(this); }
 };
+
+inline SVGMaskElement* toSVGMaskElement(Node* node)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(!node || node->hasTagName(SVGNames::maskTag));
+    return static_cast<SVGMaskElement*>(node);
+}
 
 }
 
