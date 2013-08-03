@@ -34,8 +34,6 @@
 #include "HTMLTokenizer.h"
 #include "InputTypeNames.h"
 #include "LinkRelAttribute.h"
-#include "MediaList.h"
-#include "MediaQueryEvaluator.h"
 #include <wtf/MainThread.h>
 
 namespace WebCore {
@@ -110,7 +108,6 @@ public:
     explicit StartTagScanner(TagId tagId)
         : m_tagId(tagId)
         , m_linkIsStyleSheet(false)
-        , m_linkMediaAttributeIsScreen(true)
         , m_inputIsImage(false)
     {
     }
@@ -142,7 +139,7 @@ public:
         if (!shouldPreload())
             return nullptr;
 
-        OwnPtr<PreloadRequest> request = PreloadRequest::create(initiatorFor(m_tagId), m_urlToLoad, predictedBaseURL, resourceType());
+        OwnPtr<PreloadRequest> request = PreloadRequest::create(initiatorFor(m_tagId), m_urlToLoad, predictedBaseURL, resourceType(), m_mediaAttribute);
         request->setCrossOriginModeAllowsCookies(crossOriginModeAllowsCookies());
         request->setCharset(charset());
         return request.release();
@@ -179,7 +176,7 @@ private:
             else if (match(attributeName, relAttr))
                 m_linkIsStyleSheet = relAttributeIsStyleSheet(attributeValue);
             else if (match(attributeName, mediaAttr))
-                m_linkMediaAttributeIsScreen = linkMediaAttributeIsScreen(attributeValue);
+                m_mediaAttribute = attributeValue;
         } else if (m_tagId == InputTagId) {
             if (match(attributeName, srcAttr))
                 setUrlToLoad(attributeValue);
@@ -192,19 +189,6 @@ private:
     {
         LinkRelAttribute rel(attributeValue);
         return rel.m_isStyleSheet && !rel.m_isAlternate && rel.m_iconType == InvalidIcon && !rel.m_isDNSPrefetch;
-    }
-
-    static bool linkMediaAttributeIsScreen(const String& attributeValue)
-    {
-        if (attributeValue.isEmpty())
-            return true;
-        RefPtr<MediaQuerySet> mediaQueries = MediaQuerySet::createAllowingDescriptionSyntax(attributeValue);
-    
-        // Only preload screen media stylesheets. Used this way, the evaluator evaluates to true for any 
-        // rules containing complex queries (full evaluation is possible but it requires a frame and a style selector which
-        // may be problematic here).
-        MediaQueryEvaluator mediaQueryEvaluator("screen");
-        return mediaQueryEvaluator.eval(mediaQueries.get());
     }
 
     void setUrlToLoad(const String& attributeValue)
@@ -230,7 +214,7 @@ private:
             return CachedResource::Script;
         if (m_tagId == ImgTagId || (m_tagId == InputTagId && m_inputIsImage))
             return CachedResource::ImageResource;
-        if (m_tagId == LinkTagId && m_linkIsStyleSheet && m_linkMediaAttributeIsScreen)
+        if (m_tagId == LinkTagId && m_linkIsStyleSheet)
             return CachedResource::CSSStyleSheet;
         ASSERT_NOT_REACHED();
         return CachedResource::RawResource;
@@ -241,7 +225,7 @@ private:
         if (m_urlToLoad.isEmpty())
             return false;
 
-        if (m_tagId == LinkTagId && (!m_linkIsStyleSheet || !m_linkMediaAttributeIsScreen))
+        if (m_tagId == LinkTagId && !m_linkIsStyleSheet)
             return false;
 
         if (m_tagId == InputTagId && !m_inputIsImage)
@@ -260,7 +244,7 @@ private:
     String m_charset;
     String m_crossOriginMode;
     bool m_linkIsStyleSheet;
-    bool m_linkMediaAttributeIsScreen;
+    String m_mediaAttribute;
     bool m_inputIsImage;
 };
 

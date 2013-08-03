@@ -1,3 +1,16 @@
+2013-08-03  Yoav Weiss  <yoav@yoav.ws>
+
+        PreloadScanner preloads external CSS with non-matching media attribute
+        https://bugs.webkit.org/show_bug.cgi?id=106198
+
+        Reviewed by Dean Jackson.
+
+        * http/tests/loading/preload-css-test-expected.txt: Added.
+        * http/tests/loading/preload-css-test.html: Added.
+        * http/tests/loading/resources/big_mq.css: Added.
+        * http/tests/loading/resources/small_mq.css: Added.
+        * http/tests/local/link-stylesheet-load-order-preload-expected.txt:
+
 2013-08-02  Benjamin Poulain  <bpoulain@apple.com>
 
         REGRESSION (r153005): Crash in SpaceSplitString::spaceSplitStringContainsValue on Facebook

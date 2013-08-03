@@ -33,9 +33,14 @@ namespace WebCore {
 
 class PreloadRequest {
 public:
+    static PassOwnPtr<PreloadRequest> create(const String& initiator, const String& resourceURL, const KURL& baseURL, CachedResource::Type resourceType, const String& mediaAttribute)
+    {
+        return adoptPtr(new PreloadRequest(initiator, resourceURL, baseURL, resourceType, mediaAttribute));
+    }
+
     static PassOwnPtr<PreloadRequest> create(const String& initiator, const String& resourceURL, const KURL& baseURL, CachedResource::Type resourceType)
     {
-        return adoptPtr(new PreloadRequest(initiator, resourceURL, baseURL, resourceType));
+        return adoptPtr(new PreloadRequest(initiator, resourceURL, baseURL, resourceType, String()));
     }
 
     bool isSafeToSendToAnotherThread() const;
@@ -43,16 +48,18 @@ public:
     CachedResourceRequest resourceRequest(Document*);
 
     const String& charset() const { return m_charset; }
+    const String& media() const { return m_mediaAttribute; }
     void setCharset(const String& charset) { m_charset = charset.isolatedCopy(); }
     void setCrossOriginModeAllowsCookies(bool allowsCookies) { m_crossOriginModeAllowsCookies = allowsCookies; }
     CachedResource::Type resourceType() const { return m_resourceType; }
 
 private:
-    PreloadRequest(const String& initiator, const String& resourceURL, const KURL& baseURL, CachedResource::Type resourceType)
+    PreloadRequest(const String& initiator, const String& resourceURL, const KURL& baseURL, CachedResource::Type resourceType, const String& mediaAttribute)
         : m_initiator(initiator)
         , m_resourceURL(resourceURL.isolatedCopy())
         , m_baseURL(baseURL.copy())
         , m_resourceType(resourceType)
+        , m_mediaAttribute(mediaAttribute.isolatedCopy())
         , m_crossOriginModeAllowsCookies(false)
     {
     }
@@ -64,6 +71,7 @@ private:
     KURL m_baseURL;
     String m_charset;
     CachedResource::Type m_resourceType;
+    String m_mediaAttribute;
     bool m_crossOriginModeAllowsCookies;
 };
 

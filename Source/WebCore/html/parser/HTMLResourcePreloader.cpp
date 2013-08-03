@@ -29,6 +29,10 @@
 #include "CachedResourceLoader.h"
 #include "Document.h"
 
+#include "MediaList.h"
+#include "MediaQueryEvaluator.h"
+#include "RenderObject.h"
+
 namespace WebCore {
 
 bool PreloadRequest::isSafeToSendToAnotherThread() const
@@ -36,6 +40,7 @@ bool PreloadRequest::isSafeToSendToAnotherThread() const
     return m_initiator.isSafeToSendToAnotherThread()
         && m_charset.isSafeToSendToAnotherThread()
         && m_resourceURL.isSafeToSendToAnotherThread()
+        && m_mediaAttribute.isSafeToSendToAnotherThread()
         && m_baseURL.isSafeToSendToAnotherThread();
 }
 
@@ -65,10 +70,24 @@ void HTMLResourcePreloader::takeAndPreload(PreloadRequestStream& r)
         preload(it->release());
 }
 
+static bool mediaAttributeMatches(Frame* frame, RenderStyle* renderStyle, const String& attributeValue)
+{
+    RefPtr<MediaQuerySet> mediaQueries = MediaQuerySet::createAllowingDescriptionSyntax(attributeValue);
+    MediaQueryEvaluator mediaQueryEvaluator("screen", frame, renderStyle);
+    return mediaQueryEvaluator.eval(mediaQueries.get());
+}
+
 void HTMLResourcePreloader::preload(PassOwnPtr<PreloadRequest> preload)
 {
+    ASSERT(m_document->frame());
+    ASSERT(m_document->renderer());
+    ASSERT(m_document->renderer()->style());
+    if (!preload->media().isEmpty() && !mediaAttributeMatches(m_document->frame(), m_document->renderer()->style(), preload->media()))
+        return;
+
     CachedResourceRequest request = preload->resourceRequest(m_document);
     m_document->cachedResourceLoader()->preload(preload->resourceType(), request, preload->charset());
 }
+
 
 }

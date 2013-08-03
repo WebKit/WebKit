@@ -1,3 +1,35 @@
+2013-08-03  Yoav Weiss  <yoav@yoav.ws>
+
+        PreloadScanner preloads external CSS with non-matching media attribute
+        https://bugs.webkit.org/show_bug.cgi?id=106198
+
+        Reviewed by Dean Jackson.
+
+        Test: http/tests/loading/preload-css-test.html
+
+        * html/parser/HTMLPreloadScanner.cpp:
+        Remove m_linkMediaAttributeIsScreen
+        Remove MediaQueryEvaluator calls
+        Add m_mediaAttribute that gets the value of the "media" attribute
+        Pass m_mediaAttribute to PreloadRequest
+        (WebCore::TokenPreloadScanner::StartTagScanner::StartTagScanner):
+        (WebCore::TokenPreloadScanner::StartTagScanner::createPreloadRequest):
+        (WebCore::TokenPreloadScanner::StartTagScanner::processAttribute):
+        (WebCore::TokenPreloadScanner::StartTagScanner::resourceType):
+        (WebCore::TokenPreloadScanner::StartTagScanner::shouldPreload):
+        * html/parser/HTMLResourcePreloader.cpp:
+        Add MediaQueryEvaluator calls to see if "media" matches
+        Perform preload only to resource with a matching media (if media exists)
+        (WebCore::PreloadRequest::isSafeToSendToAnotherThread):
+        (WebCore::mediaAttributeMatches):
+        (WebCore::HTMLResourcePreloader::preload):
+        * html/parser/HTMLResourcePreloader.h:
+        Add a constructor with a mediaAttribute value
+        Add m_mediaAttribute & its getter.
+        (WebCore::PreloadRequest::create):
+        (WebCore::PreloadRequest::media):
+        (WebCore::PreloadRequest::PreloadRequest):
+
 2013-08-03  Andreas Kling  <akling@apple.com>
 
         RenderBoxModelObject::firstLetterRemainingText should be a RenderTextFragment*.
