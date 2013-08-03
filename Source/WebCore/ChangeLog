@@ -1,3 +1,23 @@
+2013-08-02  Dean Jackson  <dino@apple.com>
+
+        Force elements with perspective or preserve-3d to disallow direct composited backgrounds
+        https://bugs.webkit.org/show_bug.cgi?id=119462
+        <rdar://problem/14607548>
+
+        Reviewed by Simon Fraser.
+
+        Bug 119461 (http://wkb.ug/119461) describes how a directly composited
+        background color can intersect with its children. It's not clear exactly
+        what the best way to fix that is, but for the moment we should disallow
+        any element that has perspective or a preserve-3d transform style from
+        getting a directly composited background.
+
+        Test: compositing/background-color/no-composited-background-color-when-perspective.html
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::hasPerspectiveOrPreserves3D): New static helper.
+        (WebCore::supportsDirectBoxDecorationsComposition): Return false if the above function is true.
+
 2013-08-02  Oliver Hunt  <oliver@apple.com>
 
         Update binding test results

@@ -1,3 +1,16 @@
+2013-08-02  Dean Jackson  <dino@apple.com>
+
+        Force elements with perspective or preserve-3d to disallow direct composited backgrounds
+        https://bugs.webkit.org/show_bug.cgi?id=119462
+        <rdar://problem/14607548>
+
+        Reviewed by Simon Fraser.
+
+        * compositing/background-color/no-composited-background-color-when-perspective-expected.html: Added.
+        * compositing/background-color/no-composited-background-color-when-perspective.html: Added.
+        * compositing/geometry/preserve-3d-switching-expected.txt: Rebaselined.
+        * compositing/overflow-trumps-transform-style-expected.txt: Rebaselined.
+
 2013-08-02  Chris Curtis  <chris_curtis@apple.com>
 
         Give the error object's stack property accessor attributes.
