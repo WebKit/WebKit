@@ -213,6 +213,9 @@ private:
 
 bool SpaceSplitString::spaceSplitStringContainsValue(const String& inputString, const char* value, unsigned valueLength, bool shouldFoldCase)
 {
+    if (inputString.isNull())
+        return false;
+
     String string = inputString;
     if (shouldFoldCase && hasNonASCIIOrUpper(string))
         string = string.foldCase();

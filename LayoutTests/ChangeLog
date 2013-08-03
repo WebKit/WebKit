@@ -1,3 +1,13 @@
+2013-08-02  Benjamin Poulain  <bpoulain@apple.com>
+
+        REGRESSION (r153005): Crash in SpaceSplitString::spaceSplitStringContainsValue on Facebook
+        https://bugs.webkit.org/show_bug.cgi?id=119384
+
+        Reviewed by Alexey Proskuryakov.
+
+        * fast/dom/HTMLAnchorElement/remove-rel-attribute.html: Added.
+        * fast/dom/HTMLAnchorElement/remove-rel-attribute-expected.txt: Added.
+
 2013-08-02  Dean Jackson  <dino@apple.com>
 
         Force elements with perspective or preserve-3d to disallow direct composited backgrounds

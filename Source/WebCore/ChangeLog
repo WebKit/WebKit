@@ -1,3 +1,23 @@
+2013-08-02  Benjamin Poulain  <bpoulain@apple.com>
+
+        REGRESSION (r153005): Crash in SpaceSplitString::spaceSplitStringContainsValue on Facebook
+        https://bugs.webkit.org/show_bug.cgi?id=119384
+
+        Reviewed by Alexey Proskuryakov.
+
+        When removing the "rel" attribute from HTMLAnchorElement, we parse the attribute for no value.
+        Following r153005, we no longer checked for null String, which caused a crash in that case.
+
+        Creating a SpaceSplitString from a null string causes the SpaceSplitString to be null. In that case
+        SpaceSplitString::contains() would always return false.
+        This patch modify SpaceSplitString::spaceSplitStringContainsValue() to follow the exact same
+        behavior.
+
+        Test: fast/dom/HTMLAnchorElement/remove-rel-attribute.html
+
+        * dom/SpaceSplitString.cpp:
+        (WebCore::SpaceSplitString::spaceSplitStringContainsValue):
+
 2013-08-02  Dean Jackson  <dino@apple.com>
 
         Force elements with perspective or preserve-3d to disallow direct composited backgrounds
