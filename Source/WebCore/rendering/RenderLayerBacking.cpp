@@ -1389,6 +1389,11 @@ static bool hasBoxDecorationsOrBackgroundImage(const RenderStyle* style)
     return !GraphicsLayer::supportsContentsTiling() || !canCreateTiledImage(style);
 }
 
+static bool hasPerspectiveOrPreserves3D(const RenderStyle* style)
+{
+    return style->hasPerspective() || style->preserves3D();
+}
+
 Color RenderLayerBacking::rendererBackgroundColor() const
 {
     RenderObject* backgroundRenderer = renderer();
@@ -1502,6 +1507,14 @@ static bool supportsDirectBoxDecorationsComposition(const RenderObject* renderer
         return false;
 
     if (hasBoxDecorationsOrBackgroundImage(renderer->style()))
+        return false;
+
+    // FIXME: We can't create a directly composited background if this
+    // layer will have children that intersect with the background layer.
+    // A better solution might be to introduce a flattening layer if
+    // we do direct box decoration composition.
+    // https://bugs.webkit.org/show_bug.cgi?id=119461
+    if (hasPerspectiveOrPreserves3D(renderer->style()))
         return false;
 
     // FIXME: we should be able to allow backgroundComposite; However since this is not a common use case it has been deferred for now.
