@@ -1,3 +1,19 @@
+2013-08-02  Chris Curtis  <chris_curtis@apple.com>
+
+        Give the error object's stack property accessor attributes.
+        https://bugs.webkit.org/show_bug.cgi?id=119404
+
+        Reviewed by Geoffrey Garen.
+        
+        Changed the attributes of error object's stack property to allow developers to write
+        and delete the stack property. This will match the functionality of Chrome. Firefox  
+        allows developers to write the error's stack, but not delete it. 
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::addStackTraceIfNecessary):
+        * runtime/ErrorInstance.cpp:
+        (JSC::ErrorInstance::finishCreation):
+
 2013-08-02  Oliver Hunt  <oliver@apple.com>
 
         Incorrect type speculation reported by ToPrimitive

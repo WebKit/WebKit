@@ -6,7 +6,7 @@ PASS Object.prototype.toString.call(e) is "[object DOMException]"
 PASS e.name is "HierarchyRequestError"
 PASS e.message is "HierarchyRequestError: DOM Exception 3"
 PASS e.code is 3
-FAIL e.stack === 42 should be true. Was false.
+PASS e.stack === 42 is true
 PASS successfullyParsed is true
 
 TEST COMPLETE

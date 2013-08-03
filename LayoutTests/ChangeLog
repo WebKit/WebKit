@@ -1,3 +1,16 @@
+2013-08-02  Chris Curtis  <chris_curtis@apple.com>
+
+        Give the error object's stack property accessor attributes.
+        https://bugs.webkit.org/show_bug.cgi?id=119404
+
+        Reviewed by Geoffrey Garen.
+
+        * fast/dom/DOMException/stack-trace-expected.txt:
+        
+        New tests to show that the error object's stack property is writable and deleteable.
+        * fast/js/error-object-write-and-detele-for-stack-property-expected.txt: Added.
+        * fast/js/error-object-write-and-detele-for-stack-property.html: Added.
+
 2013-08-02  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Skip failing canvas blending tests on AppleWin port.

@@ -583,7 +583,7 @@ void Interpreter::addStackTraceIfNecessary(CallFrame* callFrame, JSValue error)
     if (asObject(error)->hasProperty(callFrame, vm->propertyNames->stack))
         return;
     
-    asObject(error)->putDirect(*vm, vm->propertyNames->stack, vm->interpreter->stackTraceAsString(vm->topCallFrame, stackTrace), ReadOnly | DontDelete);
+    asObject(error)->putDirect(*vm, vm->propertyNames->stack, vm->interpreter->stackTraceAsString(vm->topCallFrame, stackTrace), None);
 
 }
 

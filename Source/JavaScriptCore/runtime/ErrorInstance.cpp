@@ -44,7 +44,7 @@ void ErrorInstance::finishCreation(VM& vm, const String& message, Vector<StackFr
         putDirect(vm, vm.propertyNames->message, jsString(&vm, message), DontEnum);
     
     if (!stackTrace.isEmpty())
-        putDirect(vm, vm.propertyNames->stack, vm.interpreter->stackTraceAsString(vm.topCallFrame, stackTrace), ReadOnly | DontDelete);
+        putDirect(vm, vm.propertyNames->stack, vm.interpreter->stackTraceAsString(vm.topCallFrame, stackTrace), None);
 }
     
 } // namespace JSC
