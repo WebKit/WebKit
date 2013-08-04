@@ -189,6 +189,11 @@ public:
     // A non-throwing version of putDirect and putDirectIndex.
     JS_EXPORT_PRIVATE void putDirectMayBeIndex(ExecState*, PropertyName, JSValue);
         
+    bool hasIndexingHeader() const
+    {
+        return structure()->hasIndexingHeader(this);
+    }
+    
     bool canGetIndexQuickly(unsigned i)
     {
         switch (structure()->indexingType()) {
@@ -1107,7 +1112,7 @@ inline bool JSObject::isErrorInstance() const
 inline void JSObject::setButterfly(VM& vm, Butterfly* butterfly, Structure* structure)
 {
     ASSERT(structure);
-    ASSERT(!butterfly == (!structure->outOfLineCapacity() && !structure->hasIndexingHeader()));
+    ASSERT(!butterfly == (!structure->outOfLineCapacity() && !structure->hasIndexingHeader(this)));
     setStructure(vm, structure);
     m_butterfly = butterfly;
 }

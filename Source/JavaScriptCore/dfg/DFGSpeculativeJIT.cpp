@@ -4259,7 +4259,7 @@ bool SpeculativeJIT::compileRegExpExec(Node* node)
 
 void SpeculativeJIT::compileAllocatePropertyStorage(Node* node)
 {
-    if (node->structureTransitionData().previousStructure->hasIndexingHeader()) {
+    if (node->structureTransitionData().previousStructure->couldHaveIndexingHeader()) {
         SpeculateCellOperand base(this, node->child1());
         
         GPRReg baseGPR = base.gpr();
@@ -4302,7 +4302,7 @@ void SpeculativeJIT::compileReallocatePropertyStorage(Node* node)
     size_t newSize = oldSize * outOfLineGrowthFactor;
     ASSERT(newSize == node->structureTransitionData().newStructure->outOfLineCapacity() * sizeof(JSValue));
 
-    if (node->structureTransitionData().previousStructure->hasIndexingHeader()) {
+    if (node->structureTransitionData().previousStructure->couldHaveIndexingHeader()) {
         SpeculateCellOperand base(this, node->child1());
         
         GPRReg baseGPR = base.gpr();

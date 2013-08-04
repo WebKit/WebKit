@@ -228,11 +228,16 @@ public:
             && (offset < m_inlineCapacity || offset >= firstOutOfLineOffset);
     }
     
-    bool hasIndexingHeader() const
+    bool couldHaveIndexingHeader() const
     {
         return hasIndexedProperties(indexingType());
     }
-
+    
+    bool hasIndexingHeader(const JSCell*) const
+    {
+        return hasIndexedProperties(indexingType());
+    }
+    
     bool masqueradesAsUndefined(JSGlobalObject* lexicalGlobalObject);
 
     PropertyOffset get(VM&, PropertyName);

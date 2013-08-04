@@ -102,7 +102,7 @@ ALWAYS_INLINE void JSObject::copyButterfly(CopyVisitor& visitor, Butterfly* butt
     size_t propertyCapacity = structure->outOfLineCapacity();
     size_t preCapacity;
     size_t indexingPayloadSizeInBytes;
-    bool hasIndexingHeader = structure->hasIndexingHeader();
+    bool hasIndexingHeader = this->hasIndexingHeader();
     if (UNLIKELY(hasIndexingHeader)) {
         preCapacity = butterfly->indexingHeader()->preCapacity(structure);
         indexingPayloadSizeInBytes = butterfly->indexingHeader()->indexingPayloadSizeInBytes(structure);
@@ -173,7 +173,7 @@ ALWAYS_INLINE void JSObject::visitButterfly(SlotVisitor& visitor, Butterfly* but
     size_t propertyCapacity = structure->outOfLineCapacity();
     size_t preCapacity;
     size_t indexingPayloadSizeInBytes;
-    bool hasIndexingHeader = structure->hasIndexingHeader();
+    bool hasIndexingHeader = this->hasIndexingHeader();
     if (UNLIKELY(hasIndexingHeader)) {
         preCapacity = butterfly->indexingHeader()->preCapacity(structure);
         indexingPayloadSizeInBytes = butterfly->indexingHeader()->indexingPayloadSizeInBytes(structure);

@@ -58,7 +58,7 @@ inline Butterfly* Butterfly::create(VM& vm, JSCell* intendedOwner, Structure* st
 {
     return create(
         vm, intendedOwner, 0, structure->outOfLineCapacity(),
-        structure->hasIndexingHeader(), IndexingHeader(), 0);
+        structure->hasIndexingHeader(intendedOwner), IndexingHeader(), 0);
 }
 
 inline Butterfly* Butterfly::createUninitializedDuringCollection(CopyVisitor& visitor, size_t preCapacity, size_t propertyCapacity, bool hasIndexingHeader, size_t indexingPayloadSizeInBytes)
@@ -96,7 +96,7 @@ inline Butterfly* Butterfly::growPropertyStorage(
 {
     return growPropertyStorage(
         vm, intendedOwner, indexingHeader()->preCapacity(structure), oldPropertyCapacity,
-        structure->hasIndexingHeader(),
+        structure->hasIndexingHeader(intendedOwner),
         indexingHeader()->indexingPayloadSizeInBytes(structure), newPropertyCapacity);
 }
 
@@ -129,7 +129,7 @@ inline Butterfly* Butterfly::growArrayRight(
     size_t newIndexingPayloadSizeInBytes)
 {
     ASSERT_UNUSED(oldStructure, !indexingHeader()->preCapacity(oldStructure));
-    ASSERT_UNUSED(oldStructure, hadIndexingHeader == oldStructure->hasIndexingHeader());
+    ASSERT_UNUSED(oldStructure, hadIndexingHeader == oldStructure->hasIndexingHeader(intendedOwner));
     void* theBase = base(0, propertyCapacity);
     size_t oldSize = totalSize(0, propertyCapacity, hadIndexingHeader, oldIndexingPayloadSizeInBytes);
     size_t newSize = totalSize(0, propertyCapacity, true, newIndexingPayloadSizeInBytes);
@@ -144,7 +144,7 @@ inline Butterfly* Butterfly::growArrayRight(
 {
     return growArrayRight(
         vm, intendedOwner, oldStructure, oldStructure->outOfLineCapacity(),
-        oldStructure->hasIndexingHeader(), 
+        oldStructure->hasIndexingHeader(intendedOwner), 
         indexingHeader()->indexingPayloadSizeInBytes(oldStructure),
         newIndexingPayloadSizeInBytes);
 }
@@ -172,7 +172,7 @@ inline Butterfly* Butterfly::resizeArray(
     VM& vm, JSCell* intendedOwner, Structure* structure, size_t newPreCapacity,
     size_t newIndexingPayloadSizeInBytes)
 {
-    bool hasIndexingHeader = structure->hasIndexingHeader();
+    bool hasIndexingHeader = structure->hasIndexingHeader(intendedOwner);
     return resizeArray(
         vm, intendedOwner, structure->outOfLineCapacity(), hasIndexingHeader,
         indexingHeader()->indexingPayloadSizeInBytes(structure), newPreCapacity,

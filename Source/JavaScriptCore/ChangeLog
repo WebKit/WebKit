@@ -1,3 +1,40 @@
+2013-08-03  Filip Pizlo  <fpizlo@apple.com>
+
+        hasIndexingHeader() ought really to be a property of an object and its structure, not just its structure
+        https://bugs.webkit.org/show_bug.cgi?id=119470
+
+        Reviewed by Oliver Hunt.
+        
+        Structure can still tell you if the object "could" (in the conservative sense)
+        have an indexing header; that's used by the compiler.
+        
+        Most of the time if you want to know if there's an indexing header, you ask the
+        JSObject.
+        
+        In some cases, the JSObject wants to know if it would have an indexing header if
+        it had a different structure; then it uses Structure::hasIndexingHeader(JSCell*).
+
+        * dfg/DFGRepatch.cpp:
+        (JSC::DFG::tryCachePutByID):
+        (JSC::DFG::tryBuildPutByIdList):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileAllocatePropertyStorage):
+        (JSC::DFG::SpeculativeJIT::compileReallocatePropertyStorage):
+        * runtime/ButterflyInlines.h:
+        (JSC::Butterfly::create):
+        (JSC::Butterfly::growPropertyStorage):
+        (JSC::Butterfly::growArrayRight):
+        (JSC::Butterfly::resizeArray):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::copyButterfly):
+        (JSC::JSObject::visitButterfly):
+        * runtime/JSObject.h:
+        (JSC::JSObject::hasIndexingHeader):
+        (JSC::JSObject::setButterfly):
+        * runtime/Structure.h:
+        (JSC::Structure::couldHaveIndexingHeader):
+        (JSC::Structure::hasIndexingHeader):
+
 2013-08-02  Chris Curtis  <chris_curtis@apple.com>
 
         Give the error object's stack property accessor attributes.

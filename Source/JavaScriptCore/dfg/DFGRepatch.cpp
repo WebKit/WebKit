@@ -965,7 +965,7 @@ static bool tryCachePutByID(ExecState* exec, JSValue baseValue, const Identifier
             
             // Skip optimizing the case where we need realloc, and the structure has
             // indexing storage.
-            if (oldStructure->hasIndexingHeader())
+            if (oldStructure->couldHaveIndexingHeader())
                 return false;
             
             if (normalizePrototypeChain(exec, baseCell) == InvalidPrototypeChain)
@@ -1040,7 +1040,7 @@ static bool tryBuildPutByIdList(ExecState* exec, JSValue baseValue, const Identi
             
             // Skip optimizing the case where we need realloc, and the structure has
             // indexing storage.
-            if (oldStructure->hasIndexingHeader())
+            if (oldStructure->couldHaveIndexingHeader())
                 return false;
             
             if (normalizePrototypeChain(exec, baseCell) == InvalidPrototypeChain)
