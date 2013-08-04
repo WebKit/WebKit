@@ -136,6 +136,7 @@ Settings::Settings(Page* page)
 #endif
 #endif
     SETTINGS_INITIALIZER_LIST
+    , m_screenFontSubstitutionEnabled(shouldEnableScreenFontSubstitutionByDefault())
     , m_isJavaEnabled(false)
     , m_isJavaEnabledForLocalFiles(true)
     , m_loadsImagesAutomatically(false)
@@ -197,6 +198,13 @@ double Settings::hiddenPageDOMTimerAlignmentInterval()
 {
     return gHiddenPageDOMTimerAlignmentInterval;
 }
+
+#if !PLATFORM(MAC)
+bool Settings::shouldEnableScreenFontSubstitutionByDefault()
+{
+    return true;
+}
+#endif
 
 #if !PLATFORM(MAC) && !PLATFORM(BLACKBERRY)
 void Settings::initializeDefaultFontFamilies()
@@ -463,6 +471,14 @@ void Settings::setUsesPageCache(bool usesPageCache)
         for (int i = first; i <= last; i++)
             pageCache()->remove(m_page->backForward()->itemAtIndex(i));
     }
+}
+
+void Settings::setScreenFontSubstitutionEnabled(bool enabled)
+{
+    if (m_screenFontSubstitutionEnabled == enabled)
+        return;
+    m_screenFontSubstitutionEnabled = enabled;
+    m_page->setNeedsRecalcStyleInAllFrames();
 }
 
 void Settings::setFontRenderingMode(FontRenderingMode mode)

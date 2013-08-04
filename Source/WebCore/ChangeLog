@@ -1,3 +1,24 @@
+2013-08-04  Andreas Kling  <akling@apple.com>
+
+        [Mac] Disable screen font substitution at WebCore-level in OS X 10.9+
+        <http://webkit.org/b/119474>
+        <rdar://problem/14643349>
+
+        Reviewed by Dan Bernstein.
+
+        Disable screen font substitution by default in Settings so internal WebCore clients
+        such as SVG-as-image will get the right default setting.
+
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        (WebCore::Settings::shouldEnableScreenFontSubstitutionByDefault):
+        (WebCore::Settings::setScreenFontSubstitutionEnabled):
+        * page/Settings.h:
+        (WebCore::Settings::screenFontSubstitutionEnabled):
+        * page/Settings.in:
+        * page/mac/SettingsMac.mm:
+        (WebCore::Settings::shouldEnableScreenFontSubstitutionByDefault):
+
 2013-08-03  Tim Horton  <timothy_horton@apple.com>
 
         Refine the unavailable plug-in indicator

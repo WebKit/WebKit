@@ -55,7 +55,6 @@ javaScriptCanAccessClipboard initial=false
 shouldPrintBackgrounds initial=false
 usesDashboardBackwardCompatibilityMode initial=false, conditional=DASHBOARD_SUPPORT
 
-screenFontSubstitutionEnabled initial=true, setNeedsStyleRecalcInAllFrames=1
 textAreasAreResizable initial=false, setNeedsStyleRecalcInAllFrames=1
 authorAndUserStylesEnabled initial=true, setNeedsStyleRecalcInAllFrames=1
 acceleratedCompositingEnabled initial=true, setNeedsStyleRecalcInAllFrames=1
