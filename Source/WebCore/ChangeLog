@@ -1,5 +1,19 @@
 2013-08-04  Andreas Kling  <akling@apple.com>
 
+        Document needn't expose its active element.
+        <http://webkit.org/b/119466>
+
+        Reviewed by Antonio Gomes.
+
+        The Document::m_activeElement pointer is only used inside updateHoverActiveState(),
+        so we can remove the activeElement()/setActiveElement() accessors.
+
+        * dom/Document.h:
+        * dom/Document.cpp:
+        (WebCore::Document::updateHoverActiveState):
+
+2013-08-04  Andreas Kling  <akling@apple.com>
+
         Inserting a rule into an empty style sheet shouldn't trigger style recalc unless necessary.
         <http://webkit.org/b/119475>
         <rdar://problem/14643481>

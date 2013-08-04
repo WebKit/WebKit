@@ -3217,16 +3217,6 @@ void Document::notifySeamlessChildDocumentsOfStylesheetUpdate() const
     }
 }
 
-void Document::setActiveElement(PassRefPtr<Element> newActiveElement)
-{
-    if (!newActiveElement) {
-        m_activeElement.clear();
-        return;
-    }
-
-    m_activeElement = newActiveElement;
-}
-
 void Document::removeFocusedNodeOfSubtree(Node* node, bool amongChildrenOnly)
 {
     if (!m_focusedElement || this->inPageCache()) // If the document is in the page cache, then we don't need to clear out the focused node.
@@ -5806,7 +5796,7 @@ void Document::updateHoverActiveState(const HitTestRequest& request, Element* in
         innerElementInDocument = innerElementInDocument->document()->ownerElement();
     }
 
-    Element* oldActiveElement = activeElement();
+    Element* oldActiveElement = m_activeElement.get();
     if (oldActiveElement && !request.active()) {
         // We are clearing the :active chain because the mouse has been released.
         for (RenderObject* curr = oldActiveElement->renderer(); curr; curr = curr->parent()) {
@@ -5816,7 +5806,7 @@ void Document::updateHoverActiveState(const HitTestRequest& request, Element* in
             element->setActive(false);
             m_userActionElements.setInActiveChain(element, false);
         }
-        setActiveElement(0);
+        m_activeElement.clear();
     } else {
         Element* newActiveElement = innerElementInDocument;
         if (!oldActiveElement && newActiveElement && request.active() && !request.touchMove()) {
@@ -5828,12 +5818,12 @@ void Document::updateHoverActiveState(const HitTestRequest& request, Element* in
                 m_userActionElements.setInActiveChain(toElement(curr->node()), true);
             }
 
-            setActiveElement(newActiveElement);
+            m_activeElement = newActiveElement;
         }
     }
     // If the mouse has just been pressed, set :active on the chain. Those (and only those)
     // nodes should remain :active until the mouse is released.
-    bool allowActiveChanges = !oldActiveElement && activeElement();
+    bool allowActiveChanges = !oldActiveElement && m_activeElement;
 
     // If the mouse is down and if this is a mouse move event, we want to restrict changes in
     // :hover/:active to only apply to elements that are in the :active chain that we froze
