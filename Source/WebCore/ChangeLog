@@ -1,3 +1,17 @@
+2013-08-04  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Remove legacy hack in CodeGeneratorGObject.pm
+        https://bugs.webkit.org/show_bug.cgi?id=117545
+
+        Reviewed by Carlos Garcia Campos.
+
+        There's a checking that sets gtype to uint in case it's ushort. gtype 
+        is a value obtained from GetGValueTypeName(), which never returns 
+        ushort.
+
+        * bindings/scripts/CodeGeneratorGObject.pm:
+        (GenerateProperty): remove unnecessary glitch
+
 2013-08-04  Andreas Kling  <akling@apple.com>
 
         [Mac] Disable screen font substitution at WebCore-level in OS X 10.9+

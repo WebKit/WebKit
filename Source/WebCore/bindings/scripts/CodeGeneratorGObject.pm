@@ -522,30 +522,13 @@ sub GenerateProperty {
     # FIXME: Should we return a default value when isNull == true?
 
     my $postConvertFunction = "";
-    my $done = 0;
     if ($gtype eq "string") {
         push(@txtGetProps, "        g_value_take_string(value, convertToUTF8String(${getterFunctionName}(" . join(", ", @getterArguments) . ")));\n");
-        $done = 1;
     } elsif ($gtype eq "object") {
         push(@txtGetProps, "        RefPtr<WebCore::${propType}> ptr = ${getterFunctionName}(" . join(", ", @getterArguments) . ");\n");
         push(@txtGetProps, "        g_value_set_object(value, WebKit::kit(ptr.get()));\n");
-        $done = 1;
-    }
-
-    # FIXME: get rid of this glitch?
-    my $_gtype = $gtype;
-    if ($gtype eq "ushort") {
-        $_gtype = "uint";
-    }
-
-    if (!$done) {
-        if ($attribute->signature->extendedAttributes->{"ImplementedBy"}) {
-            my $implementedBy = $attribute->signature->extendedAttributes->{"ImplementedBy"};
-            $implIncludes{"${implementedBy}.h"} = 1;
-            push(@txtGetProps, "        g_value_set_$_gtype(value, ${convertFunction}${getterFunctionName}(" . join(", ", @getterArguments) .  ")${postConvertFunction});\n");
-        } else {
-            push(@txtGetProps, "        g_value_set_$_gtype(value, ${convertFunction}${getterFunctionName}(" . join(", ", @getterArguments) . ")${postConvertFunction});\n");
-        }
+    } else {
+        push(@txtGetProps, "        g_value_set_$gtype(value, ${convertFunction}${getterFunctionName}(" . join(", ", @getterArguments) . ")${postConvertFunction});\n");
     }
 
     push(@txtGetProps, "#else\n") if $conditionalString;
@@ -576,7 +559,7 @@ sub GenerateProperty {
     my $txtInstallProp = << "EOF";
     g_object_class_install_property(gobjectClass,
                                     ${propEnum},
-                                    g_param_spec_${_gtype}("${propName}", /* name */
+                                    g_param_spec_${gtype}("${propName}", /* name */
                                                            "$nick", /* short description */
                                                            "$long", /* longer - could do with some extra doc stuff here */
                                                            $param_spec_options{$gtype}
