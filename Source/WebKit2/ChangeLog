@@ -1,5 +1,27 @@
 2013-08-03  Tim Horton  <timothy_horton@apple.com>
 
+        Remove SimplePDFPlugin
+        https://bugs.webkit.org/show_bug.cgi?id=119437
+
+        Reviewed by Alexey Proskuryakov.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::getPlugins):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::createPlugin):
+        Don't add SimplePDFPlugin, nor try to instantiate it.
+
+        * WebProcess/Plugins/PDF/PDFPlugin.h:
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        Merge previously inherited behavior in from SimplePDFPlugin.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/Plugins/PDF/SimplePDFPlugin.h: Removed.
+        * WebProcess/Plugins/PDF/SimplePDFPlugin.mm: Removed.
+        Remove SimplePDFPlugin.
+
+2013-08-03  Tim Horton  <timothy_horton@apple.com>
+
         Remove pageOverlayShouldApplyFadeWhenPainting() and adopt composited fade for the Mac port
         https://bugs.webkit.org/show_bug.cgi?id=119411
 

@@ -1165,7 +1165,6 @@
 		E18E6918169B667B009B6670 /* SecItemShimProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = E18E6914169B667B009B6670 /* SecItemShimProxyMessages.h */; };
 		E19582D3153CBFD700B60875 /* PDFKitImports.h in Headers */ = {isa = PBXBuildFile; fileRef = E19582D2153CBFD700B60875 /* PDFKitImports.h */; };
 		E19582D6153CC05400B60875 /* PDFKitImports.mm in Sources */ = {isa = PBXBuildFile; fileRef = E19582D4153CC05300B60875 /* PDFKitImports.mm */; };
-		E199875E142C045400BB2DE7 /* SimplePDFPlugin.mm in Sources */ = {isa = PBXBuildFile; fileRef = E199875C142BFC9700BB2DE7 /* SimplePDFPlugin.mm */; };
 		E1A31732134CEA6C007C9A4F /* AttributedString.h in Headers */ = {isa = PBXBuildFile; fileRef = E1A31731134CEA6C007C9A4F /* AttributedString.h */; };
 		E1A31735134CEA80007C9A4F /* AttributedString.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1A31734134CEA80007C9A4F /* AttributedString.mm */; };
 		E1A9A852169E2025002D7176 /* WebKit.icns in Resources */ = {isa = PBXBuildFile; fileRef = E133FD891423DD7F00FC7BFB /* WebKit.icns */; };
@@ -2695,8 +2694,6 @@
 		E19582D2153CBFD700B60875 /* PDFKitImports.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PDFKitImports.h; sourceTree = "<group>"; };
 		E19582D4153CC05300B60875 /* PDFKitImports.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PDFKitImports.mm; sourceTree = "<group>"; };
 		E1967E37150AB5E200C73169 /* com.apple.WebProcess.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = com.apple.WebProcess.sb; sourceTree = "<group>"; };
-		E199875A142BF9B800BB2DE7 /* SimplePDFPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SimplePDFPlugin.h; path = PDF/SimplePDFPlugin.h; sourceTree = "<group>"; };
-		E199875C142BFC9700BB2DE7 /* SimplePDFPlugin.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SimplePDFPlugin.mm; path = PDF/SimplePDFPlugin.mm; sourceTree = "<group>"; };
 		E1A31731134CEA6C007C9A4F /* AttributedString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AttributedString.h; sourceTree = "<group>"; };
 		E1A31734134CEA80007C9A4F /* AttributedString.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AttributedString.mm; sourceTree = "<group>"; };
 		E1AEA22D14687BDB00804569 /* WKFullKeyboardAccessWatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKFullKeyboardAccessWatcher.h; sourceTree = "<group>"; };
@@ -5238,8 +5235,6 @@
 				2D429BFB1721E2BA00EC681F /* PDFPluginPasswordField.mm */,
 				2D2ADF0516362DC700197E47 /* PDFPluginTextAnnotation.h */,
 				2D2ADF0616362DC700197E47 /* PDFPluginTextAnnotation.mm */,
-				E199875A142BF9B800BB2DE7 /* SimplePDFPlugin.h */,
-				E199875C142BFC9700BB2DE7 /* SimplePDFPlugin.mm */,
 			);
 			name = PDF;
 			sourceTree = "<group>";
@@ -6789,7 +6784,6 @@
 				E1EDFE151628DD7A0039ECDA /* SharedWorkerProcessProxy.cpp in Sources */,
 				9F4F59441648B67F00493B7E /* SharedWorkerProcessProxyMac.mm in Sources */,
 				E1EDFDB71628AD730039ECDA /* SharedWorkerProcessProxyMessageReceiver.cpp in Sources */,
-				E199875E142C045400BB2DE7 /* SimplePDFPlugin.mm in Sources */,
 				5272B28A1406985D0096A5D0 /* StatisticsData.cpp in Sources */,
 				51A4D5A916CAC4FF000E615E /* StatisticsRequest.cpp in Sources */,
 				1AD3306E16B1D991004F60E7 /* StorageAreaImpl.cpp in Sources */,

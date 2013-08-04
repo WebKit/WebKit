@@ -39,6 +39,7 @@
 #include "LayerTreeHost.h"
 #include "NetscapePlugin.h"
 #include "NotificationPermissionRequestManager.h"
+#include "PDFPlugin.h"
 #include "PageBanner.h"
 #include "PageOverlay.h"
 #include "PluginProcessAttributes.h"
@@ -163,10 +164,6 @@
 #endif
 
 #if PLATFORM(MAC)
-#include "SimplePDFPlugin.h"
-#if ENABLE(PDFKIT_PLUGIN)
-#include "PDFPlugin.h"
-#endif
 #include <WebCore/LegacyWebArchive.h>
 #endif
 
@@ -568,15 +565,10 @@ PassRefPtr<Plugin> WebPage::createPlugin(WebFrame* frame, HTMLPlugInElement* plu
     }
 
     if (!pluginProcessToken) {
-#if PLATFORM(MAC)
-        String path = parameters.url.path();
-        if (MIMETypeRegistry::isPDFOrPostScriptMIMEType(parameters.mimeType) || (parameters.mimeType.isEmpty() && (path.endsWith(".pdf", false) || path.endsWith(".ps", false)))) {
 #if ENABLE(PDFKIT_PLUGIN)
-            if (shouldUsePDFPlugin())
-                return PDFPlugin::create(frame);
-#endif
-            return SimplePDFPlugin::create(frame);
-        }
+        String path = parameters.url.path();
+        if (shouldUsePDFPlugin() && (MIMETypeRegistry::isPDFOrPostScriptMIMEType(parameters.mimeType) || (parameters.mimeType.isEmpty() && (path.endsWith(".pdf", false) || path.endsWith(".ps", false)))))
+            return PDFPlugin::create(frame);
 #else
         UNUSED_PARAM(frame);
 #endif
