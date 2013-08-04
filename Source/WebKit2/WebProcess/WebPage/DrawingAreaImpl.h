@@ -65,7 +65,6 @@ private:
     virtual void didUninstallPageOverlay(PageOverlay*);
     virtual void setPageOverlayNeedsDisplay(PageOverlay*, const WebCore::IntRect&);
     virtual void setPageOverlayOpacity(PageOverlay*, float);
-    virtual bool pageOverlayShouldApplyFadeWhenPainting() const;
 
     virtual void setPaintingEnabled(bool);
     virtual void updatePreferences(const WebPreferencesStore&) OVERRIDE;

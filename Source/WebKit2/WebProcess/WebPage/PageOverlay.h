@@ -76,7 +76,6 @@ public:
     void startFadeOutAnimation();
     void stopFadeOutAnimation();
 
-    float fractionFadedIn() const { return m_fractionFadedIn; }
     Client* client() const { return m_client; }
     
 protected:
@@ -103,7 +102,6 @@ private:
 
     FadeAnimationType m_fadeAnimationType;
     float m_fractionFadedIn;
-    bool m_pageOverlayShouldApplyFadeWhenPainting;
 };
 
 } // namespace WebKit

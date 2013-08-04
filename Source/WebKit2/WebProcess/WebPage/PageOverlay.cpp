@@ -55,7 +55,6 @@ PageOverlay::PageOverlay(Client* client)
     , m_fadeAnimationDuration(fadeAnimationDuration)
     , m_fadeAnimationType(NoAnimation)
     , m_fractionFadedIn(1.0)
-    , m_pageOverlayShouldApplyFadeWhenPainting(true)
 {
 }
 
@@ -85,17 +84,13 @@ void PageOverlay::setPage(WebPage* webPage)
     m_webPage = webPage;
     m_client->didMoveToWebPage(this, webPage);
 
-    if (m_webPage)
-        m_pageOverlayShouldApplyFadeWhenPainting = m_webPage->drawingArea()->pageOverlayShouldApplyFadeWhenPainting();
-
     m_fadeAnimationTimer.stop();
 }
 
 void PageOverlay::setNeedsDisplay(const IntRect& dirtyRect)
 {
     if (m_webPage) {
-        if (!m_pageOverlayShouldApplyFadeWhenPainting)
-            m_webPage->drawingArea()->setPageOverlayOpacity(this, m_fractionFadedIn);
+        m_webPage->drawingArea()->setPageOverlayOpacity(this, m_fractionFadedIn);
         m_webPage->drawingArea()->setPageOverlayNeedsDisplay(this, dirtyRect);
     }
 }
@@ -181,11 +176,7 @@ void PageOverlay::fadeAnimationTimerFired()
     float fadeAnimationValue = sine * sine;
 
     m_fractionFadedIn = (m_fadeAnimationType == FadeInAnimation) ? fadeAnimationValue : 1 - fadeAnimationValue;
-
-    if (m_pageOverlayShouldApplyFadeWhenPainting)
-        setNeedsDisplay();
-    else
-        m_webPage->drawingArea()->setPageOverlayOpacity(this, m_fractionFadedIn);
+    m_webPage->drawingArea()->setPageOverlayOpacity(this, m_fractionFadedIn);
 
     if (animationProgress == 1.0) {
         m_fadeAnimationTimer.stop();

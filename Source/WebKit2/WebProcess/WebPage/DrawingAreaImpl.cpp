@@ -253,14 +253,6 @@ void DrawingAreaImpl::setPageOverlayOpacity(PageOverlay* pageOverlay, float valu
         m_layerTreeHost->setPageOverlayOpacity(pageOverlay, value);
 }
 
-bool DrawingAreaImpl::pageOverlayShouldApplyFadeWhenPainting() const
-{
-    if (m_layerTreeHost && !m_layerTreeHost->pageOverlayShouldApplyFadeWhenPainting())
-        return false;
-
-    return true;
-}
-
 void DrawingAreaImpl::setPaintingEnabled(bool paintingEnabled)
 {
     m_isPaintingEnabled = paintingEnabled;

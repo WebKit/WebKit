@@ -169,5 +169,9 @@ void WKBundlePageOverlaySetNeedsDisplay(WKBundlePageOverlayRef bundlePageOverlay
 
 float WKBundlePageOverlayFractionFadedIn(WKBundlePageOverlayRef bundlePageOverlayRef)
 {
-    return toImpl(bundlePageOverlayRef)->fractionFadedIn();
+    // Clients who include the fade opacity during painting interfere
+    // with composited fade, so we'll pretend we're opaque and do the
+    // fade on our own.
+
+    return 1;
 }

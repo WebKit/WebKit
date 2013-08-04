@@ -68,7 +68,6 @@ public:
     virtual void didUninstallPageOverlay(PageOverlay*);
     virtual void setPageOverlayNeedsDisplay(PageOverlay*, const WebCore::IntRect&);
     virtual void setPageOverlayOpacity(PageOverlay*, float);
-    virtual bool pageOverlayShouldApplyFadeWhenPainting() const { return false; }
 
     virtual void pauseRendering() { m_isSuspended = true; }
     virtual void resumeRendering() { m_isSuspended = false; scheduleLayerFlush(); }

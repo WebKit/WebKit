@@ -397,35 +397,20 @@ static const float overlayBackgroundGreen = 0.1;
 static const float overlayBackgroundBlue = 0.1;
 static const float overlayBackgroundAlpha = 0.25;
 
-static Color overlayBackgroundColor(float fractionFadedIn)
-{
-    return Color(overlayBackgroundRed, overlayBackgroundGreen, overlayBackgroundBlue, overlayBackgroundAlpha * fractionFadedIn);
-}
-
-static Color holeShadowColor(float fractionFadedIn)
-{
-    return Color(0.0f, 0.0f, 0.0f, fractionFadedIn);
-}
-
-static Color holeFillColor(float fractionFadedIn)
-{
-    return Color(1.0f, 1.0f, 1.0f, fractionFadedIn);
-}
-
 void FindController::drawRect(PageOverlay* pageOverlay, GraphicsContext& graphicsContext, const IntRect& dirtyRect)
 {
-    float fractionFadedIn = pageOverlay->fractionFadedIn();
+    Color overlayBackgroundColor(overlayBackgroundRed, overlayBackgroundGreen, overlayBackgroundBlue, overlayBackgroundAlpha);
 
     Vector<IntRect> rects = rectsForTextMatches();
 
     // Draw the background.
-    graphicsContext.fillRect(dirtyRect, overlayBackgroundColor(fractionFadedIn), ColorSpaceSRGB);
+    graphicsContext.fillRect(dirtyRect, overlayBackgroundColor, ColorSpaceSRGB);
 
     {
         GraphicsContextStateSaver stateSaver(graphicsContext);
 
-        graphicsContext.setShadow(FloatSize(shadowOffsetX, shadowOffsetY), shadowBlurRadius, holeShadowColor(fractionFadedIn), ColorSpaceSRGB);
-        graphicsContext.setFillColor(holeFillColor(fractionFadedIn), ColorSpaceSRGB);
+        graphicsContext.setShadow(FloatSize(shadowOffsetX, shadowOffsetY), shadowBlurRadius, Color::black, ColorSpaceSRGB);
+        graphicsContext.setFillColor(Color::white, ColorSpaceSRGB);
 
         // Draw white frames around the holes.
         for (size_t i = 0; i < rects.size(); ++i) {

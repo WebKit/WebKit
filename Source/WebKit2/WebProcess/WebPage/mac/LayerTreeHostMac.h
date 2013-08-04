@@ -63,6 +63,7 @@ private:
     virtual void didInstallPageOverlay(PageOverlay*) OVERRIDE;
     virtual void didUninstallPageOverlay(PageOverlay*) OVERRIDE;
     virtual void setPageOverlayNeedsDisplay(PageOverlay*, const WebCore::IntRect&) OVERRIDE;
+    virtual void setPageOverlayOpacity(PageOverlay*, float) OVERRIDE;
 
     virtual void pauseRendering() OVERRIDE;
     virtual void resumeRendering() OVERRIDE;

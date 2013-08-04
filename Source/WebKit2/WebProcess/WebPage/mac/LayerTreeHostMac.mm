@@ -210,6 +210,17 @@ void LayerTreeHostMac::setPageOverlayNeedsDisplay(PageOverlay* pageOverlay, cons
     scheduleLayerFlush();
 }
 
+void LayerTreeHostMac::setPageOverlayOpacity(PageOverlay* pageOverlay, float opacity)
+{
+    GraphicsLayer* layer = m_pageOverlayLayers.get(pageOverlay);
+
+    if (!layer)
+        return;
+
+    layer->setOpacity(opacity);
+    scheduleLayerFlush();
+}
+
 void LayerTreeHostMac::pauseRendering()
 {
     CALayer* root = m_rootLayer->platformLayer();

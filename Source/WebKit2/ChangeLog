@@ -1,3 +1,51 @@
+2013-08-03  Tim Horton  <timothy_horton@apple.com>
+
+        Remove pageOverlayShouldApplyFadeWhenPainting() and adopt composited fade for the Mac port
+        https://bugs.webkit.org/show_bug.cgi?id=119411
+
+        Reviewed by Simon Fraser.
+
+        Mac is the only holdout that performs non-composited fades of page
+        overlays. We should adopt that mechanism (as a precursor to doing a
+        CA-accelerated fade) and remove the now-unnecessary property.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePageOverlay.cpp:
+        (WKBundlePageOverlayFractionFadedIn):
+        Always return 1 (fully-faded-in) so that clients who attempt to use this
+        to bake the fade opacity into their painting will paint at full opacity,
+        allowing us to do the composited fade separately.
+
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.h:
+        * WebProcess/WebPage/DrawingArea.h:
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        * WebProcess/WebPage/DrawingAreaImpl.h:
+        * WebProcess/WebPage/LayerTreeHost.h:
+        * WebProcess/WebPage/PageOverlay.cpp:
+        (WebKit::PageOverlay::PageOverlay):
+        (WebKit::PageOverlay::setPage):
+        (WebKit::PageOverlay::setNeedsDisplay):
+        (WebKit::PageOverlay::fadeAnimationTimerFired):
+        * WebProcess/WebPage/PageOverlay.h:
+        Remove pageOverlayShouldApplyFadeWhenPainting and fractionFadedIn().
+
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::drawRect):
+        Draw the find overlay without taking the PageOverlay's fade into account.
+
+        * WebProcess/WebPage/TapHighlightController.cpp:
+        (WebKit::TapHighlightController::drawRect):
+        Remove pageOverlayShouldApplyFadeWhenPainting. Since it's always
+        "false" for all ports now, take the second path here.
+
+        * WebProcess/WebPage/mac/LayerTreeHostMac.h:
+        * WebProcess/WebPage/mac/LayerTreeHostMac.mm:
+        (WebKit::LayerTreeHostMac::setPageOverlayOpacity):
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::setPageOverlayOpacity):
+        Implement setPageOverlayOpacity for DrawingAreaImpl
+        and TiledCoreAnimationDrawingArea.
+
 2013-08-02  Gavin Barraclough  <barraclough@apple.com>
 
         Remove no-arguments constructor to PropertySlot

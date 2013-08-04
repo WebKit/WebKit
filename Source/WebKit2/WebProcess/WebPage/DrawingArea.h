@@ -77,8 +77,6 @@ public:
     virtual void didUninstallPageOverlay(PageOverlay*) { }
     virtual void setPageOverlayNeedsDisplay(PageOverlay*, const WebCore::IntRect&) { }
     virtual void setPageOverlayOpacity(PageOverlay*, float) { }
-    // If this function returns false, PageOverlay should apply opacity when painting.
-    virtual bool pageOverlayShouldApplyFadeWhenPainting() const { return true; }
 
     virtual void setPaintingEnabled(bool) { }
     virtual void updatePreferences(const WebPreferencesStore&) { }

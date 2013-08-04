@@ -225,6 +225,17 @@ void TiledCoreAnimationDrawingArea::setPageOverlayNeedsDisplay(PageOverlay* page
     scheduleCompositingLayerFlush();
 }
 
+void TiledCoreAnimationDrawingArea::setPageOverlayOpacity(PageOverlay* pageOverlay, float opacity)
+{
+    GraphicsLayer* layer = m_pageOverlayLayers.get(pageOverlay);
+
+    if (!layer)
+        return;
+
+    layer->setOpacity(opacity);
+    scheduleCompositingLayerFlush();
+}
+
 void TiledCoreAnimationDrawingArea::updatePreferences(const WebPreferencesStore&)
 {
     Settings* settings = m_webPage->corePage()->settings();
