@@ -1,3 +1,12 @@
+2013-08-04  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [GTK] Fix a C++11 warning.
+
+        Rubber-stamped by Martin Robinson.
+
+        * platform/gtk/FileSystemGtk.cpp:
+        (WebCore::sharedResourcesPath): Fix a C++11 warning.
+
 2013-08-04  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Remove legacy hack in CodeGeneratorGObject.pm
