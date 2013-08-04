@@ -147,12 +147,15 @@ void CSSStyleSheet::willMutateRules()
     reattachChildRuleCSSOMWrappers();
 }
 
-void CSSStyleSheet::didMutateRules()
+void CSSStyleSheet::didMutateRules(RuleMutationType mutationType)
 {
     ASSERT(m_contents->isMutable());
     ASSERT(m_contents->hasOneClient());
 
-    didMutate();
+    Document* owner = ownerDocument();
+    if (!owner)
+        return;
+    owner->styleResolverChanged(mutationType == InsertionIntoEmptySheet ? DeferRecalcStyleIfNeeded : DeferRecalcStyle);
 }
 
 void CSSStyleSheet::didMutate()
@@ -275,7 +278,9 @@ unsigned CSSStyleSheet::insertRule(const String& ruleString, unsigned index, Exc
         ec = SYNTAX_ERR;
         return 0;
     }
-    RuleMutationScope mutationScope(this);
+
+    RuleMutationType mutationType = !length() ? InsertionIntoEmptySheet : OtherMutation;
+    RuleMutationScope mutationScope(this, mutationType);
 
     bool success = m_contents->wrapperInsertRule(rule, index);
     if (!success) {

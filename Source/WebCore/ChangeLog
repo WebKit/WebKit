@@ -1,3 +1,34 @@
+2013-08-04  Andreas Kling  <akling@apple.com>
+
+        Inserting a rule into an empty style sheet shouldn't trigger style recalc unless necessary.
+        <http://webkit.org/b/119475>
+        <rdar://problem/14643481>
+
+        Reviewed by Antti Koivisto.
+
+        This is kind of a cheesy optimization, but it turns out that the use case is quite common.
+        The pattern goes like this:
+
+            (1) Create <style> element.
+            (2) Add it to the document's <head>.
+            (3) .addRule() one rule through the CSSOM API.
+
+        Prior to this patch, (3) would always cause a full (deferred) style recalc.
+
+        Now that we exclude empty style sheets from the document's (effective) active set,
+        we can piggyback on the style invalidation analysis when transitioning from an empty
+        sheet to a single-rule sheet.
+
+        In other words, add a special code path for the first rule insertion into an empty,
+        in-document style sheet to minimize the amount of invalidation that happens.
+
+        * css/CSSStyleSheet.cpp:
+        (WebCore::CSSStyleSheet::didMutateRules):
+        (WebCore::CSSStyleSheet::insertRule):
+        * css/CSSStyleSheet.h:
+        (WebCore::CSSStyleSheet::RuleMutationScope::RuleMutationScope):
+        (WebCore::CSSStyleSheet::RuleMutationScope::~RuleMutationScope):
+
 2013-08-04  Claudio Saavedra  <csaavedra@igalia.com>
 
         [GTK] Fix a C++11 warning.
