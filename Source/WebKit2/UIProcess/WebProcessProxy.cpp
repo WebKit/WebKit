@@ -28,7 +28,6 @@
 
 #include "DataReference.h"
 #include "DownloadProxyMap.h"
-#include "PDFPlugin.h"
 #include "PluginInfoStore.h"
 #include "PluginProcessManager.h"
 #include "TextChecker.h"
@@ -50,6 +49,10 @@
 
 #if ENABLE(CUSTOM_PROTOCOLS)
 #include "CustomProtocolManagerProxyMessages.h"
+#endif
+
+#if PLATFORM(MAC)
+#include "PDFPlugin.h"
 #endif
 
 #if USE(SECURITY_FRAMEWORK)

@@ -39,7 +39,6 @@
 #include "LayerTreeHost.h"
 #include "NetscapePlugin.h"
 #include "NotificationPermissionRequestManager.h"
-#include "PDFPlugin.h"
 #include "PageBanner.h"
 #include "PageOverlay.h"
 #include "PluginProcessAttributes.h"
@@ -164,6 +163,7 @@
 #endif
 
 #if PLATFORM(MAC)
+#include "PDFPlugin.h"
 #include <WebCore/LegacyWebArchive.h>
 #endif
 

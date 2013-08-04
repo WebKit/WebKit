@@ -1,5 +1,13 @@
 2013-08-03  Tim Horton  <timothy_horton@apple.com>
 
+        Unreviewed, build and style fix for r153693.
+
+        * UIProcess/WebProcessProxy.cpp:
+        * WebProcess/Plugins/PDF/PDFPlugin.h:
+        * WebProcess/WebPage/WebPage.cpp:
+
+2013-08-03  Tim Horton  <timothy_horton@apple.com>
+
         Remove SimplePDFPlugin
         https://bugs.webkit.org/show_bug.cgi?id=119437
 
