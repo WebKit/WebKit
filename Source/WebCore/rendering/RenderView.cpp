@@ -526,6 +526,17 @@ bool RenderView::shouldRepaint(const LayoutRect& r) const
     return true;
 }
 
+void RenderView::repaintRootContents()
+{
+#if USE(ACCELERATED_COMPOSITING)
+    if (layer()->isComposited()) {
+        layer()->setBackingNeedsRepaint();
+        return;
+    }
+#endif
+    repaint();
+}
+
 void RenderView::repaintViewRectangle(const LayoutRect& ur, bool immediate) const
 {
     if (!shouldRepaint(ur))
@@ -567,8 +578,7 @@ void RenderView::repaintRectangleInViewAndCompositedLayers(const LayoutRect& ur,
 
 void RenderView::repaintViewAndCompositedLayers()
 {
-    repaint();
-    
+    repaintRootContents();
 #if USE(ACCELERATED_COMPOSITING)
     if (compositor()->inCompositingMode())
         compositor()->repaintCompositedLayers();

@@ -206,11 +206,9 @@ void RenderBox::styleWillChange(StyleDifference diff, const RenderStyle* newStyl
     RenderStyle* oldStyle = style();
     if (oldStyle) {
         // The background of the root element or the body element could propagate up to
-        // the canvas.  Just dirty the entire canvas when our style changes substantially.
-        if (diff >= StyleDifferenceRepaint && node() &&
-            (node()->hasTagName(htmlTag) || node()->hasTagName(bodyTag))) {
-            view()->repaint();
-            
+        // the canvas. Issue full repaint, when our style changes substantially.
+        if (diff >= StyleDifferenceRepaint && (isRoot() || isBody())) {
+            view()->repaintRootContents();
 #if USE(ACCELERATED_COMPOSITING)
             if (oldStyle->hasEntirelyFixedBackground() != newStyle->hasEntirelyFixedBackground())
                 view()->compositor()->rootFixedBackgroundsChanged();
@@ -229,7 +227,7 @@ void RenderBox::styleWillChange(StyleDifference diff, const RenderStyle* newStyl
                 removeFloatingOrPositionedChildFromBlockLists();
         }
     } else if (newStyle && isBody())
-        view()->repaint();
+        view()->repaintRootContents();
 
     RenderBoxModelObject::styleWillChange(diff, newStyle);
 }

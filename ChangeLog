@@ -1,3 +1,29 @@
+2013-08-04  Zalan Bujtas  <zalan@apple.com>
+
+        Background doesn't fully repaint when body has margins.
+        https://bugs.webkit.org/show_bug.cgi?id=119033
+
+        Reviewed by Simon Fraser.
+
+        Ensure that background-color changes do not leave unpainted areas when
+        body has margins.
+
+        Both <body> and <html> background-color get propagated up to the viewport.
+        If <body> has background-color attribute set, while <html> doesn't, the color is
+        applied not only on the <body> but on both the <html> and the viewport. However,
+        it's not enough to mark the RenderView dirty because with tiles backing on,
+        there could be areas outside of the viewport that need repaint. By marking
+        the RenderView's graphics layer dirty instead, we ensure that all the related
+        tiles get marked dirty too and the new background color covers all areas.
+
+        Manual test added. When forcing top-level composition on (even with embedded iframe to
+        make sure we don't do paintsIntoWindow rendering), the test case execution changes so much,
+        that the repaint rects don't reflect the functionality difference anymore.
+
+        Reviewed by Simon Fraser.
+
+        * ManualTests/compositing/background-color-change-on-body-with-margin.html: Added.
+
 2013-07-30  Ádám Kallai  <kadam@inf.u-szeged.hu>
 
         [Qt] Workaround to make syncqt run and generate forwarding headers in SVN repositories too.

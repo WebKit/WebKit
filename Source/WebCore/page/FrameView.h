@@ -115,7 +115,7 @@ public:
     void setNeedsLayout();
     void setViewportConstrainedObjectsNeedLayout();
 
-    bool needsFullRepaint() const { return m_doFullRepaint; }
+    bool needsFullRepaint() const { return m_needsFullRepaint; }
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)
     void serviceScriptedAnimations(double monotonicAnimationStartTime);
@@ -555,7 +555,7 @@ private:
 
     OwnPtr<RenderObjectSet> m_slowRepaintObjects;
 
-    bool m_doFullRepaint;
+    bool m_needsFullRepaint;
     
     bool m_canHaveScrollbars;
     bool m_cannotBlitToWindow;

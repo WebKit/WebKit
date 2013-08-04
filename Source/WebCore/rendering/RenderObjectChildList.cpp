@@ -67,7 +67,7 @@ RenderObject* RenderObjectChildList::removeChildNode(RenderObject* owner, Render
         oldChild->setNeedsLayoutAndPrefWidthsRecalc();
         // We only repaint |oldChild| if we have a RenderLayer as its visual overflow may not be tracked by its parent.
         if (oldChild->isBody())
-            owner->view()->repaint();
+            owner->view()->repaintRootContents();
         else
             oldChild->repaint();
     }

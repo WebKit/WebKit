@@ -274,7 +274,7 @@ void FrameView::reset()
     m_layoutTimer.stop();
     m_layoutRoot = 0;
     m_delayedLayout = false;
-    m_doFullRepaint = true;
+    m_needsFullRepaint = true;
     m_layoutSchedulingEnabled = true;
     m_inLayout = false;
     m_doingPreLayoutStyleUpdate = false;
@@ -1259,7 +1259,7 @@ void FrameView::layout(bool allowSubtree)
         ScrollbarMode vMode;    
         calculateScrollbarModesForLayout(hMode, vMode);
 
-        m_doFullRepaint = !subtree && (m_firstLayout || toRenderView(root)->printing());
+        m_needsFullRepaint = !subtree && (m_firstLayout || toRenderView(root)->printing());
 
         if (!subtree) {
             // Now set our scrollbar state for the layout.
@@ -1296,7 +1296,7 @@ void FrameView::layout(bool allowSubtree)
             m_size = LayoutSize(layoutWidth(), layoutHeight());
 
             if (oldSize != m_size) {
-                m_doFullRepaint = true;
+                m_needsFullRepaint = true;
                 if (!m_firstLayout) {
                     RenderBox* rootRenderer = document->documentElement() ? document->documentElement()->renderBox() : 0;
                     RenderBox* bodyRenderer = rootRenderer && document->body() ? document->body()->renderBox() : 0;
@@ -1339,20 +1339,19 @@ void FrameView::layout(bool allowSubtree)
         m_layoutRoot = 0;
     } // Reset m_layoutSchedulingEnabled to its previous value.
 
-    bool neededFullRepaint = m_doFullRepaint;
+    bool neededFullRepaint = m_needsFullRepaint;
 
     if (!subtree && !toRenderView(root)->printing())
         adjustViewSize();
 
-    m_doFullRepaint = neededFullRepaint;
+    m_needsFullRepaint = neededFullRepaint;
 
     // Now update the positions of all layers.
     beginDeferredRepaints();
-    if (m_doFullRepaint)
-        root->view()->repaint(); // FIXME: This isn't really right, since the RenderView doesn't fully encompass the visibleContentRect(). It just happens
-                                 // to work out most of the time, since first layouts and printing don't have you scrolled anywhere.
+    if (m_needsFullRepaint)
+        root->view()->repaintRootContents();
 
-    layer->updateLayerPositionsAfterLayout(renderView()->layer(), updateLayerPositionFlags(layer, subtree, m_doFullRepaint));
+    layer->updateLayerPositionsAfterLayout(renderView()->layer(), updateLayerPositionFlags(layer, subtree, m_needsFullRepaint));
 
     endDeferredRepaints();
 
