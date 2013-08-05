@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>hiding a box covering a multicol, horizontal-bt</title>
+        <script>
+            if (window.testRunner)
+                testRunner.waitUntilDone();
+            if (window.internals)
+                internals.settings.setRegionBasedColumnsEnabled(true);
+            function scheduleHide() {
+                document.body.offsetLeft;
+                setTimeout("hideIt()", 100);
+            }
+            function hideIt() {
+                document.getElementById('hider').style.visibility = 'hidden';
+                document.body.offsetLeft;
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }
+        </script>
+    </head>
+    <body onload="scheduleHide()">
+        <p>The word PASS should be seen below.</p>
+        <div style="position:relative; background:lime;">
+            <div id="hider" style="position:absolute; z-index:1; left:5.1em; bottom:2em; width:3em; height:3em; background:red;"></div>
+            <div style="position:absolute; z-index:1; left:0; right:0; top:0; height:6em; background:white;"></div> <!-- make it fail if writing-mode isn't supported  -->
+            <div style="width:20em; height:20em; -webkit-writing-mode:horizontal-bt;">
+                <div style="-webkit-columns:4; -webkit-column-fill:auto; -webkit-column-gap:0; columns:4; column-fill:auto; column-gap:0; orphans:1; widows:1; height:6em; line-height:2em; background:cyan;">
+                    <br>
+                    <br>
+                    <br>
+                    <br>
+                    <div style="position:relative;">&nbsp;PASS</div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

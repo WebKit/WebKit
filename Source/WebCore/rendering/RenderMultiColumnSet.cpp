@@ -413,13 +413,35 @@ void RenderMultiColumnSet::repaintFlowThreadContent(const LayoutRect& repaintRec
 
 void RenderMultiColumnSet::collectLayerFragments(LayerFragments& fragments, const LayoutRect& layerBoundingBox, const LayoutRect& dirtyRect)
 {
-    // Put the layer bounds into flow thread-local coordinates by flipping it first.
+    // Let's start by introducing the different coordinate systems involved here. They are different
+    // in how they deal with writing modes and columns. RenderLayer rectangles tend to be more
+    // physical than the rectangles used in RenderObject & co.
+    //
+    // The two rectangles passed to this method are physical, except that we pretend that there's
+    // only one long column (that's the flow thread). They are relative to the top left corner of
+    // the flow thread. All rectangles being compared to the dirty rect also need to be in this
+    // coordinate system.
+    //
+    // Then there's the output from this method - the stuff we put into the list of fragments. The
+    // translationOffset point is the actual physical translation required to get from a location in
+    // the flow thread to a location in some column. The paginationClip rectangle is in the same
+    // coordinate system as the two rectangles passed to this method (i.e. physical, in flow thread
+    // coordinates, pretending that there's only one long column).
+    //
+    // All other rectangles in this method are slightly less physical, when it comes to how they are
+    // used with different writing modes, but they aren't really logical either. They are just like
+    // RenderBox::frameRect(). More precisely, the sizes are physical, and the inline direction
+    // coordinate is too, but the block direction coordinate is always "logical top". These
+    // rectangles also pretend that there's only one long column, i.e. they are for the flow thread.
+    //
+    // To sum up: input and output from this method are "physical" RenderLayer-style rectangles and
+    // points, while inside this method we mostly use the RenderObject-style rectangles (with the
+    // block direction coordinate always being logical top).
+
+    // Put the layer bounds into flow thread-local coordinates by flipping it first. Since we're in
+    // a renderer, most rectangles are represented this way.
     LayoutRect layerBoundsInFlowThread(layerBoundingBox);
     flowThread()->flipForWritingMode(layerBoundsInFlowThread);
-
-    // Do the same for the dirty rect.
-    LayoutRect dirtyRectInFlowThread(dirtyRect);
-    flowThread()->flipForWritingMode(dirtyRectInFlowThread);
 
     // Now we can compare with the flow thread portions owned by each column. First let's
     // see if the rect intersects our flow thread portion at all.
@@ -472,11 +494,11 @@ void RenderMultiColumnSet::collectLayerFragments(LayerFragments& fragments, cons
         // multicolumn block as well. This won't be an issue until we start creating multiple multicolumn sets.
 
         // Shift the dirty rect to be in flow thread coordinates with this translation applied.
-        LayoutRect translatedDirtyRect(dirtyRectInFlowThread);
+        LayoutRect translatedDirtyRect(dirtyRect);
         translatedDirtyRect.moveBy(-translationOffset);
         
         // See if we intersect the dirty rect.
-        clippedRect = layerBoundsInFlowThread;
+        clippedRect = layerBoundingBox;
         clippedRect.intersect(translatedDirtyRect);
         if (clippedRect.isEmpty())
             continue;
@@ -485,9 +507,10 @@ void RenderMultiColumnSet::collectLayerFragments(LayerFragments& fragments, cons
         // offset and the clip rect for the column with that offset applied.
         LayerFragment fragment;
         fragment.paginationOffset = translationOffset;
-        
+
         LayoutRect flippedFlowThreadOverflowPortion(flowThreadOverflowPortion);
-        flipForWritingMode(flippedFlowThreadOverflowPortion);
+        // Flip it into more a physical (RenderLayer-style) rectangle.
+        flowThread()->flipForWritingMode(flippedFlowThreadOverflowPortion);
         fragment.paginationClip = flippedFlowThreadOverflowPortion;
         fragments.append(fragment);
     }

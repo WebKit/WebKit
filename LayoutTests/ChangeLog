@@ -1,5 +1,19 @@
 2013-08-05  Morten Stenshorne  <mstensho@opera.com>
 
+        Region based columns not painted correctly in non-default writing-modes
+        https://bugs.webkit.org/show_bug.cgi?id=118506
+
+        Reviewed by David Hyatt.
+
+        * fast/multicol/newmulticol/hide-box-horizontal-bt-expected.html: Added.
+        * fast/multicol/newmulticol/hide-box-horizontal-bt.html: Added.
+        * fast/multicol/newmulticol/hide-box-vertical-lr-expected.html: Added.
+        * fast/multicol/newmulticol/hide-box-vertical-lr.html: Added.
+        * fast/multicol/newmulticol/hide-box-vertical-rl-expected.html: Added.
+        * fast/multicol/newmulticol/hide-box-vertical-rl.html: Added.
+
+2013-08-05  Morten Stenshorne  <mstensho@opera.com>
+
         Region based columns not clipped properly
         https://bugs.webkit.org/show_bug.cgi?id=118499
 

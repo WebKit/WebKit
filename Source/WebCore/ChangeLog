@@ -1,5 +1,24 @@
 2013-08-05  Morten Stenshorne  <mstensho@opera.com>
 
+        Region based columns not painted correctly in non-default writing-modes
+        https://bugs.webkit.org/show_bug.cgi?id=118506
+
+        Reviewed by David Hyatt.
+
+        The column translation offset was calculated incorrectly.
+        The dirty rect intersection check was also wrong.
+
+        Added some documentation, to make it clear what's going on.
+
+        Tests: fast/multicol/newmulticol/hide-box-horizontal-bt.html
+               fast/multicol/newmulticol/hide-box-vertical-lr.html
+               fast/multicol/newmulticol/hide-box-vertical-rl.html
+
+        * rendering/RenderMultiColumnSet.cpp:
+        (WebCore::RenderMultiColumnSet::collectLayerFragments):
+
+2013-08-05  Morten Stenshorne  <mstensho@opera.com>
+
         Region based columns not clipped properly
         https://bugs.webkit.org/show_bug.cgi?id=118499
 
