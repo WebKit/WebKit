@@ -125,6 +125,7 @@ fast/text/international/thai-cursor-position.html
 platform/mac/editing/input/5576619.html
 platform/mac/editing/input/bold-node.html
 platform/mac/editing/input/caret-primary-bidi.html
+platform/mac/editing/input/firstrectforcharacterrange-caret-in-br.html
 platform/mac/editing/input/firstrectforcharacterrange-plain.html
 platform/mac/editing/input/firstrectforcharacterrange-styled.html
 platform/mac/editing/input/firstrectforcharacterrange-vertical.html
