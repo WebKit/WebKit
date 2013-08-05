@@ -38,6 +38,8 @@ class WKCACFViewLayerTreeHost : public CACFLayerTreeHost {
 public:
     static PassRefPtr<WKCACFViewLayerTreeHost> create();
 
+    virtual bool createRenderer();
+
 private:
     WKCACFViewLayerTreeHost();
 
@@ -46,7 +48,6 @@ private:
 
     virtual void initializeContext(void* userData, PlatformCALayer*);
     virtual void resize();
-    virtual bool createRenderer();
     virtual void destroyRenderer();
     virtual void flushContext();
     virtual void contextDidChange();

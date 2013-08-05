@@ -62,7 +62,7 @@ void MediaPlayerPrivateFullscreenWindow::createWindow(HWND parentHwnd)
     static LPCWSTR windowClassName = L"MediaPlayerPrivateFullscreenWindowClass";
     if (!windowAtom) {
         WNDCLASSEX wcex = {0};
-        wcex.cbSize = sizeof(WNDCLASSEX);
+        wcex.cbSize = sizeof(wcex);
         wcex.style = CS_HREDRAW | CS_VREDRAW;
         wcex.lpfnWndProc = staticWndProc;
         wcex.hInstance = instanceHandle();
@@ -81,7 +81,7 @@ void MediaPlayerPrivateFullscreenWindow::createWindow(HWND parentHwnd)
     
     ::CreateWindowExW(WS_EX_TOOLWINDOW, windowClassName, L"", WS_POPUP, 
         monitorRect.x(), monitorRect.y(), monitorRect.width(), monitorRect.height(),
-        parentHwnd, 0, WebCore::instanceHandle(), this);
+        parentHwnd, 0, instanceHandle(), this);
     ASSERT(IsWindow(m_hwnd));
 
 #if USE(ACCELERATED_COMPOSITING)
@@ -110,8 +110,10 @@ void MediaPlayerPrivateFullscreenWindow::setRootChildLayer(PassRefPtr<PlatformCA
 
     if (!m_layerTreeHost) {
         m_layerTreeHost = CACFLayerTreeHost::create();
-        if (m_hwnd)
+        if (m_hwnd) {
             m_layerTreeHost->setWindow(m_hwnd);
+            m_layerTreeHost->createRenderer();
+        }
     }
 
     m_layerTreeHost->setRootChildLayer(m_rootChild.get());

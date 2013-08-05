@@ -1,5 +1,20 @@
 2013-08-05  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r153628
+
+    2013-08-01  Brent Fulgham  <bfulgham@apple.com>
+
+            [Windows] WebKit1 Fullscreen Video Play is Broken
+            https://bugs.webkit.org/show_bug.cgi?id=119415
+
+            Reviewed by Jer Noble.
+
+            * WinLauncher/WinLauncher.cpp:
+            (dllLauncherEntryPoint): Activate full screen mode via
+            IWebPreferencesInternal interface.
+
+2013-08-05  Lucas Forschler  <lforschler@apple.com>
+
         Merge r152861
 
     2013-07-16  Brent Fulgham  <bfulgham@apple.com>
