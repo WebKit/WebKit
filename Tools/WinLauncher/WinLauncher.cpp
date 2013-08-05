@@ -31,7 +31,14 @@
 #include "DOMDefaultImpl.h"
 #include "PrintWebUIDelegate.h"
 #include <WebKit/WebKitCOMAPI.h>
+#include <wtf/Platform.h>
 
+#if USE(CF)
+#include <CoreFoundation/CFPriv.h>
+#include <CoreFoundation/CFRunLoop.h>
+#endif
+
+#include <assert.h>
 #include <commctrl.h>
 #include <commdlg.h>
 #include <objbase.h>
@@ -412,12 +419,17 @@ extern "C" __declspec(dllexport) int WINAPI dllLauncherEntryPoint(HINSTANCE, HIN
     }
 
     // Main message loop:
+#if USE(CF)
+    _CFRunLoopSetWindowsMessageQueueMask(CFRunLoopGetMain(), QS_ALLINPUT | QS_ALLPOSTMESSAGE, kCFRunLoopDefaultMode);
+    CFRunLoopRun();
+#else
     while (GetMessage(&msg, NULL, 0, 0)) {
         if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg)) {
             TranslateMessage(&msg);
             DispatchMessage(&msg);
         }
     }
+#endif
 
 exit:
     gPrintDelegate->Release();

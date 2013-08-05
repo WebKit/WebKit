@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,10 +38,9 @@ class MediaPlayerPrivateAVFoundationCF : public MediaPlayerPrivateAVFoundation {
 public:
     virtual ~MediaPlayerPrivateAVFoundationCF();
 
-    static void registerMediaEngine(MediaEngineRegistrar);
+    virtual void tracksChanged() OVERRIDE;
 
-    //FIXME: this needs to be implemented
-    virtual InbandTextTrackPrivateAVF* currentTrack() const { return 0; }
+    static void registerMediaEngine(MediaEngineRegistrar);
 
 private:
     MediaPlayerPrivateAVFoundationCF(MediaPlayer*);
@@ -85,7 +84,6 @@ private:
     virtual float platformDuration() const;
     virtual float platformMaxTimeLoaded() const;
     virtual void beginLoadingMetadata();
-    virtual void tracksChanged();
     virtual void sizeChanged();
 
     virtual bool hasAvailableVideoFrame() const;
@@ -101,9 +99,25 @@ private:
 
     virtual void contentsNeedsDisplay();
 
+    virtual String languageOfPrimaryAudioTrack() const OVERRIDE;
+
+#if HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP)
+    void processMediaSelectionOptions();
+#endif
+
+    virtual void setCurrentTrack(InbandTextTrackPrivateAVF*) OVERRIDE;
+    virtual InbandTextTrackPrivateAVF* currentTrack() const OVERRIDE;
+    void processNewAndRemovedTextTracks(const Vector<RefPtr<InbandTextTrackPrivateAVF> >&);
+    void clearTextTracks();
+
+#if !HAVE(AVFOUNDATION_LEGIBLE_OUTPUT_SUPPORT)
+    void processLegacyClosedCaptionsTracks();
+#endif
+
     friend class AVFWrapper;
     AVFWrapper* m_avfWrapper;
     
+    mutable String m_languageOfPrimaryAudioTrack;
     bool m_videoFrameHasDrawn;
 };
 

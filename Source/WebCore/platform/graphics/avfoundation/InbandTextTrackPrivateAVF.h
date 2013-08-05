@@ -26,7 +26,7 @@
 #ifndef InbandTextTrackPrivateAVF_h
 #define InbandTextTrackPrivateAVF_h
 
-#if ENABLE(VIDEO) && ((USE(AVFOUNDATION) && !PLATFORM(WIN)) || PLATFORM(IOS))
+#if ENABLE(VIDEO) && (USE(AVFOUNDATION) || PLATFORM(IOS))
 
 #include "InbandTextTrackPrivate.h"
 #include "InbandTextTrackPrivateClient.h"
@@ -90,6 +90,6 @@ protected:
 
 } // namespace WebCore
 
-#endif //  ENABLE(VIDEO) && ((USE(AVFOUNDATION) && !PLATFORM(WIN)) || PLATFORM(IOS))
+#endif //  ENABLE(VIDEO) && (USE(AVFOUNDATION) || PLATFORM(IOS))
 
 #endif // InbandTextTrackPrivateAVF_h

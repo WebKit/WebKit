@@ -1,3 +1,25 @@
+2013-08-05  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r152861
+
+    2013-07-16  Brent Fulgham  <bfulgham@apple.com>
+
+            [Win] Support in-band text tracks.
+            https://bugs.webkit.org/show_bug.cgi?id=103770
+
+            Reviewed by Eric Carlson.
+
+            Update WinLauncher to run in a CFRunLoop (rather than a hand-written Windows event loop) so that
+            libdispatch and CFRunLoop elements are services during the run loop.
+
+            * WinLauncher/WinLauncher.cpp:
+            (dllLauncherEntryPoint): Use CFRunLoopRun (rather than a Windows message loop) if running with
+            a CoreFoundation (or CFLite) support library.
+            * WinLauncher/WinLauncher.vcxproj/WinLauncherCF.props: Added.
+            * WinLauncher/WinLauncher.vcxproj/WinLauncherCFLite.props: Added.
+            * WinLauncher/WinLauncher.vcxproj/WinLauncherLib.vcxproj: Add references to WinLauncherCF.props
+            and WinLauncherCFLite.props.
+
 2013-07-26  Lucas Forschler  <lforschler@apple.com>
 
         Merge r153344

@@ -39,10 +39,7 @@ namespace WebCore {
 class InbandTextTrackPrivateAVF;
 class GenericCueData;
 
-class MediaPlayerPrivateAVFoundation : public MediaPlayerPrivateInterface
-#if !PLATFORM(WIN)
-    , public AVFInbandTrackParent
-#endif
+class MediaPlayerPrivateAVFoundation : public MediaPlayerPrivateInterface, public AVFInbandTrackParent
 {
 public:
 
@@ -56,11 +53,9 @@ public:
     virtual void seekCompleted(bool);
     virtual void didEnd();
     virtual void contentsNeedsDisplay() { }
-#if !PLATFORM(WIN)
     virtual void configureInbandTracks();
     virtual void setCurrentTrack(InbandTextTrackPrivateAVF*) { }
     virtual InbandTextTrackPrivateAVF* currentTrack() const = 0;
-#endif
 
     class Notification {
     public:
@@ -268,10 +263,8 @@ protected:
 
     virtual size_t extraMemoryCost() const OVERRIDE;
 
-#if !PLATFORM(WIN)
     virtual void trackModeChanged() OVERRIDE;
     Vector<RefPtr<InbandTextTrackPrivateAVF> > m_textTracks;
-#endif
     
 private:
     MediaPlayer* m_player;
@@ -308,9 +301,7 @@ private:
     bool m_ignoreLoadStateChanges;
     bool m_haveReportedFirstVideoFrame;
     bool m_playWhenFramesAvailable;
-#if !PLATFORM(WIN)
     bool m_inbandTrackConfigurationPending;
-#endif
     size_t m_seekCount;
 };
 

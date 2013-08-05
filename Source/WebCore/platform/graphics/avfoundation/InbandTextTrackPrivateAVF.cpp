@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if ENABLE(VIDEO) && ((USE(AVFOUNDATION) && !PLATFORM(WIN)) || PLATFORM(IOS))
+#if ENABLE(VIDEO) && (USE(AVFOUNDATION) || PLATFORM(IOS))
 
 #include "InbandTextTrackPrivateAVF.h"
 
@@ -38,27 +38,35 @@
 #include <wtf/text/WTFString.h>
 #include <wtf/unicode/CharacterNames.h>
 
-SOFT_LINK_FRAMEWORK_OPTIONAL(CoreMedia)
+#if !PLATFORM(WIN)
+#define SOFT_LINK_AVF_FRAMEWORK(Lib) SOFT_LINK_FRAMEWORK_OPTIONAL(Lib)
+#define SOFT_LINK_AVF_POINTER(Lib, Name, Type) SOFT_LINK_POINTER_OPTIONAL(Lib, Name, Type)
+#else
+#define SOFT_LINK_AVF_FRAMEWORK(Lib) SOFT_LINK_LIBRARY(Lib)
+#define SOFT_LINK_AVF_POINTER(Lib, Name, Type) SOFT_LINK_VARIABLE_DLL_IMPORT_OPTIONAL(Lib, Name, Type)
+#endif
 
-SOFT_LINK_POINTER_OPTIONAL(CoreMedia, kCMTextMarkupAttribute_Alignment, CFStringRef)
-SOFT_LINK_POINTER_OPTIONAL(CoreMedia, kCMTextMarkupAlignmentType_Start, CFStringRef)
-SOFT_LINK_POINTER_OPTIONAL(CoreMedia, kCMTextMarkupAlignmentType_Middle, CFStringRef)
-SOFT_LINK_POINTER_OPTIONAL(CoreMedia, kCMTextMarkupAlignmentType_End, CFStringRef)
-SOFT_LINK_POINTER_OPTIONAL(CoreMedia, kCMTextMarkupAttribute_BoldStyle, CFStringRef)
-SOFT_LINK_POINTER_OPTIONAL(CoreMedia, kCMTextMarkupAttribute_ItalicStyle, CFStringRef)
-SOFT_LINK_POINTER_OPTIONAL(CoreMedia, kCMTextMarkupAttribute_UnderlineStyle, CFStringRef)
-SOFT_LINK_POINTER_OPTIONAL(CoreMedia, kCMTextMarkupAttribute_TextPositionPercentageRelativeToWritingDirection, CFStringRef)
-SOFT_LINK_POINTER_OPTIONAL(CoreMedia, kCMTextMarkupAttribute_WritingDirectionSizePercentage, CFStringRef)
-SOFT_LINK_POINTER_OPTIONAL(CoreMedia, kCMTextMarkupAttribute_OrthogonalLinePositionPercentageRelativeToWritingDirection, CFStringRef)
-SOFT_LINK_POINTER_OPTIONAL(CoreMedia, kCMTextMarkupAttribute_VerticalLayout, CFStringRef)
-SOFT_LINK_POINTER_OPTIONAL(CoreMedia, kCMTextVerticalLayout_LeftToRight, CFStringRef)
-SOFT_LINK_POINTER_OPTIONAL(CoreMedia, kCMTextVerticalLayout_RightToLeft, CFStringRef)
-SOFT_LINK_POINTER_OPTIONAL(CoreMedia, kCMTextMarkupAttribute_BaseFontSizePercentageRelativeToVideoHeight, CFStringRef)
-SOFT_LINK_POINTER_OPTIONAL(CoreMedia, kCMTextMarkupAttribute_RelativeFontSize, CFStringRef)
-SOFT_LINK_POINTER_OPTIONAL(CoreMedia, kCMTextMarkupAttribute_FontFamilyName, CFStringRef)
-SOFT_LINK_POINTER_OPTIONAL(CoreMedia, kCMTextMarkupAttribute_ForegroundColorARGB, CFStringRef)
-SOFT_LINK_POINTER_OPTIONAL(CoreMedia, kCMTextMarkupAttribute_BackgroundColorARGB, CFStringRef)
-SOFT_LINK_POINTER_OPTIONAL(CoreMedia, kCMTextMarkupAttribute_CharacterBackgroundColorARGB, CFStringRef)
+SOFT_LINK_AVF_FRAMEWORK(CoreMedia)
+
+SOFT_LINK_AVF_POINTER(CoreMedia, kCMTextMarkupAttribute_Alignment, CFStringRef)
+SOFT_LINK_AVF_POINTER(CoreMedia, kCMTextMarkupAlignmentType_Start, CFStringRef)
+SOFT_LINK_AVF_POINTER(CoreMedia, kCMTextMarkupAlignmentType_Middle, CFStringRef)
+SOFT_LINK_AVF_POINTER(CoreMedia, kCMTextMarkupAlignmentType_End, CFStringRef)
+SOFT_LINK_AVF_POINTER(CoreMedia, kCMTextMarkupAttribute_BoldStyle, CFStringRef)
+SOFT_LINK_AVF_POINTER(CoreMedia, kCMTextMarkupAttribute_ItalicStyle, CFStringRef)
+SOFT_LINK_AVF_POINTER(CoreMedia, kCMTextMarkupAttribute_UnderlineStyle, CFStringRef)
+SOFT_LINK_AVF_POINTER(CoreMedia, kCMTextMarkupAttribute_TextPositionPercentageRelativeToWritingDirection, CFStringRef)
+SOFT_LINK_AVF_POINTER(CoreMedia, kCMTextMarkupAttribute_WritingDirectionSizePercentage, CFStringRef)
+SOFT_LINK_AVF_POINTER(CoreMedia, kCMTextMarkupAttribute_OrthogonalLinePositionPercentageRelativeToWritingDirection, CFStringRef)
+SOFT_LINK_AVF_POINTER(CoreMedia, kCMTextMarkupAttribute_VerticalLayout, CFStringRef)
+SOFT_LINK_AVF_POINTER(CoreMedia, kCMTextVerticalLayout_LeftToRight, CFStringRef)
+SOFT_LINK_AVF_POINTER(CoreMedia, kCMTextVerticalLayout_RightToLeft, CFStringRef)
+SOFT_LINK_AVF_POINTER(CoreMedia, kCMTextMarkupAttribute_BaseFontSizePercentageRelativeToVideoHeight, CFStringRef)
+SOFT_LINK_AVF_POINTER(CoreMedia, kCMTextMarkupAttribute_RelativeFontSize, CFStringRef)
+SOFT_LINK_AVF_POINTER(CoreMedia, kCMTextMarkupAttribute_FontFamilyName, CFStringRef)
+SOFT_LINK_AVF_POINTER(CoreMedia, kCMTextMarkupAttribute_ForegroundColorARGB, CFStringRef)
+SOFT_LINK_AVF_POINTER(CoreMedia, kCMTextMarkupAttribute_BackgroundColorARGB, CFStringRef)
+SOFT_LINK_AVF_POINTER(CoreMedia, kCMTextMarkupAttribute_CharacterBackgroundColorARGB, CFStringRef)
 
 #define kCMTextMarkupAttribute_Alignment getkCMTextMarkupAttribute_Alignment()
 #define kCMTextMarkupAlignmentType_Start getkCMTextMarkupAlignmentType_Start()
@@ -459,4 +467,4 @@ void InbandTextTrackPrivateAVF::setMode(InbandTextTrackPrivate::Mode newMode)
 
 } // namespace WebCore
 
-#endif // ENABLE(VIDEO) && ((USE(AVFOUNDATION) && !PLATFORM(WIN)) || PLATFORM(IOS))
+#endif // ENABLE(VIDEO) && (USE(AVFOUNDATION) || PLATFORM(IOS))

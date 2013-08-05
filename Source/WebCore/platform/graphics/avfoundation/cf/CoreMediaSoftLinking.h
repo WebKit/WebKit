@@ -53,7 +53,10 @@ SOFT_LINK_DLL_IMPORT(CoreMedia, CMTimeMakeFromDictionary, CMTime, __cdecl, (CFDi
 SOFT_LINK_DLL_IMPORT(CoreMedia, CMTimeMakeWithSeconds, CMTime, __cdecl, (Float64 seconds, int32_t preferredTimeScale), (seconds, preferredTimeScale))
 #define CMTimeMakeWithSeconds softLink_CMTimeMakeWithSeconds
 
+SOFT_LINK_DLL_IMPORT(CoreMedia, CMTimeRangeGetEnd, CMTime, __cdecl, (CMTimeRange range), (range))
+#define CMTimeRangeGetEnd softLink_CMTimeRangeGetEnd
+
 // Variables
 
 SOFT_LINK_VARIABLE_DLL_IMPORT(CoreMedia, kCMTimeZero, const CMTime);
-#define kCMTimeZero get_kCMTimeZero()
+#define kCMTimeZero getkCMTimeZero()
