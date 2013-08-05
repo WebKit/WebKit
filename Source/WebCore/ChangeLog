@@ -1,3 +1,18 @@
+2013-08-05  Mihai Tica  <mitica@adobe.com>
+
+        [CSS Background Blending] Specifying background-image and background-color
+        with opaque image doesn't trigger blending. The fix consists of adding a
+        check whether blend mode is set in hasOpaqueImage.
+
+        https://bugs.webkit.org/show_bug.cgi?id=119434
+
+        Reviewed by Dirk Schulze.
+
+        Test: css3/compositing/background-blend-mode-separate-layer-declaration.html
+
+        * rendering/style/FillLayer.cpp:
+        (WebCore::FillLayer::hasOpaqueImage):
+
 2013-08-04  Zalan Bujtas  <zalan@apple.com>
 
         Background doesn't fully repaint when body has margins.

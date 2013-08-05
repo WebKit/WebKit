@@ -1,3 +1,16 @@
+2013-08-05  Mihai Tica  <mitica@adobe.com>
+
+        [CSS Background Blending] Specifying background-image and background-color with opaque
+        image doesn't trigger blending. Adding ref test to validate the fix.
+
+        https://bugs.webkit.org/show_bug.cgi?id=119434i
+
+        Reviewed by Dirk Schulze.
+
+        * css3/compositing/background-blend-mode-separate-layer-declaration-expected.html: Added.
+        * css3/compositing/background-blend-mode-separate-layer-declaration.html: Added.
+        * css3/compositing/resources/gray_square.svg: Added.
+
 2013-08-03  Simon Fraser  <simon.fraser@apple.com>
 
         webaudio/audiobuffersource-loop-points.html always times out
