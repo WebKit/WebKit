@@ -43,14 +43,14 @@
 
 namespace WebCore {
 
-PassOwnPtr<WebCoreAVFResourceLoader> WebCoreAVFResourceLoader::create(MediaPlayerPrivateAVFoundationObjC* parent, AVAssetResourceLoadingRequest* avRequest)
+PassRefPtr<WebCoreAVFResourceLoader> WebCoreAVFResourceLoader::create(MediaPlayerPrivateAVFoundationObjC* parent, AVAssetResourceLoadingRequest *avRequest)
 {
     ASSERT(avRequest);
     ASSERT(parent);
-    return adoptPtr(new WebCoreAVFResourceLoader(parent, avRequest));
+    return adoptRef(new WebCoreAVFResourceLoader(parent, avRequest));
 }
 
-WebCoreAVFResourceLoader::WebCoreAVFResourceLoader(MediaPlayerPrivateAVFoundationObjC* parent, AVAssetResourceLoadingRequest* avRequest)
+WebCoreAVFResourceLoader::WebCoreAVFResourceLoader(MediaPlayerPrivateAVFoundationObjC* parent, AVAssetResourceLoadingRequest *avRequest)
     : m_parent(parent)
     , m_avRequest(avRequest)
 {
@@ -88,6 +88,8 @@ void WebCoreAVFResourceLoader::stopLoading()
 
     m_resource->removeClient(this);
     m_resource = 0;
+
+    m_parent->didStopLoadingRequest(m_avRequest.get());
 }
 
 void WebCoreAVFResourceLoader::responseReceived(CachedResource* resource, const ResourceResponse& response)
