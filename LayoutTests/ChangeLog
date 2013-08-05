@@ -1,3 +1,17 @@
+2013-08-05  Morten Stenshorne  <mstensho@opera.com>
+
+        Region based columns not clipped properly
+        https://bugs.webkit.org/show_bug.cgi?id=118499
+
+        Reviewed by David Hyatt.
+
+        * fast/multicol/newmulticol/clipping-expected.html: Added.
+        * fast/multicol/newmulticol/clipping-overflow-hidden-expected.html: Added.
+        * fast/multicol/newmulticol/clipping-overflow-hidden.html: Added.
+        * fast/multicol/newmulticol/clipping-top-overflow-expected.html: Added.
+        * fast/multicol/newmulticol/clipping-top-overflow.html: Added.
+        * fast/multicol/newmulticol/clipping.html: Added.
+
 2013-08-05  Mihai Tica  <mitica@adobe.com>
 
         Make tests platform agnostic, fix async tests, remove broken blend modes: hue, saturation, color, luminosity, soft-light.

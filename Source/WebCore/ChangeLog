@@ -1,3 +1,22 @@
+2013-08-05  Morten Stenshorne  <mstensho@opera.com>
+
+        Region based columns not clipped properly
+        https://bugs.webkit.org/show_bug.cgi?id=118499
+
+        Reviewed by David Hyatt.
+
+        Need to call RenderRegion::overflowRectForFlowThreadPortion() first,
+        and THEN clip in the column gaps. overflowRectForFlowThreadPortion()
+        expands the logical left and right to the flow thread's overflow
+        rectangle, effectively defeating inline direction clipping completely.
+
+        Tests: fast/multicol/newmulticol/clipping-overflow-hidden.html
+               fast/multicol/newmulticol/clipping-top-overflow.html
+               fast/multicol/newmulticol/clipping.html
+
+        * rendering/RenderMultiColumnSet.cpp:
+        (WebCore::RenderMultiColumnSet::flowThreadPortionOverflowRect):
+
 2013-08-05  Vivek Galatage  <vivek.vg@samsung.com>
 
         XMLTreeViewer should be created only in the XML viewer mode

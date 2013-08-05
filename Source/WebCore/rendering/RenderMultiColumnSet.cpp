@@ -280,39 +280,25 @@ LayoutRect RenderMultiColumnSet::flowThreadPortionOverflowRect(const LayoutRect&
     bool isLastColumn = index == colCount - 1;
     bool isLeftmostColumn = style()->isLeftToRightDirection() ? isFirstColumn : isLastColumn;
     bool isRightmostColumn = style()->isLeftToRightDirection() ? isLastColumn : isFirstColumn;
-    LayoutRect overflowRect(portionRect);
+
+    // Calculate the overflow rectangle, based on the flow thread's, clipped at column logical
+    // top/bottom unless it's the first/last column.
+    LayoutRect overflowRect = overflowRectForFlowThreadPortion(portionRect, isFirstColumn && isFirstRegion(), isLastColumn && isLastRegion());
+
+    // Avoid overflowing into neighboring columns, by clipping in the middle of adjacent column
+    // gaps. Also make sure that we avoid rounding errors.
     if (isHorizontalWritingMode()) {
-        if (isLeftmostColumn) {
-            // Shift to the logical left overflow of the flow thread to make sure it's all covered.
-            overflowRect.shiftXEdgeTo(min(flowThread()->visualOverflowRect().x(), portionRect.x()));
-        } else {
-            // Expand into half of the logical left column gap.
+        if (!isLeftmostColumn)
             overflowRect.shiftXEdgeTo(portionRect.x() - colGap / 2);
-        }
-        if (isRightmostColumn) {
-            // Shift to the logical right overflow of the flow thread to ensure content can spill out of the column.
-            overflowRect.shiftMaxXEdgeTo(max(flowThread()->visualOverflowRect().maxX(), portionRect.maxX()));
-        } else {
-            // Expand into half of the logical right column gap.
-            overflowRect.shiftMaxXEdgeTo(portionRect.maxX() + colGap / 2);
-        }
+        if (!isRightmostColumn)
+            overflowRect.shiftMaxXEdgeTo(portionRect.maxX() + colGap - colGap / 2);
     } else {
-        if (isLeftmostColumn) {
-            // Shift to the logical left overflow of the flow thread to make sure it's all covered.
-            overflowRect.shiftYEdgeTo(min(flowThread()->visualOverflowRect().y(), portionRect.y()));
-        } else {
-            // Expand into half of the logical left column gap.
+        if (!isLeftmostColumn)
             overflowRect.shiftYEdgeTo(portionRect.y() - colGap / 2);
-        }
-        if (isRightmostColumn) {
-            // Shift to the logical right overflow of the flow thread to ensure content can spill out of the column.
-            overflowRect.shiftMaxYEdgeTo(max(flowThread()->visualOverflowRect().maxY(), portionRect.maxY()));
-        } else {
-            // Expand into half of the logical right column gap.
-            overflowRect.shiftMaxYEdgeTo(portionRect.maxY() + colGap / 2);
-        }
+        if (!isRightmostColumn)
+            overflowRect.shiftMaxYEdgeTo(portionRect.maxY() + colGap - colGap / 2);
     }
-    return overflowRectForFlowThreadPortion(overflowRect, isFirstRegion() && isFirstColumn, isLastRegion() && isLastColumn);
+    return overflowRect;
 }
 
 void RenderMultiColumnSet::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffset)

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Column clipping</title>
+    <script>
+      if (window.internals)
+        internals.settings.setRegionBasedColumnsEnabled(true);
+    </script>
+    <style>
+      body {
+        width: 450px;
+        color: black;
+        background: white;
+      }
+      #container { margin:0 60px; }
+      .mc {
+        columns: 3;
+        column-gap: 15px;
+        column-fill: auto;
+        -webkit-columns: 3;
+        -webkit-column-gap: 15px;
+        -webkit-column-fill: auto;
+        height: 100px;
+        background: red;
+      }
+      .hoverflow { margin:0 -60px; }
+      .rect {
+        box-sizing:border-box;
+        height:100px;
+        border:10px solid green;
+        background:white;
+      }
+    </style>
+  </head>
+  <body>
+    <p>There should be a rectangle with a solid 10px thick green border below, and no red.</p>
+    <div id="container">
+      <div class="mc">
+	<div class="hoverflow">
+	  <div class="rect"></div>
+	</div>
+	<div class="hoverflow">
+	  <div class="rect"></div>
+	</div>
+	<div class="hoverflow">
+	  <div class="rect"></div>
+	</div>
+      </div>
+    </div>
+  </body>
+</html>
