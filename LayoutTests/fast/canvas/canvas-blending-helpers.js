@@ -1,11 +1,14 @@
+// Test only these blend modes for now, since soft light as well as the non separate blend modes seem to be broken,
+// as stated in // https://bugs.webkit.org/show_bug.cgi?id=105609.
+// Radar 12922671.
 var blendModes = ["source-over", "multiply", "screen", "overlay", "darken", "lighten", "color-dodge", "color-burn",
-                  "hard-light", "soft-light", "difference", "exclusion", "hue", "saturation", "color", "luminosity"];
+                  "hard-light", "difference", "exclusion"];
 
 // Helper functions for separate blend mode
 
 var separateBlendmodes = ["normal", "multiply", "screen", "overlay",
                           "darken", "lighten", "colorDodge","colorBurn",
-                          "hardLight", "softLight", "difference", "exclusion"];
+                          "hardLight", "difference", "exclusion"];
 
 var separateBlendFunctions = {
     normal: function(b, s) {
@@ -41,22 +44,6 @@ var separateBlendFunctions = {
             return separateBlendFunctions.multiply(s, 2 * b);
 
         return separateBlendFunctions.screen(s, 2 * b - 1);
-    },
-    // soft light as well as the non separate blend modes seem to be broken, as stated in
-    // https://bugs.webkit.org/show_bug.cgi?id=105609.
-    // Radar 12922671.
-    softLight: function(b, s) {
-        return s;
-        // var c = 0;
-        // if(b <= 0.25)
-        //     c = ((16 * b - 12) * b + 4) * b;
-        // else
-        //     c = Math.sqrt(b);
-
-        // if(s <= 0.5)
-        //     return b - (1 - 2 * s) * b * (1 - b);
-
-        // return b + (2  * s - 1) * (c - b);
     },
     difference: function(b, s) {
         return Math.abs(b - s);
@@ -149,33 +136,27 @@ function setSaturation(c, s) {
 
     return newColor;
 }
-// soft light as well as the non separate blend modes seem to be broken, as stated in
-// https://bugs.webkit.org/show_bug.cgi?id=105609.
-// Radar 12922671.
+
 var nonSeparateBlendFunctions = {
     hue: function(b, s) {
-        return s;
-        // var bCopy = [b[0], b[1], b[2]];
-        // var sCopy = [s[0], s[1], s[2]];
-        // return setLuminosity(setSaturation(sCopy, saturation(bCopy)), luminosity(bCopy));
+        var bCopy = [b[0], b[1], b[2]];
+        var sCopy = [s[0], s[1], s[2]];
+        return setLuminosity(setSaturation(sCopy, saturation(bCopy)), luminosity(bCopy));
     },
     saturation: function(b, s) {
-        return s;
-        // var bCopy = [b[0], b[1], b[2]];
-        // var sCopy = [s[0], s[1], s[2]];
-        // return setLuminosity(setSaturation(bCopy, saturation(sCopy)), luminosity(bCopy));
+        var bCopy = [b[0], b[1], b[2]];
+        var sCopy = [s[0], s[1], s[2]];
+        return setLuminosity(setSaturation(bCopy, saturation(sCopy)), luminosity(bCopy));
     },
     color: function(b, s) {
-        return s;
-        // var bCopy = [b[0], b[1], b[2]];
-        // var sCopy = [s[0], s[1], s[2]];
-        // return setLuminosity(sCopy, luminosity(bCopy));
+        var bCopy = [b[0], b[1], b[2]];
+        var sCopy = [s[0], s[1], s[2]];
+        return setLuminosity(sCopy, luminosity(bCopy));
     },
     luminosity: function(b, s) {
-        return s;
-        // var bCopy = [b[0], b[1], b[2]];
-        // var sCopy = [s[0], s[1], s[2]];
-        // return setLuminosity(bCopy, luminosity(sCopy));
+        var bCopy = [b[0], b[1], b[2]];
+        var sCopy = [s[0], s[1], s[2]];
+        return setLuminosity(bCopy, luminosity(sCopy));
     }
 };
 

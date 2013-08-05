@@ -1,3 +1,64 @@
+2013-08-05  Mihai Tica  <mitica@adobe.com>
+
+        Make tests platform agnostic, fix async tests, remove broken blend modes: hue, saturation, color, luminosity, soft-light.
+        The test suite should now pass on windows.
+
+        https://bugs.webkit.org/show_bug.cgi?id=119463
+
+        Reviewed by Dirk Schulze.
+
+        * fast/canvas/canvas-blending-clipping-expected.txt:
+        * fast/canvas/canvas-blending-clipping.html:
+        * fast/canvas/canvas-blending-color-over-color-expected.txt:
+        * fast/canvas/canvas-blending-color-over-color.html:
+        * fast/canvas/canvas-blending-color-over-gradient-expected.txt:
+        * fast/canvas/canvas-blending-color-over-gradient.html:
+        * fast/canvas/canvas-blending-color-over-image-expected.txt:
+        * fast/canvas/canvas-blending-color-over-image.html:
+        * fast/canvas/canvas-blending-color-over-pattern-expected.txt:
+        * fast/canvas/canvas-blending-color-over-pattern.html:
+        * fast/canvas/canvas-blending-fill-style-expected.txt:
+        * fast/canvas/canvas-blending-fill-style.html:
+        * fast/canvas/canvas-blending-global-alpha-expected.txt:
+        * fast/canvas/canvas-blending-global-alpha.html:
+        * fast/canvas/canvas-blending-gradient-over-color-expected.txt:
+        * fast/canvas/canvas-blending-gradient-over-color.html:
+        * fast/canvas/canvas-blending-gradient-over-gradient-expected.txt:
+        * fast/canvas/canvas-blending-gradient-over-gradient.html:
+        * fast/canvas/canvas-blending-gradient-over-image-expected.txt:
+        * fast/canvas/canvas-blending-gradient-over-image.html:
+        * fast/canvas/canvas-blending-gradient-over-pattern-expected.txt:
+        * fast/canvas/canvas-blending-gradient-over-pattern.html:
+        * fast/canvas/canvas-blending-helpers.js:
+        (separateBlendFunctions.hardLight):
+        (nonSeparateBlendFunctions.hue):
+        (nonSeparateBlendFunctions.saturation):
+        (nonSeparateBlendFunctions.color):
+        (nonSeparateBlendFunctions.luminosity):
+        * fast/canvas/canvas-blending-image-over-color-expected.txt:
+        * fast/canvas/canvas-blending-image-over-color.html:
+        * fast/canvas/canvas-blending-image-over-gradient-expected.txt:
+        * fast/canvas/canvas-blending-image-over-gradient.html:
+        * fast/canvas/canvas-blending-image-over-image-expected.txt:
+        * fast/canvas/canvas-blending-image-over-image.html:
+        * fast/canvas/canvas-blending-image-over-pattern-expected.txt:
+        * fast/canvas/canvas-blending-image-over-pattern.html:
+        * fast/canvas/canvas-blending-pattern-over-color-expected.txt:
+        * fast/canvas/canvas-blending-pattern-over-color.html:
+        * fast/canvas/canvas-blending-pattern-over-gradient-expected.txt:
+        * fast/canvas/canvas-blending-pattern-over-gradient.html:
+        * fast/canvas/canvas-blending-pattern-over-image-expected.txt:
+        * fast/canvas/canvas-blending-pattern-over-image.html:
+        * fast/canvas/canvas-blending-pattern-over-pattern-expected.txt:
+        * fast/canvas/canvas-blending-pattern-over-pattern.html:
+        * fast/canvas/canvas-blending-shadow-expected.txt:
+        * fast/canvas/canvas-blending-shadow.html:
+        * fast/canvas/canvas-blending-text-expected.txt:
+        * fast/canvas/canvas-blending-text.html:
+        * fast/canvas/canvas-blending-transforms-expected.txt:
+        * fast/canvas/canvas-blending-transforms.html:
+        * platform/win/TestExpectations:
+
 2013-08-05  Abhijeet Kandalkar  <abhijeet.k@samsung.com>
 
         Spatial Navigation should avoid unwanted calculation while deciding focus candidate.

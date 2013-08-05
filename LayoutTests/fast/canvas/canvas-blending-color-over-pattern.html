@@ -13,20 +13,25 @@
 
         description("Series of tests to ensure correct results on applying different blend modes when drawing a rectangle on top of an pattern.");
 
+        var context;
+        function actualColor(x, y) {
+            return context.getImageData(x, y, 1, 1).data;
+        }
+
         function checkBlendModeResult(i, context, sigma) {
             var expectedColor = blendColors([129 / 255, 1, 129 / 255, 1], [1, 129 / 255, 129 / 255, 1], i);
-
-            var actualColor = context.getImageData(0, 0, 1, 1).data;
-            shouldBeCloseTo(actualColor[0] + "", expectedColor[0], sigma);
-            shouldBeCloseTo(actualColor[1] + "", expectedColor[1], sigma);
-            shouldBeCloseTo(actualColor[2] + "", expectedColor[2], sigma);
-            shouldBeCloseTo(actualColor[3] + "", expectedColor[3], sigma);
+            var ac = "actualColor(0, 0)";
+            shouldBeCloseTo(ac + "[0]", expectedColor[0], sigma);
+            shouldBeCloseTo(ac + "[1]", expectedColor[1], sigma);
+            shouldBeCloseTo(ac + "[2]", expectedColor[2], sigma);
+            shouldBeCloseTo(ac + "[3]", expectedColor[3], sigma);
         }
 
         function drawElement(context, i) {
             if (i >= blendModes.length) {
-                if (window.testRunner)
-                    testRunner.notifyDone();
+                var scriptElement = document.createElement("script");
+                scriptElement.src = "../js/resources/js-test-post-async.js";
+                document.body.appendChild(scriptElement);
                 return;
             }
             debug("Testing blend mode " + blendModes[i]);
@@ -35,8 +40,7 @@
             context.save();
             drawBackdropColorPatternInContext(context,
                 function() {
-                    if (blendModes[i] != "soft-light")
-                        context.globalCompositeOperation = blendModes[i];
+                    context.globalCompositeOperation = blendModes[i];
                     drawSourceColorInContext(context);
                     checkBlendModeResult(i, context, 5);
                     context.restore();
@@ -50,12 +54,11 @@
             var sigma = 5;
             canvas.width = 10;
             canvas.height = 10;
-            var context = canvas.getContext("2d");
+            context = canvas.getContext("2d");
             drawElement(context, 0);
         }
 
         runTest();
     </script>
-    <script src="../js/resources/js-test-post.js"></script>
 </body>
 </html>

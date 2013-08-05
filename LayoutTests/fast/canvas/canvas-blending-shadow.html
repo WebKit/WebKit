@@ -7,22 +7,25 @@
 
         description("Series of tests to ensure correct results on applying different blend modes when drawing a rectangle with shadow.");
 
+        var context;
+        function actualColor(x, y) {
+            return context.getImageData(x, y, 1, 1).data;
+        }
+
         function checkBlendModeResult(i, context, sigma) {
             var expectedColor = blendColors([129 / 255, 1, 129 / 255, 1], [1, 129 / 255, 129 / 255, 1], i);
-            var actualColor = context.getImageData(0, 0, 1, 1).data;
+            var ac = "actualColor(0, 0)";
+            shouldBeCloseTo(ac + "[0]", expectedColor[0], sigma);
+            shouldBeCloseTo(ac + "[1]", expectedColor[1], sigma);
+            shouldBeCloseTo(ac + "[2]", expectedColor[2], sigma);
+            shouldBeCloseTo(ac + "[3]", expectedColor[3], sigma);
 
-            shouldBeCloseTo(actualColor[0] + "", expectedColor[0], sigma);
-            shouldBeCloseTo(actualColor[1] + "", expectedColor[1], sigma);
-            shouldBeCloseTo(actualColor[2] + "", expectedColor[2], sigma);
-            shouldBeCloseTo(actualColor[3] + "", expectedColor[3], sigma);
-
-            var shadowBlendedColor = context.getImageData(11, 11, 1, 1).data;
             var expectedShadowColor = blendColors([192 / 255, 192 / 255, 192 / 255, 1], [1, 129 / 255, 129 / 255, 1], i);
-
-            shouldBeCloseTo(shadowBlendedColor[0] + "", expectedShadowColor[0], sigma);
-            shouldBeCloseTo(shadowBlendedColor[1] + "", expectedShadowColor[1], sigma);
-            shouldBeCloseTo(shadowBlendedColor[2] + "", expectedShadowColor[2], sigma);
-            shouldBeCloseTo(shadowBlendedColor[3] + "", expectedShadowColor[3], sigma);
+            var ac = "actualColor(11, 11)";
+            shouldBeCloseTo(ac + "[0]", expectedShadowColor[0], sigma);
+            shouldBeCloseTo(ac + "[1]", expectedShadowColor[1], sigma);
+            shouldBeCloseTo(ac + "[2]", expectedShadowColor[2], sigma);
+            shouldBeCloseTo(ac + "[3]", expectedShadowColor[3], sigma);
         }
 
         function runTest() {
@@ -30,7 +33,7 @@
             var sigma = 5;
             canvas.width = 12;
             canvas.height = 12;
-            var context = canvas.getContext("2d");
+            context = canvas.getContext("2d");
 
             for (var i = 0; i < blendModes.length; ++i) {
                 debug("Testing blend mode " + blendModes[i]);
@@ -38,8 +41,7 @@
                 context.clearRect(0, 0, 12, 12);
                 context.save();
                 drawBackdropColorWithShadowInContext(context);
-                if (blendModes[i] != "soft-light")
-                    context.globalCompositeOperation = blendModes[i];
+                context.globalCompositeOperation = blendModes[i];
                 drawSourceColorRectOverShadow(context);
                 checkBlendModeResult(i, context, sigma);
                 context.restore();
