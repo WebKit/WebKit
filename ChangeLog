@@ -1,3 +1,23 @@
+2013-08-05  Zan Dobersek  <zdobersek@igalia.com>
+
+        [Automake] Define ENABLE_JIT through the Autoconf header
+        https://bugs.webkit.org/show_bug.cgi?id=119445
+
+        Reviewed by Martin Robinson.
+
+        Instead of defining the ENABLE_JIT value through JSC_CPPFLAGS, the feature define is
+        set to be either enabled or disabled through the Autoconf header, based on the value
+        passed through the configuration flag. The 'auto' value is used as default, meaning
+        that the feature is enabled or disabled in the Platform.h header based on the platform
+        configuration (OS, architecture etc.).
+
+        * Source/autotools/FindDependencies.m4: Remove the JSC_CPPFLAGS definition.
+        * Source/autotools/ReadCommandLineArguments.m4: Change the default value to 'auto' instead
+        of 'autodetect', as used by other configuration options that take a similar approach to enabling
+        a specific feature.
+        * Source/autotools/SetupAutoconfHeader.m4: Set a strict value for the ENABLE_JIT define through
+        the Autoconf header if the feature was specifically enabled or disabled.
+
 2013-08-04  Zalan Bujtas  <zalan@apple.com>
 
         Background doesn't fully repaint when body has margins.

@@ -94,3 +94,8 @@ if test "$enable_credential_storage" = "yes"; then
     AC_DEFINE([ENABLE_CREDENTIAL_STORAGE], [1], [ ])
 fi
 
+if test "$enable_jit" = "yes"; then
+    AC_DEFINE([ENABLE_JIT], [1], [ ])
+elif test "$enable_jit" = "no"; then
+    AC_DEFINE([ENABLE_JIT], [0], [ ])
+fi

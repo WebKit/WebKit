@@ -312,14 +312,6 @@ if test "$enable_opcode_stats" = "yes"; then
     fi
 fi
 
-case "$enable_jit" in
-    yes) JSC_CPPFLAGS="-DENABLE_JIT=1" ;;
-    no) JSC_CPPFLAGS="-DENABLE_JIT=0" ;;
-    *) enable_jit="autodetect" ;;
-esac
-AC_SUBST(JSC_CPPFLAGS)
-
-
 # Enable CSS Filters and Shaders if accelerated_compositing is turned on.
 enable_css_filters=no;
 enable_css_shaders=no;

@@ -1,3 +1,12 @@
+2013-08-05  Zan Dobersek  <zdobersek@igalia.com>
+
+        [Automake] Define ENABLE_JIT through the Autoconf header
+        https://bugs.webkit.org/show_bug.cgi?id=119445
+
+        Reviewed by Martin Robinson.
+
+        * GNUmakefile.am: Remove JSC_CPPFLAGS from the cpp flags for the JSC library.
+
 2013-08-03  Filip Pizlo  <fpizlo@apple.com>
 
         hasIndexingHeader() ought really to be a property of an object and its structure, not just its structure

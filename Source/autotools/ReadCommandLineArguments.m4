@@ -182,7 +182,7 @@ AC_ARG_ENABLE(accelerated_compositing,
 AC_MSG_RESULT([$enable_accelerated_compositing])
 
 AC_MSG_CHECKING([whether to enable JIT compilation])
-AC_ARG_ENABLE(jit, AS_HELP_STRING([--enable-jit], [Enable JIT compilation (default: autodetect)]))
+AC_ARG_ENABLE(jit, AS_HELP_STRING([--enable-jit], [Enable JIT compilation (default: auto)]), [], [enable_jit=auto])
 AC_MSG_RESULT([$enable_jit])
 
 AC_MSG_CHECKING([whether to enable opcode stats])
