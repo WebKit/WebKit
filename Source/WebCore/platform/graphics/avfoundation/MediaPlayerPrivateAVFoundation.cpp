@@ -905,7 +905,7 @@ void MediaPlayerPrivateAVFoundation::processNewAndRemovedTextTracks(const Vector
         track->setHasBeenReported(true);
         player()->addTextTrack(track.get());
     }
-    LOG(Media, "MediaPlayerPrivateAVFoundation::processNewAndRemovedTextTracks(%p) - found %i text tracks", this, m_textTracks.size());
+    LOG(Media, "MediaPlayerPrivateAVFoundation::processNewAndRemovedTextTracks(%p) - found %lu text tracks", this, m_textTracks.size());
 }
 
 } // namespace WebCore

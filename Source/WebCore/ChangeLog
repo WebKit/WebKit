@@ -1,5 +1,16 @@
 2013-08-05  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r152884
+
+    2013-07-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+            Build fix after r152876.
+
+            * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+            (WebCore::MediaPlayerPrivateAVFoundation::processNewAndRemovedTextTracks):
+
+2013-08-05  Lucas Forschler  <lforschler@apple.com>
+
         Merge r152876
 
     2013-07-18  Brent Fulgham  <bfulgham@apple.com>
