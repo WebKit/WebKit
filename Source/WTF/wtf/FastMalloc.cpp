@@ -1363,6 +1363,11 @@ class TCMalloc_Central_FreeList {
         finder.visit(nextObject.value());
       }
     }
+
+    for (int slot = 0; slot < used_slots_; ++slot) {
+      for (HardenedSLL entry = tc_slots_[slot].head; entry; entry.setValue(reader.nextEntryInHardenedLinkedList(reinterpret_cast<void**>(entry.value()), entropy_)))
+        finder.visit(entry.value());
+    }
   }
 #endif
 
