@@ -1,3 +1,22 @@
+2013-08-05  Brian Holt  <brian.holt@samsung.com>
+
+        [GTK] Implement leak checking with valgrind
+        https://bugs.webkit.org/show_bug.cgi?id=118785
+
+        Reviewed by Dirk Pranke.
+
+        Launch the DRT under Valgrind to generate xml files with details
+        of leaks found.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (parse_args):
+        * Scripts/webkitpy/port/gtk.py:
+        (GtkPort.__init__):
+        (GtkPort.default_timeout_ms): Allow extra time to run under
+        Valgrind.
+        (GtkPort.setup_environ_for_server): Pass Valgrind instructions
+        using environment variables.
+
 2013-08-02  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         [EFL] REGRESSION after r153432: some accessibility tests crash.

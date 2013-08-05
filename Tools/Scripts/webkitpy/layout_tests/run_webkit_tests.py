@@ -110,7 +110,7 @@ def parse_args(args):
         optparse.make_option("--complex-text", action="store_true", default=False,
             help="Use the complex text code path for all text (Mac OS X and Windows only)"),
         optparse.make_option("-l", "--leaks", action="store_true", default=False,
-            help="Enable leaks checking (Mac OS X only)"),
+            help="Enable leaks checking (Mac OS X and Gtk+ only)"),
         optparse.make_option("-g", "--guard-malloc", action="store_true", default=False,
             help="Enable Guard Malloc (Mac OS X only)"),
         optparse.make_option("--threaded", action="store_true", default=False,

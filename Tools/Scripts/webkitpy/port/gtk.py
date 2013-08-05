@@ -1,4 +1,5 @@
 # Copyright (C) 2010 Google Inc. All rights reserved.
+# Copyright (C) 2013 Samsung Electronics.  All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -28,6 +29,7 @@
 
 import os
 import subprocess
+import uuid
 
 from webkitpy.common.memoized import memoized
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration
@@ -44,6 +46,10 @@ class GtkPort(Port):
         super(GtkPort, self).__init__(*args, **kwargs)
         self._pulseaudio_sanitizer = PulseAudioSanitizer()
 
+        if self.get_option("leaks"):
+            if not self.get_option("wrapper"):
+                raise ValueError('use --wrapper=\"valgrind\" for memory leak detection on GTK')
+
     def warn_if_bug_missing_in_test_expectations(self):
         return not self.get_option('webkit_test_runner')
 
@@ -57,9 +63,12 @@ class GtkPort(Port):
         return XvfbDriver
 
     def default_timeout_ms(self):
+        # Starting an application under Valgrind takes a lot longer than normal
+        # so increase the timeout (empirically 10x is enough to avoid timeouts).
+        multiplier = 10 if self.get_option("leaks") else 1
         if self.get_option('configuration') == 'Debug':
-            return 12 * 1000
-        return 6 * 1000
+            return multiplier * 12 * 1000
+        return multiplier * 6 * 1000
 
     def setup_test_run(self):
         super(GtkPort, self).setup_test_run()
@@ -79,6 +88,27 @@ class GtkPort(Port):
         environment['WEBKIT_INSPECTOR_PATH'] = self._build_path('Programs', 'resources', 'inspector')
         environment['AUDIO_RESOURCES_PATH'] = self.path_from_webkit_base('Source', 'WebCore', 'platform', 'audio', 'resources')
         self._copy_value_from_environ_if_set(environment, 'WEBKIT_OUTPUTDIR')
+        if self.get_option("leaks"):
+            #  Turn off GLib memory optimisations https://wiki.gnome.org/Valgrind.
+            environment['G_SLICE'] = 'always-malloc'
+            environment['G_DEBUG'] = 'gc-friendly'
+            xmlfilename = "".join(("drt-%p-", uuid.uuid1().hex, "-leaks.xml"))
+            xmlfile = os.path.join(self.results_directory(), xmlfilename)
+            environment['VALGRIND_OPTS'] = \
+                "--tool=memcheck " \
+                "--num-callers=40 " \
+                "--demangle=no " \
+                "--trace-children=no " \
+                "--smc-check=all-non-file " \
+                "--leak-check=yes " \
+                "--leak-resolution=high " \
+                "--show-possibly-lost=no " \
+                "--show-reachable=no " \
+                "--leak-check=full " \
+                "--undef-value-errors=no " \
+                "--gen-suppressions=all " \
+                "--xml=yes " \
+                "--xml-file=\"%s\" " % (xmlfile)
         return environment
 
     def _generate_all_test_configurations(self):
