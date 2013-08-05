@@ -208,7 +208,7 @@ inline void SlotVisitor::donateAndDrain()
     drain();
 }
 
-inline void SlotVisitor::copyLater(JSCell* owner, void* ptr, size_t bytes)
+inline void SlotVisitor::copyLater(JSCell* owner, CopyToken token, void* ptr, size_t bytes)
 {
     CopiedBlock* block = CopiedSpace::blockFor(ptr);
     if (block->isOversize()) {
@@ -219,7 +219,7 @@ inline void SlotVisitor::copyLater(JSCell* owner, void* ptr, size_t bytes)
     if (block->isPinned())
         return;
 
-    block->reportLiveBytes(owner, bytes);
+    block->reportLiveBytes(owner, token, bytes);
 }
     
 inline void SlotVisitor::reportExtraMemoryUsage(size_t size)

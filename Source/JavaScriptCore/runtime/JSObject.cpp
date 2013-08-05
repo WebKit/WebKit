@@ -185,7 +185,9 @@ ALWAYS_INLINE void JSObject::visitButterfly(SlotVisitor& visitor, Butterfly* but
 
     // Mark the properties.
     visitor.appendValues(butterfly->propertyStorage() - storageSize, storageSize);
-    visitor.copyLater(this, butterfly->base(preCapacity, propertyCapacity), capacityInBytes);
+    visitor.copyLater(
+        this, ButterflyCopyToken,
+        butterfly->base(preCapacity, propertyCapacity), capacityInBytes);
     
     // Mark the array if appropriate.
     switch (structure->indexingType()) {
@@ -222,10 +224,13 @@ void JSObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
 #endif
 }
 
-void JSObject::copyBackingStore(JSCell* cell, CopyVisitor& visitor)
+void JSObject::copyBackingStore(JSCell* cell, CopyVisitor& visitor, CopyToken token)
 {
     JSObject* thisObject = jsCast<JSObject*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    
+    if (token != ButterflyCopyToken)
+        return;
     
     Butterfly* butterfly = thisObject->butterfly();
     if (butterfly)

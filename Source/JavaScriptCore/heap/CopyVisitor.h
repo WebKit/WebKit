@@ -51,7 +51,7 @@ public:
 
 private:
     void* allocateNewSpaceSlow(size_t);
-    void visitCell(JSCell*);
+    void visitItem(CopyWorklistItem);
 
     GCThreadSharedData& m_shared;
     CopiedAllocator m_copiedAllocator;

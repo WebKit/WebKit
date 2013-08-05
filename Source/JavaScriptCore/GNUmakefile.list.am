@@ -373,6 +373,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/heap/CopiedSpace.cpp \
 	Source/JavaScriptCore/heap/CopiedSpace.h \
 	Source/JavaScriptCore/heap/CopiedSpaceInlines.h \
+	Source/JavaScriptCore/heap/CopyToken.h \
 	Source/JavaScriptCore/heap/CopyVisitor.h \
 	Source/JavaScriptCore/heap/CopyVisitorInlines.h \
 	Source/JavaScriptCore/heap/CopyVisitor.cpp \

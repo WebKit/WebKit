@@ -101,7 +101,7 @@ public:
     JS_EXPORT_PRIVATE JSObject* toObject(ExecState*, JSGlobalObject*) const;
 
     static void visitChildren(JSCell*, SlotVisitor&);
-    JS_EXPORT_PRIVATE static void copyBackingStore(JSCell*, CopyVisitor&);
+    JS_EXPORT_PRIVATE static void copyBackingStore(JSCell*, CopyVisitor&, CopyToken);
 
     // Object operations, with the toObject operation included.
     const ClassInfo* classInfo() const;

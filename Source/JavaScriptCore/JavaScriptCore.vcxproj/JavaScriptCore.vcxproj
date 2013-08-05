@@ -641,6 +641,7 @@
     <ClInclude Include="..\heap\CopiedBlockInlines.h" />
     <ClInclude Include="..\heap\CopiedSpace.h" />
     <ClInclude Include="..\heap\CopiedSpaceInlines.h" />
+    <ClInclude Include="..\heap\CopyToken.h" />
     <ClInclude Include="..\heap\CopyVisitor.h" />
     <ClInclude Include="..\heap\CopyVisitorInlines.h" />
     <ClInclude Include="..\heap\CopyWorkList.h" />

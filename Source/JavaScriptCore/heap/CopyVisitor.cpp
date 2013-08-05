@@ -32,6 +32,7 @@
 #include "GCThreadSharedData.h"
 #include "JSCell.h"
 #include "JSObject.h"
+#include "Operations.h"
 #include <wtf/Threading.h>
 
 namespace JSC {
@@ -53,7 +54,7 @@ void CopyVisitor::copyFromShared()
 
             CopyWorkList& workList = block->workList();
             for (CopyWorkList::iterator it = workList.begin(); it != workList.end(); ++it)
-                visitCell(*it);
+                visitItem(*it);
 
             ASSERT(!block->liveBytes());
             m_shared.m_copiedSpace->recycleEvacuatedBlock(block);

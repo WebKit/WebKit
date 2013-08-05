@@ -34,10 +34,15 @@
 
 namespace JSC {
 
-inline void CopyVisitor::visitCell(JSCell* cell)
+inline void CopyVisitor::visitItem(CopyWorklistItem item)
 {
-    ASSERT(cell->structure()->classInfo()->methodTable.copyBackingStore == JSObject::copyBackingStore);
-    JSObject::copyBackingStore(cell, *this);
+    if (item.token() == ButterflyCopyToken) {
+        ASSERT(item.cell()->structure()->classInfo()->methodTable.copyBackingStore == JSObject::copyBackingStore);
+        JSObject::copyBackingStore(item.cell(), *this, ButterflyCopyToken);
+        return;
+    }
+    
+    item.cell()->methodTable()->copyBackingStore(item.cell(), *this, item.token());
 }
 
 inline bool CopyVisitor::checkIfShouldCopy(void* oldPtr)

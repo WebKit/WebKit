@@ -26,6 +26,7 @@
 #ifndef SlotVisitor_h
 #define SlotVisitor_h
 
+#include "CopyToken.h"
 #include "HandleTypes.h"
 #include "MarkStackInlines.h"
 
@@ -83,7 +84,7 @@ public:
     void harvestWeakReferences();
     void finalizeUnconditionalFinalizers();
 
-    void copyLater(JSCell*, void*, size_t);
+    void copyLater(JSCell*, CopyToken, void*, size_t);
     
     void reportExtraMemoryUsage(size_t size);
     

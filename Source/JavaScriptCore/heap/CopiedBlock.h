@@ -52,7 +52,7 @@ public:
     bool isOversize();
 
     unsigned liveBytes();
-    void reportLiveBytes(JSCell*, unsigned);
+    void reportLiveBytes(JSCell*, CopyToken, unsigned);
     void didSurviveGC();
     void didEvacuateBytes(unsigned);
     bool shouldEvacuate();

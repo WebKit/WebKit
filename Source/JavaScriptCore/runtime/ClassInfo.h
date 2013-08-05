@@ -25,6 +25,7 @@
 
 #include "CallFrame.h"
 #include "ConstructData.h"
+#include "CopyToken.h"
 #include "JSCell.h"
 
 namespace JSC {
@@ -39,7 +40,7 @@ struct MethodTable {
     typedef void (*VisitChildrenFunctionPtr)(JSCell*, SlotVisitor&);
     VisitChildrenFunctionPtr visitChildren;
 
-    typedef void (*CopyBackingStoreFunctionPtr)(JSCell*, CopyVisitor&);
+    typedef void (*CopyBackingStoreFunctionPtr)(JSCell*, CopyVisitor&, CopyToken);
     CopyBackingStoreFunctionPtr copyBackingStore;
 
     typedef CallType (*GetCallDataFunctionPtr)(JSCell*, CallData&);

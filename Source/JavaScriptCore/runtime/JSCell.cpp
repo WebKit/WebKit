@@ -39,7 +39,7 @@ void JSCell::destroy(JSCell* cell)
     cell->JSCell::~JSCell();
 }
 
-void JSCell::copyBackingStore(JSCell*, CopyVisitor&)
+void JSCell::copyBackingStore(JSCell*, CopyVisitor&, CopyToken)
 {
 }
 
