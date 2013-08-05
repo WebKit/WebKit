@@ -32,6 +32,7 @@
 #include <wtf/HashMap.h>
 
 OBJC_CLASS AVAssetImageGenerator;
+OBJC_CLASS AVAssetResourceLoadingRequest;
 OBJC_CLASS AVMediaSelectionGroup;
 OBJC_CLASS AVPlayer;
 OBJC_CLASS AVPlayerItem;
@@ -77,6 +78,7 @@ public:
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     bool shouldWaitForLoadingOfResource(AVAssetResourceLoadingRequest*);
     void didCancelLoadingRequest(AVAssetResourceLoadingRequest*);
+    void didStopLoadingRequest(AVAssetResourceLoadingRequest *);
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA) || ENABLE(ENCRYPTED_MEDIA_V2)
@@ -201,7 +203,7 @@ private:
     RetainPtr<VTPixelTransferSessionRef> m_pixelTransferSession;
 
     friend class WebCoreAVFResourceLoader;
-    OwnPtr<WebCoreAVFResourceLoader> m_resourceLoader;
+    HashMap<RetainPtr<AVAssetResourceLoadingRequest>, RefPtr<WebCoreAVFResourceLoader> > m_resourceLoaderMap;
     RetainPtr<WebCoreAVFLoaderDelegate> m_loaderDelegate;
     HashMap<String, RetainPtr<AVAssetResourceLoadingRequest> > m_keyURIToRequestMap;
     HashMap<String, RetainPtr<AVAssetResourceLoadingRequest> > m_sessionIDToRequestMap;

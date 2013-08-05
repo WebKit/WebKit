@@ -1,3 +1,28 @@
+2013-08-03  Jer Noble  <jer.noble@apple.com>
+
+        Loading a video with a custom URL scheme will result in stalling playback
+        https://bugs.webkit.org/show_bug.cgi?id=119469
+
+        Reviewed by Eric Carlson.
+
+        Break the assumption that only one AVAssetResourceRequest will be outstanding simultaneously
+        by storing a HashMap of AVAssetResourceRequests and their resulting WebCoreAVFResourceLoader.
+        When loading is stopped (due to completion or error), notify the MediaPlayerPrivateAVFoundation
+        parent so that the map can be emptied.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::shouldWaitForLoadingOfResource): Store the request
+            in m_resourceLoaderMap.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::didCancelLoadingRequest): Pull the request from
+            m_resourceLoaderMap.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::didStopLoadingRequest): Remove the requset from
+            m_resourceLoaderMap.
+        * platform/graphics/avfoundation/objc/WebCoreAVFResourceLoader.h:
+        * platform/graphics/avfoundation/objc/WebCoreAVFResourceLoader.mm:
+        (WebCore::WebCoreAVFResourceLoader::create): Return a PassRefPtr, rather than a PassOwnPtr.
+        (WebCore::WebCoreAVFResourceLoader::stopLoading): Call didStopLoadingRequest.
+
 2013-08-05  Abhijeet Kandalkar  <abhijeet.k@samsung.com>
 
         Spatial Navigation should avoid unwanted calculation while deciding focus candidate.
