@@ -1,3 +1,27 @@
+2013-08-05  Vivek Galatage  <vivek.vg@samsung.com>
+
+        XMLTreeViewer should be created only in the XML viewer mode
+        https://bugs.webkit.org/show_bug.cgi?id=119483
+
+        Reviewed by Alexey Proskuryakov.
+
+        XMLTreeViewer is created even for the XSL transform which is avoided by the patch.
+        The XMLTreeViewer::hasNoStyleInformation() is moved to XMLDocumentParserLibxml2.cpp
+        as static inline method as XMLTreeViewer should not have the responsibility for it.
+        Also removes an unnecessary conditional check while deciding for XML viewer mode.
+
+        Blink patch review links:
+        https://codereview.chromium.org/19552003/
+        https://codereview.chromium.org/22150003/
+
+        No new tests as the patch is about code refactoring.
+
+        * xml/XMLTreeViewer.cpp:
+        * xml/XMLTreeViewer.h:
+        * xml/parser/XMLDocumentParserLibxml2.cpp:
+        (WebCore::hasNoStyleInformation):
+        (WebCore::XMLDocumentParser::doEnd):
+
 2013-08-03  Jer Noble  <jer.noble@apple.com>
 
         Loading a video with a custom URL scheme will result in stalling playback
