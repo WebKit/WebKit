@@ -1334,17 +1334,6 @@ RetainPtr<AVAssetResourceLoadingRequest> MediaPlayerPrivateAVFoundationObjC::tak
 }
 #endif
 
-
-void MediaPlayerPrivateAVFoundationObjC::clearTextTracks()
-{
-    for (unsigned i = 0; i < m_textTracks.size(); ++i) {
-        RefPtr<InbandTextTrackPrivateAVF> track = m_textTracks[i];
-        player()->removeTextTrack(track);
-        track->disconnect();
-    }
-    m_textTracks.clear();
-}
-
 #if !HAVE(AVFOUNDATION_LEGIBLE_OUTPUT_SUPPORT)
 void MediaPlayerPrivateAVFoundationObjC::processLegacyClosedCaptionsTracks()
 {
@@ -1382,32 +1371,6 @@ void MediaPlayerPrivateAVFoundationObjC::processLegacyClosedCaptionsTracks()
     processNewAndRemovedTextTracks(removedTextTracks);
 }
 #endif
-
-void MediaPlayerPrivateAVFoundationObjC::processNewAndRemovedTextTracks(const Vector<RefPtr<InbandTextTrackPrivateAVF> >& removedTextTracks)
-{
-    if (removedTextTracks.size()) {
-        for (unsigned i = 0; i < m_textTracks.size(); ++i) {
-            if (!removedTextTracks.contains(m_textTracks[i]))
-                continue;
-            
-            player()->removeTextTrack(removedTextTracks[i].get());
-            m_textTracks.remove(i);
-        }
-    }
-    
-    for (unsigned i = 0; i < m_textTracks.size(); ++i) {
-        RefPtr<InbandTextTrackPrivateAVF> track = m_textTracks[i];
-        
-        track->setTextTrackIndex(i);
-        if (track->hasBeenReported())
-            continue;
-        
-        track->setHasBeenReported(true);
-        player()->addTextTrack(track.get());
-    }
-    LOG(Media, "MediaPlayerPrivateAVFoundationObjC::processNewAndRemovedTextTracks(%p) - found %i text tracks", this, m_textTracks.size());
-    
-}
 
 #if HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP)
 AVMediaSelectionGroupType* MediaPlayerPrivateAVFoundationObjC::safeMediaSelectionGroupForLegibleMedia()

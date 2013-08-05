@@ -873,6 +873,41 @@ size_t MediaPlayerPrivateAVFoundation::extraMemoryCost() const
     return totalBytes() * buffered()->totalDuration() / duration;
 }
 
+void MediaPlayerPrivateAVFoundation::clearTextTracks()
+{
+    for (unsigned i = 0; i < m_textTracks.size(); ++i) {
+        RefPtr<InbandTextTrackPrivateAVF> track = m_textTracks[i];
+        player()->removeTextTrack(track);
+        track->disconnect();
+    }
+    m_textTracks.clear();
+}
+
+void MediaPlayerPrivateAVFoundation::processNewAndRemovedTextTracks(const Vector<RefPtr<InbandTextTrackPrivateAVF> >& removedTextTracks)
+{
+    if (removedTextTracks.size()) {
+        for (unsigned i = 0; i < m_textTracks.size(); ++i) {
+            if (!removedTextTracks.contains(m_textTracks[i]))
+                continue;
+            
+            player()->removeTextTrack(removedTextTracks[i].get());
+            m_textTracks.remove(i);
+        }
+    }
+    
+    for (unsigned i = 0; i < m_textTracks.size(); ++i) {
+        RefPtr<InbandTextTrackPrivateAVF> track = m_textTracks[i];
+        
+        track->setTextTrackIndex(i);
+        if (track->hasBeenReported())
+            continue;
+        
+        track->setHasBeenReported(true);
+        player()->addTextTrack(track.get());
+    }
+    LOG(Media, "MediaPlayerPrivateAVFoundation::processNewAndRemovedTextTracks(%p) - found %i text tracks", this, m_textTracks.size());
+}
+
 } // namespace WebCore
 
 #endif
