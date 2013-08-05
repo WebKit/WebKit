@@ -115,6 +115,9 @@ namespace WebCore {
 
         SETTINGS_GETTERS_AND_SETTERS
 
+        void setScreenFontSubstitutionEnabled(bool);
+        bool screenFontSubstitutionEnabled() const { return m_screenFontSubstitutionEnabled; }
+
         void setJavaEnabled(bool);
         bool isJavaEnabled() const { return m_isJavaEnabled; }
 
@@ -265,6 +268,7 @@ namespace WebCore {
         explicit Settings(Page*);
 
         void initializeDefaultFontFamilies();
+        static bool shouldEnableScreenFontSubstitutionByDefault();
 
         Page* m_page;
 
@@ -280,6 +284,7 @@ namespace WebCore {
 
         SETTINGS_MEMBER_VARIABLES
 
+        bool m_screenFontSubstitutionEnabled : 1;
         bool m_isJavaEnabled : 1;
         bool m_isJavaEnabledForLocalFiles : 1;
         bool m_loadsImagesAutomatically : 1;

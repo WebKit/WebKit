@@ -28,6 +28,15 @@
 
 namespace WebCore {
 
+bool Settings::shouldEnableScreenFontSubstitutionByDefault()
+{
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+    return false;
+#else
+    return true;
+#endif
+}
+
 void Settings::initializeDefaultFontFamilies()
 {
 #if !PLATFORM(IOS)
