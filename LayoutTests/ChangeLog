@@ -1,5 +1,16 @@
 2013-08-05  Alexey Proskuryakov  <ap@apple.com>
 
+        <rdar://problem/13128990> chunked-progress-event-expectedLength.html is flaky on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=119498
+
+        Reviewed by Brady Eidson.
+
+        * http/tests/xmlhttprequest/resources/chunked-transfer.php: This test relies on
+        length not being known upfront, which is not the case when the resource is served
+        form cache.
+
+2013-08-05  Alexey Proskuryakov  <ap@apple.com>
+
         <rdar://problem/14637103> REGRESSION (r153060?): Microphone appears in the way
         of text when dictating an e-mail
         https://bugs.webkit.org/show_bug.cgi?id=119496
