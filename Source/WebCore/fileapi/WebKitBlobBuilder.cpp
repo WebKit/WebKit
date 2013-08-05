@@ -40,8 +40,8 @@
 #include "LineEnding.h"
 #include "ScriptCallStack.h"
 #include "TextEncoding.h"
-#include <wtf/ArrayBuffer.h>
-#include <wtf/ArrayBufferView.h>
+#include <runtime/ArrayBuffer.h>
+#include <runtime/ArrayBufferView.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/AtomicString.h>

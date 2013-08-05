@@ -28,17 +28,15 @@
 #ifndef Uint8ClampedArray_h
 #define Uint8ClampedArray_h
 
-#include <wtf/Platform.h>
-
-#include <wtf/Uint8Array.h>
+#include "Uint8Array.h"
 #include <wtf/MathExtras.h>
 
-namespace WTF {
+namespace JSC {
 
 class Uint8ClampedArray : public Uint8Array {
 public:
     static inline PassRefPtr<Uint8ClampedArray> create(unsigned length);
-    static inline PassRefPtr<Uint8ClampedArray> create(const unsigned char* array, unsigned length);
+    static inline PassRefPtr<Uint8ClampedArray> create(const uint8_t* array, unsigned length);
     static inline PassRefPtr<Uint8ClampedArray> create(PassRefPtr<ArrayBuffer>, unsigned byteOffset, unsigned length);
 
     // Should only be used when it is known the entire array will be filled. Do
@@ -50,7 +48,7 @@ public:
     // zero the allocated memory.
     inline void zeroFill();
 
-    using TypedArrayBase<unsigned char>::set;
+    using TypedArrayBase<uint8_t>::set;
     inline void set(unsigned index, double value);
 
     inline PassRefPtr<Uint8ClampedArray> subarray(int start) const;
@@ -62,31 +60,29 @@ public:
     }
 
 private:
-    inline Uint8ClampedArray(PassRefPtr<ArrayBuffer>,
-                             unsigned byteOffset,
-                             unsigned length);
+    inline Uint8ClampedArray(PassRefPtr<ArrayBuffer>, unsigned byteOffset, unsigned length);
     // Make constructor visible to superclass.
-    friend class TypedArrayBase<unsigned char>;
+    friend class TypedArrayBase<uint8_t>;
 };
 
 PassRefPtr<Uint8ClampedArray> Uint8ClampedArray::create(unsigned length)
 {
-    return TypedArrayBase<unsigned char>::create<Uint8ClampedArray>(length);
+    return TypedArrayBase<uint8_t>::create<Uint8ClampedArray>(length);
 }
 
-PassRefPtr<Uint8ClampedArray> Uint8ClampedArray::create(const unsigned char* array, unsigned length)
+PassRefPtr<Uint8ClampedArray> Uint8ClampedArray::create(const uint8_t* array, unsigned length)
 {
-    return TypedArrayBase<unsigned char>::create<Uint8ClampedArray>(array, length);
+    return TypedArrayBase<uint8_t>::create<Uint8ClampedArray>(array, length);
 }
 
 PassRefPtr<Uint8ClampedArray> Uint8ClampedArray::create(PassRefPtr<ArrayBuffer> buffer, unsigned byteOffset, unsigned length)
 {
-    return TypedArrayBase<unsigned char>::create<Uint8ClampedArray>(buffer, byteOffset, length);
+    return TypedArrayBase<uint8_t>::create<Uint8ClampedArray>(buffer, byteOffset, length);
 }
 
 PassRefPtr<Uint8ClampedArray> Uint8ClampedArray::createUninitialized(unsigned length)
 {
-    return TypedArrayBase<unsigned char>::createUninitialized<Uint8ClampedArray>(length);
+    return TypedArrayBase<uint8_t>::createUninitialized<Uint8ClampedArray>(length);
 }
 
 void Uint8ClampedArray::zeroFill()
@@ -102,7 +98,7 @@ void Uint8ClampedArray::set(unsigned index, double value)
         value = 0;
     else if (value > 255)
         value = 255;
-    data()[index] = static_cast<unsigned char>(lrint(value));
+    data()[index] = static_cast<uint8_t>(lrint(value));
 }
 
 Uint8ClampedArray::Uint8ClampedArray(PassRefPtr<ArrayBuffer> buffer, unsigned byteOffset, unsigned length)
@@ -120,8 +116,8 @@ PassRefPtr<Uint8ClampedArray> Uint8ClampedArray::subarray(int start, int end) co
     return subarrayImpl<Uint8ClampedArray>(start, end);
 }
 
-} // namespace WTF
+} // namespace JSC
 
-using WTF::Uint8ClampedArray;
+using JSC::Uint8ClampedArray;
 
 #endif // Uint8ClampedArray_h

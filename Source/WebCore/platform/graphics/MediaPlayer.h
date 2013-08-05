@@ -39,6 +39,7 @@
 #include "LayoutRect.h"
 #include "Timer.h"
 #include "VideoTrackPrivate.h"
+#include <runtime/Uint8Array.h>
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
 #include <wtf/OwnPtr.h>

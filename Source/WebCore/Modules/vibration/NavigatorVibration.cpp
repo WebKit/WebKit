@@ -26,7 +26,7 @@
 #include "Navigator.h"
 #include "Page.h"
 #include "Vibration.h"
-#include <wtf/Uint32Array.h>
+#include <runtime/Uint32Array.h>
 
 namespace WebCore {
 

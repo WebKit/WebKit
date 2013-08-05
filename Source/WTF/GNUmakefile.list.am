@@ -4,10 +4,6 @@ wtf_sources += \
     Source/WTF/wtf/ASCIICType.h \
     Source/WTF/wtf/AVLTree.h \
     Source/WTF/wtf/Alignment.h \
-    Source/WTF/wtf/ArrayBuffer.cpp \
-    Source/WTF/wtf/ArrayBuffer.h \
-    Source/WTF/wtf/ArrayBufferView.cpp \
-    Source/WTF/wtf/ArrayBufferView.h \
     Source/WTF/wtf/Assertions.cpp \
     Source/WTF/wtf/Assertions.h \
     Source/WTF/wtf/Atomics.cpp \
@@ -56,8 +52,6 @@ wtf_sources += \
     Source/WTF/wtf/FilePrintStream.cpp \
     Source/WTF/wtf/FilePrintStream.h \
     Source/WTF/wtf/FixedArray.h \
-    Source/WTF/wtf/Float32Array.h \
-    Source/WTF/wtf/Float64Array.h \
     Source/WTF/wtf/Forward.h \
     Source/WTF/wtf/FunctionDispatcher.cpp \
     Source/WTF/wtf/FunctionDispatcher.h \
@@ -76,10 +70,6 @@ wtf_sources += \
     Source/WTF/wtf/HexNumber.h \
     Source/WTF/wtf/InlineASM.h \
     Source/WTF/wtf/Insertion.h \
-    Source/WTF/wtf/Int16Array.h \
-    Source/WTF/wtf/Int32Array.h \
-    Source/WTF/wtf/Int8Array.h \
-    Source/WTF/wtf/IntegralTypedArrayBase.h \
     Source/WTF/wtf/ListDump.h \
     Source/WTF/wtf/ListHashSet.h \
     Source/WTF/wtf/LLVMHeaders.h \
@@ -189,11 +179,6 @@ wtf_sources += \
     Source/WTF/wtf/TriState.h \
     Source/WTF/wtf/TypeTraits.cpp \
     Source/WTF/wtf/TypeTraits.h \
-    Source/WTF/wtf/TypedArrayBase.h \
-    Source/WTF/wtf/Uint16Array.h \
-    Source/WTF/wtf/Uint32Array.h \
-    Source/WTF/wtf/Uint8Array.h \
-    Source/WTF/wtf/Uint8ClampedArray.h \
     Source/WTF/wtf/UnionFind.h \
     Source/WTF/wtf/UniStdExtras.h \
     Source/WTF/wtf/VMTags.h \

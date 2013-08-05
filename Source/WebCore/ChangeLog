@@ -1,3 +1,122 @@
+2013-08-05  Oliver Hunt  <oliver@apple.com>
+
+        Move TypedArray implementation into JSC
+        https://bugs.webkit.org/show_bug.cgi?id=119489
+
+        Reviewed by Filip Pizlo.
+
+        Update WebCore for new location of TypedArray implementation.
+
+        * ForwardingHeaders/runtime/ArrayBuffer.h: Added.
+        * ForwardingHeaders/runtime/ArrayBufferView.h: Added.
+        * ForwardingHeaders/runtime/Float32Array.h: Added.
+        * ForwardingHeaders/runtime/Float64Array.h: Added.
+        * ForwardingHeaders/runtime/Int16Array.h: Added.
+        * ForwardingHeaders/runtime/Int32Array.h: Added.
+        * ForwardingHeaders/runtime/Int8Array.h: Added.
+        * ForwardingHeaders/runtime/IntegralTypedArrayBase.h: Added.
+        * ForwardingHeaders/runtime/TypedArrayBase.h: Added.
+        * ForwardingHeaders/runtime/Uint16Array.h: Added.
+        * ForwardingHeaders/runtime/Uint32Array.h: Added.
+        * ForwardingHeaders/runtime/Uint8Array.h: Added.
+        * ForwardingHeaders/runtime/Uint8ClampedArray.h: Added.
+        * Modules/webaudio/AnalyserNode.h:
+        (WebCore::AnalyserNode::getFloatFrequencyData):
+        (WebCore::AnalyserNode::getByteFrequencyData):
+        (WebCore::AnalyserNode::getByteTimeDomainData):
+        * Modules/webaudio/AsyncAudioDecoder.cpp:
+        * Modules/webaudio/AsyncAudioDecoder.h:
+        (WebCore::AsyncAudioDecoder::DecodingTask::audioData):
+        * Modules/webaudio/AudioBuffer.h:
+        * Modules/webaudio/AudioContext.cpp:
+        * Modules/webaudio/AudioParam.h:
+        * Modules/webaudio/AudioParamTimeline.h:
+        * Modules/webaudio/PeriodicWave.h:
+        * Modules/webaudio/RealtimeAnalyser.cpp:
+        * Modules/webaudio/RealtimeAnalyser.h:
+        * Modules/webaudio/ScriptProcessorNode.cpp:
+        * Modules/webaudio/WaveShaperProcessor.h:
+        * Modules/websockets/ThreadableWebSocketChannel.h:
+        * Modules/websockets/WebSocket.cpp:
+        * Modules/websockets/WebSocket.h:
+        * Modules/websockets/WebSocketChannel.cpp:
+        * Modules/websockets/WebSocketChannel.h:
+        * Modules/websockets/WorkerThreadableWebSocketChannel.cpp:
+        * Modules/websockets/WorkerThreadableWebSocketChannel.h:
+        * WebCore.exp.in:
+        * bindings/js/JSArrayBufferCustom.cpp:
+        * bindings/js/JSArrayBufferViewHelper.h:
+        * bindings/js/JSAudioContextCustom.cpp:
+        * bindings/js/JSCryptoCustom.cpp:
+        * bindings/js/JSDictionary.h:
+        * bindings/js/JSFileReaderCustom.cpp:
+        * bindings/js/JSWebGLRenderingContextCustom.cpp:
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::SerializedScriptValue::transferArrayBuffers):
+        * bindings/js/SerializedScriptValue.h:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (AddIncludesForType):
+        (GenerateHeader):
+        (NativeToJSValue):
+        * dom/MessageEvent.h:
+        * fileapi/FileReader.cpp:
+        * fileapi/FileReader.h:
+        * fileapi/FileReaderLoader.cpp:
+        * fileapi/FileReaderLoader.h:
+        * fileapi/FileReaderSync.cpp:
+        * fileapi/FileReaderSync.h:
+        * fileapi/WebKitBlobBuilder.cpp:
+        * fileapi/WebKitBlobBuilder.h:
+        * html/HTMLMediaElement.cpp:
+        * html/ImageData.h:
+        * html/canvas/ArrayBuffer.idl:
+        * html/canvas/ArrayBufferView.idl:
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        * html/canvas/DataView.h:
+        * html/canvas/Float32Array.idl:
+        * html/canvas/Float64Array.idl:
+        * html/canvas/Int16Array.idl:
+        * html/canvas/Int32Array.idl:
+        * html/canvas/Int8Array.idl:
+        * html/canvas/Uint16Array.idl:
+        * html/canvas/Uint32Array.idl:
+        * html/canvas/Uint8Array.idl:
+        * html/canvas/Uint8ClampedArray.idl:
+        * html/canvas/WebGLBuffer.h:
+        (WebCore::WebGLBuffer::elementArrayBuffer):
+        * html/canvas/WebGLGetInfo.cpp:
+        * html/canvas/WebGLGetInfo.h:
+        * html/canvas/WebGLRenderingContext.cpp:
+        * html/canvas/WebGLRenderingContext.h:
+        * inspector/InspectorMemoryAgent.cpp:
+        * page/Crypto.cpp:
+        * page/Crypto.h:
+        * platform/graphics/GraphicsContext3D.cpp:
+        * platform/graphics/ImageBuffer.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        * platform/graphics/cg/ImageBufferDataCG.h:
+        * platform/graphics/filters/FEBlend.cpp:
+        * platform/graphics/filters/FEColorMatrix.cpp:
+        * platform/graphics/filters/FEComponentTransfer.cpp:
+        * platform/graphics/filters/FEComposite.cpp:
+        * platform/graphics/filters/FEConvolveMatrix.cpp:
+        * platform/graphics/filters/FECustomFilter.cpp:
+        * platform/graphics/filters/FEDisplacementMap.cpp:
+        * platform/graphics/filters/FEDropShadow.cpp:
+        * platform/graphics/filters/FEGaussianBlur.cpp:
+        * platform/graphics/filters/FELighting.h:
+        * platform/graphics/filters/FEMorphology.cpp:
+        * platform/graphics/filters/FETurbulence.cpp:
+        * platform/graphics/filters/FilterEffect.cpp:
+        * platform/graphics/filters/FilterEffect.h:
+        * platform/graphics/mac/GraphicsContext3DMac.mm:
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        * testing/Internals.h:
+        * xml/XMLHttpRequest.cpp:
+        * xml/XMLHttpRequest.h:
+        (WebCore::XMLHttpRequest::optionalResponseArrayBuffer):
+
 2013-08-05  Alexey Proskuryakov  <ap@apple.com>
 
         <rdar://problem/14637103> REGRESSION (r153060?): Microphone appears in the way

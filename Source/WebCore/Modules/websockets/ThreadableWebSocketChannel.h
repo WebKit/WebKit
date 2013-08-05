@@ -37,6 +37,11 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/PassRefPtr.h>
 
+namespace JSC {
+class ArrayBuffer;
+class ArrayBufferView;
+}
+
 namespace WebCore {
 
 class Blob;
@@ -60,7 +65,7 @@ public:
     virtual String subprotocol() = 0; // Will be available after didConnect() callback is invoked.
     virtual String extensions() = 0; // Will be available after didConnect() callback is invoked.
     virtual SendResult send(const String& message) = 0;
-    virtual SendResult send(const ArrayBuffer&, unsigned byteOffset, unsigned byteLength) = 0;
+    virtual SendResult send(const JSC::ArrayBuffer&, unsigned byteOffset, unsigned byteLength) = 0;
     virtual SendResult send(const Blob&) = 0;
     virtual unsigned long bufferedAmount() const = 0;
     virtual void close(int code, const String& reason) = 0;

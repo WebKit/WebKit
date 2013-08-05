@@ -31,8 +31,8 @@
 #include "ContextDestructionObserver.h"
 #include "ExceptionCodePlaceholder.h"
 #include "NodeList.h"
-#include <wtf/ArrayBuffer.h>
-#include <wtf/Float32Array.h>
+#include <runtime/ArrayBuffer.h>
+#include <runtime/Float32Array.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>

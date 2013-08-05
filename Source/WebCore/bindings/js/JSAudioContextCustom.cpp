@@ -34,8 +34,8 @@
 #include "JSAudioContext.h"
 #include "JSOfflineAudioContext.h"
 #include "OfflineAudioContext.h"
+#include <runtime/ArrayBuffer.h>
 #include <runtime/Error.h>
-#include <wtf/ArrayBuffer.h>
 
 using namespace JSC;
 

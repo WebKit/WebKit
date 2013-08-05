@@ -27,9 +27,9 @@
 #ifndef Int32Array_h
 #define Int32Array_h
 
-#include <wtf/IntegralTypedArrayBase.h>
+#include "IntegralTypedArrayBase.h"
 
-namespace WTF {
+namespace JSC {
 
 class Int32Array : public IntegralTypedArrayBase<int> {
 public:
@@ -53,9 +53,7 @@ public:
     }
 
 private:
-    inline Int32Array(PassRefPtr<ArrayBuffer>,
-                  unsigned byteOffset,
-                  unsigned length);
+    inline Int32Array(PassRefPtr<ArrayBuffer>, unsigned byteOffset, unsigned length);
     // Make constructor visible to superclass.
     friend class TypedArrayBase<int>;
 };
@@ -95,8 +93,8 @@ PassRefPtr<Int32Array> Int32Array::subarray(int start, int end) const
     return subarrayImpl<Int32Array>(start, end);
 }
 
-} // namespace WTF
+} // namespace JSC
 
-using WTF::Int32Array;
+using JSC::Int32Array;
 
 #endif // Int32Array_h

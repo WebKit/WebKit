@@ -1,3 +1,131 @@
+2013-08-05  Oliver Hunt  <oliver@apple.com>
+
+        Move TypedArray implementation into JSC
+        https://bugs.webkit.org/show_bug.cgi?id=119489
+
+        Reviewed by Filip Pizlo.
+
+        Move TypedArray implementation into JSC in advance of re-implementation
+
+        * GNUmakefile.list.am:
+        * JSCTypedArrayStubs.h:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * runtime/ArrayBuffer.cpp: Renamed from Source/WTF/wtf/ArrayBuffer.cpp.
+        (JSC::ArrayBuffer::transfer):
+        (JSC::ArrayBuffer::addView):
+        (JSC::ArrayBuffer::removeView):
+        * runtime/ArrayBuffer.h: Renamed from Source/WTF/wtf/ArrayBuffer.h.
+        (JSC::ArrayBufferContents::ArrayBufferContents):
+        (JSC::ArrayBufferContents::data):
+        (JSC::ArrayBufferContents::sizeInBytes):
+        (JSC::ArrayBufferContents::transfer):
+        (JSC::ArrayBufferContents::copyTo):
+        (JSC::ArrayBuffer::isNeutered):
+        (JSC::ArrayBuffer::~ArrayBuffer):
+        (JSC::ArrayBuffer::clampValue):
+        (JSC::ArrayBuffer::create):
+        (JSC::ArrayBuffer::createUninitialized):
+        (JSC::ArrayBuffer::ArrayBuffer):
+        (JSC::ArrayBuffer::data):
+        (JSC::ArrayBuffer::byteLength):
+        (JSC::ArrayBuffer::slice):
+        (JSC::ArrayBuffer::sliceImpl):
+        (JSC::ArrayBuffer::clampIndex):
+        (JSC::ArrayBufferContents::tryAllocate):
+        (JSC::ArrayBufferContents::~ArrayBufferContents):
+        * runtime/ArrayBufferView.cpp: Renamed from Source/WTF/wtf/ArrayBufferView.cpp.
+        (JSC::ArrayBufferView::ArrayBufferView):
+        (JSC::ArrayBufferView::~ArrayBufferView):
+        (JSC::ArrayBufferView::neuter):
+        * runtime/ArrayBufferView.h: Renamed from Source/WTF/wtf/ArrayBufferView.h.
+        (JSC::ArrayBufferView::buffer):
+        (JSC::ArrayBufferView::baseAddress):
+        (JSC::ArrayBufferView::byteOffset):
+        (JSC::ArrayBufferView::setNeuterable):
+        (JSC::ArrayBufferView::isNeuterable):
+        (JSC::ArrayBufferView::verifySubRange):
+        (JSC::ArrayBufferView::clampOffsetAndNumElements):
+        (JSC::ArrayBufferView::setImpl):
+        (JSC::ArrayBufferView::setRangeImpl):
+        (JSC::ArrayBufferView::zeroRangeImpl):
+        (JSC::ArrayBufferView::calculateOffsetAndLength):
+        * runtime/Float32Array.h: Renamed from Source/WTF/wtf/Float32Array.h.
+        (JSC::Float32Array::set):
+        (JSC::Float32Array::getType):
+        (JSC::Float32Array::create):
+        (JSC::Float32Array::createUninitialized):
+        (JSC::Float32Array::Float32Array):
+        (JSC::Float32Array::subarray):
+        * runtime/Float64Array.h: Renamed from Source/WTF/wtf/Float64Array.h.
+        (JSC::Float64Array::set):
+        (JSC::Float64Array::getType):
+        (JSC::Float64Array::create):
+        (JSC::Float64Array::createUninitialized):
+        (JSC::Float64Array::Float64Array):
+        (JSC::Float64Array::subarray):
+        * runtime/Int16Array.h: Renamed from Source/WTF/wtf/Int16Array.h.
+        (JSC::Int16Array::getType):
+        (JSC::Int16Array::create):
+        (JSC::Int16Array::createUninitialized):
+        (JSC::Int16Array::Int16Array):
+        (JSC::Int16Array::subarray):
+        * runtime/Int32Array.h: Renamed from Source/WTF/wtf/Int32Array.h.
+        (JSC::Int32Array::getType):
+        (JSC::Int32Array::create):
+        (JSC::Int32Array::createUninitialized):
+        (JSC::Int32Array::Int32Array):
+        (JSC::Int32Array::subarray):
+        * runtime/Int8Array.h: Renamed from Source/WTF/wtf/Int8Array.h.
+        (JSC::Int8Array::getType):
+        (JSC::Int8Array::create):
+        (JSC::Int8Array::createUninitialized):
+        (JSC::Int8Array::Int8Array):
+        (JSC::Int8Array::subarray):
+        * runtime/IntegralTypedArrayBase.h: Renamed from Source/WTF/wtf/IntegralTypedArrayBase.h.
+        (JSC::IntegralTypedArrayBase::set):
+        (JSC::IntegralTypedArrayBase::IntegralTypedArrayBase):
+        * runtime/TypedArrayBase.h: Renamed from Source/WTF/wtf/TypedArrayBase.h.
+        (JSC::TypedArrayBase::data):
+        (JSC::TypedArrayBase::set):
+        (JSC::TypedArrayBase::setRange):
+        (JSC::TypedArrayBase::zeroRange):
+        (JSC::TypedArrayBase::length):
+        (JSC::TypedArrayBase::byteLength):
+        (JSC::TypedArrayBase::item):
+        (JSC::TypedArrayBase::checkInboundData):
+        (JSC::TypedArrayBase::TypedArrayBase):
+        (JSC::TypedArrayBase::create):
+        (JSC::TypedArrayBase::createUninitialized):
+        (JSC::TypedArrayBase::subarrayImpl):
+        (JSC::TypedArrayBase::neuter):
+        * runtime/Uint16Array.h: Renamed from Source/WTF/wtf/Uint16Array.h.
+        (JSC::Uint16Array::getType):
+        (JSC::Uint16Array::create):
+        (JSC::Uint16Array::createUninitialized):
+        (JSC::Uint16Array::Uint16Array):
+        (JSC::Uint16Array::subarray):
+        * runtime/Uint32Array.h: Renamed from Source/WTF/wtf/Uint32Array.h.
+        (JSC::Uint32Array::getType):
+        (JSC::Uint32Array::create):
+        (JSC::Uint32Array::createUninitialized):
+        (JSC::Uint32Array::Uint32Array):
+        (JSC::Uint32Array::subarray):
+        * runtime/Uint8Array.h: Renamed from Source/WTF/wtf/Uint8Array.h.
+        (JSC::Uint8Array::getType):
+        (JSC::Uint8Array::create):
+        (JSC::Uint8Array::createUninitialized):
+        (JSC::Uint8Array::Uint8Array):
+        (JSC::Uint8Array::subarray):
+        * runtime/Uint8ClampedArray.h: Renamed from Source/WTF/wtf/Uint8ClampedArray.h.
+        (JSC::Uint8ClampedArray::getType):
+        (JSC::Uint8ClampedArray::create):
+        (JSC::Uint8ClampedArray::createUninitialized):
+        (JSC::Uint8ClampedArray::zeroFill):
+        (JSC::Uint8ClampedArray::set):
+        (JSC::Uint8ClampedArray::Uint8ClampedArray):
+        (JSC::Uint8ClampedArray::subarray):
+        * runtime/VM.h:
+
 2013-08-03  Filip Pizlo  <fpizlo@apple.com>
 
         Copied space should be able to handle more than one copied backing store per JSCell

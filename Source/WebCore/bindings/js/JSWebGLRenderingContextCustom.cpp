@@ -85,11 +85,11 @@
 #include "WebGLRenderingContext.h"
 #include "WebGLVertexArrayObjectOES.h"
 #include <runtime/Error.h>
+#include <runtime/Float32Array.h>
+#include <runtime/Int32Array.h>
 #include <runtime/JSArray.h>
+#include <runtime/Uint32Array.h>
 #include <wtf/FastMalloc.h>
-#include <wtf/Float32Array.h>
-#include <wtf/Int32Array.h>
-#include <wtf/Uint32Array.h>
 
 #if ENABLE(VIDEO)
 #include "HTMLVideoElement.h"

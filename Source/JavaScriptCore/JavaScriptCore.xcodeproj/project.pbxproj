@@ -815,6 +815,21 @@
 		A7A4AE0D17973B4D005612B1 /* JITStubsMIPS.h in Headers */ = {isa = PBXBuildFile; fileRef = A7A4AE0917973B4D005612B1 /* JITStubsMIPS.h */; };
 		A7A4AE0F17973B4D005612B1 /* JITStubsSH4.h in Headers */ = {isa = PBXBuildFile; fileRef = A7A4AE0B17973B4D005612B1 /* JITStubsSH4.h */; };
 		A7A4AE1017973B4D005612B1 /* JITStubsX86Common.h in Headers */ = {isa = PBXBuildFile; fileRef = A7A4AE0C17973B4D005612B1 /* JITStubsX86Common.h */; };
+		A7A8AF3417ADB5F3005AB174 /* ArrayBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7A8AF2517ADB5F2005AB174 /* ArrayBuffer.cpp */; };
+		A7A8AF3517ADB5F3005AB174 /* ArrayBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = A7A8AF2617ADB5F3005AB174 /* ArrayBuffer.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A7A8AF3617ADB5F3005AB174 /* ArrayBufferView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7A8AF2717ADB5F3005AB174 /* ArrayBufferView.cpp */; };
+		A7A8AF3717ADB5F3005AB174 /* ArrayBufferView.h in Headers */ = {isa = PBXBuildFile; fileRef = A7A8AF2817ADB5F3005AB174 /* ArrayBufferView.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A7A8AF3817ADB5F3005AB174 /* Float32Array.h in Headers */ = {isa = PBXBuildFile; fileRef = A7A8AF2917ADB5F3005AB174 /* Float32Array.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A7A8AF3917ADB5F3005AB174 /* Float64Array.h in Headers */ = {isa = PBXBuildFile; fileRef = A7A8AF2A17ADB5F3005AB174 /* Float64Array.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A7A8AF3A17ADB5F3005AB174 /* Int8Array.h in Headers */ = {isa = PBXBuildFile; fileRef = A7A8AF2B17ADB5F3005AB174 /* Int8Array.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A7A8AF3B17ADB5F3005AB174 /* Int16Array.h in Headers */ = {isa = PBXBuildFile; fileRef = A7A8AF2C17ADB5F3005AB174 /* Int16Array.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A7A8AF3C17ADB5F3005AB174 /* Int32Array.h in Headers */ = {isa = PBXBuildFile; fileRef = A7A8AF2D17ADB5F3005AB174 /* Int32Array.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A7A8AF3D17ADB5F3005AB174 /* IntegralTypedArrayBase.h in Headers */ = {isa = PBXBuildFile; fileRef = A7A8AF2E17ADB5F3005AB174 /* IntegralTypedArrayBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A7A8AF3E17ADB5F3005AB174 /* TypedArrayBase.h in Headers */ = {isa = PBXBuildFile; fileRef = A7A8AF2F17ADB5F3005AB174 /* TypedArrayBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A7A8AF3F17ADB5F3005AB174 /* Uint8Array.h in Headers */ = {isa = PBXBuildFile; fileRef = A7A8AF3017ADB5F3005AB174 /* Uint8Array.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A7A8AF4017ADB5F3005AB174 /* Uint8ClampedArray.h in Headers */ = {isa = PBXBuildFile; fileRef = A7A8AF3117ADB5F3005AB174 /* Uint8ClampedArray.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A7A8AF4117ADB5F3005AB174 /* Uint16Array.h in Headers */ = {isa = PBXBuildFile; fileRef = A7A8AF3217ADB5F3005AB174 /* Uint16Array.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A7A8AF4217ADB5F3005AB174 /* Uint32Array.h in Headers */ = {isa = PBXBuildFile; fileRef = A7A8AF3317ADB5F3005AB174 /* Uint32Array.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A7B48F490EE8936F00DCBDB6 /* ExecutableAllocator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7B48DB60EE74CFC00DCBDB6 /* ExecutableAllocator.cpp */; };
 		A7B4ACAF1484C9CE00B38A36 /* JSExportMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = A7B4ACAE1484C9CE00B38A36 /* JSExportMacros.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A7B601821639FD2A00372BA3 /* UnlinkedCodeBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = A79E781F15EECBA80047C855 /* UnlinkedCodeBlock.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1903,6 +1918,21 @@
 		A7A4AE0C17973B4D005612B1 /* JITStubsX86Common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITStubsX86Common.h; sourceTree = "<group>"; };
 		A7A7EE7411B98B8D0065A14F /* ASTBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTBuilder.h; sourceTree = "<group>"; };
 		A7A7EE7711B98B8D0065A14F /* SyntaxChecker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SyntaxChecker.h; sourceTree = "<group>"; };
+		A7A8AF2517ADB5F2005AB174 /* ArrayBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ArrayBuffer.cpp; sourceTree = "<group>"; };
+		A7A8AF2617ADB5F3005AB174 /* ArrayBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArrayBuffer.h; sourceTree = "<group>"; };
+		A7A8AF2717ADB5F3005AB174 /* ArrayBufferView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ArrayBufferView.cpp; sourceTree = "<group>"; };
+		A7A8AF2817ADB5F3005AB174 /* ArrayBufferView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArrayBufferView.h; sourceTree = "<group>"; };
+		A7A8AF2917ADB5F3005AB174 /* Float32Array.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Float32Array.h; sourceTree = "<group>"; };
+		A7A8AF2A17ADB5F3005AB174 /* Float64Array.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Float64Array.h; sourceTree = "<group>"; };
+		A7A8AF2B17ADB5F3005AB174 /* Int8Array.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Int8Array.h; sourceTree = "<group>"; };
+		A7A8AF2C17ADB5F3005AB174 /* Int16Array.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Int16Array.h; sourceTree = "<group>"; };
+		A7A8AF2D17ADB5F3005AB174 /* Int32Array.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Int32Array.h; sourceTree = "<group>"; };
+		A7A8AF2E17ADB5F3005AB174 /* IntegralTypedArrayBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntegralTypedArrayBase.h; sourceTree = "<group>"; };
+		A7A8AF2F17ADB5F3005AB174 /* TypedArrayBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TypedArrayBase.h; sourceTree = "<group>"; };
+		A7A8AF3017ADB5F3005AB174 /* Uint8Array.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Uint8Array.h; sourceTree = "<group>"; };
+		A7A8AF3117ADB5F3005AB174 /* Uint8ClampedArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Uint8ClampedArray.h; sourceTree = "<group>"; };
+		A7A8AF3217ADB5F3005AB174 /* Uint16Array.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Uint16Array.h; sourceTree = "<group>"; };
+		A7A8AF3317ADB5F3005AB174 /* Uint32Array.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Uint32Array.h; sourceTree = "<group>"; };
 		A7B48DB50EE74CFC00DCBDB6 /* ExecutableAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExecutableAllocator.h; sourceTree = "<group>"; };
 		A7B48DB60EE74CFC00DCBDB6 /* ExecutableAllocator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExecutableAllocator.cpp; sourceTree = "<group>"; };
 		A7B4ACAE1484C9CE00B38A36 /* JSExportMacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSExportMacros.h; sourceTree = "<group>"; };
@@ -2209,9 +2239,9 @@
 		034768DFFF38A50411DB9C8B /* Products */ = {
 			isa = PBXGroup;
 			children = (
+				0FF922CF14F46B130041A24E /* JSCLLIntOffsetsExtractor */,
 				932F5BD90822A1C700736975 /* JavaScriptCore.framework */,
 				932F5BE10822A1C700736975 /* jsc */,
-				0FF922CF14F46B130041A24E /* JSCLLIntOffsetsExtractor */,
 				141211200A48793C00480255 /* minidom */,
 				14BD59BF0A3E8F9000BAF59C /* testapi */,
 				6511230514046A4C002B101D /* testRegExp */,
@@ -2798,12 +2828,14 @@
 		7EF6E0BB0EB7A1EC0079AFAF /* runtime */ = {
 			isa = PBXGroup;
 			children = (
-				6553A32F17A1F1EE008CF6F3 /* CommonSlowPathsExceptions.cpp */,
-				6553A33017A1F1EE008CF6F3 /* CommonSlowPathsExceptions.h */,
 				BCF605110E203EF800B9A64D /* ArgList.cpp */,
 				BCF605120E203EF800B9A64D /* ArgList.h */,
 				BC257DE50E1F51C50016B6C9 /* Arguments.cpp */,
 				BC257DE60E1F51C50016B6C9 /* Arguments.h */,
+				A7A8AF2517ADB5F2005AB174 /* ArrayBuffer.cpp */,
+				A7A8AF2617ADB5F3005AB174 /* ArrayBuffer.h */,
+				A7A8AF2717ADB5F3005AB174 /* ArrayBufferView.cpp */,
+				A7A8AF2817ADB5F3005AB174 /* ArrayBufferView.h */,
 				BC7952060E15E8A800A898AB /* ArrayConstructor.cpp */,
 				BC7952070E15E8A800A898AB /* ArrayConstructor.h */,
 				0FB7F38915ED8E3800F167B2 /* ArrayConventions.h */,
@@ -2832,6 +2864,8 @@
 				65EA73630BAE35D1001BB560 /* CommonIdentifiers.h */,
 				A709F2F117A0AC2A00512E98 /* CommonSlowPaths.cpp */,
 				0F15F15D14B7A73A005DE37D /* CommonSlowPaths.h */,
+				6553A32F17A1F1EE008CF6F3 /* CommonSlowPathsExceptions.cpp */,
+				6553A33017A1F1EE008CF6F3 /* CommonSlowPathsExceptions.h */,
 				A7E5A3A51797432D00E893C0 /* CompilationResult.cpp */,
 				A7E5A3A61797432D00E893C0 /* CompilationResult.h */,
 				969A09220ED1E09C00F1F681 /* Completion.cpp */,
@@ -2863,6 +2897,8 @@
 				86CA032D1038E8440028A609 /* Executable.cpp */,
 				86CAFEE21035DDE60028A609 /* Executable.h */,
 				0F21C27A14BE727300ADC64B /* ExecutionHarness.h */,
+				A7A8AF2917ADB5F3005AB174 /* Float32Array.h */,
+				A7A8AF2A17ADB5F3005AB174 /* Float64Array.h */,
 				BC2680C00E16D4E900A06E92 /* FunctionConstructor.cpp */,
 				BC2680C10E16D4E900A06E92 /* FunctionConstructor.h */,
 				0FB4B52116B6278D003F696B /* FunctionExecutableDump.cpp */,
@@ -2881,6 +2917,10 @@
 				0FB7F38F15ED8E3800F167B2 /* IndexingType.h */,
 				E178636C0D9BEEC300D74E75 /* InitializeThreading.cpp */,
 				E178633F0D9BEC0000D74E75 /* InitializeThreading.h */,
+				A7A8AF2C17ADB5F3005AB174 /* Int16Array.h */,
+				A7A8AF2D17ADB5F3005AB174 /* Int32Array.h */,
+				A7A8AF2B17ADB5F3005AB174 /* Int8Array.h */,
+				A7A8AF2E17ADB5F3005AB174 /* IntegralTypedArrayBase.h */,
 				A78853F717972629001440E4 /* IntendedStructureChain.cpp */,
 				A78853F817972629001440E4 /* IntendedStructureChain.h */,
 				BC9BB95B0E19680600DF8855 /* InternalFunction.cpp */,
@@ -3038,8 +3078,13 @@
 				14A396A60CD2933100B5B4FF /* SymbolTable.h */,
 				5D53726D0E1C546B0021E549 /* Tracing.d */,
 				5D53726E0E1C54880021E549 /* Tracing.h */,
+				A7A8AF2F17ADB5F3005AB174 /* TypedArrayBase.h */,
 				0FEB3ECB16237F4700AB67AD /* TypedArrayDescriptor.h */,
+				A7A8AF3217ADB5F3005AB174 /* Uint16Array.h */,
 				866739D113BFDE710023D87C /* Uint16WithFraction.h */,
+				A7A8AF3317ADB5F3005AB174 /* Uint32Array.h */,
+				A7A8AF3017ADB5F3005AB174 /* Uint8Array.h */,
+				A7A8AF3117ADB5F3005AB174 /* Uint8ClampedArray.h */,
 				E18E3A570DF9278C00D90B34 /* VM.cpp */,
 				E18E3A560DF9278C00D90B34 /* VM.h */,
 				FE6617271774E03500495B00 /* VMStackBounds.h */,
@@ -3484,6 +3529,8 @@
 				86ADD1450FDDEA980006EEC2 /* ARMv7Assembler.h in Headers */,
 				65C0285D1717966800351E35 /* ARMv7DOpcode.h in Headers */,
 				0F8335B81639C1EA001443B5 /* ArrayAllocationProfile.h in Headers */,
+				A7A8AF3517ADB5F3005AB174 /* ArrayBuffer.h in Headers */,
+				A7A8AF3717ADB5F3005AB174 /* ArrayBufferView.h in Headers */,
 				BC18C3E60E16F5CD00B34460 /* ArrayConstructor.h in Headers */,
 				0FB7F39515ED8E4600F167B2 /* ArrayConventions.h in Headers */,
 				0F63945515D07057006A597C /* ArrayProfile.h in Headers */,
@@ -3522,6 +3569,7 @@
 				0F0B83A714BCF50700885B4F /* CodeType.h in Headers */,
 				BC18C3F30E16F5CD00B34460 /* CommonIdentifiers.h in Headers */,
 				0F15F15F14B7A73E005DE37D /* CommonSlowPaths.h in Headers */,
+				6553A33217A1F1EE008CF6F3 /* CommonSlowPathsExceptions.h in Headers */,
 				0FD82E39141AB14D00179C94 /* CompactJITCodeMap.h in Headers */,
 				A7E5A3A81797432D00E893C0 /* CompilationResult.h in Headers */,
 				BC18C3F40E16F5CD00B34460 /* Completion.h in Headers */,
@@ -3678,6 +3726,8 @@
 				0F21C27C14BE727600ADC64B /* ExecutionHarness.h in Headers */,
 				0FB105861675481200F8AB6E /* ExitKind.h in Headers */,
 				0F0B83AB14BCF5BB00885B4F /* ExpressionRangeInfo.h in Headers */,
+				A7A8AF3817ADB5F3005AB174 /* Float32Array.h in Headers */,
+				A7A8AF3917ADB5F3005AB174 /* Float64Array.h in Headers */,
 				0FDB2CC9173DA520007B3C1B /* FTLAbbreviatedTypes.h in Headers */,
 				0FEA0A08170513DB00BB722C /* FTLAbbreviations.h in Headers */,
 				0FEA0A1D1708B00700BB722C /* FTLAbstractHeap.h in Headers */,
@@ -3741,6 +3791,10 @@
 				0FB7F39B15ED8E4600F167B2 /* IndexingType.h in Headers */,
 				BC18C4100E16F5CD00B34460 /* InitializeThreading.h in Headers */,
 				969A07990ED1D3AE00F1F681 /* Instruction.h in Headers */,
+				A7A8AF3B17ADB5F3005AB174 /* Int16Array.h in Headers */,
+				A7A8AF3C17ADB5F3005AB174 /* Int32Array.h in Headers */,
+				A7A8AF3A17ADB5F3005AB174 /* Int8Array.h in Headers */,
+				A7A8AF3D17ADB5F3005AB174 /* IntegralTypedArrayBase.h in Headers */,
 				A78853FA17972629001440E4 /* IntendedStructureChain.h in Headers */,
 				BC11667B0E199C05008066DD /* InternalFunction.h in Headers */,
 				1429D77C0ED20D7300B89619 /* Interpreter.h in Headers */,
@@ -3975,7 +4029,6 @@
 				E49DC16D12EF295300184A1F /* SourceProviderCacheItem.h in Headers */,
 				0FB7F39E15ED8E4600F167B2 /* SparseArrayValueMap.h in Headers */,
 				A7386554118697B400540279 /* SpecializedThunkJIT.h in Headers */,
-				6553A33217A1F1EE008CF6F3 /* CommonSlowPathsExceptions.h in Headers */,
 				0F5541B21613C1FB00CE3E25 /* SpecialPointer.h in Headers */,
 				0FD82E54141DAEEE00179C94 /* SpeculatedType.h in Headers */,
 				A7C1EAF217987AB600299DB2 /* StackIterator.h in Headers */,
@@ -4005,6 +4058,7 @@
 				A7386556118697B400540279 /* ThunkGenerators.h in Headers */,
 				141448CD13A1783700F5BA1A /* TinyBloomFilter.h in Headers */,
 				5D53726F0E1C54880021E549 /* Tracing.h in Headers */,
+				A7A8AF3E17ADB5F3005AB174 /* TypedArrayBase.h in Headers */,
 				0FEB3ECD16237F4D00AB67AD /* TypedArrayDescriptor.h in Headers */,
 				0FF4274B158EBE91004CB9FF /* udis86.h in Headers */,
 				0FF42741158EBE8D004CB9FF /* udis86_decode.h in Headers */,
@@ -4013,7 +4067,11 @@
 				0FF42748158EBE91004CB9FF /* udis86_syn.h in Headers */,
 				0FF42749158EBE91004CB9FF /* udis86_types.h in Headers */,
 				A7E5AB391799E4B200D2833D /* UDis86Disassembler.h in Headers */,
+				A7A8AF4117ADB5F3005AB174 /* Uint16Array.h in Headers */,
 				866739D313BFDE710023D87C /* Uint16WithFraction.h in Headers */,
+				A7A8AF4217ADB5F3005AB174 /* Uint32Array.h in Headers */,
+				A7A8AF3F17ADB5F3005AB174 /* Uint8Array.h in Headers */,
+				A7A8AF4017ADB5F3005AB174 /* Uint8ClampedArray.h in Headers */,
 				0F5F08CF146C7633000472A9 /* UnconditionalFinalizer.h in Headers */,
 				A7B601821639FD2A00372BA3 /* UnlinkedCodeBlock.h in Headers */,
 				0F2E892C16D028AD009E4FD2 /* UnusedPointer.h in Headers */,
@@ -4393,6 +4451,8 @@
 				65C02850171795E200351E35 /* ARMv7Disassembler.cpp in Sources */,
 				65C0285C1717966800351E35 /* ARMv7DOpcode.cpp in Sources */,
 				0F8335B71639C1E6001443B5 /* ArrayAllocationProfile.cpp in Sources */,
+				A7A8AF3417ADB5F3005AB174 /* ArrayBuffer.cpp in Sources */,
+				A7A8AF3617ADB5F3005AB174 /* ArrayBufferView.cpp in Sources */,
 				147F39BF107EC37600427A48 /* ArrayConstructor.cpp in Sources */,
 				0F63945415D07055006A597C /* ArrayProfile.cpp in Sources */,
 				147F39C0107EC37600427A48 /* ArrayPrototype.cpp in Sources */,
@@ -4416,6 +4476,7 @@
 				0F8F94421667633500D61971 /* CodeType.cpp in Sources */,
 				147F39C1107EC37600427A48 /* CommonIdentifiers.cpp in Sources */,
 				A709F2F217A0AC2A00512E98 /* CommonSlowPaths.cpp in Sources */,
+				6553A33117A1F1EE008CF6F3 /* CommonSlowPathsExceptions.cpp in Sources */,
 				A7E5A3A71797432D00E893C0 /* CompilationResult.cpp in Sources */,
 				147F39C2107EC37600427A48 /* Completion.cpp in Sources */,
 				146B16D812EB5B59001BEC1B /* ConservativeRoots.cpp in Sources */,
@@ -4688,7 +4749,6 @@
 				0FF729AF166AD35C000F5BA3 /* ProfilerCompilation.cpp in Sources */,
 				0FF729B0166AD35C000F5BA3 /* ProfilerCompilationKind.cpp in Sources */,
 				0FF729B1166AD35C000F5BA3 /* ProfilerCompiledBytecode.cpp in Sources */,
-				6553A33117A1F1EE008CF6F3 /* CommonSlowPathsExceptions.cpp in Sources */,
 				0FF729B2166AD35C000F5BA3 /* ProfilerDatabase.cpp in Sources */,
 				0FF729B3166AD35C000F5BA3 /* ProfilerOrigin.cpp in Sources */,
 				0FF729B4166AD35C000F5BA3 /* ProfilerOriginStack.cpp in Sources */,

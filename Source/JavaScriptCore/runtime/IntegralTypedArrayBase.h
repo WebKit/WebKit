@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (c) 2010, Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,36 +24,40 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "ArrayBufferView.h"
+#ifndef IntegralTypedArrayBase_h
+#define IntegralTypedArrayBase_h
 
-#include "ArrayBuffer.h"
+#include "TypedArrayBase.h"
+#include <limits>
+#include <wtf/MathExtras.h>
 
-namespace WTF {
+// Base class for all WebGL<T>Array types holding integral
+// (non-floating-point) values.
 
-ArrayBufferView::ArrayBufferView(PassRefPtr<ArrayBuffer> buffer,
-                       unsigned byteOffset)
-        : m_byteOffset(byteOffset)
-        , m_isNeuterable(true)
-        , m_buffer(buffer)
-        , m_prevView(0)
-        , m_nextView(0)
-{
-    m_baseAddress = m_buffer ? (static_cast<char*>(m_buffer->data()) + m_byteOffset) : 0;
-    if (m_buffer) 
-        m_buffer->addView(this);
-}
+namespace JSC {
 
-ArrayBufferView::~ArrayBufferView()
-{
-    if (m_buffer)
-        m_buffer->removeView(this);
-}
+template <typename T>
+class IntegralTypedArrayBase : public TypedArrayBase<T> {
+public:
+    void set(unsigned index, double value)
+    {
+        if (index >= TypedArrayBase<T>::m_length)
+            return;
+        if (std::isnan(value)) // Clamp NaN to 0
+            value = 0;
+        // The double cast is necessary to get the correct wrapping
+        // for out-of-range values with Int32Array and Uint32Array.
+        TypedArrayBase<T>::data()[index] = static_cast<T>(static_cast<int64_t>(value));
+    }
 
-void ArrayBufferView::neuter()
-{
-    m_buffer = 0;
-    m_byteOffset = 0;
-}
+protected:
+    IntegralTypedArrayBase(PassRefPtr<ArrayBuffer> buffer, unsigned byteOffset, unsigned length)
+        : TypedArrayBase<T>(buffer, byteOffset, length)
+    {
+    }
 
-}
+};
+
+} // namespace JSC
+
+#endif // IntegralTypedArrayBase_h

@@ -29,8 +29,8 @@
 #include "RenderTreeAsText.h"
 #include "ShadowBlur.h"
 #include "TextStream.h"
+#include <runtime/Uint8ClampedArray.h>
 #include <wtf/MathExtras.h>
-#include <wtf/Uint8ClampedArray.h>
 
 using namespace std;
 

@@ -34,10 +34,10 @@
 #include "VectorMath.h"
 #include <algorithm>
 #include <complex>
-#include <wtf/Float32Array.h>
+#include <runtime/Float32Array.h>
+#include <runtime/Uint8Array.h>
 #include <wtf/MainThread.h>
 #include <wtf/MathExtras.h>
-#include <wtf/Uint8Array.h>
 
 namespace WebCore {
 

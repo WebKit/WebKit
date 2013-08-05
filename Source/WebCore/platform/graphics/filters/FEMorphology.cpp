@@ -30,8 +30,8 @@
 #include "RenderTreeAsText.h"
 #include "TextStream.h"
 
+#include <runtime/Uint8ClampedArray.h>
 #include <wtf/ParallelJobs.h>
-#include <wtf/Uint8ClampedArray.h>
 #include <wtf/Vector.h>
 
 using std::min;

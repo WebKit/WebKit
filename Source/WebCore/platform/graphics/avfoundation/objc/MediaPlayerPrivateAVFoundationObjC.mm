@@ -47,10 +47,10 @@
 #import "WebCoreAVFResourceLoader.h"
 #import "WebCoreSystemInterface.h"
 #import <objc/runtime.h>
+#import <runtime/Uint16Array.h>
+#import <runtime/Uint32Array.h>
+#import <runtime/Uint8Array.h>
 #import <wtf/CurrentTime.h>
-#import <wtf/Uint16Array.h>
-#import <wtf/Uint32Array.h>
-#import <wtf/Uint8Array.h>
 #import <wtf/text/CString.h>
 
 #import <AVFoundation/AVFoundation.h>

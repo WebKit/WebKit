@@ -31,7 +31,7 @@
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
-namespace WTF {
+namespace JSC {
 
 class ArrayBuffer;
 class ArrayBufferView;
@@ -251,8 +251,9 @@ ArrayBufferContents::~ArrayBufferContents()
     WTF::fastFree(m_data);
 }
 
-} // namespace WTF
+} // namespace JSC
 
-using WTF::ArrayBuffer;
+using JSC::ArrayBuffer;
+using JSC::ArrayBufferContents;
 
 #endif // ArrayBuffer_h

@@ -40,7 +40,7 @@
 #include "GraphicsContext3DNEON.h"
 #endif
 
-#include <wtf/ArrayBufferView.h>
+#include <runtime/ArrayBufferView.h>
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/PassOwnArrayPtr.h>
 

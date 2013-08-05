@@ -73,8 +73,8 @@ public:
     void connect(const String& url, const Vector<String>& protocols, ExceptionCode&);
 
     void send(const String& message, ExceptionCode&);
-    void send(ArrayBuffer*, ExceptionCode&);
-    void send(ArrayBufferView*, ExceptionCode&);
+    void send(JSC::ArrayBuffer*, ExceptionCode&);
+    void send(JSC::ArrayBufferView*, ExceptionCode&);
     void send(Blob*, ExceptionCode&);
 
     void close(int code, const String& reason, ExceptionCode&);

@@ -69,8 +69,13 @@ namespace JSC {
     class CodeCache;
     class CommonIdentifiers;
     class ExecState;
+    class Float32Array;
+    class Float64Array;
     class HandleStack;
     class IdentifierTable;
+    class Int8Array;
+    class Int16Array;
+    class Int32Array;
     class Interpreter;
     class JSGlobalObject;
     class JSObject;
@@ -88,6 +93,10 @@ namespace JSC {
 #if ENABLE(REGEXP_TRACING)
     class RegExp;
 #endif
+    class Uint8Array;
+    class Uint8ClampedArray;
+    class Uint16Array;
+    class Uint32Array;
     class UnlinkedCodeBlock;
     class UnlinkedEvalCodeBlock;
     class UnlinkedFunctionExecutable;

@@ -40,6 +40,10 @@
 #include <wtf/Forward.h>
 #include <wtf/text/WTFString.h>
 
+namespace JSC {
+class ArrayBuffer;
+}
+
 namespace WebCore {
 
 class Blob;
@@ -72,7 +76,7 @@ public:
     virtual void didFail(const ResourceError&);
 
     String stringResult();
-    PassRefPtr<ArrayBuffer> arrayBufferResult() const;
+    PassRefPtr<JSC::ArrayBuffer> arrayBufferResult() const;
 #if ENABLE(STREAM)
     PassRefPtr<Blob> blobResult();
 #endif // ENABLE(STREAM)
@@ -105,7 +109,7 @@ private:
     KURL m_urlForReading;
     RefPtr<ThreadableLoader> m_loader;
 
-    RefPtr<ArrayBuffer> m_rawData;
+    RefPtr<JSC::ArrayBuffer> m_rawData;
     bool m_isRawDataConverted;
 
     String m_stringResult;

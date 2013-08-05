@@ -25,10 +25,10 @@
  */
 
 #include "Image.h"
+#include <runtime/Uint8ClampedArray.h>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
-#include <wtf/Uint8ClampedArray.h>
 
 #if (PLATFORM(MAC) && USE(CA) && (PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070))
 #define WTF_USE_IOSURFACE_CANVAS_BACKING_STORE 1

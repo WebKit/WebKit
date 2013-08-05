@@ -58,10 +58,10 @@
 #include "XMLHttpRequestUpload.h"
 #include "markup.h"
 #include <heap/Strong.h>
+#include <runtime/ArrayBuffer.h>
+#include <runtime/ArrayBufferView.h>
 #include <runtime/JSLock.h>
 #include <runtime/Operations.h>
-#include <wtf/ArrayBuffer.h>
-#include <wtf/ArrayBufferView.h>
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>

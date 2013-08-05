@@ -56,7 +56,7 @@
 #include "WebSocketChannelClient.h"
 #include "WebSocketHandshake.h"
 
-#include <wtf/ArrayBuffer.h>
+#include <runtime/ArrayBuffer.h>
 #include <wtf/Deque.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/HashMap.h>

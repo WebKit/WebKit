@@ -30,7 +30,7 @@
 
 #include "CDM.h"
 #include "MediaKeyError.h"
-#include <wtf/Uint8Array.h>
+#include <runtime/Uint8Array.h>
 
 namespace WebCore {
 
@@ -80,7 +80,7 @@ static Uint8Array* initDataPrefix()
 static Uint8Array* keyPrefix()
 {
     static const unsigned char prefixData[] = {'k', 'e', 'y'};
-    DEFINE_STATIC_LOCAL(RefPtr<WTF::Uint8Array>, prefix, ());
+    DEFINE_STATIC_LOCAL(RefPtr<JSC::Uint8Array>, prefix, ());
     static bool initialized = false;
     if (!initialized) {
         initialized = true;
@@ -92,7 +92,7 @@ static Uint8Array* keyPrefix()
 static Uint8Array* keyRequest()
 {
     static const unsigned char requestData[] = {'r', 'e', 'q', 'u', 'e', 's', 't'};
-    DEFINE_STATIC_LOCAL(RefPtr<WTF::Uint8Array>, request, ());
+    DEFINE_STATIC_LOCAL(RefPtr<JSC::Uint8Array>, request, ());
     static bool initialized = false;
     if (!initialized) {
         initialized = true;

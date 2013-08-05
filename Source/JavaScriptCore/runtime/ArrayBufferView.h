@@ -26,7 +26,7 @@
 #ifndef ArrayBufferView_h
 #define ArrayBufferView_h
 
-#include <wtf/ArrayBuffer.h>
+#include "ArrayBuffer.h"
 
 #include <algorithm>
 #include <limits.h>
@@ -34,10 +34,10 @@
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
-namespace WTF {
+namespace JSC {
 
 class ArrayBufferView : public RefCounted<ArrayBufferView> {
-  public:
+public:
     enum ViewType {
         TypeInt8,
         TypeUint8,
@@ -74,7 +74,7 @@ class ArrayBufferView : public RefCounted<ArrayBufferView> {
 
     WTF_EXPORT_PRIVATE virtual ~ArrayBufferView();
 
-  protected:
+protected:
     WTF_EXPORT_PRIVATE ArrayBufferView(PassRefPtr<ArrayBuffer>, unsigned byteOffset);
 
     inline bool setImpl(ArrayBufferView*, unsigned byteOffset);
@@ -83,15 +83,12 @@ class ArrayBufferView : public RefCounted<ArrayBufferView> {
 
     inline bool zeroRangeImpl(unsigned byteOffset, size_t rangeByteLength);
 
-    static inline void calculateOffsetAndLength(int start, int end, unsigned arraySize,
-                                         unsigned* offset, unsigned* length);
+    static inline void calculateOffsetAndLength(int start, int end, unsigned arraySize, unsigned* offset, unsigned* length);
 
     // Helper to verify that a given sub-range of an ArrayBuffer is
     // within range.
     template <typename T>
-    static bool verifySubRange(PassRefPtr<ArrayBuffer> buffer,
-                               unsigned byteOffset,
-                               unsigned numElements)
+    static bool verifySubRange(PassRefPtr<ArrayBuffer> buffer, unsigned byteOffset, unsigned numElements)
     {
         if (!buffer)
             return false;
@@ -108,10 +105,7 @@ class ArrayBufferView : public RefCounted<ArrayBufferView> {
     // Input offset is in number of elements from this array's view;
     // output offset is in number of bytes from the underlying buffer's view.
     template <typename T>
-    static void clampOffsetAndNumElements(PassRefPtr<ArrayBuffer> buffer,
-                                          unsigned arrayByteOffset,
-                                          unsigned *offset,
-                                          unsigned *numElements)
+    static void clampOffsetAndNumElements(PassRefPtr<ArrayBuffer> buffer, unsigned arrayByteOffset, unsigned *offset, unsigned *numElements)
     {
         unsigned maxOffset = (UINT_MAX - arrayByteOffset) / sizeof(T);
         if (*offset > maxOffset) {
@@ -133,7 +127,7 @@ class ArrayBufferView : public RefCounted<ArrayBufferView> {
     unsigned m_byteOffset : 31;
     bool m_isNeuterable : 1;
 
-  private:
+private:
     friend class ArrayBuffer;
     RefPtr<ArrayBuffer> m_buffer;
     ArrayBufferView* m_prevView;
@@ -182,8 +176,7 @@ bool ArrayBufferView::zeroRangeImpl(unsigned byteOffset, size_t rangeByteLength)
     return true;
 }
 
-void ArrayBufferView::calculateOffsetAndLength(int start, int end, unsigned arraySize,
-                                               unsigned* offset, unsigned* length)
+void ArrayBufferView::calculateOffsetAndLength(int start, int end, unsigned arraySize, unsigned* offset, unsigned* length)
 {
     if (start < 0)
         start += arraySize;
@@ -201,8 +194,8 @@ void ArrayBufferView::calculateOffsetAndLength(int start, int end, unsigned arra
     *length = static_cast<unsigned>(end - start);
 }
 
-} // namespace WTF
+} // namespace JSC
 
-using WTF::ArrayBufferView;
+using JSC::ArrayBufferView;
 
 #endif // ArrayBufferView_h

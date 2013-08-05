@@ -38,7 +38,7 @@
 #include "BlobURL.h"
 #include "FileException.h"
 #include "FileReaderLoader.h"
-#include <wtf/ArrayBuffer.h>
+#include <runtime/ArrayBuffer.h>
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {

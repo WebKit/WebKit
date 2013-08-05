@@ -30,7 +30,7 @@
 #define PeriodicWave_h
 
 #include "AudioArray.h"
-#include <wtf/Float32Array.h>
+#include <runtime/Float32Array.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>

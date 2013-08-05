@@ -30,7 +30,7 @@
 
 #include "AudioBuffer.h"
 #include "AudioBufferCallback.h"
-#include <wtf/ArrayBuffer.h>
+#include <runtime/ArrayBuffer.h>
 #include <wtf/MainThread.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>

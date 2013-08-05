@@ -37,6 +37,10 @@
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
+namespace JSC {
+class ArrayBuffer;
+}
+
 namespace WebCore {
 
 class Blob;
@@ -54,7 +58,7 @@ public:
 
     virtual ~FileReaderSync() { }
 
-    PassRefPtr<ArrayBuffer> readAsArrayBuffer(ScriptExecutionContext*, Blob*, ExceptionCode&);
+    PassRefPtr<JSC::ArrayBuffer> readAsArrayBuffer(ScriptExecutionContext*, Blob*, ExceptionCode&);
     String readAsBinaryString(ScriptExecutionContext*, Blob*, ExceptionCode&);
     String readAsText(ScriptExecutionContext* scriptExecutionContext, Blob* blob, ExceptionCode& ec)
     {

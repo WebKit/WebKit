@@ -28,6 +28,7 @@
 
 #if ENABLE(ENCRYPTED_MEDIA) || ENABLE(ENCRYPTED_MEDIA_V2)
 
+#include <runtime/Uint8Array.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 

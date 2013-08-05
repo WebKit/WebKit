@@ -23,8 +23,8 @@
 
 #include "JSArrayBufferView.h"
 #include "JSDOMBinding.h"
+#include <runtime/Float64Array.h>
 #include <runtime/JSObject.h>
-#include <wtf/Float64Array.h>
 
 namespace WebCore {
 

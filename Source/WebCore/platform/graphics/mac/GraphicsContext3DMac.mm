@@ -43,11 +43,11 @@
 #include <OpenGL/gl.h>
 #include "WebGLLayer.h"
 #include "WebGLObject.h"
-#include <wtf/ArrayBuffer.h>
-#include <wtf/ArrayBufferView.h>
-#include <wtf/Int32Array.h>
-#include <wtf/Float32Array.h>
-#include <wtf/Uint8Array.h>
+#include <runtime/ArrayBuffer.h>
+#include <runtime/ArrayBufferView.h>
+#include <runtime/Int32Array.h>
+#include <runtime/Float32Array.h>
+#include <runtime/Uint8Array.h>
 #include <wtf/text/CString.h>
 
 namespace WebCore {

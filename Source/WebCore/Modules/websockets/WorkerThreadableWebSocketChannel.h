@@ -66,7 +66,7 @@ public:
     virtual String subprotocol() OVERRIDE;
     virtual String extensions() OVERRIDE;
     virtual ThreadableWebSocketChannel::SendResult send(const String& message) OVERRIDE;
-    virtual ThreadableWebSocketChannel::SendResult send(const ArrayBuffer&, unsigned byteOffset, unsigned byteLength) OVERRIDE;
+    virtual ThreadableWebSocketChannel::SendResult send(const JSC::ArrayBuffer&, unsigned byteOffset, unsigned byteLength) OVERRIDE;
     virtual ThreadableWebSocketChannel::SendResult send(const Blob&) OVERRIDE;
     virtual unsigned long bufferedAmount() const OVERRIDE;
     virtual void close(int code, const String& reason) OVERRIDE;
@@ -88,7 +88,7 @@ public:
 
         void connect(const KURL&, const String& protocol);
         void send(const String& message);
-        void send(const ArrayBuffer&);
+        void send(const JSC::ArrayBuffer&);
         void send(const Blob&);
         void bufferedAmount();
         void close(int code, const String& reason);
@@ -134,7 +134,7 @@ private:
         void initialize();
         void connect(const KURL&, const String& protocol);
         ThreadableWebSocketChannel::SendResult send(const String& message);
-        ThreadableWebSocketChannel::SendResult send(const ArrayBuffer&, unsigned byteOffset, unsigned byteLength);
+        ThreadableWebSocketChannel::SendResult send(const JSC::ArrayBuffer&, unsigned byteOffset, unsigned byteLength);
         ThreadableWebSocketChannel::SendResult send(const Blob&);
         unsigned long bufferedAmount();
         void close(int code, const String& reason);

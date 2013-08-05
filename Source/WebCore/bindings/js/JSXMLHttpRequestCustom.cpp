@@ -48,8 +48,8 @@
 #include "JSEventListener.h"
 #include "XMLHttpRequest.h"
 #include <interpreter/StackIterator.h>
+#include <runtime/ArrayBuffer.h>
 #include <runtime/Error.h>
-#include <wtf/ArrayBuffer.h>
 
 using namespace JSC;
 

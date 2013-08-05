@@ -226,7 +226,7 @@ sub AddIncludesForType
     } elsif ($isCallback && $codeGenerator->IsWrapperType($type)) {
         $includesRef->{"JS${type}.h"} = 1;
     } elsif ($codeGenerator->IsTypedArrayType($type)) {
-        $includesRef->{"<wtf/${type}.h>"} = 1;
+        $includesRef->{"<runtime/${type}.h>"} = 1;
     } else {
         # default, include the same named file
         $includesRef->{"${type}.h"} = 1;
@@ -683,7 +683,7 @@ sub GenerateHeader
 
     if ($hasParent && $interface->extendedAttributes->{"JSGenerateToNativeObject"}) {
         if ($codeGenerator->IsTypedArrayType($interfaceName)) {
-            $headerIncludes{"<wtf/$interfaceName.h>"} = 1;
+            $headerIncludes{"<runtime/$interfaceName.h>"} = 1;
         } else {
             $headerIncludes{"$interfaceName.h"} = 1;
         }
@@ -3612,7 +3612,7 @@ sub NativeToJSValue
         # Default, include header with same name.
         AddToImplIncludes("JS$type.h", $conditional);
         if ($codeGenerator->IsTypedArrayType($type)) {
-            AddToImplIncludes("<wtf/$type.h>", $conditional) if not $codeGenerator->SkipIncludeHeader($type);
+            AddToImplIncludes("<runtime/$type.h>", $conditional) if not $codeGenerator->SkipIncludeHeader($type);
         } else {
             AddToImplIncludes("$type.h", $conditional) if not $codeGenerator->SkipIncludeHeader($type);
         }

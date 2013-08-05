@@ -33,7 +33,7 @@
     CustomToJSObject,
     DoNotCheckConstants,
     TypedArray=float,
-    ImplementationNamespace=WTF
+    ImplementationNamespace=JSC
 ] interface Float32Array : ArrayBufferView {
     const unsigned long BYTES_PER_ELEMENT = 4;
 

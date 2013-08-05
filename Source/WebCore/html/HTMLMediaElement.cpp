@@ -80,10 +80,10 @@
 #include "ShadowRoot.h"
 #include "TimeRanges.h"
 #include <limits>
+#include <runtime/Uint8Array.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/MathExtras.h>
 #include <wtf/NonCopyingSort.h>
-#include <wtf/Uint8Array.h>
 #include <wtf/text/CString.h>
 
 #if USE(ACCELERATED_COMPOSITING)

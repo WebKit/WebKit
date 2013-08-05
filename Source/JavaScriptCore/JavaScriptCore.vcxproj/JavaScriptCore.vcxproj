@@ -410,6 +410,8 @@
     <ClCompile Include="..\profiler\ProfilerOSRExit.cpp" />
     <ClCompile Include="..\profiler\ProfilerOSRExitSite.cpp" />
     <ClCompile Include="..\profiler\ProfilerProfiledBytecodes.cpp" />
+    <ClCompile Include="..\runtime\ArrayBuffer.cpp" />
+    <ClCompile Include="..\runtime\ArrayBufferView.cpp" />
     <ClCompile Include="..\runtime\ArgList.cpp" />
     <ClCompile Include="..\runtime\Arguments.cpp" />
     <ClCompile Include="..\runtime\ArrayConstructor.cpp" />
@@ -771,6 +773,8 @@
     <ClInclude Include="..\profiler\ProfilerOSRExit.h" />
     <ClInclude Include="..\profiler\ProfilerOSRExitSite.h" />
     <ClInclude Include="..\profiler\ProfilerProfiledBytecodes.h" />
+    <ClInclude Include="..\runtime\ArrayBuffer.h" />
+    <ClInclude Include="..\runtime\ArrayBufferView.h" />
     <ClInclude Include="..\runtime\ArgList.h" />
     <ClInclude Include="..\runtime\Arguments.h" />
     <ClInclude Include="..\runtime\ArrayConstructor.h" />
@@ -806,6 +810,8 @@
     <ClInclude Include="..\runtime\ExceptionHelpers.h" />
     <ClInclude Include="..\runtime\Executable.h" />
     <ClInclude Include="..\runtime\ExecutionHarness.h" />
+    <ClInclude Include="..\runtime\Float32Array.h" />
+    <ClInclude Include="..\runtime\Float64Array.h" />
     <ClInclude Include="..\runtime\FunctionConstructor.h" />
     <ClInclude Include="..\runtime\FunctionPrototype.h" />
     <ClInclude Include="..\runtime\GCActivityCallback.h" />
@@ -815,6 +821,9 @@
     <ClInclude Include="..\runtime\IndexingHeaderInlines.h" />
     <ClInclude Include="..\runtime\IndexingType.h" />
     <ClInclude Include="..\runtime\InitializeThreading.h" />
+    <ClInclude Include="..\runtime\Int16Array.h" />
+    <ClInclude Include="..\runtime\Int32Array.h" />
+    <ClInclude Include="..\runtime\Int8Array.h" />
     <ClInclude Include="..\runtime\IntendedStructureChain.h" />
     <ClInclude Include="..\runtime\InternalFunction.h" />
     <ClInclude Include="..\runtime\Intrinsic.h" />
@@ -903,7 +912,10 @@
     <ClInclude Include="..\runtime\SymbolTable.h" />
     <ClInclude Include="..\runtime\Tracing.h" />
     <ClInclude Include="..\runtime\TypedArrayDescriptor.h" />
+    <ClInclude Include="..\runtime\Uint16Array.h" />
     <ClInclude Include="..\runtime\Uint16WithFraction.h" />
+    <ClInclude Include="..\runtime\Uint32Array.h" />
+    <ClInclude Include="..\runtime\Uint8Array.h" />
     <ClInclude Include="..\runtime\VM.h" />
     <ClInclude Include="..\runtime\Watchdog.h" />
     <ClInclude Include="..\runtime\WeakGCMap.h" />

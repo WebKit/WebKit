@@ -28,7 +28,7 @@
     GenerateIsReachable=Impl,
     CustomConstructor(unsigned long length),
     JSNoStaticTables,
-    ImplementationNamespace=WTF,
+    ImplementationNamespace=JSC,
     ImplementationLacksVTable
 ] interface ArrayBuffer {
     readonly attribute unsigned long byteLength;

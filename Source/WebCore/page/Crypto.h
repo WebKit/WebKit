@@ -34,6 +34,10 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
+namespace JSC {
+class ArrayBufferView;
+}
+
 namespace WebCore {
 
 typedef int ExceptionCode;
@@ -42,7 +46,7 @@ class Crypto : public ScriptWrappable, public RefCounted<Crypto> {
 public:
     static PassRefPtr<Crypto> create() { return adoptRef(new Crypto()); }
 
-    void getRandomValues(ArrayBufferView*, ExceptionCode&);
+    void getRandomValues(JSC::ArrayBufferView*, ExceptionCode&);
 
 private:
     Crypto();

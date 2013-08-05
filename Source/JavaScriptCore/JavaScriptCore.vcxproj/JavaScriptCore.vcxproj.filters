@@ -444,6 +444,12 @@
     <ClCompile Include="..\profiler\ProfilerProfiledBytecodes.cpp">
       <Filter>profiler</Filter>
     </ClCompile>
+    <ClCompile Include="..\runtime\ArrayBuffer.cpp">
+      <Filter>runtime</Filter>
+    </ClCompile>
+    <ClCompile Include="..\runtime\ArrayBufferView.cpp">
+      <Filter>runtime</Filter>
+    </ClCompile>
     <ClCompile Include="..\runtime\ArgList.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
@@ -1459,6 +1465,36 @@
     </ClInclude>
     <ClInclude Include="..\profiler\ProfilerProfiledBytecodes.h">
       <Filter>profiler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\runtime\ArrayBuffer.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\runtime\ArrayBufferView.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\runtime\Float32Array.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\runtime\Float64Array.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\runtime\Int16Array.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\runtime\Int32Array.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\runtime\Int8Array.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\runtime\Uint16Array.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\runtime\Uint32Array.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\runtime\Uint8Array.h">
+      <Filter>wtf</Filter>
     </ClInclude>
     <ClInclude Include="..\runtime\ArgList.h">
       <Filter>runtime</Filter>

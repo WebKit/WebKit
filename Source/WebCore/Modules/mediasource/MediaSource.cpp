@@ -38,7 +38,7 @@
 #include "MIMETypeRegistry.h"
 #include "SourceBufferPrivate.h"
 #include "TimeRanges.h"
-#include <wtf/Uint8Array.h>
+#include <runtime/Uint8Array.h>
 
 namespace WebCore {
 

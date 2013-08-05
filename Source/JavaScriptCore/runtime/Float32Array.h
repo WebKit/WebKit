@@ -27,10 +27,10 @@
 #ifndef Float32Array_h
 #define Float32Array_h
 
-#include <wtf/TypedArrayBase.h>
+#include "TypedArrayBase.h"
 #include <wtf/MathExtras.h>
 
-namespace WTF {
+namespace JSC {
 
 class Float32Array : public TypedArrayBase<float> {
 public:
@@ -60,9 +60,7 @@ public:
     }
 
 private:
-    inline Float32Array(PassRefPtr<ArrayBuffer>,
-                    unsigned byteOffset,
-                    unsigned length);
+    inline Float32Array(PassRefPtr<ArrayBuffer>, unsigned byteOffset, unsigned length);
     // Make constructor visible to superclass.
     friend class TypedArrayBase<float>;
 };
@@ -102,8 +100,8 @@ PassRefPtr<Float32Array> Float32Array::subarray(int start, int end) const
     return subarrayImpl<Float32Array>(start, end);
 }
 
-} // namespace WTF
+} // namespace JSC
 
-using WTF::Float32Array;
+using JSC::Float32Array;
 
 #endif // Float32Array_h

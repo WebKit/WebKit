@@ -34,7 +34,7 @@
 #include "MessagePort.h"
 #include "ScriptValue.h"
 #include "SerializedScriptValue.h"
-#include <wtf/ArrayBuffer.h>
+#include <runtime/ArrayBuffer.h>
 
 namespace WebCore {
 

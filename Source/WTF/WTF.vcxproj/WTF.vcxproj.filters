@@ -96,12 +96,6 @@
     <ClCompile Include="..\wtf\unicode\UTF8.cpp">
       <Filter>wtf\unicode</Filter>
     </ClCompile>
-    <ClCompile Include="..\wtf\ArrayBuffer.cpp">
-      <Filter>wtf</Filter>
-    </ClCompile>
-    <ClCompile Include="..\wtf\ArrayBufferView.cpp">
-      <Filter>wtf</Filter>
-    </ClCompile>
     <ClCompile Include="..\wtf\Assertions.cpp">
       <Filter>wtf</Filter>
     </ClCompile>
@@ -338,12 +332,6 @@
     <ClInclude Include="..\wtf\WTFThreadData.h">
       <Filter>wtf</Filter>
     </ClInclude>
-    <ClInclude Include="..\wtf\ArrayBuffer.h">
-      <Filter>wtf</Filter>
-    </ClInclude>
-    <ClInclude Include="..\wtf\ArrayBufferView.h">
-      <Filter>wtf</Filter>
-    </ClInclude>
     <ClInclude Include="..\wtf\ASCIICType.h">
       <Filter>wtf</Filter>
     </ClInclude>
@@ -437,12 +425,6 @@
     <ClInclude Include="..\wtf\FixedArray.h">
       <Filter>wtf</Filter>
     </ClInclude>
-    <ClInclude Include="..\wtf\Float32Array.h">
-      <Filter>wtf</Filter>
-    </ClInclude>
-    <ClInclude Include="..\wtf\Float64Array.h">
-      <Filter>wtf</Filter>
-    </ClInclude>
     <ClInclude Include="..\wtf\Forward.h">
       <Filter>wtf</Filter>
     </ClInclude>
@@ -477,15 +459,6 @@
       <Filter>wtf</Filter>
     </ClInclude>
     <ClInclude Include="..\wtf\HexNumber.h">
-      <Filter>wtf</Filter>
-    </ClInclude>
-    <ClInclude Include="..\wtf\Int16Array.h">
-      <Filter>wtf</Filter>
-    </ClInclude>
-    <ClInclude Include="..\wtf\Int32Array.h">
-      <Filter>wtf</Filter>
-    </ClInclude>
-    <ClInclude Include="..\wtf\Int8Array.h">
       <Filter>wtf</Filter>
     </ClInclude>
     <ClInclude Include="..\wtf\ListHashSet.h">
@@ -678,15 +651,6 @@
       <Filter>wtf</Filter>
     </ClInclude>
     <ClInclude Include="..\wtf\TypeTraits.h">
-      <Filter>wtf</Filter>
-    </ClInclude>
-    <ClInclude Include="..\wtf\Uint16Array.h">
-      <Filter>wtf</Filter>
-    </ClInclude>
-    <ClInclude Include="..\wtf\Uint32Array.h">
-      <Filter>wtf</Filter>
-    </ClInclude>
-    <ClInclude Include="..\wtf\Uint8Array.h">
       <Filter>wtf</Filter>
     </ClInclude>
     <ClInclude Include="..\wtf\ValueCheck.h">

@@ -27,24 +27,24 @@
 #ifndef Uint8Array_h
 #define Uint8Array_h
 
-#include <wtf/IntegralTypedArrayBase.h>
+#include "IntegralTypedArrayBase.h"
 
-namespace WTF {
+namespace JSC {
 
 class ArrayBuffer;
 
-class Uint8Array : public IntegralTypedArrayBase<unsigned char> {
+class Uint8Array : public IntegralTypedArrayBase<uint8_t> {
 public:
     static inline PassRefPtr<Uint8Array> create(unsigned length);
-    static inline PassRefPtr<Uint8Array> create(const unsigned char* array, unsigned length);
+    static inline PassRefPtr<Uint8Array> create(const uint8_t* array, unsigned length);
     static inline PassRefPtr<Uint8Array> create(PassRefPtr<ArrayBuffer>, unsigned byteOffset, unsigned length);
 
     // Should only be used when it is known the entire array will be filled. Do
     // not return these results directly to JavaScript without filling first.
     static inline PassRefPtr<Uint8Array> createUninitialized(unsigned length);
 
-    using TypedArrayBase<unsigned char>::set;
-    using IntegralTypedArrayBase<unsigned char>::set;
+    using TypedArrayBase<uint8_t>::set;
+    using IntegralTypedArrayBase<uint8_t>::set;
 
     inline PassRefPtr<Uint8Array> subarray(int start) const;
     inline PassRefPtr<Uint8Array> subarray(int start, int end) const;
@@ -55,35 +55,33 @@ public:
     }
 
 protected:
-    inline Uint8Array(PassRefPtr<ArrayBuffer>,
-                           unsigned byteOffset,
-                           unsigned length);
+    inline Uint8Array(PassRefPtr<ArrayBuffer>, unsigned byteOffset, unsigned length);
     // Make constructor visible to superclass.
-    friend class TypedArrayBase<unsigned char>;
+    friend class TypedArrayBase<uint8_t>;
 };
 
 PassRefPtr<Uint8Array> Uint8Array::create(unsigned length)
 {
-    return TypedArrayBase<unsigned char>::create<Uint8Array>(length);
+    return TypedArrayBase<uint8_t>::create<Uint8Array>(length);
 }
 
-PassRefPtr<Uint8Array> Uint8Array::create(const unsigned char* array, unsigned length)
+PassRefPtr<Uint8Array> Uint8Array::create(const uint8_t* array, unsigned length)
 {
-    return TypedArrayBase<unsigned char>::create<Uint8Array>(array, length);
+    return TypedArrayBase<uint8_t>::create<Uint8Array>(array, length);
 }
 
 PassRefPtr<Uint8Array> Uint8Array::create(PassRefPtr<ArrayBuffer> buffer, unsigned byteOffset, unsigned length)
 {
-    return TypedArrayBase<unsigned char>::create<Uint8Array>(buffer, byteOffset, length);
+    return TypedArrayBase<uint8_t>::create<Uint8Array>(buffer, byteOffset, length);
 }
 
 PassRefPtr<Uint8Array> Uint8Array::createUninitialized(unsigned length)
 {
-    return TypedArrayBase<unsigned char>::createUninitialized<Uint8Array>(length);
+    return TypedArrayBase<uint8_t>::createUninitialized<Uint8Array>(length);
 }
 
 Uint8Array::Uint8Array(PassRefPtr<ArrayBuffer> buffer, unsigned byteOffset, unsigned length)
-: IntegralTypedArrayBase<unsigned char>(buffer, byteOffset, length)
+: IntegralTypedArrayBase<uint8_t>(buffer, byteOffset, length)
 {
 }
 
@@ -97,8 +95,8 @@ PassRefPtr<Uint8Array> Uint8Array::subarray(int start, int end) const
     return subarrayImpl<Uint8Array>(start, end);
 }
 
-} // namespace WTF
+} // namespace JSC
 
-using WTF::Uint8Array;
+using JSC::Uint8Array;
 
 #endif // Uint8Array_h

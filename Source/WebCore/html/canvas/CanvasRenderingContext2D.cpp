@@ -62,10 +62,11 @@
 #include "RenderLayer.h"
 #endif
 
+#include <runtime/Uint8ClampedArray.h>
+
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/MathExtras.h>
 #include <wtf/OwnPtr.h>
-#include <wtf/Uint8ClampedArray.h>
 #include <wtf/text/StringBuilder.h>
 
 #if USE(CG)

@@ -32,7 +32,7 @@ javascriptcore_built_nosources += \
 	DerivedSources/JavaScriptCore/LLIntAssembly.h
 
 javascriptcore_sources += \
-    Source/JavaScriptCore/API/APICallbackFunction.h \
+	Source/JavaScriptCore/API/APICallbackFunction.h \
 	Source/JavaScriptCore/API/APICast.h \
 	Source/JavaScriptCore/API/APIShims.h \
 	Source/JavaScriptCore/API/JSAPIWrapperObject.h \
@@ -644,6 +644,10 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/ArgList.h \
 	Source/JavaScriptCore/runtime/Arguments.cpp \
 	Source/JavaScriptCore/runtime/Arguments.h \
+	Source/JavaScriptCore/runtime/ArrayBuffer.cpp \
+	Source/JavaScriptCore/runtime/ArrayBuffer.h \
+	Source/JavaScriptCore/runtime/ArrayBufferView.cpp \
+	Source/JavaScriptCore/runtime/ArrayBufferView.h \
 	Source/JavaScriptCore/runtime/ArrayConstructor.cpp \
 	Source/JavaScriptCore/runtime/ArrayConstructor.h \
 	Source/JavaScriptCore/runtime/ArrayConventions.h \
@@ -705,6 +709,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/Executable.cpp \
 	Source/JavaScriptCore/runtime/Executable.h \
 	Source/JavaScriptCore/runtime/ExecutionHarness.h \
+	Source/JavaScriptCore/runtime/Float32Array.h \
+	Source/JavaScriptCore/runtime/Float64Array.h \
 	Source/JavaScriptCore/runtime/FunctionConstructor.cpp \
 	Source/JavaScriptCore/runtime/FunctionConstructor.h \
 	Source/JavaScriptCore/runtime/FunctionExecutableDump.cpp \
@@ -723,6 +729,10 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/IndexingType.h \
 	Source/JavaScriptCore/runtime/InitializeThreading.cpp \
 	Source/JavaScriptCore/runtime/InitializeThreading.h \
+	Source/JavaScriptCore/runtime/Int16Array.h \
+	Source/JavaScriptCore/runtime/Int32Array.h \
+	Source/JavaScriptCore/runtime/Int8Array.h \
+	Source/JavaScriptCore/runtime/IntegralTypedArrayBase.h \
 	Source/JavaScriptCore/runtime/IntendedStructureChain.cpp \
 	Source/JavaScriptCore/runtime/IntendedStructureChain.h \
 	Source/JavaScriptCore/runtime/InternalFunction.cpp \
@@ -882,8 +892,13 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/SymbolTable.cpp \
 	Source/JavaScriptCore/runtime/SymbolTable.h \
 	Source/JavaScriptCore/runtime/Tracing.h \
+	Source/JavaScriptCore/runtime/TypedArrayBase.h \
 	Source/JavaScriptCore/runtime/TypedArrayDescriptor.h \
+	Source/JavaScriptCore/runtime/Uint16Array.h \
 	Source/JavaScriptCore/runtime/Uint16WithFraction.h \
+	Source/JavaScriptCore/runtime/Uint32Array.h \
+	Source/JavaScriptCore/runtime/Uint8Array.h \
+	Source/JavaScriptCore/runtime/Uint8ClampedArray.h \
 	Source/JavaScriptCore/runtime/VMStackBounds.h \
 	Source/JavaScriptCore/runtime/Watchdog.cpp \
 	Source/JavaScriptCore/runtime/Watchdog.h \

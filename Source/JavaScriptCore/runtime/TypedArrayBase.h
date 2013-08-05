@@ -27,14 +27,14 @@
 #ifndef TypedArrayBase_h
 #define TypedArrayBase_h
 
-#include <wtf/ArrayBuffer.h>
-#include <wtf/ArrayBufferView.h>
+#include "ArrayBuffer.h"
+#include "ArrayBufferView.h"
 
-namespace WTF {
+namespace JSC {
 
 template <typename T>
 class TypedArrayBase : public ArrayBufferView {
-  public:
+public:
     T* data() const { return static_cast<T*>(baseAddress()); }
 
     bool set(TypedArrayBase<T>* array, unsigned offset)
@@ -108,9 +108,7 @@ protected:
     }
 
     template <class Subclass>
-    static PassRefPtr<Subclass> create(PassRefPtr<ArrayBuffer> buffer,
-                                       unsigned byteOffset,
-                                       unsigned length)
+    static PassRefPtr<Subclass> create(PassRefPtr<ArrayBuffer> buffer, unsigned byteOffset, unsigned length)
     {
         RefPtr<ArrayBuffer> buf(buffer);
         if (!verifySubRange<T>(buf, byteOffset, length))
@@ -148,8 +146,8 @@ protected:
     unsigned m_length;
 };
 
-} // namespace WTF
+} // namespace JSC
 
-using WTF::TypedArrayBase;
+using JSC::TypedArrayBase;
 
 #endif // TypedArrayBase_h

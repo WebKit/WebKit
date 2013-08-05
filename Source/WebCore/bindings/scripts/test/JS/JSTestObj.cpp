@@ -54,9 +54,9 @@
 #include "TestObj.h"
 #include "bool.h"
 #include <runtime/Error.h>
+#include <runtime/Float32Array.h>
 #include <runtime/JSArray.h>
 #include <runtime/JSString.h>
-#include <wtf/Float32Array.h>
 #include <wtf/GetPtr.h>
 
 #if ENABLE(Condition1)

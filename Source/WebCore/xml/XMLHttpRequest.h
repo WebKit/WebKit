@@ -35,6 +35,11 @@
 #include <wtf/text/AtomicStringHash.h>
 #include <wtf/text/StringBuilder.h>
 
+namespace JSC {
+class ArrayBuffer;
+class ArrayBufferView;
+}
+
 namespace WebCore {
 
 class Blob;
@@ -91,8 +96,8 @@ public:
     void send(const String&, ExceptionCode&);
     void send(Blob*, ExceptionCode&);
     void send(DOMFormData*, ExceptionCode&);
-    void send(ArrayBuffer*, ExceptionCode&);
-    void send(ArrayBufferView*, ExceptionCode&);
+    void send(JSC::ArrayBuffer*, ExceptionCode&);
+    void send(JSC::ArrayBufferView*, ExceptionCode&);
     void abort();
     void setRequestHeader(const AtomicString& name, const String& value, ExceptionCode&);
     void overrideMimeType(const String& override);
@@ -120,8 +125,8 @@ public:
     ResponseTypeCode responseTypeCode() const { return m_responseTypeCode; }
     
     // response attribute has custom getter.
-    ArrayBuffer* responseArrayBuffer(ExceptionCode&);
-    ArrayBuffer* optionalResponseArrayBuffer() const { return m_responseArrayBuffer.get(); }
+    JSC::ArrayBuffer* responseArrayBuffer(ExceptionCode&);
+    JSC::ArrayBuffer* optionalResponseArrayBuffer() const { return m_responseArrayBuffer.get(); }
 
     void setLastSendLineNumber(unsigned lineNumber) { m_lastSendLineNumber = lineNumber; }
     void setLastSendURL(const String& url) { m_lastSendURL = url; }
@@ -222,7 +227,7 @@ private:
     mutable RefPtr<Document> m_responseDocument;
     
     RefPtr<SharedBuffer> m_binaryResponseBuilder;
-    mutable RefPtr<ArrayBuffer> m_responseArrayBuffer;
+    mutable RefPtr<JSC::ArrayBuffer> m_responseArrayBuffer;
 
     bool m_error;
 

@@ -44,13 +44,13 @@
 #include "IntSize.h"
 #include "NotImplemented.h"
 #include <cstring>
-#include <wtf/ArrayBuffer.h>
-#include <wtf/ArrayBufferView.h>
-#include <wtf/Float32Array.h>
-#include <wtf/Int32Array.h>
+#include <runtime/ArrayBuffer.h>
+#include <runtime/ArrayBufferView.h>
+#include <runtime/Float32Array.h>
+#include <runtime/Int32Array.h>
+#include <runtime/Uint8Array.h>
 #include <wtf/MainThread.h>
 #include <wtf/OwnArrayPtr.h>
-#include <wtf/Uint8Array.h>
 #include <wtf/text/CString.h>
 
 #if USE(OPENGL_ES_2)

@@ -26,19 +26,20 @@
 #ifndef JSCTypedArrayStubs_h
 #define JSCTypedArrayStubs_h
 
+#include "Float32Array.h"
+#include "Float64Array.h"
+#include "Int16Array.h"
+#include "Int32Array.h"
+#include "Int8Array.h"
 #include "JSDestructibleObject.h"
 #include "ObjectPrototype.h"
 #include "Operations.h"
-#include <wtf/Float32Array.h>
-#include <wtf/Float64Array.h>
+#include "Uint16Array.h"
+#include "Uint32Array.h"
+#include "Uint8Array.h"
+#include "Uint8ClampedArray.h"
+
 #include <wtf/Forward.h>
-#include <wtf/Int16Array.h>
-#include <wtf/Int32Array.h>
-#include <wtf/Int8Array.h>
-#include <wtf/Uint16Array.h>
-#include <wtf/Uint32Array.h>
-#include <wtf/Uint8Array.h>
-#include <wtf/Uint8ClampedArray.h>
 
 namespace JSC {
     

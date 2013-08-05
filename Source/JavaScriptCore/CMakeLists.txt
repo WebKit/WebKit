@@ -264,6 +264,8 @@ set(JavaScriptCore_SOURCES
     profiler/ProfileNode.cpp
     profiler/LegacyProfiler.cpp
 
+    runtime/ArrayBuffer.cpp
+    runtime/ArrayBufferView.cpp
     runtime/ArgList.cpp
     runtime/Arguments.cpp
     runtime/ArrayConstructor.cpp

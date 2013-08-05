@@ -51,8 +51,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\wtf\ArrayBuffer.cpp" />
-    <ClCompile Include="..\wtf\ArrayBufferView.cpp" />
     <ClCompile Include="..\wtf\Assertions.cpp" />
     <ClCompile Include="..\wtf\BitVector.cpp" />
     <ClCompile Include="..\wtf\CompilationThread.cpp" />
@@ -122,8 +120,6 @@
     <ClInclude Include="..\wtf\CompilationThread.h" />
     <ClInclude Include="..\WTF\config.h" />
     <ClInclude Include="..\wtf\Alignment.h" />
-    <ClInclude Include="..\wtf\ArrayBuffer.h" />
-    <ClInclude Include="..\wtf\ArrayBufferView.h" />
     <ClInclude Include="..\wtf\ASCIICType.h" />
     <ClInclude Include="..\wtf\Assertions.h" />
     <ClInclude Include="..\wtf\Atomics.h" />
@@ -168,8 +164,6 @@
     <ClInclude Include="..\wtf\FeatureDefines.h" />
     <ClInclude Include="..\wtf\FilePrintStream.h" />
     <ClInclude Include="..\wtf\FixedArray.h" />
-    <ClInclude Include="..\wtf\Float32Array.h" />
-    <ClInclude Include="..\wtf\Float64Array.h" />
     <ClInclude Include="..\wtf\Forward.h" />
     <ClInclude Include="..\wtf\FunctionDispatcher.h" />
     <ClInclude Include="..\wtf\Functional.h" />
@@ -183,9 +177,6 @@
     <ClInclude Include="..\wtf\HashTable.h" />
     <ClInclude Include="..\wtf\HashTraits.h" />
     <ClInclude Include="..\wtf\HexNumber.h" />
-    <ClInclude Include="..\wtf\Int16Array.h" />
-    <ClInclude Include="..\wtf\Int32Array.h" />
-    <ClInclude Include="..\wtf\Int8Array.h" />
     <ClInclude Include="..\wtf\ListHashSet.h" />
     <ClInclude Include="..\wtf\Locker.h" />
     <ClInclude Include="..\wtf\MainThread.h" />
@@ -270,9 +261,6 @@
     <ClInclude Include="..\wtf\threadspecific.h" />
     <ClInclude Include="..\wtf\threads\BinarySemaphore.h" />
     <ClInclude Include="..\wtf\TypeTraits.h" />
-    <ClInclude Include="..\wtf\Uint16Array.h" />
-    <ClInclude Include="..\wtf\Uint32Array.h" />
-    <ClInclude Include="..\wtf\Uint8Array.h" />
     <ClInclude Include="..\wtf\unicode\CharacterNames.h" />
     <ClInclude Include="..\wtf\unicode\Collator.h" />
     <ClInclude Include="..\wtf\unicode\icu\UnicodeIcu.h" />

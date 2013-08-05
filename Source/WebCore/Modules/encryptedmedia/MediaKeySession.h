@@ -32,10 +32,10 @@
 #include "EventTarget.h"
 #include "ExceptionCode.h"
 #include "Timer.h"
+#include <runtime/Uint8Array.h>
 #include <wtf/Deque.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
-#include <wtf/Uint8Array.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

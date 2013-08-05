@@ -27,24 +27,24 @@
 #ifndef Uint32Array_h
 #define Uint32Array_h
 
-#include <wtf/IntegralTypedArrayBase.h>
+#include "IntegralTypedArrayBase.h"
 
-namespace WTF {
+namespace JSC {
 
 class ArrayBuffer;
 
-class Uint32Array : public IntegralTypedArrayBase<unsigned int> {
+class Uint32Array : public IntegralTypedArrayBase<uint32_t> {
 public:
     static inline PassRefPtr<Uint32Array> create(unsigned length);
-    static inline PassRefPtr<Uint32Array> create(const unsigned int* array, unsigned length);
+    static inline PassRefPtr<Uint32Array> create(const uint32_t* array, unsigned length);
     static inline PassRefPtr<Uint32Array> create(PassRefPtr<ArrayBuffer>, unsigned byteOffset, unsigned length);
 
     // Should only be used when it is known the entire array will be filled. Do
     // not return these results directly to JavaScript without filling first.
     static inline PassRefPtr<Uint32Array> createUninitialized(unsigned length);
 
-    using TypedArrayBase<unsigned>::set;
-    using IntegralTypedArrayBase<unsigned>::set;
+    using TypedArrayBase<uint32_t>::set;
+    using IntegralTypedArrayBase<uint32_t>::set;
 
     inline PassRefPtr<Uint32Array> subarray(int start) const;
     inline PassRefPtr<Uint32Array> subarray(int start, int end) const;
@@ -55,35 +55,33 @@ public:
     }
 
 private:
-    inline Uint32Array(PassRefPtr<ArrayBuffer>,
-                          unsigned byteOffset,
-                          unsigned length);
+    inline Uint32Array(PassRefPtr<ArrayBuffer>, unsigned byteOffset, unsigned length);
     // Make constructor visible to superclass.
-    friend class TypedArrayBase<unsigned int>;
+    friend class TypedArrayBase<uint32_t>;
 };
 
 PassRefPtr<Uint32Array> Uint32Array::create(unsigned length)
 {
-    return TypedArrayBase<unsigned int>::create<Uint32Array>(length);
+    return TypedArrayBase<uint32_t>::create<Uint32Array>(length);
 }
 
-PassRefPtr<Uint32Array> Uint32Array::create(const unsigned int* array, unsigned length)
+PassRefPtr<Uint32Array> Uint32Array::create(const uint32_t* array, unsigned length)
 {
-    return TypedArrayBase<unsigned int>::create<Uint32Array>(array, length);
+    return TypedArrayBase<uint32_t>::create<Uint32Array>(array, length);
 }
 
 PassRefPtr<Uint32Array> Uint32Array::create(PassRefPtr<ArrayBuffer> buffer, unsigned byteOffset, unsigned length)
 {
-    return TypedArrayBase<unsigned int>::create<Uint32Array>(buffer, byteOffset, length);
+    return TypedArrayBase<uint32_t>::create<Uint32Array>(buffer, byteOffset, length);
 }
 
 PassRefPtr<Uint32Array> Uint32Array::createUninitialized(unsigned length)
 {
-    return TypedArrayBase<unsigned int>::createUninitialized<Uint32Array>(length);
+    return TypedArrayBase<uint32_t>::createUninitialized<Uint32Array>(length);
 }
 
 Uint32Array::Uint32Array(PassRefPtr<ArrayBuffer> buffer, unsigned byteOffset, unsigned length)
-    : IntegralTypedArrayBase<unsigned int>(buffer, byteOffset, length)
+    : IntegralTypedArrayBase<uint32_t>(buffer, byteOffset, length)
 {
 }
 
@@ -97,8 +95,8 @@ PassRefPtr<Uint32Array> Uint32Array::subarray(int start, int end) const
     return subarrayImpl<Uint32Array>(start, end);
 }
 
-} // namespace WTF
+} // namespace JSC
 
-using WTF::Uint32Array;
+using JSC::Uint32Array;
 
 #endif // Uint32Array_h

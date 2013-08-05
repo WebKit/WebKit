@@ -35,8 +35,8 @@
 #include "RTCDataChannelHandler.h"
 #include "RTCPeerConnectionHandler.h"
 #include "ScriptExecutionContext.h"
-#include <wtf/ArrayBuffer.h>
-#include <wtf/ArrayBufferView.h>
+#include <runtime/ArrayBuffer.h>
+#include <runtime/ArrayBufferView.h>
 
 namespace WebCore {
 

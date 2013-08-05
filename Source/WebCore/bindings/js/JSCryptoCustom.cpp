@@ -28,8 +28,8 @@
 #include "ExceptionCode.h"
 #include "JSArrayBufferView.h"
 
+#include <runtime/ArrayBufferView.h>
 #include <runtime/Error.h>
-#include <wtf/ArrayBufferView.h>
 
 using namespace JSC;
 

@@ -42,6 +42,10 @@
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
+namespace JSC {
+class ArrayBuffer;
+}
+
 namespace WebCore {
 
 class Blob;
@@ -73,7 +77,7 @@ public:
     ReadyState readyState() const { return m_state; }
     PassRefPtr<FileError> error() { return m_error; }
     FileReaderLoader::ReadType readType() const { return m_readType; }
-    PassRefPtr<ArrayBuffer> arrayBufferResult() const;
+    PassRefPtr<JSC::ArrayBuffer> arrayBufferResult() const;
     String stringResult();
 
     // EventTarget

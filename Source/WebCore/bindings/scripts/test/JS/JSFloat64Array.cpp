@@ -27,10 +27,10 @@
 #include "JSFloat32Array.h"
 #include "JSInt32Array.h"
 #include <runtime/Error.h>
+#include <runtime/Float64Array.h>
+#include <runtime/Int32Array.h>
 #include <runtime/PropertyNameArray.h>
-#include <wtf/Float64Array.h>
 #include <wtf/GetPtr.h>
-#include <wtf/Int32Array.h>
 
 using namespace JSC;
 

@@ -39,11 +39,11 @@
 #include "GraphicsTypes3D.h"
 #include "IntSize.h"
 #include "ImageBufferData.h"
+#include <runtime/Uint8ClampedArray.h>
 #include <wtf/Forward.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
-#include <wtf/Uint8ClampedArray.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {

@@ -30,6 +30,11 @@
 
 #include <wtf/Forward.h>
 
+namespace JSC {
+class ArrayBuffer;
+class ArrayBufferView;
+}
+
 namespace WebCore {
 
 class WebGLBuffer : public WebGLSharedObject {
@@ -39,13 +44,13 @@ public:
     static PassRefPtr<WebGLBuffer> create(WebGLRenderingContext*);
 
     bool associateBufferData(GC3Dsizeiptr size);
-    bool associateBufferData(ArrayBuffer*);
-    bool associateBufferData(ArrayBufferView*);
-    bool associateBufferSubData(GC3Dintptr offset, ArrayBuffer*);
-    bool associateBufferSubData(GC3Dintptr offset, ArrayBufferView*);
+    bool associateBufferData(JSC::ArrayBuffer*);
+    bool associateBufferData(JSC::ArrayBufferView*);
+    bool associateBufferSubData(GC3Dintptr offset, JSC::ArrayBuffer*);
+    bool associateBufferSubData(GC3Dintptr offset, JSC::ArrayBufferView*);
 
     GC3Dsizeiptr byteLength() const;
-    const ArrayBuffer* elementArrayBuffer() const { return m_elementArrayBuffer.get(); }
+    const JSC::ArrayBuffer* elementArrayBuffer() const { return m_elementArrayBuffer.get(); }
 
     // Gets the cached max index for the given type. Returns -1 if
     // none has been set.
@@ -68,7 +73,7 @@ private:
 
     GC3Denum m_target;
 
-    RefPtr<ArrayBuffer> m_elementArrayBuffer;
+    RefPtr<JSC::ArrayBuffer> m_elementArrayBuffer;
     GC3Dsizeiptr m_byteLength;
 
     // Optimization for index validation. For each type of index

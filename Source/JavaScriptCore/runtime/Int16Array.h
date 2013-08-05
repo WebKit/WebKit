@@ -26,24 +26,24 @@
 #ifndef Int16Array_h
 #define Int16Array_h
 
-#include <wtf/IntegralTypedArrayBase.h>
+#include "IntegralTypedArrayBase.h"
 
-namespace WTF {
+namespace JSC {
 
 class ArrayBuffer;
 
-class Int16Array : public IntegralTypedArrayBase<short> {
+class Int16Array : public IntegralTypedArrayBase<int16_t> {
 public:
     static inline PassRefPtr<Int16Array> create(unsigned length);
-    static inline PassRefPtr<Int16Array> create(const short* array, unsigned length);
+    static inline PassRefPtr<Int16Array> create(const int16_t* array, unsigned length);
     static inline PassRefPtr<Int16Array> create(PassRefPtr<ArrayBuffer>, unsigned byteOffset, unsigned length);
 
     // Should only be used when it is known the entire array will be filled. Do
     // not return these results directly to JavaScript without filling first.
     static inline PassRefPtr<Int16Array> createUninitialized(unsigned length);
 
-    using TypedArrayBase<short>::set;
-    using IntegralTypedArrayBase<short>::set;
+    using TypedArrayBase<int16_t>::set;
+    using IntegralTypedArrayBase<int16_t>::set;
 
     inline PassRefPtr<Int16Array> subarray(int start) const;
     inline PassRefPtr<Int16Array> subarray(int start, int end) const;
@@ -54,35 +54,34 @@ public:
     }
 
 private:
-    inline Int16Array(PassRefPtr<ArrayBuffer>,
-                    unsigned byteOffset,
-                    unsigned length);
+    inline Int16Array(PassRefPtr<ArrayBuffer>, unsigned byteOffset, unsigned length);
+
     // Make constructor visible to superclass.
-    friend class TypedArrayBase<short>;
+    friend class TypedArrayBase<int16_t>;
 };
 
 PassRefPtr<Int16Array> Int16Array::create(unsigned length)
 {
-    return TypedArrayBase<short>::create<Int16Array>(length);
+    return TypedArrayBase<int16_t>::create<Int16Array>(length);
 }
 
-PassRefPtr<Int16Array> Int16Array::create(const short* array, unsigned length)
+PassRefPtr<Int16Array> Int16Array::create(const int16_t* array, unsigned length)
 {
-    return TypedArrayBase<short>::create<Int16Array>(array, length);
+    return TypedArrayBase<int16_t>::create<Int16Array>(array, length);
 }
 
 PassRefPtr<Int16Array> Int16Array::create(PassRefPtr<ArrayBuffer> buffer, unsigned byteOffset, unsigned length)
 {
-    return TypedArrayBase<short>::create<Int16Array>(buffer, byteOffset, length);
+    return TypedArrayBase<int16_t>::create<Int16Array>(buffer, byteOffset, length);
 }
 
 PassRefPtr<Int16Array> Int16Array::createUninitialized(unsigned length)
 {
-    return TypedArrayBase<short>::createUninitialized<Int16Array>(length);
+    return TypedArrayBase<int16_t>::createUninitialized<Int16Array>(length);
 }
 
 Int16Array::Int16Array(PassRefPtr<ArrayBuffer> buffer, unsigned byteOffset, unsigned length)
-    : IntegralTypedArrayBase<short>(buffer, byteOffset, length)
+    : IntegralTypedArrayBase<int16_t>(buffer, byteOffset, length)
 {
 }
 
@@ -96,8 +95,8 @@ PassRefPtr<Int16Array> Int16Array::subarray(int start, int end) const
     return subarrayImpl<Int16Array>(start, end);
 }
 
-} // namespace WTF
+} // namespace JSC
 
-using WTF::Int16Array;
+using JSC::Int16Array;
 
 #endif // Int16Array_h

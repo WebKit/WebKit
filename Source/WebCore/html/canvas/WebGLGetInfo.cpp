@@ -36,10 +36,10 @@
 #include "WebGLRenderbuffer.h"
 #include "WebGLTexture.h"
 #include "WebGLVertexArrayObjectOES.h"
-#include <wtf/Float32Array.h>
-#include <wtf/Int32Array.h>
-#include <wtf/Uint32Array.h>
-#include <wtf/Uint8Array.h>
+#include <runtime/Float32Array.h>
+#include <runtime/Int32Array.h>
+#include <runtime/Uint32Array.h>
+#include <runtime/Uint8Array.h>
 
 namespace WebCore {
 

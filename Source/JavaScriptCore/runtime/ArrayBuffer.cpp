@@ -31,7 +31,7 @@
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
-namespace WTF {
+namespace JSC {
 
 bool ArrayBuffer::transfer(ArrayBufferContents& result, Vector<RefPtr<ArrayBufferView> >& neuteredViews)
 {

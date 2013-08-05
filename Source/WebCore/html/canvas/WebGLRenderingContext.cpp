@@ -74,9 +74,9 @@
 #include "WebGLTexture.h"
 #include "WebGLUniformLocation.h"
 
+#include <runtime/Uint32Array.h>
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/PassOwnArrayPtr.h>
-#include <wtf/Uint32Array.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 

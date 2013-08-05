@@ -32,7 +32,7 @@
 
 #include "ExceptionCode.h"
 #include "ScriptWrappableInlines.h"
-#include <wtf/ArrayBufferView.h>
+#include <runtime/ArrayBufferView.h>
 #include <wtf/CryptographicallyRandomNumber.h>
 
 namespace WebCore {

@@ -24,7 +24,7 @@
 
 #include <BlackBerryPlatformGraphics.h>
 #include <BlackBerryPlatformGuardedPointer.h>
-#include <wtf/Uint8ClampedArray.h>
+#include <runtime/Uint8ClampedArray.h>
 
 namespace WebCore {
 

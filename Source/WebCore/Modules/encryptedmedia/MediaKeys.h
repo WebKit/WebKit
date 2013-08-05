@@ -31,10 +31,10 @@
 #include "CDM.h"
 #include "EventTarget.h"
 #include "ExceptionCode.h"
+#include <runtime/Uint8Array.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
-#include <wtf/Uint8Array.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 

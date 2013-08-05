@@ -33,7 +33,7 @@
     CustomToJSObject,
     DoNotCheckConstants,
     TypedArray=unsigned int,
-    ImplementationNamespace=WTF
+    ImplementationNamespace=JSC
 ] interface Uint32Array : ArrayBufferView {
     const unsigned long BYTES_PER_ELEMENT = 4;
 

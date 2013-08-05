@@ -27,10 +27,11 @@
 #include "FloatRect.h"
 #include "IntRect.h"
 
+#include <runtime/Uint8ClampedArray.h>
+
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
-#include <wtf/Uint8ClampedArray.h>
 #include <wtf/Vector.h>
 
 #if ENABLE(OPENCL)

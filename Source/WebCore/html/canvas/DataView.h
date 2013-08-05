@@ -26,7 +26,7 @@
 #ifndef DataView_h
 #define DataView_h
 
-#include <wtf/ArrayBufferView.h>
+#include <runtime/ArrayBufferView.h>
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {

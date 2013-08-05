@@ -32,12 +32,12 @@
 #include "JSDOMBinding.h"
 #include <interpreter/CallFrame.h>
 #include <runtime/ArgList.h>
+#include <runtime/ArrayBufferView.h>
 #include <runtime/Error.h>
 #include <runtime/JSCJSValue.h>
 #include <runtime/JSObject.h>
 #include <runtime/Operations.h>
-#include <wtf/ArrayBufferView.h>
-#include <wtf/TypedArrayBase.h>
+#include <runtime/TypedArrayBase.h>
 
 namespace WebCore {
 
