@@ -54,6 +54,9 @@
     [RaisesException] Node treeScopeRootNode(Node node);
     [RaisesException] Node parentTreeScope(Node node);
 
+    // Spatial Navigation testing
+    [RaisesException] unsigned long lastSpatialNavigationCandidateCount();
+
     // CSS Animation testing.
     unsigned long numberOfActiveAnimations();
     [RaisesException] void suspendAnimations(Document document);

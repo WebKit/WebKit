@@ -187,6 +187,7 @@ Page::Page(PageClients& pageClients)
     , m_scriptedAnimationsSuspended(false)
     , m_pageThrottler(PageThrottler::create(this))
     , m_console(PageConsole::create(this))
+    , m_lastSpatialNavigationCandidatesCount(0) // NOTE: Only called from Internals for Spatial Navigation testing.
     , m_framesHandlingBeforeUnloadEvent(0)
 {
     ASSERT(m_editorClient);

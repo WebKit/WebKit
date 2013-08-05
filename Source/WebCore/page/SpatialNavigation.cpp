@@ -620,6 +620,28 @@ bool areElementsOnSameLine(const FocusCandidate& firstCandidate, const FocusCand
     return true;
 }
 
+// Consider only those nodes as candidate which are exactly in the focus-direction.
+// e.g. If we are moving down then the nodes that are above current focused node should be considered as invalid.
+bool isValidCandidate(FocusDirection direction, const FocusCandidate& current, FocusCandidate& candidate)
+{
+    LayoutRect currentRect = current.rect;
+    LayoutRect candidateRect = candidate.rect;
+
+    switch (direction) {
+    case FocusDirectionLeft:
+        return candidateRect.x() < currentRect.maxX();
+    case FocusDirectionUp:
+        return candidateRect.y() < currentRect.maxY();
+    case FocusDirectionRight:
+        return candidateRect.maxX() > currentRect.x();
+    case FocusDirectionDown:
+        return candidateRect.maxY() > currentRect.y();
+    default:
+        ASSERT_NOT_REACHED();
+    }
+    return false;
+}
+
 void distanceDataForNode(FocusDirection direction, const FocusCandidate& current, FocusCandidate& candidate)
 {
     if (areElementsOnSameLine(current, candidate)) {

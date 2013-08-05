@@ -94,6 +94,9 @@ public:
     String shadowPseudoId(Element*, ExceptionCode&);
     void setShadowPseudoId(Element*, const String&, ExceptionCode&);
 
+    // Spatial Navigation testing.
+    unsigned lastSpatialNavigationCandidateCount(ExceptionCode&) const;
+
     // CSS Animation testing.
     unsigned numberOfActiveAnimations() const;
     bool animationsAreSuspended(Document*, ExceptionCode&) const;

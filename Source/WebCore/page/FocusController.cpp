@@ -766,6 +766,7 @@ void FocusController::findFocusCandidateInContainer(Node* container, const Layou
     current.focusableNode = focusedNode;
     current.visibleNode = focusedNode;
 
+    unsigned candidateCount = 0;
     for (; element; element = (element->isFrameOwnerElement() || canScrollInDirection(element, direction))
         ? ElementTraversal::nextSkippingChildren(element, container)
         : ElementTraversal::next(element, container)) {
@@ -779,8 +780,19 @@ void FocusController::findFocusCandidateInContainer(Node* container, const Layou
         if (candidate.isNull())
             continue;
 
+        if (!isValidCandidate(direction, current, candidate))
+            continue;
+
+        candidateCount++;
         candidate.enclosingScrollableBox = container;
         updateFocusCandidateIfNeeded(direction, current, candidate, closest);
+    }
+
+    // The variable 'candidateCount' keeps track of the number of nodes traversed in a given container.
+    // If we have more than one container in a page then the total number of nodes traversed is equal to the sum of nodes traversed in each container.
+    if (focusedFrame() && focusedFrame()->document()) {
+        candidateCount += focusedFrame()->document()->page()->lastSpatialNavigationCandidateCount();
+        focusedFrame()->document()->page()->setLastSpatialNavigationCandidateCount(candidateCount);
     }
 }
 
@@ -868,7 +880,7 @@ bool FocusController::advanceFocusDirectionally(FocusDirection direction, Keyboa
 
     if (container->isDocumentNode())
         toDocument(container)->updateLayoutIgnorePendingStylesheets();
-        
+
     // Figure out the starting rect.
     LayoutRect startingRect;
     if (focusedElement) {
@@ -881,6 +893,9 @@ bool FocusController::advanceFocusDirectionally(FocusDirection direction, Keyboa
             startingRect = virtualRectForAreaElementAndDirection(area, direction);
         }
     }
+
+    if (focusedFrame() && focusedFrame()->document())
+        focusedDocument->page()->setLastSpatialNavigationCandidateCount(0);
 
     bool consumed = false;
     do {

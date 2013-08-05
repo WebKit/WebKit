@@ -136,6 +136,7 @@ bool canScrollInDirection(const Node* container, FocusDirection);
 bool canScrollInDirection(const Frame*, FocusDirection);
 bool canBeScrolledIntoView(FocusDirection, const FocusCandidate&);
 bool areElementsOnSameLine(const FocusCandidate& firstCandidate, const FocusCandidate& secondCandidate);
+bool isValidCandidate(FocusDirection, const FocusCandidate&, FocusCandidate&);
 void distanceDataForNode(FocusDirection, const FocusCandidate& current, FocusCandidate& candidate);
 Node* scrollableEnclosingBoxOrParentFrameForNodeInDirection(FocusDirection, Node*);
 LayoutRect nodeRectInAbsoluteCoordinates(Node*, bool ignoreBorder = false);

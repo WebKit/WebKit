@@ -393,6 +393,16 @@ Node* Internals::parentTreeScope(Node* node, ExceptionCode& ec)
     return parentTreeScope ? parentTreeScope->rootNode() : 0;
 }
 
+unsigned Internals::lastSpatialNavigationCandidateCount(ExceptionCode& ec) const
+{
+    if (!contextDocument() || !contextDocument()->page()) {
+        ec = INVALID_ACCESS_ERR;
+        return 0;
+    }
+
+    return contextDocument()->page()->lastSpatialNavigationCandidateCount();
+}
+
 unsigned Internals::numberOfActiveAnimations() const
 {
     Frame* contextFrame = frame();

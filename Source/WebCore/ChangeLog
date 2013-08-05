@@ -1,3 +1,32 @@
+2013-08-05  Abhijeet Kandalkar  <abhijeet.k@samsung.com>
+
+        Spatial Navigation should avoid unwanted calculation while deciding focus candidate.
+        https://bugs.webkit.org/show_bug.cgi?id=117265
+
+        Reviewed by Antonio Gomes.
+
+        Spatial Navigation should consider only those nodes as candidate which are exactly in the focus-direction.
+        e.g. If we are moving down then the nodes that are above CURRENT focused node should be considered as invalid.
+        Added isValidCandidate() which checks whether node is exactly in the focus-direction.
+
+        Test: fast/spatial-navigation/snav-search-optimization.html
+
+        * page/FocusController.cpp:
+        (WebCore::FocusController::findFocusCandidateInContainer):
+        (WebCore::FocusController::advanceFocusDirectionally):
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        * page/Page.h:
+        (WebCore::Page::setLastSpatialNavigationCandidateCount):
+        (WebCore::Page::lastSpatialNavigationCandidateCount):
+        * page/SpatialNavigation.cpp:
+        (WebCore::isValidCandidate):
+        * page/SpatialNavigation.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::lastSpatialNavigationCandidateCount):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2013-08-05  Mihai Tica  <mitica@adobe.com>
 
         [CSS Background Blending] Specifying background-image and background-color

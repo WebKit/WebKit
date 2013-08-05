@@ -409,6 +409,8 @@ public:
     void incrementFrameHandlingBeforeUnloadEventCount();
     void decrementFrameHandlingBeforeUnloadEventCount();
     bool isAnyFrameHandlingBeforeUnloadEvent();
+    void setLastSpatialNavigationCandidateCount(unsigned count) { m_lastSpatialNavigationCandidatesCount = count; }
+    unsigned lastSpatialNavigationCandidateCount() const { return m_lastSpatialNavigationCandidatesCount; }
 
 private:
     void initGroup();
@@ -546,7 +548,8 @@ private:
 
     HashSet<String> m_seenPlugins;
     HashSet<String> m_seenMediaEngines;
-    
+
+    unsigned m_lastSpatialNavigationCandidatesCount;
     unsigned m_framesHandlingBeforeUnloadEvent;
 };
 
