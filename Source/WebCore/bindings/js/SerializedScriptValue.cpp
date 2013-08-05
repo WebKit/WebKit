@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -54,6 +54,7 @@
 #include "NotImplemented.h"
 #include "ScriptValue.h"
 #include "SharedBuffer.h"
+#include "WebCoreJSClientData.h"
 #include <limits>
 #include <JavaScriptCore/APICast.h>
 #include <JavaScriptCore/APIShims.h>
@@ -1721,8 +1722,49 @@ SerializedScriptValue::SerializedScriptValue(Vector<uint8_t>& buffer, Vector<Str
     m_blobURLs.swap(blobURLs);
 }
 
+static void neuterView(JSCell* jsView)
+{
+    if (!jsView)
+        return;
+    
+    switch (jsView->classInfo()->typedArrayStorageType) {
+    case TypedArrayNone:
+        // This could be a DataView, for example. Assume that there are views that the
+        // DFG doesn't care about.
+        return;
+    case TypedArrayInt8:
+        jsCast<JSInt8Array*>(jsView)->m_storageLength = 0;
+        return;
+    case TypedArrayInt16:
+        jsCast<JSInt16Array*>(jsView)->m_storageLength = 0;
+        return;
+    case TypedArrayInt32:
+        jsCast<JSInt32Array*>(jsView)->m_storageLength = 0;
+        return;
+    case TypedArrayUint8:
+        jsCast<JSUint8Array*>(jsView)->m_storageLength = 0;
+        return;
+    case TypedArrayUint8Clamped:
+        jsCast<JSUint8ClampedArray*>(jsView)->m_storageLength = 0;
+        return;
+    case TypedArrayUint16:
+        jsCast<JSUint16Array*>(jsView)->m_storageLength = 0;
+        return;
+    case TypedArrayUint32:
+        jsCast<JSUint32Array*>(jsView)->m_storageLength = 0;
+        return;
+    case TypedArrayFloat32:
+        jsCast<JSFloat32Array*>(jsView)->m_storageLength = 0;
+        return;
+    case TypedArrayFloat64:
+        jsCast<JSFloat64Array*>(jsView)->m_storageLength = 0;
+        return;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
 PassOwnPtr<SerializedScriptValue::ArrayBufferContentsArray> SerializedScriptValue::transferArrayBuffers(
-    ArrayBufferArray& arrayBuffers, SerializationReturnCode& code)
+    ExecState* exec, ArrayBufferArray& arrayBuffers, SerializationReturnCode& code)
 {
     for (size_t i = 0; i < arrayBuffers.size(); i++) {
         if (arrayBuffers[i]->isNeutered()) {
@@ -1732,19 +1774,30 @@ PassOwnPtr<SerializedScriptValue::ArrayBufferContentsArray> SerializedScriptValu
     }
 
     OwnPtr<ArrayBufferContentsArray> contents = adoptPtr(new ArrayBufferContentsArray(arrayBuffers.size()));
+    Vector<RefPtr<DOMWrapperWorld> > worlds;
+    static_cast<WebCoreJSClientData*>(exec->vm().clientData)->getAllWorlds(worlds);
 
     HashSet<WTF::ArrayBuffer*> visited;
-    for (size_t i = 0; i < arrayBuffers.size(); i++) {
+    for (size_t arrayBufferIndex = 0; arrayBufferIndex < arrayBuffers.size(); arrayBufferIndex++) {
         Vector<RefPtr<ArrayBufferView> > neuteredViews;
 
-        if (visited.contains(arrayBuffers[i].get()))
+        if (visited.contains(arrayBuffers[arrayBufferIndex].get()))
             continue;
-        visited.add(arrayBuffers[i].get());
+        visited.add(arrayBuffers[arrayBufferIndex].get());
 
-        bool result = arrayBuffers[i]->transfer(contents->at(i), neuteredViews);
+        bool result = arrayBuffers[arrayBufferIndex]->transfer(contents->at(arrayBufferIndex), neuteredViews);
         if (!result) {
             code = ValidationError;
             return nullptr;
+        }
+        
+        // The views may have been neutered, but their wrappers also need to be neutered, too.
+        for (size_t viewIndex = neuteredViews.size(); viewIndex--;) {
+            ArrayBufferView* view = neuteredViews[viewIndex].get();
+            for (size_t worldIndex = worlds.size(); worldIndex--;) {
+                DOMWrapperWorld* world = worlds[worldIndex].get();
+                neuterView(getCachedWrapper(world, view));
+            }
         }
     }
     return contents.release();
@@ -1762,7 +1815,7 @@ PassRefPtr<SerializedScriptValue> SerializedScriptValue::create(ExecState* exec,
     OwnPtr<ArrayBufferContentsArray> arrayBufferContentsArray;
 
     if (arrayBuffers && serializationDidCompleteSuccessfully(code))
-        arrayBufferContentsArray = transferArrayBuffers(*arrayBuffers, code);
+        arrayBufferContentsArray = transferArrayBuffers(exec, *arrayBuffers, code);
 
     if (throwExceptions == Throwing)
         maybeThrowExceptionIfSerializationFailed(exec, code);

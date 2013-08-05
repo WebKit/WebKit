@@ -1,3 +1,20 @@
+2013-08-05  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG optimizations don't handle neutered arrays properly
+        https://bugs.webkit.org/show_bug.cgi?id=119409
+
+        Reviewed by Mark Hahnenberg and Oliver Hunt.
+        
+        This just neuters view wrappers also.
+
+        Test: fast/js/dfg-typed-array-neuter.
+
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::neuterView):
+        (WebCore::SerializedScriptValue::transferArrayBuffers):
+        (WebCore::SerializedScriptValue::create):
+        * bindings/js/SerializedScriptValue.h:
+
 2013-08-02  Lucas Forschler  <lforschler@apple.com>
 
         Merge r153681
