@@ -1,0 +1,32 @@
+<head>
+<script src="../../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body style="word-wrap: break-word; -webkit-nbsp-mode: space; -webkit-line-break: after-white-space;">a
+<div><br></div>
+<script>
+document.designMode='on';
+window.getSelection().setPosition(document.body, 2);
+
+if (window.textInputController) {
+    var firstRect = textInputController.firstRectForCharacterRange(2, 1);
+
+    // This should be a reasonable rect for a caret.
+    var xLocation = firstRect[0];
+    var width = firstRect[2];
+    var height = firstRect[3];
+    shouldBeTrue("xLocation > 0");
+    shouldBe("width", "0");
+    shouldBeTrue("height > 10");
+    shouldBeTrue("height < 30");
+
+    // Delete test data for nicer output.
+    document.execCommand("Delete");
+    document.execCommand("Delete");
+} else {
+    debug("To test manually, invoke Dictation. Its popover should be positioned reasonably.");
+}
+</script>
+<div id=result></div>
+</body>
+<script src="../../../../fast/js/resources/js-test-post.js"></script>
+</html>

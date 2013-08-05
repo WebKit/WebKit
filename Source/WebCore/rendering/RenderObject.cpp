@@ -1243,9 +1243,12 @@ FloatRect RenderObject::absoluteBoundingBoxRectForRange(const Range* range)
     Vector<FloatQuad> quads;
     range->textQuads(quads);
 
-    FloatRect result;
-    for (size_t i = 0; i < quads.size(); ++i)
-        result.unite(quads[i].boundingBox());
+    if (quads.isEmpty())
+        return FloatRect();
+
+    FloatRect result = quads[0].boundingBox();
+    for (size_t i = 1; i < quads.size(); ++i)
+        result.uniteEvenIfEmpty(quads[i].boundingBox());
 
     return result;
 }

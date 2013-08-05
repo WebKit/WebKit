@@ -1,3 +1,17 @@
+2013-08-05  Alexey Proskuryakov  <ap@apple.com>
+
+        <rdar://problem/14637103> REGRESSION (r153060?): Microphone appears in the way
+        of text when dictating an e-mail
+        https://bugs.webkit.org/show_bug.cgi?id=119496
+
+        Reviewed by Ryosuke Niwa.
+
+        * platform/mac/editing/input/firstrectforcharacterrange-caret-in-br-expected.txt: Added.
+        * platform/mac/editing/input/firstrectforcharacterrange-caret-in-br.html: Added.
+
+        * platform/wk2/TestExpectations: textInputController.firstRectForCharacterRange is
+        not available in WTR.
+
 2013-08-05  Morten Stenshorne  <mstensho@opera.com>
 
         Region based columns not painted correctly in non-default writing-modes

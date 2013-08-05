@@ -1,3 +1,18 @@
+2013-08-05  Alexey Proskuryakov  <ap@apple.com>
+
+        <rdar://problem/14637103> REGRESSION (r153060?): Microphone appears in the way
+        of text when dictating an e-mail
+        https://bugs.webkit.org/show_bug.cgi?id=119496
+
+        Reviewed by Ryosuke Niwa.
+
+        Test: platform/mac/editing/input/firstrectforcharacterrange-caret-in-br.html
+
+        * rendering/RenderObject.cpp: (WebCore::RenderObject::absoluteBoundingBoxRectForRange):
+        FloatRect::unite() doesn't preserve empty rects, which we need here.
+        We alrady handle the case of collapsed range in Editor::firstRectForRange(), and
+        this is similar, but we can't currently cover both with one simple fix.
+
 2013-08-05  Morten Stenshorne  <mstensho@opera.com>
 
         Region based columns not painted correctly in non-default writing-modes
