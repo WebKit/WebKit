@@ -1,3 +1,12 @@
+2013-08-05  Dean Jackson  <dino@apple.com>
+
+        Upload example for a blog post.
+
+        * blog-files/srcset/image-1x.png: Added.
+        * blog-files/srcset/image-2x.png: Added.
+        * blog-files/srcset/image-src.png: Added.
+        * blog-files/srcset/index.html: Added.
+
 2013-07-31  Benjamin Poulain  <benjamin@webkit.org>
 
         Upload images for a potential blog post
