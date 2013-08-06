@@ -6066,7 +6066,6 @@ platform_sources += \
 	Source/WebCore/platform/HistogramSupport.cpp \
 	Source/WebCore/platform/HistogramSupport.h \
 	Source/WebCore/platform/HostWindow.h \
-	Source/WebCore/platform/InitializeLogging.h \
 	Source/WebCore/platform/KURL.cpp \
 	Source/WebCore/platform/KURL.h \
 	Source/WebCore/platform/KURLHash.h \

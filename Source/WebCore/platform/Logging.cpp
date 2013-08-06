@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003, 2006, 2013 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,137 +26,38 @@
 #include "config.h"
 #include "Logging.h"
 
+#include <wtf/StdLibExtras.h>
+#include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
 #if !LOG_DISABLED
 
 namespace WebCore {
 
-WTFLogChannel LogNotYetImplemented = { 0x00000001, "WebCoreLogLevel", WTFLogChannelOff };
+#define DEFINE_LOG_CHANNEL(name) \
+    WTFLogChannel JOIN_LOG_CHANNEL_WITH_PREFIX(LOG_CHANNEL_PREFIX, name) = { WTFLogChannelOff, #name };
+WEBCORE_LOG_CHANNELS(DEFINE_LOG_CHANNEL)
 
-WTFLogChannel LogFrames =            { 0x00000010, "WebCoreLogLevel", WTFLogChannelOff };
-WTFLogChannel LogLoading =           { 0x00000020, "WebCoreLogLevel", WTFLogChannelOff };
-WTFLogChannel LogPopupBlocking =     { 0x00000040, "WebCoreLogLevel", WTFLogChannelOff };
-WTFLogChannel LogEvents =            { 0x00000080, "WebCoreLogLevel", WTFLogChannelOff };
+#define LOG_CHANNEL_ADDRESS(name)  &JOIN_LOG_CHANNEL_WITH_PREFIX(LOG_CHANNEL_PREFIX, name),
+WTFLogChannel* logChannels[] = {
+    WEBCORE_LOG_CHANNELS(LOG_CHANNEL_ADDRESS)
+};
 
-WTFLogChannel LogEditing =           { 0x00000100, "WebCoreLogLevel", WTFLogChannelOff };
-WTFLogChannel LogLiveConnect =       { 0x00000200, "WebCoreLogLevel", WTFLogChannelOff };
-WTFLogChannel LogIconDatabase =      { 0x00000400, "WebCoreLogLevel", WTFLogChannelOff };
-WTFLogChannel LogSQLDatabase =       { 0x00000800, "WebCoreLogLevel", WTFLogChannelOff };
+size_t logChannelCount = WTF_ARRAY_LENGTH(logChannels);
 
-WTFLogChannel LogSpellingAndGrammar ={ 0x00001000, "WebCoreLogLevel", WTFLogChannelOff };
-WTFLogChannel LogBackForward =       { 0x00002000, "WebCoreLogLevel", WTFLogChannelOff };
-WTFLogChannel LogHistory =           { 0x00004000, "WebCoreLogLevel", WTFLogChannelOff };
-WTFLogChannel LogPageCache =         { 0x00008000, "WebCoreLogLevel", WTFLogChannelOff };
-
-WTFLogChannel LogPlatformLeaks =     { 0x00010000, "WebCoreLogLevel", WTFLogChannelOff };
-WTFLogChannel LogResourceLoading =   { 0x00020000, "WebCoreLogLevel", WTFLogChannelOff };
-WTFLogChannel LogAnimations =        { 0x00040000, "WebCoreLogLevel", WTFLogChannelOff };
-
-WTFLogChannel LogNetwork =           { 0x00100000, "WebCoreLogLevel", WTFLogChannelOff };
-WTFLogChannel LogFTP =               { 0x00200000, "WebCoreLogLevel", WTFLogChannelOff };
-WTFLogChannel LogThreading =         { 0x00400000, "WebCoreLogLevel", WTFLogChannelOff };
-WTFLogChannel LogStorageAPI =        { 0x00800000, "WebCoreLogLevel", WTFLogChannelOff };
-
-WTFLogChannel LogMedia =             { 0x01000000, "WebCoreLogLevel", WTFLogChannelOff };
-WTFLogChannel LogPlugins =           { 0x02000000, "WebCoreLogLevel", WTFLogChannelOff };
-WTFLogChannel LogArchives =          { 0x04000000, "WebCoreLogLevel", WTFLogChannelOff };
-WTFLogChannel LogProgress =          { 0x08000000, "WebCoreLogLevel", WTFLogChannelOff };
-
-WTFLogChannel LogFileAPI =           { 0x10000000, "WebCoreLogLevel", WTFLogChannelOff };
-
-WTFLogChannel LogWebAudio =          { 0x20000000, "WebCoreLogLevel", WTFLogChannelOff };
-WTFLogChannel LogCompositing =       { 0x40000000, "WebCoreLogLevel", WTFLogChannelOff };
-WTFLogChannel LogGamepad =           { 0x80000000, "WebCoreLogLevel", WTFLogChannelOff };
-
-
-WTFLogChannel* getChannelFromName(const String& channelName)
+WTFLogChannel* logChannelByName(const String& name)
 {
-    if (!(channelName.length() >= 2))
-        return 0;
+    return WTFLogChannelByName(logChannels, logChannelCount, name.utf8().data());
+}
 
-    if (equalIgnoringCase(channelName, String("BackForward")))
-        return &LogBackForward;
+void initializeLoggingChannelsIfNecessary()
+{
+    static bool haveInitializedLoggingChannels = false;
+    if (haveInitializedLoggingChannels)
+        return;
+    haveInitializedLoggingChannels = true;
 
-    if (equalIgnoringCase(channelName, String("Editing")))
-        return &LogEditing;
-
-    if (equalIgnoringCase(channelName, String("Events")))
-        return &LogEvents;
-
-    if (equalIgnoringCase(channelName, String("Frames")))
-        return &LogFrames;
-
-    if (equalIgnoringCase(channelName, String("FTP")))
-        return &LogFTP;
-
-    if (equalIgnoringCase(channelName, String("History")))
-        return &LogHistory;
-
-    if (equalIgnoringCase(channelName, String("IconDatabase")))
-        return &LogIconDatabase;
-
-    if (equalIgnoringCase(channelName, String("Loading")))
-        return &LogLoading;
-
-    if (equalIgnoringCase(channelName, String("Media")))
-        return &LogMedia;
-
-    if (equalIgnoringCase(channelName, String("Network")))
-        return &LogNetwork;
-
-    if (equalIgnoringCase(channelName, String("NotYetImplemented")))
-        return &LogNotYetImplemented;
-
-    if (equalIgnoringCase(channelName, String("PageCache")))
-        return &LogPageCache;
-
-    if (equalIgnoringCase(channelName, String("PlatformLeaks")))
-        return &LogPlatformLeaks;
-
-    if (equalIgnoringCase(channelName, String("ResourceLoading")))
-        return &LogResourceLoading;
-
-    if (equalIgnoringCase(channelName, String("Animations")))
-        return &LogAnimations;
-
-    if (equalIgnoringCase(channelName, String("Plugins")))
-        return &LogPlugins;
-
-    if (equalIgnoringCase(channelName, String("PopupBlocking")))
-        return &LogPopupBlocking;
-
-    if (equalIgnoringCase(channelName, String("Progress")))
-        return &LogProgress;
-
-    if (equalIgnoringCase(channelName, String("SpellingAndGrammar")))
-        return &LogSpellingAndGrammar;
-
-    if (equalIgnoringCase(channelName, String("SQLDatabase")))
-        return &LogSQLDatabase;
-
-    if (equalIgnoringCase(channelName, String("StorageAPI")))
-        return &LogStorageAPI;
-
-    if (equalIgnoringCase(channelName, String("LiveConnect")))
-        return &LogLiveConnect;
-
-    if (equalIgnoringCase(channelName, String("Threading")))
-        return &LogThreading;
-
-    if (equalIgnoringCase(channelName, String("FileAPI")))
-        return &LogFileAPI;
-
-    if (equalIgnoringCase(channelName, String("WebAudio")))
-        return &LogWebAudio;
-
-    if (equalIgnoringCase(channelName, String("Compositing")))
-        return &LogCompositing;
-
-    if (equalIgnoringCase(channelName, String("Gamepad")))
-        return &LogGamepad;
-
-    return 0;
+    WTFInitializeLogChannelStatesFromString(logChannels, logChannelCount, logLevelString().utf8().data());
 }
 
 }

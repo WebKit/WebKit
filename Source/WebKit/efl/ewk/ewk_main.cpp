@@ -22,7 +22,7 @@
 #include "ewk_main.h"
 
 #include "FileSystem.h"
-#include "InitializeLogging.h"
+#include "Logging.h"
 #include "PageCache.h"
 #include "PageGroup.h"
 #include "PlatformStrategiesEfl.h"

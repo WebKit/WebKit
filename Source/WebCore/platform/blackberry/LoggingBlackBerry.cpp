@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009, 2010, 2011 Research In Motion Limited. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,41 +20,15 @@
 #include "config.h"
 #include "Logging.h"
 
-#include "InitializeLogging.h"
-
 #if !LOG_DISABLED
 
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-static inline void initializeWithUserDefault(WTFLogChannel& channel, bool enabled)
+String logLevelString()
 {
-    if (enabled)
-        channel.state = WTFLogChannelOn;
-    else
-        channel.state = WTFLogChannelOff;
-}
-
-void initializeLoggingChannelsIfNecessary()
-{
-    static bool haveInitializedLoggingChannels = false;
-    if (haveInitializedLoggingChannels)
-        return;
-    haveInitializedLoggingChannels = true;
-
-    String logEnv = getenv("WEBKIT_DEBUG");
-    if (logEnv.isEmpty())
-        return;
-
-    Vector<String> logv;
-    logEnv.split(" ", logv);
-
-    Vector<String>::const_iterator it = logv.begin();
-    for (; it != logv.end(); ++it) {
-        if (WTFLogChannel* channel = getChannelFromName(*it))
-            channel->state = WTFLogChannelOn;
-    }
+    return getenv("WEBKIT_DEBUG");
 }
 
 } // namespace WebCore

@@ -34,7 +34,7 @@
 #include "ChromeClientQt.h"
 #include "Font.h"
 #include "Image.h"
-#include "InitializeLogging.h"
+#include "Logging.h"
 #include "MemoryCache.h"
 #include "NotImplemented.h"
 #include "Page.h"

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 Samsung Electronics. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,27 +31,9 @@
 
 namespace WebKit {
 
-void initializeLogChannel(WTFLogChannel* channel)
+String logLevelString()
 {
-    DEFINE_STATIC_LOCAL(Vector<WTFLogChannel*>, activatedChannels, ());
-
-    // Fill activatedChannels vector only once based on names set in logValue.
-    if (activatedChannels.isEmpty()) {
-        const String logValue = getenv("WEBKIT_DEBUG");
-        if (logValue.isEmpty())
-            return;
-
-        Vector<String> activatedNames;
-        logValue.split(',', activatedNames);
-        for (size_t i = 0; i < activatedNames.size(); i++) {
-            WTFLogChannel* activeChannel = getChannelFromName(activatedNames[i]);
-            if (activeChannel)
-                activatedChannels.append(activeChannel);
-        }
-    }
-
-    if (activatedChannels.contains(channel))
-        channel->state = WTFLogChannelOn;
+    return getenv("WEBKIT_DEBUG");
 }
 
 } // namespace WebKit

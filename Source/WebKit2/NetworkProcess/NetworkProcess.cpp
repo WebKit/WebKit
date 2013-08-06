@@ -42,7 +42,7 @@
 #include "StatisticsData.h"
 #include "WebContextMessages.h"
 #include "WebCookieManager.h"
-#include <WebCore/InitializeLogging.h>
+#include <WebCore/Logging.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/RunLoop.h>
 #include <wtf/text/CString.h>

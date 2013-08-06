@@ -572,7 +572,7 @@ GstElement* MediaPlayerPrivateGStreamerBase::createVideoSink(GstElement* pipelin
 #if LOG_DISABLED
             g_object_set(m_fpsSink, "text-overlay", FALSE , NULL);
 #else
-            WTFLogChannel* channel = getChannelFromName("Media");
+            WTFLogChannel* channel = logChannelByName("Media");
             if (channel->state != WTFLogChannelOn)
                 g_object_set(m_fpsSink, "text-overlay", FALSE , NULL);
 #endif // LOG_DISABLED

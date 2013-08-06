@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2007 Alp Toker <alp@atoker.com>
  * Copyright (C) 2009 Gustavo Noronha Silva <gns@gnome.org>
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,7 +20,6 @@
  */
 
 #include "config.h"
-#include "InitializeLogging.h"
 #include "Logging.h"
 
 #if !LOG_DISABLED
@@ -30,38 +30,21 @@
 
 namespace WebCore {
 
-// Inspired by the code used by the Qt port
-
-void initializeLoggingChannelsIfNecessary()
+String logLevelString()
 {
-    static bool didInitializeLoggingChannels = false;
-    if (didInitializeLoggingChannels)
-        return;
-
-    didInitializeLoggingChannels = true;
-
     char* logEnv = getenv("WEBKIT_DEBUG");
     if (!logEnv)
-        return;
+        return emptyString();
 
-    // we set up the logs anyway because some of our logging, such as
-    // soup's is available in release builds
+    // We set up the logs anyway because some of our logging, such as Soup's is available in release builds.
 #if defined(NDEBUG)
     g_warning("WEBKIT_DEBUG is not empty, but this is a release build. Notice that many log messages will only appear in a debug build.");
 #endif
 
-    char** logv = g_strsplit(logEnv, " ", -1);
-
-    for (int i = 0; logv[i]; i++) {
-        if (WTFLogChannel* channel = getChannelFromName(logv[i]))
-            channel->state = WTFLogChannelOn;
-    }
-
-    g_strfreev(logv);
-
-    // to disable logging notImplemented set the DISABLE_NI_WARNING
-    // environment variable to 1
-    LogNotYetImplemented.state = WTFLogChannelOn;
+    // To disable logging notImplemented set the DISABLE_NI_WARNING environment variable to 1.
+    String logLevel = "NotYetImplemented,";
+    logLevel.append(logEnv);
+    return logLevel;
 }
 
 } // namespace WebCore

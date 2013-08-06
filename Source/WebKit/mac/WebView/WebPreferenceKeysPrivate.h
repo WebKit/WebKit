@@ -29,7 +29,6 @@
 // These are private because callers should be using the cover methods. They are in
 // a Private (as opposed to Internal) header file because Safari uses some of them
 // for managed preferences.
-#define WebKitLogLevelPreferenceKey @"WebKitLogLevel"
 #define WebKitStandardFontPreferenceKey @"WebKitStandardFont"
 #define WebKitFixedFontPreferenceKey @"WebKitFixedFont"
 #define WebKitSerifFontPreferenceKey @"WebKitSerifFont"

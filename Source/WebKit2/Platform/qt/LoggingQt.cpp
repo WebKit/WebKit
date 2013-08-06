@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2011 Samsung Electronics
  * Copyright (C) 2012 Nokia Corporation and/or its subsidiary(-ies)
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,31 +29,14 @@
 #include "Logging.h"
 
 #include <QDebug>
-#include <QStringList>
 
 namespace WebKit {
 
 #if !LOG_DISABLED
 
-void initializeLogChannel(WTFLogChannel* channel)
+String logLevelString()
 {
-    static Vector<WTFLogChannel*> activatedChannels;
-
-    QByteArray loggingEnv = qgetenv("QT_WEBKIT_LOG");
-    if (loggingEnv.isEmpty())
-        return;
-
-    // Fill activatedChannels vector only once based on names set in logValue.
-    if (activatedChannels.isEmpty()) {
-        QStringList channels = QString::fromLocal8Bit(loggingEnv).split(QLatin1String(","));
-        for (int i = 0; i < channels.count(); i++) {
-            if (WTFLogChannel* activeChannel = getChannelFromName(channels.at(i)))
-                activatedChannels.append(activeChannel);
-        }
-    }
-
-    if (activatedChannels.contains(channel))
-        channel->state = WTFLogChannelOn;
+    return QString::fromLocal8Bit(qgetenv("QT_WEBKIT_LOG"));
 }
 
 #endif // !LOG_DISABLED

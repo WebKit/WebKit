@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003, 2006, 2013 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,36 +37,49 @@
 
 namespace WebCore {
 
-    extern WTFLogChannel LogNotYetImplemented;
-    extern WTFLogChannel LogFrames;
-    extern WTFLogChannel LogLoading;
-    extern WTFLogChannel LogPopupBlocking;
-    extern WTFLogChannel LogEvents;
-    extern WTFLogChannel LogEditing;
-    extern WTFLogChannel LogLiveConnect;
-    extern WTFLogChannel LogIconDatabase;
-    extern WTFLogChannel LogSQLDatabase;
-    extern WTFLogChannel LogSpellingAndGrammar;
-    extern WTFLogChannel LogBackForward;
-    extern WTFLogChannel LogHistory;
-    extern WTFLogChannel LogPageCache;
-    extern WTFLogChannel LogPlatformLeaks;
-    extern WTFLogChannel LogResourceLoading;
-    extern WTFLogChannel LogAnimations;
-    extern WTFLogChannel LogNetwork;
-    extern WTFLogChannel LogFTP;
-    extern WTFLogChannel LogThreading;
-    extern WTFLogChannel LogStorageAPI;
-    extern WTFLogChannel LogMedia;
-    extern WTFLogChannel LogPlugins;
-    extern WTFLogChannel LogArchives;
-    extern WTFLogChannel LogProgress;
-    extern WTFLogChannel LogFileAPI;
-    extern WTFLogChannel LogWebAudio;
-    extern WTFLogChannel LogCompositing;
-    extern WTFLogChannel LogGamepad;
+#define WEBCORE_LOG_CHANNELS(M) \
+    M(Animations) \
+    M(Archives) \
+    M(BackForward) \
+    M(Compositing) \
+    M(Editing) \
+    M(Events) \
+    M(FTP) \
+    M(FileAPI) \
+    M(Frames) \
+    M(Gamepad) \
+    M(History) \
+    M(IconDatabase) \
+    M(LiveConnect) \
+    M(Loading) \
+    M(Media) \
+    M(Network) \
+    M(NotYetImplemented) \
+    M(PageCache) \
+    M(PlatformLeaks) \
+    M(Plugins) \
+    M(PopupBlocking) \
+    M(Progress) \
+    M(ResourceLoading) \
+    M(SQLDatabase) \
+    M(SpellingAndGrammar) \
+    M(StorageAPI) \
+    M(Threading) \
+    M(WebAudio) \
 
-    WTFLogChannel* getChannelFromName(const String& channelName);
+#define DECLARE_LOG_CHANNEL(name) \
+    extern WTFLogChannel JOIN_LOG_CHANNEL_WITH_PREFIX(LOG_CHANNEL_PREFIX, name);
+
+WEBCORE_LOG_CHANNELS(DECLARE_LOG_CHANNEL)
+
+#undef DECLARE_LOG_CHANNEL
+
+    extern WTFLogChannel* logChannels[];
+    extern size_t logChannelCount;
+
+    String logLevelString();
+    WTFLogChannel* logChannelByName(const String&);
+    void initializeLoggingChannelsIfNecessary();
 }
 
 #endif // !LOG_DISABLED

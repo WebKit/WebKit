@@ -2134,7 +2134,6 @@ HEADERS += \
     platform/FileStreamClient.h \
     platform/FileSystem.h \
     platform/HistogramSupport.h \
-    platform/InitializeLogging.h \
     platform/image-decoders/ImageDecoder.h \
     platform/mock/DeviceMotionClientMock.h \
     platform/mock/DeviceOrientationClientMock.h \

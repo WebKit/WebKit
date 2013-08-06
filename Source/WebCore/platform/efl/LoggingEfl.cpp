@@ -3,6 +3,7 @@
  * Copyright (C) 2008 INdT - Instituto Nokia de Tecnologia
  * Copyright (C) 2009-2010 ProFUSION embedded systems
  * Copyright (C) 2009-2010 Samsung Electronics
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,47 +22,28 @@
  */
 
 #include "config.h"
-#include "InitializeLogging.h"
 #include "Logging.h"
 
 #if !LOG_DISABLED
 
-#include <Eina.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-void initializeLoggingChannelsIfNecessary()
+String logLevelString()
 {
-    static bool didInitializeLoggingChannels = false;
-    if (didInitializeLoggingChannels)
-        return;
-
-    didInitializeLoggingChannels = true;
-
     char* logEnv = getenv("WEBKIT_DEBUG");
     if (!logEnv)
-        return;
+        return emptyString();
 
 #if defined(NDEBUG)
     EINA_LOG_WARN("WEBKIT_DEBUG is not empty, but this is a release build. Notice that many log messages will only appear in a debug build.");
 #endif
 
-    char** logv = eina_str_split(logEnv, ",", -1);
-
-    EINA_SAFETY_ON_NULL_RETURN(logv);
-
-    for (int i = 0; logv[i]; i++) {
-        if (WTFLogChannel* channel = getChannelFromName(logv[i]))
-            channel->state = WTFLogChannelOn;
-    }
-
-    free(*logv);
-    free(logv);
-
-    // To disable logging notImplemented set the DISABLE_NI_WARNING
-    // environment variable to 1.
-    LogNotYetImplemented.state = WTFLogChannelOn;
+    // To disable logging notImplemented set the DISABLE_NI_WARNING environment variable to 1.
+    String logLevel = "NotYetImplemented,";
+    logLevel.append(logEnv);
+    return logLevel;
 }
 
 }

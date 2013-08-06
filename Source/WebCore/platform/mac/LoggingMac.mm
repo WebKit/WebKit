@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003, 2006, 2013 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,59 +24,19 @@
  */
 
 #include "config.h"
-#include "InitializeLogging.h"
 #include "Logging.h"
+
+#include <wtf/text/WTFString.h>
 
 #if !LOG_DISABLED
 
 namespace WebCore {
 
-static inline void initializeWithUserDefault(WTFLogChannel& channel)
-{
-    NSString *logLevelString = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithUTF8String:channel.defaultName]];
-    if (logLevelString) {
-        unsigned logLevel;
-        if (![[NSScanner scannerWithString:logLevelString] scanHexInt:&logLevel])
-            NSLog(@"unable to parse hex value for %s (%@), logging is off", channel.defaultName, logLevelString);
-        if ((logLevel & channel.mask) == channel.mask)
-            channel.state = WTFLogChannelOn;
-        else
-            channel.state = WTFLogChannelOff;
-    }
-}
+static NSString * const defaultsDomain = @"WebCoreLogging";
 
-void initializeLoggingChannelsIfNecessary()
+String logLevelString()
 {
-    static bool haveInitializedLoggingChannels = false;
-    if (haveInitializedLoggingChannels)
-        return;
-    haveInitializedLoggingChannels = true;
-    
-    initializeWithUserDefault(LogNotYetImplemented);
-    initializeWithUserDefault(LogFrames);
-    initializeWithUserDefault(LogLoading);
-    initializeWithUserDefault(LogPopupBlocking);
-    initializeWithUserDefault(LogEvents);
-    initializeWithUserDefault(LogEditing);
-    initializeWithUserDefault(LogLiveConnect);
-    initializeWithUserDefault(LogIconDatabase);
-    initializeWithUserDefault(LogSQLDatabase);
-    initializeWithUserDefault(LogSpellingAndGrammar);
-    initializeWithUserDefault(LogBackForward);
-    initializeWithUserDefault(LogHistory);
-    initializeWithUserDefault(LogPageCache);
-    initializeWithUserDefault(LogPlatformLeaks);
-    initializeWithUserDefault(LogResourceLoading);
-    initializeWithUserDefault(LogAnimations);
-    initializeWithUserDefault(LogNetwork);
-    initializeWithUserDefault(LogFTP);
-    initializeWithUserDefault(LogThreading);
-    initializeWithUserDefault(LogStorageAPI);
-    initializeWithUserDefault(LogMedia);
-    initializeWithUserDefault(LogPlugins);
-    initializeWithUserDefault(LogArchives);
-    initializeWithUserDefault(LogWebAudio);
-    initializeWithUserDefault(LogCompositing);
+    return [[NSUserDefaults standardUserDefaults] stringForKey:defaultsDomain];
 }
 
 }

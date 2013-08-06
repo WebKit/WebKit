@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,26 +32,35 @@
 #if !LOG_DISABLED
 
 #ifndef LOG_CHANNEL_PREFIX
-#define LOG_CHANNEL_PREFIX Log
+#define LOG_CHANNEL_PREFIX WebKit2Log
 #endif
 
 namespace WebKit {
 
-extern WTFLogChannel LogContextMenu;
-extern WTFLogChannel LogIconDatabase;
-extern WTFLogChannel LogInspectorServer;
-extern WTFLogChannel LogKeyHandling;
-extern WTFLogChannel LogPlugins;
-extern WTFLogChannel LogSessionState;
-extern WTFLogChannel LogTextInput;
-extern WTFLogChannel LogView;
-extern WTFLogChannel LogNetwork;
-extern WTFLogChannel LogNetworkScheduling;
+#define WEBKIT2_LOG_CHANNELS(M) \
+    M(ContextMenu) \
+    M(IconDatabase) \
+    M(InspectorServer) \
+    M(KeyHandling) \
+    M(Network) \
+    M(NetworkScheduling) \
+    M(Plugins) \
+    M(SessionState) \
+    M(TextInput) \
+    M(View) \
 
-void initializeLogChannel(WTFLogChannel*);
+#define DECLARE_LOG_CHANNEL(name) \
+    extern WTFLogChannel JOIN_LOG_CHANNEL_WITH_PREFIX(LOG_CHANNEL_PREFIX, name);
+
+WEBKIT2_LOG_CHANNELS(DECLARE_LOG_CHANNEL)
+
+#undef DECLARE_LOG_CHANNEL
+
 void initializeLogChannelsIfNecessary(void);
+String logLevelString();
+
 #if PLATFORM(GTK) || PLATFORM(QT) || PLATFORM(EFL)
-WTFLogChannel* getChannelFromName(const String& channelName);
+WTFLogChannel* logChannelByName(const String&);
 #endif
 
 } // namespace WebKit

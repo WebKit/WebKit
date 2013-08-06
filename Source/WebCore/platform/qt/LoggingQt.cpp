@@ -1,5 +1,6 @@
 /*
     Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
+    Copyright (C) 2013 Apple Inc. All rights reserved.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -18,41 +19,29 @@
 */
 
 #include "config.h"
-#include "InitializeLogging.h"
 #include "Logging.h"
 
 #if !LOG_DISABLED
 
 #include <QDebug>
-#include <QStringList>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-void initializeLoggingChannelsIfNecessary()
+String logLevelString()
 {
-    static bool haveInitializedLoggingChannels = false;
-    if (haveInitializedLoggingChannels)
-        return;
-
-    haveInitializedLoggingChannels = true;
-
     QByteArray loggingEnv = qgetenv("QT_WEBKIT_LOG");
     if (loggingEnv.isEmpty())
-        return;
+        return emptyString();
 
 #if defined(NDEBUG)
     qWarning("This is a release build. Setting QT_WEBKIT_LOG will have no effect.");
 #else
-    QStringList channels = QString::fromLocal8Bit(loggingEnv).split(QLatin1String(","));
-    for (int i = 0; i < channels.count(); i++) {
-        if (WTFLogChannel* channel = getChannelFromName(channels.at(i)))
-            channel->state = WTFLogChannelOn;
-    }
 
-    // By default we log calls to notImplemented(). This can be turned
-    // off by setting the environment variable DISABLE_NI_WARNING to 1
-    LogNotYetImplemented.state = WTFLogChannelOn;
+    // To disable logging notImplemented set the DISABLE_NI_WARNING environment variable to 1.
+    String logLevel = "NotYetImplemented,";
+    logLevel.append(QString::fromLocal8Bit(loggingEnv));
+    return logLevel;
 #endif
 }
 

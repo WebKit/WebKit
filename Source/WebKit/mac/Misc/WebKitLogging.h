@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2005, 2007, 2008, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,30 +37,39 @@ extern "C" {
 #endif
 
 #if !LOG_DISABLED
-extern WTFLogChannel WebKitLogTiming;
-extern WTFLogChannel WebKitLogLoading;
-extern WTFLogChannel WebKitLogFontCache;
-extern WTFLogChannel WebKitLogFontSubstitution;
-extern WTFLogChannel WebKitLogFontSelection;
-extern WTFLogChannel WebKitLogDownload;
-extern WTFLogChannel WebKitLogDocumentLoad;
-extern WTFLogChannel WebKitLogPlugins;
-extern WTFLogChannel WebKitLogEvents;
-extern WTFLogChannel WebKitLogView;
-extern WTFLogChannel WebKitLogRedirect;
-extern WTFLogChannel WebKitLogPageCache;
-extern WTFLogChannel WebKitLogCacheSizes;
-extern WTFLogChannel WebKitLogFormDelegate;
-extern WTFLogChannel WebKitLogFileDatabaseActivity;
-extern WTFLogChannel WebKitLogHistory;
-extern WTFLogChannel WebKitLogBindings;
-extern WTFLogChannel WebKitLogEncoding;
-extern WTFLogChannel WebKitLogLiveConnect;
-extern WTFLogChannel WebKitLogBackForward;
-extern WTFLogChannel WebKitLogProgress;
-extern WTFLogChannel WebKitLogPluginEvents;
-extern WTFLogChannel WebKitLogIconDatabase;
-extern WTFLogChannel WebKitLogTextInput;
+
+#define WEBKIT_LOG_CHANNELS(M) \
+    M(BackForward) \
+    M(Bindings) \
+    M(CacheSizes) \
+    M(DocumentLoad) \
+    M(Download) \
+    M(Encoding) \
+    M(Events) \
+    M(FileDatabaseActivity) \
+    M(FontCache) \
+    M(FontSelection) \
+    M(FontSubstitution) \
+    M(FormDelegate) \
+    M(History) \
+    M(IconDatabase) \
+    M(LiveConnect) \
+    M(Loading) \
+    M(PageCache) \
+    M(PluginEvents) \
+    M(Plugins) \
+    M(Progress) \
+    M(Redirect) \
+    M(TextInput) \
+    M(Timing) \
+    M(View) \
+
+#define DECLARE_LOG_CHANNEL(name) \
+extern WTFLogChannel JOIN_LOG_CHANNEL_WITH_PREFIX(LOG_CHANNEL_PREFIX, name);
+
+WEBKIT_LOG_CHANNELS(DECLARE_LOG_CHANNEL)
+
+#undef DECLARE_LOG_CHANNEL
 
 void WebKitInitializeLoggingChannelsIfNecessary(void);
 #endif // !LOG_DISABLED

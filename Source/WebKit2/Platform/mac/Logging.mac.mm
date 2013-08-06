@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,20 +30,11 @@ namespace WebKit {
 
 #if !LOG_DISABLED
 
-void initializeLogChannel(WTFLogChannel* channel)
+static NSString * const defaultsDomain = @"WebKit2Logging";
+
+String logLevelString()
 {
-    // If there is no log level string from the user defaults then don't change the logging channel at all.
-    NSString *logLevelString = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithUTF8String:channel->defaultName]];
-    if (!logLevelString)
-        return;
-
-    channel->state = WTFLogChannelOff;
-
-    unsigned logLevel;
-    if (![[NSScanner scannerWithString:logLevelString] scanHexInt:&logLevel])
-        NSLog(@"unable to parse hex value for %s (%@), logging is off", channel->defaultName, logLevelString);
-    if ((logLevel & channel->mask) == channel->mask)
-        channel->state = WTFLogChannelOn;
+    return [[NSUserDefaults standardUserDefaults] stringForKey:defaultsDomain];
 }
 
 #endif

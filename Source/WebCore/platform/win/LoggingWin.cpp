@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2013 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,7 +24,6 @@
  */
 
 #include "config.h"
-#include "InitializeLogging.h"
 #include "Logging.h"
 
 #if !LOG_DISABLED
@@ -35,74 +34,20 @@
 
 namespace WebCore {
 
-static inline void initializeWithUserDefault(WTFLogChannel& channel)
+static char * const loggingEnvironmentVariable = "WebCoreLogging";
+
+String logLevelString()
 {
-    DWORD length = GetEnvironmentVariableA(channel.defaultName, 0, 0);
+    DWORD length = GetEnvironmentVariableA(loggingEnvironmentVariable, 0, 0);
     if (!length)
-        return;
+        return emptyString();
 
     OwnArrayPtr<char> buffer = adoptArrayPtr(new char[length]);
 
-    if (!GetEnvironmentVariableA(channel.defaultName, buffer.get(), length))
-        return;
+    if (!GetEnvironmentVariableA(loggingEnvironmentVariable, buffer.get(), length))
+        return emptyString();
 
-    String variableValue(buffer.get());
-
-    static const String& hexadecimalPrefix = *new String("0x");
-    if (variableValue.length() < 3 || !variableValue.startsWith(hexadecimalPrefix, false)) {
-        LOG_ERROR("Unable to parse hex value for %s (%s), logging is off", channel.defaultName, buffer.get());
-        return;
-    }
-
-    String unprefixedValue = variableValue.substring(2);
-
-    // Now parse the unprefixed string as a hexadecimal number.
-    bool parsedSuccessfully = false;
-    unsigned logLevel = unprefixedValue.toUIntStrict(&parsedSuccessfully, 16);
-
-    if (!parsedSuccessfully) {
-        LOG_ERROR("Unable to parse hex value for %s (%s), logging is off", channel.defaultName, buffer.get());
-        return;
-    }
-
-    if ((logLevel & channel.mask) == channel.mask)
-        channel.state = WTFLogChannelOn;
-    else
-        channel.state = WTFLogChannelOff;
-}
-
-void initializeLoggingChannelsIfNecessary()
-{
-    static bool haveInitializedLoggingChannels = false;
-    if (haveInitializedLoggingChannels)
-        return;
-    haveInitializedLoggingChannels = true;
-
-    initializeWithUserDefault(LogNotYetImplemented);
-    initializeWithUserDefault(LogFrames);
-    initializeWithUserDefault(LogLoading);
-    initializeWithUserDefault(LogPopupBlocking);
-    initializeWithUserDefault(LogEvents);
-    initializeWithUserDefault(LogEditing);
-    initializeWithUserDefault(LogLiveConnect);
-    initializeWithUserDefault(LogIconDatabase);
-    initializeWithUserDefault(LogSQLDatabase);
-    initializeWithUserDefault(LogSpellingAndGrammar);
-    initializeWithUserDefault(LogBackForward);
-    initializeWithUserDefault(LogHistory);
-    initializeWithUserDefault(LogPageCache);
-    initializeWithUserDefault(LogPlatformLeaks);
-    initializeWithUserDefault(LogResourceLoading);
-    initializeWithUserDefault(LogAnimations);
-    initializeWithUserDefault(LogNetwork);
-    initializeWithUserDefault(LogFTP);
-    initializeWithUserDefault(LogThreading);
-    initializeWithUserDefault(LogStorageAPI);
-    initializeWithUserDefault(LogMedia);
-    initializeWithUserDefault(LogPlugins);
-    initializeWithUserDefault(LogArchives);
-    initializeWithUserDefault(LogProgress);
-    initializeWithUserDefault(LogFileAPI);
+    return String(buffer.get());
 }
 
 } // namespace WebCore

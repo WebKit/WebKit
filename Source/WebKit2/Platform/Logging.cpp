@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2013 Apple Inc. All rights reserved.
  * Copyright (C) 2011 Samsung Electronics
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,64 +27,22 @@
 #include "config.h"
 #include "Logging.h"
 
+#include <wtf/text/CString.h>
+
 #if !LOG_DISABLED
 
 namespace WebKit {
 
-WTFLogChannel LogSessionState      = { 0x00000001, "WebKit2LogLevel", WTFLogChannelOff };
-WTFLogChannel LogContextMenu       = { 0x00000002, "WebKit2LogLevel", WTFLogChannelOff };
-WTFLogChannel LogTextInput         = { 0x00000004, "WebKit2LogLevel", WTFLogChannelOff };
-WTFLogChannel LogView              = { 0x00000008, "WebKit2LogLevel", WTFLogChannelOff };
-WTFLogChannel LogIconDatabase      = { 0x00000010, "WebKit2LogLevel", WTFLogChannelOff };
-WTFLogChannel LogKeyHandling       = { 0x00000020, "WebKit2LogLevel", WTFLogChannelOff };
-WTFLogChannel LogPlugins           = { 0x00000040, "WebKit2LogLevel", WTFLogChannelOff };
-WTFLogChannel LogNetwork           = { 0x00000080, "WebKit2LogLevel", WTFLogChannelOff };
-WTFLogChannel LogNetworkScheduling = { 0x00000100, "WebKit2LogLevel", WTFLogChannelOff };
-WTFLogChannel LogInspectorServer   = { 0x00000200, "WebKit2LogLevel", WTFLogChannelOff };
+#define DEFINE_LOG_CHANNEL(name) \
+    WTFLogChannel JOIN_LOG_CHANNEL_WITH_PREFIX(LOG_CHANNEL_PREFIX, name) = { WTFLogChannelOff, #name };
+WEBKIT2_LOG_CHANNELS(DEFINE_LOG_CHANNEL)
 
-#if !PLATFORM(MAC) && !PLATFORM(GTK) && !PLATFORM(QT) && !PLATFORM(EFL)
-void initializeLogChannel(WTFLogChannel* channel)
-{
-    // FIXME: Each platform will need to define their own initializeLogChannel().
-}
-#endif
+#define LOG_CHANNEL_ADDRESS(name)  &JOIN_LOG_CHANNEL_WITH_PREFIX(LOG_CHANNEL_PREFIX, name),
+static WTFLogChannel* logChannels[] = {
+    WEBKIT2_LOG_CHANNELS(LOG_CHANNEL_ADDRESS)
+};
 
-#if PLATFORM(GTK) || PLATFORM(QT) || PLATFORM(EFL)
-WTFLogChannel* getChannelFromName(const String& channelName)
-{
-    if (!(channelName.length() >= 2))
-        return 0;
-
-    if (equalIgnoringCase(channelName, String("SessionState")))
-        return &LogSessionState;
-
-    if (equalIgnoringCase(channelName, String("ContextMenu")))
-        return &LogContextMenu;
-
-    if (equalIgnoringCase(channelName, String("TextInput")))
-        return &LogTextInput;
-
-    if (equalIgnoringCase(channelName, String("View")))
-        return &LogView;
-
-    if (equalIgnoringCase(channelName, String("IconDatabase")))
-        return &LogIconDatabase;
-
-    if (equalIgnoringCase(channelName, String("KeyHandling")))
-        return &LogKeyHandling;
-
-    if (equalIgnoringCase(channelName, String("Plugins")))
-        return &LogPlugins;
-
-    if (equalIgnoringCase(channelName, String("Network")))
-        return &LogNetwork;
-
-    if (equalIgnoringCase(channelName, String("InspectorServer")))
-        return &LogInspectorServer;
-
-    return 0;
-}
-#endif
+const size_t logChannelCount = WTF_ARRAY_LENGTH(logChannels);
 
 void initializeLogChannelsIfNecessary()
 {
@@ -93,17 +51,28 @@ void initializeLogChannelsIfNecessary()
         return;
     haveInitializedLogChannels = true;
 
-    initializeLogChannel(&LogSessionState);
-    initializeLogChannel(&LogContextMenu);
-    initializeLogChannel(&LogTextInput);
-    initializeLogChannel(&LogView);
-    initializeLogChannel(&LogIconDatabase);
-    initializeLogChannel(&LogKeyHandling);
-    initializeLogChannel(&LogPlugins);
-    initializeLogChannel(&LogNetwork);
-    initializeLogChannel(&LogNetworkScheduling);
-    initializeLogChannel(&LogInspectorServer);
+    static bool haveInitializedLoggingChannels = false;
+    if (haveInitializedLoggingChannels)
+        return;
+    haveInitializedLoggingChannels = true;
+    
+    WTFInitializeLogChannelStatesFromString(logChannels, logChannelCount, logLevelString().utf8().data());
 }
+
+#if PLATFORM(GTK) || PLATFORM(QT) || PLATFORM(EFL)
+WTFLogChannel* logChannelByName(const String& name)
+{
+    return WTFLogChannelByName(logChannels, logChannelCount, name.utf8().data());
+}
+#endif
+
+#if !PLATFORM(MAC) && !PLATFORM(GTK) && !PLATFORM(QT) && !PLATFORM(EFL)
+String logLevelString()
+{
+    // FIXME: Each platform will need to define their own logLevelString();
+    return emptyString();
+}
+#endif
 
 } // namespace WebKit
 

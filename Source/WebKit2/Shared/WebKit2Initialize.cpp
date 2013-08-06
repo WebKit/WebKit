@@ -27,7 +27,7 @@
 #include "WebKit2Initialize.h"
 
 #include "Logging.h"
-#include <WebCore/InitializeLogging.h>
+#include <WebCore/Logging.h>
 #include <WebCore/RunLoop.h>
 #include <runtime/InitializeThreading.h>
 #include <wtf/MainThread.h>
