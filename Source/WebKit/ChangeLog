@@ -1,3 +1,11 @@
+2013-08-05  Mark Lam  <mark.lam@apple.com>
+
+        Gardening: fix build after r153728.
+
+        Not reviewed.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
+
 2013-07-29  Alex Christensen  <achristensen@apple.com>
 
         Separated translator into preprocessor, translator_common,
