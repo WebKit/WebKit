@@ -1,3 +1,17 @@
+2013-08-05  Rob Buis  <rwlbuis@webkit.org>
+
+        SVG stroke-dasharray is not animatable
+        https://bugs.webkit.org/show_bug.cgi?id=118574
+
+        Reviewed by Dirk Schulze.
+
+        Make stroke-dasharray a property that can be animated using CSS transitions.
+
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::blendFunc):
+        (WebCore::CSSPropertyAnimation::ensurePropertyMap):
+        * rendering/style/RenderStyle.h:
+
 2013-08-06  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] Allow defining named grid lines on the grid element

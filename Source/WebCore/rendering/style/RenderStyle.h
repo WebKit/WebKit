@@ -1448,6 +1448,8 @@ public:
     void setStrokeOpacity(float f) { accessSVGStyle()->setStrokeOpacity(f); }
     SVGLength strokeWidth() const { return svgStyle()->strokeWidth(); }
     void setStrokeWidth(SVGLength w) { accessSVGStyle()->setStrokeWidth(w); }
+    Vector<SVGLength> strokeDashArray() const { return svgStyle()->strokeDashArray(); }
+    void setStrokeDashArray(Vector<SVGLength> array) { accessSVGStyle()->setStrokeDashArray(array); }
     SVGLength strokeDashOffset() const { return svgStyle()->strokeDashOffset(); }
     void setStrokeDashOffset(SVGLength d) { accessSVGStyle()->setStrokeDashOffset(d); }
     float strokeMiterLimit() const { return svgStyle()->strokeMiterLimit(); }

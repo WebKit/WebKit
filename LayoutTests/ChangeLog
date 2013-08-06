@@ -1,3 +1,15 @@
+2013-08-05  Rob Buis  <rwlbuis@webkit.org>
+
+        SVG stroke-dasharray is not animatable
+        https://bugs.webkit.org/show_bug.cgi?id=118574
+
+        Reviewed by Dirk Schulze.
+
+        Add test for animating stroke-dasharray in addition to the original SVG tests.
+
+        * transitions/svg-transitions-expected.txt:
+        * transitions/svg-transitions.html:
+
 2013-08-06  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] Allow defining named grid lines on the grid element
