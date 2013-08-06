@@ -1,3 +1,13 @@
+2013-08-06  Alex Christensen  <achristensen@apple.com>
+
+        Enabled WebGL on WinCairo port.
+        https://bugs.webkit.org/show_bug.cgi?id=119502
+
+        Reviewed by Benjamin Poulain.
+
+        * wtf/FeatureDefines.h: Enabled WebGL.
+        * wtf/Platform.h: Added definitions required for WebGL on Windows.
+
 2013-08-05  Mark Rowe  <mrowe@apple.com>
 
         <rdar://problem/5927399> FastMalloc should support MallocStackLogging

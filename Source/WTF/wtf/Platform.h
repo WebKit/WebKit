@@ -904,6 +904,13 @@
 #define WTF_USE_3D_GRAPHICS 1
 #endif
 
+#if ENABLE(WEBGL) && PLATFORM(WIN)
+#define WTF_USE_OPENGL 1
+#define WTF_USE_OPENGL_ES_2 1
+#define WTF_USE_EGL 1
+#define WTF_USE_SURFACE 1
+#endif
+
 /* Qt always uses Texture Mapper */
 #if PLATFORM(QT)
 #define WTF_USE_TEXTURE_MAPPER 1

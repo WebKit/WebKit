@@ -1,3 +1,13 @@
+2013-08-06  Alex Christensen  <achristensen@apple.com>
+
+        Enabled WebGL on WinCairo port.
+        https://bugs.webkit.org/show_bug.cgi?id=119502
+
+        Reviewed by Benjamin Poulain.
+
+        * WebKit.vcxproj/WebKit.sln: Build ANGLE libraries.
+        * WebKit.vcxproj/WebKit/WebKitCFLite.props: Link to ANGLE libraries.
+
 2013-08-05  Mark Lam  <mark.lam@apple.com>
 
         Gardening: fix build after r153728.
