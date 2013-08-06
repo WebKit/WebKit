@@ -30,6 +30,8 @@
 
 #include <wtf/Assertions.h>
 
+#if !LOG_DISABLED
+
 #ifndef LOG_CHANNEL_PREFIX
 #define LOG_CHANNEL_PREFIX WebKitLog
 #endif
@@ -68,5 +70,7 @@ WEBKIT_LOG_CHANNELS(DECLARE_LOG_CHANNEL)
 #undef DECLARE_LOG_CHANNEL
 
 void WebKitInitializeLoggingChannelsIfNecessary(void);
+
+#endif // !LOG_DISABLED
 
 #endif

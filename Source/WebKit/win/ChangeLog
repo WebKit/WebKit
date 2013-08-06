@@ -1,3 +1,9 @@
+2013-08-05  Mark Rowe  <mrowe@apple.com>
+
+        Build fix for Windows release build.
+
+        * WebKitLogging.h: Wrap things in !LOG_DISABLED so that we don't attempt to use macros that have not been defined.
+
 2013-07-26  Mark Rowe  <mrowe@apple.com>
 
         Logging should be configurable using human-readable channel names rather than crazy bitmasks
