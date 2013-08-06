@@ -78,9 +78,12 @@ namespace WebCore {
 
 static inline bool hasNoStyleInformation(Document* document)
 {
-    if (document->sawElementsInKnownNamespaces() || document->transformSourceDocument())
+    if (document->sawElementsInKnownNamespaces())
         return false;
-
+#if ENABLE(XSLT)
+    if (document->transformSourceDocument())
+        return false;
+#endif
     if (!document->frame() || !document->frame()->page())
         return false;
 

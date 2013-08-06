@@ -1,3 +1,14 @@
+2013-08-06  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt] Fix minimal build.
+
+        Unreviewed build fix.
+
+        Fix build witt XSLT disabled
+
+        * xml/parser/XMLDocumentParserLibxml2.cpp:
+        (WebCore::hasNoStyleInformation):
+
 2013-08-06  Zan Dobersek  <zdobersek@igalia.com>
 
         webkit-gtk fails to build with bison-3.0
