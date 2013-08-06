@@ -1,3 +1,16 @@
+2013-08-06  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Remove stale code in ResourceContentView
+        https://bugs.webkit.org/show_bug.cgi?id=119527
+
+        The handling of Resource Type changes moved to ResourceClusterContentView,
+        this removeEventListener is stale and doesn't do anything anymore.
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/ResourceContentView.js:
+        (WebInspector.ResourceContentView.prototype.closed):
+
 2013-08-06  Timothy Hatcher  <timothy@apple.com>
 
         Convert all Web Inspector PDFs to SVGs.

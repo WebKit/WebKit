@@ -80,8 +80,6 @@ WebInspector.ResourceContentView.prototype = {
 
     closed: function()
     {
-        this._resource.removeEventListener(WebInspector.Resource.Event.TypeDidChange, this._resourceTypeDidChange, this);
-
         if (!this.managesOwnIssues)
             WebInspector.issueManager.removeEventListener(WebInspector.IssueManager.Event.IssueWasAdded, this._issueWasAdded, this);
     },
