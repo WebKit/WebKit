@@ -84,6 +84,7 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="..\..\..\..\WebKitLibraries\win\tools\vsprops\common.props" />
     <Import Project="translatorCommon.props" />
+    <Import Project="ANGLERelease.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="..\..\..\..\WebKitLibraries\win\tools\vsprops\common.props" />
@@ -92,6 +93,7 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="..\..\..\..\WebKitLibraries\win\tools\vsprops\common.props" />
     <Import Project="translatorCommon.props" />
+    <Import Project="ANGLERelease.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="..\..\..\..\WebKitLibraries\win\tools\vsprops\common.props" />
@@ -108,18 +110,22 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">
     <Import Project="..\..\..\..\WebKitLibraries\win\tools\vsprops\common.props" />
     <Import Project="translatorCommon.props" />
+    <Import Project="ANGLERelease.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Production|x64'">
     <Import Project="..\..\..\..\WebKitLibraries\win\tools\vsprops\common.props" />
     <Import Project="translatorCommon.props" />
+    <Import Project="ANGLERelease.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">
     <Import Project="..\..\..\..\WebKitLibraries\win\tools\vsprops\common.props" />
     <Import Project="translatorCommon.props" />
+    <Import Project="ANGLERelease.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|x64'">
     <Import Project="..\..\..\..\WebKitLibraries\win\tools\vsprops\common.props" />
     <Import Project="translatorCommon.props" />
+    <Import Project="ANGLERelease.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <ItemGroup>

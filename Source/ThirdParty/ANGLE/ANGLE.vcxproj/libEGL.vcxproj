@@ -91,6 +91,7 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\..\..\..\WebKitLibraries\win\tools\vsprops\common.props" />
     <Import Project="libEGLCommon.props" />
+    <Import Project="ANGLERelease.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -101,6 +102,7 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\..\..\..\WebKitLibraries\win\tools\vsprops\common.props" />
     <Import Project="libEGLCommon.props" />
+    <Import Project="ANGLERelease.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -118,18 +120,22 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">
     <Import Project="..\..\..\..\WebKitLibraries\win\tools\vsprops\common.props" />
     <Import Project="libEGLCommon.props" />
+    <Import Project="ANGLERelease.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Production|x64'">
     <Import Project="..\..\..\..\WebKitLibraries\win\tools\vsprops\common.props" />
     <Import Project="libEGLCommon.props" />
+    <Import Project="ANGLERelease.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">
     <Import Project="..\..\..\..\WebKitLibraries\win\tools\vsprops\common.props" />
     <Import Project="libEGLCommon.props" />
+    <Import Project="ANGLERelease.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|x64'">
     <Import Project="..\..\..\..\WebKitLibraries\win\tools\vsprops\common.props" />
     <Import Project="libEGLCommon.props" />
+    <Import Project="ANGLERelease.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <ItemGroup>

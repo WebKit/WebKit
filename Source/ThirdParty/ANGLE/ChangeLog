@@ -1,3 +1,19 @@
+2013-08-05  Alex Christensen  <achristensen@apple.com>
+
+        Added optimizations to Windows ANGLE builds.
+        https://bugs.webkit.org/show_bug.cgi?id=119500
+
+        Reviewed by Brent Fulgham.
+
+        * ANGLE.vcxproj/ANGLERelease.props: Added.
+        * ANGLE.vcxproj/libEGL.vcxproj:
+        * ANGLE.vcxproj/libGLESv2.vcxproj:
+        * ANGLE.vcxproj/preprocessor.vcxproj:
+        * ANGLE.vcxproj/translator_common.vcxproj:
+        * ANGLE.vcxproj/translator_glsl.vcxproj:
+        * ANGLE.vcxproj/translator_hlsl.vcxproj:
+        Use ANGLERelease.props for Release, Release_WinCairo, and Production configurations.
+
 2013-08-02  Alex Christensen  <achristensen@apple.com>
 
         Soft link ANGLE on Windows.
