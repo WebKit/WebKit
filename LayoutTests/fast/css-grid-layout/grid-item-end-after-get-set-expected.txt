@@ -1,54 +1,54 @@
-Test that setting and getting grid-end and grid-after works as expected
+Test that setting and getting grid-column-end and grid-row-end works as expected
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-Test getting -webkit-grid-end and -webkit-grid-after set through CSS
-PASS getComputedStyle(gridElement, '').getPropertyValue('-webkit-grid-end') is 'auto'
+Test getting -webkit-grid-column-end and -webkit-grid-row-end set through CSS
+PASS getComputedStyle(gridElement, '').getPropertyValue('-webkit-grid-column-end') is 'auto'
 PASS getComputedStyle(gridElement, '').getPropertyValue('-webkit-grid-column') is 'auto / auto'
-PASS getComputedStyle(gridElement, '').getPropertyValue('-webkit-grid-after') is 'auto'
+PASS getComputedStyle(gridElement, '').getPropertyValue('-webkit-grid-row-end') is 'auto'
 PASS getComputedStyle(gridElement, '').getPropertyValue('-webkit-grid-row') is 'auto / auto'
-PASS getComputedStyle(gridItemWithPositiveInteger, '').getPropertyValue('-webkit-grid-end') is '10'
+PASS getComputedStyle(gridItemWithPositiveInteger, '').getPropertyValue('-webkit-grid-column-end') is '10'
 PASS getComputedStyle(gridItemWithPositiveInteger, '').getPropertyValue('-webkit-grid-column') is 'auto / 10'
-PASS getComputedStyle(gridItemWithPositiveInteger, '').getPropertyValue('-webkit-grid-after') is '15'
+PASS getComputedStyle(gridItemWithPositiveInteger, '').getPropertyValue('-webkit-grid-row-end') is '15'
 PASS getComputedStyle(gridItemWithPositiveInteger, '').getPropertyValue('-webkit-grid-row') is 'auto / 15'
-PASS getComputedStyle(gridItemWithNegativeInteger, '').getPropertyValue('-webkit-grid-end') is '-10'
+PASS getComputedStyle(gridItemWithNegativeInteger, '').getPropertyValue('-webkit-grid-column-end') is '-10'
 PASS getComputedStyle(gridItemWithNegativeInteger, '').getPropertyValue('-webkit-grid-column') is 'auto / -10'
-PASS getComputedStyle(gridItemWithNegativeInteger, '').getPropertyValue('-webkit-grid-after') is '-15'
+PASS getComputedStyle(gridItemWithNegativeInteger, '').getPropertyValue('-webkit-grid-row-end') is '-15'
 PASS getComputedStyle(gridItemWithNegativeInteger, '').getPropertyValue('-webkit-grid-row') is 'auto / -15'
-PASS getComputedStyle(gridItemWithAutoElement, '').getPropertyValue('-webkit-grid-end') is 'auto'
+PASS getComputedStyle(gridItemWithAutoElement, '').getPropertyValue('-webkit-grid-column-end') is 'auto'
 PASS getComputedStyle(gridItemWithAutoElement, '').getPropertyValue('-webkit-grid-column') is 'auto / auto'
-PASS getComputedStyle(gridItemWithAutoElement, '').getPropertyValue('-webkit-grid-after') is 'auto'
+PASS getComputedStyle(gridItemWithAutoElement, '').getPropertyValue('-webkit-grid-row-end') is 'auto'
 PASS getComputedStyle(gridItemWithAutoElement, '').getPropertyValue('-webkit-grid-row') is 'auto / auto'
 
 Test the initial value
-PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-end') is 'auto'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-column-end') is 'auto'
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-column') is 'auto / auto'
-PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-after') is 'auto'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-row-end') is 'auto'
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-row') is 'auto / auto'
 
-Test getting and setting grid-end and grid-after through JS
-PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-end') is '18'
+Test getting and setting grid-column-end and grid-row-end through JS
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-column-end') is '18'
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-column') is 'auto / 18'
-PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-after') is '66'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-row-end') is '66'
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-row') is 'auto / 66'
-PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-end') is '-55'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-column-end') is '-55'
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-column') is 'auto / -55'
-PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-after') is '-40'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-row-end') is '-40'
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-row') is 'auto / -40'
-PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-end') is 'auto'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-column-end') is 'auto'
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-column') is 'auto / auto'
-PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-after') is 'auto'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-row-end') is 'auto'
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-row') is 'auto / auto'
 
-Test setting grid-end and grid-after back to 'auto' through JS
-PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-end') is '18'
+Test setting grid-column-end and grid-row-end back to 'auto' through JS
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-column-end') is '18'
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-column') is 'auto / 18'
-PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-after') is '66'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-row-end') is '66'
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-row') is 'auto / 66'
-PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-end') is 'auto'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-column-end') is 'auto'
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-column') is 'auto / auto'
-PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-after') is 'auto'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-row-end') is 'auto'
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-row') is 'auto / auto'
 PASS successfullyParsed is true
 

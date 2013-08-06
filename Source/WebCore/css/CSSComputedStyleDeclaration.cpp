@@ -291,12 +291,12 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyWebkitGridAutoColumns,
     CSSPropertyWebkitGridAutoFlow,
     CSSPropertyWebkitGridAutoRows,
+    CSSPropertyWebkitGridColumnEnd,
+    CSSPropertyWebkitGridColumnStart,
     CSSPropertyWebkitGridDefinitionColumns,
     CSSPropertyWebkitGridDefinitionRows,
-    CSSPropertyWebkitGridStart,
-    CSSPropertyWebkitGridEnd,
-    CSSPropertyWebkitGridBefore,
-    CSSPropertyWebkitGridAfter,
+    CSSPropertyWebkitGridRowEnd,
+    CSSPropertyWebkitGridRowStart,
     CSSPropertyWebkitHighlight,
     CSSPropertyWebkitHyphenateCharacter,
     CSSPropertyWebkitHyphenateLimitAfter,
@@ -2041,14 +2041,14 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
         case CSSPropertyWebkitGridDefinitionRows:
             return valueForGridTrackList(style->gridRows(), style.get(), m_node->document()->renderView());
 
-        case CSSPropertyWebkitGridStart:
-            return valueForGridPosition(style->gridItemStart());
-        case CSSPropertyWebkitGridEnd:
-            return valueForGridPosition(style->gridItemEnd());
-        case CSSPropertyWebkitGridBefore:
-            return valueForGridPosition(style->gridItemBefore());
-        case CSSPropertyWebkitGridAfter:
-            return valueForGridPosition(style->gridItemAfter());
+        case CSSPropertyWebkitGridColumnStart:
+            return valueForGridPosition(style->gridItemColumnStart());
+        case CSSPropertyWebkitGridColumnEnd:
+            return valueForGridPosition(style->gridItemColumnEnd());
+        case CSSPropertyWebkitGridRowStart:
+            return valueForGridPosition(style->gridItemRowStart());
+        case CSSPropertyWebkitGridRowEnd:
+            return valueForGridPosition(style->gridItemRowEnd());
         case CSSPropertyWebkitGridColumn:
             return getCSSPropertyValuesForGridShorthand(webkitGridColumnShorthand());
         case CSSPropertyWebkitGridRow:

@@ -35,19 +35,19 @@
 namespace WebCore {
 
 StyleGridItemData::StyleGridItemData()
-    : m_gridStart(RenderStyle::initialGridPosition())
-    , m_gridEnd(RenderStyle::initialGridPosition())
-    , m_gridBefore(RenderStyle::initialGridPosition())
-    , m_gridAfter(RenderStyle::initialGridPosition())
+    : m_gridColumnStart(RenderStyle::initialGridPosition())
+    , m_gridColumnEnd(RenderStyle::initialGridPosition())
+    , m_gridRowStart(RenderStyle::initialGridPosition())
+    , m_gridRowEnd(RenderStyle::initialGridPosition())
 {
 }
 
 StyleGridItemData::StyleGridItemData(const StyleGridItemData& o)
     : RefCounted<StyleGridItemData>()
-    , m_gridStart(o.m_gridStart)
-    , m_gridEnd(o.m_gridEnd)
-    , m_gridBefore(o.m_gridBefore)
-    , m_gridAfter(o.m_gridAfter)
+    , m_gridColumnStart(o.m_gridColumnStart)
+    , m_gridColumnEnd(o.m_gridColumnEnd)
+    , m_gridRowStart(o.m_gridRowStart)
+    , m_gridRowEnd(o.m_gridRowEnd)
 {
 }
 

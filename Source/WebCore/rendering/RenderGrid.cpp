@@ -346,8 +346,8 @@ size_t RenderGrid::maximumIndexInDirection(TrackSizingDirection direction) const
         // This function bypasses the cache (cachedGridCoordinate()) as it is used to build it.
         // Also we can't call resolveGridPositionsFromStyle here as it assumes that the grid is build and we are in
         // the middle of building it. However we should be able to share more code with the previous logic (FIXME).
-        const GridPosition& initialPosition = (direction == ForColumns) ? child->style()->gridItemStart() : child->style()->gridItemBefore();
-        const GridPosition& finalPosition = (direction == ForColumns) ? child->style()->gridItemEnd() : child->style()->gridItemAfter();
+        const GridPosition& initialPosition = (direction == ForColumns) ? child->style()->gridItemColumnStart() : child->style()->gridItemRowStart();
+        const GridPosition& finalPosition = (direction == ForColumns) ? child->style()->gridItemColumnEnd() : child->style()->gridItemRowEnd();
 
         size_t estimatedSizeForInitialPosition = estimatedGridSizeForPosition(initialPosition);
         size_t estimatedSizeForFinalPosition = estimatedGridSizeForPosition(finalPosition);
@@ -723,10 +723,10 @@ PassOwnPtr<RenderGrid::GridSpan> RenderGrid::resolveGridPositionsFromStyle(const
 {
     ASSERT(gridWasPopulated());
 
-    const GridPosition& initialPosition = (direction == ForColumns) ? gridItem->style()->gridItemStart() : gridItem->style()->gridItemBefore();
-    const GridPositionSide initialPositionSide = (direction == ForColumns) ? StartSide : BeforeSide;
-    const GridPosition& finalPosition = (direction == ForColumns) ? gridItem->style()->gridItemEnd() : gridItem->style()->gridItemAfter();
-    const GridPositionSide finalPositionSide = (direction == ForColumns) ? EndSide : AfterSide;
+    const GridPosition& initialPosition = (direction == ForColumns) ? gridItem->style()->gridItemColumnStart() : gridItem->style()->gridItemRowStart();
+    const GridPositionSide initialPositionSide = (direction == ForColumns) ? ColumnStartSide : RowStartSide;
+    const GridPosition& finalPosition = (direction == ForColumns) ? gridItem->style()->gridItemColumnEnd() : gridItem->style()->gridItemRowEnd();
+    const GridPositionSide finalPositionSide = (direction == ForColumns) ? ColumnEndSide : RowEndSide;
 
     if (initialPosition.isAuto() && finalPosition.isAuto()) {
         if (style()->gridAutoFlow() == AutoFlowNone)
@@ -761,10 +761,10 @@ size_t RenderGrid::resolveGridPositionFromStyle(const GridPosition& position, Gr
         // FIXME: What does a non-positive integer mean for a column/row?
         size_t resolvedPosition = position.isPositive() ? position.integerPosition() - 1 : 0;
 
-        if (side == StartSide || side == BeforeSide)
+        if (side == ColumnStartSide || side == RowStartSide)
             return resolvedPosition;
 
-        const size_t endOfTrack = (side == EndSide) ? gridColumnCount() - 1 : gridRowCount() - 1;
+        const size_t endOfTrack = (side == ColumnEndSide) ? gridColumnCount() - 1 : gridRowCount() - 1;
         ASSERT(endOfTrack >= resolvedPosition);
         return endOfTrack - resolvedPosition;
     }

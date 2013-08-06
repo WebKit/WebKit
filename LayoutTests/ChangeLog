@@ -1,3 +1,21 @@
+2013-06-25  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] Rename grid placement properties
+        https://bugs.webkit.org/show_bug.cgi?id=117878
+
+        Reviewed by Andreas Kling.
+
+        Renamed the grid placement properties to match the latest version
+        of the spec. The new names are -webkit-grid-column-{start|end} and
+        -webkit-grid-row-{start|end}.
+
+        * fast/css-grid-layout/grid-item-column-row-get-set-expected.txt:
+        * fast/css-grid-layout/grid-item-column-row-get-set.html:
+        * fast/css-grid-layout/grid-item-end-after-get-set-expected.txt:
+        * fast/css-grid-layout/grid-item-end-after-get-set.html:
+        * fast/css-grid-layout/grid-item-start-before-get-set-expected.txt:
+        * fast/css-grid-layout/grid-item-start-before-get-set.html:
+
 2013-08-05  Dean Jackson  <dino@apple.com>
 
         Update HTMLPreloadScanner to handle img srcset

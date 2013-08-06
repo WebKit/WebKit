@@ -2821,33 +2821,33 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
         return;
     }
 
-    case CSSPropertyWebkitGridStart: {
-        GridPosition startPosition;
-        if (!createGridPosition(value, startPosition))
+    case CSSPropertyWebkitGridColumnStart: {
+        GridPosition columnStartPosition;
+        if (!createGridPosition(value, columnStartPosition))
             return;
-        state.style()->setGridItemStart(startPosition);
+        state.style()->setGridItemColumnStart(columnStartPosition);
         return;
     }
-    case CSSPropertyWebkitGridEnd: {
-        GridPosition endPosition;
-        if (!createGridPosition(value, endPosition))
+    case CSSPropertyWebkitGridColumnEnd: {
+        GridPosition columnEndPosition;
+        if (!createGridPosition(value, columnEndPosition))
             return;
-        state.style()->setGridItemEnd(endPosition);
+        state.style()->setGridItemColumnEnd(columnEndPosition);
         return;
     }
 
-    case CSSPropertyWebkitGridBefore: {
-        GridPosition beforePosition;
-        if (!createGridPosition(value, beforePosition))
+    case CSSPropertyWebkitGridRowStart: {
+        GridPosition rowStartPosition;
+        if (!createGridPosition(value, rowStartPosition))
             return;
-        state.style()->setGridItemBefore(beforePosition);
+        state.style()->setGridItemRowStart(rowStartPosition);
         return;
     }
-    case CSSPropertyWebkitGridAfter: {
-        GridPosition afterPosition;
-        if (!createGridPosition(value, afterPosition))
+    case CSSPropertyWebkitGridRowEnd: {
+        GridPosition rowEndPosition;
+        if (!createGridPosition(value, rowEndPosition))
             return;
-        state.style()->setGridItemAfter(afterPosition);
+        state.style()->setGridItemRowEnd(rowEndPosition);
         return;
     }
 

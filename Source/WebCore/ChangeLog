@@ -1,3 +1,41 @@
+2013-06-25  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] Rename grid placement properties
+        https://bugs.webkit.org/show_bug.cgi?id=117878
+
+        Reviewed by Andreas Kling.
+
+        Renamed the grid placement properties to match the latest version
+        of the spec. The new names are -webkit-grid-column-{start|end} and
+        -webkit-grid-row-{start|end}.
+
+        No new tests needed as we're just renaming some properties,
+        functionality already covered by existing tests in
+        fast/css-grid-layout.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        * css/CSSProperty.cpp:
+        (WebCore::CSSProperty::isInheritedProperty):
+        * css/CSSPropertyNames.in:
+        * css/StylePropertyShorthand.cpp:
+        (WebCore::webkitGridColumnShorthand):
+        (WebCore::webkitGridRowShorthand):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::applyProperty):
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::maximumIndexInDirection):
+        (WebCore::RenderGrid::resolveGridPositionsFromStyle):
+        (WebCore::RenderGrid::resolveGridPositionFromStyle):
+        * rendering/RenderGrid.h:
+        * rendering/style/RenderStyle.h:
+        * rendering/style/StyleGridItemData.cpp:
+        (WebCore::StyleGridItemData::StyleGridItemData):
+        * rendering/style/StyleGridItemData.h:
+        (WebCore::StyleGridItemData::operator==):
+
 2013-08-05  Przemyslaw Szymanski  <p.szymanski3@samsung.com>
 
         [WebGL] validateRenderingState method name change

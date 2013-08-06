@@ -121,10 +121,10 @@ private:
     GridSpan resolveGridPositionsFromAutoPlacementPosition(const RenderBox*, TrackSizingDirection, size_t) const;
     PassOwnPtr<GridSpan> resolveGridPositionsFromStyle(const RenderBox*, TrackSizingDirection) const;
     enum GridPositionSide {
-        StartSide,
-        EndSide,
-        BeforeSide,
-        AfterSide
+        ColumnStartSide,
+        ColumnEndSide,
+        RowStartSide,
+        RowEndSide
     };
     size_t resolveGridPositionFromStyle(const GridPosition&, GridPositionSide) const;
 
