@@ -588,8 +588,9 @@ if (WTF_CPU_ARM)
         add_custom_command(
             OUTPUT ${DERIVED_SOURCES_DIR}/GeneratedJITStubs.asm
             MAIN_DEPENDENCY ${JAVASCRIPTCORE_DIR}/create_jit_stubs
+            DEPENDS ${JAVASCRIPTCORE_DIR}/jit/JITStubsARM.h
             DEPENDS ${JAVASCRIPTCORE_DIR}/jit/JITStubs.cpp
-            COMMAND ${PERL_EXECUTABLE} ${JAVASCRIPTCORE_DIR}/create_jit_stubs --prefix=MSVC ${JAVASCRIPTCORE_DIR}/jit/JITStubs.cpp > ${DERIVED_SOURCES_DIR}/GeneratedJITStubs.asm
+            COMMAND ${PERL_EXECUTABLE} ${JAVASCRIPTCORE_DIR}/create_jit_stubs --prefix=MSVC --header ${JAVASCRIPTCORE_DIR}/jit/JITStubsARM.h ${JAVASCRIPTCORE_DIR}/jit/JITStubs.cpp > ${DERIVED_SOURCES_DIR}/GeneratedJITStubs.asm
             VERBATIM)
 
         add_custom_command(

@@ -64,7 +64,7 @@ GENERATORS += keywordlut
 # GENERATOR 2-A: JIT Stub functions for RVCT
 rvctstubs.output = Generated${QMAKE_FILE_BASE}_RVCT.h
 rvctstubs.script = $$PWD/create_jit_stubs
-rvctstubs.commands = perl -i $$rvctstubs.script --prefix RVCT ${QMAKE_FILE_NAME} > ${QMAKE_FILE_OUT}
+rvctstubs.commands = perl -i $$rvctstubs.script --prefix RVCT --header $$PWD/jit/JITStubsARM.h ${QMAKE_FILE_NAME} > ${QMAKE_FILE_OUT}
 rvctstubs.depends = ${QMAKE_FILE_NAME}
 rvctstubs.input = JIT_STUB_FILES
 rvctstubs.CONFIG += no_link
@@ -73,7 +73,7 @@ GENERATORS += rvctstubs
 # GENERATOR 2-B: JIT Stub functions for MSVC
 msvcstubs.output = Generated${QMAKE_FILE_BASE}_MSVC.asm
 msvcstubs.script = $$PWD/create_jit_stubs
-msvcstubs.commands = perl -i $$msvcstubs.script --prefix MSVC ${QMAKE_FILE_NAME} > ${QMAKE_FILE_OUT}
+msvcstubs.commands = perl -i $$msvcstubs.script --prefix MSVC --header $$PWD/jit/JITStubsARM.h ${QMAKE_FILE_NAME} > ${QMAKE_FILE_OUT}
 msvcstubs.depends = ${QMAKE_FILE_NAME}
 msvcstubs.input = JIT_STUB_FILES
 msvcstubs.CONFIG += no_link

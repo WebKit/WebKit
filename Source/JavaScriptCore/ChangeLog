@@ -1,3 +1,13 @@
+2013-08-06  Patrick Gansterer  <paroga@webkit.org>
+
+        Build fix for ARM MSVC after r150109.
+
+        Read the stub template from a header files instead of the JITStubs.cpp.
+
+        * CMakeLists.txt:
+        * DerivedSources.pri:
+        * create_jit_stubs:
+
 2013-08-05  Oliver Hunt  <oliver@apple.com>
 
         Move TypedArray implementation into JSC
