@@ -4819,18 +4819,6 @@ AudioSourceProvider* HTMLMediaElement::audioSourceProvider()
 }
 #endif
 
-#if ENABLE(MICRODATA)
-String HTMLMediaElement::itemValueText() const
-{
-    return getURLAttribute(srcAttr);
-}
-
-void HTMLMediaElement::setItemValueText(const String& value, ExceptionCode&)
-{
-    setAttribute(srcAttr, value);
-}
-#endif
-
 const String& HTMLMediaElement::mediaGroup() const
 {
     return m_mediaGroup;

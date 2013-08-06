@@ -110,7 +110,6 @@ my (
     $mediaStreamSupport,
     $meterElementSupport,
     $mhtmlSupport,
-    $microdataSupport,
     $mouseCursorScaleSupport,
     $netscapePluginAPISupport,
     $networkInfoSupport,
@@ -356,9 +355,6 @@ my @features = (
 
     { option => "mhtml", desc => "Toggle MHTML support",
       define => "ENABLE_MHTML", default => (isGtk() || isEfl()), value => \$mhtmlSupport },
-
-    { option => "microdata", desc => "Toggle Microdata support",
-      define => "ENABLE_MICRODATA", default => (isEfl() || isBlackBerry() || isGtk()), value => \$microdataSupport },
 
     { option => "mouse-cursor-scale", desc => "Toggle Scaled mouse cursor support",
       define => "ENABLE_MOUSE_CURSOR_SCALE", default => isEfl(), value => \$mouseCursorScaleSupport },

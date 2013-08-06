@@ -389,16 +389,4 @@ bool HTMLImageElement::isServerMap() const
     return document()->completeURL(stripLeadingAndTrailingHTMLSpaces(usemap)).isEmpty();
 }
 
-#if ENABLE(MICRODATA)
-String HTMLImageElement::itemValueText() const
-{
-    return getURLAttribute(srcAttr);
-}
-
-void HTMLImageElement::setItemValueText(const String& value, ExceptionCode&)
-{
-    setAttribute(srcAttr, value);
-}
-#endif
-
 }

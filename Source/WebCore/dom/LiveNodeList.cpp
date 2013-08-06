@@ -26,8 +26,6 @@
 #include "Document.h"
 #include "Element.h"
 #include "HTMLCollection.h"
-#include "HTMLPropertiesCollection.h"
-#include "PropertyNodeList.h"
 
 namespace WebCore {
 
@@ -35,18 +33,6 @@ Node* LiveNodeListBase::rootNode() const
 {
     if (isRootedAtDocument() && m_ownerNode->inDocument())
         return m_ownerNode->document();
-
-#if ENABLE(MICRODATA)
-    if (m_rootType == NodeListIsRootedAtDocumentIfOwnerHasItemrefAttr && toElement(ownerNode())->fastHasAttribute(HTMLNames::itemrefAttr)) {
-        if (m_ownerNode->inDocument())
-            return m_ownerNode->document();
-
-        Node* root = m_ownerNode.get();
-        while (Node* parent = root->parentNode())
-            root = parent;
-        return root;
-    }
-#endif
 
     return m_ownerNode.get();
 }
@@ -73,12 +59,6 @@ void LiveNodeListBase::invalidateCache() const
     cacheBase->m_idCache.clear();
     cacheBase->m_nameCache.clear();
     cacheBase->m_cachedElementsArrayOffset = 0;
-
-#if ENABLE(MICRODATA)
-    // FIXME: There should be more generic mechanism to clear caches in subclasses.
-    if (type() == ItemProperties)
-        static_cast<const HTMLPropertiesCollection*>(this)->invalidateCache();
-#endif
 }
 
 void LiveNodeListBase::invalidateIdNameCacheMaps() const
@@ -94,11 +74,6 @@ Node* LiveNodeList::namedItem(const AtomicString& elementId) const
     Node* rootNode = this->rootNode();
 
     if (rootNode->inDocument()) {
-#if ENABLE(MICRODATA)
-        if (type() == PropertyNodeListType)
-            static_cast<const PropertyNodeList*>(this)->updateRefElements();
-#endif
-
         Element* element = rootNode->treeScope()->getElementById(elementId);
         if (element && nodeMatches(element) && element->isDescendantOf(rootNode))
             return element;

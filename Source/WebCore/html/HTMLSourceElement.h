@@ -54,11 +54,6 @@ private:
 
     void errorEventTimerFired(Timer<HTMLSourceElement>*);
 
-#if ENABLE(MICRODATA)
-    virtual String itemValueText() const OVERRIDE;
-    virtual void setItemValueText(const String&, ExceptionCode&) OVERRIDE;
-#endif
-
     Timer<HTMLSourceElement> m_errorEventTimer;
 };
 

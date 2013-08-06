@@ -3056,10 +3056,6 @@ PassRefPtr<HTMLCollection> Element::ensureCachedHTMLCollection(CollectionType ty
     } else if (type == FormControls) {
         ASSERT(hasTagName(formTag) || hasTagName(fieldsetTag));
         return ensureRareData()->ensureNodeLists()->addCacheWithAtomicName<HTMLFormControlsCollection>(this, type);
-#if ENABLE(MICRODATA)
-    } else if (type == ItemProperties) {
-        return ensureRareData()->ensureNodeLists()->addCacheWithAtomicName<HTMLPropertiesCollection>(this, type);
-#endif
     }
     return ensureRareData()->ensureNodeLists()->addCacheWithAtomicName<HTMLCollection>(this, type);
 }

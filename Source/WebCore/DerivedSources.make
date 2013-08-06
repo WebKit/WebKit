@@ -269,7 +269,6 @@ BINDING_IDLS = \
     $(WebCore)/dom/ProcessingInstruction.idl \
     $(WebCore)/dom/ProgressEvent.idl \
     $(WebCore)/dom/ProgressEvent.idl \
-    $(WebCore)/dom/PropertyNodeList.idl \
     $(WebCore)/dom/Range.idl \
     $(WebCore)/dom/RangeException.idl \
     $(WebCore)/dom/RequestAnimationFrameCallback.idl \
@@ -354,7 +353,6 @@ BINDING_IDLS = \
     $(WebCore)/html/HTMLParamElement.idl \
     $(WebCore)/html/HTMLPreElement.idl \
     $(WebCore)/html/HTMLProgressElement.idl \
-    $(WebCore)/html/HTMLPropertiesCollection.idl \
     $(WebCore)/html/HTMLQuoteElement.idl \
     $(WebCore)/html/HTMLScriptElement.idl \
     $(WebCore)/html/HTMLSelectElement.idl \
@@ -379,7 +377,6 @@ BINDING_IDLS = \
     $(WebCore)/html/MediaError.idl \
     $(WebCore)/html/MediaKeyError.idl \
     $(WebCore)/html/MediaKeyEvent.idl \
-    $(WebCore)/html/MicroDataItemValue.idl \
     $(WebCore)/html/RadioNodeList.idl \
     $(WebCore)/html/TextMetrics.idl \
     $(WebCore)/html/TimeRanges.idl \
@@ -862,10 +859,6 @@ endif
 
 ifeq ($(findstring ENABLE_METER_ELEMENT,$(FEATURE_DEFINES)), ENABLE_METER_ELEMENT)
     HTML_FLAGS := $(HTML_FLAGS) ENABLE_METER_ELEMENT=1
-endif
-
-ifeq ($(findstring ENABLE_MICRODATA,$(FEATURE_DEFINES)), ENABLE_MICRODATA)
-    HTML_FLAGS := $(HTML_FLAGS) ENABLE_MICRODATA=1
 endif
 
 ifeq ($(findstring ENABLE_PROGRESS_ELEMENT,$(FEATURE_DEFINES)), ENABLE_PROGRESS_ELEMENT)

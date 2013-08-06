@@ -159,7 +159,6 @@ SOURCES += \
      bindings/js/JSMessageEventCustom.cpp \
      bindings/js/JSMessagePortCustom.cpp \
      bindings/js/JSMessagePortCustom.h \
-     bindings/js/JSMicroDataItemValueCustom.cpp \
      bindings/js/JSMutationCallback.cpp \
      bindings/js/JSMutationObserverCustom.cpp \
      bindings/js/JSNamedNodeMapCustom.cpp \
@@ -430,7 +429,6 @@ SOURCES += \
     dom/MessageEvent.cpp \
     dom/MessagePort.cpp \
     dom/MessagePortChannel.cpp \
-    dom/MicroDataItemList.cpp \
     dom/MouseEvent.cpp \
     dom/MouseRelatedEvent.cpp \
     dom/MutationEvent.cpp \
@@ -459,7 +457,6 @@ SOURCES += \
     dom/PositionIterator.cpp \
     dom/ProcessingInstruction.cpp \
     dom/ProgressEvent.cpp \
-    dom/PropertyNodeList.cpp \
     dom/PseudoElement.cpp \
     dom/QualifiedName.cpp \
     dom/Range.cpp \
@@ -665,7 +662,6 @@ SOURCES += \
     html/HTMLPlugInImageElement.cpp \
     html/HTMLPreElement.cpp \
     html/HTMLProgressElement.cpp \
-    html/HTMLPropertiesCollection.cpp \
     html/HTMLQuoteElement.cpp \
     html/HTMLScriptElement.cpp \
     html/HTMLSelectElement.cpp \
@@ -696,8 +692,6 @@ SOURCES += \
     html/LabelsNodeList.cpp \
     html/LinkRelAttribute.cpp \
     html/MediaDocument.cpp \
-    html/MicroDataAttributeTokenList.cpp \
-    html/MicroDataItemValue.cpp \
     html/MonthInputType.cpp \
     html/NumberInputType.cpp \
     html/PasswordInputType.cpp \
@@ -1636,7 +1630,6 @@ HEADERS += \
     dom/MessageEvent.h \
     dom/MessagePortChannel.h \
     dom/MessagePort.h \
-    dom/MicroDataItemList.h \
     dom/MouseEvent.h \
     dom/MouseRelatedEvent.h \
     dom/MutationCallback.h \
@@ -1662,7 +1655,6 @@ HEADERS += \
     dom/PositionIterator.h \
     dom/ProcessingInstruction.h \
     dom/ProgressEvent.h \
-    dom/PropertyNodeList.h \
     dom/PseudoElement.h \
     dom/QualifiedName.h \
     dom/Range.h \
@@ -1862,7 +1854,6 @@ HEADERS += \
     html/HTMLPlugInImageElement.h \
     html/HTMLPreElement.h \
     html/HTMLProgressElement.h \
-    html/HTMLPropertiesCollection.h \
     html/HTMLQuoteElement.h \
     html/HTMLScriptElement.h \
     html/HTMLSelectElement.h \
@@ -1893,8 +1884,6 @@ HEADERS += \
     html/MediaController.h \
     html/MediaDocument.h \
     html/MediaFragmentURIParser.h \
-    html/MicroDataAttributeTokenList.h \
-    html/MicroDataItemValue.h \
     html/PluginDocument.h \
     html/PublicURLManager.h \
     html/RadioNodeList.h \

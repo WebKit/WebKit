@@ -607,11 +607,6 @@ private:
 
     void removeBehaviorsRestrictionsAfterFirstUserGesture();
 
-#if ENABLE(MICRODATA)
-    virtual String itemValueText() const;
-    virtual void setItemValueText(const String&, ExceptionCode&);
-#endif
-
     void updateMediaController();
     bool isBlocked() const;
     bool isBlockedOnMediaController() const;

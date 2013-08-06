@@ -123,18 +123,6 @@ bool HTMLSourceElement::isURLAttribute(const Attribute& attribute) const
     return attribute.name() == srcAttr || HTMLElement::isURLAttribute(attribute);
 }
 
-#if ENABLE(MICRODATA)
-String HTMLSourceElement::itemValueText() const
-{
-    return getURLAttribute(srcAttr);
-}
-
-void HTMLSourceElement::setItemValueText(const String& value, ExceptionCode&)
-{
-    setAttribute(srcAttr, value);
-}
-#endif
-
 }
 
 #endif

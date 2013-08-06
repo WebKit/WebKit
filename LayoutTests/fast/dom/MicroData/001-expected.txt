@@ -1,7 +1,0 @@
-This test ensures that document.getItems DOM API must exist.
-
-PASS NodeList is defined.
-PASS successfullyParsed is true
-
-TEST COMPLETE
-

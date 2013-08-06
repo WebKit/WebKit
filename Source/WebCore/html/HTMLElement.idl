@@ -56,23 +56,6 @@
 
              attribute boolean spellcheck;
 
-#if !defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C // No Objective-C bindings yet.
-             [Conditional=MICRODATA, Reflect] attribute boolean itemScope;
-    [Conditional=MICRODATA] readonly attribute DOMSettableTokenList itemType;
-             [Conditional=MICRODATA, Reflect, URL] attribute DOMString itemId;
-
-    [Conditional=MICRODATA] readonly attribute DOMSettableTokenList itemRef;
-    [Conditional=MICRODATA] readonly attribute DOMSettableTokenList itemProp;
-
-    [Conditional=MICRODATA] readonly attribute HTMLPropertiesCollection properties;
-#endif
-
-#if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP
-#if !defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C
-             [Conditional=MICRODATA, Custom, SetterRaisesException] attribute any itemValue;
-#endif
-#endif
-
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
     readonly attribute DOMString titleDisplayString;
 #endif

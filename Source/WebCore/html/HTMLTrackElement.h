@@ -80,11 +80,6 @@ private:
 
     void loadTimerFired(Timer<HTMLTrackElement>*);
 
-#if ENABLE(MICRODATA)
-    virtual String itemValueText() const OVERRIDE;
-    virtual void setItemValueText(const String&, ExceptionCode&) OVERRIDE;
-#endif
-
     HTMLMediaElement* mediaElement() const;
 
     // TextTrackClient

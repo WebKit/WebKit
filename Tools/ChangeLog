@@ -1,3 +1,13 @@
+2013-08-04  Sam Weinig  <sam@webkit.org>
+
+        Remove support for HTML5 MicroData
+        https://bugs.webkit.org/show_bug.cgi?id=119480
+
+        Reviewed by Anders Carlsson.
+
+        * Scripts/webkitperl/FeatureList.pm:
+        * qmake/mkspecs/features/features.pri:
+
 2013-07-23  David Farler  <dfarler@apple.com>
 
         Provide optional OTHER_CFLAGS, OTHER_CPPFLAGS, OTHER_LDFLAGS additions for building with ASAN

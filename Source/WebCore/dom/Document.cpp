@@ -205,11 +205,6 @@
 #include "ScriptedAnimationController.h"
 #endif
 
-#if ENABLE(MICRODATA)
-#include "MicroDataItemList.h"
-#include "NodeRareData.h"
-#endif
-
 #if ENABLE(TEXT_AUTOSIZING)
 #include "TextAutosizer.h"
 #endif
@@ -5669,17 +5664,6 @@ DocumentLoader* Document::loader() const
     
     return loader;
 }
-
-#if ENABLE(MICRODATA)
-PassRefPtr<NodeList> Document::getItems(const String& typeNames)
-{
-    // Since documet.getItem() is allowed for microdata, typeNames will be null string.
-    // In this case we need to create an empty string identifier to map such request in the cache.
-    String localTypeNames = typeNames.isNull() ? MicroDataItemList::undefinedItemType() : typeNames;
-
-    return ensureRareData()->ensureNodeLists()->addCacheWithName<MicroDataItemList>(this, MicroDataItemListType, localTypeNames);
-}
-#endif
 
 IntSize Document::viewportSize() const
 {

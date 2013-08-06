@@ -381,7 +381,6 @@ set(WebCore_IDL_FILES
     dom/PopStateEvent.idl
     dom/ProcessingInstruction.idl
     dom/ProgressEvent.idl
-    dom/PropertyNodeList.idl
     dom/RangeException.idl
     dom/Range.idl
     dom/RequestAnimationFrameCallback.idl
@@ -470,7 +469,6 @@ set(WebCore_IDL_FILES
     html/HTMLParamElement.idl
     html/HTMLPreElement.idl
     html/HTMLProgressElement.idl
-    html/HTMLPropertiesCollection.idl
     html/HTMLQuoteElement.idl
     html/HTMLScriptElement.idl
     html/HTMLSelectElement.idl
@@ -493,7 +491,6 @@ set(WebCore_IDL_FILES
     html/ImageData.idl
     html/MediaController.idl
     html/MediaError.idl
-    html/MicroDataItemValue.idl
     html/RadioNodeList.idl
     html/TextMetrics.idl
     html/TimeRanges.idl
@@ -1195,7 +1192,6 @@ set(WebCore_SOURCES
     dom/MessageEvent.cpp
     dom/MessagePortChannel.cpp
     dom/MessagePort.cpp
-    dom/MicroDataItemList.cpp
     dom/MouseEvent.cpp
     dom/MouseRelatedEvent.cpp
     dom/MutationEvent.cpp
@@ -1223,7 +1219,6 @@ set(WebCore_SOURCES
     dom/PositionIterator.cpp
     dom/ProcessingInstruction.cpp
     dom/ProgressEvent.cpp
-    dom/PropertyNodeList.cpp
     dom/PseudoElement.cpp
     dom/QualifiedName.cpp
     dom/Range.cpp
@@ -1437,7 +1432,6 @@ set(WebCore_SOURCES
     html/HTMLPlugInImageElement.cpp
     html/HTMLPreElement.cpp
     html/HTMLProgressElement.cpp
-    html/HTMLPropertiesCollection.cpp
     html/HTMLQuoteElement.cpp
     html/HTMLScriptElement.cpp
     html/HTMLSelectElement.cpp
@@ -1473,8 +1467,6 @@ set(WebCore_SOURCES
     html/MediaController.cpp
     html/MediaDocument.cpp
     html/MediaFragmentURIParser.cpp
-    html/MicroDataAttributeTokenList.cpp
-    html/MicroDataItemValue.cpp
     html/MonthInputType.cpp
     html/NumberInputType.cpp
     html/PasswordInputType.cpp

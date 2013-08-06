@@ -604,18 +604,6 @@ bool HTMLAnchorElement::willRespondToMouseClickEvents()
     return isLink() || HTMLElement::willRespondToMouseClickEvents();
 }
 
-#if ENABLE(MICRODATA)
-String HTMLAnchorElement::itemValueText() const
-{
-    return getURLAttribute(hrefAttr);
-}
-
-void HTMLAnchorElement::setItemValueText(const String& value, ExceptionCode&)
-{
-    setAttribute(hrefAttr, value);
-}
-#endif
-
 typedef HashMap<const HTMLAnchorElement*, RefPtr<Element> > RootEditableElementMap;
 
 static RootEditableElementMap& rootEditableElementMap()

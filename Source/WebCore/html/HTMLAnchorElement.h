@@ -132,11 +132,6 @@ private:
     static EventType eventType(Event*);
     bool treatLinkAsLiveForEventType(EventType) const;
 
-#if ENABLE(MICRODATA)
-    virtual String itemValueText() const OVERRIDE;
-    virtual void setItemValueText(const String&, ExceptionCode&) OVERRIDE;
-#endif
-
     Element* rootEditableElementForSelectionOnMouseDown() const;
     void setRootEditableElementForSelectionOnMouseDown(Element*);
     void clearRootEditableElementForSelectionOnMouseDown();

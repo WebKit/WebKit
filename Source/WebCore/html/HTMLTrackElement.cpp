@@ -361,18 +361,6 @@ HTMLMediaElement* HTMLTrackElement::mediaElement() const
     return 0;
 }
 
-#if ENABLE(MICRODATA)
-String HTMLTrackElement::itemValueText() const
-{
-    return getURLAttribute(srcAttr);
-}
-
-void HTMLTrackElement::setItemValueText(const String& value, ExceptionCode&)
-{
-    setAttribute(srcAttr, value);
-}
-#endif
-
 }
 
 #endif

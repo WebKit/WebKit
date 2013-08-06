@@ -1,3 +1,92 @@
+2013-08-04  Sam Weinig  <sam@webkit.org>
+
+        Remove support for HTML5 Microdata
+        https://bugs.webkit.org/show_bug.cgi?id=119480
+
+        Reviewed by Anders Carlsson.
+
+        * CMakeLists.txt:
+        * Configurations/FeatureDefines.xcconfig:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * DerivedSources.pri:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * UseJSC.cmake:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/gobject/GNUmakefile.am:
+        * bindings/js/JSBindingsAllInOne.cpp:
+        * bindings/js/JSHTMLCollectionCustom.cpp:
+        (WebCore::JSHTMLCollection::nameGetter):
+        * bindings/js/JSHTMLElementCustom.cpp:
+        * bindings/js/JSMicroDataItemValueCustom.cpp: Removed.
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+        * dom/Document.cpp:
+        * dom/Document.h:
+        * dom/Document.idl:
+        * dom/Element.cpp:
+        (WebCore::Element::ensureCachedHTMLCollection):
+        * dom/LiveNodeList.cpp:
+        (WebCore::LiveNodeListBase::rootNode):
+        (WebCore::LiveNodeListBase::invalidateCache):
+        (WebCore::LiveNodeList::namedItem):
+        * dom/LiveNodeList.h:
+        (WebCore::LiveNodeListBase::shouldInvalidateTypeOnAttributeChange):
+        * dom/MicroDataItemList.cpp: Removed.
+        * dom/MicroDataItemList.h: Removed.
+        * dom/Node.cpp:
+        * dom/Node.h:
+        * dom/NodeRareData.cpp:
+        * dom/NodeRareData.h:
+        * dom/PropertyNodeList.cpp: Removed.
+        * dom/PropertyNodeList.h: Removed.
+        * dom/PropertyNodeList.idl: Removed.
+        * html/CollectionType.h:
+        * html/HTMLAnchorElement.cpp:
+        * html/HTMLAnchorElement.h:
+        * html/HTMLAreaElement.cpp:
+        * html/HTMLAreaElement.h:
+        * html/HTMLCollection.cpp:
+        (WebCore::shouldOnlyIncludeDirectChildren):
+        (WebCore::rootTypeFromCollectionType):
+        (WebCore::invalidationTypeExcludingIdAndNameAttributes):
+        (WebCore::isMatchingElement):
+        (WebCore::LiveNodeListBase::item):
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::parseAttribute):
+        (WebCore::HTMLElement::isURLAttribute):
+        * html/HTMLElement.h:
+        * html/HTMLElement.idl:
+        * html/HTMLEmbedElement.cpp:
+        * html/HTMLEmbedElement.h:
+        * html/HTMLIFrameElement.cpp:
+        * html/HTMLIFrameElement.h:
+        * html/HTMLImageElement.cpp:
+        * html/HTMLImageElement.h:
+        * html/HTMLLinkElement.cpp:
+        * html/HTMLLinkElement.h:
+        * html/HTMLMediaElement.cpp:
+        * html/HTMLMediaElement.h:
+        * html/HTMLMetaElement.cpp:
+        * html/HTMLMetaElement.h:
+        * html/HTMLObjectElement.cpp:
+        * html/HTMLObjectElement.h:
+        * html/HTMLPropertiesCollection.cpp: Removed.
+        * html/HTMLPropertiesCollection.h: Removed.
+        * html/HTMLPropertiesCollection.idl: Removed.
+        * html/HTMLSourceElement.cpp:
+        * html/HTMLSourceElement.h:
+        * html/HTMLTrackElement.cpp:
+        * html/HTMLTrackElement.h:
+        * html/MicroDataAttributeTokenList.cpp: Removed.
+        * html/MicroDataAttributeTokenList.h: Removed.
+        * html/MicroDataItemValue.cpp: Removed.
+        * html/MicroDataItemValue.h: Removed.
+        * html/MicroDataItemValue.idl: Removed.
+
 2013-08-06  Tim Horton  <timothy_horton@apple.com>
 
         Remove PlatformCALayer::contentsTransform and ::setContentsTransform

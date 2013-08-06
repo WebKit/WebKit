@@ -40,12 +40,6 @@
 #include <wtf/text/AtomicString.h>
 #include <wtf/text/StringHash.h>
 
-#if ENABLE(MICRODATA)
-#include "HTMLPropertiesCollection.h"
-#include "MicroDataAttributeTokenList.h"
-#include "MicroDataItemList.h"
-#endif
-
 namespace WebCore {
 
 class LabelsNodeList;
@@ -254,42 +248,6 @@ private:
     NodeMutationObserverData() { }
 };
 
-#if ENABLE(MICRODATA)
-class NodeMicroDataTokenLists {
-    WTF_MAKE_NONCOPYABLE(NodeMicroDataTokenLists); WTF_MAKE_FAST_ALLOCATED;
-public:
-    static PassOwnPtr<NodeMicroDataTokenLists> create() { return adoptPtr(new NodeMicroDataTokenLists); }
-
-    MicroDataAttributeTokenList* itemProp(Node* node) const
-    {
-        if (!m_itemProp)
-            m_itemProp = MicroDataAttributeTokenList::create(toElement(node), HTMLNames::itempropAttr);
-        return m_itemProp.get();
-    }
-
-    MicroDataAttributeTokenList* itemRef(Node* node) const
-    {
-        if (!m_itemRef)
-            m_itemRef = MicroDataAttributeTokenList::create(toElement(node), HTMLNames::itemrefAttr);
-        return m_itemRef.get();
-    }
-
-    MicroDataAttributeTokenList* itemType(Node* node) const
-    {
-        if (!m_itemType)
-            m_itemType = MicroDataAttributeTokenList::create(toElement(node), HTMLNames::itemtypeAttr);
-        return m_itemType.get();
-    }
-
-private:
-    NodeMicroDataTokenLists() { }
-
-    mutable RefPtr<MicroDataAttributeTokenList> m_itemProp;
-    mutable RefPtr<MicroDataAttributeTokenList> m_itemRef;
-    mutable RefPtr<MicroDataAttributeTokenList> m_itemType;
-};
-#endif
-
 class NodeRareData : public NodeRareDataBase {
     WTF_MAKE_NONCOPYABLE(NodeRareData); WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -311,15 +269,6 @@ public:
             m_mutationObserverData = NodeMutationObserverData::create();
         return m_mutationObserverData.get();
     }
-
-#if ENABLE(MICRODATA)
-    NodeMicroDataTokenLists* ensureMicroDataTokenLists() const
-    {
-        if (!m_microDataTokenLists)
-            m_microDataTokenLists = NodeMicroDataTokenLists::create();
-        return m_microDataTokenLists.get();
-    }
-#endif
 
     unsigned connectedSubframeCount() const { return m_connectedFrameCount; }
     void incrementConnectedSubframeCount(unsigned amount)
@@ -344,10 +293,6 @@ private:
 
     OwnPtr<NodeListsNodeData> m_nodeLists;
     OwnPtr<NodeMutationObserverData> m_mutationObserverData;
-
-#if ENABLE(MICRODATA)
-    mutable OwnPtr<NodeMicroDataTokenLists> m_microDataTokenLists;
-#endif
 };
 
 inline bool NodeListsNodeData::deleteThisAndUpdateNodeRareDataIfAboutToRemoveLastList(Node* ownerNode)

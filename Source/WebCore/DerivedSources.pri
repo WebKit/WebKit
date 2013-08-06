@@ -275,7 +275,6 @@ IDL_BINDINGS += \
     $$PWD/dom/PopStateEvent.idl \
     $$PWD/dom/ProcessingInstruction.idl \
     $$PWD/dom/ProgressEvent.idl \
-    $$PWD/dom/PropertyNodeList.idl \
     $$PWD/dom/RangeException.idl \
     $$PWD/dom/Range.idl \
     $$PWD/dom/RequestAnimationFrameCallback.idl \
@@ -406,7 +405,6 @@ IDL_BINDINGS += \
     $$PWD/html/HTMLParamElement.idl \
     $$PWD/html/HTMLPreElement.idl \
     $$PWD/html/HTMLProgressElement.idl \
-    $$PWD/html/HTMLPropertiesCollection.idl \
     $$PWD/html/HTMLQuoteElement.idl \
     $$PWD/html/HTMLScriptElement.idl \
     $$PWD/html/HTMLSelectElement.idl \
@@ -428,7 +426,6 @@ IDL_BINDINGS += \
     $$PWD/html/ImageData.idl \
     $$PWD/html/MediaController.idl \
     $$PWD/html/MediaError.idl \
-    $$PWD/html/MicroDataItemValue.idl \
     $$PWD/html/RadioNodeList.idl \
     $$PWD/html/TextMetrics.idl \
     $$PWD/html/TimeRanges.idl \

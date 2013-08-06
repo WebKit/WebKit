@@ -3342,9 +3342,6 @@
     <ClCompile Include="..\dom\MessagePortChannel.cpp">
       <Filter>dom</Filter>
     </ClCompile>
-    <ClCompile Include="..\dom\MicroDataItemList.cpp">
-      <Filter>dom</Filter>
-    </ClCompile>
     <ClCompile Include="..\dom\MouseEvent.cpp">
       <Filter>dom</Filter>
     </ClCompile>
@@ -3424,9 +3421,6 @@
       <Filter>dom</Filter>
     </ClCompile>
     <ClCompile Include="..\dom\ProgressEvent.cpp">
-      <Filter>dom</Filter>
-    </ClCompile>
-    <ClCompile Include="..\dom\PropertyNodeList.cpp">
       <Filter>dom</Filter>
     </ClCompile>
     <ClCompile Include="..\dom\PseudoElement.cpp">
@@ -4053,9 +4047,6 @@
     <ClCompile Include="..\html\HTMLProgressElement.cpp">
       <Filter>html</Filter>
     </ClCompile>
-    <ClCompile Include="..\html\HTMLPropertiesCollection.cpp">
-      <Filter>html</Filter>
-    </ClCompile>
     <ClCompile Include="..\html\HTMLQuoteElement.cpp">
       <Filter>html</Filter>
     </ClCompile>
@@ -4159,9 +4150,6 @@
       <Filter>html</Filter>
     </ClCompile>
     <ClCompile Include="..\html\MediaFragmentURIParser.cpp">
-      <Filter>html</Filter>
-    </ClCompile>
-    <ClCompile Include="..\html\MicroDataItemValue.cpp">
       <Filter>html</Filter>
     </ClCompile>
     <ClCompile Include="..\html\MonthInputType.cpp">
@@ -4600,9 +4588,6 @@
       <Filter>bindings\js</Filter>
     </ClCompile>
     <ClCompile Include="..\bindings\js\JSMessagePortCustom.cpp">
-      <Filter>bindings\js</Filter>
-    </ClCompile>
-    <ClCompile Include="..\bindings\js\JSMicroDataItemValueCustom.cpp">
       <Filter>bindings\js</Filter>
     </ClCompile>
     <ClCompile Include="..\bindings\js\JSMutationCallback.cpp">
@@ -5944,9 +5929,6 @@
     <ClCompile Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\JSHTMLProgressElement.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\JSHTMLPropertiesCollection.cpp">
-      <Filter>DerivedSources</Filter>
-    </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\JSHTMLQuoteElement.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
@@ -6079,9 +6061,6 @@
     <ClCompile Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\JSMetadataCallback.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\JSMicroDataItemValue.cpp">
-      <Filter>DerivedSources</Filter>
-    </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\JSMouseEvent.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
@@ -6155,9 +6134,6 @@
       <Filter>DerivedSources</Filter>
     </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\JSProgressEvent.cpp">
-      <Filter>DerivedSources</Filter>
-    </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\JSPropertyNodeList.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\JSRadioNodeList.cpp">
@@ -10423,9 +10399,6 @@
     <ClInclude Include="..\dom\MessagePortChannel.h">
       <Filter>dom</Filter>
     </ClInclude>
-    <ClInclude Include="..\dom\MicroDataItemList.h">
-      <Filter>dom</Filter>
-    </ClInclude>
     <ClInclude Include="..\dom\MouseEvent.h">
       <Filter>dom</Filter>
     </ClInclude>
@@ -10502,9 +10475,6 @@
       <Filter>dom</Filter>
     </ClInclude>
     <ClInclude Include="..\dom\ProgressEvent.h">
-      <Filter>dom</Filter>
-    </ClInclude>
-    <ClInclude Include="..\dom\PropertyNodeList.h">
       <Filter>dom</Filter>
     </ClInclude>
     <ClInclude Include="..\dom\PseudoElement.h">
@@ -11197,9 +11167,6 @@
     <ClInclude Include="..\html\HTMLProgressElement.h">
       <Filter>html</Filter>
     </ClInclude>
-    <ClInclude Include="..\html\HTMLPropertiesCollection.h">
-      <Filter>html</Filter>
-    </ClInclude>
     <ClInclude Include="..\html\HTMLQuoteElement.h">
       <Filter>html</Filter>
     </ClInclude>
@@ -11303,9 +11270,6 @@
       <Filter>html</Filter>
     </ClInclude>
     <ClInclude Include="..\html\MediaFragmentURIParser.h">
-      <Filter>html</Filter>
-    </ClInclude>
-    <ClInclude Include="..\html\MicroDataItemValue.h">
       <Filter>html</Filter>
     </ClInclude>
     <ClInclude Include="..\html\MonthInputType.h">
@@ -13707,9 +13671,6 @@
     <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\JSHTMLProgressElement.h">
       <Filter>DerivedSources</Filter>
     </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\JSHTMLPropertiesCollection.h">
-      <Filter>DerivedSources</Filter>
-    </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\JSHTMLQuoteElement.h">
       <Filter>DerivedSources</Filter>
     </ClInclude>
@@ -13836,9 +13797,6 @@
     <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\JSMetadataCallback.h">
       <Filter>DerivedSources</Filter>
     </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\JSMicroDataItemValue.h">
-      <Filter>DerivedSources</Filter>
-    </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\JSMouseEvent.h">
       <Filter>DerivedSources</Filter>
     </ClInclude>
@@ -13912,9 +13870,6 @@
       <Filter>DerivedSources</Filter>
     </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\JSProgressEvent.h">
-      <Filter>DerivedSources</Filter>
-    </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\JSPropertyNodeList.h">
       <Filter>DerivedSources</Filter>
     </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\JSRadioNodeList.h">

@@ -101,11 +101,6 @@ private:
     virtual void derefFormAssociatedElement() { deref(); }
     virtual HTMLFormElement* virtualForm() const;
 
-#if ENABLE(MICRODATA)
-    virtual String itemValueText() const OVERRIDE;
-    virtual void setItemValueText(const String&, ExceptionCode&) OVERRIDE;
-#endif
-
     String m_classId;
     bool m_docNamedItem : 1;
     bool m_useFallbackContent : 1;

@@ -252,16 +252,4 @@ String HTMLAreaElement::target() const
     return getAttribute(targetAttr);
 }
 
-#if ENABLE(MICRODATA)
-String HTMLAreaElement::itemValueText() const
-{
-    return getURLAttribute(hrefAttr);
-}
-
-void HTMLAreaElement::setItemValueText(const String& value, ExceptionCode&)
-{
-    setAttribute(hrefAttr, value);
-}
-#endif
-
 }

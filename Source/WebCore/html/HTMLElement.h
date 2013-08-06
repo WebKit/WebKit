@@ -31,11 +31,6 @@ class DocumentFragment;
 class HTMLCollection;
 class HTMLFormElement;
 
-#if ENABLE(MICRODATA)
-class HTMLPropertiesCollection;
-class MicroDataItemValue;
-#endif
-
 enum TranslateAttributeMode {
     TranslateAttributeYes,
     TranslateAttributeNo,
@@ -95,13 +90,6 @@ public:
     bool hasDirectionAuto() const;
     TextDirection directionalityIfhasDirAutoAttribute(bool& isAuto) const;
 
-#if ENABLE(MICRODATA)
-    void setItemValue(const String&, ExceptionCode&);
-    PassRefPtr<MicroDataItemValue> itemValue() const;
-    PassRefPtr<HTMLPropertiesCollection> properties();
-    void getItemRefElements(Vector<HTMLElement*>&);
-#endif
-
     virtual bool isHTMLUnknownElement() const { return false; }
 
     virtual bool isLabelable() const { return false; }
@@ -143,11 +131,6 @@ private:
     TranslateAttributeMode translateAttributeMode() const;
 
     AtomicString eventNameForAttributeName(const QualifiedName& attrName) const;
-
-#if ENABLE(MICRODATA)
-    virtual String itemValueText() const;
-    virtual void setItemValueText(const String&, ExceptionCode&);
-#endif
 };
 
 inline HTMLElement* toHTMLElement(Node* node)

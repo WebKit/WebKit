@@ -421,8 +421,6 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSHTMLPreElement.h \
 	DerivedSources/WebCore/JSHTMLProgressElement.cpp \
 	DerivedSources/WebCore/JSHTMLProgressElement.h \
-	DerivedSources/WebCore/JSHTMLPropertiesCollection.cpp \
-	DerivedSources/WebCore/JSHTMLPropertiesCollection.h \
 	DerivedSources/WebCore/JSHTMLQuoteElement.cpp \
 	DerivedSources/WebCore/JSHTMLQuoteElement.h \
 	DerivedSources/WebCore/JSHTMLScriptElement.cpp \
@@ -539,8 +537,6 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSMetadata.h \
 	DerivedSources/WebCore/JSMetadataCallback.cpp \
 	DerivedSources/WebCore/JSMetadataCallback.h \
-	DerivedSources/WebCore/JSMicroDataItemValue.cpp \
-	DerivedSources/WebCore/JSMicroDataItemValue.h \
 	DerivedSources/WebCore/JSMouseEvent.cpp \
 	DerivedSources/WebCore/JSMouseEvent.h \
 	DerivedSources/WebCore/JSMutationEvent.cpp \
@@ -623,8 +619,6 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSProcessingInstruction.h \
 	DerivedSources/WebCore/JSProgressEvent.cpp \
 	DerivedSources/WebCore/JSProgressEvent.h \
-	DerivedSources/WebCore/JSPropertyNodeList.cpp \
-	DerivedSources/WebCore/JSPropertyNodeList.h \
 	DerivedSources/WebCore/JSRadioNodeList.cpp \
 	DerivedSources/WebCore/JSRadioNodeList.h \
 	DerivedSources/WebCore/JSRange.cpp \
@@ -1433,7 +1427,6 @@ dom_binding_idls += \
 	$(WebCore)/dom/PopStateEvent.idl \
 	$(WebCore)/dom/ProcessingInstruction.idl \
 	$(WebCore)/dom/ProgressEvent.idl \
-	$(WebCore)/dom/PropertyNodeList.idl \
 	$(WebCore)/dom/Range.idl \
 	$(WebCore)/dom/RangeException.idl \
 	$(WebCore)/dom/RequestAnimationFrameCallback.idl \
@@ -1518,7 +1511,6 @@ dom_binding_idls += \
 	$(WebCore)/html/HTMLParamElement.idl \
 	$(WebCore)/html/HTMLPreElement.idl \
 	$(WebCore)/html/HTMLProgressElement.idl \
-	$(WebCore)/html/HTMLPropertiesCollection.idl \
 	$(WebCore)/html/HTMLQuoteElement.idl \
 	$(WebCore)/html/HTMLScriptElement.idl \
 	$(WebCore)/html/HTMLSelectElement.idl \
@@ -1543,7 +1535,6 @@ dom_binding_idls += \
 	$(WebCore)/html/MediaError.idl \
 	$(WebCore)/html/MediaKeyError.idl \
 	$(WebCore)/html/MediaKeyEvent.idl \
-	$(WebCore)/html/MicroDataItemValue.idl \
 	$(WebCore)/html/RadioNodeList.idl \
 	$(WebCore)/html/TextMetrics.idl \
 	$(WebCore)/html/TimeRanges.idl \
@@ -2455,7 +2446,6 @@ webcore_sources += \
 	Source/WebCore/bindings/js/JSMessageEventCustom.cpp \
 	Source/WebCore/bindings/js/JSMessagePortCustom.cpp \
 	Source/WebCore/bindings/js/JSMessagePortCustom.h \
-	Source/WebCore/bindings/js/JSMicroDataItemValueCustom.cpp \
 	Source/WebCore/bindings/js/JSMutationCallback.cpp \
 	Source/WebCore/bindings/js/JSMutationCallback.h \
 	Source/WebCore/bindings/js/JSMutationObserverCustom.cpp \
@@ -2977,8 +2967,6 @@ webcore_sources += \
 	Source/WebCore/dom/MessagePortChannel.h \
 	Source/WebCore/dom/MessagePort.cpp \
 	Source/WebCore/dom/MessagePort.h \
-	Source/WebCore/dom/MicroDataItemList.cpp \
-	Source/WebCore/dom/MicroDataItemList.h \
 	Source/WebCore/dom/MouseEvent.cpp \
 	Source/WebCore/dom/MouseEvent.h \
 	Source/WebCore/dom/MouseRelatedEvent.cpp \
@@ -3037,8 +3025,6 @@ webcore_sources += \
 	Source/WebCore/dom/ProcessingInstruction.h \
 	Source/WebCore/dom/ProgressEvent.cpp \
 	Source/WebCore/dom/ProgressEvent.h \
-	Source/WebCore/dom/PropertyNodeList.cpp \
-	Source/WebCore/dom/PropertyNodeList.h \
 	Source/WebCore/dom/PseudoElement.cpp \
 	Source/WebCore/dom/PseudoElement.h \
 	Source/WebCore/dom/QualifiedName.cpp \
@@ -3563,8 +3549,6 @@ webcore_sources += \
 	Source/WebCore/html/HTMLPreElement.h \
 	Source/WebCore/html/HTMLProgressElement.cpp \
 	Source/WebCore/html/HTMLProgressElement.h \
-	Source/WebCore/html/HTMLPropertiesCollection.cpp \
-	Source/WebCore/html/HTMLPropertiesCollection.h \
 	Source/WebCore/html/HTMLQuoteElement.cpp \
 	Source/WebCore/html/HTMLQuoteElement.h \
 	Source/WebCore/html/HTMLScriptElement.cpp \
@@ -3641,10 +3625,6 @@ webcore_sources += \
 	Source/WebCore/html/MediaKeyEvent.h \
 	Source/WebCore/html/MediaFragmentURIParser.cpp \
 	Source/WebCore/html/MediaFragmentURIParser.h \
-	Source/WebCore/html/MicroDataAttributeTokenList.cpp \
-	Source/WebCore/html/MicroDataAttributeTokenList.h \
-	Source/WebCore/html/MicroDataItemValue.cpp \
-	Source/WebCore/html/MicroDataItemValue.h \
 	Source/WebCore/html/MonthInputType.cpp \
 	Source/WebCore/html/MonthInputType.h \
 	Source/WebCore/html/NumberInputType.cpp \

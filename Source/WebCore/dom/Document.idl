@@ -157,8 +157,6 @@
 
     NodeList getElementsByName([Default=Undefined] optional DOMString elementName);
 
-    [Conditional=MICRODATA] NodeList getItems([TreatNullAs=NullString, TreatUndefinedAs=NullString, Default=Undefined] optional DOMString typeNames);
-
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
              [Custom] attribute Location location;
 #endif

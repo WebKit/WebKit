@@ -115,16 +115,4 @@ void HTMLIFrameElement::didRecalcStyle(StyleChange styleChange)
         contentDocument()->recalcStyle(styleChange);
 }
 
-#if ENABLE(MICRODATA)
-String HTMLIFrameElement::itemValueText() const
-{
-    return getURLAttribute(srcAttr);
-}
-
-void HTMLIFrameElement::setItemValueText(const String& value, ExceptionCode&)
-{
-    setAttribute(srcAttr, value);
-}
-#endif
-
 }

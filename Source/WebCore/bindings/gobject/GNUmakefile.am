@@ -177,8 +177,6 @@ webkitgtk_gdom_built_sources += \
 	DerivedSources/webkitdom/WebKitDOMHTMLParamElementPrivate.h \
 	DerivedSources/webkitdom/WebKitDOMHTMLPreElement.cpp \
 	DerivedSources/webkitdom/WebKitDOMHTMLPreElementPrivate.h \
-	DerivedSources/webkitdom/WebKitDOMHTMLPropertiesCollection.cpp \
-	DerivedSources/webkitdom/WebKitDOMHTMLPropertiesCollectionPrivate.h \
 	DerivedSources/webkitdom/WebKitDOMHTMLQuoteElement.cpp \
 	DerivedSources/webkitdom/WebKitDOMHTMLQuoteElementPrivate.h \
 	DerivedSources/webkitdom/WebKitDOMHTMLScriptElement.cpp \
@@ -215,8 +213,6 @@ webkitgtk_gdom_built_sources += \
 	DerivedSources/webkitdom/WebKitDOMMediaQueryListPrivate.h \
 	DerivedSources/webkitdom/WebKitDOMMessagePort.cpp \
 	DerivedSources/webkitdom/WebKitDOMMessagePortPrivate.h \
-	DerivedSources/webkitdom/WebKitDOMMicroDataItemValue.cpp \
-	DerivedSources/webkitdom/WebKitDOMMicroDataItemValuePrivate.h \
 	DerivedSources/webkitdom/WebKitDOMMouseEvent.cpp \
 	DerivedSources/webkitdom/WebKitDOMMouseEventPrivate.h \
 	DerivedSources/webkitdom/WebKitDOMNamedNodeMap.cpp \
@@ -242,8 +238,6 @@ webkitgtk_gdom_built_sources += \
 	DerivedSources/webkitdom/WebKitDOMPerformanceTimingPrivate.h \
 	DerivedSources/webkitdom/WebKitDOMProcessingInstruction.cpp \
 	DerivedSources/webkitdom/WebKitDOMProcessingInstructionPrivate.h \
-	DerivedSources/webkitdom/WebKitDOMPropertyNodeList.cpp \
-	DerivedSources/webkitdom/WebKitDOMPropertyNodeListPrivate.h \
 	DerivedSources/webkitdom/WebKitDOMRange.cpp \
 	DerivedSources/webkitdom/WebKitDOMRangePrivate.h \
 	DerivedSources/webkitdom/WebKitDOMScreen.cpp \
@@ -377,7 +371,6 @@ webkitgtk_gdom_built_h_api += \
 	DerivedSources/webkitdom/WebKitDOMHTMLParagraphElement.h \
 	DerivedSources/webkitdom/WebKitDOMHTMLParamElement.h \
 	DerivedSources/webkitdom/WebKitDOMHTMLPreElement.h \
-	DerivedSources/webkitdom/WebKitDOMHTMLPropertiesCollection.h \
 	DerivedSources/webkitdom/WebKitDOMHTMLQuoteElement.h \
 	DerivedSources/webkitdom/WebKitDOMHTMLScriptElement.h \
 	DerivedSources/webkitdom/WebKitDOMHTMLSelectElement.h \
@@ -404,10 +397,8 @@ webkitgtk_gdom_built_h_api += \
 	DerivedSources/webkitdom/WebKitDOMEventTarget.h \
 	DerivedSources/webkitdom/WebKitDOMHistory.h \
 	DerivedSources/webkitdom/WebKitDOMLocation.h \
-	DerivedSources/webkitdom/WebKitDOMMicroDataItemValue.h \
 	DerivedSources/webkitdom/WebKitDOMObject.h \
 	DerivedSources/webkitdom/WebKitDOMNavigator.h \
-	DerivedSources/webkitdom/WebKitDOMPropertyNodeList.h \
 	DerivedSources/webkitdom/WebKitDOMScreen.h \
 	DerivedSources/webkitdom/WebKitDOMShadowRoot.h \
 	DerivedSources/webkitdom/WebKitDOMWebKitPoint.h \

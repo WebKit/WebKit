@@ -50,9 +50,6 @@ enum CollectionType {
     SelectedOptions,
     DataListOptions,
     MapAreas,
-#if ENABLE(MICRODATA)
-    ItemProperties, // Microdata item properties in the document
-#endif
     FormControls,
 
     // Live NodeList.
@@ -63,8 +60,6 @@ enum CollectionType {
     HTMLTagNodeListType,
     RadioNodeListType,
     LabelsNodeListType,
-    MicroDataItemListType,
-    PropertyNodeListType,
 };
 
 static const CollectionType FirstNodeListType = ChildNodeListType;

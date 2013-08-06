@@ -174,10 +174,6 @@ class RequestAnimationFrameCallback;
 class ScriptedAnimationController;
 #endif
 
-#if ENABLE(MICRODATA)
-class MicroDataItemList;
-#endif
-
 #if ENABLE(TEXT_AUTOSIZING)
 class TextAutosizer;
 #endif
@@ -207,7 +203,6 @@ enum NodeListInvalidationType {
     InvalidateOnForAttrChange,
     InvalidateForFormControls,
     InvalidateOnHRefAttrChange,
-    InvalidateOnItemAttrChange,
     InvalidateOnAnyAttrChange,
 };
 const int numNodeListInvalidationTypes = InvalidateOnAnyAttrChange + 1;
@@ -1117,10 +1112,6 @@ public:
 #endif
 
     bool visualUpdatesAllowed() const { return m_visualUpdatesAllowed; }
-
-#if ENABLE(MICRODATA)
-    PassRefPtr<NodeList> getItems(const String& typeNames);
-#endif
 
     bool isInDocumentWrite() { return m_writeRecursionDepth > 0; }
 
