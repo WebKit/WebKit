@@ -468,9 +468,6 @@ struct WKViewInterpretKeyEventsParameters {
     dispatch_async(dispatch_get_main_queue(), ^{
         _data->_didScheduleWindowAndViewFrameUpdate = NO;
 
-        if (!_data->_needsViewFrameInWindowCoordinates && !WebCore::AXObjectCache::accessibilityEnabled())
-            return;
-
         NSRect viewFrameInWindowCoordinates = NSZeroRect;
         NSPoint accessibilityPosition = NSZeroPoint;
 
