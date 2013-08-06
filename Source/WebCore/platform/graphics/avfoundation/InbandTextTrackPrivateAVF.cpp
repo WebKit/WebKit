@@ -126,7 +126,7 @@ static bool makeRGBA32FromARGBCFArray(CFArrayRef colorArray, RGBA32& color)
         componentArray[i] = component;
     }
 
-    color = makeRGBA32FromFloats(componentArray[1] * 255, componentArray[2] * 255, componentArray[3] * 255, componentArray[0] * 255);
+    color = makeRGBA32FromFloats(componentArray[1], componentArray[2], componentArray[3], componentArray[0]);
     return true;
 }
 
