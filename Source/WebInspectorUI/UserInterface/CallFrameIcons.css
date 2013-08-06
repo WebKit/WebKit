@@ -24,13 +24,13 @@
  */
 
 .function-icon .icon {
-    content: url(Images/Function.pdf);
+    content: url(Images/Function.svg);
 }
 
 .event-listener-icon .icon {
-    content: url(Images/EventListener.pdf);
+    content: url(Images/EventListener.svg);
 }
 
 .native-icon .icon {
-    content: url(Images/Native.pdf);
+    content: url(Images/Native.svg);
 }

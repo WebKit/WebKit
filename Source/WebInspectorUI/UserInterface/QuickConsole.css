@@ -64,7 +64,10 @@
 
     margin-right: 1px;
 
-    content: url(Images/UserInputPrompt.pdf);
+    width: 10px;
+    height: 10px;
+
+    content: url(Images/UserInputPrompt.svg);
 }
 
 .quick-console > .console-prompt > .CodeMirror {

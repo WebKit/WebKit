@@ -1,3 +1,189 @@
+2013-08-06  Timothy Hatcher  <timothy@apple.com>
+
+        Convert all Web Inspector PDFs to SVGs.
+
+        Some PDFs need to stay around until bug 119492 is fixed. But the SVGs are there for when they are needed.
+        Updated some of the existing SVGs to be consistent with the format of the new SVGs.
+
+        https://bugs.webkit.org/show_bug.cgi?id=118677
+
+        Rubber-stamped by Joseph Pecoraro.
+
+        * UserInterface/BreakpointIcons.css:
+        * UserInterface/BreakpointTreeElement.css:
+        * UserInterface/CallFrameIcons.css:
+        * UserInterface/DatabaseContentView.css:
+        * UserInterface/FilterBar.css:
+        * UserInterface/HierarchicalPathComponent.css:
+        * UserInterface/Images/BackArrow.svg: Added.
+        * UserInterface/Images/BottomUpTree.svg: Added.
+        * UserInterface/Images/BreakpointButton.pdf: Removed.
+        * UserInterface/Images/BreakpointButton.svg: Added.
+        * UserInterface/Images/BreakpointInactiveButton.pdf: Removed.
+        * UserInterface/Images/BreakpointInactiveButton.svg: Added.
+        * UserInterface/Images/Breakpoints.svg: Added.
+        * UserInterface/Images/Close.svg: Added.
+        * UserInterface/Images/Crosshair.svg: Added.
+        * UserInterface/Images/DOMCharacterData.pdf: Removed.
+        * UserInterface/Images/DOMCharacterData.svg: Added.
+        * UserInterface/Images/DOMComment.pdf: Removed.
+        * UserInterface/Images/DOMComment.svg: Added.
+        * UserInterface/Images/DOMDocument.pdf: Removed.
+        * UserInterface/Images/DOMDocument.svg: Added.
+        * UserInterface/Images/DOMDocumentType.pdf: Removed.
+        * UserInterface/Images/DOMDocumentType.svg: Added.
+        * UserInterface/Images/DOMElement.pdf: Removed.
+        * UserInterface/Images/DOMElement.svg: Added.
+        * UserInterface/Images/DOMNode.pdf: Removed.
+        * UserInterface/Images/DOMNode.svg: Added.
+        * UserInterface/Images/DOMTextNode.pdf: Removed.
+        * UserInterface/Images/DOMTextNode.svg: Added.
+        * UserInterface/Images/DOMTree.pdf: Removed.
+        * UserInterface/Images/DOMTree.svg: Added.
+        * UserInterface/Images/DisclosureTriangleSmallClosed.svg: Added.
+        * UserInterface/Images/DisclosureTriangleSmallOpen.svg: Added.
+        * UserInterface/Images/DisclosureTriangleTinyClosed.svg: Added.
+        * UserInterface/Images/DisclosureTriangleTinyOpen.svg: Added.
+        * UserInterface/Images/DockBottom.svg: Added.
+        * UserInterface/Images/DockRight.svg: Added.
+        * UserInterface/Images/Error.pdf: Removed.
+        * UserInterface/Images/Error.svg: Added.
+        * UserInterface/Images/ErrorSmall.pdf: Removed.
+        * UserInterface/Images/Errors.svg:
+        * UserInterface/Images/ErrorsEnabled.svg:
+        * UserInterface/Images/EventListener.pdf: Removed.
+        * UserInterface/Images/EventListener.svg: Added.
+        * UserInterface/Images/Exception.pdf: Removed.
+        * UserInterface/Images/Exception.svg: Added.
+        * UserInterface/Images/FilterFieldGlyph.pdf: Removed.
+        * UserInterface/Images/FilterFieldGlyph.svg: Added.
+        * UserInterface/Images/ForwardArrow.svg: Added.
+        * UserInterface/Images/Function.pdf: Removed.
+        * UserInterface/Images/Function.svg: Added.
+        * UserInterface/Images/GoToArrow.svg: Added.
+        * UserInterface/Images/HierarchicalNavigationItemChevron.pdf: Removed.
+        * UserInterface/Images/HierarchicalNavigationItemChevron.svg: Added.
+        * UserInterface/Images/IndeterminateProgressSpinner1.pdf: Removed.
+        * UserInterface/Images/IndeterminateProgressSpinner1.svg: Added.
+        * UserInterface/Images/IndeterminateProgressSpinner10.pdf: Removed.
+        * UserInterface/Images/IndeterminateProgressSpinner10.svg: Added.
+        * UserInterface/Images/IndeterminateProgressSpinner11.pdf: Removed.
+        * UserInterface/Images/IndeterminateProgressSpinner11.svg: Added.
+        * UserInterface/Images/IndeterminateProgressSpinner12.pdf: Removed.
+        * UserInterface/Images/IndeterminateProgressSpinner12.svg: Added.
+        * UserInterface/Images/IndeterminateProgressSpinner2.pdf: Removed.
+        * UserInterface/Images/IndeterminateProgressSpinner2.svg: Added.
+        * UserInterface/Images/IndeterminateProgressSpinner3.pdf: Removed.
+        * UserInterface/Images/IndeterminateProgressSpinner3.svg: Added.
+        * UserInterface/Images/IndeterminateProgressSpinner4.pdf: Removed.
+        * UserInterface/Images/IndeterminateProgressSpinner4.svg: Added.
+        * UserInterface/Images/IndeterminateProgressSpinner5.pdf: Removed.
+        * UserInterface/Images/IndeterminateProgressSpinner5.svg: Added.
+        * UserInterface/Images/IndeterminateProgressSpinner6.pdf: Removed.
+        * UserInterface/Images/IndeterminateProgressSpinner6.svg: Added.
+        * UserInterface/Images/IndeterminateProgressSpinner7.pdf: Removed.
+        * UserInterface/Images/IndeterminateProgressSpinner7.svg: Added.
+        * UserInterface/Images/IndeterminateProgressSpinner8.pdf: Removed.
+        * UserInterface/Images/IndeterminateProgressSpinner8.svg: Added.
+        * UserInterface/Images/IndeterminateProgressSpinner9.pdf: Removed.
+        * UserInterface/Images/IndeterminateProgressSpinner9.svg: Added.
+        * UserInterface/Images/Issues.svg:
+        * UserInterface/Images/IssuesEnabled.svg:
+        * UserInterface/Images/LayerBorders.svg: Added.
+        * UserInterface/Images/LessColumns.svg: Added.
+        * UserInterface/Images/Locked.svg: Added.
+        * UserInterface/Images/Logs.svg:
+        * UserInterface/Images/Memory.svg:
+        * UserInterface/Images/MoreColumns.svg: Added.
+        * UserInterface/Images/Native.pdf: Removed.
+        * UserInterface/Images/Native.svg: Added.
+        * UserInterface/Images/NavigationItemAngleBrackets.svg: Added.
+        * UserInterface/Images/NavigationItemBrushAndRuler.svg: Added.
+        * UserInterface/Images/NavigationItemBug.svg: Added.
+        * UserInterface/Images/NavigationItemCurleyBraces.svg: Added.
+        * UserInterface/Images/NavigationItemFile.svg: Added.
+        * UserInterface/Images/NavigationItemLayers.svg: Added.
+        * UserInterface/Images/NavigationItemLog.svg: Added.
+        * UserInterface/Images/NavigationItemMagnifyingGlass.svg: Added.
+        * UserInterface/Images/NavigationItemStopwatch.svg: Added.
+        * UserInterface/Images/NavigationItemStorage.svg: Added.
+        * UserInterface/Images/NavigationItemTrash.svg: Added.
+        * UserInterface/Images/NavigationItemVariable.svg: Added.
+        * UserInterface/Images/NetworkBarLabelCalloutLeft.pdf: Removed.
+        * UserInterface/Images/NetworkBarLabelCalloutLeft.svg: Added.
+        * UserInterface/Images/NetworkBarLabelCalloutRight.pdf: Removed.
+        * UserInterface/Images/NetworkBarLabelCalloutRight.svg: Added.
+        * UserInterface/Images/NetworkBarLabelCalloutWhiteLeft.pdf: Removed.
+        * UserInterface/Images/NetworkBarLabelCalloutWhiteLeft.svg: Added.
+        * UserInterface/Images/NetworkBarLabelCalloutWhiteRight.pdf: Removed.
+        * UserInterface/Images/NetworkBarLabelCalloutWhiteRight.svg: Added.
+        * UserInterface/Images/Pause.svg: Added.
+        * UserInterface/Images/Percent.svg: Added.
+        * UserInterface/Images/Plus.svg: Added.
+        * UserInterface/Images/PseudoElement.pdf: Removed.
+        * UserInterface/Images/PseudoElement.svg: Added.
+        * UserInterface/Images/Reflection.pdf: Removed.
+        * UserInterface/Images/Reflection.svg: Added.
+        * UserInterface/Images/Reload.svg:
+        * UserInterface/Images/ReloadSelected.svg:
+        * UserInterface/Images/Request.pdf: Removed.
+        * UserInterface/Images/Request.svg: Added.
+        * UserInterface/Images/Resources.svg:
+        * UserInterface/Images/Response.pdf: Removed.
+        * UserInterface/Images/Response.svg: Added.
+        * UserInterface/Images/ResultLine.pdf: Removed.
+        * UserInterface/Images/ResultLine.svg: Added.
+        * UserInterface/Images/Resume.svg: Added.
+        * UserInterface/Images/ShadowDOM.svg: Added.
+        * UserInterface/Images/SortIndicatorDownArrow.svg: Added.
+        * UserInterface/Images/SortIndicatorUpArrow.svg: Added.
+        * UserInterface/Images/SourceCode.pdf: Removed.
+        * UserInterface/Images/SourceCode.svg: Added.
+        * UserInterface/Images/SplitToggleDown.svg: Added.
+        * UserInterface/Images/SplitToggleUp.svg: Added.
+        * UserInterface/Images/StepInto.svg: Added.
+        * UserInterface/Images/StepOut.svg: Added.
+        * UserInterface/Images/StepOver.svg: Added.
+        * UserInterface/Images/StyleRuleAuthor.pdf: Removed.
+        * UserInterface/Images/StyleRuleAuthor.svg: Added.
+        * UserInterface/Images/StyleRuleInherited.pdf: Removed.
+        * UserInterface/Images/StyleRuleInherited.svg: Added.
+        * UserInterface/Images/StyleRuleInheritedElement.pdf: Removed.
+        * UserInterface/Images/StyleRuleInheritedElement.svg: Added.
+        * UserInterface/Images/StyleRuleInspector.pdf: Removed.
+        * UserInterface/Images/StyleRuleInspector.svg: Added.
+        * UserInterface/Images/StyleRuleUser.pdf: Removed.
+        * UserInterface/Images/StyleRuleUser.svg: Added.
+        * UserInterface/Images/StyleRuleUserAgent.pdf: Removed.
+        * UserInterface/Images/StyleRuleUserAgent.svg: Added.
+        * UserInterface/Images/Time.svg:
+        * UserInterface/Images/Undock.svg: Added.
+        * UserInterface/Images/UpDownArrows.svg:
+        * UserInterface/Images/UserInputPrompt.pdf: Removed.
+        * UserInterface/Images/UserInputPrompt.svg: Added.
+        * UserInterface/Images/UserInputPromptPrevious.pdf: Removed.
+        * UserInterface/Images/UserInputPromptPrevious.svg: Added.
+        * UserInterface/Images/UserInputPromptPreviousSelected.pdf: Removed.
+        * UserInterface/Images/UserInputPromptPreviousSelected.svg: Added.
+        * UserInterface/Images/UserInputResult.pdf: Removed.
+        * UserInterface/Images/UserInputResult.svg: Added.
+        * UserInterface/Images/UserInputResultSelected.pdf: Removed.
+        * UserInterface/Images/UserInputResultSelected.svg: Added.
+        * UserInterface/Images/Warning.pdf: Removed.
+        * UserInterface/Images/Warning.svg: Added.
+        * UserInterface/Images/WarningSmall.pdf: Removed.
+        * UserInterface/Images/Weight.svg:
+        * UserInterface/IndeterminateProgressSpinner.css:
+        * UserInterface/LayerTreeSidebarPanel.css:
+        * UserInterface/LogContentView.css:
+        * UserInterface/Main.css:
+        * UserInterface/NetworkTimeline.css:
+        * UserInterface/PathComponentIcons.css:
+        * UserInterface/QuickConsole.css:
+        * UserInterface/RulesStyleDetailsPanel.css:
+        * UserInterface/SearchIcons.css:
+        * UserInterface/StyleRuleIcons.css:
+
 2013-07-23  David Farler  <dfarler@apple.com>
 
         Provide optional OTHER_CFLAGS, OTHER_CPPFLAGS, OTHER_LDFLAGS additions for building with ASAN

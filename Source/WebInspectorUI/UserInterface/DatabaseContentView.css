@@ -71,7 +71,7 @@
 }
 
 .database-query-prompt::before {
-    background-image: url(Images/UserInputPrompt.pdf);
+    background-image: url(Images/UserInputPrompt.svg);
 }
 
 .database-user-query {
@@ -82,7 +82,7 @@
 }
 
 .database-user-query::before {
-    background-image: url(Images/UserInputPromptPrevious.pdf);
+    background-image: url(Images/UserInputPromptPrevious.svg);
 }
 
 .database-query-text {
@@ -103,6 +103,6 @@
 }
 
 .database-query-result.error::before {
-    background-image: url(Images/ErrorSmall.pdf);
+    background-image: url(Images/Error.svg);
     background-size: 10px 10px;
 }

@@ -24,9 +24,9 @@
  */
 
 .breakpoint-generic-line-icon .icon {
-    content: url(Images/ResultLine.pdf);
+    content: url(Images/ResultLine.svg);
 }
 
 .breakpoint-exception-icon .icon {
-    content: url(Images/Exception.pdf);
+    content: url(Images/Exception.svg);
 }

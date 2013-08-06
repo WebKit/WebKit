@@ -24,25 +24,25 @@
  */
 
 .author-style-rule-icon .icon {
-    content: url(Images/StyleRuleAuthor.pdf);
+    content: url(Images/StyleRuleAuthor.svg);
 }
 
 .user-style-rule-icon .icon {
-    content: url(Images/StyleRuleUser.pdf);
+    content: url(Images/StyleRuleUser.svg);
 }
 
 .user-agent-style-rule-icon .icon {
-    content: url(Images/StyleRuleUserAgent.pdf);
+    content: url(Images/StyleRuleUserAgent.svg);
 }
 
 .inspector-style-rule-icon .icon {
-    content: url(Images/StyleRuleInspector.pdf);
+    content: url(Images/StyleRuleInspector.svg);
 }
 
 .inherited-style-rule-icon .icon {
-    content: url(Images/StyleRuleInherited.pdf);
+    content: url(Images/StyleRuleInherited.svg);
 }
 
 .inherited-element-style-rule-icon .icon {
-    content: url(Images/StyleRuleInheritedElement.pdf);
+    content: url(Images/StyleRuleInheritedElement.svg);
 }

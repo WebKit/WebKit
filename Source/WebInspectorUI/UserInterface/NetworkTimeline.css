@@ -85,7 +85,7 @@
     vertical-align: 6px;
     height: 5px;
     width: 13px;
-    content: url(Images/NetworkBarLabelCalloutLeft.pdf);
+    content: url(Images/NetworkBarLabelCalloutLeft.svg);
 }
 
 .network-graph-label.after {
@@ -103,7 +103,7 @@
     padding-right: 2px;
     height: 5px;
     width: 13px;
-    content: url(Images/NetworkBarLabelCalloutRight.pdf);
+    content: url(Images/NetworkBarLabelCalloutRight.svg);
 }
 
 .network-graph-bar {
@@ -217,9 +217,9 @@
 }
 
 .data-grid:focus tr.selected .network-graph-label.before::after {
-    content: url(Images/NetworkBarLabelCalloutWhiteLeft.pdf);
+    content: url(Images/NetworkBarLabelCalloutWhiteLeft.svg);
 }
 
 .data-grid:focus tr.selected .network-graph-label.after::before {
-    content: url(Images/NetworkBarLabelCalloutWhiteRight.pdf);
+    content: url(Images/NetworkBarLabelCalloutWhiteRight.svg);
 }

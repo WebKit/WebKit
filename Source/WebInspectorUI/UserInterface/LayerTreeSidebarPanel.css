@@ -124,15 +124,15 @@
     vertical-align: top;
     width: 16px;
     height: 16px;
-    content: url(Images/DOMElement.pdf);
+    content: url(Images/DOMElement.svg);
 }
 
 .layer-tree.panel .data-container tr.reflection .name-column .icon {
-    content: url(Images/Reflection.pdf);
+    content: url(Images/Reflection.svg);
 }
 
 .layer-tree.panel .data-container tr.pseudo-element .name-column .icon {
-    content: url(Images/PseudoElement.pdf);
+    content: url(Images/PseudoElement.svg);
 }
 
 .layer-tree.panel .data-container .name-column .label {

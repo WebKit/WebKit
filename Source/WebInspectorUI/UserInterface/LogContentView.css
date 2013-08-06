@@ -65,11 +65,11 @@
 }
 
 .console-user-command-result.console-log-level::before {
-    background-image: url(Images/UserInputResult.pdf);
+    background-image: url(Images/UserInputResult.svg);
 }
 
 .console-messages:focus .console-item.selected .console-user-command-result.console-log-level::before {
-    background-image: url(Images/UserInputResultSelected.pdf);
+    background-image: url(Images/UserInputResultSelected.svg);
 }
 
 .console-message, .console-user-command {
@@ -176,12 +176,12 @@
 }
 
 .console-error-level::before {
-    background-image: url(Images/ErrorSmall.pdf);
+    background-image: url(Images/Error.svg);
     background-size: 10px 10px;
 }
 
 .console-warning-level::before {
-    background-image: url(Images/WarningSmall.pdf);
+    background-image: url(Images/Warning.svg);
     background-size: 10px 10px;
 }
 
@@ -191,11 +191,11 @@
 }
 
 .console-user-command::before {
-    background-image: url(Images/UserInputPromptPrevious.pdf);
+    background-image: url(Images/UserInputPromptPrevious.svg);
 }
 
 .console-messages:focus .console-item.selected .console-user-command::before {
-    background-image: url(Images/UserInputPromptPreviousSelected.pdf);
+    background-image: url(Images/UserInputPromptPreviousSelected.svg);
 }
 
 .console-user-command > .console-message-text {

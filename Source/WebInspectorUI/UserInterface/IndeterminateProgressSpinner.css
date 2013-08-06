@@ -26,60 +26,60 @@
 /* These keyframes try to reproduce the 12 discrete steps seen in a standard system progress indicator. */
 @-webkit-keyframes discrete-spinner {
     0% {
-        background-image: url(Images/IndeterminateProgressSpinner1.pdf);
+        background-image: url(Images/IndeterminateProgressSpinner1.svg);
     }
 
     8.333% {
-        background-image: url(Images/IndeterminateProgressSpinner2.pdf);
+        background-image: url(Images/IndeterminateProgressSpinner2.svg);
     }
 
     16.666% {
-        background-image: url(Images/IndeterminateProgressSpinner3.pdf);
+        background-image: url(Images/IndeterminateProgressSpinner3.svg);
     }
 
     25.000% {
-        background-image: url(Images/IndeterminateProgressSpinner4.pdf);
+        background-image: url(Images/IndeterminateProgressSpinner4.svg);
     }
 
     33.333% {
-        background-image: url(Images/IndeterminateProgressSpinner5.pdf);
+        background-image: url(Images/IndeterminateProgressSpinner5.svg);
     }
 
     41.666% {
-        background-image: url(Images/IndeterminateProgressSpinner6.pdf);
+        background-image: url(Images/IndeterminateProgressSpinner6.svg);
     }
 
     50.000% {
-        background-image: url(Images/IndeterminateProgressSpinner7.pdf);
+        background-image: url(Images/IndeterminateProgressSpinner7.svg);
     }
 
     58.333% {
-        background-image: url(Images/IndeterminateProgressSpinner8.pdf);
+        background-image: url(Images/IndeterminateProgressSpinner8.svg);
     }
 
     66.666% {
-        background-image: url(Images/IndeterminateProgressSpinner9.pdf);
+        background-image: url(Images/IndeterminateProgressSpinner9.svg);
     }
 
     75.000% {
-        background-image: url(Images/IndeterminateProgressSpinner10.pdf);
+        background-image: url(Images/IndeterminateProgressSpinner10.svg);
     }
 
     83.333% {
-        background-image: url(Images/IndeterminateProgressSpinner11.pdf);
+        background-image: url(Images/IndeterminateProgressSpinner11.svg);
     }
 
     91.666% {
-        background-image: url(Images/IndeterminateProgressSpinner12.pdf);
+        background-image: url(Images/IndeterminateProgressSpinner12.svg);
     }
 
     100% {
-        background-image: url(Images/IndeterminateProgressSpinner1.pdf);
+        background-image: url(Images/IndeterminateProgressSpinner1.svg);
     }
 }
 
 .indeterminate-progress-spinner {
-    background-image: url(Images/IndeterminateProgressSpinner1.pdf);
+    background-image: url(Images/IndeterminateProgressSpinner1.svg);
     background-repeat: no-repeat;
     background-size: 100% 100%;
 

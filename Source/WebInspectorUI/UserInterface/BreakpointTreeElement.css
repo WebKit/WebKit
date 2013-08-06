@@ -26,12 +26,12 @@
 .item.breakpoint .status > .status-image {
     width: 21px;
     height: 12px;
-    content: url(Images/BreakpointInactiveButton.pdf);
+    content: url(Images/BreakpointInactiveButton.svg);
     margin-top: 3px;
 }
 
 .item.breakpoint .status > .status-image.resolved {
-    content: url(Images/BreakpointButton.pdf);
+    content: url(Images/BreakpointButton.svg);
 }
 
 .item.breakpoint .status > .status-image.disabled {

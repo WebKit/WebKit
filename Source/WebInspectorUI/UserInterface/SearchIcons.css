@@ -24,29 +24,29 @@
  */
 
 .dom-match-element-icon .icon {
-    content: url(Images/DOMElement.pdf);
+    content: url(Images/DOMElement.svg);
 }
 
 .dom-match-text-node-icon .icon {
-    content: url(Images/DOMTextNode.pdf);
+    content: url(Images/DOMTextNode.svg);
 }
 
 .dom-match-comment-icon .icon {
-    content: url(Images/DOMComment.pdf);
+    content: url(Images/DOMComment.svg);
 }
 
 .dom-match-document-type-icon .icon {
-    content: url(Images/DOMDocumentType.pdf);
+    content: url(Images/DOMDocumentType.svg);
 }
 
 .dom-match-character-data-icon .icon {
-    content: url(Images/DOMCharacterData.pdf);
+    content: url(Images/DOMCharacterData.svg);
 }
 
 .dom-match-node-icon .icon {
-    content: url(Images/DOMNode.pdf);
+    content: url(Images/DOMNode.svg);
 }
 
 .resource-match-icon .icon {
-    content: url(Images/ResultLine.pdf);
+    content: url(Images/ResultLine.svg);
 }
