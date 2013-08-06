@@ -1,5 +1,11 @@
 2013-08-06  Simon Pena  <simon.pena@samsung.com>
 
+        Build fix for GTK 32-bit after r153736
+
+        * Source/autotools/symbols.filter: expose WebCore::SerializedScriptValue::create.
+
+2013-08-06  Simon Pena  <simon.pena@samsung.com>
+
         Build fix for GTK after r153736
 
         * Source/autotools/symbols.filter: expose missing symbols
