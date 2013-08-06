@@ -104,6 +104,8 @@ inline bool threadSafeHTMLNamesMatch(const HTMLIdentifier& tagName, const Qualif
 }
 #endif
 
+String bestFitSourceForImageAttributes(float deviceScaleFactor, const String& srcAttribute, const String& sourceSetAttribute);
+
 }
 
 #endif

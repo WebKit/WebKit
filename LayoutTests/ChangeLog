@@ -1,3 +1,19 @@
+2013-08-05  Dean Jackson  <dino@apple.com>
+
+        Update HTMLPreloadScanner to handle img srcset
+        https://bugs.webkit.org/show_bug.cgi?id=119360
+
+        Reviewed by Sam Weinig.
+
+        This patch is a merge of similar patches from Yoav Weiss <yoav@yoav.ws>
+        and Dean Jackson.
+
+        New test to make sure the HTML preloader takes the
+        value of srcset if available.
+
+        * fast/preloader/image-srcset-expected.txt: Added.
+        * fast/preloader/image-srcset.html: Added.
+
 2013-08-05  Alexey Proskuryakov  <ap@apple.com>
 
         <rdar://problem/13128990> chunked-progress-event-expectedLength.html is flaky on Mac

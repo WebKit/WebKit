@@ -115,85 +115,16 @@ const AtomicString& HTMLImageElement::imageSourceURL() const
     return m_bestFitImageURL.isEmpty() ? fastGetAttribute(srcAttr) : m_bestFitImageURL;
 }
 
-void HTMLImageElement::determineBestImageForScaleFactor()
-{
-    m_imagesWithScale.clear();
-    m_bestFitImageURL = nullAtom;
-
-    collectImageCandidatesFromSrcSet();
-    collectImageCandidateFromSrc();
-    stable_sort(m_imagesWithScale.begin(), m_imagesWithScale.end(), compareByScaleFactor);
-
-    for (size_t i = 1; i < m_imagesWithScale.size(); ++i) {
-        if (m_imagesWithScale[i-1].scaleFactor == m_imagesWithScale[i].scaleFactor) {
-            m_imagesWithScale.remove(i);
-            i--;
-        }
-    }
-
-    float pageScaleFactor = 1.0;
-    if (Page* page = document()->page())
-        pageScaleFactor = page->deviceScaleFactor();
-
-    for (size_t i = 0; i < m_imagesWithScale.size(); ++i) {
-        if (m_imagesWithScale[i].scaleFactor >= pageScaleFactor) {
-            m_bestFitImageURL = m_imagesWithScale[i].imageURL;
-            return;
-        }
-    }
-}
-
-void HTMLImageElement::collectImageCandidatesFromSrcSet()
-{
-    const String& srcSetAttributeValue = fastGetAttribute(srcsetAttr).string().simplifyWhiteSpace(isHTMLSpace);
-    Vector<String> srcSetTokens;
-
-    srcSetAttributeValue.split(',', srcSetTokens);
-    for (size_t i = 0; i < srcSetTokens.size(); ++i) {
-        Vector<String> data;
-        float imgScaleFactor = 1.0;
-        bool validScaleFactor = false;
-
-        srcSetTokens[i].stripWhiteSpace().split(' ', data);
-        // There must be at least one candidate descriptor, and the last one must
-        // be a scale factor. Since we don't support descriptors other than scale,
-        // it's better to discard any rule with such descriptors rather than accept
-        // only the scale data.
-        if (data.size() != 2)
-            continue;
-        if (!data.last().endsWith('x'))
-            continue;
-
-        imgScaleFactor = data.last().substring(0, data.last().length() - 1).toFloat(&validScaleFactor);
-        if (!validScaleFactor)
-            continue;
-
-        ImageWithScale image;
-        image.imageURL = decodeURLEscapeSequences(data[0]);
-        image.scaleFactor = imgScaleFactor;
-
-        m_imagesWithScale.append(image);
-    }
-}
-
-void HTMLImageElement::collectImageCandidateFromSrc()
-{
-    const AtomicString& src = fastGetAttribute(srcAttr);
-    ImageWithScale image;
-    if (!src.isEmpty()) {
-        image.imageURL = decodeURLEscapeSequences(src);
-        image.scaleFactor = 1.0;
-        m_imagesWithScale.append(image);
-    }
-}
-
 void HTMLImageElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     if (name == altAttr) {
         if (renderer() && renderer()->isImage())
             toRenderImage(renderer())->updateAltText();
     } else if (name == srcAttr || name == srcsetAttr) {
-        determineBestImageForScaleFactor();
+        float deviceScaleFactor = 1.0;
+        if (Page* page = document()->page())
+            deviceScaleFactor = page->deviceScaleFactor();
+        m_bestFitImageURL = bestFitSourceForImageAttributes(deviceScaleFactor, fastGetAttribute(srcAttr), fastGetAttribute(srcsetAttr));
         m_imageLoader.updateFromElementIgnoringPreviousError();
     }
     else if (name == usemapAttr)

@@ -1,3 +1,43 @@
+2013-08-05  Dean Jackson  <dino@apple.com>
+
+        Update HTMLPreloadScanner to handle img srcset
+        https://bugs.webkit.org/show_bug.cgi?id=119360
+
+        Reviewed by Sam Weinig.
+
+        This patch is a merge of similar patches from Yoav Weiss <yoav@yoav.ws>
+        and Dean Jackson.
+
+        Test: fast/preloader/image-srcset.html
+
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::parseAttribute): Move srcset parsing into
+        HTMLParserIdioms, and call it when we hit src or srcset.
+        * html/HTMLImageElement.h: Remove code that was moved to HTMLParserIdioms.
+
+        * html/parser/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::pumpTokenizer): Pass device scale into preloader.
+        (WebCore::HTMLDocumentParser::insert):
+
+        * html/parser/HTMLPreloadScanner.cpp:
+        (WebCore::TokenPreloadScanner::StartTagScanner::StartTagScanner): Takes device scale as a parameter.
+        (WebCore::TokenPreloadScanner::StartTagScanner::processAttributes): Resolve between src and srcSet if necessary.
+        (WebCore::TokenPreloadScanner::StartTagScanner::processAttribute): Add support for srcset attribute.
+        (WebCore::TokenPreloadScanner::StartTagScanner::setUrlToLoad): New flag to indicate if we should
+        replace any existing value.
+        (WebCore::TokenPreloadScanner::TokenPreloadScanner): Takes device scale.
+        (WebCore::TokenPreloadScanner::scanCommon): Pass device scale.
+        (WebCore::HTMLPreloadScanner::HTMLPreloadScanner):
+        * html/parser/HTMLPreloadScanner.h: New attribute to constructor for device scale. New member
+        variable on TokenPreloadScanner that holds the srcset value.
+
+        * html/parser/HTMLParserIdioms.cpp:
+        (WebCore::ImageWithScale::operator==): Used for sorting.
+        (WebCore::compareByScaleFactor): Used for sorting.
+        (WebCore::bestFitSourceForImageAttributes): New method that takes the code from HTMLImageElement
+        for parsing src and srcset attributes, and finding the best match.
+        * html/parser/HTMLParserIdioms.h:
+
 2013-08-05  Oliver Hunt  <oliver@apple.com>
 
         Move TypedArray implementation into JSC
