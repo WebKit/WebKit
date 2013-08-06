@@ -1,3 +1,20 @@
+2013-08-06  Alex Christensen  <achristensen@apple.com>
+
+        Moved GraphicsContext3DPrivate out of cairo directory to be used by the AppleWin port.
+        https://bugs.webkit.org/show_bug.cgi?id=119525
+
+        Reviewed by Dean Jackson.
+
+        * GNUmakefile.list.am:
+        * PlatformGTK.cmake:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        Changed location of GraphicsContext3DPrivate.cpp and GraphicsContext3DPrivate.h.
+        * platform/graphics/GraphicsContext3DPrivate.cpp: Copied from WebCore/platform/graphics/cairo/GraphicsContext3DPrivate.cpp.
+        * platform/graphics/GraphicsContext3DPrivate.h: Copied from WebCore/platform/graphics/cairo/GraphicsContext3DPrivate.h.
+        * platform/graphics/cairo/GraphicsContext3DPrivate.cpp: Removed.
+        * platform/graphics/cairo/GraphicsContext3DPrivate.h: Removed.
+
 2013-08-06  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Unreviewed build correction after r153754 and r153757.

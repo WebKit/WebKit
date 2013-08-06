@@ -5681,8 +5681,8 @@ platform_sources += \
 	Source/WebCore/platform/graphics/cairo/FontCustomPlatformData.h \
 	Source/WebCore/platform/graphics/cairo/GradientCairo.cpp \
 	Source/WebCore/platform/graphics/cairo/GraphicsContext3DCairo.cpp \
-	Source/WebCore/platform/graphics/cairo/GraphicsContext3DPrivate.cpp \
-	Source/WebCore/platform/graphics/cairo/GraphicsContext3DPrivate.h \
+	Source/WebCore/platform/graphics/GraphicsContext3DPrivate.cpp \
+	Source/WebCore/platform/graphics/GraphicsContext3DPrivate.h \
 	Source/WebCore/platform/graphics/cairo/ImageBufferCairo.cpp \
 	Source/WebCore/platform/graphics/cairo/ImageBufferDataCairo.h \
 	Source/WebCore/platform/graphics/cairo/ImageCairo.cpp \

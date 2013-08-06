@@ -7054,7 +7054,7 @@
     <ClCompile Include="..\platform\graphics\cairo\GraphicsContext3DCairo.cpp">
       <Filter>platform\graphics\cairo</Filter>
     </ClCompile>
-    <ClCompile Include="..\platform\graphics\cairo\GraphicsContext3DPrivate.cpp">
+    <ClCompile Include="..\platform\graphics\GraphicsContext3DPrivate.cpp">
       <Filter>platform\graphics\cairo</Filter>
     </ClCompile>
     <ClCompile Include="..\html\canvas\CanvasContextAttributes.cpp">
@@ -14823,7 +14823,7 @@
     <ClInclude Include="..\page\CaptionUserPreferencesMediaAF.h">
       <Filter>page</Filter>
     </ClInclude>
-    <ClInclude Include="..\platform\graphics\cairo\GraphicsContext3DPrivate.h">
+    <ClInclude Include="..\platform\graphics\GraphicsContext3DPrivate.h">
       <Filter>platform\graphics\cairo</Filter>
     </ClInclude>
     <ClInclude Include="..\html\canvas\CanvasContextAttributes.h">
