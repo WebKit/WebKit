@@ -1,5 +1,13 @@
 2013-08-06  Brent Fulgham  <bfulgham@apple.com>
 
+        [Windows] Unreviewed build correction after r153754 and r153757.
+
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::blendFunc): Don't force std::remainder, since we are using our own
+        custom implementation on Windows.
+
+2013-08-06  Brent Fulgham  <bfulgham@apple.com>
+
         Improper Calculation of In-band Cue Colors
         https://bugs.webkit.org/show_bug.cgi?id=119523
 

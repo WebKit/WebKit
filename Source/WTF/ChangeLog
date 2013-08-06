@@ -1,3 +1,10 @@
+2013-08-06  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Unreviewed build correction after r153754 and r153757.
+
+        * wtf/MathExtras.h:
+        (remainder): Provide implementation of C99 remainder for VS2010 (and earlier).
+
 2013-07-23  David Farler  <dfarler@apple.com> 
         Provide optional OTHER_CFLAGS, OTHER_CPPFLAGS, OTHER_LDFLAGS additions for building with ASAN
         https://bugs.webkit.org/show_bug.cgi?id=117762

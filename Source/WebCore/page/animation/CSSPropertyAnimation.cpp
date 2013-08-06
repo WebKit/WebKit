@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2009, 2013 Apple Inc. All rights reserved.
  * Copyright (C) 2012 Adobe Systems Incorporated. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -49,6 +49,7 @@
 #include "StylePropertyShorthand.h"
 #include "StyleResolver.h"
 #include <algorithm>
+#include <wtf/MathExtras.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefCounted.h>
 
@@ -240,7 +241,7 @@ static inline Vector<SVGLength> blendFunc(const AnimationBase*, const Vector<SVG
         return progress == 1 ? from : to;
     size_t resultLength = fromLength;
     if (fromLength != toLength) {
-        if (!std::remainder(std::max(fromLength, toLength), std::min(fromLength, toLength)))
+        if (!remainder(std::max(fromLength, toLength), std::min(fromLength, toLength)))
             resultLength = std::max(fromLength, toLength);
         else
             resultLength = fromLength * toLength;
