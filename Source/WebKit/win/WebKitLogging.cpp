@@ -28,6 +28,8 @@
 #include "config.h"
 #include "WebKitLogging.h"
 
+#if !LOG_DISABLED
+
 #define DEFINE_LOG_CHANNEL(name) \
     WTFLogChannel JOIN_LOG_CHANNEL_WITH_PREFIX(LOG_CHANNEL_PREFIX, name) = { WTFLogChannelOff, #name };
 WEBKIT_LOG_CHANNELS(DEFINE_LOG_CHANNEL)
@@ -49,3 +51,5 @@ void WebKitInitializeLoggingChannelsIfNecessary()
     // FIXME: Get the log channel string from somewhere so people don't have to hardcode it here.
     WTFInitializeLogChannelStatesFromString(logChannels, logChannelCount, "");
 }
+
+#endif // !LOG_DISABLED

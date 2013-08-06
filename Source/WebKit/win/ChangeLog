@@ -1,5 +1,11 @@
 2013-08-05  Mark Rowe  <mrowe@apple.com>
 
+        Another Windows release build fix.
+
+        * WebKitLogging.cpp: Wrap the implementation file in !LOG_DISABLED #if's too.
+
+2013-08-05  Mark Rowe  <mrowe@apple.com>
+
         Build fix for Windows release build.
 
         * WebKitLogging.h: Wrap things in !LOG_DISABLED so that we don't attempt to use macros that have not been defined.
