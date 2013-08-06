@@ -35,7 +35,8 @@ namespace WebCore {
 
 enum GridPositionType {
     AutoPosition,
-    IntegerPosition
+    IntegerPosition,
+    SpanPosition
 };
 
 class GridPosition {
@@ -50,6 +51,8 @@ public:
 
     GridPositionType type() const { return m_type; }
     bool isAuto() const { return m_type == AutoPosition; }
+    bool isInteger() const { return m_type == IntegerPosition; }
+    bool isSpan() const { return m_type == SpanPosition; }
 
     void setIntegerPosition(int position)
     {
@@ -57,9 +60,24 @@ public:
         m_integerPosition = position;
     }
 
+    // 'span' values cannot be negative, yet we reuse the <integer> position which can
+    // be. This means that we have to convert the span position to an integer, losing
+    // some precision here. It shouldn't be an issue in practice though.
+    void setSpanPosition(int position)
+    {
+        m_type = SpanPosition;
+        m_integerPosition = position;
+    }
+
     int integerPosition() const
     {
         ASSERT(type() == IntegerPosition);
+        return m_integerPosition;
+    }
+
+    int spanPosition() const
+    {
+        ASSERT(type() == SpanPosition);
         return m_integerPosition;
     }
 

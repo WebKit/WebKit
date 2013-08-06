@@ -1,3 +1,36 @@
+2013-06-26  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] Add support for parsing <grid-line> that includes a 'span'
+        https://bugs.webkit.org/show_bug.cgi?id=118051
+
+        Reviewed by Andreas Kling.
+
+        From Blink r148766 by <jchaffraix@chromium.org>
+
+        This adds the parsing, style resolution and getComputedStyle bits
+        to our code. The rendering code was not made aware of the new type
+        of GridPosition yet.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::valueForGridPosition):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseGridPosition):
+        * css/CSSParser.h:
+        * css/CSSValueKeywords.in:
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::adjustRenderStyle):
+        (WebCore::StyleResolver::adjustGridItemPosition):
+        (WebCore::createGridPosition):
+        * css/StyleResolver.h:
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::resolveGridPositionFromStyle):
+        * rendering/style/GridPosition.h:
+        (WebCore::GridPosition::isInteger):
+        (WebCore::GridPosition::isSpan):
+        (WebCore::GridPosition::setSpanPosition):
+        (WebCore::GridPosition::spanPosition):
+
 2013-06-25  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] Rename grid placement properties

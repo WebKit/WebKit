@@ -772,6 +772,10 @@ size_t RenderGrid::resolveGridPositionFromStyle(const GridPosition& position, Gr
         // 'auto' depends on the opposite position for resolution (e.g. grid-row: auto / 1).
         ASSERT_NOT_REACHED();
         return 0;
+    case SpanPosition:
+        // FIXME: Handle span positions.
+        ASSERT_NOT_REACHED();
+        return 0;
     }
     ASSERT_NOT_REACHED();
     return 0;

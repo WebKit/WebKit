@@ -2684,7 +2684,7 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         if (!cssGridLayoutEnabled())
             return false;
 
-        validPrimitive = id == CSSValueAuto || (validUnit(value, FInteger) && value->fValue);
+        parsedValue = parseGridPosition();
         break;
 
     case CSSPropertyWebkitGridColumn:
@@ -4770,6 +4770,50 @@ bool CSSParser::parseAnimationProperty(CSSPropertyID propId, RefPtr<CSSValue>& r
         return true;
     }
     return false;
+}
+
+PassRefPtr<CSSValue> CSSParser::parseGridPosition()
+{
+    CSSParserValue* value = m_valueList->current();
+    if (value->id == CSSValueAuto) {
+        m_valueList->next();
+        return cssValuePool().createIdentifierValue(CSSValueAuto);
+    }
+
+    RefPtr<CSSPrimitiveValue> numericValue;
+    bool hasSeenSpanKeyword = false;
+
+    if (validUnit(value, FInteger) && value->fValue) {
+        numericValue = createPrimitiveNumericValue(value);
+        value = m_valueList->next();
+        if (value && value->id == CSSValueSpan) {
+            hasSeenSpanKeyword = true;
+            m_valueList->next();
+        }
+    } else if (value->id == CSSValueSpan) {
+        hasSeenSpanKeyword = true;
+        value = m_valueList->next();
+        if (value && (validUnit(value, FInteger) && value->fValue)) {
+            numericValue = createPrimitiveNumericValue(value);
+            m_valueList->next();
+        }
+    }
+
+    if (!hasSeenSpanKeyword)
+        return numericValue.release();
+
+    if (!numericValue && hasSeenSpanKeyword)
+        return cssValuePool().createIdentifierValue(CSSValueSpan);
+
+    // Negative numbers are not allowed for span (but are for <integer>).
+    if (numericValue && numericValue->getIntValue() < 0)
+        return 0;
+
+    RefPtr<CSSValueList> values = CSSValueList::createSpaceSeparated();
+    values->append(cssValuePool().createIdentifierValue(CSSValueSpan));
+    if (numericValue)
+        values->append(numericValue.release());
+    return values.release();
 }
 
 bool CSSParser::parseGridItemPositionShorthand(CSSPropertyID shorthandId, bool important)

@@ -1022,6 +1022,9 @@ drag
 no-drag
 #endif
 
+// -webkit-grid-{column-start|column-end|row-start|row-end}
+span
+
 #if defined(ENABLE_CSS3_TEXT) && ENABLE_CSS3_TEXT
 // text-indent
 -webkit-each-line

@@ -1531,6 +1531,8 @@ void StyleResolver::adjustRenderStyle(RenderStyle* style, RenderStyle* parentSty
     if (e && e->hasTagName(iframeTag) && style->display() == INLINE && toHTMLIFrameElement(e)->shouldDisplaySeamlessly())
         style->setDisplay(INLINE_BLOCK);
 
+    adjustGridItemPosition(style);
+
 #if ENABLE(SVG)
     if (e && e->isSVGElement()) {
         // Spec: http://www.w3.org/TR/SVG/masking.html#OverflowProperty
@@ -1554,6 +1556,20 @@ void StyleResolver::adjustRenderStyle(RenderStyle* style, RenderStyle* parentSty
             style->setEffectiveZoom(RenderStyle::initialZoom());
     }
 #endif
+}
+
+void StyleResolver::adjustGridItemPosition(RenderStyle* style) const
+{
+    // If opposing grid-placement properties both specify a grid span, they both compute to ‘auto’.
+    if (style->gridItemColumnStart().isSpan() && style->gridItemColumnEnd().isSpan()) {
+        style->setGridItemColumnStart(GridPosition());
+        style->setGridItemColumnEnd(GridPosition());
+    }
+
+    if (style->gridItemRowStart().isSpan() && style->gridItemRowEnd().isSpan()) {
+        style->setGridItemRowStart(GridPosition());
+        style->setGridItemRowEnd(GridPosition());
+    }
 }
 
 bool StyleResolver::checkRegionStyle(Element* regionElement)
@@ -2108,16 +2124,30 @@ static bool createGridTrackList(CSSValue* value, Vector<GridTrackSize>& trackSiz
 
 static bool createGridPosition(CSSValue* value, GridPosition& position)
 {
-    // For now, we only accept: <integer> | 'auto'
-    if (!value->isPrimitiveValue())
-        return false;
+    // For now, we only accept: 'auto' | <integer> | span && <integer>?
+    if (value->isPrimitiveValue()) {
+        CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
+        if (primitiveValue->getValueID() == CSSValueAuto)
+            return true;
 
-    CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
-    if (primitiveValue->getValueID() == CSSValueAuto)
+        if (primitiveValue->getValueID() == CSSValueSpan) {
+            // If the <integer> is omitted, it defaults to '1'.
+            position.setSpanPosition(1);
+            return true;
+        }
+
+        ASSERT(primitiveValue->isNumber());
+        position.setIntegerPosition(primitiveValue->getIntValue());
         return true;
+    }
 
-    ASSERT_WITH_SECURITY_IMPLICATION(primitiveValue->isNumber());
-    position.setIntegerPosition(primitiveValue->getIntValue());
+    ASSERT_WITH_SECURITY_IMPLICATION(value->isValueList());
+    CSSValueList* values = static_cast<CSSValueList*>(value);
+    ASSERT(values->length() == 2);
+    ASSERT_WITH_SECURITY_IMPLICATION(values->itemWithoutBoundsCheck(1)->isPrimitiveValue());
+    CSSPrimitiveValue* numericValue = static_cast<CSSPrimitiveValue*>(values->itemWithoutBoundsCheck(1));
+    ASSERT(numericValue->isNumber());
+    position.setSpanPosition(numericValue->getIntValue());
     return true;
 }
 
