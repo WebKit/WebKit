@@ -149,6 +149,40 @@ static inline Qt::DropAction dragOpToDropAction(unsigned actions)
     return result;
 }
 
+static inline WebCore::PageVisibilityState webPageVisibilityStateToWebCoreVisibilityState(QWebPageAdapter::VisibilityState state)
+{
+    switch (state) {
+    case QWebPageAdapter::VisibilityStatePrerender:
+        return WebCore::PageVisibilityStatePrerender;
+    case QWebPageAdapter::VisibilityStateUnloaded:
+        return WebCore::PageVisibilityStateUnloaded;
+    case QWebPageAdapter::VisibilityStateVisible:
+        return WebCore::PageVisibilityStateVisible;
+    case QWebPageAdapter::VisibilityStateHidden:
+        return WebCore::PageVisibilityStateHidden;
+    default:
+        ASSERT(false);
+        return WebCore::PageVisibilityStateHidden;
+    }
+}
+
+static inline QWebPageAdapter::VisibilityState webCoreVisibilityStateToWebPageVisibilityState(WebCore::PageVisibilityState state)
+{
+    switch (state) {
+    case WebCore::PageVisibilityStatePrerender:
+        return QWebPageAdapter::VisibilityStatePrerender;
+    case WebCore::PageVisibilityStateUnloaded:
+        return QWebPageAdapter::VisibilityStateUnloaded;
+    case WebCore::PageVisibilityStateVisible:
+        return QWebPageAdapter::VisibilityStateVisible;
+    case WebCore::PageVisibilityStateHidden:
+        return QWebPageAdapter::VisibilityStateHidden;
+    default:
+        ASSERT(false);
+        return QWebPageAdapter::VisibilityStateHidden;
+    }
+}
+
 static WebCore::FrameLoadRequest frameLoadRequest(const QUrl &url, WebCore::Frame *frame)
 {
     return WebCore::FrameLoadRequest(frame->document()->securityOrigin(),
@@ -278,6 +312,22 @@ ViewportArguments QWebPageAdapter::viewportArguments() const
 void QWebPageAdapter::registerUndoStep(WTF::PassRefPtr<WebCore::UndoStep> step)
 {
     createUndoStep(QSharedPointer<UndoStepQt>(new UndoStepQt(step)));
+}
+
+void QWebPageAdapter::setVisibilityState(VisibilityState state)
+{
+#if ENABLE(PAGE_VISIBILITY_API)
+    if (!page)
+        return;
+    page->setVisibilityState(webPageVisibilityStateToWebCoreVisibilityState(state), false);
+#else
+    Q_UNUSED(state);
+#endif
+}
+
+QWebPageAdapter::VisibilityState QWebPageAdapter::visibilityState() const
+{
+    return webCoreVisibilityStateToWebPageVisibilityState(page->visibilityState());
 }
 
 void QWebPageAdapter::setNetworkAccessManager(QNetworkAccessManager *manager)

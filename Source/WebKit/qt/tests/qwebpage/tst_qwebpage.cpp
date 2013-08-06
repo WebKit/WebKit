@@ -168,6 +168,8 @@ private Q_SLOTS:
     void screenshot_data();
     void screenshot();
 
+    void changeVisibilityState();
+
 #if defined(ENABLE_WEBGL) && ENABLE_WEBGL
     void acceleratedWebGLScreenshotWithoutView();
     void unacceleratedWebGLScreenshotWithoutView();
@@ -3131,6 +3133,82 @@ void tst_QWebPage::macCopyUnicodeToClipboard()
     QVERIFY(clipboardData.contains(unicodeText));
 }
 #endif
+
+void tst_QWebPage::changeVisibilityState()
+{
+#if ENABLE_PAGE_VISIBILITY_API
+    QVariant stateBool, stateString, cpt;
+
+    m_page->mainFrame()->setHtml("<html><body></body></html>");
+    m_page->mainFrame()->evaluateJavaScript("var stateBool = undefined, stateString = undefined, cpt = 0; var visibilityCallBack = function () {stateBool = document['hidden']; stateString = document['visibilityState']; cpt++;};document.addEventListener('visibilitychange', visibilityCallBack, false);");
+
+    // The visibility state should be initialised to visible.
+    QCOMPARE(m_page->visibilityState(), QWebPage::VisibilityStateVisible);
+    stateBool = m_page->mainFrame()->evaluateJavaScript("document['hidden']");
+    QVERIFY(stateBool.type() == QVariant::Bool && !stateBool.toBool());
+    stateString = m_page->mainFrame()->evaluateJavaScript("document['visibilityState']");
+    QVERIFY(stateString.type() == QVariant::String && stateString.toString() == QString("visible"));
+
+    // Try to change with the same value.
+    m_page->setVisibilityState(QWebPage::VisibilityStateVisible);
+    QVERIFY(m_page->visibilityState() == QWebPage::VisibilityStateVisible);
+    // We check that there isn't any JS event that has been fired and
+    // visibility properties are still equals to visible.
+    stateBool = m_page->mainFrame()->evaluateJavaScript("document['hidden']");
+    QVERIFY(stateBool.type() == QVariant::Bool && !stateBool.toBool());
+    stateString = m_page->mainFrame()->evaluateJavaScript("document['visibilityState']");
+    QVERIFY(stateString.type() == QVariant::String && stateString.toString() == QString("visible"));
+    cpt = m_page->mainFrame()->evaluateJavaScript("cpt");
+    QVERIFY(cpt.type() == QVariant::Double && !cpt.toDouble());
+
+    // Try to change to with different values then check if a JS event has been fired
+    // and visibility properties have been updated correctly.
+    m_page->setVisibilityState(QWebPage::VisibilityStatePrerender);
+    QCOMPARE(m_page->visibilityState(), QWebPage::VisibilityStatePrerender);
+    stateBool = m_page->mainFrame()->evaluateJavaScript("stateBool");
+    QVERIFY(stateBool.type() == QVariant::Bool && stateBool.toBool());
+    stateString = m_page->mainFrame()->evaluateJavaScript("stateString");
+    QVERIFY(stateString.type() == QVariant::String && stateString.toString() == QString("prerender"));
+    cpt = m_page->mainFrame()->evaluateJavaScript("cpt");
+    QVERIFY(cpt.type() == QVariant::Double && cpt.toDouble() == 1);
+
+    m_page->setVisibilityState(QWebPage::VisibilityStateUnloaded);
+    QCOMPARE(m_page->visibilityState(), QWebPage::VisibilityStateUnloaded);
+    stateBool = m_page->mainFrame()->evaluateJavaScript("stateBool");
+    QVERIFY(stateBool.type() == QVariant::Bool && stateBool.toBool());
+    stateString = m_page->mainFrame()->evaluateJavaScript("stateString");
+    QVERIFY(stateString.type() == QVariant::String && stateString.toString() == QString("unloaded"));
+    cpt = m_page->mainFrame()->evaluateJavaScript("cpt");
+    QVERIFY(cpt.type() == QVariant::Double && cpt.toDouble() == 2);
+
+    m_page->setVisibilityState(QWebPage::VisibilityStateVisible);
+    QCOMPARE(m_page->visibilityState(), QWebPage::VisibilityStateVisible);
+    stateBool = m_page->mainFrame()->evaluateJavaScript("stateBool");
+    QVERIFY(stateBool.type() == QVariant::Bool && !stateBool.toBool());
+    stateString = m_page->mainFrame()->evaluateJavaScript("stateString");
+    QVERIFY(stateString.type() == QVariant::String && stateString.toString() == QString("visible"));
+    cpt = m_page->mainFrame()->evaluateJavaScript("cpt");
+    QVERIFY(cpt.type() == QVariant::Double && cpt.toDouble() == 3);
+
+    m_page->setVisibilityState(QWebPage::VisibilityStateHidden);
+    QCOMPARE(m_page->visibilityState(), QWebPage::VisibilityStateHidden);
+    stateBool = m_page->mainFrame()->evaluateJavaScript("stateBool");
+    QVERIFY(stateBool.type() == QVariant::Bool && stateBool.toBool());
+    stateString = m_page->mainFrame()->evaluateJavaScript("stateString");
+    QVERIFY(stateString.type() == QVariant::String && stateString.toString() == QString("hidden"));
+    cpt = m_page->mainFrame()->evaluateJavaScript("cpt");
+    QVERIFY(cpt.type() == QVariant::Double && cpt.toDouble() == 4);
+
+    m_page->setVisibilityState(QWebPage::VisibilityStateVisible);
+    QCOMPARE(m_page->visibilityState(), QWebPage::VisibilityStateVisible);
+    stateBool = m_page->mainFrame()->evaluateJavaScript("stateBool");
+    QVERIFY(stateBool.type() == QVariant::Bool && !stateBool.toBool());
+    stateString = m_page->mainFrame()->evaluateJavaScript("stateString");
+    QVERIFY(stateString.type() == QVariant::String && stateString.toString() == QString("visible"));
+    cpt = m_page->mainFrame()->evaluateJavaScript("cpt");
+    QVERIFY(cpt.type() == QVariant::Double && cpt.toDouble() == 5);
+#endif
+}
 
 void tst_QWebPage::contextMenuCopy()
 {

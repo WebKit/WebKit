@@ -1056,6 +1056,20 @@ QWebInspector* QWebPagePrivate::getOrCreateInspector()
 */
 
 /*!
+    \enum QWebPage::VisibilityState
+
+    This enum defines visibility states that a webpage can take.
+
+    \value VisibilityStateVisible The webpage is at least partially visible at on at least one screen.
+    \value VisibilityStateHidden The webpage is not visible at all on any screen.
+    \value VisibilityStatePrerender The webpage is loaded off-screen and is not visible.
+    \value VisibilityStateUnloaded The webpage is unloading its content.
+    More information about this values can be found at \l{ http://www.w3.org/TR/page-visibility/#dom-document-visibilitystate}{W3C Recommendation: Page Visibility: visibilityState attribute}.
+
+    \sa QWebPage::visibilityState
+*/
+
+/*!
     \enum QWebPage::LinkDelegationPolicy
 
     This enum defines the delegation policies a webpage can have when activating links and emitting
@@ -3137,6 +3151,31 @@ quint64 QWebPage::bytesReceived() const
 {
     return d->m_bytesReceived;
 }
+
+
+/*!
+    \property QWebPage::visibilityState
+    \brief the page's visibility state
+
+    This property should be changed by Qt applications who want to notify the JavaScript application
+    that the visibility state has changed (e.g. by reimplementing QWidget::setVisible).
+    The visibility state will be updated with the \a state parameter value only if it's different from the previous set.
+    Then, HTML DOM Document Object attributes 'hidden' and 'visibilityState'
+    will be updated to the correct value and a 'visiblitychange' event will be fired.
+    More information about this HTML5 API can be found at \l{http://www.w3.org/TR/page-visibility/}{W3C Recommendation: Page Visibility}.
+
+    By default, this property is set to VisibilityStateVisible.
+*/
+void QWebPage::setVisibilityState(VisibilityState state)
+{
+    d->setVisibilityState(static_cast<QWebPageAdapter::VisibilityState>(state));
+}
+
+QWebPage::VisibilityState QWebPage::visibilityState() const
+{
+    return static_cast<VisibilityState>(d->visibilityState());
+}
+
 
 /*!
     \since 4.8

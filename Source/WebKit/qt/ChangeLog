@@ -1,3 +1,23 @@
+2013-08-06  Benjamin Dupont   <bdupont@nds.com>
+
+        [Qt] Add Page Visibility API support
+        https://bugs.webkit.org/show_bug.cgi?id=109422
+
+        Reviewed by Simon Hausmann.
+
+        * WebCoreSupport/QWebPageAdapter.cpp:
+        (webPageVisibilityStateToWebCoreVisibilityState):
+        (webCoreVisibilityStateToWebPageVisibilityState):
+        (QWebPageAdapter::setVisibilityState):
+        (QWebPageAdapter::visibilityState):
+        * WebCoreSupport/QWebPageAdapter.h:
+        * WidgetApi/qwebpage.cpp:
+        (QWebPage::setVisibilityState):
+        (QWebPage::visibilityState):
+        * WidgetApi/qwebpage.h:
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (tst_QWebPage::changeVisibilityState):
+
 2013-07-27  Mark Rowe  <mrowe@apple.com>
 
         Logging should be configurable using human-readable channel names rather than crazy bitmasks
