@@ -1,3 +1,14 @@
+2013-08-06  Patrick Gansterer  <paroga@webkit.org>
+
+        Remove useless code from COMPILER(RVCT) JITStubs
+        https://bugs.webkit.org/show_bug.cgi?id=119521
+
+        Reviewed by Geoffrey Garen.
+
+        * jit/JITStubsARMv7.h:
+        (JSC::ctiVMThrowTrampoline): "ldr r6, [sp, #PRESERVED_R6_OFFSET]" was called twice.
+        (JSC::ctiOpThrowNotCaught): Ditto.
+
 2013-07-23  David Farler  <dfarler@apple.com>
 
         Provide optional OTHER_CFLAGS, OTHER_CPPFLAGS, OTHER_LDFLAGS additions for building with ASAN
