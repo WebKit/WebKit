@@ -16,3 +16,5 @@ STRIP_STYLE = debugging
 
 // Let the user install by specifying the $DSTROOT with xcodebuild
 SKIP_INSTALL = NO
+
+OTHER_LDFLAGS = ;

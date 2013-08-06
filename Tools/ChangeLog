@@ -1,3 +1,33 @@
+2013-07-23  David Farler  <dfarler@apple.com>
+
+        Provide optional OTHER_CFLAGS, OTHER_CPPFLAGS, OTHER_LDFLAGS additions for building with ASAN
+        https://bugs.webkit.org/show_bug.cgi?id=117762
+
+        Reviewed by Mark Rowe.
+
+        * DumpRenderTree/mac/Configurations/DebugRelease.xcconfig:
+        Add ASAN_OTHER_CFLAGS, CPLUSPLUSFLAGS, LDFLAGS.
+        * DumpRenderTree/mac/Configurations/DumpRenderTree.xcconfig:
+        Add ASAN_OTHER_LDFLAGS.
+        * MiniBrowser/Configurations/DebugRelease.xcconfig:
+        Add ASAN_OTHER_CFLAGS, CPLUSPLUSFLAGS, LDFLAGS.
+        * Scripts/check-for-weak-vtables-and-externals:
+        Ignore ___asan externals, these are populated by compiler-rt.
+        * TestWebKitAPI/Configurations/DebugRelease.xcconfig:
+        Add ASAN_OTHER_CFLAGS, CPLUSPLUSFLAGS, LDFLAGS.
+        * TestWebKitAPI/Configurations/TestWebKitAPI.xcconfig:
+        Add ASAN_OTHER_LDFLAGS.
+        * WebKitLauncher/Configurations/Base.xcconfig:
+        Add ASAN_OTHER_CFLAGS, CPLUSPLUSFLAGS, LDFLAGS.
+        * WebKitLauncher/Configurations/WebKitNightlyEnabler.xcconfig:
+        Add ASAN_OTHER_LDFLAGS.
+        * WebKitTestRunner/Configurations/DebugRelease.xcconfig:
+        Add ASAN_OTHER_CFLAGS, CPLUSPLUSFLAGS, LDFLAGS.
+        * WebKitTestRunner/Configurations/InjectedBundle.xcconfig:
+        Add ASAN_OTHER_LDFLAGS.
+        * asan/asan.xcconfig: Added.
+        * asan/webkit-asan-ignore.txt: Added.
+
 2013-08-05  Brian Holt  <brian.holt@samsung.com>
 
         [GTK] Implement leak checking with valgrind

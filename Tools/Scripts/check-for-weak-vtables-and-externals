@@ -69,6 +69,9 @@ if (!defined $executablePathAge || !defined $buildTimestampAge || $executablePat
             # Ignore undefined, RTTI and typeinfo symbols.
             next if /\bundefined\b/ or /\b__ZT[IS]/;
 
+            # ASan compiler-rt calls into __asan_mapping_offset and __asan_mapping_scale
+            next if /\b___asan/;
+
             if (/weak external vtable for (.*)$/) {
                 push @weakVTableClasses, $1;
             } elsif (/weak external (.*)$/) {

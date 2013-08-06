@@ -27231,6 +27231,8 @@
 				EXPORTED_SYMBOLS_FILE = "";
 				GCC_OPTIMIZATION_LEVEL = 0;
 				INSTALL_PATH = /usr/local/bin;
+				OTHER_CFLAGS = "";
+				OTHER_CPLUSPLUSFLAGS = "";
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = WebCoreExportFileGenerator;
 				SKIP_INSTALL = YES;
@@ -27243,6 +27245,8 @@
 			buildSettings = {
 				EXPORTED_SYMBOLS_FILE = "";
 				INSTALL_PATH = /usr/local/bin;
+				OTHER_CFLAGS = "";
+				OTHER_CPLUSPLUSFLAGS = "";
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = WebCoreExportFileGenerator;
 				SKIP_INSTALL = YES;

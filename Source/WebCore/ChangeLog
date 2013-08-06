@@ -1,3 +1,23 @@
+2013-07-23  David Farler  <dfarler@apple.com>
+
+        Provide optional OTHER_CFLAGS, OTHER_CPPFLAGS, OTHER_LDFLAGS additions for building with ASAN
+        https://bugs.webkit.org/show_bug.cgi?id=117762
+
+        Reviewed by Mark Rowe.
+
+        No new tests necessary.
+
+        * Configurations/DebugRelease.xcconfig:
+        Add ASAN_OTHER_CFLAGS, CPLUSPLUSFLAGS, LDFLAGS.
+        * Configurations/WebCore.xcconfig:
+        Add ASAN_OTHER_LDFLAGS.
+        * Configurations/WebCoreTestShim.xcconfig:
+        Add ASAN_OTHER_LDFLAGS.
+        * Configurations/WebCoreTestSupport.xcconfig:
+        Add ASAN_OTHER_LDFLAGS.
+        * WebCore.xcodeproj/project.pbxproj:
+        Don't use ASAN for build tools.
+
 2013-08-05  Rob Buis  <rwlbuis@webkit.org>
 
         SVG stroke-dasharray is not animatable

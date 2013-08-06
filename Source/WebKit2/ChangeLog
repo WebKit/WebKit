@@ -1,3 +1,17 @@
+2013-07-23  David Farler  <dfarler@apple.com>
+
+        Provide optional OTHER_CFLAGS, OTHER_CPPFLAGS, OTHER_LDFLAGS additions for building with ASAN
+        https://bugs.webkit.org/show_bug.cgi?id=117762
+
+        Reviewed by Mark Rowe.
+
+        * Configurations/DebugRelease.xcconfig:
+        Add ASAN_OTHER_CFLAGS, CPLUSPLUSFLAGS, LDFLAGS.
+        * Configurations/WebContentProcess.xcconfig:
+        Add ASAN_OTHER_LDFLAGS.
+        * Configurations/WebKit2.xcconfig:
+        Add ASAN_OTHER_LDFLAGS.
+
 2013-08-06  Andreas Kling  <akling@apple.com>
 
         REGRESSION(r151403): Resizing is extremely laggy on many sites when plugins are disallowed.

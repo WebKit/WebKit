@@ -24,6 +24,6 @@
 PRODUCT_NAME = WebKitNightlyEnabler;
 INSTALL_PATH = @executable_path/../Resources;
 
-OTHER_LDFLAGS = $(OTHER_LDFLAGS_$(ENABLE_SPARKLE));
+OTHER_LDFLAGS = $(inherited) $(OTHER_LDFLAGS_$(ENABLE_SPARKLE));
 OTHER_LDFLAGS_0 = ;
 OTHER_LDFLAGS_1 = -framework Sparkle;
