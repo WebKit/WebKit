@@ -1,3 +1,18 @@
+2013-08-06  Tim Horton  <timothy_horton@apple.com>
+
+        Remove PlatformCALayer::contentsTransform and ::setContentsTransform
+        https://bugs.webkit.org/show_bug.cgi?id=119529
+
+        Reviewed by Sam Weinig.
+
+        No new tests, removing dead code.
+
+        These methods are not used and are currently unimplemented.
+
+        * platform/graphics/ca/PlatformCALayer.h:
+        * platform/graphics/ca/mac/PlatformCALayerMac.mm:
+        * platform/graphics/ca/win/PlatformCALayerWin.cpp:
+
 2013-08-06  Alex Christensen  <achristensen@apple.com>
 
         Moved GraphicsContext3DPrivate out of cairo directory to be used by the AppleWin port.

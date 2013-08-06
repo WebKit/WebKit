@@ -551,18 +551,6 @@ void PlatformCALayer::setSublayerTransform(const TransformationMatrix& value)
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-TransformationMatrix PlatformCALayer::contentsTransform() const
-{
-    // FIXME: This function can be removed.
-    return TransformationMatrix();
-}
-
-void PlatformCALayer::setContentsTransform(const TransformationMatrix& value)
-{
-    // FIXME: This function can be removed.
-    UNUSED_PARAM(value);
-}
-
 bool PlatformCALayer::isHidden() const
 {
     return [m_layer.get() isHidden];

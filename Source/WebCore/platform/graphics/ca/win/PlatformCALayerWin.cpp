@@ -433,17 +433,6 @@ void PlatformCALayer::setSublayerTransform(const TransformationMatrix& value)
     setNeedsCommit();
 }
 
-TransformationMatrix PlatformCALayer::contentsTransform() const
-{
-    // ContentsTransform is not used
-    return TransformationMatrix();
-}
-
-void PlatformCALayer::setContentsTransform(const TransformationMatrix&)
-{
-    // ContentsTransform is not used
-}
-
 bool PlatformCALayer::isHidden() const
 {
     return CACFLayerIsHidden(m_layer.get());
