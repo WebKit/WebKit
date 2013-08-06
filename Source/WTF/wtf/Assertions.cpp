@@ -36,7 +36,7 @@
 
 #include "Compiler.h"
 #include "OwnArrayPtr.h"
-#include <wtf/StdLibExtras.h>
+#include <wtf/StringExtras.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
