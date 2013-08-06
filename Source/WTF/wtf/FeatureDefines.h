@@ -80,6 +80,10 @@
 #define ENABLE_ICONDATABASE 0
 #endif
 
+#if !defined(ENABLE_METER_ELEMENT)
+#define ENABLE_METER_ELEMENT 0
+#endif
+
 #if !defined(ENABLE_NETSCAPE_PLUGIN_API)
 #define ENABLE_NETSCAPE_PLUGIN_API 0
 #endif
