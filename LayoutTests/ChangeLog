@@ -1,3 +1,21 @@
+2013-08-06  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Shapes] New positioning model: scripted shape-margin tests
+        https://bugs.webkit.org/show_bug.cgi?id=119491
+
+        Update some of the shape-margin tests to work with the new positioning model. Floats
+        that specify shape-outside are now positioned according to their margin box, not the
+        bounding box of the shape-outside shape. The tests have been revised to reflect the
+        change.
+
+        Reviewed by Alexandru Chiculita.
+
+        * TestExpectations:
+        * fast/shapes/shape-outside-floats/shape-outside-floats-diamond-margin-polygon.html:
+        * fast/shapes/shape-outside-floats/shape-outside-floats-ellipse-margin-bottom.html:
+        * fast/shapes/shape-outside-floats/shape-outside-floats-ellipse-margin-left.html:
+        * fast/shapes/shape-outside-floats/shape-outside-floats-ellipse-margin-right.html:
+
 2013-08-06  Oliver Hunt  <oliver@apple.com>
 
         Delay Arguments creation in strict mode
