@@ -554,6 +554,11 @@ namespace JSC {
             return true;
         }
 
+        bool shouldTearOffArgumentsEagerly()
+        {
+            return m_codeType == FunctionCode && isStrictMode() && m_scopeNode->modifiesParameter();
+        }
+
         RegisterID* emitThrowExpressionTooDeepException();
 
         void createArgumentsIfNecessary();

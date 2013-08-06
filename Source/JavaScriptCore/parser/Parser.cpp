@@ -121,12 +121,15 @@ String Parser<LexerType>::parseInner()
     }
 
     IdentifierSet capturedVariables;
-    scope->getCapturedVariables(capturedVariables);
+    bool modifiedParameter = false;
+    scope->getCapturedVariables(capturedVariables, modifiedParameter);
     CodeFeatures features = context.features();
     if (scope->strictMode())
         features |= StrictModeFeature;
     if (scope->shadowsArguments())
         features |= ShadowsArgumentsFeature;
+    if (modifiedParameter)
+        features |= ModifiedParameterFeature;
 
     didFinishParsing(sourceElements, context.varDeclarations(), context.funcDeclarations(), features,
         context.numConstants(), capturedVariables);

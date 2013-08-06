@@ -1,3 +1,17 @@
+2013-08-06  Oliver Hunt  <oliver@apple.com>
+
+        Delay Arguments creation in strict mode
+        https://bugs.webkit.org/show_bug.cgi?id=119505
+
+        Reviewed by Geoffrey Garen.
+
+        Add performance testcase for lazy creation of arguments in strict mode
+
+        * fast/js/regress/delay-tear-off-arguments-strictmode-expected.txt: Added.
+        * fast/js/regress/delay-tear-off-arguments-strictmode.html: Added.
+        * fast/js/regress/script-tests/delay-tear-off-arguments-strictmode.js: Added.
+        (bar):
+
 2013-08-06  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         [CSS Shapes] New positioning model: support for shape-margin

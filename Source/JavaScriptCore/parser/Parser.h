@@ -217,6 +217,8 @@ struct Scope {
         bool isArguments = m_vm->propertyNames->arguments == *ident;
         bool isValidStrictMode = m_declaredVariables.add(ident->string().impl()).isNewEntry && m_vm->propertyNames->eval != *ident && !isArguments;
         m_isValidStrictMode = m_isValidStrictMode && isValidStrictMode;
+        m_declaredParameters.add(ident->string().impl());
+
         if (isArguments)
             m_shadowsArguments = true;
         return isValidStrictMode;
@@ -254,18 +256,10 @@ struct Scope {
         return true;
     }
 
-    void getUncapturedWrittenVariables(IdentifierSet& writtenVariables)
-    {
-        IdentifierSet::iterator end = m_writtenVariables.end();
-        for (IdentifierSet::iterator ptr = m_writtenVariables.begin(); ptr != end; ++ptr) {
-            if (!m_declaredVariables.contains(*ptr))
-                writtenVariables.add(*ptr);
-        }
-    }
-
-    void getCapturedVariables(IdentifierSet& capturedVariables)
+    void getCapturedVariables(IdentifierSet& capturedVariables, bool& modifiedParameter)
     {
         if (m_needsFullActivation || m_usesEval) {
+            modifiedParameter = true;
             capturedVariables.swap(m_declaredVariables);
             return;
         }
@@ -273,6 +267,16 @@ struct Scope {
             if (!m_declaredVariables.contains(*ptr))
                 continue;
             capturedVariables.add(*ptr);
+        }
+        modifiedParameter = false;
+        if (m_declaredParameters.size()) {
+            IdentifierSet::iterator end = m_writtenVariables.end();
+            for (IdentifierSet::iterator ptr = m_writtenVariables.begin(); ptr != end; ++ptr) {
+                if (!m_declaredParameters.contains(*ptr))
+                    continue;
+                modifiedParameter = true;
+                break;
+            }
         }
     }
     void setStrictMode() { m_strictMode = true; }
@@ -327,6 +331,7 @@ private:
 
     typedef Vector<ScopeLabelInfo, 2> LabelStack;
     OwnPtr<LabelStack> m_labels;
+    IdentifierSet m_declaredParameters;
     IdentifierSet m_declaredVariables;
     IdentifierSet m_usedVariables;
     IdentifierSet m_closedVariables;
@@ -460,7 +465,7 @@ private:
     
     void declareWrite(const Identifier* ident)
     {
-        if (!m_syntaxAlreadyValidated)
+        if (!m_syntaxAlreadyValidated || strictMode())
             m_scopeStack.last().declareWrite(ident);
     }
     

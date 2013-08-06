@@ -238,7 +238,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionBodyNode* functionBody, Unl
         emitInitLazyRegister(argumentsRegister);
         emitInitLazyRegister(unmodifiedArgumentsRegister);
         
-        if (m_codeBlock->isStrictMode()) {
+        if (shouldTearOffArgumentsEagerly()) {
             emitOpcode(op_create_arguments);
             instructions().append(argumentsRegister->index());
         }
@@ -268,7 +268,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionBodyNode* functionBody, Unl
         }
     }
 
-    if (capturesAnyArgumentByName && !codeBlock->isStrictMode()) {
+    if (capturesAnyArgumentByName && !shouldTearOffArgumentsEagerly()) {
         size_t parameterCount = m_symbolTable->parameterCount();
         OwnArrayPtr<SlowArgument> slowArguments = adoptArrayPtr(new SlowArgument[parameterCount]);
         for (size_t i = 0; i < parameterCount; ++i) {
@@ -1559,10 +1559,7 @@ void BytecodeGenerator::createArgumentsIfNecessary()
     if (!m_codeBlock->usesArguments())
         return;
 
-    // If we're in strict mode we tear off the arguments on function
-    // entry, so there's no need to check if we need to create them
-    // now
-    if (m_codeBlock->isStrictMode())
+    if (shouldTearOffArgumentsEagerly())
         return;
 
     emitOpcode(op_create_arguments);
@@ -1749,7 +1746,7 @@ RegisterID* BytecodeGenerator::emitReturn(RegisterID* src)
         instructions().append(m_activationRegister->index());
     }
 
-    if (m_codeBlock->usesArguments() && m_codeBlock->numParameters() != 1 && !m_codeBlock->isStrictMode()) {
+    if (m_codeBlock->usesArguments() && m_codeBlock->numParameters() != 1 && !isStrictMode()) {
         emitOpcode(op_tear_off_arguments);
         instructions().append(m_codeBlock->argumentsRegister());
         instructions().append(m_activationRegister ? m_activationRegister->index() : emitLoad(0, JSValue())->index());
