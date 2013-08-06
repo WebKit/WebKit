@@ -1874,7 +1874,7 @@ bool WebGLRenderingContext::validateIndexArrayPrecise(GC3Dsizei count, GC3Denum 
     return numElementsRequired > 0;
 }
 
-bool WebGLRenderingContext::validateRenderingState(unsigned numElementsRequired)
+bool WebGLRenderingContext::validateVertexAttributes(unsigned numElementsRequired)
 {
     if (!m_currentProgram)
         return false;
@@ -1956,12 +1956,12 @@ void WebGLRenderingContext::drawArrays(GC3Denum mode, GC3Dint first, GC3Dsizei c
         Checked<GC3Dint, RecordOverflow> checkedFirst(first);
         Checked<GC3Dint, RecordOverflow> checkedCount(count);
         Checked<GC3Dint, RecordOverflow> checkedSum = checkedFirst + checkedCount;
-        if (checkedSum.hasOverflowed() || !validateRenderingState(checkedSum.unsafeGet())) {
+        if (checkedSum.hasOverflowed() || !validateVertexAttributes(checkedSum.unsafeGet())) {
             synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "drawArrays", "attempt to access out of bounds arrays");
             return;
         }
     } else {
-        if (!validateRenderingState(0)) {
+        if (!validateVertexAttributes(0)) {
             synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "drawArrays", "attribs not setup correctly");
             return;
         }
@@ -2036,14 +2036,14 @@ void WebGLRenderingContext::drawElements(GC3Denum mode, GC3Dsizei count, GC3Denu
         }
         if (!count)
             return;
-        if (!validateIndexArrayConservative(type, numElements) || !validateRenderingState(numElements)) {
-            if (!validateIndexArrayPrecise(count, type, static_cast<GC3Dintptr>(offset), numElements) || !validateRenderingState(numElements)) {
+        if (!validateIndexArrayConservative(type, numElements) || !validateVertexAttributes(numElements)) {
+            if (!validateIndexArrayPrecise(count, type, static_cast<GC3Dintptr>(offset), numElements) || !validateVertexAttributes(numElements)) {
                 synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "drawElements", "attempt to access out of bounds arrays");
                 return;
             }
         }
     } else {
-        if (!validateRenderingState(0)) {
+        if (!validateVertexAttributes(0)) {
             synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "drawElements", "attribs not setup correctly");
             return;
         }

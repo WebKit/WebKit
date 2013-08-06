@@ -377,7 +377,7 @@ private:
     // Precise but slow index validation -- only done if conservative checks fail
     bool validateIndexArrayPrecise(GC3Dsizei count, GC3Denum type, GC3Dintptr offset, unsigned& numElementsRequired);
     // If numElements <= 0, we only check if each enabled vertex attribute is bound to a buffer.
-    bool validateRenderingState(unsigned numElements);
+    bool validateVertexAttributes(unsigned numElements);
 
     bool validateWebGLObject(const char*, WebGLObject*);
 

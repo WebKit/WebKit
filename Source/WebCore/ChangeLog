@@ -1,3 +1,21 @@
+2013-08-05  Przemyslaw Szymanski  <p.szymanski3@samsung.com>
+
+        [WebGL] validateRenderingState method name change
+        https://bugs.webkit.org/show_bug.cgi?id=119485
+
+        According to validateRenderingState method functionality its name should be
+        changed. This method validates only vertex attributes.
+
+        Reviewed by Dean Jackson.
+
+        No new tests. Covered by existing tests. No changes in functionality.
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::validateVertexAttributes):
+        (WebCore::WebGLRenderingContext::drawArrays):
+        (WebCore::WebGLRenderingContext::drawElements):
+        * html/canvas/WebGLRenderingContext.h:
+
 2013-07-27  Mark Rowe  <mrowe@apple.com>
 
         Logging should be configurable using human-readable channel names rather than crazy bitmasks
