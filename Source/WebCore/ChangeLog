@@ -1,3 +1,12 @@
+2013-08-06  Zan Dobersek  <zdobersek@igalia.com>
+
+        webkit-gtk fails to build with bison-3.0
+        https://bugs.webkit.org/show_bug.cgi?id=119373
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * GNUmakefile.am: Remove rules for generating ANGLE's glslang source files with Bison.
+
 2013-06-26  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] Add support for parsing <grid-line> that includes a 'span'
