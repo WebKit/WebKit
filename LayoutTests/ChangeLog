@@ -1,3 +1,15 @@
+2013-08-06  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] Allow defining named grid lines on the grid element
+        https://bugs.webkit.org/show_bug.cgi?id=118255
+
+        Reviewed by Andreas Kling.
+
+        From Blink r149798 by <jchaffraix@chromium.org>
+
+        * fast/css-grid-layout/named-grid-line-get-set-expected.txt: Added.
+        * fast/css-grid-layout/named-grid-line-get-set.html: Added.
+
 2013-06-26  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] Add support for parsing <grid-line> that includes a 'span'

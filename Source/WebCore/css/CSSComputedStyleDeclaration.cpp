@@ -1083,15 +1083,39 @@ static PassRefPtr<CSSValue> valueForGridTrackSize(const GridTrackSize& trackSize
     return 0;
 }
 
-static PassRefPtr<CSSValue> valueForGridTrackList(const Vector<GridTrackSize>& trackSizes, const RenderStyle* style, RenderView *renderView)
+static void addValuesForNamedGridLinesAtIndex(const NamedGridLinesMap& namedGridLines, size_t i, CSSValueList& list)
+{
+    // Note that this won't return the results in the order specified in the style sheet,
+    // which is probably fine as we still *do* return all the expected values.
+    NamedGridLinesMap::const_iterator it = namedGridLines.begin();
+    NamedGridLinesMap::const_iterator end = namedGridLines.end();
+    for (; it != end; ++it) {
+        const Vector<size_t>& linesIndexes = it->value;
+        for (size_t j = 0; j < linesIndexes.size(); ++j) {
+            if (linesIndexes[j] != i)
+                continue;
+
+            list.append(cssValuePool().createValue(it->key, CSSPrimitiveValue::CSS_STRING));
+            break;
+        }
+    }
+}
+
+static PassRefPtr<CSSValue> valueForGridTrackList(const Vector<GridTrackSize>& trackSizes, const NamedGridLinesMap& namedGridLines, const RenderStyle* style, RenderView* renderView)
 {
     // Handle the 'none' case here.
-    if (!trackSizes.size())
+    if (!trackSizes.size()) {
+        ASSERT(namedGridLines.isEmpty());
         return cssValuePool().createIdentifierValue(CSSValueNone);
+    }
 
     RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
-    for (size_t i = 0; i < trackSizes.size(); ++i)
+    for (size_t i = 0; i < trackSizes.size(); ++i) {
+        addValuesForNamedGridLinesAtIndex(namedGridLines, i, *list);
         list->append(valueForGridTrackSize(trackSizes[i], style, renderView));
+    }
+    // Those are the trailing <string>* allowed in the syntax.
+    addValuesForNamedGridLinesAtIndex(namedGridLines, trackSizes.size(), *list);
     return list.release();
 }
 
@@ -2044,9 +2068,9 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
         case CSSPropertyWebkitGridAutoRows:
             return valueForGridTrackSize(style->gridAutoRows(), style.get(), m_node->document()->renderView());
         case CSSPropertyWebkitGridDefinitionColumns:
-            return valueForGridTrackList(style->gridColumns(), style.get(), m_node->document()->renderView());
+            return valueForGridTrackList(style->gridColumns(), style->namedGridColumnLines(), style.get(), m_node->document()->renderView());
         case CSSPropertyWebkitGridDefinitionRows:
-            return valueForGridTrackList(style->gridRows(), style.get(), m_node->document()->renderView());
+            return valueForGridTrackList(style->gridRows(), style->namedGridRowLines(), style.get(), m_node->document()->renderView());
 
         case CSSPropertyWebkitGridColumnStart:
             return valueForGridPosition(style->gridItemColumnStart());

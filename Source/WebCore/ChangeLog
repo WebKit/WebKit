@@ -1,3 +1,39 @@
+2013-08-06  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] Allow defining named grid lines on the grid element
+        https://bugs.webkit.org/show_bug.cgi?id=118255
+
+        Reviewed by Andreas Kling.
+
+        From Blink r149798 by <jchaffraix@chromium.org>
+
+        This change adds parsing, style resolution and getComputedStyle
+        support for named grid lines at the grid element level
+        (i.e. extends our <track-list> support). Per the specification, we
+        allow multiple grid lines with the same name.
+
+        To fully support resolving the grid lines to a position on our
+        grid, we need to add the parsing at the grid item's level (which
+        means extending our <grid-line> support). This will be done in a
+        follow-up change.
+
+        Test: fast/css-grid-layout/named-grid-line-get-set.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::addValuesForNamedGridLinesAtIndex):
+        (WebCore::valueForGridTrackList):
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseGridTrackList):
+        * css/StyleResolver.cpp:
+        (WebCore::createGridTrackList):
+        (WebCore::StyleResolver::applyProperty):
+        * rendering/style/RenderStyle.h:
+        * rendering/style/StyleGridData.cpp:
+        (WebCore::StyleGridData::StyleGridData):
+        * rendering/style/StyleGridData.h:
+        (WebCore::StyleGridData::operator==):
+
 2013-08-06  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt] Fix minimal build.

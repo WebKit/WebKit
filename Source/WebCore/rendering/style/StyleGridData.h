@@ -31,8 +31,11 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
+
+typedef HashMap<String, Vector<size_t> > NamedGridLinesMap;
 
 class StyleGridData : public RefCounted<StyleGridData> {
 public:
@@ -41,7 +44,8 @@ public:
 
     bool operator==(const StyleGridData& o) const
     {
-        return m_gridColumns == o.m_gridColumns && m_gridRows == o.m_gridRows && m_gridAutoFlow == o.m_gridAutoFlow && m_gridAutoRows == o.m_gridAutoRows && m_gridAutoColumns == o.m_gridAutoColumns;
+        // FIXME: comparing two hashes doesn't look great for performance. Something to keep in mind going forward.
+        return m_gridColumns == o.m_gridColumns && m_gridRows == o.m_gridRows && m_gridAutoFlow == o.m_gridAutoFlow && m_gridAutoRows == o.m_gridAutoRows && m_gridAutoColumns == o.m_gridAutoColumns && m_namedGridColumnLines == o.m_namedGridColumnLines && m_namedGridRowLines == o.m_namedGridRowLines;
     }
 
     bool operator!=(const StyleGridData& o) const
@@ -52,6 +56,9 @@ public:
     // FIXME: Update the naming of the following variables.
     Vector<GridTrackSize> m_gridColumns;
     Vector<GridTrackSize> m_gridRows;
+
+    NamedGridLinesMap m_namedGridColumnLines;
+    NamedGridLinesMap m_namedGridRowLines;
 
     GridAutoFlow m_gridAutoFlow;
 

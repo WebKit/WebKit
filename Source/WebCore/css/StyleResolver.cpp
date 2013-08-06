@@ -2099,7 +2099,7 @@ static bool createGridTrackSize(CSSValue* value, GridTrackSize& trackSize, const
     return true;
 }
 
-static bool createGridTrackList(CSSValue* value, Vector<GridTrackSize>& trackSizes, const StyleResolver::State& state)
+static bool createGridTrackList(CSSValue* value, Vector<GridTrackSize>& trackSizes, NamedGridLinesMap& namedGridLines, const StyleResolver::State& state)
 {
     // Handle 'none'.
     if (value->isPrimitiveValue()) {
@@ -2110,14 +2110,29 @@ static bool createGridTrackList(CSSValue* value, Vector<GridTrackSize>& trackSiz
     if (!value->isValueList())
         return false;
 
+    size_t currentNamedGridLine = 0;
     for (CSSValueListIterator i = value; i.hasMore(); i.advance()) {
         CSSValue* currValue = i.value();
+        if (currValue->isPrimitiveValue()) {
+            CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(currValue);
+            if (primitiveValue->isString()) {
+                NamedGridLinesMap::AddResult result = namedGridLines.add(primitiveValue->getStringValue(), Vector<size_t>());
+                result.iterator->value.append(currentNamedGridLine);
+                continue;
+            }
+        }
+
+        ++currentNamedGridLine;
         GridTrackSize trackSize;
         if (!createGridTrackSize(currValue, trackSize, state))
             return false;
 
         trackSizes.append(trackSize);
     }
+
+    if (trackSizes.isEmpty())
+        return false;
+
     return true;
 }
 
@@ -2838,16 +2853,20 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     }
     case CSSPropertyWebkitGridDefinitionColumns: {
         Vector<GridTrackSize> trackSizes;
-        if (!createGridTrackList(value, trackSizes, state))
+        NamedGridLinesMap namedGridLines;
+        if (!createGridTrackList(value, trackSizes, namedGridLines, state))
             return;
         state.style()->setGridColumns(trackSizes);
+        state.style()->setNamedGridColumnLines(namedGridLines);
         return;
     }
     case CSSPropertyWebkitGridDefinitionRows: {
         Vector<GridTrackSize> trackSizes;
-        if (!createGridTrackList(value, trackSizes, state))
+        NamedGridLinesMap namedGridLines;
+        if (!createGridTrackList(value, trackSizes, namedGridLines, state))
             return;
         state.style()->setGridRows(trackSizes);
+        state.style()->setNamedGridRowLines(namedGridLines);
         return;
     }
 
