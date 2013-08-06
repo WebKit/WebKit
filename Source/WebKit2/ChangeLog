@@ -1,3 +1,24 @@
+2013-08-06  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r153753
+
+    2013-08-06  Andreas Kling  <akling@apple.com>
+
+            REGRESSION(r151403): Resizing is extremely laggy on many sites when plugins are disallowed.
+            <http://webkit.org/b/119516>
+            <rdar://problem/14648086>
+
+            Reviewed by Simon Fraser.
+
+            The web process relies on the WindowAndViewFramesChanged mechanism for caching a copy
+            of the window rect for fast access from DOMWindow APIs.
+
+            We retain part of the optimization introduced in r151403, namely not computing the
+            viewFrameInWindowCoordinates and accessibilityPosition unless the web process needs them.
+
+            * UIProcess/API/mac/WKView.mm:
+            (-[WKView _updateWindowAndViewFrames]):
+
 2013-08-05  Lucas Forschler  <lforschler@apple.com>
 
         Merge r153724
