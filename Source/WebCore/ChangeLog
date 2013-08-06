@@ -1,3 +1,10 @@
+2013-08-06  Rob Buis  <rwlbuis@webkit.org>
+
+        Speculative build fix after r153754.
+
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::blendFunc):
+
 2013-07-23  David Farler  <dfarler@apple.com>
 
         Provide optional OTHER_CFLAGS, OTHER_CPPFLAGS, OTHER_LDFLAGS additions for building with ASAN

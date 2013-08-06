@@ -240,7 +240,7 @@ static inline Vector<SVGLength> blendFunc(const AnimationBase*, const Vector<SVG
         return progress == 1 ? from : to;
     size_t resultLength = fromLength;
     if (fromLength != toLength) {
-        if (!remainder(std::max(fromLength, toLength), std::min(fromLength, toLength)))
+        if (!std::remainder(std::max(fromLength, toLength), std::min(fromLength, toLength)))
             resultLength = std::max(fromLength, toLength);
         else
             resultLength = fromLength * toLength;
