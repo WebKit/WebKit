@@ -1,3 +1,19 @@
+2013-08-06  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        [CSS Shapes] New positioning model: support for shape-margin
+        https://bugs.webkit.org/show_bug.cgi?id=118088
+
+        Reviewed by Alexandru Chiculita.
+
+        Update simple shape-margin tests to work with new positioning model.
+        Also move them to the CSSWG's repo.
+
+        * TestExpectations: Remove replaced tests.
+        * csswg/submitted/shapes/shape-outside/shape-outside-floats-shape-margin-000-expected.html: Renamed from LayoutTests/fast/shapes/shape-outside-floats/shape-outside-floats-left-margin-polygon-expected.html.
+        * csswg/submitted/shapes/shape-outside/shape-outside-floats-shape-margin-000.html: Renamed from LayoutTests/fast/shapes/shape-outside-floats/shape-outside-floats-left-margin-polygon.html.
+        * csswg/submitted/shapes/shape-outside/shape-outside-floats-shape-margin-001-expected.html: Renamed from LayoutTests/fast/shapes/shape-outside-floats/shape-outside-floats-right-margin-polygon-expected.html.
+        * csswg/submitted/shapes/shape-outside/shape-outside-floats-shape-margin-001.html: Renamed from LayoutTests/fast/shapes/shape-outside-floats/shape-outside-floats-right-margin-polygon.html.
+
 2013-08-05  Rob Buis  <rwlbuis@webkit.org>
 
         SVG stroke-dasharray is not animatable

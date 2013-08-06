@@ -34,12 +34,10 @@ webkit.org/b/119325 dom/xhtml/level3/core/nodecomparedocumentposition38.xhtml [ 
 # The CSS Shapes spec has changed the positioning model for floats with shape-outside.
 # Thus all of the tests need to be rewitten to work as the implementation of
 # the new model is completed.
-webkit.org/b/118088 fast/shapes/shape-outside-floats/shape-outside-floats-diamond-margin-polygon.html [ Skip ]
-webkit.org/b/118088 fast/shapes/shape-outside-floats/shape-outside-floats-ellipse-margin-bottom.html [ Skip ]
-webkit.org/b/118088 fast/shapes/shape-outside-floats/shape-outside-floats-ellipse-margin-left.html [ Skip ]
-webkit.org/b/118088 fast/shapes/shape-outside-floats/shape-outside-floats-ellipse-margin-right.html [ Skip ]
-webkit.org/b/118088 fast/shapes/shape-outside-floats/shape-outside-floats-left-margin-polygon.html [ Skip ]
-webkit.org/b/118088 fast/shapes/shape-outside-floats/shape-outside-floats-right-margin-polygon.html [ Skip ]
+webkit.org/b/119491 fast/shapes/shape-outside-floats/shape-outside-floats-diamond-margin-polygon.html [ Skip ]
+webkit.org/b/119491 fast/shapes/shape-outside-floats/shape-outside-floats-ellipse-margin-bottom.html [ Skip ]
+webkit.org/b/119491 fast/shapes/shape-outside-floats/shape-outside-floats-ellipse-margin-left.html [ Skip ]
+webkit.org/b/119491 fast/shapes/shape-outside-floats/shape-outside-floats-ellipse-margin-right.html [ Skip ]
 
 webkit.org/b/118301 fast/dom/timer-throttling-hidden-page.html [ Skip ]
 

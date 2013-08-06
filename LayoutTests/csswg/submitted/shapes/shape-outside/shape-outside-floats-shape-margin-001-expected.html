@@ -1,14 +1,19 @@
 <!DOCTYPE html>
-<html>
-<head>
-<script>
-    if (window.internals)
-        window.internals.settings.setCSSShapesEnabled(true);
-</script>
-
+<title>CSS RefTest Reference</title>
+<link rel="author" title="Adobe" href="http://html.adobe.com/">
+<link rel="author" title="Bem Jones-Bey" href="mailto:bjonesbe@adobe.com">
+<link rel="author" title="Hans Muller" href="mailto:hmuller@adobe.com">
+<meta name="flags" content="ahem">
 <style>
+#container-border {
+    border: 1px solid black; 
+    margin: 10px; 
+    width: 200px;
+}
+
 #container {
     font: 20px/1 Ahem, sans-serif;
+    line-height: 20px;
     width: 200px;
     height: 300px;
     text-align: right;
@@ -18,15 +23,15 @@
     float: right;
     position: relative;
     overflow: visible;
-    -webkit-shape-outside: polygon(0px 0px, 100px 0px, 100px 60px, 0px 60px);
-    -webkit-shape-margin: 20px;
+    width: 120px;
+    height: 100px;
 }
 
 #svg-shape {
     position: absolute;
     display:block;
-    top: -21px;
-    left: -21px;
+    top: 0px;
+    right: -20px;
     width: 142px;
     height: 102px;
 }
@@ -44,5 +49,3 @@
     X<br/>X<br/>X<br/>X<br/>X
 </div>
 </body>
-</html>
-
