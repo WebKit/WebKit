@@ -1,3 +1,53 @@
+2013-08-06  Eunmi Lee  <eunmi15.lee@samsung.com>
+
+        [EFL][WK2] Implement gesture recognizer.
+        https://bugs.webkit.org/show_bug.cgi?id=102643
+
+        Reviewed by Gyuyoung Kim.
+
+        Recognize tap, pan and pinch gestures using touch events.
+        The tap gesture is separated into single tap, double tap and
+        'tap and hold'.
+
+        This patch references the webkit NIX port.
+        https://github.com/WebKitNix/webkitnix
+
+        * PlatformEfl.cmake:
+        * UIProcess/API/efl/EwkView.cpp:
+        (EwkView::EwkView):
+        (EwkView::doneWithTouchEvent):
+        * UIProcess/API/efl/EwkView.h:
+        * UIProcess/API/efl/GestureRecognizer.cpp: Added.
+        (WebKit::GestureHandler::create):
+        (WebKit::GestureHandler::GestureHandler):
+        (WebKit::GestureHandler::handleSingleTap):
+        (WebKit::GestureHandler::handleDoubleTap):
+        (WebKit::GestureHandler::handleTapAndHold):
+        (WebKit::GestureHandler::handlePanStarted):
+        (WebKit::GestureHandler::handlePan):
+        (WebKit::GestureHandler::handlePanFinished):
+        (WebKit::GestureHandler::handlePinchStarted):
+        (WebKit::GestureHandler::handlePinch):
+        (WebKit::GestureHandler::handlePinchFinished):
+        (WebKit::GestureRecognizer::GestureRecognizer):
+        (WebKit::GestureRecognizer::~GestureRecognizer):
+        (WebKit::GestureRecognizer::processTouchEvent):
+        (WebKit::GestureRecognizer::doubleTapTimerCallback):
+        (WebKit::GestureRecognizer::tapAndHoldTimerCallback):
+        (WebKit::GestureRecognizer::exceedsPanThreshold):
+        (WebKit::GestureRecognizer::exceedsDoubleTapThreshold):
+        (WebKit::getPointAtIndex):
+        (WebKit::createVectorWithWKArray):
+        (WebKit::GestureRecognizer::noGesture):
+        (WebKit::GestureRecognizer::singleTapGesture):
+        (WebKit::GestureRecognizer::doubleTapGesture):
+        (WebKit::GestureRecognizer::panGesture):
+        (WebKit::GestureRecognizer::pinchGesture):
+        (WebKit::GestureRecognizer::reset):
+        (WebKit::GestureRecognizer::stopTapTimers):
+        * UIProcess/API/efl/GestureRecognizer.h: Added.
+        (WebKit::GestureRecognizer::create):
+
 2013-07-23  David Farler  <dfarler@apple.com>
 
         Provide optional OTHER_CFLAGS, OTHER_CPPFLAGS, OTHER_LDFLAGS additions for building with ASAN

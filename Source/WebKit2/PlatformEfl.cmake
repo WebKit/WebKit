@@ -64,6 +64,7 @@ list(APPEND WebKit2_SOURCES
     UIProcess/API/efl/EwkView.cpp
     UIProcess/API/efl/EvasGLContext.cpp
     UIProcess/API/efl/EvasGLSurface.cpp
+    UIProcess/API/efl/GestureRecognizer.cpp
     UIProcess/API/efl/SnapshotImageGL.cpp
     UIProcess/API/efl/ewk_auth_request.cpp
     UIProcess/API/efl/ewk_back_forward_list.cpp

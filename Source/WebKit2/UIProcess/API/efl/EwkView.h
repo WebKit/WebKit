@@ -43,6 +43,7 @@
 #include <wtf/text/WTFString.h>
 
 #if ENABLE(TOUCH_EVENTS)
+#include "GestureRecognizer.h"
 #include "ewk_touch.h"
 #endif
 
@@ -279,6 +280,7 @@ private:
     bool m_mouseEventsEnabled;
 #if ENABLE(TOUCH_EVENTS)
     bool m_touchEventsEnabled;
+    OwnPtr<WebKit::GestureRecognizer> m_gestureRecognizer;
 #endif
     WebCore::Timer<EwkView> m_displayTimer;
     RefPtr<EwkContextMenu> m_contextMenu;
