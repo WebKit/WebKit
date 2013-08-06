@@ -1,5 +1,14 @@
 2013-08-05  Dean Jackson  <dino@apple.com>
 
+        Move previous commit into /demos.
+
+        * demos/srcset/image-1x.png: Renamed from Websites/webkit.org/blog-files/srcset/image-1x.png.
+        * demos/srcset/image-2x.png: Renamed from Websites/webkit.org/blog-files/srcset/image-2x.png.
+        * demos/srcset/image-src.png: Renamed from Websites/webkit.org/blog-files/srcset/image-src.png.
+        * demos/srcset/index.html: Renamed from Websites/webkit.org/blog-files/srcset/index.html.
+
+2013-08-05  Dean Jackson  <dino@apple.com>
+
         Upload example for a blog post.
 
         * blog-files/srcset/image-1x.png: Added.
