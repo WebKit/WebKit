@@ -1,3 +1,25 @@
+2013-08-05  Mark Rowe  <mrowe@apple.com>
+
+        <rdar://problem/5927399> FastMalloc should support MallocStackLogging
+
+        Call the malloc stack logging function from within the various entry points to FastMalloc
+        when stack logging is enabled.
+
+        Reviewed by Oliver Hunt and Geoff Garen.
+
+        * wtf/FastMalloc.cpp:
+        Call in to MallocHook::InvokeNewHook / MallocHook::InvokeDeleteHook at the appropriate entry
+        points to FastMalloc. The naming comes from TCMalloc's existing, unused concept of malloc hooks.
+        (WTF::MallocHook::record): Call the stack logging function with appropriate argument types.
+        (WTF::MallocHook::recordAllocation): Out-of-line slow path for when stack logging is enabled
+        that calls record with the values in the right arguments.
+        (WTF::MallocHook::recordDeallocation): Ditto.
+        (WTF::MallocHook::init): Stack logging is enabled if the system allocator has enabled stack logging.
+        (WTF::MallocHook::InvokeNewHook): Call recordAllocation in the unlikely event that stack logging is
+        enabled.
+        (WTF::MallocHook::InvokeDeleteHook): Ditto for recordDeallocation.
+        (WTF::TCMalloc_ThreadCache::InitModule): Initialize the malloc hook.
+
 2013-08-06  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Unreviewed build correction after r153754 and r153757.
