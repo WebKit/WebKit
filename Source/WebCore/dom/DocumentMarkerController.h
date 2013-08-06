@@ -55,6 +55,11 @@ public:
     void addTextMatchMarker(const Range*, bool activeMatch);
 
     void copyMarkers(Node* srcNode, unsigned startOffset, int length, Node* dstNode, int delta);
+    bool hasMarkers() const
+    {
+        ASSERT(m_markers.isEmpty() == !m_possiblyExistingMarkerTypes.intersects(DocumentMarker::AllMarkers()));
+        return !m_markers.isEmpty();
+    }
     bool hasMarkers(Range*, DocumentMarker::MarkerTypes = DocumentMarker::AllMarkers());
 
     // When a marker partially overlaps with range, if removePartiallyOverlappingMarkers is true, we completely
