@@ -1,3 +1,11 @@
+2013-08-07  Antti Koivisto  <antti@apple.com>
+
+        Try to fix EFL build.
+        
+        Not reviewed.
+
+        * CMakeLists.txt:
+
 2013-08-06  Jer Noble  <jer.noble@apple.com>
 
         Crash when entering fullscreen video playback from a WebView using WebKit2
