@@ -1,3 +1,15 @@
+2013-08-06  Jer Noble  <jer.noble@apple.com>
+
+        Crash when entering fullscreen video playback from a WebView using WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=119531
+
+        Reviewed by Tim Horton.
+
+        Initialize wkWindowSetScaledFrame and wkWindowSetAlpha when initializing WebCoreSystemInterface.
+
+        * WebProcess/WebCoreSupport/mac/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface):
+
 2013-08-04  Sam Weinig  <sam@webkit.org>
 
         Remove support for HTML5 MicroData
