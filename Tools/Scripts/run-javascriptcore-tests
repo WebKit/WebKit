@@ -137,7 +137,6 @@ if (isAppleMacWebKit() || isAppleWinWebKit()) {
 chdirWebKit();
 chdir("Source/JavaScriptCore");
 chdir "tests/mozilla" or die "Failed to switch directory to 'tests/mozilla'\n";
-printf "Running: jsDriver.pl -e squirrelfish -s %s -f actual.html %s\n", jscPath($productDir), join(" ", @jsArgs);
 my @jsDriverCmd = ("perl", "jsDriver.pl", "-e", "squirrelfish", "-s", jscPath($productDir), "-f", "actual.html", @jsArgs);
 if (isGtk() || isEfl()) {
     my @jhbuildPrefix = sourceDir() . "/Tools/jhbuild/jhbuild-wrapper";
@@ -151,6 +150,7 @@ if (isGtk() || isEfl()) {
 
     unshift(@jsDriverCmd, @jhbuildPrefix);
 }
+print "Running: " . join(" ", @jsDriverCmd) . "\n";
 my $result = system(@jsDriverCmd);
 exit exitStatus($result)  if $result;
 

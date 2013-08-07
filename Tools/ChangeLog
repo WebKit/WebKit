@@ -1,3 +1,18 @@
+2013-08-07  Daniel Bates  <dabates@apple.com>
+
+        Clean up: Simplifying the printing of the command line arguments passed to jsDriver.pl
+        <https://bugs.webkit.org/show_bug.cgi?id=119558>
+
+        Reviewed by Martin Robinson.
+
+        Currently we build the command line to execute jsDriver.pl twice so as to both
+        print it to standard output and actually execute it. We should only build up
+        this command line once. Moreover, we should print to standard output the actual
+        command line that we are going to use including the GTK- and EFL-specific call
+        to /Tools/jhbuild/jhbuild-wrapper.
+
+        * Scripts/run-javascriptcore-tests:
+
 2013-08-07  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         [EFL] REGRESSION after r153432: some accessibility tests crash.
