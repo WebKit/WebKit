@@ -1,3 +1,15 @@
+2013-08-07  Adenilson Cavalcanti  <cavalcantii@gmail.com>
+
+        [rendering] Implement PaintInfo interfaces
+        https://bugs.webkit.org/show_bug.cgi?id=119388
+
+        Reviewed by Benjamin Poulain.
+
+        In discussion in IRC, it was decided to remove this comment since implementing such change
+        would have a vast impact on rendering classes.
+
+        * rendering/PaintInfo.h:
+
 2013-08-07  Dean Jackson  <dino@apple.com>
 
         Don't remove contents layer from its parent unless necessary

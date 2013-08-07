@@ -107,7 +107,6 @@ struct PaintInfo {
 
     static IntRect infiniteRect() { return IntRect(LayoutRect::infiniteRect()); }
 
-    // FIXME: Introduce setters/getters at some point. Requires a lot of changes throughout rendering/.
     GraphicsContext* context;
     IntRect rect;
     PaintPhase phase;
