@@ -908,7 +908,7 @@
 #define WTF_USE_OPENGL 1
 #define WTF_USE_OPENGL_ES_2 1
 #define WTF_USE_EGL 1
-#define WTF_USE_SURFACE 1
+#define WTF_USE_GRAPHICS_SURFACE 1
 #endif
 
 /* Qt always uses Texture Mapper */

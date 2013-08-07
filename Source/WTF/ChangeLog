@@ -1,3 +1,11 @@
+2013-08-07  Alex Christensen  <achristensen@apple.com>
+
+        Fixed wrong definition for AppleWin port's WebGL after r153768.
+
+        Rubberstamped by Benjamin Poulain.
+
+        * wtf/Platform.h: Replaced WTF_USE_SURFACE with WTF_USE_GRAPHICS_SURFACE.
+
 2013-08-04  Sam Weinig  <sam@webkit.org>
 
         Remove support for HTML5 MicroData
