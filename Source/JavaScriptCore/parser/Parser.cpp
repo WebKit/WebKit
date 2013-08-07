@@ -80,6 +80,8 @@ Parser<LexerType>::Parser(VM* vm, const SourceCode& source, FunctionParameters* 
     m_lexer = adoptPtr(new LexerType(vm));
     m_arena = m_vm->parserArena.get();
     m_lexer->setCode(source, m_arena);
+    m_token.m_location.line = source.firstLine();
+    m_token.m_location.startOffset = source.startOffset();
     m_token.m_location.endOffset = source.startOffset();
     m_token.m_location.lineStartOffset = source.startOffset();
 

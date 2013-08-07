@@ -1,3 +1,15 @@
+2013-08-06  Mark Lam  <mark.lam@apple.com>
+
+        Assertion failure in emitExpressionInfo when reloading with Web Inspector open.
+        https://bugs.webkit.org/show_bug.cgi?id=119532.
+
+        Reviewed by Oliver Hunt.
+
+        * parser/Parser.cpp:
+        (JSC::::Parser):
+        - Just need to initialize the Parser's JSTokenLocation's initial line and
+          startOffset as well during Parser construction.
+
 2013-08-04  Sam Weinig  <sam@webkit.org>
 
         Remove support for HTML5 MicroData
