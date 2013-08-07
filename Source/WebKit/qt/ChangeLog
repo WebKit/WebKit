@@ -1,3 +1,14 @@
+2013-08-07  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt] Build fix after r153751
+
+        Unreviewed build fix.
+
+        Fix build when PAGE_VISIBILITY_API is disabled.
+
+        * WebCoreSupport/QWebPageAdapter.cpp:
+        (QWebPageAdapter::visibilityState):
+
 2013-08-06  Benjamin Dupont   <bdupont@nds.com>
 
         [Qt] Add Page Visibility API support

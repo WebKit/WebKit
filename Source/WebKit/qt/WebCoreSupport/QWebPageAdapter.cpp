@@ -327,7 +327,11 @@ void QWebPageAdapter::setVisibilityState(VisibilityState state)
 
 QWebPageAdapter::VisibilityState QWebPageAdapter::visibilityState() const
 {
+#if ENABLE(PAGE_VISIBILITY_API)
     return webCoreVisibilityStateToWebPageVisibilityState(page->visibilityState());
+#else
+    return QWebPageAdapter::VisibilityStateVisible;
+#endif
 }
 
 void QWebPageAdapter::setNetworkAccessManager(QNetworkAccessManager *manager)
