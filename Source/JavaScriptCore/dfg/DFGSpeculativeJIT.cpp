@@ -2134,10 +2134,17 @@ void SpeculativeJIT::compileGetByValOnString(Node* node)
     // 8 bit string values don't need the isASCII check.
     cont8Bit.link(&m_jit);
 
+#if CPU(X86)
+    // Don't have enough register, construct our own indexed address and load.
+    m_jit.lshift32(MacroAssembler::TrustedImm32(2), scratchReg);
+    m_jit.addPtr(MacroAssembler::TrustedImmPtr(m_jit.vm()->smallStrings.singleCharacterStrings()), scratchReg);
+    m_jit.loadPtr(scratchReg, scratchReg);
+#else
     GPRTemporary smallStrings(this);
     GPRReg smallStringsReg = smallStrings.gpr();
     m_jit.move(MacroAssembler::TrustedImmPtr(m_jit.vm()->smallStrings.singleCharacterStrings()), smallStringsReg);
     m_jit.loadPtr(MacroAssembler::BaseIndex(smallStringsReg, scratchReg, MacroAssembler::ScalePtr, 0), scratchReg);
+#endif
 
     addSlowPathGenerator(
         slowPathCall(
