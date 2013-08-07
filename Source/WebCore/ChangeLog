@@ -1,3 +1,18 @@
+2013-08-07  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r153775
+
+    2013-08-06  Stephanie Lewis  <slewis@apple.com>
+
+            Update Order Files for Safari
+            <rdar://problem/14517392>
+
+            Unreviewed.
+
+            No change in functionality.
+
+            * WebCore.order:
+
 2013-08-06  Lucas Forschler  <lforschler@apple.com>
 
         Merge r153758

@@ -1,3 +1,16 @@
+2013-08-07  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r153775
+
+    2013-08-06  Stephanie Lewis  <slewis@apple.com>
+
+            Update Order Files for Safari
+            <rdar://problem/14517392>
+
+            Unreviewed.
+
+            * WebKit.order:
+
 2013-07-26  Lucas Forschler  <lforschler@apple.com>
 
         Merge r153379
