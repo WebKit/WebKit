@@ -1,3 +1,18 @@
+2013-08-07  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt] REGRESSION(r) Two pixel result fail after r153522
+        https://bugs.webkit.org/show_bug.cgi?id=119392
+
+        Reviewed by Jocelyn Turcotte.
+
+        Consider scaling transform on the painter to determine final destination size.
+
+        Covered by existing tests.
+
+        * platform/graphics/qt/ImageQt.cpp:
+        (WebCore::prescaleImageIfRequired):
+        (WebCore::BitmapImage::draw):
+
 2013-08-07  Antti Koivisto  <antti@apple.com>
 
         2.5% regression on page cycler moz
