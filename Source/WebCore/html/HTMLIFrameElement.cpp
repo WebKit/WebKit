@@ -112,7 +112,7 @@ void HTMLIFrameElement::didRecalcStyle(Style::Change styleChange)
         return;
     Document* childDocument = contentDocument();
     if (styleChange >= Style::Inherit || childDocument->childNeedsStyleRecalc() || childDocument->needsStyleRecalc())
-        contentDocument()->recalcStyle(styleChange);
+        contentDocument()->recalcStyle(styleChange == Style::Detach ? Style::Force : styleChange);
 }
 
 }

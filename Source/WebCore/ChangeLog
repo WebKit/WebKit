@@ -1,3 +1,15 @@
+2013-08-07  Antti Koivisto  <antti@apple.com>
+
+        fast/frames/seamless/seamless-custom-font-pruning-crash.html asserts
+        https://bugs.webkit.org/show_bug.cgi?id=119557
+
+        Rubber-stamped by Eric Carlson.
+        
+        Pass Style::Detach style change to seamless document as Style::Force. Style::resolveTree does not expect to be called with Detach.
+
+        * html/HTMLIFrameElement.cpp:
+        (WebCore::HTMLIFrameElement::didRecalcStyle):
+
 2013-08-07  Andre Moreira Magalhaes   <andre.magalhaes@collabora.co.uk>
 
         Disable HTTP request "Accept-Encoding:" header field on gstreamer source element to avoid receiving the wrong size when retrieving data
