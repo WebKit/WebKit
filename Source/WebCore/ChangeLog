@@ -1,3 +1,32 @@
+2013-08-07  Andre Moreira Magalhaes   <andre.magalhaes@collabora.co.uk>
+
+        Disable HTTP request "Accept-Encoding:" header field on gstreamer source element to avoid receiving the wrong size when retrieving data
+        https://bugs.webkit.org/show_bug.cgi?id=115354
+
+        Reviewed by Philippe Normand.
+
+        The default value for the HTTP "Accept-Encoding:" header field in the request allows
+        compressed data to be received on requests.
+        While this works fine for most cases, it can break the webkit source that needs to rely on the
+        the proper data size when receiving the response (even though the received data is already
+        uncompressed the size reported in ResourceResponse::expectedContentLength() is the same
+        represented by the HTTP header field "Content-Length" which is the size of the compressed data).
+
+        This patch disables the HTTP "Accept-Encoding:" header field when using the request
+        as we don't want the received response to be encoded in any way, as we need to rely on the proper
+        size of the returned data on ResourceHandle::didReceiveResponse().
+
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (webKitWebSrcStart):
+        * platform/network/soup/ResourceRequest.h:
+        (ResourceRequestBase):
+        (WebCore::ResourceRequest::acceptEncoding):
+        (WebCore::ResourceRequest::setAcceptEncoding):
+        (WebCore::ResourceRequest::ResourceRequestBase):
+        * platform/network/soup/ResourceRequestSoup.cpp:
+        (WebCore::ResourceRequest::updateSoupMessage):
+        (WebCore::ResourceRequest::toSoupMessage):
+
 2013-08-07  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt] REGRESSION(r) Two pixel result fail after r153522

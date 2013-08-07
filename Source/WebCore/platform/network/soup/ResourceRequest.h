@@ -36,18 +36,21 @@ namespace WebCore {
     public:
         ResourceRequest(const String& url)
             : ResourceRequestBase(KURL(ParsedURLString, url), UseProtocolCachePolicy)
+            , m_acceptEncoding(true)
             , m_soupFlags(static_cast<SoupMessageFlags>(0))
         {
         }
 
         ResourceRequest(const KURL& url)
             : ResourceRequestBase(url, UseProtocolCachePolicy)
+            , m_acceptEncoding(true)
             , m_soupFlags(static_cast<SoupMessageFlags>(0))
         {
         }
 
         ResourceRequest(const KURL& url, const String& referrer, ResourceRequestCachePolicy policy = UseProtocolCachePolicy)
             : ResourceRequestBase(url, policy)
+            , m_acceptEncoding(true)
             , m_soupFlags(static_cast<SoupMessageFlags>(0))
         {
             setHTTPReferrer(referrer);
@@ -55,18 +58,23 @@ namespace WebCore {
 
         ResourceRequest()
             : ResourceRequestBase(KURL(), UseProtocolCachePolicy)
+            , m_acceptEncoding(true)
             , m_soupFlags(static_cast<SoupMessageFlags>(0))
         {
         }
 
         ResourceRequest(SoupMessage* soupMessage)
             : ResourceRequestBase(KURL(), UseProtocolCachePolicy)
+            , m_acceptEncoding(true)
             , m_soupFlags(static_cast<SoupMessageFlags>(0))
         {
             updateFromSoupMessage(soupMessage);
         }
 
         void updateFromDelegatePreservingOldHTTPBody(const ResourceRequest& delegateProvidedRequest) { *this = delegateProvidedRequest; }
+
+        bool acceptEncoding() const { return m_acceptEncoding; }
+        void setAcceptEncoding(bool acceptEncoding) { m_acceptEncoding = acceptEncoding; }
 
         void updateSoupMessageHeaders(SoupMessageHeaders*) const;
         void updateFromSoupMessageHeaders(SoupMessageHeaders*);
@@ -82,6 +90,7 @@ namespace WebCore {
     private:
         friend class ResourceRequestBase;
 
+        bool m_acceptEncoding : 1;
         SoupMessageFlags m_soupFlags;
 
         void doUpdatePlatformRequest() { }

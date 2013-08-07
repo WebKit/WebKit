@@ -69,6 +69,9 @@ void ResourceRequest::updateSoupMessage(SoupMessage* soupMessage) const
     }
 
     soup_message_set_flags(soupMessage, m_soupFlags);
+
+    if (!acceptEncoding())
+        soup_message_disable_feature(soupMessage, SOUP_TYPE_CONTENT_DECODER);
 }
 
 SoupMessage* ResourceRequest::toSoupMessage() const
