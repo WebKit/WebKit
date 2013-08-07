@@ -132,6 +132,8 @@ void InitWebCoreSystemInterface(void)
         INIT(SetCrashReportApplicationSpecificInformation);
         INIT(AVAssetResolvedURL);
         INIT(Cursor);
+        INIT(WindowSetScaledFrame);
+        INIT(WindowSetAlpha);
 
 #if USE(CFNETWORK)
         INIT(GetDefaultHTTPCookieStorage);
