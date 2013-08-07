@@ -1,3 +1,31 @@
+2013-08-07  Tim Horton  <timothy_horton@apple.com>
+
+        Fall out of simple image layer optimization if the image has EXIF rotation
+        https://bugs.webkit.org/show_bug.cgi?id=119535
+        <rdar://problem/14071174>
+
+        Reviewed by Simon Fraser.
+
+        Test: fast/images/exif-orientation-composited.html
+
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::frameOrientationAtIndex):
+        Ensure that the frame is cached if we're requesting the orientation,
+        so we can acquire orientation information at any given time.
+
+        * platform/mac/DragImageMac.mm:
+        (WebCore::createDragImageFromImage):
+        * platform/graphics/BitmapImage.h:
+        Rename currentFrameOrientation to frameOrientationForCurrentFrame to match
+        the similarly-behaving nativeImageForCurrentFrame.
+
+        * platform/graphics/Image.h:
+        (WebCore::Image::orientationForCurrentFrame): Added. Virtual, overriden by BitmapImage.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::isDirectlyCompositedImage):
+        If the given image has a non-default image orientation, don't use direct compositing.
+
 2013-08-07  Antti Koivisto  <antti@apple.com>
 
         fast/frames/seamless/seamless-custom-font-pruning-crash.html asserts

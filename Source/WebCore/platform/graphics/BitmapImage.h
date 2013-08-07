@@ -162,10 +162,9 @@ public:
 #endif
 
     virtual PassNativeImagePtr nativeImageForCurrentFrame() OVERRIDE;
+    virtual ImageOrientation orientationForCurrentFrame() OVERRIDE { return frameOrientationAtIndex(currentFrame()); }
 
     virtual bool currentFrameKnownToBeOpaque() OVERRIDE;
-
-    ImageOrientation currentFrameOrientation();
 
 #if !ASSERT_DISABLED
     virtual bool notSolidColor();

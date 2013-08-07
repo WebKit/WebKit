@@ -338,14 +338,9 @@ bool BitmapImage::currentFrameKnownToBeOpaque()
     return !frameHasAlphaAtIndex(currentFrame());
 }
 
-ImageOrientation BitmapImage::currentFrameOrientation()
-{
-    return frameOrientationAtIndex(currentFrame());
-}
-
 ImageOrientation BitmapImage::frameOrientationAtIndex(size_t index)
 {
-    if (m_frames.size() <= index)
+    if (!ensureFrameIsCached(index))
         return DefaultImageOrientation;
 
     if (m_frames[index].m_haveMetadata)

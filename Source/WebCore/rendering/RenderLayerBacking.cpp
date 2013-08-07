@@ -1707,6 +1707,9 @@ bool RenderLayerBacking::isDirectlyCompositedImage() const
         if (!image->isBitmapImage())
             return false;
 
+        if (image->orientationForCurrentFrame() != DefaultImageOrientation)
+            return false;
+
         return m_graphicsLayer->shouldDirectlyCompositeImage(image);
     }
 
