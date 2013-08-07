@@ -10,6 +10,15 @@
         - Just need to initialize the Parser's JSTokenLocation's initial line and
           startOffset as well during Parser construction.
 
+2013-08-06  Stephanie Lewis  <slewis@apple.com>
+
+        Update Order Files for Safari
+        <rdar://problem/14517392>
+
+        Unreviewed.
+
+        * JavaScriptCore.order:
+
 2013-08-04  Sam Weinig  <sam@webkit.org>
 
         Remove support for HTML5 MicroData

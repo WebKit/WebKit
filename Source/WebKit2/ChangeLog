@@ -10,6 +10,15 @@
         * WebProcess/WebCoreSupport/mac/WebSystemInterface.mm:
         (InitWebCoreSystemInterface):
 
+2013-08-06  Stephanie Lewis  <slewis@apple.com>
+
+        Update Order Files for Safari
+        <rdar://problem/14517392>
+
+        Unreviewed.
+
+        * mac/WebKit2.order:
+
 2013-08-04  Sam Weinig  <sam@webkit.org>
 
         Remove support for HTML5 MicroData
