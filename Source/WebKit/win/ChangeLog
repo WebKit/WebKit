@@ -1,3 +1,12 @@
+2013-08-07  Antti Koivisto  <antti@apple.com>
+
+        Try to fix Win WK1 build.
+
+        Not reviewed.
+
+        * WebFrame.cpp:
+        (WebFrame::invalidate):
+
 2013-08-07  Patrick Gansterer  <paroga@webkit.org>
 
         Remove dependency on CoreFoundation from WebURLResponse
