@@ -89,6 +89,7 @@ INCLUDEPATH += \
     $$SOURCE_DIR/rendering/style \
     $$SOURCE_DIR/rendering/svg \
     $$SOURCE_DIR/storage \
+    $$SOURCE_DIR/style \
     $$SOURCE_DIR/svg \
     $$SOURCE_DIR/svg/animation \
     $$SOURCE_DIR/svg/graphics \

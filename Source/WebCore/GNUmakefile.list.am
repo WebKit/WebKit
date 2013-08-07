@@ -2751,8 +2751,6 @@ webcore_sources += \
 	Source/WebCore/css/StylePropertyShorthand.h \
 	Source/WebCore/css/StyleResolver.cpp \
 	Source/WebCore/css/StyleResolver.h \
-	Source/WebCore/css/StyleResolveTree.cpp \
-	Source/WebCore/css/StyleResolveTree.h \
 	Source/WebCore/css/StyleRule.cpp \
 	Source/WebCore/css/StyleRule.h \
 	Source/WebCore/css/StyleRuleImport.cpp \
@@ -4717,6 +4715,8 @@ webcore_sources += \
 	Source/WebCore/storage/StorageTracker.cpp \
 	Source/WebCore/storage/StorageTracker.h \
 	Source/WebCore/storage/StorageTrackerClient.h \
+	Source/WebCore/style/StyleResolveTree.cpp \
+	Source/WebCore/style/StyleResolveTree.h \
 	Source/WebCore/WebCorePrefix.h \
 	Source/WebCore/workers/AbstractWorker.cpp \
 	Source/WebCore/workers/AbstractWorker.h \

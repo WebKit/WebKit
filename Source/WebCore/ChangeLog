@@ -1,5 +1,34 @@
 2013-08-07  Antti Koivisto  <antti@apple.com>
 
+        Create WebCore/style and move StyleResolveTree there
+        https://bugs.webkit.org/show_bug.cgi?id=119543
+
+        Reviewed by Andreas Kling.
+
+        WebCore/css is bloated. We should move the internal style representation and the style resolver
+        related code to a directory of their own. CSS language related code including parser and 
+        CSSOM stays under css.
+
+        Things named StyleFoo should generally move under WebCore/style. They should also be moved to
+        the Style namespace at the same time.
+
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * WebCore.pri:
+        * Target.pri:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCoreCommon.props:
+        * WebCore.vcxproj/copyForwardingHeaders.cmd:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/StyleResolveTree.cpp: Removed.
+        * css/StyleResolveTree.h: Removed.
+        * style: Added.
+        * style/StyleResolveTree.cpp: Copied from Source/WebCore/css/StyleResolveTree.cpp.
+        * style/StyleResolveTree.h: Copied from Source/WebCore/css/StyleResolveTree.h.
+
+2013-08-07  Antti Koivisto  <antti@apple.com>
+
         Move style recalculation out from Element
         https://bugs.webkit.org/show_bug.cgi?id=119497
 

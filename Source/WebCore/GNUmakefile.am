@@ -95,6 +95,7 @@ webcore_cppflags += \
 	-I$(srcdir)/Source/WebCore/rendering/style \
 	-I$(srcdir)/Source/WebCore/rendering/svg \
 	-I$(srcdir)/Source/WebCore/storage \
+	-I$(srcdir)/Source/WebCore/style \
 	-I$(srcdir)/Source/WebCore/svg \
 	-I$(srcdir)/Source/WebCore/svg/animation \
 	-I$(srcdir)/Source/WebCore/svg/graphics \

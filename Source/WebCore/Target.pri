@@ -333,7 +333,6 @@ SOURCES += \
     css/StylePropertySet.cpp \
     css/StylePropertyShorthand.cpp \
     css/StyleResolver.cpp \
-    css/StyleResolveTree.cpp \
     css/StyleRule.cpp \
     css/StyleRuleImport.cpp \
     css/StyleScopeResolver.cpp \
@@ -1282,6 +1281,7 @@ SOURCES += \
     storage/StorageSyncManager.cpp \
     storage/StorageStrategy.cpp \
     storage/StorageTracker.cpp \
+    style/StyleResolveTree.cpp \
     testing/Internals.cpp \
     testing/InternalSettings.cpp \
     xml/DOMParser.cpp \
@@ -1543,7 +1543,6 @@ HEADERS += \
     css/StylePropertySet.h \
     css/StylePropertyShorthand.h \
     css/StyleResolver.h \
-    css/StyleResolveTree.h \
     css/StyleRule.h \
     css/StyleRuleImport.h \
     css/StyleSheet.h \
@@ -2602,6 +2601,7 @@ HEADERS += \
     storage/StorageThread.h \
     storage/StorageTracker.h \
     storage/StorageTrackerClient.h \
+    style/StyleResolveTree.h \
     svg/animation/SMILTimeContainer.h \
     svg/animation/SMILTime.h \
     svg/animation/SVGSMILElement.h \

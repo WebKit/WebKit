@@ -13042,6 +13042,7 @@
 				5DCF83690D59157800953BC6 /* plugins */,
 				F523D2F302DE443B018635CA /* rendering */,
 				1AE82EC90CAAE177002237AE /* storage */,
+				E4763D4A17B2704900D35206 /* style */,
 				B22277CA0D00BF1E0071B782 /* svg */,
 				417DA4CD13734204007C57FB /* testing */,
 				2E4346310F546A6800B0F1BA /* workers */,
@@ -19605,6 +19606,15 @@
 			path = animation;
 			sourceTree = "<group>";
 		};
+		E4763D4A17B2704900D35206 /* style */ = {
+			isa = PBXGroup;
+			children = (
+				E4DEAA1517A93DC3000E0430 /* StyleResolveTree.cpp */,
+				E4DEAA1617A93DC3000E0430 /* StyleResolveTree.h */,
+			);
+			path = style;
+			sourceTree = "<group>";
+		};
 		ED501DC90B249F3900AE18D9 /* mac */ = {
 			isa = PBXGroup;
 			children = (
@@ -19844,8 +19854,6 @@
 				E1B25105152A0BAF0069B779 /* StylePropertyShorthand.h */,
 				E139866115478474001E3F65 /* StyleResolver.cpp */,
 				E139866215478474001E3F65 /* StyleResolver.h */,
-				E4DEAA1517A93DC3000E0430 /* StyleResolveTree.cpp */,
-				E4DEAA1617A93DC3000E0430 /* StyleResolveTree.h */,
 				E4BBED4A14FCDBA1003F0B98 /* StyleRule.cpp */,
 				E4BBED4B14FCDBA1003F0B98 /* StyleRule.h */,
 				E4946EAC156E64DD00D3297F /* StyleRuleImport.cpp */,

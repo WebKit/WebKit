@@ -81,6 +81,7 @@ set(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/rendering/style"
     "${WEBCORE_DIR}/rendering/svg"
     "${WEBCORE_DIR}/storage"
+    "${WEBCORE_DIR}/style"
     "${WEBCORE_DIR}/svg"
     "${WEBCORE_DIR}/svg/animation"
     "${WEBCORE_DIR}/svg/graphics"
@@ -1091,7 +1092,6 @@ set(WebCore_SOURCES
     css/StylePropertySet.cpp
     css/StylePropertyShorthand.cpp
     css/StyleResolver.cpp
-    css/StyleResolveTree.cpp
     css/StyleRule.cpp
     css/StyleRuleImport.cpp
     css/StyleScopeResolver.cpp
@@ -2326,6 +2326,8 @@ set(WebCore_SOURCES
     storage/StorageStrategy.cpp
     storage/StorageSyncManager.cpp
     storage/StorageTracker.cpp
+
+    style/StyleResolveTree.cpp
 
     svg/ColorDistance.cpp
     svg/SVGAElement.cpp
