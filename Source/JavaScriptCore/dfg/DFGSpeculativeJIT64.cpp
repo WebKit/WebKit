@@ -987,8 +987,9 @@ FPRReg SpeculativeJIT::fillSpeculateDouble(Edge edge)
                 m_jit.move64ToDouble(gpr, fpr);
                 unlock(gpr);
 
-                m_fprs.retain(fpr, virtualRegister, SpillOrderDouble);
-                info.fillDouble(*m_stream, fpr);
+                // Don't fill double here since that will lead to confusion: the
+                // register allocator will now think that this is a double while
+                // everyone else thinks it's an integer.
                 return fpr;
             }
             if (isNumberConstant(edge.node())) {

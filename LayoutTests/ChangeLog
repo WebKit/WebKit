@@ -1,3 +1,17 @@
+2013-08-06  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG FixupPhase should insert Int32ToDouble nodes for number uses in NewArray, and SpeculativeJIT 64-bit should not try to coerce integer constants to double constants
+        https://bugs.webkit.org/show_bug.cgi?id=119528
+
+        Reviewed by Geoffrey Garen.
+
+        * fast/js/dfg-new-array-double-const-then-int-const.html: Added.
+        * fast/js/dfg-new-array-double-const-then-int-const-expected.txt: Added.
+        * fast/js/jsc-test-list:
+        * fast/js/script-tests/dfg-new-array-double-const-then-int-const.js: Added.
+        (bar):
+        (foo):
+
 2013-08-04  Sam Weinig  <sam@webkit.org>
 
         Remove support for HTML5 MicroData

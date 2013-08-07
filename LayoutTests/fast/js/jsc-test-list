@@ -199,6 +199,7 @@ fast/js/dfg-mod-neg2tothe31-by-one-and-then-or-zero-with-interesting-reg-alloc
 fast/js/dfg-multi-basic-block-structure-clobber
 fast/js/dfg-multiply
 fast/js/dfg-negative-array-index
+fast/js/dfg-new-array-double-const-then-int-const
 fast/js/dfg-obvious-constant-cfa
 fast/js/dfg-osr-entry-hoisted-clobbered-structure-check
 fast/js/dfg-other-branch

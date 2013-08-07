@@ -72,7 +72,6 @@ static CompilationResult compile(CompileMode compileMode, ExecState* exec, CodeB
 
     if (!Options::bytecodeRangeToDFGCompile().isInRange(codeBlock->instructionCount()))
         return CompilationFailed;
-
     
     if (logCompilationChanges())
         dataLog("DFG(Driver) compiling ", *codeBlock, ", number of instructions = ", codeBlock->instructionCount(), "\n");

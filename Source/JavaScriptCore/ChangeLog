@@ -1,3 +1,32 @@
+2013-08-06  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG FixupPhase should insert Int32ToDouble nodes for number uses in NewArray, and SpeculativeJIT 64-bit should not try to coerce integer constants to double constants
+        https://bugs.webkit.org/show_bug.cgi?id=119528
+
+        Reviewed by Geoffrey Garen.
+
+        Either of the two fixes would solve the crash I saw. Basically, for best performance, we want the DFG register allocator to track double uses and non-double
+        uses of a node separately, and we accomplish this by inserting Int32ToDouble nodes in the FixupPhase. But even if FixupPhase fails to do this, we still want
+        the DFG register allocator to do the right thing: if it encounters a double use of an integer, it should perform a conversion and preserve the original
+        format of the value (namely, that it was an integer). For constants, the best format to preserve is None, so that future integer uses rematerialize the int
+        from scratch. This only affects the 64-bit backend; the 32-bit backend was already doing the right thing.
+
+        This also fixes some more debug dumping code, and adds some stronger assertions for integer arrays.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finalizeUnconditionally):
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compile):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillSpeculateDouble):
+        * runtime/JSObject.h:
+        (JSC::JSObject::getIndexQuickly):
+        (JSC::JSObject::tryGetIndexQuickly):
+
 2013-08-06  Mark Lam  <mark.lam@apple.com>
 
         Assertion failure in emitExpressionInfo when reloading with Web Inspector open.

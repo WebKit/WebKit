@@ -661,7 +661,7 @@ private:
                 break;
             case ALL_DOUBLE_INDEXING_TYPES:
                 for (unsigned operandIndex = 0; operandIndex < node->numChildren(); ++operandIndex)
-                    setUseKindAndUnboxIfProfitable<RealNumberUse>(m_graph.m_varArgChildren[node->firstChild() + operandIndex]);
+                    fixDoubleEdge<RealNumberUse>(m_graph.m_varArgChildren[node->firstChild() + operandIndex]);
                 break;
             case ALL_CONTIGUOUS_INDEXING_TYPES:
             case ALL_ARRAY_STORAGE_INDEXING_TYPES:

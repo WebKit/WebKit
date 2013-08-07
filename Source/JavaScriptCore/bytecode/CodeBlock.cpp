@@ -2206,13 +2206,13 @@ void CodeBlock::finalizeUnconditionally()
                 JSCell* to = transition.m_to.get();
                 if ((!origin || Heap::isMarked(origin)) && Heap::isMarked(from))
                     continue;
-                dataLog("    Transition under ", JSValue(origin), ", ", JSValue(from), " -> ", JSValue(to), ".\n");
+                dataLog("    Transition under ", RawPointer(origin), ", ", RawPointer(from), " -> ", RawPointer(to), ".\n");
             }
             for (unsigned i = 0; i < dfgCommon->weakReferences.size(); ++i) {
                 JSCell* weak = dfgCommon->weakReferences[i].get();
                 if (Heap::isMarked(weak))
                     continue;
-                dataLog("    Weak reference ", JSValue(weak), ".\n");
+                dataLog("    Weak reference ", RawPointer(weak), ".\n");
             }
         }
         

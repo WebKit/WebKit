@@ -223,6 +223,7 @@ public:
     {
         switch (structure()->indexingType()) {
         case ALL_INT32_INDEXING_TYPES:
+            return jsNumber(m_butterfly->contiguous()[i].get().asInt32());
         case ALL_CONTIGUOUS_INDEXING_TYPES:
             return m_butterfly->contiguous()[i].get();
         case ALL_DOUBLE_INDEXING_TYPES:
@@ -242,6 +243,12 @@ public:
         case ALL_UNDECIDED_INDEXING_TYPES:
             break;
         case ALL_INT32_INDEXING_TYPES:
+            if (i < m_butterfly->publicLength()) {
+                JSValue result = m_butterfly->contiguous()[i].get();
+                ASSERT(result.isInt32() || !result);
+                return result;
+            }
+            break;
         case ALL_CONTIGUOUS_INDEXING_TYPES:
             if (i < m_butterfly->publicLength())
                 return m_butterfly->contiguous()[i].get();
