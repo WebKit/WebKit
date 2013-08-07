@@ -1,3 +1,20 @@
+2013-08-07  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions] Wrong auto-height region computation for nested named flows
+        https://bugs.webkit.org/show_bug.cgi?id=119517
+
+        Reviewed by David Hyatt.
+
+        Test: fast/regions/abspos-autoheight-nested-region.html
+
+        In the case of an (inner) auto-height region that is absolutely positioned in a named flow that is displayed in an (outer) auto-height region,
+        when we are doing the layout for the named flow we need to add a "forced region break" also for the case of simplified layout, otherwise
+        the outer auto-height region will not get the chance to compute its auto-height, ending up with a huge value that was used to initialize
+        the auto-height computed value before the start of the layout algorithm.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::simplifiedLayout):
+
 2013-08-06  Stephanie Lewis  <slewis@apple.com>
 
         Update Order Files for Safari

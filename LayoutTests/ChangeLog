@@ -1,3 +1,13 @@
+2013-08-07  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions] Wrong auto-height region computation for nested named flows
+        https://bugs.webkit.org/show_bug.cgi?id=119517
+
+        Reviewed by David Hyatt.
+
+        * fast/regions/abspos-autoheight-nested-region-expected.txt: Added.
+        * fast/regions/abspos-autoheight-nested-region.html: Added.
+
 2013-08-07  Krzysztof Czech  <k.czech@samsung.com>
 
         [EFL] REGRESSION after r153432: marking crashing tests.

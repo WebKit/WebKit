@@ -2797,6 +2797,11 @@ bool RenderBlock::simplifiedLayout()
     if (needsSimplifiedNormalFlowLayout())
         simplifiedNormalFlowLayout();
 
+    // Make sure a forced break is applied after the content if we are a flow thread in a simplified layout.
+    // This ensures the size information is correctly computed for the last auto-height region receiving content.
+    if (isRenderFlowThread())
+        toRenderFlowThread(this)->applyBreakAfterContent(clientLogicalBottom());
+
     // Lay out our positioned objects if our positioned child bit is set.
     // Also, if an absolute position element inside a relative positioned container moves, and the absolute element has a fixed position
     // child, neither the fixed element nor its container learn of the movement since posChildNeedsLayout() is only marked as far as the 
