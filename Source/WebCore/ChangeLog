@@ -1,3 +1,16 @@
+2013-08-07  Andre Moreira Magalhaes   <andre.magalhaes@collabora.co.uk>
+
+        Do no check seek offset against internal size on gstreamer source element
+        https://bugs.webkit.org/show_bug.cgi?id=116533
+
+        Reviewed by Philippe Normand.
+
+        The internal size on gstreamer source element may be wrong in case the received size in
+        didReceiveResponse is not accurate. Lets just try to seek and let it fail if necessary.
+
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (webKitWebSrcSeekDataCb):
+
 2013-08-07  Antti Koivisto  <antti@apple.com>
 
         Create WebCore/style and move StyleResolveTree there

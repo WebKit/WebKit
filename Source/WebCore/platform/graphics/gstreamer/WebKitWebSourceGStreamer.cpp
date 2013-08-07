@@ -747,8 +747,6 @@ static gboolean webKitWebSrcSeekDataCb(GstAppSrc*, guint64 offset, gpointer user
 
     if (!priv->seekable)
         return FALSE;
-    if (offset > priv->size)
-        return FALSE;
 
     GST_DEBUG_OBJECT(src, "Doing range-request seek");
     priv->requestedOffset = offset;
