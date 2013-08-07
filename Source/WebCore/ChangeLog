@@ -1,3 +1,22 @@
+2013-08-07  Dean Jackson  <dino@apple.com>
+
+        Don't remove contents layer from its parent unless necessary
+        https://bugs.webkit.org/show_bug.cgi?id=119560
+
+        Reviewed by Simon Fraser.
+
+        RenderLayerBacking::updateInternalHierarchy() is called in some
+        instances where there doesn't need to be a complete reparenting of the
+        the m_graphicsLayer. For example, on OS X when the user changes the
+        scrollbar styles to/from always visible. We don't need to always
+        remove the graphics layer from its parent - any reparenting does that
+        automatically.
+
+        Unfortunately we can't trigger this situation in an automated test.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateInternalHierarchy): Don't call removeFromParent().
+
 2013-08-07  Tim Horton  <timothy_horton@apple.com>
 
         Fall out of simple image layer optimization if the image has EXIF rotation
