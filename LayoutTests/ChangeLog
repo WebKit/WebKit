@@ -1,3 +1,28 @@
+2013-08-07  Mirela Budaes  <mbudaes@adobe.com>
+
+        [CSS Blending] Add test suite to validate background blending with different properties
+        https://bugs.webkit.org/show_bug.cgi?id=118243
+
+        Reviewed by Dirk Schulze.
+
+        * css3/compositing/background-blend-mode-background-attachement-fixed-expected.html: Added.
+        * css3/compositing/background-blend-mode-background-attachement-fixed.html: Added.
+        * css3/compositing/background-blend-mode-background-clip-content-box-expected.html: Added.
+        * css3/compositing/background-blend-mode-background-clip-content-box.html: Added.
+        * css3/compositing/background-blend-mode-background-clip-padding-box-expected.html: Added.
+        * css3/compositing/background-blend-mode-background-clip-padding-box.html: Added.
+        * css3/compositing/background-blend-mode-background-origin-border-box-expected.html: Added.
+        * css3/compositing/background-blend-mode-background-origin-border-box.html: Added.
+        * css3/compositing/background-blend-mode-background-position-percentage-expected.html: Added.
+        * css3/compositing/background-blend-mode-background-position-percentage.html: Added.
+        * css3/compositing/background-blend-mode-background-repeat-no-repeat-expected.html: Added.
+        * css3/compositing/background-blend-mode-background-repeat-no-repeat.html: Added.
+        * css3/compositing/background-blend-mode-background-size-contain-expected.html: Added.
+        * css3/compositing/background-blend-mode-background-size-contain.html: Added.
+        * css3/compositing/background-blend-mode-background-size-cover-expected.html: Added.
+        * css3/compositing/background-blend-mode-background-size-cover.html: Added.
+        * css3/compositing/resources/white_square.svg: Added.
+
 2013-08-07  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions] Wrong auto-height region computation for nested named flows
