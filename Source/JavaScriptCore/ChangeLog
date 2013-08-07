@@ -1,3 +1,16 @@
+2013-08-07  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        32-bit code gen for TypeOf doesn't properly update the AbstractInterpreter state
+        https://bugs.webkit.org/show_bug.cgi?id=119555
+
+        Reviewed by Geoffrey Garen.
+
+        It uses a speculationCheck where it should be using a DFG_TYPE_CHECK like the 64-bit backend does.
+        This was causing crashes on maps.google.com in 32-bit debug builds.
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2013-08-06  Michael Saboff  <msaboff@apple.com>
 
         REGRESSION(FTL merge): Assertion fail on 32 bit with enabled DFG JIT
