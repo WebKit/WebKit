@@ -1,5 +1,12 @@
 2013-08-07  Lucas Forschler  <lforschler@apple.com>
 
+        Merge patch from <rdar://problem/14655517>.
+        
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillSpeculateDouble):
+
+2013-08-07  Lucas Forschler  <lforschler@apple.com>
+
         Merge r153793
 
     2013-08-07  Mark Hahnenberg  <mhahnenberg@apple.com>

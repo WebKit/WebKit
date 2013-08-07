@@ -984,8 +984,6 @@ FPRReg SpeculativeJIT::fillSpeculateDouble(Edge edge)
                 m_jit.move64ToDouble(gpr, fpr);
                 unlock(gpr);
 
-                m_fprs.retain(fpr, virtualRegister, SpillOrderDouble);
-                info.fillDouble(*m_stream, fpr);
                 return fpr;
             }
             if (isNumberConstant(edge.node())) {
