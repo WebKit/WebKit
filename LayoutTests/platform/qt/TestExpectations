@@ -485,6 +485,21 @@ editing/secure-input [ Failure ]
 # CSS.regionOversetChanged is not implemented.
 webkit.org/b/117833 inspector/styles/protocol-css-regions-commands.html [ Skip ]
 
+# CSS -webkit-background-blend-mode not supported yet.
+css3/compositing/background-blend-mode-background-attachement-fixed.html
+css3/compositing/background-blend-mode-background-clip-content-box.html
+css3/compositing/background-blend-mode-background-clip-padding-box.html
+css3/compositing/background-blend-mode-background-origin-border-box.html
+css3/compositing/background-blend-mode-background-position-percentage.html
+css3/compositing/background-blend-mode-background-repeat-no-repeat.html
+css3/compositing/background-blend-mode-background-size-contain.html
+css3/compositing/background-blend-mode-background-size-cover.html
+css3/compositing/background-blend-mode-default-value.html
+css3/compositing/background-blend-mode-different-image-formats.html
+css3/compositing/background-blend-mode-image-color.html
+css3/compositing/background-blend-mode-image-image.html
+css3/compositing/background-blend-mode-single-layer-no-blending.html
+
 # =========================================================================== #
 #       Drag and Drop Support in DRT.                                         #
 # =========================================================================== #
@@ -2677,4 +2692,3 @@ webkit.org/b/117185 fast/forms/control-clip-overflow.html [ Skip ]
 
 # Synthesized italics not supported
 fast/text/international/synthesized-italic-vertical-latin.html [ Skip ]
-

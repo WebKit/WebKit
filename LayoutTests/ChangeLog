@@ -1,3 +1,11 @@
+2013-08-07  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt] Skip background-blending-mode tests
+
+        Unreviewed gardening.
+
+        * platform/qt/TestExpectations:
+
 2013-08-07  Antti Koivisto  <antti@apple.com>
 
         2.5% regression on page cycler moz
