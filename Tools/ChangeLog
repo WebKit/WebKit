@@ -1,3 +1,17 @@
+2013-08-07  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        [EFL] REGRESSION after r153432: some accessibility tests crash.
+        https://bugs.webkit.org/show_bug.cgi?id=119333
+
+        Reviewed by Darin Adler.
+
+        Use a RefPtr to store a reference to the parent element of
+        an AccessibilityUIElement instead of the raw pointer, so we
+        never derefence a function from an invalid pointer.
+
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        (WTR::attributesOfElement): Use a RefPtr instead of a raw pointer.
+
 2013-08-07  Cosmin Truta  <ctruta@blackberry.com>
 
         Unreviewed. Add myself as a committer.
