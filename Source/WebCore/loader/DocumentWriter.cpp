@@ -208,7 +208,7 @@ void DocumentWriter::reportDataReceived()
     m_hasReceivedSomeData = true;
     if (m_decoder->encoding().usesVisualOrdering())
         m_frame->document()->setVisuallyOrdered();
-    m_frame->document()->recalcStyle(Node::Force);
+    m_frame->document()->recalcStyle(Style::Force);
 }
 
 void DocumentWriter::addData(const char* bytes, size_t length)

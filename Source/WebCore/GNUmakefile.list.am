@@ -2751,6 +2751,8 @@ webcore_sources += \
 	Source/WebCore/css/StylePropertyShorthand.h \
 	Source/WebCore/css/StyleResolver.cpp \
 	Source/WebCore/css/StyleResolver.h \
+	Source/WebCore/css/StyleResolveTree.cpp \
+	Source/WebCore/css/StyleResolveTree.h \
 	Source/WebCore/css/StyleRule.cpp \
 	Source/WebCore/css/StyleRule.h \
 	Source/WebCore/css/StyleRuleImport.cpp \

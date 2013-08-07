@@ -24,6 +24,7 @@
 #define Text_h
 
 #include "CharacterData.h"
+#include "StyleResolveTree.h"
 
 namespace WebCore {
 
@@ -44,7 +45,7 @@ public:
     String wholeText() const;
     PassRefPtr<Text> replaceWholeText(const String&, ExceptionCode&);
     
-    void recalcTextStyle(StyleChange);
+    void recalcTextStyle(Style::Change);
     void createTextRendererIfNeeded();
     bool textRendererIsNeeded(const NodeRenderingContext&);
     RenderText* createTextRenderer(RenderArena*, RenderStyle*);

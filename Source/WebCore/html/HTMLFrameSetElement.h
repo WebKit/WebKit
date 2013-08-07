@@ -77,7 +77,7 @@ private:
     
     virtual void defaultEventHandler(Event*);
 
-    virtual bool willRecalcStyle(StyleChange);
+    virtual bool willRecalcStyle(Style::Change) OVERRIDE;
 
     virtual InsertionNotificationRequest insertedInto(ContainerNode*) OVERRIDE;
     virtual void removedFrom(ContainerNode*) OVERRIDE;

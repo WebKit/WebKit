@@ -333,6 +333,7 @@ SOURCES += \
     css/StylePropertySet.cpp \
     css/StylePropertyShorthand.cpp \
     css/StyleResolver.cpp \
+    css/StyleResolveTree.cpp \
     css/StyleRule.cpp \
     css/StyleRuleImport.cpp \
     css/StyleScopeResolver.cpp \
@@ -1542,6 +1543,7 @@ HEADERS += \
     css/StylePropertySet.h \
     css/StylePropertyShorthand.h \
     css/StyleResolver.h \
+    css/StyleResolveTree.h \
     css/StyleRule.h \
     css/StyleRuleImport.h \
     css/StyleSheet.h \

@@ -651,7 +651,7 @@ void HTMLMediaElement::attach(const AttachContext& context)
 #endif
 }
 
-void HTMLMediaElement::didRecalcStyle(StyleChange)
+void HTMLMediaElement::didRecalcStyle(Style::Change)
 {
     if (renderer())
         renderer()->updateFromElement();

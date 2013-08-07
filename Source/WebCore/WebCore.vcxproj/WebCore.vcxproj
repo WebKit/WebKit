@@ -9353,6 +9353,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\css\StyleResolveTree.cpp" />
     <ClCompile Include="..\css\StyleRule.cpp" />
     <ClCompile Include="..\css\StyleRuleImport.cpp" />
     <ClCompile Include="..\css\StyleSheet.cpp" />
@@ -19866,6 +19867,7 @@
     <ClInclude Include="..\css\StylePropertySet.h" />
     <ClInclude Include="..\css\StylePropertyShorthand.h" />
     <ClInclude Include="..\css\StyleResolver.h" />
+    <ClInclude Include="..\css\StyleResolveTree.h" />
     <ClInclude Include="..\css\StyleRule.h" />
     <ClInclude Include="..\css\StyleRuleImport.h" />
     <ClInclude Include="..\css\StyleSheet.h" />

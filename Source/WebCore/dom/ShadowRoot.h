@@ -56,7 +56,7 @@ public:
 
     virtual ~ShadowRoot();
 
-    void recalcStyle(StyleChange);
+    void recalcStyle(Style::Change);
 
     virtual bool applyAuthorStyles() const OVERRIDE { return m_applyAuthorStyles; }
     void setApplyAuthorStyles(bool);

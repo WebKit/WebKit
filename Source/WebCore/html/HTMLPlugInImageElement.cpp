@@ -224,7 +224,7 @@ RenderObject* HTMLPlugInImageElement::createRenderer(RenderArena* arena, RenderS
     return new (arena) RenderEmbeddedObject(this);
 }
 
-bool HTMLPlugInImageElement::willRecalcStyle(StyleChange)
+bool HTMLPlugInImageElement::willRecalcStyle(Style::Change)
 {
     // FIXME: Why is this necessary?  Manual re-attach is almost always wrong.
     if (!useFallbackContent() && needsWidgetUpdate() && renderer() && !isImageType() && (displayState() != DisplayingSnapshot))
@@ -303,7 +303,7 @@ void HTMLPlugInImageElement::documentWillSuspendForPageCache()
     if (RenderStyle* renderStyle = this->renderStyle()) {
         m_customStyleForPageCache = RenderStyle::clone(renderStyle);
         m_customStyleForPageCache->setDisplay(NONE);
-        recalcStyle(Force);
+        Style::resolveTree(this, Style::Force);
     }
 
     HTMLPlugInElement::documentWillSuspendForPageCache();
@@ -313,7 +313,7 @@ void HTMLPlugInImageElement::documentDidResumeFromPageCache()
 {
     if (m_customStyleForPageCache) {
         m_customStyleForPageCache = 0;
-        recalcStyle(Force);
+        Style::resolveTree(this, Style::Force);
     }
 
     HTMLPlugInElement::documentDidResumeFromPageCache();

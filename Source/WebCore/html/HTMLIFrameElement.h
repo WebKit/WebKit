@@ -44,7 +44,7 @@ private:
     virtual bool rendererIsNeeded(const NodeRenderingContext&);
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 
-    virtual void didRecalcStyle(StyleChange) OVERRIDE;
+    virtual void didRecalcStyle(Style::Change) OVERRIDE;
 };
 
 inline HTMLIFrameElement* toHTMLIFrameElement(Node* node)

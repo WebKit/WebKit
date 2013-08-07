@@ -323,7 +323,7 @@ PassRefPtr<RenderStyle> HTMLOptionElement::customStyleForRenderer()
     return m_style;
 }
 
-void HTMLOptionElement::didRecalcStyle(StyleChange)
+void HTMLOptionElement::didRecalcStyle(Style::Change)
 {
     // FIXME: This is nasty, we ask our owner select to repaint even if the new
     // style is exactly the same.

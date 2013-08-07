@@ -60,7 +60,7 @@ public:
 private:
     PseudoElement(Element*, PseudoId);
 
-    virtual void didRecalcStyle(StyleChange) OVERRIDE;
+    virtual void didRecalcStyle(Style::Change) OVERRIDE;
     virtual PseudoId customPseudoId() const OVERRIDE { return m_pseudoId; }
 
     PseudoId m_pseudoId;

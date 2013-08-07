@@ -126,7 +126,7 @@ protected:
 
 private:
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*) OVERRIDE;
-    virtual bool willRecalcStyle(StyleChange) OVERRIDE;
+    virtual bool willRecalcStyle(Style::Change) OVERRIDE;
 
     void didAddUserAgentShadowRoot(ShadowRoot*) OVERRIDE;
 

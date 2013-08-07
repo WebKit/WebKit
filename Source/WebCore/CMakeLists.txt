@@ -1091,6 +1091,7 @@ set(WebCore_SOURCES
     css/StylePropertySet.cpp
     css/StylePropertyShorthand.cpp
     css/StyleResolver.cpp
+    css/StyleResolveTree.cpp
     css/StyleRule.cpp
     css/StyleRuleImport.cpp
     css/StyleScopeResolver.cpp

@@ -1,3 +1,124 @@
+2013-08-07  Antti Koivisto  <antti@apple.com>
+
+        Move style recalculation out from Element
+        https://bugs.webkit.org/show_bug.cgi?id=119497
+
+        Reviewed by Andreas Kling.
+
+        Element currently does too much. Element::recalcStyle() and the related functions can be turned into
+        standalone functions that operate on DOM tree. This will also give more freedom for future refactoring,
+        for example making style recalculation non-recursive.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/StyleResolveTree.cpp: Added.
+        (WebCore::Style::determineChange):
+                
+            - moved and renamed from Node::diff
+            - factored to use early return style
+            - simplifield the null input logic
+
+        (WebCore::Style::pseudoStyleCacheIsInvalid):
+        
+            - moved from Element::pseudoStyleCacheIsInvalid
+            - narrowed to take RenderObject rather than operate on Element
+
+        (WebCore::Style::resolveLocal):
+        
+            - split from Element::recalcStyle
+            - factored to use early return style
+
+        (WebCore::Style::resolveTree):
+        
+            - moved and renamed from Element::recalcStyle
+
+        * css/StyleResolveTree.h: Added.
+        
+            - introcuduce Style namespace for style related classes and functions
+            - move and rename Node::StyleChange -> Style::Change
+
+        * css/StyleResolver.h:
+        (WebCore::StyleResolverParentPusher::StyleResolverParentPusher):
+        (WebCore::StyleResolverParentPusher::push):
+        (WebCore::StyleResolverParentPusher::~StyleResolverParentPusher):
+        
+            Moved this stack helper to StyleResolver.h for now since it is needed by both
+            StyleRecalculation and Element.
+
+        * dom/Document.cpp:
+        (WebCore::Document::recalcStyle):
+        (WebCore::Document::updateStyleIfNeeded):
+        (WebCore::Document::updateLayoutIgnorePendingStylesheets):
+        (WebCore::Document::attach):
+        (WebCore::Document::styleResolverChanged):
+        (WebCore::Document::webkitWillEnterFullScreenForElement):
+        * dom/Document.h:
+        * dom/Element.cpp:
+        (WebCore::shouldIgnoreAttributeCase):
+        (WebCore::Element::updatePseudoElement):
+        (WebCore::Element::resetComputedStyle):
+        (WebCore::Element::willRecalcStyle):
+        (WebCore::Element::didRecalcStyle):
+        * dom/Element.h:
+        
+            - remove Element::recalcStyle
+            - make a few private functions needed by StyleRecalculation public
+
+        * dom/ElementShadow.cpp:
+        (WebCore::ElementShadow::recalcStyle):
+        * dom/ElementShadow.h:
+        * dom/Node.cpp:
+        * dom/Node.h:
+
+            - remove Node::StyleChange
+            - remove Node::diff
+
+        * dom/PseudoElement.cpp:
+        (WebCore::PseudoElement::didRecalcStyle):
+        * dom/PseudoElement.h:
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::recalcStyle):
+        (WebCore::ShadowRoot::setResetStyleInheritance):
+        * dom/ShadowRoot.h:
+        * dom/Text.cpp:
+        (WebCore::Text::recalcTextStyle):
+        * dom/Text.h:
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::didRecalcStyle):
+        * html/HTMLFormControlElement.h:
+        * html/HTMLFrameSetElement.cpp:
+        (WebCore::HTMLFrameSetElement::willRecalcStyle):
+        * html/HTMLFrameSetElement.h:
+        * html/HTMLIFrameElement.cpp:
+        (WebCore::HTMLIFrameElement::didRecalcStyle):
+        * html/HTMLIFrameElement.h:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::didRecalcStyle):
+        * html/HTMLMediaElement.h:
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::didRecalcStyle):
+        * html/HTMLOptionElement.h:
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::willRecalcStyle):
+        (WebCore::HTMLPlugInImageElement::documentWillSuspendForPageCache):
+        (WebCore::HTMLPlugInImageElement::documentDidResumeFromPageCache):
+        * html/HTMLPlugInImageElement.h:
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::InspectorOverlay::update):
+        * loader/DocumentWriter.cpp:
+        (WebCore::DocumentWriter::reportDataReceived):
+        * page/Frame.cpp:
+        (WebCore::Frame::setPageAndTextZoomFactors):
+        * page/Page.cpp:
+        (WebCore::Page::setPageScaleFactor):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::updateFirstLetterStyle):
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::willRecalcStyle):
+        * svg/SVGElement.h:
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::willRecalcStyle):
+        * svg/SVGUseElement.h:
+
 2013-08-07  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions] Wrong auto-height region computation for nested named flows

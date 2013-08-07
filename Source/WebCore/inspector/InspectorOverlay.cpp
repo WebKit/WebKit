@@ -301,7 +301,7 @@ void InspectorOverlay::update()
     drawPausedInDebuggerMessage();
 
     // Position DOM elements.
-    overlayPage()->mainFrame()->document()->recalcStyle(Node::Force);
+    overlayPage()->mainFrame()->document()->recalcStyle(Style::Force);
     if (overlayView->needsLayout())
         overlayView->layout();
 

@@ -122,7 +122,7 @@ bool ShadowRoot::childTypeAllowed(NodeType type) const
     }
 }
 
-void ShadowRoot::recalcStyle(StyleChange change)
+void ShadowRoot::recalcStyle(Style::Change change)
 {
     // ShadowRoot doesn't support custom callbacks.
     ASSERT(!hasCustomStyleCallbacks());
@@ -132,7 +132,7 @@ void ShadowRoot::recalcStyle(StyleChange change)
 
     for (Node* child = firstChild(); child; child = child->nextSibling()) {
         if (child->isElementNode())
-            toElement(child)->recalcStyle(change);
+            Style::resolveTree(toElement(child), change);
         else if (child->isTextNode())
             toText(child)->recalcTextStyle(change);
     }
@@ -161,7 +161,7 @@ void ShadowRoot::setResetStyleInheritance(bool value)
     if (value != m_resetStyleInheritance) {
         m_resetStyleInheritance = value;
         if (attached() && owner())
-            owner()->recalcStyle(Force);
+            owner()->recalcStyle(Style::Force);
     }
 }
 

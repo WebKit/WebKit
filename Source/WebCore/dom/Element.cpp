@@ -107,40 +107,6 @@ static inline bool shouldIgnoreAttributeCase(const Element* e)
 {
     return e && e->document()->isHTMLDocument() && e->isHTMLElement();
 }
-    
-class StyleResolverParentPusher {
-public:
-    StyleResolverParentPusher(Element* parent)
-        : m_parent(parent)
-        , m_pushedStyleResolver(0)
-    {
-    }
-    void push()
-    {
-        if (m_pushedStyleResolver)
-            return;
-        m_pushedStyleResolver = m_parent->document()->ensureStyleResolver();
-        m_pushedStyleResolver->pushParentElement(m_parent);
-    }
-    ~StyleResolverParentPusher()
-    {
-
-        if (!m_pushedStyleResolver)
-            return;
-
-        // This tells us that our pushed style selector is in a bad state,
-        // so we should just bail out in that scenario.
-        ASSERT(m_pushedStyleResolver == m_parent->document()->ensureStyleResolver());
-        if (m_pushedStyleResolver != m_parent->document()->ensureStyleResolver())
-            return;
-
-        m_pushedStyleResolver->popParentElement(m_parent);
-    }
-
-private:
-    Element* m_parent;
-    StyleResolver* m_pushedStyleResolver;
-};
 
 typedef Vector<RefPtr<Attr> > AttrNodeList;
 typedef HashMap<Element*, OwnPtr<AttrNodeList> > AttrNodeListMap;
@@ -1497,44 +1463,6 @@ void Element::detach(const AttachContext& context)
     ContainerNode::detach(context);
 }
 
-bool Element::pseudoStyleCacheIsInvalid(const RenderStyle* currentStyle, RenderStyle* newStyle)
-{
-    ASSERT(currentStyle == renderStyle());
-    ASSERT(renderer());
-
-    if (!currentStyle)
-        return false;
-
-    const PseudoStyleCache* pseudoStyleCache = currentStyle->cachedPseudoStyles();
-    if (!pseudoStyleCache)
-        return false;
-
-    size_t cacheSize = pseudoStyleCache->size();
-    for (size_t i = 0; i < cacheSize; ++i) {
-        RefPtr<RenderStyle> newPseudoStyle;
-        PseudoId pseudoId = pseudoStyleCache->at(i)->styleType();
-        if (pseudoId == FIRST_LINE || pseudoId == FIRST_LINE_INHERITED)
-            newPseudoStyle = renderer()->uncachedFirstLineStyle(newStyle);
-        else
-            newPseudoStyle = renderer()->getUncachedPseudoStyle(PseudoStyleRequest(pseudoId), newStyle, newStyle);
-        if (!newPseudoStyle)
-            return true;
-        if (*newPseudoStyle != *pseudoStyleCache->at(i)) {
-            if (pseudoId < FIRST_INTERNAL_PSEUDOID)
-                newStyle->setHasPseudoStyle(pseudoId);
-            newStyle->addCachedPseudoStyle(newPseudoStyle);
-            if (pseudoId == FIRST_LINE || pseudoId == FIRST_LINE_INHERITED) {
-                // FIXME: We should do an actual diff to determine whether a repaint vs. layout
-                // is needed, but for now just assume a layout will be required.  The diff code
-                // in RenderObject::setStyle would need to be factored out so that it could be reused.
-                renderer()->setNeedsLayoutAndPrefWidthsRecalc();
-            }
-            return true;
-        }
-    }
-    return false;
-}
-
 PassRefPtr<RenderStyle> Element::styleForRenderer()
 {
     if (hasCustomStyleCallbacks()) {
@@ -1543,115 +1471,6 @@ PassRefPtr<RenderStyle> Element::styleForRenderer()
     }
 
     return document()->ensureStyleResolver()->styleForElement(this);
-}
-
-void Element::recalcStyle(StyleChange change)
-{
-    if (hasCustomStyleCallbacks()) {
-        if (!willRecalcStyle(change))
-            return;
-    }
-
-    // Ref currentStyle in case it would otherwise be deleted when setting the new style in the renderer.
-    RefPtr<RenderStyle> currentStyle(renderStyle());
-    bool hasParentStyle = parentNodeForRenderingAndStyle() ? static_cast<bool>(parentNodeForRenderingAndStyle()->renderStyle()) : false;
-    bool hasDirectAdjacentRules = childrenAffectedByDirectAdjacentRules();
-    bool hasIndirectAdjacentRules = childrenAffectedByForwardPositionalRules();
-
-    if ((change > NoChange || needsStyleRecalc())) {
-        if (hasRareData())
-            elementRareData()->resetComputedStyle();
-    }
-    if (hasParentStyle && (change >= Inherit || needsStyleRecalc())) {
-        StyleChange localChange = Detach;
-        RefPtr<RenderStyle> newStyle;
-        if (currentStyle) {
-            newStyle = styleForRenderer();
-            localChange = Node::diff(currentStyle.get(), newStyle.get(), document());
-        }
-        if (localChange == Detach) {
-            AttachContext reattachContext;
-            reattachContext.resolvedStyle = newStyle.get();
-            reattach(reattachContext);
-
-            // attach recalculates the style for all children. No need to do it twice.
-            clearNeedsStyleRecalc();
-            clearChildNeedsStyleRecalc();
-
-            if (hasCustomStyleCallbacks())
-                didRecalcStyle(change);
-            return;
-        }
-
-        if (RenderObject* renderer = this->renderer()) {
-            if (localChange != NoChange || pseudoStyleCacheIsInvalid(currentStyle.get(), newStyle.get()) || (change == Force && renderer->requiresForcedStyleRecalcPropagation()) || styleChangeType() == SyntheticStyleChange)
-                renderer->setAnimatableStyle(newStyle.get());
-            else if (needsStyleRecalc()) {
-                // Although no change occurred, we use the new style so that the cousin style sharing code won't get
-                // fooled into believing this style is the same.
-                renderer->setStyleInternal(newStyle.get());
-            }
-        }
-
-        // If "rem" units are used anywhere in the document, and if the document element's font size changes, then go ahead and force font updating
-        // all the way down the tree. This is simpler than having to maintain a cache of objects (and such font size changes should be rare anyway).
-        if (document()->styleSheetCollection()->usesRemUnits() && document()->documentElement() == this && localChange != NoChange && currentStyle && newStyle && currentStyle->fontSize() != newStyle->fontSize()) {
-            // Cached RenderStyles may depend on the re units.
-            if (StyleResolver* styleResolver = document()->styleResolverIfExists())
-                styleResolver->invalidateMatchedPropertiesCache();
-            change = Force;
-        }
-
-        if (change != Force) {
-            if (styleChangeType() >= FullStyleChange)
-                change = Force;
-            else
-                change = localChange;
-        }
-    }
-    StyleResolverParentPusher parentPusher(this);
-
-    // FIXME: This does not care about sibling combinators. Will be necessary in XBL2 world.
-    if (ElementShadow* shadow = this->shadow()) {
-        if (change >= Inherit || shadow->childNeedsStyleRecalc() || shadow->needsStyleRecalc()) {
-            parentPusher.push();
-            shadow->recalcStyle(change);
-        }
-    }
-
-    updatePseudoElement(BEFORE, change);
-
-    // FIXME: This check is good enough for :hover + foo, but it is not good enough for :hover + foo + bar.
-    // For now we will just worry about the common case, since it's a lot trickier to get the second case right
-    // without doing way too much re-resolution.
-    bool forceCheckOfNextElementSibling = false;
-    bool forceCheckOfAnyElementSibling = false;
-    for (Node *n = firstChild(); n; n = n->nextSibling()) {
-        if (n->isTextNode()) {
-            toText(n)->recalcTextStyle(change);
-            continue;
-        } 
-        if (!n->isElementNode()) 
-            continue;
-        Element* element = toElement(n);
-        bool childRulesChanged = element->needsStyleRecalc() && element->styleChangeType() == FullStyleChange;
-        if ((forceCheckOfNextElementSibling || forceCheckOfAnyElementSibling))
-            element->setNeedsStyleRecalc();
-        if (change >= Inherit || element->childNeedsStyleRecalc() || element->needsStyleRecalc()) {
-            parentPusher.push();
-            element->recalcStyle(change);
-        }
-        forceCheckOfNextElementSibling = childRulesChanged && hasDirectAdjacentRules;
-        forceCheckOfAnyElementSibling = forceCheckOfAnyElementSibling || (childRulesChanged && hasIndirectAdjacentRules);
-    }
-
-    updatePseudoElement(AFTER, change);
-
-    clearNeedsStyleRecalc();
-    clearChildNeedsStyleRecalc();
-    
-    if (hasCustomStyleCallbacks())
-        didRecalcStyle(change);
 }
 
 ElementShadow* Element::shadow() const
@@ -2491,13 +2310,13 @@ void Element::normalizeAttributes()
     }
 }
 
-void Element::updatePseudoElement(PseudoId pseudoId, StyleChange change)
+void Element::updatePseudoElement(PseudoId pseudoId, Style::Change change)
 {
     PseudoElement* existing = pseudoElement(pseudoId);
     if (existing) {
         // PseudoElement styles hang off their parent element's style so if we needed
         // a style recalc we should Force one on the pseudo.
-        existing->recalcStyle(needsStyleRecalc() ? Force : change);
+        Style::resolveTree(existing, needsStyleRecalc() ? Style::Force : change);
 
         // Wait until our parent is not displayed or pseudoElementRendererIsNeeded
         // is false, otherwise we could continously create and destroy PseudoElements
@@ -3127,17 +2946,23 @@ void Element::detachAllAttrNodesFromElement()
     removeAttrNodeListForElement(this);
 }
 
-bool Element::willRecalcStyle(StyleChange)
+void Element::resetComputedStyle()
+{
+    if (!hasRareData())
+        return;
+    elementRareData()->resetComputedStyle();
+}
+
+bool Element::willRecalcStyle(Style::Change)
 {
     ASSERT(hasCustomStyleCallbacks());
     return true;
 }
 
-void Element::didRecalcStyle(StyleChange)
+void Element::didRecalcStyle(Style::Change)
 {
     ASSERT(hasCustomStyleCallbacks());
 }
-
 
 PassRefPtr<RenderStyle> Element::customStyleForRenderer()
 {

@@ -282,11 +282,11 @@ void Text::attach(const AttachContext& context)
     CharacterData::attach(context);
 }
 
-void Text::recalcTextStyle(StyleChange change)
+void Text::recalcTextStyle(Style::Change change)
 {
     RenderText* renderer = toRenderText(this->renderer());
 
-    if (change != NoChange && renderer)
+    if (change != Style::NoChange && renderer)
         renderer->setStyle(document()->ensureStyleResolver()->styleForText(this));
 
     if (needsStyleRecalc()) {

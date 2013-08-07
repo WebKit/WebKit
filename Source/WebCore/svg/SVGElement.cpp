@@ -88,13 +88,13 @@ SVGElement::~SVGElement()
     document()->accessSVGExtensions()->removeAllElementReferencesForTarget(this);
 }
 
-bool SVGElement::willRecalcStyle(StyleChange change)
+bool SVGElement::willRecalcStyle(Style::Change change)
 {
     if (!hasSVGRareData() || styleChangeType() == SyntheticStyleChange)
         return true;
     // If the style changes because of a regular property change (not induced by SMIL animations themselves)
     // reset the "computed style without SMIL style properties", so the base value change gets reflected.
-    if (change > NoChange || needsStyleRecalc())
+    if (change > Style::NoChange || needsStyleRecalc())
         svgRareData()->setNeedsOverrideComputedStyleUpdate();
     return true;
 }

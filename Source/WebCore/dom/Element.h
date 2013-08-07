@@ -32,6 +32,7 @@
 #include "RegionOversetState.h"
 #include "ScrollTypes.h"
 #include "SpaceSplitString.h"
+#include "StyleResolveTree.h"
 
 namespace WebCore {
 
@@ -414,7 +415,6 @@ public:
     virtual void detach(const AttachContext& = AttachContext()) OVERRIDE;
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
     virtual bool rendererIsNeeded(const NodeRenderingContext&);
-    void recalcStyle(StyleChange = NoChange);
     void didAffectSelector(AffectedSelectorMask);
 
     ElementShadow* shadow() const;
@@ -657,6 +657,11 @@ public:
     virtual void dispatchFocusEvent(PassRefPtr<Element> oldFocusedElement, FocusDirection);
     virtual void dispatchBlurEvent(PassRefPtr<Element> newFocusedElement);
 
+    virtual bool willRecalcStyle(Style::Change);
+    virtual void didRecalcStyle(Style::Change);
+    void updatePseudoElement(PseudoId, Style::Change = Style::NoChange);
+    void resetComputedStyle();
+
 protected:
     Element(const QualifiedName& tagName, Document* document, ConstructionType type)
         : ContainerNode(document, type)
@@ -669,8 +674,6 @@ protected:
     virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0) OVERRIDE;
     virtual void removeAllEventListeners() OVERRIDE FINAL;
 
-    virtual bool willRecalcStyle(StyleChange);
-    virtual void didRecalcStyle(StyleChange);
     virtual PassRefPtr<RenderStyle> customStyleForRenderer();
 
     void clearTabIndexExplicitlyIfNeeded();    
@@ -692,7 +695,6 @@ private:
     bool isUserActionElementFocused() const;
     bool isUserActionElementHovered() const;
 
-    void updatePseudoElement(PseudoId, StyleChange = NoChange);
     PassRefPtr<PseudoElement> createPseudoElementIfNeeded(PseudoId);
     void setPseudoElement(PseudoId, PassRefPtr<PseudoElement>);
 
@@ -736,8 +738,6 @@ private:
 #ifndef NDEBUG
     virtual void formatForDebugger(char* buffer, unsigned length) const;
 #endif
-
-    bool pseudoStyleCacheIsInvalid(const RenderStyle* currentStyle, RenderStyle* newStyle);
 
     void cancelFocusAppearanceUpdate();
 

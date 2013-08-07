@@ -120,7 +120,7 @@ protected:
     virtual bool isKeyboardFocusable(KeyboardEvent*) const OVERRIDE;
     virtual bool isMouseFocusable() const OVERRIDE;
 
-    virtual void didRecalcStyle(StyleChange) OVERRIDE;
+    virtual void didRecalcStyle(Style::Change) OVERRIDE;
 
     virtual void dispatchBlurEvent(PassRefPtr<Element> newFocusedElement) OVERRIDE;
 

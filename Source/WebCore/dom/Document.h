@@ -44,6 +44,7 @@
 #include "ReferrerPolicy.h"
 #include "ScriptExecutionContext.h"
 #include "StringWithDirection.h"
+#include "StyleResolveTree.h"
 #include "Timer.h"
 #include "TreeScope.h"
 #include "UserActionElementSet.h"
@@ -505,7 +506,7 @@ public:
     PassRefPtr<CSSStyleDeclaration> createCSSStyleDeclaration();
     PassRefPtr<Text> createEditingTextNode(const String&);
 
-    void recalcStyle(StyleChange = NoChange);
+    void recalcStyle(Style::Change = Style::NoChange);
     bool childNeedsAndNotInStyleRecalc();
     void updateStyleIfNeeded();
     void updateLayout();

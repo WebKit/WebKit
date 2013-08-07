@@ -106,12 +106,12 @@ bool HTMLIFrameElement::shouldDisplaySeamlessly() const
     return contentDocument() && contentDocument()->shouldDisplaySeamlesslyWithParent();
 }
 
-void HTMLIFrameElement::didRecalcStyle(StyleChange styleChange)
+void HTMLIFrameElement::didRecalcStyle(Style::Change styleChange)
 {
     if (!shouldDisplaySeamlessly())
         return;
     Document* childDocument = contentDocument();
-    if (styleChange >= Inherit || childDocument->childNeedsStyleRecalc() || childDocument->needsStyleRecalc())
+    if (styleChange >= Style::Inherit || childDocument->childNeedsStyleRecalc() || childDocument->needsStyleRecalc())
         contentDocument()->recalcStyle(styleChange);
 }
 
