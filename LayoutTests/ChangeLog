@@ -1,3 +1,14 @@
+2013-08-07  Krzysztof Czech  <k.czech@samsung.com>
+
+        [EFL] REGRESSION after r153432: marking crashing tests.
+        https://bugs.webkit.org/show_bug.cgi?id=119539
+
+        Unreviewed EFL gardening.
+
+        * platform/efl-wk1/TestExpectations:
+        * platform/efl-wk2/TestExpectations:
+        * platform/efl/TestExpectations:
+
 2013-08-06  Filip Pizlo  <fpizlo@apple.com>
 
         DFG FixupPhase should insert Int32ToDouble nodes for number uses in NewArray, and SpeculativeJIT 64-bit should not try to coerce integer constants to double constants
