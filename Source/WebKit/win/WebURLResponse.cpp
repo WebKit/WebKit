@@ -47,7 +47,7 @@
 
 using namespace WebCore;
 
-static String CFHTTPMessageCopyLocalizedShortDescriptionForStatusCode(CFIndex statusCode)
+static String localizedShortDescriptionForStatusCode(int statusCode)
 {
     String result;
     if (statusCode < 100 || statusCode >= 600)
@@ -372,7 +372,7 @@ HRESULT STDMETHODCALLTYPE WebURLResponse::localizedStringForStatusCode(
     ASSERT(m_response.isHTTP());
     if (statusString)
         *statusString = 0;
-    String statusText = CFHTTPMessageCopyLocalizedShortDescriptionForStatusCode(statusCode);
+    const String& statusText = localizedShortDescriptionForStatusCode(statusCode);
     if (!statusText)
         return E_FAIL;
     if (statusString)
