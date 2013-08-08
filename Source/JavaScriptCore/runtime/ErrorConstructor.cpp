@@ -48,7 +48,7 @@ void ErrorConstructor::finishCreation(ExecState* exec, ErrorPrototype* errorProt
 
 // ECMA 15.9.3
 
-static EncodedJSValue JSC_HOST_CALL constructWithErrorConstructor(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL Interpreter::constructWithErrorConstructor(ExecState* exec)
 {
     JSValue message = exec->argumentCount() ? exec->argument(0) : jsUndefined();
     Structure* errorStructure = asInternalFunction(exec->callee())->globalObject()->errorStructure();
@@ -60,11 +60,11 @@ static EncodedJSValue JSC_HOST_CALL constructWithErrorConstructor(ExecState* exe
 
 ConstructType ErrorConstructor::getConstructData(JSCell*, ConstructData& constructData)
 {
-    constructData.native.function = constructWithErrorConstructor;
+    constructData.native.function = Interpreter::constructWithErrorConstructor;
     return ConstructTypeHost;
 }
 
-static EncodedJSValue JSC_HOST_CALL callErrorConstructor(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL Interpreter::callErrorConstructor(ExecState* exec)
 {
     JSValue message = exec->argumentCount() ? exec->argument(0) : jsUndefined();
     Structure* errorStructure = asInternalFunction(exec->callee())->globalObject()->errorStructure();
@@ -76,7 +76,7 @@ static EncodedJSValue JSC_HOST_CALL callErrorConstructor(ExecState* exec)
 
 CallType ErrorConstructor::getCallData(JSCell*, CallData& callData)
 {
-    callData.native.function = callErrorConstructor;
+    callData.native.function = Interpreter::callErrorConstructor;
     return CallTypeHost;
 }
 

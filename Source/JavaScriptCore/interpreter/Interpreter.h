@@ -222,6 +222,11 @@ namespace JSC {
         static void addStackTraceIfNecessary(CallFrame*, JSValue error);
         JSString* stackTraceAsString(ExecState*, Vector<StackFrame>);
 
+        static EncodedJSValue JSC_HOST_CALL constructWithErrorConstructor(ExecState*);
+        static EncodedJSValue JSC_HOST_CALL callErrorConstructor(ExecState*);
+        static EncodedJSValue JSC_HOST_CALL constructWithNativeErrorConstructor(ExecState*);
+        static EncodedJSValue JSC_HOST_CALL callNativeErrorConstructor(ExecState*);
+
         void dumpSampleData(ExecState* exec);
         void startSampling();
         void stopSampling();

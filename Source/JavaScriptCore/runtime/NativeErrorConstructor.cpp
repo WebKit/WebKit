@@ -49,7 +49,7 @@ void NativeErrorConstructor::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(&thisObject->m_errorStructure);
 }
 
-static EncodedJSValue JSC_HOST_CALL constructWithNativeErrorConstructor(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL Interpreter::constructWithNativeErrorConstructor(ExecState* exec)
 {
     JSValue message = exec->argumentCount() ? exec->argument(0) : jsUndefined();
     Structure* errorStructure = static_cast<NativeErrorConstructor*>(exec->callee())->errorStructure();
@@ -62,11 +62,11 @@ static EncodedJSValue JSC_HOST_CALL constructWithNativeErrorConstructor(ExecStat
 
 ConstructType NativeErrorConstructor::getConstructData(JSCell*, ConstructData& constructData)
 {
-    constructData.native.function = constructWithNativeErrorConstructor;
+    constructData.native.function = Interpreter::constructWithNativeErrorConstructor;
     return ConstructTypeHost;
 }
     
-static EncodedJSValue JSC_HOST_CALL callNativeErrorConstructor(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL Interpreter::callNativeErrorConstructor(ExecState* exec)
 {
     JSValue message = exec->argumentCount() ? exec->argument(0) : jsUndefined();
     Structure* errorStructure = static_cast<NativeErrorConstructor*>(exec->callee())->errorStructure();
@@ -78,7 +78,7 @@ static EncodedJSValue JSC_HOST_CALL callNativeErrorConstructor(ExecState* exec)
 
 CallType NativeErrorConstructor::getCallData(JSCell*, CallData& callData)
 {
-    callData.native.function = callNativeErrorConstructor;
+    callData.native.function = Interpreter::callNativeErrorConstructor;
     return CallTypeHost;
 }
 
