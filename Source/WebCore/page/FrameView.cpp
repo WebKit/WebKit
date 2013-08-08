@@ -1293,7 +1293,7 @@ void FrameView::layout(bool allowSubtree)
 
             LayoutSize oldSize = m_size;
 
-            m_size = LayoutSize(layoutWidth(), layoutHeight());
+            m_size = layoutSize();
 
             if (oldSize != m_size) {
                 m_needsFullRepaint = true;

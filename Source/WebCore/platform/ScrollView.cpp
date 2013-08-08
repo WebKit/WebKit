@@ -221,7 +221,7 @@ void ScrollView::setDelegatesScrolling(bool delegatesScrolling)
 IntSize ScrollView::unscaledVisibleContentSize(VisibleContentRectIncludesScrollbars scrollbarInclusion) const
 {
     if (platformWidget())
-        return platformVisibleContentRect(scrollbarInclusion == IncludeScrollbars).size();
+        return platformVisibleContentSize(scrollbarInclusion == IncludeScrollbars);
 
     if (!m_fixedVisibleContentRect.isEmpty())
         return m_fixedVisibleContentRect.size();
@@ -1410,6 +1410,11 @@ bool ScrollView::platformCanBlitOnScroll() const
 IntRect ScrollView::platformVisibleContentRect(bool) const
 {
     return IntRect();
+}
+
+IntSize ScrollView::platformVisibleContentSize(bool) const
+{
+    return IntSize();
 }
 
 void ScrollView::platformSetContentsSize()

@@ -28,6 +28,7 @@
 
 #import "BlockExceptions.h"
 #import "FloatRect.h"
+#import "FloatSize.h"
 #import "IntRect.h"
 #import "Logging.h"
 #import "NotImplemented.h"
@@ -114,6 +115,17 @@ IntRect ScrollView::platformVisibleContentRect(bool includeScrollbars) const
     return result;
     END_BLOCK_OBJC_EXCEPTIONS;
     return IntRect();
+}
+
+IntSize ScrollView::platformVisibleContentSize(bool includeScrollbars) const
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    if (includeScrollbars)
+        return IntSize([scrollView() frame].size);
+
+    return expandedIntSize(FloatSize([scrollView() documentVisibleRect].size));
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return IntSize();
 }
 
 void ScrollView::platformSetContentsSize()

@@ -1,5 +1,33 @@
 2013-08-07  Simon Fraser  <simon.fraser@apple.com>
 
+        Avoid spurious "all repaint" layouts when scrolling WebViews on Retina displays
+        https://bugs.webkit.org/show_bug.cgi?id=119564
+
+        Reviewed by Beth Dakin.
+
+        When scrolling WebViews on Macs with Retina displays, AppKit uses
+        device pixels for the scroll offset, so [scrollView() documentVisibleRect]
+        can return a CGRect with non-integral origin. This rect is used by layout,
+        via layoutSize(), to decide whether the view size changed, which prompts
+        a full repaint. However, FrameView gets a value which has been rounded
+        by enclosingIntRect(), which increases the height or width by 1px if the 
+        y or x offset is on a half-pixel, causing spurious full repaints.
+        
+        Fix by plumbing through platformVisibleContentSize(), which just
+        gets the size of the -documentVisibleRect.
+        
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout): Don't get layoutHeight and layoutWidth
+        separately, since that is two calls down into platformVisibleContentSize.
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::unscaledVisibleContentSize):
+        (WebCore::ScrollView::platformVisibleContentSize):
+        * platform/ScrollView.h:
+        * platform/mac/ScrollViewMac.mm:
+        (WebCore::ScrollView::platformVisibleContentSize):
+
+2013-08-07  Simon Fraser  <simon.fraser@apple.com>
+
         Be more aggressive about sending fake mouse events less frequently
         https://bugs.webkit.org/show_bug.cgi?id=119563
         <rdar://problem/14669029>
