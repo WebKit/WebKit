@@ -663,8 +663,6 @@ webkit.org/b/89845 fast/forms/input-set-composition-scroll.html [ Failure ]
 
 webkit.org/b/90707 inspector/timeline/timeline-receive-response-event.html [ Pass Failure ]
 
-webkit.org/b/90708 fullscreen/exit-full-screen-iframe.html [ Failure ]
-
 webkit.org/b/90724 compositing/iframes/iframe-size-from-zero.html [ Pass Failure ]
 
 compositing/iframes/overlapped-nested-iframes.html [ Pass Failure ]
