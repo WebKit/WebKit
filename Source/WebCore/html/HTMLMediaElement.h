@@ -209,7 +209,7 @@ public:
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA_V2)
-    MediaKeys* mediaKeys() const { return m_mediaKeys.get(); }
+    MediaKeys* keys() const { return m_mediaKeys.get(); }
     void setMediaKeys(MediaKeys*);
 #endif
 

@@ -1,3 +1,13 @@
+2013-08-08  Jer Noble  <jer.noble@apple.com>
+
+        [EME] setMediaKeys function as defined in the EME specification does not work
+        https://bugs.webkit.org/show_bug.cgi?id=119597
+
+        Reviewed by Anders Carlsson.
+
+        * media/encrypted-media/encrypted-media-v2-syntax-expected.txt:
+        * media/encrypted-media/encrypted-media-v2-syntax.html:
+
 2013-08-08  Rob Buis  <rwlbuis@webkit.org>
 
         ASSERT_NOT_REACHED() touched in WebCore::SVGAnimatedStringAnimator::addAnimatedTypes
