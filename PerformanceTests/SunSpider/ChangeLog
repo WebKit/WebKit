@@ -1,3 +1,51 @@
+2013-08-08  Cosmin Truta  <ctruta@blackberry.com>
+
+        SunSpider: Move the 3d-morph fix from version 1.0 to version 1.0.1
+        https://bugs.webkit.org/show_bug.cgi?id=117993
+
+        Reviewed by George Staikos.
+
+        Bump the SunSpider version to 1.0.1.
+
+        Unroll r149548 in order to restore version 1.0 to its original,
+        and add the 3d-morph fix to version 1.0.1 instead.
+
+        * hosted/sunspider.html: Updated to version 1.0.1.
+        * hosted/versions.html: Updated to version 1.0.1.
+        * make-hosted: Added support for version 1.0.1.
+        * resources/driver-TEMPLATE.html: Updated to version 1.0.1.
+        * resources/results-TEMPLATE.html: Updated to version 1.0.1.
+        * sunspider: Updated to version 1.0.1.
+        * sunspider-compare-results: Updated to version 1.0.1.
+        * tests/sunspider-1.0/3d-morph.js: Rolled back to the original version.
+        * tests/sunspider-1.0.1/LIST: Added.
+        * tests/sunspider-1.0.1/3d-cube.js: Added.
+        * tests/sunspider-1.0.1/3d-morph.js: Added.
+        * tests/sunspider-1.0.1/3d-raytrace.js: Added.
+        * tests/sunspider-1.0.1/access-binary-trees.js: Added.
+        * tests/sunspider-1.0.1/access-fannkuch.js: Added.
+        * tests/sunspider-1.0.1/access-nbody.js: Added.
+        * tests/sunspider-1.0.1/access-nsieve.js: Added.
+        * tests/sunspider-1.0.1/bitops-3bit-bits-in-byte.js: Added.
+        * tests/sunspider-1.0.1/bitops-bits-in-byte.js: Added.
+        * tests/sunspider-1.0.1/bitops-bitwise-and.js: Added.
+        * tests/sunspider-1.0.1/bitops-nsieve-bits.js: Added.
+        * tests/sunspider-1.0.1/controlflow-recursive.js: Added.
+        * tests/sunspider-1.0.1/crypto-aes.js: Added.
+        * tests/sunspider-1.0.1/crypto-md5.js: Added.
+        * tests/sunspider-1.0.1/crypto-sha1.js: Added.
+        * tests/sunspider-1.0.1/date-format-tofte.js: Added.
+        * tests/sunspider-1.0.1/date-format-xparb.js: Added.
+        * tests/sunspider-1.0.1/math-cordic.js: Added.
+        * tests/sunspider-1.0.1/math-partial-sums.js: Added.
+        * tests/sunspider-1.0.1/math-spectral-norm.js: Added.
+        * tests/sunspider-1.0.1/regexp-dna.js: Added.
+        * tests/sunspider-1.0.1/string-base64.js: Added.
+        * tests/sunspider-1.0.1/string-fasta.js: Added.
+        * tests/sunspider-1.0.1/string-tagcloud.js: Added.
+        * tests/sunspider-1.0.1/string-unpack-code.js: Added.
+        * tests/sunspider-1.0.1/string-validate-input.js: Added.
+
 2013-05-03  Cosmin Truta  <ctruta@blackberry.com>
 
         SunSpider 1.0: 3d-morph: use epsilon to check result

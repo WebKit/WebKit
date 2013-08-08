@@ -54,7 +54,7 @@ Usage: $programName --shell=[path] [options]
   --runs            Number of times to run tests (default: $testRuns)
   --tests           Only run tests matching provided pattern
   --instruments     Sample execution time with the Mac OS X "Instruments" tool (Time Profile) (implies --runs=1)
-  --suite           Select a specific benchmark suite. The default is sunspider-1.0
+  --suite           Select a specific benchmark suite. The default is sunspider-1.0.1
   --ubench          Use microbenchmark suite instead of regular tests. Same as --suite=ubench
   --v8-suite        Use the V8 benchmark suite. Same as --suite=v8-v4
   --parse-only      Use the parse-only benchmark suite. Same as --suite=parse-only
@@ -76,7 +76,7 @@ GetOptions('runs=i' => \$testRuns,
 $suite = "ubench" if ($ubench);
 $suite = "v8-v4" if ($v8suite);
 $suite = "parse-only" if ($parseOnly);
-$suite = "sunspider-1.0" if (!$suite);
+$suite = "sunspider-1.0.1" if (!$suite);
 
 my $resultDirectory = "${suite}-results";
 

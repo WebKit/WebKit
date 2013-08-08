@@ -23,41 +23,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-var loops = 15
-var nx = 120
-var nz = 120
+bitwiseAndValue = 4294967296;
+for (var i = 0; i < 600000; i++)
+    bitwiseAndValue = bitwiseAndValue & i;
 
-function morph(a, f) {
-    var PI2nx = Math.PI * 8/nx
-    var sin = Math.sin
-    var f30 = -(50 * sin(f*Math.PI*2))
-    
-    for (var i = 0; i < nz; ++i) {
-        for (var j = 0; j < nx; ++j) {
-            a[3*(i*nx+j)+1]    = sin((j-1) * PI2nx ) * -f30
-        }
-    }
-}
+var result = bitwiseAndValue;
 
-    
-var a = Array()
-for (var i=0; i < nx*nz*3; ++i) 
-    a[i] = 0
+var expected = 0;
+if (result != expected)
+    throw "ERROR: bad result: expected " + expected + " but got " + result;
 
-for (var i = 0; i < loops; ++i) {
-    morph(a, i/loops)
-}
-
-testOutput = 0;
-for (var i = 0; i < nx; i++)
-    testOutput += a[3*(i*nx+i)+1];
-a = null;
-
-// This has to be an approximate test since ECMAscript doesn't formally specify
-// what sin() returns. Even if it did specify something like for example what Java 7
-// says - that sin() has to return a value within 1 ulp of exact - then we still
-// would not be able to do an exact test here since that would allow for just enough
-// low-bit slop to create possibly big errors due to testOutput being a sum.
-var expected = 6;
-if (("" + testOutput)[0] != expected)
-    throw "Error: bad test output: expected leading digit to be " + expected + " but got " + testOutput;

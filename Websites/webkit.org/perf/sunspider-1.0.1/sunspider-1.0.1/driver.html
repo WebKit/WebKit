@@ -29,14 +29,14 @@
  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
 -->
 
-<title>SunSpider 1.0.1 JavaScript Benchmark (@SUITE@ test suite - In Progress...)</title>
+<title>SunSpider 1.0.1 JavaScript Benchmark (sunspider-1.0.1 test suite - In Progress...)</title>
 <link rel="stylesheet" href="../sunspider.css">
 </head>
 
 <body onload="start()">
 
 <h2><span id="logo">&#x2600;</span>SunSpider JavaScript Benchmark <small>(In Progress...)</small></h2>
-<h3>Content Version: @SUITE@</h3>
+<h3>Content Version: sunspider-1.0.1</h3>
 
 <script src="sunspider-test-prefix.js"></script>
 <script src="sunspider-test-contents.js"></script>
@@ -91,7 +91,7 @@ function recordResult(time)
 function finish()
 {
     var outputString = "{";
-    outputString += '"v": "@SUITE@", ';
+    outputString += '"v": "sunspider-1.0.1", ';
     for (var test in output[0]) {
         outputString += '"' + test + '":[';
         for (var i = 0; i < output.length; i++) {
