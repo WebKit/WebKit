@@ -58,7 +58,7 @@ DocumentStyleSheetCollection::DocumentStyleSheetCollection(Document* document)
     , m_pendingStylesheets(0)
     , m_injectedStyleSheetCacheValid(false)
     , m_hadActiveLoadingStylesheet(false)
-    , m_needsUpdateActiveStylesheetsOnStyleRecalc(false)
+    , m_pendingUpdateType(NoUpdate)
     , m_usesSiblingRules(false)
     , m_usesSiblingRulesOverride(false)
     , m_usesFirstLineRules(false)
@@ -459,7 +459,7 @@ bool DocumentStyleSheetCollection::updateActiveStyleSheets(UpdateFlag updateFlag
         // SVG <use> element may manage to invalidate style selector in the middle of a style recalc.
         // https://bugs.webkit.org/show_bug.cgi?id=54344
         // FIXME: This should be fixed in SVG and the call site replaced by ASSERT(!m_inStyleRecalc).
-        m_needsUpdateActiveStylesheetsOnStyleRecalc = true;
+        m_pendingUpdateType = FullUpdate;
         m_document->scheduleForcedStyleRecalc();
         return false;
 
@@ -493,15 +493,27 @@ bool DocumentStyleSheetCollection::updateActiveStyleSheets(UpdateFlag updateFlag
         }
         resetCSSFeatureFlags();
     }
+
+    m_weakCopyOfActiveStyleSheetListForFastLookup.clear();
     m_activeAuthorStyleSheets.swap(activeCSSStyleSheets);
     m_styleSheetsForStyleSheetList.swap(activeStyleSheets);
 
     m_usesRemUnits = styleSheetsUseRemUnits(m_activeAuthorStyleSheets);
-    m_needsUpdateActiveStylesheetsOnStyleRecalc = false;
+    m_pendingUpdateType = NoUpdate;
 
     m_document->notifySeamlessChildDocumentsOfStylesheetUpdate();
 
     return requiresFullStyleRecalc;
+}
+
+bool DocumentStyleSheetCollection::activeStyleSheetsContains(const CSSStyleSheet* sheet) const
+{
+    if (!m_weakCopyOfActiveStyleSheetListForFastLookup) {
+        m_weakCopyOfActiveStyleSheetListForFastLookup = adoptPtr(new HashSet<const CSSStyleSheet*>);
+        for (unsigned i = 0; i < m_activeAuthorStyleSheets.size(); ++i)
+            m_weakCopyOfActiveStyleSheetListForFastLookup->add(m_activeAuthorStyleSheets[i].get());
+    }
+    return m_weakCopyOfActiveStyleSheetListForFastLookup->contains(sheet);
 }
 
 }

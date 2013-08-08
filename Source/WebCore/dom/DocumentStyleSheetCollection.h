@@ -71,9 +71,21 @@ public:
     void addAuthorSheet(PassRefPtr<StyleSheetContents> authorSheet);
     void addUserSheet(PassRefPtr<StyleSheetContents> userSheet);
 
-    bool needsUpdateActiveStylesheetsOnStyleRecalc() const { return m_needsUpdateActiveStylesheetsOnStyleRecalc; }
+    enum UpdateFlag { NoUpdate = 0, OptimizedUpdate, FullUpdate };
 
-    enum UpdateFlag { FullUpdate, OptimizedUpdate };
+    UpdateFlag pendingUpdateType() const { return m_pendingUpdateType; }
+    void setPendingUpdateType(UpdateFlag updateType)
+    {
+        if (updateType > m_pendingUpdateType)
+            m_pendingUpdateType = updateType;
+    }
+
+    void flushPendingUpdates()
+    {
+        if (m_pendingUpdateType != NoUpdate)
+            updateActiveStyleSheets(m_pendingUpdateType);
+    }
+
     bool updateActiveStyleSheets(UpdateFlag);
 
     String preferredStylesheetSetName() const { return m_preferredStylesheetSetName; }
@@ -103,6 +115,8 @@ public:
     void combineCSSFeatureFlags();
     void resetCSSFeatureFlags();
 
+    bool activeStyleSheetsContains(const CSSStyleSheet*) const;
+
 private:
     DocumentStyleSheetCollection(Document*);
 
@@ -118,6 +132,9 @@ private:
 
     Vector<RefPtr<StyleSheet> > m_styleSheetsForStyleSheetList;
     Vector<RefPtr<CSSStyleSheet> > m_activeAuthorStyleSheets;
+
+    // This is a mirror of m_activeAuthorStyleSheets that gets populated on demand for activeStyleSheetsContains().
+    mutable OwnPtr<HashSet<const CSSStyleSheet*>> m_weakCopyOfActiveStyleSheetListForFastLookup;
 
     // Track the number of currently loading top-level stylesheets needed for rendering.
     // Sheets loaded using the @import directive are not included in this count.
@@ -135,7 +152,7 @@ private:
     Vector<RefPtr<CSSStyleSheet> > m_authorStyleSheets;
 
     bool m_hadActiveLoadingStylesheet;
-    bool m_needsUpdateActiveStylesheetsOnStyleRecalc;
+    UpdateFlag m_pendingUpdateType;
 
     typedef ListHashSet<Node*, 32> StyleSheetCandidateListHashSet;
     StyleSheetCandidateListHashSet m_styleSheetCandidateNodes;

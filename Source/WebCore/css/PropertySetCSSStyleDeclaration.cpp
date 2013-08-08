@@ -331,9 +331,9 @@ void StyleRuleCSSStyleDeclaration::didMutate(MutationType type)
     if (type == PropertyChanged)
         m_cssomCSSValueClones.clear();
 
-    // Style sheet mutation needs to be signaled even if the change failed. willMutateRules/didMutateRules must pair.
+    // Style sheet mutation needs to be signaled even if the change failed. willMutate*/didMutate* must pair.
     if (m_parentRule && m_parentRule->parentStyleSheet())
-        m_parentRule->parentStyleSheet()->didMutateRules();
+        m_parentRule->parentStyleSheet()->didMutateRuleFromCSSStyleDeclaration();
 }
 
 CSSStyleSheet* StyleRuleCSSStyleDeclaration::parentStyleSheet() const

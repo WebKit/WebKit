@@ -1,3 +1,83 @@
+2013-08-08  Andreas Kling  <akling@apple.com>
+
+        Inserting multiple rules into an empty style sheet should avoid style recalc if possible.
+        <http://webkit.org/b/119568>
+
+        Reviewed by Antti Koivisto.
+
+        As a follow-up to <http://webkit.org/b/119475>, where I added a hack for inserting
+        a single rule into an empty style sheet, this broadens the optimization to support
+        any number of rules.
+
+        This optimizes the scenario where a style sheet is added to the DOM and then populated
+        rule-by-rule via CSSOM insertRule()/addRule() calls. Previously we'd do a full style
+        recalc for this case, but now we'll treat it the same as a full sheet added at once.
+
+        * css/CSSStyleSheet.h:
+        * css/CSSStyleSheet.cpp:
+        (WebCore::CSSStyleSheet::willMutateRules):
+
+            Made willMutateRules() return whether the style sheet contents were cloned by the
+            copy-on-write mechanism.
+
+        * dom/Document.h:
+        (WebCore::CSSStyleSheet::didMutateRules):
+        (WebCore::CSSStyleSheet::insertRule):
+
+            Replaced the InsertionIntoEmptySheet mutation type by a general RuleInsertion.
+            The mutation callback checks if we're inserting into a rule that's not (yet) part
+            of the document's active sheet set. In that case, we defer doing the style sheet
+            until all the insertions are done (or something forces us to style+layout.)
+
+            Note that this optimization only happens if the style sheet had a single client.
+            Shared style sheets that just got cloned before mutation may have pointers into
+            them from the Document's StyleResolver, so we're forced to do an immediate sheet
+            update in that case.
+
+        (WebCore::CSSStyleSheet::RuleMutationScope::RuleMutationScope):
+        (WebCore::CSSStyleSheet::RuleMutationScope::~RuleMutationScope):
+
+            Moved these out-of-line.
+
+        (WebCore::CSSStyleSheet::didMutateRuleFromCSSStyleDeclaration):
+        * css/PropertySetCSSStyleDeclaration.cpp:
+        (WebCore::StyleRuleCSSStyleDeclaration::didMutate):
+
+            Made a separate mutation callback for CSSStyleDeclaration since its needs are
+            so simple compared to the mutation callback from CSSStyleSheet. Seems better
+            than adding yet another mode to the enum.
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::recalcStyle):
+        (WebCore::Document::styleResolverChanged):
+        (WebCore::Document::optimizedStyleSheetUpdateTimerFired):
+        (WebCore::Document::scheduleOptimizedStyleSheetUpdate):
+
+            Added mechanism to defer doing a RecalcStyleIfNeeded.
+
+        (WebCore::Document::updateStyleIfNeeded):
+
+            Synchronize the optimized style sheet update if there's one scheduled.
+            This ensures that stuff like layout-dependent property access won't operate
+            on stale style.
+
+        * dom/DocumentStyleSheetCollection.h:
+        (WebCore::DocumentStyleSheetCollection::pendingUpdateType):
+        (WebCore::DocumentStyleSheetCollection::setPendingUpdateType):
+        (WebCore::DocumentStyleSheetCollection::flushPendingUpdates):
+        * dom/DocumentStyleSheetCollection.cpp:
+        (WebCore::DocumentStyleSheetCollection::DocumentStyleSheetCollection):
+        (WebCore::DocumentStyleSheetCollection::updateActiveStyleSheets):
+
+            Have DSSC track the kind of style sheet update it needs to do (instead of just
+            a boolean "needs update.") This is used by Document::recalcStyle() to make sure
+            the right kind of update happens if there's one scheduled.
+
+        (WebCore::DocumentStyleSheetCollection::activeStyleSheetsContains):
+
+            Added helper to check if a CSSStyleSheet is part of the active set.
+
 2013-08-08  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [WK1] NPStream::headers not initialized

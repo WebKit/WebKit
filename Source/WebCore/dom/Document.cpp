@@ -412,6 +412,7 @@ Document::Document(Frame* frame, const KURL& url, unsigned documentClasses)
     , m_visuallyOrdered(false)
     , m_readyState(Complete)
     , m_bParsing(false)
+    , m_optimizedStyleSheetUpdateTimer(this, &Document::optimizedStyleSheetUpdateTimerFired)
     , m_styleRecalcTimer(this, &Document::styleRecalcTimerFired)
     , m_pendingStyleRecalcShouldForce(false)
     , m_inStyleRecalc(false)
@@ -1759,8 +1760,7 @@ void Document::recalcStyle(Style::Change change)
     // re-attaching our containing iframe, which when asked HTMLFrameElementBase::isURLAllowed
     // hits a null-dereference due to security code always assuming the document has a SecurityOrigin.
 
-    if (m_styleSheetCollection->needsUpdateActiveStylesheetsOnStyleRecalc())
-        m_styleSheetCollection->updateActiveStyleSheets(DocumentStyleSheetCollection::FullUpdate);
+    m_styleSheetCollection->flushPendingUpdates();
 
     InspectorInstrumentationCookie cookie = InspectorInstrumentation::willRecalculateStyle(this);
 
@@ -1845,7 +1845,10 @@ void Document::updateStyleIfNeeded()
 {
     ASSERT(isMainThread());
     ASSERT(!view() || (!view()->isInLayout() && !view()->isPainting()));
-    
+
+    if (m_optimizedStyleSheetUpdateTimer.isActive())
+        styleResolverChanged(RecalcStyleIfNeeded);
+
     if ((!m_pendingStyleRecalcShouldForce && !childNeedsStyleRecalc()) || inPageCache())
         return;
 
@@ -3135,8 +3138,24 @@ void Document::evaluateMediaQueryList()
         m_mediaQueryMatcher->styleResolverChanged();
 }
 
+void Document::optimizedStyleSheetUpdateTimerFired(Timer<Document>*)
+{
+    styleResolverChanged(RecalcStyleIfNeeded);
+}
+
+void Document::scheduleOptimizedStyleSheetUpdate()
+{
+    if (m_optimizedStyleSheetUpdateTimer.isActive())
+        return;
+    styleSheetCollection()->setPendingUpdateType(DocumentStyleSheetCollection::OptimizedUpdate);
+    m_optimizedStyleSheetUpdateTimer.startOneShot(0);
+}
+
 void Document::styleResolverChanged(StyleResolverUpdateFlag updateFlag)
 {
+    if (m_optimizedStyleSheetUpdateTimer.isActive())
+        m_optimizedStyleSheetUpdateTimer.stop();
+
     // Don't bother updating, since we haven't loaded all our style info yet
     // and haven't calculated the style selector for the first time.
     if (!attached() || (!m_didCalculateStyleResolver && !haveStylesheetsLoaded())) {

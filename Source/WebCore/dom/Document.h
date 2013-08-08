@@ -481,6 +481,8 @@ public:
      */
     void styleResolverChanged(StyleResolverUpdateFlag);
 
+    void scheduleOptimizedStyleSheetUpdate();
+
     void didAccessStyleResolver();
 
     void evaluateMediaQueryList();
@@ -690,6 +692,7 @@ public:
     bool hasPendingStyleRecalc() const;
     bool hasPendingForcedStyleRecalc() const;
     void styleRecalcTimerFired(Timer<Document>*);
+    void optimizedStyleSheetUpdateTimerFired(Timer<Document>*);
 
     void registerNodeList(LiveNodeListBase*);
     void unregisterNodeList(LiveNodeListBase*);
@@ -1355,7 +1358,8 @@ private:
     bool m_visuallyOrdered;
     ReadyState m_readyState;
     bool m_bParsing;
-    
+
+    Timer<Document> m_optimizedStyleSheetUpdateTimer;
     Timer<Document> m_styleRecalcTimer;
     bool m_pendingStyleRecalcShouldForce;
     bool m_inStyleRecalc;

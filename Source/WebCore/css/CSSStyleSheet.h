@@ -85,7 +85,8 @@ public:
     void setMediaQueries(PassRefPtr<MediaQuerySet>);
     void setTitle(const String& title) { m_title = title; }
 
-    enum RuleMutationType { OtherMutation, InsertionIntoEmptySheet };
+    enum RuleMutationType { OtherMutation, RuleInsertion };
+    enum WhetherContentsWereClonedForMutation { ContentsWereNotClonedForMutation = 0, ContentsWereClonedForMutation };
 
     class RuleMutationScope {
         WTF_MAKE_NONCOPYABLE(RuleMutationScope);
@@ -97,10 +98,12 @@ public:
     private:
         CSSStyleSheet* m_styleSheet;
         RuleMutationType m_mutationType;
+        WhetherContentsWereClonedForMutation m_contentsWereClonedForMutation;
     };
 
-    void willMutateRules();
-    void didMutateRules(RuleMutationType = OtherMutation);
+    WhetherContentsWereClonedForMutation willMutateRules();
+    void didMutateRules(RuleMutationType, WhetherContentsWereClonedForMutation);
+    void didMutateRuleFromCSSStyleDeclaration();
     void didMutate();
     
     void clearChildRuleCSSOMWrappers();
@@ -130,28 +133,6 @@ private:
     mutable Vector<RefPtr<CSSRule> > m_childRuleCSSOMWrappers;
     mutable OwnPtr<CSSRuleList> m_ruleListCSSOMWrapper;
 };
-
-inline CSSStyleSheet::RuleMutationScope::RuleMutationScope(CSSStyleSheet* sheet, RuleMutationType mutationType)
-    : m_styleSheet(sheet)
-    , m_mutationType(mutationType)
-{
-    if (m_styleSheet)
-        m_styleSheet->willMutateRules();
-}
-
-inline CSSStyleSheet::RuleMutationScope::RuleMutationScope(CSSRule* rule)
-    : m_styleSheet(rule ? rule->parentStyleSheet() : 0)
-    , m_mutationType(OtherMutation)
-{
-    if (m_styleSheet)
-        m_styleSheet->willMutateRules();
-}
-
-inline CSSStyleSheet::RuleMutationScope::~RuleMutationScope()
-{
-    if (m_styleSheet)
-        m_styleSheet->didMutateRules(m_mutationType);
-}
 
 } // namespace
 
