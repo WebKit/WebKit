@@ -1087,8 +1087,6 @@ compositing/patterns/direct-pattern-compositing-position.html [ Pass ImageOnlyFa
 compositing/patterns/direct-pattern-compositing-size.html [ Pass ImageOnlyFailure ]
 compositing/patterns/direct-pattern-compositing.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/99096 fast/canvas/webgl/arraybuffer-transfer-of-control.html [ Failure ]
-
 # Timing out on Mountain Lion WK1 release sometimes
 webkit.org/b/99221 fast/js/random-array-gc-stress.html [ Pass Timeout ]
 
