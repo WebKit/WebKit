@@ -50,9 +50,17 @@ protected:
     String m_sessionId;
 };
 
-bool MockCDM::supportsKeySytem(const String& keySystem)
+bool MockCDM::supportsKeySystem(const String& keySystem)
 {
     return equalIgnoringCase(keySystem, "com.webcore.mock");
+}
+
+bool MockCDM::supportsKeySystemAndMimeType(const String& keySystem, const String& mimeType)
+{
+    if (!supportsKeySystem(keySystem))
+        return false;
+
+    return equalIgnoringCase(mimeType, "video/mock");
 }
 
 bool MockCDM::supportsMIMEType(const String& mimeType)

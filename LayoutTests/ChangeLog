@@ -1,3 +1,13 @@
+2013-08-08  Jer Noble  <jer.noble@apple.com>
+
+        [EME] Implement MediaKeys.isTypeSupported()
+        https://bugs.webkit.org/show_bug.cgi?id=119586
+
+        Reviewed by Eric Carlson.
+
+        * media/encrypted-media/encrypted-media-is-type-supported-expected.txt: Added.
+        * media/encrypted-media/encrypted-media-is-type-supported.html: Added.
+
 2013-08-08  Eric Carlson  <eric.carlson@apple.com>
 
         fast/events/scroll-div-with-prevent-default-in-subframe.html is failing

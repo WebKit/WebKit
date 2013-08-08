@@ -39,7 +39,8 @@ class MockCDM : public CDMPrivateInterface {
 public:
     // CDMFactory support:
     static PassOwnPtr<CDMPrivateInterface> create(CDM* cdm) { return adoptPtr(new MockCDM(cdm)); }
-    static bool supportsKeySytem(const String&);
+    static bool supportsKeySystem(const String&);
+    static bool supportsKeySystemAndMimeType(const String& keySystem, const String& mimeType);
 
     virtual ~MockCDM() { }
 

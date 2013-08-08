@@ -1,3 +1,48 @@
+2013-08-08  Jer Noble  <jer.noble@apple.com>
+
+        [EME] Implement MediaKeys.isTypeSupported()
+        https://bugs.webkit.org/show_bug.cgi?id=119586
+
+        Reviewed by Eric Carlson.
+
+        Test: media/encrypted-media/encrypted-media-is-type-supported.html
+
+        The EME spec has removed the extra keySystem parameter from
+        HTMLMediaElement.canPlayType() in favor of a new isTypeSupported()
+        method on MediaKeys.
+
+        To implement this method, the CDMFactory needs to know whether the
+        registered CDM supports the specified mime type.  CDMs must register
+        this new factory method, which requires changes to CDMPrivateAVFoundation
+        and MockCDM.
+
+        Add the new MediaKeys.isTypeSupported() method:
+        * Modules/encryptedmedia/MediaKeys.cpp:
+        (WebCore::MediaKeys::isTypeSupported):
+        * Modules/encryptedmedia/MediaKeys.h:
+        * Modules/encryptedmedia/MediaKeys.idl:
+
+        Add the new factory CDMSupportsKeySystemAndMimeType method:
+        * Modules/encryptedmedia/CDM.cpp:
+        (WebCore::CDMFactory::CDMFactory): Now takes a third parameter.
+        (WebCore::installedCDMFactories): When adding the AVFoundation CDM, pass its new method.
+        (WebCore::CDM::registerCDMFactory): Now takes a third parameter.
+        (WebCore::CDM::keySystemSupportsMimeType): Added.
+        * Modules/encryptedmedia/CDM.h:
+        * WebCore.exp.in:
+
+        Register this new method with the factory for all concrete CDMs:
+        * Modules/encryptedmedia/CDMPrivateAVFoundation.h:
+        * Modules/encryptedmedia/CDMPrivateAVFoundation.mm:
+        (WebCore::CDMPrivateAVFoundation::supportsKeySystem):
+        (WebCore::CDMPrivateAVFoundation::supportsKeySystemAndMimeType):
+        * testing/Internals.cpp:
+        (WebCore::Internals::initializeMockCDM):
+        * testing/MockCDM.cpp:
+        (WebCore::MockCDM::supportsKeySystem):
+        (WebCore::MockCDM::supportsKeySystemAndMimeType):
+        * testing/MockCDM.h:
+
 2013-08-08  Rob Buis  <rwlbuis@webkit.org>
 
         Crash in WTF::RefPtr<WebCore::SpaceSplitStringData>::operator UnspecifiedBoolType

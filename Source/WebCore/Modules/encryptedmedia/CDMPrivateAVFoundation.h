@@ -40,7 +40,8 @@ class CDMPrivateAVFoundation : public CDMPrivateInterface {
 public:
     // CDMFactory support:
     static PassOwnPtr<CDMPrivateInterface> create(CDM* cdm) { return adoptPtr(new CDMPrivateAVFoundation(cdm)); }
-    static bool supportsKeySytem(const String&);
+    static bool supportsKeySystem(const String&);
+    static bool supportsKeySystemAndMimeType(const String& keySystem, const String& mimeType);
 
     virtual ~CDMPrivateAVFoundation() { }
 
