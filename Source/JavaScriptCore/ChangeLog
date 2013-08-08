@@ -51,6 +51,16 @@
         (JSC::JSObject::getIndexQuickly):
         (JSC::JSObject::tryGetIndexQuickly):
 
+2013-08-08  Stephanie Lewis  <slewis@apple.com>
+
+        <rdar://problem/14680524> REGRESSION(153806): Crash @ yahoo.com when WebKit is built with a .order file
+
+        Unreviewed.
+
+        Ensure llint symbols are in source order.
+
+        * JavaScriptCore.order:
+
 2013-08-06  Mark Lam  <mark.lam@apple.com>
 
         Assertion failure in emitExpressionInfo when reloading with Web Inspector open.
