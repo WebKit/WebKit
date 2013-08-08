@@ -1,3 +1,22 @@
+2013-08-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Allow the DumpRenderTree runloop to be idle while waiting for a test to complete
+        https://bugs.webkit.org/show_bug.cgi?id=119317
+
+        Reviewed by Tim Horton.
+        
+        The change in r55200 made DumpRenderTree spin a busy-loop while waiting for
+        the test to complete, which is not power friendly. Although DRT instances
+        are generally busy anyway, not sitting in a busy loop should free up some CPU
+        cycles for other instances of DRT.
+        
+        Editing tests continue to pass. All Java tests are skipped and were not
+        tested, but when run fail similarly with and without the patch.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (dump):
+        (runTest):
+
 2013-08-07  Daniel Bates  <dabates@apple.com>
 
         Clean up: Simplifying the printing of the command line arguments passed to jsDriver.pl

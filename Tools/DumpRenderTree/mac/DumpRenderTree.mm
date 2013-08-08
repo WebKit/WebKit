@@ -1250,6 +1250,7 @@ void dump()
     fflush(stderr);
 
     done = YES;
+    CFRunLoopStop(CFRunLoopGetMain());
 }
 
 static bool shouldLogFrameLoadDelegates(const char* pathOrURL)
@@ -1405,7 +1406,7 @@ static void runTest(const string& inputLine)
 
     while (!done) {
         pool = [[NSAutoreleasePool alloc] init];
-        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantPast]]; 
+        CFRunLoopRunInMode(kCFRunLoopDefaultMode, 10, false);
         [pool release];
     }
 
