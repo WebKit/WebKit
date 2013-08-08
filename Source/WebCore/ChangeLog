@@ -1,3 +1,20 @@
+2013-08-08  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Introduce toSVGMPathElement(), and use it
+        https://bugs.webkit.org/show_bug.cgi?id=119566
+
+        Reviewed by Andreas Kling.
+
+        As a step to change static_cast with toSVGXXX, static_cast<SVGMPathElement*> can
+        be changed with toSVGMPathElement().
+
+        * svg/SVGAnimateMotionElement.cpp:
+        (WebCore::SVGAnimateMotionElement::updateAnimationPath):
+        * svg/SVGMPathElement.h:
+        (WebCore::toSVGMPathElement):
+        * svg/SVGPathElement.cpp:
+        (WebCore::SVGPathElement::invalidateMPathDependencies):
+
 2013-08-08  Antti Koivisto  <antti@apple.com>
 
         Move more style recalc code to StyleResolveTree.cpp

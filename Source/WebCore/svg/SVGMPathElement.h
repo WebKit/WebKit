@@ -25,6 +25,7 @@
 #include "SVGAnimatedString.h"
 #include "SVGElement.h"
 #include "SVGExternalResourcesRequired.h"
+#include "SVGNames.h"
 #include "SVGURIReference.h"
 
 namespace WebCore {
@@ -62,6 +63,12 @@ private:
         DECLARE_ANIMATED_BOOLEAN(ExternalResourcesRequired, externalResourcesRequired)
     END_DECLARE_ANIMATED_PROPERTIES
 };
+
+inline SVGMPathElement* toSVGMPathElement(Node* node)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(!node || node->hasTagName(SVGNames::mpathTag));
+    return static_cast<SVGMPathElement*>(node);
+}
 
 } // namespace WebCore
 

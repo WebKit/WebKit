@@ -290,7 +290,7 @@ void SVGPathElement::invalidateMPathDependencies()
         HashSet<SVGElement*>::iterator end = dependencies->end();
         for (HashSet<SVGElement*>::iterator it = dependencies->begin(); it != end; ++it) {
             if ((*it)->hasTagName(SVGNames::mpathTag))
-                static_cast<SVGMPathElement*>(*it)->targetPathChanged();
+                toSVGMPathElement(*it)->targetPathChanged();
         }
     }
 }
