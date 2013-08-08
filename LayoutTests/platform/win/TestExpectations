@@ -1588,9 +1588,6 @@ webaudio/
 inspector-protocol/nmi-webaudio.html
 inspector-protocol/nmi-webaudio-leak-test.html
 
-# Microdata DOM API is not yet enabled.
-fast/dom/MicroData
-
 # ENABLE(DRAGGABLE_REGION) is disabled
 fast/css/draggable-region-parser.html
 
