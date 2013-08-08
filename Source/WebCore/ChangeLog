@@ -1,3 +1,16 @@
+2013-08-08  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Improper Caption Button Displayed to Users
+        https://bugs.webkit.org/show_bug.cgi?id=119593 
+
+        Reviewed by Eric Carlson.
+
+        Remove the custom drawing code for the Windows port, and
+        have it render using the CSS/SVG markup like we do on OS X.
+
+        * rendering/RenderThemeWin.cpp: Remove drawing code.
+        * rendering/RenderThemeWin.h: Remove declaration.
+
 2013-08-08  Alex Christensen  <achristensen@apple.com>
 
         Work towards WebGL on AppleWin port.
