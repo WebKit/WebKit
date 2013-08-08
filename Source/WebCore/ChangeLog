@@ -1,3 +1,23 @@
+2013-08-08  Zalan Bujtas  <zalan@apple.com>
+
+        REGRESSION (r121551) Incorrect handling of invalid media query list.
+        https://bugs.webkit.org/show_bug.cgi?id=119164
+
+        Reviewed by Antti Koivisto.
+
+        Differentiate between syntactically invalid media queries and media queries with empty expressions.
+
+        Introduce a dedicated function for valid, but empty expression queries, so that passing NULL MediaQuerySet
+        object to CSSParser::createMediaRule() can indicate invalid media query.
+
+        Test: fast/media/invalid-media-query-list.html
+
+        * css/CSSGrammar.y.in:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::createMediaRule):
+        (WebCore::CSSParser::createEmptyMediaRule):
+        * css/CSSParser.h:
+
 2013-08-08  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Introduce toSVGMPathElement(), and use it

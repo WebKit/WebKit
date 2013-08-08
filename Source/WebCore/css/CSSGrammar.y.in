@@ -728,7 +728,7 @@ media:
         $$ = parser->createMediaRule($4, $9);
     }
     | before_media_rule MEDIA_SYM at_rule_header_end_maybe_space '{' at_rule_body_start maybe_space block_rule_list save_block {
-        $$ = parser->createMediaRule(0, $7);
+        $$ = parser->createEmptyMediaRule($7);
     }
     | before_media_rule MEDIA_SYM at_rule_header_end_maybe_space ';' {
         $$ = 0;
