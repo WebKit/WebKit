@@ -9,16 +9,16 @@ layer at (0,0) size 800x600
       RenderTextControl {INPUT} at (2,21) size 192x23
       RenderText {#text} at (196,23) size 4x19
         text run at (196,23) width 4: " "
-      RenderTextControl {INPUT} at (202,21) size 192x23
-        RenderFlexibleBox {DIV} at (2,2) size 188x19
+      RenderTextControl {INPUT} at (202,21) size 203x23
+        RenderFlexibleBox {DIV} at (2,2) size 199x19
           RenderBlock {DIV} at (0,9) size 0x1
-          RenderBlock {DIV} at (0,0) size 177x19
-          RenderBlock {DIV} at (177,4) size 11x11
-      RenderText {#text} at (396,23) size 4x19
-        text run at (396,23) width 4: " "
-      RenderTextControl {INPUT} at (402,21) size 192x23
-      RenderText {#text} at (596,23) size 4x19
-        text run at (596,23) width 4: " "
+          RenderBlock {DIV} at (0,0) size 188x19
+          RenderBlock {DIV} at (188,4) size 11x11
+      RenderText {#text} at (407,23) size 4x19
+        text run at (407,23) width 4: " "
+      RenderTextControl {INPUT} at (413,21) size 192x23
+      RenderText {#text} at (607,23) size 4x19
+        text run at (607,23) width 4: " "
       RenderTextControl {INPUT} at (2,48) size 192x23
       RenderText {#text} at (196,50) size 4x19
         text run at (196,50) width 4: " "
@@ -33,17 +33,17 @@ layer at (12,31) size 188x19
       text run at (0,0) width 22: "text"
 layer at (12,31) size 188x19
   RenderBlock {DIV} at (2,2) size 188x19
-layer at (212,31) size 177x19
-  RenderBlock {DIV} at (2,2) size 177x19 [color=#640000]
+layer at (212,31) size 188x19
+  RenderBlock {DIV} at (2,2) size 188x19 [color=#640000]
     RenderText {#text} at (0,0) size 39x19
       text run at (0,0) width 39: "search"
-layer at (212,31) size 177x19
-  RenderBlock {DIV} at (0,0) size 177x19
-layer at (412,31) size 188x19
+layer at (212,31) size 188x19
+  RenderBlock {DIV} at (0,0) size 188x19
+layer at (423,31) size 188x19
   RenderBlock {DIV} at (2,2) size 188x19 [color=#640000]
     RenderText {#text} at (0,0) size 59x19
       text run at (0,0) width 59: "password"
-layer at (412,31) size 188x19
+layer at (423,31) size 188x19
   RenderBlock {DIV} at (2,2) size 188x19
 layer at (12,58) size 188x19
   RenderBlock {DIV} at (2,2) size 188x19 [color=#640000]

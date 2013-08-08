@@ -7,22 +7,22 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 367x19
           text run at (0,0) width 367: "Only the second search field should have a cancel button (\x{D7})."
       RenderBlock (anonymous) at (0,35) size 784x27
-        RenderTextControl {INPUT} at (2,2) size 192x23
-          RenderFlexibleBox {DIV} at (2,2) size 188x19
+        RenderTextControl {INPUT} at (2,2) size 203x23
+          RenderFlexibleBox {DIV} at (2,2) size 199x19
             RenderBlock {DIV} at (0,9) size 0x1
-            RenderBlock {DIV} at (0,0) size 177x19
-            RenderBlock {DIV} at (177,4) size 11x11
-        RenderText {#text} at (196,4) size 4x19
-          text run at (196,4) width 4: " "
-        RenderTextControl {INPUT} at (202,2) size 192x23
-          RenderFlexibleBox {DIV} at (2,2) size 188x19
+            RenderBlock {DIV} at (0,0) size 188x19
+            RenderBlock {DIV} at (188,4) size 11x11
+        RenderText {#text} at (207,4) size 4x19
+          text run at (207,4) width 4: " "
+        RenderTextControl {INPUT} at (213,2) size 203x23
+          RenderFlexibleBox {DIV} at (2,2) size 199x19
             RenderBlock {DIV} at (0,9) size 0x1
-            RenderBlock {DIV} at (0,0) size 177x19
-            RenderBlock {DIV} at (177,4) size 11x11
+            RenderBlock {DIV} at (0,0) size 188x19
+            RenderBlock {DIV} at (188,4) size 11x11
         RenderText {#text} at (0,0) size 0x0
-layer at (12,47) size 177x19
-  RenderBlock {DIV} at (0,0) size 177x19
-layer at (212,47) size 177x19
-  RenderBlock {DIV} at (0,0) size 177x19
+layer at (12,47) size 188x19
+  RenderBlock {DIV} at (0,0) size 188x19
+layer at (223,47) size 188x19
+  RenderBlock {DIV} at (0,0) size 188x19
     RenderText {#text} at (0,0) size 46x19
       text run at (0,0) width 46: "this one"

@@ -16,47 +16,47 @@ layer at (0,0) size 800x600
         RenderText {#text} at (752,0) size 4x19
           text run at (752,0) width 4: "."
       RenderBlock {P} at (0,35) size 784x81
-        RenderTextControl {INPUT} at (2,2) size 192x23
-          RenderFlexibleBox {DIV} at (2,2) size 188x19
+        RenderTextControl {INPUT} at (2,2) size 203x23
+          RenderFlexibleBox {DIV} at (2,2) size 199x19
             RenderBlock {DIV} at (0,9) size 0x1
-            RenderBlock {DIV} at (0,0) size 177x19
-            RenderBlock {DIV} at (177,4) size 11x11
-        RenderText {#text} at (196,4) size 4x19
-          text run at (196,4) width 4: " "
+            RenderBlock {DIV} at (0,0) size 188x19
+            RenderBlock {DIV} at (188,4) size 11x11
+        RenderText {#text} at (207,4) size 4x19
+          text run at (207,4) width 4: " "
         RenderBR {BR} at (0,0) size 0x0
-        RenderTextControl {INPUT} at (2,29) size 282x23
-          RenderFlexibleBox {DIV} at (2,2) size 278x19
+        RenderTextControl {INPUT} at (2,29) size 293x23
+          RenderFlexibleBox {DIV} at (2,2) size 289x19
             RenderBlock {DIV} at (0,9) size 0x1
-            RenderBlock {DIV} at (0,0) size 267x19
-            RenderBlock {DIV} at (267,4) size 11x11
-        RenderText {#text} at (286,31) size 4x19
-          text run at (286,31) width 4: " "
+            RenderBlock {DIV} at (0,0) size 278x19
+            RenderBlock {DIV} at (278,4) size 11x11
+        RenderText {#text} at (297,31) size 4x19
+          text run at (297,31) width 4: " "
         RenderBR {BR} at (0,0) size 0x0
-        RenderTextControl {INPUT} at (2,56) size 192x23
-          RenderFlexibleBox {DIV} at (2,2) size 188x19
+        RenderTextControl {INPUT} at (2,56) size 203x23
+          RenderFlexibleBox {DIV} at (2,2) size 199x19
             RenderBlock {DIV} at (0,9) size 0x1
-            RenderBlock {DIV} at (0,0) size 177x19
-            RenderBlock {DIV} at (177,4) size 11x11
+            RenderBlock {DIV} at (0,0) size 188x19
+            RenderBlock {DIV} at (188,4) size 11x11
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,132) size 784x19
         RenderText {#text} at (0,0) size 38x19
           text run at (0,0) width 38: "PASS"
-layer at (12,47) size 177x19
-  RenderBlock {DIV} at (0,0) size 177x19
-    RenderText {#text} at (14,0) size 163x19
-      text run at (14,0) width 27 RTL: " \x{5D5}\x{5D6}\x{5D4}\x{5D5}"
-      text run at (41,0) width 20: "she"
-      text run at (61,0) width 55 RTL: " \x{5D5}\x{5D4}\x{5D9}\x{5D0} \x{5D6}\x{5D4} "
-      text run at (116,0) width 14: "he"
-      text run at (130,0) width 47 RTL: "\x{5D4}\x{5D5}\x{5D0} \x{5D6}\x{5D4} "
-layer at (12,74) size 267x19
-  RenderBlock {DIV} at (0,0) size 267x19
-    RenderText {#text} at (104,0) size 163x19
-      text run at (104,0) width 27 RTL: " \x{5D5}\x{5D6}\x{5D4}\x{5D5}"
-      text run at (131,0) width 20: "she"
-      text run at (151,0) width 55 RTL: " \x{5D5}\x{5D4}\x{5D9}\x{5D0} \x{5D6}\x{5D4} "
-      text run at (206,0) width 14: "he"
-      text run at (220,0) width 47 RTL: "\x{5D4}\x{5D5}\x{5D0} \x{5D6}\x{5D4} "
-layer at (12,101) size 177x19
-  RenderBlock {DIV} at (0,0) size 177x19
+layer at (12,47) size 188x19
+  RenderBlock {DIV} at (0,0) size 188x19
+    RenderText {#text} at (33,0) size 155x19
+      text run at (33,0) width 25 RTL: " \x{5D5}\x{5D6}\x{5D4}\x{5D5}"
+      text run at (58,0) width 20: "she"
+      text run at (78,0) width 52 RTL: " \x{5D5}\x{5D4}\x{5D9}\x{5D0} \x{5D6}\x{5D4} "
+      text run at (130,0) width 14: "he"
+      text run at (144,0) width 44 RTL: "\x{5D4}\x{5D5}\x{5D0} \x{5D6}\x{5D4} "
+layer at (12,74) size 278x19
+  RenderBlock {DIV} at (0,0) size 278x19
+    RenderText {#text} at (123,0) size 155x19
+      text run at (123,0) width 25 RTL: " \x{5D5}\x{5D6}\x{5D4}\x{5D5}"
+      text run at (148,0) width 20: "she"
+      text run at (168,0) width 52 RTL: " \x{5D5}\x{5D4}\x{5D9}\x{5D0} \x{5D6}\x{5D4} "
+      text run at (220,0) width 14: "he"
+      text run at (234,0) width 44 RTL: "\x{5D4}\x{5D5}\x{5D0} \x{5D6}\x{5D4} "
+layer at (12,101) size 188x19
+  RenderBlock {DIV} at (0,0) size 188x19
 caret: position 0 of child 0 {DIV} of child 1 {DIV} of child 0 {DIV} of {#document-fragment} of child 9 {INPUT} of child 3 {P} of body

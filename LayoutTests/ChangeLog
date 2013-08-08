@@ -1,3 +1,34 @@
+2013-08-08  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
+        [Qt] Unreviewed rebaselining after r153647.
+
+        * platform/qt/fast/css/input-search-padding-expected.png:
+        * platform/qt/fast/css/input-search-padding-expected.txt:
+        * platform/qt/fast/css/text-overflow-input-expected.png:
+        * platform/qt/fast/css/text-overflow-input-expected.txt:
+        * platform/qt/fast/forms/box-shadow-override-expected.png:
+        * platform/qt/fast/forms/box-shadow-override-expected.txt:
+        * platform/qt/fast/forms/control-restrict-line-height-expected.png:
+        * platform/qt/fast/forms/control-restrict-line-height-expected.txt:
+        * platform/qt/fast/forms/placeholder-position-expected.png:
+        * platform/qt/fast/forms/placeholder-position-expected.txt:
+        * platform/qt/fast/forms/placeholder-pseudo-style-expected.png:
+        * platform/qt/fast/forms/placeholder-pseudo-style-expected.txt:
+        * platform/qt/fast/forms/search-cancel-button-style-sharing-expected.png:
+        * platform/qt/fast/forms/search-cancel-button-style-sharing-expected.txt:
+        * platform/qt/fast/forms/search-display-none-cancel-button-expected.png:
+        * platform/qt/fast/forms/search-display-none-cancel-button-expected.txt:
+        * platform/qt/fast/forms/search-rtl-expected.png:
+        * platform/qt/fast/forms/search-rtl-expected.txt:
+        * platform/qt/fast/forms/search-styled-expected.png:
+        * platform/qt/fast/forms/search-styled-expected.txt:
+        * platform/qt/fast/forms/search-vertical-alignment-expected.png:
+        * platform/qt/fast/forms/search-vertical-alignment-expected.txt:
+        * platform/qt/fast/forms/search/search-size-with-decorations-expected.png: Added.
+        * platform/qt/fast/forms/search/search-size-with-decorations-expected.txt: Added.
+        * platform/qt/fast/repaint/search-field-cancel-expected.png:
+        * platform/qt/fast/repaint/search-field-cancel-expected.txt:
+
 2013-08-08  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt] Skip more tests depending on canvas blending.
