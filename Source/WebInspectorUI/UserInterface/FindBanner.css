@@ -40,32 +40,32 @@
     white-space: nowrap;
     overflow: hidden;
 
-    -webkit-transition-property: top;
-    -webkit-transition-duration: 200ms;
-    -webkit-transition-timing-function: ease-in;
+    transition-property: top;
+    transition-duration: 200ms;
+    transition-timing-function: ease-in;
 
     z-index: 500;
 }
 
 .find-banner.showing {
     top: 0;
-    -webkit-transition-timing-function: ease-out;
+    transition-timing-function: ease-out;
 }
 
 .find-banner.no-find-banner-transition,
 .supports-find-banner.no-find-banner-transition {
-    -webkit-transition-duration: 0 !important;
+    transition-duration: 0 !important;
 }
 
 .supports-find-banner {
-    -webkit-transition-property: top;
-    -webkit-transition-duration: 200ms;
-    -webkit-transition-timing-function: ease-in;
+    transition-property: top;
+    transition-duration: 200ms;
+    transition-timing-function: ease-in;
 }
 
 .supports-find-banner.showing-find-banner {
     top: 22px !important;
-    -webkit-transition-timing-function: ease-out;
+    transition-timing-function: ease-out;
 }
 
 .find-banner > :first-child {

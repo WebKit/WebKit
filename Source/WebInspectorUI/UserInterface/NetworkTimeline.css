@@ -59,7 +59,7 @@
 }
 
 .network-graph-side:hover .network-graph-label {
-    -webkit-transition: opacity 250ms ease-in-out;
+    transition: opacity 250ms ease-in-out;
     opacity: 1;
 }
 

@@ -48,7 +48,7 @@
 }
 
 .popover.fade-out {
-    -webkit-transition: opacity 350ms;
+    transition: opacity 350ms;
     pointer-events: none;
     opacity: 0;
 }

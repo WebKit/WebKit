@@ -103,7 +103,7 @@ WebInspector.CSSCompletions.requestCSSNameCompletions = function()
 
         function collectPropertyNameForCodeMirror(propertyName)
         {
-            // Properties can also be value keywords, like when used in a -webkit-transition.
+            // Properties can also be value keywords, like when used in a transition.
             // So we add them to both lists.
             var codeMirrorPropertyName = nameForCodeMirror(propertyName);
             propertyNamesForCodeMirror[codeMirrorPropertyName] = true;

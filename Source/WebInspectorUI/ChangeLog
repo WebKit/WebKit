@@ -1,3 +1,25 @@
+2013-08-08  Dean Jackson  <dino@apple.com>
+
+        Unprefix use of transitions in Web Inspector code
+        https://bugs.webkit.org/show_bug.cgi?id=119588
+
+        Reviewed by Tim Hatcher.
+
+        Replace "-webkit-transition" with "transition".
+
+        * UserInterface/CSSCompletions.js:
+        (WebInspector.CSSCompletions.requestCSSNameCompletions.collectPropertyNameForCodeMirror):
+        * UserInterface/FindBanner.css:
+        (.find-banner):
+        (.find-banner.showing):
+        (.supports-find-banner.no-find-banner-transition):
+        (.supports-find-banner):
+        (.supports-find-banner.showing-find-banner):
+        * UserInterface/NetworkTimeline.css:
+        (.network-graph-side:hover .network-graph-label):
+        * UserInterface/Popover.css:
+        (.popover.fade-out):
+
 2013-08-08  Vivek Galatage  <vivek.vg@samsung.com>
 
         Web Inspector: Use granular DOMStorage modification events to avoid complete DataGrid update.
