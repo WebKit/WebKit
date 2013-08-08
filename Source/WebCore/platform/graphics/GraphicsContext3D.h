@@ -38,6 +38,10 @@
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
+#if USE(CA)
+#include "PlatformCALayer.h"
+#endif
+
 // FIXME: Find a better way to avoid the name confliction for NO_ERROR.
 #if PLATFORM(WIN) || (PLATFORM(QT) && OS(WINDOWS))
 #undef NO_ERROR
@@ -950,6 +954,8 @@ private:
 #if PLATFORM(MAC)
     CGLContextObj m_contextObj;
     RetainPtr<WebGLLayer> m_webGLLayer;
+#elif PLATFORM(WIN) && USE(CA)
+    RefPtr<PlatformCALayer> m_webGLLayer;
 #elif PLATFORM(BLACKBERRY)
 #if USE(ACCELERATED_COMPOSITING)
     RefPtr<PlatformLayer> m_compositingLayer;

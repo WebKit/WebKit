@@ -27,6 +27,7 @@
 
 #if USE(3D_GRAPHICS)
 
+#include "GraphicsContext3DPrivate.h"
 #include <wtf/NotFound.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
@@ -45,15 +46,6 @@
 #endif
 
 namespace WebCore {
-
-// FIXME: This class is currently empty on Windows, but will get populated as 
-// the restructuring in https://bugs.webkit.org/show_bug.cgi?id=66903 is done
-class GraphicsContext3DPrivate {
-public:
-    GraphicsContext3DPrivate(GraphicsContext3D*) { }
-    
-    ~GraphicsContext3DPrivate() { }
-};
 
 PassRefPtr<GraphicsContext3D> GraphicsContext3D::create(GraphicsContext3D::Attributes attributes, HostWindow* hostWindow, GraphicsContext3D::RenderStyle renderStyle)
 {
@@ -87,10 +79,15 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attributes, H
     , m_multisampleFBO(0)
     , m_multisampleDepthStencilBuffer(0)
     , m_multisampleColorBuffer(0)
+    , m_private(GraphicsContext3DPrivate::create(this, renderStyle))
 {
     makeContextCurrent();
 
     validateAttributes();
+
+#if USE(CA)
+    m_webGLLayer = PlatformCALayer::create(PlatformCALayer::LayerTypeLayer, 0);
+#endif
 
     if (renderStyle == RenderOffscreen) {
         // Create a texture to render into.
@@ -176,12 +173,14 @@ void GraphicsContext3D::setErrorMessageCallback(PassOwnPtr<ErrorMessageCallback>
 
 bool GraphicsContext3D::makeContextCurrent()
 {
-    return false;
+    if (!m_private)
+        return false;
+    return m_private->makeContextCurrent();
 }
 
 PlatformGraphicsContext3D GraphicsContext3D::platformGraphicsContext3D()
 {
-    return 0;
+    return m_private->platformContext();
 }
 
 Platform3DObject GraphicsContext3D::platformTexture() const
@@ -201,7 +200,7 @@ bool GraphicsContext3D::isGLES2Compliant() const
 #if USE(ACCELERATED_COMPOSITING)
 PlatformLayer* GraphicsContext3D::platformLayer() const
 {
-    return 0;
+    return m_webGLLayer->platformLayer();
 }
 #endif
 

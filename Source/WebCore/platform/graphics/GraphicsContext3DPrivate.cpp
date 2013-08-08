@@ -24,8 +24,11 @@
 
 #include "HostWindow.h"
 #include "NotImplemented.h"
-#include "PlatformContextCairo.h"
 #include <wtf/OwnArrayPtr.h>
+
+#if USE(CAIRO)
+#include "PlatformContextCairo.h"
+#endif
 
 #if USE(OPENGL_ES_2)
 #include <GLES2/gl2.h>

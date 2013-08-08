@@ -1,3 +1,28 @@
+2013-08-08  Alex Christensen  <achristensen@apple.com>
+
+        Work towards WebGL on AppleWin port.
+        https://bugs.webkit.org/show_bug.cgi?id=119562
+
+        Reviewed by Brent Fulgham.
+
+        * WebCore.vcxproj/WebCore.vcxproj:
+        Build GLContext.cpp and GraphicsContext3DPrivate.cpp on AppleWin port.
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        Moved GLContext and GraphicsContext3DPrivate from Cairo filter to graphics.
+        * platform/graphics/GraphicsContext3D.h:
+        Added m_webGLLayer for AppleWin port.
+        * platform/graphics/GraphicsContext3DPrivate.cpp:
+        Protected inclusion of PlatformContextCairo.h in USE(CAIRO) macro for non-cairo ports.
+        * platform/graphics/win/GraphicsContext3DWin.cpp:
+        Removed stub GraphicsContext3DPrivate implementation in favor of GraphicsContext3DPrivate.cpp.
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+        Added GraphicsContext3DPrivate and PlatformCALayer initialization.
+        (WebCore::GraphicsContext3D::makeContextCurrent):
+        (WebCore::GraphicsContext3D::platformGraphicsContext3D):
+        Added implementation based on Cairo ports' to be refactored soon.
+        (WebCore::GraphicsContext3D::platformLayer):
+        Return PlatformCALayer's PlatformLayer instead of 0.
+
 2013-08-08  Jer Noble  <jer.noble@apple.com>
 
         [EME] Implement MediaKeys.isTypeSupported()

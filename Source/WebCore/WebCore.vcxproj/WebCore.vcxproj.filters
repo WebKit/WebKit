@@ -7030,14 +7030,8 @@
     <ClCompile Include="..\platform\graphics\cairo\GraphicsContext3DCairo.cpp">
       <Filter>platform\graphics\cairo</Filter>
     </ClCompile>
-    <ClCompile Include="..\platform\graphics\GraphicsContext3DPrivate.cpp">
-      <Filter>platform\graphics\cairo</Filter>
-    </ClCompile>
     <ClCompile Include="..\html\canvas\CanvasContextAttributes.cpp">
       <Filter>html\canvas</Filter>
-    </ClCompile>
-    <ClCompile Include="..\platform\graphics\GLContext.cpp">
-      <Filter>platform\graphics\cairo</Filter>
     </ClCompile>
     <ClCompile Include="..\platform\graphics\opengl\GraphicsContext3DOpenGLES.cpp">
       <Filter>platform\graphics\opengl</Filter>
@@ -7057,6 +7051,12 @@
     </ClCompile>
     <ClCompile Include="..\platform\graphics\win\GraphicsContext3DWin.cpp">
       <Filter>platform\graphics\win</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\GraphicsContext3DPrivate.cpp">
+      <Filter>platform\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\GLContext.cpp">
+      <Filter>platform\graphics</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -14778,14 +14778,8 @@
     <ClInclude Include="..\page\CaptionUserPreferencesMediaAF.h">
       <Filter>page</Filter>
     </ClInclude>
-    <ClInclude Include="..\platform\graphics\GraphicsContext3DPrivate.h">
-      <Filter>platform\graphics\cairo</Filter>
-    </ClInclude>
     <ClInclude Include="..\html\canvas\CanvasContextAttributes.h">
       <Filter>html\canvas</Filter>
-    </ClInclude>
-    <ClInclude Include="..\platform\graphics\GLContext.h">
-      <Filter>platform\graphics\cairo</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\graphics\egl\GLContextEGL.h">
       <Filter>platform\graphics\egl</Filter>
@@ -14800,6 +14794,12 @@
       <Filter>platform\graphics\avfoundation\cf</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\graphics\MediaPlayerPrivate.h">
+      <Filter>platform\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\GraphicsContext3DPrivate.h">
+      <Filter>platform\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\GLContext.h">
       <Filter>platform\graphics</Filter>
     </ClInclude>
   </ItemGroup>
