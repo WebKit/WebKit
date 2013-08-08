@@ -1,3 +1,19 @@
+2013-08-08  Rob Buis  <rwlbuis@webkit.org>
+
+        ASSERT_NOT_REACHED() touched in WebCore::SVGAnimatedStringAnimator::addAnimatedTypes
+        https://bugs.webkit.org/show_bug.cgi?id=113224
+
+        Reviewed by Dirk Schulze.
+
+        Add a test for animating non-additive attributes in from-by animations
+
+        * svg/animations/non-additive-type-from-by-animation-expected.txt: Added.
+        * svg/animations/non-additive-type-from-by-animation.html: Added.
+        * svg/animations/resources/non-additive-type-from-by-animation.svg: Added.
+        * svg/animations/script-tests/non-additive-type-from-by-animation.js: Added.
+        (sample):
+        (executeTest):
+
 2013-08-08  Eric Carlson  <eric.carlson@apple.com>
 
         fullscreen/exit-full-screen-iframe.html is failing
