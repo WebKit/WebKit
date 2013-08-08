@@ -1,3 +1,11 @@
+2013-08-08  Alex Christensen  <achristensen@apple.com>
+
+        Windows build fixes.
+
+        Rubberstamped by Brent Fulgham.
+
+        * win/tools/vsprops/debug_wincairo.props: Removed MinimalRebuild option preventing parallel compiling.
+
 2013-07-30  Sanghyun Park  <sh919.park@samsung.com>
 
         Missing the rename REGISTER_PROCOTOL_HANDLER Macro to NAVIGATOR_CONTENT_UTILS in WebKitLibraries.

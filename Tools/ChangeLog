@@ -1,3 +1,12 @@
+2013-08-08  Alex Christensen  <achristensen@apple.com>
+
+        Windows build fixes.
+
+        Rubberstamped by Brent Fulgham.
+
+        * DumpRenderTree/DumpRenderTree.vcxproj/DumpRenderTree/DumpRenderTreeLauncher.vcxproj:
+        Removed /SAFESEH link option which doesn't work with x64.
+
 2013-08-08  Daniel Bates  <dabates@apple.com>
 
         Add iOS support to run-javascriptcore-tests
