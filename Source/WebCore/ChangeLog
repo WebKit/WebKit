@@ -1,3 +1,23 @@
+2013-08-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Be more aggressive about sending fake mouse events less frequently
+        https://bugs.webkit.org/show_bug.cgi?id=119563
+        <rdar://problem/14669029>
+
+        Reviewed by Tim Horton.
+
+        r109151 added code that throttles back the fake mouse events that we
+        send during scrolling, but in such a way that a page could take up to
+        100ms to handle a single mousemove, and we'd still send fake mousemove
+        events every 100ms. This could cause serious scrolling stutter.
+        
+        Fix by changing when we drop back to sending events every 250ms, rather than every
+        100ms: if the slowest mousemove takes 10ms or more (less than one frame), drop back
+        to a 250ms fake move interval.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::dispatchFakeMouseMoveEventSoon):
+
 2013-08-07  Adenilson Cavalcanti  <cavalcantii@gmail.com>
 
         [rendering] Implement PaintInfo interfaces

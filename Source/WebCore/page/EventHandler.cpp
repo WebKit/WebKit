@@ -139,10 +139,11 @@ using namespace SVGNames;
 #endif
 
 // The amount of time to wait before sending a fake mouse event, triggered
-// during a scroll. The short interval is used if the content responds to the mouse events quickly enough,
-// otherwise the long interval is used.
+// during a scroll. The short interval is used if the content responds to the mouse events
+// in fakeMouseMoveDurationThreshold or less, otherwise the long interval is used.
+const double fakeMouseMoveDurationThreshold = 0.01;
 const double fakeMouseMoveShortInterval = 0.1;
-const double fakeMouseMoveLongInterval = 0.250;
+const double fakeMouseMoveLongInterval = 0.25;
 
 // The amount of time to wait for a cursor update on style and layout changes
 // Set to 50Hz, no need to be faster than common screen refresh rate
@@ -3037,7 +3038,7 @@ void EventHandler::dispatchFakeMouseMoveEventSoon()
     // reschedule the timer and use a longer time. This will cause the content
     // to receive these moves only after the user is done scrolling, reducing
     // pauses during the scroll.
-    if (m_maxMouseMovedDuration > fakeMouseMoveShortInterval) {
+    if (m_maxMouseMovedDuration > fakeMouseMoveDurationThreshold) {
         if (m_fakeMouseMoveEventTimer.isActive())
             m_fakeMouseMoveEventTimer.stop();
         m_fakeMouseMoveEventTimer.startOneShot(fakeMouseMoveLongInterval);
