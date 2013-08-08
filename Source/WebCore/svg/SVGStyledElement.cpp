@@ -402,13 +402,13 @@ PassRefPtr<CSSValue> SVGStyledElement::getPresentationAttribute(const String& na
         return 0;
 
     QualifiedName attributeName(nullAtom, name, nullAtom);
-    const Attribute* attr = getAttributeItem(attributeName);
-    if (!attr)
+    const Attribute* attribute = findAttributeByName(attributeName);
+    if (!attribute)
         return 0;
 
     RefPtr<MutableStylePropertySet> style = MutableStylePropertySet::create(SVGAttributeMode);
-    CSSPropertyID propertyID = SVGStyledElement::cssPropertyIdForSVGAttributeName(attr->name());
-    style->setProperty(propertyID, attr->value());
+    CSSPropertyID propertyID = SVGStyledElement::cssPropertyIdForSVGAttributeName(attribute->name());
+    style->setProperty(propertyID, attribute->value());
     RefPtr<CSSValue> cssValue = style->getPropertyCSSValue(propertyID);
     return cssValue ? cssValue->cloneForCSSOM() : 0;
 }

@@ -220,7 +220,7 @@ void HTMLConstructionSite::mergeAttributesFromTokenIntoElement(AtomicHTMLToken* 
 
     for (unsigned i = 0; i < token->attributes().size(); ++i) {
         const Attribute& tokenAttribute = token->attributes().at(i);
-        if (!element->elementData() || !element->getAttributeItem(tokenAttribute.name()))
+        if (!element->elementData() || !element->findAttributeByName(tokenAttribute.name()))
             element->setAttribute(tokenAttribute.name(), tokenAttribute.value());
     }
 }

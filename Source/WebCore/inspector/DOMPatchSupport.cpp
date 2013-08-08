@@ -194,8 +194,8 @@ bool DOMPatchSupport::innerPatchNode(Digest* oldDigest, Digest* newDigest, Excep
         // FIXME: Create a function in Element for removing all properties. Take in account whether did/willModifyAttribute are important.
         if (oldElement->hasAttributesWithoutUpdate()) {
             while (oldElement->attributeCount()) {
-                const Attribute* attribute = oldElement->attributeItem(0);
-                if (!m_domEditor->removeAttribute(oldElement, attribute->localName(), ec))
+                const Attribute& attribute = oldElement->attributeAt(0);
+                if (!m_domEditor->removeAttribute(oldElement, attribute.localName(), ec))
                     return false;
             }
         }
@@ -204,8 +204,8 @@ bool DOMPatchSupport::innerPatchNode(Digest* oldDigest, Digest* newDigest, Excep
         if (newElement->hasAttributesWithoutUpdate()) {
             size_t numAttrs = newElement->attributeCount();
             for (size_t i = 0; i < numAttrs; ++i) {
-                const Attribute* attribute = newElement->attributeItem(i);
-                if (!m_domEditor->setAttribute(oldElement, attribute->name().localName(), attribute->value(), ec))
+                const Attribute& attribute = newElement->attributeAt(i);
+                if (!m_domEditor->setAttribute(oldElement, attribute.name().localName(), attribute.value(), ec))
                     return false;
             }
         }
@@ -441,9 +441,9 @@ PassOwnPtr<DOMPatchSupport::Digest> DOMPatchSupport::createDigest(Node* node, Un
             size_t numAttrs = element->attributeCount();
             SHA1 attrsSHA1;
             for (size_t i = 0; i < numAttrs; ++i) {
-                const Attribute* attribute = element->attributeItem(i);
-                addStringToSHA1(attrsSHA1, attribute->name().toString());
-                addStringToSHA1(attrsSHA1, attribute->value());
+                const Attribute& attribute = element->attributeAt(i);
+                addStringToSHA1(attrsSHA1, attribute.name().toString());
+                addStringToSHA1(attrsSHA1, attribute.value());
             }
             Vector<uint8_t, 20> attrsHash;
             attrsSHA1.computeHash(attrsHash);

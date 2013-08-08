@@ -206,8 +206,8 @@ void Node::dumpStatistics()
                     attributes += elementData->length();
                     ++elementsWithAttributeStorage;
                     for (unsigned i = 0; i < elementData->length(); ++i) {
-                        Attribute* attr = elementData->attributeItem(i);
-                        if (attr->attr())
+                        Attribute& attr = elementData->attributeAt(i);
+                        if (attr.attr())
                             ++attributesWithAttr;
                     }
                 }
@@ -1306,10 +1306,10 @@ bool Node::isDefaultNamespace(const AtomicString& namespaceURIMaybeEmpty) const
 
             if (elem->hasAttributes()) {
                 for (unsigned i = 0; i < elem->attributeCount(); i++) {
-                    const Attribute* attr = elem->attributeItem(i);
+                    const Attribute& attribute = elem->attributeAt(i);
                     
-                    if (attr->localName() == xmlnsAtom)
-                        return attr->value() == namespaceURI;
+                    if (attribute.localName() == xmlnsAtom)
+                        return attribute.value() == namespaceURI;
                 }
             }
 
@@ -1390,16 +1390,17 @@ String Node::lookupNamespaceURI(const String &prefix) const
             
             if (elem->hasAttributes()) {
                 for (unsigned i = 0; i < elem->attributeCount(); i++) {
-                    const Attribute* attr = elem->attributeItem(i);
+                    const Attribute& attribute = elem->attributeAt(i);
                     
-                    if (attr->prefix() == xmlnsAtom && attr->localName() == prefix) {
-                        if (!attr->value().isEmpty())
-                            return attr->value();
+                    if (attribute.prefix() == xmlnsAtom && attribute.localName() == prefix) {
+                        if (!attribute.value().isEmpty())
+                            return attribute.value();
                         
                         return String();
-                    } else if (attr->localName() == xmlnsAtom && prefix.isNull()) {
-                        if (!attr->value().isEmpty())
-                            return attr->value();
+                    }
+                    if (attribute.localName() == xmlnsAtom && prefix.isNull()) {
+                        if (!attribute.value().isEmpty())
+                            return attribute.value();
                         
                         return String();
                     }
@@ -1445,11 +1446,11 @@ String Node::lookupNamespacePrefix(const AtomicString &_namespaceURI, const Elem
     const Element* thisElement = toElement(this);
     if (thisElement->hasAttributes()) {
         for (unsigned i = 0; i < thisElement->attributeCount(); i++) {
-            const Attribute* attr = thisElement->attributeItem(i);
+            const Attribute& attribute = thisElement->attributeAt(i);
             
-            if (attr->prefix() == xmlnsAtom && attr->value() == _namespaceURI
-                    && originalElement->lookupNamespaceURI(attr->localName()) == _namespaceURI)
-                return attr->localName();
+            if (attribute.prefix() == xmlnsAtom && attribute.value() == _namespaceURI
+                && originalElement->lookupNamespaceURI(attribute.localName()) == _namespaceURI)
+                return attribute.localName();
         }
     }
     
@@ -1604,10 +1605,10 @@ unsigned short Node::compareDocumentPosition(Node* otherNode)
             // the same nodeType are inserted into or removed from the direct container. This would be the case, for example, 
             // when comparing two attributes of the same element, and inserting or removing additional attributes might change 
             // the order between existing attributes.
-            const Attribute* attribute = owner1->attributeItem(i);
-            if (attr1->qualifiedName() == attribute->name())
+            const Attribute& attribute = owner1->attributeAt(i);
+            if (attr1->qualifiedName() == attribute.name())
                 return DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC | DOCUMENT_POSITION_FOLLOWING;
-            if (attr2->qualifiedName() == attribute->name())
+            if (attr2->qualifiedName() == attribute.name())
                 return DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC | DOCUMENT_POSITION_PRECEDING;
         }
         

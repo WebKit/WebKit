@@ -154,11 +154,11 @@ XMLDocumentParser::XMLDocumentParser(DocumentFragment* fragment, Element* parent
         element->synchronizeAllAttributes();
         if (const ElementData* attrs = element->elementData()) {
             for (unsigned i = 0; i < attrs->length(); i++) {
-                const Attribute* attr = attrs->attributeItem(i);
-                if (attr->localName() == "xmlns")
+                const Attribute& attr = attrs->attributeAt(i);
+                if (attr.localName() == "xmlns")
                     m_defaultNamespaceURI = attr->value();
-                else if (attr->prefix() == "xmlns")
-                    namespaces.append(QXmlStreamNamespaceDeclaration(attr->localName(), attr->value()));
+                else if (attr.prefix() == "xmlns")
+                    namespaces.append(QXmlStreamNamespaceDeclaration(attr.localName(), attr.value()));
             }
         }
     }

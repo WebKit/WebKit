@@ -106,9 +106,9 @@ static void completeURLs(DocumentFragment* fragment, const String& baseURL)
             continue;
         unsigned length = element->attributeCount();
         for (unsigned i = 0; i < length; i++) {
-            const Attribute* attribute = element->attributeItem(i);
-            if (element->isURLAttribute(*attribute) && !attribute->value().isEmpty())
-                changes.append(AttributeChange(element, attribute->name(), KURL(parsedBaseURL, attribute->value()).string()));
+            const Attribute& attribute = element->attributeAt(i);
+            if (element->isURLAttribute(attribute) && !attribute.value().isEmpty())
+                changes.append(AttributeChange(element, attribute.name(), KURL(parsedBaseURL, attribute.value()).string()));
         }
     }
 
@@ -285,11 +285,11 @@ void StyledMarkupAccumulator::appendElement(StringBuilder& out, Element* element
     const bool shouldAnnotateOrForceInline = element->isHTMLElement() && (shouldAnnotate() || addDisplayInline);
     const bool shouldOverrideStyleAttr = shouldAnnotateOrForceInline || shouldApplyWrappingStyle(element);
     for (unsigned i = 0; i < length; ++i) {
-        const Attribute* attribute = element->attributeItem(i);
+        const Attribute& attribute = element->attributeAt(i);
         // We'll handle the style attribute separately, below.
-        if (attribute->name() == styleAttr && shouldOverrideStyleAttr)
+        if (attribute.name() == styleAttr && shouldOverrideStyleAttr)
             continue;
-        appendAttribute(out, element, *attribute, 0);
+        appendAttribute(out, element, attribute, 0);
     }
 
     if (shouldOverrideStyleAttr) {

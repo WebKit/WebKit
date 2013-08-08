@@ -590,7 +590,7 @@ Value FunLang::evaluate() const
         if (node->isElementNode()) {
             Element* element = toElement(node);
             if (element->hasAttributes())
-                languageAttribute = element->getAttributeItem(XMLNames::langAttr);
+                languageAttribute = element->findAttributeByName(XMLNames::langAttr);
         }
         if (languageAttribute)
             break;

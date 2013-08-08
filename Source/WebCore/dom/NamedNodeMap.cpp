@@ -62,7 +62,7 @@ PassRefPtr<Node> NamedNodeMap::getNamedItemNS(const AtomicString& namespaceURI, 
 
 PassRefPtr<Node> NamedNodeMap::removeNamedItem(const AtomicString& name, ExceptionCode& ec)
 {
-    unsigned index = m_element->hasAttributes() ? m_element->getAttributeItemIndex(name, shouldIgnoreAttributeCase(m_element)) : ElementData::attributeNotFound;
+    unsigned index = m_element->hasAttributes() ? m_element->findAttributeIndexByName(name, shouldIgnoreAttributeCase(m_element)) : ElementData::attributeNotFound;
     if (index == ElementData::attributeNotFound) {
         ec = NOT_FOUND_ERR;
         return 0;
@@ -72,7 +72,7 @@ PassRefPtr<Node> NamedNodeMap::removeNamedItem(const AtomicString& name, Excepti
 
 PassRefPtr<Node> NamedNodeMap::removeNamedItemNS(const AtomicString& namespaceURI, const AtomicString& localName, ExceptionCode& ec)
 {
-    unsigned index = m_element->hasAttributes() ? m_element->getAttributeItemIndex(QualifiedName(nullAtom, localName, namespaceURI)) : notFound;
+    unsigned index = m_element->hasAttributes() ? m_element->findAttributeIndexByName(QualifiedName(nullAtom, localName, namespaceURI)) : notFound;
     if (index == ElementData::attributeNotFound) {
         ec = NOT_FOUND_ERR;
         return 0;
@@ -105,7 +105,7 @@ PassRefPtr<Node> NamedNodeMap::item(unsigned index) const
 {
     if (index >= length())
         return 0;
-    return m_element->ensureAttr(m_element->attributeItem(index)->name());
+    return m_element->ensureAttr(m_element->attributeAt(index).name());
 }
 
 unsigned NamedNodeMap::length() const

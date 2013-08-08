@@ -220,7 +220,7 @@ void NodeSet::traversalSort() const
 
         unsigned attributeCount = element->attributeCount();
         for (unsigned i = 0; i < attributeCount; ++i) {
-            RefPtr<Attr> attr = element->attrIfExists(element->attributeItem(i)->name());
+            RefPtr<Attr> attr = element->attrIfExists(element->attributeAt(i).name());
             if (attr && nodes.contains(attr.get()))
                 sortedNodes.append(attr);
         }

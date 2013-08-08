@@ -296,15 +296,15 @@ void StyledElement::makePresentationAttributeCacheKey(PresentationAttributeCache
         return;
     unsigned size = attributeCount();
     for (unsigned i = 0; i < size; ++i) {
-        const Attribute* attribute = attributeItem(i);
-        if (!isPresentationAttribute(attribute->name()))
+        const Attribute& attribute = attributeAt(i);
+        if (!isPresentationAttribute(attribute.name()))
             continue;
-        if (!attribute->namespaceURI().isNull())
+        if (!attribute.namespaceURI().isNull())
             return;
         // FIXME: Background URL may depend on the base URL and can't be shared. Disallow caching.
-        if (attribute->name() == backgroundAttr)
+        if (attribute.name() == backgroundAttr)
             return;
-        result.attributesAndValues.append(make_pair(attribute->localName().impl(), attribute->value()));
+        result.attributesAndValues.append(make_pair(attribute.localName().impl(), attribute.value()));
     }
     if (result.attributesAndValues.isEmpty())
         return;
@@ -346,8 +346,8 @@ void StyledElement::rebuildPresentationAttributeStyle()
         style = MutableStylePropertySet::create(isSVGElement() ? SVGAttributeMode : CSSQuirksMode);
         unsigned size = attributeCount();
         for (unsigned i = 0; i < size; ++i) {
-            const Attribute* attribute = attributeItem(i);
-            collectStyleForPresentationAttribute(attribute->name(), attribute->value(), static_cast<MutableStylePropertySet*>(style.get()));
+            const Attribute& attribute = attributeAt(i);
+            collectStyleForPresentationAttribute(attribute.name(), attribute.value(), static_cast<MutableStylePropertySet*>(style.get()));
         }
     }
 

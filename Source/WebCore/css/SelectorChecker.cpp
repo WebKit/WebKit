@@ -291,9 +291,9 @@ SelectorChecker::Match SelectorChecker::match(const SelectorCheckingContext& con
     return SelectorFailsCompletely;
 }
 
-static bool attributeValueMatches(const Attribute* attributeItem, CSSSelector::Match match, const AtomicString& selectorValue, bool caseSensitive)
+static bool attributeValueMatches(const Attribute& attribute, CSSSelector::Match match, const AtomicString& selectorValue, bool caseSensitive)
 {
-    const AtomicString& value = attributeItem->value();
+    const AtomicString& value = attribute.value();
     if (value.isNull())
         return false;
 
@@ -357,13 +357,13 @@ static bool attributeValueMatches(const Attribute* attributeItem, CSSSelector::M
 static bool anyAttributeMatches(Element* element, const CSSSelector* selector, const QualifiedName& selectorAttr, bool caseSensitive)
 {
     ASSERT(element->hasAttributesWithoutUpdate());
-    for (size_t i = 0; i < element->attributeCount(); ++i) {
-        const Attribute* attributeItem = element->attributeItem(i);
+    for (size_t i = 0, count = element->attributeCount(); i < count; ++i) {
+        const Attribute& attribute = element->attributeAt(i);
 
-        if (!attributeItem->matches(selectorAttr.prefix(), element->isHTMLElement() ? selector->attributeCanonicalLocalName() : selectorAttr.localName(), selectorAttr.namespaceURI()))
+        if (!attribute.matches(selectorAttr.prefix(), element->isHTMLElement() ? selector->attributeCanonicalLocalName() : selectorAttr.localName(), selectorAttr.namespaceURI()))
             continue;
 
-        if (attributeValueMatches(attributeItem, static_cast<CSSSelector::Match>(selector->m_match), selector->value(), caseSensitive))
+        if (attributeValueMatches(attribute, static_cast<CSSSelector::Match>(selector->m_match), selector->value(), caseSensitive))
             return true;
     }
 

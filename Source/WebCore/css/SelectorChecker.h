@@ -135,8 +135,8 @@ inline bool SelectorChecker::checkExactAttribute(const Element* element, const C
     const AtomicString& localName = element->isHTMLElement() ? selector->attributeCanonicalLocalName() : selectorAttributeName.localName();
     unsigned size = element->attributeCount();
     for (unsigned i = 0; i < size; ++i) {
-        const Attribute* attribute = element->attributeItem(i);
-        if (attribute->matches(selectorAttributeName.prefix(), localName, selectorAttributeName.namespaceURI()) && (!value || attribute->value().impl() == value))
+        const Attribute& attribute = element->attributeAt(i);
+        if (attribute.matches(selectorAttributeName.prefix(), localName, selectorAttributeName.namespaceURI()) && (!value || attribute.value().impl() == value))
             return true;
     }
     return false;

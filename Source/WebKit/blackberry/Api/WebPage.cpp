@@ -2151,7 +2151,7 @@ Platform::WebContext WebPagePrivate::webContext(TargetDetectionStrategy strategy
     if (linkNode && (node == linkNode || node->isTextNode() || nodeIsImage)) {
         KURL href;
         if (linkNode->isLink() && linkNode->hasAttributes()) {
-            if (const Attribute* attribute = toElement(linkNode)->getAttributeItem(HTMLNames::hrefAttr))
+            if (const Attribute* attribute = toElement(linkNode)->findAttributeByName(HTMLNames::hrefAttr))
                 href = linkNode->document()->completeURL(stripLeadingAndTrailingHTMLSpaces(attribute->value()));
         }
 

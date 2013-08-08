@@ -295,7 +295,7 @@ void HTMLSelectElement::parseAttribute(const QualifiedName& name, const AtomicSt
         String attrSize = String::number(size);
         if (attrSize != value) {
             // FIXME: This is horribly factored.
-            if (Attribute* sizeAttribute = ensureUniqueElementData()->getAttributeItem(sizeAttr))
+            if (Attribute* sizeAttribute = ensureUniqueElementData()->findAttributeByName(sizeAttr))
                 sizeAttribute->setValue(attrSize);
         }
         size = max(size, 1);

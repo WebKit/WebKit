@@ -1,5 +1,115 @@
 2013-08-08  Mark Lam  <mark.lam@apple.com>
 
+        Element: Modernize attribute storage accessor functions.
+        <http://webkit.org/b/119578>
+
+        Reviewed by Antti Koivisto.
+
+        Rename these functions to more WebKit-style names.
+
+        - const Attribute* attributeItem(index) => const Attribute& attributeAt(index)
+        - const Attribute* getAttributeItem(name) => const Attribute* findAttributeByName(name)
+        - unsigned getAttributeItemIndex(name) => unsigned findAttributeIndexByName(name)
+
+        Note that attributeAt() now returns a reference instead of a pointer. That's right.
+
+        * css/SelectorChecker.cpp:
+        (WebCore::attributeValueMatches):
+        (WebCore::anyAttributeMatches):
+        * css/SelectorChecker.h:
+        (WebCore::SelectorChecker::checkExactAttribute):
+        * dom/Attr.cpp:
+        (WebCore::Attr::elementAttribute):
+        * dom/DatasetDOMStringMap.cpp:
+        (WebCore::DatasetDOMStringMap::getNames):
+        (WebCore::DatasetDOMStringMap::item):
+        (WebCore::DatasetDOMStringMap::contains):
+        * dom/Element.cpp:
+        (WebCore::Element::detachAttribute):
+        (WebCore::Element::removeAttribute):
+        (WebCore::Element::getAttribute):
+        (WebCore::Element::setAttribute):
+        (WebCore::Element::setSynchronizedLazyAttribute):
+        (WebCore::Element::setAttributeInternal):
+        (WebCore::Element::setAttributeNode):
+        (WebCore::Element::removeAttributeNode):
+        (WebCore::Element::removeAttributeInternal):
+        (WebCore::Element::getAttributeNode):
+        (WebCore::Element::getAttributeNodeNS):
+        (WebCore::Element::hasAttribute):
+        (WebCore::Element::hasAttributeNS):
+        (WebCore::Element::computeInheritedLanguage):
+        (WebCore::Element::normalizeAttributes):
+        (WebCore::Element::getURLAttribute):
+        (WebCore::Element::getNonEmptyURLAttribute):
+        (WebCore::Element::detachAllAttrNodesFromElement):
+        (WebCore::Element::cloneAttributesFromElement):
+        (WebCore::ElementData::isEquivalent):
+        (WebCore::ElementData::findAttributeIndexByNameSlowCase):
+        (WebCore::ElementData::findAttributeIndexByNameForAttributeNode):
+        (WebCore::UniqueElementData::findAttributeByName):
+        (WebCore::UniqueElementData::attributeAt):
+        * dom/Element.h:
+        (WebCore::Element::findAttributeIndexByName):
+        (WebCore::Element::fastHasAttribute):
+        (WebCore::Element::fastGetAttribute):
+        (WebCore::Element::attributeAt):
+        (WebCore::Element::findAttributeByName):
+        (WebCore::ElementData::findAttributeByName):
+        (WebCore::ElementData::findAttributeIndexByName):
+        (WebCore::ElementData::attributeAt):
+        * dom/NamedNodeMap.cpp:
+        (WebCore::NamedNodeMap::removeNamedItem):
+        (WebCore::NamedNodeMap::removeNamedItemNS):
+        (WebCore::NamedNodeMap::item):
+        * dom/Node.cpp:
+        (WebCore::Node::dumpStatistics):
+        (WebCore::Node::isDefaultNamespace):
+        (WebCore::Node::lookupNamespaceURI):
+        (WebCore::Node::lookupNamespacePrefix):
+        (WebCore::Node::compareDocumentPosition):
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::makePresentationAttributeCacheKey):
+        (WebCore::StyledElement::rebuildPresentationAttributeStyle):
+        * editing/MarkupAccumulator.cpp:
+        (WebCore::MarkupAccumulator::appendElement):
+        * editing/markup.cpp:
+        (WebCore::completeURLs):
+        (WebCore::StyledMarkupAccumulator::appendElement):
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::parametersForPlugin):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::updateType):
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::parametersForPlugin):
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::parseAttribute):
+        * html/parser/HTMLConstructionSite.cpp:
+        (WebCore::HTMLConstructionSite::mergeAttributesFromTokenIntoElement):
+        * inspector/DOMPatchSupport.cpp:
+        (WebCore::DOMPatchSupport::innerPatchNode):
+        (WebCore::DOMPatchSupport::createDigest):
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::setAttributesAsText):
+        (WebCore::InspectorDOMAgent::performSearch):
+        (WebCore::InspectorDOMAgent::buildArrayForElementAttributes):
+        * page/PageSerializer.cpp:
+        (WebCore::isCharsetSpecifyingNode):
+        * svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::getPresentationAttribute):
+        * xml/XPathFunctions.cpp:
+        (WebCore::XPath::FunLang::evaluate):
+        * xml/XPathNodeSet.cpp:
+        (WebCore::XPath::NodeSet::traversalSort):
+        * xml/XPathStep.cpp:
+        (WebCore::XPath::Step::nodesInAxis):
+        * xml/parser/XMLDocumentParserLibxml2.cpp:
+        (WebCore::XMLDocumentParser::XMLDocumentParser):
+        * xml/parser/XMLDocumentParserQt.cpp:
+        (WebCore::XMLDocumentParser::XMLDocumentParser):
+
+2013-08-08  Andreas Kling  <akling@apple.com>
+
         Restoring use of StackIterator instead of Interpreter::getStacktrace().
         https://bugs.webkit.org/show_bug.cgi?id=119575.
 

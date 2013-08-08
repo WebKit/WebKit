@@ -1,3 +1,13 @@
+2013-08-08  Andreas Kling  <akling@apple.com>
+
+        Element: Modernize attribute storage accessor functions.
+        <http://webkit.org/b/119578>
+
+        Reviewed by Antti Koivisto.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::webContext):
+
 2013-08-07  Jacky Jiang  <zhajiang@blackberry.com>
 
         [BlackBerry] Remove pointless const in InputHandler

@@ -697,9 +697,9 @@ void InspectorDOMAgent::setAttributesAsText(ErrorString* errorString, int elemen
     unsigned numAttrs = childElement->attributeCount();
     for (unsigned i = 0; i < numAttrs; ++i) {
         // Add attribute pair
-        const Attribute* attribute = childElement->attributeItem(i);
-        foundOriginalAttribute = foundOriginalAttribute || (name && attribute->name().toString() == *name);
-        if (!m_domEditor->setAttribute(element, attribute->name().toString(), attribute->value(), errorString))
+        const Attribute& attribute = childElement->attributeAt(i);
+        foundOriginalAttribute = foundOriginalAttribute || (name && attribute.name().toString() == *name);
+        if (!m_domEditor->setAttribute(element, attribute.name().toString(), attribute.value(), errorString))
             return;
     }
 
@@ -955,14 +955,14 @@ void InspectorDOMAgent::performSearch(ErrorString*, const String& whitespaceTrim
                 unsigned numAttrs = element->attributeCount();
                 for (unsigned i = 0; i < numAttrs; ++i) {
                     // Add attribute pair
-                    const Attribute* attribute = element->attributeItem(i);
-                    if (attribute->localName().find(whitespaceTrimmedQuery) != notFound) {
+                    const Attribute& attribute = element->attributeAt(i);
+                    if (attribute.localName().find(whitespaceTrimmedQuery) != notFound) {
                         resultCollector.add(node);
                         break;
                     }
-                    size_t foundPosition = attribute->value().find(attributeQuery);
+                    size_t foundPosition = attribute.value().find(attributeQuery);
                     if (foundPosition != notFound) {
-                        if (!exactAttributeMatch || (!foundPosition && attribute->value().length() == attributeQuery.length())) {
+                        if (!exactAttributeMatch || (!foundPosition && attribute.value().length() == attributeQuery.length())) {
                             resultCollector.add(node);
                             break;
                         }
@@ -1455,9 +1455,9 @@ PassRefPtr<TypeBuilder::Array<String> > InspectorDOMAgent::buildArrayForElementA
     unsigned numAttrs = element->attributeCount();
     for (unsigned i = 0; i < numAttrs; ++i) {
         // Add attribute pair
-        const Attribute* attribute = element->attributeItem(i);
-        attributesValue->addItem(attribute->name().toString());
-        attributesValue->addItem(attribute->value());
+        const Attribute& attribute = element->attributeAt(i);
+        attributesValue->addItem(attribute.name().toString());
+        attributesValue->addItem(attribute.value());
     }
     return attributesValue.release();
 }

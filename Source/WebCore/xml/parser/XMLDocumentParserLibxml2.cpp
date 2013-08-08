@@ -639,11 +639,11 @@ XMLDocumentParser::XMLDocumentParser(DocumentFragment* fragment, Element* parent
         Element* element = elemStack.last();
         if (element->hasAttributes()) {
             for (unsigned i = 0; i < element->attributeCount(); i++) {
-                const Attribute* attribute = element->attributeItem(i);
-                if (attribute->localName() == xmlnsAtom)
-                    m_defaultNamespaceURI = attribute->value();
-                else if (attribute->prefix() == xmlnsAtom)
-                    m_prefixToNamespaceMap.set(attribute->localName(), attribute->value());
+                const Attribute& attribute = element->attributeAt(i);
+                if (attribute.localName() == xmlnsAtom)
+                    m_defaultNamespaceURI = attribute.value();
+                else if (attribute.prefix() == xmlnsAtom)
+                    m_prefixToNamespaceMap.set(attribute.localName(), attribute.value());
             }
         }
     }

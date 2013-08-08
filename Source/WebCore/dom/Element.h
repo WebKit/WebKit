@@ -77,11 +77,11 @@ public:
     unsigned length() const;
     bool isEmpty() const { return !length(); }
 
-    const Attribute* attributeItem(unsigned index) const;
-    const Attribute* getAttributeItem(const QualifiedName&) const;
-    unsigned getAttributeItemIndex(const QualifiedName&) const;
-    unsigned getAttributeItemIndex(const AtomicString& name, bool shouldIgnoreAttributeCase) const;
-    unsigned getAttributeItemIndexForAttributeNode(const Attr*) const;
+    const Attribute& attributeAt(unsigned index) const;
+    const Attribute* findAttributeByName(const QualifiedName&) const;
+    unsigned findAttributeIndexByName(const QualifiedName&) const;
+    unsigned findAttributeIndexByName(const AtomicString& name, bool shouldIgnoreAttributeCase) const;
+    unsigned findAttributeIndexByNameForAttributeNode(const Attr*) const;
 
     bool hasID() const { return !m_idForStyleResolution.isNull(); }
     bool hasClass() const { return !m_classNames.isNull(); }
@@ -119,8 +119,8 @@ private:
 #endif
 
     const Attribute* attributeBase() const;
-    const Attribute* getAttributeItem(const AtomicString& name, bool shouldIgnoreAttributeCase) const;
-    unsigned getAttributeItemIndexSlowCase(const AtomicString& name, bool shouldIgnoreAttributeCase) const;
+    const Attribute* findAttributeByName(const AtomicString& name, bool shouldIgnoreAttributeCase) const;
+    unsigned findAttributeIndexByNameSlowCase(const AtomicString& name, bool shouldIgnoreAttributeCase) const;
 
     PassRefPtr<UniqueElementData> makeUniqueCopy() const;
 };
@@ -154,8 +154,8 @@ public:
     void addAttribute(const QualifiedName&, const AtomicString&);
     void removeAttribute(unsigned index);
 
-    Attribute* attributeItem(unsigned index);
-    Attribute* getAttributeItem(const QualifiedName&);
+    Attribute& attributeAt(unsigned index);
+    Attribute* findAttributeByName(const QualifiedName&);
 
     UniqueElementData();
     explicit UniqueElementData(const ShareableElementData&);
@@ -296,10 +296,10 @@ public:
     // Internal methods that assume the existence of attribute storage, one should use hasAttributes()
     // before calling them.
     unsigned attributeCount() const;
-    const Attribute* attributeItem(unsigned index) const;
-    const Attribute* getAttributeItem(const QualifiedName&) const;
-    unsigned getAttributeItemIndex(const QualifiedName& name) const { return elementData()->getAttributeItemIndex(name); }
-    unsigned getAttributeItemIndex(const AtomicString& name, bool shouldIgnoreAttributeCase) const { return elementData()->getAttributeItemIndex(name, shouldIgnoreAttributeCase); }
+    const Attribute& attributeAt(unsigned index) const;
+    const Attribute* findAttributeByName(const QualifiedName&) const;
+    unsigned findAttributeIndexByName(const QualifiedName& name) const { return elementData()->findAttributeIndexByName(name); }
+    unsigned findAttributeIndexByName(const AtomicString& name, bool shouldIgnoreAttributeCase) const { return elementData()->findAttributeIndexByName(name, shouldIgnoreAttributeCase); }
 
     void scrollIntoView(bool alignToTop = true);
     void scrollIntoViewIfNeeded(bool centerIfNeeded = true);
@@ -844,14 +844,14 @@ inline Element* Element::nextElementSibling() const
 inline bool Element::fastHasAttribute(const QualifiedName& name) const
 {
     ASSERT(fastAttributeLookupAllowed(name));
-    return elementData() && getAttributeItem(name);
+    return elementData() && findAttributeByName(name);
 }
 
 inline const AtomicString& Element::fastGetAttribute(const QualifiedName& name) const
 {
     ASSERT(fastAttributeLookupAllowed(name));
     if (elementData()) {
-        if (const Attribute* attribute = getAttributeItem(name))
+        if (const Attribute* attribute = findAttributeByName(name))
             return attribute->value();
     }
     return nullAtom;
@@ -905,16 +905,16 @@ inline unsigned Element::attributeCount() const
     return elementData()->length();
 }
 
-inline const Attribute* Element::attributeItem(unsigned index) const
+inline const Attribute& Element::attributeAt(unsigned index) const
 {
     ASSERT(elementData());
-    return elementData()->attributeItem(index);
+    return elementData()->attributeAt(index);
 }
 
-inline const Attribute* Element::getAttributeItem(const QualifiedName& name) const
+inline const Attribute* Element::findAttributeByName(const QualifiedName& name) const
 {
     ASSERT(elementData());
-    return elementData()->getAttributeItem(name);
+    return elementData()->findAttributeByName(name);
 }
 
 inline bool Element::hasID() const
@@ -984,15 +984,15 @@ inline const StylePropertySet* ElementData::presentationAttributeStyle() const
     return static_cast<const UniqueElementData*>(this)->m_presentationAttributeStyle.get();
 }
 
-inline const Attribute* ElementData::getAttributeItem(const AtomicString& name, bool shouldIgnoreAttributeCase) const
+inline const Attribute* ElementData::findAttributeByName(const AtomicString& name, bool shouldIgnoreAttributeCase) const
 {
-    unsigned index = getAttributeItemIndex(name, shouldIgnoreAttributeCase);
+    unsigned index = findAttributeIndexByName(name, shouldIgnoreAttributeCase);
     if (index != attributeNotFound)
-        return attributeItem(index);
+        return &attributeAt(index);
     return 0;
 }
 
-inline unsigned ElementData::getAttributeItemIndex(const QualifiedName& name) const
+inline unsigned ElementData::findAttributeIndexByName(const QualifiedName& name) const
 {
     const Attribute* attributes = attributeBase();
     for (unsigned i = 0, count = length(); i < count; ++i) {
@@ -1004,7 +1004,7 @@ inline unsigned ElementData::getAttributeItemIndex(const QualifiedName& name) co
 
 // We use a boolean parameter instead of calling shouldIgnoreAttributeCase so that the caller
 // can tune the behavior (hasAttribute is case sensitive whereas getAttribute is not).
-inline unsigned ElementData::getAttributeItemIndex(const AtomicString& name, bool shouldIgnoreAttributeCase) const
+inline unsigned ElementData::findAttributeIndexByName(const AtomicString& name, bool shouldIgnoreAttributeCase) const
 {
     const Attribute* attributes = attributeBase();
     bool doSlowCheck = shouldIgnoreAttributeCase;
@@ -1020,11 +1020,11 @@ inline unsigned ElementData::getAttributeItemIndex(const AtomicString& name, boo
     }
 
     if (doSlowCheck)
-        return getAttributeItemIndexSlowCase(name, shouldIgnoreAttributeCase);
+        return findAttributeIndexByNameSlowCase(name, shouldIgnoreAttributeCase);
     return attributeNotFound;
 }
 
-inline const Attribute* ElementData::getAttributeItem(const QualifiedName& name) const
+inline const Attribute* ElementData::findAttributeByName(const QualifiedName& name) const
 {
     const Attribute* attributes = attributeBase();
     for (unsigned i = 0, count = length(); i < count; ++i) {
@@ -1034,10 +1034,10 @@ inline const Attribute* ElementData::getAttributeItem(const QualifiedName& name)
     return 0;
 }
 
-inline const Attribute* ElementData::attributeItem(unsigned index) const
+inline const Attribute& ElementData::attributeAt(unsigned index) const
 {
     RELEASE_ASSERT(index < length());
-    return attributeBase() + index;
+    return attributeBase()[index];
 }
 
 } // namespace

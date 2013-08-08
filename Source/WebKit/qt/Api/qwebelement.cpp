@@ -503,9 +503,9 @@ QStringList QWebElement::attributeNames(const QString& namespaceUri) const
         const String namespaceUriString(namespaceUri); // convert QString -> String once
         const unsigned attrsCount = m_element->attributeCount();
         for (unsigned i = 0; i < attrsCount; ++i) {
-            const Attribute* const attribute = m_element->attributeItem(i);
-            if (namespaceUriString == attribute->namespaceURI())
-                attributeNameList.append(attribute->localName());
+            const Attribute& attribute = m_element->attributeAt(i);
+            if (namespaceUriString == attribute.namespaceURI())
+                attributeNameList.append(attribute.localName());
         }
     }
     return attributeNameList;
