@@ -1,3 +1,19 @@
+2013-08-08  Rob Buis  <rwlbuis@webkit.org>
+
+        svg/custom/use-href-update-crash.svg failing on certain platforms
+        https://bugs.webkit.org/show_bug.cgi?id=104054
+
+        Reviewed by Darin Adler.
+
+        Fix mistake in use-href-update-crash.svg which caused the gc() not found problem. Update the test expectations
+        that had this marked as failure, it passes after the test fix.
+
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/qt/TestExpectations:
+        * platform/win/TestExpectations:
+        * svg/custom/use-href-update-crash.svg:
+
 2013-08-08  Alexey Proskuryakov  <ap@apple.com>
 
         WTR::pathSuitableForTestResult should behave the same as _drt_descriptionSuitableForTestResult so we can unskip tests.
