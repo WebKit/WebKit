@@ -2770,6 +2770,7 @@ void RenderBlock::simplifiedNormalFlowLayout()
         }
 
         // FIXME: Glyph overflow will get lost in this case, but not really a big deal.
+        // FIXME: Find a way to invalidate the knownToHaveNoOverflow flag on the InlineBoxes.
         GlyphOverflowAndFallbackFontsMap textBoxDataMap;                  
         for (ListHashSet<RootInlineBox*>::const_iterator it = lineBoxes.begin(); it != lineBoxes.end(); ++it) {
             RootInlineBox* box = *it;

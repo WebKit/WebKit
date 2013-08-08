@@ -281,6 +281,7 @@ private:
 
     void layoutContent(const LayoutState&);
     void layoutContentInAutoLogicalHeightRegions(const LayoutState&);
+    void layoutContentToComputeOverflowInRegions(const LayoutState&);
 #ifndef NDEBUG
     void checkLayoutState(const LayoutState&);
 #endif

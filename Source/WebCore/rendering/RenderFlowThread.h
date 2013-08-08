@@ -141,6 +141,7 @@ public:
     bool objectInFlowRegion(const RenderObject*, const RenderRegion*) const;
 
     void markAutoLogicalHeightRegionsForLayout();
+    void markRegionsForOverflowLayoutIfNeeded();
 
     bool addForcedRegionBreak(LayoutUnit, RenderObject* breakChild, bool isBefore, LayoutUnit* offsetBreakAdjustment = 0);
     void applyBreakAfterContent(LayoutUnit);
@@ -158,8 +159,18 @@ public:
     void collectLayerFragments(LayerFragments&, const LayoutRect& layerBoundingBox, const LayoutRect& dirtyRect);
     LayoutRect fragmentsBoundingBox(const LayoutRect& layerBoundingBox);
 
-    void setInConstrainedLayoutPhase(bool value) { m_inConstrainedLayoutPhase = value; }
-    bool inConstrainedLayoutPhase() const { return m_inConstrainedLayoutPhase; }
+    // A flow thread goes through different states during layout.
+    enum LayoutPhase {
+        LayoutPhaseMeasureContent = 0, // The initial phase, used to measure content for the auto-height regions.
+        LayoutPhaseConstrained, // In this phase the regions are laid out using the sizes computed in the normal phase.
+        LayoutPhaseOverflow, // In this phase the layout overflow is propagated from the content to the regions.
+        LayoutPhaseFinal // In case scrollbars have resized the regions, content is laid out one last time to respect the change.
+    };
+    bool inMeasureContentLayoutPhase() const { return m_layoutPhase == LayoutPhaseMeasureContent; }
+    bool inConstrainedLayoutPhase() const { return m_layoutPhase == LayoutPhaseConstrained; }
+    bool inOverflowLayoutPhase() const { return m_layoutPhase == LayoutPhaseOverflow; }
+    bool inFinalLayoutPhase() const { return m_layoutPhase == LayoutPhaseFinal; }
+    void setLayoutPhase(LayoutPhase phase) { m_layoutPhase = phase; }
 
     bool needsTwoPhasesLayout() const { return m_needsTwoPhasesLayout; }
     void clearNeedsTwoPhasesLayout() { m_needsTwoPhasesLayout = false; }
@@ -282,7 +293,7 @@ protected:
     bool m_dispatchRegionLayoutUpdateEvent : 1;
     bool m_dispatchRegionOversetChangeEvent : 1;
     bool m_pageLogicalSizeChanged : 1;
-    bool m_inConstrainedLayoutPhase : 1;
+    unsigned m_layoutPhase : 2;
     bool m_needsTwoPhasesLayout : 1;
 };
 

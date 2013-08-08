@@ -1,3 +1,86 @@
+2013-08-07  Andrei Bucur  <abucur@adobe.com>
+
+        [CSS Regions] Propagate overflow from the flow thread to the first and last region
+        https://bugs.webkit.org/show_bug.cgi?id=118526
+
+        Reviewed by David Hyatt.
+
+        The patch implements layout overflow propagation for the first and last regions. The approach
+        taken is triggering a simple layout on the regions after the named flows are laid out
+        that extracts the layout overflow from the flow thread and adds it to the regions.
+
+        The process is based on adding two new layout phases: the overflow phase and the final phase.
+        The overflow phase is set after the flow threads are laid out and it marks the regions as
+        needing to extract the overflow from the flow thread. In case there are blocks with auto overflow
+        it's possible the overflow to create scrollbars that shrink the regions. In this case the flow
+        thread is relaid out and set in the final phase, forcing the regions to recollect the layout
+        overflow. In theory this would be an N-step layout because scrollbars can force content to change
+        regions and create overflow for other blocks (and thus creating more scrollbars). For now, we are
+        limiting this to the first pass by inserting this new final layout phase.
+
+        A short description of the processing model for a document:
+        - layout the document (all the flow threads should be in the constrained layout phase after this step)
+        - reverse iterate through the flow threads and mark the regions for simplified layout (we need to
+        reverse iterate so the overflow can correctly propagate with nested regions)
+        - if the layout changes the size of a region, invalidate the flow thread and when laying it out mark
+        it as needing a new pass
+        - make a secondary pass through the flow threads that changed after scrollbars have been added and
+        recompute the overflow for their regions; mark the flow threads in the final phase (flow threads can't
+        be invalidated in the final phase)
+        - after the overflow was propagated update all the flow threads in the normal layout phase
+
+        There are some issues with the patch:
+        - the simplified layout doesn't compute correct overflow values for inline blocks
+        - the layout overflow from the flow thread doesn't take the region size into account
+
+        The first issue is not related to regions and will be fixed in a future patch. The second issue
+        will be fixed when box overflow will be region bound.
+
+        Tests: fast/regions/overflow-scrollable-1.html
+               fast/regions/overflow-scrollable-2.html
+               fast/regions/overflow-scrollable-3.html
+               fast/regions/overflow-scrollable-fit-complex.html
+               fast/regions/overflow-scrollable-fit.html
+               fast/regions/overflow-scrollable-nested.html
+
+        * rendering/FlowThreadController.cpp: Flow threads layout driver functions.
+        (WebCore::FlowThreadController::updateFlowThreadsNeedingLayout):
+        (WebCore::FlowThreadController::updateFlowThreadsIntoConstrainedPhase):
+        (WebCore::FlowThreadController::updateFlowThreadsIntoOverflowPhase):
+        (WebCore::FlowThreadController::updateFlowThreadsIntoMeasureContentPhase):
+        (WebCore::FlowThreadController::updateFlowThreadsIntoFinalPhase):
+        * rendering/FlowThreadController.h:
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::simplifiedNormalFlowLayout):
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::RenderFlowThread):
+        (WebCore::RenderFlowThread::invalidateRegions):
+        (WebCore::RenderFlowThread::validateRegions):
+        (WebCore::RenderFlowThread::layout):
+        (WebCore::RenderFlowThread::firstRegion): This getter should work even though the region chain is invalid.
+        (WebCore::RenderFlowThread::lastRegion): This getter should work even though the region chain is invalid.
+        (WebCore::RenderFlowThread::initializeRegionsComputedAutoHeight):
+        (WebCore::RenderFlowThread::markRegionsForOverflowLayoutIfNeeded): If the flow thread has no overflow do nothing.
+        (WebCore::RenderFlowThread::updateRegionsFlowThreadPortionRect):
+        (WebCore::RenderFlowThread::addForcedRegionBreak):
+        * rendering/RenderFlowThread.h:
+        * rendering/RenderMultiColumnSet.cpp:
+        (WebCore::RenderMultiColumnSet::flowThreadPortionOverflowRect):
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::pageLogicalHeight):
+        (WebCore::RenderRegion::maxPageLogicalHeight):
+        (WebCore::RenderRegion::logicalHeightOfAllFlowThreadContent):
+        (WebCore::RenderRegion::flowThreadPortionOverflowRect):
+        (WebCore::RenderRegion::overflowRectForFlowThreadPortion): Used to get the flow thread visual or layout overflow.
+        (WebCore::RenderRegion::layoutBlock):
+        (WebCore::RenderRegion::computeOverflowFromFlowThread):
+        (WebCore::RenderRegion::updateLogicalHeight):
+        * rendering/RenderRegion.h:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::layoutContentToComputeOverflowInRegions):
+        (WebCore::RenderView::layout):
+        * rendering/RenderView.h:
+
 2013-08-07  Simon Fraser  <simon.fraser@apple.com>
 
         Avoid spurious "all repaint" layouts when scrolling WebViews on Retina displays

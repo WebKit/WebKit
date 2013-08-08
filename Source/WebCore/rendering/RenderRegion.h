@@ -145,11 +145,18 @@ protected:
     virtual void computePreferredLogicalWidths() OVERRIDE;
     virtual void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const OVERRIDE;
 
-    LayoutRect overflowRectForFlowThreadPortion(const LayoutRect& flowThreadPortionRect, bool isFirstPortion, bool isLastPortion) const;
+    enum OverflowType {
+        LayoutOverflow = 0,
+        VisualOverflow
+    };
+    LayoutRect overflowRectForFlowThreadPortion(const LayoutRect& flowThreadPortionRect, bool isFirstPortion, bool isLastPortion, OverflowType) const;
+
     void repaintFlowThreadContentRectangle(const LayoutRect& repaintRect, bool immediate, const LayoutRect& flowThreadPortionRect,
         const LayoutRect& flowThreadPortionOverflowRect, const LayoutPoint& regionLocation) const;
 
     virtual bool shouldHaveAutoLogicalHeight() const;
+
+    void computeOverflowFromFlowThread();
 
 private:
     virtual const char* renderName() const { return "RenderRegion"; }

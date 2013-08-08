@@ -75,6 +75,9 @@ public:
     bool updateFlowThreadsNeedingLayout();
     bool updateFlowThreadsNeedingTwoStepLayout();
     void updateFlowThreadsIntoConstrainedPhase();
+    void updateFlowThreadsIntoOverflowPhase();
+    void updateFlowThreadsIntoMeasureContentPhase();
+    void updateFlowThreadsIntoFinalPhase();
 
 #ifndef NDEBUG
     bool isAutoLogicalHeightRegionsCountConsistent() const;

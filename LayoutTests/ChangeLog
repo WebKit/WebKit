@@ -1,3 +1,26 @@
+2013-08-07  Andrei Bucur  <abucur@adobe.com>
+
+        [CSS Regions] Propagate overflow from the flow thread to the first and last region
+        https://bugs.webkit.org/show_bug.cgi?id=118526
+
+        Reviewed by David Hyatt.
+
+        Add tests for scrolling of regions in containers in different situations: regions with
+        transforms, nested regions, regions affected by scrollbars etc.
+
+        * fast/regions/overflow-scrollable-1-expected.html: Added.
+        * fast/regions/overflow-scrollable-1.html: Added.
+        * fast/regions/overflow-scrollable-2-expected.html: Added.
+        * fast/regions/overflow-scrollable-2.html: Added.
+        * fast/regions/overflow-scrollable-3-expected.html: Added.
+        * fast/regions/overflow-scrollable-3.html: Added.
+        * fast/regions/overflow-scrollable-fit-complex-expected.html: Added.
+        * fast/regions/overflow-scrollable-fit-complex.html: Added.
+        * fast/regions/overflow-scrollable-fit-expected.html: Added.
+        * fast/regions/overflow-scrollable-fit.html: Added.
+        * fast/regions/overflow-scrollable-nested-expected.txt: Added.
+        * fast/regions/overflow-scrollable-nested.html: Added.
+
 2013-08-07  Tim Horton  <timothy_horton@apple.com>
 
         Fall out of simple image layer optimization if the image has EXIF rotation

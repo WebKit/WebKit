@@ -68,7 +68,7 @@ LayoutUnit RenderRegion::pageLogicalWidth() const
 LayoutUnit RenderRegion::pageLogicalHeight() const
 {
     ASSERT(m_flowThread);
-    if (hasComputedAutoHeight() && !m_flowThread->inConstrainedLayoutPhase()) {
+    if (hasComputedAutoHeight() && m_flowThread->inMeasureContentLayoutPhase()) {
         ASSERT(hasAutoLogicalHeight());
         return computedAutoHeight();
     }
@@ -80,14 +80,14 @@ LayoutUnit RenderRegion::pageLogicalHeight() const
 LayoutUnit RenderRegion::maxPageLogicalHeight() const
 {
     ASSERT(m_flowThread);
-    ASSERT(hasAutoLogicalHeight() && !m_flowThread->inConstrainedLayoutPhase());
+    ASSERT(hasAutoLogicalHeight() && m_flowThread->inMeasureContentLayoutPhase());
     return style()->logicalMaxHeight().isUndefined() ? RenderFlowThread::maxLogicalHeight() : computeReplacedLogicalHeightUsing(style()->logicalMaxHeight());
 }
 
 LayoutUnit RenderRegion::logicalHeightOfAllFlowThreadContent() const
 {
     ASSERT(m_flowThread);
-    if (hasComputedAutoHeight() && !m_flowThread->inConstrainedLayoutPhase()) {
+    if (hasComputedAutoHeight() && m_flowThread->inMeasureContentLayoutPhase()) {
         ASSERT(hasAutoLogicalHeight());
         return computedAutoHeight();
     }
@@ -96,10 +96,10 @@ LayoutUnit RenderRegion::logicalHeightOfAllFlowThreadContent() const
 
 LayoutRect RenderRegion::flowThreadPortionOverflowRect() const
 {
-    return overflowRectForFlowThreadPortion(flowThreadPortionRect(), isFirstRegion(), isLastRegion());
+    return overflowRectForFlowThreadPortion(flowThreadPortionRect(), isFirstRegion(), isLastRegion(), VisualOverflow);
 }
 
-LayoutRect RenderRegion::overflowRectForFlowThreadPortion(const LayoutRect& flowThreadPortionRect, bool isFirstPortion, bool isLastPortion) const
+LayoutRect RenderRegion::overflowRectForFlowThreadPortion(const LayoutRect& flowThreadPortionRect, bool isFirstPortion, bool isLastPortion, OverflowType overflowType) const
 {
     ASSERT(isValid());
 
@@ -111,10 +111,10 @@ LayoutRect RenderRegion::overflowRectForFlowThreadPortion(const LayoutRect& flow
     if ((clipX && clipY) || isLastRegionWithRegionFragmentBreak)
         return flowThreadPortionRect;
 
-    LayoutRect flowThreadOverflow = m_flowThread->visualOverflowRect();
+    LayoutRect flowThreadOverflow = overflowType == VisualOverflow ? m_flowThread->visualOverflowRect() : m_flowThread->layoutOverflowRect();
 
-    // Only clip along the flow thread axis.
-    LayoutUnit outlineSize = maximalOutlineSize(PaintPhaseOutline);
+    // We are interested about the outline size only when computing the visual overflow.
+    LayoutUnit outlineSize = overflowType == VisualOverflow ? LayoutUnit(maximalOutlineSize(PaintPhaseOutline)) : LayoutUnit();
     LayoutRect clipRect;
     if (m_flowThread->isHorizontalWritingMode()) {
         LayoutUnit minY = isFirstPortion ? (flowThreadOverflow.y() - outlineSize) : flowThreadPortionRect.y();
@@ -302,13 +302,16 @@ void RenderRegion::layoutBlock(bool relayoutChildren, LayoutUnit)
         if (!isHorizontalWritingMode())
             oldRegionRect = oldRegionRect.transposedRect();
 
-        if (hasAutoLogicalHeight() && !m_flowThread->inConstrainedLayoutPhase()) {
+        if (m_flowThread->inOverflowLayoutPhase() || m_flowThread->inFinalLayoutPhase())
+            computeOverflowFromFlowThread();
+
+        if (hasAutoLogicalHeight() && m_flowThread->inMeasureContentLayoutPhase()) {
             m_flowThread->invalidateRegions();
             clearComputedAutoHeight();
             return;
         }
 
-        if (!isRenderRegionSet() && (oldRegionRect.width() != pageLogicalWidth() || oldRegionRect.height() != pageLogicalHeight()))
+        if (!isRenderRegionSet() && (oldRegionRect.width() != pageLogicalWidth() || oldRegionRect.height() != pageLogicalHeight()) && !m_flowThread->inFinalLayoutPhase())
             // This can happen even if we are in the inConstrainedLayoutPhase and it will trigger a pathological layout of the flow thread.
             m_flowThread->invalidateRegions();
     }
@@ -323,6 +326,21 @@ void RenderRegion::layoutBlock(bool relayoutChildren, LayoutUnit)
     // RenderFlowThread itself).
     //
     // We'll need to expand RenderBoxRegionInfo to also hold left and right overflow values.
+}
+
+void RenderRegion::computeOverflowFromFlowThread()
+{
+    ASSERT(isValid());
+
+    LayoutRect layoutRect = overflowRectForFlowThreadPortion(flowThreadPortionRect(), isFirstRegion(), isLastRegion(), LayoutOverflow);
+
+    layoutRect.setLocation(contentBoxRect().location() + (layoutRect.location() - m_flowThreadPortionRect.location()));
+
+    // FIXME: Correctly adjust the layout overflow for writing modes.
+    addLayoutOverflow(layoutRect);
+
+    updateLayerTransform();
+    updateScrollInfoAfterLayout();
 }
 
 void RenderRegion::repaintFlowThreadContent(const LayoutRect& repaintRect, bool immediate) const
@@ -683,9 +701,9 @@ void RenderRegion::updateLogicalHeight()
         return;
 
     // We want to update the logical height based on the computed auto-height
-    // only if the view is in the layout phase in which all the
+    // only after the measure cotnent layout phase when all the
     // auto logical height regions have a computed auto-height.
-    if (!m_flowThread->inConstrainedLayoutPhase())
+    if (m_flowThread->inMeasureContentLayoutPhase())
         return;
 
     // There may be regions with auto logical height that during the prerequisite layout phase

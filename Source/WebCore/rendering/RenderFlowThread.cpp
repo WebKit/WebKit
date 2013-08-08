@@ -59,7 +59,7 @@ RenderFlowThread::RenderFlowThread()
     , m_dispatchRegionLayoutUpdateEvent(false)
     , m_dispatchRegionOversetChangeEvent(false)
     , m_pageLogicalSizeChanged(false)
-    , m_inConstrainedLayoutPhase(false)
+    , m_layoutPhase(LayoutPhaseMeasureContent)
     , m_needsTwoPhasesLayout(false)
 {
     setFlowThreadState(InsideOutOfFlowThread);
@@ -111,6 +111,8 @@ void RenderFlowThread::removeRegionFromThread(RenderRegion* renderRegion)
 
 void RenderFlowThread::invalidateRegions()
 {
+    ASSERT(!inFinalLayoutPhase());
+
     if (m_regionsInvalidated) {
         ASSERT(selfNeedsLayout());
         return;
@@ -163,11 +165,11 @@ void RenderFlowThread::validateRegions()
 
                 region->deleteAllRenderBoxRegionInfo();
 
-                // In the normal layout phase we need to initialize the computedAutoHeight for auto-height regions.
+                // In the measure content layout phase we need to initialize the computedAutoHeight for auto-height regions.
                 // See initializeRegionsComputedAutoHeight for the explanation.
                 // Also, if we have auto-height regions we can't assume m_regionsHaveUniformLogicalHeight to be true in the first phase
                 // because the auto-height regions don't have their height computed yet.
-                if (!inConstrainedLayoutPhase() && region->hasAutoLogicalHeight()) {
+                if (inMeasureContentLayoutPhase() && region->hasAutoLogicalHeight()) {
                     region->setComputedAutoHeight(region->maxPageLogicalHeight());
                     m_regionsHaveUniformLogicalHeight = false;
                 }
@@ -199,16 +201,18 @@ void RenderFlowThread::layout()
 
     m_pageLogicalSizeChanged = m_regionsInvalidated && everHadLayout();
 
-    // In case this is the second pass of the normal phase we need to update the auto-height regions to their initial value.
+    // In case this is the second pass of the measure content phase we need to update the auto-height regions to their initial value.
     // If the region chain was invalidated this will happen anyway.
-    if (!m_regionsInvalidated && !inConstrainedLayoutPhase())
+    if (!m_regionsInvalidated && inMeasureContentLayoutPhase())
         initializeRegionsComputedAutoHeight();
-
-    validateRegions();
 
     // This is the first phase of the layout and because we have auto-height regions we'll need a second
     // pass to update the flow with the computed auto-height regions.
-    m_needsTwoPhasesLayout = !inConstrainedLayoutPhase() && hasAutoLogicalHeightRegions();
+    // It's also possible to need a secondary layout if the overflow computation invalidated the region chain (e.g. overflow: auto scrollbars
+    // shrunk some regions) so repropagation is required.
+    m_needsTwoPhasesLayout = (inMeasureContentLayoutPhase() && hasAutoLogicalHeightRegions()) || (inOverflowLayoutPhase() && m_regionsInvalidated);
+
+    validateRegions();
 
     CurrentRenderFlowThreadMaintainer currentFlowThreadSetter(this);
     RenderBlock::layout();
@@ -648,14 +652,14 @@ LayoutUnit RenderFlowThread::contentLogicalLeftOfFirstRegion() const
 
 RenderRegion* RenderFlowThread::firstRegion() const
 {
-    if (!hasValidRegionInfo())
+    if (!hasRegions())
         return 0;
     return m_regionList.first();
 }
 
 RenderRegion* RenderFlowThread::lastRegion() const
 {
-    if (!hasValidRegionInfo())
+    if (!hasRegions())
         return 0;
     return m_regionList.last();
 }
@@ -835,12 +839,12 @@ bool RenderFlowThread::isAutoLogicalHeightRegionsCountConsistent() const
 }
 #endif
 
-// During the normal layout phase of the named flow the regions are initialized with a height equal to their max-height.
+// During the measure content layout phase of the named flow the regions are initialized with a height equal to their max-height.
 // This way unforced breaks are automatically placed when a region is full and the content height/position correctly estimated.
 // Also, the region where a forced break falls is exactly the region found at the forced break offset inside the flow content.
 void RenderFlowThread::initializeRegionsComputedAutoHeight(RenderRegion* startRegion)
 {
-    ASSERT(!inConstrainedLayoutPhase());
+    ASSERT(inMeasureContentLayoutPhase());
     if (!hasAutoLogicalHeightRegions())
         return;
 
@@ -867,9 +871,20 @@ void RenderFlowThread::markAutoLogicalHeightRegionsForLayout()
     }
 }
 
+void RenderFlowThread::markRegionsForOverflowLayoutIfNeeded()
+{
+    if (!hasRegions() || !hasRenderOverflow())
+        return;
+
+    // FIXME: We will eventually create a faster type of layout that only computes overflow.
+    // FIXME: For now propagate overflow only for the first and last regions.
+    firstRegion()->setNeedsSimplifiedNormalFlowLayout();
+    lastRegion()->setNeedsSimplifiedNormalFlowLayout();
+}
+
 void RenderFlowThread::updateRegionsFlowThreadPortionRect(const RenderRegion* lastRegionWithContent)
 {
-    ASSERT(!lastRegionWithContent || (!inConstrainedLayoutPhase() && hasAutoLogicalHeightRegions()));
+    ASSERT(!lastRegionWithContent || (inMeasureContentLayoutPhase() && hasAutoLogicalHeightRegions()));
     LayoutUnit logicalHeight = 0;
     bool emptyRegionsSegment = false;
     // FIXME: Optimize not to clear the interval all the time. This implies manually managing the tree nodes lifecycle.
@@ -910,7 +925,7 @@ bool RenderFlowThread::addForcedRegionBreak(LayoutUnit offsetBreakInFlowThread, 
     // only in the layout phase in which we lay out the flows threads unconstrained
     // and we use the content breaks to determine the computed auto height for
     // auto logical height regions.
-    if (inConstrainedLayoutPhase())
+    if (!inMeasureContentLayoutPhase())
         return false;
 
     // Breaks can come before or after some objects. We need to track these objects, so that if we get

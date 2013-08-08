@@ -260,6 +260,28 @@ void RenderView::layoutContentInAutoLogicalHeightRegions(const LayoutState& stat
         layoutContent(state);
 }
 
+void RenderView::layoutContentToComputeOverflowInRegions(const LayoutState& state)
+{
+    if (!hasRenderNamedFlowThreads())
+        return;
+
+    // First pass through the flow threads and mark the regions as needing a simple layout.
+    // The regions extract the overflow from the flow thread and pass it to their containg
+    // block chain.
+    flowThreadController()->updateFlowThreadsIntoOverflowPhase();
+    if (needsLayout())
+        layoutContent(state);
+
+    // In case scrollbars resized the regions a new pass is necessary to update the flow threads
+    // and recompute the overflow on regions. This is the final state of the flow threads.
+    flowThreadController()->updateFlowThreadsIntoFinalPhase();
+    if (needsLayout())
+        layoutContent(state);
+
+    // Finally reset the layout state of the flow threads.
+    flowThreadController()->updateFlowThreadsIntoMeasureContentPhase();
+}
+
 void RenderView::layout()
 {
     StackStats::LayoutCheckPoint layoutCheckPoint;
@@ -303,6 +325,8 @@ void RenderView::layout()
         layoutContentInAutoLogicalHeightRegions(state);
     else
         layoutContent(state);
+
+    layoutContentToComputeOverflowInRegions(state);
 
 #ifndef NDEBUG
     checkLayoutState(state);

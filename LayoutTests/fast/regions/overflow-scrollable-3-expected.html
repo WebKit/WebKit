@@ -1,0 +1,56 @@
+<!doctype html>
+<html style="font: 16px/1.25 monospace;">
+    <head>
+        <style>
+            .overflow { color: orange; margin: 2px;}
+            .no_overflow { margin: 2px; }
+
+            #region1, #region2 { width: 100px; height: 100px; }
+            #region1 { border: 5px solid green; }
+            #region2 { border: 5px solid blue; }
+
+            #container {
+                position: relative;
+                border: thin solid red;
+                overflow: auto;
+                height: 300px;
+                width: 150px;
+            }
+
+            .rotate {
+                -webkit-transform: rotate(90deg);
+            }
+
+            .pull_top {
+                margin-top: -50px;
+            }
+        </style>
+    </head>
+    <body>
+        <p>Test that overflow content for the first and last regions generate scrollbars.</p>
+        <p>On success, the orange lines of text should be visible below the blue border rectangle. The lines overflowing the green region should overflow horizontally. The red container should be scrollable both top/bottom and left/right.</p>
+        <div id="container">
+            <div class="region rotate" id="region1">
+                <p class="no_overflow pull_top">Linetext1</p>
+                <p class="no_overflow">Linetext2</p>
+                <p class="no_overflow">Linetext3</p>
+                <p class="no_overflow">Linetext4</p>
+            </div>
+            <div class="region" id="region2">
+                <p class="no_overflow">Linetext5</p>
+                <p class="no_overflow">Linetext6</p>
+                <p class="no_overflow">Linetext7</p>
+                <p class="no_overflow">Linetext8</p>
+                <p class="no_overflow">Linetext9</p>
+                <br/>
+                <p class="overflow">Overflow10</p>
+                <p class="overflow">Overflow11</p>
+                <p class="overflow">Overflow12</p>
+                <p class="overflow">Overflow13</p>
+                <p class="overflow">Overflow14</p>
+                <p class="overflow">Overflow15</p>
+                <p class="overflow">Overflow16</p>
+            </div>
+        </div>
+    </body>
+</html>

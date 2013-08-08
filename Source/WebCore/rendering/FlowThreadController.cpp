@@ -170,7 +170,7 @@ bool FlowThreadController::updateFlowThreadsNeedingLayout()
     for (RenderNamedFlowThreadList::iterator iter = m_renderNamedFlowThreadList->begin(); iter != m_renderNamedFlowThreadList->end(); ++iter) {
         RenderNamedFlowThread* flowRenderer = *iter;
         ASSERT(!flowRenderer->needsTwoPhasesLayout());
-        flowRenderer->setInConstrainedLayoutPhase(false);
+        ASSERT(flowRenderer->inMeasureContentLayoutPhase());
         if (flowRenderer->needsLayout() && flowRenderer->hasAutoLogicalHeightRegions())
             needsTwoPassLayout = true;
     }
@@ -222,8 +222,47 @@ void FlowThreadController::updateFlowThreadsIntoConstrainedPhase()
             ASSERT(flowRenderer->needsTwoPhasesLayout());
             flowRenderer->markAutoLogicalHeightRegionsForLayout();
         }
-        flowRenderer->setInConstrainedLayoutPhase(true);
+        flowRenderer->setLayoutPhase(RenderFlowThread::LayoutPhaseConstrained);
         flowRenderer->clearNeedsTwoPhasesLayout();
+    }
+}
+
+void FlowThreadController::updateFlowThreadsIntoOverflowPhase()
+{
+    for (RenderNamedFlowThreadList::reverse_iterator iter = m_renderNamedFlowThreadList->rbegin(); iter != m_renderNamedFlowThreadList->rend(); ++iter) {
+        RenderNamedFlowThread* flowRenderer = *iter;
+        ASSERT(!flowRenderer->hasRegions() || flowRenderer->hasValidRegionInfo());
+        ASSERT(!flowRenderer->needsTwoPhasesLayout());
+
+        // In the overflow computation phase the flow threads start in the constrained phase even though optimizations didn't set the state before.
+        flowRenderer->setLayoutPhase(RenderFlowThread::LayoutPhaseConstrained);
+
+        flowRenderer->layoutIfNeeded();
+        flowRenderer->markRegionsForOverflowLayoutIfNeeded();
+        flowRenderer->setLayoutPhase(RenderFlowThread::LayoutPhaseOverflow);
+    }
+}
+
+void FlowThreadController::updateFlowThreadsIntoMeasureContentPhase()
+{
+    for (RenderNamedFlowThreadList::iterator iter = m_renderNamedFlowThreadList->begin(); iter != m_renderNamedFlowThreadList->end(); ++iter) {
+        RenderNamedFlowThread* flowRenderer = *iter;
+        ASSERT(flowRenderer->inFinalLayoutPhase());
+
+        flowRenderer->setLayoutPhase(RenderFlowThread::LayoutPhaseMeasureContent);
+    }
+}
+
+void FlowThreadController::updateFlowThreadsIntoFinalPhase()
+{
+    for (RenderNamedFlowThreadList::reverse_iterator iter = m_renderNamedFlowThreadList->rbegin(); iter != m_renderNamedFlowThreadList->rend(); ++iter) {
+        RenderNamedFlowThread* flowRenderer = *iter;
+        flowRenderer->layoutIfNeeded();
+        if (flowRenderer->needsTwoPhasesLayout()) {
+            flowRenderer->markRegionsForOverflowLayoutIfNeeded();
+            flowRenderer->clearNeedsTwoPhasesLayout();
+        }
+        flowRenderer->setLayoutPhase(RenderFlowThread::LayoutPhaseFinal);
     }
 }
 
