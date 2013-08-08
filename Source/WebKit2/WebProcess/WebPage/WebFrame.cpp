@@ -681,7 +681,11 @@ String WebFrame::provisionalURL() const
     if (!m_coreFrame)
         return String();
 
-    return m_coreFrame->loader()->provisionalDocumentLoader()->url().string();
+    DocumentLoader* provisionalDocumentLoader = m_coreFrame->loader()->provisionalDocumentLoader();
+    if (!provisionalDocumentLoader)
+        return String();
+
+    return provisionalDocumentLoader->url().string();
 }
 
 String WebFrame::suggestedFilenameForResourceWithURL(const KURL& url) const
