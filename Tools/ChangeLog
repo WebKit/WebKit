@@ -1,3 +1,34 @@
+2013-08-08  Alexey Proskuryakov  <ap@apple.com>
+
+        [WK2] loader/go-back-cached-main-resource.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=116491
+
+        Reviewed by Tim Horton.
+
+        * DumpRenderTree/efl/DumpRenderTreeChrome.cpp:
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        Added FIXMEs about making path printing normalization more compatible.
+
+        * DumpRenderTree/mac/ResourceLoadDelegate.mm: (-[NSURL _drt_descriptionSuitableForTestResult]):
+        Return last path component in cases where we used to return a full path, which is
+        never desirable. Added a null check to basePath to prevent potentially getting
+        an Objective C exception.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::pathSuitableForTestResult): Changed to use path for main test window, not
+        for a currently loading one (which is different for tests that use multiple windows).
+        Changed to return "(null)" for empty URLs to match WK1 output. Changed to return
+        last path component as last fallback.
+        (WTR::dumpRequestDescriptionSuitableForTestResult): We no longer need to pass main
+        frame URL here, and it was potentially a wrong frame.
+        (WTR::dumpResponseDescriptionSuitableForTestResult): Ditto.
+        (WTR::InjectedBundlePage::willPerformClientRedirectForFrame): Ditto.
+        (WTR::InjectedBundlePage::didInitiateLoadForResource): Ditto.
+        (WTR::InjectedBundlePage::willSendRequestForFrame): Ditto.
+        (WTR::InjectedBundlePage::didReceiveResponseForResource): Ditto.
+
 2013-08-08  Alex Christensen  <achristensen@apple.com>
 
         WTR::pathSuitableForTestResult should behave the same as _drt_descriptionSuitableForTestResult so we can unskip tests.

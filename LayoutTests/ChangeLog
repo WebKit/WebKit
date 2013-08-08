@@ -1,3 +1,17 @@
+2013-08-08  Alexey Proskuryakov  <ap@apple.com>
+
+        [WK2] loader/go-back-cached-main-resource.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=116491
+
+        Reviewed by Tim Horton.
+
+        * platform/wk2/TestExpectations:
+        * webarchive/loading/test-loading-archive-subresource-null-mimetype-expected.txt:
+        Updated to not have file:// in results. This may not be desirable for a webarchive
+        test, but shouldn't be too bad either.
+        * platform/mac-wk2/loader/go-back-cached-main-resource-expected.txt: Deleted.
+        Cross-platform results now work.
+
 2013-08-08  Jer Noble  <jer.noble@apple.com>
 
         [EME] setMediaKeys function as defined in the EME specification does not work

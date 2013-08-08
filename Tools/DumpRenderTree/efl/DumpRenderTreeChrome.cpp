@@ -336,6 +336,7 @@ void DumpRenderTreeChrome::resetDefaultsToConsistentValues()
     policyDelegatePermissive = false;
 }
 
+// FIXME (119585): Make this match other platforms better.
 static CString pathSuitableForTestResult(const char* uriString)
 {
     if (!uriString)

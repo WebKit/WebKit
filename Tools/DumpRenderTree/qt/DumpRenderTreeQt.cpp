@@ -275,6 +275,7 @@ void WebPage::permissionSet(QWebPage::Feature feature)
     }
 }
 
+// FIXME (119591): Make this match other platforms better.
 static QString urlSuitableForTestResult(const QString& url)
 {
     if (url.isEmpty() || !url.startsWith(QLatin1String("file://")))

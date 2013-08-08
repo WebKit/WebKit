@@ -84,9 +84,9 @@ using namespace std;
     NSString *basePath = [[[[dataSource request] URL] path] stringByDeletingLastPathComponent];
     basePath = [basePath stringByAppendingString:@"/"];
 
-    if ([[self path] hasPrefix:basePath])
+    if (basePath && [[self path] hasPrefix:basePath])
         return [[self path] substringFromIndex:[basePath length]];
-    return [self absoluteString];
+    return [self lastPathComponent]; // We lose some information here, but it's better than exposing a full path, which is always machine specific.
 }
 
 @end

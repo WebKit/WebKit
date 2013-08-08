@@ -141,6 +141,7 @@ static RetainPtr<CFStringRef> substringFromIndex(CFStringRef string, CFIndex ind
     return adoptCF(CFStringCreateWithSubstring(kCFAllocatorDefault, string, CFRangeMake(index, CFStringGetLength(string) - index)));
 }
 
+// FIXME (119583): Make this match other platforms better.
 wstring urlSuitableForTestResult(const wstring& urlString)
 {
     RetainPtr<CFURLRef> url = adoptCF(CFURLCreateWithBytes(kCFAllocatorDefault, reinterpret_cast<const UInt8*>(urlString.c_str()), urlString.length() * sizeof(wstring::value_type), kCFStringEncodingUTF16, 0));
