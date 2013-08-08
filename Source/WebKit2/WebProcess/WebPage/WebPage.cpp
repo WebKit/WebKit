@@ -37,6 +37,7 @@
 #include "InjectedBundleBackForwardList.h"
 #include "InjectedBundleUserMessageCoders.h"
 #include "LayerTreeHost.h"
+#include "Logging.h"
 #include "NetscapePlugin.h"
 #include "NotificationPermissionRequestManager.h"
 #include "PageBanner.h"
@@ -3068,6 +3069,7 @@ void WebPage::addPluginView(PluginView* pluginView)
 
     m_pluginViews.add(pluginView);
 #if ENABLE(PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
+    LOG(Plugins, "Primary Plug-In Detection: triggering detection from addPluginView.");
     m_determinePrimarySnapshottedPlugInTimer.startOneShot(0);
 #endif
 }
@@ -4022,6 +4024,7 @@ void WebPage::didFinishLoad(WebFrame* frame)
         return;
 
     m_readyToFindPrimarySnapshottedPlugin = true;
+    LOG(Plugins, "Primary Plug-In Detection: triggering detection from didFinishLoad (marking as ready to detect).");
     m_determinePrimarySnapshottedPlugInTimer.startOneShot(0);
 #else
     UNUSED_PARAM(frame);
@@ -4052,14 +4055,22 @@ void WebPage::determinePrimarySnapshottedPlugIn()
     if (!m_page->settings()->plugInSnapshottingEnabled())
         return;
 
-    if (!m_readyToFindPrimarySnapshottedPlugin)
-        return;
+    LOG(Plugins, "Primary Plug-In Detection: began.");
 
-    if (m_pluginViews.isEmpty())
+    if (!m_readyToFindPrimarySnapshottedPlugin) {
+        LOG(Plugins, "Primary Plug-In Detection: exiting - not ready to find plugins.");
         return;
+    }
 
-    if (m_didFindPrimarySnapshottedPlugin)
+    if (m_pluginViews.isEmpty()) {
+        LOG(Plugins, "Primary Plug-In Detection: exiting - no plugin views.");
         return;
+    }
+
+    if (m_didFindPrimarySnapshottedPlugin) {
+        LOG(Plugins, "Primary Plug-In Detection: exiting - we've already found a primary plug-in.");
+        return;
+    }
 
     RenderView* renderView = corePage()->mainFrame()->view()->renderView();
 
@@ -4114,9 +4125,12 @@ void WebPage::determinePrimarySnapshottedPlugIn()
         }
     }
 
-    if (!candidatePlugIn)
+    if (!candidatePlugIn) {
+        LOG(Plugins, "Primary Plug-In Detection: fail - did not find a candidate plug-in.");
         return;
+    }
 
+    LOG(Plugins, "Primary Plug-In Detection: success - found a candidate plug-in - inform it.");
     m_didFindPrimarySnapshottedPlugin = true;
     m_primaryPlugInPageOrigin = m_page->mainFrame()->document()->baseURL().host();
     m_primaryPlugInOrigin = candidatePlugIn->loadedUrl().host();

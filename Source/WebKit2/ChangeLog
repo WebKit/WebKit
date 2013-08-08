@@ -1,3 +1,15 @@
+2013-08-08  Dean Jackson  <dino@apple.com>
+
+        Add logging to the primary plugin detection
+        https://bugs.webkit.org/show_bug.cgi?id=119594
+
+        Reviewed by Tim Horton.
+
+        Add some simple logging to our primary plug-in detection.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::determinePrimarySnapshottedPlugIn):
+
 2013-08-08  Alexey Proskuryakov  <ap@apple.com>
 
         WKBundleFrameCopyProvisionalURL crashes when there is no provisional loader
