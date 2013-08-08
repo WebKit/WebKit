@@ -1,3 +1,29 @@
+2013-08-06  Sam Weinig  <sam@webkit.org>
+
+        Hashing SecurityOrigin's can lead to trouble if you mutate them :(
+        https://bugs.webkit.org/show_bug.cgi?id=119533
+        <rdar://problem/12978338>
+
+        Reviewed by Andreas Kling.
+
+        We are getting into trouble in the following circumstance:
+        - You have a HashMap<RefPtr<SecurityOrigin>, Value> map.
+        - You add security origin A (http, www.webkit.org, 80) to the map.
+        - You mutate security origin A by domain relaxation, so that it has the domain webkit.org.
+        - You add security origin B (http, www.webkit.org, 80) to the map.
+        - You mutate security origin B by domain relaxation, so that it has the domain webkit.org.
+            You now have two identical keys in the map.
+        - Add few more items to the map causing a rehash.
+        - When you try to add A and B back into the map, you will have a collision, because they now equal each other.
+
+        We should probably stop using SecurityOrigins as keys in HashMaps (and move to using a non-mutable SecurityOriginTuple,
+        or something), but for now, we can just only use the scheme / host / port part for equality, which is what all the users
+        really want.
+
+        * page/SecurityOriginHash.h:
+        (WebCore::SecurityOriginHash::equal):
+        Switch to using isSameSchemeHostPort() for SecurityOriginHash::equal().
+
 2013-08-08  Rob Buis  <rwlbuis@webkit.org>
 
         ASSERT_NOT_REACHED() touched in WebCore::SVGAnimatedStringAnimator::addAnimatedTypes
