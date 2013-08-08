@@ -39,6 +39,8 @@ public:
     class Frame;
     typedef bool (*FrameFilter)(Frame*);
 
+    JS_EXPORT_PRIVATE size_t numberOfFrames();
+
     Frame& operator*() { return *m_frame; }
     ALWAYS_INLINE Frame* operator->() { return m_frame; }
 
@@ -51,8 +53,12 @@ private:
     JS_EXPORT_PRIVATE StackIterator(CallFrame* startFrame, FrameFilter = 0);
 
     static Frame* end() { return 0; }
+    void gotoFrameAtIndex(size_t frameIndex);
     JS_EXPORT_PRIVATE void gotoNextFrame();
+    void resetIterator();
 
+    CallFrame* m_startFrame;
+    size_t m_frameIndex;
     Frame* m_frame;
     FrameFilter m_filter;
 

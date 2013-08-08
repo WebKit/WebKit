@@ -1,3 +1,15 @@
+2013-08-08  Mark Lam  <mark.lam@apple.com>
+
+        Restoring use of StackIterator instead of Interpreter::getStacktrace().
+        https://bugs.webkit.org/show_bug.cgi?id=119575.
+
+        Reviewed by Oliver Hunt.
+
+        No new tests.
+
+        * bindings/js/ScriptCallStackFactory.cpp:
+        (WebCore::createScriptCallStack):
+
 2013-08-08  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION (r121551) Incorrect handling of invalid media query list.

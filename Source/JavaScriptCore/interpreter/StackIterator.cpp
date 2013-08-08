@@ -34,12 +34,32 @@
 
 namespace JSC {
 
-StackIterator::StackIterator(CallFrame* frame, StackIterator::FrameFilter filter)
-    : m_filter(filter)
+StackIterator::StackIterator(CallFrame* startFrame, StackIterator::FrameFilter filter)
+    : m_startFrame(startFrame)
+    , m_filter(filter)
 {
-    ASSERT(frame);
-    m_frame = Frame::create(frame);
-    m_frame = m_frame->logicalFrame();
+    ASSERT(startFrame);
+    resetIterator();
+}
+
+size_t StackIterator::numberOfFrames()
+{
+    int savedFrameIndex = m_frameIndex;
+    resetIterator();
+    while (m_frame)
+        gotoNextFrame();
+    size_t numberOfFrames = m_frameIndex;
+
+    resetIterator();
+    gotoFrameAtIndex(savedFrameIndex);
+
+    return numberOfFrames;
+}
+
+void StackIterator::gotoFrameAtIndex(size_t index)
+{
+    while (m_frame && (m_frameIndex != index))
+        gotoNextFrame();
 }
 
 void StackIterator::gotoNextFrame()
@@ -51,6 +71,14 @@ void StackIterator::gotoNextFrame()
             break;
     }
     m_frame = frame;
+    m_frameIndex++;
+}
+
+void StackIterator::resetIterator()
+{
+    m_frameIndex = 0;
+    m_frame = Frame::create(m_startFrame);
+    m_frame = m_frame->logicalFrame();
 }
 
 void StackIterator::find(JSFunction* functionObj)
