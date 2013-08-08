@@ -1,3 +1,11 @@
+2013-08-07  Benjamin Poulain  <benjamin@webkit.org>
+
+        Update the images for the blog size-matters
+
+        * blog-files/size-matters/JavaScriptCore-relative-binary-growth.png: Added.
+        * blog-files/size-matters/WebCore-relative-binary-growth.png: Added.
+        * blog-files/size-matters/WebKit-relative-binary-growth.png: Added.
+
 2013-08-05  Dean Jackson  <dino@apple.com>
 
         Move previous commit into /demos.
