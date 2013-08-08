@@ -1,3 +1,18 @@
+2013-08-08  Robert Hogan  <robert@webkit.org>
+
+        REGRESSION(r147019): Page has extra space
+        https://bugs.webkit.org/show_bug.cgi?id=119424
+
+        Reviewed by David Hyatt.
+
+        Clear the overflow rect before recomputing it in table sections.
+
+        No new tests: the reduction uses jquery and I was unable to simulate the reduction without it.
+
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::layoutRows):
+        (WebCore::RenderTableSection::computeOverflowFromCells):
+
 2013-08-08  Andreas Kling  <akling@apple.com>
 
         Inserting multiple rules into an empty style sheet should avoid style recalc if possible.

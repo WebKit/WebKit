@@ -515,8 +515,6 @@ void RenderTableSection::layoutRows()
 
     // Set the width of our section now.  The rows will also be this width.
     setLogicalWidth(table()->contentLogicalWidth());
-    m_overflow.clear();
-    m_overflowingCells.clear();
     m_forceSlowPaintPathWithOverflowingCell = false;
 
     int vspacing = table()->vBorderSpacing();
@@ -669,6 +667,8 @@ void RenderTableSection::computeOverflowFromCells()
 
 void RenderTableSection::computeOverflowFromCells(unsigned totalRows, unsigned nEffCols)
 {
+    m_overflow.clear();
+    m_overflowingCells.clear();
     unsigned totalCellsCount = nEffCols * totalRows;
     int maxAllowedOverflowingCellsCount = totalCellsCount < gMinTableSizeToUseFastPaintPathWithOverflowingCell ? 0 : gMaxAllowedOverflowingCellRatioForFastPaintPath * totalCellsCount;
 
