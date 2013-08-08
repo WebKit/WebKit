@@ -1,3 +1,25 @@
+2013-08-08  Andreas Kling  <akling@apple.com>
+
+        REGRESSION(r139282): Old caret sometimes gets "stuck" (not repainted) in contenteditable elements.
+        <http://webkit.org/b/119520>
+        <rdar://problem/14658929>
+
+        Reviewed by Simon Fraser.
+
+        When computing a new caret rect, don't forget to repaint the old rect if the caret jumped
+        from one node to another.
+        We were being a little too clever, assuming that oldRect==newRect meant that no repaint was
+        necessary, but moving from (0,0) in one node to (0,0) in another would cause a ghost caret
+        in the old node.
+
+        Test: fast/repaint/caret-jump-between-nodes.html
+
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::recomputeCaretRect):
+
+            Fall through all the way down to caret repaints if the selection's new anchor node is not
+            the same as m_previousCaretNode.
+
 2013-08-07  Andrei Bucur  <abucur@adobe.com>
 
         [CSS Regions] Propagate overflow from the flow thread to the first and last region

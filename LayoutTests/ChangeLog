@@ -1,3 +1,14 @@
+2013-08-08  Andreas Kling  <akling@apple.com>
+
+        REGRESSION(r139282): Old caret sometimes gets "stuck" (not repainted) in contenteditable elements.
+        <http://webkit.org/b/119520>
+        <rdar://problem/14658929>
+
+        Reviewed by Simon Fraser.
+
+        * fast/repaint/caret-jump-between-nodes-expected.txt: Added.
+        * fast/repaint/caret-jump-between-nodes.html: Added.
+
 2013-08-07  Andrei Bucur  <abucur@adobe.com>
 
         [CSS Regions] Propagate overflow from the flow thread to the first and last region

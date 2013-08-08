@@ -1380,27 +1380,29 @@ bool FrameSelection::recomputeCaretRect()
     if (!v)
         return false;
 
+    Node* caretNode = m_selection.start().deprecatedNode();
+
     LayoutRect oldRect = localCaretRectWithoutUpdate();
     LayoutRect newRect = localCaretRect();
-    if (oldRect == newRect && !m_absCaretBoundsDirty)
+
+    if (caretNode == m_previousCaretNode && oldRect == newRect && !m_absCaretBoundsDirty)
         return false;
 
     IntRect oldAbsCaretBounds = m_absCaretBounds;
-    m_absCaretBounds = absoluteBoundsForLocalRect(m_selection.start().deprecatedNode(), localCaretRectWithoutUpdate());
+    m_absCaretBounds = absoluteBoundsForLocalRect(caretNode, localCaretRectWithoutUpdate());
     m_absCaretBoundsDirty = false;
-    
-    if (oldAbsCaretBounds == m_absCaretBounds)
+
+    if (caretNode == m_previousCaretNode && oldAbsCaretBounds == m_absCaretBounds)
         return false;
 
 #if ENABLE(TEXT_CARET)
     if (RenderView* view = m_frame->document()->renderView()) {
         bool previousOrNewCaretNodeIsContentEditable = isContentEditable() || (m_previousCaretNode && m_previousCaretNode->isContentEditable());
         if (shouldRepaintCaret(view, previousOrNewCaretNodeIsContentEditable)) {
-            Node* node = m_selection.start().deprecatedNode();
             if (m_previousCaretNode)
                 repaintCaretForLocalRect(m_previousCaretNode.get(), oldRect);
-            m_previousCaretNode = node;
-            repaintCaretForLocalRect(node, newRect);
+            m_previousCaretNode = caretNode;
+            repaintCaretForLocalRect(caretNode, newRect);
         }
     }
 #endif
