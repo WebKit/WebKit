@@ -1,3 +1,16 @@
+2013-08-08  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [WK1] NPStream::headers not initialized
+        https://bugs.webkit.org/show_bug.cgi?id=119574
+
+        Reviewed by Alexey Proskuryakov.
+
+        Initialize the header field. According to user feedback that should solve some
+        cases of random crashes when loading plugins on Mac and Windows.
+
+        * plugins/PluginStream.cpp:
+        (WebCore::PluginStream::PluginStream):
+
 2013-08-08  Andreas Kling  <akling@apple.com>
 
         Element: Modernize attribute storage accessor functions.
