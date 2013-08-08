@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Samsung Electronics. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,7 +27,7 @@
 WebInspector.DOMStorageContentView = function(representedObject)
 {
     WebInspector.ContentView.call(this, representedObject);
-    
+
     this.element.classList.add(WebInspector.DOMStorageContentView.StyleClassName);
 
     this.update();
@@ -36,12 +37,65 @@ WebInspector.DOMStorageContentView.StyleClassName = "dom-storage";
 
 WebInspector.DOMStorageContentView.prototype = {
     constructor: WebInspector.DOMStorageContentView,
-    
+
     // Public
-    
+
     update: function()
     {
         this.representedObject.getEntries(this._showDOMStorageEntries.bind(this));
+    },
+
+    itemsCleared: function()
+    {
+        this._dataGrid.removeChildren();
+        this._dataGrid.addCreationNode(false);
+    },
+
+    itemRemoved: function(key)
+    {
+        for (var i = 0; i < this._dataGrid.children.length; ++i) {
+            var childNode = this._dataGrid.children[i];
+            if (childNode.data[0] === key) {
+                this._dataGrid.removeChild(childNode);
+                return;
+            }
+        }
+    },
+
+    itemAdded: function(key, value)
+    {
+        for (var i = 0; i < this._dataGrid.children.length; ++i) {
+            if (this._dataGrid.children[i][0] === key)
+                return;
+        }
+
+        var data = {};
+        data[0] = key;
+        data[1] = value;
+
+        var childNode = new WebInspector.DataGridNode(data, false);
+
+        this._dataGrid.insertChild(childNode, this._dataGrid.children.length - 1);
+        if (this._dataGrid.sortOrder)
+            this._sortDataGrid();
+    },
+
+    itemUpdated: function(key, oldValue, value)
+    {
+        var keyFound = false;
+        for (var i = 0; i < this._dataGrid.children.length; ++i) {
+            var childNode = this._dataGrid.children[i];
+            if (childNode.data[0] === key) {
+                if (keyFound) {
+                    this._dataGrid.removeChild(childNode);
+                    return;
+                }
+
+                keyFound = true;
+                childNode.data[1] = value;
+                childNode.refresh();
+            }
+        }
     },
 
     updateLayout: function()
@@ -65,7 +119,7 @@ WebInspector.DOMStorageContentView.prototype = {
             return;
 
         this._updateDataGridForDOMStorageEntries(entries);
-        
+
         this._dataGrid.updateLayout();
     },
 
@@ -74,7 +128,7 @@ WebInspector.DOMStorageContentView.prototype = {
         if (!this._dataGrid) {
             var columns = {};
             columns[0] = {title: WebInspector.UIString("Key"), sortable: true};
-            columns[1] = {title: WebInspector.UIString("Value"), sortable: true};            
+            columns[1] = {title: WebInspector.UIString("Value"), sortable: true};
 
             this._dataGrid = new WebInspector.DataGrid(columns, this._editingCallback.bind(this), this._deleteCallback.bind(this));
             this._dataGrid.addEventListener(WebInspector.DataGrid.Event.SortChanged, this._sortDataGrid, this);

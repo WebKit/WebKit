@@ -1,3 +1,29 @@
+2013-08-08  Vivek Galatage  <vivek.vg@samsung.com>
+
+        Web Inspector: Use granular DOMStorage modification events to avoid complete DataGrid update.
+        https://bugs.webkit.org/show_bug.cgi?id=119541
+
+        Reviewed by Joseph Pecoraro.
+
+        InspectorDOMStorageAgent sends more granular events about the storage modifications.
+        Using these would avoid the complete rebuilding of the DataGrid.
+
+        * UserInterface/DOMStorageContentView.js:
+        (WebInspector.DOMStorageContentView.prototype.itemsCleared):
+        (WebInspector.DOMStorageContentView.prototype.itemRemoved):
+        (WebInspector.DOMStorageContentView.prototype.itemAdded):
+        (WebInspector.DOMStorageContentView.prototype.itemUpdated):
+        * UserInterface/DOMStorageObserver.js:
+        (WebInspector.DOMStorageObserver.prototype.domStorageItemsCleared):
+        (WebInspector.DOMStorageObserver.prototype.domStorageItemRemoved):
+        (WebInspector.DOMStorageObserver.prototype.domStorageItemAdded):
+        (WebInspector.DOMStorageObserver.prototype.domStorageItemUpdated):
+        * UserInterface/StorageManager.js:
+        (WebInspector.StorageManager.prototype.domStorageItemsCleared):
+        (WebInspector.StorageManager.prototype.domStorageItemRemoved):
+        (WebInspector.StorageManager.prototype.domStorageItemAdded):
+        (WebInspector.StorageManager.prototype.domStorageItemUpdated):
+
 2013-08-06  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Remove stale code in ResourceContentView

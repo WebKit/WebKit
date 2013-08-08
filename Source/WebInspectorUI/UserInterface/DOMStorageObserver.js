@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Samsung Electronics. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,26 +48,22 @@ WebInspector.DOMStorageObserver.prototype = {
 
     domStorageItemsCleared: function(storageId)
     {
-        // FIXME: Handle this granular event better by only updating what changed. <rdar://problem/13223981>
-        this.updateDOMStorage(storageId);
+        WebInspector.storageManager.domStorageItemsCleared(storageId);
     },
 
     domStorageItemRemoved: function(storageId, key)
     {
-        // FIXME: Handle this granular event better by only updating what changed. <rdar://problem/13223981>
-        this.updateDOMStorage(storageId);
+        WebInspector.storageManager.domStorageItemRemoved(storageId, key);
     },
 
-    domStorageItemAdded: function(storageId, key, newValue)
+    domStorageItemAdded: function(storageId, key, value)
     {
-        // FIXME: Handle this granular event better by only updating what changed. <rdar://problem/13223981>
-        this.updateDOMStorage(storageId);
+        WebInspector.storageManager.domStorageItemAdded(storageId, key, value);
     },
 
-    domStorageItemUpdated: function(storageId, key, oldValue, newValue)
+    domStorageItemUpdated: function(storageId, key, oldValue, value)
     {
-        // FIXME: Handle this granular event better by only updating what changed. <rdar://problem/13223981>
-        this.updateDOMStorage(storageId);
+        WebInspector.storageManager.domStorageItemUpdated(storageId, key, oldValue, value);
     }
 };
 

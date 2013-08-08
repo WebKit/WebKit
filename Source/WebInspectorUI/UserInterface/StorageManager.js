@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Samsung Electronics. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -69,27 +70,63 @@ WebInspector.StorageManager.prototype = {
         this._domStorageObjects.push(domStorage);
         this.dispatchEventToListeners(WebInspector.StorageManager.Event.DOMStorageObjectWasAdded, {domStorage: domStorage});
     },
-    
+
     databaseWasAdded: function(id, host, name, version)
     {
         var database = new WebInspector.DatabaseObject(id, host, name, version);
-        
+
         this._databaseObjects.push(database);
         this.dispatchEventToListeners(WebInspector.StorageManager.Event.DatabaseWasAdded, {database: database});
     },
 
     domStorageWasUpdated: function(id)
     {
-        var domStorage = this._domStorageForId(id);
-        if (!domStorage)
-            return;
-
-        var domStorageView = WebInspector.contentBrowser.contentViewContainer.contentViewForRepresentedObject(domStorage, true);
+        var domStorageView = this._domStorageViewForId(id);
         if (!domStorageView)
             return;
 
         console.assert(domStorageView instanceof WebInspector.DOMStorageContentView);
         domStorageView.update();
+    },
+
+    domStorageItemsCleared: function(id)
+    {
+        var domStorageView = this._domStorageViewForId(id);
+        if (!domStorageView)
+            return;
+
+        console.assert(domStorageView instanceof WebInspector.DOMStorageContentView);
+        domStorageView.itemsCleared();
+    },
+
+    domStorageItemRemoved: function(id, key)
+    {
+        var domStorageView = this._domStorageViewForId(id);
+        if (!domStorageView)
+            return;
+
+        console.assert(domStorageView instanceof WebInspector.DOMStorageContentView);
+        domStorageView.itemRemoved(key);
+    },
+
+    domStorageItemAdded: function(id, key, value)
+    {
+        var domStorageView = this._domStorageViewForId(id);
+        if (!domStorageView)
+            return;
+
+        console.assert(domStorageView instanceof WebInspector.DOMStorageContentView);
+        domStorageView.itemAdded(key, value);
+    },
+
+    domStorageItemUpdated: function(id, key, oldValue, value)
+    {
+        var domStorageView = this._domStorageViewForId(id);
+        if (!domStorageView)
+            return;
+
+        console.assert(domStorageView instanceof WebInspector.DOMStorageContentView);
+        domStorageView.itemUpdated(key, oldValue, value);
     },
 
     inspectDatabase: function(id)
@@ -180,6 +217,15 @@ WebInspector.StorageManager.prototype = {
         }
 
         return null;
+    },
+
+    _domStorageViewForId: function(id)
+    {
+        var domStorage = this._domStorageForId(id);
+        if (!domStorage)
+            return null;
+
+        return WebInspector.contentBrowser.contentViewContainer.contentViewForRepresentedObject(domStorage, true);
     }
 };
 
