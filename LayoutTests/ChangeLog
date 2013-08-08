@@ -1,5 +1,14 @@
 2013-08-08  Eric Carlson  <eric.carlson@apple.com>
 
+        fast/events/scroll-div-with-prevent-default-in-subframe.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=82747
+
+        Unreviewed gardening.
+
+        * platform/mac/TestExpectations: Mark test as flakey, it doesn't always pass.
+
+2013-08-08  Eric Carlson  <eric.carlson@apple.com>
+
         http/tests/navigation/back-twice-without-commit.html is flaky
         https://bugs.webkit.org/show_bug.cgi?id=82980
 
