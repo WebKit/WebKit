@@ -9,6 +9,18 @@
 
 2013-08-08  Rob Buis  <rwlbuis@webkit.org>
 
+        Crash in WTF::RefPtr<WebCore::SpaceSplitStringData>::operator UnspecifiedBoolType
+        https://bugs.webkit.org/show_bug.cgi?id=118839
+
+        Reviewed by Darin Adler.
+
+        Add testcase that showed up to cause a crash by the fuzzer.
+
+        * svg/animations/classAttributeSettingCrash-expected.txt: Added.
+        * svg/animations/classAttributeSettingCrash.html: Added.
+
+2013-08-08  Rob Buis  <rwlbuis@webkit.org>
+
         svg/custom/use-href-update-crash.svg failing on certain platforms
         https://bugs.webkit.org/show_bug.cgi?id=104054
 

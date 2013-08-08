@@ -1,3 +1,17 @@
+2013-08-08  Rob Buis  <rwlbuis@webkit.org>
+
+        Crash in WTF::RefPtr<WebCore::SpaceSplitStringData>::operator UnspecifiedBoolType
+        https://bugs.webkit.org/show_bug.cgi?id=118839
+
+        Reviewed by Darin Adler.
+
+        Take into account that elementData() can be null in classAttributeChanged.
+
+        Test: svg/animations/classAttributeSettingCrash.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::classAttributeChanged):
+
 2013-08-08  Robert Hogan  <robert@webkit.org>
 
         REGRESSION(r147019): Page has extra space
