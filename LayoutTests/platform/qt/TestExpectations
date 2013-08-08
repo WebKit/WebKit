@@ -500,6 +500,33 @@ css3/compositing/background-blend-mode-image-color.html
 css3/compositing/background-blend-mode-image-image.html
 css3/compositing/background-blend-mode-single-layer-no-blending.html
 
+# The following test fail because canvas blending is not yet supported.
+# https://bugs.webkit.org/show_bug.cgi?id=100072
+fast/canvas/canvas-blend-image.html
+fast/canvas/canvas-blend-solid.html
+fast/canvas/canvas-blending-clipping.html
+fast/canvas/canvas-blending-color-over-color.html
+fast/canvas/canvas-blending-color-over-gradient.html
+fast/canvas/canvas-blending-color-over-image.html
+fast/canvas/canvas-blending-color-over-pattern.html
+fast/canvas/canvas-blending-fill-style.html
+fast/canvas/canvas-blending-global-alpha.html
+fast/canvas/canvas-blending-gradient-over-color.html
+fast/canvas/canvas-blending-gradient-over-gradient.html
+fast/canvas/canvas-blending-gradient-over-image.html
+fast/canvas/canvas-blending-gradient-over-pattern.html
+fast/canvas/canvas-blending-image-over-color.html
+fast/canvas/canvas-blending-image-over-gradient.html
+fast/canvas/canvas-blending-image-over-image.html
+fast/canvas/canvas-blending-image-over-pattern.html
+fast/canvas/canvas-blending-pattern-over-color.html
+fast/canvas/canvas-blending-pattern-over-gradient.html
+fast/canvas/canvas-blending-pattern-over-image.html
+fast/canvas/canvas-blending-pattern-over-pattern.html
+fast/canvas/canvas-blending-shadow.html
+fast/canvas/canvas-blending-text.html
+fast/canvas/canvas-blending-transforms.html
+
 # =========================================================================== #
 #       Drag and Drop Support in DRT.                                         #
 # =========================================================================== #
@@ -1250,11 +1277,6 @@ css3/filters/custom/custom-filter-animation.html
 css3/filters/custom/custom-filter-transforms-animation.html
 css3/filters/custom/custom-filter-blend-modes.html
 css3/filters/custom/custom-filter-array-blending.html
-
-# The following test fail because blending is not yet implemented
-# https://bugs.webkit.org/show_bug.cgi?id=100072
-fast/canvas/canvas-blend-image.html
-fast/canvas/canvas-blend-solid.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=107118
 fast/canvas/canvas-quadratic-same-endpoint.html

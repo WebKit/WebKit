@@ -1,3 +1,12 @@
+2013-08-08  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt] Skip more tests depending on canvas blending.
+        https://bugs.webkit.org/show_bug.cgi?id=100072
+
+        Unreviewed gardening.
+
+        * platform/qt/TestExpectations:
+
 2013-08-08  Andreas Kling  <akling@apple.com>
 
         REGRESSION(r139282): Old caret sometimes gets "stuck" (not repainted) in contenteditable elements.
