@@ -1,3 +1,9 @@
+2013-08-07  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Unreviewed build fix on Efl port after r153785.
+
+        * CMakeLists.txt: Added "${WEBCORE_DIR}/style" in include list.
+
 2013-08-06  Alex Christensen  <achristensen@apple.com>
 
         Enabled WebGL on WinCairo port.
