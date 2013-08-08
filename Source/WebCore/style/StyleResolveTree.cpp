@@ -31,6 +31,7 @@
 #include "NodeRenderStyle.h"
 #include "NodeTraversal.h"
 #include "RenderObject.h"
+#include "RenderText.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "StyleResolver.h"
@@ -176,6 +177,43 @@ static Change resolveLocal(Element* current, Change inheritedChange)
     return localChange;
 }
 
+static void updateTextStyle(Text* text, RenderStyle* parentElementStyle, Style::Change change)
+{
+    RenderText* renderer = toRenderText(text->renderer());
+
+    if (change != Style::NoChange && renderer)
+        renderer->setStyle(parentElementStyle);
+
+    if (!text->needsStyleRecalc())
+        return;
+    if (renderer)
+        renderer->setText(text->dataImpl());
+    else
+        text->reattach();
+    text->clearNeedsStyleRecalc();
+}
+
+static void resolveShadowTree(ShadowRoot* shadowRoot, RenderStyle* parentElementStyle, Style::Change change)
+{
+    if (!shadowRoot)
+        return;
+    StyleResolver* styleResolver = shadowRoot->document()->ensureStyleResolver();
+    styleResolver->pushParentShadowRoot(shadowRoot);
+
+    for (Node* child = shadowRoot->firstChild(); child; child = child->nextSibling()) {
+        if (child->isTextNode()) {
+            // Current user agent ShadowRoots don't have immediate text children so this branch is never actually taken.
+            updateTextStyle(toText(child), parentElementStyle, change);
+            continue;
+        }
+        resolveTree(toElement(child), change);
+    }
+
+    styleResolver->popParentShadowRoot(shadowRoot);
+    shadowRoot->clearNeedsStyleRecalc();
+    shadowRoot->clearChildNeedsStyleRecalc();
+}
+
 void resolveTree(Element* current, Change change)
 {
     ASSERT(change != Detach);
@@ -198,10 +236,12 @@ void resolveTree(Element* current, Change change)
     if (change != Detach) {
         StyleResolverParentPusher parentPusher(current);
 
+        RenderStyle* currentStyle = current->renderStyle();
+
         if (ElementShadow* shadow = current->shadow()) {
             if (change >= Inherit || shadow->childNeedsStyleRecalc() || shadow->needsStyleRecalc()) {
                 parentPusher.push();
-                shadow->recalcStyle(change);
+                resolveShadowTree(shadow->shadowRoot(), currentStyle, change);
             }
         }
 
@@ -214,7 +254,7 @@ void resolveTree(Element* current, Change change)
         bool forceCheckOfAnyElementSibling = false;
         for (Node* child = current->firstChild(); child; child = child->nextSibling()) {
             if (child->isTextNode()) {
-                toText(child)->recalcTextStyle(change);
+                updateTextStyle(toText(child), currentStyle, change);
                 continue;
             }
             if (!child->isElementNode())

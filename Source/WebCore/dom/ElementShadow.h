@@ -61,7 +61,6 @@ public:
 
     bool childNeedsStyleRecalc() const;
     bool needsStyleRecalc() const;
-    void recalcStyle(Style::Change);
     void removeAllEventListeners();
 
     void invalidateDistribution() { m_distributor.invalidateDistribution(host()); }

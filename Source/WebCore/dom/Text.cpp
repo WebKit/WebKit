@@ -282,22 +282,6 @@ void Text::attach(const AttachContext& context)
     CharacterData::attach(context);
 }
 
-void Text::recalcTextStyle(Style::Change change)
-{
-    RenderText* renderer = toRenderText(this->renderer());
-
-    if (change != Style::NoChange && renderer)
-        renderer->setStyle(document()->ensureStyleResolver()->styleForText(this));
-
-    if (needsStyleRecalc()) {
-        if (renderer)
-            renderer->setText(dataImpl());
-        else
-            reattach();
-    }
-    clearNeedsStyleRecalc();
-}
-
 void Text::updateTextRenderer(unsigned offsetOfReplacedData, unsigned lengthOfReplacedData)
 {
     if (!attached())

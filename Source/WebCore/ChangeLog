@@ -1,3 +1,46 @@
+2013-08-08  Antti Koivisto  <antti@apple.com>
+
+        Move more style recalc code to StyleResolveTree.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=119553
+
+        Reviewed by Andreas Kling.
+
+        * css/StyleResolver.cpp:
+        * css/StyleResolver.h:
+        
+            Remove now unused StyleResolver::styleForText.
+
+        * dom/ElementShadow.cpp:
+        * dom/ElementShadow.h:
+        
+            Remove ElementShadow::recalcStyle.
+
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::setResetStyleInheritance):
+        
+            Use Style::resolveTree instead of ElementShadow::recalcStyle.
+
+        * dom/ShadowRoot.h:
+        
+            Remove ShadowRoot::recalcStyle.
+
+        * dom/Text.cpp:
+        * dom/Text.h:
+        
+            Remove Text::recalcTextStyle.
+
+        * style/StyleResolveTree.cpp:
+        (WebCore::Style::updateTextStyle):
+        
+            Moved from Text::recalcTextStyle. Speed up by just setting the parent style on common case.
+
+        (WebCore::Style::resolveShadowTree):
+        
+            Moved from ShadowRoot::recalcStyle. 
+            Simplified to cover only cases that can occur with the current shadow DOM support.
+
+        (WebCore::Style::resolveTree):
+
 2013-08-08  Andreas Kling  <akling@apple.com>
 
         REGRESSION(r139282): Old caret sometimes gets "stuck" (not repainted) in contenteditable elements.

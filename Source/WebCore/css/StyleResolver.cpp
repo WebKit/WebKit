@@ -1221,16 +1221,6 @@ PassRefPtr<RenderStyle> StyleResolver::defaultStyleForElement()
     return m_state.takeStyle();
 }
 
-PassRefPtr<RenderStyle> StyleResolver::styleForText(Text* textNode)
-{
-    ASSERT(textNode);
-
-    NodeRenderingContext context(textNode);
-    Node* parentNode = context.parentNodeForRenderingAndStyle();
-    return context.resetStyleInheritance() || !parentNode || !parentNode->renderStyle() ?
-        defaultStyleForElement() : parentNode->renderStyle();
-}
-
 static void addIntrinsicMargins(RenderStyle* style)
 {
     // Intrinsic margin value.

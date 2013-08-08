@@ -189,7 +189,6 @@ public:
 
     PassRefPtr<RenderStyle> styleForPage(int pageIndex);
     PassRefPtr<RenderStyle> defaultStyleForElement();
-    PassRefPtr<RenderStyle> styleForText(Text*);
 
     static PassRefPtr<RenderStyle> styleForDocument(Document*, CSSFontSelector* = 0);
 
