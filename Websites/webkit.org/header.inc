@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="robots" content="noodp">
+    <meta name="viewport" content="width=860">
 
     <title>The WebKit Open Source Project<?php if (isset($title)) { echo " - " . $title; } ?></title>
 
