@@ -1,3 +1,11 @@
+2013-08-08  Alexey Proskuryakov  <ap@apple.com>
+
+        WTR::pathSuitableForTestResult should behave the same as _drt_descriptionSuitableForTestResult so we can unskip tests.
+        https://bugs.webkit.org/show_bug.cgi?id=116125
+
+        * platform/wk2/TestExpectations: Removed a test that now passes, added one that fails
+        (will look into that separately).
+
 2013-08-08  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION (r121551) Incorrect handling of invalid media query list.

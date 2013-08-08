@@ -1,3 +1,23 @@
+2013-08-08  Alex Christensen  <achristensen@apple.com>
+
+        WTR::pathSuitableForTestResult should behave the same as _drt_descriptionSuitableForTestResult so we can unskip tests.
+        https://bugs.webkit.org/show_bug.cgi?id=116125
+
+        Reviewed by Tim Horton. Tweaked and re-landed by Alexey Proskuryakov.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::pathSuitableForTestResult):
+        Changed string operations to match _drt_descriptionSuitableForTestResult.
+        (WTR::dumpRequestDescriptionSuitableForTestResult):
+        (WTR::dumpResponseDescriptionSuitableForTestResult):
+        (WTR::InjectedBundlePage::willPerformClientRedirectForFrame):
+        (WTR::InjectedBundlePage::didInitiateLoadForResource):
+        (WTR::InjectedBundlePage::willSendRequestForFrame):
+        (WTR::InjectedBundlePage::didReceiveResponseForResource):
+        Pass the main frame's URL to pathSuitableForTestResult.
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.h:
+        Added WKBundlePageRef to willPerformClientRedirectForFrame.
+
 2013-08-07  Simon Fraser  <simon.fraser@apple.com>
 
         Allow the DumpRenderTree runloop to be idle while waiting for a test to complete

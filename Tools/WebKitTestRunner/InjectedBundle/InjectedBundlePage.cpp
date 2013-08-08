@@ -235,7 +235,7 @@ static inline bool isLocalFileScheme(WKStringRef scheme)
 
 static const char divider = '/';
 
-static inline WTF::String pathSuitableForTestResult(WKURLRef fileUrl)
+static inline WTF::String pathSuitableForTestResult(WKURLRef fileUrl, WKURLRef mainFrameURL)
 {
     if (!fileUrl)
         return String();
@@ -245,37 +245,12 @@ static inline WTF::String pathSuitableForTestResult(WKURLRef fileUrl)
         return toWTFString(adoptWK(WKURLCopyString(fileUrl)));
 
     String pathString = toWTFString(adoptWK(WKURLCopyPath(fileUrl)));
-    StringBuilder stringBuilder;
-
-    // Remove the leading path from file urls.
-    const size_t indexBaseName = pathString.reverseFind(divider);
-    if (indexBaseName != notFound) {
-        const size_t indexDirName = pathString.reverseFind(divider, indexBaseName - 1);
-        if (indexDirName != notFound)
-            stringBuilder.append(pathString.substring(indexDirName + 1, indexBaseName - indexDirName - 1));
-        stringBuilder.append(divider);
-        stringBuilder.append(pathString.substring(indexBaseName + 1)); // Filename.
-    } else {
-        stringBuilder.append(divider);
-        stringBuilder.append(pathString); // Return "/pathString".
-    }
-
-    return stringBuilder.toString();
-}
-
-static inline WTF::String urlSuitableForTestResult(WKURLRef fileUrl)
-{
-    if (!fileUrl)
-        return String();
-
-    WKRetainPtr<WKStringRef> schemeString = adoptWK(WKURLCopyScheme(fileUrl));
-    if (!isLocalFileScheme(schemeString.get()))
-        return toWTFString(adoptWK(WKURLCopyString(fileUrl)));
-
-    WTF::String urlString = toWTFString(adoptWK(WKURLCopyString(fileUrl)));
-    const size_t indexBaseName = urlString.reverseFind(divider);
-
-    return (indexBaseName == notFound) ? urlString : urlString.substring(indexBaseName + 1);
+    String mainFrameURLPathString = toWTFString(adoptWK(WKURLCopyPath(mainFrameURL)));
+    String basePath = mainFrameURLPathString.substring(0, mainFrameURLPathString.reverseFind(divider) + 1);
+    
+    if (pathString.startsWith(basePath))
+        return pathString.substring(basePath.length());
+    return toWTFString(adoptWK(WKURLCopyString(fileUrl)));
 }
 
 static HashMap<uint64_t, String> assignedUrlsCache;
@@ -493,16 +468,16 @@ static void dumpLoadEvent(WKBundleFrameRef frame, const char* eventName)
     InjectedBundle::shared().outputText(stringBuilder.toString());
 }
 
-static inline void dumpRequestDescriptionSuitableForTestResult(WKURLRequestRef request, StringBuilder& stringBuilder)
+static inline void dumpRequestDescriptionSuitableForTestResult(WKURLRequestRef request, StringBuilder& stringBuilder, WKURLRef mainFrameURL)
 {
     WKRetainPtr<WKURLRef> url = adoptWK(WKURLRequestCopyURL(request));
     WKRetainPtr<WKURLRef> firstParty = adoptWK(WKURLRequestCopyFirstPartyForCookies(request));
     WKRetainPtr<WKStringRef> httpMethod = adoptWK(WKURLRequestCopyHTTPMethod(request));
 
     stringBuilder.appendLiteral("<NSURLRequest URL ");
-    stringBuilder.append(pathSuitableForTestResult(url.get()));
+    stringBuilder.append(pathSuitableForTestResult(url.get(), mainFrameURL));
     stringBuilder.appendLiteral(", main document URL ");
-    stringBuilder.append(urlSuitableForTestResult(firstParty.get()));
+    stringBuilder.append(pathSuitableForTestResult(firstParty.get(), mainFrameURL));
     stringBuilder.appendLiteral(", http method ");
 
     if (WKStringIsEmpty(httpMethod.get()))
@@ -513,7 +488,7 @@ static inline void dumpRequestDescriptionSuitableForTestResult(WKURLRequestRef r
     stringBuilder.append('>');
 }
 
-static inline void dumpResponseDescriptionSuitableForTestResult(WKURLResponseRef response, StringBuilder& stringBuilder)
+static inline void dumpResponseDescriptionSuitableForTestResult(WKURLResponseRef response, StringBuilder& stringBuilder, WKURLRef mainFrameURL)
 {
     WKRetainPtr<WKURLRef> url = adoptWK(WKURLResponseCopyURL(response));
     if (!url) {
@@ -521,7 +496,7 @@ static inline void dumpResponseDescriptionSuitableForTestResult(WKURLResponseRef
         return;
     }
     stringBuilder.appendLiteral("<NSURLResponse ");
-    stringBuilder.append(pathSuitableForTestResult(url.get()));
+    stringBuilder.append(pathSuitableForTestResult(url.get(), mainFrameURL));
     stringBuilder.appendLiteral(", http status code ");
     stringBuilder.appendNumber(WKURLResponseHTTPStatusCode(response));
     stringBuilder.append('>');
@@ -614,7 +589,7 @@ void InjectedBundlePage::didCancelClientRedirectForFrame(WKBundlePageRef page, W
 
 void InjectedBundlePage::willPerformClientRedirectForFrame(WKBundlePageRef page, WKBundleFrameRef frame, WKURLRef url, double delay, double date, const void* clientInfo)
 {
-    static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->willPerformClientRedirectForFrame(frame, url, delay, date);
+    static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->willPerformClientRedirectForFrame(page, frame, url, delay, date);
 }
 
 void InjectedBundlePage::didSameDocumentNavigationForFrame(WKBundlePageRef page, WKBundleFrameRef frame, WKSameDocumentNavigationType type, WKTypeRef*, const void* clientInfo)
@@ -999,7 +974,7 @@ void InjectedBundlePage::didCancelClientRedirectForFrame(WKBundleFrameRef frame)
     dumpLoadEvent(frame, "didCancelClientRedirectForFrame");
 }
 
-void InjectedBundlePage::willPerformClientRedirectForFrame(WKBundleFrameRef frame, WKURLRef url, double delay, double date)
+void InjectedBundlePage::willPerformClientRedirectForFrame(WKBundlePageRef page, WKBundleFrameRef frame, WKURLRef url, double delay, double date)
 {
     if (!InjectedBundle::shared().isTestRunning())
         return;
@@ -1008,9 +983,10 @@ void InjectedBundlePage::willPerformClientRedirectForFrame(WKBundleFrameRef fram
         return;
 
     StringBuilder stringBuilder;
+    WKRetainPtr<WKURLRef> mainFrameURL = adoptWK(WKBundleFrameCopyURL(WKBundlePageGetMainFrame(page)));
     dumpFrameDescriptionSuitableForTestResult(frame, stringBuilder);
     stringBuilder.appendLiteral(" - willPerformClientRedirectToURL: ");
-    stringBuilder.append(pathSuitableForTestResult(url));
+    stringBuilder.append(pathSuitableForTestResult(url, mainFrameURL.get()));
     stringBuilder.appendLiteral(" \n");
     InjectedBundle::shared().outputText(stringBuilder.toString());
 }
@@ -1065,7 +1041,7 @@ void InjectedBundlePage::didDetectXSSForFrame(WKBundleFrameRef frame)
         InjectedBundle::shared().outputText("didDetectXSS\n");
 }
 
-void InjectedBundlePage::didInitiateLoadForResource(WKBundlePageRef, WKBundleFrameRef, uint64_t identifier, WKURLRequestRef request, bool)
+void InjectedBundlePage::didInitiateLoadForResource(WKBundlePageRef page, WKBundleFrameRef, uint64_t identifier, WKURLRequestRef request, bool)
 {
     if (!InjectedBundle::shared().isTestRunning())
         return;
@@ -1074,7 +1050,8 @@ void InjectedBundlePage::didInitiateLoadForResource(WKBundlePageRef, WKBundleFra
         return;
 
     WKRetainPtr<WKURLRef> url = adoptWK(WKURLRequestCopyURL(request));
-    assignedUrlsCache.add(identifier, pathSuitableForTestResult(url.get()));
+    WKRetainPtr<WKURLRef> mainFrameURL = adoptWK(WKBundleFrameCopyURL(WKBundlePageGetMainFrame(page)));
+    assignedUrlsCache.add(identifier, pathSuitableForTestResult(url.get(), mainFrameURL.get()));
 }
 
 // Resource Load Client Callbacks
@@ -1089,16 +1066,17 @@ static inline bool isHTTPOrHTTPSScheme(WKStringRef scheme)
     return WKStringIsEqualToUTF8CStringIgnoringCase(scheme, "http") || WKStringIsEqualToUTF8CStringIgnoringCase(scheme, "https");
 }
 
-WKURLRequestRef InjectedBundlePage::willSendRequestForFrame(WKBundlePageRef, WKBundleFrameRef frame, uint64_t identifier, WKURLRequestRef request, WKURLResponseRef response)
+WKURLRequestRef InjectedBundlePage::willSendRequestForFrame(WKBundlePageRef page, WKBundleFrameRef frame, uint64_t identifier, WKURLRequestRef request, WKURLResponseRef response)
 {
     if (InjectedBundle::shared().isTestRunning()
         && InjectedBundle::shared().testRunner()->shouldDumpResourceLoadCallbacks()) {
         StringBuilder stringBuilder;
         dumpResourceURL(identifier, stringBuilder);
         stringBuilder.appendLiteral(" - willSendRequest ");
-        dumpRequestDescriptionSuitableForTestResult(request, stringBuilder);
+        WKRetainPtr<WKURLRef> mainFrameURL = adoptWK(WKBundleFrameCopyURL(WKBundlePageGetMainFrame(page)));
+        dumpRequestDescriptionSuitableForTestResult(request, stringBuilder, mainFrameURL.get());
         stringBuilder.appendLiteral(" redirectResponse ");
-        dumpResponseDescriptionSuitableForTestResult(response, stringBuilder);
+        dumpResponseDescriptionSuitableForTestResult(response, stringBuilder, mainFrameURL.get());
         stringBuilder.append('\n');
         InjectedBundle::shared().outputText(stringBuilder.toString());
     }
@@ -1145,7 +1123,7 @@ WKURLRequestRef InjectedBundlePage::willSendRequestForFrame(WKBundlePageRef, WKB
     return request;
 }
 
-void InjectedBundlePage::didReceiveResponseForResource(WKBundlePageRef, WKBundleFrameRef, uint64_t identifier, WKURLResponseRef response)
+void InjectedBundlePage::didReceiveResponseForResource(WKBundlePageRef page, WKBundleFrameRef, uint64_t identifier, WKURLResponseRef response)
 {
     if (!InjectedBundle::shared().isTestRunning())
         return;
@@ -1154,7 +1132,8 @@ void InjectedBundlePage::didReceiveResponseForResource(WKBundlePageRef, WKBundle
         StringBuilder stringBuilder;
         dumpResourceURL(identifier, stringBuilder);
         stringBuilder.appendLiteral(" - didReceiveResponse ");
-        dumpResponseDescriptionSuitableForTestResult(response, stringBuilder);
+        WKRetainPtr<WKURLRef> mainFrameURL = adoptWK(WKBundleFrameCopyURL(WKBundlePageGetMainFrame(page)));
+        dumpResponseDescriptionSuitableForTestResult(response, stringBuilder, mainFrameURL.get());
         stringBuilder.append('\n');
         InjectedBundle::shared().outputText(stringBuilder.toString());
     }

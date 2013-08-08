@@ -271,6 +271,8 @@ plugins/npruntime/embed-property-iframe-equality.html
 
 webkit.org/b/105952 fast/loader/submit-form-while-parsing-2.html [ Pass Failure ]
 
+webkit.org/b/116491 loader/go-back-cached-main-resource.html [ Failure ] 
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 
@@ -432,8 +434,6 @@ http/tests/security/contentTypeOptions
 
 # Unexpected redirection happens.
 http/tests/loading/redirect-methods.html
-
-webkit.org/b/116125 webarchive/loading/test-loading-archive-subresource-null-mimetype.html [ Failure ]
 
 # Should pass now on ports other than EFL and GTK.
 # But it needs to be checked first.
