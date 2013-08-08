@@ -1,3 +1,16 @@
+2013-08-08  Gavin Barraclough  <barraclough@apple.com>
+
+        Disable suppression of plugin process for Java
+        https://bugs.webkit.org/show_bug.cgi?id=119604
+
+        Reviewed by Sam Weinig.
+
+        Workaround, the Java plugin doesn't like this.
+
+        * PluginProcess/mac/PluginProcessMac.mm:
+        (WebKit::PluginProcess::platformInitializeProcess):
+            - +1 active task count on the java plugin, to inhibit supression.
+
 2013-08-08  Dean Jackson  <dino@apple.com>
 
         Add logging to the primary plugin detection

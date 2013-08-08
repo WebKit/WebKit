@@ -415,6 +415,10 @@ void PluginProcess::platformInitializeProcess(const ChildProcessInitializationPa
         return;
 
     m_pluginBundleIdentifier = CFBundleGetIdentifier(pluginBundle.get());
+
+    // FIXME: Workaround for Java not liking its plugin process to be supressed - <rdar://problem/14267843>
+    if (m_pluginBundleIdentifier == "com.oracle.java.JavaAppletPlugin")
+        incrementActiveTaskCount();
 }
 
 void PluginProcess::initializeProcessName(const ChildProcessInitializationParameters& parameters)
