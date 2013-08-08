@@ -126,10 +126,12 @@ sub testapiPath($)
 if (isAppleMacWebKit() || isAppleWinWebKit()) {
     chdirWebKit();
     chdir($productDir) or die "Failed to switch directory to '$productDir'\n";
-    my $path = testapiPath($productDir);
+    my @command = (testapiPath($productDir));
+    unshift @command, ("xcrun", "-sdk", xcodeSDK(), "sim") if willUseIOSSimulatorSDKWhenBuilding();
+
     # Use an "indirect object" so that system() won't get confused if the path
     # contains spaces (see perldoc -f exec).
-    my $testapiResult = system { $path } $path;
+    my $testapiResult = system { $command[0] } @command;
     exit exitStatus($testapiResult)  if $testapiResult;
 }
 
@@ -149,6 +151,8 @@ if (isGtk() || isEfl()) {
     push(@jhbuildPrefix, 'run');
 
     unshift(@jsDriverCmd, @jhbuildPrefix);
+} elsif (isIOSWebKit() && willUseIOSSimulatorSDKWhenBuilding()) {
+    push @jsDriverCmd, ("--sdk", xcodeSDK());
 }
 print "Running: " . join(" ", @jsDriverCmd) . "\n";
 my $result = system(@jsDriverCmd);
