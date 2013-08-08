@@ -1,5 +1,14 @@
 2013-08-08  Eric Carlson  <eric.carlson@apple.com>
 
+        fast/events/scroll-div-with-prevent-default-in-subframe.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=82747
+
+        Unreviewed gardening.
+
+        * platform/mac/TestExpectations: Unskip passing test.
+
+2013-08-08  Eric Carlson  <eric.carlson@apple.com>
+
         REGRESSION(r130839): fast/canvas/webgl/arraybuffer-transfer-of-control.html is failing
         https://bugs.webkit.org/show_bug.cgi?id=99096
 

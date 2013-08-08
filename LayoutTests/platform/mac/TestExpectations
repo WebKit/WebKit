@@ -568,8 +568,6 @@ webkit.org/b/82671 http/tests/inspector/resource-har-conversion.html [ Failure ]
 
 webkit.org/b/82672 http/tests/xmlhttprequest/range-test.html [ Failure ]
 
-webkit.org/b/82747 fast/events/scroll-div-with-prevent-default-in-subframe.html [ Failure ]
-
 webkit.org/b/82762 fast/animation/request-animation-frame-during-modal.html
 
 webkit.org/b/82805 fast/canvas/webgl/framebuffer-object-attachment.html [ Failure ]
