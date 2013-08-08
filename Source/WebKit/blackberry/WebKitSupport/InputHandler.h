@@ -154,9 +154,9 @@ public:
     void spellCheckTextBlock(WebCore::Element* = 0);
 
     bool shouldRequestSpellCheckingOptionsForPoint(const Platform::IntPoint& documentContentPosition, const WebCore::Element*, imf_sp_text_t&);
-    void requestSpellingCheckingOptions(imf_sp_text_t&, WebCore::IntSize& screenOffset, const bool shouldMoveDialog = false);
+    void requestSpellingCheckingOptions(imf_sp_text_t&, WebCore::IntSize& screenOffset, bool shouldMoveDialog = false);
     void clearDidSpellCheckState() { m_didSpellCheckWord = false; }
-    void redrawSpellCheckDialogIfRequired(const bool shouldMoveDialog = true);
+    void redrawSpellCheckDialogIfRequired(bool shouldMoveDialog = true);
 
     void callRequestCheckingFor(PassRefPtr<WebCore::SpellCheckRequest>);
     void setSystemSpellCheckStatus(bool enabled) { m_spellCheckStatusConfirmed = true; m_globalSpellCheckStatus = enabled; }

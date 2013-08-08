@@ -788,7 +788,7 @@ bool InputHandler::shouldRequestSpellCheckingOptionsForPoint(const Platform::Int
     return true;
 }
 
-void InputHandler::requestSpellingCheckingOptions(imf_sp_text_t& spellCheckingOptionRequest, WebCore::IntSize& screenOffset, const bool shouldMoveDialog)
+void InputHandler::requestSpellingCheckingOptions(imf_sp_text_t& spellCheckingOptionRequest, WebCore::IntSize& screenOffset, bool shouldMoveDialog)
 {
     // If the caret is no longer active, no message should be sent.
     if (m_webPage->focusedOrMainFrame()->selection()->selectionType() != VisibleSelection::CaretSelection)
@@ -1256,7 +1256,7 @@ void InputHandler::stopPendingSpellCheckRequests(bool isRestartRequired)
     }
 }
 
-void InputHandler::redrawSpellCheckDialogIfRequired(const bool shouldMoveDialog)
+void InputHandler::redrawSpellCheckDialogIfRequired(bool shouldMoveDialog)
 {
     if (didSpellCheckWord()) {
         imf_sp_text_t spellCheckingOptionRequest;

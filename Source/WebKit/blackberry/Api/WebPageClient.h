@@ -146,7 +146,7 @@ public:
     virtual void showFormControls(bool visible, bool previousActive = false, bool nextActive = false) = 0;
     virtual void showVirtualKeyboard(bool) = 0;
 
-    virtual void requestSpellingCheckingOptions(imf_sp_text_t&, const BlackBerry::Platform::IntRect& documentCaretRect, const BlackBerry::Platform::IntSize& screenOffset, const bool shouldMoveDialog) = 0;
+    virtual void requestSpellingCheckingOptions(imf_sp_text_t&, const BlackBerry::Platform::IntRect& documentCaretRect, const BlackBerry::Platform::IntSize& screenOffset, bool shouldMoveDialog) = 0;
     virtual int32_t checkSpellingOfStringAsync(wchar_t* text, const unsigned length) = 0;
 
     virtual void notifySelectionDetailsChanged(const BlackBerry::Platform::SelectionDetails&) = 0;
