@@ -158,8 +158,10 @@ function installDependenciesWithYum {
     # These are dependencies necessary for running tests.
     yum install \
         httpd \
-        curl \
         mod_bw \
+        mod_ssl \
+        php \
+        curl \
         libgpg-error-devel \
         pulseaudio-utils \
         pygobject3-base \

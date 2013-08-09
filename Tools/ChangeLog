@@ -1,3 +1,13 @@
+2013-08-09  Gustavo Noronha Silva  <gustavo.noronha@collabora.com>
+
+        [GTK] Misses mod_ssl and php in the list of packages required for tests for yum
+        https://bugs.webkit.org/show_bug.cgi?id=115751
+
+        Reviewed by Martin Robinson.
+
+        * gtk/install-dependencies: add mod_ssl and php to the packages installed for tests
+        with yum.
+
 2013-08-09  Beth Dakin  <bdakin@apple.com>
 
         AX: Not able to use arrow keys to read text in a WK2 app
