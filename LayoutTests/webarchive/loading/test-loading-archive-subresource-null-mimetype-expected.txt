@@ -3,7 +3,7 @@ main frame - didCommitLoadForFrame
 frame "<!--framePath //<!--frame0-->-->" - didStartProvisionalLoadForFrame
 resources/subresource-null-mimetype.webarchive - willSendRequest <NSURLRequest URL resources/subresource-null-mimetype.webarchive, main document URL test-loading-archive-subresource-null-mimetype.html, http method GET> redirectResponse (null)
 main frame - didFinishDocumentLoadForFrame
-<unknown> - didFinishLoading
+test-loading-archive-subresource-null-mimetype.html - didFinishLoading
 resources/subresource-null-mimetype.webarchive - didReceiveResponse <NSURLResponse resources/subresource-null-mimetype.webarchive, http status code 0>
 frame "<!--framePath //<!--frame0-->-->" - didCommitLoadForFrame
 test.png - willSendRequest <NSURLRequest URL test.png, main document URL test-loading-archive-subresource-null-mimetype.html, http method GET> redirectResponse (null)

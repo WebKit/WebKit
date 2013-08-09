@@ -3,7 +3,7 @@ main frame - didCommitLoadForFrame
 frame "<!--framePath //<!--frame0-->-->" - didStartProvisionalLoadForFrame
 resources/helloworld.webarchive - willSendRequest <NSURLRequest URL resources/helloworld.webarchive, main document URL test-loading-archive.html, http method GET> redirectResponse (null)
 main frame - didFinishDocumentLoadForFrame
-<unknown> - didFinishLoading
+test-loading-archive.html - didFinishLoading
 resources/helloworld.webarchive - didReceiveResponse <NSURLResponse resources/helloworld.webarchive, http status code 0>
 frame "<!--framePath //<!--frame0-->-->" - didCommitLoadForFrame
 frame "<!--framePath //<!--frame0-->-->" - didFinishDocumentLoadForFrame

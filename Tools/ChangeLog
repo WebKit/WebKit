@@ -1,3 +1,24 @@
+2013-08-09  Alexey Proskuryakov  <ap@apple.com>
+
+        <unknown> is often dumped instead of path in test output
+        https://bugs.webkit.org/show_bug.cgi?id=119590
+
+        Reviewed by Anders Carlsson.
+
+        There were two reasons for <unknown>:
+        1. When delegate logging is enabled via a testRunner call, that obviously happens
+        after main resource load starts, so we don't record its URL.
+        2. Authentication delegate logging relied on URL recording, but it's only turned on
+        when enabling resource loading delegate logging, not auth one.
+
+        URL recording was made conditional in <http://trac.webkit.org/r19316>, which was
+        landed without posted rationale and unreviewed. Just undoing that change now.
+
+        * DumpRenderTree/mac/ResourceLoadDelegate.mm:
+        (-[ResourceLoadDelegate webView:identifierForInitialRequest:fromDataSource:]):
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::didInitiateLoadForResource):
+
 2013-08-08  Alex Christensen  <achristensen@apple.com>
 
         Windows build fixes.

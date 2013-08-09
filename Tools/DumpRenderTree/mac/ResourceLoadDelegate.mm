@@ -121,7 +121,7 @@ using namespace std;
 {
     ASSERT([[dataSource webFrame] dataSource] || [[dataSource webFrame] provisionalDataSource]);
 
-    if (!done && gTestRunner->dumpResourceLoadCallbacks())
+    if (!done)
         return [[request URL] _drt_descriptionSuitableForTestResult];
 
     return @"<unknown>";

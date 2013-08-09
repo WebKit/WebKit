@@ -1,4 +1,4 @@
-<unknown> - didFinishLoading
+http://127.0.0.1:8000/misc/link-rel-icon-beforeload.html - didFinishLoading
 http://127.0.0.1:8000/misc/link-rel-icon-beforeload.html - willSendRequest <NSURLRequest URL http://127.0.0.1:8000/misc/link-rel-icon-beforeload.html, main document URL http://127.0.0.1:8000/misc/link-rel-icon-beforeload.html, http method GET> redirectResponse (null)
 http://127.0.0.1:8000/misc/link-rel-icon-beforeload.html - didReceiveResponse <NSURLResponse http://127.0.0.1:8000/misc/link-rel-icon-beforeload.html, http status code 200>
 http://127.0.0.1:8000/favicon.ico - willSendRequest <NSURLRequest URL http://127.0.0.1:8000/favicon.ico, main document URL http://127.0.0.1:8000/misc/link-rel-icon-beforeload.html, http method GET> redirectResponse (null)

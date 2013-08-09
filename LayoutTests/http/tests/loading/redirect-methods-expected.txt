@@ -3,7 +3,7 @@ main frame - didCommitLoadForFrame
 main frame - didFinishDocumentLoadForFrame
 main frame - didHandleOnloadEventsForFrame
 main frame - didFinishLoadForFrame
-<unknown> - didFinishLoading
+http://127.0.0.1:8000/loading/redirect-methods.html - didFinishLoading
 frame "0" - didStartProvisionalLoadForFrame
 frame "0" - didCommitLoadForFrame
 frame "0" - didFinishDocumentLoadForFrame

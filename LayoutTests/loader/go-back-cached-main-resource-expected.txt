@@ -1,5 +1,5 @@
 resources/first-page.html - willSendRequest <NSURLRequest URL resources/first-page.html, main document URL resources/first-page.html, http method GET> redirectResponse (null)
-<unknown> - didFinishLoading
+go-back-cached-main-resource.html - didFinishLoading
 resources/first-page.html - didReceiveResponse <NSURLResponse resources/first-page.html, http status code 0>
 resources/first-page.html - didFinishLoading
 resources/other-page.html - willSendRequest <NSURLRequest URL resources/other-page.html, main document URL resources/other-page.html, http method GET> redirectResponse (null)
