@@ -6305,11 +6305,6 @@ endif
 # 3D canvas (WebGL) support
 # ---
 if ENABLE_WEBGL
-webcore_built_sources += \
-	DerivedSources/ANGLE/glslang.cpp \
-	DerivedSources/ANGLE/glslang_tab.cpp \
-	DerivedSources/ANGLE/glslang_tab.h
-
 webcore_sources += \
 	Source/ThirdParty/ANGLE/include/EGL/egl.h \
 	Source/ThirdParty/ANGLE/include/EGL/eglplatform.h \
@@ -6346,6 +6341,9 @@ webcore_sources += \
 	Source/ThirdParty/ANGLE/src/compiler/ForLoopUnroll.cpp \
 	Source/ThirdParty/ANGLE/src/compiler/ForLoopUnroll.h \
 	Source/ThirdParty/ANGLE/src/compiler/glslang.h \
+	Source/ThirdParty/ANGLE/src/compiler/glslang_lex.cpp \
+	Source/ThirdParty/ANGLE/src/compiler/glslang_tab.cpp \
+	Source/ThirdParty/ANGLE/src/compiler/glslang_tab.h \
 	Source/ThirdParty/ANGLE/src/compiler/HashNames.h \
 	Source/ThirdParty/ANGLE/src/compiler/InfoSink.cpp \
 	Source/ThirdParty/ANGLE/src/compiler/InfoSink.h \
