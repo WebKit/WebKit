@@ -1,3 +1,30 @@
+2013-08-08  Simon Fraser  <simon.fraser@apple.com>
+
+        Kill updateStyleForAllDocuments()
+        https://bugs.webkit.org/show_bug.cgi?id=118093
+
+        Reviewed by Geoff Garen.
+
+        We should never have to eagerly update style, especially for all documents
+        that the process knows about. The WebKit model is to update style when
+        required for layout etc, not to update it eagerly.
+        
+        This is historical code whose origins are lost in the mists of KHTML.
+        r42384 makes it possible to do away with this eager updating, and
+        r55568 removed some calls. Discussion in bug 32580 suggests that
+        form control code still need this, but tests still pass without it.
+
+        * bindings/js/JSCallbackData.cpp:
+        (WebCore::JSCallbackData::invokeCallback):
+        * bindings/js/JSCustomXPathNSResolver.cpp:
+        (WebCore::JSCustomXPathNSResolver::lookupNamespaceURI):
+        * dom/Document.cpp:
+        (WebCore::Document::scheduleStyleRecalc):
+        (WebCore::Document::unscheduleStyleRecalc):
+        * dom/Document.h:
+        * dom/Element.cpp:
+        (WebCore::Element::setActive):
+
 2013-08-08  Jer Noble  <jer.noble@apple.com>
 
         [EME] MediaKey APIs should be prefixed.

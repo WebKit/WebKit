@@ -379,8 +379,6 @@ static void printNavigationErrorMessage(Frame* frame, const KURL& activeURL, con
     frame->document()->domWindow()->printErrorMessage(message);
 }
 
-static HashSet<Document*>* documentsThatNeedStyleRecalc = 0;
-
 uint64_t Document::s_globalTreeVersion = 0;
 
 static const double timeBeforeThrowingAwayStyleResolverAfterLastUseInSeconds = 30;
@@ -1700,10 +1698,6 @@ void Document::scheduleStyleRecalc()
 
     ASSERT(childNeedsStyleRecalc() || m_pendingStyleRecalcShouldForce);
 
-    if (!documentsThatNeedStyleRecalc)
-        documentsThatNeedStyleRecalc = new HashSet<Document*>;
-    documentsThatNeedStyleRecalc->add(this);
-    
     // FIXME: Why on earth is this here? This is clearly misplaced.
     invalidateAccessKeyMap();
     
@@ -1715,9 +1709,6 @@ void Document::scheduleStyleRecalc()
 void Document::unscheduleStyleRecalc()
 {
     ASSERT(!childNeedsStyleRecalc());
-
-    if (documentsThatNeedStyleRecalc)
-        documentsThatNeedStyleRecalc->remove(this);
 
     m_styleRecalcTimer.stop();
     m_pendingStyleRecalcShouldForce = false;
@@ -1854,20 +1845,6 @@ void Document::updateStyleIfNeeded()
 
     AnimationUpdateBlock animationUpdateBlock(m_frame ? m_frame->animation() : 0);
     recalcStyle(Style::NoChange);
-}
-
-void Document::updateStyleForAllDocuments()
-{
-    ASSERT(isMainThread());
-    if (!documentsThatNeedStyleRecalc)
-        return;
-
-    while (documentsThatNeedStyleRecalc->size()) {
-        HashSet<Document*>::iterator it = documentsThatNeedStyleRecalc->begin();
-        Document* doc = *it;
-        documentsThatNeedStyleRecalc->remove(doc);
-        doc->updateStyleIfNeeded();
-    }
 }
 
 void Document::updateLayout()

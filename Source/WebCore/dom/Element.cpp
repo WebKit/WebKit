@@ -485,7 +485,8 @@ void Element::setActive(bool flag, bool pause)
         double startTime = currentTime();
 #endif
 
-        Document::updateStyleForAllDocuments();
+        document()->updateStyleIfNeeded();
+
         // Do an immediate repaint.
         if (renderer())
             renderer()->repaint(true);
