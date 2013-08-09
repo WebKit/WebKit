@@ -24,7 +24,7 @@
  */
 
 WebInspector.ApplicationCacheDetailsSidebarPanel = function() {
-    WebInspector.DetailsSidebarPanel.call(this, "application-cache-details", WebInspector.UIString("Storage"), WebInspector.UIString("Storage"), "Images/NavigationItemStorage.pdf");
+    WebInspector.DetailsSidebarPanel.call(this, "application-cache-details", WebInspector.UIString("Storage"), WebInspector.UIString("Storage"), "Images/NavigationItemStorage.svg");
 
     this.element.classList.add(WebInspector.ApplicationCacheDetailsSidebarPanel.StyleClassName);
 

@@ -32,7 +32,7 @@ WebInspector.ProfileView = function(profile, settingId)
     this.element.classList.add("profile-view");
 
     this.showTimeAsPercent = new WebInspector.Setting(settingId, true);
-    this.showTimeAsPercentNavigationItem = new WebInspector.ActivateButtonNavigationItem("selector-profiler-show-time-as-percent-navigation-item", WebInspector.UIString("Show times as percentages"), WebInspector.UIString("Show times as absolute times"), "Images/Percent.pdf", 16, 16);
+    this.showTimeAsPercentNavigationItem = new WebInspector.ActivateButtonNavigationItem("selector-profiler-show-time-as-percent-navigation-item", WebInspector.UIString("Show times as percentages"), WebInspector.UIString("Show times as absolute times"), "Images/Percent.svg", 16, 16);
     this.showTimeAsPercentNavigationItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this.toggleTimeDisplay, this);
     this.showTimeAsPercentNavigationItem.activated = this.showTimeAsPercent.value;
 

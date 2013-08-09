@@ -25,7 +25,7 @@
 
 WebInspector.CSSStyleDetailsSidebarPanel = function()
 {
-    WebInspector.DOMDetailsSidebarPanel.call(this, "css-style", WebInspector.UIString("Styles"), WebInspector.UIString("Style"), "Images/NavigationItemBrushAndRuler.pdf", "4");
+    WebInspector.DOMDetailsSidebarPanel.call(this, "css-style", WebInspector.UIString("Styles"), WebInspector.UIString("Style"), "Images/NavigationItemBrushAndRuler.svg", "4");
 
     this._selectedPanel = null;
 

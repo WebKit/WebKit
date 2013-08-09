@@ -1,3 +1,103 @@
+2013-08-07  Timothy Hatcher  <timothy@apple.com>
+
+        Switch the generated images off of PDFs and onto SVGs now that bug 119492 is fixed.
+
+        https://bugs.webkit.org/show_bug.cgi?id=118677
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/ApplicationCacheDetailsSidebarPanel.js:
+        (WebInspector.ApplicationCacheDetailsSidebarPanel):
+        * UserInterface/CSSStyleDeclarationSection.js:
+        (WebInspector.CSSStyleDeclarationSection):
+        * UserInterface/CSSStyleDetailsSidebarPanel.js:
+        (WebInspector.CSSStyleDetailsSidebarPanel):
+        * UserInterface/ContentBrowser.js:
+        (WebInspector.ContentBrowser):
+        * UserInterface/DOMNodeDetailsSidebarPanel.js:
+        (WebInspector.DOMNodeDetailsSidebarPanel):
+        * UserInterface/DOMTreeContentView.js:
+        (WebInspector.DOMTreeContentView):
+        * UserInterface/DataGrid.js:
+        (WebInspector.DataGrid.prototype._generateSortIndicatorImagesIfNeeded):
+        * UserInterface/DebuggerSidebarPanel.js:
+        (WebInspector.DebuggerSidebarPanel):
+        * UserInterface/DetailsSection.js:
+        (WebInspector.DetailsSection.prototype._generateDisclosureTrianglesIfNeeded):
+        * UserInterface/FindBanner.js:
+        (WebInspector.FindBanner.prototype._generateButtonsGlyphsIfNeeded):
+        * UserInterface/Images/BackArrow.pdf: Removed.
+        * UserInterface/Images/BottomUpTree.pdf: Removed.
+        * UserInterface/Images/Breakpoints.pdf: Removed.
+        * UserInterface/Images/Close.pdf: Removed.
+        * UserInterface/Images/Crosshair.pdf: Removed.
+        * UserInterface/Images/DisclosureTriangleSmallClosed.pdf: Removed.
+        * UserInterface/Images/DisclosureTriangleSmallOpen.pdf: Removed.
+        * UserInterface/Images/DisclosureTriangleTinyClosed.pdf: Removed.
+        * UserInterface/Images/DisclosureTriangleTinyOpen.pdf: Removed.
+        * UserInterface/Images/DockBottom.pdf: Removed.
+        * UserInterface/Images/DockRight.pdf: Removed.
+        * UserInterface/Images/ForwardArrow.pdf: Removed.
+        * UserInterface/Images/GoToArrow.pdf: Removed.
+        * UserInterface/Images/LayerBorders.pdf: Removed.
+        * UserInterface/Images/LessColumns.pdf: Removed.
+        * UserInterface/Images/Locked.pdf: Removed.
+        * UserInterface/Images/MoreColumns.pdf: Removed.
+        * UserInterface/Images/NavigationItemAngleBrackets.pdf: Removed.
+        * UserInterface/Images/NavigationItemBrushAndRuler.pdf: Removed.
+        * UserInterface/Images/NavigationItemBug.pdf: Removed.
+        * UserInterface/Images/NavigationItemCurleyBraces.pdf: Removed.
+        * UserInterface/Images/NavigationItemFile.pdf: Removed.
+        * UserInterface/Images/NavigationItemLayers.pdf: Removed.
+        * UserInterface/Images/NavigationItemLog.pdf: Removed.
+        * UserInterface/Images/NavigationItemMagnifyingGlass.pdf: Removed.
+        * UserInterface/Images/NavigationItemStopwatch.pdf: Removed.
+        * UserInterface/Images/NavigationItemStorage.pdf: Removed.
+        * UserInterface/Images/NavigationItemTrash.pdf: Removed.
+        * UserInterface/Images/NavigationItemVariable.pdf: Removed.
+        * UserInterface/Images/Pause.pdf: Removed.
+        * UserInterface/Images/Percent.pdf: Removed.
+        * UserInterface/Images/Plus.pdf: Removed.
+        * UserInterface/Images/Resume.pdf: Removed.
+        * UserInterface/Images/ShadowDOM.pdf: Removed.
+        * UserInterface/Images/SortIndicatorDownArrow.pdf: Removed.
+        * UserInterface/Images/SortIndicatorUpArrow.pdf: Removed.
+        * UserInterface/Images/SplitToggleDown.pdf: Removed.
+        * UserInterface/Images/SplitToggleUp.pdf: Removed.
+        * UserInterface/Images/StepInto.pdf: Removed.
+        * UserInterface/Images/StepOut.pdf: Removed.
+        * UserInterface/Images/StepOver.pdf: Removed.
+        * UserInterface/Images/Undock.pdf: Removed.
+        * UserInterface/InstrumentSidebarPanel.js:
+        (WebInspector.InstrumentSidebarPanel):
+        * UserInterface/JavaScriptProfileView.js:
+        (WebInspector.JavaScriptProfileView):
+        * UserInterface/LayerTreeSidebarPanel.js:
+        (WebInspector.LayerTreeSidebarPanel):
+        * UserInterface/LogContentView.js:
+        (WebInspector.LogContentView):
+        * UserInterface/Main.js:
+        (WebInspector.contentLoaded):
+        (WebInspector._updateDockNavigationItems):
+        (WebInspector._generateDisclosureTriangleImages):
+        * UserInterface/NavigationSidebarPanel.js:
+        (WebInspector.NavigationSidebarPanel.prototype._generateDisclosureTrianglesIfNeeded):
+        * UserInterface/ProfileView.js:
+        (WebInspector.ProfileView):
+        * UserInterface/ResourceDetailsSidebarPanel.js:
+        (WebInspector.ResourceDetailsSidebarPanel):
+        * UserInterface/ResourceSidebarPanel.js:
+        (WebInspector.ResourceSidebarPanel):
+        * UserInterface/ScopeChainDetailsSidebarPanel.js:
+        (WebInspector.ScopeChainDetailsSidebarPanel):
+        * UserInterface/ScriptContentView.js:
+        (WebInspector.ScriptContentView):
+        * UserInterface/TextContentView.js:
+        (WebInspector.TextContentView):
+        * UserInterface/TextResourceContentView.js:
+        (WebInspector.TextResourceContentView):
+        * UserInterface/TimelinesContentView.js:
+
 2013-08-08  Dean Jackson  <dino@apple.com>
 
         Remove use of prefixed transition event

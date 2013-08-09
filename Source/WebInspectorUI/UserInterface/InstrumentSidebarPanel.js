@@ -25,7 +25,7 @@
 
 WebInspector.InstrumentSidebarPanel = function()
 {
-    WebInspector.NavigationSidebarPanel.call(this, "instrument", WebInspector.UIString("Timelines"), "Images/NavigationItemStopwatch.pdf", "2");
+    WebInspector.NavigationSidebarPanel.call(this, "instrument", WebInspector.UIString("Timelines"), "Images/NavigationItemStopwatch.svg", "2");
 
     this.filterBar.placeholder = WebInspector.UIString("Filter Profile List");
 

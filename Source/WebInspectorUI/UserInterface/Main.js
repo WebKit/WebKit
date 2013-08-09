@@ -186,10 +186,10 @@ WebInspector.contentLoaded = function()
     this._redoKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.Command | WebInspector.KeyboardShortcut.Modifier.Shift, "Z", this._redoKeyboardShortcut.bind(this));
     this._undoKeyboardShortcut.implicitlyPreventsDefault = this._redoKeyboardShortcut.implicitlyPreventsDefault = false;
 
-    this.undockButtonNavigationItem = new WebInspector.ToggleControlToolbarItem("undock", WebInspector.UIString("Detach into separate window"), "", "Images/Undock.pdf", "", 16, 14);
+    this.undockButtonNavigationItem = new WebInspector.ToggleControlToolbarItem("undock", WebInspector.UIString("Detach into separate window"), "", "Images/Undock.svg", "", 16, 14);
     this.undockButtonNavigationItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._undock, this);
 
-    this.closeButtonNavigationItem = new WebInspector.ControlToolbarItem("dock-close", WebInspector.UIString("Close"), "Images/Close.pdf", 16, 14);
+    this.closeButtonNavigationItem = new WebInspector.ControlToolbarItem("dock-close", WebInspector.UIString("Close"), "Images/Close.svg", 16, 14);
     this.closeButtonNavigationItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this.close, this);
 
     this.toolbar.addToolbarItem(this.closeButtonNavigationItem, WebInspector.Toolbar.Section.Control);
@@ -211,7 +211,7 @@ WebInspector.contentLoaded = function()
     const consoleKeyboardShortcut = "\u2325\u2318C"; // Option-Command-C
     var toolTip = WebInspector.UIString("Show console (%s)").format(consoleKeyboardShortcut);
     var activatedToolTip = WebInspector.UIString("Hide console");
-    this._consoleToolbarButton = new WebInspector.ActivateButtonToolbarItem("console", toolTip, activatedToolTip, WebInspector.UIString("Console"), "Images/NavigationItemLog.pdf");
+    this._consoleToolbarButton = new WebInspector.ActivateButtonToolbarItem("console", toolTip, activatedToolTip, WebInspector.UIString("Console"), "Images/NavigationItemLog.svg");
     this._consoleToolbarButton.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this.toggleConsoleView, this);
     this.toolbar.addToolbarItem(this._consoleToolbarButton, WebInspector.Toolbar.Section.Center);
 
@@ -220,7 +220,7 @@ WebInspector.contentLoaded = function()
     // The toolbar button for node inspection.
     var toolTip = WebInspector.UIString("Enable point to inspect mode (%s)").format(WebInspector._inspectModeKeyboardShortcut.displayName);
     var activatedToolTip = WebInspector.UIString("Disable point to inspect mode (%s)").format(WebInspector._inspectModeKeyboardShortcut.displayName);
-    this._inspectModeToolbarButton = new WebInspector.ActivateButtonToolbarItem("inspect", toolTip, activatedToolTip, WebInspector.UIString("Inspect"), "Images/Crosshair.pdf");
+    this._inspectModeToolbarButton = new WebInspector.ActivateButtonToolbarItem("inspect", toolTip, activatedToolTip, WebInspector.UIString("Inspect"), "Images/Crosshair.svg");
     this._inspectModeToolbarButton.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._toggleInspectMode, this);
     this.toolbar.addToolbarItem(this._inspectModeToolbarButton, WebInspector.Toolbar.Section.Center);
 
@@ -821,7 +821,7 @@ WebInspector._updateDockNavigationItems = function()
     this.undockButtonNavigationItem.hidden = !docked;
 
     if (docked) {
-        this.undockButtonNavigationItem.alternateImage = this._dockSide === "bottom" ? "Images/DockRight.pdf" : "Images/DockBottom.pdf";
+        this.undockButtonNavigationItem.alternateImage = this._dockSide === "bottom" ? "Images/DockRight.svg" : "Images/DockBottom.svg";
         this.undockButtonNavigationItem.alternateToolTip = this._dockSide === "bottom" ? WebInspector.UIString("Dock to right of window") : WebInspector.UIString("Dock to bottom of window");
     }
 
@@ -1365,11 +1365,11 @@ WebInspector._generateDisclosureTriangleImages = function()
     specifications["selected"] = {fillColor: [255, 255, 255, 0.8]};
     specifications["selected-active"] = {fillColor: [255, 255, 255, 1]};
 
-    generateColoredImagesForCSS("Images/DisclosureTriangleSmallOpen.pdf", specifications, 13, 13, "disclosure-triangle-small-open-");
-    generateColoredImagesForCSS("Images/DisclosureTriangleSmallClosed.pdf", specifications, 13, 13, "disclosure-triangle-small-closed-");
+    generateColoredImagesForCSS("Images/DisclosureTriangleSmallOpen.svg", specifications, 13, 13, "disclosure-triangle-small-open-");
+    generateColoredImagesForCSS("Images/DisclosureTriangleSmallClosed.svg", specifications, 13, 13, "disclosure-triangle-small-closed-");
 
-    generateColoredImagesForCSS("Images/DisclosureTriangleTinyOpen.pdf", specifications, 8, 8, "disclosure-triangle-tiny-open-");
-    generateColoredImagesForCSS("Images/DisclosureTriangleTinyClosed.pdf", specifications, 8, 8, "disclosure-triangle-tiny-closed-");
+    generateColoredImagesForCSS("Images/DisclosureTriangleTinyOpen.svg", specifications, 8, 8, "disclosure-triangle-tiny-open-");
+    generateColoredImagesForCSS("Images/DisclosureTriangleTinyClosed.svg", specifications, 8, 8, "disclosure-triangle-tiny-closed-");
 }
 
 WebInspector.elementDragStart = function(element, dividerDrag, elementDragEnd, event, cursor, eventTarget)
@@ -1444,7 +1444,7 @@ WebInspector.createGoToArrowButton = function()
         specifications["go-to-arrow-selected"] = {fillColor: [255, 255, 255, 0.8]};
         specifications["go-to-arrow-selected-active"] = {fillColor: [255, 255, 255, 1]};
 
-        generateColoredImagesForCSS("Images/GoToArrow.pdf", specifications, 10, 10);
+        generateColoredImagesForCSS("Images/GoToArrow.svg", specifications, 10, 10);
     }
 
     function stopPropagation(event)

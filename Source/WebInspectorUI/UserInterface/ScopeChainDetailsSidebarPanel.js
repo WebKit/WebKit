@@ -24,7 +24,7 @@
  */
 
 WebInspector.ScopeChainDetailsSidebarPanel = function() {
-    WebInspector.DetailsSidebarPanel.call(this, "scope-chain", WebInspector.UIString("Scope Chain"), WebInspector.UIString("Scope Chain"), "Images/NavigationItemVariable.pdf", "5");
+    WebInspector.DetailsSidebarPanel.call(this, "scope-chain", WebInspector.UIString("Scope Chain"), WebInspector.UIString("Scope Chain"), "Images/NavigationItemVariable.svg", "5");
 
     this._callFrame = null;
 };

@@ -326,8 +326,8 @@ WebInspector.FindBanner.prototype = {
         specifications["normal"] = {fillColor: [81, 81, 81]};
         specifications["normal-active"] = {fillColor: [37, 37, 37]};
 
-        generateColoredImagesForCSS("Images/BackArrow.pdf", specifications, 7, 7, "find-banner-previous-arrow-");
-        generateColoredImagesForCSS("Images/ForwardArrow.pdf", specifications, 7, 7, "find-banner-next-arrow-");
+        generateColoredImagesForCSS("Images/BackArrow.svg", specifications, 7, 7, "find-banner-previous-arrow-");
+        generateColoredImagesForCSS("Images/ForwardArrow.svg", specifications, 7, 7, "find-banner-next-arrow-");
     }
 };
 

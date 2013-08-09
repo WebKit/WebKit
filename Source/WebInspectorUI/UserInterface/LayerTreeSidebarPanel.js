@@ -24,7 +24,7 @@
  */
 
 WebInspector.LayerTreeSidebarPanel = function() {
-    WebInspector.DOMDetailsSidebarPanel.call(this, "layer-tree", WebInspector.UIString("Layers"), WebInspector.UIString("Layer"), "Images/NavigationItemLayers.pdf", "3");
+    WebInspector.DOMDetailsSidebarPanel.call(this, "layer-tree", WebInspector.UIString("Layers"), WebInspector.UIString("Layer"), "Images/NavigationItemLayers.svg", "3");
 
     this._dataGridNodesByLayerId = {};
 

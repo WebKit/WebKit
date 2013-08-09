@@ -24,7 +24,7 @@
  */
 
 WebInspector.ResourceDetailsSidebarPanel = function() {
-    WebInspector.DetailsSidebarPanel.call(this, "resource-details", WebInspector.UIString("Resource"), WebInspector.UIString("Resource"), "Images/NavigationItemFile.pdf", "1");
+    WebInspector.DetailsSidebarPanel.call(this, "resource-details", WebInspector.UIString("Resource"), WebInspector.UIString("Resource"), "Images/NavigationItemFile.svg", "1");
 
     this.element.classList.add(WebInspector.ResourceDetailsSidebarPanel.StyleClassName);
 

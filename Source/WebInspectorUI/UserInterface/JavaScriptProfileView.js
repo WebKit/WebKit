@@ -31,7 +31,7 @@ WebInspector.JavaScriptProfileView = function(profile)
 
     this._showTreeBottomUpSetting = new WebInspector.Setting("javascript-profiler-show-tree-bottom-up", true);
 
-    this._showTreeBottomUpNavigationItem = new WebInspector.ActivateButtonNavigationItem("show-tree-bottom-up-navigation-item", WebInspector.UIString("Invert call tree"), WebInspector.UIString("Normal call tree"), "Images/BottomUpTree.pdf", 16, 16);
+    this._showTreeBottomUpNavigationItem = new WebInspector.ActivateButtonNavigationItem("show-tree-bottom-up-navigation-item", WebInspector.UIString("Invert call tree"), WebInspector.UIString("Normal call tree"), "Images/BottomUpTree.svg", 16, 16);
     this._showTreeBottomUpNavigationItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this._toggleBottomUpView, this);
     this._showTreeBottomUpNavigationItem.activated = this._showTreeBottomUpSetting.value;
 

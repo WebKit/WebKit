@@ -99,7 +99,7 @@ WebInspector.CSSStyleDeclarationSection = function(style)
         WebInspector.CSSStyleDeclarationSection._generatedLockImages = true;
 
         var specifications = {"style-lock-normal": {fillColor: [0, 0, 0, 0.5]}};
-        generateColoredImagesForCSS("Images/Locked.pdf", specifications, 8, 10);
+        generateColoredImagesForCSS("Images/Locked.svg", specifications, 8, 10);
     }
 
     this.refresh();

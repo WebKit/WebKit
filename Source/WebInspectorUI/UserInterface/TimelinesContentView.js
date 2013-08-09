@@ -215,8 +215,8 @@ WebInspector.TimelinesContentView.generateEmbossedCollapseImages = function()
         return;
     WebInspector.TimelinesContentView._generatedImages = true;
 
-    generateEmbossedImages("Images/MoreColumns.pdf", 15, 13, WebInspector.TimelinesContentView.CollapseButton.States, canvasIdentifier.bind(this, WebInspector.TimelinesContentView.CollapseButton.More));
-    generateEmbossedImages("Images/LessColumns.pdf", 15, 13, WebInspector.TimelinesContentView.CollapseButton.States, canvasIdentifier.bind(this, WebInspector.TimelinesContentView.CollapseButton.Less));
+    generateEmbossedImages("Images/MoreColumns.svg", 15, 13, WebInspector.TimelinesContentView.CollapseButton.States, canvasIdentifier.bind(this, WebInspector.TimelinesContentView.CollapseButton.More));
+    generateEmbossedImages("Images/LessColumns.svg", 15, 13, WebInspector.TimelinesContentView.CollapseButton.States, canvasIdentifier.bind(this, WebInspector.TimelinesContentView.CollapseButton.Less));
 
     function canvasIdentifier(type, state) {
         return "timeline-datagrid-collapse-button-" + type + "-" + state;
