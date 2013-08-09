@@ -1,5 +1,25 @@
 2013-08-08  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r153851
+
+    2013-08-08  Jer Noble  <jer.noble@apple.com>
+
+            [EME] setMediaKeys function as defined in the EME specification does not work
+            https://bugs.webkit.org/show_bug.cgi?id=119597
+
+            Reviewed by Anders Carlsson.
+
+            No new tests; updated media/encrypted-media/encrypted-media-v2-syntax.html
+
+            Rename the mediaKeys attribute 'keys' and make readonly, and add an explicit
+            setMediaKeys() method in HTMLMediaElement's IDL.
+
+            * html/HTMLMediaElement.h:
+            (WebCore::HTMLMediaElement::keys):
+            * html/HTMLMediaElement.idl:
+
+2013-08-08  Lucas Forschler  <lforschler@apple.com>
+
         Merge r153838
 
     2013-08-08  Jer Noble  <jer.noble@apple.com>
