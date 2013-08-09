@@ -199,8 +199,7 @@ Path absolutePathForRenderer(RenderObject* const o)
         drawableRects.append(last);
 
     // Clip the overflow rects if needed, before the ring path is formed to
-    // ensure rounded highlight rects. This clipping has the problem with nested
-    // divs with transforms, which could be resolved by proper Path::intersecting.
+    // ensure rounded highlight rects.
     for (int i = drawableRects.size() - 1; i >= 0; --i) {
         LayoutRect& ringRect = drawableRects.at(i);
         LayoutPoint ringRectLocation = ringRect.location();
@@ -220,7 +219,12 @@ Path absolutePathForRenderer(RenderObject* const o)
                 currentRenderer->container(layerRenderer, &containerSkipped);
                 if (containerSkipped)
                     continue;
-                ringRect.move(currentRenderer->offsetFromAncestorContainer(layerRenderer));
+                FloatQuad ringQuad = currentRenderer->localToContainerQuad(FloatQuad(ringRect), layerRenderer);
+                // Ignore quads that are not rectangular, since we can not currently highlight them nicely.
+                if (ringQuad.isRectilinear())
+                    ringRect = ringQuad.enclosingBoundingBox();
+                else
+                    ringRect = LayoutRect();
                 currentRenderer = layerRenderer;
 
                 ASSERT(layerRenderer->isBox());

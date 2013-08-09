@@ -1,3 +1,15 @@
+2013-08-08  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt][WK2] Composited and transformed links asserts in tap highlight
+        https://bugs.webkit.org/show_bug.cgi?id=94345
+
+        Reviewed by Jocelyn Turcotte.
+
+        Use a mapping that does not assert when hitting transforms. We still skip
+        transforms that produces non-rectangular areas.
+
+        * page/GestureTapHighlighter.cpp:
+
 2013-08-09  Gabor Abraham  <abrhm@inf.u-szeged.hu>
 
         Buildfix. Fix warning after r153887:
