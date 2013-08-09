@@ -400,7 +400,8 @@ void ElementRuleCollector::doCollectMatchingRulesForList(const Vector<RuleData>*
 
     const StyleResolver::State& state = m_state;
 
-    for (const RuleData& ruleData : *rules) {
+    for (unsigned i = 0, size = rules->size(); i < size; ++i) {
+        const RuleData& ruleData = rules->data()[i];
         if (m_canUseFastReject && m_selectorFilter.fastRejectSelector<RuleData::maximumIdentifierCount>(ruleData.descendantSelectorIdentifierHashes()))
             continue;
 

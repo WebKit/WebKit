@@ -1,3 +1,10 @@
+2013-08-09  Andreas Kling  <akling@apple.com>
+
+        I wish we had a Windows EWS. :(
+
+        * css/ElementRuleCollector.cpp:
+        (WebCore::ElementRuleCollector::doCollectMatchingRulesForList): No range-based for today.
+
 2013-08-09  Rob Buis  <rwlbuis@webkit.org>
 
         ASSERT_NOT_REACHED() touched in WebCore::SVGAnimatedStringAnimator::addAnimatedTypes
