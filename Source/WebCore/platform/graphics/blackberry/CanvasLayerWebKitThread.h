@@ -23,15 +23,18 @@
 
 #include "EGLImageLayerWebKitThread.h"
 
+#include <BlackBerryPlatformGraphics.h>
+#include <BlackBerryPlatformGraphicsContext.h>
+
 namespace WebCore {
 
 class CanvasLayerCompositingThreadClient;
 
 class CanvasLayerWebKitThread : public LayerWebKitThread {
 public:
-    static PassRefPtr<CanvasLayerWebKitThread> create(BlackBerry::Platform::Graphics::Buffer* buffer, const IntSize& size)
+    static PassRefPtr<CanvasLayerWebKitThread> create(BlackBerry::Platform::Graphics::Buffer* buffer, BlackBerry::Platform::Graphics::PlatformGraphicsContext* context, const IntSize& size)
     {
-        return adoptRef(new CanvasLayerWebKitThread(buffer, size));
+        return adoptRef(new CanvasLayerWebKitThread(buffer, context, size));
     }
 
     virtual ~CanvasLayerWebKitThread();
@@ -42,7 +45,7 @@ protected:
     virtual void deleteTextures();
 
 private:
-    CanvasLayerWebKitThread(BlackBerry::Platform::Graphics::Buffer*, const IntSize&);
+    CanvasLayerWebKitThread(BlackBerry::Platform::Graphics::Buffer*, BlackBerry::Platform::Graphics::PlatformGraphicsContext*, const IntSize&);
     CanvasLayerCompositingThreadClient* m_compositingThreadClient;
 };
 

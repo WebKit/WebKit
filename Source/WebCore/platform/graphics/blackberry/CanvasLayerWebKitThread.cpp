@@ -35,7 +35,7 @@ void CanvasLayerWebKitThread::deleteTextures()
 
 class CanvasLayerCompositingThreadClient : public LayerCompositingThreadClient {
 public:
-    CanvasLayerCompositingThreadClient(BlackBerry::Platform::Graphics::Buffer*, const IntSize&);
+    CanvasLayerCompositingThreadClient(BlackBerry::Platform::Graphics::Buffer*, BlackBerry::Platform::Graphics::PlatformGraphicsContext*, const IntSize&);
 
     void layerCompositingThreadDestroyed(LayerCompositingThread*) { }
     void layerVisibilityChanged(LayerCompositingThread*, bool) { }
@@ -50,11 +50,13 @@ public:
 
 private:
     BlackBerry::Platform::Graphics::Buffer* m_buffer;
+    BlackBerry::Platform::Graphics::PlatformGraphicsContext* m_context;
     IntSize m_size;
 };
 
-CanvasLayerCompositingThreadClient::CanvasLayerCompositingThreadClient(BlackBerry::Platform::Graphics::Buffer* buffer, const IntSize& size)
+CanvasLayerCompositingThreadClient::CanvasLayerCompositingThreadClient(BlackBerry::Platform::Graphics::Buffer* buffer, BlackBerry::Platform::Graphics::PlatformGraphicsContext* context, const IntSize& size)
     : m_buffer(buffer)
+    , m_context(context)
     , m_size(size)
 {
 }
@@ -78,23 +80,23 @@ void CanvasLayerCompositingThreadClient::deleteTextures(LayerCompositingThread*)
 
 void CanvasLayerCompositingThreadClient::commitPendingTextureUploads(LayerCompositingThread*)
 {
-    if (!m_buffer)
+    if (!m_buffer || !m_context)
         return;
 
     // This method is called during a synchronization point between WebKit and compositing thread.
     // This is our only chance to transfer the back display list to the front display list without
     // race conditions.
     // 1. Flush back display list to front
-    BlackBerry::Platform::Graphics::releaseBufferDrawable(m_buffer);
+    m_context->flush();
     // 2. Draw front display list to FBO
     BlackBerry::Platform::Graphics::updateBufferBackingSurface(m_buffer);
 }
 
 
-CanvasLayerWebKitThread::CanvasLayerWebKitThread(BlackBerry::Platform::Graphics::Buffer* buffer, const IntSize& size)
+CanvasLayerWebKitThread::CanvasLayerWebKitThread(BlackBerry::Platform::Graphics::Buffer* buffer, BlackBerry::Platform::Graphics::PlatformGraphicsContext* context, const IntSize& size)
     : LayerWebKitThread(CanvasLayer, 0)
 {
-    m_compositingThreadClient = new CanvasLayerCompositingThreadClient(buffer, size);
+    m_compositingThreadClient = new CanvasLayerCompositingThreadClient(buffer, context, size);
     layerCompositingThread()->setClient(m_compositingThreadClient);
 }
 
