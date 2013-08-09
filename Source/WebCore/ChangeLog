@@ -1,3 +1,17 @@
+2013-08-09  Dean Jackson  <dino@apple.com>
+
+        Captions menu needs to reset text-align
+        https://bugs.webkit.org/show_bug.cgi?id=119637
+
+        Reviewed by Eric Carlson.
+
+        Reset the text-align property on the menu so that it
+        doesn't get the inherited value. The full fix for all
+        controls is http://webkit.org/b/116100.
+
+        * css/mediaControlsQuickTime.css:
+        (video::-webkit-media-controls-closed-captions-container):
+
 2013-08-09  Beth Dakin  <bdakin@apple.com>
 
         AX: Not able to use arrow keys to read text in a WK2 app
