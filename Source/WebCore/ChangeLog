@@ -1,3 +1,19 @@
+2013-08-09  Rob Buis  <rwlbuis@webkit.org>
+
+        ASSERT(m_type == toSVGTransform.type())
+        https://bugs.webkit.org/show_bug.cgi?id=113217
+
+        Reviewed by Darin Adler.
+
+        For to animations clear the transform list while animating and reset to it after the animation is done.
+        This matches Firefox and Opera 12 behavior.
+
+        Tests: svg/animations/animateTransform-to-scale-expected.svg
+               svg/animations/animateTransform-to-scale.svg
+
+        * svg/SVGAnimatedTransformList.cpp:
+        (WebCore::SVGAnimatedTransformListAnimator::calculateAnimatedValue):
+
 2013-08-09  Arunprasad Rajkumar  <arurajku@cisco.com>
 
         [Qt] QtWebKit should allow sending domain specific keycode to HTML applications
