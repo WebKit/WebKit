@@ -1,3 +1,21 @@
+2013-08-08  Jer Noble  <jer.noble@apple.com>
+
+        [EME] MediaKey APIs should be prefixed.
+        https://bugs.webkit.org/show_bug.cgi?id=119606
+
+        Reviewed by Anders Carlsson.
+
+        * media/encrypted-media/encrypted-media-constants-expected.txt:
+        * media/encrypted-media/encrypted-media-constants.html:
+        * media/encrypted-media/encrypted-media-events-expected.txt:
+        * media/encrypted-media/encrypted-media-events.html:
+        * media/encrypted-media/encrypted-media-is-type-supported-expected.txt:
+        * media/encrypted-media/encrypted-media-is-type-supported.html:
+        * media/encrypted-media/encrypted-media-v2-events-expected.txt:
+        * media/encrypted-media/encrypted-media-v2-events.html:
+        * media/encrypted-media/encrypted-media-v2-syntax-expected.txt:
+        * media/encrypted-media/encrypted-media-v2-syntax.html:
+
 2013-08-08  Tim Horton  <timothy_horton@apple.com>
 
         Unreviewed, remove TestExpectations for removed microdata tests.

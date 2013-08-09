@@ -1,5 +1,23 @@
 2013-08-08  Jer Noble  <jer.noble@apple.com>
 
+        [EME] MediaKey APIs should be prefixed.
+        https://bugs.webkit.org/show_bug.cgi?id=119606
+
+        Reviewed by Anders Carlsson.
+
+        No new tests; updated exsisting tests with new names.
+
+        Prefix all new classes with "WebKit" and new methods on existing unprefixed
+        classes with "webkit"
+
+        * Modules/encryptedmedia/MediaKeyMessageEvent.idl: MediaKeyMessageEvent -> WebKitMediaKeyMessageEvent
+        * Modules/encryptedmedia/MediaKeySession.idl: MediaKeySession -> WebKitMediaKeySession
+        * Modules/encryptedmedia/MediaKeys.idl: MediaKeys -> WebKitMediaKeys
+        * html/HTMLMediaElement.idl: keys -> webkitKeys, setMediaKeys -> webkitSetMediaKeys
+        * html/MediaKeyError.idl: MediaKeyError -> WebKitMediaKeyError
+
+2013-08-08  Jer Noble  <jer.noble@apple.com>
+
         [EME] setMediaKeys function as defined in the EME specification does not work
         https://bugs.webkit.org/show_bug.cgi?id=119597
 

@@ -30,7 +30,7 @@
                 consoleWrite("keyadded event occurred");
 
                 testExpected("event.target", video);
-                testExpected("event instanceof window.MediaKeyEvent", true);
+                testExpected("event instanceof window.WebKitMediaKeyEvent", true);
 
                 testExpected("event.keySystem", "webkit-org.w3.clearkey");
                 testExpected("event.sessionId == keyMessageSessionId", true);
@@ -51,7 +51,7 @@
                 consoleWrite("keyerror event occurred");
 
                 testExpected("event.target", video);
-                testExpected("event instanceof window.MediaKeyEvent", true);
+                testExpected("event instanceof window.WebKitMediaKeyEvent", true);
 
                 testExpected("event.keySystem", "webkit-org.w3.clearkey");
                 testExpected("event.sessionId == keyMessageSessionId", true);
@@ -59,7 +59,7 @@
                 testExpected("event.initData", null, "===");
                 testExpected("event.message", null, "===");
                 testExpected("event.defaultURL", "");
-                testExpected("event.errorCode.code", MediaKeyError.MEDIA_KEYERR_UNKNOWN);
+                testExpected("event.errorCode.code", WebKitMediaKeyError.MEDIA_KEYERR_UNKNOWN);
                 // systemCode is not supported by the Clear Key key system.
                 testExpected("event.systemCode", 0);
 
@@ -74,7 +74,7 @@
                     run("event.initData = new Uint8Array([0x12])");
                     run("event.message  = new Uint8Array([0x12])");
                     run("event.defaultURL = 'example.com'");
-                    run("event.errorCode.code = MediaKeyError.MEDIA_KEYERR_CLIENT");
+                    run("event.errorCode.code = WebKitMediaKeyError.MEDIA_KEYERR_CLIENT");
                     run("event.systemCode = 123");
 
                     testExpected("event.keySystem", "webkit-org.w3.clearkey");
@@ -82,7 +82,7 @@
                     testExpected("event.initData", null, "===");
                     testExpected("event.message", null, "===");
                     testExpected("event.defaultURL", "");
-                    testExpected("event.errorCode.code", MediaKeyError.MEDIA_KEYERR_UNKNOWN);
+                    testExpected("event.errorCode.code", WebKitMediaKeyError.MEDIA_KEYERR_UNKNOWN);
                     testExpected("event.systemCode", 0);
 
                     endTest();
@@ -94,7 +94,7 @@
                 consoleWrite("keymessage event occurred");
 
                 testExpected("event.target", video);
-                testExpected("event instanceof window.MediaKeyEvent", true);
+                testExpected("event instanceof window.WebKitMediaKeyEvent", true);
 
                 testExpected("event.keySystem", "webkit-org.w3.clearkey");
 
@@ -135,7 +135,7 @@
                 consoleWrite("needKey event occurred");
 
                 testExpected("event.target", video);
-                testExpected("event instanceof window.MediaKeyEvent", true);
+                testExpected("event instanceof window.WebKitMediaKeyEvent", true);
 
                 testExpected("event.keySystem", "webkit-org.w3.clearkey");
                 testExpected("event.sessionId", "");

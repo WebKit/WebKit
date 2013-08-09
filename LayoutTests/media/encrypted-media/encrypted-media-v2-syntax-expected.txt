@@ -1,16 +1,16 @@
-This tests the basic API of MediaKeys and MediaKeySession.
+This tests the basic API of WebKitMediaKeys and WebKitMediaKeySession.
 
-Test MediaKeys.
-EXPECTED (typeof window.MediaKeys == 'object') OK
-TEST(new MediaKeys("")) THROWS(DOMException.INVALID_ACCESS_ERR) OK
-TEST(new MediaKeys("unsupported")) THROWS(DOMException.NOT_SUPPORTED_ERR) OK
-RUN(mediaKeys = new MediaKeys("com.webcore.mock"))
+Test WebKitMediaKeys.
+EXPECTED (typeof window.WebKitMediaKeys == 'object') OK
+TEST(new WebKitMediaKeys("")) THROWS(DOMException.INVALID_ACCESS_ERR) OK
+TEST(new WebKitMediaKeys("unsupported")) THROWS(DOMException.NOT_SUPPORTED_ERR) OK
+RUN(mediaKeys = new WebKitMediaKeys("com.webcore.mock"))
 EXPECTED (mediaKeys.keySystem == 'com.webcore.mock') OK
 EXPECTED (typeof mediaKeys.createSession == 'function') OK
 TEST(mediaKeys.createSession("", new Uint8Array(1))) THROWS(DOMException.INVALID_ACCESS_ERR) OK
 TEST(mediaKeys.createSession("unsupported/type")) THROWS(DOMException.NOT_SUPPORTED_ERR) OK
 
-Test MediaKeySession.
+Test WebKitMediaKeySession.
 RUN(mediaKeySession = mediaKeys.createSession("video/mock", initData))
 EXPECTED (typeof mediaKeySession == 'object') OK
 EXPECTED (typeof mediaKeySession.addEventListener == 'function') OK
