@@ -1,5 +1,32 @@
 2013-08-09  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
+        Add support for KeyboardEvent.location attribute
+        https://bugs.webkit.org/show_bug.cgi?id=119326
+
+        Reviewed by Benjamin Poulain.
+
+        Rename KeyboardEvent.keyLocation to KeyboardEvent.location in the
+        tests and add test cases to make sure that the deprecated
+        KeyboardEvent.keyLocation still works.
+
+        * fast/events/arrow-keys-on-body-expected.txt:
+        * fast/events/arrow-keys-on-body.html:
+        * fast/events/constructors/keyboard-event-constructor-expected.txt:
+        * fast/events/constructors/keyboard-event-constructor.html:
+        * fast/events/init-events-expected.txt:
+        * fast/events/js-keyboard-event-creation.html:
+        * fast/events/keydown-leftright-keys-expected.txt:
+        * fast/events/keydown-leftright-keys.html:
+        * fast/events/keydown-numpad-keys-expected.txt:
+        * fast/events/script-tests/init-events.js:
+        * fast/events/script-tests/keydown-numpad-keys.js:
+        (recordKeyEvent):
+        (testKeyEventWithLocation):
+        * platform/mac/fast/events/objc-keyboard-event-creation.html:
+        * platform/win/fast/events/keyLocation-numpad.html:
+
+2013-08-09  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
         Make atob() throw an InvalidCharacterError on excess padding characters
         https://bugs.webkit.org/show_bug.cgi?id=118898
 

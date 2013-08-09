@@ -4081,8 +4081,9 @@ END
                 my $attribute = @{$interface->attributes}[$index];
                 if ($attribute->signature->extendedAttributes->{"InitializedByEventConstructor"}) {
                     my $attributeName = $attribute->signature->name;
+                    my $attributeImplName = $attribute->signature->extendedAttributes->{"ImplementedAs"} || $attributeName;
                     push(@implContent, <<END);
-    if (!dictionary.tryGetProperty("${attributeName}", eventInit.${attributeName}))
+    if (!dictionary.tryGetProperty("${attributeName}", eventInit.${attributeImplName}))
         return false;
 END
                 }

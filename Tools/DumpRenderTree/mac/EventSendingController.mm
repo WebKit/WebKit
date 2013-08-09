@@ -586,7 +586,7 @@ static int buildModifierFlags(const WebScriptObject* modifiers)
     savedMouseEvents = nil;
 }
 
-- (void)keyDown:(NSString *)character withModifiers:(WebScriptObject *)modifiers withLocation:(unsigned long)keyLocation
+- (void)keyDown:(NSString *)character withModifiers:(WebScriptObject *)modifiers withLocation:(unsigned long)location
 {
     NSString *eventCharacter = character;
     unsigned short keyCode = 0;
@@ -738,7 +738,7 @@ static int buildModifierFlags(const WebScriptObject* modifiers)
     for (unsigned i = 0; i < WTF_ARRAY_LENGTH(table); ++i) {
         NSString* currentCharacterString = [NSString stringWithCharacters:&table[i].character length:1];
         if ([character isEqualToString:currentCharacterString] || [character isEqualToString:table[i].characterName]) {
-            if (keyLocation == DOM_KEY_LOCATION_NUMPAD)
+            if (location == DOM_KEY_LOCATION_NUMPAD)
                 keyCode = table[i].macNumpadKeyCode;
             else
                 keyCode = table[i].macKeyCode;
@@ -758,7 +758,7 @@ static int buildModifierFlags(const WebScriptObject* modifiers)
 
     modifierFlags |= buildModifierFlags(modifiers);
 
-    if (keyLocation == DOM_KEY_LOCATION_NUMPAD)
+    if (location == DOM_KEY_LOCATION_NUMPAD)
         modifierFlags |= NSNumericPadKeyMask;
 
     [[[mainFrame frameView] documentView] layout];
@@ -790,12 +790,12 @@ static int buildModifierFlags(const WebScriptObject* modifiers)
     [[[[mainFrame webView] window] firstResponder] keyUp:event];
 }
 
-- (void)keyDownWrapper:(NSString *)character withModifiers:(WebScriptObject *)modifiers withLocation:(unsigned long)keyLocation
+- (void)keyDownWrapper:(NSString *)character withModifiers:(WebScriptObject *)modifiers withLocation:(unsigned long)location
 {
-    [self keyDown:character withModifiers:modifiers withLocation:keyLocation];
+    [self keyDown:character withModifiers:modifiers withLocation:location];
 }
 
-- (void)scheduleAsynchronousKeyDown:(NSString *)character withModifiers:(WebScriptObject *)modifiers withLocation:(unsigned long)keyLocation
+- (void)scheduleAsynchronousKeyDown:(NSString *)character withModifiers:(WebScriptObject *)modifiers withLocation:(unsigned long)location
 {
     NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:[EventSendingController instanceMethodSignatureForSelector:@selector(keyDownWrapper:withModifiers:withLocation:)]];
     [invocation retainArguments];
@@ -803,7 +803,7 @@ static int buildModifierFlags(const WebScriptObject* modifiers)
     [invocation setSelector:@selector(keyDownWrapper:withModifiers:withLocation:)];
     [invocation setArgument:&character atIndex:2];
     [invocation setArgument:&modifiers atIndex:3];
-    [invocation setArgument:&keyLocation atIndex:4];
+    [invocation setArgument:&location atIndex:4];
     [invocation performSelector:@selector(invoke) withObject:nil afterDelay:0];
 }
 
@@ -843,7 +843,7 @@ static int buildModifierFlags(const WebScriptObject* modifiers)
     
     if ([event isKindOfClass:[DOMKeyboardEvent class]]) {
         printf("  keyIdentifier: %s\n", [[(DOMKeyboardEvent*)event keyIdentifier] UTF8String]);
-        printf("  keyLocation:   %d\n", [(DOMKeyboardEvent*)event keyLocation]);
+        printf("  keyLocation:   %d\n", [(DOMKeyboardEvent*)event location]);
         printf("  modifier keys: c:%d s:%d a:%d m:%d\n", 
                [(DOMKeyboardEvent*)event ctrlKey] ? 1 : 0, 
                [(DOMKeyboardEvent*)event shiftKey] ? 1 : 0, 
@@ -920,7 +920,7 @@ static int buildModifierFlags(const WebScriptObject* modifiers)
                                         cancelable:YES
                                               view:[document defaultView]
                                      keyIdentifier:@"U+000041" 
-                                       keyLocation:0
+                                       location:0
                                            ctrlKey:YES
                                             altKey:NO
                                           shiftKey:NO
@@ -935,7 +935,7 @@ static int buildModifierFlags(const WebScriptObject* modifiers)
                                         cancelable:YES
                                               view:[document defaultView]
                                      keyIdentifier:@"U+000045" 
-                                       keyLocation:1
+                                       location:1
                                            ctrlKey:NO
                                             altKey:YES
                                           shiftKey:NO
@@ -950,7 +950,7 @@ static int buildModifierFlags(const WebScriptObject* modifiers)
                                         cancelable:YES
                                               view:[document defaultView]
                                      keyIdentifier:@"U+000056" 
-                                       keyLocation:0
+                                       location:0
                                            ctrlKey:NO
                                             altKey:NO
                                           shiftKey:NO

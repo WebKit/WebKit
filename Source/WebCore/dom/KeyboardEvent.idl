@@ -32,7 +32,8 @@
 #endif
 
     [InitializedByEventConstructor] readonly attribute DOMString        keyIdentifier;
-    [InitializedByEventConstructor] readonly attribute unsigned long    keyLocation;
+    [InitializedByEventConstructor] readonly attribute unsigned long    location;
+    [InitializedByEventConstructor, ImplementedAs=location] readonly attribute unsigned long keyLocation; // Deprecated.
     [InitializedByEventConstructor] readonly attribute boolean          ctrlKey;
     [InitializedByEventConstructor] readonly attribute boolean          shiftKey;
     [InitializedByEventConstructor] readonly attribute boolean          altKey;
@@ -49,7 +50,7 @@
                            [Default=Undefined] optional boolean cancelable, 
                            [Default=Undefined] optional DOMWindow view, 
                            [Default=Undefined] optional DOMString keyIdentifier,
-                           [Default=Undefined] optional unsigned long keyLocation,
+                           [Default=Undefined] optional unsigned long location,
                            [Default=Undefined] optional boolean ctrlKey,
                            [Default=Undefined] optional boolean altKey,
                            [Default=Undefined] optional boolean shiftKey,
@@ -61,10 +62,36 @@
     readonly attribute long             keyCode;
     readonly attribute long             charCode;
     
-    void initKeyboardEvent([Default=Undefined] optional DOMString type, 
+    void initKeyboardEvent([Default=Undefined] optional DOMString type,
                            [Default=Undefined] optional boolean canBubble, 
                            [Default=Undefined] optional boolean cancelable, 
                            [Default=Undefined] optional DOMWindow view, 
+                           [Default=Undefined] optional DOMString keyIdentifier,
+                           [Default=Undefined] optional unsigned long location,
+                           [Default=Undefined] optional boolean ctrlKey,
+                           [Default=Undefined] optional boolean altKey,
+                           [Default=Undefined] optional boolean shiftKey,
+                           [Default=Undefined] optional boolean metaKey);
+#endif
+
+#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
+    // For backward compatibility.
+    void initKeyboardEvent([Default=Undefined] optional DOMString type,
+                           [Default=Undefined] optional boolean canBubble,
+                           [Default=Undefined] optional boolean cancelable,
+                           [Default=Undefined] optional DOMWindow view,
+                           [Default=Undefined] optional DOMString keyIdentifier,
+                           [Default=Undefined] optional unsigned long keyLocation,
+                           [Default=Undefined] optional boolean ctrlKey,
+                           [Default=Undefined] optional boolean altKey,
+                           [Default=Undefined] optional boolean shiftKey,
+                           [Default=Undefined] optional boolean metaKey,
+                           [Default=Undefined] optional boolean altGraphKey);
+
+    void initKeyboardEvent([Default=Undefined] optional DOMString type,
+                           [Default=Undefined] optional boolean canBubble,
+                           [Default=Undefined] optional boolean cancelable,
+                           [Default=Undefined] optional DOMWindow view,
                            [Default=Undefined] optional DOMString keyIdentifier,
                            [Default=Undefined] optional unsigned long keyLocation,
                            [Default=Undefined] optional boolean ctrlKey,

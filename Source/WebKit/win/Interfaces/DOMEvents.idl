@@ -171,6 +171,9 @@ interface IDOMKeyboardEvent : IDOMUIEvent
     //readonly attribute DOMString        keyIdentifier;
     HRESULT keyIdentifier([out, retval] BSTR* result);
 
+    //readonly attribute unsigned long    location;
+    HRESULT location([out, retval] unsigned long* result);
+
     //readonly attribute unsigned long    keyLocation;
     HRESULT keyLocation([out, retval] unsigned long* result);
 

@@ -19,7 +19,7 @@ PASS testInitEvent('Keyboard', '"a", false, true, window, "b", 1001, false, fals
 PASS testInitEvent('Keyboard', '"a", false, true, null, "b", 1001, false, false, false, false, false').view is null
 PASS testInitEvent('Keyboard', '"a", false, true, window, "b", 1001, false, false, false, false, false').keyIdentifier is 'b'
 PASS testInitEvent('Keyboard', '"a", false, true, window, null, 1001, false, false, false, false, false').keyIdentifier is 'null'
-PASS testInitEvent('Keyboard', '"a", false, true, window, "b", 1001, false, false, false, false, false').keyLocation is 1001
+PASS testInitEvent('Keyboard', '"a", false, true, window, "b", 1001, false, false, false, false, false').location is 1001
 PASS testInitEvent('Keyboard', '"a", false, true, window, "b", 1001, false, false, false, false, false').ctrlKey is false
 PASS testInitEvent('Keyboard', '"a", false, true, window, "b", 1001, true, false, false, false, false').ctrlKey is true
 PASS testInitEvent('Keyboard', '"a", false, true, window, "b", 1001, false, false, false, false, false').altKey is false

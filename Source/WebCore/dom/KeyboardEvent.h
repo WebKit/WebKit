@@ -49,7 +49,7 @@ struct KeyboardEventInit : public UIEventInit {
     KeyboardEventInit();
 
     String keyIdentifier;
-    unsigned keyLocation;
+    unsigned location;
     bool ctrlKey;
     bool altKey;
     bool shiftKey;
@@ -83,11 +83,11 @@ public:
     virtual ~KeyboardEvent();
     
     void initKeyboardEvent(const AtomicString& type, bool canBubble, bool cancelable, AbstractView*,
-        const String& keyIdentifier, unsigned keyLocation,
+        const String& keyIdentifier, unsigned location,
         bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, bool altGraphKey = false);
     
     const String& keyIdentifier() const { return m_keyIdentifier; }
-    unsigned keyLocation() const { return m_keyLocation; }
+    unsigned location() const { return m_location; }
 
     bool getModifierState(const String& keyIdentifier) const;
 
@@ -114,7 +114,7 @@ private:
 
     OwnPtr<PlatformKeyboardEvent> m_keyEvent;
     String m_keyIdentifier;
-    unsigned m_keyLocation;
+    unsigned m_location;
     bool m_altGraphKey : 1;
 
 #if PLATFORM(MAC)

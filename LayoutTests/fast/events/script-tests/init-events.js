@@ -35,7 +35,7 @@ shouldBe("testInitEvent('Keyboard', '\"a\", false, true, window, \"b\", 1001, fa
 shouldBe("testInitEvent('Keyboard', '\"a\", false, true, null, \"b\", 1001, false, false, false, false, false').view", "null");
 shouldBe("testInitEvent('Keyboard', '\"a\", false, true, window, \"b\", 1001, false, false, false, false, false').keyIdentifier", "'b'");
 shouldBe("testInitEvent('Keyboard', '\"a\", false, true, window, null, 1001, false, false, false, false, false').keyIdentifier", "'null'");
-shouldBe("testInitEvent('Keyboard', '\"a\", false, true, window, \"b\", 1001, false, false, false, false, false').keyLocation", "1001");
+shouldBe("testInitEvent('Keyboard', '\"a\", false, true, window, \"b\", 1001, false, false, false, false, false').location", "1001");
 shouldBe("testInitEvent('Keyboard', '\"a\", false, true, window, \"b\", 1001, false, false, false, false, false').ctrlKey", "false");
 shouldBe("testInitEvent('Keyboard', '\"a\", false, true, window, \"b\", 1001, true, false, false, false, false').ctrlKey", "true");
 shouldBe("testInitEvent('Keyboard', '\"a\", false, true, window, \"b\", 1001, false, false, false, false, false').altKey", "false");

@@ -1,3 +1,17 @@
+2013-08-09  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Add support for KeyboardEvent.location attribute
+        https://bugs.webkit.org/show_bug.cgi?id=119326
+
+        Reviewed by Benjamin Poulain.
+
+        Add new location attribute to DOMKeyboardEvent.
+
+        * DOMEventsClasses.cpp:
+        (DOMKeyboardEvent::location):
+        * DOMEventsClasses.h:
+        * Interfaces/DOMEvents.idl:
+
 2013-08-07  Antti Koivisto  <antti@apple.com>
 
         Try to fix Win WK1 build.

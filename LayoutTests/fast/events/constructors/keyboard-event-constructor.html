@@ -16,7 +16,7 @@ shouldBe("new KeyboardEvent('eventType').cancelable", "false");
 shouldBe("new KeyboardEvent('eventType').view", "null");
 shouldBe("new KeyboardEvent('eventType').detail", "0");
 shouldBeEqualToString("new KeyboardEvent('eventType').keyIdentifier", "");
-shouldBe("new KeyboardEvent('eventType').keyLocation", "0");
+shouldBe("new KeyboardEvent('eventType').location", "0");
 shouldBe("new KeyboardEvent('eventType').ctrlKey", "false");
 shouldBe("new KeyboardEvent('eventType').altKey", "false");
 shouldBe("new KeyboardEvent('eventType').shiftKey", "false");
@@ -70,36 +70,40 @@ shouldBeEqualToString("new KeyboardEvent('eventType', { keyIdentifier: [1, 2, 3]
 shouldBeEqualToString("new KeyboardEvent('eventType', { keyIdentifier: {koakuma: 12345} }).keyIdentifier", "[object Object]");
 shouldBeEqualToString("new KeyboardEvent('eventType', { keyIdentifier: {valueOf: function () { return 'koakuma'; } } }).keyIdentifier", "[object Object]");
 
-// keyLocation is passed.
-// numbers within the unsigned long range.
-shouldBe("new KeyboardEvent('eventType', { keyLocation: 0 }).keyLocation", "0");
-shouldBe("new KeyboardEvent('eventType', { keyLocation: 1 }).keyLocation", "1");
-shouldBe("new KeyboardEvent('eventType', { keyLocation: 4294967294 }).keyLocation", "4294967294");
-shouldBe("new KeyboardEvent('eventType', { keyLocation: 4294967295 }).keyLocation", "4294967295");
+// location / keyLocation is passed.
+["location", "keyLocation"].forEach(function (propertyName) {
+    // numbers within the unsigned long range.
+    shouldBe("new KeyboardEvent('eventType', { " + propertyName + ": 0 })." + propertyName, "0");
+    shouldBe("new KeyboardEvent('eventType', { " + propertyName + ": 1 })." + propertyName, "1");
+    shouldBe("new KeyboardEvent('eventType', { " + propertyName + ": 4294967294 })." + propertyName, "4294967294");
+    shouldBe("new KeyboardEvent('eventType', { " + propertyName + ": 4294967295 })." + propertyName, "4294967295");
 
-// numbers out of the unsigned long range.
-// 2^{53}-1, the largest number that can be exactly represented by double.
-shouldBe("new KeyboardEvent('eventType', { keyLocation: 9007199254740991 }).keyLocation", "4294967295");
-// 2^{64}-1
-shouldBe("new KeyboardEvent('eventType', { keyLocation: 18446744073709551615 }).keyLocation", "0");
-shouldBe("new KeyboardEvent('eventType', { keyLocation: 12345678901234567890 }).keyLocation", "3944679424");
-shouldBe("new KeyboardEvent('eventType', { keyLocation: -1 }).keyLocation", "4294967295");
-shouldBe("new KeyboardEvent('eventType', { keyLocation: 123.45 }).keyLocation", "123");
-shouldBe("new KeyboardEvent('eventType', { keyLocation: NaN }).keyLocation", "0");
+    // numbers out of the unsigned long range.
+    // 2^{53}-1, the largest number that can be exactly represented by double.
+    shouldBe("new KeyboardEvent('eventType', { " + propertyName + ": 9007199254740991 })." + propertyName, "4294967295");
+    // 2^{64}-1
+    shouldBe("new KeyboardEvent('eventType', { " + propertyName + ": 18446744073709551615 })." + propertyName, "0");
+    shouldBe("new KeyboardEvent('eventType', { " + propertyName + ": 12345678901234567890 })." + propertyName, "3944679424");
+    shouldBe("new KeyboardEvent('eventType', { " + propertyName + ": -1 })." + propertyName, "4294967295");
+    shouldBe("new KeyboardEvent('eventType', { " + propertyName + ": 123.45 })." + propertyName, "123");
+    shouldBe("new KeyboardEvent('eventType', { " + propertyName + ": NaN })." + propertyName, "0");
 
-// Non-numeric values.
-shouldBe("new KeyboardEvent('eventType', { keyLocation: undefined }).keyLocation", "0");
-shouldBe("new KeyboardEvent('eventType', { keyLocation: null }).keyLocation", "0");
-shouldBe("new KeyboardEvent('eventType', { keyLocation: '' }).keyLocation", "0");
-shouldBe("new KeyboardEvent('eventType', { keyLocation: '12345' }).keyLocation", "12345");
-shouldBe("new KeyboardEvent('eventType', { keyLocation: '12345a' }).keyLocation", "0");
-shouldBe("new KeyboardEvent('eventType', { keyLocation: 'abc' }).keyLocation", "0");
-shouldBe("new KeyboardEvent('eventType', { keyLocation: [] }).keyLocation", "0");
-shouldBe("new KeyboardEvent('eventType', { keyLocation: [12345] }).keyLocation", "12345");
-shouldBe("new KeyboardEvent('eventType', { keyLocation: [12345, 67890] }).keyLocation", "0");
-shouldBe("new KeyboardEvent('eventType', { keyLocation: {} }).keyLocation", "0");
-shouldBe("new KeyboardEvent('eventType', { keyLocation: {moemoe: 12345} }).keyLocation", "0");
-shouldBe("new KeyboardEvent('eventType', { keyLocation: {valueOf: function () { return 12345; }} }).keyLocation", "12345");
+    // Non-numeric values.
+    shouldBe("new KeyboardEvent('eventType', { " + propertyName + ": undefined })." + propertyName, "0");
+    shouldBe("new KeyboardEvent('eventType', { " + propertyName + ": null })." + propertyName, "0");
+    shouldBe("new KeyboardEvent('eventType', { " + propertyName + ": '' })." + propertyName, "0");
+    shouldBe("new KeyboardEvent('eventType', { " + propertyName + ": '12345' })." + propertyName, "12345");
+    shouldBe("new KeyboardEvent('eventType', { " + propertyName + ": '12345a' })." + propertyName, "0");
+    shouldBe("new KeyboardEvent('eventType', { " + propertyName + ": 'abc' })." + propertyName, "0");
+    shouldBe("new KeyboardEvent('eventType', { " + propertyName + ": [] })." + propertyName, "0");
+    shouldBe("new KeyboardEvent('eventType', { " + propertyName + ": [12345] })." + propertyName, "12345");
+    shouldBe("new KeyboardEvent('eventType', { " + propertyName + ": [12345, 67890] })." + propertyName, "0");
+    shouldBe("new KeyboardEvent('eventType', { " + propertyName + ": {} })." + propertyName, "0");
+    shouldBe("new KeyboardEvent('eventType', { " + propertyName + ": {moemoe: 12345} })." + propertyName, "0");
+    shouldBe("new KeyboardEvent('eventType', { " + propertyName + ": {valueOf: function () { return 12345; }} })." + propertyName, "12345");
+});
+shouldBe("new KeyboardEvent('eventType', { keyLocation: 1 }).location", "1");
+shouldBe("new KeyboardEvent('eventType', { location: 1 }).keyLocation", "1");
 
 // ctrlKey, altKey, shiftKey and metaKey are passed.
 ["ctrlKey", "altKey", "shiftKey", "metaKey"].forEach(function (attr) {
@@ -108,16 +112,16 @@ shouldBe("new KeyboardEvent('eventType', { keyLocation: {valueOf: function () { 
 });
 
 // All initializers are passed.
-shouldBe("new KeyboardEvent('eventType', { bubbles: true, cancelable: true, view: window, detail: 111, keyIdentifier: 'chocolate', keyLocation: 222, ctrlKey: true, altKey: true, shiftKey: true, metaKey: true }).bubbles", "true");
-shouldBe("new KeyboardEvent('eventType', { bubbles: true, cancelable: true, view: window, detail: 111, keyIdentifier: 'chocolate', keyLocation: 222, ctrlKey: true, altKey: true, shiftKey: true, metaKey: true }).cancelable", "true");
-shouldBe("new KeyboardEvent('eventType', { bubbles: true, cancelable: true, view: window, detail: 111, keyIdentifier: 'chocolate', keyLocation: 222, ctrlKey: true, altKey: true, shiftKey: true, metaKey: true }).view", "window");
-shouldBe("new KeyboardEvent('eventType', { bubbles: true, cancelable: true, view: window, detail: 111, keyIdentifier: 'chocolate', keyLocation: 222, ctrlKey: true, altKey: true, shiftKey: true, metaKey: true }).detail", "111");
-shouldBeEqualToString("new KeyboardEvent('eventType', { bubbles: true, cancelable: true, view: window, detail: 111, keyIdentifier: 'chocolate', keyLocation: 222, ctrlKey: true, altKey: true, shiftKey: true, metaKey: true }).keyIdentifier", "chocolate");
-shouldBe("new KeyboardEvent('eventType', { bubbles: true, cancelable: true, view: window, detail: 111, keyIdentifier: 'chocolate', keyLocation: 222, ctrlKey: true, altKey: true, shiftKey: true, metaKey: true }).keyLocation", "222");
-shouldBe("new KeyboardEvent('eventType', { bubbles: true, cancelable: true, view: window, detail: 111, keyIdentifier: 'chocolate', keyLocation: 222, ctrlKey: true, altKey: true, shiftKey: true, metaKey: true }).ctrlKey", "true");
-shouldBe("new KeyboardEvent('eventType', { bubbles: true, cancelable: true, view: window, detail: 111, keyIdentifier: 'chocolate', keyLocation: 222, ctrlKey: true, altKey: true, shiftKey: true, metaKey: true }).altKey", "true");
-shouldBe("new KeyboardEvent('eventType', { bubbles: true, cancelable: true, view: window, detail: 111, keyIdentifier: 'chocolate', keyLocation: 222, ctrlKey: true, altKey: true, shiftKey: true, metaKey: true }).shiftKey", "true");
-shouldBe("new KeyboardEvent('eventType', { bubbles: true, cancelable: true, view: window, detail: 111, keyIdentifier: 'chocolate', keyLocation: 222, ctrlKey: true, altKey: true, shiftKey: true, metaKey: true }).metaKey", "true");
+shouldBe("new KeyboardEvent('eventType', { bubbles: true, cancelable: true, view: window, detail: 111, keyIdentifier: 'chocolate', location: 222, ctrlKey: true, altKey: true, shiftKey: true, metaKey: true }).bubbles", "true");
+shouldBe("new KeyboardEvent('eventType', { bubbles: true, cancelable: true, view: window, detail: 111, keyIdentifier: 'chocolate', location: 222, ctrlKey: true, altKey: true, shiftKey: true, metaKey: true }).cancelable", "true");
+shouldBe("new KeyboardEvent('eventType', { bubbles: true, cancelable: true, view: window, detail: 111, keyIdentifier: 'chocolate', location: 222, ctrlKey: true, altKey: true, shiftKey: true, metaKey: true }).view", "window");
+shouldBe("new KeyboardEvent('eventType', { bubbles: true, cancelable: true, view: window, detail: 111, keyIdentifier: 'chocolate', location: 222, ctrlKey: true, altKey: true, shiftKey: true, metaKey: true }).detail", "111");
+shouldBeEqualToString("new KeyboardEvent('eventType', { bubbles: true, cancelable: true, view: window, detail: 111, keyIdentifier: 'chocolate', location: 222, ctrlKey: true, altKey: true, shiftKey: true, metaKey: true }).keyIdentifier", "chocolate");
+shouldBe("new KeyboardEvent('eventType', { bubbles: true, cancelable: true, view: window, detail: 111, keyIdentifier: 'chocolate', location: 222, ctrlKey: true, altKey: true, shiftKey: true, metaKey: true }).location", "222");
+shouldBe("new KeyboardEvent('eventType', { bubbles: true, cancelable: true, view: window, detail: 111, keyIdentifier: 'chocolate', location: 222, ctrlKey: true, altKey: true, shiftKey: true, metaKey: true }).ctrlKey", "true");
+shouldBe("new KeyboardEvent('eventType', { bubbles: true, cancelable: true, view: window, detail: 111, keyIdentifier: 'chocolate', location: 222, ctrlKey: true, altKey: true, shiftKey: true, metaKey: true }).altKey", "true");
+shouldBe("new KeyboardEvent('eventType', { bubbles: true, cancelable: true, view: window, detail: 111, keyIdentifier: 'chocolate', location: 222, ctrlKey: true, altKey: true, shiftKey: true, metaKey: true }).shiftKey", "true");
+shouldBe("new KeyboardEvent('eventType', { bubbles: true, cancelable: true, view: window, detail: 111, keyIdentifier: 'chocolate', location: 222, ctrlKey: true, altKey: true, shiftKey: true, metaKey: true }).metaKey", "true");
 </script>
 <script src="../../js/resources/js-test-post.js"></script>
 </body>

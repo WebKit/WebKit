@@ -14,7 +14,7 @@ function recordKeyEvent(ev) {
               'shiftKey=' + ev.shiftKey + ',' +
               'altKey=' + ev.altKey + ',' +
               'metaKey=' + ev.metaKey + ',' +
-              'location=' + ev.keyLocation);
+              'location=' + ev.location);
     }
 }
 
@@ -22,7 +22,7 @@ function testKeyEventWithLocation(evString, evLocation, expectedKeyCode) {
     eventSender.keyDown(evString, [], evLocation);
     shouldBe("lastKeyboardEvent.type", '"keydown"');
     shouldEvaluateTo("lastKeyboardEvent.keyCode", expectedKeyCode);
-    shouldEvaluateTo("lastKeyboardEvent.keyLocation", evLocation);
+    shouldEvaluateTo("lastKeyboardEvent.location", evLocation);
 }
 
 var textarea = document.createElement("textarea");

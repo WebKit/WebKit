@@ -1092,7 +1092,8 @@
 
 @interface DOMKeyboardEvent : DOMUIEvent WEBKIT_VERSION_3_0
 @property(readonly, copy) NSString *keyIdentifier;
-@property(readonly) unsigned keyLocation;
+@property(readonly) unsigned location AVAILABLE_AFTER_WEBKIT_VERSION_5_1;
+@property(readonly) unsigned keyLocation AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER_BUT_DEPRECATED;
 @property(readonly) BOOL ctrlKey;
 @property(readonly) BOOL shiftKey;
 @property(readonly) BOOL altKey;
@@ -1101,8 +1102,10 @@
 @property(readonly) int charCode;
 @property(readonly) BOOL altGraphKey AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
 - (BOOL)getModifierState:(NSString *)keyIdentifierArg;
-- (void)initKeyboardEvent:(NSString *)type canBubble:(BOOL)canBubble cancelable:(BOOL)cancelable view:(DOMAbstractView *)view keyIdentifier:(NSString *)keyIdentifier keyLocation:(unsigned)keyLocation ctrlKey:(BOOL)ctrlKey altKey:(BOOL)altKey shiftKey:(BOOL)shiftKey metaKey:(BOOL)metaKey altGraphKey:(BOOL)altGraphKey AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
-- (void)initKeyboardEvent:(NSString *)type canBubble:(BOOL)canBubble cancelable:(BOOL)cancelable view:(DOMAbstractView *)view keyIdentifier:(NSString *)keyIdentifier keyLocation:(unsigned)keyLocation ctrlKey:(BOOL)ctrlKey altKey:(BOOL)altKey shiftKey:(BOOL)shiftKey metaKey:(BOOL)metaKey AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER;
+- (void)initKeyboardEvent:(NSString *)type canBubble:(BOOL)canBubble cancelable:(BOOL)cancelable view:(DOMAbstractView *)view keyIdentifier:(NSString *)keyIdentifier keyLocation:(unsigned)keyLocation ctrlKey:(BOOL)ctrlKey altKey:(BOOL)altKey shiftKey:(BOOL)shiftKey metaKey:(BOOL)metaKey altGraphKey:(BOOL)altGraphKey AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER_BUT_DEPRECATED;
+- (void)initKeyboardEvent:(NSString *)type canBubble:(BOOL)canBubble cancelable:(BOOL)cancelable view:(DOMAbstractView *)view keyIdentifier:(NSString *)keyIdentifier keyLocation:(unsigned)keyLocation ctrlKey:(BOOL)ctrlKey altKey:(BOOL)altKey shiftKey:(BOOL)shiftKey metaKey:(BOOL)metaKey AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER_BUT_DEPRECATED;
+- (void)initKeyboardEvent:(NSString *)type canBubble:(BOOL)canBubble cancelable:(BOOL)cancelable view:(DOMAbstractView *)view keyIdentifier:(NSString *)keyIdentifier location:(unsigned)location ctrlKey:(BOOL)ctrlKey altKey:(BOOL)altKey shiftKey:(BOOL)shiftKey metaKey:(BOOL)metaKey altGraphKey:(BOOL)altGraphKey AVAILABLE_AFTER_WEBKIT_VERSION_5_1;
+- (void)initKeyboardEvent:(NSString *)type canBubble:(BOOL)canBubble cancelable:(BOOL)cancelable view:(DOMAbstractView *)view keyIdentifier:(NSString *)keyIdentifier location:(unsigned)location ctrlKey:(BOOL)ctrlKey altKey:(BOOL)altKey shiftKey:(BOOL)shiftKey metaKey:(BOOL)metaKey AVAILABLE_AFTER_WEBKIT_VERSION_5_1;
 @end
 
 @interface DOMMouseEvent : DOMUIEvent WEBKIT_VERSION_1_3

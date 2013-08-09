@@ -307,6 +307,12 @@ HRESULT STDMETHODCALLTYPE DOMKeyboardEvent::keyIdentifier(
     return E_NOTIMPL;
 }
 
+HRESULT STDMETHODCALLTYPE DOMKeyboardEvent::location(
+    /* [retval][out] */ unsigned long* /*result*/)
+{
+    return E_NOTIMPL;
+}
+
 HRESULT STDMETHODCALLTYPE DOMKeyboardEvent::keyLocation( 
     /* [retval][out] */ unsigned long* /*result*/)
 {

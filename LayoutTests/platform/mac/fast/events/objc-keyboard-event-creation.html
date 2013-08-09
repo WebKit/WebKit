@@ -4,7 +4,7 @@
 
 function keyevent(event) {
     var p = document.createElement("p");
-    p.appendChild(document.createTextNode(event.type + " - key: " + event.keyIdentifier + "@" + event.keyLocation + " (keyCode/charCode: " + event.keyCode + "/" + event.charCode + ")" + " modifiers: " + event.ctrlKey + "," + event.altKey + "," + event.shiftKey + "," + event.metaKey));
+    p.appendChild(document.createTextNode(event.type + " - key: " + event.keyIdentifier + "@" + event.location + " (keyCode/charCode: " + event.keyCode + "/" + event.charCode + ")" + " modifiers: " + event.ctrlKey + "," + event.altKey + "," + event.shiftKey + "," + event.metaKey));
     document.getElementById("result").appendChild(p);
 }
 

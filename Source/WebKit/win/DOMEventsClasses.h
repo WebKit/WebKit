@@ -403,6 +403,9 @@ public:
     virtual HRESULT STDMETHODCALLTYPE keyIdentifier( 
         /* [retval][out] */ BSTR* result);
     
+    virtual HRESULT STDMETHODCALLTYPE location(
+        /* [retval][out] */ unsigned long* result);
+    
     virtual HRESULT STDMETHODCALLTYPE keyLocation( 
         /* [retval][out] */ unsigned long* result);
     
