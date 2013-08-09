@@ -2327,6 +2327,8 @@ set(WebCore_SOURCES
     storage/StorageSyncManager.cpp
     storage/StorageTracker.cpp
 
+    style/StyleFontSizeFunctions.cpp
+    style/StyleResolveForDocument.cpp
     style/StyleResolveTree.cpp
 
     svg/ColorDistance.cpp

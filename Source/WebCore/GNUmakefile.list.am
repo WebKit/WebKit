@@ -4715,6 +4715,10 @@ webcore_sources += \
 	Source/WebCore/storage/StorageTracker.cpp \
 	Source/WebCore/storage/StorageTracker.h \
 	Source/WebCore/storage/StorageTrackerClient.h \
+	Source/WebCore/style/StyleFontSizeFunctions.cpp \
+	Source/WebCore/style/StyleFontSizeFunctions.h \
+	Source/WebCore/style/StyleResolveForDocument.cpp \
+	Source/WebCore/style/StyleResolveForDocument.h \
 	Source/WebCore/style/StyleResolveTree.cpp \
 	Source/WebCore/style/StyleResolveTree.h \
 	Source/WebCore/WebCorePrefix.h \

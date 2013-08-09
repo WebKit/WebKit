@@ -1281,6 +1281,8 @@ SOURCES += \
     storage/StorageSyncManager.cpp \
     storage/StorageStrategy.cpp \
     storage/StorageTracker.cpp \
+    style/StyleFontSizeFunctions.cpp \
+    style/StyleResolveForDocument.cpp \
     style/StyleResolveTree.cpp \
     testing/Internals.cpp \
     testing/InternalSettings.cpp \
@@ -2601,6 +2603,8 @@ HEADERS += \
     storage/StorageThread.h \
     storage/StorageTracker.h \
     storage/StorageTrackerClient.h \
+    style/StyleFontSizeFunctions.h \
+    style/StyleResolveForDocument.h \
     style/StyleResolveTree.h \
     svg/animation/SMILTimeContainer.h \
     svg/animation/SMILTime.h \

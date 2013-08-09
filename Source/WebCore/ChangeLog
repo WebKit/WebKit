@@ -1,3 +1,52 @@
+2013-08-09  Antti Koivisto  <antti@apple.com>
+
+        Move static StyleResolver functions to Style namespace
+        https://bugs.webkit.org/show_bug.cgi?id=119629
+
+        Reviewed by Sam Weinig and Andreas Kling.
+
+        - Move static font size computation functions to StyleFontSizeFunctions.h/.cpp
+        - Move StyleResolver::styleForDocument to Style::resolveForDocument
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::ApplyPropertyFontFamily::applyInitialValue):
+        (WebCore::ApplyPropertyFontFamily::applyValue):
+        (WebCore::ApplyPropertyFontSize::applyInitialValue):
+        (WebCore::ApplyPropertyFontSize::applyValue):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::adjustRenderStyle):
+        (WebCore::checkForOrientationChange):
+        (WebCore::StyleResolver::applyProperty):
+        (WebCore::StyleResolver::checkForGenericFamilyChange):
+        (WebCore::StyleResolver::initializeFontStyle):
+        (WebCore::StyleResolver::setFontSize):
+        * css/StyleResolver.h:
+        * dom/Document.cpp:
+        (WebCore::Document::recalcStyle):
+        * editing/EditingStyle.cpp:
+        (WebCore::legacyFontSizeFromCSSValue):
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::process):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::getFontAndGlyphOrientation):
+        
+            Moved from StyleResolver.cpp so it can be used by Style::resolveForDocument().
+            This depends on RenderStyle only so it is a natural member function.
+
+        * rendering/style/RenderStyle.h:
+        * rendering/svg/RenderSVGInlineText.cpp:
+        (WebCore::RenderSVGInlineText::computeNewScaledFontForStyle):
+        * style/StyleFontSizeFunctions.cpp: Copied from Source/WebCore/css/StyleResolver.cpp.
+        (WebCore::Style::computedFontSizeFromSpecifiedSize):
+        (WebCore::Style::computedFontSizeFromSpecifiedSizeForSVGInlineText):
+        (WebCore::Style::fontSizeForKeyword):
+        (WebCore::Style::legacyFontSizeForPixelSize):
+        * style/StyleFontSizeFunctions.h: Added.
+        * style/StyleResolveForDocument.cpp: Added.
+        (WebCore::Style::resolveForDocument):
+        * style/StyleResolveForDocument.h: Added.
+
 2013-08-09  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Add support for KeyboardEvent.location attribute

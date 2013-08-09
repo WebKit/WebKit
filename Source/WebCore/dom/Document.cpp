@@ -146,6 +146,7 @@
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "StylePropertySet.h"
+#include "StyleResolveForDocument.h"
 #include "StyleResolver.h"
 #include "StyleSheetContents.h"
 #include "StyleSheetList.h"
@@ -1780,8 +1781,9 @@ void Document::recalcStyle(Style::Change change)
         if ((change == Style::Force) || (shouldDisplaySeamlesslyWithParent() && (change >= Style::Inherit))) {
             // style selector may set this again during recalc
             m_hasNodesWithPlaceholderStyle = false;
-            
-            RefPtr<RenderStyle> documentStyle = StyleResolver::styleForDocument(this, m_styleResolver ? m_styleResolver->fontSelector() : 0);
+
+            RefPtr<RenderStyle> documentStyle = Style::resolveForDocument(this);
+
             Style::Change documentChange = Style::determineChange(documentStyle.get(), renderer()->style(), settings());
             if (documentChange != Style::NoChange)
                 renderer()->setStyle(documentStyle.release());

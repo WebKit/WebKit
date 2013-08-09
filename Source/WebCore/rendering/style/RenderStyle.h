@@ -557,6 +557,7 @@ public:
     float specifiedFontSize() const;
     float computedFontSize() const;
     int fontSize() const;
+    void getFontAndGlyphOrientation(FontOrientation&, NonCJKGlyphOrientation&);
 
 #if ENABLE(TEXT_AUTOSIZING)
     float textAutosizingMultiplier() const { return visual->m_textAutosizingMultiplier; }

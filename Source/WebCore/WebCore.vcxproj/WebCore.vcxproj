@@ -17607,6 +17607,8 @@
     <ClCompile Include="..\storage\StorageSyncManager.cpp" />
     <ClCompile Include="..\storage\StorageThread.cpp" />
     <ClCompile Include="..\storage\StorageTracker.cpp" />
+    <ClCompile Include="..\style\StyleFontSizeFunctions.cpp" />
+    <ClCompile Include="..\style\StyleResolveForDocument.cpp" />
     <ClCompile Include="..\style\StyleResolveTree.cpp" />
     <ClCompile Include="..\bridge\jsc\BridgeJSC.cpp" />
     <ClCompile Include="..\bridge\c\c_class.cpp" />
@@ -20925,6 +20927,8 @@
     <ClInclude Include="..\storage\StorageSyncManager.h" />
     <ClInclude Include="..\storage\StorageThread.h" />
     <ClInclude Include="..\storage\StorageTracker.h" />
+    <ClInclude Include="..\style\StyleFontSizeFunctions.h" />
+    <ClInclude Include="..\style\StyleResolveForDocument.h" />
     <ClInclude Include="..\style\StyleResolveTree.h" />
     <ClInclude Include="..\bridge\Bridge.h" />
     <ClInclude Include="..\bridge\jsc\BridgeJSC.h" />
