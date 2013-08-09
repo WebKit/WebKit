@@ -1,3 +1,17 @@
+2013-08-09  Rob Buis  <rwlbuis@webkit.org>
+
+        ASSERTION FAILED: stroke->opacity != other->stroke->opacity in WebCore::SVGRenderStyle::diff
+        https://bugs.webkit.org/show_bug.cgi?id=119623
+
+        Reviewed by Dirk Schulze.
+
+        Include all the stroke attributes in the style diff comparison, the visited links ones were missing.
+
+        Test: svg/animations/animate-stroke-crasher.html
+
+        * rendering/style/SVGRenderStyle.cpp:
+        (WebCore::SVGRenderStyle::diff):
+
 2013-08-09  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION (r142755): window.open creates an invisible window when width and height are 0
