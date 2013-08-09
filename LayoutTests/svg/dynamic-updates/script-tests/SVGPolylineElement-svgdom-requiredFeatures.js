@@ -12,7 +12,7 @@ function repaintTest() {
     debug("Check that SVGPolylineElement is initially displayed");
     shouldBeEqualToString("document.defaultView.getComputedStyle(polylineElement, null).display", "inline");
     debug("Check that setting requiredFeatures to something invalid makes it not render");
-    polylineElement.requiredFeatures.appendItem("foo");
+    polylineElement.requiredFeatures.appendItem("http://www.w3.org/TR/SVG11/feature#BogusFeature");
     shouldBeEqualToString("document.defaultView.getComputedStyle(polylineElement, null).display", "");
     debug("Check that setting requiredFeatures to something valid makes it render again");
     polylineElement.requiredFeatures.replaceItem("http://www.w3.org/TR/SVG11/feature#Shape", 0);
@@ -21,7 +21,7 @@ function repaintTest() {
     polylineElement.requiredFeatures.appendItem("http://www.w3.org/TR/SVG11/feature#Gradient");
     shouldBeEqualToString("document.defaultView.getComputedStyle(polylineElement, null).display", "inline");
     debug("Check that adding something invalid to requiredFeatures makes it not render");
-    polylineElement.requiredFeatures.appendItem("foo");
+    polylineElement.requiredFeatures.appendItem("http://www.w3.org/TR/SVG11/feature#BogusFeature");
     shouldBeEqualToString("document.defaultView.getComputedStyle(polylineElement, null).display", "");
 
     completeTest();

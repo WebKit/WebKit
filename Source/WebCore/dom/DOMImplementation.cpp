@@ -89,7 +89,7 @@ private:
 
 #if ENABLE(SVG)
 
-static bool isSVG10Feature(const String &feature, const String &version)
+static bool isSupportedSVG10Feature(const String& feature, const String& version)
 {
     if (!version.isEmpty() && version != "1.0")
         return false;
@@ -118,7 +118,7 @@ static bool isSVG10Feature(const String &feature, const String &version)
         && svgFeatures.contains(feature.right(feature.length() - 8));
 }
 
-static bool isSVG11Feature(const String &feature, const String &version)
+static bool isSupportedSVG11Feature(const String& feature, const String& version)
 {
     if (!version.isEmpty() && version != "1.1")
         return false;
@@ -188,50 +188,6 @@ static bool isSVG11Feature(const String &feature, const String &version)
 }
 #endif
 
-static bool isEvents2Feature(const String &feature, const String &version)
-{
-    if (!version.isEmpty() && version != "2.0")
-        return false;
-
-    static bool initialized = false;
-    DEFINE_STATIC_LOCAL(FeatureSet, events2Features, ());
-    if (!initialized) {
-        addString(events2Features, "Events");
-        addString(events2Features, "HTMLEvents");
-        addString(events2Features, "MouseEvents");
-        addString(events2Features, "MutationEvents");
-        addString(events2Features, "UIEvents");
-        initialized = true;
-    }
-    return events2Features.contains(feature);
-}
-
-static bool isEvents3Feature(const String &feature, const String &version)
-{
-    if (!version.isEmpty() && version != "3.0")
-        return false;
-
-    static bool initialized = false;
-    DEFINE_STATIC_LOCAL(FeatureSet, events3Features, ());
-    if (!initialized) {
-        // FIXME: We probably support many of these features.
-//        addString(events3Features, "CompositionEvents");
-//        addString(events3Features, "Events");
-//        addString(events3Features, "FocusEvents");
-//        addString(events3Features, "HTMLEvents");
-//        addString(events3Features, "KeyboardEvents");
-//        addString(events3Features, "MouseEvents");
-//        addString(events3Features, "MutationEvents");
-//        addString(events3Features, "MutationNameEvents");
-        addString(events3Features, "TextEvents");
-//        addString(events3Features, "UIEvents");
-//        addString(events3Features, "WheelEvents");
-        initialized = true;
-    }
-    // FIXME: We do not yet support Events 3 "extended feature strings".
-    return events3Features.contains(feature);
-}
-
 DOMImplementation::DOMImplementation(Document* document)
     : m_document(document)
 {
@@ -239,31 +195,19 @@ DOMImplementation::DOMImplementation(Document* document)
 
 bool DOMImplementation::hasFeature(const String& feature, const String& version)
 {
-    String lower = feature.lower();
-    if (lower == "core" || lower == "html" || lower == "xml" || lower == "xhtml")
-        return version.isEmpty() || version == "1.0" || version == "2.0";
-    if (lower == "css"
-            || lower == "css2"
-            || lower == "range"
-            || lower == "stylesheets"
-            || lower == "traversal"
-            || lower == "views")
-        return version.isEmpty() || version == "2.0";
-    if (isEvents2Feature(feature, version))
-        return true;
-    if (lower == "xpath")
-        return version.isEmpty() || version == "3.0";
-    if (isEvents3Feature(feature, version))
-        return true;
-
+    if (feature.startsWith("http://www.w3.org/TR/SVG", false)
+        || feature.startsWith("org.w3c.dom.svg", false)
+        || feature.startsWith("org.w3c.svg", false)) {
 #if ENABLE(SVG)
-    if (isSVG11Feature(feature, version))
-        return true;
-    if (isSVG10Feature(feature, version))
-        return true;
+        // FIXME: SVG 2.0 support?
+        return isSupportedSVG10Feature(feature, version) || isSupportedSVG11Feature(feature, version);
+#else
+        UNUSED_PARAM(version);
+        return false;
 #endif
+    }
 
-    return false;
+    return true;
 }
 
 PassRefPtr<DocumentType> DOMImplementation::createDocumentType(const String& qualifiedName,

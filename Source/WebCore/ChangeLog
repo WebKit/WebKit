@@ -1,3 +1,29 @@
+2013-08-09  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Make DOMImplementation::hasFeature() behave according to specification
+        https://bugs.webkit.org/show_bug.cgi?id=119329
+
+        Reviewed by Ryosuke Niwa.
+
+        Make DOMImplementation::hasFeature() behave according to the latest specification:
+        http://dom.spec.whatwg.org/#dom-domimplementation-hasfeature
+
+        Specifically, the function should now return true unconditionally for any non-SVG feature.
+        This behavior is consistent with Firefox and since recently Blink.
+
+        hasFeature() originally would report whether the user agent claimed to support a
+        given DOM feature, but experience proved it was not nearly as reliable or granular
+        as simply checking whether the desired interfaces, attributes, or methods existed.
+        As such, it should no longer be used, but continues to exist (and simply returns
+        true) so that old pages don't stop working.
+
+        No new tests, covered by existing tests.
+
+        * dom/DOMImplementation.cpp:
+        (WebCore::isSupportedSVG10Feature):
+        (WebCore::isSupportedSVG11Feature):
+        (WebCore::DOMImplementation::hasFeature):
+
 2013-08-09  Alejandro G. Castro  <alex@igalia.com>
 
         [GTK] [EFL] Enable tiled shadow blur for the inset shadows.

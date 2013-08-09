@@ -19,7 +19,7 @@ function repaintTest() {
     description("Check that SVGUseElement is initially displayed");
     shouldBeEqualToString("document.defaultView.getComputedStyle(useElement, null).display", "inline");
     description("Check that setting requiredFeatures to something invalid makes it not render");
-    useElement.setAttribute("requiredFeatures", "foo");
+    useElement.setAttribute("requiredFeatures", "http://www.w3.org/TR/SVG11/feature#BogusFeature");
     shouldBeEqualToString("document.defaultView.getComputedStyle(useElement, null).display", "");
     description("Check that setting requiredFeatures to something valid makes it render again");
     useElement.setAttribute("requiredFeatures", "http://www.w3.org/TR/SVG11/feature#Shape");
@@ -28,7 +28,7 @@ function repaintTest() {
     useElement.setAttribute("requiredFeatures", "http://www.w3.org/TR/SVG11/feature#Gradient");
     shouldBeEqualToString("document.defaultView.getComputedStyle(useElement, null).display", "inline");
     debug("Check that adding something invalid to requiredFeatures makes it not render");
-    useElement.setAttribute("requiredFeatures", "foo");
+    useElement.setAttribute("requiredFeatures", "http://www.w3.org/TR/SVG11/feature#BogusFeature");
     shouldBeEqualToString("document.defaultView.getComputedStyle(useElement, null).display", "");
 
     completeTest();

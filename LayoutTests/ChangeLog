@@ -1,3 +1,85 @@
+2013-08-09  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Make DOMImplementation::hasFeature() behave according to specification
+        https://bugs.webkit.org/show_bug.cgi?id=119329
+
+        Reviewed by Ryosuke Niwa.
+
+        Rebaseline several test cases now that DOMImplementation::hasFeature() returns
+        true unconditionally for non-SVG features.
+
+        Also use a valid svg prefix for unknown features in SVG tests so that they are
+        properly recognized as SVG features and so that hasFeature() returns false as
+        expected.
+
+        * dom/xhtml/level3/core/hasFeature01-expected.txt:
+        * dom/xhtml/level3/core/hasFeature02-expected.txt:
+        * dom/xhtml/level3/core/hasFeature03-expected.txt:
+        * dom/xhtml/level3/core/hasFeature04-expected.txt:
+        * fast/dom/features-expected.txt:
+        * platform/efl/svg/W3C-SVG-1.1-SE/types-dom-06-f-expected.txt:
+        * platform/efl/svg/W3C-SVG-1.1/struct-dom-03-b-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/types-dom-06-f-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1/struct-dom-03-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/types-dom-06-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/struct-dom-03-b-expected.txt:
+        * platform/qt-mac/svg/W3C-SVG-1.1-SE/types-dom-06-f-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1-SE/types-dom-06-f-expected.txt:
+        * svg/W3C-SVG-1.1/struct-dom-03-b-expected.txt:
+        * svg/custom/outer-svg-unknown-feature.svg:
+        * svg/dynamic-updates/script-tests/SVGCircleElement-dom-requiredFeatures.js:
+        (repaintTest):
+        * svg/dynamic-updates/script-tests/SVGCircleElement-svgdom-requiredFeatures.js:
+        (repaintTest):
+        * svg/dynamic-updates/script-tests/SVGEllipseElement-dom-requiredFeatures.js:
+        (repaintTest):
+        * svg/dynamic-updates/script-tests/SVGEllipseElement-svgdom-requiredFeatures.js:
+        (repaintTest):
+        * svg/dynamic-updates/script-tests/SVGForeignObjectElement-dom-requiredFeatures.js:
+        (repaintTest):
+        * svg/dynamic-updates/script-tests/SVGForeignObjectElement-svgdom-requiredFeatures.js:
+        (repaintTest):
+        * svg/dynamic-updates/script-tests/SVGGElement-dom-requiredFeatures.js:
+        (repaintTest):
+        * svg/dynamic-updates/script-tests/SVGGElement-svgdom-requiredFeatures.js:
+        (repaintTest):
+        * svg/dynamic-updates/script-tests/SVGImageElement-dom-requiredFeatures.js:
+        (repaintTest):
+        * svg/dynamic-updates/script-tests/SVGImageElement-svgdom-requiredFeatures.js:
+        (repaintTest):
+        * svg/dynamic-updates/script-tests/SVGLineElement-dom-requiredFeatures.js:
+        (repaintTest):
+        * svg/dynamic-updates/script-tests/SVGLineElement-svgdom-requiredFeatures.js:
+        (repaintTest):
+        * svg/dynamic-updates/script-tests/SVGPathElement-dom-requiredFeatures.js:
+        (repaintTest):
+        * svg/dynamic-updates/script-tests/SVGPathElement-svgdom-requiredFeatures.js:
+        (repaintTest):
+        * svg/dynamic-updates/script-tests/SVGPolygonElement-dom-requiredFeatures.js:
+        (repaintTest):
+        * svg/dynamic-updates/script-tests/SVGPolygonElement-svgdom-requiredFeatures.js:
+        (repaintTest):
+        * svg/dynamic-updates/script-tests/SVGPolylineElement-dom-requiredFeatures.js:
+        (repaintTest):
+        * svg/dynamic-updates/script-tests/SVGPolylineElement-svgdom-requiredFeatures.js:
+        (repaintTest):
+        * svg/dynamic-updates/script-tests/SVGRectElement-dom-requiredFeatures.js:
+        (repaintTest):
+        * svg/dynamic-updates/script-tests/SVGRectElement-svgdom-requiredFeatures.js:
+        (repaintTest):
+        * svg/dynamic-updates/script-tests/SVGSVGElement-dom-requiredFeatures.js:
+        (repaintTest):
+        * svg/dynamic-updates/script-tests/SVGSVGElement-svgdom-requiredFeatures.js:
+        (repaintTest):
+        * svg/dynamic-updates/script-tests/SVGTextElement-dom-requiredFeatures.js:
+        (repaintTest):
+        * svg/dynamic-updates/script-tests/SVGTextElement-svgdom-requiredFeatures.js:
+        (repaintTest):
+        * svg/dynamic-updates/script-tests/SVGUseElement-dom-requiredFeatures.js:
+        (repaintTest):
+        * svg/dynamic-updates/script-tests/SVGUseElement-svgdom-requiredFeatures.js:
+        (repaintTest):
+
 2013-08-09  Simon Fraser  <simon.fraser@apple.com>
 
         move-by-word-visually-multi-space.html takes 21s and spends most of its time doing spelling and grammar checking
