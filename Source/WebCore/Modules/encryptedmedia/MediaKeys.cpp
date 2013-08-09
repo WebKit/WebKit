@@ -118,6 +118,26 @@ PassRefPtr<MediaKeySession> MediaKeys::createSession(ScriptExecutionContext* con
     return session;
 }
 
+bool MediaKeys::isTypeSupported(const String& keySystem, const String& mimeType)
+{
+    // 1. If keySystem contains an unrecognized or unsupported Key System, return false and abort these steps.
+    // Key system string comparison is case-sensitive.
+    if (keySystem.isNull() || keySystem.isEmpty() || !CDM::supportsKeySystem(keySystem))
+        return false;
+
+    // 2. If type is null or an empty string, return true and abort these steps.
+    if (mimeType.isNull() || mimeType.isEmpty())
+        return true;
+
+    // 3. If the Key System specified by keySystem does not support decrypting the container and/or codec
+    // specified by type, return false and abort these steps.
+    if (!CDM::keySystemSupportsMimeType(keySystem, mimeType))
+        return false;
+
+    // 4. Return true;
+    return true;
+}
+
 void MediaKeys::setMediaElement(HTMLMediaElement* element)
 {
     m_mediaElement = element;

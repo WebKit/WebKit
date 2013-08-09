@@ -62,9 +62,16 @@ SOFT_LINK_CLASS(AVFoundation, AVAssetResourceLoadingRequest)
 #define AVAssetResourceLoadingRequest getAVAssetResourceLoadingRequest()
 
 
-bool CDMPrivateAVFoundation::supportsKeySytem(const String& keySystem)
+bool CDMPrivateAVFoundation::supportsKeySystem(const String& keySystem)
 {
     return equalIgnoringCase(keySystem, "com.apple.fps") || equalIgnoringCase(keySystem, "com.apple.fps.1_0");
+}
+
+bool CDMPrivateAVFoundation::supportsKeySystemAndMimeType(const String& keySystem, const String& mimeType)
+{
+    if (!supportsKeySystem(keySystem))
+        return false;
+    return [AVURLAsset isPlayableExtendedMIMEType:mimeType];
 }
 
 bool CDMPrivateAVFoundation::supportsMIMEType(const String& mimeType)

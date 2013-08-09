@@ -2015,7 +2015,7 @@ void Internals::forceReload(bool endToEnd)
 #if ENABLE(ENCRYPTED_MEDIA_V2)
 void Internals::initializeMockCDM()
 {
-    CDM::registerCDMFactory(MockCDM::create, MockCDM::supportsKeySytem);
+    CDM::registerCDMFactory(MockCDM::create, MockCDM::supportsKeySystem, MockCDM::supportsKeySystemAndMimeType);
 }
 #endif
 

@@ -43,14 +43,16 @@ namespace WebCore {
 struct CDMFactory {
     WTF_MAKE_NONCOPYABLE(CDMFactory); WTF_MAKE_FAST_ALLOCATED;
 public:
-    CDMFactory(CreateCDM constructor, CDMSupportsKeySystem supportsKeySystem)
+    CDMFactory(CreateCDM constructor, CDMSupportsKeySystem supportsKeySystem, CDMSupportsKeySystemAndMimeType supportsKeySystemAndMimeType)
         : constructor(constructor)
         , supportsKeySystem(supportsKeySystem)
+        , supportsKeySystemAndMimeType(supportsKeySystemAndMimeType)
     {
     }
 
     CreateCDM constructor;
     CDMSupportsKeySystem supportsKeySystem;
+    CDMSupportsKeySystemAndMimeType supportsKeySystemAndMimeType;
 };
 
 static Vector<CDMFactory*>& installedCDMFactories()
@@ -62,7 +64,7 @@ static Vector<CDMFactory*>& installedCDMFactories()
 
         // FIXME: initialize specific UA CDMs. http://webkit.org/b/109318, http://webkit.org/b/109320
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
-        cdms.append(new CDMFactory(CDMPrivateAVFoundation::create, CDMPrivateAVFoundation::supportsKeySytem));
+        cdms.append(new CDMFactory(CDMPrivateAVFoundation::create, CDMPrivateAVFoundation::supportsKeySystem, CDMPrivateAVFoundation::supportsKeySystemAndMimeType));
 #endif
 
     }
@@ -70,9 +72,9 @@ static Vector<CDMFactory*>& installedCDMFactories()
     return cdms;
 }
 
-void CDM::registerCDMFactory(CreateCDM constructor, CDMSupportsKeySystem supportsKeySystem)
+void CDM::registerCDMFactory(CreateCDM constructor, CDMSupportsKeySystem supportsKeySystem, CDMSupportsKeySystemAndMimeType supportsKeySystemAndMimeType)
 {
-    installedCDMFactories().append(new CDMFactory(constructor, supportsKeySystem));
+    installedCDMFactories().append(new CDMFactory(constructor, supportsKeySystem, supportsKeySystemAndMimeType));
 }
 
 static CDMFactory* CDMFactoryForKeySystem(const String& keySystem)
@@ -88,6 +90,13 @@ static CDMFactory* CDMFactoryForKeySystem(const String& keySystem)
 bool CDM::supportsKeySystem(const String& keySystem)
 {
     return CDMFactoryForKeySystem(keySystem);
+}
+
+bool CDM::keySystemSupportsMimeType(const String& keySystem, const String& mimeType)
+{
+    if (CDMFactory* factory = CDMFactoryForKeySystem(keySystem))
+        return factory->supportsKeySystemAndMimeType(keySystem, mimeType);
+    return false;
 }
 
 PassOwnPtr<CDM> CDM::create(const String& keySystem)

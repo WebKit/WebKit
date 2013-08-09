@@ -42,6 +42,7 @@ class MediaPlayer;
 
 typedef PassOwnPtr<CDMPrivateInterface> (*CreateCDM)(CDM*);
 typedef bool (*CDMSupportsKeySystem)(const String&);
+typedef bool (*CDMSupportsKeySystemAndMimeType)(const String&, const String&);
 
 class CDMClient {
 public:
@@ -66,8 +67,9 @@ public:
 
     enum CDMErrorCode { UnknownError = 1, ClientError, ServiceError, OutputError, HardwareChangeError, DomainError };
     static bool supportsKeySystem(const String&);
+    static bool keySystemSupportsMimeType(const String& keySystem, const String& mimeType);
     static PassOwnPtr<CDM> create(const String& keySystem);
-    static void registerCDMFactory(CreateCDM, CDMSupportsKeySystem);
+    static void registerCDMFactory(CreateCDM, CDMSupportsKeySystem, CDMSupportsKeySystemAndMimeType);
     ~CDM();
 
     bool supportsMIMEType(const String&) const;

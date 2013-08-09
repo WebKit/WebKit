@@ -50,6 +50,8 @@ public:
 
     PassRefPtr<MediaKeySession> createSession(ScriptExecutionContext*, const String& mimeType, Uint8Array* initData, ExceptionCode&);
 
+    static bool isTypeSupported(const String& keySystem, const String& mimeType);
+
     const String& keySystem() const { return m_keySystem; }
     CDM* cdm() { return m_cdm.get(); }
 

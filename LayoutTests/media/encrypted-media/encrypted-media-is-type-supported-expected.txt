@@ -1,0 +1,22 @@
+Test Encrypted Media extension of MediaKeys isTypeSupported() method.
+
+Always return false for a null type.
+EXPECTED (MediaKeys.isTypeSupported(null) == 'false') OK
+
+Always return false for an empty type.
+EXPECTED (MediaKeys.isTypeSupported('') == 'false') OK
+EXPECTED (MediaKeys.isTypeSupported('', '') == 'false') OK
+EXPECTED (MediaKeys.isTypeSupported('', null) == 'false') OK
+EXPECTED (MediaKeys.isTypeSupported('', undefined) == 'false') OK
+EXPECTED (MediaKeys.isTypeSupported('', 'video/invalid') == 'false') OK
+
+Always return true for supported types.
+EXPECTED (MediaKeys.isTypeSupported('com.webcore.mock') == 'true') OK
+
+Always return true for supported types and containers.
+EXPECTED (MediaKeys.isTypeSupported('com.webcore.mock', 'video/mock') == 'true') OK
+
+Always return false for supported types but unsupported containers.
+EXPECTED (MediaKeys.isTypeSupported('com.webcore.mock', 'video/invalid') == 'false') OK
+END OF TEST
+
