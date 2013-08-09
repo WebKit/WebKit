@@ -1,3 +1,10 @@
+2013-08-09  Alexey Proskuryakov  <ap@apple.com>
+
+        http/tests/navigation/back-twice-without-commit.html times out
+        https://bugs.webkit.org/show_bug.cgi?id=82980
+
+        * platform/mac/TestExpectations: Marked as such again, reverting r153842.
+
 2013-08-09  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Add support for KeyboardEvent.location attribute
