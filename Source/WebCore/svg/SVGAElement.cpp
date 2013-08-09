@@ -134,8 +134,7 @@ void SVGAElement::svgAttributeChanged(const QualifiedName& attrName)
     // as none of the other properties changes the linking behaviour for our <a> element.
     if (SVGURIReference::isKnownAttribute(attrName)) {
         bool wasLink = isLink();
-        setIsLink(!href().isNull());
-
+        setIsLink(!href().isNull() && !shouldProhibitLinks(this));
         if (wasLink != isLink())
             setNeedsStyleRecalc();
     }

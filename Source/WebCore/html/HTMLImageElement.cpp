@@ -29,6 +29,7 @@
 #include "CachedImage.h"
 #include "EventNames.h"
 #include "FrameView.h"
+#include "HTMLAnchorElement.h"
 #include "HTMLDocument.h"
 #include "HTMLFormElement.h"
 #include "HTMLNames.h"
@@ -126,9 +127,8 @@ void HTMLImageElement::parseAttribute(const QualifiedName& name, const AtomicStr
             deviceScaleFactor = page->deviceScaleFactor();
         m_bestFitImageURL = bestFitSourceForImageAttributes(deviceScaleFactor, fastGetAttribute(srcAttr), fastGetAttribute(srcsetAttr));
         m_imageLoader.updateFromElementIgnoringPreviousError();
-    }
-    else if (name == usemapAttr)
-        setIsLink(!value.isNull());
+    } else if (name == usemapAttr)
+        setIsLink(!value.isNull() && !shouldProhibitLinks(this));
     else if (name == onbeforeloadAttr)
         setAttributeEventListener(eventNames().beforeloadEvent, createAttributeEventListener(this, name, value));
     else if (name == compositeAttr) {

@@ -42,6 +42,7 @@
 #include "PlatformMouseEvent.h"
 #include "RenderImage.h"
 #include "ResourceRequest.h"
+#include "SVGImage.h"
 #include "SecurityOrigin.h"
 #include "SecurityPolicy.h"
 #include "Settings.h"
@@ -245,7 +246,7 @@ void HTMLAnchorElement::parseAttribute(const QualifiedName& name, const AtomicSt
 {
     if (name == hrefAttr) {
         bool wasLink = isLink();
-        setIsLink(!value.isNull());
+        setIsLink(!value.isNull() && !shouldProhibitLinks(this));
         if (wasLink != isLink())
             didAffectSelector(AffectedSelectorLink | AffectedSelectorVisited | AffectedSelectorEnabled);
         if (isLink()) {
@@ -597,6 +598,15 @@ bool isEnterKeyKeydownEvent(Event* event)
 bool isLinkClick(Event* event)
 {
     return event->type() == eventNames().clickEvent && (!event->isMouseEvent() || static_cast<MouseEvent*>(event)->button() != RightButton);
+}
+
+bool shouldProhibitLinks(Element* element)
+{
+#if ENABLE(SVG)
+    return isInSVGImage(element);
+#else
+    return false;
+#endif
 }
 
 bool HTMLAnchorElement::willRespondToMouseClickEvents()

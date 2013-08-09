@@ -33,6 +33,7 @@
 
 namespace WebCore {
 
+class Element;
 class FrameView;
 class ImageBuffer;
 class Page;
@@ -52,6 +53,8 @@ public:
 
     virtual bool isSVGImage() const { return true; }
     virtual IntSize size() const OVERRIDE { return m_intrinsicSize; }
+
+    virtual bool hasSingleSecurityOrigin() const OVERRIDE;
 
     virtual bool hasRelativeWidth() const;
     virtual bool hasRelativeHeight() const;
@@ -97,6 +100,9 @@ private:
     OwnPtr<Page> m_page;
     IntSize m_intrinsicSize;
 };
+
+bool isInSVGImage(const Element*);
+
 }
 
 #endif // ENABLE(SVG)

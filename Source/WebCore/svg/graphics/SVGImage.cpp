@@ -30,11 +30,13 @@
 #if ENABLE(SVG)
 #include "SVGImage.h"
 
+#include "Chrome.h"
 #include "DocumentLoader.h"
 #include "FrameView.h"
 #include "ImageBuffer.h"
 #include "ImageObserver.h"
 #include "IntRect.h"
+#include "NodeTraversal.h"
 #include "RenderSVGRoot.h"
 #include "RenderStyle.h"
 #include "SVGDocument.h"
@@ -59,6 +61,27 @@ SVGImage::~SVGImage()
 
     // Verify that page teardown destroyed the Chrome
     ASSERT(!m_chromeClient || !m_chromeClient->image());
+}
+
+bool SVGImage::hasSingleSecurityOrigin() const
+{
+    if (!m_page)
+        return true;
+
+    Frame* frame = m_page->mainFrame();
+    SVGSVGElement* rootElement = toSVGDocument(frame->document())->rootElement();
+    if (!rootElement)
+        return true;
+
+    // Don't allow foreignObject elements since they can leak information with arbitrary HTML (like spellcheck or control theme).
+    for (Element* current = ElementTraversal::firstWithin(rootElement); current; current = ElementTraversal::next(current, rootElement)) {
+        if (current->hasTagName(SVGNames::foreignObjectTag))
+            return false;
+    }
+
+    // Because SVG image rendering disallows external resources and links,
+    // these images effectively are restricted to a single security origin.
+    return true;
 }
 
 void SVGImage::setContainerSize(const IntSize& size)
@@ -369,6 +392,18 @@ bool SVGImage::dataChanged(bool allDataReceived)
 String SVGImage::filenameExtension() const
 {
     return "svg";
+}
+
+bool isInSVGImage(const Element* element)
+{
+    ASSERT(element);
+
+    Page* page = element->document()->page();
+    if (!page)
+        return false;
+
+    ChromeClient* chromeClient = page->chrome().client();
+    return chromeClient && chromeClient->isSVGImageChromeClient();
 }
 
 }

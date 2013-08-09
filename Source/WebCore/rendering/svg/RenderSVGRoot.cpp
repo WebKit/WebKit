@@ -38,6 +38,7 @@
 #include "RenderSVGResource.h"
 #include "RenderSVGResourceContainer.h"
 #include "RenderView.h"
+#include "SVGImage.h"
 #include "SVGLength.h"
 #include "SVGRenderingContext.h"
 #include "SVGResources.h"
@@ -124,20 +125,7 @@ bool RenderSVGRoot::isEmbeddedThroughSVGImage() const
 {
     if (!node())
         return false;
-
-    Frame* frame = node()->document()->frame();
-    if (!frame)
-        return false;
-
-    // Test whether we're embedded through an img.
-    if (!frame->page())
-        return false;
-
-    ChromeClient* chromeClient = frame->page()->chrome().client();
-    if (!chromeClient || !chromeClient->isSVGImageChromeClient())
-        return false;
-
-    return true;
+    return isInSVGImage(toSVGSVGElement(node()));
 }
 
 bool RenderSVGRoot::isEmbeddedThroughFrameContainingSVGDocument() const

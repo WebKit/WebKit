@@ -1,3 +1,26 @@
+2013-08-08  Timothy Hatcher  <timothy@apple.com>
+
+        Allow SVG images to be drawn into canvas without tainting.
+        https://bugs.webkit.org/show_bug.cgi?id=119492
+
+        Reviewed by Darin Adler.
+
+        * fast/canvas/svg-taint-expected.txt: Removed.
+        * fast/canvas/svg-taint.html: Removed. Obsolete.
+        * http/tests/security/canvas-remote-read-data-url-svg-image-expected.txt: Removed.
+        * http/tests/security/canvas-remote-read-data-url-svg-image.html: Removed. Obsolete.
+        * http/tests/security/canvas-remote-read-svg-image-expected.txt: Removed.
+        * http/tests/security/canvas-remote-read-svg-image.html: Removed. Obsolete.
+        * svg/as-image/resources/link-xhtml-svg.svg: Added.
+        * svg/as-image/resources/link-xhtml.svg: Added.
+        * svg/as-image/resources/link.svg: Added.
+        * svg/as-image/svg-canvas-link-not-colored-expected.txt: Added.
+        * svg/as-image/svg-canvas-link-not-colored.html: Added.
+        * svg/as-image/svg-canvas-not-tainted-expected.txt: Added.
+        * svg/as-image/svg-canvas-not-tainted.html: Added.
+        * svg/as-image/svg-canvas-xhtml-tainted-expected.txt: Added.
+        * svg/as-image/svg-canvas-xhtml-tainted.html: Added.
+
 2013-08-08  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r153847.
