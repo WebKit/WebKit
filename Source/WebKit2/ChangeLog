@@ -1,3 +1,85 @@
+2013-08-09  Brian Holt  <brian.holt@samsung.com>
+
+        [GTK] [WebKit2] Add an 'authenticate' signal to WebKitWebView
+        https://bugs.webkit.org/show_bug.cgi?id=99352
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add a new public class to the API, WebKitAuthenticationRequest, to be
+        emitted along with a new WebKitWebView::authenticate signal to
+        let client applications to provide their own authentication
+        when the user is challenged with HTTP authentication. The
+        credential is exposed through a new class WebKitCredential.
+
+        * GNUmakefile.list.am:
+        * UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:
+        (okButtonClicked): Use new API for authentication.
+        (cancelButtonClicked): Ditto.
+        (webkitAuthenticationDialogInitialize):Get
+        authenticationChallenge from request object.
+        (webkitAuthenticationDialogNew): Ditto.
+        * UIProcess/API/gtk/WebKitAuthenticationDialog.h:
+        * UIProcess/API/gtk/WebKitAuthenticationRequest.cpp: Added new
+        class representing a HTTP authentication request.
+        (webkitAuthenticationRequestDispose):
+        (webkit_authentication_request_class_init):
+        (webkitAuthenticationRequestCreate):
+        (webkitAuthenticationRequestGetAuthenticationChallenge):
+        (webkit_authentication_request_can_save_credentials):
+        (webkit_authentication_request_get_proposed_credential):
+        (webkit_authentication_request_get_host):
+        (webkit_authentication_request_get_port):
+        (webkit_authentication_request_get_realm):
+        (webkit_authentication_request_get_scheme):
+        (webkit_authentication_request_is_for_proxy):
+        (webkit_authentication_request_is_retry):
+        (webkit_authentication_request_authenticate):
+        (webkit_authentication_request_cancel):
+        * UIProcess/API/gtk/WebKitAuthenticationRequest.h: Added.
+        * UIProcess/API/gtk/WebKitAuthenticationRequestPrivate.h: Added.
+        * UIProcess/API/gtk/WebKitCredential.cpp: Added new class to
+        support credentials for HTTP authentication.
+        (_WebKitCredential::_WebKitCredential):
+        (webkitCredentialCreate):
+        (webkitCredentialGetCredential):
+        (webkit_credential_new):
+        (webkit_credential_copy):
+        (webkit_credential_free):
+        (webkit_credential_get_username):
+        (webkit_credential_get_password):
+        (webkit_credential_has_password):
+        (webkit_credential_get_persistence):
+        * UIProcess/API/gtk/WebKitCredential.h: Added.
+        * UIProcess/API/gtk/WebKitCredentialPrivate.h: Added.
+        * UIProcess/API/gtk/WebKitWebView.cpp: Added authenticate signal.
+        (webkitWebViewAuthenticate): Default signal handler for authenticate.
+        (webkit_web_view_class_init): Ditto.
+        (webkitWebViewHandleAuthenticationChallenge): Create an
+        authentication request and emit it with authenticate signal.
+        * UIProcess/API/gtk/WebKitWebView.h: Replaced reserved function
+        pointer slot with for WebViewClass with function pointer to
+        authenticate signal handler.
+        * UIProcess/API/gtk/docs/webkit2gtk-docs.sgml: Added new section for
+        the authentication request.
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt: Ditto.
+        * UIProcess/API/gtk/docs/webkit2gtk.types: Added authentication
+        request and credential types.
+        * UIProcess/API/gtk/tests/TestWebKitWebView.cpp: Created a new
+        unit test for HTTP authentication. A libsoup server callback
+        handler is installed that creates soup messages with appropriate
+        headers and body to test HTTP authentication.
+        (testWebViewAuthenticationRequest): Test the authentication
+        request and credential API.
+        (testWebViewAuthenticationCancel): Test cancelled authentication.
+        (testWebViewAuthenticationFailure): Test repeated authentication failures.
+        (testWebViewAuthenticationNoCredential): Test continue without
+        credentials.
+        (testWebViewAuthenticationStorage): Test credential storage.
+        (testWebViewAuthenticationSuccess): Test successful authentication.
+        (beforeAll): Added tests.
+        * UIProcess/API/gtk/webkit2.h: Added WebKitAuthenticationRequest and
+        WebKitCredential headers.
+
 2013-08-09  Tim Horton  <timothy_horton@apple.com>
 
         PDFPlugin is disabled by default in nightlies on Mac accidentally

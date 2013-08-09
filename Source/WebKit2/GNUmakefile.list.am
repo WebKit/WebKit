@@ -94,12 +94,14 @@ webkit2_h_api += \
 	$(WebKit2)/UIProcess/API/cpp/WKRetainPtr.h
 
 webkit2gtk_h_api += \
+	$(WebKit2)/UIProcess/API/gtk/WebKitAuthenticationRequest.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitBackForwardList.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitBackForwardListItem.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitContextMenu.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitContextMenuActions.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitContextMenuItem.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitCookieManager.h \
+	$(WebKit2)/UIProcess/API/gtk/WebKitCredential.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitDefines.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitDownload.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitEditingCommands.h \
@@ -653,6 +655,9 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/API/gtk/PageClientImpl.cpp \
 	Source/WebKit2/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp \
 	Source/WebKit2/UIProcess/API/gtk/WebKitAuthenticationDialog.h \
+	Source/WebKit2/UIProcess/API/gtk/WebKitAuthenticationRequest.cpp \
+	Source/WebKit2/UIProcess/API/gtk/WebKitAuthenticationRequest.h \
+	Source/WebKit2/UIProcess/API/gtk/WebKitAuthenticationRequestPrivate.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitBackForwardList.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitBackForwardList.cpp \
 	Source/WebKit2/UIProcess/API/gtk/WebKitBackForwardListItem.h \
@@ -672,6 +677,9 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/API/gtk/WebKitCookieManager.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitCookieManager.cpp \
 	Source/WebKit2/UIProcess/API/gtk/WebKitCookieManagerPrivate.h \
+	Source/WebKit2/UIProcess/API/gtk/WebKitCredential.cpp \
+	Source/WebKit2/UIProcess/API/gtk/WebKitCredential.h \
+	Source/WebKit2/UIProcess/API/gtk/WebKitCredentialPrivate.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitDefines.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitDownload.cpp \
 	Source/WebKit2/UIProcess/API/gtk/WebKitDownload.h \

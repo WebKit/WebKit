@@ -29,6 +29,7 @@
 #define WebKitWebView_h
 
 #include <JavaScriptCore/JSBase.h>
+#include <webkit2/WebKitAuthenticationRequest.h>
 #include <webkit2/WebKitBackForwardList.h>
 #include <webkit2/WebKitDefines.h>
 #include <webkit2/WebKitFileChooserRequest.h>
@@ -242,6 +243,8 @@ struct _WebKitWebViewClass {
                                               WebKitInsecureContentEvent   event);
     gboolean   (* web_process_crashed)       (WebKitWebView               *web_view);
 
+    gboolean   (* authenticate)              (WebKitWebView               *web_view,
+                                              WebKitAuthenticationRequest *request);
     void (*_webkit_reserved0) (void);
     void (*_webkit_reserved1) (void);
     void (*_webkit_reserved2) (void);
@@ -249,7 +252,6 @@ struct _WebKitWebViewClass {
     void (*_webkit_reserved4) (void);
     void (*_webkit_reserved5) (void);
     void (*_webkit_reserved6) (void);
-    void (*_webkit_reserved7) (void);
 };
 
 WEBKIT_API GType

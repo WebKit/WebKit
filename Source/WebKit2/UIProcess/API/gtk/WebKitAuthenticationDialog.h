@@ -20,7 +20,7 @@
 #ifndef WebKitAuthenticationDialog_h
 #define WebKitAuthenticationDialog_h
 
-#include "AuthenticationChallengeProxy.h"
+#include "WebKitAuthenticationRequest.h"
 #include "WebKitAuthenticationWidget.h"
 #include <gtk/gtk.h>
 
@@ -48,7 +48,7 @@ struct _WebKitAuthenticationDialogClass {
 };
 
 GType webkit_authentication_dialog_get_type();
-GtkWidget* webkitAuthenticationDialogNew(WebKit::AuthenticationChallengeProxy*, CredentialStorageMode);
+GtkWidget* webkitAuthenticationDialogNew(WebKitAuthenticationRequest*, CredentialStorageMode);
 
 G_END_DECLS
 
