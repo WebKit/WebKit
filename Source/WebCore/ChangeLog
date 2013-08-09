@@ -1,3 +1,26 @@
+2013-08-08  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix ASSERT(m_contentsSolidColor.isValid()) assertion on iOS at nytimes.com
+        https://bugs.webkit.org/show_bug.cgi?id=119603
+
+        Reviewed by Dean Jackson.
+
+        On iOS it's possible for a GraphicsLayer to transition between having
+        a solid background color, and containing media. This happens on nytimes.com
+        when playing video.
+        
+        In this case, GraphicsLayerCA::updateContentsColorLayer() would assert
+        because m_contentsLayer had been already set up to contain media, but
+        it would be trying to update the color.
+        
+        Fix by bailing from all the updateContents* functions if there is no
+        contents layer, or that layer exists for a different purpose.
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::updateContentsMediaLayer):
+        (WebCore::GraphicsLayerCA::updateContentsCanvasLayer):
+        (WebCore::GraphicsLayerCA::updateContentsColorLayer):
+
 2013-08-08  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r153847.

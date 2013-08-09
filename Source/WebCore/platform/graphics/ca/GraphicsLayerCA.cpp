@@ -1727,37 +1727,40 @@ void GraphicsLayerCA::updateContentsImage()
 
 void GraphicsLayerCA::updateContentsMediaLayer()
 {
+    if (!m_contentsLayer || m_contentsLayerPurpose != ContentsLayerForMedia)
+        return;
+
     // Video layer was set as m_contentsLayer, and will get parented in updateSublayerList().
-    if (m_contentsLayer) {
-        setupContentsLayer(m_contentsLayer.get());
-        updateContentsRect();
-    }
+    setupContentsLayer(m_contentsLayer.get());
+    updateContentsRect();
 }
 
 void GraphicsLayerCA::updateContentsCanvasLayer()
 {
+    if (!m_contentsLayer || m_contentsLayerPurpose != ContentsLayerForCanvas)
+        return;
+
     // CanvasLayer was set as m_contentsLayer, and will get parented in updateSublayerList().
-    if (m_contentsLayer) {
-        setupContentsLayer(m_contentsLayer.get());
-        m_contentsLayer->setNeedsDisplay();
-        updateContentsRect();
-    }
+    setupContentsLayer(m_contentsLayer.get());
+    m_contentsLayer->setNeedsDisplay();
+    updateContentsRect();
 }
 
 void GraphicsLayerCA::updateContentsColorLayer()
 {
     // Color layer was set as m_contentsLayer, and will get parented in updateSublayerList().
-    if (m_contentsLayer) {
-        setupContentsLayer(m_contentsLayer.get());
-        updateContentsRect();
-        ASSERT(m_contentsSolidColor.isValid()); // An invalid color should have removed the contents layer.
-        m_contentsLayer->setBackgroundColor(m_contentsSolidColor);
+    if (!m_contentsLayer || m_contentsLayerPurpose != ContentsLayerForBackgroundColor)
+        return;
 
-        if (m_contentsLayerClones) {
-            LayerMap::const_iterator end = m_contentsLayerClones->end();
-            for (LayerMap::const_iterator it = m_contentsLayerClones->begin(); it != end; ++it)
-                it->value->setBackgroundColor(m_contentsSolidColor);
-        }
+    setupContentsLayer(m_contentsLayer.get());
+    updateContentsRect();
+    ASSERT(m_contentsSolidColor.isValid());
+    m_contentsLayer->setBackgroundColor(m_contentsSolidColor);
+
+    if (m_contentsLayerClones) {
+        LayerMap::const_iterator end = m_contentsLayerClones->end();
+        for (LayerMap::const_iterator it = m_contentsLayerClones->begin(); it != end; ++it)
+            it->value->setBackgroundColor(m_contentsSolidColor);
     }
 }
 
