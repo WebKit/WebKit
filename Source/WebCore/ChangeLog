@@ -1,3 +1,20 @@
+2013-08-09  Alejandro G. Castro  <alex@igalia.com>
+
+        [GTK] [EFL] Enable tiled shadow blur for the inset shadows.
+        https://bugs.webkit.org/show_bug.cgi?id=119078
+
+        Reviewed by Martin Robinson.
+
+        Already covered in the tests.
+
+        * platform/graphics/GraphicsContext.cpp:
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::fillCurrentCairoPath): Added to allow fill the path
+        without the shadow.
+        (WebCore::shadowAndFillCurrentCairoPath):
+        (WebCore::GraphicsContext::fillRectWithRoundedHole): Added cairo
+        implementation.
+
 2013-08-09  Jakob Petsovits  <jpetsovits@blackberry.com>
 
         [BlackBerry] Don't release the canvas Drawable, flush it directly instead.

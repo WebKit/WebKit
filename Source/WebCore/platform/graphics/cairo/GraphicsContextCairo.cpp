@@ -150,17 +150,21 @@ static inline void drawPathShadow(GraphicsContext* context, PathDrawingStyle dra
     cairo_append_path(cairoContext, path.get());
 }
 
-static inline void shadowAndFillCurrentCairoPath(GraphicsContext* context)
+static inline void fillCurrentCairoPath(GraphicsContext* context)
 {
     cairo_t* cr = context->platformContext()->cr();
     cairo_save(cr);
-
-    drawPathShadow(context, Fill);
 
     context->platformContext()->prepareForFilling(context->state(), PlatformContextCairo::AdjustPatternForGlobalAlpha);
     cairo_fill(cr);
 
     cairo_restore(cr);
+}
+
+static inline void shadowAndFillCurrentCairoPath(GraphicsContext* context)
+{
+    drawPathShadow(context, Fill);
+    fillCurrentCairoPath(context);
 }
 
 static inline void shadowAndStrokeCurrentCairoPath(GraphicsContext* context)
@@ -1033,6 +1037,28 @@ void GraphicsContext::fillRoundedRect(const IntRect& r, const IntSize& topLeft, 
     appendWebCorePathToCairoContext(cr, path);
     setSourceRGBAFromColor(cr, color);
     cairo_fill(cr);
+    cairo_restore(cr);
+}
+
+void GraphicsContext::fillRectWithRoundedHole(const IntRect& rect, const RoundedRect& roundedHoleRect, const Color& color, ColorSpace colorSpace)
+{
+    if (paintingDisabled() || !color.isValid())
+        return;
+
+    if (this->mustUseShadowBlur())
+        platformContext()->shadowBlur().drawInsetShadow(this, rect, roundedHoleRect.rect(), roundedHoleRect.radii());
+
+    Path path;
+    path.addRect(rect);
+    if (!roundedHoleRect.radii().isZero())
+        path.addRoundedRect(roundedHoleRect);
+    else
+        path.addRect(roundedHoleRect.rect());
+
+    cairo_t* cr = platformContext()->cr();
+    cairo_save(cr);
+    setPathOnCairoContext(platformContext()->cr(), path.platformPath()->context());
+    fillCurrentCairoPath(this);
     cairo_restore(cr);
 }
 
