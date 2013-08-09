@@ -1123,7 +1123,7 @@ String DOMWindow::atob(const String& encodedString, ExceptionCode& ec)
     }
 
     Vector<char> out;
-    if (!base64Decode(encodedString, out, Base64FailOnInvalidCharacter)) {
+    if (!base64Decode(encodedString, out, Base64FailOnInvalidCharacterOrExcessPadding)) {
         ec = INVALID_CHARACTER_ERR;
         return String();
     }

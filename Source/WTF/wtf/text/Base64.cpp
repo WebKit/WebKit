@@ -140,31 +140,35 @@ bool base64Decode(const Vector<char>& in, Vector<char>& out, Base64DecodePolicy 
 }
 
 template<typename T>
-static inline bool base64DecodeInternal(const T* data, unsigned len, Vector<char>& out, Base64DecodePolicy policy)
+static inline bool base64DecodeInternal(const T* data, unsigned length, Vector<char>& out, Base64DecodePolicy policy)
 {
     out.clear();
-    if (!len)
+    if (!length)
         return true;
 
-    out.grow(len);
+    out.grow(length);
 
-    bool sawEqualsSign = false;
+    unsigned equalsSignCount = 0;
     unsigned outLength = 0;
-    for (unsigned idx = 0; idx < len; ++idx) {
+    for (unsigned idx = 0; idx < length; ++idx) {
         unsigned ch = data[idx];
-        if (ch == '=')
-            sawEqualsSign = true;
-        else if (('0' <= ch && ch <= '9') || ('A' <= ch && ch <= 'Z') || ('a' <= ch && ch <= 'z') || ch == '+' || ch == '/') {
-            if (sawEqualsSign)
+        if (ch == '=') {
+            ++equalsSignCount;
+            // There should be no padding if length is a multiple of 4, and there
+            // should never be more than 2 padding characters.
+            if (policy == Base64FailOnInvalidCharacterOrExcessPadding && (length % 4 || equalsSignCount > 2))
+                return false;
+        } else if (('0' <= ch && ch <= '9') || ('A' <= ch && ch <= 'Z') || ('a' <= ch && ch <= 'z') || ch == '+' || ch == '/') {
+            if (equalsSignCount)
                 return false;
             out[outLength] = base64DecMap[ch];
             ++outLength;
-        } else if (policy == Base64FailOnInvalidCharacter || (policy == Base64IgnoreWhitespace && !isSpaceOrNewline(ch)))
+        } else if (policy == Base64FailOnInvalidCharacterOrExcessPadding || policy == Base64FailOnInvalidCharacter || (policy == Base64IgnoreWhitespace && !isSpaceOrNewline(ch)))
             return false;
     }
 
     if (!outLength)
-        return !sawEqualsSign;
+        return !equalsSignCount;
 
     // Valid data is (n * 4 + [0,2,3]) characters long.
     if ((outLength % 4) == 1)

@@ -1,5 +1,24 @@
 2013-08-09  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
+        Make atob() throw an InvalidCharacterError on excess padding characters
+        https://bugs.webkit.org/show_bug.cgi?id=118898
+
+        Reviewed by Darin Adler.
+
+        According to the latest specification, window.atob() should throw an
+        InvalidCharacterError on excess padding characters:
+        http://www.whatwg.org/specs/web-apps/current-work/multipage/webappapis.html#dom-windowbase64-atob
+
+        This behavior is consistent with both Firefox, IE10 and recently Blink.
+
+        No new tests, already covered by:
+        fast/dom/Window/atob-btoa.html
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::atob):
+
+2013-08-09  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
         Make DOMImplementation::hasFeature() behave according to specification
         https://bugs.webkit.org/show_bug.cgi?id=119329
 

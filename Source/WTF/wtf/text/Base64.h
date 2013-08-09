@@ -39,6 +39,7 @@ enum Base64EncodePolicy {
 };
 
 enum Base64DecodePolicy {
+    Base64FailOnInvalidCharacterOrExcessPadding,
     Base64FailOnInvalidCharacter,
     Base64IgnoreWhitespace,
     Base64IgnoreInvalidCharacters
@@ -81,6 +82,7 @@ using WTF::Base64EncodePolicy;
 using WTF::Base64DoNotInsertLFs;
 using WTF::Base64InsertLFs;
 using WTF::Base64DecodePolicy;
+using WTF::Base64FailOnInvalidCharacterOrExcessPadding;
 using WTF::Base64FailOnInvalidCharacter;
 using WTF::Base64IgnoreWhitespace;
 using WTF::Base64IgnoreInvalidCharacters;
