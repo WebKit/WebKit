@@ -3,6 +3,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
     <meta name="robots" content="noodp">
+    <meta name="viewport" content="width=860">
 
     <title><?php bloginfo('name'); if ( is_single() ) { ?> - Blog Archive <?php } else { ?> - The WebKit Blog <?php } wp_title(); ?></title>
 

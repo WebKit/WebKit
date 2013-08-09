@@ -194,6 +194,8 @@ dt {
 .code, pre, tt, code {
     font-family: Courier, Fixed;
     font-size: 110%;
+    overflow: scroll;
+    -webkit-overflow-scrolling: touch;
 }
 
 .code {

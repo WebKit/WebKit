@@ -1,3 +1,26 @@
+2013-08-08  Benjamin Poulain  <bpoulain@apple.com>
+
+        Fix webkit.org content overflowing their content box
+
+        Rubberstamped by Simon Fraser.
+
+        More fixes to have webkit.org show properly on iPad and iPhone.
+
+        * blog/wp-content/themes/webkit/header.php:
+        Add the correct viewport width for the blog.
+
+        * building/debug.html:
+        * building/launch-debugger-vs2010-small.png: Added.
+        * building/set-debugging-properties-vs2010-small.png: Added.
+        Fix the images to make them fit in the page.
+
+        * coding/adding-features.html:
+        Using <pre> for the example of email just make it looks like our code examples.
+        Change the source to use <blockquote> so that the text can reflow to the content box.
+        * css/main.css:
+        (.code, pre, tt, code):
+        Scroll the content when it overflows the box for code and pre.
+
 2013-08-08  Benjamin Poulain  <benjamin@webkit.org>
 
         Give a smaller viewport to webkit.org on devices
