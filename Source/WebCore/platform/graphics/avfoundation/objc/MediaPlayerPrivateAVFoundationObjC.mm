@@ -1045,7 +1045,7 @@ void MediaPlayerPrivateAVFoundationObjC::tracksChanged()
 
     sizeChanged();
 
-    if (!primaryAudioTrackLanguage.isNull() && primaryAudioTrackLanguage != languageOfPrimaryAudioTrack())
+    if (primaryAudioTrackLanguage != languageOfPrimaryAudioTrack())
         player()->characteristicChanged();
 }
 
@@ -1496,6 +1496,12 @@ String MediaPlayerPrivateAVFoundationObjC::languageOfPrimaryAudioTrack() const
 
     AVAssetTrack *track = [tracks objectAtIndex:0];
     NSString *language = [track extendedLanguageTag];
+
+    // If the language code is stored as a QuickTime 5-bit packed code there aren't enough bits for a full
+    // RFC 4646 language tag so extendedLanguageTag returns NULL. In this case languageCode will return the
+    // ISO 639-2/T language code so check it.
+    if (!language)
+        language = [track languageCode];
 
     // Some legacy tracks have "und" as a language, treat that the same as no language at all.
     if (language && ![language isEqualToString:@"und"]) {
