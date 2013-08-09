@@ -1,3 +1,21 @@
+2013-08-08  Tim Horton  <timothy_horton@apple.com>
+
+        navigator.plugins has plugins in it when plugins are disabled
+        https://bugs.webkit.org/show_bug.cgi?id=119607
+        <rdar://problem/14678030>
+
+        Reviewed by Anders Carlsson.
+
+        Test: plugins/navigator-plugins-disabled.html
+
+        * page/Settings.cpp:
+        (WebCore::Settings::setPluginsEnabled):
+        Refresh the plugin database when plugins are enabled or disabled.
+        This is necessary to ensure that navigator.plugins will have the
+        correct set of plugins after dynamically changing whether plugins
+        are enabled, which makes the test for this patch possible (but it
+        makes sense in the browser as well).
+
 2013-08-08  Timothy Hatcher  <timothy@apple.com>
 
         Allow SVG images to be drawn into canvas without tainting.

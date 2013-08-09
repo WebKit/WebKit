@@ -39,6 +39,7 @@
 #include "WebProcess.h"
 #include "WebProcessProxyMessages.h"
 #include <WebCore/Color.h>
+#include <WebCore/Frame.h>
 #include <WebCore/KURL.h>
 #include <WebCore/LoaderStrategy.h>
 #include <WebCore/NetworkStorageSession.h>
@@ -279,11 +280,17 @@ void WebPlatformStrategies::refreshPlugins()
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
 }
 
-void WebPlatformStrategies::getPluginInfo(const WebCore::Page*, Vector<WebCore::PluginInfo>& plugins)
+void WebPlatformStrategies::getPluginInfo(const WebCore::Page* page, Vector<WebCore::PluginInfo>& plugins)
 {
 #if ENABLE(NETSCAPE_PLUGIN_API)
     populatePluginCache();
-    plugins = m_cachedPlugins;
+
+    if (page->mainFrame()->loader()->subframeLoader()->allowPlugins(NotAboutToInstantiatePlugin)) {
+        plugins = m_cachedPlugins;
+        return;
+    }
+
+    plugins = m_cachedApplicationPlugins;
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
 }
 
@@ -296,7 +303,7 @@ void WebPlatformStrategies::populatePluginCache()
     ASSERT(m_cachedPlugins.isEmpty());
     
     // FIXME: Should we do something in case of error here?
-    if (!WebProcess::shared().parentProcessConnection()->sendSync(Messages::WebProcessProxy::GetPlugins(m_shouldRefreshPlugins), Messages::WebProcessProxy::GetPlugins::Reply(m_cachedPlugins), 0))
+    if (!WebProcess::shared().parentProcessConnection()->sendSync(Messages::WebProcessProxy::GetPlugins(m_shouldRefreshPlugins), Messages::WebProcessProxy::GetPlugins::Reply(m_cachedPlugins, m_cachedApplicationPlugins), 0))
         return;
 
     m_shouldRefreshPlugins = false;

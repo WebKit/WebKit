@@ -1,3 +1,27 @@
+2013-08-08  Tim Horton  <timothy_horton@apple.com>
+
+        navigator.plugins has plugins in it when plugins are disabled
+        https://bugs.webkit.org/show_bug.cgi?id=119607
+        <rdar://problem/14678030>
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::getPlugins):
+        Return a list of all plugins, and a list of only application plugins.
+
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebProcessProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.h:
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::getPluginInfo):
+        Add applicationPlugin parameter to getPlugins, and storage for the returned list.
+
+        (WebKit::WebPlatformStrategies::populatePluginCache):
+        If plugins are disabled for the given page, give WebCore the list that
+        only includes application plugins. Otherwise, give it the whole list
+        as we are doing currently.
+
 2013-08-08  Gavin Barraclough  <barraclough@apple.com>
 
         Disable suppression of plugin process for Java

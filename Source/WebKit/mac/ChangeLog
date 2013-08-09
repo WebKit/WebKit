@@ -1,3 +1,17 @@
+2013-08-08  Tim Horton  <timothy_horton@apple.com>
+
+        navigator.plugins has plugins in it when plugins are disabled
+        https://bugs.webkit.org/show_bug.cgi?id=119607
+        <rdar://problem/14678030>
+
+        Reviewed by Anders Carlsson.
+
+        * WebCoreSupport/WebPlatformStrategies.mm:
+        (WebPlatformStrategies::getPluginInfo):
+        If plugins are disabled for the given page, give WebCore an empty list of
+        plugins. If WebKit1 had any application plugins, we'd return just them
+        instead.
+
 2013-08-06  Stephanie Lewis  <slewis@apple.com>
 
         Update Order Files for Safari
