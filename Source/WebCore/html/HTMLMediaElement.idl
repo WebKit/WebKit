@@ -105,8 +105,8 @@ attribute boolean webkitClosedCaptionsVisible;
 #endif
     [Conditional=ENCRYPTED_MEDIA|ENCRYPTED_MEDIA_V2] attribute EventListener onwebkitneedkey;
 #if defined(ENABLE_ENCRYPTED_MEDIA_V2) && ENABLE_ENCRYPTED_MEDIA_V2
-    readonly attribute MediaKeys keys;
-    void setMediaKeys(MediaKeys mediaKeys);
+    [ImplementedAs=keys] readonly attribute MediaKeys webkitKeys;
+    [ImplementedAs=setMediaKeys] void webkitSetMediaKeys(MediaKeys mediaKeys);
 #endif
 
 #if defined(ENABLE_VIDEO_TRACK) && ENABLE_VIDEO_TRACK

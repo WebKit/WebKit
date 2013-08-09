@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>MediaKeys</title>
+        <title>WebKitMediaKeys</title>
         <script src=../video-test.js></script>
         <script>
             function stringToUint8Array(str)
@@ -26,7 +26,7 @@
                 if (internals)
                     internals.initializeMockCDM();
 
-                run('mediaKeys = new MediaKeys("com.webcore.mock")');
+                run('mediaKeys = new WebKitMediaKeys("com.webcore.mock")');
                 run('mediaKeySession = mediaKeys.createSession("video/mock", initData)');
                 waitForEvent('webkitkeymessage', keyMessage, false, false, mediaKeySession);
                 waitForEvent('webkitkeyerror', keyError, false, false, mediaKeySession);
@@ -45,5 +45,5 @@
         </script>
     </head>
     <body onload="runTest()">
-        <p>This tests the events created by MediaKeys.</p>
+        <p>This tests the events created by WebKitMediaKeys.</p>
 </html>

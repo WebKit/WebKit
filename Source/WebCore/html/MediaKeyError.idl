@@ -25,7 +25,8 @@
 
 [
     Conditional=ENCRYPTED_MEDIA|ENCRYPTED_MEDIA_V2,
-    ImplementationLacksVTable
+    ImplementationLacksVTable,
+    InterfaceName=WebKitMediaKeyError
 ] interface MediaKeyError {
     const unsigned short MEDIA_KEYERR_UNKNOWN = 1;
     const unsigned short MEDIA_KEYERR_CLIENT = 2;
