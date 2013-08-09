@@ -1,3 +1,15 @@
+2013-08-09  Tim Horton  <timothy_horton@apple.com>
+
+        PDFPlugin is disabled by default in nightlies on Mac accidentally
+        https://bugs.webkit.org/show_bug.cgi?id=119615
+
+        Rubber-stamped by Andreas Kling.
+
+        Enable PDFPlugin by default on Mac at the WebKit2 level.
+
+        * Shared/WebPreferencesStore.h:
+        * UIProcess/API/C/WKPreferencesPrivate.h:
+
 2013-08-08  Tim Horton  <timothy_horton@apple.com>
 
         navigator.plugins has plugins in it when plugins are disabled

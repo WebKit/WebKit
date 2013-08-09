@@ -235,7 +235,7 @@ WK_EXPORT bool WKPreferencesGetScreenFontSubstitutionEnabled(WKPreferencesRef pr
 WK_EXPORT void WKPreferencesSetCookieEnabled(WKPreferencesRef preferences, bool enabled);
 WK_EXPORT bool WKPreferencesGetCookieEnabled(WKPreferencesRef preferences);
 
-// Defaults to false
+// Defaults to true on Mac, false elsewhere
 WK_EXPORT void WKPreferencesSetPDFPluginEnabled(WKPreferencesRef preferences, bool enabled);
 WK_EXPORT bool WKPreferencesGetPDFPluginEnabled(WKPreferencesRef preferences);
 
