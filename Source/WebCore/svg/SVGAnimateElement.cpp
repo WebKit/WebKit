@@ -400,9 +400,10 @@ bool SVGAnimateElement::animatedPropertyTypeSupportsAddition() const
     case AnimatedRect:
     case AnimatedTransformList:
         return true;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        return true;
     }
-
-    ASSERT_NOT_REACHED();
 }
 
 bool SVGAnimateElement::isAdditive() const
