@@ -1,5 +1,16 @@
 2013-08-09  Andreas Kling  <akling@apple.com>
 
+        ElementRuleCollector: Use range-based for syntax in rule collection loop.
+        <http://webkit.org/b/119617>
+        <rdar://problem/14695311>
+
+        Reviewed by Antti Koivisto.
+
+        * css/ElementRuleCollector.cpp:
+        (WebCore::ElementRuleCollector::doCollectMatchingRulesForList):
+
+2013-08-09  Andreas Kling  <akling@apple.com>
+
         StyleRule*::properties() should return const references.
         <http://webkit.org/b/119596>
 
