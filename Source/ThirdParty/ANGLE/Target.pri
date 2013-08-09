@@ -141,7 +141,10 @@ SOURCES += \
     src/compiler/preprocessor/Token.cpp \
     src/third_party/compiler/ArrayBoundsClamper.cpp
 
-win32: SOURCES += src/compiler/ossource_win.cpp
+win32: {
+    SOURCES += src/compiler/ossource_win.cpp
+    DEFINES += ANGLE_WEBKIT_WIN=1
+}
 else: SOURCES += src/compiler/ossource_posix.cpp
 
 # Make sure the derived sources are built

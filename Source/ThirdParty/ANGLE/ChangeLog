@@ -1,3 +1,12 @@
+2013-08-09  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
+        [Qt] Buidfix after r153664. Adding ANGLE_WEBKIT_WIN definition.
+        https://bugs.webkit.org/show_bug.cgi?id=119577
+
+        Reviewed by Allan Sandfeld Jensen.
+
+        * Target.pri:
+
 2013-08-08  Alex Christensen  <achristensen@apple.com>
 
         Link to correct DirectX libraries for Win64 ANGLE build.
