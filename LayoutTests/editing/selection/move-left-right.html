@@ -134,6 +134,9 @@
 
         function runTest()
         {
+            if (window.internals)
+                internals.setContinuousSpellCheckingEnabled(false); // For performance.
+
             var tests = document.getElementsByClassName("test");
             var sel = getSelection();
             for (var i = 0; i < tests.length; ++i) {

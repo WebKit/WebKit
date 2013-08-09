@@ -311,6 +311,9 @@ function createAllNodes()
 }
 
 if (window.testRunner) {
+    if (window.internals)
+        internals.setContinuousSpellCheckingEnabled(false); // For performance.
+
     var originalOnload = window.onload;
     window.onload = function() {
         if (originalOnload)

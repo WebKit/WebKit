@@ -1,3 +1,23 @@
+2013-08-09  Simon Fraser  <simon.fraser@apple.com>
+
+        move-by-word-visually-multi-space.html takes 21s and spends most of its time doing spelling and grammar checking
+        https://bugs.webkit.org/show_bug.cgi?id=119613
+
+        Reviewed by Darin Adler.
+        
+        editing/selection tests are very slow, and much of the time is spent
+        doing spelling and grammar checking (which is not what these tests are
+        testing). So call internals.setContinuousSpellCheckingEnabled(false)
+        to turn that off.
+
+        * editing/selection/caret-at-bidi-boundary.html:
+        * editing/selection/move-by-character-brute-force.html:
+        * editing/selection/move-left-right.html:
+        * editing/selection/programmatic-selection-on-mac-is-directionless.html:
+        * editing/selection/resources/extend-selection.js:
+        * editing/selection/resources/move-by-word-visually.js:
+        (runTest):
+
 2013-08-09  Bruno de Oliveira Abinader  <bruno.d@partner.samsung.com>
 
         Text decorations should be listed as non-inheritable

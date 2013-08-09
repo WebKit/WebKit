@@ -27,6 +27,9 @@ line 3</textarea>
 </div>
 
 <script>
+if (window.internals)
+    internals.setContinuousSpellCheckingEnabled(false); // For performance.
+
 description("This test ensures that programmatically set selections are directionless on mac, and that they are not on other platforms.");
 
 function selectLine(node) {

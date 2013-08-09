@@ -2,6 +2,9 @@
 <script src="../../fast/js/resources/js-test-pre.js"></script>
 <div id="test"></div>
 <script>
+if (window.internals)
+    internals.setContinuousSpellCheckingEnabled(false); // For performance.
+
 description("This test checks that we have simple caret motion up to a certain limit");
 
 function hasSimpleCaretMovement(charCode) {

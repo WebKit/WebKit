@@ -86,6 +86,8 @@ function runTest(target, expectations) {
 
 if (window.testRunner) {
     testRunner.dumpAsText();
+    if (window.internals)
+        internals.setContinuousSpellCheckingEnabled(false); // For performance.
 
     var tests = document.getElementById('tests').getElementsByTagName('dt');
     var testExpectations = document.getElementById('tests').getElementsByTagName('dd');

@@ -281,6 +281,9 @@ function runMoveLeftRight(tests, unit)
 }
 
 function runTest() {
+    if (window.internals)
+        internals.setContinuousSpellCheckingEnabled(false); // For performance.
+    
     log("\n======== Move By Word ====\n");
     var tests = document.getElementsByClassName("test_move_by_word");
     runMoveLeftRight(tests, "word");
