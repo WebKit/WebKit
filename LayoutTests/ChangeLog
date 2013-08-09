@@ -1,3 +1,56 @@
+2013-08-09  Mihai Tica  <mitica@adobe.com>
+
+        Modify the existing canvas blending test suite to test both
+        accelerated and non accelerated modes.
+        https://bugs.webkit.org/show_bug.cgi?id=119628
+
+        Reviewed by Dirk Schulze.
+
+        * fast/canvas/canvas-blending-clipping-expected.txt:
+        * fast/canvas/canvas-blending-clipping.html:
+        * fast/canvas/canvas-blending-color-over-color-expected.txt:
+        * fast/canvas/canvas-blending-color-over-color.html:
+        * fast/canvas/canvas-blending-color-over-gradient-expected.txt:
+        * fast/canvas/canvas-blending-color-over-gradient.html:
+        * fast/canvas/canvas-blending-color-over-image-expected.txt:
+        * fast/canvas/canvas-blending-color-over-image.html:
+        * fast/canvas/canvas-blending-color-over-pattern-expected.txt:
+        * fast/canvas/canvas-blending-color-over-pattern.html:
+        * fast/canvas/canvas-blending-fill-style-expected.txt:
+        * fast/canvas/canvas-blending-fill-style.html:
+        * fast/canvas/canvas-blending-global-alpha-expected.txt:
+        * fast/canvas/canvas-blending-global-alpha.html:
+        * fast/canvas/canvas-blending-gradient-over-color-expected.txt:
+        * fast/canvas/canvas-blending-gradient-over-color.html:
+        * fast/canvas/canvas-blending-gradient-over-gradient-expected.txt:
+        * fast/canvas/canvas-blending-gradient-over-gradient.html:
+        * fast/canvas/canvas-blending-gradient-over-image-expected.txt:
+        * fast/canvas/canvas-blending-gradient-over-image.html:
+        * fast/canvas/canvas-blending-gradient-over-pattern-expected.txt:
+        * fast/canvas/canvas-blending-gradient-over-pattern.html:
+        * fast/canvas/canvas-blending-image-over-color-expected.txt:
+        * fast/canvas/canvas-blending-image-over-color.html:
+        * fast/canvas/canvas-blending-image-over-gradient-expected.txt:
+        * fast/canvas/canvas-blending-image-over-gradient.html:
+        * fast/canvas/canvas-blending-image-over-image-expected.txt:
+        * fast/canvas/canvas-blending-image-over-image.html:
+        * fast/canvas/canvas-blending-image-over-pattern-expected.txt:
+        * fast/canvas/canvas-blending-image-over-pattern.html:
+        * fast/canvas/canvas-blending-pattern-over-color-expected.txt:
+        * fast/canvas/canvas-blending-pattern-over-color.html:
+        * fast/canvas/canvas-blending-pattern-over-gradient-expected.txt:
+        * fast/canvas/canvas-blending-pattern-over-gradient.html:
+        * fast/canvas/canvas-blending-pattern-over-image-expected.txt:
+        * fast/canvas/canvas-blending-pattern-over-image.html:
+        * fast/canvas/canvas-blending-pattern-over-pattern-expected.txt:
+        * fast/canvas/canvas-blending-pattern-over-pattern.html:
+        * fast/canvas/canvas-blending-shadow-expected.txt:
+        * fast/canvas/canvas-blending-shadow.html:
+        * fast/canvas/canvas-blending-text-expected.txt:
+        * fast/canvas/canvas-blending-text.html:
+        * fast/canvas/canvas-blending-transforms-expected.txt:
+        * fast/canvas/canvas-blending-transforms.html:
+
 2013-08-09  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Make DOMImplementation::hasFeature() behave according to specification

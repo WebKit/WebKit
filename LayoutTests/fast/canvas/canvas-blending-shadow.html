@@ -28,12 +28,13 @@
             shouldBeCloseTo(ac + "[3]", expectedShadowColor[3], sigma);
         }
 
-        function runTest() {
+        function runTest(width, height) {
             var canvas = document.createElement("canvas");
             var sigma = 5;
-            canvas.width = 12;
-            canvas.height = 12;
+            canvas.width = width;
+            canvas.height = height;
             context = canvas.getContext("2d");
+            document.body.appendChild(canvas);
 
             for (var i = 0; i < blendModes.length; ++i) {
                 debug("Testing blend mode " + blendModes[i]);
@@ -49,7 +50,11 @@
             }
         }
 
-        runTest();
+        debug('Running test in non accelerated mode\n');
+        runTest(12, 12);
+        debug('Running test in hardware accelerated mode\n');
+        runTest(100, 100);
+
     </script>
     <script src="../js/resources/js-test-post.js"></script>
 </body>
