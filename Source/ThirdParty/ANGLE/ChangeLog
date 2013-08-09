@@ -1,3 +1,19 @@
+2013-08-08  Alex Christensen  <achristensen@apple.com>
+
+        Link to correct DirectX libraries for Win64 ANGLE build.
+        https://bugs.webkit.org/show_bug.cgi?id=119600
+
+        Reviewed by Brent Fulgham.
+
+        * ANGLE.vcxproj/DirectX32.props: Added with x86 DirectX library directory.
+        * ANGLE.vcxproj/DirectX64.props: Added with x64 DirectX library directory.
+        * ANGLE.vcxproj/libEGL.vcxproj:
+        * ANGLE.vcxproj/libGLESv2.vcxproj:
+        Use DirectX32.props and DirectX64.props.
+        * ANGLE.vcxproj/libEGLCommon.props:
+        * ANGLE.vcxproj/libGLESv2Common.props:
+        Removed DirectX library directory.
+
 2013-07-23  David Farler  <dfarler@apple.com>
 
         Provide optional OTHER_CFLAGS, OTHER_CPPFLAGS, OTHER_LDFLAGS additions for building with ASAN

@@ -88,50 +88,60 @@
     <Import Project="..\..\..\..\WebKitLibraries\win\tools\vsprops\common.props" />
     <Import Project="libGLESv2Common.props" />
     <Import Project="ANGLERelease.props" />
+    <Import Project="DirectX32.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\..\..\..\WebKitLibraries\win\tools\vsprops\common.props" />
     <Import Project="libGLESv2Common.props" />
+    <Import Project="DirectX32.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\..\..\..\WebKitLibraries\win\tools\vsprops\common.props" />
     <Import Project="libGLESv2Common.props" />
     <Import Project="ANGLERelease.props" />
+    <Import Project="DirectX64.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\..\..\..\WebKitLibraries\win\tools\vsprops\common.props" />
     <Import Project="libGLESv2Common.props" />
+    <Import Project="DirectX64.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'">
     <Import Project="..\..\..\..\WebKitLibraries\win\tools\vsprops\common.props" />
     <Import Project="libGLESv2Common.props" />
+    <Import Project="DirectX32.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|x64'">
     <Import Project="..\..\..\..\WebKitLibraries\win\tools\vsprops\common.props" />
     <Import Project="libGLESv2Common.props" />
+    <Import Project="DirectX64.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">
     <Import Project="..\..\..\..\WebKitLibraries\win\tools\vsprops\common.props" />
     <Import Project="libGLESv2Common.props" />
     <Import Project="ANGLERelease.props" />
+    <Import Project="DirectX32.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Production|x64'">
     <Import Project="..\..\..\..\WebKitLibraries\win\tools\vsprops\common.props" />
     <Import Project="libGLESv2Common.props" />
     <Import Project="ANGLERelease.props" />
+    <Import Project="DirectX64.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">
     <Import Project="..\..\..\..\WebKitLibraries\win\tools\vsprops\common.props" />
     <Import Project="libGLESv2Common.props" />
     <Import Project="ANGLERelease.props" />
+    <Import Project="DirectX32.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|x64'">
     <Import Project="..\..\..\..\WebKitLibraries\win\tools\vsprops\common.props" />
     <Import Project="libGLESv2Common.props" />
     <Import Project="ANGLERelease.props" />
+    <Import Project="DirectX64.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <ItemGroup>
