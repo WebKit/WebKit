@@ -1,3 +1,13 @@
+2013-08-09  Renata Hodovan  <reni@webkit.org>
+
+        Missing NULL check in ApplyStyleCommand::applyInlineStyleToNodeRange()
+        https://bugs.webkit.org/show_bug.cgi?id=119570
+
+        Reviewed by Ryosuke Niwa.
+
+        * editing/execCommand/null-style-crash-expected.txt: Added.
+        * editing/execCommand/null-style-crash.html: Added.
+
 2013-08-08  Tim Horton  <timothy_horton@apple.com>
 
         navigator.plugins has plugins in it when plugins are disabled

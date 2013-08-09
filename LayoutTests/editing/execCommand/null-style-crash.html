@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<body>
+   <table> 
+      <tr>
+         <td contenteditable="plaintext-only">171</td>
+      </tr>
+   </table>   
+   <script> 
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        document.designMode = "on"; 
+        document.execCommand("SelectAll"); 
+        document.execCommand("CreateLink", true, 'www.google.com');
+
+        document.body.innerHTML = "PASS. WebKit didn't crash";
+        if (window.testRunner)
+            testRunner.notifyDone();
+    </script> 
+</body>
+</html>

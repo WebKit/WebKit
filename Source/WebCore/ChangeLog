@@ -1,3 +1,27 @@
+2013-08-09  Renata Hodovan  <reni@webkit.org>
+
+        Missing NULL check in ApplyStyleCommand::applyInlineStyleToNodeRange()
+        https://bugs.webkit.org/show_bug.cgi?id=119570
+
+        Reviewed by Ryosuke Niwa.
+
+        The m_mutableStyleSet of EditingStyle can be NULL in ApplyStyleCommand::applyInlineStyleToNodeRange but
+        this scenario was not checked earlier.
+
+        Test: editing/execCommand/null-style-crash.html
+
+        * css/StylePropertySet.cpp:
+        (WebCore::MutableStylePropertySet::mergeAndOverrideOnConflict):
+        * css/StylePropertySet.h:
+        * css/ViewportStyleResolver.cpp:
+        (WebCore::ViewportStyleResolver::addViewportRule):
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::applyInlineStyleToNodeRange):
+        * editing/EditingStyle.cpp:
+        (WebCore::styleFromMatchedRulesForElement):
+        (WebCore::EditingStyle::mergeStyleFromRules):
+        (WebCore::EditingStyle::mergeStyleFromRulesForSerialization):
+
 2013-08-09  Andreas Kling  <akling@apple.com>
 
         ElementRuleCollector: Use range-based for syntax in rule collection loop.
