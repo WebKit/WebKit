@@ -37,14 +37,13 @@ AM_CONDITIONAL([HAVE_ATSPI2], [test "$have_atspi2" = "yes"])
 
 # Accelerated compositing conditionals.
 AM_CONDITIONAL([USE_ACCELERATED_COMPOSITING], [test "$enable_accelerated_compositing" = "yes"])
-AM_CONDITIONAL([USE_TEXTURE_MAPPER_GL],
-    [test "$enable_accelerated_compositing" = "yes" && test "$found_opengl" = "yes"])
+AM_CONDITIONAL([USE_TEXTURE_MAPPER_GL], [test "$enable_accelerated_compositing" = "yes" && test "$found_opengl" = "yes"])
 
-# These are the same for now, but they will soon be separate.
-AM_CONDITIONAL([USE_OPENGL], [test "$found_opengl" = "yes"])
-AM_CONDITIONAL([USE_EGL], [test "$enable_egl" = "yes"])
-AM_CONDITIONAL([USE_GLES2], [test "$enable_gles2" = "yes"])
+# OpenGL graphics conditionals.
 AM_CONDITIONAL([USE_GLX], [test "$enable_glx" = "yes"])
+AM_CONDITIONAL([USE_EGL], [test "$enable_egl" = "yes"])
+AM_CONDITIONAL([USE_OPENGL], [test "$found_opengl" = "yes"])
+AM_CONDITIONAL([USE_GLES2], [test "$enable_gles2" = "yes"])
 
 # WebKit feature conditionals.
 AM_CONDITIONAL([ENABLE_DEBUG],[test "$enable_debug" = "yes"])
@@ -59,4 +58,3 @@ AM_CONDITIONAL([ENABLE_SPELLCHECK],[test "$enable_spellcheck" = "yes"])
 
 # Introspection conditional.
 AM_CONDITIONAL([ENABLE_INTROSPECTION],[test "$enable_introspection" = "yes"])
-

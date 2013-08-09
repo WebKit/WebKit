@@ -187,9 +187,6 @@ AC_SUBST(GTK_LIBS)
 AC_SUBST(CAIRO_CFLAGS)
 AC_SUBST(CAIRO_LIBS)
 
-
-found_opengl=no
-have_glx=no
 AC_CHECK_HEADERS([GL/glx.h], [have_glx="yes"], [have_glx="no"])
 AC_MSG_CHECKING([whether to enable GLX support])
 if test "$enable_glx" != "no"; then
@@ -205,7 +202,6 @@ if test "$enable_glx" != "no"; then
 fi
 AC_MSG_RESULT([$enable_glx])
 
-have_egl=no
 AC_CHECK_HEADERS([EGL/egl.h], [have_egl="yes"], [have_egl="no"])
 AC_MSG_CHECKING([whether to enable EGL support])
 if test "$enable_egl" != "no"; then
@@ -221,19 +217,18 @@ if test "$enable_egl" != "no"; then
 fi
 AC_MSG_RESULT([$enable_egl])
 
-have_gles2=no
 AC_CHECK_HEADERS([GLES2/gl2.h], [have_gles2="yes"], [have_gles2="no"])
 AC_MSG_CHECKING([whether to use OpenGL ES 2 support])
 if test "$enable_glx" = "yes"; then
     if test "$enable_gles2" = "yes"; then
-        AC_MSG_ERROR([Cannot enable OpenGL ES 2 support with GLX])
+        AC_MSG_ERROR([Cannot enable OpenGL ES 2 support with GLX enabled.])
     else
         enable_gles2=no
     fi
 fi
 if test "$enable_egl" = "no"; then
     if test "$enable_gles2" = "yes"; then
-        AC_MSG_ERROR([Cannot enable OpenGL ES 2 support without EGL])
+        AC_MSG_ERROR([Cannot enable OpenGL ES 2 support without EGL enabled.])
     else
         enable_gles2=no
     fi
@@ -241,18 +236,20 @@ fi
 if test "$enable_gles2" != "no"; then
     if test "$have_gles2" = "no"; then
         if test "$enable_gles2" = "yes"; then
-            AC_MSG_ERROR([--enable-gles2 specified, but not available])
+            AC_MSG_ERROR([--enable-gles2 specified, but not available.])
         else
             enable_gles2=no
         fi
-   else
+    else
         enable_gles2=yes
-        found_opengl=yes
-   fi
+    fi
 fi
 AC_MSG_RESULT([$enable_gles2])
 
-if test "$enable_gles2" != "yes"; then
+found_opengl=no
+if test "$enable_gles2" = "yes"; then
+    found_opengl=yes
+else
     AC_CHECK_HEADERS([GL/gl.h], [found_opengl="yes"], [])
 fi
 
@@ -265,28 +262,25 @@ if test "$found_opengl" = "yes"; then
     AC_SUBST(XDAMAGE_LIBS)
 fi
 
-# OpenGL is turned on by default if available (along with WebGL and accelerated compositing).
-if test "$enable_webgl" = "auto"; then
-    if test "$found_opengl" = yes; then
-        enable_webgl="yes";
+if test "$enable_webgl" != "no"; then
+    if test "$found_opengl" = "yes"; then
+        enable_webgl=yes
     else
-        enable_webgl="no";
+        if test "$enable_webgl" = "yes"; then
+            AC_MSG_ERROR([OpenGL support must be present to enable WebGL.])
+        fi
+        enable_webgl=no
     fi
 fi
 
-if test "$enable_webgl" = "yes" && test "$found_opengl" != "yes"; then
-    AC_MSG_ERROR([OpenGL must be active to use WebGL.])
-fi;
-
-if test "$enable_accelerated_compositing" = "yes" && test "$found_opengl" != "yes"; then
-    AC_MSG_ERROR([OpenGL must be active to use accelerated compositing.])
-fi
-
-if test "$enable_accelerated_compositing" = "auto"; then
+if test "$enable_accelerated_compositing" != "no"; then
     if test "$found_opengl" = "yes"; then
-        enable_accelerated_compositing="yes";
+        enable_accelerated_compositing=yes
     else
-        enable_accelerated_compositing="no";
+        if test "$enable_accelerated_compositing" = "yes"; then
+            AC_MSG_ERROR([OpenGL support must be present to enable accelerated compositing.])
+        fi
+        enable_accelerated_compositing=no
     fi
 fi
 
@@ -435,10 +429,8 @@ if test "$found_opengl" = "yes"; then
 
     # Check whether dlopen() is in the core libc like on FreeBSD, or in a separate
     # libdl like on GNU/Linux (in which case we want to link to libdl).
-    AC_CHECK_FUNC([dlopen], [], [AC_CHECK_LIB([dl], [dlopen], [DLOPEN_LIBS="-ldl"])])
-    AC_SUBST([DLOPEN_LIBS])
+    AC_CHECK_FUNC([dlopen], [], [AC_CHECK_LIB([dl], [dlopen], [OPENGL_LIBS="$OPENGL_LIBS -ldl"])])
 
-    OPENGL_LIBS="$OPENGL_LIBS $DLOPEN_LIBS"
     acceleration_description="$acceleration_description)"
 fi
 AC_SUBST([OPENGL_LIBS])

@@ -169,14 +169,14 @@ AC_ARG_ENABLE(debug_symbols,
 AC_MSG_RESULT([$enable_debug_symbols])
 
 AC_MSG_CHECKING([whether to enable WebGL support])
-AC_ARG_ENABLE(webgl, AC_HELP_STRING([--enable-webgl], [enable support for WebGL [default=check]]),
+AC_ARG_ENABLE(webgl, AC_HELP_STRING([--enable-webgl], [enable support for WebGL [default=auto]]),
     [],
     [enable_webgl="auto"])
 AC_MSG_RESULT([$enable_webgl])
 
 AC_MSG_CHECKING([whether to enable accelerated compositing support])
 AC_ARG_ENABLE(accelerated_compositing,
-    AC_HELP_STRING([--enable-accelerated-compositing], [enable support for accelerated compositing [default=check]]),
+    AC_HELP_STRING([--enable-accelerated-compositing], [enable support for accelerated compositing [default=auto]]),
     [],
     [enable_accelerated_compositing="auto"])
 AC_MSG_RESULT([$enable_accelerated_compositing])

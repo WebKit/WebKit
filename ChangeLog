@@ -1,3 +1,18 @@
+2013-08-09  Zan Dobersek  <zdobersek@igalia.com>
+
+        [Automake] Clean up OpenGL graphics configuration sections
+        https://bugs.webkit.org/show_bug.cgi?id=119554
+
+        Reviewed by Martin Robinson.
+
+        Clean up sections in the Automake configuration process that are configuring the OpenGL graphics
+        features and dependencies. Remove unnecessary variable assignments, merge similar code paths,
+        clarify a couple of comments and error messages and fix a few whitespace problems.
+
+        * Source/autotools/FindDependencies.m4:
+        * Source/autotools/ReadCommandLineArguments.m4:
+        * Source/autotools/SetupAutomake.m4:
+
 2013-08-04  Sam Weinig  <sam@webkit.org>
 
         Remove support for HTML5 MicroData
