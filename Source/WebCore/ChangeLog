@@ -1,3 +1,25 @@
+2013-08-09  Bruno de Oliveira Abinader  <bruno.d@partner.samsung.com>
+
+        Text decorations should be listed as non-inheritable
+        https://bugs.webkit.org/show_bug.cgi?id=119608
+
+        Reviewed by Andreas Kling.
+
+        Both "text-decoration" specs (CSS 2.1, CSS 3) and "text-decoration-line"
+        spec (CSS 3) states these properties are not inherited (w/ exceptions,
+        which are currently handled by -in-effect property), however those were
+        listed as inherited for no reason - thus preserving behavior as shown by
+        layout test results.
+
+        Backported from Blink: https://codereview.chromium.org/20751008
+
+        Updated getComputedStyle tests for both 'text-decoration' and
+        'text-decoration-line' properties to check that both are not implicitly
+        inherited.
+
+        * css/CSSProperty.cpp:
+        (WebCore::CSSProperty::isInheritedProperty):
+
 2013-08-09  Andreas Kling  <akling@apple.com>
 
         I wish we had a Windows EWS. :(

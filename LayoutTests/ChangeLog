@@ -1,3 +1,18 @@
+2013-08-09  Bruno de Oliveira Abinader  <bruno.d@partner.samsung.com>
+
+        Text decorations should be listed as non-inheritable
+        https://bugs.webkit.org/show_bug.cgi?id=119608
+
+        Reviewed by Andreas Kling.
+
+        Added test to verify that 'text-decoration' and 'text-decoration-line'
+        properties are not implicitly inherited.
+
+        * fast/css/getComputedStyle/getComputedStyle-text-decoration-expected.txt:
+        * fast/css/getComputedStyle/script-tests/getComputedStyle-text-decoration.js:
+        * fast/css3-text/css3-text-decoration/getComputedStyle/getComputedStyle-text-decoration-line-expected.txt:
+        * fast/css3-text/css3-text-decoration/getComputedStyle/script-tests/getComputedStyle-text-decoration-line.js:
+
 2013-08-09  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening. Rebaselinnig some new tests.

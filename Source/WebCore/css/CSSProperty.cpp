@@ -297,7 +297,6 @@ bool CSSProperty::isInheritedProperty(CSSPropertyID propertyID)
     case CSSPropertySpeak:
     case CSSPropertyTabSize:
     case CSSPropertyTextAlign:
-    case CSSPropertyTextDecoration:
     case CSSPropertyTextIndent:
     case CSSPropertyTextRendering:
     case CSSPropertyTextShadow:
@@ -339,7 +338,6 @@ bool CSSProperty::isInheritedProperty(CSSPropertyID propertyID)
     case CSSPropertyWebkitRubyPosition:
     case CSSPropertyWebkitTextCombine:
 #if ENABLE(CSS3_TEXT)
-    case CSSPropertyWebkitTextDecorationLine:
     case CSSPropertyWebkitTextAlignLast:
     case CSSPropertyWebkitTextJustify:
     case CSSPropertyWebkitTextUnderlinePosition:
@@ -488,6 +486,7 @@ bool CSSProperty::isInheritedProperty(CSSPropertyID propertyID)
     case CSSPropertySize:
     case CSSPropertySrc:
     case CSSPropertyTableLayout:
+    case CSSPropertyTextDecoration:
     case CSSPropertyTextLineThrough:
     case CSSPropertyTextLineThroughColor:
     case CSSPropertyTextLineThroughMode:
@@ -656,6 +655,7 @@ bool CSSProperty::isInheritedProperty(CSSPropertyID propertyID)
     case CSSPropertyWebkitPerspectiveOriginX:
     case CSSPropertyWebkitPerspectiveOriginY:
 #if ENABLE(CSS3_TEXT)
+    case CSSPropertyWebkitTextDecorationLine:
     case CSSPropertyWebkitTextDecorationStyle:
     case CSSPropertyWebkitTextDecorationColor:
 #endif // CSS3_TEXT

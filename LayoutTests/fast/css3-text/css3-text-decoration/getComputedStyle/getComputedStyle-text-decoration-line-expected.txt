@@ -87,6 +87,12 @@ PASS computedStyle.webkitTextDecorationLine is 'underline'
 PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-line').toString() is '[object CSSValueList]'
 PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-line').cssText is 'underline'
 
+Ancestor should not implicitly inherit value from parent (i.e. when value is void):
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-line') is null
+PASS computedStyle.webkitTextDecorationLine is 'none'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-line').toString() is '[object CSSPrimitiveValue]'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-line').cssText is 'none'
+
 PASS successfullyParsed is true
 
 TEST COMPLETE
