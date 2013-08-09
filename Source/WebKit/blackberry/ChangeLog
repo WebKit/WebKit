@@ -1,3 +1,28 @@
+2013-08-09  Jacky Jiang  <zhajiang@blackberry.com>
+
+        [BlackBerry] Viewport allows scrolling when it shouldn't after rotation to landscape
+        https://bugs.webkit.org/show_bug.cgi?id=119595
+
+        Reviewed by Rob Buis.
+        Internally reviewed by Konrad Piascik, Max Feil, Arvid Nilsson and John Griggs.
+
+        JIRA 466384
+        Initial scales of portrait mode and landscape mode can be different due
+        to different viewport size and contents size. In this case, we restored
+        to the intial scale of portrait mode instead of the initial scale of current
+        landscape mode which zoomed in the WebPage a little bit and made the WebPage
+        scallable as the scale is larger than the initial scale of the current
+        landscape mode WebPage.
+        To fix that, we should restore to the current initial scale instead if
+        the WebPage was at initial scale before fullscreen.
+        Meanwhile, move the FIXME comments to the right place.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::WebPagePrivate):
+        (BlackBerry::WebKit::WebPagePrivate::setViewportSize):
+        (BlackBerry::WebKit::WebPagePrivate::enterFullScreenForElement):
+        * Api/WebPage_p.h:
+
 2013-08-08  Andreas Kling  <akling@apple.com>
 
         Element: Modernize attribute storage accessor functions.

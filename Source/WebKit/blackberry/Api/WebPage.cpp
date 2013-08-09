@@ -387,6 +387,7 @@ WebPagePrivate::WebPagePrivate(WebPage* webPage, WebPageClient* client, const In
     , m_touchEventMode(ProcessedTouchEvents)
 #endif
 #if ENABLE(FULLSCREEN_API) && ENABLE(VIDEO)
+    , m_atInitialScaleBeforeFullScreen(false)
     , m_scaleBeforeFullScreen(-1.0)
 #endif
     , m_currentCursor(Platform::CursorNone)
@@ -3745,10 +3746,16 @@ bool WebPagePrivate::setViewportSize(const IntSize& transformedActualVisibleSize
 #if ENABLE(FULLSCREEN_API) && ENABLE(VIDEO)
     // When leaving fullscreen mode, restore the scale and scroll position if needed.
     // We also need to make sure the scale and scroll position won't cause over scale or over scroll.
-    if (m_scaleBeforeFullScreen > 0 && !m_fullscreenNode) {
-        // Restore the scale when leaving fullscreen. We can't use TransformationMatrix::scale(double) here,
-        // as it will multiply the scale rather than set the scale.
-        // FIXME: We can refactor this into setCurrentScale(double) if it is useful in the future.
+    if ((m_atInitialScaleBeforeFullScreen || m_scaleBeforeFullScreen > 0) && !m_fullscreenNode) {
+        // Initial scales of portrait mode and landscape mode can be different due to different
+        // viewport size and contents size, restore the scale of current mode from the scale
+        // before fullscreen of the other mode can be wrong if the WebPage was at initial scale.
+        // So restore m_scaleBeforeFullScreen to the initialScale() of the current mode WebPage instead.
+        if (m_atInitialScaleBeforeFullScreen) {
+            m_scaleBeforeFullScreen = initialScale();
+            m_atInitialScaleBeforeFullScreen = false;
+        }
+
         if (m_orientationBeforeFullScreen % 180 != orientation() % 180) { // Orientation changed
             if (m_actualVisibleWidth > contentsSize().width() * m_scaleBeforeFullScreen) {
                 // Cached scale need to be adjusted after rotation.
@@ -3769,6 +3776,9 @@ bool WebPagePrivate::setViewportSize(const IntSize& transformedActualVisibleSize
             }
         }
 
+        // Restore the scale when leaving fullscreen. We can't use TransformationMatrix::scale(double) here,
+        // as it will multiply the scale rather than set the scale.
+        // FIXME: We can refactor this into setCurrentScale(double) if it is useful in the future.
         m_transformationMatrix->setM11(m_scaleBeforeFullScreen);
         m_transformationMatrix->setM22(m_scaleBeforeFullScreen);
         m_scaleBeforeFullScreen = -1.0;
@@ -5697,7 +5707,10 @@ void WebPagePrivate::enterFullScreenForElement(Element* element)
             // The current scale can be clamped to a greater minimum scale when we relayout contents during
             // the change of the viewport size. Cache the current scale so that we can restore it when
             // leaving fullscreen. Otherwise, it is possible that we will use the wrong scale.
-            m_scaleBeforeFullScreen = currentScale();
+            // We'll restore to initialScale() instead when exiting fullscreen if the WebPage is
+            // at intial scale before fullscreen.
+            if (!(m_atInitialScaleBeforeFullScreen = m_webPage->isAtInitialZoom()))
+                m_scaleBeforeFullScreen = currentScale();
 
             // When an element goes fullscreen, the viewport size changes and the scroll
             // position might change. So we keep track of it here, in order to restore it
