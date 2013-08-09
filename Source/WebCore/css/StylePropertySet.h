@@ -213,7 +213,7 @@ public:
     void removeEquivalentProperties(const StylePropertySet*);
     void removeEquivalentProperties(const ComputedStyleExtractor*);
 
-    void mergeAndOverrideOnConflict(const StylePropertySet*);
+    void mergeAndOverrideOnConflict(const StylePropertySet&);
 
     void clear();
     void parseDeclaration(const String& styleDeclaration, StyleSheetContents* contextStyleSheet);

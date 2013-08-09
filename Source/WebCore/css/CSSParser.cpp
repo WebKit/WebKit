@@ -9118,8 +9118,7 @@ bool CSSParser::parseFilterRuleParameters()
 
 StyleRuleBase* CSSParser::createFilterRule(const CSSParserString& filterName)
 {
-    RefPtr<StyleRuleFilter> rule = StyleRuleFilter::create(filterName);
-    rule->setProperties(createStylePropertySet());
+    RefPtr<StyleRuleFilter> rule = StyleRuleFilter::create(filterName, createStylePropertySet());
     clearProperties();
     StyleRuleFilter* result = rule.get();
     m_parsedRules.append(rule.release());
@@ -11673,12 +11672,12 @@ StyleRuleBase* CSSParser::createStyleRule(Vector<OwnPtr<CSSParserSelector> >* se
 {
     StyleRule* result = 0;
     if (selectors) {
-        m_allowImportRules = m_allowNamespaceDeclarations = false;
-        RefPtr<StyleRule> rule = StyleRule::create(m_lastSelectorLineNumber);
-        rule->parserAdoptSelectorVector(*selectors);
+        m_allowImportRules = false;
+        m_allowNamespaceDeclarations = false;
         if (m_hasFontFaceOnlyValues)
             deleteFontFaceOnlyValues();
-        rule->setProperties(createStylePropertySet());
+        RefPtr<StyleRule> rule = StyleRule::create(m_lastSelectorLineNumber, createStylePropertySet());
+        rule->parserAdoptSelectorVector(*selectors);
         result = rule.get();
         m_parsedRules.append(rule.release());
         processAndAddNewRuleToSourceTreeIfNeeded();
@@ -11705,8 +11704,7 @@ StyleRuleBase* CSSParser::createFontFaceRule()
             return 0;
         }
     }
-    RefPtr<StyleRuleFontFace> rule = StyleRuleFontFace::create();
-    rule->setProperties(createStylePropertySet());
+    RefPtr<StyleRuleFontFace> rule = StyleRuleFontFace::create(createStylePropertySet());
     clearProperties();
     StyleRuleFontFace* result = rule.get();
     m_parsedRules.append(rule.release());
@@ -11819,11 +11817,10 @@ StyleRuleBase* CSSParser::createPageRule(PassOwnPtr<CSSParserSelector> pageSelec
     m_allowImportRules = m_allowNamespaceDeclarations = false;
     StyleRulePage* pageRule = 0;
     if (pageSelector) {
-        RefPtr<StyleRulePage> rule = StyleRulePage::create();
+        RefPtr<StyleRulePage> rule = StyleRulePage::create(createStylePropertySet());
         Vector<OwnPtr<CSSParserSelector> > selectorVector;
         selectorVector.append(pageSelector);
         rule->parserAdoptSelectorVector(selectorVector);
-        rule->setProperties(createStylePropertySet());
         pageRule = rule.get();
         m_parsedRules.append(rule.release());
         processAndAddNewRuleToSourceTreeIfNeeded();
@@ -11921,9 +11918,8 @@ StyleKeyframe* CSSParser::createKeyframe(CSSParserValueList* keys)
         keyString.append('%');
     }
 
-    RefPtr<StyleKeyframe> keyframe = StyleKeyframe::create();
+    RefPtr<StyleKeyframe> keyframe = StyleKeyframe::create(createStylePropertySet());
     keyframe->setKeyText(keyString.toString());
-    keyframe->setProperties(createStylePropertySet());
 
     clearProperties();
 
@@ -12141,9 +12137,7 @@ StyleRuleBase* CSSParser::createViewportRule()
 {
     m_allowImportRules = m_allowNamespaceDeclarations = false;
 
-    RefPtr<StyleRuleViewport> rule = StyleRuleViewport::create();
-
-    rule->setProperties(createStylePropertySet());
+    RefPtr<StyleRuleViewport> rule = StyleRuleViewport::create(createStylePropertySet());
     clearProperties();
 
     StyleRuleViewport* result = rule.get();

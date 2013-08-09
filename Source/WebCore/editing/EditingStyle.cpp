@@ -1123,7 +1123,7 @@ void EditingStyle::mergeStyleFromRules(StyledElement* element)
     // Styles from the inline style declaration, held in the variable "style", take precedence 
     // over those from matched rules.
     if (m_mutableStyle)
-        styleFromMatchedRules->mergeAndOverrideOnConflict(m_mutableStyle.get());
+        styleFromMatchedRules->mergeAndOverrideOnConflict(*m_mutableStyle);
 
     clear();
     m_mutableStyle = styleFromMatchedRules;
@@ -1152,7 +1152,7 @@ void EditingStyle::mergeStyleFromRulesForSerialization(StyledElement* element)
             }
         }
     }
-    m_mutableStyle->mergeAndOverrideOnConflict(fromComputedStyle.get());
+    m_mutableStyle->mergeAndOverrideOnConflict(*fromComputedStyle);
 }
 
 static void removePropertiesInStyle(MutableStylePropertySet* styleToRemovePropertiesFrom, StylePropertySet* style)

@@ -314,7 +314,7 @@ void PageSerializer::addImageToResources(CachedImage* image, RenderObject* image
 
 void PageSerializer::retrieveResourcesForRule(StyleRule* rule, Document* document)
 {
-    retrieveResourcesForProperties(rule->properties(), document);
+    retrieveResourcesForProperties(&rule->properties(), document);
 }
 
 void PageSerializer::retrieveResourcesForProperties(const StylePropertySet* styleDeclaration, Document* document)

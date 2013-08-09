@@ -46,20 +46,20 @@
 
 namespace WebCore {
 
-static StylePropertySet* leftToRightDeclaration()
+static const StylePropertySet& leftToRightDeclaration()
 {
-    DEFINE_STATIC_LOCAL(RefPtr<MutableStylePropertySet>, leftToRightDecl, (MutableStylePropertySet::create()));
+    static MutableStylePropertySet* leftToRightDecl = MutableStylePropertySet::create().leakRef();
     if (leftToRightDecl->isEmpty())
         leftToRightDecl->setProperty(CSSPropertyDirection, CSSValueLtr);
-    return leftToRightDecl.get();
+    return *leftToRightDecl;
 }
 
-static StylePropertySet* rightToLeftDeclaration()
+static const StylePropertySet& rightToLeftDeclaration()
 {
-    DEFINE_STATIC_LOCAL(RefPtr<MutableStylePropertySet>, rightToLeftDecl, (MutableStylePropertySet::create()));
+    static MutableStylePropertySet* rightToLeftDecl = MutableStylePropertySet::create().leakRef();
     if (rightToLeftDecl->isEmpty())
         rightToLeftDecl->setProperty(CSSPropertyDirection, CSSValueRtl);
-    return rightToLeftDecl.get();
+    return *rightToLeftDecl;
 }
 
 StyleResolver::MatchResult& ElementRuleCollector::matchedResult()
@@ -95,7 +95,7 @@ inline void ElementRuleCollector::addElementStyleProperties(const StylePropertyS
     m_result.ranges.lastAuthorRule = m_result.matchedProperties.size();
     if (m_result.ranges.firstAuthorRule == -1)
         m_result.ranges.firstAuthorRule = m_result.ranges.lastAuthorRule;
-    m_result.addMatchedProperties(propertySet);
+    m_result.addMatchedProperties(*propertySet);
     if (!isCacheable)
         m_result.isCacheable = false;
 }
@@ -413,8 +413,8 @@ void ElementRuleCollector::doCollectMatchingRulesForList(const Vector<RuleData>*
         PseudoId dynamicPseudo = NOPSEUDO;
         if (ruleMatches(ruleData, matchRequest.scope, dynamicPseudo)) {
             // If the rule has no properties to apply, then ignore it in the non-debug mode.
-            const StylePropertySet* properties = rule->properties();
-            if (!properties || (properties->isEmpty() && !matchRequest.includeEmptyRules)) {
+            const StylePropertySet& properties = rule->properties();
+            if (properties.isEmpty() && !matchRequest.includeEmptyRules) {
                 if (hasInspectorFrontends)
                     InspectorInstrumentation::didMatchRule(cookie, false);
                 continue;

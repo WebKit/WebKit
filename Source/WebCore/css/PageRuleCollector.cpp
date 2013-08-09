@@ -118,8 +118,8 @@ void PageRuleCollector::matchPageRulesForList(Vector<StyleRulePage*>& matchedRul
             continue;
 
         // If the rule has no properties to apply, then ignore it.
-        const StylePropertySet* properties = rule->properties();
-        if (!properties || properties->isEmpty())
+        const StylePropertySet& properties = rule->properties();
+        if (properties.isEmpty())
             continue;
 
         // Add this rule to our list of matched rules.

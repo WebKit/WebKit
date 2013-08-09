@@ -840,11 +840,11 @@ QString QWebElement::styleProperty(const QString &name, StyleResolveStrategy str
                 continue;
             StyleRule* styleRule = static_cast<StyleRule*>(rules[i - 1].get());
 
-            if (styleRule->properties()->propertyIsImportant(propID))
-                return styleRule->properties()->getPropertyValue(propID);
+            if (styleRule->properties().propertyIsImportant(propID))
+                return styleRule->properties().getPropertyValue(propID);
 
             if (!style || style->getPropertyValue(propID).isEmpty())
-                style = styleRule->properties();
+                style = &styleRule->properties();
         }
 
         if (!style)

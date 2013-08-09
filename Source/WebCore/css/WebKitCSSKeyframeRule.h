@@ -27,21 +27,20 @@
 #define WebKitCSSKeyframeRule_h
 
 #include "CSSRule.h"
+#include "StylePropertySet.h"
 
 namespace WebCore {
 
 class CSSStyleDeclaration;
-class MutableStylePropertySet;
-class StylePropertySet;
 class StyleRuleCSSStyleDeclaration;
 class WebKitCSSKeyframesRule;
 
 class StyleKeyframe : public RefCounted<StyleKeyframe> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassRefPtr<StyleKeyframe> create()
+    static PassRefPtr<StyleKeyframe> create(PassRefPtr<StylePropertySet> properties)
     {
-        return adoptRef(new StyleKeyframe());
+        return adoptRef(new StyleKeyframe(properties));
     }
     ~StyleKeyframe();
 
@@ -50,14 +49,13 @@ public:
 
     void getKeys(Vector<float>& keys) const   { parseKeyString(m_key, keys); }
     
-    const StylePropertySet* properties() const { return m_properties.get(); }
+    const StylePropertySet& properties() const { return *m_properties; }
     MutableStylePropertySet* mutableProperties();
-    void setProperties(PassRefPtr<StylePropertySet>);
     
     String cssText() const;
 
 private:
-    StyleKeyframe();
+    StyleKeyframe(PassRefPtr<StylePropertySet>);
     
     static void parseKeyString(const String&, Vector<float>& keys);
     

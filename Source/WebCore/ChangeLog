@@ -1,3 +1,95 @@
+2013-08-09  Andreas Kling  <akling@apple.com>
+
+        StyleRule*::properties() should return const references.
+        <http://webkit.org/b/119596>
+
+        Reviewed by Antti Koivisto.
+
+        Make StyleRule::properties() & friends return const-references instead of
+        pointers. This exposed some pointless null checking, since rules should
+        always have properties.
+
+        All rule objects that contain properties now require a StylePropertySet at
+        the time of construction instead having you call setProperties() later.
+
+        The only rules that could ever have null properties were the default-inserted
+        animation keyframe rules for 0% and 100% that we'd conjure up if the author
+        didn't provide them. Now they just have an empty property set instead.
+
+        * css/CSSFontFaceRule.cpp:
+        (WebCore::CSSFontFaceRule::cssText):
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::addFontFaceRule):
+        * css/CSSPageRule.cpp:
+        (WebCore::CSSPageRule::cssText):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::createFilterRule):
+        (WebCore::CSSParser::createStyleRule):
+        (WebCore::CSSParser::createFontFaceRule):
+        (WebCore::CSSParser::rewriteSpecifiers):
+        * css/CSSStyleRule.cpp:
+        (WebCore::CSSStyleRule::cssText):
+        * css/ElementRuleCollector.cpp:
+        (WebCore::leftToRightDeclaration):
+        (WebCore::rightToLeftDeclaration):
+        (WebCore::ElementRuleCollector::addElementStyleProperties):
+        (WebCore::ElementRuleCollector::doCollectMatchingRulesForList):
+        * css/PageRuleCollector.cpp:
+        (WebCore::PageRuleCollector::matchPageRulesForList):
+        * css/StylePropertySet.cpp:
+        (WebCore::MutableStylePropertySet::mergeAndOverrideOnConflict):
+        * css/StylePropertySet.h:
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::MatchResult::addMatchedProperties):
+        (WebCore::StyleResolver::styleForKeyframe):
+        (WebCore::StyleResolver::keyframeStylesForAnimation):
+        * css/StyleResolver.h:
+        * css/StyleRule.cpp:
+        (WebCore::StyleRule::StyleRule):
+        (WebCore::StyleRule::create):
+        (WebCore::StyleRulePage::StyleRulePage):
+        (WebCore::StyleRuleFontFace::StyleRuleFontFace):
+        (WebCore::StyleRuleViewport::StyleRuleViewport):
+        (WebCore::StyleRuleViewport::mutableProperties):
+        (WebCore::StyleRuleFilter::StyleRuleFilter):
+        * css/StyleRule.h:
+        (WebCore::StyleRule::create):
+        (WebCore::StyleRule::properties):
+        (WebCore::StyleRuleFontFace::create):
+        (WebCore::StyleRuleFontFace::properties):
+        (WebCore::StyleRulePage::create):
+        (WebCore::StyleRulePage::properties):
+        (WebCore::StyleRuleViewport::create):
+        (WebCore::StyleRuleViewport::properties):
+        (WebCore::StyleRuleFilter::create):
+        (WebCore::StyleRuleFilter::properties):
+        * css/StyleSheetContents.cpp:
+        (WebCore::StyleSheetContents::addSubresourceStyleURLs):
+        (WebCore::childRulesHaveFailedOrCanceledSubresources):
+        * css/WebKitCSSFilterRule.cpp:
+        (WebCore::WebKitCSSFilterRule::cssText):
+        * css/WebKitCSSKeyframeRule.cpp:
+        (WebCore::StyleKeyframe::StyleKeyframe):
+        (WebCore::StyleKeyframe::mutableProperties):
+        * css/WebKitCSSKeyframeRule.h:
+        (WebCore::StyleKeyframe::create):
+        (WebCore::StyleKeyframe::properties):
+        * css/WebKitCSSViewportRule.cpp:
+        (WebCore::WebKitCSSViewportRule::cssText):
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::applyInlineStyleToNodeRange):
+        * editing/EditingStyle.cpp:
+        (WebCore::EditingStyle::mergeStyleFromRules):
+        (WebCore::EditingStyle::mergeStyleFromRulesForSerialization):
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::InspectorStyleSheet::revalidateStyle):
+        * page/PageSerializer.cpp:
+        (WebCore::PageSerializer::retrieveResourcesForRule):
+        * svg/SVGFontFaceElement.cpp:
+        (WebCore::SVGFontFaceElement::SVGFontFaceElement):
+        (WebCore::SVGFontFaceElement::fontFamily):
+        (WebCore::SVGFontFaceElement::rebuildFontFace):
+
 2013-08-09  Julien Brianceau  <jbrianceau@nds.com>
 
         [Qt] Fix build (broken by changeset r153826).

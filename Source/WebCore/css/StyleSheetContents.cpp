@@ -421,9 +421,9 @@ void StyleSheetContents::addSubresourceStyleURLs(ListHashSet<KURL>& urls)
         for (unsigned i = 0; i < styleSheet->m_childRules.size(); ++i) {
             StyleRuleBase* rule = styleSheet->m_childRules[i].get();
             if (rule->isStyleRule())
-                static_cast<StyleRule*>(rule)->properties()->addSubresourceStyleURLs(urls, this);
+                static_cast<StyleRule*>(rule)->properties().addSubresourceStyleURLs(urls, this);
             else if (rule->isFontFaceRule())
-                static_cast<StyleRuleFontFace*>(rule)->properties()->addSubresourceStyleURLs(urls, this);
+                static_cast<StyleRuleFontFace*>(rule)->properties().addSubresourceStyleURLs(urls, this);
         }
     }
 }
@@ -434,11 +434,11 @@ static bool childRulesHaveFailedOrCanceledSubresources(const Vector<RefPtr<Style
         const StyleRuleBase* rule = rules[i].get();
         switch (rule->type()) {
         case StyleRuleBase::Style:
-            if (static_cast<const StyleRule*>(rule)->properties()->hasFailedOrCanceledSubresources())
+            if (static_cast<const StyleRule*>(rule)->properties().hasFailedOrCanceledSubresources())
                 return true;
             break;
         case StyleRuleBase::FontFace:
-            if (static_cast<const StyleRuleFontFace*>(rule)->properties()->hasFailedOrCanceledSubresources())
+            if (static_cast<const StyleRuleFontFace*>(rule)->properties().hasFailedOrCanceledSubresources())
                 return true;
             break;
         case StyleRuleBase::Media:

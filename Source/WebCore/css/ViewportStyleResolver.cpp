@@ -65,7 +65,7 @@ void ViewportStyleResolver::addViewportRule(StyleRuleViewport* viewportRule)
         return;
     }
 
-    m_propertySet->mergeAndOverrideOnConflict(propertySet);
+    m_propertySet->mergeAndOverrideOnConflict(*propertySet);
 }
 
 void ViewportStyleResolver::clearDocument()

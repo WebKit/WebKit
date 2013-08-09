@@ -67,7 +67,7 @@ String WebKitCSSFilterRule::cssText() const
     result.append(filterName);
     result.appendLiteral(" { ");
 
-    String descs = m_filterRule->properties()->asText();
+    String descs = m_filterRule->properties().asText();
     result.append(descs);
     if (!descs.isEmpty())
         result.append(' ');

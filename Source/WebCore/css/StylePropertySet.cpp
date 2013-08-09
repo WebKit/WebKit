@@ -1034,11 +1034,11 @@ bool StylePropertySet::hasCSSOMWrapper() const
     return m_isMutable && static_cast<const MutableStylePropertySet*>(this)->m_cssomWrapper;
 }
 
-void MutableStylePropertySet::mergeAndOverrideOnConflict(const StylePropertySet* other)
+void MutableStylePropertySet::mergeAndOverrideOnConflict(const StylePropertySet& other)
 {
-    unsigned size = other->propertyCount();
+    unsigned size = other.propertyCount();
     for (unsigned i = 0; i < size; ++i)
-        addParsedProperty(other->propertyAt(i).toCSSProperty());
+        addParsedProperty(other.propertyAt(i).toCSSProperty());
 }
 
 void StylePropertySet::addSubresourceStyleURLs(ListHashSet<KURL>& urls, StyleSheetContents* contextStyleSheet) const

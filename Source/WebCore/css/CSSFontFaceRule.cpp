@@ -52,7 +52,7 @@ String CSSFontFaceRule::cssText() const
 {
     StringBuilder result;
     result.appendLiteral("@font-face { ");
-    String descs = m_fontFaceRule->properties()->asText();
+    String descs = m_fontFaceRule->properties().asText();
     result.append(descs);
     if (!descs.isEmpty())
         result.append(' ');
