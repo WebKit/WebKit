@@ -35,12 +35,12 @@
 
             function keyMessage(event)
             {
-                run('mediaKeySession.addKey(invalidKey)');
+                run('mediaKeySession.update(invalidKey)');
             }
 
             function keyError(event)
             {
-                run('mediaKeySession.addKey(validKey)');
+                run('mediaKeySession.update(validKey)');
             }
         </script>
     </head>

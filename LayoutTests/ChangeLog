@@ -1,5 +1,12 @@
 2013-08-08  Jer Noble  <jer.noble@apple.com>
 
+        Unreviewed gardening; update test after addKey() was renamed to update().
+
+        * media/encrypted-media/encrypted-media-v2-events-expected.txt:
+        * media/encrypted-media/encrypted-media-v2-events.html:
+
+2013-08-08  Jer Noble  <jer.noble@apple.com>
+
         [EME] MediaKey APIs should be prefixed.
         https://bugs.webkit.org/show_bug.cgi?id=119606
 
