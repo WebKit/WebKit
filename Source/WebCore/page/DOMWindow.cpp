@@ -340,11 +340,8 @@ FloatRect DOMWindow::adjustWindowRect(Page* page, const FloatRect& pendingChange
         window.setHeight(pendingChanges.height());
 
     FloatSize minimumSize = page->chrome().client()->minimumWindowSize();
-    // Let size 0 pass through, since that indicates default size, not minimum size.
-    if (window.width())
-        window.setWidth(min(max(minimumSize.width(), window.width()), screen.width()));
-    if (window.height())
-        window.setHeight(min(max(minimumSize.height(), window.height()), screen.height()));
+    window.setWidth(min(max(minimumSize.width(), window.width()), screen.width()));
+    window.setHeight(min(max(minimumSize.height(), window.height()), screen.height()));
 
     // Constrain the window position within the valid screen area.
     window.setX(max(screen.x(), min(window.x(), screen.maxX() - window.width())));

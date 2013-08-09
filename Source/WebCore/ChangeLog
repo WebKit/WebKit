@@ -1,3 +1,23 @@
+2013-08-09  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION (r142755): window.open creates an invisible window when width and height are 0
+        https://bugs.webkit.org/show_bug.cgi?id=119633
+
+        Reviewed by Darin Adler.
+
+        Test: fast/dom/Window/open-zero-size-as-default.html
+
+        Relying on each WebKit to refuse setting size to zero was fragile - because this
+        required each one to have the check, and because by the time the client was called,
+        the initially zero size was not necessarily zero.
+
+        * loader/FrameLoader.cpp: (WebCore::createWindow): When sizes are zero, keep the
+        size the window was created with, because that's the default one by definition.
+
+        * page/DOMWindow.cpp: (WebCore::DOMWindow::adjustWindowRect): It's too late to
+        check for zero size now, it's been mangled to adjust for the difference between
+        window and viewport size.
+
 2013-08-09  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac] some track language tags are not recognized
