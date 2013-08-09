@@ -1,3 +1,27 @@
+2013-08-09  Beth Dakin  <bdakin@apple.com>
+
+        AX: Not able to use arrow keys to read text in a WK2 app
+        https://bugs.webkit.org/show_bug.cgi?id=119605
+        -and corresponding-
+        <rdar://problem/14281275>
+
+        Reviewed by Darin Adler.
+
+        Make all of these scrolling functions actually return the WebCore bools that 
+        indicate whether or not scrolling happened. 
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::scroll):
+        (WebKit::WebPage::logicalScroll):
+        (WebKit::WebPage::scrollBy):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::executeKeypressCommandsInternal):
+
+        This function now gives accessibility a chance to handle the event too. And it 
+        also actually tracks whether or not the event was handled by scrolling instead of 
+        assuming that it was and universally returning true.
+        (WebKit::WebPage::performNonEditingBehaviorForSelector):
+
 2013-08-09  Brian Holt  <brian.holt@samsung.com>
 
         [GTK] [WebKit2] Add an 'authenticate' signal to WebKitWebView

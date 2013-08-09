@@ -1,3 +1,20 @@
+2013-08-09  Beth Dakin  <bdakin@apple.com>
+
+        AX: Not able to use arrow keys to read text in a WK2 app
+        https://bugs.webkit.org/show_bug.cgi?id=119605
+        -and corresponding-
+        <rdar://problem/14281275>
+
+        Reviewed by Darin Adler.
+
+        New test verifies that didNotHandleKeyEvent will be called when there is nothing 
+        to scroll. 
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2/DidNotHandleKeyDown.cpp: Added.
+        (TestWebKitAPI::didFinishLoadForFrame):
+        (TestWebKitAPI::didNotHandleKeyEventCallback):
+        (TestWebKitAPI::TEST):
+
 2013-08-09  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Add support for KeyboardEvent.location attribute

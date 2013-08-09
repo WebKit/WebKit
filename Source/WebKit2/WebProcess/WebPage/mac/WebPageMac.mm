@@ -186,7 +186,7 @@ bool WebPage::executeKeypressCommandsInternal(const Vector<WebCore::KeypressComm
                 bool commandExecutedByEditor = command.execute(event);
                 eventWasHandled |= commandExecutedByEditor;
                 if (!commandExecutedByEditor) {
-                    bool performedNonEditingBehavior = event->keyEvent()->type() == PlatformEvent::RawKeyDown && performNonEditingBehaviorForSelector(commands[i].commandName);
+                    bool performedNonEditingBehavior = event->keyEvent()->type() == PlatformEvent::RawKeyDown && performNonEditingBehaviorForSelector(commands[i].commandName, event);
                     eventWasHandled |= performedNonEditingBehavior;
                 }
             } else {
@@ -624,40 +624,47 @@ void WebPage::performDictionaryLookupForRange(Frame* frame, Range* range, NSDict
     send(Messages::WebPageProxy::DidPerformDictionaryLookup(attributedString, dictionaryPopupInfo));
 }
 
-bool WebPage::performNonEditingBehaviorForSelector(const String& selector)
+bool WebPage::performNonEditingBehaviorForSelector(const String& selector, KeyboardEvent* event)
 {
+    // First give accessibility a chance to handle the event.
+    Frame* frame = frameForEvent(event);
+    frame->eventHandler()->handleKeyboardSelectionMovementForAccessibility(event);
+    if (event->defaultHandled())
+        return true;
+
     // FIXME: All these selectors have corresponding Editor commands, but the commands only work in editable content.
     // Should such non-editing behaviors be implemented in Editor or EventHandler::defaultArrowEventHandler() perhaps?
-    if (selector == "moveUp:")
-        scroll(m_page.get(), ScrollUp, ScrollByLine);
-    else if (selector == "moveToBeginningOfParagraph:")
-        scroll(m_page.get(), ScrollUp, ScrollByPage);
-    else if (selector == "moveToBeginningOfDocument:") {
-        scroll(m_page.get(), ScrollUp, ScrollByDocument);
-        scroll(m_page.get(), ScrollLeft, ScrollByDocument);
-    } else if (selector == "moveDown:")
-        scroll(m_page.get(), ScrollDown, ScrollByLine);
-    else if (selector == "moveToEndOfParagraph:")
-        scroll(m_page.get(), ScrollDown, ScrollByPage);
-    else if (selector == "moveToEndOfDocument:") {
-        scroll(m_page.get(), ScrollDown, ScrollByDocument);
-        scroll(m_page.get(), ScrollLeft, ScrollByDocument);
-    } else if (selector == "moveLeft:")
-        scroll(m_page.get(), ScrollLeft, ScrollByLine);
-    else if (selector == "moveWordLeft:")
-        scroll(m_page.get(), ScrollLeft, ScrollByPage);
-    else if (selector == "moveToLeftEndOfLine:")
-        m_page->goBack();
-    else if (selector == "moveRight:")
-        scroll(m_page.get(), ScrollRight, ScrollByLine);
-    else if (selector == "moveWordRight:")
-        scroll(m_page.get(), ScrollRight, ScrollByPage);
-    else if (selector == "moveToRightEndOfLine:")
-        m_page->goForward();
-    else
-        return false;
+    
+    bool didPerformAction = false;
 
-    return true;
+    if (selector == "moveUp:")
+        didPerformAction = scroll(m_page.get(), ScrollUp, ScrollByLine);
+    else if (selector == "moveToBeginningOfParagraph:")
+        didPerformAction = scroll(m_page.get(), ScrollUp, ScrollByPage);
+    else if (selector == "moveToBeginningOfDocument:") {
+        didPerformAction = scroll(m_page.get(), ScrollUp, ScrollByDocument);
+        didPerformAction |= scroll(m_page.get(), ScrollLeft, ScrollByDocument);
+    } else if (selector == "moveDown:")
+        didPerformAction = scroll(m_page.get(), ScrollDown, ScrollByLine);
+    else if (selector == "moveToEndOfParagraph:")
+        didPerformAction = scroll(m_page.get(), ScrollDown, ScrollByPage);
+    else if (selector == "moveToEndOfDocument:") {
+        didPerformAction = scroll(m_page.get(), ScrollDown, ScrollByDocument);
+        didPerformAction |= scroll(m_page.get(), ScrollLeft, ScrollByDocument);
+    } else if (selector == "moveLeft:")
+        didPerformAction = scroll(m_page.get(), ScrollLeft, ScrollByLine);
+    else if (selector == "moveWordLeft:")
+        didPerformAction = scroll(m_page.get(), ScrollLeft, ScrollByPage);
+    else if (selector == "moveToLeftEndOfLine:")
+        didPerformAction = m_page->goBack();
+    else if (selector == "moveRight:")
+        didPerformAction = scroll(m_page.get(), ScrollRight, ScrollByLine);
+    else if (selector == "moveWordRight:")
+        didPerformAction = scroll(m_page.get(), ScrollRight, ScrollByPage);
+    else if (selector == "moveToRightEndOfLine:")
+        didPerformAction = m_page->goForward();
+
+    return didPerformAction;
 }
 
 bool WebPage::performDefaultBehaviorForKeyEvent(const WebKeyboardEvent&)

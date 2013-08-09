@@ -1,3 +1,21 @@
+2013-08-09  Beth Dakin  <bdakin@apple.com>
+
+        AX: Not able to use arrow keys to read text in a WK2 app
+        https://bugs.webkit.org/show_bug.cgi?id=119605
+        -and corresponding-
+        <rdar://problem/14281275>
+
+        Reviewed by Darin Adler.
+
+        This code from defaultKeyboardEventHandler() is the magic that makes this AX 
+        functionality work. This patch moves that into a separate function so that we can 
+        call it from WK2.
+        * WebCore.exp.in:
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleKeyboardSelectionMovementForAccessibility):
+        (WebCore::EventHandler::defaultKeyboardEventHandler):
+        * page/EventHandler.h:
+
 2013-08-09  Antti Koivisto  <antti@apple.com>
 
         Move static StyleResolver functions to Style namespace
