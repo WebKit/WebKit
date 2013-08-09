@@ -1,3 +1,17 @@
+2013-08-08  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r153847.
+        http://trac.webkit.org/changeset/153847
+        https://bugs.webkit.org/show_bug.cgi?id=119609
+
+        caused new SVG animation test failures (Requested by smfr on
+        #webkit).
+
+        * svg/animations/non-additive-type-from-by-animation-expected.txt: Removed.
+        * svg/animations/non-additive-type-from-by-animation.html: Removed.
+        * svg/animations/resources/non-additive-type-from-by-animation.svg: Removed.
+        * svg/animations/script-tests/non-additive-type-from-by-animation.js: Removed.
+
 2013-08-08  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed gardening; update test after addKey() was renamed to update().

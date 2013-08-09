@@ -167,7 +167,7 @@ bool SVGAnimateElement::calculateFromAndByValues(const String& fromString, const
     if (!targetElement)
         return false;
 
-    if (!isAdditive())
+    if (animationMode() == ByAnimation && !isAdditive())
         return false;
 
     ASSERT(!hasTagName(SVGNames::setTag));
