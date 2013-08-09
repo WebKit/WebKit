@@ -1,5 +1,22 @@
 2013-08-09  Rob Buis  <rwlbuis@webkit.org>
 
+        ASSERT_NOT_REACHED() touched in WebCore::SVGAnimatedStringAnimator::addAnimatedTypes
+        https://bugs.webkit.org/show_bug.cgi?id=113224
+
+        Reviewed by Darin Adler.
+
+        Do not perform from-by animations for non-additive attributes.
+
+        Test: svg/animations/non-additive-type-from-by-animation.html
+
+        * svg/SVGAnimateElement.cpp:
+        (WebCore::SVGAnimateElement::calculateFromAndByValues):
+        (WebCore::SVGAnimateElement::animatedPropertyTypeSupportsAddition):
+        (WebCore::SVGAnimateElement::isAdditive):
+        * svg/SVGAnimateElement.h:
+
+2013-08-09  Rob Buis  <rwlbuis@webkit.org>
+
         ASSERT(m_type == toSVGTransform.type())
         https://bugs.webkit.org/show_bug.cgi?id=113217
 

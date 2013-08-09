@@ -62,6 +62,7 @@ protected:
 private:
     void resetAnimatedPropertyType();
     SVGAnimatedTypeAnimator* ensureAnimator();
+    bool animatedPropertyTypeSupportsAddition() const;
 
     virtual bool hasValidAttributeType();
 
