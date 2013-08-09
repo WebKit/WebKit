@@ -1,3 +1,15 @@
+2013-08-09  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening. Rebaselinnig some new tests.
+
+        * platform/qt-5.0-wk1/TestExpectations:
+        * platform/qt-5.0-wk2/compositing/overflow-trumps-transform-style-expected.txt:
+        * platform/qt-5.0-wk2/fast/repaint/caret-jump-between-nodes-expected.txt: Added.
+        * platform/qt/compositing/geometry/preserve-3d-switching-expected.txt:
+        * platform/qt/fast/forms/search-rtl-expected.png:
+        * platform/qt/fast/forms/search-rtl-expected.txt:
+        * platform/qt/fast/repaint/caret-jump-between-nodes-expected.txt: Added.
+
 2013-08-09  Rob Buis  <rwlbuis@webkit.org>
 
         ASSERT_NOT_REACHED() touched in WebCore::SVGAnimatedStringAnimator::addAnimatedTypes
