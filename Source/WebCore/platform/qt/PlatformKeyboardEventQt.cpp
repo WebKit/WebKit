@@ -814,7 +814,7 @@ static String keyTextForKeyEvent(const QKeyEvent* event)
     return event->text();
 }
 
-PlatformKeyboardEvent::PlatformKeyboardEvent(QKeyEvent* event)
+PlatformKeyboardEvent::PlatformKeyboardEvent(QKeyEvent* event, bool useNativeVirtualKeyAsDOMKey)
 {
     const int state = event->modifiers();
     m_type = (event->type() == QEvent::KeyRelease) ? PlatformEvent::KeyUp : PlatformEvent::KeyDown;
@@ -829,14 +829,22 @@ PlatformKeyboardEvent::PlatformKeyboardEvent(QKeyEvent* event)
     if (state & Qt::MetaModifier)
         m_modifiers |= MetaKey;
 
+    m_useNativeVirtualKeyAsDOMKey = useNativeVirtualKeyAsDOMKey;
     m_text = keyTextForKeyEvent(event);
     m_unmodifiedText = m_text; // FIXME: not correct
     m_keyIdentifier = keyIdentifierForQtKeyCode(event->key());
     m_autoRepeat = event->isAutoRepeat();
     m_isKeypad = (state & Qt::KeypadModifier);
     m_isSystemKey = false;
-    m_windowsVirtualKeyCode = windowsKeyCodeForKeyEvent(event->key(), m_isKeypad);
     m_nativeVirtualKeyCode = event->nativeVirtualKey();
+    // If QKeyEvent::nativeVirtualKey() is valid (!=0) and useNativeVirtualKeyAsDOMKey is set,
+    // then it is a special case desired by QtWebKit embedder to send domain specific keys
+    // to Web Applications intented for platforms like HbbTV,CE-HTML,OIPF,..etc.
+    if (useNativeVirtualKeyAsDOMKey && m_nativeVirtualKeyCode)
+        m_windowsVirtualKeyCode = m_nativeVirtualKeyCode;
+    else
+        m_windowsVirtualKeyCode = windowsKeyCodeForKeyEvent(event->key(), m_isKeypad);
+
     m_macCharCode = 0;
     m_qtEvent = event;
     m_timestamp = WTF::currentTime();
@@ -858,7 +866,7 @@ void PlatformKeyboardEvent::disambiguateKeyDownEvent(Type type, bool)
             we try to detect this situation and still set the text, to ensure that the
             general event handling sends a key press event after this disambiguation.
         */
-        if (m_text.isEmpty() && m_windowsVirtualKeyCode && isVirtualKeyCodeRepresentingCharacter(m_windowsVirtualKeyCode))
+        if (!m_useNativeVirtualKeyAsDOMKey && m_text.isEmpty() && m_windowsVirtualKeyCode && isVirtualKeyCodeRepresentingCharacter(m_windowsVirtualKeyCode))
             m_text.append(UChar(m_windowsVirtualKeyCode));
 
         m_keyIdentifier = String();

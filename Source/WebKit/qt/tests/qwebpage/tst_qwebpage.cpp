@@ -114,6 +114,7 @@ private Q_SLOTS:
     void contextMenuCopy();
     void contextMenuPopulatedOnce();
     void acceptNavigationRequest();
+    void domainSpecificKeyEvent();
     void geolocationRequestJS();
     void loadFinished();
     void actionStates();
@@ -281,6 +282,58 @@ void tst_QWebPage::acceptNavigationRequest()
 
     // Restore default page
     m_view->setPage(0);
+}
+
+void tst_QWebPage::domainSpecificKeyEvent()
+{
+    QWebView webView;
+    webView.show();
+    QTest::qWaitForWindowExposed(&webView);
+
+    webView.setHtml(QLatin1String("<html><head>"
+        "<script>"
+        "var receivedKeyArray = new Array();"
+        "function keyEvent(e) {"
+        "receivedKeyArray.push(e.type+':'+e.keyCode+':'+e.charCode);"
+        "};"
+        "window.onkeyup = keyEvent; window.onkeypress = keyEvent; window.onkeydown = keyEvent;"
+        "</script></head><body>test</body></html>"));
+
+    // Enable settings to use nativeVirtualKey as DOM key value.
+    webView.page()->setProperty("_q_useNativeVirtualKeyAsDOMKey", true);
+    // Simulate domain specific keyevent to WebKit by passing it as nativeVirtualKey in QKeyEvent.
+    // Qt::Key_Pause --> 0x51
+    QKeyEvent keyEvent(QEvent::KeyPress, Qt::Key_Pause, Qt::NoModifier, 0, 81, 0);
+    QApplication::sendEvent(&webView, &keyEvent);
+    keyEvent = QKeyEvent(QEvent::KeyRelease, Qt::Key_Pause, Qt::NoModifier, 0, 81, 0);
+    QApplication::sendEvent(&webView, &keyEvent);
+    const QLatin1String expectedReceivedKeyArray1("keydown:81:0,keyup:81:0");
+    QString receivedKeyArray = webView.page()->mainFrame()->evaluateJavaScript(QLatin1String("receivedKeyArray")).toStringList().join(",");
+    QVERIFY(receivedKeyArray == expectedReceivedKeyArray1);
+
+    // Normal PC keyboard key converstion flow shouldn't be affected when sending nativeVirtual key as 0.
+    // Qt::Key_Pause --> VK_PAUSE(0x13)
+    webView.page()->mainFrame()->evaluateJavaScript(QLatin1String("receivedKeyArray = new Array()")); // Reset
+    keyEvent = QKeyEvent(QEvent::KeyPress, Qt::Key_Pause, Qt::NoModifier, 0, 0, 0);
+    QApplication::sendEvent(&webView, &keyEvent);
+    keyEvent = QKeyEvent(QEvent::KeyRelease, Qt::Key_Pause, Qt::NoModifier, 0, 0, 0);
+    QApplication::sendEvent(&webView, &keyEvent);
+    const QLatin1String expectedReceivedKeyArray2("keydown:19:0,keyup:19:0");
+    receivedKeyArray = webView.page()->mainFrame()->evaluateJavaScript(QLatin1String("receivedKeyArray")).toStringList().join(",");
+    QVERIFY(receivedKeyArray == expectedReceivedKeyArray2);
+
+    // Negative case.
+    // Disable settings to use nativeVirtualKey as DOM key value.
+    webView.page()->setProperty("_q_useNativeVirtualKeyAsDOMKey", false);
+    // Qt::Key_Pause --> VK_PAUSE(0x13)
+    webView.page()->mainFrame()->evaluateJavaScript(QLatin1String("receivedKeyArray = new Array()")); // Reset
+    keyEvent = QKeyEvent(QEvent::KeyPress, Qt::Key_Pause, Qt::NoModifier, 0, 81, 0);
+    QApplication::sendEvent(&webView, &keyEvent);
+    keyEvent = QKeyEvent(QEvent::KeyRelease, Qt::Key_Pause, Qt::NoModifier, 0, 81, 0);
+    QApplication::sendEvent(&webView, &keyEvent);
+    const QLatin1String expectedReceivedKeyArray3("keydown:19:0,keyup:19:0");
+    receivedKeyArray = webView.page()->mainFrame()->evaluateJavaScript(QLatin1String("receivedKeyArray")).toStringList().join(",");
+    QVERIFY(receivedKeyArray == expectedReceivedKeyArray3);
 }
 
 class JSTestPage : public QWebPage

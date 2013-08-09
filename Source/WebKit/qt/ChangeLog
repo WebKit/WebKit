@@ -1,3 +1,20 @@
+2013-08-09  Arunprasad Rajkumar  <arurajku@cisco.com>
+
+        [Qt] QtWebKit should allow sending domain specific keycode to HTML applications
+        https://bugs.webkit.org/show_bug.cgi?id=118445
+
+        Reviewed by Allan Sandfeld Jensen.
+
+        Added API test.
+
+        * WebCoreSupport/QWebPageAdapter.cpp:
+        (QWebPageAdapter::QWebPageAdapter):
+        (QWebPageAdapter::dynamicPropertyChangeEvent):
+        (QWebPageAdapter::handleKeyEvent):
+        * WebCoreSupport/QWebPageAdapter.h:
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (tst_QWebPage::domainSpecificKeyEvent):
+
 2013-08-09  Andreas Kling  <akling@apple.com>
 
         StyleRule*::properties() should return const references.

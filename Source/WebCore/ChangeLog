@@ -1,3 +1,22 @@
+2013-08-09  Arunprasad Rajkumar  <arurajku@cisco.com>
+
+        [Qt] QtWebKit should allow sending domain specific keycode to HTML applications
+        https://bugs.webkit.org/show_bug.cgi?id=118445
+
+        Reviewed by Allan Sandfeld Jensen.
+
+        No new test required, it is covered by QtWebKit API test.
+
+        This fix allows sending QKeyEvent::nativeVirtualKey as the DOM KeyboardEvent keyCode value instead
+        of Windows virtual key code. It can be enabled/disabled using "_q_useNativeVirtualKeyAsDOMKey"
+        dynamic property present in QWebPage.
+
+        * platform/PlatformKeyboardEvent.h:
+        (WebCore::PlatformKeyboardEvent::PlatformKeyboardEvent):
+        * platform/qt/PlatformKeyboardEventQt.cpp:
+        (WebCore::PlatformKeyboardEvent::PlatformKeyboardEvent):
+        (WebCore::PlatformKeyboardEvent::disambiguateKeyDownEvent):
+
 2013-08-09  Renata Hodovan  <reni@webkit.org>
 
         Missing NULL check in ApplyStyleCommand::applyInlineStyleToNodeRange()

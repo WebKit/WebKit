@@ -359,6 +359,7 @@ public:
     QBasicTimer tripleClickTimer;
 
     bool clickCausedFocus;
+    bool m_useNativeVirtualKeyAsDOMKey;
     quint64 m_totalBytes;
     quint64 m_bytesReceived;
     QWebHistory history;

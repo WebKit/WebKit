@@ -209,6 +209,7 @@ QWebPageAdapter::QWebPageAdapter()
     , forwardUnsupportedContent(false)
     , insideOpenCall(false)
     , clickCausedFocus(false)
+    , m_useNativeVirtualKeyAsDOMKey(false)
     , m_totalBytes(0)
     , m_bytesReceived()
     , networkManager(0)
@@ -838,6 +839,8 @@ void QWebPageAdapter::dynamicPropertyChangeEvent(QObject* obj, QDynamicPropertyC
     } else if (event->propertyName() == "_q_deadDecodedDataDeletionInterval") {
         double interval = obj->property("_q_deadDecodedDataDeletionInterval").toDouble();
         memoryCache()->setDeadDecodedDataDeletionInterval(interval);
+    }  else if (event->propertyName() == "_q_useNativeVirtualKeyAsDOMKey") {
+        m_useNativeVirtualKeyAsDOMKey = obj->property("_q_useNativeVirtualKeyAsDOMKey").toBool();
     }
 }
 
@@ -1295,7 +1298,7 @@ QWebPageAdapter::ViewportAttributes QWebPageAdapter::viewportAttributesForSize(c
 bool QWebPageAdapter::handleKeyEvent(QKeyEvent *ev)
 {
     Frame* frame = page->focusController()->focusedOrMainFrame();
-    return frame->eventHandler()->keyEvent(ev);
+    return frame->eventHandler()->keyEvent(PlatformKeyboardEvent(ev, m_useNativeVirtualKeyAsDOMKey));
 }
 
 bool QWebPageAdapter::handleScrolling(QKeyEvent *ev)
