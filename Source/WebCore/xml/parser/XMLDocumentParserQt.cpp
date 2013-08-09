@@ -156,7 +156,7 @@ XMLDocumentParser::XMLDocumentParser(DocumentFragment* fragment, Element* parent
             for (unsigned i = 0; i < attrs->length(); i++) {
                 const Attribute& attr = attrs->attributeAt(i);
                 if (attr.localName() == "xmlns")
-                    m_defaultNamespaceURI = attr->value();
+                    m_defaultNamespaceURI = attr.value();
                 else if (attr.prefix() == "xmlns")
                     namespaces.append(QXmlStreamNamespaceDeclaration(attr.localName(), attr.value()));
             }
