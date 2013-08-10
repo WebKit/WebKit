@@ -109,9 +109,10 @@ sub IsBaseType
 sub GetBaseClass
 {
     $parent = shift;
+    $interface = shift;
 
     return $parent if $parent eq "Object" or IsBaseType($parent);
-    return "Event" if $parent eq "UIEvent" or $parent eq "MouseEvent";
+    return "Event" if $codeGenerator->InheritsInterface($interface, "Event");
     return "CSSValue" if $parent eq "SVGColor" or $parent eq "CSSValueList";
     return "Node";
 }
@@ -1271,7 +1272,7 @@ sub GenerateCFile {
     my $clsCaps = uc($decamelize);
     my $lowerCaseIfaceName = "webkit_dom_$decamelize";
     my $parentImplClassName = GetParentImplClassName($interface);
-    my $baseClassName = GetBaseClass($parentImplClassName);
+    my $baseClassName = GetBaseClass($parentImplClassName, $interface);
 
     # Add a private struct only for direct subclasses of Object so that we can use RefPtr
     # for the WebCore wrapped object and make sure we only increment the reference counter once.
@@ -1414,7 +1415,7 @@ sub Generate {
     my $parentGObjType = GetParentGObjType($interface);
     my $interfaceName = $interface->name;
     my $parentImplClassName = GetParentImplClassName($interface);
-    my $baseClassName = GetBaseClass($parentImplClassName);
+    my $baseClassName = GetBaseClass($parentImplClassName, $interface);
 
     # Add the default impl header template
     @cPrefix = split("\r", $licenceTemplate);

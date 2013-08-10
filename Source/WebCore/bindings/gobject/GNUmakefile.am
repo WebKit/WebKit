@@ -203,6 +203,8 @@ webkitgtk_gdom_built_sources += \
 	DerivedSources/webkitdom/WebKitDOMHTMLTitleElementPrivate.h \
 	DerivedSources/webkitdom/WebKitDOMHTMLUListElement.cpp \
 	DerivedSources/webkitdom/WebKitDOMHTMLUListElementPrivate.h \
+	DerivedSources/webkitdom/WebKitDOMKeyboardEvent.cpp \
+	DerivedSources/webkitdom/WebKitDOMKeyboardEventPrivate.h \
 	DerivedSources/webkitdom/WebKitDOMLocation.cpp \
 	DerivedSources/webkitdom/WebKitDOMLocationPrivate.h \
 	DerivedSources/webkitdom/WebKitDOMMediaError.cpp \
@@ -305,6 +307,7 @@ webkitgtk_gdom_built_h_api += \
 	DerivedSources/webkitdom/WebKitDOMElement.h \
 	DerivedSources/webkitdom/WebKitDOMEntityReference.h \
 	DerivedSources/webkitdom/WebKitDOMEvent.h \
+	DerivedSources/webkitdom/WebKitDOMKeyboardEvent.h \
 	DerivedSources/webkitdom/WebKitDOMMessagePort.h \
 	DerivedSources/webkitdom/WebKitDOMMouseEvent.h \
 	DerivedSources/webkitdom/WebKitDOMNamedNodeMap.h \

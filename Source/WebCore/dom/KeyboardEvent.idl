@@ -58,7 +58,7 @@
                            [Default=Undefined] optional boolean altGraphKey);
 
     // WebKit Extensions
-#if !defined(LANGUAGE_JAVASCRIPT) || !LANGUAGE_JAVASCRIPT
+#if (!defined(LANGUAGE_JAVASCRIPT) || !LANGUAGE_JAVASCRIPT) && (!defined(LANGUAGE_GOBJECT) || !LANGUAGE_GOBJECT)
     readonly attribute long             keyCode;
     readonly attribute long             charCode;
     

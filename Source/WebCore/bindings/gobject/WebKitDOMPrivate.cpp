@@ -33,6 +33,7 @@
 #include "File.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
+#include "KeyboardEvent.h"
 #include "MouseEvent.h"
 #include "StyleSheet.h"
 #include "UIEvent.h"
@@ -54,6 +55,7 @@
 #include "WebKitDOMHTMLDocumentPrivate.h"
 #include "WebKitDOMHTMLOptionsCollectionPrivate.h"
 #include "WebKitDOMHTMLPrivate.h"
+#include "WebKitDOMKeyboardEventPrivate.h"
 #include "WebKitDOMMouseEventPrivate.h"
 #include "WebKitDOMNodePrivate.h"
 #include "WebKitDOMProcessingInstructionPrivate.h"
@@ -111,6 +113,9 @@ WebKitDOMEvent* wrap(Event* event)
 
     if (event->isMouseEvent())
         return WEBKIT_DOM_EVENT(wrapMouseEvent(static_cast<MouseEvent*>(event)));
+
+    if (event->isKeyboardEvent())
+        return WEBKIT_DOM_EVENT(wrapKeyboardEvent(static_cast<KeyboardEvent*>(event)));
 
     if (event->isUIEvent())
         return WEBKIT_DOM_EVENT(wrapUIEvent(static_cast<UIEvent*>(event)));
