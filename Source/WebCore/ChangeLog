@@ -1,3 +1,16 @@
+2013-08-09  Jer Noble  <jer.noble@apple.com>
+
+        Crash in com.apple.WebKit.WebContent at com.apple.MediaToolbox.
+        https://bugs.webkit.org/show_bug.cgi?id=119645
+
+        Reviewed by Eric Carlson.
+
+        Work around crash caused by <rdar://problem/14688471> by releasing
+        m_request as soon as keys have been added to it.
+
+        * Modules/encryptedmedia/CDMPrivateAVFoundation.mm:
+        (WebCore::CDMSessionAVFoundation::update):
+
 2013-08-09  Anders Carlsson  <andersca@apple.com>
 
         Artifacts seen sometimes with layer backed WebKit1 plug-in
