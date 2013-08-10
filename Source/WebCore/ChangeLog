@@ -1,3 +1,16 @@
+2013-08-09  Anders Carlsson  <andersca@apple.com>
+
+        Artifacts seen sometimes with layer backed WebKit1 plug-in
+        https://bugs.webkit.org/show_bug.cgi?id=119647
+        <rdar://problem/14002715>
+
+        Reviewed by Beth Dakin.
+
+        Don't try to paint layer backed views - they will be painted by Core Animation.
+
+        * platform/mac/WidgetMac.mm:
+        (WebCore::Widget::paint):
+
 2013-08-09  Rob Buis  <rwlbuis@webkit.org>
 
         ASSERTION FAILED: stroke->opacity != other->stroke->opacity in WebCore::SVGRenderStyle::diff

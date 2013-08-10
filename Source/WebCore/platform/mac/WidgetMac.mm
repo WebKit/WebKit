@@ -204,6 +204,12 @@ void Widget::paint(GraphicsContext* p, const IntRect& r)
         return;
     NSView *view = getOuterView();
 
+    // We don't want to paint the view at all if it's layer backed, because then we'll end up
+    // with multiple copies of the view contents, one in the view's layer itself and one in the
+    // WebHTMLView's backing store (either a layer or the window backing store).
+    if (view.layer)
+        return;
+
     // Take a reference to this Widget, because sending messages to the views can invoke arbitrary
     // code, which can deref it.
     RefPtr<Widget> protectedThis(this);
