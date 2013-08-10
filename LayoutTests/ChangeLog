@@ -1,3 +1,55 @@
+2013-08-09  Alexey Proskuryakov  <ap@apple.com>
+
+        Tests that dump delegate calls are flaky because of cached redirects
+        https://bugs.webkit.org/show_bug.cgi?id=119641
+
+        Reviewed by Brady Eidson.
+
+        Made redirect.php emit Cache-Control: no store as a workaround for bug 77538.
+        Removed several reimplementations of it, and changed the test to use the
+        central copy.
+
+        * http/tests/permissionclient/resources/redir.php: Removed.
+        * http/tests/resources/redirect.php:
+        * http/tests/security/beforeload-iframe-server-redirect-expected.txt:
+        * http/tests/security/beforeload-iframe-server-redirect.html:
+        * http/tests/security/cannot-read-cssrules-redirect.html:
+        * http/tests/security/canvas-remote-read-redirect-to-remote-image.html:
+        * http/tests/security/canvas-remote-read-remote-image-redirect.html:
+        * http/tests/security/contentSecurityPolicy/frame-src-redirect-blocked.html:
+        * http/tests/security/contentSecurityPolicy/resources/multiple-iframe-test.js:
+        * http/tests/security/contentSecurityPolicy/resources/redir.php: Removed.
+        * http/tests/security/contentSecurityPolicy/script-src-redirect-expected.txt:
+        * http/tests/security/contentSecurityPolicy/script-src-redirect.html:
+        * http/tests/security/cross-origin-css.html:
+        * http/tests/security/cross-origin-script-window-onerror-redirected.html:
+        * http/tests/security/mixedContent/redirect-http-to-https-iframe-in-main-frame-expected.txt:
+        * http/tests/security/mixedContent/redirect-http-to-https-script-in-iframe-expected.txt:
+        * http/tests/security/mixedContent/redirect-https-to-http-iframe-in-main-frame-expected.txt:
+        * http/tests/security/mixedContent/resources/frame-with-redirect-http-to-https-frame.html:
+        * http/tests/security/mixedContent/resources/frame-with-redirect-http-to-https-script.html:
+        * http/tests/security/mixedContent/resources/frame-with-redirect-https-to-http-frame.html:
+        * http/tests/security/mixedContent/resources/frame-with-redirect-https-to-http-script.html:
+        * http/tests/security/redirect-BLOCKED-to-localURL.html:
+        * http/tests/security/resources/cross-origin-xsl-redirect.xml:
+        * http/tests/security/resources/redir.php: Removed.
+        * http/tests/security/resources/xsl-using-document-redirect.xsl:
+        * http/tests/security/resources/xsl-using-external-entity-redirect.xsl:
+        * http/tests/security/stylesheet-href-redirect-expected.txt:
+        * http/tests/security/stylesheet-href-redirect.html:
+        * http/tests/security/xssAuditor/block-does-not-leak-referrer.html:
+        * http/tests/security/xssAuditor/resources/redir.php: Removed.
+        * http/tests/security/xssAuditor/script-tag-open-redirect.html:
+        * http/tests/security/xssAuditor/script-tag-redirect.html:
+        * http/tests/xmlhttprequest/redirect-cross-origin-2.html:
+        * http/tests/xmlhttprequest/redirect-cross-origin-post-sync.html:
+        * http/tests/xmlhttprequest/redirect-cross-origin-post.html:
+        * http/tests/xmlhttprequest/redirect-cross-origin-sync-double.html:
+        * http/tests/xmlhttprequest/redirect-cross-origin-sync.html:
+        * http/tests/xmlhttprequest/redirect-cross-origin.html:
+        * http/tests/xmlhttprequest/resources/redirect.php: Removed.
+        * http/tests/xmlhttprequest/xmlhttprequest-unsafe-redirect.html:
+
 2013-08-09  Rob Buis  <rwlbuis@webkit.org>
 
         ASSERTION FAILED: stroke->opacity != other->stroke->opacity in WebCore::SVGRenderStyle::diff

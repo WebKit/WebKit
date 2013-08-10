@@ -28,7 +28,8 @@ function testImpl(experimental, preescapedPolicy) {
     if (!preescapedPolicy)
         policy = encodeURIComponent(policy);
 
-    var scriptToLoad = baseURL + encodeURIComponent(current[2]);
+    var scriptURLIsAbsolute = current[2][0] == '/';
+    var scriptToLoad = scriptURLIsAbsolute ? encodeURIComponent(current[2]) : (baseURL + encodeURIComponent(current[2]));
     if (current[2].match(/^data:/) || current[2].match(/^https?:/))
         scriptToLoad = encodeURIComponent(current[2]);
 
