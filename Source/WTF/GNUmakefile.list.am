@@ -188,6 +188,7 @@ wtf_sources += \
     Source/WTF/wtf/WTFThreadData.cpp \
     Source/WTF/wtf/WTFThreadData.h \
     Source/WTF/wtf/WeakPtr.h \
+    Source/WTF/wtf/WindowsExtras.h \
     Source/WTF/wtf/dtoa.cpp \
     Source/WTF/wtf/dtoa.h \
     Source/WTF/wtf/dtoa/bignum-dtoa.cc \
