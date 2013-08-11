@@ -105,9 +105,15 @@ WebInspector.InstrumentSidebarPanel = function()
     startCSSSelectorProfileOption.textContent = WebInspector.UIString("Start CSS Selector Profile");
     startCSSSelectorProfileOption.value = WebInspector.InstrumentSidebarPanel.StartCSSSelectorProfileValue;
     startCSSSelectorProfileOption.selected = false;
-    
+
+    var startCanvasProfileOption = document.createElement("option");
+    startCanvasProfileOption.textContent = WebInspector.UIString("Start Canvas Profile");
+    startCanvasProfileOption.value = WebInspector.InstrumentSidebarPanel.StartCanvasProfileValue;
+    startCanvasProfileOption.selected = false;
+
     this._recordProfileGlyphElement.add(startJavaScriptProfileOption);
     this._recordProfileGlyphElement.add(startCSSSelectorProfileOption);
+    this._recordProfileGlyphElement.add(startCanvasProfileOption);
 
     profilesTitleBarElement.appendChild(this._recordProfileGlyphElement);
 
@@ -152,6 +158,7 @@ WebInspector.InstrumentSidebarPanel.ScriptIconStyleClass = "script-icon";
 WebInspector.InstrumentSidebarPanel.ProfileIconStyleClass = "profile-icon";
 WebInspector.InstrumentSidebarPanel.StartJavaScriptProfileValue = "start-javascript-profile";
 WebInspector.InstrumentSidebarPanel.StartCSSSelectorProfileValue = "start-css-selector-profile";
+WebInspector.InstrumentSidebarPanel.StartCanvasProfileValue = "start-canvas-profile";
 
 WebInspector.InstrumentSidebarPanel.prototype = {
     constructor: WebInspector.InstrumentSidebarPanel,
@@ -277,7 +284,7 @@ WebInspector.InstrumentSidebarPanel.prototype = {
     {
         this._recordProfileGlyphElement.classList.remove(WebInspector.InstrumentSidebarPanel.RecordGlyphRecordingForcedStyleClass);
 
-        if (WebInspector.profileManager.isProfilingJavaScript() || WebInspector.profileManager.isProfilingCSSSelectors())
+        if (WebInspector.profileManager.isProfilingJavaScript() || WebInspector.profileManager.isProfilingCSSSelectors() || WebInspector.profileManager.isProfilingCanvas())
             this._recordProfileStatusElement.textContent = WebInspector.UIString("Stop Profiling");
         else
             this._recordProfileStatusElement.textContent = WebInspector.UIString("Start Profiling");
@@ -300,7 +307,7 @@ WebInspector.InstrumentSidebarPanel.prototype = {
         
         // We don't want to show the select if the user is currently profiling. In that case,
         // the user should just be able to click the record button to stop profiling.
-        if (WebInspector.profileManager.isProfilingJavaScript() || WebInspector.profileManager.isProfilingCSSSelectors())
+        if (WebInspector.profileManager.isProfilingJavaScript() || WebInspector.profileManager.isProfilingCSSSelectors() || WebInspector.profileManager.isProfilingCanvas())
             event.preventDefault();
         else {
             // When a select is opened, a click event will be fired when the select is closed,
@@ -324,6 +331,8 @@ WebInspector.InstrumentSidebarPanel.prototype = {
             WebInspector.profileManager.stopProfilingJavaScript();
         if (WebInspector.profileManager.isProfilingCSSSelectors())
             WebInspector.profileManager.stopProfilingCSSSelectors();
+        if (WebInspector.profileManager.isProfilingCanvas())
+            WebInspector.profileManager.stopProfilingCanvas();
     },
 
     _profileTypeWasSelected: function(event)
@@ -331,15 +340,16 @@ WebInspector.InstrumentSidebarPanel.prototype = {
         var selectedIndex = this._recordProfileGlyphElement.selectedIndex;
         if (selectedIndex === -1)
             return;
-        
+
         var selectedValue = this._recordProfileGlyphElement.options[selectedIndex].value;
         if (selectedValue === WebInspector.InstrumentSidebarPanel.StartJavaScriptProfileValue)
             WebInspector.profileManager.startProfilingJavaScript();
-        else {
-            console.assert(selectedValue === WebInspector.InstrumentSidebarPanel.StartCSSSelectorProfileValue);
+        else if (selectedValue === WebInspector.InstrumentSidebarPanel.StartCSSSelectorProfileValue)
             WebInspector.profileManager.startProfilingCSSSelectors();
+        else {
+            console.assert(selectedValue === WebInspector.InstrumentSidebarPanel.StartCanvasProfileValue);
+            WebInspector.profileManager.startProfilingCanvas();
         }
-        
     },
 
     _recordingStarted: function(event)
@@ -478,6 +488,7 @@ WebInspector.InstrumentSidebarPanel.prototype = {
         
         WebInspector.contentBrowser.contentViewContainer.closeAllContentViewsOfPrototype(WebInspector.JavaScriptProfileView);
         WebInspector.contentBrowser.contentViewContainer.closeAllContentViewsOfPrototype(WebInspector.CSSSelectorProfileView);
+        WebInspector.contentBrowser.contentViewContainer.closeAllContentViewsOfPrototype(WebInspector.CanvasProfileView);
         
         this.updateEmptyContentPlaceholder(WebInspector.UIString("No Recorded Profiles"));
     },

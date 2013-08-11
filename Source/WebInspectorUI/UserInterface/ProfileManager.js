@@ -29,6 +29,7 @@ WebInspector.ProfileManager = function()
 
     this._javaScriptProfileType = new WebInspector.JavaScriptProfileType;
     this._cssSelectorProfileType = new WebInspector.CSSSelectorProfileType;
+    this._canvasProfileType = new WebInspector.CanvasProfileType;
 
     ProfilerAgent.enable();
     ProfilerAgent.getProfileHeaders();
@@ -60,6 +61,7 @@ WebInspector.ProfileManager.prototype = {
 
         this._recordingJavaScriptProfile = null;
         this._recordingCSSSelectorProfile = null;
+        this._recordingCanvasProfile = null;
 
         this._isProfiling = false;
 
@@ -120,6 +122,43 @@ WebInspector.ProfileManager.prototype = {
         }
 
         this._cssSelectorProfileType.stopRecordingProfile(cssProfilingStopped.bind(this));
+    },
+
+    isProfilingCanvas: function()
+    {
+        return this._canvasProfileType.isRecordingProfile();
+    },
+
+    startProfilingCanvas: function()
+    {
+        this._canvasProfileType.startRecordingProfile();
+
+        var id = this._canvasProfileType.nextProfileId();
+        this._recordingCanvasProfile = new WebInspector.CanvasProfileObject(WebInspector.UIString("Canvas Profile %d").format(id), id, true);
+        this.dispatchEventToListeners(WebInspector.ProfileManager.Event.ProfileWasAdded, {profile: this._recordingCanvasProfile});
+
+        this.dispatchEventToListeners(WebInspector.ProfileManager.Event.ProfilingStarted);
+    },
+
+    stopProfilingCanvas: function()
+    {
+        function canvasProfilingStopped(error, profile)
+        {
+            if (error)
+                return;
+
+            console.assert(this._recordingCanvasProfile);
+
+            this._recordingCanvasProfile.data = profile.data;
+            this._recordingCanvasProfile.recording = false;
+
+            this.dispatchEventToListeners(WebInspector.ProfileManager.Event.ProfileWasUpdated, {profile: this._recordingCanvasProfile});
+            this.dispatchEventToListeners(WebInspector.ProfileManager.Event.ProfilingEnded, {profile: this._recordingCanvasProfile});
+
+            this._recordingCanvasProfile = null;
+        }
+
+        this._canvasProfileType.stopRecordingProfile(canvasProfilingStopped.bind(this));
     },
 
     profileWasStartedFromConsole: function(title)
@@ -211,6 +250,9 @@ WebInspector.ProfileManager.prototype = {
         } else if (this._recordingCSSSelectorProfile) {
             this.dispatchEventToListeners(WebInspector.ProfileManager.Event.ProfilingInterrupted, {profile: this._recordingCSSSelectorProfile});
             this._cssSelectorProfileType.setRecordingProfile(false);
+        } else if (this._recordingCanvasProfile) {
+            this.dispatchEventToListeners(WebInspector.ProfileManager.Event.ProfilingInterrupted, {profile: this._recordingCanvasProfile});
+            this._canvasProfileType.setRecordingProfile(false);
         }
     },
 
@@ -222,6 +264,8 @@ WebInspector.ProfileManager.prototype = {
             this.startProfilingJavaScript();
         else if (this._recordingCSSSelectorProfile)
             this.startProfilingCSSSelectors();
+        else if (this._recordingCanvasProfile)
+            this.startProfilingCanvas();
     }
 };
 

@@ -1,3 +1,39 @@
+2013-08-09  Dean Jackson  <dino@apple.com>
+
+        Bootstrap canvas profiler
+        https://bugs.webkit.org/show_bug.cgi?id=119652
+        <rdar://problem/14703665>
+
+        Reviewed by Joseph Pecoraro.
+
+        Add enough to get an empty Canvas profile recording
+        and displayed.
+
+        * Localizations/en.lproj/localizedStrings.js: Add canvas strings.
+        * UserInterface/CanvasProfileObject.js: Added. Mostly copied from CSS Selector Profiles.
+        * UserInterface/CanvasProfileType.js: Added. Ditto.
+        * UserInterface/CanvasDataGridNode.js: Added. Ditto.
+        * UserInterface/CanvasProfileView.js: Added. Ditto.
+        * UserInterface/ContentView.js:
+        (WebInspector.ContentView): Add support for the new View type.
+        (WebInspector.ContentView.isViewable):
+        * UserInterface/InstrumentSidebarPanel.js:
+        (WebInspector.InstrumentSidebarPanel): Add support for canvas profiles.
+        (WebInspector.InstrumentSidebarPanel.prototype._recordProfileGlyphMousedOver):
+        (WebInspector.InstrumentSidebarPanel.prototype._recordProfileGlyphMousedDown):
+        (WebInspector.InstrumentSidebarPanel.prototype._recordProfileGlyphClicked):
+        (WebInspector.InstrumentSidebarPanel.prototype._profileTypeWasSelected):
+        (WebInspector.InstrumentSidebarPanel.prototype._profilesCleared):
+        * UserInterface/Main.html: Load the new files.
+        * UserInterface/ProfileManager.js: New methods and support for canvas profiles.
+        (WebInspector.ProfileManager):
+        (WebInspector.ProfileManager.prototype.initialize):
+        (WebInspector.ProfileManager.prototype.isProfilingCanvas):
+        (WebInspector.ProfileManager.prototype.startProfilingCanvas):
+        (WebInspector.ProfileManager.prototype.stopProfilingCanvas):
+        (WebInspector.ProfileManager.prototype._checkForInterruptions):
+        (WebInspector.ProfileManager.prototype._attemptToResumeProfiling):
+
 2013-08-07  Timothy Hatcher  <timothy@apple.com>
 
         Switch the generated images off of PDFs and onto SVGs now that bug 119492 is fixed.
