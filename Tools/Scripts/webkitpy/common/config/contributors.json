@@ -459,8 +459,8 @@
       },
       "ChangSeok Oh" : {
          "emails" : [
-            "changseok.oh@collabora.co.uk",
             "changseok.oh@collabora.com",
+            "changseok.oh@collabora.co.uk",
             "kevin.cs.oh@gmail.com"
          ],
          "expertise" : "The WebKitGTK+ port, H/W acceleration",

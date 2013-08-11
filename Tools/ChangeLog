@@ -1,3 +1,9 @@
+2013-08-11  ChangSeok Oh  <changseok.oh@collabora.com>
+
+        Unreviewed. Change my primary mail address.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2013-08-09  Gustavo Noronha Silva  <gustavo.noronha@collabora.com>
 
         [GTK] Misses mod_ssl and php in the list of packages required for tests for yum
