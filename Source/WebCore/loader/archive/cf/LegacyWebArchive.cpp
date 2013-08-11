@@ -436,7 +436,7 @@ PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(Node* node, FrameFilter* f
     // In practice we don't actually know whether scripting was enabled when the page was originally loaded
     // but we can approximate that by checking if scripting is enabled right now.
     OwnPtr<Vector<QualifiedName> > tagNamesToFilter;
-    if (frame->page() && frame->page()->settings()->isScriptEnabled()) {
+    if (frame->page() && frame->page()->settings().isScriptEnabled()) {
         tagNamesToFilter = adoptPtr(new Vector<QualifiedName>);
         tagNamesToFilter->append(HTMLNames::noscriptTag);
     }

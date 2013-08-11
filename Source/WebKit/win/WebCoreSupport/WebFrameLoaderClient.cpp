@@ -607,7 +607,7 @@ void WebFrameLoaderClient::updateGlobalHistoryItemForPage()
     WebView* webView = m_webFrame->webView();
 
     if (Page* page = webView->page()) {
-        if (!page->settings()->privateBrowsingEnabled())
+        if (!page->settings().privateBrowsingEnabled())
             historyItem = page->backForward()->currentItem();
     }
 

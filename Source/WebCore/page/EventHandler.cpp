@@ -1467,7 +1467,7 @@ void EventHandler::startAutoHideCursorTimer()
     if (!page)
         return;
 
-    m_autoHideCursorTimer.startOneShot(page->settings()->timeWithoutMouseMovementBeforeHidingControls());
+    m_autoHideCursorTimer.startOneShot(page->settings().timeWithoutMouseMovementBeforeHidingControls());
 
     // The fake mouse move event screws up the auto-hide feature (by resetting the auto-hide timer)
     // so cancel any pending fake mouse moves.

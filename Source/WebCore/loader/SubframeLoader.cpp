@@ -188,7 +188,7 @@ static String findPluginMIMETypeFromURL(Page* page, const String& url)
 
 static void logPluginRequest(Page* page, const String& mimeType, const String& url, bool success)
 {
-    if (!page || !page->settings()->diagnosticLoggingEnabled())
+    if (!page || !page->settings().diagnosticLoggingEnabled())
         return;
 
     String newMIMEType = mimeType;

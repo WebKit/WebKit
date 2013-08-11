@@ -2728,12 +2728,12 @@ HRESULT STDMETHODCALLTYPE WebView::initWithFrame(
 
     BString localStoragePath;
     if (SUCCEEDED(m_preferences->localStorageDatabasePath(&localStoragePath)))
-        m_page->settings()->setLocalStorageDatabasePath(toString(localStoragePath));
+        m_page->settings().setLocalStorageDatabasePath(toString(localStoragePath));
 
     if (m_uiDelegate) {
         BString path;
         if (SUCCEEDED(m_uiDelegate->ftpDirectoryTemplatePath(this, &path)))
-            m_page->settings()->setFTPDirectoryTemplatePath(toString(path));
+            m_page->settings().setFTPDirectoryTemplatePath(toString(path));
     }
 
     WebFrame* webFrame = WebFrame::createInstance();
@@ -4147,8 +4147,8 @@ HRESULT STDMETHODCALLTYPE WebView::typingStyle(
 HRESULT STDMETHODCALLTYPE WebView::setSmartInsertDeleteEnabled( 
         /* [in] */ BOOL flag)
 {
-    if (m_page->settings()->smartInsertDeleteEnabled() != !!flag) {
-        m_page->settings()->setSmartInsertDeleteEnabled(!!flag);
+    if (m_page->settings().smartInsertDeleteEnabled() != !!flag) {
+        m_page->settings().setSmartInsertDeleteEnabled(!!flag);
         setSelectTrailingWhitespaceEnabled(!flag);
     }
     return S_OK;
@@ -4157,15 +4157,15 @@ HRESULT STDMETHODCALLTYPE WebView::setSmartInsertDeleteEnabled(
 HRESULT STDMETHODCALLTYPE WebView::smartInsertDeleteEnabled( 
         /* [retval][out] */ BOOL* enabled)
 {
-    *enabled = m_page->settings()->smartInsertDeleteEnabled() ? TRUE : FALSE;
+    *enabled = m_page->settings().smartInsertDeleteEnabled() ? TRUE : FALSE;
     return S_OK;
 }
  
 HRESULT STDMETHODCALLTYPE WebView::setSelectTrailingWhitespaceEnabled( 
         /* [in] */ BOOL flag)
 {
-    if (m_page->settings()->selectTrailingWhitespaceEnabled() != !!flag) {
-        m_page->settings()->setSelectTrailingWhitespaceEnabled(!!flag);
+    if (m_page->settings().selectTrailingWhitespaceEnabled() != !!flag) {
+        m_page->settings().setSelectTrailingWhitespaceEnabled(!!flag);
         setSmartInsertDeleteEnabled(!flag);
     }
     return S_OK;
@@ -4174,7 +4174,7 @@ HRESULT STDMETHODCALLTYPE WebView::setSelectTrailingWhitespaceEnabled(
 HRESULT STDMETHODCALLTYPE WebView::isSelectTrailingWhitespaceEnabled( 
         /* [retval][out] */ BOOL* enabled)
 {
-    *enabled = m_page->settings()->selectTrailingWhitespaceEnabled() ? TRUE : FALSE;
+    *enabled = m_page->settings().selectTrailingWhitespaceEnabled() ? TRUE : FALSE;
     return S_OK;
 }
 
@@ -4641,57 +4641,57 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
     int size;
     BOOL enabled;
 
-    Settings* settings = m_page->settings();
+    Settings& settings = m_page->settings();
 
     hr = preferences->cursiveFontFamily(&str);
     if (FAILED(hr))
         return hr;
-    settings->setCursiveFontFamily(toAtomicString(str));
+    settings.setCursiveFontFamily(toAtomicString(str));
     str.clear();
 
     hr = preferences->defaultFixedFontSize(&size);
     if (FAILED(hr))
         return hr;
-    settings->setDefaultFixedFontSize(size);
+    settings.setDefaultFixedFontSize(size);
 
     hr = preferences->defaultFontSize(&size);
     if (FAILED(hr))
         return hr;
-    settings->setDefaultFontSize(size);
+    settings.setDefaultFontSize(size);
 
     hr = preferences->defaultTextEncodingName(&str);
     if (FAILED(hr))
         return hr;
-    settings->setDefaultTextEncodingName(toString(str));
+    settings.setDefaultTextEncodingName(toString(str));
     str.clear();
 
     hr = preferences->fantasyFontFamily(&str);
     if (FAILED(hr))
         return hr;
-    settings->setFantasyFontFamily(toAtomicString(str));
+    settings.setFantasyFontFamily(toAtomicString(str));
     str.clear();
 
     hr = preferences->fixedFontFamily(&str);
     if (FAILED(hr))
         return hr;
-    settings->setFixedFontFamily(toAtomicString(str));
+    settings.setFixedFontFamily(toAtomicString(str));
     str.clear();
 
 #if ENABLE(VIDEO_TRACK)
     hr = preferences->shouldDisplaySubtitles(&enabled);
     if (FAILED(hr))
         return hr;
-    settings->setShouldDisplaySubtitles(enabled);
+    settings.setShouldDisplaySubtitles(enabled);
 
     hr = preferences->shouldDisplayCaptions(&enabled);
     if (FAILED(hr))
         return hr;
-    settings->setShouldDisplayCaptions(enabled);
+    settings.setShouldDisplayCaptions(enabled);
 
     hr = preferences->shouldDisplayTextDescriptions(&enabled);
     if (FAILED(hr))
         return hr;
-    settings->setShouldDisplayTextDescriptions(enabled);
+    settings.setShouldDisplayTextDescriptions(enabled);
 #endif
 
     COMPtr<IWebPreferencesPrivate> prefsPrivate(Query, preferences);
@@ -4699,45 +4699,45 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
         hr = prefsPrivate->localStorageDatabasePath(&str);
         if (FAILED(hr))
             return hr;
-        settings->setLocalStorageDatabasePath(toString(str));
+        settings.setLocalStorageDatabasePath(toString(str));
         str.clear();
     }
 
     hr = preferences->pictographFontFamily(&str);
     if (FAILED(hr))
         return hr;
-    settings->setPictographFontFamily(toAtomicString(str));
+    settings.setPictographFontFamily(toAtomicString(str));
     str.clear();
 
     hr = preferences->isJavaEnabled(&enabled);
     if (FAILED(hr))
         return hr;
-    settings->setJavaEnabled(!!enabled);
+    settings.setJavaEnabled(!!enabled);
 
     hr = preferences->isJavaScriptEnabled(&enabled);
     if (FAILED(hr))
         return hr;
-    settings->setScriptEnabled(!!enabled);
+    settings.setScriptEnabled(!!enabled);
 
     hr = preferences->javaScriptCanOpenWindowsAutomatically(&enabled);
     if (FAILED(hr))
         return hr;
-    settings->setJavaScriptCanOpenWindowsAutomatically(!!enabled);
+    settings.setJavaScriptCanOpenWindowsAutomatically(!!enabled);
 
     hr = preferences->minimumFontSize(&size);
     if (FAILED(hr))
         return hr;
-    settings->setMinimumFontSize(size);
+    settings.setMinimumFontSize(size);
 
     hr = preferences->minimumLogicalFontSize(&size);
     if (FAILED(hr))
         return hr;
-    settings->setMinimumLogicalFontSize(size);
+    settings.setMinimumLogicalFontSize(size);
 
     hr = preferences->arePlugInsEnabled(&enabled);
     if (FAILED(hr))
         return hr;
-    settings->setPluginsEnabled(!!enabled);
+    settings.setPluginsEnabled(!!enabled);
 
     hr = preferences->isCSSRegionsEnabled(&enabled);
     if (FAILED(hr))
@@ -4758,30 +4758,30 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
     else
         WebFrameNetworkingContext::destroyPrivateBrowsingSession();
 #endif
-    settings->setPrivateBrowsingEnabled(!!enabled);
+    settings.setPrivateBrowsingEnabled(!!enabled);
 
     hr = preferences->sansSerifFontFamily(&str);
     if (FAILED(hr))
         return hr;
-    settings->setSansSerifFontFamily(toAtomicString(str));
+    settings.setSansSerifFontFamily(toAtomicString(str));
     str.clear();
 
     hr = preferences->serifFontFamily(&str);
     if (FAILED(hr))
         return hr;
-    settings->setSerifFontFamily(toAtomicString(str));
+    settings.setSerifFontFamily(toAtomicString(str));
     str.clear();
 
     hr = preferences->standardFontFamily(&str);
     if (FAILED(hr))
         return hr;
-    settings->setStandardFontFamily(toAtomicString(str));
+    settings.setStandardFontFamily(toAtomicString(str));
     str.clear();
 
     hr = preferences->loadsImagesAutomatically(&enabled);
     if (FAILED(hr))
         return hr;
-    settings->setLoadsImagesAutomatically(!!enabled);
+    settings.setLoadsImagesAutomatically(!!enabled);
 
     hr = preferences->userStyleSheetEnabled(&enabled);
     if (FAILED(hr))
@@ -4807,36 +4807,36 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
             url = adoptCF(CFURLCreateFromFileSystemRepresentation(0, utf8Path.data(), result - 1, false));
         }
 
-        settings->setUserStyleSheetLocation(url.get());
+        settings.setUserStyleSheetLocation(url.get());
         str.clear();
     } else
-        settings->setUserStyleSheetLocation(KURL());
+        settings.setUserStyleSheetLocation(KURL());
 
     hr = preferences->shouldPrintBackgrounds(&enabled);
     if (FAILED(hr))
         return hr;
-    settings->setShouldPrintBackgrounds(!!enabled);
+    settings.setShouldPrintBackgrounds(!!enabled);
 
     hr = preferences->textAreasAreResizable(&enabled);
     if (FAILED(hr))
         return hr;
-    settings->setTextAreasAreResizable(!!enabled);
+    settings.setTextAreasAreResizable(!!enabled);
 
     WebKitEditableLinkBehavior behavior;
     hr = preferences->editableLinkBehavior(&behavior);
     if (FAILED(hr))
         return hr;
-    settings->setEditableLinkBehavior((EditableLinkBehavior)behavior);
+    settings.setEditableLinkBehavior((EditableLinkBehavior)behavior);
 
     hr = preferences->usesPageCache(&enabled);
     if (FAILED(hr))
         return hr;
-    settings->setUsesPageCache(!!enabled);
+    settings.setUsesPageCache(!!enabled);
 
     hr = preferences->isDOMPasteAllowed(&enabled);
     if (FAILED(hr))
         return hr;
-    settings->setDOMPasteAllowed(!!enabled);
+    settings.setDOMPasteAllowed(!!enabled);
 
     hr = preferences->zoomsTextOnly(&enabled);
     if (FAILED(hr))
@@ -4845,41 +4845,41 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
     if (m_zoomsTextOnly != !!enabled)
         setZoomMultiplier(m_zoomMultiplier, enabled);
 
-    settings->setShowsURLsInToolTips(false);
+    settings.setShowsURLsInToolTips(false);
 
-    settings->setForceFTPDirectoryListings(true);
-    settings->setDeveloperExtrasEnabled(developerExtrasEnabled());
-    settings->setNeedsSiteSpecificQuirks(s_allowSiteSpecificHacks);
+    settings.setForceFTPDirectoryListings(true);
+    settings.setDeveloperExtrasEnabled(developerExtrasEnabled());
+    settings.setNeedsSiteSpecificQuirks(s_allowSiteSpecificHacks);
 
     FontSmoothingType smoothingType;
     hr = preferences->fontSmoothing(&smoothingType);
     if (FAILED(hr))
         return hr;
-    settings->setFontRenderingMode(smoothingType != FontSmoothingTypeWindows ? NormalRenderingMode : AlternateRenderingMode);
+    settings.setFontRenderingMode(smoothingType != FontSmoothingTypeWindows ? NormalRenderingMode : AlternateRenderingMode);
 
 #if USE(AVFOUNDATION)
     hr = preferences->avFoundationEnabled(&enabled);
     if (FAILED(hr))
         return hr;
-    settings->setAVFoundationEnabled(enabled);
+    settings.setAVFoundationEnabled(enabled);
 #endif
 
     if (prefsPrivate) {
         hr = prefsPrivate->authorAndUserStylesEnabled(&enabled);
         if (FAILED(hr))
             return hr;
-        settings->setAuthorAndUserStylesEnabled(enabled);
+        settings.setAuthorAndUserStylesEnabled(enabled);
     }
 
     hr = prefsPrivate->inApplicationChromeMode(&enabled);
     if (FAILED(hr))
         return hr;
-    settings->setApplicationChromeMode(enabled);
+    settings.setApplicationChromeMode(enabled);
 
     hr = prefsPrivate->offlineWebApplicationCacheEnabled(&enabled);
     if (FAILED(hr))
         return hr;
-    settings->setOfflineWebApplicationCacheEnabled(enabled);
+    settings.setOfflineWebApplicationCacheEnabled(enabled);
 
 #if ENABLE(SQL_DATABASE)
     hr = prefsPrivate->databasesEnabled(&enabled);
@@ -4891,100 +4891,100 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
     hr = prefsPrivate->localStorageEnabled(&enabled);
     if (FAILED(hr))
         return hr;
-    settings->setLocalStorageEnabled(enabled);
+    settings.setLocalStorageEnabled(enabled);
 
     hr = prefsPrivate->experimentalNotificationsEnabled(&enabled);
     if (FAILED(hr))
         return hr;
-    settings->setExperimentalNotificationsEnabled(enabled);
+    settings.setExperimentalNotificationsEnabled(enabled);
 
     hr = prefsPrivate->isWebSecurityEnabled(&enabled);
     if (FAILED(hr))
         return hr;
-    settings->setWebSecurityEnabled(!!enabled);
+    settings.setWebSecurityEnabled(!!enabled);
 
     hr = prefsPrivate->allowUniversalAccessFromFileURLs(&enabled);
     if (FAILED(hr))
         return hr;
-    settings->setAllowUniversalAccessFromFileURLs(!!enabled);
+    settings.setAllowUniversalAccessFromFileURLs(!!enabled);
 
     hr = prefsPrivate->allowFileAccessFromFileURLs(&enabled);
     if (FAILED(hr))
         return hr;
-    settings->setAllowFileAccessFromFileURLs(!!enabled);
+    settings.setAllowFileAccessFromFileURLs(!!enabled);
 
     hr = prefsPrivate->javaScriptCanAccessClipboard(&enabled);
     if (FAILED(hr))
         return hr;
-    settings->setJavaScriptCanAccessClipboard(!!enabled);
+    settings.setJavaScriptCanAccessClipboard(!!enabled);
 
     hr = prefsPrivate->isXSSAuditorEnabled(&enabled);
     if (FAILED(hr))
         return hr;
-    settings->setXSSAuditorEnabled(!!enabled);
+    settings.setXSSAuditorEnabled(!!enabled);
 
 #if USE(SAFARI_THEME)
     hr = prefsPrivate->shouldPaintNativeControls(&enabled);
     if (FAILED(hr))
         return hr;
-    settings->setShouldPaintNativeControls(!!enabled);
+    settings.setShouldPaintNativeControls(!!enabled);
 #endif
 
     hr = prefsPrivate->shouldUseHighResolutionTimers(&enabled);
     if (FAILED(hr))
         return hr;
-    settings->setShouldUseHighResolutionTimers(enabled);
+    settings.setShouldUseHighResolutionTimers(enabled);
 
     hr = prefsPrivate->isFrameFlatteningEnabled(&enabled);
     if (FAILED(hr))
         return hr;
-    settings->setFrameFlatteningEnabled(enabled);
+    settings.setFrameFlatteningEnabled(enabled);
 
 #if USE(ACCELERATED_COMPOSITING)
     hr = prefsPrivate->acceleratedCompositingEnabled(&enabled);
     if (FAILED(hr))
         return hr;
-    settings->setAcceleratedCompositingEnabled(enabled);
+    settings.setAcceleratedCompositingEnabled(enabled);
 #endif
 
     hr = prefsPrivate->showDebugBorders(&enabled);
     if (FAILED(hr))
         return hr;
-    settings->setShowDebugBorders(enabled);
+    settings.setShowDebugBorders(enabled);
 
     hr = prefsPrivate->showRepaintCounter(&enabled);
     if (FAILED(hr))
         return hr;
-    settings->setShowRepaintCounter(enabled);
+    settings.setShowRepaintCounter(enabled);
 
 #if ENABLE(WEB_AUDIO)
-    settings->:setWebAudioEnabled(true);
+    settings.setWebAudioEnabled(true);
 #endif // ENABLE(WEB_AUDIO)
 
 #if ENABLE(WEBGL)
-    settings->setWebGLEnabled(true);
+    settings.setWebGLEnabled(true);
 #endif // ENABLE(WEBGL)
 
     hr = prefsPrivate->isDNSPrefetchingEnabled(&enabled);
     if (FAILED(hr))
         return hr;
-    settings->setDNSPrefetchingEnabled(enabled);
+    settings.setDNSPrefetchingEnabled(enabled);
 
     hr = prefsPrivate->hyperlinkAuditingEnabled(&enabled);
     if (FAILED(hr))
         return hr;
-    settings->setHyperlinkAuditingEnabled(enabled);
+    settings.setHyperlinkAuditingEnabled(enabled);
 
     hr = prefsPrivate->loadsSiteIconsIgnoringImageLoadingPreference(&enabled);
     if (FAILED(hr))
         return hr;
-    settings->setLoadsSiteIconsIgnoringImageLoadingSetting(!!enabled);
+    settings.setLoadsSiteIconsIgnoringImageLoadingSetting(!!enabled);
 
     hr = prefsPrivate->showsToolTipOverTruncatedText(&enabled);
     if (FAILED(hr))
         return hr;
 
-    settings->setShowsToolTipOverTruncatedText(enabled);
+    settings.setShowsToolTipOverTruncatedText(enabled);
 
     if (!m_closeWindowTimer)
         m_mainFrame->invalidate(); // FIXME
@@ -5003,12 +5003,12 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
     hr = prefsPrivate->mediaPlaybackRequiresUserGesture(&enabled);
     if (FAILED(hr))
         return hr;
-    settings->setMediaPlaybackRequiresUserGesture(enabled);
+    settings.setMediaPlaybackRequiresUserGesture(enabled);
 
     hr = prefsPrivate->mediaPlaybackAllowsInline(&enabled);
     if (FAILED(hr))
         return hr;
-    settings->setMediaPlaybackAllowsInline(enabled);
+    settings.setMediaPlaybackAllowsInline(enabled);
 
     hr = prefsPrivate->shouldInvertColors(&enabled);
     if (FAILED(hr))
@@ -5018,7 +5018,7 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
     hr = prefsPrivate->requestAnimationFrameEnabled(&enabled);
     if (FAILED(hr))
         return hr;
-    settings->setRequestAnimationFrameEnabled(enabled);
+    settings.setRequestAnimationFrameEnabled(enabled);
 
     return S_OK;
 }
@@ -6083,7 +6083,7 @@ HRESULT STDMETHODCALLTYPE WebView::setCookieEnabled(BOOL enable)
     if (!m_page)
         return E_FAIL;
 
-    m_page->settings()->setCookieEnabled(enable);
+    m_page->settings().setCookieEnabled(enable);
     return S_OK;
 }
 
@@ -6095,7 +6095,7 @@ HRESULT STDMETHODCALLTYPE WebView::cookieEnabled(BOOL* enabled)
     if (!m_page)
         return E_FAIL;
 
-    *enabled = m_page->settings()->cookieEnabled();
+    *enabled = m_page->settings().cookieEnabled();
     return S_OK;
 }
 
@@ -6831,7 +6831,7 @@ HRESULT WebView::defaultMinimumTimerInterval(double* interval)
 
 HRESULT WebView::setMinimumTimerInterval(double interval)
 {
-    page()->settings()->setMinDOMTimerInterval(interval);
+    page()->settings().setMinDOMTimerInterval(interval);
     return S_OK;
 }
 

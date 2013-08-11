@@ -597,12 +597,12 @@ int DumpRenderTreeSupportGtk::numberOfPendingGeolocationPermissionRequests(WebKi
 
 void DumpRenderTreeSupportGtk::setPageCacheSupportsPlugins(WebKitWebView* webView, bool enabled)
 {
-    core(webView)->settings()->setPageCacheSupportsPlugins(enabled);
+    core(webView)->settings().setPageCacheSupportsPlugins(enabled);
 }
 
 void DumpRenderTreeSupportGtk::setCSSGridLayoutEnabled(WebKitWebView* webView, bool enabled)
 {
-    core(webView)->settings()->setCSSGridLayoutEnabled(enabled);
+    core(webView)->settings().setCSSGridLayoutEnabled(enabled);
 }
 
 void DumpRenderTreeSupportGtk::setCSSRegionsEnabled(WebKitWebView* webView, bool enabled)
@@ -613,7 +613,7 @@ void DumpRenderTreeSupportGtk::setCSSRegionsEnabled(WebKitWebView* webView, bool
 void DumpRenderTreeSupportGtk::setCSSCustomFilterEnabled(WebKitWebView* webView, bool enabled)
 {
 #if ENABLE(CSS_SHADERS)
-    core(webView)->settings()->setCSSCustomFilterEnabled(enabled);
+    core(webView)->settings().setCSSCustomFilterEnabled(enabled);
 #endif
 }
 

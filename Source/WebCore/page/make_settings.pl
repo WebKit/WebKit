@@ -467,7 +467,7 @@ EOF
         if ($conditional) {
             print $file "#if " . $InCompiler->conditionalStringFromAttributeValue($conditional) . "\n";
         }
-        print $file "    , m_$settingName(page->settings()->$settingName())\n";
+        print $file "    , m_$settingName(page->settings().$settingName())\n";
         if ($conditional) {
             print $file "#endif\n";
         }
@@ -494,7 +494,7 @@ EOF
         if ($conditional) {
             print $file "#if " . $InCompiler->conditionalStringFromAttributeValue($conditional) . "\n";
         }
-        print $file "    m_page->settings()->$setterFunctionName(m_$settingName);\n";
+        print $file "    m_page->settings().$setterFunctionName(m_$settingName);\n";
         if ($conditional) {
             print $file "#endif\n";
         }
@@ -517,7 +517,7 @@ EOF
         if ($conditional) {
             print $file "#if " . $InCompiler->conditionalStringFromAttributeValue($conditional) . "\n";
         }
-        print $file "    m_page->settings()->$setterFunctionName($settingName);\n";
+        print $file "    m_page->settings().$setterFunctionName($settingName);\n";
         if ($conditional) {
             print $file "#else\n";
             print $file "    UNUSED_PARAM($settingName);\n";

@@ -110,7 +110,7 @@ static unsigned logCanCacheFrameDecision(Frame* frame, int indentLevel)
         PCLOG("   -Frame is an error page");
         rejectReasons |= 1 << IsErrorPage;
     }
-    if (frame->loader()->subframeLoader()->containsPlugins() && !frame->page()->settings()->pageCacheSupportsPlugins()) {
+    if (frame->loader()->subframeLoader()->containsPlugins() && !frame->page()->settings().pageCacheSupportsPlugins()) {
         PCLOG("   -Frame contains plugins");
         rejectReasons |= 1 << HasPlugins;
     }
@@ -220,7 +220,7 @@ static void logCanCachePageDecision(Page* page)
         PCLOG("   -The back/forward list is disabled or has 0 capacity");
         rejectReasons |= 1 << DisabledBackForwardList;
     }
-    if (!page->settings()->usesPageCache()) {
+    if (!page->settings().usesPageCache()) {
         PCLOG("   -Page settings says b/f cache disabled");
         rejectReasons |= 1 << DisabledPageCache;
     }
@@ -316,7 +316,7 @@ bool PageCache::canCachePageContainingThisFrame(Frame* frame)
         && documentLoader->mainDocumentError().isNull()
         // Do not cache error pages (these can be recognized as pages with substitute data or unreachable URLs).
         && !(documentLoader->substituteData().isValid() && !documentLoader->substituteData().failingURL().isEmpty())
-        && (!frameLoader->subframeLoader()->containsPlugins() || frame->page()->settings()->pageCacheSupportsPlugins())
+        && (!frameLoader->subframeLoader()->containsPlugins() || frame->page()->settings().pageCacheSupportsPlugins())
         && (!document->url().protocolIs("https") || (!documentLoader->response().cacheControlContainsNoCache() && !documentLoader->response().cacheControlContainsNoStore()))
         && (!document->domWindow() || !document->domWindow()->hasEventListeners(eventNames().unloadEvent))
 #if ENABLE(SQL_DATABASE)
@@ -355,7 +355,7 @@ bool PageCache::canCache(Page* page) const
     return m_capacity > 0
         && canCachePageContainingThisFrame(page->mainFrame())
         && page->backForward()->isActive()
-        && page->settings()->usesPageCache()
+        && page->settings().usesPageCache()
 #if ENABLE(DEVICE_ORIENTATION)
         && !DeviceMotionController::isActiveAt(page)
         && !DeviceOrientationController::isActiveAt(page)

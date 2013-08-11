@@ -772,11 +772,11 @@ static bool shouldUseLegacyBackgroundSizeShorthandBehavior()
 #endif
 
     _private->page->setCanStartMedia([self window]);
-    _private->page->settings()->setLocalStorageDatabasePath([[self preferences] _localStorageDatabasePath]);
-    _private->page->settings()->setUseLegacyBackgroundSizeShorthandBehavior(shouldUseLegacyBackgroundSizeShorthandBehavior());
+    _private->page->settings().setLocalStorageDatabasePath([[self preferences] _localStorageDatabasePath]);
+    _private->page->settings().setUseLegacyBackgroundSizeShorthandBehavior(shouldUseLegacyBackgroundSizeShorthandBehavior());
 
     if (needsOutlookQuirksScript()) {
-        _private->page->settings()->setShouldInjectUserScriptsInInitialEmptyDocument(true);
+        _private->page->settings().setShouldInjectUserScriptsInInitialEmptyDocument(true);
         [self _injectOutlookQuirksScript];
     }
 
@@ -1393,7 +1393,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
 #if ENABLE(DASHBOARD_SUPPORT)
         // Pre-HTML5 parser quirks are required to remain compatible with many
         // Dashboard widgets. See <rdar://problem/8175982>.
-        || (_private->page && _private->page->settings()->usesDashboardBackwardCompatibilityMode())
+        || (_private->page && _private->page->settings().usesDashboardBackwardCompatibilityMode())
 #endif
         || [[self preferences] usePreHTML5ParserQuirks];
 }
@@ -1423,39 +1423,39 @@ static bool needsSelfRetainWhileLoadingQuirk()
     if (!_private->page)
         return;
     
-    Settings* settings = _private->page->settings();
-    
-    settings->setCursiveFontFamily([preferences cursiveFontFamily]);
-    settings->setDefaultFixedFontSize([preferences defaultFixedFontSize]);
-    settings->setDefaultFontSize([preferences defaultFontSize]);
-    settings->setDefaultTextEncodingName([preferences defaultTextEncodingName]);
-    settings->setUsesEncodingDetector([preferences usesEncodingDetector]);
-    settings->setFantasyFontFamily([preferences fantasyFontFamily]);
-    settings->setFixedFontFamily([preferences fixedFontFamily]);
-    settings->setScreenFontSubstitutionEnabled(
+    Settings& settings = _private->page->settings();
+
+    settings.setCursiveFontFamily([preferences cursiveFontFamily]);
+    settings.setDefaultFixedFontSize([preferences defaultFixedFontSize]);
+    settings.setDefaultFontSize([preferences defaultFontSize]);
+    settings.setDefaultTextEncodingName([preferences defaultTextEncodingName]);
+    settings.setUsesEncodingDetector([preferences usesEncodingDetector]);
+    settings.setFantasyFontFamily([preferences fantasyFontFamily]);
+    settings.setFixedFontFamily([preferences fixedFontFamily]);
+    settings.setScreenFontSubstitutionEnabled(
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
         [[NSUserDefaults standardUserDefaults] boolForKey:@"NSFontDefaultScreenFontSubstitutionEnabled"] ||
 #endif
         [preferences screenFontSubstitutionEnabled]
     );
-    settings->setForceFTPDirectoryListings([preferences _forceFTPDirectoryListings]);
-    settings->setFTPDirectoryTemplatePath([preferences _ftpDirectoryTemplatePath]);
-    settings->setLocalStorageDatabasePath([preferences _localStorageDatabasePath]);
-    settings->setJavaEnabled([preferences isJavaEnabled]);
-    settings->setScriptEnabled([preferences isJavaScriptEnabled]);
-    settings->setWebSecurityEnabled([preferences isWebSecurityEnabled]);
-    settings->setAllowUniversalAccessFromFileURLs([preferences allowUniversalAccessFromFileURLs]);
-    settings->setAllowFileAccessFromFileURLs([preferences allowFileAccessFromFileURLs]);
-    settings->setJavaScriptCanOpenWindowsAutomatically([preferences javaScriptCanOpenWindowsAutomatically]);
-    settings->setMinimumFontSize([preferences minimumFontSize]);
-    settings->setMinimumLogicalFontSize([preferences minimumLogicalFontSize]);
-    settings->setPictographFontFamily([preferences pictographFontFamily]);
-    settings->setPluginsEnabled([preferences arePlugInsEnabled]);
+    settings.setForceFTPDirectoryListings([preferences _forceFTPDirectoryListings]);
+    settings.setFTPDirectoryTemplatePath([preferences _ftpDirectoryTemplatePath]);
+    settings.setLocalStorageDatabasePath([preferences _localStorageDatabasePath]);
+    settings.setJavaEnabled([preferences isJavaEnabled]);
+    settings.setScriptEnabled([preferences isJavaScriptEnabled]);
+    settings.setWebSecurityEnabled([preferences isWebSecurityEnabled]);
+    settings.setAllowUniversalAccessFromFileURLs([preferences allowUniversalAccessFromFileURLs]);
+    settings.setAllowFileAccessFromFileURLs([preferences allowFileAccessFromFileURLs]);
+    settings.setJavaScriptCanOpenWindowsAutomatically([preferences javaScriptCanOpenWindowsAutomatically]);
+    settings.setMinimumFontSize([preferences minimumFontSize]);
+    settings.setMinimumLogicalFontSize([preferences minimumLogicalFontSize]);
+    settings.setPictographFontFamily([preferences pictographFontFamily]);
+    settings.setPluginsEnabled([preferences arePlugInsEnabled]);
 #if ENABLE(SQL_DATABASE)
     DatabaseManager::manager().setIsAvailable([preferences databasesEnabled]);
 #endif
-    settings->setLocalStorageEnabled([preferences localStorageEnabled]);
-    settings->setExperimentalNotificationsEnabled([preferences experimentalNotificationsEnabled]);
+    settings.setLocalStorageEnabled([preferences localStorageEnabled]);
+    settings.setExperimentalNotificationsEnabled([preferences experimentalNotificationsEnabled]);
 
     bool privateBrowsingEnabled = [preferences privateBrowsingEnabled];
 #if PLATFORM(MAC) || USE(CFNETWORK)
@@ -1464,136 +1464,136 @@ static bool needsSelfRetainWhileLoadingQuirk()
     else
         WebFrameNetworkingContext::destroyPrivateBrowsingSession();
 #endif
-    settings->setPrivateBrowsingEnabled(privateBrowsingEnabled);
+    settings.setPrivateBrowsingEnabled(privateBrowsingEnabled);
 
-    settings->setSansSerifFontFamily([preferences sansSerifFontFamily]);
-    settings->setSerifFontFamily([preferences serifFontFamily]);
-    settings->setStandardFontFamily([preferences standardFontFamily]);
-    settings->setLoadsImagesAutomatically([preferences loadsImagesAutomatically]);
-    settings->setLoadsSiteIconsIgnoringImageLoadingSetting([preferences loadsSiteIconsIgnoringImageLoadingPreference]);
-    settings->setShouldPrintBackgrounds([preferences shouldPrintBackgrounds]);
-    settings->setTextAreasAreResizable([preferences textAreasAreResizable]);
-    settings->setShrinksStandaloneImagesToFit([preferences shrinksStandaloneImagesToFit]);
-    settings->setEditableLinkBehavior(core([preferences editableLinkBehavior]));
-    settings->setTextDirectionSubmenuInclusionBehavior(core([preferences textDirectionSubmenuInclusionBehavior]));
-    settings->setDOMPasteAllowed([preferences isDOMPasteAllowed]);
-    settings->setUsesPageCache([self usesPageCache]);
-    settings->setPageCacheSupportsPlugins([preferences pageCacheSupportsPlugins]);
-    settings->setBackForwardCacheExpirationInterval([preferences _backForwardCacheExpirationInterval]);
-    settings->setShowsURLsInToolTips([preferences showsURLsInToolTips]);
-    settings->setShowsToolTipOverTruncatedText([preferences showsToolTipOverTruncatedText]);
-    settings->setDeveloperExtrasEnabled([preferences developerExtrasEnabled]);
-    settings->setJavaScriptExperimentsEnabled([preferences javaScriptExperimentsEnabled]);
-    settings->setAuthorAndUserStylesEnabled([preferences authorAndUserStylesEnabled]);
-    settings->setApplicationChromeMode([preferences applicationChromeModeEnabled]);
+    settings.setSansSerifFontFamily([preferences sansSerifFontFamily]);
+    settings.setSerifFontFamily([preferences serifFontFamily]);
+    settings.setStandardFontFamily([preferences standardFontFamily]);
+    settings.setLoadsImagesAutomatically([preferences loadsImagesAutomatically]);
+    settings.setLoadsSiteIconsIgnoringImageLoadingSetting([preferences loadsSiteIconsIgnoringImageLoadingPreference]);
+    settings.setShouldPrintBackgrounds([preferences shouldPrintBackgrounds]);
+    settings.setTextAreasAreResizable([preferences textAreasAreResizable]);
+    settings.setShrinksStandaloneImagesToFit([preferences shrinksStandaloneImagesToFit]);
+    settings.setEditableLinkBehavior(core([preferences editableLinkBehavior]));
+    settings.setTextDirectionSubmenuInclusionBehavior(core([preferences textDirectionSubmenuInclusionBehavior]));
+    settings.setDOMPasteAllowed([preferences isDOMPasteAllowed]);
+    settings.setUsesPageCache([self usesPageCache]);
+    settings.setPageCacheSupportsPlugins([preferences pageCacheSupportsPlugins]);
+    settings.setBackForwardCacheExpirationInterval([preferences _backForwardCacheExpirationInterval]);
+    settings.setShowsURLsInToolTips([preferences showsURLsInToolTips]);
+    settings.setShowsToolTipOverTruncatedText([preferences showsToolTipOverTruncatedText]);
+    settings.setDeveloperExtrasEnabled([preferences developerExtrasEnabled]);
+    settings.setJavaScriptExperimentsEnabled([preferences javaScriptExperimentsEnabled]);
+    settings.setAuthorAndUserStylesEnabled([preferences authorAndUserStylesEnabled]);
+    settings.setApplicationChromeMode([preferences applicationChromeModeEnabled]);
     if ([preferences userStyleSheetEnabled]) {
         NSString* location = [[preferences userStyleSheetLocation] _web_originalDataAsString];
         if ([location isEqualToString:@"apple-dashboard://stylesheet"])
             location = @"file:///System/Library/PrivateFrameworks/DashboardClient.framework/Resources/widget.css";
-        settings->setUserStyleSheetLocation([NSURL URLWithString:(location ? location : @"")]);
+        settings.setUserStyleSheetLocation([NSURL URLWithString:(location ? location : @"")]);
     } else
-        settings->setUserStyleSheetLocation([NSURL URLWithString:@""]);
-    settings->setNeedsAdobeFrameReloadingQuirk([self _needsAdobeFrameReloadingQuirk]);
-    settings->setTreatsAnyTextCSSLinkAsStylesheet([self _needsLinkElementTextCSSQuirk]);
-    settings->setNeedsKeyboardEventDisambiguationQuirks([self _needsKeyboardEventDisambiguationQuirks]);
-    settings->setNeedsSiteSpecificQuirks(_private->useSiteSpecificSpoofing);
-    settings->setWebArchiveDebugModeEnabled([preferences webArchiveDebugModeEnabled]);
-    settings->setLocalFileContentSniffingEnabled([preferences localFileContentSniffingEnabled]);
-    settings->setOfflineWebApplicationCacheEnabled([preferences offlineWebApplicationCacheEnabled]);
-    settings->setJavaScriptCanAccessClipboard([preferences javaScriptCanAccessClipboard]);
-    settings->setXSSAuditorEnabled([preferences isXSSAuditorEnabled]);
-    settings->setEnforceCSSMIMETypeInNoQuirksMode(!WKAppVersionCheckLessThan(@"com.apple.iWeb", -1, 2.1));
-    settings->setDNSPrefetchingEnabled([preferences isDNSPrefetchingEnabled]);
+        settings.setUserStyleSheetLocation([NSURL URLWithString:@""]);
+    settings.setNeedsAdobeFrameReloadingQuirk([self _needsAdobeFrameReloadingQuirk]);
+    settings.setTreatsAnyTextCSSLinkAsStylesheet([self _needsLinkElementTextCSSQuirk]);
+    settings.setNeedsKeyboardEventDisambiguationQuirks([self _needsKeyboardEventDisambiguationQuirks]);
+    settings.setNeedsSiteSpecificQuirks(_private->useSiteSpecificSpoofing);
+    settings.setWebArchiveDebugModeEnabled([preferences webArchiveDebugModeEnabled]);
+    settings.setLocalFileContentSniffingEnabled([preferences localFileContentSniffingEnabled]);
+    settings.setOfflineWebApplicationCacheEnabled([preferences offlineWebApplicationCacheEnabled]);
+    settings.setJavaScriptCanAccessClipboard([preferences javaScriptCanAccessClipboard]);
+    settings.setXSSAuditorEnabled([preferences isXSSAuditorEnabled]);
+    settings.setEnforceCSSMIMETypeInNoQuirksMode(!WKAppVersionCheckLessThan(@"com.apple.iWeb", -1, 2.1));
+    settings.setDNSPrefetchingEnabled([preferences isDNSPrefetchingEnabled]);
     
     // FIXME: Enabling accelerated compositing when WebGL is enabled causes tests to fail on Leopard which expect HW compositing to be disabled.
     // Until we fix that, I will comment out the test (CFM)
-    settings->setAcceleratedCompositingEnabled([preferences acceleratedCompositingEnabled]);
-    settings->setAcceleratedDrawingEnabled([preferences acceleratedDrawingEnabled]);
-    settings->setCanvasUsesAcceleratedDrawing([preferences canvasUsesAcceleratedDrawing]);    
-    settings->setShowDebugBorders([preferences showDebugBorders]);
-    settings->setShowRepaintCounter([preferences showRepaintCounter]);
-    settings->setWebGLEnabled([preferences webGLEnabled]);
-    settings->setAccelerated2dCanvasEnabled([preferences accelerated2dCanvasEnabled]);
-    settings->setLoadDeferringEnabled(shouldEnableLoadDeferring());
-    settings->setWindowFocusRestricted(shouldRestrictWindowFocus());
-    settings->setFrameFlatteningEnabled([preferences isFrameFlatteningEnabled]);
-    settings->setSpatialNavigationEnabled([preferences isSpatialNavigationEnabled]);
-    settings->setPaginateDuringLayoutEnabled([preferences paginateDuringLayoutEnabled]);
+    settings.setAcceleratedCompositingEnabled([preferences acceleratedCompositingEnabled]);
+    settings.setAcceleratedDrawingEnabled([preferences acceleratedDrawingEnabled]);
+    settings.setCanvasUsesAcceleratedDrawing([preferences canvasUsesAcceleratedDrawing]);    
+    settings.setShowDebugBorders([preferences showDebugBorders]);
+    settings.setShowRepaintCounter([preferences showRepaintCounter]);
+    settings.setWebGLEnabled([preferences webGLEnabled]);
+    settings.setAccelerated2dCanvasEnabled([preferences accelerated2dCanvasEnabled]);
+    settings.setLoadDeferringEnabled(shouldEnableLoadDeferring());
+    settings.setWindowFocusRestricted(shouldRestrictWindowFocus());
+    settings.setFrameFlatteningEnabled([preferences isFrameFlatteningEnabled]);
+    settings.setSpatialNavigationEnabled([preferences isSpatialNavigationEnabled]);
+    settings.setPaginateDuringLayoutEnabled([preferences paginateDuringLayoutEnabled]);
 #if ENABLE(CSS_SHADERS)
-    settings->setCSSCustomFilterEnabled([preferences cssCustomFilterEnabled]);
+    settings.setCSSCustomFilterEnabled([preferences cssCustomFilterEnabled]);
 #endif
     RuntimeEnabledFeatures::setCSSRegionsEnabled([preferences cssRegionsEnabled]);
     RuntimeEnabledFeatures::setCSSCompositingEnabled([preferences cssCompositingEnabled]);
 #if ENABLE(WEB_AUDIO)
-    settings->setWebAudioEnabled([preferences webAudioEnabled]);
+    settings.setWebAudioEnabled([preferences webAudioEnabled]);
 #endif
 #if ENABLE(IFRAME_SEAMLESS)
     RuntimeEnabledFeatures::setSeamlessIFramesEnabled([preferences seamlessIFramesEnabled]);
 #endif
-    settings->setCSSGridLayoutEnabled([preferences cssGridLayoutEnabled]);
+    settings.setCSSGridLayoutEnabled([preferences cssGridLayoutEnabled]);
 #if ENABLE(FULLSCREEN_API)
-    settings->setFullScreenEnabled([preferences fullScreenEnabled]);
+    settings.setFullScreenEnabled([preferences fullScreenEnabled]);
 #endif
-    settings->setAsynchronousSpellCheckingEnabled([preferences asynchronousSpellCheckingEnabled]);
-    settings->setHyperlinkAuditingEnabled([preferences hyperlinkAuditingEnabled]);
-    settings->setUsePreHTML5ParserQuirks([self _needsPreHTML5ParserQuirks]);
-    settings->setCrossOriginCheckInGetMatchedCSSRulesDisabled([self _needsUnrestrictedGetMatchedCSSRules]);
-    settings->setInteractiveFormValidationEnabled([self interactiveFormValidationEnabled]);
-    settings->setValidationMessageTimerMagnification([self validationMessageTimerMagnification]);
+    settings.setAsynchronousSpellCheckingEnabled([preferences asynchronousSpellCheckingEnabled]);
+    settings.setHyperlinkAuditingEnabled([preferences hyperlinkAuditingEnabled]);
+    settings.setUsePreHTML5ParserQuirks([self _needsPreHTML5ParserQuirks]);
+    settings.setCrossOriginCheckInGetMatchedCSSRulesDisabled([self _needsUnrestrictedGetMatchedCSSRules]);
+    settings.setInteractiveFormValidationEnabled([self interactiveFormValidationEnabled]);
+    settings.setValidationMessageTimerMagnification([self validationMessageTimerMagnification]);
 #if USE(AVFOUNDATION)
-    settings->setAVFoundationEnabled([preferences isAVFoundationEnabled]);
+    settings.setAVFoundationEnabled([preferences isAVFoundationEnabled]);
 #endif
 #if PLATFORM(MAC)
-    settings->setQTKitEnabled([preferences isQTKitEnabled]);
+    settings.setQTKitEnabled([preferences isQTKitEnabled]);
 #endif
-    settings->setMediaPlaybackRequiresUserGesture([preferences mediaPlaybackRequiresUserGesture]);
-    settings->setMediaPlaybackAllowsInline([preferences mediaPlaybackAllowsInline]);
-    settings->setSuppressesIncrementalRendering([preferences suppressesIncrementalRendering]);
-    settings->setRegionBasedColumnsEnabled([preferences regionBasedColumnsEnabled]);
-    settings->setBackspaceKeyNavigationEnabled([preferences backspaceKeyNavigationEnabled]);
-    settings->setWantsBalancedSetDefersLoadingBehavior([preferences wantsBalancedSetDefersLoadingBehavior]);
-    settings->setMockScrollbarsEnabled([preferences mockScrollbarsEnabled]);
+    settings.setMediaPlaybackRequiresUserGesture([preferences mediaPlaybackRequiresUserGesture]);
+    settings.setMediaPlaybackAllowsInline([preferences mediaPlaybackAllowsInline]);
+    settings.setSuppressesIncrementalRendering([preferences suppressesIncrementalRendering]);
+    settings.setRegionBasedColumnsEnabled([preferences regionBasedColumnsEnabled]);
+    settings.setBackspaceKeyNavigationEnabled([preferences backspaceKeyNavigationEnabled]);
+    settings.setWantsBalancedSetDefersLoadingBehavior([preferences wantsBalancedSetDefersLoadingBehavior]);
+    settings.setMockScrollbarsEnabled([preferences mockScrollbarsEnabled]);
 
 #if ENABLE(VIDEO_TRACK)
-    settings->setShouldDisplaySubtitles([preferences shouldDisplaySubtitles]);
-    settings->setShouldDisplayCaptions([preferences shouldDisplayCaptions]);
-    settings->setShouldDisplayTextDescriptions([preferences shouldDisplayTextDescriptions]);
+    settings.setShouldDisplaySubtitles([preferences shouldDisplaySubtitles]);
+    settings.setShouldDisplayCaptions([preferences shouldDisplayCaptions]);
+    settings.setShouldDisplayTextDescriptions([preferences shouldDisplayTextDescriptions]);
 #endif
 
-    settings->setShouldRespectImageOrientation([preferences shouldRespectImageOrientation]);
-    settings->setNeedsIsLoadingInAPISenseQuirk([self _needsIsLoadingInAPISenseQuirk]);
-    settings->setRequestAnimationFrameEnabled([preferences requestAnimationFrameEnabled]);
-    settings->setDiagnosticLoggingEnabled([preferences diagnosticLoggingEnabled]);
-    settings->setLowPowerVideoAudioBufferSizeEnabled([preferences lowPowerVideoAudioBufferSizeEnabled]);
+    settings.setShouldRespectImageOrientation([preferences shouldRespectImageOrientation]);
+    settings.setNeedsIsLoadingInAPISenseQuirk([self _needsIsLoadingInAPISenseQuirk]);
+    settings.setRequestAnimationFrameEnabled([preferences requestAnimationFrameEnabled]);
+    settings.setDiagnosticLoggingEnabled([preferences diagnosticLoggingEnabled]);
+    settings.setLowPowerVideoAudioBufferSizeEnabled([preferences lowPowerVideoAudioBufferSizeEnabled]);
 
     switch ([preferences storageBlockingPolicy]) {
     case WebAllowAllStorage:
-        settings->setStorageBlockingPolicy(SecurityOrigin::AllowAllStorage);
+        settings.setStorageBlockingPolicy(SecurityOrigin::AllowAllStorage);
         break;
     case WebBlockThirdPartyStorage:
-        settings->setStorageBlockingPolicy(SecurityOrigin::BlockThirdPartyStorage);
+        settings.setStorageBlockingPolicy(SecurityOrigin::BlockThirdPartyStorage);
         break;
     case WebBlockAllStorage:
-        settings->setStorageBlockingPolicy(SecurityOrigin::BlockAllStorage);
+        settings.setStorageBlockingPolicy(SecurityOrigin::BlockAllStorage);
         break;
     }
 
-    settings->setPlugInSnapshottingEnabled([preferences plugInSnapshottingEnabled]);
+    settings.setPlugInSnapshottingEnabled([preferences plugInSnapshottingEnabled]);
 
 #if ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING)
-    settings->setHiddenPageDOMTimerThrottlingEnabled([preferences hiddenPageDOMTimerThrottlingEnabled]);
+    settings.setHiddenPageDOMTimerThrottlingEnabled([preferences hiddenPageDOMTimerThrottlingEnabled]);
 #endif
 #if ENABLE(PAGE_VISIBILITY_API)
-    settings->setHiddenPageCSSAnimationSuspensionEnabled([preferences hiddenPageCSSAnimationSuspensionEnabled]);
+    settings.setHiddenPageCSSAnimationSuspensionEnabled([preferences hiddenPageCSSAnimationSuspensionEnabled]);
 #endif
 
     // We have enabled this setting in WebKit2 for the sake of some ScrollingCoordinator work.
     // To avoid possible rendering differences, we should enable it for WebKit1 too.
-    settings->setFixedPositionCreatesStackingContext(true);
+    settings.setFixedPositionCreatesStackingContext(true);
     
     NSTimeInterval timeout = [preferences incrementalRenderingSuppressionTimeoutInSeconds];
     if (timeout > 0)
-        settings->setIncrementalRenderingSuppressionTimeoutInSeconds(timeout);
+        settings.setIncrementalRenderingSuppressionTimeoutInSeconds(timeout);
 
     // Application Cache Preferences are stored on the global cache storage manager, not in Settings.
     [WebApplicationCache setDefaultOriginQuota:[preferences applicationCacheDefaultOriginQuota]];
@@ -2170,7 +2170,7 @@ static inline IMP getMethod(id o, SEL s)
     // FIXME: Remove this blanket assignment once Dashboard and Dashcode implement 
     // specific support for the backward compatibility mode flag.
     if (behavior == WebDashboardBehaviorAllowWheelScrolling && flag == NO && _private->page)
-        _private->page->settings()->setUsesDashboardBackwardCompatibilityMode(true);
+        _private->page->settings().setUsesDashboardBackwardCompatibilityMode(true);
     
     switch (behavior) {
         case WebDashboardBehaviorAlwaysSendMouseEventsToAllWindows: {
@@ -2191,7 +2191,7 @@ static inline IMP getMethod(id o, SEL s)
         }
         case WebDashboardBehaviorUseBackwardCompatibilityMode: {
             if (_private->page)
-                _private->page->settings()->setUsesDashboardBackwardCompatibilityMode(flag);
+                _private->page->settings().setUsesDashboardBackwardCompatibilityMode(flag);
 #if ENABLE(LEGACY_CSS_VENDOR_PREFIXES)
             RuntimeEnabledFeatures::setLegacyCSSVendorPrefixesEnabled(flag);
 #endif
@@ -2202,7 +2202,7 @@ static inline IMP getMethod(id o, SEL s)
     // Pre-HTML5 parser quirks should be enabled if Dashboard is in backward
     // compatibility mode. See <rdar://problem/8175982>.
     if (_private->page)
-        _private->page->settings()->setUsePreHTML5ParserQuirks([self _needsPreHTML5ParserQuirks]);
+        _private->page->settings().setUsePreHTML5ParserQuirks([self _needsPreHTML5ParserQuirks]);
 }
 
 - (BOOL)_dashboardBehavior:(WebDashboardBehavior)behavior
@@ -2221,7 +2221,7 @@ static inline IMP getMethod(id o, SEL s)
             return _private->dashboardBehaviorAllowWheelScrolling;
         }
         case WebDashboardBehaviorUseBackwardCompatibilityMode: {
-            return _private->page && _private->page->settings()->usesDashboardBackwardCompatibilityMode();
+            return _private->page && _private->page->settings().usesDashboardBackwardCompatibilityMode();
         }
     }
     return NO;
@@ -2319,14 +2319,14 @@ static inline IMP getMethod(id o, SEL s)
 - (BOOL)_cookieEnabled
 {
     if (_private->page)
-        return _private->page->settings()->cookieEnabled();
+        return _private->page->settings().cookieEnabled();
     return YES;
 }
 
 - (void)_setCookieEnabled:(BOOL)enable
 {
     if (_private->page)
-        _private->page->settings()->setCookieEnabled(enable);
+        _private->page->settings().setCookieEnabled(enable);
 }
 
 - (void)_setAdditionalWebPlugInPaths:(NSArray *)newPaths
@@ -2467,15 +2467,15 @@ static inline IMP getMethod(id o, SEL s)
 
 - (void)setSelectTrailingWhitespaceEnabled:(BOOL)flag
 {
-    if (_private->page->settings()->selectTrailingWhitespaceEnabled() != flag) {
-        _private->page->settings()->setSelectTrailingWhitespaceEnabled(flag);
+    if (_private->page->settings().selectTrailingWhitespaceEnabled() != flag) {
+        _private->page->settings().setSelectTrailingWhitespaceEnabled(flag);
         [self setSmartInsertDeleteEnabled:!flag];
     }
 }
 
 - (BOOL)isSelectTrailingWhitespaceEnabled
 {
-    return _private->page->settings()->selectTrailingWhitespaceEnabled();
+    return _private->page->settings().selectTrailingWhitespaceEnabled();
 }
 
 - (void)setMemoryCacheDelegateCallsEnabled:(BOOL)enabled
@@ -5512,16 +5512,16 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSC::JSValue j
 
 - (void)setSmartInsertDeleteEnabled:(BOOL)flag
 {
-    if (_private->page->settings()->smartInsertDeleteEnabled() != flag) {
-        _private->page->settings()->setSmartInsertDeleteEnabled(flag);
-        [[NSUserDefaults standardUserDefaults] setBool:_private->page->settings()->smartInsertDeleteEnabled() forKey:WebSmartInsertDeleteEnabled];
+    if (_private->page->settings().smartInsertDeleteEnabled() != flag) {
+        _private->page->settings().setSmartInsertDeleteEnabled(flag);
+        [[NSUserDefaults standardUserDefaults] setBool:_private->page->settings().smartInsertDeleteEnabled() forKey:WebSmartInsertDeleteEnabled];
         [self setSelectTrailingWhitespaceEnabled:!flag];
     }
 }
 
 - (BOOL)smartInsertDeleteEnabled
 {
-    return _private->page->settings()->smartInsertDeleteEnabled();
+    return _private->page->settings().smartInsertDeleteEnabled();
 }
 
 - (void)setContinuousSpellCheckingEnabled:(BOOL)flag

@@ -219,7 +219,7 @@ void DumpRenderTreeSupportQt::setDumpRenderTreeModeEnabled(bool b)
 
 void DumpRenderTreeSupportQt::setFrameFlatteningEnabled(QWebPageAdapter* adapter, bool enabled)
 {
-    adapter->page->settings()->setFrameFlatteningEnabled(enabled);
+    adapter->page->settings().setFrameFlatteningEnabled(enabled);
 }
 
 void DumpRenderTreeSupportQt::webPageSetGroupName(QWebPageAdapter *adapter, const QString& groupName)
@@ -319,12 +319,12 @@ void DumpRenderTreeSupportQt::setDomainRelaxationForbiddenForURLScheme(bool forb
 
 void DumpRenderTreeSupportQt::setCaretBrowsingEnabled(QWebPageAdapter* adapter, bool value)
 {
-    adapter->page->settings()->setCaretBrowsingEnabled(value);
+    adapter->page->settings().setCaretBrowsingEnabled(value);
 }
 
 void DumpRenderTreeSupportQt::setAuthorAndUserStylesEnabled(QWebPageAdapter* adapter, bool value)
 {
-    adapter->page->settings()->setAuthorAndUserStylesEnabled(value);
+    adapter->page->settings().setAuthorAndUserStylesEnabled(value);
 }
 
 void DumpRenderTreeSupportQt::executeCoreCommandByName(QWebPageAdapter* adapter, const QString& name, const QString& value)
@@ -384,7 +384,7 @@ void DumpRenderTreeSupportQt::setWindowsBehaviorAsEditingBehavior(QWebPageAdapte
     Page* corePage = adapter->page;
     if (!corePage)
         return;
-    corePage->settings()->setEditingBehaviorType(EditingWindowsBehavior);
+    corePage->settings().setEditingBehaviorType(EditingWindowsBehavior);
 }
 
 void DumpRenderTreeSupportQt::clearAllApplicationCaches()
@@ -684,7 +684,7 @@ void DumpRenderTreeSupportQt::setInteractiveFormValidationEnabled(QWebPageAdapte
 {
     Page* corePage = adapter->page;
     if (corePage)
-        corePage->settings()->setInteractiveFormValidationEnabled(enable);
+        corePage->settings().setInteractiveFormValidationEnabled(enable);
 }
 
 QStringList DumpRenderTreeSupportQt::contextMenu(QWebPageAdapter* page)

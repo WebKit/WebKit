@@ -183,7 +183,7 @@ inline Frame::Frame(Page* page, HTMLFrameOwnerElement* ownerElement, FrameLoader
     if (!ownerElement) {
 #if USE(TILED_BACKING_STORE)
         // Top level frame only for now.
-        setTiledBackingStoreEnabled(page->settings()->tiledBackingStoreEnabled());
+        setTiledBackingStoreEnabled(page->settings().tiledBackingStoreEnabled());
 #endif
     } else {
         page->incrementSubframeCount();
@@ -329,7 +329,7 @@ void Frame::sendOrientationChangeEvent(int orientation)
     
 Settings* Frame::settings() const
 {
-    return m_page ? m_page->settings() : 0;
+    return m_page ? &m_page->settings() : 0;
 }
 
 static PassOwnPtr<RegularExpression> createRegExpForLabels(const Vector<String>& labels)
@@ -948,7 +948,7 @@ float Frame::frameScaleFactor() const
     Page* page = this->page();
 
     // Main frame is scaled with respect to he container but inner frames are not scaled with respect to the main frame.
-    if (!page || page->mainFrame() != this || page->settings()->applyPageScaleFactorInCompositor())
+    if (!page || page->mainFrame() != this || page->settings().applyPageScaleFactorInCompositor())
         return 1;
 
     return page->pageScaleFactor();

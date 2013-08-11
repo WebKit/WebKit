@@ -207,7 +207,7 @@ void FrameLoaderClient::dispatchDidReceiveAuthenticationChallenge(WebCore::Docum
     WebKitWebView* view = webkit_web_frame_get_web_view(m_frame);
 
     CredentialStorageMode credentialStorageMode;
-    if (core(view)->settings()->privateBrowsingEnabled())
+    if (core(view)->settings().privateBrowsingEnabled())
         credentialStorageMode = DisallowPersistentStorage;
     else
         credentialStorageMode = AllowPersistentStorage;

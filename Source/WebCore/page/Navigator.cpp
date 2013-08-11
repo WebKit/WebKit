@@ -116,7 +116,7 @@ bool Navigator::cookieEnabled() const
     if (!m_frame)
         return false;
 
-    if (m_frame->page() && !m_frame->page()->settings()->cookieEnabled())
+    if (m_frame->page() && !m_frame->page()->settings().cookieEnabled())
         return false;
 
     return cookiesEnabled(m_frame->document());

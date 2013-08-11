@@ -488,7 +488,7 @@ void HTMLPlugInImageElement::userDidClickSnapshot(PassRefPtr<MouseEvent> event, 
         m_pendingClickEventFromSnapshot = event;
 
     String plugInOrigin = m_loadedUrl.host();
-    if (document()->page() && !SchemeRegistry::shouldTreatURLSchemeAsLocal(document()->page()->mainFrame()->document()->baseURL().protocol()) && document()->page()->settings()->autostartOriginPlugInSnapshottingEnabled())
+    if (document()->page() && !SchemeRegistry::shouldTreatURLSchemeAsLocal(document()->page()->mainFrame()->document()->baseURL().protocol()) && document()->page()->settings().autostartOriginPlugInSnapshottingEnabled())
         document()->page()->plugInClient()->didStartFromOrigin(document()->page()->mainFrame()->document()->baseURL().host(), plugInOrigin, loadedMimeType());
 
     LOG(Plugins, "%p User clicked on snapshotted plug-in. Restart.", this);
@@ -500,7 +500,7 @@ void HTMLPlugInImageElement::userDidClickSnapshot(PassRefPtr<MouseEvent> event, 
 
 void HTMLPlugInImageElement::setIsPrimarySnapshottedPlugIn(bool isPrimarySnapshottedPlugIn)
 {
-    if (!document()->page() || !document()->page()->settings()->primaryPlugInSnapshotDetectionEnabled() || document()->page()->settings()->snapshotAllPlugIns())
+    if (!document()->page() || !document()->page()->settings().primaryPlugInSnapshotDetectionEnabled() || document()->page()->settings().snapshotAllPlugIns())
         return;
 
     if (isPrimarySnapshottedPlugIn) {
@@ -585,7 +585,7 @@ void HTMLPlugInImageElement::subframeLoaderWillCreatePlugIn(const KURL& url)
     m_plugInWasCreated = false;
     m_deferredPromotionToPrimaryPlugIn = false;
 
-    if (!document()->page() || !document()->page()->settings()->plugInSnapshottingEnabled()) {
+    if (!document()->page() || !document()->page()->settings().plugInSnapshottingEnabled()) {
         m_snapshotDecision = NeverSnapshot;
         return;
     }
@@ -634,14 +634,14 @@ void HTMLPlugInImageElement::subframeLoaderWillCreatePlugIn(const KURL& url)
         return;
     }
 
-    if (document()->page()->settings()->snapshotAllPlugIns()) {
+    if (document()->page()->settings().snapshotAllPlugIns()) {
         LOG(Plugins, "%p Plug-in forced to snapshot by user preference", this);
         m_snapshotDecision = Snapshotted;
         setDisplayState(WaitingForSnapshot);
         return;
     }
 
-    if (document()->page()->settings()->autostartOriginPlugInSnapshottingEnabled() && document()->page()->plugInClient() && document()->page()->plugInClient()->shouldAutoStartFromOrigin(document()->page()->mainFrame()->document()->baseURL().host(), url.host(), loadedMimeType())) {
+    if (document()->page()->settings().autostartOriginPlugInSnapshottingEnabled() && document()->page()->plugInClient() && document()->page()->plugInClient()->shouldAutoStartFromOrigin(document()->page()->mainFrame()->document()->baseURL().host(), url.host(), loadedMimeType())) {
         LOG(Plugins, "%p Plug-in from (%s, %s) is marked to auto-start, set to play", this, document()->page()->mainFrame()->document()->baseURL().host().utf8().data(), url.host().utf8().data());
         m_snapshotDecision = NeverSnapshot;
         return;

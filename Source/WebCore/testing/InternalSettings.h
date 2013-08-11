@@ -47,8 +47,8 @@ class InternalSettings : public InternalSettingsGenerated {
 public:
     class Backup {
     public:
-        explicit Backup(Settings*);
-        void restoreTo(Settings*);
+        explicit Backup(Settings&);
+        void restoreTo(Settings&);
 
         bool m_originalCSSExclusionsEnabled;
         bool m_originalCSSShapesEnabled;

@@ -216,7 +216,7 @@ bool EditorClientWinCE::smartInsertDeleteEnabled()
     Page* page = m_webView->page();
     if (!page)
         return false;
-    return page->settings()->smartInsertDeleteEnabled();
+    return page->settings().smartInsertDeleteEnabled();
 }
 
 bool EditorClientWinCE::isSelectTrailingWhitespaceEnabled()
@@ -224,7 +224,7 @@ bool EditorClientWinCE::isSelectTrailingWhitespaceEnabled()
     Page* page = m_webView->page();
     if (!page)
         return false;
-    return page->settings()->selectTrailingWhitespaceEnabled();
+    return page->settings().selectTrailingWhitespaceEnabled();
 }
 
 void EditorClientWinCE::toggleContinuousSpellChecking()

@@ -404,7 +404,7 @@ void Chrome::setToolTip(const HitTestResult& result)
     String toolTip = result.spellingToolTip(toolTipDirection);
 
     // Next priority is a toolTip from a URL beneath the mouse (if preference is set to show those).
-    if (toolTip.isEmpty() && m_page->settings()->showsURLsInToolTips()) {
+    if (toolTip.isEmpty() && m_page->settings().showsURLsInToolTips()) {
         if (Node* node = result.innerNonSharedNode()) {
             // Get tooltip representing form action, if relevant
             if (isHTMLInputElement(node)) {
@@ -433,7 +433,7 @@ void Chrome::setToolTip(const HitTestResult& result)
     if (toolTip.isEmpty())
         toolTip = result.title(toolTipDirection);
 
-    if (toolTip.isEmpty() && m_page->settings()->showsToolTipOverTruncatedText())
+    if (toolTip.isEmpty() && m_page->settings().showsToolTipOverTruncatedText())
         toolTip = result.innerTextIfTruncated(toolTipDirection);
 
     // Lastly, for <input type="file"> that allow multiple files, we'll consider a tooltip for the selected filenames

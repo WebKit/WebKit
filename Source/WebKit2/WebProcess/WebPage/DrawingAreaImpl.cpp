@@ -67,7 +67,7 @@ DrawingAreaImpl::DrawingAreaImpl(WebPage* webPage, const WebPageCreationParamete
     , m_displayTimer(RunLoop::main(), this, &DrawingAreaImpl::displayTimerFired)
     , m_exitCompositingTimer(RunLoop::main(), this, &DrawingAreaImpl::exitAcceleratedCompositingMode)
 {
-    if (webPage->corePage()->settings()->acceleratedDrawingEnabled() || webPage->corePage()->settings()->forceCompositingMode())
+    if (webPage->corePage()->settings().acceleratedDrawingEnabled() || webPage->corePage()->settings().forceCompositingMode())
         m_alwaysUseCompositing = true;
 
 #if USE(COORDINATED_GRAPHICS)
@@ -264,16 +264,16 @@ void DrawingAreaImpl::updatePreferences(const WebPreferencesStore& store)
     // Soon we want pages with fixed positioned elements to be able to be scrolled by the ScrollingCoordinator.
     // As a part of that work, we have to composite fixed position elements, and we have to allow those
     // elements to create a stacking context.
-    m_webPage->corePage()->settings()->setAcceleratedCompositingForFixedPositionEnabled(true);
-    m_webPage->corePage()->settings()->setFixedPositionCreatesStackingContext(true);
+    m_webPage->corePage()->settings().setAcceleratedCompositingForFixedPositionEnabled(true);
+    m_webPage->corePage()->settings().setFixedPositionCreatesStackingContext(true);
 
     // <rdar://problem/10697417>: It is necessary to force compositing when accelerate drawing
     // is enabled on Mac so that scrollbars are always in their own layers.
-    if (m_webPage->corePage()->settings()->acceleratedDrawingEnabled())
-        m_webPage->corePage()->settings()->setForceCompositingMode(LayerTreeHost::supportsAcceleratedCompositing());
+    if (m_webPage->corePage()->settings().acceleratedDrawingEnabled())
+        m_webPage->corePage()->settings().setForceCompositingMode(LayerTreeHost::supportsAcceleratedCompositing());
     else
 #endif
-        m_webPage->corePage()->settings()->setForceCompositingMode(store.getBoolValueForKey(WebPreferencesKey::forceCompositingModeKey()) && LayerTreeHost::supportsAcceleratedCompositing());
+        m_webPage->corePage()->settings().setForceCompositingMode(store.getBoolValueForKey(WebPreferencesKey::forceCompositingModeKey()) && LayerTreeHost::supportsAcceleratedCompositing());
 }
 
 void DrawingAreaImpl::layerHostDidFlushLayers()

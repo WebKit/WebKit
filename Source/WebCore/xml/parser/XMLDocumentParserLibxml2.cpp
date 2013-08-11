@@ -87,7 +87,7 @@ static inline bool hasNoStyleInformation(Document* document)
     if (!document->frame() || !document->frame()->page())
         return false;
 
-    if (!document->frame()->page()->settings()->developerExtrasEnabled())
+    if (!document->frame()->page()->settings().developerExtrasEnabled())
         return false;
 
     if (document->frame()->tree()->parent())

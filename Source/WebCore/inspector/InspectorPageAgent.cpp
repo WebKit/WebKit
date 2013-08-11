@@ -1310,25 +1310,15 @@ void InspectorPageAgent::applyEmulatedMedia(String* media)
         *media = emulatedMedia;
 }
 
-void InspectorPageAgent::getCompositingBordersVisible(ErrorString* error, bool* outParam)
+void InspectorPageAgent::getCompositingBordersVisible(ErrorString*, bool* outParam)
 {
-    Settings* settings = m_page->settings();
-    if (!settings) {
-        *error = "Internal error: unable to read settings";
-        return;
-    }
-
-    *outParam = settings->showDebugBorders() || settings->showRepaintCounter();
+    *outParam = m_page->settings().showDebugBorders() || m_page->settings().showRepaintCounter();
 }
 
 void InspectorPageAgent::setCompositingBordersVisible(ErrorString*, bool visible)
 {
-    Settings* settings = m_page->settings();
-    if (!settings)
-        return;
-
-    settings->setShowDebugBorders(visible);
-    settings->setShowRepaintCounter(visible);
+    m_page->settings().setShowDebugBorders(visible);
+    m_page->settings().setShowRepaintCounter(visible);
 }
 
 void InspectorPageAgent::captureScreenshot(ErrorString* errorString, String* data)

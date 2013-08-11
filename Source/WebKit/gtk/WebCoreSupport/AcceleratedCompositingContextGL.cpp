@@ -100,7 +100,7 @@ void AcceleratedCompositingContext::initialize()
     m_nonCompositedContentLayer->setDrawsContent(true);
     m_nonCompositedContentLayer->setContentsOpaque(!m_webView->priv->transparent);
     m_nonCompositedContentLayer->setSize(pageSize);
-    if (core(m_webView)->settings()->acceleratedDrawingEnabled())
+    if (core(m_webView)->settings().acceleratedDrawingEnabled())
         m_nonCompositedContentLayer->setAcceleratesDrawing(true);
 
 #ifndef NDEBUG

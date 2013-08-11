@@ -75,8 +75,8 @@ TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea(WebPage* webPage, c
 {
     Page* page = m_webPage->corePage();
 
-    page->settings()->setScrollingCoordinatorEnabled(true);
-    page->settings()->setForceCompositingMode(true);
+    page->settings().setScrollingCoordinatorEnabled(true);
+    page->settings().setForceCompositingMode(true);
 
     WebProcess::shared().eventDispatcher().addScrollingTreeForPage(webPage);
 
@@ -238,26 +238,26 @@ void TiledCoreAnimationDrawingArea::setPageOverlayOpacity(PageOverlay* pageOverl
 
 void TiledCoreAnimationDrawingArea::updatePreferences(const WebPreferencesStore&)
 {
-    Settings* settings = m_webPage->corePage()->settings();
+    Settings& settings = m_webPage->corePage()->settings();
     bool scrollingPerformanceLoggingEnabled = m_webPage->scrollingPerformanceLoggingEnabled();
     ScrollingThread::dispatch(bind(&ScrollingTree::setScrollingPerformanceLoggingEnabled, m_webPage->corePage()->scrollingCoordinator()->scrollingTree(), scrollingPerformanceLoggingEnabled));
 
     if (TiledBacking* tiledBacking = mainFrameTiledBacking())
-        tiledBacking->setAggressivelyRetainsTiles(settings->aggressiveTileRetentionEnabled());
+        tiledBacking->setAggressivelyRetainsTiles(settings.aggressiveTileRetentionEnabled());
 
     for (PageOverlayLayerMap::iterator it = m_pageOverlayLayers.begin(), end = m_pageOverlayLayers.end(); it != end; ++it) {
-        it->value->setAcceleratesDrawing(settings->acceleratedDrawingEnabled());
-        it->value->setShowDebugBorder(settings->showDebugBorders());
-        it->value->setShowRepaintCounter(settings->showRepaintCounter());
+        it->value->setAcceleratesDrawing(settings.acceleratedDrawingEnabled());
+        it->value->setShowDebugBorder(settings.showDebugBorders());
+        it->value->setShowRepaintCounter(settings.showRepaintCounter());
     }
 
     // Soon we want pages with fixed positioned elements to be able to be scrolled by the ScrollingCoordinator.
     // As a part of that work, we have to composite fixed position elements, and we have to allow those
     // elements to create a stacking context.
-    settings->setAcceleratedCompositingForFixedPositionEnabled(true);
-    settings->setFixedPositionCreatesStackingContext(true);
+    settings.setAcceleratedCompositingForFixedPositionEnabled(true);
+    settings.setFixedPositionCreatesStackingContext(true);
 
-    bool showTiledScrollingIndicator = settings->showTiledScrollingIndicator();
+    bool showTiledScrollingIndicator = settings.showTiledScrollingIndicator();
     if (showTiledScrollingIndicator == !!m_debugInfoLayer)
         return;
 
@@ -602,13 +602,13 @@ void TiledCoreAnimationDrawingArea::setRootCompositingLayer(CALayer *layer)
         [m_rootLayer.get() addSublayer:it->value->platformLayer()];
 
     if (TiledBacking* tiledBacking = mainFrameTiledBacking()) {
-        tiledBacking->setAggressivelyRetainsTiles(m_webPage->corePage()->settings()->aggressiveTileRetentionEnabled());
+        tiledBacking->setAggressivelyRetainsTiles(m_webPage->corePage()->settings().aggressiveTileRetentionEnabled());
         tiledBacking->setExposedRect(m_scrolledExposedRect);
     }
 
     updateMainFrameClipsToExposedRect();
 
-    updateDebugInfoLayer(m_webPage->corePage()->settings()->showTiledScrollingIndicator());
+    updateDebugInfoLayer(m_webPage->corePage()->settings().showTiledScrollingIndicator());
 
     [CATransaction commit];
 }
@@ -620,9 +620,9 @@ void TiledCoreAnimationDrawingArea::createPageOverlayLayer(PageOverlay* pageOver
     layer->setName("page overlay content");
 #endif
 
-    layer->setAcceleratesDrawing(m_webPage->corePage()->settings()->acceleratedDrawingEnabled());
-    layer->setShowDebugBorder(m_webPage->corePage()->settings()->showDebugBorders());
-    layer->setShowRepaintCounter(m_webPage->corePage()->settings()->showRepaintCounter());
+    layer->setAcceleratesDrawing(m_webPage->corePage()->settings().acceleratedDrawingEnabled());
+    layer->setShowDebugBorder(m_webPage->corePage()->settings().showDebugBorders());
+    layer->setShowRepaintCounter(m_webPage->corePage()->settings().showRepaintCounter());
 
     m_pageOverlayPlatformLayers.set(layer.get(), layer->platformLayer());
 

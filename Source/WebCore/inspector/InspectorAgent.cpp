@@ -185,7 +185,7 @@ bool InspectorAgent::developerExtrasEnabled() const
 {
     if (!m_inspectedPage)
         return false;
-    return m_inspectedPage->settings()->developerExtrasEnabled();
+    return m_inspectedPage->settings().developerExtrasEnabled();
 }
 
 } // namespace WebCore

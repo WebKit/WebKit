@@ -723,7 +723,7 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* smartData)
     }
 #endif
 
-    priv->pageSettings = priv->page->settings();
+    priv->pageSettings = &priv->page->settings();
 
     WebCore::LayoutMilestones layoutMilestones = WebCore::DidFirstLayout | WebCore::DidFirstVisuallyNonEmptyLayout;
     priv->page->addLayoutMilestones(layoutMilestones);

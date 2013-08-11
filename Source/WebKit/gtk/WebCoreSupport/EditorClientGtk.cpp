@@ -365,7 +365,7 @@ bool EditorClient::smartInsertDeleteEnabled()
     WebCore::Page* corePage = core(m_webView);
     if (!corePage)
         return false;
-    return corePage->settings()->smartInsertDeleteEnabled();
+    return corePage->settings().smartInsertDeleteEnabled();
 }
 
 bool EditorClient::isSelectTrailingWhitespaceEnabled()
@@ -373,7 +373,7 @@ bool EditorClient::isSelectTrailingWhitespaceEnabled()
     WebCore::Page* corePage = core(m_webView);
     if (!corePage)
         return false;
-    return corePage->settings()->selectTrailingWhitespaceEnabled();
+    return corePage->settings().selectTrailingWhitespaceEnabled();
 }
 
 void EditorClient::toggleContinuousSpellChecking()

@@ -86,7 +86,7 @@ void WebFullScreenManager::didReceiveMessage(CoreIPC::Connection* connection, Co
 
 bool WebFullScreenManager::supportsFullScreen(bool withKeyboard)
 {
-    if (!m_page->corePage()->settings()->fullScreenEnabled())
+    if (!m_page->corePage()->settings().fullScreenEnabled())
         return false;
 
     return m_page->injectedBundleFullScreenClient().supportsFullScreen(m_page.get(), withKeyboard);

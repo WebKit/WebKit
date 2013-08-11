@@ -318,7 +318,7 @@ void LayerTreeHostMac::initialize()
     m_nonCompositedContentLayer->setDrawsContent(true);
     m_nonCompositedContentLayer->setContentsOpaque(m_webPage->drawsBackground() && !m_webPage->drawsTransparentBackground());
     m_nonCompositedContentLayer->setSize(m_webPage->size());
-    if (m_webPage->corePage()->settings()->acceleratedDrawingEnabled())
+    if (m_webPage->corePage()->settings().acceleratedDrawingEnabled())
         m_nonCompositedContentLayer->setAcceleratesDrawing(true);
 
     m_rootLayer->addChild(m_nonCompositedContentLayer.get());
@@ -390,11 +390,11 @@ void LayerTreeHostMac::createPageOverlayLayer(PageOverlay* pageOverlay)
     layer->setName("LayerTreeHost page overlay content");
 #endif
 
-    layer->setAcceleratesDrawing(m_webPage->corePage()->settings()->acceleratedDrawingEnabled());
+    layer->setAcceleratesDrawing(m_webPage->corePage()->settings().acceleratedDrawingEnabled());
     layer->setDrawsContent(true);
     layer->setSize(m_webPage->size());
-    layer->setShowDebugBorder(m_webPage->corePage()->settings()->showDebugBorders());
-    layer->setShowRepaintCounter(m_webPage->corePage()->settings()->showRepaintCounter());
+    layer->setShowDebugBorder(m_webPage->corePage()->settings().showDebugBorders());
+    layer->setShowRepaintCounter(m_webPage->corePage()->settings().showRepaintCounter());
 
     m_rootLayer->addChild(layer.get());
 

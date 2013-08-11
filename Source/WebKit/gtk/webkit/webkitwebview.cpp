@@ -1465,7 +1465,7 @@ static void webkit_web_view_screen_changed(GtkWidget* widget, GdkScreen* previou
         return;
 
     WebKitWebSettings* webSettings = priv->webSettings.get();
-    Settings* settings = core(webView)->settings();
+    Settings& settings = core(webView)->settings();
     guint defaultFontSize, defaultMonospaceFontSize, minimumFontSize, minimumLogicalFontSize;
 
     g_object_get(webSettings,
@@ -1475,10 +1475,10 @@ static void webkit_web_view_screen_changed(GtkWidget* widget, GdkScreen* previou
                  "minimum-logical-font-size", &minimumLogicalFontSize,
                  NULL);
 
-    settings->setDefaultFontSize(webViewConvertFontSizeToPixels(webView, defaultFontSize));
-    settings->setDefaultFixedFontSize(webViewConvertFontSizeToPixels(webView, defaultMonospaceFontSize));
-    settings->setMinimumFontSize(webViewConvertFontSizeToPixels(webView, minimumFontSize));
-    settings->setMinimumLogicalFontSize(webViewConvertFontSizeToPixels(webView, minimumLogicalFontSize));
+    settings.setDefaultFontSize(webViewConvertFontSizeToPixels(webView, defaultFontSize));
+    settings.setDefaultFixedFontSize(webViewConvertFontSizeToPixels(webView, defaultMonospaceFontSize));
+    settings.setMinimumFontSize(webViewConvertFontSizeToPixels(webView, minimumFontSize));
+    settings.setMinimumLogicalFontSize(webViewConvertFontSizeToPixels(webView, minimumLogicalFontSize));
 }
 
 #if ENABLE(DRAG_SUPPORT)
@@ -3498,54 +3498,54 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
 static void webkit_web_view_update_settings(WebKitWebView* webView)
 {
     WebKitWebSettingsPrivate* settingsPrivate = webView->priv->webSettings->priv;
-    Settings* coreSettings = core(webView)->settings();
+    Settings& coreSettings = core(webView)->settings();
 
-    coreSettings->setDefaultTextEncodingName(settingsPrivate->defaultEncoding.data());
-    coreSettings->setCursiveFontFamily(settingsPrivate->cursiveFontFamily.data());
-    coreSettings->setStandardFontFamily(settingsPrivate->defaultFontFamily.data());
-    coreSettings->setFantasyFontFamily(settingsPrivate->fantasyFontFamily.data());
-    coreSettings->setFixedFontFamily(settingsPrivate->monospaceFontFamily.data());
-    coreSettings->setSansSerifFontFamily(settingsPrivate->sansSerifFontFamily.data());
-    coreSettings->setSerifFontFamily(settingsPrivate->serifFontFamily.data());
-    coreSettings->setLoadsImagesAutomatically(settingsPrivate->autoLoadImages);
-    coreSettings->setShrinksStandaloneImagesToFit(settingsPrivate->autoShrinkImages);
-    coreSettings->setShouldRespectImageOrientation(settingsPrivate->respectImageOrientation);
-    coreSettings->setShouldPrintBackgrounds(settingsPrivate->printBackgrounds);
-    coreSettings->setScriptEnabled(settingsPrivate->enableScripts);
-    coreSettings->setPluginsEnabled(settingsPrivate->enablePlugins);
-    coreSettings->setTextAreasAreResizable(settingsPrivate->resizableTextAreas);
-    coreSettings->setUserStyleSheetLocation(KURL(KURL(), settingsPrivate->userStylesheetURI.data()));
-    coreSettings->setDeveloperExtrasEnabled(settingsPrivate->enableDeveloperExtras);
-    coreSettings->setPrivateBrowsingEnabled(settingsPrivate->enablePrivateBrowsing);
-    coreSettings->setCaretBrowsingEnabled(settingsPrivate->enableCaretBrowsing);
-    coreSettings->setLocalStorageEnabled(settingsPrivate->enableHTML5LocalStorage);
-    coreSettings->setLocalStorageDatabasePath(settingsPrivate->html5LocalStorageDatabasePath.data());
-    coreSettings->setXSSAuditorEnabled(settingsPrivate->enableXSSAuditor);
-    coreSettings->setSpatialNavigationEnabled(settingsPrivate->enableSpatialNavigation);
-    coreSettings->setFrameFlatteningEnabled(settingsPrivate->enableFrameFlattening);
-    coreSettings->setJavaScriptCanOpenWindowsAutomatically(settingsPrivate->javascriptCanOpenWindowsAutomatically);
-    coreSettings->setJavaScriptCanAccessClipboard(settingsPrivate->javascriptCanAccessClipboard);
-    coreSettings->setOfflineWebApplicationCacheEnabled(settingsPrivate->enableOfflineWebApplicationCache);
-    coreSettings->setEditingBehaviorType(static_cast<WebCore::EditingBehaviorType>(settingsPrivate->editingBehavior));
-    coreSettings->setAllowUniversalAccessFromFileURLs(settingsPrivate->enableUniversalAccessFromFileURIs);
-    coreSettings->setAllowFileAccessFromFileURLs(settingsPrivate->enableFileAccessFromFileURIs);
-    coreSettings->setDOMPasteAllowed(settingsPrivate->enableDOMPaste);
-    coreSettings->setNeedsSiteSpecificQuirks(settingsPrivate->enableSiteSpecificQuirks);
-    coreSettings->setUsesPageCache(settingsPrivate->enablePageCache);
-    coreSettings->setJavaEnabled(settingsPrivate->enableJavaApplet);
-    coreSettings->setHyperlinkAuditingEnabled(settingsPrivate->enableHyperlinkAuditing);
-    coreSettings->setDNSPrefetchingEnabled(settingsPrivate->enableDNSPrefetching);
-    coreSettings->setMediaPlaybackRequiresUserGesture(settingsPrivate->mediaPlaybackRequiresUserGesture);
-    coreSettings->setMediaPlaybackAllowsInline(settingsPrivate->mediaPlaybackAllowsInline);
-    coreSettings->setAllowDisplayOfInsecureContent(settingsPrivate->enableDisplayOfInsecureContent);
-    coreSettings->setAllowRunningOfInsecureContent(settingsPrivate->enableRunningOfInsecureContent);
+    coreSettings.setDefaultTextEncodingName(settingsPrivate->defaultEncoding.data());
+    coreSettings.setCursiveFontFamily(settingsPrivate->cursiveFontFamily.data());
+    coreSettings.setStandardFontFamily(settingsPrivate->defaultFontFamily.data());
+    coreSettings.setFantasyFontFamily(settingsPrivate->fantasyFontFamily.data());
+    coreSettings.setFixedFontFamily(settingsPrivate->monospaceFontFamily.data());
+    coreSettings.setSansSerifFontFamily(settingsPrivate->sansSerifFontFamily.data());
+    coreSettings.setSerifFontFamily(settingsPrivate->serifFontFamily.data());
+    coreSettings.setLoadsImagesAutomatically(settingsPrivate->autoLoadImages);
+    coreSettings.setShrinksStandaloneImagesToFit(settingsPrivate->autoShrinkImages);
+    coreSettings.setShouldRespectImageOrientation(settingsPrivate->respectImageOrientation);
+    coreSettings.setShouldPrintBackgrounds(settingsPrivate->printBackgrounds);
+    coreSettings.setScriptEnabled(settingsPrivate->enableScripts);
+    coreSettings.setPluginsEnabled(settingsPrivate->enablePlugins);
+    coreSettings.setTextAreasAreResizable(settingsPrivate->resizableTextAreas);
+    coreSettings.setUserStyleSheetLocation(KURL(KURL(), settingsPrivate->userStylesheetURI.data()));
+    coreSettings.setDeveloperExtrasEnabled(settingsPrivate->enableDeveloperExtras);
+    coreSettings.setPrivateBrowsingEnabled(settingsPrivate->enablePrivateBrowsing);
+    coreSettings.setCaretBrowsingEnabled(settingsPrivate->enableCaretBrowsing);
+    coreSettings.setLocalStorageEnabled(settingsPrivate->enableHTML5LocalStorage);
+    coreSettings.setLocalStorageDatabasePath(settingsPrivate->html5LocalStorageDatabasePath.data());
+    coreSettings.setXSSAuditorEnabled(settingsPrivate->enableXSSAuditor);
+    coreSettings.setSpatialNavigationEnabled(settingsPrivate->enableSpatialNavigation);
+    coreSettings.setFrameFlatteningEnabled(settingsPrivate->enableFrameFlattening);
+    coreSettings.setJavaScriptCanOpenWindowsAutomatically(settingsPrivate->javascriptCanOpenWindowsAutomatically);
+    coreSettings.setJavaScriptCanAccessClipboard(settingsPrivate->javascriptCanAccessClipboard);
+    coreSettings.setOfflineWebApplicationCacheEnabled(settingsPrivate->enableOfflineWebApplicationCache);
+    coreSettings.setEditingBehaviorType(static_cast<WebCore::EditingBehaviorType>(settingsPrivate->editingBehavior));
+    coreSettings.setAllowUniversalAccessFromFileURLs(settingsPrivate->enableUniversalAccessFromFileURIs);
+    coreSettings.setAllowFileAccessFromFileURLs(settingsPrivate->enableFileAccessFromFileURIs);
+    coreSettings.setDOMPasteAllowed(settingsPrivate->enableDOMPaste);
+    coreSettings.setNeedsSiteSpecificQuirks(settingsPrivate->enableSiteSpecificQuirks);
+    coreSettings.setUsesPageCache(settingsPrivate->enablePageCache);
+    coreSettings.setJavaEnabled(settingsPrivate->enableJavaApplet);
+    coreSettings.setHyperlinkAuditingEnabled(settingsPrivate->enableHyperlinkAuditing);
+    coreSettings.setDNSPrefetchingEnabled(settingsPrivate->enableDNSPrefetching);
+    coreSettings.setMediaPlaybackRequiresUserGesture(settingsPrivate->mediaPlaybackRequiresUserGesture);
+    coreSettings.setMediaPlaybackAllowsInline(settingsPrivate->mediaPlaybackAllowsInline);
+    coreSettings.setAllowDisplayOfInsecureContent(settingsPrivate->enableDisplayOfInsecureContent);
+    coreSettings.setAllowRunningOfInsecureContent(settingsPrivate->enableRunningOfInsecureContent);
 
 #if ENABLE(SQL_DATABASE)
     DatabaseManager::manager().setIsAvailable(settingsPrivate->enableHTML5Database);
 #endif
 
 #if ENABLE(FULLSCREEN_API)
-    coreSettings->setFullScreenEnabled(settingsPrivate->enableFullscreen);
+    coreSettings.setFullScreenEnabled(settingsPrivate->enableFullscreen);
 #endif
 
 #if ENABLE(SPELLCHECK)
@@ -3556,7 +3556,7 @@ static void webkit_web_view_update_settings(WebKitWebView* webView)
 #endif
 
 #if ENABLE(WEBGL)
-    coreSettings->setWebGLEnabled(settingsPrivate->enableWebgl);
+    coreSettings.setWebGLEnabled(settingsPrivate->enableWebgl);
 #endif
 
 #if ENABLE(MEDIA_STREAM)
@@ -3564,27 +3564,27 @@ static void webkit_web_view_update_settings(WebKitWebView* webView)
 #endif
 
 #if USE(ACCELERATED_COMPOSITING)
-    coreSettings->setAcceleratedCompositingEnabled(settingsPrivate->enableAcceleratedCompositing);
+    coreSettings.setAcceleratedCompositingEnabled(settingsPrivate->enableAcceleratedCompositing);
     char* debugVisualsEnvironment = getenv("WEBKIT_SHOW_COMPOSITING_DEBUG_VISUALS");
     bool showDebugVisuals = debugVisualsEnvironment && !strcmp(debugVisualsEnvironment, "1");
-    coreSettings->setShowDebugBorders(showDebugVisuals);
-    coreSettings->setShowRepaintCounter(showDebugVisuals);
+    coreSettings.setShowDebugBorders(showDebugVisuals);
+    coreSettings.setShowRepaintCounter(showDebugVisuals);
 #endif
 
 #if ENABLE(WEB_AUDIO)
-    coreSettings->setWebAudioEnabled(settingsPrivate->enableWebAudio);
+    coreSettings.setWebAudioEnabled(settingsPrivate->enableWebAudio);
 #endif
 
 #if ENABLE(SMOOTH_SCROLLING)
-    coreSettings->setScrollAnimatorEnabled(settingsPrivate->enableSmoothScrolling);
+    coreSettings.setScrollAnimatorEnabled(settingsPrivate->enableSmoothScrolling);
 #endif
 
 #if ENABLE(CSS_SHADERS)
-    coreSettings->setCSSCustomFilterEnabled(settingsPrivate->enableCSSShaders);
+    coreSettings.setCSSCustomFilterEnabled(settingsPrivate->enableCSSShaders);
 #endif
 
     // Use mock scrollbars if in DumpRenderTree mode (i.e. testing layout tests).
-    coreSettings->setMockScrollbarsEnabled(DumpRenderTreeSupportGtk::dumpRenderTreeModeEnabled());
+    coreSettings.setMockScrollbarsEnabled(DumpRenderTreeSupportGtk::dumpRenderTreeModeEnabled());
 
     if (Page* page = core(webView))
         page->setTabKeyCyclesThroughElements(settingsPrivate->tabKeyCyclesThroughElements);
@@ -3594,7 +3594,7 @@ static void webkit_web_view_update_settings(WebKitWebView* webView)
 
 static void webkit_web_view_settings_notify(WebKitWebSettings* webSettings, GParamSpec* pspec, WebKitWebView* webView)
 {
-    Settings* settings = core(webView)->settings();
+    Settings& settings = core(webView)->settings();
 
     const gchar* name = g_intern_string(pspec->name);
     GValue value = { 0, { { 0 } } };
@@ -3602,98 +3602,98 @@ static void webkit_web_view_settings_notify(WebKitWebSettings* webSettings, GPar
     g_object_get_property(G_OBJECT(webSettings), name, &value);
 
     if (name == g_intern_string("default-encoding"))
-        settings->setDefaultTextEncodingName(g_value_get_string(&value));
+        settings.setDefaultTextEncodingName(g_value_get_string(&value));
     else if (name == g_intern_string("cursive-font-family"))
-        settings->setCursiveFontFamily(g_value_get_string(&value));
+        settings.setCursiveFontFamily(g_value_get_string(&value));
     else if (name == g_intern_string("default-font-family"))
-        settings->setStandardFontFamily(g_value_get_string(&value));
+        settings.setStandardFontFamily(g_value_get_string(&value));
     else if (name == g_intern_string("fantasy-font-family"))
-        settings->setFantasyFontFamily(g_value_get_string(&value));
+        settings.setFantasyFontFamily(g_value_get_string(&value));
     else if (name == g_intern_string("monospace-font-family"))
-        settings->setFixedFontFamily(g_value_get_string(&value));
+        settings.setFixedFontFamily(g_value_get_string(&value));
     else if (name == g_intern_string("sans-serif-font-family"))
-        settings->setSansSerifFontFamily(g_value_get_string(&value));
+        settings.setSansSerifFontFamily(g_value_get_string(&value));
     else if (name == g_intern_string("serif-font-family"))
-        settings->setSerifFontFamily(g_value_get_string(&value));
+        settings.setSerifFontFamily(g_value_get_string(&value));
     else if (name == g_intern_string("default-font-size"))
-        settings->setDefaultFontSize(webViewConvertFontSizeToPixels(webView, g_value_get_int(&value)));
+        settings.setDefaultFontSize(webViewConvertFontSizeToPixels(webView, g_value_get_int(&value)));
     else if (name == g_intern_string("default-monospace-font-size"))
-        settings->setDefaultFixedFontSize(webViewConvertFontSizeToPixels(webView, g_value_get_int(&value)));
+        settings.setDefaultFixedFontSize(webViewConvertFontSizeToPixels(webView, g_value_get_int(&value)));
     else if (name == g_intern_string("minimum-font-size"))
-        settings->setMinimumFontSize(webViewConvertFontSizeToPixels(webView, g_value_get_int(&value)));
+        settings.setMinimumFontSize(webViewConvertFontSizeToPixels(webView, g_value_get_int(&value)));
     else if (name == g_intern_string("minimum-logical-font-size"))
-        settings->setMinimumLogicalFontSize(webViewConvertFontSizeToPixels(webView, g_value_get_int(&value)));
+        settings.setMinimumLogicalFontSize(webViewConvertFontSizeToPixels(webView, g_value_get_int(&value)));
     else if (name == g_intern_string("enforce-96-dpi"))
         webkit_web_view_screen_changed(GTK_WIDGET(webView), NULL);
     else if (name == g_intern_string("auto-load-images"))
-        settings->setLoadsImagesAutomatically(g_value_get_boolean(&value));
+        settings.setLoadsImagesAutomatically(g_value_get_boolean(&value));
     else if (name == g_intern_string("auto-shrink-images"))
-        settings->setShrinksStandaloneImagesToFit(g_value_get_boolean(&value));
+        settings.setShrinksStandaloneImagesToFit(g_value_get_boolean(&value));
     else if (name == g_intern_string("respect-image-orientation"))
-        settings->setShouldRespectImageOrientation(g_value_get_boolean(&value));
+        settings.setShouldRespectImageOrientation(g_value_get_boolean(&value));
     else if (name == g_intern_string("print-backgrounds"))
-        settings->setShouldPrintBackgrounds(g_value_get_boolean(&value));
+        settings.setShouldPrintBackgrounds(g_value_get_boolean(&value));
     else if (name == g_intern_string("enable-scripts"))
-        settings->setScriptEnabled(g_value_get_boolean(&value));
+        settings.setScriptEnabled(g_value_get_boolean(&value));
     else if (name == g_intern_string("enable-plugins"))
-        settings->setPluginsEnabled(g_value_get_boolean(&value));
+        settings.setPluginsEnabled(g_value_get_boolean(&value));
     else if (name == g_intern_string("enable-dns-prefetching"))
-        settings->setDNSPrefetchingEnabled(g_value_get_boolean(&value));
+        settings.setDNSPrefetchingEnabled(g_value_get_boolean(&value));
     else if (name == g_intern_string("resizable-text-areas"))
-        settings->setTextAreasAreResizable(g_value_get_boolean(&value));
+        settings.setTextAreasAreResizable(g_value_get_boolean(&value));
     else if (name == g_intern_string("user-stylesheet-uri"))
-        settings->setUserStyleSheetLocation(KURL(KURL(), g_value_get_string(&value)));
+        settings.setUserStyleSheetLocation(KURL(KURL(), g_value_get_string(&value)));
     else if (name == g_intern_string("enable-developer-extras"))
-        settings->setDeveloperExtrasEnabled(g_value_get_boolean(&value));
+        settings.setDeveloperExtrasEnabled(g_value_get_boolean(&value));
     else if (name == g_intern_string("enable-private-browsing"))
-        settings->setPrivateBrowsingEnabled(g_value_get_boolean(&value));
+        settings.setPrivateBrowsingEnabled(g_value_get_boolean(&value));
     else if (name == g_intern_string("enable-caret-browsing"))
-        settings->setCaretBrowsingEnabled(g_value_get_boolean(&value));
+        settings.setCaretBrowsingEnabled(g_value_get_boolean(&value));
 #if ENABLE(SQL_DATABASE)
     else if (name == g_intern_string("enable-html5-database")) {
         DatabaseManager::manager().setIsAvailable(g_value_get_boolean(&value));
     }
 #endif
     else if (name == g_intern_string("enable-html5-local-storage"))
-        settings->setLocalStorageEnabled(g_value_get_boolean(&value));
+        settings.setLocalStorageEnabled(g_value_get_boolean(&value));
     else if (name == g_intern_string("html5-local-storage-database-path"))
-        settings->setLocalStorageDatabasePath(g_value_get_string(&value));
+        settings.setLocalStorageDatabasePath(g_value_get_string(&value));
     else if (name == g_intern_string("enable-xss-auditor"))
-        settings->setXSSAuditorEnabled(g_value_get_boolean(&value));
+        settings.setXSSAuditorEnabled(g_value_get_boolean(&value));
     else if (name == g_intern_string("enable-spatial-navigation"))
-        settings->setSpatialNavigationEnabled(g_value_get_boolean(&value));
+        settings.setSpatialNavigationEnabled(g_value_get_boolean(&value));
     else if (name == g_intern_string("enable-frame-flattening"))
-        settings->setFrameFlatteningEnabled(g_value_get_boolean(&value));
+        settings.setFrameFlatteningEnabled(g_value_get_boolean(&value));
     else if (name == g_intern_string("javascript-can-open-windows-automatically"))
-        settings->setJavaScriptCanOpenWindowsAutomatically(g_value_get_boolean(&value));
+        settings.setJavaScriptCanOpenWindowsAutomatically(g_value_get_boolean(&value));
     else if (name == g_intern_string("javascript-can-access-clipboard"))
-        settings->setJavaScriptCanAccessClipboard(g_value_get_boolean(&value));
+        settings.setJavaScriptCanAccessClipboard(g_value_get_boolean(&value));
     else if (name == g_intern_string("enable-offline-web-application-cache"))
-        settings->setOfflineWebApplicationCacheEnabled(g_value_get_boolean(&value));
+        settings.setOfflineWebApplicationCacheEnabled(g_value_get_boolean(&value));
     else if (name == g_intern_string("editing-behavior"))
-        settings->setEditingBehaviorType(static_cast<WebCore::EditingBehaviorType>(g_value_get_enum(&value)));
+        settings.setEditingBehaviorType(static_cast<WebCore::EditingBehaviorType>(g_value_get_enum(&value)));
     else if (name == g_intern_string("enable-universal-access-from-file-uris"))
-        settings->setAllowUniversalAccessFromFileURLs(g_value_get_boolean(&value));
+        settings.setAllowUniversalAccessFromFileURLs(g_value_get_boolean(&value));
     else if (name == g_intern_string("enable-file-access-from-file-uris"))
-        settings->setAllowFileAccessFromFileURLs(g_value_get_boolean(&value));
+        settings.setAllowFileAccessFromFileURLs(g_value_get_boolean(&value));
     else if (name == g_intern_string("enable-dom-paste"))
-        settings->setDOMPasteAllowed(g_value_get_boolean(&value));
+        settings.setDOMPasteAllowed(g_value_get_boolean(&value));
     else if (name == g_intern_string("tab-key-cycles-through-elements")) {
         Page* page = core(webView);
         if (page)
             page->setTabKeyCyclesThroughElements(g_value_get_boolean(&value));
     } else if (name == g_intern_string("enable-site-specific-quirks"))
-        settings->setNeedsSiteSpecificQuirks(g_value_get_boolean(&value));
+        settings.setNeedsSiteSpecificQuirks(g_value_get_boolean(&value));
     else if (name == g_intern_string("enable-page-cache"))
-        settings->setUsesPageCache(g_value_get_boolean(&value));
+        settings.setUsesPageCache(g_value_get_boolean(&value));
     else if (name == g_intern_string("enable-java-applet"))
-        settings->setJavaEnabled(g_value_get_boolean(&value));
+        settings.setJavaEnabled(g_value_get_boolean(&value));
     else if (name == g_intern_string("enable-hyperlink-auditing"))
-        settings->setHyperlinkAuditingEnabled(g_value_get_boolean(&value));
+        settings.setHyperlinkAuditingEnabled(g_value_get_boolean(&value));
     else if (name == g_intern_string("media-playback-requires-user-gesture"))
-        settings->setMediaPlaybackRequiresUserGesture(g_value_get_boolean(&value));
+        settings.setMediaPlaybackRequiresUserGesture(g_value_get_boolean(&value));
     else if (name == g_intern_string("media-playback-allows-inline"))
-        settings->setMediaPlaybackAllowsInline(g_value_get_boolean(&value));
+        settings.setMediaPlaybackAllowsInline(g_value_get_boolean(&value));
 
 #if ENABLE(SPELLCHECK)
     else if (name == g_intern_string("spell-checking-languages")) {
@@ -3708,27 +3708,27 @@ static void webkit_web_view_settings_notify(WebKitWebSettings* webSettings, GPar
 
 #if ENABLE(WEBGL)
     else if (name == g_intern_string("enable-webgl"))
-        settings->setWebGLEnabled(g_value_get_boolean(&value));
+        settings.setWebGLEnabled(g_value_get_boolean(&value));
 #endif
 
 #if USE(ACCELERATED_COMPOSITING)
     else if (name == g_intern_string("enable-accelerated-compositing"))
-        settings->setAcceleratedCompositingEnabled(g_value_get_boolean(&value));
+        settings.setAcceleratedCompositingEnabled(g_value_get_boolean(&value));
 #endif
 
 #if ENABLE(WEB_AUDIO)
     else if (name == g_intern_string("enable-webaudio"))
-        settings->setWebAudioEnabled(g_value_get_boolean(&value));
+        settings.setWebAudioEnabled(g_value_get_boolean(&value));
 #endif
 
 #if ENABLE(SMOOTH_SCROLLING)
     else if (name == g_intern_string("enable-smooth-scrolling"))
-        settings->setScrollAnimatorEnabled(g_value_get_boolean(&value));
+        settings.setScrollAnimatorEnabled(g_value_get_boolean(&value));
 #endif
 
 #if ENABLE(CSS_SHADERS)
     else if (name == g_intern_string("enable-css-shaders"))
-        settings->setCSSCustomFilterEnabled(g_value_get_boolean(&value));
+        settings.setCSSCustomFilterEnabled(g_value_get_boolean(&value));
 #endif
 
     else if (!g_object_class_find_property(G_OBJECT_GET_CLASS(webSettings), name))
@@ -3789,8 +3789,8 @@ static void webkit_web_view_init(WebKitWebView* webView)
 
     if (DumpRenderTreeSupportGtk::dumpRenderTreeModeEnabled()) {
         // Set some testing-specific settings
-        priv->corePage->settings()->setInteractiveFormValidationEnabled(true);
-        priv->corePage->settings()->setValidationMessageTimerMagnification(-1);
+        priv->corePage->settings().setInteractiveFormValidationEnabled(true);
+        priv->corePage->settings().setValidationMessageTimerMagnification(-1);
     }
 
     // Pages within a same session need to be linked together otherwise some functionalities such

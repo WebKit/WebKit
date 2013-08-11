@@ -237,7 +237,7 @@ bool HTMLObjectElement::shouldAllowQuickTimeClassIdQuirk()
     // fallback content, which ensures the quirk will disable itself if Wiki
     // Server is updated to generate an alternate embed tag as fallback content.
     if (!document()->page()
-        || !document()->page()->settings()->needsSiteSpecificQuirks()
+        || !document()->page()->settings().needsSiteSpecificQuirks()
         || hasFallbackContent()
         || !equalIgnoringCase(classId(), "clsid:02BF25D5-8C17-4B23-BC80-D3488ABDDC6B"))
         return false;

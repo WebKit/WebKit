@@ -978,7 +978,7 @@ void WebFrameLoaderClient::updateGlobalHistoryItemForPage()
     HistoryItem* historyItem = 0;
 
     if (Page* page = core(m_webFrame.get())->page()) {
-        if (!page->settings()->privateBrowsingEnabled())
+        if (!page->settings().privateBrowsingEnabled())
             historyItem = page->backForward()->currentItem();
     }
 

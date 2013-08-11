@@ -268,7 +268,7 @@ void QWebPageAdapter::initializeWebCorePage()
 
     page->addLayoutMilestones(DidFirstVisuallyNonEmptyLayout);
 
-    settings = new QWebSettings(page->settings());
+    settings = new QWebSettings(&page->settings());
 
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     WebCore::provideNotification(page, NotificationPresenterClientQt::notificationPresenter());
@@ -959,7 +959,7 @@ QStringList QWebPageAdapter::supportedContentTypes() const
 
     extractContentTypeFromHash(MIMETypeRegistry::getSupportedImageMIMETypes(), &mimeTypes);
     extractContentTypeFromHash(MIMETypeRegistry::getSupportedNonImageMIMETypes(), &mimeTypes);
-    if (page->settings() && page->settings()->arePluginsEnabled())
+    if (page->settings().arePluginsEnabled())
         extractContentTypeFromPluginVector(PluginDatabase::installedPlugins()->plugins(), &mimeTypes);
 
     return mimeTypes;
@@ -988,7 +988,7 @@ bool QWebPageAdapter::supportsContentType(const QString& mimeType) const
     if (MIMETypeRegistry::isSupportedNonImageMIMEType(type))
         return true;
 
-    if (page->settings() && page->settings()->arePluginsEnabled()
+    if (page->settings().arePluginsEnabled()
         && PluginDatabase::installedPlugins()->isMIMETypeRegistered(type))
         return true;
 

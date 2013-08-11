@@ -562,9 +562,8 @@ void WebGLRenderingContext::setupFlags()
 {
     ASSERT(m_context);
 
-    Page* p = canvas()->document()->page();
-    if (p)
-        m_synthesizedErrorsToConsole = p->settings()->webGLErrorsToConsoleEnabled();
+    if (Page* page = canvas()->document()->page())
+        m_synthesizedErrorsToConsole = page->settings().webGLErrorsToConsoleEnabled();
 
     m_isGLES2Compliant = m_context->isGLES2Compliant();
     m_isErrorGeneratedOnOutOfBoundsAccesses = m_context->getExtensions()->isEnabled("GL_CHROMIUM_strict_attribs");
@@ -581,9 +580,8 @@ void WebGLRenderingContext::setupFlags()
 
 bool WebGLRenderingContext::allowPrivilegedExtensions() const
 {
-    Page* p = canvas()->document()->page();
-    if (p && p->settings())
-        return p->settings()->privilegedWebGLExtensionsEnabled();
+    if (Page* page = canvas()->document()->page())
+        return page->settings().privilegedWebGLExtensionsEnabled();
     return false;
 }
 

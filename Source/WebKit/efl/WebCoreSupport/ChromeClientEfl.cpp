@@ -636,7 +636,7 @@ bool ChromeClientEfl::supportsFullScreenForElement(const WebCore::Element* eleme
 
     if (!element->document()->page())
         return false;
-    return element->document()->page()->settings()->fullScreenEnabled();
+    return element->document()->page()->settings().fullScreenEnabled();
 }
 
 void ChromeClientEfl::enterFullScreenForElement(WebCore::Element* element)

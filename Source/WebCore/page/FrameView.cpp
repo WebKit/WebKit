@@ -463,7 +463,7 @@ void FrameView::setFrameRect(const IntRect& newRect)
     // Autosized font sizes depend on the width of the viewing area.
     if (newRect.width() != oldRect.width()) {
         Page* page = m_frame ? m_frame->page() : 0;
-        if (page && page->mainFrame() == m_frame && page->settings()->textAutosizingEnabled()) {
+        if (page && page->mainFrame() == m_frame && page->settings().textAutosizingEnabled()) {
             for (Frame* frame = page->mainFrame(); frame; frame = frame->tree()->traverseNext())
                 m_frame->document()->textAutosizer()->recalculateMultipliers();
         }
@@ -1991,7 +1991,7 @@ void FrameView::setFixedVisibleContentRect(const IntRect& visibleContentRect)
     ScrollView::setFixedVisibleContentRect(visibleContentRect);
     if (offset != scrollOffset()) {
         repaintFixedElementsAfterScrolling();
-        if (m_frame->page()->settings()->acceleratedCompositingForFixedPositionEnabled())
+        if (m_frame->page()->settings().acceleratedCompositingForFixedPositionEnabled())
             updateFixedElementsAfterScrolling();
         scrollAnimator()->setCurrentPosition(scrollPosition());
         scrollPositionChanged();
@@ -3286,7 +3286,7 @@ bool FrameView::scrollAnimatorEnabled() const
 {
 #if ENABLE(SMOOTH_SCROLLING)
     if (Page* page = m_frame->page())
-        return page->settings()->scrollAnimatorEnabled();
+        return page->settings().scrollAnimatorEnabled();
 #endif
 
     return false;

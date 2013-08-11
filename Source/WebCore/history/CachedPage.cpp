@@ -52,7 +52,7 @@ PassRefPtr<CachedPage> CachedPage::create(Page* page)
 
 CachedPage::CachedPage(Page* page)
     : m_timeStamp(currentTime())
-    , m_expirationTime(m_timeStamp + page->settings()->backForwardCacheExpirationInterval())
+    , m_expirationTime(m_timeStamp + page->settings().backForwardCacheExpirationInterval())
     , m_cachedMainFrame(CachedFrame::create(page->mainFrame()))
     , m_needStyleRecalcForVisitedLinks(false)
     , m_needsFullStyleRecalc(false)

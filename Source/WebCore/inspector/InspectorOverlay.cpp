@@ -436,20 +436,20 @@ Page* InspectorOverlay::overlayPage()
     fillWithEmptyClients(pageClients);
     m_overlayPage = adoptPtr(new Page(pageClients));
 
-    Settings* settings = m_page->settings();
-    Settings* overlaySettings = m_overlayPage->settings();
+    Settings& settings = m_page->settings();
+    Settings& overlaySettings = m_overlayPage->settings();
 
-    overlaySettings->setStandardFontFamily(settings->standardFontFamily());
-    overlaySettings->setSerifFontFamily(settings->serifFontFamily());
-    overlaySettings->setSansSerifFontFamily(settings->sansSerifFontFamily());
-    overlaySettings->setCursiveFontFamily(settings->cursiveFontFamily());
-    overlaySettings->setFantasyFontFamily(settings->fantasyFontFamily());
-    overlaySettings->setPictographFontFamily(settings->pictographFontFamily());
-    overlaySettings->setMinimumFontSize(settings->minimumFontSize());
-    overlaySettings->setMinimumLogicalFontSize(settings->minimumLogicalFontSize());
-    overlaySettings->setMediaEnabled(false);
-    overlaySettings->setScriptEnabled(true);
-    overlaySettings->setPluginsEnabled(false);
+    overlaySettings.setStandardFontFamily(settings.standardFontFamily());
+    overlaySettings.setSerifFontFamily(settings.serifFontFamily());
+    overlaySettings.setSansSerifFontFamily(settings.sansSerifFontFamily());
+    overlaySettings.setCursiveFontFamily(settings.cursiveFontFamily());
+    overlaySettings.setFantasyFontFamily(settings.fantasyFontFamily());
+    overlaySettings.setPictographFontFamily(settings.pictographFontFamily());
+    overlaySettings.setMinimumFontSize(settings.minimumFontSize());
+    overlaySettings.setMinimumLogicalFontSize(settings.minimumLogicalFontSize());
+    overlaySettings.setMediaEnabled(false);
+    overlaySettings.setScriptEnabled(true);
+    overlaySettings.setPluginsEnabled(false);
 
     RefPtr<Frame> frame = Frame::create(m_overlayPage.get(), 0, dummyFrameLoaderClient);
     frame->setView(FrameView::create(frame.get()));

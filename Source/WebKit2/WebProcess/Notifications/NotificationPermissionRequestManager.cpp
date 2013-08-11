@@ -123,7 +123,7 @@ void NotificationPermissionRequestManager::cancelRequest(SecurityOrigin* origin)
 NotificationClient::Permission NotificationPermissionRequestManager::permissionLevel(SecurityOrigin* securityOrigin)
 {
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
-    if (!m_page->corePage()->settings()->notificationsEnabled())
+    if (!m_page->corePage()->settings().notificationsEnabled())
         return NotificationClient::PermissionDenied;
     
     return WebProcess::shared().supplement<WebNotificationManager>()->policyForOrigin(securityOrigin);

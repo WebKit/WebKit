@@ -466,7 +466,7 @@ PlatformPageClient WebChromeClient::platformPageClient() const
 
 void WebChromeClient::contentsSizeChanged(Frame* frame, const IntSize& size) const
 {
-    if (!m_page->corePage()->settings()->frameFlatteningEnabled()) {
+    if (!m_page->corePage()->settings().frameFlatteningEnabled()) {
         WebFrame* largestFrame = findLargestFrameInFrameSet(m_page);
         if (largestFrame != m_cachedFrameSetLargestFrame.get()) {
             m_cachedFrameSetLargestFrame = largestFrame;
@@ -856,7 +856,7 @@ void WebChromeClient::numWheelEventHandlersChanged(unsigned count)
 
 void WebChromeClient::logDiagnosticMessage(const String& message, const String& description, const String& success)
 {
-    if (!m_page->corePage()->settings()->diagnosticLoggingEnabled())
+    if (!m_page->corePage()->settings().diagnosticLoggingEnabled())
         return;
 
     m_page->injectedBundleDiagnosticLoggingClient().logDiagnosticMessage(m_page, message, description, success);

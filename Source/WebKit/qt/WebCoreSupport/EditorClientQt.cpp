@@ -336,15 +336,15 @@ bool EditorClientQt::smartInsertDeleteEnabled()
     Page* page = m_page->page;
     if (!page)
         return false;
-    return page->settings()->smartInsertDeleteEnabled();
+    return page->settings().smartInsertDeleteEnabled();
 }
 
 void EditorClientQt::toggleSmartInsertDelete()
 {
     Page* page = m_page->page;
     if (page) {
-        page->settings()->setSmartInsertDeleteEnabled(!page->settings()->smartInsertDeleteEnabled());
-        page->settings()->setSelectTrailingWhitespaceEnabled(!page->settings()->selectTrailingWhitespaceEnabled());
+        page->settings().setSmartInsertDeleteEnabled(!page->settings().smartInsertDeleteEnabled());
+        page->settings().setSelectTrailingWhitespaceEnabled(!page->settings().selectTrailingWhitespaceEnabled());
     }
 }
 
@@ -353,7 +353,7 @@ bool EditorClientQt::isSelectTrailingWhitespaceEnabled()
     Page* page = m_page->page;
     if (!page)
         return false;
-    return page->settings()->selectTrailingWhitespaceEnabled();
+    return page->settings().selectTrailingWhitespaceEnabled();
 }
 
 void EditorClientQt::toggleContinuousSpellChecking()
@@ -506,7 +506,7 @@ void EditorClientQt::handleKeyboardEvent(KeyboardEvent* event)
     }
 
     // Non editable content.
-    if (m_page->page->settings()->caretBrowsingEnabled()) {
+    if (m_page->page->settings().caretBrowsingEnabled()) {
         switch (kevent->windowsVirtualKeyCode()) {
         case VK_LEFT:
         case VK_RIGHT:

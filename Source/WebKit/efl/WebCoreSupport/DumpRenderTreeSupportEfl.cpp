@@ -247,14 +247,14 @@ void DumpRenderTreeSupportEfl::setLoadsSiteIconsIgnoringImageLoadingSetting(Evas
 {
     DRT_SUPPRT_PAGE_GET_OR_RETURN(ewkView, page);
 
-    page->settings()->setLoadsSiteIconsIgnoringImageLoadingSetting(loadsSiteIconsIgnoringImageLoadingPreferences);
+    page->settings().setLoadsSiteIconsIgnoringImageLoadingSetting(loadsSiteIconsIgnoringImageLoadingPreferences);
 }
 
 void DumpRenderTreeSupportEfl::setMinimumLogicalFontSize(Evas_Object* ewkView, int size)
 {
     DRT_SUPPRT_PAGE_GET_OR_RETURN(ewkView, page);
 
-    page->settings()->setMinimumLogicalFontSize(size);
+    page->settings().setMinimumLogicalFontSize(size);
 }
 
 void DumpRenderTreeSupportEfl::addUserScript(const Evas_Object* ewkView, const String& sourceCode, bool runAtStart, bool allFrames)
@@ -305,7 +305,7 @@ void DumpRenderTreeSupportEfl::setCSSGridLayoutEnabled(const Evas_Object* ewkVie
 {
     DRT_SUPPRT_PAGE_GET_OR_RETURN(ewkView, page);
 
-    page->settings()->setCSSGridLayoutEnabled(enabled);
+    page->settings().setCSSGridLayoutEnabled(enabled);
 }
 
 void DumpRenderTreeSupportEfl::setCSSRegionsEnabled(const Evas_Object* ewkView, bool enabled)
@@ -329,7 +329,7 @@ void DumpRenderTreeSupportEfl::setWebAudioEnabled(Evas_Object* ewkView, bool ena
 #if ENABLE(WEB_AUDIO)
     DRT_SUPPRT_PAGE_GET_OR_RETURN(ewkView, page);
 
-    page->settings()->setWebAudioEnabled(enabled);
+    page->settings().setWebAudioEnabled(enabled);
 #else
     UNUSED_PARAM(ewkView);
     UNUSED_PARAM(enabled);
@@ -528,21 +528,21 @@ void DumpRenderTreeSupportEfl::setInteractiveFormValidationEnabled(Evas_Object* 
 {
     DRT_SUPPRT_PAGE_GET_OR_RETURN(ewkView, page);
 
-    page->settings()->setInteractiveFormValidationEnabled(enabled);
+    page->settings().setInteractiveFormValidationEnabled(enabled);
 }
 
 void DumpRenderTreeSupportEfl::setValidationMessageTimerMagnification(Evas_Object* ewkView, int value)
 {
     DRT_SUPPRT_PAGE_GET_OR_RETURN(ewkView, page);
 
-    page->settings()->setValidationMessageTimerMagnification(value);
+    page->settings().setValidationMessageTimerMagnification(value);
 }
 
 void DumpRenderTreeSupportEfl::setAuthorAndUserStylesEnabled(Evas_Object* ewkView, bool enabled)
 {
     DRT_SUPPRT_PAGE_GET_OR_RETURN(ewkView, page);
 
-    page->settings()->setAuthorAndUserStylesEnabled(enabled);
+    page->settings().setAuthorAndUserStylesEnabled(enabled);
 }
 
 void DumpRenderTreeSupportEfl::setSerializeHTTPLoads(bool enabled)

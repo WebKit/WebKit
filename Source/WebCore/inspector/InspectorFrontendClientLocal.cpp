@@ -121,7 +121,7 @@ InspectorFrontendClientLocal::InspectorFrontendClientLocal(InspectorController* 
     , m_frontendLoaded(false)
     , m_dockSide(UNDOCKED)
 {
-    m_frontendPage->settings()->setAllowFileAccessFromFileURLs(true);
+    m_frontendPage->settings().setAllowFileAccessFromFileURLs(true);
     m_dispatchTask = adoptPtr(new InspectorBackendDispatchTask(inspectorController));
 }
 

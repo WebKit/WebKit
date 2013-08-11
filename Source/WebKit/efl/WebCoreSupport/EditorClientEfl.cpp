@@ -249,7 +249,7 @@ bool EditorClientEfl::smartInsertDeleteEnabled()
     WebCore::Page* corePage = EWKPrivate::corePage(m_view);
     if (!corePage)
         return false;
-    return corePage->settings()->smartInsertDeleteEnabled();
+    return corePage->settings().smartInsertDeleteEnabled();
 }
 
 bool EditorClientEfl::isSelectTrailingWhitespaceEnabled()
@@ -257,7 +257,7 @@ bool EditorClientEfl::isSelectTrailingWhitespaceEnabled()
     WebCore::Page* corePage = EWKPrivate::corePage(m_view);
     if (!corePage)
         return false;
-    return corePage->settings()->selectTrailingWhitespaceEnabled();
+    return corePage->settings().selectTrailingWhitespaceEnabled();
 }
 
 void EditorClientEfl::toggleContinuousSpellChecking()

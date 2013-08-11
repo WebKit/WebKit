@@ -141,7 +141,7 @@ uint64_t WebNotificationManager::notificationIDForTesting(Notification* notifica
 bool WebNotificationManager::show(Notification* notification, WebPage* page)
 {
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
-    if (!notification || !page->corePage()->settings()->notificationsEnabled())
+    if (!notification || !page->corePage()->settings().notificationsEnabled())
         return false;
     
     uint64_t notificationID = generateNotificationID();
@@ -167,7 +167,7 @@ bool WebNotificationManager::show(Notification* notification, WebPage* page)
 void WebNotificationManager::cancel(Notification* notification, WebPage* page)
 {
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
-    if (!notification || !page->corePage()->settings()->notificationsEnabled())
+    if (!notification || !page->corePage()->settings().notificationsEnabled())
         return;
     
     uint64_t notificationID = m_notificationMap.get(notification);

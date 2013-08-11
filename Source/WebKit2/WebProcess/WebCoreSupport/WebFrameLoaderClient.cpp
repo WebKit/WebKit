@@ -549,7 +549,7 @@ void WebFrameLoaderClient::dispatchDidLayout(LayoutMilestones milestones)
         webPage->send(Messages::WebPageProxy::DidFirstLayoutForFrame(m_frame->frameID(), InjectedBundleUserMessageEncoder(userData.get())));
 
         if (m_frame == m_frame->page()->mainWebFrame()) {
-            if (!webPage->corePage()->settings()->suppressesIncrementalRendering() && !m_didCompletePageTransitionAlready) {
+            if (!webPage->corePage()->settings().suppressesIncrementalRendering() && !m_didCompletePageTransitionAlready) {
                 webPage->didCompletePageTransition();
                 m_didCompletePageTransitionAlready = true;
             }

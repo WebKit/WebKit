@@ -308,7 +308,7 @@ bool WebEditorClient::smartInsertDeleteEnabled(void)
     Page* page = m_webView->page();
     if (!page)
         return false;
-    return page->settings()->smartInsertDeleteEnabled();
+    return page->settings().smartInsertDeleteEnabled();
 }
 
 bool WebEditorClient::isSelectTrailingWhitespaceEnabled(void)
@@ -316,7 +316,7 @@ bool WebEditorClient::isSelectTrailingWhitespaceEnabled(void)
     Page* page = m_webView->page();
     if (!page)
         return false;
-    return page->settings()->selectTrailingWhitespaceEnabled();
+    return page->settings().selectTrailingWhitespaceEnabled();
 }
 
 bool WebEditorClient::shouldChangeSelectedRange(WebCore::Range*, WebCore::Range*, WebCore::EAffinity, bool)

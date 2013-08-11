@@ -207,7 +207,7 @@ public:
     String mainThreadScrollingReasonsAsText();
     PassRefPtr<ClientRectList> nonFastScrollableRects(const Frame*);
 
-    Settings* settings() const { return m_settings.get(); }
+    Settings& settings() const { return *m_settings; }
     ProgressTracker* progress() const { return m_progress.get(); }
     BackForwardController* backForward() const { return m_backForwardController.get(); }
 
@@ -457,7 +457,7 @@ private:
 #endif
     RefPtr<ScrollingCoordinator> m_scrollingCoordinator;
 
-    OwnPtr<Settings> m_settings;
+    const OwnPtr<Settings> m_settings;
     OwnPtr<ProgressTracker> m_progress;
 
     OwnPtr<BackForwardController> m_backForwardController;

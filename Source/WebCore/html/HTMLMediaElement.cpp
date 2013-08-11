@@ -1684,7 +1684,7 @@ void HTMLMediaElement::mediaPlayerNetworkStateChanged(MediaPlayer*)
 
 static void logMediaLoadRequest(Page* page, const String& mediaEngine, const String& errorMessage, bool succeeded)
 {
-    if (!page || !page->settings()->diagnosticLoggingEnabled())
+    if (!page || !page->settings().diagnosticLoggingEnabled())
         return;
 
     ChromeClient* client = page->chrome().client();

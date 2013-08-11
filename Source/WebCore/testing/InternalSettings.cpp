@@ -65,10 +65,10 @@
 
 namespace WebCore {
 
-InternalSettings::Backup::Backup(Settings* settings)
+InternalSettings::Backup::Backup(Settings& settings)
     : m_originalCSSExclusionsEnabled(RuntimeEnabledFeatures::cssExclusionsEnabled())
     , m_originalCSSShapesEnabled(RuntimeEnabledFeatures::cssShapesEnabled())
-    , m_originalCSSVariablesEnabled(settings->cssVariablesEnabled())
+    , m_originalCSSVariablesEnabled(settings.cssVariablesEnabled())
 #if ENABLE(SHADOW_DOM)
     , m_originalShadowDOMEnabled(RuntimeEnabledFeatures::shadowDOMEnabled())
     , m_originalAuthorShadowDOMForAnyElementEnabled(RuntimeEnabledFeatures::authorShadowDOMForAnyElementEnabled())
@@ -76,37 +76,37 @@ InternalSettings::Backup::Backup(Settings* settings)
 #if ENABLE(STYLE_SCOPED)
     , m_originalStyleScoped(RuntimeEnabledFeatures::styleScopedEnabled())
 #endif
-    , m_originalEditingBehavior(settings->editingBehaviorType())
+    , m_originalEditingBehavior(settings.editingBehaviorType())
 #if ENABLE(TEXT_AUTOSIZING)
-    , m_originalTextAutosizingEnabled(settings->textAutosizingEnabled())
-    , m_originalTextAutosizingWindowSizeOverride(settings->textAutosizingWindowSizeOverride())
-    , m_originalTextAutosizingFontScaleFactor(settings->textAutosizingFontScaleFactor())
+    , m_originalTextAutosizingEnabled(settings.textAutosizingEnabled())
+    , m_originalTextAutosizingWindowSizeOverride(settings.textAutosizingWindowSizeOverride())
+    , m_originalTextAutosizingFontScaleFactor(settings.textAutosizingFontScaleFactor())
 #endif
-    , m_originalMediaTypeOverride(settings->mediaTypeOverride())
+    , m_originalMediaTypeOverride(settings.mediaTypeOverride())
 #if ENABLE(DIALOG_ELEMENT)
     , m_originalDialogElementEnabled(RuntimeEnabledFeatures::dialogElementEnabled())
 #endif
-    , m_originalCanvasUsesAcceleratedDrawing(settings->canvasUsesAcceleratedDrawing())
-    , m_originalMockScrollbarsEnabled(settings->mockScrollbarsEnabled())
+    , m_originalCanvasUsesAcceleratedDrawing(settings.canvasUsesAcceleratedDrawing())
+    , m_originalMockScrollbarsEnabled(settings.mockScrollbarsEnabled())
     , m_langAttributeAwareFormControlUIEnabled(RuntimeEnabledFeatures::langAttributeAwareFormControlUIEnabled())
-    , m_imagesEnabled(settings->areImagesEnabled())
-    , m_minimumTimerInterval(settings->minDOMTimerInterval())
+    , m_imagesEnabled(settings.areImagesEnabled())
+    , m_minimumTimerInterval(settings.minDOMTimerInterval())
 #if ENABLE(VIDEO_TRACK)
-    , m_shouldDisplaySubtitles(settings->shouldDisplaySubtitles())
-    , m_shouldDisplayCaptions(settings->shouldDisplayCaptions())
-    , m_shouldDisplayTextDescriptions(settings->shouldDisplayTextDescriptions())
+    , m_shouldDisplaySubtitles(settings.shouldDisplaySubtitles())
+    , m_shouldDisplayCaptions(settings.shouldDisplayCaptions())
+    , m_shouldDisplayTextDescriptions(settings.shouldDisplayTextDescriptions())
 #endif
-    , m_defaultVideoPosterURL(settings->defaultVideoPosterURL())
-    , m_originalTimeWithoutMouseMovementBeforeHidingControls(settings->timeWithoutMouseMovementBeforeHidingControls())
-    , m_useLegacyBackgroundSizeShorthandBehavior(settings->useLegacyBackgroundSizeShorthandBehavior())
+    , m_defaultVideoPosterURL(settings.defaultVideoPosterURL())
+    , m_originalTimeWithoutMouseMovementBeforeHidingControls(settings.timeWithoutMouseMovementBeforeHidingControls())
+    , m_useLegacyBackgroundSizeShorthandBehavior(settings.useLegacyBackgroundSizeShorthandBehavior())
 {
 }
 
-void InternalSettings::Backup::restoreTo(Settings* settings)
+void InternalSettings::Backup::restoreTo(Settings& settings)
 {
     RuntimeEnabledFeatures::setCSSExclusionsEnabled(m_originalCSSExclusionsEnabled);
     RuntimeEnabledFeatures::setCSSShapesEnabled(m_originalCSSShapesEnabled);
-    settings->setCSSVariablesEnabled(m_originalCSSVariablesEnabled);
+    settings.setCSSVariablesEnabled(m_originalCSSVariablesEnabled);
 #if ENABLE(SHADOW_DOM)
     RuntimeEnabledFeatures::setShadowDOMEnabled(m_originalShadowDOMEnabled);
     RuntimeEnabledFeatures::setAuthorShadowDOMForAnyElementEnabled(m_originalAuthorShadowDOMForAnyElementEnabled);
@@ -114,29 +114,29 @@ void InternalSettings::Backup::restoreTo(Settings* settings)
 #if ENABLE(STYLE_SCOPED)
     RuntimeEnabledFeatures::setStyleScopedEnabled(m_originalStyleScoped);
 #endif
-    settings->setEditingBehaviorType(m_originalEditingBehavior);
+    settings.setEditingBehaviorType(m_originalEditingBehavior);
 #if ENABLE(TEXT_AUTOSIZING)
-    settings->setTextAutosizingEnabled(m_originalTextAutosizingEnabled);
-    settings->setTextAutosizingWindowSizeOverride(m_originalTextAutosizingWindowSizeOverride);
-    settings->setTextAutosizingFontScaleFactor(m_originalTextAutosizingFontScaleFactor);
+    settings.setTextAutosizingEnabled(m_originalTextAutosizingEnabled);
+    settings.setTextAutosizingWindowSizeOverride(m_originalTextAutosizingWindowSizeOverride);
+    settings.setTextAutosizingFontScaleFactor(m_originalTextAutosizingFontScaleFactor);
 #endif
-    settings->setMediaTypeOverride(m_originalMediaTypeOverride);
+    settings.setMediaTypeOverride(m_originalMediaTypeOverride);
 #if ENABLE(DIALOG_ELEMENT)
     RuntimeEnabledFeatures::setDialogElementEnabled(m_originalDialogElementEnabled);
 #endif
-    settings->setCanvasUsesAcceleratedDrawing(m_originalCanvasUsesAcceleratedDrawing);
-    settings->setMockScrollbarsEnabled(m_originalMockScrollbarsEnabled);
+    settings.setCanvasUsesAcceleratedDrawing(m_originalCanvasUsesAcceleratedDrawing);
+    settings.setMockScrollbarsEnabled(m_originalMockScrollbarsEnabled);
     RuntimeEnabledFeatures::setLangAttributeAwareFormControlUIEnabled(m_langAttributeAwareFormControlUIEnabled);
-    settings->setImagesEnabled(m_imagesEnabled);
-    settings->setMinDOMTimerInterval(m_minimumTimerInterval);
+    settings.setImagesEnabled(m_imagesEnabled);
+    settings.setMinDOMTimerInterval(m_minimumTimerInterval);
 #if ENABLE(VIDEO_TRACK)
-    settings->setShouldDisplaySubtitles(m_shouldDisplaySubtitles);
-    settings->setShouldDisplayCaptions(m_shouldDisplayCaptions);
-    settings->setShouldDisplayTextDescriptions(m_shouldDisplayTextDescriptions);
+    settings.setShouldDisplaySubtitles(m_shouldDisplaySubtitles);
+    settings.setShouldDisplayCaptions(m_shouldDisplayCaptions);
+    settings.setShouldDisplayTextDescriptions(m_shouldDisplayTextDescriptions);
 #endif
-    settings->setDefaultVideoPosterURL(m_defaultVideoPosterURL);
-    settings->setTimeWithoutMouseMovementBeforeHidingControls(m_originalTimeWithoutMouseMovementBeforeHidingControls);
-    settings->setUseLegacyBackgroundSizeShorthandBehavior(m_useLegacyBackgroundSizeShorthandBehavior);
+    settings.setDefaultVideoPosterURL(m_defaultVideoPosterURL);
+    settings.setTimeWithoutMouseMovementBeforeHidingControls(m_originalTimeWithoutMouseMovementBeforeHidingControls);
+    settings.setUseLegacyBackgroundSizeShorthandBehavior(m_useLegacyBackgroundSizeShorthandBehavior);
 }
 
 // We can't use RefCountedSupplement because that would try to make InternalSettings RefCounted
@@ -184,8 +184,8 @@ void InternalSettings::resetToConsistentState()
     page()->setPageScaleFactor(1, IntPoint(0, 0));
     page()->setCanStartMedia(true);
 
-    m_backup.restoreTo(settings());
-    m_backup = Backup(settings());
+    m_backup.restoreTo(*settings());
+    m_backup = Backup(*settings());
 
     InternalSettingsGenerated::resetToConsistentState();
 }
@@ -194,7 +194,7 @@ Settings* InternalSettings::settings() const
 {
     if (!page())
         return 0;
-    return page()->settings();
+    return &page()->settings();
 }
 
 void InternalSettings::setMockScrollbarsEnabled(bool enabled, ExceptionCode& ec)

@@ -2563,7 +2563,7 @@ double Document::minimumTimerInterval() const
     Page* p = page();
     if (!p)
         return ScriptExecutionContext::minimumTimerInterval();
-    return p->settings()->minDOMTimerInterval();
+    return p->settings().minDOMTimerInterval();
 }
 
 double Document::timerAlignmentInterval() const
@@ -2571,7 +2571,7 @@ double Document::timerAlignmentInterval() const
     Page* p = page();
     if (!p)
         return ScriptExecutionContext::timerAlignmentInterval();
-    return p->settings()->domTimerAlignmentInterval();
+    return p->settings().domTimerAlignmentInterval();
 }
 
 EventTarget* Document::errorEventTarget()
@@ -3688,7 +3688,7 @@ HTMLFrameOwnerElement* Document::ownerElement() const
 
 String Document::cookie(ExceptionCode& ec) const
 {
-    if (page() && !page()->settings()->cookieEnabled())
+    if (page() && !page()->settings().cookieEnabled())
         return String();
 
     // FIXME: The HTML5 DOM spec states that this attribute can raise an
@@ -3709,7 +3709,7 @@ String Document::cookie(ExceptionCode& ec) const
 
 void Document::setCookie(const String& value, ExceptionCode& ec)
 {
-    if (page() && !page()->settings()->cookieEnabled())
+    if (page() && !page()->settings().cookieEnabled())
         return;
 
     // FIXME: The HTML5 DOM spec states that this attribute can raise an
@@ -4997,7 +4997,7 @@ void Document::requestFullScreenForElement(Element* element, unsigned short flag
             break;
 
         // There is a previously-established user preference, security risk, or platform limitation.
-        if (!page() || !page()->settings()->fullScreenEnabled())
+        if (!page() || !page()->settings().fullScreenEnabled())
             break;
 
         if (!page()->chrome().client()->supportsFullScreenForElement(element, flags & Element::ALLOW_KEYBOARD_INPUT)) {
@@ -5179,7 +5179,7 @@ void Document::webkitWillEnterFullScreenForElement(Element* element)
     if (!page())
         return;
 
-    ASSERT(page()->settings()->fullScreenEnabled());
+    ASSERT(page()->settings().fullScreenEnabled());
 
     if (m_fullScreenRenderer)
         m_fullScreenRenderer->unwrapRenderer();

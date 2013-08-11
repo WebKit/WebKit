@@ -168,12 +168,12 @@ void PageConsole::addMessage(MessageSource source, MessageLevel level, const Str
     if (source == CSSMessageSource)
         return;
 
-    if (page->settings()->privateBrowsingEnabled())
+    if (page->settings().privateBrowsingEnabled())
         return;
 
     page->chrome().client()->addMessageToConsole(source, level, message, lineNumber, columnNumber, url);
 
-    if (!page->settings()->logsPageMessagesToSystemConsoleEnabled() && !shouldPrintExceptions())
+    if (!page->settings().logsPageMessagesToSystemConsoleEnabled() && !shouldPrintExceptions())
         return;
 
     printSourceURLAndLine(url, lineNumber);

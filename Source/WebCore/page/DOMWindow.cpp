@@ -795,7 +795,7 @@ Storage* DOMWindow::localStorage(ExceptionCode& ec) const
     if (!page)
         return 0;
 
-    if (!page->settings()->localStorageEnabled())
+    if (!page->settings().localStorageEnabled())
         return 0;
 
     RefPtr<StorageArea> storageArea;

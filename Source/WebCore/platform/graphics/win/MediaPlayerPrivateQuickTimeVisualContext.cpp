@@ -198,8 +198,8 @@ bool MediaPlayerPrivateQuickTimeVisualContext::supportsFullscreen() const
 {
 #if USE(ACCELERATED_COMPOSITING)
     Document* document = m_player->mediaPlayerClient()->mediaPlayerOwningDocument(); 
-    if (document && document->settings())
-        return document->settings()->acceleratedCompositingEnabled();
+    if (document)
+        return document->settings().acceleratedCompositingEnabled();
 #endif
     return false;
 }
