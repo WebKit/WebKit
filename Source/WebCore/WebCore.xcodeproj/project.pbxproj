@@ -13063,8 +13063,6 @@
 				034768DFFF38A50411DB9C8B /* Products */,
 				1CDD44660BA9C80000F90147 /* Configurations */,
 				449195900FBE175B00D9F824 /* Exports */,
-				DBFCB0EBFF5CD77EBEB35395 /* RenderMathMLSpace.cpp */,
-				331FF67DE197B57393C46AA7 /* RenderMathMLSpace.h */,
 			);
 			name = WebKit;
 			sourceTree = "<group>";
@@ -14001,6 +13999,8 @@
 				439046CE12DA25E800AF80A2 /* RenderMathMLRoot.h */,
 				439046CF12DA25E800AF80A2 /* RenderMathMLRow.cpp */,
 				439046D012DA25E800AF80A2 /* RenderMathMLRow.h */,
+				DBFCB0EBFF5CD77EBEB35395 /* RenderMathMLSpace.cpp */,
+				331FF67DE197B57393C46AA7 /* RenderMathMLSpace.h */,
 				439046D112DA25E800AF80A2 /* RenderMathMLSquareRoot.cpp */,
 				439046D212DA25E800AF80A2 /* RenderMathMLSquareRoot.h */,
 				439046D312DA25E800AF80A2 /* RenderMathMLSubSup.cpp */,
