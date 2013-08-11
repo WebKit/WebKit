@@ -3131,6 +3131,10 @@ sub GenerateCallbackHeader
     # Destructor
     push(@headerContent, "    virtual ~$className();\n");
 
+    if ($interface->extendedAttributes->{"CallbackNeedsOperatorEqual"}) {
+        push(@headerContent, "    virtual bool operator==(const $interfaceName&) const;\n\n")
+    }
+
     # Functions
     my $numFunctions = @{$interface->functions};
     if ($numFunctions > 0) {
@@ -3189,7 +3193,12 @@ sub GenerateCallbackImplementation
 
     # Constructor
     push(@implContent, "${className}::${className}(JSObject* callback, JSDOMGlobalObject* globalObject)\n");
-    push(@implContent, "    : ActiveDOMCallback(globalObject->scriptExecutionContext())\n");
+    if ($interface->extendedAttributes->{"CallbackNeedsOperatorEqual"}) {
+        push(@implContent, "    : ${interfaceName}(${className}Type)\n");
+    } else {
+        push(@implContent, "    : ${interfaceName}()\n");
+    }
+    push(@implContent, "    , ActiveDOMCallback(globalObject->scriptExecutionContext())\n");
     push(@implContent, "    , m_data(new JSCallbackData(callback, globalObject))\n");
     push(@implContent, "{\n");
     push(@implContent, "}\n\n");
@@ -3207,8 +3216,16 @@ sub GenerateCallbackImplementation
     push(@implContent, "#ifndef NDEBUG\n");
     push(@implContent, "    m_data = 0;\n");
     push(@implContent, "#endif\n");
-    push(@implContent, "}\n");
+    push(@implContent, "}\n\n");
 
+    if ($interface->extendedAttributes->{"CallbackNeedsOperatorEqual"}) {
+        push(@implContent, "bool ${className}::operator==(const ${interfaceName}& other) const\n");
+        push(@implContent, "{\n");
+        push(@implContent, "    if (other.type() != type())\n");
+        push(@implContent, "        return false;\n");
+        push(@implContent, "    return static_cast<const ${className}*>(&other)->m_data->callback() == m_data->callback();\n");
+        push(@implContent, "}\n\n");
+    }
     # Functions
     my $numFunctions = @{$interface->functions};
     if ($numFunctions > 0) {
@@ -3339,8 +3356,7 @@ my %nativeType = (
     "unsigned long long" => "unsigned long long",
     "byte" => "int8_t",
     "octet" => "uint8_t",
-    "MediaQueryListListener" => "RefPtr<MediaQueryListListener>",
-    "DOMTimeStamp" => "DOMTimeStamp",    
+    "DOMTimeStamp" => "DOMTimeStamp",
 );
 
 sub GetNativeType
@@ -3473,11 +3489,6 @@ sub JSValueToNative
     if ($type eq "NodeFilter") {
         AddToImplIncludes("JS$type.h", $conditional);
         return "to$type(exec->vm(), $value)";
-    }
-
-    if ($type eq "MediaQueryListListener") {
-        AddToImplIncludes("MediaQueryListListener.h", $conditional);
-        return "MediaQueryListListener::create(ScriptValue(exec->vm(), " . $value ."))";
     }
 
     if ($type eq "SerializedScriptValue") {

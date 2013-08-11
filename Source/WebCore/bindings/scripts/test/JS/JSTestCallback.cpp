@@ -36,7 +36,8 @@ using namespace JSC;
 namespace WebCore {
 
 JSTestCallback::JSTestCallback(JSObject* callback, JSDOMGlobalObject* globalObject)
-    : ActiveDOMCallback(globalObject->scriptExecutionContext())
+    : TestCallback()
+    , ActiveDOMCallback(globalObject->scriptExecutionContext())
     , m_data(new JSCallbackData(callback, globalObject))
 {
 }
@@ -54,6 +55,7 @@ JSTestCallback::~JSTestCallback()
     m_data = 0;
 #endif
 }
+
 
 // Functions
 
