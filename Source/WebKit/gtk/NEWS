@@ -4,16 +4,22 @@ WebKitGTK+  2.1.4
 
 What's new in WebKitGTK+ 2.1.4?
 
+  - Add WebKitWebView::authenticate signal to WebKit2 GTK API.
+  - Expose KeyboardEvent in GObject DOM bindings.
   - Implement attributesOfChildren() for AccessibilityUIElement.
   - Implement allAttributes() for AccessibilityUIElement.
   - Fix issues with edge cases when getting offsets for a text range
     in AtkText.
   - Remote inspector server now notifies about errors when loading
     resurces.
+  - Disable HTTP request "Accept-Encoding:" header field on gstreamer
+    source element to avoid receiving the wrong size when retrieving
+    data.
   - Fix the final position when receiving several seek calls in a row,
     in GStreamer media backend.
   - When rendering accelerated video, upload onto the texture only the
     buffer to be painted.
+  - Fix response property definition of WebKitResponsePolicyDecision.
   - Fix a crash in WebKit1 when the WebView is created and destroyed
     too fast.
   - Fix a crash in UI process when the web process crashes.

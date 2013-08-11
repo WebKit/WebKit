@@ -1,3 +1,9 @@
+2013-08-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update NEWS and Versions.m4 for 2.1.4 release.
+
+        * Source/autotools/Versions.m4: Update version numbers.
+
 2013-08-09  Zan Dobersek  <zdobersek@igalia.com>
 
         [Automake] Clean up OpenGL graphics configuration sections

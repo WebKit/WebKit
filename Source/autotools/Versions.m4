@@ -12,8 +12,8 @@ m4_define([webkit_user_agent_minor_version], [1])
 # Libtool library version, not to confuse with API version.
 # See http://www.gnu.org/software/libtool/manual/html_node/Libtool-versioning.html
 m4_define([libwebkitgtk_version], [19:3:19])
-m4_define([libjavascriptcoregtk_version], [14:3:14])
-m4_define([libwebkit2gtk_version], [26:3:1])
+m4_define([libjavascriptcoregtk_version], [15:0:15])
+m4_define([libwebkit2gtk_version], [27:0:2])
 
 m4_define([gtk2_required_version], [2.24.10])
 m4_define([gail2_required_version], [1.8])
