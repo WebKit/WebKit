@@ -81,7 +81,7 @@ inline HTMLKeygenElement::HTMLKeygenElement(const QualifiedName& tagName, Docume
         option->appendChild(Text::create(document, keys[i]), IGNORE_EXCEPTION);
     }
 
-    ensureUserAgentShadowRoot()->appendChild(select, IGNORE_EXCEPTION);
+    ensureUserAgentShadowRoot().appendChild(select, IGNORE_EXCEPTION);
 }
 
 PassRefPtr<HTMLKeygenElement> HTMLKeygenElement::create(const QualifiedName& tagName, Document* document, HTMLFormElement* form)

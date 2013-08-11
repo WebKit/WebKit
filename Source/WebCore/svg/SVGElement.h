@@ -79,7 +79,7 @@ public:
 
     virtual AffineTransform* supplementalTransform() { return 0; }
 
-    void invalidateSVGAttributes() { ensureUniqueElementData()->m_animatedSVGAttributesAreDirty = true; }
+    void invalidateSVGAttributes() { ensureUniqueElementData().m_animatedSVGAttributesAreDirty = true; }
 
     const HashSet<SVGElementInstance*>& instancesForElement() const;
 
@@ -112,7 +112,7 @@ public:
 #endif
 
     MutableStylePropertySet* animatedSMILStyleProperties() const;
-    MutableStylePropertySet* ensureAnimatedSMILStyleProperties();
+    MutableStylePropertySet& ensureAnimatedSMILStyleProperties();
     void setUseOverrideComputedStyle(bool);
 
     virtual bool haveLoadedRequiredResources();
@@ -136,7 +136,7 @@ protected:
     virtual void removedFrom(ContainerNode*) OVERRIDE;
 
     SVGElementRareData* svgRareData() const;
-    SVGElementRareData* ensureSVGRareData();
+    SVGElementRareData& ensureSVGRareData();
 
     void reportAttributeParsingError(SVGParsingError, const QualifiedName&, const AtomicString&);
 

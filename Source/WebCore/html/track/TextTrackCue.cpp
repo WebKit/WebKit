@@ -1168,9 +1168,9 @@ EventTargetData* TextTrackCue::eventTargetData()
     return &m_eventTargetData;
 }
 
-EventTargetData* TextTrackCue::ensureEventTargetData()
+EventTargetData& TextTrackCue::ensureEventTargetData()
 {
-    return &m_eventTargetData;
+    return m_eventTargetData;
 }
 
 bool TextTrackCue::isEqual(const TextTrackCue& cue, CueMatchRules match) const

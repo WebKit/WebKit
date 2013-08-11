@@ -145,9 +145,9 @@ EventTargetData* DOMApplicationCache::eventTargetData()
     return &m_eventTargetData;
 }
 
-EventTargetData* DOMApplicationCache::ensureEventTargetData()
+EventTargetData& DOMApplicationCache::ensureEventTargetData()
 {
-    return &m_eventTargetData;
+    return m_eventTargetData;
 }
 
 } // namespace WebCore

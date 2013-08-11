@@ -86,18 +86,18 @@ DocumentStyleSheetCollection::~DocumentStyleSheetCollection()
 void DocumentStyleSheetCollection::combineCSSFeatureFlags()
 {
     // Delay resetting the flags until after next style recalc since unapplying the style may not work without these set (this is true at least with before/after).
-    StyleResolver* styleResolver = m_document->ensureStyleResolver();
-    m_usesSiblingRules = m_usesSiblingRules || styleResolver->usesSiblingRules();
-    m_usesFirstLineRules = m_usesFirstLineRules || styleResolver->usesFirstLineRules();
-    m_usesBeforeAfterRules = m_usesBeforeAfterRules || styleResolver->usesBeforeAfterRules();
+    const StyleResolver& styleResolver = m_document->ensureStyleResolver();
+    m_usesSiblingRules = m_usesSiblingRules || styleResolver.usesSiblingRules();
+    m_usesFirstLineRules = m_usesFirstLineRules || styleResolver.usesFirstLineRules();
+    m_usesBeforeAfterRules = m_usesBeforeAfterRules || styleResolver.usesBeforeAfterRules();
 }
 
 void DocumentStyleSheetCollection::resetCSSFeatureFlags()
 {
-    StyleResolver* styleResolver = m_document->ensureStyleResolver();
-    m_usesSiblingRules = styleResolver->usesSiblingRules();
-    m_usesFirstLineRules = styleResolver->usesFirstLineRules();
-    m_usesBeforeAfterRules = styleResolver->usesBeforeAfterRules();
+    const StyleResolver& styleResolver = m_document->ensureStyleResolver();
+    m_usesSiblingRules = styleResolver.usesSiblingRules();
+    m_usesFirstLineRules = styleResolver.usesFirstLineRules();
+    m_usesBeforeAfterRules = styleResolver.usesBeforeAfterRules();
 }
 
 CSSStyleSheet* DocumentStyleSheetCollection::pageUserSheet()
@@ -483,13 +483,13 @@ bool DocumentStyleSheetCollection::updateActiveStyleSheets(UpdateFlag updateFlag
     if (styleResolverUpdateType == Reconstruct)
         m_document->clearStyleResolver();
     else {
-        StyleResolver* styleResolver = m_document->ensureStyleResolver();
+        StyleResolver& styleResolver = m_document->ensureStyleResolver();
         if (styleResolverUpdateType == Reset) {
-            styleResolver->ruleSets().resetAuthorStyle();
-            styleResolver->appendAuthorStyleSheets(0, activeCSSStyleSheets);
+            styleResolver.ruleSets().resetAuthorStyle();
+            styleResolver.appendAuthorStyleSheets(0, activeCSSStyleSheets);
         } else {
             ASSERT(styleResolverUpdateType == Additive);
-            styleResolver->appendAuthorStyleSheets(m_activeAuthorStyleSheets.size(), activeCSSStyleSheets);
+            styleResolver.appendAuthorStyleSheets(m_activeAuthorStyleSheets.size(), activeCSSStyleSheets);
         }
         resetCSSFeatureFlags();
     }

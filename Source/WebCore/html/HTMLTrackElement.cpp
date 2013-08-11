@@ -166,7 +166,7 @@ void HTMLTrackElement::setIsDefault(bool isDefault)
     setBooleanAttribute(defaultAttr, isDefault);
 }
 
-LoadableTextTrack* HTMLTrackElement::ensureTrack()
+LoadableTextTrack& HTMLTrackElement::ensureTrack()
 {
     if (!m_track) {
         // The kind attribute is an enumerated attribute, limited only to know values. It defaults to 'subtitles' if missing or invalid.
@@ -177,12 +177,12 @@ LoadableTextTrack* HTMLTrackElement::ensureTrack()
     } else
         m_track->setTrackElement(this);
 
-    return m_track.get();
+    return *m_track;
 }
 
 TextTrack* HTMLTrackElement::track()
 {
-    return ensureTrack();
+    return &ensureTrack();
 }
 
 bool HTMLTrackElement::isURLAttribute(const Attribute& attribute) const
@@ -201,7 +201,7 @@ void HTMLTrackElement::scheduleLoad()
         return;
 
     // 2. If the text track's text track mode is not set to one of hidden or showing, abort these steps.
-    if (ensureTrack()->mode() != TextTrack::hiddenKeyword() && ensureTrack()->mode() != TextTrack::showingKeyword())
+    if (ensureTrack().mode() != TextTrack::hiddenKeyword() && ensureTrack().mode() != TextTrack::showingKeyword())
         return;
 
     // 3. If the text track's track element does not have a media element as a parent, abort these steps.
@@ -226,11 +226,11 @@ void HTMLTrackElement::loadTimerFired(Timer<HTMLTrackElement>*)
     // 8. If the track element's parent is a media element then let CORS mode be the state of the parent media
     // element's crossorigin content attribute. Otherwise, let CORS mode be No CORS.
     if (!canLoadUrl(url)) {
-        didCompleteLoad(ensureTrack(), HTMLTrackElement::Failure);
+        didCompleteLoad(&ensureTrack(), HTMLTrackElement::Failure);
         return;
     }
 
-    ensureTrack()->scheduleLoad(url);
+    ensureTrack().scheduleLoad(url);
 }
 
 bool HTMLTrackElement::canLoadUrl(const KURL& url)
@@ -294,14 +294,14 @@ COMPILE_ASSERT(HTMLTrackElement::TRACK_ERROR == static_cast<HTMLTrackElement::Re
 
 void HTMLTrackElement::setReadyState(ReadyState state)
 {
-    ensureTrack()->setReadinessState(static_cast<TextTrack::ReadinessState>(state));
+    ensureTrack().setReadinessState(static_cast<TextTrack::ReadinessState>(state));
     if (HTMLMediaElement* parent = mediaElement())
         return parent->textTrackReadyStateChanged(m_track.get());
 }
 
 HTMLTrackElement::ReadyState HTMLTrackElement::readyState() 
 {
-    return static_cast<ReadyState>(ensureTrack()->readinessState());
+    return static_cast<ReadyState>(ensureTrack().readinessState());
 }
 
 const AtomicString& HTMLTrackElement::mediaElementCrossOriginAttribute() const

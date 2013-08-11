@@ -98,11 +98,11 @@ public:
 
     void clearShadow() { m_shadow = nullptr; }
     ElementShadow* shadow() const { return m_shadow.get(); }
-    ElementShadow* ensureShadow()
+    ElementShadow& ensureShadow()
     {
         if (!m_shadow)
             m_shadow = ElementShadow::create();
-        return m_shadow.get();
+        return *m_shadow;
     }
 
     NamedNodeMap* attributeMap() const { return m_attributeMap.get(); }

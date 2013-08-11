@@ -322,7 +322,7 @@ void HTMLPlugInImageElement::documentDidResumeFromPageCache()
 PassRefPtr<RenderStyle> HTMLPlugInImageElement::customStyleForRenderer()
 {
     if (!m_customStyleForPageCache)
-        return document()->ensureStyleResolver()->styleForElement(this);
+        return document()->ensureStyleResolver().styleForElement(this);
     return m_customStyleForPageCache;
 }
 
@@ -356,7 +356,7 @@ void HTMLPlugInImageElement::checkSnapshotStatus()
     }
 
     // Notify the shadow root that the size changed so that we may update the overlay layout.
-    ensureUserAgentShadowRoot()->dispatchEvent(Event::create(eventNames().resizeEvent, true, false));
+    ensureUserAgentShadowRoot().dispatchEvent(Event::create(eventNames().resizeEvent, true, false));
 }
 
 void HTMLPlugInImageElement::didAddUserAgentShadowRoot(ShadowRoot* root)
@@ -403,7 +403,7 @@ void HTMLPlugInImageElement::didAddUserAgentShadowRoot(ShadowRoot* root)
 bool HTMLPlugInImageElement::partOfSnapshotOverlay(Node* node)
 {
     DEFINE_STATIC_LOCAL(AtomicString, selector, (".snapshot-overlay", AtomicString::ConstructFromLiteral));
-    RefPtr<Element> snapshotLabel = ensureUserAgentShadowRoot()->querySelector(selector, ASSERT_NO_EXCEPTION);
+    RefPtr<Element> snapshotLabel = ensureUserAgentShadowRoot().querySelector(selector, ASSERT_NO_EXCEPTION);
     return node && snapshotLabel && (node == snapshotLabel.get() || node->isDescendantOf(snapshotLabel.get()));
 }
 

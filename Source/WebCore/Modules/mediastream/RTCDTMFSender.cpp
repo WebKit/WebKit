@@ -149,9 +149,9 @@ EventTargetData* RTCDTMFSender::eventTargetData()
     return &m_eventTargetData;
 }
 
-EventTargetData* RTCDTMFSender::ensureEventTargetData()
+EventTargetData& RTCDTMFSender::ensureEventTargetData()
 {
-    return &m_eventTargetData;
+    return m_eventTargetData;
 }
 
 void RTCDTMFSender::scheduleDispatchEvent(PassRefPtr<Event> event)

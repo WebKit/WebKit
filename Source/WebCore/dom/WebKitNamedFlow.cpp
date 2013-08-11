@@ -197,9 +197,9 @@ EventTargetData* WebKitNamedFlow::eventTargetData()
     return &m_eventTargetData;
 }
 
-EventTargetData* WebKitNamedFlow::ensureEventTargetData()
+EventTargetData& WebKitNamedFlow::ensureEventTargetData()
 {
-    return &m_eventTargetData;
+    return m_eventTargetData;
 }
 
 void WebKitNamedFlow::dispatchRegionLayoutUpdateEvent()

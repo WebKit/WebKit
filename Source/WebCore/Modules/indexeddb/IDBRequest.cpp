@@ -564,9 +564,9 @@ EventTargetData* IDBRequest::eventTargetData()
     return &m_eventTargetData;
 }
 
-EventTargetData* IDBRequest::ensureEventTargetData()
+EventTargetData& IDBRequest::ensureEventTargetData()
 {
-    return &m_eventTargetData;
+    return m_eventTargetData;
 }
 
 } // namespace WebCore

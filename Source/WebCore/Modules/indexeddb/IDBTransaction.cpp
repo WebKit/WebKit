@@ -442,9 +442,9 @@ EventTargetData* IDBTransaction::eventTargetData()
     return &m_eventTargetData;
 }
 
-EventTargetData* IDBTransaction::ensureEventTargetData()
+EventTargetData& IDBTransaction::ensureEventTargetData()
 {
-    return &m_eventTargetData;
+    return m_eventTargetData;
 }
 
 IDBDatabaseBackendInterface* IDBTransaction::backendDB() const

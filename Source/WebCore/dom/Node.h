@@ -609,8 +609,8 @@ public:
     using TreeShared<Node>::ref;
     using TreeShared<Node>::deref;
 
-    virtual EventTargetData* eventTargetData();
-    virtual EventTargetData* ensureEventTargetData();
+    virtual EventTargetData* eventTargetData() OVERRIDE;
+    virtual EventTargetData& ensureEventTargetData() OVERRIDE;
 
     void getRegisteredMutationObserversOfType(HashMap<MutationObserver*, MutationRecordDeliveryOptions>&, MutationObserver::MutationType, const QualifiedName* attributeName);
     void registerMutationObserver(MutationObserver*, MutationObserverOptions, const HashSet<AtomicString>& attributeFilter);
@@ -703,7 +703,7 @@ protected:
     bool hasRareData() const { return getFlag(HasRareDataFlag); }
 
     NodeRareData* rareData() const;
-    NodeRareData* ensureRareData();
+    NodeRareData& ensureRareData();
     void clearRareData();
 
     void clearEventTargetData();

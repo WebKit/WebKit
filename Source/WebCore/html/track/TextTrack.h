@@ -160,7 +160,7 @@ protected:
 #endif
 
     virtual EventTargetData* eventTargetData() OVERRIDE;
-    virtual EventTargetData* ensureEventTargetData() OVERRIDE;
+    virtual EventTargetData& ensureEventTargetData() OVERRIDE;
 
     RefPtr<TextTrackCueList> m_cues;
 

@@ -436,9 +436,9 @@ EventTargetData* EventSource::eventTargetData()
     return &m_eventTargetData;
 }
 
-EventTargetData* EventSource::ensureEventTargetData()
+EventTargetData& EventSource::ensureEventTargetData()
 {
-    return &m_eventTargetData;
+    return m_eventTargetData;
 }
 
 } // namespace WebCore

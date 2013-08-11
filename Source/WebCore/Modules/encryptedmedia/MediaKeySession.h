@@ -103,7 +103,7 @@ private:
     virtual void derefEventTarget() OVERRIDE { deref(); }
 
     virtual EventTargetData* eventTargetData() OVERRIDE { return &m_eventTargetData; }
-    virtual EventTargetData* ensureEventTargetData() OVERRIDE { return &m_eventTargetData; }
+    virtual EventTargetData& ensureEventTargetData() OVERRIDE { return m_eventTargetData; }
 
     EventTargetData m_eventTargetData;
 };

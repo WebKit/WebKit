@@ -80,10 +80,10 @@ private:
     void scheduledEventTimerFired(Timer<RTCDataChannel>*);
 
     // EventTarget
-    virtual EventTargetData* eventTargetData();
-    virtual EventTargetData* ensureEventTargetData();
-    virtual void refEventTarget() { ref(); }
-    virtual void derefEventTarget() { deref(); }
+    virtual EventTargetData* eventTargetData() OVERRIDE;
+    virtual EventTargetData& ensureEventTargetData() OVERRIDE;
+    virtual void refEventTarget() OVERRIDE { ref(); }
+    virtual void derefEventTarget() OVERRIDE { deref(); }
     EventTargetData m_eventTargetData;
     ScriptExecutionContext* m_scriptExecutionContext;
 

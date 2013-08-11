@@ -119,9 +119,9 @@ EventTargetData* FontLoader::eventTargetData()
     return &m_eventTargetData;
 }
 
-EventTargetData* FontLoader::ensureEventTargetData()
+EventTargetData& FontLoader::ensureEventTargetData()
 {
-    return &m_eventTargetData;
+    return m_eventTargetData;
 }
 
 const AtomicString& FontLoader::interfaceName() const

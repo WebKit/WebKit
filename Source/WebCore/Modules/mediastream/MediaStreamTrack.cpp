@@ -164,9 +164,9 @@ EventTargetData* MediaStreamTrack::eventTargetData()
     return &m_eventTargetData;
 }
 
-EventTargetData* MediaStreamTrack::ensureEventTargetData()
+EventTargetData& MediaStreamTrack::ensureEventTargetData()
 {
-    return &m_eventTargetData;
+    return m_eventTargetData;
 }
 
 } // namespace WebCore

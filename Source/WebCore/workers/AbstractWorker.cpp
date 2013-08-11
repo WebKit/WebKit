@@ -92,9 +92,9 @@ EventTargetData* AbstractWorker::eventTargetData()
     return &m_eventTargetData;
 }
 
-EventTargetData* AbstractWorker::ensureEventTargetData()
+EventTargetData& AbstractWorker::ensureEventTargetData()
 {
-    return &m_eventTargetData;
+    return m_eventTargetData;
 }
 
 } // namespace WebCore

@@ -69,7 +69,7 @@ namespace WebCore {
         virtual void refEventTarget() OVERRIDE { ref(); }
         virtual void derefEventTarget() OVERRIDE { deref(); }
         virtual EventTargetData* eventTargetData() OVERRIDE;
-        virtual EventTargetData* ensureEventTargetData() OVERRIDE;
+        virtual EventTargetData& ensureEventTargetData() OVERRIDE;
         
         virtual void contextDestroyed() OVERRIDE;
 

@@ -129,12 +129,12 @@ private:
     void startTimeupdateTimer();
 
     // EventTarget
-    virtual void refEventTarget() { ref(); }
-    virtual void derefEventTarget() { deref(); }
+    virtual void refEventTarget() OVERRIDE { ref(); }
+    virtual void derefEventTarget() OVERRIDE { deref(); }
     virtual const AtomicString& interfaceName() const;
     virtual ScriptExecutionContext* scriptExecutionContext() const { return m_scriptExecutionContext; };
-    virtual EventTargetData* eventTargetData() { return &m_eventTargetData; }
-    virtual EventTargetData* ensureEventTargetData() { return &m_eventTargetData; }
+    virtual EventTargetData* eventTargetData() OVERRIDE { return &m_eventTargetData; }
+    virtual EventTargetData& ensureEventTargetData() OVERRIDE { return m_eventTargetData; }
     EventTargetData m_eventTargetData;
 
     friend class HTMLMediaElement;

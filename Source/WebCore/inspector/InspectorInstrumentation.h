@@ -178,7 +178,7 @@ public:
     static void didScheduleStyleRecalculation(Document*);
     static InspectorInstrumentationCookie willMatchRule(Document*, StyleRule*, InspectorCSSOMWrappers&, DocumentStyleSheetCollection*);
     static void didMatchRule(const InspectorInstrumentationCookie&, bool matched);
-    static InspectorInstrumentationCookie willProcessRule(Document*, StyleRule*, StyleResolver*);
+    static InspectorInstrumentationCookie willProcessRule(Document*, StyleRule*, StyleResolver&);
     static void didProcessRule(const InspectorInstrumentationCookie&);
 
     static void applyUserAgentOverride(Frame*, String*);
@@ -381,7 +381,7 @@ private:
     static void didScheduleStyleRecalculationImpl(InstrumentingAgents*, Document*);
     static InspectorInstrumentationCookie willMatchRuleImpl(InstrumentingAgents*, StyleRule*, InspectorCSSOMWrappers&, DocumentStyleSheetCollection*);
     static void didMatchRuleImpl(const InspectorInstrumentationCookie&, bool matched);
-    static InspectorInstrumentationCookie willProcessRuleImpl(InstrumentingAgents*, StyleRule*, StyleResolver*);
+    static InspectorInstrumentationCookie willProcessRuleImpl(InstrumentingAgents*, StyleRule*, StyleResolver&);
     static void didProcessRuleImpl(const InspectorInstrumentationCookie&);
 
     static void applyUserAgentOverrideImpl(InstrumentingAgents*, String*);
@@ -1223,7 +1223,7 @@ inline void InspectorInstrumentation::didMatchRule(const InspectorInstrumentatio
 #endif
 }
 
-inline InspectorInstrumentationCookie InspectorInstrumentation::willProcessRule(Document* document, StyleRule* rule, StyleResolver* styleResolver)
+inline InspectorInstrumentationCookie InspectorInstrumentation::willProcessRule(Document* document, StyleRule* rule, StyleResolver& styleResolver)
 {
 #if ENABLE(INSPECTOR)
     FAST_RETURN_IF_NO_FRONTENDS(InspectorInstrumentationCookie());

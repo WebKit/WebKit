@@ -77,9 +77,9 @@ EventTargetData* NetworkInfoConnection::eventTargetData()
     return &m_eventTargetData;
 }
 
-EventTargetData* NetworkInfoConnection::ensureEventTargetData()
+EventTargetData& NetworkInfoConnection::ensureEventTargetData()
 {
-    return &m_eventTargetData;
+    return m_eventTargetData;
 }
 
 const AtomicString& NetworkInfoConnection::interfaceName() const

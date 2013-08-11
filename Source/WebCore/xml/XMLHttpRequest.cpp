@@ -1313,9 +1313,9 @@ EventTargetData* XMLHttpRequest::eventTargetData()
     return &m_eventTargetData;
 }
 
-EventTargetData* XMLHttpRequest::ensureEventTargetData()
+EventTargetData& XMLHttpRequest::ensureEventTargetData()
 {
-    return &m_eventTargetData;
+    return m_eventTargetData;
 }
 
 } // namespace WebCore

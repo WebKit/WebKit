@@ -162,9 +162,9 @@ EventTargetData* TextTrack::eventTargetData()
     return &m_eventTargetData;
 }
 
-EventTargetData* TextTrack::ensureEventTargetData()
+EventTargetData& TextTrack::ensureEventTargetData()
 {
-    return &m_eventTargetData;
+    return m_eventTargetData;
 }
 
 bool TextTrack::isValidKind(const AtomicString& value) const

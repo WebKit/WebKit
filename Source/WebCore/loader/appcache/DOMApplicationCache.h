@@ -83,8 +83,8 @@ private:
 
     virtual void refEventTarget() { ref(); }
     virtual void derefEventTarget() { deref(); }
-    virtual EventTargetData* eventTargetData();
-    virtual EventTargetData* ensureEventTargetData();
+    virtual EventTargetData* eventTargetData() OVERRIDE;
+    virtual EventTargetData& ensureEventTargetData() OVERRIDE;
 
     ApplicationCacheHost* applicationCacheHost() const;
 

@@ -81,10 +81,10 @@ public:
 private:
     EventSource(ScriptExecutionContext*, const KURL&, const Dictionary&);
 
-    virtual void refEventTarget() { ref(); }
-    virtual void derefEventTarget() { deref(); }
-    virtual EventTargetData* eventTargetData();
-    virtual EventTargetData* ensureEventTargetData();
+    virtual void refEventTarget() OVERRIDE { ref(); }
+    virtual void derefEventTarget() OVERRIDE { deref(); }
+    virtual EventTargetData* eventTargetData() OVERRIDE;
+    virtual EventTargetData& ensureEventTargetData() OVERRIDE;
 
     virtual void didReceiveResponse(unsigned long, const ResourceResponse&);
     virtual void didReceiveData(const char*, int);

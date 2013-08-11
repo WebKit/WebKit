@@ -203,9 +203,9 @@ EventTargetData* Performance::eventTargetData()
     return &m_eventTargetData;
 }
 
-EventTargetData* Performance::ensureEventTargetData()
+EventTargetData& Performance::ensureEventTargetData()
 {
-    return &m_eventTargetData;
+    return m_eventTargetData;
 }
 
 #if ENABLE(USER_TIMING)

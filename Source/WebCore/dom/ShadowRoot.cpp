@@ -147,10 +147,10 @@ void ShadowRoot::setResetStyleInheritance(bool value)
 
 void ShadowRoot::attach(const AttachContext& context)
 {
-    StyleResolver* styleResolver = document()->ensureStyleResolver();
-    styleResolver->pushParentShadowRoot(this);
+    StyleResolver& styleResolver = document()->ensureStyleResolver();
+    styleResolver.pushParentShadowRoot(this);
     DocumentFragment::attach(context);
-    styleResolver->popParentShadowRoot(this);
+    styleResolver.popParentShadowRoot(this);
 }
 
 void ShadowRoot::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)

@@ -426,8 +426,8 @@ namespace WebCore {
 
         virtual void refEventTarget() { ref(); }
         virtual void derefEventTarget() { deref(); }
-        virtual EventTargetData* eventTargetData();
-        virtual EventTargetData* ensureEventTargetData();
+        virtual EventTargetData* eventTargetData() OVERRIDE;
+        virtual EventTargetData& ensureEventTargetData() OVERRIDE;
 
         static PassRefPtr<Frame> createWindow(const String& urlString, const AtomicString& frameName, const WindowFeatures&,
             DOMWindow* activeWindow, Frame* firstFrame, Frame* openerFrame,

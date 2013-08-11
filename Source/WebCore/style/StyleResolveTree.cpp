@@ -197,8 +197,8 @@ static void resolveShadowTree(ShadowRoot* shadowRoot, RenderStyle* parentElement
 {
     if (!shadowRoot)
         return;
-    StyleResolver* styleResolver = shadowRoot->document()->ensureStyleResolver();
-    styleResolver->pushParentShadowRoot(shadowRoot);
+    StyleResolver& styleResolver = shadowRoot->document()->ensureStyleResolver();
+    styleResolver.pushParentShadowRoot(shadowRoot);
 
     for (Node* child = shadowRoot->firstChild(); child; child = child->nextSibling()) {
         if (child->isTextNode()) {
@@ -209,7 +209,7 @@ static void resolveShadowTree(ShadowRoot* shadowRoot, RenderStyle* parentElement
         resolveTree(toElement(child), change);
     }
 
-    styleResolver->popParentShadowRoot(shadowRoot);
+    styleResolver.popParentShadowRoot(shadowRoot);
     shadowRoot->clearNeedsStyleRecalc();
     shadowRoot->clearChildNeedsStyleRecalc();
 }

@@ -66,7 +66,7 @@ public:
 
 protected:
     virtual EventTargetData* eventTargetData() OVERRIDE;
-    virtual EventTargetData* ensureEventTargetData() OVERRIDE;
+    virtual EventTargetData& ensureEventTargetData() OVERRIDE;
 
 private:
     SourceBufferList(ScriptExecutionContext*, GenericEventQueue*);

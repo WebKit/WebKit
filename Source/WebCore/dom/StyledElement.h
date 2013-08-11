@@ -84,7 +84,7 @@ private:
     void inlineStyleChanged();
     PropertySetCSSStyleDeclaration* inlineStyleCSSOMWrapper();
     void setInlineStyleFromString(const AtomicString&);
-    MutableStylePropertySet* ensureMutableInlineStyle();
+    MutableStylePropertySet& ensureMutableInlineStyle();
 
     void makePresentationAttributeCacheKey(PresentationAttributeCacheKey&) const;
     void rebuildPresentationAttributeStyle();

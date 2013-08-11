@@ -247,8 +247,7 @@ static inline void applyCSSPropertyToTarget(SVGElement* targetElement, CSSProper
 {
     ASSERT(!targetElement->m_deletionHasBegun);
 
-    MutableStylePropertySet* propertySet = targetElement->ensureAnimatedSMILStyleProperties();
-    if (!propertySet->setProperty(id, value, false, 0))
+    if (!targetElement->ensureAnimatedSMILStyleProperties().setProperty(id, value, false, 0))
         return;
 
     targetElement->setNeedsStyleRecalc(SyntheticStyleChange);
@@ -257,7 +256,7 @@ static inline void applyCSSPropertyToTarget(SVGElement* targetElement, CSSProper
 static inline void removeCSSPropertyFromTarget(SVGElement* targetElement, CSSPropertyID id)
 {
     ASSERT(!targetElement->m_deletionHasBegun);
-    targetElement->ensureAnimatedSMILStyleProperties()->removeProperty(id);
+    targetElement->ensureAnimatedSMILStyleProperties().removeProperty(id);
     targetElement->setNeedsStyleRecalc(SyntheticStyleChange);
 }
 

@@ -140,7 +140,7 @@ namespace WebCore {
         virtual ~EventTarget();
         
         virtual EventTargetData* eventTargetData() = 0;
-        virtual EventTargetData* ensureEventTargetData() = 0;
+        virtual EventTargetData& ensureEventTargetData() = 0;
 
     private:
         virtual void refEventTarget() = 0;

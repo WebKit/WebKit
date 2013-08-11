@@ -108,10 +108,10 @@ private:
     virtual void stop() OVERRIDE;
 
     // EventTarget
-    virtual void refEventTarget() { ref(); }
-    virtual void derefEventTarget() { deref(); }
-    virtual EventTargetData* eventTargetData() { return &m_eventTargetData; }
-    virtual EventTargetData* ensureEventTargetData() { return &m_eventTargetData; }
+    virtual void refEventTarget() OVERRIDE { ref(); }
+    virtual void derefEventTarget() OVERRIDE { deref(); }
+    virtual EventTargetData* eventTargetData() OVERRIDE { return &m_eventTargetData; }
+    virtual EventTargetData& ensureEventTargetData() OVERRIDE { return m_eventTargetData; }
 
     void terminate();
     void readInternal(Blob*, FileReaderLoader::ReadType, ExceptionCode&);

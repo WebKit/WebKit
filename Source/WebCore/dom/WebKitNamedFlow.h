@@ -89,7 +89,7 @@ private:
     virtual void derefEventTarget() { deref(); }
 
     virtual EventTargetData* eventTargetData() OVERRIDE;
-    virtual EventTargetData* ensureEventTargetData() OVERRIDE;
+    virtual EventTargetData& ensureEventTargetData() OVERRIDE;
 
     // The name of the flow thread as specified in CSS.
     AtomicString m_flowThreadName;

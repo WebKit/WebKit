@@ -397,7 +397,7 @@ public:
     void stripScriptingAttributes(Vector<Attribute>&) const;
 
     const ElementData* elementData() const { return m_elementData.get(); }
-    UniqueElementData* ensureUniqueElementData();
+    UniqueElementData& ensureUniqueElementData();
 
     void synchronizeAllAttributes() const;
 
@@ -418,14 +418,14 @@ public:
     void didAffectSelector(AffectedSelectorMask);
 
     ElementShadow* shadow() const;
-    ElementShadow* ensureShadow();
+    ElementShadow& ensureShadow();
     PassRefPtr<ShadowRoot> createShadowRoot(ExceptionCode&);
     ShadowRoot* authorShadowRoot() const;
 
     bool hasAuthorShadowRoot() const { return authorShadowRoot(); }
 
     ShadowRoot* userAgentShadowRoot() const;
-    ShadowRoot* ensureUserAgentShadowRoot();
+    ShadowRoot& ensureUserAgentShadowRoot();
 
     virtual const AtomicString& shadowPseudoId() const;
 
@@ -767,7 +767,7 @@ private:
     void createUniqueElementData();
 
     ElementRareData* elementRareData() const;
-    ElementRareData* ensureElementRareData();
+    ElementRareData& ensureElementRareData();
 
     void detachAllAttrNodesFromElement();
     void detachAttrNodeFromElementWithValue(Attr*, const AtomicString& value);
@@ -932,11 +932,11 @@ inline bool Element::hasName() const
     return elementData() && elementData()->hasName();
 }
 
-inline UniqueElementData* Element::ensureUniqueElementData()
+inline UniqueElementData& Element::ensureUniqueElementData()
 {
     if (!elementData() || !elementData()->isUnique())
         createUniqueElementData();
-    return static_cast<UniqueElementData*>(m_elementData.get());
+    return static_cast<UniqueElementData&>(*m_elementData);
 }
 
 inline Node::InsertionNotificationRequest Node::insertedInto(ContainerNode* insertionPoint)

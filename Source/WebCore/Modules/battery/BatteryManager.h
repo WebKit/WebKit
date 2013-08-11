@@ -66,7 +66,7 @@ public:
 
 protected:
     virtual EventTargetData* eventTargetData() { return &m_eventTargetData; }
-    virtual EventTargetData* ensureEventTargetData() { return &m_eventTargetData; }
+    virtual EventTargetData& ensureEventTargetData() { return m_eventTargetData; }
 
 private:
     explicit BatteryManager(Navigator*);

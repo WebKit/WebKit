@@ -183,7 +183,7 @@ public:
     virtual const AtomicString& interfaceName() const OVERRIDE;
     virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE;
     virtual EventTargetData* eventTargetData() OVERRIDE { return &m_eventTargetData; }
-    virtual EventTargetData* ensureEventTargetData() OVERRIDE { return &m_eventTargetData; }
+    virtual EventTargetData& ensureEventTargetData() OVERRIDE { return m_eventTargetData; }
 
 protected:
     // Inputs and outputs must be created before the AudioNode is initialized.

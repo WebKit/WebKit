@@ -109,7 +109,7 @@ void HTMLOptGroupElement::detach(const AttachContext& context)
 
 void HTMLOptGroupElement::updateNonRenderStyle()
 {
-    m_style = document()->ensureStyleResolver()->styleForElement(this);
+    m_style = document()->ensureStyleResolver().styleForElement(this);
 }
 
 RenderStyle* HTMLOptGroupElement::nonRendererStyle() const

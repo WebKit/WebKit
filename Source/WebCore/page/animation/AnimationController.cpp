@@ -67,12 +67,12 @@ AnimationControllerPrivate::~AnimationControllerPrivate()
 {
 }
 
-CompositeAnimation* AnimationControllerPrivate::ensureCompositeAnimation(RenderObject* renderer)
+CompositeAnimation& AnimationControllerPrivate::ensureCompositeAnimation(RenderObject* renderer)
 {
     RenderObjectAnimationMap::AddResult result = m_compositeAnimations.add(renderer, 0);
     if (result.isNewEntry)
         result.iterator->value = CompositeAnimation::create(this);
-    return result.iterator->value.get();
+    return *result.iterator->value;
 }
 
 bool AnimationControllerPrivate::clear(RenderObject* renderer)
@@ -337,8 +337,8 @@ bool AnimationControllerPrivate::pauseAnimationAtTime(RenderObject* renderer, co
     if (!renderer)
         return false;
 
-    CompositeAnimation* compositeAnimation = ensureCompositeAnimation(renderer);
-    if (compositeAnimation->pauseAnimationAtTime(name, t)) {
+    CompositeAnimation& compositeAnimation = ensureCompositeAnimation(renderer);
+    if (compositeAnimation.pauseAnimationAtTime(name, t)) {
         renderer->node()->setNeedsStyleRecalc(SyntheticStyleChange);
         startUpdateStyleIfNeededDispatcher();
         return true;
@@ -352,8 +352,8 @@ bool AnimationControllerPrivate::pauseTransitionAtTime(RenderObject* renderer, c
     if (!renderer)
         return false;
 
-    CompositeAnimation* compositeAnimation = ensureCompositeAnimation(renderer);
-    if (compositeAnimation->pauseTransitionAtTime(cssPropertyID(property), t)) {
+    CompositeAnimation& compositeAnimation = ensureCompositeAnimation(renderer);
+    if (compositeAnimation.pauseTransitionAtTime(cssPropertyID(property), t)) {
         renderer->node()->setNeedsStyleRecalc(SyntheticStyleChange);
         startUpdateStyleIfNeededDispatcher();
         return true;
@@ -536,8 +536,8 @@ PassRefPtr<RenderStyle> AnimationController::updateAnimations(RenderObject* rend
     // We don't support anonymous pseudo elements like :first-line or :first-letter.
     ASSERT(renderer->node());
 
-    CompositeAnimation* rendererAnimations = m_data->ensureCompositeAnimation(renderer);
-    RefPtr<RenderStyle> blendedStyle = rendererAnimations->animate(renderer, oldStyle, newStyle);
+    CompositeAnimation& rendererAnimations = m_data->ensureCompositeAnimation(renderer);
+    RefPtr<RenderStyle> blendedStyle = rendererAnimations.animate(renderer, oldStyle, newStyle);
 
     if (renderer->parent() || newStyle->animations() || (oldStyle && oldStyle->animations())) {
         m_data->updateAnimationTimerForRenderer(renderer);

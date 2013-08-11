@@ -231,7 +231,7 @@ void NodeRenderingContext::moveToFlowThreadIfNeeded()
 
     ASSERT(m_node->document()->renderView());
     FlowThreadController* flowThreadController = m_node->document()->renderView()->flowThreadController();
-    m_parentFlowRenderer = flowThreadController->ensureRenderFlowThreadWithName(m_style->flowThread());
+    m_parentFlowRenderer = &flowThreadController->ensureRenderFlowThreadWithName(m_style->flowThread());
     flowThreadController->registerNamedFlowContentNode(m_node, m_parentFlowRenderer);
 #endif
 }
@@ -310,7 +310,7 @@ void NodeRenderingContext::createRendererForTextIfNeeded()
     Document* document = textNode->document();
 
     if (resetStyleInheritance())
-        m_style = document->ensureStyleResolver()->defaultStyleForElement();
+        m_style = document->ensureStyleResolver().defaultStyleForElement();
     else
         m_style = parentRenderer->style();
 

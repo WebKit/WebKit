@@ -255,19 +255,19 @@ public:
 
     void clearNodeLists() { m_nodeLists.clear(); }
     NodeListsNodeData* nodeLists() const { return m_nodeLists.get(); }
-    NodeListsNodeData* ensureNodeLists()
+    NodeListsNodeData& ensureNodeLists()
     {
         if (!m_nodeLists)
             m_nodeLists = NodeListsNodeData::create();
-        return m_nodeLists.get();
+        return *m_nodeLists;
     }
 
     NodeMutationObserverData* mutationObserverData() { return m_mutationObserverData.get(); }
-    NodeMutationObserverData* ensureMutationObserverData()
+    NodeMutationObserverData& ensureMutationObserverData()
     {
         if (!m_mutationObserverData)
             m_mutationObserverData = NodeMutationObserverData::create();
-        return m_mutationObserverData.get();
+        return *m_mutationObserverData;
     }
 
     unsigned connectedSubframeCount() const { return m_connectedFrameCount; }

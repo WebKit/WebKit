@@ -155,7 +155,7 @@ namespace WebCore {
         virtual void refEventTarget() OVERRIDE { ref(); }
         virtual void derefEventTarget() OVERRIDE { deref(); }
         virtual EventTargetData* eventTargetData() OVERRIDE;
-        virtual EventTargetData* ensureEventTargetData() OVERRIDE;
+        virtual EventTargetData& ensureEventTargetData() OVERRIDE;
 
         virtual const KURL& virtualURL() const OVERRIDE;
         virtual KURL virtualCompleteURL(const String&) const;

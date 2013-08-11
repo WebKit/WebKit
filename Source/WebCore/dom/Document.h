@@ -234,7 +234,7 @@ public:
     }
     virtual ~Document();
 
-    MediaQueryMatcher* mediaQueryMatcher();
+    MediaQueryMatcher& mediaQueryMatcher();
 
     using ContainerNode::ref;
     using ContainerNode::deref;
@@ -246,7 +246,7 @@ public:
     Element* getElementByAccessKey(const String& key);
     void invalidateAccessKeyMap();
 
-    SelectorQueryCache* selectorQueryCache();
+    SelectorQueryCache& selectorQueryCache();
 
     // DOM methods & attributes for Document
 
@@ -451,11 +451,11 @@ public:
 
     bool sawElementsInKnownNamespaces() const { return m_sawElementsInKnownNamespaces; }
 
-    StyleResolver* ensureStyleResolver()
+    StyleResolver& ensureStyleResolver()
     { 
         if (!m_styleResolver)
             createStyleResolver();
-        return m_styleResolver.get();
+        return *m_styleResolver;
     }
 
     void notifyRemovePendingSheetIfNeeded();

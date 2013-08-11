@@ -203,8 +203,8 @@ public:
     using RefCounted<TextTrackCue>::deref;
 
 protected:
-    virtual EventTargetData* eventTargetData();
-    virtual EventTargetData* ensureEventTargetData();
+    virtual EventTargetData* eventTargetData() OVERRIDE;
+    virtual EventTargetData& ensureEventTargetData() OVERRIDE;
 
     TextTrackCue(ScriptExecutionContext*, double start, double end, const String& content);
 

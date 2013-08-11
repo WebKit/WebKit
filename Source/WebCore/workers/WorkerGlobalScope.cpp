@@ -323,9 +323,9 @@ EventTargetData* WorkerGlobalScope::eventTargetData()
     return &m_eventTargetData;
 }
 
-EventTargetData* WorkerGlobalScope::ensureEventTargetData()
+EventTargetData& WorkerGlobalScope::ensureEventTargetData()
 {
-    return &m_eventTargetData;
+    return m_eventTargetData;
 }
 
 WorkerGlobalScope::Observer::Observer(WorkerGlobalScope* context)

@@ -131,7 +131,7 @@ void RenderListBox::updateFromElement()
                 FontDescription d = itemFont.fontDescription();
                 d.setWeight(d.bolderWeight());
                 itemFont = Font(d, itemFont.letterSpacing(), itemFont.wordSpacing());
-                itemFont.update(document()->ensureStyleResolver()->fontSelector());
+                itemFont.update(document()->ensureStyleResolver().fontSelector());
             }
 
             if (!text.isEmpty()) {
@@ -432,7 +432,7 @@ void RenderListBox::paintItemForeground(PaintInfo& paintInfo, const LayoutPoint&
         FontDescription d = itemFont.fontDescription();
         d.setWeight(d.bolderWeight());
         itemFont = Font(d, itemFont.letterSpacing(), itemFont.wordSpacing());
-        itemFont.update(document()->ensureStyleResolver()->fontSelector());
+        itemFont.update(document()->ensureStyleResolver().fontSelector());
     }
 
     // Draw the item text

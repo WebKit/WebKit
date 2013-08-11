@@ -1,3 +1,13 @@
+2013-08-11  Andreas Kling  <akling@apple.com>
+
+        Make some things that return never-null pointers return references instead.
+        <http://webkit.org/b/119660>
+
+        Reviewed by Antti Koivisto.
+
+        * Api/qwebelement.cpp:
+        (QWebElement::styleProperty):
+
 2013-08-09  Arunprasad Rajkumar  <arurajku@cisco.com>
 
         [Qt] QtWebKit should allow sending domain specific keycode to HTML applications

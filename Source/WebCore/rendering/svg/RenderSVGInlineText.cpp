@@ -229,8 +229,6 @@ void RenderSVGInlineText::computeNewScaledFontForStyle(RenderObject* renderer, c
     Document* document = renderer->document();
     ASSERT(document);
     
-    StyleResolver* styleResolver = document->ensureStyleResolver();
-
     // Alter font-size to the right on-screen value to avoid scaling the glyphs themselves, except when GeometricPrecision is specified
     scalingFactor = SVGRenderingContext::calculateScreenFontSizeScalingFactor(renderer);
     if (scalingFactor == 1 || !scalingFactor || style->fontDescription().textRenderingMode() == GeometricPrecision) {
@@ -245,7 +243,7 @@ void RenderSVGInlineText::computeNewScaledFontForStyle(RenderObject* renderer, c
     fontDescription.setComputedSize(Style::computedFontSizeFromSpecifiedSizeForSVGInlineText(fontDescription.computedSize(), fontDescription.isAbsoluteSize(), scalingFactor, document));
 
     scaledFont = Font(fontDescription, 0, 0);
-    scaledFont.update(styleResolver->fontSelector());
+    scaledFont.update(document->ensureStyleResolver().fontSelector());
 }
 
 }

@@ -173,9 +173,9 @@ EventTargetData* Notification::eventTargetData()
     return &m_eventTargetData;
 }
 
-EventTargetData* Notification::ensureEventTargetData()
+EventTargetData& Notification::ensureEventTargetData()
 {
-    return &m_eventTargetData;
+    return m_eventTargetData;
 }
 
 void Notification::contextDestroyed()

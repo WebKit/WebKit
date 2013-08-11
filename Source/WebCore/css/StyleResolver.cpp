@@ -1534,7 +1534,7 @@ template <StyleResolver::StyleApplicationPass pass>
 void StyleResolver::applyProperties(const StylePropertySet* properties, StyleRule* rule, bool isImportant, bool inheritedOnly, PropertyWhitelistType propertyWhitelistType)
 {
     ASSERT((propertyWhitelistType != PropertyWhitelistRegion) || m_state.regionForStyling());
-    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willProcessRule(document(), rule, this);
+    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willProcessRule(document(), rule, *this);
 
     unsigned propertyCount = properties->propertyCount();
     for (unsigned i = 0; i < propertyCount; ++i) {

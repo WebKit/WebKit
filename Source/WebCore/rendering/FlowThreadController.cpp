@@ -57,7 +57,7 @@ FlowThreadController::~FlowThreadController()
 {
 }
 
-RenderNamedFlowThread* FlowThreadController::ensureRenderFlowThreadWithName(const AtomicString& name)
+RenderNamedFlowThread& FlowThreadController::ensureRenderFlowThreadWithName(const AtomicString& name)
 {
     if (!m_renderNamedFlowThreadList)
         m_renderNamedFlowThreadList = adoptPtr(new RenderNamedFlowThreadList());
@@ -65,7 +65,7 @@ RenderNamedFlowThread* FlowThreadController::ensureRenderFlowThreadWithName(cons
         for (RenderNamedFlowThreadList::iterator iter = m_renderNamedFlowThreadList->begin(); iter != m_renderNamedFlowThreadList->end(); ++iter) {
             RenderNamedFlowThread* flowRenderer = *iter;
             if (flowRenderer->flowThreadName() == name)
-                return flowRenderer;
+                return *flowRenderer;
         }
     }
 
@@ -83,7 +83,7 @@ RenderNamedFlowThread* FlowThreadController::ensureRenderFlowThreadWithName(cons
 
     setIsRenderNamedFlowThreadOrderDirty(true);
 
-    return flowRenderer;
+    return *flowRenderer;
 }
 
 void FlowThreadController::styleDidChange()

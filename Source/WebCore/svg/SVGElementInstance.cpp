@@ -250,12 +250,12 @@ EventTargetData* SVGElementInstance::eventTargetData()
     return 0;
 }
 
-EventTargetData* SVGElementInstance::ensureEventTargetData()
+EventTargetData& SVGElementInstance::ensureEventTargetData()
 {
     // EventTarget would use these methods if we were actually using its add/removeEventListener logic.
     // As we're forwarding those calls to the correspondingElement(), no one should ever call this function.
     ASSERT_NOT_REACHED();
-    return 0;
+    return *eventTargetData();
 }
 
 SVGElementInstance::InstanceUpdateBlocker::InstanceUpdateBlocker(SVGElement* targetElement)

@@ -253,9 +253,9 @@ EventTargetData* RTCDataChannel::eventTargetData()
     return &m_eventTargetData;
 }
 
-EventTargetData* RTCDataChannel::ensureEventTargetData()
+EventTargetData& RTCDataChannel::ensureEventTargetData()
 {
-    return &m_eventTargetData;
+    return m_eventTargetData;
 }
 
 void RTCDataChannel::scheduleDispatchEvent(PassRefPtr<Event> event)

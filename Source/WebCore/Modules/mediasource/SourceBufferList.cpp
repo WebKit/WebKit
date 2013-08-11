@@ -109,9 +109,9 @@ EventTargetData* SourceBufferList::eventTargetData()
     return &m_eventTargetData;
 }
 
-EventTargetData* SourceBufferList::ensureEventTargetData()
+EventTargetData& SourceBufferList::ensureEventTargetData()
 {
-    return &m_eventTargetData;
+    return m_eventTargetData;
 }
 
 } // namespace WebCore

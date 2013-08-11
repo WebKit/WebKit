@@ -56,9 +56,9 @@ EventTargetData* XMLHttpRequestUpload::eventTargetData()
     return &m_eventTargetData;
 }
 
-EventTargetData* XMLHttpRequestUpload::ensureEventTargetData()
+EventTargetData& XMLHttpRequestUpload::ensureEventTargetData()
 {
-    return &m_eventTargetData;
+    return m_eventTargetData;
 }
 
 void XMLHttpRequestUpload::dispatchEventAndLoadEnd(PassRefPtr<Event> event)

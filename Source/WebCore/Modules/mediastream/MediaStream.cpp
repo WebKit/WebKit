@@ -251,9 +251,9 @@ EventTargetData* MediaStream::eventTargetData()
     return &m_eventTargetData;
 }
 
-EventTargetData* MediaStream::ensureEventTargetData()
+EventTargetData& MediaStream::ensureEventTargetData()
 {
-    return &m_eventTargetData;
+    return m_eventTargetData;
 }
 
 void MediaStream::addRemoteTrack(MediaStreamComponent* component)

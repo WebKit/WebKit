@@ -246,9 +246,9 @@ EventTargetData* MessagePort::eventTargetData()
     return &m_eventTargetData;
 }
 
-EventTargetData* MessagePort::ensureEventTargetData()
+EventTargetData& MessagePort::ensureEventTargetData()
 {
-    return &m_eventTargetData;
+    return m_eventTargetData;
 }
 
 } // namespace WebCore

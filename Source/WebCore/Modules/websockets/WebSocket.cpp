@@ -584,9 +584,9 @@ EventTargetData* WebSocket::eventTargetData()
     return &m_eventTargetData;
 }
 
-EventTargetData* WebSocket::ensureEventTargetData()
+EventTargetData& WebSocket::ensureEventTargetData()
 {
-    return &m_eventTargetData;
+    return m_eventTargetData;
 }
 
 size_t WebSocket::getFramingOverhead(size_t payloadSize)

@@ -84,7 +84,7 @@ protected:
 
     // EventTarget
     virtual EventTargetData* eventTargetData() OVERRIDE;
-    virtual EventTargetData* ensureEventTargetData() OVERRIDE;
+    virtual EventTargetData& ensureEventTargetData() OVERRIDE;
 
     // ContextDestructionObserver
     virtual void contextDestroyed();

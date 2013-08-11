@@ -1,3 +1,29 @@
+2013-08-11  Andreas Kling  <akling@apple.com>
+
+        Make some things that return never-null pointers return references instead.
+        <http://webkit.org/b/119660>
+
+        Reviewed by Antti Koivisto.
+
+        These functions never return null anyway, so remove any ambiguity by letting
+        them return references instead of pointers.
+
+        - Node::ensureRareData()
+        - Element::ensureUniqueElementData()
+        - Element::ensureShadow()
+        - Element::ensureUserAgentShadowRoot()
+        - StyledElement::ensureMutableInlineStyle()
+        - NodeRareData::ensureNodeLists()
+        - NodeRareData::ensureMutationObserverData()
+        - EventTarget::ensureEventTargetData()
+        - Document::ensureStyleResolver()
+        - Document::selectorQueryCache()
+        - Document::mediaQueryMatcher()
+        - FlowThreadController::ensureRenderFlowThreadWithName()
+        - HTMLTrackElement::ensureTrack()
+        - SVGElement::ensureSVGRareData()
+        - AnimationControllerPrivate::ensureCompositeAnimation()
+
 2013-08-11  Sam Weinig  <sam@webkit.org>
 
         Cleanup MediaQueryListListener

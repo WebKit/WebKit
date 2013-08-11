@@ -605,7 +605,7 @@ void InspectorInstrumentation::didMatchRuleImpl(const InspectorInstrumentationCo
         cssAgent->didMatchRule(matched);
 }
 
-InspectorInstrumentationCookie InspectorInstrumentation::willProcessRuleImpl(InstrumentingAgents* instrumentingAgents, StyleRule* rule, StyleResolver* styleResolver)
+InspectorInstrumentationCookie InspectorInstrumentation::willProcessRuleImpl(InstrumentingAgents* instrumentingAgents, StyleRule* rule, StyleResolver& styleResolver)
 {
     InspectorCSSAgent* cssAgent = instrumentingAgents->inspectorCSSAgent();
     if (cssAgent) {

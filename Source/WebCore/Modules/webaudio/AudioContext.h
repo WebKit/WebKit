@@ -238,7 +238,7 @@ public:
     virtual const AtomicString& interfaceName() const;
     virtual ScriptExecutionContext* scriptExecutionContext() const;
     virtual EventTargetData* eventTargetData() { return &m_eventTargetData; }
-    virtual EventTargetData* ensureEventTargetData() { return &m_eventTargetData; }
+    virtual EventTargetData& ensureEventTargetData() { return m_eventTargetData; }
 
     DEFINE_ATTRIBUTE_EVENT_LISTENER(complete);
 

@@ -834,7 +834,7 @@ QString QWebElement::styleProperty(const QString &name, StyleResolveStrategy str
         // declarations, as well as embedded and inline style declarations.
 
         Document* doc = m_element->document();
-        Vector<RefPtr<StyleRuleBase> > rules = doc->ensureStyleResolver()->styleRulesForElement(m_element, StyleResolver::AuthorCSSRules | StyleResolver::CrossOriginCSSRules);
+        Vector<RefPtr<StyleRuleBase> > rules = doc->ensureStyleResolver().styleRulesForElement(m_element, StyleResolver::AuthorCSSRules | StyleResolver::CrossOriginCSSRules);
         for (int i = rules.size(); i > 0; --i) {
             if (!rules[i - 1]->isStyleRule())
                 continue;
