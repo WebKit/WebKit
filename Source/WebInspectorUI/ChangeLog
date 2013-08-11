@@ -1,4 +1,11 @@
-2013-08-09  Dean Jackson  <dino@apple.com>
+2013-08-11  Dean Jackson  <dino@apple.com>
+
+        Update localizedStrings - I think I checked in an unmerged version
+        in the previous commit.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
+2013-08-11  Dean Jackson  <dino@apple.com>
 
         Bootstrap canvas profiler
         https://bugs.webkit.org/show_bug.cgi?id=119652
