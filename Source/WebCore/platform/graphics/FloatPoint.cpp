@@ -33,6 +33,7 @@
 #include "TransformationMatrix.h"
 #include <limits>
 #include <math.h>
+#include <wtf/PrintStream.h>
 
 namespace WebCore {
 
@@ -116,6 +117,11 @@ bool findIntersection(const FloatPoint& p1, const FloatPoint& p2, const FloatPoi
     intersection.setX((dOffset - pOffset) / (pSlope - dSlope));
     intersection.setY(pSlope * intersection.x() + pOffset);
     return true;
+}
+
+void FloatPoint::dump(PrintStream& out) const
+{
+    out.printf("(%f, %f)", x(), y());
 }
 
 }

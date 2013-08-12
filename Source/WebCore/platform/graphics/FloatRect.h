@@ -203,6 +203,8 @@ public:
     operator cairo_rectangle_t() const;
 #endif
 
+    void dump(PrintStream& out) const;
+
 private:
     FloatPoint m_location;
     FloatSize m_size;

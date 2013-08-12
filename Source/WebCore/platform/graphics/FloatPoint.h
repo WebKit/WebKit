@@ -164,6 +164,8 @@ public:
     FloatPoint matrixTransform(const TransformationMatrix&) const;
     FloatPoint matrixTransform(const AffineTransform&) const;
 
+    void dump(PrintStream& out) const;
+
 private:
     float m_x, m_y;
 };

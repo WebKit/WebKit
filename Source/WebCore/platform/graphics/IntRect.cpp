@@ -29,6 +29,7 @@
 #include "FloatRect.h"
 #include "LayoutRect.h"
 #include <algorithm>
+#include <wtf/PrintStream.h>
 
 using std::max;
 using std::min;
@@ -157,6 +158,11 @@ IntRect unionRect(const Vector<IntRect>& rects)
         result.unite(rects[i]);
 
     return result;
+}
+
+void IntRect::dump(PrintStream& out) const
+{
+    out.print(location(), " ", size());
 }
 
 } // namespace WebCore

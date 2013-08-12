@@ -32,6 +32,7 @@
 #include <algorithm>
 #include <math.h>
 #include <wtf/MathExtras.h>
+#include <wtf/PrintStream.h>
 
 using std::max;
 using std::min;
@@ -250,6 +251,11 @@ FloatRect mapRect(const FloatRect& r, const FloatRect& srcRect, const FloatRect&
     return FloatRect(destRect.x() + (r.x() - srcRect.x()) * widthScale,
                      destRect.y() + (r.y() - srcRect.y()) * heightScale,
                      r.width() * widthScale, r.height() * heightScale);
+}
+
+void FloatRect::dump(PrintStream& out) const
+{
+    out.print(location(), " ", size());
 }
 
 }

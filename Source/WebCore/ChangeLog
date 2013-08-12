@@ -1,3 +1,27 @@
+2013-08-12  Tim Horton  <timothy_horton@apple.com>
+
+        dataLog dumpers for WebCore's basic geometry types
+        https://bugs.webkit.org/show_bug.cgi?id=119636
+
+        Reviewed by Filip Pizlo.
+
+        * platform/graphics/FloatPoint.cpp:
+        (WebCore::FloatPoint::dump):
+        * platform/graphics/FloatPoint.h:
+        * platform/graphics/FloatRect.cpp:
+        (WebCore::FloatRect::dump):
+        * platform/graphics/FloatRect.h:
+        * platform/graphics/FloatSize.cpp:
+        (WebCore::FloatSize::dump):
+        * platform/graphics/FloatSize.h:
+        * platform/graphics/IntPoint.h:
+        (WebCore::IntPoint::dump):
+        * platform/graphics/IntRect.cpp:
+        (WebCore::IntRect::dump):
+        * platform/graphics/IntRect.h:
+        * platform/graphics/IntSize.h:
+        (WebCore::IntSize::dump):
+
 2013-08-12  Dean Jackson  <dino@apple.com>
 
         Shadows don't support viewport units

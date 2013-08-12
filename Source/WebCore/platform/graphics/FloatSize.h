@@ -138,6 +138,8 @@ public:
     operator NSSize() const;
 #endif
 
+    void dump(PrintStream& out) const;
+
 private:
     float m_width, m_height;
 };

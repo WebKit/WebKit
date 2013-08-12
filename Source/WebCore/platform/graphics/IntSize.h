@@ -26,6 +26,8 @@
 #ifndef IntSize_h
 #define IntSize_h
 
+#include <wtf/PrintStream.h>
+
 #if USE(CG)
 typedef struct CGSize CGSize;
 #endif
@@ -153,6 +155,8 @@ public:
     operator BlackBerry::Platform::IntSize() const;
 #endif
 
+    void dump(PrintStream& out) const;
+
 private:
     int m_width, m_height;
 };
@@ -194,6 +198,11 @@ inline bool operator==(const IntSize& a, const IntSize& b)
 inline bool operator!=(const IntSize& a, const IntSize& b)
 {
     return a.width() != b.width() || a.height() != b.height();
+}
+
+inline void IntSize::dump(PrintStream& out) const
+{
+    out.printf("(%d x %d)", width(), height());
 }
 
 } // namespace WebCore

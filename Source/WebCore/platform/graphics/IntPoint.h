@@ -28,6 +28,7 @@
 
 #include "IntSize.h"
 #include <wtf/MathExtras.h>
+#include <wtf/PrintStream.h>
 
 #if USE(CG)
 typedef struct CGPoint CGPoint;
@@ -139,6 +140,8 @@ public:
     operator Evas_Point() const;
 #endif
 
+    void dump(PrintStream& out) const;
+
 private:
     int m_x, m_y;
 };
@@ -198,6 +201,11 @@ inline IntSize toIntSize(const IntPoint& a)
 inline int IntPoint::distanceSquaredToPoint(const IntPoint& point) const
 {
     return ((*this) - point).diagonalLengthSquared();
+}
+
+inline void IntPoint::dump(PrintStream& out) const
+{
+    out.printf("(%d, %d)", x(), y());
 }
 
 } // namespace WebCore
