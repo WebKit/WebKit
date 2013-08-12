@@ -37,6 +37,7 @@
 namespace JSC {
 
 class CodeBlock;
+class Identifier;
 
 namespace DFG {
 
@@ -73,7 +74,8 @@ public:
     void notifyCompilingStructureTransition(CodeBlock*, Node*);
     
     void shrinkToFit();
-    
+
+    Vector<Identifier> dfgIdentifiers;
     Vector<WeakReferenceTransition> transitions;
     Vector<WriteBarrier<JSCell> > weakReferences;
     

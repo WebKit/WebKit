@@ -654,17 +654,34 @@ public:
 #endif
 
     // Constant Pool
+#if ENABLE(DFG_JIT)
+    size_t numberOfIdentifiers() const { return m_unlinkedCode->numberOfIdentifiers() + numberOfDFGIdentifiers(); }
+    size_t numberOfDFGIdentifiers() const
+    {
+        if (!JITCode::isOptimizingJIT(jitType()))
+            return 0;
 
-    size_t numberOfIdentifiers() const { return m_unlinkedCode->numberOfIdentifiers() + numberOfAdditionalIdentifiers(); }
-    size_t numberOfAdditionalIdentifiers() const { return m_additionalIdentifiers.size(); }
-    void addAdditionalIdentifier(const Identifier& i) { return m_additionalIdentifiers.append(i); }
+        return m_jitCode->dfgCommon()->dfgIdentifiers.size();
+    }
+
+    void addAdditionalIdentifier(const Identifier& i)
+    {
+        ASSERT(JITCode::isOptimizingJIT(jitType()));
+        return m_jitCode->dfgCommon()->dfgIdentifiers.append(i);
+    }
+
     const Identifier& identifier(int index) const
     {
         size_t unlinkedIdentifiers = m_unlinkedCode->numberOfIdentifiers();
         if (static_cast<unsigned>(index) < unlinkedIdentifiers)
             return m_unlinkedCode->identifier(index);
-        return m_additionalIdentifiers[index - unlinkedIdentifiers];
+        ASSERT(JITCode::isOptimizingJIT(jitType()));
+        return m_jitCode->dfgCommon()->dfgIdentifiers[index - unlinkedIdentifiers];
     }
+#else
+    size_t numberOfIdentifiers() const { return m_unlinkedCode->numberOfIdentifiers(); }
+    const Identifier& identifier(int index) const { return m_unlinkedCode->identifier(index); }
+#endif
 
     size_t numberOfConstantRegisters() const { return m_constantRegisters.size(); }
     unsigned addConstant(JSValue v)

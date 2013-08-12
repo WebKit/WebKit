@@ -1,5 +1,21 @@
 2013-08-12  Oliver Hunt  <oliver@apple.com>
 
+        Move additionalIdentifiers into DFGCommonData as only the optimising JITs use them
+        https://bugs.webkit.org/show_bug.cgi?id=119705
+
+        Reviewed by Geoffrey Garen.
+
+        Relatively trivial refactoring
+
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::numberOfAdditionalIdentifiers):
+        (JSC::CodeBlock::addAdditionalIdentifier):
+        (JSC::CodeBlock::identifier):
+        (JSC::CodeBlock::numberOfIdentifiers):
+        * dfg/DFGCommonData.h:
+
+2013-08-12  Oliver Hunt  <oliver@apple.com>
+
         Stop making unnecessary copy of CodeBlock Identifier Vector
         https://bugs.webkit.org/show_bug.cgi?id=119702
 
