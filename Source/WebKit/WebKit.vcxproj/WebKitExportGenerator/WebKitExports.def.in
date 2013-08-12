@@ -396,6 +396,7 @@ EXPORTS
         symbolWithPointer(?solidColor@BitmapImage@WebCore@@MBE?AVColor@2@XZ, ?solidColor@BitmapImage@WebCore@@MEBA?AVColor@2@XZ)
         symbolWithPointer(?draw@BitmapImage@WebCore@@MAEXPAVGraphicsContext@2@ABVFloatRect@2@1W4ColorSpace@2@W4CompositeOperator@2@W4BlendMode@2@W4RespectImageOrientationEnum@2@@Z, ?draw@BitmapImage@WebCore@@MEAAXPEAVGraphicsContext@2@AEBVFloatRect@2@1W4ColorSpace@2@W4CompositeOperator@2@W4BlendMode@2@W4RespectImageOrientationEnum@2@@Z)
         symbolWithPointer(?frameCount@BitmapImage@WebCore@@MAEIXZ, ?frameCount@BitmapImage@WebCore@@MEAA_KXZ)
+        ?frameOrientationAtIndex@BitmapImage@WebCore@@IAE?AVImageOrientation@2@I@Z
         symbolWithPointer(?addAuthorSheet@DocumentStyleSheetCollection@WebCore@@QAEXV?$PassRefPtr@VStyleSheetContents@WebCore@@@WTF@@@Z, ?addAuthorSheet@DocumentStyleSheetCollection@WebCore@@QEAAXV?$PassRefPtr@VStyleSheetContents@WebCore@@@WTF@@@Z)
         symbolWithPointer(?parseString@StyleSheetContents@WebCore@@QAE_NABVString@WTF@@@Z, ?parseString@StyleSheetContents@WebCore@@QEAA_NAEBVString@WTF@@@Z)
         symbolWithPointer(??0CSSParserContext@WebCore@@QAE@PAVDocument@1@ABVKURL@1@ABVString@WTF@@@Z, ??0CSSParserContext@WebCore@@QEAA@PEAVDocument@1@AEBVKURL@1@AEBVString@WTF@@@Z)
