@@ -1,3 +1,45 @@
+2013-08-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Use const AtomicStringImpl* in DocumentOrderedMap
+        https://bugs.webkit.org/show_bug.cgi?id=119700
+
+        Reviewed by Benjamin Poulain.
+
+        Use const AtomicStringImpl* in DocumentOrderedMap. It caught at least one bug that HTMLNameCollection'
+        subclasses' nodeMatches were taking const AtomicString& instead of AtomicStringImpl*. This was forcing
+        DocumentOrderedMap::getElementByWindowNamedItem and DocumentOrderedMap::getElementByDocumentNamedItem
+        to create temporary AtomicStrings.
+
+        * dom/DocumentOrderedMap.cpp:
+        (WebCore::keyMatchesId):
+        (WebCore::keyMatchesName):
+        (WebCore::keyMatchesMapName):
+        (WebCore::keyMatchesLowercasedMapName):
+        (WebCore::keyMatchesLabelForAttribute):
+        (WebCore::keyMatchesWindowNamedItem):
+        (WebCore::keyMatchesDocumentNamedItem):
+        (WebCore::DocumentOrderedMap::add):
+        (WebCore::DocumentOrderedMap::remove):
+        (WebCore::DocumentOrderedMap::get):
+        (WebCore::DocumentOrderedMap::getElementById):
+        (WebCore::DocumentOrderedMap::getElementByName):
+        (WebCore::DocumentOrderedMap::getElementByMapName):
+        (WebCore::DocumentOrderedMap::getElementByLowercasedMapName):
+        (WebCore::DocumentOrderedMap::getElementByLabelForAttribute):
+        (WebCore::DocumentOrderedMap::getElementByWindowNamedItem):
+        (WebCore::DocumentOrderedMap::getElementByDocumentNamedItem):
+        (WebCore::DocumentOrderedMap::getAllElementsById):
+        * dom/DocumentOrderedMap.h:
+        (WebCore::DocumentOrderedMap::containsSingle):
+        (WebCore::DocumentOrderedMap::contains):
+        (WebCore::DocumentOrderedMap::containsMultiple):
+        * html/HTMLNameCollection.cpp:
+        (WebCore::WindowNameCollection::nodeMatches):
+        (WebCore::DocumentNameCollection::nodeMatches):
+        * html/HTMLNameCollection.h:
+        (WebCore::WindowNameCollection::nodeMatches):
+        (WebCore::DocumentNameCollection::nodeMatches):
+
 2013-08-12  Beth Dakin  <bdakin@apple.com>
 
         The LayoutMilestones didLayout callback should only fire for the main frame

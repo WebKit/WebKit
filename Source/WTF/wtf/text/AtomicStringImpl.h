@@ -41,6 +41,11 @@ template<> struct
 ValueCheck<AtomicStringImpl*> {
     static void checkConsistency(const AtomicStringImpl*) { }
 };
+
+template<> struct
+ValueCheck<const AtomicStringImpl*> {
+    static void checkConsistency(const AtomicStringImpl*) { }
+};
 #endif
 
 }

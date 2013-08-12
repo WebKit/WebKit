@@ -43,37 +43,37 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-inline bool keyMatchesId(AtomicStringImpl* key, Element* element)
+inline bool keyMatchesId(const AtomicStringImpl* key, Element* element)
 {
     return element->getIdAttribute().impl() == key;
 }
 
-inline bool keyMatchesName(AtomicStringImpl* key, Element* element)
+inline bool keyMatchesName(const AtomicStringImpl* key, Element* element)
 {
     return element->getNameAttribute().impl() == key;
 }
 
-inline bool keyMatchesMapName(AtomicStringImpl* key, Element* element)
+inline bool keyMatchesMapName(const AtomicStringImpl* key, Element* element)
 {
     return isHTMLMapElement(element) && toHTMLMapElement(element)->getName().impl() == key;
 }
 
-inline bool keyMatchesLowercasedMapName(AtomicStringImpl* key, Element* element)
+inline bool keyMatchesLowercasedMapName(const AtomicStringImpl* key, Element* element)
 {
     return isHTMLMapElement(element) && toHTMLMapElement(element)->getName().lower().impl() == key;
 }
 
-inline bool keyMatchesLabelForAttribute(AtomicStringImpl* key, Element* element)
+inline bool keyMatchesLabelForAttribute(const AtomicStringImpl* key, Element* element)
 {
     return isHTMLLabelElement(element) && element->getAttribute(forAttr).impl() == key;
 }
 
-inline bool keyMatchesWindowNamedItem(AtomicStringImpl* key, Element* element)
+inline bool keyMatchesWindowNamedItem(const AtomicStringImpl* key, Element* element)
 {
     return WindowNameCollection::nodeMatches(element, key);
 }
 
-inline bool keyMatchesDocumentNamedItem(AtomicStringImpl* key, Element* element)
+inline bool keyMatchesDocumentNamedItem(const AtomicStringImpl* key, Element* element)
 {
     return DocumentNameCollection::nodeMatches(element, key);
 }
@@ -83,7 +83,7 @@ void DocumentOrderedMap::clear()
     m_map.clear();
 }
 
-void DocumentOrderedMap::add(AtomicStringImpl* key, Element* element)
+void DocumentOrderedMap::add(const AtomicStringImpl* key, Element* element)
 {
     ASSERT(key);
     ASSERT(element);
@@ -99,7 +99,7 @@ void DocumentOrderedMap::add(AtomicStringImpl* key, Element* element)
     entry.orderedList.clear();
 }
 
-void DocumentOrderedMap::remove(AtomicStringImpl* key, Element* element)
+void DocumentOrderedMap::remove(const AtomicStringImpl* key, Element* element)
 {
     ASSERT(key);
     ASSERT(element);
@@ -121,8 +121,8 @@ void DocumentOrderedMap::remove(AtomicStringImpl* key, Element* element)
     }
 }
 
-template<bool keyMatches(AtomicStringImpl*, Element*)>
-inline Element* DocumentOrderedMap::get(AtomicStringImpl* key, const TreeScope* scope) const
+template<bool keyMatches(const AtomicStringImpl*, Element*)>
+inline Element* DocumentOrderedMap::get(const AtomicStringImpl* key, const TreeScope* scope) const
 {
     ASSERT(key);
     ASSERT(scope);
@@ -149,42 +149,42 @@ inline Element* DocumentOrderedMap::get(AtomicStringImpl* key, const TreeScope* 
     return 0;
 }
 
-Element* DocumentOrderedMap::getElementById(AtomicStringImpl* key, const TreeScope* scope) const
+Element* DocumentOrderedMap::getElementById(const AtomicStringImpl* key, const TreeScope* scope) const
 {
     return get<keyMatchesId>(key, scope);
 }
 
-Element* DocumentOrderedMap::getElementByName(AtomicStringImpl* key, const TreeScope* scope) const
+Element* DocumentOrderedMap::getElementByName(const AtomicStringImpl* key, const TreeScope* scope) const
 {
     return get<keyMatchesName>(key, scope);
 }
 
-Element* DocumentOrderedMap::getElementByMapName(AtomicStringImpl* key, const TreeScope* scope) const
+Element* DocumentOrderedMap::getElementByMapName(const AtomicStringImpl* key, const TreeScope* scope) const
 {
     return get<keyMatchesMapName>(key, scope);
 }
 
-Element* DocumentOrderedMap::getElementByLowercasedMapName(AtomicStringImpl* key, const TreeScope* scope) const
+Element* DocumentOrderedMap::getElementByLowercasedMapName(const AtomicStringImpl* key, const TreeScope* scope) const
 {
     return get<keyMatchesLowercasedMapName>(key, scope);
 }
 
-Element* DocumentOrderedMap::getElementByLabelForAttribute(AtomicStringImpl* key, const TreeScope* scope) const
+Element* DocumentOrderedMap::getElementByLabelForAttribute(const AtomicStringImpl* key, const TreeScope* scope) const
 {
     return get<keyMatchesLabelForAttribute>(key, scope);
 }
 
-Element* DocumentOrderedMap::getElementByWindowNamedItem(AtomicStringImpl* key, const TreeScope* scope) const
+Element* DocumentOrderedMap::getElementByWindowNamedItem(const AtomicStringImpl* key, const TreeScope* scope) const
 {
     return get<keyMatchesWindowNamedItem>(key, scope);
 }
 
-Element* DocumentOrderedMap::getElementByDocumentNamedItem(AtomicStringImpl* key, const TreeScope* scope) const
+Element* DocumentOrderedMap::getElementByDocumentNamedItem(const AtomicStringImpl* key, const TreeScope* scope) const
 {
     return get<keyMatchesDocumentNamedItem>(key, scope);
 }
 
-const Vector<Element*>* DocumentOrderedMap::getAllElementsById(AtomicStringImpl* key, const TreeScope* scope) const
+const Vector<Element*>* DocumentOrderedMap::getAllElementsById(const AtomicStringImpl* key, const TreeScope* scope) const
 {
     ASSERT(key);
     ASSERT(scope);
