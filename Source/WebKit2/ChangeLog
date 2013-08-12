@@ -1,3 +1,13 @@
+2013-08-12  Anton Obzhirov  <a.obzhirov@samsung.com>
+
+        [GTK] Don't load GAIL when using GTK 3.2 or greater
+        https://bugs.webkit.org/show_bug.cgi?id=72735
+
+        Reviewed by Carlos Garcia Campos.
+
+        * UIProcess/API/gtk/tests/AccessibilityTestServer.cpp:
+        (main):
+
 2013-08-09  Beth Dakin  <bdakin@apple.com>
 
         AX: Not able to use arrow keys to read text in a WK2 app

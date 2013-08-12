@@ -31,8 +31,8 @@ static void loadChangedCallback(WebKitWebView*, WebKitLoadEvent loadEvent, gpoin
 
 int main(int argc, char** argv)
 {
-    // Make sure that both GAIL and the ATK bridge are loaded.
-    g_setenv("GTK_MODULES", "gail:atk-bridge", TRUE);
+    // Make sure that the ATK bridge is loaded.
+    g_setenv("GTK_MODULES", "atk-bridge", TRUE);
 
     gtk_init(&argc, &argv);
 

@@ -2154,8 +2154,7 @@ static void testWebkitAtkSetParentForObject()
     g_object_unref(parentContainer);
 }
 
-/* FIXME: Please remove this function and replace its usage by
-   gtk_test_init() when upgrading to GTK 3.2 or greater. */
+#ifdef GTK_API_VERSION_2
 static void initializeTestingFramework(int argc, char** argv)
 {
     /* Ensure GAIL is the only module loaded. */
@@ -2166,23 +2165,21 @@ static void initializeTestingFramework(int argc, char** argv)
     gtk_disable_setlocale();
     setlocale(LC_ALL, "C");
 
-#ifndef GTK_API_VERSION_2
-    /* gdk_disable_multidevice() available since GTK+ 3.0 only. */
-    gdk_disable_multidevice();
-#endif
-
     gtk_init(&argc, &argv);
 }
+#endif
 
 int main(int argc, char** argv)
 {
-  /* We can't just call to gtk_test_init() in this case because its
-     implementation makes sure that no GTK+ module will be loaded, and
-     we will need to load GAIL for tests that need to use AtkObjects
-     from non-WebKit GtkWidgets (e.g parentForRootObject). However, it
-     shouldn't be needed to do this in the future, as GAIL won't longer
-     be a separate module (but part of GTK+) since GTK+ 3.2 on. */
+#ifdef GTK_API_VERSION_2
+    /* We can't just call to gtk_test_init() in this case because its
+       implementation makes sure that no GTK+ module will be loaded, and
+       we will need to load GAIL for tests that need to use AtkObjects
+       from non-WebKit GtkWidgets (e.g parentForRootObject).*/
     initializeTestingFramework(argc, argv);
+#else
+    gtk_test_init(&argc, &argv, NULL);
+#endif
 
     g_test_bug_base("https://bugs.webkit.org/");
     g_test_add_func("/webkit/atk/caretOffsets", testWebkitAtkCaretOffsets);
