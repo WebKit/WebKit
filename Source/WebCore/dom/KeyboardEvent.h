@@ -59,10 +59,13 @@ struct KeyboardEventInit : public UIEventInit {
 class KeyboardEvent : public UIEventWithKeyState {
 public:
     enum KeyLocationCode {
-        DOMKeyLocationStandard      = 0x00,
-        DOMKeyLocationLeft          = 0x01,
-        DOMKeyLocationRight         = 0x02,
-        DOMKeyLocationNumpad        = 0x03
+        DOM_KEY_LOCATION_STANDARD   = 0x00,
+        DOM_KEY_LOCATION_LEFT       = 0x01,
+        DOM_KEY_LOCATION_RIGHT      = 0x02,
+        DOM_KEY_LOCATION_NUMPAD     = 0x03
+        // FIXME: The following values are not supported yet (crbug.com/265446)
+        // DOM_KEY_LOCATION_MOBILE     = 0x04,
+        // DOM_KEY_LOCATION_JOYSTICK   = 0x05
     };
         
     static PassRefPtr<KeyboardEvent> create()

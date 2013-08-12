@@ -74,21 +74,21 @@ static inline int windowsVirtualKeyCodeWithoutLocation(int keycode)
 static inline KeyboardEvent::KeyLocationCode keyLocationCode(const PlatformKeyboardEvent& key)
 {
     if (key.isKeypad())
-        return KeyboardEvent::DOMKeyLocationNumpad;
+        return KeyboardEvent::DOM_KEY_LOCATION_NUMPAD;
 
     switch (key.windowsVirtualKeyCode()) {
     case VK_LCONTROL:
     case VK_LSHIFT:
     case VK_LMENU:
     case VK_LWIN:
-        return KeyboardEvent::DOMKeyLocationLeft;
+        return KeyboardEvent::DOM_KEY_LOCATION_LEFT;
     case VK_RCONTROL:
     case VK_RSHIFT:
     case VK_RMENU:
     case VK_RWIN:
-        return KeyboardEvent::DOMKeyLocationRight;
+        return KeyboardEvent::DOM_KEY_LOCATION_RIGHT;
     default:
-        return KeyboardEvent::DOMKeyLocationStandard;
+        return KeyboardEvent::DOM_KEY_LOCATION_STANDARD;
     }
 }
 
@@ -102,7 +102,7 @@ KeyboardEventInit::KeyboardEventInit()
 }
 
 KeyboardEvent::KeyboardEvent()
-    : m_location(DOMKeyLocationStandard)
+    : m_location(DOM_KEY_LOCATION_STANDARD)
     , m_altGraphKey(false)
 {
 }

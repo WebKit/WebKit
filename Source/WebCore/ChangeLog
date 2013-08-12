@@ -1,3 +1,28 @@
+2013-08-12  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Define DOM_KEY_LOCATION_* constants on KeyboardEvent
+        https://bugs.webkit.org/show_bug.cgi?id=119341
+
+        Reviewed by Ryosuke Niwa.
+
+        Add support for the DOM_KEY_LOCATION_* constants on KeyboardEvent as per
+        the specification:
+        http://www.w3.org/TR/DOM-Level-3-Events/#events-KeyboardEvent
+
+        Those constants are already supported by IE10, Firefox 22 and since
+        recently Blink.
+
+        Note that the following constants are not supported / exposed yet:
+        DOM_KEY_LOCATION_MOBILE and DOM_KEY_LOCATION_JOYSTICK.
+
+        Test: fast/events/keyboardevent-location-constants.html
+
+        * dom/KeyboardEvent.cpp:
+        (WebCore::keyLocationCode):
+        (WebCore::KeyboardEvent::KeyboardEvent):
+        * dom/KeyboardEvent.h:
+        * dom/KeyboardEvent.idl:
+
 2013-08-12  Tim Horton  <timothy_horton@apple.com>
 
         dataLog dumpers for WebCore's basic geometry types

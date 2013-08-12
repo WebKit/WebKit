@@ -2,9 +2,29 @@
 <head>
 <script>
 
+function keyLocationToText(location)
+{
+    switch (location) {
+        case KeyboardEvent.DOM_KEY_LOCATION_STANDARD:
+            return "DOM_KEY_LOCATION_STANDARD";
+	case KeyboardEvent.DOM_KEY_LOCATION_LEFT:
+            return "DOM_KEY_LOCATION_LEFT";
+	case KeyboardEvent.DOM_KEY_LOCATION_RIGHT:
+            return "DOM_KEY_LOCATION_RIGHT";
+	case KeyboardEvent.DOM_KEY_LOCATION_NUMPAD:
+            return "DOM_KEY_LOCATION_NUMPAD";
+	case KeyboardEvent.DOM_KEY_LOCATION_MOBILE:
+            return "DOM_KEY_LOCATION_MOBILE";
+	case KeyboardEvent.DOM_KEY_LOCATION_JOYSTICK:
+            return "DOM_KEY_LOCATION_JOYSTICK";
+	default:
+            return "" + location
+    }
+}
+
 function keyevent(event) {
     var p = document.createElement("p");
-    p.appendChild(document.createTextNode(event.type + " - key: " + event.keyIdentifier + "@" + event.location + " (keyCode/charCode: " + event.keyCode + "/" + event.charCode + ")" + " modifiers: " + event.ctrlKey + "," + event.altKey + "," + event.shiftKey + "," + event.metaKey));
+    p.appendChild(document.createTextNode(event.type + " - key: " + event.keyIdentifier + "@" + keyLocationToText(event.location) + " (keyCode/charCode: " + event.keyCode + "/" + event.charCode + ")" + " modifiers: " + event.ctrlKey + "," + event.altKey + "," + event.shiftKey + "," + event.metaKey));
     document.getElementById("result").appendChild(p);
 }
 

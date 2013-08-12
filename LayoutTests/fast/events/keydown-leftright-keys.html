@@ -11,8 +11,6 @@ var lastKeyboardEvent;
 var VK_SHIFT = 16;
 var VK_CONTROL = 17;
 var VK_MENU = 18;
-var KEY_LOCATION_LEFT = 1;
-var KEY_LOCATION_RIGHT = 2;
 
 function recordKeyEvent(ev) {
     ev = ev || event;
@@ -44,13 +42,13 @@ textarea.focus();
 
 if (window.eventSender) {
     // location=0 indicates that we send events as standard keys.
-    testKeyEventWithLocation("leftShift", VK_SHIFT, "KEY_LOCATION_LEFT");
-    testKeyEventWithLocation("leftControl", VK_CONTROL, "KEY_LOCATION_LEFT");
-    testKeyEventWithLocation("leftAlt", VK_MENU, "KEY_LOCATION_LEFT");
+    testKeyEventWithLocation("leftShift", VK_SHIFT, "KeyboardEvent.DOM_KEY_LOCATION_LEFT");
+    testKeyEventWithLocation("leftControl", VK_CONTROL, "KeyboardEvent.DOM_KEY_LOCATION_LEFT");
+    testKeyEventWithLocation("leftAlt", VK_MENU, "KeyboardEvent.DOM_KEY_LOCATION_LEFT");
 
-    testKeyEventWithLocation("rightShift", VK_SHIFT, "KEY_LOCATION_RIGHT");
-    testKeyEventWithLocation("rightControl", VK_CONTROL, "KEY_LOCATION_RIGHT");
-    testKeyEventWithLocation("rightAlt", VK_MENU, "KEY_LOCATION_RIGHT");
+    testKeyEventWithLocation("rightShift", VK_SHIFT, "KeyboardEvent.DOM_KEY_LOCATION_RIGHT");
+    testKeyEventWithLocation("rightControl", VK_CONTROL, "KeyboardEvent.DOM_KEY_LOCATION_RIGHT");
+    testKeyEventWithLocation("rightAlt", VK_MENU, "KeyboardEvent.DOM_KEY_LOCATION_RIGHT");
 } else {
     debug("This test requires DumpRenderTree.");
 }

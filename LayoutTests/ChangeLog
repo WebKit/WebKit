@@ -1,3 +1,27 @@
+2013-08-12  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Define DOM_KEY_LOCATION_* constants on KeyboardEvent
+        https://bugs.webkit.org/show_bug.cgi?id=119341
+
+        Reviewed by Ryosuke Niwa.
+
+        Make use of the new DOM_KEY_LOCATION_* constants in the KeyboardEvent
+        test cases instead of hardcoding their values.
+
+        * fast/events/constructors/keyboard-event-constructor-expected.txt:
+        * fast/events/constructors/keyboard-event-constructor.html:
+        * fast/events/js-keyboard-event-creation-expected.txt:
+        * fast/events/js-keyboard-event-creation.html:
+        * fast/events/keyboardevent-location-constants-expected.txt: Added.
+        * fast/events/keyboardevent-location-constants.html: Added.
+        * fast/events/keydown-leftright-keys-expected.txt:
+        * fast/events/keydown-leftright-keys.html:
+        * fast/events/keydown-numpad-keys-expected.txt:
+        * fast/events/script-tests/keydown-numpad-keys.js:
+        (testKeyEventWithLocation):
+        * platform/efl/fast/events/js-keyboard-event-creation-expected.txt:
+        * platform/gtk/fast/events/js-keyboard-event-creation-expected.txt:
+
 2013-08-12  Alexey Proskuryakov  <ap@apple.com>
 
         Multiple CSP tests complain about undefined strings in echo-object-data.pl and echo-script-src.pl

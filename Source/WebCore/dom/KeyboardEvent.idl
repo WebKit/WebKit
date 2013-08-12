@@ -31,6 +31,17 @@
     const unsigned long       KEY_LOCATION_NUMPAD        = 0x03;
 #endif
 
+#if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
+    const unsigned long DOM_KEY_LOCATION_STANDARD = 0x00;
+    const unsigned long DOM_KEY_LOCATION_LEFT     = 0x01;
+    const unsigned long DOM_KEY_LOCATION_RIGHT    = 0x02;
+    const unsigned long DOM_KEY_LOCATION_NUMPAD   = 0x03;
+    // FIXME: The following constants are defined in the specification but
+    // not yet supported.
+    // const unsigned long DOM_KEY_LOCATION_MOBILE   = 0x04;
+    // const unsigned long DOM_KEY_LOCATION_JOYSTICK = 0x05;
+#endif
+
     [InitializedByEventConstructor] readonly attribute DOMString        keyIdentifier;
     [InitializedByEventConstructor] readonly attribute unsigned long    location;
     [InitializedByEventConstructor, ImplementedAs=location] readonly attribute unsigned long keyLocation; // Deprecated.
