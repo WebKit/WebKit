@@ -1,3 +1,47 @@
+2013-08-12  Oliver Hunt  <oliver@apple.com>
+
+        Stop making unnecessary copy of CodeBlock Identifier Vector
+        https://bugs.webkit.org/show_bug.cgi?id=119702
+
+        Reviewed by Michael Saboff.
+
+        Make CodeBlock simply use a separate Vector for additional Identifiers
+        and use the UnlinkedCodeBlock for the initial set of identifiers.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::printGetByIdOp):
+        (JSC::dumpStructure):
+        (JSC::dumpChain):
+        (JSC::CodeBlock::printGetByIdCacheStatus):
+        (JSC::CodeBlock::printPutByIdOp):
+        (JSC::CodeBlock::dumpBytecode):
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::CodeBlock::shrinkToFit):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::numberOfIdentifiers):
+        (JSC::CodeBlock::numberOfAdditionalIdentifiers):
+        (JSC::CodeBlock::addAdditionalIdentifier):
+        (JSC::CodeBlock::identifier):
+        * dfg/DFGDesiredIdentifiers.cpp:
+        (JSC::DFG::DesiredIdentifiers::reallyAdd):
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emitSlow_op_get_arguments_length):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_get_by_id):
+        (JSC::JIT::compileGetByIdHotPath):
+        (JSC::JIT::emitSlow_op_get_by_id):
+        (JSC::JIT::compileGetByIdSlowCase):
+        (JSC::JIT::emitSlow_op_put_by_id):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_get_by_id):
+        (JSC::JIT::compileGetByIdHotPath):
+        (JSC::JIT::compileGetByIdSlowCase):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+
 2013-08-08  Mark Lam  <mark.lam@apple.com>
 
         Restoring use of StackIterator instead of Interpreter::getStacktrace().

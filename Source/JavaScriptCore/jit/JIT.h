@@ -538,8 +538,8 @@ namespace JSC {
         void emitJumpSlowCaseIfNotJSCell(int virtualRegisterIndex);
         void emitJumpSlowCaseIfNotJSCell(int virtualRegisterIndex, RegisterID tag);
 
-        void compileGetByIdHotPath(Identifier*);
-        void compileGetByIdSlowCase(int resultVReg, int baseVReg, Identifier*, Vector<SlowCaseEntry>::iterator&);
+        void compileGetByIdHotPath(const Identifier*);
+        void compileGetByIdSlowCase(int resultVReg, int baseVReg, const Identifier*, Vector<SlowCaseEntry>::iterator&);
         void compileGetDirectOffset(RegisterID base, RegisterID resultTag, RegisterID resultPayload, PropertyOffset cachedOffset);
         void compileGetDirectOffset(JSObject* base, RegisterID resultTag, RegisterID resultPayload, PropertyOffset cachedOffset);
         void compileGetDirectOffset(RegisterID base, RegisterID resultTag, RegisterID resultPayload, RegisterID offset, FinalObjectMode = MayBeFinal);
@@ -612,8 +612,8 @@ namespace JSC {
         void compileBinaryArithOp(OpcodeID, unsigned dst, unsigned src1, unsigned src2, OperandTypes opi);
         void compileBinaryArithOpSlowCase(Instruction*, OpcodeID, Vector<SlowCaseEntry>::iterator&, unsigned dst, unsigned src1, unsigned src2, OperandTypes, bool op1HasImmediateIntFastCase, bool op2HasImmediateIntFastCase);
 
-        void compileGetByIdHotPath(int baseVReg, Identifier*);
-        void compileGetByIdSlowCase(int resultVReg, int baseVReg, Identifier*, Vector<SlowCaseEntry>::iterator&);
+        void compileGetByIdHotPath(int baseVReg, const Identifier*);
+        void compileGetByIdSlowCase(int resultVReg, int baseVReg, const Identifier*, Vector<SlowCaseEntry>::iterator&);
         void compileGetDirectOffset(RegisterID base, RegisterID result, PropertyOffset cachedOffset);
         void compileGetDirectOffset(JSObject* base, RegisterID result, PropertyOffset cachedOffset);
         void compileGetDirectOffset(RegisterID base, RegisterID result, RegisterID offset, RegisterID scratch, FinalObjectMode = MayBeFinal);

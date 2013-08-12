@@ -67,7 +67,7 @@ void DesiredIdentifiers::reallyAdd(VM& vm)
     for (unsigned i = 0; i < m_addedIdentifiers.size(); ++i) {
         StringImpl* rep = m_addedIdentifiers[i];
         ASSERT(rep->hasAtLeastOneRef());
-        m_codeBlock->addIdentifier(Identifier(&vm, rep));
+        m_codeBlock->addAdditionalIdentifier(Identifier(&vm, rep));
     }
 }
 

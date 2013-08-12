@@ -655,9 +655,16 @@ public:
 
     // Constant Pool
 
-    size_t numberOfIdentifiers() const { return m_identifiers.size(); }
-    void addIdentifier(const Identifier& i) { return m_identifiers.append(i); }
-    Identifier& identifier(int index) { return m_identifiers[index]; }
+    size_t numberOfIdentifiers() const { return m_unlinkedCode->numberOfIdentifiers() + numberOfAdditionalIdentifiers(); }
+    size_t numberOfAdditionalIdentifiers() const { return m_additionalIdentifiers.size(); }
+    void addAdditionalIdentifier(const Identifier& i) { return m_additionalIdentifiers.append(i); }
+    const Identifier& identifier(int index) const
+    {
+        size_t unlinkedIdentifiers = m_unlinkedCode->numberOfIdentifiers();
+        if (static_cast<unsigned>(index) < unlinkedIdentifiers)
+            return m_unlinkedCode->identifier(index);
+        return m_additionalIdentifiers[index - unlinkedIdentifiers];
+    }
 
     size_t numberOfConstantRegisters() const { return m_constantRegisters.size(); }
     unsigned addConstant(JSValue v)
@@ -963,12 +970,6 @@ private:
     void updateAllPredictionsAndCountLiveness(OperationInProgress, unsigned& numberOfLiveNonArgumentValueProfiles, unsigned& numberOfSamplesInProfiles);
 #endif
 
-    void setIdentifiers(const Vector<Identifier>& identifiers)
-    {
-        RELEASE_ASSERT(m_identifiers.isEmpty());
-        m_identifiers.appendVector(identifiers);
-    }
-
     void setConstantRegisters(const Vector<WriteBarrier<Unknown> >& constants)
     {
         size_t count = constants.size();
@@ -1086,7 +1087,7 @@ private:
     SegmentedVector<ObjectAllocationProfile, 8> m_objectAllocationProfiles;
 
     // Constant Pool
-    Vector<Identifier> m_identifiers;
+    Vector<Identifier> m_additionalIdentifiers;
     COMPILE_ASSERT(sizeof(Register) == sizeof(WriteBarrier<Unknown>), Register_must_be_same_size_as_WriteBarrier_Unknown);
     // TODO: This could just be a pointer to m_unlinkedCodeBlock's data, but the DFG mutates
     // it, so we're stuck with it for now.

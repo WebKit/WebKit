@@ -518,7 +518,7 @@ void JIT::emit_op_get_by_id(Instruction* currentInstruction)
 {
     unsigned resultVReg = currentInstruction[1].u.operand;
     unsigned baseVReg = currentInstruction[2].u.operand;
-    Identifier* ident = &(m_codeBlock->identifier(currentInstruction[3].u.operand));
+    const Identifier* ident = &(m_codeBlock->identifier(currentInstruction[3].u.operand));
 
     emitGetVirtualRegister(baseVReg, regT0);
     compileGetByIdHotPath(baseVReg, ident);
@@ -526,7 +526,7 @@ void JIT::emit_op_get_by_id(Instruction* currentInstruction)
     emitPutVirtualRegister(resultVReg);
 }
 
-void JIT::compileGetByIdHotPath(int baseVReg, Identifier* ident)
+void JIT::compileGetByIdHotPath(int baseVReg, const Identifier* ident)
 {
     // As for put_by_id, get_by_id requires the offset of the Structure and the offset of the access to be patched.
     // Additionally, for get_by_id we need patch the offset of the branch to the slow case (we patch this to jump
@@ -562,13 +562,13 @@ void JIT::emitSlow_op_get_by_id(Instruction* currentInstruction, Vector<SlowCase
 {
     unsigned resultVReg = currentInstruction[1].u.operand;
     unsigned baseVReg = currentInstruction[2].u.operand;
-    Identifier* ident = &(m_codeBlock->identifier(currentInstruction[3].u.operand));
+    const Identifier* ident = &(m_codeBlock->identifier(currentInstruction[3].u.operand));
 
     compileGetByIdSlowCase(resultVReg, baseVReg, ident, iter);
     emitValueProfilingSite(regT4);
 }
 
-void JIT::compileGetByIdSlowCase(int resultVReg, int baseVReg, Identifier* ident, Vector<SlowCaseEntry>::iterator& iter)
+void JIT::compileGetByIdSlowCase(int resultVReg, int baseVReg, const Identifier* ident, Vector<SlowCaseEntry>::iterator& iter)
 {
     // As for the hot path of get_by_id, above, we ensure that we can use an architecture specific offset
     // so that we only need track one pointer into the slow case code - we track a pointer to the location
@@ -628,7 +628,7 @@ void JIT::emit_op_put_by_id(Instruction* currentInstruction)
 void JIT::emitSlow_op_put_by_id(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     unsigned baseVReg = currentInstruction[1].u.operand;
-    Identifier* ident = &(m_codeBlock->identifier(currentInstruction[2].u.operand));
+    const Identifier* ident = &(m_codeBlock->identifier(currentInstruction[2].u.operand));
     unsigned direct = currentInstruction[8].u.operand;
 
     linkSlowCaseIfNotJSCell(iter, baseVReg);

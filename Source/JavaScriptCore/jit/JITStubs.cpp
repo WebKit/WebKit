@@ -2186,7 +2186,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_resolve_scope)
     ExecState* exec = stackFrame.callFrame;
     Instruction* pc = stackFrame.args[0].pc();
 
-    Identifier& ident = exec->codeBlock()->identifier(pc[2].u.operand);
+    const Identifier& ident = exec->codeBlock()->identifier(pc[2].u.operand);
     return JSValue::encode(JSScope::resolve(exec, exec->scope(), ident));
 }
 
@@ -2196,7 +2196,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_from_scope)
     ExecState* exec = stackFrame.callFrame;
     Instruction* pc = stackFrame.args[0].pc();
 
-    Identifier& ident = exec->codeBlock()->identifier(pc[3].u.operand);
+    const Identifier& ident = exec->codeBlock()->identifier(pc[3].u.operand);
     JSObject* scope = jsCast<JSObject*>(exec->uncheckedR(pc[2].u.operand).jsValue());
     ResolveModeAndType modeAndType(pc[4].u.operand);
 
@@ -2229,7 +2229,7 @@ DEFINE_STUB_FUNCTION(void, op_put_to_scope)
     Instruction* pc = stackFrame.args[0].pc();
 
     CodeBlock* codeBlock = exec->codeBlock();
-    Identifier& ident = codeBlock->identifier(pc[2].u.operand);
+    const Identifier& ident = codeBlock->identifier(pc[2].u.operand);
     JSObject* scope = jsCast<JSObject*>(exec->uncheckedR(pc[1].u.operand).jsValue());
     JSValue value = exec->r(pc[3].u.operand).jsValue();
     ResolveModeAndType modeAndType = ResolveModeAndType(pc[4].u.operand);
