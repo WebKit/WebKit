@@ -3404,6 +3404,7 @@ enable?(WEB_AUDIO) {
         platform/audio/DenormalDisabler.h \
         platform/audio/DirectConvolver.h \
         platform/audio/Distance.h \
+        platform/audio/DownSampler.h \
         platform/audio/DynamicsCompressor.h \
         platform/audio/DynamicsCompressorKernel.h \
         platform/audio/EqualPowerPanner.h \
@@ -3422,6 +3423,7 @@ enable?(WEB_AUDIO) {
         platform/audio/Reverb.h \
         platform/audio/ReverbInputBuffer.h \
         platform/audio/SincResampler.h \
+        platform/audio/UpSampler.h \
         platform/audio/VectorMath.h \
         platform/audio/ZeroPole.h
 
@@ -3485,6 +3487,7 @@ enable?(WEB_AUDIO) {
         platform/audio/Cone.cpp \
         platform/audio/DirectConvolver.cpp \
         platform/audio/Distance.cpp \
+        platform/audio/DownSampler.cpp \
         platform/audio/DynamicsCompressor.cpp \
         platform/audio/DynamicsCompressorKernel.cpp \
         platform/audio/EqualPowerPanner.cpp \
@@ -3505,6 +3508,7 @@ enable?(WEB_AUDIO) {
         platform/audio/Reverb.cpp \
         platform/audio/ReverbInputBuffer.cpp \
         platform/audio/SincResampler.cpp \
+        platform/audio/UpSampler.cpp \
         platform/audio/VectorMath.cpp \
         platform/audio/ZeroPole.cpp
 
