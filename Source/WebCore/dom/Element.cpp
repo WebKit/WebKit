@@ -2378,10 +2378,17 @@ Element* Element::firstElementChild() const
 
 Element* Element::lastElementChild() const
 {
-    Node* n = lastChild();
-    while (n && !n->isElementNode())
-        n = n->previousSibling();
-    return toElement(n);
+    return ElementTraversal::lastWithin(this);
+}
+
+Element* Element::previousElementSibling() const
+{
+    return ElementTraversal::previousSibling(this);
+}
+
+Element* Element::nextElementSibling() const
+{
+    return ElementTraversal::nextSibling(this);
 }
 
 unsigned Element::childElementCount() const

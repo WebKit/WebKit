@@ -27,6 +27,7 @@
 #include "IndentOutdentCommand.h"
 
 #include "Document.h"
+#include "ElementTraversal.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
 #include "InsertLineBreakCommand.h"
@@ -71,8 +72,8 @@ bool IndentOutdentCommand::tryIndentingAsListItem(const Position& start, const P
         return false;
     
     // FIXME: previousElementSibling does not ignore non-rendered content like <span></span>.  Should we?
-    Element* previousList = selectedListItem->previousElementSibling();
-    Element* nextList = selectedListItem->nextElementSibling();
+    Element* previousList = ElementTraversal::previousSibling(selectedListItem);
+    Element* nextList = ElementTraversal::nextSibling(selectedListItem);
 
     RefPtr<Element> newList = document()->createElement(listNode->tagQName(), false);
     insertNodeBefore(newList, selectedListItem);

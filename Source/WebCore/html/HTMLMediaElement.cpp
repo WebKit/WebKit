@@ -41,6 +41,7 @@
 #include "DiagnosticLoggingKeys.h"
 #include "DocumentLoader.h"
 #include "ElementShadow.h"
+#include "ElementTraversal.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "ExceptionCode.h"
@@ -534,9 +535,9 @@ void HTMLMediaElement::finishParsingChildren()
 #if ENABLE(VIDEO_TRACK)
     if (!RuntimeEnabledFeatures::webkitVideoTrackEnabled())
         return;
-    
-    for (Node* node = firstChild(); node; node = node->nextSibling()) {
-        if (node->hasTagName(trackTag)) {
+
+    for (Element* element = ElementTraversal::firstWithin(this); element; element = ElementTraversal::nextSibling(element)) {
+        if (element->hasTagName(trackTag)) {
             scheduleDelayedAction(ConfigureTextTracks);
             break;
         }

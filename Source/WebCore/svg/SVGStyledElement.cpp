@@ -102,7 +102,7 @@ String SVGStyledElement::title() const
     // If we aren't an instance in a <use> or the <use> title was not found, then find the first
     // <title> child of this element.
     Element* titleElement = ElementTraversal::firstWithin(this);
-    for (; titleElement; titleElement = ElementTraversal::nextSkippingChildren(titleElement, this)) {
+    for (; titleElement; titleElement = ElementTraversal::nextSibling(titleElement)) {
         if (titleElement->hasTagName(SVGNames::titleTag) && titleElement->isSVGElement())
             break;
     }

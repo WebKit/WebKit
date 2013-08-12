@@ -34,6 +34,7 @@
 #include "Document.h"
 #include "EditingStyle.h"
 #include "Editor.h"
+#include "ElementTraversal.h"
 #include "Frame.h"
 #include "HTMLFontElement.h"
 #include "HTMLInterchange.h"
@@ -99,11 +100,11 @@ bool isStyleSpanOrSpanWithOnlyStyleAttribute(const Element* element)
     return hasNoAttributeOrOnlyStyleAttribute(toHTMLElement(element), AllowNonEmptyStyleAttribute);
 }
 
-static inline bool isSpanWithoutAttributesOrUnstyledStyleSpan(const Node* node)
+static inline bool isSpanWithoutAttributesOrUnstyledStyleSpan(const Element* element)
 {
-    if (!node || !node->isHTMLElement() || !node->hasTagName(spanTag))
+    if (!element || !element->isHTMLElement() || !element->hasTagName(spanTag))
         return false;
-    return hasNoAttributeOrOnlyStyleAttribute(toHTMLElement(node), StyleAttributeShouldBeEmpty);
+    return hasNoAttributeOrOnlyStyleAttribute(toHTMLElement(element), StyleAttributeShouldBeEmpty);
 }
 
 bool isEmptyFontTag(const Element* element, ShouldStyleAttributeBeEmpty shouldStyleAttributeBeEmpty)
@@ -440,12 +441,11 @@ void ApplyStyleCommand::cleanupUnstyledAppleStyleSpans(Node* dummySpanAncestor)
     // can be propagated, which can result in more splitting. If a dummy span gets
     // cloned/split, the new node is always a sibling of it. Therefore, we scan
     // all the children of the dummy's parent
-    Node* next;
-    for (Node* node = dummySpanAncestor->firstChild(); node; node = next) {
-        next = node->nextSibling();
-        if (isSpanWithoutAttributesOrUnstyledStyleSpan(node))
-            removeNodePreservingChildren(node);
-        node = next;
+    Element* next;
+    for (Element* element = ElementTraversal::firstWithin(dummySpanAncestor); element; element = next) {
+        next = ElementTraversal::nextSibling(element);
+        if (isSpanWithoutAttributesOrUnstyledStyleSpan(element))
+            removeNodePreservingChildren(element);
     }
 }
 

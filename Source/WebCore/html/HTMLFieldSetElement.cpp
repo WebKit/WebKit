@@ -67,7 +67,7 @@ void HTMLFieldSetElement::disabledAttributeChanged()
 void HTMLFieldSetElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
 {
     HTMLFormControlElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
-    for (Element* element = ElementTraversal::firstWithin(this); element; element = ElementTraversal::nextSkippingChildren(element, this)) {
+    for (Element* element = ElementTraversal::firstWithin(this); element; element = ElementTraversal::nextSibling(element)) {
         if (element->hasTagName(legendTag))
             invalidateDisabledStateUnder(element);
     }
@@ -91,7 +91,7 @@ RenderObject* HTMLFieldSetElement::createRenderer(RenderArena* arena, RenderStyl
 
 HTMLLegendElement* HTMLFieldSetElement::legend() const
 {
-    for (Element* child = ElementTraversal::firstWithin(this); child; child = ElementTraversal::nextSkippingChildren(child, this)) {
+    for (Element* child = ElementTraversal::firstWithin(this); child; child = ElementTraversal::nextSibling(child)) {
         if (child->hasTagName(legendTag))
             return static_cast<HTMLLegendElement*>(child);
     }

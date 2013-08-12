@@ -31,6 +31,7 @@
 
 #include "ColorSpace.h"
 #include "Document.h"
+#include "ElementTraversal.h"
 #include "FEColorMatrix.h"
 #include "FEComponentTransfer.h"
 #include "FEDropShadow.h"
@@ -159,15 +160,13 @@ PassRefPtr<FilterEffect> FilterEffectRenderer::buildReferenceFilter(RenderObject
     // This may need a spec clarification.
     RefPtr<SVGFilterBuilder> builder = SVGFilterBuilder::create(previousEffect, SourceAlpha::create(this));
 
-    for (Node* node = filter->firstChild(); node; node = node->nextSibling()) {
-        if (!node->isSVGElement())
+    for (Element* element = ElementTraversal::firstWithin(filter); element; element = ElementTraversal::nextSibling(element)) {
+        if (!element->isSVGElement())
             continue;
-
-        SVGElement* element = toSVGElement(node);
-        if (!element->isFilterEffect())
+        SVGElement* svgElement = toSVGElement(element);
+        if (!svgElement->isFilterEffect())
             continue;
-
-        SVGFilterPrimitiveStandardAttributes* effectElement = static_cast<SVGFilterPrimitiveStandardAttributes*>(element);
+        SVGFilterPrimitiveStandardAttributes* effectElement = static_cast<SVGFilterPrimitiveStandardAttributes*>(svgElement);
 
         effect = effectElement->build(builder.get(), this);
         if (!effect)

@@ -1,3 +1,67 @@
+2013-08-12  Antti Koivisto  <antti@apple.com>
+
+        Add ElementTraversal::next/previousSibling
+        https://bugs.webkit.org/show_bug.cgi?id=119681
+
+        Reviewed by Andreas Kling.
+
+        Add nextSibling/previousSibling/lastWithin to ElementTraversal namespace.
+        
+        - Use them to replace internal use of Element::next/previousElementSibling DOM API for traversal.
+        - Replace some Node::nextSibling() usage with ElementTraversal::nextSibling() for tighter code.
+        - Replace ElementTraversal::nextSkippingChildren where it is used to traverse over immediate children only.
+
+        * css/SelectorChecker.cpp:
+        (WebCore::isFirstChildElement):
+        (WebCore::isLastChildElement):
+        (WebCore::isFirstOfType):
+        (WebCore::isLastOfType):
+        (WebCore::countElementsBefore):
+        (WebCore::countElementsOfTypeBefore):
+        (WebCore::countElementsAfter):
+        (WebCore::countElementsOfTypeAfter):
+        * dom/Element.cpp:
+        (WebCore::Element::lastElementChild):
+        (WebCore::Element::previousElementSibling):
+        (WebCore::Element::nextElementSibling):
+        * dom/Element.h:
+        * dom/ElementTraversal.h:
+        (WebCore::ElementTraversal::lastElementWithinTemplate):
+        (WebCore::ElementTraversal::lastWithin):
+        (WebCore::ElementTraversal::traverseNextSiblingElementTemplate):
+        (WebCore::ElementTraversal::nextSibling):
+        (WebCore::ElementTraversal::traversePreviousSiblingElementTemplate):
+        (WebCore::ElementTraversal::previousSibling):
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::isSpanWithoutAttributesOrUnstyledStyleSpan):
+        (WebCore::ApplyStyleCommand::cleanupUnstyledAppleStyleSpans):
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::breakOutOfEmptyListItem):
+        * editing/IndentOutdentCommand.cpp:
+        (WebCore::IndentOutdentCommand::tryIndentingAsListItem):
+        * editing/InsertListCommand.cpp:
+        (WebCore::InsertListCommand::mergeWithNeighboringLists):
+        * editing/markup.cpp:
+        (WebCore::createContextualFragment):
+        * html/HTMLCollection.cpp:
+        (WebCore::firstMatchingChildElement):
+        (WebCore::nextMatchingSiblingElement):
+        (WebCore::HTMLCollection::traverseNextElement):
+        (WebCore::HTMLCollection::traverseForwardToOffset):
+        * html/HTMLFieldSetElement.cpp:
+        (WebCore::HTMLFieldSetElement::childrenChanged):
+        (WebCore::HTMLFieldSetElement::legend):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::finishParsingChildren):
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::containsJavaApplet):
+        * rendering/FilterEffectRenderer.cpp:
+        (WebCore::FilterEffectRenderer::buildReferenceFilter):
+        * style/StyleResolveTree.cpp:
+        (WebCore::Style::resolveTree):
+        * svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::title):
+
 2013-08-12  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt] Add Support for canvas blend modes

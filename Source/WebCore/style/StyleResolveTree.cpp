@@ -28,6 +28,7 @@
 
 #include "Element.h"
 #include "ElementRareData.h"
+#include "ElementTraversal.h"
 #include "NodeRenderStyle.h"
 #include "NodeTraversal.h"
 #include "RenderObject.h"
@@ -293,12 +294,10 @@ void resolveTree(Document* document, Change change)
             document->renderer()->setStyle(documentStyle.release());
     }
 
-    for (Node* child = document->firstChild(); child; child = child->nextSibling()) {
-        if (!child->isElementNode())
+    for (Element* child = ElementTraversal::firstWithin(document); child; child = ElementTraversal::nextSibling(child)) {
+        if (change < Inherit && !child->childNeedsStyleRecalc() && !child->needsStyleRecalc())
             continue;
-        Element* elementChild = toElement(child);
-        if (change >= Inherit || elementChild->childNeedsStyleRecalc() || elementChild->needsStyleRecalc())
-            resolveTree(elementChild, change);
+        resolveTree(child, change);
     }
 }
 

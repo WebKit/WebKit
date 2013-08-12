@@ -31,6 +31,7 @@
 #include "CSSSelector.h"
 #include "CSSSelectorList.h"
 #include "Document.h"
+#include "ElementTraversal.h"
 #include "FocusController.h"
 #include "Frame.h"
 #include "FrameSelection.h"
@@ -66,17 +67,17 @@ using namespace HTMLNames;
     
 static inline bool isFirstChildElement(const Element* element)
 {
-    return !element->previousElementSibling();
+    return !ElementTraversal::previousSibling(element);
 }
 
 static inline bool isLastChildElement(const Element* element)
 {
-    return !element->nextElementSibling();
+    return !ElementTraversal::nextSibling(element);
 }
 
 static inline bool isFirstOfType(const Element* element, const QualifiedName& type)
 {
-    for (const Element* sibling = element->previousElementSibling(); sibling; sibling = sibling->previousElementSibling()) {
+    for (const Element* sibling = ElementTraversal::previousSibling(element); sibling; sibling = ElementTraversal::previousSibling(sibling)) {
         if (sibling->hasTagName(type))
             return false;
     }
@@ -85,7 +86,7 @@ static inline bool isFirstOfType(const Element* element, const QualifiedName& ty
 
 static inline bool isLastOfType(const Element* element, const QualifiedName& type)
 {
-    for (const Element* sibling = element->nextElementSibling(); sibling; sibling = sibling->nextElementSibling()) {
+    for (const Element* sibling = ElementTraversal::nextSibling(element); sibling; sibling = ElementTraversal::nextSibling(sibling)) {
         if (sibling->hasTagName(type))
             return false;
     }
@@ -95,7 +96,7 @@ static inline bool isLastOfType(const Element* element, const QualifiedName& typ
 static inline int countElementsBefore(const Element* element)
 {
     int count = 0;
-    for (const Element* sibling = element->previousElementSibling(); sibling; sibling = sibling->previousElementSibling()) {
+    for (const Element* sibling = ElementTraversal::previousSibling(element); sibling; sibling = ElementTraversal::previousSibling(sibling)) {
         unsigned index = sibling->childIndex();
         if (index) {
             count += index;
@@ -109,7 +110,7 @@ static inline int countElementsBefore(const Element* element)
 static inline int countElementsOfTypeBefore(const Element* element, const QualifiedName& type)
 {
     int count = 0;
-    for (const Element* sibling = element->previousElementSibling(); sibling; sibling = sibling->previousElementSibling()) {
+    for (const Element* sibling = ElementTraversal::previousSibling(element); sibling; sibling = ElementTraversal::previousSibling(sibling)) {
         if (sibling->hasTagName(type))
             ++count;
     }
@@ -119,7 +120,7 @@ static inline int countElementsOfTypeBefore(const Element* element, const Qualif
 static inline int countElementsAfter(const Element* element)
 {
     int count = 0;
-    for (const Element* sibling = element->nextElementSibling(); sibling; sibling = sibling->nextElementSibling())
+    for (const Element* sibling = ElementTraversal::nextSibling(element); sibling; sibling = ElementTraversal::nextSibling(sibling))
         ++count;
     return count;
 }
@@ -127,7 +128,7 @@ static inline int countElementsAfter(const Element* element)
 static inline int countElementsOfTypeAfter(const Element* element, const QualifiedName& type)
 {
     int count = 0;
-    for (const Element* sibling = element->nextElementSibling(); sibling; sibling = sibling->nextElementSibling()) {
+    for (const Element* sibling = ElementTraversal::nextSibling(element); sibling; sibling = ElementTraversal::nextSibling(sibling)) {
         if (sibling->hasTagName(type))
             ++count;
     }

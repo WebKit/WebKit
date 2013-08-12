@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "Element.h"
+#include "ElementTraversal.h"
 #include "InsertListCommand.h"
 #include "ExceptionCodePlaceholder.h"
 #include "htmlediting.h"
@@ -69,10 +70,13 @@ PassRefPtr<HTMLElement> InsertListCommand::mergeWithNeighboringLists(PassRefPtr<
     if (canMergeLists(previousList, list.get()))
         mergeIdenticalElements(previousList, list);
 
-    if (!list || !list->nextElementSibling() || !list->nextElementSibling()->isHTMLElement())
+    if (!list)
+        return 0;
+    Element* sibling = ElementTraversal::nextSibling(list.get());
+    if (!sibling || !sibling->isHTMLElement())
         return list.release();
 
-    RefPtr<HTMLElement> nextList = toHTMLElement(list->nextElementSibling());
+    RefPtr<HTMLElement> nextList = toHTMLElement(sibling);
     if (canMergeLists(list.get(), nextList.get())) {
         mergeIdenticalElements(list, nextList);
         return nextList.release();

@@ -31,15 +31,23 @@
 namespace WebCore {
 namespace ElementTraversal {
 
-// First element child of the node.
+// First or last element child of the node.
 Element* firstWithin(const Node*);
 Element* firstWithin(const ContainerNode*);
+Element* lastWithin(const Node*);
+Element* lastWithin(const ContainerNode*);
 
 // Pre-order traversal skipping non-element nodes.
 Element* next(const Node*);
 Element* next(const Node*, const Node* stayWithin);
 Element* next(const ContainerNode*);
 Element* next(const ContainerNode*, const Node* stayWithin);
+
+// Next or previous Element sibling if there is one.
+Element* nextSibling(const Node*);
+Element* nextSibling(const ContainerNode*);
+Element* previousSibling(const Node*);
+Element* previousSibling(const ContainerNode*);
 
 // Like next, but skips children.
 Element* nextSkippingChildren(const Node*);
@@ -58,6 +66,7 @@ Element* pseudoAwarePreviousSibling(const Node*);
 }
 
 namespace ElementTraversal {
+
 template <class NodeType>
 inline Element* firstElementWithinTemplate(NodeType* current)
 {
@@ -69,6 +78,17 @@ inline Element* firstElementWithinTemplate(NodeType* current)
 }
 inline Element* firstWithin(const ContainerNode* current) { return firstElementWithinTemplate(current); }
 inline Element* firstWithin(const Node* current) { return firstElementWithinTemplate(current); }
+
+template <class NodeType>
+inline Element* lastElementWithinTemplate(NodeType* current)
+{
+    Node* node = current->lastChild();
+    while (node && !node->isElementNode())
+        node = node->previousSibling();
+    return toElement(node);
+}
+inline Element* lastWithin(const ContainerNode* current) { return lastElementWithinTemplate(current); }
+inline Element* lastWithin(const Node* current) { return lastElementWithinTemplate(current); }
 
 template <class NodeType>
 inline Element* traverseNextElementTemplate(NodeType* current)
@@ -91,6 +111,28 @@ inline Element* traverseNextElementTemplate(NodeType* current, const Node* stayW
 }
 inline Element* next(const ContainerNode* current, const Node* stayWithin) { return traverseNextElementTemplate(current, stayWithin); }
 inline Element* next(const Node* current, const Node* stayWithin) { return traverseNextElementTemplate(current, stayWithin); }
+
+template <class NodeType>
+inline Element* traverseNextSiblingElementTemplate(NodeType* current)
+{
+    Node* node = current->nextSibling();
+    while (node && !node->isElementNode())
+        node = node->nextSibling();
+    return toElement(node);
+}
+inline Element* nextSibling(const ContainerNode* current) { return traverseNextSiblingElementTemplate(current); }
+inline Element* nextSibling(const Node* current) { return traverseNextSiblingElementTemplate(current); }
+
+template <class NodeType>
+inline Element* traversePreviousSiblingElementTemplate(NodeType* current)
+{
+    Node* node = current->previousSibling();
+    while (node && !node->isElementNode())
+        node = node->previousSibling();
+    return toElement(node);
+}
+inline Element* previousSibling(const ContainerNode* current) { return traversePreviousSiblingElementTemplate(current); }
+inline Element* previousSibling(const Node* current) { return traversePreviousSiblingElementTemplate(current); }
 
 template <class NodeType>
 inline Element* traverseNextElementSkippingChildrenTemplate(NodeType* current)
