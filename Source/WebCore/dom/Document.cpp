@@ -146,7 +146,6 @@
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "StylePropertySet.h"
-#include "StyleResolveForDocument.h"
 #include "StyleResolver.h"
 #include "StyleSheetContents.h"
 #include "StyleSheetList.h"
@@ -1777,25 +1776,12 @@ void Document::recalcStyle(Style::Change change)
         if (m_pendingStyleRecalcShouldForce)
             change = Style::Force;
 
-        // Recalculating the root style (on the document) is not needed in the common case.
-        if ((change == Style::Force) || (shouldDisplaySeamlesslyWithParent() && (change >= Style::Inherit))) {
-            // style selector may set this again during recalc
+        if (change == Style::Force) {
+            // This may get set again during style resolve.
             m_hasNodesWithPlaceholderStyle = false;
-
-            RefPtr<RenderStyle> documentStyle = Style::resolveForDocument(this);
-
-            Style::Change documentChange = Style::determineChange(documentStyle.get(), renderer()->style(), settings());
-            if (documentChange != Style::NoChange)
-                renderer()->setStyle(documentStyle.release());
         }
 
-        for (Node* n = firstChild(); n; n = n->nextSibling()) {
-            if (!n->isElementNode())
-                continue;
-            Element* element = toElement(n);
-            if (change >= Style::Inherit || element->childNeedsStyleRecalc() || element->needsStyleRecalc())
-                Style::resolveTree(element, change);
-        }
+        resolveTree(this, change);
 
 #if USE(ACCELERATED_COMPOSITING)
         if (view())

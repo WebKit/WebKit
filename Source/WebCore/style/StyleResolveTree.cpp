@@ -34,6 +34,7 @@
 #include "RenderText.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
+#include "StyleResolveForDocument.h"
 #include "StyleResolver.h"
 #include "Text.h"
 
@@ -281,6 +282,25 @@ void resolveTree(Element* current, Change change)
         current->didRecalcStyle(change);
 }
 
+void resolveTree(Document* document, Change change)
+{
+    bool resolveRootStyle = change == Force || (document->shouldDisplaySeamlesslyWithParent() && change >= Inherit);
+    if (resolveRootStyle) {
+        RefPtr<RenderStyle> documentStyle = resolveForDocument(document);
+
+        Style::Change documentChange = determineChange(documentStyle.get(), document->renderer()->style(), document->settings());
+        if (documentChange != NoChange)
+            document->renderer()->setStyle(documentStyle.release());
+    }
+
+    for (Node* child = document->firstChild(); child; child = child->nextSibling()) {
+        if (!child->isElementNode())
+            continue;
+        Element* elementChild = toElement(child);
+        if (change >= Inherit || elementChild->childNeedsStyleRecalc() || elementChild->needsStyleRecalc())
+            resolveTree(elementChild, change);
+    }
 }
 
+}
 }

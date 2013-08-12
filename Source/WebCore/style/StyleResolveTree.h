@@ -28,6 +28,7 @@
 
 namespace WebCore {
 
+class Document;
 class Element;
 class RenderStyle;
 class Settings;
@@ -37,6 +38,7 @@ namespace Style {
 enum Change { NoChange, NoInherit, Inherit, Detach, Force };
 
 void resolveTree(Element*, Change);
+void resolveTree(Document*, Change);
 
 Change determineChange(const RenderStyle*, const RenderStyle*, Settings*);
 
