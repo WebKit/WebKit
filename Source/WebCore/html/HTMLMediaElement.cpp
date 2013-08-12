@@ -4178,6 +4178,11 @@ void HTMLMediaElement::stop()
     cancelPendingEventsAndCallbacks();
 
     m_asyncEventQueue->close();
+
+    // Once an active DOM object has been stopped it can not be restarted, so we can deallocate
+    // the media player now. Note that userCancelledLoad will already have cleared the player
+    // if the media was not fully loaded. This handles all other cases.
+    m_player.clear();
 }
 
 void HTMLMediaElement::suspend(ReasonForSuspension why)

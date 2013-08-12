@@ -1,3 +1,19 @@
+2013-08-12  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        Resource leak related to gstreamer and videos
+        https://bugs.webkit.org/show_bug.cgi?id=109350
+
+        Reviewed by Eric Carlson.
+
+        Since active DOM object are only stopped once and can not be restarted, we can
+        unreference the media player there, instead of waiting for garbage collection.
+
+        If the r152778 is rolled back, this also breaks a circular reference between
+        GStreamer and WebKit which prevented garbage collecting from triggering.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::stop):
+
 2013-08-12  Gabor Rapcsanyi  <rgabor@webkit.org>
 
         [Qt] Unreviewed buildfix for webaudio.
