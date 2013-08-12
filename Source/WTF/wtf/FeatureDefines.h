@@ -850,4 +850,8 @@
 #error "ENABLE(VIDEO_TRACK) requires ENABLE(VIDEO)"
 #endif
 
+#if ENABLE(CSS_SHADERS) && !ENABLE(WEBGL)
+#error "ENABLE(CSS_SHADERS) requires ENABLE(WEBGL)"
+#endif
+
 #endif /* WTF_FeatureDefines_h */
