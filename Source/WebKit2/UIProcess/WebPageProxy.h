@@ -816,7 +816,6 @@ private:
     void didReceiveTitleForFrame(uint64_t frameID, const String&, CoreIPC::MessageDecoder&);
     void didFirstLayoutForFrame(uint64_t frameID, CoreIPC::MessageDecoder&);
     void didFirstVisuallyNonEmptyLayoutForFrame(uint64_t frameID, CoreIPC::MessageDecoder&);
-    void didNewFirstVisuallyNonEmptyLayout(CoreIPC::MessageDecoder&);
     void didLayout(uint32_t layoutMilestones, CoreIPC::MessageDecoder&);
     void didRemoveFrameFromHierarchy(uint64_t frameID, CoreIPC::MessageDecoder&);
     void didDisplayInsecureContentForFrame(uint64_t frameID, CoreIPC::MessageDecoder&);

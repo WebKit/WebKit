@@ -62,15 +62,15 @@ public:
     void didSameDocumentNavigationForFrame(WebPageProxy*, WebFrameProxy*, SameDocumentNavigationType, APIObject*);
     void didReceiveTitleForFrame(WebPageProxy*, const String&, WebFrameProxy*, APIObject*);
     void didFirstLayoutForFrame(WebPageProxy*, WebFrameProxy*, APIObject*);
+
+    // FIXME: We should consider removing didFirstVisuallyNonEmptyLayoutForFrame since it is replaced by didLayout.
     void didFirstVisuallyNonEmptyLayoutForFrame(WebPageProxy*, WebFrameProxy*, APIObject*);
+
     void didRemoveFrameFromHierarchy(WebPageProxy*, WebFrameProxy*, APIObject*);
     void didDisplayInsecureContentForFrame(WebPageProxy*, WebFrameProxy*, APIObject*);
     void didRunInsecureContentForFrame(WebPageProxy*, WebFrameProxy*, APIObject*);
     void didDetectXSSForFrame(WebPageProxy*, WebFrameProxy*, APIObject*);
 
-    // FIXME: didNewFirstVisuallyNonEmptyLayout should be removed. We should consider removing didFirstVisuallyNonEmptyLayoutForFrame
-    // as well. They are both being replaced by didLayout.
-    void didNewFirstVisuallyNonEmptyLayout(WebPageProxy*, APIObject*);
     void didLayout(WebPageProxy*, WebCore::LayoutMilestones, APIObject*);
     
     bool canAuthenticateAgainstProtectionSpaceInFrame(WebPageProxy*, WebFrameProxy*, WebProtectionSpace*);

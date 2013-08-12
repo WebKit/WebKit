@@ -494,8 +494,6 @@ void WebPage::initializeInjectedBundleLoaderClient(WKBundlePageLoaderClient* cli
             milestones |= WebCore::DidFirstLayout;
         if (client->didFirstVisuallyNonEmptyLayoutForFrame)
             milestones |= WebCore::DidFirstVisuallyNonEmptyLayout;
-        if (client->didNewFirstVisuallyNonEmptyLayout)
-            milestones |= WebCore::DidHitRelevantRepaintedObjectsAreaThreshold;
     }
 
     if (milestones)

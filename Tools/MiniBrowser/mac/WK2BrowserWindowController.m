@@ -653,7 +653,7 @@ static void runOpenPanel(WKPageRef page, WKFrameRef frame, WKOpenPanelParameters
         0, // shouldGoToBackForwardItem
         0, // didFailToInitializePlugin
         didDetectXSSForFrame,
-        0, // didNewFirstVisuallyNonEmptyLayout
+        0, // didNewFirstVisuallyNonEmptyLayout_unavailable
         0, // willGoToBackForwardListItem
         0, // interactionOccurredWhileProcessUnresponsive
         0, // pluginDidFail_deprecatedForUseWithV1

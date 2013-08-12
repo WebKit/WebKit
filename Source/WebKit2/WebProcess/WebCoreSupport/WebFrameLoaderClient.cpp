@@ -567,12 +567,6 @@ void WebFrameLoaderClient::dispatchDidLayout(LayoutMilestones milestones)
         webPage->injectedBundleLoaderClient().didFirstVisuallyNonEmptyLayoutForFrame(webPage, m_frame, userData);
         webPage->send(Messages::WebPageProxy::DidFirstVisuallyNonEmptyLayoutForFrame(m_frame->frameID(), InjectedBundleUserMessageEncoder(userData.get())));
     }
-
-    if (milestones & DidHitRelevantRepaintedObjectsAreaThreshold) {
-        // FIXME: This can go away when we remove didNewFirstVisuallyNonEmptyLayout.
-        webPage->injectedBundleLoaderClient().didNewFirstVisuallyNonEmptyLayout(webPage, userData);
-        webPage->send(Messages::WebPageProxy::DidNewFirstVisuallyNonEmptyLayout(InjectedBundleUserMessageEncoder(userData.get())));
-    }
 }
 
 void WebFrameLoaderClient::dispatchDidLayout()

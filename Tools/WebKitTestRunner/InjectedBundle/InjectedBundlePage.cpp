@@ -294,7 +294,7 @@ InjectedBundlePage::InjectedBundlePage(WKBundlePageRef page)
         willPerformClientRedirectForFrame,
         didHandleOnloadEventsForFrame,
         0, // didLayoutForFrame
-        0, // didNewFirstVisuallyNonEmptyLayoutForFrame
+        0, // didNewFirstVisuallyNonEmptyLayout_unavailable
         didDetectXSSForFrame,
         0, // shouldGoToBackForwardListItem
         0, // didCreateGlobalObjectForFrame

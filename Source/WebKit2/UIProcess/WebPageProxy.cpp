@@ -421,8 +421,6 @@ void WebPageProxy::initializeLoaderClient(const WKPageLoaderClient* loadClient)
         milestones |= WebCore::DidFirstLayout;
     if (loadClient->didFirstVisuallyNonEmptyLayoutForFrame)
         milestones |= WebCore::DidFirstVisuallyNonEmptyLayout;
-    if (loadClient->didNewFirstVisuallyNonEmptyLayout)
-        milestones |= WebCore::DidHitRelevantRepaintedObjectsAreaThreshold;
 
     if (milestones)
         m_process->send(Messages::WebPage::ListenForLayoutMilestones(milestones), m_pageID);
@@ -2395,16 +2393,6 @@ void WebPageProxy::didFirstVisuallyNonEmptyLayoutForFrame(uint64_t frameID, Core
     MESSAGE_CHECK(frame);
 
     m_loaderClient.didFirstVisuallyNonEmptyLayoutForFrame(this, frame, userData.get());
-}
-
-void WebPageProxy::didNewFirstVisuallyNonEmptyLayout(CoreIPC::MessageDecoder& decoder)
-{
-    RefPtr<APIObject> userData;
-    WebContextUserMessageDecoder messageDecoder(userData, m_process.get());
-    if (!decoder.decode(messageDecoder))
-        return;
-
-    m_loaderClient.didNewFirstVisuallyNonEmptyLayout(this, userData.get());
 }
 
 void WebPageProxy::didLayout(uint32_t layoutMilestones, CoreIPC::MessageDecoder& decoder)

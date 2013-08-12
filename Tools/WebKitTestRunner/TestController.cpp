@@ -480,7 +480,7 @@ void TestController::createWebViewWithOptions(WKDictionaryRef options)
         0, // shouldGoToBackForwardListItem
         0, // didRunInsecureContentForFrame
         0, // didDetectXSSForFrame
-        0, // didNewFirstVisuallyNonEmptyLayout
+        0, // didNewFirstVisuallyNonEmptyLayout_unavailable
         0, // willGoToBackForwardListItem
         0, // interactionOccurredWhileProcessUnresponsive
         0, // pluginDidFail_deprecatedForUseWithV1

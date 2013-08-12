@@ -1,3 +1,29 @@
+2013-08-12  Beth Dakin  <bdakin@apple.com>
+
+        Remove didNewFirstVisuallyNonEmptyLayout from WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=119658
+
+        Reviewed by Darin Adler.
+
+        Removing this function entirely will change some functionality in the Nightlies, 
+        but we think that is an acceptable difference for the Nightlies. If is does cause 
+        a problem though, we can roll out this patch and deprecate the function instead.
+
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/WebLoaderClient.cpp:
+        * UIProcess/WebLoaderClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::initializeLoaderClient):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.cpp:
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.h:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidLayout):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::initializeInjectedBundleLoaderClient):
+
 2013-08-12  Arunprasad Rajkumar  <arurajku@cisco.com>
 
         [Qt] [WebKit2] Remove duplicate RAM Size calculation and reuse WTF::ramSize()
