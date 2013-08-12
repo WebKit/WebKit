@@ -49,6 +49,9 @@ enum EnumerationMode {
     IncludeDontEnumProperties
 };
 
+template<typename T> void* allocateCell(Heap&);
+template<typename T> void* allocateCell(Heap&, size_t);
+
 class JSCell {
     friend class JSValue;
     friend class MarkedBlock;
