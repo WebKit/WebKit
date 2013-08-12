@@ -238,6 +238,9 @@ void setCookiesFromDOM(const NetworkStorageSession&, const KURL&, const KURL& ur
     // required behavior if the domain field is not explicity specified.
     String cookie = getNetscapeCookieFormat(url, value);
 
+    if (!cookie.is8Bit())
+        cookie = String::make8BitFrom16BitSource(cookie.characters16(), cookie.length());
+
     CString strCookie(reinterpret_cast<const char*>(cookie.characters8()), cookie.length());
 
     curl_easy_setopt(curl, CURLOPT_COOKIELIST, strCookie.data());

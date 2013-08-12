@@ -1,3 +1,16 @@
+2013-08-12  peavo@outlook.com  <peavo@outlook.com>
+
+        [Curl] Cookie is not set when url string is unicode.
+        https://bugs.webkit.org/show_bug.cgi?id=119545
+
+        Reviewed by Brent Fulgham.
+
+        When the method setCookiesFromDOM is called with an unicode url parameter, the cookie is not correctly set.
+        We need to convert the cookie string to 8 bit, before passing it to the Curl api function.
+
+        * platform/network/curl/CookieJarCurl.cpp:
+        (WebCore::setCookiesFromDOM): Convert cookie string to 8 bit, if needed.
+
 2013-08-12  Eric Carlson  <eric.carlson@apple.com>
 
         Revert r153912 because it broke some track tests.
