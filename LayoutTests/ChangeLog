@@ -1,3 +1,13 @@
+2013-08-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Layout Test fast/overflow/scrollbar-click-retains-focus.html is failing on Apple Mac WK1 and GTK.
+        https://bugs.webkit.org/show_bug.cgi?id=104104
+
+        Add back test expectation for Mac since it's still failing on ML WK1 bots.
+
+        * platform/mac/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2013-08-12  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Define DOM_KEY_LOCATION_* constants on KeyboardEvent

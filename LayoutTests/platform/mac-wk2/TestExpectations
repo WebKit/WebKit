@@ -338,6 +338,9 @@ webkit.org/b/118925 [ Debug ] fast/regions/fixed-pos-elem-in-region.html  [ Imag
 webkit.org/b/118925 [ Debug ] fast/repaint/region-painting-in-composited-view.html  [ ImageOnlyFailure ]
 webkit.org/b/118925 [ Debug ] svg/repaint/buffered-rendering-static-image.html  [ ImageOnlyFailure ]
 
+# Only failing on WK1
+webkit.org/b/104104 fast/overflow/scrollbar-click-retains-focus.html [ Pass ]
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 
