@@ -1,3 +1,14 @@
+2013-08-12  Alexey Proskuryakov  <ap@apple.com>
+
+        Multiple CSP tests complain about undefined strings in echo-object-data.pl and echo-script-src.pl
+        https://bugs.webkit.org/show_bug.cgi?id=119692
+
+        Reviewed by Darin Adler.
+
+        * http/tests/security/contentSecurityPolicy/resources/echo-object-data.pl:
+        * http/tests/security/contentSecurityPolicy/resources/echo-script-src.pl:
+        Check whether optional CGI parameters are provided.
+
 2013-08-12  Dean Jackson  <dino@apple.com>
 
         Shadows don't support viewport units
