@@ -1,27 +1,54 @@
-This tests if the "spellcheck" attribute is implemented as written in its specification. If this test succeeds, you can see six forms filled with an invalid word 'zz '. Nevertheless, the 'zz ' only in the line 1.1, 1.2, and 2.2 are marked as misspelled.
+This tests if the "spellcheck" attribute is implemented as written in its specification. If this test succeeds, you can see forms filled with an invalid word 'zz '. Nevertheless, the 'zz ' is not marked as misspelled in all of them.
 
-PASS:test1_1
-PASS:test1_2
-PASS:test1_3
-PASS:test1_4
-PASS:test1_5
-PASS:test1_6
-PASS:test2_1
-PASS:test2_2
-PASS:test2_3
-PASS:test2_4
-PASS:test2_5
-PASS:test2_6
-PASS:test3_1
-PASS:test3_2
-PASS:test3_3
-PASS:test3_4
-PASS:test3_5
-PASS:test3_6
-PASS:test4_1
-PASS:test4_2
-PASS:test4_3
-PASS:test4_4
-PASS:test4_5
-PASS:test4_6
+id=test1_1 type=text spellcheck=true parent's spellcheck=true
+PASS internals.hasSpellingMarker(document, 0, 2) is true
+id=test1_2 type=text spellcheck=true parent's spellcheck=true
+PASS internals.hasSpellingMarker(document, 0, 2) is true
+id=test1_3 type=text spellcheck=false parent's spellcheck=true
+PASS internals.hasSpellingMarker(document, 0, 2) is false
+id=test1_4 type=text spellcheck=true parent's spellcheck=true
+PASS internals.hasSpellingMarker(document, 0, 2) is true
+id=test1_5 type=text spellcheck=true parent's spellcheck=true
+PASS internals.hasSpellingMarker(document, 0, 2) is true
+id=test1_6 type=text spellcheck=true parent's spellcheck=true
+PASS internals.hasSpellingMarker(document, 0, 2) is true
+
+id=test2_1 type=text spellcheck=false parent's spellcheck=false
+PASS internals.hasSpellingMarker(document, 0, 2) is false
+id=test2_2 type=text spellcheck=true parent's spellcheck=false
+PASS internals.hasSpellingMarker(document, 0, 2) is true
+id=test2_3 type=text spellcheck=false parent's spellcheck=false
+PASS internals.hasSpellingMarker(document, 0, 2) is false
+id=test2_4 type=text spellcheck=false parent's spellcheck=false
+PASS internals.hasSpellingMarker(document, 0, 2) is false
+id=test2_5 type=text spellcheck=true parent's spellcheck=false
+PASS internals.hasSpellingMarker(document, 0, 2) is true
+id=test2_6 type=text spellcheck=false parent's spellcheck=false
+PASS internals.hasSpellingMarker(document, 0, 2) is false
+
+id=test3_1 type=search spellcheck=true parent's spellcheck=true
+PASS internals.hasSpellingMarker(document, 0, 2) is true
+id=test3_2 type=search spellcheck=true parent's spellcheck=true
+PASS internals.hasSpellingMarker(document, 0, 2) is true
+id=test3_3 type=search spellcheck=false parent's spellcheck=true
+PASS internals.hasSpellingMarker(document, 0, 2) is false
+id=test3_4 type=search spellcheck=true parent's spellcheck=true
+PASS internals.hasSpellingMarker(document, 0, 2) is true
+id=test3_5 type=search spellcheck=true parent's spellcheck=true
+PASS internals.hasSpellingMarker(document, 0, 2) is true
+id=test3_6 type=search spellcheck=true parent's spellcheck=true
+PASS internals.hasSpellingMarker(document, 0, 2) is true
+
+id=test4_1 type=search spellcheck=false parent's spellcheck=false
+PASS internals.hasSpellingMarker(document, 0, 2) is false
+id=test4_2 type=search spellcheck=true parent's spellcheck=false
+PASS internals.hasSpellingMarker(document, 0, 2) is true
+id=test4_3 type=search spellcheck=false parent's spellcheck=false
+PASS internals.hasSpellingMarker(document, 0, 2) is false
+id=test4_4 type=search spellcheck=false parent's spellcheck=false
+PASS internals.hasSpellingMarker(document, 0, 2) is false
+id=test4_5 type=search spellcheck=true parent's spellcheck=false
+PASS internals.hasSpellingMarker(document, 0, 2) is true
+id=test4_6 type=search spellcheck=false parent's spellcheck=false
+PASS internals.hasSpellingMarker(document, 0, 2) is false
 

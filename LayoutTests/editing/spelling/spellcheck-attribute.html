@@ -2,9 +2,10 @@
 <head>
 <title>Spellcheck Attribute Test</title>
 <link rel="help" href="http://damowmow.com/playground/spellcheck.txt">
+<script src="../../fast/js/resources/js-test-pre.js"></script>
 </head>
 <body>
-<p>This tests if the "spellcheck" attribute is implemented as written in its specification. If this test succeeds, you can see six forms filled with an invalid word 'zz '. Nevertheless, the 'zz ' only in the line 1.1, 1.2, and 2.2 are marked as misspelled.</p>
+<p>This tests if the "spellcheck" attribute is implemented as written in its specification. If this test succeeds, you can see forms filled with an invalid word 'zz '. Nevertheless, the 'zz ' is not marked as misspelled in all of them.
 <div id="testRoot">
 
 <div spellcheck="true">
@@ -48,44 +49,49 @@ function log(msg) {
     document.getElementById("console").innerHTML += (msg + "\n");
 }
 
-function testTypingInvalidWord(id, shouldBeMarked) {
-    document.getElementById(id).focus();
+function testMarkerForMisspelledWord(id, shouldBeMarked) {
+    var inputElement = document.getElementById(id);
+    inputElement.focus();
     document.execCommand("InsertText", false, 'z');
     document.execCommand("InsertText", false, 'z');
     document.execCommand("InsertText", false, ' ');
-    if (shouldBeMarked == internals.hasSpellingMarker(document, 0, 2))
-        log("PASS:" + id);
-    else
-        log("FAIL:" + id);
+
+    log("id=" + id + " type=" + inputElement.type + " spellcheck=" + inputElement.spellcheck
+        + " parent's spellcheck=" + inputElement.parentNode.spellcheck);
+
+    shouldBe("internals.hasSpellingMarker(document, 0, 2)", shouldBeMarked ? "true" : "false")
 }
 
 // For type="text".
-testTypingInvalidWord('test1_1', true);
-testTypingInvalidWord('test1_2', true);
-testTypingInvalidWord('test1_3', false);
-testTypingInvalidWord('test1_4', true);
-testTypingInvalidWord('test1_5', true);
-testTypingInvalidWord('test1_6', true);
-testTypingInvalidWord('test2_1', false);
-testTypingInvalidWord('test2_2', true);
-testTypingInvalidWord('test2_3', false);
-testTypingInvalidWord('test2_4', false);
-testTypingInvalidWord('test2_5', true);
-testTypingInvalidWord('test2_6', false);
+testMarkerForMisspelledWord('test1_1', true);
+testMarkerForMisspelledWord('test1_2', true);
+testMarkerForMisspelledWord('test1_3', false);
+testMarkerForMisspelledWord('test1_4', true);
+testMarkerForMisspelledWord('test1_5', true);
+testMarkerForMisspelledWord('test1_6', true);
+log("");
+testMarkerForMisspelledWord('test2_1', false);
+testMarkerForMisspelledWord('test2_2', true);
+testMarkerForMisspelledWord('test2_3', false);
+testMarkerForMisspelledWord('test2_4', false);
+testMarkerForMisspelledWord('test2_5', true);
+testMarkerForMisspelledWord('test2_6', false);
+log("");
 
 // For type="search".
-testTypingInvalidWord('test3_1', true);
-testTypingInvalidWord('test3_2', true);
-testTypingInvalidWord('test3_3', false);
-testTypingInvalidWord('test3_4', true);
-testTypingInvalidWord('test3_5', true);
-testTypingInvalidWord('test3_6', true);
-testTypingInvalidWord('test4_1', false);
-testTypingInvalidWord('test4_2', true);
-testTypingInvalidWord('test4_3', false);
-testTypingInvalidWord('test4_4', false);
-testTypingInvalidWord('test4_5', true);
-testTypingInvalidWord('test4_6', false);
+testMarkerForMisspelledWord('test3_1', true);
+testMarkerForMisspelledWord('test3_2', true);
+testMarkerForMisspelledWord('test3_3', false);
+testMarkerForMisspelledWord('test3_4', true);
+testMarkerForMisspelledWord('test3_5', true);
+testMarkerForMisspelledWord('test3_6', true);
+log("");
+testMarkerForMisspelledWord('test4_1', false);
+testMarkerForMisspelledWord('test4_2', true);
+testMarkerForMisspelledWord('test4_3', false);
+testMarkerForMisspelledWord('test4_4', false);
+testMarkerForMisspelledWord('test4_5', true);
+testMarkerForMisspelledWord('test4_6', false);
 
 if (window.testRunner) {
     testRunner.dumpAsText();

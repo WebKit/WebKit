@@ -1,3 +1,18 @@
+2013-08-12  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        Update spellcheck-attribute.html description.
+        https://bugs.webkit.org/show_bug.cgi?id=119486
+
+        Reviewed by Ryosuke Niwa.
+
+        r70512 r72782 added new fields to spellcheck-attribute.html to verify
+        spellcheck attribute.
+        Update the test to be more descriptive by dumping additional information
+        whether the misspelled word should be marked or not.
+
+        * editing/spelling/spellcheck-attribute-expected.txt:
+        * editing/spelling/spellcheck-attribute.html:
+
 2013-08-09  Alexey Proskuryakov  <ap@apple.com>
 
         Merge an encoding test from Blink
