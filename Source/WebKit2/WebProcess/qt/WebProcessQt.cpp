@@ -42,6 +42,7 @@
 #include <WebCore/MemoryCache.h>
 #include <WebCore/PageCache.h>
 #include <WebCore/RuntimeEnabledFeatures.h>
+#include <wtf/RAMSize.h>
 
 #if defined(Q_OS_MACX)
 #include <dispatch/dispatch.h>
@@ -56,42 +57,9 @@ using namespace WebCore;
 
 namespace WebKit {
 
-static uint64_t physicalMemorySizeInBytes()
-{
-    static uint64_t physicalMemorySize = 0;
-
-    if (!physicalMemorySize) {
-#if defined(Q_OS_MACX)
-        host_basic_info_data_t hostInfo;
-        mach_port_t host = mach_host_self();
-        mach_msg_type_number_t count = HOST_BASIC_INFO_COUNT;
-        kern_return_t r = host_info(host, HOST_BASIC_INFO, (host_info_t)&hostInfo, &count);
-        mach_port_deallocate(mach_task_self(), host);
-
-        if (r == KERN_SUCCESS)
-            physicalMemorySize = hostInfo.max_mem;
-
-#elif defined(Q_OS_WIN)
-        MEMORYSTATUSEX statex;
-        statex.dwLength = sizeof(statex);
-        GlobalMemoryStatusEx(&statex);
-        physicalMemorySize = static_cast<uint64_t>(statex.ullTotalPhys);
-
-#else
-        long pageSize = sysconf(_SC_PAGESIZE);
-        long numberOfPages = sysconf(_SC_PHYS_PAGES);
-
-        if (pageSize > 0 && numberOfPages > 0)
-            physicalMemorySize = static_cast<uint64_t>(pageSize) * static_cast<uint64_t>(numberOfPages);
-
-#endif
-    }
-    return physicalMemorySize;
-}
-
 void WebProcess::platformSetCacheModel(CacheModel cacheModel)
 {
-    uint64_t physicalMemorySizeInMegabytes = physicalMemorySizeInBytes() / 1024 / 1024;
+    uint64_t physicalMemorySizeInMegabytes = WTF::ramSize() / 1024 / 1024;
 
     // The Mac port of WebKit2 uses a fudge factor of 1000 here to account for misalignment, however,
     // that tends to overestimate the memory quite a bit (1 byte misalignment ~ 48 MiB misestimation).
