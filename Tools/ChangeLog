@@ -1,3 +1,12 @@
+2013-08-12  Seokju Kwon  <seokju@webkit.org>
+
+        Remove glu's libtest rule from checker.py
+        https://bugs.webkit.org/show_bug.cgi?id=119674
+
+        Reviewed by Darin Adler.
+
+        * Scripts/webkitpy/style/checker.py: It is no longer used after r148032.
+
 2013-08-11  ChangSeok Oh  <changseok.oh@collabora.com>
 
         Unreviewed. Change my primary mail address.

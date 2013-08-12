@@ -260,13 +260,6 @@ _PATH_RULES_SPECIFIER = [
       "+pep8/W291",  # Trailing white space
       "+whitespace/carriage_return"]),
 
-    ([# glu's libtess is third-party code, and doesn't follow WebKit style.
-      "Source/ThirdParty/glu"],
-     ["-readability",
-      "-whitespace",
-      "-build/header_guard",
-      "-build/include_order"]),
-
     ([# There is no way to avoid the symbols __jit_debug_register_code
       # and __jit_debug_descriptor when integrating with gdb.
       "Source/JavaScriptCore/jit/GDBInterface.cpp"],
