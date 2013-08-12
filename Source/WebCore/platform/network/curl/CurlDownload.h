@@ -69,8 +69,8 @@ private:
 
     ThreadIdentifier m_threadId;
     CURLM* m_curlMultiHandle;
-    int m_activeDownloadCount;
     Vector<CURL*> m_pendingHandleList;
+    Vector<CURL*> m_activeHandleList;
     Vector<CURL*> m_removedHandleList;
     mutable Mutex m_mutex;
     bool m_runThread;

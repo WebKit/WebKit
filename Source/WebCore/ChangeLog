@@ -1,3 +1,23 @@
+2013-08-12  peavo@outlook.com  <peavo@outlook.com>
+
+        [Curl] Crash when starting second download.
+        https://bugs.webkit.org/show_bug.cgi?id=119620
+
+        Reviewed by Brent Fulgham.
+
+        When a second download is started, a crash sometimes occurs in Curl.
+        This happens because the Curl easy handle is deleted and removed from the Curl multi handle twice.
+        This is solved by adding an array to keep track of active downloads to avoid double deletion. 
+
+        * platform/network/curl/CurlDownload.cpp:
+        (WebCore::CurlDownloadManager::CurlDownloadManager): Removed active download count member.
+        (WebCore::CurlDownloadManager::getActiveDownloadCount): Use active download array to return active download count.
+        (WebCore::CurlDownloadManager::updateHandleList): Remove Curl handles before adding, in case Curl reuses handles.
+        (WebCore::CurlDownloadManager::addToCurl): Add Curl handle to active download array.
+        (WebCore::CurlDownloadManager::removeFromCurl): Check if Curl handle is in active download array to avoid double deletion.
+        (WebCore::CurlDownloadManager::downloadThread): Removed active download count member.
+        * platform/network/curl/CurlDownload.h: Added array of active downloads member, and removed download count member.
+
 2013-08-12  Antti Koivisto  <antti@apple.com>
 
         Add ElementTraversal::next/previousSibling
