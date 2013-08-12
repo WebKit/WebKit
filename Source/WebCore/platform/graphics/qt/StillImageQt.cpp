@@ -68,7 +68,7 @@ PassNativeImagePtr StillImage::nativeImageForCurrentFrame()
 }
 
 void StillImage::draw(GraphicsContext* ctxt, const FloatRect& dst,
-    const FloatRect& src, ColorSpace, CompositeOperator op, BlendMode)
+    const FloatRect& src, ColorSpace, CompositeOperator op, BlendMode blendMode)
 {
     if (m_pixmap->isNull())
         return;
@@ -77,7 +77,8 @@ void StillImage::draw(GraphicsContext* ctxt, const FloatRect& dst,
     FloatRect normalizedDst = dst.normalized();
 
     CompositeOperator previousOperator = ctxt->compositeOperation();
-    ctxt->setCompositeOperation(op);
+    BlendMode previousBlendMode = ctxt->blendModeOperation();
+    ctxt->setCompositeOperation(op, blendMode);
 
     if (ctxt->hasShadow()) {
         ShadowBlur shadow(ctxt->state());
@@ -90,7 +91,7 @@ void StillImage::draw(GraphicsContext* ctxt, const FloatRect& dst,
     }
 
     ctxt->platformContext()->drawPixmap(normalizedDst, *m_pixmap, normalizedSrc);
-    ctxt->setCompositeOperation(previousOperator);
+    ctxt->setCompositeOperation(previousOperator, previousBlendMode);
 }
 
 }

@@ -1,3 +1,24 @@
+2013-08-12  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt] Add Support for canvas blend modes
+        https://bugs.webkit.org/show_bug.cgi?id=100072
+
+        Reviewed by Jocelyn Turcotte.
+
+        Implement basic support for the blend-modes supported by QPainter.
+
+        Covered by existing tests.
+
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::toQtCompositionMode):
+        (WebCore::GraphicsContext::setPlatformCompositeOperation):
+        * platform/graphics/qt/ImageBufferQt.cpp:
+        (WebCore::ImageBuffer::draw):
+        * platform/graphics/qt/ImageQt.cpp:
+        (WebCore::BitmapImage::draw):
+        * platform/graphics/qt/StillImageQt.cpp:
+        (WebCore::StillImage::draw):
+
 2013-08-12  Gabor Abraham  <abrhm@inf.u-szeged.hu>
 
         Buildfix for !ENABLE(SVG). Fix warning by adding guard after r153901:

@@ -121,6 +121,46 @@ static inline QPainter::CompositionMode toQtCompositionMode(CompositeOperator op
     return QPainter::CompositionMode_SourceOver;
 }
 
+static inline QPainter::CompositionMode toQtCompositionMode(BlendMode op)
+{
+    switch (op) {
+    case BlendModeNormal:
+        return QPainter::CompositionMode_SourceOver;
+    case BlendModeMultiply:
+        return QPainter::CompositionMode_Multiply;
+    case BlendModeScreen:
+        return QPainter::CompositionMode_Screen;
+    case BlendModeOverlay:
+        return QPainter::CompositionMode_Overlay;
+    case BlendModeDarken:
+        return QPainter::CompositionMode_Darken;
+    case BlendModeLighten:
+        return QPainter::CompositionMode_Lighten;
+    case BlendModeColorDodge:
+        return QPainter::CompositionMode_ColorDodge;
+    case BlendModeColorBurn:
+        return QPainter::CompositionMode_ColorBurn;
+    case BlendModeHardLight:
+        return QPainter::CompositionMode_HardLight;
+    case BlendModeSoftLight:
+        return QPainter::CompositionMode_SoftLight;
+    case BlendModeDifference:
+        return QPainter::CompositionMode_Difference;
+    case BlendModeExclusion:
+        return QPainter::CompositionMode_Exclusion;
+    case BlendModeHue:
+    case BlendModeSaturation:
+    case BlendModeColor:
+    case BlendModeLuminosity:
+        // Not supported.
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+    }
+
+    return QPainter::CompositionMode_SourceOver;
+}
+
 static inline Qt::PenCapStyle toQtLineCap(LineCap lc)
 {
     switch (lc) {
@@ -1343,12 +1383,17 @@ void GraphicsContext::setAlpha(float opacity)
     p->setOpacity(opacity);
 }
 
-void GraphicsContext::setPlatformCompositeOperation(CompositeOperator op, BlendMode)
+void GraphicsContext::setPlatformCompositeOperation(CompositeOperator op, BlendMode blendMode)
 {
     if (paintingDisabled())
         return;
 
-    m_data->p()->setCompositionMode(toQtCompositionMode(op));
+    ASSERT(op == WebCore::CompositeSourceOver || blendMode == WebCore::BlendModeNormal);
+
+    if (op == WebCore::CompositeSourceOver)
+        m_data->p()->setCompositionMode(toQtCompositionMode(blendMode));
+    else
+        m_data->p()->setCompositionMode(toQtCompositionMode(op));
 }
 
 void GraphicsContext::clip(const Path& path, WindRule windRule)

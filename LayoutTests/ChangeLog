@@ -1,3 +1,14 @@
+2013-08-12  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt] Add Support for canvas blend modes
+        https://bugs.webkit.org/show_bug.cgi?id=100072
+
+        Reviewed by Jocelyn Turcotte.
+
+        Unskip tests that now passes.
+
+        * platform/qt/TestExpectations:
+
 2013-08-12  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening. Rebaselining after r153903.

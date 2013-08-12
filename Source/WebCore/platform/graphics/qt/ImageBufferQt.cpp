@@ -131,14 +131,14 @@ BackingStoreCopy ImageBuffer::fastCopyImageMode()
 }
 
 void ImageBuffer::draw(GraphicsContext* destContext, ColorSpace styleColorSpace, const FloatRect& destRect, const FloatRect& srcRect,
-    CompositeOperator op, BlendMode, bool useLowQualityScale)
+    CompositeOperator op, BlendMode blendMode, bool useLowQualityScale)
 {
     if (destContext == context()) {
         // We're drawing into our own buffer.  In order for this to work, we need to copy the source buffer first.
         RefPtr<Image> copy = copyImage(CopyBackingStore);
-        destContext->drawImage(copy.get(), ColorSpaceDeviceRGB, destRect, srcRect, op, DoNotRespectImageOrientation, useLowQualityScale);
+        destContext->drawImage(copy.get(), ColorSpaceDeviceRGB, destRect, srcRect, op, blendMode, DoNotRespectImageOrientation, useLowQualityScale);
     } else
-        destContext->drawImage(m_data.m_image.get(), styleColorSpace, destRect, srcRect, op, DoNotRespectImageOrientation, useLowQualityScale);
+        destContext->drawImage(m_data.m_image.get(), styleColorSpace, destRect, srcRect, op, blendMode, DoNotRespectImageOrientation, useLowQualityScale);
 }
 
 void ImageBuffer::drawPattern(GraphicsContext* destContext, const FloatRect& srcRect, const AffineTransform& patternTransform,
