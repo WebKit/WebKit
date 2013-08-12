@@ -1442,8 +1442,9 @@ static void runTest(const string& inputLine)
 
     resetWebViewToConsistentStateBeforeTesting();
 
-    [mainFrame loadHTMLString:@"<html></html>" baseURL:[NSURL URLWithString:@"about:blank"]];
-    [mainFrame stopLoading];
+    // Loading an empty request synchronously replaces the document with a blank one, which is necessary
+    // to stop timers, WebSockets and other activity that could otherwise spill output into next test's results.
+    [mainFrame loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@""]]];
 
     [pool release];
 

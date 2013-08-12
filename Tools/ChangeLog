@@ -1,3 +1,18 @@
+2013-08-12  Alexey Proskuryakov  <ap@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=119693
+        [Mac] security/contentSecurityPolicy/connect-src-websocket-blocked.html is flaky
+        because of connect-src-websocket-allowed.html
+
+        Reviewed by Darin Adler.
+
+        Starting a load of about:blank and immediately stopping it cancels outstanding
+        resource loads, but the page has to transition to committed state to have timers
+        or WebSockets stopped too.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm: (runTest): Use a synchronous load to
+        ensure that transition to committed state happens before we start the next test.
+
 2013-08-12  Beth Dakin  <bdakin@apple.com>
 
         The LayoutMilestones didLayout callback should only fire for the main frame
