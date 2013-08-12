@@ -1,3 +1,13 @@
+2013-08-12  Gabor Abraham  <abrhm@inf.u-szeged.hu>
+
+        Buildfix for !ENABLE(SVG). Fix warning by adding guard after r153901:
+        void WebCore::addString(WebCore::FeatureSet&, const char*)'
+        defined but not used [-Werror=unused-function]
+
+        Reviewed by Csaba Osztrogonác.
+
+        * dom/DOMImplementation.cpp:
+
 2013-08-12  Antti Koivisto  <antti@apple.com>
 
         Move ElementTraversal to ElementTraversal.h

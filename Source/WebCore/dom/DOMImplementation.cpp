@@ -64,10 +64,12 @@ namespace WebCore {
 
 typedef HashSet<String, CaseFoldingHash> FeatureSet;
 
+#if ENABLE(SVG)
 static void addString(FeatureSet& set, const char* string)
 {
     set.add(string);
 }
+#endif
 
 #if ENABLE(VIDEO)
 class DOMImplementationSupportsTypeClient : public MediaPlayerSupportsTypeClient {
