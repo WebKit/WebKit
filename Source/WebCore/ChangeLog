@@ -1,3 +1,38 @@
+2013-08-12  Arnaud Renevier  <a.renevier@samsung.com>
+
+        [cairo] memory corruption with putImageData and accelerated canvas.
+        https://bugs.webkit.org/show_bug.cgi?id=118621
+
+        Reviewed by Martin Robinson.
+
+        When we have an accelerated imageBuffer, and we putByteArray with a
+        non zero destPoint, we create temporary surface of sourceSize. Then,
+        we write to image data with an offset. This results in an out of bound
+        write.
+
+        In order to avoid that, we use a 0 offset when writing data.
+
+        In addition, we also create image with the minimal needed size in
+        getImageData, and also use a 0 offset. This decrease data transfer
+        between cpu and gpu
+
+        Instead of the map/unmap mechanism, perform an explicit surface copy
+        when needed. This change also removes an unneeded glReadPixels at the
+        start of putByteArray
+
+        Add two parameters to copyRectFromOneSurfaceToAnother: destination
+        offset, and cairo drawing operator.
+
+        No new tests. Accelerated canvas is not enabled for testing yet.
+
+        * platform/graphics/cairo/CairoUtilities.cpp:
+        (WebCore::copyRectFromOneSurfaceToAnother):
+        * platform/graphics/cairo/CairoUtilities.h:
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        (WebCore::copySurfaceToImageAndAdjustRect):
+        (WebCore::getImageData):
+        (WebCore::ImageBuffer::putByteArray):
+
 2013-08-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         Use const AtomicStringImpl* in DocumentOrderedMap
