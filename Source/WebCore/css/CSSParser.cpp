@@ -6541,6 +6541,13 @@ PassRefPtr<CSSValueList> CSSParser::parseShadow(CSSParserValueList* valueList, C
             if (!context.allowLength())
                 return 0;
 
+            // We don't support viewport units for shadow values.
+            if (val->unit == CSSPrimitiveValue::CSS_VW
+                || val->unit == CSSPrimitiveValue::CSS_VH
+                || val->unit == CSSPrimitiveValue::CSS_VMIN
+                || val->unit == CSSPrimitiveValue::CSS_VMAX)
+                return 0;
+
             // Blur radius must be non-negative.
             if (context.allowBlur && !validUnit(val, FLength | FNonNeg, CSSStrictMode))
                 return 0;
