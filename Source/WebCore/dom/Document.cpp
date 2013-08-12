@@ -1264,10 +1264,11 @@ void Document::setVisualUpdatesAllowed(bool visualUpdatesAllowed)
         updateLayout();
 
     if (Page* page = this->page()) {
-        if (frame() == page->mainFrame())
+        if (frame() == page->mainFrame()) {
             frameView->addPaintPendingMilestones(DidFirstPaintAfterSuppressedIncrementalRendering);
-        if (page->requestedLayoutMilestones() & DidFirstLayoutAfterSuppressedIncrementalRendering)
-            frame()->loader()->didLayout(DidFirstLayoutAfterSuppressedIncrementalRendering);
+            if (page->requestedLayoutMilestones() & DidFirstLayoutAfterSuppressedIncrementalRendering)
+                frame()->loader()->didLayout(DidFirstLayoutAfterSuppressedIncrementalRendering);
+        }
     }
 
 #if USE(ACCELERATED_COMPOSITING)

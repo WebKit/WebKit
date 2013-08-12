@@ -2283,6 +2283,11 @@ void FrameLoader::setOriginalURLForDownloadRequest(ResourceRequest& request)
 
 void FrameLoader::didLayout(LayoutMilestones milestones)
 {
+#if !ASSERT_DISABLED
+    if (Page* page = m_frame->page())
+        ASSERT(page->mainFrame() == m_frame);
+#endif
+
     m_client->dispatchDidLayout(milestones);
 }
 

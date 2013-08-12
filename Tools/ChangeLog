@@ -1,5 +1,21 @@
 2013-08-12  Beth Dakin  <bdakin@apple.com>
 
+        The LayoutMilestones didLayout callback should only fire for the main frame
+        https://bugs.webkit.org/show_bug.cgi?id=119457
+
+        Reviewed by Sam Weinig.
+
+        Now that the didLayout callback only fires for the main frame, we want to make 
+        sure it will fire even when all of the content is in a subframe.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2/LayoutMilestonesWithAllContentInFrame.cpp: Added.
+        (TestWebKitAPI::didLayout):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit2/all-content-in-one-iframe.html: Added.
+
+2013-08-12  Beth Dakin  <bdakin@apple.com>
+
         Remove didNewFirstVisuallyNonEmptyLayout from WebKit2
         https://bugs.webkit.org/show_bug.cgi?id=119658
 

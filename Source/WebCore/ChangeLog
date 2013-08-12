@@ -1,3 +1,32 @@
+2013-08-12  Beth Dakin  <bdakin@apple.com>
+
+        The LayoutMilestones didLayout callback should only fire for the main frame
+        https://bugs.webkit.org/show_bug.cgi?id=119457
+
+        Reviewed by Sam Weinig.
+
+        This patch makes it so that FrameLoader::didLayout(LayoutMilestones) is only ever 
+        called for the main frame. Technically this will change existing API for 
+        didFirstVisuallyNonEmptyLayoutInFrame and didFirstLayoutInFrame. Clients used to 
+        be able to register for those callbacks for any frame they wanted, however, now 
+        they will only ever get the callback when it applies to the main frame. We think 
+        that this is acceptable since we don’t know of any clients that ever used those 
+        APIs for a non-main frame. This change also makes nothing but sense for the 
+        didLayout(LayoutMilestones) callback, since that is a Page-level concept, so it 
+        should only fire for the main frame.
+
+        Only call didLayout for the main frame.
+        * dom/Document.cpp:
+        (WebCore::Document::setVisualUpdatesAllowed):
+
+        Assert that this is the main frame.
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::didLayout):
+
+        Only call didLayout for the main frame.
+        * page/FrameView.cpp:
+        (WebCore::FrameView::performPostLayoutTasks):
+
 2013-08-12  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Define DOM_KEY_LOCATION_* constants on KeyboardEvent
