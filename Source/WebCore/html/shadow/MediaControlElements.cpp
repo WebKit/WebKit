@@ -54,6 +54,7 @@
 #include "RenderVideo.h"
 #include "RenderView.h"
 #include "Settings.h"
+#include "ShadowRoot.h"
 #if ENABLE(VIDEO_TRACK)
 #include "TextTrack.h"
 #include "TextTrackList.h"

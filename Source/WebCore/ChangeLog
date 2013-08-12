@@ -1,3 +1,12 @@
+2013-08-12  Andreas Kling  <akling@apple.com>
+
+        Some build juice for the Windows bots after r153926 + r153927.
+
+        * html/shadow/MediaControlElements.cpp:
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeVisualContext.cpp:
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::supportsFullscreen):
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::setUpCookiesForQuickTime):
+
 2013-08-11  Sam Weinig  <sam@webkit.org>
 
         Move RenderMathMLSpace.h/cpp to the right group in the Xcode project.

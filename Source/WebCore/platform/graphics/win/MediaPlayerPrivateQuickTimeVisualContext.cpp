@@ -199,7 +199,7 @@ bool MediaPlayerPrivateQuickTimeVisualContext::supportsFullscreen() const
 #if USE(ACCELERATED_COMPOSITING)
     Document* document = m_player->mediaPlayerClient()->mediaPlayerOwningDocument(); 
     if (document)
-        return document->settings().acceleratedCompositingEnabled();
+        return document->settings()->acceleratedCompositingEnabled();
 #endif
     return false;
 }
@@ -264,7 +264,7 @@ void MediaPlayerPrivateQuickTimeVisualContext::setUpCookiesForQuickTime(const St
     // download the movie into WinInet before asking QuickTime to open it.
     Document* document = m_player->mediaPlayerClient()->mediaPlayerOwningDocument();
     Frame* frame = document ? document->frame() : 0;
-    if (!frame || !frame->page() || !frame->page()->settings()->cookieEnabled())
+    if (!frame || !frame->page() || !frame->page()->settings().cookieEnabled())
         return;
 
     KURL movieURL = KURL(KURL(), url);
