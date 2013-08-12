@@ -20197,6 +20197,7 @@
     <ClInclude Include="..\dom\DOMStringMap.h" />
     <ClInclude Include="..\dom\DOMTimeStamp.h" />
     <ClInclude Include="..\dom\Element.h" />
+    <ClInclude Include="..\dom\ElementTraversal.h" />
     <ClInclude Include="..\dom\Entity.h" />
     <ClInclude Include="..\dom\EntityReference.h" />
     <ClInclude Include="..\dom\ErrorEvent.h" />

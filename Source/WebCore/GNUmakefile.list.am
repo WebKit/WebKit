@@ -2907,6 +2907,7 @@ webcore_sources += \
 	Source/WebCore/dom/ElementRareData.h \
 	Source/WebCore/dom/ElementShadow.cpp \
 	Source/WebCore/dom/ElementShadow.h \
+	Source/WebCore/dom/ElementTraversal.h \
 	Source/WebCore/dom/Entity.h \
 	Source/WebCore/dom/EntityReference.cpp \
 	Source/WebCore/dom/EntityReference.h \

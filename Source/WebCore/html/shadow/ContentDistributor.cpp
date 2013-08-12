@@ -28,8 +28,8 @@
 #include "ContentDistributor.h"
 
 #include "ElementShadow.h"
+#include "ElementTraversal.h"
 #include "HTMLContentElement.h"
-#include "NodeTraversal.h"
 #include "ShadowRoot.h"
 
 

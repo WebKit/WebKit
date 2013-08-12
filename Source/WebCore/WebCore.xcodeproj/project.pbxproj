@@ -5549,6 +5549,7 @@
 		E4D58EB517B4DBDC00CBDCA8 /* StyleResolveForDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = E4D58EB317B4DBDC00CBDCA8 /* StyleResolveForDocument.h */; };
 		E4D58EB817B4ED8900CBDCA8 /* StyleFontSizeFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4D58EB617B4ED8900CBDCA8 /* StyleFontSizeFunctions.cpp */; };
 		E4D58EB917B4ED8900CBDCA8 /* StyleFontSizeFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = E4D58EB717B4ED8900CBDCA8 /* StyleFontSizeFunctions.h */; };
+		E4D58EBB17B8F12800CBDCA8 /* ElementTraversal.h in Headers */ = {isa = PBXBuildFile; fileRef = E4D58EBA17B8F12800CBDCA8 /* ElementTraversal.h */; };
 		E4D687770ED7AE3D006EA978 /* PurgeableBufferMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4D687760ED7AE3D006EA978 /* PurgeableBufferMac.cpp */; };
 		E4D687790ED7AE4F006EA978 /* PurgeableBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = E4D687780ED7AE4F006EA978 /* PurgeableBuffer.h */; };
 		E4DEAA1717A93DC3000E0430 /* StyleResolveTree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4DEAA1517A93DC3000E0430 /* StyleResolveTree.cpp */; };
@@ -12372,6 +12373,7 @@
 		E4D58EB317B4DBDC00CBDCA8 /* StyleResolveForDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleResolveForDocument.h; sourceTree = "<group>"; };
 		E4D58EB617B4ED8900CBDCA8 /* StyleFontSizeFunctions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StyleFontSizeFunctions.cpp; sourceTree = "<group>"; };
 		E4D58EB717B4ED8900CBDCA8 /* StyleFontSizeFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleFontSizeFunctions.h; sourceTree = "<group>"; };
+		E4D58EBA17B8F12800CBDCA8 /* ElementTraversal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ElementTraversal.h; sourceTree = "<group>"; };
 		E4D687760ED7AE3D006EA978 /* PurgeableBufferMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PurgeableBufferMac.cpp; sourceTree = "<group>"; };
 		E4D687780ED7AE4F006EA978 /* PurgeableBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PurgeableBuffer.h; sourceTree = "<group>"; };
 		E4DEAA1517A93DC3000E0430 /* StyleResolveTree.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StyleResolveTree.cpp; sourceTree = "<group>"; };
@@ -20308,6 +20310,7 @@
 				637B7ADE0E8767B800E32194 /* ElementRareData.h */,
 				57CF4C8414F7597A00ECFF14 /* ElementShadow.cpp */,
 				57CF4C8514F7597A00ECFF14 /* ElementShadow.h */,
+				E4D58EBA17B8F12800CBDCA8 /* ElementTraversal.h */,
 				A8EA7EBA0A1945D000A8EF5F /* Entity.h */,
 				93EEC1EB09C2877700C515D1 /* Entity.idl */,
 				A8EA7EB90A1945D000A8EF5F /* EntityReference.cpp */,
@@ -21907,6 +21910,7 @@
 				656D373C0ADBA5DE00A4554D /* FrameLoader.h in Headers */,
 				656D373E0ADBA5DE00A4554D /* FrameLoaderClient.h in Headers */,
 				D000EBA311BDAFD400C47726 /* FrameLoaderStateMachine.h in Headers */,
+				E4D58EBB17B8F12800CBDCA8 /* ElementTraversal.h in Headers */,
 				93B77A380ADD792500EA4B81 /* FrameLoaderTypes.h in Headers */,
 				658436860AE01B7400E53753 /* FrameLoadRequest.h in Headers */,
 				628D214E12131EF40055DCFC /* FrameNetworkingContext.h in Headers */,

@@ -24,9 +24,9 @@
 #include "config.h"
 #include "RenderListItem.h"
 
+#include "ElementTraversal.h"
 #include "HTMLNames.h"
 #include "HTMLOListElement.h"
-#include "NodeTraversal.h"
 #include "RenderListMarker.h"
 #include "RenderView.h"
 #include "StyleInheritedData.h"

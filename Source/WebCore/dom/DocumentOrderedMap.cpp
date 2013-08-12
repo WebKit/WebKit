@@ -32,11 +32,11 @@
 #include "DocumentOrderedMap.h"
 
 #include "Element.h"
+#include "ElementTraversal.h"
 #include "HTMLLabelElement.h"
 #include "HTMLMapElement.h"
 #include "HTMLNameCollection.h"
 #include "HTMLNames.h"
-#include "NodeTraversal.h"
 #include "TreeScope.h"
 
 namespace WebCore {

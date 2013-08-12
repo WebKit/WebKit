@@ -29,7 +29,7 @@
 #include "CSSParser.h"
 #include "CSSSelectorList.h"
 #include "Document.h"
-#include "NodeTraversal.h"
+#include "ElementTraversal.h"
 #include "SelectorChecker.h"
 #include "SelectorCheckerFastPath.h"
 #include "StaticNodeList.h"

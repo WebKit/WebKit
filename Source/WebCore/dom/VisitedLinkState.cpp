@@ -29,10 +29,10 @@
 #include "config.h"
 #include "VisitedLinkState.h"
 
+#include "ElementTraversal.h"
 #include "Frame.h"
 #include "HTMLAnchorElement.h"
 #include "HTMLNames.h"
-#include "NodeTraversal.h"
 #include "Page.h"
 #include "PageGroup.h"
 #include "PlatformStrategies.h"

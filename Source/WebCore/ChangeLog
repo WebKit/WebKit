@@ -1,5 +1,59 @@
 2013-08-12  Antti Koivisto  <antti@apple.com>
 
+        Move ElementTraversal to ElementTraversal.h
+        https://bugs.webkit.org/show_bug.cgi?id=119678
+
+        Rubber-stamped by Andreas Kling.
+
+        Move ElementTraversal namespace from NodeTraversal.h to a correctly named file.
+
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * accessibility/AccessibilityRenderObject.cpp:
+        * css/StyleInvalidationAnalysis.cpp:
+        * dom/Document.cpp:
+        * dom/DocumentOrderedMap.cpp:
+        * dom/Element.cpp:
+        * dom/ElementTraversal.h: Added.
+        (WebCore::ElementTraversal::firstElementWithinTemplate):
+        (WebCore::ElementTraversal::firstWithin):
+        (WebCore::ElementTraversal::traverseNextElementTemplate):
+        (WebCore::ElementTraversal::next):
+        (WebCore::ElementTraversal::traverseNextElementSkippingChildrenTemplate):
+        (WebCore::ElementTraversal::nextSkippingChildren):
+        (WebCore::ElementTraversal::previousIncludingPseudo):
+        (WebCore::ElementTraversal::nextIncludingPseudo):
+        (WebCore::ElementTraversal::nextIncludingPseudoSkippingChildren):
+        (WebCore::ElementTraversal::pseudoAwarePreviousSibling):
+        * dom/Node.cpp:
+        * dom/NodeTraversal.h:
+        * dom/SelectorQuery.cpp:
+        * dom/TreeScope.cpp:
+        * dom/VisitedLinkState.cpp:
+        * editing/FrameSelection.cpp:
+        * editing/markup.cpp:
+        * html/HTMLCollection.cpp:
+        * html/HTMLFieldSetElement.cpp:
+        * html/HTMLFormElement.cpp:
+        * html/HTMLLabelElement.cpp:
+        * html/HTMLLegendElement.cpp:
+        * html/HTMLMapElement.cpp:
+        * html/HTMLObjectElement.cpp:
+        * html/HTMLSelectElement.cpp:
+        * html/shadow/ContentDistributor.cpp:
+        * page/FocusController.cpp:
+        * rendering/RenderCounter.cpp:
+        * rendering/RenderListItem.cpp:
+        * svg/SVGSVGElement.cpp:
+        * svg/SVGStyledElement.cpp:
+        * svg/SVGUseElement.cpp:
+        * svg/animation/SMILTimeContainer.cpp:
+        * svg/graphics/SVGImage.cpp:
+
+2013-08-12  Antti Koivisto  <antti@apple.com>
+
         Move some Document recalcStyle code to StyleResolveTree
         https://bugs.webkit.org/show_bug.cgi?id=119676
 

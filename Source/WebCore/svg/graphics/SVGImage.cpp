@@ -32,11 +32,11 @@
 
 #include "Chrome.h"
 #include "DocumentLoader.h"
+#include "ElementTraversal.h"
 #include "FrameView.h"
 #include "ImageBuffer.h"
 #include "ImageObserver.h"
 #include "IntRect.h"
-#include "NodeTraversal.h"
 #include "RenderSVGRoot.h"
 #include "RenderStyle.h"
 #include "SVGDocument.h"

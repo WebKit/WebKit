@@ -28,7 +28,7 @@
 
 #if ENABLE(SVG)
 #include "Document.h"
-#include "NodeTraversal.h"
+#include "ElementTraversal.h"
 #include "SVGNames.h"
 #include "SVGSMILElement.h"
 #include "SVGSVGElement.h"

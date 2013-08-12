@@ -28,7 +28,7 @@
 
 #include "CSSSelectorList.h"
 #include "Document.h"
-#include "NodeTraversal.h"
+#include "ElementTraversal.h"
 #include "StyleRuleImport.h"
 #include "StyleSheetContents.h"
 #include "StyledElement.h"

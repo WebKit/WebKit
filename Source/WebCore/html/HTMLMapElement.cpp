@@ -24,13 +24,13 @@
 
 #include "Attribute.h"
 #include "Document.h"
+#include "ElementTraversal.h"
 #include "HTMLAreaElement.h"
 #include "HTMLCollection.h"
 #include "HTMLImageElement.h"
 #include "HTMLNames.h"
 #include "HitTestResult.h"
 #include "IntSize.h"
-#include "NodeTraversal.h"
 #include "RenderObject.h"
 
 using namespace std;

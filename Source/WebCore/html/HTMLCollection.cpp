@@ -24,6 +24,7 @@
 #include "HTMLCollection.h"
 
 #include "ClassNodeList.h"
+#include "ElementTraversal.h"
 #include "HTMLDocument.h"
 #include "HTMLElement.h"
 #include "HTMLNameCollection.h"
@@ -32,7 +33,6 @@
 #include "HTMLOptionElement.h"
 #include "NodeList.h"
 #include "NodeRareData.h"
-#include "NodeTraversal.h"
 
 namespace WebCore {
 

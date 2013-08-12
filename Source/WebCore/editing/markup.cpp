@@ -41,6 +41,7 @@
 #endif
 #include "DocumentFragment.h"
 #include "Editor.h"
+#include "ElementTraversal.h"
 #include "ExceptionCode.h"
 #include "ExceptionCodePlaceholder.h"
 #include "Frame.h"
@@ -52,7 +53,6 @@
 #include "HTMLTextFormControlElement.h"
 #include "KURL.h"
 #include "MarkupAccumulator.h"
-#include "NodeTraversal.h"
 #include "Range.h"
 #include "RenderBlock.h"
 #include "RenderObject.h"

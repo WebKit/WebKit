@@ -25,11 +25,11 @@
 #include "config.h"
 #include "HTMLFieldSetElement.h"
 
+#include "ElementTraversal.h"
 #include "HTMLCollection.h"
 #include "HTMLLegendElement.h"
 #include "HTMLNames.h"
 #include "HTMLObjectElement.h"
-#include "NodeTraversal.h"
 #include "RenderFieldset.h"
 #include <wtf/StdLibExtras.h>
 

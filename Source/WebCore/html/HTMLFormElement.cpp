@@ -27,6 +27,7 @@
 
 #include "Attribute.h"
 #include "Document.h"
+#include "ElementTraversal.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "FormController.h"
@@ -41,7 +42,6 @@
 #include "HTMLNames.h"
 #include "HTMLTableElement.h"
 #include "NodeRenderingContext.h"
-#include "NodeTraversal.h"
 #include "Page.h"
 #include "RenderTextControl.h"
 #include "ScriptController.h"

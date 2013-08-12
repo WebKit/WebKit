@@ -25,10 +25,10 @@
 #include "config.h"
 #include "HTMLLegendElement.h"
 
+#include "ElementTraversal.h"
 #include "HTMLFieldSetElement.h"
 #include "HTMLFormControlElement.h"
 #include "HTMLNames.h"
-#include "NodeTraversal.h"
 
 namespace WebCore {
 
