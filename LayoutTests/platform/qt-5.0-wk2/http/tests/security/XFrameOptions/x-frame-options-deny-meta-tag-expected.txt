@@ -1,5 +1,5 @@
 http://127.0.0.1:8000/security/XFrameOptions/resources/x-frame-options-deny-meta-tag-subframe.html - willSendRequest <NSURLRequest URL http://127.0.0.1:8000/security/XFrameOptions/resources/x-frame-options-deny-meta-tag-subframe.html, main document URL http://127.0.0.1:8000/security/XFrameOptions/x-frame-options-deny-meta-tag.html, http method GET> redirectResponse (null)
-<unknown> - didFinishLoading
+http://127.0.0.1:8000/security/XFrameOptions/x-frame-options-deny-meta-tag.html - didFinishLoading
 http://127.0.0.1:8000/security/XFrameOptions/resources/x-frame-options-deny-meta-tag-subframe.html - didReceiveResponse <NSURLResponse http://127.0.0.1:8000/security/XFrameOptions/resources/x-frame-options-deny-meta-tag-subframe.html, http status code 200>
 http://127.0.0.1:8000/security/XFrameOptions/resources/x-frame-options-deny-meta-tag-subframe.html - didFailLoadingWithError: <NSError domain QtNetwork, code 5, failing URL "http://127.0.0.1:8000/security/XFrameOptions/resources/x-frame-options-deny-meta-tag-subframe.html">
 CONSOLE MESSAGE: Refused to display 'http://127.0.0.1:8000/security/XFrameOptions/resources/x-frame-options-deny-meta-tag-subframe.html' in a frame because it set 'X-Frame-Options' to 'deny'.

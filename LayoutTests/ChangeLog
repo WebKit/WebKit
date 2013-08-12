@@ -1,3 +1,29 @@
+2013-08-12  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening. Rebaselining after r153903.
+
+        * platform/qt-5.0-wk1/fast/loader/main-document-url-for-non-http-loads-expected.txt: Added.
+        * platform/qt-5.0-wk1/http/tests/cache/iframe-304-crash-expected.txt: Added.
+        * platform/qt-5.0-wk1/http/tests/loading/307-after-303-after-post-expected.txt: Added.
+        * platform/qt-5.0-wk1/http/tests/loading/redirect-methods-expected.txt: Added.
+        * platform/qt-5.0-wk1/http/tests/misc/favicon-loads-with-images-disabled-expected.txt: Added.
+        * platform/qt-5.0-wk1/http/tests/security/XFrameOptions/x-frame-options-allowall-expected.txt: Added.
+        * platform/qt-5.0-wk1/http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-allow-expected.txt: Added.
+        * platform/qt-5.0-wk1/http/tests/security/XFrameOptions/x-frame-options-invalid-expected.txt: Added.
+        * platform/qt-5.0-wk1/http/tests/security/XFrameOptions/x-frame-options-multiple-headers-sameorigin-allow-expected.txt: Added.
+        * platform/qt-5.0-wk1/http/tests/security/XFrameOptions/x-frame-options-parent-same-origin-allow-expected.txt: Added.
+        * platform/qt-5.0-wk2/compositing/geometry/preserve-3d-switching-expected.txt:
+        * platform/qt-5.0-wk2/http/tests/misc/will-send-request-returns-null-on-redirect-expected.txt:
+        * platform/qt-5.0-wk2/http/tests/misc/window-dot-stop-expected.txt:
+        * platform/qt-5.0-wk2/http/tests/security/XFrameOptions/x-frame-options-deny-expected.txt:
+        * platform/qt-5.0-wk2/http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-expected.txt:
+        * platform/qt-5.0-wk2/http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-in-body-expected.txt:
+        * platform/qt-5.0-wk2/http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-deny-expected.txt:
+        * platform/qt-5.0-wk2/http/tests/security/XFrameOptions/x-frame-options-multiple-headers-conflict-expected.txt:
+        * platform/qt-5.0-wk2/http/tests/security/XFrameOptions/x-frame-options-multiple-headers-sameorigin-deny-expected.txt:
+        * platform/qt-5.0-wk2/http/tests/security/XFrameOptions/x-frame-options-parent-same-origin-deny-expected.txt:
+        * platform/qt-5.0-wk2/loader/go-back-cached-main-resource-expected.txt:
+
 2013-08-12  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         Update spellcheck-attribute.html description.
