@@ -36,6 +36,10 @@
 #import <wtf/HashSet.h>
 #import <wtf/Threading.h>
 
+#if USE(WEB_THREAD)
+#include <wtf/ios/WebCoreThread.h>
+#endif
+
 @interface JSWTFMainThreadCaller : NSObject {
 }
 - (void)call;
@@ -124,6 +128,23 @@ void scheduleDispatchFunctionsOnMainThread()
     [staticMainThreadCaller performSelector:@selector(call) onThread:mainThreadNSThread withObject:nil waitUntilDone:NO];
 }
 
+#if USE(WEB_THREAD)
+bool isMainThread()
+{
+    ASSERT(!mainThreadEstablishedAsPthreadMain);
+    return (isWebThread() || pthread_main_np()) && WebCoreWebThreadIsLockedOrDisabled();
+}
+
+bool isUIThread()
+{
+    return pthread_main_np();
+}
+
+bool isWebThread()
+{
+    return pthread_equal(pthread_self(), mainThreadPthread);
+}
+#else
 bool isMainThread()
 {
     if (mainThreadEstablishedAsPthreadMain) {
@@ -132,17 +153,6 @@ bool isMainThread()
     }
 
     ASSERT(mainThreadPthread);
-    return pthread_equal(pthread_self(), mainThreadPthread);
-}
-
-#if USE(WEB_THREAD)
-bool isUIThread()
-{
-    return pthread_main_np();
-}
-
-bool isWebThread()
-{
     return pthread_equal(pthread_self(), mainThreadPthread);
 }
 #endif // USE(WEB_THREAD)
