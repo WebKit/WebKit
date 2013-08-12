@@ -4997,7 +4997,7 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
     hr = prefsPrivate->isFullScreenEnabled(&enabled);
     if (FAILED(hr))
         return hr;
-    settings->setFullScreenEnabled(enabled);
+    settings.setFullScreenEnabled(enabled);
 #endif
 
     hr = prefsPrivate->mediaPlaybackRequiresUserGesture(&enabled);

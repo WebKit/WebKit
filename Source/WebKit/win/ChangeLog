@@ -1,3 +1,10 @@
+2013-08-12  Andreas Kling  <akling@apple.com>
+
+        More Windows build juice.
+
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged):
+
 2013-08-09  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Add support for KeyboardEvent.location attribute
