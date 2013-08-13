@@ -114,6 +114,8 @@ void performPlatformSpecificJITAssertions(VM* vm)
     performARMJITAssertions();
 #elif CPU(MIPS)
     performMIPSJITAssertions();
+#elif CPU(SH4)
+    performSH4JITAssertions();
 #endif
 }
 

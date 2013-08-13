@@ -266,15 +266,19 @@ struct JITStackFrame {
     JITStubArg args[6];
 
     ReturnAddressPtr thunkReturnAddress;
+
     void* savedR10;
     void* savedR11;
     void* savedR13;
     void* savedRPR;
     void* savedR14;
 
+    // These arguments are passed in r5, r6 and r7.
     JSStack* stack;
     CallFrame* callFrame;
     JSValue* exception;
+
+    // These arguments are passed on the stack.
     void* unused1;
     VM* vm;
 

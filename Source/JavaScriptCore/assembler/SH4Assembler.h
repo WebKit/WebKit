@@ -337,8 +337,8 @@ public:
     };
 
     SH4Assembler()
+        : m_claimscratchReg(0x0)
     {
-        m_claimscratchReg = 0x0;
     }
 
     // SH4 condition codes
@@ -1189,14 +1189,6 @@ public:
         oneShortOp(opc);
     }
 
-    void movlImm8r(int imm8, RegisterID dst)
-    {
-        ASSERT((imm8 <= 127) && (imm8 >= -128));
-
-        uint16_t opc = getOpcodeGroup3(MOVIMM_OPCODE, dst, imm8);
-        oneShortOp(opc);
-    }
-
     void loadConstant(uint32_t constant, RegisterID dst)
     {
         if (((int)constant <= 0x7f) && ((int)constant >= -0x80)) {
@@ -1331,12 +1323,14 @@ public:
 
     static void changePCrelativeAddress(int offset, uint16_t* instructionPtr, uint32_t newAddress)
     {
+        ASSERT((instructionPtr[0] & 0xf000) == MOVL_READ_OFFPC_OPCODE);
         uint32_t address = (offset << 2) + ((reinterpret_cast<uint32_t>(instructionPtr) + 4) &(~0x3));
         *reinterpret_cast<uint32_t*>(address) = newAddress;
     }
 
     static uint32_t readPCrelativeAddress(int offset, uint16_t* instructionPtr)
     {
+        ASSERT((instructionPtr[0] & 0xf000) == MOVL_READ_OFFPC_OPCODE);
         uint32_t address = (offset << 2) + ((reinterpret_cast<uint32_t>(instructionPtr) + 4) &(~0x3));
         return *reinterpret_cast<uint32_t*>(address);
     }
@@ -1374,17 +1368,9 @@ public:
             braf @reg        braf @reg
             nop              nop
          */
-        ASSERT((*(instructionPtr + 1) & BRAF_OPCODE) == BRAF_OPCODE);
-
-        offsetBits -= 4;
-        if (offsetBits >= -4096 && offsetBits <= 4094) {
-            *instructionPtr = getOpcodeGroup6(BRA_OPCODE, offsetBits >> 1);
-            *(++instructionPtr) = NOP_OPCODE;
-            printBlockInstr(instructionPtr - 1, from.m_offset, 2);
-            return;
-        }
-
-        changePCrelativeAddress((*instructionPtr & 0xff), instructionPtr, offsetBits - 2);
+        ASSERT((instructionPtr[0] & 0xf000) == MOVL_READ_OFFPC_OPCODE);
+        ASSERT((instructionPtr[1] & 0xf0ff) == BRAF_OPCODE);
+        changePCrelativeAddress((*instructionPtr & 0xff), instructionPtr, offsetBits - 6);
         printInstr(*instructionPtr, from.m_offset + 2);
     }
 
@@ -1392,12 +1378,14 @@ public:
     {
         uint16_t* instructionPtr = getInstructionPtr(code, from.m_offset);
         instructionPtr -= 3;
+        ASSERT((instructionPtr[0] & 0xf000) == MOVL_READ_OFFPC_OPCODE);
         changePCrelativeAddress((*instructionPtr & 0xff), instructionPtr, reinterpret_cast<uint32_t>(to));
     }
 
     static void linkPointer(void* code, AssemblerLabel where, void* value)
     {
         uint16_t* instructionPtr = getInstructionPtr(code, where.m_offset);
+        ASSERT((instructionPtr[0] & 0xf000) == MOVL_READ_OFFPC_OPCODE);
         changePCrelativeAddress((*instructionPtr & 0xff), instructionPtr, reinterpret_cast<uint32_t>(value));
     }
 
@@ -1441,7 +1429,7 @@ public:
         ASSERT((((reinterpret_cast<uint32_t>(constPoolAddr) - reinterpret_cast<uint32_t>(loadAddr)) + index * 4)) < 1024);
 
         int offset = reinterpret_cast<uint32_t>(constPoolAddr) + (index * 4) - ((reinterpret_cast<uint32_t>(instructionPtr) & ~0x03) + 4);
-        instruction &=0xf00;
+        instruction &= 0x0f00;
         instruction |= 0xd000;
         offset &= 0x03ff;
         instruction |= (offset >> 2);
@@ -1462,6 +1450,7 @@ public:
     static void repatchInt32(void* where, int32_t value)
     {
         uint16_t* instructionPtr = reinterpret_cast<uint16_t*>(where);
+        ASSERT((instructionPtr[0] & 0xf000) == MOVL_READ_OFFPC_OPCODE);
         changePCrelativeAddress((*instructionPtr & 0xff), instructionPtr, value);
     }
 
@@ -1477,6 +1466,7 @@ public:
     {
         uint16_t* instructionPtr = reinterpret_cast<uint16_t*>(from);
         instructionPtr -= 3;
+        ASSERT((instructionPtr[0] & 0xf000) == MOVL_READ_OFFPC_OPCODE);
         changePCrelativeAddress((*instructionPtr & 0xff), instructionPtr, reinterpret_cast<uint32_t>(to));
     }
 
@@ -1489,23 +1479,17 @@ public:
         if (((*instructionPtr & 0xff00) == BT_OPCODE) || ((*instructionPtr & 0xff00) == BF_OPCODE)) {
             offsetBits -= 8;
             instructionPtr++;
+            ASSERT((instructionPtr[0] & 0xf000) == MOVL_READ_OFFPC_OPCODE);
             changePCrelativeAddress((*instructionPtr & 0xff), instructionPtr, offsetBits);
             instruction = (BRAF_OPCODE | (*instructionPtr++ & 0xf00));
             *instructionPtr = instruction;
             printBlockInstr(instructionPtr, reinterpret_cast<uint32_t>(from) + 1, 3);
+            cacheFlush(instructionPtr, sizeof(SH4Word));
             return;
         }
 
-        ASSERT((*(instructionPtr + 1) & BRAF_OPCODE) == BRAF_OPCODE);
-        offsetBits -= 4;
-        if (offsetBits >= -4096 && offsetBits <= 4094) {
-            *instructionPtr = getOpcodeGroup6(BRA_OPCODE, offsetBits >> 1);
-            *(++instructionPtr) = NOP_OPCODE;
-            printBlockInstr(instructionPtr - 2, reinterpret_cast<uint32_t>(from), 2);
-            return;
-        }
-
-        changePCrelativeAddress((*instructionPtr & 0xff), instructionPtr, offsetBits - 2);
+        ASSERT((instructionPtr[1] & 0xf0ff) == BRAF_OPCODE);
+        changePCrelativeAddress((*instructionPtr & 0xff), instructionPtr, offsetBits - 6);
         printInstr(*instructionPtr, reinterpret_cast<uint32_t>(from));
     }
 
@@ -1520,32 +1504,43 @@ public:
     {
         SH4Word* instruction = reinterpret_cast<SH4Word*>(instructionStart);
         intptr_t difference = reinterpret_cast<intptr_t>(to) - (reinterpret_cast<intptr_t>(instruction) + 2 * sizeof(SH4Word));
-        int nbinst = 0;
 
-        if ((difference >= -4096) && (difference <= 4094)) {
-            instruction[0] = getOpcodeGroup6(BRA_OPCODE, difference >> 1);
-            instruction[1] = NOP_OPCODE;
-            cacheFlush(instruction, sizeof(SH4Word) * 2);
-            return;
+        if ((instruction[0] & 0xf000) == MOVL_READ_OFFPC_OPCODE) {
+            instruction[1] = (BRAF_OPCODE | (instruction[0] & 0x0f00));
+            instruction[2] = NOP_OPCODE;
+            cacheFlush(&instruction[1], 2 * sizeof(SH4Word));
+        } else {
+            instruction[0] = getOpcodeGroup3(MOVL_READ_OFFPC_OPCODE, SH4Registers::r13, 1);
+            instruction[1] = getOpcodeGroup2(BRAF_OPCODE, SH4Registers::r13);
+            instruction[2] = NOP_OPCODE;
+            cacheFlush(instruction, 3 * sizeof(SH4Word));
         }
 
-        instruction[nbinst++] = getOpcodeGroup3(MOVL_READ_OFFPC_OPCODE, scratchReg2, 1);
-        instruction[nbinst++] = getOpcodeGroup2(JMP_OPCODE, scratchReg2);
-        instruction[nbinst++] = NOP_OPCODE;
-
-        if (!(reinterpret_cast<unsigned>(instruction) & 3))
-            instruction[nbinst++] = NOP_OPCODE;
-
-        instruction[nbinst++] = reinterpret_cast<unsigned>(to) & 0xffff;
-        instruction[nbinst++] = reinterpret_cast<unsigned>(to) >> 16;
-        cacheFlush(instruction, sizeof(SH4Word) * nbinst);
+        changePCrelativeAddress(instruction[0] & 0x00ff, instruction, difference - 2);
     }
 
-    static void revertJump(void* instructionStart, void *immptr)
+    static void revertJumpToMove(void* instructionStart, RegisterID rd, int imm)
     {
         SH4Word *insn = reinterpret_cast<SH4Word*>(instructionStart);
         ASSERT((insn[0] & 0xf000) == MOVL_READ_OFFPC_OPCODE);
-        changePCrelativeAddress(insn[0] & 0x00ff, insn, reinterpret_cast<uint32_t>(immptr));
+
+        if ((insn[1] & 0xf000) == CMPEQ_OPCODE) {
+            insn[0] = getOpcodeGroup3(MOVL_READ_OFFPC_OPCODE, SH4Registers::r13, insn[0] & 0x00ff);
+            insn[1] = (insn[1] & 0xf00f) | (rd << 8) | (SH4Registers::r13 << 4);
+            cacheFlush(insn, 2 * sizeof(SH4Word));
+            changePCrelativeAddress(insn[0] & 0x00ff, insn, imm);
+            return;
+        }
+
+        if ((insn[0] & 0x00ff) == 1)
+            insn[1] = getOpcodeGroup6(BRA_OPCODE, 3);
+        else
+            insn[1] = NOP_OPCODE;
+
+        insn[2] = NOP_OPCODE;
+        cacheFlush(&insn[1], 2 * sizeof(SH4Word));
+
+        changePCrelativeAddress(insn[0] & 0x00ff, insn, imm);
     }
 
     void linkJump(AssemblerLabel from, AssemblerLabel to, JumpType type = JumpFar)
@@ -1558,8 +1553,9 @@ public:
         int offsetBits;
 
         if (type == JumpNear) {
-            ASSERT((instruction ==  BT_OPCODE) || (instruction == BF_OPCODE) || (instruction == BRA_OPCODE));
             int offset = (codeSize() - from.m_offset) - 4;
+            ASSERT((((instruction == BT_OPCODE) || (instruction == BF_OPCODE)) && (offset >= -256) && (offset <= 254))
+                || ((instruction == BRA_OPCODE) && (offset >= -4096) && (offset <= 4094)));
             *instructionPtr++ = instruction | (offset >> 1);
             printInstr(*instructionPtr, from.m_offset + 2);
             return;
@@ -1574,7 +1570,7 @@ public:
             offsetBits = (to.m_offset - from.m_offset) - 8;
             instruction ^= 0x0202;
             *instructionPtr++ = instruction;
-            if ((*instructionPtr & 0xf000) == 0xe000) {
+            if ((*instructionPtr & 0xf000) == MOVIMM_OPCODE) {
                 uint32_t* addr = getLdrImmAddressOnPool(instructionPtr, m_buffer.poolAddress());
                 *addr = offsetBits;
             } else
@@ -1590,23 +1586,18 @@ public:
            nop               nop
         */
         ASSERT((*(instructionPtr + 1) & BRAF_OPCODE) == BRAF_OPCODE);
-        offsetBits = (to.m_offset - from.m_offset) - 4;
-        if (offsetBits >= -4096 && offsetBits <= 4094) {
-            *instructionPtr = getOpcodeGroup6(BRA_OPCODE, offsetBits >> 1);
-            *(++instructionPtr) = NOP_OPCODE;
-            printBlockInstr(instructionPtr - 1, from.m_offset, 2);
-            return;
-        }
+        offsetBits = (to.m_offset - from.m_offset) - 6;
 
         instruction = *instructionPtr;
-        if ((instruction & 0xf000) == 0xe000) {
+        if ((instruction & 0xf000) == MOVIMM_OPCODE) {
             uint32_t* addr = getLdrImmAddressOnPool(instructionPtr, m_buffer.poolAddress());
-            *addr = offsetBits - 2;
+            *addr = offsetBits;
             printInstr(*instructionPtr, from.m_offset + 2);
             return;
         }
 
-        changePCrelativeAddress((*instructionPtr & 0xff), instructionPtr, offsetBits - 2);
+        ASSERT((instructionPtr[0] & 0xf000) == MOVL_READ_OFFPC_OPCODE);
+        changePCrelativeAddress((*instructionPtr & 0xff), instructionPtr, offsetBits);
         printInstr(*instructionPtr, from.m_offset + 2);
     }
 

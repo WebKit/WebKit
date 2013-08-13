@@ -1,3 +1,25 @@
+2013-08-13  Julien Brianceau  <jbrianceau@nds.com>
+
+        [sh4] Prepare baseline JIT for DFG_JIT implementation.
+        https://bugs.webkit.org/show_bug.cgi?id=119758
+
+        Reviewed by Oliver Hunt.
+
+        * assembler/MacroAssemblerSH4.h:
+            - Introduce a loadEffectiveAddress function to avoid code duplication.
+            - Add ASSERTs and clean code.
+        * assembler/SH4Assembler.h:
+            - Prepare DFG_JIT implementation.
+            - Add ASSERTs.
+        * jit/JITStubs.cpp:
+            - Add SH4 specific call for assertions.
+        * jit/JITStubs.h:
+            - Cosmetic change.
+        * jit/JITStubsSH4.h:
+            - Use constants to be more flexible with sh4 JIT stack frame.
+        * jit/JSInterfaceJIT.h:
+            - Cosmetic change.
+
 2013-08-13  Oliver Hunt  <oliver@apple.com>
 
         Harden executeConstruct against incorrect return types from host functions
