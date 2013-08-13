@@ -123,15 +123,15 @@ void CurlDownloadManager::updateHandleList()
     // Remove curl easy handles from multi list 
     int size = m_removedHandleList.size();
     for (int i = 0; i < size; i++) {
-        if (removeFromCurl(m_removedHandleList[0]))
-            m_removedHandleList.remove(0);
+        removeFromCurl(m_removedHandleList[0]);
+        m_removedHandleList.remove(0);
     }
 
     // Add pending curl easy handles to multi list 
     size = m_pendingHandleList.size();
     for (int i = 0; i < size; i++) {
-        if (addToCurl(m_pendingHandleList[0]))
-            m_pendingHandleList.remove(0);
+        addToCurl(m_pendingHandleList[0]);
+        m_pendingHandleList.remove(0);
     }
 }
 

@@ -1,3 +1,16 @@
+2013-08-13  peavo@outlook.com  <peavo@outlook.com>
+
+        [Curl] Possible infinite loop while downloading.
+        https://bugs.webkit.org/show_bug.cgi?id=119744
+
+        Reviewed by Darin Adler.
+
+        If adding/removing curl handles fails, the download thread
+        can end up in an endless loop trying to update the curl handle list.
+
+        * platform/network/curl/CurlDownload.cpp:
+        (WebCore::CurlDownloadManager::updateHandleList): Avoid infinite loop by ignoring return value.
+
 2013-08-13  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         HTMLSelectElement.item() does not behave according to specification
