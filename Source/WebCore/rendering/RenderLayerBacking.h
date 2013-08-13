@@ -141,8 +141,8 @@ public:
     void suspendAnimations(double time = 0);
     void resumeAnimations();
 
-    IntRect compositedBounds() const;
-    void setCompositedBounds(const IntRect&);
+    LayoutRect compositedBounds() const;
+    void setCompositedBounds(const LayoutRect&);
     void updateCompositedBounds();
     
     void updateAfterWidgetResize();
@@ -175,7 +175,7 @@ public:
     virtual void verifyNotPainting();
 #endif
 
-    IntRect contentsBox() const;
+    LayoutRect contentsBox() const;
     IntRect backgroundBox() const;
     
     // For informative purposes only.
@@ -229,7 +229,7 @@ private:
 
     GraphicsLayerPaintingPhase paintingPhaseForPrimaryLayer() const;
     
-    IntSize contentOffsetInCompostingLayer() const;
+    LayoutSize contentOffsetInCompostingLayer() const;
     // Result is transform origin in pixels.
     FloatPoint3D computeTransformOrigin(const IntRect& borderBox) const;
     // Result is perspective origin in pixels.
@@ -297,7 +297,8 @@ private:
 
     uint64_t m_scrollLayerID;
 
-    IntRect m_compositedBounds;
+    LayoutRect m_compositedBounds;
+    LayoutSize m_subpixelAccumulation; // The accumulated subpixel offset of the compositedBounds compared to absolute coordinates.
 
     bool m_artificiallyInflatedBounds; // bounds had to be made non-zero to make transform-origin work
     bool m_boundsConstrainedByClipping;

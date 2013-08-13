@@ -654,7 +654,7 @@ void RenderLayerCompositor::logLayerInfo(const RenderLayer* layer, int depth)
 
     StringBuilder logString;
     logString.append(String::format("%*p %dx%d %.2fKB", 12 + depth * 2, layer,
-        backing->compositedBounds().width(), backing->compositedBounds().height(),
+        backing->compositedBounds().width().round(), backing->compositedBounds().height().round(),
         backing->backingStoreMemoryEstimate() / 1024));
     
     logString.append(" (");
@@ -830,10 +830,10 @@ void RenderLayerCompositor::repaintInCompositedAncestor(RenderLayer* layer, cons
 
 // The bounds of the GraphicsLayer created for a compositing layer is the union of the bounds of all the descendant
 // RenderLayers that are rendered by the composited RenderLayer.
-IntRect RenderLayerCompositor::calculateCompositedBounds(const RenderLayer* layer, const RenderLayer* ancestorLayer) const
+LayoutRect RenderLayerCompositor::calculateCompositedBounds(const RenderLayer* layer, const RenderLayer* ancestorLayer) const
 {
     if (!canBeComposited(layer))
-        return IntRect();
+        return LayoutRect();
     return layer->calculateLayerBounds(ancestorLayer, 0, RenderLayer::DefaultCalculateLayerBoundsFlags | RenderLayer::ExcludeHiddenDescendants | RenderLayer::DontConstrainForMask);
 }
 

@@ -1,3 +1,13 @@
+2013-08-13  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        REGRESSION(SUBPIXEL_LAYOUT) Composited layers can cause one pixel shifts
+        https://bugs.webkit.org/show_bug.cgi?id=115304
+
+        Reviewed by David Hyatt.
+
+        * fast/sub-pixel/sub-pixel-composited-layers-expected.html: Added.
+        * fast/sub-pixel/sub-pixel-composited-layers.html: Added.
+
 2013-08-13  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         HTMLSelectElement.item() does not behave according to specification

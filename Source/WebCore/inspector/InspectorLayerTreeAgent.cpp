@@ -180,7 +180,7 @@ PassRefPtr<TypeBuilder::LayerTree::Layer> InspectorLayerTreeAgent::buildObjectFo
         .setNodeId(idForNode(errorString, node))
         .setBounds(buildObjectForIntRect(renderer->absoluteBoundingBoxRect()))
         .setMemory(backing->backingStoreMemoryEstimate())
-        .setCompositedBounds(buildObjectForIntRect(backing->compositedBounds()))
+        .setCompositedBounds(buildObjectForIntRect(enclosingIntRect(backing->compositedBounds())))
         .setPaintCount(backing->graphicsLayer()->repaintCount());
 
     if (node && node->shadowHost())

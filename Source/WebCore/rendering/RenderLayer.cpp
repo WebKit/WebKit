@@ -3730,7 +3730,7 @@ bool RenderLayer::setupFontSubpixelQuantization(GraphicsContext* context, bool& 
     return false;
 }
 
-bool RenderLayer::setupClipPath(GraphicsContext* context, const LayerPaintingInfo& paintingInfo, const LayoutPoint& offsetFromRoot, IntRect& rootRelativeBounds, bool& rootRelativeBoundsComputed)
+bool RenderLayer::setupClipPath(GraphicsContext* context, const LayerPaintingInfo& paintingInfo, const LayoutPoint& offsetFromRoot, LayoutRect& rootRelativeBounds, bool& rootRelativeBoundsComputed)
 {
     if (!renderer()->hasClipPath() || context->paintingDisabled())
         return false;
@@ -3773,7 +3773,7 @@ bool RenderLayer::setupClipPath(GraphicsContext* context, const LayerPaintingInf
 }
 
 #if ENABLE(CSS_FILTERS)
-PassOwnPtr<FilterEffectRendererHelper> RenderLayer::setupFilters(GraphicsContext* context, LayerPaintingInfo& paintingInfo, PaintLayerFlags paintFlags, const LayoutPoint& offsetFromRoot, IntRect& rootRelativeBounds, bool& rootRelativeBoundsComputed)
+PassOwnPtr<FilterEffectRendererHelper> RenderLayer::setupFilters(GraphicsContext* context, LayerPaintingInfo& paintingInfo, PaintLayerFlags paintFlags, const LayoutPoint& offsetFromRoot, LayoutRect& rootRelativeBounds, bool& rootRelativeBoundsComputed)
 {
     if (context->paintingDisabled())
         return nullptr;
@@ -3864,7 +3864,7 @@ void RenderLayer::paintLayerContents(GraphicsContext* context, const LayerPainti
     LayoutPoint offsetFromRoot;
     convertToLayerCoords(paintingInfo.rootLayer, offsetFromRoot);
 
-    IntRect rootRelativeBounds;
+    LayoutRect rootRelativeBounds;
     bool rootRelativeBoundsComputed = false;
 
     // FIXME: We shouldn't have to disable subpixel quantization for overflow clips or subframes once we scroll those
@@ -5381,14 +5381,14 @@ IntRect RenderLayer::absoluteBoundingBox() const
     return pixelSnappedIntRect(boundingBox(root()));
 }
 
-IntRect RenderLayer::calculateLayerBounds(const RenderLayer* ancestorLayer, const LayoutPoint* offsetFromRoot, CalculateLayerBoundsFlags flags) const
+LayoutRect RenderLayer::calculateLayerBounds(const RenderLayer* ancestorLayer, const LayoutPoint* offsetFromRoot, CalculateLayerBoundsFlags flags) const
 {
     if (!isSelfPaintingLayer())
-        return IntRect();
+        return LayoutRect();
 
     // FIXME: This could be improved to do a check like hasVisibleNonCompositingDescendantLayers() (bug 92580).
     if ((flags & ExcludeHiddenDescendants) && this != ancestorLayer && !hasVisibleContent() && !hasVisibleDescendant())
-        return IntRect();
+        return LayoutRect();
 
     RenderLayerModelObject* renderer = this->renderer();
 
@@ -5428,7 +5428,7 @@ IntRect RenderLayer::calculateLayerBounds(const RenderLayer* ancestorLayer, cons
             LayoutPoint ancestorRelOffset;
             convertToLayerCoords(ancestorLayer, ancestorRelOffset);
             localClipRect.moveBy(ancestorRelOffset);
-            return pixelSnappedIntRect(localClipRect);
+            return localClipRect;
         }
     }
 
@@ -5439,7 +5439,7 @@ IntRect RenderLayer::calculateLayerBounds(const RenderLayer* ancestorLayer, cons
 
     if (RenderLayer* reflection = reflectionLayer()) {
         if (!reflection->isComposited()) {
-            IntRect childUnionBounds = reflection->calculateLayerBounds(this, 0, descendantFlags);
+            LayoutRect childUnionBounds = reflection->calculateLayerBounds(this, 0, descendantFlags);
             unionBounds.unite(childUnionBounds);
         }
     }
@@ -5455,7 +5455,7 @@ IntRect RenderLayer::calculateLayerBounds(const RenderLayer* ancestorLayer, cons
         for (size_t i = 0; i < listSize; ++i) {
             RenderLayer* curLayer = negZOrderList->at(i);
             if (flags & IncludeCompositedDescendants || !curLayer->isComposited()) {
-                IntRect childUnionBounds = curLayer->calculateLayerBounds(this, 0, descendantFlags);
+                LayoutRect childUnionBounds = curLayer->calculateLayerBounds(this, 0, descendantFlags);
                 unionBounds.unite(childUnionBounds);
             }
         }
@@ -5466,7 +5466,7 @@ IntRect RenderLayer::calculateLayerBounds(const RenderLayer* ancestorLayer, cons
         for (size_t i = 0; i < listSize; ++i) {
             RenderLayer* curLayer = posZOrderList->at(i);
             if (flags & IncludeCompositedDescendants || !curLayer->isComposited()) {
-                IntRect childUnionBounds = curLayer->calculateLayerBounds(this, 0, descendantFlags);
+                LayoutRect childUnionBounds = curLayer->calculateLayerBounds(this, 0, descendantFlags);
                 unionBounds.unite(childUnionBounds);
             }
         }
@@ -5480,7 +5480,7 @@ IntRect RenderLayer::calculateLayerBounds(const RenderLayer* ancestorLayer, cons
             // so there's no way we could hit a RenderNamedFlowThread here.
             ASSERT(!curLayer->isOutOfFlowRenderFlowThread());
             if (flags & IncludeCompositedDescendants || !curLayer->isComposited()) {
-                IntRect curAbsBounds = curLayer->calculateLayerBounds(this, 0, descendantFlags);
+                LayoutRect curAbsBounds = curLayer->calculateLayerBounds(this, 0, descendantFlags);
                 unionBounds.unite(curAbsBounds);
             }
         }
@@ -5507,7 +5507,7 @@ IntRect RenderLayer::calculateLayerBounds(const RenderLayer* ancestorLayer, cons
         convertToLayerCoords(ancestorLayer, ancestorRelOffset);
     unionBounds.moveBy(ancestorRelOffset);
     
-    return pixelSnappedIntRect(unionBounds);
+    return unionBounds;
 }
 
 void RenderLayer::clearClipRectsIncludingDescendants(ClipRectsType typeToClear)

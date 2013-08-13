@@ -425,7 +425,7 @@ bool RenderLayerBacking::shouldClipCompositedBounds() const
 
 void RenderLayerBacking::updateCompositedBounds()
 {
-    IntRect layerBounds = compositor()->calculateCompositedBounds(m_owningLayer, m_owningLayer);
+    LayoutRect layerBounds = compositor()->calculateCompositedBounds(m_owningLayer, m_owningLayer);
 
     // Clip to the size of the document or enclosing overflow-scroll layer.
     // If this or an ancestor is transformed, we can't currently compute the correct rect to intersect with.
@@ -447,7 +447,7 @@ void RenderLayerBacking::updateCompositedBounds()
         m_owningLayer->convertToLayerCoords(rootLayer, delta);
         clippingBounds.move(-delta.x(), -delta.y());
 
-        layerBounds.intersect(pixelSnappedIntRect(clippingBounds));
+        layerBounds.intersect(clippingBounds);
         m_boundsConstrainedByClipping = true;
     } else
         m_boundsConstrainedByClipping = false;
@@ -470,7 +470,7 @@ void RenderLayerBacking::updateAfterWidgetResize()
     if (renderer()->isRenderPart()) {
         if (RenderLayerCompositor* innerCompositor = RenderLayerCompositor::frameContentsCompositor(toRenderPart(renderer()))) {
             innerCompositor->frameViewDidChangeSize();
-            innerCompositor->frameViewDidChangeLocation(contentsBox().location());
+            innerCompositor->frameViewDidChangeLocation(flooredIntPoint(contentsBox().location()));
         }
     }
 }
@@ -647,11 +647,16 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
         ancestorCompositingBounds = pixelSnappedIntRect(compAncestor->backing()->compositedBounds());
     }
 
-    IntRect localCompositingBounds = pixelSnappedIntRect(compositedBounds());
+    LayoutRect localRawCompositingBounds = compositedBounds();
+    LayoutPoint rawDelta;
+    m_owningLayer->convertToLayerCoords(compAncestor, rawDelta);
+    IntPoint delta = flooredIntPoint(rawDelta);
+    m_subpixelAccumulation = toLayoutSize(rawDelta.fraction());
+    // Move the bounds by the subpixel accumulation so that it pixel-snaps relative to absolute pixels instead of local coordinates.
+    localRawCompositingBounds.move(m_subpixelAccumulation);
 
+    IntRect localCompositingBounds = pixelSnappedIntRect(localRawCompositingBounds);
     IntRect relativeCompositingBounds(localCompositingBounds);
-    IntPoint delta;
-    m_owningLayer->convertToPixelSnappedLayerCoords(compAncestor, delta);
     relativeCompositingBounds.moveBy(delta);
 
     IntPoint graphicsLayerParentLocation;
@@ -701,7 +706,7 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
 
     m_graphicsLayer->setPosition(FloatPoint(relativeCompositingBounds.location() - graphicsLayerParentLocation));
     m_graphicsLayer->setOffsetFromRenderer(toIntSize(localCompositingBounds.location()));
-    
+
     FloatSize oldSize = m_graphicsLayer->size();
     if (oldSize != contentsSize) {
         m_graphicsLayer->setSize(contentsSize);
@@ -739,7 +744,7 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
         const IntRect borderBox = toRenderBox(renderer())->pixelSnappedBorderBoxRect();
 
         // Get layout bounds in the coords of compAncestor to match relativeCompositingBounds.
-        IntRect layerBounds = IntRect(delta, borderBox.size());
+        IntRect layerBounds(delta, borderBox.size());
 
         // Update properties that depend on layer dimensions
         FloatPoint3D transformOrigin = computeTransformOrigin(borderBox);
@@ -953,7 +958,7 @@ void RenderLayerBacking::updateInternalHierarchy()
 
 void RenderLayerBacking::resetContentsRect()
 {
-    IntRect rect = contentsBox();
+    IntRect rect = pixelSnappedIntRect(contentsBox());
     m_graphicsLayer->setContentsRect(rect);
     m_graphicsLayer->setContentsTileSize(IntSize());
     m_graphicsLayer->setContentsTilePhase(IntPoint());
@@ -1757,7 +1762,7 @@ void RenderLayerBacking::updateImageContents()
         return;
 
     // This is a no-op if the layer doesn't have an inner layer for the image.
-    m_graphicsLayer->setContentsRect(contentsBox());
+    m_graphicsLayer->setContentsRect(pixelSnappedIntRect(contentsBox()));
     m_graphicsLayer->setContentsToImage(image);
     bool isSimpleContainer = false;
     updateDrawsContent(isSimpleContainer);
@@ -1795,24 +1800,24 @@ FloatPoint RenderLayerBacking::computePerspectiveOrigin(const IntRect& borderBox
 }
 
 // Return the offset from the top-left of this compositing layer at which the renderer's contents are painted.
-IntSize RenderLayerBacking::contentOffsetInCompostingLayer() const
+LayoutSize RenderLayerBacking::contentOffsetInCompostingLayer() const
 {
-    return IntSize(-m_compositedBounds.x(), -m_compositedBounds.y());
+    return LayoutSize(-m_compositedBounds.x(), -m_compositedBounds.y());
 }
 
-IntRect RenderLayerBacking::contentsBox() const
+LayoutRect RenderLayerBacking::contentsBox() const
 {
     if (!renderer()->isBox())
-        return IntRect();
+        return LayoutRect();
 
-    IntRect contentsRect;
+    LayoutRect contentsRect;
 #if ENABLE(VIDEO)
     if (renderer()->isVideo()) {
         RenderVideo* videoRenderer = toRenderVideo(renderer());
         contentsRect = videoRenderer->videoBox();
     } else
 #endif
-        contentsRect = pixelSnappedIntRect(toRenderBox(renderer())->contentBoxRect());
+        contentsRect = toRenderBox(renderer())->contentBoxRect();
 
     contentsRect.move(contentOffsetInCompostingLayer());
     return contentsRect;
@@ -1840,9 +1845,9 @@ IntRect RenderLayerBacking::backgroundBox() const
     if (!renderer()->isBox())
         return IntRect();
 
-    IntRect pixelSnappedBackgroundBox = pixelSnappedIntRect(backgroundRectForBox(toRenderBox(renderer())));
-    pixelSnappedBackgroundBox.move(contentOffsetInCompostingLayer());
-    return pixelSnappedBackgroundBox;
+    LayoutRect backgroundBox = backgroundRectForBox(toRenderBox(renderer()));
+    backgroundBox.move(contentOffsetInCompostingLayer());
+    return pixelSnappedIntRect(backgroundBox);
 }
 
 GraphicsLayer* RenderLayerBacking::parentForSublayers() const
@@ -1988,7 +1993,7 @@ void RenderLayerBacking::paintIntoLayer(const GraphicsLayer* graphicsLayer, Grap
         paintFlags |= RenderLayer::PaintLayerPaintingSkipRootBackground;
     
     // FIXME: GraphicsLayers need a way to split for RenderRegions.
-    RenderLayer::LayerPaintingInfo paintingInfo(m_owningLayer, paintDirtyRect, paintBehavior, LayoutSize());
+    RenderLayer::LayerPaintingInfo paintingInfo(m_owningLayer, paintDirtyRect, paintBehavior, m_subpixelAccumulation);
     m_owningLayer->paintLayerContents(context, paintingInfo, paintFlags);
 
     if (m_owningLayer->containsDirtyOverlayScrollbars())
@@ -2031,7 +2036,7 @@ void RenderLayerBacking::paintContents(const GraphicsLayer* graphicsLayer, Graph
         // The dirtyRect is in the coords of the painting root.
         IntRect dirtyRect = clip;
         if (!(paintingPhase & GraphicsLayerPaintOverflowContents))
-            dirtyRect.intersect(compositedBounds());
+            dirtyRect.intersect(enclosingIntRect(compositedBounds()));
 
         // We have to use the same root as for hit testing, because both methods can compute and cache clipRects.
         paintIntoLayer(graphicsLayer, &context, dirtyRect, PaintBehaviorNormal, paintingPhase);
@@ -2264,12 +2269,12 @@ void RenderLayerBacking::resumeAnimations()
     m_graphicsLayer->resumeAnimations();
 }
 
-IntRect RenderLayerBacking::compositedBounds() const
+LayoutRect RenderLayerBacking::compositedBounds() const
 {
     return m_compositedBounds;
 }
 
-void RenderLayerBacking::setCompositedBounds(const IntRect& bounds)
+void RenderLayerBacking::setCompositedBounds(const LayoutRect& bounds)
 {
     m_compositedBounds = bounds;
 }

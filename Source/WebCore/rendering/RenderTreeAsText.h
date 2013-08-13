@@ -38,6 +38,7 @@ class Frame;
 class IntPoint;
 class IntRect;
 class LayoutPoint;
+class LayoutRect;
 class RenderObject;
 class TextStream;
 
@@ -71,6 +72,7 @@ static void writeRenderObject(TextStream& ts, const RenderObject& o, RenderAsTex
 TextStream& operator<<(TextStream&, const IntPoint&);
 TextStream& operator<<(TextStream&, const IntRect&);
 TextStream& operator<<(TextStream&, const LayoutPoint&);
+TextStream& operator<<(TextStream&, const LayoutRect&);
 TextStream& operator<<(TextStream&, const FloatPoint&);
 TextStream& operator<<(TextStream&, const FloatSize&);
 

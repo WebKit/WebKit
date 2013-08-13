@@ -705,7 +705,7 @@ public:
 #endif
 
     // Can pass offsetFromRoot if known.
-    IntRect calculateLayerBounds(const RenderLayer* ancestorLayer, const LayoutPoint* offsetFromRoot = 0, CalculateLayerBoundsFlags = DefaultCalculateLayerBoundsFlags) const;
+    LayoutRect calculateLayerBounds(const RenderLayer* ancestorLayer, const LayoutPoint* offsetFromRoot = 0, CalculateLayerBoundsFlags = DefaultCalculateLayerBoundsFlags) const;
     
     // WARNING: This method returns the offset for the parent as this is what updateLayerPositions expects.
     LayoutPoint computeOffsetFromRoot(bool& hasLayerOffset) const;
@@ -940,9 +940,9 @@ private:
     };
 
     bool setupFontSubpixelQuantization(GraphicsContext*, bool& didQuantizeFonts);
-    bool setupClipPath(GraphicsContext*, const LayerPaintingInfo&, const LayoutPoint& offsetFromRoot, IntRect& rootRelativeBounds, bool& rootRelativeBoundsComputed);
+    bool setupClipPath(GraphicsContext*, const LayerPaintingInfo&, const LayoutPoint& offsetFromRoot, LayoutRect& rootRelativeBounds, bool& rootRelativeBoundsComputed);
 #if ENABLE(CSS_FILTERS)
-    PassOwnPtr<FilterEffectRendererHelper> setupFilters(GraphicsContext*, LayerPaintingInfo&, PaintLayerFlags, const LayoutPoint& offsetFromRoot, IntRect& rootRelativeBounds, bool& rootRelativeBoundsComputed);
+    PassOwnPtr<FilterEffectRendererHelper> setupFilters(GraphicsContext*, LayerPaintingInfo&, PaintLayerFlags, const LayoutPoint& offsetFromRoot, LayoutRect& rootRelativeBounds, bool& rootRelativeBoundsComputed);
     GraphicsContext* applyFilters(FilterEffectRendererHelper*, GraphicsContext* originalContext, LayerPaintingInfo&, LayerFragments&);
 #endif
 

@@ -88,9 +88,15 @@ TextStream& operator<<(TextStream& ts, const IntPoint& p)
     return ts << "(" << p.x() << "," << p.y() << ")";
 }
 
+TextStream& operator<<(TextStream& ts, const LayoutRect& r)
+{
+    // FIXME: These should be printed as floats. Keeping them ints for consistency with previous test expectations.
+    return ts << pixelSnappedIntRect(r);
+}
+
 TextStream& operator<<(TextStream& ts, const LayoutPoint& p)
 {
-    // FIXME: These should be printed as floats. Keeping them ints for consistency with pervious test expectations.
+    // FIXME: These should be printed as floats. Keeping them ints for consistency with previous test expectations.
     return ts << "(" << p.x().toInt() << "," << p.y().toInt() << ")";
 }
 

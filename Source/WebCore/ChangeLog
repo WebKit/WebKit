@@ -1,3 +1,51 @@
+2013-08-13  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        REGRESSION(SUBPIXEL_LAYOUT) Composited layers can cause one pixel shifts
+        https://bugs.webkit.org/show_bug.cgi?id=115304
+
+        Reviewed by David Hyatt.
+
+        Accelerated layers can cause blocks at subpixel offsets to shift because
+        accumulated subpixel offsets are lost between each layers.
+
+        To solve this layer bounds are now calculated in LayoutUnits, and their
+        subpixel offset saved so it can be used to ensure correct pixel-snapping
+        during painting.
+
+        Test: fast/sub-pixel/sub-pixel-composited-layers.html
+
+        * WebCore.exp.in:
+        * inspector/InspectorLayerTreeAgent.cpp:
+        (WebCore::InspectorLayerTreeAgent::buildObjectForLayer):
+        * platform/graphics/LayoutPoint.h:
+        (WebCore::LayoutPoint::fraction):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::setupClipPath):
+        (WebCore::RenderLayer::setupFilters):
+        (WebCore::RenderLayer::paintLayerContents):
+        (WebCore::RenderLayer::calculateLayerBounds):
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateCompositedBounds):
+        (WebCore::RenderLayerBacking::updateAfterWidgetResize):
+        (WebCore::RenderLayerBacking::updateGraphicsLayerGeometry):
+        (WebCore::RenderLayerBacking::resetContentsRect):
+        (WebCore::RenderLayerBacking::contentOffsetInCompostingLayer):
+        (WebCore::RenderLayerBacking::contentsBox):
+        (WebCore::RenderLayerBacking::backgroundBox):
+        (WebCore::RenderLayerBacking::paintIntoLayer):
+        (WebCore::RenderLayerBacking::paintContents):
+        (WebCore::RenderLayerBacking::compositedBounds):
+        (WebCore::RenderLayerBacking::setCompositedBounds):
+        * rendering/RenderLayerBacking.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::logLayerInfo):
+        (WebCore::RenderLayerCompositor::calculateCompositedBounds):
+        * rendering/RenderLayerCompositor.h:
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::operator<<):
+        * rendering/RenderTreeAsText.h:
+
 2013-08-13  peavo@outlook.com  <peavo@outlook.com>
 
         [Curl] Possible infinite loop while downloading.

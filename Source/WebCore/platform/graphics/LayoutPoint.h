@@ -81,7 +81,12 @@ public:
     {
         return LayoutPoint(m_y, m_x);
     }
-    
+
+    LayoutPoint fraction() const
+    {
+        return LayoutPoint(m_x.fraction(), m_y.fraction());
+    }
+
     operator FloatPoint() const { return FloatPoint(m_x, m_y); }
 
 private:

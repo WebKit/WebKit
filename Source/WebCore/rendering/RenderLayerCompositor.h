@@ -163,7 +163,7 @@ public:
     
     // Return the bounding box required for compositing layer and its childern, relative to ancestorLayer.
     // If layerBoundingBox is not 0, on return it contains the bounding box of this layer only.
-    IntRect calculateCompositedBounds(const RenderLayer*, const RenderLayer* ancestorLayer) const;
+    LayoutRect calculateCompositedBounds(const RenderLayer*, const RenderLayer* ancestorLayer) const;
 
     // Repaint the appropriate layers when the given RenderLayer starts or stops being composited.
     void repaintOnCompositingChange(RenderLayer*);
