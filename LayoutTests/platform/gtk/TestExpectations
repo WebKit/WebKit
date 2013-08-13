@@ -1438,6 +1438,18 @@ webkit.org/b/118595 fast/regions/autoheight-correct-region-for-lines-2.html [ Im
 webkit.org/b/118904 mathml/presentation/bug95404.html [ ImageOnlyFailure ]
 webkit.org/b/119004 mathml/presentation/fenced-mi.html [ ImageOnlyFailure ]
 
+webkit.org/b/119730 fast/dom/Window/open-zero-size-as-default.html [ Failure ]
+
+webkit.org/b/119731 fast/images/exif-orientation-composited.html [ Failure ]
+
+webkit.org/b/119732 fast/media/media-query-list-07.html [ Failure ]
+
+webkit.org/b/119733 fast/regions/overflow-scrollable-2.html [ ImageOnlyFailure ]
+
+webkit.org/b/119734 plugins/navigator-plugins-disabled.html [ Failure ]
+
+webkit.org/b/119735 plugins/unavailable-plugin-indicator-obscurity.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
 #////////////////////////////////////////////////////////////////////////////////////////

@@ -1,3 +1,9 @@
+2013-08-13  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK gardening.
+
+        * platform/gtk/TestExpectations: Add failure expectations for various failing tests.
+
 2013-08-13  Gabor Abraham  <abrhm@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening. Skipping new fails.
