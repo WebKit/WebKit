@@ -1,3 +1,15 @@
+2013-08-13  Gabor Abraham  <abrhm@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening. Rebase tests after r153901 and r153915. Skip failing tests.
+
+        * platform/qt-5.0-wk2/TestExpectations:
+        * platform/qt-5.0-wk2/svg/W3C-SVG-1.1/struct-dom-03-b-expected.png: Removed.
+        * platform/qt-5.0/http/tests/security/xss-DENIED-xsl-document-redirect-expected.txt: Removed.
+        * platform/qt/TestExpectations:
+        * platform/qt/http/tests/security/xss-DENIED-xsl-document-redirect-expected.txt: Added.
+        * platform/qt/svg/W3C-SVG-1.1/struct-dom-03-b-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/struct-dom-03-b-expected.txt: Added.
+
 2013-08-13  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed GTK gardening.
