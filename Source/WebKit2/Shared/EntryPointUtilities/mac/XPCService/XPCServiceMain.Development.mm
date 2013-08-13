@@ -108,7 +108,7 @@ static void XPCServiceEventHandler(xpc_connection_t peer)
 
                 xpc_object_t environmentArray = xpc_dictionary_get_value(event, "environment");
                 size_t numberOfEnvironmentVariables = xpc_array_get_count(environmentArray);
-                char** environment = static_cast<char **>(malloc(numberOfEnvironmentVariables * sizeof(char*) + 1));
+                char** environment = static_cast<char **>(malloc((numberOfEnvironmentVariables + 1) * sizeof(char*)));
                 for (size_t i = 0; i < numberOfEnvironmentVariables; ++i)
                     environment[i] = strdup(xpc_array_get_string(environmentArray, i));
                 environment[numberOfEnvironmentVariables] = 0;

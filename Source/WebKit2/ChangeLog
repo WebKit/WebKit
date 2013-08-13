@@ -1,3 +1,12 @@
+2013-08-12  Dan Bernstein  <mitz@apple.com>
+
+        Fixed an off-by-(sizeof(char*) - 1) bug.
+
+        Reviewed by Sam Weinig.
+
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceMain.Development.mm:
+        (WebKit::XPCServiceEventHandler): Allocate a sufficiently large buffer.
+
 2013-08-12  Beth Dakin  <bdakin@apple.com>
 
         Remove didNewFirstVisuallyNonEmptyLayout from WebKit2
