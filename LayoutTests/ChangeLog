@@ -1,3 +1,15 @@
+2013-08-12  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Unreviewed gardening.
+
+        * platform/efl/TestExpectations: Added pasteboard after r152185.
+        * platform/efl/editing/deleting/delete-br-002-expected.txt: Updated after r152478.
+        * platform/efl/editing/execCommand/outdent-blockquote-test1-expected.txt:
+        Removed platform specific expectations after r152494.
+        * platform/efl/editing/execCommand/outdent-blockquote-test2-expected.txt: Ditto.
+        * platform/efl/editing/execCommand/outdent-blockquote-test3-expected.txt: Ditto.
+        * platform/efl/editing/execCommand/outdent-blockquote-test4-expected.txt: Ditto.
+
 2013-08-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         Layout Test fast/overflow/scrollbar-click-retains-focus.html is failing on Apple Mac WK1 and GTK.
