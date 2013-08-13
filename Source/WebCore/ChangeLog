@@ -1,3 +1,20 @@
+2013-08-13  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Simplify RadioNodeList's anonymous indexed getter
+        https://bugs.webkit.org/show_bug.cgi?id=119725
+
+        Reviewed by Darin Adler.
+
+        Simplify RadioNodeList's anonymous indexed getter by dropping [IsIndex]
+        IDL extended attribute from its parameter and making it mandatory.
+
+        This change has strictly no impact on the generated bindings code
+        but it simplifies the IDL.
+
+        No new test, no behavior change.
+
+        * html/RadioNodeList.idl:
+
 2013-08-13  Danilo Cesar Lemes de Paula  <danilo.cesar@collabora.co.uk>
 
         [GTK] close the volume slider when the media control panel is hidden
