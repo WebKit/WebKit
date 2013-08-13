@@ -1,3 +1,12 @@
+2013-08-12  Patrick Gansterer  <paroga@webkit.org>
+
+        [CMake] Use the correct list of files when compiling ANGLESupport on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=119439
+
+        Reviewed by Gyuyoung Kim.
+
+        * CMakeLists.txt: Use ossource_win.cpp instead of ossource_posix.cpp on Windows platforms.
+
 2013-08-12  Arnaud Renevier  <a.renevier@samsung.com>
 
         [cairo] memory corruption with putImageData and accelerated canvas.
