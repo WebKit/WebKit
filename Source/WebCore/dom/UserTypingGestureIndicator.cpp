@@ -29,7 +29,7 @@
 #include "Document.h"
 #include "Element.h"
 #include "Frame.h"
-#include <wtf/StdLibExtras.h>
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -41,7 +41,7 @@ bool UserTypingGestureIndicator::processingUserTypingGesture()
 
 static RefPtr<Node>& focusedNode()
 {
-    DEFINE_STATIC_LOCAL(RefPtr<Node>, node, ());
+    static NeverDestroyed<RefPtr<Node>> node;
     return node;
 }
 

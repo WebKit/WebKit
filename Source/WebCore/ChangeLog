@@ -1,5 +1,21 @@
 2013-08-13  Anders Carlsson  <andersca@apple.com>
 
+        <https://webkit.org/b/119771> Use NeverDestroyed for smart pointer slot static locals
+
+        Reviewed by Andreas Kling.
+
+        This is preparation for making it a hard error to use DEFINE_STATIC_LOCAL with smart pointer types.
+
+        * dom/UserTypingGestureIndicator.cpp:
+        (WebCore::focusedNode):
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::currentNSEventSlot):
+        * platform/network/cf/NetworkStorageSessionCFNet.cpp:
+        (WebCore::defaultNetworkStorageSession):
+        (WebCore::cookieStorageOverride):
+
+2013-08-13  Anders Carlsson  <andersca@apple.com>
+
         Stop using DEFINE_STATIC_LOCAL with RefPtr
         https://bugs.webkit.org/show_bug.cgi?id=119769
 

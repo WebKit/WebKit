@@ -27,6 +27,7 @@
 #include "NetworkStorageSession.h"
 
 #include <wtf/MainThread.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/PassOwnPtr.h>
 
 #if PLATFORM(MAC)
@@ -46,7 +47,7 @@ NetworkStorageSession::NetworkStorageSession(RetainPtr<CFURLStorageSessionRef> p
 static OwnPtr<NetworkStorageSession>& defaultNetworkStorageSession()
 {
     ASSERT(isMainThread());
-    DEFINE_STATIC_LOCAL(OwnPtr<NetworkStorageSession>, session, ());
+    static NeverDestroyed<OwnPtr<NetworkStorageSession>> session;
     return session;
 }
 
@@ -64,7 +65,7 @@ void NetworkStorageSession::switchToNewTestingSession()
 #if PLATFORM(WIN)
 static RetainPtr<CFHTTPCookieStorageRef>& cookieStorageOverride()
 {
-    DEFINE_STATIC_LOCAL(RetainPtr<CFHTTPCookieStorageRef>, cookieStorage, ());
+    static NeverDestroyed<RetainPtr<CFHTTPCookieStorageRef>> cookieStorage;
     return cookieStorage;
 }
 

@@ -49,8 +49,8 @@
 #include "Settings.h"
 #include "WebCoreSystemInterface.h"
 #include <wtf/MainThread.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/ObjcRuntimeExtras.h>
-#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
@@ -60,7 +60,7 @@ const double EventHandler::TextDragDelay = 0.15;
 
 static RetainPtr<NSEvent>& currentNSEventSlot()
 {
-    DEFINE_STATIC_LOCAL(RetainPtr<NSEvent>, event, ());
+    static NeverDestroyed<RetainPtr<NSEvent>> event;
     return event;
 }
 
