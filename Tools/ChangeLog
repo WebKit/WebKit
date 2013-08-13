@@ -1,3 +1,15 @@
+2013-08-13  Tim Horton  <timothy_horton@apple.com>
+
+        [mac] Give MiniBrowser a reasonable bundle identifier
+        https://bugs.webkit.org/show_bug.cgi?id=119773
+
+        Rubber-stamped by Simon Fraser.
+
+        Give MiniBrowser the bundle identifier org.webkit.MiniBrowser.
+
+        * MiniBrowser/mac/Info.plist:
+        * MiniBrowser/mac/WebBundle/Info.plist:
+
 2013-08-13  Dean Jackson  <dino@apple.com>
 
         <https://webkit.org/b/119766> Make bug url more human friendly in ChangeLog
