@@ -219,6 +219,10 @@ const double minimumExpandingRatio = 0.15;
 const double minimumZoomToFitScale = 0.25;
 const double maximumImageDocumentZoomToFitScale = 2;
 
+// Fuzz a zoom factor epsilon 0.0001 which is always too small to be visible and
+// should be large enough for most of the floating-point rounding errors.
+const double zoomFactorEpsilon = 0.0001;
+
 // Helper function to parse a URL and fill in missing parts.
 static KURL parseUrl(const String& url)
 {
@@ -1714,7 +1718,6 @@ bool WebPagePrivate::respectViewport() const
 
 double WebPagePrivate::initialScale() const
 {
-
     if (m_initialScale > 0.0 && respectViewport())
         return m_initialScale;
 
@@ -4673,17 +4676,17 @@ bool WebPage::blockZoom(const Platform::IntPoint& documentTargetPoint)
 
 bool WebPage::isMaxZoomed() const
 {
-    return (d->currentScale() == d->maximumScale()) || !d->isUserScalable();
+    return fabs(d->currentScale() - d->maximumScale()) <= zoomFactorEpsilon || !d->isUserScalable();
 }
 
 bool WebPage::isMinZoomed() const
 {
-    return (d->currentScale() == d->minimumScale()) || !d->isUserScalable();
+    return fabs(d->currentScale() - d->minimumScale()) <= zoomFactorEpsilon || !d->isUserScalable();
 }
 
 bool WebPage::isAtInitialZoom() const
 {
-    return (d->currentScale() == d->initialScale()) || !d->isUserScalable();
+    return fabs(d->currentScale() - d->initialScale()) <= zoomFactorEpsilon || !d->isUserScalable();
 }
 
 class DeferredTaskSetFocused: public DeferredTask<&WebPagePrivate::m_wouldSetFocused> {

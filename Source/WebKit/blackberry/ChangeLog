@@ -1,3 +1,30 @@
+2013-08-13  Jacky Jiang  <zhajiang@blackberry.com>
+
+        [BlackBerry] WebPage doesn't zoom to fit viewport after being rotated from landscape to portrait mode
+        https://bugs.webkit.org/show_bug.cgi?id=119754
+
+        Reviewed by Rob Buis.
+        Internally reviewed by Konrad Piascik.
+
+        JIRA 470951
+        In this case, zoomToFitWidthScale(currentScale) = viewportWidth / contentsWidth
+        which was 2.6666666666666665, initialScale = ((viewportWidth / devicePixelRatio)
+        / contentsWidth) * devicePixelRatio which was 2.6666665077209473. When
+        rotating the device from landscape to portrait, m_webPage->isAtInitialZoom()
+        was false in setViewportSize() because of the floating-point rounding error
+        above so that we had to use the scale of the previous rotation WebPage
+        which was too large for the current rotation WebPage.
+        Ignore the floating-point rounding error in isAtInitialZoom() so that we
+        can use initialScale of the current rotation WebPage as the scale and also
+        we should do it for isMaxZoomed() and isMinZoomed() as well. Please note
+        that we can not use FLT_EPSILON here as it's 1E-7 on our platform.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::initialScale):
+        (BlackBerry::WebKit::WebPage::isMaxZoomed):
+        (BlackBerry::WebKit::WebPage::isMinZoomed):
+        (BlackBerry::WebKit::WebPage::isAtInitialZoom):
+
 2013-08-09  Jacky Jiang  <zhajiang@blackberry.com>
 
         [BlackBerry] Viewport allows scrolling when it shouldn't after rotation to landscape
