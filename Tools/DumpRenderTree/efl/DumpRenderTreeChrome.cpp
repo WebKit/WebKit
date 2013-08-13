@@ -336,8 +336,6 @@ void DumpRenderTreeChrome::resetDefaultsToConsistentValues()
     policyDelegatePermissive = false;
 }
 
-static const char divider = '/';
-
 static String pathSuitableForTestResult(const char* uriString)
 {
     KURL uri = KURL(ParsedURLString, uriString);
@@ -353,7 +351,7 @@ static String pathSuitableForTestResult(const char* uriString)
 
     String mainFrameUrlPathString = mainFrameURL.path();
     String pathString = uri.path();
-    String basePath = mainFrameUrlPathString.substring(0, mainFrameUrlPathString.reverseFind(divider) + 1);
+    String basePath = mainFrameUrlPathString.substring(0, mainFrameUrlPathString.reverseFind('/') + 1);
 
     if (!basePath.isEmpty() && pathString.startsWith(basePath))
         return pathString.substring(basePath.length());

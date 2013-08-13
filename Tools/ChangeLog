@@ -1,3 +1,16 @@
+2013-08-13  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [EFL][DRT] Simplify call to reverseFind()
+        https://bugs.webkit.org/show_bug.cgi?id=119746
+
+        Reviewed by Christophe Dumez.
+
+        Follow-up to r153977.
+
+        * DumpRenderTree/efl/DumpRenderTreeChrome.cpp:
+        (pathSuitableForTestResult): Instead of defining a static variable
+        that's only used in a single place, pass '/' to reverseFind() directly.
+
 2013-08-13  Alberto Garcia  <berto@igalia.com>
 
         [GTK] Closing inspector window crashes wk
