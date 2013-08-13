@@ -10,25 +10,25 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 257x17
           text run at (0,0) width 257: "You should not see any red on this page."
       RenderBlock {DIV} at (0,66) size 784x27
-        RenderTextControl {INPUT} at (2,2) size 191x23 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-          RenderFlexibleBox {DIV} at (3,3) size 185x17
+        RenderTextControl {INPUT} at (2,2) size 207x23 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+          RenderFlexibleBox {DIV} at (3,3) size 201x17
             RenderBlock {DIV} at (0,8) size 0x1
-            RenderBlock {DIV} at (0,0) size 169x17
-            RenderBlock {DIV} at (169,0) size 16x17
+            RenderBlock {DIV} at (0,0) size 185x17
+            RenderBlock {DIV} at (185,0) size 16x17
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,93) size 784x27
-        RenderTextControl {INPUT} at (2,2) size 191x23 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-          RenderFlexibleBox {DIV} at (3,3) size 185x17
+        RenderTextControl {INPUT} at (2,2) size 223x23 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+          RenderFlexibleBox {DIV} at (3,3) size 217x17
             RenderBlock {DIV} at (0,0) size 16x17
-            RenderBlock {DIV} at (16,0) size 153x17
-            RenderBlock {DIV} at (169,0) size 16x17
+            RenderBlock {DIV} at (16,0) size 185x17
+            RenderBlock {DIV} at (201,0) size 16x17
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,120) size 784x27
-        RenderTextControl {INPUT} at (2,2) size 191x23 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-          RenderFlexibleBox {DIV} at (3,3) size 185x17
+        RenderTextControl {INPUT} at (2,2) size 223x23 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+          RenderFlexibleBox {DIV} at (3,3) size 217x17
             RenderBlock {DIV} at (0,0) size 16x17
-            RenderBlock {DIV} at (16,0) size 153x17
-            RenderBlock {DIV} at (169,0) size 16x17
+            RenderBlock {DIV} at (16,0) size 185x17
+            RenderBlock {DIV} at (201,0) size 16x17
         RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,147) size 784x35
         RenderBlock {INPUT} at (4,10) size 17x16
@@ -73,11 +73,11 @@ layer at (0,0) size 800x600
             RenderText {#text} at (0,0) size 58x22
               text run at (0,0) width 58: "Button"
         RenderText {#text} at (0,0) size 0x0
-layer at (13,79) size 169x17
-  RenderBlock {DIV} at (0,0) size 169x17
+layer at (13,79) size 185x17
+  RenderBlock {DIV} at (0,0) size 185x17
     RenderText {#text} at (0,0) size 51x17
       text run at (0,0) width 51: "Search"
-layer at (29,106) size 153x17
-  RenderBlock {DIV} at (0,0) size 153x17
-layer at (29,133) size 153x17
-  RenderBlock {DIV} at (0,0) size 153x17
+layer at (29,106) size 185x17
+  RenderBlock {DIV} at (0,0) size 185x17
+layer at (29,133) size 185x17
+  RenderBlock {DIV} at (0,0) size 185x17
