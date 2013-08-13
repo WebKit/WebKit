@@ -305,7 +305,7 @@ void RenderDeprecatedFlexibleBox::layoutBlock(bool relayoutChildren, LayoutUnit)
     RenderFlowThread* flowThread = flowThreadContainingBlock();
     if (logicalWidthChangedInRegions(flowThread))
         relayoutChildren = true;
-    if (updateRegionsAndShapesBeforeChildLayout(flowThread))
+    if (updateShapesBeforeBlockLayout())
         relayoutChildren = true;
 
     LayoutSize previousSize = size();
@@ -349,7 +349,7 @@ void RenderDeprecatedFlexibleBox::layoutBlock(bool relayoutChildren, LayoutUnit)
 
     layoutPositionedObjects(relayoutChildren || isRoot());
 
-    updateRegionsAndShapesAfterChildLayout(flowThread);
+    updateShapesAfterBlockLayout();
 
     if (!isFloatingOrOutOfFlowPositioned() && height() == 0) {
         // We are a block with no border and padding and a computed height

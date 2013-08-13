@@ -1480,15 +1480,11 @@ static inline bool shapeInfoRequiresRelayout(const RenderBlock* block)
 }
 #endif
 
-bool RenderBlock::updateRegionsAndShapesBeforeChildLayout(RenderFlowThread* flowThread)
+bool RenderBlock::updateShapesBeforeBlockLayout()
 {
 #if ENABLE(CSS_SHAPES)
-    if (!flowThread && !shapeInsideInfo())
+    if (!flowThreadContainingBlock() && !shapeInsideInfo())
         return shapeInfoRequiresRelayout(this);
-#else
-    if (!flowThread)
-        return false;
-#endif
 
     LayoutUnit oldHeight = logicalHeight();
     LayoutUnit oldTop = logicalTop();
@@ -1498,21 +1494,12 @@ bool RenderBlock::updateRegionsAndShapesBeforeChildLayout(RenderFlowThread* flow
     setLogicalHeight(RenderFlowThread::maxLogicalHeight());
     updateLogicalHeight();
 
-#if ENABLE(CSS_SHAPES)
     computeShapeSize();
-#endif
-
-    // Set our start and end regions. No regions above or below us will be considered by our children. They are
-    // effectively clamped to our region range.
-    computeRegionRangeForBlock(flowThread);
 
     setLogicalHeight(oldHeight);
     setLogicalTop(oldTop);
 
-#if ENABLE(CSS_SHAPES)
     return shapeInfoRequiresRelayout(this);
-#else
-    return false;
 #endif
 }
 
@@ -1527,23 +1514,14 @@ void RenderBlock::computeShapeSize()
 }
 #endif
 
-void RenderBlock::updateRegionsAndShapesAfterChildLayout(RenderFlowThread* flowThread, bool heightChanged)
+void RenderBlock::updateShapesAfterBlockLayout(bool heightChanged)
 {
 #if ENABLE(CSS_SHAPES)
     // A previous sibling has changed dimension, so we need to relayout the shape with the content
     ShapeInsideInfo* shapeInsideInfo = layoutShapeInsideInfo();
     if (heightChanged && shapeInsideInfo)
         shapeInsideInfo->dirtyShapeSize();
-#else
-    UNUSED_PARAM(heightChanged);
 #endif
-    computeRegionRangeForBlock(flowThread);
-}
-
-void RenderBlock::computeRegionRangeForBlock(RenderFlowThread* flowThread)
-{
-    if (flowThread)
-        flowThread->setRegionRangeForBox(this, offsetFromLogicalTopOfFirstPage());
 }
 
 bool RenderBlock::updateLogicalWidthAndColumnWidth()
@@ -1591,6 +1569,17 @@ void RenderBlock::checkForPaginationLogicalHeightChange(LayoutUnit& pageLogicalH
     }
 }
 
+bool RenderBlock::relayoutToAvoidWidows(LayoutStateMaintainer& statePusher)
+{
+    if (!shouldBreakAtLineToAvoidWidow())
+        return false;
+
+    statePusher.pop();
+    setEverHadLayout(true);
+    layoutBlock(false);
+    return true;
+}
+
 void RenderBlock::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight)
 {
     ASSERT(needsLayout());
@@ -1625,7 +1614,7 @@ void RenderBlock::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeigh
     RenderFlowThread* flowThread = flowThreadContainingBlock();
     if (logicalWidthChangedInRegions(flowThread))
         relayoutChildren = true;
-    if (updateRegionsAndShapesBeforeChildLayout(flowThread))
+    if (updateShapesBeforeBlockLayout())
         relayoutChildren = true;
 
     // We use four values, maxTopPos, maxTopNeg, maxBottomPos, and maxBottomNeg, to track
@@ -1662,8 +1651,10 @@ void RenderBlock::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeigh
     if (lowestFloatLogicalBottom() > (logicalHeight() - toAdd) && expandsToEncloseOverhangingFloats())
         setLogicalHeight(lowestFloatLogicalBottom() + toAdd);
     
-    if (relayoutForPagination(hasSpecifiedPageLogicalHeight, pageLogicalHeight, statePusher))
+    if (relayoutForPagination(hasSpecifiedPageLogicalHeight, pageLogicalHeight, statePusher) || relayoutToAvoidWidows(statePusher)) {
+        ASSERT(!shouldBreakAtLineToAvoidWidow());
         return;
+    }
 
     // Calculate our new height.
     LayoutUnit oldHeight = logicalHeight();
@@ -1695,7 +1686,7 @@ void RenderBlock::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeigh
 
     layoutPositionedObjects(relayoutChildren || isRoot());
 
-    updateRegionsAndShapesAfterChildLayout(flowThread, heightChanged);
+    updateShapesAfterBlockLayout(heightChanged);
 
     // Add overflow from children (unless we're multi-column, since in that case all our child overflow is clipped anyway).
     computeOverflow(oldClientAfterEdge);
@@ -2632,6 +2623,7 @@ void RenderBlock::layoutBlockChild(RenderBox* child, MarginInfo& marginInfo, Lay
 #endif
     // Go ahead and position the child as though it didn't collapse with the top.
     setLogicalTopForChild(child, logicalTopEstimate, ApplyLayoutDelta);
+    estimateRegionRangeForBoxChild(child);
 
     RenderBlock* childRenderBlock = child->isRenderBlock() ? toRenderBlock(child) : 0;
     bool markDescendantsWithFloats = false;
@@ -2705,6 +2697,11 @@ void RenderBlock::layoutBlockChild(RenderBox* child, MarginInfo& marginInfo, Lay
         }
 
         // Our guess was wrong. Make the child lay itself out again.
+        child->layoutIfNeeded();
+    }
+
+    if (updateRegionRangeForBoxChild(child)) {
+        child->setNeedsLayout(true, MarkOnlyThis);
         child->layoutIfNeeded();
     }
 
@@ -2876,6 +2873,8 @@ void RenderBlock::layoutPositionedObjects(bool relayoutChildren, bool fixedPosit
     TrackedRendererListHashSet::iterator end = positionedDescendants->end();
     for (TrackedRendererListHashSet::iterator it = positionedDescendants->begin(); it != end; ++it) {
         r = *it;
+        
+        estimateRegionRangeForBoxChild(r);
 
         // A fixed position element with an absolute positioned ancestor has no way of knowing if the latter has changed position. So
         // if this is a fixed position element, mark it for layout if it has an abspos ancestor and needs to move with that ancestor, i.e. 
@@ -2916,12 +2915,17 @@ void RenderBlock::layoutPositionedObjects(bool relayoutChildren, bool fixedPosit
                 r->updateLogicalWidth();
             oldLogicalTop = logicalTopForChild(r);
         }
-        
+
         r->layoutIfNeeded();
 
         // Lay out again if our estimate was wrong.
         if (needsBlockDirectionLocationSetBeforeLayout && logicalTopForChild(r) != oldLogicalTop) {
             r->setChildNeedsLayout(true, MarkOnlyThis);
+            r->layoutIfNeeded();
+        }
+
+        if (updateRegionRangeForBoxChild(r)) {
+            r->setNeedsLayout(true, MarkOnlyThis);
             r->layoutIfNeeded();
         }
     }
@@ -2949,7 +2953,7 @@ void RenderBlock::markForPaginationRelayoutIfNeeded()
     if (needsLayout())
         return;
 
-    if (view()->layoutState()->pageLogicalHeightChanged() || (view()->layoutState()->pageLogicalHeight() && view()->layoutState()->pageLogicalOffset(this, logicalTop()) != pageLogicalOffset()) || shouldBreakAtLineToAvoidWidow())
+    if (view()->layoutState()->pageLogicalHeightChanged() || (view()->layoutState()->pageLogicalHeight() && view()->layoutState()->pageLogicalOffset(this, logicalTop()) != pageLogicalOffset()))
         setChildNeedsLayout(true, MarkOnlyThis);
 }
 
@@ -4245,6 +4249,7 @@ bool RenderBlock::positionNewFloats()
             continue;
 
         RenderBox* childBox = floatingObject->renderer();
+
         LayoutUnit childLogicalLeftMargin = style()->isLeftToRightDirection() ? marginStartForChild(childBox) : marginEndForChild(childBox);
 
         LayoutRect oldRect = childBox->frameRect();
@@ -4260,6 +4265,8 @@ bool RenderBlock::positionNewFloats()
 
         setLogicalLeftForChild(childBox, floatLogicalLocation.x() + childLogicalLeftMargin);
         setLogicalTopForChild(childBox, floatLogicalLocation.y() + marginBeforeForChild(childBox));
+
+        estimateRegionRangeForBoxChild(childBox);
 
         LayoutState* layoutState = view()->layoutState();
         bool isPaginated = layoutState->isPaginated();
@@ -4293,6 +4300,11 @@ bool RenderBlock::positionNewFloats()
         
                 if (childBlock)
                     childBlock->setChildNeedsLayout(true, MarkOnlyThis);
+                childBox->layoutIfNeeded();
+            }
+
+            if (updateRegionRangeForBoxChild(childBox)) {
+                childBox->setNeedsLayout(true, MarkOnlyThis);
                 childBox->layoutIfNeeded();
             }
         }
@@ -7231,7 +7243,7 @@ void RenderBlock::setPageLogicalOffset(LayoutUnit logicalOffset)
     m_rareData->m_pageLogicalOffset = logicalOffset;
 }
 
-void RenderBlock::setBreakAtLineToAvoidWidow(RootInlineBox* lineToBreak)
+void RenderBlock::setBreakAtLineToAvoidWidow(int lineToBreak)
 {
     ASSERT(lineToBreak);
     if (!m_rareData)
@@ -7245,7 +7257,7 @@ void RenderBlock::clearShouldBreakAtLineToAvoidWidow() const
     if (!m_rareData)
         return;
     m_rareData->m_shouldBreakAtLineToAvoidWidow = false;
-    m_rareData->m_lineBreakToAvoidWidow = 0;
+    m_rareData->m_lineBreakToAvoidWidow = -1;
 }
 
 void RenderBlock::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& accumulatedOffset) const
@@ -7407,7 +7419,7 @@ bool RenderBlock::hasNextPage(LayoutUnit logicalOffset, PageBoundaryRule pageBou
 
     // See if we're in the last region.
     LayoutUnit pageOffset = offsetFromLogicalTopOfFirstPage() + logicalOffset;
-    RenderRegion* region = flowThread->regionAtBlockOffset(pageOffset, this);
+    RenderRegion* region = flowThread->regionAtBlockOffset(this, pageOffset, this);
     if (!region)
         return false;
     if (region->isLastRegion())
@@ -7462,7 +7474,7 @@ LayoutUnit RenderBlock::applyBeforeBreak(RenderBox* child, LayoutUnit logicalOff
             view()->layoutState()->addForcedColumnBreak(child, logicalOffset);
         if (checkRegionBreaks) {
             LayoutUnit offsetBreakAdjustment = 0;
-            if (flowThread->addForcedRegionBreak(offsetFromLogicalTopOfFirstPage() + logicalOffset, child, true, &offsetBreakAdjustment))
+            if (flowThread->addForcedRegionBreak(this, offsetFromLogicalTopOfFirstPage() + logicalOffset, child, true, &offsetBreakAdjustment))
                 return logicalOffset + offsetBreakAdjustment;
         }
         return nextPageLogicalTop(logicalOffset, IncludePageBoundary);
@@ -7489,7 +7501,7 @@ LayoutUnit RenderBlock::applyAfterBreak(RenderBox* child, LayoutUnit logicalOffs
             view()->layoutState()->addForcedColumnBreak(child, logicalOffset);
         if (checkRegionBreaks) {
             LayoutUnit offsetBreakAdjustment = 0;
-            if (flowThread->addForcedRegionBreak(offsetFromLogicalTopOfFirstPage() + logicalOffset + marginOffset, child, false, &offsetBreakAdjustment))
+            if (flowThread->addForcedRegionBreak(this, offsetFromLogicalTopOfFirstPage() + logicalOffset + marginOffset, child, false, &offsetBreakAdjustment))
                 return logicalOffset + marginOffset + offsetBreakAdjustment;
         }
         return nextPageLogicalTop(logicalOffset, IncludePageBoundary);
@@ -7588,13 +7600,13 @@ bool RenderBlock::pushToNextPageWithMinimumLogicalHeight(LayoutUnit& adjustment,
 void RenderBlock::setPageBreak(LayoutUnit offset, LayoutUnit spaceShortage)
 {
     if (RenderFlowThread* flowThread = flowThreadContainingBlock())
-        flowThread->setPageBreak(offsetFromLogicalTopOfFirstPage() + offset, spaceShortage);
+        flowThread->setPageBreak(this, offsetFromLogicalTopOfFirstPage() + offset, spaceShortage);
 }
 
 void RenderBlock::updateMinimumPageHeight(LayoutUnit offset, LayoutUnit minHeight)
 {
     if (RenderFlowThread* flowThread = flowThreadContainingBlock())
-        flowThread->updateMinimumPageHeight(offsetFromLogicalTopOfFirstPage() + offset, minHeight);
+        flowThread->updateMinimumPageHeight(this, offsetFromLogicalTopOfFirstPage() + offset, minHeight);
     else if (ColumnInfo* colInfo = view()->layoutState()->m_columnInfo)
         colInfo->updateMinimumColumnHeight(minHeight);
 }
@@ -7655,8 +7667,9 @@ void RenderBlock::adjustLinePositionForPagination(RootInlineBox* lineBox, Layout
         return;
     LayoutUnit remainingLogicalHeight = pageRemainingLogicalHeightForOffset(logicalOffset, ExcludePageBoundary);
 
-    if (remainingLogicalHeight < lineHeight || (shouldBreakAtLineToAvoidWidow() && lineBreakToAvoidWidow() == lineBox)) {
-        if (shouldBreakAtLineToAvoidWidow() && lineBreakToAvoidWidow() == lineBox)
+    int lineIndex = lineCount(lineBox);
+    if (remainingLogicalHeight < lineHeight || (shouldBreakAtLineToAvoidWidow() && lineBreakToAvoidWidow() == lineIndex)) {
+        if (shouldBreakAtLineToAvoidWidow() && lineBreakToAvoidWidow() == lineIndex)
             clearShouldBreakAtLineToAvoidWidow();
         // If we have a non-uniform page height, then we have to shift further possibly.
         if (!hasUniformPageLogicalHeight && !pushToNextPageWithMinimumLogicalHeight(remainingLogicalHeight, logicalOffset, lineHeight))
@@ -7668,7 +7681,7 @@ void RenderBlock::adjustLinePositionForPagination(RootInlineBox* lineBox, Layout
         LayoutUnit totalLogicalHeight = lineHeight + max<LayoutUnit>(0, logicalOffset);
         LayoutUnit pageLogicalHeightAtNewOffset = hasUniformPageLogicalHeight ? pageLogicalHeight : pageLogicalHeightForOffset(logicalOffset + remainingLogicalHeight);
         setPageBreak(logicalOffset, lineHeight - remainingLogicalHeight);
-        if (((lineBox == firstRootBox() && totalLogicalHeight < pageLogicalHeightAtNewOffset) || (!style()->hasAutoOrphans() && style()->orphans() >= lineCount(lineBox)))
+        if (((lineBox == firstRootBox() && totalLogicalHeight < pageLogicalHeightAtNewOffset) || (!style()->hasAutoOrphans() && style()->orphans() >= lineIndex))
             && !isOutOfFlowPositioned() && !isTableCell())
             setPaginationStrut(remainingLogicalHeight + max<LayoutUnit>(0, logicalOffset));
         else {
@@ -7800,7 +7813,7 @@ RenderRegion* RenderBlock::regionAtBlockOffset(LayoutUnit blockOffset) const
     if (!flowThread || !flowThread->hasValidRegionInfo())
         return 0;
 
-    return flowThread->regionAtBlockOffset(offsetFromLogicalTopOfFirstPage() + blockOffset, true);
+    return flowThread->regionAtBlockOffset(this, offsetFromLogicalTopOfFirstPage() + blockOffset, true);
 }
 
 void RenderBlock::updateStaticInlinePositionForChild(RenderBox* child, LayoutUnit logicalTop)
@@ -7828,28 +7841,69 @@ bool RenderBlock::logicalWidthChangedInRegions(RenderFlowThread* flowThread) con
     return flowThread->logicalWidthChangedInRegionsForBlock(this);
 }
 
-RenderRegion* RenderBlock::clampToStartAndEndRegions(RenderRegion* region) const
+void RenderBlock::computeRegionRangeForBoxChild(const RenderBox* box) const
 {
     RenderFlowThread* flowThread = flowThreadContainingBlock();
+    if (!flowThread || !flowThread->hasRegions())
+        return;
 
-    ASSERT(isRenderView() || (region && flowThread));
-    if (isRenderView())
-        return region;
-
-    // We need to clamp to the block, since we want any lines or blocks that overflow out of the
-    // logical top or logical bottom of the block to size as though the border box in the first and
-    // last regions extended infinitely. Otherwise the lines are going to size according to the regions
-    // they overflow into, which makes no sense when this block doesn't exist in |region| at all.
     RenderRegion* startRegion;
     RenderRegion* endRegion;
-    flowThread->getRegionRangeForBox(this, startRegion, endRegion);
-    
-    if (startRegion && region->logicalTopForFlowThreadContent() < startRegion->logicalTopForFlowThreadContent())
-        return startRegion;
-    if (endRegion && region->logicalTopForFlowThreadContent() > endRegion->logicalTopForFlowThreadContent())
-        return endRegion;
-    
-    return region;
+    LayoutUnit offsetFromLogicalTopOfFirstRegion = box->offsetFromLogicalTopOfFirstPage();
+    if (box->isUnsplittableForPagination())
+        startRegion = endRegion = flowThread->regionAtBlockOffset(this, offsetFromLogicalTopOfFirstRegion, true);
+    else {
+        startRegion = flowThread->regionAtBlockOffset(this, offsetFromLogicalTopOfFirstRegion, true);
+        endRegion = flowThread->regionAtBlockOffset(this, offsetFromLogicalTopOfFirstRegion + logicalHeightForChild(box), true);
+    }
+
+    flowThread->setRegionRangeForBox(box, startRegion, endRegion);
+}
+
+void RenderBlock::estimateRegionRangeForBoxChild(const RenderBox* box) const
+{
+    RenderFlowThread* flowThread = flowThreadContainingBlock();
+    if (!flowThread || !flowThread->hasRegions())
+        return;
+
+    if (box->isUnsplittableForPagination()) {
+        computeRegionRangeForBoxChild(box);
+        return;
+    }
+
+    LogicalExtentComputedValues estimatedValues;
+    box->computeLogicalHeight(RenderFlowThread::maxLogicalHeight(), logicalTopForChild(box), estimatedValues);
+
+    LayoutUnit offsetFromLogicalTopOfFirstRegion = box->offsetFromLogicalTopOfFirstPage();
+    RenderRegion* startRegion = flowThread->regionAtBlockOffset(this, offsetFromLogicalTopOfFirstRegion, true);
+    RenderRegion* endRegion = flowThread->regionAtBlockOffset(this, offsetFromLogicalTopOfFirstRegion + estimatedValues.m_extent, true);
+
+    flowThread->setRegionRangeForBox(box, startRegion, endRegion);
+}
+
+bool RenderBlock::updateRegionRangeForBoxChild(const RenderBox* box) const
+{
+    RenderFlowThread* flowThread = flowThreadContainingBlock();
+    if (!flowThread || !flowThread->hasRegions())
+        return false;
+
+    RenderRegion* startRegion = 0;
+    RenderRegion* endRegion = 0;
+    flowThread->getRegionRangeForBox(box, startRegion, endRegion);
+
+    computeRegionRangeForBoxChild(box);
+
+    RenderRegion* newStartRegion = 0;
+    RenderRegion* newEndRegion = 0;
+    flowThread->getRegionRangeForBox(box, newStartRegion, newEndRegion);
+
+    // The region range of the box has changed. Some boxes (e.g floats) may have been positioned assuming
+    // a different range.
+    // FIXME: Be smarter about this. We don't need to relayout all the time.
+    if (newStartRegion != startRegion || newEndRegion != endRegion)
+        return true;
+
+    return false;
 }
 
 LayoutUnit RenderBlock::collapsedMarginBeforeForChild(const RenderBox* child) const

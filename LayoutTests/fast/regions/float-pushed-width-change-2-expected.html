@@ -12,9 +12,7 @@
     }
     
     #float2 {
-        margin-top: 30px;
-        margin-left: -30px;
-        float:left;
+        float:right;
         width:200px;
         height:30px;
         background-color:orange
@@ -45,30 +43,29 @@
         padding-right:10px;
         padding-bottom:10px;
     }
-	
-   	p.flow1 {
-		clear:both;
-		margin-bottom: 0px;
-	}
+    
+    p.flow1 {
+        clear:both;
+        margin-bottom: 0px;
+    }
 
-	p.flow2 {
-		margin-top: 0px;
-	}
-	
+    p.flow2 {
+        margin-top: 0px;
+    }
+    
 </style>
 
 <p>In the example below, the green float should be at the top of the first region and on the left. It should spill into region two.
-The orange float should be right aligned under the green float because their containing block is flown only in the first region</p>
+The orange float should be on the right at the top of region two.</p>
 
 <div id="region1">
      <p><img id="float1"></p>
 </div>
 <div id="region2">
     <img id="float2">
-    <p class="flow1">This line of text should not get out of the region.</p>
+    <p class="flow1">This line of text should not get out of the region. This line of text should not get out of the region.</p>
 </div>
 <div id="region3">
 <p class="flow2">This line of text should not get out of the region. This line of text should not get out of the region.</p>
 <p>This line of text should not get out of the region.</p>
 </div>
-

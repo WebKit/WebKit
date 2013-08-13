@@ -1,3 +1,85 @@
+2013-08-13  Andrei Bucur  <abucur@adobe.com>
+
+        [CSS Regions] Compute correct region ranges for boxes
+        https://bugs.webkit.org/show_bug.cgi?id=116296
+
+        Reviewed by David Hyatt.
+
+        The patch extends the region ranges implementation with the following behavior:
+        - the range of a box is always included in the range of its containing block (even for floats); this will simplify how overflow
+        is propagated to the regions and it should later change on a case by case basis.
+        - if the range of a box is not correctly estimated before the layout it will be marked for relayout; this is necessary to correctly
+        position boxes that overflow naturally, like floats.
+        - all the boxes have a range now, not only the blocks.
+        - regionAtBlockOffset can clamp to a box.
+        - an unsplittable box has a region range of a single region, the one where the box top falls into.
+
+        When the layout of a child box starts it tries to give an estimate based on the maximal height of the box. After the layout,
+        if the estimation was wrong, the box is relaid out. For example, if a block with a float is laid out in a region but the float
+        overflows in the next region a relayout is needed for the float so it can be positioned relative to the containing block
+        region (this step can be optimized by making a layout pass only for the children that don't have the region range enclosed in the
+        containing block range).
+
+        Tests: fast/regions/bottom-overflow-out-of-first-region-absolute.html
+               fast/regions/float-pushed-width-change-2.html
+               fast/regions/scrollable-paragraph-unsplittable.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::updateShapesBeforeBlockLayout): Doesn't do anything for regions now.
+        (WebCore::RenderBlock::updateShapesAfterBlockLayout): Doesn't do anything for regions now.
+        (WebCore::RenderBlock::relayoutToAvoidWidows): The layout to avoid widows. Widows use the line index to determine the break point,
+        not the RootLineBox pointer as before. This is necessary to prevent stale pointers in further layouts.
+        (WebCore::RenderBlock::layoutBlock):
+        (WebCore::RenderBlock::layoutBlockChild):
+        (WebCore::RenderBlock::layoutPositionedObjects):
+        (WebCore::RenderBlock::markForPaginationRelayoutIfNeeded): Relayout for widows during layoutBlock(). Don't wait to exit the block layout.
+        (WebCore::RenderBlock::positionNewFloats):
+        (WebCore::RenderBlock::hasNextPage):
+        (WebCore::RenderBlock::applyBeforeBreak):
+        (WebCore::RenderBlock::applyAfterBreak):
+        (WebCore::RenderBlock::setPageBreak):
+        (WebCore::RenderBlock::updateMinimumPageHeight):
+        (WebCore::RenderBlock::regionAtBlockOffset): This function can now clamp at a box.
+        (WebCore::RenderBlock::computeRegionRangeForBoxChild): Calculate the box region range using the box height.
+        (WebCore::RenderBlock::estimateRegionRangeForBoxChild): Estimate the box region range using a huge height for the box.
+        (WebCore::RenderBlock::updateRegionRangeForBoxChild): Determine the final region range of a box.
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::logicalWidthForChild):
+        (WebCore::RenderBlock::logicalHeightForChild):
+        (WebCore::RenderBlock::logicalTopForChild):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::layoutInlineChildren):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::clampToStartAndEndRegions):
+        (WebCore::RenderBox::borderBoxRectInRegion):
+        * rendering/RenderBox.h:
+        * rendering/RenderDeprecatedFlexibleBox.cpp:
+        (WebCore::RenderDeprecatedFlexibleBox::layoutBlock):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutBlock):
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::validateRegions):
+        (WebCore::RenderFlowThread::regionAtBlockOffset):
+        (WebCore::RenderFlowThread::adjustedPositionRelativeToOffsetParent):
+        (WebCore::RenderFlowThread::pageLogicalTopForOffset):
+        (WebCore::RenderFlowThread::pageLogicalWidthForOffset):
+        (WebCore::RenderFlowThread::pageLogicalHeightForOffset):
+        (WebCore::RenderFlowThread::pageRemainingLogicalHeightForOffset):
+        (WebCore::RenderFlowThread::mapFromFlowToRegion):
+        (WebCore::RenderFlowThread::logicalWidthChangedInRegionsForBlock):
+        (WebCore::RenderFlowThread::clearRenderObjectCustomStyle):
+        (WebCore::RenderFlowThread::clearRenderBoxRegionInfoAndCustomStyle):
+        (WebCore::RenderFlowThread::setRegionRangeForBox):
+        (WebCore::RenderFlowThread::applyBreakAfterContent):
+        (WebCore::RenderFlowThread::addForcedRegionBreak):
+        * rendering/RenderFlowThread.h:
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::layoutBlock):
+        * rendering/RenderMultiColumnFlowThread.cpp:
+        (WebCore::RenderMultiColumnFlowThread::setPageBreak):
+        (WebCore::RenderMultiColumnFlowThread::updateMinimumPageHeight):
+        * rendering/RenderMultiColumnFlowThread.h:
+
 2013-08-13  Ryosuke Niwa  <rniwa@webkit.org>
 
         One more speculative Windows build fix after r153978.

@@ -44,8 +44,8 @@ private:
     virtual void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const OVERRIDE;
     virtual void autoGenerateRegionsToBlockOffset(LayoutUnit) OVERRIDE;
     virtual LayoutUnit initialLogicalWidth() const OVERRIDE;
-    virtual void setPageBreak(LayoutUnit offset, LayoutUnit spaceShortage) OVERRIDE;
-    virtual void updateMinimumPageHeight(LayoutUnit offset, LayoutUnit minHeight) OVERRIDE;
+    virtual void setPageBreak(const RenderBlock*, LayoutUnit offset, LayoutUnit spaceShortage) OVERRIDE;
+    virtual void updateMinimumPageHeight(const RenderBlock*, LayoutUnit offset, LayoutUnit minHeight) OVERRIDE;
 };
 
 } // namespace WebCore

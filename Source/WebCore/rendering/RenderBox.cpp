@@ -108,11 +108,54 @@ RenderBox::~RenderBox()
 {
 }
 
+RenderRegion* RenderBox::clampToStartAndEndRegions(RenderRegion* region) const
+{
+    RenderFlowThread* flowThread = flowThreadContainingBlock();
+
+    ASSERT(isRenderView() || (region && flowThread));
+    if (isRenderView())
+        return region;
+
+    // We need to clamp to the block, since we want any lines or blocks that overflow out of the
+    // logical top or logical bottom of the block to size as though the border box in the first and
+    // last regions extended infinitely. Otherwise the lines are going to size according to the regions
+    // they overflow into, which makes no sense when this block doesn't exist in |region| at all.
+    RenderRegion* startRegion = 0;
+    RenderRegion* endRegion = 0;
+    flowThread->getRegionRangeForBox(this, startRegion, endRegion);
+
+    if (startRegion && region->logicalTopForFlowThreadContent() < startRegion->logicalTopForFlowThreadContent())
+        return startRegion;
+    if (endRegion && region->logicalTopForFlowThreadContent() > endRegion->logicalTopForFlowThreadContent())
+        return endRegion;
+
+    return region;
+}
+
 LayoutRect RenderBox::borderBoxRectInRegion(RenderRegion* region, RenderBoxRegionInfoFlags cacheFlag) const
 {
     if (!region)
         return borderBoxRect();
-    
+
+    RenderFlowThread* flowThread = flowThreadContainingBlock();
+    if (!flowThread)
+        return borderBoxRect();
+
+    RenderRegion* startRegion = 0;
+    RenderRegion* endRegion = 0;
+    flowThread->getRegionRangeForBox(this, startRegion, endRegion);
+
+    // FIXME: In a perfect world this condition should never happen.
+    if (!startRegion || !endRegion)
+        return borderBoxRect();
+
+    // FIXME: Once overflow is implemented this assertion needs to be enabled. Right now the overflow content is painted
+    // in regions outside the box range so the assert is disabled.
+    // ASSERT(clampToStartAndEndRegions(region) == region);
+
+    // FIXME: Remove once boxes are painted inside their region range.
+    region = clampToStartAndEndRegions(region);
+
     // Compute the logical width and placement in this region.
     RenderBoxRegionInfo* boxInfo = renderBoxRegionInfo(region, cacheFlag);
     if (!boxInfo)
@@ -2939,10 +2982,8 @@ LayoutUnit RenderBox::containingBlockLogicalWidthForPositioned(const RenderBoxMo
             if (isWritingModeRoot()) {
                 LayoutUnit cbPageOffset = cb->offsetFromLogicalTopOfFirstPage();
                 RenderRegion* cbRegion = cb->regionAtBlockOffset(cbPageOffset);
-                if (cbRegion) {
-                    cbRegion = cb->clampToStartAndEndRegions(cbRegion);
+                if (cbRegion)
                     boxInfo = cb->renderBoxRegionInfo(cbRegion);
-                }
             }
         } else if (region && flowThread->isHorizontalWritingMode() == containingBlock->isHorizontalWritingMode()) {
             RenderRegion* containingBlockRegion = cb->clampToStartAndEndRegions(region);
@@ -3186,7 +3227,6 @@ void RenderBox::computePositionedLogicalWidth(LogicalExtentComputedValues& compu
         LayoutUnit cbPageOffset = cb->offsetFromLogicalTopOfFirstPage();
         RenderRegion* cbRegion = cb->regionAtBlockOffset(cbPageOffset);
         if (cbRegion) {
-            cbRegion = cb->clampToStartAndEndRegions(cbRegion);
             RenderBoxRegionInfo* boxInfo = cb->renderBoxRegionInfo(cbRegion);
             if (boxInfo) {
                 logicalLeftPos += boxInfo->logicalLeft();
@@ -3505,7 +3545,6 @@ void RenderBox::computePositionedLogicalHeight(LogicalExtentComputedValues& comp
         LayoutUnit cbPageOffset = cb->offsetFromLogicalTopOfFirstPage() - logicalLeft();
         RenderRegion* cbRegion = cb->regionAtBlockOffset(cbPageOffset);
         if (cbRegion) {
-            cbRegion = cb->clampToStartAndEndRegions(cbRegion);
             RenderBoxRegionInfo* boxInfo = cb->renderBoxRegionInfo(cbRegion);
             if (boxInfo) {
                 logicalTopPos += boxInfo->logicalLeft();
