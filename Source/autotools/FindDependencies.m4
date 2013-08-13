@@ -125,7 +125,7 @@ case "$host" in
 
         # We don't use --cflags as this gives us a lot of things that we don't necessarily want,
         # like debugging and optimization flags. See man (1) icu-config for more info.
-        UNICODE_CFLAGS=`$icu_config --cppflags`
+        UNICODE_CFLAGS=`$icu_config --cppflags-searchpath`
         UNICODE_LIBS=`$icu_config --ldflags-libsonly`
         ;;
 esac

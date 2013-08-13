@@ -1,7 +1,7 @@
 # Use C99 as the language standard for C code.
-CFLAGS="$CFLAGS -std=c99"
+CFLAGS="$CFLAGS -pthread -std=c99"
 # Use the C++11 standard. Do not warn about C++11 incompatibilities.
-CXXFLAGS="$CXXFLAGS -std=c++11 -Wno-c++11-compat"
+CXXFLAGS="$CXXFLAGS -pthread -std=c++11 -Wno-c++11-compat"
 
 # Clang requires suppression of unused arguments warnings.
 if test "$c_compiler" = "clang"; then
@@ -13,6 +13,13 @@ fi
 # Suppress unused arguments warnings for C++ files as well.
 if test "$cxx_compiler" = "clang++"; then
     CXXFLAGS="$CXXFLAGS -stdlib=libstdc++ -Wno-c++11-extensions -Qunused-arguments"
+fi
+
+if test "$c_compiler" = "gcc"; then
+    CFLAGS="$CFLAGS -D_FORTIFY_SOURCE=2"
+fi
+if test "$cxx_compiler" = "g++"; then
+    CXXFLAGS="$CXXFLAGS -D_FORTIFY_SOURCE=2"
 fi
 
 if test "$host_cpu" = "sh4"; then

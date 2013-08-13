@@ -1,5 +1,28 @@
 2013-08-13  Zan Dobersek  <zdobersek@igalia.com>
 
+        [Autotools] Unicode's CFLAGS enforce -D_FORTIFY_SOURCE=2, -D_REENTRANT=1, causing faulty Clang builds
+        https://bugs.webkit.org/show_bug.cgi?id=119685
+
+        Reviewed by Gustavo Noronha Silva.
+
+        icu-config includes '-D_FORTIFY_SOURCE=2 -D_REENTRANT=1' when printing out C preprocessor flags that are used
+        as the C compiler flags to avoid other unwanted compiler options. This causes problems when building optimized
+        builds with Clang because of a bug in that compiler:
+        http://llvm.org/bugs/show_bug.cgi?id=16821
+
+        To avoid that, the C preprocessor search flags, as printed by `icu-config --cppflags-searchpath` are now used
+        the Unicode dependency's C compiler flags, avoiding unconditionally specifying the two macros.
+
+        To adjust for that, the `-pthread` flag is added to the global CFLAGS and CXXFLAGS variables, ensuring
+        the _REENTRANT define is set to 1 and declaring the flag globally instead of relying on Glib dependency's
+        C compiler flags to do so for us. -D_FORTIFY_SOURCE=2 is only added to the CFLAGS and CXXFLAGS variables if
+        the compiler in use is gcc or g++, preventing the Clang builds to malfunction.
+
+        * Source/autotools/FindDependencies.m4:
+        * Source/autotools/SetupCompilerFlags.m4:
+
+2013-08-13  Zan Dobersek  <zdobersek@igalia.com>
+
         [Autotools] Don't compare $CC, $CXX to exact compiler names
         https://bugs.webkit.org/show_bug.cgi?id=119683
 
