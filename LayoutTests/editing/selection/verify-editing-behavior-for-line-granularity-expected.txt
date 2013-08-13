@@ -1,0 +1,11 @@
+When moving the caret up/down between lines, our editing behavior is similar to that of the text editors on various platforms such as mac, windows and linux. When no further up/down movement is possible, the caret is moved either to the start (for up) or end (for down) of the line. This should not reset the "x" co-ordinate maintained for the start caret position and moving the caret down from the start of a line (or vice-versa) should bring it to a position which is offset by this "x" amount on the adjacent line.
+
+To manually verify the issue, place the caret somewhere in between the first line and then press the up arrow key. This should move the caret to the start of the first line. Next press the down arrow key. This should result in the caret being placed on the next line offset by an amount equivalent to the start "x" position of the caret on the previous line. Similarly, forward caret movement too can be verified.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS caretRectAfterDownArrowKey.left is startCaretRectOnSecondLine.left
+PASS caretRectAfterDownArrowKey.top is startCaretRectOnSecondLine.top
+PASS caretRectAfterUpArrowKey.left is startCaretRectOnFirstLine.left
+PASS caretRectAfterUpArrowKey.top is startCaretRectOnFirstLine.top
+

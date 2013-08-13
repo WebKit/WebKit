@@ -1,3 +1,15 @@
+2013-08-13  Arpita Bahuguna  <a.bah@samsung.com>
+
+        Adding testcase for verifying editing behavior for up/down caret movement between lines.
+        https://bugs.webkit.org/show_bug.cgi?id=119511
+
+        Reviewed by Ryosuke Niwa.
+
+        * editing/selection/verify-editing-behavior-for-line-granularity-expected.txt: Added.
+        * editing/selection/verify-editing-behavior-for-line-granularity.html: Added.
+        Layout testcase added for verifying that the up/down caret movement between
+        lines is similar to the default text editor behavior on various platforms.
+
 2013-08-13  Andrei Bucur  <abucur@adobe.com>
 
         [CSS Regions] Compute correct region ranges for boxes
