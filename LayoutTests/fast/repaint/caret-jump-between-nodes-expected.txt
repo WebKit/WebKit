@@ -6,7 +6,6 @@ This test verifies that moving the caret between two distinct nodes doesn't leav
   (rect 8 44 100 100)
   (rect 3 39 110 110)
   (rect 8 44 1 18)
-  (rect 8 44 1 18)
   (rect 3 39 110 110)
   (rect -5 -5 5 610)
   (rect 800 -5 5 610)

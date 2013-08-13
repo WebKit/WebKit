@@ -1,3 +1,12 @@
+2013-08-13  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION(r139282): Old caret sometimes gets "stuck" (not repainted) in contenteditable elements.
+        https://bugs.webkit.org/show_bug.cgi?id=119520
+
+        * fast/repaint/caret-jump-between-nodes-expected.txt: Test was failing everywhere.
+        Landing current Mac results to make bots greener, but Andreas should take a look at
+        fixing the test.
+
 2013-08-13  Robert Hogan  <robert@webkit.org>
 
         Section's collapsed borders painted in wrong place in rtl tables
