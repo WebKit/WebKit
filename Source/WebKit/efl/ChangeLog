@@ -1,3 +1,15 @@
+2013-08-12  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL][WK1] URL printing code in DumpRenderTree doesn't match WTR or Mac DRT
+        https://bugs.webkit.org/show_bug.cgi?id=119585
+
+        Reviewed by Gyuyoung Kim.
+
+        * WebCoreSupport/DumpRenderTreeSupportEfl.cpp:
+        (DumpRenderTreeSupportEfl::provisionalURL):
+        Implemented to pass provisionalURL of main frame to DumpRenderTreeChrome.
+        * WebCoreSupport/DumpRenderTreeSupportEfl.h:
+
 2013-08-09  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION (r142755): window.open creates an invisible window when width and height are 0

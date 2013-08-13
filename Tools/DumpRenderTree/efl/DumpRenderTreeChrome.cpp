@@ -336,53 +336,38 @@ void DumpRenderTreeChrome::resetDefaultsToConsistentValues()
     policyDelegatePermissive = false;
 }
 
-// FIXME (119585): Make this match other platforms better.
-static CString pathSuitableForTestResult(const char* uriString)
-{
-    if (!uriString)
-        return CString();
+static const char divider = '/';
 
+static String pathSuitableForTestResult(const char* uriString)
+{
     KURL uri = KURL(ParsedURLString, uriString);
+    if (uri.isEmpty())
+        return "(null)";
 
     if (!uri.isLocalFile())
-        return uri.string().utf8();
+        return uri.string();
 
+    KURL mainFrameURL = KURL(ParsedURLString, ewk_frame_uri_get(browser->mainFrame()));
+    if (mainFrameURL.isEmpty())
+        mainFrameURL = DumpRenderTreeSupportEfl::provisionalURL(browser->mainFrame());
+
+    String mainFrameUrlPathString = mainFrameURL.path();
     String pathString = uri.path();
-    size_t indexBaseName = pathString.reverseFind('/');
-    String baseName;
-    if (indexBaseName == notFound)
-        baseName = pathString;
-    else
-        baseName = pathString.substring(indexBaseName + 1);
+    String basePath = mainFrameUrlPathString.substring(0, mainFrameUrlPathString.reverseFind(divider) + 1);
 
-    String dirName;
-    if (indexBaseName != notFound) {
-        size_t indexDirName = pathString.reverseFind('/', indexBaseName - 1);
-        if (indexDirName != notFound)
-            dirName = pathString.substring(indexDirName + 1, indexBaseName - indexDirName - 1);
-    }
+    if (!basePath.isEmpty() && pathString.startsWith(basePath))
+        return pathString.substring(basePath.length());
 
-    String ret = dirName + "/" + baseName;
-    return ret.utf8();
-}
-
-static CString urlSuitableForTestResult(const char* uriString)
-{
-    KURL uri = KURL(ParsedURLString, uriString);
-    if (!uri.isLocalFile())
-        return CString(uriString);
-
-    unsigned startIndex = uri.pathAfterLastSlash();
-    return uri.string().substring(startIndex).utf8();
+    return uri.lastPathComponent();
 }
 
 static CString descriptionSuitableForTestResult(Ewk_Frame_Resource_Request* request)
 {
     StringBuilder builder;
     builder.appendLiteral("<NSURLRequest URL ");
-    builder.append(pathSuitableForTestResult(request->url).data());
+    builder.append(pathSuitableForTestResult(request->url));
     builder.appendLiteral(", main document URL ");
-    builder.append(urlSuitableForTestResult(request->first_party).data());
+    builder.append(pathSuitableForTestResult(request->first_party));
     builder.appendLiteral(", http method ");
 
     if (request->http_method)
@@ -401,7 +386,7 @@ static CString descriptionSuitableForTestResult(const Ewk_Frame_Resource_Respons
 
     StringBuilder builder;
     builder.appendLiteral("<NSURLResponse ");
-    builder.append(pathSuitableForTestResult(response->url).data());
+    builder.append(pathSuitableForTestResult(response->url));
     builder.appendLiteral(", http status code ");
     builder.append(String::number(response->status_code));
     builder.append('>');
@@ -795,7 +780,7 @@ void DumpRenderTreeChrome::onFrameRedirectRequested(void*, Evas_Object* frame, v
 
     if (!done && gTestRunner->dumpFrameLoadCallbacks()) {
         const String frameName(DumpRenderTreeSupportEfl::suitableDRTFrameName(frame));
-        printf("%s - willPerformClientRedirectToURL: %s \n", frameName.utf8().data(), pathSuitableForTestResult(url).data());
+        printf("%s - willPerformClientRedirectToURL: %s \n", frameName.utf8().data(), pathSuitableForTestResult(url).utf8().data());
     }
 }
 
@@ -846,8 +831,8 @@ void DumpRenderTreeChrome::onNewResourceRequest(void*, Evas_Object*, void* event
 {
     Ewk_Frame_Resource_Request* request = static_cast<Ewk_Frame_Resource_Request*>(eventInfo);
 
-    if (!done && gTestRunner->dumpResourceLoadCallbacks())
-        m_dumpAssignedUrls.add(request->identifier, pathSuitableForTestResult(request->url));
+    if (!done)
+        m_dumpAssignedUrls.add(request->identifier, pathSuitableForTestResult(request->url).utf8());
 }
 
 void DumpRenderTreeChrome::onDownloadRequest(void*, Evas_Object*, void* eventInfo)

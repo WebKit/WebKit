@@ -223,6 +223,17 @@ String DumpRenderTreeSupportEfl::suitableDRTFrameName(const Evas_Object* ewkFram
     return String("frame (anonymous)");
 }
 
+const WebCore::KURL DumpRenderTreeSupportEfl::provisionalURL(const Evas_Object* ewkFrame)
+{
+    DRT_SUPPORT_FRAME_GET_OR_RETURN(ewkFrame, frame, WebCore::KURL());
+
+    WebCore::DocumentLoader* provisionalDocumentLoader = frame->loader()->provisionalDocumentLoader();
+    if (!provisionalDocumentLoader)
+        return WebCore::KURL();
+
+    return provisionalDocumentLoader->url();
+}
+
 void DumpRenderTreeSupportEfl::setValueForUser(JSContextRef context, JSValueRef nodeObject, const String& value)
 {
     JSC::ExecState* exec = toJS(context);

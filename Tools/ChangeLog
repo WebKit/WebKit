@@ -1,3 +1,19 @@
+2013-08-12  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL][WK1] URL printing code in DumpRenderTree doesn't match WTR or Mac DRT
+        https://bugs.webkit.org/show_bug.cgi?id=119585
+
+        Reviewed by Gyuyoung Kim.
+
+        * DumpRenderTree/efl/DumpRenderTreeChrome.cpp:
+        (pathSuitableForTestResult):
+        Return path string that's relative to main frame URL, or just file name if
+        the resource is not in the same directory subtree.
+        Referenced WebKitTestRunner code in r153852.
+        (descriptionSuitableForTestResult):
+        (DumpRenderTreeChrome::onFrameRedirectRequested):
+        (DumpRenderTreeChrome::onNewResourceRequest): Followed changes of r153903.
+
 2013-08-12  Dan Bernstein  <mitz@apple.com>
 
         extract-localizable-strings doesn't know how to verify an existing strings file
