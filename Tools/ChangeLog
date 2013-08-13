@@ -1,3 +1,16 @@
+2013-08-13  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] fast/dom/attr-style-too-lazy.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=119763
+
+        Reviewed by Darin Adler.
+
+        * DumpRenderTree/mac/UIDelegate.mm:
+        (-[UIDelegate webView:setStatusText:]): Don't dump anything when not running
+        a test, it would just semi-randomly leak to the next one.
+        (-[UIDelegate webView:didPressMissingPluginButton:]): Added same check here, just
+        for good measure.
+
 2013-08-13  Tim Horton  <timothy_horton@apple.com>
 
         [mac] Give MiniBrowser a reasonable bundle identifier
