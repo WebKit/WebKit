@@ -272,15 +272,6 @@ void ClipboardIOS::writeURL(const KURL&, const String&, Frame*)
 {
 }
 
-#if ENABLE(DRAG_SUPPORT)
-void ClipboardIOS::declareAndWriteDragImage(Element* element, const KURL& url, const String& title, Frame* frame)
-{
-    ASSERT(frame);
-    if (Page* page = frame->page())
-        page->dragController()->client()->declareAndWriteDragImage(m_pasteboard.get(), kit(element), url, title, frame);
-}
-#endif // ENABLE(DRAG_SUPPORT)
-
 DragImageRef ClipboardIOS::createDragImage(IntPoint&) const
 {
     return 0;

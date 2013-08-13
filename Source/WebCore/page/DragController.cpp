@@ -701,14 +701,11 @@ static Image* getImage(Element* element)
         cachedImage->image() : 0;
 }
 
-static void prepareClipboardForImageDrag(Frame* source, Clipboard* clipboard, Element* node, const KURL& linkURL, const KURL& imageURL, const String& label)
+static void selectElement(Element* element)
 {
-    if (node->isContentRichlyEditable()) {
-        RefPtr<Range> range = source->document()->createRange();
-        range->selectNode(node, ASSERT_NO_EXCEPTION);
-        source->selection()->setSelection(VisibleSelection(range.get(), DOWNSTREAM));
-    }
-    clipboard->declareAndWriteDragImage(node, !linkURL.isEmpty() ? linkURL : imageURL, label, source);
+    RefPtr<Range> range = element->document()->createRange();
+    range->selectNode(element);
+    element->document()->frame()->selection()->setSelection(VisibleSelection(range.get(), DOWNSTREAM));
 }
 
 static IntPoint dragLocForDHTMLDrag(const IntPoint& mouseDraggedPoint, const IntPoint& dragOrigin, const IntPoint& dragImageOffset, bool isLinkImage)
@@ -809,14 +806,15 @@ bool DragController::startDrag(Frame* src, const DragState& state, DragOperation
             m_dragOffset = IntPoint(dragOrigin.x() - dragLoc.x(), dragOrigin.y() - dragLoc.y());
         }
         doSystemDrag(dragImage, dragLoc, dragOrigin, clipboard, src, false);
-    } else if (!imageURL.isEmpty() && element && image && !image->isNull()
-               && (m_dragSourceAction & DragSourceActionImage)) {
+    } else if (!imageURL.isEmpty() && element && image && !image->isNull() && (m_dragSourceAction & DragSourceActionImage)) {
         // We shouldn't be starting a drag for an image that can't provide an extension.
         // This is an early detection for problems encountered later upon drop.
         ASSERT(!image->filenameExtension().isEmpty());
         if (!clipboard->hasData()) {
             m_draggingImageURL = imageURL;
-            prepareClipboardForImageDrag(src, clipboard, element, linkURL, imageURL, hitTestResult.altDisplayString());
+            if (element->isContentRichlyEditable())
+                selectElement(element);
+            declareAndWriteDragImage(clipboard, element, !linkURL.isEmpty() ? linkURL : imageURL, hitTestResult.altDisplayString());
         }
 
         m_client->willPerformDragSourceAction(DragSourceActionImage, dragOrigin, clipboard);

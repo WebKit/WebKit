@@ -41,12 +41,9 @@ namespace WebCore {
     class Frame;
     class FrameSelection;
     class HTMLInputElement;
-    class Image;
     class IntRect;
-    class Node;
     class Page;
     class PlatformMouseEvent;
-    class Range;
 
     struct DragSession;
     struct DragState;
@@ -113,6 +110,7 @@ namespace WebCore {
         void doImageDrag(Element*, const IntPoint&, const IntRect&, Clipboard*, Frame*, IntPoint&);
         void doSystemDrag(DragImageRef, const IntPoint&, const IntPoint&, Clipboard*, Frame*, bool forLink);
         void cleanupAfterSystemDrag();
+        void declareAndWriteDragImage(Clipboard*, Element*, const KURL&, const String& label);
 
         Page* m_page;
         DragClient* m_client;

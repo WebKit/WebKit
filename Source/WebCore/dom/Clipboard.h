@@ -101,9 +101,6 @@ namespace WebCore {
         Node* dragImageElement() const { return m_dragImageElement.get(); }
         
         LEGACY_VIRTUAL DragImageRef createDragImage(IntPoint& dragLocation) const LEGACY_PURE;
-#if ENABLE(DRAG_SUPPORT)
-        LEGACY_VIRTUAL void declareAndWriteDragImage(Element*, const KURL&, const String& title, Frame*) LEGACY_PURE;
-#endif
         LEGACY_VIRTUAL void writeURL(const KURL&, const String&, Frame*) LEGACY_PURE;
         LEGACY_VIRTUAL void writeRange(Range*, Frame*) LEGACY_PURE;
         LEGACY_VIRTUAL void writePlainText(const String&) LEGACY_PURE;
@@ -136,7 +133,7 @@ namespace WebCore {
 #if !USE(LEGACY_STYLE_ABSTRACT_CLIPBOARD_CLASS)
         static PassRefPtr<Clipboard> createForCopyAndPaste(ClipboardAccessPolicy);
 
-        const Pasteboard& pasteboard() { return *m_pasteboard; }
+        Pasteboard& pasteboard() { return *m_pasteboard; }
 #endif
 
 #if !USE(LEGACY_STYLE_ABSTRACT_CLIPBOARD_CLASS) && ENABLE(DRAG_SUPPORT)

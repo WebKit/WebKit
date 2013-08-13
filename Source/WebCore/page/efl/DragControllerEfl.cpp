@@ -64,6 +64,11 @@ const IntSize& DragController::maxDragImageSize()
 }
 
 void DragController::cleanupAfterSystemDrag()
-{}
+{
+}
+
+void DragController::declareAndWriteDragImage(Clipboard*, Element*, const KURL&, const String&)
+{
+}
 
 }

@@ -26,10 +26,13 @@
 #include "config.h"
 #include "DragController.h"
 
+#include "Clipboard.h"
 #include "DragData.h"
+#include "Element.h"
 #include "Frame.h"
 #include "FrameView.h"
 #include "Page.h"
+#include "Pasteboard.h"
 
 namespace WebCore {
 
@@ -66,6 +69,11 @@ const IntSize& DragController::maxDragImageSize()
 
 void DragController::cleanupAfterSystemDrag()
 {
+}
+
+void DragController::declareAndWriteDragImage(Clipboard* clipboard, Element* element, const KURL& url, const String& label)
+{
+    clipboard->pasteboard().writeImage(element, url, label);
 }
 
 }

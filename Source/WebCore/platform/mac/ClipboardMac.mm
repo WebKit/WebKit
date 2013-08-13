@@ -40,13 +40,6 @@
 #import "PlatformStrategies.h"
 
 namespace WebCore {
-
-void Clipboard::declareAndWriteDragImage(Element* element, const KURL& url, const String& title, Frame* frame)
-{
-    ASSERT(frame);
-    if (Page* page = frame->page())
-        page->dragController()->client()->declareAndWriteDragImage(m_pasteboard->name(), kit(element), url, title, frame);
-}
     
 DragImageRef Clipboard::createDragImage(IntPoint& location) const
 {

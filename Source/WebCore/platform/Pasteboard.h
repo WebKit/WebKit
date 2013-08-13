@@ -131,6 +131,7 @@ public:
 
     bool writeString(const String& type, const String& data);
     void writeSelection(Range*, bool canSmartCopyOrDelete, Frame*, ShouldSerializeSelectedTextForClipboard = DefaultSelectedTextType);
+    void writeMarkup(const String& markup);
     void writePlainText(const String&, SmartReplaceOption);
 #if !PLATFORM(IOS)
     void writeURL(const KURL&, const String&, Frame* = 0);

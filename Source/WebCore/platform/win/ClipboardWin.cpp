@@ -58,31 +58,4 @@ DragImageRef Clipboard::createDragImage(IntPoint& dragLocation) const
     return result;
 }
 
-#if ENABLE(DRAG_SUPPORT)
-void Clipboard::declareAndWriteDragImage(Element* element, const KURL& url, const String& title, Frame* frame)
-{
-    // Order is important here for Explorer's sake
-    if (!m_pasteboard->writableDataObject())
-        return;
-    m_pasteboard->writeURLToWritableDataObject(url, title);
-    m_pasteboard->writeImageToDataObject(element, url);
-    AtomicString imageURL = element->getAttribute(HTMLNames::srcAttr);
-    if (imageURL.isEmpty()) 
-        return;
-
-    KURL fullURL = frame->document()->completeURL(stripLeadingAndTrailingHTMLSpaces(imageURL));
-    if (fullURL.isEmpty()) 
-        return;
-    STGMEDIUM medium = {0};
-    medium.tymed = TYMED_HGLOBAL;
-
-    // Put img tag on the clipboard referencing the image
-    Vector<char> data;
-    markupToCFHTML(createMarkup(element, IncludeNode, 0, ResolveAllURLs), "", data);
-    medium.hGlobal = createGlobalData(data);
-    if (medium.hGlobal && FAILED(m_pasteboard->writableDataObject()->SetData(htmlFormat(), &medium, TRUE)))
-        ::GlobalFree(medium.hGlobal);
-}
-#endif
-
 } // namespace WebCore

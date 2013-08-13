@@ -27,10 +27,15 @@
 #import "DragController.h"
 
 #if ENABLE(DRAG_SUPPORT)
+#import "Clipboard.h"
+#import "DOMElementInternal.h"
+#import "DragClient.h"
 #import "DragData.h"
+#import "Element.h"
 #import "Frame.h"
 #import "FrameView.h"
 #import "Page.h"
+#import "Pasteboard.h"
 
 namespace WebCore {
 
@@ -77,6 +82,11 @@ void DragController::cleanupAfterSystemDrag()
     // is asynchronous.
     if (m_page->mainFrame()->view()->platformWidget())
         dragEnded();
+}
+
+void DragController::declareAndWriteDragImage(Clipboard* clipboard, Element* element, const KURL& url, const String& label)
+{
+    client()->declareAndWriteDragImage(clipboard->pasteboard().name(), kit(element), url, label, element->document()->frame());
 }
 
 } // namespace WebCore

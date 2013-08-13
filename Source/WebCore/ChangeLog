@@ -1,3 +1,60 @@
+2013-06-16  Darin Adler  <darin@apple.com>
+
+        Move Clipboard::declareAndWriteDragImage to DragController
+        https://bugs.webkit.org/show_bug.cgi?id=117683
+
+        Reviewed by Brent Fulgham.
+
+        * dom/Clipboard.h: Removed declareAndWriteDragImage.
+
+        * page/DragController.cpp:
+        (WebCore::selectImageBeforeDragging): Half of the old prepareClipboardForImageDrag
+        is now refactored into this function.
+        (WebCore::DragController::startDrag): Where we called prepareClipboardForImageDrag,
+        instead call selectImageBeforeDragging and declareAndWriteDragImage. This is needed
+        because declareAndWriteDragImage needs to be a member function, for Mac at least.
+
+        * page/DragController.h: Added declareAndWriteDragImage.
+
+        * page/efl/DragControllerEfl.cpp:
+        (WebCore::DragController::declareAndWriteDragImage): Added empty placeholder.
+        It would be better to delete this file rather than having these placeholders.
+        I don't think EFL actually has drag support, and it makes work to have to keep
+        source files up to date that are really unused.
+
+        * page/gtk/DragControllerGtk.cpp:
+        (WebCore::DragController::declareAndWriteDragImage): Added. Calls Pasteboard::writeImage.
+        * page/mac/DragControllerMac.mm:
+        (WebCore::DragController::declareAndWriteDragImage): Added. Calls to DragClient, which
+        does the work.
+        * page/qt/DragControllerQt.cpp:
+        (WebCore::DragController::declareAndWriteDragImage): Added. Calls Pasteboard::writeImage.
+        * page/win/DragControllerWin.cpp:
+        (WebCore::DragController::declareAndWriteDragImage): Added. Uses Pasteboard functions to
+        do the work.
+
+        * platform/Clipboard.h: Changed the pasteboard function to return a non-const reference.
+        For now, it's not clear what const will mean for pasteboards, and it's currently not
+        possible to write to a const pasteboard, which we need to do in the new
+        DragController::declareAndWriteDragImage functions.
+
+        * platform/Pasteboard.h: Added a new writeMarkup function, implemented only for Windows
+        at this time.
+
+        * platform/efl/ClipboardEfl.cpp: Deleted declareAndWriteDragImage.
+        * platform/gtk/ClipboardGtk.cpp: Ditto.
+        * platform/ios/ClipboardIOS.h: Ditto.
+        * platform/ios/ClipboardIOS.mm: Ditto.
+        * platform/mac/ClipboardMac.mm: Ditto.
+        * platform/qt/ClipboardQt.cpp: Ditto.
+        * platform/win/ClipboardWin.cpp: Ditto.
+
+        * platform/win/PasteboardWin.cpp:
+        (WebCore::Pasteboard::writePlainTextToDataObject): Took out a pointless line of code.
+        (WebCore::Pasteboard::writeMarkup): Added. Currently implemented only for Windows.
+        This factors out a significant piece of DragController::declareAndWriteDragImage,
+        and will probably be handy for other platforms later.
+
 2013-08-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         Fix NULL de-refernce in HTMLAnchorElement::sendPings when settings doesn't exist

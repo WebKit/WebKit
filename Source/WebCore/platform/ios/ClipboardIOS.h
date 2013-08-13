@@ -59,9 +59,6 @@ public:
     virtual void setDragImageElement(Node *, const IntPoint&) OVERRIDE;
 
     virtual DragImageRef createDragImage(IntPoint& dragLoc) const OVERRIDE;
-#if ENABLE(DRAG_SUPPORT)
-    virtual void declareAndWriteDragImage(Element*, const KURL&, const String& title, Frame*) OVERRIDE;
-#endif
     virtual void writeRange(Range*, Frame*) OVERRIDE;
     virtual void writeURL(const KURL&, const String&, Frame*) OVERRIDE;
     virtual void writePlainText(const String&) OVERRIDE;
