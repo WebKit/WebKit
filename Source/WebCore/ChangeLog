@@ -1,3 +1,9 @@
+2013-08-13  Anders Carlsson  <andersca@apple.com>
+
+        Fix build.
+
+        * WebCore.exp.in:
+
 2013-08-13  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         REGRESSION(SUBPIXEL_LAYOUT) Composited layers can cause one pixel shifts
