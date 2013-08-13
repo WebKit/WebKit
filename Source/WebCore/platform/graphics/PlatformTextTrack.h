@@ -76,14 +76,14 @@ public:
 
     static PlatformTextTrack* captionMenuOffItem()
     {
-        DEFINE_STATIC_LOCAL(RefPtr<PlatformTextTrack>, off, (PlatformTextTrack::create(0, "off menu item", "", Subtitle, InBand, 0)));
-        return off.get();
+        static PlatformTextTrack* off = PlatformTextTrack::create(0, "off menu item", "", Subtitle, InBand, 0).leakRef();
+        return off;
     }
 
     static PlatformTextTrack* captionMenuAutomaticItem()
     {
-        DEFINE_STATIC_LOCAL(RefPtr<PlatformTextTrack>, automatic, (PlatformTextTrack::create(0, "automatic menu item", "", Subtitle, InBand, 0)));
-        return automatic.get();
+        static PlatformTextTrack *automatic = PlatformTextTrack::create(0, "automatic menu item", "", Subtitle, InBand, 0).leakRef();
+        return automatic;
     }
 
 protected:

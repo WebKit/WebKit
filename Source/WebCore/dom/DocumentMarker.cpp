@@ -84,8 +84,8 @@ private:
 
 PassRefPtr<DocumentMarkerTextMatch> DocumentMarkerTextMatch::instanceFor(bool match)
 {
-    DEFINE_STATIC_LOCAL(RefPtr<DocumentMarkerTextMatch>, trueInstance, (adoptRef(new DocumentMarkerTextMatch(true))));
-    DEFINE_STATIC_LOCAL(RefPtr<DocumentMarkerTextMatch>, falseInstance, (adoptRef(new DocumentMarkerTextMatch(false))));
+    static DocumentMarkerTextMatch* trueInstance = adoptRef(new DocumentMarkerTextMatch(true)).leakRef();
+    static DocumentMarkerTextMatch* falseInstance = adoptRef(new DocumentMarkerTextMatch(false)).leakRef();
     return match ? trueInstance : falseInstance;
 }
 

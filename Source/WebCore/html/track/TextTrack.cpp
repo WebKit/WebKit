@@ -103,14 +103,14 @@ const AtomicString& TextTrack::showingKeyword()
 
 TextTrack* TextTrack::captionMenuOffItem()
 {
-    DEFINE_STATIC_LOCAL(RefPtr<TextTrack>, off, (TextTrack::create(0, 0, "off menu item", "", "")));
-    return off.get();
+    static TextTrack* off = TextTrack::create(0, 0, "off menu item", "", "").leakRef();
+    return off;
 }
 
 TextTrack* TextTrack::captionMenuAutomaticItem()
 {
-    DEFINE_STATIC_LOCAL(RefPtr<TextTrack>, automatic, (TextTrack::create(0, 0, "automatic menu item", "", "")));
-    return automatic.get();
+    static TextTrack* automatic = TextTrack::create(0, 0, "automatic menu item", "", "").leakRef();
+    return automatic;
 }
 
 TextTrack::TextTrack(ScriptExecutionContext* context, TextTrackClient* client, const AtomicString& kind, const AtomicString& label, const AtomicString& language, TextTrackType type)

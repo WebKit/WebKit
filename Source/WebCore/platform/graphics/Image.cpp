@@ -57,8 +57,8 @@ Image::~Image()
 Image* Image::nullImage()
 {
     ASSERT(isMainThread());
-    DEFINE_STATIC_LOCAL(RefPtr<Image>, nullImage, (BitmapImage::create()));;
-    return nullImage.get();
+    static Image* nullImage = BitmapImage::create().leakRef();
+    return nullImage;
 }
 
 bool Image::supportsType(const String& type)

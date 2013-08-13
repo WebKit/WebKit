@@ -289,7 +289,7 @@ static inline PassRefPtr<SharedBuffer> createTemplateDocumentData(Settings* sett
     
 bool FTPDirectoryDocumentParser::loadDocumentTemplate()
 {
-    DEFINE_STATIC_LOCAL(RefPtr<SharedBuffer>, templateDocumentData, (createTemplateDocumentData(document()->settings())));
+    static SharedBuffer* templateDocumentData = createTemplateDocumentData(document()->settings()).leakRef();
     // FIXME: Instead of storing the data, we'd rather actually parse the template data into the template Document once,
     // store that document, then "copy" it whenever we get an FTP directory listing.  There are complexities with this 
     // approach that make it worth putting this off.

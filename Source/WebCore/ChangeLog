@@ -1,5 +1,41 @@
 2013-08-13  Anders Carlsson  <andersca@apple.com>
 
+        Stop using DEFINE_STATIC_LOCAL with RefPtr
+        https://bugs.webkit.org/show_bug.cgi?id=119769
+
+        Reviewed by Andreas Kling.
+
+        No need to waste heap memory allocating RefPtr, just store the raw pointers directly.
+
+        * dom/ContextFeatures.cpp:
+        (WebCore::ContextFeatures::defaultSwitch):
+        * dom/DocumentMarker.cpp:
+        (WebCore::DocumentMarkerTextMatch::instanceFor):
+        * editing/EditingStyle.cpp:
+        (WebCore::StyleChange::extractTextStyles):
+        * html/FTPDirectoryDocument.cpp:
+        (WebCore::FTPDirectoryDocumentParser::loadDocumentTemplate):
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::didAddUserAgentShadowRoot):
+        * html/track/TextTrack.cpp:
+        (WebCore::TextTrack::captionMenuOffItem):
+        (WebCore::TextTrack::captionMenuAutomaticItem):
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::loadDefaultIconRecord):
+        * platform/graphics/Image.cpp:
+        (WebCore::Image::nullImage):
+        * platform/graphics/PlatformTextTrack.h:
+        (WebCore::PlatformTextTrack::captionMenuOffItem):
+        (WebCore::PlatformTextTrack::captionMenuAutomaticItem):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::initialShapeInside):
+        * testing/MockCDM.cpp:
+        (WebCore::initDataPrefix):
+        (WebCore::keyPrefix):
+        (WebCore::keyRequest):
+
+2013-08-13  Anders Carlsson  <andersca@apple.com>
+
         Stop using DEFINE_STATIC_LOCAL with RetainPtr
         https://bugs.webkit.org/show_bug.cgi?id=119765
 

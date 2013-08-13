@@ -1786,8 +1786,8 @@ void RenderStyle::setBorderImageOutset(LengthBox outset)
 #if ENABLE(CSS_SHAPES)
 ShapeValue* RenderStyle::initialShapeInside()
 {
-    DEFINE_STATIC_LOCAL(RefPtr<ShapeValue>, sOutsideValue, (ShapeValue::createOutsideValue()));
-    return sOutsideValue.get();
+    static ShapeValue* outsideValue = ShapeValue::createOutsideValue().leakRef();
+    return outsideValue;
 }
 #endif
 
