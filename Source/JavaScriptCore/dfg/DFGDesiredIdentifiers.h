@@ -38,6 +38,8 @@ class CodeBlock;
 
 namespace DFG {
 
+class CommonData;
+
 class DesiredIdentifiers {
 public:
     DesiredIdentifiers(CodeBlock*);
@@ -50,7 +52,7 @@ public:
     
     StringImpl* operator[](unsigned index) const { return at(index); }
     
-    void reallyAdd(VM&);
+    void reallyAdd(VM&, CommonData*);
     
 private:
     CodeBlock* m_codeBlock;

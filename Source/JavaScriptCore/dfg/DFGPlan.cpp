@@ -271,10 +271,10 @@ bool Plan::isStillValid()
         && chains.areStillValid();
 }
 
-void Plan::reallyAdd()
+void Plan::reallyAdd(CommonData* commonData)
 {
     watchpoints.reallyAdd();
-    identifiers.reallyAdd(vm);
+    identifiers.reallyAdd(vm, commonData);
 }
 
 CompilationResult Plan::finalize(RefPtr<JSC::JITCode>& jitCode, MacroAssemblerCodePtr* jitCodeWithArityCheck)
@@ -291,7 +291,7 @@ CompilationResult Plan::finalize(RefPtr<JSC::JITCode>& jitCode, MacroAssemblerCo
     if (!result)
         return CompilationFailed;
     
-    reallyAdd();
+    reallyAdd(jitCode->dfgCommon());
     
     return CompilationSuccessful;
 }

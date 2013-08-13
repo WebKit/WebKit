@@ -85,7 +85,7 @@ private:
     CompilationPath compileInThreadImpl(LongLivedState&);
     
     bool isStillValid();
-    void reallyAdd();
+    void reallyAdd(CommonData*);
 };
 
 #else // ENABLE(DFG_JIT)

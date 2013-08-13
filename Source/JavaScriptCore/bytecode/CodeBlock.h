@@ -664,12 +664,6 @@ public:
         return m_jitCode->dfgCommon()->dfgIdentifiers.size();
     }
 
-    void addAdditionalIdentifier(const Identifier& i)
-    {
-        ASSERT(JITCode::isOptimizingJIT(jitType()));
-        return m_jitCode->dfgCommon()->dfgIdentifiers.append(i);
-    }
-
     const Identifier& identifier(int index) const
     {
         size_t unlinkedIdentifiers = m_unlinkedCode->numberOfIdentifiers();
