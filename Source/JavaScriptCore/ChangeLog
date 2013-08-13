@@ -1,3 +1,14 @@
+2013-08-13  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt] Fix C++11 build with gcc 4.4 and 4.5
+        https://bugs.webkit.org/show_bug.cgi?id=119736
+
+        Reviewed by Anders Carlsson.
+
+        Don't force C++11 mode off anymore.
+
+        * Target.pri:
+
 2013-08-12  Oliver Hunt  <oliver@apple.com>
 
         Remove CodeBlock's notion of adding identifiers entirely

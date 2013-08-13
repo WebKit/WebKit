@@ -407,11 +407,3 @@ HEADERS += $$files(*.h, true)
     QMAKE_CXXFLAGS += -mieee -w
     QMAKE_CFLAGS   += -mieee -w
 }
-
-lessThan(QT_GCC_MAJOR_VERSION, 5) {
-    # GCC 4.5 and before
-    lessThan(QT_GCC_MINOR_VERSION, 6) {
-        # Disable C++0x mode in JSC for those who enabled it in their Qt's mkspec.
-        *-g++*:QMAKE_CXXFLAGS -= -std=c++0x -std=gnu++0x
-    }
-}
