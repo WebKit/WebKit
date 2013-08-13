@@ -1,3 +1,20 @@
+2013-08-13  Simon Fraser  <simon.fraser@apple.com>
+
+        Every scroll causes additional layer tree work because of flatteningLayer->removeFromParent();
+        https://bugs.webkit.org/show_bug.cgi?id=119551
+
+        Reviewed by Dean Jackson.
+
+        Only re-parent the flattening layer if we had to update our
+        layer configuration (reparenting is necessary then to get
+        the correct sibling ordering), or if it was parented in some
+        other layer.
+        
+        This avoid unnecessary flushing of state to CA.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateGraphicsLayerConfiguration):
+
 2013-08-13  Robert Hogan  <robert@webkit.org>
 
         Section's collapsed borders painted in wrong place in rtl tables

@@ -539,8 +539,8 @@ bool RenderLayerBacking::updateGraphicsLayerConfiguration()
         updateInternalHierarchy();
 
     if (GraphicsLayer* flatteningLayer = tileCacheFlatteningLayer()) {
-        flatteningLayer->removeFromParent();
-        m_graphicsLayer->addChild(flatteningLayer);
+        if (layerConfigChanged || flatteningLayer->parent() != m_graphicsLayer)
+            m_graphicsLayer->addChild(flatteningLayer);
     }
 
     if (updateMaskLayer(renderer->hasMask()))
