@@ -1,3 +1,9 @@
+2013-08-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        One more speculative Windows build fix after r153978.
+
+        * page/win/DragControllerWin.cpp:
+
 2013-08-13  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Update scheme list according to latest specification

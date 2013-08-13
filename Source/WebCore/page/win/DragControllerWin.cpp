@@ -28,6 +28,7 @@
 
 #include "Clipboard.h"
 #include "DragData.h"
+#include "Element.h"
 #include "FrameSelection.h"
 #include "Pasteboard.h"
 #include "markup.h"
