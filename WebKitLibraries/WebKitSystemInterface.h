@@ -455,7 +455,10 @@ NSURL* WKAVAssetResolvedURL(AVAsset*);
 NSCursor *WKCursor(const char *name);
 
 dispatch_source_t WKCreateVMPressureDispatchOnMainQueue(void);
-
+#if MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+dispatch_source_t WKCreateMemoryStatusPressureCriticalDispatchOnMainQueue(void);
+#endif
+    
 #if MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
 bool WKExecutableWasLinkedOnOrBeforeLion(void);
 #endif
@@ -501,9 +504,6 @@ bool WKRegisterOcclusionNotificationHandler(WKOcclusionNotificationType, WKOcclu
 bool WKUnregisterOcclusionNotificationHandler(WKOcclusionNotificationType, WKOcclusionNotificationHandler);
 bool WKEnableWindowOcclusionNotifications(NSInteger windowID, bool *outCurrentOcclusionState);
 #endif
-
-bool WKIsJavaPlugInActive(void);
-void WKActivateJavaPlugIn(void);
 
 void WKCFNetworkSetOverrideSystemProxySettings(CFDictionaryRef);
 

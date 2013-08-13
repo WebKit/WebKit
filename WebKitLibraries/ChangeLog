@@ -1,3 +1,15 @@
+2013-08-13  Simon Fraser  <simon.fraser@apple.com>
+
+        Various media tests spew "CGContextScaleCTM: invalid context 0x0" errors
+        https://bugs.webkit.org/show_bug.cgi?id=119490
+
+        New versions of WKSI that fix a bug that caused spew about null CGContexts,
+        and update WebKitSystemInterface.h.
+
+        * WebKitSystemInterface.h:
+        * libWebKitSystemInterfaceLion.a:
+        * libWebKitSystemInterfaceMountainLion.a:
+
 2013-08-08  Alex Christensen  <achristensen@apple.com>
 
         Windows build fixes.
