@@ -1,3 +1,18 @@
+2013-08-13  Dean Jackson  <dino@apple.com>
+
+        <https://webkit.org/b/119766> Make bug url more human friendly in ChangeLog
+
+        Reviewed by Mark Rowe.
+
+        Have prepare-ChangeLog produce webkit.org/b/id style
+        URLs rather than exposing the inner workings of our
+        cgi. I was going to use the term "Future Proofing"
+        but that seems excessive :)
+
+        * Scripts/prepare-ChangeLog:
+        (main): Generate a more human readable form.
+        (generateNewChangeLogs): Use it when printing out the ChangeLog entry.
+
 2013-08-13  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [EFL][DRT] Simplify call to reverseFind()
