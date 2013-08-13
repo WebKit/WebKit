@@ -1,5 +1,14 @@
 2013-08-13  Andrei Bucur  <abucur@adobe.com>
 
+        Unreviewed.
+
+        Fix the build after http://trac.webkit.org/changeset/153990.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::updateShapesBeforeBlockLayout): Add the default return value if CSS Shapes are disabled.
+
+2013-08-13  Andrei Bucur  <abucur@adobe.com>
+
         [CSS Regions] Compute correct region ranges for boxes
         https://bugs.webkit.org/show_bug.cgi?id=116296
 

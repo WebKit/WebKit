@@ -1500,6 +1500,8 @@ bool RenderBlock::updateShapesBeforeBlockLayout()
     setLogicalTop(oldTop);
 
     return shapeInfoRequiresRelayout(this);
+#else
+    return false;
 #endif
 }
 
