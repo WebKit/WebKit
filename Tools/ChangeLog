@@ -1,3 +1,22 @@
+2013-08-12  Dan Bernstein  <mitz@apple.com>
+
+        extract-localizable-strings doesn't know how to verify an existing strings file
+        https://bugs.webkit.org/show_bug.cgi?id=119704
+
+        Reviewed by Darin Adler.
+
+        * Scripts/extract-localizable-strings: Added an --exceptions option for specifying the
+        exceptions file, changing the way “no exceptions file” is expressed from passing “-” as the
+        exceptions file name to omitting the --exceptions option. Added a --skip option, changing
+        the way directories to skip are specified from prefixing the directory with a “-” to
+        specifying it with --skip.
+        Finally, added a --verify option. When specified, the strings file is not written to, but
+        instead read in and checked for consistency with the comments, keys and values derived from
+        the source files and the exceptions file. Missing keys, unused keys, mismatching values and
+        mismatching comments are reported as errors.
+        * Scripts/update-webkit-localizable-strings: Updated for the new way of specifying
+        directories to skip and no exceptions file.
+
 2013-08-12  Alexey Proskuryakov  <ap@apple.com>
 
         http/tests/security/sandboxed-iframe-invalid.html is flaky on Mac

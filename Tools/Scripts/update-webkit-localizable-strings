@@ -35,7 +35,7 @@ use lib $FindBin::Bin;
 use webkitdirs;
 
 # WebKit and WebKit2 strings go into WebCore's Localizable.strings.
-my @webKitDirectoriesToScan = ("Source/WebCore", "Source/WebKit/mac", "Source/WebKit/win", "Source/WebKit2", "-Source/WebCore/icu", "-Source/WebKit/mac/icu");
+my @webKitDirectoriesToScan = ("Source/WebCore", "Source/WebKit/mac", "Source/WebKit/win", "Source/WebKit2", "--skip", "Source/WebCore/icu", "--skip", "Source/WebKit/mac/icu");
 my @webInspectorUIDirectoriesToScan = ("Source/WebInspectorUI/UserInterface");
 
 my $webCoreFileToUpdate = "Source/WebCore/English.lproj/Localizable.strings";
@@ -45,5 +45,5 @@ my $webInspectorUIFileToUpdate = "Source/WebInspectorUI/Localizations/en.lproj/l
 
 chdirWebKit();
 
-system "Tools/Scripts/extract-localizable-strings", "-", $webCoreFileToUpdate, @webKitDirectoriesToScan;
+system "Tools/Scripts/extract-localizable-strings", $webCoreFileToUpdate, @webKitDirectoriesToScan;
 system "Tools/Scripts/extract-localizable-js-strings", $webInspectorUIFileToUpdate, @webInspectorUIDirectoriesToScan;
