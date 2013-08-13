@@ -1,3 +1,21 @@
+2013-08-13  Zan Dobersek  <zdobersek@igalia.com>
+
+        [Autotools] Don't compare $CC, $CXX to exact compiler names
+        https://bugs.webkit.org/show_bug.cgi?id=119683
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Instead of comparing $CC and $CXX to exact compiler names (like 'gcc', 'clang++' etc.),
+        use the compiler version checks to also specify the broader compiler collection of which
+        the used compiler is a member of. This avoids failures in some border-line cases where
+        the user would still use either a GCC or a Clang compiler but provide it through a symbolic
+        link that was specified via the CC/CXX environment variables.
+
+        * Source/autotools/CheckSystemAndBasicDependencies.m4: Store the detected C/C++ compiler collection
+        in c_compiler/cxx_compiler. Throw an error if no supported compiler was found.
+        * Source/autotools/SetupCompilerFlags.m4: Test for a specific compiler by checking against
+        c_compiler/cxx_compiler rather than CC/CXX values.
+
 2013-08-12  Zan Dobersek  <zdobersek@igalia.com>
 
         [Autotools] Adjust the help string for the configure's --enable-optimizations flag

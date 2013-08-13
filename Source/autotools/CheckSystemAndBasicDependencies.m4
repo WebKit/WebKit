@@ -79,24 +79,42 @@ AC_PROG_INSTALL
 AC_SYS_LARGEFILE
 
 # Check that an appropriate C compiler is available.
+c_compiler="unknown"
 AC_LANG_PUSH([C])
 AC_COMPILE_IFELSE([AC_LANG_PROGRAM([
-#if !(defined(__GNUC__) && !defined(__clang__) && !defined(__INTEL_COMPILER) && __GNUC__ >= 4 && __GNUC_MINOR__ >= 7) \
-    && !(defined(__clang__) && __clang_major__ >= 3 && __clang_minor__ >= 0)
-#error Unsupported compiler
+#if !(defined(__GNUC__) && !defined(__clang__) && !defined(__INTEL_COMPILER) && __GNUC__ >= 4 && __GNUC_MINOR__ >= 7)
+#error Not a supported GCC compiler
 #endif
-],[])],[],[AC_MSG_ERROR([Compiler GCC >= 4.7 or Clang >= 3.0 is required for C compilation])])
+])], [c_compiler="gcc"], [])
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([
+#if !(defined(__clang__) && __clang_major__ >= 3 && __clang_minor__ >= 0)
+#error Not a supported Clang compiler
+#endif
+])], [c_compiler="clang"], [])
 AC_LANG_POP([C])
 
+if test "$c_compiler" = "unknown"; then
+    AC_MSG_ERROR([Compiler GCC >= 4.7 or Clang >= 3.0 is required for C compilation])
+fi
+
 # Check that an appropriate C++ compiler is available.
+cxx_compiler="unknown"
 AC_LANG_PUSH([C++])
 AC_COMPILE_IFELSE([AC_LANG_PROGRAM([
-#if !(defined(__GNUG__) && defined(__GNUC__) && !defined(__clang__) && !defined(__INTEL_COMPILER) && __GNUC__ >= 4 && __GNUC_MINOR__ >= 7) \
-    && !(defined(__clang__) && __clang_major__ >= 3 && __clang_minor__ >= 0)
-#error Unsupported compiler
+#if !(defined(__GNUG__) && defined(__GNUC__) && !defined(__clang__) && !defined(__INTEL_COMPILER) && __GNUC__ >= 4 && __GNUC_MINOR__ >= 7)
+#error Not a supported G++ compiler
 #endif
-],[])],[],[AC_MSG_ERROR([Compiler GCC >= 4.7 or Clang >= 3.0 is required for C++ compilation])])
+])], [cxx_compiler="g++"], [])
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([
+#if !(defined(__clang__) && __clang_major__ >= 3 && __clang_minor__ >= 0)
+#error Not a supported Clang++ compiler
+#endif
+])], [cxx_compiler="clang++"], [])
 AC_LANG_POP([C++])
+
+if test "$cxx_compiler" = "unknown"; then
+    AC_MSG_ERROR([Compiler GCC >= 4.7 or Clang >= 3.0 is required for C++ compilation])
+fi
 
 # C/C++ Language Features
 AC_C_CONST

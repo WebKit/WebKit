@@ -4,14 +4,14 @@ CFLAGS="$CFLAGS -std=c99"
 CXXFLAGS="$CXXFLAGS -std=c++11 -Wno-c++11-compat"
 
 # Clang requires suppression of unused arguments warnings.
-if test "$CC" = "clang"; then
+if test "$c_compiler" = "clang"; then
     CFLAGS="$CFLAGS -Qunused-arguments"
 fi
 
 # libstdc++ is at the moment the only option as the C++ standard library when compiling with Clang.
 # -Wno-c++11-extensions, currently only usable with Clang, suppresses warnings of C++11 extensions in use.
 # Suppress unused arguments warnings for C++ files as well.
-if test "$CXX" = "clang++"; then
+if test "$cxx_compiler" = "clang++"; then
     CXXFLAGS="$CXXFLAGS -stdlib=libstdc++ -Wno-c++11-extensions -Qunused-arguments"
 fi
 
