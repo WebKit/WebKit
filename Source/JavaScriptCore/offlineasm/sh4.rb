@@ -212,8 +212,8 @@ end
 #
 # will become:
 #
-# addi foo, bar, tmp
-# bs tmp, baz
+# addi foo, bar
+# bs bar, baz
 #
 
 def sh4LowerSimpleBranchOps(list)
@@ -405,7 +405,7 @@ class Sequence
             | node, address |
             if address.is_a? Address
                 case node.opcode
-                when "btbz", "btbnz", "cbeq", "bbeq", "bbneq", "bbb", "loadb"
+                when "btbz", "btbnz", "cbeq", "bbeq", "bbneq", "bbb", "loadb", "storeb"
                     (0..15).include? address.offset.value and
                         ((node.operands[0].is_a? RegisterID and node.operands[0].sh4Operand == "r0") or
                          (node.operands[1].is_a? RegisterID and node.operands[1].sh4Operand == "r0"))
@@ -441,26 +441,12 @@ def sh4Operands(operands)
     operands.map{|v| v.sh4Operand}.join(", ")
 end
 
-def emitSH4Load32(constant, dest)
-    outlabel = LocalLabel.unique("load32out")
-    constlabel = LocalLabel.unique("load32const")
-    $asm.puts "mov.l #{LocalLabelReference.new(codeOrigin, constlabel).asmLabel}, #{dest.sh4Operand}"
-    $asm.puts "bra #{LocalLabelReference.new(codeOrigin, outlabel).asmLabel}"
-    $asm.puts "nop"
-    $asm.puts ".balign 4"
-    constlabel.lower("SH4")
-    $asm.puts ".long #{constant}"
-    outlabel.lower("SH4")
-end
-
 def emitSH4Load32AndJump(constant, scratch)
-    constlabel = LocalLabel.unique("load32const")
-    $asm.puts "mov.l #{LocalLabelReference.new(codeOrigin, constlabel).asmLabel}, #{scratch.sh4Operand}"
-    $asm.puts "jmp @#{scratch.sh4Operand}"
+    $asm.puts "mov.l 2f, #{scratch.sh4Operand}"
+    $asm.puts "braf #{scratch.sh4Operand}"
     $asm.puts "nop"
-    $asm.puts ".balign 4"
-    constlabel.lower("SH4")
-    $asm.puts ".long #{constant}"
+    $asm.puts "1: .balign 4"
+    $asm.puts "2: .long #{constant}-1b"
 end
 
 def emitSH4LoadImm(operands)
@@ -480,7 +466,15 @@ def emitSH4LoadImm(operands)
         $asm.puts ".word #{operands[0].value}"
         constlabel.lower("SH4")
     else
-        emitSH4Load32(operands[0].value, operands[1])
+        outlabel = LocalLabel.unique("load32out")
+        constlabel = LocalLabel.unique("load32const")
+        $asm.puts "mov.l #{LocalLabelReference.new(codeOrigin, constlabel).asmLabel}, #{operands[1].sh4Operand}"
+        $asm.puts "bra #{LocalLabelReference.new(codeOrigin, outlabel).asmLabel}"
+        $asm.puts "nop"
+        $asm.puts ".balign 4"
+        constlabel.lower("SH4")
+        $asm.puts ".long #{operands[0].value}"
+        outlabel.lower("SH4")
     end
 end
 
@@ -656,10 +650,10 @@ class Instruction
             raise "Invalid operands number (#{operands.size})" unless operands.size == 5
             $asm.puts "dmuls.l #{sh4Operands([operands[2], operands[3]])}"
             $asm.puts "sts macl, #{operands[3].sh4Operand}"
-            $asm.puts "sts mach, #{operands[0].sh4Operand}"
             $asm.puts "cmp/pz #{operands[3].sh4Operand}"
             $asm.puts "movt #{operands[1].sh4Operand}"
-            $asm.puts "dt #{operands[1].sh4Operand}"
+            $asm.puts "add #-1, #{operands[1].sh4Operand}"
+            $asm.puts "sts mach, #{operands[0].sh4Operand}"
             $asm.puts "cmp/eq #{sh4Operands([operands[0], operands[1]])}"
             $asm.puts "bf #{operands[4].asmLabel}"
         when "btiz", "btpz", "btbz", "btinz", "btpnz", "btbnz"
@@ -715,9 +709,9 @@ class Instruction
             $asm.puts "mova @(14, PC), r0"
             $asm.puts "lds r0, pr"
             $asm.puts "mov.l @(6, PC), #{operands[1].sh4Operand}"
-            $asm.puts "jmp @#{operands[1].sh4Operand}"
+            $asm.puts "braf #{operands[1].sh4Operand}"
             $asm.puts "mov #{operands[0].sh4Operand}, r0"
-            $asm.puts ".long #{operands[2].asmLabel}"
+            $asm.puts ".long #{operands[2].asmLabel}-."
         when "jmp"
             if operands[0].is_a? LocalLabelReference
                 $asm.puts "bra #{operands[0].asmLabel}"
@@ -735,15 +729,15 @@ class Instruction
         when "loadb"
             $asm.puts "mov.b #{sh4Operands(operands)}"
             $asm.puts "extu.b #{sh4Operands([operands[1], operands[1]])}"
+        when "storeb"
+            $asm.puts "mov.b #{sh4Operands(operands)}"
         when "loadh"
             $asm.puts "mov.w #{sh4Operands(operands)}"
             $asm.puts "extu.w #{sh4Operands([operands[1], operands[1]])}"
         when "loadi", "loadis", "loadp", "storei", "storep"
             $asm.puts "mov.l #{sh4Operands(operands)}"
         when "move"
-            if operands[0].is_a? LabelReference
-                emitSH4Load32(operands[0].asmLabel, operands[1])
-            elsif operands[0].is_a? Immediate
+            if operands[0].is_a? Immediate
                 emitSH4LoadImm(operands)
             else
                 $asm.puts "mov #{sh4Operands(operands)}"
@@ -751,15 +745,11 @@ class Instruction
         when "leap"
             if operands[0].is_a? BaseIndex
                 biop = operands[0]
-                if biop.scale > 0
-                    $asm.puts "mov #{sh4Operands([biop.index, operands[1]])}"
-                    if biop.scaleShift > 0
-                        emitSH4ShiftImm(biop.scaleShift, operands[1], "l")
-                    end
-                    $asm.puts "add #{sh4Operands([biop.base, operands[1]])}"
-                else
-                    $asm.puts "mov #{sh4Operands([biop.base, operands[1]])}"
+                $asm.puts "mov #{sh4Operands([biop.index, operands[1]])}"
+                if biop.scaleShift > 0
+                    emitSH4ShiftImm(biop.scaleShift, operands[1], "l")
                 end
+                $asm.puts "add #{sh4Operands([biop.base, operands[1]])}"
                 if biop.offset.value != 0
                     $asm.puts "add #{sh4Operands([biop.offset, operands[1]])}"
                 end

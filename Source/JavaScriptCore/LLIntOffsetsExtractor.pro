@@ -45,6 +45,7 @@ LLINT_DEPENDENCY = \
     $$PWD/offlineasm/registers.rb \
     $$PWD/offlineasm/self_hash.rb \
     $$PWD/offlineasm/settings.rb \
+    $$PWD/offlineasm/sh4.rb \
     $$PWD/offlineasm/transform.rb \
     $$PWD/offlineasm/x86.rb
 

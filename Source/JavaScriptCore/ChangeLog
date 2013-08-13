@@ -1,5 +1,20 @@
 2013-08-13  Julien Brianceau  <jbrianceau@nds.com>
 
+        [sh4] Prepare LLINT for DFG_JIT implementation.
+        https://bugs.webkit.org/show_bug.cgi?id=119755
+
+        Reviewed by Oliver Hunt.
+
+        * LLIntOffsetsExtractor.pro: Add sh4.rb dependency.
+        * offlineasm/sh4.rb:
+            - Handle storeb opcode.
+            - Make relative jumps when possible using braf opcode.
+            - Update bmulio implementation to be consistent with baseline JIT.
+            - Remove useless code from leap opcode.
+            - Fix incorrect comment.
+
+2013-08-13  Julien Brianceau  <jbrianceau@nds.com>
+
         [sh4] Prepare baseline JIT for DFG_JIT implementation.
         https://bugs.webkit.org/show_bug.cgi?id=119758
 
