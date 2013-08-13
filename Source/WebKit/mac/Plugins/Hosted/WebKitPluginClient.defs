@@ -207,6 +207,11 @@ routine PCResolveURL(clientPort :mach_port_t;
                      target :data_t;
                      out resolvedURL :data_t, dealloc);
 
+simpleroutine PCLayerHostingModeChanged(clientPort :mach_port_t;
+                                        pluginID :uint32_t;
+                                        hostsLayersInWindowServer :boolean_t;
+                                        renderContextID :uint32_t);
+
 // Replies
 simpleroutine PCInstantiatePluginReply(clientPort :mach_port_t;
                                      pluginID :uint32_t;

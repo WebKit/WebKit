@@ -1,3 +1,57 @@
+2013-08-13  Tim Horton  <timothy_horton@apple.com>
+
+        Remotely hosted plugins don’t work in window-server-hosted WebKit1 views
+        https://bugs.webkit.org/show_bug.cgi?id=119709
+        <rdar://problem/14717572>
+
+        Reviewed by Anders Carlsson.
+
+        * Plugins/Hosted/NetscapePluginHostManager.h:
+        Add hostLayersInWindowServer argument to instantiatePlugin.
+
+        * Plugins/Hosted/NetscapePluginHostManager.mm:
+        (WebKit::NetscapePluginHostManager::instantiatePlugin):
+        Add hostLayersInWindowServer argument to instantiatePlugin, and pass it through to WebKitPluginHost.
+
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        (WKPCLayerHostingModeChanged):
+        Forward the notification that the plugin host changed its layer hosting mode
+        to the instance proxy.
+
+        * Plugins/Hosted/NetscapePluginInstanceProxy.h:
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::setShouldHostLayersInWindowServer):
+        Ask the plugin host to re-host its layers when the layer hosting mode changes.
+
+        (WebKit::NetscapePluginInstanceProxy::layerHostingModeChanged):
+        Inform the WebHostedNetscapePluginView of the new layer hosting mode
+        when it changes. Also, store the new CAContext ID.
+
+        * Plugins/Hosted/WebHostedNetscapePluginView.h:
+        * Plugins/Hosted/WebHostedNetscapePluginView.mm:
+        (-[WebHostedNetscapePluginView windowHostsLayersInWindowServer]):
+        Determine whether the WebView's current window uses window-server hosting for its layers.
+
+        (-[WebHostedNetscapePluginView createPlugin]):
+        Drive-by spelling fix.
+        Factor _pluginLayer initialization out into createPluginLayer.
+        Instantiate the plugin with the appropriate layer hosting mode.
+
+        (-[WebHostedNetscapePluginView createPluginLayer]):
+
+        (-[WebHostedNetscapePluginView setHostsLayersInWindowServer:]):
+        Create a new _pluginLayer if the layer hosting mode changes.
+        Attach the new _pluginLayer to our parent layer.
+
+        (-[WebHostedNetscapePluginView updateAndSetWindow]):
+        Inform the NetscapePluginInstanceProxy if the layer hosting mode changes,
+        so it can inform the plugin host. We will asynchronously receive a reply
+        with the new hosting mode and renderContextID and switch to the new CAContext,
+        in setHostsLayersInWindowServer:.
+
+        * Plugins/Hosted/WebKitPluginClient.defs:
+        * Plugins/Hosted/WebKitPluginHost.defs:
+
 2013-08-08  Tim Horton  <timothy_horton@apple.com>
 
         navigator.plugins has plugins in it when plugins are disabled
