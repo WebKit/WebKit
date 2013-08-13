@@ -95,13 +95,13 @@ if (defined $exceptionsFile && open EXCEPTIONS, $exceptionsFile) {
         chomp;
         if (/^"([^\\"]|\\.)*"$/ or /^[-_\/\w\s.]+.(h|m|mm|c|cpp)$/ or /^[-_\/\w\s.]+.(h|m|mm|c|cpp):"([^\\"]|\\.)*"$/) {
             if ($exception{$_}) {
-                print "$exceptionsFile:$.:exception for $_ appears twice\n";
-                print "$exceptionsFile:$exception{$_}:first appearance\n";
+                print "$exceptionsFile:$.: warning: exception for $_ appears twice\n";
+                print "$exceptionsFile:$exception{$_}: warning: first appearance\n";
             } else {
                 $exception{$_} = $.;
             }
         } else {
-            print "$exceptionsFile:$.:syntax error\n";
+            print "$exceptionsFile:$.: warning: syntax error\n";
         }
     }
     close EXCEPTIONS;
@@ -151,7 +151,7 @@ for my $file (sort @files) {
             
             if ($token eq "\"") {
                 if ($expected and $expected ne "a quoted string") {
-                    print "$file:$.:ERROR:found a quoted string but expected $expected\n";
+                    print "$file:$.: found a quoted string but expected $expected\n";
                     $sawError = 1;
                     $expected = "";
                 }
@@ -163,7 +163,7 @@ for my $file (sort @files) {
                         $string .= $1;
                     }
                 } else {
-                    print "$file:$.:ERROR:mismatched quotes\n";
+                    print "$file:$.: mismatched quotes\n";
                     $sawError = 1;
                     $_ = "";
                 }
@@ -202,7 +202,7 @@ handleString:
                     } elsif ($exception{"$file:\"$string\""}) {
                         $usedException{"$file:\"$string\""} = 1;
                     } else {
-                        print "$file:$stringLine:\"$string\" is not marked for localization\n" if $warnAboutUnlocalizedStrings;
+                        print "$file:$stringLine: warning: \"$string\" is not marked for localization\n" if $warnAboutUnlocalizedStrings;
                         $notLocalizedCount++;
                     }
                 }
@@ -213,7 +213,7 @@ handleString:
             $previousToken = $token;
 
             if ($token =~ /^NSLocalized/ && $token !~ /NSLocalizedDescriptionKey/ && $token !~ /NSLocalizedStringFromTableInBundle/ && $token !~ /NSLocalizedFileSizeDescription/) {
-                print "$file:$.:ERROR:found a use of an NSLocalized macro ($token); not supported\n";
+                print "$file:$.: found a use of an NSLocalized macro ($token); not supported\n";
                 $nestingLevel = 0 if !defined $nestingLevel;
                 $sawError = 1;
                 $NSLocalizeCount++;
@@ -226,13 +226,13 @@ handleString:
                 $_ = ""; # Discard the rest of the line
             } elsif ($token eq "'") {
                 if (!s-([^\\]|\\.)'--) { #' <-- that single quote makes the Project Builder editor less confused
-                    print "$file:$.:ERROR:mismatched single quote\n";
+                    print "$file:$.: mismatched single quote\n";
                     $sawError = 1;
                     $_ = "";
                 }
             } else {
                 if ($expected and $expected ne $token) {
-                    print "$file:$.:ERROR:found $token but expected $expected\n";
+                    print "$file:$.: found $token but expected $expected\n";
                     $sawError = 1;
                     $expected = "";
                 }
@@ -268,7 +268,7 @@ handleString:
     goto handleString if defined $string;
     
     if ($expected) {
-        print "$file:ERROR:reached end of file but expected $expected\n";
+        print "$file: reached end of file but expected $expected\n";
         $sawError = 1;
     }
     
@@ -310,29 +310,29 @@ sub HandleUIString
     my $bad = 0;
     $string = UnescapeHexSequence($string);
     if (!defined($string)) {
-        print "$file:$line:ERROR:string has an illegal hexadecimal escape sequence\n";
+        print "$file:$line: string has an illegal hexadecimal escape sequence\n";
         $bad = 1;
     }
     $key = UnescapeHexSequence($key);
     if (!defined($key)) {
-        print "$file:$line:ERROR:key has an illegal hexadecimal escape sequence\n";
+        print "$file:$line: key has an illegal hexadecimal escape sequence\n";
         $bad = 1;
     }
     $comment = UnescapeHexSequence($comment);
     if (!defined($comment)) {
-        print "$file:$line:ERROR:comment has an illegal hexadecimal escape sequence\n";
+        print "$file:$line: comment has an illegal hexadecimal escape sequence\n";
         $bad = 1;
     }
     if (grep { $_ == 0xFFFD } unpack "U*", $string) {
-        print "$file:$line:ERROR:string for translation has illegal UTF-8 -- most likely a problem with the Text Encoding of the source file\n";
+        print "$file:$line: string for translation has illegal UTF-8 -- most likely a problem with the Text Encoding of the source file\n";
         $bad = 1;
     }
     if ($string ne $key && grep { $_ == 0xFFFD } unpack "U*", $key) {
-        print "$file:$line:ERROR:key has illegal UTF-8 -- most likely a problem with the Text Encoding of the source file\n";
+        print "$file:$line: key has illegal UTF-8 -- most likely a problem with the Text Encoding of the source file\n";
         $bad = 1;
     }
     if (grep { $_ == 0xFFFD } unpack "U*", $comment) {
-        print "$file:$line:ERROR:comment for translation has illegal UTF-8 -- most likely a problem with the Text Encoding of the source file\n";
+        print "$file:$line: comment for translation has illegal UTF-8 -- most likely a problem with the Text Encoding of the source file\n";
         $bad = 1;
     }
     if ($bad) {
@@ -341,14 +341,14 @@ sub HandleUIString
     }
     
     if ($stringByKey{$key} && $stringByKey{$key} ne $string) {
-        print "$file:$line:encountered the same key, \"$key\", twice, with different strings\n";
-        print "$fileByKey{$key}:$lineByKey{$key}:previous occurrence\n";
+        print "$file:$line: warning: encountered the same key, \"$key\", twice, with different strings\n";
+        print "$fileByKey{$key}:$lineByKey{$key}: warning: previous occurrence\n";
         $keyCollisionCount++;
         return;
     }
     if ($commentByKey{$key} && $commentByKey{$key} ne $comment) {
-        print "$file:$line:encountered the same key, \"$key\", twice, with different comments\n";
-        print "$fileByKey{$key}:$lineByKey{$key}:previous occurrence\n";
+        print "$file:$line: warning: encountered the same key, \"$key\", twice, with different comments\n";
+        print "$fileByKey{$key}:$lineByKey{$key}: warning: previous occurrence\n";
         $keyCollisionCount++;
         return;
     }
@@ -364,7 +364,7 @@ print "\n" if $sawError || $notLocalizedCount || $NSLocalizeCount;
 my @unusedExceptions = sort grep { !$usedException{$_} } keys %exception;
 if (@unusedExceptions) {
     for my $unused (@unusedExceptions) {
-        print "$exceptionsFile:$exception{$unused}:exception $unused not used\n";
+        print "$exceptionsFile:$exception{$unused}: warning: exception $unused not used\n";
     }
     print "\n";
 }
@@ -396,6 +396,7 @@ if (-e "$fileToUpdate") {
         open STRINGS, $fileToUpdate or die;
 
         my $lastComment;
+        my $line;
 
         while (<STRINGS>) {
             chomp;
@@ -408,34 +409,35 @@ if (-e "$fileToUpdate") {
             {
                 my $string = delete $stringByKey{$1};
                 if (!defined $string) {
-                    print "error: $fileToUpdate contains unused key \"$1\" (preceding comment: /* $lastComment */)\n";
+                    print "$fileToUpdate:$.: unused key \"$1\" (preceding comment: /* $lastComment */)\n";
                     $sawError = 1;
                 } else {
                     if (!($string eq $2)) {
-                        print "error: $fileToUpdate contains unexpected value \"$2\" for key \"$1\" (expected \"$string\")\n";
+                        print "$fileToUpdate:$.: unexpected value \"$2\" for key \"$1\" (expected \"$string\")\n";
                         $sawError = 1;
                     }
                     if (!($lastComment eq $commentByKey{$1})) {
-                        print "error: $fileToUpdate contains unexpected comment /* $lastComment */ for key \"$1\" (expected /* $commentByKey{$1} */)\n";
+                        print "$fileToUpdate:$.: unexpected comment /* $lastComment */ for key \"$1\" (expected /* $commentByKey{$1} */)\n";
+                        $sawError = 1;
                     }
                 }
             } else {
-                print "error: $fileToUpdate contains line with unexpected format: $_\n";
+                print "$fileToUpdate:$.: line with unexpected format: $_\n";
                 $sawError = 1;
             }
         }
 
         for my $missing (keys %stringByKey) {
-            print "error: $fileToUpdate is missing key \"$missing\"\n";
+            print "$fileByKey{$missing}:$lineByKey{$missing}: missing key \"$missing\"\n";
             $sawError = 1;
         }
 
         if ($sawError) {
-            print "\nerror: $fileToUpdate is not up to date.\n";
+            print "\n$fileToUpdate:0: file is not up to date.\n";
             exit 1;
         }
     }
 } else {
-    print "$fileToUpdate does not exist\n";
+    print "error: $fileToUpdate does not exist\n";
     exit 1;
 }

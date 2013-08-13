@@ -1,3 +1,17 @@
+2013-08-12  Dan Bernstein  <mitz@apple.com>
+
+        extract-localizable-strings output is not suited for parsing by Xcode
+        https://bugs.webkit.org/show_bug.cgi?id=119728
+
+        Reviewed by Darin Adler.
+
+        Added spaces where needed after “path:line:” to allow Xcode to recognize the file reference,
+        removed “ERROR” since messages that refer to a line in a file are shown as error by default,
+        added “warning: ” in messages that aren’t errors (i.e. don’t prevent the script from exiting
+        with 0).
+
+        * Scripts/extract-localizable-strings:
+
 2013-08-12  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL][WK1] URL printing code in DumpRenderTree doesn't match WTR or Mac DRT
