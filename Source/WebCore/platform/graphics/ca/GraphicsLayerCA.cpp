@@ -2682,8 +2682,15 @@ void GraphicsLayerCA::swapFromOrToTiledLayer(bool useTiledLayer)
     ASSERT(m_layer->layerType() != PlatformCALayer::LayerTypePageTiledBackingLayer);
     ASSERT(useTiledLayer != m_usingTiledBacking);
     RefPtr<PlatformCALayer> oldLayer = m_layer;
-    
-    m_layer = PlatformCALayer::create(useTiledLayer ? PlatformCALayer::LayerTypeTiledBackingLayer : PlatformCALayer::LayerTypeWebLayer, this);
+
+#if PLATFORM(WIN)
+    PlatformCALayer::LayerType layerType = useTiledLayer ? PlatformCALayer::LayerTypeWebTiledLayer : PlatformCALayer::LayerTypeWebLayer;
+#else
+    PlatformCALayer::LayerType layerType = useTiledLayer ? PlatformCALayer::LayerTypeTiledBackingLayer : PlatformCALayer::LayerTypeWebLayer;
+#endif
+
+    m_layer = PlatformCALayer::create(layerType, this);
+
     m_usingTiledBacking = useTiledLayer;
     
     m_layer->adoptSublayers(oldLayer.get());
