@@ -74,8 +74,8 @@ static bool initFontData(SimpleFontData* fontData)
 
 static NSString *webFallbackFontFamily(void)
 {
-    DEFINE_STATIC_LOCAL(RetainPtr<NSString>, webFallbackFontFamily, ([[NSFont systemFontOfSize:16.0f] familyName]));
-    return webFallbackFontFamily.get();
+    static NSString *webFallbackFontFamily = [[[NSFont systemFontOfSize:16.0f] familyName] retain];
+    return webFallbackFontFamily;
 }
 
 const SimpleFontData* SimpleFontData::getCompositeFontReferenceFontData(NSFont *key) const

@@ -83,7 +83,7 @@ void GraphicsContext::drawFocusRing(const Vector<IntRect>& rects, int width, int
 }
 
 
-static NSColor* createPatternColor(NSString* firstChoiceName, NSString* secondChoiceName, NSColor* defaultColor, bool& usingDot)
+static NSColor* makePatternColor(NSString* firstChoiceName, NSString* secondChoiceName, NSColor* defaultColor, bool& usingDot)
 {
     // Eventually we should be able to get rid of the secondChoiceName. For the time being we need both to keep
     // this working on all platforms.
@@ -116,18 +116,18 @@ void GraphicsContext::drawLineForDocumentMarker(const FloatPoint& point, float w
         {
             // Constants for spelling pattern color.
             static bool usingDotForSpelling = false;
-            DEFINE_STATIC_LOCAL(RetainPtr<NSColor>, spellingPatternColor, (createPatternColor(@"NSSpellingDot", @"SpellingDot", [NSColor redColor], usingDotForSpelling)));
+            static NSColor *spellingPatternColor = [makePatternColor(@"NSSpellingDot", @"SpellingDot", [NSColor redColor], usingDotForSpelling) retain];
             usingDot = usingDotForSpelling;
-            patternColor = spellingPatternColor.get();
+            patternColor = spellingPatternColor;
             break;
         }
         case DocumentMarkerGrammarLineStyle:
         {
             // Constants for grammar pattern color.
             static bool usingDotForGrammar = false;
-            DEFINE_STATIC_LOCAL(RetainPtr<NSColor>, grammarPatternColor, (createPatternColor(@"NSGrammarDot", @"GrammarDot", [NSColor greenColor], usingDotForGrammar)));
+            static NSColor *grammarPatternColor = [makePatternColor(@"NSGrammarDot", @"GrammarDot", [NSColor greenColor], usingDotForGrammar) retain];
             usingDot = usingDotForGrammar;
-            patternColor = grammarPatternColor.get();
+            patternColor = grammarPatternColor;
             break;
         }
 #if PLATFORM(MAC) && (PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070)
@@ -137,9 +137,9 @@ void GraphicsContext::drawLineForDocumentMarker(const FloatPoint& point, float w
         {
             // Constants for spelling pattern color.
             static bool usingDotForSpelling = false;
-            DEFINE_STATIC_LOCAL(RetainPtr<NSColor>, spellingPatternColor, (createPatternColor(@"NSCorrectionDot", @"CorrectionDot", [NSColor blueColor], usingDotForSpelling)));
+            static NSColor *spellingPatternColor = [makePatternColor(@"NSCorrectionDot", @"CorrectionDot", [NSColor blueColor], usingDotForSpelling) retain];
             usingDot = usingDotForSpelling;
-            patternColor = spellingPatternColor.get();
+            patternColor = spellingPatternColor;
             break;
         }
 #endif

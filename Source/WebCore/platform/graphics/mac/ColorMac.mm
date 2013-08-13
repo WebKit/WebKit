@@ -78,16 +78,16 @@ NSColor *nsColor(const Color& color)
     switch (c) {
         case 0: {
             // Need this to avoid returning nil because cachedRGBAValues will default to 0.
-            DEFINE_STATIC_LOCAL(RetainPtr<NSColor>, clearColor, ([NSColor colorWithDeviceRed:0 green:0 blue:0 alpha:0]));
-            return clearColor.get();
+            static NSColor *clearColor = [[NSColor colorWithDeviceRed:0 green:0 blue:0 alpha:0] retain];
+            return clearColor;
         }
         case Color::black: {
-            DEFINE_STATIC_LOCAL(RetainPtr<NSColor>, blackColor, ([NSColor colorWithDeviceRed:0 green:0 blue:0 alpha:1]));
-            return blackColor.get();
+            static NSColor *blackColor = [[NSColor colorWithDeviceRed:0 green:0 blue:0 alpha:1] retain];
+            return blackColor;
         }
         case Color::white: {
-            DEFINE_STATIC_LOCAL(RetainPtr<NSColor>, whiteColor, ([NSColor colorWithDeviceRed:1 green:1 blue:1 alpha:1]));
-            return whiteColor.get();
+            static NSColor *whiteColor = [[NSColor colorWithDeviceRed:1 green:1 blue:1 alpha:1] retain];
+            return whiteColor;
         }
         default: {
             const int cacheSize = 32;
