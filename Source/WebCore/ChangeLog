@@ -1,5 +1,12 @@
 2013-08-13  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Yet another Windows build fix attempt after r153978.
+
+        * page/win/DragControllerWin.cpp:
+        (WebCore::DragController::declareAndWriteDragImage):
+
+2013-08-13  Ryosuke Niwa  <rniwa@webkit.org>
+
         Another Windows build fix attempt after r153978.
 
         * page/win/DragControllerWin.cpp:

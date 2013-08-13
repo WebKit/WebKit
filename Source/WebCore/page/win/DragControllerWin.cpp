@@ -30,6 +30,7 @@
 #include "DragData.h"
 #include "FrameSelection.h"
 #include "Pasteboard.h"
+#include "markup.h"
 #include "windows.h"
 #include <wtf/RefPtr.h>
 
@@ -70,16 +71,16 @@ void DragController::cleanupAfterSystemDrag()
 
 void DragController::declareAndWriteDragImage(Clipboard* clipboard, Element* element, const KURL& url, const String& label)
 {
-    Pasteboard* pasteboard = clipboard->pasteboard();
+    Pasteboard& pasteboard = clipboard->pasteboard();
 
     // FIXME: Do we really need this check?
-    if (!pasteboard->writableDataObject())
+    if (!pasteboard.writableDataObject())
         return;
 
     // Order is important here for Explorer's sake
-    pasteboard->writeURLToWritableDataObject(url, label);
-    pasteboard->writeImageToDataObject(element, url);
-    pasteboard->writeMarkup(createMarkup(element, IncludeNode, 0, ResolveAllURLs));
+    pasteboard.writeURLToWritableDataObject(url, label);
+    pasteboard.writeImageToDataObject(element, url);
+    pasteboard.writeMarkup(createMarkup(element, IncludeNode, 0, ResolveAllURLs));
 }
 
 }
