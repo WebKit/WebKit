@@ -2,6 +2,14 @@
 
         Unreviewed GTK gardening.
 
+        * platform/gtk/fast/repaint/caret-jump-between-nodes-expected.txt: Added. Rebaselining after r153815.
+        * platform/gtk/svg/W3C-SVG-1.1/struct-dom-03-b-expected.png: Rebaselining after r153901.
+        * platform/gtk/svg/W3C-SVG-1.1/struct-dom-03-b-expected.txt: Ditto.
+
+2013-08-13  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK gardening.
+
         * platform/gtk/TestExpectations: Add failure expectations for various failing tests.
 
 2013-08-13  Gabor Abraham  <abrhm@inf.u-szeged.hu>
