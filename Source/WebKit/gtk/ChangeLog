@@ -1,3 +1,21 @@
+2013-08-13  Alberto Garcia  <berto@igalia.com>
+
+        [GTK] Closing inspector window crashes wk
+        https://bugs.webkit.org/show_bug.cgi?id=110865
+
+        Reviewed by Carlos Garcia Campos.
+
+        Deleting priv->corePage during the destruction of a webView will
+        trigger the deletion of InspectorFrontendClient. However that
+        object is supposed to handle the webView's destroy signal first in
+        order to do the necessary cleanup.
+
+        The solution is to wait until webkit_web_view_dispose finishes
+        before deleting priv->corePage.
+
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_dispose):
+
 2013-08-12  Anton Obzhirov  <a.obzhirov@samsung.com>
 
         [GTK] Don't load GAIL when using GTK 3.2 or greater

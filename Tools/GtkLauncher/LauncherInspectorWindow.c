@@ -78,6 +78,11 @@ static gboolean closeInspectorWindow(WebKitWebInspector *inspector, LauncherInsp
     return TRUE;
 }
 
+static void inspectorWindowDestroyed(gpointer inspector, GObject* inspectorWindow)
+{
+    g_signal_handlers_disconnect_by_data(inspector, inspectorWindow);
+}
+
 GtkWidget *launcherInspectorWindowNew(WebKitWebInspector *inspector, GtkWindow *parent)
 {
     LauncherInspectorWindow *inspectorWindow = LAUNCHER_INSPECTOR_WINDOW(g_object_new(LAUNCHER_TYPE_INSPECTOR_WINDOW, "type", GTK_WINDOW_TOPLEVEL, NULL));
@@ -96,6 +101,8 @@ GtkWidget *launcherInspectorWindowNew(WebKitWebInspector *inspector, GtkWindow *
     g_signal_connect(inspector, "notify::inspected-uri", G_CALLBACK(inspectedURIChanged), inspectorWindow);
     g_signal_connect(inspector, "show-window", G_CALLBACK(showInspectorWindow), inspectorWindow);
     g_signal_connect(inspector, "close-window", G_CALLBACK(closeInspectorWindow), inspectorWindow);
+
+    g_object_weak_ref(G_OBJECT(inspectorWindow), inspectorWindowDestroyed, inspector);
 
     return GTK_WIDGET(inspectorWindow);
 }

@@ -1,3 +1,17 @@
+2013-08-13  Alberto Garcia  <berto@igalia.com>
+
+        [GTK] Closing inspector window crashes wk
+        https://bugs.webkit.org/show_bug.cgi?id=110865
+
+        Reviewed by Carlos Garcia Campos.
+
+        Disconnect all signal handlers if the inspector window is
+        destroyed.
+
+        * GtkLauncher/LauncherInspectorWindow.c:
+        (inspectorWindowDestroyed):
+        (launcherInspectorWindowNew):
+
 2013-08-12  Dan Bernstein  <mitz@apple.com>
 
         extract-localizable-strings output is not suited for parsing by Xcode
