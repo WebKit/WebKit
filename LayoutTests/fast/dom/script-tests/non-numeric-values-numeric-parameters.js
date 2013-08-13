@@ -250,7 +250,7 @@ shouldBe("nonNumericPolicy('createHTMLOptionsCollection().remove(x)')", "'any ty
 // HTMLSelectElement
 
 shouldBe("nonNumericPolicy('createHTMLSelectElement().remove(x)')", "'any type allowed'");
-shouldBe("nonNumericPolicy('createHTMLSelectElement().item(x)')", "'any type allowed'");
+shouldBe("nonNumericPolicy('createHTMLSelectElement().item(x)')", "'any type allowed (but not omitted)'");
 
 // HTMLTableElement
 

@@ -1,5 +1,31 @@
 2013-08-13  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
+        HTMLSelectElement.item() does not behave according to specification
+        https://bugs.webkit.org/show_bug.cgi?id=119738
+
+        Reviewed by Darin Adler.
+
+        Make HTMLSelectElement.item() behave according to specification:
+        http://www.w3.org/TR/html51/forms.html#dom-select-item
+        http://dom.spec.whatwg.org/#dom-htmlcollection-item
+
+        Namely, we no longer throw if the offset argument is negative. Also,
+        the argument is now mandatory.
+
+        IE10, Firefox and Blink do not throw when HTMLSelectElement.item() is
+        called with a negative value (as per the specification).
+
+        The argument is mandatory in Firefox and Blink, but optional in IE10
+        (it returns null when called without argument). This looks like a bug
+        in IE because other item() getters' argument is usually mandatory in IE
+        (e.g. NodeList.item()).
+
+        Test: fast/dom/HTMLSelectElement/select-element-item-argument.html
+
+        * html/HTMLSelectElement.idl:
+
+2013-08-13  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
         On request error, always fire events on the XMLHttpRequestUpload before the XMLHttpRequest
         https://bugs.webkit.org/show_bug.cgi?id=119714
 

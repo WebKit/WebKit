@@ -1,5 +1,22 @@
 2013-08-13  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
+        HTMLSelectElement.item() does not behave according to specification
+        https://bugs.webkit.org/show_bug.cgi?id=119738
+
+        Reviewed by Darin Adler.
+
+        Add a new layout test to check that the HTMLSelectElement.item() indexed getter's
+        parameter is correctly validated.
+        Also update fast/dom/non-numeric-values-numeric-parameters.html now that the
+        argument is mandatory.
+
+        * fast/dom/HTMLSelectElement/select-element-item-argument-expected.txt: Added.
+        * fast/dom/HTMLSelectElement/select-element-item-argument.html: Added.
+        * fast/dom/non-numeric-values-numeric-parameters-expected.txt:
+        * fast/dom/script-tests/non-numeric-values-numeric-parameters.js:
+
+2013-08-13  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
         On request error, always fire events on the XMLHttpRequestUpload before the XMLHttpRequest
         https://bugs.webkit.org/show_bug.cgi?id=119714
 

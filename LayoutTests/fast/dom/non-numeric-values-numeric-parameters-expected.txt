@@ -31,7 +31,7 @@ PASS nonNumericPolicy('document.createElement("input").setSelectionRange(0, x)')
 PASS nonNumericPolicy('createHTMLOptionsCollection().add(document.createElement("option"), x)') is 'any type allowed'
 PASS nonNumericPolicy('createHTMLOptionsCollection().remove(x)') is 'any type allowed'
 PASS nonNumericPolicy('createHTMLSelectElement().remove(x)') is 'any type allowed'
-PASS nonNumericPolicy('createHTMLSelectElement().item(x)') is 'any type allowed'
+PASS nonNumericPolicy('createHTMLSelectElement().item(x)') is 'any type allowed (but not omitted)'
 PASS nonNumericPolicy('createHTMLTableElement().insertRow(x)') is 'any type allowed'
 PASS nonNumericPolicy('createHTMLTableElement().deleteRow(x)') is 'any type allowed'
 PASS nonNumericPolicy('createHTMLTableRowElement().insertCell(x)') is 'any type allowed'
