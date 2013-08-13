@@ -1,3 +1,14 @@
+2013-08-12  Zan Dobersek  <zdobersek@igalia.com>
+
+        [Autotools] Adjust the help string for the configure's --enable-optimizations flag
+        https://bugs.webkit.org/show_bug.cgi?id=119682
+
+        Reviewed by Martin Robinson.
+
+        * Source/autotools/ReadCommandLineArguments.m4: Remove the 'GCC only' part of the help
+        string for the --enable-optimizations flag. This is not true and can lead to confusion
+        since the optimizations can be applied when compiling with Clang as well.
+
 2013-08-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update NEWS and Versions.m4 for 2.1.4 release.

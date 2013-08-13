@@ -22,7 +22,7 @@ AC_MSG_RESULT([$enable_debug])
 
 AC_MSG_CHECKING([whether to enable optimized builds])
 AC_ARG_ENABLE(optimizations, 
-    AC_HELP_STRING([--enable-optimizations], [turn on optimize builds (GCC only) [default=yes]]),
+    AC_HELP_STRING([--enable-optimizations], [turn on build-time optimizations [default=yes]]),
     [enable_optimizations=$enableval],
     [
         if test "$enable_debug" = "yes"; then
