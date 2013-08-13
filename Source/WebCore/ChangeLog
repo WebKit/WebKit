@@ -1,3 +1,20 @@
+2013-08-12  Zan Dobersek  <zdobersek@igalia.com>
+
+        ASSERTION FAILED: type() == Percent in WebCore::Length::percent
+        https://bugs.webkit.org/show_bug.cgi?id=116715
+
+        Reviewed by Darin Adler.
+
+        Allow the Calculated type in the Length::percent method that returns the Length's
+        float value. This reflects the changes in r110148 that adjusted the Length::isPercent
+        method to return true for Length objects of either Percent or Calculated type.
+
+        Test: fast/css/calculated-length-as-percent-crash.html
+
+        * platform/Length.h:
+        (WebCore::Length::percent): Assert that Length::isPercent is true when Length::percent
+        is called, ensuring the Length's type is either Percent or Calculated.
+
 2013-06-16  Darin Adler  <darin@apple.com>
 
         Move Clipboard::declareAndWriteDragImage to DragController

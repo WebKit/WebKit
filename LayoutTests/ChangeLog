@@ -1,3 +1,18 @@
+2013-08-12  Zan Dobersek  <zdobersek@igalia.com>
+
+        ASSERTION FAILED: type() == Percent in WebCore::Length::percent
+        https://bugs.webkit.org/show_bug.cgi?id=116715
+
+        Reviewed by Darin Adler.
+
+        Add the test case, as produced by the Fuzzinator, that was causing assertions
+        in Length::percent due to Length objects of the Calculated type not being treated
+        as holding a proper percent value in that method, despite Length::isPercent
+        returning true for Length objects of either Percent or the Calculated type.
+
+        * fast/css/calculated-length-as-percent-crash-expected.txt: Added.
+        * fast/css/calculated-length-as-percent-crash.html: Added.
+
 2013-08-12  Alexey Proskuryakov  <ap@apple.com>
 
         http/tests/security/sandboxed-iframe-invalid.html is flaky on Mac

@@ -136,7 +136,7 @@ public:
 
     float percent() const
     {
-        ASSERT(type() == Percent);
+        ASSERT(isPercent());
         return getFloatValue();
     }
 
