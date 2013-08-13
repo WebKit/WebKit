@@ -1,3 +1,19 @@
+2013-08-13  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        On request error, always fire events on the XMLHttpRequestUpload before the XMLHttpRequest
+        https://bugs.webkit.org/show_bug.cgi?id=119714
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add a layout test to validate the order in which the events are fired in case
+        of a xhr request error. Also update an existing test which was relying on the
+        outdated firing order.
+
+        * http/tests/xmlhttprequest/simple-cross-origin-progress-events-expected.txt:
+        * http/tests/xmlhttprequest/simple-cross-origin-progress-events.html:
+        * http/tests/xmlhttprequest/upload-request-error-event-order-expected.txt: Added.
+        * http/tests/xmlhttprequest/upload-request-error-event-order.html: Added.
+
 2013-08-13  Gabor Abraham  <abrhm@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening. Rebase tests after r153901 and r153915. Skip failing tests.

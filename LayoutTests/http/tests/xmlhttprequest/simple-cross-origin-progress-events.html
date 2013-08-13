@@ -103,12 +103,12 @@ function test3()
     xhr.upload.onload = function() { log("FAIL: upload.onload") }
     xhr.upload.onerror = function() { 
         log("upload.onerror (expected)")
-        if (window.testRunner)
-            testRunner.notifyDone();
     }
     xhr.onerror = function() {
         log("onerror (expected)");
         log("Response length: " + xhr.responseText.length);
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
     xhr.onload = function() {
         log("onload");

@@ -1,5 +1,33 @@
 2013-08-13  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
+        On request error, always fire events on the XMLHttpRequestUpload before the XMLHttpRequest
+        https://bugs.webkit.org/show_bug.cgi?id=119714
+
+        Reviewed by Alexey Proskuryakov.
+
+        On request error, fire events on the XMLHttpRequestUpload object before the XMLHttpRequest
+        object as per the latest specification:
+        http://xhr.spec.whatwg.org/#request-error
+
+        This specification change was made in Sept 2010:
+        http://dev.w3.org/cvsweb/2006/webapi/XMLHttpRequest-2/Overview.src.html.diff?r1=1.138;r2=1.139;f=h
+
+        It addresses the following comment:
+        http://lists.w3.org/Archives/Public/public-webapps/2010JulSep/0777.html
+
+        IE10 and since recently Blink behave according to specification but WebKit was firing the
+        events on the XMLHttpRequest object BEFORE the XMLHttpRequestUpload object in case of
+        'network error' or 'abort error'. WebKit was however behaving according to specification
+        in case of 'timeout error', which was inconsistent.
+
+        Test: http/tests/xmlhttprequest/upload-request-error-event-order.html
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::networkError):
+        (WebCore::XMLHttpRequest::abortError):
+
+2013-08-13  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
         Simplify RadioNodeList's anonymous indexed getter
         https://bugs.webkit.org/show_bug.cgi?id=119725
 
