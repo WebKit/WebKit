@@ -1,3 +1,15 @@
+2013-08-12  Seokju Kwon  <seokju@webkit.org>
+
+        Use the correct preprocessor in shouldRepaintFixedBackgroundsOnScroll()
+        https://bugs.webkit.org/show_bug.cgi?id=119710
+
+        Reviewed by Darin Adler.
+
+        No behavior change, no new tests needed.
+
+        * rendering/RenderObject.cpp: Remove unused parameter warning.
+        (WebCore::shouldRepaintFixedBackgroundsOnScroll):
+
 2013-08-12  Alexey Proskuryakov  <ap@apple.com>
 
         http/tests/security/sandboxed-iframe-invalid.html is flaky on Mac

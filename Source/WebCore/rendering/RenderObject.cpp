@@ -126,7 +126,7 @@ COMPILE_ASSERT(sizeof(RenderObject) == sizeof(SameSizeAsRenderObject), RenderObj
 // ignore the CSS property "background-attachment: fixed".
 static bool shouldRepaintFixedBackgroundsOnScroll(FrameView* frameView)
 {
-#if !ENABLE(FAST_MOBILE_SCROLLING) && !PLATFORM(QT)
+#if !ENABLE(FAST_MOBILE_SCROLLING) || !PLATFORM(QT)
     UNUSED_PARAM(frameView);
 #endif
 
