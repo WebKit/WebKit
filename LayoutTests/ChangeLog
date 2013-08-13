@@ -1,3 +1,10 @@
+2013-08-13  Gabor Abraham  <abrhm@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening. Skipping new fails.
+
+        * platform/qt-5.0-wk1/TestExpectations:
+        * platform/qt/TestExpectations:
+
 2013-08-13  Arpita Bahuguna  <a.bah@samsung.com>
 
         Adding testcase for verifying editing behavior for up/down caret movement between lines.

@@ -791,6 +791,9 @@ webkit.org/b/115261 editing/selection/selection-in-iframe-removed-crash.html [ S
 
 webkit.org/b/116613 editing/selection/contains-node-crash.html [ Skip ]
 
+# [Qt] New editing/selection/leak-document-with-selection-inside.html test fails on Qt bots after r153366.
+webkit.org/b/119689 editing/selection/leak-document-with-selection-inside.html [ Skip ]
+
 # ============================================================================= #
 # Failing editing/spelling tests
 # ============================================================================= #

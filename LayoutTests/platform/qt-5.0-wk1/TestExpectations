@@ -174,3 +174,12 @@ editing/pasteboard/paste-noplugin.html [ Skip ]
 
 # [Qt][WK1] New fast/events/ime-composition-events-001.html fails after r152668.
 webkit.org/b/118722 fast/events/ime-composition-events-001.html [ Skip ]
+
+# [GTK][Qt][WK1] New test fails: plugins/navigator-plugins-disabled.html after r153877.
+webkit.org/b/119687 plugins/navigator-plugins-disabled.html [ Skip ]
+
+# [Qt][WK1] New fast/events/setDragImage-in-document-element-crash.html test timed out after r153511.
+webkit.org/b/119684 fast/events/setDragImage-in-document-element-crash.html [ Skip ]
+
+# [EFL][GTK][Qt][WK1] New fast/dom/Window/open-zero-size-as-default.html test fails after r153913.
+webkit.org/b/119729 fast/dom/Window/open-zero-size-as-default.html [ Skip ]
