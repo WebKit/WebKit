@@ -1,3 +1,17 @@
+2013-08-13  Oliver Hunt  <oliver@apple.com>
+
+        Harden executeConstruct against incorrect return types from host functions
+        https://bugs.webkit.org/show_bug.cgi?id=119757
+
+        Reviewed by Mark Hahnenberg.
+
+        Add logic to guard against bogus return types.  There doesn't seem to be any
+        class in webkit that does this wrong, but the typed array stubs in debug JSC
+        do exhibit this bad behaviour.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::executeConstruct):
+
 2013-08-13  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt] Fix C++11 build with gcc 4.4 and 4.5
