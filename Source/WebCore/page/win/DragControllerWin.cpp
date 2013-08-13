@@ -28,6 +28,7 @@
 
 #include "DragData.h"
 #include "FrameSelection.h"
+#include "Pasteboard.h"
 #include "windows.h"
 #include <wtf/RefPtr.h>
 

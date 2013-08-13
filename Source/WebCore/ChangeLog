@@ -1,3 +1,9 @@
+2013-08-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Windows build fix attempt after r153978.
+
+        * page/win/DragControllerWin.cpp:
+
 2013-08-12  Zan Dobersek  <zdobersek@igalia.com>
 
         ASSERTION FAILED: type() == Percent in WebCore::Length::percent
