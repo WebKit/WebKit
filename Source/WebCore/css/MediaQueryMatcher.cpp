@@ -42,12 +42,12 @@ MediaQueryMatcher::Listener::~Listener()
 {
 }
 
-void MediaQueryMatcher::Listener::evaluate(MediaQueryEvaluator* evaluator)
+void MediaQueryMatcher::Listener::evaluate(ScriptState* state, MediaQueryEvaluator* evaluator)
 {
     bool notify;
     m_query->evaluate(evaluator, notify);
     if (notify)
-        m_listener->queryChanged(m_query.get());
+        m_listener->queryChanged(state, m_query.get());
 }
 
 MediaQueryMatcher::MediaQueryMatcher(Document* document)
@@ -141,13 +141,17 @@ void MediaQueryMatcher::styleResolverChanged()
 {
     ASSERT(m_document);
 
+    ScriptState* scriptState = mainWorldScriptState(m_document->frame());
+    if (!scriptState)
+        return;
+
     ++m_evaluationRound;
     OwnPtr<MediaQueryEvaluator> evaluator = prepareEvaluator();
     if (!evaluator)
         return;
 
     for (size_t i = 0; i < m_listeners.size(); ++i)
-        m_listeners[i]->evaluate(evaluator.get());
+        m_listeners[i]->evaluate(scriptState, evaluator.get());
 }
 
-} // namespace WebCore
+}

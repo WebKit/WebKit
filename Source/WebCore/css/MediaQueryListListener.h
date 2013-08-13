@@ -20,34 +20,35 @@
 #ifndef MediaQueryListListener_h
 #define MediaQueryListListener_h
 
+#include "ScriptState.h"
+#include "ScriptValue.h"
 #include <wtf/RefCounted.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class MediaQueryList;
 
+// See http://dev.w3.org/csswg/cssom-view/#the-mediaquerylist-interface
+
 class MediaQueryListListener : public RefCounted<MediaQueryListListener> {
 public:
-    enum Type {
-        JSMediaQueryListListenerType
-    };
-
-    virtual bool queryChanged(MediaQueryList*) = 0;
-    virtual bool operator==(const MediaQueryListListener&) const = 0;
-    virtual ~MediaQueryListListener() { }
-
-    Type type() const { return m_type; }
-
-protected:
-    explicit MediaQueryListListener(Type type)
-        : m_type(type)
+    static PassRefPtr<MediaQueryListListener> create(const ScriptValue& value)
     {
+        if (!value.isFunction())
+            return 0;
+        return adoptRef(new MediaQueryListListener(value));
     }
+    void queryChanged(ScriptState*, MediaQueryList*);
+
+    bool operator==(const MediaQueryListListener& other) const { return m_value == other.m_value; }
 
 private:
-    Type m_type;
+    MediaQueryListListener(const ScriptValue& value) : m_value(value) { }
+
+    ScriptValue m_value;
 };
 
-} // namespace WebCore
+}
 
 #endif // MediaQueryListListener_h

@@ -316,7 +316,6 @@ set(WebCore_IDL_FILES
     css/FontLoader.idl
     css/MediaList.idl
     css/MediaQueryList.idl
-    css/MediaQueryListListener.idl
     css/RGBColor.idl
     css/Rect.idl
     css/StyleMedia.idl
@@ -1075,6 +1074,7 @@ set(WebCore_SOURCES
     css/MediaQueryEvaluator.cpp
     css/MediaQueryExp.cpp
     css/MediaQueryList.cpp
+    css/MediaQueryListListener.cpp
     css/MediaQueryMatcher.cpp
     css/PageRuleCollector.cpp
     css/PropertySetCSSStyleDeclaration.cpp

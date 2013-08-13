@@ -317,6 +317,7 @@ SOURCES += \
     css/MediaQueryEvaluator.cpp \
     css/MediaQueryExp.cpp \
     css/MediaQueryList.cpp \
+    css/MediaQueryListListener.cpp \
     css/MediaQueryMatcher.cpp \
     css/PageRuleCollector.cpp \
     css/PropertySetCSSStyleDeclaration.cpp \

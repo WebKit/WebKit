@@ -17,11 +17,21 @@
  *  Boston, MA 02110-1301, USA.
  */
 
-[
-    NoInterfaceObject,
-    JSNoStaticTables,
-    ObjCProtocol,
-    CPPPureInterface,
-] interface MediaQueryListListener {
-    void queryChanged([Default=Undefined] optional MediaQueryList list);
-};
+#include "config.h"
+#include "MediaQueryListListener.h"
+
+#include "MediaQueryList.h"
+#include "ScriptFunctionCall.h"
+
+#include "JSMediaQueryList.h"
+
+namespace WebCore {
+
+void MediaQueryListListener::queryChanged(ScriptState* state, MediaQueryList* query)
+{
+    ScriptCallback callback(state, m_value);
+    callback.appendArgument(toJS(state, deprecatedGlobalObjectForPrototype(state), query));
+    callback.call();
+}
+
+}

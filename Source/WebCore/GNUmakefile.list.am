@@ -527,8 +527,6 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSMediaStreamTrackEvent.h \
 	DerivedSources/WebCore/JSMediaQueryList.cpp \
 	DerivedSources/WebCore/JSMediaQueryList.h \
-	DerivedSources/WebCore/JSMediaQueryListListener.cpp \
-	DerivedSources/WebCore/JSMediaQueryListListener.h \
 	DerivedSources/WebCore/JSMessageChannel.cpp \
 	DerivedSources/WebCore/JSMessageChannel.h \
 	DerivedSources/WebCore/JSMessageEvent.cpp \
@@ -1363,7 +1361,6 @@ dom_binding_idls += \
 	$(WebCore)/css/FontLoader.idl \
 	$(WebCore)/css/MediaList.idl \
 	$(WebCore)/css/MediaQueryList.idl \
-	$(WebCore)/css/MediaQueryListListener.idl \
 	$(WebCore)/css/RGBColor.idl \
 	$(WebCore)/css/Rect.idl \
 	$(WebCore)/css/StyleMedia.idl \
@@ -2720,6 +2717,7 @@ webcore_sources += \
 	Source/WebCore/css/MediaQueryExp.h \
 	Source/WebCore/css/MediaQueryList.cpp \
 	Source/WebCore/css/MediaQueryList.h \
+	Source/WebCore/css/MediaQueryListListener.cpp \
 	Source/WebCore/css/MediaQueryListListener.h \
 	Source/WebCore/css/MediaQueryMatcher.cpp \
 	Source/WebCore/css/MediaQueryMatcher.h \

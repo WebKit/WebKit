@@ -1,3 +1,43 @@
+2013-08-13  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r153925.
+        http://trac.webkit.org/changeset/153925
+        https://bugs.webkit.org/show_bug.cgi?id=119768
+
+        broke fast/media/media-query-list-07.html (Requested by kling
+        on #webkit).
+
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * DerivedSources.pri:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateCallbackHeader):
+        (GenerateCallbackImplementation):
+        (JSValueToNative):
+        * bindings/scripts/IDLAttributes.txt:
+        * bindings/scripts/test/JS/JSTestCallback.cpp:
+        (WebCore::JSTestCallback::JSTestCallback):
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.cpp:
+        (WebCore::jsTestMediaQueryListListenerPrototypeFunctionMethod):
+        * css/MediaAllInOne.cpp:
+        * css/MediaQueryListListener.cpp: Copied from Source/WebCore/css/MediaQueryListListener.idl.
+        (WebCore::MediaQueryListListener::queryChanged):
+        * css/MediaQueryListListener.h:
+        (WebCore::MediaQueryListListener::create):
+        (WebCore::MediaQueryListListener::operator==):
+        (WebCore::MediaQueryListListener::MediaQueryListListener):
+        * css/MediaQueryListListener.idl:
+        * css/MediaQueryMatcher.cpp:
+        (WebCore::MediaQueryMatcher::Listener::evaluate):
+        (WebCore::MediaQueryMatcher::styleResolverChanged):
+        * css/MediaQueryMatcher.h:
+
 2013-08-13  Simon Fraser  <simon.fraser@apple.com>
 
         Every scroll causes additional layer tree work because of flatteningLayer->removeFromParent();

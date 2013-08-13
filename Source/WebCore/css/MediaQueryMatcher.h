@@ -20,6 +20,7 @@
 #ifndef MediaQueryMatcher_h
 #define MediaQueryMatcher_h
 
+#include "ScriptState.h"
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
@@ -58,7 +59,7 @@ private:
         Listener(PassRefPtr<MediaQueryListListener>, PassRefPtr<MediaQueryList>);
         ~Listener();
 
-        void evaluate(MediaQueryEvaluator*);
+        void evaluate(ScriptState*, MediaQueryEvaluator*);
 
         MediaQueryListListener* listener() { return m_listener.get(); }
         MediaQueryList* query() { return m_query.get(); }
@@ -81,6 +82,6 @@ private:
     unsigned m_evaluationRound;
 };
 
-} // namespace WebCore
+}
 
 #endif // MediaQueryMatcher_h
