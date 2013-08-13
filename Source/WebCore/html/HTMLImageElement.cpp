@@ -144,9 +144,9 @@ void HTMLImageElement::parseAttribute(const QualifiedName& name, const AtomicStr
                 const AtomicString& id = getIdAttribute();
                 if (!id.isEmpty() && id != getNameAttribute()) {
                     if (willHaveName)
-                        document->documentNamedItemMap().add(id.impl(), this);
+                        document->addDocumentNamedItem(id, this);
                     else
-                        document->documentNamedItemMap().remove(id.impl(), this);
+                        document->removeDocumentNamedItem(id, this);
                 }
             }
         }

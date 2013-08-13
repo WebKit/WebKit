@@ -54,7 +54,7 @@ using namespace HTMLNames;
 bool JSHTMLDocument::canGetItemsForName(ExecState*, HTMLDocument* document, PropertyName propertyName)
 {
     AtomicStringImpl* atomicPropertyName = findAtomicString(propertyName);
-    return atomicPropertyName && document->documentNamedItemMap().contains(atomicPropertyName);
+    return atomicPropertyName && document->hasDocumentNamedItem(atomicPropertyName);
 }
 
 JSValue JSHTMLDocument::nameGetter(ExecState* exec, JSValue slotBase, PropertyName propertyName)
@@ -63,17 +63,17 @@ JSValue JSHTMLDocument::nameGetter(ExecState* exec, JSValue slotBase, PropertyNa
     HTMLDocument* document = toHTMLDocument(thisObj->impl());
 
     AtomicStringImpl* atomicPropertyName = findAtomicString(propertyName);
-    if (!atomicPropertyName || !document->documentNamedItemMap().contains(atomicPropertyName))
+    if (!atomicPropertyName || !document->hasDocumentNamedItem(atomicPropertyName))
         return jsUndefined();
 
-    if (UNLIKELY(!document->documentNamedItemMap().containsSingle(atomicPropertyName))) {
+    if (UNLIKELY(document->documentNamedItemContainsMultipleElements(atomicPropertyName))) {
         RefPtr<HTMLCollection> collection = document->documentNamedItems(atomicPropertyName);
         ASSERT(!collection->isEmpty());
         ASSERT(!collection->hasExactlyOneItem());
         return toJS(exec, thisObj->globalObject(), WTF::getPtr(collection));
     }
 
-    Node* node = document->documentNamedItemMap().getElementByDocumentNamedItem(atomicPropertyName, document);
+    Node* node = document->documentNamedItem(atomicPropertyName);
     Frame* frame;
     if (node->hasTagName(iframeTag) && (frame = toHTMLIFrameElement(node)->contentFrame()))
         return toJS(exec, frame);

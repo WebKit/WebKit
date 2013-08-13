@@ -1,3 +1,41 @@
+2013-08-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Encapsulate access to documentNamedItemMap and windowNamedItemMap
+        https://bugs.webkit.org/show_bug.cgi?id=119701
+
+        Reviewed by Darin Adler.
+
+        Encapsulate m_documentNamedItem and m_windowNamedItem by adding various methods on HTMLDocument.
+        This will help us doing more refactorings in the future.
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::namedItemGetter):
+        (WebCore::JSDOMWindow::getOwnPropertySlot):
+        (WebCore::JSDOMWindow::getOwnPropertySlotByIndex):
+        (WebCore::JSDOMWindow::getOwnPropertyDescriptor):
+        * bindings/js/JSHTMLDocumentCustom.cpp:
+        (WebCore::JSHTMLDocument::canGetItemsForName):
+        (WebCore::JSHTMLDocument::nameGetter):
+        * dom/Element.cpp:
+        (WebCore::Element::updateNameForDocument):
+        (WebCore::Element::updateIdForDocument):
+        * html/HTMLDocument.cpp:
+        (WebCore::HTMLDocument::addDocumentNamedItem): Added.
+        (WebCore::HTMLDocument::removeDocumentNamedItem): Added.
+        (WebCore::HTMLDocument::addWindowNamedItem): Added.
+        (WebCore::HTMLDocument::removeWindowNamedItem): Added.
+        * html/HTMLDocument.h:
+        (WebCore::HTMLDocument::documentNamedItem): Added.
+        (WebCore::HTMLDocument::hasDocumentNamedItem): Added.
+        (WebCore::HTMLDocument::documentNamedItemContainsMultipleElements): Added.
+        (WebCore::HTMLDocument::windowNamedItem): Added.
+        (WebCore::HTMLDocument::hasWindowNamedItem): Added.
+        (WebCore::HTMLDocument::windowNamedItemContainsMultipleElements): Added.
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::parseAttribute):
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::updateDocNamedItem):
+
 2013-08-12  Patrick Gansterer  <paroga@webkit.org>
 
         [CMake] Use the correct list of files when compiling ANGLESupport on Windows

@@ -445,17 +445,17 @@ void HTMLObjectElement::updateDocNamedItem()
         const AtomicString& id = getIdAttribute();
         if (!id.isEmpty()) {
             if (isNamedItem)
-                document->documentNamedItemMap().add(id.impl(), this);
+                document->addDocumentNamedItem(id, this);
             else
-                document->documentNamedItemMap().remove(id.impl(), this);
+                document->removeDocumentNamedItem(id, this);
         }
 
         const AtomicString& name = getNameAttribute();
         if (!name.isEmpty() && id != name) {
             if (isNamedItem)
-                document->documentNamedItemMap().add(name.impl(), this);
+                document->addDocumentNamedItem(name, this);
             else
-                document->documentNamedItemMap().remove(name.impl(), this);
+                document->removeDocumentNamedItem(name, this);
         }
     }
     m_docNamedItem = isNamedItem;

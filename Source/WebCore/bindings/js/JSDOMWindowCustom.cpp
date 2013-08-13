@@ -96,18 +96,17 @@ static JSValue namedItemGetter(ExecState* exec, JSValue slotBase, PropertyName p
     ASSERT(document->isHTMLDocument());
 
     AtomicStringImpl* atomicPropertyName = findAtomicString(propertyName);
-    if (!atomicPropertyName || !toHTMLDocument(document)->windowNamedItemMap().contains(atomicPropertyName))
+    if (!atomicPropertyName || !toHTMLDocument(document)->hasWindowNamedItem(atomicPropertyName))
         return jsUndefined();
 
-    if (UNLIKELY(!toHTMLDocument(document)->windowNamedItemMap().containsSingle(atomicPropertyName))) {
+    if (UNLIKELY(toHTMLDocument(document)->windowNamedItemContainsMultipleElements(atomicPropertyName))) {
         RefPtr<HTMLCollection> collection = document->windowNamedItems(atomicPropertyName);
         ASSERT(!collection->isEmpty());
         ASSERT(!collection->hasExactlyOneItem());
         return toJS(exec, thisObj->globalObject(), WTF::getPtr(collection));
     }
 
-    Node* node = toHTMLDocument(document)->windowNamedItemMap().getElementByWindowNamedItem(atomicPropertyName, document);
-    return toJS(exec, thisObj->globalObject(), node);
+    return toJS(exec, thisObj->globalObject(), toHTMLDocument(document)->windowNamedItem(atomicPropertyName));
 }
 
 bool JSDOMWindow::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
@@ -247,7 +246,7 @@ bool JSDOMWindow::getOwnPropertySlot(JSObject* object, ExecState* exec, Property
     Document* document = thisObject->impl()->frame()->document();
     if (document->isHTMLDocument()) {
         AtomicStringImpl* atomicPropertyName = findAtomicString(propertyName);
-        if (atomicPropertyName && toHTMLDocument(document)->windowNamedItemMap().contains(atomicPropertyName)) {
+        if (atomicPropertyName && toHTMLDocument(document)->hasWindowNamedItem(atomicPropertyName)) {
             slot.setCustom(thisObject, namedItemGetter);
             return true;
         }
@@ -323,7 +322,7 @@ bool JSDOMWindow::getOwnPropertySlotByIndex(JSObject* object, ExecState* exec, u
     Document* document = thisObject->impl()->frame()->document();
     if (document->isHTMLDocument()) {
         AtomicStringImpl* atomicPropertyName = findAtomicString(propertyName);
-        if (atomicPropertyName && toHTMLDocument(document)->windowNamedItemMap().contains(atomicPropertyName)) {
+        if (atomicPropertyName && toHTMLDocument(document)->hasWindowNamedItem(atomicPropertyName)) {
             slot.setCustom(thisObject, namedItemGetter);
             return true;
         }
@@ -394,7 +393,7 @@ bool JSDOMWindow::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, Pr
     Document* document = thisObject->impl()->frame()->document();
     if (document->isHTMLDocument()) {
         AtomicStringImpl* atomicPropertyName = findAtomicString(propertyName);
-        if (atomicPropertyName && toHTMLDocument(document)->windowNamedItemMap().contains(atomicPropertyName)) {
+        if (atomicPropertyName && toHTMLDocument(document)->hasWindowNamedItem(atomicPropertyName)) {
             PropertySlot slot(thisObject);
             slot.setCustom(thisObject, namedItemGetter);
             descriptor.setDescriptor(slot.getValue(exec, propertyName), ReadOnly | DontDelete | DontEnum);

@@ -68,8 +68,17 @@ public:
     void captureEvents();
     void releaseEvents();
 
-    DocumentOrderedMap& documentNamedItemMap() { return m_documentNamedItem; }
-    DocumentOrderedMap& windowNamedItemMap() { return m_windowNamedItem; }
+    Element* documentNamedItem(const AtomicStringImpl* name) const { return m_documentNamedItem.getElementByDocumentNamedItem(name, this); }
+    bool hasDocumentNamedItem(const AtomicStringImpl* name) const { return m_documentNamedItem.contains(name); }
+    bool documentNamedItemContainsMultipleElements(const AtomicStringImpl* name) const { return m_documentNamedItem.containsMultiple(name); }
+    void addDocumentNamedItem(const AtomicString&, Element*);
+    void removeDocumentNamedItem(const AtomicString&, Element*);
+
+    Element* windowNamedItem(const AtomicStringImpl* name) const { return m_windowNamedItem.getElementByWindowNamedItem(name, this); }
+    bool hasWindowNamedItem(const AtomicStringImpl* name) const { return m_windowNamedItem.contains(name); }
+    bool windowNamedItemContainsMultipleElements(const AtomicStringImpl* name) const { return m_windowNamedItem.containsMultiple(name); }
+    void addWindowNamedItem(const AtomicString&, Element*);
+    void removeWindowNamedItem(const AtomicString&, Element*);
 
     static bool isCaseSensitiveAttribute(const QualifiedName&);
 
