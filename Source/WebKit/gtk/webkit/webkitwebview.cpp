@@ -1328,6 +1328,7 @@ static void webkit_web_view_dispose(GObject* object)
 {
     WebKitWebView* webView = WEBKIT_WEB_VIEW(object);
     WebKitWebViewPrivate* priv = webView->priv;
+    WebCore::Page* corePagePtr = priv->corePage;
 
     priv->disposing = TRUE;
 
@@ -1339,6 +1340,12 @@ static void webkit_web_view_dispose(GObject* object)
     // These smart pointers are cleared manually, because some cleanup operations are
     // very sensitive to their value. We may crash if these are done in the wrong order.
     priv->backForwardList.clear();
+
+    if (priv->corePage) {
+        webkit_web_view_stop_loading(WEBKIT_WEB_VIEW(object));
+        core(priv->mainFrame)->loader()->detachFromParent();
+        priv->corePage = 0;
+    }
 
     if (priv->webSettings) {
         g_signal_handlers_disconnect_by_func(priv->webSettings.get(), reinterpret_cast<void*>(webkit_web_view_settings_notify), webView);
@@ -1358,15 +1365,10 @@ static void webkit_web_view_dispose(GObject* object)
 
     G_OBJECT_CLASS(webkit_web_view_parent_class)->dispose(object);
 
-    // We need to run the parent's dispose before destroying
-    // priv->corePage. Otherwise we're triggering the deletion of
+    // We need to run the parent's dispose before destroying the Page
+    // pointer. Otherwise we're triggering the deletion of
     // InspectorFrontendClient before it can clean up itself.
-    if (priv->corePage) {
-        webkit_web_view_stop_loading(WEBKIT_WEB_VIEW(object));
-        core(priv->mainFrame)->loader()->detachFromParent();
-        delete priv->corePage;
-        priv->corePage = 0;
-    }
+    delete corePagePtr;
 }
 
 static void webkit_web_view_finalize(GObject* object)

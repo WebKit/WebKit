@@ -5,6 +5,20 @@
 
         Reviewed by Carlos Garcia Campos.
 
+        The previous fix for the inspector window crash breaks some unit
+        tests. This one goes back to the original code and only moves the
+        actual deletion of priv->corePage to the end of the function.
+
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_dispose):
+
+2013-08-13  Alberto Garcia  <berto@igalia.com>
+
+        [GTK] Closing inspector window crashes wk
+        https://bugs.webkit.org/show_bug.cgi?id=110865
+
+        Reviewed by Carlos Garcia Campos.
+
         Deleting priv->corePage during the destruction of a webView will
         trigger the deletion of InspectorFrontendClient. However that
         object is supposed to handle the webView's destroy signal first in
