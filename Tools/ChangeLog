@@ -1,5 +1,17 @@
 2013-08-12  Alexey Proskuryakov  <ap@apple.com>
 
+        http/tests/security/sandboxed-iframe-invalid.html is flaky on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=85522
+
+        Reviewed by Andy Estes.
+
+        * DumpRenderTree/mac/UIDelegate.mm:
+        (-[UIDelegate webView:addMessageToConsole:withSource:]): Don't print console messages
+        when already done with a test. We already had this check in all UI delegate functions,
+        except for -webView:addMessageToConsole:withSource: somehow.
+
+2013-08-12  Alexey Proskuryakov  <ap@apple.com>
+
         https://bugs.webkit.org/show_bug.cgi?id=119693
         [Mac] security/contentSecurityPolicy/connect-src-websocket-blocked.html is flaky
         because of connect-src-websocket-allowed.html

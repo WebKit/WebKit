@@ -621,8 +621,6 @@ webkit.org/b/84357 media/audio-repaint.html [ Failure ]
 # Requires ENABLE(MEDIA_CAPTURE)
 fast/forms/file/file-input-capture.html
 
-webkit.org/b/85522 http/tests/security/sandboxed-iframe-form-top.html [ Pass Failure ]
-
 webkit.org/b/85523 fullscreen/full-screen-iframe-legacy.html [ Pass Failure ]
 
 webkit.org/b/85525 media/video-played-reset.html [ Pass Failure ]

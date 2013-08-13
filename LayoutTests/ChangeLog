@@ -1,3 +1,17 @@
+2013-08-12  Alexey Proskuryakov  <ap@apple.com>
+
+        http/tests/security/sandboxed-iframe-invalid.html is flaky on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=85522
+
+        Reviewed by Andy Estes.
+
+        * http/tests/security/sandboxed-iframe-form-top-expected.txt: Console logging got
+        improved while this test was marked as skipped or flaky, updating the results.
+
+        * platform/mac/TestExpectations: Removed sandboxed-iframe-form-top.html, this test
+        no longer leaks output into later ones. The test was erroneously marked as flaky
+        instead of skipped, but now it's good.
+
 2013-08-12  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Unreviewed gardening.

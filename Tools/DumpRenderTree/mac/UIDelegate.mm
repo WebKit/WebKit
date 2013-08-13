@@ -60,6 +60,9 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
 
 - (void)webView:(WebView *)sender addMessageToConsole:(NSDictionary *)dictionary withSource:(NSString *)source
 {
+    if (done)
+        return;
+
     NSString *message = [dictionary objectForKey:@"message"];
     NSNumber *lineNumber = [dictionary objectForKey:@"lineNumber"];
 

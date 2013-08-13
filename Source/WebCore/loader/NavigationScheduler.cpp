@@ -232,7 +232,7 @@ public:
         Document* requestingDocument = m_submission->state()->sourceDocument();
         if (!requestingDocument->canNavigate(frame))
             return;
-        FrameLoadRequest frameRequest(requestingDocument->document()->securityOrigin());
+        FrameLoadRequest frameRequest(requestingDocument->securityOrigin());
         m_submission->populateFrameLoadRequest(frameRequest);
         frame->loader()->loadFrameRequest(frameRequest, lockHistory(), lockBackForwardList(), m_submission->event(), m_submission->state(), MaybeSendReferrer);
     }
