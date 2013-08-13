@@ -1,3 +1,20 @@
+2013-08-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Fix variable name |end| -> |size| in EventTarget::fireEventListeners
+        https://bugs.webkit.org/show_bug.cgi?id=119715
+
+        Reviewed by Benjamin Poulain.
+
+        Merge https://chromium.googlesource.com/chromium/blink/+/f58b017539c48059bb2b88d18ee0ee3d14decb01
+        and also fix variable names in FiringEventIterator.
+
+        * dom/EventTarget.cpp:
+        (WebCore::EventTarget::removeEventListener):
+        (WebCore::EventTarget::fireEventListeners):
+        (WebCore::EventTarget::removeAllEventListeners):
+        * dom/EventTarget.h:
+        (WebCore::FiringEventIterator::FiringEventIterator):
+
 2013-08-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         Encapsulate access to documentNamedItemMap and windowNamedItemMap

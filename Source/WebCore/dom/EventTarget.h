@@ -79,16 +79,16 @@ namespace WebCore {
     typedef int ExceptionCode;
 
     struct FiringEventIterator {
-        FiringEventIterator(const AtomicString& eventType, size_t& iterator, size_t& end)
+        FiringEventIterator(const AtomicString& eventType, size_t& iterator, size_t& size)
             : eventType(eventType)
             , iterator(iterator)
-            , end(end)
+            , size(size)
         {
         }
 
         const AtomicString& eventType;
         size_t& iterator;
-        size_t& end;
+        size_t& size;
     };
     typedef Vector<FiringEventIterator, 1> FiringEventIteratorVector;
 

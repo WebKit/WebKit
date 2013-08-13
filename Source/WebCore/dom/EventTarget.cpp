@@ -92,10 +92,10 @@ bool EventTarget::removeEventListener(const AtomicString& eventType, EventListen
         if (eventType != firingIterator.eventType)
             continue;
 
-        if (indexOfRemovedListener >= firingIterator.end)
+        if (indexOfRemovedListener >= firingIterator.size)
             continue;
 
-        --firingIterator.end;
+        --firingIterator.size;
         if (indexOfRemovedListener <= firingIterator.iterator)
             --firingIterator.iterator;
     }
@@ -217,18 +217,17 @@ void EventTarget::fireEventListeners(Event* event, EventTargetData* d, EventList
 {
     RefPtr<EventTarget> protect = this;
 
-    // Fire all listeners registered for this event. Don't fire listeners removed
-    // during event dispatch. Also, don't fire event listeners added during event
-    // dispatch. Conveniently, all new event listeners will be added after 'end',
-    // so iterating to 'end' naturally excludes new event listeners.
+    // Fire all listeners registered for this event. Don't fire listeners removed during event dispatch.
+    // Also, don't fire event listeners added during event dispatch. Conveniently, all new event listeners will be added
+    // after or at index |size|, so iterating up to (but not including) |size| naturally excludes new event listeners.
 
     bool userEventWasHandled = false;
     size_t i = 0;
-    size_t end = entry.size();
+    size_t size = entry.size();
     if (!d->firingEventIterators)
         d->firingEventIterators = adoptPtr(new FiringEventIteratorVector);
-    d->firingEventIterators->append(FiringEventIterator(event->type(), i, end));
-    for ( ; i < end; ++i) {
+    d->firingEventIterators->append(FiringEventIterator(event->type(), i, size));
+    for (; i < size; ++i) {
         RegisteredEventListener& registeredListener = entry[i];
         if (event->eventPhase() == Event::CAPTURING_PHASE && !registeredListener.useCapture)
             continue;
@@ -286,7 +285,7 @@ void EventTarget::removeAllEventListeners()
     if (d->firingEventIterators) {
         for (size_t i = 0; i < d->firingEventIterators->size(); ++i) {
             d->firingEventIterators->at(i).iterator = 0;
-            d->firingEventIterators->at(i).end = 0;
+            d->firingEventIterators->at(i).size = 0;
         }
     }
 }
