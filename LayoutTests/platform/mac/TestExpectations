@@ -731,9 +731,6 @@ fast/block/float/016.html
 editing/pasteboard/paste-TIFF.html
 platform/mac/editing/pasteboard/dataTransfer-set-data-file-url.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=93878 (yes, same bug as the previous)
-# Due to WebCore::JSEventListener::jsFunction(WebCore::ScriptExecutionContext*) crashes:
-
 # https://bugs.webkit.org/show_bug.cgi?id=94458
 # Assertion failure in MessagePort::contextDestroyed, usually attributed to later tests
 http/tests/security/MessagePort/event-listener-context.html
