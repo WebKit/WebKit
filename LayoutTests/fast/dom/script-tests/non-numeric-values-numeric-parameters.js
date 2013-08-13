@@ -299,7 +299,7 @@ shouldBe("nonNumericPolicy('document.createNodeIterator(document, x, null, false
 
 // NodeList
 
-shouldBe("nonNumericPolicy('document.getElementsByTagName(\"div\").item(x)')", "'any type allowed'");
+shouldBe("nonNumericPolicy('document.getElementsByTagName(\"div\").item(x)')", "'any type allowed (but not omitted)'");
 
 // Range
 

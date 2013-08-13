@@ -1,3 +1,20 @@
+2013-08-13  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        NodeList.item() does not behave according to specification
+        https://bugs.webkit.org/show_bug.cgi?id=119722
+
+        Reviewed by Darin Adler.
+
+        Add a layout test to check that the NodeList.item() indexed getter's
+        argument is properly validated. Also, update the following test case now
+        that the argument is mandatory:
+        fast/dom/non-numeric-values-numeric-parameters.html
+
+        * fast/dom/nodelist-item-parameter-expected.txt: Added.
+        * fast/dom/nodelist-item-parameter.html: Added.
+        * fast/dom/non-numeric-values-numeric-parameters-expected.txt:
+        * fast/dom/script-tests/non-numeric-values-numeric-parameters.js:
+
 2013-08-13  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         REGRESSION(SUBPIXEL_LAYOUT) Composited layers can cause one pixel shifts
