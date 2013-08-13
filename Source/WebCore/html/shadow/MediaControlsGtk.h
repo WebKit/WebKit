@@ -46,6 +46,7 @@ public:
     void changedMute() OVERRIDE;
     virtual void updateCurrentTimeDisplay() OVERRIDE;
     virtual void showVolumeSlider() OVERRIDE;
+    virtual void makeTransparent() OVERRIDE;
 
 #if ENABLE(VIDEO_TRACK)
     void createTextTrackDisplay() OVERRIDE;

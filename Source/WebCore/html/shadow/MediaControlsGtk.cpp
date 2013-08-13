@@ -201,6 +201,15 @@ void MediaControlsGtk::changedMute()
         m_volumeSlider->setVolume(m_mediaController->volume());
 }
 
+
+void MediaControlsGtk::makeTransparent()
+{
+    MediaControls::makeTransparent();
+
+    if (m_volumeSliderContainer)
+        m_volumeSliderContainer->hide();
+}
+
 void MediaControlsGtk::showVolumeSlider()
 {
     if (!m_mediaController->hasAudio())
