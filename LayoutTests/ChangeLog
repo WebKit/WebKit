@@ -2,6 +2,45 @@
 
         [EFL] Unreviewed gardening.
 
+        Add a missing result after r152911.
+
+        * platform/efl/fast/multicol/pagination/BottomToTop-bt-expected.png: Added.
+        * platform/efl/fast/multicol/pagination/BottomToTop-bt-expected.txt: Added.
+        * platform/efl/fast/multicol/pagination/BottomToTop-lr-expected.png: Added.
+        * platform/efl/fast/multicol/pagination/BottomToTop-lr-expected.txt: Added.
+        * platform/efl/fast/multicol/pagination/BottomToTop-rl-expected.png: Added.
+        * platform/efl/fast/multicol/pagination/BottomToTop-rl-expected.txt: Added.
+        * platform/efl/fast/multicol/pagination/BottomToTop-tb-expected.png: Added.
+        * platform/efl/fast/multicol/pagination/BottomToTop-tb-expected.txt: Added.
+        * platform/efl/fast/multicol/pagination/LeftToRight-bt-expected.png: Added.
+        * platform/efl/fast/multicol/pagination/LeftToRight-bt-expected.txt: Added.
+        * platform/efl/fast/multicol/pagination/LeftToRight-lr-expected.png: Added.
+        * platform/efl/fast/multicol/pagination/LeftToRight-lr-expected.txt: Added.
+        * platform/efl/fast/multicol/pagination/LeftToRight-rl-expected.png: Added.
+        * platform/efl/fast/multicol/pagination/LeftToRight-rl-expected.txt: Added.
+        * platform/efl/fast/multicol/pagination/LeftToRight-tb-expected.png: Added.
+        * platform/efl/fast/multicol/pagination/LeftToRight-tb-expected.txt: Added.
+        * platform/efl/fast/multicol/pagination/RightToLeft-bt-expected.png: Added.
+        * platform/efl/fast/multicol/pagination/RightToLeft-bt-expected.txt: Added.
+        * platform/efl/fast/multicol/pagination/RightToLeft-lr-expected.png: Added.
+        * platform/efl/fast/multicol/pagination/RightToLeft-lr-expected.txt: Added.
+        * platform/efl/fast/multicol/pagination/RightToLeft-rl-expected.png: Added.
+        * platform/efl/fast/multicol/pagination/RightToLeft-rl-expected.txt: Added.
+        * platform/efl/fast/multicol/pagination/RightToLeft-tb-expected.png: Added.
+        * platform/efl/fast/multicol/pagination/RightToLeft-tb-expected.txt: Added.
+        * platform/efl/fast/multicol/pagination/TopToBottom-bt-expected.png: Added.
+        * platform/efl/fast/multicol/pagination/TopToBottom-bt-expected.txt: Added.
+        * platform/efl/fast/multicol/pagination/TopToBottom-lr-expected.png: Added.
+        * platform/efl/fast/multicol/pagination/TopToBottom-lr-expected.txt: Added.
+        * platform/efl/fast/multicol/pagination/TopToBottom-rl-expected.png: Added.
+        * platform/efl/fast/multicol/pagination/TopToBottom-rl-expected.txt: Added.
+        * platform/efl/fast/multicol/pagination/TopToBottom-tb-expected.png: Added.
+        * platform/efl/fast/multicol/pagination/TopToBottom-tb-expected.txt: Added.
+
+2013-08-12  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Unreviewed gardening.
+
         * platform/efl/TestExpectations: Added pasteboard after r152185.
         * platform/efl/editing/deleting/delete-br-002-expected.txt: Updated after r152478.
         * platform/efl/editing/execCommand/outdent-blockquote-test1-expected.txt:
