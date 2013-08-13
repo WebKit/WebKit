@@ -1,3 +1,20 @@
+2013-08-13  Robert Hogan  <robert@webkit.org>
+
+        Section's collapsed borders painted in wrong place in rtl tables
+        https://bugs.webkit.org/show_bug.cgi?id=119691
+
+        Reviewed by Darin Adler.
+
+        Table row-groups can be RTL too, so look to the section rather than the
+        table when deciding the direction of a row. The section will inherit the
+        table's direction if it doesn't override it.
+
+        Test: fast/table/paint-collapsed-borders-rtl-section.html
+
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::hasStartBorderAdjoiningTable):
+        (WebCore::RenderTableCell::hasEndBorderAdjoiningTable):
+
 2013-08-13  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         NodeList.item() does not behave according to specification

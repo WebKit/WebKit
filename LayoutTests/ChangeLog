@@ -1,3 +1,13 @@
+2013-08-13  Robert Hogan  <robert@webkit.org>
+
+        Section's collapsed borders painted in wrong place in rtl tables
+        https://bugs.webkit.org/show_bug.cgi?id=119691
+
+        Reviewed by Darin Adler.
+
+        * fast/table/paint-collapsed-borders-rtl-section-expected.html: Added.
+        * fast/table/paint-collapsed-borders-rtl-section.html: Added.
+
 2013-08-13  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         NodeList.item() does not behave according to specification
