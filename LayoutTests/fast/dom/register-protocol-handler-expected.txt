@@ -4,10 +4,13 @@ Fail: window.navigator.registerProtocolHandler is not defined.
 Fail: Invalid protocol "http" allowed.
 Fail: Invalid protocol "https" allowed.
 Fail: Invalid protocol "file" allowed.
-Fail: Valid protocol "irc" failed.
+Fail: Valid protocol "bitcoin" failed.
 Fail: Valid protocol "geo" failed.
-Fail: Valid protocol "mailto" failed.
+Fail: Valid protocol "im" failed.
+Fail: Valid protocol "irc" failed.
+Fail: Valid protocol "ircs" failed.
 Fail: Valid protocol "magnet" failed.
+Fail: Valid protocol "mailto" failed.
 Fail: Valid protocol "mms" failed.
 Fail: Valid protocol "news" failed.
 Fail: Valid protocol "nntp" failed.
@@ -18,6 +21,7 @@ Fail: Valid protocol "ssh" failed.
 Fail: Valid protocol "tel" failed.
 Fail: Valid protocol "urn" failed.
 Fail: Valid protocol "webcal" failed.
+Fail: Valid protocol "wtai" failed.
 Fail: Valid protocol "xmpp" failed.
 Fail: Invalid url "" allowed.
 Fail: Invalid url "%S" allowed.

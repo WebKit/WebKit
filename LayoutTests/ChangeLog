@@ -1,3 +1,22 @@
+2013-08-13  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Update scheme list according to latest specification
+        https://bugs.webkit.org/show_bug.cgi?id=119510
+
+        Reviewed by Christophe Dumez.
+
+        New schemes are added to it additionally. Those are bitcoin, im, ircs and wtai.
+        As additional work, scheme order is listed to be sync with spec.
+
+        Spec: http://www.w3.org/html/wg/drafts/html/master/webappapis.html#custom-handlers
+
+        * fast/dom/register-protocol-handler-expected.txt:
+        * fast/dom/register-protocol-handler.html:
+        * fast/dom/unregister-protocol-handler-expected.txt:
+        * fast/dom/unregister-protocol-handler.html:
+        * platform/efl/fast/dom/register-protocol-handler-expected.txt:
+        * platform/efl/fast/dom/unregister-protocol-handler-expected.txt:
+
 2013-08-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         Fix null dereference in HTMLAnchorElement::sendPings when frame is not attached to a page

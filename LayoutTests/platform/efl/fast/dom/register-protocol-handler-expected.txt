@@ -4,10 +4,13 @@ Pass: window.navigator.registerProtocolHandler is defined.
 Pass: Invalid protocol "http" threw SecurityError exception.
 Pass: Invalid protocol "https" threw SecurityError exception.
 Pass: Invalid protocol "file" threw SecurityError exception.
-Pass: Valid protocol "irc" allowed.
+Pass: Valid protocol "bitcoin" allowed.
 Pass: Valid protocol "geo" allowed.
-Pass: Valid protocol "mailto" allowed.
+Pass: Valid protocol "im" allowed.
+Pass: Valid protocol "irc" allowed.
+Pass: Valid protocol "ircs" allowed.
 Pass: Valid protocol "magnet" allowed.
+Pass: Valid protocol "mailto" allowed.
 Pass: Valid protocol "mms" allowed.
 Pass: Valid protocol "news" allowed.
 Pass: Valid protocol "nntp" allowed.
@@ -18,6 +21,7 @@ Pass: Valid protocol "ssh" allowed.
 Pass: Valid protocol "tel" allowed.
 Pass: Valid protocol "urn" allowed.
 Pass: Valid protocol "webcal" allowed.
+Pass: Valid protocol "wtai" allowed.
 Pass: Valid protocol "xmpp" allowed.
 Pass: Invalid url "" threw SyntaxError exception.
 Pass: Invalid url "%S" threw SyntaxError exception.

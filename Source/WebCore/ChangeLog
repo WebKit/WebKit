@@ -1,3 +1,21 @@
+2013-08-13  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Update scheme list according to latest specification
+        https://bugs.webkit.org/show_bug.cgi?id=119510
+
+        Reviewed by Christophe Dumez.
+
+        New schemes are added to it additionally. Those are bitcoin, im, ircs and wtai.
+        As additional work, scheme order is listed to be sync with spec.
+
+        Spec: http://www.w3.org/html/wg/drafts/html/master/webappapis.html#custom-handlers
+
+        Test: fast/dom/register-protocol-handler.html
+              fast/dom/unregister-protocol-handler.html
+
+        * Modules/navigatorcontentutils/NavigatorContentUtils.cpp:
+        (WebCore::initProtocolHandlerWhitelist):
+
 2013-08-13  Ryosuke Niwa  <rniwa@webkit.org>
 
         Yet another Windows build fix attempt after r153978.
