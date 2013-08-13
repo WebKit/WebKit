@@ -29,12 +29,8 @@ PASS a["title"] is
 PASS a["lang"] is 
 PASS a["translate"] is true
 PASS a["hidden"] is false
-PASS a["itemRef"] is 
-PASS a["itemScope"] is false
 PASS a["innerText"] is nerget
-PASS a["itemType"] is 
 PASS a["dir"] is 
-PASS a["properties"] is [object HTMLPropertiesCollection]
 PASS a["innerHTML"] is nerget
 PASS a["contentEditable"] is inherit
 PASS a["tabIndex"] is 0
@@ -43,9 +39,6 @@ PASS a["outerText"] is nerget
 PASS a["accessKey"] is 
 PASS a["children"] is [object HTMLCollection]
 PASS a["isContentEditable"] is false
-PASS a["itemId"] is 
-PASS a["itemProp"] is 
-PASS a["itemValue"] is null
 PASS a["style"] is [object CSSStyleDeclaration]
 PASS a["dataset"] is [object DOMStringMap]
 PASS a["clientWidth"] is 0
@@ -68,7 +61,7 @@ PASS a["firstElementChild"] is null
 PASS a["clientLeft"] is 0
 PASS a["offsetHeight"] is 17
 PASS a["clientHeight"] is 0
-PASS a["offsetTop"] is 1057
+PASS a["offsetTop"] is 952
 PASS a["scrollTop"] is 0
 PASS a["scrollHeight"] is 0
 PASS a["previousSibling"] is [object Text]

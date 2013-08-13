@@ -638,11 +638,6 @@ PASS Object.getOwnPropertyDescriptor(global, 'HTMLProgressElement').hasOwnProper
 PASS Object.getOwnPropertyDescriptor(global, 'HTMLProgressElement').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'HTMLProgressElement').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'HTMLProgressElement').configurable is true
-PASS Object.getOwnPropertyDescriptor(global, 'HTMLPropertiesCollection').value is HTMLPropertiesCollection
-PASS Object.getOwnPropertyDescriptor(global, 'HTMLPropertiesCollection').hasOwnProperty('get') is false
-PASS Object.getOwnPropertyDescriptor(global, 'HTMLPropertiesCollection').hasOwnProperty('set') is false
-PASS Object.getOwnPropertyDescriptor(global, 'HTMLPropertiesCollection').enumerable is false
-PASS Object.getOwnPropertyDescriptor(global, 'HTMLPropertiesCollection').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'HTMLQuoteElement').value is HTMLQuoteElement
 PASS Object.getOwnPropertyDescriptor(global, 'HTMLQuoteElement').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'HTMLQuoteElement').hasOwnProperty('set') is false
@@ -1033,11 +1028,6 @@ PASS Object.getOwnPropertyDescriptor(global, 'ProgressEvent').hasOwnProperty('ge
 PASS Object.getOwnPropertyDescriptor(global, 'ProgressEvent').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'ProgressEvent').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'ProgressEvent').configurable is true
-PASS Object.getOwnPropertyDescriptor(global, 'PropertyNodeList').value is PropertyNodeList
-PASS Object.getOwnPropertyDescriptor(global, 'PropertyNodeList').hasOwnProperty('get') is false
-PASS Object.getOwnPropertyDescriptor(global, 'PropertyNodeList').hasOwnProperty('set') is false
-PASS Object.getOwnPropertyDescriptor(global, 'PropertyNodeList').enumerable is false
-PASS Object.getOwnPropertyDescriptor(global, 'PropertyNodeList').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'RGBColor').value is RGBColor
 PASS Object.getOwnPropertyDescriptor(global, 'RGBColor').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'RGBColor').hasOwnProperty('set') is false

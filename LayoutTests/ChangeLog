@@ -1,6 +1,14 @@
 2013-08-13  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed GTK gardening.
+
+        * platform/gtk/editing/caret/caret-color-expected.txt: Rebaselining after r152612.
+        * platform/gtk/fast/js/dom-static-property-for-in-iteration-expected.txt: Rebaselining after r153772.
+        * platform/gtk/fast/js/global-constructors-attributes-expected.txt: Ditto.
+
+2013-08-13  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK gardening.
         Rebaselining after r153647.
 
         * platform/gtk/fast/css/input-search-padding-expected.txt:
