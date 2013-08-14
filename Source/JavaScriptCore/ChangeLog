@@ -1,3 +1,12 @@
+2013-08-14  Alex Christensen  <achristensen@apple.com>
+
+        Compile fix for Win64 with jit disabled.
+        https://bugs.webkit.org/show_bug.cgi?id=119804
+
+        Reviewed by Michael Saboff.
+
+        * offlineasm/cloop.rb: Added std:: before isnan.
+
 2013-08-14  Julien Brianceau  <jbrianceau@nds.com>
 
         DFG_JIT implementation for sh4 architecture.
