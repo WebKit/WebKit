@@ -1,3 +1,10 @@
+2013-08-14  Alex Christensen  <achristensen@apple.com>
+
+        Unreviewed build fix for Win64 after r153943.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
+        Added 64-bit linker symbol for frameOrientationAtIndex.
+
 2013-08-12  peavo@outlook.com  <peavo@outlook.com>
 
         [Win] TestWebKitAPI fails to link.
