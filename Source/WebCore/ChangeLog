@@ -1,3 +1,21 @@
+2013-08-14  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Add toSVGTextPathElement(), and use it
+        https://bugs.webkit.org/show_bug.cgi?id=119783
+
+        Reviewed by Ryosuke Niwa.
+
+        As a step to clean-up static_cast<SVGXXX>, static_cast<SVGTextPathElement*> can
+        be changed with toSVGTextPathElement().
+
+        * rendering/svg/RenderSVGTextPath.cpp:
+        (WebCore::RenderSVGTextPath::layoutPath):
+        (WebCore::RenderSVGTextPath::startOffset):
+        (WebCore::RenderSVGTextPath::exactAlignment):
+        (WebCore::RenderSVGTextPath::stretchMethod):
+        * svg/SVGTextPathElement.h:
+        (WebCore::toSVGTextPathElement):
+
 2013-08-14  Jinwoo Jeong  <jw00.jeong@samsung.com>
 
         FEComponentTransfer could be faster.
