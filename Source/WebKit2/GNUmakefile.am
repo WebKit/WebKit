@@ -612,6 +612,7 @@ Programs_WebKitPluginProcess_LDADD = \
 	$(FREETYPE_LIBS) \
 	$(GEOCLUE_LIBS) \
 	$(GLIB_LIBS) \
+	$(GAMEPAD_LIBS) \
 	$(GSTREAMER_LIBS) \
 	$(GTK2_LIBS) \
 	$(JPEG_LIBS) \
