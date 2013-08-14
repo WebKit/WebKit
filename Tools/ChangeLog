@@ -1,3 +1,14 @@
+2013-08-14  Benjamin Dupont   <bdupont@nds.com>
+
+        [Qt] Activate visibility API layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=119790
+
+        Reviewed by Allan Sandfeld Jensen.
+
+        * DumpRenderTree/qt/TestRunnerQt.cpp:
+        (TestRunner::resetPageVisibility):
+        (TestRunner::setPageVisibility):
+
 2013-08-13  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [GTK] WK does not link properly against libxslt

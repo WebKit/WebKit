@@ -1,3 +1,12 @@
+2013-08-14  Benjamin Dupont   <bdupont@nds.com>
+
+        [Qt] Activate visibility API layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=119790
+
+        Reviewed by Allan Sandfeld Jensen.
+
+        * platform/qt/TestExpectations:
+
 2013-08-14  Rob Buis  <rwlbuis@webkit.org>
 
         ASSERTION FAILED: resultAnimationElement->m_animatedType in WebCore::SVGAnimateElement::calculateAnimatedValue

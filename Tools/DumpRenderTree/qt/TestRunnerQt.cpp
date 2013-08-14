@@ -950,6 +950,20 @@ void TestRunner::setDomainRelaxationForbiddenForURLScheme(bool forbidden, JSStri
 
 void TestRunner::resetPageVisibility()
 {
+    // No need to implement it because the visibility state is correctly initialised when the page is created.
+}
+
+void TestRunner::setPageVisibility(const char* visibility)
+{
+    QLatin1String newVisibility = QLatin1String(visibility);
+    if (newVisibility == QStringLiteral("visible"))
+        DumpRenderTree::instance()->webPage()->setVisibilityState(QWebPage::VisibilityStateVisible);
+    else if (newVisibility == QStringLiteral("hidden"))
+        DumpRenderTree::instance()->webPage()->setVisibilityState(QWebPage::VisibilityStateHidden);
+    else if (newVisibility == QStringLiteral("prerender"))
+        DumpRenderTree::instance()->webPage()->setVisibilityState(QWebPage::VisibilityStatePrerender);
+    else if (newVisibility == QStringLiteral("unloaded"))
+        DumpRenderTree::instance()->webPage()->setVisibilityState(QWebPage::VisibilityStateUnloaded);
 }
 
 void TestRunner::keepWebHistory()
@@ -1143,10 +1157,6 @@ void TestRunner::setValueForUser(JSContextRef, JSValueRef nodeObject, JSStringRe
 }
 
 void TestRunner::setViewModeMediaFeature(JSStringRef)
-{
-}
-
-void TestRunner::setPageVisibility(const char *)
 {
 }
 

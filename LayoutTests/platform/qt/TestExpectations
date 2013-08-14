@@ -441,14 +441,6 @@ networkinformation
 fast/images/exif-orientation.html
 fast/images/exif-orientation-css.html
 
-# This platform does not support the Page Visibility API.
-fast/events/page-visibility-iframe-delete-test.html
-fast/events/page-visibility-iframe-move-test.html
-fast/events/page-visibility-iframe-propagation-test.html
-fast/events/page-visibility-null-view.html
-fast/events/page-visibility-transition-test.html
-fast/frames/page-visibility-crash.html
-
 # No CORS support for media elements is implemented yet.
 http/tests/security/video-cross-origin-readback.html
 
