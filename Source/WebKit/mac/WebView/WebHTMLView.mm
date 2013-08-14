@@ -3555,23 +3555,22 @@ static void setMenuTargets(NSMenu* menu)
     [self _setMouseDownEvent:event];
 
     NSInputManager *currentInputManager = [NSInputManager currentInputManager];
-    if ([currentInputManager wantsToHandleMouseEvents] && [currentInputManager handleMouseEvent:event])
-        goto done;
 
-    [_private->completionController endRevertingChange:NO moveLeft:NO];
+    if (![currentInputManager wantsToHandleMouseEvents] || ![currentInputManager handleMouseEvent:event]) {
+        [_private->completionController endRevertingChange:NO moveLeft:NO];
 
-    // If the web page handles the context menu event and menuForEvent: returns nil, we'll get control click events here.
-    // We don't want to pass them along to KHTML a second time.
-    if (!([event modifierFlags] & NSControlKeyMask)) {
-        _private->ignoringMouseDraggedEvents = NO;
+        // If the web page handles the context menu event and menuForEvent: returns nil, we'll get control click events here.
+        // We don't want to pass them along to KHTML a second time.
+        if (!([event modifierFlags] & NSControlKeyMask)) {
+            _private->ignoringMouseDraggedEvents = NO;
 
-        // Let WebCore get a chance to deal with the event. This will call back to us
-        // to start the autoscroll timer if appropriate.
-        if (Frame* coreframe = core([self _frame]))
-            coreframe->eventHandler()->mouseDown(event);
+            // Let WebCore get a chance to deal with the event. This will call back to us
+            // to start the autoscroll timer if appropriate.
+            if (Frame* coreframe = core([self _frame]))
+                coreframe->eventHandler()->mouseDown(event);
+        }
     }
 
-done:
     _private->handlingMouseDownEvent = NO;
 }
 
@@ -3666,23 +3665,18 @@ static bool matchesExtensionOrEquivalent(NSString *filename, NSString *extension
     NSURL *draggingImageURL = nil;
     
     if (WebCore::CachedImage* tiffResource = [self promisedDragTIFFDataSource]) {
-        
-        ResourceBuffer *buffer = static_cast<CachedResource*>(tiffResource)->resourceBuffer();
-        if (!buffer)
-            goto noPromisedData;
-        
-        NSData *data = buffer->createNSData();
-        NSURLResponse *response = tiffResource->response().nsURLResponse();
-        draggingImageURL = [response URL];
-        wrapper = [[[NSFileWrapper alloc] initRegularFileWithContents:data] autorelease];
-        NSString* filename = [response suggestedFilename];
-        NSString* trueExtension(tiffResource->image()->filenameExtension());
-        if (!matchesExtensionOrEquivalent(filename, trueExtension))
-            filename = [[filename stringByAppendingString:@"."] stringByAppendingString:trueExtension];
-        [wrapper setPreferredFilename:filename];
+        if (ResourceBuffer *buffer = static_cast<CachedResource*>(tiffResource)->resourceBuffer()) {
+            NSData *data = buffer->createNSData();
+            NSURLResponse *response = tiffResource->response().nsURLResponse();
+            draggingImageURL = [response URL];
+            wrapper = [[[NSFileWrapper alloc] initRegularFileWithContents:data] autorelease];
+            NSString* filename = [response suggestedFilename];
+            NSString* trueExtension(tiffResource->image()->filenameExtension());
+            if (!matchesExtensionOrEquivalent(filename, trueExtension))
+                filename = [[filename stringByAppendingString:@"."] stringByAppendingString:trueExtension];
+            [wrapper setPreferredFilename:filename];
+        }
     }
-    
-noPromisedData:
     
     if (!wrapper) {
         ASSERT(![self _webView] || [self _isTopHTMLView]);

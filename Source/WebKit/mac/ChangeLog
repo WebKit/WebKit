@@ -1,3 +1,13 @@
+2013-08-13  Anders Carlsson  <andersca@apple.com>
+
+        <https://webkit.org/b/119777> Get rid of two gotos
+
+        Reviewed by Tim Horton.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView mouseDown:]):
+        (-[WebHTMLView namesOfPromisedFilesDroppedAtDestination:]):
+
 2013-08-13  Tim Horton  <timothy_horton@apple.com>
 
         Remotely hosted plugins don’t work in window-server-hosted WebKit1 views
