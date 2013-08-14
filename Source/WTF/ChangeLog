@@ -1,3 +1,13 @@
+2013-08-13  Arunprasad Rajkumar  <arurajku@cisco.com>
+
+        [WTF] [JSC] Replace currentTime() with monotonicallyIncreasingTime() in all possible places
+        https://bugs.webkit.org/show_bug.cgi?id=119762
+
+        Reviewed by Geoffrey Garen.
+
+        * wtf/MainThread.cpp:
+        (WTF::dispatchFunctionsFromMainThread):
+
 2013-08-12  Ragner Magalhaes  <ranger.n@samsung.com>
 
         Broken build with build-webkit --no-webgl

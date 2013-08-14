@@ -171,12 +171,12 @@ private:
 
 void StopWatch::start()
 {
-    m_startTime = currentTime();
+    m_startTime = monotonicallyIncreasingTime();
 }
 
 void StopWatch::stop()
 {
-    m_stopTime = currentTime();
+    m_stopTime = monotonicallyIncreasingTime();
 }
 
 long StopWatch::getElapsedMS()

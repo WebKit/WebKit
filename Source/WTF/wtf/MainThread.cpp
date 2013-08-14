@@ -141,7 +141,7 @@ void dispatchFunctionsFromMainThread()
     if (callbacksPaused)
         return;
 
-    double startTime = currentTime();
+    double startTime = monotonicallyIncreasingTime();
 
     FunctionWithContext invocation;
     while (true) {
@@ -162,7 +162,7 @@ void dispatchFunctionsFromMainThread()
         // yield so the user input can be processed. Otherwise user may not be able to even close the window.
         // This code has effect only in case the scheduleDispatchFunctionsOnMainThread() is implemented in a way that
         // allows input events to be processed before we are back here.
-        if (currentTime() - startTime > maxRunLoopSuspensionTime) {
+        if (monotonicallyIncreasingTime() - startTime > maxRunLoopSuspensionTime) {
             scheduleDispatchFunctionsOnMainThread();
             break;
         }
