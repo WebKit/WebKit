@@ -1,3 +1,11 @@
+2013-08-14  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Unreviewed build fix.
+
+        * GNUmakefile.am: link gamepad libs onto the plugin process,
+        our dearest friend when it comes to linking and unresolved
+        symbols issues.
+
 2013-07-02  Zan Dobersek  <zdobersek@igalia.com>
 
         [WK2] Invalidate FontCache before purging MemoryCache upon WebProcess termination/closure
