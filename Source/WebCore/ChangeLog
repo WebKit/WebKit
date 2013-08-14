@@ -1,3 +1,22 @@
+2013-08-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r150187): Safari fails to render allrecipe.com comment popups
+        https://bugs.webkit.org/show_bug.cgi?id=119780
+
+        Reviewed by Benjamin Poulain.
+
+        The bug was caused by SelectorDataList::executeFastPathForIdSelector not verifying that
+        elements found by getAllElementsById are descendents of rootNode when there are multiple
+        elements of the same id. This resulted in querySelector and querySelectorAll of an element
+        returning nodes outside of the element.
+
+        Fixed the bug by checking this condition when we have multiple elements of the same id.
+
+        Test: fast/selectors/querySelector-id-with-multiple-elements-with-same-id.html
+
+        * dom/SelectorQuery.cpp:
+        (WebCore::SelectorDataList::executeFastPathForIdSelector):
+
 2013-08-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         Fix orphan needsLayout state in RenderTextControlSingleLine
