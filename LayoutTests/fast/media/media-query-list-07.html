@@ -25,17 +25,30 @@
         if (!window.testRunner)
             return;
 
-        testRunner.setViewModeMediaFeature("windowed");
-
-        var query = window.matchMedia("(-webkit-view-mode: windowed)");
+        var query = window.matchMedia("screen");
 
         query.addListener(callback1);
-        query.addListener(5);
-        query.addListener('cinco');
-        query.addListener([1,2]);
+
+        try {
+            query.addListener(5);
+        } catch (e) {
+            log("query.addListener(5) threw exception as expected");
+        }
+
+        try {
+            query.addListener('cinco');
+        } catch (e) {
+            log("query.addListener('cinco') threw exception as expected");
+            
+        }
+        try {
+            query.addListener([1,2]);
+        } catch (e) {
+            log("query.addListener([1,2]) threw exception as expected");
+        }
         query.addListener(callback2);
 
-        testRunner.setViewModeMediaFeature("minimized");
+        window.internals.settings.setMediaTypeOverride("handheld");
     }
 
 </script>

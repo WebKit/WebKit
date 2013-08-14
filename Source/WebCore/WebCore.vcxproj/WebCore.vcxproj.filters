@@ -2328,9 +2328,6 @@
     <ClCompile Include="..\css\MediaQueryList.cpp">
       <Filter>css</Filter>
     </ClCompile>
-    <ClCompile Include="..\css\MediaQueryListListener.cpp">
-      <Filter>css</Filter>
-    </ClCompile>
     <ClCompile Include="..\css\MediaQueryMatcher.cpp">
       <Filter>css</Filter>
     </ClCompile>
@@ -6044,6 +6041,9 @@
       <Filter>DerivedSources</Filter>
     </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\JSMediaQueryList.cpp">
+      <Filter>DerivedSources</Filter>
+    </ClCompile>
+    <ClCompile Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\JSMediaQueryListListener.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\JSMessageChannel.cpp">
@@ -13780,6 +13780,9 @@
       <Filter>DerivedSources</Filter>
     </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\JSMediaQueryList.h">
+      <Filter>DerivedSources</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\JSMediaQueryListListener.h">
       <Filter>DerivedSources</Filter>
     </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\JSMessageChannel.h">

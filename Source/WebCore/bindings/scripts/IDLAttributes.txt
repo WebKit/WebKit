@@ -21,6 +21,7 @@
 ActiveDOMObject
 CPPPureInterface
 CachedAttribute
+CallbackNeedsOperatorEqual
 CallWith=ScriptExecutionContext|ScriptState|ScriptArguments|CallStack
 CheckSecurity
 CheckSecurityForNode

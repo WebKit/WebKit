@@ -1,3 +1,17 @@
+2013-08-13  Sam Weinig  <sam@webkit.org>
+
+        [Re-land] Cleanup MediaQueryListListener
+        https://bugs.webkit.org/show_bug.cgi?id=119664
+
+        Reviewed by Andreas Kling.
+
+        * fast/media/media-query-list-07-expected.txt:
+        * fast/media/media-query-list-07.html:
+        * platform/mac/TestExpectations:
+        Update test to reflect that we are supposed to throw exceptions when when not passing a callback
+        object to addListener/removeListener. Also update the test to use the internals interface that is
+        supported by more ports.
+
 2013-08-13  Alexey Proskuryakov  <ap@apple.com>
 
         Removed a bogus comment that didn't have any bugs after it.

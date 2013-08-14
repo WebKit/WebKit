@@ -18,10 +18,7 @@
  */
 
 [
-    NoInterfaceObject,
-    JSNoStaticTables,
-    ObjCProtocol,
-    CPPPureInterface,
-] interface MediaQueryListListener {
-    void queryChanged([Default=Undefined] optional MediaQueryList list);
+    CallbackNeedsOperatorEqual
+] callback interface MediaQueryListListener {
+    boolean queryChanged([Default=Undefined] optional MediaQueryList list);
 };

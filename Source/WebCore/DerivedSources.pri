@@ -209,6 +209,7 @@ IDL_BINDINGS += \
     $$PWD/css/FontLoader.idl \
     $$PWD/css/MediaList.idl \
     $$PWD/css/MediaQueryList.idl \
+    $$PWD/css/MediaQueryListListener.idl \
     $$PWD/css/Rect.idl \
     $$PWD/css/RGBColor.idl \
     $$PWD/css/StyleMedia.idl \

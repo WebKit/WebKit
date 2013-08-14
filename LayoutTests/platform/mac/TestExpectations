@@ -85,7 +85,6 @@ fast/media/media-query-list-03.html [ Failure ]
 fast/media/media-query-list-04.html [ Failure ]
 fast/media/media-query-list-05.html [ Failure ]
 fast/media/media-query-list-06.html [ Failure ]
-fast/media/media-query-list-07.html [ Failure ]
 
 # Needs layoutTestController.enableAutoResizeMode()
 fast/autoresize
