@@ -166,10 +166,11 @@ void FEComponentTransfer::platformApplySoftware()
     in->copyUnmultipliedImage(pixelArray, drawingRect);
 
     unsigned pixelArrayLength = pixelArray->length();
+    unsigned char* data = pixelArray->data();
     for (unsigned pixelOffset = 0; pixelOffset < pixelArrayLength; pixelOffset += 4) {
         for (unsigned channel = 0; channel < 4; ++channel) {
-            unsigned char c = pixelArray->item(pixelOffset + channel);
-            pixelArray->set(pixelOffset + channel, tables[channel][c]);
+            unsigned char c = data[pixelOffset + channel];
+            data[pixelOffset + channel] = tables[channel][c];
         }
     }
 }
