@@ -1,3 +1,55 @@
+2013-08-14  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        Finish making FloatingObject a real class with private members
+        https://bugs.webkit.org/show_bug.cgi?id=119807
+
+        This is a port from Blink of
+        http://src.chromium.org/viewvc/blink?view=revision&revision=155964
+        Original patch by Eric Seidel.
+
+        From his comments on the Blink change:
+
+        Previously FloatingObject was in a half-done state where it had
+        accessors for many members, but also many members were public.
+
+        This CL makes all members private and adds the necessary remaining
+        accessors.
+
+        Reviewed by David Hyatt.
+
+        No new tests, no behavior change.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::deleteLineBoxTree):
+        (WebCore::RenderBlock::addOverflowFromFloats):
+        (WebCore::RenderBlock::repaintOverhangingFloats):
+        (WebCore::RenderBlock::paintFloats):
+        (WebCore::RenderBlock::selectionGaps):
+        (WebCore::RenderBlock::insertFloatingObject):
+        (WebCore::RenderBlock::removeFloatingObject):
+        (WebCore::RenderBlock::removeFloatingObjectsBelow):
+        (WebCore::RenderBlock::positionNewFloats):
+        (WebCore::RenderBlock::clearFloats):
+        (WebCore::RenderBlock::addOverhangingFloats):
+        (WebCore::RenderBlock::addIntrudingFloats):
+        (WebCore::RenderBlock::hitTestFloats):
+        (WebCore::RenderBlock::adjustForBorderFit):
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::FloatingObject::paginationStrut):
+        (WebCore::RenderBlock::FloatingObject::setPaginationStrut):
+        (WebCore::RenderBlock::FloatingObject::setRenderer):
+        (WebCore::RenderBlock::FloatingObject::originatingLine):
+        (WebCore::RenderBlock::FloatingObject::setOriginatingLine):
+        (WebCore::RenderBlock::FloatingObjectHashFunctions::hash):
+        (WebCore::RenderBlock::FloatingObjectHashFunctions::equal):
+        (WebCore::RenderBlock::FloatingObjectHashTranslator::equal):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::appendFloatingObjectToLastLine):
+        (WebCore::RenderBlock::layoutRunsAndFloatsInRange):
+        (WebCore::RenderBlock::linkToEndLineIfNeeded):
+        (WebCore::RenderBlock::determineStartPosition):
+        (WebCore::RenderBlock::positionNewFloatOnLine):
+
 2013-08-14  Rob Buis  <rwlbuis@webkit.org>
 
         Assertion failure in RenderObject::drawLineForBoxSide

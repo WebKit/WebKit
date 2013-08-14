@@ -676,7 +676,7 @@ private:
         bool everHadLayout;
     };
 
-    struct FloatingObject {
+    class FloatingObject {
         WTF_MAKE_NONCOPYABLE(FloatingObject); WTF_MAKE_FAST_ALLOCATED;
     public:
         // Note that Type uses bits so you can use FloatLeftRight as a mask to query for both left and right.
@@ -748,6 +748,9 @@ private:
         const LayoutRect& frameRect() const { ASSERT(isPlaced()); return m_frameRect; }
         void setFrameRect(const LayoutRect& frameRect) { ASSERT(!isInPlacedTree()); m_frameRect = frameRect; }
 
+        int paginationStrut() const { return m_paginationStrut; }
+        void setPaginationStrut(int strut) { m_paginationStrut = strut; }
+
 #ifndef NDEBUG
         bool isInPlacedTree() const { return m_isInPlacedTree; }
         void setIsInPlacedTree(bool value) { m_isInPlacedTree = value; }
@@ -758,12 +761,17 @@ private:
         bool isDescendant() const { return m_isDescendant; }
         void setIsDescendant(bool isDescendant) { m_isDescendant = isDescendant; }
 
+        // FIXME: Callers of these methods are dangerous and should be whitelisted explicitly or removed.
+        void setRenderer(RenderBox* renderer) { m_renderer = renderer; }
+        RootInlineBox* originatingLine() const { return m_originatingLine; }
+        void setOriginatingLine(RootInlineBox* line) { m_originatingLine = line; }
+
+    private:
         RenderBox* m_renderer;
         RootInlineBox* m_originatingLine;
         LayoutRect m_frameRect;
-        int m_paginationStrut;
+        int m_paginationStrut; // FIXME: This should be a LayoutUnit, since it's a vertical offset.
 
-    private:
         unsigned m_type : 2; // Type (left or right aligned)
         unsigned m_shouldPaint : 1;
         unsigned m_isDescendant : 1;
@@ -1173,13 +1181,13 @@ public:
 
 protected:
     struct FloatingObjectHashFunctions {
-        static unsigned hash(FloatingObject* key) { return DefaultHash<RenderBox*>::Hash::hash(key->m_renderer); }
-        static bool equal(FloatingObject* a, FloatingObject* b) { return a->m_renderer == b->m_renderer; }
+        static unsigned hash(FloatingObject* key) { return DefaultHash<RenderBox*>::Hash::hash(key->renderer()); }
+        static bool equal(FloatingObject* a, FloatingObject* b) { return a->renderer() == b->renderer(); }
         static const bool safeToCompareToEmptyOrDeleted = true;
     };
     struct FloatingObjectHashTranslator {
         static unsigned hash(RenderBox* key) { return DefaultHash<RenderBox*>::Hash::hash(key); }
-        static bool equal(FloatingObject* a, RenderBox* b) { return a->m_renderer == b; }
+        static bool equal(FloatingObject* a, RenderBox* b) { return a->renderer() == b; }
     };
     typedef ListHashSet<FloatingObject*, 4, FloatingObjectHashFunctions> FloatingObjectSet;
     typedef FloatingObjectSet::const_iterator FloatingObjectSetIterator;
