@@ -62,6 +62,7 @@ namespace JSC {
 #else
         static const RegisterID firstArgumentRegister = X86Registers::ecx;
         static const RegisterID secondArgumentRegister = X86Registers::edx;
+        static const RegisterID thirdArgumentRegister = X86Registers::r8;
 #endif
 
         static const RegisterID callFrameRegister = X86Registers::r13;
