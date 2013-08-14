@@ -1,0 +1,21 @@
+SVG 1.1 dynamic animation tests
+
+Tests that an animateTransform with invalid attributeType does not animate. Should result in a 100x100 rect and only PASS messages.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS rootSVGElement.getTransformToElement(rect).e is 0
+PASS rootSVGElement.getTransformToElement(rect).f is 0
+PASS rootSVGElement.getTransformToElement(rect).e is 0
+PASS rootSVGElement.getTransformToElement(rect).f is 0
+PASS rootSVGElement.getTransformToElement(rect).e is 0
+PASS rootSVGElement.getTransformToElement(rect).f is 0
+PASS rootSVGElement.getTransformToElement(rect).e is 0
+PASS rootSVGElement.getTransformToElement(rect).f is 0
+PASS rootSVGElement.getTransformToElement(rect).e is 0
+PASS rootSVGElement.getTransformToElement(rect).f is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

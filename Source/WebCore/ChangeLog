@@ -1,3 +1,18 @@
+2013-08-14  Rob Buis  <rwlbuis@webkit.org>
+
+        ASSERTION FAILED: resultAnimationElement->m_animatedType in WebCore::SVGAnimateElement::calculateAnimatedValue
+        https://bugs.webkit.org/show_bug.cgi?id=119748
+
+        Reviewed by Dirk Schulze.
+
+        Avoid animation when attributeType="CSS" is used on an animateTransform.
+
+        Tests: svg/animations/animateTransform-translate-attributetype-auto.html
+               svg/animations/animateTransform-translate-invalid-attributetype.html
+
+        * svg/SVGAnimateTransformElement.cpp:
+        (WebCore::SVGAnimateTransformElement::hasValidAttributeType):
+
 2013-08-14  Antti Koivisto  <antti@apple.com>
 
         Try to fix Qt build.

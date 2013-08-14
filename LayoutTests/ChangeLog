@@ -1,3 +1,26 @@
+2013-08-14  Rob Buis  <rwlbuis@webkit.org>
+
+        ASSERTION FAILED: resultAnimationElement->m_animatedType in WebCore::SVGAnimateElement::calculateAnimatedValue
+        https://bugs.webkit.org/show_bug.cgi?id=119748
+
+        Reviewed by Dirk Schulze.
+
+        Test that using animateTransform with attributeType="CSS" will cause no animateTransform animation, and
+        attributeType="auto" will act as "XML".
+
+        * svg/animations/animateTransform-translate-attributetype-auto-expected.txt: Added.
+        * svg/animations/animateTransform-translate-attributetype-auto.html: Added.
+        * svg/animations/animateTransform-translate-invalid-attributetype-expected.txt: Added.
+        * svg/animations/animateTransform-translate-invalid-attributetype.html: Added.
+        * svg/animations/script-tests/animateTransform-translate-attributetype-auto.js: Added.
+        (sample1):
+        (sample2):
+        (sample3):
+        (executeTest):
+        * svg/animations/script-tests/animateTransform-translate-invalid-attributetype.js: Added.
+        (sample):
+        (executeTest):
+
 2013-08-14  Gabor Abraham  <abrhm@inf.u-szeged.hu>
 
         [Qt] Unreviewd gardening. Skipping failing tests on x86.
