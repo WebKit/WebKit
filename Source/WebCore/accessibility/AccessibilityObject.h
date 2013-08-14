@@ -240,9 +240,19 @@ struct AccessibilityText {
     }
 };
 
-enum AccessibilityTextUnderElementMode {
-    TextUnderElementModeSkipIgnoredChildren,
-    TextUnderElementModeIncludeAllChildren
+struct AccessibilityTextUnderElementMode {
+    enum ChildrenInclusion {
+        TextUnderElementModeSkipIgnoredChildren,
+        TextUnderElementModeIncludeAllChildren,
+    };
+    
+    ChildrenInclusion childrenInclusion;
+    bool includeFocusableContent;
+    
+    AccessibilityTextUnderElementMode(ChildrenInclusion c = TextUnderElementModeSkipIgnoredChildren, bool i = false)
+    : childrenInclusion(c)
+    , includeFocusableContent(i)
+    { }
 };
     
 enum AccessibilityOrientation {
@@ -590,7 +600,7 @@ public:
 
     // Methods for determining accessibility text.
     virtual String stringValue() const { return String(); }
-    virtual String textUnderElement(AccessibilityTextUnderElementMode = TextUnderElementModeSkipIgnoredChildren) const { return String(); }
+    virtual String textUnderElement(AccessibilityTextUnderElementMode = AccessibilityTextUnderElementMode()) const { return String(); }
     virtual String text() const { return String(); }
     virtual int textLength() const { return 0; }
     virtual String ariaLabeledByAttribute() const { return String(); }

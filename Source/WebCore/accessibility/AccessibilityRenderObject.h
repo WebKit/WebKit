@@ -144,7 +144,7 @@ public:
     virtual VisibleSelection selection() const;
     virtual String stringValue() const;
     virtual String helpText() const;
-    virtual String textUnderElement(AccessibilityTextUnderElementMode = TextUnderElementModeSkipIgnoredChildren) const;
+    virtual String textUnderElement(AccessibilityTextUnderElementMode = AccessibilityTextUnderElementMode()) const;
     virtual String text() const;
     virtual int textLength() const;
     virtual String selectedText() const;

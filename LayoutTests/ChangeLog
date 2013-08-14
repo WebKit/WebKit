@@ -1,3 +1,14 @@
+2013-08-13  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Headings not longer have an AXTitle if they have a link as the only child
+        https://bugs.webkit.org/show_bug.cgi?id=119699
+
+        Reviewed by Anders Carlsson.
+
+        * accessibility/heading-title-includes-links.html: Added.
+        * platform/mac/accessibility/heading-title-includes-links-expected.txt: Added.
+        * platform/mac/accessibility/internal-link-anchors2-expected.txt:
+
 2013-08-14  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Move id attribute to parent Element interface

@@ -1280,7 +1280,13 @@ void AccessibilityNodeObject::visibleText(Vector<AccessibilityText>& textOrder) 
         useTextUnderElement = true;
     
     if (useTextUnderElement) {
-        String text = textUnderElement();
+        AccessibilityTextUnderElementMode mode;
+        
+        // Headings often include links as direct children. Those links need to be included in text under element.
+        if (isHeading())
+            mode.includeFocusableContent = true;
+
+        String text = textUnderElement(mode);
         if (!text.isEmpty())
             textOrder.append(AccessibilityText(text, ChildrenText));
     }
@@ -1507,7 +1513,7 @@ unsigned AccessibilityNodeObject::hierarchicalLevel() const
 static bool shouldUseAccessiblityObjectInnerText(AccessibilityObject* obj, AccessibilityTextUnderElementMode mode)
 {
     // Do not use any heuristic if we are explicitly asking to include all the children.
-    if (mode == TextUnderElementModeIncludeAllChildren)
+    if (mode.childrenInclusion == AccessibilityTextUnderElementMode::TextUnderElementModeIncludeAllChildren)
         return true;
 
     // Consider this hypothetical example:
@@ -1536,7 +1542,7 @@ static bool shouldUseAccessiblityObjectInnerText(AccessibilityObject* obj, Acces
         return true;
     
     // Skip focusable children, so we don't include the text of links and controls.
-    if (obj->canSetFocusAttribute())
+    if (obj->canSetFocusAttribute() && !mode.includeFocusableContent)
         return false;
 
     // Skip big container elements like lists, tables, etc.
@@ -1624,10 +1630,12 @@ String AccessibilityNodeObject::title() const
         break;
     }
 
-    if (isHeading() || isLink())
+    if (isLink())
         return textUnderElement();
+    if (isHeading())
+        return textUnderElement(AccessibilityTextUnderElementMode(AccessibilityTextUnderElementMode::TextUnderElementModeSkipIgnoredChildren, true));
 
-    // If it's focusable but it's not content editable or a known control type, then it will appear to                  
+    // If it's focusable but it's not content editable or a known control type, then it will appear to
     // the user as a single atomic object, so we should use its text as the default title.                              
     if (isGenericFocusableElement())
         return textUnderElement();

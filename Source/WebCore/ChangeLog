@@ -1,3 +1,28 @@
+2013-08-13  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Headings not longer have an AXTitle if they have a link as the only child
+        https://bugs.webkit.org/show_bug.cgi?id=119699
+
+        Reviewed by Anders Carlsson.
+
+        Normally, focusable content is not incuded when looking at the visible text of an element.
+        One case where we need an exception is with headings, where there is usually link content inside the heading
+        that we want to be used as the visible text.
+
+        Test: accessibility/heading-title-includes-links.html
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::visibleText):
+        (WebCore::shouldUseAccessiblityObjectInnerText):
+        (WebCore::AccessibilityNodeObject::title):
+        * accessibility/AccessibilityNodeObject.h:
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityTextUnderElementMode::AccessibilityTextUnderElementMode):
+        (WebCore::AccessibilityObject::textUnderElement):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::textUnderElement):
+        * accessibility/AccessibilityRenderObject.h:
+
 2013-08-14  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Move id attribute to parent Element interface

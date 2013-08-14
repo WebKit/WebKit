@@ -164,7 +164,7 @@ unsigned AccessibilityObject::getLengthForTextRange() const
     // Get the text length from the elements under the
     // accessibility object if the value is still zero.
     if (!textLength && allowsTextRanges())
-        textLength = textUnderElement(TextUnderElementModeIncludeAllChildren).length();
+        textLength = textUnderElement(AccessibilityTextUnderElementMode(AccessibilityTextUnderElementMode::TextUnderElementModeIncludeAllChildren)).length();
 
     return textLength;
 }
