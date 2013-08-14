@@ -1,3 +1,11 @@
+2013-08-14  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Unreviewed build gardening.
+
+        * platform/win/TestExpectations: Clean up a lint warning, and reactivate four tiling tests
+        that pass and had been turned off previously.
+
+
 2013-08-14  Alexandru Chiculita  <achicu@adobe.com>
 
         [CSS Regions] RenderRegions should have a RenderLayer+Backing when they contain a Composited RenderLayer

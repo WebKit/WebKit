@@ -2447,15 +2447,8 @@ animations/3d/change-transform-in-end-event.html
 transitions/move-after-transition.html
 compositing/text-on-large-layer.html
 compositing/iframes/fixed-position-iframe.html
-compositing/tiling/backface-preserve-3d-tiled.html
-compositing/tiling/constrained-layer-size.html
-compositing/tiling/crash-huge-layer.html
-compositing/tiling/crash-reparent-tiled-layer.html
 compositing/tiling/huge-layer-add-remove-child.html
-compositing/tiling/huge-layer-img.html
-compositing/tiling/huge-layer-with-layer-children-resize.html
-compositing/tiling/huge-layer-with-layer-children.html
-compositing/tiling/preserve3d-tiled.html
+compositing/tiling/huge-layer-resize.html
 compositing/tiling/tile-cache-zoomed.html
 
 # Test added in r132901 is for chromium only
@@ -2693,7 +2686,6 @@ webkit.org/b/116560 fast/workers
 webkit.org/b/116562 fast/css/font-face-data-uri-invalid.html
 webkit.org/b/116562 fast/dom/Window/window-postmessage-clone-deep-array.html
 webkit.org/b/116562 fast/js/callback-function-with-handle-event.html
-webkit.org/b/116562 fast/js/global-constructors-attributes-worker.html
 webkit.org/b/116562 fast/js/large-expressions.html
 webkit.org/b/116562 fast/js/string-replace-exception-crash.html
 webkit.org/b/116562 fast/text/custom-font-data-crash.html
@@ -2821,3 +2813,5 @@ svg/dom/svgpath-out-of-bounds-getPathSeg.html [ Failure ]
 fast/js/global-constructors-attributes-dedicated-worker.html [ Failure ]
 fast/text/split-text-crash.xhtml [ Failure ]
 fast/frames/seamless/seamless-nested-crash.html [ Failure ]
+
+webkit.org/b/119818 compositing/tiling/empty-to-tiled.html [ Crash ]
