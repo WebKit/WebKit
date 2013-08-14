@@ -1,3 +1,11 @@
+2013-08-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add a hyperlink from build.webkit.org to the flakiness dashboard.
+
+        Rubbers-tamped by Simon Fraser.
+
+        * BuildSlaveSupport/build.webkit.org-config/templates/root.html:
+
 2013-08-14  Benjamin Dupont   <bdupont@nds.com>
 
         [Qt] Activate visibility API layout tests
