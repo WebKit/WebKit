@@ -91,6 +91,9 @@ public:
     void focusChanged(bool hasFocus);
     void windowFocusChanged(bool hasFocus);
     void windowFrameChanged(NSRect frame);
+
+    void setShouldHostLayersInWindowServer(bool);
+    void layerHostingModeChanged(bool hostsLayersInWindowServer, uint32_t renderContextID);
     
     void mouseEvent(NSView *pluginView, NSEvent *, NPCocoaEventType);
     void keyEvent(NSView *pluginView, NSEvent *, NPCocoaEventType);

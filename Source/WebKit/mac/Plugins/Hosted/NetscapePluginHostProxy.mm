@@ -1097,6 +1097,20 @@ kern_return_t WKPCConvertPoint(mach_port_t clientPort, uint32_t pluginID,
     return KERN_SUCCESS;
 }
 
+kern_return_t WKPCLayerHostingModeChanged(mach_port_t clientPort, uint32_t pluginID, boolean_t hostsLayersInWindowServer, uint32_t renderContextID)
+{
+    NetscapePluginHostProxy* hostProxy = pluginProxyMap().get(clientPort);
+    if (!hostProxy)
+        return KERN_FAILURE;
+
+    NetscapePluginInstanceProxy* instanceProxy = hostProxy->pluginInstance(pluginID);
+    if (!instanceProxy)
+        return KERN_FAILURE;
+
+    instanceProxy->layerHostingModeChanged(hostsLayersInWindowServer, renderContextID);
+    return KERN_SUCCESS;
+}
+
 kern_return_t WKPCCheckIfAllowedToLoadURL(mach_port_t clientPort, uint32_t pluginID, data_t urlData, mach_msg_type_number_t urlLength,
                                           data_t targetData, mach_msg_type_number_t targetLength, uint32_t *checkID)
 {
