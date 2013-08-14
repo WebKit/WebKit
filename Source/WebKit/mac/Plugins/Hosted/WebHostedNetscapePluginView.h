@@ -41,7 +41,6 @@ namespace WebKit {
     RetainPtr<NSArray> _attributeValues;
     
     RetainPtr<CALayer> _pluginLayer;
-    BOOL _hostsLayersInWindowServer;
     WKSoftwareCARendererRef _softwareRenderer;
     
     NSSize _previousSize;
@@ -62,7 +61,6 @@ namespace WebKit {
 - (CALayer *)pluginLayer;
 - (BOOL)getFormValue:(NSString **)value;
 - (void)webFrame:(WebFrame *)webFrame didFinishLoadWithReason:(NPReason)reason;
-- (void)setHostsLayersInWindowServer:(bool)hostsLayersInWindowServer;
 
 @end
 

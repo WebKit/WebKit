@@ -71,8 +71,6 @@ simpleroutine PHPluginInstanceWindowFrameChanged(pluginHostPort :mach_port_t;
                                                height :double;
                                                maxScreenY :double);
 
-simpleroutine PHPluginShouldHostLayersInWindowServerChanged(pluginHostPort :mach_port_t; pluginID :uint32_t; shouldHostLayersInWindowServer :boolean_t);
-
 simpleroutine PHPluginInstanceMouseEvent(pluginHostPort :mach_port_t;
                                        pluginID :uint32_t;
                                        timestamp :double;
