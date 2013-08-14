@@ -1,3 +1,27 @@
+2013-08-14  Arpita Bahuguna  <a.bah@samsung.com>
+
+        createAttribute/setAttributeNode does not properly normalize case
+        https://bugs.webkit.org/show_bug.cgi?id=90341
+
+        Reviewed by Darin Adler.
+
+        * fast/dom/Element/setAttributeNode-case-insensitivity.html: Added.
+        * fast/dom/Element/setAttributeNode-case-insensitivity-expected.txt: Added.
+        Testcase for verifying that setAttributeNode() checks against existing
+        attributes in a case insensitive manner. It updates the value of an
+        existing attribute (in lower case) with that of the one set using
+        setAttributeNode() (in upper case).
+        The test also verifies the behavior of attributes when specified with
+        namespace and prefix.
+
+        * fast/dom/Element/setAttributeNode-case-insensitivity-xhtml-expected.txt: Added.
+        * fast/dom/Element/setAttributeNode-case-insensitivity-xhtml.xhtml: Added.
+        Testcase added for verifying that the default behavior for xhtml documents
+        does not change with this fix.
+        For xhtml documents, attributes can be added case sensitively. This testcase
+        verifies that two attributes with the same name but different case are
+        allowed for an xhtml document.
+
 2013-08-14  Benjamin Dupont   <bdupont@nds.com>
 
         [Qt] Activate visibility API layout tests

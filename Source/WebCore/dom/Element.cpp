@@ -1838,7 +1838,7 @@ PassRefPtr<Attr> Element::setAttributeNode(Attr* attrNode, ExceptionCode& ec)
     synchronizeAllAttributes();
     UniqueElementData& elementData = ensureUniqueElementData();
 
-    unsigned index = elementData.findAttributeIndexByNameForAttributeNode(attrNode);
+    unsigned index = elementData.findAttributeIndexByNameForAttributeNode(attrNode, shouldIgnoreAttributeCase(this));
     if (index != ElementData::attributeNotFound) {
         if (oldAttrNode)
             detachAttrNodeFromElementWithValue(oldAttrNode.get(), elementData.attributeAt(index).value());
@@ -3338,13 +3338,13 @@ unsigned ElementData::findAttributeIndexByNameSlowCase(const AtomicString& name,
     return attributeNotFound;
 }
 
-unsigned ElementData::findAttributeIndexByNameForAttributeNode(const Attr* attr) const
+unsigned ElementData::findAttributeIndexByNameForAttributeNode(const Attr* attr, bool shouldIgnoreAttributeCase) const
 {
     ASSERT(attr);
     const Attribute* attributes = attributeBase();
     unsigned count = length();
     for (unsigned i = 0; i < count; ++i) {
-        if (attributes[i].name() == attr->qualifiedName())
+        if (attributes[i].name().matchesIgnoringCaseForLocalName(attr->qualifiedName(), shouldIgnoreAttributeCase))
             return i;
     }
     return attributeNotFound;

@@ -1,3 +1,35 @@
+2013-08-14  Arpita Bahuguna  <a.bah@samsung.com>
+
+        createAttribute/setAttributeNode does not properly normalize case
+        https://bugs.webkit.org/show_bug.cgi?id=90341
+
+        Reviewed by Darin Adler.
+
+        setAttributeNode() verifies for existing attributes in a case sensitive
+        manner. Thus, it would add another attribute if specified in a case
+        different from the existing one. Instead, like setAttribute(), it too
+        should modify the existing attribute's value.
+
+        Tests: fast/dom/Element/setAttributeNode-case-insensitivity-xhtml.xhtml
+               fast/dom/Element/setAttributeNode-case-insensitivity.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::setAttributeNode):
+        Passing the second param (shouldIgnoreAttributeCase) to
+        findAttributeIndexByNameForAttributeNode() method. We are now letting
+        findAttributeIndexByNameForAttributeNode() handle the case-sensitive/insensitive
+        checking.
+
+        (WebCore::ElementData::findAttributeIndexByNameForAttributeNode):
+        * dom/Element.h:
+        Added shouldIgnoreAttributeCase boolean param to the method. It passes
+        this on to QualifiedName::matchesIgnoringCaseForLocalName() method.
+
+        * dom/QualifiedName.h:
+        (WebCore::QualifiedName::matchesIgnoringCaseForLocalName):
+        New method added for doing a case-insensitive comparison based on the
+        shouldIgnoreCase param passed to this method.
+
 2013-08-14  Gabor Abraham  <abrhm@inf.u-szeged.hu>
 
         [CMake] Fix building with bison-3.0.
