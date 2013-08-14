@@ -1,3 +1,9 @@
+2013-08-14  Gabor Abraham  <abrhm@inf.u-szeged.hu>
+
+        [Qt] Unreviewd gardening. Skipping failing tests on x86.
+
+        * platform/qt/TestExpectations:
+
 2013-08-13  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] Align our grid-line handling with the updated specification

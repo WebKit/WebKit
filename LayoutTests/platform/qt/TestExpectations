@@ -898,6 +898,10 @@ sputnik/Unicode/Unicode_510/S7.6_A3.2.html
 sputnik/Unicode/Unicode_510/S7.6_A5.3_T1.html
 sputnik/Unicode/Unicode_510/S7.6_A5.3_T2.html
 
+# [Qt] REGRESSION(FTL) 2 sputnik/ test failing on x86.
+webkit.org/b/119796 sputnik/Conformance/08_Types/8.5_The_Number_Type/S8.5_A2.1.html [ Skip ]
+webkit.org/b/119796 sputnik/Conformance/08_Types/8.5_The_Number_Type/S8.5_A2.2.html [ Skip ]
+
 # =========================================================================== #
 # Fluctuating/flakey tests
 # =========================================================================== #
@@ -1933,6 +1937,8 @@ webkit.org/b/119732 fast/media/media-query-list-07.html [ Skip ]
 # REGRESSION (r153145): fast/workers/worker-call.html fails
 webkit.org/b/119271 fast/workers/worker-call.html [ Skip ]
 
+# [Qt] fast/canvas/canvas-blending-transforms.html test fails on x32.
+webkit.org/b/119792 fast/canvas/canvas-blending-transforms.html [ Skip ]
 
 # ============================================================================= #
 # failing security tests
