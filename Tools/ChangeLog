@@ -1,3 +1,10 @@
+2013-08-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Flakiness dashboard build fix.
+
+        * TestResultServer/static-dashboards/flakiness_dashboard.js:
+        (processTestRunsForBuilder):
+
 2013-08-14  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] [CMake] Add support for building TestWebKitAPI

@@ -599,6 +599,9 @@ traversePlatformsTree(function(platform, platformName) {
 // of all tests run on the win-debug builders.
 function allTestsWithSamePlatformAndBuildType(platform, buildType)
 {
+    if (!g_allTestsByPlatformAndBuildType[platform])
+        return {};
+
     if (!g_allTestsByPlatformAndBuildType[platform][buildType]) {
         var tests = {};
         for (var thisBuilder in currentBuilders()) {
@@ -903,6 +906,9 @@ function processTestRunsForBuilder(builderName)
     var buildInfo = platformAndBuildType(builderName);
     var platform = buildInfo.platform;
     var buildType = buildInfo.buildType;
+    if (!platform)
+        return;
+
     processMissingTestsWithExpectations(builderName, platform, buildType);
 
     var failures = [];
