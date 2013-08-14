@@ -31,6 +31,7 @@
 #include "AccessibilityDelegate.h"
 #include "DOMDefaultImpl.h"
 #include "PrintWebUIDelegate.h"
+#include "WinLauncherLibResource.h"
 #include <WebKit/WebKitCOMAPI.h>
 #include <wtf/Platform.h>
 
@@ -56,8 +57,11 @@ HWND hMainWnd;
 HWND hURLBarWnd;
 WNDPROC DefEditProc = 0;
 WNDPROC DefWebKitProc = 0;
+IWebInspector* gInspector = 0;
 IWebView* gWebView = 0;
 IWebViewPrivate* gWebViewPrivate = 0;
+IWebPreferences* gStandardPreferences = 0;
+IWebPreferencesPrivate* gPrefsPrivate = 0;
 HWND gViewWindow = 0;
 WinLauncherWebHost* gWebHost = 0;
 PrintWebUIDelegate* gPrintDelegate = 0;
@@ -265,6 +269,31 @@ BOOL WINAPI DllMain(HINSTANCE dllInstance, DWORD reason, LPVOID)
     return TRUE;
 }
 
+static bool setToDefaultPreferences()
+{
+    HRESULT hr = gStandardPreferences->QueryInterface(IID_IWebPreferencesPrivate, reinterpret_cast<void**>(&gPrefsPrivate));
+    if (!SUCCEEDED(hr))
+        return false;
+
+#if USE(CG)
+    gStandardPreferences->setAVFoundationEnabled(TRUE);
+    gPrefsPrivate->setAcceleratedCompositingEnabled(TRUE);
+#endif
+
+    gPrefsPrivate->setFullScreenEnabled(TRUE);
+    gPrefsPrivate->setShowDebugBorders(FALSE);
+    gPrefsPrivate->setShowRepaintCounter(FALSE);
+
+    gStandardPreferences->setLoadsImagesAutomatically(TRUE);
+    gPrefsPrivate->setAuthorAndUserStylesEnabled(TRUE);
+    gStandardPreferences->setJavaScriptEnabled(TRUE);
+    gPrefsPrivate->setAllowUniversalAccessFromFileURLs(FALSE);
+    gPrefsPrivate->setAllowFileAccessFromFileURLs(TRUE);
+
+    return true;
+}
+
+
 #if USE(CF)
 extern "C" void _CFRunLoopSetWindowsMessageQueueMask(CFRunLoopRef, uint32_t, CFStringRef);
 #endif
@@ -347,22 +376,16 @@ extern "C" __declspec(dllexport) int WINAPI dllLauncherEntryPoint(HINSTANCE, HIN
     RECT clientRect = { s_windowPosition.x, s_windowPosition.y, s_windowPosition.x + s_windowSize.cx, s_windowPosition.y + s_windowSize.cy };
 
     IWebPreferences* tmpPreferences = 0;
-    IWebPreferences* standardPreferences = 0;
     if (FAILED(WebKitCreateInstance(CLSID_WebPreferences, 0, IID_IWebPreferences, reinterpret_cast<void**>(&tmpPreferences))))
         goto exit;
 
-    if (FAILED(tmpPreferences->standardPreferences(&standardPreferences)))
+    if (FAILED(tmpPreferences->standardPreferences(&gStandardPreferences)))
         goto exit;
 
-    standardPreferences->setAcceleratedCompositingEnabled(TRUE);
-    standardPreferences->setAVFoundationEnabled(TRUE);
+    if (!setToDefaultPreferences())
+        goto exit;
 
-    IWebPreferencesPrivate* prefsPrivate = 0;
-    HRESULT hr = standardPreferences->QueryInterface(IID_IWebPreferencesPrivate, reinterpret_cast<void**>(&prefsPrivate));
-    if (SUCCEEDED(hr))
-        prefsPrivate->setFullScreenEnabled(TRUE);
-
-    hr = WebKitCreateInstance(CLSID_WebView, 0, IID_IWebView, reinterpret_cast<void**>(&gWebView));
+    HRESULT hr = WebKitCreateInstance(CLSID_WebView, 0, IID_IWebView, reinterpret_cast<void**>(&gWebView));
     if (FAILED(hr))
         goto exit;
 
@@ -452,9 +475,19 @@ exit:
     gPrintDelegate->Release();
     if (gWebViewPrivate)
         gWebViewPrivate->Release();
+    if (gInspector) {
+        gInspector->Release();
+        gInspector = 0;
+    }
     gWebView->Release();
-    if (standardPreferences)
-        standardPreferences->Release();
+    if (gPrefsPrivate) {
+        gPrefsPrivate->Release();
+        gPrefsPrivate = 0;
+    }
+    if (gStandardPreferences) {
+        gStandardPreferences->Release();
+        gStandardPreferences = 0;
+    }
     tmpPreferences->Release();
 
     shutDownWebKit();
@@ -569,6 +602,85 @@ exit:
         framePrivate->Release();
 }
 
+static void ToggleMenuItem(HWND hWnd, UINT menuID)
+{
+    HMENU menu = ::GetMenu(hWnd);
+
+    MENUITEMINFO info;
+    ::memset(&info, 0x00, sizeof(info));
+    info.cbSize = sizeof(info);
+    info.fMask = MIIM_STATE;
+
+    if (!::GetMenuItemInfo(menu, menuID, FALSE, &info))
+        return;
+
+    BOOL newState = !(info.fState & MFS_CHECKED);
+
+    if (!gStandardPreferences || !gPrefsPrivate)
+        return;
+
+    switch (menuID) {
+    case IDM_AVFOUNDATION:
+        gStandardPreferences->setAVFoundationEnabled(newState);
+        break;
+    case IDM_ACC_COMPOSITING:
+        gPrefsPrivate->setAcceleratedCompositingEnabled(newState);
+        break;
+    case IDM_WK_FULLSCREEN:
+        gPrefsPrivate->setFullScreenEnabled(newState);
+        break;
+    case IDM_COMPOSITING_BORDERS:
+        gPrefsPrivate->setShowDebugBorders(newState);
+        gPrefsPrivate->setShowRepaintCounter(newState);
+        break;
+    case IDM_DISABLE_IMAGES:
+        gStandardPreferences->setLoadsImagesAutomatically(!newState);
+        break;
+    case IDM_DISABLE_STYLES:
+        gPrefsPrivate->setAuthorAndUserStylesEnabled(!newState);
+        break;
+    case IDM_DISABLE_JAVASCRIPT:
+        gStandardPreferences->setJavaScriptEnabled(!newState);
+        break;
+    case IDM_DISABLE_LOCAL_FILE_RESTRICTIONS:
+        gPrefsPrivate->setAllowUniversalAccessFromFileURLs(newState);
+        gPrefsPrivate->setAllowFileAccessFromFileURLs(newState);
+        break;
+    }
+
+    info.fState = (newState) ? MFS_CHECKED : MFS_UNCHECKED;
+
+    ::SetMenuItemInfo(menu, menuID, FALSE, &info);
+}
+
+static void LaunchInspector(HWND hwnd)
+{
+    if (!gWebViewPrivate)
+        return;
+
+    if (gInspector) {
+        gInspector->Release();
+        gInspector = 0;
+    }
+
+    if (!SUCCEEDED(gWebViewPrivate->inspector(&gInspector)))
+        return;
+
+    gInspector->show();
+}
+
+static void NavigateForwardOrBackward(HWND hWnd, UINT menuID)
+{
+    if (!gWebView)
+        return;
+
+    BOOL wentBackOrForward = FALSE;
+    if (IDM_HISTORY_FORWARD == menuID)
+        gWebView->goForward(&wentBackOrForward);
+    else
+        gWebView->goBack(&wentBackOrForward);
+}
+
 static const int dragBarHeight = 30;
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -607,12 +719,32 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         case IDM_PRINT:
             PrintView(hWnd, message, wParam, lParam);
             break;
+        case IDM_WEB_INSPECTOR:
+            LaunchInspector(hWnd);
+            break;
+        case IDM_HISTORY_BACKWARD:
+        case IDM_HISTORY_FORWARD:
+            NavigateForwardOrBackward(hWnd, wmId);
+            break;
+        case IDM_AVFOUNDATION:
+        case IDM_ACC_COMPOSITING:
+        case IDM_WK_FULLSCREEN:
+        case IDM_COMPOSITING_BORDERS:
+        case IDM_DISABLE_IMAGES:
+        case IDM_DISABLE_STYLES:
+        case IDM_DISABLE_JAVASCRIPT:
+        case IDM_DISABLE_LOCAL_FILE_RESTRICTIONS:
+            ToggleMenuItem(hWnd, wmId);
+            break;
         default:
             return CallWindowProc(parentProc, hWnd, message, wParam, lParam);
         }
         }
         break;
     case WM_DESTROY:
+#if USE(CF)
+        CFRunLoopStop(CFRunLoopGetMain());
+#endif
         PostQuitMessage(0);
         break;
     case WM_SIZE:

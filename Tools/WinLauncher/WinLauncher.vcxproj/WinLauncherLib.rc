@@ -45,9 +45,31 @@ BEGIN
         MENUITEM "&Print\tCtrl-P",              IDM_PRINT
         MENUITEM "E&xit",                       IDM_EXIT
     END
+    POPUP "&History"
+    BEGIN
+        MENUITEM "Back",                        IDM_HISTORY_BACKWARD
+        MENUITEM "Forward",                     IDM_HISTORY_FORWARD
+    END
+    POPUP "D&evelop"
+    BEGIN
+        MENUITEM "Show Web Inspector",          IDM_WEB_INSPECTOR
+        MENUITEM SEPARATOR
+        MENUITEM "Disable Images",              IDM_DISABLE_IMAGES
+        MENUITEM "Disable Styles",              IDM_DISABLE_STYLES
+        MENUITEM "Disable JavaScript",          IDM_DISABLE_JAVASCRIPT
+        MENUITEM "Disable Local File Restrictions", IDM_DISABLE_LOCAL_FILE_RESTRICTIONS
+    END
     POPUP "&Help"
     BEGIN
         MENUITEM "&About ...",                  IDM_ABOUT
+    END
+    POPUP "&Debug"
+    BEGIN
+        MENUITEM "Use AVFoundation",            IDM_AVFOUNDATION, CHECKED
+        MENUITEM "Use Accelerated Compositing", IDM_ACC_COMPOSITING, CHECKED
+        MENUITEM "Enable WebKit Full Screen",   IDM_WK_FULLSCREEN, CHECKED
+        MENUITEM SEPARATOR
+        MENUITEM "Show Compositing Borders",    IDM_COMPOSITING_BORDERS
     END
 END
 

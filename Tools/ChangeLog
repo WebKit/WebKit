@@ -1,3 +1,27 @@
+2013-08-14  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Simplify Setting WebKit Debugging Options in WinLauncher
+        https://bugs.webkit.org/show_bug.cgi?id=119775
+
+        This bug updates the WinLauncher program with a few useful menu
+        options to toggle certain debugging and development features of
+        WebKit.
+
+        Reviewed by Tim Horton.
+
+        * WinLauncher/WinLauncher.cpp:
+        (dllLauncherEntryPoint): Clean up preference objects on exit.
+        (ToggleMenuItem): New function.
+        (LaunchInspector): New function.
+        (WndProc): Add handler for new menu items. Also properly terminate
+        CFRunLoop operation on program exit.
+        * WinLauncher/WinLauncher.vcxproj/WinLauncherLib.rc: Add new
+        menu items.
+        * WinLauncher/WinLauncher.vcxproj/WinLauncherLibCommon.props: Add
+        resource folder to search path.
+        * WinLauncher/WinLauncher.vcxproj/WinLauncherLibResource.h: Update
+        for new menu items.
+
 2013-08-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add a hyperlink from build.webkit.org to the flakiness dashboard.

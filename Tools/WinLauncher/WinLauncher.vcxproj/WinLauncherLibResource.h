@@ -12,6 +12,18 @@
 #define IDI_WINLAUNCHER                 107
 #define IDI_SMALL                       108
 #define IDC_WINLAUNCHER                 109
+#define IDM_AVFOUNDATION                110
+#define IDM_ACC_COMPOSITING             111
+#define IDM_WK_FULLSCREEN               112
+#define IDM_COMPOSITING_BORDERS         113
+#define IDM_WEB_INSPECTOR               120
+#define IDM_DISABLE_IMAGES              121
+#define IDM_DISABLE_STYLES              122
+#define IDM_DISABLE_JAVASCRIPT          123
+#define IDM_DISABLE_LOCAL_FILE_RESTRICTIONS 124
+#define IDM_HISTORY_BACKWARD            130
+#define IDM_HISTORY_FORWARD             131
+
 #define IDR_MAINFRAME                   128
 #define IDC_STATIC                      -1
 
