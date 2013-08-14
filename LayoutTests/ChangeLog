@@ -1,3 +1,14 @@
+2013-08-14  Chris Fleizach  <cfleizach@apple.com>
+
+        <https://webkit.org/b/119817> AX: Integrate layout tests from overflow bounding boxes are way too big; prevents VoiceOver taps from activating the right elements
+
+        Reviewed by Simon Fraser.
+
+        Add a layout test to ensure that transformed elements do not get offset twice when calculating their accessibility bounds.
+
+        * accessibility/transformed-bounds-expected.txt: Added.
+        * accessibility/transformed-bounds.html: Added.
+
 2013-08-14  Hans Muller  <hmuller@adobe.com>
 
         [CSS Exclusions] Minimal support for using an image to define a shape
