@@ -4,6 +4,7 @@ Pass: window.navigator.registerProtocolHandler is defined.
 Pass: Invalid protocol "http" threw SecurityError exception.
 Pass: Invalid protocol "https" threw SecurityError exception.
 Pass: Invalid protocol "file" threw SecurityError exception.
+Pass: Invalid protocol "web+" threw SecurityError exception.
 Pass: Valid protocol "bitcoin" allowed.
 Pass: Valid protocol "geo" allowed.
 Pass: Valid protocol "im" allowed.

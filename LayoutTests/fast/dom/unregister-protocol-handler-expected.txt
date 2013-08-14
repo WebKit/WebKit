@@ -4,6 +4,7 @@ Fail: window.navigator.unregisterProtocolHandler is not defined.
 Fail: Invalid protocol "http" allowed.
 Fail: Invalid protocol "https" allowed.
 Fail: Invalid protocol "file" allowed.
+Fail: Invalid protocol "web+" allowed.
 Fail: Valid protocol "bitcoin" failed.
 Fail: Valid protocol "geo" failed.
 Fail: Valid protocol "im" failed.

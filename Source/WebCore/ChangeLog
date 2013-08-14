@@ -1,3 +1,21 @@
+2013-08-13  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        The length of scheme is at least five characters even when the scheme has 'web+' prefix
+        https://bugs.webkit.org/show_bug.cgi?id=119779
+
+        Reviewed by Ryosuke Niwa.
+
+        The content-scheme handler specification requires that it is SecurityError if the length of
+        scheme isn't five characters at least, including 'web+' prefix. Thus, we need to check the length
+        of scheme on the 'web+' scheme.
+
+        Spec: http://www.whatwg.org/specs/web-apps/current-work/#custom-handlers
+
+        No new tests, just modify existing tests.
+
+        * Modules/navigatorcontentutils/NavigatorContentUtils.cpp:
+        (WebCore::verifyProtocolHandlerScheme):
+
 2013-08-13  Filip Pizlo  <fpizlo@apple.com>
 
         Foo::s_info should be Foo::info(), so that you can change how the s_info is actually linked

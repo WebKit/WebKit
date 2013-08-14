@@ -17,7 +17,7 @@ if (window.navigator.registerProtocolHandler)
 else
     debug('Fail: window.navigator.registerProtocolHandler is not defined.');
 
-var invalid_protocols = ['http', 'https', 'file'];
+var invalid_protocols = ['http', 'https', 'file', 'web+'];
 invalid_protocols.forEach(function (protocol) {
     var succeeded = false;
     try {
