@@ -161,13 +161,13 @@ void PluginDocument::setPluginElement(PassRefPtr<HTMLPlugInElement> element)
     m_pluginElement = element;
 }
 
-void PluginDocument::detach(const AttachContext& context)
+void PluginDocument::detach()
 {
     // Release the plugin Element so that we don't have a circular reference.
     m_pluginElement = 0;
     if (FrameLoader* loader = frame()->loader())
         loader->client()->redirectDataToPlugin(0);
-    HTMLDocument::detach(context);
+    Document::detach();
 }
 
 void PluginDocument::cancelManualPluginLoad()

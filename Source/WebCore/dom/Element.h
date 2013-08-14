@@ -411,8 +411,23 @@ public:
 
     virtual void copyNonAttributePropertiesFromElement(const Element&) { }
 
-    virtual void attach(const AttachContext& = AttachContext()) OVERRIDE;
-    virtual void detach(const AttachContext& = AttachContext()) OVERRIDE;
+    struct AttachContext {
+        RenderStyle* resolvedStyle;
+        bool performingReattach;
+
+        AttachContext() : resolvedStyle(0), performingReattach(false) { }
+    };
+    virtual void attach(const AttachContext& = AttachContext());
+    virtual void detach(const AttachContext& = AttachContext());
+    void reattach(const AttachContext& = AttachContext());
+    void reattachIfAttached(const AttachContext& = AttachContext());
+    enum ShouldSetAttached {
+        SetAttached,
+        DoNotSetAttached
+    };
+    void lazyAttach(ShouldSetAttached = SetAttached);
+    void lazyReattach(ShouldSetAttached = SetAttached);
+
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
     virtual bool rendererIsNeeded(const NodeRenderingContext&);
     void didAffectSelector(AffectedSelectorMask);
@@ -771,6 +786,9 @@ private:
 
     void detachAllAttrNodesFromElement();
     void detachAttrNodeFromElementWithValue(Attr*, const AtomicString& value);
+
+    void attachChildren(const AttachContext&);
+    void detachChildren(const AttachContext&);
 
     void createRendererIfNeeded(const AttachContext&);
 

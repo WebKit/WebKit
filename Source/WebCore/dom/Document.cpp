@@ -1978,7 +1978,7 @@ void Document::clearStyleResolver()
     m_styleResolver.clear();
 }
 
-void Document::attach(const AttachContext& context)
+void Document::attach()
 {
     ASSERT(!attached());
     ASSERT(!m_inPageCache);
@@ -1998,12 +1998,15 @@ void Document::attach(const AttachContext& context)
     RenderObject* render = renderer();
     setRenderer(0);
 
-    ContainerNode::attach(context);
+    Element::AttachContext attachContext;
+    for (Element* child = ElementTraversal::firstWithin(this); child; child = ElementTraversal::nextSibling(child))
+        child->attach(attachContext);
 
     setRenderer(render);
+    setAttached(true);
 }
 
-void Document::detach(const AttachContext& context)
+void Document::detach()
 {
     ASSERT(attached());
     ASSERT(!m_inPageCache);
@@ -2054,7 +2057,12 @@ void Document::detach(const AttachContext& context)
     m_focusedElement = 0;
     m_activeElement = 0;
 
-    ContainerNode::detach(context);
+    Element::AttachContext attachContext;
+    for (Element* child = ElementTraversal::firstWithin(this); child; child = ElementTraversal::nextSibling(child))
+        child->detach(attachContext);
+
+    clearChildNeedsStyleRecalc();
+    setAttached(false);
 
     unscheduleStyleRecalc();
 
@@ -3270,8 +3278,6 @@ bool Document::setFocusedElement(PassRefPtr<Element> prpNewFocusedElement, Focus
 
     // Remove focus from the existing focus node (if any)
     if (oldFocusedElement) {
-        ASSERT(!oldFocusedElement->inDetach());
-
         if (oldFocusedElement->active())
             oldFocusedElement->setActive(false);
 

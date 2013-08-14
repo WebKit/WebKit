@@ -44,7 +44,7 @@ public:
     Widget* pluginWidget();
     HTMLPlugInElement* pluginElement() { return m_pluginElement.get(); }
 
-    virtual void detach(const AttachContext& = AttachContext()) OVERRIDE;
+    virtual void detach() OVERRIDE;
 
     void cancelManualPluginLoad();
 

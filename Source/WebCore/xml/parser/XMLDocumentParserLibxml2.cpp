@@ -1010,8 +1010,6 @@ void XMLDocumentParser::processingInstruction(const xmlChar* target, const xmlCh
     pi->setCreatedByParser(true);
 
     m_currentNode->parserAppendChild(pi.get());
-    if (m_view && !pi->attached())
-        pi->attach();
 
     pi->finishParsingChildren();
 
@@ -1039,7 +1037,7 @@ void XMLDocumentParser::cdataBlock(const xmlChar* s, int len)
     RefPtr<CDATASection> newNode = CDATASection::create(m_currentNode->document(), toString(s, len));
     m_currentNode->parserAppendChild(newNode.get());
     if (m_view && !newNode->attached())
-        newNode->attach();
+        newNode->attachText();
 }
 
 void XMLDocumentParser::comment(const xmlChar* s)
@@ -1056,8 +1054,6 @@ void XMLDocumentParser::comment(const xmlChar* s)
 
     RefPtr<Comment> newNode = Comment::create(m_currentNode->document(), toString(s));
     m_currentNode->parserAppendChild(newNode.get());
-    if (m_view && !newNode->attached())
-        newNode->attach();
 }
 
 enum StandaloneInfo {

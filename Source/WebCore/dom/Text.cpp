@@ -55,6 +55,12 @@ PassRefPtr<Text> Text::createEditingText(Document* document, const String& data)
     return adoptRef(new Text(document, data, CreateEditingText));
 }
 
+Text::~Text()
+{
+    if (renderer())
+        detachText();
+}
+
 PassRefPtr<Text> Text::splitText(unsigned offset, ExceptionCode& ec)
 {
     ec = 0;
@@ -276,10 +282,49 @@ RenderText* Text::createTextRenderer(RenderArena* arena, RenderStyle* style)
     return new (arena) RenderText(this, dataImpl());
 }
 
-void Text::attach(const AttachContext& context)
+void Text::createTextRenderersForSiblingsAfterAttachIfNeeded(Node* sibling)
+{
+    ASSERT(sibling->previousSibling());
+    ASSERT(sibling->previousSibling()->renderer());
+    ASSERT(!sibling->renderer());
+    ASSERT(sibling->attached());
+    // If this node got a renderer it may be the previousRenderer() of sibling text nodes and thus affect the
+    // result of Text::textRendererIsNeeded() for those nodes.
+    for (; sibling; sibling = sibling->nextSibling()) {
+        if (sibling->renderer())
+            break;
+        if (!sibling->attached())
+            break; // Assume this means none of the following siblings are attached.
+        if (!sibling->isTextNode())
+            continue;
+        ASSERT(!sibling->renderer());
+        toText(sibling)->createTextRendererIfNeeded();
+        // If we again decided not to create a renderer for next, we can bail out the loop,
+        // because it won't affect the result of Text::textRendererIsNeeded() for the rest
+        // of sibling nodes.
+        if (!sibling->renderer())
+            break;
+    }
+}
+
+void Text::attachText()
 {
     createTextRendererIfNeeded();
-    CharacterData::attach(context);
+
+    Node* sibling = nextSibling();
+    if (renderer() && sibling && !sibling->renderer() && sibling->attached())
+        createTextRenderersForSiblingsAfterAttachIfNeeded(sibling);
+
+    setAttached(true);
+    clearNeedsStyleRecalc();
+}
+
+void Text::detachText()
+{
+    if (renderer())
+        renderer()->destroyAndCleanupAnonymousWrappers();
+    setRenderer(0);
+    setAttached(false);
 }
 
 void Text::updateTextRenderer(unsigned offsetOfReplacedData, unsigned lengthOfReplacedData)
@@ -288,12 +333,14 @@ void Text::updateTextRenderer(unsigned offsetOfReplacedData, unsigned lengthOfRe
         return;
     RenderText* textRenderer = toRenderText(renderer());
     if (!textRenderer) {
-        reattach();
+        attachText();
         return;
     }
     NodeRenderingContext renderingContext(this, textRenderer->style());
     if (!textRendererIsNeeded(renderingContext)) {
-        reattach();
+        if (attached())
+            detachText();
+        attachText();
         return;
     }
     textRenderer->setTextWithOffset(dataImpl(), offsetOfReplacedData, lengthOfReplacedData);

@@ -38,6 +38,8 @@ public:
     static PassRefPtr<Text> createWithLengthLimit(Document*, const String&, unsigned positionInString, unsigned lengthLimit = defaultLengthLimit);
     static PassRefPtr<Text> createEditingText(Document*, const String&);
 
+    virtual ~Text();
+
     PassRefPtr<Text> splitText(unsigned offset, ExceptionCode&);
 
     // DOM Level 3: http://www.w3.org/TR/DOM-Level-3-Core/core.html#ID-1312295772
@@ -50,7 +52,10 @@ public:
     RenderText* createTextRenderer(RenderArena*, RenderStyle*);
     void updateTextRenderer(unsigned offsetOfReplacedData, unsigned lengthOfReplacedData);
 
-    virtual void attach(const AttachContext& = AttachContext()) OVERRIDE FINAL;
+    void attachText();
+    void detachText();
+
+    static void createTextRenderersForSiblingsAfterAttachIfNeeded(Node*);
     
     virtual bool canContainRangeEndPoint() const OVERRIDE FINAL { return true; }
 

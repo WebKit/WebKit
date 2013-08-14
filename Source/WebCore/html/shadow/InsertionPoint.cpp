@@ -36,6 +36,7 @@
 #include "QualifiedName.h"
 #include "ShadowRoot.h"
 #include "StaticNodeList.h"
+#include "Text.h"
 
 namespace WebCore {
 
@@ -56,10 +57,15 @@ void InsertionPoint::attach(const AttachContext& context)
     if (ShadowRoot* shadowRoot = containingShadowRoot())
         ContentDistributor::ensureDistribution(shadowRoot);
     for (Node* current = firstDistributed(); current; current = nextDistributedTo(current)) {
-        if (!current->attached())
-            current->attach(context);
+        if (current->attached())
+            continue;
+        if (current->isTextNode()) {
+            toText(current)->attachText();
+            continue;
+        }
+        if (current->isElementNode())
+            toElement(current)->attach(context);
     }
-
     HTMLElement::attach(context);
 }
 
@@ -68,9 +74,14 @@ void InsertionPoint::detach(const AttachContext& context)
     if (ShadowRoot* shadowRoot = containingShadowRoot())
         ContentDistributor::ensureDistribution(shadowRoot);
 
-    for (Node* current = firstDistributed(); current; current = nextDistributedTo(current))
-        current->detach(context);
-
+    for (Node* current = firstDistributed(); current; current = nextDistributedTo(current)) {
+        if (current->isTextNode()) {
+            toText(current)->detachText();
+            continue;
+        }
+        if (current->isElementNode())
+            toElement(current)->detach(context);
+    }
     HTMLElement::detach(context);
 }
 

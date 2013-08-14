@@ -56,8 +56,8 @@ public:
 
     ShadowRoot* addShadowRoot(Element* shadowHost, ShadowRoot::ShadowRootType);
 
-    void attach(const Node::AttachContext&);
-    void detach(const Node::AttachContext&);
+    void attach(const Element::AttachContext&);
+    void detach(const Element::AttachContext&);
 
     bool childNeedsStyleRecalc() const;
     bool needsStyleRecalc() const;

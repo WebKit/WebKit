@@ -255,9 +255,9 @@ void HTMLViewSourceDocument::addText(const String& text, const AtomicString& cla
             finishLine();
             continue;
         }
-        RefPtr<Text> t = Text::create(this, substring);
-        m_current->parserAppendChild(t);
-        t->attach();
+        RefPtr<Text> text = Text::create(this, substring);
+        m_current->parserAppendChild(text);
+        text->attachText();
         if (i < size - 1)
             finishLine();
     }

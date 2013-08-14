@@ -69,7 +69,8 @@ public:
 
     Element* activeElement() const;
 
-    virtual void attach(const AttachContext& = AttachContext()) OVERRIDE;
+    void attach(const Element::AttachContext&);
+    void detach(const Element::AttachContext&);
 
     virtual void registerScopedHTMLStyleChild() OVERRIDE;
     virtual void unregisterScopedHTMLStyleChild() OVERRIDE;

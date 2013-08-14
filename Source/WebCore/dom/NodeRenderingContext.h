@@ -47,7 +47,7 @@ class NodeRenderingContext {
 public:
     explicit NodeRenderingContext(Node*);
     NodeRenderingContext(Node*, RenderStyle*);
-    NodeRenderingContext(Node*, const Node::AttachContext&);
+    NodeRenderingContext(Node*, const Element::AttachContext&);
     ~NodeRenderingContext();
 
     void createRendererForTextIfNeeded();

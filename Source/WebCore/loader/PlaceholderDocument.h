@@ -37,7 +37,7 @@ public:
         return adoptRef(new PlaceholderDocument(frame, url));
     }
 
-    virtual void attach(const AttachContext& = AttachContext()) OVERRIDE;
+    virtual void attach();
 
 private:
     PlaceholderDocument(Frame* frame, const KURL& url)

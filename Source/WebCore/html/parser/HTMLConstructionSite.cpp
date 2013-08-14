@@ -99,8 +99,12 @@ static inline void executeTask(HTMLConstructionSiteTask& task)
     // JavaScript run from beforeload (or DOM Mutation or event handlers)
     // might have removed the child, in which case we should not attach it.
 
-    if (task.child->parentNode() && task.parent->attached() && !task.child->attached())
-        task.child->attach();
+    if (task.child->parentNode() && task.parent->attached() && !task.child->attached()) {
+        if (task.child->isElementNode())
+            toElement(task.child.get())->attach();
+        else if (task.child->isTextNode())
+            toText(task.child.get())->attachText();
+    }
 
     task.child->beginParsingChildren();
 

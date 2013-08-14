@@ -1,3 +1,126 @@
+2013-08-13  Antti Koivisto  <antti@apple.com>
+
+        Remove Node::attach() and ContainerNode::attach()
+        https://bugs.webkit.org/show_bug.cgi?id=119698
+
+        Reviewed by Andreas Kling.
+
+        Currently attach() is a virtual function on Node. However only Elements have style and so a corresponding 
+        independent render object. Attaching should be made Element level concept.
+        
+        This patch merges Node::attach() and ContainerNode::attach() to Element::attach(). Other related functions
+        (detach(), reattach(), etc) move similarly.
+        
+        Next step here is to make attach non-virtual in common case and move it out from the DOM tree.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::attachChild):
+        (WebCore::detachChild):
+        
+            Temporary helpers. Further refactoring should get rid of these.
+
+        (WebCore::ContainerNode::takeAllChildrenFrom):
+        (WebCore::ContainerNode::removeBetween):
+        (WebCore::updateTreeAfterInsertion):
+        * dom/ContainerNode.h:
+        * dom/Document.cpp:
+        (WebCore::Document::attach):
+        (WebCore::Document::detach):
+        
+            Copy the relevant parts of the code from base class attach/detach here. It is not much.
+
+        * dom/Document.h:
+        * dom/Element.cpp:
+        (WebCore::Element::~Element):
+        
+            Node destructor no longer detaches.
+
+        (WebCore::Element::attachChildren):
+        (WebCore::Element::attach):
+        
+            Combine Node::attach(), ContainerNode::attach() and Element::attach().
+
+        (WebCore::Element::detachChildren):
+        (WebCore::Element::detach):
+        
+            Combine Node::detach(), ContainerNode::detach() and Element::detach().
+
+        (WebCore::Element::reattach):
+        (WebCore::Element::reattachIfAttached):
+        (WebCore::Element::lazyReattach):
+        (WebCore::Element::lazyAttach):
+        
+            This stuff moves from ContainerNode/Node.
+
+        * dom/Element.h:
+        (WebCore::Element::AttachContext::AttachContext):
+        * dom/ElementShadow.cpp:
+        (WebCore::ElementShadow::removeShadowRoot):
+        (WebCore::ElementShadow::attach):
+        (WebCore::ElementShadow::detach):
+        * dom/ElementShadow.h:
+        * dom/Node.cpp:
+        (WebCore::Node::~Node):
+        
+            Assert that we are not attached at this point.
+
+        (WebCore::Node::markAncestorsWithChildNeedsStyleRecalc):
+        * dom/Node.h:
+        (WebCore::Node::setAttached):
+        (WebCore::Node::setStyleChange):
+        
+            Make available.
+
+        * dom/NodeRenderingContext.cpp:
+        (WebCore::NodeRenderingContext::NodeRenderingContext):
+        * dom/NodeRenderingContext.h:
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::attach):
+        (WebCore::ShadowRoot::detach):
+        * dom/ShadowRoot.h:
+        * dom/Text.cpp:
+        (WebCore::Text::~Text):
+        
+            Node destructor no longer detaches. Add destructor.
+
+        (WebCore::Text::createTextRenderersForSiblingsAfterAttachIfNeeded):
+        
+            Factor the code that updates sibling text renderers after attach into a function.
+
+        (WebCore::Text::attachText):
+        (WebCore::Text::detachText):
+        
+            Text::attachText/detachText replace virtual Node::attach/detach. They do the part of the work text nodes actually ended up doing.
+
+        (WebCore::Text::updateTextRenderer):
+        * dom/Text.h:
+        * html/HTMLViewSourceDocument.cpp:
+        (WebCore::HTMLViewSourceDocument::addText):
+        * html/PluginDocument.cpp:
+        (WebCore::PluginDocument::detach):
+        * html/PluginDocument.h:
+        * html/parser/HTMLConstructionSite.cpp:
+        (WebCore::executeTask):
+        * html/shadow/ContentDistributor.cpp:
+        (WebCore::ContentDistributor::invalidateDistribution):
+        * html/shadow/InsertionPoint.cpp:
+        (WebCore::InsertionPoint::attach):
+        (WebCore::InsertionPoint::detach):
+        * loader/PlaceholderDocument.cpp:
+        (WebCore::PlaceholderDocument::attach):
+        * loader/PlaceholderDocument.h:
+        * style/StyleResolveTree.cpp:
+        (WebCore::Style::resolveLocal):
+        (WebCore::Style::updateTextStyle):
+        * xml/parser/XMLDocumentParser.cpp:
+        (WebCore::XMLDocumentParser::exitText):
+        * xml/parser/XMLDocumentParserLibxml2.cpp:
+        (WebCore::XMLDocumentParser::processingInstruction):
+        (WebCore::XMLDocumentParser::cdataBlock):
+        (WebCore::XMLDocumentParser::comment):
+        
+            No need to attach non-rendered nodes.
+
 2013-08-14  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         ASSERT(m_frame->view() == this) fails

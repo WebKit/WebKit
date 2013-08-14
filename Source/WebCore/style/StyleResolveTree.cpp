@@ -147,7 +147,7 @@ static Change resolveLocal(Element* current, Change inheritedChange)
         localChange = determineChange(currentStyle.get(), newStyle.get(), document->settings());
     }
     if (localChange == Detach) {
-        Node::AttachContext reattachContext;
+        Element::AttachContext reattachContext;
         reattachContext.resolvedStyle = newStyle.get();
         current->reattach(reattachContext);
         return Detach;
@@ -191,7 +191,7 @@ static void updateTextStyle(Text* text, RenderStyle* parentElementStyle, Style::
     if (renderer)
         renderer->setText(text->dataImpl());
     else
-        text->reattach();
+        text->attachText();
     text->clearNeedsStyleRecalc();
 }
 

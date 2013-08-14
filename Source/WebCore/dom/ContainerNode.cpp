@@ -52,6 +52,7 @@
 #include "ResourceLoadScheduler.h"
 #include "RootInlineBox.h"
 #include "TemplateContentDocumentFragment.h"
+#include "Text.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/Vector.h>
 
@@ -104,6 +105,22 @@ void ContainerNode::removeDetachedChildren()
     removeDetachedChildrenInContainer<Node, ContainerNode>(this);
 }
 
+static inline void attachChild(Node* child)
+{
+    if (child->isElementNode())
+        toElement(child)->attach();
+    else if (child->isTextNode())
+        toText(child)->attachText();
+}
+
+static inline void detachChild(Node* child)
+{
+    if (child->isElementNode())
+        toElement(child)->detach();
+    else if (child->isTextNode())
+        toText(child)->detachText();
+}
+
 void ContainerNode::takeAllChildrenFrom(ContainerNode* oldParent)
 {
     NodeVector children;
@@ -121,17 +138,18 @@ void ContainerNode::takeAllChildrenFrom(ContainerNode* oldParent)
     oldParent->removeDetachedChildren();
 
     for (unsigned i = 0; i < children.size(); ++i) {
-        if (children[i]->attached())
-            children[i]->detach();
+        Node* child = children[i].get();
+        if (child->attached())
+            detachChild(child);
         // FIXME: We need a no mutation event version of adoptNode.
-        RefPtr<Node> child = document()->adoptNode(children[i].release(), ASSERT_NO_EXCEPTION);
-        parserAppendChild(child.get());
+        RefPtr<Node> adoptedChild = document()->adoptNode(children[i].release(), ASSERT_NO_EXCEPTION);
+        parserAppendChild(adoptedChild.get());
         // FIXME: Together with adoptNode above, the tree scope might get updated recursively twice
         // (if the document changed or oldParent was in a shadow tree, AND *this is in a shadow tree).
         // Can we do better?
-        treeScope()->adoptIfNeeded(child.get());
-        if (attached() && !child->attached())
-            child->attach();
+        treeScope()->adoptIfNeeded(adoptedChild.get());
+        if (attached() && !adoptedChild->attached())
+            attachChild(adoptedChild.get());
     }
 }
 
@@ -548,7 +566,7 @@ void ContainerNode::removeBetween(Node* previousChild, Node* nextChild, Node* ol
 
     // Remove from rendering tree
     if (oldChild->attached())
-        oldChild->detach();
+        detachChild(oldChild);
 
     if (nextChild)
         nextChild->setPreviousSibling(previousChild);
@@ -785,19 +803,6 @@ void ContainerNode::scheduleSetNeedsStyleRecalc(StyleChangeType changeType)
         queuePostAttachCallback(needsStyleRecalcCallback, this, static_cast<unsigned>(changeType));
     else
         setNeedsStyleRecalc(changeType);
-}
-
-void ContainerNode::attach(const AttachContext& context)
-{
-    attachChildren(context);
-    Node::attach(context);
-}
-
-void ContainerNode::detach(const AttachContext& context)
-{
-    detachChildren(context);
-    clearChildNeedsStyleRecalc();
-    Node::detach(context);
 }
 
 void ContainerNode::childrenChanged(bool changedByParser, Node*, Node*, int childCountDelta)
@@ -1046,10 +1051,15 @@ static void updateTreeAfterInsertion(ContainerNode* parent, Node* child, AttachB
     // FIXME: Attachment should be the first operation in this function, but some code
     // (for example, HTMLFormControlElement's autofocus support) requires this ordering.
     if (parent->attached() && !child->attached() && child->parentNode() == parent) {
-        if (attachBehavior == AttachLazily)
-            child->lazyAttach();
-        else
-            child->attach();
+        if (attachBehavior == AttachLazily) {
+            if (child->isElementNode())
+                toElement(child)->lazyAttach();
+            else if (child->isTextNode()) {
+                child->setAttached(true);
+                child->setNeedsStyleRecalc();
+            }
+        } else
+            attachChild(child);
     }
 
     dispatchChildInsertionEvents(child);

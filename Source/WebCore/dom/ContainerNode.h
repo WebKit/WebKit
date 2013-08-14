@@ -106,8 +106,6 @@ public:
 
     void cloneChildNodes(ContainerNode* clone);
 
-    virtual void attach(const AttachContext& = AttachContext()) OVERRIDE;
-    virtual void detach(const AttachContext& = AttachContext()) OVERRIDE;
     virtual LayoutRect boundingBox() const OVERRIDE;
     virtual void scheduleSetNeedsStyleRecalc(StyleChangeType = FullStyleChange) OVERRIDE FINAL;
 
@@ -141,9 +139,6 @@ protected:
 private:
     void removeBetween(Node* previousChild, Node* nextChild, Node* oldChild);
     void insertBeforeCommon(Node* nextChild, Node* oldChild);
-
-    void attachChildren(const AttachContext& = AttachContext());
-    void detachChildren(const AttachContext& = AttachContext());
 
     static void dispatchPostAttachCallbacks();
     void suspendPostAttachCallbacks();
@@ -180,27 +175,6 @@ inline ContainerNode::ContainerNode(Document* document, ConstructionType type)
     , m_firstChild(0)
     , m_lastChild(0)
 {
-}
-
-inline void ContainerNode::attachChildren(const AttachContext& context)
-{
-    AttachContext childrenContext(context);
-    childrenContext.resolvedStyle = 0;
-
-    for (Node* child = firstChild(); child; child = child->nextSibling()) {
-        ASSERT(!child->attached() || childAttachedAllowedWhenAttachingChildren(this));
-        if (!child->attached())
-            child->attach(childrenContext);
-    }
-}
-
-inline void ContainerNode::detachChildren(const AttachContext& context)
-{
-    AttachContext childrenContext(context);
-    childrenContext.resolvedStyle = 0;
-
-    for (Node* child = firstChild(); child; child = child->nextSibling())
-        child->detach(childrenContext);
 }
 
 inline unsigned Node::childNodeCount() const

@@ -66,7 +66,7 @@ void ElementShadow::removeShadowRoot()
         shadowHost->document()->removeFocusedNodeOfSubtree(oldRoot.get());
 
         if (oldRoot->attached())
-            oldRoot->detach();
+            oldRoot->detach(Element::AttachContext());
 
         m_shadowRoot = 0;
         oldRoot->setParentOrShadowHostNode(0);
@@ -77,11 +77,11 @@ void ElementShadow::removeShadowRoot()
     m_distributor.invalidateDistribution(shadowHost);
 }
 
-void ElementShadow::attach(const Node::AttachContext& context)
+void ElementShadow::attach(const Element::AttachContext& context)
 {
     ContentDistributor::ensureDistribution(shadowRoot());
 
-    Node::AttachContext childrenContext(context);
+    Element::AttachContext childrenContext(context);
     childrenContext.resolvedStyle = 0;
 
     if (ShadowRoot* root = shadowRoot()) {
@@ -90,9 +90,9 @@ void ElementShadow::attach(const Node::AttachContext& context)
     }
 }
 
-void ElementShadow::detach(const Node::AttachContext& context)
+void ElementShadow::detach(const Element::AttachContext& context)
 {
-    Node::AttachContext childrenContext(context);
+    Element::AttachContext childrenContext(context);
     childrenContext.resolvedStyle = 0;
 
     if (ShadowRoot* root = shadowRoot()) {

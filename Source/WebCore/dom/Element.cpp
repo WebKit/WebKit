@@ -186,6 +186,9 @@ Element::~Element()
         ASSERT(!hasPendingResources());
     }
 #endif
+
+    if (renderer())
+        detach();
 }
 
 inline ElementRareData* Element::elementRareData() const
@@ -1390,6 +1393,25 @@ void Element::createRendererIfNeeded(const AttachContext& context)
     NodeRenderingContext(this, context).createRendererForElementIfNeeded();
 }
 
+void Element::attachChildren(const AttachContext& context)
+{
+    AttachContext childrenContext(context);
+    childrenContext.resolvedStyle = 0;
+
+    for (Node* child = firstChild(); child; child = child->nextSibling()) {
+        ASSERT(!child->attached() || childAttachedAllowedWhenAttachingChildren(this));
+        if (child->attached())
+            continue;
+        if (child->isTextNode()) {
+            toText(child)->attachText();
+            continue;
+        }
+        if (!child->isElementNode())
+            continue;
+        toElement(child)->attach(childrenContext);
+    }
+}
+
 void Element::attach(const AttachContext& context)
 {
     PostAttachCallbackDisabler callbackDisabler(this);
@@ -1410,7 +1432,19 @@ void Element::attach(const AttachContext& context)
     } else if (firstChild())
         parentPusher.push();
 
-    ContainerNode::attach(context);
+    attachChildren(context);
+
+    Node* sibling = nextSibling();
+    if (renderer() && sibling && !sibling->renderer() && sibling->attached())
+        Text::createTextRenderersForSiblingsAfterAttachIfNeeded(sibling);
+
+    setAttached(true);
+    clearNeedsStyleRecalc();
+
+    if (Document* doc = documentInternal()) {
+        if (AXObjectCache* cache = doc->axObjectCache())
+            cache->updateCacheAfterNodeIsAttached(this);
+    }
 
     updatePseudoElement(AFTER);
 
@@ -1428,6 +1462,22 @@ void Element::unregisterNamedFlowContentNode()
 {
     if (document()->cssRegionsEnabled() && inNamedFlow() && document()->renderView())
         document()->renderView()->flowThreadController()->unregisterNamedFlowContentNode(this);
+}
+
+void Element::detachChildren(const AttachContext& context)
+{
+    AttachContext childrenContext(context);
+    childrenContext.resolvedStyle = 0;
+
+    for (Node* child = firstChild(); child; child = child->nextSibling()) {
+        if (child->isTextNode()) {
+            toText(child)->detachText();
+            continue;
+        }
+        if (child->isElementNode())
+            toElement(child)->detach(childrenContext);
+    }
+    clearChildNeedsStyleRecalc();
 }
 
 void Element::detach(const AttachContext& context)
@@ -1460,7 +1510,54 @@ void Element::detach(const AttachContext& context)
         }
     }
 
-    ContainerNode::detach(context);
+    detachChildren(context);
+
+    if (renderer())
+        renderer()->destroyAndCleanupAnonymousWrappers();
+    setRenderer(0);
+
+    setAttached(false);
+}
+
+void Element::reattach(const AttachContext& context)
+{
+    AttachContext reattachContext(context);
+    reattachContext.performingReattach = true;
+
+    if (attached())
+        detach(reattachContext);
+    attach(reattachContext);
+}
+
+void Element::reattachIfAttached(const AttachContext& context)
+{
+    if (attached())
+        reattach(context);
+}
+
+void Element::lazyReattach(ShouldSetAttached shouldSetAttached)
+{
+    AttachContext context;
+    context.performingReattach = true;
+
+    if (attached())
+        detach(context);
+    lazyAttach(shouldSetAttached);
+}
+
+void Element::lazyAttach(ShouldSetAttached shouldSetAttached)
+{
+    for (Node* node = this; node; node = NodeTraversal::next(node, this)) {
+        if (!node->isTextNode() && !node->isElementNode())
+            continue;
+        if (node->hasChildNodes())
+            node->setChildNeedsStyleRecalc();
+        if (node->isElementNode())
+            toElement(node)->setStyleChange(FullStyleChange);
+        if (shouldSetAttached == SetAttached)
+            node->setAttached(true);
+    }
+    markAncestorsWithChildNeedsStyleRecalc();
 }
 
 PassRefPtr<RenderStyle> Element::styleForRenderer()
