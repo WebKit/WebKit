@@ -1,3 +1,14 @@
+2013-08-14  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] [CMake] Add support for building TestWebKitAPI
+        https://bugs.webkit.org/show_bug.cgi?id=116987
+
+        Reviewed by Philippe Normand.
+
+        * TestWebKitAPI/CMakeLists.txt: Move the library listings to before the inclusion of the
+        platform-specific file, so that GTK+ can override them.
+        * TestWebKitAPI/PlatformGTK.cmake: Added.
+
 2013-08-14  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Simplify Setting WebKit Debugging Options in WinLauncher
