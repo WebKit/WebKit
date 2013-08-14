@@ -338,6 +338,8 @@ public:
 
     SH4Assembler()
         : m_claimscratchReg(0x0)
+        , m_indexOfLastWatchpoint(INT_MIN)
+        , m_indexOfTailOfLastWatchpoint(INT_MIN)
     {
     }
 
@@ -1300,10 +1302,25 @@ public:
         return m_buffer.label();
     }
 
-    AssemblerLabel label()
+    AssemblerLabel labelForWatchpoint()
     {
         m_buffer.ensureSpaceForAnyInstruction();
-        return m_buffer.label();
+        AssemblerLabel result = m_buffer.label();
+        if (static_cast<int>(result.m_offset) != m_indexOfLastWatchpoint)
+            result = label();
+        m_indexOfLastWatchpoint = result.m_offset;
+        m_indexOfTailOfLastWatchpoint = result.m_offset + maxJumpReplacementSize();
+        return result;
+    }
+
+    AssemblerLabel label()
+    {
+        AssemblerLabel result = labelIgnoringWatchpoints();
+        while (UNLIKELY(static_cast<int>(result.m_offset) < m_indexOfTailOfLastWatchpoint)) {
+            nop();
+            result = labelIgnoringWatchpoints();
+        }
+        return result;
     }
 
     int sizeOfConstantPool()
@@ -1689,6 +1706,8 @@ public:
 
     void* data() const { return m_buffer.data(); }
     size_t codeSize() const { return m_buffer.codeSize(); }
+
+    unsigned debugOffset() { return m_buffer.debugOffset(); }
 
 #ifdef SH4_ASSEMBLER_TRACING
     static void printInstr(uint16_t opc, unsigned size, bool isdoubleInst = true)
@@ -2223,6 +2242,8 @@ public:
 private:
     SH4Buffer m_buffer;
     int m_claimscratchReg;
+    int m_indexOfLastWatchpoint;
+    int m_indexOfTailOfLastWatchpoint;
 };
 
 } // namespace JSC

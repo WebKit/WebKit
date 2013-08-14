@@ -759,12 +759,8 @@
 #if CPU(ARM_THUMB2) && (PLATFORM(IOS) || PLATFORM(BLACKBERRY) || PLATFORM(QT))
 #define ENABLE_DFG_JIT 1
 #endif
-/* Enable the DFG JIT on ARM. */
-#if CPU(ARM_TRADITIONAL)
-#define ENABLE_DFG_JIT 1
-#endif
-/* Enable the DFG JIT on MIPS. */
-#if CPU(MIPS)
+/* Enable the DFG JIT on ARM, MIPS and SH4. */
+#if CPU(ARM_TRADITIONAL) || CPU(MIPS) || CPU(SH4)
 #define ENABLE_DFG_JIT 1
 #endif
 #endif

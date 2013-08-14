@@ -1,3 +1,62 @@
+2013-08-14  Julien Brianceau  <jbrianceau@nds.com>
+
+        DFG_JIT implementation for sh4 architecture.
+        https://bugs.webkit.org/show_bug.cgi?id=119737
+
+        Reviewed by Oliver Hunt.
+
+        * assembler/MacroAssemblerSH4.h:
+        (JSC::MacroAssemblerSH4::invert):
+        (JSC::MacroAssemblerSH4::add32):
+        (JSC::MacroAssemblerSH4::and32):
+        (JSC::MacroAssemblerSH4::lshift32):
+        (JSC::MacroAssemblerSH4::mul32):
+        (JSC::MacroAssemblerSH4::or32):
+        (JSC::MacroAssemblerSH4::rshift32):
+        (JSC::MacroAssemblerSH4::sub32):
+        (JSC::MacroAssemblerSH4::xor32):
+        (JSC::MacroAssemblerSH4::store32):
+        (JSC::MacroAssemblerSH4::swapDouble):
+        (JSC::MacroAssemblerSH4::storeDouble):
+        (JSC::MacroAssemblerSH4::subDouble):
+        (JSC::MacroAssemblerSH4::mulDouble):
+        (JSC::MacroAssemblerSH4::divDouble):
+        (JSC::MacroAssemblerSH4::negateDouble):
+        (JSC::MacroAssemblerSH4::zeroExtend32ToPtr):
+        (JSC::MacroAssemblerSH4::branchTruncateDoubleToUint32):
+        (JSC::MacroAssemblerSH4::truncateDoubleToUint32):
+        (JSC::MacroAssemblerSH4::swap):
+        (JSC::MacroAssemblerSH4::jump):
+        (JSC::MacroAssemblerSH4::branchNeg32):
+        (JSC::MacroAssemblerSH4::branchAdd32):
+        (JSC::MacroAssemblerSH4::branchMul32):
+        (JSC::MacroAssemblerSH4::urshift32):
+        * assembler/SH4Assembler.h:
+        (JSC::SH4Assembler::SH4Assembler):
+        (JSC::SH4Assembler::labelForWatchpoint):
+        (JSC::SH4Assembler::label):
+        (JSC::SH4Assembler::debugOffset):
+        * dfg/DFGAssemblyHelpers.h:
+        (JSC::DFG::AssemblyHelpers::preserveReturnAddressAfterCall):
+        (JSC::DFG::AssemblyHelpers::restoreReturnAddressBeforeReturn):
+        (JSC::DFG::AssemblyHelpers::debugCall):
+        * dfg/DFGCCallHelpers.h:
+        (JSC::DFG::CCallHelpers::setupArguments):
+        (JSC::DFG::CCallHelpers::setupArgumentsWithExecState):
+        * dfg/DFGFPRInfo.h:
+        (JSC::DFG::FPRInfo::toRegister):
+        (JSC::DFG::FPRInfo::toIndex):
+        (JSC::DFG::FPRInfo::debugName):
+        * dfg/DFGGPRInfo.h:
+        (JSC::DFG::GPRInfo::toRegister):
+        (JSC::DFG::GPRInfo::toIndex):
+        (JSC::DFG::GPRInfo::debugName):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * jit/JITStubs.h:
+        * jit/JITStubsSH4.h:
+
 2013-08-13  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, fix build.

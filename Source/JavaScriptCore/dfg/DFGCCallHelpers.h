@@ -609,6 +609,37 @@ public:
         move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
         poke(arg3, 4);
     }
+#elif CPU(SH4)
+    ALWAYS_INLINE void setupArguments(FPRReg arg1)
+    {
+        moveDouble(arg1, FPRInfo::argumentFPR0);
+    }
+
+    ALWAYS_INLINE void setupArguments(FPRReg arg1, FPRReg arg2)
+    {
+        if (arg2 != FPRInfo::argumentFPR0) {
+            moveDouble(arg1, FPRInfo::argumentFPR0);
+            moveDouble(arg2, FPRInfo::argumentFPR1);
+        } else if (arg1 != FPRInfo::argumentFPR1) {
+            moveDouble(arg2, FPRInfo::argumentFPR1);
+            moveDouble(arg1, FPRInfo::argumentFPR0);
+        } else
+            swapDouble(FPRInfo::argumentFPR0, FPRInfo::argumentFPR1);
+    }
+
+    ALWAYS_INLINE void setupArgumentsWithExecState(FPRReg arg1, GPRReg arg2)
+    {
+        moveDouble(arg1, FPRInfo::argumentFPR0);
+        move(arg2, GPRInfo::argumentGPR1);
+        move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
+    }
+
+    ALWAYS_INLINE void setupArgumentsWithExecState(GPRReg arg1, GPRReg arg2, FPRReg arg3)
+    {
+        moveDouble(arg3, FPRInfo::argumentFPR0);
+        setupStubArguments(arg1, arg2);
+        move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
+    }
 #else
 #error "DFG JIT not supported on this platform."
 #endif
@@ -870,6 +901,13 @@ public:
 
     ALWAYS_INLINE void setupArgumentsWithExecState(GPRReg arg1, GPRReg arg2, TrustedImm32 arg3, TrustedImm32 arg4)
     {
+        poke(arg4, POKE_ARGUMENT_OFFSET);
+        setupArgumentsWithExecState(arg1, arg2, arg3);
+    }
+
+    ALWAYS_INLINE void setupArgumentsWithExecState(GPRReg arg1, GPRReg arg2, TrustedImm32 arg3, TrustedImm32 arg4, TrustedImm32 arg5)
+    {
+        poke(arg5, POKE_ARGUMENT_OFFSET + 1);
         poke(arg4, POKE_ARGUMENT_OFFSET);
         setupArgumentsWithExecState(arg1, arg2, arg3);
     }

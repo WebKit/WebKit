@@ -111,6 +111,23 @@ public:
     }
 #endif
 
+#if CPU(SH4)
+    ALWAYS_INLINE void preserveReturnAddressAfterCall(RegisterID reg)
+    {
+        m_assembler.stspr(reg);
+    }
+
+    ALWAYS_INLINE void restoreReturnAddressBeforeReturn(RegisterID reg)
+    {
+        m_assembler.ldspr(reg);
+    }
+
+    ALWAYS_INLINE void restoreReturnAddressBeforeReturn(Address address)
+    {
+        loadPtrLinkReg(address);
+    }
+#endif
+
     void emitGetFromCallFrameHeaderPtr(JSStack::CallFrameHeaderEntry entry, GPRReg to)
     {
         loadPtr(Address(GPRInfo::callFrameRegister, entry * sizeof(Register)), to);
@@ -211,11 +228,11 @@ public:
         move(TrustedImmPtr(scratchBuffer->activeLengthPtr()), GPRInfo::regT0);
         storePtr(TrustedImmPtr(scratchSize), GPRInfo::regT0);
 
-#if CPU(X86_64) || CPU(ARM) || CPU(MIPS)
+#if CPU(X86_64) || CPU(ARM) || CPU(MIPS) || CPU(SH4)
         move(TrustedImmPtr(buffer), GPRInfo::argumentGPR2);
         move(TrustedImmPtr(argument), GPRInfo::argumentGPR1);
         move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
-        GPRReg scratch = selectScratchGPR(GPRInfo::argumentGPR0, GPRInfo::argumentGPR1);
+        GPRReg scratch = selectScratchGPR(GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, GPRInfo::argumentGPR2);
 #elif CPU(X86)
         poke(GPRInfo::callFrameRegister, 0);
         poke(TrustedImmPtr(argument), 1);

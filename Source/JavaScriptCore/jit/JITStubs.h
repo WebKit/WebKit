@@ -267,6 +267,8 @@ struct JITStackFrame {
 
     ReturnAddressPtr thunkReturnAddress;
 
+    void* savedR8;
+    void* savedR9;
     void* savedR10;
     void* savedR11;
     void* savedR13;

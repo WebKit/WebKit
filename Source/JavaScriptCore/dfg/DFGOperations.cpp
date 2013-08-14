@@ -262,6 +262,53 @@
         "b " LOCAL_REFERENCE(function) "WithReturnAddress" "\n" \
     );
 
+#elif COMPILER(GCC) && CPU(SH4)
+
+#define SH4_SCRATCH_REGISTER "r11"
+
+#define FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_E(function) \
+    asm( \
+    ".text" "\n" \
+    ".globl " SYMBOL_STRING(function) "\n" \
+    HIDE_SYMBOL(function) "\n" \
+    SYMBOL_STRING(function) ":" "\n" \
+        "sts pr, r5" "\n" \
+        "bra " LOCAL_REFERENCE(function) "WithReturnAddress" "\n" \
+        "nop" "\n" \
+    );
+
+#define FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_ECI(function) \
+    asm( \
+    ".text" "\n" \
+    ".globl " SYMBOL_STRING(function) "\n" \
+    HIDE_SYMBOL(function) "\n" \
+    SYMBOL_STRING(function) ":" "\n" \
+        "sts pr, r7" "\n" \
+        "mov.l 2f, " SH4_SCRATCH_REGISTER "\n" \
+        "braf " SH4_SCRATCH_REGISTER "\n" \
+        "nop" "\n" \
+        "1: .balign 4" "\n" \
+        "2: .long " LOCAL_REFERENCE(function) "WithReturnAddress-1b" "\n" \
+    );
+
+#define FUNCTION_WRAPPER_WITH_RETURN_ADDRESS(function, offset, scratch) \
+    asm( \
+    ".text" "\n" \
+    ".globl " SYMBOL_STRING(function) "\n" \
+    HIDE_SYMBOL(function) "\n" \
+    SYMBOL_STRING(function) ":" "\n" \
+        "sts pr, " scratch "\n" \
+        "mov.l " scratch ", @(" STRINGIZE(offset) ", r15)" "\n" \
+        "mov.l 2f, " scratch "\n" \
+        "braf " scratch "\n" \
+        "nop" "\n" \
+        "1: .balign 4" "\n" \
+        "2: .long " LOCAL_REFERENCE(function) "WithReturnAddress-1b" "\n" \
+    );
+
+#define FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJI(function)  FUNCTION_WRAPPER_WITH_RETURN_ADDRESS(function, 0, SH4_SCRATCH_REGISTER)
+#define FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_EJCI(function) FUNCTION_WRAPPER_WITH_RETURN_ADDRESS(function, 4, SH4_SCRATCH_REGISTER)
+
 #endif
 
 #define P_FUNCTION_WRAPPER_WITH_RETURN_ADDRESS_E(function) \
@@ -1859,8 +1906,11 @@ SYMBOL_STRING(getHostCallReturnValue) ":" "\n"
     "add #-40, r14" "\n"
     "mov.l @r14, r14" "\n"
     "mov r14, r4" "\n"
-    "bra " LOCAL_REFERENCE(getHostCallReturnValueWithExecState) "\n"
+    "mov.l 2f, " SH4_SCRATCH_REGISTER "\n"
+    "braf " SH4_SCRATCH_REGISTER "\n"
     "nop" "\n"
+    "1: .balign 4" "\n"
+    "2: .long " LOCAL_REFERENCE(getHostCallReturnValueWithExecState) "-1b\n"
 );
 #endif
 
