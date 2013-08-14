@@ -1,3 +1,14 @@
+2013-08-14  Gabor Abraham  <abrhm@inf.u-szeged.hu>
+
+        [CMake] Fix building with bison-3.0.
+        https://bugs.webkit.org/show_bug.cgi?id=119788
+
+        Reviewed by Zoltan Herczeg.
+
+        No new tests, just build fix.
+
+        * CMakeLists.txt:
+
 2013-08-14  Rob Buis  <rwlbuis@webkit.org>
 
         ASSERTION FAILED: resultAnimationElement->m_animatedType in WebCore::SVGAnimateElement::calculateAnimatedValue

@@ -2851,9 +2851,13 @@ if (WTF_USE_3D_GRAPHICS)
         ${OPENGL_gl_LIBRARY}
     )
 
-    if (BISON_VERSION EQUAL "2.5")
+    if (BISON_VERSION EQUAL "2.5" OR NOT (BISON_VERSION LESS "3.0"))
         # Bison 2.5 can not compile generated glslang.
         # See https://bugs.webkit.org/show_bug.cgi?id=93487
+        #
+        # With Bison 3.0 or greater the generated glslang will not compile.
+        # See https://bugs.webkit.org/show_bug.cgi?id=119373
+        # Use already generated glslang.
         list(APPEND ANGLESupport_SOURCES
             ${THIRDPARTY_DIR}/ANGLE/src/compiler/glslang_lex.cpp
             ${THIRDPARTY_DIR}/ANGLE/src/compiler/glslang_tab.cpp
