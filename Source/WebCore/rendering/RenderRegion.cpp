@@ -54,6 +54,9 @@ RenderRegion::RenderRegion(Element* element, RenderFlowThread* flowThread)
     , m_isValid(false)
     , m_hasCustomRegionStyle(false)
     , m_hasAutoLogicalHeight(false)
+#if USE(ACCELERATED_COMPOSITING)
+    , m_requiresLayerForCompositing(false)
+#endif
     , m_hasComputedAutoHeight(false)
     , m_computedAutoHeight(0)
 {
@@ -722,5 +725,23 @@ void RenderRegion::updateLogicalHeight()
         RenderBlock::updateLogicalHeight();
     }
 }
+
+#if USE(ACCELERATED_COMPOSITING)
+void RenderRegion::setRequiresLayerForCompositing(bool requiresLayerForCompositing)
+{
+    // This function is called when the regions had already
+    // been laid out, after the flow thread decides there are 
+    // composited layers that will display in this region.
+    ASSERT(!needsLayout());
+    if (m_requiresLayerForCompositing == requiresLayerForCompositing)
+        return;
+    
+    bool requiredLayer = requiresLayer();
+    m_requiresLayerForCompositing = requiresLayerForCompositing;
+
+    if (requiredLayer != requiresLayer())
+        updateLayerIfNeeded();
+}
+#endif
 
 } // namespace WebCore

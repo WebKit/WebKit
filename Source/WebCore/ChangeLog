@@ -1,3 +1,80 @@
+2013-08-14  Alexandru Chiculita  <achicu@adobe.com>
+
+        [CSS Regions] RenderRegions should have a RenderLayer+Backing when they contain a Composited RenderLayer
+        https://bugs.webkit.org/show_bug.cgi?id=117365
+
+        Reviewed by David Hyatt.
+
+        After the RenderFlowThread has a new layout we need to check if any of the children layers
+        had been moved to a new render region. We are only checking for the first level of layers,
+        as they are the only ones supported right now. Also, added code to make Regions require a layer
+        based on the layers that fit in their clipping area.
+
+        Tests: fast/regions/layers/dynamic-layer-added-with-no-layout.html
+               fast/regions/layers/dynamic-layer-removed-with-no-layout.html
+               fast/regions/layers/float-region-promoted-to-layer.html
+               fast/regions/layers/regions-promoted-to-layers-horizontal-bt.html
+               fast/regions/layers/regions-promoted-to-layers-vertical-lr.html
+               fast/regions/layers/regions-promoted-to-layers-vertical-rl.html
+               fast/regions/layers/regions-promoted-to-layers.html
+
+        * rendering/FlowThreadController.cpp:
+        (WebCore::FlowThreadController::updateRenderFlowThreadLayersIfNeeded): Iterate on all the flow threads and updateLayerToRegionMappings if needed. 
+        * rendering/FlowThreadController.h:
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::updateLocalFloatingObjectsForPaintingContainer): Checks if the FloatingObject
+        needs to be painted by the current block or not.
+        (WebCore::RenderBlock::updateFloatingObjectsPaintingContainer): Helper function to lookup what is the right
+        container that would need to paint a FloatingObject.
+        (WebCore::RenderBlock::updateAllDescendantsFloatingObjectsPaintingContainer):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::outermostBlockContainingFloatingObject): Looks up the ancestor RenderBlock that contains all
+        the FloatingObjects of a float.
+        (WebCore::RenderBox::removeFloatingOrPositionedChildFromBlockLists): Extracted the code for outermostBlockContainingFloatingObject
+        into its own method.
+        (WebCore::RenderBox::updatePaintingContainerForFloatingObject): Helper method to update the "m_shouldPaint" flag
+        of all the FloatingObjects created for a floating RenderObject. Normally, that flag is maintained during layout,
+        but we need to patch it for the floating RenderRegions after the layout is already finished.
+        (WebCore::RenderBox::updateLayerIfNeeded): Overwrite of the RenderLayerModelObject::updateLayerIfNeeded that is also
+        calling updatePaintingContainerForFloatingObject if a new layer was created or destroyed.
+        * rendering/RenderBox.h:
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::layout): Added code to call updateLayerToRegionMappings when needed.
+        (WebCore::RenderFlowThread::regionForCompositedLayer): Looks up the first RenderRegion to display a specific layer.
+        It only cares about the top most point of the element and ignores transforms.
+        (WebCore::RenderFlowThread::updateRegionForRenderLayer): Helper method to update the mapped region of a layer.
+        (WebCore::RenderFlowThread::updateLayerToRegionMappings): Iterates all the first level layers of the flow thread
+        and updates the region. Will return true if there was any change.
+        * rendering/RenderFlowThread.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::dirtyZOrderLists): When new layers are added or removed we need to update the layer map in the flow thread.
+        (WebCore::RenderLayer::dirtyNormalFlowList):
+        (WebCore::RenderLayer::shouldBeNormalFlowOnly): CSS Regions might become layers because they contain RenderLayers,
+        but they should not become stacking contexts for that reason. This will prevent the RenderRegions from rendering
+        in front of other layers.
+        (WebCore::RenderLayer::shouldBeSelfPaintingLayer):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateCompositingLayers): Call updateRenderFlowThreadLayersIfNeeded when there's a layer hierarchy update.
+        (WebCore::RenderLayerCompositor::updateRenderFlowThreadLayersIfNeeded): Update the render flow thread layer maps when they are dirty.
+        * rendering/RenderLayerCompositor.h:
+        * rendering/RenderLayer.h:
+        (WebCore::RenderLayer::isDirtyRenderFlowThread): Used to check if the RenderLayers had changed their order,
+        so that we can update the list of layers associated with a region. In a following patch we will need to 
+        rebuild the composited layers.
+        * rendering/RenderLayerModelObject.cpp:
+        (WebCore::RenderLayerModelObject::updateLayerIfNeeded): Adds or removes a layer when the "requiresLayer" changes
+        after the styleDidChange already happened. This is needed for Regions as we only know if they still require a layer,
+        only after the content of the flow thread is computed.
+        * rendering/RenderLayerModelObject.h:
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::RenderRegion):
+        (WebCore::RenderRegion::setRequiresLayerForCompositing):
+        * rendering/RenderRegion.h:
+        (WebCore::RenderRegion::requiresLayer):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::writeRenderRegionList): Updated the output to print the fact that the layer has a layer.
+
 2013-08-14  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         Finish making FloatingObject a real class with private members

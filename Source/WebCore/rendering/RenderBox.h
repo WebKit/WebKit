@@ -500,6 +500,10 @@ public:
 
     virtual VisiblePosition positionForPoint(const LayoutPoint&);
 
+    RenderBlock* outermostBlockContainingFloatingObject();
+    void updatePaintingContainerForFloatingObject();
+    virtual bool updateLayerIfNeeded();
+
     void removeFloatingOrPositionedChildFromBlockLists();
     
     RenderLayer* enclosingFloatPaintingLayer() const;

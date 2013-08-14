@@ -24,12 +24,12 @@ Flow Threads
     layer at (0,0) size 50x450
       RenderNamedFlowThread at (0,0) size 50x450
   Regions for flow 'flow3'
-    RenderRegion {DIV} #region3
+    RenderRegion {DIV} #region3 hasLayer
   Thread with flow-name 'flow4'
     layer at (0,0) size 650x50
       RenderNamedFlowThread at (0,0) size 650x50
   Regions for flow 'flow4'
-    RenderRegion {DIV} #region4
+    RenderRegion {DIV} #region4 hasLayer
   Thread with flow-name 'flow5'
   Regions for flow 'flow5'
     RenderRegion {DIV} #region5 hasAutoLogicalHeight

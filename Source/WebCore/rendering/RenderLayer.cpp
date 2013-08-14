@@ -5705,6 +5705,8 @@ void RenderLayer::dirtyZOrderLists()
 
 #if USE(ACCELERATED_COMPOSITING)
     if (!renderer()->documentBeingDestroyed()) {
+        if (renderer()->isOutOfFlowRenderFlowThread())
+            toRenderFlowThread(renderer())->setNeedsLayerToRegionMappingsUpdate();
         compositor()->setCompositingLayersNeedRebuild();
         if (acceleratedCompositingForOverflowScrollEnabled())
             compositor()->setShouldReevaluateCompositingAfterLayout();
@@ -5729,6 +5731,8 @@ void RenderLayer::dirtyNormalFlowList()
 
 #if USE(ACCELERATED_COMPOSITING)
     if (!renderer()->documentBeingDestroyed()) {
+        if (renderer()->isOutOfFlowRenderFlowThread())
+            toRenderFlowThread(renderer())->setNeedsLayerToRegionMappingsUpdate();
         compositor()->setCompositingLayersNeedRebuild();
         if (acceleratedCompositingForOverflowScrollEnabled())
             compositor()->setShouldReevaluateCompositingAfterLayout();
@@ -5927,6 +5931,7 @@ bool RenderLayer::shouldBeNormalFlowOnly() const
                 || renderer()->isVideo()
                 || renderer()->isEmbeddedObject()
                 || renderer()->isRenderIFrame()
+                || renderer()->isRenderRegion()
                 || (renderer()->style()->specifiesColumns() && !isRootLayer()))
             && !renderer()->isPositioned()
             && !renderer()->hasTransform()
@@ -5953,7 +5958,8 @@ bool RenderLayer::shouldBeSelfPaintingLayer() const
         || renderer()->isCanvas()
         || renderer()->isVideo()
         || renderer()->isEmbeddedObject()
-        || renderer()->isRenderIFrame();
+        || renderer()->isRenderIFrame()
+        || renderer()->isRenderRegion();
 }
 
 void RenderLayer::updateSelfPaintingLayer()

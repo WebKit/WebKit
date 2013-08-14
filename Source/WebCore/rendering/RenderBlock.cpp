@@ -4996,6 +4996,64 @@ void RenderBlock::markSiblingsWithFloatsForLayout(RenderBox* floatToRemove)
     }
 }
 
+void RenderBlock::updateFloatingObjectsPaintingContainer(RenderBox* floatToUpdate)
+{
+    bool didFindPaintContainer = false;
+    updateFloatingObjectsPaintingContainer(floatToUpdate, didFindPaintContainer);
+    ASSERT(didFindPaintContainer || floatToUpdate->hasSelfPaintingLayer());
+}
+
+void RenderBlock::updateFloatingObjectsPaintingContainer(RenderBox* floatToUpdate, bool& didFindPaintContainer)
+{
+    if (needsLayout()) {
+        // The floating object update should only be required after the layout is already complete.
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    if (!m_floatingObjects)
+        return;
+    updateAllDescendantsFloatingObjectsPaintingContainer(floatToUpdate, didFindPaintContainer);
+    for (RenderObject* next = nextSibling(); next; next = next->nextSibling()) {
+        if (!next->isRenderBlock() || next->isFloatingOrOutOfFlowPositioned() || toRenderBlock(next)->avoidsFloats())
+            continue;
+        RenderBlock* nextBlock = toRenderBlock(next);
+        if (nextBlock->containsFloat(floatToUpdate))
+            nextBlock->updateAllDescendantsFloatingObjectsPaintingContainer(floatToUpdate, didFindPaintContainer);
+    }
+}
+
+void RenderBlock::updateLocalFloatingObjectsForPaintingContainer(RenderBox* floatToUpdate, bool& foundPaintContainer)
+{
+    ASSERT(!needsLayout());
+    if (!m_floatingObjects)
+        return;
+    FloatingObjectSetIterator iterator = m_floatingObjects->set().find<RenderBox*, FloatingObjectHashTranslator>(floatToUpdate);
+    if (iterator != m_floatingObjects->set().end()) {
+        bool shouldPaint = !foundPaintContainer && !floatToUpdate->hasSelfPaintingLayer() && floatToUpdate->enclosingFloatPaintingLayer() == enclosingFloatPaintingLayer();
+        foundPaintContainer |= shouldPaint;
+        (*iterator)->setShouldPaint(shouldPaint);
+    }
+}
+
+void RenderBlock::updateAllDescendantsFloatingObjectsPaintingContainer(RenderBox* floatToUpdate, bool& didFindPaintContainer)
+{
+    if (needsLayout()) {
+        // The floating object update should only be required after the layout is already complete.
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    updateLocalFloatingObjectsForPaintingContainer(floatToUpdate, didFindPaintContainer);
+    if (childrenInline())
+        return;
+    for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
+        if (!child->isRenderBlock())
+            continue;
+        RenderBlock* childBlock = toRenderBlock(child);
+        if (childBlock->containsFloat(floatToUpdate))
+            childBlock->updateAllDescendantsFloatingObjectsPaintingContainer(floatToUpdate, didFindPaintContainer);
+    }
+}
+
 LayoutUnit RenderBlock::getClearDelta(RenderBox* child, LayoutUnit logicalTop)
 {
     // There is no need to compute clearance if we have no floats.

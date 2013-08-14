@@ -676,6 +676,8 @@ static void writeRenderRegionList(const RenderRegionList& flowThreadRegionList, 
                 Element* element = toElement(renderRegion->generatingNode());
                 ts << " #" << element->idForStyleResolution();
             }
+            if (renderRegion->hasLayer())
+                ts << " hasLayer";
             if (renderRegion->hasCustomRegionStyle())
                 ts << " region style: 1";
             if (renderRegion->hasAutoLogicalHeight())

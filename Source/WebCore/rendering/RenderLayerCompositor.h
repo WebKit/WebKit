@@ -141,6 +141,9 @@ public:
     // This is only used when state changes and we do not exepect a style update or layout to happen soon (e.g. when
     // we discover that an iframe is overlapped during painting).
     void scheduleCompositingLayerUpdate();
+
+    // Update the maps that we use to distribute layers to coresponding RenderRegions.
+    void updateRenderFlowThreadLayersIfNeeded();
     
     // Update the compositing state of the given layer. Returns true if that state changed.
     enum CompositingChangeRepaint { CompositingChangeRepaintNow, CompositingChangeWillRepaintLater };

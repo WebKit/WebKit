@@ -184,5 +184,32 @@ void RenderLayerModelObject::styleDidChange(StyleDifference diff, const RenderSt
     }
 }
 
+bool RenderLayerModelObject::updateLayerIfNeeded()
+{
+    LayoutStateDisabler layoutStateDisabler(view());
+
+    bool hadLayer = hasLayer();
+    if (requiresLayer()) {
+        if (!layer() && layerCreationAllowedForSubtree()) {
+            ensureLayer();
+            if (parent() && containingBlock()) {
+                layer()->setRepaintStatus(NeedsFullRepaint);
+                // There is only one layer to update, it is not worth using |cachedOffset| since
+                // we are not sure the value will be used.
+                layer()->updateLayerPositions(0);
+            }
+        }
+    } else if (layer() && layer()->parent())
+        layer()->removeOnlyThisLayer(); // calls destroyLayer() which clears m_layer
+
+    if (hadLayer == hasLayer())
+        return false;
+
+    if (layer())
+        layer()->styleChanged(StyleDifferenceEqual, 0);
+
+    return true;
+}
+
 } // namespace WebCore
 

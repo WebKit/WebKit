@@ -79,6 +79,8 @@ public:
     void updateFlowThreadsIntoMeasureContentPhase();
     void updateFlowThreadsIntoFinalPhase();
 
+    void updateRenderFlowThreadLayersIfNeeded();
+
 #ifndef NDEBUG
     bool isAutoLogicalHeightRegionsCountConsistent() const;
 #endif

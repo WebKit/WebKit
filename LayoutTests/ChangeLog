@@ -1,3 +1,43 @@
+2013-08-14  Alexandru Chiculita  <achicu@adobe.com>
+
+        [CSS Regions] RenderRegions should have a RenderLayer+Backing when they contain a Composited RenderLayer
+        https://bugs.webkit.org/show_bug.cgi?id=117365
+
+        Reviewed by David Hyatt.
+
+        Added new tests for cases when CSS Regions are promoted to RenderLayers because
+        they contain elements that might need to become composited.
+
+        * fast/regions/layers/dynamic-layer-added-with-no-layout-expected.png: Added.
+        * fast/regions/layers/dynamic-layer-added-with-no-layout-expected.txt: Added.
+        * fast/regions/layers/dynamic-layer-added-with-no-layout.html: Added.
+        * fast/regions/layers/dynamic-layer-removed-with-no-layout-expected.png: Added.
+        * fast/regions/layers/dynamic-layer-removed-with-no-layout-expected.txt: Added.
+        * fast/regions/layers/dynamic-layer-removed-with-no-layout.html: Added.
+        * fast/regions/layers/float-region-promoted-to-layer-expected.html: Added.
+        * fast/regions/layers/float-region-promoted-to-layer.html: Added.
+        * fast/regions/layers/regions-promoted-to-layers-expected.txt: Added.
+        * fast/regions/layers/regions-promoted-to-layers-horizontal-bt-expected.txt: Added.
+        * fast/regions/layers/regions-promoted-to-layers-horizontal-bt.html: Added.
+        * fast/regions/layers/regions-promoted-to-layers-vertical-lr-expected.txt: Added.
+        * fast/regions/layers/regions-promoted-to-layers-vertical-lr.html: Added.
+        * fast/regions/layers/regions-promoted-to-layers-vertical-rl-expected.txt: Added.
+        * fast/regions/layers/regions-promoted-to-layers-vertical-rl.html: Added.
+        * fast/regions/layers/regions-promoted-to-layers.html: Added.
+
+        Updated existing tests that now have CSS Regions that require a RenderLayer.
+        * fast/regions/autoheight-regions-mark-expected.txt:
+        * fast/repaint/overflow-flipped-writing-mode-block-in-regions-expected.txt:
+        * fast/repaint/region-painting-via-layout-expected.txt:
+        * platform/mac/fast/regions/overflow-in-uniform-regions-dynamic-expected.txt:
+        * platform/mac/fast/regions/overflow-in-variable-width-regions-expected.txt:
+        * platform/mac/fast/regions/overflow-moving-below-floats-in-variable-width-regions-expected.txt:
+        * platform/mac/fast/regions/overflow-not-moving-below-floats-in-variable-width-regions-expected.txt:
+        * platform/mac/fast/regions/overflow-rtl-in-variable-width-regions-expected.txt:
+        * platform/mac/fast/regions/overflow-size-change-in-variable-width-regions-expected.txt:
+        * platform/mac/fast/repaint/japanese-rl-selection-repaint-in-regions-expected.txt:
+        * platform/mac/fast/repaint/line-flow-with-floats-in-regions-expected.txt:
+
 2013-08-14  Andreas Kling  <akling@apple.com>
 
         <http://webkit.org/b/119520> REGRESSION(154062): fast/repaint/caret-jump-between-nodes.html flakes on bots.

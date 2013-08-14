@@ -211,6 +211,25 @@ void RenderBox::willBeDestroyed()
     RenderBoxModelObject::willBeDestroyed();
 }
 
+RenderBlock* RenderBox::outermostBlockContainingFloatingObject()
+{
+    ASSERT(isFloating());
+    RenderBlock* parentBlock = 0;
+    for (RenderObject* curr = parent(); curr && !curr->isRenderView(); curr = curr->parent()) {
+        if (curr->isRenderBlock()) {
+            RenderBlock* currBlock = toRenderBlock(curr);
+            if (!parentBlock || currBlock->containsFloat(this))
+                parentBlock = currBlock;
+        }
+    }
+    if (parentBlock) {
+        RenderObject* parent = parentBlock->parent();
+        if (parent && parent->isFlexibleBoxIncludingDeprecated())
+            parentBlock = toRenderBlock(parent);
+    }
+    return parentBlock;
+}
+
 void RenderBox::removeFloatingOrPositionedChildFromBlockLists()
 {
     ASSERT(isFloatingOrOutOfFlowPositioned());
@@ -219,20 +238,7 @@ void RenderBox::removeFloatingOrPositionedChildFromBlockLists()
         return;
 
     if (isFloating()) {
-        RenderBlock* parentBlock = 0;
-        for (RenderObject* curr = parent(); curr && !curr->isRenderView(); curr = curr->parent()) {
-            if (curr->isRenderBlock()) {
-                RenderBlock* currBlock = toRenderBlock(curr);
-                if (!parentBlock || currBlock->containsFloat(this))
-                    parentBlock = currBlock;
-            }
-        }
-
-        if (parentBlock) {
-            RenderObject* parent = parentBlock->parent();
-            if (parent && parent->isFlexibleBoxIncludingDeprecated())
-                parentBlock = toRenderBlock(parent);
-
+        if (RenderBlock* parentBlock = outermostBlockContainingFloatingObject()) {
             parentBlock->markSiblingsWithFloatsForLayout(this);
             parentBlock->markAllDescendantsWithFloatsForLayout(this, false);
         }
@@ -240,6 +246,21 @@ void RenderBox::removeFloatingOrPositionedChildFromBlockLists()
 
     if (isOutOfFlowPositioned())
         RenderBlock::removePositionedObject(this);
+}
+
+void RenderBox::updatePaintingContainerForFloatingObject()
+{
+    ASSERT(isFloating());
+    if (RenderBlock* parentBlock = outermostBlockContainingFloatingObject())
+        parentBlock->updateFloatingObjectsPaintingContainer(this);
+}
+
+bool RenderBox::updateLayerIfNeeded()
+{
+    bool didUpdateLayer = RenderBoxModelObject::updateLayerIfNeeded();
+    if (didUpdateLayer && isFloating())
+        updatePaintingContainerForFloatingObject();
+    return didUpdateLayer;
 }
 
 void RenderBox::styleWillChange(StyleDifference diff, const RenderStyle* newStyle)

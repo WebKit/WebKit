@@ -55,6 +55,7 @@ public:
 
 protected:
     void ensureLayer();
+    virtual bool updateLayerIfNeeded();
 
     virtual void willBeDestroyed() OVERRIDE;
 

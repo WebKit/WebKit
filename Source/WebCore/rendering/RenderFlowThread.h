@@ -45,6 +45,9 @@ class RenderStyle;
 class RenderRegion;
 
 typedef ListHashSet<RenderRegion*> RenderRegionList;
+typedef Vector<RenderLayer*> RenderLayerList;
+typedef HashMap<RenderRegion*, RenderLayerList> RegionToLayerListMap;
+typedef HashMap<RenderLayer*, RenderRegion*> LayerToRegionMap;
 
 // RenderFlowThread is used to collect all the render objects that participate in a
 // flow thread. It will also help in doing the layout. However, it will not render
@@ -113,6 +116,8 @@ public:
 
     RenderRegion* regionAtBlockOffset(const RenderBox*, LayoutUnit, bool extendLastRegion = false, RegionAutoGenerationPolicy = AllowRegionAutoGeneration);
 
+    const RenderLayerList* getLayerListForRegion(RenderRegion*) const;
+
     bool regionsHaveUniformLogicalWidth() const { return m_regionsHaveUniformLogicalWidth; }
     bool regionsHaveUniformLogicalHeight() const { return m_regionsHaveUniformLogicalHeight; }
 
@@ -174,6 +179,15 @@ public:
     bool needsTwoPhasesLayout() const { return m_needsTwoPhasesLayout; }
     void clearNeedsTwoPhasesLayout() { m_needsTwoPhasesLayout = false; }
 
+#if USE(ACCELERATED_COMPOSITING)
+    void setNeedsLayerToRegionMappingsUpdate() { m_layersToRegionMappingsDirty = true; }
+    void updateLayerToRegionMappingsIfNeeded()
+    {
+        if (m_layersToRegionMappingsDirty)
+            updateLayerToRegionMappings();
+    }
+#endif
+
     void pushFlowThreadLayoutState(const RenderObject*);
     void popFlowThreadLayoutState();
     LayoutUnit offsetFromLogicalTopOfFirstRegion(const RenderBlock*) const;
@@ -196,6 +210,12 @@ protected:
     bool regionInRange(const RenderRegion* targetRegion, const RenderRegion* startRegion, const RenderRegion* endRegion) const;
 
     LayoutRect computeRegionClippingRect(const LayoutPoint&, const LayoutRect&, const LayoutRect&) const;
+
+#if USE(ACCELERATED_COMPOSITING)
+    RenderRegion* regionForCompositedLayer(RenderLayer*);
+    bool updateLayerToRegionMappings();
+    void updateRegionForRenderLayer(RenderLayer*, LayerToRegionMap&, RegionToLayerListMap&, bool& needsLayerUpdate);
+#endif
 
     void setDispatchRegionLayoutUpdateEvent(bool value) { m_dispatchRegionLayoutUpdateEvent = value; }
     bool shouldDispatchRegionLayoutUpdateEvent() { return m_dispatchRegionLayoutUpdateEvent; }
@@ -273,6 +293,10 @@ protected:
         RenderRegion* m_result;
     };
 
+#if USE(ACCELERATED_COMPOSITING)
+    OwnPtr<LayerToRegionMap> m_layerToRegionMap;
+#endif
+
     // A maps from RenderBox
     typedef HashMap<const RenderBox*, RenderRegionRange> RenderRegionRangeMap;
     RenderRegionRangeMap m_regionRangeMap;
@@ -299,6 +323,7 @@ protected:
     bool m_pageLogicalSizeChanged : 1;
     unsigned m_layoutPhase : 2;
     bool m_needsTwoPhasesLayout : 1;
+    bool m_layersToRegionMappingsDirty : 1;
 };
 
 inline RenderFlowThread* toRenderFlowThread(RenderObject* object)

@@ -40,6 +40,7 @@
 #include "RenderBoxRegionInfo.h"
 #include "RenderInline.h"
 #include "RenderLayer.h"
+#include "RenderLayerCompositor.h"
 #include "RenderRegion.h"
 #include "RenderView.h"
 #include "TransformState.h"
@@ -61,6 +62,9 @@ RenderFlowThread::RenderFlowThread()
     , m_pageLogicalSizeChanged(false)
     , m_layoutPhase(LayoutPhaseMeasureContent)
     , m_needsTwoPhasesLayout(false)
+#if USE(ACCELERATED_COMPOSITING)
+    , m_layersToRegionMappingsDirty(true)
+#endif
 {
     setFlowThreadState(InsideOutOfFlowThread);
 }
@@ -224,12 +228,105 @@ void RenderFlowThread::layout()
     if (lastRegion())
         lastRegion()->expandToEncompassFlowThreadContentsIfNeeded();
 
+#if USE(ACCELERATED_COMPOSITING)
+    // If there are children layers in the RenderFlowThread then we need to make sure that the
+    // composited children layers will land in the right RenderRegions. Also, the parent RenderRegions
+    // will get RenderLayers and become composited as needed.
+    // Note that there's no need to do so for the inline multi-column as we are not moving layers into different
+    // containers, but just adjusting the position of the RenderLayerBacking.
+    if (!m_needsTwoPhasesLayout) {
+        updateLayerToRegionMappings();
+        // FIXME: If we have layers that moved from one region to another, we should trigger
+        // a composited layers rebuild in here to make sure that the regions will collect the right layers.
+    }
+#endif
+
     if (shouldDispatchRegionLayoutUpdateEvent())
         dispatchRegionLayoutUpdateEvent();
     
     if (shouldDispatchRegionOversetChangeEvent())
         dispatchRegionOversetChangeEvent();
 }
+
+#if USE(ACCELERATED_COMPOSITING)
+RenderRegion* RenderFlowThread::regionForCompositedLayer(RenderLayer* childLayer)
+{
+    LayoutPoint leftTopLocation = childLayer->renderBox() ? childLayer->renderBox()->flipForWritingMode(LayoutPoint()) : LayoutPoint();
+    LayoutPoint flowThreadOffset = flooredLayoutPoint(childLayer->renderer()->localToContainerPoint(leftTopLocation, this, ApplyContainerFlip));
+    return regionAtBlockOffset(0, flipForWritingMode(isHorizontalWritingMode() ? flowThreadOffset.y() : flowThreadOffset.x()), true, DisallowRegionAutoGeneration);
+}
+
+void RenderFlowThread::updateRegionForRenderLayer(RenderLayer* layer, LayerToRegionMap& layerToRegionMap, RegionToLayerListMap& regionToLayerListMap, bool& needsLayerUpdate)
+{
+    RenderRegion* region = regionForCompositedLayer(layer);
+    if (!needsLayerUpdate) {
+        ASSERT(m_layerToRegionMap);
+        // Figure out if we moved this layer from a region to the other.
+        RenderRegion* previousRegion = m_layerToRegionMap->get(layer);
+        if (previousRegion != region)
+            needsLayerUpdate = true;
+    }
+    if (!region)
+        return;
+    layerToRegionMap.set(layer, region);
+    RegionToLayerListMap::iterator iterator = regionToLayerListMap.find(region);
+    RenderLayerList& list = iterator == regionToLayerListMap.end() ? regionToLayerListMap.set(region, RenderLayerList()).iterator->value : iterator->value;
+    list.append(layer);
+}
+
+bool RenderFlowThread::updateLayerToRegionMappings()
+{
+    // We only need to map layers to regions for named flow threads.
+    // Multi-column threads are displayed on top of the regions and do not require
+    // distributing the layers.
+    if (!isOutOfFlowRenderFlowThread())
+        return false;
+
+    // We can't use currentFlowThread as it is possible to have interleaved flow threads and the wrong one could be used.
+    // Let each region figure out the proper enclosing flow thread.
+    CurrentRenderFlowThreadDisabler disabler(view());
+
+    // If the RenderFlowThread had a z-index layer update, then we need to update the composited layers too.
+    bool needsLayerUpdate = m_layersToRegionMappingsDirty || !m_layerToRegionMap.get();
+    layer()->updateLayerListsIfNeeded();
+
+    LayerToRegionMap layerToRegionMap;
+    RegionToLayerListMap regionToLayerListMap;
+
+    if (Vector<RenderLayer*>* negZOrderList = layer()->negZOrderList()) {
+        size_t listSize = negZOrderList->size();
+        for (size_t i = 0; i < listSize; ++i)
+            updateRegionForRenderLayer(negZOrderList->at(i), layerToRegionMap, regionToLayerListMap, needsLayerUpdate);
+    }
+
+    if (Vector<RenderLayer*>* normalFlowList = layer()->normalFlowList()) {
+        size_t listSize = normalFlowList->size();
+        for (size_t i = 0; i < listSize; ++i)
+            updateRegionForRenderLayer(normalFlowList->at(i), layerToRegionMap, regionToLayerListMap, needsLayerUpdate);
+    }
+    
+    if (Vector<RenderLayer*>* posZOrderList = layer()->posZOrderList()) {
+        size_t listSize = posZOrderList->size();
+        for (size_t i = 0; i < listSize; ++i)
+            updateRegionForRenderLayer(posZOrderList->at(i), layerToRegionMap, regionToLayerListMap, needsLayerUpdate);
+    }
+
+    if (needsLayerUpdate) {
+        if (!m_layerToRegionMap)
+            m_layerToRegionMap = adoptPtr(new LayerToRegionMap());
+        m_layerToRegionMap->swap(layerToRegionMap);
+
+        for (RenderRegionList::iterator iter = m_regionList.begin(); iter != m_regionList.end(); ++iter) {
+            RenderRegion* region = *iter;
+            region->setRequiresLayerForCompositing(regionToLayerListMap.contains(region));
+        }
+    }
+
+    m_layersToRegionMappingsDirty = false;
+
+    return needsLayerUpdate;
+}
+#endif
 
 void RenderFlowThread::updateLogicalWidth()
 {

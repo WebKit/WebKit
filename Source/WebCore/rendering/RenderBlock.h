@@ -156,6 +156,8 @@ public:
 
     bool generatesLineBoxesForInlineChild(RenderObject*);
 
+    void updateFloatingObjectsPaintingContainer(RenderBox* floatToUpdate);
+
     void markAllDescendantsWithFloatsForLayout(RenderBox* floatToRemove = 0, bool inLayout = true);
     void markSiblingsWithFloatsForLayout(RenderBox* floatToRemove = 0);
     void markPositionedObjectsForLayout();
@@ -932,6 +934,11 @@ private:
 
     LayoutUnit lowestFloatLogicalBottom(FloatingObject::Type = FloatingObject::FloatLeftRight) const; 
     LayoutUnit nextFloatLogicalBottomBelow(LayoutUnit) const;
+
+    void updateLocalFloatingObjectsForPaintingContainer(RenderBox* floatToUpdate, bool& didFindPaintContainer);
+    void updateFloatingObjectsPaintingContainer(RenderBox* floatToUpdate, bool& didFindPaintContainer);
+    void updateAllDescendantsFloatingObjectsPaintingContainer(RenderBox* floatToUpdate, bool& didFindPaintContainer);
+
     
     bool hitTestColumns(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction);
     virtual bool hitTestContents(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction);
