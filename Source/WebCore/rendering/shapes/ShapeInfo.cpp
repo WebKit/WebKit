@@ -45,12 +45,26 @@ const Shape* ShapeInfo<RenderType, shapeGetter, intervalGetter>::computedShape()
     if (Shape* shape = m_shape.get())
         return shape;
 
-    ShapeValue* shapeValue = (m_renderer->style()->*shapeGetter)();
-    BasicShape* shape = (shapeValue && shapeValue->type() == ShapeValue::Shape) ? shapeValue->shape() : 0;
+    const LayoutSize logicalBoxSize(m_shapeLogicalWidth, m_shapeLogicalHeight);
+    WritingMode writingMode = m_renderer->style()->writingMode();
+    Length margin = m_renderer->style()->shapeMargin();
+    Length padding = m_renderer->style()->shapePadding();
+    const ShapeValue* shapeValue = (m_renderer->style()->*shapeGetter)();
+    ASSERT(shapeValue);
 
-    ASSERT(shape);
+    switch (shapeValue->type()) {
+    case ShapeValue::Shape:
+        ASSERT(shapeValue->shape());
+        m_shape = Shape::createShape(shapeValue->shape(), logicalBoxSize, writingMode, margin, padding);
+        break;
+    case ShapeValue::Image:
+        ASSERT(shapeValue->image());
+        m_shape = Shape::createShape(shapeValue->image(), 0, logicalBoxSize, writingMode, margin, padding);
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+    }
 
-    m_shape = Shape::createShape(shape, LayoutSize(m_shapeLogicalWidth, m_shapeLogicalHeight), m_renderer->style()->writingMode(), m_renderer->style()->shapeMargin(), m_renderer->style()->shapePadding());
     ASSERT(m_shape);
     return m_shape.get();
 }

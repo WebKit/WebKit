@@ -1850,6 +1850,10 @@ void RenderObject::setStyle(PassRefPtr<RenderStyle> style)
     updateImage(oldStyle ? oldStyle->borderImage().image() : 0, m_style ? m_style->borderImage().image() : 0);
     updateImage(oldStyle ? oldStyle->maskBoxImage().image() : 0, m_style ? m_style->maskBoxImage().image() : 0);
 
+#if ENABLE(CSS_SHAPES)
+    updateShapeImage(oldStyle ? oldStyle->shapeInside() : 0, m_style ? m_style->shapeInside() : 0);
+#endif
+
     // We need to ensure that view->maximalOutlineSize() is valid for any repaints that happen
     // during styleDidChange (it's used by clippedOverflowRectForRepaint()).
     if (m_style->outlineWidth() > 0 && m_style->outlineSize() > maximalOutlineSize(PaintPhaseOutline))
@@ -2101,6 +2105,14 @@ void RenderObject::updateImage(StyleImage* oldImage, StyleImage* newImage)
             newImage->addClient(this);
     }
 }
+
+#if ENABLE(CSS_SHAPES)
+void RenderObject::updateShapeImage(const ShapeValue* oldShapeValue, const ShapeValue* newShapeValue)
+{
+    if (oldShapeValue || newShapeValue)
+        updateImage(oldShapeValue ? oldShapeValue->image() : 0, newShapeValue ? newShapeValue->image() : 0);
+}
+#endif
 
 LayoutRect RenderObject::viewRect() const
 {
@@ -2620,6 +2632,16 @@ void RenderObject::destroy()
     arenaDelete(renderArena(), this);
 }
 
+#if ENABLE(CSS_SHAPES)
+void RenderObject::removeShapeImageClient(ShapeValue* shapeValue)
+{
+    if (!shapeValue)
+        return;
+    if (StyleImage* shapeImage = shapeValue->image())
+        shapeImage->removeClient(this);
+}
+#endif
+
 void RenderObject::arenaDelete(RenderArena* arena, void* base)
 {
     if (m_style) {
@@ -2638,6 +2660,10 @@ void RenderObject::arenaDelete(RenderArena* arena, void* base)
 
         if (StyleImage* maskBoxImage = m_style->maskBoxImage().image())
             maskBoxImage->removeClient(this);
+
+#if ENABLE(CSS_SHAPES)
+        removeShapeImageClient(m_style->shapeInside());
+#endif
     }
 
 #ifndef NDEBUG

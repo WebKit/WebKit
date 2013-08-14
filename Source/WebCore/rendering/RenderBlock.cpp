@@ -1436,6 +1436,21 @@ void RenderBlock::layout()
 }
 
 #if ENABLE(CSS_SHAPES)
+void RenderBlock::imageChanged(WrappedImagePtr image, const IntRect*)
+{
+    RenderBox::imageChanged(image);
+
+    if (!parent())
+        return;
+
+    ShapeValue* shapeValue = style()->shapeInside();
+    if (shapeValue && shapeValue->image() && shapeValue->image()->data() == image) {
+        ShapeInsideInfo* shapeInsideInfo = ensureShapeInsideInfo();
+        shapeInsideInfo->dirtyShapeSize();
+        markShapeInsideDescendantsForLayout();
+    }
+}
+
 void RenderBlock::updateShapeInsideInfoAfterStyleChange(const ShapeValue* shapeInside, const ShapeValue* oldShapeInside)
 {
     // FIXME: A future optimization would do a deep comparison for equality.

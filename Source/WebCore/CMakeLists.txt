@@ -2221,6 +2221,7 @@ set(WebCore_SOURCES
     rendering/mathml/RenderMathMLUnderOver.cpp
 
     rendering/shapes/PolygonShape.cpp
+    rendering/shapes/RasterShape.cpp
     rendering/shapes/RectangleShape.cpp
     rendering/shapes/Shape.cpp
     rendering/shapes/ShapeInfo.cpp

@@ -4598,6 +4598,8 @@ webcore_sources += \
 	Source/WebCore/rendering/mathml/RenderMathMLUnderOver.h \
 	Source/WebCore/rendering/shapes/PolygonShape.cpp \
 	Source/WebCore/rendering/shapes/PolygonShape.h \
+	Source/WebCore/rendering/shapes/RasterShape.cpp \
+	Source/WebCore/rendering/shapes/RasterShape.h \
 	Source/WebCore/rendering/shapes/RectangleShape.cpp \
 	Source/WebCore/rendering/shapes/RectangleShape.h \
 	Source/WebCore/rendering/shapes/Shape.cpp \

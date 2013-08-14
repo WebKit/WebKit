@@ -1232,6 +1232,7 @@ SOURCES += \
     rendering/RootInlineBox.cpp \
     rendering/ScrollBehavior.cpp \
     rendering/shapes/PolygonShape.cpp \
+    rendering/shapes/RasterShape.cpp \
     rendering/shapes/RectangleShape.cpp \
     rendering/shapes/Shape.cpp \
     rendering/shapes/ShapeInfo.cpp \
@@ -2493,6 +2494,7 @@ HEADERS += \
     rendering/RootInlineBox.h \
     rendering/ScrollBehavior.h \
     rendering/shapes/PolygonShape.h \
+    rendering/shapes/RasterShape.h \
     rendering/shapes/RectangleShape.h \
     rendering/shapes/Shape.h \
     rendering/shapes/ShapeInfo.h \

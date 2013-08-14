@@ -1,3 +1,18 @@
+2013-08-14  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Exclusions] Minimal support for using an image to define a shape
+        https://bugs.webkit.org/show_bug.cgi?id=116643
+
+        Two tests to verify that the initial implementation of shape valued images is working
+        for shape-inside.
+
+        Reviewed by Alexandru Chiculita.
+
+        * fast/exclusions/shape-inside/shape-inside-image-001-expected.html: Added.
+        * fast/exclusions/shape-inside/shape-inside-image-001.html: Added.
+        * fast/exclusions/shape-inside/shape-inside-image-002-expected.html: Added.
+        * fast/exclusions/shape-inside/shape-inside-image-002.html: Added.
+
 2013-08-14  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Unreviewed build gardening.

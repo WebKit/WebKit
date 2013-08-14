@@ -38,8 +38,18 @@
 namespace WebCore {
 bool ShapeOutsideInfo::isEnabledFor(const RenderBox* box)
 {
-    ShapeValue* value = box->style()->shapeOutside();
-    return box->isFloatingWithShapeOutside() && value->type() == ShapeValue::Shape && value->shape();
+    ShapeValue* shapeValue = box->style()->shapeOutside();
+    if (!box->isFloatingWithShapeOutside() || !shapeValue)
+        return false;
+
+    switch (shapeValue->type()) {
+    case ShapeValue::Shape:
+        return shapeValue->shape();
+    case ShapeValue::Image:
+        return false; // FIXME, see https://bugs.webkit.org/show_bug.cgi?id=119809.
+    default:
+        return false;
+    }
 }
 
 bool ShapeOutsideInfo::computeSegmentsForContainingBlockLine(LayoutUnit lineTop, LayoutUnit floatTop, LayoutUnit lineHeight)

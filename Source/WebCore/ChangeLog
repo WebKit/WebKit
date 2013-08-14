@@ -1,3 +1,60 @@
+2013-08-14  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Exclusions] Minimal support for using an image to define a shape
+        https://bugs.webkit.org/show_bug.cgi?id=116643
+
+        Reviewed by Alexandru Chiculita.
+
+        This is a first small step towards supporting CSS shapes defined by an
+        image URL and a alpha channel threshold. To keep the patch as small as
+        possible, there are many limitations and remaining work items. For
+        example images are currently restricted to same-origin, although CORS
+        should be supported. See https://bugs.webkit.org/show_bug.cgi?id=116348
+        for the current list.
+
+        Test: fast/exclusions/shape-inside/shape-inside-image-001.html
+        Test: fast/exclusions/shape-inside/shape-inside-image-002.html
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::imageChanged): When the image has finished loading, request a layout.
+        * rendering/RenderBlock.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::setStyle): Add notify clients for shape images.
+        (WebCore::RenderObject::updateShapeImage):
+        (WebCore::removeShapeImageClient):
+        (WebCore::RenderObject::arenaDelete): Remove notify clients for shape images.
+        * rendering/RenderObject.h:
+        * rendering/shapes/RasterShape.cpp: Added. A Shape defined by thresholding an image's alpha channel.
+        (WebCore::RasterShapeIntervals::bounds):
+        (WebCore::RasterShapeIntervals::addInterval): Add a single run to the shape.
+        (WebCore::alignedRect):
+        (WebCore::RasterShapeIntervals::getIntervals): Return the shape's runs that fall within a horizonal box.
+        (WebCore::RasterShape::marginIntervals): Internal representation of the shape with shape-margin factored in.  Currently only a stub.
+        (WebCore::RasterShape::paddingIntervals): Internal representation of the shape with shape-padding factored in.  Currently only a stub.
+        (WebCore::RasterShape::getExcludedIntervals):
+        (WebCore::RasterShape::getIncludedIntervals):
+        (WebCore::RasterShape::firstIncludedIntervalLogicalTop):
+        * rendering/shapes/RasterShape.h:
+        (WebCore::RasterShapeIntervals::RasterShapeIntervals): Internal run length encoded representation of a RasterShape.
+        (WebCore::RasterShapeIntervals::isEmpty):
+        (WebCore::RasterShape::RasterShape):
+        * rendering/shapes/Shape.cpp:
+        (WebCore::Shape::createShape): Support for creating a Shape based on a RasterShapeIntervals object.
+        * rendering/shapes/Shape.h:
+        * rendering/shapes/ShapeInfo.cpp:
+        (WebCore::::computedShape): Added support for the Image ShapeValue type.
+        * rendering/shapes/ShapeInsideInfo.cpp:
+        (WebCore::ShapeInsideInfo::isEnabledFor): Added support for the Image ShapeValue type.
+        * rendering/shapes/ShapeOutsideInfo.cpp:
+        (WebCore::ShapeOutsideInfo::isEnabledFor): Added support for the Image ShapeValue type.
+        * rendering/style/ShapeValue.h:
+        (WebCore::ShapeValue::isImageValid): True if the shape's image is ready to be be processed.
+
 2013-08-14  Alexandru Chiculita  <achicu@adobe.com>
 
         [CSS Regions] RenderRegions should have a RenderLayer+Backing when they contain a Composited RenderLayer

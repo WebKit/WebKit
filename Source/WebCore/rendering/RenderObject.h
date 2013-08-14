@@ -694,6 +694,9 @@ public:
 
     void updateFillImages(const FillLayer*, const FillLayer*);
     void updateImage(StyleImage*, StyleImage*);
+#if ENABLE(CSS_SHAPES)
+    void updateShapeImage(const ShapeValue*, const ShapeValue*);
+#endif
 
     virtual void paint(PaintInfo&, const LayoutPoint&);
 
@@ -1025,6 +1028,10 @@ private:
     StyleDifference adjustStyleDifference(StyleDifference, unsigned contextSensitiveProperties) const;
 
     Color selectionColor(int colorProperty) const;
+
+#if ENABLE(CSS_SHAPES)
+    void removeShapeImageClient(ShapeValue*);
+#endif
 
 #ifndef NDEBUG
     void checkBlockPositionedObjectsNeedLayout();
