@@ -1,5 +1,17 @@
 2013-08-13  Filip Pizlo  <fpizlo@apple.com>
 
+        Unreviewed, fix build.
+
+        * API/JSValue.mm:
+        (isDate):
+        (isArray):
+        * API/JSWrapperMap.mm:
+        (tryUnwrapObjcObject):
+        * API/ObjCCallbackFunction.mm:
+        (tryUnwrapBlock):
+
+2013-08-13  Filip Pizlo  <fpizlo@apple.com>
+
         Foo::s_info should be Foo::info(), so that you can change how the s_info is actually linked
         https://bugs.webkit.org/show_bug.cgi?id=119770
 

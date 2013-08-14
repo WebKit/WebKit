@@ -615,7 +615,7 @@ JSObjectRef objCCallbackFunctionForBlock(JSContext *context, id target)
 
 id tryUnwrapBlock(JSObjectRef object)
 {
-    if (!toJS(object)->inherits(&JSC::ObjCCallbackFunction::s_info))
+    if (!toJS(object)->inherits(JSC::ObjCCallbackFunction::info()))
         return nil;
     return static_cast<JSC::ObjCCallbackFunction*>(toJS(object))->impl()->wrappedBlock();
 }

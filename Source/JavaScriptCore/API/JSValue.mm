@@ -555,13 +555,13 @@ NSString * const JSPropertyDescriptorSetKey = @"set";
 inline bool isDate(JSObjectRef object, JSGlobalContextRef context)
 {
     JSC::APIEntryShim entryShim(toJS(context));
-    return toJS(object)->inherits(&JSC::DateInstance::s_info);
+    return toJS(object)->inherits(JSC::DateInstance::info());
 }
 
 inline bool isArray(JSObjectRef object, JSGlobalContextRef context)
 {
     JSC::APIEntryShim entryShim(toJS(context));
-    return toJS(object)->inherits(&JSC::JSArray::s_info);
+    return toJS(object)->inherits(JSC::JSArray::info());
 }
 
 @implementation JSValue(Internal)

@@ -499,7 +499,7 @@ id tryUnwrapObjcObject(JSGlobalContextRef context, JSValueRef value)
     JSValueRef exception = 0;
     JSObjectRef object = JSValueToObject(context, value, &exception);
     ASSERT(!exception);
-    if (toJS(object)->inherits(&JSC::JSCallbackObject<JSC::JSAPIWrapperObject>::s_info))
+    if (toJS(object)->inherits(JSC::JSCallbackObject<JSC::JSAPIWrapperObject>::info()))
         return (id)JSC::jsCast<JSC::JSAPIWrapperObject*>(toJS(object))->wrappedObject();
     if (id target = tryUnwrapBlock(object))
         return target;
