@@ -478,6 +478,7 @@ private:
     virtual void repaintContentRectangle(const IntRect&, bool immediate);
     virtual void contentsResized() OVERRIDE;
     virtual void visibleContentsResized();
+    virtual void fixedLayoutSizeChanged() OVERRIDE;
 
     virtual void delegatesScrollingDidChange();
 

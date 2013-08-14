@@ -163,7 +163,7 @@ public:
     void setFixedLayoutSize(const IntSize&);
     bool useFixedLayout() const;
     void setUseFixedLayout(bool enable);
-    
+
     // Functions for getting/setting the size of the document contained inside the ScrollView (as an IntSize or as individual width and height
     // values).
     virtual IntSize contentsSize() const OVERRIDE; // Always at least as big as the visibleWidth()/visibleHeight().
@@ -312,6 +312,8 @@ protected:
 
     virtual void visibleContentsResized() = 0;
     virtual void delegatesScrollingDidChange() { }
+    virtual void fixedLayoutSizeChanged();
+
     // These functions are used to create/destroy scrollbars.
     void setHasHorizontalScrollbar(bool);
     void setHasVerticalScrollbar(bool);

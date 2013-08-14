@@ -2205,6 +2205,15 @@ void FrameView::contentsResized()
     setNeedsLayout();
 }
 
+void FrameView::fixedLayoutSizeChanged()
+{
+    // Can be triggered before the view is set, see comment in FrameView::visibleContentsResized().
+    // An ASSERT is triggered when a view schedules a layout before being attached to a frame.
+    if (!frame()->view())
+        return;
+    ScrollView::fixedLayoutSizeChanged();
+}
+
 void FrameView::visibleContentsResized()
 {
     // We check to make sure the view is attached to a frame() as this method can
