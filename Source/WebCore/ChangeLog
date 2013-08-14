@@ -1,3 +1,14 @@
+2013-08-14  Antti Koivisto  <antti@apple.com>
+
+        Try to fix Qt build.
+        
+        Not reviewed.
+
+        * xml/parser/XMLDocumentParserQt.cpp:
+        (WebCore::XMLDocumentParser::parseProcessingInstruction):
+        (WebCore::XMLDocumentParser::parseCdata):
+        (WebCore::XMLDocumentParser::parseComment):
+
 2013-08-13  Antti Koivisto  <antti@apple.com>
 
         Remove Node::attach() and ContainerNode::attach()

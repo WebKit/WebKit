@@ -586,8 +586,6 @@ void XMLDocumentParser::parseProcessingInstruction()
     pi->setCreatedByParser(true);
 
     m_currentNode->parserAppendChild(pi.get());
-    if (m_view && !pi->attached())
-        pi->attach();
 
     pi->finishParsingChildren();
 
@@ -608,7 +606,7 @@ void XMLDocumentParser::parseCdata()
 
     m_currentNode->parserAppendChild(newNode.get());
     if (m_view && !newNode->attached())
-        newNode->attach();
+        newNode->attachText();
 }
 
 void XMLDocumentParser::parseComment()
@@ -618,8 +616,6 @@ void XMLDocumentParser::parseComment()
     RefPtr<Comment> newNode = Comment::create(document(), m_stream.text());
 
     m_currentNode->parserAppendChild(newNode.get());
-    if (m_view && !newNode->attached())
-        newNode->attach();
 }
 
 void XMLDocumentParser::endDocument()
