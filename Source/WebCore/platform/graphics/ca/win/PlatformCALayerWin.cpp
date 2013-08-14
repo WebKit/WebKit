@@ -116,6 +116,7 @@ PlatformCALayer::PlatformCALayer(LayerType layerType, PlatformLayer* layer, Plat
         m_layer = layer;
     } else {
         m_layerType = layerType;
+        ASSERT((layerType != LayerTypeTiledBackingLayer) && (layerType != LayerTypePageTiledBackingLayer));
         m_layer = adoptCF(CACFLayerCreate(toCACFLayerType(layerType)));
 
         // Create the PlatformCALayerWinInternal object and point to it in the userdata.
