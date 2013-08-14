@@ -1,3 +1,15 @@
+2013-08-14  Dean Jackson  <dino@apple.com>
+
+        <https://webkit.org/b/119820> Add pluginView-related logging to WebPage
+
+        Reviewed by Tim Horton.
+
+        Add some more diagnostic output to help track down bugs.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::addPluginView): More logging.
+        (WebKit::WebPage::removePluginView): Ditto.
+
 2013-08-14  Alexey Proskuryakov  <ap@apple.com>
 
         [WK2] Sync messages with with non-default timeout sent from secondary threads always time out
