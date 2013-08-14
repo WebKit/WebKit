@@ -1,3 +1,17 @@
+2013-08-14  Rob Buis  <rwlbuis@webkit.org>
+
+        Assertion failure in RenderObject::drawLineForBoxSide
+        https://bugs.webkit.org/show_bug.cgi?id=108187
+
+        Reviewed by David Hyatt.
+
+        Don't draw the outline if the rectangle to draw is empty.
+
+        Test: fast/css/outline-negative.html
+
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::paintOutlineForLine):
+
 2013-08-13  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Headings not longer have an AXTitle if they have a link as the only child

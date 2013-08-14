@@ -1,3 +1,15 @@
+2013-08-14  Rob Buis  <rwlbuis@webkit.org>
+
+        Assertion failure in RenderObject::drawLineForBoxSide
+        https://bugs.webkit.org/show_bug.cgi?id=108187
+
+        Reviewed by David Hyatt.
+
+        Add testcase from bug with small adjustments.
+
+        * fast/css/outline-negative-expected.txt: Added.
+        * fast/css/outline-negative.html: Added.
+
 2013-08-14  Andreas Kling  <akling@apple.com>
 
         REGRESSION(r153815): fast/repaint/caret-jump-between-nodes.html sucks.
