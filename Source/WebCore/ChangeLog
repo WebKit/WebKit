@@ -1,3 +1,33 @@
+2013-08-14  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Move id attribute to parent Element interface
+        https://bugs.webkit.org/show_bug.cgi?id=119706
+
+        Reviewed by Ryosuke Niwa.
+
+        Move id attribute from SVGElement / HTMLElement to their Element parent
+        interface to match the latest DOM specification and avoid duplication:
+        http://dom.spec.whatwg.org/#dom-element-id
+
+        There is no web-exposed behavior change because we haven't moved
+        properties from instances to their prototype, as per the Web IDL
+        specification (http://dev.w3.org/2006/webapi/WebIDL/#es-attributes).
+
+        Firefox already exposes the id property of Element's prototype.
+
+        This patch also drops the comment about returning the empty string when
+        no id is present (introduced in http://trac.webkit.org/changeset/4417).
+        This comment is redundant since the id property is already marked to
+        "reflect" the id attribute. Returning the empty string when the
+        attribute is not present is the normal behavior when reflecting:
+        http://www.whatwg.org/specs/web-apps/current-work/multipage/common-dom-interfaces.html#reflect
+
+        No new test, no web-exposed behavior change.
+
+        * dom/Element.idl:
+        * html/HTMLElement.idl:
+        * svg/SVGElement.idl:
+
 2013-08-14  Arpita Bahuguna  <a.bah@samsung.com>
 
         createAttribute/setAttributeNode does not properly normalize case

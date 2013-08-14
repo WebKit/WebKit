@@ -1,3 +1,15 @@
+2013-08-14  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Move id attribute to parent Element interface
+        https://bugs.webkit.org/show_bug.cgi?id=119706
+
+        Reviewed by Ryosuke Niwa.
+
+        Rebaseline fast/js/dom-static-property-for-in-iteration.html as
+        the order has changed.
+
+        * fast/js/dom-static-property-for-in-iteration-expected.txt:
+
 2013-08-14  Arpita Bahuguna  <a.bah@samsung.com>
 
         createAttribute/setAttributeNode does not properly normalize case

@@ -22,9 +22,10 @@
     JSGenerateToNativeObject,
     JSCustomPushEventHandlerScope,
 ] interface HTMLElement : Element {
-             // iht.com relies on id returning the empty string when no id is present. 
-             // Other browsers do this as well. So we don't convert null to JS null.
+#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
+             // FIXME: id should be moved to Element for ObjC as well.
              [Reflect] attribute DOMString id;
+#endif
              [Reflect] attribute DOMString title;
              [Reflect] attribute DOMString lang;
              attribute boolean             translate;
