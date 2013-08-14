@@ -1,3 +1,15 @@
+2013-08-14  Alexey Proskuryakov  <ap@apple.com>
+
+        [WK2] Sync messages with with non-default timeout sent from secondary threads always time out
+        https://bugs.webkit.org/show_bug.cgi?id=119767
+
+        Fix by Justin Bur.
+        Reviewed by Darin Adler.
+
+        * Platform/CoreIPC/Connection.cpp: (CoreIPC::Connection::sendSyncMessageFromSecondaryThread):
+        The argument to wait() is absolute time, not a delta. This calculation matches one
+        in Connection::waitForMessage().
+
 2013-08-14  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION (r153877): Plugin scanning slows creation of WebViews

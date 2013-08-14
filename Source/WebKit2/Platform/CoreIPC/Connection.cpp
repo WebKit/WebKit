@@ -511,7 +511,7 @@ PassOwnPtr<MessageDecoder> Connection::sendSyncMessageFromSecondaryThread(uint64
     if (timeout == NoTimeout)
         timeout = 1e10;
 
-    pendingReply.semaphore.wait(timeout);
+    pendingReply.semaphore.wait(currentTime() + timeout);
 
     // Finally, pop the pending sync reply information.
     {
