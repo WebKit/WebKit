@@ -1,3 +1,17 @@
+2013-08-14  Andreas Kling  <akling@apple.com>
+
+        REGRESSION(r153815): fast/repaint/caret-jump-between-nodes.html sucks.
+        <http://webkit.org/b/119520>
+
+        Unreviewed, remove the description text from this repaint test in an attempt
+        to get consistent cross-platform results.
+
+        * fast/repaint/caret-jump-between-nodes-expected.txt:
+        * fast/repaint/caret-jump-between-nodes.html:
+        * platform/gtk/fast/repaint/caret-jump-between-nodes-expected.txt: Removed.
+        * platform/qt-5.0-wk2/fast/repaint/caret-jump-between-nodes-expected.txt: Removed.
+        * platform/qt/fast/repaint/caret-jump-between-nodes-expected.txt: Removed.
+
 2013-08-13  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Headings not longer have an AXTitle if they have a link as the only child

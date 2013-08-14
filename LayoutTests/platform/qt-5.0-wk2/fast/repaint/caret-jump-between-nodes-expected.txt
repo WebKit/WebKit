@@ -1,4 +1,0 @@
-This test verifies that moving the caret between two distinct nodes doesn't leave a ghost behind when the node-relative coordinate offset is identical.
-
-
-
