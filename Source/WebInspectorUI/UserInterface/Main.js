@@ -38,6 +38,8 @@ WebInspector.loaded = function()
     // Register observers for events from the InspectorBackend.
     InspectorBackend.registerInspectorDispatcher(new WebInspector.InspectorObserver);
     InspectorBackend.registerPageDispatcher(new WebInspector.PageObserver);
+    if (InspectorBackend.registerCanvasDispatcher)
+        InspectorBackend.registerCanvasDispatcher(new WebInspector.CanvasObserver);
     InspectorBackend.registerConsoleDispatcher(new WebInspector.ConsoleObserver);
     InspectorBackend.registerNetworkDispatcher(new WebInspector.NetworkObserver);
     InspectorBackend.registerDOMDispatcher(new WebInspector.DOMObserver);

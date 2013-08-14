@@ -1,3 +1,20 @@
+2013-08-13  Dean Jackson  <dino@apple.com>
+
+        <https://webkit.org/b/119778> Add Canvas protocol observer
+
+        Reviewed by Joseph Pecoraro.
+
+        In preparation for listening to backend events about canvas profiling,
+        add a canvas observer.
+
+        * UserInterface/CanvasObserver.js: New empty CanvasObserver object.
+        (WebInspector.CanvasObserver):
+        (WebInspector.CanvasObserver.prototype.contextCreated):
+        (WebInspector.CanvasObserver.prototype.traceLogsRemoved):
+        * UserInterface/Main.html:
+        * UserInterface/Main.js:
+        (WebInspector.loaded):
+
 2013-08-11  Dean Jackson  <dino@apple.com>
 
         Update localizedStrings - I think I checked in an unmerged version
