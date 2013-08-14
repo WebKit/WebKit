@@ -31,11 +31,11 @@ namespace JSC {
 
         static ObjectPrototype* create(ExecState*, JSGlobalObject*, Structure*);
 
-        static const ClassInfo s_info;
+        DECLARE_INFO;
 
         static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
         {
-            return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info);
+            return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
         }
 
     protected:

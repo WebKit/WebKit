@@ -74,13 +74,13 @@ RegExpObject::RegExpObject(JSGlobalObject* globalObject, Structure* structure, R
 void RegExpObject::finishCreation(JSGlobalObject* globalObject)
 {
     Base::finishCreation(globalObject->vm());
-    ASSERT(inherits(&s_info));
+    ASSERT(inherits(info()));
 }
 
 void RegExpObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     RegExpObject* thisObject = jsCast<RegExpObject*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
 

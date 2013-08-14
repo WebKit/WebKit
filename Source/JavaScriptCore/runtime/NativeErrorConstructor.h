@@ -41,11 +41,11 @@ namespace JSC {
             return constructor;
         }
         
-        static const ClassInfo s_info;
+        DECLARE_INFO;
 
         static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
         {
-            return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info);
+            return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
         }
 
         Structure* errorStructure() { return m_errorStructure.get(); }
@@ -54,7 +54,7 @@ namespace JSC {
         void finishCreation(ExecState* exec, JSGlobalObject* globalObject, Structure* prototypeStructure, const String& name)
         {
             Base::finishCreation(exec->vm(), name);
-            ASSERT(inherits(&s_info));
+            ASSERT(inherits(info()));
 
             NativeErrorPrototype* prototype = NativeErrorPrototype::create(exec, globalObject, prototypeStructure, name, this);
 

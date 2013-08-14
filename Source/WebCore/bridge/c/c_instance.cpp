@@ -123,10 +123,10 @@ public:
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
-        return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info);
+        return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
     }
 
-    static const ClassInfo s_info;
+    DECLARE_INFO;
 
 private:
     CRuntimeMethod(JSGlobalObject* globalObject, Structure* structure, Bindings::Method* method)
@@ -137,7 +137,7 @@ private:
     void finishCreation(VM& vm, const String& name)
     {
         Base::finishCreation(vm, name);
-        ASSERT(inherits(&s_info));
+        ASSERT(inherits(info()));
     }
 
 };
@@ -152,7 +152,7 @@ JSValue CInstance::getMethod(ExecState* exec, PropertyName propertyName)
 
 JSValue CInstance::invokeMethod(ExecState* exec, RuntimeMethod* runtimeMethod)
 {
-    if (!asObject(runtimeMethod)->inherits(&CRuntimeMethod::s_info))
+    if (!asObject(runtimeMethod)->inherits(CRuntimeMethod::info()))
         return throwError(exec, createTypeError(exec, "Attempt to invoke non-plug-in method on plug-in object."));
 
     CMethod* method = static_cast<CMethod*>(runtimeMethod->method());

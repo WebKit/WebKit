@@ -69,11 +69,14 @@ namespace WebCore {
 
         DOMWrapperWorld* world() { return m_world.get(); }
 
+    protected:
         static WEBKIT_EXPORTDATA const JSC::ClassInfo s_info;
+    public:
+        static const JSC::ClassInfo* info() { return &s_info; }
 
         static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSValue prototype)
         {
-            return JSC::Structure::create(vm, 0, prototype, JSC::TypeInfo(JSC::GlobalObjectType, StructureFlags), &s_info);
+            return JSC::Structure::create(vm, 0, prototype, JSC::TypeInfo(JSC::GlobalObjectType, StructureFlags), info());
         }
 
     protected:
@@ -87,12 +90,12 @@ namespace WebCore {
     template<class ConstructorClass>
     inline JSC::JSObject* getDOMConstructor(JSC::ExecState* exec, const JSDOMGlobalObject* globalObject)
     {
-        if (JSC::JSObject* constructor = const_cast<JSDOMGlobalObject*>(globalObject)->constructors().get(&ConstructorClass::s_info).get())
+        if (JSC::JSObject* constructor = const_cast<JSDOMGlobalObject*>(globalObject)->constructors().get(ConstructorClass::info()).get())
             return constructor;
         JSC::JSObject* constructor = ConstructorClass::create(exec, ConstructorClass::createStructure(exec->vm(), const_cast<JSDOMGlobalObject*>(globalObject), globalObject->objectPrototype()), const_cast<JSDOMGlobalObject*>(globalObject));
-        ASSERT(!const_cast<JSDOMGlobalObject*>(globalObject)->constructors().contains(&ConstructorClass::s_info));
+        ASSERT(!const_cast<JSDOMGlobalObject*>(globalObject)->constructors().contains(ConstructorClass::info()));
         JSC::WriteBarrier<JSC::JSObject> temp;
-        const_cast<JSDOMGlobalObject*>(globalObject)->constructors().add(&ConstructorClass::s_info, temp).iterator->value.set(exec->vm(), globalObject, constructor);
+        const_cast<JSDOMGlobalObject*>(globalObject)->constructors().add(ConstructorClass::info(), temp).iterator->value.set(exec->vm(), globalObject, constructor);
         return constructor;
     }
 

@@ -104,11 +104,11 @@ namespace JSC {
             return m_numParametersForCall == NUM_PARAMETERS_IS_HOST;
         }
 
-        static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto) { return Structure::create(vm, globalObject, proto, TypeInfo(CompoundType, StructureFlags), &s_info); }
+        static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto) { return Structure::create(vm, globalObject, proto, TypeInfo(CompoundType, StructureFlags), info()); }
         
         void clearCode();
 
-        static JS_EXPORTDATA const ClassInfo s_info;
+        DECLARE_EXPORT_INFO;
 
     protected:
         static const unsigned StructureFlags = 0;
@@ -312,9 +312,9 @@ namespace JSC {
             return OBJECT_OFFSETOF(NativeExecutable, m_constructor);
         }
 
-        static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto) { return Structure::create(vm, globalObject, proto, TypeInfo(LeafType, StructureFlags), &s_info); }
+        static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto) { return Structure::create(vm, globalObject, proto, TypeInfo(LeafType, StructureFlags), info()); }
         
-        static const ClassInfo s_info;
+        DECLARE_INFO;
 
         Intrinsic intrinsic() const;
 
@@ -391,7 +391,7 @@ namespace JSC {
         
         CodeFeatures features() const { return m_features; }
         
-        static const ClassInfo s_info;
+        DECLARE_INFO;
 
         void recordParse(CodeFeatures features, bool hasCapturedVariables, int firstLine, int lastLine, unsigned startColumn)
         {
@@ -466,10 +466,10 @@ namespace JSC {
 #endif
         static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto)
         {
-            return Structure::create(vm, globalObject, proto, TypeInfo(EvalExecutableType, StructureFlags), &s_info);
+            return Structure::create(vm, globalObject, proto, TypeInfo(EvalExecutableType, StructureFlags), info());
         }
         
-        static const ClassInfo s_info;
+        DECLARE_INFO;
 
         void unlinkCalls();
 
@@ -545,10 +545,10 @@ namespace JSC {
         
         static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto)
         {
-            return Structure::create(vm, globalObject, proto, TypeInfo(ProgramExecutableType, StructureFlags), &s_info);
+            return Structure::create(vm, globalObject, proto, TypeInfo(ProgramExecutableType, StructureFlags), info());
         }
         
-        static const ClassInfo s_info;
+        DECLARE_INFO;
         
         void unlinkCalls();
 
@@ -671,7 +671,7 @@ namespace JSC {
         JSObject* compileFor(ExecState* exec, JSScope* scope, CodeSpecializationKind kind)
         {
             ASSERT(exec->callee());
-            ASSERT(exec->callee()->inherits(&JSFunction::s_info));
+            ASSERT(exec->callee()->inherits(JSFunction::info()));
             ASSERT(jsCast<JSFunction*>(exec->callee())->jsExecutable() == this);
 
             if (kind == CodeForCall)
@@ -684,7 +684,7 @@ namespace JSC {
         JSObject* compileOptimizedFor(ExecState* exec, JSScope* scope, CompilationResult& result, unsigned bytecodeIndex, CodeSpecializationKind kind)
         {
             ASSERT(exec->callee());
-            ASSERT(exec->callee()->inherits(&JSFunction::s_info));
+            ASSERT(exec->callee()->inherits(JSFunction::info()));
             ASSERT(jsCast<JSFunction*>(exec->callee())->jsExecutable() == this);
             
             if (kind == CodeForCall)
@@ -756,10 +756,10 @@ namespace JSC {
         static void visitChildren(JSCell*, SlotVisitor&);
         static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto)
         {
-            return Structure::create(vm, globalObject, proto, TypeInfo(FunctionExecutableType, StructureFlags), &s_info);
+            return Structure::create(vm, globalObject, proto, TypeInfo(FunctionExecutableType, StructureFlags), info());
         }
         
-        static const ClassInfo s_info;
+        DECLARE_INFO;
         
         void unlinkCalls();
 

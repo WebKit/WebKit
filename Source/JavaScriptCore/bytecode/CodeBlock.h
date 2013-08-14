@@ -1253,7 +1253,7 @@ inline CodeBlock* baselineCodeBlockForInlineCallFrame(InlineCallFrame* inlineCal
 {
     RELEASE_ASSERT(inlineCallFrame);
     ExecutableBase* executable = inlineCallFrame->executable.get();
-    RELEASE_ASSERT(executable->structure()->classInfo() == &FunctionExecutable::s_info);
+    RELEASE_ASSERT(executable->structure()->classInfo() == FunctionExecutable::info());
     return static_cast<FunctionExecutable*>(executable)->baselineCodeBlockFor(inlineCallFrame->isCall ? CodeForCall : CodeForConstruct);
 }
 

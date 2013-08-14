@@ -31,7 +31,7 @@ ASSERT_HAS_TRIVIAL_DESTRUCTOR(JSWrapperObject);
 void JSWrapperObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSWrapperObject* thisObject = jsCast<JSWrapperObject*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
 

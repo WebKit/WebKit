@@ -59,7 +59,7 @@ JSTestCustomNamedGetterConstructor::JSTestCustomNamedGetterConstructor(Structure
 void JSTestCustomNamedGetterConstructor::finishCreation(ExecState* exec, JSDOMGlobalObject* globalObject)
 {
     Base::finishCreation(exec->vm());
-    ASSERT(inherits(&s_info));
+    ASSERT(inherits(info()));
     putDirect(exec->vm(), exec->propertyNames().prototype, JSTestCustomNamedGetterPrototype::self(exec, globalObject), DontDelete | ReadOnly);
     putDirect(exec->vm(), exec->propertyNames().length, jsNumber(0), ReadOnly | DontDelete | DontEnum);
 }
@@ -113,7 +113,7 @@ JSTestCustomNamedGetter::JSTestCustomNamedGetter(Structure* structure, JSDOMGlob
 void JSTestCustomNamedGetter::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(&s_info));
+    ASSERT(inherits(info()));
 }
 
 JSObject* JSTestCustomNamedGetter::createPrototype(ExecState* exec, JSGlobalObject* globalObject)
@@ -135,7 +135,7 @@ JSTestCustomNamedGetter::~JSTestCustomNamedGetter()
 bool JSTestCustomNamedGetter::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
     JSTestCustomNamedGetter* thisObject = jsCast<JSTestCustomNamedGetter*>(object);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     if (canGetItemsForName(exec, static_cast<TestCustomNamedGetter*>(thisObject->impl()), propertyName)) {
         slot.setCustom(thisObject, thisObject->nameGetter);
         return true;
@@ -146,7 +146,7 @@ bool JSTestCustomNamedGetter::getOwnPropertySlot(JSObject* object, ExecState* ex
 bool JSTestCustomNamedGetter::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)
 {
     JSTestCustomNamedGetter* thisObject = jsCast<JSTestCustomNamedGetter*>(object);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     if (canGetItemsForName(exec, static_cast<TestCustomNamedGetter*>(thisObject->impl()), propertyName)) {
         PropertySlot slot(thisObject);
         slot.setCustom(thisObject, nameGetter);
@@ -159,7 +159,7 @@ bool JSTestCustomNamedGetter::getOwnPropertyDescriptor(JSObject* object, ExecSta
 bool JSTestCustomNamedGetter::getOwnPropertySlotByIndex(JSObject* object, ExecState* exec, unsigned index, PropertySlot& slot)
 {
     JSTestCustomNamedGetter* thisObject = jsCast<JSTestCustomNamedGetter*>(object);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     PropertyName propertyName = Identifier::from(exec, index);
     if (canGetItemsForName(exec, static_cast<TestCustomNamedGetter*>(thisObject->impl()), propertyName)) {
         slot.setCustom(thisObject, thisObject->nameGetter);
@@ -182,10 +182,10 @@ JSValue JSTestCustomNamedGetter::getConstructor(ExecState* exec, JSGlobalObject*
 EncodedJSValue JSC_HOST_CALL jsTestCustomNamedGetterPrototypeFunctionAnotherFunction(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(&JSTestCustomNamedGetter::s_info))
+    if (!thisValue.inherits(JSTestCustomNamedGetter::info()))
         return throwVMTypeError(exec);
     JSTestCustomNamedGetter* castedThis = jsCast<JSTestCustomNamedGetter*>(asObject(thisValue));
-    ASSERT_GC_OBJECT_INHERITS(castedThis, &JSTestCustomNamedGetter::s_info);
+    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestCustomNamedGetter::info());
     TestCustomNamedGetter* impl = static_cast<TestCustomNamedGetter*>(castedThis->impl());
     if (exec->argumentCount() < 1)
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
@@ -259,7 +259,7 @@ JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TestCus
 
 TestCustomNamedGetter* toTestCustomNamedGetter(JSC::JSValue value)
 {
-    return value.inherits(&JSTestCustomNamedGetter::s_info) ? jsCast<JSTestCustomNamedGetter*>(asObject(value))->impl() : 0;
+    return value.inherits(JSTestCustomNamedGetter::info()) ? jsCast<JSTestCustomNamedGetter*>(asObject(value))->impl() : 0;
 }
 
 }

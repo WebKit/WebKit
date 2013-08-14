@@ -59,12 +59,12 @@ JSObject* createTerminatedExecutionException(VM* vm)
 
 bool isTerminatedExecutionException(JSObject* object)
 {
-    return object->inherits(&TerminatedExecutionError::s_info);
+    return object->inherits(TerminatedExecutionError::info());
 }
 
 bool isTerminatedExecutionException(JSValue value)
 {
-    return value.inherits(&TerminatedExecutionError::s_info);
+    return value.inherits(TerminatedExecutionError::info());
 }
 
 

@@ -132,7 +132,7 @@ void ArrayPrototype::finishCreation(JSGlobalObject* globalObject)
 {
     VM& vm = globalObject->vm();
     Base::finishCreation(vm);
-    ASSERT(inherits(&s_info));
+    ASSERT(inherits(info()));
     vm.prototypeMap.addPrototype(this);
 }
 
@@ -427,7 +427,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncConcat(ExecState* exec)
     size_t i = 0;
     size_t argCount = exec->argumentCount();
     while (1) {
-        if (curArg.inherits(&JSArray::s_info)) {
+        if (curArg.inherits(JSArray::info())) {
             unsigned length = curArg.get(exec, exec->propertyNames().length).toUInt32(exec);
             JSObject* curObject = curArg.toObject(exec);
             for (unsigned k = 0; k < length; ++k) {
@@ -610,7 +610,7 @@ inline JSValue getOrHole(JSObject* obj, ExecState* exec, unsigned propertyName)
 
 static bool attemptFastSort(ExecState* exec, JSObject* thisObj, JSValue function, CallData& callData, CallType& callType)
 {
-    if (thisObj->classInfo() != &JSArray::s_info
+    if (thisObj->classInfo() != JSArray::info()
         || asArray(thisObj)->hasSparseMap()
         || shouldUseSlowPut(thisObj->structure()->indexingType()))
         return false;

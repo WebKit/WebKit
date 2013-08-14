@@ -38,7 +38,7 @@ const ClassInfo JSProxy::s_info = { "JSProxy", &Base::s_info, 0, 0, CREATE_METHO
 void JSProxy::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSProxy* thisObject = jsCast<JSProxy*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());

@@ -38,7 +38,7 @@ BooleanObject::BooleanObject(VM& vm, Structure* structure)
 void BooleanObject::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(&s_info));
+    ASSERT(inherits(info()));
 }
 
 } // namespace JSC

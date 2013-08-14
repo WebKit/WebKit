@@ -46,7 +46,7 @@ RuntimeArray::RuntimeArray(ExecState* exec, Structure* structure)
 void RuntimeArray::finishCreation(VM& vm, Bindings::Array* array)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(&s_info));
+    ASSERT(inherits(info()));
     m_array = array;
 }
 

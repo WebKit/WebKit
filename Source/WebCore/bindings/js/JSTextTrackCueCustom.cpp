@@ -59,7 +59,7 @@ bool JSTextTrackCueOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> h
 void JSTextTrackCue::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSTextTrackCue* jsTextTrackCue = jsCast<JSTextTrackCue*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(jsTextTrackCue, &s_info);
+    ASSERT_GC_OBJECT_INHERITS(jsTextTrackCue, info());
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(jsTextTrackCue->structure()->typeInfo().overridesVisitChildren());
     Base::visitChildren(jsTextTrackCue, visitor);

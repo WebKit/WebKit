@@ -37,7 +37,7 @@ namespace WebCore {
 void JSTextTrack::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSTextTrack* jsTextTrack = jsCast<JSTextTrack*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(jsTextTrack, &s_info);
+    ASSERT_GC_OBJECT_INHERITS(jsTextTrack, info());
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(jsTextTrack->structure()->typeInfo().overridesVisitChildren());
     Base::visitChildren(jsTextTrack, visitor);

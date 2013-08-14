@@ -43,7 +43,7 @@ TrackBase* toTrack(JSValue value)
         return 0;
 
     JSObject* object = asObject(value);
-    if (object->inherits(&JSTextTrack::s_info))
+    if (object->inherits(JSTextTrack::info()))
         return jsCast<JSTextTrack*>(object)->impl();
     
     // FIXME: Fill in additional tests and casts here for VideoTrack and AudioTrack when 

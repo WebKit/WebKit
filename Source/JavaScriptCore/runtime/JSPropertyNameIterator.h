@@ -54,7 +54,7 @@ namespace JSC {
        
         static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
         {
-            return Structure::create(vm, globalObject, prototype, TypeInfo(CompoundType, OverridesVisitChildren), &s_info);
+            return Structure::create(vm, globalObject, prototype, TypeInfo(CompoundType, OverridesVisitChildren), info());
         }
 
         static void visitChildren(JSCell*, SlotVisitor&);
@@ -73,7 +73,7 @@ namespace JSC {
         void setCachedPrototypeChain(VM& vm, StructureChain* cachedPrototypeChain) { m_cachedPrototypeChain.set(vm, this, cachedPrototypeChain); }
         StructureChain* cachedPrototypeChain() { return m_cachedPrototypeChain.get(); }
         
-        static JS_EXPORTDATA const ClassInfo s_info;
+        DECLARE_EXPORT_INFO;
 
     protected:
         void finishCreation(ExecState* exec, PropertyNameArrayData* propertyNameArrayData, JSObject* object)

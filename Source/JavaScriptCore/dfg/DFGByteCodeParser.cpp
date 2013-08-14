@@ -1587,7 +1587,7 @@ bool ByteCodeParser::handleConstantInternalFunction(
     
     UNUSED_PARAM(prediction); // Remove this once we do more things.
     
-    if (function->classInfo() == &ArrayConstructor::s_info) {
+    if (function->classInfo() == ArrayConstructor::info()) {
         if (argumentCountIncludingThis == 2) {
             set(resultOperand,
                 addToGraph(NewArrayWithSize, OpInfo(ArrayWithUndecided), get(registerOffset + argumentToOperand(1))));
@@ -1599,7 +1599,7 @@ bool ByteCodeParser::handleConstantInternalFunction(
         set(resultOperand,
             addToGraph(Node::VarArg, NewArray, OpInfo(ArrayWithUndecided), OpInfo(0)));
         return true;
-    } else if (function->classInfo() == &StringConstructor::s_info) {
+    } else if (function->classInfo() == StringConstructor::info()) {
         Node* result;
         
         if (argumentCountIncludingThis <= 1)
@@ -1822,7 +1822,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 if (profile->m_singletonValueIsTop
                     || !profile->m_singletonValue
                     || !profile->m_singletonValue.isCell()
-                    || profile->m_singletonValue.asCell()->classInfo() != &Structure::s_info)
+                    || profile->m_singletonValue.asCell()->classInfo() != Structure::info())
                     setThis(addToGraph(ToThis, op1));
                 else {
                     addToGraph(
@@ -1840,7 +1840,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             bool alreadyEmitted = false;
             if (callee->op() == WeakJSConstant) {
                 JSCell* cell = callee->weakConstant();
-                ASSERT(cell->inherits(&JSFunction::s_info));
+                ASSERT(cell->inherits(JSFunction::info()));
                 
                 JSFunction* function = jsCast<JSFunction*>(cell);
                 ObjectAllocationProfile* allocationProfile = function->tryGetAllocationProfile();
@@ -1919,7 +1919,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 || !profile->m_singletonValue.isCell())
                 set(currentInstruction[1].u.operand, get(JSStack::Callee));
             else {
-                ASSERT(profile->m_singletonValue.asCell()->inherits(&JSFunction::s_info));
+                ASSERT(profile->m_singletonValue.asCell()->inherits(JSFunction::info()));
                 Node* actualCallee = get(JSStack::Callee);
                 addToGraph(CheckFunction, OpInfo(profile->m_singletonValue.asCell()), actualCallee);
                 set(currentInstruction[1].u.operand, addToGraph(WeakJSConstant, OpInfo(profile->m_singletonValue.asCell())));

@@ -756,7 +756,7 @@ EncodedJSValue DFG_OPERATION operationRegExpExec(ExecState* exec, JSCell* base, 
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
     
-    if (!base->inherits(&RegExpObject::s_info))
+    if (!base->inherits(RegExpObject::info()))
         return throwVMTypeError(exec);
 
     ASSERT(argument->isString() || argument->isObject());
@@ -769,7 +769,7 @@ size_t DFG_OPERATION operationRegExpTest(ExecState* exec, JSCell* base, JSCell* 
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
 
-    if (!base->inherits(&RegExpObject::s_info)) {
+    if (!base->inherits(RegExpObject::info())) {
         throwTypeError(exec);
         return false;
     }
@@ -1428,7 +1428,7 @@ EncodedJSValue DFG_OPERATION operationGetInlinedArgumentByVal(
 
 JSCell* DFG_OPERATION operationNewFunctionNoCheck(ExecState* exec, JSCell* functionExecutable)
 {
-    ASSERT(functionExecutable->inherits(&FunctionExecutable::s_info));
+    ASSERT(functionExecutable->inherits(FunctionExecutable::info()));
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
     return JSFunction::create(exec, static_cast<FunctionExecutable*>(functionExecutable), exec->scope());
@@ -1436,7 +1436,7 @@ JSCell* DFG_OPERATION operationNewFunctionNoCheck(ExecState* exec, JSCell* funct
 
 EncodedJSValue DFG_OPERATION operationNewFunction(ExecState* exec, JSCell* functionExecutable)
 {
-    ASSERT(functionExecutable->inherits(&FunctionExecutable::s_info));
+    ASSERT(functionExecutable->inherits(FunctionExecutable::info()));
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
     return JSValue::encode(JSFunction::create(exec, static_cast<FunctionExecutable*>(functionExecutable), exec->scope()));
@@ -1444,7 +1444,7 @@ EncodedJSValue DFG_OPERATION operationNewFunction(ExecState* exec, JSCell* funct
 
 JSCell* DFG_OPERATION operationNewFunctionExpression(ExecState* exec, JSCell* functionExecutableAsCell)
 {
-    ASSERT(functionExecutableAsCell->inherits(&FunctionExecutable::s_info));
+    ASSERT(functionExecutableAsCell->inherits(FunctionExecutable::info()));
 
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);

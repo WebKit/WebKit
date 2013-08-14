@@ -276,7 +276,7 @@ public:
         if (!value.isCell() || !value)
             return false;
         JSCell* cell = value.asCell();
-        if (!cell->inherits(&InternalFunction::s_info))
+        if (!cell->inherits(InternalFunction::info()))
             return false;
         return true;
     }

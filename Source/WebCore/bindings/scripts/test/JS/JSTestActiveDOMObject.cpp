@@ -61,7 +61,7 @@ JSTestActiveDOMObjectConstructor::JSTestActiveDOMObjectConstructor(Structure* st
 void JSTestActiveDOMObjectConstructor::finishCreation(ExecState* exec, JSDOMGlobalObject* globalObject)
 {
     Base::finishCreation(exec->vm());
-    ASSERT(inherits(&s_info));
+    ASSERT(inherits(info()));
     putDirect(exec->vm(), exec->propertyNames().prototype, JSTestActiveDOMObjectPrototype::self(exec, globalObject), DontDelete | ReadOnly);
     putDirect(exec->vm(), exec->propertyNames().length, jsNumber(0), ReadOnly | DontDelete | DontEnum);
 }
@@ -116,7 +116,7 @@ JSTestActiveDOMObject::JSTestActiveDOMObject(Structure* structure, JSDOMGlobalOb
 void JSTestActiveDOMObject::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(&s_info));
+    ASSERT(inherits(info()));
 }
 
 JSObject* JSTestActiveDOMObject::createPrototype(ExecState* exec, JSGlobalObject* globalObject)
@@ -138,14 +138,14 @@ JSTestActiveDOMObject::~JSTestActiveDOMObject()
 bool JSTestActiveDOMObject::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
     JSTestActiveDOMObject* thisObject = jsCast<JSTestActiveDOMObject*>(object);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     return getStaticValueSlot<JSTestActiveDOMObject, Base>(exec, &JSTestActiveDOMObjectTable, thisObject, propertyName, slot);
 }
 
 bool JSTestActiveDOMObject::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)
 {
     JSTestActiveDOMObject* thisObject = jsCast<JSTestActiveDOMObject*>(object);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     if (!shouldAllowAccessToFrame(exec, thisObject->impl()->frame()))
         return false;
     return getStaticValueDescriptor<JSTestActiveDOMObject, Base>(exec, &JSTestActiveDOMObjectTable, thisObject, propertyName, descriptor);
@@ -179,10 +179,10 @@ JSValue JSTestActiveDOMObject::getConstructor(ExecState* exec, JSGlobalObject* g
 EncodedJSValue JSC_HOST_CALL jsTestActiveDOMObjectPrototypeFunctionExcitingFunction(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(&JSTestActiveDOMObject::s_info))
+    if (!thisValue.inherits(JSTestActiveDOMObject::info()))
         return throwVMTypeError(exec);
     JSTestActiveDOMObject* castedThis = jsCast<JSTestActiveDOMObject*>(asObject(thisValue));
-    ASSERT_GC_OBJECT_INHERITS(castedThis, &JSTestActiveDOMObject::s_info);
+    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestActiveDOMObject::info());
     if (!BindingSecurity::shouldAllowAccessToDOMWindow(exec, castedThis->impl()))
         return JSValue::encode(jsUndefined());
     TestActiveDOMObject* impl = static_cast<TestActiveDOMObject*>(castedThis->impl());
@@ -198,10 +198,10 @@ EncodedJSValue JSC_HOST_CALL jsTestActiveDOMObjectPrototypeFunctionExcitingFunct
 EncodedJSValue JSC_HOST_CALL jsTestActiveDOMObjectPrototypeFunctionPostMessage(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(&JSTestActiveDOMObject::s_info))
+    if (!thisValue.inherits(JSTestActiveDOMObject::info()))
         return throwVMTypeError(exec);
     JSTestActiveDOMObject* castedThis = jsCast<JSTestActiveDOMObject*>(asObject(thisValue));
-    ASSERT_GC_OBJECT_INHERITS(castedThis, &JSTestActiveDOMObject::s_info);
+    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestActiveDOMObject::info());
     TestActiveDOMObject* impl = static_cast<TestActiveDOMObject*>(castedThis->impl());
     if (exec->argumentCount() < 1)
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
@@ -275,7 +275,7 @@ JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TestAct
 
 TestActiveDOMObject* toTestActiveDOMObject(JSC::JSValue value)
 {
-    return value.inherits(&JSTestActiveDOMObject::s_info) ? jsCast<JSTestActiveDOMObject*>(asObject(value))->impl() : 0;
+    return value.inherits(JSTestActiveDOMObject::info()) ? jsCast<JSTestActiveDOMObject*>(asObject(value))->impl() : 0;
 }
 
 }

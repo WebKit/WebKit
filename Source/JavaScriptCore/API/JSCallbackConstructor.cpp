@@ -49,7 +49,7 @@ JSCallbackConstructor::JSCallbackConstructor(JSGlobalObject* globalObject, Struc
 void JSCallbackConstructor::finishCreation(JSGlobalObject* globalObject, JSClassRef jsClass)
 {
     Base::finishCreation(globalObject->vm());
-    ASSERT(inherits(&s_info));
+    ASSERT(inherits(info()));
     if (m_class)
         JSClassRetain(jsClass);
 }

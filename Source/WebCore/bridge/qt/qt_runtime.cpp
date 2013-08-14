@@ -148,22 +148,22 @@ void registerCustomType(int qtMetaTypeId, ConvertToVariantFunction toVariantFunc
 
 static bool isJSUint8Array(JSObjectRef object)
 {
-    return toJS(object)->inherits(&JSUint8Array::s_info);
+    return toJS(object)->inherits(JSUint8Array::info());
 }
 
 static bool isJSArray(JSObjectRef object)
 {
-    return toJS(object)->inherits(&JSArray::s_info);
+    return toJS(object)->inherits(JSArray::info());
 }
 
 static bool isJSDate(JSObjectRef object)
 {
-    return toJS(object)->inherits(&DateInstance::s_info);
+    return toJS(object)->inherits(DateInstance::info());
 }
 
 static bool isQtObject(JSObjectRef object)
 {
-    return toJS(object)->inherits(&RuntimeObject::s_info);
+    return toJS(object)->inherits(RuntimeObject::info());
 }
 
 static JSRealType valueRealType(JSContextRef context, JSValueRef value, JSValueRef* exception)
@@ -203,11 +203,11 @@ static JSValueRef unwrapBoxedPrimitive(JSContextRef context, JSValueRef value, J
     ExecState* exec = toJS(context);
     APIEntryShim entryShim(exec);
     JSObject* object = toJS(obj);
-    if (object->inherits(&NumberObject::s_info))
+    if (object->inherits(NumberObject::info()))
         return toRef(exec, jsNumber(object->toNumber(exec)));
-    if (object->inherits(&StringObject::s_info))
+    if (object->inherits(StringObject::info()))
         return toRef(exec, object->toString(exec));
-    if (object->inherits(&BooleanObject::s_info))
+    if (object->inherits(BooleanObject::info()))
         return toRef(exec, object->toPrimitive(exec));
     return value;
 }
@@ -749,7 +749,7 @@ JSValueRef convertQVariantToValue(JSContextRef context, PassRefPtr<RootObject> r
         return QtPixmapRuntime::toJS(context, variant, exception);
 
     if (customRuntimeConversions()->contains(type)) {
-        if (!root->globalObject()->inherits(&JSDOMWindow::s_info))
+        if (!root->globalObject()->inherits(JSDOMWindow::info()))
             return JSValueMakeUndefined(context);
 
         Document* document = (static_cast<JSDOMWindow*>(root->globalObject()))->impl()->document();

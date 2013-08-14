@@ -92,7 +92,7 @@ RegExpConstructor::RegExpConstructor(JSGlobalObject* globalObject, Structure* st
 void RegExpConstructor::finishCreation(ExecState* exec, RegExpPrototype* regExpPrototype)
 {
     Base::finishCreation(exec->vm(), Identifier(exec, "RegExp").string());
-    ASSERT(inherits(&s_info));
+    ASSERT(inherits(info()));
 
     // ECMA 15.10.5.1 RegExp.prototype
     putDirectWithoutTransition(exec->vm(), exec->propertyNames().prototype, regExpPrototype, DontEnum | DontDelete | ReadOnly);
@@ -109,7 +109,7 @@ void RegExpConstructor::destroy(JSCell* cell)
 void RegExpConstructor::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     RegExpConstructor* thisObject = jsCast<RegExpConstructor*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
 
@@ -259,7 +259,7 @@ JSObject* constructRegExp(ExecState* exec, JSGlobalObject* globalObject, const A
     JSValue arg0 = args.at(0);
     JSValue arg1 = args.at(1);
 
-    if (arg0.inherits(&RegExpObject::s_info)) {
+    if (arg0.inherits(RegExpObject::info())) {
         if (!arg1.isUndefined())
             return throwError(exec, createTypeError(exec, ASCIILiteral("Cannot supply flags when constructing one RegExp from another.")));
         // If called as a function, this just returns the first argument (see 15.10.3.1).

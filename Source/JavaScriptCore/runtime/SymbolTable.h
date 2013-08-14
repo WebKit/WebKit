@@ -452,7 +452,7 @@ public:
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
-        return Structure::create(vm, globalObject, prototype, TypeInfo(LeafType, StructureFlags), &s_info);
+        return Structure::create(vm, globalObject, prototype, TypeInfo(LeafType, StructureFlags), info());
     }
 
     bool usesNonStrictEval() { return m_usesNonStrictEval; }
@@ -474,7 +474,7 @@ public:
     const SlowArgument* slowArguments() { return m_slowArguments.get(); }
     void setSlowArguments(PassOwnArrayPtr<SlowArgument> slowArguments) { m_slowArguments = slowArguments; }
 
-    static JS_EXPORTDATA const ClassInfo s_info;
+    DECLARE_EXPORT_INFO;
 
 private:
     SharedSymbolTable(VM& vm)

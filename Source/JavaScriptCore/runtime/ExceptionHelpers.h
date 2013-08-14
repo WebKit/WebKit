@@ -76,10 +76,10 @@ public:
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
-        return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info);
+        return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
     }
 
-    static JS_EXPORTDATA const ClassInfo s_info;
+    DECLARE_EXPORT_INFO;
 };
 
 } // namespace JSC

@@ -46,7 +46,7 @@ String DebuggerCallFrame::functionName() const
         return String();
 
     JSObject* function = m_callFrame->callee();
-    if (!function || !function->inherits(&JSFunction::s_info))
+    if (!function || !function->inherits(JSFunction::info()))
         return String();
     return jsCast<JSFunction*>(function)->name(m_callFrame);
 }

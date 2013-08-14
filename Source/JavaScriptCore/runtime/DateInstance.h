@@ -52,7 +52,7 @@ namespace JSC {
 
         double internalNumber() const { return internalValue().asNumber(); }
 
-        static JS_EXPORTDATA const ClassInfo s_info;
+        DECLARE_EXPORT_INFO;
 
         const GregorianDateTime* gregorianDateTime(ExecState* exec) const
         {
@@ -70,7 +70,7 @@ namespace JSC {
 
         static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
         {
-            return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info);
+            return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
         }
 
     private:
@@ -84,7 +84,7 @@ namespace JSC {
 
     inline DateInstance* asDateInstance(JSValue value)
     {
-        ASSERT(asObject(value)->inherits(&DateInstance::s_info));
+        ASSERT(asObject(value)->inherits(DateInstance::info()));
         return static_cast<DateInstance*>(asObject(value));
     }
 

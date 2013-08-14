@@ -101,7 +101,7 @@ static inline void insertSemicolonIfNeeded(String& functionBody)
 EncodedJSValue JSC_HOST_CALL functionProtoFuncToString(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (thisValue.inherits(&JSFunction::s_info)) {
+    if (thisValue.inherits(JSFunction::info())) {
         JSFunction* function = jsCast<JSFunction*>(thisValue);
         if (function->isHostFunction())
             return JSValue::encode(jsMakeNontrivialString(exec, "function ", function->name(exec), "() {\n    [native code]\n}"));
@@ -111,7 +111,7 @@ EncodedJSValue JSC_HOST_CALL functionProtoFuncToString(ExecState* exec)
         return JSValue::encode(jsMakeNontrivialString(exec, "function ", function->name(exec), "(", executable->paramString(), ") ", sourceString));
     }
 
-    if (thisValue.inherits(&InternalFunction::s_info)) {
+    if (thisValue.inherits(InternalFunction::info())) {
         InternalFunction* function = asInternalFunction(thisValue);
         return JSValue::encode(jsMakeNontrivialString(exec, "function ", function->name(exec), "() {\n    [native code]\n}"));
     }
@@ -133,7 +133,7 @@ EncodedJSValue JSC_HOST_CALL functionProtoFuncApply(ExecState* exec)
     if (!array.isUndefinedOrNull()) {
         if (!array.isObject())
             return throwVMTypeError(exec);
-        if (asObject(array)->classInfo() == &Arguments::s_info) {
+        if (asObject(array)->classInfo() == Arguments::info()) {
             if (asArguments(array)->length(exec) > Arguments::MaxArguments)
                 return JSValue::encode(throwStackOverflowError(exec));
             asArguments(array)->fillArgList(exec, applyArgs);
@@ -197,7 +197,7 @@ EncodedJSValue JSC_HOST_CALL functionProtoFuncBind(ExecState* exec)
     // If the [[Class]] internal property of Target is "Function", then ...
     // Else set the length own property of F to 0.
     unsigned length = 0;
-    if (targetObject->inherits(&JSFunction::s_info)) {
+    if (targetObject->inherits(JSFunction::info())) {
         ASSERT(target.get(exec, exec->propertyNames().length).isNumber());
         // a. Let L be the length property of Target minus the length of A.
         // b. Set the length own property of F to either 0 or L, whichever is larger.

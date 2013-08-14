@@ -43,7 +43,7 @@ namespace WebCore {
 
 static HTMLFormElement* toHTMLFormElement(JSC::JSValue value)
 {
-    return value.inherits(&JSHTMLFormElement::s_info) ? toHTMLFormElement(jsCast<JSHTMLFormElement*>(asObject(value))->impl()) : 0;
+    return value.inherits(JSHTMLFormElement::info()) ? toHTMLFormElement(jsCast<JSHTMLFormElement*>(asObject(value))->impl()) : 0;
 }
 
 EncodedJSValue JSC_HOST_CALL JSDOMFormDataConstructor::constructJSDOMFormData(ExecState* exec)
@@ -62,7 +62,7 @@ JSValue JSDOMFormData::append(ExecState* exec)
     if (exec->argumentCount() >= 2) {
         String name = exec->argument(0).toString(exec)->value(exec);
         JSValue value = exec->argument(1);
-        if (value.inherits(&JSBlob::s_info)) {
+        if (value.inherits(JSBlob::info())) {
             String filename;
             if (exec->argumentCount() >= 3 && !exec->argument(2).isUndefinedOrNull())
                 filename = exec->argument(2).toString(exec)->value(exec);

@@ -204,7 +204,7 @@ public:
         return globalObject;
     }
 
-    static JS_EXPORTDATA const ClassInfo s_info;
+    DECLARE_EXPORT_INFO;
 
     bool hasDebugger() const { return m_debugger; }
     bool hasProfiler() const { return globalObjectMethodTable()->supportsProfiling(this); }
@@ -390,7 +390,7 @@ public:
 
     static Structure* createStructure(VM& vm, JSValue prototype)
     {
-        return Structure::create(vm, 0, prototype, TypeInfo(GlobalObjectType, StructureFlags), &s_info);
+        return Structure::create(vm, 0, prototype, TypeInfo(GlobalObjectType, StructureFlags), info());
     }
 
     void registerWeakMap(OpaqueJSWeakObjectMap* map)

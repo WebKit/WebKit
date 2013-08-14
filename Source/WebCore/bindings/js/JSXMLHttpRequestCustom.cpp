@@ -58,7 +58,7 @@ namespace WebCore {
 void JSXMLHttpRequest::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSXMLHttpRequest* thisObject = jsCast<JSXMLHttpRequest*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
     Base::visitChildren(thisObject, visitor);
@@ -119,15 +119,15 @@ JSValue JSXMLHttpRequest::send(ExecState* exec)
         JSValue val = exec->argument(0);
         if (val.isUndefinedOrNull())
             impl()->send(ec);
-        else if (val.inherits(&JSDocument::s_info))
+        else if (val.inherits(JSDocument::info()))
             impl()->send(toDocument(val), ec);
-        else if (val.inherits(&JSBlob::s_info))
+        else if (val.inherits(JSBlob::info()))
             impl()->send(toBlob(val), ec);
-        else if (val.inherits(&JSDOMFormData::s_info))
+        else if (val.inherits(JSDOMFormData::info()))
             impl()->send(toDOMFormData(val), ec);
-        else if (val.inherits(&JSArrayBuffer::s_info))
+        else if (val.inherits(JSArrayBuffer::info()))
             impl()->send(toArrayBuffer(val), ec);
-        else if (val.inherits(&JSArrayBufferView::s_info))
+        else if (val.inherits(JSArrayBufferView::info()))
             impl()->send(toArrayBufferView(val), ec);
         else
             impl()->send(val.toString(exec)->value(exec), ec);

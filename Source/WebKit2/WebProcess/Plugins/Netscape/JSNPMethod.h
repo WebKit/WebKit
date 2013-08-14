@@ -49,7 +49,7 @@ public:
         return method;
     }
 
-    static const JSC::ClassInfo s_info;
+    DECLARE_INFO;
 
     NPIdentifier npIdentifier() const { return m_npIdentifier; }
 
@@ -61,7 +61,7 @@ private:
 
     static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
     {
-        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), &s_info);
+        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());
     }
 
     static JSC::CallType getCallData(JSC::JSCell*, JSC::CallData&);

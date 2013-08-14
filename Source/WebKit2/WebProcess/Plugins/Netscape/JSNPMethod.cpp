@@ -54,7 +54,7 @@ JSNPMethod::JSNPMethod(JSGlobalObject* globalObject, Structure* structure, NPIde
 void JSNPMethod::finishCreation(VM& vm, const String& name)
 {
     Base::finishCreation(vm, name);
-    ASSERT(inherits(&s_info));
+    ASSERT(inherits(info()));
 }
 
 static EncodedJSValue JSC_HOST_CALL callMethod(ExecState* exec)
@@ -64,7 +64,7 @@ static EncodedJSValue JSC_HOST_CALL callMethod(ExecState* exec)
     JSValue thisValue = exec->hostThisValue();
 
     // Check if we're calling a method on the plug-in script object.
-    if (thisValue.inherits(&JSHTMLElement::s_info)) {
+    if (thisValue.inherits(JSHTMLElement::info())) {
         JSHTMLElement* element = static_cast<JSHTMLElement*>(asObject(thisValue));
 
         // Try to get the script object from the element
@@ -72,7 +72,7 @@ static EncodedJSValue JSC_HOST_CALL callMethod(ExecState* exec)
             thisValue = scriptObject;
     }
 
-    if (thisValue.inherits(&JSNPObject::s_info)) {
+    if (thisValue.inherits(JSNPObject::info())) {
         JSNPObject* jsNPObject = static_cast<JSNPObject*>(asObject(thisValue));
 
         return JSValue::encode(jsNPObject->callMethod(exec, jsNPMethod->npIdentifier()));

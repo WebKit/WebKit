@@ -58,7 +58,7 @@ public:
     JSPropertyNameIterator* enumerationCache();
     void setEnumerationCache(VM&, const Structure* owner, JSPropertyNameIterator* value);
 
-    static JS_EXPORTDATA const ClassInfo s_info;
+    DECLARE_EXPORT_INFO;
 
 private:
     StructureRareData(VM&, Structure*);

@@ -185,7 +185,7 @@ JSValue JSNode::appendChild(ExecState* exec)
 
 JSScope* JSNode::pushEventHandlerScope(ExecState* exec, JSScope* node) const
 {
-    if (inherits(&JSHTMLElement::s_info))
+    if (inherits(JSHTMLElement::info()))
         return jsCast<const JSHTMLElement*>(this)->pushEventHandlerScope(exec, node);
     return node;
 }
@@ -193,7 +193,7 @@ JSScope* JSNode::pushEventHandlerScope(ExecState* exec, JSScope* node) const
 void JSNode::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSNode* thisObject = jsCast<JSNode*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
     Base::visitChildren(thisObject, visitor);

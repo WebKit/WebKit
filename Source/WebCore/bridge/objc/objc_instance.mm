@@ -196,7 +196,7 @@ public:
         return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info);
     }
 
-    static const ClassInfo s_info;
+    DECLARE_INFO;
 
 private:
     typedef RuntimeMethod Base;
@@ -209,7 +209,7 @@ private:
     void finishCreation(VM& vm, const String& name)
     {
         Base::finishCreation(vm, name);
-        ASSERT(inherits(&s_info));
+        ASSERT(inherits(info()));
     }
 };
 
@@ -223,7 +223,7 @@ JSValue ObjcInstance::getMethod(ExecState* exec, PropertyName propertyName)
 
 JSValue ObjcInstance::invokeMethod(ExecState* exec, RuntimeMethod* runtimeMethod)
 {
-    if (!asObject(runtimeMethod)->inherits(&ObjCRuntimeMethod::s_info))
+    if (!asObject(runtimeMethod)->inherits(ObjCRuntimeMethod::info()))
         return throwError(exec, createTypeError(exec, "Attempt to invoke non-plug-in method on plug-in object."));
 
     ObjcMethod *method = static_cast<ObjcMethod*>(runtimeMethod->method());

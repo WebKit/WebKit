@@ -54,7 +54,7 @@ void ObjectPrototype::finishCreation(ExecState* exec, JSGlobalObject* globalObje
     VM& vm = exec->vm();
     
     Base::finishCreation(vm);
-    ASSERT(inherits(&s_info));
+    ASSERT(inherits(info()));
     vm.prototypeMap.addPrototype(this);
     
     JSC_NATIVE_FUNCTION(vm.propertyNames->toString, objectProtoFuncToString, DontEnum, 0);

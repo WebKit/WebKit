@@ -64,7 +64,7 @@ int JSSegmentedVariableObject::addRegisters(int numberOfRegistersToAdd)
 void JSSegmentedVariableObject::visitChildren(JSCell* cell, SlotVisitor& slotVisitor)
 {
     JSSegmentedVariableObject* thisObject = jsCast<JSSegmentedVariableObject*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
     JSSymbolTableObject::visitChildren(thisObject, slotVisitor);

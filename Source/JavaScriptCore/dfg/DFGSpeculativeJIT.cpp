@@ -705,7 +705,7 @@ void SpeculativeJIT::checkArray(Node* node)
     
     switch (node->arrayMode().type()) {
     case Array::String:
-        expectedClassInfo = &JSString::s_info;
+        expectedClassInfo = JSString::info();
         break;
     case Array::Int32:
     case Array::Double:
@@ -725,7 +725,7 @@ void SpeculativeJIT::checkArray(Node* node)
         return;
     }
     case Array::Arguments:
-        expectedClassInfo = &Arguments::s_info;
+        expectedClassInfo = Arguments::info();
         break;
     case Array::Int8Array:
     case Array::Int16Array:
@@ -4451,7 +4451,7 @@ void SpeculativeJIT::compileNewStringObject(Node* node)
         slowPath);
     
     m_jit.storePtr(
-        TrustedImmPtr(&StringObject::s_info),
+        TrustedImmPtr(StringObject::info()),
         JITCompiler::Address(resultGPR, JSDestructibleObject::classInfoOffset()));
 #if USE(JSVALUE64)
     m_jit.store64(

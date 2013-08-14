@@ -202,12 +202,12 @@ public:
 
     static const bool needsDestruction = false;
 
-    static const ClassInfo s_info;
+    DECLARE_INFO;
     static const GlobalObjectMethodTable s_globalObjectMethodTable;
 
     static Structure* createStructure(VM& vm, JSValue prototype)
     {
-        return Structure::create(vm, 0, prototype, TypeInfo(GlobalObjectType, StructureFlags), &s_info);
+        return Structure::create(vm, 0, prototype, TypeInfo(GlobalObjectType, StructureFlags), info());
     }
 
     static bool javaScriptExperimentsEnabled(const JSGlobalObject*) { return true; }

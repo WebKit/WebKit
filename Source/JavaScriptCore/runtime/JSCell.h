@@ -52,6 +52,18 @@ enum EnumerationMode {
 template<typename T> void* allocateCell(Heap&);
 template<typename T> void* allocateCell(Heap&, size_t);
 
+#define DECLARE_EXPORT_INFO                                             \
+    protected:                                                          \
+        static JS_EXPORTDATA const ::JSC::ClassInfo s_info;             \
+    public:                                                             \
+        static const ::JSC::ClassInfo* info() { return &s_info; }
+
+#define DECLARE_INFO                                                    \
+    protected:                                                          \
+        static const ::JSC::ClassInfo s_info;                           \
+    public:                                                             \
+        static const ::JSC::ClassInfo* info() { return &s_info; }
+
 class JSCell {
     friend class JSValue;
     friend class MarkedBlock;
@@ -165,27 +177,27 @@ private:
 template<typename To, typename From>
 inline To jsCast(From* from)
 {
-    ASSERT(!from || from->JSCell::inherits(&WTF::RemovePointer<To>::Type::s_info));
+    ASSERT(!from || from->JSCell::inherits(WTF::RemovePointer<To>::Type::info()));
     return static_cast<To>(from);
 }
     
 template<typename To>
 inline To jsCast(JSValue from)
 {
-    ASSERT(from.isCell() && from.asCell()->JSCell::inherits(&WTF::RemovePointer<To>::Type::s_info));
+    ASSERT(from.isCell() && from.asCell()->JSCell::inherits(WTF::RemovePointer<To>::Type::info()));
     return static_cast<To>(from.asCell());
 }
 
 template<typename To, typename From>
 inline To jsDynamicCast(From* from)
 {
-    return from->inherits(&WTF::RemovePointer<To>::Type::s_info) ? static_cast<To>(from) : 0;
+    return from->inherits(WTF::RemovePointer<To>::Type::info()) ? static_cast<To>(from) : 0;
 }
 
 template<typename To>
 inline To jsDynamicCast(JSValue from)
 {
-    return from.isCell() && from.asCell()->inherits(&WTF::RemovePointer<To>::Type::s_info) ? static_cast<To>(from.asCell()) : 0;
+    return from.isCell() && from.asCell()->inherits(WTF::RemovePointer<To>::Type::info()) ? static_cast<To>(from.asCell()) : 0;
 }
 
 } // namespace JSC

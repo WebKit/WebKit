@@ -55,9 +55,9 @@ namespace JSC {
         WriteBarrier<Structure>* head() { return m_vector.get(); }
         static void visitChildren(JSCell*, SlotVisitor&);
 
-        static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype) { return Structure::create(vm, globalObject, prototype, TypeInfo(CompoundType, OverridesVisitChildren), &s_info); }
+        static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype) { return Structure::create(vm, globalObject, prototype, TypeInfo(CompoundType, OverridesVisitChildren), info()); }
         
-        static ClassInfo s_info;
+        DECLARE_INFO;
 
         static const bool needsDestruction = true;
         static const bool hasImmortalStructure = true;

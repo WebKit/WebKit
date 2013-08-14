@@ -73,7 +73,7 @@ private:
     static const unsigned StructureFlags = OverridesVisitChildren | JSCell::StructureFlags;
 
 public:
-    static JS_EXPORTDATA const ClassInfo s_info;
+    DECLARE_EXPORT_INFO;
     
     typedef Map::iterator iterator;
     typedef Map::const_iterator const_iterator;

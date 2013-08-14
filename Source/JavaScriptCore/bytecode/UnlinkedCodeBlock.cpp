@@ -108,7 +108,7 @@ size_t UnlinkedFunctionExecutable::parameterCount() const
 void UnlinkedFunctionExecutable::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     UnlinkedFunctionExecutable* thisObject = jsCast<UnlinkedFunctionExecutable*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
     Base::visitChildren(thisObject, visitor);
@@ -221,7 +221,7 @@ UnlinkedCodeBlock::UnlinkedCodeBlock(VM* vm, Structure* structure, CodeType code
 void UnlinkedCodeBlock::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     UnlinkedCodeBlock* thisObject = jsCast<UnlinkedCodeBlock*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
     Base::visitChildren(thisObject, visitor);
@@ -357,7 +357,7 @@ void UnlinkedCodeBlock::addExpressionInfo(unsigned instructionOffset,
 void UnlinkedProgramCodeBlock::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     UnlinkedProgramCodeBlock* thisObject = jsCast<UnlinkedProgramCodeBlock*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
     Base::visitChildren(thisObject, visitor);

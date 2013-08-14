@@ -130,7 +130,7 @@ static JSValueRef assignToHTMLImageElement(JSContextRef context, JSObjectRef fun
 
     JSObject* jsObject = ::toJS(objectArg);
 
-    if (!jsObject->inherits(&JSHTMLImageElement::s_info))
+    if (!jsObject->inherits(JSHTMLImageElement::info()))
         return JSValueMakeUndefined(context);
 
     QVariant& data = *static_cast<QVariant*>(JSObjectGetPrivate(object));
@@ -214,7 +214,7 @@ QVariant QtPixmapRuntime::toQt(JSContextRef context, JSObjectRef obj, QMetaType:
     }
 
     JSObject* jsObject = ::toJS(obj);
-    if (!jsObject->inherits(&JSHTMLImageElement::s_info))
+    if (!jsObject->inherits(JSHTMLImageElement::info()))
         return emptyVariantForHint(hint);
 
     JSHTMLImageElement* elementJSWrapper = static_cast<JSHTMLImageElement*>(jsObject);

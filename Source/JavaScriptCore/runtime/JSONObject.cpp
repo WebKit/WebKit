@@ -62,7 +62,7 @@ JSONObject::JSONObject(JSGlobalObject* globalObject, Structure* structure)
 void JSONObject::finishCreation(JSGlobalObject* globalObject)
 {
     Base::finishCreation(globalObject->vm());
-    ASSERT(inherits(&s_info));
+    ASSERT(inherits(info()));
 }
 
 // PropertyNameForFunctionCall objects must be on the stack, since the JSValue that they create is not marked.
@@ -139,11 +139,11 @@ static inline JSValue unwrapBoxedPrimitive(ExecState* exec, JSValue value)
     if (!value.isObject())
         return value;
     JSObject* object = asObject(value);
-    if (object->inherits(&NumberObject::s_info))
+    if (object->inherits(NumberObject::info()))
         return jsNumber(object->toNumber(exec));
-    if (object->inherits(&StringObject::s_info))
+    if (object->inherits(StringObject::info()))
         return object->toString(exec);
-    if (object->inherits(&BooleanObject::s_info))
+    if (object->inherits(BooleanObject::info()))
         return object->toPrimitive(exec);
     return value;
 }
@@ -214,7 +214,7 @@ Stringifier::Stringifier(ExecState* exec, const Local<Unknown>& replacer, const 
     if (!m_replacer.isObject())
         return;
 
-    if (m_replacer.asObject()->inherits(&JSArray::s_info)) {
+    if (m_replacer.asObject()->inherits(JSArray::info())) {
         m_usingArrayReplacer = true;
         Handle<JSObject> array = m_replacer.asObject();
         unsigned length = array->get(exec, exec->vm().propertyNames->length).toUInt32(exec);
@@ -224,7 +224,7 @@ Stringifier::Stringifier(ExecState* exec, const Local<Unknown>& replacer, const 
                 break;
 
             if (name.isObject()) {
-                if (!asObject(name)->inherits(&NumberObject::s_info) && !asObject(name)->inherits(&StringObject::s_info))
+                if (!asObject(name)->inherits(NumberObject::info()) && !asObject(name)->inherits(StringObject::info()))
                     continue;
             }
 
@@ -358,7 +358,7 @@ Stringifier::StringifyResult Stringifier::appendStringifiedValue(StringBuilder& 
             return StringifyFailed;
     }
 
-    if (value.isUndefined() && !holder->inherits(&JSArray::s_info))
+    if (value.isUndefined() && !holder->inherits(JSArray::info()))
         return StringifyFailedDueToUndefinedValue;
 
     if (value.isNull()) {
@@ -401,7 +401,7 @@ Stringifier::StringifyResult Stringifier::appendStringifiedValue(StringBuilder& 
 
     CallData callData;
     if (object->methodTable()->getCallData(object, callData) != CallTypeNone) {
-        if (holder->inherits(&JSArray::s_info)) {
+        if (holder->inherits(JSArray::info())) {
             builder.appendLiteral("null");
             return StringifySucceeded;
         }
@@ -461,7 +461,7 @@ inline void Stringifier::startNewLine(StringBuilder& builder) const
 
 inline Stringifier::Holder::Holder(VM& vm, JSObject* object)
     : m_object(vm, object)
-    , m_isArray(object->inherits(&JSArray::s_info))
+    , m_isArray(object->inherits(JSArray::info()))
     , m_index(0)
 #ifndef NDEBUG
     , m_size(0)
@@ -649,7 +649,7 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
             arrayStartState:
             case ArrayStartState: {
                 ASSERT(inValue.isObject());
-                ASSERT(isJSArray(asObject(inValue)) || asObject(inValue)->inherits(&JSArray::s_info));
+                ASSERT(isJSArray(asObject(inValue)) || asObject(inValue)->inherits(JSArray::info()));
                 if (objectStack.size() + arrayStack.size() > maximumFilterRecursion)
                     return throwError(m_exec, createStackOverflowError(m_exec));
 
@@ -700,7 +700,7 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
             objectStartState:
             case ObjectStartState: {
                 ASSERT(inValue.isObject());
-                ASSERT(!isJSArray(asObject(inValue)) && !asObject(inValue)->inherits(&JSArray::s_info));
+                ASSERT(!isJSArray(asObject(inValue)) && !asObject(inValue)->inherits(JSArray::info()));
                 if (objectStack.size() + arrayStack.size() > maximumFilterRecursion)
                     return throwError(m_exec, createStackOverflowError(m_exec));
 
@@ -761,7 +761,7 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
                     break;
                 }
                 JSObject* object = asObject(inValue);
-                if (isJSArray(object) || object->inherits(&JSArray::s_info))
+                if (isJSArray(object) || object->inherits(JSArray::info()))
                     goto arrayStartState;
                 goto objectStartState;
         }
@@ -820,7 +820,8 @@ EncodedJSValue JSC_HOST_CALL JSONProtoFuncStringify(ExecState* exec)
     Local<Unknown> value(exec->vm(), exec->argument(0));
     Local<Unknown> replacer(exec->vm(), exec->argument(1));
     Local<Unknown> space(exec->vm(), exec->argument(2));
-    return JSValue::encode(Stringifier(exec, replacer, space).stringify(value).get());
+    JSValue result = Stringifier(exec, replacer, space).stringify(value).get();
+    return JSValue::encode(result);
 }
 
 String JSONStringify(ExecState* exec, JSValue value, unsigned indent)

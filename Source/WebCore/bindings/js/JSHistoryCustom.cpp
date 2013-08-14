@@ -65,7 +65,7 @@ bool JSHistory::getOwnPropertySlotDelegate(ExecState* exec, PropertyName propert
         return false;
 
     // Check for the few functions that we allow, even when called cross-domain.
-    const HashEntry* entry = JSHistoryPrototype::s_info.propHashTable(exec)->entry(exec, propertyName);
+    const HashEntry* entry = JSHistoryPrototype::info()->propHashTable(exec)->entry(exec, propertyName);
     if (entry) {
         // Allow access to back(), forward() and go() from any frame.
         if (entry->attributes() & JSC::Function) {
@@ -105,7 +105,7 @@ bool JSHistory::getOwnPropertyDescriptorDelegate(ExecState* exec, PropertyName p
         return true;
 
     // Check for the few functions that we allow, even when called cross-domain.
-    const HashEntry* entry = JSHistoryPrototype::s_info.propHashTable(exec)->entry(exec, propertyName);
+    const HashEntry* entry = JSHistoryPrototype::info()->propHashTable(exec)->entry(exec, propertyName);
     if (entry) {
         PropertySlot slot(this);
         // Allow access to back(), forward() and go() from any frame.

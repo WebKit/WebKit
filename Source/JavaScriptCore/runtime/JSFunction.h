@@ -103,12 +103,12 @@ namespace JSC {
 
         JS_EXPORT_PRIVATE const SourceCode* sourceCode() const;
 
-        static JS_EXPORTDATA const ClassInfo s_info;
+        DECLARE_EXPORT_INFO;
 
         static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype) 
         {
             ASSERT(globalObject);
-            return Structure::create(vm, globalObject, prototype, TypeInfo(JSFunctionType, StructureFlags), &s_info); 
+            return Structure::create(vm, globalObject, prototype, TypeInfo(JSFunctionType, StructureFlags), info()); 
         }
 
         NativeFunction nativeFunction();

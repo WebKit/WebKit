@@ -1134,7 +1134,7 @@ private:
         if (!specificValue)
             return false;
         
-        if (!specificValue->inherits(&JSFunction::s_info))
+        if (!specificValue->inherits(JSFunction::info()))
             return false;
         
         JSFunction* function = jsCast<JSFunction*>(specificValue);
@@ -1151,7 +1151,7 @@ private:
         
         Structure* stringObjectStructure = m_graph.globalObjectFor(codeOrigin)->stringObjectStructure();
         ASSERT(stringObjectStructure->storedPrototype().isObject());
-        ASSERT(stringObjectStructure->storedPrototype().asCell()->classInfo() == &StringPrototype::s_info);
+        ASSERT(stringObjectStructure->storedPrototype().asCell()->classInfo() == StringPrototype::info());
         
         JSObject* stringPrototypeObject = asObject(stringObjectStructure->storedPrototype());
         Structure* stringPrototypeStructure = stringPrototypeObject->structure();

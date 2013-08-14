@@ -133,11 +133,11 @@ public:
     static const bool hasImmortalStructure = true;
     static void destroy(JSCell*);
 
-    static JS_EXPORTDATA const ClassInfo s_info;
+    DECLARE_EXPORT_INFO;
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
-        return Structure::create(vm, globalObject, prototype, TypeInfo(CompoundType, OverridesVisitChildren), &s_info);
+        return Structure::create(vm, globalObject, prototype, TypeInfo(CompoundType, OverridesVisitChildren), info());
     }
 
     static void visitChildren(JSCell*, SlotVisitor&);

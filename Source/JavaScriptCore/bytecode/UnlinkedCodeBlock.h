@@ -179,12 +179,12 @@ protected:
 public:
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto)
     {
-        return Structure::create(vm, globalObject, proto, TypeInfo(UnlinkedFunctionExecutableType, StructureFlags), &s_info);
+        return Structure::create(vm, globalObject, proto, TypeInfo(UnlinkedFunctionExecutableType, StructureFlags), info());
     }
 
     static const unsigned StructureFlags = OverridesVisitChildren | JSCell::StructureFlags;
 
-    static const ClassInfo s_info;
+    DECLARE_INFO;
 };
 
 struct UnlinkedStringJumpTable {
@@ -547,7 +547,7 @@ protected:
     static void visitChildren(JSCell*, SlotVisitor&);
 
 public:
-    static const ClassInfo s_info;
+    DECLARE_INFO;
 };
 
 class UnlinkedGlobalCodeBlock : public UnlinkedCodeBlock {
@@ -562,7 +562,7 @@ protected:
 
     static const unsigned StructureFlags = OverridesVisitChildren | Base::StructureFlags;
 
-    static const ClassInfo s_info;
+    DECLARE_INFO;
 };
 
 class UnlinkedProgramCodeBlock : public UnlinkedGlobalCodeBlock {
@@ -609,12 +609,12 @@ private:
 public:
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto)
     {
-        return Structure::create(vm, globalObject, proto, TypeInfo(UnlinkedProgramCodeBlockType, StructureFlags), &s_info);
+        return Structure::create(vm, globalObject, proto, TypeInfo(UnlinkedProgramCodeBlockType, StructureFlags), info());
     }
 
     static const unsigned StructureFlags = OverridesVisitChildren | Base::StructureFlags;
 
-    static const ClassInfo s_info;
+    DECLARE_INFO;
 };
 
 class UnlinkedEvalCodeBlock : public UnlinkedGlobalCodeBlock {
@@ -651,12 +651,12 @@ private:
 public:
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto)
     {
-        return Structure::create(vm, globalObject, proto, TypeInfo(UnlinkedEvalCodeBlockType, StructureFlags), &s_info);
+        return Structure::create(vm, globalObject, proto, TypeInfo(UnlinkedEvalCodeBlockType, StructureFlags), info());
     }
 
     static const unsigned StructureFlags = OverridesVisitChildren | Base::StructureFlags;
 
-    static const ClassInfo s_info;
+    DECLARE_INFO;
 };
 
 class UnlinkedFunctionCodeBlock : public UnlinkedCodeBlock {
@@ -680,12 +680,12 @@ private:
 public:
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto)
     {
-        return Structure::create(vm, globalObject, proto, TypeInfo(UnlinkedFunctionCodeBlockType, StructureFlags), &s_info);
+        return Structure::create(vm, globalObject, proto, TypeInfo(UnlinkedFunctionCodeBlockType, StructureFlags), info());
     }
 
     static const unsigned StructureFlags = OverridesVisitChildren | Base::StructureFlags;
 
-    static const ClassInfo s_info;
+    DECLARE_INFO;
 };
 
 }

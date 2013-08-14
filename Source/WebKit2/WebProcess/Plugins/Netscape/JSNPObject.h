@@ -65,7 +65,7 @@ public:
     JSC::JSValue callObject(JSC::ExecState*);
     JSC::JSValue callConstructor(JSC::ExecState*);
 
-    static const JSC::ClassInfo s_info;
+    DECLARE_INFO;
 
     NPObject* npObject() const { return m_npObject; }
 
@@ -79,7 +79,7 @@ private:
     
     static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
     {
-        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), &s_info);
+        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());
     }
 
     static JSC::CallType getCallData(JSC::JSCell*, JSC::CallData&);

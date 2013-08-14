@@ -60,7 +60,7 @@ namespace WebCore {
 void JSDOMWindow::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSDOMWindow* thisObject = jsCast<JSDOMWindow*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
     Base::visitChildren(thisObject, visitor);
@@ -129,7 +129,7 @@ bool JSDOMWindow::getOwnPropertySlot(JSObject* object, ExecState* exec, Property
             slot.setCustom(thisObject, entry->propertyGetter());
             return true;
         }
-        entry = JSDOMWindowPrototype::s_info.propHashTable(exec)->entry(exec, propertyName);
+        entry = JSDOMWindowPrototype::info()->propHashTable(exec)->entry(exec, propertyName);
         if (entry && (entry->attributes() & JSC::Function) && entry->function() == jsDOMWindowPrototypeFunctionClose) {
             slot.setCustom(thisObject, nonCachingStaticFunctionGetter<jsDOMWindowPrototypeFunctionClose, 0>);
             return true;
@@ -156,7 +156,7 @@ bool JSDOMWindow::getOwnPropertySlot(JSObject* object, ExecState* exec, Property
     // prototype due to the blanket same origin (shouldAllowAccessToDOMWindow) check at the end of getOwnPropertySlot.
     // Also, it's important to get the implementation straight out of the DOMWindow prototype regardless of
     // what prototype is actually set on this object.
-    entry = JSDOMWindowPrototype::s_info.propHashTable(exec)->entry(exec, propertyName);
+    entry = JSDOMWindowPrototype::info()->propHashTable(exec)->entry(exec, propertyName);
     if (entry) {
         if (entry->attributes() & JSC::Function) {
             if (entry->function() == jsDOMWindowPrototypeFunctionBlur) {
@@ -196,7 +196,7 @@ bool JSDOMWindow::getOwnPropertySlot(JSObject* object, ExecState* exec, Property
         }
     }
 
-    entry = JSDOMWindow::s_info.propHashTable(exec)->entry(exec, propertyName);
+    entry = JSDOMWindow::info()->propHashTable(exec)->entry(exec, propertyName);
     if (entry) {
         slot.setCustom(thisObject, entry->propertyGetter());
         return true;
@@ -349,7 +349,7 @@ bool JSDOMWindow::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, Pr
             descriptor.setDescriptor(jsBoolean(true), ReadOnly | DontDelete | DontEnum);
             return true;
         }
-        entry = JSDOMWindowPrototype::s_info.propHashTable(exec)->entry(exec, propertyName);
+        entry = JSDOMWindowPrototype::info()->propHashTable(exec)->entry(exec, propertyName);
         if (entry && (entry->attributes() & JSC::Function) && entry->function() == jsDOMWindowPrototypeFunctionClose) {
             PropertySlot slot(thisObject);
             slot.setCustom(thisObject, nonCachingStaticFunctionGetter<jsDOMWindowPrototypeFunctionClose, 0>);
@@ -360,7 +360,7 @@ bool JSDOMWindow::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, Pr
         return true;
     }
 
-    entry = JSDOMWindow::s_info.propHashTable(exec)->entry(exec, propertyName);
+    entry = JSDOMWindow::info()->propHashTable(exec)->entry(exec, propertyName);
     if (entry) {
         PropertySlot slot(thisObject);
         slot.setCustom(thisObject, entry->propertyGetter());
@@ -726,9 +726,9 @@ DOMWindow* toDOMWindow(JSValue value)
     if (!value.isObject())
         return 0;
     JSObject* object = asObject(value);
-    if (object->inherits(&JSDOMWindow::s_info))
+    if (object->inherits(JSDOMWindow::info()))
         return jsCast<JSDOMWindow*>(object)->impl();
-    if (object->inherits(&JSDOMWindowShell::s_info))
+    if (object->inherits(JSDOMWindowShell::info()))
         return jsCast<JSDOMWindowShell*>(object)->impl();
     return 0;
 }

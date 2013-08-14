@@ -61,10 +61,10 @@ namespace JSC {
         void setSetter(VM& vm, JSObject* setter) { m_setter.setMayBeNull(vm, this, setter); }
         static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
         {
-            return Structure::create(vm, globalObject, prototype, TypeInfo(GetterSetterType, OverridesVisitChildren), &s_info);
+            return Structure::create(vm, globalObject, prototype, TypeInfo(GetterSetterType, OverridesVisitChildren), info());
         }
         
-        static const ClassInfo s_info;
+        DECLARE_INFO;
 
     private:
         WriteBarrier<JSObject> m_getter;

@@ -57,13 +57,13 @@ namespace JSC {
         static void getOwnPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
         static bool defineOwnProperty(JSObject*, ExecState*, PropertyName, PropertyDescriptor&, bool shouldThrow);
 
-        static const JS_EXPORTDATA ClassInfo s_info;
+        DECLARE_EXPORT_INFO;
 
         JSString* internalValue() const { return asString(JSWrapperObject::internalValue());}
 
         static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
         {
-            return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info);
+            return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
         }
 
     protected:
@@ -76,7 +76,7 @@ namespace JSC {
 
     inline StringObject* asStringObject(JSValue value)
     {
-        ASSERT(asObject(value)->inherits(&StringObject::s_info));
+        ASSERT(asObject(value)->inherits(StringObject::info()));
         return static_cast<StringObject*>(asObject(value));
     }
 

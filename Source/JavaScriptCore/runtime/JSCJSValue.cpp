@@ -207,7 +207,7 @@ void JSValue::dumpInContext(PrintStream& out, DumpContext* context) const
         out.printf("Double: %08x:%08x, %lf", u.asTwoInt32s[1], u.asTwoInt32s[0], asDouble());
 #endif
     } else if (isCell()) {
-        if (asCell()->inherits(&JSString::s_info)) {
+        if (asCell()->inherits(JSString::info())) {
             JSString* string = jsCast<JSString*>(asCell());
             out.print("String");
             if (string->isRope())
@@ -221,7 +221,7 @@ void JSValue::dumpInContext(PrintStream& out, DumpContext* context) const
             } else
                 out.print(" (unresolved)");
             out.print(": ", impl);
-        } else if (asCell()->inherits(&Structure::s_info))
+        } else if (asCell()->inherits(Structure::info()))
             out.print("Structure: ", inContext(*jsCast<Structure*>(asCell()), context));
         else {
             out.print("Cell: ", RawPointer(asCell()));

@@ -106,7 +106,7 @@ JSObject* constructDate(ExecState* exec, JSGlobalObject* globalObject, const Arg
     if (numArgs == 0) // new Date() ECMA 15.9.3.3
         value = jsCurrentTime();
     else if (numArgs == 1) {
-        if (args.at(0).inherits(&DateInstance::s_info))
+        if (args.at(0).inherits(DateInstance::info()))
             value = asDateInstance(args.at(0))->internalNumber();
         else {
             JSValue primitive = args.at(0).toPrimitive(exec);

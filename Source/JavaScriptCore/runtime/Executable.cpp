@@ -260,7 +260,7 @@ void EvalExecutable::jettisonOptimizedCode(VM& vm)
 void EvalExecutable::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     EvalExecutable* thisObject = jsCast<EvalExecutable*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
     ScriptExecutable::visitChildren(thisObject, visitor);
@@ -436,7 +436,7 @@ JSObject* ProgramExecutable::initializeGlobalProperties(VM& vm, CallFrame* callF
 void ProgramExecutable::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     ProgramExecutable* thisObject = jsCast<ProgramExecutable*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
     ScriptExecutable::visitChildren(thisObject, visitor);
@@ -624,7 +624,7 @@ void FunctionExecutable::jettisonOptimizedCodeForConstruct(VM& vm)
 void FunctionExecutable::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     FunctionExecutable* thisObject = jsCast<FunctionExecutable*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
     ScriptExecutable::visitChildren(thisObject, visitor);
@@ -690,7 +690,7 @@ String FunctionExecutable::paramString() const
 
 CodeBlockHash ExecutableBase::hashFor(CodeSpecializationKind kind) const
 {
-    if (this->classInfo() == &NativeExecutable::s_info)
+    if (this->classInfo() == NativeExecutable::info())
         return jsCast<const NativeExecutable*>(this)->hashFor(kind);
     
     return jsCast<const ScriptExecutable*>(this)->hashFor(kind);

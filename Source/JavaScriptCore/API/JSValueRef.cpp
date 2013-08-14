@@ -177,12 +177,12 @@ bool JSValueIsObjectOfClass(JSContextRef ctx, JSValueRef value, JSClassRef jsCla
     JSValue jsValue = toJS(exec, value);
     
     if (JSObject* o = jsValue.getObject()) {
-        if (o->inherits(&JSCallbackObject<JSGlobalObject>::s_info))
+        if (o->inherits(JSCallbackObject<JSGlobalObject>::info()))
             return jsCast<JSCallbackObject<JSGlobalObject>*>(o)->inherits(jsClass);
-        if (o->inherits(&JSCallbackObject<JSDestructibleObject>::s_info))
+        if (o->inherits(JSCallbackObject<JSDestructibleObject>::info()))
             return jsCast<JSCallbackObject<JSDestructibleObject>*>(o)->inherits(jsClass);
 #if JSC_OBJC_API_ENABLED
-        if (o->inherits(&JSCallbackObject<JSAPIWrapperObject>::s_info))
+        if (o->inherits(JSCallbackObject<JSAPIWrapperObject>::info()))
             return jsCast<JSCallbackObject<JSAPIWrapperObject>*>(o)->inherits(jsClass);
 #endif
     }

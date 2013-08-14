@@ -95,7 +95,7 @@ void StringPrototype::finishCreation(ExecState* exec, JSGlobalObject* globalObje
     VM& vm = exec->vm();
     
     Base::finishCreation(vm, nameAndMessage);
-    ASSERT(inherits(&s_info));
+    ASSERT(inherits(info()));
 
     JSC_NATIVE_INTRINSIC_FUNCTION(vm.propertyNames->toString, stringProtoFuncToString, DontEnum, 0, StringPrototypeValueOfIntrinsic);
     JSC_NATIVE_INTRINSIC_FUNCTION(vm.propertyNames->valueOf, stringProtoFuncToString, DontEnum, 0, StringPrototypeValueOfIntrinsic);
@@ -685,7 +685,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncReplace(ExecState* exec)
     JSString* string = thisValue.toString(exec);
     JSValue searchValue = exec->argument(0);
 
-    if (searchValue.inherits(&RegExpObject::s_info))
+    if (searchValue.inherits(RegExpObject::info()))
         return replaceUsingRegExpSearch(exec, string, searchValue);
     return replaceUsingStringSearch(exec, string, searchValue);
 }
@@ -698,7 +698,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncToString(ExecState* exec)
     if (thisValue.isString())
         return JSValue::encode(thisValue);
 
-    if (thisValue.inherits(&StringObject::s_info))
+    if (thisValue.inherits(StringObject::info()))
         return JSValue::encode(asStringObject(thisValue)->internalValue());
 
     return throwVMTypeError(exec);
@@ -835,7 +835,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncMatch(ExecState* exec)
 
     RegExp* regExp;
     bool global = false;
-    if (a0.inherits(&RegExpObject::s_info)) {
+    if (a0.inherits(RegExpObject::info())) {
         RegExpObject* regExpObject = asRegExpObject(a0);
         regExp = regExpObject->regExp();
         if ((global = regExp->global())) {
@@ -893,7 +893,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSearch(ExecState* exec)
     JSValue a0 = exec->argument(0);
 
     RegExp* reg;
-    if (a0.inherits(&RegExpObject::s_info))
+    if (a0.inherits(RegExpObject::info()))
         reg = asRegExpObject(a0)->regExp();
     else { 
         /*
@@ -996,7 +996,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSplit(ExecState* exec)
     // 8. If separator is a RegExp object (its [[Class]] is "RegExp"), let R = separator;
     //    otherwise let R = ToString(separator).
     JSValue separatorValue = exec->argument(0);
-    if (separatorValue.inherits(&RegExpObject::s_info)) {
+    if (separatorValue.inherits(RegExpObject::info())) {
         VM* vm = &exec->vm();
         RegExp* reg = asRegExpObject(separatorValue)->regExp();
 

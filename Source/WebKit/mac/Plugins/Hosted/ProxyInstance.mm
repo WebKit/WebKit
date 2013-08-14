@@ -195,7 +195,7 @@ public:
         return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info);
     }
 
-    static const ClassInfo s_info;
+    DECLARE_INFO;
 
 private:
     ProxyRuntimeMethod(JSGlobalObject* globalObject, Structure* structure, Bindings::Method* method)
@@ -206,7 +206,7 @@ private:
     void finishCreation(VM& vm, const String& name)
     {
         Base::finishCreation(vm, name);
-        ASSERT(inherits(&s_info));
+        ASSERT(inherits(info()));
     }
 };
 
@@ -220,7 +220,7 @@ JSValue ProxyInstance::getMethod(JSC::ExecState* exec, PropertyName propertyName
 
 JSValue ProxyInstance::invokeMethod(ExecState* exec, JSC::RuntimeMethod* runtimeMethod)
 {
-    if (!asObject(runtimeMethod)->inherits(&ProxyRuntimeMethod::s_info))
+    if (!asObject(runtimeMethod)->inherits(ProxyRuntimeMethod::info()))
         return throwError(exec, createTypeError(exec, "Attempt to invoke non-plug-in method on plug-in object."));
 
     ProxyMethod* method = static_cast<ProxyMethod*>(runtimeMethod->method());

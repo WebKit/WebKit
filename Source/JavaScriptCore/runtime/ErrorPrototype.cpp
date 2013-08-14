@@ -57,7 +57,7 @@ ErrorPrototype::ErrorPrototype(ExecState* exec, Structure* structure)
 void ErrorPrototype::finishCreation(ExecState* exec, JSGlobalObject*)
 {
     Base::finishCreation(exec->vm(), "");
-    ASSERT(inherits(&s_info));
+    ASSERT(inherits(info()));
     putDirect(exec->vm(), exec->propertyNames().name, jsNontrivialString(exec, String(ASCIILiteral("Error"))), DontEnum);
 }
 

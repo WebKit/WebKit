@@ -40,11 +40,11 @@ public:
         return boolean;
     }
         
-    static JS_EXPORTDATA const ClassInfo s_info;
+    DECLARE_EXPORT_INFO;
         
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
-        return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info);
+        return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
     }
 };
 
@@ -52,7 +52,7 @@ BooleanObject* asBooleanObject(JSValue);
 
 inline BooleanObject* asBooleanObject(JSValue value)
 {
-    ASSERT(asObject(value)->inherits(&BooleanObject::s_info));
+    ASSERT(asObject(value)->inherits(BooleanObject::info()));
     return static_cast<BooleanObject*>(asObject(value));
 }
 

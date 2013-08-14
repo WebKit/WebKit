@@ -75,7 +75,7 @@ inline Structure* Structure::storedPrototypeStructure() const
 inline PropertyOffset Structure::get(VM& vm, PropertyName propertyName)
 {
     ASSERT(!isCompilationThread());
-    ASSERT(structure()->classInfo() == &s_info);
+    ASSERT(structure()->classInfo() == info());
     materializePropertyMapIfNecessary(vm);
     if (!propertyTable())
         return invalidOffset;
@@ -87,7 +87,7 @@ inline PropertyOffset Structure::get(VM& vm, PropertyName propertyName)
 inline PropertyOffset Structure::get(VM& vm, const WTF::String& name)
 {
     ASSERT(!isCompilationThread());
-    ASSERT(structure()->classInfo() == &s_info);
+    ASSERT(structure()->classInfo() == info());
     materializePropertyMapIfNecessary(vm);
     if (!propertyTable())
         return invalidOffset;

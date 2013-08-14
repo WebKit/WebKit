@@ -66,7 +66,7 @@ public:
     
     Bindings::Array* getConcreteArray() const { return m_array; }
 
-    static const ClassInfo s_info;
+    DECLARE_INFO;
 
     static ArrayPrototype* createPrototype(ExecState*, JSGlobalObject* globalObject)
     {
@@ -75,7 +75,7 @@ public:
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
-        return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info, ArrayClass);
+        return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info(), ArrayClass);
     }
 
 protected:

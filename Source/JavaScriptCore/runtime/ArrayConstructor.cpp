@@ -128,7 +128,7 @@ CallType ArrayConstructor::getCallData(JSCell*, CallData& callData)
 
 EncodedJSValue JSC_HOST_CALL arrayConstructorIsArray(ExecState* exec)
 {
-    return JSValue::encode(jsBoolean(exec->argument(0).inherits(&JSArray::s_info)));
+    return JSValue::encode(jsBoolean(exec->argument(0).inherits(JSArray::info())));
 }
 
 } // namespace JSC

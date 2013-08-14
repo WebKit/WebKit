@@ -254,7 +254,7 @@ static MacroAssemblerCodeRef virtualForThunkGenerator(
         jit.branchPtr(
             CCallHelpers::NotEqual,
             CCallHelpers::Address(GPRInfo::nonArgGPR2, Structure::classInfoOffset()),
-            CCallHelpers::TrustedImmPtr(&JSFunction::s_info)));
+            CCallHelpers::TrustedImmPtr(JSFunction::info())));
     
     // Now we know we have a JSFunction.
     

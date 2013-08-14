@@ -701,13 +701,13 @@ public:
         return &m_butterfly;
     }
 
-    static JS_EXPORTDATA const ClassInfo s_info;
+    DECLARE_EXPORT_INFO;
 
 protected:
     void finishCreation(VM& vm)
     {
         Base::finishCreation(vm);
-        ASSERT(inherits(&s_info));
+        ASSERT(inherits(info()));
         ASSERT(!structure()->outOfLineCapacity());
         ASSERT(structure()->isEmpty());
         ASSERT(prototype().isNull() || Heap::heap(this) == Heap::heap(prototype()));
@@ -717,7 +717,7 @@ protected:
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
-        return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info);
+        return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
     }
 
     // To instantiate objects you likely want JSFinalObject, below.
@@ -985,7 +985,7 @@ public:
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
-        return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info);
+        return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
     }
 
 protected:
@@ -1027,12 +1027,12 @@ public:
     static JSFinalObject* create(ExecState*, Structure*);
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype, unsigned inlineCapacity)
     {
-        return Structure::create(vm, globalObject, prototype, TypeInfo(FinalObjectType, StructureFlags), &s_info, NonArray, inlineCapacity);
+        return Structure::create(vm, globalObject, prototype, TypeInfo(FinalObjectType, StructureFlags), info(), NonArray, inlineCapacity);
     }
 
     JS_EXPORT_PRIVATE static void visitChildren(JSCell*, SlotVisitor&);
 
-    static JS_EXPORTDATA const ClassInfo s_info;
+    DECLARE_EXPORT_INFO;
 
 protected:
     void visitChildrenCommon(SlotVisitor&);
@@ -1070,7 +1070,7 @@ inline JSFinalObject* JSFinalObject::create(ExecState* exec, Structure* structur
 
 inline bool isJSFinalObject(JSCell* cell)
 {
-    return cell->classInfo() == &JSFinalObject::s_info;
+    return cell->classInfo() == JSFinalObject::info();
 }
 
 inline bool isJSFinalObject(JSValue value)

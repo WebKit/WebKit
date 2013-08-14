@@ -45,7 +45,7 @@ namespace JSC {
 
         static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
         {
-            return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info);
+            return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
         }
 
         static void put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
@@ -53,7 +53,7 @@ namespace JSC {
         static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
         static bool getOwnPropertyDescriptor(JSObject*, ExecState*, PropertyName, PropertyDescriptor&);
 
-        static const ClassInfo s_info;
+        DECLARE_INFO;
 
         MatchResult performMatch(VM&, RegExp*, JSString*, const String&, int startOffset, int** ovector);
         MatchResult performMatch(VM&, RegExp*, JSString*, const String&, int startOffset);
@@ -92,7 +92,7 @@ namespace JSC {
 
     inline RegExpConstructor* asRegExpConstructor(JSValue value)
     {
-        ASSERT(asObject(value)->inherits(&RegExpConstructor::s_info));
+        ASSERT(asObject(value)->inherits(RegExpConstructor::info()));
         return static_cast<RegExpConstructor*>(asObject(value));
     }
 

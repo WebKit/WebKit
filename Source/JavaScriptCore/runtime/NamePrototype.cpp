@@ -55,7 +55,7 @@ NamePrototype::NamePrototype(ExecState* exec, Structure* structure)
 void NamePrototype::finishCreation(ExecState* exec)
 {
     Base::finishCreation(exec->vm());
-    ASSERT(inherits(&s_info));
+    ASSERT(inherits(info()));
 }
 
 bool NamePrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot &slot)
@@ -77,7 +77,7 @@ EncodedJSValue JSC_HOST_CALL privateNameProtoFuncToString(ExecState* exec)
         return throwVMTypeError(exec);
 
     JSObject* thisObject = asObject(thisValue);
-    if (!thisObject->inherits(&NameInstance::s_info))
+    if (!thisObject->inherits(NameInstance::info()))
         return throwVMTypeError(exec);
 
     return JSValue::encode(jsCast<NameInstance*>(thisObject)->nameString());

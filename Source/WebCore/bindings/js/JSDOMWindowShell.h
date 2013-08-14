@@ -47,7 +47,7 @@ namespace WebCore {
         void setWindow(JSC::VM&, JSDOMWindow*);
         void setWindow(PassRefPtr<DOMWindow>);
 
-        static const JSC::ClassInfo s_info;
+        DECLARE_INFO;
 
         DOMWindow* impl() const;
 
@@ -61,7 +61,7 @@ namespace WebCore {
 
         static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSValue prototype) 
         {
-            return JSC::Structure::create(vm, 0, prototype, JSC::TypeInfo(JSC::ProxyType, StructureFlags), &s_info);
+            return JSC::Structure::create(vm, 0, prototype, JSC::TypeInfo(JSC::ProxyType, StructureFlags), info());
         }
 
         DOMWrapperWorld* world() { return m_world.get(); }

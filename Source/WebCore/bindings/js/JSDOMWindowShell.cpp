@@ -52,7 +52,7 @@ JSDOMWindowShell::JSDOMWindowShell(Structure* structure, DOMWrapperWorld* world)
 void JSDOMWindowShell::finishCreation(VM& vm, PassRefPtr<DOMWindow> window)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(&s_info));
+    ASSERT(inherits(info()));
     setWindow(window);
 }
 

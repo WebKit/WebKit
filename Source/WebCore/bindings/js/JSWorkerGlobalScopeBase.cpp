@@ -55,7 +55,7 @@ JSWorkerGlobalScopeBase::JSWorkerGlobalScopeBase(JSC::VM& vm, JSC::Structure* st
 void JSWorkerGlobalScopeBase::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(&s_info));
+    ASSERT(inherits(info()));
 }
 
 void JSWorkerGlobalScopeBase::destroy(JSCell* cell)
@@ -90,7 +90,7 @@ JSDedicatedWorkerGlobalScope* toJSDedicatedWorkerGlobalScope(JSValue value)
     if (!value.isObject())
         return 0;
     const ClassInfo* classInfo = asObject(value)->classInfo();
-    if (classInfo == &JSDedicatedWorkerGlobalScope::s_info)
+    if (classInfo == JSDedicatedWorkerGlobalScope::info())
         return jsCast<JSDedicatedWorkerGlobalScope*>(asObject(value));
     return 0;
 }
@@ -101,7 +101,7 @@ JSSharedWorkerGlobalScope* toJSSharedWorkerGlobalScope(JSValue value)
     if (!value.isObject())
         return 0;
     const ClassInfo* classInfo = asObject(value)->classInfo();
-    if (classInfo == &JSSharedWorkerGlobalScope::s_info)
+    if (classInfo == JSSharedWorkerGlobalScope::info())
         return jsCast<JSSharedWorkerGlobalScope*>(asObject(value));
     return 0;
 }

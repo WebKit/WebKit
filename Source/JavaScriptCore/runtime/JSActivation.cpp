@@ -43,7 +43,7 @@ const ClassInfo JSActivation::s_info = { "JSActivation", &Base::s_info, 0, 0, CR
 void JSActivation::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSActivation* thisObject = jsCast<JSActivation*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
     Base::visitChildren(thisObject, visitor);
@@ -259,7 +259,7 @@ JSValue JSActivation::argumentsGetter(ExecState*, JSValue slotBase, PropertyName
     callFrame->uncheckedR(argumentsRegister) = arguments;
     callFrame->uncheckedR(realArgumentsRegister) = arguments;
     
-    ASSERT(callFrame->uncheckedR(realArgumentsRegister).jsValue().inherits(&Arguments::s_info));
+    ASSERT(callFrame->uncheckedR(realArgumentsRegister).jsValue().inherits(Arguments::info()));
     return callFrame->uncheckedR(realArgumentsRegister).jsValue();
 }
 

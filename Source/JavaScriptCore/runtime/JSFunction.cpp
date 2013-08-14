@@ -105,7 +105,7 @@ JSFunction::JSFunction(ExecState* exec, JSGlobalObject* globalObject, Structure*
 void JSFunction::finishCreation(ExecState* exec, NativeExecutable* executable, int length, const String& name)
 {
     Base::finishCreation(exec->vm());
-    ASSERT(inherits(&s_info));
+    ASSERT(inherits(info()));
     m_executable.set(exec->vm(), this, executable);
     putDirect(exec->vm(), exec->vm().propertyNames->name, jsString(exec, name), DontDelete | ReadOnly | DontEnum);
     putDirect(exec->vm(), exec->propertyNames().length, jsNumber(length), DontDelete | ReadOnly | DontEnum);
@@ -160,7 +160,7 @@ const SourceCode* JSFunction::sourceCode() const
 void JSFunction::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSFunction* thisObject = jsCast<JSFunction*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
     Base::visitChildren(thisObject, visitor);
@@ -199,7 +199,7 @@ JSValue JSFunction::argumentsGetter(ExecState* exec, JSValue slotBase, PropertyN
 static bool skipOverBoundFunctions(StackIterator::Frame* frame)
 {
     JSObject* callee = frame->callee();
-    bool shouldSkip = callee ? callee->inherits(&JSBoundFunction::s_info) : false;
+    bool shouldSkip = callee ? callee->inherits(JSBoundFunction::info()) : false;
     return shouldSkip;
 }
 
@@ -218,7 +218,7 @@ JSValue JSFunction::callerGetter(ExecState* exec, JSValue slotBase, PropertyName
     JSValue caller = retrieveCallerFunction(exec, thisObj);
 
     // See ES5.1 15.3.5.4 - Function.caller may not be used to retrieve a strict caller.
-    if (!caller.isObject() || !asObject(caller)->inherits(&JSFunction::s_info))
+    if (!caller.isObject() || !asObject(caller)->inherits(JSFunction::info()))
         return caller;
     JSFunction* function = jsCast<JSFunction*>(caller);
     if (function->isHostFunction() || !function->jsExecutable()->isStrictMode())

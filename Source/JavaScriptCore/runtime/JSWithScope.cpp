@@ -35,7 +35,7 @@ const ClassInfo JSWithScope::s_info = { "WithScope", &Base::s_info, 0, 0, CREATE
 void JSWithScope::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSWithScope* thisObject = jsCast<JSWithScope*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
 

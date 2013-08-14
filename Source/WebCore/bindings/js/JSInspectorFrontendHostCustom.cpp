@@ -105,7 +105,7 @@ static void populateContextMenuItems(ExecState* exec, JSArray* array, ContextMen
                                  ContextMenuItemCustomTagNoAction,
                                  String());
             menu.appendItem(item);
-        } else if (typeString == "subMenu" && subItems.inherits(&JSArray::s_info)) {
+        } else if (typeString == "subMenu" && subItems.inherits(JSArray::info())) {
             ContextMenu subMenu;
             JSArray* subItemsArray = asArray(subItems);
             populateContextMenuItems(exec, subItemsArray, subMenu);

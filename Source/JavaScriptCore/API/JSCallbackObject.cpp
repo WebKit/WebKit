@@ -52,13 +52,13 @@ JSCallbackObject<JSGlobalObject>* JSCallbackObject<JSGlobalObject>::create(VM& v
 template <>
 Structure* JSCallbackObject<JSDestructibleObject>::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto)
 { 
-    return Structure::create(vm, globalObject, proto, TypeInfo(ObjectType, StructureFlags), &s_info); 
+    return Structure::create(vm, globalObject, proto, TypeInfo(ObjectType, StructureFlags), info()); 
 }
     
 template <>
 Structure* JSCallbackObject<JSGlobalObject>::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto)
 { 
-    return Structure::create(vm, globalObject, proto, TypeInfo(GlobalObjectType, StructureFlags), &s_info); 
+    return Structure::create(vm, globalObject, proto, TypeInfo(GlobalObjectType, StructureFlags), info()); 
 }
 
 void JSCallbackObjectData::finalize(Handle<Unknown> handle, void* context)

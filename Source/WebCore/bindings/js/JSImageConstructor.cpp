@@ -42,7 +42,7 @@ JSImageConstructor::JSImageConstructor(Structure* structure, JSDOMGlobalObject* 
 void JSImageConstructor::finishCreation(ExecState* exec, JSDOMGlobalObject* globalObject)
 {
     Base::finishCreation(globalObject);
-    ASSERT(inherits(&s_info));
+    ASSERT(inherits(info()));
     putDirect(exec->vm(), exec->propertyNames().prototype, JSHTMLImageElementPrototype::self(exec, globalObject), None);
 }
 

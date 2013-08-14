@@ -1017,7 +1017,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     }
         
     case NewStringObject: {
-        ASSERT(node->structure()->classInfo() == &StringObject::s_info);
+        ASSERT(node->structure()->classInfo() == StringObject::info());
         forNode(node).set(m_graph, node->structure());
         break;
     }

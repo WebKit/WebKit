@@ -38,7 +38,7 @@ namespace WebCore {
 void JSAudioTrackList::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSAudioTrackList* jsAudioTrackList = jsCast<JSAudioTrackList*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(jsAudioTrackList, &s_info);
+    ASSERT_GC_OBJECT_INHERITS(jsAudioTrackList, info());
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(jsAudioTrackList->structure()->typeInfo().overridesVisitChildren());
     Base::visitChildren(jsAudioTrackList, visitor);

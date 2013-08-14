@@ -45,7 +45,7 @@ CallLinkStatus::CallLinkStatus(JSValue value)
     
     m_structure = value.asCell()->structure();
     
-    if (!value.asCell()->inherits(&JSFunction::s_info))
+    if (!value.asCell()->inherits(JSFunction::info()))
         return;
     
     m_executable = jsCast<JSFunction*>(value.asCell())->executable();
@@ -56,7 +56,7 @@ JSFunction* CallLinkStatus::function() const
     if (!m_callTarget || !m_callTarget.isCell())
         return 0;
     
-    if (!m_callTarget.asCell()->inherits(&JSFunction::s_info))
+    if (!m_callTarget.asCell()->inherits(JSFunction::info()))
         return 0;
     
     return jsCast<JSFunction*>(m_callTarget.asCell());
@@ -67,7 +67,7 @@ InternalFunction* CallLinkStatus::internalFunction() const
     if (!m_callTarget || !m_callTarget.isCell())
         return 0;
     
-    if (!m_callTarget.asCell()->inherits(&InternalFunction::s_info))
+    if (!m_callTarget.asCell()->inherits(InternalFunction::info()))
         return 0;
     
     return jsCast<InternalFunction*>(m_callTarget.asCell());

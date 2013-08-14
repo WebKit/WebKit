@@ -58,7 +58,7 @@ public:
     static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
     static bool getOwnPropertyDescriptor(JSObject*, ExecState*, PropertyName, PropertyDescriptor&);
 
-    static JS_EXPORTDATA const ClassInfo s_info;
+    DECLARE_EXPORT_INFO;
         
     unsigned length() const { return getArrayLength(); }
     // OK to use on new arrays, but not if it might be a RegExpMatchArray.
@@ -131,7 +131,7 @@ public:
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype, IndexingType indexingType)
     {
-        return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info, indexingType);
+        return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info(), indexingType);
     }
         
 protected:
@@ -272,7 +272,7 @@ JSArray* asArray(JSValue);
 
 inline JSArray* asArray(JSCell* cell)
 {
-    ASSERT(cell->inherits(&JSArray::s_info));
+    ASSERT(cell->inherits(JSArray::info()));
     return jsCast<JSArray*>(cell);
 }
 
@@ -281,7 +281,7 @@ inline JSArray* asArray(JSValue value)
     return asArray(value.asCell());
 }
 
-inline bool isJSArray(JSCell* cell) { return cell->classInfo() == &JSArray::s_info; }
+inline bool isJSArray(JSCell* cell) { return cell->classInfo() == JSArray::info(); }
 inline bool isJSArray(JSValue v) { return v.isCell() && isJSArray(v.asCell()); }
 
 inline JSArray* constructArray(ExecState* exec, Structure* arrayStructure, const ArgList& values)

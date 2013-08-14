@@ -58,11 +58,11 @@ public:
         return object;
     }
     
-    static const ClassInfo s_info;
+    DECLARE_INFO;
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
-        return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType,  StructureFlags), &s_info);
+        return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType,  StructureFlags), info());
     }
 
 protected:
@@ -152,7 +152,7 @@ QtInstance* QtInstance::getInstance(JSObject* object)
 {
     if (!object)
         return 0;
-    if (!object->inherits(&QtRuntimeObject::s_info))
+    if (!object->inherits(QtRuntimeObject::info()))
         return 0;
     return static_cast<QtInstance*>(static_cast<RuntimeObject*>(object)->getInternalInstance());
 }

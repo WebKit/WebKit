@@ -35,11 +35,11 @@ class NameInstance : public JSDestructibleObject {
 public:
     typedef JSDestructibleObject Base;
 
-    static const ClassInfo s_info;
+    DECLARE_INFO;
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
-        return Structure::create(vm, globalObject, prototype, TypeInfo(NameInstanceType, StructureFlags), &s_info);
+        return Structure::create(vm, globalObject, prototype, TypeInfo(NameInstanceType, StructureFlags), info());
     }
 
     static NameInstance* create(VM& vm, Structure* structure, JSString* nameString)
@@ -60,7 +60,7 @@ protected:
     void finishCreation(VM& vm)
     {
         Base::finishCreation(vm);
-        ASSERT(inherits(&s_info));
+        ASSERT(inherits(info()));
     }
 
     PrivateName m_privateName;

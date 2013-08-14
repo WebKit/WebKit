@@ -168,7 +168,7 @@ CallIdentifier LegacyProfiler::createCallIdentifier(ExecState* exec, JSValue fun
         return CallIdentifier(GlobalCodeExecution, defaultSourceURL, defaultLineNumber);
     if (!functionValue.isObject())
         return CallIdentifier("(unknown)", defaultSourceURL, defaultLineNumber);
-    if (asObject(functionValue)->inherits(&JSFunction::s_info) || asObject(functionValue)->inherits(&InternalFunction::s_info))
+    if (asObject(functionValue)->inherits(JSFunction::info()) || asObject(functionValue)->inherits(InternalFunction::info()))
         return createCallIdentifierFromFunctionImp(exec, asObject(functionValue), defaultSourceURL, defaultLineNumber);
     return CallIdentifier(makeString("(", asObject(functionValue)->methodTable()->className(asObject(functionValue)), " object)"), defaultSourceURL, defaultLineNumber);
 }

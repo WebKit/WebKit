@@ -60,7 +60,7 @@ JSCell* getCallableObjectSlow(JSCell* cell)
     Structure* structure = cell->structure();
     if (structure->typeInfo().type() == JSFunctionType)
         return cell;
-    if (structure->classInfo()->isSubClassOf(&InternalFunction::s_info))
+    if (structure->classInfo()->isSubClassOf(InternalFunction::info()))
         return cell;
     return 0;
 }
@@ -207,7 +207,7 @@ ALWAYS_INLINE void JSObject::visitButterfly(SlotVisitor& visitor, Butterfly* but
 void JSObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSObject* thisObject = jsCast<JSObject*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 #if !ASSERT_DISABLED
     bool wasCheckingForDefaultMarkViolation = visitor.m_isCheckingForDefaultMarkViolation;
     visitor.m_isCheckingForDefaultMarkViolation = false;
@@ -227,7 +227,7 @@ void JSObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
 void JSObject::copyBackingStore(JSCell* cell, CopyVisitor& visitor, CopyToken token)
 {
     JSObject* thisObject = jsCast<JSObject*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     
     if (token != ButterflyCopyToken)
         return;
@@ -240,7 +240,7 @@ void JSObject::copyBackingStore(JSCell* cell, CopyVisitor& visitor, CopyToken to
 void JSFinalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSFinalObject* thisObject = jsCast<JSFinalObject*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 #if !ASSERT_DISABLED
     bool wasCheckingForDefaultMarkViolation = visitor.m_isCheckingForDefaultMarkViolation;
     visitor.m_isCheckingForDefaultMarkViolation = false;
@@ -940,7 +940,7 @@ void JSObject::convertDoubleToContiguousWhilePerformingSetIndex(VM& vm, unsigned
 
 ContiguousJSValues JSObject::ensureInt32Slow(VM& vm)
 {
-    ASSERT(inherits(&s_info));
+    ASSERT(inherits(info()));
     
     switch (structure()->indexingType()) {
     case ALL_BLANK_INDEXING_TYPES:
@@ -964,7 +964,7 @@ ContiguousJSValues JSObject::ensureInt32Slow(VM& vm)
 
 ContiguousDoubles JSObject::ensureDoubleSlow(VM& vm)
 {
-    ASSERT(inherits(&s_info));
+    ASSERT(inherits(info()));
     
     switch (structure()->indexingType()) {
     case ALL_BLANK_INDEXING_TYPES:
@@ -990,7 +990,7 @@ ContiguousDoubles JSObject::ensureDoubleSlow(VM& vm)
 
 ContiguousJSValues JSObject::ensureContiguousSlow(VM& vm, DoubleToContiguousMode mode)
 {
-    ASSERT(inherits(&s_info));
+    ASSERT(inherits(info()));
     
     switch (structure()->indexingType()) {
     case ALL_BLANK_INDEXING_TYPES:
@@ -1030,7 +1030,7 @@ ContiguousJSValues JSObject::rageEnsureContiguousSlow(VM& vm)
 
 ArrayStorage* JSObject::ensureArrayStorageSlow(VM& vm)
 {
-    ASSERT(inherits(&s_info));
+    ASSERT(inherits(info()));
     
     switch (structure()->indexingType()) {
     case ALL_BLANK_INDEXING_TYPES:

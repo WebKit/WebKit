@@ -40,7 +40,7 @@ const ClassInfo Arguments::s_info = { "Arguments", &Base::s_info, 0, 0, CREATE_M
 void Arguments::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     Arguments* thisObject = jsCast<Arguments*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
     JSObject::visitChildren(thisObject, visitor);

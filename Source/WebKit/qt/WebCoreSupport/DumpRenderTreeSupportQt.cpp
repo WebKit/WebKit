@@ -163,7 +163,7 @@ WebCore::Node* QtDRTNodeRuntime::get(const QDRTNode& node)
 
 static QVariant convertJSValueToNodeVariant(JSC::JSObject* object, int *distance, HashSet<JSObjectRef>*)
 {
-    if (!object || !object->inherits(&JSNode::s_info))
+    if (!object || !object->inherits(JSNode::info()))
         return QVariant();
     return QVariant::fromValue<QDRTNode>(QtDRTNodeRuntime::create((static_cast<JSNode*>(object))->impl()));
 }

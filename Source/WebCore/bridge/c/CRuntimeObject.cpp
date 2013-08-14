@@ -45,7 +45,7 @@ CRuntimeObject::CRuntimeObject(ExecState* exec, JSGlobalObject* globalObject, St
 void CRuntimeObject::finishCreation(JSGlobalObject* globalObject)
 {
     Base::finishCreation(globalObject);
-    ASSERT(inherits(&s_info));
+    ASSERT(inherits(info()));
 }
 
 CInstance* CRuntimeObject::getInternalCInstance() const

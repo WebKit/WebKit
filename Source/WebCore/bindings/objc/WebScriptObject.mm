@@ -534,13 +534,13 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
         JSObject* object = asObject(value);
         JSLockHolder lock(rootObject->globalObject()->vm());
 
-        if (object->inherits(&JSHTMLElement::s_info)) {
+        if (object->inherits(JSHTMLElement::info())) {
             // Plugin elements cache the instance internally.
             HTMLElement* el = jsCast<JSHTMLElement*>(object)->impl();
             ObjcInstance* instance = static_cast<ObjcInstance*>(pluginInstance(el));
             if (instance)
                 return instance->getObject();
-        } else if (object->inherits(&ObjCRuntimeObject::s_info)) {
+        } else if (object->inherits(ObjCRuntimeObject::info())) {
             ObjCRuntimeObject* runtimeObject = static_cast<ObjCRuntimeObject*>(object);
             ObjcInstance* instance = runtimeObject->getInternalObjCInstance();
             if (instance)

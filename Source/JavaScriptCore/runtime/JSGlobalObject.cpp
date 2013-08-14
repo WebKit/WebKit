@@ -480,7 +480,7 @@ void JSGlobalObject::resetPrototype(VM& vm, JSValue prototype)
 void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
 { 
     JSGlobalObject* thisObject = jsCast<JSGlobalObject*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
     Base::visitChildren(thisObject, visitor);
@@ -613,7 +613,7 @@ DynamicGlobalObjectScope::DynamicGlobalObjectScope(VM& vm, JSGlobalObject* dynam
 void slowValidateCell(JSGlobalObject* globalObject)
 {
     RELEASE_ASSERT(globalObject->isGlobalObject());
-    ASSERT_GC_OBJECT_INHERITS(globalObject, &JSGlobalObject::s_info);
+    ASSERT_GC_OBJECT_INHERITS(globalObject, JSGlobalObject::info());
 }
 
 UnlinkedProgramCodeBlock* JSGlobalObject::createProgramCodeBlock(CallFrame* callFrame, ProgramExecutable* executable, JSObject** exception)

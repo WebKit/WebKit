@@ -59,11 +59,11 @@ public: \
     static bool getOwnPropertySlotByIndex(JSC::JSObject*, JSC::ExecState*, unsigned propertyName, JSC::PropertySlot&);\
     static void put(JSC::JSCell*, JSC::ExecState*, JSC::PropertyName propertyName, JSC::JSValue, JSC::PutPropertySlot&);\
     static void putByIndex(JSC::JSCell*, JSC::ExecState*, unsigned propertyName, JSC::JSValue, bool);\
-    static const JSC::ClassInfo s_info;\
+    DECLARE_INFO;\
 \
     static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)\
     {\
-        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), &s_info);\
+        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());\
     }\
 \
     static void getOwnPropertyNames(JSC::JSObject*, JSC::ExecState*, JSC::PropertyNameArray&, JSC::EnumerationMode mode = JSC::ExcludeDontEnumProperties);\
@@ -97,13 +97,13 @@ void JS##name##Array::finishCreation(VM& vm)\
     m_storage = m_impl->data();\
     m_storageLength = m_impl->length();\
     putDirect(vm, vm.propertyNames->length, jsNumber(m_storageLength), DontDelete | ReadOnly | DontEnum); \
-    ASSERT(inherits(&s_info));\
+    ASSERT(inherits(info()));\
 }\
 \
 bool JS##name##Array::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)\
 {\
     JS##name##Array* thisObject = jsCast<JS##name##Array*>(object);\
-    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);\
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());\
     unsigned index = propertyName.asIndex();\
     if (index < thisObject->m_storageLength) {\
         ASSERT(index != PropertyName::NotAnIndex);\
@@ -116,7 +116,7 @@ bool JS##name##Array::getOwnPropertySlot(JSObject* object, ExecState* exec, Prop
 bool JS##name##Array::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)\
 {\
     JS##name##Array* thisObject = jsCast<JS##name##Array*>(object);\
-    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);\
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());\
     unsigned index = propertyName.asIndex();\
     if (index < thisObject->m_storageLength) {\
         ASSERT(index != PropertyName::NotAnIndex);\
@@ -129,7 +129,7 @@ bool JS##name##Array::getOwnPropertyDescriptor(JSObject* object, ExecState* exec
 bool JS##name##Array::getOwnPropertySlotByIndex(JSObject* object, ExecState* exec, unsigned propertyName, PropertySlot& slot)\
 {\
     JS##name##Array* thisObject = jsCast<JS##name##Array*>(object);\
-    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);\
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());\
     if (propertyName < thisObject->m_storageLength) {\
         slot.setValue(thisObject->getByIndex(exec, propertyName));\
         return true;\
@@ -140,7 +140,7 @@ bool JS##name##Array::getOwnPropertySlotByIndex(JSObject* object, ExecState* exe
 void JS##name##Array::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)\
 {\
     JS##name##Array* thisObject = jsCast<JS##name##Array*>(cell);\
-    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);\
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());\
     unsigned index = propertyName.asIndex();\
     if (index != PropertyName::NotAnIndex) {\
         thisObject->indexSetter(exec, index, value);\
@@ -157,7 +157,7 @@ void JS##name##Array::indexSetter(JSC::ExecState* exec, unsigned index, JSC::JSV
 void JS##name##Array::putByIndex(JSCell* cell, ExecState* exec, unsigned propertyName, JSValue value, bool)\
 {\
     JS##name##Array* thisObject = jsCast<JS##name##Array*>(cell);\
-    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);\
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());\
     thisObject->indexSetter(exec, propertyName, value);\
     return;\
 }\
@@ -165,7 +165,7 @@ void JS##name##Array::putByIndex(JSCell* cell, ExecState* exec, unsigned propert
 void JS##name##Array::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)\
 {\
     JS##name##Array* thisObject = jsCast<JS##name##Array*>(object);\
-    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);\
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());\
     for (unsigned i = 0; i < thisObject->m_storageLength; ++i)\
         propertyNames.add(Identifier::from(exec, i));\
     Base::getOwnPropertyNames(thisObject, exec, propertyNames, mode);\
@@ -173,7 +173,7 @@ void JS##name##Array::getOwnPropertyNames(JSObject* object, ExecState* exec, Pro
 \
 JSValue JS##name##Array::getByIndex(ExecState*, unsigned index)\
 {\
-    ASSERT_GC_OBJECT_INHERITS(this, &s_info);\
+    ASSERT_GC_OBJECT_INHERITS(this, info());\
     type result = m_impl->item(index);\
     if (std::isnan((double)result))\
         return jsNaN();\

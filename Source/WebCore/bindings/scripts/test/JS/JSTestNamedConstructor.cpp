@@ -58,7 +58,7 @@ JSTestNamedConstructorConstructor::JSTestNamedConstructorConstructor(Structure* 
 void JSTestNamedConstructorConstructor::finishCreation(ExecState* exec, JSDOMGlobalObject* globalObject)
 {
     Base::finishCreation(exec->vm());
-    ASSERT(inherits(&s_info));
+    ASSERT(inherits(info()));
     putDirect(exec->vm(), exec->propertyNames().prototype, JSTestNamedConstructorPrototype::self(exec, globalObject), DontDelete | ReadOnly);
     putDirect(exec->vm(), exec->propertyNames().length, jsNumber(0), ReadOnly | DontDelete | DontEnum);
 }
@@ -106,7 +106,7 @@ JSTestNamedConstructorNamedConstructor::JSTestNamedConstructorNamedConstructor(S
 void JSTestNamedConstructorNamedConstructor::finishCreation(ExecState* exec, JSDOMGlobalObject* globalObject)
 {
     Base::finishCreation(globalObject);
-    ASSERT(inherits(&s_info));
+    ASSERT(inherits(info()));
     putDirect(exec->vm(), exec->propertyNames().prototype, JSTestNamedConstructorPrototype::self(exec, globalObject), None);
     putDirect(exec->vm(), exec->propertyNames().length, jsNumber(0), ReadOnly | DontDelete | DontEnum);
 }
@@ -143,7 +143,7 @@ JSTestNamedConstructor::JSTestNamedConstructor(Structure* structure, JSDOMGlobal
 void JSTestNamedConstructor::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(&s_info));
+    ASSERT(inherits(info()));
 }
 
 JSObject* JSTestNamedConstructor::createPrototype(ExecState* exec, JSGlobalObject* globalObject)
@@ -165,14 +165,14 @@ JSTestNamedConstructor::~JSTestNamedConstructor()
 bool JSTestNamedConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
     JSTestNamedConstructor* thisObject = jsCast<JSTestNamedConstructor*>(object);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     return getStaticValueSlot<JSTestNamedConstructor, Base>(exec, &JSTestNamedConstructorTable, thisObject, propertyName, slot);
 }
 
 bool JSTestNamedConstructor::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)
 {
     JSTestNamedConstructor* thisObject = jsCast<JSTestNamedConstructor*>(object);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     return getStaticValueDescriptor<JSTestNamedConstructor, Base>(exec, &JSTestNamedConstructorTable, thisObject, propertyName, descriptor);
 }
 
@@ -257,7 +257,7 @@ JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TestNam
 
 TestNamedConstructor* toTestNamedConstructor(JSC::JSValue value)
 {
-    return value.inherits(&JSTestNamedConstructor::s_info) ? jsCast<JSTestNamedConstructor*>(asObject(value))->impl() : 0;
+    return value.inherits(JSTestNamedConstructor::info()) ? jsCast<JSTestNamedConstructor*>(asObject(value))->impl() : 0;
 }
 
 }

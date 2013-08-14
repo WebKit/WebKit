@@ -116,11 +116,11 @@ static PassRefPtr<IDBKey> createIDBKeyFromValue(ExecState* exec, JSValue value, 
         return IDBKey::createNumber(value.toNumber(exec));
     if (value.isString())
         return IDBKey::createString(value.toString(exec)->value(exec));
-    if (value.inherits(&DateInstance::s_info) && !std::isnan(valueToDate(exec, value)))
+    if (value.inherits(DateInstance::info()) && !std::isnan(valueToDate(exec, value)))
         return IDBKey::createDate(valueToDate(exec, value));
     if (value.isObject()) {
         JSObject* object = asObject(value);
-        if (isJSArray(object) || object->inherits(&JSArray::s_info)) {
+        if (isJSArray(object) || object->inherits(JSArray::info())) {
             JSArray* array = asArray(object);
             size_t length = array->length();
 

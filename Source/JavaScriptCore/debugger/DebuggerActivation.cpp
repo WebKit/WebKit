@@ -51,7 +51,7 @@ void DebuggerActivation::finishCreation(VM& vm, JSObject* activation)
 void DebuggerActivation::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     DebuggerActivation* thisObject = jsCast<DebuggerActivation*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
 

@@ -46,11 +46,11 @@ public:
     static void destroy(JSCell*);
     JSClassRef classRef() const { return m_class; }
     JSObjectCallAsConstructorCallback callback() const { return m_callback; }
-    static const ClassInfo s_info;
+    DECLARE_INFO;
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto) 
     {
-        return Structure::create(vm, globalObject, proto, TypeInfo(ObjectType, StructureFlags), &s_info);
+        return Structure::create(vm, globalObject, proto, TypeInfo(ObjectType, StructureFlags), info());
     }
 
 protected:

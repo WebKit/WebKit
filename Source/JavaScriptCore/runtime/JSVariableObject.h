@@ -52,7 +52,7 @@ namespace JSC {
         WriteBarrierBase<Unknown>* const * addressOfRegisters() const { return &m_registers; }
         static size_t offsetOfRegisters() { return OBJECT_OFFSETOF(JSVariableObject, m_registers); }
 
-        static const ClassInfo s_info;
+        DECLARE_INFO;
 
     protected:
         static const unsigned StructureFlags = Base::StructureFlags;

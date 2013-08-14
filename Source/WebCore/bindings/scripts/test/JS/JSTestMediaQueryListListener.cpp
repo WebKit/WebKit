@@ -59,7 +59,7 @@ JSTestMediaQueryListListenerConstructor::JSTestMediaQueryListListenerConstructor
 void JSTestMediaQueryListListenerConstructor::finishCreation(ExecState* exec, JSDOMGlobalObject* globalObject)
 {
     Base::finishCreation(exec->vm());
-    ASSERT(inherits(&s_info));
+    ASSERT(inherits(info()));
     putDirect(exec->vm(), exec->propertyNames().prototype, JSTestMediaQueryListListenerPrototype::self(exec, globalObject), DontDelete | ReadOnly);
     putDirect(exec->vm(), exec->propertyNames().length, jsNumber(0), ReadOnly | DontDelete | DontEnum);
 }
@@ -113,7 +113,7 @@ JSTestMediaQueryListListener::JSTestMediaQueryListListener(Structure* structure,
 void JSTestMediaQueryListListener::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(&s_info));
+    ASSERT(inherits(info()));
 }
 
 JSObject* JSTestMediaQueryListListener::createPrototype(ExecState* exec, JSGlobalObject* globalObject)
@@ -135,14 +135,14 @@ JSTestMediaQueryListListener::~JSTestMediaQueryListListener()
 bool JSTestMediaQueryListListener::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
     JSTestMediaQueryListListener* thisObject = jsCast<JSTestMediaQueryListListener*>(object);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     return getStaticValueSlot<JSTestMediaQueryListListener, Base>(exec, &JSTestMediaQueryListListenerTable, thisObject, propertyName, slot);
 }
 
 bool JSTestMediaQueryListListener::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)
 {
     JSTestMediaQueryListListener* thisObject = jsCast<JSTestMediaQueryListListener*>(object);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     return getStaticValueDescriptor<JSTestMediaQueryListListener, Base>(exec, &JSTestMediaQueryListListenerTable, thisObject, propertyName, descriptor);
 }
 
@@ -160,10 +160,10 @@ JSValue JSTestMediaQueryListListener::getConstructor(ExecState* exec, JSGlobalOb
 EncodedJSValue JSC_HOST_CALL jsTestMediaQueryListListenerPrototypeFunctionMethod(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(&JSTestMediaQueryListListener::s_info))
+    if (!thisValue.inherits(JSTestMediaQueryListListener::info()))
         return throwVMTypeError(exec);
     JSTestMediaQueryListListener* castedThis = jsCast<JSTestMediaQueryListListener*>(asObject(thisValue));
-    ASSERT_GC_OBJECT_INHERITS(castedThis, &JSTestMediaQueryListListener::s_info);
+    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestMediaQueryListListener::info());
     TestMediaQueryListListener* impl = static_cast<TestMediaQueryListListener*>(castedThis->impl());
     if (exec->argumentCount() < 1)
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
@@ -237,7 +237,7 @@ JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TestMed
 
 TestMediaQueryListListener* toTestMediaQueryListListener(JSC::JSValue value)
 {
-    return value.inherits(&JSTestMediaQueryListListener::s_info) ? jsCast<JSTestMediaQueryListListener*>(asObject(value))->impl() : 0;
+    return value.inherits(JSTestMediaQueryListListener::info()) ? jsCast<JSTestMediaQueryListListener*>(asObject(value))->impl() : 0;
 }
 
 }

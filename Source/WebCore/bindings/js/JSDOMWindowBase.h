@@ -51,11 +51,11 @@ namespace WebCore {
         // Called just before removing this window from the JSDOMWindowShell.
         void willRemoveFromWindowShell();
 
-        static const JSC::ClassInfo s_info;
+        DECLARE_INFO;
 
         static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSValue prototype)
         {
-            return JSC::Structure::create(vm, 0, prototype, JSC::TypeInfo(JSC::GlobalObjectType, StructureFlags), &s_info);
+            return JSC::Structure::create(vm, 0, prototype, JSC::TypeInfo(JSC::GlobalObjectType, StructureFlags), info());
         }
 
         static const JSC::GlobalObjectMethodTable s_globalObjectMethodTable;

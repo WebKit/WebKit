@@ -63,7 +63,7 @@ bool JSLocation::getOwnPropertySlotDelegate(ExecState* exec, PropertyName proper
         return false;
 
     // Check for the few functions that we allow, even when called cross-domain.
-    const HashEntry* entry = JSLocationPrototype::s_info.propHashTable(exec)->entry(exec, propertyName);
+    const HashEntry* entry = JSLocationPrototype::info()->propHashTable(exec)->entry(exec, propertyName);
     if (entry && (entry->attributes() & JSC::Function)) {
         if (entry->function() == jsLocationPrototypeFunctionReplace) {
             slot.setCustom(this, nonCachingStaticReplaceFunctionGetter);
@@ -99,7 +99,7 @@ bool JSLocation::getOwnPropertyDescriptorDelegate(ExecState* exec, PropertyName 
         return true;
     
     // Check for the few functions that we allow, even when called cross-domain.
-    const HashEntry* entry = JSLocationPrototype::s_info.propHashTable(exec)->entry(exec, propertyName);
+    const HashEntry* entry = JSLocationPrototype::info()->propHashTable(exec)->entry(exec, propertyName);
     PropertySlot slot(this);
     if (entry && (entry->attributes() & JSC::Function)) {
         if (entry->function() == jsLocationPrototypeFunctionReplace) {
@@ -136,7 +136,7 @@ bool JSLocation::putDelegate(ExecState* exec, PropertyName propertyName, JSValue
 
     bool sameDomainAccess = shouldAllowAccessToFrame(exec, frame);
 
-    const HashEntry* entry = JSLocation::s_info.propHashTable(exec)->entry(exec, propertyName);
+    const HashEntry* entry = JSLocation::info()->propHashTable(exec)->entry(exec, propertyName);
     if (!entry) {
         if (sameDomainAccess)
             JSObject::put(this, exec, propertyName, value, slot);

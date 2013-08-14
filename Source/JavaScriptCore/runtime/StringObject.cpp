@@ -40,7 +40,7 @@ StringObject::StringObject(VM& vm, Structure* structure)
 void StringObject::finishCreation(VM& vm, JSString* string)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(&s_info));
+    ASSERT(inherits(info()));
     setInternalValue(vm, string);
 }
 

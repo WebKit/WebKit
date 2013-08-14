@@ -47,7 +47,7 @@ namespace WebCore {
     template <class Type, class Base> bool pluginElementCustomGetOwnPropertySlot(JSC::ExecState* exec, JSC::PropertyName propertyName, JSC::PropertySlot& slot, Type* element)
     {
         if (!element->globalObject()->world()->isNormal()) {
-            if (JSC::getStaticValueSlot<Type, Base>(exec, element->s_info.staticPropHashTable, element, propertyName, slot))
+            if (JSC::getStaticValueSlot<Type, Base>(exec, Type::info()->staticPropHashTable, element, propertyName, slot))
                 return true;
 
             JSC::JSValue proto = element->prototype();
@@ -61,7 +61,7 @@ namespace WebCore {
     template <class Type, class Base> bool pluginElementCustomGetOwnPropertyDescriptor(JSC::ExecState* exec, JSC::PropertyName propertyName, JSC::PropertyDescriptor& descriptor, Type* element)
     {
         if (!element->globalObject()->world()->isNormal()) {
-            if (JSC::getStaticValueDescriptor<Type, Base>(exec, element->s_info.staticPropHashTable, element, propertyName, descriptor))
+            if (JSC::getStaticValueDescriptor<Type, Base>(exec, Type::info()->staticPropHashTable, element, propertyName, descriptor))
                 return true;
 
             JSC::JSValue proto = element->prototype();

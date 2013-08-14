@@ -181,7 +181,7 @@ CallFrame* loadVarargs(CallFrame* callFrame, JSStack* stack, JSValue thisValue, 
         return 0;
     }
 
-    if (asObject(arguments)->classInfo() == &Arguments::s_info) {
+    if (asObject(arguments)->classInfo() == Arguments::info()) {
         Arguments* argsObject = asArguments(arguments);
         unsigned argCount = argsObject->length(callFrame);
         CallFrame* newCallFrame = CallFrame::create(callFrame->registers() + firstFreeRegister + CallFrame::offsetFor(argCount + 1));

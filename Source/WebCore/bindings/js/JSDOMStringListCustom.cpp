@@ -25,7 +25,7 @@ namespace WebCore {
 
 PassRefPtr<DOMStringList> toDOMStringList(ExecState* exec, JSValue value)
 {
-    if (value.inherits(&JSDOMStringList::s_info))
+    if (value.inherits(JSDOMStringList::info()))
         return jsCast<JSDOMStringList*>(asObject(value))->impl();
 
     if (!isJSArray(value))

@@ -68,7 +68,7 @@ MathObject::MathObject(JSGlobalObject* globalObject, Structure* structure)
 void MathObject::finishCreation(ExecState* exec, JSGlobalObject* globalObject)
 {
     Base::finishCreation(globalObject->vm());
-    ASSERT(inherits(&s_info));
+    ASSERT(inherits(info()));
 
     putDirectWithoutTransition(exec->vm(), Identifier(exec, "E"), jsNumber(exp(1.0)), DontDelete | DontEnum | ReadOnly);
     putDirectWithoutTransition(exec->vm(), Identifier(exec, "LN2"), jsNumber(log(2.0)), DontDelete | DontEnum | ReadOnly);

@@ -52,9 +52,9 @@ static CanvasStyle toHTMLCanvasStyle(ExecState*, JSValue value)
     if (!value.isObject())
         return CanvasStyle();
     JSObject* object = asObject(value);
-    if (object->inherits(&JSCanvasGradient::s_info))
+    if (object->inherits(JSCanvasGradient::info()))
         return CanvasStyle(jsCast<JSCanvasGradient*>(object)->impl());
-    if (object->inherits(&JSCanvasPattern::s_info))
+    if (object->inherits(JSCanvasPattern::info()))
         return CanvasStyle(jsCast<JSCanvasPattern*>(object)->impl());
     return CanvasStyle();
 }

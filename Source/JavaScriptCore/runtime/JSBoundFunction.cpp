@@ -107,7 +107,7 @@ JSBoundFunction::JSBoundFunction(ExecState* exec, JSGlobalObject* globalObject, 
 void JSBoundFunction::finishCreation(ExecState* exec, NativeExecutable* executable, int length, const String& name)
 {
     Base::finishCreation(exec, executable, length, name);
-    ASSERT(inherits(&s_info));
+    ASSERT(inherits(info()));
 
     putDirectAccessor(exec, exec->propertyNames().arguments, globalObject()->throwTypeErrorGetterSetter(exec), DontDelete | DontEnum | Accessor);
     putDirectAccessor(exec, exec->propertyNames().caller, globalObject()->throwTypeErrorGetterSetter(exec), DontDelete | DontEnum | Accessor);
@@ -116,7 +116,7 @@ void JSBoundFunction::finishCreation(ExecState* exec, NativeExecutable* executab
 void JSBoundFunction::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSBoundFunction* thisObject = jsCast<JSBoundFunction*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
     Base::visitChildren(thisObject, visitor);

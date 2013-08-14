@@ -47,7 +47,7 @@ JS_EXPORT_PRIVATE void slowValidateCell(JSGlobalObject*);
 #if ENABLE(GC_VALIDATION)
 template<class T> inline void validateCell(T cell)
 {
-    ASSERT_GC_OBJECT_INHERITS(cell, &WTF::RemovePointer<T>::Type::s_info);
+    ASSERT_GC_OBJECT_INHERITS(cell, WTF::RemovePointer<T>::Type::info());
 }
 
 template<> inline void validateCell<JSCell*>(JSCell* cell)

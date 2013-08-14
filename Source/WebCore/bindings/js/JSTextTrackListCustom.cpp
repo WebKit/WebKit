@@ -38,7 +38,7 @@ namespace WebCore {
 void JSTextTrackList::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSTextTrackList* jsTextTrackList = jsCast<JSTextTrackList*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(jsTextTrackList, &s_info);
+    ASSERT_GC_OBJECT_INHERITS(jsTextTrackList, info());
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(jsTextTrackList->structure()->typeInfo().overridesVisitChildren());
     Base::visitChildren(jsTextTrackList, visitor);

@@ -58,7 +58,7 @@ JSTestExceptionConstructor::JSTestExceptionConstructor(Structure* structure, JSD
 void JSTestExceptionConstructor::finishCreation(ExecState* exec, JSDOMGlobalObject* globalObject)
 {
     Base::finishCreation(exec->vm());
-    ASSERT(inherits(&s_info));
+    ASSERT(inherits(info()));
     putDirect(exec->vm(), exec->propertyNames().prototype, JSTestExceptionPrototype::self(exec, globalObject), DontDelete | ReadOnly);
     putDirect(exec->vm(), exec->propertyNames().length, jsNumber(0), ReadOnly | DontDelete | DontEnum);
 }
@@ -99,7 +99,7 @@ JSTestException::JSTestException(Structure* structure, JSDOMGlobalObject* global
 void JSTestException::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(&s_info));
+    ASSERT(inherits(info()));
 }
 
 JSObject* JSTestException::createPrototype(ExecState* exec, JSGlobalObject* globalObject)
@@ -121,14 +121,14 @@ JSTestException::~JSTestException()
 bool JSTestException::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
     JSTestException* thisObject = jsCast<JSTestException*>(object);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     return getStaticValueSlot<JSTestException, Base>(exec, &JSTestExceptionTable, thisObject, propertyName, slot);
 }
 
 bool JSTestException::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)
 {
     JSTestException* thisObject = jsCast<JSTestException*>(object);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     return getStaticValueDescriptor<JSTestException, Base>(exec, &JSTestExceptionTable, thisObject, propertyName, descriptor);
 }
 
@@ -216,7 +216,7 @@ JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TestExc
 
 TestException* toTestException(JSC::JSValue value)
 {
-    return value.inherits(&JSTestException::s_info) ? jsCast<JSTestException*>(asObject(value))->impl() : 0;
+    return value.inherits(JSTestException::info()) ? jsCast<JSTestException*>(asObject(value))->impl() : 0;
 }
 
 }

@@ -156,14 +156,14 @@ namespace JSC {
 
         static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto)
         {
-            return Structure::create(vm, globalObject, proto, TypeInfo(StringType, OverridesGetOwnPropertySlot | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero), &s_info);
+            return Structure::create(vm, globalObject, proto, TypeInfo(StringType, OverridesGetOwnPropertySlot | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero), info());
         }
 
         static size_t offsetOfLength() { return OBJECT_OFFSETOF(JSString, m_length); }
         static size_t offsetOfFlags() { return OBJECT_OFFSETOF(JSString, m_flags); }
         static size_t offsetOfValue() { return OBJECT_OFFSETOF(JSString, m_value); }
 
-        static JS_EXPORTDATA const ClassInfo s_info;
+        DECLARE_EXPORT_INFO;
 
         static void visitChildren(JSCell*, SlotVisitor&);
 
@@ -497,7 +497,7 @@ namespace JSC {
         return false;
     }
 
-    inline bool isJSString(JSValue v) { return v.isCell() && v.asCell()->classInfo() == &JSString::s_info; }
+    inline bool isJSString(JSValue v) { return v.isCell() && v.asCell()->classInfo() == JSString::info(); }
 
     // --- JSValue inlines ----------------------------
         

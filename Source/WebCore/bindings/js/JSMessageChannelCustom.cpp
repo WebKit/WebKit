@@ -39,7 +39,7 @@ namespace WebCore {
 void JSMessageChannel::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSMessageChannel* thisObject = jsCast<JSMessageChannel*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
     Base::visitChildren(thisObject, visitor);

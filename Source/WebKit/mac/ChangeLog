@@ -1,3 +1,22 @@
+2013-08-13  Filip Pizlo  <fpizlo@apple.com>
+
+        Foo::s_info should be Foo::info(), so that you can change how the s_info is actually linked
+        https://bugs.webkit.org/show_bug.cgi?id=119770
+
+        Reviewed by Mark Hahnenberg.
+
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::getObjectID):
+        (WebKit::NetscapePluginInstanceProxy::retainLocalObject):
+        (WebKit::NetscapePluginInstanceProxy::releaseLocalObject):
+        * Plugins/Hosted/ProxyInstance.mm:
+        (WebKit::ProxyRuntimeMethod::finishCreation):
+        (WebKit::ProxyInstance::invokeMethod):
+        * Plugins/Hosted/ProxyRuntimeObject.h:
+        (WebKit::ProxyRuntimeObject::createStructure):
+        * WebView/WebView.mm:
+        (aeDescFromJSValue):
+
 2013-08-13  Anders Carlsson  <andersca@apple.com>
 
         <https://webkit.org/b/119777> Get rid of two gotos

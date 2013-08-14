@@ -5030,7 +5030,7 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSC::JSValue j
     }
     if (jsValue.isObject()) {
         JSObject* object = jsValue.getObject();
-        if (object->inherits(&DateInstance::s_info)) {
+        if (object->inherits(DateInstance::info())) {
             DateInstance* date = static_cast<DateInstance*>(object);
             double ms = date->internalNumber();
             if (!std::isnan(ms)) {
@@ -5040,7 +5040,7 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSC::JSValue j
                     return [NSAppleEventDescriptor descriptorWithDescriptorType:typeLongDateTime bytes:&ldt length:sizeof(ldt)];
             }
         }
-        else if (object->inherits(&JSArray::s_info)) {
+        else if (object->inherits(JSArray::info())) {
             DEFINE_STATIC_LOCAL(HashSet<JSObject*>, visitedElems, ());
             if (!visitedElems.contains(object)) {
                 visitedElems.add(object);

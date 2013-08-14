@@ -251,19 +251,19 @@ void dumpSpeculationAbbreviated(PrintStream& out, SpeculatedType value)
 
 SpeculatedType speculationFromClassInfo(const ClassInfo* classInfo)
 {
-    if (classInfo == &JSFinalObject::s_info)
+    if (classInfo == JSFinalObject::info())
         return SpecFinalObject;
     
-    if (classInfo == &JSArray::s_info)
+    if (classInfo == JSArray::info())
         return SpecArray;
     
-    if (classInfo == &Arguments::s_info)
+    if (classInfo == Arguments::info())
         return SpecArguments;
     
-    if (classInfo == &StringObject::s_info)
+    if (classInfo == StringObject::info())
         return SpecStringObject;
     
-    if (classInfo->isSubClassOf(&JSFunction::s_info))
+    if (classInfo->isSubClassOf(JSFunction::info()))
         return SpecFunction;
     
     if (classInfo->typedArrayStorageType != TypedArrayNone) {
@@ -291,7 +291,7 @@ SpeculatedType speculationFromClassInfo(const ClassInfo* classInfo)
         }
     }
     
-    if (classInfo->isSubClassOf(&JSObject::s_info))
+    if (classInfo->isSubClassOf(JSObject::info()))
         return SpecObjectOther;
     
     return SpecCellOther;

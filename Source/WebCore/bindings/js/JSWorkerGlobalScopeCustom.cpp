@@ -56,7 +56,7 @@ namespace WebCore {
 void JSWorkerGlobalScope::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSWorkerGlobalScope* thisObject = jsCast<JSWorkerGlobalScope*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
     Base::visitChildren(thisObject, visitor);

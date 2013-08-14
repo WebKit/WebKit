@@ -65,7 +65,7 @@ class DOMStringList;
     public:
         static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
         {
-            return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), &s_info);
+            return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());
         }
 
     protected:
@@ -112,9 +112,9 @@ class DOMStringList;
 
     template<class WrapperClass> inline JSC::Structure* getDOMStructure(JSC::ExecState* exec, JSDOMGlobalObject* globalObject)
     {
-        if (JSC::Structure* structure = getCachedDOMStructure(globalObject, &WrapperClass::s_info))
+        if (JSC::Structure* structure = getCachedDOMStructure(globalObject, WrapperClass::info()))
             return structure;
-        return cacheDOMStructure(globalObject, WrapperClass::createStructure(exec->vm(), globalObject, WrapperClass::createPrototype(exec, globalObject)), &WrapperClass::s_info);
+        return cacheDOMStructure(globalObject, WrapperClass::createStructure(exec->vm(), globalObject, WrapperClass::createPrototype(exec, globalObject)), WrapperClass::info());
     }
 
     template<class WrapperClass> inline JSC::Structure* deprecatedGetDOMStructure(JSC::ExecState* exec)
@@ -421,7 +421,7 @@ class DOMStringList;
         JSC::JSArray* array = asArray(value);
         for (size_t i = 0; i < array->length(); ++i) {
             JSC::JSValue element = array->getIndex(exec, i);
-            if (element.inherits(&JST::s_info))
+            if (element.inherits(JST::info()))
                 result.append((*toT)(element));
             else {
                 throwVMError(exec, createTypeError(exec, "Invalid Array element type"));
@@ -514,7 +514,7 @@ class DOMStringList;
     template <class ThisImp>
     inline const JSC::HashEntry* getStaticValueSlotEntryWithoutCaching(JSC::ExecState* exec, JSC::PropertyName propertyName)
     {
-        const JSC::HashEntry* entry = ThisImp::s_info.propHashTable(exec)->entry(exec, propertyName);
+        const JSC::HashEntry* entry = ThisImp::info()->propHashTable(exec)->entry(exec, propertyName);
         if (!entry) // not found, forward to parent
             return getStaticValueSlotEntryWithoutCaching<typename ThisImp::Base>(exec, propertyName);
         return entry;

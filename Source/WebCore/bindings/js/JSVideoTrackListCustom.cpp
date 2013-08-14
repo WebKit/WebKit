@@ -38,7 +38,7 @@ namespace WebCore {
 void JSVideoTrackList::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSVideoTrackList* jsVideoTrackList = jsCast<JSVideoTrackList*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(jsVideoTrackList, &s_info);
+    ASSERT_GC_OBJECT_INHERITS(jsVideoTrackList, info());
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(jsVideoTrackList->structure()->typeInfo().overridesVisitChildren());
     Base::visitChildren(jsVideoTrackList, visitor);

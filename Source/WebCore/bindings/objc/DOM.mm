@@ -305,7 +305,7 @@ id <DOMEventTarget> kit(WebCore::EventTarget* eventTarget)
 {
     JSObject* object = toJS(jsWrapper);
 
-    if (!object->inherits(&JSNode::s_info))
+    if (!object->inherits(JSNode::info()))
         return nil;
 
     WebCore::Node* node = jsCast<JSNode*>(object)->impl();

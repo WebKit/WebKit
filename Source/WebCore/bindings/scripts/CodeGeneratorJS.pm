@@ -416,7 +416,7 @@ sub GenerateGetOwnPropertySlotBody
     if ($hasAttributes) {
         if ($inlined) {
             die "Cannot inline if NoStaticTables is set." if ($interface->extendedAttributes->{"JSNoStaticTables"});
-            push(@getOwnPropertySlotImpl, "    return ${namespaceMaybe}getStaticValueSlot<$className, Base>(exec, s_info.staticPropHashTable, thisObject, propertyName, slot);\n");
+            push(@getOwnPropertySlotImpl, "    return ${namespaceMaybe}getStaticValueSlot<$className, Base>(exec, info()->staticPropHashTable, thisObject, propertyName, slot);\n");
         } else {
             push(@getOwnPropertySlotImpl, "    return ${namespaceMaybe}getStaticValueSlot<$className, Base>(exec, " . hashTableAccessor($interface->extendedAttributes->{"JSNoStaticTables"}, $className) . ", thisObject, propertyName, slot);\n");
         }
@@ -521,7 +521,7 @@ sub GenerateGetOwnPropertyDescriptorBody
     if ($hasAttributes) {
         if ($inlined) {
             die "Cannot inline if NoStaticTables is set." if ($interface->extendedAttributes->{"JSNoStaticTables"});
-            push(@getOwnPropertyDescriptorImpl, "    return ${namespaceMaybe}getStaticValueDescriptor<$className, Base>(exec, s_info.staticPropHashTable, thisObject, propertyName, descriptor);\n");
+            push(@getOwnPropertyDescriptorImpl, "    return ${namespaceMaybe}getStaticValueDescriptor<$className, Base>(exec, info()->staticPropHashTable, thisObject, propertyName, descriptor);\n");
         } else {
             push(@getOwnPropertyDescriptorImpl, "    return ${namespaceMaybe}getStaticValueDescriptor<$className, Base>(exec, " . hashTableAccessor($interface->extendedAttributes->{"JSNoStaticTables"}, $className) . ", thisObject, propertyName, descriptor);\n");
         }
@@ -828,9 +828,12 @@ sub GenerateHeader
 
     # Class info
     if ($interfaceName eq "Node") {
-        push(@headerContent, "    static WEBKIT_EXPORTDATA const JSC::ClassInfo s_info;\n\n");
+        push(@headerContent, "protected:");
+        push(@headerContent, "    static WEBKIT_EXPORTDATA const JSC::ClassInfo s_info;\n");
+        push(@headerContent, "public:");
+        push(@headerContent, "    static const JSC::ClassInfo* info() { return &s_info; }\n\n");
     } else {
-        push(@headerContent, "    static const JSC::ClassInfo s_info;\n\n");
+        push(@headerContent, "    DECLARE_INFO;\n\n");
     }
     # Structure ID
     if ($interfaceName eq "DOMWindow") {
@@ -839,9 +842,9 @@ sub GenerateHeader
     push(@headerContent, "    static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)\n");
     push(@headerContent, "    {\n");
     if (IsDOMGlobalObject($interface)) {
-        push(@headerContent, "        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::GlobalObjectType, StructureFlags), &s_info);\n");
+        push(@headerContent, "        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::GlobalObjectType, StructureFlags), info());\n");
     } else {
-        push(@headerContent, "        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), &s_info);\n");
+        push(@headerContent, "        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());\n");
     }
     push(@headerContent, "    }\n\n");
 
@@ -1022,13 +1025,13 @@ sub GenerateHeader
         push(@headerContent, "ALWAYS_INLINE bool ${className}::getOwnPropertySlot(JSC::JSObject* object, JSC::ExecState* exec, JSC::PropertyName propertyName, JSC::PropertySlot& slot)\n");
         push(@headerContent, "{\n");
         push(@headerContent, "    ${className}* thisObject = JSC::jsCast<${className}*>(object);\n");
-        push(@headerContent, "    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);\n");
+        push(@headerContent, "    ASSERT_GC_OBJECT_INHERITS(thisObject, info());\n");
         push(@headerContent, GenerateGetOwnPropertySlotBody($interface, $interfaceName, $className, $numAttributes > 0, 1));
         push(@headerContent, "}\n\n");
         push(@headerContent, "ALWAYS_INLINE bool ${className}::getOwnPropertyDescriptor(JSC::JSObject* object, JSC::ExecState* exec, JSC::PropertyName propertyName, JSC::PropertyDescriptor& descriptor)\n");
         push(@headerContent, "{\n");
         push(@headerContent, "    ${className}* thisObject = JSC::jsCast<${className}*>(object);\n");
-        push(@headerContent, "    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);\n");
+        push(@headerContent, "    ASSERT_GC_OBJECT_INHERITS(thisObject, info());\n");
         push(@headerContent, GenerateGetOwnPropertyDescriptorBody($interface, $interfaceName, $className, $numAttributes > 0, 1));
         push(@headerContent, "}\n\n");
     }
@@ -1095,7 +1098,7 @@ sub GenerateHeader
     push(@headerContent, "        return ptr;\n");
     push(@headerContent, "    }\n\n");
 
-    push(@headerContent, "    static const JSC::ClassInfo s_info;\n");
+    push(@headerContent, "    DECLARE_INFO;\n");
     if ($numFunctions > 0 || $numConstants > 0) {
         push(@headerContent, "    static bool getOwnPropertySlot(JSC::JSObject*, JSC::ExecState*, JSC::PropertyName, JSC::PropertySlot&);\n");
         push(@headerContent, "    static bool getOwnPropertyDescriptor(JSC::JSObject*, JSC::ExecState*, JSC::PropertyName, JSC::PropertyDescriptor&);\n");
@@ -1107,7 +1110,7 @@ sub GenerateHeader
     push(@headerContent,
         "    static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)\n" .
         "    {\n" .
-        "        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), &s_info);\n" .
+        "        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());\n" .
         "    }\n");
     if ($interface->extendedAttributes->{"JSCustomNamedGetterOnPrototype"}) {
         push(@headerContent, "    static void put(JSC::JSCell*, JSC::ExecState*, JSC::PropertyName, JSC::JSValue, JSC::PutPropertySlot&);\n");
@@ -1304,9 +1307,9 @@ sub GenerateParametersCheckExpression
             $usedArguments{$parameterIndex} = 1;
         } elsif (!IsNativeType($type)) {
             if ($parameter->isNullable) {
-                push(@andExpression, "(${value}.isNull() || (${value}.isObject() && asObject(${value})->inherits(&JS${type}::s_info)))");
+                push(@andExpression, "(${value}.isNull() || (${value}.isObject() && asObject(${value})->inherits(JS${type}::info())))");
             } else {
-                push(@andExpression, "(${value}.isObject() && asObject(${value})->inherits(&JS${type}::s_info))");
+                push(@andExpression, "(${value}.isObject() && asObject(${value})->inherits(JS${type}::info()))");
             }
             $usedArguments{$parameterIndex} = 1;
         }
@@ -1867,12 +1870,12 @@ sub GenerateImplementation
         push(@implContent, "{\n");
         push(@implContent, "    Base::finishCreation(vm);\n");
         if ($codeGenerator->IsTypedArrayType($implType) and ($implType ne "ArrayBufferView") and ($implType ne "ArrayBuffer")) {
-            push(@implContent, "    TypedArrayDescriptor descriptor(&${className}::s_info, OBJECT_OFFSETOF(${className}, m_storage), OBJECT_OFFSETOF(${className}, m_storageLength));\n");
+            push(@implContent, "    TypedArrayDescriptor descriptor(${className}::info(), OBJECT_OFFSETOF(${className}, m_storage), OBJECT_OFFSETOF(${className}, m_storageLength));\n");
             push(@implContent, "    vm.registerTypedArrayDescriptor(impl(), descriptor);\n");
             push(@implContent, "    m_storage = impl()->data();\n");
             push(@implContent, "    m_storageLength = impl()->length();\n");
         }
-        push(@implContent, "    ASSERT(inherits(&s_info));\n");
+        push(@implContent, "    ASSERT(inherits(info()));\n");
         push(@implContent, "}\n\n");
     }
 
@@ -1923,13 +1926,13 @@ sub GenerateImplementation
             push(@implContent, "bool ${className}::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)\n");
             push(@implContent, "{\n");
             push(@implContent, "    ${className}* thisObject = jsCast<${className}*>(object);\n");
-            push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);\n");
+            push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(thisObject, info());\n");
             push(@implContent, GenerateGetOwnPropertySlotBody($interface, $interfaceName, $className, $numAttributes > 0, 0));
             push(@implContent, "}\n\n");
             push(@implContent, "bool ${className}::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)\n");
             push(@implContent, "{\n");
             push(@implContent, "    ${className}* thisObject = jsCast<${className}*>(object);\n");
-            push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);\n");
+            push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(thisObject, info());\n");
             push(@implContent, GenerateGetOwnPropertyDescriptorBody($interface, $interfaceName, $className, $numAttributes > 0, 0));
             push(@implContent, "}\n\n");
         }
@@ -1940,7 +1943,7 @@ sub GenerateImplementation
             push(@implContent, "bool ${className}::getOwnPropertySlotByIndex(JSObject* object, ExecState* exec, unsigned index, PropertySlot& slot)\n");
             push(@implContent, "{\n");
             push(@implContent, "    ${className}* thisObject = jsCast<${className}*>(object);\n");
-            push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);\n");
+            push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(thisObject, info());\n");
 
             # Sink the int-to-string conversion that happens when we create a PropertyName
             # to the point where we actually need it.
@@ -2196,7 +2199,7 @@ sub GenerateImplementation
                 push(@implContent, "void ${className}::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)\n");
                 push(@implContent, "{\n");
                 push(@implContent, "    ${className}* thisObject = jsCast<${className}*>(cell);\n");
-                push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);\n");
+                push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(thisObject, info());\n");
                 if ($interface->extendedAttributes->{"CustomIndexedSetter"}) {
                     push(@implContent, "    unsigned index = propertyName.asIndex();\n");
                     push(@implContent, "    if (index != PropertyName::NotAnIndex) {\n");
@@ -2220,7 +2223,7 @@ sub GenerateImplementation
                     push(@implContent, "void ${className}::putByIndex(JSCell* cell, ExecState* exec, unsigned index, JSValue value, bool shouldThrow)\n");
                     push(@implContent, "{\n");
                     push(@implContent, "    ${className}* thisObject = jsCast<${className}*>(cell);\n");
-                    push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);\n");
+                    push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(thisObject, info());\n");
                     if ($interface->extendedAttributes->{"CustomIndexedSetter"}) {
                         push(@implContent, "    if (index <= MAX_ARRAY_INDEX) {\n");
                         push(@implContent, "        UNUSED_PARAM(shouldThrow);\n");
@@ -2323,7 +2326,7 @@ sub GenerateImplementation
 
                                     my $argType = $attribute->signature->type;
                                     if (!IsNativeType($argType)) {
-                                        push(@implContent, "    if (!value.isUndefinedOrNull() && !value.inherits(&JS${argType}::s_info)) {\n");
+                                        push(@implContent, "    if (!value.isUndefinedOrNull() && !value.inherits(JS${argType}::info())) {\n");
                                         push(@implContent, "        throwVMTypeError(exec);\n");
                                         push(@implContent, "        return;\n");
                                         push(@implContent, "    };\n");
@@ -2429,7 +2432,7 @@ sub GenerateImplementation
         push(@implContent, "void ${className}::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)\n");
         push(@implContent, "{\n");
         push(@implContent, "    ${className}* thisObject = jsCast<${className}*>(object);\n");
-        push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);\n");
+        push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(thisObject, info());\n");
         push(@implContent, "    for (unsigned i = 0; i < static_cast<${interfaceName}*>(thisObject->impl())->length(); ++i)\n");
         push(@implContent, "        propertyNames.add(Identifier::from(exec, i));\n");
         push(@implContent, "     Base::getOwnPropertyNames(thisObject, exec, propertyNames, mode);\n");
@@ -2506,12 +2509,12 @@ sub GenerateImplementation
                     push(@implContent, "        return throwVMTypeError(exec);\n");
                 } else {
                     push(@implContent, "    JSValue thisValue = exec->hostThisValue();\n");
-                    push(@implContent, "    if (!thisValue.inherits(&${className}::s_info))\n");
+                    push(@implContent, "    if (!thisValue.inherits(${className}::info()))\n");
                     push(@implContent, "        return throwVMTypeError(exec);\n");
                     push(@implContent, "    $className* castedThis = jsCast<$className*>(asObject(thisValue));\n");
                 }
 
-                push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(castedThis, &${className}::s_info);\n");
+                push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(castedThis, ${className}::info());\n");
 
                 if ($interface->extendedAttributes->{"CheckSecurity"} and
                     !$function->signature->extendedAttributes->{"DoNotCheckSecurity"}) {
@@ -2578,7 +2581,7 @@ sub GenerateImplementation
         push(@implContent, "void ${className}::visitChildren(JSCell* cell, SlotVisitor& visitor)\n");
         push(@implContent, "{\n");
         push(@implContent, "    ${className}* thisObject = jsCast<${className}*>(cell);\n");
-        push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);\n");
+        push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(thisObject, info());\n");
         push(@implContent, "    COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);\n");
         push(@implContent, "    ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());\n");
         push(@implContent, "    Base::visitChildren(thisObject, visitor);\n");
@@ -2631,7 +2634,7 @@ sub GenerateImplementation
         push(@implContent, "\nJSValue ${className}::indexGetter(ExecState* exec, JSValue slotBase, unsigned index)\n");
         push(@implContent, "{\n");
         push(@implContent, "    ${className}* thisObj = jsCast<$className*>(asObject(slotBase));\n");
-        push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(thisObj, &s_info);\n");
+        push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(thisObj, info());\n");
         if ($indexedGetterFunction->signature->type eq "DOMString") {
             $implIncludes{"KURL.h"} = 1;
             push(@implContent, "    return jsStringOrUndefined(exec, thisObj->impl()->item(index));\n");
@@ -2648,7 +2651,7 @@ sub GenerateImplementation
     if ($hasNumericIndexedGetter) {
         push(@implContent, "\nJSValue ${className}::getByIndex(ExecState*, unsigned index)\n");
         push(@implContent, "{\n");
-        push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(this, &s_info);\n");
+        push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(this, info());\n");
         push(@implContent, "    double result = static_cast<$interfaceName*>(impl())->item(index);\n");
         # jsNumber conversion doesn't suppress signalling NaNs, so enforce that here.
         push(@implContent, "    if (std::isnan(result))\n");
@@ -2841,7 +2844,7 @@ END
     if ((!$hasParent or $interface->extendedAttributes->{"JSGenerateToNativeObject"}) and !$interface->extendedAttributes->{"JSCustomToNativeObject"}) {
         push(@implContent, "$implType* to${interfaceName}(JSC::JSValue value)\n");
         push(@implContent, "{\n");
-        push(@implContent, "    return value.inherits(&${className}::s_info) ? jsCast<$className*>(asObject(value))->impl() : 0");
+        push(@implContent, "    return value.inherits(${className}::info()) ? jsCast<$className*>(asObject(value))->impl() : 0");
         push(@implContent, ";\n}\n");
     }
 
@@ -3018,7 +3021,7 @@ sub GenerateParametersCheck
             if (!IsNativeType($argType)) {
                 push(@$outputArray, "    Vector<$nativeElementType> $name;\n");
                 push(@$outputArray, "    for (unsigned i = $argsIndex; i < exec->argumentCount(); ++i) {\n");
-                push(@$outputArray, "        if (!exec->argument(i).inherits(&JS${argType}::s_info))\n");
+                push(@$outputArray, "        if (!exec->argument(i).inherits(JS${argType}::info()))\n");
                 push(@$outputArray, "            return throwVMTypeError(exec);\n");
                 push(@$outputArray, "        $name.append(to$argType(exec->argument(i)));\n");
                 push(@$outputArray, "    }\n")
@@ -3055,7 +3058,7 @@ sub GenerateParametersCheck
 
                 my $argValue = "exec->argument($argsIndex)";
                 if (!IsNativeType($argType)) {
-                    push(@$outputArray, "    if (exec->argumentCount() > $argsIndex && !${argValue}.isUndefinedOrNull() && !${argValue}.inherits(&JS${argType}::s_info))\n");
+                    push(@$outputArray, "    if (exec->argumentCount() > $argsIndex && !${argValue}.isUndefinedOrNull() && !${argValue}.inherits(JS${argType}::info()))\n");
                     push(@$outputArray, "        return throwVMTypeError(exec);\n");
                 }
             }
@@ -3891,11 +3894,11 @@ sub GenerateConstructorDeclaration
 
     push(@$outputArray, "    static bool getOwnPropertySlot(JSC::JSObject*, JSC::ExecState*, JSC::PropertyName, JSC::PropertySlot&);\n");
     push(@$outputArray, "    static bool getOwnPropertyDescriptor(JSC::JSObject*, JSC::ExecState*, JSC::PropertyName, JSC::PropertyDescriptor&);\n");
-    push(@$outputArray, "    static const JSC::ClassInfo s_info;\n");
+    push(@$outputArray, "    DECLARE_INFO;\n");
 
     push(@$outputArray, "    static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)\n");
     push(@$outputArray, "    {\n");
-    push(@$outputArray, "        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), &s_info);\n");
+    push(@$outputArray, "        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());\n");
     push(@$outputArray, "    }\n");
 
     push(@$outputArray, "protected:\n");
@@ -3940,10 +3943,10 @@ public:
 
     static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
     {
-        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), &s_info);
+        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());
     }
 
-    static const JSC::ClassInfo s_info;
+    DECLARE_INFO;
 
 private:
     JS${interfaceName}NamedConstructor(JSC::Structure*, JSDOMGlobalObject*);
@@ -4247,15 +4250,15 @@ sub GenerateConstructorHelperMethods
     push(@$outputArray, "{\n");
     if (IsDOMGlobalObject($interface)) {
         push(@$outputArray, "    Base::finishCreation(exec->vm());\n");
-        push(@$outputArray, "    ASSERT(inherits(&s_info));\n");
+        push(@$outputArray, "    ASSERT(inherits(info()));\n");
         push(@$outputArray, "    putDirect(exec->vm(), exec->propertyNames().prototype, globalObject->prototype(), DontDelete | ReadOnly);\n");
     } elsif ($generatingNamedConstructor) {
         push(@$outputArray, "    Base::finishCreation(globalObject);\n");
-        push(@$outputArray, "    ASSERT(inherits(&s_info));\n");
+        push(@$outputArray, "    ASSERT(inherits(info()));\n");
         push(@$outputArray, "    putDirect(exec->vm(), exec->propertyNames().prototype, ${className}Prototype::self(exec, globalObject), None);\n");
     } else {
         push(@$outputArray, "    Base::finishCreation(exec->vm());\n");
-        push(@$outputArray, "    ASSERT(inherits(&s_info));\n");
+        push(@$outputArray, "    ASSERT(inherits(info()));\n");
         push(@$outputArray, "    putDirect(exec->vm(), exec->propertyNames().prototype, ${protoClassName}::self(exec, globalObject), DontDelete | ReadOnly);\n");
     }
     push(@$outputArray, "    putDirect(exec->vm(), exec->propertyNames().length, jsNumber(${leastConstructorLength}), ReadOnly | DontDelete | DontEnum);\n") if defined $leastConstructorLength;

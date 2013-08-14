@@ -164,8 +164,8 @@ VM::VM(VMType vmType, HeapType heapType)
     , parserArena(adoptPtr(new ParserArena))
     , keywords(adoptPtr(new Keywords(this)))
     , interpreter(0)
-    , jsArrayClassInfo(&JSArray::s_info)
-    , jsFinalObjectClassInfo(&JSFinalObject::s_info)
+    , jsArrayClassInfo(JSArray::info())
+    , jsFinalObjectClassInfo(JSFinalObject::info())
 #if ENABLE(DFG_JIT)
     , sizeOfLastScratchBuffer(0)
 #endif
@@ -490,7 +490,7 @@ struct StackPreservingRecompiler : public MarkedBlock::VoidFunctor {
     HashSet<FunctionExecutable*> currentlyExecutingFunctions;
     void operator()(JSCell* cell)
     {
-        if (!cell->inherits(&FunctionExecutable::s_info))
+        if (!cell->inherits(FunctionExecutable::info()))
             return;
         FunctionExecutable* executable = jsCast<FunctionExecutable*>(cell);
         if (currentlyExecutingFunctions.contains(executable))
@@ -512,18 +512,18 @@ void VM::releaseExecutableMemory()
         for (HashSet<JSCell*>::iterator ptr = roots.begin(); ptr != end; ++ptr) {
             ScriptExecutable* executable = 0;
             JSCell* cell = *ptr;
-            if (cell->inherits(&ScriptExecutable::s_info))
+            if (cell->inherits(ScriptExecutable::info()))
                 executable = static_cast<ScriptExecutable*>(*ptr);
-            else if (cell->inherits(&JSFunction::s_info)) {
+            else if (cell->inherits(JSFunction::info())) {
                 JSFunction* function = jsCast<JSFunction*>(*ptr);
                 if (function->isHostFunction())
                     continue;
                 executable = function->jsExecutable();
             } else
                 continue;
-            ASSERT(executable->inherits(&ScriptExecutable::s_info));
+            ASSERT(executable->inherits(ScriptExecutable::info()));
             executable->unlinkCalls();
-            if (executable->inherits(&FunctionExecutable::s_info))
+            if (executable->inherits(FunctionExecutable::info()))
                 recompiler.currentlyExecutingFunctions.add(static_cast<FunctionExecutable*>(executable));
                 
         }

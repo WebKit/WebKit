@@ -65,7 +65,7 @@ JSTestNodeConstructor::JSTestNodeConstructor(Structure* structure, JSDOMGlobalOb
 void JSTestNodeConstructor::finishCreation(ExecState* exec, JSDOMGlobalObject* globalObject)
 {
     Base::finishCreation(exec->vm());
-    ASSERT(inherits(&s_info));
+    ASSERT(inherits(info()));
     putDirect(exec->vm(), exec->propertyNames().prototype, JSTestNodePrototype::self(exec, globalObject), DontDelete | ReadOnly);
     putDirect(exec->vm(), exec->propertyNames().length, jsNumber(0), ReadOnly | DontDelete | DontEnum);
 }
@@ -111,7 +111,7 @@ JSTestNode::JSTestNode(Structure* structure, JSDOMGlobalObject* globalObject, Pa
 void JSTestNode::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(&s_info));
+    ASSERT(inherits(info()));
 }
 
 JSObject* JSTestNode::createPrototype(ExecState* exec, JSGlobalObject* globalObject)
@@ -122,14 +122,14 @@ JSObject* JSTestNode::createPrototype(ExecState* exec, JSGlobalObject* globalObj
 bool JSTestNode::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
     JSTestNode* thisObject = jsCast<JSTestNode*>(object);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     return getStaticValueSlot<JSTestNode, Base>(exec, &JSTestNodeTable, thisObject, propertyName, slot);
 }
 
 bool JSTestNode::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)
 {
     JSTestNode* thisObject = jsCast<JSTestNode*>(object);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     return getStaticValueDescriptor<JSTestNode, Base>(exec, &JSTestNodeTable, thisObject, propertyName, descriptor);
 }
 
@@ -147,7 +147,7 @@ JSValue JSTestNode::getConstructor(ExecState* exec, JSGlobalObject* globalObject
 void JSTestNode::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSTestNode* thisObject = jsCast<JSTestNode*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
     Base::visitChildren(thisObject, visitor);

@@ -80,7 +80,7 @@ void NumberPrototype::finishCreation(ExecState* exec, JSGlobalObject*)
     Base::finishCreation(exec->vm());
     setInternalValue(exec->vm(), jsNumber(0));
 
-    ASSERT(inherits(&s_info));
+    ASSERT(inherits(info()));
 }
 
 bool NumberPrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot &slot)

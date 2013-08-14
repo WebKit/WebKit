@@ -43,14 +43,14 @@ namespace WebCore {
     public:
         static void destroy(JSC::JSCell*);
 
-        static const JSC::ClassInfo s_info;
+        DECLARE_INFO;
 
         WorkerGlobalScope* impl() const { return m_impl.get(); }
         ScriptExecutionContext* scriptExecutionContext() const;
 
         static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
         {
-            return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::GlobalObjectType, StructureFlags), &s_info);
+            return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::GlobalObjectType, StructureFlags), info());
         }
 
     protected:

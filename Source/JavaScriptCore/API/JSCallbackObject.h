@@ -144,7 +144,7 @@ public:
     void setPrivate(void* data);
     void* getPrivate();
 
-    static const ClassInfo s_info;
+    DECLARE_INFO;
 
     JSClassRef classRef() const { return m_callbackObjectData->jsClass; }
     bool inherits(JSClassRef) const;
@@ -196,7 +196,7 @@ private:
     static void visitChildren(JSCell* cell, SlotVisitor& visitor)
     {
         JSCallbackObject* thisObject = jsCast<JSCallbackObject*>(cell);
-        ASSERT_GC_OBJECT_INHERITS((static_cast<Parent*>(thisObject)), &JSCallbackObject<Parent>::s_info);
+        ASSERT_GC_OBJECT_INHERITS((static_cast<Parent*>(thisObject)), JSCallbackObject<Parent>::info());
         COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
         ASSERT(thisObject->Parent::structure()->typeInfo().overridesVisitChildren());
         Parent::visitChildren(thisObject, visitor);

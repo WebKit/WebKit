@@ -1,3 +1,472 @@
+2013-08-13  Filip Pizlo  <fpizlo@apple.com>
+
+        Foo::s_info should be Foo::info(), so that you can change how the s_info is actually linked
+        https://bugs.webkit.org/show_bug.cgi?id=119770
+
+        Reviewed by Mark Hahnenberg.
+
+        No new tests because no new behavior.
+
+        * bindings/js/IDBBindingUtilities.cpp:
+        (WebCore::createIDBKeyFromValue):
+        * bindings/js/JSAttrCustom.cpp:
+        (WebCore::JSAttr::visitChildren):
+        * bindings/js/JSAudioTrackCustom.cpp:
+        (WebCore::JSAudioTrack::visitChildren):
+        * bindings/js/JSAudioTrackListCustom.cpp:
+        (WebCore::JSAudioTrackList::visitChildren):
+        * bindings/js/JSBlobCustom.cpp:
+        (WebCore::JSBlobConstructor::constructJSBlob):
+        * bindings/js/JSCSSRuleCustom.cpp:
+        (WebCore::JSCSSRule::visitChildren):
+        * bindings/js/JSCSSStyleDeclarationCustom.cpp:
+        (WebCore::JSCSSStyleDeclaration::visitChildren):
+        (WebCore::JSCSSStyleDeclaration::getOwnPropertyNames):
+        * bindings/js/JSCanvasRenderingContext2DCustom.cpp:
+        (WebCore::toHTMLCanvasStyle):
+        * bindings/js/JSCanvasRenderingContextCustom.cpp:
+        (WebCore::JSCanvasRenderingContext::visitChildren):
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::valueToDate):
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::DOMConstructorObject::createStructure):
+        (WebCore::getDOMStructure):
+        (WebCore::toRefPtrNativeArray):
+        (WebCore::getStaticValueSlotEntryWithoutCaching):
+        * bindings/js/JSDOMFormDataCustom.cpp:
+        (WebCore::toHTMLFormElement):
+        (WebCore::JSDOMFormData::append):
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::JSDOMGlobalObject::finishCreation):
+        (WebCore::JSDOMGlobalObject::scriptExecutionContext):
+        (WebCore::JSDOMGlobalObject::visitChildren):
+        * bindings/js/JSDOMGlobalObject.h:
+        (WebCore::JSDOMGlobalObject::info):
+        (WebCore::JSDOMGlobalObject::createStructure):
+        (WebCore::getDOMConstructor):
+        * bindings/js/JSDOMStringListCustom.cpp:
+        (WebCore::toDOMStringList):
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::finishCreation):
+        (WebCore::toJSDOMWindow):
+        * bindings/js/JSDOMWindowBase.h:
+        (WebCore::JSDOMWindowBase::createStructure):
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::visitChildren):
+        (WebCore::JSDOMWindow::getOwnPropertySlot):
+        (WebCore::JSDOMWindow::getOwnPropertyDescriptor):
+        (WebCore::toDOMWindow):
+        * bindings/js/JSDOMWindowShell.cpp:
+        (WebCore::JSDOMWindowShell::finishCreation):
+        * bindings/js/JSDOMWindowShell.h:
+        (WebCore::JSDOMWindowShell::createStructure):
+        * bindings/js/JSEventTargetCustom.cpp:
+        (WebCore::toEventTarget):
+        * bindings/js/JSHistoryCustom.cpp:
+        (WebCore::JSHistory::getOwnPropertySlotDelegate):
+        (WebCore::JSHistory::getOwnPropertyDescriptorDelegate):
+        * bindings/js/JSImageConstructor.cpp:
+        (WebCore::JSImageConstructor::finishCreation):
+        * bindings/js/JSImageConstructor.h:
+        (WebCore::JSImageConstructor::createStructure):
+        * bindings/js/JSInjectedScriptHostCustom.cpp:
+        (WebCore::JSInjectedScriptHost::isHTMLAllCollection):
+        (WebCore::JSInjectedScriptHost::type):
+        (WebCore::JSInjectedScriptHost::functionDetails):
+        * bindings/js/JSInspectorFrontendHostCustom.cpp:
+        (WebCore::populateContextMenuItems):
+        * bindings/js/JSLocationCustom.cpp:
+        (WebCore::JSLocation::getOwnPropertySlotDelegate):
+        (WebCore::JSLocation::getOwnPropertyDescriptorDelegate):
+        (WebCore::JSLocation::putDelegate):
+        * bindings/js/JSMessageChannelCustom.cpp:
+        (WebCore::JSMessageChannel::visitChildren):
+        * bindings/js/JSMessagePortCustom.cpp:
+        (WebCore::JSMessagePort::visitChildren):
+        * bindings/js/JSNodeCustom.cpp:
+        (WebCore::JSNode::pushEventHandlerScope):
+        (WebCore::JSNode::visitChildren):
+        * bindings/js/JSNodeFilterCustom.cpp:
+        (WebCore::JSNodeFilter::visitChildren):
+        (WebCore::toNodeFilter):
+        * bindings/js/JSNodeIteratorCustom.cpp:
+        (WebCore::JSNodeIterator::visitChildren):
+        * bindings/js/JSPluginElementFunctions.h:
+        (WebCore::pluginElementCustomGetOwnPropertySlot):
+        (WebCore::pluginElementCustomGetOwnPropertyDescriptor):
+        * bindings/js/JSSVGElementInstanceCustom.cpp:
+        (WebCore::JSSVGElementInstance::visitChildren):
+        * bindings/js/JSSharedWorkerCustom.cpp:
+        (WebCore::JSSharedWorker::visitChildren):
+        * bindings/js/JSStyleSheetCustom.cpp:
+        (WebCore::JSStyleSheet::visitChildren):
+        * bindings/js/JSTextTrackCueCustom.cpp:
+        (WebCore::JSTextTrackCue::visitChildren):
+        * bindings/js/JSTextTrackCustom.cpp:
+        (WebCore::JSTextTrack::visitChildren):
+        * bindings/js/JSTextTrackListCustom.cpp:
+        (WebCore::JSTextTrackList::visitChildren):
+        * bindings/js/JSTrackCustom.cpp:
+        (WebCore::toTrack):
+        * bindings/js/JSTreeWalkerCustom.cpp:
+        (WebCore::JSTreeWalker::visitChildren):
+        * bindings/js/JSVideoTrackCustom.cpp:
+        (WebCore::JSVideoTrack::visitChildren):
+        * bindings/js/JSVideoTrackListCustom.cpp:
+        (WebCore::JSVideoTrackList::visitChildren):
+        * bindings/js/JSWebGLRenderingContextCustom.cpp:
+        (WebCore::JSWebGLRenderingContext::visitChildren):
+        (WebCore::JSWebGLRenderingContext::getAttachedShaders):
+        (WebCore::JSWebGLRenderingContext::getProgramParameter):
+        (WebCore::JSWebGLRenderingContext::getShaderParameter):
+        (WebCore::JSWebGLRenderingContext::getUniform):
+        (WebCore::dataFunctionf):
+        (WebCore::dataFunctioni):
+        (WebCore::dataFunctionMatrix):
+        * bindings/js/JSWorkerGlobalScopeBase.cpp:
+        (WebCore::JSWorkerGlobalScopeBase::finishCreation):
+        (WebCore::toJSDedicatedWorkerGlobalScope):
+        (WebCore::toJSSharedWorkerGlobalScope):
+        * bindings/js/JSWorkerGlobalScopeBase.h:
+        (WebCore::JSWorkerGlobalScopeBase::createStructure):
+        * bindings/js/JSWorkerGlobalScopeCustom.cpp:
+        (WebCore::JSWorkerGlobalScope::visitChildren):
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        (WebCore::JSXMLHttpRequest::visitChildren):
+        (WebCore::JSXMLHttpRequest::send):
+        * bindings/js/JSXPathResultCustom.cpp:
+        (WebCore::JSXPathResult::visitChildren):
+        * bindings/js/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::dispatchDidPause):
+        * bindings/js/ScriptState.cpp:
+        (WebCore::domWindowFromScriptState):
+        (WebCore::scriptExecutionContextFromScriptState):
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneSerializer::isArray):
+        (WebCore::CloneSerializer::dumpArrayBufferView):
+        (WebCore::CloneSerializer::dumpIfTerminal):
+        (WebCore::CloneSerializer::serialize):
+        (WebCore::CloneDeserializer::CloneDeserializer):
+        (WebCore::CloneDeserializer::readArrayBufferView):
+        * bindings/objc/DOM.mm:
+        (+[DOMNode _nodeFromJSWrapper:]):
+        * bindings/objc/DOMUtility.mm:
+        (JSC::createDOMWrapper):
+        * bindings/objc/WebScriptObject.mm:
+        (+[WebScriptObject _convertValueToObjcValue:JSC::originRootObject:rootObject:]):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateGetOwnPropertySlotBody):
+        (GenerateGetOwnPropertyDescriptorBody):
+        (GenerateHeader):
+        (GenerateParametersCheckExpression):
+        (GenerateImplementation):
+        (GenerateParametersCheck):
+        (GenerateConstructorDeclaration):
+        (GenerateConstructorHelperMethods):
+        * bindings/scripts/test/JS/JSFloat64Array.cpp:
+        (WebCore::JSFloat64ArrayConstructor::finishCreation):
+        (WebCore::JSFloat64Array::finishCreation):
+        (WebCore::JSFloat64Array::getOwnPropertySlot):
+        (WebCore::JSFloat64Array::getOwnPropertyDescriptor):
+        (WebCore::JSFloat64Array::getOwnPropertySlotByIndex):
+        (WebCore::JSFloat64Array::put):
+        (WebCore::JSFloat64Array::putByIndex):
+        (WebCore::JSFloat64Array::getOwnPropertyNames):
+        (WebCore::jsFloat64ArrayPrototypeFunctionFoo):
+        (WebCore::jsFloat64ArrayPrototypeFunctionSet):
+        (WebCore::JSFloat64Array::getByIndex):
+        (WebCore::toFloat64Array):
+        * bindings/scripts/test/JS/JSFloat64Array.h:
+        (WebCore::JSFloat64Array::createStructure):
+        (WebCore::JSFloat64ArrayPrototype::createStructure):
+        (WebCore::JSFloat64ArrayConstructor::createStructure):
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.cpp:
+        (WebCore::JSTestActiveDOMObjectConstructor::finishCreation):
+        (WebCore::JSTestActiveDOMObject::finishCreation):
+        (WebCore::JSTestActiveDOMObject::getOwnPropertySlot):
+        (WebCore::JSTestActiveDOMObject::getOwnPropertyDescriptor):
+        (WebCore::jsTestActiveDOMObjectPrototypeFunctionExcitingFunction):
+        (WebCore::jsTestActiveDOMObjectPrototypeFunctionPostMessage):
+        (WebCore::toTestActiveDOMObject):
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.h:
+        (WebCore::JSTestActiveDOMObject::createStructure):
+        (WebCore::JSTestActiveDOMObjectPrototype::createStructure):
+        (WebCore::JSTestActiveDOMObjectConstructor::createStructure):
+        * bindings/scripts/test/JS/JSTestCustomNamedGetter.cpp:
+        (WebCore::JSTestCustomNamedGetterConstructor::finishCreation):
+        (WebCore::JSTestCustomNamedGetter::finishCreation):
+        (WebCore::JSTestCustomNamedGetter::getOwnPropertySlot):
+        (WebCore::JSTestCustomNamedGetter::getOwnPropertyDescriptor):
+        (WebCore::JSTestCustomNamedGetter::getOwnPropertySlotByIndex):
+        (WebCore::jsTestCustomNamedGetterPrototypeFunctionAnotherFunction):
+        (WebCore::toTestCustomNamedGetter):
+        * bindings/scripts/test/JS/JSTestCustomNamedGetter.h:
+        (WebCore::JSTestCustomNamedGetter::createStructure):
+        (WebCore::JSTestCustomNamedGetterPrototype::createStructure):
+        (WebCore::JSTestCustomNamedGetterConstructor::createStructure):
+        * bindings/scripts/test/JS/JSTestEventConstructor.cpp:
+        (WebCore::JSTestEventConstructorConstructor::finishCreation):
+        (WebCore::JSTestEventConstructor::finishCreation):
+        (WebCore::JSTestEventConstructor::getOwnPropertySlot):
+        (WebCore::JSTestEventConstructor::getOwnPropertyDescriptor):
+        (WebCore::toTestEventConstructor):
+        * bindings/scripts/test/JS/JSTestEventConstructor.h:
+        (WebCore::JSTestEventConstructor::createStructure):
+        (WebCore::JSTestEventConstructorPrototype::createStructure):
+        (WebCore::JSTestEventConstructorConstructor::createStructure):
+        * bindings/scripts/test/JS/JSTestEventTarget.cpp:
+        (WebCore::JSTestEventTargetConstructor::finishCreation):
+        (WebCore::JSTestEventTarget::finishCreation):
+        (WebCore::JSTestEventTarget::getOwnPropertySlot):
+        (WebCore::JSTestEventTarget::getOwnPropertyDescriptor):
+        (WebCore::JSTestEventTarget::getOwnPropertySlotByIndex):
+        (WebCore::JSTestEventTarget::getOwnPropertyNames):
+        (WebCore::jsTestEventTargetPrototypeFunctionItem):
+        (WebCore::jsTestEventTargetPrototypeFunctionAddEventListener):
+        (WebCore::jsTestEventTargetPrototypeFunctionRemoveEventListener):
+        (WebCore::jsTestEventTargetPrototypeFunctionDispatchEvent):
+        (WebCore::JSTestEventTarget::visitChildren):
+        (WebCore::JSTestEventTarget::indexGetter):
+        (WebCore::toTestEventTarget):
+        * bindings/scripts/test/JS/JSTestEventTarget.h:
+        (WebCore::JSTestEventTarget::createStructure):
+        (WebCore::JSTestEventTargetPrototype::createStructure):
+        (WebCore::JSTestEventTargetConstructor::createStructure):
+        * bindings/scripts/test/JS/JSTestException.cpp:
+        (WebCore::JSTestExceptionConstructor::finishCreation):
+        (WebCore::JSTestException::finishCreation):
+        (WebCore::JSTestException::getOwnPropertySlot):
+        (WebCore::JSTestException::getOwnPropertyDescriptor):
+        (WebCore::toTestException):
+        * bindings/scripts/test/JS/JSTestException.h:
+        (WebCore::JSTestException::createStructure):
+        (WebCore::JSTestExceptionPrototype::createStructure):
+        (WebCore::JSTestExceptionConstructor::createStructure):
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        (WebCore::JSTestInterfaceConstructor::finishCreation):
+        (WebCore::JSTestInterface::finishCreation):
+        (WebCore::JSTestInterface::getOwnPropertySlot):
+        (WebCore::JSTestInterface::getOwnPropertyDescriptor):
+        (WebCore::JSTestInterface::put):
+        (WebCore::JSTestInterface::putByIndex):
+        (WebCore::jsTestInterfacePrototypeFunctionImplementsMethod1):
+        (WebCore::jsTestInterfacePrototypeFunctionImplementsMethod2):
+        (WebCore::jsTestInterfacePrototypeFunctionImplementsMethod3):
+        (WebCore::jsTestInterfacePrototypeFunctionSupplementalMethod1):
+        (WebCore::jsTestInterfacePrototypeFunctionSupplementalMethod2):
+        (WebCore::jsTestInterfacePrototypeFunctionSupplementalMethod3):
+        (WebCore::toTestInterface):
+        * bindings/scripts/test/JS/JSTestInterface.h:
+        (WebCore::JSTestInterface::createStructure):
+        (WebCore::JSTestInterfacePrototype::createStructure):
+        (WebCore::JSTestInterfaceConstructor::createStructure):
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.cpp:
+        (WebCore::JSTestMediaQueryListListenerConstructor::finishCreation):
+        (WebCore::JSTestMediaQueryListListener::finishCreation):
+        (WebCore::JSTestMediaQueryListListener::getOwnPropertySlot):
+        (WebCore::JSTestMediaQueryListListener::getOwnPropertyDescriptor):
+        (WebCore::jsTestMediaQueryListListenerPrototypeFunctionMethod):
+        (WebCore::toTestMediaQueryListListener):
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.h:
+        (WebCore::JSTestMediaQueryListListener::createStructure):
+        (WebCore::JSTestMediaQueryListListenerPrototype::createStructure):
+        (WebCore::JSTestMediaQueryListListenerConstructor::createStructure):
+        * bindings/scripts/test/JS/JSTestNamedConstructor.cpp:
+        (WebCore::JSTestNamedConstructorConstructor::finishCreation):
+        (WebCore::JSTestNamedConstructorNamedConstructor::finishCreation):
+        (WebCore::JSTestNamedConstructor::finishCreation):
+        (WebCore::JSTestNamedConstructor::getOwnPropertySlot):
+        (WebCore::JSTestNamedConstructor::getOwnPropertyDescriptor):
+        (WebCore::toTestNamedConstructor):
+        * bindings/scripts/test/JS/JSTestNamedConstructor.h:
+        (WebCore::JSTestNamedConstructor::createStructure):
+        (WebCore::JSTestNamedConstructorPrototype::createStructure):
+        (WebCore::JSTestNamedConstructorConstructor::createStructure):
+        (WebCore::JSTestNamedConstructorNamedConstructor::createStructure):
+        * bindings/scripts/test/JS/JSTestNode.cpp:
+        (WebCore::JSTestNodeConstructor::finishCreation):
+        (WebCore::JSTestNode::finishCreation):
+        (WebCore::JSTestNode::getOwnPropertySlot):
+        (WebCore::JSTestNode::getOwnPropertyDescriptor):
+        (WebCore::JSTestNode::visitChildren):
+        * bindings/scripts/test/JS/JSTestNode.h:
+        (WebCore::JSTestNode::createStructure):
+        (WebCore::JSTestNodePrototype::createStructure):
+        (WebCore::JSTestNodeConstructor::createStructure):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::JSTestObjConstructor::finishCreation):
+        (WebCore::JSTestObj::finishCreation):
+        (WebCore::JSTestObj::getOwnPropertySlot):
+        (WebCore::JSTestObj::getOwnPropertyDescriptor):
+        (WebCore::JSTestObj::put):
+        (WebCore::jsTestObjPrototypeFunctionVoidMethod):
+        (WebCore::jsTestObjPrototypeFunctionVoidMethodWithArgs):
+        (WebCore::jsTestObjPrototypeFunctionByteMethod):
+        (WebCore::jsTestObjPrototypeFunctionByteMethodWithArgs):
+        (WebCore::jsTestObjPrototypeFunctionOctetMethod):
+        (WebCore::jsTestObjPrototypeFunctionOctetMethodWithArgs):
+        (WebCore::jsTestObjPrototypeFunctionLongMethod):
+        (WebCore::jsTestObjPrototypeFunctionLongMethodWithArgs):
+        (WebCore::jsTestObjPrototypeFunctionObjMethod):
+        (WebCore::jsTestObjPrototypeFunctionObjMethodWithArgs):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithSequenceArg):
+        (WebCore::jsTestObjPrototypeFunctionMethodReturningSequence):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithEnumArg):
+        (WebCore::jsTestObjPrototypeFunctionMethodThatRequiresAllArgsAndThrows):
+        (WebCore::jsTestObjPrototypeFunctionSerializedValue):
+        (WebCore::jsTestObjPrototypeFunctionOptionsObject):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithException):
+        (WebCore::jsTestObjPrototypeFunctionCustomMethod):
+        (WebCore::jsTestObjPrototypeFunctionCustomMethodWithArgs):
+        (WebCore::jsTestObjPrototypeFunctionAddEventListener):
+        (WebCore::jsTestObjPrototypeFunctionRemoveEventListener):
+        (WebCore::jsTestObjPrototypeFunctionWithScriptStateVoid):
+        (WebCore::jsTestObjPrototypeFunctionWithScriptStateObj):
+        (WebCore::jsTestObjPrototypeFunctionWithScriptStateVoidException):
+        (WebCore::jsTestObjPrototypeFunctionWithScriptStateObjException):
+        (WebCore::jsTestObjPrototypeFunctionWithScriptExecutionContext):
+        (WebCore::jsTestObjPrototypeFunctionWithScriptExecutionContextAndScriptState):
+        (WebCore::jsTestObjPrototypeFunctionWithScriptExecutionContextAndScriptStateObjException):
+        (WebCore::jsTestObjPrototypeFunctionWithScriptExecutionContextAndScriptStateWithSpaces):
+        (WebCore::jsTestObjPrototypeFunctionWithScriptArgumentsAndCallStack):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalArg):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithNonOptionalArgAndOptionalArg):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithNonOptionalArgAndTwoOptionalArgs):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalString):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalStringIsUndefined):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalStringIsNullString):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithCallbackArg):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithNonCallbackArgAndCallbackArg):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithCallbackAndOptionalArg):
+        (WebCore::jsTestObjPrototypeFunctionConditionalMethod1):
+        (WebCore::jsTestObjPrototypeFunctionConditionalMethod2):
+        (WebCore::jsTestObjPrototypeFunctionConditionalMethod3):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod1):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod2):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod3):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod4):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod5):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod6):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod7):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod8):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod9):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod10):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod11):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod):
+        (WebCore::jsTestObjPrototypeFunctionClassMethodWithClamp):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithUnsignedLongSequence):
+        (WebCore::jsTestObjPrototypeFunctionStringArrayFunction):
+        (WebCore::jsTestObjPrototypeFunctionDomStringListFunction):
+        (WebCore::jsTestObjPrototypeFunctionGetSVGDocument):
+        (WebCore::jsTestObjPrototypeFunctionConvert1):
+        (WebCore::jsTestObjPrototypeFunctionConvert2):
+        (WebCore::jsTestObjPrototypeFunctionConvert4):
+        (WebCore::jsTestObjPrototypeFunctionConvert5):
+        (WebCore::jsTestObjPrototypeFunctionMutablePointFunction):
+        (WebCore::jsTestObjPrototypeFunctionImmutablePointFunction):
+        (WebCore::jsTestObjPrototypeFunctionOrange):
+        (WebCore::jsTestObjPrototypeFunctionStrictFunction):
+        (WebCore::jsTestObjPrototypeFunctionVariadicStringMethod):
+        (WebCore::jsTestObjPrototypeFunctionVariadicDoubleMethod):
+        (WebCore::jsTestObjPrototypeFunctionVariadicNodeMethod):
+        (WebCore::JSTestObj::visitChildren):
+        (WebCore::toTestObj):
+        * bindings/scripts/test/JS/JSTestObj.h:
+        (WebCore::JSTestObj::createStructure):
+        (WebCore::JSTestObjPrototype::createStructure):
+        (WebCore::JSTestObjConstructor::createStructure):
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.cpp:
+        (WebCore::JSTestOverloadedConstructorsConstructor::constructJSTestOverloadedConstructors):
+        (WebCore::JSTestOverloadedConstructorsConstructor::finishCreation):
+        (WebCore::JSTestOverloadedConstructors::finishCreation):
+        (WebCore::JSTestOverloadedConstructors::getOwnPropertySlot):
+        (WebCore::JSTestOverloadedConstructors::getOwnPropertyDescriptor):
+        (WebCore::toTestOverloadedConstructors):
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.h:
+        (WebCore::JSTestOverloadedConstructors::createStructure):
+        (WebCore::JSTestOverloadedConstructorsPrototype::createStructure):
+        (WebCore::JSTestOverloadedConstructorsConstructor::createStructure):
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        (WebCore::JSTestSerializedScriptValueInterfaceConstructor::finishCreation):
+        (WebCore::JSTestSerializedScriptValueInterface::finishCreation):
+        (WebCore::JSTestSerializedScriptValueInterface::getOwnPropertySlot):
+        (WebCore::JSTestSerializedScriptValueInterface::getOwnPropertyDescriptor):
+        (WebCore::JSTestSerializedScriptValueInterface::put):
+        (WebCore::JSTestSerializedScriptValueInterface::visitChildren):
+        (WebCore::toTestSerializedScriptValueInterface):
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.h:
+        (WebCore::JSTestSerializedScriptValueInterface::createStructure):
+        (WebCore::JSTestSerializedScriptValueInterfacePrototype::createStructure):
+        (WebCore::JSTestSerializedScriptValueInterfaceConstructor::createStructure):
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        (WebCore::JSTestTypedefsConstructor::finishCreation):
+        (WebCore::JSTestTypedefs::finishCreation):
+        (WebCore::JSTestTypedefs::getOwnPropertySlot):
+        (WebCore::JSTestTypedefs::getOwnPropertyDescriptor):
+        (WebCore::JSTestTypedefs::put):
+        (WebCore::jsTestTypedefsPrototypeFunctionFunc):
+        (WebCore::jsTestTypedefsPrototypeFunctionSetShadow):
+        (WebCore::jsTestTypedefsPrototypeFunctionMethodWithSequenceArg):
+        (WebCore::jsTestTypedefsPrototypeFunctionNullableArrayArg):
+        (WebCore::jsTestTypedefsPrototypeFunctionFuncWithClamp):
+        (WebCore::jsTestTypedefsPrototypeFunctionImmutablePointFunction):
+        (WebCore::jsTestTypedefsPrototypeFunctionStringArrayFunction):
+        (WebCore::jsTestTypedefsPrototypeFunctionStringArrayFunction2):
+        (WebCore::jsTestTypedefsPrototypeFunctionMethodWithException):
+        (WebCore::toTestTypedefs):
+        * bindings/scripts/test/JS/JSTestTypedefs.h:
+        (WebCore::JSTestTypedefs::createStructure):
+        (WebCore::JSTestTypedefsPrototype::createStructure):
+        (WebCore::JSTestTypedefsConstructor::createStructure):
+        * bridge/c/CRuntimeObject.cpp:
+        (JSC::Bindings::CRuntimeObject::finishCreation):
+        * bridge/c/CRuntimeObject.h:
+        (JSC::Bindings::CRuntimeObject::createStructure):
+        * bridge/c/c_instance.cpp:
+        (JSC::Bindings::CRuntimeMethod::createStructure):
+        (JSC::Bindings::CRuntimeMethod::finishCreation):
+        (JSC::Bindings::CInstance::invokeMethod):
+        * bridge/c/c_utility.cpp:
+        (JSC::Bindings::convertValueToNPVariant):
+        * bridge/objc/ObjCRuntimeObject.h:
+        (JSC::Bindings::ObjCRuntimeObject::createStructure):
+        * bridge/objc/objc_instance.mm:
+        (ObjCRuntimeMethod::finishCreation):
+        (ObjcInstance::invokeMethod):
+        * bridge/objc/objc_runtime.h:
+        (JSC::Bindings::ObjcFallbackObjectImp::createStructure):
+        * bridge/objc/objc_runtime.mm:
+        (JSC::Bindings::ObjcFallbackObjectImp::finishCreation):
+        (JSC::Bindings::callObjCFallbackObject):
+        * bridge/qt/qt_instance.cpp:
+        (JSC::Bindings::QtRuntimeObject::createStructure):
+        (JSC::Bindings::QtInstance::getInstance):
+        * bridge/qt/qt_pixmapruntime.cpp:
+        (JSC::Bindings::assignToHTMLImageElement):
+        (JSC::Bindings::QtPixmapRuntime::toQt):
+        * bridge/qt/qt_runtime.cpp:
+        (JSC::Bindings::isJSUint8Array):
+        (JSC::Bindings::isJSArray):
+        (JSC::Bindings::isJSDate):
+        (JSC::Bindings::isQtObject):
+        (JSC::Bindings::unwrapBoxedPrimitive):
+        (JSC::Bindings::convertQVariantToValue):
+        * bridge/runtime_array.cpp:
+        (JSC::RuntimeArray::finishCreation):
+        * bridge/runtime_array.h:
+        (JSC::RuntimeArray::createStructure):
+        * bridge/runtime_method.cpp:
+        (JSC::RuntimeMethod::finishCreation):
+        (JSC::callRuntimeMethod):
+        * bridge/runtime_method.h:
+        (JSC::RuntimeMethod::createStructure):
+        * bridge/runtime_object.cpp:
+        (JSC::Bindings::RuntimeObject::finishCreation):
+        (JSC::Bindings::callRuntimeObject):
+        (JSC::Bindings::callRuntimeConstructor):
+        * bridge/runtime_object.h:
+        (JSC::Bindings::RuntimeObject::createStructure):
+
 2013-08-13  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r150187): Safari fails to render allrecipe.com comment popups

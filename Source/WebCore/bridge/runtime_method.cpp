@@ -51,7 +51,7 @@ RuntimeMethod::RuntimeMethod(JSGlobalObject* globalObject, Structure* structure,
 void RuntimeMethod::finishCreation(VM& vm, const String& ident)
 {
     Base::finishCreation(vm, ident);
-    ASSERT(inherits(&s_info));
+    ASSERT(inherits(info()));
 }
 
 JSValue RuntimeMethod::lengthGetter(ExecState*, JSValue slotBase, PropertyName)
@@ -95,14 +95,14 @@ static EncodedJSValue JSC_HOST_CALL callRuntimeMethod(ExecState* exec)
     RefPtr<Instance> instance;
 
     JSValue thisValue = exec->hostThisValue();
-    if (thisValue.inherits(&RuntimeObject::s_info)) {
+    if (thisValue.inherits(RuntimeObject::info())) {
         RuntimeObject* runtimeObject = static_cast<RuntimeObject*>(asObject(thisValue));
         instance = runtimeObject->getInternalInstance();
         if (!instance) 
             return JSValue::encode(RuntimeObject::throwInvalidAccessError(exec));
     } else {
         // Calling a runtime object of a plugin element?
-        if (thisValue.inherits(&JSHTMLElement::s_info)) {
+        if (thisValue.inherits(JSHTMLElement::info())) {
             HTMLElement* element = jsCast<JSHTMLElement*>(asObject(thisValue))->impl();
             instance = pluginInstance(element);
         }

@@ -133,7 +133,7 @@ public:
     bool propertyAccessesAreCacheable() { return m_dictionaryKind != UncachedDictionaryKind && !typeInfo().prohibitsPropertyCaching(); }
 
     // Type accessors.
-    const TypeInfo& typeInfo() const { ASSERT(structure()->classInfo() == &s_info); return m_typeInfo; }
+    const TypeInfo& typeInfo() const { ASSERT(structure()->classInfo() == info()); return m_typeInfo; }
     bool isObject() const { return typeInfo().isObject(); }
 
     IndexingType indexingType() const { return m_indexingType & AllArrayTypes; }
@@ -169,7 +169,7 @@ public:
         
     Structure* previousID() const
     {
-        ASSERT(structure()->classInfo() == &s_info);
+        ASSERT(structure()->classInfo() == info());
         if (typeInfo().structureHasRareData())
             return rareData()->previousID();
         return previous();
@@ -195,7 +195,7 @@ public:
     unsigned outOfLineSize() const
     {
         ASSERT(checkOffsetConsistency());
-        ASSERT(structure()->classInfo() == &s_info);
+        ASSERT(structure()->classInfo() == info());
             
         return numberOfOutOfLineSlotsForLastOffset(m_offset);
     }
@@ -217,7 +217,7 @@ public:
     }
     unsigned totalStorageCapacity() const
     {
-        ASSERT(structure()->classInfo() == &s_info);
+        ASSERT(structure()->classInfo() == info());
         return outOfLineCapacity() + inlineCapacity();
     }
 
@@ -365,7 +365,7 @@ public:
     
     static void dumpContextHeader(PrintStream&);
     
-    static JS_EXPORTDATA const ClassInfo s_info;
+    DECLARE_EXPORT_INFO;
 
 private:
     friend class LLIntOffsetsExtractor;
@@ -408,14 +408,14 @@ private:
     void materializePropertyMapIfNecessary(VM& vm)
     {
         ASSERT(!isCompilationThread());
-        ASSERT(structure()->classInfo() == &s_info);
+        ASSERT(structure()->classInfo() == info());
         ASSERT(checkOffsetConsistency());
         if (!propertyTable() && previousID())
             materializePropertyMap(vm);
     }
     void materializePropertyMapIfNecessaryForPinning(VM& vm)
     {
-        ASSERT(structure()->classInfo() == &s_info);
+        ASSERT(structure()->classInfo() == info());
         checkOffsetConsistency();
         if (!propertyTable())
             materializePropertyMap(vm);

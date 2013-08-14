@@ -605,7 +605,7 @@ inline JSObject* JSValue::toObject(ExecState* exec, JSGlobalObject* globalObject
 
 inline bool JSValue::isFunction() const
 {
-    return isCell() && (asCell()->inherits(&JSFunction::s_info) || asCell()->inherits(&InternalFunction::s_info));
+    return isCell() && (asCell()->inherits(JSFunction::info()) || asCell()->inherits(InternalFunction::info()));
 }
 
 // this method is here to be after the inline declaration of JSCell::inherits

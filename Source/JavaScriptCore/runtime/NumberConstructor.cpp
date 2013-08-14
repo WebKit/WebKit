@@ -62,8 +62,8 @@ NumberConstructor::NumberConstructor(JSGlobalObject* globalObject, Structure* st
 
 void NumberConstructor::finishCreation(ExecState* exec, NumberPrototype* numberPrototype)
 {
-    Base::finishCreation(exec->vm(), numberPrototype->s_info.className);
-    ASSERT(inherits(&s_info));
+    Base::finishCreation(exec->vm(), NumberPrototype::info()->className);
+    ASSERT(inherits(info()));
 
     // Number.Prototype
     putDirectWithoutTransition(exec->vm(), exec->propertyNames().prototype, numberPrototype, DontEnum | DontDelete | ReadOnly);

@@ -38,7 +38,7 @@ namespace WebCore {
 void JSSVGElementInstance::visitChildren(JSC::JSCell* cell, JSC::SlotVisitor& visitor)
 {
     JSSVGElementInstance* thisObject = JSC::jsCast<JSSVGElementInstance*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     COMPILE_ASSERT(StructureFlags & JSC::OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
     // Skip JSEventTarget::visitChildren because event listener registration is

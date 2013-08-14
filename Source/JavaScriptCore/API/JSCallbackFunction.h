@@ -38,13 +38,13 @@ public:
 
     static JSCallbackFunction* create(ExecState*, JSGlobalObject*, JSObjectCallAsFunctionCallback, const String& name);
 
-    static const ClassInfo s_info;
+    DECLARE_INFO;
     
     // InternalFunction mish-mashes constructor and function behavior -- we should 
     // refactor the code so this override isn't necessary
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto) 
     { 
-        return Structure::create(vm, globalObject, proto, TypeInfo(ObjectType, StructureFlags), &s_info); 
+        return Structure::create(vm, globalObject, proto, TypeInfo(ObjectType, StructureFlags), info()); 
     }
 
 private:

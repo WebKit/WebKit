@@ -52,7 +52,7 @@ namespace WebCore {
 void JSCSSStyleDeclaration::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSCSSStyleDeclaration* thisObject = jsCast<JSCSSStyleDeclaration*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
     Base::visitChildren(thisObject, visitor);
@@ -393,7 +393,7 @@ JSValue JSCSSStyleDeclaration::getPropertyCSSValue(ExecState* exec)
 void JSCSSStyleDeclaration::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
     JSCSSStyleDeclaration* thisObject = jsCast<JSCSSStyleDeclaration*>(object);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
     unsigned length = thisObject->impl()->length();
     for (unsigned i = 0; i < length; ++i)

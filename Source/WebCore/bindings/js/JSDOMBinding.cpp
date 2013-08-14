@@ -127,7 +127,7 @@ double valueToDate(ExecState* exec, JSValue value)
 {
     if (value.isNumber())
         return value.asNumber();
-    if (!value.inherits(&DateInstance::s_info))
+    if (!value.inherits(DateInstance::info()))
         return std::numeric_limits<double>::quiet_NaN();
     return static_cast<DateInstance*>(value.toObject(exec))->internalNumber();
 }

@@ -184,7 +184,7 @@ const ClassInfo Structure::s_info = { "Structure", 0, 0, 0, CREATE_METHOD_TABLE(
 Structure::Structure(VM& vm)
     : JSCell(CreatingEarlyCell)
     , m_prototype(vm, this, jsNull())
-    , m_classInfo(&s_info)
+    , m_classInfo(info())
     , m_transitionWatchpointSet(InitializedWatching)
     , m_offset(invalidOffset)
     , m_typeInfo(CompoundType, OverridesVisitChildren)
@@ -263,7 +263,7 @@ void Structure::findStructuresAndMapForMaterialization(Vector<Structure*, 8>& st
 
 void Structure::materializePropertyMap(VM& vm)
 {
-    ASSERT(structure()->classInfo() == &s_info);
+    ASSERT(structure()->classInfo() == info());
     ASSERT(!propertyTable());
 
     Vector<Structure*, 8> structures;
@@ -827,7 +827,7 @@ PropertyOffset Structure::getConcurrently(VM&, StringImpl* uid, unsigned& attrib
 PropertyOffset Structure::get(VM& vm, PropertyName propertyName, unsigned& attributes, JSCell*& specificValue)
 {
     ASSERT(!isCompilationThread());
-    ASSERT(structure()->classInfo() == &s_info);
+    ASSERT(structure()->classInfo() == info());
 
     materializePropertyMapIfNecessary(vm);
     if (!propertyTable())
@@ -951,7 +951,7 @@ JSValue Structure::prototypeForLookup(CodeBlock* codeBlock) const
 void Structure::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     Structure* thisObject = jsCast<Structure*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
 
     JSCell::visitChildren(thisObject, visitor);

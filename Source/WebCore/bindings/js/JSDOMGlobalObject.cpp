@@ -57,21 +57,21 @@ void JSDOMGlobalObject::destroy(JSCell* cell)
 void JSDOMGlobalObject::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(&s_info));
+    ASSERT(inherits(info()));
 }
 
 void JSDOMGlobalObject::finishCreation(VM& vm, JSObject* thisValue)
 {
     Base::finishCreation(vm, thisValue);
-    ASSERT(inherits(&s_info));
+    ASSERT(inherits(info()));
 }
 
 ScriptExecutionContext* JSDOMGlobalObject::scriptExecutionContext() const
 {
-    if (inherits(&JSDOMWindowBase::s_info))
+    if (inherits(JSDOMWindowBase::info()))
         return jsCast<const JSDOMWindowBase*>(this)->scriptExecutionContext();
 #if ENABLE(WORKERS)
-    if (inherits(&JSWorkerGlobalScopeBase::s_info))
+    if (inherits(JSWorkerGlobalScopeBase::info()))
         return jsCast<const JSWorkerGlobalScopeBase*>(this)->scriptExecutionContext();
 #endif
     ASSERT_NOT_REACHED();
@@ -81,7 +81,7 @@ ScriptExecutionContext* JSDOMGlobalObject::scriptExecutionContext() const
 void JSDOMGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSDOMGlobalObject* thisObject = jsCast<JSDOMGlobalObject*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
     Base::visitChildren(thisObject, visitor);

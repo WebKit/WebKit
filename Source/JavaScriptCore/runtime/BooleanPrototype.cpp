@@ -60,7 +60,7 @@ void BooleanPrototype::finishCreation(ExecState* exec, JSGlobalObject*)
     Base::finishCreation(exec->vm());
     setInternalValue(exec->vm(), jsBoolean(false));
 
-    ASSERT(inherits(&s_info));
+    ASSERT(inherits(info()));
 }
 
 bool BooleanPrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot &slot)
@@ -85,7 +85,7 @@ EncodedJSValue JSC_HOST_CALL booleanProtoFuncToString(ExecState* exec)
     if (thisValue == jsBoolean(true))
         return JSValue::encode(vm->smallStrings.trueString());
 
-    if (!thisValue.inherits(&BooleanObject::s_info))
+    if (!thisValue.inherits(BooleanObject::info()))
         return throwVMTypeError(exec);
 
     if (asBooleanObject(thisValue)->internalValue() == jsBoolean(false))
@@ -101,7 +101,7 @@ EncodedJSValue JSC_HOST_CALL booleanProtoFuncValueOf(ExecState* exec)
     if (thisValue.isBoolean())
         return JSValue::encode(thisValue);
 
-    if (!thisValue.inherits(&BooleanObject::s_info))
+    if (!thisValue.inherits(BooleanObject::info()))
         return throwVMTypeError(exec);
 
     return JSValue::encode(asBooleanObject(thisValue)->internalValue());

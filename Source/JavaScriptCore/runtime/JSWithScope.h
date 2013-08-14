@@ -54,10 +54,10 @@ public:
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto)
     {
-        return Structure::create(vm, globalObject, proto, TypeInfo(WithScopeType, StructureFlags), &s_info);
+        return Structure::create(vm, globalObject, proto, TypeInfo(WithScopeType, StructureFlags), info());
     }
 
-    static JS_EXPORTDATA const ClassInfo s_info;
+    DECLARE_EXPORT_INFO;
 
 protected:
     static const unsigned StructureFlags = OverridesVisitChildren | Base::StructureFlags;
