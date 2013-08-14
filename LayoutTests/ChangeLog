@@ -1,3 +1,13 @@
+2013-08-14  Andreas Kling  <akling@apple.com>
+
+        <http://webkit.org/b/119520> REGRESSION(154062): fast/repaint/caret-jump-between-nodes.html flakes on bots.
+
+        Unreviewed. This isn't working out. I can't get it to blink the caret a consistent number of times.
+        Removing the test for now to stop making bots red.
+
+        * fast/repaint/caret-jump-between-nodes-expected.txt: Removed.
+        * fast/repaint/caret-jump-between-nodes.html: Removed.
+
 2013-08-14  Rob Buis  <rwlbuis@webkit.org>
 
         Assertion failure in RenderObject::drawLineForBoxSide
