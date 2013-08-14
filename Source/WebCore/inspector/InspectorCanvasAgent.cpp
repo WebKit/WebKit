@@ -46,6 +46,7 @@
 #include "InspectorPageAgent.h"
 #include "InspectorState.h"
 #include "InstrumentingAgents.h"
+#include "NodeList.h"
 #include "Page.h"
 #include "ScriptObject.h"
 #include "ScriptProfiler.h"
@@ -263,35 +264,23 @@ InjectedScriptCanvasModule InspectorCanvasAgent::injectedScriptCanvasModule(Erro
 
 void InspectorCanvasAgent::findFramesWithUninstrumentedCanvases()
 {
-    class NodeVisitor : public WrappedNodeVisitor {
-    public:
-        NodeVisitor(Page* page, FramesWithUninstrumentedCanvases& result)
-            : m_page(page)
-            , m_framesWithUninstrumentedCanvases(result)
-        {
-        }
-
-        virtual void visitNode(Node* node) OVERRIDE
-        {
-            if (!node->hasTagName(HTMLNames::canvasTag) || !node->document() || !node->document()->frame())
-                return;
-            
-            Frame* frame = node->document()->frame();
-            if (frame->page() != m_page)
-                return;
-
-            HTMLCanvasElement* canvas = static_cast<HTMLCanvasElement*>(node);
-            if (canvas->renderingContext())
-                m_framesWithUninstrumentedCanvases.set(frame, true);
-        }
-
-    private:
-        Page* m_page;
-        FramesWithUninstrumentedCanvases& m_framesWithUninstrumentedCanvases;
-    } nodeVisitor(m_pageAgent->page(), m_framesWithUninstrumentedCanvases);
-
     m_framesWithUninstrumentedCanvases.clear();
-    ScriptProfiler::visitNodeWrappers(&nodeVisitor);
+
+    for (Frame* frame = m_pageAgent->page()->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
+        if (!frame->document())
+            continue;
+
+        RefPtr<NodeList> canvases = frame->document()->getElementsByTagName(HTMLNames::canvasTag.localName());
+        if (canvases) {
+            for (unsigned i = 0, length = canvases->length(); i < length; i++) {
+                const HTMLCanvasElement* canvas = toHTMLCanvasElement(canvases->item(i));
+                if (canvas->renderingContext()) {
+                    m_framesWithUninstrumentedCanvases.set(frame, true);
+                    break;
+                }
+            }
+        }
+    }
 
     for (FramesWithUninstrumentedCanvases::iterator it = m_framesWithUninstrumentedCanvases.begin(); it != m_framesWithUninstrumentedCanvases.end(); ++it) {
         String frameId = m_pageAgent->frameId(it->key);

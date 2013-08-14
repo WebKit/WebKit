@@ -1,3 +1,22 @@
+2013-08-13  Dean Jackson  <dino@apple.com>
+
+        <https://webkit.org/b/119776> Don't use ScriptProfiler to find canvases for instrumentation
+
+        Reviewed by Joseph Pecoraro.
+
+        InspectorCanvasAgent::findFramesWithUninstrumentedCanvases uses a ScriptProfiler to walk the tree
+        looking for canvas elements. This is currently not implemented in JSC, but we can do this directly
+        with DOM methods. We're only looking for Canvas elements that have a context, so there isn't a need
+        for this abstract walking object.
+
+        * html/HTMLCanvasElement.h: Add new helpers to cast to <canvas>.
+        (WebCore::isHTMLCanvasElement):
+        (WebCore::toHTMLCanvasElement):
+        * inspector/InspectorCanvasAgent.cpp:
+        (WebCore::InspectorCanvasAgent::findFramesWithUninstrumentedCanvases): Simply walk
+        the frame tree and use getElementsByTagName to find canvas elements.
+        * bindings/js/bindings/js/ScriptProfiler.h: Removed unused method.
+
 2013-08-13  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Windows is incorrectly using a LayerTypeTiledBackingLayer
