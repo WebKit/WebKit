@@ -110,6 +110,8 @@ private:
     void distributeSpaceToTracks(Vector<GridTrack*>&, Vector<GridTrack*>* tracksForGrowthAboveMaxBreadth, AccumulatorGetter, AccumulatorGrowFunction, LayoutUnit& availableLogicalSpace);
 
     const GridTrackSize& gridTrackSize(TrackSizingDirection, size_t) const;
+    size_t explicitGridColumnCount() const;
+    size_t explicitGridRowCount() const;
     size_t maximumIndexInDirection(TrackSizingDirection) const;
 
     LayoutUnit logicalContentHeightForChild(RenderBox*, Vector<GridTrack>&);

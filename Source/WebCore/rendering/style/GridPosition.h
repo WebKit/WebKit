@@ -88,7 +88,6 @@ public:
 
 private:
     GridPositionType m_type;
-    // FIXME: This should probably be a size_t but the spec currently allows any <integer>.
     int m_integerPosition;
 };
 

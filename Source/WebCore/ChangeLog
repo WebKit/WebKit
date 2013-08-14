@@ -1,3 +1,33 @@
+2013-08-13  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] Align our grid-line handling with the updated specification
+        https://bugs.webkit.org/show_bug.cgi?id=113546
+
+        Reviewed by Andreas Kling.
+
+        From Blink r148091 by <jchaffraix@chromium.org>
+
+        This change makes us match the updated specification by making
+        grid line numbers to always resolve against the
+        grid-{column|row}-start edge (the previous code would resolve
+        grid-{column|row}-end grid lines against the grid-{column|row}-end
+        edge).
+
+        To keep feature parity, negative numbers resolve against the
+        grid-{column|row}-end edge of the 'explicit grid'.
+
+        Test: fast/css-grid-layout/grid-item-negative-integer-explicit-grid-resolution.html
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::estimatedGridSizeForPosition):
+        (WebCore::RenderGrid::explicitGridColumnCount): New utility function.
+        (WebCore::RenderGrid::explicitGridRowCount): Ditto.
+        (WebCore::RenderGrid::maximumIndexInDirection): Use explicitGridXXXCount().
+        (WebCore::RenderGrid::resolveGridPositionsFromStyle): Check that row-end > row-start.
+        (WebCore::RenderGrid::resolveGridPositionFromStyle): Clamp negative values to the first line.
+        * rendering/RenderGrid.h:
+        * rendering/style/GridPosition.h:
+
 2013-08-14  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Add toSVGTextPathElement(), and use it

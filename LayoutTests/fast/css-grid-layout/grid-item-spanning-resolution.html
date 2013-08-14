@@ -13,9 +13,19 @@ if (window.testRunner)
     height: 300px;
 }
 
+.negativeOverflowRowFirstColumn {
+    -webkit-grid-row: 1 / -5;
+    -webkit-grid-column: 1;
+}
+
 .overflowRowFirstColumn {
     -webkit-grid-row: 1 / 5;
     -webkit-grid-column: 1;
+}
+
+.firstRowNegativeOverflowColumn {
+    -webkit-grid-row: 1;
+    -webkit-grid-column: 1 / -5;
 }
 
 .firstRowOverflowColumn {
@@ -60,13 +70,25 @@ if (window.testRunner)
 
 <div style="position: relative">
 <div class="grid" data-expected-width="400" data-expected-height="300">
-    <div class="sizedToGridArea overflowRowFirstColumn" data-offset-x="0" data-offset-y="0" data-expected-width="160" data-expected-height="90"></div>
+    <div class="sizedToGridArea negativeOverflowRowFirstColumn" data-offset-x="0" data-offset-y="0" data-expected-width="160" data-expected-height="90"></div>
 </div>
 </div>
 
 <div style="position: relative">
 <div class="grid" data-expected-width="400" data-expected-height="300">
-    <div class="sizedToGridArea firstRowOverflowColumn" data-offset-x="0" data-offset-y="0" data-expected-width="160" data-expected-height="90"></div>
+    <div class="sizedToGridArea overflowRowFirstColumn" data-offset-x="0" data-offset-y="0" data-expected-width="160" data-expected-height="300"></div>
+</div>
+</div>
+
+<div style="position: relative">
+<div class="grid" data-expected-width="400" data-expected-height="300">
+    <div class="sizedToGridArea firstRowNegativeOverflowColumn" data-offset-x="0" data-offset-y="0" data-expected-width="160" data-expected-height="90"></div>
+</div>
+</div>
+
+<div style="position: relative">
+<div class="grid" data-expected-width="400" data-expected-height="300">
+    <div class="sizedToGridArea firstRowOverflowColumn" data-offset-x="0" data-offset-y="0" data-expected-width="400" data-expected-height="90"></div>
 </div>
 </div>
 
@@ -78,7 +100,7 @@ if (window.testRunner)
 
 <div style="position: relative">
 <div class="grid" data-expected-width="400" data-expected-height="300">
-    <div class="sizedToGridArea autoSecondRowAutoFirstColumn" data-offset-x="160" data-offset-y="0" data-expected-width="240" data-expected-height="90"></div>
+    <div class="sizedToGridArea autoSecondRowAutoFirstColumn" data-offset-x="0" data-offset-y="90" data-expected-width="160" data-expected-height="210"></div>
 </div>
 </div>
 
