@@ -1,3 +1,10 @@
+2013-08-15  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, fix 32-bit build.
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2013-08-14  Filip Pizlo  <fpizlo@apple.com>
 
         Typed arrays should be rewritten

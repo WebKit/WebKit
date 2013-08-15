@@ -2668,11 +2668,11 @@ void SpeculativeJIT::compile(Node* node)
             compileGetByValOnArguments(node);
             break;
         default: {
-            TypedArrayType type = arrayMode.typedArrayType();
+            TypedArrayType type = node->arrayMode().typedArrayType();
             if (isInt(type))
-                compileGetByValForIntTypedArray(node, type);
+                compileGetByValOnIntTypedArray(node, type);
             else
-                compileGetByValForFloatTypedArray(node, type);
+                compileGetByValOnFloatTypedArray(node, type);
         } }
         break;
     }
