@@ -46,6 +46,7 @@ public:
     bool isEmpty() const  { return m_region.isEmpty(); }
     void addInterval(int y, int x1, int x2);
     void getIncludedIntervals(int y1, int y2, SegmentList&) const;
+    void getExcludedIntervals(int y1, int y2, SegmentList&) const;
 
 private:
     Region m_region;

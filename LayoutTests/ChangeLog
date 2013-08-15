@@ -1,3 +1,18 @@
+2013-08-15  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Shapes] Add support for shape-outside image values
+        https://bugs.webkit.org/show_bug.cgi?id=119809
+
+        Two tests to verify that the initial implementation of shape valued images is working
+        for shape-outside.
+
+        Reviewed by Alexandru Chiculita.
+
+        * fast/shapes/shape-outside-floats/shape-outside-floats-image-001-expected.html: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-floats-image-001.html: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-floats-image-002-expected.html: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-floats-image-002.html: Added.
+
 2013-08-15  Ryosuke Niwa  <rniwa@webkit.org>
 
         Revert that. The test had been fixed in r154148.

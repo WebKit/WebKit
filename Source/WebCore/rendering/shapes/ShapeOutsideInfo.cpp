@@ -46,7 +46,7 @@ bool ShapeOutsideInfo::isEnabledFor(const RenderBox* box)
     case ShapeValue::Shape:
         return shapeValue->shape();
     case ShapeValue::Image:
-        return false; // FIXME, see https://bugs.webkit.org/show_bug.cgi?id=119809.
+        return shapeValue->isImageValid();
     default:
         return false;
     }

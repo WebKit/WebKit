@@ -88,6 +88,28 @@ void RasterShapeIntervals::getIncludedIntervals(int y1, int y2, SegmentList& res
         result.append(LineSegment(segmentRects[i].x(), segmentRects[i].maxX()));
 }
 
+void RasterShapeIntervals::getExcludedIntervals(int y1, int y2, SegmentList& result) const
+{
+    ASSERT(y2 >= y1);
+
+    IntRect lineRect(bounds().x(), y1, bounds().width(), y2 - y1);
+    Region lineRegion(lineRect);
+    lineRegion.intersect(m_region);
+    if (lineRegion.isEmpty())
+        return;
+
+    Vector<IntRect> lineRects = lineRegion.rects();
+    ASSERT(lineRects.size() > 0);
+
+    Region segmentsRegion;
+    for (unsigned i = 0; i < lineRects.size(); i++)
+        segmentsRegion.unite(Region(alignedRect(lineRects[i], y1, y2)));
+
+    Vector<IntRect> segmentRects = segmentsRegion.rects();
+    for (unsigned i = 0; i < segmentRects.size(); i++)
+        result.append(LineSegment(segmentRects[i].x(), segmentRects[i].maxX() + 1));
+}
+
 const RasterShapeIntervals& RasterShape::marginIntervals() const
 {
     ASSERT(shapeMargin() >= 0);
@@ -108,9 +130,19 @@ const RasterShapeIntervals& RasterShape::paddingIntervals() const
     return *m_intervals;
 }
 
-void RasterShape::getExcludedIntervals(LayoutUnit, LayoutUnit, SegmentList&) const
+void RasterShape::getExcludedIntervals(LayoutUnit logicalTop, LayoutUnit logicalHeight, SegmentList& result) const
 {
-    // FIXME: this method is only a stub, see https://bugs.webkit.org/show_bug.cgi?id=119809.
+    const RasterShapeIntervals& intervals = marginIntervals();
+    if (intervals.isEmpty())
+        return;
+
+    float y1 = logicalTop;
+    float y2 = logicalTop + logicalHeight;
+
+    if (y2 < intervals.bounds().y() || y1 >= intervals.bounds().maxY())
+        return;
+
+    intervals.getExcludedIntervals(y1, y2, result);
 }
 
 void RasterShape::getIncludedIntervals(LayoutUnit logicalTop, LayoutUnit logicalHeight, SegmentList& result) const

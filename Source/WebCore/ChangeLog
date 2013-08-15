@@ -1,3 +1,32 @@
+2013-08-15  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Shapes] Add support for shape-outside image values
+        https://bugs.webkit.org/show_bug.cgi?id=119809
+
+        Added minimal support for shape-outside image values. A new method that computes
+        the excluded intervals for a horizontal line segment was added to the RasterIntervals
+        class. The stub RasterShape getExcludedIntervals() method has been replaced by
+        one that uses the new method.
+
+        Image shapes are represented by a RasterIntervals object, which just encapsulates a
+        Region object. The new getExcludedIntervals() method computes the excluded intervals
+        for a horizontal line segment between y1 and y2. To find the excluded intervals we
+        vertically expand each of the image shape Region's rectangles that fall within the line
+        segment, so that they begin at y1 and have height = y2 - y1. The union of the expanded
+        rectangles produces a new Region whose horizontal projection defines the excluded intervals.
+
+        Reviewed by Alexandru Chiculita.
+
+        Tests: fast/shapes/shape-outside-floats/shape-outside-floats-image-001.html
+               fast/shapes/shape-outside-floats/shape-outside-floats-image-002.html
+
+        * rendering/shapes/RasterShape.cpp:
+        (WebCore::RasterShapeIntervals::getExcludedIntervals): See above.
+        (WebCore::RasterShape::getExcludedIntervals): Stub method has been replaced by one that uses RasterShapeIntervals::getExcludedIntervals().
+        * rendering/shapes/RasterShape.h:
+        * rendering/shapes/ShapeOutsideInfo.cpp:
+        (WebCore::ShapeOutsideInfo::isEnabledFor): Enable Image valued shapes.
+
 2013-08-15  Simon Fraser  <simon.fraser@apple.com>
 
         <https://webkit.org/b/119871> Flash of garbage pixels when playing a show on Hulu
