@@ -1,3 +1,14 @@
+2013-08-15  Chris Fleizach  <cfleizach@apple.com>
+
+        <https://webkit.org/b/119858> AX: Crash: com.apple.WebKit.WebContent at com.apple.WebKit2: WebKit::WebPage::accessibilityObjectForMainFramePlugin + 8
+
+        Reviewed by Tim Horton.
+
+        Ensure that the page is available before accessing it.
+
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::accessibilityObjectForMainFramePlugin):
+
 2013-08-15  Alexey Proskuryakov  <ap@apple.com>
 
         [WK2] NetworkProcess should use a temporary storage session for test

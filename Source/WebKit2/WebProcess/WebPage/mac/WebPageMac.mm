@@ -99,6 +99,9 @@ void WebPage::platformInitialize()
 
 NSObject *WebPage::accessibilityObjectForMainFramePlugin()
 {
+    if (!m_page)
+        return 0;
+    
     Frame* frame = m_page->mainFrame();
     if (!frame)
         return 0;
