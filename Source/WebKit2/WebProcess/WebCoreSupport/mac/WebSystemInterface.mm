@@ -77,7 +77,6 @@ void InitWebCoreSystemInterface(void)
         INIT(HitTestMediaUIPart);
         INIT(InitializeMaximumHTTPConnectionCountPerHost);
         INIT(MeasureMediaUIPart);
-        INIT(MediaControllerThemeAvailable);
         INIT(PopupMenu);
         INIT(QTIncludeOnlyModernMediaFileTypes);
         INIT(QTMovieDataRate);

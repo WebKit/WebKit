@@ -130,9 +130,7 @@ protected:
     virtual String extraFullScreenStyleSheet();
 #endif
 
-    virtual bool hasOwnDisabledStateHandlingFor(ControlPart) const;
-    virtual bool usesMediaControlStatusDisplay();
-    virtual bool usesMediaControlVolumeSlider() const;
+    virtual bool usesMediaControlStatusDisplay() { return true; }
     virtual void adjustMediaSliderThumbSize(RenderStyle*) const;
     virtual IntPoint volumeSliderOffsetFromMuteButton(RenderBox*, const IntSize&) const OVERRIDE;
 #endif

@@ -41,7 +41,6 @@ NSArray *WKGetExtensionsForMIMEType(NSString *type);
 NSString *WKGetMIMETypeForExtension(NSString *extension);
 
 NSDate *WKGetNSURLResponseLastModifiedDate(NSURLResponse *response);
-NSTimeInterval WKGetNSURLResponseFreshnessLifetime(NSURLResponse *response);
 NSString *WKCopyNSURLResponseStatusLine(NSURLResponse *response);
 
 CFArrayRef WKCopyNSURLResponseCertificateChain(NSURLResponse *response);
@@ -298,22 +297,16 @@ typedef enum {
 } WKMediaUIPart;
 
 typedef enum {
-    WKMediaControllerThemeClassic   = 1,
-    WKMediaControllerThemeQuickTime = 2
-} WKMediaControllerThemeStyle;
-
-typedef enum {
     WKMediaControllerFlagDisabled = 1 << 0,
     WKMediaControllerFlagPressed = 1 << 1,
     WKMediaControllerFlagDrawEndCaps = 1 << 3,
     WKMediaControllerFlagFocused = 1 << 4
 } WKMediaControllerThemeState;
 
-BOOL WKMediaControllerThemeAvailable(int themeStyle);
-BOOL WKHitTestMediaUIPart(int part, int themeStyle, CGRect bounds, CGPoint point);
-void WKMeasureMediaUIPart(int part, int themeStyle, CGRect *bounds, CGSize *naturalSize);
-void WKDrawMediaUIPart(int part, int themeStyle, CGContextRef context, CGRect rect, unsigned state);
-void WKDrawMediaSliderTrack(int themeStyle, CGContextRef context, CGRect rect, float timeLoaded, float currentTime, float duration, unsigned state);
+BOOL WKHitTestMediaUIPart(int part, CGRect bounds, CGPoint point);
+void WKMeasureMediaUIPart(int part, CGRect *bounds, CGSize *naturalSize);
+void WKDrawMediaUIPart(int part, CGContextRef context, CGRect rect, unsigned state);
+void WKDrawMediaSliderTrack(CGContextRef context, CGRect rect, float timeLoaded, float currentTime, float duration, unsigned state);
 NSView *WKCreateMediaUIBackgroundView(void);
 
 typedef enum {

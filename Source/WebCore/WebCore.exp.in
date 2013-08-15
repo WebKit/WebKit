@@ -1975,7 +1975,6 @@ _wkGetVerticalGlyphsForCharacters
 _wkGetWheelEventDeltas
 _wkHitTestMediaUIPart
 _wkMeasureMediaUIPart
-_wkMediaControllerThemeAvailable
 _wkPopupMenu
 _wkQTClearMediaDownloadCache
 _wkQTClearMediaDownloadCacheForSite

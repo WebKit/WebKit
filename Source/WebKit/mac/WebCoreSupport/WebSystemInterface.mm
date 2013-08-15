@@ -89,7 +89,6 @@ void InitWebCoreSystemInterface(void)
     INIT(CreateMediaUIControl);
     INIT(WindowSetAlpha);
     INIT(WindowSetScaledFrame);
-    INIT(MediaControllerThemeAvailable);
     INIT(PopupMenu);
     INIT(SetBaseCTM);
     INIT(SetCGFontRenderingMode);

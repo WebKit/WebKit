@@ -182,33 +182,6 @@ NSView* RenderThemeMac::documentViewFor(RenderObject* o) const
 
 #if ENABLE(VIDEO)
 
-typedef enum {
-    MediaControllerThemeClassic   = 1,
-    MediaControllerThemeQuickTime = 2
-} MediaControllerThemeStyle;
-
-static int mediaControllerTheme()
-{
-    static int controllerTheme = -1;
-
-    if (controllerTheme != -1)
-        return controllerTheme;
-
-    controllerTheme = MediaControllerThemeClassic;
-
-    Boolean validKey;
-    Boolean useQTMediaUIPref = CFPreferencesGetAppBooleanValue(CFSTR("UseQuickTimeMediaUI"), CFSTR("com.apple.WebCore"), &validKey);
-
-    if (validKey && !useQTMediaUIPref)
-        return controllerTheme;
-
-    controllerTheme = MediaControllerThemeQuickTime;
-    return controllerTheme;
-}
-
-const int mediaSliderThumbWidth = 13;
-const int mediaSliderThumbHeight = 14;
-
 void RenderThemeMac::adjustMediaSliderThumbSize(RenderStyle* style) const
 {
     int wkPart;
@@ -226,15 +199,10 @@ void RenderThemeMac::adjustMediaSliderThumbSize(RenderStyle* style) const
         return;
     }
 
-    int width = mediaSliderThumbWidth;
-    int height = mediaSliderThumbHeight;
-
-    if (mediaControllerTheme() == MediaControllerThemeQuickTime) {
-        CGSize size;
-        wkMeasureMediaUIPart(wkPart, MediaControllerThemeQuickTime, NULL, &size);
-        width = size.width;
-        height = size.height;
-    }
+    CGSize size;
+    wkMeasureMediaUIPart(wkPart, NULL, &size);
+    int width = size.width;
+    int height = size.height;
 
     float zoomLevel = style->effectiveZoom();
     style->setWidth(Length(static_cast<int>(width * zoomLevel), Fixed));
@@ -263,7 +231,7 @@ static FloatRect getUnzoomedRectAndAdjustCurrentContext(RenderObject* o, const P
 {
     float zoomLevel = o->style()->effectiveZoom();
     FloatRect unzoomedRect(originalRect);
-    if (zoomLevel != 1.0f && mediaControllerTheme() == MediaControllerThemeQuickTime) {
+    if (zoomLevel != 1.0f) {
         unzoomedRect.setWidth(unzoomedRect.width() / zoomLevel);
         unzoomedRect.setHeight(unzoomedRect.height() / zoomLevel);
         paintInfo.context->translate(unzoomedRect.x(), unzoomedRect.y());
@@ -281,7 +249,7 @@ bool RenderThemeMac::paintMediaFullscreenButton(RenderObject* o, const PaintInfo
 
     if (node->isMediaControlElement()) {
         LocalCurrentGraphicsContext localContext(paintInfo.context);
-        wkDrawMediaUIPart(mediaControlElementType(node), mediaControllerTheme(), localContext.cgContext(), r, getMediaUIPartStateFlags(node));
+        wkDrawMediaUIPart(mediaControlElementType(node), localContext.cgContext(), r, getMediaUIPartStateFlags(node));
     }
     return false;
 }
@@ -295,7 +263,7 @@ bool RenderThemeMac::paintMediaMuteButton(RenderObject* o, const PaintInfo& pain
 
     if (node->isMediaControlElement()) {
         LocalCurrentGraphicsContext localContext(paintInfo.context);
-        wkDrawMediaUIPart(mediaControlElementType(node), mediaControllerTheme(), localContext.cgContext(), r, getMediaUIPartStateFlags(node));
+        wkDrawMediaUIPart(mediaControlElementType(node), localContext.cgContext(), r, getMediaUIPartStateFlags(node));
     }
     return false;
 }
@@ -309,7 +277,7 @@ bool RenderThemeMac::paintMediaPlayButton(RenderObject* o, const PaintInfo& pain
 
     if (node->isMediaControlElement()) {
         LocalCurrentGraphicsContext localContext(paintInfo.context);
-        wkDrawMediaUIPart(mediaControlElementType(node), mediaControllerTheme(), localContext.cgContext(), r, getMediaUIPartStateFlags(node));
+        wkDrawMediaUIPart(mediaControlElementType(node), localContext.cgContext(), r, getMediaUIPartStateFlags(node));
     }
     return false;
 }
@@ -321,7 +289,7 @@ bool RenderThemeMac::paintMediaSeekBackButton(RenderObject* o, const PaintInfo& 
         return false;
 
     LocalCurrentGraphicsContext localContext(paintInfo.context);
-    wkDrawMediaUIPart(MediaSeekBackButton, mediaControllerTheme(), localContext.cgContext(), r, getMediaUIPartStateFlags(node));
+    wkDrawMediaUIPart(MediaSeekBackButton, localContext.cgContext(), r, getMediaUIPartStateFlags(node));
     return false;
 }
 
@@ -332,7 +300,7 @@ bool RenderThemeMac::paintMediaSeekForwardButton(RenderObject* o, const PaintInf
         return false;
 
     LocalCurrentGraphicsContext localContext(paintInfo.context);
-    wkDrawMediaUIPart(MediaSeekForwardButton, mediaControllerTheme(), localContext.cgContext(), r, getMediaUIPartStateFlags(node));
+    wkDrawMediaUIPart(MediaSeekForwardButton, localContext.cgContext(), r, getMediaUIPartStateFlags(node));
     return false;
 }
 
@@ -358,7 +326,7 @@ bool RenderThemeMac::paintMediaSliderTrack(RenderObject* o, const PaintInfo& pai
     CGContextRef context = cgContextContainer.context();
     GraphicsContextStateSaver stateSaver(*paintInfo.context);
     FloatRect unzoomedRect = getUnzoomedRectAndAdjustCurrentContext(o, paintInfo, r);
-    wkDrawMediaSliderTrack(mediaControllerTheme(), context, unzoomedRect,
+    wkDrawMediaSliderTrack(context, unzoomedRect,
         timeLoaded, currentTime, duration, getMediaUIPartStateFlags(node));
     return false;
 }
@@ -370,7 +338,7 @@ bool RenderThemeMac::paintMediaSliderThumb(RenderObject* o, const PaintInfo& pai
         return false;
 
     LocalCurrentGraphicsContext localContext(paintInfo.context);
-    wkDrawMediaUIPart(MediaSliderThumb, mediaControllerTheme(), localContext.cgContext(), r, getMediaUIPartStateFlags(node));
+    wkDrawMediaUIPart(MediaSliderThumb, localContext.cgContext(), r, getMediaUIPartStateFlags(node));
     return false;
 }
 
@@ -381,7 +349,7 @@ bool RenderThemeMac::paintMediaRewindButton(RenderObject* o, const PaintInfo& pa
         return false;
 
     LocalCurrentGraphicsContext localContext(paintInfo.context);
-    wkDrawMediaUIPart(MediaRewindButton, mediaControllerTheme(), localContext.cgContext(), r, getMediaUIPartStateFlags(node));
+    wkDrawMediaUIPart(MediaRewindButton, localContext.cgContext(), r, getMediaUIPartStateFlags(node));
     return false;
 }
 
@@ -392,7 +360,7 @@ bool RenderThemeMac::paintMediaReturnToRealtimeButton(RenderObject* o, const Pai
         return false;
 
     LocalCurrentGraphicsContext localContext(paintInfo.context);
-    wkDrawMediaUIPart(MediaReturnToRealtimeButton, mediaControllerTheme(), localContext.cgContext(), r, getMediaUIPartStateFlags(node));
+    wkDrawMediaUIPart(MediaReturnToRealtimeButton, localContext.cgContext(), r, getMediaUIPartStateFlags(node));
     return false;
 }
 
@@ -403,7 +371,7 @@ bool RenderThemeMac::paintMediaControlsBackground(RenderObject* o, const PaintIn
         return false;
 
     LocalCurrentGraphicsContext localContext(paintInfo.context);
-    wkDrawMediaUIPart(MediaTimelineContainer, mediaControllerTheme(), localContext.cgContext(), r, getMediaUIPartStateFlags(node));
+    wkDrawMediaUIPart(MediaTimelineContainer, localContext.cgContext(), r, getMediaUIPartStateFlags(node));
     return false;
 }
 
@@ -416,7 +384,7 @@ bool RenderThemeMac::paintMediaCurrentTime(RenderObject* o, const PaintInfo& pai
     ContextContainer cgContextContainer(paintInfo.context);
     GraphicsContextStateSaver stateSaver(*paintInfo.context);
     FloatRect unzoomedRect = getUnzoomedRectAndAdjustCurrentContext(o, paintInfo, r);
-    wkDrawMediaUIPart(MediaCurrentTimeDisplay, mediaControllerTheme(), cgContextContainer.context(), unzoomedRect, getMediaUIPartStateFlags(node));
+    wkDrawMediaUIPart(MediaCurrentTimeDisplay, cgContextContainer.context(), unzoomedRect, getMediaUIPartStateFlags(node));
     return false;
 }
 
@@ -429,7 +397,7 @@ bool RenderThemeMac::paintMediaTimeRemaining(RenderObject* o, const PaintInfo& p
     ContextContainer cgContextContainer(paintInfo.context);
     GraphicsContextStateSaver stateSaver(*paintInfo.context);
     FloatRect unzoomedRect = getUnzoomedRectAndAdjustCurrentContext(o, paintInfo, r);
-    wkDrawMediaUIPart(MediaTimeRemainingDisplay, mediaControllerTheme(), cgContextContainer.context(), unzoomedRect, getMediaUIPartStateFlags(node));
+    wkDrawMediaUIPart(MediaTimeRemainingDisplay, cgContextContainer.context(), unzoomedRect, getMediaUIPartStateFlags(node));
     return false;
 }
 
@@ -440,7 +408,7 @@ bool RenderThemeMac::paintMediaVolumeSliderContainer(RenderObject* o, const Pain
         return false;
 
     LocalCurrentGraphicsContext localContext(paintInfo.context);
-    wkDrawMediaUIPart(MediaVolumeSliderContainer, mediaControllerTheme(), localContext.cgContext(), r, getMediaUIPartStateFlags(node));
+    wkDrawMediaUIPart(MediaVolumeSliderContainer, localContext.cgContext(), r, getMediaUIPartStateFlags(node));
     return false;
 }
 
@@ -451,7 +419,7 @@ bool RenderThemeMac::paintMediaVolumeSliderTrack(RenderObject* o, const PaintInf
         return false;
 
     LocalCurrentGraphicsContext localContext(paintInfo.context);
-    wkDrawMediaUIPart(MediaVolumeSlider, mediaControllerTheme(), localContext.cgContext(), r, getMediaUIPartStateFlags(node));
+    wkDrawMediaUIPart(MediaVolumeSlider, localContext.cgContext(), r, getMediaUIPartStateFlags(node));
     return false;
 }
 
@@ -462,7 +430,7 @@ bool RenderThemeMac::paintMediaVolumeSliderThumb(RenderObject* o, const PaintInf
         return false;
 
     LocalCurrentGraphicsContext localContext(paintInfo.context);
-    wkDrawMediaUIPart(MediaVolumeSliderThumb, mediaControllerTheme(), localContext.cgContext(), r, getMediaUIPartStateFlags(node));
+    wkDrawMediaUIPart(MediaVolumeSliderThumb, localContext.cgContext(), r, getMediaUIPartStateFlags(node));
     return false;
 }
 
@@ -473,7 +441,7 @@ bool RenderThemeMac::paintMediaFullScreenVolumeSliderTrack(RenderObject* o, cons
         return false;
 
     LocalCurrentGraphicsContext localContext(paintInfo.context);
-    wkDrawMediaUIPart(MediaFullScreenVolumeSlider, mediaControllerTheme(), localContext.cgContext(), r, getMediaUIPartStateFlags(node));
+    wkDrawMediaUIPart(MediaFullScreenVolumeSlider, localContext.cgContext(), r, getMediaUIPartStateFlags(node));
     return false;
 }
 
@@ -484,45 +452,21 @@ bool RenderThemeMac::paintMediaFullScreenVolumeSliderThumb(RenderObject* o, cons
         return false;
 
     LocalCurrentGraphicsContext localContext(paintInfo.context);
-    wkDrawMediaUIPart(MediaFullScreenVolumeSliderThumb, mediaControllerTheme(), localContext.cgContext(), r, getMediaUIPartStateFlags(node));
+    wkDrawMediaUIPart(MediaFullScreenVolumeSliderThumb, localContext.cgContext(), r, getMediaUIPartStateFlags(node));
     return false;
 }
 
 String RenderThemeMac::extraMediaControlsStyleSheet()
 {
-    if (mediaControllerTheme() == MediaControllerThemeQuickTime)
-        return String(mediaControlsQuickTimeUserAgentStyleSheet, sizeof(mediaControlsQuickTimeUserAgentStyleSheet));
-
-    return String();
+    return String(mediaControlsQuickTimeUserAgentStyleSheet, sizeof(mediaControlsQuickTimeUserAgentStyleSheet));
 }
 
 #if ENABLE(FULLSCREEN_API)
 String RenderThemeMac::extraFullScreenStyleSheet()
 {
-    if (mediaControllerTheme() == MediaControllerThemeQuickTime)
-        return String(fullscreenQuickTimeUserAgentStyleSheet, sizeof(fullscreenQuickTimeUserAgentStyleSheet));
-
-    return String();
+    return String(fullscreenQuickTimeUserAgentStyleSheet, sizeof(fullscreenQuickTimeUserAgentStyleSheet));
 }
 #endif
-
-bool RenderThemeMac::hasOwnDisabledStateHandlingFor(ControlPart part) const
-{
-    if (part == MediaMuteButtonPart)
-        return false;
-
-    return mediaControllerTheme() == MediaControllerThemeClassic;
-}
-
-bool RenderThemeMac::usesMediaControlStatusDisplay()
-{
-    return mediaControllerTheme() == MediaControllerThemeQuickTime;
-}
-
-bool RenderThemeMac::usesMediaControlVolumeSlider() const
-{
-    return mediaControllerTheme() == MediaControllerThemeQuickTime;
-}
 
 IntPoint RenderThemeMac::volumeSliderOffsetFromMuteButton(RenderBox* muteButtonBox, const IntSize& size) const
 {
