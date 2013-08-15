@@ -33,7 +33,6 @@
 
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
-#include "ElementShadow.h"
 #include "ExceptionCodePlaceholder.h"
 #include "HTMLBRElement.h"
 #include "HTMLDivElement.h"

@@ -240,10 +240,10 @@ void resolveTree(Element* current, Change change)
 
         RenderStyle* currentStyle = current->renderStyle();
 
-        if (ElementShadow* shadow = current->shadow()) {
-            if (change >= Inherit || shadow->childNeedsStyleRecalc() || shadow->needsStyleRecalc()) {
+        if (ShadowRoot* shadowRoot = current->shadowRoot()) {
+            if (change >= Inherit || shadowRoot->childNeedsStyleRecalc() || shadowRoot->needsStyleRecalc()) {
                 parentPusher.push();
-                resolveShadowTree(shadow->shadowRoot(), currentStyle, change);
+                resolveShadowTree(shadowRoot, currentStyle, change);
             }
         }
 

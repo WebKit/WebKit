@@ -32,7 +32,6 @@
 #define InsertionPoint_h
 
 #include "ContentDistributor.h"
-#include "ElementShadow.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
 #include "ShadowRoot.h"
@@ -137,11 +136,11 @@ inline Element* parentElementForDistribution(const Node* node)
     return 0;
 }
 
-inline ElementShadow* shadowOfParentForDistribution(const Node* node)
+inline ShadowRoot* shadowRootOfParentForDistribution(const Node* node)
 {
     ASSERT(node);
     if (Element* parent = parentElementForDistribution(node))
-        return parent->shadow();
+        return parent->shadowRoot();
 
     return 0;
 }

@@ -27,7 +27,6 @@
 
 #include "Attribute.h"
 #include "Document.h"
-#include "ElementShadow.h"
 #include "FormDataList.h"
 #include "HTMLNames.h"
 #include "HTMLSelectElement.h"

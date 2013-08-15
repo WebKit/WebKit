@@ -69,7 +69,6 @@
 #include "DocumentSharedObjectPool.cpp"
 #include "DocumentType.cpp"
 #include "Element.cpp"
-#include "ElementShadow.cpp"
 #include "EntityReference.cpp"
 #include "ErrorEvent.cpp"
 #include "Event.cpp"

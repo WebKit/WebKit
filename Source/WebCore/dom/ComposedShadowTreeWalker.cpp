@@ -30,19 +30,11 @@
 
 #include "ContentDistributor.h"
 #include "Element.h"
-#include "ElementShadow.h"
 #include "HTMLContentElement.h"
 #include "InsertionPoint.h"
 #include "PseudoElement.h"
 
 namespace WebCore {
-
-static inline ElementShadow* shadowFor(const Node* node)
-{
-    if (node && node->isElementNode())
-        return toElement(node)->shadow();
-    return 0;
-}
 
 static inline bool nodeCanBeDistributed(const Node* node)
 {
@@ -54,7 +46,7 @@ static inline bool nodeCanBeDistributed(const Node* node)
     if (parent->isShadowRoot())
         return false;
 
-    if (parent->isElementNode() && toElement(parent)->shadow())
+    if (parent->isElementNode() && toElement(parent)->shadowRoot())
         return true;
 
     return false;
@@ -97,8 +89,7 @@ Node* ComposedShadowTreeWalker::traverseChild(const Node* node, TraversalDirecti
 {
     ASSERT(node);
     if (canCrossUpperBoundary()) {
-        ElementShadow* shadow = shadowFor(node);
-        return shadow ? traverseLightChildren(shadow->shadowRoot(), direction)
+        return node->shadowRoot() ? traverseLightChildren(node->shadowRoot(), direction)
             : traverseLightChildren(node, direction);
     }
     if (isShadowHost(node))

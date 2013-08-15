@@ -44,7 +44,6 @@
 #include "DocumentMarkerController.h"
 #include "Editor.h"
 #include "Element.h"
-#include "ElementShadow.h"
 #include "EventHandler.h"
 #include "ExceptionCode.h"
 #include "FormController.h"
@@ -627,8 +626,8 @@ Internals::ShadowRootIfShadowDOMEnabledOrNode* Internals::ensureShadowRoot(Eleme
         return 0;
     }
 
-    if (ElementShadow* shadow = host->shadow())
-        return shadow->shadowRoot();
+    if (ShadowRoot* shadowRoot = host->shadowRoot())
+        return shadowRoot;
 
     return host->createShadowRoot(ec).get();
 }
@@ -648,9 +647,7 @@ Internals::ShadowRootIfShadowDOMEnabledOrNode* Internals::shadowRoot(Element* ho
         ec = INVALID_ACCESS_ERR;
         return 0;
     }
-    if (ElementShadow* shadow = host->shadow())
-        return shadow->shadowRoot();
-    return 0;
+    return host->shadowRoot();
 }
 
 String Internals::shadowRootType(const Node* root, ExceptionCode& ec) const

@@ -35,7 +35,6 @@
 #include "DateTimeChooser.h"
 #include "Document.h"
 #include "Editor.h"
-#include "ElementShadow.h"
 #include "EventNames.h"
 #include "ExceptionCode.h"
 #include "FeatureObserver.h"
@@ -535,8 +534,8 @@ void HTMLInputElement::updateType()
             updateFocusAppearance(true);
     }
 
-    if (ElementShadow* elementShadow = shadowOfParentForDistribution(this))
-        elementShadow->invalidateDistribution();
+    if (ShadowRoot* shadowRoot = shadowRootOfParentForDistribution(this))
+        shadowRoot->invalidateDistribution();
 
     setChangedSinceLastFormControlChangeEvent(false);
 

@@ -52,8 +52,8 @@ void EventPathWalker::moveToParent()
 {
     ASSERT(m_node);
     ASSERT(m_distributedNode);
-    if (ElementShadow* shadow = shadowOfParent(m_node)) {
-        if (InsertionPoint* insertionPoint = shadow->distributor().findInsertionPointFor(m_distributedNode)) {
+    if (ShadowRoot* shadowRoot = m_node->parentElement() ? m_node->parentElement()->shadowRoot() : 0) {
+        if (InsertionPoint* insertionPoint = shadowRoot->distributor().findInsertionPointFor(m_distributedNode)) {
             m_node = insertionPoint;
             m_isVisitingInsertionPointInReprojection = true;
             return;

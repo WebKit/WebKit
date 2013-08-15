@@ -41,7 +41,6 @@ class Node;
 class RenderNamedFlowThread;
 class RenderObject;
 class RenderStyle;
-class ElementShadow;
 
 class NodeRenderingContext {
 public:

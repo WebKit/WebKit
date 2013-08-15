@@ -24,7 +24,6 @@
 
 #include "Chrome.h"
 #include "DragData.h"
-#include "ElementShadow.h"
 #include "Event.h"
 #include "File.h"
 #include "FileList.h"
@@ -313,13 +312,13 @@ bool FileInputType::isFileUpload() const
 
 void FileInputType::createShadowSubtree()
 {
-    ASSERT(element()->shadow());
+    ASSERT(element()->shadowRoot());
     element()->userAgentShadowRoot()->appendChild(element()->multiple() ? UploadButtonElement::createForMultiple(element()->document()): UploadButtonElement::create(element()->document()), IGNORE_EXCEPTION);
 }
 
 void FileInputType::disabledAttributeChanged()
 {
-    ASSERT(element()->shadow());
+    ASSERT(element()->shadowRoot());
     UploadButtonElement* button = static_cast<UploadButtonElement*>(element()->userAgentShadowRoot()->firstChild());
     if (button)
         button->setBooleanAttribute(disabledAttr, element()->isDisabledFormControl());
@@ -327,7 +326,7 @@ void FileInputType::disabledAttributeChanged()
 
 void FileInputType::multipleAttributeChanged()
 {
-    ASSERT(element()->shadow());
+    ASSERT(element()->shadowRoot());
     UploadButtonElement* button = static_cast<UploadButtonElement*>(element()->userAgentShadowRoot()->firstChild());
     if (button)
         button->setValue(element()->multiple() ? fileButtonChooseMultipleFilesLabel() : fileButtonChooseFileLabel());

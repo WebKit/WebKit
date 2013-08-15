@@ -26,7 +26,6 @@
 #include "HTMLFormControlElement.h"
 
 #include "Attribute.h"
-#include "ElementShadow.h"
 #include "Event.h"
 #include "EventHandler.h"
 #include "EventNames.h"

@@ -33,7 +33,6 @@
 #include "RangeInputType.h"
 
 #include "AXObjectCache.h"
-#include "ElementShadow.h"
 #include "ExceptionCodePlaceholder.h"
 #include "HTMLDivElement.h"
 #include "HTMLInputElement.h"
@@ -158,7 +157,7 @@ void RangeInputType::handleMouseDownEvent(MouseEvent* event)
     Node* targetNode = event->target()->toNode();
     if (event->button() != LeftButton || !targetNode)
         return;
-    ASSERT(element()->shadow());
+    ASSERT(element()->shadowRoot());
     if (targetNode != element() && !targetNode->isDescendantOf(element()->userAgentShadowRoot()))
         return;
     SliderThumbElement* thumb = sliderThumbElementOf(element());
@@ -256,7 +255,7 @@ void RangeInputType::handleKeydownEvent(KeyboardEvent* event)
 
 void RangeInputType::createShadowSubtree()
 {
-    ASSERT(element()->shadow());
+    ASSERT(element()->shadowRoot());
 
     Document* document = element()->document();
     RefPtr<HTMLDivElement> track = HTMLDivElement::create(document);

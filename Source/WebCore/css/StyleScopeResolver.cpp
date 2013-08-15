@@ -33,7 +33,6 @@
 #include "CSSStyleSheet.h"
 #include "ContentDistributor.h"
 #include "ContextFeatures.h"
-#include "ElementShadow.h"
 #include "HTMLNames.h"
 #include "HTMLStyleElement.h"
 #include "RuleFeature.h"
@@ -199,15 +198,11 @@ bool StyleScopeResolver::styleSharingCandidateMatchesHostRules(const Element* el
     if (m_atHostRules.isEmpty())
         return false;
 
-    ElementShadow* shadow = element->shadow();
-    if (!shadow)
-        return false;
-
     // FIXME(99827): https://bugs.webkit.org/show_bug.cgi?id=99827
     // add a new flag to ElementShadow and cache whether any@host @-rules are
     // applied to the element or not. So we can avoid always traversing
     // shadow roots.
-    if (ShadowRoot* shadowRoot = shadow->shadowRoot()) {
+    if (ShadowRoot* shadowRoot = element->shadowRoot()) {
         if (atHostRuleSetFor(shadowRoot))
             return true;
     }
@@ -219,15 +214,11 @@ void StyleScopeResolver::matchHostRules(const Element* element, Vector<RuleSet*>
     if (m_atHostRules.isEmpty())
         return;
 
-    ElementShadow* shadow = element->shadow();
-    if (!shadow)
-        return;
-
     // FIXME(99827): https://bugs.webkit.org/show_bug.cgi?id=99827
     // add a new flag to ElementShadow and cache whether any @host @-rules are
     // applied to the element or not. So we can quickly exit this method
     // by using the flag.
-    if (ShadowRoot* shadowRoot = shadow->shadowRoot()) {
+    if (ShadowRoot* shadowRoot = element->shadowRoot()) {
         if (RuleSet* ruleSet = atHostRuleSetFor(shadowRoot))
             matchedRules.append(ruleSet);
     }

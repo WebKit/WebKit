@@ -27,7 +27,6 @@
 #include "config.h"
 #include "ContentDistributor.h"
 
-#include "ElementShadow.h"
 #include "ElementTraversal.h"
 #include "HTMLContentElement.h"
 #include "ShadowRoot.h"
@@ -76,7 +75,7 @@ void ContentDistributor::distribute(Element* host)
 {
     ASSERT(needsDistribution());
     ASSERT(m_nodeToInsertionPoint.isEmpty());
-    ASSERT(!host->containingShadowRoot() || host->containingShadowRoot()->owner()->distributor().isValid());
+    ASSERT(!host->containingShadowRoot() || host->containingShadowRoot()->distributor().isValid());
 
     m_validity = Valid;
 
@@ -130,19 +129,17 @@ void ContentDistributor::ensureDistribution(ShadowRoot* shadowRoot)
 {
     ASSERT(shadowRoot);
 
-    Vector<ElementShadow*, 8> elementShadows;
+    Vector<ShadowRoot*, 8> shadowRoots;
     for (Element* current = shadowRoot->host(); current; current = current->shadowHost()) {
-        ElementShadow* elementShadow = current->shadow();
-        if (!elementShadow->distributor().needsDistribution())
+        ShadowRoot* currentRoot = current->shadowRoot();
+        if (!currentRoot->distributor().needsDistribution())
             break;
-
-        elementShadows.append(elementShadow);
+        shadowRoots.append(currentRoot);
     }
 
-    for (size_t i = elementShadows.size(); i > 0; --i)
-        elementShadows[i - 1]->distributor().distribute(elementShadows[i - 1]->host());
+    for (size_t i = shadowRoots.size(); i > 0; --i)
+        shadowRoots[i - 1]->distributor().distribute(shadowRoots[i - 1]->host());
 }
-
 
 void ContentDistributor::invalidateDistribution(Element* host)
 {

@@ -31,7 +31,6 @@
 #include "config.h"
 #include "InsertionPoint.h"
 
-#include "ElementShadow.h"
 #include "HTMLNames.h"
 #include "QualifiedName.h"
 #include "ShadowRoot.h"
@@ -118,8 +117,7 @@ void InsertionPoint::childrenChanged(bool changedByParser, Node* beforeChange, N
 {
     HTMLElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
     if (ShadowRoot* root = containingShadowRoot())
-        if (ElementShadow* rootOwner = root->owner())
-            rootOwner->invalidateDistribution();
+        root->invalidateDistribution();
 }
 
 Node::InsertionNotificationRequest InsertionPoint::insertedInto(ContainerNode* insertionPoint)
@@ -127,10 +125,8 @@ Node::InsertionNotificationRequest InsertionPoint::insertedInto(ContainerNode* i
     HTMLElement::insertedInto(insertionPoint);
 
     if (ShadowRoot* root = containingShadowRoot()) {
-        if (ElementShadow* rootOwner = root->owner()) {
-            rootOwner->distributor().didShadowBoundaryChange(root->host());
-            rootOwner->distributor().invalidateInsertionPointList();
-        }
+        root->distributor().didShadowBoundaryChange(root->host());
+        root->distributor().invalidateInsertionPointList();
     }
 
     return InsertionDone;
@@ -142,11 +138,9 @@ void InsertionPoint::removedFrom(ContainerNode* insertionPoint)
     if (!root)
         root = insertionPoint->containingShadowRoot();
 
-    // host can be null when removedFrom() is called from ElementShadow destructor.
-    ElementShadow* rootOwner = root ? root->owner() : 0;
-    if (rootOwner) {
-        rootOwner->invalidateDistribution();
-        rootOwner->distributor().invalidateInsertionPointList();
+    if (root && root->host()) {
+        root->invalidateDistribution();
+        root->distributor().invalidateInsertionPointList();
     }
 
     // Since this insertion point is no longer visible from the shadow subtree, it need to clean itself up.
@@ -217,10 +211,10 @@ Node* InsertionPoint::previousDistributedTo(const Node* node) const
 
 InsertionPoint* resolveReprojection(const Node* projectedNode)
 {
-    if (ElementShadow* shadow = shadowOfParentForDistribution(projectedNode)) {
+    if (ShadowRoot* shadowRoot = shadowRootOfParentForDistribution(projectedNode)) {
         if (ShadowRoot* root = projectedNode->containingShadowRoot())
             ContentDistributor::ensureDistribution(root);
-        return shadow->distributor().findInsertionPointFor(projectedNode);
+        return shadowRoot->distributor().findInsertionPointFor(projectedNode);
     }
     return 0;
 }

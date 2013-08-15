@@ -27,7 +27,6 @@
 #include "EventDispatcher.h"
 
 #include "ContainerNode.h"
-#include "ElementShadow.h"
 #include "EventContext.h"
 #include "EventDispatchMediator.h"
 #include "EventPathWalker.h"

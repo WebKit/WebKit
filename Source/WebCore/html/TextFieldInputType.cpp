@@ -35,7 +35,6 @@
 #include "BeforeTextInsertedEvent.h"
 #include "Chrome.h"
 #include "Editor.h"
-#include "ElementShadow.h"
 #include "FormDataList.h"
 #include "Frame.h"
 #include "FrameSelection.h"
@@ -225,7 +224,7 @@ bool TextFieldInputType::shouldHaveSpinButton() const
 
 void TextFieldInputType::createShadowSubtree()
 {
-    ASSERT(element()->shadow());
+    ASSERT(element()->shadowRoot());
 
     ASSERT(!m_innerText);
     ASSERT(!m_innerBlock);

@@ -1074,7 +1074,7 @@ bool childAttachedAllowedWhenAttachingChildren(ContainerNode* node)
     if (node->isInsertionPoint())
         return true;
 
-    if (node->isElementNode() && toElement(node)->shadow())
+    if (node->isElementNode() && toElement(node)->shadowRoot())
         return true;
 
     return false;

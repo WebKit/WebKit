@@ -67,16 +67,16 @@ public:
     void didShadowBoundaryChange(Element* host);
 
     static void ensureDistribution(ShadowRoot*);
+    void distribute(Element* host);
+    bool needsDistribution() const;
 
 private:
     const Vector<RefPtr<InsertionPoint> >& ensureInsertionPointList(ShadowRoot*);
 
-    void distribute(Element* host);
     bool invalidate(Element* host);
 
     void setValidity(Validity validity) { m_validity = validity; }
     bool isValid() const { return m_validity == Valid; }
-    bool needsDistribution() const;
     bool needsInvalidation() const { return m_validity != Invalidated; }
 
     Vector<RefPtr<InsertionPoint> > m_insertionPointList;

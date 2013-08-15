@@ -28,7 +28,6 @@
 #include "ShadowRoot.h"
 
 #include "ContentDistributor.h"
-#include "ElementShadow.h"
 #include "ElementTraversal.h"
 #include "HistogramSupport.h"
 #include "InsertionPoint.h"
@@ -41,6 +40,7 @@ namespace WebCore {
 
 struct SameSizeAsShadowRoot : public DocumentFragment, public TreeScope {
     unsigned countersAndFlags[1];
+    ContentDistributor distributor;
 };
 
 COMPILE_ASSERT(sizeof(ShadowRoot) == sizeof(SameSizeAsShadowRoot), shadowroot_should_stay_small);
@@ -148,6 +148,8 @@ void ShadowRoot::setResetStyleInheritance(bool value)
 
 void ShadowRoot::attach(const Element::AttachContext& context)
 {
+    if (attached())
+        return;
     StyleResolver& styleResolver = document()->ensureStyleResolver();
     styleResolver.pushParentShadowRoot(this);
 
@@ -159,7 +161,7 @@ void ShadowRoot::attach(const Element::AttachContext& context)
             continue;
         }
         if (child->isElementNode())
-            toElement(child)->attach(context);
+            toElement(child)->attach(childrenContext);
     }
 
     styleResolver.popParentShadowRoot(this);
@@ -170,6 +172,8 @@ void ShadowRoot::attach(const Element::AttachContext& context)
 
 void ShadowRoot::detach(const Element::AttachContext& context)
 {
+    if (!attached())
+        return;
     Element::AttachContext childrenContext(context);
     childrenContext.resolvedStyle = 0;
     for (Node* child = firstChild(); child; child = child->nextSibling()) {
@@ -190,7 +194,7 @@ void ShadowRoot::childrenChanged(bool changedByParser, Node* beforeChange, Node*
         return;
 
     ContainerNode::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
-    owner()->invalidateDistribution();
+    invalidateDistribution();
 }
 
 void ShadowRoot::registerScopedHTMLStyleChild()
@@ -204,6 +208,13 @@ void ShadowRoot::unregisterScopedHTMLStyleChild()
     ASSERT(hasScopedHTMLStyleChild() && m_numberOfStyles > 0);
     --m_numberOfStyles;
     setHasScopedHTMLStyleChild(m_numberOfStyles > 0);
+}
+
+void ShadowRoot::removeAllEventListeners()
+{
+    DocumentFragment::removeAllEventListeners();
+    for (Node* node = firstChild(); node; node = NodeTraversal::next(node))
+        node->removeAllEventListeners();
 }
 
 }

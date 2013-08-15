@@ -35,7 +35,6 @@
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
 #include "DOMTokenList.h"
-#include "ElementShadow.h"
 #include "ExceptionCodePlaceholder.h"
 #include "HTMLCollection.h"
 #include "HTMLDataListElement.h"

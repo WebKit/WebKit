@@ -31,7 +31,6 @@
 #include "CSSValueKeywords.h"
 #include "Document.h"
 #include "Editor.h"
-#include "ElementShadow.h"
 #include "Event.h"
 #include "EventHandler.h"
 #include "EventNames.h"

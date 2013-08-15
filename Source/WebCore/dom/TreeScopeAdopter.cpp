@@ -28,7 +28,6 @@
 #include "Attr.h"
 #include "Document.h"
 #include "ElementRareData.h"
-#include "ElementShadow.h"
 #include "NodeRareData.h"
 #include "NodeTraversal.h"
 #include "RenderStyle.h"

@@ -24,7 +24,6 @@
 #if ENABLE(SVG)
 #include "SVGTRefElement.h"
 
-#include "ElementShadow.h"
 #include "EventListener.h"
 #include "EventNames.h"
 #include "ExceptionCodePlaceholder.h"
@@ -150,8 +149,8 @@ void SVGTRefElement::updateReferencedText(Element* target)
     if (target)
         textContent = target->textContent();
 
-    ASSERT(shadow());
-    ShadowRoot* root = shadow()->shadowRoot();
+    ASSERT(shadowRoot());
+    ShadowRoot* root = shadowRoot();
     if (!root->firstChild())
         root->appendChild(Text::create(document(), textContent), ASSERT_NO_EXCEPTION);
     else {
@@ -167,8 +166,8 @@ void SVGTRefElement::detachTarget()
 
     String emptyContent;
 
-    ASSERT(shadow());
-    Node* container = shadow()->shadowRoot()->firstChild();
+    ASSERT(shadowRoot());
+    Node* container = shadowRoot()->firstChild();
     if (container)
         container->setTextContent(emptyContent, IGNORE_EXCEPTION);
 

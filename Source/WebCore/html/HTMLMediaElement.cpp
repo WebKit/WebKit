@@ -40,7 +40,6 @@
 #include "CSSValueKeywords.h"
 #include "DiagnosticLoggingKeys.h"
 #include "DocumentLoader.h"
-#include "ElementShadow.h"
 #include "ElementTraversal.h"
 #include "Event.h"
 #include "EventNames.h"

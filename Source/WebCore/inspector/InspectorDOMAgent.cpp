@@ -53,7 +53,6 @@
 #include "DocumentFragment.h"
 #include "DocumentType.h"
 #include "Element.h"
-#include "ElementShadow.h"
 #include "Event.h"
 #include "EventContext.h"
 #include "EventListener.h"
@@ -357,10 +356,8 @@ void InspectorDOMAgent::unbind(Node* node, NodeToIdMap* nodesMap)
     }
 
     if (node->isElementNode()) {
-        if (ElementShadow* shadow = toElement(node)->shadow()) {
-            if (ShadowRoot* root = shadow->shadowRoot())
-                unbind(root, nodesMap);
-        }
+        if (ShadowRoot* root = toElement(node)->shadowRoot())
+            unbind(root, nodesMap);
     }
 
     nodesMap->remove(node);
@@ -1415,11 +1412,9 @@ PassRefPtr<TypeBuilder::DOM::Node> InspectorDOMAgent::buildObjectForNode(Node* n
                 value->setContentDocument(buildObjectForNode(doc, 0, nodesMap));
         }
 
-        ElementShadow* shadow = element->shadow();
-        if (shadow) {
+        if (ShadowRoot* root = element->shadowRoot()) {
             RefPtr<TypeBuilder::Array<TypeBuilder::DOM::Node> > shadowRoots = TypeBuilder::Array<TypeBuilder::DOM::Node>::create();
-            if (ShadowRoot* root = shadow->shadowRoot())
-                shadowRoots->addItem(buildObjectForNode(root, 0, nodesMap));
+            shadowRoots->addItem(buildObjectForNode(root, 0, nodesMap));
             value->setShadowRoots(shadowRoots);
         }
 

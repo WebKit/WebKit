@@ -28,6 +28,7 @@
 #define ShadowRoot_h
 
 #include "ContainerNode.h"
+#include "ContentDistributor.h"
 #include "Document.h"
 #include "DocumentFragment.h"
 #include "Element.h"
@@ -35,8 +36,6 @@
 #include "TreeScope.h"
 
 namespace WebCore {
-
-class ElementShadow;
 
 class ShadowRoot FINAL : public DocumentFragment, public TreeScope {
 public:
@@ -62,7 +61,6 @@ public:
     void setResetStyleInheritance(bool);
 
     Element* host() const { return toElement(parentOrShadowHostNode()); }
-    ElementShadow* owner() const { return host() ? host()->shadow() : 0; }
 
     String innerHTML() const;
     void setInnerHTML(const String&, ExceptionCode&);
@@ -78,6 +76,11 @@ public:
     ShadowRootType type() const { return static_cast<ShadowRootType>(m_type); }
 
     PassRefPtr<Node> cloneNode(bool, ExceptionCode&);
+
+    ContentDistributor& distributor() { return m_distributor; }
+    void invalidateDistribution() { m_distributor.invalidateDistribution(host()); }
+
+    void removeAllEventListeners();
 
 private:
     ShadowRoot(Document*, ShadowRootType);
@@ -96,6 +99,8 @@ private:
     unsigned m_applyAuthorStyles : 1;
     unsigned m_resetStyleInheritance : 1;
     unsigned m_type : 1;
+
+    ContentDistributor m_distributor;
 };
 
 inline Element* ShadowRoot::activeElement() const
@@ -112,6 +117,13 @@ inline const ShadowRoot* toShadowRoot(const Node* node)
 inline ShadowRoot* toShadowRoot(Node* node)
 {
     return const_cast<ShadowRoot*>(toShadowRoot(static_cast<const Node*>(node)));
+}
+
+inline ShadowRoot* Node::shadowRoot() const
+{
+    if (!isElementNode())
+        return 0;
+    return toElement(this)->shadowRoot();
 }
 
 } // namespace

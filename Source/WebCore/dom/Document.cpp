@@ -59,7 +59,6 @@
 #include "DocumentType.h"
 #include "Editor.h"
 #include "Element.h"
-#include "ElementShadow.h"
 #include "ElementTraversal.h"
 #include "EntityReference.h"
 #include "Event.h"

@@ -35,7 +35,6 @@
 #include "CSSPropertyNames.h"
 #include "Chrome.h"
 #include "Color.h"
-#include "ElementShadow.h"
 #include "HTMLDataListElement.h"
 #include "HTMLDivElement.h"
 #include "HTMLInputElement.h"
@@ -117,7 +116,7 @@ Color ColorInputType::valueAsColor() const
 
 void ColorInputType::createShadowSubtree()
 {
-    ASSERT(element()->shadow());
+    ASSERT(element()->shadowRoot());
 
     Document* document = element()->document();
     RefPtr<HTMLDivElement> wrapperElement = HTMLDivElement::create(document);

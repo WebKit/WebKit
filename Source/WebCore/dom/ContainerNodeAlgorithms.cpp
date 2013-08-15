@@ -27,7 +27,6 @@
 #include "ContainerNodeAlgorithms.h"
 
 #include "Element.h"
-#include "ElementShadow.h"
 #include "HTMLFrameOwnerElement.h"
 
 namespace WebCore {
@@ -46,11 +45,9 @@ void ChildNodeInsertionNotifier::notifyDescendantInsertedIntoDocument(ContainerN
     if (!node->isElementNode())
         return;
 
-    if (ElementShadow* shadow = toElement(node)->shadow()) {
-        if (RefPtr<ShadowRoot> root = shadow->shadowRoot()) {
-            if (node->inDocument() && root->host() == node)
-                notifyNodeInsertedIntoDocument(root.get());
-        }
+    if (RefPtr<ShadowRoot> root = toElement(node)->shadowRoot()) {
+        if (node->inDocument() && root->host() == node)
+            notifyNodeInsertedIntoDocument(root.get());
     }
 }
 
@@ -82,11 +79,9 @@ void ChildNodeRemovalNotifier::notifyDescendantRemovedFromDocument(ContainerNode
     if (node->document()->cssTarget() == node)
         node->document()->setCSSTarget(0);
 
-    if (ElementShadow* shadow = toElement(node)->shadow()) {
-        if (RefPtr<ShadowRoot> root = shadow->shadowRoot()) {
-            if (!node->inDocument() && root->host() == node)
-                notifyNodeRemovedFromDocument(root.get());
-        }
+    if (RefPtr<ShadowRoot> root = toElement(node)->shadowRoot()) {
+        if (!node->inDocument() && root->host() == node)
+            notifyNodeRemovedFromDocument(root.get());
     }
 }
 
@@ -100,16 +95,8 @@ void ChildNodeRemovalNotifier::notifyDescendantRemovedFromTree(ContainerNode* no
     if (!node->isElementNode())
         return;
 
-    if (ElementShadow* shadow = toElement(node)->shadow()) {
-        if (RefPtr<ShadowRoot> root = shadow->shadowRoot())
-            notifyNodeRemovedFromTree(root.get());
-    }
-}
-
-void ChildFrameDisconnector::collectFrameOwners(ElementShadow* shadow)
-{
-    if (ShadowRoot* root = shadow->shadowRoot())
-        collectFrameOwners(root);
+    if (RefPtr<ShadowRoot> root = toElement(node)->shadowRoot())
+        notifyNodeRemovedFromTree(root.get());
 }
 
 #ifndef NDEBUG
@@ -121,10 +108,8 @@ unsigned assertConnectedSubrameCountIsConsistent(Node* node)
         if (node->isFrameOwnerElement() && toFrameOwnerElement(node)->contentFrame())
             count++;
 
-        if (ElementShadow* shadow = toElement(node)->shadow()) {
-            if (ShadowRoot* root = shadow->shadowRoot())
-                count += assertConnectedSubrameCountIsConsistent(root);
-        }
+        if (ShadowRoot* root = toElement(node)->shadowRoot())
+            count += assertConnectedSubrameCountIsConsistent(root);
     }
 
     for (Node* child = node->firstChild(); child; child = child->nextSibling())

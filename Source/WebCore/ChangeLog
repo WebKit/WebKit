@@ -1,3 +1,137 @@
+2013-08-15  Antti Koivisto  <antti@apple.com>
+
+        <https://webkit.org/b/119834> Remove ElementShadow
+
+        Reviewed by Anders Carlsson.
+
+        It is 1:1 with ShadowRoot and has virtually no functionality. What little there is can be moved to ShadowRoot or Element.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.exp.in:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::locateCousinList):
+        * css/StyleScopeResolver.cpp:
+        (WebCore::StyleScopeResolver::styleSharingCandidateMatchesHostRules):
+        (WebCore::StyleScopeResolver::matchHostRules):
+        * dom/ComposedShadowTreeWalker.cpp:
+        (WebCore::nodeCanBeDistributed):
+        (WebCore::ComposedShadowTreeWalker::traverseChild):
+        * dom/ContainerNode.cpp:
+        (WebCore::childAttachedAllowedWhenAttachingChildren):
+        * dom/ContainerNodeAlgorithms.cpp:
+        (WebCore::ChildNodeInsertionNotifier::notifyDescendantInsertedIntoDocument):
+        (WebCore::ChildNodeRemovalNotifier::notifyDescendantRemovedFromDocument):
+        (WebCore::ChildNodeRemovalNotifier::notifyDescendantRemovedFromTree):
+        (WebCore::assertConnectedSubrameCountIsConsistent):
+        * dom/ContainerNodeAlgorithms.h:
+        (WebCore::ChildFrameDisconnector::collectFrameOwners):
+        * dom/DOMAllInOne.cpp:
+        * dom/Document.cpp:
+        * dom/Element.cpp:
+        (WebCore::Element::~Element):
+        (WebCore::Element::attach):
+        (WebCore::Element::detach):
+        (WebCore::Element::shadowRoot):
+        (WebCore::Element::didAffectSelector):
+        (WebCore::Element::addShadowRoot):
+        (WebCore::Element::removeShadowRoot):
+        
+            Move addShadowRoot and removeShadowRoot here from ElementShadow.
+
+        (WebCore::Element::createShadowRoot):
+        (WebCore::Element::authorShadowRoot):
+        (WebCore::Element::userAgentShadowRoot):
+        (WebCore::Element::ensureUserAgentShadowRoot):
+        (WebCore::Element::childrenChanged):
+        (WebCore::Element::removeAllEventListeners):
+        * dom/Element.h:
+        (WebCore::isShadowHost):
+        * dom/ElementRareData.h:
+        (WebCore::ElementRareData::clearShadowRoot):
+        (WebCore::ElementRareData::shadowRoot):
+        (WebCore::ElementRareData::setShadowRoot):
+        (WebCore::ElementRareData::~ElementRareData):
+        * dom/ElementShadow.cpp: Removed.
+        * dom/ElementShadow.h: Removed.
+        * dom/EventDispatcher.cpp:
+        * dom/EventPathWalker.cpp:
+        (WebCore::EventPathWalker::moveToParent):
+        * dom/Node.cpp:
+        (WebCore::Node::needsShadowTreeWalkerSlow):
+        * dom/NodeRenderingContext.cpp:
+        * dom/NodeRenderingContext.h:
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::attach):
+        (WebCore::ShadowRoot::detach):
+        
+            Move attached() tests from ElementShadow.
+
+        (WebCore::ShadowRoot::childrenChanged):
+        (WebCore::ShadowRoot::removeAllEventListeners):
+        
+            Move here from ElementShadow.
+
+        * dom/ShadowRoot.h:
+        (WebCore::Node::shadowRoot):
+        * dom/TreeScopeAdopter.cpp:
+        * html/ColorInputType.cpp:
+        (WebCore::ColorInputType::createShadowSubtree):
+        * html/FileInputType.cpp:
+        (WebCore::FileInputType::createShadowSubtree):
+        (WebCore::FileInputType::disabledAttributeChanged):
+        (WebCore::FileInputType::multipleAttributeChanged):
+        * html/HTMLFormControlElement.cpp:
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::canStartSelection):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::updateType):
+        * html/HTMLKeygenElement.cpp:
+        * html/HTMLMediaElement.cpp:
+        * html/HTMLTextAreaElement.cpp:
+        * html/InputType.cpp:
+        * html/RangeInputType.cpp:
+        (WebCore::RangeInputType::handleMouseDownEvent):
+        (WebCore::RangeInputType::createShadowSubtree):
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::createShadowSubtree):
+        * html/ValidationMessage.cpp:
+        * html/shadow/ContentDistributor.cpp:
+        (WebCore::ContentDistributor::distribute):
+        (WebCore::ContentDistributor::ensureDistribution):
+        * html/shadow/ContentDistributor.h:
+        (WebCore::ContentDistributor::isValid):
+        * html/shadow/InsertionPoint.cpp:
+        (WebCore::InsertionPoint::childrenChanged):
+        (WebCore::InsertionPoint::insertedInto):
+        (WebCore::InsertionPoint::removedFrom):
+        (WebCore::resolveReprojection):
+        * html/shadow/InsertionPoint.h:
+        (WebCore::shadowRootOfParentForDistribution):
+        * html/shadow/SliderThumbElement.cpp:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::unbind):
+        (WebCore::InspectorDOMAgent::buildObjectForNode):
+        * page/FocusController.cpp:
+        (WebCore::FocusNavigationScope::focusNavigationScopeOwnedByShadowHost):
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::uploadButton):
+        * rendering/RenderTheme.cpp:
+        * style/StyleResolveTree.cpp:
+        (WebCore::Style::resolveTree):
+        * svg/SVGTRefElement.cpp:
+        (WebCore::SVGTRefElement::updateReferencedText):
+        (WebCore::SVGTRefElement::detachTarget):
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::clearResourceReferences):
+        (WebCore::SVGUseElement::buildShadowAndInstanceTree):
+        (WebCore::SVGUseElement::buildShadowTree):
+        * testing/Internals.cpp:
+        (WebCore::Internals::ensureShadowRoot):
+        (WebCore::Internals::shadowRoot):
+
 2013-08-15  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt] memory leak in WebCore::FontCache::getLastResortFallbackFont

@@ -43,7 +43,6 @@ class DOMStringMap;
 class DOMTokenList;
 class Element;
 class ElementRareData;
-class ElementShadow;
 class HTMLDocument;
 class ShareableElementData;
 class IntSize;
@@ -432,8 +431,7 @@ public:
     virtual bool rendererIsNeeded(const NodeRenderingContext&);
     void didAffectSelector(AffectedSelectorMask);
 
-    ElementShadow* shadow() const;
-    ElementShadow& ensureShadow();
+    ShadowRoot* shadowRoot() const;
     PassRefPtr<ShadowRoot> createShadowRoot(ExceptionCode&);
     ShadowRoot* authorShadowRoot() const;
 
@@ -763,7 +761,9 @@ private:
     virtual PassRefPtr<Node> cloneNode(bool deep) OVERRIDE;
     virtual PassRefPtr<Element> cloneElementWithoutAttributesAndChildren();
 
-    QualifiedName m_tagName;
+    void addShadowRoot(PassRefPtr<ShadowRoot>);
+    void removeShadowRoot();
+
     bool rareDataStyleAffectedByEmpty() const;
     bool rareDataChildrenAffectedByHover() const;
     bool rareDataChildrenAffectedByActive() const;
@@ -794,9 +794,10 @@ private:
 
     bool isJavaScriptURLAttribute(const Attribute&) const;
 
+    QualifiedName m_tagName;
     RefPtr<ElementData> m_elementData;
 };
-    
+
 inline Element* toElement(Node* node)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(!node || node->isElementNode());
@@ -962,7 +963,7 @@ inline void Node::removedFrom(ContainerNode* insertionPoint)
 
 inline bool isShadowHost(const Node* node)
 {
-    return node && node->isElementNode() && toElement(node)->shadow();
+    return node && node->isElementNode() && toElement(node)->shadowRoot();
 }
 
 inline unsigned ElementData::length() const

@@ -27,6 +27,7 @@
 #include "HTMLFrameOwnerElement.h"
 #include "InspectorInstrumentation.h"
 #include "NodeTraversal.h"
+#include "ShadowRoot.h"
 #include <wtf/Assertions.h>
 
 namespace WebCore {
@@ -275,7 +276,6 @@ public:
 
 private:
     void collectFrameOwners(Node* root);
-    void collectFrameOwners(ElementShadow*);
     void disconnectCollectedFrameOwners();
 
     Vector<RefPtr<HTMLFrameOwnerElement>, 10> m_frameOwners;
@@ -297,7 +297,7 @@ inline void ChildFrameDisconnector::collectFrameOwners(Node* root)
     for (Node* child = root->firstChild(); child; child = child->nextSibling())
         collectFrameOwners(child);
 
-    ElementShadow* shadow = root->isElementNode() ? toElement(root)->shadow() : 0;
+    ShadowRoot* shadow = root->isElementNode() ? toElement(root)->shadowRoot() : 0;
     if (shadow)
         collectFrameOwners(shadow);
 }

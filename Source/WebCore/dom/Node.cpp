@@ -49,7 +49,6 @@
 #include "DocumentType.h"
 #include "Element.h"
 #include "ElementRareData.h"
-#include "ElementShadow.h"
 #include "ElementTraversal.h"
 #include "Event.h"
 #include "EventContext.h"
@@ -1048,7 +1047,7 @@ Node* Node::insertionParentForBinding() const
 
 bool Node::needsShadowTreeWalkerSlow() const
 {
-    return (isShadowRoot() || (isElementNode() && (isInsertionPoint() || isPseudoElement() || toElement(this)->hasPseudoElements() || toElement(this)->shadow())));
+    return (isShadowRoot() || (isElementNode() && (isInsertionPoint() || isPseudoElement() || toElement(this)->hasPseudoElements() || toElement(this)->shadowRoot())));
 }
 
 bool Node::isRootEditableElement() const

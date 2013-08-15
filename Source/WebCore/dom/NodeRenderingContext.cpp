@@ -28,7 +28,6 @@
 
 #include "ContainerNode.h"
 #include "ContentDistributor.h"
-#include "ElementShadow.h"
 #include "FlowThreadController.h"
 #include "HTMLContentElement.h"
 #include "HTMLInputElement.h"

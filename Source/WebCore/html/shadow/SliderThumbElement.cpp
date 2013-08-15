@@ -34,7 +34,6 @@
 #include "SliderThumbElement.h"
 
 #include "CSSValueKeywords.h"
-#include "ElementShadow.h"
 #include "Event.h"
 #include "EventHandler.h"
 #include "Frame.h"

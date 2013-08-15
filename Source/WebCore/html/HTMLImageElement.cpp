@@ -178,7 +178,7 @@ RenderObject* HTMLImageElement::createRenderer(RenderArena* arena, RenderStyle* 
 
 bool HTMLImageElement::canStartSelection() const
 {
-    if (shadow())
+    if (shadowRoot())
         return HTMLElement::canStartSelection();
 
     return false;

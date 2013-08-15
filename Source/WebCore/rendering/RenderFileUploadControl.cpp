@@ -21,7 +21,6 @@
 #include "config.h"
 #include "RenderFileUploadControl.h"
 
-#include "ElementShadow.h"
 #include "FileList.h"
 #include "Font.h"
 #include "GraphicsContext.h"
@@ -228,9 +227,9 @@ HTMLInputElement* RenderFileUploadControl::uploadButton() const
 {
     HTMLInputElement* input = toHTMLInputElement(node());
 
-    ASSERT(input->shadow());
+    ASSERT(input->shadowRoot());
 
-    Node* buttonNode = input->shadow()->shadowRoot()->firstChild();
+    Node* buttonNode = input->shadowRoot()->firstChild();
     return buttonNode && buttonNode->isHTMLElement() && isHTMLInputElement(buttonNode) ? toHTMLInputElement(buttonNode) : 0;
 }
 

@@ -24,10 +24,10 @@
 
 #include "ClassList.h"
 #include "DatasetDOMStringMap.h"
-#include "ElementShadow.h"
 #include "NamedNodeMap.h"
 #include "NodeRareData.h"
 #include "PseudoElement.h"
+#include "ShadowRoot.h"
 #include "StyleInheritedData.h"
 #include <wtf/OwnPtr.h>
 
@@ -96,14 +96,9 @@ public:
     unsigned childIndex() const { return m_childIndex; }
     void setChildIndex(unsigned index) { m_childIndex = index; }
 
-    void clearShadow() { m_shadow = nullptr; }
-    ElementShadow* shadow() const { return m_shadow.get(); }
-    ElementShadow& ensureShadow()
-    {
-        if (!m_shadow)
-            m_shadow = ElementShadow::create();
-        return *m_shadow;
-    }
+    void clearShadowRoot() { m_shadowRoot = nullptr; }
+    ShadowRoot* shadowRoot() const { return m_shadowRoot.get(); }
+    void setShadowRoot(PassRefPtr<ShadowRoot> shadowRoot) { m_shadowRoot = shadowRoot; }
 
     NamedNodeMap* attributeMap() const { return m_attributeMap.get(); }
     void setAttributeMap(PassOwnPtr<NamedNodeMap> attributeMap) { m_attributeMap = attributeMap; }
@@ -171,7 +166,7 @@ private:
 
     OwnPtr<DatasetDOMStringMap> m_dataset;
     OwnPtr<ClassList> m_classList;
-    OwnPtr<ElementShadow> m_shadow;
+    RefPtr<ShadowRoot> m_shadowRoot;
     OwnPtr<NamedNodeMap> m_attributeMap;
 
     RefPtr<PseudoElement> m_generatedBefore;
@@ -219,7 +214,7 @@ inline ElementRareData::ElementRareData(RenderObject* renderer)
 
 inline ElementRareData::~ElementRareData()
 {
-    ASSERT(!m_shadow);
+    ASSERT(!m_shadowRoot);
     ASSERT(!m_generatedBefore);
     ASSERT(!m_generatedAfter);
 }

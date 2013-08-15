@@ -35,6 +35,7 @@
 #include "ClassList.h"
 #include "ClientRect.h"
 #include "ClientRectList.h"
+#include "ContainerNodeAlgorithms.h"
 #include "CustomElementRegistry.h"
 #include "DOMTokenList.h"
 #include "DatasetDOMStringMap.h"
@@ -174,7 +175,7 @@ Element::~Element()
         ElementRareData* data = elementRareData();
         data->setPseudoElement(BEFORE, 0);
         data->setPseudoElement(AFTER, 0);
-        data->clearShadow();
+        removeShadowRoot();
     }
 
     if (hasSyntheticAttrChildNodes())
@@ -1426,9 +1427,9 @@ void Element::attach(const AttachContext& context)
     updatePseudoElement(BEFORE);
 
     // When a shadow root exists, it does the work of attaching the children.
-    if (ElementShadow* shadow = this->shadow()) {
+    if (ShadowRoot* shadowRoot = this->shadowRoot()) {
         parentPusher.push();
-        shadow->attach(context);
+        shadowRoot->attach(context);
     } else if (firstChild())
         parentPusher.push();
 
@@ -1495,8 +1496,8 @@ void Element::detach(const AttachContext& context)
         data->setIsInsideRegion(false);
     }
 
-    if (ElementShadow* shadow = this->shadow())
-        shadow->detach(context);
+    if (ShadowRoot* shadowRoot = this->shadowRoot())
+        shadowRoot->detach(context);
 
     // Do not remove the element's hovered and active status
     // if performing a reattach.
@@ -1570,19 +1571,60 @@ PassRefPtr<RenderStyle> Element::styleForRenderer()
     return document()->ensureStyleResolver().styleForElement(this);
 }
 
-ElementShadow* Element::shadow() const
+ShadowRoot* Element::shadowRoot() const
 {
-    return hasRareData() ? elementRareData()->shadow() : 0;
-}
-
-ElementShadow& Element::ensureShadow()
-{
-    return ensureElementRareData().ensureShadow();
+    return hasRareData() ? elementRareData()->shadowRoot() : 0;
 }
 
 void Element::didAffectSelector(AffectedSelectorMask)
 {
     setNeedsStyleRecalc();
+}
+
+void Element::addShadowRoot(PassRefPtr<ShadowRoot> newShadowRoot)
+{
+    ASSERT(!shadowRoot());
+
+    ShadowRoot* shadowRoot = newShadowRoot.get();
+    ensureElementRareData().setShadowRoot(newShadowRoot);
+
+    shadowRoot->setParentOrShadowHostNode(this);
+    shadowRoot->setParentTreeScope(treeScope());
+    shadowRoot->distributor().didShadowBoundaryChange(this);
+
+    ChildNodeInsertionNotifier(this).notify(shadowRoot);
+
+    // Existence of shadow roots requires the host and its children to do traversal using ComposedShadowTreeWalker.
+    setNeedsShadowTreeWalker();
+
+    // FIXME(94905): ShadowHost should be reattached during recalcStyle.
+    // Set some flag here and recreate shadow hosts' renderer in
+    // Element::recalcStyle.
+    if (attached())
+        lazyReattach();
+
+    InspectorInstrumentation::didPushShadowRoot(this, shadowRoot);
+}
+
+void Element::removeShadowRoot()
+{
+    RefPtr<ShadowRoot> oldRoot = shadowRoot();
+    if (!oldRoot)
+        return;
+    InspectorInstrumentation::willPopShadowRoot(this, oldRoot.get());
+    document()->removeFocusedNodeOfSubtree(oldRoot.get());
+
+    if (oldRoot->attached())
+        oldRoot->detach(Element::AttachContext());
+
+    elementRareData()->clearShadowRoot();
+
+    oldRoot->setParentOrShadowHostNode(0);
+    oldRoot->setParentTreeScope(document());
+
+    ChildNodeRemovalNotifier(this).notify(oldRoot.get());
+
+    oldRoot->distributor().invalidateDistribution(this);
 }
 
 PassRefPtr<ShadowRoot> Element::createShadowRoot(ExceptionCode& ec)
@@ -1591,8 +1633,10 @@ PassRefPtr<ShadowRoot> Element::createShadowRoot(ExceptionCode& ec)
         ensureUserAgentShadowRoot();
 
 #if ENABLE(SHADOW_DOM)
-    if (RuntimeEnabledFeatures::authorShadowDOMForAnyElementEnabled())
-        return ensureShadow().addShadowRoot(this, ShadowRoot::AuthorShadowRoot);
+    if (RuntimeEnabledFeatures::authorShadowDOMForAnyElementEnabled()) {
+        addShadowRoot(ShadowRoot::create(document(), ShadowRoot::AuthorShadowRoot));
+        return shadowRoot();
+    }
 #endif
 
     // Since some elements recreates shadow root dynamically, multiple shadow
@@ -1602,15 +1646,14 @@ PassRefPtr<ShadowRoot> Element::createShadowRoot(ExceptionCode& ec)
         ec = HIERARCHY_REQUEST_ERR;
         return 0;
     }
-    return ensureShadow().addShadowRoot(this, ShadowRoot::AuthorShadowRoot);
+    addShadowRoot(ShadowRoot::create(document(), ShadowRoot::AuthorShadowRoot));
+
+    return shadowRoot();
 }
 
 ShadowRoot* Element::authorShadowRoot() const
 {
-    ElementShadow* elementShadow = shadow();
-    if (!elementShadow)
-        return 0;
-    ShadowRoot* shadowRoot = elementShadow->shadowRoot();
+    ShadowRoot* shadowRoot = this->shadowRoot();
     if (shadowRoot->type() == ShadowRoot::AuthorShadowRoot)
         return shadowRoot;
     return 0;
@@ -1618,13 +1661,10 @@ ShadowRoot* Element::authorShadowRoot() const
 
 ShadowRoot* Element::userAgentShadowRoot() const
 {
-    if (ElementShadow* elementShadow = shadow()) {
-        if (ShadowRoot* shadowRoot = elementShadow->shadowRoot()) {
-            ASSERT(shadowRoot->type() == ShadowRoot::UserAgentShadowRoot);
-            return shadowRoot;
-        }
+    if (ShadowRoot* shadowRoot = this->shadowRoot()) {
+        ASSERT(shadowRoot->type() == ShadowRoot::UserAgentShadowRoot);
+        return shadowRoot;
     }
-
     return 0;
 }
 
@@ -1632,7 +1672,8 @@ ShadowRoot& Element::ensureUserAgentShadowRoot()
 {
     ShadowRoot* shadowRoot = userAgentShadowRoot();
     if (!shadowRoot) {
-        shadowRoot = ensureShadow().addShadowRoot(this, ShadowRoot::UserAgentShadowRoot);
+        addShadowRoot(ShadowRoot::create(document(), ShadowRoot::UserAgentShadowRoot));
+        shadowRoot = userAgentShadowRoot();
         didAddUserAgentShadowRoot(shadowRoot);
     }
     return *shadowRoot;
@@ -1755,15 +1796,15 @@ void Element::childrenChanged(bool changedByParser, Node* beforeChange, Node* af
     else
         checkForSiblingStyleChanges(this, renderStyle(), false, beforeChange, afterChange, childCountDelta);
 
-    if (ElementShadow * shadow = this->shadow())
-        shadow->invalidateDistribution();
+    if (ShadowRoot* shadowRoot = this->shadowRoot())
+        shadowRoot->invalidateDistribution();
 }
 
 void Element::removeAllEventListeners()
 {
     ContainerNode::removeAllEventListeners();
-    if (ElementShadow* shadow = this->shadow())
-        shadow->removeAllEventListeners();
+    if (ShadowRoot* shadowRoot = this->shadowRoot())
+        shadowRoot->removeAllEventListeners();
 }
 
 void Element::beginParsingChildren()
