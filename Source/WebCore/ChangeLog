@@ -1,3 +1,24 @@
+2013-08-15  Andy Estes  <aestes@apple.com>
+
+        <https://webkit.org/b/119853> REGRESSION (r139343): WebKit crashes when canceling a load inside webView:resource:didFinishLoadingFromDataSource:
+
+        Reviewed by Brady Eidson.
+
+        A client implementing webView:resource:didFinishLoadingFromDataSource:
+        might decide to call stopLoading: for the identifier that just finished
+        loading. If this happens we re-enter the loader and attempt to cancel a
+        load that has already finished and been removed from the set of active
+        loaders. Prevent this by clearing DocumentLoader's
+        m_identifierForLoadWithoutResourceLoader before calling
+        dispatchDidFinishLoading().
+
+        New API test: WebKit1.StopLoadingFromDidFinishLoading.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::finishedLoading): Set
+        m_identifierForLoadWithoutResourceLoader to 0 before calling
+        dispatchDidFinishLoading().
+
 2013-08-15  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac] Remove "legacy" media UI
