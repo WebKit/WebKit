@@ -1,3 +1,22 @@
+2013-08-15  Daniel Bates  <dabates@apple.com>
+
+        <https://webkit.org/b/119863> [iOS] Upstream WebCore/editing/ios
+
+        Reviewed by David Kilzer.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * editing/ios/EditorIOS.mm: Added.
+        (WebCore::Editor::newGeneralClipboard):
+        (WebCore::Editor::showFontPanel):
+        (WebCore::Editor::showStylesPanel):
+        (WebCore::Editor::showColorPanel):
+        (WebCore::Editor::setTextAlignmentForChangedBaseWritingDirection):
+        (WebCore::Editor::insertParagraphSeparatorInQuotedContent):
+        (WebCore::styleForSelectionStart):
+        (WebCore::Editor::fontForSelection):
+        (WebCore::Editor::fontAttributesForSelectionStart):
+        (WebCore::Editor::removeUnchangeableStyles):
+
 2013-08-15  Dirk Schulze  <krit@webkit.org>
 
         Implement CSS Image filter() function
