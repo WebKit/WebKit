@@ -1,5 +1,28 @@
 2013-08-14  Dean Jackson  <dino@apple.com>
 
+        <https://webkit.org/b/119827> Allow primary plug-in detection to run more than once if necessary
+
+        Reviewed by Tim Horton.
+
+        We occasionally see cases where the primary plug-in detection runs before the plugins have been added
+        to the page, especially if they do so in response to a load event. Tweak the algorithm so that it can
+        run an arbitrary number of times if it fails.
+
+        While here, also have the detection run if there has ever been a plugin in the page as opposed to any
+        current views. We may have snapshotted a plugin by now and deleted its view.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage): initialise new members.
+        (WebKit::WebPage::addPluginView): Mark that we've seen a plugin.
+        (WebKit::WebPage::resetPrimarySnapshottedPlugIn): Reset new members.
+        (WebKit::WebPage::determinePrimarySnapshottedPlugIn): Exit early if we've never
+        seen a plugin, rather than if we don't have any active views. Also, if we didn't find anything set
+        a timer to run again (maximum of two attempts at the moment).
+        * WebProcess/WebPage/WebPage.h: New members - m_numberOfPrimarySnapshotDetectionAttempts
+        and m_hasSeenPlugin.
+
+2013-08-14  Dean Jackson  <dino@apple.com>
+
         <https://webkit.org/b/119820> Add pluginView-related logging to WebPage
 
         Reviewed by Tim Horton.
