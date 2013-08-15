@@ -1,3 +1,9 @@
+2013-08-15  Simon Pena  <simon.pena@samsung.com>
+
+        [GTK] Unreviewed gardening. Rebaseline after r154057.
+
+        * platform/gtk/fast/js/dom-static-property-for-in-iteration-expected.txt:
+
 2013-08-15  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Unreviwed gardening.
