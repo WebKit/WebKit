@@ -1,3 +1,16 @@
+2013-08-15  Julien Brianceau  <jbrianceau@nds.com>
+
+        [DFG] isDouble() and isNumerical() should return true with KnownNumberUse UseKind.
+        https://bugs.webkit.org/show_bug.cgi?id=119794
+
+        Reviewed by Filip Pizlo.
+
+        This patch fixes ASSERTs failures in debug builds for sh4 and mips architecture.
+
+        * dfg/DFGUseKind.h:
+        (JSC::DFG::isNumerical):
+        (JSC::DFG::isDouble):
+
 2013-08-15  Filip Pizlo  <fpizlo@apple.com>
 
         http://trac.webkit.org/changeset/154120 accidentally changed DFGCapabilities to read the resolve type from operand 4, not 3; it should be 3.

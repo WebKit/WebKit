@@ -124,6 +124,7 @@ ALWAYS_INLINE bool isNumerical(UseKind kind)
     case KnownInt32Use:
     case RealNumberUse:
     case NumberUse:
+    case KnownNumberUse:
         return true;
     default:
         return false;
@@ -136,6 +137,7 @@ ALWAYS_INLINE bool isDouble(UseKind kind)
     case KnownInt32Use:
     case RealNumberUse:
     case NumberUse:
+    case KnownNumberUse:
         return true;
     default:
         return false;
