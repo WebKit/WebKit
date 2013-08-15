@@ -99,7 +99,7 @@ public:
     virtual JSArrayBufferView* wrap(ExecState*, JSGlobalObject*) = 0;
     
 protected:
-    WTF_EXPORT_PRIVATE ArrayBufferView(PassRefPtr<ArrayBuffer>, unsigned byteOffset);
+    JS_EXPORT_PRIVATE ArrayBufferView(PassRefPtr<ArrayBuffer>, unsigned byteOffset);
 
     inline bool setImpl(ArrayBufferView*, unsigned byteOffset);
 
