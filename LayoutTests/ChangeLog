@@ -1,3 +1,11 @@
+2013-08-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        <https://webkit.org/b/119873> REGRESSION(r154057): platform/mac/accessibility/role-subrole-roledescription.html fails
+
+        Add a test expectation.
+
+        * TestExpectations:
+
 2013-08-15  Sam White  <samuel_white@apple.com>
 
         AX: platform/mac/accessibility/role-subrole-roledescription.html is failing
