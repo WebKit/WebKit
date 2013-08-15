@@ -69,6 +69,8 @@ struct WebProcessCreationParameters {
     String cookieStorageDirectory;
     SandboxExtension::Handle cookieStorageDirectoryExtensionHandle;
 
+    bool shouldUseTestingNetworkSession;
+
     Vector<String> urlSchemesRegistererdAsEmptyDocument;
     Vector<String> urlSchemesRegisteredAsSecure;
     Vector<String> urlSchemesForWhichDomainRelaxationIsForbidden;

@@ -183,11 +183,6 @@ void WKBundleSetPopupBlockingEnabled(WKBundleRef bundleRef, WKBundlePageGroupRef
     toImpl(bundleRef)->setPopupBlockingEnabled(toImpl(pageGroupRef), enabled);
 }
 
-void WKBundleSwitchNetworkLoaderToNewTestingSession(WKBundleRef bundleRef)
-{
-    toImpl(bundleRef)->switchNetworkLoaderToNewTestingSession();
-}
-
 void WKBundleSetAuthorAndUserStylesEnabled(WKBundleRef bundleRef, WKBundlePageGroupRef pageGroupRef, bool enabled)
 {
     toImpl(bundleRef)->setAuthorAndUserStylesEnabled(toImpl(pageGroupRef), enabled);

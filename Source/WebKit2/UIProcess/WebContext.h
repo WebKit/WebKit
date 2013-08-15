@@ -229,6 +229,8 @@ public:
     void setDiskCacheDirectory(const String& dir) { m_overrideDiskCacheDirectory = dir; }
     void setCookieStorageDirectory(const String& dir) { m_overrideCookieStorageDirectory = dir; }
 
+    void useTestingNetworkSession();
+
     void allowSpecificHTTPSCertificateForHost(const WebCertificateInfo*, const String& host);
 
     WebProcessProxy* ensureSharedWebProcess();
@@ -464,6 +466,8 @@ private:
     String m_overrideLocalStorageDirectory;
     String m_overrideDiskCacheDirectory;
     String m_overrideCookieStorageDirectory;
+
+    bool m_shouldUseTestingNetworkSession;
 
     bool m_processTerminationEnabled;
 

@@ -61,6 +61,7 @@ void WebProcessCreationParameters::encode(CoreIPC::ArgumentEncoder& encoder) con
     encoder << diskCacheDirectoryExtensionHandle;
     encoder << cookieStorageDirectory;
     encoder << cookieStorageDirectoryExtensionHandle;
+    encoder << shouldUseTestingNetworkSession;
     encoder << urlSchemesRegistererdAsEmptyDocument;
     encoder << urlSchemesRegisteredAsSecure;
     encoder << urlSchemesForWhichDomainRelaxationIsForbidden;
@@ -139,6 +140,8 @@ bool WebProcessCreationParameters::decode(CoreIPC::ArgumentDecoder& decoder, Web
     if (!decoder.decode(parameters.cookieStorageDirectory))
         return false;
     if (!decoder.decode(parameters.cookieStorageDirectoryExtensionHandle))
+        return false;
+    if (!decoder.decode(parameters.shouldUseTestingNetworkSession))
         return false;
     if (!decoder.decode(parameters.urlSchemesRegistererdAsEmptyDocument))
         return false;

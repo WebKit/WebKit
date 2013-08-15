@@ -38,10 +38,11 @@ NetworkProcessCreationParameters::NetworkProcessCreationParameters()
 
 void NetworkProcessCreationParameters::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
-    encoder << diskCacheDirectory;
-    encoder << diskCacheDirectoryExtensionHandle;
     encoder << privateBrowsingEnabled;
     encoder.encodeEnum(cacheModel);
+    encoder << diskCacheDirectory;
+    encoder << diskCacheDirectoryExtensionHandle;
+    encoder << shouldUseTestingNetworkSession;
 #if PLATFORM(MAC)
     encoder << parentProcessName;
     encoder << uiProcessBundleIdentifier;
@@ -57,13 +58,15 @@ void NetworkProcessCreationParameters::encode(CoreIPC::ArgumentEncoder& encoder)
 
 bool NetworkProcessCreationParameters::decode(CoreIPC::ArgumentDecoder& decoder, NetworkProcessCreationParameters& result)
 {
+    if (!decoder.decode(result.privateBrowsingEnabled))
+        return false;
+    if (!decoder.decodeEnum(result.cacheModel))
+        return false;
     if (!decoder.decode(result.diskCacheDirectory))
         return false;
     if (!decoder.decode(result.diskCacheDirectoryExtensionHandle))
         return false;
-    if (!decoder.decode(result.privateBrowsingEnabled))
-        return false;
-    if (!decoder.decodeEnum(result.cacheModel))
+    if (!decoder.decode(result.shouldUseTestingNetworkSession))
         return false;
 #if PLATFORM(MAC)
     if (!decoder.decode(result.parentProcessName))

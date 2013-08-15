@@ -103,9 +103,6 @@ void InjectedBundle::initialize(WKBundleRef bundle, WKTypeRef initializationUser
 
     activateFonts();
     WKBundleActivateMacFontAscentHack(m_bundle);
-
-    // FIXME: We'd like to start with a clean state for every test, but this function can't be used more than once yet.
-    WKBundleSwitchNetworkLoaderToNewTestingSession(m_bundle);
 }
 
 void InjectedBundle::didCreatePage(WKBundlePageRef page)

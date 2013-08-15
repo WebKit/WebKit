@@ -375,6 +375,8 @@ void TestController::initialize(int argc, const char* argv[])
         WKContextSetIconDatabasePath(m_context.get(), toWK(temporaryFolder + separator + "IconDatabase" + separator + "WebpageIcons.db").get());
     }
 
+    WKContextUseTestingNetworkSession(m_context.get());
+
     platformInitializeContext();
 
     WKContextInjectedBundleClient injectedBundleClient = {

@@ -364,6 +364,11 @@ void WKContextSetUsesNetworkProcess(WKContextRef contextRef, bool usesNetworkPro
     toImpl(contextRef)->setUsesNetworkProcess(usesNetworkProcess);
 }
 
+void WKContextUseTestingNetworkSession(WKContextRef context)
+{
+    toImpl(context)->useTestingNetworkSession();
+}
+
 WKDictionaryRef WKContextCopyPlugInAutoStartOriginHashes(WKContextRef contextRef)
 {
     return toAPI(toImpl(contextRef)->plugInAutoStartOriginHashes().leakRef());

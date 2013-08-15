@@ -52,6 +52,8 @@ struct NetworkProcessCreationParameters {
     String diskCacheDirectory;
     SandboxExtension::Handle diskCacheDirectoryExtensionHandle;
 
+    bool shouldUseTestingNetworkSession;
+
 #if PLATFORM(MAC)
     String parentProcessName;
     String uiProcessBundleIdentifier;

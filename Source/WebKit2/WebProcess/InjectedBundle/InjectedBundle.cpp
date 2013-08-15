@@ -76,10 +76,6 @@
 #include <WebCore/RuntimeEnabledFeatures.h>
 #endif
 
-#if PLATFORM(MAC)
-#include "WebSystemInterface.h"
-#endif
-
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
 #include "WebNotificationManager.h"
 #endif
@@ -320,15 +316,6 @@ void InjectedBundle::setPopupBlockingEnabled(WebPageGroupProxy* pageGroup, bool 
     HashSet<Page*>::const_iterator end = pages.end();
     for (HashSet<Page*>::const_iterator iter = pages.begin(); iter != end; ++iter)
         (*iter)->settings().setJavaScriptCanOpenWindowsAutomatically(!enabled);
-}
-
-void InjectedBundle::switchNetworkLoaderToNewTestingSession()
-{
-#if PLATFORM(MAC) || USE(CFNETWORK)
-    // FIXME (NetworkProcess): Do this in network process, too.
-    InitWebCoreSystemInterface();
-    NetworkStorageSession::switchToNewTestingSession();
-#endif
 }
 
 void InjectedBundle::setAuthorAndUserStylesEnabled(WebPageGroupProxy* pageGroup, bool enabled)
