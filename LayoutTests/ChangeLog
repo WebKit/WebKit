@@ -1,3 +1,11 @@
+2013-08-15  Simon Pena  <simon.pena@samsung.com>
+
+        [GTK] Unreviewed gardening. Skip failing test.
+
+        * platform/gtk-wk1/TestExpectations:
+        http/tests/loading/unfinished-main-resource-back-to-cached-page-callbacks.html
+        is failing.
+
 2013-08-15  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt] fast/canvas/canvas-blending-transforms.html test fails on x32 after r153941.
