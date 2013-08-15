@@ -1,3 +1,27 @@
+2013-08-15  Simon Fraser  <simon.fraser@apple.com>
+
+        <https://webkit.org/b/119871> Flash of garbage pixels when playing a show on Hulu
+
+        Reviewed by Tim Horton.
+        
+        When starting a show on Hulu, there's a layer that gets marked as
+        opaque because it has a child RenderLayer whose background fills the
+        compositing layer. That child RenderLayer was recently position:fixed
+        but outside the viewport, so its viewportConstrainedNotCompositedReason
+        was set to a non-zero value.
+        
+        However, we failed to clear the viewportConstrainedNotCompositedReason
+        when the layer became non-fixed. This caused painting the opaque
+        layer to bail in RenderLayer::paintLayer(), leaving garbage.
+
+        Test: compositing/contents-opaque/fixed-to-nonfixed.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintLayer): Add an assertion to catch this error in future.
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateBacking): Make sure we clear the
+        ViewportConstrainedNotCompositedReason if the layer is no longer fixed.
+
 2013-08-15  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Consolidate WebKit Bundle Handling

@@ -1,3 +1,14 @@
+2013-08-15  Simon Fraser  <simon.fraser@apple.com>
+
+        <https://webkit.org/b/119871> Flash of garbage pixels when playing a show on Hulu
+
+        Reviewed by Tim Horton.
+        
+        Test that would hit the newly added assertion in case of failure.
+        Was unable to create a ref test that worked reliably.
+
+        * compositing/contents-opaque/fixed-to-nonfixed.html: Added.
+
 2013-08-15  Filip Pizlo  <fpizlo@apple.com>
 
         Remove a test that times out.

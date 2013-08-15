@@ -776,7 +776,8 @@ bool RenderLayerCompositor::updateBacking(RenderLayer* layer, CompositingChangeR
             if (ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator())
                 scrollingCoordinator->frameViewFixedObjectsDidChange(m_renderView->frameView());
         }
-    }
+    } else
+        layer->setViewportConstrainedNotCompositedReason(RenderLayer::NoNotCompositedReason);
     
     if (layer->backing())
         layer->backing()->updateDebugIndicators(m_showDebugBorders, m_showRepaintCounter);
