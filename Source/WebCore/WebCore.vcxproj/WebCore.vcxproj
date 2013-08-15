@@ -14418,7 +14418,6 @@
     <ClCompile Include="..\html\CheckboxInputType.cpp" />
     <ClCompile Include="..\html\ClassList.cpp" />
     <ClCompile Include="..\html\ColorInputType.cpp" />
-    <ClCompile Include="..\html\canvas\DataView.cpp" />
     <ClCompile Include="..\html\DateInputType.cpp" />
     <ClCompile Include="..\html\DateTimeInputType.cpp" />
     <ClCompile Include="..\html\DateTimeLocalInputType.cpp" />
@@ -20432,7 +20431,6 @@
     <ClInclude Include="..\html\ClassList.h" />
     <ClInclude Include="..\html\CollectionType.h" />
     <ClInclude Include="..\html\ColorInputType.h" />
-    <ClInclude Include="..\html\canvas\DataView.h" />
     <ClInclude Include="..\html\DateInputType.h" />
     <ClInclude Include="..\html\DateTimeInputType.h" />
     <ClInclude Include="..\html\DateTimeLocalInputType.h" />

@@ -1,3 +1,15 @@
+2013-08-15  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Unreviewed build fix after r15417.
+
+        * DerivedSources.cpp: Remove classes that now live in JSC.
+        * WebCore.vcxproj/WebCore.vcxproj: Remove classes no longer included in WebCore.
+        * WebCore.vcxproj/WebCore.vcxproj.filters: Ditto.
+        * bindings/js/WebCoreTypedArrayController.cpp: Add explicit namespace to avoid conflict
+        with Windows 'Unknown' type.
+        (WebCore::WebCoreTypedArrayController::JSArrayBufferOwner::isReachableFromOpaqueRoots):
+        (WebCore::WebCoreTypedArrayController::JSArrayBufferOwner::finalize):
+
 2013-08-15  Daniel Bates  <dabates@apple.com>
 
         <https://webkit.org/b/119863> [iOS] Upstream WebCore/editing/ios

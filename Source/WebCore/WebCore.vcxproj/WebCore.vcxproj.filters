@@ -5356,9 +5356,6 @@
     <ClCompile Include="..\html\canvas\CanvasStyle.cpp">
       <Filter>html\canvas</Filter>
     </ClCompile>
-    <ClCompile Include="..\html\canvas\DataView.cpp">
-      <Filter>html\canvas</Filter>
-    </ClCompile>
     <ClCompile Include="..\html\parser\HTMLResourcePreloader.cpp">
       <Filter>html\parser</Filter>
     </ClCompile>
@@ -7064,6 +7061,11 @@
     <ClCompile Include="..\platform\graphics\GLContext.cpp">
       <Filter>platform\graphics</Filter>
     </ClCompile>
+    <ClCompile Include="..\rendering\shapes\RasterShape.cpp" />
+    <ClCompile Include="..\bindings\js\WebCoreTypedArrayController.cpp" />
+    <ClCompile Include="..\style\StyleFontSizeFunctions.cpp" />
+    <ClCompile Include="..\style\StyleResolveForDocument.cpp" />
+    <ClCompile Include="..\style\StyleResolveTree.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Modules\filesystem\AsyncFileWriter.h">
@@ -13101,9 +13103,6 @@
     <ClInclude Include="..\html\canvas\CanvasStyle.h">
       <Filter>html\canvas</Filter>
     </ClInclude>
-    <ClInclude Include="..\html\canvas\DataView.h">
-      <Filter>html\canvas</Filter>
-    </ClInclude>
     <ClInclude Include="..\html\parser\HTMLResourcePreloader.h">
       <Filter>html\parser</Filter>
     </ClInclude>
@@ -14811,6 +14810,11 @@
     <ClInclude Include="..\platform\graphics\GLContext.h">
       <Filter>platform\graphics</Filter>
     </ClInclude>
+    <ClInclude Include="..\rendering\shapes\RasterShape.h" />
+    <ClInclude Include="..\dom\ElementTraversal.h" />
+    <ClInclude Include="..\style\StyleFontSizeFunctions.h" />
+    <ClInclude Include="..\style\StyleResolveForDocument.h" />
+    <ClInclude Include="..\style\StyleResolveTree.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\css\CSSGrammar.y.in">

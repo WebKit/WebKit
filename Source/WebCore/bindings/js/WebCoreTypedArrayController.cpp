@@ -51,7 +51,7 @@ JSArrayBuffer* WebCoreTypedArrayController::toJS(
 }
 
 bool WebCoreTypedArrayController::JSArrayBufferOwner::isReachableFromOpaqueRoots(
-    Handle<Unknown> handle, void*, SlotVisitor& visitor)
+    Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
 {
     JSArrayBuffer* jsArrayBuffer = jsCast<JSArrayBuffer*>(handle.get().asCell());
     if (!jsArrayBuffer->hasCustomProperties())
@@ -61,7 +61,7 @@ bool WebCoreTypedArrayController::JSArrayBufferOwner::isReachableFromOpaqueRoots
 }
 
 void WebCoreTypedArrayController::JSArrayBufferOwner::finalize(
-    Handle<Unknown> handle, void* context)
+    Handle<JSC::Unknown> handle, void* context)
 {
     JSArrayBuffer* jsArrayBuffer = static_cast<JSArrayBuffer*>(handle.get().asCell());
     DOMWrapperWorld* world = static_cast<DOMWrapperWorld*>(context);
