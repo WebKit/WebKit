@@ -1010,7 +1010,9 @@ SOURCES += \
     platform/graphics/ImageBuffer.cpp \
     platform/graphics/ImageOrientation.cpp \
     platform/graphics/ImageSource.cpp \
+    platform/graphics/IntPoint.cpp \
     platform/graphics/IntRect.cpp \
+    platform/graphics/IntSize.cpp \
     platform/graphics/Path.cpp \
     platform/graphics/PathTraversalState.cpp \
     platform/graphics/Pattern.cpp \

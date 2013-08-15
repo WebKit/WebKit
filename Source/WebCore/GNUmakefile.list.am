@@ -5851,11 +5851,13 @@ platform_sources += \
 	Source/WebCore/platform/graphics/ImageSource.h \
 	Source/WebCore/platform/graphics/InbandTextTrackPrivate.h \
 	Source/WebCore/platform/graphics/InbandTextTrackPrivateClient.h \
+	Source/WebCore/platform/graphics/IntPoint.cpp \
 	Source/WebCore/platform/graphics/IntPoint.h \
 	Source/WebCore/platform/graphics/IntPointHash.h \
 	Source/WebCore/platform/graphics/IntRect.cpp \
 	Source/WebCore/platform/graphics/IntRect.h \
 	Source/WebCore/platform/graphics/IntRectExtent.h \
+	Source/WebCore/platform/graphics/IntSize.cpp \
 	Source/WebCore/platform/graphics/IntSize.h \
 	Source/WebCore/platform/graphics/IntSizeHash.h \
 	Source/WebCore/platform/graphics/LayoutBoxExtent.cpp \

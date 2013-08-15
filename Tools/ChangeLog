@@ -1,3 +1,12 @@
+2013-08-14  Tim Horton  <timothy_horton@apple.com>
+
+        Un-inline dataLog dumpers for IntSize and IntPoint
+        https://bugs.webkit.org/show_bug.cgi?id=119697
+
+        Reviewed by Sam Weinig.
+
+        * TestWebKitAPI/GNUmakefile.am:
+
 2013-08-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         Flakiness dashboard build fix.

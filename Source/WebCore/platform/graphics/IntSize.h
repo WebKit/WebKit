@@ -200,11 +200,6 @@ inline bool operator!=(const IntSize& a, const IntSize& b)
     return a.width() != b.width() || a.height() != b.height();
 }
 
-inline void IntSize::dump(PrintStream& out) const
-{
-    out.printf("(%d x %d)", width(), height());
-}
-
 } // namespace WebCore
 
 #endif // IntSize_h

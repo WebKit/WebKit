@@ -1,3 +1,25 @@
+2013-08-14  Tim Horton  <timothy_horton@apple.com>
+
+        Un-inline dataLog dumpers for IntSize and IntPoint
+        https://bugs.webkit.org/show_bug.cgi?id=119697
+
+        Reviewed by Sam Weinig.
+
+        Avoid regressing build performance by moving IntSize::dump and IntPoint::dump elsewhere.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/IntPoint.cpp: Added.
+        (WebCore::IntPoint::dump):
+        * platform/graphics/IntPoint.h:
+        * platform/graphics/IntSize.cpp: Added.
+        (WebCore::IntSize::dump):
+        * platform/graphics/IntSize.h:
+
 2013-08-14  Chris Fleizach  <cfleizach@apple.com>
 
         <https://webkit.org/b/119824> AX: WKView does not become first responder when the voiceover cursor lands on it

@@ -203,7 +203,9 @@ Programs_TestWebKitAPI_TestGtk_LDFLAGS = \
 	$(Programs_TestWebKitAPI_TestWTF_LDFLAGS)
 
 Programs_TestWebKitAPI_TestGtk_SOURCES = \
+	Source/WebCore/platform/graphics/IntPoint.cpp \
 	Source/WebCore/platform/graphics/IntRect.cpp \
+	Source/WebCore/platform/graphics/IntSize.cpp \
 	Source/WebCore/platform/graphics/cairo/IntRectCairo.cpp \
 	Source/WebCore/platform/graphics/gtk/IntRectGtk.cpp \
 	Source/WebCore/platform/gtk/GtkInputMethodFilter.cpp \
