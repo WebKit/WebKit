@@ -34,5 +34,3 @@ webkit.org/b/119325 dom/xhtml/level3/core/nodecomparedocumentposition38.xhtml [ 
 webkit.org/b/118301 fast/dom/timer-throttling-hidden-page.html [ Skip ]
 
 webkit.org/b/119094 fast/forms/color/input-color-onchange-event.html [ Crash Pass ]
-
-webkit.org/b/119873 platform/mac/accessibility/role-subrole-roledescription.html [ Failure ]
