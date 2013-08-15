@@ -48,7 +48,6 @@
 #import "DOMTestCallbackInternal.h"
 #import "DOMTestNodeInternal.h"
 #import "ExceptionHandlers.h"
-#import "Float32Array.h"
 #import "JSMainThreadExecState.h"
 #import "KURL.h"
 #import "SerializedScriptValue.h"

@@ -25,7 +25,6 @@
 #include "JSTestCallback.h"
 
 #include "JSDOMStringList.h"
-#include "JSFloat32Array.h"
 #include "JSTestNode.h"
 #include "ScriptExecutionContext.h"
 #include "SerializedScriptValue.h"
@@ -75,7 +74,7 @@ bool JSTestCallback::callbackWithNoParam()
     return !raisedException;
 }
 
-bool JSTestCallback::callbackWithArrayParam(Float32Array* arrayParam)
+bool JSTestCallback::callbackWithArrayParam(RefPtr<Float32Array> arrayParam)
 {
     if (!canInvokeCallback())
         return true;

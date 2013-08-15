@@ -22,8 +22,6 @@
 #include "JSTestOverloadedConstructors.h"
 
 #include "ExceptionCode.h"
-#include "JSArrayBuffer.h"
-#include "JSArrayBufferView.h"
 #include "JSBlob.h"
 #include "JSDOMBinding.h"
 #include "TestOverloadedConstructors.h"
@@ -68,7 +66,7 @@ EncodedJSValue JSC_HOST_CALL JSTestOverloadedConstructorsConstructor::constructJ
     JSTestOverloadedConstructorsConstructor* castedThis = jsCast<JSTestOverloadedConstructorsConstructor*>(exec->callee());
     if (exec->argumentCount() < 1)
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
-    ArrayBufferView* arrayBufferView(toArrayBufferView(exec->argument(0)));
+    RefPtr<ArrayBufferView> arrayBufferView(toArrayBufferView(exec->argument(0)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
     RefPtr<TestOverloadedConstructors> object = TestOverloadedConstructors::create(arrayBufferView);

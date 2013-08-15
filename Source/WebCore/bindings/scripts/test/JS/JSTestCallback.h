@@ -43,7 +43,7 @@ public:
 
     // Functions
     virtual bool callbackWithNoParam();
-    virtual bool callbackWithArrayParam(Float32Array* arrayParam);
+    virtual bool callbackWithArrayParam(RefPtr<Float32Array> arrayParam);
     virtual bool callbackWithSerializedScriptValueParam(PassRefPtr<SerializedScriptValue> srzParam, const String& strArg);
     COMPILE_ASSERT(false)    virtual int callbackWithNonBoolReturnType(const String& strArg);
     virtual int customCallback(Class5* class5Param, Class6* class6Param);

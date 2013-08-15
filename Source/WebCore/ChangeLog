@@ -1,3 +1,20 @@
+2013-08-15  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, fix bindings tests after http://trac.webkit.org/changeset/154127
+
+        * bindings/scripts/test/JS/JSTestCallback.cpp:
+        (WebCore::JSTestCallback::callbackWithArrayParam):
+        * bindings/scripts/test/JS/JSTestCallback.h:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::setJSTestObjTypedArrayAttr):
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.cpp:
+        (WebCore::JSTestOverloadedConstructorsConstructor::constructJSTestOverloadedConstructors2):
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        (WebCore::jsTestTypedefsPrototypeFunctionFunc):
+        * bindings/scripts/test/ObjC/DOMFloat64Array.mm:
+        * bindings/scripts/test/ObjC/DOMTestCallback.mm:
+        * bindings/scripts/test/TestTypedArray.idl: Removed.
+
 2013-08-15  Ryosuke Niwa  <rniwa@webkit.org>
 
         Qt minimum build fix after r154116.

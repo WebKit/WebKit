@@ -32,7 +32,6 @@
 #include "JSDOMStringList.h"
 #include "JSDocument.h"
 #include "JSEventListener.h"
-#include "JSFloat32Array.h"
 #include "JSNode.h"
 #include "JSSVGDocument.h"
 #include "JSSVGPoint.h"
@@ -54,7 +53,6 @@
 #include "TestObj.h"
 #include "bool.h"
 #include <runtime/Error.h>
-#include <runtime/Float32Array.h>
 #include <runtime/JSArray.h>
 #include <runtime/JSString.h>
 #include <wtf/GetPtr.h>
@@ -1387,10 +1385,10 @@ void setJSTestObjTypedArrayAttr(ExecState* exec, JSObject* thisObject, JSValue v
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
-    Float32Array* nativeValue(toFloat32Array(value));
+    RefPtr<Float32Array> nativeValue(toFloat32Array(value));
     if (exec->hadException())
         return;
-    impl->setTypedArrayAttr(nativeValue);
+    impl->setTypedArrayAttr(nativeValue.get());
 }
 
 
