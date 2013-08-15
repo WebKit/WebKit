@@ -106,7 +106,7 @@ public:
     void addView(ArrayBufferView*);
     void removeView(ArrayBufferView*);
 
-    WTF_EXPORT_PRIVATE bool transfer(ArrayBufferContents&, Vector<RefPtr<ArrayBufferView> >& neuteredViews);
+    JS_EXPORT_PRIVATE bool transfer(ArrayBufferContents&, Vector<RefPtr<ArrayBufferView> >& neuteredViews);
     bool isNeutered() { return !m_contents.m_data; }
 
     ~ArrayBuffer() { }

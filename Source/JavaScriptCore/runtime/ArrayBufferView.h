@@ -72,10 +72,10 @@ public:
     void setNeuterable(bool flag) { m_isNeuterable = flag; }
     bool isNeuterable() const { return m_isNeuterable; }
 
-    WTF_EXPORT_PRIVATE virtual ~ArrayBufferView();
+    JS_EXPORT_PRIVATE virtual ~ArrayBufferView();
 
 protected:
-    WTF_EXPORT_PRIVATE ArrayBufferView(PassRefPtr<ArrayBuffer>, unsigned byteOffset);
+    JS_EXPORT_PRIVATE ArrayBufferView(PassRefPtr<ArrayBuffer>, unsigned byteOffset);
 
     inline bool setImpl(ArrayBufferView*, unsigned byteOffset);
 
@@ -119,7 +119,7 @@ protected:
         *numElements = std::min(remainingElements, *numElements);
     }
 
-    WTF_EXPORT_PRIVATE virtual void neuter();
+    JS_EXPORT_PRIVATE virtual void neuter();
 
     // This is the address of the ArrayBuffer's storage, plus the byte offset.
     void* m_baseAddress;

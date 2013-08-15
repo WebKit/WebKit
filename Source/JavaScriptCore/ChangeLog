@@ -1,3 +1,13 @@
+2013-08-15  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Incorrect DLL Linkage for JSC ArrayBuffer and ArrayBufferView
+        https://bugs.webkit.org/show_bug.cgi?id=119847
+
+        Reviewed by Oliver Hunt.
+
+        * runtime/ArrayBuffer.h: Switch from WTF_EXPORT_PRIVATE to JS_EXPORT_PRIVATE
+        * runtime/ArrayBufferView.h: Ditto.
+
 2013-08-15  Gavin Barraclough  <barraclough@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=119843
