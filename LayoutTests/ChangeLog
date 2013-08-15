@@ -1,3 +1,13 @@
+2013-08-15  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Unreviwed gardening.
+
+        Skipped some failures.
+
+        * platform/efl-wk2/TestExpectations:
+        * platform/efl/TestExpectations:
+        * platform/efl/fast/forms/datalist/input-list-expected.txt: Removed.
+
 2013-08-15  Simon Pena  <simon.pena@samsung.com>
 
         [GTK] Unreviewed gardening. Rebaseline after r154072.

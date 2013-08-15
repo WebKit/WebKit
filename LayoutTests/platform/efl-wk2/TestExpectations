@@ -591,3 +591,10 @@ webkit.org/b/117460 fast/repaint/selection-gap-transformed-fixed-child.html [ Fa
 webkit.org/b/117460 fast/repaint/transform-table-layout.html [ Failure ]
 webkit.org/b/117460 svg/repaint/repaint-webkit-svg-shadow-container.html [ Failure ]
 
+webkit.org/b/119789 fast/events/touch/frame-hover-update.html [ Crash ]
+webkit.org/b/119789 fast/events/touch/multi-touch-inside-iframes.html [ Crash ]
+webkit.org/b/119789 fast/events/touch/multi-touch-inside-nested-iframes.html [ Crash ]
+webkit.org/b/119789 fast/events/touch/touch-before-pressing-spin-button.html [ Crash ]
+webkit.org/b/119789 fast/events/touch/touch-coords-in-zoom-and-scroll.html [ Crash ]
+webkit.org/b/119789 fast/events/touch/touch-inside-iframe.html [ Crash ]
+webkit.org/b/119789 fast/events/touch/touch-slider-no-js-touch-listener.html [ Crash ]
