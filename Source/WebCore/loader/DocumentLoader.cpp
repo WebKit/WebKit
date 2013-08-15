@@ -364,8 +364,13 @@ void DocumentLoader::finishedLoading(double finishTime)
     RefPtr<DocumentLoader> protect(this);
 
     if (m_identifierForLoadWithoutResourceLoader) {
-        frameLoader()->notifier()->dispatchDidFinishLoading(this, m_identifierForLoadWithoutResourceLoader, finishTime);
+        // A didFinishLoading delegate might try to cancel the load (despite it
+        // being finished). Clear m_identifierForLoadWithoutResourceLoader
+        // before calling dispatchDidFinishLoading so that we don't later try to
+        // cancel the already-finished substitute load.
+        unsigned long identifier = m_identifierForLoadWithoutResourceLoader;
         m_identifierForLoadWithoutResourceLoader = 0;
+        frameLoader()->notifier()->dispatchDidFinishLoading(this, identifier, finishTime);
     }
 
 #if USE(CONTENT_FILTERING)
