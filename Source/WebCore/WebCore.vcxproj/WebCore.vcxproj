@@ -7528,6 +7528,7 @@
       <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">ICUVersion.h</ForcedIncludeFiles>
       <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Production|x64'">ICUVersion.h</ForcedIncludeFiles>
     </ClCompile>
+    <ClCompile Include="..\platform\win\WebCoreBundleWin.cpp" />
     <ClCompile Include="..\platform\win\WebCoreInstanceHandle.cpp" />
     <ClCompile Include="..\rendering\HitTestLocation.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
@@ -19298,6 +19299,7 @@
     <ClInclude Include="..\platform\win\SystemInfo.h" />
     <ClInclude Include="..\platform\graphics\TextRenderingMode.h" />
     <ClInclude Include="..\platform\win\WCDataObject.h" />
+    <ClInclude Include="..\platform\win\WebCoreBundleWin.h" />
     <ClInclude Include="..\platform\win\WebCoreInstanceHandle.h" />
     <ClInclude Include="..\rendering\HitTestLocation.h" />
     <ClInclude Include="..\storage\StorageStrategy.h" />

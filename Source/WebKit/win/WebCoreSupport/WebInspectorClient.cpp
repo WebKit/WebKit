@@ -31,6 +31,7 @@
 
 #if ENABLE(INSPECTOR)
 
+#include "WebCoreBundleWin.h"
 #include "WebInspectorDelegate.h"
 #include "WebKit.h"
 #include "WebMutableURLRequest.h"
@@ -61,11 +62,6 @@ static const IntRect& defaultWindowRect()
 {
     static IntRect rect(60, 200, 750, 650);
     return rect;
-}
-
-static CFBundleRef getWebKitBundle()
-{
-    return CFBundleGetBundleWithIdentifier(CFSTR("com.apple.WebKit"));
 }
 
 WebInspectorClient::WebInspectorClient(WebView* webView)
@@ -162,7 +158,7 @@ WebCore::InspectorFrontendChannel* WebInspectorClient::openInspectorFrontend(Ins
 
     COMPtr<WebMutableURLRequest> request(AdoptCOM, WebMutableURLRequest::createInstance());
 
-    RetainPtr<CFURLRef> htmlURLRef = adoptCF(CFBundleCopyResourceURL(getWebKitBundle(), CFSTR("inspector"), CFSTR("html"), CFSTR("inspector")));
+    RetainPtr<CFURLRef> htmlURLRef = adoptCF(CFBundleCopyResourceURL(webKitBundle(), CFSTR("inspector"), CFSTR("html"), CFSTR("inspector")));
     if (!htmlURLRef)
         return 0;
 
@@ -262,7 +258,7 @@ void WebInspectorFrontendClient::frontendLoaded()
 
 String WebInspectorFrontendClient::localizedStringsURL()
 {
-    RetainPtr<CFURLRef> url = adoptCF(CFBundleCopyResourceURL(getWebKitBundle(), CFSTR("localizedStrings"), CFSTR("js"), 0));
+    RetainPtr<CFURLRef> url = adoptCF(CFBundleCopyResourceURL(webKitBundle(), CFSTR("localizedStrings"), CFSTR("js"), 0));
     if (!url)
         return String();
 

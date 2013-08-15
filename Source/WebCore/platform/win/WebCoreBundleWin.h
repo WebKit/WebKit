@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,40 +23,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "LocalizedStrings.h"
-
-#include "WebCoreInstanceHandle.h"
-#include <windows.h>
-#include <wtf/Assertions.h>
-#include <wtf/MainThread.h>
-#include <wtf/StdLibExtras.h>
-#include <wtf/text/WTFString.h>
+#ifndef WebCoreBundleWin_h
+#define WebCoreBundleWin_h
 
 #if USE(CF)
-#include "WebCoreBundleWin.h"
-#include <CoreFoundation/CFBundle.h>
-#include <wtf/RetainPtr.h>
-#endif
 
 namespace WebCore {
 
-String localizedString(const char* key)
-{
-    ASSERT(isMainThread());
+CFBundleRef webKitBundle();
 
-#if USE(CF)
-    static CFStringRef notFound = CFSTR("localized string not found");
-
-    RetainPtr<CFStringRef> keyString = adoptCF(CFStringCreateWithCStringNoCopy(NULL, key, kCFStringEncodingUTF8, kCFAllocatorNull));
-    RetainPtr<CFStringRef> result = adoptCF(CFCopyLocalizedStringWithDefaultValue(keyString.get(), 0, webKitBundle(), notFound, 0));
-    ASSERT_WITH_MESSAGE(result.get() != notFound, "could not find localizable string %s in bundle", key);
-
-    return result.get();
-#else
-    // FIXME: Implement localizedString() for !USE(CF).
-    return String::fromUTF8(key, strlen(key));
-#endif
 }
 
-} // namespace WebCore
+#endif
+
+#endif // WebCoreBundleWin_h

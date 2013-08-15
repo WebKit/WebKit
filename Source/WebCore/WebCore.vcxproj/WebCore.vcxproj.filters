@@ -7066,6 +7066,10 @@
     <ClCompile Include="..\style\StyleFontSizeFunctions.cpp" />
     <ClCompile Include="..\style\StyleResolveForDocument.cpp" />
     <ClCompile Include="..\style\StyleResolveTree.cpp" />
+    <ClCompile Include="..\css\CSSFilterImageValue.cpp" />
+    <ClCompile Include="..\platform\win\WebCoreBundleWin.cpp">
+      <Filter>platform\win</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Modules\filesystem\AsyncFileWriter.h">
@@ -14815,6 +14819,10 @@
     <ClInclude Include="..\style\StyleFontSizeFunctions.h" />
     <ClInclude Include="..\style\StyleResolveForDocument.h" />
     <ClInclude Include="..\style\StyleResolveTree.h" />
+    <ClInclude Include="..\css\CSSFilterImageValue.h" />
+    <ClInclude Include="..\platform\win\WebCoreBundleWin.h">
+      <Filter>platform\win</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\css\CSSGrammar.y.in">

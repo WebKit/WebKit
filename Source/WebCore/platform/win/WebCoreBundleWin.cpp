@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,39 +24,43 @@
  */
 
 #include "config.h"
-#include "LocalizedStrings.h"
-
-#include "WebCoreInstanceHandle.h"
-#include <windows.h>
-#include <wtf/Assertions.h>
-#include <wtf/MainThread.h>
-#include <wtf/StdLibExtras.h>
-#include <wtf/text/WTFString.h>
+#include "WebCoreBundleWin.h"
 
 #if USE(CF)
-#include "WebCoreBundleWin.h"
+
+#include "WebCoreInstanceHandle.h"
 #include <CoreFoundation/CFBundle.h>
 #include <wtf/RetainPtr.h>
-#endif
 
 namespace WebCore {
 
-String localizedString(const char* key)
+static CFBundleRef createWebKitBundle()
 {
-    ASSERT(isMainThread());
+    if (CFBundleRef existingBundle = CFBundleGetBundleWithIdentifier(CFSTR("com.apple.WebKit"))) {
+        CFRetain(existingBundle);
+        return existingBundle;
+    }
 
-#if USE(CF)
-    static CFStringRef notFound = CFSTR("localized string not found");
+    wchar_t dllPathBuffer[MAX_PATH];
+    DWORD length = ::GetModuleFileNameW(WebCore::instanceHandle(), dllPathBuffer, WTF_ARRAY_LENGTH(dllPathBuffer));
+    ASSERT(length);
+    ASSERT(length < WTF_ARRAY_LENGTH(dllPathBuffer));
 
-    RetainPtr<CFStringRef> keyString = adoptCF(CFStringCreateWithCStringNoCopy(NULL, key, kCFStringEncodingUTF8, kCFAllocatorNull));
-    RetainPtr<CFStringRef> result = adoptCF(CFCopyLocalizedStringWithDefaultValue(keyString.get(), 0, webKitBundle(), notFound, 0));
-    ASSERT_WITH_MESSAGE(result.get() != notFound, "could not find localizable string %s in bundle", key);
+    RetainPtr<CFStringRef> dllPath = adoptCF(CFStringCreateWithCharactersNoCopy(0, reinterpret_cast<const UniChar*>(dllPathBuffer), length, kCFAllocatorNull));
+    RetainPtr<CFURLRef> dllURL = adoptCF(CFURLCreateWithFileSystemPath(0, dllPath.get(), kCFURLWindowsPathStyle, false));
+    RetainPtr<CFURLRef> dllDirectoryURL = adoptCF(CFURLCreateCopyDeletingLastPathComponent(0, dllURL.get()));
+    RetainPtr<CFURLRef> resourcesDirectoryURL = adoptCF(CFURLCreateCopyAppendingPathComponent(0, dllDirectoryURL.get(), CFSTR("WebKit.resources"), true));
 
-    return result.get();
-#else
-    // FIXME: Implement localizedString() for !USE(CF).
-    return String::fromUTF8(key, strlen(key));
-#endif
+    return CFBundleCreate(0, resourcesDirectoryURL.get());
+}
+
+CFBundleRef webKitBundle()
+{
+    static CFBundleRef bundle = createWebKitBundle();
+    ASSERT(bundle);
+    return bundle;
 }
 
 } // namespace WebCore
+
+#endif

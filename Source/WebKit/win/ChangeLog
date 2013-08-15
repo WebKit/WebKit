@@ -1,3 +1,15 @@
+2013-08-15  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Consolidate WebKit Bundle handling
+        https://bugs.webkit.org/show_bug.cgi?id=119869
+
+        Reviewed by Tim Horton.
+
+        * WebCoreSupport/WebInspectorClient.cpp:
+        (WebInspectorClient::openInspectorFrontend): Switch to new
+        WebCore::webkitBundle() method.
+        (WebInspectorFrontendClient::localizedStringsURL): Ditto.
+
 2013-08-15  Anders Carlsson  <andersca@apple.com>
 
         <https://webkit.org/b/119859> Frame::loader() should return a reference
