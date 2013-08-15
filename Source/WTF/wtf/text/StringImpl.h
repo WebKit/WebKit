@@ -519,6 +519,9 @@ public:
     
     size_t costDuringGC()
     {
+        if (isStatic())
+            return 0;
+        
         if (bufferOwnership() == BufferSubstring)
             return divideRoundedUp(m_substringBuffer->costDuringGC(), refCount());
         
@@ -613,6 +616,8 @@ public:
         return hashSlowCase();
     }
     
+    bool isStatic() const { return m_refCount & s_refCountFlagIsStaticString; }
+
     inline size_t refCount() const
     {
         return m_refCount / s_refCountIncrement;
@@ -802,7 +807,6 @@ private:
     static const unsigned s_copyCharsInlineCutOff = 20;
 
     BufferOwnership bufferOwnership() const { return static_cast<BufferOwnership>(m_hashAndFlags & s_hashMaskBufferOwnership); }
-    bool isStatic() const { return m_refCount & s_refCountFlagIsStaticString; }
     template <class UCharPredicate> PassRefPtr<StringImpl> stripMatchedCharacters(UCharPredicate);
     template <typename CharType, class UCharPredicate> PassRefPtr<StringImpl> simplifyMatchedCharactersToSpace(UCharPredicate);
     template <typename CharType> static PassRefPtr<StringImpl> constructInternal(StringImpl*, unsigned);

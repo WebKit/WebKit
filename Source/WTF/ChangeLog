@@ -1,3 +1,15 @@
+2013-08-15  Filip Pizlo  <fpizlo@apple.com>
+
+        refCount() of a StringImpl could be zero if it's static; in that case we shouldn't report extra memory cost
+        https://bugs.webkit.org/show_bug.cgi?id=119870
+
+        Reviewed by Mark Hahnenberg.
+
+        * wtf/text/StringImpl.h:
+        (WTF::StringImpl::costDuringGC):
+        (WTF::StringImpl::isStatic):
+        (WTF::StringImpl::bufferOwnership):
+
 2013-08-14  Filip Pizlo  <fpizlo@apple.com>
 
         Typed arrays should be rewritten
