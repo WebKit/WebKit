@@ -47,6 +47,7 @@ WHICH GENERATES THE GLSL ES PARSER (glslang_tab.cpp AND glslang_tab.h).
 %pure-parser
 %parse-param {TParseContext* context}
 %locations
+%lex-param {YYLEX_PARAM}
 
 %union {
 #define YYLTYPE TSourceLoc
@@ -86,7 +87,7 @@ static void yyerror(YYLTYPE* yylloc, TParseContext* context, const char* reason)
 
 #define YYLLOC_DEFAULT(Current, Rhs, N)                      \
   do {                                                       \
-      if (YYID(N)) {                                         \
+      if (N) {                                               \
         (Current).first_file = YYRHSLOC(Rhs, 1).first_file;  \
         (Current).first_line = YYRHSLOC(Rhs, 1).first_line;  \
         (Current).last_file = YYRHSLOC(Rhs, N).last_file;    \

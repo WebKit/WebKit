@@ -1,3 +1,15 @@
+2013-08-15  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        ANGLE doesn't build with bison 3.0
+        https://bugs.webkit.org/show_bug.cgi?id=119798
+
+        Reviewed by Antti Koivisto.
+
+        Make glslang.y compatible with bison 3.0, by using %lex-param
+        to set YYLEX_PARAM and getting rid of useless YYID macro.
+
+        * src/compiler/glslang.y:
+
 2013-08-09  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
 
         [Qt] Buidfix after r153664. Adding ANGLE_WEBKIT_WIN definition.
