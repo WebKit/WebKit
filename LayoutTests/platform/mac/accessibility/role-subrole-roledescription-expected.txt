@@ -325,9 +325,9 @@ PASS: mark
       AXRoleDescription: 
       
 PASS: math
-      AXRole: 
-      AXSubrole: 
-      AXRoleDescription: 
+      AXRole: AXGroup
+      AXSubrole: AXDocumentMath
+      AXRoleDescription: math
       
 PASS: meter
       AXRole: AXProgressIndicator
