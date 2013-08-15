@@ -1,3 +1,14 @@
+2013-08-15  Filip Pizlo  <fpizlo@apple.com>
+
+        http://trac.webkit.org/changeset/154120 accidentally changed DFGCapabilities to read the resolve type from operand 4, not 3; it should be 3.
+
+        Rubber stamped by Oliver Hunt.
+        
+        This was causing some test crashes for me.
+
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+
 2013-08-15  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Clear up improper export declaration.
