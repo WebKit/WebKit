@@ -1,3 +1,15 @@
+2013-08-15  Daniel Bates  <dabates@apple.com>
+
+        <https://webkit.org/b/119863> [iOS] Upstream WebCore/editing/ios
+
+        Reviewed by David Kilzer.
+
+        Use the same UUIDs for EditorIOS.mm and the group ios as in the iOS tree
+        so as to make it straightforward to merge changes to the WebCore Xcode
+        project file on WebKit.org with changes to the same file in the iOS tree.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2013-08-15  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Unreviewed build fix after r15417.

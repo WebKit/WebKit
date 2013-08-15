@@ -5211,7 +5211,7 @@
 		CE057FA61220731100A476D5 /* DocumentMarkerController.h in Headers */ = {isa = PBXBuildFile; fileRef = CE057FA41220731100A476D5 /* DocumentMarkerController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CE08C3D1152B599A0021B8C2 /* AlternativeTextController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE08C3CF152B599A0021B8C2 /* AlternativeTextController.cpp */; };
 		CE08C3D2152B599A0021B8C2 /* AlternativeTextController.h in Headers */ = {isa = PBXBuildFile; fileRef = CE08C3D0152B599A0021B8C2 /* AlternativeTextController.h */; settings = {ATTRIBUTES = (); }; };
-		CE13CA9517BD7DB3001CF3BE /* EditorIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = CE13CA9417BD7DB3001CF3BE /* EditorIOS.mm */; };
+		FED13D3A0CEA934600D89466 /* EditorIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = FED13D390CEA934600D89466 /* EditorIOS.mm */; };
 		CE7B2DB31586ABAD0098B3FA /* AlternativeTextUIController.h in Headers */ = {isa = PBXBuildFile; fileRef = CE7B2DAF1586ABAD0098B3FA /* AlternativeTextUIController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CE7B2DB41586ABAD0098B3FA /* AlternativeTextUIController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CE7B2DB01586ABAD0098B3FA /* AlternativeTextUIController.mm */; };
 		CE7B2DB51586ABAD0098B3FA /* TextAlternativeWithRange.h in Headers */ = {isa = PBXBuildFile; fileRef = CE7B2DB11586ABAD0098B3FA /* TextAlternativeWithRange.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -11947,7 +11947,7 @@
 		CE057FA41220731100A476D5 /* DocumentMarkerController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocumentMarkerController.h; sourceTree = "<group>"; };
 		CE08C3CF152B599A0021B8C2 /* AlternativeTextController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AlternativeTextController.cpp; sourceTree = "<group>"; };
 		CE08C3D0152B599A0021B8C2 /* AlternativeTextController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlternativeTextController.h; sourceTree = "<group>"; };
-		CE13CA9417BD7DB3001CF3BE /* EditorIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = EditorIOS.mm; sourceTree = "<group>"; };
+		FED13D390CEA934600D89466 /* EditorIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = EditorIOS.mm; sourceTree = "<group>"; };
 		CE5CB1B314EDAB6F00BB2795 /* EventSender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventSender.h; sourceTree = "<group>"; };
 		CE7B2DAF1586ABAD0098B3FA /* AlternativeTextUIController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AlternativeTextUIController.h; path = mac/AlternativeTextUIController.h; sourceTree = "<group>"; };
 		CE7B2DB01586ABAD0098B3FA /* AlternativeTextUIController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AlternativeTextUIController.mm; path = mac/AlternativeTextUIController.mm; sourceTree = "<group>"; };
@@ -15438,7 +15438,7 @@
 		93309D86099E64910056E581 /* editing */ = {
 			isa = PBXGroup;
 			children = (
-				CE13CA9317BD7DB3001CF3BE /* ios */,
+				443292C10EBA6D7300E62016 /* ios */,
 				ED501DC90B249F3900AE18D9 /* mac */,
 				CE08C3CF152B599A0021B8C2 /* AlternativeTextController.cpp */,
 				CE08C3D0152B599A0021B8C2 /* AlternativeTextController.h */,
@@ -19391,10 +19391,10 @@
 			name = EncryptedMedia;
 			sourceTree = "<group>";
 		};
-		CE13CA9317BD7DB3001CF3BE /* ios */ = {
+		443292C10EBA6D7300E62016 /* ios */ = {
 			isa = PBXGroup;
 			children = (
-				CE13CA9417BD7DB3001CF3BE /* EditorIOS.mm */,
+				FED13D390CEA934600D89466 /* EditorIOS.mm */,
 			);
 			path = ios;
 			sourceTree = "<group>";
@@ -24891,7 +24891,7 @@
 				9BAB6C6D12550631001626D4 /* EditingStyle.cpp in Sources */,
 				4B3043CC0AE0373B00A82647 /* Editor.cpp in Sources */,
 				93A38B4B0D0E5808006872C2 /* EditorCommand.cpp in Sources */,
-				CE13CA9517BD7DB3001CF3BE /* EditorIOS.mm in Sources */,
+				FED13D3A0CEA934600D89466 /* EditorIOS.mm in Sources */,
 				ED501DC60B249F2900AE18D9 /* EditorMac.mm in Sources */,
 				A8C4A80809D563270003AC8D /* Element.cpp in Sources */,
 				4FFC022D1643B726004E1638 /* ElementRareData.cpp in Sources */,
