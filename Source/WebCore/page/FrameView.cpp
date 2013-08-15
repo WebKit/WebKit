@@ -2833,7 +2833,6 @@ void FrameView::sendResizeEventIfNeeded()
     if (!renderView || renderView->printing())
         return;
 
-    Page* page = m_frame->page();
     IntSize currentSize;
     if (useFixedLayout() && !fixedLayoutSize().isEmpty() && delegatesScrolling())
         currentSize = fixedLayoutSize();
@@ -2860,6 +2859,7 @@ void FrameView::sendResizeEventIfNeeded()
         m_frame->document()->enqueueWindowEvent(resizeEvent.release());
 
 #if ENABLE(INSPECTOR)
+    Page* page = m_frame->page();
     if (InspectorInstrumentation::hasFrontends() && isMainFrame) {
         if (InspectorClient* inspectorClient = page ? page->inspectorController()->inspectorClient() : 0)
             inspectorClient->didResizeMainFrame(m_frame.get());

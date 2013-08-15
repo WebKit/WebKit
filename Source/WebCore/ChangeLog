@@ -1,3 +1,10 @@
+2013-08-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Qt minimum build fix after r154116.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::sendResizeEventIfNeeded):
+
 2013-08-14  Filip Pizlo  <fpizlo@apple.com>
 
         Typed arrays should be rewritten
