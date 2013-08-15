@@ -67,45 +67,19 @@ String openTemporaryFile(const String& prefix, PlatformFileHandle& platformFileH
     return String::fromUTF8(temporaryFilePath.data());
 }
 
-typedef struct MetaDataInfo
-{
-    String URLString;
-    String referrer;
-    String path;
-} MetaDataInfo;
-
-static void* setMetaData(void* context)
-{
-    MetaDataInfo *info = (MetaDataInfo *)context;
-    wkSetMetadataURL((NSString *)info->URLString, (NSString *)info->referrer, (NSString *)String::fromUTF8(fileSystemRepresentation(info->path).data()));
-    
-    delete info;
-    
-    return 0;
-}
-
 void setMetadataURL(String& URLString, const String& referrer, const String& path)
 {
     NSURL *URL = URLWithUserTypedString(URLString, nil);
     if (URL)
         URLString = userVisibleString(URLByRemovingUserInfo(URL));
-    
-    // Spawn a background thread for WKSetMetadataURL because this function will not return until mds has
-    // journaled the data we're're trying to set. Depending on what other I/O is going on, it can take some
-    // time. 
-    pthread_t tid;
-    pthread_attr_t attr;
-    pthread_attr_init(&attr);
-    pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
-    
-    MetaDataInfo *info = new MetaDataInfo;
-    
-    info->URLString = URLString;
-    info->referrer = referrer;
-    info->path = path;
-    
-    pthread_create(&tid, &attr, setMetaData, info);
-    pthread_attr_destroy(&attr);
+
+    // Call WKSetMetadataURL on a background queue because it can take some time.
+    NSString *URLStringCopy = URLString;
+    NSString *referrerCopy = referrer;
+    NSString *pathCopy = path;
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        wkSetMetadataURL(URLStringCopy, referrerCopy, [NSString stringWithUTF8String:[pathCopy fileSystemRepresentation]]);
+    });
 }
 
 #if !PLATFORM(IOS)

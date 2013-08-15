@@ -1,3 +1,16 @@
+2013-08-14  Joseph Pecoraro  <pecoraro@apple.com>
+
+        <https://webkit.org/b/119810> [Mac] No AutoreleasePool leaks when dragging image out of WebView
+
+        Reviewed by Dan Bernstein.
+
+        This code was just running a block of code asynchronously using a
+        pthread. Convert this to use a dispatch block, which does provide
+        an autorelease pool so there are no leaks and ends up much simpler.
+
+        * platform/mac/FileSystemMac.mm:
+        (WebCore::setMetadataURL):
+
 2013-08-14  Tim Horton  <timothy_horton@apple.com>
 
         Un-inline dataLog dumpers for IntSize and IntPoint
