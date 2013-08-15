@@ -1,3 +1,15 @@
+2013-08-15  Anders Carlsson  <andersca@apple.com>
+
+        <https://webkit.org/b/119854> REGRESSION (r153379): Serious drawing issues with WebViews
+        <rdar://problem/14698870>
+
+        Reviewed by Simon Fraser.
+
+        Don't set aside subviews if they have already been set aside.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _recursive:displayRectIgnoringOpacity:inGraphicsContext:CGContext:topView:shouldChangeFontReferenceColor:]):
+
 2013-08-15  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac] Remove "legacy" media UI
