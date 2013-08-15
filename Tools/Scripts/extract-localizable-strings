@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# Copyright (C) 2006, 2007, 2009, 2010 Apple Inc. All rights reserved.
+# Copyright (C) 2006, 2007, 2009, 2010, 2013 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -409,15 +409,17 @@ if (-e "$fileToUpdate") {
             {
                 my $string = delete $stringByKey{$1};
                 if (!defined $string) {
-                    print "$fileToUpdate:$.: unused key \"$1\" (preceding comment: /* $lastComment */)\n";
+                    print "$fileToUpdate:$.: unused key \"$1\"\n";
                     $sawError = 1;
                 } else {
                     if (!($string eq $2)) {
-                        print "$fileToUpdate:$.: unexpected value \"$2\" for key \"$1\" (expected \"$string\")\n";
+                        print "$fileToUpdate:$.: unexpected value \"$2\" for key \"$1\"\n";
+                        print "$fileByKey{$1}:$lineByKey{$1}: expected value \"$string\" defined here\n";
                         $sawError = 1;
                     }
                     if (!($lastComment eq $commentByKey{$1})) {
-                        print "$fileToUpdate:$.: unexpected comment /* $lastComment */ for key \"$1\" (expected /* $commentByKey{$1} */)\n";
+                        print "$fileToUpdate:$.: unexpected comment /* $lastComment */ for key \"$1\"\n";
+                        print "$fileByKey{$1}:$lineByKey{$1}: expected comment /* $commentByKey{$1} */ defined here\n";
                         $sawError = 1;
                     }
                 }

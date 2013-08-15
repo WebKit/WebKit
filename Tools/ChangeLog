@@ -1,3 +1,13 @@
+2013-08-15  Dan Bernstein  <mitz@apple.com>
+
+        <https://webkit.org/b/119856> Improve extract-localizable-strings messages
+
+        Reviewed by Darin Adler.
+
+        * Scripts/extract-localizable-strings: When the strings file disagrees with the source code,
+        added a message that points to the source code. Removed some unnecessary repetition of what
+        is already in the file.
+
 2013-08-15  Andy Estes  <aestes@apple.com>
 
         <https://webkit.org/b/119853> REGRESSION (r139343): WebKit crashes when canceling a load inside webView:resource:didFinishLoadingFromDataSource:
