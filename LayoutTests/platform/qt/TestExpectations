@@ -1385,11 +1385,6 @@ webkit.org/b/112680 jquery/manipulation.html [ Skip ]
 inspector/console/console-filter-test.html
 
 # REGRESSION(r148790) Made 7 tests fail on x86 32bit
-webkit.org/b/114913 fast/canvas/canvas-arc-360-winding.html [ Skip ]
-webkit.org/b/114913 fast/canvas/canvas-fillPath-alpha-shadow.html [ Skip ]
-webkit.org/b/114913 fast/canvas/canvas-fillPath-gradient-shadow.html [ Skip ]
-webkit.org/b/114913 fast/canvas/canvas-fillPath-pattern-shadow.html [ Skip ]
-webkit.org/b/114913 fast/canvas/canvas-strokePath-alpha-shadow.html [ Skip ]
 webkit.org/b/114913 sputnik/Conformance/15_Native_Objects/15.8_Math/15.8.2/15.8.2.13_pow/S15.8.2.13_A24.html [ Skip ]
 webkit.org/b/114913 sputnik/Conformance/15_Native_Objects/15.8_Math/15.8.2/15.8.2.8_exp/S15.8.2.8_A6.html [ Skip ]
 

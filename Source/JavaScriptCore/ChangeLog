@@ -1,3 +1,19 @@
+2013-08-15  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        REGRESSION(r148790) Made 7 tests fail on x86 32bit
+        https://bugs.webkit.org/show_bug.cgi?id=114913
+
+        Reviewed by Filip Pizlo.
+
+        The X87 register was not freed before some calls. Instead
+        of inserting resetX87Registers to the last call sites,
+        the two X87 registers are now freed in every call.
+
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * offlineasm/instructions.rb:
+        * offlineasm/x86.rb:
+
 2013-08-14  Michael Saboff  <msaboff@apple.com>
 
         Fixed jit on Win64.

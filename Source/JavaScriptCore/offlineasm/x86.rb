@@ -1149,6 +1149,12 @@ class Instruction
         when "break"
             $asm.puts "int $3"
         when "call"
+            if useX87
+                2.times {
+                    | offset |
+                    $asm.puts "ffree %st(#{offset})"
+                }
+            end
             $asm.puts "call #{operands[0].x86CallOperand(:ptr)}"
         when "ret"
             $asm.puts "ret"
@@ -1336,13 +1342,6 @@ class Instruction
             $asm.puts "leal #{operands[0].x86AddressOperand(:int)}, #{operands[1].x86Operand(:int)}"
         when "leap"
             $asm.puts "lea#{x86Suffix(:ptr)} #{operands[0].x86AddressOperand(:ptr)}, #{operands[1].x86Operand(:ptr)}"
-        when "resetX87Stack"
-            if useX87
-                2.times {
-                    | offset |
-                    $asm.puts "ffree %st(#{offset})"
-                }
-            end
         else
             lowerDefault
         end
