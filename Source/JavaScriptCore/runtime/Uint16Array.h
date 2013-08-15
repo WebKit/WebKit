@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -11,10 +10,10 @@
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY APPLE COMPUTER, INC. ``AS IS'' AND ANY
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
  * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
  * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
  * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
@@ -27,76 +26,9 @@
 #ifndef Uint16Array_h
 #define Uint16Array_h
 
-#include "IntegralTypedArrayBase.h"
-
-namespace JSC {
-
-class ArrayBuffer;
-
-class Uint16Array : public IntegralTypedArrayBase<uint16_t> {
-public:
-    static inline PassRefPtr<Uint16Array> create(unsigned length);
-    static inline PassRefPtr<Uint16Array> create(const uint16_t* array, unsigned length);
-    static inline PassRefPtr<Uint16Array> create(PassRefPtr<ArrayBuffer>, unsigned byteOffset, unsigned length);
-
-    // Should only be used when it is known the entire array will be filled. Do
-    // not return these results directly to JavaScript without filling first.
-    static inline PassRefPtr<Uint16Array> createUninitialized(unsigned length);
-
-    using TypedArrayBase<uint16_t>::set;
-    using IntegralTypedArrayBase<uint16_t>::set;
-
-    inline PassRefPtr<Uint16Array> subarray(int start) const;
-    inline PassRefPtr<Uint16Array> subarray(int start, int end) const;
-
-    virtual ViewType getType() const
-    {
-        return TypeUint16;
-    }
-
-private:
-    inline Uint16Array(PassRefPtr<ArrayBuffer>, unsigned byteOffset, unsigned length);
-    // Make constructor visible to superclass.
-    friend class TypedArrayBase<uint16_t>;
-};
-
-PassRefPtr<Uint16Array> Uint16Array::create(unsigned length)
-{
-    return TypedArrayBase<uint16_t>::create<Uint16Array>(length);
-}
-
-PassRefPtr<Uint16Array> Uint16Array::create(const uint16_t* array, unsigned length)
-{
-    return TypedArrayBase<uint16_t>::create<Uint16Array>(array, length);
-}
-
-PassRefPtr<Uint16Array> Uint16Array::create(PassRefPtr<ArrayBuffer> buffer, unsigned byteOffset, unsigned length)
-{
-    return TypedArrayBase<uint16_t>::create<Uint16Array>(buffer, byteOffset, length);
-}
-
-PassRefPtr<Uint16Array> Uint16Array::createUninitialized(unsigned length)
-{
-    return TypedArrayBase<uint16_t>::createUninitialized<Uint16Array>(length);
-}
-
-Uint16Array::Uint16Array(PassRefPtr<ArrayBuffer> buffer, unsigned byteOffset, unsigned length)
-    : IntegralTypedArrayBase<uint16_t>(buffer, byteOffset, length)
-{
-}
-
-PassRefPtr<Uint16Array> Uint16Array::subarray(int start) const
-{
-    return subarray(start, length());
-}
-
-PassRefPtr<Uint16Array> Uint16Array::subarray(int start, int end) const
-{
-    return subarrayImpl<Uint16Array>(start, end);
-}
-
-} // namespace JSC
+#include "TypedArrays.h"
 
 using JSC::Uint16Array;
 
 #endif // Uint16Array_h
+

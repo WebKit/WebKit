@@ -36,6 +36,7 @@ wtf_sources += \
     Source/WTF/wtf/DecimalNumber.cpp \
     Source/WTF/wtf/DecimalNumber.h \
     Source/WTF/wtf/Decoder.h \
+    Source/WTF/wtf/DeferrableRefCounted.h \
     Source/WTF/wtf/Deque.h \
     Source/WTF/wtf/DisallowCType.h \
     Source/WTF/wtf/DoublyLinkedList.h \
@@ -52,6 +53,7 @@ wtf_sources += \
     Source/WTF/wtf/FilePrintStream.cpp \
     Source/WTF/wtf/FilePrintStream.h \
     Source/WTF/wtf/FixedArray.h \
+    Source/WTF/wtf/FlipBytes.h \
     Source/WTF/wtf/Forward.h \
     Source/WTF/wtf/FunctionDispatcher.cpp \
     Source/WTF/wtf/FunctionDispatcher.h \

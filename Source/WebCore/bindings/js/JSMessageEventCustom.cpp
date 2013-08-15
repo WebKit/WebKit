@@ -31,7 +31,6 @@
 #include "config.h"
 #include "JSMessageEvent.h"
 
-#include "JSArrayBuffer.h"
 #include "JSBlob.h"
 #include "JSDOMBinding.h"
 #include "JSDOMWindow.h"
@@ -39,6 +38,7 @@
 #include "JSMessagePortCustom.h"
 #include "MessageEvent.h"
 #include <runtime/JSArray.h>
+#include <runtime/JSArrayBuffer.h>
 
 using namespace JSC;
 

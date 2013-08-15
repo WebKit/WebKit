@@ -36,18 +36,14 @@
 #include "HTMLImageElement.h"
 #include "JSEXTDrawBuffers.h"
 #include "JSEXTTextureFilterAnisotropic.h"
-#include "JSFloat32Array.h"
 #include "JSHTMLCanvasElement.h"
 #include "JSHTMLImageElement.h"
 #include "JSImageData.h"
-#include "JSInt32Array.h"
 #include "JSOESElementIndexUint.h"
 #include "JSOESStandardDerivatives.h"
 #include "JSOESTextureFloat.h"
 #include "JSOESTextureHalfFloat.h"
 #include "JSOESVertexArrayObject.h"
-#include "JSUint32Array.h"
-#include "JSUint8Array.h"
 #include "JSWebGLBuffer.h"
 #include "JSWebGLCompressedTextureATC.h"
 #include "JSWebGLCompressedTexturePVRTC.h"
@@ -85,10 +81,9 @@
 #include "WebGLRenderingContext.h"
 #include "WebGLVertexArrayObjectOES.h"
 #include <runtime/Error.h>
-#include <runtime/Float32Array.h>
-#include <runtime/Int32Array.h>
-#include <runtime/JSArray.h>
-#include <runtime/Uint32Array.h>
+#include <runtime/JSTypedArrays.h>
+#include <runtime/TypedArrayInlines.h>
+#include <runtime/TypedArrays.h>
 #include <wtf/FastMalloc.h>
 
 #if ENABLE(VIDEO)

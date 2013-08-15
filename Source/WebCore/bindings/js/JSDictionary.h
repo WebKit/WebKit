@@ -31,6 +31,7 @@
 #include <heap/StrongInlines.h>
 #include <interpreter/CallFrame.h>
 #include <runtime/Operations.h>
+#include <runtime/Uint8Array.h>
 #include <wtf/Forward.h>
 
 namespace WebCore {

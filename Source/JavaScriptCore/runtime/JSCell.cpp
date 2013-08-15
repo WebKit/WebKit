@@ -23,6 +23,7 @@
 #include "config.h"
 #include "JSCell.h"
 
+#include "ArrayBufferView.h"
 #include "JSFunction.h"
 #include "JSString.h"
 #include "JSObject.h"
@@ -221,6 +222,17 @@ bool JSCell::getOwnPropertyDescriptor(JSObject*, ExecState*, PropertyName, Prope
 {
     RELEASE_ASSERT_NOT_REACHED();
     return false;
+}
+
+void JSCell::slowDownAndWasteMemory(JSArrayBufferView*)
+{
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+PassRefPtr<ArrayBufferView> JSCell::getTypedArrayImpl(JSArrayBufferView*)
+{
+    RELEASE_ASSERT_NOT_REACHED();
+    return 0;
 }
 
 } // namespace JSC

@@ -13,6 +13,7 @@ LUT_FILES += \
     runtime/DateConstructor.cpp \
     runtime/DatePrototype.cpp \
     runtime/ErrorPrototype.cpp \
+    runtime/JSDataViewPrototype.cpp \
     runtime/JSGlobalObject.cpp \
     runtime/JSONObject.cpp \
     runtime/MathObject.cpp \

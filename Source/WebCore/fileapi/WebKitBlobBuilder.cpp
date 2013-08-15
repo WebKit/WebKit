@@ -98,7 +98,7 @@ void BlobBuilder::append(ArrayBuffer* arrayBuffer)
     appendBytesData(arrayBuffer->data(), arrayBuffer->byteLength());
 }
 
-void BlobBuilder::append(ArrayBufferView* arrayBufferView)
+void BlobBuilder::append(PassRefPtr<ArrayBufferView> arrayBufferView)
 {
     HistogramSupport::histogramEnumeration("WebCore.Blob.constructor.ArrayBufferOrView", BlobConstructorArrayBufferView, BlobConstructorArrayBufferOrViewMax);
 

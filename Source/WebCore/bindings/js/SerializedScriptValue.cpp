@@ -32,25 +32,13 @@
 #include "File.h"
 #include "FileList.h"
 #include "ImageData.h"
-#include "JSArrayBuffer.h"
-#include "JSArrayBufferView.h"
 #include "JSBlob.h"
-#include "JSDataView.h"
 #include "JSDOMGlobalObject.h"
 #include "JSFile.h"
 #include "JSFileList.h"
-#include "JSFloat32Array.h"
-#include "JSFloat64Array.h"
 #include "JSImageData.h"
-#include "JSInt16Array.h"
-#include "JSInt32Array.h"
-#include "JSInt8Array.h"
 #include "JSMessagePort.h"
 #include "JSNavigator.h"
-#include "JSUint16Array.h"
-#include "JSUint32Array.h"
-#include "JSUint8Array.h"
-#include "JSUint8ClampedArray.h"
 #include "NotImplemented.h"
 #include "ScriptValue.h"
 #include "SharedBuffer.h"
@@ -63,12 +51,17 @@
 #include <runtime/DateInstance.h>
 #include <runtime/Error.h>
 #include <runtime/ExceptionHelpers.h>
+#include <runtime/JSArrayBuffer.h>
+#include <runtime/JSArrayBufferView.h>
+#include <runtime/JSDataView.h>
+#include <runtime/JSTypedArrays.h>
 #include <runtime/ObjectConstructor.h>
 #include <runtime/Operations.h>
 #include <runtime/PropertyNameArray.h>
 #include <runtime/RegExp.h>
 #include <runtime/RegExpObject.h>
-#include <runtime/Uint8ClampedArray.h>
+#include <runtime/TypedArrayInlines.h>
+#include <runtime/TypedArrays.h>
 #include <wtf/HashTraits.h>
 #include <wtf/Vector.h>
 
@@ -1722,47 +1715,6 @@ SerializedScriptValue::SerializedScriptValue(Vector<uint8_t>& buffer, Vector<Str
     m_blobURLs.swap(blobURLs);
 }
 
-static void neuterView(JSCell* jsView)
-{
-    if (!jsView)
-        return;
-    
-    switch (jsView->classInfo()->typedArrayStorageType) {
-    case TypedArrayNone:
-        // This could be a DataView, for example. Assume that there are views that the
-        // DFG doesn't care about.
-        return;
-    case TypedArrayInt8:
-        jsCast<JSInt8Array*>(jsView)->m_storageLength = 0;
-        return;
-    case TypedArrayInt16:
-        jsCast<JSInt16Array*>(jsView)->m_storageLength = 0;
-        return;
-    case TypedArrayInt32:
-        jsCast<JSInt32Array*>(jsView)->m_storageLength = 0;
-        return;
-    case TypedArrayUint8:
-        jsCast<JSUint8Array*>(jsView)->m_storageLength = 0;
-        return;
-    case TypedArrayUint8Clamped:
-        jsCast<JSUint8ClampedArray*>(jsView)->m_storageLength = 0;
-        return;
-    case TypedArrayUint16:
-        jsCast<JSUint16Array*>(jsView)->m_storageLength = 0;
-        return;
-    case TypedArrayUint32:
-        jsCast<JSUint32Array*>(jsView)->m_storageLength = 0;
-        return;
-    case TypedArrayFloat32:
-        jsCast<JSFloat32Array*>(jsView)->m_storageLength = 0;
-        return;
-    case TypedArrayFloat64:
-        jsCast<JSFloat64Array*>(jsView)->m_storageLength = 0;
-        return;
-    }
-    RELEASE_ASSERT_NOT_REACHED();
-}
-
 PassOwnPtr<SerializedScriptValue::ArrayBufferContentsArray> SerializedScriptValue::transferArrayBuffers(
     ExecState* exec, ArrayBufferArray& arrayBuffers, SerializationReturnCode& code)
 {
@@ -1779,25 +1731,14 @@ PassOwnPtr<SerializedScriptValue::ArrayBufferContentsArray> SerializedScriptValu
 
     HashSet<JSC::ArrayBuffer*> visited;
     for (size_t arrayBufferIndex = 0; arrayBufferIndex < arrayBuffers.size(); arrayBufferIndex++) {
-        Vector<RefPtr<ArrayBufferView> > neuteredViews;
-
         if (visited.contains(arrayBuffers[arrayBufferIndex].get()))
             continue;
         visited.add(arrayBuffers[arrayBufferIndex].get());
 
-        bool result = arrayBuffers[arrayBufferIndex]->transfer(contents->at(arrayBufferIndex), neuteredViews);
+        bool result = arrayBuffers[arrayBufferIndex]->transfer(contents->at(arrayBufferIndex));
         if (!result) {
             code = ValidationError;
             return nullptr;
-        }
-        
-        // The views may have been neutered, but their wrappers also need to be neutered, too.
-        for (size_t viewIndex = neuteredViews.size(); viewIndex--;) {
-            ArrayBufferView* view = neuteredViews[viewIndex].get();
-            for (size_t worldIndex = worlds.size(); worldIndex--;) {
-                DOMWrapperWorld* world = worlds[worldIndex].get();
-                neuterView(getCachedWrapper(world, view));
-            }
         }
     }
     return contents.release();

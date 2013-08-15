@@ -28,7 +28,7 @@
 #include "Heap.h"
 #include "JSLock.h"
 #include "SlotVisitor.h"
-#include "TypedArrayDescriptor.h"
+#include "TypedArrayType.h"
 #include "WriteBarrier.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/TypeTraits.h>
@@ -37,6 +37,7 @@ namespace JSC {
 
 class CopyVisitor;
 class ExecState;
+class JSArrayBufferView;
 class JSDestructibleObject;
 class JSGlobalObject;
 class LLIntOffsetsExtractor;
@@ -149,7 +150,7 @@ public:
     Structure* unvalidatedStructure() { return m_structure.unvalidatedGet(); }
 #endif
         
-    static const TypedArrayType TypedArrayStorageType = TypedArrayNone;
+    static const TypedArrayType TypedArrayStorageType = NotTypedArray;
 protected:
 
     void finishCreation(VM&);
@@ -167,6 +168,8 @@ protected:
     static bool getOwnPropertyDescriptor(JSObject*, ExecState*, PropertyName, PropertyDescriptor&);
     static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
     static bool getOwnPropertySlotByIndex(JSObject*, ExecState*, unsigned propertyName, PropertySlot&);
+    JS_EXPORT_PRIVATE static NO_RETURN_DUE_TO_CRASH void slowDownAndWasteMemory(JSArrayBufferView*);
+    JS_EXPORT_PRIVATE static PassRefPtr<ArrayBufferView> getTypedArrayImpl(JSArrayBufferView*);
 
 private:
     friend class LLIntOffsetsExtractor;

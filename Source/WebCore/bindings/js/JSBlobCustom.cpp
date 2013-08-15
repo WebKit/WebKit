@@ -34,14 +34,14 @@
 #include "Blob.h"
 #include "ExceptionCode.h"
 #include "ExceptionCodePlaceholder.h"
-#include "JSArrayBuffer.h"
-#include "JSArrayBufferView.h"
 #include "JSDOMBinding.h"
 #include "JSDictionary.h"
 #include "JSFile.h"
 #include "WebKitBlobBuilder.h"
 #include <runtime/Error.h>
 #include <runtime/JSArray.h>
+#include <runtime/JSArrayBuffer.h>
+#include <runtime/JSArrayBufferView.h>
 #include <wtf/Assertions.h>
 
 using namespace JSC;

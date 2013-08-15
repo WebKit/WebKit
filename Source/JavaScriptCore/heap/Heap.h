@@ -22,9 +22,11 @@
 #ifndef Heap_h
 #define Heap_h
 
+#include "ArrayBuffer.h"
 #include "BlockAllocator.h"
 #include "CopyVisitor.h"
 #include "DFGCodeBlocks.h"
+#include "GCIncomingRefCountedSet.h"
 #include "GCThreadSharedData.h"
 #include "HandleSet.h"
 #include "HandleStack.h"
@@ -144,6 +146,7 @@ namespace JSC {
         
         void jettisonDFGCodeBlock(PassRefPtr<CodeBlock>);
 
+        size_t extraSize(); // extra memory usage outside of pages allocated by the heap
         JS_EXPORT_PRIVATE size_t size();
         JS_EXPORT_PRIVATE size_t capacity();
         JS_EXPORT_PRIVATE size_t objectCount();
@@ -179,11 +182,14 @@ namespace JSC {
         bool isPagedOut(double deadline);
         
         const JITStubRoutineSet& jitStubRoutines() { return m_jitStubRoutines; }
+        
+        void addReference(JSCell*, ArrayBuffer*);
 
     private:
         friend class CodeBlock;
         friend class CopiedBlock;
         friend class DeferGC;
+        friend class DeferGCForAWhile;
         friend class GCAwareJITStubRoutine;
         friend class HandleSet;
         friend class JITStubRoutine;
@@ -230,6 +236,7 @@ namespace JSC {
         BlockAllocator& blockAllocator();
         
         void incrementDeferralDepth();
+        void decrementDeferralDepth();
         void decrementDeferralDepthAndGCIfNeeded();
 
         const HeapType m_heapType;
@@ -245,6 +252,7 @@ namespace JSC {
         BlockAllocator m_blockAllocator;
         MarkedSpace m_objectSpace;
         CopiedSpace m_storageSpace;
+        GCIncomingRefCountedSet<ArrayBuffer> m_arrayBuffers;
         size_t m_extraMemoryUsage;
 
 #if ENABLE(SIMPLE_HEAP_PROFILING)

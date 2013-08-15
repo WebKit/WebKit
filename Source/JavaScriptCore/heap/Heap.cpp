@@ -28,6 +28,7 @@
 #include "CopyVisitorInlines.h"
 #include "DFGWorklist.h"
 #include "GCActivityCallback.h"
+#include "GCIncomingRefCountedSetInlines.h"
 #include "HeapRootVisitor.h"
 #include "HeapStatistics.h"
 #include "IncrementalSweeper.h"
@@ -358,6 +359,14 @@ void Heap::jettisonDFGCodeBlock(PassRefPtr<CodeBlock> codeBlock)
     m_dfgCodeBlocks.jettison(codeBlock);
 }
 
+void Heap::addReference(JSCell* cell, ArrayBuffer* buffer)
+{
+    if (m_arrayBuffers.addReference(cell, buffer)) {
+        collectIfNecessaryOrDefer();
+        didAllocate(buffer->gcSizeEstimateInBytes());
+    }
+}
+
 void Heap::markProtectedObjects(HeapRootVisitor& heapRootVisitor)
 {
     ProtectCountSet::iterator end = m_protectedValues.end();
@@ -621,14 +630,19 @@ size_t Heap::objectCount()
     return m_objectSpace.objectCount();
 }
 
+size_t Heap::extraSize()
+{
+    return m_extraMemoryUsage + m_arrayBuffers.size();
+}
+
 size_t Heap::size()
 {
-    return m_objectSpace.size() + m_storageSpace.size() + m_extraMemoryUsage;
+    return m_objectSpace.size() + m_storageSpace.size() + extraSize();
 }
 
 size_t Heap::capacity()
 {
-    return m_objectSpace.capacity() + m_storageSpace.capacity();
+    return m_objectSpace.capacity() + m_storageSpace.capacity() + extraSize();
 }
 
 size_t Heap::protectedGlobalObjectCount()
@@ -707,6 +721,12 @@ void Heap::collect(SweepToggle sweepToggle)
     dataLogF("JSC GC starting collection.\n");
 #endif
     
+    double before = 0;
+    if (Options::logGC()) {
+        dataLog("[GC", sweepToggle == DoSweep ? " (eager sweep)" : "", ": ");
+        before = currentTimeMS();
+    }
+    
     SamplingRegion samplingRegion("Garbage Collection");
     
     RELEASE_ASSERT(!m_deferralDepth);
@@ -745,6 +765,11 @@ void Heap::collect(SweepToggle sweepToggle)
     }
 
     JAVASCRIPTCORE_GC_MARKED();
+    
+    {
+        GCPHASE(SweepingArrayBuffers);
+        m_arrayBuffers.sweep();
+    }
 
     {
         m_blockSnapshot.resize(m_objectSpace.blocks().set().size());
@@ -815,6 +840,11 @@ void Heap::collect(SweepToggle sweepToggle)
 
     if (Options::showObjectStatistics())
         HeapStatistics::showObjectStatistics(this);
+    
+    if (Options::logGC()) {
+        double after = currentTimeMS();
+        dataLog(after - before, " ms, ", currentHeapSize / 1024, " kb]\n");
+    }
 
 #if ENABLE(ALLOCATION_LOGGING)
     dataLogF("JSC GC finishing collection.\n");
@@ -924,12 +954,16 @@ void Heap::incrementDeferralDepth()
     m_deferralDepth++;
 }
 
-void Heap::decrementDeferralDepthAndGCIfNeeded()
+void Heap::decrementDeferralDepth()
 {
     RELEASE_ASSERT(m_deferralDepth >= 1);
     
     m_deferralDepth--;
-    
+}
+
+void Heap::decrementDeferralDepthAndGCIfNeeded()
+{
+    decrementDeferralDepth();
     collectIfNecessaryOrDefer();
 }
 

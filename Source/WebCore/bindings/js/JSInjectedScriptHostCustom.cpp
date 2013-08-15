@@ -46,19 +46,11 @@
 #include "InspectorDebuggerAgent.h"
 #include "InspectorValues.h"
 #include "JSEventListener.h"
-#include "JSFloat32Array.h"
-#include "JSFloat64Array.h"
 #include "JSHTMLAllCollection.h"
 #include "JSHTMLCollection.h"
-#include "JSInt16Array.h"
-#include "JSInt32Array.h"
-#include "JSInt8Array.h"
 #include "JSNode.h"
 #include "JSNodeList.h"
 #include "JSStorage.h"
-#include "JSUint16Array.h"
-#include "JSUint32Array.h"
-#include "JSUint8Array.h"
 #include "ScriptValue.h"
 #include "Storage.h"
 #include <parser/SourceCode.h>
@@ -67,8 +59,11 @@
 #include <runtime/JSArray.h>
 #include <runtime/JSFunction.h>
 #include <runtime/JSLock.h>
+#include <runtime/JSTypedArrays.h>
 #include <runtime/ObjectConstructor.h>
+#include <runtime/Operations.h>
 #include <runtime/RegExpObject.h>
+#include <runtime/TypedArrayInlines.h>
 
 using namespace JSC;
 

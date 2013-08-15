@@ -56,7 +56,7 @@ public:
     void append(const String& text, const String& ending);
 #if ENABLE(BLOB)
     void append(JSC::ArrayBuffer*);
-    void append(JSC::ArrayBufferView*);
+    void append(PassRefPtr<JSC::ArrayBufferView>);
 #endif
 
     PassRefPtr<Blob> getBlob(const String& contentType);

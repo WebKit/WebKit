@@ -270,9 +270,9 @@ function runConstructorTests()
     // Use try/catch instead of calling shouldThrow to avoid different exception message being reported from different platform.
     try {
         TestEval(expr);
-        testFailed(expr + " does not throw exception");
+        testPassed(expr + " works");
     } catch (e) {
-        testPassed(expr + " threw exception");
+        testFailed(expr + " threw exception");
     }
 
     debug("");

@@ -23,7 +23,9 @@
 #define Operations_h
 
 #include "ExceptionHelpers.h"
+#include "GCIncomingRefCountedInlines.h"
 #include "Interpreter.h"
+#include "JSArrayBufferViewInlines.h"
 #include "JSCJSValueInlines.h"
 #include "JSFunctionInlines.h"
 #include "JSProxy.h"

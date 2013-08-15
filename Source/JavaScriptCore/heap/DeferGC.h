@@ -49,6 +49,24 @@ private:
     Heap& m_heap;
 };
 
+class DeferGCForAWhile {
+    WTF_MAKE_NONCOPYABLE(DeferGCForAWhile);
+public:
+    DeferGCForAWhile(Heap& heap)
+        : m_heap(heap)
+    {
+        m_heap.incrementDeferralDepth();
+    }
+    
+    ~DeferGCForAWhile()
+    {
+        m_heap.decrementDeferralDepth();
+    }
+
+private:
+    Heap& m_heap;
+};
+
 } // namespace JSC
 
 #endif // DeferGC_h

@@ -259,10 +259,10 @@ SOURCES += \
     profiler/ProfileGenerator.cpp \
     profiler/ProfileNode.cpp \
     profiler/LegacyProfiler.cpp \
-    runtime/ArrayBuffer.cpp \
-    runtime/ArrayBufferView.cpp \
     runtime/ArgList.cpp \
     runtime/Arguments.cpp \
+    runtime/ArrayBuffer.cpp \
+    runtime/ArrayBufferView.cpp \
     runtime/ArrayConstructor.cpp \
     runtime/ArrayPrototype.cpp \
     runtime/BooleanConstructor.cpp \
@@ -277,13 +277,14 @@ SOURCES += \
     runtime/CompilationResult.cpp \
     runtime/Completion.cpp \
     runtime/ConstructData.cpp \
+    runtime/DataView.cpp \
     runtime/DateConstructor.cpp \
     runtime/DateConversion.cpp \
     runtime/DateInstance.cpp \
     runtime/DatePrototype.cpp \
     runtime/DumpContext.cpp \
-    runtime/ErrorConstructor.cpp \
     runtime/Error.cpp \
+    runtime/ErrorConstructor.cpp \
     runtime/ErrorInstance.cpp \
     runtime/ErrorPrototype.cpp \
     runtime/ExceptionHelpers.cpp \
@@ -293,37 +294,44 @@ SOURCES += \
     runtime/FunctionPrototype.cpp \
     runtime/GCActivityCallback.cpp \
     runtime/GetterSetter.cpp \
-    runtime/Options.cpp \
     runtime/Identifier.cpp \
     runtime/IndexingType.cpp \
     runtime/InitializeThreading.cpp \
     runtime/IntendedStructureChain.cpp \
     runtime/InternalFunction.cpp \
-    runtime/JSActivation.cpp \
     runtime/JSAPIValueWrapper.cpp \
+    runtime/JSActivation.cpp \
     runtime/JSArray.cpp \
+    runtime/JSArrayBuffer.cpp \
+    runtime/JSArrayBufferConstructor.cpp \
+    runtime/JSArrayBufferPrototype.cpp \
+    runtime/JSArrayBufferView.cpp \
+    runtime/JSBoundFunction.cpp \
+    runtime/JSCJSValue.cpp \
     runtime/JSCell.cpp \
+    runtime/JSDataView.cpp \
+    runtime/JSDataViewPrototype.cpp \
     runtime/JSDateMath.cpp \
     runtime/JSFunction.cpp \
-    runtime/JSBoundFunction.cpp \
-    runtime/VM.cpp \
     runtime/JSGlobalObject.cpp \
     runtime/JSGlobalObjectFunctions.cpp \
-    runtime/JSProxy.cpp \
     runtime/JSLock.cpp \
-    runtime/JSNotAnObject.cpp \
-    runtime/JSObject.cpp \
-    runtime/JSONObject.cpp \
-    runtime/JSPropertyNameIterator.cpp \
-    runtime/JSSegmentedVariableObject.cpp \
-    runtime/JSWithScope.cpp \
     runtime/JSNameScope.cpp \
+    runtime/JSNotAnObject.cpp \
+    runtime/JSONObject.cpp \
+    runtime/JSObject.cpp \
+    runtime/JSPropertyNameIterator.cpp \
+    runtime/JSProxy.cpp \
     runtime/JSScope.cpp \
+    runtime/JSSegmentedVariableObject.cpp \
     runtime/JSString.cpp \
     runtime/JSStringJoiner.cpp \
     runtime/JSSymbolTableObject.cpp \
-    runtime/JSCJSValue.cpp \
+    runtime/JSTypedArrayConstructors.cpp \
+    runtime/JSTypedArrayPrototypes.cpp \
+    runtime/JSTypedArrays.cpp \
     runtime/JSVariableObject.cpp \
+    runtime/JSWithScope.cpp \
     runtime/JSWrapperObject.cpp \
     runtime/LiteralParser.cpp \
     runtime/Lookup.cpp \
@@ -340,19 +348,21 @@ SOURCES += \
     runtime/ObjectConstructor.cpp \
     runtime/ObjectPrototype.cpp \
     runtime/Operations.cpp \
+    runtime/Options.cpp \
     runtime/PropertyDescriptor.cpp \
     runtime/PropertyNameArray.cpp \
     runtime/PropertySlot.cpp \
     runtime/PropertyTable.cpp \
     runtime/PrototypeMap.cpp \
-    runtime/RegExpConstructor.cpp \
-    runtime/RegExpCachedResult.cpp \
-    runtime/RegExpMatchesArray.cpp \
     runtime/RegExp.cpp \
+    runtime/RegExpCache.cpp \
+    runtime/RegExpCachedResult.cpp \
+    runtime/RegExpConstructor.cpp \
+    runtime/RegExpMatchesArray.cpp \
     runtime/RegExpObject.cpp \
     runtime/RegExpPrototype.cpp \
-    runtime/RegExpCache.cpp \
     runtime/SamplingCounter.cpp \
+    runtime/SimpleTypedArrayController.cpp \
     runtime/SmallStrings.cpp \
     runtime/SparseArrayValueMap.cpp \
     runtime/StrictEvalActivation.cpp \
@@ -360,10 +370,13 @@ SOURCES += \
     runtime/StringObject.cpp \
     runtime/StringPrototype.cpp \
     runtime/StringRecursionChecker.cpp \
-    runtime/StructureChain.cpp \
     runtime/Structure.cpp \
+    runtime/StructureChain.cpp \
     runtime/StructureRareData.cpp \
     runtime/SymbolTable.cpp \
+    runtime/TypedArrayController.cpp \
+    runtime/TypedArrayType.cpp \
+    runtime/VM.cpp \
     runtime/Watchdog.cpp \
     runtime/WatchdogNone.cpp \
     tools/CodeProfile.cpp \

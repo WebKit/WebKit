@@ -141,6 +141,7 @@
     <ClInclude Include="..\wtf\DateMath.h" />
     <ClInclude Include="..\wtf\DecimalNumber.h" />
     <ClInclude Include="..\wtf\Decoder.h" />
+    <ClInclude Include="..\wtf\DeferrableRefCounted.h" />
     <ClInclude Include="..\wtf\Deque.h" />
     <ClInclude Include="..\wtf\DisallowCType.h" />
     <ClInclude Include="..\wtf\DoublyLinkedList.h" />
@@ -164,6 +165,7 @@
     <ClInclude Include="..\wtf\FeatureDefines.h" />
     <ClInclude Include="..\wtf\FilePrintStream.h" />
     <ClInclude Include="..\wtf\FixedArray.h" />
+    <ClInclude Include="..\wtf\FlipBytes.h" />
     <ClInclude Include="..\wtf\Forward.h" />
     <ClInclude Include="..\wtf\FunctionDispatcher.h" />
     <ClInclude Include="..\wtf\Functional.h" />

@@ -230,13 +230,11 @@ public:
     
     bool couldHaveIndexingHeader() const
     {
-        return hasIndexedProperties(indexingType());
+        return hasIndexedProperties(indexingType())
+            || isTypedView(m_classInfo->typedArrayStorageType);
     }
     
-    bool hasIndexingHeader(const JSCell*) const
-    {
-        return hasIndexedProperties(indexingType());
-    }
+    bool hasIndexingHeader(const JSCell*) const;
     
     bool masqueradesAsUndefined(JSGlobalObject* lexicalGlobalObject);
 

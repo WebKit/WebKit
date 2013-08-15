@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -10,10 +10,10 @@
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY APPLE COMPUTER, INC. ``AS IS'' AND ANY
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
  * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
  * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
  * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
@@ -26,15 +26,17 @@
 #ifndef ArrayBuffer_h
 #define ArrayBuffer_h
 
-#include <wtf/HashSet.h>
+#include "GCIncomingRefCounted.h"
+#include "Weak.h"
 #include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 
 namespace JSC {
 
 class ArrayBuffer;
 class ArrayBufferView;
+class JSArrayBuffer;
 
 class ArrayBufferContents {
     WTF_MAKE_NONCOPYABLE(ArrayBufferContents);
@@ -45,7 +47,7 @@ public:
     { }
 
     inline ~ArrayBufferContents();
-
+    
     void* data() { return m_data; }
     unsigned sizeInBytes() { return m_sizeInBytes; }
 
@@ -86,12 +88,13 @@ private:
     unsigned m_sizeInBytes;
 };
 
-class ArrayBuffer : public RefCounted<ArrayBuffer> {
+class ArrayBuffer : public GCIncomingRefCounted<ArrayBuffer> {
 public:
     static inline PassRefPtr<ArrayBuffer> create(unsigned numElements, unsigned elementByteSize);
     static inline PassRefPtr<ArrayBuffer> create(ArrayBuffer*);
     static inline PassRefPtr<ArrayBuffer> create(const void* source, unsigned byteLength);
     static inline PassRefPtr<ArrayBuffer> create(ArrayBufferContents&);
+    static inline PassRefPtr<ArrayBuffer> createAdopted(const void* data, unsigned byteLength);
 
     // Only for use by Uint8ClampedArray::createUninitialized.
     static inline PassRefPtr<ArrayBuffer> createUninitialized(unsigned numElements, unsigned elementByteSize);
@@ -99,14 +102,16 @@ public:
     inline void* data();
     inline const void* data() const;
     inline unsigned byteLength() const;
+    
+    inline size_t gcSizeEstimateInBytes() const;
 
     inline PassRefPtr<ArrayBuffer> slice(int begin, int end) const;
     inline PassRefPtr<ArrayBuffer> slice(int begin) const;
+    
+    inline void pin();
+    inline void unpin();
 
-    void addView(ArrayBufferView*);
-    void removeView(ArrayBufferView*);
-
-    JS_EXPORT_PRIVATE bool transfer(ArrayBufferContents&, Vector<RefPtr<ArrayBufferView> >& neuteredViews);
+    JS_EXPORT_PRIVATE bool transfer(ArrayBufferContents&);
     bool isNeutered() { return !m_contents.m_data; }
 
     ~ArrayBuffer() { }
@@ -119,8 +124,11 @@ private:
     inline unsigned clampIndex(int index) const;
     static inline int clampValue(int x, int left, int right);
 
+    unsigned m_pinCount;
     ArrayBufferContents m_contents;
-    ArrayBufferView* m_firstView;
+
+public:
+    Weak<JSArrayBuffer> m_wrapper;
 };
 
 int ArrayBuffer::clampValue(int x, int left, int right)
@@ -159,6 +167,12 @@ PassRefPtr<ArrayBuffer> ArrayBuffer::create(ArrayBufferContents& contents)
     return adoptRef(new ArrayBuffer(contents));
 }
 
+PassRefPtr<ArrayBuffer> ArrayBuffer::createAdopted(const void* data, unsigned byteLength)
+{
+    ArrayBufferContents contents(const_cast<void*>(data), byteLength);
+    return create(contents);
+}
+
 PassRefPtr<ArrayBuffer> ArrayBuffer::createUninitialized(unsigned numElements, unsigned elementByteSize)
 {
     return create(numElements, elementByteSize, ArrayBufferContents::DontInitialize);
@@ -174,7 +188,7 @@ PassRefPtr<ArrayBuffer> ArrayBuffer::create(unsigned numElements, unsigned eleme
 }
 
 ArrayBuffer::ArrayBuffer(ArrayBufferContents& contents)
-    : m_firstView(0)
+    : m_pinCount(0)
 {
     contents.transfer(m_contents);
 }
@@ -192,6 +206,11 @@ const void* ArrayBuffer::data() const
 unsigned ArrayBuffer::byteLength() const
 {
     return m_contents.m_sizeInBytes;
+}
+
+size_t ArrayBuffer::gcSizeEstimateInBytes() const
+{
+    return sizeof(ArrayBuffer) + static_cast<size_t>(byteLength());
 }
 
 PassRefPtr<ArrayBuffer> ArrayBuffer::slice(int begin, int end) const
@@ -218,15 +237,23 @@ unsigned ArrayBuffer::clampIndex(int index) const
     return clampValue(index, 0, currentLength);
 }
 
+void ArrayBuffer::pin()
+{
+    m_pinCount++;
+}
+
+void ArrayBuffer::unpin()
+{
+    m_pinCount--;
+}
+
 void ArrayBufferContents::tryAllocate(unsigned numElements, unsigned elementByteSize, ArrayBufferContents::InitializationPolicy policy, ArrayBufferContents& result)
 {
-    // Do not allow 32-bit overflow of the total size.
-    // FIXME: Why not? The tryFastCalloc function already checks its arguments,
-    // and will fail if there is any overflow, so why should we include a
-    // redudant unnecessarily restrictive check here?
+    // Do not allow 31-bit overflow of the total size.
     if (numElements) {
         unsigned totalSize = numElements * elementByteSize;
-        if (totalSize / numElements != elementByteSize) {
+        if (totalSize / numElements != elementByteSize
+            || totalSize > static_cast<unsigned>(std::numeric_limits<int32_t>::max())) {
             result.m_data = 0;
             return;
         }
@@ -254,6 +281,6 @@ ArrayBufferContents::~ArrayBufferContents()
 } // namespace JSC
 
 using JSC::ArrayBuffer;
-using JSC::ArrayBufferContents;
 
 #endif // ArrayBuffer_h
+

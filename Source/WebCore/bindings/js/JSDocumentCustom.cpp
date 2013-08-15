@@ -56,7 +56,7 @@ JSValue JSDocument::location(ExecState* exec) const
         return jsNull();
 
     Location* location = frame->document()->domWindow()->location();
-    if (JSDOMWrapper* wrapper = getCachedWrapper(currentWorld(exec), location))
+    if (JSObject* wrapper = getCachedWrapper(currentWorld(exec), location))
         return wrapper;
 
     JSLocation* jsLocation = JSLocation::create(getDOMStructure<JSLocation>(exec, globalObject()), globalObject(), location);
@@ -83,7 +83,7 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, Document* documen
     if (!document)
         return jsNull();
 
-    JSDOMWrapper* wrapper = getCachedWrapper(currentWorld(exec), document);
+    JSObject* wrapper = getCachedWrapper(currentWorld(exec), document);
     if (wrapper)
         return wrapper;
 

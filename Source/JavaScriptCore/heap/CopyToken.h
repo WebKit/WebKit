@@ -29,7 +29,8 @@
 namespace JSC {
 
 enum CopyToken {
-    ButterflyCopyToken
+    ButterflyCopyToken,
+    TypedArrayVectorCopyToken
 };
 
 } // namespace JSC

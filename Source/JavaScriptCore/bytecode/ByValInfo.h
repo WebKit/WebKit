@@ -69,7 +69,7 @@ inline bool isOptimizableIndexingType(IndexingType indexingType)
 
 inline bool hasOptimizableIndexingForClassInfo(const ClassInfo* classInfo)
 {
-    return classInfo->typedArrayStorageType != TypedArrayNone;
+    return isTypedView(classInfo->typedArrayStorageType);
 }
 
 inline bool hasOptimizableIndexing(Structure* structure)
@@ -98,27 +98,54 @@ inline JITArrayMode jitArrayModeForIndexingType(IndexingType indexingType)
 inline JITArrayMode jitArrayModeForClassInfo(const ClassInfo* classInfo)
 {
     switch (classInfo->typedArrayStorageType) {
-    case TypedArrayInt8:
+    case TypeInt8:
         return JITInt8Array;
-    case TypedArrayInt16:
+    case TypeInt16:
         return JITInt16Array;
-    case TypedArrayInt32:
+    case TypeInt32:
         return JITInt32Array;
-    case TypedArrayUint8:
+    case TypeUint8:
         return JITUint8Array;
-    case TypedArrayUint8Clamped:
+    case TypeUint8Clamped:
         return JITUint8ClampedArray;
-    case TypedArrayUint16:
+    case TypeUint16:
         return JITUint16Array;
-    case TypedArrayUint32:
+    case TypeUint32:
         return JITUint32Array;
-    case TypedArrayFloat32:
+    case TypeFloat32:
         return JITFloat32Array;
-    case TypedArrayFloat64:
+    case TypeFloat64:
         return JITFloat64Array;
     default:
         CRASH();
         return JITContiguous;
+    }
+}
+
+inline TypedArrayType typedArrayTypeForJITArrayMode(JITArrayMode mode)
+{
+    switch (mode) {
+    case JITInt8Array:
+        return TypeInt8;
+    case JITInt16Array:
+        return TypeInt16;
+    case JITInt32Array:
+        return TypeInt32;
+    case JITUint8Array:
+        return TypeUint8;
+    case JITUint8ClampedArray:
+        return TypeUint8Clamped;
+    case JITUint16Array:
+        return TypeUint16;
+    case JITUint32Array:
+        return TypeUint32;
+    case JITFloat32Array:
+        return TypeFloat32;
+    case JITFloat64Array:
+        return TypeFloat64;
+    default:
+        CRASH();
+        return NotTypedArray;
     }
 }
 

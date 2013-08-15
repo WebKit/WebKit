@@ -38,8 +38,6 @@
 #include "FrameLoader.h"
 #include "HTMLDocument.h"
 #include "InspectorInstrumentation.h"
-#include "JSArrayBuffer.h"
-#include "JSArrayBufferView.h"
 #include "JSBlob.h"
 #include "JSDOMFormData.h"
 #include "JSDOMWindowCustom.h"
@@ -50,6 +48,8 @@
 #include <interpreter/StackIterator.h>
 #include <runtime/ArrayBuffer.h>
 #include <runtime/Error.h>
+#include <runtime/JSArrayBuffer.h>
+#include <runtime/JSArrayBufferView.h>
 
 using namespace JSC;
 
@@ -127,9 +127,10 @@ JSValue JSXMLHttpRequest::send(ExecState* exec)
             impl()->send(toDOMFormData(val), ec);
         else if (val.inherits(JSArrayBuffer::info()))
             impl()->send(toArrayBuffer(val), ec);
-        else if (val.inherits(JSArrayBufferView::info()))
-            impl()->send(toArrayBufferView(val), ec);
-        else
+        else if (val.inherits(JSArrayBufferView::info())) {
+            RefPtr<ArrayBufferView> view = toArrayBufferView(val);
+            impl()->send(view.get(), ec);
+        } else
             impl()->send(val.toString(exec)->value(exec), ec);
     }
 

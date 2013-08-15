@@ -13,6 +13,7 @@ var basicBufferTypes =
     ["Uint32", Uint32Array, 4],
     ["Int8", Int8Array, 1],
     ["Uint8", Uint8Array, 1],
+    ["Uint8Clamped", Uint8ClampedArray, 1],
     ["Int16", Int16Array, 2],
     ["Uint16", Uint16Array, 2],
     ["Float32", Float32Array, 4],
@@ -200,7 +201,7 @@ function checkView(testName, typedArrayType, view)
     }
     if (view.buffer.byteLength !== arraySize ||
         (!(view instanceof DataView) && view.length !== arrayEffectiveSize / view.BYTES_PER_ELEMENT)) {
-        testFailed(testName + ": view has the wrong length (" + view.length + ")");
+        testFailed(testName + ": view has the wrong length (" + view.length + " instead of " + arrayEffectiveSize + " / " + view.BYTES_PER_ELEMENT + ")");
         return false;
     }
     if (view.byteOffset !== arrayOffset) {

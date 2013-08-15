@@ -30,28 +30,36 @@
 
 namespace JSC {
 
-ArrayBufferView::ArrayBufferView(PassRefPtr<ArrayBuffer> buffer, unsigned byteOffset)
-    : m_byteOffset(byteOffset)
-    , m_isNeuterable(true)
-    , m_buffer(buffer)
-    , m_prevView(0)
-    , m_nextView(0)
+ArrayBufferView::ArrayBufferView(
+    PassRefPtr<ArrayBuffer> buffer,
+    unsigned byteOffset)
+        : m_byteOffset(byteOffset)
+        , m_isNeuterable(true)
+        , m_buffer(buffer)
 {
     m_baseAddress = m_buffer ? (static_cast<char*>(m_buffer->data()) + m_byteOffset) : 0;
-    if (m_buffer) 
-        m_buffer->addView(this);
 }
 
 ArrayBufferView::~ArrayBufferView()
 {
-    if (m_buffer)
-        m_buffer->removeView(this);
+    if (!m_isNeuterable)
+        m_buffer->unpin();
 }
 
-void ArrayBufferView::neuter()
+void ArrayBufferView::setNeuterable(bool flag)
 {
-    m_buffer = 0;
-    m_byteOffset = 0;
+    if (flag == m_isNeuterable)
+        return;
+    
+    m_isNeuterable = flag;
+    
+    if (!m_buffer)
+        return;
+    
+    if (flag)
+        m_buffer->unpin();
+    else
+        m_buffer->pin();
 }
 
-}
+} // namespace JSC

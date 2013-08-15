@@ -31,6 +31,7 @@
 namespace JSC {
 
 class HashEntry;
+class JSArrayBufferView;
 struct HashTable;
 
 struct MethodTable {
@@ -96,6 +97,12 @@ struct MethodTable {
 
     typedef bool (*GetOwnPropertyDescriptorFunctionPtr)(JSObject*, ExecState*, PropertyName, PropertyDescriptor&);
     GetOwnPropertyDescriptorFunctionPtr getOwnPropertyDescriptor;
+    
+    typedef void (*SlowDownAndWasteMemory)(JSArrayBufferView*);
+    SlowDownAndWasteMemory slowDownAndWasteMemory;
+    
+    typedef PassRefPtr<ArrayBufferView> (*GetTypedArrayImpl)(JSArrayBufferView*);
+    GetTypedArrayImpl getTypedArrayImpl;
 };
 
 #define CREATE_MEMBER_CHECKER(member) \
@@ -139,6 +146,8 @@ struct MethodTable {
         &ClassName::putDirectVirtual, \
         &ClassName::defineOwnProperty, \
         &ClassName::getOwnPropertyDescriptor, \
+        &ClassName::slowDownAndWasteMemory, \
+        &ClassName::getTypedArrayImpl \
     }, \
     ClassName::TypedArrayStorageType
 

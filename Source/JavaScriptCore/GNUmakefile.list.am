@@ -17,6 +17,7 @@ javascriptcore_built_nosources += \
 	DerivedSources/JavaScriptCore/DateConstructor.lut.h \
 	DerivedSources/JavaScriptCore/DatePrototype.lut.h \
 	DerivedSources/JavaScriptCore/ErrorPrototype.lut.h \
+	DerivedSources/JavaScriptCore/JSDataViewPrototype.lut.h \
 	DerivedSources/JavaScriptCore/JSGlobalObject.lut.h \
 	DerivedSources/JavaScriptCore/JSONObject.lut.h \
 	DerivedSources/JavaScriptCore/MathObject.lut.h \
@@ -384,6 +385,10 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/heap/DFGCodeBlocks.cpp \
 	Source/JavaScriptCore/heap/DFGCodeBlocks.h \
 	Source/JavaScriptCore/heap/GCAssertions.h \
+	Source/JavaScriptCore/heap/GCIncomingRefCounted.h \
+	Source/JavaScriptCore/heap/GCIncomingRefCountedInlines.h \
+	Source/JavaScriptCore/heap/GCIncomingRefCountedSet.h \
+	Source/JavaScriptCore/heap/GCIncomingRefCountedSetInlines.h \
 	Source/JavaScriptCore/heap/Handle.h \
 	Source/JavaScriptCore/heap/HandleBlock.h \
 	Source/JavaScriptCore/heap/HandleBlockInlines.h \
@@ -685,6 +690,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/ConcurrentJITLock.h \
 	Source/JavaScriptCore/runtime/ConstructData.cpp \
 	Source/JavaScriptCore/runtime/ConstructData.h \
+	Source/JavaScriptCore/runtime/DataView.cpp \
+	Source/JavaScriptCore/runtime/DataView.h \
 	Source/JavaScriptCore/runtime/DateConstructor.cpp \
 	Source/JavaScriptCore/runtime/DateConstructor.h \
 	Source/JavaScriptCore/runtime/DateConversion.cpp \
@@ -719,6 +726,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/FunctionPrototype.h \
 	Source/JavaScriptCore/runtime/GCActivityCallback.cpp \
 	Source/JavaScriptCore/runtime/GCActivityCallback.h \
+	Source/JavaScriptCore/runtime/GenericTypedArrayView.h \
+	Source/JavaScriptCore/runtime/GenericTypedArrayViewInlines.h \
 	Source/JavaScriptCore/runtime/GetterSetter.cpp \
 	Source/JavaScriptCore/runtime/GetterSetter.h \
 	Source/JavaScriptCore/runtime/Identifier.cpp \
@@ -744,12 +753,27 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/JSAPIValueWrapper.h \
 	Source/JavaScriptCore/runtime/JSArray.cpp \
 	Source/JavaScriptCore/runtime/JSArray.h \
+	Source/JavaScriptCore/runtime/JSArrayBuffer.cpp \
+	Source/JavaScriptCore/runtime/JSArrayBuffer.h \
+	Source/JavaScriptCore/runtime/JSArrayBufferConstructor.cpp \
+	Source/JavaScriptCore/runtime/JSArrayBufferConstructor.h \
+	Source/JavaScriptCore/runtime/JSArrayBufferPrototype.cpp \
+	Source/JavaScriptCore/runtime/JSArrayBufferPrototype.h \
+	Source/JavaScriptCore/runtime/JSArrayBufferView.cpp \
+	Source/JavaScriptCore/runtime/JSArrayBufferView.h \
+	Source/JavaScriptCore/runtime/JSArrayBufferViewInlines.h \
 	Source/JavaScriptCore/runtime/JSCell.cpp \
 	Source/JavaScriptCore/runtime/JSCell.h \
+	Source/JavaScriptCore/runtime/JSDataView.cpp \
+	Source/JavaScriptCore/runtime/JSDataView.h \
+	Source/JavaScriptCore/runtime/JSDataViewPrototype.cpp \
+	Source/JavaScriptCore/runtime/JSDataViewPrototype.h \
 	Source/JavaScriptCore/runtime/JSDateMath.cpp \
 	Source/JavaScriptCore/runtime/JSCellInlines.h \
 	Source/JavaScriptCore/runtime/JSDateMath.h \
 	Source/JavaScriptCore/runtime/JSDestructibleObject.h \
+	Source/JavaScriptCore/runtime/JSFloat32Array.h \
+	Source/JavaScriptCore/runtime/JSFloat64Array.h \
 	Source/JavaScriptCore/runtime/JSFunction.cpp \
 	Source/JavaScriptCore/runtime/JSFunction.h \
 	Source/JavaScriptCore/runtime/JSBoundFunction.cpp \
@@ -758,12 +782,21 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/VM.cpp \
 	Source/JavaScriptCore/runtime/VM.h \
 	Source/JavaScriptCore/runtime/JSFunctionInlines.h \
+	Source/JavaScriptCore/runtime/JSGenericTypedArrayView.h \
+	Source/JavaScriptCore/runtime/JSGenericTypedArrayViewConstructor.h \
+	Source/JavaScriptCore/runtime/JSGenericTypedArrayViewConstructorInlines.h \
+	Source/JavaScriptCore/runtime/JSGenericTypedArrayViewInlines.h \
+	Source/JavaScriptCore/runtime/JSGenericTypedArrayViewPrototype.h \
+	Source/JavaScriptCore/runtime/JSGenericTypedArrayViewPrototypeInlines.h \
 	Source/JavaScriptCore/runtime/JSGlobalObject.cpp \
 	Source/JavaScriptCore/runtime/JSGlobalObjectFunctions.cpp \
 	Source/JavaScriptCore/runtime/JSGlobalObjectFunctions.h \
 	Source/JavaScriptCore/runtime/JSGlobalObject.h \
 	Source/JavaScriptCore/runtime/JSProxy.cpp \
 	Source/JavaScriptCore/runtime/JSProxy.h \
+	Source/JavaScriptCore/runtime/JSInt16Array.h \
+	Source/JavaScriptCore/runtime/JSInt32Array.h \
+	Source/JavaScriptCore/runtime/JSInt8Array.h \
 	Source/JavaScriptCore/runtime/JSLock.cpp \
 	Source/JavaScriptCore/runtime/JSLock.h \
 	Source/JavaScriptCore/runtime/JSNotAnObject.cpp \
@@ -776,6 +809,16 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/JSPropertyNameIterator.h \
 	Source/JavaScriptCore/runtime/JSSegmentedVariableObject.cpp \
 	Source/JavaScriptCore/runtime/JSSegmentedVariableObject.h \
+	Source/JavaScriptCore/runtime/JSTypedArrayConstructors.cpp \
+	Source/JavaScriptCore/runtime/JSTypedArrayConstructors.h \
+	Source/JavaScriptCore/runtime/JSTypedArrayPrototypes.cpp \
+	Source/JavaScriptCore/runtime/JSTypedArrayPrototypes.h \
+	Source/JavaScriptCore/runtime/JSTypedArrays.cpp \
+	Source/JavaScriptCore/runtime/JSTypedArrays.h \
+	Source/JavaScriptCore/runtime/JSUint16Array.h \
+	Source/JavaScriptCore/runtime/JSUint32Array.h \
+	Source/JavaScriptCore/runtime/JSUint8Array.h \
+	Source/JavaScriptCore/runtime/JSUint8ClampedArray.h \
 	Source/JavaScriptCore/runtime/JSWithScope.cpp \
 	Source/JavaScriptCore/runtime/JSNameScope.cpp \
 	Source/JavaScriptCore/runtime/JSNameScope.h \
@@ -866,6 +909,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/Reject.h \
 	Source/JavaScriptCore/runtime/SamplingCounter.cpp \
 	Source/JavaScriptCore/runtime/SamplingCounter.h \
+	Source/JavaScriptCore/runtime/SimpleTypedArrayController.cpp \
+	Source/JavaScriptCore/runtime/SimpleTypedArrayController.h \
 	Source/JavaScriptCore/runtime/SmallStrings.cpp \
 	Source/JavaScriptCore/runtime/SmallStrings.h \
 	Source/JavaScriptCore/runtime/SparseArrayValueMap.cpp \
@@ -892,8 +937,14 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/SymbolTable.cpp \
 	Source/JavaScriptCore/runtime/SymbolTable.h \
 	Source/JavaScriptCore/runtime/Tracing.h \
+	Source/JavaScriptCore/runtime/TypedArrayAdaptors.h \
 	Source/JavaScriptCore/runtime/TypedArrayBase.h \
-	Source/JavaScriptCore/runtime/TypedArrayDescriptor.h \
+	Source/JavaScriptCore/runtime/TypedArrayController.cpp \
+	Source/JavaScriptCore/runtime/TypedArrayController.h \
+	Source/JavaScriptCore/runtime/TypedArrayInlines.h \
+	Source/JavaScriptCore/runtime/TypedArrayType.cpp \
+	Source/JavaScriptCore/runtime/TypedArrayType.h \
+	Source/JavaScriptCore/runtime/TypedArrays.h \
 	Source/JavaScriptCore/runtime/Uint16Array.h \
 	Source/JavaScriptCore/runtime/Uint16WithFraction.h \
 	Source/JavaScriptCore/runtime/Uint32Array.h \
@@ -967,5 +1018,4 @@ Programs_LLIntOffsetsExtractor_SOURCES = \
 	Source/JavaScriptCore/llint/LLIntOffsetsExtractor.cpp
 
 Programs_jsc_@WEBKITGTK_API_MAJOR_VERSION@_SOURCES = \
-	Source/JavaScriptCore/JSCTypedArrayStubs.h \
 	Source/JavaScriptCore/jsc.cpp

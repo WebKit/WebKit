@@ -29,12 +29,10 @@ list(APPEND WebCore_SOURCES
     bindings/js/DOMWrapperWorld.cpp
     bindings/js/Dictionary.cpp
     bindings/js/GCController.cpp
-    bindings/js/JSArrayBufferCustom.cpp
     bindings/js/JSAudioBufferCustom.cpp
     bindings/js/JSAttrCustom.cpp
     bindings/js/JSBlobCustom.cpp
     bindings/js/JSCDATASectionCustom.cpp
-    bindings/js/JSDataViewCustom.cpp
     bindings/js/JSCSSFontFaceRuleCustom.cpp
     bindings/js/JSCSSImportRuleCustom.cpp
     bindings/js/JSCSSMediaRuleCustom.cpp
@@ -150,6 +148,7 @@ list(APPEND WebCore_SOURCES
     bindings/js/ScriptState.cpp
     bindings/js/ScriptValue.cpp
     bindings/js/SerializedScriptValue.cpp
+    bindings/js/WebCoreTypedArrayController.cpp
 
     bridge/IdentifierRep.cpp
     bridge/NP_jsobject.cpp

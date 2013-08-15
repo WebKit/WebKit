@@ -301,14 +301,7 @@ IDL_BINDINGS += \
     $$PWD/fileapi/FileList.idl \
     $$PWD/fileapi/FileReader.idl \
     $$PWD/fileapi/FileReaderSync.idl \
-    $$PWD/html/canvas/ArrayBufferView.idl \
-    $$PWD/html/canvas/ArrayBuffer.idl \
-    $$PWD/html/canvas/DataView.idl \
-    $$PWD/html/canvas/Int8Array.idl \
-    $$PWD/html/canvas/Float32Array.idl \
-    $$PWD/html/canvas/Float64Array.idl \
     $$PWD/html/canvas/CanvasGradient.idl \
-    $$PWD/html/canvas/Int32Array.idl \
     $$PWD/html/canvas/CanvasPattern.idl \
     $$PWD/html/canvas/CanvasProxy.idl \
     $$PWD/html/canvas/CanvasRenderingContext.idl \
@@ -338,14 +331,9 @@ IDL_BINDINGS += \
     $$PWD/html/canvas/WebGLRenderingContext.idl \
     $$PWD/html/canvas/WebGLShader.idl \
     $$PWD/html/canvas/WebGLShaderPrecisionFormat.idl \
-    $$PWD/html/canvas/Int16Array.idl \
     $$PWD/html/canvas/WebGLTexture.idl \
     $$PWD/html/canvas/WebGLUniformLocation.idl \
     $$PWD/html/canvas/WebGLVertexArrayObjectOES.idl \
-    $$PWD/html/canvas/Uint8Array.idl \
-    $$PWD/html/canvas/Uint8ClampedArray.idl \
-    $$PWD/html/canvas/Uint32Array.idl \
-    $$PWD/html/canvas/Uint16Array.idl \
     $$PWD/html/DOMFormData.idl \
     $$PWD/html/DOMSettableTokenList.idl \
     $$PWD/html/DOMTokenList.idl \

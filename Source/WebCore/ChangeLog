@@ -1,3 +1,181 @@
+2013-08-14  Filip Pizlo  <fpizlo@apple.com>
+
+        Typed arrays should be rewritten
+        https://bugs.webkit.org/show_bug.cgi?id=119064
+
+        Reviewed by Oliver Hunt.
+
+        Typed arrays are now implemented in JavaScriptCore, and WebCore is merely a
+        client of them. There is only one layering violation: WebCore installs a
+        WebCoreTypedArrayController on VM, which makes the
+        ArrayBuffer<->JSArrayBuffer relationship resemble DOM wrappers. By default,
+        JSC makes the ownership go one way; the JSArrayBuffer keeps the ArrayBuffer
+        alive but if ArrayBuffer is kept alive from native code then the
+        JSArrayByffer may die. WebCoreTypedArrayController will keep the
+        JSArrayBuffer alive if the ArrayBuffer is in the opaque root set.
+        
+        To make non-JSDOMWrappers behave like DOM wrappers, a bunch of code is
+        changed to make most references to wrappers refer to JSObject* rather than
+        JSDOMWrapper*.
+        
+        Array buffer views are now transient; the JS array buffer view wrappers
+        don't own them or keep them alive. This required a bunch of changes to make
+        bindings code use RefPtr<ArrayBufferView> to hold onto their views.
+        
+        Also there is a bunch of new code to make JSC-provided array buffers and
+        views obey the toJS/to<ClassName> idiom for wrapping and unwrapping.
+        
+        Finally, the DataView API is now completely different: the JSDataView
+        provides the same user-visible JS API but using its own internal magic; the
+        C++ code that uses DataView now uses a rather different API that is not
+        aware of usual DOM semantics, since it's in JSC and not WebCore. It's
+        equally useful for all of WebCore's purposes, but some code had to change
+        to adapt the new conventions.
+        
+        Some tests have been changed or rebased due to changes in behavior, that
+        bring us into conformance with where the standards are going and allow us to
+        match Firefox behavior.
+
+        Automake work and some additional GTK changes courtesy of
+        Zan Dobersek <zdobersek@igalia.com>.
+        
+        Additional Qt changes courtesy of Arunprasad Rajkumar <arurajku@cisco.com>.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * ForwardingHeaders/runtime/DataView.h: Added.
+        * ForwardingHeaders/runtime/JSArrayBuffer.h: Added.
+        * ForwardingHeaders/runtime/JSArrayBufferView.h: Added.
+        * ForwardingHeaders/runtime/JSDataView.h: Added.
+        * ForwardingHeaders/runtime/JSTypedArrays.h: Added.
+        * ForwardingHeaders/runtime/TypedArrayController.h: Added.
+        * ForwardingHeaders/runtime/TypedArrayInlines.h: Added.
+        * ForwardingHeaders/runtime/TypedArrays.h: Added.
+        * GNUmakefile.list.am:
+        * Modules/webaudio/RealtimeAnalyser.h:
+        * Target.pri:
+        * UseJSC.cmake:
+        * WebCore.exp.in:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/DOMWrapperWorld.h:
+        * bindings/js/JSArrayBufferCustom.cpp: Removed.
+        * bindings/js/JSArrayBufferViewHelper.h: Removed.
+        * bindings/js/JSAudioContextCustom.cpp:
+        * bindings/js/JSBindingsAllInOne.cpp:
+        * bindings/js/JSBlobCustom.cpp:
+        * bindings/js/JSCSSRuleCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSCSSValueCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSCryptoCustom.cpp:
+        (WebCore::JSCrypto::getRandomValues):
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::wrapperOwner):
+        (WebCore::wrapperContext):
+        (WebCore::getInlineCachedWrapper):
+        (WebCore::setInlineCachedWrapper):
+        (WebCore::clearInlineCachedWrapper):
+        (WebCore::getCachedWrapper):
+        (WebCore::cacheWrapper):
+        (WebCore::uncacheWrapper):
+        (WebCore::wrap):
+        (WebCore::toJS):
+        (WebCore::toArrayBufferView):
+        (WebCore::toInt8Array):
+        (WebCore::toInt16Array):
+        (WebCore::toInt32Array):
+        (WebCore::toUint8Array):
+        (WebCore::toUint8ClampedArray):
+        (WebCore::toUint16Array):
+        (WebCore::toUint32Array):
+        (WebCore::toFloat32Array):
+        (WebCore::toFloat64Array):
+        (WebCore::toDataView):
+        * bindings/js/JSDataViewCustom.cpp: Removed.
+        * bindings/js/JSDictionary.cpp:
+        * bindings/js/JSDictionary.h:
+        * bindings/js/JSDocumentCustom.cpp:
+        (WebCore::JSDocument::location):
+        (WebCore::toJS):
+        * bindings/js/JSEventCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSFileReaderCustom.cpp:
+        * bindings/js/JSHTMLCollectionCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSHTMLTemplateElementCustom.cpp:
+        (WebCore::JSHTMLTemplateElement::content):
+        * bindings/js/JSImageDataCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSInjectedScriptHostCustom.cpp:
+        * bindings/js/JSMessageEventCustom.cpp:
+        * bindings/js/JSMessagePortCustom.cpp:
+        * bindings/js/JSSVGPathSegCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSStyleSheetCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSTrackCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSWebGLRenderingContextCustom.cpp:
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        (WebCore::JSXMLHttpRequest::send):
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::SerializedScriptValue::transferArrayBuffers):
+        * bindings/js/WebCoreJSClientData.h:
+        (WebCore::initNormalWorldClientData):
+        * bindings/js/WebCoreTypedArrayController.cpp: Added.
+        (WebCore::WebCoreTypedArrayController::WebCoreTypedArrayController):
+        (WebCore::WebCoreTypedArrayController::~WebCoreTypedArrayController):
+        (WebCore::WebCoreTypedArrayController::toJS):
+        (WebCore::WebCoreTypedArrayController::JSArrayBufferOwner::isReachableFromOpaqueRoots):
+        (WebCore::WebCoreTypedArrayController::JSArrayBufferOwner::finalize):
+        * bindings/js/WebCoreTypedArrayController.h: Added.
+        (WebCore::WebCoreTypedArrayController::wrapperOwner):
+        * bindings/scripts/CodeGenerator.pm:
+        (ForAllParents):
+        (ParseInterface):
+        (SkipIncludeHeader):
+        (IsTypedArrayType):
+        (IsWrapperType):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (AddIncludesForType):
+        (GenerateHeader):
+        (GenerateImplementation):
+        (GenerateParametersCheck):
+        (GetNativeType):
+        (JSValueToNative):
+        (NativeToJSValue):
+        (GenerateConstructorDefinition):
+        (GenerateConstructorHelperMethods):
+        * fileapi/WebKitBlobBuilder.cpp:
+        (WebCore::BlobBuilder::append):
+        * fileapi/WebKitBlobBuilder.h:
+        * html/canvas/ArrayBuffer.idl: Removed.
+        * html/canvas/ArrayBufferView.idl: Removed.
+        * html/canvas/DataView.cpp: Removed.
+        * html/canvas/DataView.h: Removed.
+        * html/canvas/DataView.idl: Removed.
+        * html/canvas/Float32Array.idl: Removed.
+        * html/canvas/Float64Array.idl: Removed.
+        * html/canvas/Int16Array.idl: Removed.
+        * html/canvas/Int32Array.idl: Removed.
+        * html/canvas/Int8Array.idl: Removed.
+        * html/canvas/Uint16Array.idl: Removed.
+        * html/canvas/Uint32Array.idl: Removed.
+        * html/canvas/Uint8Array.idl: Removed.
+        * html/canvas/Uint8ClampedArray.idl: Removed.
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::readPixels):
+        (WebCore::WebGLRenderingContext::validateTexFuncData):
+        * page/Crypto.cpp:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::shouldWaitForLoadingOfResource):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::extractKeyURIKeyIDAndCertificateFromInitData):
+        * platform/graphics/filters/FECustomFilter.h:
+        * platform/graphics/filters/FEGaussianBlur.cpp:
+        * platform/graphics/filters/FilterEffect.cpp:
+        * testing/MockCDM.cpp:
+
 2013-08-15  Chris Fleizach  <cfleizach@apple.com>
 
         <https://webkit.org/b/119824> AX: WKView does not become first responder when the voiceover cursor lands on it

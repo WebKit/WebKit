@@ -1973,10 +1973,10 @@ public:
     void compileArithDiv(Node*);
     void compileArithMod(Node*);
     void compileGetIndexedPropertyStorage(Node*);
-    void compileGetByValOnIntTypedArray(const TypedArrayDescriptor&, Node*, size_t elementSize, TypedArraySignedness);
-    void compilePutByValForIntTypedArray(const TypedArrayDescriptor&, GPRReg base, GPRReg property, Node*, size_t elementSize, TypedArraySignedness, TypedArrayRounding = TruncateRounding);
-    void compileGetByValOnFloatTypedArray(const TypedArrayDescriptor&, Node*, size_t elementSize);
-    void compilePutByValForFloatTypedArray(const TypedArrayDescriptor&, GPRReg base, GPRReg property, Node*, size_t elementSize);
+    void compileGetByValOnIntTypedArray(Node*, TypedArrayType);
+    void compilePutByValForIntTypedArray(GPRReg base, GPRReg property, Node*, TypedArrayType);
+    void compileGetByValOnFloatTypedArray(Node*, TypedArrayType);
+    void compilePutByValForFloatTypedArray(GPRReg base, GPRReg property, Node*, TypedArrayType);
     void compileNewFunctionNoCheck(Node*);
     void compileNewFunctionExpression(Node*);
     bool compileRegExpExec(Node*);
@@ -2117,8 +2117,6 @@ public:
     void speculateNotCell(Edge);
     void speculateOther(Edge);
     void speculate(Node*, Edge);
-    
-    const TypedArrayDescriptor* typedArrayDescriptor(ArrayMode);
     
     JITCompiler::Jump jumpSlowForUnwantedArrayMode(GPRReg tempWithIndexingTypeReg, ArrayMode, IndexingType);
     JITCompiler::JumpList jumpSlowForUnwantedArrayMode(GPRReg tempWithIndexingTypeReg, ArrayMode);

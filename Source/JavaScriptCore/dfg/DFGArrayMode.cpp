@@ -458,6 +458,32 @@ const char* arrayConversionToString(Array::Conversion conversion)
     }
 }
 
+TypedArrayType toTypedArrayType(Array::Type type)
+{
+    switch (type) {
+    case Array::Int8Array:
+        return TypeInt8;
+    case Array::Int16Array:
+        return TypeInt16;
+    case Array::Int32Array:
+        return TypeInt32;
+    case Array::Uint8Array:
+        return TypeUint8;
+    case Array::Uint8ClampedArray:
+        return TypeUint8Clamped;
+    case Array::Uint16Array:
+        return TypeUint16;
+    case Array::Uint32Array:
+        return TypeUint32;
+    case Array::Float32Array:
+        return TypeFloat32;
+    case Array::Float64Array:
+        return TypeFloat64;
+    default:
+        return NotTypedArray;
+    }
+}
+
 void ArrayMode::dump(PrintStream& out) const
 {
     out.print(type(), arrayClass(), speculation(), conversion());

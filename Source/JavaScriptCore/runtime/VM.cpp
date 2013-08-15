@@ -57,6 +57,7 @@
 #include "ParserArena.h"
 #include "RegExpCache.h"
 #include "RegExpObject.h"
+#include "SimpleTypedArrayController.h"
 #include "SourceProviderCache.h"
 #include "StrictEvalActivation.h"
 #include "StrongInlines.h"
@@ -87,6 +88,7 @@ extern const HashTable arrayConstructorTable;
 extern const HashTable arrayPrototypeTable;
 extern const HashTable booleanPrototypeTable;
 extern const HashTable jsonTable;
+extern const HashTable dataViewTable;
 extern const HashTable dateTable;
 extern const HashTable dateConstructorTable;
 extern const HashTable errorPrototypeTable;
@@ -145,6 +147,7 @@ VM::VM(VMType vmType, HeapType heapType)
     , arrayConstructorTable(fastNew<HashTable>(JSC::arrayConstructorTable))
     , arrayPrototypeTable(fastNew<HashTable>(JSC::arrayPrototypeTable))
     , booleanPrototypeTable(fastNew<HashTable>(JSC::booleanPrototypeTable))
+    , dataViewTable(fastNew<HashTable>(JSC::dataViewTable))
     , dateTable(fastNew<HashTable>(JSC::dateTable))
     , dateConstructorTable(fastNew<HashTable>(JSC::dateConstructorTable))
     , errorPrototypeTable(fastNew<HashTable>(JSC::errorPrototypeTable))
@@ -258,6 +261,10 @@ VM::VM(VMType vmType, HeapType heapType)
     if (canUseJIT())
         dfgState = adoptPtr(new DFG::LongLivedState());
 #endif
+    
+    // Initialize this last, as a free way of asserting that VM initialization itself
+    // won't use this.
+    m_typedArrayController = adoptRef(new SimpleTypedArrayController());
 }
 
 VM::~VM()
@@ -289,6 +296,7 @@ VM::~VM()
     arrayPrototypeTable->deleteTable();
     arrayConstructorTable->deleteTable();
     booleanPrototypeTable->deleteTable();
+    dataViewTable->deleteTable();
     dateTable->deleteTable();
     dateConstructorTable->deleteTable();
     errorPrototypeTable->deleteTable();
@@ -306,6 +314,7 @@ VM::~VM()
     fastDelete(const_cast<HashTable*>(arrayConstructorTable));
     fastDelete(const_cast<HashTable*>(arrayPrototypeTable));
     fastDelete(const_cast<HashTable*>(booleanPrototypeTable));
+    fastDelete(const_cast<HashTable*>(dataViewTable));
     fastDelete(const_cast<HashTable*>(dateTable));
     fastDelete(const_cast<HashTable*>(dateConstructorTable));
     fastDelete(const_cast<HashTable*>(errorPrototypeTable));

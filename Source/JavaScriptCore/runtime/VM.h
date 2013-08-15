@@ -47,7 +47,7 @@
 #include "SmallStrings.h"
 #include "Strong.h"
 #include "ThunkGenerators.h"
-#include "TypedArrayDescriptor.h"
+#include "TypedArrayController.h"
 #include "Watchdog.h"
 #include "WeakRandom.h"
 #include <wtf/BumpPointerAllocator.h>
@@ -69,13 +69,8 @@ namespace JSC {
     class CodeCache;
     class CommonIdentifiers;
     class ExecState;
-    class Float32Array;
-    class Float64Array;
     class HandleStack;
     class IdentifierTable;
-    class Int8Array;
-    class Int16Array;
-    class Int32Array;
     class Interpreter;
     class JSGlobalObject;
     class JSObject;
@@ -93,10 +88,6 @@ namespace JSC {
 #if ENABLE(REGEXP_TRACING)
     class RegExp;
 #endif
-    class Uint8Array;
-    class Uint8ClampedArray;
-    class Uint16Array;
-    class Uint32Array;
     class UnlinkedCodeBlock;
     class UnlinkedEvalCodeBlock;
     class UnlinkedFunctionExecutable;
@@ -230,6 +221,7 @@ namespace JSC {
         const HashTable* arrayConstructorTable;
         const HashTable* arrayPrototypeTable;
         const HashTable* booleanPrototypeTable;
+        const HashTable* dataViewTable;
         const HashTable* dateTable;
         const HashTable* dateConstructorTable;
         const HashTable* errorPrototypeTable;
@@ -390,6 +382,7 @@ namespace JSC {
 
         LegacyProfiler* m_enabledProfiler;
         OwnPtr<Profiler::Database> m_perBytecodeProfiler;
+        RefPtr<TypedArrayController> m_typedArrayController;
         RegExpCache* m_regExpCache;
         BumpPointerAllocator m_regExpAllocator;
 
@@ -428,55 +421,6 @@ namespace JSC {
         bool haveEnoughNewStringsToHashCons() { return m_newStringsSinceLastHashCons > s_minNumberOfNewStringsToHashCons; }
         void resetNewStringsSinceLastHashCons() { m_newStringsSinceLastHashCons = 0; }
 
-#define registerTypedArrayFunction(type, capitalizedType) \
-        void registerTypedArrayDescriptor(const capitalizedType##Array*, const TypedArrayDescriptor& descriptor) \
-        { \
-            ASSERT(!m_##type##ArrayDescriptor.m_classInfo || m_##type##ArrayDescriptor.m_classInfo == descriptor.m_classInfo); \
-            m_##type##ArrayDescriptor = descriptor; \
-            ASSERT(m_##type##ArrayDescriptor.m_classInfo); \
-        } \
-        const TypedArrayDescriptor& type##ArrayDescriptor() const { ASSERT(m_##type##ArrayDescriptor.m_classInfo); return m_##type##ArrayDescriptor; }
-
-        registerTypedArrayFunction(int8, Int8);
-        registerTypedArrayFunction(int16, Int16);
-        registerTypedArrayFunction(int32, Int32);
-        registerTypedArrayFunction(uint8, Uint8);
-        registerTypedArrayFunction(uint8Clamped, Uint8Clamped);
-        registerTypedArrayFunction(uint16, Uint16);
-        registerTypedArrayFunction(uint32, Uint32);
-        registerTypedArrayFunction(float32, Float32);
-        registerTypedArrayFunction(float64, Float64);
-#undef registerTypedArrayFunction
-        
-        const TypedArrayDescriptor* typedArrayDescriptor(TypedArrayType type) const
-        {
-            switch (type) {
-            case TypedArrayNone:
-                return 0;
-            case TypedArrayInt8:
-                return &int8ArrayDescriptor();
-            case TypedArrayInt16:
-                return &int16ArrayDescriptor();
-            case TypedArrayInt32:
-                return &int32ArrayDescriptor();
-            case TypedArrayUint8:
-                return &uint8ArrayDescriptor();
-            case TypedArrayUint8Clamped:
-                return &uint8ClampedArrayDescriptor();
-            case TypedArrayUint16:
-                return &uint16ArrayDescriptor();
-            case TypedArrayUint32:
-                return &uint32ArrayDescriptor();
-            case TypedArrayFloat32:
-                return &float32ArrayDescriptor();
-            case TypedArrayFloat64:
-                return &float64ArrayDescriptor();
-            default:
-                CRASH();
-                return 0;
-            }
-        }
-
         bool currentThreadIsHoldingAPILock() const
         {
             return m_apiLock->currentThreadIsHoldingLock() || exclusiveThread == currentThread();
@@ -510,16 +454,6 @@ namespace JSC {
         bool m_inDefineOwnProperty;
         OwnPtr<CodeCache> m_codeCache;
         RefCountedArray<StackFrame> m_exceptionStack;
-
-        TypedArrayDescriptor m_int8ArrayDescriptor;
-        TypedArrayDescriptor m_int16ArrayDescriptor;
-        TypedArrayDescriptor m_int32ArrayDescriptor;
-        TypedArrayDescriptor m_uint8ArrayDescriptor;
-        TypedArrayDescriptor m_uint8ClampedArrayDescriptor;
-        TypedArrayDescriptor m_uint16ArrayDescriptor;
-        TypedArrayDescriptor m_uint32ArrayDescriptor;
-        TypedArrayDescriptor m_float32ArrayDescriptor;
-        TypedArrayDescriptor m_float64ArrayDescriptor;
     };
 
 #if ENABLE(GC_VALIDATION)

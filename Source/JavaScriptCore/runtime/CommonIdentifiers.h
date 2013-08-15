@@ -28,6 +28,8 @@
 // ways without repeating the list.
 #define JSC_COMMON_IDENTIFIERS_EACH_PROPERTY_NAME(macro) \
     macro(Array) \
+    macro(ArrayBuffer) \
+    macro(BYTES_PER_ELEMENT) \
     macro(Boolean) \
     macro(Date) \
     macro(Error) \
@@ -55,6 +57,9 @@
     macro(apply) \
     macro(arguments) \
     macro(bind) \
+    macro(buffer) \
+    macro(byteLength) \
+    macro(byteOffset) \
     macro(bytecode) \
     macro(bytecodeIndex) \
     macro(bytecodes) \
@@ -112,9 +117,11 @@
     macro(propertyIsEnumerable) \
     macro(prototype) \
     macro(set) \
+    macro(slice) \
     macro(source) \
     macro(sourceCode) \
     macro(stack) \
+    macro(subarray) \
     macro(test) \
     macro(toExponential) \
     macro(toFixed) \

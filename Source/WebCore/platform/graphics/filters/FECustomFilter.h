@@ -37,11 +37,8 @@
 #include "Filter.h"
 #include "FilterEffect.h"
 #include "GraphicsTypes3D.h"
+#include <runtime/Uint8ClampedArray.h>
 #include <wtf/RefPtr.h>
-
-namespace JSC {
-class Uint8ClampedArray;
-}
 
 namespace WebCore {
 

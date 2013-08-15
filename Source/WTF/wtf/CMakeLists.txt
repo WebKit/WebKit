@@ -18,6 +18,7 @@ set(WTF_HEADERS
     DataLog.h
     DecimalNumber.h
     Decoder.h
+    DeferrableRefCounted.h
     Deque.h
     DisallowCType.h
     DoublyLinkedList.h
@@ -28,6 +29,7 @@ set(WTF_HEADERS
     FeatureDefines.h
     FilePrintStream.h
     FixedArray.h
+    FlipBytes.h
     Forward.h
     FunctionDispatcher.h
     Functional.h

@@ -30,13 +30,13 @@
 #include "Event.h"
 #include "ExceptionCode.h"
 #include "Frame.h"
-#include "JSArrayBuffer.h"
 #include "JSDOMGlobalObject.h"
 #include "JSEvent.h"
 #include "JSEventListener.h"
 #include "JSMessagePortCustom.h"
 #include "MessagePort.h"
 #include <runtime/Error.h>
+#include <runtime/JSArrayBuffer.h>
 #include <wtf/text/AtomicString.h>
 
 using namespace JSC;

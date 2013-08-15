@@ -266,29 +266,27 @@ SpeculatedType speculationFromClassInfo(const ClassInfo* classInfo)
     if (classInfo->isSubClassOf(JSFunction::info()))
         return SpecFunction;
     
-    if (classInfo->typedArrayStorageType != TypedArrayNone) {
-        switch (classInfo->typedArrayStorageType) {
-        case TypedArrayInt8:
-            return SpecInt8Array;
-        case TypedArrayInt16:
-            return SpecInt16Array;
-        case TypedArrayInt32:
-            return SpecInt32Array;
-        case TypedArrayUint8:
-            return SpecUint8Array;
-        case TypedArrayUint8Clamped:
-            return SpecUint8ClampedArray;
-        case TypedArrayUint16:
-            return SpecUint16Array;
-        case TypedArrayUint32:
-            return SpecUint32Array;
-        case TypedArrayFloat32:
-            return SpecFloat32Array;
-        case TypedArrayFloat64:
-            return SpecFloat64Array;
-        default:
-            break;
-        }
+    switch (classInfo->typedArrayStorageType) {
+    case TypeInt8:
+        return SpecInt8Array;
+    case TypeInt16:
+        return SpecInt16Array;
+    case TypeInt32:
+        return SpecInt32Array;
+    case TypeUint8:
+        return SpecUint8Array;
+    case TypeUint8Clamped:
+        return SpecUint8ClampedArray;
+    case TypeUint16:
+        return SpecUint16Array;
+    case TypeUint32:
+        return SpecUint32Array;
+    case TypeFloat32:
+        return SpecFloat32Array;
+    case TypeFloat64:
+        return SpecFloat64Array;
+    default:
+        break;
     }
     
     if (classInfo->isSubClassOf(JSObject::info()))

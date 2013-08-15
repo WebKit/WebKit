@@ -25,7 +25,6 @@
 
 #include "config.h"
 #include "JSImageData.h"
-#include "JSUint8ClampedArray.h"
 
 #include "ImageData.h"
 #include <wtf/StdLibExtras.h>
@@ -40,7 +39,7 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, ImageData* imageD
     if (!imageData)
         return jsNull();
     
-    JSDOMWrapper* wrapper = getCachedWrapper(currentWorld(exec), imageData);
+    JSObject* wrapper = getCachedWrapper(currentWorld(exec), imageData);
     if (wrapper)
         return wrapper;
     

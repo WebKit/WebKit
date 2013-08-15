@@ -1,3 +1,447 @@
+2013-08-14  Filip Pizlo  <fpizlo@apple.com>
+
+        Typed arrays should be rewritten
+        https://bugs.webkit.org/show_bug.cgi?id=119064
+
+        Reviewed by Oliver Hunt.
+        
+        Typed arrays were previously deficient in several major ways:
+        
+        - They were defined separately in WebCore and in the jsc shell. The two
+          implementations were different, and the jsc shell one was basically wrong.
+          The WebCore one was quite awful, also.
+        
+        - Typed arrays were not visible to the JIT except through some weird hooks.
+          For example, the JIT could not ask "what is the Structure that this typed
+          array would have if I just allocated it from this global object". Also,
+          it was difficult to wire any of the typed array intrinsics, because most
+          of the functionality wasn't visible anywhere in JSC.
+        
+        - Typed array allocation was brain-dead. Allocating a typed array involved
+          two JS objects, two GC weak handles, and three malloc allocations.
+        
+        - Neutering. It involved keeping tabs on all native views but not the view
+          wrappers, even though the native views can autoneuter just by asking the
+          buffer if it was neutered anytime you touch them; while the JS view
+          wrappers are the ones that you really want to reach out to.
+        
+        - Common case-ing. Most typed arrays have one buffer and one view, and
+          usually nobody touches the buffer. Yet we created all of that stuff
+          anyway, using data structures optimized for the case where you had a lot
+          of views.
+        
+        - Semantic goofs. Typed arrays should, in the future, behave like ES
+          features rather than DOM features, for example when it comes to exceptions.
+          Firefox already does this and I agree with them.
+        
+        This patch cleanses our codebase of these sins:
+        
+        - Typed arrays are almost entirely defined in JSC. Only the lifecycle
+          management of native references to buffers is left to WebCore.
+        
+        - Allocating a typed array requires either two GC allocations (a cell and a
+          copied storage vector) or one GC allocation, a malloc allocation, and a
+          weak handle (a cell and a malloc'd storage vector, plus a finalizer for the
+          latter). The latter is only used for oversize arrays. Remember that before
+          it was 7 allocations no matter what.
+        
+        - Typed arrays require just 4 words of overhead: Structure*, Butterfly*,
+          mode/length, void* vector. Before it was a lot more than that - remember,
+          there were five additional objects that did absolutely nothing for anybody.
+        
+        - Native views aren't tracked by the buffer, or by the wrappers. They are
+          transient. In the future we'll probably switch to not even having them be
+          malloc'd.
+        
+        - Native array buffers have an efficient way of tracking all of their JS view
+          wrappers, both for neutering, and for lifecycle management. The GC
+          special-cases native array buffers. This saves a bunch of grief; for example
+          it means that a JS view wrapper can refer to its buffer via the butterfly,
+          which would be dead by the time we went to finalize.
+        
+        - Typed array semantics now match Firefox, which also happens to be where the
+          standards are going. The discussion on webkit-dev seemed to confirm that
+          Chrome is also heading in this direction. This includes making
+          Uint8ClampedArray not a subtype of Uint8Array, and getting rid of
+          ArrayBufferView as a JS-visible construct.
+        
+        This is up to a 10x speed-up on programs that allocate a lot of typed arrays.
+        It's a 1% speed-up on Octane. It also opens up a bunch of possibilities for
+        further typed array optimizations in the JSC JITs, including inlining typed
+        array allocation, inlining more of the accessors, reducing the cost of type
+        checks, etc.
+        
+        An additional property of this patch is that typed arrays are mostly
+        implemented using templates. This deduplicates a bunch of code, but does mean
+        that we need some hacks for exporting s_info's of template classes. See
+        JSGenericTypedArrayView.h and JSTypedArrays.cpp. Those hacks are fairly
+        low-impact compared to code duplication.
+        
+        Automake work courtesy of Zan Dobersek <zdobersek@igalia.com>.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * GNUmakefile.list.am:
+        * JSCTypedArrayStubs.h: Removed.
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * bytecode/ByValInfo.h:
+        (JSC::hasOptimizableIndexingForClassInfo):
+        (JSC::jitArrayModeForClassInfo):
+        (JSC::typedArrayTypeForJITArrayMode):
+        * bytecode/SpeculatedType.cpp:
+        (JSC::speculationFromClassInfo):
+        * dfg/DFGArrayMode.cpp:
+        (JSC::DFG::toTypedArrayType):
+        * dfg/DFGArrayMode.h:
+        (JSC::DFG::ArrayMode::typedArrayType):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::checkArray):
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnIntTypedArray):
+        (JSC::DFG::SpeculativeJIT::compilePutByValForIntTypedArray):
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnFloatTypedArray):
+        (JSC::DFG::SpeculativeJIT::compilePutByValForFloatTypedArray):
+        (JSC::DFG::SpeculativeJIT::compileGetIndexedPropertyStorage):
+        (JSC::DFG::SpeculativeJIT::compileGetArrayLength):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * heap/CopyToken.h:
+        * heap/DeferGC.h:
+        (JSC::DeferGCForAWhile::DeferGCForAWhile):
+        (JSC::DeferGCForAWhile::~DeferGCForAWhile):
+        * heap/GCIncomingRefCounted.h: Added.
+        (JSC::GCIncomingRefCounted::GCIncomingRefCounted):
+        (JSC::GCIncomingRefCounted::~GCIncomingRefCounted):
+        (JSC::GCIncomingRefCounted::numberOfIncomingReferences):
+        (JSC::GCIncomingRefCounted::incomingReferenceAt):
+        (JSC::GCIncomingRefCounted::singletonFlag):
+        (JSC::GCIncomingRefCounted::hasVectorOfCells):
+        (JSC::GCIncomingRefCounted::hasAnyIncoming):
+        (JSC::GCIncomingRefCounted::hasSingleton):
+        (JSC::GCIncomingRefCounted::singleton):
+        (JSC::GCIncomingRefCounted::vectorOfCells):
+        * heap/GCIncomingRefCountedInlines.h: Added.
+        (JSC::::addIncomingReference):
+        (JSC::::filterIncomingReferences):
+        * heap/GCIncomingRefCountedSet.h: Added.
+        (JSC::GCIncomingRefCountedSet::size):
+        * heap/GCIncomingRefCountedSetInlines.h: Added.
+        (JSC::::GCIncomingRefCountedSet):
+        (JSC::::~GCIncomingRefCountedSet):
+        (JSC::::addReference):
+        (JSC::::sweep):
+        (JSC::::removeAll):
+        (JSC::::removeDead):
+        * heap/Heap.cpp:
+        (JSC::Heap::addReference):
+        (JSC::Heap::extraSize):
+        (JSC::Heap::size):
+        (JSC::Heap::capacity):
+        (JSC::Heap::collect):
+        (JSC::Heap::decrementDeferralDepth):
+        (JSC::Heap::decrementDeferralDepthAndGCIfNeeded):
+        * heap/Heap.h:
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::dataViewTable):
+        * jit/JIT.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::privateCompileGetByVal):
+        (JSC::JIT::privateCompilePutByVal):
+        (JSC::JIT::emitIntTypedArrayGetByVal):
+        (JSC::JIT::emitFloatTypedArrayGetByVal):
+        (JSC::JIT::emitIntTypedArrayPutByVal):
+        (JSC::JIT::emitFloatTypedArrayPutByVal):
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+        * runtime/ArrayBuffer.cpp:
+        (JSC::ArrayBuffer::transfer):
+        * runtime/ArrayBuffer.h:
+        (JSC::ArrayBuffer::createAdopted):
+        (JSC::ArrayBuffer::ArrayBuffer):
+        (JSC::ArrayBuffer::gcSizeEstimateInBytes):
+        (JSC::ArrayBuffer::pin):
+        (JSC::ArrayBuffer::unpin):
+        (JSC::ArrayBufferContents::tryAllocate):
+        * runtime/ArrayBufferView.cpp:
+        (JSC::ArrayBufferView::ArrayBufferView):
+        (JSC::ArrayBufferView::~ArrayBufferView):
+        (JSC::ArrayBufferView::setNeuterable):
+        * runtime/ArrayBufferView.h:
+        (JSC::ArrayBufferView::isNeutered):
+        (JSC::ArrayBufferView::buffer):
+        (JSC::ArrayBufferView::baseAddress):
+        (JSC::ArrayBufferView::byteOffset):
+        (JSC::ArrayBufferView::verifySubRange):
+        (JSC::ArrayBufferView::clampOffsetAndNumElements):
+        (JSC::ArrayBufferView::calculateOffsetAndLength):
+        * runtime/ClassInfo.h:
+        * runtime/CommonIdentifiers.h:
+        * runtime/DataView.cpp: Added.
+        (JSC::DataView::DataView):
+        (JSC::DataView::create):
+        (JSC::DataView::wrap):
+        * runtime/DataView.h: Added.
+        (JSC::DataView::byteLength):
+        (JSC::DataView::getType):
+        (JSC::DataView::get):
+        (JSC::DataView::set):
+        * runtime/Float32Array.h:
+        * runtime/Float64Array.h:
+        * runtime/GenericTypedArrayView.h: Added.
+        (JSC::GenericTypedArrayView::data):
+        (JSC::GenericTypedArrayView::set):
+        (JSC::GenericTypedArrayView::setRange):
+        (JSC::GenericTypedArrayView::zeroRange):
+        (JSC::GenericTypedArrayView::zeroFill):
+        (JSC::GenericTypedArrayView::length):
+        (JSC::GenericTypedArrayView::byteLength):
+        (JSC::GenericTypedArrayView::item):
+        (JSC::GenericTypedArrayView::checkInboundData):
+        (JSC::GenericTypedArrayView::getType):
+        * runtime/GenericTypedArrayViewInlines.h: Added.
+        (JSC::::GenericTypedArrayView):
+        (JSC::::create):
+        (JSC::::createUninitialized):
+        (JSC::::subarray):
+        (JSC::::wrap):
+        * runtime/IndexingHeader.h:
+        (JSC::IndexingHeader::arrayBuffer):
+        (JSC::IndexingHeader::setArrayBuffer):
+        * runtime/Int16Array.h:
+        * runtime/Int32Array.h:
+        * runtime/Int8Array.h:
+        * runtime/JSArrayBuffer.cpp: Added.
+        (JSC::JSArrayBuffer::JSArrayBuffer):
+        (JSC::JSArrayBuffer::finishCreation):
+        (JSC::JSArrayBuffer::create):
+        (JSC::JSArrayBuffer::createStructure):
+        (JSC::JSArrayBuffer::getOwnPropertySlot):
+        (JSC::JSArrayBuffer::getOwnPropertyDescriptor):
+        (JSC::JSArrayBuffer::put):
+        (JSC::JSArrayBuffer::defineOwnProperty):
+        (JSC::JSArrayBuffer::deleteProperty):
+        (JSC::JSArrayBuffer::getOwnNonIndexPropertyNames):
+        * runtime/JSArrayBuffer.h: Added.
+        (JSC::JSArrayBuffer::impl):
+        (JSC::toArrayBuffer):
+        * runtime/JSArrayBufferConstructor.cpp: Added.
+        (JSC::JSArrayBufferConstructor::JSArrayBufferConstructor):
+        (JSC::JSArrayBufferConstructor::finishCreation):
+        (JSC::JSArrayBufferConstructor::create):
+        (JSC::JSArrayBufferConstructor::createStructure):
+        (JSC::constructArrayBuffer):
+        (JSC::JSArrayBufferConstructor::getConstructData):
+        (JSC::JSArrayBufferConstructor::getCallData):
+        * runtime/JSArrayBufferConstructor.h: Added.
+        * runtime/JSArrayBufferPrototype.cpp: Added.
+        (JSC::arrayBufferProtoFuncSlice):
+        (JSC::JSArrayBufferPrototype::JSArrayBufferPrototype):
+        (JSC::JSArrayBufferPrototype::finishCreation):
+        (JSC::JSArrayBufferPrototype::create):
+        (JSC::JSArrayBufferPrototype::createStructure):
+        * runtime/JSArrayBufferPrototype.h: Added.
+        * runtime/JSArrayBufferView.cpp: Added.
+        (JSC::JSArrayBufferView::ConstructionContext::ConstructionContext):
+        (JSC::JSArrayBufferView::JSArrayBufferView):
+        (JSC::JSArrayBufferView::finishCreation):
+        (JSC::JSArrayBufferView::getOwnPropertySlot):
+        (JSC::JSArrayBufferView::getOwnPropertyDescriptor):
+        (JSC::JSArrayBufferView::put):
+        (JSC::JSArrayBufferView::defineOwnProperty):
+        (JSC::JSArrayBufferView::deleteProperty):
+        (JSC::JSArrayBufferView::getOwnNonIndexPropertyNames):
+        (JSC::JSArrayBufferView::finalize):
+        * runtime/JSArrayBufferView.h: Added.
+        (JSC::JSArrayBufferView::sizeOf):
+        (JSC::JSArrayBufferView::ConstructionContext::operator!):
+        (JSC::JSArrayBufferView::ConstructionContext::structure):
+        (JSC::JSArrayBufferView::ConstructionContext::vector):
+        (JSC::JSArrayBufferView::ConstructionContext::length):
+        (JSC::JSArrayBufferView::ConstructionContext::mode):
+        (JSC::JSArrayBufferView::ConstructionContext::butterfly):
+        (JSC::JSArrayBufferView::mode):
+        (JSC::JSArrayBufferView::vector):
+        (JSC::JSArrayBufferView::length):
+        (JSC::JSArrayBufferView::offsetOfVector):
+        (JSC::JSArrayBufferView::offsetOfLength):
+        (JSC::JSArrayBufferView::offsetOfMode):
+        * runtime/JSArrayBufferViewInlines.h: Added.
+        (JSC::JSArrayBufferView::slowDownAndWasteMemoryIfNecessary):
+        (JSC::JSArrayBufferView::buffer):
+        (JSC::JSArrayBufferView::impl):
+        (JSC::JSArrayBufferView::neuter):
+        (JSC::JSArrayBufferView::byteOffset):
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::slowDownAndWasteMemory):
+        (JSC::JSCell::getTypedArrayImpl):
+        * runtime/JSCell.h:
+        * runtime/JSDataView.cpp: Added.
+        (JSC::JSDataView::JSDataView):
+        (JSC::JSDataView::create):
+        (JSC::JSDataView::createUninitialized):
+        (JSC::JSDataView::set):
+        (JSC::JSDataView::typedImpl):
+        (JSC::JSDataView::getOwnPropertySlot):
+        (JSC::JSDataView::getOwnPropertyDescriptor):
+        (JSC::JSDataView::slowDownAndWasteMemory):
+        (JSC::JSDataView::getTypedArrayImpl):
+        (JSC::JSDataView::createStructure):
+        * runtime/JSDataView.h: Added.
+        * runtime/JSDataViewPrototype.cpp: Added.
+        (JSC::JSDataViewPrototype::JSDataViewPrototype):
+        (JSC::JSDataViewPrototype::create):
+        (JSC::JSDataViewPrototype::createStructure):
+        (JSC::JSDataViewPrototype::getOwnPropertySlot):
+        (JSC::JSDataViewPrototype::getOwnPropertyDescriptor):
+        (JSC::getData):
+        (JSC::setData):
+        (JSC::dataViewProtoFuncGetInt8):
+        (JSC::dataViewProtoFuncGetInt16):
+        (JSC::dataViewProtoFuncGetInt32):
+        (JSC::dataViewProtoFuncGetUint8):
+        (JSC::dataViewProtoFuncGetUint16):
+        (JSC::dataViewProtoFuncGetUint32):
+        (JSC::dataViewProtoFuncGetFloat32):
+        (JSC::dataViewProtoFuncGetFloat64):
+        (JSC::dataViewProtoFuncSetInt8):
+        (JSC::dataViewProtoFuncSetInt16):
+        (JSC::dataViewProtoFuncSetInt32):
+        (JSC::dataViewProtoFuncSetUint8):
+        (JSC::dataViewProtoFuncSetUint16):
+        (JSC::dataViewProtoFuncSetUint32):
+        (JSC::dataViewProtoFuncSetFloat32):
+        (JSC::dataViewProtoFuncSetFloat64):
+        * runtime/JSDataViewPrototype.h: Added.
+        * runtime/JSFloat32Array.h: Added.
+        * runtime/JSFloat64Array.h: Added.
+        * runtime/JSGenericTypedArrayView.h: Added.
+        (JSC::JSGenericTypedArrayView::byteLength):
+        (JSC::JSGenericTypedArrayView::byteSize):
+        (JSC::JSGenericTypedArrayView::typedVector):
+        (JSC::JSGenericTypedArrayView::canGetIndexQuickly):
+        (JSC::JSGenericTypedArrayView::canSetIndexQuickly):
+        (JSC::JSGenericTypedArrayView::getIndexQuicklyAsNativeValue):
+        (JSC::JSGenericTypedArrayView::getIndexQuicklyAsDouble):
+        (JSC::JSGenericTypedArrayView::getIndexQuickly):
+        (JSC::JSGenericTypedArrayView::setIndexQuicklyToNativeValue):
+        (JSC::JSGenericTypedArrayView::setIndexQuicklyToDouble):
+        (JSC::JSGenericTypedArrayView::setIndexQuickly):
+        (JSC::JSGenericTypedArrayView::canAccessRangeQuickly):
+        (JSC::JSGenericTypedArrayView::typedImpl):
+        (JSC::JSGenericTypedArrayView::createStructure):
+        (JSC::JSGenericTypedArrayView::info):
+        (JSC::toNativeTypedView):
+        * runtime/JSGenericTypedArrayViewConstructor.h: Added.
+        * runtime/JSGenericTypedArrayViewConstructorInlines.h: Added.
+        (JSC::::JSGenericTypedArrayViewConstructor):
+        (JSC::::finishCreation):
+        (JSC::::create):
+        (JSC::::createStructure):
+        (JSC::constructGenericTypedArrayView):
+        (JSC::::getConstructData):
+        (JSC::::getCallData):
+        * runtime/JSGenericTypedArrayViewInlines.h: Added.
+        (JSC::::JSGenericTypedArrayView):
+        (JSC::::create):
+        (JSC::::createUninitialized):
+        (JSC::::validateRange):
+        (JSC::::setWithSpecificType):
+        (JSC::::set):
+        (JSC::::getOwnPropertySlot):
+        (JSC::::getOwnPropertyDescriptor):
+        (JSC::::put):
+        (JSC::::defineOwnProperty):
+        (JSC::::deleteProperty):
+        (JSC::::getOwnPropertySlotByIndex):
+        (JSC::::putByIndex):
+        (JSC::::deletePropertyByIndex):
+        (JSC::::getOwnNonIndexPropertyNames):
+        (JSC::::getOwnPropertyNames):
+        (JSC::::visitChildren):
+        (JSC::::copyBackingStore):
+        (JSC::::slowDownAndWasteMemory):
+        (JSC::::getTypedArrayImpl):
+        * runtime/JSGenericTypedArrayViewPrototype.h: Added.
+        * runtime/JSGenericTypedArrayViewPrototypeInlines.h: Added.
+        (JSC::genericTypedArrayViewProtoFuncSet):
+        (JSC::genericTypedArrayViewProtoFuncSubarray):
+        (JSC::::JSGenericTypedArrayViewPrototype):
+        (JSC::::finishCreation):
+        (JSC::::create):
+        (JSC::::createStructure):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::reset):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::arrayBufferPrototype):
+        (JSC::JSGlobalObject::arrayBufferStructure):
+        (JSC::JSGlobalObject::typedArrayStructure):
+        * runtime/JSInt16Array.h: Added.
+        * runtime/JSInt32Array.h: Added.
+        * runtime/JSInt8Array.h: Added.
+        * runtime/JSTypedArrayConstructors.cpp: Added.
+        * runtime/JSTypedArrayConstructors.h: Added.
+        * runtime/JSTypedArrayPrototypes.cpp: Added.
+        * runtime/JSTypedArrayPrototypes.h: Added.
+        * runtime/JSTypedArrays.cpp: Added.
+        * runtime/JSTypedArrays.h: Added.
+        * runtime/JSUint16Array.h: Added.
+        * runtime/JSUint32Array.h: Added.
+        * runtime/JSUint8Array.h: Added.
+        * runtime/JSUint8ClampedArray.h: Added.
+        * runtime/Operations.h:
+        * runtime/Options.h:
+        * runtime/SimpleTypedArrayController.cpp: Added.
+        (JSC::SimpleTypedArrayController::SimpleTypedArrayController):
+        (JSC::SimpleTypedArrayController::~SimpleTypedArrayController):
+        (JSC::SimpleTypedArrayController::toJS):
+        * runtime/SimpleTypedArrayController.h: Added.
+        * runtime/Structure.h:
+        (JSC::Structure::couldHaveIndexingHeader):
+        * runtime/StructureInlines.h:
+        (JSC::Structure::hasIndexingHeader):
+        * runtime/TypedArrayAdaptors.h: Added.
+        (JSC::IntegralTypedArrayAdaptor::toNative):
+        (JSC::IntegralTypedArrayAdaptor::toJSValue):
+        (JSC::IntegralTypedArrayAdaptor::toDouble):
+        (JSC::FloatTypedArrayAdaptor::toNative):
+        (JSC::FloatTypedArrayAdaptor::toJSValue):
+        (JSC::FloatTypedArrayAdaptor::toDouble):
+        (JSC::Uint8ClampedAdaptor::toNative):
+        (JSC::Uint8ClampedAdaptor::toJSValue):
+        (JSC::Uint8ClampedAdaptor::toDouble):
+        (JSC::Uint8ClampedAdaptor::clamp):
+        * runtime/TypedArrayController.cpp: Added.
+        (JSC::TypedArrayController::TypedArrayController):
+        (JSC::TypedArrayController::~TypedArrayController):
+        * runtime/TypedArrayController.h: Added.
+        * runtime/TypedArrayDescriptor.h: Removed.
+        * runtime/TypedArrayInlines.h: Added.
+        * runtime/TypedArrayType.cpp: Added.
+        (JSC::classInfoForType):
+        (WTF::printInternal):
+        * runtime/TypedArrayType.h: Added.
+        (JSC::toIndex):
+        (JSC::isTypedView):
+        (JSC::elementSize):
+        (JSC::isInt):
+        (JSC::isFloat):
+        (JSC::isSigned):
+        (JSC::isClamped):
+        * runtime/TypedArrays.h: Added.
+        * runtime/Uint16Array.h:
+        * runtime/Uint32Array.h:
+        * runtime/Uint8Array.h:
+        * runtime/Uint8ClampedArray.h:
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        (JSC::VM::~VM):
+        * runtime/VM.h:
+
 2013-08-15  Oliver Hunt  <oliver@apple.com>
 
         <https://webkit.org/b/119830> Assigning to a readonly global results in DFG byte code parse failure

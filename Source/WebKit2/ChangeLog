@@ -1,3 +1,15 @@
+2013-08-14  Filip Pizlo  <fpizlo@apple.com>
+
+        Typed arrays should be rewritten
+        https://bugs.webkit.org/show_bug.cgi?id=119064
+
+        Reviewed by Oliver Hunt.
+        
+        You don't need to include JSUint8Array anymore if you just want to
+        unwrap one; JSDOMBinding gives you all of the things you need.
+
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+
 2013-08-15  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac] Remove "legacy" media UI

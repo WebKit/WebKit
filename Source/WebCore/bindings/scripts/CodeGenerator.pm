@@ -180,21 +180,22 @@ sub ForAllParents
 
     my $recurse;
     $recurse = sub {
+        my $outerInterface = shift;
         my $currentInterface = shift;
 
         for (@{$currentInterface->parents}) {
             my $interfaceName = $_;
-            my $parentInterface = $object->ParseInterface($interfaceName);
+            my $parentInterface = $object->ParseInterface($outerInterface, $interfaceName);
 
             if ($beforeRecursion) {
                 &$beforeRecursion($parentInterface) eq 'prune' and next;
             }
-            &$recurse($parentInterface);
+            &$recurse($outerInterface, $parentInterface);
             &$afterRecursion($parentInterface) if $afterRecursion;
         }
     };
 
-    &$recurse($interface);
+    &$recurse($interface, $interface);
 }
 
 sub FindSuperMethod
@@ -238,6 +239,7 @@ sub IDLFileForInterface
 sub ParseInterface
 {
     my $object = shift;
+    my $outerInterface = shift;
     my $interfaceName = shift;
 
     return undef if $interfaceName eq 'Object';
@@ -248,7 +250,7 @@ sub ParseInterface
 
     # Step #1: Find the IDL file associated with 'interface'
     my $filename = $object->IDLFileForInterface($interfaceName)
-        or die("Could NOT find IDL file for interface \"$interfaceName\"!\n");
+        or die("Could NOT find IDL file for interface \"$interfaceName\", reachable from \"" . $outerInterface->name . "\"!\n");
 
     print "  |  |>  Parsing parent IDL \"$filename\" for interface \"$interfaceName\"\n" if $verbose;
 
@@ -277,6 +279,10 @@ sub SkipIncludeHeader
 
     # Special case: SVGNumber.h does not exist.
     return 1 if $type eq "SVGNumber";
+    
+    # Typed arrays already included by JSDOMBinding.h.
+    return 1 if $object->IsTypedArrayType($type);
+    
     return 0;
 }
 
@@ -368,7 +374,7 @@ sub IsTypedArrayType
     return 1 if (($type eq "ArrayBuffer") or ($type eq "ArrayBufferView"));
     return 1 if (($type eq "Uint8Array") or ($type eq "Uint8ClampedArray") or ($type eq "Uint16Array") or ($type eq "Uint32Array"));
     return 1 if (($type eq "Int8Array") or ($type eq "Int16Array") or ($type eq "Int32Array"));
-    return 1 if (($type eq "Float32Array") or ($type eq "Float64Array"));
+    return 1 if (($type eq "Float32Array") or ($type eq "Float64Array") or ($type eq "DataView"));
     return 0;
 }
 
@@ -609,6 +615,7 @@ sub IsWrapperType
     return 0 if $object->GetSequenceType($type);
     return 0 if $object->IsEnumType($type);
     return 0 if $object->IsStringType($type);
+    return 0 if $object->IsTypedArrayType($type);
     return 0 if $webCoreTypeHash{$type};
     return 0 if $type eq "any";
 

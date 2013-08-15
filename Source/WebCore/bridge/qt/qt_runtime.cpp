@@ -494,7 +494,7 @@ QVariant convertValueToQVariant(JSContextRef context, JSValueRef value, QMetaTyp
 
         case QMetaType::QByteArray: {
             if (type == RTUint8Array) {
-                JSC::Uint8Array* arr = toUint8Array(toJS(toJS(context), value));
+                RefPtr<JSC::Uint8Array> arr = toUint8Array(toJS(toJS(context), value));
                 ret = QVariant(QByteArray(reinterpret_cast<const char*>(arr->data()), arr->length()));
                 dist = 0;
             } else {

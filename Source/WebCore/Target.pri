@@ -78,7 +78,6 @@ SOURCES += \
      bindings/js/DOMWrapperWorld.cpp \
      bindings/js/Dictionary.cpp \
      bindings/js/GCController.cpp \
-     bindings/js/JSArrayBufferCustom.cpp \
      bindings/js/JSAudioBufferCustom.cpp \
      bindings/js/JSAttrCustom.cpp \
      bindings/js/JSBlobCustom.cpp \
@@ -114,7 +113,6 @@ SOURCES += \
      bindings/js/JSDOMWindowCustom.cpp \
      bindings/js/JSDOMWindowShell.cpp \
      bindings/js/JSDOMWrapper.cpp \
-     bindings/js/JSDataViewCustom.cpp \
      bindings/js/JSDeviceMotionEventCustom.cpp \
      bindings/js/JSDeviceOrientationEventCustom.cpp \
      bindings/js/JSDocumentCustom.cpp \
@@ -200,6 +198,7 @@ SOURCES += \
      bindings/js/ScriptState.cpp \
      bindings/js/ScriptValue.cpp \
      bindings/js/SerializedScriptValue.cpp \
+     bindings/js/WebCoreTypedArrayController.cpp \
      bridge/IdentifierRep.cpp \
      bridge/NP_jsobject.cpp \
      bridge/c/CRuntimeObject.cpp \
@@ -718,7 +717,6 @@ SOURCES += \
     html/canvas/CanvasRenderingContext.cpp \
     html/canvas/CanvasRenderingContext2D.cpp \
     html/canvas/CanvasStyle.cpp \
-    html/canvas/DataView.cpp \
     html/forms/FileIconLoader.cpp \
     html/parser/BackgroundHTMLInputStream.cpp \
     html/parser/BackgroundHTMLParser.cpp \
@@ -1346,7 +1344,6 @@ HEADERS += \
     bindings/js/GCController.h \
     bindings/js/DOMObjectHashTableMap.h \
     bindings/js/DOMWrapperWorld.h \
-    bindings/js/JSArrayBufferViewHelper.h \
     bindings/js/JSCSSStyleDeclarationCustom.h \
     bindings/js/JSCallbackData.h \
     bindings/js/JSCustomXPathNSResolver.h \
@@ -1782,7 +1779,6 @@ HEADERS += \
     html/canvas/CanvasRenderingContext.h \
     html/canvas/CanvasRenderingContext2D.h \
     html/canvas/CanvasStyle.h \
-    html/canvas/DataView.h \
     html/canvas/DOMPath.h \
     html/ClassList.h \
     html/DOMFormData.h \

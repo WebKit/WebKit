@@ -33,7 +33,6 @@
 #include "InitializeThreading.h"
 #include "Interpreter.h"
 #include "JSArray.h"
-#include "JSCTypedArrayStubs.h"
 #include "JSFunction.h"
 #include "JSLock.h"
 #include "JSProxy.h"
@@ -238,16 +237,6 @@ protected:
         addFunction(vm, "clearSamplingFlags", functionClearSamplingFlags, 1);
 #endif
         
-        addConstructableFunction(vm, "Uint8Array", constructJSUint8Array, 1);
-        addConstructableFunction(vm, "Uint8ClampedArray", constructJSUint8ClampedArray, 1);
-        addConstructableFunction(vm, "Uint16Array", constructJSUint16Array, 1);
-        addConstructableFunction(vm, "Uint32Array", constructJSUint32Array, 1);
-        addConstructableFunction(vm, "Int8Array", constructJSInt8Array, 1);
-        addConstructableFunction(vm, "Int16Array", constructJSInt16Array, 1);
-        addConstructableFunction(vm, "Int32Array", constructJSInt32Array, 1);
-        addConstructableFunction(vm, "Float32Array", constructJSFloat32Array, 1);
-        addConstructableFunction(vm, "Float64Array", constructJSFloat64Array, 1);
-
         JSArray* array = constructEmptyArray(globalExec(), 0);
         for (size_t i = 0; i < arguments.size(); ++i)
             array->putDirectIndex(globalExec(), i, jsString(globalExec(), arguments[i]));

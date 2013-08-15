@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -11,10 +10,10 @@
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY APPLE COMPUTER, INC. ``AS IS'' AND ANY
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
  * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
  * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
  * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
@@ -27,76 +26,9 @@
 #ifndef Uint32Array_h
 #define Uint32Array_h
 
-#include "IntegralTypedArrayBase.h"
-
-namespace JSC {
-
-class ArrayBuffer;
-
-class Uint32Array : public IntegralTypedArrayBase<uint32_t> {
-public:
-    static inline PassRefPtr<Uint32Array> create(unsigned length);
-    static inline PassRefPtr<Uint32Array> create(const uint32_t* array, unsigned length);
-    static inline PassRefPtr<Uint32Array> create(PassRefPtr<ArrayBuffer>, unsigned byteOffset, unsigned length);
-
-    // Should only be used when it is known the entire array will be filled. Do
-    // not return these results directly to JavaScript without filling first.
-    static inline PassRefPtr<Uint32Array> createUninitialized(unsigned length);
-
-    using TypedArrayBase<uint32_t>::set;
-    using IntegralTypedArrayBase<uint32_t>::set;
-
-    inline PassRefPtr<Uint32Array> subarray(int start) const;
-    inline PassRefPtr<Uint32Array> subarray(int start, int end) const;
-
-    virtual ViewType getType() const
-    {
-        return TypeUint32;
-    }
-
-private:
-    inline Uint32Array(PassRefPtr<ArrayBuffer>, unsigned byteOffset, unsigned length);
-    // Make constructor visible to superclass.
-    friend class TypedArrayBase<uint32_t>;
-};
-
-PassRefPtr<Uint32Array> Uint32Array::create(unsigned length)
-{
-    return TypedArrayBase<uint32_t>::create<Uint32Array>(length);
-}
-
-PassRefPtr<Uint32Array> Uint32Array::create(const uint32_t* array, unsigned length)
-{
-    return TypedArrayBase<uint32_t>::create<Uint32Array>(array, length);
-}
-
-PassRefPtr<Uint32Array> Uint32Array::create(PassRefPtr<ArrayBuffer> buffer, unsigned byteOffset, unsigned length)
-{
-    return TypedArrayBase<uint32_t>::create<Uint32Array>(buffer, byteOffset, length);
-}
-
-PassRefPtr<Uint32Array> Uint32Array::createUninitialized(unsigned length)
-{
-    return TypedArrayBase<uint32_t>::createUninitialized<Uint32Array>(length);
-}
-
-Uint32Array::Uint32Array(PassRefPtr<ArrayBuffer> buffer, unsigned byteOffset, unsigned length)
-    : IntegralTypedArrayBase<uint32_t>(buffer, byteOffset, length)
-{
-}
-
-PassRefPtr<Uint32Array> Uint32Array::subarray(int start) const
-{
-    return subarray(start, length());
-}
-
-PassRefPtr<Uint32Array> Uint32Array::subarray(int start, int end) const
-{
-    return subarrayImpl<Uint32Array>(start, end);
-}
-
-} // namespace JSC
+#include "TypedArrays.h"
 
 using JSC::Uint32Array;
 
 #endif // Uint32Array_h
+

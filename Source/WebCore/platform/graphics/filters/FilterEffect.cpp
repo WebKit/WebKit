@@ -28,6 +28,8 @@
 #include "Filter.h"
 #include "ImageBuffer.h"
 #include "TextStream.h"
+#include <runtime/Operations.h>
+#include <runtime/TypedArrayInlines.h>
 #include <runtime/Uint8ClampedArray.h>
 
 #if HAVE(ARM_NEON_INTRINSICS)

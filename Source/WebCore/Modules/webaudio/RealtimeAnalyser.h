@@ -26,14 +26,11 @@
 #define RealtimeAnalyser_h
 
 #include "AudioArray.h"
+#include <runtime/Float32Array.h>
+#include <runtime/Uint8Array.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
-
-namespace JSC {
-class Float32Array;
-class Uint8Array;
-}
 
 namespace WebCore {
 

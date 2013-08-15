@@ -104,6 +104,8 @@ const char* arrayClassToString(Array::Class);
 const char* arraySpeculationToString(Array::Speculation);
 const char* arrayConversionToString(Array::Conversion);
 
+TypedArrayType toTypedArrayType(Array::Type);
+
 class ArrayMode {
 public:
     ArrayMode()
@@ -378,6 +380,11 @@ public:
     bool getIndexedPropertyStorageMayTriggerGC() const
     {
         return type() == Array::String;
+    }
+    
+    TypedArrayType typedArrayType() const
+    {
+        return toTypedArrayType(type());
     }
     
     bool operator==(const ArrayMode& other) const

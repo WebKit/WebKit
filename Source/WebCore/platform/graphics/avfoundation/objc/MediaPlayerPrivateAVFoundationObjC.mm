@@ -30,7 +30,6 @@
 #import "MediaPlayerPrivateAVFoundationObjC.h"
 
 #import "BlockExceptions.h"
-#import "DataView.h"
 #import "ExceptionCodePlaceholder.h"
 #import "FloatConversion.h"
 #import "FloatConversion.h"
@@ -47,6 +46,9 @@
 #import "WebCoreAVFResourceLoader.h"
 #import "WebCoreSystemInterface.h"
 #import <objc/runtime.h>
+#import <runtime/DataView.h>
+#import <runtime/Operations.h>
+#import <runtime/TypedArrayInlines.h>
 #import <runtime/Uint16Array.h>
 #import <runtime/Uint32Array.h>
 #import <runtime/Uint8Array.h>
@@ -923,8 +925,8 @@ bool MediaPlayerPrivateAVFoundationObjC::shouldWaitForLoadingOfResource(AVAssetR
         // [4 bytes: keyURI size], [keyURI size bytes: keyURI]
         unsigned keyURISize = keyURI.length() * sizeof(UChar);
         RefPtr<ArrayBuffer> initDataBuffer = ArrayBuffer::create(4 + keyURISize, 1);
-        RefPtr<DataView> initDataView = DataView::create(initDataBuffer, 0, initDataBuffer->byteLength());
-        initDataView->setUint32(0, keyURISize, true, IGNORE_EXCEPTION);
+        RefPtr<JSC::DataView> initDataView = JSC::DataView::create(initDataBuffer, 0, initDataBuffer->byteLength());
+        initDataView->set<uint32_t>(0, keyURISize, true);
 
         RefPtr<Uint16Array> keyURIArray = Uint16Array::create(initDataBuffer, 4, keyURI.length());
         keyURIArray->setRange(keyURI.characters(), keyURI.length() / sizeof(unsigned char), 0);
@@ -1204,13 +1206,13 @@ bool MediaPlayerPrivateAVFoundationObjC::extractKeyURIKeyIDAndCertificateFromIni
     RefPtr<ArrayBuffer> initDataBuffer = initData->buffer();
 
     // Use a DataView to read uint32 values from the buffer, as Uint32Array requires the reads be aligned on 4-byte boundaries. 
-    RefPtr<DataView> initDataView = DataView::create(initDataBuffer, 0, initDataBuffer->byteLength());
+    RefPtr<JSC::DataView> initDataView = JSC::DataView::create(initDataBuffer, 0, initDataBuffer->byteLength());
     uint32_t offset = 0;
-    ExceptionCode ec = 0;
+    bool status = true;
 
-    uint32_t keyURILength = initDataView->getUint32(offset, true, ec);
+    uint32_t keyURILength = initDataView->get<uint32_t>(offset, true, &status);
     offset += 4;
-    if (ec || offset + keyURILength > initData->length())
+    if (!status || offset + keyURILength > initData->length())
         return false;
 
     RefPtr<Uint16Array> keyURIArray = Uint16Array::create(initDataBuffer, offset, keyURILength);
@@ -1220,9 +1222,9 @@ bool MediaPlayerPrivateAVFoundationObjC::extractKeyURIKeyIDAndCertificateFromIni
     keyURI = String(keyURIArray->data(), keyURILength / sizeof(unsigned short));
     offset += keyURILength;
 
-    uint32_t keyIDLength = initDataView->getUint32(offset, true, ec);
+    uint32_t keyIDLength = initDataView->get<uint32_t>(offset, true, &status);
     offset += 4;
-    if (ec || offset + keyIDLength > initData->length())
+    if (!status || offset + keyIDLength > initData->length())
         return false;
 
     RefPtr<Uint16Array> keyIDArray = Uint16Array::create(initDataBuffer, offset, keyIDLength);
@@ -1232,9 +1234,9 @@ bool MediaPlayerPrivateAVFoundationObjC::extractKeyURIKeyIDAndCertificateFromIni
     keyID = String(keyIDArray->data(), keyIDLength / sizeof(unsigned short));
     offset += keyIDLength;
 
-    uint32_t certificateLength = initDataView->getUint32(offset, true, ec);
+    uint32_t certificateLength = initDataView->get<uint32_t>(offset, true, &status);
     offset += 4;
-    if (ec || offset + certificateLength > initData->length())
+    if (!status || offset + certificateLength > initData->length())
         return false;
 
     certificate = Uint8Array::create(initDataBuffer, offset, certificateLength);

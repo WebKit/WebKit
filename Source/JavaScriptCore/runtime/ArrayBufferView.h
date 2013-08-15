@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,7 +27,7 @@
 #define ArrayBufferView_h
 
 #include "ArrayBuffer.h"
-
+#include "TypedArrayType.h"
 #include <algorithm>
 #include <limits.h>
 #include <wtf/PassRefPtr.h>
@@ -36,46 +36,70 @@
 
 namespace JSC {
 
+class JSArrayBufferView;
+class JSGlobalObject;
+class ExecState;
+
 class ArrayBufferView : public RefCounted<ArrayBufferView> {
 public:
-    enum ViewType {
-        TypeInt8,
-        TypeUint8,
-        TypeUint8Clamped,
-        TypeInt16,
-        TypeUint16,
-        TypeInt32,
-        TypeUint32,
-        TypeFloat32,
-        TypeFloat64,
-        TypeDataView
-    };
-    virtual ViewType getType() const = 0;
+    virtual TypedArrayType getType() const = 0;
 
+    bool isNeutered() const
+    {
+        return !m_buffer || m_buffer->isNeutered();
+    }
+    
     PassRefPtr<ArrayBuffer> buffer() const
     {
+        if (isNeutered())
+            return 0;
         return m_buffer;
     }
 
     void* baseAddress() const
     {
+        if (isNeutered())
+            return 0;
         return m_baseAddress;
     }
 
     unsigned byteOffset() const
     {
+        if (isNeutered())
+            return 0;
         return m_byteOffset;
     }
 
     virtual unsigned byteLength() const = 0;
 
-    void setNeuterable(bool flag) { m_isNeuterable = flag; }
+    JS_EXPORT_PRIVATE void setNeuterable(bool flag);
     bool isNeuterable() const { return m_isNeuterable; }
 
     JS_EXPORT_PRIVATE virtual ~ArrayBufferView();
 
+    // Helper to verify that a given sub-range of an ArrayBuffer is
+    // within range.
+    template <typename T>
+    static bool verifySubRange(
+        PassRefPtr<ArrayBuffer> buffer,
+        unsigned byteOffset,
+        unsigned numElements)
+    {
+        unsigned byteLength = buffer->byteLength();
+        if (sizeof(T) > 1 && byteOffset % sizeof(T))
+            return false;
+        if (byteOffset > byteLength)
+            return false;
+        unsigned remainingElements = (byteLength - byteOffset) / sizeof(T);
+        if (numElements > remainingElements)
+            return false;
+        return true;
+    }
+    
+    virtual JSArrayBufferView* wrap(ExecState*, JSGlobalObject*) = 0;
+    
 protected:
-    JS_EXPORT_PRIVATE ArrayBufferView(PassRefPtr<ArrayBuffer>, unsigned byteOffset);
+    WTF_EXPORT_PRIVATE ArrayBufferView(PassRefPtr<ArrayBuffer>, unsigned byteOffset);
 
     inline bool setImpl(ArrayBufferView*, unsigned byteOffset);
 
@@ -83,29 +107,18 @@ protected:
 
     inline bool zeroRangeImpl(unsigned byteOffset, size_t rangeByteLength);
 
-    static inline void calculateOffsetAndLength(int start, int end, unsigned arraySize, unsigned* offset, unsigned* length);
-
-    // Helper to verify that a given sub-range of an ArrayBuffer is
-    // within range.
-    template <typename T>
-    static bool verifySubRange(PassRefPtr<ArrayBuffer> buffer, unsigned byteOffset, unsigned numElements)
-    {
-        if (!buffer)
-            return false;
-        if (sizeof(T) > 1 && byteOffset % sizeof(T))
-            return false;
-        if (byteOffset > buffer->byteLength())
-            return false;
-        unsigned remainingElements = (buffer->byteLength() - byteOffset) / sizeof(T);
-        if (numElements > remainingElements)
-            return false;
-        return true;
-    }
+    static inline void calculateOffsetAndLength(
+        int start, int end, unsigned arraySize,
+        unsigned* offset, unsigned* length);
 
     // Input offset is in number of elements from this array's view;
     // output offset is in number of bytes from the underlying buffer's view.
     template <typename T>
-    static void clampOffsetAndNumElements(PassRefPtr<ArrayBuffer> buffer, unsigned arrayByteOffset, unsigned *offset, unsigned *numElements)
+    static void clampOffsetAndNumElements(
+        PassRefPtr<ArrayBuffer> buffer,
+        unsigned arrayByteOffset,
+        unsigned *offset,
+        unsigned *numElements)
     {
         unsigned maxOffset = (UINT_MAX - arrayByteOffset) / sizeof(T);
         if (*offset > maxOffset) {
@@ -119,8 +132,6 @@ protected:
         *numElements = std::min(remainingElements, *numElements);
     }
 
-    JS_EXPORT_PRIVATE virtual void neuter();
-
     // This is the address of the ArrayBuffer's storage, plus the byte offset.
     void* m_baseAddress;
 
@@ -130,8 +141,6 @@ protected:
 private:
     friend class ArrayBuffer;
     RefPtr<ArrayBuffer> m_buffer;
-    ArrayBufferView* m_prevView;
-    ArrayBufferView* m_nextView;
 };
 
 bool ArrayBufferView::setImpl(ArrayBufferView* array, unsigned byteOffset)
@@ -176,7 +185,8 @@ bool ArrayBufferView::zeroRangeImpl(unsigned byteOffset, size_t rangeByteLength)
     return true;
 }
 
-void ArrayBufferView::calculateOffsetAndLength(int start, int end, unsigned arraySize, unsigned* offset, unsigned* length)
+void ArrayBufferView::calculateOffsetAndLength(
+    int start, int end, unsigned arraySize, unsigned* offset, unsigned* length)
 {
     if (start < 0)
         start += arraySize;

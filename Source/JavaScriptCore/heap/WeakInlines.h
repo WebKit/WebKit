@@ -91,7 +91,7 @@ template<typename T> inline T* Weak<T>::get() const
 
 template<typename T> inline bool Weak<T>::was(T* other) const
 {
-    return jsCast<T*>(m_impl->jsValue().asCell()) == other;
+    return static_cast<T*>(m_impl->jsValue().asCell()) == other;
 }
 
 template<typename T> inline bool Weak<T>::operator!() const
