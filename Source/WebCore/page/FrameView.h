@@ -456,6 +456,8 @@ private:
 
     virtual bool isFrameView() const OVERRIDE { return true; }
 
+    bool isMainFrameView() const;
+
     friend class RenderWidget;
     bool useSlowRepaints(bool considerOverlap = true) const;
     bool useSlowRepaintsIfNotOverlapped() const;

@@ -207,15 +207,7 @@ FrameView::FrameView(Frame* frame)
 {
     init();
 
-    // FIXME: Can m_frame ever be null here?
-    if (!m_frame)
-        return;
-
-    Page* page = m_frame->page();
-    if (!page)
-        return;
-
-    if (m_frame == page->mainFrame()) {
+    if (isMainFrameView()) {
         ScrollableArea::setVerticalScrollElasticity(ScrollElasticityAllowed);
         ScrollableArea::setHorizontalScrollElasticity(ScrollElasticityAllowed);
     }
@@ -427,6 +419,11 @@ void FrameView::clear()
     setScrollbarsSuppressed(true);
 }
 
+bool FrameView::isMainFrameView() const
+{
+    return m_frame && m_frame->page() && m_frame->page()->mainFrame() == m_frame;
+}
+
 bool FrameView::didFirstLayout() const
 {
     return !m_firstLayout;
@@ -463,7 +460,7 @@ void FrameView::setFrameRect(const IntRect& newRect)
     // Autosized font sizes depend on the width of the viewing area.
     if (newRect.width() != oldRect.width()) {
         Page* page = m_frame ? m_frame->page() : 0;
-        if (page && page->mainFrame() == m_frame && page->settings().textAutosizingEnabled()) {
+        if (isMainFrameView() && page->settings().textAutosizingEnabled()) {
             for (Frame* frame = page->mainFrame(); frame; frame = frame->tree()->traverseNext())
                 m_frame->document()->textAutosizer()->recalculateMultipliers();
         }
@@ -559,7 +556,7 @@ void FrameView::updateCanHaveScrollbars()
 PassRefPtr<Scrollbar> FrameView::createScrollbar(ScrollbarOrientation orientation)
 {
     if (Settings* settings = m_frame->settings()) {
-        if (!settings->allowCustomScrollbarInMainFrame() && m_frame->page() && m_frame->page()->mainFrame() == m_frame)
+        if (!settings->allowCustomScrollbarInMainFrame() && isMainFrameView())
             return ScrollView::createScrollbar(orientation);
     }
 
@@ -635,8 +632,7 @@ void FrameView::applyOverflowToViewport(RenderObject* o, ScrollbarMode& hMode, S
     // there is a frameScaleFactor that is greater than one on the main frame. Also disregard hidden if there is a
     // header or footer.
 
-    bool overrideHidden = (m_frame->page() && m_frame->page()->mainFrame() == m_frame && m_frame->frameScaleFactor() > 1)
-        || (m_frame->page() && m_frame->page()->mainFrame() == m_frame && (headerHeight() || footerHeight()));
+    bool overrideHidden = isMainFrameView() && ((m_frame->frameScaleFactor() > 1) || headerHeight() || footerHeight());
 
     EOverflow overflowX = o->style()->overflowX();
     EOverflow overflowY = o->style()->overflowY();
@@ -950,7 +946,7 @@ void FrameView::setNeedsOneShotDrawingSynchronization()
 void FrameView::setHeaderHeight(int headerHeight)
 {
     if (m_frame && m_frame->page())
-        ASSERT(m_frame == m_frame->page()->mainFrame());
+        ASSERT(isMainFrameView());
     m_headerHeight = headerHeight;
 
     if (RenderView* renderView = this->renderView())
@@ -960,7 +956,7 @@ void FrameView::setHeaderHeight(int headerHeight)
 void FrameView::setFooterHeight(int footerHeight)
 {
     if (m_frame && m_frame->page())
-        ASSERT(m_frame == m_frame->page()->mainFrame());
+        ASSERT(isMainFrameView());
     m_footerHeight = footerHeight;
 
     if (RenderView* renderView = this->renderView())
@@ -1644,10 +1640,7 @@ IntPoint FrameView::minimumScrollPosition() const
 {
     IntPoint minimumPosition(ScrollView::minimumScrollPosition());
 
-    if (!m_frame || !m_frame->page())
-        return minimumPosition;
-
-    if (m_frame == m_frame->page()->mainFrame() && m_scrollPinningBehavior == PinToBottom)
+    if (isMainFrameView() && m_scrollPinningBehavior == PinToBottom)
         minimumPosition.setY(maximumScrollPosition().y());
     
     return minimumPosition;
@@ -1659,10 +1652,7 @@ IntPoint FrameView::maximumScrollPosition() const
 
     maximumOffset.clampNegativeToZero();
 
-    if (!m_frame || !m_frame->page())
-        return maximumOffset;
-
-    if (m_frame == m_frame->page()->mainFrame() && m_scrollPinningBehavior == PinToTop)
+    if (isMainFrameView() && m_scrollPinningBehavior == PinToTop)
         maximumOffset.setY(minimumScrollPosition().y());
     
     return maximumOffset;
@@ -2781,10 +2771,8 @@ void FrameView::performPostLayoutTasks()
             m_frame->loader()->didFirstLayout();
             if (requestedMilestones & DidFirstLayout)
                 milestonesAchieved |= DidFirstLayout;
-            if (page) {
-                if (page->mainFrame() == m_frame)
-                    page->startCountingRelevantRepaintedObjects();
-            }
+            if (isMainFrameView())
+                page->startCountingRelevantRepaintedObjects();
         }
         updateIsVisuallyNonEmpty();
 
@@ -2861,7 +2849,7 @@ void FrameView::sendResizeEventIfNeeded()
     if (!shouldSendResizeEvent)
         return;
 
-    bool isMainFrame = page && page->mainFrame() == m_frame;
+    bool isMainFrame = isMainFrameView();
     bool canSendResizeEventSynchronously = isMainFrame && !isInLayout();
 
     // If we resized during layout, queue up a resize event for later, otherwise fire it right away.
@@ -3036,10 +3024,8 @@ const Pagination& FrameView::pagination() const
     if (m_pagination != Pagination())
         return m_pagination;
 
-    if (Page* page = m_frame->page()) {
-        if (page->mainFrame() == m_frame)
-            return page->pagination();
-    }
+    if (isMainFrameView())
+        return m_frame->page()->pagination();
 
     return m_pagination;
 }
@@ -3135,10 +3121,7 @@ IntRect FrameView::windowResizerRect() const
 
 float FrameView::visibleContentScaleFactor() const
 {
-    if (!m_frame || !m_frame->page())
-        return 1;
-
-    if (!m_frame->settings()->applyPageScaleFactorInCompositor() || m_frame != m_frame->page()->mainFrame())
+    if (!isMainFrameView() || !m_frame->settings()->applyPageScaleFactorInCompositor())
         return 1;
 
     return m_frame->page()->pageScaleFactor();
@@ -3146,12 +3129,10 @@ float FrameView::visibleContentScaleFactor() const
 
 void FrameView::setVisibleScrollerThumbRect(const IntRect& scrollerThumb)
 {
-    Page* page = m_frame->page();
-    if (!page)
+    if (!isMainFrameView())
         return;
-    if (page->mainFrame() != m_frame)
-        return;
-    page->chrome().client()->notifyScrollerThumbIsVisibleInRect(scrollerThumb);
+
+    m_frame->page()->chrome().client()->notifyScrollerThumbIsVisibleInRect(scrollerThumb);
 }
 
 bool FrameView::scrollbarsCanBeActive() const
@@ -3239,12 +3220,10 @@ bool FrameView::shouldSuspendScrollAnimations() const
 
 void FrameView::scrollbarStyleChanged(int newStyle, bool forceUpdate)
 {
-    Page* page = m_frame->page();
-    if (!page)
+    if (!isMainFrameView())
         return;
-    if (page->mainFrame() != m_frame)
-        return;
-    page->chrome().client()->recommendedScrollbarStyleDidChange(newStyle);
+
+    m_frame->page()->chrome().client()->recommendedScrollbarStyleDidChange(newStyle);
 
     if (forceUpdate)
         ScrollView::scrollbarStyleChanged(newStyle, forceUpdate);
@@ -3371,8 +3350,7 @@ void FrameView::paintScrollCorner(GraphicsContext* context, const IntRect& corne
     }
 
     if (m_scrollCorner) {
-        bool needsBackgorund = m_frame->page() && m_frame->page()->mainFrame() == m_frame;
-        if (needsBackgorund)
+        if (isMainFrameView())
             context->fillRect(cornerRect, baseBackgroundColor(), ColorSpaceDeviceRGB);
         m_scrollCorner->paintIntoRect(context, cornerRect.location(), cornerRect);
         return;
@@ -3383,8 +3361,7 @@ void FrameView::paintScrollCorner(GraphicsContext* context, const IntRect& corne
 
 void FrameView::paintScrollbar(GraphicsContext* context, Scrollbar* bar, const IntRect& rect)
 {
-    bool needsBackgorund = bar->isCustomScrollbar() && (m_frame->page() && m_frame->page()->mainFrame() == m_frame);
-    if (needsBackgorund) {
+    if (bar->isCustomScrollbar() && isMainFrameView()) {
         IntRect toFill = bar->frameRect();
         toFill.intersect(rect);
         context->fillRect(toFill, baseBackgroundColor(), ColorSpaceDeviceRGB);
@@ -3730,11 +3707,8 @@ void FrameView::paintOverhangAreas(GraphicsContext* context, const IntRect& hori
     if (m_frame->document()->printing())
         return;
 
-    Page* page = m_frame->page();
-    if (page->mainFrame() == m_frame) {
-        if (page->chrome().client()->paintCustomOverhangArea(context, horizontalOverhangArea, verticalOverhangArea, dirtyRect))
-            return;
-    }
+    if (isMainFrameView() && m_frame->page()->chrome().client()->paintCustomOverhangArea(context, horizontalOverhangArea, verticalOverhangArea, dirtyRect))
+        return;
 
     ScrollView::paintOverhangAreas(context, horizontalOverhangArea, verticalOverhangArea, dirtyRect);
 }
