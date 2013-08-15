@@ -1,3 +1,16 @@
+2013-08-15  Chris Fleizach  <cfleizach@apple.com>
+
+        <https://webkit.org/b/119824> AX: WKView does not become first responder when the voiceover cursor lands on it
+
+        Reviewed by Darin Adler.
+
+        Incorporate review feedback from Darin.
+
+        * accessibility/AccessibilityScrollView.cpp:
+        (WebCore::AccessibilityScrollView::canSetFocusAttribute):
+        (WebCore::AccessibilityScrollView::isFocused):
+        * accessibility/AccessibilityScrollView.h:
+
 2013-08-15  Andreas Kling  <akling@apple.com>
 
         <https://webkit.org/b/119826> Page::focusController() should return a reference.
