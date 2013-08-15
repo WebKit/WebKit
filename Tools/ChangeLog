@@ -2,6 +2,14 @@
 
         Adding Myles Maxfield to contributors.json.
 
+        Oops, wrong section, fixing.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
+2013-08-15  Alexey Proskuryakov  <ap@apple.com>
+
+        Adding Myles Maxfield to contributors.json.
+
         * Scripts/webkitpy/common/config/contributors.json:
 
 2013-08-15  Allan Sandfeld Jensen  <allan.jensen@digia.com>
