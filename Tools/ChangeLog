@@ -1,3 +1,15 @@
+2013-08-15  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt] Do not check specifically for version 5.0
+        https://bugs.webkit.org/show_bug.cgi?id=119846
+
+        Reviewed by Jocelyn Turcotte.
+
+        For Qt 5.x we should always use both wk1 and wk2 basepath results.
+
+        * Scripts/webkitpy/port/qt.py:
+        (QtPort._search_paths):
+
 2013-08-15  Simon Pena  <simon.pena@samsung.com>
 
         <https://webkit.org/b/119584> [Gtk] URL printing code in DumpRenderTree doesn't match WTR or Mac DRT
