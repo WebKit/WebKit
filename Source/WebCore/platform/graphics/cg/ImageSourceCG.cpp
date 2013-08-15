@@ -195,7 +195,7 @@ static ImageOrientation orientationFromProperties(CFDictionaryRef imagePropertie
     return ImageOrientation::fromEXIFValue(exifValue);
 }
 
-IntSize ImageSource::frameSizeAtIndex(size_t index, RespectImageOrientationEnum shouldRespectOrientation) const
+IntSize ImageSource::frameSizeAtIndex(size_t index, ImageOrientationDescription description) const
 {
     RetainPtr<CFDictionaryRef> properties = adoptCF(CGImageSourceCopyPropertiesAtIndex(m_decoder, index, imageSourceOptions(SkipMetadata)));
 
@@ -210,7 +210,7 @@ IntSize ImageSource::frameSizeAtIndex(size_t index, RespectImageOrientationEnum 
     if (num)
         CFNumberGetValue(num, kCFNumberIntType, &h);
 
-    if ((shouldRespectOrientation == RespectImageOrientation) && orientationFromProperties(properties.get()).usesWidthAsHeight())
+    if ((description.respectImageOrientation() == RespectImageOrientation) && orientationFromProperties(properties.get()).usesWidthAsHeight())
         return IntSize(h, w);
 
     return IntSize(w, h);
@@ -225,9 +225,9 @@ ImageOrientation ImageSource::orientationAtIndex(size_t index) const
     return orientationFromProperties(properties.get());
 }
 
-IntSize ImageSource::size(RespectImageOrientationEnum shouldRespectOrientation) const
+IntSize ImageSource::size(ImageOrientationDescription description) const
 {
-    return frameSizeAtIndex(0, shouldRespectOrientation);
+    return frameSizeAtIndex(0, description);
 }
 
 bool ImageSource::getHotSpot(IntPoint& hotSpot) const
@@ -384,7 +384,7 @@ bool ImageSource::frameHasAlphaAtIndex(size_t index)
 
 unsigned ImageSource::frameBytesAtIndex(size_t index) const
 {
-    IntSize frameSize = frameSizeAtIndex(index, RespectImageOrientation);
+    IntSize frameSize = frameSizeAtIndex(index, ImageOrientationDescription(RespectImageOrientation));
     return frameSize.width() * frameSize.height() * 4;
 }
 

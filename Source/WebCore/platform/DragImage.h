@@ -74,7 +74,7 @@ namespace WebCore {
     DragImageRef scaleDragImage(DragImageRef, FloatSize scale);
     DragImageRef dissolveDragImageToFraction(DragImageRef image, float delta);
     
-    DragImageRef createDragImageFromImage(Image*, RespectImageOrientationEnum = DoNotRespectImageOrientation);
+    DragImageRef createDragImageFromImage(Image*, ImageOrientationDescription);
     DragImageRef createDragImageIconForCachedImageFilename(const String&);
     DragImageRef createDragImageForLink(KURL&, const String& label, FontRenderingMode);
     void deleteDragImage(DragImageRef);

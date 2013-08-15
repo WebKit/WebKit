@@ -121,10 +121,9 @@ void BitmapImage::invalidatePlatformData()
 
 void BitmapImage::draw(GraphicsContext* context, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace styleColorSpace, CompositeOperator op, BlendMode blendMode)
 {
-    draw(context, dstRect, srcRect, styleColorSpace, op, blendMode, DoNotRespectImageOrientation);
-}
+    draw(context, dstRect, srcRect, styleColorSpace, op, blendMode, ImageOrientationDescription());
 
-void BitmapImage::draw(GraphicsContext* context, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace, CompositeOperator op, BlendMode, RespectImageOrientationEnum shouldRespectImageOrientation)
+void BitmapImage::draw(GraphicsContext* context, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace, CompositeOperator op, BlendMode, ImageOrientationDescription description)
 {
     startAnimation();
 
@@ -143,9 +142,9 @@ void BitmapImage::draw(GraphicsContext* context, const FloatRect& dstRect, const
 #endif
 
     // use similar orientation code as ImageSkia
-    ImageOrientation orientation = DefaultImageOrientation;
-    if (shouldRespectImageOrientation == RespectImageOrientation)
-        orientation = frameOrientationAtIndex(m_currentFrame);
+    ImageOrientation orientation;
+    if (description.respectImageOrientation() == RespectImageOrientation)
+        orientation = frameOrientationAtIndex(m_currentFrame);  
 
     GraphicsContextStateSaver saveContext(*context, false);
     if (orientation != DefaultImageOrientation) {

@@ -150,7 +150,7 @@ exit:
     return hbmp;
 }
     
-DragImageRef createDragImageFromImage(Image* img, RespectImageOrientationEnum)
+DragImageRef createDragImageFromImage(Image* img, ImageOrientationDescription)
 {
     HBITMAP hbmp = 0;
     HDC dc = GetDC(0);

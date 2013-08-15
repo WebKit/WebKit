@@ -45,7 +45,7 @@ DragImageRef Clipboard::createDragImage(IntPoint& dragLocation) const
     HBITMAP result = 0;
     if (m_dragImage) {
 #if USE(CAIRO) || USE(CG)
-        result = createDragImageFromImage(m_dragImage->image());        
+        result = createDragImageFromImage(m_dragImage->image(), ImageOrientationDescription());        
         dragLocation = m_dragLoc;
 #else
         notImplemented();

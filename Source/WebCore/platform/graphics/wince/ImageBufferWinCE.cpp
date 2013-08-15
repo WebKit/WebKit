@@ -114,7 +114,7 @@ void ImageBuffer::draw(GraphicsContext* context, ColorSpace styleColorSpace, con
                        CompositeOperator op, BlendMode blendMode, bool useLowQualityScale)
 {
     RefPtr<Image> imageCopy = copyImage(CopyBackingStore);
-    context->drawImage(imageCopy.get(), styleColorSpace, destRect, srcRect, op, blendMode, DoNotRespectImageOrientation, useLowQualityScale);
+    context->drawImage(imageCopy.get(), styleColorSpace, destRect, srcRect, op, blendMode, ImageOrientationDescription(), useLowQualityScale);
 }
 
 void ImageBuffer::drawPattern(GraphicsContext* context, const FloatRect& srcRect, const AffineTransform& patternTransform,

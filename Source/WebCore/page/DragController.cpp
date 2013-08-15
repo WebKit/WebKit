@@ -877,7 +877,7 @@ void DragController::doImageDrag(Element* element, const IntPoint& dragOrigin, c
 
     Image* image = getImage(element);
     if (image && image->size().height() * image->size().width() <= MaxOriginalImageArea
-        && (dragImage = createDragImageFromImage(image, element->renderer() ? element->renderer()->shouldRespectImageOrientation() : DoNotRespectImageOrientation))) {
+        && (dragImage = createDragImageFromImage(image, element->renderer() ? ImageOrientationDescription(element->renderer()->shouldRespectImageOrientation()) : ImageOrientationDescription()))) {
         IntSize originalSize = rect.size();
         origin = rect.location();
 

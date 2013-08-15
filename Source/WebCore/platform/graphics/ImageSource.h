@@ -132,8 +132,8 @@ public:
     String filenameExtension() const;
 
     bool isSizeAvailable();
-    IntSize size(RespectImageOrientationEnum = DoNotRespectImageOrientation) const;
-    IntSize frameSizeAtIndex(size_t, RespectImageOrientationEnum = DoNotRespectImageOrientation) const;
+    IntSize size(ImageOrientationDescription = ImageOrientationDescription()) const;
+    IntSize frameSizeAtIndex(size_t, ImageOrientationDescription = ImageOrientationDescription()) const;
 
     bool getHotSpot(IntPoint&) const;
 

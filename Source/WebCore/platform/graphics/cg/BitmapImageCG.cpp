@@ -163,10 +163,10 @@ RetainPtr<CFArrayRef> BitmapImage::getCGImageArray()
 
 void BitmapImage::draw(GraphicsContext* ctx, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace styleColorSpace, CompositeOperator op, BlendMode blendMode)
 {
-    draw(ctx, dstRect, srcRect, styleColorSpace, op, blendMode, DoNotRespectImageOrientation);
+    draw(ctx, dstRect, srcRect, styleColorSpace, op, blendMode, ImageOrientationDescription());
 }
 
-void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& destRect, const FloatRect& srcRect, ColorSpace styleColorSpace, CompositeOperator compositeOp, BlendMode blendMode, RespectImageOrientationEnum shouldRespectImageOrientation)
+void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& destRect, const FloatRect& srcRect, ColorSpace styleColorSpace, CompositeOperator compositeOp, BlendMode blendMode, ImageOrientationDescription description)
 {
     startAnimation();
 
@@ -180,9 +180,9 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& destRect, const F
     }
 
     FloatSize selfSize = currentFrameSize();
-    ImageOrientation orientation = DefaultImageOrientation;
+    ImageOrientation orientation;
 
-    if (shouldRespectImageOrientation == RespectImageOrientation)
+    if (description.respectImageOrientation() == RespectImageOrientation)
         orientation = frameOrientationAtIndex(m_currentFrame);
 
     ctxt->drawNativeImage(image, selfSize, styleColorSpace, destRect, srcRect, compositeOp, blendMode, orientation);

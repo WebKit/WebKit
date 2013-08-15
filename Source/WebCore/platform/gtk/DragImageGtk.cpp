@@ -76,7 +76,7 @@ DragImageRef dissolveDragImageToFraction(DragImageRef image, float fraction)
     return image;
 }
 
-DragImageRef createDragImageFromImage(Image* image, RespectImageOrientationEnum)
+DragImageRef createDragImageFromImage(Image* image, ImageOrientationDescription)
 {
     return image->nativeImageForCurrentFrame().leakRef();
 }

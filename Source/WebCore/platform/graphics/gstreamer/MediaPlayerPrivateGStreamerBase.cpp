@@ -444,7 +444,7 @@ void MediaPlayerPrivateGStreamerBase::paint(GraphicsContext* context, const IntR
     }
 
     context->drawImage(reinterpret_cast<Image*>(gstImage->image().get()), ColorSpaceSRGB,
-        rect, gstImage->rect(), CompositeCopy, DoNotRespectImageOrientation, false);
+        rect, gstImage->rect(), CompositeCopy, ImageOrientationDescription(), false);
     g_mutex_unlock(m_bufferMutex);
 }
 

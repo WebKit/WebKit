@@ -66,11 +66,11 @@ BitmapImage::BitmapImage(PassRefPtr<cairo_surface_t> nativeImage, ImageObserver*
 
 void BitmapImage::draw(GraphicsContext* context, const FloatRect& dst, const FloatRect& src, ColorSpace styleColorSpace, CompositeOperator op, BlendMode blendMode)
 {
-    draw(context, dst, src, styleColorSpace, op, blendMode, DoNotRespectImageOrientation);
+    draw(context, dst, src, styleColorSpace, op, blendMode, ImageOrientationDescription());
 }
 
 void BitmapImage::draw(GraphicsContext* context, const FloatRect& dst, const FloatRect& src, ColorSpace styleColorSpace, CompositeOperator op,
-    BlendMode blendMode, RespectImageOrientationEnum shouldRespectImageOrientation)
+    BlendMode blendMode, ImageOrientationDescription description)
 {
     if (!dst.width() || !dst.height() || !src.width() || !src.height())
         return;
@@ -101,8 +101,8 @@ void BitmapImage::draw(GraphicsContext* context, const FloatRect& dst, const Flo
     FloatRect adjustedSrcRect(src);
 #endif
 
-    ImageOrientation orientation = DefaultImageOrientation;
-    if (shouldRespectImageOrientation == RespectImageOrientation)
+    ImageOrientation orientation;
+    if (description.respectImageOrientation() == RespectImageOrientation)
         orientation = frameOrientationAtIndex(m_currentFrame);
 
     FloatRect dstRect = dst;

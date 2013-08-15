@@ -1,3 +1,86 @@
+2013-08-14  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [CSS] Introduce new structure to pass image orientation values.
+        https://bugs.webkit.org/show_bug.cgi?id=119418
+
+        Reviewed by Beth Dakin.
+
+        Add a ImageOrientationDescription struct in order to reduce count of argument for
+        image orientation.
+
+        No new tests, no behavior change.
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::paint):
+        * page/DragController.cpp:
+        (WebCore::DragController::doImageDrag):
+        * page/Frame.cpp:
+        (WebCore::Frame::nodeImage):
+        (WebCore::Frame::dragImageForSelection):
+        * platform/DragImage.h:
+        * platform/blackberry/DragImageBlackBerry.cpp:
+        (WebCore::createDragImageFromImage):
+        * platform/efl/DragImageEfl.cpp:
+        (WebCore::createDragImageFromImage):
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::updateSize):
+        * platform/graphics/BitmapImage.h:
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::drawImage):
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/Image.cpp:
+        (WebCore::Image::draw):
+        * platform/graphics/Image.h:
+        * platform/graphics/ImageOrientation.h:
+        (WebCore::ImageOrientationDescription::ImageOrientationDescription):
+        (WebCore::ImageOrientationDescription::respectImageOrientation):
+        (WebCore::ImageOrientationDescription::imageOrientation):
+        * platform/graphics/ImageSource.cpp:
+        (WebCore::ImageSource::size):
+        (WebCore::ImageSource::frameSizeAtIndex):
+        * platform/graphics/ImageSource.h:
+        * platform/graphics/blackberry/ImageBlackBerry.cpp:
+        (WebCore::BitmapImage::draw):
+        * platform/graphics/cairo/BitmapImageCairo.cpp:
+        (WebCore::BitmapImage::draw):
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        (WebCore::ImageBuffer::draw):
+        * platform/graphics/cg/BitmapImageCG.cpp:
+        (WebCore::BitmapImage::draw):
+        * platform/graphics/cg/ImageSourceCG.cpp:
+        (WebCore::ImageSource::frameSizeAtIndex):
+        (WebCore::ImageSource::size):
+        (WebCore::ImageSource::frameBytesAtIndex):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::paint):
+        * platform/graphics/qt/ImageBufferQt.cpp:
+        (WebCore::ImageBuffer::draw):
+        * platform/graphics/wince/ImageBufferWinCE.cpp:
+        (WebCore::ImageBuffer::draw):
+        * platform/gtk/ClipboardGtk.cpp:
+        (WebCore::Clipboard::createDragImage):
+        * platform/gtk/DragImageGtk.cpp:
+        (WebCore::createDragImageFromImage):
+        * platform/mac/DragImageMac.mm:
+        (WebCore::createDragImageFromImage):
+        * platform/qt/ClipboardQt.cpp:
+        (WebCore::Clipboard::createDragImage):
+        * platform/qt/DragImageQt.cpp:
+        (WebCore::createDragImageFromImage):
+        * platform/win/ClipboardWin.cpp:
+        (WebCore::Clipboard::createDragImage):
+        * platform/win/DragImageCGWin.cpp:
+        (WebCore::createDragImageFromImage):
+        * platform/win/DragImageCairoWin.cpp:
+        (WebCore::createDragImageFromImage):
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::paintSnapshotImage):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paintReplaced):
+        (WebCore::RenderImage::paintIntoRect):
+        * rendering/RenderSnapshottedPlugIn.cpp:
+        (WebCore::RenderSnapshottedPlugIn::paintSnapshot):
+
 2013-08-14  Sam Weinig  <sam@webkit.org>
 
         Update binding test results.  Follow up fix for <https://webkit.org/b/119664>

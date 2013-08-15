@@ -185,7 +185,7 @@ void BitmapImage::updateSize() const
         return;
 
     m_size = m_source.size();
-    m_sizeRespectingOrientation = m_source.size(RespectImageOrientation);
+    m_sizeRespectingOrientation = m_source.size(ImageOrientationDescription(RespectImageOrientation));
     m_haveSize = true;
     didDecodeProperties();
 }
