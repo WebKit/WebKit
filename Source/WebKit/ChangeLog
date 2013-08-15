@@ -1,5 +1,11 @@
 2013-08-15  Brent Fulgham  <bfulgham@apple.com>
 
+        [Windows] Build correctsion after r154106
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in: Add missing symbol export.
+
+2013-08-15  Brent Fulgham  <bfulgham@apple.com>
+
         [Windows] Correct build after r154088
 
         * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in: Remove unused
