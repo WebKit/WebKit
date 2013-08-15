@@ -122,7 +122,7 @@ EncodedJSValue getData(ExecState* exec)
     }
     
     unsigned byteLength = dataView->length();
-    if (elementSize > byteLength || byteOffset > byteLength - sizeof(typename Adaptor::Type))
+    if (elementSize > byteLength || byteOffset > byteLength - elementSize)
         return throwVMError(exec, createRangeError(exec, "Out of bounds access"));
     
     typename Adaptor::Type value = *reinterpret_cast<typename Adaptor::Type*>(static_cast<uint8_t*>(dataView->vector()) + byteOffset);
@@ -160,7 +160,7 @@ EncodedJSValue setData(ExecState* exec)
     }
     
     unsigned byteLength = dataView->length();
-    if (elementSize > byteLength || byteOffset > byteLength - sizeof(typename Adaptor::Type))
+    if (elementSize > byteLength || byteOffset > byteLength - elementSize)
         return throwVMError(exec, createRangeError(exec, "Out of bounds access"));
     
     if (needToFlipBytesIfLittleEndian(littleEndian))

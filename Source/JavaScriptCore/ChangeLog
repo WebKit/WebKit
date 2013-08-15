@@ -1,3 +1,13 @@
+2013-08-15  Filip Pizlo  <fpizlo@apple.com>
+
+        Remove some code duplication.
+        
+        Rubber stamped by Mark Hahnenberg.
+
+        * runtime/JSDataViewPrototype.cpp:
+        (JSC::getData):
+        (JSC::setData):
+
 2013-08-15  Julien Brianceau  <jbrianceau@nds.com>
 
         [DFG] isDouble() and isNumerical() should return true with KnownNumberUse UseKind.
