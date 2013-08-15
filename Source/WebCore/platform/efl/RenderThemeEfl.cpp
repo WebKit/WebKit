@@ -106,7 +106,6 @@ static const char* toEdjeGroup(FormType type)
         "webkit/widget/progressbar",
 #endif
         "webkit/widget/search/field",
-        "webkit/widget/search/decoration",
         "webkit/widget/search/results_button",
         "webkit/widget/search/results_decoration",
         "webkit/widget/search/cancel_button",
@@ -907,28 +906,6 @@ bool RenderThemeEfl::paintTextArea(RenderObject* object, const PaintInfo& info, 
     return paintTextField(object, info, rect);
 }
 
-void RenderThemeEfl::adjustSearchFieldDecorationStyle(StyleResolver* styleResolver, RenderStyle* style, Element* element) const
-{
-    if (!m_page && element && element->document()->page()) {
-        static_cast<RenderThemeEfl*>(element->document()->page()->theme())->adjustSearchFieldDecorationStyle(styleResolver, style, element);
-        return;
-    }
-    adjustSizeConstraints(style, SearchFieldDecoration);
-    style->resetBorder();
-    style->setWhiteSpace(PRE);
-
-    float fontScale = style->fontSize() / defaultFontSize;
-    int decorationSize = lroundf(std::min(std::max(minSearchDecorationButtonSize, defaultFontSize * fontScale), maxSearchDecorationButtonSize));
-
-    style->setWidth(Length(decorationSize + searchFieldDecorationButtonOffset, Fixed));
-    style->setHeight(Length(decorationSize, Fixed));
-}
-
-bool RenderThemeEfl::paintSearchFieldDecoration(RenderObject* object, const PaintInfo& info, const IntRect& rect)
-{
-    return paintThemePart(object, SearchFieldDecoration, info, rect);
-}
-
 void RenderThemeEfl::adjustSearchFieldResultsButtonStyle(StyleResolver* styleResolver, RenderStyle* style, Element* element) const
 {
     if (!m_page && element && element->document()->page()) {
@@ -938,6 +915,12 @@ void RenderThemeEfl::adjustSearchFieldResultsButtonStyle(StyleResolver* styleRes
     adjustSizeConstraints(style, SearchFieldResultsButton);
     style->resetBorder();
     style->setWhiteSpace(PRE);
+
+    float fontScale = style->fontSize() / defaultFontSize;
+    int decorationSize = lroundf(std::min(std::max(minSearchDecorationButtonSize, defaultFontSize * fontScale), maxSearchDecorationButtonSize));
+
+    style->setWidth(Length(decorationSize + searchFieldDecorationButtonOffset, Fixed));
+    style->setHeight(Length(decorationSize, Fixed));
 }
 
 bool RenderThemeEfl::paintSearchFieldResultsButton(RenderObject* object, const PaintInfo& info, const IntRect& rect)
@@ -954,6 +937,12 @@ void RenderThemeEfl::adjustSearchFieldResultsDecorationStyle(StyleResolver* styl
     adjustSizeConstraints(style, SearchFieldResultsDecoration);
     style->resetBorder();
     style->setWhiteSpace(PRE);
+
+    float fontScale = style->fontSize() / defaultFontSize;
+    int decorationSize = lroundf(std::min(std::max(minSearchDecorationButtonSize, defaultFontSize * fontScale), maxSearchDecorationButtonSize));
+
+    style->setWidth(Length(decorationSize + searchFieldDecorationButtonOffset, Fixed));
+    style->setHeight(Length(decorationSize, Fixed));
 }
 
 bool RenderThemeEfl::paintSearchFieldResultsDecoration(RenderObject* object, const PaintInfo& info, const IntRect& rect)

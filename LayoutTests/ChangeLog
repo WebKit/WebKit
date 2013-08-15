@@ -1,3 +1,40 @@
+2013-08-14  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        <https://webkit.org/b/119786> [EFL] decoration of search type is different from other platforms
+
+        Reviewed by Gyuyoung Kim.
+
+        Rebaseline related to input search field.
+
+        * platform/efl/fast/css/input-search-padding-expected.png:
+        * platform/efl/fast/css/input-search-padding-expected.txt:
+        * platform/efl/fast/css/text-input-with-webkit-border-radius-expected.png:
+        * platform/efl/fast/css/text-input-with-webkit-border-radius-expected.txt:
+        * platform/efl/fast/css/text-overflow-input-expected.png:
+        * platform/efl/fast/css/text-overflow-input-expected.txt:
+        * platform/efl/fast/forms/box-shadow-override-expected.png:
+        * platform/efl/fast/forms/box-shadow-override-expected.txt:
+        * platform/efl/fast/forms/control-restrict-line-height-expected.png:
+        * platform/efl/fast/forms/control-restrict-line-height-expected.txt:
+        * platform/efl/fast/forms/input-appearance-height-expected.png:
+        * platform/efl/fast/forms/input-appearance-height-expected.txt:
+        * platform/efl/fast/forms/placeholder-position-expected.png:
+        * platform/efl/fast/forms/placeholder-position-expected.txt:
+        * platform/efl/fast/forms/placeholder-pseudo-style-expected.png:
+        * platform/efl/fast/forms/placeholder-pseudo-style-expected.txt:
+        * platform/efl/fast/forms/search-cancel-button-style-sharing-expected.png:
+        * platform/efl/fast/forms/search-cancel-button-style-sharing-expected.txt:
+        * platform/efl/fast/forms/search-display-none-cancel-button-expected.png:
+        * platform/efl/fast/forms/search-display-none-cancel-button-expected.txt:
+        * platform/efl/fast/forms/search-rtl-expected.png:
+        * platform/efl/fast/forms/search-rtl-expected.txt:
+        * platform/efl/fast/forms/search-vertical-alignment-expected.png:
+        * platform/efl/fast/forms/search-vertical-alignment-expected.txt:
+        * platform/efl/fast/forms/searchfield-heights-expected.png:
+        * platform/efl/fast/forms/searchfield-heights-expected.txt:
+        * platform/efl/fast/repaint/search-field-cancel-expected.png:
+        * platform/efl/fast/repaint/search-field-cancel-expected.txt:
+
 2013-08-14  Chris Fleizach  <cfleizach@apple.com>
 
         <https://webkit.org/b/119817> AX: Integrate layout tests from overflow bounding boxes are way too big; prevents VoiceOver taps from activating the right elements

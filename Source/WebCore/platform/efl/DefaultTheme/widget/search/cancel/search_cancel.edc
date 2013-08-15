@@ -21,7 +21,6 @@
 
 group {
     name: "webkit/widget/search/cancel_button";
-    alias: "webkit/widget/search/results_button"; // TODO
 
     images {
         image: "widget/search/cancel/cancel_normal_button2.png" COMP;

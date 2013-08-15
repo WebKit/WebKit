@@ -20,8 +20,8 @@
 */
 
 group {
-    name: "webkit/widget/search/decoration";
-    alias: "webkit/widget/search/results_decoration"; //TODO
+    name: "webkit/widget/search/results_decoration";
+    alias: "webkit/widget/search/results_button"; // TODO
 
     images {
         image: "widget/search/decoration/decoration_normal_button.png" COMP;

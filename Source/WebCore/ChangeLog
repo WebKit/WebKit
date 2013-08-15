@@ -1,3 +1,41 @@
+2013-08-14  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        <https://webkit.org/b/119786> [EFL] decoration of search type is different from other platforms
+
+        Reviewed by Gyuyoung Kim.
+
+        Other platforms except EFL port draw a magnifying icon for
+        -webkit-search-results-button and -webkit-search-results-decoration in search field,
+        but Efl port draws it for -webkit-search-decoration.
+
+        This patch makes Efl port draw icon in first two cases like other ports.
+
+        Tests: fast/css/input-search-padding.html
+           fast/css/text-input-with-webkit-border-radius.html
+           fast/css/text-overflow-input.html
+           fast/forms/box-shadow-override.html
+           fast/forms/control-restrict-line-height.html
+           fast/forms/input-appearance-height.html
+           fast/forms/placeholder-position.html
+           fast/forms/placeholder-pseudo-style.html
+           fast/forms/search-cancel-button-style-sharing.html
+           fast/forms/search-display-none-cancel-button.html
+           fast/forms/search-rtl.html
+           fast/forms/search-vertical-alignment.html
+           fast/forms/searchfield-heights.html
+           fast/repaint/search-field-cancel.html
+
+        * platform/efl/DefaultTheme/widget/search/cancel/search_cancel.edc:
+        Moved results_button alias to search_decoration.edc
+        * platform/efl/DefaultTheme/widget/search/decoration/search_decoration.edc:
+        * platform/efl/RenderThemeEfl.cpp:
+        Updated size of ResultsButtonStyle and ResultsDecorationStyle to show icon.
+        In addition, removed adjustSearchFieldResultsButtonStyle and paintSearchFieldDecoration.
+        (WebCore::toEdjeGroup): Removed decoration group.
+        (WebCore::RenderThemeEfl::adjustSearchFieldResultsButtonStyle):
+        (WebCore::RenderThemeEfl::adjustSearchFieldResultsDecorationStyle):
+        * platform/efl/RenderThemeEfl.h:
+
 2013-08-14  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [CSS] Introduce new structure to pass image orientation values.
