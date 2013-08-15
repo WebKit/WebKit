@@ -1,3 +1,9 @@
+2013-08-15  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, rebase the test now that we throw different exceptions.
+
+        * fast/canvas/webgl/data-view-test-expected.txt:
+
 2013-08-14  Filip Pizlo  <fpizlo@apple.com>
 
         Typed arrays should be rewritten

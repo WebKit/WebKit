@@ -1,5 +1,13 @@
 2013-08-15  Filip Pizlo  <fpizlo@apple.com>
 
+        Unreviewed, remove some unnecessary periods from exceptions.
+
+        * runtime/JSDataViewPrototype.cpp:
+        (JSC::getData):
+        (JSC::setData):
+
+2013-08-15  Filip Pizlo  <fpizlo@apple.com>
+
         Unreviewed, fix 32-bit build.
 
         * dfg/DFGSpeculativeJIT32_64.cpp:

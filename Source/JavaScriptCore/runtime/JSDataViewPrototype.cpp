@@ -104,10 +104,10 @@ EncodedJSValue getData(ExecState* exec)
 {
     JSDataView* dataView = jsDynamicCast<JSDataView*>(exec->thisValue());
     if (!dataView)
-        return throwVMError(exec, createTypeError(exec, "Receiver of DataView method must be a DataView."));
+        return throwVMError(exec, createTypeError(exec, "Receiver of DataView method must be a DataView"));
     
     if (!exec->argumentCount())
-        return throwVMError(exec, createTypeError(exec, "Need at least one argument (the byteOffset)."));
+        return throwVMError(exec, createTypeError(exec, "Need at least one argument (the byteOffset)"));
     
     unsigned byteOffset = exec->argument(0).toUInt32(exec);
     if (exec->hadException())
@@ -138,10 +138,10 @@ EncodedJSValue setData(ExecState* exec)
 {
     JSDataView* dataView = jsDynamicCast<JSDataView*>(exec->thisValue());
     if (!dataView)
-        return throwVMError(exec, createTypeError(exec, "Receiver of DataView method must be a DataView."));
+        return throwVMError(exec, createTypeError(exec, "Receiver of DataView method must be a DataView"));
     
     if (exec->argumentCount() < 2)
-        return throwVMError(exec, createTypeError(exec, "Need at least two argument (the byteOffset and value)."));
+        return throwVMError(exec, createTypeError(exec, "Need at least two argument (the byteOffset and value)"));
     
     unsigned byteOffset = exec->argument(0).toUInt32(exec);
     if (exec->hadException())
