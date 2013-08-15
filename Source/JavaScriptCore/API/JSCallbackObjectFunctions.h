@@ -151,11 +151,11 @@ bool JSCallbackObject<Parent>::getOwnPropertySlot(JSObject* object, ExecState* e
                 }
                 if (exception) {
                     throwError(exec, toJS(exec, exception));
-                    slot.setValue(jsUndefined());
+                    slot.setValue(thisObject, jsUndefined());
                     return true;
                 }
                 if (value) {
-                    slot.setValue(toJS(exec, value));
+                    slot.setValue(thisObject, toJS(exec, value));
                     return true;
                 }
             }
@@ -164,7 +164,7 @@ bool JSCallbackObject<Parent>::getOwnPropertySlot(JSObject* object, ExecState* e
                 if (staticValues->contains(name)) {
                     JSValue value = thisObject->getStaticValue(exec, propertyName);
                     if (value) {
-                        slot.setValue(value);
+                        slot.setValue(thisObject, value);
                         return true;
                     }
                 }

@@ -128,7 +128,7 @@ void SparseArrayEntry::get(JSObject* thisObject, PropertySlot& slot) const
     ASSERT(value);
 
     if (LIKELY(!value.isGetterSetter())) {
-        slot.setValue(value);
+        slot.setValue(thisObject, value);
         return;
     }
 

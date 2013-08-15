@@ -66,7 +66,7 @@ inline bool JSActivation::symbolTableGet(PropertyName propertyName, PropertySlot
     if (isTornOff() && !isValid(entry))
         return false;
 
-    slot.setValue(registerAt(entry.getIndex()).get());
+    slot.setValue(this, registerAt(entry.getIndex()).get());
     return true;
 }
 
@@ -166,7 +166,7 @@ bool JSActivation::getOwnPropertySlot(JSObject* object, ExecState* exec, Propert
         return true;
 
     if (JSValue value = thisObject->getDirect(exec->vm(), propertyName)) {
-        slot.setValue(value);
+        slot.setValue(thisObject, value);
         return true;
     }
 

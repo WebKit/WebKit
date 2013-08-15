@@ -94,7 +94,7 @@ bool Arguments::getOwnPropertySlotByIndex(JSObject* object, ExecState* exec, uns
 {
     Arguments* thisObject = jsCast<Arguments*>(object);
     if (JSValue value = thisObject->tryGetArgument(i)) {
-        slot.setValue(value);
+        slot.setValue(thisObject, value);
         return true;
     }
 
@@ -129,18 +129,18 @@ bool Arguments::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyNa
     unsigned i = propertyName.asIndex();
     if (JSValue value = thisObject->tryGetArgument(i)) {
         RELEASE_ASSERT(i < PropertyName::NotAnIndex);
-        slot.setValue(value);
+        slot.setValue(thisObject, value);
         return true;
     }
 
     if (propertyName == exec->propertyNames().length && LIKELY(!thisObject->m_overrodeLength)) {
-        slot.setValue(jsNumber(thisObject->m_numArguments));
+        slot.setValue(thisObject, jsNumber(thisObject->m_numArguments));
         return true;
     }
 
     if (propertyName == exec->propertyNames().callee && LIKELY(!thisObject->m_overrodeCallee)) {
         if (!thisObject->m_isStrictMode) {
-            slot.setValue(thisObject->m_callee.get());
+            slot.setValue(thisObject, thisObject->m_callee.get());
             return true;
         }
         thisObject->createStrictModeCalleeIfNecessary(exec);

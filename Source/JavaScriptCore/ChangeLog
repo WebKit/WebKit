@@ -1,3 +1,43 @@
+2013-08-15  Gavin Barraclough  <barraclough@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=119843
+        PropertySlot::setValue is ambiguous
+
+        Reviewed by Geoff Garen.
+
+        There are three different versions of PropertySlot::setValue, one for cacheable properties, and two that are used interchangeably and inconsistently.
+        The problematic variants are the ones that just take a value, and one that takes a value and also the object containing the property.
+        Unify on always providing the object, and remove the version that just takes a value.
+        This always works except for JSString, where we optimize out the object (logically we should be instantiating a temporary StringObject on every property access).
+        Provide a version of setValue that takes a JSString as the owner of the property.
+        We won't store this, but it makes it clear that this interface should only be used from JSString.
+
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::::getOwnPropertySlot):
+        * JSCTypedArrayStubs.h:
+        * runtime/Arguments.cpp:
+        (JSC::Arguments::getOwnPropertySlotByIndex):
+        (JSC::Arguments::getOwnPropertySlot):
+        * runtime/JSActivation.cpp:
+        (JSC::JSActivation::symbolTableGet):
+        (JSC::JSActivation::getOwnPropertySlot):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::getOwnPropertySlot):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::getOwnPropertySlotByIndex):
+        * runtime/JSString.h:
+        (JSC::JSString::getStringPropertySlot):
+        * runtime/JSSymbolTableObject.h:
+        (JSC::symbolTableGet):
+        * runtime/SparseArrayValueMap.cpp:
+        (JSC::SparseArrayEntry::get):
+            - Pass object containing property to PropertySlot::setValue
+        * runtime/PropertySlot.h:
+        (JSC::PropertySlot::setValue):
+            - Logically, the base of a string property access is a temporary StringObject, but we optimize that away.
+        (JSC::PropertySlot::setUndefined):
+            - removed setValue(JSValue), added setValue(JSString*, JSValue)
+
 2013-08-15  Oliver Hunt  <oliver@apple.com>
 
         Remove bogus assertion.

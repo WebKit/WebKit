@@ -101,7 +101,7 @@ public:
         m_offset = offset;
     }
 
-    void setValue(JSValue value)
+    void setValue(JSString*, JSValue value)
     {
         ASSERT(value);
         m_data.value = JSValue::encode(value);
@@ -169,7 +169,11 @@ public:
 
     void setUndefined()
     {
-        setValue(jsUndefined());
+        m_data.value = JSValue::encode(jsUndefined());
+
+        m_slotBase = 0;
+        m_propertyType = TypeValue;
+        m_offset = invalidOffset;
     }
 
 private:

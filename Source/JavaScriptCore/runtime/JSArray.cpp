@@ -181,7 +181,7 @@ bool JSArray::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName
 {
     JSArray* thisObject = jsCast<JSArray*>(object);
     if (propertyName == exec->propertyNames().length) {
-        slot.setValue(jsNumber(thisObject->length()));
+        slot.setValue(thisObject, jsNumber(thisObject->length()));
         return true;
     }
 

@@ -107,7 +107,7 @@ bool JS##name##Array::getOwnPropertySlot(JSObject* object, ExecState* exec, Prop
     unsigned index = propertyName.asIndex();\
     if (index < thisObject->m_storageLength) {\
         ASSERT(index != PropertyName::NotAnIndex);\
-        slot.setValue(thisObject->getByIndex(exec, index));\
+        slot.setValue(thisObject, thisObject->getByIndex(exec, index));\
         return true;\
     }\
     return Base::getOwnPropertySlot(object, exec, propertyName, slot);\
@@ -131,7 +131,7 @@ bool JS##name##Array::getOwnPropertySlotByIndex(JSObject* object, ExecState* exe
     JS##name##Array* thisObject = jsCast<JS##name##Array*>(object);\
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());\
     if (propertyName < thisObject->m_storageLength) {\
-        slot.setValue(thisObject->getByIndex(exec, propertyName));\
+        slot.setValue(thisObject, thisObject->getByIndex(exec, propertyName));\
         return true;\
     }\
     return thisObject->methodTable()->getOwnPropertySlot(thisObject, exec, Identifier::from(exec, propertyName), slot);\
