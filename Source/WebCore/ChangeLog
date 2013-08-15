@@ -1,3 +1,16 @@
+2013-08-15  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt] memory leak in WebCore::FontCache::getLastResortFallbackFont
+        https://bugs.webkit.org/show_bug.cgi?id=118532
+
+        Reviewed by Jocelyn Turcotte.
+
+        We don't need to allocate FontPlatformData on the heap
+        since getCachedFontData makes a deep copy anyway.
+
+        * platform/graphics/qt/FontCacheQt.cpp:
+        (WebCore::FontCache::getLastResortFallbackFont):
+
 2013-08-15  Rob Buis  <rwlbuis@webkit.org>
 
         ASSERTION FAILED: !m_adoptionIsRequired in void WebCore::TreeShared<NodeType>::ref()
