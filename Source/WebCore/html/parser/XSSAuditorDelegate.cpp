@@ -76,10 +76,10 @@ PassRefPtr<FormData> XSSAuditorDelegate::generateViolationReport()
 {
     ASSERT(isMainThread());
 
-    FrameLoader* frameLoader = m_document->frame()->loader();
+    FrameLoader& frameLoader = m_document->frame()->loader();
     String httpBody;
-    if (frameLoader->documentLoader()) {
-        if (FormData* formData = frameLoader->documentLoader()->originalRequest().httpBody())
+    if (frameLoader.documentLoader()) {
+        if (FormData* formData = frameLoader.documentLoader()->originalRequest().httpBody())
             httpBody = formData->flattenToString();
     }
 
@@ -99,14 +99,14 @@ void XSSAuditorDelegate::didBlockScript(const XSSInfo& xssInfo)
 
     m_document->addConsoleMessage(JSMessageSource, ErrorMessageLevel, buildConsoleError(xssInfo, m_document->url().string()));
 
-    FrameLoader* frameLoader = m_document->frame()->loader();
+    FrameLoader& frameLoader = m_document->frame()->loader();
     if (xssInfo.m_didBlockEntirePage)
-        frameLoader->stopAllLoaders();
+        frameLoader.stopAllLoaders();
 
     if (!m_didSendNotifications) {
         m_didSendNotifications = true;
 
-        frameLoader->client()->didDetectXSS(m_document->url(), xssInfo.m_didBlockEntirePage);
+        frameLoader.client()->didDetectXSS(m_document->url(), xssInfo.m_didBlockEntirePage);
 
         if (!m_reportURL.isEmpty())
             PingLoader::sendViolationReport(m_document->frame(), m_reportURL, generateViolationReport());

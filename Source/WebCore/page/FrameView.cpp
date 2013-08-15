@@ -1465,7 +1465,7 @@ void FrameView::setMediaType(const String& mediaType)
 String FrameView::mediaType() const
 {
     // See if we have an override type.
-    String overrideType = m_frame->loader()->client()->overrideMediaType();
+    String overrideType = m_frame->loader().client()->overrideMediaType();
     InspectorInstrumentation::applyEmulatedMedia(m_frame.get(), &overrideType);
     if (!overrideType.isNull())
         return overrideType;
@@ -1990,7 +1990,7 @@ void FrameView::setFixedVisibleContentRect(const IntRect& visibleContentRect)
         // Update the scroll-bars to calculate new page-step size.
         updateScrollbars(scrollOffset());
     }
-    frame()->loader()->client()->didChangeScrollOffset();
+    frame()->loader().client()->didChangeScrollOffset();
 }
 
 void FrameView::setViewportConstrainedObjectsNeedLayout()
@@ -2319,7 +2319,7 @@ void FrameView::doDeferredRepaints()
 bool FrameView::shouldUseLoadTimeDeferredRepaintDelay() const
 {
     // Don't defer after the initial load of the page has been completed.
-    if (m_frame->tree()->top()->loader()->isComplete())
+    if (m_frame->tree()->top()->loader().isComplete())
         return false;
     Document* document = m_frame->document();
     if (!document)
@@ -2768,7 +2768,7 @@ void FrameView::performPostLayoutTasks()
     if (m_nestedLayoutCount <= 1 && m_frame->document()->documentElement()) {
         if (m_firstLayoutCallbackPending) {
             m_firstLayoutCallbackPending = false;
-            m_frame->loader()->didFirstLayout();
+            m_frame->loader().didFirstLayout();
             if (requestedMilestones & DidFirstLayout)
                 milestonesAchieved |= DidFirstLayout;
             if (isMainFrameView())
@@ -2785,7 +2785,7 @@ void FrameView::performPostLayoutTasks()
     }
 
     if (milestonesAchieved && page && page->mainFrame() == m_frame)
-        m_frame->loader()->didLayout(milestonesAchieved);
+        m_frame->loader().didLayout(milestonesAchieved);
 #if ENABLE(FONT_LOAD_EVENTS)
     if (RuntimeEnabledFeatures::fontLoadEventsEnabled())
         m_frame->document()->fontloader()->didLayout();
@@ -2793,7 +2793,7 @@ void FrameView::performPostLayoutTasks()
     
     // FIXME: We should consider adding DidLayout as a LayoutMilestone. That would let us merge this
     // with didLayout(LayoutMilestones).
-    m_frame->loader()->client()->dispatchDidLayout();
+    m_frame->loader().client()->dispatchDidLayout();
 
     if (RenderView* renderView = this->renderView())
         renderView->updateWidgetPositions();
@@ -2962,7 +2962,7 @@ void FrameView::autoSizeIfEnabled()
         // While loading only allow the size to increase (to avoid twitching during intermediate smaller states)
         // unless autoresize has just been turned on or the maximum size is smaller than the current size.
         if (m_didRunAutosize && size.height() <= m_maxAutoSize.height() && size.width() <= m_maxAutoSize.width()
-            && !frame()->loader()->isComplete() && (newSize.height() < size.height() || newSize.width() < size.width()))
+            && !frame()->loader().isComplete() && (newSize.height() < size.height() || newSize.width() < size.width()))
             break;
 
         resize(newSize.width(), newSize.height());
@@ -3095,7 +3095,7 @@ void FrameView::scrollTo(const IntSize& newOffset)
     ScrollView::scrollTo(newOffset);
     if (offset != scrollOffset())
         scrollPositionChanged();
-    frame()->loader()->client()->didChangeScrollOffset();
+    frame()->loader().client()->didChangeScrollOffset();
 }
 
 void FrameView::invalidateScrollbarRect(Scrollbar* scrollbar, const IntRect& rect)
@@ -3215,7 +3215,7 @@ void FrameView::updateScrollableAreaSet()
 
 bool FrameView::shouldSuspendScrollAnimations() const
 {
-    return m_frame->loader()->state() != FrameStateComplete;
+    return m_frame->loader().state() != FrameStateComplete;
 }
 
 void FrameView::scrollbarStyleChanged(int newStyle, bool forceUpdate)
@@ -3757,7 +3757,7 @@ bool FrameView::qualifiesAsVisuallyNonEmpty() const
         return false;
 
     // Ensure that we always get marked visually non-empty eventually.
-    if (!m_frame->document()->parsing() && m_frame->loader()->stateMachine()->committedFirstRealDocumentLoad())
+    if (!m_frame->document()->parsing() && m_frame->loader().stateMachine()->committedFirstRealDocumentLoad())
         return true;
 
     // Require the document to grow a bit.
@@ -4152,7 +4152,7 @@ bool FrameView::wheelEvent(const PlatformWheelEvent& wheelEvent)
         if (offset != newOffset) {
             ScrollView::scrollTo(newOffset);
             scrollPositionChanged();
-            frame()->loader()->client()->didChangeScrollOffset();
+            frame()->loader().client()->didChangeScrollOffset();
         }
         return true;
     }
@@ -4264,7 +4264,7 @@ void FrameView::firePaintRelatedMilestones()
 
     if (milestonesAchieved) {
         if (Frame* frame = page->mainFrame())
-            frame->loader()->didLayout(milestonesAchieved);
+            frame->loader().didLayout(milestonesAchieved);
     }
 }
 

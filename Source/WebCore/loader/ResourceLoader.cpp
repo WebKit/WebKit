@@ -54,7 +54,7 @@ namespace WebCore {
 
 ResourceLoader::ResourceLoader(Frame* frame, ResourceLoaderOptions options)
     : m_frame(frame)
-    , m_documentLoader(frame->loader()->activeDocumentLoader())
+    , m_documentLoader(frame->loader().activeDocumentLoader())
     , m_identifier(0)
     , m_reachedTerminalState(false)
     , m_notifiedLoadComplete(false)
@@ -157,7 +157,7 @@ void ResourceLoader::start()
     }
 
     if (!m_reachedTerminalState)
-        m_handle = ResourceHandle::create(m_frame->loader()->networkingContext(), m_request, this, m_defersLoading, m_options.sniffContent == SniffContent);
+        m_handle = ResourceHandle::create(m_frame->loader().networkingContext(), m_request, this, m_defersLoading, m_options.sniffContent == SniffContent);
 }
 
 void ResourceLoader::setDefersLoading(bool defers)
@@ -176,7 +176,7 @@ FrameLoader* ResourceLoader::frameLoader() const
 {
     if (!m_frame)
         return 0;
-    return m_frame->loader();
+    return &m_frame->loader();
 }
 
 void ResourceLoader::setDataBufferingPolicy(DataBufferingPolicy dataBufferingPolicy)
@@ -243,7 +243,7 @@ void ResourceLoader::willSendRequest(ResourceRequest& request, const ResourceRes
     }
 #if ENABLE(INSPECTOR)
     else
-        InspectorInstrumentation::willSendRequest(m_frame.get(), m_identifier, m_frame->loader()->documentLoader(), request, redirectResponse);
+        InspectorInstrumentation::willSendRequest(m_frame.get(), m_identifier, m_frame->loader().documentLoader(), request, redirectResponse);
 #endif
 
     if (!redirectResponse.isNull())

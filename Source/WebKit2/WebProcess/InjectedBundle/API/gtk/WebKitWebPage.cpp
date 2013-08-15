@@ -69,7 +69,7 @@ WEBKIT_DEFINE_TYPE(WebKitWebPage, webkit_web_page, G_TYPE_OBJECT)
 
 static CString getProvisionalURLForFrame(WebFrame* webFrame)
 {
-    DocumentLoader* documentLoader = webFrame->coreFrame()->loader()->provisionalDocumentLoader();
+    DocumentLoader* documentLoader = webFrame->coreFrame()->loader().provisionalDocumentLoader();
     if (!documentLoader->unreachableURL().isEmpty())
         return documentLoader->unreachableURL().string().utf8();
 

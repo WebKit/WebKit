@@ -67,7 +67,7 @@ DocumentWriter::DocumentWriter(Frame* frame)
 // This is the <iframe src="javascript:'html'"> case.
 void DocumentWriter::replaceDocument(const String& source, Document* ownerDocument)
 {
-    m_frame->loader()->stopAllLoaders();
+    m_frame->loader().stopAllLoaders();
     begin(m_frame->document()->url(), true, ownerDocument);
 
     if (!source.isNull()) {
@@ -104,9 +104,9 @@ void DocumentWriter::begin()
 
 PassRefPtr<Document> DocumentWriter::createDocument(const KURL& url)
 {
-    if (!m_frame->loader()->stateMachine()->isDisplayingInitialEmptyDocument() && m_frame->loader()->client()->shouldAlwaysUsePluginDocument(m_mimeType))
+    if (!m_frame->loader().stateMachine()->isDisplayingInitialEmptyDocument() && m_frame->loader().client()->shouldAlwaysUsePluginDocument(m_mimeType))
         return PluginDocument::create(m_frame, url);
-    if (!m_frame->loader()->client()->hasHTMLView())
+    if (!m_frame->loader().client()->hasHTMLView())
         return PlaceholderDocument::create(m_frame, url);
     return DOMImplementation::createDocument(m_mimeType, m_frame, url, m_frame->inViewSourceMode());
 }
@@ -129,19 +129,19 @@ void DocumentWriter::begin(const KURL& urlReference, bool dispatch, Document* ow
 
     // FIXME: Do we need to consult the content security policy here about blocked plug-ins?
 
-    bool shouldReuseDefaultView = m_frame->loader()->stateMachine()->isDisplayingInitialEmptyDocument() && m_frame->document()->isSecureTransitionTo(url);
+    bool shouldReuseDefaultView = m_frame->loader().stateMachine()->isDisplayingInitialEmptyDocument() && m_frame->document()->isSecureTransitionTo(url);
     if (shouldReuseDefaultView)
         document->takeDOMWindowFrom(m_frame->document());
     else
         document->createDOMWindow();
 
-    m_frame->loader()->clear(document.get(), !shouldReuseDefaultView, !shouldReuseDefaultView);
+    m_frame->loader().clear(document.get(), !shouldReuseDefaultView, !shouldReuseDefaultView);
     clear();
 
     if (!shouldReuseDefaultView)
         m_frame->script()->updatePlatformScriptObjects();
 
-    m_frame->loader()->setOutgoingReferrer(url);
+    m_frame->loader().setOutgoingReferrer(url);
     m_frame->setDocument(document);
 
     if (m_decoder)
@@ -151,7 +151,7 @@ void DocumentWriter::begin(const KURL& urlReference, bool dispatch, Document* ow
         document->setSecurityOrigin(ownerDocument->securityOrigin());
     }
 
-    m_frame->loader()->didBeginDocument(dispatch);
+    m_frame->loader().didBeginDocument(dispatch);
 
     document->implicitOpen();
 
@@ -160,7 +160,7 @@ void DocumentWriter::begin(const KURL& urlReference, bool dispatch, Document* ow
     // document.open).
     m_parser = document->parser();
 
-    if (m_frame->view() && m_frame->loader()->client()->hasHTMLView())
+    if (m_frame->view() && m_frame->loader().client()->hasHTMLView())
         m_frame->view()->setContentsSize(IntSize());
 
     m_state = StartedWritingState;

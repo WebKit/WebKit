@@ -66,7 +66,7 @@ void HTMLHtmlElement::insertedByParser()
     if (!document()->frame())
         return;
 
-    DocumentLoader* documentLoader = document()->frame()->loader()->documentLoader();
+    DocumentLoader* documentLoader = document()->frame()->loader().documentLoader();
     if (!documentLoader)
         return;
 

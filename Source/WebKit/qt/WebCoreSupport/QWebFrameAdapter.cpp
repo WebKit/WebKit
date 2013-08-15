@@ -167,7 +167,7 @@ void QWebFrameAdapter::load(const QNetworkRequest& req, QNetworkAccessManager::O
     if (!body.isEmpty())
         request.setHTTPBody(WebCore::FormData::create(body.constData(), body.size()));
 
-    frame->loader()->load(WebCore::FrameLoadRequest(frame, request));
+    frame->loader().load(WebCore::FrameLoadRequest(frame, request));
 
     if (frame->tree()->parent())
         pageAdapter->insideOpenCall = false;
@@ -274,7 +274,7 @@ void QWebFrameAdapter::setContent(const QByteArray &data, const QString &mimeTyp
         encoding = extractCharsetFromMediaType(mimeType);
     }
     WebCore::SubstituteData substituteData(buffer, WTF::String(actualMimeType), encoding, KURL());
-    frame->loader()->load(WebCore::FrameLoadRequest(frame, request, substituteData));
+    frame->loader().load(WebCore::FrameLoadRequest(frame, request, substituteData));
 }
 
 void QWebFrameAdapter::setHtml(const QString &html, const QUrl &baseUrl)
@@ -284,7 +284,7 @@ void QWebFrameAdapter::setHtml(const QString &html, const QUrl &baseUrl)
     const QByteArray utf8 = html.toUtf8();
     WTF::RefPtr<WebCore::SharedBuffer> data = WebCore::SharedBuffer::create(utf8.constData(), utf8.length());
     WebCore::SubstituteData substituteData(data, WTF::String("text/html"), WTF::String("utf-8"), KURL());
-    frame->loader()->load(WebCore::FrameLoadRequest(frame, request, substituteData));
+    frame->loader().load(WebCore::FrameLoadRequest(frame, request, substituteData));
 }
 
 QMultiMap<QString, QString> QWebFrameAdapter::metaData() const
@@ -366,7 +366,7 @@ void QWebFrameAdapter::init(QWebPageAdapter* pageAdapter, QWebFrameData* frameDa
 
 QWebFrameAdapter* QWebFrameAdapter::kit(const Frame* frame)
 {
-    return static_cast<FrameLoaderClientQt*>(frame->loader()->client())->webFrame();
+    return static_cast<FrameLoaderClientQt*>(frame->loader().client())->webFrame();
 }
 
 QUrl QWebFrameAdapter::ensureAbsoluteUrl(const QUrl& url)
@@ -412,13 +412,13 @@ QWebElement QWebFrameAdapter::documentElement() const
 QString QWebFrameAdapter::title() const
 {
     if (frame->document())
-        return frame->loader()->documentLoader()->title().string();
+        return frame->loader().documentLoader()->title().string();
     return QString();
 }
 
 void QWebFrameAdapter::clearCoreFrame()
 {
-    DocumentLoader* documentLoader = frame->loader()->activeDocumentLoader();
+    DocumentLoader* documentLoader = frame->loader().activeDocumentLoader();
     Q_ASSERT(documentLoader);
     documentLoader->writer()->begin();
     documentLoader->writer()->end();
@@ -694,8 +694,8 @@ QList<QObject*> QWebFrameAdapter::childFrames() const
     if (frame) {
         FrameTree* tree = frame->tree();
         for (Frame* child = tree->firstChild(); child; child = child->tree()->nextSibling()) {
-            FrameLoader* loader = child->loader();
-            originatingObjects.append(loader->networkingContext()->originatingObject());
+            FrameLoader& loader = child->loader();
+            originatingObjects.append(loader.networkingContext()->originatingObject());
         }
     }
     return originatingObjects;

@@ -123,7 +123,7 @@ void ProgressTracker::progressStarted(Frame* frame)
 {
     LOG(Progress, "Progress started (%p) - frame %p(\"%s\"), value %f, tracked frames %d, originating frame %p", this, frame, frame->tree()->uniqueName().string().utf8().data(), m_progressValue, m_numProgressTrackedFrames, m_originatingProgressFrame.get());
 
-    frame->loader()->client()->willChangeEstimatedProgress();
+    frame->loader().client()->willChangeEstimatedProgress();
     
     if (m_numProgressTrackedFrames == 0 || m_originatingProgressFrame == frame) {
         reset();
@@ -131,13 +131,13 @@ void ProgressTracker::progressStarted(Frame* frame)
         m_originatingProgressFrame = frame;
 
         m_progressHeartbeatTimer.startRepeating(progressHeartbeatInterval);
-        m_originatingProgressFrame->loader()->loadProgressingStatusChanged();
+        m_originatingProgressFrame->loader().loadProgressingStatusChanged();
 
-        m_originatingProgressFrame->loader()->client()->postProgressStartedNotification();
+        m_originatingProgressFrame->loader().client()->postProgressStartedNotification();
     }
     m_numProgressTrackedFrames++;
 
-    frame->loader()->client()->didChangeEstimatedProgress();
+    frame->loader().client()->didChangeEstimatedProgress();
     InspectorInstrumentation::frameStartedLoading(frame);
 }
 
@@ -148,13 +148,13 @@ void ProgressTracker::progressCompleted(Frame* frame)
     if (m_numProgressTrackedFrames <= 0)
         return;
     
-    frame->loader()->client()->willChangeEstimatedProgress();
+    frame->loader().client()->willChangeEstimatedProgress();
         
     m_numProgressTrackedFrames--;
     if (!m_numProgressTrackedFrames || m_originatingProgressFrame == frame)
         finalProgressComplete();
     
-    frame->loader()->client()->didChangeEstimatedProgress();
+    frame->loader().client()->didChangeEstimatedProgress();
 }
 
 void ProgressTracker::finalProgressComplete()
@@ -167,14 +167,14 @@ void ProgressTracker::finalProgressComplete()
     // with final progress value.
     if (!m_finalProgressChangedSent) {
         m_progressValue = 1;
-        frame->loader()->client()->postProgressEstimateChangedNotification();
+        frame->loader().client()->postProgressEstimateChangedNotification();
     }
 
     reset();
 
-    frame->loader()->client()->setMainFrameDocumentReady(true);
-    frame->loader()->client()->postProgressFinishedNotification();
-    frame->loader()->loadProgressingStatusChanged();
+    frame->loader().client()->setMainFrameDocumentReady(true);
+    frame->loader().client()->postProgressFinishedNotification();
+    frame->loader().loadProgressingStatusChanged();
 
     InspectorInstrumentation::frameStoppedLoading(frame.get());
 }
@@ -209,7 +209,7 @@ void ProgressTracker::incrementProgress(unsigned long identifier, const char*, i
 
     RefPtr<Frame> frame = m_originatingProgressFrame;
     
-    frame->loader()->client()->willChangeEstimatedProgress();
+    frame->loader().client()->willChangeEstimatedProgress();
     
     unsigned bytesReceived = length;
     double increment, percentOfRemainingBytes;
@@ -221,7 +221,7 @@ void ProgressTracker::incrementProgress(unsigned long identifier, const char*, i
         item->estimatedLength = item->bytesReceived * 2;
     }
     
-    int numPendingOrLoadingRequests = frame->loader()->numPendingOrLoadingRequests(true);
+    int numPendingOrLoadingRequests = frame->loader().numPendingOrLoadingRequests(true);
     estimatedBytesForPendingRequests = progressItemDefaultEstimatedLength * numPendingOrLoadingRequests;
     remainingBytes = ((m_totalPageAndResourceBytesToLoad + estimatedBytesForPendingRequests) - m_totalBytesReceived);
     if (remainingBytes > 0)  // Prevent divide by 0.
@@ -231,8 +231,8 @@ void ProgressTracker::incrementProgress(unsigned long identifier, const char*, i
     
     // For documents that use WebCore's layout system, treat first layout as the half-way point.
     // FIXME: The hasHTMLView function is a sort of roundabout way of asking "do you use WebCore's layout system".
-    bool useClampedMaxProgress = frame->loader()->client()->hasHTMLView()
-        && !frame->loader()->stateMachine()->firstLayoutDone();
+    bool useClampedMaxProgress = frame->loader().client()->hasHTMLView()
+        && !frame->loader().stateMachine()->firstLayoutDone();
     double maxProgressValue = useClampedMaxProgress ? 0.5 : finalProgressValue;
     increment = (maxProgressValue - m_progressValue) * percentOfRemainingBytes;
     m_progressValue += increment;
@@ -253,14 +253,14 @@ void ProgressTracker::incrementProgress(unsigned long identifier, const char*, i
             if (m_progressValue == 1)
                 m_finalProgressChangedSent = true;
             
-            frame->loader()->client()->postProgressEstimateChangedNotification();
+            frame->loader().client()->postProgressEstimateChangedNotification();
 
             m_lastNotifiedProgressValue = m_progressValue;
             m_lastNotifiedProgressTime = now;
         }
     }
     
-    frame->loader()->client()->didChangeEstimatedProgress();
+    frame->loader().client()->didChangeEstimatedProgress();
 }
 
 void ProgressTracker::completeProgress(unsigned long identifier)
@@ -302,7 +302,7 @@ void ProgressTracker::progressHeartbeatTimerFired(Timer<ProgressTracker>*)
 
     m_totalBytesReceivedBeforePreviousHeartbeat = m_totalBytesReceived;
 
-    m_originatingProgressFrame->loader()->loadProgressingStatusChanged();
+    m_originatingProgressFrame->loader().loadProgressingStatusChanged();
 
     if (m_progressValue >= finalProgressValue)
         m_progressHeartbeatTimer.stop();

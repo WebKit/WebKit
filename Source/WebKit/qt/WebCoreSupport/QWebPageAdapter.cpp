@@ -186,7 +186,7 @@ static inline QWebPageAdapter::VisibilityState webCoreVisibilityStateToWebPageVi
 static WebCore::FrameLoadRequest frameLoadRequest(const QUrl &url, WebCore::Frame *frame)
 {
     return WebCore::FrameLoadRequest(frame->document()->securityOrigin(),
-        WebCore::ResourceRequest(url, frame->loader()->outgoingReferrer()));
+        WebCore::ResourceRequest(url, frame->loader().outgoingReferrer()));
 }
 
 static void openNewWindow(const QUrl& url, Frame* frame)
@@ -196,7 +196,7 @@ static void openNewWindow(const QUrl& url, Frame* frame)
         NavigationAction action;
         FrameLoadRequest request = frameLoadRequest(url, frame);
         if (Page* newPage = oldPage->chrome().createWindow(frame, request, features, action)) {
-            newPage->mainFrame()->loader()->loadFrameRequest(request, false, false, 0, 0, MaybeSendReferrer);
+            newPage->mainFrame()->loader().loadFrameRequest(request, false, false, 0, 0, MaybeSendReferrer);
             newPage->chrome().show();
         }
     }
@@ -292,9 +292,8 @@ QWebPageAdapter::~QWebPageAdapter()
 void QWebPageAdapter::deletePage()
 {
     // Before we delete the page, detach the mainframe's loader
-    FrameLoader* loader = mainFrameAdapter()->frame->loader();
-    if (loader)
-        loader->detachFromParent();
+    FrameLoader& loader = mainFrameAdapter()->frame->loader();
+    loader.detachFromParent();
     delete page;
     page = 0;
 }
@@ -1011,7 +1010,7 @@ void QWebPageAdapter::didCloseInspector()
 
 void QWebPageAdapter::updateActionInternal(QWebPageAdapter::MenuAction action, const char* commandName, bool* enabled, bool* checked)
 {
-    WebCore::FrameLoader* loader = mainFrameAdapter()->frame->loader();
+    WebCore::FrameLoader& loader = mainFrameAdapter()->frame->loader();
     WebCore::Editor& editor = page->focusController().focusedOrMainFrame()->editor();
 
     switch (action) {
@@ -1022,10 +1021,10 @@ void QWebPageAdapter::updateActionInternal(QWebPageAdapter::MenuAction action, c
         *enabled = page->canGoBackOrForward(1);
         break;
     case QWebPageAdapter::Stop:
-        *enabled = loader->isLoading();
+        *enabled = loader.isLoading();
         break;
     case QWebPageAdapter::Reload:
-        *enabled = !loader->isLoading();
+        *enabled = !loader.isLoading();
         break;
     case QWebPageAdapter::SetTextDirectionDefault:
     case QWebPageAdapter::SetTextDirectionLeftToRight:
@@ -1064,7 +1063,7 @@ void QWebPageAdapter::triggerAction(QWebPageAdapter::MenuAction action, QWebHitT
     switch (action) {
     case OpenLink:
         if (Frame* targetFrame = hitTestResult->webCoreFrame) {
-            targetFrame->loader()->loadFrameRequest(frameLoadRequest(hitTestResult->linkUrl, targetFrame), /*lockHistory*/ false, /*lockBackForwardList*/ false, /*event*/ 0, /*FormState*/ 0, MaybeSendReferrer);
+            targetFrame->loader().loadFrameRequest(frameLoadRequest(hitTestResult->linkUrl, targetFrame), /*lockHistory*/ false, /*lockBackForwardList*/ false, /*event*/ 0, /*FormState*/ 0, MaybeSendReferrer);
             break;
         }
         // fall through
@@ -1072,12 +1071,12 @@ void QWebPageAdapter::triggerAction(QWebPageAdapter::MenuAction action, QWebHitT
         openNewWindow(hitTestResult->linkUrl, frame);
         break;
     case OpenLinkInThisWindow:
-        frame->loader()->loadFrameRequest(frameLoadRequest(hitTestResult->linkUrl, frame), /*lockHistory*/ false, /*lockBackForwardList*/ false, /*event*/ 0, /*FormState*/ 0, MaybeSendReferrer);
+        frame->loader().loadFrameRequest(frameLoadRequest(hitTestResult->linkUrl, frame), /*lockHistory*/ false, /*lockBackForwardList*/ false, /*event*/ 0, /*FormState*/ 0, MaybeSendReferrer);
         break;
     case OpenFrameInNewWindow: {
-        KURL url = frame->loader()->documentLoader()->unreachableURL();
+        KURL url = frame->loader().documentLoader()->unreachableURL();
         if (url.isEmpty())
-            url = frame->loader()->documentLoader()->url();
+            url = frame->loader().documentLoader()->url();
         openNewWindow(url, frame);
         break;
         }
@@ -1095,10 +1094,10 @@ void QWebPageAdapter::triggerAction(QWebPageAdapter::MenuAction action, QWebHitT
         openNewWindow(hitTestResult->imageUrl, frame);
         break;
     case DownloadImageToDisk:
-        frame->loader()->client()->startDownload(WebCore::ResourceRequest(hitTestResult->imageUrl, frame->loader()->outgoingReferrer()));
+        frame->loader().client()->startDownload(WebCore::ResourceRequest(hitTestResult->imageUrl, frame->loader().outgoingReferrer()));
         break;
     case DownloadLinkToDisk:
-        frame->loader()->client()->startDownload(WebCore::ResourceRequest(hitTestResult->linkUrl, frame->loader()->outgoingReferrer()));
+        frame->loader().client()->startDownload(WebCore::ResourceRequest(hitTestResult->linkUrl, frame->loader().outgoingReferrer()));
         break;
     case Back:
         page->goBack();
@@ -1107,11 +1106,11 @@ void QWebPageAdapter::triggerAction(QWebPageAdapter::MenuAction action, QWebHitT
         page->goForward();
         break;
     case Stop:
-        mainFrameAdapter()->frame->loader()->stopForUserCancel();
+        mainFrameAdapter()->frame->loader().stopForUserCancel();
         updateNavigationActions();
         break;
     case Reload:
-        mainFrameAdapter()->frame->loader()->reload(endToEndReload);
+        mainFrameAdapter()->frame->loader().reload(endToEndReload);
         break;
 
     case SetTextDirectionDefault:
@@ -1257,7 +1256,7 @@ bool QWebPageAdapter::treatSchemeAsLocal(const QString& scheme)
 QObject* QWebPageAdapter::currentFrame() const
 {
     Frame* frame = page->focusController().focusedOrMainFrame();
-    return frame->loader()->networkingContext()->originatingObject();
+    return frame->loader().networkingContext()->originatingObject();
 }
 
 bool QWebPageAdapter::hasFocusedNode() const

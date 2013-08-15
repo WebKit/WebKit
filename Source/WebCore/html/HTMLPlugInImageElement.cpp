@@ -158,7 +158,7 @@ bool HTMLPlugInImageElement::isImageType()
 
     if (Frame* frame = document()->frame()) {
         KURL completedURL = document()->completeURL(m_url);
-        return frame->loader()->client()->objectContentType(completedURL, m_serviceType, shouldPreferPlugInsForImages()) == ObjectContentImage;
+        return frame->loader().client()->objectContentType(completedURL, m_serviceType, shouldPreferPlugInsForImages()) == ObjectContentImage;
     }
 
     return Image::supportsType(m_serviceType);
@@ -187,9 +187,8 @@ bool HTMLPlugInImageElement::wouldLoadAsNetscapePlugin(const String& url, const 
     if (!url.isEmpty())
         completedURL = document()->completeURL(url);
 
-    FrameLoader* frameLoader = document()->frame()->loader();
-    ASSERT(frameLoader);
-    if (frameLoader->client()->objectContentType(completedURL, serviceType, shouldPreferPlugInsForImages()) == ObjectContentNetscapePlugin)
+    FrameLoader& frameLoader = document()->frame()->loader();
+    if (frameLoader.client()->objectContentType(completedURL, serviceType, shouldPreferPlugInsForImages()) == ObjectContentNetscapePlugin)
         return true;
     return false;
 }
@@ -457,7 +456,7 @@ void HTMLPlugInImageElement::restartSimilarPlugIns()
         return;
 
     for (Frame* frame = document()->page()->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
-        if (!frame->loader()->subframeLoader()->containsPlugins())
+        if (!frame->loader().subframeLoader()->containsPlugins())
             continue;
         
         if (!frame->document())

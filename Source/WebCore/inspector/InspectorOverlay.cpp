@@ -454,14 +454,14 @@ Page* InspectorOverlay::overlayPage()
     RefPtr<Frame> frame = Frame::create(m_overlayPage.get(), 0, dummyFrameLoaderClient);
     frame->setView(FrameView::create(frame.get()));
     frame->init();
-    FrameLoader* loader = frame->loader();
+    FrameLoader& loader = frame->loader();
     frame->view()->setCanHaveScrollbars(false);
     frame->view()->setTransparent(true);
-    ASSERT(loader->activeDocumentLoader());
-    loader->activeDocumentLoader()->writer()->setMIMEType("text/html");
-    loader->activeDocumentLoader()->writer()->begin();
-    loader->activeDocumentLoader()->writer()->addData(reinterpret_cast<const char*>(InspectorOverlayPage_html), sizeof(InspectorOverlayPage_html));
-    loader->activeDocumentLoader()->writer()->end();
+    ASSERT(loader.activeDocumentLoader());
+    loader.activeDocumentLoader()->writer()->setMIMEType("text/html");
+    loader.activeDocumentLoader()->writer()->begin();
+    loader.activeDocumentLoader()->writer()->addData(reinterpret_cast<const char*>(InspectorOverlayPage_html), sizeof(InspectorOverlayPage_html));
+    loader.activeDocumentLoader()->writer()->end();
 
 #if OS(WINDOWS)
     evaluateInOverlay("setPlatform", "windows");

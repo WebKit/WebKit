@@ -1,5 +1,75 @@
 2013-08-15  Anders Carlsson  <andersca@apple.com>
 
+        <https://webkit.org/b/119859> Frame::loader() should return a reference
+
+        Reviewed by Andreas Kling.
+
+        * Plugins/Hosted/HostedNetscapePluginStream.mm:
+        (WebKit::HostedNetscapePluginStream::HostedNetscapePluginStream):
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::performRequest):
+        (WebKit::NetscapePluginInstanceProxy::loadRequest):
+        * Plugins/Hosted/WebHostedNetscapePluginView.mm:
+        (-[WebHostedNetscapePluginView pluginView:receivedResponse:]):
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView requestWithURLCString:]):
+        * Plugins/WebNetscapePluginStream.mm:
+        (WebNetscapePluginStream::WebNetscapePluginStream):
+        * Plugins/WebNetscapePluginView.mm:
+        (-[WebNetscapePluginView loadStream]):
+        (-[WebNetscapePluginView pluginView:receivedResponse:]):
+        (-[WebNetscapePluginView loadPluginRequest:]):
+        (-[WebNetscapePluginView loadRequest:inTarget:withNotifyData:sendNotification:]):
+        * Plugins/WebPluginController.mm:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::dispatchDidReceiveServerRedirectForProvisionalLoad):
+        (WebFrameLoaderClient::dispatchDidStartProvisionalLoad):
+        (WebFrameLoaderClient::dispatchWillSubmitForm):
+        (WebFrameLoaderClient::updateGlobalHistory):
+        (WebFrameLoaderClient::updateGlobalHistoryRedirectLinks):
+        (WebFrameLoaderClient::restoreViewState):
+        (WebFrameLoaderClient::transitionToCommittedForNewPage):
+        (WebFrameLoaderClient::createFrame):
+        * WebCoreSupport/WebFrameNetworkingContext.mm:
+        (WebFrameNetworkingContext::blockedError):
+        * WebCoreSupport/WebPlatformStrategies.mm:
+        (WebPlatformStrategies::getPluginInfo):
+        * WebView/WebFrame.mm:
+        (kit):
+        (-[WebFrame _dataSource]):
+        (-[WebFrame _canProvideDocumentSource]):
+        (-[WebFrame _commitData:]):
+        (-[WebFrame _firstLayoutDone]):
+        (-[WebFrame _loadType]):
+        (-[WebFrame _cacheabilityDictionary]):
+        (-[WebFrame _clearOpener]):
+        (-[WebFrame provisionalDataSource]):
+        (-[WebFrame dataSource]):
+        (-[WebFrame loadRequest:]):
+        (-[WebFrame _loadData:MIMEType:textEncodingName:baseURL:unreachableURL:]):
+        (-[WebFrame loadArchive:]):
+        (-[WebFrame stopLoading]):
+        (-[WebFrame reload]):
+        (-[WebFrame reloadFromOrigin]):
+        * WebView/WebHTMLRepresentation.mm:
+        (-[WebHTMLRepresentation receivedData:withDataSource:]):
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView validateUserInterfaceItemWithoutDelegate:]):
+        * WebView/WebPDFView.mm:
+        (-[WebPDFView PDFViewWillClickOnLink:withURL:]):
+        * WebView/WebRenderLayer.mm:
+        (-[WebRenderLayer initWithWebFrame:]):
+        * WebView/WebRenderNode.mm:
+        (-[WebRenderNode _initWithCoreFrame:]):
+        * WebView/WebView.mm:
+        (-[WebView _close]):
+        (-[WebView _loadBackForwardListFromOtherView:]):
+        (-[WebView _cachedResponseForURL:]):
+        (-[WebView setCustomTextEncodingName:]):
+        (-[WebView shouldClose]):
+
+2013-08-15  Anders Carlsson  <andersca@apple.com>
+
         <https://webkit.org/b/119854> REGRESSION (r153379): Serious drawing issues with WebViews
         <rdar://problem/14698870>
 

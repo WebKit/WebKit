@@ -1,3 +1,415 @@
+2013-08-15  Anders Carlsson  <andersca@apple.com>
+
+        <https://webkit.org/b/119859> Frame::loader() should return a reference
+
+        Reviewed by Andreas Kling.
+
+        * Modules/websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::willOpenSocketStream):
+        * WebCore.xcodeproj/project.pbxproj:
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::press):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper remoteAccessibilityParentObject]):
+        * bindings/ScriptControllerBase.cpp:
+        (WebCore::ScriptController::canExecuteScripts):
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::initScript):
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::beginLoadTimerFired):
+        * dom/DOMImplementation.cpp:
+        (WebCore::DOMImplementation::createDocument):
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::setVisualUpdatesAllowed):
+        (WebCore::Document::updateTitle):
+        (WebCore::Document::open):
+        (WebCore::Document::explicitClose):
+        (WebCore::Document::implicitClose):
+        (WebCore::Document::userAgent):
+        (WebCore::Document::canNavigate):
+        (WebCore::Document::processHttpEquiv):
+        (WebCore::Document::referrer):
+        (WebCore::Document::documentDidResumeFromPageCache):
+        (WebCore::Document::openSearchDescriptionURL):
+        (WebCore::Document::finishedParsing):
+        (WebCore::Document::addIconURL):
+        (WebCore::Document::initSecurityContext):
+        (WebCore::Document::updateURLForPushOrReplaceState):
+        (WebCore::Document::loadEventDelayTimerFired):
+        (WebCore::Document::loader):
+        (WebCore::Document::decrementActiveParserCount):
+        * history/CachedFrame.cpp:
+        (WebCore::CachedFrameBase::CachedFrameBase):
+        (WebCore::CachedFrameBase::restore):
+        (WebCore::CachedFrame::CachedFrame):
+        (WebCore::CachedFrame::open):
+        (WebCore::CachedFrame::destroy):
+        * history/PageCache.cpp:
+        (WebCore::logCanCacheFrameDecision):
+        (WebCore::logCanCachePageDecision):
+        (WebCore::PageCache::canCachePageContainingThisFrame):
+        (WebCore::PageCache::canCache):
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::handleClick):
+        * html/HTMLAppletElement.cpp:
+        (WebCore::HTMLAppletElement::updateWidget):
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::rendererIsNeeded):
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::updateWidget):
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::prepareForSubmission):
+        (WebCore::HTMLFormElement::submit):
+        * html/HTMLFrameElementBase.cpp:
+        (WebCore::HTMLFrameElementBase::openURL):
+        * html/HTMLFrameOwnerElement.cpp:
+        (WebCore::HTMLFrameOwnerElement::disconnectContentFrame):
+        * html/HTMLFrameSetElement.cpp:
+        (WebCore::HTMLFrameSetElement::insertedInto):
+        (WebCore::HTMLFrameSetElement::removedFrom):
+        * html/HTMLHtmlElement.cpp:
+        (WebCore::HTMLHtmlElement::insertedByParser):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::createRenderer):
+        (WebCore::HTMLMediaElement::attach):
+        (WebCore::HTMLMediaElement::loadResource):
+        (WebCore::HTMLMediaElement::getPluginProxyParams):
+        (WebCore::HTMLMediaElement::createMediaPlayerProxy):
+        (WebCore::HTMLMediaElement::updateWidget):
+        (WebCore::HTMLMediaElement::mediaPlayerReferrer):
+        (WebCore::HTMLMediaElement::mediaPlayerUserAgent):
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::parametersForPlugin):
+        (WebCore::HTMLObjectElement::updateWidget):
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::isImageType):
+        (WebCore::HTMLPlugInImageElement::wouldLoadAsNetscapePlugin):
+        (WebCore::HTMLPlugInImageElement::restartSimilarPlugIns):
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::setDisplayMode):
+        * html/ImageDocument.cpp:
+        (WebCore::ImageDocumentParser::appendBytes):
+        (WebCore::ImageDocumentParser::finish):
+        (WebCore::ImageDocument::createDocumentStructure):
+        * html/MediaDocument.cpp:
+        (WebCore::MediaDocumentParser::createDocumentStructure):
+        * html/PluginDocument.cpp:
+        (WebCore::PluginDocumentParser::createDocumentStructure):
+        (WebCore::PluginDocumentParser::appendBytes):
+        (WebCore::PluginDocument::detach):
+        (WebCore::PluginDocument::cancelManualPluginLoad):
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::create):
+        (WebCore::WebGLRenderingContext::loseContextImpl):
+        (WebCore::WebGLRenderingContext::maybeRestoreContext):
+        * html/parser/HTMLConstructionSite.cpp:
+        (WebCore::HTMLConstructionSite::dispatchDocumentElementAvailableIfNeeded):
+        (WebCore::HTMLConstructionSite::insertHTMLBodyElement):
+        * html/parser/HTMLParserOptions.cpp:
+        (WebCore::HTMLParserOptions::HTMLParserOptions):
+        * html/parser/XSSAuditor.cpp:
+        (WebCore::XSSAuditor::init):
+        * html/parser/XSSAuditorDelegate.cpp:
+        (WebCore::XSSAuditorDelegate::generateViolationReport):
+        (WebCore::XSSAuditorDelegate::didBlockScript):
+        * inspector/InspectorApplicationCacheAgent.cpp:
+        (WebCore::InspectorApplicationCacheAgent::updateApplicationCacheStatus):
+        (WebCore::InspectorApplicationCacheAgent::getFramesWithManifests):
+        * inspector/InspectorFrontendClientLocal.cpp:
+        (WebCore::InspectorFrontendClientLocal::openInNewTab):
+        * inspector/InspectorFrontendHost.cpp:
+        (WebCore::InspectorFrontendHost::loadResourceSynchronously):
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::InspectorOverlay::overlayPage):
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::mainResourceContent):
+        (WebCore::InspectorPageAgent::reload):
+        (WebCore::InspectorPageAgent::navigate):
+        (WebCore::allResourcesURLsForFrame):
+        (WebCore::InspectorPageAgent::searchInResource):
+        (WebCore::InspectorPageAgent::assertDocumentLoader):
+        (WebCore::InspectorPageAgent::buildObjectForFrame):
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::InspectorResourceAgent::didFailLoading):
+        * loader/CookieJar.cpp:
+        (WebCore::networkingContext):
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::frameLoader):
+        (WebCore::DocumentLoader::document):
+        (WebCore::DocumentLoader::stopLoading):
+        (WebCore::DocumentLoader::removeSubresourceLoader):
+        (WebCore::DocumentLoader::subresourceLoaderFinishedLoadingOnePart):
+        (WebCore::DocumentLoader::iconLoadDecisionAvailable):
+        (WebCore::DocumentLoader::continueIconLoadWithDecision):
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::didReceiveResponse):
+        (WebCore::DocumentThreadableLoader::didFinishLoading):
+        (WebCore::DocumentThreadableLoader::didFail):
+        (WebCore::DocumentThreadableLoader::preflightFailure):
+        (WebCore::DocumentThreadableLoader::loadRequest):
+        * loader/DocumentWriter.cpp:
+        (WebCore::DocumentWriter::replaceDocument):
+        (WebCore::DocumentWriter::createDocument):
+        (WebCore::DocumentWriter::begin):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::~FrameLoader):
+        (WebCore::FrameLoader::allChildrenAreComplete):
+        (WebCore::FrameLoader::allAncestorsAreComplete):
+        (WebCore::FrameLoader::loadURLIntoChildFrame):
+        (WebCore::FrameLoader::outgoingReferrer):
+        (WebCore::FrameLoader::setOpener):
+        (WebCore::FrameLoader::completed):
+        (WebCore::FrameLoader::started):
+        (WebCore::FrameLoader::loadFrameRequest):
+        (WebCore::FrameLoader::loadURL):
+        (WebCore::FrameLoader::load):
+        (WebCore::FrameLoader::loadWithDocumentLoader):
+        (WebCore::FrameLoader::stopAllLoaders):
+        (WebCore::FrameLoader::closeOldDataSources):
+        (WebCore::FrameLoader::subframeIsLoading):
+        (WebCore::FrameLoader::subresourceCachePolicy):
+        (WebCore::FrameLoader::checkLoadCompleteForThisFrame):
+        (WebCore::FrameLoader::detachChildren):
+        (WebCore::FrameLoader::checkLoadComplete):
+        (WebCore::FrameLoader::detachFromParent):
+        (WebCore::FrameLoader::loadPostRequest):
+        (WebCore::FrameLoader::loadResourceSynchronously):
+        (WebCore::FrameLoader::shouldClose):
+        (WebCore::FrameLoader::handleBeforeUnloadEvent):
+        (WebCore::FrameLoader::continueLoadAfterNavigationPolicy):
+        (WebCore::FrameLoader::continueLoadAfterNewWindowPolicy):
+        (WebCore::createWindow):
+        * loader/HistoryController.cpp:
+        (WebCore::HistoryController::saveScrollPositionAndViewStateToItem):
+        (WebCore::HistoryController::restoreScrollPositionAndViewState):
+        (WebCore::HistoryController::saveDocumentState):
+        (WebCore::HistoryController::saveDocumentAndScrollState):
+        (WebCore::isAssociatedToRequestedHistoryItem):
+        (WebCore::HistoryController::restoreDocumentState):
+        (WebCore::HistoryController::shouldStopLoadingForHistoryItem):
+        (WebCore::HistoryController::goToItem):
+        (WebCore::HistoryController::updateForBackForwardNavigation):
+        (WebCore::HistoryController::updateForReload):
+        (WebCore::HistoryController::updateForStandardLoad):
+        (WebCore::HistoryController::updateForRedirectWithLockedBackForwardList):
+        (WebCore::HistoryController::updateForClientRedirect):
+        (WebCore::HistoryController::updateForCommit):
+        (WebCore::HistoryController::recursiveUpdateForCommit):
+        (WebCore::HistoryController::updateForSameDocumentNavigation):
+        (WebCore::HistoryController::recursiveUpdateForSameDocumentNavigation):
+        (WebCore::HistoryController::initializeItem):
+        (WebCore::HistoryController::createItemTree):
+        (WebCore::HistoryController::recursiveSetProvisionalItem):
+        (WebCore::HistoryController::recursiveGoToItem):
+        (WebCore::HistoryController::updateBackForwardListClippedAtTarget):
+        (WebCore::HistoryController::updateCurrentItem):
+        (WebCore::HistoryController::pushState):
+        (WebCore::HistoryController::replaceState):
+        * loader/ImageLoader.cpp:
+        (WebCore::pageIsBeingDismissed):
+        * loader/MixedContentChecker.cpp:
+        (WebCore::MixedContentChecker::client):
+        * loader/NavigationScheduler.cpp:
+        (WebCore::ScheduledURLNavigation::fire):
+        (WebCore::ScheduledURLNavigation::didStartTimer):
+        (WebCore::ScheduledURLNavigation::didStopTimer):
+        (WebCore::ScheduledRedirect::shouldStartTimer):
+        (WebCore::ScheduledRedirect::fire):
+        (WebCore::ScheduledRefresh::fire):
+        (WebCore::ScheduledHistoryNavigation::fire):
+        (WebCore::ScheduledFormSubmission::fire):
+        (WebCore::ScheduledFormSubmission::didStartTimer):
+        (WebCore::ScheduledFormSubmission::didStopTimer):
+        (WebCore::NavigationScheduler::mustLockBackForwardList):
+        (WebCore::NavigationScheduler::scheduleLocationChange):
+        (WebCore::NavigationScheduler::scheduleFormSubmission):
+        (WebCore::NavigationScheduler::scheduleRefresh):
+        (WebCore::NavigationScheduler::schedule):
+        * loader/PingLoader.cpp:
+        (WebCore::PingLoader::loadImage):
+        (WebCore::PingLoader::sendPing):
+        (WebCore::PingLoader::sendViolationReport):
+        (WebCore::PingLoader::PingLoader):
+        * loader/PolicyChecker.cpp:
+        (WebCore::PolicyChecker::checkNavigationPolicy):
+        (WebCore::PolicyChecker::checkNewWindowPolicy):
+        (WebCore::PolicyChecker::checkContentPolicy):
+        (WebCore::PolicyChecker::cancelCheck):
+        (WebCore::PolicyChecker::stopCheck):
+        (WebCore::PolicyChecker::cannotShowMIMEType):
+        (WebCore::PolicyChecker::continueLoadAfterWillSubmitForm):
+        (WebCore::PolicyChecker::continueAfterNavigationPolicy):
+        (WebCore::PolicyChecker::continueAfterNewWindowPolicy):
+        (WebCore::PolicyChecker::handleUnimplementablePolicy):
+        * loader/ProgressTracker.cpp:
+        (WebCore::ProgressTracker::progressStarted):
+        (WebCore::ProgressTracker::progressCompleted):
+        (WebCore::ProgressTracker::finalProgressComplete):
+        (WebCore::ProgressTracker::incrementProgress):
+        (WebCore::ProgressTracker::progressHeartbeatTimerFired):
+        * loader/ResourceLoadNotifier.cpp:
+        (WebCore::ResourceLoadNotifier::didReceiveAuthenticationChallenge):
+        (WebCore::ResourceLoadNotifier::didCancelAuthenticationChallenge):
+        (WebCore::ResourceLoadNotifier::willSendRequest):
+        (WebCore::ResourceLoadNotifier::didFailToLoad):
+        (WebCore::ResourceLoadNotifier::assignIdentifierToInitialRequest):
+        (WebCore::ResourceLoadNotifier::dispatchWillSendRequest):
+        (WebCore::ResourceLoadNotifier::dispatchDidReceiveResponse):
+        (WebCore::ResourceLoadNotifier::dispatchDidReceiveData):
+        (WebCore::ResourceLoadNotifier::dispatchDidFinishLoading):
+        (WebCore::ResourceLoadNotifier::dispatchDidFailLoading):
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::ResourceLoader):
+        (WebCore::ResourceLoader::start):
+        (WebCore::ResourceLoader::frameLoader):
+        (WebCore::ResourceLoader::willSendRequest):
+        * loader/SubframeLoader.cpp:
+        (WebCore::SubframeLoader::pluginIsLoadable):
+        (WebCore::SubframeLoader::loadMediaPlayerProxyPlugin):
+        (WebCore::SubframeLoader::createJavaAppletWidget):
+        (WebCore::SubframeLoader::loadOrRedirectSubframe):
+        (WebCore::SubframeLoader::loadSubframe):
+        (WebCore::SubframeLoader::allowPlugins):
+        (WebCore::SubframeLoader::shouldUsePlugin):
+        (WebCore::SubframeLoader::loadPlugin):
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::selectCache):
+        (WebCore::ApplicationCacheGroup::selectCacheWithoutManifestURL):
+        (WebCore::ApplicationCacheGroup::update):
+        (WebCore::ApplicationCacheGroup::createResourceHandle):
+        (WebCore::ApplicationCacheGroup::didReceiveResponse):
+        (WebCore::ApplicationCacheGroup::didFinishLoading):
+        (WebCore::ApplicationCacheGroup::didFail):
+        (WebCore::ApplicationCacheGroup::addEntry):
+        (WebCore::CallCacheListenerTask::performTask):
+        (WebCore::ApplicationCacheGroup::postListenerTask):
+        * loader/appcache/DOMApplicationCache.cpp:
+        (WebCore::DOMApplicationCache::applicationCacheHost):
+        * loader/archive/cf/LegacyWebArchive.cpp:
+        (WebCore::LegacyWebArchive::create):
+        (WebCore::LegacyWebArchive::createFromSelection):
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::addAdditionalRequestHeaders):
+        (WebCore::CachedResource::load):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::requestImage):
+        (WebCore::CachedResourceLoader::checkInsecureContent):
+        (WebCore::CachedResourceLoader::canRequest):
+        (WebCore::CachedResourceLoader::shouldContinueAfterNotifyingLoadedFromMemoryCache):
+        (WebCore::CachedResourceLoader::requestResource):
+        (WebCore::CachedResourceLoader::clientDefersImage):
+        (WebCore::CachedResourceLoader::cachePolicy):
+        (WebCore::CachedResourceLoader::loadDone):
+        * loader/icon/IconController.cpp:
+        (WebCore::IconController::commitToDatabase):
+        (WebCore::IconController::startLoader):
+        (WebCore::IconController::continueLoadWithDecision):
+        * loader/icon/IconLoader.cpp:
+        (WebCore::IconLoader::startLoading):
+        (WebCore::IconLoader::notifyFinished):
+        * page/Chrome.cpp:
+        (WebCore::canRunModalIfDuringPageDismissal):
+        * page/ContextMenuController.cpp:
+        (WebCore::openNewWindow):
+        (WebCore::ContextMenuController::contextMenuItemSelected):
+        (WebCore::ContextMenuController::populate):
+        (WebCore::ContextMenuController::checkOrEnableIfNeeded):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::dispatchAllPendingBeforeUnloadEvents):
+        (WebCore::DOMWindow::postMessageTimerFired):
+        (WebCore::DOMWindow::close):
+        (WebCore::DOMWindow::print):
+        (WebCore::DOMWindow::stop):
+        (WebCore::DOMWindow::setName):
+        (WebCore::DOMWindow::opener):
+        (WebCore::DOMWindow::dispatchLoadEvent):
+        (WebCore::DOMWindow::setLocation):
+        (WebCore::DOMWindow::createWindow):
+        (WebCore::DOMWindow::open):
+        * page/DOMWindowExtension.cpp:
+        (WebCore::DOMWindowExtension::disconnectFrameForPageCache):
+        (WebCore::DOMWindowExtension::reconnectFrameFromPageCache):
+        (WebCore::DOMWindowExtension::willDestroyGlobalObjectInCachedFrame):
+        (WebCore::DOMWindowExtension::willDestroyGlobalObjectInFrame):
+        (WebCore::DOMWindowExtension::willDetachGlobalObjectFromFrame):
+        * page/DragController.cpp:
+        (WebCore::DragController::performDrag):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMousePressEvent):
+        (WebCore::EventHandler::keyEvent):
+        * page/Frame.cpp:
+        (WebCore::Frame::~Frame):
+        (WebCore::Frame::setView):
+        (WebCore::Frame::injectUserScripts):
+        (WebCore::Frame::willDetachPage):
+        * page/Frame.h:
+        (WebCore::Frame::loader):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::mediaType):
+        (WebCore::FrameView::setFixedVisibleContentRect):
+        (WebCore::FrameView::shouldUseLoadTimeDeferredRepaintDelay):
+        (WebCore::FrameView::performPostLayoutTasks):
+        (WebCore::FrameView::autoSizeIfEnabled):
+        (WebCore::FrameView::scrollTo):
+        (WebCore::FrameView::shouldSuspendScrollAnimations):
+        (WebCore::FrameView::qualifiesAsVisuallyNonEmpty):
+        (WebCore::FrameView::wheelEvent):
+        (WebCore::FrameView::firePaintRelatedMilestones):
+        * page/History.cpp:
+        (WebCore::History::stateInternal):
+        (WebCore::History::stateObjectAdded):
+        * page/Location.cpp:
+        (WebCore::Location::setLocation):
+        * page/Navigator.cpp:
+        (WebCore::Navigator::userAgent):
+        * page/Page.cpp:
+        (WebCore::Page::goToItem):
+        (WebCore::Page::refreshPlugins):
+        (WebCore::Page::setDefersLoading):
+        (WebCore::Page::setMemoryCacheClientCallsEnabled):
+        (WebCore::Page::addRelevantRepaintedObject):
+        * page/Performance.cpp:
+        (WebCore::Performance::now):
+        * page/PerformanceNavigation.cpp:
+        (WebCore::PerformanceNavigation::type):
+        (WebCore::PerformanceNavigation::redirectCount):
+        * page/PerformanceResourceTiming.cpp:
+        (WebCore::monotonicTimeToDocumentMilliseconds):
+        * page/mac/PageMac.cpp:
+        (WebCore::Page::addSchedulePair):
+        (WebCore::Page::removeSchedulePair):
+        * platform/ios/PasteboardIOS.mm:
+        (WebCore::documentFragmentWithImageResource):
+        (WebCore::documentFragmentWithRTF):
+        (WebCore::Pasteboard::documentFragmentForPasteboardItemAtIndex):
+        * platform/mac/HTMLConverter.mm:
+        (-[WebHTMLConverter _addAttachmentForElement:URL:needsParagraph:usePlaceholder:]):
+        (-[WebHTMLConverter _loadFromDOMRange]):
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::documentFragmentWithImageResource):
+        (WebCore::documentFragmentWithRTF):
+        (WebCore::fragmentFromWebArchive):
+        * plugins/DOMMimeType.cpp:
+        (WebCore::DOMMimeType::enabledPlugin):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollTo):
+        * svg/SVGAElement.cpp:
+        (WebCore::SVGAElement::defaultEventHandler):
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::~SVGImage):
+        (WebCore::SVGImage::dataChanged):
+        * testing/Internals.cpp:
+        (WebCore::Internals::formControlStateOfPreviousHistoryItem):
+        (WebCore::Internals::setFormControlStateOfPreviousHistoryItem):
+        (WebCore::Internals::getReferencedFilePaths):
+        (WebCore::Internals::forceReload):
+        * xml/XSLTProcessorLibxslt.cpp:
+        (WebCore::docLoaderFunc):
+        * xml/parser/XMLDocumentParserLibxml2.cpp:
+        (WebCore::openFunc):
+        (WebCore::XMLDocumentParser::startElementNs):
+
 2013-08-15  Daniel Bates  <dabates@apple.com>
 
         <https://webkit.org/b/119863> [iOS] Upstream WebCore/editing/ios

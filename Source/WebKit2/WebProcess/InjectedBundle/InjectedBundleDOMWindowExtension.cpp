@@ -72,7 +72,7 @@ InjectedBundleDOMWindowExtension::~InjectedBundleDOMWindowExtension()
 WebFrame* InjectedBundleDOMWindowExtension::frame() const
 {
     Frame* frame = m_coreExtension->frame();
-    WebFrameLoaderClient* webFrameLoaderClient = frame ? toWebFrameLoaderClient(frame->loader()->client()) : 0;
+    WebFrameLoaderClient* webFrameLoaderClient = frame ? toWebFrameLoaderClient(frame->loader().client()) : 0;
     return webFrameLoaderClient ? webFrameLoaderClient->webFrame() : 0;
 }
 

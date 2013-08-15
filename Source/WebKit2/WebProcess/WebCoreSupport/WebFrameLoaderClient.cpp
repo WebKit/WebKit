@@ -271,7 +271,7 @@ void WebFrameLoaderClient::dispatchDidReceiveServerRedirectForProvisionalLoad()
     if (!webPage)
         return;
 
-    DocumentLoader* provisionalLoader = m_frame->coreFrame()->loader()->provisionalDocumentLoader();
+    DocumentLoader* provisionalLoader = m_frame->coreFrame()->loader().provisionalDocumentLoader();
     const String& url = provisionalLoader->url().string();
     RefPtr<APIObject> userData;
 
@@ -387,7 +387,7 @@ void WebFrameLoaderClient::dispatchDidStartProvisionalLoad()
     webPage->findController().hideFindUI();
     webPage->sandboxExtensionTracker().didStartProvisionalLoad(m_frame);
 
-    DocumentLoader* provisionalLoader = m_frame->coreFrame()->loader()->provisionalDocumentLoader();
+    DocumentLoader* provisionalLoader = m_frame->coreFrame()->loader().provisionalDocumentLoader();
     const String& url = provisionalLoader->url().string();
     RefPtr<APIObject> userData;
 
@@ -427,7 +427,7 @@ void WebFrameLoaderClient::dispatchDidCommitLoad()
     if (!webPage)
         return;
 
-    const ResourceResponse& response = m_frame->coreFrame()->loader()->documentLoader()->response();
+    const ResourceResponse& response = m_frame->coreFrame()->loader().documentLoader()->response();
     RefPtr<APIObject> userData;
 
     // Notify the bundle client.
@@ -437,7 +437,7 @@ void WebFrameLoaderClient::dispatchDidCommitLoad()
 
     // Notify the UIProcess.
 
-    webPage->send(Messages::WebPageProxy::DidCommitLoadForFrame(m_frame->frameID(), response.mimeType(), m_frame->coreFrame()->loader()->loadType(), PlatformCertificateInfo(response), InjectedBundleUserMessageEncoder(userData.get())));
+    webPage->send(Messages::WebPageProxy::DidCommitLoadForFrame(m_frame->frameID(), response.mimeType(), m_frame->coreFrame()->loader().loadType(), PlatformCertificateInfo(response), InjectedBundleUserMessageEncoder(userData.get())));
 
     webPage->didCommitLoad(m_frame);
 }
@@ -620,7 +620,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForResponse(FramePolicyFunction f
         return;
 
     if (!request.url().string()) {
-        (m_frame->coreFrame()->loader()->policyChecker()->*function)(PolicyUse);
+        (m_frame->coreFrame()->loader().policyChecker()->*function)(PolicyUse);
         return;
     }
 
@@ -629,7 +629,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForResponse(FramePolicyFunction f
     // Notify the bundle client.
     WKBundlePagePolicyAction policy = webPage->injectedBundlePolicyClient().decidePolicyForResponse(webPage, m_frame, response, request, userData);
     if (policy == WKBundlePagePolicyActionUse) {
-        (m_frame->coreFrame()->loader()->policyChecker()->*function)(PolicyUse);
+        (m_frame->coreFrame()->loader().policyChecker()->*function)(PolicyUse);
         return;
     }
 
@@ -660,7 +660,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(FramePolicyFun
     // Notify the bundle client.
     WKBundlePagePolicyAction policy = webPage->injectedBundlePolicyClient().decidePolicyForNewWindowAction(webPage, m_frame, action.get(), request, frameName, userData);
     if (policy == WKBundlePagePolicyActionUse) {
-        (m_frame->coreFrame()->loader()->policyChecker()->*function)(PolicyUse);
+        (m_frame->coreFrame()->loader().policyChecker()->*function)(PolicyUse);
         return;
     }
 
@@ -679,7 +679,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(FramePolicyFu
 
     // Always ignore requests with empty URLs. 
     if (request.isEmpty()) { 
-        (m_frame->coreFrame()->loader()->policyChecker()->*function)(PolicyIgnore); 
+        (m_frame->coreFrame()->loader().policyChecker()->*function)(PolicyIgnore); 
         return; 
     }
 
@@ -690,7 +690,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(FramePolicyFu
     // Notify the bundle client.
     WKBundlePagePolicyAction policy = webPage->injectedBundlePolicyClient().decidePolicyForNavigationAction(webPage, m_frame, action.get(), request, userData);
     if (policy == WKBundlePagePolicyActionUse) {
-        (m_frame->coreFrame()->loader()->policyChecker()->*function)(PolicyUse);
+        (m_frame->coreFrame()->loader().policyChecker()->*function)(PolicyUse);
         return;
     }
     
@@ -737,7 +737,7 @@ void WebFrameLoaderClient::dispatchWillSendSubmitEvent(PassRefPtr<FormState> prp
     RefPtr<FormState> formState = prpFormState;
     HTMLFormElement* form = formState->form();
 
-    WebFrameLoaderClient* webFrameLoaderClient = toWebFrameLoaderClient(formState->sourceDocument()->frame()->loader()->client());
+    WebFrameLoaderClient* webFrameLoaderClient = toWebFrameLoaderClient(formState->sourceDocument()->frame()->loader().client());
     WebFrame* sourceFrame = webFrameLoaderClient ? webFrameLoaderClient->webFrame() : 0;
     ASSERT(sourceFrame);
 
@@ -755,7 +755,7 @@ void WebFrameLoaderClient::dispatchWillSubmitForm(FramePolicyFunction function, 
     
     HTMLFormElement* form = formState->form();
 
-    WebFrameLoaderClient* webFrameLoaderClient = toWebFrameLoaderClient(formState->sourceDocument()->frame()->loader()->client());
+    WebFrameLoaderClient* webFrameLoaderClient = toWebFrameLoaderClient(formState->sourceDocument()->frame()->loader().client());
     WebFrame* sourceFrame = webFrameLoaderClient ? webFrameLoaderClient->webFrame() : 0;
     ASSERT(sourceFrame);
 
@@ -897,7 +897,7 @@ void WebFrameLoaderClient::updateGlobalHistory()
     if (!webPage || !webPage->pageGroup()->isVisibleToHistoryClient())
         return;
 
-    DocumentLoader* loader = m_frame->coreFrame()->loader()->documentLoader();
+    DocumentLoader* loader = m_frame->coreFrame()->loader().documentLoader();
 
     WebNavigationDataStore data;
     data.url = loader->url().string();
@@ -914,7 +914,7 @@ void WebFrameLoaderClient::updateGlobalHistoryRedirectLinks()
     if (!webPage || !webPage->pageGroup()->isVisibleToHistoryClient())
         return;
 
-    DocumentLoader* loader = m_frame->coreFrame()->loader()->documentLoader();
+    DocumentLoader* loader = m_frame->coreFrame()->loader().documentLoader();
     ASSERT(loader->unreachableURL().isEmpty());
 
     // Client redirect
@@ -1112,7 +1112,7 @@ void WebFrameLoaderClient::saveViewStateToItem(HistoryItem*)
 void WebFrameLoaderClient::restoreViewState()
 {
     // Inform the UI process of the scale factor.
-    double scaleFactor = m_frame->coreFrame()->loader()->history()->currentItem()->pageScaleFactor();
+    double scaleFactor = m_frame->coreFrame()->loader().history()->currentItem()->pageScaleFactor();
 
     // A scale factor of 0 means the history item has the default scale factor, thus we do not need to update it.
     if (scaleFactor)
@@ -1266,7 +1266,7 @@ PassRefPtr<Frame> WebFrameLoaderClient::createFrame(const KURL& url, const Strin
     if (!coreSubframe->page())
         return 0;
 
-    m_frame->coreFrame()->loader()->loadURLIntoChildFrame(url, referrer, coreSubframe);
+    m_frame->coreFrame()->loader().loadURLIntoChildFrame(url, referrer, coreSubframe);
 
     // The frame's onload handler may have removed it from the document.
     if (!subframe->coreFrame())
@@ -1346,8 +1346,8 @@ PassRefPtr<Widget> WebFrameLoaderClient::createJavaAppletWidget(const IntSize& p
     RefPtr<Widget> plugin = createPlugin(pluginSize, appletElement, KURL(), paramNames, paramValues, appletElement->serviceType(), false);
     if (!plugin) {
         if (WebPage* webPage = m_frame->page()) {
-            String frameURLString = m_frame->coreFrame()->loader()->documentLoader()->responseURL().string();
-            String pageURLString = webPage->corePage()->mainFrame()->loader()->documentLoader()->responseURL().string();
+            String frameURLString = m_frame->coreFrame()->loader().documentLoader()->responseURL().string();
+            String pageURLString = webPage->corePage()->mainFrame()->loader().documentLoader()->responseURL().string();
             webPage->send(Messages::WebPageProxy::DidFailToInitializePlugin(appletElement->serviceType(), frameURLString, pageURLString));
         }
     }
@@ -1414,7 +1414,7 @@ ObjectContentType WebFrameLoaderClient::objectContentType(const KURL& url, const
     bool plugInSupportsMIMEType = false;
     if (WebPage* webPage = m_frame->page()) {
         if (PluginData* pluginData = webPage->corePage()->pluginData()) {
-            if (pluginData->supportsMimeType(mimeType, PluginData::AllPlugins) && webFrame()->coreFrame()->loader()->subframeLoader()->allowPlugins(NotAboutToInstantiatePlugin))
+            if (pluginData->supportsMimeType(mimeType, PluginData::AllPlugins) && webFrame()->coreFrame()->loader().subframeLoader()->allowPlugins(NotAboutToInstantiatePlugin))
                 plugInSupportsMIMEType = true;
             else if (pluginData->supportsMimeType(mimeType, PluginData::OnlyApplicationPlugins))
                 plugInSupportsMIMEType = true;

@@ -2567,7 +2567,7 @@ WEBCORE_COMMAND(yankAndSelect)
             return NO;
         if (doc->isImageDocument()) {            
             if (action == @selector(copy:))
-                return frame->loader()->isComplete();
+                return frame->loader().isComplete();
             return NO;
         }
     }

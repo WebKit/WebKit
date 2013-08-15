@@ -180,7 +180,7 @@ void SVGAElement::defaultEventHandler(Event* event)
             Frame* frame = document()->frame();
             if (!frame)
                 return;
-            frame->loader()->urlSelected(document()->completeURL(url), target, event, false, false, MaybeSendReferrer);
+            frame->loader().urlSelected(document()->completeURL(url), target, event, false, false, MaybeSendReferrer);
             return;
         }
     }

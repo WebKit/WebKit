@@ -613,7 +613,7 @@ void CSSFontSelector::beginLoadTimerFired(Timer<WebCore::CSSFontSelector>*)
     // New font loads may be triggered by layout after the document load is complete but before we have dispatched
     // didFinishLoading for the frame. Make sure the delegate is always dispatched by checking explicitly.
     if (m_document && m_document->frame())
-        m_document->frame()->loader()->checkLoadComplete();
+        m_document->frame()->loader().checkLoadComplete();
 }
 
 bool CSSFontSelector::resolvesFamilyFor(const FontDescription& description) const

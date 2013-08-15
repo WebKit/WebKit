@@ -526,7 +526,7 @@ void WebFrameLoaderClient::finishedLoading(DocumentLoader*)
 
 void WebFrameLoaderClient::updateGlobalHistory()
 {
-    DocumentLoader* loader = core(m_webFrame)->loader()->documentLoader();
+    DocumentLoader* loader = core(m_webFrame)->loader().documentLoader();
     WebView* webView = m_webFrame->webView();
     COMPtr<IWebHistoryDelegate> historyDelegate;
     webView->historyDelegate(&historyDelegate);
@@ -557,7 +557,7 @@ void WebFrameLoaderClient::updateGlobalHistoryRedirectLinks()
 
     WebHistory* history = WebHistory::sharedHistory();
 
-    DocumentLoader* loader = core(m_webFrame)->loader()->documentLoader();
+    DocumentLoader* loader = core(m_webFrame)->loader().documentLoader();
     ASSERT(loader->unreachableURL().isEmpty());
 
     if (!loader->clientRedirectSourceForHistory().isNull()) {
@@ -701,9 +701,9 @@ void WebFrameLoaderClient::savePlatformDataToCachedFrame(CachedFrame* cachedFram
     if (!coreFrame)
         return;
 
-    ASSERT(coreFrame->loader()->documentLoader() == cachedFrame->documentLoader());
+    ASSERT(coreFrame->loader().documentLoader() == cachedFrame->documentLoader());
 
-    cachedFrame->setCachedFramePlatformData(adoptPtr(new WebCachedFramePlatformData(static_cast<IWebDataSource*>(getWebDataSource(coreFrame->loader()->documentLoader())))));
+    cachedFrame->setCachedFramePlatformData(adoptPtr(new WebCachedFramePlatformData(static_cast<IWebDataSource*>(getWebDataSource(coreFrame->loader().documentLoader())))));
 #else
     notImplemented();
 #endif
@@ -763,7 +763,7 @@ PassRefPtr<Frame> WebFrameLoaderClient::createFrame(const KURL& URL, const Strin
     coreFrame->tree()->appendChild(childFrame);
     childFrame->init();
 
-    coreFrame->loader()->loadURLIntoChildFrame(URL, referrer, childFrame.get());
+    coreFrame->loader().loadURLIntoChildFrame(URL, referrer, childFrame.get());
 
     // The frame's onload handler may have removed it from the document.
     if (!childFrame->tree()->parent())
@@ -824,7 +824,7 @@ void WebFrameLoaderClient::dispatchDidFailToStartPlugin(const PluginView* plugin
     ResourceError resourceError(String(WebKitErrorDomain), errorCode, pluginView->url().string(), String());
     COMPtr<IWebError> error(AdoptCOM, WebError::createInstance(resourceError, userInfoBag.get()));
      
-    resourceLoadDelegate->plugInFailedWithError(webView, error.get(), getWebDataSource(frame->loader()->documentLoader()));
+    resourceLoadDelegate->plugInFailedWithError(webView, error.get(), getWebDataSource(frame->loader().documentLoader()));
 }
 
 PassRefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize& pluginSize, HTMLPlugInElement* element, const KURL& url, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType, bool loadManually)

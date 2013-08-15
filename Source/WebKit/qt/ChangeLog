@@ -1,3 +1,41 @@
+2013-08-15  Anders Carlsson  <andersca@apple.com>
+
+        <https://webkit.org/b/119859> Frame::loader() should return a reference
+
+        Reviewed by Andreas Kling.
+
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::closeWindowSoon):
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        (DumpRenderTreeSupportQt::shouldClose):
+        (DumpRenderTreeSupportQt::responseMimeType):
+        (DumpRenderTreeSupportQt::clearOpener):
+        (DumpRenderTreeSupportQt::thirdPartyCookiePolicyAllows):
+        (DumpRenderTreeSupportQt::setAlternateHtml):
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::callPolicyFunction):
+        (WebCore::FrameLoaderClientQt::dispatchDidStartProvisionalLoad):
+        (WebCore::FrameLoaderClientQt::updateGlobalHistory):
+        (WebCore::FrameLoaderClientQt::updateGlobalHistoryRedirectLinks):
+        (WebCore::FrameLoaderClientQt::callErrorPageExtension):
+        (WebCore::FrameLoaderClientQt::dispatchDecidePolicyForNewWindowAction):
+        (WebCore::FrameLoaderClientQt::dispatchDecidePolicyForNavigationAction):
+        (WebCore::FrameLoaderClientQt::startDownload):
+        (WebCore::FrameLoaderClientQt::createFrame):
+        (WebCore::FrameLoaderClientQt::objectContentType):
+        * WebCoreSupport/QWebFrameAdapter.cpp:
+        (QWebFrameAdapter::load):
+        (QWebFrameAdapter::setContent):
+        (QWebFrameAdapter::setHtml):
+        (QWebFrameAdapter::kit):
+        (QWebFrameAdapter::title):
+        (QWebFrameAdapter::clearCoreFrame):
+        * WebCoreSupport/QWebPageAdapter.cpp:
+        (frameLoadRequest):
+        (openNewWindow):
+        (QWebPageAdapter::triggerAction):
+        (QWebPageAdapter::currentFrame):
+
 2013-08-13  Filip Pizlo  <fpizlo@apple.com>
 
         Foo::s_info should be Foo::info(), so that you can change how the s_info is actually linked

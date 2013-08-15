@@ -116,7 +116,7 @@ namespace WebCore {
 
         Editor& editor() const;
         EventHandler* eventHandler() const;
-        FrameLoader* loader() const;
+        FrameLoader& loader() const;
         NavigationScheduler* navigationScheduler() const;
         FrameSelection* selection() const;
         FrameTree* tree() const;
@@ -260,9 +260,9 @@ namespace WebCore {
         m_loader.init();
     }
 
-    inline FrameLoader* Frame::loader() const
+    inline FrameLoader& Frame::loader() const
     {
-        return &m_loader;
+        return m_loader;
     }
 
     inline NavigationScheduler* Frame::navigationScheduler() const

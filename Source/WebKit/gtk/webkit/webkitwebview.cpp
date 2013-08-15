@@ -1343,7 +1343,7 @@ static void webkit_web_view_dispose(GObject* object)
 
     if (priv->corePage) {
         webkit_web_view_stop_loading(WEBKIT_WEB_VIEW(object));
-        core(priv->mainFrame)->loader()->detachFromParent();
+        core(priv->mainFrame)->loader().detachFromParent();
         priv->corePage = 0;
     }
 
@@ -4225,7 +4225,7 @@ void webkit_web_view_reload(WebKitWebView* webView)
 {
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
 
-    core(webView)->mainFrame()->loader()->reload();
+    core(webView)->mainFrame()->loader().reload();
 }
 
 /**
@@ -4240,7 +4240,7 @@ void webkit_web_view_reload_bypass_cache(WebKitWebView* webView)
 {
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
 
-    core(webView)->mainFrame()->loader()->reload(true);
+    core(webView)->mainFrame()->loader().reload(true);
 }
 
 /**
@@ -4334,7 +4334,7 @@ void webkit_web_view_stop_loading(WebKitWebView* webView)
 {
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
 
-    core(webView)->mainFrame()->loader()->stopForUserCancel();
+    core(webView)->mainFrame()->loader().stopForUserCancel();
 }
 
 /**
@@ -4693,7 +4693,7 @@ gboolean webkit_web_view_can_show_mime_type(WebKitWebView* webView, const gchar*
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), FALSE);
 
     Frame* frame = core(webkit_web_view_get_main_frame(webView));
-    return frame->loader()->client()->canShowMIMEType(String::fromUTF8(mimeType));
+    return frame->loader().client()->canShowMIMEType(String::fromUTF8(mimeType));
 }
 
 /**
@@ -4962,7 +4962,7 @@ void webkit_web_view_set_custom_encoding(WebKitWebView* webView, const char* enc
 {
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
 
-    core(webView)->mainFrame()->loader()->reloadWithOverrideEncoding(String::fromUTF8(encoding));
+    core(webView)->mainFrame()->loader().reloadWithOverrideEncoding(String::fromUTF8(encoding));
 }
 
 /**
@@ -4979,7 +4979,7 @@ void webkit_web_view_set_custom_encoding(WebKitWebView* webView, const char* enc
 const char* webkit_web_view_get_custom_encoding(WebKitWebView* webView)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), NULL);
-    String overrideEncoding = core(webView)->mainFrame()->loader()->documentLoader()->overrideEncoding();
+    String overrideEncoding = core(webView)->mainFrame()->loader().documentLoader()->overrideEncoding();
     if (overrideEncoding.isEmpty())
         return 0;
     webView->priv->customEncoding = overrideEncoding.utf8();
@@ -5259,7 +5259,7 @@ GList* webkit_web_view_get_subresources(WebKitWebView* webView)
     GList* subResources = 0;
     Vector<PassRefPtr<ArchiveResource> > coreSubResources;
 
-    core(webView)->mainFrame()->loader()->documentLoader()->getSubresources(coreSubResources);
+    core(webView)->mainFrame()->loader().documentLoader()->getSubresources(coreSubResources);
 
     for (unsigned i = 0; i < coreSubResources.size(); i++) {
         WebKitWebResource* webResource = WEBKIT_WEB_RESOURCE(g_object_new(WEBKIT_TYPE_WEB_RESOURCE, NULL));

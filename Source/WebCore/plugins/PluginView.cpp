@@ -284,7 +284,7 @@ void PluginView::mediaCanStart()
 {
     ASSERT(!m_isStarted);
     if (!start())
-        parentFrame()->loader()->client()->dispatchDidFailToStartPlugin(this);
+        parentFrame()->loader().client()->dispatchDidFailToStartPlugin(this);
 }
 
 PluginView::~PluginView()
@@ -422,8 +422,7 @@ void PluginView::performRequest(PluginRequest* request)
     // don't let a plugin start any loads if it is no longer part of a document that is being 
     // displayed unless the loads are in the same frame as the plugin.
     const String& targetFrameName = request->frameLoadRequest().frameName();
-    if (m_parentFrame->loader()->documentLoader() != m_parentFrame->loader()->activeDocumentLoader() &&
-        (targetFrameName.isNull() || m_parentFrame->tree()->find(targetFrameName) != m_parentFrame))
+    if (m_parentFrame->loader().documentLoader() != m_parentFrame->loader().activeDocumentLoader() && (targetFrameName.isNull() || m_parentFrame->tree()->find(targetFrameName) != m_parentFrame))
         return;
 
     KURL requestURL = request->frameLoadRequest().resourceRequest().url();
@@ -444,7 +443,7 @@ void PluginView::performRequest(PluginRequest* request)
             FrameLoadRequest frameRequest(m_parentFrame.get(), request->frameLoadRequest().resourceRequest());
             frameRequest.setFrameName(targetFrameName);
             frameRequest.setShouldCheckNewWindowPolicy(true);
-            m_parentFrame->loader()->load(frameRequest);
+            m_parentFrame->loader().load(frameRequest);
 
             // FIXME: <rdar://problem/4807469> This should be sent when the document has finished loading
             if (request->sendNotification()) {
@@ -516,7 +515,7 @@ NPError PluginView::load(const FrameLoadRequest& frameLoadRequest, bool sendNoti
         return NPERR_INVALID_URL;
 
     // Don't allow requests to be made when the document loader is stopping all loaders.
-    DocumentLoader* loader = m_parentFrame->loader()->documentLoader();
+    DocumentLoader* loader = m_parentFrame->loader().documentLoader();
     if (!loader || loader->isStopping())
         return NPERR_GENERIC_ERROR;
 
@@ -889,7 +888,7 @@ void PluginView::didReceiveResponse(const ResourceResponse& response)
     ASSERT(m_loadManually);
     ASSERT(!m_manualStream);
 
-    m_manualStream = PluginStream::create(this, m_parentFrame.get(), m_parentFrame->loader()->activeDocumentLoader()->request(), false, 0, plugin()->pluginFuncs(), instance(), m_plugin->quirks());
+    m_manualStream = PluginStream::create(this, m_parentFrame.get(), m_parentFrame->loader().activeDocumentLoader()->request(), false, 0, plugin()->pluginFuncs(), instance(), m_plugin->quirks());
     m_manualStream->setLoadManually(true);
 
     m_manualStream->didReceiveResponse(0, response);
@@ -1256,7 +1255,7 @@ const char* PluginView::userAgent()
     else if (m_plugin->quirks().contains(PluginQuirkWantsChromeUserAgent))
         return ChromeUserAgent;
     if (m_userAgent.isNull())
-        m_userAgent = m_parentFrame->loader()->userAgent(m_url).utf8();
+        m_userAgent = m_parentFrame->loader().userAgent(m_url).utf8();
 
     return m_userAgent.data();
 }
@@ -1411,7 +1410,7 @@ NPError PluginView::getValueForURL(NPNURLVariable variable, const char* url, cha
         KURL u(m_parentFrame->document()->baseURL(), url);
         if (u.isValid()) {
             Frame* frame = getFrame(parentFrame(), m_element);
-            const FrameLoader* frameLoader = frame ? frame->loader() : 0;
+            const FrameLoader* frameLoader = frame ? &frame->loader() : 0;
             const NetworkingContext* context = frameLoader ? frameLoader->networkingContext() : 0;
             const CString proxyStr = toString(proxyServersForURL(u, context)).utf8();
             if (!proxyStr.isNull()) {

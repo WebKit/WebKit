@@ -713,7 +713,7 @@ void WebPagePrivate::load(const Platform::NetworkRequest& netReq, bool needRefer
     if (!netReq.getSuggestedSaveName().empty())
         request.setSuggestedSaveName(netReq.getSuggestedSaveName());
 
-    m_mainFrame->loader()->load(FrameLoadRequest(m_mainFrame, request));
+    m_mainFrame->loader().load(FrameLoadRequest(m_mainFrame, request));
 }
 
 void WebPage::loadFile(const BlackBerry::Platform::String& path, const BlackBerry::Platform::String& overrideContentType)
@@ -747,7 +747,7 @@ void WebPagePrivate::loadString(const BlackBerry::Platform::String& string, cons
         extractMIMETypeFromMediaType(contentType),
         extractCharsetFromMediaType(contentType),
         !failingURL.empty() ? parseUrl(failingURL) : KURL());
-    m_mainFrame->loader()->load(FrameLoadRequest(m_mainFrame, request, substituteData));
+    m_mainFrame->loader().load(FrameLoadRequest(m_mainFrame, request, substituteData));
 }
 
 void WebPage::loadString(const BlackBerry::Platform::String& string, const BlackBerry::Platform::String& baseURL, const BlackBerry::Platform::String& mimeType, const BlackBerry::Platform::String& failingURL)
@@ -922,7 +922,7 @@ void WebPagePrivate::stopCurrentLoad()
     // WebPage::stoploading (the entry point for the client to stop the load
     // explicitly). If it should only be done while stopping the load
     // explicitly, it goes in WebPage::stopLoading, not here.
-    m_mainFrame->loader()->stopAllLoaders();
+    m_mainFrame->loader().stopAllLoaders();
 
     // Cancel any deferred script that hasn't been processed yet.
     DeferredTaskLoadManualScript::finishOrCancel(this);
@@ -936,10 +936,10 @@ void WebPage::stopLoading()
 static void closeURLRecursively(Frame* frame)
 {
     // Do not create more frame please.
-    FrameLoaderClientBlackBerry* frameLoaderClient = static_cast<FrameLoaderClientBlackBerry*>(frame->loader()->client());
+    FrameLoaderClientBlackBerry* frameLoaderClient = static_cast<FrameLoaderClientBlackBerry*>(frame->loader().client());
     frameLoaderClient->suppressChildFrameCreation();
 
-    frame->loader()->closeURL();
+    frame->loader().closeURL();
 
     Vector<RefPtr<Frame>, 10> childFrames;
 
@@ -966,7 +966,7 @@ void WebPage::prepareToDestroy()
 
 bool WebPage::dispatchBeforeUnloadEvent()
 {
-    return d->m_page->mainFrame()->loader()->shouldClose();
+    return d->m_page->mainFrame()->loader().shouldClose();
 }
 
 static void enableCrossSiteXHRRecursively(Frame* frame)
@@ -1389,7 +1389,7 @@ bool WebPagePrivate::shouldSendResizeEvent()
     // Don't send the resize event if the document is loading. Some pages automatically reload
     // when the window is resized; Safari on iPhone often resizes the window while setting up its
     // viewport. This obviously can cause problems.
-    DocumentLoader* documentLoader = m_mainFrame->loader()->documentLoader();
+    DocumentLoader* documentLoader = m_mainFrame->loader().documentLoader();
     if (documentLoader && documentLoader->isLoadingInAPISense())
         return false;
 
@@ -1652,7 +1652,7 @@ void WebPagePrivate::zoomToInitialScaleOnLoad()
 
     // If this is a back/forward type navigation, don't zoom to initial scale
     // but instead let the HistoryItem's saved viewport reign supreme.
-    if (m_mainFrame && m_mainFrame->loader() && isBackForwardLoadType(m_mainFrame->loader()->loadType()))
+    if (m_mainFrame && m_mainFrame->loader() && isBackForwardLoadType(m_mainFrame->loader().loadType()))
         shouldZoom = false;
 
     if (shouldZoom && shouldZoomToInitialScaleOnLoad()) {
@@ -3069,12 +3069,12 @@ void WebPage::goToBackForwardEntry(BackForwardId id)
 
 void WebPage::reload()
 {
-    d->m_mainFrame->loader()->reload(/* bypassCache */ true);
+    d->m_mainFrame->loader().reload(/* bypassCache */ true);
 }
 
 void WebPage::reloadFromCache()
 {
-    d->m_mainFrame->loader()->reload(/* bypassCache */ false);
+    d->m_mainFrame->loader().reload(/* bypassCache */ false);
 }
 
 WebSettings* WebPage::settings() const
@@ -4194,7 +4194,7 @@ BlackBerry::Platform::String WebPage::textEncoding()
     if (!document)
         return BlackBerry::Platform::String::emptyString();
 
-    return document->loader()->writer()->encoding();
+    return document->loader().writer()->encoding();
 }
 
 BlackBerry::Platform::String WebPage::forcedTextEncoding()
@@ -4207,13 +4207,13 @@ BlackBerry::Platform::String WebPage::forcedTextEncoding()
     if (!document)
         return BlackBerry::Platform::String::emptyString();
 
-    return document->loader()->overrideEncoding();
+    return document->loader().overrideEncoding();
 }
 
 void WebPage::setForcedTextEncoding(const BlackBerry::Platform::String& encoding)
 {
     if (!encoding.empty() && d->focusedOrMainFrame() && d->focusedOrMainFrame()->loader() && d->focusedOrMainFrame()->loader())
-        d->focusedOrMainFrame()->loader()->reloadWithOverrideEncoding(encoding);
+        d->focusedOrMainFrame()->loader().reloadWithOverrideEncoding(encoding);
 }
 
 bool WebPage::keyEvent(const Platform::KeyboardEvent& keyboardEvent)
@@ -4325,7 +4325,7 @@ bool WebPage::selectionContainsDocumentPoint(const Platform::IntPoint& point)
 BlackBerry::Platform::String WebPage::title() const
 {
     if (d->m_mainFrame->document())
-        return d->m_mainFrame->loader()->documentLoader()->title().string();
+        return d->m_mainFrame->loader().documentLoader()->title().string();
     return BlackBerry::Platform::String::emptyString();
 }
 

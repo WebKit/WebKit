@@ -212,9 +212,8 @@ void HTMLVideoElement::setDisplayMode(DisplayMode mode)
     if (player() && player()->canLoadPoster()) {
         bool canLoad = true;
         if (!poster.isEmpty()) {
-            Frame* frame = document()->frame();
-            FrameLoader* loader = frame ? frame->loader() : 0;
-            canLoad = loader && loader->willLoadMediaElementURL(poster);
+            if (Frame* frame = document()->frame())
+                canLoad = frame->loader().willLoadMediaElementURL(poster);
         }
         if (canLoad)
             player()->setPoster(poster);

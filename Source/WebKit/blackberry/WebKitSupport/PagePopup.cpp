@@ -58,7 +58,7 @@ void PagePopup::initialize(WebPage* webPage)
 
     webPage->d->setLoadState(WebPagePrivate::Committed);
 
-    writeDocument(webPage->d->mainFrame()->loader()->activeDocumentLoader()->writer());
+    writeDocument(webPage->d->mainFrame()->loader().activeDocumentLoader()->writer());
     installDOMFunction(webPage->d->mainFrame());
 
     webPage->d->setLoadState(WebPagePrivate::Finished);

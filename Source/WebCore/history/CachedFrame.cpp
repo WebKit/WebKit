@@ -74,7 +74,7 @@ static WTF::RefCountedLeakCounter& cachedFrameCounter()
 
 CachedFrameBase::CachedFrameBase(Frame* frame)
     : m_document(frame->document())
-    , m_documentLoader(frame->loader()->documentLoader())
+    , m_documentLoader(frame->loader().documentLoader())
     , m_view(frame->view())
     , m_mousePressNode(frame->eventHandler()->mousePressNode())
     , m_url(frame->document()->url())
@@ -123,7 +123,7 @@ void CachedFrameBase::restore()
         frame->view()->restoreBackingStores();
 #endif
 
-    frame->loader()->client()->didRestoreFromPageCache();
+    frame->loader().client()->didRestoreFromPageCache();
 
     // Reconstruct the FrameTree
     for (unsigned i = 0; i < m_childFrames.size(); ++i)
@@ -138,7 +138,7 @@ void CachedFrameBase::restore()
 
     m_document->enqueuePageshowEvent(PageshowEventPersisted);
     
-    HistoryItem* historyItem = frame->loader()->history()->currentItem();
+    HistoryItem* historyItem = frame->loader().history()->currentItem();
     m_document->enqueuePopstateEvent(historyItem && historyItem->stateObject() ? historyItem->stateObject() : SerializedScriptValue::nullValue());
     
 #if ENABLE(TOUCH_EVENTS)
@@ -166,7 +166,7 @@ CachedFrame::CachedFrame(Frame* frame)
     m_view->detachCustomScrollbars();
 
     m_document->setInPageCache(true);
-    frame->loader()->stopLoading(UnloadEventPolicyUnloadAndPageHide);
+    frame->loader().stopLoading(UnloadEventPolicyUnloadAndPageHide);
 
     // Create the CachedFrames for all Frames in the FrameTree.
     for (Frame* child = frame->tree()->firstChild(); child; child = child->tree()->nextSibling())
@@ -183,7 +183,7 @@ CachedFrame::CachedFrame(Frame* frame)
 
     m_document->domWindow()->suspendForPageCache();
 
-    frame->loader()->client()->savePlatformDataToCachedFrame(this);
+    frame->loader().client()->savePlatformDataToCachedFrame(this);
 
 #if USE(ACCELERATED_COMPOSITING)
     if (m_isComposited && pageCache()->shouldClearBackingStores())
@@ -203,7 +203,7 @@ CachedFrame::CachedFrame(Frame* frame)
     if (!m_isMainFrame)
         frame->page()->decrementSubframeCount();
 
-    frame->loader()->client()->didSaveToPageCache();
+    frame->loader().client()->didSaveToPageCache();
 
 #ifndef NDEBUG
     if (m_isMainFrame)
@@ -217,7 +217,7 @@ CachedFrame::CachedFrame(Frame* frame)
 void CachedFrame::open()
 {
     ASSERT(m_view);
-    m_view->frame()->loader()->open(*this);
+    m_view->frame()->loader().open(*this);
 
     if (!m_isMainFrame)
         m_view->frame()->page()->incrementSubframeCount();
@@ -262,7 +262,7 @@ void CachedFrame::destroy()
 
     if (!m_isMainFrame) {
         m_view->frame()->detachFromPage();
-        m_view->frame()->loader()->detachViewsAndDocumentLoader();
+        m_view->frame()->loader().detachViewsAndDocumentLoader();
     }
     
     for (int i = m_childFrames.size() - 1; i >= 0; --i)

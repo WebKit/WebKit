@@ -107,7 +107,7 @@ void FrameLoaderClientEfl::callPolicyFunction(FramePolicyFunction function, Poli
 {
     Frame* f = EWKPrivate::coreFrame(m_frame);
     ASSERT(f);
-    (f->loader()->policyChecker()->*function)(action);
+    (f->loader().policyChecker()->*function)(action);
 }
 
 WTF::PassRefPtr<DocumentLoader> FrameLoaderClientEfl::createDocumentLoader(const ResourceRequest& request, const SubstituteData& substituteData)
@@ -321,7 +321,7 @@ void FrameLoaderClientEfl::dispatchDecidePolicyForNewWindowAction(FramePolicyFun
     // if not acceptNavigationRequest - look at Qt -> PolicyIgnore;
     // FIXME: do proper check and only reset forms when on PolicyIgnore
     Frame* f = EWKPrivate::coreFrame(m_frame);
-    f->loader()->resetMultipleFormSubmissionProtection();
+    f->loader().resetMultipleFormSubmissionProtection();
     callPolicyFunction(function, PolicyUse);
 }
 
@@ -349,7 +349,7 @@ void FrameLoaderClientEfl::dispatchDecidePolicyForNavigationAction(FramePolicyFu
     else {
         if (action.type() == NavigationTypeFormSubmitted || action.type() == NavigationTypeFormResubmitted) {
             Frame* f = EWKPrivate::coreFrame(m_frame);
-            f->loader()->resetMultipleFormSubmissionProtection();
+            f->loader().resetMultipleFormSubmissionProtection();
         }
         policy = PolicyUse;
     }
@@ -514,7 +514,7 @@ void FrameLoaderClientEfl::updateGlobalHistoryRedirectLinks()
         if (!frame)
             return;
 
-        WebCore::DocumentLoader* loader = frame->loader()->documentLoader();
+        WebCore::DocumentLoader* loader = frame->loader().documentLoader();
         if (!loader)
             return;
 
@@ -963,7 +963,7 @@ void FrameLoaderClientEfl::updateGlobalHistory()
     if (!frame)
         return;
 
-    WebCore::DocumentLoader* loader = frame->loader()->documentLoader();
+    WebCore::DocumentLoader* loader = frame->loader().documentLoader();
     if (!loader)
         return;
 

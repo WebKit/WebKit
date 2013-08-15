@@ -72,11 +72,7 @@ WKFrameLoadState WKBundleFrameGetFrameLoadState(WKBundleFrameRef frameRef)
     if (!coreFrame)
         return kWKFrameLoadStateFinished;
 
-    FrameLoader* loader = coreFrame->loader();
-    if (!loader)
-        return kWKFrameLoadStateFinished;
-
-    switch (loader->state()) {
+    switch (coreFrame->loader().state()) {
     case FrameStateProvisional:
         return kWKFrameLoadStateProvisional;
     case FrameStateCommittedPage:
@@ -148,7 +144,7 @@ void WKBundleFrameClearOpener(WKBundleFrameRef frameRef)
 {
     Frame* coreFrame = toImpl(frameRef)->coreFrame();
     if (coreFrame)
-        coreFrame->loader()->setOpener(0);
+        coreFrame->loader().setOpener(0);
 }
 
 void WKBundleFrameStopLoading(WKBundleFrameRef frameRef)
@@ -257,7 +253,7 @@ bool WKBundleFrameCallShouldCloseOnWebView(WKBundleFrameRef frameRef)
     if (!coreFrame)
         return true;
 
-    return coreFrame->loader()->shouldClose();
+    return coreFrame->loader().shouldClose();
 }
 
 WKBundleHitTestResultRef WKBundleFrameCreateHitTestResult(WKBundleFrameRef frameRef, WKPoint point)

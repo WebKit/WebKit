@@ -44,10 +44,8 @@ static NetworkingContext* networkingContext(const Document* document)
     Frame* frame = document->frame();
     if (!frame)
         return 0;
-    FrameLoader* loader = frame->loader();
-    if (!loader)
-        return 0;
-    return loader->networkingContext();
+
+    return frame->loader().networkingContext();
 }
 
 #if PLATFORM(MAC) || USE(CFNETWORK) || USE(SOUP)

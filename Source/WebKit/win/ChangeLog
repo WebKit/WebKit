@@ -1,3 +1,49 @@
+2013-08-15  Anders Carlsson  <andersca@apple.com>
+
+        <https://webkit.org/b/119859> Frame::loader() should return a reference
+
+        Reviewed by Andreas Kling.
+
+        * WebCoreSupport/WebContextMenuClient.cpp:
+        (WebContextMenuClient::searchWithGoogle):
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::updateGlobalHistory):
+        (WebFrameLoaderClient::updateGlobalHistoryRedirectLinks):
+        (WebFrameLoaderClient::savePlatformDataToCachedFrame):
+        (WebFrameLoaderClient::createFrame):
+        (WebFrameLoaderClient::dispatchDidFailToStartPlugin):
+        * WebCoreSupport/WebFrameNetworkingContext.cpp:
+        (WebFrameNetworkingContext::blockedError):
+        (WebFrameNetworkingContext::referrer):
+        * WebElementPropertyBag.cpp:
+        (WebElementPropertyBag::Read):
+        * WebFrame.cpp:
+        (kit):
+        (WebFrame::reloadFromOrigin):
+        (WebFrame::loadRequest):
+        (WebFrame::loadData):
+        (WebFrame::dataSource):
+        (WebFrame::provisionalDataSource):
+        (WebFrame::stopLoading):
+        (WebFrame::reload):
+        (WebFrame::firstLayoutDone):
+        (WebFrame::loadType):
+        (WebFrame::clearOpener):
+        (WebFrame::dispatchWillSubmitForm):
+        (WebFrame::receivedPolicyDecision):
+        (WebFrame::dispatchDecidePolicyForResponse):
+        (WebFrame::dispatchDecidePolicyForNewWindowAction):
+        (WebFrame::dispatchDecidePolicyForNavigationAction):
+        (WebFrame::createJavaAppletWidget):
+        * WebFramePolicyListener.cpp:
+        (WebFramePolicyListener::receivedPolicyDecision):
+        * WebView.cpp:
+        (WebView::close):
+        (WebView::canShowMIMEType):
+        (WebView::setCustomTextEncodingName):
+        (WebView::loadBackForwardListFromOtherView):
+        (WebView::shouldClose):
+
 2013-08-12  Andreas Kling  <akling@apple.com>
 
         More Windows build juice.

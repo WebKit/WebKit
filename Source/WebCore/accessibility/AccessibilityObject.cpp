@@ -578,7 +578,7 @@ bool AccessibilityObject::press() const
     if (!actionElem)
         return false;
     if (Frame* f = actionElem->document()->frame())
-        f->loader()->resetMultipleFormSubmissionProtection();
+        f->loader().resetMultipleFormSubmissionProtection();
     
     UserGestureIndicator gestureIndicator(DefinitelyProcessingUserGesture);
     actionElem->accessKeyAction(true);

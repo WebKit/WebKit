@@ -144,7 +144,7 @@ void ApplicationCacheGroup::selectCache(Frame* frame, const KURL& passedManifest
     if (!frame->document()->securityOrigin()->canAccessApplicationCache(frame->tree()->top()->document()->securityOrigin()))
         return;
     
-    DocumentLoader* documentLoader = frame->loader()->documentLoader();
+    DocumentLoader* documentLoader = frame->loader().documentLoader();
     ASSERT(!documentLoader->applicationCacheHost()->applicationCache());
 
     if (passedManifestURL.isNull()) {
@@ -179,14 +179,14 @@ void ApplicationCacheGroup::selectCache(Frame* frame, const KURL& passedManifest
             // Restart the current navigation from the top of the navigation algorithm, undoing any changes that were made
             // as part of the initial load.
             // The navigation will not result in the same resource being loaded, because "foreign" entries are never picked during navigation.
-            frame->navigationScheduler()->scheduleLocationChange(frame->document()->securityOrigin(), documentLoader->url(), frame->loader()->referrer());
+            frame->navigationScheduler()->scheduleLocationChange(frame->document()->securityOrigin(), documentLoader->url(), frame->loader().referrer());
         }
         
         return;
     }
     
     // The resource was loaded from the network, check if it is a HTTP/HTTPS GET.    
-    const ResourceRequest& request = frame->loader()->activeDocumentLoader()->request();
+    const ResourceRequest& request = frame->loader().activeDocumentLoader()->request();
 
     if (!ApplicationCache::requestIsHTTPOrHTTPSGet(request))
         return;
@@ -220,7 +220,7 @@ void ApplicationCacheGroup::selectCacheWithoutManifestURL(Frame* frame)
     if (!frame->document()->securityOrigin()->canAccessApplicationCache(frame->tree()->top()->document()->securityOrigin()))
         return;
 
-    DocumentLoader* documentLoader = frame->loader()->documentLoader();
+    DocumentLoader* documentLoader = frame->loader().documentLoader();
     ASSERT(!documentLoader->applicationCacheHost()->applicationCache());
 
     ApplicationCache* mainResourceCache = documentLoader->applicationCacheHost()->mainResourceApplicationCache();
@@ -432,9 +432,9 @@ void ApplicationCacheGroup::update(Frame* frame, ApplicationCacheUpdateOption up
 {
     if (m_updateStatus == Checking || m_updateStatus == Downloading) {
         if (updateOption == ApplicationCacheUpdateWithBrowsingContext) {
-            postListenerTask(ApplicationCacheHost::CHECKING_EVENT, frame->loader()->documentLoader());
+            postListenerTask(ApplicationCacheHost::CHECKING_EVENT, frame->loader().documentLoader());
             if (m_updateStatus == Downloading)
-                postListenerTask(ApplicationCacheHost::DOWNLOADING_EVENT, frame->loader()->documentLoader());
+                postListenerTask(ApplicationCacheHost::DOWNLOADING_EVENT, frame->loader().documentLoader());
         }
         return;
     }
@@ -444,8 +444,8 @@ void ApplicationCacheGroup::update(Frame* frame, ApplicationCacheUpdateOption up
         ASSERT(m_pendingMasterResourceLoaders.isEmpty());
         ASSERT(m_pendingEntries.isEmpty());
         ASSERT(!m_cacheBeingUpdated);
-        postListenerTask(ApplicationCacheHost::CHECKING_EVENT, frame->loader()->documentLoader());
-        postListenerTask(ApplicationCacheHost::NOUPDATE_EVENT, frame->loader()->documentLoader());
+        postListenerTask(ApplicationCacheHost::CHECKING_EVENT, frame->loader().documentLoader());
+        postListenerTask(ApplicationCacheHost::NOUPDATE_EVENT, frame->loader().documentLoader());
         return;
     }
 
@@ -457,7 +457,7 @@ void ApplicationCacheGroup::update(Frame* frame, ApplicationCacheUpdateOption up
     postListenerTask(ApplicationCacheHost::CHECKING_EVENT, m_associatedDocumentLoaders);
     if (!m_newestCache) {
         ASSERT(updateOption == ApplicationCacheUpdateWithBrowsingContext);
-        postListenerTask(ApplicationCacheHost::CHECKING_EVENT, frame->loader()->documentLoader());
+        postListenerTask(ApplicationCacheHost::CHECKING_EVENT, frame->loader().documentLoader());
     }
     
     ASSERT(!m_manifestHandle);
@@ -486,7 +486,7 @@ void ApplicationCacheGroup::abort(Frame* frame)
 PassRefPtr<ResourceHandle> ApplicationCacheGroup::createResourceHandle(const KURL& url, ApplicationCacheResource* newestCachedResource)
 {
     ResourceRequest request(url);
-    m_frame->loader()->applyUserAgent(request);
+    m_frame->loader().applyUserAgent(request);
     request.setHTTPHeaderField("Cache-Control", "max-age=0");
 
     if (newestCachedResource) {
@@ -518,13 +518,13 @@ PassRefPtr<ResourceHandle> ApplicationCacheGroup::createResourceHandle(const KUR
     request.setTargetType(target);
 #endif
 
-    RefPtr<ResourceHandle> handle = ResourceHandle::create(m_frame->loader()->networkingContext(), request, this, false, true);
+    RefPtr<ResourceHandle> handle = ResourceHandle::create(m_frame->loader().networkingContext(), request, this, false, true);
 #if ENABLE(INSPECTOR)
     // Because willSendRequest only gets called during redirects, we initialize
     // the identifier and the first willSendRequest here.
     m_currentResourceIdentifier = m_frame->page()->progress()->createUniqueIdentifier();
     ResourceResponse redirectResponse = ResourceResponse();
-    InspectorInstrumentation::willSendRequest(m_frame, m_currentResourceIdentifier, m_frame->loader()->documentLoader(), request, redirectResponse);
+    InspectorInstrumentation::willSendRequest(m_frame, m_currentResourceIdentifier, m_frame->loader().documentLoader(), request, redirectResponse);
 #endif
     return handle;
 }
@@ -532,7 +532,7 @@ PassRefPtr<ResourceHandle> ApplicationCacheGroup::createResourceHandle(const KUR
 void ApplicationCacheGroup::didReceiveResponse(ResourceHandle* handle, const ResourceResponse& response)
 {
 #if ENABLE(INSPECTOR)
-    DocumentLoader* loader = (handle == m_manifestHandle) ? 0 : m_frame->loader()->documentLoader();
+    DocumentLoader* loader = (handle == m_manifestHandle) ? 0 : m_frame->loader().documentLoader();
     InspectorInstrumentationCookie cookie = InspectorInstrumentation::willReceiveResourceResponse(m_frame, m_currentResourceIdentifier, response);
     InspectorInstrumentation::didReceiveResourceResponse(cookie, m_currentResourceIdentifier, loader, response, 0);
 #endif
@@ -625,7 +625,7 @@ void ApplicationCacheGroup::didReceiveData(ResourceHandle* handle, const char* d
 void ApplicationCacheGroup::didFinishLoading(ResourceHandle* handle, double finishTime)
 {
 #if ENABLE(INSPECTOR)
-    InspectorInstrumentation::didFinishLoading(m_frame, m_frame->loader()->documentLoader(), m_currentResourceIdentifier, finishTime);
+    InspectorInstrumentation::didFinishLoading(m_frame, m_frame->loader().documentLoader(), m_currentResourceIdentifier, finishTime);
 #else
     UNUSED_PARAM(finishTime);
 #endif
@@ -664,7 +664,7 @@ void ApplicationCacheGroup::didFinishLoading(ResourceHandle* handle, double fini
 void ApplicationCacheGroup::didFail(ResourceHandle* handle, const ResourceError& error)
 {
 #if ENABLE(INSPECTOR)
-    InspectorInstrumentation::didFailLoading(m_frame, m_frame->loader()->documentLoader(), m_currentResourceIdentifier, error);
+    InspectorInstrumentation::didFailLoading(m_frame, m_frame->loader().documentLoader(), m_currentResourceIdentifier, error);
 #else
     UNUSED_PARAM(error);
 #endif
@@ -1065,7 +1065,7 @@ void ApplicationCacheGroup::addEntry(const String& url, unsigned type)
     // (i.e., the main resource finished loading before the manifest).
     if (ApplicationCacheResource* resource = m_cacheBeingUpdated->resourceForURL(url)) {
         ASSERT(resource->type() & ApplicationCacheResource::Master);
-        ASSERT(!m_frame->loader()->documentLoader()->isLoadingMainResource());
+        ASSERT(!m_frame->loader().documentLoader()->isLoadingMainResource());
     
         resource->addType(type);
         return;
@@ -1140,7 +1140,7 @@ public:
         if (!frame)
             return;
     
-        ASSERT(frame->loader()->documentLoader() == m_documentLoader.get());
+        ASSERT(frame->loader().documentLoader() == m_documentLoader.get());
 
         m_documentLoader->applicationCacheHost()->notifyDOMApplicationCache(m_eventID, m_progressTotal, m_progressDone);
     }
@@ -1173,7 +1173,7 @@ void ApplicationCacheGroup::postListenerTask(ApplicationCacheHost::EventID event
     if (!frame)
         return;
     
-    ASSERT(frame->loader()->documentLoader() == loader);
+    ASSERT(frame->loader().documentLoader() == loader);
 
     frame->document()->postTask(CallCacheListenerTask::create(loader, eventID, progressTotal, progressDone));
 }

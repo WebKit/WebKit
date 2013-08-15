@@ -405,7 +405,7 @@ static void cancelOutstandingCheck(const void *item, void *context)
         FrameLoadRequest frameRequest(core(frame), request);
         frameRequest.setFrameName(target);
         frameRequest.setShouldCheckNewWindowPolicy(true);
-        core(frame)->loader()->load(frameRequest);
+        core(frame)->loader().load(frameRequest);
     }
 }
 

@@ -707,7 +707,7 @@ HRESULT STDMETHODCALLTYPE WebView::close()
 
     if (m_page) {
         if (Frame* frame = m_page->mainFrame())
-            frame->loader()->detachFromParent();
+            frame->loader().detachFromParent();
     }
 
     if (m_mouseOutTracker) {
@@ -2542,7 +2542,7 @@ HRESULT STDMETHODCALLTYPE WebView::canShowMIMEType(
         return E_POINTER;
 
     Frame* coreFrame = core(m_mainFrame);
-    bool allowPlugins = coreFrame && coreFrame->loader()->subframeLoader()->allowPlugins(NotAboutToInstantiatePlugin);
+    bool allowPlugins = coreFrame && coreFrame->loader().subframeLoader()->allowPlugins(NotAboutToInstantiatePlugin);
 
     *canShow = MIMETypeRegistry::isSupportedImageMIMEType(mimeTypeStr)
         || MIMETypeRegistry::isSupportedNonImageMIMEType(mimeTypeStr);
@@ -3199,7 +3199,7 @@ HRESULT STDMETHODCALLTYPE WebView::setCustomTextEncodingName(
 
     if (oldEncoding != encodingName && (!oldEncoding || !encodingName || wcscmp(oldEncoding, encodingName))) {
         if (Frame* coreFrame = core(m_mainFrame))
-            coreFrame->loader()->reloadWithOverrideEncoding(toString(encodingName));
+            coreFrame->loader().reloadWithOverrideEncoding(toString(encodingName));
     }
 
     return S_OK;
@@ -5383,7 +5383,7 @@ HRESULT STDMETHODCALLTYPE WebView::loadBackForwardListFromOtherView(
             // If this item is showing , save away its current scroll and form state,
             // since that might have changed since loading and it is normally not saved
             // until we leave that page.
-            otherWebView->m_page->mainFrame()->loader()->history()->saveDocumentAndScrollState();
+            otherWebView->m_page->mainFrame()->loader().history()->saveDocumentAndScrollState();
         }
         RefPtr<HistoryItem> newItem = otherBackForwardList->itemAtIndex(i)->copy();
         if (!i) 
@@ -5413,7 +5413,7 @@ HRESULT STDMETHODCALLTYPE WebView::shouldClose(
 
     *result = TRUE;
     if (Frame* frame = m_page->mainFrame())
-        *result = frame->loader()->shouldClose();
+        *result = frame->loader().shouldClose();
     return S_OK;
 }
 

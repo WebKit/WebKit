@@ -722,7 +722,7 @@ void Internals::selectColorInColorChooser(Element* element, const String& colorV
 
 Vector<String> Internals::formControlStateOfPreviousHistoryItem(ExceptionCode& ec)
 {
-    HistoryItem* mainItem = frame()->loader()->history()->previousItem();
+    HistoryItem* mainItem = frame()->loader().history()->previousItem();
     if (!mainItem) {
         ec = INVALID_ACCESS_ERR;
         return Vector<String>();
@@ -737,7 +737,7 @@ Vector<String> Internals::formControlStateOfPreviousHistoryItem(ExceptionCode& e
 
 void Internals::setFormControlStateOfPreviousHistoryItem(const Vector<String>& state, ExceptionCode& ec)
 {
-    HistoryItem* mainItem = frame()->loader()->history()->previousItem();
+    HistoryItem* mainItem = frame()->loader().history()->previousItem();
     if (!mainItem) {
         ec = INVALID_ACCESS_ERR;
         return;
@@ -1883,8 +1883,8 @@ PassRefPtr<MemoryInfo> Internals::memoryInfo() const
 
 Vector<String> Internals::getReferencedFilePaths() const
 {
-    frame()->loader()->history()->saveDocumentAndScrollState();
-    return FormController::getReferencedFilePaths(frame()->loader()->history()->currentItem()->documentState());
+    frame()->loader().history()->saveDocumentAndScrollState();
+    return FormController::getReferencedFilePaths(frame()->loader().history()->currentItem()->documentState());
 }
 
 void Internals::startTrackingRepaints(Document* document, ExceptionCode& ec)
@@ -2021,7 +2021,7 @@ void Internals::setUsesOverlayScrollbars(bool enabled)
 
 void Internals::forceReload(bool endToEnd)
 {
-    frame()->loader()->reload(endToEnd);
+    frame()->loader().reload(endToEnd);
 }
 
 #if ENABLE(ENCRYPTED_MEDIA_V2)

@@ -786,7 +786,7 @@ static inline NSShadow *_shadowForShadowStyle(NSString *shadowStyle)
     NSFileWrapper *fileWrapper = nil;
     static NSImage *missingImage = nil;
     Frame* frame = core([element ownerDocument])->frame();
-    DocumentLoader *dataSource = frame->loader()->frameHasLoaded() ? frame->loader()->documentLoader() : 0;
+    DocumentLoader *dataSource = frame->loader().frameHasLoaded() ? frame->loader().documentLoader() : 0;
     BOOL ignoreOrientation = YES;
 
     if (_flags.isIndexing) return NO;
@@ -1564,7 +1564,7 @@ static NSInteger _colCompare(id block1, id block2, void *)
             ancestorContainer = [ancestorContainer parentNode];
         }
         _document = [commonAncestorContainer ownerDocument];
-        _dataSource = (DocumentLoader *)core(_document)->frame()->loader()->documentLoader();
+        _dataSource = (DocumentLoader *)core(_document)->frame()->loader().documentLoader();
         if (_textSizeMultiplier <= 0.0) _textSizeMultiplier = 1;
         if (_defaultFontSize <= 0.0) _defaultFontSize = 12;
         if (_minimumFontSize < 1.0) _minimumFontSize = 1;

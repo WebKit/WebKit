@@ -1,3 +1,37 @@
+2013-08-15  Anders Carlsson  <andersca@apple.com>
+
+        <https://webkit.org/b/119859> Frame::loader() should return a reference
+
+        Reviewed by Andreas Kling.
+
+        * WebCoreSupport/ChromeClientEfl.cpp:
+        (kit):
+        * WebCoreSupport/DumpRenderTreeSupportEfl.cpp:
+        (DumpRenderTreeSupportEfl::callShouldCloseOnWebView):
+        (DumpRenderTreeSupportEfl::clearOpener):
+        (DumpRenderTreeSupportEfl::frameChildren):
+        (DumpRenderTreeSupportEfl::responseMimeType):
+        (DumpRenderTreeSupportEfl::provisionalURL):
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::callPolicyFunction):
+        (WebCore::FrameLoaderClientEfl::dispatchDecidePolicyForNewWindowAction):
+        (WebCore::FrameLoaderClientEfl::dispatchDecidePolicyForNavigationAction):
+        (WebCore::FrameLoaderClientEfl::updateGlobalHistoryRedirectLinks):
+        (WebCore::FrameLoaderClientEfl::updateGlobalHistory):
+        * ewk/ewk_frame.cpp:
+        (_ewk_frame_loader_efl_get):
+        (_ewk_frame_smart_del):
+        (_ewk_frame_contents_set_internal):
+        (ewk_frame_stop):
+        (ewk_frame_reload):
+        (ewk_frame_reload_full):
+        (ewk_frame_child_add):
+        * ewk/ewk_view.cpp:
+        (ewk_view_frame_focused_get):
+        (ewk_view_setting_user_agent_set):
+        (ewk_view_setting_encoding_custom_get):
+        (ewk_view_setting_encoding_custom_set):
+
 2013-08-12  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL][WK1] URL printing code in DumpRenderTree doesn't match WTR or Mac DRT

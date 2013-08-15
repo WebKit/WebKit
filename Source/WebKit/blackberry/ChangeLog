@@ -1,3 +1,47 @@
+2013-08-15  Anders Carlsson  <andersca@apple.com>
+
+        <https://webkit.org/b/119859> Frame::loader() should return a reference
+
+        Reviewed by Andreas Kling.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::load):
+        (BlackBerry::WebKit::WebPagePrivate::loadString):
+        (BlackBerry::WebKit::WebPagePrivate::stopCurrentLoad):
+        (BlackBerry::WebKit::closeURLRecursively):
+        (BlackBerry::WebKit::WebPage::dispatchBeforeUnloadEvent):
+        (BlackBerry::WebKit::WebPagePrivate::shouldSendResizeEvent):
+        (BlackBerry::WebKit::WebPagePrivate::zoomToInitialScaleOnLoad):
+        (BlackBerry::WebKit::WebPage::reload):
+        (BlackBerry::WebKit::WebPage::reloadFromCache):
+        (BlackBerry::WebKit::WebPage::textEncoding):
+        (BlackBerry::WebKit::WebPage::forcedTextEncoding):
+        (BlackBerry::WebKit::WebPage::setForcedTextEncoding):
+        (BlackBerry::WebKit::WebPage::title):
+        * WebCoreSupport/ChromeClientBlackBerry.cpp:
+        (WebCore::ChromeClientBlackBerry::createWindow):
+        * WebCoreSupport/FrameLoaderClientBlackBerry.cpp:
+        (WebCore::FrameLoaderClientBlackBerry::dispatchDidChangeLocationWithinPage):
+        (WebCore::FrameLoaderClientBlackBerry::dispatchDecidePolicyForResponse):
+        (WebCore::FrameLoaderClientBlackBerry::dispatchDecidePolicyForNavigationAction):
+        (WebCore::FrameLoaderClientBlackBerry::delayPolicyCheckUntilFragmentExists):
+        (WebCore::FrameLoaderClientBlackBerry::dispatchDecidePolicyForNewWindowAction):
+        (WebCore::FrameLoaderClientBlackBerry::createPlugin):
+        (WebCore::FrameLoaderClientBlackBerry::receivedData):
+        (WebCore::FrameLoaderClientBlackBerry::createDocumentLoader):
+        (WebCore::FrameLoaderClientBlackBerry::dispatchDidCommitLoad):
+        (WebCore::FrameLoaderClientBlackBerry::dispatchDidFailProvisionalLoad):
+        (WebCore::FrameLoaderClientBlackBerry::dispatchWillSubmitForm):
+        (WebCore::FrameLoaderClientBlackBerry::createFrame):
+        (WebCore::FrameLoaderClientBlackBerry::dispatchDidLayout):
+        (WebCore::FrameLoaderClientBlackBerry::dispatchWillSendRequest):
+        (WebCore::FrameLoaderClientBlackBerry::restoreViewState):
+        (WebCore::FrameLoaderClientBlackBerry::startDownload):
+        (WebCore::FrameLoaderClientBlackBerry::canCachePage):
+        (WebCore::FrameLoaderClientBlackBerry::didRestoreFromPageCache):
+        * WebKitSupport/PagePopup.cpp:
+        (BlackBerry::WebKit::PagePopup::initialize):
+
 2013-08-13  Jacky Jiang  <zhajiang@blackberry.com>
 
         [BlackBerry] WebPage doesn't zoom to fit viewport after being rotated from landscape to portrait mode

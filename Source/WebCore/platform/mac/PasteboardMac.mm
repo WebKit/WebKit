@@ -415,7 +415,7 @@ static PassRefPtr<DocumentFragment> documentFragmentWithImageResource(Frame* fra
     if (!resource)
         return 0;
     
-    if (DocumentLoader* loader = frame->loader()->documentLoader())
+    if (DocumentLoader* loader = frame->loader().documentLoader())
         loader->addArchiveResource(resource.get());
 
     RefPtr<Element> imageElement = frame->document()->createElement(HTMLNames::imgTag, false);
@@ -460,7 +460,7 @@ static PassRefPtr<DocumentFragment> documentFragmentWithRTF(Frame* frame, NSStri
 
     size_t size = resources.size();
     if (size) {
-        DocumentLoader* loader = frame->loader()->documentLoader();
+        DocumentLoader* loader = frame->loader().documentLoader();
         for (size_t i = 0; i < size; ++i)
             loader->addArchiveResource(resources[i]);    
     }
@@ -495,10 +495,10 @@ static PassRefPtr<DocumentFragment> fragmentFromWebArchive(Frame* frame, PassRef
     if (!frame || !frame->document())
         return 0;
 
-    if (frame->loader()->client()->canShowMIMETypeAsHTML(MIMEType)) {
+    if (frame->loader().client()->canShowMIMETypeAsHTML(MIMEType)) {
         RetainPtr<NSString> markupString = adoptNS([[NSString alloc] initWithData:[mainResource->data()->createNSData() autorelease] encoding:NSUTF8StringEncoding]);
         // FIXME: seems poor form to do this as a side effect of getting a document fragment
-        if (DocumentLoader* loader = frame->loader()->documentLoader())
+        if (DocumentLoader* loader = frame->loader().documentLoader())
             loader->addAllArchiveResources(coreArchive.get());
         return createFragmentFromMarkup(frame->document(), markupString.get(), mainResource->url(), DisallowScriptingAndPluginContent);
     }

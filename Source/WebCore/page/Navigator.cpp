@@ -94,7 +94,7 @@ String Navigator::userAgent() const
     if (!m_frame->page())
         return String();
         
-    return m_frame->loader()->userAgent(m_frame->document()->url());
+    return m_frame->loader().userAgent(m_frame->document()->url());
 }
 
 DOMPluginArray* Navigator::plugins() const

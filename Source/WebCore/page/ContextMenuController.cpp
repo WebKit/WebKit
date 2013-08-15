@@ -181,7 +181,7 @@ void ContextMenuController::showContextMenu(Event* event)
 static void openNewWindow(const KURL& urlToLoad, Frame* frame)
 {
     if (Page* oldPage = frame->page()) {
-        FrameLoadRequest request(frame->document()->securityOrigin(), ResourceRequest(urlToLoad, frame->loader()->outgoingReferrer()));
+        FrameLoadRequest request(frame->document()->securityOrigin(), ResourceRequest(urlToLoad, frame->loader().outgoingReferrer()));
         Page* newPage = oldPage;
         if (!frame->settings() || frame->settings()->supportsMultipleWindows()) {
             newPage = oldPage->chrome().createWindow(frame, request, WindowFeatures(), NavigationAction(request.resourceRequest()));
@@ -189,7 +189,7 @@ static void openNewWindow(const KURL& urlToLoad, Frame* frame)
                 return;
             newPage->chrome().show();
         }
-        newPage->mainFrame()->loader()->loadFrameRequest(request, false, false, 0, 0, MaybeSendReferrer);
+        newPage->mainFrame()->loader().loadFrameRequest(request, false, false, 0, 0, MaybeSendReferrer);
     }
 }
 
@@ -280,7 +280,7 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
         m_hitTestResult.toggleMediaMuteState();
         break;
     case ContextMenuItemTagOpenFrameInNewWindow: {
-        DocumentLoader* loader = frame->loader()->documentLoader();
+        DocumentLoader* loader = frame->loader().documentLoader();
         if (!loader->unreachableURL().isEmpty())
             openNewWindow(loader->unreachableURL(), frame);
         else
@@ -299,10 +299,10 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
             page->backForward()->goBackOrForward(1);
         break;
     case ContextMenuItemTagStop:
-        frame->loader()->stop();
+        frame->loader().stop();
         break;
     case ContextMenuItemTagReload:
-        frame->loader()->reload();
+        frame->loader().reload();
         break;
     case ContextMenuItemTagCut:
         frame->editor().command("Cut").execute();
@@ -387,12 +387,12 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
         break;
     case ContextMenuItemTagOpenLink:
         if (Frame* targetFrame = m_hitTestResult.targetFrame())
-            targetFrame->loader()->loadFrameRequest(FrameLoadRequest(frame->document()->securityOrigin(), ResourceRequest(m_hitTestResult.absoluteLinkURL(), frame->loader()->outgoingReferrer())), false, false, 0, 0, MaybeSendReferrer);
+            targetFrame->loader().loadFrameRequest(FrameLoadRequest(frame->document()->securityOrigin(), ResourceRequest(m_hitTestResult.absoluteLinkURL(), frame->loader().outgoingReferrer())), false, false, 0, 0, MaybeSendReferrer);
         else
             openNewWindow(m_hitTestResult.absoluteLinkURL(), frame);
         break;
     case ContextMenuItemTagOpenLinkInThisWindow:
-        frame->loader()->loadFrameRequest(FrameLoadRequest(frame->document()->securityOrigin(), ResourceRequest(m_hitTestResult.absoluteLinkURL(), frame->loader()->outgoingReferrer())), false, false, 0, 0, MaybeSendReferrer);
+        frame->loader().loadFrameRequest(FrameLoadRequest(frame->document()->securityOrigin(), ResourceRequest(m_hitTestResult.absoluteLinkURL(), frame->loader().outgoingReferrer())), false, false, 0, 0, MaybeSendReferrer);
         break;
     case ContextMenuItemTagBold:
         frame->editor().command("ToggleBold").execute();
@@ -833,10 +833,10 @@ void ContextMenuController::populate()
         return;
 
     if (!m_hitTestResult.isContentEditable()) {
-        FrameLoader* loader = frame->loader();
+        FrameLoader& loader = frame->loader();
         KURL linkURL = m_hitTestResult.absoluteLinkURL();
         if (!linkURL.isEmpty()) {
-            if (loader->client()->canHandleRequest(ResourceRequest(linkURL))) {
+            if (loader.client()->canHandleRequest(ResourceRequest(linkURL))) {
                 appendItem(OpenLinkItem, m_contextMenu.get());
                 appendItem(OpenLinkInNewWindowItem, m_contextMenu.get());
                 appendItem(DownloadFileItem, m_contextMenu.get());
@@ -879,7 +879,7 @@ void ContextMenuController::populate()
             appendItem(*separatorItem(), m_contextMenu.get());
             appendItem(CopyMediaLinkItem, m_contextMenu.get());
             appendItem(OpenMediaInNewWindowItem, m_contextMenu.get());
-            if (loader->client()->canHandleRequest(ResourceRequest(mediaURL)))
+            if (loader.client()->canHandleRequest(ResourceRequest(mediaURL)))
                 appendItem(DownloadMediaItem, m_contextMenu.get());
         }
 
@@ -936,7 +936,7 @@ void ContextMenuController::populate()
 
                 // use isLoadingInAPISense rather than isLoading because Stop/Reload are
                 // intended to match WebKit's API, not WebCore's internal notion of loading status
-                if (loader->documentLoader()->isLoadingInAPISense())
+                if (loader.documentLoader()->isLoadingInAPISense())
                     appendItem(StopItem, m_contextMenu.get());
                 else
                     appendItem(ReloadItem, m_contextMenu.get());
@@ -1014,10 +1014,10 @@ void ContextMenuController::populate()
             }
         }
 
-        FrameLoader* loader = frame->loader();
+        FrameLoader& loader = frame->loader();
         KURL linkURL = m_hitTestResult.absoluteLinkURL();
         if (!linkURL.isEmpty()) {
-            if (loader->client()->canHandleRequest(ResourceRequest(linkURL))) {
+            if (loader.client()->canHandleRequest(ResourceRequest(linkURL))) {
                 appendItem(OpenLinkItem, m_contextMenu.get());
                 appendItem(OpenLinkInNewWindowItem, m_contextMenu.get());
                 appendItem(DownloadFileItem, m_contextMenu.get());
@@ -1325,10 +1325,10 @@ void ContextMenuController::checkOrEnableIfNeeded(ContextMenuItem& item) const
             shouldEnable = frame->page() && frame->page()->backForward()->canGoBackOrForward(1);
             break;
         case ContextMenuItemTagStop:
-            shouldEnable = frame->loader()->documentLoader()->isLoadingInAPISense();
+            shouldEnable = frame->loader().documentLoader()->isLoadingInAPISense();
             break;
         case ContextMenuItemTagReload:
-            shouldEnable = !frame->loader()->documentLoader()->isLoadingInAPISense();
+            shouldEnable = !frame->loader().documentLoader()->isLoadingInAPISense();
             break;
         case ContextMenuItemTagFontMenu:
             shouldEnable = frame->editor().canEditRichly();

@@ -71,8 +71,8 @@ void PluginDocumentParser::createDocumentStructure()
     document()->appendChild(rootElement, IGNORE_EXCEPTION);
     static_cast<HTMLHtmlElement*>(rootElement.get())->insertedByParser();
 
-    if (document()->frame() && document()->frame()->loader())
-        document()->frame()->loader()->dispatchDocumentElementAvailable();
+    if (document()->frame())
+        document()->frame()->loader().dispatchDocumentElementAvailable();
 
     RefPtr<Element> body = document()->createElement(bodyTag, false);
     body->setAttribute(marginwidthAttr, "0");
@@ -125,11 +125,11 @@ void PluginDocumentParser::appendBytes(DocumentWriter*, const char*, size_t)
 
     if (RenderPart* renderer = m_embedElement->renderPart()) {
         if (Widget* widget = renderer->widget()) {
-            frame->loader()->client()->redirectDataToPlugin(widget);
+            frame->loader().client()->redirectDataToPlugin(widget);
             // In a plugin document, the main resource is the plugin. If we have a null widget, that means
             // the loading of the plugin was cancelled, which gives us a null mainResourceLoader(), so we
             // need to have this call in a null check of the widget or of mainResourceLoader().
-            frame->loader()->activeDocumentLoader()->setMainResourceDataBufferingPolicy(DoNotBufferData);
+            frame->loader().activeDocumentLoader()->setMainResourceDataBufferingPolicy(DoNotBufferData);
         }
     }
 }
@@ -165,8 +165,7 @@ void PluginDocument::detach()
 {
     // Release the plugin Element so that we don't have a circular reference.
     m_pluginElement = 0;
-    if (FrameLoader* loader = frame()->loader())
-        loader->client()->redirectDataToPlugin(0);
+    frame()->loader().client()->redirectDataToPlugin(0);
     Document::detach();
 }
 
@@ -177,8 +176,8 @@ void PluginDocument::cancelManualPluginLoad()
     if (!shouldLoadPluginManually())
         return;
 
-    DocumentLoader* documentLoader = frame()->loader()->activeDocumentLoader();
-    documentLoader->cancelMainResourceLoad(frame()->loader()->cancelledError(documentLoader->request()));
+    DocumentLoader* documentLoader = frame()->loader().activeDocumentLoader();
+    documentLoader->cancelMainResourceLoad(frame()->loader().cancelledError(documentLoader->request()));
     setShouldLoadPluginManually(false);
 }
 

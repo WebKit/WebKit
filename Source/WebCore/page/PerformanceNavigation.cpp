@@ -49,7 +49,7 @@ unsigned short PerformanceNavigation::type() const
     if (!m_frame)
         return TYPE_NAVIGATE;
 
-    DocumentLoader* documentLoader = m_frame->loader()->documentLoader();
+    DocumentLoader* documentLoader = m_frame->loader().documentLoader();
     if (!documentLoader)
         return TYPE_NAVIGATE;
 
@@ -69,7 +69,7 @@ unsigned short PerformanceNavigation::redirectCount() const
     if (!m_frame)
         return 0;
 
-    DocumentLoader* loader = m_frame->loader()->documentLoader();
+    DocumentLoader* loader = m_frame->loader().documentLoader();
     if (!loader)
         return 0;
 

@@ -45,7 +45,7 @@ String FrameNetworkingContextWinCE::userAgent() const
 
 String FrameNetworkingContextWinCE::referrer() const
 {
-    return frame()->loader()->referrer();
+    return frame()->loader().referrer();
 }
 
 WebCore::ResourceError FrameNetworkingContextWinCE::blockedError(const WebCore::ResourceRequest&) const

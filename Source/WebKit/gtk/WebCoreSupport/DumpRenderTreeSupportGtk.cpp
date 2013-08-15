@@ -489,7 +489,7 @@ void DumpRenderTreeSupportGtk::clearOpener(WebKitWebFrame* frame)
 {
     Frame* coreFrame = core(frame);
     if (coreFrame)
-        coreFrame->loader()->setOpener(0);
+        coreFrame->loader().setOpener(0);
 }
 
 bool DumpRenderTreeSupportGtk::findString(WebKitWebView* webView, const gchar* targetString, WebKitFindOptions findOptions)
@@ -543,7 +543,7 @@ bool DumpRenderTreeSupportGtk::shouldClose(WebKitWebFrame* frame)
     Frame* coreFrame = core(frame);
     if (!coreFrame)
         return true;
-    return coreFrame->loader()->shouldClose();
+    return coreFrame->loader().shouldClose();
 }
 
 void DumpRenderTreeSupportGtk::scalePageBy(WebKitWebView* webView, float scaleFactor, float x, float y)

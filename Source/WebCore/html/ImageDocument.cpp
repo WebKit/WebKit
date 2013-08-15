@@ -131,11 +131,11 @@ void ImageDocumentParser::appendBytes(DocumentWriter*, const char*, size_t)
 {
     Frame* frame = document()->frame();
     Settings* settings = frame->settings();
-    if (!frame->loader()->client()->allowImage(!settings || settings->areImagesEnabled(), document()->url()))
+    if (!frame->loader().client()->allowImage(!settings || settings->areImagesEnabled(), document()->url()))
         return;
 
     CachedImage* cachedImage = document()->cachedImage();
-    RefPtr<ResourceBuffer> resourceData = frame->loader()->documentLoader()->mainResourceData();
+    RefPtr<ResourceBuffer> resourceData = frame->loader().documentLoader()->mainResourceData();
     cachedImage->addDataBuffer(resourceData.get());
 
     document()->imageUpdated();
@@ -145,17 +145,17 @@ void ImageDocumentParser::finish()
 {
     if (!isStopped() && document()->imageElement()) {
         CachedImage* cachedImage = document()->cachedImage();
-        RefPtr<ResourceBuffer> data = document()->frame()->loader()->documentLoader()->mainResourceData();
+        RefPtr<ResourceBuffer> data = document()->frame()->loader().documentLoader()->mainResourceData();
 
         // If this is a multipart image, make a copy of the current part, since the resource data
         // will be overwritten by the next part.
-        if (document()->frame()->loader()->documentLoader()->isLoadingMultipartContent())
+        if (document()->frame()->loader().documentLoader()->isLoadingMultipartContent())
             data = data->copy();
 
         cachedImage->finishLoading(data.get());
         cachedImage->finish();
 
-        cachedImage->setResponse(document()->frame()->loader()->documentLoader()->response());
+        cachedImage->setResponse(document()->frame()->loader().documentLoader()->response());
 
         // Report the natural image size in the page title, regardless of zoom level.
         // At a zoom level of 1 the image is guaranteed to have an integer size.
@@ -199,8 +199,8 @@ void ImageDocument::createDocumentStructure()
     appendChild(rootElement, IGNORE_EXCEPTION);
     static_cast<HTMLHtmlElement*>(rootElement.get())->insertedByParser();
 
-    if (frame() && frame()->loader())
-        frame()->loader()->dispatchDocumentElementAvailable();
+    if (frame())
+        frame()->loader().dispatchDocumentElementAvailable();
     
     RefPtr<Element> body = Document::createElement(bodyTag, false);
     body->setAttribute(styleAttr, "margin: 0px;");

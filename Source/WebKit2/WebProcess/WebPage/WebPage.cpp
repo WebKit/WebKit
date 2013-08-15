@@ -534,11 +534,11 @@ void WebPage::initializeInjectedBundleDiagnosticLoggingClient(WKBundlePageDiagno
 #if ENABLE(NETSCAPE_PLUGIN_API)
 PassRefPtr<Plugin> WebPage::createPlugin(WebFrame* frame, HTMLPlugInElement* pluginElement, const Plugin::Parameters& parameters, String& newMIMEType)
 {
-    String frameURLString = frame->coreFrame()->loader()->documentLoader()->responseURL().string();
-    String pageURLString = m_page->mainFrame()->loader()->documentLoader()->responseURL().string();
+    String frameURLString = frame->coreFrame()->loader().documentLoader()->responseURL().string();
+    String pageURLString = m_page->mainFrame()->loader().documentLoader()->responseURL().string();
     PluginProcessType processType = pluginElement->displayState() == HTMLPlugInElement::WaitingForSnapshot ? PluginProcessTypeSnapshot : PluginProcessTypeNormal;
 
-    bool allowOnlyApplicationPlugins = !frame->coreFrame()->loader()->subframeLoader()->allowPlugins(NotAboutToInstantiatePlugin);
+    bool allowOnlyApplicationPlugins = !frame->coreFrame()->loader().subframeLoader()->allowPlugins(NotAboutToInstantiatePlugin);
 
     uint64_t pluginProcessToken;
     uint32_t pluginLoadPolicy;
@@ -863,7 +863,7 @@ void WebPage::close()
     m_logDiagnosticMessageClient.initialize(0);
 
     m_printContext = nullptr;
-    m_mainFrame->coreFrame()->loader()->detachFromParent();
+    m_mainFrame->coreFrame()->loader().detachFromParent();
     m_page = nullptr;
     m_drawingArea = nullptr;
 
@@ -881,7 +881,7 @@ void WebPage::tryClose()
 {
     SendStopResponsivenessTimer stopper(this);
 
-    if (!m_mainFrame->coreFrame()->loader()->shouldClose()) {
+    if (!m_mainFrame->coreFrame()->loader().shouldClose()) {
         send(Messages::WebPageProxy::StopResponsivenessTimer());
         return;
     }
@@ -915,7 +915,7 @@ void WebPage::loadURLRequest(const ResourceRequest& request, const SandboxExtens
     m_loaderClient.willLoadURLRequest(this, request, userData.get());
 
     // Initate the load in WebCore.
-    m_mainFrame->coreFrame()->loader()->load(FrameLoadRequest(m_mainFrame->coreFrame(), request));
+    m_mainFrame->coreFrame()->loader().load(FrameLoadRequest(m_mainFrame->coreFrame(), request));
 }
 
 void WebPage::loadDataImpl(PassRefPtr<SharedBuffer> sharedBuffer, const String& MIMEType, const String& encodingName, const KURL& baseURL, const KURL& unreachableURL, CoreIPC::MessageDecoder& decoder)
@@ -935,7 +935,7 @@ void WebPage::loadDataImpl(PassRefPtr<SharedBuffer> sharedBuffer, const String& 
     m_loaderClient.willLoadDataRequest(this, request, substituteData.content(), substituteData.mimeType(), substituteData.textEncoding(), substituteData.failingURL(), userData.get());
 
     // Initate the load in WebCore.
-    m_mainFrame->coreFrame()->loader()->load(FrameLoadRequest(m_mainFrame->coreFrame(), request, substituteData));
+    m_mainFrame->coreFrame()->loader().load(FrameLoadRequest(m_mainFrame->coreFrame(), request, substituteData));
 }
 
 void WebPage::loadData(const CoreIPC::DataReference& data, const String& MIMEType, const String& encodingName, const String& baseURLString, CoreIPC::MessageDecoder& decoder)
@@ -982,7 +982,7 @@ void WebPage::linkClicked(const String& url, const WebMouseEvent& event)
     if (event.type() != WebEvent::NoType)
         coreEvent = MouseEvent::create(eventNames().clickEvent, frame->document()->defaultView(), platform(event), 0, 0);
 
-    frame->loader()->loadFrameRequest(FrameLoadRequest(frame, ResourceRequest(url)), false, false, coreEvent.get(), 0, MaybeSendReferrer);
+    frame->loader().loadFrameRequest(FrameLoadRequest(frame, ResourceRequest(url)), false, false, coreEvent.get(), 0, MaybeSendReferrer);
 }
 
 void WebPage::stopLoadingFrame(uint64_t frameID)
@@ -991,14 +991,14 @@ void WebPage::stopLoadingFrame(uint64_t frameID)
     if (!frame)
         return;
 
-    frame->coreFrame()->loader()->stopForUserCancel();
+    frame->coreFrame()->loader().stopForUserCancel();
 }
 
 void WebPage::stopLoading()
 {
     SendStopResponsivenessTimer stopper(this);
 
-    m_mainFrame->coreFrame()->loader()->stopForUserCancel();
+    m_mainFrame->coreFrame()->loader().stopForUserCancel();
 }
 
 void WebPage::setDefersLoading(bool defersLoading)
@@ -1011,7 +1011,7 @@ void WebPage::reload(bool reloadFromOrigin, const SandboxExtension::Handle& sand
     SendStopResponsivenessTimer stopper(this);
 
     m_sandboxExtensionTracker.beginLoad(m_mainFrame.get(), sandboxExtensionHandle);
-    m_mainFrame->coreFrame()->loader()->reload(reloadFromOrigin);
+    m_mainFrame->coreFrame()->loader().reload(reloadFromOrigin);
 }
 
 void WebPage::goForward(uint64_t backForwardItemID)
@@ -1052,7 +1052,7 @@ void WebPage::goToBackForwardItem(uint64_t backForwardItemID)
 
 void WebPage::tryRestoreScrollPosition()
 {
-    m_page->mainFrame()->loader()->history()->restoreScrollPositionAndViewState();
+    m_page->mainFrame()->loader().history()->restoreScrollPositionAndViewState();
 }
 
 void WebPage::layoutIfNeeded()
@@ -2342,7 +2342,7 @@ void WebPage::getMainResourceDataOfFrame(uint64_t frameID, uint64_t callbackID)
         }
 
         if (dataReference.isEmpty()) {
-            if (DocumentLoader* loader = frame->coreFrame()->loader()->documentLoader()) {
+            if (DocumentLoader* loader = frame->coreFrame()->loader().documentLoader()) {
                 if ((buffer = loader->mainResourceData()))
                     dataReference = CoreIPC::DataReference(reinterpret_cast<const uint8_t*>(buffer->data()), buffer->size());
             }
@@ -2354,7 +2354,7 @@ void WebPage::getMainResourceDataOfFrame(uint64_t frameID, uint64_t callbackID)
 
 static PassRefPtr<SharedBuffer> resourceDataForFrame(Frame* frame, const KURL& resourceURL)
 {
-    DocumentLoader* loader = frame->loader()->documentLoader();
+    DocumentLoader* loader = frame->loader().documentLoader();
     if (!loader)
         return 0;
 
@@ -3238,15 +3238,15 @@ static bool shouldReuseCommittedSandboxExtension(WebFrame* frame)
 {
     ASSERT(frame->isMainFrame());
 
-    FrameLoader* frameLoader = frame->coreFrame()->loader();
-    FrameLoadType frameLoadType = frameLoader->loadType();
+    FrameLoader& frameLoader = frame->coreFrame()->loader();
+    FrameLoadType frameLoadType = frameLoader.loadType();
 
     // If the page is being reloaded, it should reuse whatever extension is committed.
     if (frameLoadType == FrameLoadTypeReload || frameLoadType == FrameLoadTypeReloadFromOrigin)
         return true;
 
-    DocumentLoader* documentLoader = frameLoader->documentLoader();
-    DocumentLoader* provisionalDocumentLoader = frameLoader->provisionalDocumentLoader();
+    DocumentLoader* documentLoader = frameLoader.documentLoader();
+    DocumentLoader* provisionalDocumentLoader = frameLoader.provisionalDocumentLoader();
     if (!documentLoader || !provisionalDocumentLoader)
         return false;
 
@@ -3272,7 +3272,7 @@ void WebPage::SandboxExtensionTracker::didStartProvisionalLoad(WebFrame* frame)
     if (!m_provisionalSandboxExtension)
         return;
 
-    ASSERT(!m_provisionalSandboxExtension || frame->coreFrame()->loader()->provisionalDocumentLoader()->url().isLocalFile());
+    ASSERT(!m_provisionalSandboxExtension || frame->coreFrame()->loader().provisionalDocumentLoader()->url().isLocalFile());
 
     m_provisionalSandboxExtension->consume();
 }
@@ -3312,8 +3312,7 @@ bool WebPage::hasLocalDataForURL(const KURL& url)
     if (url.isLocalFile())
         return true;
 
-    FrameLoader* frameLoader = m_page->mainFrame()->loader();
-    DocumentLoader* documentLoader = frameLoader ? frameLoader->documentLoader() : 0;
+    DocumentLoader* documentLoader = m_page->mainFrame()->loader().documentLoader();
     if (documentLoader && documentLoader->subresource(url))
         return true;
 
@@ -3322,7 +3321,7 @@ bool WebPage::hasLocalDataForURL(const KURL& url)
 
 void WebPage::setCustomTextEncodingName(const String& encoding)
 {
-    m_page->mainFrame()->loader()->reloadWithOverrideEncoding(encoding);
+    m_page->mainFrame()->loader().reloadWithOverrideEncoding(encoding);
 }
 
 void WebPage::didRemoveBackForwardItem(uint64_t itemID)
@@ -3793,7 +3792,7 @@ bool WebPage::canPluginHandleResponse(const ResourceResponse& response)
 {
 #if ENABLE(NETSCAPE_PLUGIN_API)
     uint32_t pluginLoadPolicy;
-    bool allowOnlyApplicationPlugins = !m_mainFrame->coreFrame()->loader()->subframeLoader()->allowPlugins(NotAboutToInstantiatePlugin);
+    bool allowOnlyApplicationPlugins = !m_mainFrame->coreFrame()->loader().subframeLoader()->allowPlugins(NotAboutToInstantiatePlugin);
 
     uint64_t pluginProcessToken;
     String newMIMEType;
@@ -3961,7 +3960,7 @@ bool WebPage::canShowMIMEType(const String& MIMEType) const
         return true;
 
     if (PluginData* pluginData = m_page->pluginData()) {
-        if (pluginData->supportsMimeType(MIMEType, PluginData::AllPlugins) && corePage()->mainFrame()->loader()->subframeLoader()->allowPlugins(NotAboutToInstantiatePlugin))
+        if (pluginData->supportsMimeType(MIMEType, PluginData::AllPlugins) && corePage()->mainFrame()->loader().subframeLoader()->allowPlugins(NotAboutToInstantiatePlugin))
             return true;
 
         // We can use application plugins even if plugins aren't enabled.
@@ -4004,11 +4003,11 @@ void WebPage::didCommitLoad(WebFrame* frame)
 
     // If previous URL is invalid, then it's not a real page that's being navigated away from.
     // Most likely, this is actually the first load to be committed in this page.
-    if (frame->coreFrame()->loader()->previousURL().isValid())
+    if (frame->coreFrame()->loader().previousURL().isValid())
         reportUsedFeatures();
 
     // Only restore the scale factor for standard frame loads (of the main frame).
-    if (frame->coreFrame()->loader()->loadType() == FrameLoadTypeStandard) {
+    if (frame->coreFrame()->loader().loadType() == FrameLoadTypeStandard) {
         Page* page = frame->coreFrame()->page();
         if (page && page->pageScaleFactor() != 1)
             scalePage(1, IntPoint());

@@ -219,11 +219,11 @@ void InspectorFrontendClientLocal::openInNewTab(const String& url)
     if (!frame)
         return;
 
-    frame->loader()->setOpener(mainFrame);
+    frame->loader().setOpener(mainFrame);
     frame->page()->setOpenedByDOM();
 
     // FIXME: Why does one use mainFrame and the other frame?
-    frame->loader()->changeLocation(mainFrame->document()->securityOrigin(), frame->document()->completeURL(url), "", false, false);
+    frame->loader().changeLocation(mainFrame->document()->securityOrigin(), frame->document()->completeURL(url), "", false, false);
 }
 
 void InspectorFrontendClientLocal::moveWindowBy(float x, float y)

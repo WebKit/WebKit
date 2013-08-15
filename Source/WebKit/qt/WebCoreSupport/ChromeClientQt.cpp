@@ -334,7 +334,7 @@ bool ChromeClientQt::runBeforeUnloadConfirmPanel(const String& message, Frame* f
 void ChromeClientQt::closeWindowSoon()
 {
     m_webPage->page->setGroupName(String());
-    m_webPage->page->mainFrame()->loader()->stopAllLoaders();
+    m_webPage->page->mainFrame()->loader().stopAllLoaders();
     QMetaObject::invokeMethod(m_webPage->handle(), "windowCloseRequested");
 }
 
@@ -508,7 +508,7 @@ PlatformPageClient ChromeClientQt::platformPageClient() const
 
 void ChromeClientQt::contentsSizeChanged(Frame* frame, const IntSize& size) const
 {
-    if (frame->loader()->networkingContext())
+    if (frame->loader().networkingContext())
         QWebFrameAdapter::kit(frame)->contentsSizeDidChange(size);
 }
 

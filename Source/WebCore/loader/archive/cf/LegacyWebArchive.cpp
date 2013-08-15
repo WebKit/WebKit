@@ -454,7 +454,7 @@ PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(Frame* frame)
 {
     ASSERT(frame);
     
-    DocumentLoader* documentLoader = frame->loader()->documentLoader();
+    DocumentLoader* documentLoader = frame->loader().documentLoader();
 
     if (!documentLoader)
         return 0;
@@ -503,7 +503,7 @@ PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString
 {
     ASSERT(frame);
     
-    const ResourceResponse& response = frame->loader()->documentLoader()->response();
+    const ResourceResponse& response = frame->loader().documentLoader()->response();
     KURL responseURL = response.url();
     
     // it's possible to have a response without a URL here
@@ -536,7 +536,7 @@ PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString
             ListHashSet<KURL> subresourceURLs;
             node->getSubresourceURLs(subresourceURLs);
             
-            DocumentLoader* documentLoader = frame->loader()->documentLoader();
+            DocumentLoader* documentLoader = frame->loader().documentLoader();
             ListHashSet<KURL>::iterator iterEnd = subresourceURLs.end();
             for (ListHashSet<KURL>::iterator iter = subresourceURLs.begin(); iter != iterEnd; ++iter) {
                 const KURL& subresourceURL = *iter;
@@ -601,8 +601,7 @@ PassRefPtr<LegacyWebArchive> LegacyWebArchive::createFromSelection(Frame* frame)
         
     // Wrap the frameset document in an iframe so it can be pasted into
     // another document (which will have a body or frameset of its own). 
-    String iframeMarkup = "<iframe frameborder=\"no\" marginwidth=\"0\" marginheight=\"0\" width=\"98%%\" height=\"98%%\" src=\"" +
-                          frame->loader()->documentLoader()->response().url().string() + "\"></iframe>";
+    String iframeMarkup = "<iframe frameborder=\"no\" marginwidth=\"0\" marginheight=\"0\" width=\"98%%\" height=\"98%%\" src=\"" + frame->loader().documentLoader()->response().url().string() + "\"></iframe>";
     RefPtr<ArchiveResource> iframeResource = ArchiveResource::create(utf8Buffer(iframeMarkup), blankURL(), "text/html", "UTF-8", String());
 
     Vector<PassRefPtr<ArchiveResource> > subresources;

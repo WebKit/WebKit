@@ -322,8 +322,8 @@ void InspectorResourceAgent::didFailLoading(unsigned long identifier, DocumentLo
 
     if (m_resourcesData->resourceType(requestId) == InspectorPageAgent::DocumentResource) {
         Frame* frame = loader ? loader->frame() : 0;
-        if (frame && frame->loader()->documentLoader() && frame->document()) {
-            RefPtr<ResourceBuffer> buffer = frame->loader()->documentLoader()->mainResourceData();
+        if (frame && frame->loader().documentLoader() && frame->document()) {
+            RefPtr<ResourceBuffer> buffer = frame->loader().documentLoader()->mainResourceData();
             m_resourcesData->addResourceSharedBuffer(requestId, buffer ? buffer->sharedBuffer() : 0, frame->document()->inputEncoding());
         }
     }

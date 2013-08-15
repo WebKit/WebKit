@@ -154,7 +154,7 @@ WebFrame* kit(Frame* frame)
     if (!frame)
         return 0;
 
-    FrameLoaderClient* frameLoaderClient = frame->loader()->client();
+    FrameLoaderClient* frameLoaderClient = frame->loader().client();
     if (frameLoaderClient)
         return static_cast<WebFrame*>(frameLoaderClient);  // eek, is there a better way than static cast?
     return 0;
@@ -316,7 +316,7 @@ HRESULT WebFrame::reloadFromOrigin()
     if (!coreFrame)
         return E_FAIL;
 
-    coreFrame->loader()->reload(true);
+    coreFrame->loader().reload(true);
     return S_OK;
 }
 
@@ -560,7 +560,7 @@ HRESULT STDMETHODCALLTYPE WebFrame::loadRequest(
     if (!coreFrame)
         return E_FAIL;
 
-    coreFrame->loader()->load(FrameLoadRequest(coreFrame, requestImpl->resourceRequest()));
+    coreFrame->loader().load(FrameLoadRequest(coreFrame, requestImpl->resourceRequest()));
     return S_OK;
 }
 
@@ -584,7 +584,7 @@ void WebFrame::loadData(PassRefPtr<WebCore::SharedBuffer> data, BSTR mimeType, B
 
     // This method is only called from IWebFrame methods, so don't ASSERT that the Frame pointer isn't null.
     if (Frame* coreFrame = core(this))
-        coreFrame->loader()->load(FrameLoadRequest(coreFrame, request, substituteData));
+        coreFrame->loader().load(FrameLoadRequest(coreFrame, request, substituteData));
 }
 
 
@@ -673,7 +673,7 @@ HRESULT STDMETHODCALLTYPE WebFrame::dataSource(
     if (!coreFrame)
         return E_FAIL;
 
-    WebDataSource* webDataSource = getWebDataSource(coreFrame->loader()->documentLoader());
+    WebDataSource* webDataSource = getWebDataSource(coreFrame->loader().documentLoader());
 
     *source = webDataSource;
 
@@ -697,7 +697,7 @@ HRESULT STDMETHODCALLTYPE WebFrame::provisionalDataSource(
     if (!coreFrame)
         return E_FAIL;
 
-    WebDataSource* webDataSource = getWebDataSource(coreFrame->loader()->provisionalDocumentLoader());
+    WebDataSource* webDataSource = getWebDataSource(coreFrame->loader().provisionalDocumentLoader());
 
     *source = webDataSource;
 
@@ -719,7 +719,7 @@ KURL WebFrame::url() const
 HRESULT STDMETHODCALLTYPE WebFrame::stopLoading( void)
 {
     if (Frame* coreFrame = core(this))
-        coreFrame->loader()->stopAllLoaders();
+        coreFrame->loader().stopAllLoaders();
     return S_OK;
 }
 
@@ -729,7 +729,7 @@ HRESULT STDMETHODCALLTYPE WebFrame::reload( void)
     if (!coreFrame)
         return E_FAIL;
 
-    coreFrame->loader()->reload();
+    coreFrame->loader().reload();
     return S_OK;
 }
 
@@ -952,7 +952,7 @@ HRESULT STDMETHODCALLTYPE WebFrame::firstLayoutDone(
     if (!coreFrame)
         return E_FAIL;
 
-    *result = coreFrame->loader()->stateMachine()->firstLayoutDone();
+    *result = coreFrame->loader().stateMachine()->firstLayoutDone();
     return S_OK;
 }
 
@@ -970,7 +970,7 @@ HRESULT STDMETHODCALLTYPE WebFrame::loadType(
     if (!coreFrame)
         return E_FAIL;
 
-    *type = (WebFrameLoadType)coreFrame->loader()->loadType();
+    *type = (WebFrameLoadType)coreFrame->loader().loadType();
     return S_OK;
 }
 
@@ -1013,7 +1013,7 @@ HRESULT STDMETHODCALLTYPE WebFrame::clearOpener()
 {
     HRESULT hr = S_OK;
     if (Frame* coreFrame = core(this))
-        coreFrame->loader()->setOpener(0);
+        coreFrame->loader().setOpener(0);
 
     return hr;
 }
@@ -1526,7 +1526,7 @@ void WebFrame::dispatchWillSubmitForm(FramePolicyFunction function, PassRefPtr<F
     COMPtr<IWebFormDelegate> formDelegate;
 
     if (FAILED(d->webView->formDelegate(&formDelegate))) {
-        (coreFrame->loader()->policyChecker()->*function)(PolicyUse);
+        (coreFrame->loader().policyChecker()->*function)(PolicyUse);
         return;
     }
 
@@ -1545,7 +1545,7 @@ void WebFrame::dispatchWillSubmitForm(FramePolicyFunction function, PassRefPtr<F
         return;
 
     // FIXME: Add a sane default implementation
-    (coreFrame->loader()->policyChecker()->*function)(PolicyUse);
+    (coreFrame->loader().policyChecker()->*function)(PolicyUse);
 }
 
 void WebFrame::revertToProvisionalState(DocumentLoader*)
@@ -1728,7 +1728,7 @@ void WebFrame::receivedPolicyDecision(PolicyAction action)
     Frame* coreFrame = core(this);
     ASSERT(coreFrame);
 
-    (coreFrame->loader()->policyChecker()->*function)(action);
+    (coreFrame->loader().policyChecker()->*function)(action);
 }
 
 void WebFrame::dispatchDecidePolicyForResponse(FramePolicyFunction function, const ResourceResponse& response, const ResourceRequest& request)
@@ -1745,7 +1745,7 @@ void WebFrame::dispatchDecidePolicyForResponse(FramePolicyFunction function, con
     if (SUCCEEDED(policyDelegate->decidePolicyForMIMEType(d->webView, BString(response.mimeType()), urlRequest.get(), this, setUpPolicyListener(function).get())))
         return;
 
-    (coreFrame->loader()->policyChecker()->*function)(PolicyUse);
+    (coreFrame->loader().policyChecker()->*function)(PolicyUse);
 }
 
 void WebFrame::dispatchDecidePolicyForNewWindowAction(FramePolicyFunction function, const NavigationAction& action, const ResourceRequest& request, PassRefPtr<FormState> formState, const String& frameName)
@@ -1763,7 +1763,7 @@ void WebFrame::dispatchDecidePolicyForNewWindowAction(FramePolicyFunction functi
     if (SUCCEEDED(policyDelegate->decidePolicyForNewWindowAction(d->webView, actionInformation.get(), urlRequest.get(), BString(frameName), setUpPolicyListener(function).get())))
         return;
 
-    (coreFrame->loader()->policyChecker()->*function)(PolicyUse);
+    (coreFrame->loader().policyChecker()->*function)(PolicyUse);
 }
 
 void WebFrame::dispatchDecidePolicyForNavigationAction(FramePolicyFunction function, const NavigationAction& action, const ResourceRequest& request, PassRefPtr<FormState> formState)
@@ -1781,7 +1781,7 @@ void WebFrame::dispatchDecidePolicyForNavigationAction(FramePolicyFunction funct
     if (SUCCEEDED(policyDelegate->decidePolicyForNavigationAction(d->webView, actionInformation.get(), urlRequest.get(), this, setUpPolicyListener(function).get())))
         return;
 
-    (coreFrame->loader()->policyChecker()->*function)(PolicyUse);
+    (coreFrame->loader().policyChecker()->*function)(PolicyUse);
 }
 
 void WebFrame::dispatchUnableToImplementPolicy(const ResourceError& error)
@@ -1861,7 +1861,7 @@ PassRefPtr<Widget> WebFrame::createJavaAppletWidget(const IntSize& pluginSize, H
     ResourceError resourceError(String(WebKitErrorDomain), WebKitErrorJavaUnavailable, String(), String());
     COMPtr<IWebError> error(AdoptCOM, WebError::createInstance(resourceError, userInfoBag.get()));
      
-    resourceLoadDelegate->plugInFailedWithError(d->webView, error.get(), getWebDataSource(d->frame->loader()->documentLoader()));
+    resourceLoadDelegate->plugInFailedWithError(d->webView, error.get(), getWebDataSource(d->frame->loader().documentLoader()));
 
     return pluginView;
 }

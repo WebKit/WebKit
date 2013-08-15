@@ -1,3 +1,46 @@
+2013-08-15  Anders Carlsson  <andersca@apple.com>
+
+        <https://webkit.org/b/119859> Frame::loader() should return a reference
+
+        Reviewed by Andreas Kling.
+
+        * WebCoreSupport/DumpRenderTreeSupportGtk.cpp:
+        (DumpRenderTreeSupportGtk::clearOpener):
+        (DumpRenderTreeSupportGtk::shouldClose):
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::dispatchWillSubmitForm):
+        (WebKit::FrameLoaderClient::committedLoad):
+        (WebKit::FrameLoaderClient::dispatchDecidePolicyForResponse):
+        (WebKit::FrameLoaderClient::dispatchDecidePolicyForNewWindowAction):
+        (WebKit::FrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+        (WebKit::FrameLoaderClient::createFrame):
+        (WebKit::FrameLoaderClient::dispatchDidCommitLoad):
+        * webkit/webkitwebframe.cpp:
+        (webkit_web_frame_finalize):
+        (webkit_web_frame_load_uri):
+        (webkit_web_frame_load_data):
+        (webkit_web_frame_load_request):
+        (webkit_web_frame_stop_loading):
+        (webkit_web_frame_reload):
+        (webkit_web_frame_get_data_source):
+        (webkit_web_frame_get_provisional_data_source):
+        (webkit_web_frame_get_response_mime_type):
+        (webkit_web_frame_get_network_response):
+        (WebKit::kit):
+        * webkit/webkitwebpolicydecision.cpp:
+        (webkit_web_policy_decision_use):
+        (webkit_web_policy_decision_ignore):
+        (webkit_web_policy_decision_download):
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_dispose):
+        (webkit_web_view_reload):
+        (webkit_web_view_reload_bypass_cache):
+        (webkit_web_view_stop_loading):
+        (webkit_web_view_can_show_mime_type):
+        (webkit_web_view_set_custom_encoding):
+        (webkit_web_view_get_custom_encoding):
+        (webkit_web_view_get_subresources):
+
 2013-08-15  Simon Pena  <simon.pena@samsung.com>
 
         <https://webkit.org/b/119584> [Gtk] URL printing code in DumpRenderTree doesn't match WTR or Mac DRT

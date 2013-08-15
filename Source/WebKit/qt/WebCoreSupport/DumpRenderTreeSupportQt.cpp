@@ -602,7 +602,7 @@ QMap<QString, QWebHistoryItem> DumpRenderTreeSupportQt::getChildHistoryItems(con
 bool DumpRenderTreeSupportQt::shouldClose(QWebFrameAdapter *adapter)
 {
     WebCore::Frame* coreFrame = adapter->frame;
-    return coreFrame->loader()->shouldClose();
+    return coreFrame->loader().shouldClose();
 }
 
 void DumpRenderTreeSupportQt::clearScriptWorlds()
@@ -665,14 +665,14 @@ void DumpRenderTreeSupportQt::goBack(QWebPageAdapter* adapter)
 QString DumpRenderTreeSupportQt::responseMimeType(QWebFrameAdapter* adapter)
 {
     WebCore::Frame* coreFrame = adapter->frame;
-    WebCore::DocumentLoader* docLoader = coreFrame->loader()->documentLoader();
+    WebCore::DocumentLoader* docLoader = coreFrame->loader().documentLoader();
     return docLoader->responseMIMEType();
 }
 
 void DumpRenderTreeSupportQt::clearOpener(QWebFrameAdapter* adapter)
 {
     WebCore::Frame* coreFrame = adapter->frame;
-    coreFrame->loader()->setOpener(0);
+    coreFrame->loader().setOpener(0);
 }
 
 void DumpRenderTreeSupportQt::addURLToRedirect(const QString& origin, const QString& destination)
@@ -695,7 +695,7 @@ QStringList DumpRenderTreeSupportQt::contextMenu(QWebPageAdapter* page)
 bool DumpRenderTreeSupportQt::thirdPartyCookiePolicyAllows(QWebPageAdapter *adapter, const QUrl& url, const QUrl& firstPartyUrl)
 {
     Page* corePage = adapter->page;
-    return thirdPartyCookiePolicyPermits(corePage->mainFrame()->loader()->networkingContext(), url, firstPartyUrl);
+    return thirdPartyCookiePolicyPermits(corePage->mainFrame()->loader().networkingContext(), url, firstPartyUrl);
 }
 
 void DumpRenderTreeSupportQt::enableMockScrollbars()
@@ -742,7 +742,7 @@ void DumpRenderTreeSupportQt::setAlternateHtml(QWebFrameAdapter* adapter, const 
     const QByteArray utf8 = html.toUtf8();
     WTF::RefPtr<WebCore::SharedBuffer> data = WebCore::SharedBuffer::create(utf8.constData(), utf8.length());
     WebCore::SubstituteData substituteData(data, WTF::String("text/html"), WTF::String("utf-8"), failingUrl);
-    coreFrame->loader()->load(WebCore::FrameLoadRequest(coreFrame, request, substituteData));
+    coreFrame->loader().load(WebCore::FrameLoadRequest(coreFrame, request, substituteData));
 }
 
 void DumpRenderTreeSupportQt::confirmComposition(QWebPageAdapter *adapter, const char* text)

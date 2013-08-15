@@ -155,7 +155,7 @@ void FrameLoaderClient::dispatchWillSubmitForm(FramePolicyFunction policyFunctio
     ASSERT(policyFunction);
     if (!policyFunction)
         return;
-    (core(m_frame)->loader()->policyChecker()->*policyFunction)(PolicyUse);
+    (core(m_frame)->loader().policyChecker()->*policyFunction)(PolicyUse);
 }
 
 void FrameLoaderClient::committedLoad(WebCore::DocumentLoader* loader, const char* data, int length)
@@ -166,7 +166,7 @@ void FrameLoaderClient::committedLoad(WebCore::DocumentLoader* loader, const cha
 
         Frame* coreFrame = loader->frame();
         if (coreFrame && coreFrame->document()->isMediaDocument())
-            loader->cancelMainResourceLoad(coreFrame->loader()->client()->pluginWillHandleLoadError(loader->response()));
+            loader->cancelMainResourceLoad(coreFrame->loader().client()->pluginWillHandleLoadError(loader->response()));
     }
 
     if (m_pluginView) {
@@ -345,7 +345,7 @@ void FrameLoaderClient::dispatchDecidePolicyForResponse(FramePolicyFunction poli
         return;
 
     if (resourceRequest.isNull()) {
-        (core(m_frame)->loader()->policyChecker()->*policyFunction)(PolicyIgnore);
+        (core(m_frame)->loader().policyChecker()->*policyFunction)(PolicyIgnore);
         return;
     }
 
@@ -421,7 +421,7 @@ void FrameLoaderClient::dispatchDecidePolicyForNewWindowAction(FramePolicyFuncti
         return;
 
     if (resourceRequest.isNull()) {
-        (core(m_frame)->loader()->policyChecker()->*policyFunction)(PolicyIgnore);
+        (core(m_frame)->loader().policyChecker()->*policyFunction)(PolicyIgnore);
         return;
     }
 
@@ -441,7 +441,7 @@ void FrameLoaderClient::dispatchDecidePolicyForNewWindowAction(FramePolicyFuncti
     // FIXME: I think Qt version marshals this to another thread so when we
     // have multi-threaded download, we might need to do the same
     if (!isHandled)
-        (core(m_frame)->loader()->policyChecker()->*policyFunction)(PolicyUse);
+        (core(m_frame)->loader().policyChecker()->*policyFunction)(PolicyUse);
 }
 
 void FrameLoaderClient::dispatchDecidePolicyForNavigationAction(FramePolicyFunction policyFunction, const NavigationAction& action, const ResourceRequest& resourceRequest, PassRefPtr<FormState>)
@@ -451,7 +451,7 @@ void FrameLoaderClient::dispatchDecidePolicyForNavigationAction(FramePolicyFunct
         return;
 
     if (resourceRequest.isNull()) {
-        (core(m_frame)->loader()->policyChecker()->*policyFunction)(PolicyIgnore);
+        (core(m_frame)->loader().policyChecker()->*policyFunction)(PolicyIgnore);
         return;
     }
 
@@ -468,7 +468,7 @@ void FrameLoaderClient::dispatchDecidePolicyForNavigationAction(FramePolicyFunct
     g_signal_emit_by_name(webView, "navigation-requested", m_frame, request.get(), &response);
 
     if (response == WEBKIT_NAVIGATION_RESPONSE_IGNORE) {
-        (core(m_frame)->loader()->policyChecker()->*policyFunction)(PolicyIgnore);
+        (core(m_frame)->loader().policyChecker()->*policyFunction)(PolicyIgnore);
         return;
     }
 
@@ -542,7 +542,7 @@ PassRefPtr<Frame> FrameLoaderClient::createFrame(const KURL& url, const String& 
 
     g_signal_emit_by_name(webView, "frame-created", kitFrame);
 
-    parentFrame->loader()->loadURLIntoChildFrame(url, referrer, childFrame.get());
+    parentFrame->loader().loadURLIntoChildFrame(url, referrer, childFrame.get());
 
     // The frame's onload handler may have removed it from the document.
     if (!childFrame->tree()->parent())
@@ -857,7 +857,7 @@ void FrameLoaderClient::dispatchDidCommitLoad(bool isNavigatingWithinPage)
 
     WebKitWebFramePrivate* priv = m_frame->priv;
     g_free(priv->uri);
-    priv->uri = g_strdup(core(m_frame)->loader()->activeDocumentLoader()->url().string().utf8().data());
+    priv->uri = g_strdup(core(m_frame)->loader().activeDocumentLoader()->url().string().utf8().data());
     g_object_notify(G_OBJECT(m_frame), "uri");
     if (!isNavigatingWithinPage) {
         g_free(priv->title);

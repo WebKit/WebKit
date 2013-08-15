@@ -254,7 +254,7 @@ static PassRefPtr<DocumentFragment> documentFragmentWithImageResource(Frame* fra
 {
     RefPtr<Element> imageElement = frame->document()->createElement(HTMLNames::imgTag, false);
 
-    if (DocumentLoader* loader = frame->loader()->documentLoader())
+    if (DocumentLoader* loader = frame->loader().documentLoader())
         loader->addArchiveResource(resource.get());
 
     NSURL *URL = resource->url();
@@ -300,7 +300,7 @@ static PassRefPtr<DocumentFragment> documentFragmentWithRTF(Frame* frame, NSStri
 
     size_t size = resources.size();
     if (size) {
-        DocumentLoader* loader = frame->loader()->documentLoader();
+        DocumentLoader* loader = frame->loader().documentLoader();
         for (size_t i = 0; i < size; ++i)
             loader->addArchiveResource(resources[i]);
     }
@@ -342,9 +342,9 @@ PassRefPtr<DocumentFragment> Pasteboard::documentFragmentForPasteboardItemAtInde
                 RefPtr<ArchiveResource> mainResource = coreArchive->mainResource();
                 if (mainResource) {
                     NSString *MIMEType = mainResource->mimeType();
-                    if (frame->loader()->client()->canShowMIMETypeAsHTML(MIMEType)) {
+                    if (frame->loader().client()->canShowMIMETypeAsHTML(MIMEType)) {
                         RetainPtr<NSString> markupString = adoptNS([[NSString alloc] initWithData:[mainResource->data()->createNSData() autorelease] encoding:NSUTF8StringEncoding]);
-                        if (DocumentLoader* loader = frame->loader()->documentLoader())
+                        if (DocumentLoader* loader = frame->loader().documentLoader())
                             loader->addAllArchiveResources(coreArchive.get());
 
                         fragment = createFragmentFromMarkup(frame->document(), markupString.get(), mainResource->url(), DisallowScriptingContent);

@@ -263,7 +263,7 @@ static inline WebPage* webPage(HTMLPlugInElement* pluginElement)
     Frame* frame = pluginElement->document()->frame();
     ASSERT(frame);
 
-    WebFrameLoaderClient* webFrameLoaderClient = toWebFrameLoaderClient(frame->loader()->client());
+    WebFrameLoaderClient* webFrameLoaderClient = toWebFrameLoaderClient(frame->loader().client());
     WebPage* webPage = webFrameLoaderClient ? webFrameLoaderClient->webFrame()->page() : 0;
     ASSERT(webPage);
 
@@ -582,8 +582,8 @@ void PluginView::didFailToInitializePlugin()
 {
     m_plugin = 0;
 
-    String frameURLString = frame()->loader()->documentLoader()->responseURL().string();
-    String pageURLString = m_webPage->corePage()->mainFrame()->loader()->documentLoader()->responseURL().string();
+    String frameURLString = frame()->loader().documentLoader()->responseURL().string();
+    String pageURLString = m_webPage->corePage()->mainFrame()->loader().documentLoader()->responseURL().string();
     m_webPage->send(Messages::WebPageProxy::DidFailToInitializePlugin(m_parameters.mimeType, frameURLString, pageURLString));
 }
 
@@ -1123,13 +1123,13 @@ void PluginView::performFrameLoadURLRequest(URLRequest* request)
     UserGestureIndicator gestureIndicator(request->allowPopups() ? DefinitelyProcessingUserGesture : PossiblyProcessingUserGesture);
 
     // First, try to find a target frame.
-    Frame* targetFrame = frame->loader()->findFrameForNavigation(request->target());
+    Frame* targetFrame = frame->loader().findFrameForNavigation(request->target());
     if (!targetFrame) {
         // We did not find a target frame. Ask our frame to load the page. This may or may not create a popup window.
         FrameLoadRequest frameRequest(frame, request->request());
         frameRequest.setFrameName(request->target());
         frameRequest.setShouldCheckNewWindowPolicy(true);
-        frame->loader()->load(frameRequest);
+        frame->loader().load(frameRequest);
 
         // FIXME: We don't know whether the window was successfully created here so we just assume that it worked.
         // It's better than not telling the plug-in anything.
@@ -1138,9 +1138,9 @@ void PluginView::performFrameLoadURLRequest(URLRequest* request)
     }
 
     // Now ask the frame to load the request.
-    targetFrame->loader()->load(FrameLoadRequest(targetFrame, request->request()));
+    targetFrame->loader().load(FrameLoadRequest(targetFrame, request->request()));
 
-    WebFrameLoaderClient* webFrameLoaderClient = toWebFrameLoaderClient(targetFrame->loader()->client());
+    WebFrameLoaderClient* webFrameLoaderClient = toWebFrameLoaderClient(targetFrame->loader().client());
     WebFrame* targetWebFrame = webFrameLoaderClient ? webFrameLoaderClient->webFrame() : 0;
     ASSERT(targetWebFrame);
 
@@ -1307,7 +1307,7 @@ String PluginView::userAgent()
     if (!frame)
         return String();
     
-    return frame->loader()->client()->userAgent(KURL());
+    return frame->loader().client()->userAgent(KURL());
 }
 
 void PluginView::loadURL(uint64_t requestID, const String& method, const String& urlString, const String& target, 
@@ -1320,7 +1320,7 @@ void PluginView::loadURL(uint64_t requestID, const String& method, const String&
     frameLoadRequest.resourceRequest().setHTTPBody(FormData::create(httpBody.data(), httpBody.size()));
     frameLoadRequest.setFrameName(target);
 
-    String referrer = SecurityPolicy::generateReferrerHeader(frame()->document()->referrerPolicy(), frameLoadRequest.resourceRequest().url(), frame()->loader()->outgoingReferrer());
+    String referrer = SecurityPolicy::generateReferrerHeader(frame()->document()->referrerPolicy(), frameLoadRequest.resourceRequest().url(), frame()->loader().outgoingReferrer());
     if (!referrer.isEmpty())
         frameLoadRequest.resourceRequest().setHTTPReferrer(referrer);
 
@@ -1346,11 +1346,11 @@ void PluginView::cancelManualStreamLoad()
     if (!frame())
         return;
 
-    DocumentLoader* documentLoader = frame()->loader()->activeDocumentLoader();
+    DocumentLoader* documentLoader = frame()->loader().activeDocumentLoader();
     ASSERT(documentLoader);
     
     if (documentLoader->isLoadingMainResource())
-        documentLoader->cancelMainResourceLoad(frame()->loader()->cancelledError(m_parameters.url));
+        documentLoader->cancelMainResourceLoad(frame()->loader().cancelledError(m_parameters.url));
 }
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
@@ -1491,7 +1491,7 @@ float PluginView::contentsScaleFactor()
     
 String PluginView::proxiesForURL(const String& urlString)
 {
-    const FrameLoader* frameLoader = frame() ? frame()->loader() : 0;
+    const FrameLoader* frameLoader = frame() ? &frame()->loader() : 0;
     const NetworkingContext* context = frameLoader ? frameLoader->networkingContext() : 0;
     Vector<ProxyServer> proxyServers = proxyServersForURL(KURL(KURL(), urlString), context);
     return toString(proxyServers);

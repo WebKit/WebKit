@@ -105,11 +105,11 @@ void PluginStream::stop()
     if (m_loadManually) {
         ASSERT(!m_loader);
 
-        DocumentLoader* documentLoader = m_frame->loader()->activeDocumentLoader();
+        DocumentLoader* documentLoader = m_frame->loader().activeDocumentLoader();
         ASSERT(documentLoader);
 
         if (documentLoader->isLoadingMainResource())
-            documentLoader->cancelMainResourceLoad(m_frame->loader()->cancelledError(m_resourceRequest));
+            documentLoader->cancelMainResourceLoad(m_frame->loader().cancelledError(m_resourceRequest));
 
         return;
     }

@@ -175,7 +175,7 @@ using namespace WebCore;
     Frame* frame = core([self webFrame]);
     if (!frame)
         return nil;
-    [request _web_setHTTPReferrer:frame->loader()->outgoingReferrer()];
+    [request _web_setHTTPReferrer:frame->loader().outgoingReferrer()];
     return request;
 }
 

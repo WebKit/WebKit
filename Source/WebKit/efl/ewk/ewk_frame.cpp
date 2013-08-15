@@ -153,7 +153,7 @@ static inline void _ewk_frame_debug(Evas_Object* ewkFrame)
 
 static WebCore::FrameLoaderClientEfl* _ewk_frame_loader_efl_get(const WebCore::Frame* frame)
 {
-    return static_cast<WebCore::FrameLoaderClientEfl*>(frame->loader()->client());
+    return static_cast<WebCore::FrameLoaderClientEfl*>(frame->loader().client());
 }
 
 static Eina_Bool _ewk_frame_children_iterator_next(Eina_Iterator_Ewk_Frame* iterator, Evas_Object** data)
@@ -244,7 +244,7 @@ static void _ewk_frame_smart_del(Evas_Object* ewkFrame)
             flc->setWebFrame(0);
             EWK_FRAME_SD_GET(ewk_view_frame_main_get(smartData->view), mainSmartData);
             if (mainSmartData->frame == smartData->frame) // applying only for main frame is enough (will traverse through frame tree)
-                smartData->frame->loader()->detachFromParent();
+                smartData->frame->loader().detachFromParent();
             smartData->frame = 0;
         }
 
@@ -419,7 +419,7 @@ static Eina_Bool _ewk_frame_contents_set_internal(Ewk_Frame_Smart_Data* smartDat
         baseKURL, unreachableKURL);
     WebCore::ResourceRequest request(baseKURL);
 
-    smartData->frame->loader()->load(WebCore::FrameLoadRequest(smartData->frame, request, substituteData));
+    smartData->frame->loader().load(WebCore::FrameLoadRequest(smartData->frame, request, substituteData));
     return true;
 }
 
@@ -579,7 +579,7 @@ Eina_Bool ewk_frame_stop(Evas_Object* ewkFrame)
 {
     EWK_FRAME_SD_GET_OR_RETURN(ewkFrame, smartData, false);
     EINA_SAFETY_ON_NULL_RETURN_VAL(smartData->frame, false);
-    smartData->frame->loader()->stopAllLoaders();
+    smartData->frame->loader().stopAllLoaders();
     return true;
 }
 
@@ -587,7 +587,7 @@ Eina_Bool ewk_frame_reload(Evas_Object* ewkFrame)
 {
     EWK_FRAME_SD_GET_OR_RETURN(ewkFrame, smartData, false);
     EINA_SAFETY_ON_NULL_RETURN_VAL(smartData->frame, false);
-    smartData->frame->loader()->reload();
+    smartData->frame->loader().reload();
     return true;
 }
 
@@ -595,7 +595,7 @@ Eina_Bool ewk_frame_reload_full(Evas_Object* ewkFrame)
 {
     EWK_FRAME_SD_GET_OR_RETURN(ewkFrame, smartData, false);
     EINA_SAFETY_ON_NULL_RETURN_VAL(smartData->frame, false);
-    smartData->frame->loader()->reload(true);
+    smartData->frame->loader().reload(true);
     return true;
 }
 
@@ -1165,7 +1165,7 @@ bool ewk_frame_child_add(Evas_Object* ewkFrame, WTF::PassRefPtr<WebCore::Frame> 
     }
 
     evas_object_smart_callback_call(smartData->view, "frame,created", frame);
-    smartData->frame->loader()->loadURLIntoChildFrame(url, referrer, coreFrame);
+    smartData->frame->loader().loadURLIntoChildFrame(url, referrer, coreFrame);
 
     // The frame's onload handler may have removed it from the document.
     // See fast/dom/null-page-show-modal-dialog-crash.html for an example.

@@ -59,7 +59,7 @@ HostedNetscapePluginStream::HostedNetscapePluginStream(NetscapePluginInstancePro
     , m_requestURL([request URL])
     , m_frameLoader(0)
 {
-    String referrer = SecurityPolicy::generateReferrerHeader(core([instance->pluginView() webFrame])->document()->referrerPolicy(), [request URL], core([instance->pluginView() webFrame])->loader()->outgoingReferrer());
+    String referrer = SecurityPolicy::generateReferrerHeader(core([instance->pluginView() webFrame])->document()->referrerPolicy(), [request URL], core([instance->pluginView() webFrame])->loader().outgoingReferrer());
     if (referrer.isEmpty())
         [m_request.get() _web_setHTTPReferrer:nil];
     else

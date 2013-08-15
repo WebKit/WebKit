@@ -514,7 +514,7 @@ void WebFrameLoaderClient::dispatchDidHandleOnloadEvents()
 
 void WebFrameLoaderClient::dispatchDidReceiveServerRedirectForProvisionalLoad()
 {
-    m_webFrame->_private->provisionalURL = core(m_webFrame.get())->loader()->provisionalDocumentLoader()->url().string();
+    m_webFrame->_private->provisionalURL = core(m_webFrame.get())->loader().provisionalDocumentLoader()->url().string();
 
     WebView *webView = getWebView(m_webFrame.get());
     WebFrameLoadDelegateImplementationCache* implementations = WebViewGetFrameLoadDelegateImplementations(webView);
@@ -600,7 +600,7 @@ void WebFrameLoaderClient::dispatchDidReceiveIcon()
 void WebFrameLoaderClient::dispatchDidStartProvisionalLoad()
 {
     ASSERT(!m_webFrame->_private->provisionalURL);
-    m_webFrame->_private->provisionalURL = core(m_webFrame.get())->loader()->provisionalDocumentLoader()->url().string();
+    m_webFrame->_private->provisionalURL = core(m_webFrame.get())->loader().provisionalDocumentLoader()->url().string();
 
     WebView *webView = getWebView(m_webFrame.get());
     [webView _didStartProvisionalLoadForFrame:m_webFrame.get()];
@@ -817,7 +817,7 @@ void WebFrameLoaderClient::dispatchWillSubmitForm(FramePolicyFunction function, 
 {
     id <WebFormDelegate> formDelegate = [getWebView(m_webFrame.get()) _formDelegate];
     if (!formDelegate) {
-        (core(m_webFrame.get())->loader()->policyChecker()->*function)(PolicyUse);
+        (core(m_webFrame.get())->loader().policyChecker()->*function)(PolicyUse);
         return;
     }
 
@@ -905,7 +905,7 @@ static inline NSString *nilOrNSString(const String& string)
 void WebFrameLoaderClient::updateGlobalHistory()
 {
     WebView* view = getWebView(m_webFrame.get());
-    DocumentLoader* loader = core(m_webFrame.get())->loader()->documentLoader();
+    DocumentLoader* loader = core(m_webFrame.get())->loader().documentLoader();
 
     if ([view historyDelegate]) {
         WebHistoryDelegateImplementationCache* implementations = WebViewGetHistoryDelegateImplementations(view);
@@ -936,7 +936,7 @@ void WebFrameLoaderClient::updateGlobalHistoryRedirectLinks()
     WebView* view = getWebView(m_webFrame.get());
     WebHistoryDelegateImplementationCache* implementations = [view historyDelegate] ? WebViewGetHistoryDelegateImplementations(view) : 0;
     
-    DocumentLoader* loader = core(m_webFrame.get())->loader()->documentLoader();
+    DocumentLoader* loader = core(m_webFrame.get())->loader().documentLoader();
     ASSERT(loader->unreachableURL().isEmpty());
 
     if (!loader->clientRedirectSourceForHistory().isNull()) {
@@ -1115,7 +1115,7 @@ void WebFrameLoaderClient::saveViewStateToItem(HistoryItem* item)
 
 void WebFrameLoaderClient::restoreViewState()
 {
-    HistoryItem* currentItem = core(m_webFrame.get())->loader()->history()->currentItem();
+    HistoryItem* currentItem = core(m_webFrame.get())->loader().history()->currentItem();
     ASSERT(currentItem);
 
     // FIXME: As the ASSERT attests, it seems we should always have a currentItem here.
@@ -1247,7 +1247,7 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
     WebDataSource *dataSource = [m_webFrame.get() _dataSource];
 
     bool willProduceHTMLView = [m_webFrame->_private->webFrameView _viewClassForMIMEType:[dataSource _responseMIMEType]] == [WebHTMLView class];
-    bool canSkipCreation = core(m_webFrame.get())->loader()->stateMachine()->committingFirstRealLoad() && willProduceHTMLView;
+    bool canSkipCreation = core(m_webFrame.get())->loader().stateMachine()->committingFirstRealLoad() && willProduceHTMLView;
     if (canSkipCreation) {
         [[m_webFrame->_private->webFrameView documentView] setDataSource:dataSource];
         return;
@@ -1414,7 +1414,7 @@ PassRefPtr<Frame> WebFrameLoaderClient::createFrame(const KURL& url, const Strin
     if (!result->page())
         return 0;
  
-    core(m_webFrame.get())->loader()->loadURLIntoChildFrame(url, referrer, result.get());
+    core(m_webFrame.get())->loader().loadURLIntoChildFrame(url, referrer, result.get());
 
     // The frame's onload handler may have removed it from the document.
     if (!result->tree()->parent())
@@ -2048,7 +2048,7 @@ PassRefPtr<FrameNetworkingContext> WebFrameLoaderClient::createNetworkingContext
     _policyFunction = nullptr;
 
     ASSERT(policyFunction);
-    (frame->loader()->policyChecker()->*policyFunction)(action);
+    (frame->loader().policyChecker()->*policyFunction)(action);
 }
 
 - (void)ignore

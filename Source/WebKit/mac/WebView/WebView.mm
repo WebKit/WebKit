@@ -1108,7 +1108,7 @@ static bool fastDocumentTeardownEnabled()
 #endif
 
     if (Frame* mainFrame = [self _mainCoreFrame])
-        mainFrame->loader()->detachFromParent();
+        mainFrame->loader().detachFromParent();
 
     [self setHostWindow:nil];
 
@@ -1304,7 +1304,7 @@ static bool fastDocumentTeardownEnabled()
             // If this item is showing , save away its current scroll and form state,
             // since that might have changed since loading and it is normally not saved
             // until we leave that page.
-            otherView->_private->page->mainFrame()->loader()->history()->saveDocumentAndScrollState();
+            otherView->_private->page->mainFrame()->loader().history()->saveDocumentAndScrollState();
         }
         RefPtr<HistoryItem> newItem = otherBackForwardList->itemAtIndex(i)->copy();
         if (i == 0) 
@@ -2010,7 +2010,7 @@ static inline IMP getMethod(id o, SEL s)
     if (!_private->page)
         return nil;
 
-    if (CFURLStorageSessionRef storageSession = _private->page->mainFrame()->loader()->networkingContext()->storageSession().platformSession())
+    if (CFURLStorageSessionRef storageSession = _private->page->mainFrame()->loader().networkingContext()->storageSession().platformSession())
         cachedResponse = WKCachedResponseForRequest(storageSession, request.get());
     else
         cachedResponse = [[NSURLCache sharedURLCache] cachedResponseForRequest:request.get()];
@@ -4152,7 +4152,7 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
     if (encoding == oldEncoding || [encoding isEqualToString:oldEncoding])
         return;
     if (Frame* mainFrame = [self _mainCoreFrame])
-        mainFrame->loader()->reloadWithOverrideEncoding(encoding);
+        mainFrame->loader().reloadWithOverrideEncoding(encoding);
 }
 
 - (NSString *)_mainFrameOverrideEncoding
@@ -5011,7 +5011,7 @@ static BOOL findString(NSView <WebDocumentSearching> *searchView, NSString *stri
     Frame* coreFrame = [self _mainCoreFrame];
     if (!coreFrame)
         return YES;
-    return coreFrame->loader()->shouldClose();
+    return coreFrame->loader().shouldClose();
 }
 
 static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSC::JSValue jsValue)

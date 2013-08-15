@@ -211,7 +211,7 @@ PassRefPtr<Frame> Frame::create(Page* page, HTMLFrameOwnerElement* ownerElement,
 Frame::~Frame()
 {
     setView(0);
-    loader()->cancelAndClear();
+    loader().cancelAndClear();
 
     // FIXME: We should not be doing all this work inside the destructor
 
@@ -274,7 +274,7 @@ void Frame::setView(PassRefPtr<FrameView> view)
     // Only one form submission is allowed per view of a part.
     // Since this part may be getting reused as a result of being
     // pulled from the back/forward cache, reset this flag.
-    loader()->resetMultipleFormSubmissionProtection();
+    loader().resetMultipleFormSubmissionProtection();
     
 #if USE(TILED_BACKING_STORE)
     if (m_view && tiledBackingStore())
@@ -560,7 +560,7 @@ void Frame::injectUserScripts(UserScriptInjectionTime injectionTime)
     if (!m_page)
         return;
 
-    if (loader()->stateMachine()->creatingInitialEmptyDocument() && !settings()->shouldInjectUserScriptsInInitialEmptyDocument())
+    if (loader().stateMachine()->creatingInitialEmptyDocument() && !settings()->shouldInjectUserScriptsInInitialEmptyDocument())
         return;
 
     // Walk the hashtable. Inject by world.
@@ -663,7 +663,7 @@ void Frame::dispatchVisibilityStateChangeEvent()
 void Frame::willDetachPage()
 {
     if (Frame* parent = tree()->parent())
-        parent->loader()->checkLoadComplete();
+        parent->loader().checkLoadComplete();
 
     HashSet<FrameDestructionObserver*>::iterator stop = m_destructionObservers.end();
     for (HashSet<FrameDestructionObserver*>::iterator it = m_destructionObservers.begin(); it != stop; ++it)

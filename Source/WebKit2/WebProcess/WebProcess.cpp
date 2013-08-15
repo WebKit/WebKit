@@ -1083,7 +1083,7 @@ void WebProcess::downloadRequest(uint64_t downloadID, uint64_t initiatingPageID,
 
     ResourceRequest requestWithOriginalURL = request;
     if (initiatingPage)
-        initiatingPage->mainFrame()->loader()->setOriginalURLForDownloadRequest(requestWithOriginalURL);
+        initiatingPage->mainFrame()->loader().setOriginalURLForDownloadRequest(requestWithOriginalURL);
 
     downloadManager().startDownload(downloadID, requestWithOriginalURL);
 }

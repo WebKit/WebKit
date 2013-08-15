@@ -222,7 +222,7 @@ JSDOMWindowShell* ScriptController::initScript(DOMWrapperWorld* world)
         windowShell->window()->setProfileGroup(page->group().identifier());
     }
 
-    m_frame->loader()->dispatchDidClearWindowObjectInWorld(world);
+    m_frame->loader().dispatchDidClearWindowObjectInWorld(world);
 
     return windowShell;
 }

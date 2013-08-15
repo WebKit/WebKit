@@ -142,24 +142,24 @@ void FrameLoaderClientWinCE::dispatchDidReceiveResponse(DocumentLoader*, unsigne
 void FrameLoaderClientWinCE::dispatchDecidePolicyForResponse(FramePolicyFunction policyFunction, const WebCore::ResourceResponse& response, const WebCore::ResourceRequest&)
 {
     if (canShowMIMEType(response.mimeType()))
-        (m_frame->loader()->policyChecker()->*policyFunction)(PolicyUse);
+        (m_frame->loader().policyChecker()->*policyFunction)(PolicyUse);
     else
-        (m_frame->loader()->policyChecker()->*policyFunction)(PolicyDownload);
+        (m_frame->loader().policyChecker()->*policyFunction)(PolicyDownload);
 }
 
 void FrameLoaderClientWinCE::dispatchDecidePolicyForNewWindowAction(FramePolicyFunction policyFunction, const NavigationAction&, const WebCore::ResourceRequest&, PassRefPtr<FormState>, const String&)
 {
-    (m_frame->loader()->policyChecker()->*policyFunction)(PolicyUse);
+    (m_frame->loader().policyChecker()->*policyFunction)(PolicyUse);
 }
 
 void FrameLoaderClientWinCE::dispatchDecidePolicyForNavigationAction(FramePolicyFunction policyFunction, const NavigationAction&, const WebCore::ResourceRequest&, PassRefPtr<FormState>)
 {
-    (m_frame->loader()->policyChecker()->*policyFunction)(PolicyUse);
+    (m_frame->loader().policyChecker()->*policyFunction)(PolicyUse);
 }
 
 void FrameLoaderClientWinCE::dispatchWillSubmitForm(FramePolicyFunction policyFunction, PassRefPtr<FormState>)
 {
-    (m_frame->loader()->policyChecker()->*policyFunction)(PolicyUse);
+    (m_frame->loader().policyChecker()->*policyFunction)(PolicyUse);
 }
 
 PassRefPtr<Widget> FrameLoaderClientWinCE::createPlugin(const IntSize&, HTMLPlugInElement*, const KURL&, const Vector<String>&, const Vector<String>&, const String&, bool)

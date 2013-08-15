@@ -121,16 +121,16 @@ IconURLs IconController::urlsForTypes(int iconTypesMask)
 
 void IconController::commitToDatabase(const KURL& icon)
 {
-    LOG(IconDatabase, "Committing iconURL %s to database for pageURLs %s and %s", icon.string().ascii().data(), m_frame->document()->url().string().ascii().data(), m_frame->loader()->initialRequest().url().string().ascii().data());
+    LOG(IconDatabase, "Committing iconURL %s to database for pageURLs %s and %s", icon.string().ascii().data(), m_frame->document()->url().string().ascii().data(), m_frame->loader().initialRequest().url().string().ascii().data());
     iconDatabase().setIconURLForPageURL(icon.string(), m_frame->document()->url().string());
-    iconDatabase().setIconURLForPageURL(icon.string(), m_frame->loader()->initialRequest().url().string());
+    iconDatabase().setIconURLForPageURL(icon.string(), m_frame->loader().initialRequest().url().string());
 }
 
 void IconController::startLoader()
 {
     // FIXME: We kick off the icon loader when the frame is done receiving its main resource.
     // But we should instead do it when we're done parsing the head element.
-    if (!m_frame->loader()->isLoadingMainFrame())
+    if (!m_frame->loader().isLoadingMainFrame())
         return;
 
     if (!iconDatabase().isEnabled())
@@ -153,19 +153,19 @@ void IconController::startLoader()
 
     // If we're reloading the page, always start the icon load now.
     // FIXME: How can this condition ever be true?
-    if (m_frame->loader()->loadType() == FrameLoadTypeReload && m_frame->loader()->loadType() == FrameLoadTypeReloadFromOrigin) {
+    if (m_frame->loader().loadType() == FrameLoadTypeReload && m_frame->loader().loadType() == FrameLoadTypeReloadFromOrigin) {
         continueLoadWithDecision(IconLoadYes);
         return;
     }
 
     if (iconDatabase().supportsAsynchronousMode()) {
-        m_frame->loader()->documentLoader()->getIconLoadDecisionForIconURL(urlString);
+        m_frame->loader().documentLoader()->getIconLoadDecisionForIconURL(urlString);
         // Commit the icon url mapping to the database just in case we don't end up loading later.
         commitToDatabase(iconURL);
         return;
     }
 
-    IconLoadDecision decision = iconDatabase().synchronousLoadDecisionForIconURL(urlString, m_frame->loader()->documentLoader());
+    IconLoadDecision decision = iconDatabase().synchronousLoadDecisionForIconURL(urlString, m_frame->loader().documentLoader());
 
     if (decision == IconLoadUnknown) {
         // In this case, we may end up loading the icon later, but we still want to commit the icon url mapping to the database
@@ -174,7 +174,7 @@ void IconController::startLoader()
         // icon is later read in from disk
         LOG(IconDatabase, "IconController %p might load icon %s later", this, urlString.ascii().data());
         m_waitingForLoadDecision = true;    
-        m_frame->loader()->client()->registerForIconNotification();
+        m_frame->loader().client()->registerForIconNotification();
         commitToDatabase(iconURL);
         return;
     }
@@ -216,7 +216,7 @@ void IconController::continueLoadWithDecision(IconLoadDecision iconLoadDecision)
         commitToDatabase(iconURL);
 
         if (iconDatabase().supportsAsynchronousMode()) {
-            m_frame->loader()->documentLoader()->getIconDataForIconURL(urlString);
+            m_frame->loader().documentLoader()->getIconDataForIconURL(urlString);
             return;
         }
 
@@ -226,11 +226,11 @@ void IconController::continueLoadWithDecision(IconLoadDecision iconLoadDecision)
         // Otherwise if the icon data *is* available, notify the delegate
         if (!iconDatabase().synchronousIconDataKnownForIconURL(urlString)) {
             LOG(IconDatabase, "Told not to load icon %s but icon data is not yet available - registering for notification and requesting load from disk", urlString.ascii().data());
-            m_frame->loader()->client()->registerForIconNotification();
+            m_frame->loader().client()->registerForIconNotification();
             iconDatabase().synchronousIconForPageURL(m_frame->document()->url().string(), IntSize(0, 0));
-            iconDatabase().synchronousIconForPageURL(m_frame->loader()->initialRequest().url().string(), IntSize(0, 0));
+            iconDatabase().synchronousIconForPageURL(m_frame->loader().initialRequest().url().string(), IntSize(0, 0));
         } else
-            m_frame->loader()->client()->dispatchDidReceiveIcon();
+            m_frame->loader().client()->dispatchDidReceiveIcon();
 
         return;
     } 

@@ -105,7 +105,7 @@ bool DumpRenderTreeSupportEfl::callShouldCloseOnWebView(Evas_Object* ewkFrame)
 {
     DRT_SUPPORT_FRAME_GET_OR_RETURN(ewkFrame, frame, false);
 
-    return frame->loader()->shouldClose();
+    return frame->loader().shouldClose();
 }
 
 void DumpRenderTreeSupportEfl::clearFrameName(Evas_Object* ewkFrame)
@@ -119,7 +119,7 @@ void DumpRenderTreeSupportEfl::clearOpener(Evas_Object* ewkFrame)
 {
     DRT_SUPPORT_FRAME_GET_OR_RETURN(ewkFrame, frame);
 
-    frame->loader()->setOpener(0);
+    frame->loader().setOpener(0);
 }
 
 String DumpRenderTreeSupportEfl::layerTreeAsText(const Evas_Object* ewkFrame)
@@ -137,7 +137,7 @@ Eina_List* DumpRenderTreeSupportEfl::frameChildren(const Evas_Object* ewkFrame)
 
     for (unsigned index = 0; index < frame->tree()->childCount(); index++) {
         WebCore::Frame *childFrame = frame->tree()->child(index);
-        WebCore::FrameLoaderClientEfl *client = static_cast<WebCore::FrameLoaderClientEfl*>(childFrame->loader()->client());
+        WebCore::FrameLoaderClientEfl *client = static_cast<WebCore::FrameLoaderClientEfl*>(childFrame->loader().client());
 
         if (!client)
             continue;
@@ -188,7 +188,7 @@ String DumpRenderTreeSupportEfl::responseMimeType(const Evas_Object* ewkFrame)
 {
     DRT_SUPPORT_FRAME_GET_OR_RETURN(ewkFrame, frame, String());
 
-    WebCore::DocumentLoader *documentLoader = frame->loader()->documentLoader();
+    WebCore::DocumentLoader *documentLoader = frame->loader().documentLoader();
 
     if (!documentLoader)
         return String();
@@ -227,7 +227,7 @@ const WebCore::KURL DumpRenderTreeSupportEfl::provisionalURL(const Evas_Object* 
 {
     DRT_SUPPORT_FRAME_GET_OR_RETURN(ewkFrame, frame, WebCore::KURL());
 
-    WebCore::DocumentLoader* provisionalDocumentLoader = frame->loader()->provisionalDocumentLoader();
+    WebCore::DocumentLoader* provisionalDocumentLoader = frame->loader().provisionalDocumentLoader();
     if (!provisionalDocumentLoader)
         return WebCore::KURL();
 

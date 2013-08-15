@@ -81,7 +81,7 @@ void HTMLFrameOwnerElement::disconnectContentFrame()
     // see if this behavior is really needed as Gecko does not allow this.
     if (Frame* frame = contentFrame()) {
         RefPtr<Frame> protect(frame);
-        frame->loader()->frameDetached();
+        frame->loader().frameDetached();
         frame->disconnectOwnerElement();
     }
 }

@@ -491,7 +491,7 @@ extern "C" {
     
     ASSERT(!_proxy->manualStream());
 
-    _proxy->setManualStream(HostedNetscapePluginStream::create(_proxy.get(), core([self webFrame])->loader()));
+    _proxy->setManualStream(HostedNetscapePluginStream::create(_proxy.get(), &core([self webFrame])->loader()));
     _proxy->manualStream()->startStreamWithResponse(response);
 }
 

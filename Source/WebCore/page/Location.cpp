@@ -265,7 +265,7 @@ void Location::setLocation(const String& url, DOMWindow* activeWindow, DOMWindow
 {
     ASSERT(m_frame);
     // We call findFrameForNavigation to handle the case of a seamless iframe correctly.
-    Frame* frame = m_frame->loader()->findFrameForNavigation(String(), activeWindow->document());
+    Frame* frame = m_frame->loader().findFrameForNavigation(String(), activeWindow->document());
     if (!frame)
         return;
     frame->document()->domWindow()->setLocation(url, activeWindow, firstWindow);

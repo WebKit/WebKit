@@ -269,12 +269,12 @@ void CachedResource::addAdditionalRequestHeaders(CachedResourceLoader* cachedRes
     // the Content-Security-Policy at the CachedResourceLoader layer so we can
     // handle different resource types differently.
 
-    FrameLoader* frameLoader = cachedResourceLoader->frame()->loader();
+    FrameLoader& frameLoader = cachedResourceLoader->frame()->loader();
     String outgoingReferrer;
     String outgoingOrigin;
     if (m_resourceRequest.httpReferrer().isNull()) {
-        outgoingReferrer = frameLoader->outgoingReferrer();
-        outgoingOrigin = frameLoader->outgoingOrigin();
+        outgoingReferrer = frameLoader.outgoingReferrer();
+        outgoingOrigin = frameLoader.outgoingOrigin();
     } else {
         outgoingReferrer = m_resourceRequest.httpReferrer();
         outgoingOrigin = SecurityOrigin::createFromString(outgoingReferrer)->toString();
@@ -287,7 +287,7 @@ void CachedResource::addAdditionalRequestHeaders(CachedResourceLoader* cachedRes
         m_resourceRequest.setHTTPReferrer(outgoingReferrer);
     FrameLoader::addHTTPOriginIfNeeded(m_resourceRequest, outgoingOrigin);
 
-    frameLoader->addExtraFieldsToSubresourceRequest(m_resourceRequest);
+    frameLoader.addExtraFieldsToSubresourceRequest(m_resourceRequest);
 }
 
 void CachedResource::load(CachedResourceLoader* cachedResourceLoader, const ResourceLoaderOptions& options)
@@ -297,8 +297,8 @@ void CachedResource::load(CachedResourceLoader* cachedResourceLoader, const Reso
         return;
     }
 
-    FrameLoader* frameLoader = cachedResourceLoader->frame()->loader();
-    if (options.securityCheck == DoSecurityCheck && (frameLoader->state() == FrameStateProvisional || !frameLoader->activeDocumentLoader() || frameLoader->activeDocumentLoader()->isStopping())) {
+    FrameLoader& frameLoader = cachedResourceLoader->frame()->loader();
+    if (options.securityCheck == DoSecurityCheck && (frameLoader.state() == FrameStateProvisional || !frameLoader.activeDocumentLoader() || frameLoader.activeDocumentLoader()->isStopping())) {
         failBeforeStarting();
         return;
     }

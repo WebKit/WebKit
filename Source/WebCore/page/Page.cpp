@@ -426,10 +426,10 @@ void Page::goToItem(HistoryItem* item, FrameLoadType type)
     // being deref()-ed. Make sure we can still use it with HistoryController::goToItem later.
     RefPtr<HistoryItem> protector(item);
 
-    if (m_mainFrame->loader()->history()->shouldStopLoadingForHistoryItem(item))
-        m_mainFrame->loader()->stopAllLoaders();
+    if (m_mainFrame->loader().history()->shouldStopLoadingForHistoryItem(item))
+        m_mainFrame->loader().stopAllLoaders();
 
-    m_mainFrame->loader()->history()->goToItem(item, type);
+    m_mainFrame->loader().history()->goToItem(item, type);
 }
 
 int Page::getHistoryLength()
@@ -510,13 +510,13 @@ void Page::refreshPlugins(bool reload)
             continue;
         
         for (Frame* frame = (*it)->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
-            if (frame->loader()->subframeLoader()->containsPlugins())
+            if (frame->loader().subframeLoader()->containsPlugins())
                 framesNeedingReload.append(frame);
         }
     }
 
     for (size_t i = 0; i < framesNeedingReload.size(); ++i)
-        framesNeedingReload[i]->loader()->reload();
+        framesNeedingReload[i]->loader().reload();
 }
 
 PluginData* Page::pluginData() const
@@ -727,7 +727,7 @@ void Page::setDefersLoading(bool defers)
 
     m_defersLoading = defers;
     for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext())
-        frame->loader()->setDefersLoading(defers);
+        frame->loader().setDefersLoading(defers);
 }
 
 void Page::clearUndoRedoOperations()
@@ -1153,7 +1153,7 @@ void Page::setMemoryCacheClientCallsEnabled(bool enabled)
         return;
 
     for (RefPtr<Frame> frame = mainFrame(); frame; frame = frame->tree()->traverseNext())
-        frame->loader()->tellClientAboutPastMemoryCacheLoads();
+        frame->loader().tellClientAboutPastMemoryCacheLoads();
 }
 
 void Page::setMinimumTimerInterval(double minimumTimerInterval)
@@ -1461,7 +1461,7 @@ void Page::addRelevantRepaintedObject(RenderObject* object, const LayoutRect& ob
         m_isCountingRelevantRepaintedObjects = false;
         resetRelevantPaintedObjectCounter();
         if (Frame* frame = mainFrame())
-            frame->loader()->didLayout(DidHitRelevantRepaintedObjectsAreaThreshold);
+            frame->loader().didLayout(DidHitRelevantRepaintedObjectsAreaThreshold);
     }
 }
 
