@@ -1,3 +1,12 @@
+2013-08-14  Sam Weinig  <sam@webkit.org>
+
+        Update binding test results.  Follow up fix for <https://webkit.org/b/119664>
+
+        * bindings/scripts/test/JS/JSTestCallback.cpp:
+        (WebCore::JSTestCallback::JSTestCallback):
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.cpp:
+        (WebCore::jsTestMediaQueryListListenerPrototypeFunctionMethod):
+
 2013-08-14  Joseph Pecoraro  <pecoraro@apple.com>
 
         <https://webkit.org/b/119810> [Mac] No AutoreleasePool leaks when dragging image out of WebView
