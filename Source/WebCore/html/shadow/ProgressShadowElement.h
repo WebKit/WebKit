@@ -51,10 +51,11 @@ protected:
 
 class ProgressInnerElement FINAL : public ProgressShadowElement {
 public:
+    static PassRefPtr<ProgressInnerElement> create(Document*);
+
+private:
     ProgressInnerElement(Document*);
 
-    static PassRefPtr<ProgressInnerElement> create(Document*);
-private:
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*) OVERRIDE;
     virtual bool rendererIsNeeded(const NodeRenderingContext&);
 };
@@ -68,9 +69,10 @@ inline PassRefPtr<ProgressInnerElement> ProgressInnerElement::create(Document* d
 
 class ProgressBarElement FINAL : public ProgressShadowElement {
 public:
-    ProgressBarElement(Document*);
-
     static PassRefPtr<ProgressBarElement> create(Document*);
+
+private:
+    ProgressBarElement(Document*);
 };
 
 inline PassRefPtr<ProgressBarElement> ProgressBarElement::create(Document* document)
@@ -82,10 +84,11 @@ inline PassRefPtr<ProgressBarElement> ProgressBarElement::create(Document* docum
 
 class ProgressValueElement FINAL : public ProgressShadowElement {
 public:
-    ProgressValueElement(Document*);
-
     static PassRefPtr<ProgressValueElement> create(Document*);
     void setWidthPercentage(double);
+
+private:
+    ProgressValueElement(Document*);
 };
 
 inline PassRefPtr<ProgressValueElement> ProgressValueElement::create(Document* document)

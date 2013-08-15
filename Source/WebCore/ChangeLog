@@ -1,3 +1,15 @@
+2013-08-15  Rob Buis  <rwlbuis@webkit.org>
+
+        ASSERTION FAILED: !m_adoptionIsRequired in void WebCore::TreeShared<NodeType>::ref()
+        https://bugs.webkit.org/show_bug.cgi?id=116979
+
+        Reviewed by Alexey Proskuryakov.
+
+        Make constructors private since only ::create should use them.
+
+        * html/shadow/MeterShadowElement.h:
+        * html/shadow/ProgressShadowElement.h:
+
 2013-08-15  Tim Horton  <timothy_horton@apple.com>
 
         FrameView should have an isMainFrameView()
