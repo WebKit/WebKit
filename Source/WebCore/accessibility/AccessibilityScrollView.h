@@ -64,6 +64,9 @@ private:
     virtual void updateChildrenIfNecessary();
     virtual void setNeedsToUpdateChildren() { m_childrenDirty = true; }
     void updateScrollbars();
+    virtual void setFocused(bool);
+    virtual bool canSetFocusAttribute() const;
+    virtual bool isFocused() const;
     
     virtual FrameView* documentFrameView() const;
     virtual LayoutRect elementRect() const;
