@@ -1,5 +1,4 @@
-shouldBeTrue("successfullyParsed");
-debug('<br /><span class="pass">TEST COMPLETE</span>');
+document.write("<script src='/resources/js-test-post.js'></script>");
 
 // Make sure that we do not leak any cookies.
 clearCookies();
