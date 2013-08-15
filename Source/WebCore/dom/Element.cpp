@@ -2079,7 +2079,7 @@ void Element::focus(bool restorePreviousSelection, FocusDirection direction)
         // If a focus event handler changes the focus to a different node it
         // does not make sense to continue and update appearence.
         protect = this;
-        if (!page->focusController()->setFocusedElement(this, doc->frame(), direction))
+        if (!page->focusController().setFocusedElement(this, doc->frame(), direction))
             return;
     }
 
@@ -2123,7 +2123,7 @@ void Element::blur()
     Document* doc = document();
     if (treeScope()->focusedElement() == this) {
         if (doc->frame())
-            doc->frame()->page()->focusController()->setFocusedElement(0, doc->frame());
+            doc->frame()->page()->focusController().setFocusedElement(0, doc->frame());
         else
             doc->setFocusedElement(0);
     }

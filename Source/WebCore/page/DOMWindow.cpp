@@ -939,7 +939,7 @@ void DOMWindow::focus(ScriptExecutionContext* context)
         return;
 
     // Clear the current frame's focused node if a new frame is about to be focused.
-    Frame* focusedFrame = page->focusController()->focusedFrame();
+    Frame* focusedFrame = page->focusController().focusedFrame();
     if (focusedFrame && focusedFrame != m_frame)
         focusedFrame->document()->setFocusedElement(0);
 

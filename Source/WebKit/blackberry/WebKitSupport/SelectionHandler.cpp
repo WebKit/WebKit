@@ -897,7 +897,7 @@ void SelectionHandler::selectObject(const WebCore::IntPoint& location, TextGranu
     if (!m_webPage->m_inputHandler->boundingBoxForInputField().contains(relativePoint)) {
         Node* anchorNode = selection.start().anchorNode();
         if (!anchorNode || anchorNode->isElementNode())
-            m_webPage->m_page->focusController()->setFocusedElement(toElement(anchorNode), focusedFrame);
+            m_webPage->m_page->focusController().setFocusedElement(toElement(anchorNode), focusedFrame);
     }
 
     m_selectionActive = expandSelectionToGranularity(focusedFrame, selection, granularity, m_webPage->m_inputHandler->isInputMode());

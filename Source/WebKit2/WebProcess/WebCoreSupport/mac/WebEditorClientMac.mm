@@ -133,7 +133,7 @@ void WebEditorClient::setInsertionPasteboard(const String&)
 
 static void changeWordCase(WebPage* page, SEL selector)
 {
-    Frame* frame = page->corePage()->focusController()->focusedOrMainFrame();
+    Frame* frame = page->corePage()->focusController().focusedOrMainFrame();
     if (!frame->editor().canEdit())
         return;
 

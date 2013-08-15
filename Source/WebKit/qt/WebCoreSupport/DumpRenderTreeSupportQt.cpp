@@ -329,17 +329,17 @@ void DumpRenderTreeSupportQt::setAuthorAndUserStylesEnabled(QWebPageAdapter* ada
 
 void DumpRenderTreeSupportQt::executeCoreCommandByName(QWebPageAdapter* adapter, const QString& name, const QString& value)
 {
-    adapter->page->focusController()->focusedOrMainFrame()->editor().command(name).execute(value);
+    adapter->page->focusController().focusedOrMainFrame()->editor().command(name).execute(value);
 }
 
 bool DumpRenderTreeSupportQt::isCommandEnabled(QWebPageAdapter *adapter, const QString& name)
 {
-    return adapter->page->focusController()->focusedOrMainFrame()->editor().command(name).isEnabled();
+    return adapter->page->focusController().focusedOrMainFrame()->editor().command(name).isEnabled();
 }
 
 QVariantList DumpRenderTreeSupportQt::selectedRange(QWebPageAdapter *adapter)
 {
-    WebCore::Frame* frame = adapter->page->focusController()->focusedOrMainFrame();
+    WebCore::Frame* frame = adapter->page->focusController().focusedOrMainFrame();
     QVariantList selectedRange;
     RefPtr<Range> range = frame->selection()->toNormalizedRange().get();
 
@@ -363,7 +363,7 @@ QVariantList DumpRenderTreeSupportQt::selectedRange(QWebPageAdapter *adapter)
 
 QVariantList DumpRenderTreeSupportQt::firstRectForCharacterRange(QWebPageAdapter *adapter, int location, int length)
 {
-    WebCore::Frame* frame = adapter->page->focusController()->focusedOrMainFrame();
+    WebCore::Frame* frame = adapter->page->focusController().focusedOrMainFrame();
     QVariantList rect;
 
     if ((location + length < location) && (location + length))
@@ -747,7 +747,7 @@ void DumpRenderTreeSupportQt::setAlternateHtml(QWebFrameAdapter* adapter, const 
 
 void DumpRenderTreeSupportQt::confirmComposition(QWebPageAdapter *adapter, const char* text)
 {
-    Frame* frame = adapter->page->focusController()->focusedOrMainFrame();
+    Frame* frame = adapter->page->focusController().focusedOrMainFrame();
     if (!frame)
         return;
 

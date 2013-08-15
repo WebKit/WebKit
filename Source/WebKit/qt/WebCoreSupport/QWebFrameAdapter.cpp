@@ -703,13 +703,13 @@ QList<QObject*> QWebFrameAdapter::childFrames() const
 
 bool QWebFrameAdapter::hasFocus() const
 {
-    Frame* ff = frame->page()->focusController()->focusedFrame();
+    Frame* ff = frame->page()->focusController().focusedFrame();
     return ff && QWebFrameAdapter::kit(ff) == this;
 }
 
 void QWebFrameAdapter::setFocus()
 {
-    frame->page()->focusController()->setFocusedFrame(frame);
+    frame->page()->focusController().setFocusedFrame(frame);
 }
 
 void QWebFrameAdapter::setScrollBarPolicy(Qt::Orientation orientation, Qt::ScrollBarPolicy policy)

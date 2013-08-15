@@ -2610,7 +2610,7 @@ IntSize RenderLayer::overhangAmount() const
 bool RenderLayer::isActive() const
 {
     Page* page = renderer()->frame()->page();
-    return page && page->focusController()->isActive();
+    return page && page->focusController().isActive();
 }
 
 static int cornerStart(const RenderLayer* layer, int minX, int maxX, int thickness)

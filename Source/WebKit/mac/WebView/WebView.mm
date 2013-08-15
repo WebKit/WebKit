@@ -2653,7 +2653,7 @@ static inline IMP getMethod(id o, SEL s)
 - (void)_updateActiveState
 {
     if (_private && _private->page)
-        _private->page->focusController()->setActive([[self window] _hasKeyAppearance]);
+        _private->page->focusController().setActive([[self window] _hasKeyAppearance]);
 }
 
 static Vector<String> toStringVector(NSArray* patterns)
@@ -3761,7 +3761,7 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
 
     if (_private && _private->page) {
         _private->page->resumeScriptedAnimations();
-        _private->page->focusController()->setContainingWindowIsVisible(true);
+        _private->page->focusController().setContainingWindowIsVisible(true);
     }
 }
 
@@ -3774,7 +3774,7 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
 {
     if (_private && _private->page) {
         _private->page->suspendScriptedAnimations();
-        _private->page->focusController()->setContainingWindowIsVisible(false);
+        _private->page->focusController().setContainingWindowIsVisible(false);
     }
 }
 

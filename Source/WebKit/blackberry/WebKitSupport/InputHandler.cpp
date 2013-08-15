@@ -422,8 +422,7 @@ BlackBerryInputType InputHandler::elementType(Element* element) const
 
 void InputHandler::focusedNodeChanged()
 {
-    ASSERT(m_webPage->m_page->focusController());
-    Frame* frame = m_webPage->m_page->focusController()->focusedOrMainFrame();
+    Frame* frame = m_webPage->m_page->focusController().focusedOrMainFrame();
     if (!frame || !frame->document())
         return;
 
@@ -1842,9 +1841,8 @@ bool InputHandler::handleKeyboardInput(const Platform::KeyboardEvent& keyboardEv
     if (WTF::isASCIIUpper(keyboardEvent.character()))
         adjustedModifiers |= KEYMOD_SHIFT;
 
-    ASSERT(m_webPage->m_page->focusController());
     bool keyboardEventHandled = false;
-    if (Frame* focusedFrame = m_webPage->m_page->focusController()->focusedFrame()) {
+    if (Frame* focusedFrame = m_webPage->m_page->focusController().focusedFrame()) {
         bool isKeyChar = type == Platform::KeyboardEvent::KeyChar;
 
         // If this is a KeyChar type then we handle it as a keydown followed by a key up.

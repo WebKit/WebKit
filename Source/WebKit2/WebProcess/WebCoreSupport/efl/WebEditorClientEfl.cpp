@@ -49,7 +49,7 @@ void WebEditorClient::handleKeyboardEvent(KeyboardEvent* event)
 
 void WebEditorClient::handleInputMethodKeydown(KeyboardEvent* event)
 {
-    Frame* frame = m_page->corePage()->focusController()->focusedOrMainFrame();
+    Frame* frame = m_page->corePage()->focusController().focusedOrMainFrame();
     if (!frame || !frame->editor().canEdit())
         return;
 

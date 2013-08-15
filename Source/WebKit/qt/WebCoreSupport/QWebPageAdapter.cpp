@@ -353,7 +353,7 @@ QNetworkAccessManager* QWebPageAdapter::networkAccessManager()
 
 bool QWebPageAdapter::hasSelection() const
 {
-    Frame* frame = page->focusController()->focusedOrMainFrame();
+    Frame* frame = page->focusController().focusedOrMainFrame();
     if (frame)
         return (frame->selection()->selection().selectionType() != VisibleSelection::NoSelection);
     return false;
@@ -361,7 +361,7 @@ bool QWebPageAdapter::hasSelection() const
 
 QString QWebPageAdapter::selectedText() const
 {
-    Frame* frame = page->focusController()->focusedOrMainFrame();
+    Frame* frame = page->focusController().focusedOrMainFrame();
     if (frame->selection()->selection().selectionType() == VisibleSelection::NoSelection)
         return QString();
     return frame->editor().selectedText();
@@ -369,7 +369,7 @@ QString QWebPageAdapter::selectedText() const
 
 QString QWebPageAdapter::selectedHtml() const
 {
-    return page->focusController()->focusedOrMainFrame()->editor().selectedRange()->toHTML();
+    return page->focusController().focusedOrMainFrame()->editor().selectedRange()->toHTML();
 }
 
 bool QWebPageAdapter::isContentEditable() const
@@ -486,7 +486,7 @@ void QWebPageAdapter::mousePressEvent(QMouseEvent* ev)
         return;
 
     RefPtr<WebCore::Node> oldNode;
-    Frame* focusedFrame = page->focusController()->focusedFrame();
+    Frame* focusedFrame = page->focusController().focusedFrame();
     if (Document* focusedDocument = focusedFrame ? focusedFrame->document() : 0)
         oldNode = focusedDocument->focusedElement();
 
@@ -504,7 +504,7 @@ void QWebPageAdapter::mousePressEvent(QMouseEvent* ev)
     ev->setAccepted(accepted);
 
     RefPtr<WebCore::Node> newNode;
-    focusedFrame = page->focusController()->focusedFrame();
+    focusedFrame = page->focusController().focusedFrame();
     if (Document* focusedDocument = focusedFrame ? focusedFrame->document() : 0)
         newNode = focusedDocument->focusedElement();
 
@@ -561,7 +561,7 @@ void QWebPageAdapter::mouseReleaseEvent(QMouseEvent *ev)
 
 void QWebPageAdapter::handleSoftwareInputPanel(Qt::MouseButton button, const QPoint& pos)
 {
-    Frame* frame = page->focusController()->focusedFrame();
+    Frame* frame = page->focusController().focusedFrame();
     if (!frame)
         return;
 
@@ -621,7 +621,7 @@ bool QWebPageAdapter::performDrag(const QMimeData *data, const QPoint &pos, Qt::
 
 void QWebPageAdapter::inputMethodEvent(QInputMethodEvent *ev)
 {
-    WebCore::Frame *frame = page->focusController()->focusedOrMainFrame();
+    WebCore::Frame *frame = page->focusController().focusedOrMainFrame();
     WebCore::Editor &editor = frame->editor();
 
     if (!editor.canEdit()) {
@@ -701,7 +701,7 @@ void QWebPageAdapter::inputMethodEvent(QInputMethodEvent *ev)
 
 QVariant QWebPageAdapter::inputMethodQuery(Qt::InputMethodQuery property) const
 {
-    Frame* frame = page->focusController()->focusedFrame();
+    Frame* frame = page->focusController().focusedFrame();
     if (!frame)
         return QVariant();
 
@@ -911,7 +911,7 @@ QList<MenuItem> descriptionForPlatformMenu(const Vector<ContextMenuItem>& items,
 QWebHitTestResultPrivate* QWebPageAdapter::updatePositionDependentMenuActions(const QPoint& pos, QBitArray* visitedWebActions)
 {
     ASSERT(visitedWebActions);
-    WebCore::Frame* focusedFrame = page->focusController()->focusedOrMainFrame();
+    WebCore::Frame* focusedFrame = page->focusController().focusedOrMainFrame();
     HitTestResult result = focusedFrame->eventHandler()->hitTestResultAtPoint(focusedFrame->view()->windowToContents(pos));
     page->contextMenuController()->setHitTestResult(result);
 
@@ -1012,7 +1012,7 @@ void QWebPageAdapter::didCloseInspector()
 void QWebPageAdapter::updateActionInternal(QWebPageAdapter::MenuAction action, const char* commandName, bool* enabled, bool* checked)
 {
     WebCore::FrameLoader* loader = mainFrameAdapter()->frame->loader();
-    WebCore::Editor& editor = page->focusController()->focusedOrMainFrame()->editor();
+    WebCore::Editor& editor = page->focusController().focusedOrMainFrame()->editor();
 
     switch (action) {
     case QWebPageAdapter::Back:
@@ -1051,7 +1051,7 @@ void QWebPageAdapter::updateActionInternal(QWebPageAdapter::MenuAction action, c
 
 void QWebPageAdapter::triggerAction(QWebPageAdapter::MenuAction action, QWebHitTestResultPrivate* hitTestResult, const char* commandName, bool endToEndReload)
 {
-    Frame* frame = page->focusController()->focusedOrMainFrame();
+    Frame* frame = page->focusController().focusedOrMainFrame();
     if (!frame)
         return;
     Editor& editor = frame->editor();
@@ -1256,14 +1256,14 @@ bool QWebPageAdapter::treatSchemeAsLocal(const QString& scheme)
 
 QObject* QWebPageAdapter::currentFrame() const
 {
-    Frame* frame = page->focusController()->focusedOrMainFrame();
+    Frame* frame = page->focusController().focusedOrMainFrame();
     return frame->loader()->networkingContext()->originatingObject();
 }
 
 bool QWebPageAdapter::hasFocusedNode() const
 {
     bool hasFocus = false;
-    Frame* frame = page->focusController()->focusedFrame();
+    Frame* frame = page->focusController().focusedFrame();
     if (frame) {
         Document* document = frame->document();
         hasFocus = document && document->focusedElement();
@@ -1297,13 +1297,13 @@ QWebPageAdapter::ViewportAttributes QWebPageAdapter::viewportAttributesForSize(c
 
 bool QWebPageAdapter::handleKeyEvent(QKeyEvent *ev)
 {
-    Frame* frame = page->focusController()->focusedOrMainFrame();
+    Frame* frame = page->focusController().focusedOrMainFrame();
     return frame->eventHandler()->keyEvent(PlatformKeyboardEvent(ev, m_useNativeVirtualKeyAsDOMKey));
 }
 
 bool QWebPageAdapter::handleScrolling(QKeyEvent *ev)
 {
-    Frame* frame = page->focusController()->focusedOrMainFrame();
+    Frame* frame = page->focusController().focusedOrMainFrame();
     WebCore::ScrollDirection direction;
     WebCore::ScrollGranularity granularity;
 
@@ -1350,11 +1350,11 @@ bool QWebPageAdapter::handleScrolling(QKeyEvent *ev)
 
 void QWebPageAdapter::focusInEvent(QFocusEvent *)
 {
-    FocusController* focusController = page->focusController();
-    focusController->setActive(true);
-    focusController->setFocused(true);
-    if (!focusController->focusedFrame())
-        focusController->setFocusedFrame(mainFrameAdapter()->frame);
+    FocusController& focusController = page->focusController();
+    focusController.setActive(true);
+    focusController.setFocused(true);
+    if (!focusController.focusedFrame())
+        focusController.setFocusedFrame(mainFrameAdapter()->frame);
 }
 
 void QWebPageAdapter::focusOutEvent(QFocusEvent *)
@@ -1362,15 +1362,15 @@ void QWebPageAdapter::focusOutEvent(QFocusEvent *)
     // only set the focused frame inactive so that we stop painting the caret
     // and the focus frame. But don't tell the focus controller so that upon
     // focusInEvent() we can re-activate the frame.
-    FocusController* focusController = page->focusController();
+    FocusController& focusController = page->focusController();
     // Call setFocused first so that window.onblur doesn't get called twice
-    focusController->setFocused(false);
-    focusController->setActive(false);
+    focusController.setFocused(false);
+    focusController.setActive(false);
 }
 
 bool QWebPageAdapter::handleShortcutOverrideEvent(QKeyEvent* event)
 {
-    WebCore::Frame* frame = page->focusController()->focusedOrMainFrame();
+    WebCore::Frame* frame = page->focusController().focusedOrMainFrame();
     WebCore::Editor& editor = frame->editor();
     if (!editor.canEdit())
         return false;
@@ -1453,7 +1453,7 @@ bool QWebPageAdapter::swallowContextMenuEvent(QContextMenuEvent *event, QWebFram
         }
     }
 
-    WebCore::Frame* focusedFrame = page->focusController()->focusedOrMainFrame();
+    WebCore::Frame* focusedFrame = page->focusController().focusedOrMainFrame();
     focusedFrame->eventHandler()->sendContextMenuEvent(convertMouseEvent(event, 1));
     ContextMenu* menu = page->contextMenuController()->contextMenu();
     // If the website defines its own handler then sendContextMenuEvent takes care of

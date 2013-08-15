@@ -328,7 +328,7 @@ void FindController::hideFindIndicator()
 
 void FindController::showFindIndicatorInSelection()
 {
-    Frame* selectedFrame = m_webPage->corePage()->focusController()->focusedOrMainFrame();
+    Frame* selectedFrame = m_webPage->corePage()->focusController().focusedOrMainFrame();
     if (!selectedFrame)
         return;
     

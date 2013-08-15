@@ -260,7 +260,7 @@ void WebPage::sendComplexTextInputToPlugin(uint64_t pluginComplexTextInputIdenti
 
 void WebPage::setComposition(const String& text, Vector<CompositionUnderline> underlines, uint64_t selectionStart, uint64_t selectionEnd, uint64_t replacementRangeStart, uint64_t replacementRangeEnd, EditorState& newState)
 {
-    Frame* frame = m_page->focusController()->focusedOrMainFrame();
+    Frame* frame = m_page->focusController().focusedOrMainFrame();
 
     if (frame->selection()->isContentEditable()) {
         RefPtr<Range> replacementRange;
@@ -277,25 +277,21 @@ void WebPage::setComposition(const String& text, Vector<CompositionUnderline> un
 
 void WebPage::confirmComposition(EditorState& newState)
 {
-    Frame* frame = m_page->focusController()->focusedOrMainFrame();
-
+    Frame* frame = m_page->focusController().focusedOrMainFrame();
     frame->editor().confirmComposition();
-
     newState = editorState();
 }
 
 void WebPage::cancelComposition(EditorState& newState)
 {
-    Frame* frame = m_page->focusController()->focusedOrMainFrame();
-
+    Frame* frame = m_page->focusController().focusedOrMainFrame();
     frame->editor().cancelComposition();
-
     newState = editorState();
 }
 
 void WebPage::insertText(const String& text, uint64_t replacementRangeStart, uint64_t replacementRangeEnd, bool& handled, EditorState& newState)
 {
-    Frame* frame = m_page->focusController()->focusedOrMainFrame();
+    Frame* frame = m_page->focusController().focusedOrMainFrame();
 
     if (replacementRangeStart != NSNotFound) {
         RefPtr<Range> replacementRange = convertToRange(frame, NSMakeRange(replacementRangeStart, replacementRangeEnd - replacementRangeStart));
@@ -317,7 +313,7 @@ void WebPage::insertText(const String& text, uint64_t replacementRangeStart, uin
 
 void WebPage::insertDictatedText(const String& text, uint64_t replacementRangeStart, uint64_t replacementRangeEnd, const Vector<WebCore::DictationAlternative>& dictationAlternativeLocations, bool& handled, EditorState& newState)
 {
-    Frame* frame = m_page->focusController()->focusedOrMainFrame();
+    Frame* frame = m_page->focusController().focusedOrMainFrame();
 
     if (replacementRangeStart != NSNotFound) {
         RefPtr<Range> replacementRange = convertToRange(frame, NSMakeRange(replacementRangeStart, replacementRangeEnd - replacementRangeStart));
@@ -334,7 +330,7 @@ void WebPage::getMarkedRange(uint64_t& location, uint64_t& length)
 {
     location = NSNotFound;
     length = 0;
-    Frame* frame = m_page->focusController()->focusedOrMainFrame();
+    Frame* frame = m_page->focusController().focusedOrMainFrame();
     if (!frame)
         return;
 
@@ -351,7 +347,7 @@ void WebPage::getSelectedRange(uint64_t& location, uint64_t& length)
 {
     location = NSNotFound;
     length = 0;
-    Frame* frame = m_page->focusController()->focusedOrMainFrame();
+    Frame* frame = m_page->focusController().focusedOrMainFrame();
     if (!frame)
         return;
 
@@ -368,7 +364,7 @@ void WebPage::getAttributedSubstringFromRange(uint64_t location, uint64_t length
 {
     NSRange nsRange = NSMakeRange(location, length - location);
 
-    Frame* frame = m_page->focusController()->focusedOrMainFrame();
+    Frame* frame = m_page->focusController().focusedOrMainFrame();
     if (!frame)
         return;
 
@@ -400,7 +396,7 @@ void WebPage::characterIndexForPoint(IntPoint point, uint64_t& index)
         return;
 
     HitTestResult result = frame->eventHandler()->hitTestResultAtPoint(point);
-    frame = result.innerNonSharedNode() ? result.innerNodeFrame() : m_page->focusController()->focusedOrMainFrame();
+    frame = result.innerNonSharedNode() ? result.innerNodeFrame() : m_page->focusController().focusedOrMainFrame();
     
     RefPtr<Range> range = frame->rangeForPoint(result.roundedPointInInnerNodeFrame());
     if (!range)
@@ -430,7 +426,7 @@ PassRefPtr<Range> convertToRange(Frame* frame, NSRange nsrange)
     
 void WebPage::firstRectForCharacterRange(uint64_t location, uint64_t length, WebCore::IntRect& resultRect)
 {
-    Frame* frame = m_page->focusController()->focusedOrMainFrame();
+    Frame* frame = m_page->focusController().focusedOrMainFrame();
     resultRect.setLocation(IntPoint(0, 0));
     resultRect.setSize(IntSize(0, 0));
     
@@ -494,7 +490,7 @@ void WebPage::performDictionaryLookupAtLocation(const FloatPoint& floatPoint)
     // Find the frame the point is over.
     IntPoint point = roundedIntPoint(floatPoint);
     HitTestResult result = frame->eventHandler()->hitTestResultAtPoint(frame->view()->windowToContents(point));
-    frame = result.innerNonSharedNode() ? result.innerNonSharedNode()->document()->frame() : m_page->focusController()->focusedOrMainFrame();
+    frame = result.innerNonSharedNode() ? result.innerNonSharedNode()->document()->frame() : m_page->focusController().focusedOrMainFrame();
 
     IntPoint translatedPoint = frame->view()->windowToContents(point);
 
@@ -503,7 +499,7 @@ void WebPage::performDictionaryLookupAtLocation(const FloatPoint& floatPoint)
         return;
 
     VisiblePosition position = frame->visiblePositionForPoint(translatedPoint);
-    VisibleSelection selection = m_page->focusController()->focusedOrMainFrame()->selection()->selection();
+    VisibleSelection selection = m_page->focusController().focusedOrMainFrame()->selection()->selection();
     if (shouldUseSelection(position, selection)) {
         performDictionaryLookupForSelection(frame, selection);
         return;
@@ -685,7 +681,7 @@ void WebPage::registerUIProcessAccessibilityTokens(const CoreIPC::DataReference&
 
 void WebPage::readSelectionFromPasteboard(const String& pasteboardName, bool& result)
 {
-    Frame* frame = m_page->focusController()->focusedOrMainFrame();
+    Frame* frame = m_page->focusController().focusedOrMainFrame();
     if (!frame || frame->selection()->isNone()) {
         result = false;
         return;
@@ -696,7 +692,7 @@ void WebPage::readSelectionFromPasteboard(const String& pasteboardName, bool& re
 
 void WebPage::getStringSelectionForPasteboard(String& stringValue)
 {
-    Frame* frame = m_page->focusController()->focusedOrMainFrame();
+    Frame* frame = m_page->focusController().focusedOrMainFrame();
 
     if (!frame)
         return;
@@ -717,7 +713,7 @@ void WebPage::getStringSelectionForPasteboard(String& stringValue)
 
 void WebPage::getDataSelectionForPasteboard(const String pasteboardType, SharedMemory::Handle& handle, uint64_t& size)
 {
-    Frame* frame = m_page->focusController()->focusedOrMainFrame();
+    Frame* frame = m_page->focusController().focusedOrMainFrame();
     if (!frame || frame->selection()->isNone())
         return;
 
@@ -789,7 +785,7 @@ bool WebPage::platformCanHandleRequest(const WebCore::ResourceRequest& request)
 void WebPage::shouldDelayWindowOrderingEvent(const WebKit::WebMouseEvent& event, bool& result)
 {
     result = false;
-    Frame* frame = m_page->focusController()->focusedOrMainFrame();
+    Frame* frame = m_page->focusController().focusedOrMainFrame();
     if (!frame)
         return;
 
@@ -803,7 +799,7 @@ void WebPage::shouldDelayWindowOrderingEvent(const WebKit::WebMouseEvent& event,
 void WebPage::acceptsFirstMouse(int eventNumber, const WebKit::WebMouseEvent& event, bool& result)
 {
     result = false;
-    Frame* frame = m_page->focusController()->focusedOrMainFrame();
+    Frame* frame = m_page->focusController().focusedOrMainFrame();
     if (!frame)
         return;
     

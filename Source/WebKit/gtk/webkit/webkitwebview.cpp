@@ -361,9 +361,9 @@ static gboolean webkit_web_view_forward_context_menu_event(WebKitWebView* webVie
         if (!targetFrame)
             targetFrame = mainFrame;
 
-        focusedFrame = page->focusController()->focusedOrMainFrame();
+        focusedFrame = page->focusController().focusedOrMainFrame();
         if (targetFrame != focusedFrame) {
-            page->focusController()->setFocusedFrame(targetFrame);
+            page->focusController().setFocusedFrame(targetFrame);
             focusedFrame = targetFrame;
         }
         if (focusedFrame == mainFrame)
@@ -448,7 +448,7 @@ static IntPoint getLocationForKeyboardGeneratedContextMenu(Frame* frame)
 
 static gboolean webkit_web_view_popup_menu_handler(GtkWidget* widget)
 {
-    Frame* frame = core(WEBKIT_WEB_VIEW(widget))->focusController()->focusedOrMainFrame();
+    Frame* frame = core(WEBKIT_WEB_VIEW(widget))->focusController().focusedOrMainFrame();
     IntPoint location = getLocationForKeyboardGeneratedContextMenu(frame);
 
     FrameView* view = frame->view();
@@ -908,14 +908,14 @@ static void webkit_web_view_grab_focus(GtkWidget* widget)
 
     if (gtk_widget_is_sensitive(widget)) {
         WebKitWebView* webView = WEBKIT_WEB_VIEW(widget);
-        FocusController* focusController = core(webView)->focusController();
+        FocusController& focusController = core(webView)->focusController();
 
-        focusController->setActive(true);
+        focusController.setActive(true);
 
-        if (focusController->focusedFrame())
-            focusController->setFocused(true);
+        if (focusController.focusedFrame())
+            focusController.setFocused(true);
         else
-            focusController->setFocusedFrame(core(webView)->mainFrame());
+            focusController.setFocusedFrame(core(webView)->mainFrame());
     }
 
     return GTK_WIDGET_CLASS(webkit_web_view_parent_class)->grab_focus(widget);
@@ -930,15 +930,15 @@ static gboolean webkit_web_view_focus_in_event(GtkWidget* widget, GdkEventFocus*
         return GTK_WIDGET_CLASS(webkit_web_view_parent_class)->focus_in_event(widget, event);
 
     WebKitWebView* webView = WEBKIT_WEB_VIEW(widget);
-    FocusController* focusController = core(webView)->focusController();
+    FocusController& focusController = core(webView)->focusController();
 
-    focusController->setActive(true);
-    if (focusController->focusedFrame())
-        focusController->setFocused(true);
+    focusController.setActive(true);
+    if (focusController.focusedFrame())
+        focusController.setFocused(true);
     else
-        focusController->setFocusedFrame(core(webView)->mainFrame());
+        focusController.setFocusedFrame(core(webView)->mainFrame());
 
-    if (focusController->focusedFrame()->editor().canEdit())
+    if (focusController.focusedFrame()->editor().canEdit())
         webView->priv->imFilter.notifyFocusedIn();
     return GTK_WIDGET_CLASS(webkit_web_view_parent_class)->focus_in_event(widget, event);
 }
@@ -950,8 +950,8 @@ static gboolean webkit_web_view_focus_out_event(GtkWidget* widget, GdkEventFocus
     // We may hit this code while destroying the widget, and we might
     // no longer have a page, then.
     if (Page* page = core(webView)) {
-        page->focusController()->setActive(false);
-        page->focusController()->setFocused(false);
+        page->focusController().setActive(false);
+        page->focusController().setFocused(false);
     }
 
     webView->priv->imFilter.notifyFocusedOut();
@@ -1180,31 +1180,31 @@ static gboolean webkit_web_view_real_console_message(WebKitWebView* webView, con
 
 static void webkit_web_view_real_select_all(WebKitWebView* webView)
 {
-    Frame* frame = core(webView)->focusController()->focusedOrMainFrame();
+    Frame* frame = core(webView)->focusController().focusedOrMainFrame();
     frame->editor().command("SelectAll").execute();
 }
 
 static void webkit_web_view_real_cut_clipboard(WebKitWebView* webView)
 {
-    Frame* frame = core(webView)->focusController()->focusedOrMainFrame();
+    Frame* frame = core(webView)->focusController().focusedOrMainFrame();
     frame->editor().command("Cut").execute();
 }
 
 static void webkit_web_view_real_copy_clipboard(WebKitWebView* webView)
 {
-    Frame* frame = core(webView)->focusController()->focusedOrMainFrame();
+    Frame* frame = core(webView)->focusController().focusedOrMainFrame();
     frame->editor().command("Copy").execute();
 }
 
 static void webkit_web_view_real_undo(WebKitWebView* webView)
 {
-    Frame* frame = core(webView)->focusController()->focusedOrMainFrame();
+    Frame* frame = core(webView)->focusController().focusedOrMainFrame();
     frame->editor().command("Undo").execute();
 }
 
 static void webkit_web_view_real_redo(WebKitWebView* webView)
 {
-    Frame* frame = core(webView)->focusController()->focusedOrMainFrame();
+    Frame* frame = core(webView)->focusController().focusedOrMainFrame();
     frame->editor().command("Redo").execute();
 }
 
@@ -1254,7 +1254,7 @@ static gboolean webkit_web_view_real_move_cursor (WebKitWebView* webView, GtkMov
         return false;
     }
 
-    Frame* frame = core(webView)->focusController()->focusedOrMainFrame();
+    Frame* frame = core(webView)->focusController().focusedOrMainFrame();
     if (!frame->eventHandler()->scrollOverflow(direction, granularity))
         frame->view()->scroll(direction, granularity);
 
@@ -1263,7 +1263,7 @@ static gboolean webkit_web_view_real_move_cursor (WebKitWebView* webView, GtkMov
 
 static void webkit_web_view_real_paste_clipboard(WebKitWebView* webView)
 {
-    Frame* frame = core(webView)->focusController()->focusedOrMainFrame();
+    Frame* frame = core(webView)->focusController().focusedOrMainFrame();
     frame->editor().command("Paste").execute();
 }
 
@@ -1493,7 +1493,7 @@ static void webkit_web_view_drag_end(GtkWidget* widget, GdkDragContext* context)
     if (!webView->priv->dragAndDropHelper.handleDragEnd(context))
         return;
 
-    Frame* frame = core(webView)->focusController()->focusedOrMainFrame();
+    Frame* frame = core(webView)->focusController().focusedOrMainFrame();
     if (!frame)
         return;
 
@@ -1592,7 +1592,7 @@ static gboolean webkit_web_view_query_tooltip(GtkWidget *widget, gint x, gint y,
         WebKitWebView* webView = WEBKIT_WEB_VIEW(widget);
 
         // Get the title of the current focused element.
-        Frame* coreFrame = core(webView)->focusController()->focusedOrMainFrame();
+        Frame* coreFrame = core(webView)->focusController().focusedOrMainFrame();
         if (!coreFrame)
             return FALSE;
 
@@ -4439,7 +4439,7 @@ WebKitWebFrame* webkit_web_view_get_focused_frame(WebKitWebView* webView)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), NULL);
 
-    Frame* focusedFrame = core(webView)->focusController()->focusedFrame();
+    Frame* focusedFrame = core(webView)->focusController().focusedFrame();
     return kit(focusedFrame);
 }
 
@@ -4463,7 +4463,7 @@ gboolean webkit_web_view_can_cut_clipboard(WebKitWebView* webView)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), FALSE);
 
-    Frame* frame = core(webView)->focusController()->focusedOrMainFrame();
+    Frame* frame = core(webView)->focusController().focusedOrMainFrame();
     return frame->editor().canCut() || frame->editor().canDHTMLCut();
 }
 
@@ -4479,7 +4479,7 @@ gboolean webkit_web_view_can_copy_clipboard(WebKitWebView* webView)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), FALSE);
 
-    Frame* frame = core(webView)->focusController()->focusedOrMainFrame();
+    Frame* frame = core(webView)->focusController().focusedOrMainFrame();
     return frame->editor().canCopy() || frame->editor().canDHTMLCopy();
 }
 
@@ -4495,7 +4495,7 @@ gboolean webkit_web_view_can_paste_clipboard(WebKitWebView* webView)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), FALSE);
 
-    Frame* frame = core(webView)->focusController()->focusedOrMainFrame();
+    Frame* frame = core(webView)->focusController().focusedOrMainFrame();
     return frame->editor().canPaste() || frame->editor().canDHTMLPaste();
 }
 
@@ -4551,7 +4551,7 @@ void webkit_web_view_delete_selection(WebKitWebView* webView)
 {
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
 
-    Frame* frame = core(webView)->focusController()->focusedOrMainFrame();
+    Frame* frame = core(webView)->focusController().focusedOrMainFrame();
     frame->editor().performDelete();
 }
 
@@ -5094,7 +5094,7 @@ gboolean webkit_web_view_can_undo(WebKitWebView* webView)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), FALSE);
 
-    Frame* frame = core(webView)->focusController()->focusedOrMainFrame();
+    Frame* frame = core(webView)->focusController().focusedOrMainFrame();
     return frame->editor().canUndo();
 }
 
@@ -5129,7 +5129,7 @@ gboolean webkit_web_view_can_redo(WebKitWebView* webView)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), FALSE);
 
-    Frame* frame = core(webView)->focusController()->focusedOrMainFrame();
+    Frame* frame = core(webView)->focusController().focusedOrMainFrame();
     return frame->editor().canRedo();
 }
 
@@ -5315,7 +5315,7 @@ WebKitHitTestResult* webkit_web_view_get_hit_test_result(WebKitWebView* webView,
     g_return_val_if_fail(event, NULL);
 
     PlatformMouseEvent mouseEvent = PlatformMouseEvent(event);
-    Frame* frame = core(webView)->focusController()->focusedOrMainFrame();
+    Frame* frame = core(webView)->focusController().focusedOrMainFrame();
     HitTestRequest request(HitTestRequest::Active | HitTestRequest::DisallowShadowContent);
     IntPoint documentPoint = documentPointForWindowPoint(frame, mouseEvent.position());
     MouseEventWithHitTestResults mev = frame->document()->prepareMouseEvent(request, documentPoint, mouseEvent);
@@ -5502,7 +5502,7 @@ void webkitWebViewDirectionChanged(WebKitWebView* webView, GtkTextDirection prev
 
     GtkTextDirection direction = gtk_widget_get_direction(GTK_WIDGET(webView));
 
-    Frame* focusedFrame = core(webView)->focusController()->focusedFrame();
+    Frame* focusedFrame = core(webView)->focusController().focusedFrame();
     if (!focusedFrame)
         return;
 

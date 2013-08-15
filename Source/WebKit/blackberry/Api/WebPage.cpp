@@ -2513,7 +2513,7 @@ void WebPagePrivate::assignFocus(Platform::FocusDirection direction)
     switch (direction) {
     case FocusDirectionForward:
     case FocusDirectionBackward:
-        m_page->focusController()->setInitialFocus((FocusDirection) direction, 0);
+        m_page->focusController().setInitialFocus((FocusDirection) direction, 0);
         break;
     case FocusDirectionNone:
         break;
@@ -2573,7 +2573,7 @@ PassRefPtr<Node> WebPagePrivate::contextNode(TargetDetectionStrategy strategy)
     // Check if we're using LinkToLink and the user is not touching the screen.
     if (m_webSettings->doesGetFocusNodeContext() && !isTouching) {
         RefPtr<Node> node;
-        node = m_page->focusController()->focusedOrMainFrame()->document()->focusedElement();
+        node = m_page->focusController().focusedOrMainFrame()->document()->focusedElement();
         if (node) {
             IntRect visibleRect = IntRect(IntPoint(), actualVisibleSize());
             if (!visibleRect.intersects(getNodeWindowRect(node.get())))
@@ -3222,7 +3222,7 @@ void WebPagePrivate::selectionChanged(Frame* frame)
     // FIXME: This is a hack!
     // To ensure the selection being changed has its frame 'focused', lets
     // set it as focused ourselves (PR #104724).
-    m_page->focusController()->setFocusedFrame(frame);
+    m_page->focusController().setFocusedFrame(frame);
 }
 
 void WebPagePrivate::updateSelectionScrollView(const Node* node)
@@ -4170,7 +4170,7 @@ void WebPage::touchEventCancel()
 
 Frame* WebPagePrivate::focusedOrMainFrame() const
 {
-    return m_page->focusController()->focusedOrMainFrame();
+    return m_page->focusController().focusedOrMainFrame();
 }
 
 void WebPagePrivate::clearFocusNode()
@@ -4181,7 +4181,7 @@ void WebPagePrivate::clearFocusNode()
     ASSERT(frame->document());
 
     if (frame->document()->focusedElement())
-        frame->page()->focusController()->setFocusedElement(0, frame);
+        frame->page()->focusController().setFocusedElement(0, frame);
 }
 
 BlackBerry::Platform::String WebPage::textEncoding()
@@ -4223,8 +4223,6 @@ bool WebPage::keyEvent(const Platform::KeyboardEvent& keyboardEvent)
 
     if (d->m_page->defersLoading())
         return false;
-
-    ASSERT(d->m_page->focusController());
 
     return d->m_inputHandler->handleKeyboardInput(keyboardEvent);
 }
@@ -4710,14 +4708,14 @@ void WebPage::setFocused(bool focused)
         return;
     }
     DeferredTaskSetFocused::finishOrCancel(d);
-    FocusController* focusController = d->m_page->focusController();
-    focusController->setActive(focused);
+    FocusController& focusController = d->m_page->focusController();
+    focusController.setActive(focused);
     if (focused) {
-        Frame* frame = focusController->focusedFrame();
+        Frame* frame = focusController.focusedFrame();
         if (!frame)
-            focusController->setFocusedFrame(d->m_mainFrame);
+            focusController.setFocusedFrame(d->m_mainFrame);
     }
-    focusController->setFocused(focused);
+    focusController.setFocused(focused);
 }
 
 bool WebPage::findNextString(const char* text, bool forward, bool caseSensitive, bool wrap, bool highlightAllMatches, bool selectActiveMatchOnClear)
@@ -5897,7 +5895,7 @@ void WebPagePrivate::didChangeSettings(WebSettings* webSettings)
 
 BlackBerry::Platform::String WebPage::textHasAttribute(const BlackBerry::Platform::String& query) const
 {
-    if (Document* doc = d->m_page->focusController()->focusedOrMainFrame()->document())
+    if (Document* doc = d->m_page->focusController().focusedOrMainFrame()->document())
         return doc->queryCommandValue(query);
 
     return BlackBerry::Platform::String::emptyString();

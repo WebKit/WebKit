@@ -1680,7 +1680,7 @@ bool FrameView::isHandlingWheelEvent() const
 bool FrameView::shouldSetCursor() const
 {
     Page* page = frame()->page();
-    return page && page->isOnscreen() && page->focusController()->isActive();
+    return page && page->isOnscreen() && page->focusController().isActive();
 }
 
 bool FrameView::scrollContentsFastPath(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect)
@@ -3086,7 +3086,7 @@ IntRect FrameView::windowClipRectForFrameOwner(const HTMLFrameOwnerElement* owne
 bool FrameView::isActive() const
 {
     Page* page = frame()->page();
-    return page && page->focusController()->isActive();
+    return page && page->focusController().isActive();
 }
 
 void FrameView::scrollTo(const IntSize& newOffset)

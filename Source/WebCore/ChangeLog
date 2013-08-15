@@ -1,3 +1,12 @@
+2013-08-15  Andreas Kling  <akling@apple.com>
+
+        <https://webkit.org/b/119826> Page::focusController() should return a reference.
+
+        Reviewed by Anders Carlsson.
+
+        Page::focusController() is never null so make it return a reference.
+        Some unnecessary checks were removed as a result.
+
 2013-08-15  Rob Buis  <rwlbuis@webkit.org>
 
         ASSERTION FAILED: !m_adoptionIsRequired in void WebCore::TreeShared<NodeType>::ref()

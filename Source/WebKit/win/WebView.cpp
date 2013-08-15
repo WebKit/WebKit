@@ -1336,7 +1336,7 @@ bool WebView::handleContextMenuEvent(WPARAM wParam, LPARAM lParam)
         // not run.
         m_page->contextMenuController()->clearContextMenu();
 
-        Frame* focusedFrame = m_page->focusController()->focusedOrMainFrame();
+        Frame* focusedFrame = m_page->focusController().focusedOrMainFrame();
         return focusedFrame->eventHandler()->sendContextMenuEventForKey();
 
     } else {
@@ -1350,7 +1350,7 @@ bool WebView::handleContextMenuEvent(WPARAM wParam, LPARAM lParam)
 
     IntPoint documentPoint(m_page->mainFrame()->view()->windowToContents(coords));
     HitTestResult result = m_page->mainFrame()->eventHandler()->hitTestResultAtPoint(documentPoint);
-    Frame* targetFrame = result.innerNonSharedNode() ? result.innerNonSharedNode()->document()->frame() : m_page->focusController()->focusedOrMainFrame();
+    Frame* targetFrame = result.innerNonSharedNode() ? result.innerNonSharedNode()->document()->frame() : m_page->focusController().focusedOrMainFrame();
 
     targetFrame->view()->setCursor(pointerCursor());
     PlatformMouseEvent mouseEvent(m_viewWindow, WM_RBUTTONUP, wParam, lParam);
@@ -1788,7 +1788,7 @@ bool WebView::verticalScroll(WPARAM wParam, LPARAM /*lParam*/)
         break;
     }
     
-    Frame* frame = m_page->focusController()->focusedOrMainFrame();
+    Frame* frame = m_page->focusController().focusedOrMainFrame();
     return frame->eventHandler()->scrollRecursively(direction, granularity);
 }
 
@@ -1817,14 +1817,14 @@ bool WebView::horizontalScroll(WPARAM wParam, LPARAM /*lParam*/)
         return false;
     }
 
-    Frame* frame = m_page->focusController()->focusedOrMainFrame();
+    Frame* frame = m_page->focusController().focusedOrMainFrame();
     return frame->eventHandler()->scrollRecursively(direction, granularity);
 }
 
 
 bool WebView::execCommand(WPARAM wParam, LPARAM /*lParam*/)
 {
-    Frame* frame = m_page->focusController()->focusedOrMainFrame();
+    Frame* frame = m_page->focusController().focusedOrMainFrame();
     switch (LOWORD(wParam)) {
         case SelectAll:
             return frame->editor().command("SelectAll").execute();
@@ -1840,7 +1840,7 @@ bool WebView::keyUp(WPARAM virtualKeyCode, LPARAM keyData, bool systemKeyDown)
 {
     PlatformKeyboardEvent keyEvent(m_viewWindow, virtualKeyCode, keyData, PlatformEvent::KeyUp, systemKeyDown);
 
-    Frame* frame = m_page->focusController()->focusedOrMainFrame();
+    Frame* frame = m_page->focusController().focusedOrMainFrame();
     m_currentCharacterCode = 0;
 
     return frame->eventHandler()->keyEvent(keyEvent);
@@ -2006,7 +2006,7 @@ bool WebView::keyDown(WPARAM virtualKeyCode, LPARAM keyData, bool systemKeyDown)
         return false;
     }
 #endif
-    Frame* frame = m_page->focusController()->focusedOrMainFrame();
+    Frame* frame = m_page->focusController().focusedOrMainFrame();
 
     PlatformKeyboardEvent keyEvent(m_viewWindow, virtualKeyCode, keyData, PlatformEvent::RawKeyDown, systemKeyDown);
     bool handled = frame->eventHandler()->keyEvent(keyEvent);
@@ -2078,7 +2078,7 @@ bool WebView::keyDown(WPARAM virtualKeyCode, LPARAM keyData, bool systemKeyDown)
 
 bool WebView::keyPress(WPARAM charCode, LPARAM keyData, bool systemKeyDown)
 {
-    Frame* frame = m_page->focusController()->focusedOrMainFrame();
+    Frame* frame = m_page->focusController().focusedOrMainFrame();
 
     PlatformKeyboardEvent keyEvent(m_viewWindow, charCode, keyData, PlatformEvent::Char, systemKeyDown);
     // IE does not dispatch keypress event for WM_SYSCHAR.
@@ -2270,14 +2270,14 @@ LRESULT CALLBACK WebView::WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam,
                 && SUCCEEDED(uiDelegate->QueryInterface(IID_IWebUIDelegatePrivate, (void**) &uiDelegatePrivate)) && uiDelegatePrivate)
                 uiDelegatePrivate->webViewReceivedFocus(webView);
 
-            FocusController* focusController = webView->page()->focusController();
-            if (Frame* frame = focusController->focusedFrame()) {
+            FocusController& focusController = webView->page()->focusController();
+            if (Frame* frame = focusController.focusedFrame()) {
                 // Send focus events unless the previously focused window is a
                 // child of ours (for example a plugin).
                 if (!IsChild(hWnd, reinterpret_cast<HWND>(wParam)))
-                    focusController->setFocused(true);
+                    focusController.setFocused(true);
             } else
-                focusController->setFocused(true);
+                focusController.setFocused(true);
             break;
         }
         case WM_KILLFOCUS: {
@@ -2288,12 +2288,12 @@ LRESULT CALLBACK WebView::WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam,
                 && SUCCEEDED(uiDelegate->QueryInterface(IID_IWebUIDelegatePrivate, (void**) &uiDelegatePrivate)) && uiDelegatePrivate)
                 uiDelegatePrivate->webViewLostFocus(webView, (OLE_HANDLE)(ULONG64)newFocusWnd);
 
-            FocusController* focusController = webView->page()->focusController();
-            Frame* frame = focusController->focusedOrMainFrame();
+            FocusController& focusController = webView->page()->focusController();
+            Frame* frame = focusController.focusedOrMainFrame();
             webView->resetIME(frame);
             // Send blur events unless we're losing focus to a child of ours.
             if (!IsChild(hWnd, newFocusWnd))
-                focusController->setFocused(false);
+                focusController.setFocused(false);
 
             // If we are pan-scrolling when we lose focus, stop the pan scrolling.
             frame->eventHandler()->stopAutoscrollTimer();
@@ -3018,7 +3018,7 @@ HRESULT STDMETHODCALLTYPE WebView::focusedFrame(
     }
 
     *frame = 0;
-    Frame* f = m_page->focusController()->focusedFrame();
+    Frame* f = m_page->focusController().focusedFrame();
     if (!f)
         return E_FAIL;
 
@@ -3477,16 +3477,16 @@ bool WebView::active()
 
 void WebView::updateActiveState()
 {
-    m_page->focusController()->setActive(active());
+    m_page->focusController().setActive(active());
 }
 
 HRESULT STDMETHODCALLTYPE WebView::updateFocusedAndActiveState()
 {
     updateActiveState();
 
-    bool active = m_page->focusController()->isActive();
+    bool active = m_page->focusController().isActive();
     Frame* mainFrame = m_page->mainFrame();
-    Frame* focusedFrame = m_page->focusController()->focusedOrMainFrame();
+    Frame* focusedFrame = m_page->focusController().focusedOrMainFrame();
     mainFrame->selection()->setFocused(active && mainFrame == focusedFrame);
 
     return S_OK;
@@ -3494,7 +3494,7 @@ HRESULT STDMETHODCALLTYPE WebView::updateFocusedAndActiveState()
 
 HRESULT STDMETHODCALLTYPE WebView::executeCoreCommandByName(BSTR name, BSTR value)
 {
-    m_page->focusController()->focusedOrMainFrame()->editor().command(toString(name)).execute(toString(value));
+    m_page->focusController().focusedOrMainFrame()->editor().command(toString(name)).execute(toString(value));
 
     return S_OK;
 }
@@ -3560,7 +3560,7 @@ HRESULT STDMETHODCALLTYPE WebView::generateSelectionImage(BOOL forceWhiteText, O
 {
     *hBitmap = 0;
 
-    WebCore::Frame* frame = m_page->focusController()->focusedOrMainFrame();
+    WebCore::Frame* frame = m_page->focusController().focusedOrMainFrame();
 
     if (frame) {
         OwnPtr<HBITMAP> bitmap = imageFromSelection(frame, forceWhiteText ? TRUE : FALSE);
@@ -3572,7 +3572,7 @@ HRESULT STDMETHODCALLTYPE WebView::generateSelectionImage(BOOL forceWhiteText, O
 
 HRESULT STDMETHODCALLTYPE WebView::selectionRect(RECT* rc)
 {
-    WebCore::Frame* frame = m_page->focusController()->focusedOrMainFrame();
+    WebCore::Frame* frame = m_page->focusController().focusedOrMainFrame();
 
     if (frame) {
         IntRect ir = enclosingIntRect(frame->selection()->bounds());
@@ -3717,7 +3717,7 @@ HRESULT STDMETHODCALLTYPE WebView::selectedText(
 
     *text = 0;
 
-    Frame* focusedFrame = (m_page && m_page->focusController()) ? m_page->focusController()->focusedOrMainFrame() : 0;
+    Frame* focusedFrame = m_page ? m_page->focusController().focusedOrMainFrame() : 0;
     if (!focusedFrame)
         return E_FAIL;
 
@@ -4306,7 +4306,7 @@ HRESULT STDMETHODCALLTYPE WebView::hasSelectedRange(
 HRESULT STDMETHODCALLTYPE WebView::cutEnabled( 
         /* [retval][out] */ BOOL* enabled)
 {
-    Editor& editor = m_page->focusController()->focusedOrMainFrame()->editor();
+    Editor& editor = m_page->focusController().focusedOrMainFrame()->editor();
     *enabled = editor.canCut() || editor.canDHTMLCut();
     return S_OK;
 }
@@ -4314,7 +4314,7 @@ HRESULT STDMETHODCALLTYPE WebView::cutEnabled(
 HRESULT STDMETHODCALLTYPE WebView::copyEnabled( 
         /* [retval][out] */ BOOL* enabled)
 {
-    Editor& editor = m_page->focusController()->focusedOrMainFrame()->editor();
+    Editor& editor = m_page->focusController().focusedOrMainFrame()->editor();
     *enabled = editor.canCopy() || editor.canDHTMLCopy();
     return S_OK;
 }
@@ -4322,7 +4322,7 @@ HRESULT STDMETHODCALLTYPE WebView::copyEnabled(
 HRESULT STDMETHODCALLTYPE WebView::pasteEnabled( 
         /* [retval][out] */ BOOL* enabled)
 {
-    Editor& editor = m_page->focusController()->focusedOrMainFrame()->editor();
+    Editor& editor = m_page->focusController().focusedOrMainFrame()->editor();
     *enabled = editor.canPaste() || editor.canDHTMLPaste();
     return S_OK;
 }
@@ -4330,14 +4330,14 @@ HRESULT STDMETHODCALLTYPE WebView::pasteEnabled(
 HRESULT STDMETHODCALLTYPE WebView::deleteEnabled( 
         /* [retval][out] */ BOOL* enabled)
 {
-    *enabled = m_page->focusController()->focusedOrMainFrame()->editor().canDelete();
+    *enabled = m_page->focusController().focusedOrMainFrame()->editor().canDelete();
     return S_OK;
 }
     
 HRESULT STDMETHODCALLTYPE WebView::editingEnabled( 
         /* [retval][out] */ BOOL* enabled)
 {
-    *enabled = m_page->focusController()->focusedOrMainFrame()->editor().canEdit();
+    *enabled = m_page->focusController().focusedOrMainFrame()->editor().canEdit();
     return S_OK;
 }
 
@@ -4389,7 +4389,7 @@ HRESULT STDMETHODCALLTYPE WebView::replaceSelectionWithText(
         /* [in] */ BSTR text)
 {
     Position start = m_page->mainFrame()->selection()->selection().start();
-    m_page->focusController()->focusedOrMainFrame()->editor().insertText(toString(text), 0);
+    m_page->focusController().focusedOrMainFrame()->editor().insertText(toString(text), 0);
     m_page->mainFrame()->selection()->setBase(start);
     return S_OK;
 }
@@ -4410,14 +4410,14 @@ HRESULT STDMETHODCALLTYPE WebView::replaceSelectionWithArchive(
     
 HRESULT STDMETHODCALLTYPE WebView::deleteSelection( void)
 {
-    Editor& editor = m_page->focusController()->focusedOrMainFrame()->editor();
+    Editor& editor = m_page->focusController().focusedOrMainFrame()->editor();
     editor.deleteSelectionWithSmartDelete(editor.canSmartCopyOrDelete());
     return S_OK;
 }
 
 HRESULT STDMETHODCALLTYPE WebView::clearSelection( void)
 {
-    m_page->focusController()->focusedOrMainFrame()->selection()->clear();
+    m_page->focusController().focusedOrMainFrame()->selection()->clear();
     return S_OK;
 }
     
@@ -4433,28 +4433,28 @@ HRESULT STDMETHODCALLTYPE WebView::applyStyle(
 HRESULT STDMETHODCALLTYPE WebView::copy( 
         /* [in] */ IUnknown* /*sender*/)
 {
-    m_page->focusController()->focusedOrMainFrame()->editor().command("Copy").execute();
+    m_page->focusController().focusedOrMainFrame()->editor().command("Copy").execute();
     return S_OK;
 }
 
 HRESULT STDMETHODCALLTYPE WebView::cut( 
         /* [in] */ IUnknown* /*sender*/)
 {
-    m_page->focusController()->focusedOrMainFrame()->editor().command("Cut").execute();
+    m_page->focusController().focusedOrMainFrame()->editor().command("Cut").execute();
     return S_OK;
 }
 
 HRESULT STDMETHODCALLTYPE WebView::paste( 
         /* [in] */ IUnknown* /*sender*/)
 {
-    m_page->focusController()->focusedOrMainFrame()->editor().command("Paste").execute();
+    m_page->focusController().focusedOrMainFrame()->editor().command("Paste").execute();
     return S_OK;
 }
 
 HRESULT STDMETHODCALLTYPE WebView::copyURL( 
         /* [in] */ BSTR url)
 {
-    m_page->focusController()->focusedOrMainFrame()->editor().copyURL(MarshallingHelpers::BSTRToKURL(url), "");
+    m_page->focusController().focusedOrMainFrame()->editor().copyURL(MarshallingHelpers::BSTRToKURL(url), "");
     return S_OK;
 }
 
@@ -4476,7 +4476,7 @@ HRESULT STDMETHODCALLTYPE WebView::pasteFont(
 HRESULT STDMETHODCALLTYPE WebView::delete_( 
         /* [in] */ IUnknown* /*sender*/)
 {
-    m_page->focusController()->focusedOrMainFrame()->editor().command("Delete").execute();
+    m_page->focusController().focusedOrMainFrame()->editor().command("Delete").execute();
     return S_OK;
 }
     
@@ -5303,18 +5303,18 @@ HRESULT STDMETHODCALLTYPE WebView::standardUserAgentWithApplicationName(
 
 HRESULT STDMETHODCALLTYPE WebView::clearFocusNode()
 {
-    if (m_page && m_page->focusController())
-        m_page->focusController()->setFocusedElement(0, 0);
+    if (m_page)
+        m_page->focusController().setFocusedElement(0, 0);
     return S_OK;
 }
 
 HRESULT STDMETHODCALLTYPE WebView::setInitialFocus(
     /* [in] */ BOOL forward)
 {
-    if (m_page && m_page->focusController()) {
-        Frame* frame = m_page->focusController()->focusedOrMainFrame();
+    if (m_page) {
+        Frame* frame = m_page->focusController().focusedOrMainFrame();
         frame->document()->setFocusedElement(0);
-        m_page->focusController()->setInitialFocus(forward ? FocusDirectionForward : FocusDirectionBackward, 0);
+        m_page->focusController().setInitialFocus(forward ? FocusDirectionForward : FocusDirectionBackward, 0);
     }
     return S_OK;
 }
@@ -5398,7 +5398,7 @@ HRESULT STDMETHODCALLTYPE WebView::loadBackForwardListFromOtherView(
 
 HRESULT STDMETHODCALLTYPE WebView::clearUndoRedoOperations()
 {
-    if (Frame* frame = m_page->focusController()->focusedOrMainFrame())
+    if (Frame* frame = m_page->focusController().focusedOrMainFrame())
         frame->editor().clearUndoRedoOperations();
     return S_OK;
 }
@@ -5542,7 +5542,7 @@ void WebView::resetIME(Frame* targetFrame)
 
 void WebView::updateSelectionForIME()
 {
-    Frame* targetFrame = m_page->focusController()->focusedOrMainFrame();
+    Frame* targetFrame = m_page->focusController().focusedOrMainFrame();
     
     if (!targetFrame)
         return;
@@ -5565,7 +5565,7 @@ bool WebView::onIMEStartComposition()
 {
     LOG(TextInput, "onIMEStartComposition");
     m_inIMEComposition++;
-    Frame* targetFrame = m_page->focusController()->focusedOrMainFrame();
+    Frame* targetFrame = m_page->focusController().focusedOrMainFrame();
     if (!targetFrame)
         return true;
 
@@ -5702,7 +5702,7 @@ bool WebView::onIMEComposition(LPARAM lparam)
     if (!hInputContext)
         return true;
 
-    Frame* targetFrame = m_page->focusController()->focusedOrMainFrame();
+    Frame* targetFrame = m_page->focusController().focusedOrMainFrame();
     if (!targetFrame || !targetFrame->editor().canEdit())
         return true;
 
@@ -5745,7 +5745,7 @@ bool WebView::onIMEEndComposition()
     LOG(TextInput, "onIMEEndComposition");
     // If the composition hasn't been confirmed yet, it needs to be cancelled.
     // This happens after deleting the last character from inline input hole.
-    Frame* targetFrame = m_page->focusController()->focusedOrMainFrame();
+    Frame* targetFrame = m_page->focusController().focusedOrMainFrame();
     if (targetFrame && targetFrame->editor().hasComposition())
         targetFrame->editor().confirmComposition(String());
 
@@ -5811,7 +5811,7 @@ LRESULT WebView::onIMERequestReconvertString(Frame* targetFrame, RECONVERTSTRING
 LRESULT WebView::onIMERequest(WPARAM request, LPARAM data)
 {
     LOG(TextInput, "onIMERequest %s", imeRequestName(request).latin1().data());
-    Frame* targetFrame = m_page->focusController()->focusedOrMainFrame();
+    Frame* targetFrame = m_page->focusController().focusedOrMainFrame();
     if (!targetFrame || !targetFrame->editor().canEdit())
         return 0;
 
@@ -6958,7 +6958,7 @@ HRESULT STDMETHODCALLTYPE WebView::setCompositionForTesting(
     if (!m_page)
         return E_FAIL;
 
-    Frame* frame = m_page->focusController()->focusedOrMainFrame();
+    Frame* frame = m_page->focusController().focusedOrMainFrame();
     if (!frame || !frame->editor().canEdit())
         return E_FAIL;
 
@@ -6976,7 +6976,7 @@ HRESULT STDMETHODCALLTYPE WebView::hasCompositionForTesting(/* [out, retval] */ 
     if (!m_page)
         return E_FAIL;
 
-    Frame* frame = m_page->focusController()->focusedOrMainFrame();
+    Frame* frame = m_page->focusController().focusedOrMainFrame();
      if (!frame)
         return E_FAIL;
 
@@ -6990,7 +6990,7 @@ HRESULT STDMETHODCALLTYPE WebView::confirmCompositionForTesting(/* [in] */ BSTR 
     if (!m_page)
         return E_FAIL;
 
-    Frame* frame = m_page->focusController()->focusedOrMainFrame();
+    Frame* frame = m_page->focusController().focusedOrMainFrame();
     if (!frame || !frame->editor().canEdit())
         return E_FAIL;
 
@@ -7009,7 +7009,7 @@ HRESULT STDMETHODCALLTYPE WebView::compositionRangeForTesting(/* [out] */ UINT* 
     if (!m_page)
         return E_FAIL;
 
-    Frame* frame = m_page->focusController()->focusedOrMainFrame();
+    Frame* frame = m_page->focusController().focusedOrMainFrame();
     if (!frame || !frame->editor().canEdit())
         return E_FAIL;
 
@@ -7033,7 +7033,7 @@ HRESULT STDMETHODCALLTYPE WebView::firstRectForCharacterRangeForTesting(
     if (!m_page)
         return E_FAIL;
 
-    Frame* frame = m_page->focusController()->focusedOrMainFrame();
+    Frame* frame = m_page->focusController().focusedOrMainFrame();
     if (!frame)
         return E_FAIL;
 
@@ -7070,7 +7070,7 @@ HRESULT STDMETHODCALLTYPE WebView::selectedRangeForTesting(/* [out] */ UINT* loc
     if (!m_page)
         return E_FAIL;
 
-    Frame* frame = m_page->focusController()->focusedOrMainFrame();
+    Frame* frame = m_page->focusController().focusedOrMainFrame();
     if (!frame)
         return E_FAIL;
 

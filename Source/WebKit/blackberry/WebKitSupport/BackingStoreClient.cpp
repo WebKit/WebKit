@@ -189,8 +189,7 @@ bool BackingStoreClient::isLoading() const
 
 bool BackingStoreClient::isFocused() const
 {
-    return m_frame && m_frame->page() && m_frame->page()->focusController()
-        && m_frame->page()->focusController()->focusedFrame() == m_frame;
+    return m_frame && m_frame->page() && m_frame->page()->focusController().focusedFrame() == m_frame;
 }
 
 bool BackingStoreClient::isClientGeneratedScroll() const

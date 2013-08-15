@@ -568,13 +568,13 @@ bool Page::findString(const String& target, FindOptions options)
         return false;
 
     bool shouldWrap = options & WrapAround;
-    Frame* frame = focusController()->focusedOrMainFrame();
+    Frame* frame = focusController().focusedOrMainFrame();
     Frame* startFrame = frame;
     do {
         if (frame->editor().findString(target, (options & ~WrapAround) | StartInSelection)) {
             if (frame != startFrame)
                 startFrame->selection()->clear();
-            focusController()->setFocusedFrame(frame);
+            focusController().setFocusedFrame(frame);
             return true;
         }
         frame = incrementFrame(frame, !(options & Backwards), shouldWrap);
@@ -584,7 +584,7 @@ bool Page::findString(const String& target, FindOptions options)
     // We cheat a bit and just research with wrap on
     if (shouldWrap && !startFrame->selection()->isNone()) {
         bool found = startFrame->editor().findString(target, options | WrapAround | StartInSelection);
-        focusController()->setFocusedFrame(frame);
+        focusController().setFocusedFrame(frame);
         return found;
     }
 
@@ -705,7 +705,7 @@ void Page::unmarkAllTextMatches()
 
 const VisibleSelection& Page::selection() const
 {
-    return focusController()->focusedOrMainFrame()->selection()->selection();
+    return focusController().focusedOrMainFrame()->selection()->selection();
 }
 
 void Page::setDefersLoading(bool defers)

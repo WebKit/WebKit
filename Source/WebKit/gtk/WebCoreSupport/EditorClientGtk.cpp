@@ -209,10 +209,10 @@ static void collapseSelection(GtkClipboard* clipboard, WebKitWebView* webView)
         return;
 
     WebCore::Page* corePage = core(webView);
-    if (!corePage || !corePage->focusController())
+    if (!corePage)
         return;
 
-    Frame* frame = corePage->focusController()->focusedOrMainFrame();
+    Frame* frame = corePage->focusController().focusedOrMainFrame();
 
     // Collapse the selection without clearing it
     ASSERT(frame);
@@ -228,7 +228,7 @@ static void setSelectionPrimaryClipboardIfNeeded(WebKitWebView* webView)
     GtkClipboard* clipboard = gtk_widget_get_clipboard(GTK_WIDGET(webView), GDK_SELECTION_PRIMARY);
     DataObjectGtk* dataObject = DataObjectGtk::forClipboard(clipboard);
     WebCore::Page* corePage = core(webView);
-    Frame* targetFrame = corePage->focusController()->focusedOrMainFrame();
+    Frame* targetFrame = corePage->focusController().focusedOrMainFrame();
 
     if (!targetFrame->selection()->isRange())
         return;

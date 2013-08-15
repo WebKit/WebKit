@@ -584,7 +584,7 @@ PassRefPtr<Plugin> WebPage::createPlugin(WebFrame* frame, HTMLPlugInElement* plu
 
 EditorState WebPage::editorState() const
 {
-    Frame* frame = m_page->focusController()->focusedOrMainFrame();
+    Frame* frame = m_page->focusController().focusedOrMainFrame();
     ASSERT(frame);
 
     EditorState result;
@@ -761,7 +761,7 @@ PluginView* WebPage::pluginViewForFrame(Frame* frame)
 
 void WebPage::executeEditingCommand(const String& commandName, const String& argument)
 {
-    Frame* frame = m_page->focusController()->focusedOrMainFrame();
+    Frame* frame = m_page->focusController().focusedOrMainFrame();
     if (!frame)
         return;
 
@@ -775,7 +775,7 @@ void WebPage::executeEditingCommand(const String& commandName, const String& arg
 
 bool WebPage::isEditingCommandEnabled(const String& commandName)
 {
-    Frame* frame = m_page->focusController()->focusedOrMainFrame();
+    Frame* frame = m_page->focusController().focusedOrMainFrame();
     if (!frame)
         return false;
 
@@ -1698,7 +1698,7 @@ void WebPage::mouseEvent(const WebMouseEvent& mouseEvent)
         // Lion when legacy scrollbars are enabled, WebKit receives mouse events all the time. If it is one
         // of those cases where the page is not active and the mouse is not pressed, then we can fire a more
         // efficient scrollbars-only version of the event.
-        bool onlyUpdateScrollbars = !(m_page->focusController()->isActive() || (mouseEvent.button() != WebMouseEvent::NoButton));
+        bool onlyUpdateScrollbars = !(m_page->focusController().isActive() || (mouseEvent.button() != WebMouseEvent::NoButton));
         handled = handleMouseEvent(mouseEvent, this, onlyUpdateScrollbars);
     }
 
@@ -1728,7 +1728,7 @@ void WebPage::mouseEventSyncForTesting(const WebMouseEvent& mouseEvent, bool& ha
         // Lion when legacy scrollbars are enabled, WebKit receives mouse events all the time. If it is one 
         // of those cases where the page is not active and the mouse is not pressed, then we can fire a more
         // efficient scrollbars-only version of the event.
-        bool onlyUpdateScrollbars = !(m_page->focusController()->isActive() || (mouseEvent.button() != WebMouseEvent::NoButton));
+        bool onlyUpdateScrollbars = !(m_page->focusController().isActive() || (mouseEvent.button() != WebMouseEvent::NoButton));
         handled = handleMouseEvent(mouseEvent, this, onlyUpdateScrollbars);
     }
 }
@@ -1768,8 +1768,8 @@ static bool handleKeyEvent(const WebKeyboardEvent& keyboardEvent, Page* page)
         return false;
 
     if (keyboardEvent.type() == WebEvent::Char && keyboardEvent.isSystemKey())
-        return page->focusController()->focusedOrMainFrame()->eventHandler()->handleAccessKey(platform(keyboardEvent));
-    return page->focusController()->focusedOrMainFrame()->eventHandler()->keyEvent(platform(keyboardEvent));
+        return page->focusController().focusedOrMainFrame()->eventHandler()->handleAccessKey(platform(keyboardEvent));
+    return page->focusController().focusedOrMainFrame()->eventHandler()->keyEvent(platform(keyboardEvent));
 }
 
 void WebPage::keyEvent(const WebKeyboardEvent& keyboardEvent)
@@ -1850,7 +1850,7 @@ void WebPage::validateCommand(const String& commandName, uint64_t callbackID)
 {
     bool isEnabled = false;
     int32_t state = 0;
-    Frame* frame = m_page->focusController()->focusedOrMainFrame();
+    Frame* frame = m_page->focusController().focusedOrMainFrame();
     if (frame) {
         if (PluginView* pluginView = focusedPluginViewForFrame(frame))
             isEnabled = pluginView->isEditingCommandEnabled(commandName);
@@ -1976,12 +1976,12 @@ void WebPage::touchEventSyncForTesting(const WebTouchEvent& touchEvent, bool& ha
 
 bool WebPage::scroll(Page* page, ScrollDirection direction, ScrollGranularity granularity)
 {
-    return page->focusController()->focusedOrMainFrame()->eventHandler()->scrollRecursively(direction, granularity);
+    return page->focusController().focusedOrMainFrame()->eventHandler()->scrollRecursively(direction, granularity);
 }
 
 bool WebPage::logicalScroll(Page* page, ScrollLogicalDirection direction, ScrollGranularity granularity)
 {
-    return page->focusController()->focusedOrMainFrame()->eventHandler()->logicalScrollRecursively(direction, granularity);
+    return page->focusController().focusedOrMainFrame()->eventHandler()->logicalScrollRecursively(direction, granularity);
 }
 
 bool WebPage::scrollBy(uint32_t scrollDirection, uint32_t scrollGranularity)
@@ -1991,7 +1991,7 @@ bool WebPage::scrollBy(uint32_t scrollDirection, uint32_t scrollGranularity)
 
 void WebPage::centerSelectionInVisibleArea()
 {
-    Frame* frame = m_page->focusController()->focusedOrMainFrame();
+    Frame* frame = m_page->focusController().focusedOrMainFrame();
     if (!frame)
         return;
     
@@ -2001,7 +2001,7 @@ void WebPage::centerSelectionInVisibleArea()
 
 void WebPage::setActive(bool isActive)
 {
-    m_page->focusController()->setActive(isActive);
+    m_page->focusController().setActive(isActive);
 
 #if PLATFORM(MAC)    
     // Tell all our plug-in views that the window focus changed.
@@ -2049,7 +2049,7 @@ void WebPage::viewWillStartLiveResize()
         return;
 
     // FIXME: This should propagate to all ScrollableAreas.
-    if (Frame* frame = m_page->focusController()->focusedOrMainFrame()) {
+    if (Frame* frame = m_page->focusController().focusedOrMainFrame()) {
         if (FrameView* view = frame->view())
             view->willStartLiveResize();
     }
@@ -2061,7 +2061,7 @@ void WebPage::viewWillEndLiveResize()
         return;
 
     // FIXME: This should propagate to all ScrollableAreas.
-    if (Frame* frame = m_page->focusController()->focusedOrMainFrame()) {
+    if (Frame* frame = m_page->focusController().focusedOrMainFrame()) {
         if (FrameView* view = frame->view())
             view->willEndLiveResize();
     }
@@ -2069,25 +2069,25 @@ void WebPage::viewWillEndLiveResize()
 
 void WebPage::setFocused(bool isFocused)
 {
-    m_page->focusController()->setFocused(isFocused);
+    m_page->focusController().setFocused(isFocused);
 }
 
 void WebPage::setInitialFocus(bool forward, bool isKeyboardEventValid, const WebKeyboardEvent& event)
 {
-    if (!m_page || !m_page->focusController())
+    if (!m_page)
         return;
 
-    Frame* frame = m_page->focusController()->focusedOrMainFrame();
+    Frame* frame = m_page->focusController().focusedOrMainFrame();
     frame->document()->setFocusedElement(0);
 
     if (isKeyboardEventValid && event.type() == WebEvent::KeyDown) {
         PlatformKeyboardEvent platformEvent(platform(event));
         platformEvent.disambiguateKeyDownEvent(PlatformEvent::RawKeyDown);
-        m_page->focusController()->setInitialFocus(forward ? FocusDirectionForward : FocusDirectionBackward, KeyboardEvent::create(platformEvent, frame->document()->defaultView()).get());
+        m_page->focusController().setInitialFocus(forward ? FocusDirectionForward : FocusDirectionBackward, KeyboardEvent::create(platformEvent, frame->document()->defaultView()).get());
         return;
     }
 
-    m_page->focusController()->setInitialFocus(forward ? FocusDirectionForward : FocusDirectionBackward, 0);
+    m_page->focusController().setInitialFocus(forward ? FocusDirectionForward : FocusDirectionBackward, 0);
 }
 
 void WebPage::setWindowResizerSize(const IntSize& windowResizerSize)
@@ -2937,13 +2937,13 @@ void WebPage::didReceiveNotificationPermissionDecision(uint64_t notificationID, 
 
 void WebPage::advanceToNextMisspelling(bool startBeforeSelection)
 {
-    Frame* frame = m_page->focusController()->focusedOrMainFrame();
+    Frame* frame = m_page->focusController().focusedOrMainFrame();
     frame->editor().advanceToNextMisspelling(startBeforeSelection);
 }
 
 void WebPage::changeSpellingToWord(const String& word)
 {
-    replaceSelectionWithText(m_page->focusController()->focusedOrMainFrame(), word);
+    replaceSelectionWithText(m_page->focusController().focusedOrMainFrame(), word);
 }
 
 void WebPage::unmarkAllMisspellings()
@@ -2965,17 +2965,17 @@ void WebPage::unmarkAllBadGrammar()
 #if USE(APPKIT)
 void WebPage::uppercaseWord()
 {
-    m_page->focusController()->focusedOrMainFrame()->editor().uppercaseWord();
+    m_page->focusController().focusedOrMainFrame()->editor().uppercaseWord();
 }
 
 void WebPage::lowercaseWord()
 {
-    m_page->focusController()->focusedOrMainFrame()->editor().lowercaseWord();
+    m_page->focusController().focusedOrMainFrame()->editor().lowercaseWord();
 }
 
 void WebPage::capitalizeWord()
 {
-    m_page->focusController()->focusedOrMainFrame()->editor().capitalizeWord();
+    m_page->focusController().focusedOrMainFrame()->editor().capitalizeWord();
 }
 #endif
     
@@ -3017,7 +3017,7 @@ void WebPage::replaceSelectionWithText(Frame* frame, const String& text)
 
 void WebPage::clearSelection()
 {
-    m_page->focusController()->focusedOrMainFrame()->selection()->clear();
+    m_page->focusController().focusedOrMainFrame()->selection()->clear();
 }
 
 void WebPage::didChangeScrollOffsetForMainFrame()
@@ -3098,7 +3098,7 @@ void WebPage::setWindowIsVisible(bool windowIsVisible)
 {
     m_windowIsVisible = windowIsVisible;
 
-    corePage()->focusController()->setContainingWindowIsVisible(windowIsVisible);
+    corePage()->focusController().setContainingWindowIsVisible(windowIsVisible);
 
     // Tell all our plug-in views that the window visibility changed.
     for (HashSet<PluginView*>::const_iterator it = m_pluginViews.begin(), end = m_pluginViews.end(); it != end; ++it)
@@ -3139,7 +3139,7 @@ void WebPage::setMainFrameIsScrollable(bool isScrollable)
 
 bool WebPage::windowIsFocused() const
 {
-    return m_page->focusController()->isActive();
+    return m_page->focusController().isActive();
 }
 
 bool WebPage::windowAndWebPageAreFocused() const
@@ -3148,7 +3148,7 @@ bool WebPage::windowAndWebPageAreFocused() const
     if (!m_windowIsVisible)
         return false;
 #endif
-    return m_page->focusController()->isFocused() && m_page->focusController()->isActive();
+    return m_page->focusController().isFocused() && m_page->focusController().isActive();
 }
 
 void WebPage::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageDecoder& decoder)
@@ -3610,7 +3610,7 @@ void WebPage::commitPageTransitionViewport()
 #if PLATFORM(MAC)
 void WebPage::handleAlternativeTextUIResult(const String& result)
 {
-    Frame* frame = m_page->focusController()->focusedOrMainFrame();
+    Frame* frame = m_page->focusController().focusedOrMainFrame();
     if (!frame)
         return;
     frame->editor().handleAlternativeTextUIResult(result);
@@ -3634,7 +3634,7 @@ void WebPage::simulateMouseMotion(WebCore::IntPoint position, double time)
 
 void WebPage::setCompositionForTesting(const String& compositionString, uint64_t from, uint64_t length)
 {
-    Frame* frame = m_page->focusController()->focusedOrMainFrame();
+    Frame* frame = m_page->focusController().focusedOrMainFrame();
     if (!frame || !frame->editor().canEdit())
         return;
 
@@ -3645,13 +3645,13 @@ void WebPage::setCompositionForTesting(const String& compositionString, uint64_t
 
 bool WebPage::hasCompositionForTesting()
 {
-    Frame* frame = m_page->focusController()->focusedOrMainFrame();
+    Frame* frame = m_page->focusController().focusedOrMainFrame();
     return frame && frame->editor().hasComposition();
 }
 
 void WebPage::confirmCompositionForTesting(const String& compositionString)
 {
-    Frame* frame = m_page->focusController()->focusedOrMainFrame();
+    Frame* frame = m_page->focusController().focusedOrMainFrame();
     if (!frame || !frame->editor().canEdit())
         return;
 
@@ -3810,7 +3810,7 @@ bool WebPage::canPluginHandleResponse(const ResourceResponse& response)
 #if PLATFORM(QT) || PLATFORM(GTK)
 static Frame* targetFrameForEditing(WebPage* page)
 {
-    Frame* targetFrame = page->corePage()->focusController()->focusedOrMainFrame();
+    Frame* targetFrame = page->corePage()->focusController().focusedOrMainFrame();
 
     if (!targetFrame)
         return 0;

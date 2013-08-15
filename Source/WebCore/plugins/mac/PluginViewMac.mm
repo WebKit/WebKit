@@ -464,7 +464,7 @@ void PluginView::handleMouseEvent(MouseEvent* event)
             eventType = NPCocoaEventMouseDown;
             // The plugin needs focus to receive keyboard events
             if (Page* page = m_parentFrame->page())
-                page->focusController()->setFocusedFrame(m_parentFrame);
+                page->focusController().setFocusedFrame(m_parentFrame);
             m_parentFrame->document()->setFocusedElement(m_element);
             break;
 

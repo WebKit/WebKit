@@ -77,7 +77,7 @@ void WebPage::platformPreferencesDidChange(const WebPreferencesStore&)
 
 static inline void scroll(Page* page, ScrollDirection direction, ScrollGranularity granularity)
 {
-    page->focusController()->focusedOrMainFrame()->eventHandler()->scrollRecursively(direction, granularity);
+    page->focusController().focusedOrMainFrame()->eventHandler()->scrollRecursively(direction, granularity);
 }
 
 bool WebPage::performDefaultBehaviorForKeyEvent(const WebKeyboardEvent& keyboardEvent)
@@ -174,7 +174,7 @@ void WebPage::setThemePath(const String& themePath)
 
 static Frame* targetFrameForEditing(WebPage* page)
 {
-    Frame* frame = page->corePage()->focusController()->focusedOrMainFrame();
+    Frame* frame = page->corePage()->focusController().focusedOrMainFrame();
     if (!frame)
         return 0;
 
@@ -217,7 +217,7 @@ void WebPage::setComposition(const String& compositionString, const Vector<WebCo
 
 void WebPage::cancelComposition()
 {
-    Frame* frame = m_page->focusController()->focusedOrMainFrame();
+    Frame* frame = m_page->focusController().focusedOrMainFrame();
     if (!frame)
         return;
 

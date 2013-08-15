@@ -863,7 +863,7 @@ bool SimplePDFPlugin::isActive() const
 {
     if (Frame* coreFrame = m_frame->coreFrame()) {
         if (Page* page = coreFrame->page())
-            return page->focusController()->isActive();
+            return page->focusController().isActive();
     }
 
     return false;

@@ -400,7 +400,7 @@ void PluginView::handleMouseEvent(MouseEvent* event)
 
     if (event->type() == eventNames().mousedownEvent) {
         if (Page* page = m_parentFrame->page())
-            page->focusController()->setActive(true);
+            page->focusController().setActive(true);
         focusPluginElement();
     }
 

@@ -3819,16 +3819,16 @@ static PassRefPtr<KeyboardEvent> currentKeyboardEvent(Frame* coreFrame)
         return YES;
 
     if (![[self _webView] _isPerformingProgrammaticFocus])
-        page->focusController()->setFocusedFrame(frame);
+        page->focusController().setFocusedFrame(frame);
 
-    page->focusController()->setFocused(true);
+    page->focusController().setFocused(true);
 
     if (direction == NSDirectSelection)
         return YES;
 
     if (Document* document = frame->document())
         document->setFocusedElement(0);
-    page->focusController()->setInitialFocus(direction == NSSelectingNext ? FocusDirectionForward : FocusDirectionBackward,
+    page->focusController().setInitialFocus(direction == NSSelectingNext ? FocusDirectionForward : FocusDirectionBackward,
                                              currentKeyboardEvent(frame).get());
     return YES;
 }
@@ -3858,7 +3858,7 @@ static PassRefPtr<KeyboardEvent> currentKeyboardEvent(Frame* coreFrame)
         bool nextResponderIsInWebView = [nextResponder isKindOfClass:[NSView class]]
             && [nextResponder isDescendantOf:[[[self _webView] mainFrame] frameView]];
         if (!nextResponderIsInWebView)
-            page->focusController()->setFocused(false);
+            page->focusController().setFocused(false);
     }
     return resign;
 }

@@ -426,7 +426,7 @@ bool SelectorChecker::checkOne(const SelectorCheckingContext& context) const
             return checkScrollbarPseudoClass(context, element->document(), selector);
         } else if (context.hasSelectionPseudo) {
             if (selector->pseudoType() == CSSSelector::PseudoWindowInactive)
-                return !element->document()->page()->focusController()->isActive();
+                return !element->document()->page()->focusController().isActive();
         }
 
         // Normal element pseudo class checking.
@@ -814,7 +814,7 @@ bool SelectorChecker::checkScrollbarPseudoClass(const SelectorCheckingContext& c
     // FIXME: This is a temporary hack for resizers and scrollbar corners. Eventually :window-inactive should become a real
     // pseudo class and just apply to everything.
     if (selector->pseudoType() == CSSSelector::PseudoWindowInactive)
-        return !document->page()->focusController()->isActive();
+        return !document->page()->focusController().isActive();
 
     if (!scrollbar)
         return false;

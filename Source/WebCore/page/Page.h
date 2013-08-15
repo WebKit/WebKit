@@ -189,7 +189,7 @@ public:
 #if ENABLE(DRAG_SUPPORT)
     DragController* dragController() const { return m_dragController.get(); }
 #endif
-    FocusController* focusController() const { return m_focusController.get(); }
+    FocusController& focusController() const { return *m_focusController; }
 #if ENABLE(CONTEXT_MENUS)
     ContextMenuController* contextMenuController() const { return m_contextMenuController.get(); }
 #endif
@@ -445,7 +445,7 @@ private:
 #if ENABLE(DRAG_SUPPORT)
     OwnPtr<DragController> m_dragController;
 #endif
-    OwnPtr<FocusController> m_focusController;
+    const OwnPtr<FocusController> m_focusController;
 #if ENABLE(CONTEXT_MENUS)
     OwnPtr<ContextMenuController> m_contextMenuController;
 #endif

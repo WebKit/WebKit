@@ -1297,8 +1297,8 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
         
     // If the document view implicitly became first responder, make sure to set the focused frame properly.
     if ([[documentView window] firstResponder] == documentView) {
-        page->focusController()->setFocusedFrame(coreFrame);
-        page->focusController()->setFocused(true);
+        page->focusController().setFocusedFrame(coreFrame);
+        page->focusController().setFocused(true);
     }
 }
 

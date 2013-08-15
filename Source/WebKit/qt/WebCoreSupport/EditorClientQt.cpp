@@ -247,7 +247,7 @@ bool EditorClientQt::selectWordBeforeMenuEvent()
 void EditorClientQt::registerUndoStep(WTF::PassRefPtr<WebCore::UndoStep> step)
 {
 #ifndef QT_NO_UNDOSTACK
-    Frame* frame = m_page->page->focusController()->focusedOrMainFrame();
+    Frame* frame = m_page->page->focusController().focusedOrMainFrame();
     if (m_inUndoRedo || (frame && !frame->editor().lastEditCommand() /* HACK!! Don't recreate undos */))
         return;
     m_page->registerUndoStep(step);
@@ -422,7 +422,7 @@ const char* editorCommandForKeyDownEvent(const KeyboardEvent* event)
 
 void EditorClientQt::handleKeyboardEvent(KeyboardEvent* event)
 {
-    Frame* frame = m_page->page->focusController()->focusedOrMainFrame();
+    Frame* frame = m_page->page->focusController().focusedOrMainFrame();
     if (!frame)
         return;
 
@@ -617,7 +617,7 @@ void EditorClientQt::setInputMethodState(bool active)
         Qt::InputMethodHints hints;
 
         HTMLInputElement* inputElement = 0;
-        Frame* frame = m_page->page->focusController()->focusedOrMainFrame();
+        Frame* frame = m_page->page->focusController().focusedOrMainFrame();
         if (frame && frame->document() && frame->document()->focusedElement())
             if (isHTMLInputElement(frame->document()->focusedElement()))
                 inputElement = toHTMLInputElement(frame->document()->focusedElement());

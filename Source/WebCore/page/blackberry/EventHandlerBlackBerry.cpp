@@ -83,7 +83,7 @@ void EventHandler::focusDocumentView()
     Page* page = m_frame->page();
     if (!page)
         return;
-    page->focusController()->setFocusedFrame(m_frame);
+    page->focusController().setFocusedFrame(m_frame);
 }
 
 } // namespace WebCore

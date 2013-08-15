@@ -489,9 +489,8 @@ static void _ewk_view_scrolls_flush(Ewk_View_Private_Data* priv)
 static Eina_Bool _ewk_view_smart_focus_in(Ewk_View_Smart_Data* smartData)
 {
     EWK_VIEW_PRIV_GET(smartData, priv);
-    WebCore::FocusController* focusController = priv->page->focusController();
+    WebCore::FocusController* focusController = &priv->page->focusController();
     DBG("ewkView=%p, focusController=%p", smartData->self, focusController);
-    EINA_SAFETY_ON_NULL_RETURN_VAL(focusController, false);
 
     focusController->setActive(true);
     focusController->setFocused(true);
@@ -501,9 +500,8 @@ static Eina_Bool _ewk_view_smart_focus_in(Ewk_View_Smart_Data* smartData)
 static Eina_Bool _ewk_view_smart_focus_out(Ewk_View_Smart_Data* smartData)
 {
     EWK_VIEW_PRIV_GET(smartData, priv);
-    WebCore::FocusController* focusController = priv->page->focusController();
+    WebCore::FocusController* focusController = &priv->page->focusController();
     DBG("ewkView=%p, fc=%p", smartData->self, focusController);
-    EINA_SAFETY_ON_NULL_RETURN_VAL(focusController, false);
 
     focusController->setActive(false);
     focusController->setFocused(false);
@@ -1395,7 +1393,7 @@ Evas_Object* ewk_view_frame_focused_get(const Evas_Object* ewkView)
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, 0);
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, 0);
 
-    WebCore::Frame* core = priv->page->focusController()->focusedFrame();
+    WebCore::Frame* core = priv->page->focusController().focusedFrame();
     if (!core)
         return 0;
 
@@ -1577,7 +1575,7 @@ const char* ewk_view_selection_get(const Evas_Object* ewkView)
 {
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, 0);
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, 0);
-    CString selectedString = priv->page->focusController()->focusedOrMainFrame()->editor().selectedText().utf8();
+    CString selectedString = priv->page->focusController().focusedOrMainFrame()->editor().selectedText().utf8();
     if (selectedString.isNull())
         return 0;
     return eina_stringshare_add(selectedString.data());
@@ -1592,7 +1590,7 @@ Eina_Bool ewk_view_editor_command_execute(const Evas_Object* ewkView, const Ewk_
     if (!commandString)
         return false;
 
-    return priv->page->focusController()->focusedOrMainFrame()->editor().command(commandString).execute(WTF::String::fromUTF8(value));
+    return priv->page->focusController().focusedOrMainFrame()->editor().command(commandString).execute(WTF::String::fromUTF8(value));
 }
 
 Eina_Bool ewk_view_context_menu_forward_event(Evas_Object* ewkView, const Evas_Event_Mouse_Down* downEvent)
@@ -2949,7 +2947,7 @@ void ewk_view_input_method_state_set(Evas_Object* ewkView, bool active)
 {
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
     EWK_VIEW_PRIV_GET(smartData, priv);
-    WebCore::Frame* focusedFrame = priv->page->focusController()->focusedOrMainFrame();
+    WebCore::Frame* focusedFrame = priv->page->focusController().focusedOrMainFrame();
 
     priv->imh = 0;
     if (focusedFrame
@@ -4015,7 +4013,7 @@ void ewk_view_text_direction_set(Evas_Object* ewkView, Ewk_Text_Direction direct
     // the text direction of the selected node and updates its DOM "dir"
     // attribute and its CSS "direction" property.
     // So, we just call the function as Safari does.
-    WebCore::Frame* focusedFrame = priv->page->focusController()->focusedOrMainFrame();
+    WebCore::Frame* focusedFrame = priv->page->focusController().focusedOrMainFrame();
     if (!focusedFrame)
         return;
 

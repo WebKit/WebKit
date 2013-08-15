@@ -159,8 +159,8 @@ CachedFrame::CachedFrame(Frame* frame)
     ASSERT(m_documentLoader);
     ASSERT(m_view);
 
-    if (frame->page()->focusController()->focusedFrame() == frame)
-        frame->page()->focusController()->setFocusedFrame(frame->page()->mainFrame());
+    if (frame->page()->focusController().focusedFrame() == frame)
+        frame->page()->focusController().setFocusedFrame(frame->page()->mainFrame());
 
     // Custom scrollbar renderers will get reattached when the document comes out of the page cache
     m_view->detachCustomScrollbars();

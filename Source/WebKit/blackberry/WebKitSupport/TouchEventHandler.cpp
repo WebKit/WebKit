@@ -100,7 +100,7 @@ void TouchEventHandler::handleTouchHold()
     if (nodeUnderFatFinger && nodeUnderFatFinger->document()->frame() != m_webPage->focusedOrMainFrame()) {
         m_webPage->clearFocusNode();
         m_webPage->m_selectionHandler->cancelSelection();
-        m_webPage->m_page->focusController()->setFocusedFrame(nodeUnderFatFinger->document()->frame());
+        m_webPage->m_page->focusController().setFocusedFrame(nodeUnderFatFinger->document()->frame());
     }
 }
 

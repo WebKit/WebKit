@@ -755,7 +755,7 @@ bool RenderTheme::isActive(const RenderObject* o) const
     if (!page)
         return false;
 
-    return page->focusController()->isActive();
+    return page->focusController().isActive();
 }
 
 bool RenderTheme::isChecked(const RenderObject* o) const
