@@ -1,5 +1,16 @@
 2013-08-15  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
+        [Qt] fast/canvas/canvas-blending-transforms.html test fails on x32 after r153941.
+        https://bugs.webkit.org/show_bug.cgi?id=119792
+
+        Unreviewed gardening.
+
+        Speculative unskip after r154095.
+
+        * platform/qt/TestExpectations:
+
+2013-08-15  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
         REGRESSION(r148790) Made 7 tests fail on x86 32bit
         https://bugs.webkit.org/show_bug.cgi?id=114913
 
