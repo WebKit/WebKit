@@ -8,9 +8,10 @@ layer at (0,0) size 800x534
           text run at (0,0) width 761: "The first and last lines of text in the regions below should be clipped to the green box. The overflow section sizes itself and clips"
           text run at (0,19) width 620: "differently in each region. The green box should be even with the lime floats at the top of the first region."
       RenderBlock {DIV} at (0,54) size 784x456
-        RenderRegion {DIV} at (0,0) size 402x152 [border: (1px solid #000000)]
         RenderRegion {DIV} at (0,152) size 402x152 [border: (1px solid #000000)]
         RenderRegion {DIV} at (0,304) size 402x152 [border: (1px solid #000000)]
+layer at (8,70) size 402x152
+  RenderRegion {DIV} at (0,0) size 402x152 [border: (1px solid #000000)]
 Flow Threads
   Thread with flow-name 'flow1'
     layer at (0,0) size 400x450
@@ -35,6 +36,6 @@ Flow Threads
             text run at (0,49) width 376: "spill out of the regions. These lines will not spill out of the"
             text run at (0,68) width 47: "regions."
   Regions for flow 'flow1'
-    RenderRegion {DIV} #region1
+    RenderRegion {DIV} #region1 hasLayer
     RenderRegion {DIV} #region2
     RenderRegion {DIV} #region3

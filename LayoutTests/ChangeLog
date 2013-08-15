@@ -1,3 +1,26 @@
+2013-08-15  Tamas Czene <tczene@inf.u-szeged.hu>
+
+        [Qt] Unreviwed gardening. Rebase fast tests after r154072.
+
+        * platform/qt-5.0-wk2/fast/repaint/region-painting-via-layout-expected.txt: Removed.
+        * platform/qt/fast/regions/autoheight-regions-mark-expected.txt:
+        * platform/qt/fast/regions/overflow-in-uniform-regions-dynamic-expected.png:
+        * platform/qt/fast/regions/overflow-in-uniform-regions-dynamic-expected.txt:
+        * platform/qt/fast/regions/overflow-in-variable-width-regions-expected.png:
+        * platform/qt/fast/regions/overflow-in-variable-width-regions-expected.txt:
+        * platform/qt/fast/regions/overflow-moving-below-floats-in-variable-width-regions-expected.png:
+        * platform/qt/fast/regions/overflow-moving-below-floats-in-variable-width-regions-expected.txt:
+        * platform/qt/fast/regions/overflow-not-moving-below-floats-in-variable-width-regions-expected.png:
+        * platform/qt/fast/regions/overflow-not-moving-below-floats-in-variable-width-regions-expected.txt:
+        * platform/qt/fast/regions/overflow-rtl-in-variable-width-regions-expected.png:
+        * platform/qt/fast/regions/overflow-rtl-in-variable-width-regions-expected.txt:
+        * platform/qt/fast/regions/overflow-size-change-in-variable-width-regions-expected.png:
+        * platform/qt/fast/regions/overflow-size-change-in-variable-width-regions-expected.txt:
+        * platform/qt/fast/repaint/line-flow-with-floats-in-regions-expected.png:
+        * platform/qt/fast/repaint/line-flow-with-floats-in-regions-expected.txt:
+        * platform/qt/fast/repaint/overflow-flipped-writing-mode-block-in-regions-expected.txt:
+        * platform/qt/fast/repaint/region-painting-via-layout-expected.txt:
+
 2013-08-14  Alexey Proskuryakov  <ap@apple.com>
 
         Don't copy js-test-pre in cookies-test-pre
