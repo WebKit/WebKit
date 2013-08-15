@@ -1274,16 +1274,6 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case StructureTransitionWatchpoint: {
         AbstractValue& value = forNode(node->child1());
 
-        // It's only valid to issue a structure transition watchpoint if we already
-        // know that the watchpoint covers a superset of the structures known to
-        // belong to the set of future structures that this value may have.
-        // Currently, we only issue singleton watchpoints (that check one structure)
-        // and our futurePossibleStructure set can only contain zero, one, or an
-        // infinity of structures.
-        ASSERT(
-            value.m_futurePossibleStructure.isSubsetOf(StructureSet(node->structure()))
-            || m_graph.watchpoints().shouldAssumeMixedState(node->structure()->transitionWatchpointSet()));
-        
         filter(value, node->structure());
         m_state.setHaveStructures(true);
         node->setCanExit(true);

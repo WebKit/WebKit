@@ -1,3 +1,12 @@
+2013-08-15  Oliver Hunt  <oliver@apple.com>
+
+        Remove bogus assertion.
+
+        RS=Filip Pizlo
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::::executeEffects):
+
 2013-08-15  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         REGRESSION(r148790) Made 7 tests fail on x86 32bit
