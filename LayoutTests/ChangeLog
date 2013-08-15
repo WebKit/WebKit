@@ -1,3 +1,17 @@
+2013-08-15  Oliver Hunt  <oliver@apple.com>
+
+        <https://webkit.org/b/119830> Assigning to a readonly global results in DFG byte code parse failure
+
+        Reviewed by Filip Pizlo.
+
+        Add a test
+
+        * fast/js/dfg-put-to-readonly-property-expected.txt: Added.
+        * fast/js/dfg-put-to-readonly-property.html: Added.
+        * fast/js/script-tests/dfg-put-to-readonly-property.js: Added.
+        (foo):
+        (bar):
+
 2013-08-15  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         [GTK] Unreviewed gardening. Move Mac specific expectation for

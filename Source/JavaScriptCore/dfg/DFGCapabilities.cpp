@@ -170,12 +170,20 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, Instruc
     case op_switch_char:
     case op_in:
     case op_get_from_scope:
-    case op_put_to_scope:
         return CanCompileAndInline;
+
+    case op_put_to_scope: {
+        ResolveType resolveType = ResolveModeAndType(pc[4].u.operand).type();
+        // If we're writing to a readonly property we emit a Dynamic put that
+        // the DFG can't currently handle.
+        if (resolveType == Dynamic)
+            return CannotCompile;
+        return CanCompileAndInline;
+    }
 
     case op_resolve_scope: {
         // We don't compile 'catch' or 'with', so there's no point in compiling variable resolution within them.
-        ResolveType resolveType = static_cast<ResolveType>(pc[3].u.operand);
+        ResolveType resolveType = ResolveModeAndType(pc[4].u.operand).type();
         if (resolveType == Dynamic)
             return CannotCompile;
         return CanCompileAndInline;

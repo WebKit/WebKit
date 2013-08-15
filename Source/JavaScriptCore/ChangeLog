@@ -1,3 +1,17 @@
+2013-08-15  Oliver Hunt  <oliver@apple.com>
+
+        <https://webkit.org/b/119830> Assigning to a readonly global results in DFG byte code parse failure
+
+        Reviewed by Filip Pizlo.
+
+        Make sure dfgCapabilities doesn't report a Dynamic put as
+        being compilable when we don't actually support it.  
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+
 2013-08-15  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Incorrect DLL Linkage for JSC ArrayBuffer and ArrayBufferView

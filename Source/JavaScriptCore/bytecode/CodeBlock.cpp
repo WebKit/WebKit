@@ -1291,9 +1291,9 @@ void CodeBlock::dumpBytecode(PrintStream& out, ExecState* exec, const Instructio
         case op_resolve_scope: {
             int r0 = (++it)->u.operand;
             int id0 = (++it)->u.operand;
-            ++it; // ResolveType
+            int resolveModeAndType = (++it)->u.operand;
             ++it; // depth
-            out.printf("[%4d] resolve_scope\t %s, %s", location, registerName(r0).data(), idName(id0, identifier(id0)).data());
+            out.printf("[%4d] resolve_scope\t %s, %s, %d", location, registerName(r0).data(), idName(id0, identifier(id0)).data(), resolveModeAndType);
             break;
         }
         case op_get_from_scope: {
