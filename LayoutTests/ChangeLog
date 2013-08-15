@@ -1,3 +1,17 @@
+2013-08-15  Filip Pizlo  <fpizlo@apple.com>
+
+        Remove a test that times out.
+        
+        Rubber stamped by Mark Hahnenberg.
+        
+        This test times out for me, every time. It tests code that has since been rewritten
+        and has had new tests added to cover it. It's not clear that this test would be
+        useful anymore even if we made it not timeout.
+
+        * fast/js/array-sort-modifying-tostring-expected.txt: Removed.
+        * fast/js/array-sort-modifying-tostring.html: Removed.
+        * fast/js/script-tests/array-sort-modifying-tostring.js: Removed.
+
 2013-08-15  Dirk Schulze  <krit@webkit.org>
 
         Implement CSS Image filter() function
