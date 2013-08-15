@@ -29,9 +29,10 @@
 #ifndef DumpRenderTreeGtk_h
 #define DumpRenderTreeGtk_h
 
-#include <webkit/webkitdefines.h>
 #include <JavaScriptCore/JSBase.h>
 #include <glib.h>
+#include <libsoup/soup.h>
+#include <webkit/webkitdefines.h>
 #include <wtf/text/CString.h>
 
 extern WebKitWebFrame* mainFrame;
@@ -44,5 +45,6 @@ CString getTopLevelPath();
 
 void setWaitToDumpWatchdog(guint timer);
 bool shouldSetWaitToDumpWatchdog();
+CString soupURIToStringPreservingPassword(SoupURI* soupURI);
 
 #endif // DumpRenderTreeGtk_h

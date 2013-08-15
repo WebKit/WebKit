@@ -45,6 +45,7 @@
 #include "WorkQueue.h"
 #include "WorkQueueItem.h"
 #include <JavaScriptCore/JavaScript.h>
+#include <WebCore/platform/network/soup/GOwnPtrSoup.h>
 #include <cassert>
 #include <cstdlib>
 #include <cstring>
@@ -55,6 +56,7 @@
 #include <wtf/Assertions.h>
 #include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GlibUtilities.h>
+#include <wtf/text/WTFString.h>
 
 #if PLATFORM(X11)
 #include <fontconfig/fontconfig.h>
@@ -422,6 +424,27 @@ void setWaitToDumpWatchdog(guint timer)
 bool shouldSetWaitToDumpWatchdog()
 {
     return !waitToDumpWatchdog && useTimeoutWatchdog;
+}
+
+CString soupURIToStringPreservingPassword(SoupURI* soupURI)
+{
+    if (!soupURI->password) {
+        GOwnPtr<char> uriString(soup_uri_to_string(soupURI, FALSE));
+        return uriString.get();
+    }
+
+    // soup_uri_to_string does not insert the password into the string, so we need to create the
+    // URI string and then reinsert any credentials that were present in the SoupURI. All tests that
+    // use URL-embedded credentials use HTTP, so it's safe here.
+    GOwnPtr<char> password(soupURI->password);
+    GOwnPtr<char> user(soupURI->user);
+    soupURI->password = 0;
+    soupURI->user = 0;
+
+    GOwnPtr<char> uriString(soup_uri_to_string(soupURI, FALSE));
+    String absoluteURIWithoutCredentialString = String::fromUTF8(uriString.get());
+    String protocolAndCredential = String::format("http://%s:%s@", user ? user.get() : "", password.get());
+    return absoluteURIWithoutCredentialString.replace("http://", protocolAndCredential).utf8();
 }
 
 static void invalidateAnyPreviousWaitToDumpWatchdog()
@@ -1140,31 +1163,36 @@ static void frameCreatedCallback(WebKitWebView* webView, WebKitWebFrame* webFram
     g_signal_connect(webFrame, "insecure-content-run", G_CALLBACK(didRunInsecureContent), NULL);
 }
 
-// FIXME (119584): Make this match other platforms better.
-static CString pathFromSoupURI(SoupURI* uri)
+static String pathFromSoupURI(SoupURI* uri)
 {
     if (!uri)
-        return CString();
+        return "(null)";
 
-    if (g_str_equal(uri->scheme, "http") || g_str_equal(uri->scheme, "ftp")) {
-        GOwnPtr<char> uriString(soup_uri_to_string(uri, FALSE));
-        return CString(uriString.get());
-    }
+    if (!g_str_equal(uri->scheme, "file"))
+        return soupURIToStringPreservingPassword(uri).data();
 
-    GOwnPtr<gchar> parentPath(g_path_get_dirname(uri->path));
-    GOwnPtr<gchar> pathDirname(g_path_get_basename(parentPath.get()));
-    GOwnPtr<gchar> pathBasename(g_path_get_basename(uri->path));
-    GOwnPtr<gchar> urlPath(g_strdup_printf("%s/%s", pathDirname.get(), pathBasename.get()));
-    return CString(urlPath.get());
+    String pathString = uri->path;
+    GOwnPtr<gchar> pathBasename(g_path_get_basename(pathString.utf8().data()));
+
+    WebKitWebFrame* mainFrame = webkit_web_view_get_main_frame(webView);
+    GOwnPtr<SoupURI> mainFrameUri(soup_uri_new(webkit_web_frame_get_uri(mainFrame)));
+
+    String mainFrameUriPathString = mainFrameUri.get()->path;
+    String basePath = mainFrameUriPathString.substring(0, mainFrameUriPathString.reverseFind('/') + 1);
+
+    if (!basePath.isEmpty() && pathString.startsWith(basePath))
+        return pathString.substring(basePath.length());
+
+    return pathBasename.get();
 }
 
 static CString convertSoupMessageToURLPath(SoupMessage* soupMessage)
 {
     if (!soupMessage)
-        return CString();
+        return CString("(null)");
     if (SoupURI* requestURI = soup_message_get_uri(soupMessage))
-        return pathFromSoupURI(requestURI);
-    return CString();
+        return pathFromSoupURI(requestURI).utf8();
+    return CString("(null)");
 }
 
 static CString convertNetworkRequestToURLPath(WebKitNetworkRequest* request)
@@ -1174,10 +1202,8 @@ static CString convertNetworkRequestToURLPath(WebKitNetworkRequest* request)
 
 static CString convertWebResourceToURLPath(WebKitWebResource* webResource)
 {
-    SoupURI* uri = soup_uri_new(webkit_web_resource_get_uri(webResource));
-    CString urlPath(pathFromSoupURI(uri));
-    soup_uri_free(uri);
-    return urlPath;
+    GOwnPtr<SoupURI> uri(soup_uri_new(webkit_web_resource_get_uri(webResource)));
+    return pathFromSoupURI(uri.get()).utf8();
 }
 
 static CString urlSuitableForTestResult(const char* uriString)
@@ -1192,28 +1218,10 @@ static CString urlSuitableForTestResult(const char* uriString)
 static CString descriptionSuitableForTestResult(SoupURI* uri)
 {
     if (!uri)
-        return CString("");
+        return CString("(null)");
 
     GOwnPtr<char> uriString(soup_uri_to_string(uri, false));
     return urlSuitableForTestResult(uriString.get());
-}
-
-static CString descriptionSuitableForTestResult(WebKitWebView* webView, WebKitWebFrame* webFrame, WebKitWebResource* webResource)
-{
-    SoupURI* uri = soup_uri_new(webkit_web_resource_get_uri(webResource));
-    CString description;
-    WebKitWebDataSource* dataSource = webkit_web_frame_get_data_source(webFrame);
-
-    if (webResource == webkit_web_data_source_get_main_resource(dataSource)
-        && (!webkit_web_view_get_progress(webView) || g_str_equal(uri->scheme, "file")))
-        description = CString("<unknown>");
-    else
-        description = convertWebResourceToURLPath(webResource);
-
-    if (uri)
-        soup_uri_free(uri);
-
-    return description;
 }
 
 static CString descriptionSuitableForTestResult(GError* error, WebKitWebResource* webResource)
@@ -1238,11 +1246,9 @@ static CString descriptionSuitableForTestResult(WebKitNetworkRequest* request)
     SoupMessage* soupMessage = webkit_network_request_get_message(request);
 
     if (!soupMessage)
-        return CString("");
+        return CString("(null)");
 
-    SoupURI* requestURI = soup_message_get_uri(soupMessage);
     SoupURI* mainDocumentURI = soup_message_get_first_party(soupMessage);
-    CString requestURIString(descriptionSuitableForTestResult(requestURI));
     CString mainDocumentURIString(descriptionSuitableForTestResult(mainDocumentURI));
     CString path(convertNetworkRequestToURLPath(request));
     GOwnPtr<char> description(g_strdup_printf("<NSURLRequest URL %s, main document URL %s, http method %s>",
@@ -1264,7 +1270,7 @@ static CString descriptionSuitableForTestResult(WebKitNetworkResponse* response)
         statusCode = soupMessage->status_code;
         path = convertSoupMessageToURLPath(soupMessage);
     } else
-        path = CString("");
+        path = CString("(null)");
 
     GOwnPtr<char> description(g_strdup_printf("<NSURLResponse %s, http status code %d>", path.data(), statusCode));
     return CString(description.get());
@@ -1334,14 +1340,14 @@ static void didReceiveResponse(WebKitWebView* webView, WebKitWebFrame*, WebKitWe
 static void didFinishLoading(WebKitWebView* webView, WebKitWebFrame* webFrame, WebKitWebResource* webResource)
 {
     if (!done && gTestRunner->dumpResourceLoadCallbacks())
-        printf("%s - didFinishLoading\n", descriptionSuitableForTestResult(webView, webFrame, webResource).data());
+        printf("%s - didFinishLoading\n", convertWebResourceToURLPath(webResource).data());
 }
 
 static void didFailLoadingWithError(WebKitWebView* webView, WebKitWebFrame* webFrame, WebKitWebResource* webResource, GError* webError)
 {
     if (!done && gTestRunner->dumpResourceLoadCallbacks()) {
         CString webErrorString(descriptionSuitableForTestResult(webError, webResource));
-        printf("%s - didFailLoadingWithError: %s\n", descriptionSuitableForTestResult(webView, webFrame, webResource).data(),
+        printf("%s - didFailLoadingWithError: %s\n", convertWebResourceToURLPath(webResource).data(),
                webErrorString.data());
     }
 }
@@ -1387,16 +1393,18 @@ static void frameLoadEventCallback(WebKitWebFrame* frame, DumpRenderTreeSupportG
     }
 }
 
-static bool authenticationCallback(CString& username, CString& password)
+static bool authenticationCallback(CString& username, CString& password, WebKitWebResource* webResource)
 {
+    CString description(convertWebResourceToURLPath(webResource));
+
     if (!gTestRunner->handlesAuthenticationChallenges()) {
-        printf("<unknown> - didReceiveAuthenticationChallenge - Simulating cancelled authentication sheet\n");
+        printf("%s - didReceiveAuthenticationChallenge - Simulating cancelled authentication sheet\n", description.data());
         return false;
     }
 
     username = gTestRunner->authenticationUsername().c_str();
     password = gTestRunner->authenticationPassword().c_str();
-    printf("<unknown> - didReceiveAuthenticationChallenge - Responding with %s:%s\n", username.data(), password.data());
+    printf("%s - didReceiveAuthenticationChallenge - Responding with %s:%s\n", description.data(), username.data(), password.data());
     return true;
 }
 

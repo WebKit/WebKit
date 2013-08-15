@@ -1,3 +1,40 @@
+2013-08-15  Simon Pena  <simon.pena@samsung.com>
+
+        <https://webkit.org/b/119584> [Gtk] URL printing code in DumpRenderTree doesn't match WTR or Mac DRT
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Following a similar approach as in r153977, return a path string
+        that is relative to main frame URL or just file name if the
+        resource is not in the same directory subtree, and replace empty
+        strings with "(null)".
+
+        Update pathFromSoupURI so it behaves more closely to the other
+        ports, and remove the unused code after we no longer print
+        <unknown> in certain cases. Also move
+        soupURIToStringPreservingPassword to DumpRenderTreeGtk so it can
+        be used both in TestRunnerGtk and in DumpRenderTree.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (soupURIToStringPreservingPassword): Moved from TestRunnerGtk so
+        we can print Soup URIs with the password, since soup_uri_to_string
+        doesn't preserve them.
+        (pathFromSoupURI): Updated following EFL implementation in
+        r153977, and return a WTFString instead of a CString.
+        (convertSoupMessageToURLPath): Return "(null)" instead of empty
+        strings, and handle the new return type of pathFromSoupURI.
+        (convertWebResourceToURLPath): Use a GOwnPtr to hold the Soup URI
+        reference, and handle the new return type of pathFromSoupURI.
+        (descriptionSuitableForTestResult): Remove unused code.
+        (didFinishLoading): Use convertResourceToURLPath.
+        (didFailLoadingWithError): Use convertResourceToURLPath.
+        (authenticationCallback): Display the URL of the authentication
+        challenge.
+        * DumpRenderTree/gtk/DumpRenderTreeGtk.h: Declare
+        soupURIToStringPreservingPassword.
+        * DumpRenderTree/gtk/TestRunnerGtk.cpp: Remove
+        soupURIToStringPreservingPassword.
+
 2013-08-14  Tim Horton  <timothy_horton@apple.com>
 
         Un-inline dataLog dumpers for IntSize and IntPoint

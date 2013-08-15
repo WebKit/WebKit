@@ -136,7 +136,7 @@ public:
     static void setFrameLoadEventCallback(FrameLoadEventCallback);
     static FrameLoadEventCallback s_frameLoadEventCallback;
 
-    typedef bool (*AuthenticationCallback) (CString& username, CString& password);
+    typedef bool (*AuthenticationCallback) (CString& username, CString& password, WebKitWebResource* webResource);
     static void setAuthenticationCallback(AuthenticationCallback);
     static AuthenticationCallback s_authenticationCallback;
     static void setPageVisibility(WebKitWebView*, WebCore::PageVisibilityState, bool);

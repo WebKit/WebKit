@@ -190,12 +190,23 @@ bool FrameLoaderClient::shouldUseCredentialStorage(WebCore::DocumentLoader*, uns
     return true;
 }
 
+// We convert this to string because it's easier to use strings as
+// keys in a GHashTable.
+static char* toString(unsigned long identifier)
+{
+    return g_strdup_printf("%ld", identifier);
+}
+
 void FrameLoaderClient::dispatchDidReceiveAuthenticationChallenge(WebCore::DocumentLoader*, unsigned long  identifier, const AuthenticationChallenge& challenge)
 {
+    WebKitWebView* view = webkit_web_frame_get_web_view(m_frame);
+
     if (DumpRenderTreeSupportGtk::dumpRenderTreeModeEnabled()) {
         CString username;
         CString password;
-        if (!DumpRenderTreeSupportGtk::s_authenticationCallback || !DumpRenderTreeSupportGtk::s_authenticationCallback(username, password)) {
+        GOwnPtr<gchar> identifierString(toString(identifier));
+        WebKitWebResource* webResource = webkit_web_view_get_resource(view, identifierString.get());
+        if (!DumpRenderTreeSupportGtk::s_authenticationCallback || !DumpRenderTreeSupportGtk::s_authenticationCallback(username, password, webResource)) {
             challenge.authenticationClient()->receivedRequestToContinueWithoutCredential(challenge);
             return;
         }
@@ -204,7 +215,6 @@ void FrameLoaderClient::dispatchDidReceiveAuthenticationChallenge(WebCore::Docum
         return;
     }
 
-    WebKitWebView* view = webkit_web_frame_get_web_view(m_frame);
 
     CredentialStorageMode credentialStorageMode;
     if (core(view)->settings().privateBrowsingEnabled())
@@ -220,13 +230,6 @@ void FrameLoaderClient::dispatchDidReceiveAuthenticationChallenge(WebCore::Docum
 void FrameLoaderClient::dispatchDidCancelAuthenticationChallenge(WebCore::DocumentLoader*, unsigned long  identifier, const AuthenticationChallenge&)
 {
     notImplemented();
-}
-
-// We convert this to string because it's easier to use strings as
-// keys in a GHashTable.
-static char* toString(unsigned long identifier)
-{
-    return g_strdup_printf("%ld", identifier);
 }
 
 void FrameLoaderClient::dispatchWillSendRequest(WebCore::DocumentLoader* loader, unsigned long identifier, ResourceRequest& request, const ResourceResponse& redirectResponse)

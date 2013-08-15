@@ -148,27 +148,6 @@ JSStringRef TestRunner::pathToLocalResource(JSContextRef context, JSStringRef ur
     return JSStringCreateWithUTF8CString(testURI.get());
 }
 
-static CString soupURIToStringPreservingPassword(SoupURI* soupURI)
-{
-    if (!soupURI->password) {
-        GOwnPtr<char> uriString(soup_uri_to_string(soupURI, FALSE));
-        return uriString.get();
-    }
-
-    // soup_uri_to_string does not insert the password into the string, so we need to create the
-    // URI string and then reinsert any credentials that were present in the SoupURI. All tests that
-    // use URL-embedded credentials use HTTP, so it's safe here.
-    GOwnPtr<char> password(soupURI->password);
-    GOwnPtr<char> user(soupURI->user);
-    soupURI->password = 0;
-    soupURI->user = 0;
-
-    GOwnPtr<char> uriString(soup_uri_to_string(soupURI, FALSE));
-    String absoluteURIWithoutCredentialString = String::fromUTF8(uriString.get());
-    String protocolAndCredential = String::format("http://%s:%s@", user ? user.get() : "", password.get());
-    return absoluteURIWithoutCredentialString.replace("http://", protocolAndCredential).utf8();
-}
-
 void TestRunner::queueLoad(JSStringRef url, JSStringRef target)
 {
     GOwnPtr<gchar> relativeURL(JSStringCopyUTF8CString(url));

@@ -1,3 +1,30 @@
+2013-08-15  Simon Pena  <simon.pena@samsung.com>
+
+        <https://webkit.org/b/119584> [Gtk] URL printing code in DumpRenderTree doesn't match WTR or Mac DRT
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Following a similar approach as in r153977, return a path string
+        that is relative to main frame URL or just file name if the
+        resource is not in the same directory subtree, and replace empty
+        strings with "(null)".
+
+        Update the AuthenticationCallback used in DumpRenderTree so that
+        it receives a WebKitWebResource, and update
+        dispatchDidReceiveAuthenticationChallenge so that it retrieves the
+        WebKitWebResource and passes it to the callback.
+
+        * WebCoreSupport/DumpRenderTreeSupportGtk.h: Update the
+        AuthenticationCallback adding a WebKitWebResource parameter.
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::toString): Define this function earlier so we can use it
+        to get the WebKitWebResource from the identifier in the
+        AuthenticationChallenge.
+        (WebKit::FrameLoaderClient::dispatchDidReceiveAuthenticationChallenge):
+        Use toString to retrieve a WebKitWebResource from the identifier
+        in the authentication challenge, and pass that WebKitWebResource
+        to the AuthenticationCallback.
+
 2013-08-13  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [GTK] WK does not link properly against libxslt
