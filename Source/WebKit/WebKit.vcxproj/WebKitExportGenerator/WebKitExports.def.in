@@ -310,7 +310,6 @@ EXPORTS
         ?textareaTag@HTMLNames@WebCore@@3VQualifiedName@2@B
         symbolWithPointer(?textContent@Node@WebCore@@QBE?AVString@WTF@@_N@Z, ?textContent@Node@WebCore@@QEBA?AVString@WTF@@_N@Z)
         symbolWithPointer(?toDocument@WebCore@@YAPAVDocument@1@VJSValue@JSC@@@Z, ?toDocument@WebCore@@YAPEAVDocument@1@VJSValue@JSC@@@Z)
-        symbolWithPointer(?toArrayBuffer@WebCore@@YAPAVArrayBuffer@JSC@@VJSValue@3@@Z, ?toArrayBuffer@WebCore@@YAPEAVArrayBuffer@JSC@@VJSValue@3@@Z)
         symbolWithPointer(?toDOMStringList@WebCore@@YA?AV?$PassRefPtr@VDOMStringList@WebCore@@@WTF@@PAVExecState@JSC@@VJSValue@5@@Z, ?toDOMStringList@WebCore@@YA?AV?$PassRefPtr@VDOMStringList@WebCore@@@WTF@@PEAVExecState@JSC@@VJSValue@5@@Z)
         symbolWithPointer(?toElement@WebCore@@YAPAVElement@1@VJSValue@JSC@@@Z, ?toElement@WebCore@@YAPEAVElement@1@VJSValue@JSC@@@Z)
         symbolWithPointer(?toJS@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@PAVArrayBuffer@3@@Z, ?toJS@WebCore@@YA?AVJSValue@JSC@@PEAVExecState@3@PEAVJSDOMGlobalObject@1@PEAVArrayBuffer@3@@Z)
@@ -456,7 +455,6 @@ EXPORTS
 #if ENABLE(VIDEO)
         symbolWithPointer(?toTimeRanges@WebCore@@YAPAVTimeRanges@1@VJSValue@JSC@@@Z, ?toTimeRanges@WebCore@@YAPEAVTimeRanges@1@VJSValue@JSC@@@Z)
         symbolWithPointer(?toJS@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@PAVTimeRanges@1@@Z, ?toJS@WebCore@@YA?AVJSValue@JSC@@PEAVExecState@3@PEAVJSDOMGlobalObject@1@PEAVTimeRanges@1@@Z)
-        symbolWithPointer(?toFloat32Array@WebCore@@YAPAVFloat32Array@JSC@@VJSValue@3@@Z, ?toFloat32Array@WebCore@@YAPEAVFloat32Array@JSC@@VJSValue@3@@Z)
         symbolWithPointer(?nearest@TimeRanges@WebCore@@QBENN@Z, ?nearest@TimeRanges@WebCore@@QEBANN@Z)
         symbolWithPointer(?add@TimeRanges@WebCore@@QAEXNN@Z, ?add@TimeRanges@WebCore@@QEAAXNN@Z)
 #endif
