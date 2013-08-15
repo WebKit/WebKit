@@ -1,3 +1,18 @@
+2013-08-15  Simon Pena  <simon.pena@samsung.com>
+
+        [GTK] Unreviewed gardening. Update test expectations.
+
+        * platform/gtk-wk1/TestExpectations: Unskip tests no longer failing.
+        * platform/gtk-wk1/loader/go-back-cached-main-resource-expected.txt:
+        Rebaseline after r153852.
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/regions/region-dynamic-after-before-expected.txt:
+        Rebaseline after r154072.
+        * platform/gtk/fast/regions/region-generated-content-before-after-expected.txt:
+        Rebaseline after r154072.
+        * platform/gtk/security/block-test-no-port-expected.txt:
+        Rebaseline after r153852.
+
 2013-08-15  Rob Buis  <rwlbuis@webkit.org>
 
         ASSERTION FAILED: !m_adoptionIsRequired in void WebCore::TreeShared<NodeType>::ref()

@@ -154,17 +154,12 @@ Bug(GTK) http/tests/appcache/origin-quota-continued-download-multiple-manifests.
 Bug(GTK) http/tests/appcache/origin-delete.html [ Failure ]
 Bug(GTK) http/tests/appcache/origins-with-appcache.html [ Failure ]
 
-Bug(GTK) [ Release ] http/tests/security/XFrameOptions/x-frame-options-allowall.html [ Failure ]
 Bug(GTK) [ Release ] http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-in-body.html [ Failure ]
-Bug(GTK) http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-allow.html [ Failure ]
 Bug(GTK) http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-deny.html [ Failure ]
 Bug(GTK) http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag.html [ Failure ]
 Bug(GTK) http/tests/security/XFrameOptions/x-frame-options-deny.html [ Failure ]
-Bug(GTK) http/tests/security/XFrameOptions/x-frame-options-invalid.html [ Failure ]
 Bug(GTK) http/tests/security/XFrameOptions/x-frame-options-multiple-headers-conflict.html [ Failure ]
-Bug(GTK) http/tests/security/XFrameOptions/x-frame-options-multiple-headers-sameorigin-allow.html [ Failure ]
 Bug(GTK) http/tests/security/XFrameOptions/x-frame-options-multiple-headers-sameorigin-deny.html [ Failure ]
-Bug(GTK) http/tests/security/XFrameOptions/x-frame-options-parent-same-origin-allow.html [ Failure ]
 Bug(GTK) http/tests/security/XFrameOptions/x-frame-options-parent-same-origin-deny.html [ Failure ]
 
 # Gtk's DRT doesn't implement dumpResourceResponseMIMETypes which is required for the preloader tests.
