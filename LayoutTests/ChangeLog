@@ -1,3 +1,93 @@
+2013-08-15  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        Empty qt-5.0 expectations into qt expectations
+
+        Unreviewed gardening.
+
+        * platform/qt-5.0/TestExpectations:
+        * platform/qt-5.0/editing/selection/editable-html-element-expected.txt: Removed.
+        * platform/qt-5.0/editing/selection/extend-by-word-001-expected.txt: Removed.
+        * platform/qt-5.0/editing/selection/vertical-rl-ltr-extend-line-backward-wrap-expected.txt: Removed.
+        * platform/qt-5.0/editing/selection/vertical-rl-ltr-extend-line-forward-wrap-expected.txt: Removed.
+        * platform/qt-5.0/fast/dom/Orientation/create-event-orientationchange-expected.txt: Removed.
+        * platform/qt-5.0/fast/dom/Window/window-properties-device-orientation-expected.txt: Removed.
+        * platform/qt-5.0/fast/events/onload-re-entry-expected.txt: Removed.
+        * platform/qt-5.0/fast/forms/input-disabled-color-expected.png: Removed.
+        * platform/qt-5.0/fast/forms/input-disabled-color-expected.txt: Removed.
+        * platform/qt-5.0/fast/forms/menulist-separator-painting-expected.png: Removed.
+        * platform/qt-5.0/fast/forms/menulist-separator-painting-expected.txt: Removed.
+        * platform/qt-5.0/fast/forms/select-background-none-expected.png: Removed.
+        * platform/qt-5.0/fast/forms/select-background-none-expected.txt: Removed.
+        * platform/qt-5.0/fast/images/embed-image-expected.txt: Removed.
+        * platform/qt-5.0/fast/images/object-image-expected.txt: Removed.
+        * platform/qt-5.0/fast/text/backslash-to-yen-sign-expected.txt: Removed.
+        * platform/qt-5.0/fast/text/basic/003-expected.png: Removed.
+        * platform/qt-5.0/fast/text/basic/003-expected.txt: Removed.
+        * platform/qt-5.0/fast/text/fallback-traits-fixup-expected.txt: Removed.
+        * platform/qt-5.0/fast/text/international/hindi-whitespace-expected.txt: Removed.
+        * platform/qt-5.0/fast/text/international/text-spliced-font-expected.txt: Removed.
+        * platform/qt-5.0/fast/text/letter-spacing-negative-opacity-expected.png: Removed.
+        * platform/qt-5.0/fast/text/letter-spacing-negative-opacity-expected.txt: Removed.
+        * platform/qt-5.0/fast/text/soft-hyphen-3-expected.txt: Removed.
+        * platform/qt-5.0/http/tests/misc/location-replace-crossdomain-expected.png: Removed.
+        * platform/qt-5.0/http/tests/misc/location-replace-crossdomain-expected.txt: Removed.
+        * platform/qt-5.0/svg/W3C-SVG-1.1-SE/color-prop-05-t-expected.png: Removed.
+        * platform/qt-5.0/svg/W3C-SVG-1.1-SE/filters-image-03-f-expected.png: Removed.
+        * platform/qt-5.0/svg/W3C-SVG-1.1-SE/pservers-pattern-03-f-expected.png: Removed.
+        * platform/qt-5.0/svg/W3C-SVG-1.1-SE/struct-use-14-f-expected.png: Removed.
+        * platform/qt-5.0/svg/W3C-SVG-1.1-SE/svgdom-over-01-f-expected.png: Removed.
+        * platform/qt-5.0/svg/as-image/img-preserveAspectRatio-support-1-expected.png: Removed.
+        * platform/qt-5.0/svg/as-image/img-preserveAspectRatio-support-1-expected.txt: Removed.
+        * platform/qt-5.0/svg/as-object/object-box-sizing-no-width-height-expected.png: Removed.
+        * platform/qt-5.0/svg/as-object/object-box-sizing-no-width-height-expected.txt: Removed.
+        * platform/qt-5.0/svg/batik/text/longTextOnPath-expected.png: Removed.
+        * platform/qt-5.0/svg/batik/text/longTextOnPath-expected.txt: Removed.
+        * platform/qt-5.0/svg/carto.net/tabgroup-expected.txt: Removed.
+        * platform/qt-5.0/svg/foreignObject/text-tref-02-b-expected.png: Removed.
+        * platform/qt-5.0/svg/transforms/text-with-pattern-with-svg-transform-expected.png: Removed.
+        * platform/qt-5.0/svg/transforms/text-with-pattern-with-svg-transform-expected.txt: Removed.
+        * platform/qt/TestExpectations:
+        * platform/qt/editing/execCommand/findString-diacriticals-expected.txt: Renamed from LayoutTests/platform/qt-5.0/editing/execCommand/findString-diacriticals-expected.txt.
+        * platform/qt/editing/selection/click-left-of-rtl-wrapping-text-expected.txt: Renamed from LayoutTests/platform/qt-5.0/editing/selection/click-left-of-rtl-wrapping-text-expected.txt.
+        * platform/qt/fast/events/onload-re-entry-expected.png: Renamed from LayoutTests/platform/qt-5.0/fast/events/onload-re-entry-expected.png.
+        * platform/qt/fast/events/onload-re-entry-expected.txt:
+        * platform/qt/fast/events/touch/touch-slider-expected.txt: Renamed from LayoutTests/platform/qt-5.0/fast/events/touch/touch-slider-expected.txt.
+        * platform/qt/fast/events/touch/touch-slider-no-js-touch-listener-expected.txt: Renamed from LayoutTests/platform/qt-5.0/fast/events/touch/touch-slider-no-js-touch-listener-expected.txt.
+        * platform/qt/fast/forms/input-disabled-color-expected.png:
+        * platform/qt/fast/forms/input-disabled-color-expected.txt:
+        * platform/qt/fast/forms/menulist-separator-painting-expected.png:
+        * platform/qt/fast/forms/menulist-separator-painting-expected.txt:
+        * platform/qt/fast/forms/select-background-none-expected.png:
+        * platform/qt/fast/forms/select-background-none-expected.txt:
+        * platform/qt/fast/images/embed-image-expected.txt:
+        * platform/qt/fast/images/object-image-expected.txt:
+        * platform/qt/fast/text/basic/003-expected.png:
+        * platform/qt/fast/text/international/text-spliced-font-expected.png: Renamed from LayoutTests/platform/qt-5.0/fast/text/international/text-spliced-font-expected.png.
+        * platform/qt/fast/text/soft-hyphen-3-expected.txt:
+        * platform/qt/http/tests/cookies/double-quoted-value-with-semi-colon-expected.txt: Renamed from LayoutTests/platform/qt-5.0/http/tests/cookies/double-quoted-value-with-semi-colon-expected.txt.
+        * platform/qt/http/tests/misc/location-replace-crossdomain-expected.png:
+        * platform/qt/http/tests/misc/location-replace-crossdomain-expected.txt:
+        * platform/qt/http/tests/security/xss-DENIED-xsl-external-entity-redirect-expected.txt: Renamed from LayoutTests/platform/qt-5.0/http/tests/security/xss-DENIED-xsl-external-entity-redirect-expected.txt.
+        * platform/qt/http/tests/xmlhttprequest/methods-expected.txt: Renamed from LayoutTests/platform/qt-5.0/http/tests/xmlhttprequest/methods-expected.txt.
+        * platform/qt/http/tests/xmlhttprequest/workers/methods-async-expected.txt: Renamed from LayoutTests/platform/qt-5.0/http/tests/xmlhttprequest/workers/methods-async-expected.txt.
+        * platform/qt/http/tests/xmlhttprequest/workers/methods-expected.txt: Renamed from LayoutTests/platform/qt-5.0/http/tests/xmlhttprequest/workers/methods-expected.txt.
+        * platform/qt/http/tests/xmlhttprequest/workers/shared-worker-methods-async-expected.txt: Renamed from LayoutTests/platform/qt-5.0/http/tests/xmlhttprequest/workers/shared-worker-methods-async-expected.txt.
+        * platform/qt/svg/W3C-SVG-1.1-SE/color-prop-05-t-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1-SE/filters-image-03-f-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1-SE/pservers-pattern-03-f-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1-SE/struct-use-14-f-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1-SE/svgdom-over-01-f-expected.png:
+        * platform/qt/svg/as-image/img-preserveAspectRatio-support-1-expected.png:
+        * platform/qt/svg/as-object/object-box-sizing-no-width-height-expected.png:
+        * platform/qt/svg/as-object/object-box-sizing-no-width-height-expected.txt:
+        * platform/qt/svg/batik/text/longTextOnPath-expected.png:
+        * platform/qt/svg/batik/text/longTextOnPath-expected.txt:
+        * platform/qt/svg/carto.net/tabgroup-expected.png: Renamed from LayoutTests/platform/qt-5.0/svg/carto.net/tabgroup-expected.png.
+        * platform/qt/svg/carto.net/tabgroup-expected.txt:
+        * platform/qt/svg/foreignObject/text-tref-02-b-expected.png:
+        * platform/qt/svg/transforms/text-with-pattern-with-svg-transform-expected.png:
+        * platform/qt/svg/transforms/text-with-pattern-with-svg-transform-expected.txt:
+
 2013-08-15  Simon Pena  <simon.pena@samsung.com>
 
         [GTK] Unreviewed gardening. Update test expectations.
