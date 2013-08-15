@@ -59,31 +59,30 @@ private:
     virtual bool rendererIsNeeded(const NodeRenderingContext&);
 };
 
+inline PassRefPtr<ProgressInnerElement> ProgressInnerElement::create(Document* document)
+{
+    RefPtr<ProgressInnerElement> result = adoptRef(new ProgressInnerElement(document));
+    result->setPseudo(AtomicString("-webkit-progress-inner-element", AtomicString::ConstructFromLiteral));
+    return result;
+}
+
 class ProgressBarElement FINAL : public ProgressShadowElement {
 public:
-    ProgressBarElement(Document* document) 
-        : ProgressShadowElement(document)
-    {
-        DEFINE_STATIC_LOCAL(AtomicString, pseudoId, ("-webkit-progress-bar", AtomicString::ConstructFromLiteral));
-        setPseudo(pseudoId);
-    }
+    ProgressBarElement(Document*);
 
     static PassRefPtr<ProgressBarElement> create(Document*);
 };
 
 inline PassRefPtr<ProgressBarElement> ProgressBarElement::create(Document* document)
 {
-    return adoptRef(new ProgressBarElement(document));
+    RefPtr<ProgressBarElement> result = adoptRef(new ProgressBarElement(document));
+    result->setPseudo(AtomicString("-webkit-progress-bar", AtomicString::ConstructFromLiteral));
+    return result;
 }
 
 class ProgressValueElement FINAL : public ProgressShadowElement {
 public:
-    ProgressValueElement(Document* document) 
-        : ProgressShadowElement(document)
-    {
-        DEFINE_STATIC_LOCAL(AtomicString, pseudoId, ("-webkit-progress-value", AtomicString::ConstructFromLiteral));
-        setPseudo(pseudoId);
-    }
+    ProgressValueElement(Document*);
 
     static PassRefPtr<ProgressValueElement> create(Document*);
     void setWidthPercentage(double);
@@ -91,7 +90,9 @@ public:
 
 inline PassRefPtr<ProgressValueElement> ProgressValueElement::create(Document* document)
 {
-    return adoptRef(new ProgressValueElement(document));
+    RefPtr<ProgressValueElement> result = adoptRef(new ProgressValueElement(document));
+    result->setPseudo(AtomicString("-webkit-progress-value", AtomicString::ConstructFromLiteral));
+    return result;
 }
 
 }

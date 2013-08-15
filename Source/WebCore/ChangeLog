@@ -1,3 +1,21 @@
+2013-08-15  Rob Buis  <rwlbuis@webkit.org>
+
+        ASSERTION FAILED: !m_adoptionIsRequired in void WebCore::TreeShared<NodeType>::ref()
+        https://bugs.webkit.org/show_bug.cgi?id=116979
+
+        Reviewed by Antti Koivisto.
+
+        Make sure adoptRef is called before calling setPseudo, for all progress shadow elements.
+
+        * html/shadow/ProgressShadowElement.cpp:
+        (WebCore::ProgressInnerElement::ProgressInnerElement):
+        (WebCore::ProgressBarElement::ProgressBarElement):
+        (WebCore::ProgressValueElement::ProgressValueElement):
+        * html/shadow/ProgressShadowElement.h:
+        (WebCore::ProgressInnerElement::create):
+        (WebCore::ProgressBarElement::create):
+        (WebCore::ProgressValueElement::create):
+
 2013-08-14  Ryuan Choi  <ryuan.choi@samsung.com>
 
         <https://webkit.org/b/119786> [EFL] decoration of search type is different from other platforms
