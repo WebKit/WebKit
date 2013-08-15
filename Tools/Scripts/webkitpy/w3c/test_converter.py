@@ -51,6 +51,9 @@ class W3CTestConverter(object):
 
         self.prefixed_properties = self.read_webkit_prefixed_css_property_list()
 
+        prop_regex = '([\s{]|^)(' + "|".join(prop.replace('-webkit-', '') for prop in self.prefixed_properties) + ')(\s+:|:)'
+        self.prop_re = re.compile(prop_regex)
+
     def path_from_webkit_root(self, *comps):
         return self._filesystem.abspath(self._filesystem.join(self._webkit_root, *comps))
 
@@ -157,12 +160,18 @@ class W3CTestConverter(object):
 
             # Rewrite tag only if changes were made.
             if updated_style_text[0]:
-                converted_properties.extend(updated_style_text[0])
+                converted_properties.extend(list(updated_style_text[0]))
 
                 new_tag = Tag(doc, tag.name, tag.attrs)
                 new_tag.insert(0, updated_style_text[1])
 
                 self.replace_tag(tag, new_tag)
+
+        # FIXME: Doing the replace in the parsed document and then writing it back out
+        # is normalizing the HTML, which may in fact alter the intent of some tests.
+        # We should probably either just do basic string-replaces, or have some other
+        # way of flagging tests that are sensitive to being rewritten.
+        # https://bugs.webkit.org/show_bug.cgi?id=119159
 
         return (converted_properties, doc.prettify())
 
@@ -171,21 +180,17 @@ class W3CTestConverter(object):
 
         Returns the list of converted properties and the modified text."""
 
-        converted_properties = []
+        converted_properties = set()
+        text_chunks = []
+        cur_pos = 0
+        for m in self.prop_re.finditer(text):
+            text_chunks.extend([text[cur_pos:m.start()], m.group(1), '-webkit-', m.group(2), m.group(3)])
+            converted_properties.add(m.group(2))
+            cur_pos = m.end()
+        text_chunks.append(text[cur_pos:])
 
-        for raw_property in self.prefixed_properties:
-            # FIXME: add in both the prefixed and unprefixed versions, rather than just replacing them?
-            # That might allow the imported test to work in other browsers more easily.
-
-            # Look for the various ways it might be in the CSS
-            # Match the the property preceded by either whitespace or left curly brace
-            # or at the beginning of the string (for inline style attribute)
-            pattern = '([\s{]|^)' + raw_property + '(\s+:|:)'
-            if re.search(pattern, text):
-                replacement_property = '-webkit-%s' % raw_property
-                _log.info('converting %s -> %s' % (raw_property, replacement_property))
-                converted_properties.append(replacement_property)
-                text = re.sub(pattern, replacement_property + ':', text)
+        for prop in converted_properties:
+            _log.info('  converting %s', prop)
 
         # FIXME: Handle the JS versions of these properties and GetComputedStyle, too.
         return (converted_properties, text)

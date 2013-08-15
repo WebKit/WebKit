@@ -1,3 +1,23 @@
+2013-08-15  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        <https://webkit.org/b/119850> Speed up test importing by doing all the regex matching in a single pass
+
+        Reviewed by Dirk Pranke.
+
+        This is a port from Blink of
+        https://src.chromium.org/viewvc/blink?revision=155647&view=revision
+        originally by Dirk Pranke.
+
+        From the original commit:
+
+        This gives something like a 15x speedup over compiling and matching
+        one property at a time and doing multiple passes over the file.
+
+        * Scripts/webkitpy/w3c/test_converter.py:
+        (W3CTestConverter.__init__):
+        (W3CTestConverter.convert_prefixed_properties):
+        (W3CTestConverter.add_webkit_prefix_to_unprefixed_properties):
+
 2013-08-15  Dan Bernstein  <mitz@apple.com>
 
         <https://webkit.org/b/119856> Improve extract-localizable-strings messages
