@@ -1,3 +1,12 @@
+2013-08-15  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        [GTK] Unreviewed gardening. Move Mac specific expectation for
+        accessibility test to the cross platform directory, as the result
+        it's shared with GTK and EFL ports.
+
+        * accessibility/heading-title-includes-links-expected.txt: Renamed
+        from LayoutTests/platform/mac/accessibility/heading-title-includes-links-expected.txt.
+
 2013-08-15  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         Empty qt-5.0 expectations into qt expectations
