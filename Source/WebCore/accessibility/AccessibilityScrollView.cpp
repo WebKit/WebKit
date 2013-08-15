@@ -88,16 +88,14 @@ Widget* AccessibilityScrollView::widgetForAttachmentView() const
     
 bool AccessibilityScrollView::canSetFocusAttribute() const
 {
-    if (AccessibilityObject* webArea = webAreaObject())
-        return webArea->canSetFocusAttribute();
-    return false;
+    AccessibilityObject* webArea = webAreaObject();
+    return webArea && webArea->canSetFocusAttribute();
 }
     
 bool AccessibilityScrollView::isFocused() const
 {
-    if (AccessibilityObject* webArea = webAreaObject())
-        return webArea->isFocused();
-    return false;
+    AccessibilityObject* webArea = webAreaObject();
+    return webArea && webArea->isFocused();
 }
     
 void AccessibilityScrollView::setFocused(bool focused)

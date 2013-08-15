@@ -50,31 +50,31 @@ protected:
 private:
     explicit AccessibilityScrollView(ScrollView*);
     
-    virtual bool computeAccessibilityIsIgnored() const;
-    virtual bool isAccessibilityScrollView() const { return true; }
-    virtual bool isEnabled() const { return true; }
+    virtual bool computeAccessibilityIsIgnored() const OVERRIDE;
+    virtual bool isAccessibilityScrollView() const OVERRIDE { return true; }
+    virtual bool isEnabled() const OVERRIDE { return true; }
     
-    virtual bool isAttachment() const;
-    virtual Widget* widgetForAttachmentView() const;
+    virtual bool isAttachment() const OVERRIDE;
+    virtual Widget* widgetForAttachmentView() const OVERRIDE;
     
-    virtual AccessibilityObject* scrollBar(AccessibilityOrientation);
-    virtual void addChildren();
-    virtual void clearChildren();
-    virtual AccessibilityObject* accessibilityHitTest(const IntPoint&) const;
-    virtual void updateChildrenIfNecessary();
-    virtual void setNeedsToUpdateChildren() { m_childrenDirty = true; }
+    virtual AccessibilityObject* scrollBar(AccessibilityOrientation) OVERRIDE;
+    virtual void addChildren() OVERRIDE;
+    virtual void clearChildren() OVERRIDE;
+    virtual AccessibilityObject* accessibilityHitTest(const IntPoint&) const OVERRIDE;
+    virtual void updateChildrenIfNecessary() OVERRIDE;
+    virtual void setNeedsToUpdateChildren() OVERRIDE { m_childrenDirty = true; }
     void updateScrollbars();
-    virtual void setFocused(bool);
-    virtual bool canSetFocusAttribute() const;
-    virtual bool isFocused() const;
+    virtual void setFocused(bool) OVERRIDE;
+    virtual bool canSetFocusAttribute() const OVERRIDE;
+    virtual bool isFocused() const OVERRIDE;
     
-    virtual FrameView* documentFrameView() const;
-    virtual LayoutRect elementRect() const;
-    virtual AccessibilityObject* parentObject() const;
-    virtual AccessibilityObject* parentObjectIfExists() const;
+    virtual FrameView* documentFrameView() const OVERRIDE;
+    virtual LayoutRect elementRect() const OVERRIDE;
+    virtual AccessibilityObject* parentObject() const OVERRIDE;
+    virtual AccessibilityObject* parentObjectIfExists() const OVERRIDE;
     
     AccessibilityObject* webAreaObject() const;
-    virtual AccessibilityObject* firstChild() const { return webAreaObject(); }
+    virtual AccessibilityObject* firstChild() const OVERRIDE { return webAreaObject(); }
     AccessibilityScrollbar* addChildScrollbar(Scrollbar*);
     void removeChildScrollbar(AccessibilityObject*);
     
