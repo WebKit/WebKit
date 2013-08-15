@@ -260,6 +260,7 @@ SOURCES += \
     css/CSSComputedStyleDeclaration.cpp \
     css/CSSCrossfadeValue.cpp \
     css/CSSCursorImageValue.cpp \
+    css/CSSFilterImageValue.cpp \
     css/CSSFontFace.cpp \
     css/CSSDefaultStyleSheets.cpp \
     css/CSSFontFaceLoadEvent.cpp \
@@ -1480,6 +1481,7 @@ HEADERS += \
     css/CSSComputedStyleDeclaration.h \
     css/CSSCrossfadeValue.h \
     css/CSSCursorImageValue.h \
+    css/CSSFilterImageValue.h \
     css/CSSFontFace.h \
     css/CSSFontFaceLoadEvent.h \
     css/CSSFontFaceRule.h \

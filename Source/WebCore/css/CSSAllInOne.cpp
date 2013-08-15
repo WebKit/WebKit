@@ -35,6 +35,7 @@
 #include "CSSCrossfadeValue.cpp"
 #include "CSSCursorImageValue.cpp"
 #include "CSSDefaultStyleSheets.cpp"
+#include "CSSFilterImageValue.cpp"
 #include "CSSFontFace.cpp"
 #include "CSSFontFaceRule.cpp"
 #include "CSSFontFaceSource.cpp"

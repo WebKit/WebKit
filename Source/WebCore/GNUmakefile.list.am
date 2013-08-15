@@ -2565,6 +2565,8 @@ webcore_sources += \
 	Source/WebCore/css/CSSCursorImageValue.h \
 	Source/WebCore/css/CSSDefaultStyleSheets.cpp \
 	Source/WebCore/css/CSSDefaultStyleSheets.h \
+	Source/WebCore/css/CSSFilterImageValue.cpp \
+	Source/WebCore/css/CSSFilterImageValue.h \
 	Source/WebCore/css/CSSFontFace.cpp \
 	Source/WebCore/css/CSSFontFace.h \
 	Source/WebCore/css/CSSFontFaceLoadEvent.cpp \

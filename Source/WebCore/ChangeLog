@@ -1,3 +1,98 @@
+2013-08-15  Dirk Schulze  <krit@webkit.org>
+
+        Implement CSS Image filter() function
+        https://bugs.webkit.org/show_bug.cgi?id=119845
+
+        Reviewed by Dean Jackson.
+
+        The Filter Effects specification defines a new CSS Image function called
+        filter(). This function takes another CSS Image as well as a filter function
+        list as input and can be used by various CSS properties.
+
+        Example:
+
+            background-image: -webkit-filter(url(image.png), brightness(0.5))
+
+        This patch implements the current definition of filter() based on other
+        image generation classes like CSSCrossfadeValue.
+        A new class called CSSFilterImageValue was added together with an
+        image observer.
+
+        The function is implemented prefixed and behind the compiler flag CSS_FILTERS.
+
+        Tests: fast/filter-image/filter-image.html
+               fast/filter-image/parse-filter-image.html
+
+        * CMakeLists.txt: Added new files to build systems.
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSAllInOne.cpp:
+        * css/CSSCrossfadeValue.cpp: Share code together with CSSFilterImageValue
+            in CSSImageGeneratorValue.cpp.
+        (WebCore::CSSCrossfadeValue::isPending):
+        (WebCore::CSSCrossfadeValue::loadSubimages):
+        * css/CSSFilterImageValue.cpp: Added.
+        (WebCore::CSSFilterImageValue::~CSSFilterImageValue):
+        (WebCore::CSSFilterImageValue::customCssText):
+        (WebCore::CSSFilterImageValue::fixedSize):
+        (WebCore::CSSFilterImageValue::isPending):
+        (WebCore::CSSFilterImageValue::knownToBeOpaque):
+        (WebCore::CSSFilterImageValue::loadSubimages):
+        (WebCore::CSSFilterImageValue::image):
+        (WebCore::CSSFilterImageValue::filterImageChanged):
+        (WebCore::CSSFilterImageValue::createFilterOperations):
+        (WebCore::CSSFilterImageValue::FilterSubimageObserverProxy::imageChanged):
+        (WebCore::CSSFilterImageValue::hasFailedOrCanceledSubresources):
+        (WebCore::CSSFilterImageValue::equals):
+        * css/CSSFilterImageValue.h: Added.
+        (WebCore::CSSFilterImageValue::create):
+        (WebCore::CSSFilterImageValue::isFixedSize):
+        (WebCore::CSSFilterImageValue::CSSFilterImageValue):
+        (WebCore::CSSFilterImageValue::FilterSubimageObserverProxy::FilterSubimageObserverProxy):
+        (WebCore::CSSFilterImageValue::FilterSubimageObserverProxy::~FilterSubimageObserverProxy):
+        (WebCore::CSSFilterImageValue::FilterSubimageObserverProxy::setReady):
+        * css/CSSImageGeneratorValue.cpp: Shared code between CSSCrossfadeValue and
+            CSSFilterImageValue.
+        (WebCore::CSSImageGeneratorValue::image):
+        (WebCore::CSSImageGeneratorValue::isFixedSize):
+        (WebCore::CSSImageGeneratorValue::fixedSize):
+        (WebCore::CSSImageGeneratorValue::isPending):
+        (WebCore::CSSImageGeneratorValue::knownToBeOpaque):
+        (WebCore::CSSImageGeneratorValue::loadSubimages):
+        (WebCore::CSSImageGeneratorValue::subimageIsPending):
+        (WebCore::CSSImageGeneratorValue::cachedImageForCSSValue):
+        * css/CSSImageGeneratorValue.h:
+        * css/CSSParser.cpp: Added parsing information for new image function.
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::isGeneratedImageValue):
+        (WebCore::CSSParser::parseGeneratedImage):
+        (WebCore::CSSParser::parseFilterImage):
+        (WebCore::CSSParser::parseFilter):
+        * css/CSSParser.h:
+        * css/CSSValue.cpp:
+        (WebCore::CSSValue::hasFailedOrCanceledSubresources):
+        (WebCore::CSSValue::equals):
+        (WebCore::CSSValue::cssText):
+        (WebCore::CSSValue::destroy):
+        * css/CSSValue.h:
+        (WebCore::CSSValue::isFilterImageValue):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::applyProperty):
+        (WebCore::StyleResolver::generatedOrPendingFromValue):
+        (WebCore::StyleResolver::createFilterOperations):
+        * css/StyleResolver.h: StyleResolver needs to be passed to
+            CSSFilterImageValue in order to resolve blur() and
+            drop-shadow() function. Both needs to be resolved together
+            with all other properties and can't be done earlier or later.
+        * rendering/FilterEffectRenderer.cpp:
+        (WebCore::FilterEffectRenderer::build): Pass an argument whether the
+            intermediate filter results should be clipped or not. The filter
+            property for instance doesn't clip but scales the intermediate
+            image sizes.
+        * rendering/FilterEffectRenderer.h:
+
 2013-08-15  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, fix bindings tests after http://trac.webkit.org/changeset/154127

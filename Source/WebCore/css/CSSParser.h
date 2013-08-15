@@ -246,7 +246,9 @@ public:
 #endif
 
 #if ENABLE(CSS_FILTERS)
-    PassRefPtr<CSSValueList> parseFilter();
+    bool parseFilterImage(CSSParserValueList*, RefPtr<CSSValue>&);
+
+    bool parseFilter(CSSParserValueList*, RefPtr<CSSValue>&);
     PassRefPtr<WebKitCSSFilterValue> parseBuiltinFilterArguments(CSSParserValueList*, WebKitCSSFilterValue::FilterOperationType);
 #if ENABLE(CSS_SHADERS)
     PassRefPtr<WebKitCSSMatFunctionValue> parseMatValue(CSSParserValue*);

@@ -27,7 +27,6 @@
 #include "CSSCrossfadeValue.h"
 
 #include "CSSImageValue.h"
-#include "CachedImage.h"
 #include "CachedResourceLoader.h"
 #include "CrossfadeGeneratedImage.h"
 #include "ImageBuffer.h"
@@ -37,19 +36,6 @@
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
-
-static bool subimageIsPending(CSSValue* value)
-{
-    if (value->isImageValue())
-        return static_cast<CSSImageValue*>(value)->cachedOrPendingImage()->isPendingImage();
-    
-    if (value->isImageGeneratorValue())
-        return static_cast<CSSImageGeneratorValue*>(value)->isPending();
-    
-    ASSERT_NOT_REACHED();
-    
-    return false;
-}
 
 static bool subimageKnownToBeOpaque(CSSValue* value, const RenderObject* renderer)
 {
@@ -62,30 +48,6 @@ static bool subimageKnownToBeOpaque(CSSValue* value, const RenderObject* rendere
     ASSERT_NOT_REACHED();
 
     return false;
-}
-
-static CachedImage* cachedImageForCSSValue(CSSValue* value, CachedResourceLoader* cachedResourceLoader)
-{
-    if (!value)
-        return 0;
-
-    if (value->isImageValue()) {
-        StyleCachedImage* styleCachedImage = static_cast<CSSImageValue*>(value)->cachedImage(cachedResourceLoader);
-        if (!styleCachedImage)
-            return 0;
-
-        return styleCachedImage->cachedImage();
-    }
-    
-    if (value->isImageGeneratorValue()) {
-        static_cast<CSSImageGeneratorValue*>(value)->loadSubimages(cachedResourceLoader);
-        // FIXME: Handle CSSImageGeneratorValue (and thus cross-fades with gradients and canvas).
-        return 0;
-    }
-    
-    ASSERT_NOT_REACHED();
-    
-    return 0;
 }
 
 CSSCrossfadeValue::~CSSCrossfadeValue()
@@ -135,7 +97,8 @@ IntSize CSSCrossfadeValue::fixedSize(const RenderObject* renderer)
 
 bool CSSCrossfadeValue::isPending() const
 {
-    return subimageIsPending(m_fromValue.get()) || subimageIsPending(m_toValue.get());
+    return CSSImageGeneratorValue::subimageIsPending(m_fromValue.get())
+        || CSSImageGeneratorValue::subimageIsPending(m_toValue.get());
 }
 
 bool CSSCrossfadeValue::knownToBeOpaque(const RenderObject* renderer) const
@@ -148,8 +111,8 @@ void CSSCrossfadeValue::loadSubimages(CachedResourceLoader* cachedResourceLoader
     CachedResourceHandle<CachedImage> oldCachedFromImage = m_cachedFromImage;
     CachedResourceHandle<CachedImage> oldCachedToImage = m_cachedToImage;
 
-    m_cachedFromImage = cachedImageForCSSValue(m_fromValue.get(), cachedResourceLoader);
-    m_cachedToImage = cachedImageForCSSValue(m_toValue.get(), cachedResourceLoader);
+    m_cachedFromImage = CSSImageGeneratorValue::cachedImageForCSSValue(m_fromValue.get(), cachedResourceLoader);
+    m_cachedToImage = CSSImageGeneratorValue::cachedImageForCSSValue(m_toValue.get(), cachedResourceLoader);
 
     if (m_cachedFromImage != oldCachedFromImage) {
         if (oldCachedFromImage)

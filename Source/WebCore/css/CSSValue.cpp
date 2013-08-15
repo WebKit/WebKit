@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Andreas Kling (kling@webkit.org)
+ * Copyright (C) 2013 Adobe Systems Incorporated. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,6 +34,7 @@
 #include "CSSCanvasValue.h"
 #include "CSSCrossfadeValue.h"
 #include "CSSCursorImageValue.h"
+#include "CSSFilterImageValue.h"
 #include "CSSFontFaceSrcValue.h"
 #include "CSSFunctionValue.h"
 #include "CSSGradientValue.h"
@@ -137,6 +139,10 @@ bool CSSValue::hasFailedOrCanceledSubresources() const
         return static_cast<const CSSImageValue*>(this)->hasFailedOrCanceledSubresources();
     if (classType() == CrossfadeClass)
         return static_cast<const CSSCrossfadeValue*>(this)->hasFailedOrCanceledSubresources();
+#if ENABLE(CSS_FILTERS)
+    if (classType() == FilterImageClass)
+        return static_cast<const CSSFilterImageValue*>(this)->hasFailedOrCanceledSubresources();
+#endif
 #if ENABLE(CSS_IMAGE_SET)
     if (classType() == ImageSetClass)
         return static_cast<const CSSImageSetValue*>(this)->hasFailedOrCanceledSubresources();
@@ -167,6 +173,10 @@ bool CSSValue::equals(const CSSValue& other) const
             return compareCSSValues<CSSCanvasValue>(*this, other);
         case CursorImageClass:
             return compareCSSValues<CSSCursorImageValue>(*this, other);
+#if ENABLE(CSS_FILTERS)
+        case FilterImageClass:
+            return compareCSSValues<CSSFilterImageValue>(*this, other);
+#endif
         case FontClass:
             return compareCSSValues<FontValue>(*this, other);
         case FontFaceSrcClass:
@@ -267,6 +277,10 @@ String CSSValue::cssText() const
         return static_cast<const CSSCanvasValue*>(this)->customCssText();
     case CursorImageClass:
         return static_cast<const CSSCursorImageValue*>(this)->customCssText();
+#if ENABLE(CSS_FILTERS)
+    case FilterImageClass:
+        return static_cast<const CSSFilterImageValue*>(this)->customCssText();
+#endif
     case FontClass:
         return static_cast<const FontValue*>(this)->customCssText();
     case FontFaceSrcClass:
@@ -453,6 +467,9 @@ void CSSValue::destroy()
         return;
 #endif
 #if ENABLE(CSS_FILTERS)
+    case FilterImageClass:
+        delete static_cast<CSSFilterImageValue*>(this);
+        return;
     case WebKitCSSFilterClass:
         delete static_cast<WebKitCSSFilterValue*>(this);
         return;

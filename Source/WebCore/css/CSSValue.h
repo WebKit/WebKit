@@ -92,6 +92,7 @@ public:
     bool isCSSLineBoxContainValue() const { return m_classType == LineBoxContainClass; }
     bool isCalculationValue() const {return m_classType == CalculationClass; }
 #if ENABLE(CSS_FILTERS)
+    bool isFilterImageValue() const { return m_classType == FilterImageClass; }
     bool isWebKitCSSFilterValue() const { return m_classType == WebKitCSSFilterClass; }
 #if ENABLE(CSS_SHADERS)
     bool isWebKitCSSArrayFunctionValue() const { return m_classType == WebKitCSSArrayFunctionValueClass; }
@@ -140,6 +141,9 @@ protected:
         // Image generator classes.
         CanvasClass,
         CrossfadeClass,
+#if ENABLE(CSS_FILTERS)
+        FilterImageClass,
+#endif
         LinearGradientClass,
         RadialGradientClass,
 

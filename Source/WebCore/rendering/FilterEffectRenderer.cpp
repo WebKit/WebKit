@@ -185,7 +185,7 @@ PassRefPtr<FilterEffect> FilterEffectRenderer::buildReferenceFilter(RenderObject
 #endif
 }
 
-bool FilterEffectRenderer::build(RenderObject* renderer, const FilterOperations& operations)
+bool FilterEffectRenderer::build(RenderObject* renderer, const FilterOperations& operations, bool clipsToBounds)
 {
 #if ENABLE(CSS_SHADERS)
     m_hasCustomShaderFilter = false;
@@ -361,8 +361,9 @@ bool FilterEffectRenderer::build(RenderObject* renderer, const FilterOperations&
         }
 
         if (effect) {
-            // Unlike SVG, filters applied here should not clip to their primitive subregions.
-            effect->setClipsToBounds(false);
+            // Unlike SVG Filters and CSSFilterImages, filter functions on the filter
+            // property applied here should not clip to their primitive subregions.
+            effect->setClipsToBounds(clipsToBounds);
             effect->setOperatingColorSpace(ColorSpaceDeviceRGB);
             
             if (filterOperation->getOperationType() != FilterOperation::REFERENCE) {

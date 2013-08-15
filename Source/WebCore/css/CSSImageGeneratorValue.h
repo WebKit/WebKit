@@ -27,6 +27,7 @@
 #define CSSImageGeneratorValue_h
 
 #include "CSSValue.h"
+#include "CachedImage.h"
 #include "GeneratorGeneratedImage.h"
 #include "IntSizeHash.h"
 #include "Timer.h"
@@ -63,6 +64,10 @@ protected:
     GeneratorGeneratedImage* cachedImageForSize(IntSize);
     void saveCachedImageForSize(IntSize, PassRefPtr<GeneratorGeneratedImage>);
     const HashCountedSet<RenderObject*>& clients() const { return m_clients; }
+
+    // Helper functions for Crossfade and Filter.
+    static CachedImage* cachedImageForCSSValue(CSSValue*, CachedResourceLoader*);
+    static bool subimageIsPending(CSSValue*);
 
 private:
     class CachedGeneratedImage {

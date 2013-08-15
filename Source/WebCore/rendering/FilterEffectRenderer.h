@@ -104,7 +104,7 @@ public:
     GraphicsContext* inputContext();
     ImageBuffer* output() const { return lastEffect()->asImageBuffer(); }
 
-    bool build(RenderObject* renderer, const FilterOperations&);
+    bool build(RenderObject* renderer, const FilterOperations&, bool clipsToBounds = false);
     PassRefPtr<FilterEffect> buildReferenceFilter(RenderObject* renderer, PassRefPtr<FilterEffect> previousEffect, ReferenceFilterOperation*);
     bool updateBackingStoreRect(const FloatRect& filterRect);
     void allocateBackingStoreIfNeeded();

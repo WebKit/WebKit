@@ -1,3 +1,19 @@
+2013-08-15  Dirk Schulze  <krit@webkit.org>
+
+        Implement CSS Image filter() function
+        https://bugs.webkit.org/show_bug.cgi?id=119845
+
+        Reviewed by Dean Jackson.
+
+        Test parsing, style resolving, computed style and behavior of new
+        CSS image function filter().
+
+        * fast/filter-image/filter-image-expected.html: Added.
+        * fast/filter-image/filter-image.html: Added.
+        * fast/filter-image/parse-filter-image-expected.txt: Added.
+        * fast/filter-image/parse-filter-image.html: Added.
+        * fast/filter-image/resources/image.svg: Added.
+
 2013-08-15  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, rebase the test now that we throw different exceptions.

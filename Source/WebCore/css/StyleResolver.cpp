@@ -34,6 +34,7 @@
 #include "CSSCalculationValue.h"
 #include "CSSCursorImageValue.h"
 #include "CSSDefaultStyleSheets.h"
+#include "CSSFilterImageValue.h"
 #include "CSSFontFaceRule.h"
 #include "CSSFontSelector.h"
 #include "CSSLineBoxContainValue.h"
@@ -2686,7 +2687,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     case CSSPropertyWebkitFilter: {
         HANDLE_INHERIT_AND_INITIAL(filter, Filter);
         FilterOperations operations;
-        if (createFilterOperations(value, state.style(), state.rootElementStyle(), operations))
+        if (createFilterOperations(value, operations))
             state.style()->setFilter(operations);
         return;
     }
@@ -3074,6 +3075,12 @@ PassRefPtr<StyleImage> StyleResolver::cachedOrPendingFromValue(CSSPropertyID pro
 
 PassRefPtr<StyleImage> StyleResolver::generatedOrPendingFromValue(CSSPropertyID property, CSSImageGeneratorValue* value)
 {
+#if ENABLE(CSS_FILTERS)
+    if (value->isFilterImageValue()) {
+        // FilterImage needs to calculate FilterOperations.
+        static_cast<CSSFilterImageValue*>(value)->createFilterOperations(this);
+    }
+#endif
     if (value->isPending()) {
         m_state.pendingImageProperties().set(property, value);
         return StylePendingImage::create(value);
@@ -3657,8 +3664,11 @@ PassRefPtr<CustomFilterOperation> StyleResolver::createCustomFilterOperation(Web
 
 #endif
 
-bool StyleResolver::createFilterOperations(CSSValue* inValue, RenderStyle* style, RenderStyle* rootStyle, FilterOperations& outOperations)
+bool StyleResolver::createFilterOperations(CSSValue* inValue, FilterOperations& outOperations)
 {
+    State& state = m_state;
+    RenderStyle* style = state.style();
+    RenderStyle* rootStyle = state.rootElementStyle();
     ASSERT(outOperations.isEmpty());
     
     if (!inValue)

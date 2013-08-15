@@ -5,7 +5,7 @@
  * Copyright (C) 2007 Nicholas Shanks <webkit@nickshanks.com>
  * Copyright (C) 2008 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
- * Copyright (C) 2012 Adobe Systems Incorporated. All rights reserved.
+ * Copyright (C) 2012, 2013 Adobe Systems Incorporated. All rights reserved.
  * Copyright (C) 2012 Intel Corporation. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -33,6 +33,7 @@
 #include "CSSCanvasValue.h"
 #include "CSSCrossfadeValue.h"
 #include "CSSCursorImageValue.h"
+#include "CSSFilterImageValue.h"
 #include "CSSFontFaceRule.h"
 #include "CSSFontFaceSrcValue.h"
 #include "CSSFunctionValue.h"
@@ -2506,12 +2507,12 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         if (id == CSSValueNone)
             validPrimitive = true;
         else {
-            RefPtr<CSSValue> val = parseFilter();
-            if (val) {
-                addProperty(propId, val, important);
-                return true;
-            }
-            return false;
+            RefPtr<CSSValue> currValue;
+            if (!parseFilter(m_valueList.get(), currValue))
+                return false;
+            // m_valueList->next();
+            addProperty(propId, currValue, important);
+            return true;
         }
         break;
 #endif
@@ -7971,7 +7972,8 @@ bool CSSParser::isGeneratedImageValue(CSSParserValue* val) const
         || equalIgnoringCase(val->function->name, "-webkit-repeating-radial-gradient(")
         || equalIgnoringCase(val->function->name, "repeating-radial-gradient(")
         || equalIgnoringCase(val->function->name, "-webkit-canvas(")
-        || equalIgnoringCase(val->function->name, "-webkit-cross-fade(");
+        || equalIgnoringCase(val->function->name, "-webkit-cross-fade(")
+        || equalIgnoringCase(val->function->name, "-webkit-filter(");
 }
 
 bool CSSParser::parseGeneratedImage(CSSParserValueList* valueList, RefPtr<CSSValue>& value)
@@ -8014,8 +8016,48 @@ bool CSSParser::parseGeneratedImage(CSSParserValueList* valueList, RefPtr<CSSVal
     if (equalIgnoringCase(val->function->name, "-webkit-cross-fade("))
         return parseCrossfade(valueList, value);
 
+#if ENABLE(CSS_FILTERS)
+    if (equalIgnoringCase(val->function->name, "-webkit-filter("))
+        return parseFilterImage(valueList, value);
+#endif
+
     return false;
 }
+
+#if ENABLE(CSS_FILTERS)
+bool CSSParser::parseFilterImage(CSSParserValueList* valueList, RefPtr<CSSValue>& crossfade)
+{
+    RefPtr<CSSFilterImageValue> result;
+
+    // Walk the arguments.
+    CSSParserValueList* args = valueList->current()->function->args.get();
+    if (!args)
+        return false;
+    CSSParserValue* a = args->current();
+    RefPtr<CSSValue> imageValue;
+    RefPtr<CSSValue> filterValue;
+
+    // The first argument is the image. It is a fill image.
+    if (!a || !parseFillImage(args, imageValue))
+        return false;
+    a = args->next();
+
+    // Skip a comma
+    if (!isComma(a))
+        return false;
+    a = args->next();
+
+    if (!a || !parseFilter(args, filterValue))
+        return false;
+    a = args->next();
+
+    result = CSSFilterImageValue::create(imageValue, filterValue);
+
+    crossfade = result;
+
+    return true;
+}
+#endif
 
 bool CSSParser::parseCrossfade(CSSParserValueList* valueList, RefPtr<CSSValue>& crossfade)
 {
@@ -9227,16 +9269,16 @@ PassRefPtr<WebKitCSSFilterValue> CSSParser::parseBuiltinFilterArguments(CSSParse
     return filterValue.release();
 }
 
-PassRefPtr<CSSValueList> CSSParser::parseFilter()
+bool CSSParser::parseFilter(CSSParserValueList* valueList, RefPtr<CSSValue>& value)
 {
-    if (!m_valueList)
-        return 0;
+    if (!valueList)
+        return false;
 
     // The filter is a list of functional primitives that specify individual operations.
     RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
-    for (CSSParserValue* value = m_valueList->current(); value; value = m_valueList->next()) {
+    for (CSSParserValue* value = valueList->current(); value; value = valueList->next()) {
         if (value->unit != CSSPrimitiveValue::CSS_URI && (value->unit != CSSParserValue::Function || !value->function))
-            return 0;
+            return false;
 
         WebKitCSSFilterValue::FilterOperationType filterType = WebKitCSSFilterValue::UnknownFilterOperation;
 
@@ -9254,34 +9296,36 @@ PassRefPtr<CSSValueList> CSSParser::parseFilter()
             filterInfoForName(name, filterType, maximumArgumentCount);
 
             if (filterType == WebKitCSSFilterValue::UnknownFilterOperation)
-                return 0;
+                return false;
 
 #if ENABLE(CSS_SHADERS)
             if (filterType == WebKitCSSFilterValue::CustomFilterOperation) {
                 // Make sure parsing fails if custom filters are disabled.
                 if (!m_context.isCSSCustomFilterEnabled)
-                    return 0;
+                    return false;
                 
                 RefPtr<WebKitCSSFilterValue> filterValue = parseCustomFilterFunction(value);
                 if (!filterValue)
-                    return 0;
+                    return false;
                 list->append(filterValue.release());
                 continue;
             }
 #endif
             CSSParserValueList* args = value->function->args.get();
             if (!args)
-                return 0;
+                return false;
 
             RefPtr<WebKitCSSFilterValue> filterValue = parseBuiltinFilterArguments(args, filterType);
             if (!filterValue)
-                return 0;
+                return false;
             
             list->append(filterValue);
         }
     }
 
-    return list.release();
+    value = list;
+
+    return true;
 }
 #endif
 
