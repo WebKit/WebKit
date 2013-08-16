@@ -82,7 +82,7 @@ Element* FocusNavigationScope::owner() const
 {
     ContainerNode* root = rootNode();
     if (root->isShadowRoot())
-        return toShadowRoot(root)->host();
+        return toShadowRoot(root)->hostElement();
     if (Frame* frame = root->document()->frame())
         return frame->ownerElement();
     return 0;

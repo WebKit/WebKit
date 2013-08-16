@@ -64,7 +64,7 @@ void EventPathWalker::moveToParent()
         m_isVisitingInsertionPointInReprojection = false;
         return;
     }
-    m_node = toShadowRoot(m_node)->host();
+    m_node = toShadowRoot(m_node)->hostElement();
     m_distributedNode = m_node;
     m_isVisitingInsertionPointInReprojection = false;
 }

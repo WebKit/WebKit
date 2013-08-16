@@ -233,7 +233,7 @@ Node* ComposedShadowTreeWalker::traverseParentBackToShadowRootOrHost(const Shado
     if (canCrossUpperBoundary()) {
         if (details)
             details->didTraverseShadowRoot(shadowRoot);
-        return shadowRoot->host();
+        return shadowRoot->hostElement();
     }
 
     return const_cast<ShadowRoot*>(shadowRoot);

@@ -986,14 +986,14 @@ bool Node::isRegisteredWithNamedFlow() const
 Element* Node::shadowHost() const
 {
     if (ShadowRoot* root = containingShadowRoot())
-        return root->host();
+        return root->hostElement();
     return 0;
 }
 
 Node* Node::deprecatedShadowAncestorNode() const
 {
     if (ShadowRoot* root = containingShadowRoot())
-        return root->host();
+        return root->hostElement();
 
     return const_cast<Node*>(this);
 }
@@ -1032,7 +1032,7 @@ Element* Node::parentOrShadowHostElement() const
         return 0;
 
     if (parent->isShadowRoot())
-        return toShadowRoot(parent)->host();
+        return toShadowRoot(parent)->hostElement();
 
     if (!parent->isElementNode())
         return 0;
@@ -1043,6 +1043,25 @@ Element* Node::parentOrShadowHostElement() const
 Node* Node::insertionParentForBinding() const
 {
     return resolveReprojection(this);
+}
+
+Node::InsertionNotificationRequest Node::insertedInto(ContainerNode* insertionPoint)
+{
+    ASSERT(insertionPoint->inDocument() || isContainerNode());
+    if (insertionPoint->inDocument())
+        setFlag(InDocumentFlag);
+    if (parentOrShadowHostNode()->isInShadowTree())
+        setFlag(IsInShadowTreeFlag);
+    return InsertionDone;
+}
+
+void Node::removedFrom(ContainerNode* insertionPoint)
+{
+    ASSERT(insertionPoint->inDocument() || isContainerNode());
+    if (insertionPoint->inDocument())
+        clearFlag(InDocumentFlag);
+    if (isInShadowTree() && !treeScope()->rootNode()->isShadowRoot())
+        clearFlag(IsInShadowTreeFlag);
 }
 
 bool Node::needsShadowTreeWalkerSlow() const

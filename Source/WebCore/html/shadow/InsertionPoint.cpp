@@ -125,7 +125,7 @@ Node::InsertionNotificationRequest InsertionPoint::insertedInto(ContainerNode* i
     HTMLElement::insertedInto(insertionPoint);
 
     if (ShadowRoot* root = containingShadowRoot()) {
-        root->distributor().didShadowBoundaryChange(root->host());
+        root->distributor().didShadowBoundaryChange(root->hostElement());
         root->distributor().invalidateInsertionPointList();
     }
 
@@ -138,7 +138,7 @@ void InsertionPoint::removedFrom(ContainerNode* insertionPoint)
     if (!root)
         root = insertionPoint->containingShadowRoot();
 
-    if (root && root->host()) {
+    if (root && root->hostElement()) {
         root->invalidateDistribution();
         root->distributor().invalidateInsertionPointList();
     }
@@ -154,7 +154,7 @@ void InsertionPoint::parseAttribute(const QualifiedName& name, const AtomicStrin
     if (name == reset_style_inheritanceAttr) {
         if (!inDocument() || !attached() || !isActive())
             return;
-        containingShadowRoot()->host()->setNeedsStyleRecalc();
+        containingShadowRoot()->hostElement()->setNeedsStyleRecalc();
     } else
         HTMLElement::parseAttribute(name, value);
 }

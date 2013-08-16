@@ -284,10 +284,10 @@ public:
     // Returns 0, a child of ShadowRoot, or a legacy shadow root.
     Node* nonBoundaryShadowTreeRootNode();
 
-    // Node's parent, shadow tree host.
+    // Node's parent or shadow tree host.
     ContainerNode* parentOrShadowHostNode() const;
     Element* parentOrShadowHostElement() const;
-    void setParentOrShadowHostNode(ContainerNode*);
+    void setParentNode(ContainerNode*);
     Node* highestAncestor() const;
 
     // Use when it's guaranteed to that shadowHost is 0.
@@ -698,7 +698,7 @@ private:
     }
 
     void removedLastRef();
-    bool hasTreeSharedParent() const { return !!parentOrShadowHostNode(); }
+    bool hasTreeSharedParent() const { return !!parentNode(); }
 
     enum EditableLevel { Editable, RichlyEditable };
     bool rendererIsEditable(EditableLevel, UserSelectAllTreatment = UserSelectAllIsAlwaysNonEditable) const;
@@ -718,7 +718,7 @@ private:
     HashSet<MutationObserverRegistration*>* transientMutationObserverRegistry();
 
     mutable uint32_t m_nodeFlags;
-    ContainerNode* m_parentOrShadowHostNode;
+    ContainerNode* m_parentNode;
     TreeScope* m_treeScope;
     Node* m_previous;
     Node* m_next;
@@ -748,27 +748,22 @@ inline void addSubresourceURL(ListHashSet<KURL>& urls, const KURL& url)
         urls.add(url);
 }
 
-inline void Node::setParentOrShadowHostNode(ContainerNode* parent)
+inline void Node::setParentNode(ContainerNode* parent)
 {
     ASSERT(isMainThread());
-    m_parentOrShadowHostNode = parent;
-}
-
-inline ContainerNode* Node::parentOrShadowHostNode() const
-{
-    ASSERT(isMainThreadOrGCThread());
-    return m_parentOrShadowHostNode;
+    m_parentNode = parent;
 }
 
 inline ContainerNode* Node::parentNode() const
 {
-    return isShadowRoot() ? 0 : parentOrShadowHostNode();
+    ASSERT(isMainThreadOrGCThread());
+    return m_parentNode;
 }
 
 inline ContainerNode* Node::parentNodeGuaranteedHostFree() const
 {
     ASSERT(!isShadowRoot());
-    return parentOrShadowHostNode();
+    return parentNode();
 }
 
 } //namespace

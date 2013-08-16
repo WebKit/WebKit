@@ -25,6 +25,7 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "RenderPart.h"
+#include "ShadowRoot.h"
 
 #if ENABLE(SVG)
 #include "ExceptionCode.h"
@@ -123,5 +124,14 @@ SVGDocument* HTMLFrameOwnerElement::getSVGDocument(ExceptionCode& ec) const
     return 0;
 }
 #endif
+
+bool SubframeLoadingDisabler::canLoadFrame(HTMLFrameOwnerElement* owner)
+{
+    for (Node* node = owner; node; node = node->parentOrShadowHostNode()) {
+        if (disabledSubtreeRoots().contains(node))
+            return false;
+    }
+    return true;
+}
 
 } // namespace WebCore

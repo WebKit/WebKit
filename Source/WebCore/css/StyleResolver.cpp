@@ -336,14 +336,14 @@ void StyleResolver::popParentElement(Element* parent)
 
 void StyleResolver::pushParentShadowRoot(const ShadowRoot* shadowRoot)
 {
-    ASSERT(shadowRoot->host());
+    ASSERT(shadowRoot->hostElement());
     if (m_scopeResolver)
-        m_scopeResolver->push(shadowRoot, shadowRoot->host());
+        m_scopeResolver->push(shadowRoot, shadowRoot->hostElement());
 }
 
 void StyleResolver::popParentShadowRoot(const ShadowRoot* shadowRoot)
 {
-    ASSERT(shadowRoot->host());
+    ASSERT(shadowRoot->hostElement());
     if (m_scopeResolver)
         m_scopeResolver->pop(shadowRoot);
 }

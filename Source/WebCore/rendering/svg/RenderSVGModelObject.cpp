@@ -38,6 +38,7 @@
 #include "SVGNames.h"
 #include "SVGResourcesCache.h"
 #include "SVGStyledElement.h"
+#include "ShadowRoot.h"
 
 namespace WebCore {
 

@@ -1588,7 +1588,7 @@ void Element::addShadowRoot(PassRefPtr<ShadowRoot> newShadowRoot)
     ShadowRoot* shadowRoot = newShadowRoot.get();
     ensureElementRareData().setShadowRoot(newShadowRoot);
 
-    shadowRoot->setParentOrShadowHostNode(this);
+    shadowRoot->setHostElement(this);
     shadowRoot->setParentTreeScope(treeScope());
     shadowRoot->distributor().didShadowBoundaryChange(this);
 
@@ -1619,7 +1619,7 @@ void Element::removeShadowRoot()
 
     elementRareData()->clearShadowRoot();
 
-    oldRoot->setParentOrShadowHostNode(0);
+    oldRoot->setHostElement(0);
     oldRoot->setParentTreeScope(document());
 
     ChildNodeRemovalNotifier(this).notify(oldRoot.get());

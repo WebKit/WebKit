@@ -44,6 +44,7 @@
 #include "RenderImage.h"
 #include "RenderInline.h"
 #include "Scrollbar.h"
+#include "ShadowRoot.h"
 #include "UserGestureIndicator.h"
 
 #if ENABLE(SVG)

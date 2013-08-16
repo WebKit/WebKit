@@ -130,7 +130,7 @@ void ContentDistributor::ensureDistribution(ShadowRoot* shadowRoot)
     ASSERT(shadowRoot);
 
     Vector<ShadowRoot*, 8> shadowRoots;
-    for (Element* current = shadowRoot->host(); current; current = current->shadowHost()) {
+    for (Element* current = shadowRoot->hostElement(); current; current = current->shadowHost()) {
         ShadowRoot* currentRoot = current->shadowRoot();
         if (!currentRoot->distributor().needsDistribution())
             break;
@@ -138,7 +138,7 @@ void ContentDistributor::ensureDistribution(ShadowRoot* shadowRoot)
     }
 
     for (size_t i = shadowRoots.size(); i > 0; --i)
-        shadowRoots[i - 1]->distributor().distribute(shadowRoots[i - 1]->host());
+        shadowRoots[i - 1]->distributor().distribute(shadowRoots[i - 1]->hostElement());
 }
 
 void ContentDistributor::invalidateDistribution(Element* host)

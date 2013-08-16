@@ -60,7 +60,8 @@ PseudoElement::PseudoElement(Element* parent, PseudoId pseudoId)
     , m_pseudoId(pseudoId)
 {
     ASSERT(pseudoId != NOPSEUDO);
-    setParentOrShadowHostNode(parent);
+    // FIXME: This is wrong in terms of tree consistency. Pseudo element is now not a child of its parent.
+    setParentNode(parent);
     setHasCustomStyleCallbacks();
 }
 

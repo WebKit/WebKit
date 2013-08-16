@@ -1,3 +1,102 @@
+2013-08-15  Antti Koivisto  <antti@apple.com>
+
+        <https://webkit.org/b/119865> Parent pointer and shadow root host pointer should not be shared
+
+        Reviewed by Andreas Kling.
+
+        Node::m_parentOrShadowHostNode is currently used both as the parent pointer for regular nodes and as the host
+        pointer for ShadowRoots. This is confusing. It is also slow as it introduces a branch to all code paths that 
+        want to traverse ancestors normally, without leaving the shadow trees. This is much more popular than
+        traversing through.
+        
+        This patch makes the Node have a pure parent pointer only and adds the host element pointer as a separate
+        member in ShadowRoot. This eliminates the ShadowRoot test branch from Node::parentNode() as the pointer is
+        now always null in the root node.
+        
+        ShadowRoot grows by a pointer. This is not significant as there are few ShadowRoots compared to Nodes.
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::pushParentShadowRoot):
+        (WebCore::StyleResolver::popParentShadowRoot):
+        * dom/Attr.cpp:
+        (WebCore::Attr::createTextChild):
+        * dom/ComposedShadowTreeWalker.cpp:
+        (WebCore::ComposedShadowTreeWalker::traverseParentBackToShadowRootOrHost):
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::insertBeforeCommon):
+        (WebCore::ContainerNode::removeBetween):
+        * dom/ContainerNodeAlgorithms.cpp:
+        (WebCore::ChildNodeInsertionNotifier::notifyDescendantInsertedIntoDocument):
+        (WebCore::ChildNodeRemovalNotifier::notifyDescendantRemovedFromDocument):
+        * dom/ContainerNodeAlgorithms.h:
+        (WebCore::appendChildToContainer):
+        (WebCore::Private::addChildNodesToDeletionQueue):
+        * dom/Document.h:
+        (WebCore::Node::Node):
+        * dom/Element.cpp:
+        (WebCore::Element::addShadowRoot):
+        (WebCore::Element::removeShadowRoot):
+        * dom/ElementRareData.h:
+        (WebCore::ElementRareData::releasePseudoElement):
+        * dom/EventPathWalker.cpp:
+        (WebCore::EventPathWalker::moveToParent):
+        * dom/EventRetargeter.cpp:
+        (WebCore::determineDispatchBehavior):
+        * dom/EventRetargeter.h:
+        (WebCore::EventRetargeter::eventTargetRespectingTargetRules):
+        * dom/Node.cpp:
+        (WebCore::Node::shadowHost):
+        (WebCore::Node::deprecatedShadowAncestorNode):
+        (WebCore::Node::parentOrShadowHostElement):
+        * dom/Node.h:
+        (WebCore::Node::hasTreeSharedParent):
+        
+            Shadow host elements refs the ShadowRoot. There is no reason to use TreeShared to keep it alive.
+
+        (WebCore::Node::setParentNode):
+        (WebCore::Node::parentNode):
+        (WebCore::Node::parentNodeGuaranteedHostFree):
+        * dom/PseudoElement.cpp:
+        (WebCore::PseudoElement::PseudoElement):
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::ShadowRoot):
+        (WebCore::ShadowRoot::setInnerHTML):
+        (WebCore::ShadowRoot::setApplyAuthorStyles):
+        (WebCore::ShadowRoot::setResetStyleInheritance):
+        * dom/ShadowRoot.h:
+        
+            Rename host() -> hostElement() for clarity.
+
+        (WebCore::Node::parentOrShadowHostNode):
+        * dom/Text.cpp:
+        (WebCore::isSVGShadowText):
+        * dom/TreeScope.cpp:
+        (WebCore::TreeScope::focusedElement):
+        * html/shadow/ContentDistributor.cpp:
+        (WebCore::ContentDistributor::ensureDistribution):
+        * html/shadow/InsertionPoint.cpp:
+        (WebCore::InsertionPoint::insertedInto):
+        (WebCore::InsertionPoint::removedFrom):
+        (WebCore::InsertionPoint::parseAttribute):
+        * page/DragController.cpp:
+        (WebCore::asFileInput):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMousePressEvent):
+        (WebCore::instanceAssociatedWithShadowTreeElement):
+        * page/FocusController.cpp:
+        (WebCore::FocusNavigationScope::owner):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::hasLineIfEmpty):
+        * rendering/RenderLayer.cpp:
+        (WebCore::rendererForScrollbar):
+        * svg/SVGElementInstance.h:
+        (WebCore::SVGElementInstance::setParentNode):
+            
+            Renamed so it works with appendChildToContainer template.
+
+        * svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::title):
+
 2013-08-13  Darin Adler  <darin@apple.com>
 
         [iOS] Get iOS port off legacy clipboard

@@ -88,7 +88,7 @@ void SelectorFilter::setupParentStack(Element* parent)
     m_parentStack.shrink(0);
     m_ancestorIdentifierFilter = adoptPtr(new BloomFilter<bloomFilterKeyBits>);
     // Fast version if parent is a root element:
-    if (!parent->parentOrShadowHostNode()) {
+    if (!parent->parentNode() && !parent->isShadowRoot()) {
         pushParentStackFrame(parent);
         return;
     }

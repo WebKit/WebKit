@@ -90,14 +90,7 @@ public:
         disabledSubtreeRoots().remove(m_root);
     }
 
-    static bool canLoadFrame(HTMLFrameOwnerElement* owner)
-    {
-        for (Node* node = owner; node; node = node->parentOrShadowHostNode()) {
-            if (disabledSubtreeRoots().contains(node))
-                return false;
-        }
-        return true;
-    }
+    static bool canLoadFrame(HTMLFrameOwnerElement*);
 
 private:
     static HashSet<Node*>& disabledSubtreeRoots()

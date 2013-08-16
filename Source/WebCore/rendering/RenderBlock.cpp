@@ -6613,7 +6613,7 @@ bool RenderBlock::hasLineIfEmpty() const
     if (node()->isRootEditableElement())
         return true;
     
-    if (node()->isShadowRoot() && isHTMLInputElement(toShadowRoot(node())->host()))
+    if (node()->isShadowRoot() && isHTMLInputElement(toShadowRoot(node())->hostElement()))
         return true;
     
     return false;

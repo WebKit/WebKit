@@ -49,7 +49,7 @@ static inline EventDispatchBehavior determineDispatchBehavior(Event* event, Shad
     if (Element* element = target->toNode()->document()->webkitCurrentFullScreenElement()) {
         // FIXME: We assume that if the full screen element is a media element that it's
         // the video-only full screen. Both here and elsewhere. But that is probably wrong.
-        if (element->isMediaElement() && shadowRoot && shadowRoot->host() == element)
+        if (element->isMediaElement() && shadowRoot && shadowRoot->hostElement() == element)
             return StayInsideShadowDOM;
     }
 #else

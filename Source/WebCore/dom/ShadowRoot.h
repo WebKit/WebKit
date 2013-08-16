@@ -60,7 +60,8 @@ public:
     virtual bool resetStyleInheritance() const OVERRIDE { return m_resetStyleInheritance; }
     void setResetStyleInheritance(bool);
 
-    Element* host() const { return toElement(parentOrShadowHostNode()); }
+    Element* hostElement() const { return m_hostElement; }
+    void setHostElement(Element* hostElement) { m_hostElement = hostElement; }
 
     String innerHTML() const;
     void setInnerHTML(const String&, ExceptionCode&);
@@ -78,7 +79,7 @@ public:
     PassRefPtr<Node> cloneNode(bool, ExceptionCode&);
 
     ContentDistributor& distributor() { return m_distributor; }
-    void invalidateDistribution() { m_distributor.invalidateDistribution(host()); }
+    void invalidateDistribution() { m_distributor.invalidateDistribution(hostElement()); }
 
     void removeAllEventListeners();
 
@@ -93,12 +94,14 @@ private:
     virtual PassRefPtr<Node> cloneNode(bool) OVERRIDE { return 0; }
 
     // FIXME: This shouldn't happen. https://bugs.webkit.org/show_bug.cgi?id=88834
-    bool isOrphan() const { return !host(); }
+    bool isOrphan() const { return !hostElement(); }
 
     unsigned m_numberOfStyles : 28;
     unsigned m_applyAuthorStyles : 1;
     unsigned m_resetStyleInheritance : 1;
     unsigned m_type : 1;
+
+    Element* m_hostElement;
 
     ContentDistributor m_distributor;
 };
@@ -124,6 +127,14 @@ inline ShadowRoot* Node::shadowRoot() const
     if (!isElementNode())
         return 0;
     return toElement(this)->shadowRoot();
+}
+
+inline ContainerNode* Node::parentOrShadowHostNode() const
+{
+    ASSERT(isMainThreadOrGCThread());
+    if (isShadowRoot())
+        return toShadowRoot(this)->hostElement();
+    return parentNode();
 }
 
 } // namespace

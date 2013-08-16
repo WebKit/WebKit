@@ -258,7 +258,7 @@ inline void ElementRareData::releasePseudoElement(PseudoElement* element)
     ASSERT(!element->nextSibling());
     ASSERT(!element->previousSibling());
 
-    element->setParentOrShadowHostNode(0);
+    element->setParentNode(0);
 }
 
 inline void ElementRareData::resetComputedStyle()

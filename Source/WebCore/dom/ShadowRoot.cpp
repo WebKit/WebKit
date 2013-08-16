@@ -41,6 +41,7 @@ namespace WebCore {
 struct SameSizeAsShadowRoot : public DocumentFragment, public TreeScope {
     unsigned countersAndFlags[1];
     ContentDistributor distributor;
+    void* host;
 };
 
 COMPILE_ASSERT(sizeof(ShadowRoot) == sizeof(SameSizeAsShadowRoot), shadowroot_should_stay_small);
@@ -58,6 +59,7 @@ ShadowRoot::ShadowRoot(Document* document, ShadowRootType type)
     , m_applyAuthorStyles(false)
     , m_resetStyleInheritance(false)
     , m_type(type)
+    , m_hostElement(0)
 {
     ASSERT(document);
 }
@@ -104,7 +106,7 @@ void ShadowRoot::setInnerHTML(const String& markup, ExceptionCode& ec)
         return;
     }
 
-    if (RefPtr<DocumentFragment> fragment = createFragmentForInnerOuterHTML(markup, host(), AllowScriptingContent, ec))
+    if (RefPtr<DocumentFragment> fragment = createFragmentForInnerOuterHTML(markup, hostElement(), AllowScriptingContent, ec))
         replaceChildrenWithFragment(this, fragment.release(), ec);
 }
 
@@ -130,7 +132,7 @@ void ShadowRoot::setApplyAuthorStyles(bool value)
 
     if (m_applyAuthorStyles != value) {
         m_applyAuthorStyles = value;
-        host()->setNeedsStyleRecalc();
+        hostElement()->setNeedsStyleRecalc();
     }
 }
 
@@ -141,8 +143,8 @@ void ShadowRoot::setResetStyleInheritance(bool value)
 
     if (value != m_resetStyleInheritance) {
         m_resetStyleInheritance = value;
-        if (attached() && host())
-            Style::resolveTree(host(), Style::Force);
+        if (attached() && hostElement())
+            Style::resolveTree(hostElement(), Style::Force);
     }
 }
 

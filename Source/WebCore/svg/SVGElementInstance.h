@@ -45,7 +45,7 @@ public:
 
     virtual ~SVGElementInstance();
 
-    void setParentOrShadowHostNode(SVGElementInstance* instance) { m_parentInstance = instance; }
+    void setParentNode(SVGElementInstance* instance) { m_parentInstance = instance; }
 
     virtual const AtomicString& interfaceName() const;
     virtual ScriptExecutionContext* scriptExecutionContext() const;

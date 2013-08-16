@@ -400,7 +400,7 @@ Element* TreeScope::focusedElement()
         return 0;
     TreeScope* treeScope = element->treeScope();
     while (treeScope != this && treeScope != document) {
-        element = toShadowRoot(treeScope->rootNode())->host();
+        element = toShadowRoot(treeScope->rootNode())->hostElement();
         treeScope = element->treeScope();
     }
     if (this != treeScope)

@@ -43,6 +43,7 @@
 #include "NodeList.h"
 #include "RawDataDocumentParser.h"
 #include "ScriptController.h"
+#include "ShadowRoot.h"
 
 namespace WebCore {
 
