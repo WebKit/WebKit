@@ -79,5 +79,5 @@ void ClockGeneric::stop()
 
 double ClockGeneric::now() const
 {
-    return WTF::currentTime();
+    return monotonicallyIncreasingTime();
 }

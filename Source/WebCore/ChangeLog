@@ -1,3 +1,67 @@
+2013-08-16  Arunprasad Rajkumar  <arurajku@cisco.com>
+
+        <https://webkit.org/b/119785> Replace currentTime() with monotonicallyIncreasingTime() in WebCore
+
+        Reviewed by Alexey Proskuryakov.
+
+        WTF::currentTime() is prone to DST changes and NTP adjustments, so use
+        WTF::monotonicallyIncreasingTime() to measure elapsed time.
+        
+        * Modules/filesystem/FileWriter.cpp:
+        (WebCore::FileWriter::didWrite):
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::elapsedTime):
+        (WebCore::Document::resetLastHandledUserGestureTimestamp):
+        * dom/Element.cpp:
+        (WebCore::Element::setActive):
+        * fileapi/FileReader.cpp:
+        (WebCore::FileReader::didReceiveData):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement):
+        (WebCore::HTMLMediaElement::startProgressEventTimer):
+        (WebCore::HTMLMediaElement::progressEventTimerFired):
+        (WebCore::HTMLMediaElement::refreshCachedTime):
+        (WebCore::HTMLMediaElement::invalidateCachedTime):
+        (WebCore::HTMLMediaElement::currentTime):
+        (WebCore::HTMLMediaElement::startPlaybackProgressTimer):
+        (WebCore::HTMLMediaElement::scheduleTimeupdateEvent):
+        * html/HTMLMediaElement.h:
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::documentHadRecentUserGesture):
+        * html/MediaController.cpp:
+        (MediaController::scheduleTimeupdateEvent):
+        * html/parser/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::pumpPendingSpeculations):
+        * html/parser/HTMLParserScheduler.h:
+        (WebCore::HTMLParserScheduler::checkForYieldBeforeToken):
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::SelectorProfile::SelectorProfile):
+        (WebCore::SelectorProfile::totalMatchingTimeMs):
+        (WebCore::SelectorProfile::startSelector):
+        (WebCore::SelectorProfile::commitSelector):
+        (WebCore::SelectorProfile::commitSelectorTime):
+        * inspector/InspectorProfilerAgent.cpp:
+        (WebCore::InspectorProfilerAgent::willProcessTask):
+        (WebCore::InspectorProfilerAgent::didProcessTask):
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::timestamp):
+        * inspector/TimelineTraceEventProcessor.cpp:
+        (WebCore::TimelineTraceEventProcessor::processEventOnAnyThread):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::adjustedDeferredRepaintDelay):
+        (WebCore::FrameView::paintContents):
+        * platform/ClockGeneric.cpp:
+        (ClockGeneric::now):
+        * platform/ScrollAnimatorNone.cpp:
+        (WebCore::ScrollAnimatorNone::scroll):
+        (WebCore::ScrollAnimatorNone::animationTimerFired):
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        (WebCore::ImageBuffer::ImageBuffer):
+        (WebCore::ImageBuffer::flushContextIfNecessary):
+        (WebCore::ImageBuffer::flushContext):
+        (WebCore::ImageBuffer::copyNativeImage):
+
 2013-08-16  peavo@outlook.com  <peavo@outlook.com>
 
         <https://webkit.org/b/119891> [WinCairo] Compile error.

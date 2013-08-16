@@ -491,7 +491,7 @@ void InspectorProfilerAgent::willProcessTask()
     if (!m_previousTaskEndTime)
         return;
 
-    double idleTime = WTF::monotonicallyIncreasingTime() - m_previousTaskEndTime;
+    double idleTime = monotonicallyIncreasingTime() - m_previousTaskEndTime;
     m_previousTaskEndTime = 0.0;
     ProfileNameIdleTimeMap::iterator end = m_profileNameIdleTimeMap->end();
     for (ProfileNameIdleTimeMap::iterator it = m_profileNameIdleTimeMap->begin(); it != end; ++it)
@@ -502,7 +502,7 @@ void InspectorProfilerAgent::didProcessTask()
 {
     if (!m_profileNameIdleTimeMap || !m_profileNameIdleTimeMap->size())
         return;
-    m_previousTaskEndTime = WTF::monotonicallyIncreasingTime();
+    m_previousTaskEndTime = monotonicallyIncreasingTime();
 }
 
 } // namespace WebCore

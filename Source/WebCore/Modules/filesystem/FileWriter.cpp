@@ -203,7 +203,7 @@ void FileWriter::didWrite(long long bytes, bool complete)
     int numAborts = m_numAborts;
     // We could get an abort in the handler for this event. If we do, it's
     // already handled the cleanup and signalCompletion call.
-    double now = currentTimeMS();
+    double now = monotonicallyIncreasingTimeMS();
     if (complete || !m_lastProgressNotificationTimeMS || (now - m_lastProgressNotificationTimeMS > progressNotificationIntervalMS)) {
         m_lastProgressNotificationTimeMS = now;
         fireEvent(eventNames().progressEvent);

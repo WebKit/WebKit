@@ -468,7 +468,7 @@ void HTMLDocumentParser::pumpPendingSpeculations()
     // FIXME: Pass in current input length.
     InspectorInstrumentationCookie cookie = InspectorInstrumentation::willWriteHTML(document(), lineNumber().zeroBasedInt());
 
-    double startTime = currentTime();
+    double startTime = monotonicallyIncreasingTime();
 
     while (!m_speculations.isEmpty()) {
         processParsedChunkFromBackgroundParser(m_speculations.takeFirst());
@@ -476,7 +476,7 @@ void HTMLDocumentParser::pumpPendingSpeculations()
         if (isWaitingForScripts() || isStopped())
             break;
 
-        if (currentTime() - startTime > parserTimeLimit && !m_speculations.isEmpty()) {
+        if (monotonicallyIncreasingTime() - startTime > parserTimeLimit && !m_speculations.isEmpty()) {
             m_parserScheduler->scheduleForResume();
             break;
         }

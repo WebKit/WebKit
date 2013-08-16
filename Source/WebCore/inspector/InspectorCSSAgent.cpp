@@ -109,14 +109,14 @@ class SelectorProfile {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     SelectorProfile()
-        : m_totalMatchingTimeMs(0.0)
+        : m_totalMatchingTimeMS(0.0)
     {
     }
     virtual ~SelectorProfile()
     {
     }
 
-    double totalMatchingTimeMs() const { return m_totalMatchingTimeMs; }
+    double totalMatchingTimeMs() const { return m_totalMatchingTimeMS; }
 
     String makeKey();
     void startSelector(const CSSStyleRule*);
@@ -129,7 +129,7 @@ private:
     // Key is "selector?url:line".
     typedef HashMap<String, RuleMatchingStats> RuleMatchingStatsMap;
 
-    double m_totalMatchingTimeMs;
+    double m_totalMatchingTimeMS;
     RuleMatchingStatsMap m_ruleMatchingStats;
     RuleMatchData m_currentMatchData;
 };
@@ -181,17 +181,17 @@ inline void SelectorProfile::startSelector(const CSSStyleRule* rule)
     }
     m_currentMatchData.url = url;
     m_currentMatchData.lineNumber = rule->styleRule()->sourceLine();
-    m_currentMatchData.startTime = WTF::currentTimeMS();
+    m_currentMatchData.startTime = monotonicallyIncreasingTimeMS();
 }
 
 inline void SelectorProfile::commitSelector(bool matched)
 {
-    double matchTimeMs = WTF::currentTimeMS() - m_currentMatchData.startTime;
-    m_totalMatchingTimeMs += matchTimeMs;
+    double matchTimeMS = monotonicallyIncreasingTimeMS() - m_currentMatchData.startTime;
+    m_totalMatchingTimeMS += matchTimeMS;
 
-    RuleMatchingStatsMap::AddResult result = m_ruleMatchingStats.add(makeKey(), RuleMatchingStats(m_currentMatchData, matchTimeMs, 1, matched ? 1 : 0));
+    RuleMatchingStatsMap::AddResult result = m_ruleMatchingStats.add(makeKey(), RuleMatchingStats(m_currentMatchData, matchTimeMS, 1, matched ? 1 : 0));
     if (!result.isNewEntry) {
-        result.iterator->value.totalTime += matchTimeMs;
+        result.iterator->value.totalTime += matchTimeMS;
         result.iterator->value.hits += 1;
         if (matched)
             result.iterator->value.matches += 1;
@@ -200,14 +200,14 @@ inline void SelectorProfile::commitSelector(bool matched)
 
 inline void SelectorProfile::commitSelectorTime()
 {
-    double processingTimeMs = WTF::currentTimeMS() - m_currentMatchData.startTime;
-    m_totalMatchingTimeMs += processingTimeMs;
+    double processingTimeMS = monotonicallyIncreasingTimeMS() - m_currentMatchData.startTime;
+    m_totalMatchingTimeMS += processingTimeMS;
 
     RuleMatchingStatsMap::iterator it = m_ruleMatchingStats.find(makeKey());
     if (it == m_ruleMatchingStats.end())
         return;
 
-    it->value.totalTime += processingTimeMs;
+    it->value.totalTime += processingTimeMS;
 }
 
 PassRefPtr<TypeBuilder::CSS::SelectorProfile> SelectorProfile::toInspectorObject() const

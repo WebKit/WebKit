@@ -641,8 +641,8 @@ private:
     unsigned m_previousProgress;
     double m_previousProgressTime;
 
-    // The last time a timeupdate event was sent (wall clock).
-    double m_lastTimeUpdateEventWallTime;
+    // The last time a timeupdate event was sent (based on monotonic clock).
+    double m_clockTimeAtLastUpdateEvent;
 
     // The last time a timeupdate event was sent in movie time.
     double m_lastTimeUpdateEventMovieTime;
@@ -673,8 +673,8 @@ private:
 #endif
 
     mutable double m_cachedTime;
-    mutable double m_cachedTimeWallClockUpdateTime;
-    mutable double m_minimumWallClockTimeToCacheMediaTime;
+    mutable double m_clockTimeAtLastCachedTimeUpdate;
+    mutable double m_minimumClockTimeToUpdateCachedTime;
 
     double m_fragmentStartTime;
     double m_fragmentEndTime;

@@ -424,7 +424,7 @@ Document::Document(Frame* frame, const KURL& url, unsigned documentClasses)
     , m_cssTarget(0)
     , m_processingLoadEvent(false)
     , m_loadEventFinished(false)
-    , m_startTime(currentTime())
+    , m_startTime(monotonicallyIncreasingTimeMS())
     , m_overMinimumLayoutThreshold(false)
     , m_scriptRunner(ScriptRunner::create(this))
     , m_xmlVersion(ASCIILiteral("1.0"))
@@ -2497,7 +2497,7 @@ int Document::minimumLayoutDelay()
 
 int Document::elapsedTime() const
 {
-    return static_cast<int>((currentTime() - m_startTime) * 1000);
+    return static_cast<int>(monotonicallyIncreasingTimeMS() - m_startTime);
 }
 
 void Document::write(const SegmentedString& text, Document* ownerDocument)
@@ -5615,7 +5615,7 @@ void Document::didRemoveEventTargetNode(Node* handler)
 
 void Document::resetLastHandledUserGestureTimestamp()
 {
-    m_lastHandledUserGestureTimestamp = currentTime();
+    m_lastHandledUserGestureTimestamp = monotonicallyIncreasingTime();
 }
 
 HTMLIFrameElement* Document::seamlessParentIFrame() const

@@ -718,7 +718,7 @@ void InspectorTimelineAgent::localToPageQuad(const RenderObject& renderer, const
 
 double InspectorTimelineAgent::timestamp()
 {
-    return m_timeConverter.fromMonotonicallyIncreasingTime(WTF::monotonicallyIncreasingTime());
+    return m_timeConverter.fromMonotonicallyIncreasingTime(monotonicallyIncreasingTime());
 }
 
 Page* InspectorTimelineAgent::page()

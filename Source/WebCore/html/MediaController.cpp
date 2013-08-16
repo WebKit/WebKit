@@ -673,7 +673,7 @@ void MediaController::timeupdateTimerFired(Timer<MediaController>*)
 
 void MediaController::scheduleTimeupdateEvent()
 {
-    double now = WTF::currentTime();
+    double now = monotonicallyIncreasingTime();
     double timedelta = now - m_previousTimeupdateTime;
 
     if (timedelta < maxTimeupdateEventFrequency)

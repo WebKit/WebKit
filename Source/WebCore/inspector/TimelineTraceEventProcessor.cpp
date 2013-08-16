@@ -213,7 +213,7 @@ void TimelineTraceEventProcessor::processEventOnAnyThread(TraceEventPhase phase,
     if (it == m_handlersByType.end())
         return;
 
-    TraceEvent event(WTF::monotonicallyIncreasingTime(), phase, name, id, currentThread(), numArgs, argNames, argTypes, argValues);
+    TraceEvent event(monotonicallyIncreasingTime(), phase, name, id, currentThread(), numArgs, argNames, argTypes, argValues);
 
     if (!isMainThread()) {
         MutexLocker locker(m_backgroundEventsMutex);

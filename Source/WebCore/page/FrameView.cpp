@@ -2330,7 +2330,7 @@ double FrameView::adjustedDeferredRepaintDelay() const
     ASSERT(!m_deferringRepaints);
     if (!m_deferredRepaintDelay)
         return 0;
-    double timeSinceLastPaint = currentTime() - m_lastPaintTime;
+    double timeSinceLastPaint = monotonicallyIncreasingTime() - m_lastPaintTime;
     return max(0., m_deferredRepaintDelay - timeSinceLastPaint);
 }
     
@@ -3532,7 +3532,7 @@ void FrameView::paintContents(GraphicsContext* p, const IntRect& rect)
 
     bool isTopLevelPainter = !sCurrentPaintTimeStamp;
     if (isTopLevelPainter)
-        sCurrentPaintTimeStamp = currentTime();
+        sCurrentPaintTimeStamp = monotonicallyIncreasingTime();
 
     FontCachePurgePreventer fontCachePurgePreventer;
 
@@ -3581,7 +3581,7 @@ void FrameView::paintContents(GraphicsContext* p, const IntRect& rect)
         notifyWidgetsInAllFrames(DidPaintFlattened);
 
     m_paintBehavior = oldPaintBehavior;
-    m_lastPaintTime = currentTime();
+    m_lastPaintTime = monotonicallyIncreasingTime();
 
     // Regions may have changed as a result of the visibility/z-index of element changing.
 #if ENABLE(DASHBOARD_SUPPORT) || ENABLE(DRAGGABLE_REGION)

@@ -1,3 +1,15 @@
+2013-08-16  Arunprasad Rajkumar  <arurajku@cisco.com>
+
+        <https://webkit.org/b/119785> Replace currentTime() with monotonicallyIncreasingTime() in WebCore
+
+        Reviewed by Alexey Proskuryakov.
+
+        WTF::currentTime() is prone to DST changes and NTP adjustments, so use
+        WTF::monotonicallyIncreasingTime() to measure elapsed time.
+
+        * wtf/CurrentTime.h:
+        (WTF::monotonicallyIncreasingTimeMS): Added mille second version of monotonic time API.
+
 2013-08-15  Filip Pizlo  <fpizlo@apple.com>
 
         refCount() of a StringImpl could be zero if it's static; in that case we shouldn't report extra memory cost
