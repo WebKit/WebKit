@@ -1,3 +1,10 @@
+2013-08-16  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Unreviewed gardening. Correct Windows test expectations after JSC changes.
+
+        * platform/win/fast/js/dom-static-property-for-in-iteration-expected.txt:
+        * platform/win/fast/js/global-constructors-attributes-shared-worker-expected.txt:
+
 2013-08-16  Jer Noble  <jer.noble@apple.com>
 
         [Mac] [WK2] Some inspector tests intermittently asserts in InspectorOverlay::paint
