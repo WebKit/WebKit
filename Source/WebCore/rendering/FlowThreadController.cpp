@@ -266,6 +266,7 @@ void FlowThreadController::updateFlowThreadsIntoFinalPhase()
     }
 }
 
+#if USE(ACCELERATED_COMPOSITING)
 void FlowThreadController::updateRenderFlowThreadLayersIfNeeded()
 {
     // Walk the flow chain in reverse order because RenderRegions might become RenderLayers for the following flow threads.
@@ -274,6 +275,7 @@ void FlowThreadController::updateRenderFlowThreadLayersIfNeeded()
         flowRenderer->updateLayerToRegionMappingsIfNeeded();
     }
 }
+#endif
 
 bool FlowThreadController::isContentNodeRegisteredWithAnyNamedFlow(const Node* contentNode) const
 {

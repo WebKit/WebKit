@@ -1,3 +1,12 @@
+2013-08-16  peavo@outlook.com  <peavo@outlook.com>
+
+        <https://webkit.org/b/119891> [WinCairo] Compile error.
+
+        Reviewed by Brent Fulgham.
+
+        * rendering/FlowThreadController.cpp: Need USE(ACCELERATED_COMPOSITING) guard.
+        * rendering/FlowThreadController.h: Need USE(ACCELERATED_COMPOSITING) guard.
+
 2013-08-16  Zan Dobersek  <zdobersek@igalia.com>
 
         <https://webkit.org/b/119887> [Soup] The testing NetworkStorageSession should have a proper SoupSession
