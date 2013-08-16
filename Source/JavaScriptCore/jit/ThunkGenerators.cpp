@@ -402,7 +402,7 @@ static MacroAssemblerCodeRef nativeForGenerator(VM* vm, CodeSpecializationKind k
 
     jit.storePtr(JSInterfaceJIT::callFrameRegister, &vm->topCallFrame);
 
-    jit.move(JSInterfaceJIT::TrustedImmPtr(FunctionPtr(ctiVMThrowTrampolineSlowpath).value()), JSInterfaceJIT::regT1);
+    jit.move(JSInterfaceJIT::TrustedImmPtr(FunctionPtr(ctiVMHandleException).value()), JSInterfaceJIT::regT1);
     jit.jump(JSInterfaceJIT::regT1);
 
     LinkBuffer patchBuffer(*vm, &jit, GLOBAL_THUNK_ID);

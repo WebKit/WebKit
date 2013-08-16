@@ -417,7 +417,7 @@ private:
 // our caller, so exception processing can proceed from a valid state.
 template<typename T> static T throwExceptionFromOpCall(JITStackFrame& jitStackFrame, CallFrame* newCallFrame, ReturnAddressPtr& returnAddressSlot, ErrorFunctor& createError )
 {
-    CallFrame* callFrame = newCallFrame->callerFrame();
+    CallFrame* callFrame = newCallFrame->callerFrame()->removeHostCallFrameFlag();
     jitStackFrame.callFrame = callFrame;
     callFrame->vm().topCallFrame = callFrame;
     callFrame->vm().exception = createError(callFrame);
@@ -2159,15 +2159,27 @@ DEFINE_STUB_FUNCTION(void*, vm_throw)
 }
 
 #if USE(JSVALUE32_64)
-EncodedExceptionHandler JIT_STUB cti_vm_throw_slowpath(CallFrame* callFrame)
+EncodedExceptionHandler JIT_STUB cti_vm_handle_exception(CallFrame* callFrame)
 {
+    ASSERT(!callFrame->hasHostCallFrameFlag());
+    if (!callFrame) {
+        // The entire stack has already been unwound. Nothing more to handle.
+        return uncaughtExceptionHandler();
+    }
+
     VM* vm = callFrame->codeBlock()->vm();
     vm->topCallFrame = callFrame;
     return encode(jitThrowNew(vm, callFrame, vm->exception));
 }
 #else
-ExceptionHandler JIT_STUB cti_vm_throw_slowpath(CallFrame* callFrame)
+ExceptionHandler JIT_STUB cti_vm_handle_exception(CallFrame* callFrame)
 {
+    ASSERT(!callFrame->hasHostCallFrameFlag());
+    if (!callFrame) {
+        // The entire stack has already been unwound. Nothing more to handle.
+        return uncaughtExceptionHandler();
+    }
+
     VM* vm = callFrame->codeBlock()->vm();
     vm->topCallFrame = callFrame;
     return jitThrowNew(vm, callFrame, vm->exception);

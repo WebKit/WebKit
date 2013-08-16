@@ -191,6 +191,11 @@ ALWAYS_INLINE void JIT::updateTopCallFrame()
     storePtr(callFrameRegister, &m_vm->topCallFrame);
 }
 
+ALWAYS_INLINE void JIT::reloadCallFrameFromTopCallFrame()
+{
+    loadPtr(&m_vm->topCallFrame, callFrameRegister);
+}
+
 ALWAYS_INLINE void JIT::restoreArgumentReferenceForTrampoline()
 {
 #if CPU(X86)

@@ -60,6 +60,13 @@ EncodedExceptionHandler encode(ExceptionHandler handler)
 }
 #endif
 
+ExceptionHandler uncaughtExceptionHandler()
+{
+    void* catchRoutine = FunctionPtr(LLInt::getCodePtr(ctiOpThrowNotCaught)).value();
+    ExceptionHandler exceptionHandler = { 0, catchRoutine};
+    return exceptionHandler;
+}
+
 ExceptionHandler genericThrow(VM* vm, ExecState* callFrame, JSValue exceptionValue, unsigned vPCIndex)
 {
     RELEASE_ASSERT(exceptionValue);

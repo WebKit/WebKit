@@ -838,6 +838,7 @@ namespace JSC {
 
         void restoreArgumentReferenceForTrampoline();
         void updateTopCallFrame();
+        void reloadCallFrameFromTopCallFrame();
 
         Call emitNakedCall(CodePtr function = CodePtr());
 

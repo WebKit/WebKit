@@ -107,21 +107,21 @@ SYMBOL_STRING(ctiVMThrowTrampoline) ":" "\n"
 );
 
 asm volatile (
-".globl " SYMBOL_STRING(ctiVMThrowTrampolineSlowpath) "\n"
-HIDE_SYMBOL(ctiVMThrowTrampolineSlowpath) "\n"
-SYMBOL_STRING(ctiVMThrowTrampolineSlowpath) ":" "\n"
-    "mov.l .L2"SYMBOL_STRING(cti_vm_throw_slowpath)",r0" "\n"
+".globl " SYMBOL_STRING(ctiVMHandleExceptiom) "\n"
+HIDE_SYMBOL(ctiVMHandleExceptiom) "\n"
+SYMBOL_STRING(ctiVMHandleExceptiom) ":" "\n"
+    "mov.l .L2"SYMBOL_STRING(cti_vm_handle_exception)",r0" "\n"
     "mov r14, r4" "\n"
     "mov.l @(r0,r12),r11" "\n"
     "jsr @r11" "\n"
-    // When cti_vm_throw_slowpath returns, r0 has callFrame and r1 has handler address
+    // When cti_vm_handle_exception returns, r0 has callFrame and r1 has handler address
     "nop" "\n"
     "mov r0, r14" "\n"
     "lds r1, pr" "\n"
     "rts" "\n"
     "nop" "\n"
     ".align 2" "\n"
-    ".L2"SYMBOL_STRING(cti_vm_throw_slowpath)":.long " SYMBOL_STRING(cti_vm_throw_slowpath)"@GOT \n"
+    ".L2"SYMBOL_STRING(cti_vm_handle_exception)":.long " SYMBOL_STRING(cti_vm_handle_exception)"@GOT \n"
 );
 
 asm volatile (

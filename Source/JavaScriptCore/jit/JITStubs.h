@@ -310,7 +310,7 @@ struct JITStackFrame {
 #endif
 
 extern "C" void ctiVMThrowTrampoline();
-extern "C" void ctiVMThrowTrampolineSlowpath();
+extern "C" void ctiVMHandleException();
 extern "C" void ctiOpThrowNotCaught();
 extern "C" EncodedJSValue ctiTrampoline(void* code, JSStack*, CallFrame*, void* /*unused1*/, void* /*unused2*/, VM*);
 #if ENABLE(DFG_JIT)
@@ -423,9 +423,9 @@ EncodedJSValue JIT_STUB cti_op_get_from_scope(STUB_ARGS_DECLARATION) WTF_INTERNA
 void JIT_STUB cti_op_put_to_scope(STUB_ARGS_DECLARATION) WTF_INTERNAL;
 
 #if USE(JSVALUE32_64)
-EncodedExceptionHandler JIT_STUB cti_vm_throw_slowpath(CallFrame*) REFERENCED_FROM_ASM WTF_INTERNAL;
+EncodedExceptionHandler JIT_STUB cti_vm_handle_exception(CallFrame*) REFERENCED_FROM_ASM WTF_INTERNAL;
 #else
-ExceptionHandler JIT_STUB cti_vm_throw_slowpath(CallFrame*) REFERENCED_FROM_ASM WTF_INTERNAL;
+ExceptionHandler JIT_STUB cti_vm_handle_exception(CallFrame*) REFERENCED_FROM_ASM WTF_INTERNAL;
 #endif
 
 } // extern "C"

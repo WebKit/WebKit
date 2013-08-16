@@ -398,7 +398,7 @@ NEVER_INLINE bool Interpreter::unwindCallFrame(StackIterator& iter, JSValue exce
     }
 
     CallFrame* callerFrame = callFrame->callerFrame();
-    callFrame->vm().topCallFrame = callerFrame;
+    callFrame->vm().topCallFrame = callerFrame->removeHostCallFrameFlag();
     return !callerFrame->hasHostCallFrameFlag();
 }
 
@@ -531,7 +531,8 @@ String StackFrame::toString(CallFrame* callFrame)
 void Interpreter::getStackTrace(Vector<StackFrame>& results, size_t maxStackSize)
 {
     VM& vm = m_vm;
-    CallFrame* callFrame = vm.topCallFrame->removeHostCallFrameFlag();
+    ASSERT(!vm.topCallFrame->hasHostCallFrameFlag());
+    CallFrame* callFrame = vm.topCallFrame;
     if (!callFrame)
         return;
     StackIterator iter = callFrame->begin();

@@ -57,6 +57,7 @@ union ExceptionHandlerUnion {
 EncodedExceptionHandler encode(ExceptionHandler);
 #endif
 
+ExceptionHandler uncaughtExceptionHandler();
 ExceptionHandler genericThrow(VM*, ExecState*, JSValue exceptionValue, unsigned vPCIndex);
 
 ExceptionHandler jitThrowNew(VM*, ExecState*, JSValue exceptionValue);

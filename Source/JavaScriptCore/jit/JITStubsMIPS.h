@@ -134,27 +134,27 @@ asm (
 ".set noreorder" "\n"
 ".set nomacro" "\n"
 ".set nomips16" "\n"
-".globl " SYMBOL_STRING(ctiVMThrowTrampolineSlowpath) "\n"
-".ent " SYMBOL_STRING(ctiVMThrowTrampolineSlowpath) "\n"
-SYMBOL_STRING(ctiVMThrowTrampolineSlowpath) ":" "\n"
+".globl " SYMBOL_STRING(ctiVMHandleException) "\n"
+".ent " SYMBOL_STRING(ctiVMHandleException) "\n"
+SYMBOL_STRING(ctiVMHandleException) ":" "\n"
 #if WTF_MIPS_PIC
 ".set macro" "\n"
 ".cpload $25" "\n"
-    "la    $25," SYMBOL_STRING(cti_vm_throw_slowpath) "\n"
+    "la    $25," SYMBOL_STRING(cti_vm_handle_exception) "\n"
 ".set nomacro" "\n"
-    "bal " SYMBOL_STRING(cti_vm_throw_slowpath) "\n"
+    "bal " SYMBOL_STRING(cti_vm_handle_exception) "\n"
     "move  $4,$16" "\n"
 #else
-    "jal " SYMBOL_STRING(cti_vm_throw_slowpath) "\n"
+    "jal " SYMBOL_STRING(cti_vm_handle_exception) "\n"
     "move  $4,$16" "\n"
 #endif
-    // When cti_vm_throw_slowpath returns, v0 has callFrame and v1 has handler address
+    // When cti_vm_handle_exception returns, v0 has callFrame and v1 has handler address
     "move  $16,$2 " "\n"
     "jr    $3" "\n"
     "nop" "\n"
 ".set reorder" "\n"
 ".set macro" "\n"
-".end " SYMBOL_STRING(ctiVMThrowTrampolineSlowpath) "\n"
+".end " SYMBOL_STRING(ctiVMHandleException) "\n"
 );
 
 asm (

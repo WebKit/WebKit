@@ -135,15 +135,17 @@ namespace JSC {
 
     class TopCallFrameSetter {
     public:
-        TopCallFrameSetter(VM& global, CallFrame* callFrame)
-            : vm(global)
-            , oldCallFrame(global.topCallFrame) 
+        TopCallFrameSetter(VM& currentVM, CallFrame* callFrame)
+            : vm(currentVM)
+            , oldCallFrame(currentVM.topCallFrame) 
         {
-            global.topCallFrame = callFrame;
+            ASSERT(!callFrame->hasHostCallFrameFlag());
+            currentVM.topCallFrame = callFrame;
         }
         
         ~TopCallFrameSetter() 
         {
+            ASSERT(!oldCallFrame->hasHostCallFrameFlag());
             vm.topCallFrame = oldCallFrame;
         }
     private:
@@ -153,11 +155,12 @@ namespace JSC {
     
     class NativeCallFrameTracer {
     public:
-        ALWAYS_INLINE NativeCallFrameTracer(VM* global, CallFrame* callFrame)
+        ALWAYS_INLINE NativeCallFrameTracer(VM* vm, CallFrame* callFrame)
         {
-            ASSERT(global);
+            ASSERT(vm);
             ASSERT(callFrame);
-            global->topCallFrame = callFrame;
+            ASSERT(!callFrame->hasHostCallFrameFlag());
+            vm->topCallFrame = callFrame;
         }
     };
 

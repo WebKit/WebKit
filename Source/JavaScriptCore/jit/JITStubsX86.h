@@ -86,12 +86,12 @@ SYMBOL_STRING(ctiVMThrowTrampoline) ":" "\n"
 );
 
 asm (
-".globl " SYMBOL_STRING(ctiVMThrowTrampolineSlowpath) "\n"
-HIDE_SYMBOL(ctiVMThrowTrampolineSlowpath) "\n"
-SYMBOL_STRING(ctiVMThrowTrampolineSlowpath) ":" "\n"
+".globl " SYMBOL_STRING(ctiVMHandleException) "\n"
+HIDE_SYMBOL(ctiVMHandleException) "\n"
+SYMBOL_STRING(ctiVMHandleException) ":" "\n"
     "movl %edi, %ecx" "\n"
-    "call " LOCAL_REFERENCE(cti_vm_throw_slowpath) "\n"
-    // When cti_vm_throw_slowpath returns, eax has callFrame and edx has handler address
+    "call " LOCAL_REFERENCE(cti_vm_handle_exception) "\n"
+    // When cti_vm_handle_exception returns, eax has callFrame and edx has handler address
     "jmp *%edx" "\n"
 );
 
@@ -304,12 +304,12 @@ extern "C" {
         }
     }
 
-    __declspec(naked) void ctiVMThrowTrampolineSlowpath()
+    __declspec(naked) void ctiVMHandleException()
     {
         __asm {
             mov ecx, edi;
-            call cti_vm_throw_slowpath;
-            // When cti_vm_throw_slowpath returns, eax has callFrame and edx has handler address
+            call cti_vm_handle_exception;
+            // When cti_vm_handle_exception returns, eax has callFrame and edx has handler address
             jmp edx
         }
     }

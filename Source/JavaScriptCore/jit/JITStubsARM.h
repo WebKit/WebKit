@@ -198,13 +198,13 @@ SYMBOL_STRING(ctiOpThrowNotCaught) ":" "\n"
 
 asm (
 ".text" "\n"
-".globl " SYMBOL_STRING(ctiVMThrowTrampolineSlowpath) "\n"
-HIDE_SYMBOL(ctiVMThrowTrampolineSlowpath) "\n"
-INLINE_ARM_FUNCTION(ctiVMThrowTrampolineSlowpath)
-SYMBOL_STRING(ctiVMThrowTrampolineSlowpath) ":" "\n"
+".globl " SYMBOL_STRING(ctiVMHandleException) "\n"
+HIDE_SYMBOL(ctiVMHandleException) "\n"
+INLINE_ARM_FUNCTION(ctiVMHandleException)
+SYMBOL_STRING(ctiVMHandleException) ":" "\n"
     "mov r0, r5" "\n"
-    "bl " SYMBOL_STRING(cti_vm_throw_slowpath) "\n"
-    // When cti_vm_throw_slowpath returns, r0 has callFrame and r1 has handler address
+    "bl " SYMBOL_STRING(cti_vm_handle_exception) "\n"
+    // When cti_vm_handle_exception returns, r0 has callFrame and r1 has handler address
     "mov r5, r0" "\n"
     "bx r1" "\n"
 );
@@ -459,8 +459,8 @@ MSVC_BEGIN(    EXPORT ctiTrampoline)
 MSVC_BEGIN(    EXPORT ctiTrampolineEnd)
 MSVC_BEGIN(    EXPORT ctiVMThrowTrampoline)
 MSVC_BEGIN(    EXPORT ctiOpThrowNotCaught)
-MSVC_BEGIN(    EXPORT ctiVMThrowTrampolineSlowpath)
-MSVC_BEGIN(    IMPORT cti_vm_throw_slowpath)
+MSVC_BEGIN(    EXPORT ctiVMHandleException)
+MSVC_BEGIN(    IMPORT cti_vm_handle_exception)
 MSVC_BEGIN()
 MSVC_BEGIN(ctiTrampoline PROC)
 MSVC_BEGIN(    stmdb sp!, {r1-r3})
@@ -488,12 +488,12 @@ MSVC_BEGIN(    add sp, sp, #12)
 MSVC_BEGIN(    bx lr)
 MSVC_BEGIN(ctiVMThrowTrampoline ENDP)
 MSVC_BEGIN()
-MSVC_BEGIN(ctiVMThrowTrampolineSlowpath PROC)
+MSVC_BEGIN(ctiVMHandleException PROC)
 MSVC_BEGIN(    mov r0, r5)
-MSVC_BEGIN(    bl cti_vm_throw_slowpath)
+MSVC_BEGIN(    bl cti_vm_handle_exception)
 MSVC_BEGIN(    mov r5, r0)
 MSVC_BEGIN(    bx r1)
-MSVC_BEGIN(ctiVMThrowTrampolineSlowpath ENDP)
+MSVC_BEGIN(ctiVMHandleException ENDP)
 MSVC_BEGIN()
 
 MSVC(    EXPORT cti_#op#)

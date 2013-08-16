@@ -170,7 +170,7 @@ JIT::CodeRef JIT::privateCompileCTINativeCall(VM* vm, NativeFunction func)
     storePtr(regT1, regT2);
     storePtr(callFrameRegister, &m_vm->topCallFrame);
 
-    move(TrustedImmPtr(FunctionPtr(ctiVMThrowTrampolineSlowpath).value()), regT1);
+    move(TrustedImmPtr(FunctionPtr(ctiVMHandleException).value()), regT1);
     jump(regT1);
 
     // All trampolines constructed! copy the code, link up calls, and set the pointers on the Machine object.

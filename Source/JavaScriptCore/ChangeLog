@@ -1,3 +1,75 @@
+2013-08-15  Mark Lam  <mark.lam@apple.com>
+
+        Fix crash when performing activation tearoff.
+        https://bugs.webkit.org/show_bug.cgi?id=119848
+
+        Reviewed by Oliver Hunt.
+
+        The activation tearoff crash was due to a bug in the baseline JIT.
+        If we have a scenario where the a baseline JIT frame calls a LLINT
+        frame, an exception may be thrown while in the LLINT.
+
+        Interpreter::throwException() which handles the exception will unwind
+        all frames until it finds a catcher or sees a host frame. When we
+        return from the LLINT to the baseline JIT code, the baseline JIT code
+        errorneously sets topCallFrame to the value in its call frame register,
+        and starts unwinding the stack frames that have already been unwound.
+
+        The fix is:
+        1. Rename ctiVMThrowTrampolineSlowpath to ctiVMHandleException.
+           This is a more accurate description of what this runtime function
+           is supposed to do i.e. it handles the exception which include doing
+           nothing (if there are no more frames to unwind).
+        2. Fix up topCallFrame values so that the HostCallFrameFlag is never
+           set on it.
+        3. Reloading the call frame register from topCallFrame when we're
+           returning from a callee and detect exception handling in progress.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::unwindCallFrame):
+        - Ensure that topCallFrame is not set with the HostCallFrameFlag.
+        (JSC::Interpreter::getStackTrace):
+        * interpreter/Interpreter.h:
+        (JSC::TopCallFrameSetter::TopCallFrameSetter):
+        (JSC::TopCallFrameSetter::~TopCallFrameSetter):
+        (JSC::NativeCallFrameTracer::NativeCallFrameTracer):
+        - Ensure that topCallFrame is not set with the HostCallFrameFlag.
+        * jit/JIT.h:
+        * jit/JITExceptions.cpp:
+        (JSC::uncaughtExceptionHandler):
+        - Convenience function to get the handler for uncaught exceptions.
+        * jit/JITExceptions.h:
+        * jit/JITInlines.h:
+        (JSC::JIT::reloadCallFrameFromTopCallFrame):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::privateCompileCTINativeCall):
+        - Rename ctiVMThrowTrampolineSlowpath to ctiVMHandleException.
+        * jit/JITStubs.cpp:
+        (JSC::throwExceptionFromOpCall):
+        - Ensure that topCallFrame is not set with the HostCallFrameFlag.
+        (JSC::cti_vm_handle_exception):
+        - Check for the case when there are no more frames to unwind.
+        * jit/JITStubs.h:
+        * jit/JITStubsARM.h:
+        * jit/JITStubsARMv7.h:
+        * jit/JITStubsMIPS.h:
+        * jit/JITStubsSH4.h:
+        * jit/JITStubsX86.h:
+        * jit/JITStubsX86_64.h:
+        - Rename ctiVMThrowTrampolineSlowpath to ctiVMHandleException.
+        * jit/SlowPathCall.h:
+        (JSC::JITSlowPathCall::call):
+        - reload cfr from topcallFrame when handling an exception.
+        - Rename ctiVMThrowTrampolineSlowpath to ctiVMHandleException.
+        * jit/ThunkGenerators.cpp:
+        (JSC::nativeForGenerator):
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        - reload cfr from topcallFrame when handling an exception.
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        - Ensure that topCallFrame is not set with the HostCallFrameFlag.
+
 2013-08-15  Filip Pizlo  <fpizlo@apple.com>
 
         Remove some code duplication.
