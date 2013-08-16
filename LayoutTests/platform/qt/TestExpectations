@@ -2453,7 +2453,7 @@ webkit.org/b/102920 editing/selection/5354455-1.html [ Failure ]
 
 # [Qt] REGRESSION: 7 tests started to fail with newer Qt5
 # https://bugs.webkit.org/show_bug.cgi?id=85629
-fast/encoding/percent-escaping.html [ Failure ]
+fast/encoding/percent-escaping.html
 http/tests/security/xssAuditor/script-tag-Big5-char-twice-url-encode-16bit-unicode.html [ Failure ]
 http/tests/security/xssAuditor/script-tag-with-16bit-unicode-surrogate-pair.html [ Failure ]
 http/tests/security/xssAuditor/script-tag-with-16bit-unicode2.html [ Failure ]

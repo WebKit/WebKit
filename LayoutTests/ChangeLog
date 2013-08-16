@@ -1,3 +1,11 @@
+2013-08-16  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        Reskip tests that times out.
+
+        Unreviewed gardening.
+
+        * platform/qt/TestExpectations:
+
 2013-08-15  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Unreviewed gardening. Correct some test expectations that now pass.
