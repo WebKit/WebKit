@@ -27,7 +27,6 @@
 #include "Editor.h"
 
 #include "Clipboard.h"
-#include "ClipboardIOS.h"
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSPrimitiveValueMappings.h"
 #include "Font.h"
@@ -48,11 +47,6 @@
 namespace WebCore {
 
 using namespace HTMLNames;
-
-PassRefPtr<Clipboard> Editor::newGeneralClipboard(ClipboardAccessPolicy policy, Frame* frame)
-{
-    return ClipboardIOS::create(Clipboard::CopyAndPaste, policy, frame);
-}    
 
 void Editor::showFontPanel()
 {

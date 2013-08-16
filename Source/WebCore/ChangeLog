@@ -1,3 +1,48 @@
+2013-08-13  Darin Adler  <darin@apple.com>
+
+        [iOS] Get iOS port off legacy clipboard
+        https://bugs.webkit.org/show_bug.cgi?id=116412
+
+        Reviewed by Daniel Bates.
+
+        * dom/Clipboard.h: Turn off legacy style clipboard for iOS.
+        Next patch will be able to remove legacy style entirely!
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::dispatchCPPEvent): Attach the frame to the
+        pasteboard directly explicitly. This is a layering violation, but
+        is needed until we change how iOS pasteboard communicates with the
+        host to use platform strategies instead of the editor client.
+
+        * editing/ios/EditorIOS.mm: Removed Editor::newGeneralClipboard and
+        the include of ClipboardIOS.h.
+
+        * platform/Pasteboard.h: Added the setFrame function (iOS-only) and
+        frame and change count data members.
+
+        * platform/ios/ClipboardIOS.h: Emptied out. Later we can remove this.
+        * platform/ios/ClipboardIOS.mm: Ditto.
+
+        * platform/ios/PasteboardIOS.mm:
+        (WebCore::Pasteboard::Pasteboard): Initialize m_frame to zero.
+        (WebCore::Pasteboard::createForCopyAndPaste): Added.
+        (WebCore::Pasteboard::createPrivate): Added.
+        (WebCore::Pasteboard::writePasteboard): Added. Empty function, like
+        writeClipboard. Eventually need to remove or implement this.
+        (WebCore::Pasteboard::setFrame): Added. Sets frame and change count.
+        (WebCore::Pasteboard::hasData): Moved here from ClipboardIOS.
+        (WebCore::utiTypeFromCocoaType): Ditto.
+        (WebCore::cocoaTypeFromHTMLClipboardType): Ditto.
+        (WebCore::Pasteboard::clear): Ditto.
+        (WebCore::Pasteboard::readString): Ditto.
+        (WebCore::addHTMLClipboardTypesForCocoaType): Ditto.
+        (WebCore::Pasteboard::writeString): Ditto.
+        (WebCore::Pasteboard::types): Ditto.
+        (WebCore::Pasteboard::readFilenames): Ditto.
+
+        * WebCore.exp.in: Move Clipboard destructor from Mac-only section to
+        common section shared by Mac and iOS.
+
 2013-08-15  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Unreviewed build fix after r154142 and r154144.

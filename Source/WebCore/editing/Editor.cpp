@@ -708,6 +708,10 @@ bool Editor::dispatchCPPEvent(const AtomicString& eventType, ClipboardAccessPoli
     RefPtr<Clipboard> clipboard = newGeneralClipboard(policy, m_frame);
 #endif
 
+#if PLATFORM(IOS)
+    clipboard->pasteboard().setFrame(m_frame);
+#endif
+
     RefPtr<Event> event = ClipboardEvent::create(eventType, true, true, clipboard);
     target->dispatchEvent(event, IGNORE_EXCEPTION);
     bool noDefaultProcessing = event->defaultPrevented();

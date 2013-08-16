@@ -157,7 +157,12 @@ public:
     // These functions need to move to the editing directory even if they have platform-specific aspects.
     PassRefPtr<DocumentFragment> documentFragment(Frame*, PassRefPtr<Range>, bool allowPlainText, bool& chosePlainText);
     String plainText(Frame* = 0);
-    
+
+#if PLATFORM(IOS)
+    // FIXME: Remove this once we switch to platform strategies instead of the editor client.
+    void setFrame(Frame*);
+#endif
+
 #if PLATFORM(QT) || PLATFORM(GTK)
     bool isSelectionMode() const;
     void setSelectionMode(bool);
@@ -203,6 +208,9 @@ private:
 
 #if PLATFORM(IOS)
     PassRefPtr<DocumentFragment> documentFragmentForPasteboardItemAtIndex(Frame*, int index, bool allowPlainText, bool& chosePlainText);
+
+    Frame* m_frame;
+    long m_changeCount;
 #endif
 
 #if PLATFORM(WIN)
