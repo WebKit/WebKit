@@ -2813,5 +2813,3 @@ svg/dom/svgpath-out-of-bounds-getPathSeg.html [ Failure ]
 fast/js/global-constructors-attributes-dedicated-worker.html [ Failure ]
 fast/text/split-text-crash.xhtml [ Failure ]
 fast/frames/seamless/seamless-nested-crash.html [ Failure ]
-
-webkit.org/b/119818 compositing/tiling/empty-to-tiled.html [ Crash ]

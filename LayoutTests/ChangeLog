@@ -1,3 +1,12 @@
+2013-08-16  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Enable previously-failing compositing/tiling/empty-to-tiled.html
+        https://bugs.webkit.org/show_bug.cgi?id=119818
+
+        Reviewed by Darin Adler.
+
+        * platform/win/TestExpectations: Re-enable empty-to-tiled.html
+
 2013-08-16  Tamas Czene <tczene@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening. Rebase js tests after r154127.

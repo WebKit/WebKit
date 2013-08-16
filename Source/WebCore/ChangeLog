@@ -1,3 +1,16 @@
+2013-08-15  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Prevent dangling CACFLayer when switching to/from Tiled backing.
+        https://bugs.webkit.org/show_bug.cgi?id=119818
+
+        Reviewed by Darin Adler.
+
+        Covered by existing: compositing/tiling/empty-to-tiled.html
+
+        * platform/graphics/ca/win/PlatformCALayerWin.cpp:
+        (PlatformCALayer::~PlatformCALayer): Remove deleted layer from its
+        parent layer 
+
 2013-08-16  Andreas Kling  <akling@apple.com>
 
         <https://webkit.org/b/119866> Frame::eventHandler() should return a reference.
