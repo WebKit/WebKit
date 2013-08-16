@@ -204,7 +204,7 @@ void MediaPlayerPrivateQt::commitLoad(const String& url)
 
         // Grab the frame and network manager
         Frame* frame = document ? document->frame() : 0;
-        FrameLoader* frameLoader = frame ? frame->loader() : 0;
+        FrameLoader* frameLoader = frame ? &frame->loader() : 0;
         QNetworkAccessManager* manager = frameLoader ? frameLoader->networkingContext()->networkAccessManager() : 0;
 
         if (manager) {

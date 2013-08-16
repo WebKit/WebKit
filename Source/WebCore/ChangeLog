@@ -1,3 +1,10 @@
+2013-08-16  Andreas Kling  <akling@apple.com>
+
+        Attempt to fix the Qt/MountainLion build after r154142.
+
+        * platform/graphics/qt/MediaPlayerPrivateQt.cpp:
+        (WebCore::MediaPlayerPrivateQt::commitLoad):
+
 2013-08-16  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt] Kerning in fast font path breaks letter-spacing
