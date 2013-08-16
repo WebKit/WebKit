@@ -858,6 +858,7 @@ static void resetDefaultsToConsistentValues(IWebPreferences* preferences)
     preferences->setDefaultFontSize(16);
     preferences->setDefaultFixedFontSize(13);
     preferences->setMinimumFontSize(0);
+    preferences->setDefaultTextEncodingName(L"ISO-8859-1");
     preferences->setJavaEnabled(FALSE);
     preferences->setPlugInsEnabled(TRUE);
     preferences->setDOMPasteAllowed(TRUE);
@@ -869,8 +870,10 @@ static void resetDefaultsToConsistentValues(IWebPreferences* preferences)
     preferences->setJavaScriptEnabled(TRUE);
     preferences->setTabsToLinks(FALSE);
     preferences->setShouldPrintBackgrounds(TRUE);
+    preferences->setCacheModel(WebCacheModelDocumentBrowser);
     preferences->setLoadsImagesAutomatically(TRUE);
     preferences->setSeamlessIFramesEnabled(TRUE);
+    preferences->setTextAreasAreResizable(TRUE);
 
     if (persistentUserStyleSheetLocation) {
         Vector<wchar_t> urlCharacters(CFStringGetLength(persistentUserStyleSheetLocation.get()));
@@ -894,6 +897,11 @@ static void resetDefaultsToConsistentValues(IWebPreferences* preferences)
         prefsPrivate->setXSSAuditorEnabled(FALSE);
         prefsPrivate->setOfflineWebApplicationCacheEnabled(TRUE);
         prefsPrivate->setLoadsSiteIconsIgnoringImageLoadingPreference(FALSE);
+        prefsPrivate->setFrameFlatteningEnabled(FALSE);
+        prefsPrivate->setFullScreenEnabled(TRUE);
+#if USE(CG)
+        prefsPrivate->setAcceleratedCompositingEnabled(TRUE);
+#endif
     }
     setAlwaysAcceptCookies(false);
 
@@ -1037,6 +1045,7 @@ static void removeFontFallbackIfPresent(const String& fontFallbackPath)
     ::setPersistentUserStyleSheetLocation(0);
 }
 
+
 static void runTest(const string& inputLine)
 {
     TestCommand command = parseInputLine(inputLine);
@@ -1131,7 +1140,13 @@ static void runTest(const string& inputLine)
     frame->loadRequest(request.get());
 
     MSG msg;
-    while (GetMessage(&msg, 0, 0, 0)) {
+    while (true) {
+#if USE(CF)
+        CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, true);
+#endif
+        if (!GetMessage(&msg, 0, 0, 0))
+            break;
+
         // We get spurious WM_MOUSELEAVE events which make event handling machinery think that mouse button
         // is released during dragging (see e.g. fast\dynamic\layer-hit-test-crash.html).
         // Mouse can never leave WebView during normal DumpRenderTree operation, so we just ignore all such events.
@@ -1357,8 +1372,10 @@ extern "C" __declspec(dllexport) int WINAPI dllLauncherEntryPoint(int argc, cons
     standardPreferencesPrivate->setShouldPaintNativeControls(FALSE);
     standardPreferences->setJavaScriptEnabled(TRUE);
     standardPreferences->setDefaultFontSize(16);
-    standardPreferences->setAcceleratedCompositingEnabled(true);
+#if USE(CG)
+    standardPreferences->setAcceleratedCompositingEnabled(TRUE);
     standardPreferences->setAVFoundationEnabled(TRUE);
+#endif
     standardPreferences->setContinuousSpellCheckingEnabled(TRUE);
 
     if (printSupportedFeatures) {

@@ -1,5 +1,18 @@
 2013-08-16  Brent Fulgham  <bfulgham@apple.com>
 
+        [Windows] DRT is not using the same preferences as the Mac build.
+        https://bugs.webkit.org/show_bug.cgi?id=119822
+
+        Reviewed by Darin Adler.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (runTest): Process Windows message queue using CFRunLoop to allow
+        dispatch routines to run properly.
+        (dllLauncherEntryPoint): Wrap CG-specific setup code in a macro
+        to prevent problems on WinCairo port.
+
+2013-08-16  Brent Fulgham  <bfulgham@apple.com>
+
         [Windows] URL printing code in DRT doesn't match WTR or Mac DRT
         https://bugs.webkit.org/show_bug.cgi?id=119583
 
