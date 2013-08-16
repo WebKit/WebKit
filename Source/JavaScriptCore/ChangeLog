@@ -1,3 +1,23 @@
+2013-08-16  Benjamin Poulain  <benjamin@webkit.org>
+
+        [JSC] x86: improve code generation for xxxTest32
+        https://bugs.webkit.org/show_bug.cgi?id=119876
+
+        Reviewed by Geoffrey Garen.
+
+        Try to use testb whenever possible when testing for an immediate value.
+
+        When the input is an address and an offset, we can tweak the mask
+        and offset to be able to generate testb for any byte of the mask.
+
+        When the input is a register, we can use testb if we are only interested
+        in testing the low bits.
+
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::branchTest32):
+        (JSC::MacroAssemblerX86Common::test32):
+        (JSC::MacroAssemblerX86Common::generateTest32):
+
 2013-08-16  Mark Lam  <mark.lam@apple.com>
 
         <https://bugs.webkit.org/show_bug.cgi?id=119913> Baseline JIT gives erroneous
