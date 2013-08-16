@@ -1061,9 +1061,15 @@
 		C25F8BCE157544A900245B71 /* IncrementalSweeper.h in Headers */ = {isa = PBXBuildFile; fileRef = C25F8BCC157544A900245B71 /* IncrementalSweeper.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C283190016FE4B7D00157BFD /* HandleBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = C28318FF16FE4B7D00157BFD /* HandleBlock.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C283190216FE533E00157BFD /* HandleBlockInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = C283190116FE533E00157BFD /* HandleBlockInlines.h */; };
+		C2981FD817BAEE4B00A3BC98 /* DFGDesiredWeakReferences.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C2981FD617BAEE4B00A3BC98 /* DFGDesiredWeakReferences.cpp */; };
+		C2981FD917BAEE4B00A3BC98 /* DFGDesiredWeakReferences.h in Headers */ = {isa = PBXBuildFile; fileRef = C2981FD717BAEE4B00A3BC98 /* DFGDesiredWeakReferences.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		C2981FDC17BAFF4400A3BC98 /* DFGDesiredWriteBarriers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C2981FDA17BAFF4400A3BC98 /* DFGDesiredWriteBarriers.cpp */; };
+		C2981FDD17BAFF4400A3BC98 /* DFGDesiredWriteBarriers.h in Headers */ = {isa = PBXBuildFile; fileRef = C2981FDB17BAFF4400A3BC98 /* DFGDesiredWriteBarriers.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C2A7F688160432D400F76B98 /* JSDestructibleObject.h in Headers */ = {isa = PBXBuildFile; fileRef = C2A7F687160432D400F76B98 /* JSDestructibleObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C2B916C214DA014E00CBAC86 /* MarkedAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = C2B916C114DA014E00CBAC86 /* MarkedAllocator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C2B916C514DA040C00CBAC86 /* MarkedAllocator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C2B916C414DA040C00CBAC86 /* MarkedAllocator.cpp */; };
+		C2C0F7CD17BBFC5B00464FE4 /* DFGDesiredTransitions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C2C0F7CB17BBFC5B00464FE4 /* DFGDesiredTransitions.cpp */; };
+		C2C0F7CE17BBFC5B00464FE4 /* DFGDesiredTransitions.h in Headers */ = {isa = PBXBuildFile; fileRef = C2C0F7CC17BBFC5B00464FE4 /* DFGDesiredTransitions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C2C8D02D14A3C6E000578E65 /* CopiedSpaceInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = C2C8D02B14A3C6B200578E65 /* CopiedSpaceInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C2C8D03014A3CEFC00578E65 /* CopiedBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = C2C8D02E14A3CEFC00578E65 /* CopiedBlock.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C2C8D03114A3CEFC00578E65 /* HeapBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = C2C8D02F14A3CEFC00578E65 /* HeapBlock.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2196,9 +2202,15 @@
 		C25F8BCC157544A900245B71 /* IncrementalSweeper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IncrementalSweeper.h; sourceTree = "<group>"; };
 		C28318FF16FE4B7D00157BFD /* HandleBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HandleBlock.h; sourceTree = "<group>"; };
 		C283190116FE533E00157BFD /* HandleBlockInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HandleBlockInlines.h; sourceTree = "<group>"; };
+		C2981FD617BAEE4B00A3BC98 /* DFGDesiredWeakReferences.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGDesiredWeakReferences.cpp; path = dfg/DFGDesiredWeakReferences.cpp; sourceTree = "<group>"; };
+		C2981FD717BAEE4B00A3BC98 /* DFGDesiredWeakReferences.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGDesiredWeakReferences.h; path = dfg/DFGDesiredWeakReferences.h; sourceTree = "<group>"; };
+		C2981FDA17BAFF4400A3BC98 /* DFGDesiredWriteBarriers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGDesiredWriteBarriers.cpp; path = dfg/DFGDesiredWriteBarriers.cpp; sourceTree = "<group>"; };
+		C2981FDB17BAFF4400A3BC98 /* DFGDesiredWriteBarriers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGDesiredWriteBarriers.h; path = dfg/DFGDesiredWriteBarriers.h; sourceTree = "<group>"; };
 		C2A7F687160432D400F76B98 /* JSDestructibleObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDestructibleObject.h; sourceTree = "<group>"; };
 		C2B916C114DA014E00CBAC86 /* MarkedAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MarkedAllocator.h; sourceTree = "<group>"; };
 		C2B916C414DA040C00CBAC86 /* MarkedAllocator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MarkedAllocator.cpp; sourceTree = "<group>"; };
+		C2C0F7CB17BBFC5B00464FE4 /* DFGDesiredTransitions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGDesiredTransitions.cpp; path = dfg/DFGDesiredTransitions.cpp; sourceTree = "<group>"; };
+		C2C0F7CC17BBFC5B00464FE4 /* DFGDesiredTransitions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGDesiredTransitions.h; path = dfg/DFGDesiredTransitions.h; sourceTree = "<group>"; };
 		C2C8D02B14A3C6B200578E65 /* CopiedSpaceInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CopiedSpaceInlines.h; sourceTree = "<group>"; };
 		C2C8D02E14A3CEFC00578E65 /* CopiedBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CopiedBlock.h; sourceTree = "<group>"; };
 		C2C8D02F14A3CEFC00578E65 /* HeapBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeapBlock.h; sourceTree = "<group>"; };
@@ -3469,6 +3481,12 @@
 				0FFFC95414EF909500C72532 /* DFGVirtualRegisterAllocationPhase.h */,
 				0FDB2CE5174830A2007B3C1B /* DFGWorklist.cpp */,
 				0FDB2CE6174830A2007B3C1B /* DFGWorklist.h */,
+				C2981FD617BAEE4B00A3BC98 /* DFGDesiredWeakReferences.cpp */,
+				C2981FD717BAEE4B00A3BC98 /* DFGDesiredWeakReferences.h */,
+				C2981FDA17BAFF4400A3BC98 /* DFGDesiredWriteBarriers.cpp */,
+				C2981FDB17BAFF4400A3BC98 /* DFGDesiredWriteBarriers.h */,
+				C2C0F7CB17BBFC5B00464FE4 /* DFGDesiredTransitions.cpp */,
+				C2C0F7CC17BBFC5B00464FE4 /* DFGDesiredTransitions.h */,
 			);
 			name = dfg;
 			sourceTree = "<group>";
@@ -3676,6 +3694,9 @@
 				BC18C3E60E16F5CD00B34460 /* ArrayConstructor.h in Headers */,
 				0FB7F39515ED8E4600F167B2 /* ArrayConventions.h in Headers */,
 				0F63945515D07057006A597C /* ArrayProfile.h in Headers */,
+				C2981FD917BAEE4B00A3BC98 /* DFGDesiredWeakReferences.h in Headers */,
+				C2981FDD17BAFF4400A3BC98 /* DFGDesiredWriteBarriers.h in Headers */,
+				C2C0F7CE17BBFC5B00464FE4 /* DFGDesiredTransitions.h in Headers */,
 				BC18C3E70E16F5CD00B34460 /* ArrayPrototype.h in Headers */,
 				BC18C5240E16FC8A00B34460 /* ArrayPrototype.lut.h in Headers */,
 				0FB7F39615ED8E4600F167B2 /* ArrayStorage.h in Headers */,
@@ -4910,6 +4931,7 @@
 				14469DE0107EC7E700650446 /* NativeErrorConstructor.cpp in Sources */,
 				14469DE1107EC7E700650446 /* NativeErrorPrototype.cpp in Sources */,
 				148F21B7107EC5470042EC2C /* Nodes.cpp in Sources */,
+				C2981FD817BAEE4B00A3BC98 /* DFGDesiredWeakReferences.cpp in Sources */,
 				655EB29B10CE2581001A990E /* NodesCodegen.cpp in Sources */,
 				14469DE2107EC7E700650446 /* NumberConstructor.cpp in Sources */,
 				14469DE3107EC7E700650446 /* NumberObject.cpp in Sources */,
@@ -4951,6 +4973,7 @@
 				14280841107EC0930013E7B2 /* RegExp.cpp in Sources */,
 				A1712B3B11C7B212007A5315 /* RegExpCache.cpp in Sources */,
 				8642C510151C06A90046D4EF /* RegExpCachedResult.cpp in Sources */,
+				C2981FDC17BAFF4400A3BC98 /* DFGDesiredWriteBarriers.cpp in Sources */,
 				14280842107EC0930013E7B2 /* RegExpConstructor.cpp in Sources */,
 				0F2B66E617B6B5AB00A7AE3F /* JSArrayBufferPrototype.cpp in Sources */,
 				8642C512151C083D0046D4EF /* RegExpMatchesArray.cpp in Sources */,
@@ -4991,6 +5014,7 @@
 				0FF42747158EBE91004CB9FF /* udis86_syn.c in Sources */,
 				0FF42732158EBD58004CB9FF /* UDis86Disassembler.cpp in Sources */,
 				A76F279415F13C9600517D67 /* UnlinkedCodeBlock.cpp in Sources */,
+				C2C0F7CD17BBFC5B00464FE4 /* DFGDesiredTransitions.cpp in Sources */,
 				E18E3A590DF9278C00D90B34 /* VM.cpp in Sources */,
 				FE4A331F15BD2E07006F54F3 /* VMInspector.cpp in Sources */,
 				0FC81516140511B500CFA603 /* VTableSpectrum.cpp in Sources */,

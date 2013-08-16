@@ -400,6 +400,15 @@ private:
             return findArgumentPositionForArgument(operandToArgument(operand));
         return findArgumentPositionForLocal(operand);
     }
+
+    void addConstant(JSValue value)
+    {
+        initializeLazyWriteBarrier(
+            m_codeBlock->addConstantLazily(), 
+            m_graph.m_plan.writeBarriers, 
+            m_codeBlock->ownerExecutable(), 
+            value);
+    }
     
     void flush(int operand)
     {
@@ -496,9 +505,11 @@ private:
     // doesn't handle liveness preservation.
     Node* getJSConstantForValue(JSValue constantValue)
     {
-        unsigned constantIndex = m_codeBlock->addOrFindConstant(constantValue);
-        if (constantIndex >= m_constants.size())
+        unsigned constantIndex;
+        if (!m_codeBlock->findConstant(constantValue, constantIndex)) {
+            addConstant(constantValue);
             m_constants.append(ConstantRecord());
+        }
         
         ASSERT(m_constants.size() == m_codeBlock->numberOfConstantRegisters());
         
@@ -567,7 +578,7 @@ private:
 
             // Add undefined to the CodeBlock's constants, and add a corresponding slot in m_constants.
             ASSERT(m_constants.size() == numberOfConstants);
-            m_codeBlock->addConstant(jsUndefined());
+            addConstant(jsUndefined());
             m_constants.append(ConstantRecord());
             ASSERT(m_constants.size() == m_codeBlock->numberOfConstantRegisters());
         }
@@ -592,7 +603,7 @@ private:
 
             // Add null to the CodeBlock's constants, and add a corresponding slot in m_constants.
             ASSERT(m_constants.size() == numberOfConstants);
-            m_codeBlock->addConstant(jsNull());
+            addConstant(jsNull());
             m_constants.append(ConstantRecord());
             ASSERT(m_constants.size() == m_codeBlock->numberOfConstantRegisters());
         }
@@ -617,7 +628,7 @@ private:
 
             // Add the value 1 to the CodeBlock's constants, and add a corresponding slot in m_constants.
             ASSERT(m_constants.size() == numberOfConstants);
-            m_codeBlock->addConstant(jsNumber(1));
+            addConstant(jsNumber(1));
             m_constants.append(ConstantRecord());
             ASSERT(m_constants.size() == m_codeBlock->numberOfConstantRegisters());
         }
@@ -645,7 +656,7 @@ private:
 
             // Add the value nan to the CodeBlock's constants, and add a corresponding slot in m_constants.
             ASSERT(m_constants.size() == numberOfConstants);
-            m_codeBlock->addConstant(nan);
+            addConstant(nan);
             m_constants.append(ConstantRecord());
             ASSERT(m_constants.size() == m_codeBlock->numberOfConstantRegisters());
         }
@@ -3274,10 +3285,19 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(
         ASSERT(callsiteBlockHead);
         
         InlineCallFrame inlineCallFrame;
-        inlineCallFrame.executable.set(*byteCodeParser->m_vm, byteCodeParser->m_codeBlock->ownerExecutable(), codeBlock->ownerExecutable());
+        initializeLazyWriteBarrier(
+            inlineCallFrame.executable,
+            byteCodeParser->m_graph.m_plan.writeBarriers,
+            byteCodeParser->m_codeBlock->ownerExecutable(), 
+            codeBlock->ownerExecutable());
         inlineCallFrame.stackOffset = inlineCallFrameStart + JSStack::CallFrameHeaderSize;
-        if (callee)
-            inlineCallFrame.callee.set(*byteCodeParser->m_vm, byteCodeParser->m_codeBlock->ownerExecutable(), callee);
+        if (callee) {
+            initializeLazyWriteBarrier(
+                inlineCallFrame.callee,
+                byteCodeParser->m_graph.m_plan.writeBarriers,
+                byteCodeParser->m_codeBlock->ownerExecutable(), 
+                callee);
+        }
         inlineCallFrame.caller = byteCodeParser->currentCodeOrigin();
         inlineCallFrame.arguments.resize(argumentCountIncludingThis); // Set the number of arguments including this, but don't configure the value recoveries, yet.
         inlineCallFrame.isCall = isCall(kind);
@@ -3328,7 +3348,7 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(
             if (!value) {
                 if (byteCodeParser->m_emptyJSValueIndex == UINT_MAX) {
                     byteCodeParser->m_emptyJSValueIndex = byteCodeParser->m_codeBlock->numberOfConstantRegisters() + FirstConstantRegisterIndex;
-                    byteCodeParser->m_codeBlock->addConstant(JSValue());
+                    byteCodeParser->addConstant(JSValue());
                     byteCodeParser->m_constants.append(ConstantRecord());
                 }
                 m_constantRemap[i] = byteCodeParser->m_emptyJSValueIndex;
@@ -3336,7 +3356,7 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(
             }
             JSValueMap::AddResult result = byteCodeParser->m_jsValueMap.add(JSValue::encode(value), byteCodeParser->m_codeBlock->numberOfConstantRegisters() + FirstConstantRegisterIndex);
             if (result.isNewEntry) {
-                byteCodeParser->m_codeBlock->addConstant(value);
+                byteCodeParser->addConstant(value);
                 byteCodeParser->m_constants.append(ConstantRecord());
             }
             m_constantRemap[i] = result.iterator->value;

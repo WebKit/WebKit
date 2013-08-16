@@ -153,7 +153,15 @@ public:
     
     void convertToConstant(Node* node, JSValue value)
     {
-        convertToConstant(node, m_codeBlock->addOrFindConstant(value));
+        unsigned constantRegister;
+        if (!m_codeBlock->findConstant(value, constantRegister)) {
+            initializeLazyWriteBarrier(
+                m_codeBlock->addConstantLazily(),
+                m_plan.writeBarriers,
+                m_codeBlock->ownerExecutable(),
+                value);
+        }
+        convertToConstant(node, constantRegister);
     }
 
     // CodeBlock is optional, but may allow additional information to be dumped (e.g. Identifier names).

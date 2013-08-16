@@ -100,7 +100,10 @@ set(JavaScriptCore_SOURCES
     dfg/DFGDCEPhase.cpp
     dfg/DFGDesiredIdentifiers.cpp
     dfg/DFGDesiredStructureChains.cpp
+    dfg/DFGDesiredTransitions.cpp
     dfg/DFGDesiredWatchpoints.cpp
+    dfg/DFGDesiredWeakReferences.cpp
+    dfg/DFGDesiredWriteBarriers.cpp
     dfg/DFGDisassembler.cpp
     dfg/DFGDominators.cpp
     dfg/DFGDriver.cpp

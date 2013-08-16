@@ -30,19 +30,19 @@
 
 #include "CodeBlock.h"
 #include "DFGNode.h"
+#include "DFGPlan.h"
 #include "Operations.h"
 #include "VM.h"
 
 namespace JSC { namespace DFG {
 
-void CommonData::notifyCompilingStructureTransition(CodeBlock* codeBlock, Node* node)
+void CommonData::notifyCompilingStructureTransition(Plan& plan, CodeBlock* codeBlock, Node* node)
 {
-    transitions.append(
-        WeakReferenceTransition(
-            *codeBlock->vm(), codeBlock->ownerExecutable(),
-            node->codeOrigin.codeOriginOwner(),
-            node->structureTransitionData().previousStructure,
-            node->structureTransitionData().newStructure));
+    plan.transitions.addLazily(
+        codeBlock,
+        node->codeOrigin.codeOriginOwner(),
+        node->structureTransitionData().previousStructure,
+        node->structureTransitionData().newStructure);
 }
 
 void CommonData::shrinkToFit()

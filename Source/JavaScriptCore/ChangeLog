@@ -1,3 +1,70 @@
+2013-08-15  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        <https://webkit.org/b/119833> Concurrent compilation thread should not trigger WriteBarriers
+
+        Reviewed by Oliver Hunt.
+
+        The concurrent compilation thread should interact minimally with the Heap, including not 
+        triggering WriteBarriers. This is a prerequisite for generational GC.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::addOrFindConstant):
+        (JSC::CodeBlock::findConstant):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::addConstantLazily):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::getJSConstantForValue):
+        (JSC::DFG::ByteCodeParser::constantUndefined):
+        (JSC::DFG::ByteCodeParser::constantNull):
+        (JSC::DFG::ByteCodeParser::one):
+        (JSC::DFG::ByteCodeParser::constantNaN):
+        (JSC::DFG::ByteCodeParser::InlineStackEntry::InlineStackEntry):
+        * dfg/DFGCommonData.cpp:
+        (JSC::DFG::CommonData::notifyCompilingStructureTransition):
+        * dfg/DFGCommonData.h:
+        * dfg/DFGDesiredTransitions.cpp: Added.
+        (JSC::DFG::DesiredTransition::DesiredTransition):
+        (JSC::DFG::DesiredTransition::reallyAdd):
+        (JSC::DFG::DesiredTransitions::DesiredTransitions):
+        (JSC::DFG::DesiredTransitions::~DesiredTransitions):
+        (JSC::DFG::DesiredTransitions::addLazily):
+        (JSC::DFG::DesiredTransitions::reallyAdd):
+        * dfg/DFGDesiredTransitions.h: Added.
+        * dfg/DFGDesiredWeakReferences.cpp: Added.
+        (JSC::DFG::DesiredWeakReferences::DesiredWeakReferences):
+        (JSC::DFG::DesiredWeakReferences::~DesiredWeakReferences):
+        (JSC::DFG::DesiredWeakReferences::addLazily):
+        (JSC::DFG::DesiredWeakReferences::reallyAdd):
+        * dfg/DFGDesiredWeakReferences.h: Added.
+        * dfg/DFGDesiredWriteBarriers.cpp: Added.
+        (JSC::DFG::DesiredWriteBarrier::DesiredWriteBarrier):
+        (JSC::DFG::DesiredWriteBarrier::trigger):
+        (JSC::DFG::DesiredWriteBarriers::DesiredWriteBarriers):
+        (JSC::DFG::DesiredWriteBarriers::~DesiredWriteBarriers):
+        (JSC::DFG::DesiredWriteBarriers::addImpl):
+        (JSC::DFG::DesiredWriteBarriers::trigger):
+        * dfg/DFGDesiredWriteBarriers.h: Added.
+        (JSC::DFG::DesiredWriteBarriers::add):
+        (JSC::DFG::initializeLazyWriteBarrier):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::truncateConstantToInt32):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::convertToConstant):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::addWeakReference):
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::Plan):
+        (JSC::DFG::Plan::reallyAdd):
+        * dfg/DFGPlan.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * runtime/WriteBarrier.h:
+        (JSC::WriteBarrierBase::set):
+        (JSC::WriteBarrier::WriteBarrier):
+
 2013-08-15  Benjamin Poulain  <benjamin@webkit.org>
 
         Fix x86 32bits build after r154158

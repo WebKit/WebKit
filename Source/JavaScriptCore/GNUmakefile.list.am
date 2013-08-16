@@ -233,8 +233,14 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/dfg/DFGDesiredIdentifiers.h \
 	Source/JavaScriptCore/dfg/DFGDesiredStructureChains.cpp \
 	Source/JavaScriptCore/dfg/DFGDesiredStructureChains.h \
+	Source/JavaScriptCore/dfg/DFGDesiredTransitions.cpp \
+	Source/JavaScriptCore/dfg/DFGDesiredTransitions.h \
 	Source/JavaScriptCore/dfg/DFGDesiredWatchpoints.cpp \
 	Source/JavaScriptCore/dfg/DFGDesiredWatchpoints.h \
+	Source/JavaScriptCore/dfg/DFGDesiredWeakReferences.cpp \
+	Source/JavaScriptCore/dfg/DFGDesiredWeakReferences.h \
+	Source/JavaScriptCore/dfg/DFGDesiredWriteBarriers.cpp \
+	Source/JavaScriptCore/dfg/DFGDesiredWriteBarriers.h \
 	Source/JavaScriptCore/dfg/DFGDisassembler.cpp \
 	Source/JavaScriptCore/dfg/DFGDisassembler.h \
 	Source/JavaScriptCore/dfg/DFGDominators.cpp \

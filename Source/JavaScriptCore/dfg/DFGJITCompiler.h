@@ -411,7 +411,7 @@ public:
     
     void addWeakReference(JSCell* target)
     {
-        m_jitCode->common.weakReferences.append(WriteBarrier<JSCell>(m_graph.m_vm, codeBlock()->ownerExecutable(), target));
+        m_graph.m_plan.weakReferences.addLazily(target);
     }
     
     void addWeakReferences(const StructureSet& structureSet)

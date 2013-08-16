@@ -686,7 +686,13 @@ public:
         return result;
     }
 
+    WriteBarrier<Unknown>& addConstantLazily()
+    {
+        m_constantRegisters.append(WriteBarrier<Unknown>());
+        return m_constantRegisters.last();
+    }
 
+    bool findConstant(JSValue, unsigned& result);
     unsigned addOrFindConstant(JSValue);
     WriteBarrier<Unknown>& constantRegister(int index) { return m_constantRegisters[index - FirstConstantRegisterIndex]; }
     ALWAYS_INLINE bool isConstantRegisterIndex(int index) const { return index >= FirstConstantRegisterIndex; }

@@ -2489,12 +2489,23 @@ void CodeBlock::createActivation(CallFrame* callFrame)
 
 unsigned CodeBlock::addOrFindConstant(JSValue v)
 {
+    unsigned result;
+    if (findConstant(v, result))
+        return result;
+    return addConstant(v);
+}
+
+bool CodeBlock::findConstant(JSValue v, unsigned& index)
+{
     unsigned numberOfConstants = numberOfConstantRegisters();
     for (unsigned i = 0; i < numberOfConstants; ++i) {
-        if (getConstant(FirstConstantRegisterIndex + i) == v)
-            return i;
+        if (getConstant(FirstConstantRegisterIndex + i) == v) {
+            index = i;
+            return true;
+        }
     }
-    return addConstant(v);
+    index = numberOfConstants;
+    return false;
 }
 
 #if ENABLE(JIT)

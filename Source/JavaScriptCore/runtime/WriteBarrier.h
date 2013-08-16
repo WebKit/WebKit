@@ -34,6 +34,10 @@
 
 namespace JSC {
 
+namespace DFG {
+class DesiredWriteBarrier;
+}
+
 class JSCell;
 class VM;
 class JSGlobalObject;
@@ -71,6 +75,7 @@ public:
     void set(VM& vm, const JSCell* owner, T* value)
     {
         ASSERT(value);
+        ASSERT(!Options::enableConcurrentJIT() || !isCompilationThread());
         validateCell(value);
         setEarlyValue(vm, owner, value);
     }
@@ -149,6 +154,7 @@ template <> class WriteBarrierBase<Unknown> {
 public:
     void set(VM&, const JSCell* owner, JSValue value)
     {
+        ASSERT(!Options::enableConcurrentJIT() || !isCompilationThread());
         m_value = JSValue::encode(value);
         Heap::writeBarrier(owner, value);
     }
@@ -202,6 +208,12 @@ public:
         this->set(vm, owner, value);
     }
 
+    WriteBarrier(DFG::DesiredWriteBarrier&, T* value)
+    {
+        ASSERT(isCompilationThread());
+        this->setWithoutWriteBarrier(value);
+    }
+
     enum MayBeNullTag { MayBeNull };
     WriteBarrier(VM& vm, const JSCell* owner, T* value, MayBeNullTag)
     {
@@ -219,6 +231,12 @@ public:
     WriteBarrier(VM& vm, const JSCell* owner, JSValue value)
     {
         this->set(vm, owner, value);
+    }
+
+    WriteBarrier(DFG::DesiredWriteBarrier&, JSValue value)
+    {
+        ASSERT(isCompilationThread());
+        this->setWithoutWriteBarrier(value);
     }
 };
 

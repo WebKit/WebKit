@@ -42,6 +42,7 @@ class Identifier;
 namespace DFG {
 
 struct Node;
+struct Plan;
 
 // CommonData holds the set of data that both DFG and FTL code blocks need to know
 // about themselves.
@@ -71,7 +72,7 @@ public:
     {
     }
     
-    void notifyCompilingStructureTransition(CodeBlock*, Node*);
+    void notifyCompilingStructureTransition(Plan&, CodeBlock*, Node*);
     
     void shrinkToFit();
 

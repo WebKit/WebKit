@@ -1412,9 +1412,17 @@ private:
         
         value = jsNumber(JSC::toInt32(value.asNumber()));
         ASSERT(value.isInt32());
+        unsigned constantRegister;
+        if (!codeBlock()->findConstant(value, constantRegister)) {
+            initializeLazyWriteBarrier(
+                codeBlock()->addConstantLazily(),
+                m_graph.m_plan.writeBarriers,
+                codeBlock()->ownerExecutable(),
+                value);
+        }
         edge.setNode(m_insertionSet.insertNode(
             m_indexInBlock, SpecInt32, JSConstant, m_currentNode->codeOrigin,
-            OpInfo(codeBlock()->addOrFindConstant(value))));
+            OpInfo(constantRegister)));
     }
     
     void truncateConstantsIfNecessary(Node* node, AddSpeculationMode mode)

@@ -3975,13 +3975,13 @@ void SpeculativeJIT::compile(Node* node)
         
     case PhantomPutStructure: {
         ASSERT(isKnownCell(node->child1().node()));
-        m_jit.jitCode()->common.notifyCompilingStructureTransition(m_jit.codeBlock(), node);
+        m_jit.jitCode()->common.notifyCompilingStructureTransition(m_jit.graph().m_plan, m_jit.codeBlock(), node);
         noResult(node);
         break;
     }
 
     case PutStructure: {
-        m_jit.jitCode()->common.notifyCompilingStructureTransition(m_jit.codeBlock(), node);
+        m_jit.jitCode()->common.notifyCompilingStructureTransition(m_jit.graph().m_plan, m_jit.codeBlock(), node);
 
         SpeculateCellOperand base(this, node->child1());
         GPRReg baseGPR = base.gpr();
