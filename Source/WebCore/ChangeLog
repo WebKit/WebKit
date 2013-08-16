@@ -1,3 +1,14 @@
+2013-08-16  Julien Brianceau  <jbrianceau@nds.com>
+
+        <https://webkit.org/b/119880> [Qt] Build fix (broken since r154142).
+
+        Reviewed by Gyuyoung Kim.
+
+        Since r154142, Frame::loader() is a reference (and not a pointer anymore).
+
+        * xml/parser/XMLDocumentParserQt.cpp:
+        (WebCore::XMLDocumentParser::parseStartElement):
+
 2013-08-16  Przemyslaw Szymanski  <p.szymanski3@samsung.com>
 
         [WebGL] Vertex attribute binding validation method

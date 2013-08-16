@@ -505,7 +505,7 @@ void XMLDocumentParser::parseStartElement()
         static_cast<HTMLHtmlElement*>(newElement.get())->insertedByParser();
 
     if (isFirstElement && document()->frame())
-        document()->frame()->loader()->dispatchDocumentElementAvailable();
+        document()->frame()->loader().dispatchDocumentElementAvailable();
 }
 
 void XMLDocumentParser::parseEndElement()
