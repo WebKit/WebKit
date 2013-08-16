@@ -1881,9 +1881,7 @@ bool WebGLRenderingContext::validateVertexAttributes(unsigned numElementsRequire
 
     // Look in each enabled vertex attrib and check if they've been bound to a buffer.
     for (unsigned i = 0; i < m_maxVertexAttribs; ++i) {
-        const WebGLVertexArrayObjectOES::VertexAttribState& state = m_boundVertexArrayObject->getVertexAttribState(i);
-        if (state.enabled
-            && (!state.bufferBinding || !state.bufferBinding->object()))
+        if (!m_boundVertexArrayObject->getVertexAttribState(i).validateBinding())
             return false;
     }
 

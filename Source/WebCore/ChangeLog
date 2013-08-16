@@ -1,3 +1,26 @@
+2013-08-16  Przemyslaw Szymanski  <p.szymanski3@samsung.com>
+
+        [WebGL] Vertex attribute binding validation method
+        https://bugs.webkit.org/show_bug.cgi?id=119515
+
+        This patch refactors WebGLRenderingContext code by moving the vertex
+        attribute binding validation to a separate method. It is now
+        possible to use that validation in other parts of the code. The
+        code is more clear now. 
+
+        Reviewed by Christophe Dumez.
+
+        No new tests. Covered by existing tests. No behaviour changed.
+        LayoutTests/webgl/resources/webgl_test_files/conformance/rendering/gl-drawelements.html
+        LayoutTests/webgl/resources/webgl_test_files/conformance/rendering/draw-elements-out-of-bounds.html
+        LayoutTests/webgl/resources/webgl_test_files/conformance/rendering/draw-arrays-out-of-bounds.html
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::validateVertexAttributes):
+        * html/canvas/WebGLVertexArrayObjectOES.h:
+        (WebCore::WebGLVertexArrayObjectOES::VertexAttribState::isBound):
+        (WebCore::WebGLVertexArrayObjectOES::VertexAttribState::validateBinding):
+
 2013-08-15  Antti Koivisto  <antti@apple.com>
 
         <https://webkit.org/b/119865> Parent pointer and shadow root host pointer should not be shared
