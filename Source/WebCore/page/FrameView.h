@@ -76,10 +76,9 @@ public:
     virtual bool scheduleAnimation();
 #endif
 
-    Frame* frame() const { return m_frame.get(); }
-    void clearFrame();
+    Frame& frame() const { return *m_frame; }
 
-    RenderView* renderView() const { return m_frame ? m_frame->contentRenderer() : 0; }
+    RenderView* renderView() const { return frame().contentRenderer(); }
 
     int mapFromLayoutToCSSUnits(LayoutUnit);
     LayoutUnit mapFromCSSToLayoutUnits(int);
@@ -554,7 +553,7 @@ private:
     
     typedef HashSet<RenderObject*> RenderObjectSet;
     OwnPtr<RenderObjectSet> m_widgetUpdateSet;
-    RefPtr<Frame> m_frame;
+    const RefPtr<Frame> m_frame;
 
     OwnPtr<RenderObjectSet> m_slowRepaintObjects;
 
@@ -700,12 +699,12 @@ inline void FrameView::incrementVisuallyNonEmptyPixelCount(const IntSize& size)
 
 inline int FrameView::mapFromLayoutToCSSUnits(LayoutUnit value)
 {
-    return value / (m_frame->pageZoomFactor() * m_frame->frameScaleFactor());
+    return value / (frame().pageZoomFactor() * frame().frameScaleFactor());
 }
 
 inline LayoutUnit FrameView::mapFromCSSToLayoutUnits(int value)
 {
-    return value * m_frame->pageZoomFactor() * m_frame->frameScaleFactor();
+    return value * frame().pageZoomFactor() * frame().frameScaleFactor();
 }
 
 inline FrameView* toFrameView(Widget* widget)

@@ -101,33 +101,33 @@ void CachedFrameBase::restore()
     if (m_isMainFrame)
         m_view->setParentVisible(true);
 
-    Frame* frame = m_view->frame();
-    m_cachedFrameScriptData->restore(frame);
+    Frame& frame = m_view->frame();
+    m_cachedFrameScriptData->restore(&frame);
 
 #if ENABLE(SVG)
     if (m_document->svgExtensions())
         m_document->accessSVGExtensions()->unpauseAnimations();
 #endif
 
-    frame->animation()->resumeAnimationsForDocument(m_document.get());
-    frame->eventHandler().setMousePressNode(m_mousePressNode.get());
+    frame.animation()->resumeAnimationsForDocument(m_document.get());
+    frame.eventHandler().setMousePressNode(m_mousePressNode.get());
     m_document->resumeActiveDOMObjects(ActiveDOMObject::DocumentWillBecomeInactive);
     m_document->resumeScriptedAnimationControllerCallbacks();
 
     // It is necessary to update any platform script objects after restoring the
     // cached page.
-    frame->script()->updatePlatformScriptObjects();
+    frame.script()->updatePlatformScriptObjects();
 
 #if USE(ACCELERATED_COMPOSITING)
     if (m_isComposited)
-        frame->view()->restoreBackingStores();
+        frame.view()->restoreBackingStores();
 #endif
 
-    frame->loader().client()->didRestoreFromPageCache();
+    frame.loader().client()->didRestoreFromPageCache();
 
     // Reconstruct the FrameTree
     for (unsigned i = 0; i < m_childFrames.size(); ++i)
-        frame->tree()->appendChild(m_childFrames[i]->view()->frame());
+        frame.tree()->appendChild(&m_childFrames[i]->view()->frame());
 
     // Open the child CachedFrames in their respective FrameLoaders.
     for (unsigned i = 0; i < m_childFrames.size(); ++i)
@@ -138,7 +138,7 @@ void CachedFrameBase::restore()
 
     m_document->enqueuePageshowEvent(PageshowEventPersisted);
     
-    HistoryItem* historyItem = frame->loader().history()->currentItem();
+    HistoryItem* historyItem = frame.loader().history()->currentItem();
     m_document->enqueuePopstateEvent(historyItem && historyItem->stateObject() ? historyItem->stateObject() : SerializedScriptValue::nullValue());
     
 #if ENABLE(TOUCH_EVENTS)
@@ -198,7 +198,7 @@ CachedFrame::CachedFrame(Frame* frame)
     // 1 - We reuse the main frame, so when it navigates to a new page load it needs to start with a blank FrameTree.
     // 2 - It's much easier to destroy a CachedFrame while it resides in the PageCache if it is disconnected from its parent.
     for (unsigned i = 0; i < m_childFrames.size(); ++i)
-        frame->tree()->removeChild(m_childFrames[i]->view()->frame());
+        frame->tree()->removeChild(&m_childFrames[i]->view()->frame());
 
     if (!m_isMainFrame)
         frame->page()->decrementSubframeCount();
@@ -217,10 +217,10 @@ CachedFrame::CachedFrame(Frame* frame)
 void CachedFrame::open()
 {
     ASSERT(m_view);
-    m_view->frame()->loader().open(*this);
+    m_view->frame().loader().open(*this);
 
     if (!m_isMainFrame)
-        m_view->frame()->page()->incrementSubframeCount();
+        m_view->frame().page()->incrementSubframeCount();
 }
 
 void CachedFrame::clear()
@@ -234,7 +234,7 @@ void CachedFrame::clear()
     // 2 - destroy()'ed because the PageCache is pruning or the WebView was closed.
     ASSERT(!m_document->inPageCache());
     ASSERT(m_view);
-    ASSERT(m_document->frame() == m_view->frame());
+    ASSERT(!m_document->frame() || m_document->frame() == &m_view->frame());
 
     for (int i = m_childFrames.size() - 1; i >= 0; --i)
         m_childFrames[i]->clear();
@@ -256,13 +256,13 @@ void CachedFrame::destroy()
     // Only CachedFrames that are still in the PageCache should be destroyed in this manner
     ASSERT(m_document->inPageCache());
     ASSERT(m_view);
-    ASSERT(m_document->frame() == m_view->frame());
+    ASSERT(m_document->frame() == &m_view->frame());
 
     m_document->domWindow()->willDestroyCachedFrame();
 
     if (!m_isMainFrame) {
-        m_view->frame()->detachFromPage();
-        m_view->frame()->loader().detachViewsAndDocumentLoader();
+        m_view->frame().detachFromPage();
+        m_view->frame().loader().detachViewsAndDocumentLoader();
     }
     
     for (int i = m_childFrames.size() - 1; i >= 0; --i)
@@ -280,7 +280,6 @@ void CachedFrame::destroy()
     m_document->setInPageCache(false);
     // FIXME: We don't call willRemove here. Why is that OK?
     m_document->detach();
-    m_view->clearFrame();
 
     clear();
 }

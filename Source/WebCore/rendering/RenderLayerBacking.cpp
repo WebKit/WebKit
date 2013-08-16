@@ -121,9 +121,9 @@ RenderLayerBacking::RenderLayerBacking(RenderLayer* layer)
     , m_didSwitchToFullTileCoverageDuringLoading(false)
 {
     if (layer->isRootLayer()) {
-        Frame* frame = toRenderView(renderer())->frameView()->frame();
-        Page* page = frame ? frame->page() : 0;
-        if (page && frame && page->mainFrame() == frame) {
+        Frame& frame = toRenderView(renderer())->frameView()->frame();
+        Page* page = frame.page();
+        if (page && page->mainFrame() == &frame) {
             m_isMainFrameRenderViewLayer = true;
 
 #if PLATFORM(MAC)

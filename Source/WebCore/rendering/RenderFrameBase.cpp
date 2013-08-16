@@ -55,7 +55,7 @@ inline bool shouldExpandFrame(LayoutUnit width, LayoutUnit height, bool hasFixed
 void RenderFrameBase::layoutWithFlattening(bool hasFixedWidth, bool hasFixedHeight)
 {
     FrameView* childFrameView = toFrameView(widget());
-    RenderView* childRoot = childFrameView ? childFrameView->frame()->contentRenderer() : 0;
+    RenderView* childRoot = childFrameView ? childFrameView->frame().contentRenderer() : 0;
 
     if (!childRoot || !shouldExpandFrame(width(), height(), hasFixedWidth, hasFixedHeight)) {
         updateWidgetPosition();

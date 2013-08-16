@@ -188,7 +188,7 @@ AccessibilityObject* AccessibilityScrollView::webAreaObject() const
     if (!m_scrollView || !m_scrollView->isFrameView())
         return 0;
     
-    Document* doc = toFrameView(m_scrollView)->frame()->document();
+    Document* doc = toFrameView(m_scrollView)->frame().document();
     if (!doc || !doc->renderer())
         return 0;
 
@@ -230,7 +230,7 @@ AccessibilityObject* AccessibilityScrollView::parentObject() const
     if (!m_scrollView || !m_scrollView->isFrameView())
         return 0;
     
-    HTMLFrameOwnerElement* owner = toFrameView(m_scrollView)->frame()->ownerElement();
+    HTMLFrameOwnerElement* owner = toFrameView(m_scrollView)->frame().ownerElement();
     if (owner && owner->renderer())
         return axObjectCache()->getOrCreate(owner);
 
@@ -242,7 +242,7 @@ AccessibilityObject* AccessibilityScrollView::parentObjectIfExists() const
     if (!m_scrollView || !m_scrollView->isFrameView())
         return 0;
     
-    HTMLFrameOwnerElement* owner = toFrameView(m_scrollView)->frame()->ownerElement();
+    HTMLFrameOwnerElement* owner = toFrameView(m_scrollView)->frame().ownerElement();
     if (owner && owner->renderer())
         return axObjectCache()->get(owner);
     

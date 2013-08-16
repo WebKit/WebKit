@@ -94,7 +94,7 @@ RenderView* RenderIFrame::contentRootRenderer() const
     // FIXME: Is this always a valid cast? What about plugins?
     ASSERT(!widget() || widget()->isFrameView());
     FrameView* childFrameView = toFrameView(widget());
-    return childFrameView ? childFrameView->frame()->contentRenderer() : 0;
+    return childFrameView ? childFrameView->frame().contentRenderer() : 0;
 }
 
 bool RenderIFrame::flattenFrame() const
@@ -146,7 +146,7 @@ void RenderIFrame::layoutSeamlessly()
     updateWidgetPosition(); // Notify the Widget of our final height.
 
     // Assert that the child document did a complete layout.
-    RenderView* childRoot = childFrameView ? childFrameView->frame()->contentRenderer() : 0;
+    RenderView* childRoot = childFrameView ? childFrameView->frame().contentRenderer() : 0;
     ASSERT(!childFrameView || !childFrameView->layoutPending());
     ASSERT_UNUSED(childRoot, !childRoot || !childRoot->needsLayout());
 }

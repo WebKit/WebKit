@@ -2020,10 +2020,8 @@ VisiblePosition AccessibilityRenderObject::visiblePositionForPoint(const IntPoin
         Widget* widget = toRenderWidget(renderer)->widget();
         if (!widget || !widget->isFrameView())
             break;
-        Frame* frame = toFrameView(widget)->frame();
-        if (!frame)
-            break;
-        renderView = frame->document()->renderView();
+        Frame& frame = toFrameView(widget)->frame();
+        renderView = frame.document()->renderView();
         frameView = toFrameView(widget);
     }
     
@@ -2824,11 +2822,9 @@ AccessibilitySVGRoot* AccessibilityRenderObject::remoteSVGRootElement() const
     FrameView* frameView = svgImage->frameView();
     if (!frameView)
         return 0;
-    Frame* frame = frameView->frame();
-    if (!frame)
-        return 0;
+    Frame& frame = frameView->frame();
     
-    Document* doc = frame->document();
+    Document* doc = frame.document();
     if (!doc || !doc->isSVGDocument())
         return 0;
     
@@ -2839,7 +2835,7 @@ AccessibilitySVGRoot* AccessibilityRenderObject::remoteSVGRootElement() const
     if (!rendererRoot)
         return 0;
     
-    AccessibilityObject* rootSVGObject = frame->document()->axObjectCache()->getOrCreate(rendererRoot);
+    AccessibilityObject* rootSVGObject = frame.document()->axObjectCache()->getOrCreate(rendererRoot);
 
     // In order to connect the AX hierarchy from the SVG root element from the loaded resource
     // the parent must be set, because there's no other way to get back to who created the image.

@@ -103,7 +103,7 @@ WebRenderObject::WebRenderObject(RenderObject* renderer, bool shouldIncludeDesce
         return;
 
     FrameView* frameView = toFrameView(widget);
-    if (RenderView* coreContentRenderer = frameView->frame()->contentRenderer()) {
+    if (RenderView* coreContentRenderer = frameView->frame().contentRenderer()) {
         RefPtr<WebRenderObject> contentRenderer = adoptRef(new WebRenderObject(coreContentRenderer, shouldIncludeDescendants));
         m_children->append(contentRenderer.get());
     }

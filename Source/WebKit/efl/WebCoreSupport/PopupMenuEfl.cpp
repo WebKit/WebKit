@@ -51,7 +51,7 @@ PopupMenuEfl::~PopupMenuEfl()
 void PopupMenuEfl::show(const IntRect& rect, FrameView* view, int index)
 {
     ASSERT(m_popupClient);
-    ChromeClientEfl* chromeClient = static_cast<ChromeClientEfl*>(view->frame()->page()->chrome().client());
+    ChromeClientEfl* chromeClient = static_cast<ChromeClientEfl*>(view->frame().page()->chrome().client());
     ASSERT(chromeClient);
 
     m_view = view;
@@ -61,7 +61,7 @@ void PopupMenuEfl::show(const IntRect& rect, FrameView* view, int index)
 void PopupMenuEfl::hide()
 {
     ASSERT(m_view);
-    ChromeClientEfl* chromeClient = static_cast<ChromeClientEfl*>(m_view->frame()->page()->chrome().client());
+    ChromeClientEfl* chromeClient = static_cast<ChromeClientEfl*>(m_view->frame().page()->chrome().client());
     ASSERT(chromeClient);
 
     chromeClient->destroySelectPopup();

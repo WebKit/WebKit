@@ -2077,7 +2077,7 @@ static inline IMP getMethod(id o, SEL s)
 
 - (void)_addScrollerDashboardRegionsForFrameView:(FrameView*)frameView dashboardRegions:(NSMutableDictionary *)regions
 {    
-    NSView *documentView = [[kit(frameView->frame()) frameView] documentView];
+    NSView *documentView = [[kit(&frameView->frame()) frameView] documentView];
 
     const HashSet<RefPtr<Widget> >* children = frameView->children();
     HashSet<RefPtr<Widget> >::const_iterator end = children->end();

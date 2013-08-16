@@ -51,7 +51,7 @@ int screenDepth(Widget*)
 static FloatRect toUserSpace(FloatRect rect, Widget* widget)
 {
     if (widget->isFrameView()) {
-        Page* page = toFrameView(widget)->frame()->page();
+        Page* page = toFrameView(widget)->frame().page();
         if (page && !page->settings().applyDeviceScaleFactorInCompositor()) {
             rect.scale(1 / page->deviceScaleFactor());
             rect.setSize(expandedIntSize(rect.size()));

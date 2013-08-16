@@ -42,7 +42,6 @@ public:
 
     void restore(Page*);
     void clear();
-    void destroy();
 
     Document* document() const { return m_cachedMainFrame->document(); }
     DocumentLoader* documentLoader() const { return m_cachedMainFrame->documentLoader(); }
@@ -64,6 +63,7 @@ public:
 
 private:
     CachedPage(Page*);
+    void destroy();
 
     double m_timeStamp;
     double m_expirationTime;

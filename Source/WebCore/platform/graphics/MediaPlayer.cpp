@@ -579,9 +579,9 @@ bool MediaPlayer::hasAudio() const
 
 bool MediaPlayer::inMediaDocument()
 {
-    Frame* frame = m_frameView ? m_frameView->frame() : 0;
-    Document* document = frame ? frame->document() : 0;
-
+    if (!m_frameView)
+        return false;
+    Document* document = m_frameView->frame().document();
     return document && document->isMediaDocument();
 }
 

@@ -1,3 +1,34 @@
+2013-08-16  Andreas Kling  <akling@apple.com>
+
+        <https://webkit.org/b/119893> FrameView::frame() should return a reference.
+
+        Reviewed by Antti Koivisto.
+
+        FrameView::m_frame was only ever null for a brief moment during CachedFrame teardown.
+        Leave it alone instead, and update the assertion that depended on this behavior.
+        This enables us to make FrameView::frame() return a Frame&, exposing a ton of
+        unnecessary null checks.
+
+        * history/CachedFrame.cpp:
+        (WebCore::CachedFrame::destroy):
+
+            Remove call to FrameView::clearFrame() that was the only way to get a null
+            FrameView::m_frame. Immediately followed by a call to CachedFrame::clear() where
+            the FrameView would get destroyed anyway.
+
+        (WebCore::CachedFrame::clear):
+
+            Update an assertion to support the case where the Document's Frame pointer has
+            been cleared out and CachedFrame is still clinging to the FrameView.
+
+        * history/CachedPage.h:
+
+            Made CachedPage::destroy() private as it was only called by ~CachedPage().
+
+        * /:
+
+            Frame* FrameView::frame() => Frame& FrameView::frame()
+
 2013-08-16  Brady Eidson  <beidson@apple.com>
 
         (NetworkProcess)  Sync XHRs should load using async ResourceHandles, not ResourceHandle::loadResourceSynchronously

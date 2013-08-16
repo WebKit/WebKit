@@ -144,11 +144,10 @@ void getPluginOcclusions(Element* element, Widget* parentWidget, const IntRect& 
         const FrameView* frameView = toFrameView((*it).get());
         // Check to make sure we can get both the element and the RenderObject
         // for this FrameView, if we can't just move on to the next object.
-        if (!frameView->frame() || !frameView->frame()->ownerElement()
-            || !frameView->frame()->ownerElement()->renderer())
+        if (!frameView->frame().ownerElement() || !frameView->frame().ownerElement()->renderer())
             continue;
 
-        HTMLElement* element = frameView->frame()->ownerElement();
+        HTMLElement* element = frameView->frame().ownerElement();
         RenderObject* iframeRenderer = element->renderer();
 
         if (element->hasTagName(HTMLNames::iframeTag)

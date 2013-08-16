@@ -352,7 +352,7 @@ void RenderWidget::updateWidgetPosition()
     if (m_widget && m_widget->isFrameView()) {
         FrameView* frameView = toFrameView(m_widget.get());
         // Check the frame's page to make sure that the frame isn't in the process of being destroyed.
-        if ((boundsChanged || frameView->needsLayout()) && frameView->frame()->page())
+        if ((boundsChanged || frameView->needsLayout()) && frameView->frame().page())
             frameView->layout();
     }
 }

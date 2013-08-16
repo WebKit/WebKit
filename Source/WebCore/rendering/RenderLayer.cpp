@@ -2276,7 +2276,7 @@ static inline bool frameElementAndViewPermitScroll(HTMLFrameElementBase* frameEl
 
     // Forbid autoscrolls when scrollbars are off, but permits other programmatic scrolls,
     // like navigation to an anchor.
-    return !frameView->frame()->eventHandler().autoscrollInProgress();
+    return !frameView->frame().eventHandler().autoscrollInProgress();
 }
 
 void RenderLayer::scrollRectToVisible(const LayoutRect& rect, const ScrollAlignment& alignX, const ScrollAlignment& alignY)
@@ -2360,10 +2360,8 @@ void RenderLayer::scrollRectToVisible(const LayoutRect& rect, const ScrollAlignm
                 // This only has an effect on the Mac platform in applications
                 // that put web views into scrolling containers, such as Mac OS X Mail.
                 // The canAutoscroll function in EventHandler also knows about this.
-                if (Frame* frame = frameView->frame()) {
-                    if (Page* page = frame->page())
-                        page->chrome().scrollRectIntoView(pixelSnappedIntRect(rect));
-                }
+                if (Page* page = frameView->frame().page())
+                    page->chrome().scrollRectIntoView(pixelSnappedIntRect(rect));
             }
         }
     }

@@ -276,7 +276,7 @@ StyleResolver::StyleResolver(Document* document, bool matchAuthorAndUserStyles)
         m_rootDefaultStyle = styleForElement(root, 0, DisallowStyleSharing, MatchOnlyUserAgentRules);
 
     if (m_rootDefaultStyle && view)
-        m_medium = adoptPtr(new MediaQueryEvaluator(view->mediaType(), view->frame(), m_rootDefaultStyle.get()));
+        m_medium = adoptPtr(new MediaQueryEvaluator(view->mediaType(), &view->frame(), m_rootDefaultStyle.get()));
 
     m_ruleSets.resetAuthorStyle();
 

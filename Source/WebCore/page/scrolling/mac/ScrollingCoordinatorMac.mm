@@ -163,7 +163,7 @@ void ScrollingCoordinatorMac::frameViewLayoutUpdated(FrameView* frameView)
     scrollParameters.scrollOrigin = frameView->scrollOrigin();
     scrollParameters.viewportRect = IntRect(IntPoint(), frameView->visibleContentRect().size());
     scrollParameters.totalContentsSize = frameView->totalContentsSize();
-    scrollParameters.frameScaleFactor = frameView->frame()->frameScaleFactor();
+    scrollParameters.frameScaleFactor = frameView->frame().frameScaleFactor();
     scrollParameters.headerHeight = frameView->headerHeight();
     scrollParameters.footerHeight = frameView->footerHeight();
 
@@ -218,12 +218,12 @@ bool ScrollingCoordinatorMac::requestScrollPositionUpdate(FrameView* frameView, 
     if (!coordinatesScrollingForFrameView(frameView))
         return false;
 
-    if (frameView->inProgrammaticScroll() || frameView->frame()->document()->inPageCache())
+    if (frameView->inProgrammaticScroll() || frameView->frame().document()->inPageCache())
         updateMainFrameScrollPosition(scrollPosition, frameView->inProgrammaticScroll(), SetScrollingLayerPosition);
 
     // If this frame view's document is being put into the page cache, we don't want to update our
     // main frame scroll position. Just let the FrameView think that we did.
-    if (frameView->frame()->document()->inPageCache())
+    if (frameView->frame().document()->inPageCache())
         return true;
 
     ScrollingStateScrollingNode* stateNode = toScrollingStateScrollingNode(m_scrollingStateTree->stateNodeForID(frameView->scrollLayerID()));

@@ -930,8 +930,7 @@ bool RenderView::shouldUsePrintingLayout() const
 {
     if (!printing() || !m_frameView)
         return false;
-    Frame* frame = m_frameView->frame();
-    return frame && frame->shouldUsePrintingLayout();
+    return m_frameView->frame().shouldUsePrintingLayout();
 }
 
 size_t RenderView::getRetainedWidgets(Vector<RenderWidget*>& renderWidgets)
@@ -1073,8 +1072,7 @@ int RenderView::viewLogicalHeight() const
 
 float RenderView::zoomFactor() const
 {
-    Frame* frame = m_frameView->frame();
-    return frame ? frame->pageZoomFactor() : 1;
+    return m_frameView->frame().pageZoomFactor();
 }
 
 void RenderView::pushLayoutState(RenderObject* root)

@@ -1387,7 +1387,7 @@ void MediaPlayerPrivateQTKit::paint(GraphicsContext* context, const IntRect& r)
 #if DRAW_FRAME_RATE
     // Draw the frame rate only after having played more than 10 frames.
     if (m_frameCountWhilePlaying > 10) {
-        Frame* frame = m_player->frameView() ? m_player->frameView()->frame() : NULL;
+        Frame* frame = m_player->frameView() ? &m_player->frameView()->frame() : NULL;
         Document* document = frame ? frame->document() : NULL;
         RenderObject* renderer = document ? document->renderer() : NULL;
         RenderStyle* styleToUse = renderer ? renderer->style() : NULL;

@@ -127,7 +127,7 @@ IntRect InjectedBundleNodeHandle::renderRect(bool* isReplaced) const
 static PassRefPtr<WebImage> imageForRect(FrameView* frameView, const IntRect& rect, SnapshotOptions options)
 {
     IntSize bitmapSize = rect.size();
-    float scaleFactor = frameView->frame()->page()->deviceScaleFactor();
+    float scaleFactor = frameView->frame().page()->deviceScaleFactor();
     bitmapSize.scale(scaleFactor);
 
     RefPtr<WebImage> snapshot = WebImage::create(bitmapSize, snapshotOptionsToImageOptions(options));

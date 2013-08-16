@@ -160,7 +160,7 @@ void ewk_paint_context_paint(Ewk_Paint_Context* context, WebCore::FrameView* vie
     WebCore::IntRect paintArea(*area);
 
 #if USE(TILED_BACKING_STORE)
-    if (view->frame()->tiledBackingStore()) {
+    if (view->frame().tiledBackingStore()) {
         int scrollX = view->scrollX();
         int scrollY = view->scrollY();
 
@@ -168,7 +168,7 @@ void ewk_paint_context_paint(Ewk_Paint_Context* context, WebCore::FrameView* vie
 
         paintArea.move(scrollX, scrollY);
 
-        view->frame()->tiledBackingStore()->paint(context->graphicContext.get(), paintArea);
+        view->frame().tiledBackingStore()->paint(context->graphicContext.get(), paintArea);
         return;
     }
 #endif
@@ -191,7 +191,7 @@ void ewk_paint_context_paint_contents(Ewk_Paint_Context* context, WebCore::Frame
     view->paintContents(context->graphicContext.get(), paintArea);
 
 #if ENABLE(INSPECTOR)
-    WebCore::Page* page = view->frame()->page();
+    WebCore::Page* page = view->frame().page();
     if (page) {
         WebCore::InspectorController* controller = page->inspectorController();
         if (controller->highlightedNode())

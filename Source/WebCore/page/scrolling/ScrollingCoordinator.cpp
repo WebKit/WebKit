@@ -102,7 +102,7 @@ bool ScrollingCoordinator::coordinatesScrollingForFrameView(FrameView* frameView
     ASSERT(m_page);
 
     // We currently only handle the main frame.
-    if (frameView->frame() != m_page->mainFrame())
+    if (&frameView->frame() != m_page->mainFrame())
         return false;
 
     // We currently only support composited mode.
@@ -293,14 +293,9 @@ GraphicsLayer* ScrollingCoordinator::verticalScrollbarLayerForScrollableArea(Scr
 GraphicsLayer* ScrollingCoordinator::scrollLayerForFrameView(FrameView* frameView)
 {
 #if USE(ACCELERATED_COMPOSITING)
-    Frame* frame = frameView->frame();
-    if (!frame)
-        return 0;
-
-    RenderView* renderView = frame->contentRenderer();
-    if (!renderView)
-        return 0;
-    return renderView->compositor()->scrollLayer();
+    if (RenderView* renderView = frameView->frame().contentRenderer())
+        return renderView->compositor()->scrollLayer();
+    return 0;
 #else
     UNUSED_PARAM(frameView);
     return 0;
@@ -310,15 +305,9 @@ GraphicsLayer* ScrollingCoordinator::scrollLayerForFrameView(FrameView* frameVie
 GraphicsLayer* ScrollingCoordinator::headerLayerForFrameView(FrameView* frameView)
 {
 #if USE(ACCELERATED_COMPOSITING) && ENABLE(RUBBER_BANDING)
-    Frame* frame = frameView->frame();
-    if (!frame)
-        return 0;
-
-    RenderView* renderView = frame->contentRenderer();
-    if (!renderView)
-        return 0;
-
-    return renderView->compositor()->headerLayer();
+    if (RenderView* renderView = frameView->frame().contentRenderer())
+        renderView->compositor()->headerLayer();
+    return 0;
 #else
     UNUSED_PARAM(frameView);
     return 0;
@@ -328,14 +317,9 @@ GraphicsLayer* ScrollingCoordinator::headerLayerForFrameView(FrameView* frameVie
 GraphicsLayer* ScrollingCoordinator::footerLayerForFrameView(FrameView* frameView)
 {
 #if USE(ACCELERATED_COMPOSITING) && ENABLE(RUBBER_BANDING)
-    Frame* frame = frameView->frame();
-    if (!frame)
-        return 0;
-
-    RenderView* renderView = frame->contentRenderer();
-    if (!renderView)
-        return 0;
-    return renderView->compositor()->footerLayer();
+    if (RenderView* renderView = frameView->frame().contentRenderer())
+        return renderView->compositor()->footerLayer();
+    return 0;
 #else
     UNUSED_PARAM(frameView);
     return 0;
@@ -345,14 +329,9 @@ GraphicsLayer* ScrollingCoordinator::footerLayerForFrameView(FrameView* frameVie
 GraphicsLayer* ScrollingCoordinator::counterScrollingLayerForFrameView(FrameView* frameView)
 {
 #if USE(ACCELERATED_COMPOSITING)
-    Frame* frame = frameView->frame();
-    if (!frame)
-        return 0;
-
-    RenderView* renderView = frame->contentRenderer();
-    if (!renderView)
-        return 0;
-    return renderView->compositor()->fixedRootBackgroundLayer();
+    if (RenderView* renderView = frameView->frame().contentRenderer())
+        return renderView->compositor()->fixedRootBackgroundLayer();
+    return 0;
 #else
     UNUSED_PARAM(frameView);
     return 0;

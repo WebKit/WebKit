@@ -383,7 +383,7 @@ void RenderLayerCompositor::flushPendingLayerChanges(bool isFlushRoot)
         return;
     }
 
-    AnimationUpdateBlock animationUpdateBlock(m_renderView->frameView()->frame()->animation());
+    AnimationUpdateBlock animationUpdateBlock(m_renderView->frameView()->frame().animation());
 
     ASSERT(!m_flushingLayers);
     m_flushingLayers = true;
@@ -479,7 +479,7 @@ RenderLayerCompositor* RenderLayerCompositor::enclosingCompositorFlushingLayers(
     if (!m_renderView->frameView())
         return 0;
 
-    for (Frame* frame = m_renderView->frameView()->frame(); frame; frame = frame->tree()->parent()) {
+    for (Frame* frame = &m_renderView->frameView()->frame(); frame; frame = frame->tree()->parent()) {
         RenderLayerCompositor* compositor = frame->contentRenderer() ? frame->contentRenderer()->compositor() : 0;
         if (compositor->isFlushingLayers())
             return compositor;
@@ -522,7 +522,7 @@ void RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
     if (!m_reevaluateCompositingAfterLayout && !m_compositing)
         return;
 
-    AnimationUpdateBlock animationUpdateBlock(m_renderView->frameView()->frame()->animation());
+    AnimationUpdateBlock animationUpdateBlock(m_renderView->frameView()->frame().animation());
 
     TemporaryChange<bool> postLayoutChange(m_inPostLayoutUpdate, true);
     
@@ -586,9 +586,9 @@ void RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
         m_obligatoryBackingStoreBytes = 0;
         m_secondaryBackingStoreBytes = 0;
 
-        Frame* frame = m_renderView->frameView()->frame();
+        Frame& frame = m_renderView->frameView()->frame();
         bool isMainFrame = !m_renderView->document()->ownerElement();
-        LOG(Compositing, "\nUpdate %d of %s.\n", m_rootLayerUpdateCount, isMainFrame ? "main frame" : frame->tree()->uniqueName().string().utf8().data());
+        LOG(Compositing, "\nUpdate %d of %s.\n", m_rootLayerUpdateCount, isMainFrame ? "main frame" : frame.tree()->uniqueName().string().utf8().data());
     }
 #endif
 
@@ -2928,12 +2928,12 @@ void RenderLayerCompositor::attachRootLayer(RootLayerAttachment attachment)
             ASSERT_NOT_REACHED();
             break;
         case RootLayerAttachedViaChromeClient: {
-            Frame* frame = m_renderView->frameView()->frame();
-            Page* page = frame ? frame->page() : 0;
+            Frame& frame = m_renderView->frameView()->frame();
+            Page* page = frame.page();
             if (!page)
                 return;
 
-            page->chrome().client()->attachRootGraphicsLayer(frame, rootGraphicsLayer());
+            page->chrome().client()->attachRootGraphicsLayer(&frame, rootGraphicsLayer());
             break;
         }
         case RootLayerAttachedViaEnclosingFrame: {
@@ -2972,12 +2972,12 @@ void RenderLayerCompositor::detachRootLayer()
         break;
     }
     case RootLayerAttachedViaChromeClient: {
-        Frame* frame = m_renderView->frameView()->frame();
-        Page* page = frame ? frame->page() : 0;
+        Frame& frame = m_renderView->frameView()->frame();
+        Page* page = frame.page();
         if (!page)
             return;
 
-        page->chrome().client()->attachRootGraphicsLayer(frame, 0);
+        page->chrome().client()->attachRootGraphicsLayer(&frame, 0);
     }
     break;
     case RootLayerUnattached:
@@ -3007,7 +3007,7 @@ void RenderLayerCompositor::rootLayerAttachmentChanged()
 // to use a synthetic style change to get the iframes into RenderLayers in order to allow them to composite.
 void RenderLayerCompositor::notifyIFramesOfCompositingChange()
 {
-    Frame* frame = m_renderView->frameView() ? m_renderView->frameView()->frame() : 0;
+    Frame* frame = m_renderView->frameView() ? &m_renderView->frameView()->frame() : 0;
     if (!frame)
         return;
 
@@ -3247,10 +3247,7 @@ GraphicsLayerFactory* RenderLayerCompositor::graphicsLayerFactory() const
 
 Page* RenderLayerCompositor::page() const
 {
-    if (Frame* frame = m_renderView->frameView()->frame())
-        return frame->page();
-    
-    return 0;
+    return m_renderView->frameView()->frame().page();
 }
 
 void RenderLayerCompositor::setLayerFlushThrottlingEnabled(bool enabled)
@@ -3304,8 +3301,8 @@ void RenderLayerCompositor::paintRelatedMilestonesTimerFired(Timer<RenderLayerCo
     if (!frameView)
         return;
 
-    Frame* frame = frameView->frame();
-    Page* page = frame ? frame->page() : 0;
+    Frame& frame = frameView->frame();
+    Page* page = frame.page();
     if (!page)
         return;
 

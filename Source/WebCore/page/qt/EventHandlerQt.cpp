@@ -91,7 +91,7 @@ bool EventHandler::passWheelEventToWidget(const PlatformWheelEvent& event, Widge
     if (!widget->isFrameView())
         return false;
 
-    return toFrameView(widget)->frame()->eventHandler().handleWheelEvent(event);
+    return toFrameView(widget)->frame().eventHandler().handleWheelEvent(event);
 }
 
 PassRefPtr<Clipboard> EventHandler::createDraggingClipboard() const
