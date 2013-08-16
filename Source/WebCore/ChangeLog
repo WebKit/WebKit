@@ -1,3 +1,16 @@
+2013-08-16  Danilo Cesar Lemes de Paula  <danilo.cesar@collabora.co.uk>
+
+        [GTK] fixing localizedString method name
+        https://bugs.webkit.org/show_bug.cgi?id=119884
+
+        The method name defined in LocalizedStringsGtk.cpp doesn't not match
+        the one used in LocalizedStrings.h
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * platform/gtk/LocalizedStringsGtk.cpp:
+        (WebCore::textTrackOffMenuItemText):
+
 2013-08-16  Andrei Parvu  <parvu@adobe.com>
 
         [CSS Masking] Add -webkit-mask-source-type property, with auto, alpha and luminance values

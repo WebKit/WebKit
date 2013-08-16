@@ -793,7 +793,7 @@ String textTrackSubtitlesText()
     return String::fromUTF8(C_("Subtitles", "Menu section heading for subtitles"));
 }
 
-String textTrackOffText()
+String textTrackOffMenuItemText()
 {
     return String::fromUTF8(C_("Off", "Menu item label for the track that represents disabling closed captions"));
 }
