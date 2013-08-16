@@ -482,7 +482,7 @@ void DumpRenderTreeSupportEfl::evaluateScriptInIsolatedWorld(const Evas_Object* 
     DRT_SUPPORT_FRAME_GET_OR_RETURN(ewkFrame, frame);
 
     // Comment from mac: Start off with some guess at a frame and a global object, we'll try to do better...!
-    WebCore::JSDOMWindow* anyWorldGlobalObject = frame->script()->globalObject(WebCore::mainThreadNormalWorld());
+    WebCore::JSDOMWindow* anyWorldGlobalObject = frame->script().globalObject(WebCore::mainThreadNormalWorld());
 
     // Comment from mac: The global object is probably a shell object? - if so, we know how to use this!
     JSC::JSObject* globalObjectObj = toJS(globalObject);
@@ -522,7 +522,7 @@ JSGlobalContextRef DumpRenderTreeSupportEfl::globalContextRefForFrame(const Evas
 {
     DRT_SUPPORT_FRAME_GET_OR_RETURN(ewkFrame, frame, 0);
 
-    return toGlobalRef(frame->script()->globalObject(WebCore::mainThreadNormalWorld())->globalExec());
+    return toGlobalRef(frame->script().globalObject(WebCore::mainThreadNormalWorld())->globalExec());
 }
 
 void DumpRenderTreeSupportEfl::setMockScrollbarsEnabled(bool enable)

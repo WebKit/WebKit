@@ -3268,11 +3268,11 @@ HRESULT STDMETHODCALLTYPE WebView::stringByEvaluatingJavaScriptFromString(
     if (!coreFrame)
         return E_FAIL;
 
-    JSC::JSValue scriptExecutionResult = coreFrame->script()->executeScript(WTF::String(script), true).jsValue();
+    JSC::JSValue scriptExecutionResult = coreFrame->script().executeScript(WTF::String(script), true).jsValue();
     if (!scriptExecutionResult)
         return E_FAIL;
     else if (scriptExecutionResult.isString()) {
-        JSC::ExecState* exec = coreFrame->script()->globalObject(mainThreadNormalWorld())->globalExec();
+        JSC::ExecState* exec = coreFrame->script().globalObject(mainThreadNormalWorld())->globalExec();
         JSC::JSLockHolder lock(exec);
         *result = BString(scriptExecutionResult.getString(exec));
     }

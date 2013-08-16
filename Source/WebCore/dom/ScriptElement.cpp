@@ -209,7 +209,7 @@ bool ScriptElement::prepareScript(const TextPosition& scriptStartPosition, Legac
     if (!document->frame())
         return false;
 
-    if (!document->frame()->script()->canExecuteScripts(AboutToExecuteScript))
+    if (!document->frame()->script().canExecuteScripts(AboutToExecuteScript))
         return false;
 
     if (!isScriptForEventSupported())
@@ -313,7 +313,7 @@ void ScriptElement::executeScript(const ScriptSourceCode& sourceCode)
             // Create a script from the script element node, using the script
             // block's source and the script block's type.
             // Note: This is where the script is compiled and actually executed.
-            frame->script()->evaluate(sourceCode);
+            frame->script().evaluate(sourceCode);
         }
     }
 }

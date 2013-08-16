@@ -1961,21 +1961,21 @@ void WebFrameLoaderClient::dispatchDidClearWindowObjectInWorld(DOMWrapperWorld* 
         return;
 
     Frame *frame = core(m_webFrame.get());
-    ScriptController *script = frame->script();
+    ScriptController& script = frame->script();
 
 #if JSC_OBJC_API_ENABLED
     if (implementations->didCreateJavaScriptContextForFrameFunc) {
         CallFrameLoadDelegate(implementations->didCreateJavaScriptContextForFrameFunc, webView, @selector(webView:didCreateJavaScriptContext:forFrame:),
-            script->javaScriptContext(), m_webFrame.get());
+            script.javaScriptContext(), m_webFrame.get());
     } else if (implementations->didClearWindowObjectForFrameFunc) {
 #else
     if (implementations->didClearWindowObjectForFrameFunc) {
 #endif
         CallFrameLoadDelegate(implementations->didClearWindowObjectForFrameFunc, webView, @selector(webView:didClearWindowObject:forFrame:),
-            script->windowScriptObject(), m_webFrame.get());
+            script.windowScriptObject(), m_webFrame.get());
     } else if (implementations->windowScriptObjectAvailableFunc) {
         CallFrameLoadDelegate(implementations->windowScriptObjectAvailableFunc, webView, @selector(webView:windowScriptObjectAvailable:),
-            script->windowScriptObject());
+            script.windowScriptObject());
     }
 
     if ([webView scriptDebugDelegate]) {

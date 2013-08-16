@@ -68,7 +68,7 @@ ScriptState* mainWorldScriptState(Frame* frame)
 {
     if (!frame)
         return 0;
-    JSDOMWindowShell* shell = frame->script()->windowShell(mainThreadNormalWorld());
+    JSDOMWindowShell* shell = frame->script().windowShell(mainThreadNormalWorld());
     return shell->window()->globalExec();
 }
 
@@ -82,14 +82,14 @@ ScriptState* scriptStateFromNode(DOMWrapperWorld* world, Node* node)
     Frame* frame = document->frame();
     if (!frame)
         return 0;
-    if (!frame->script()->canExecuteScripts(NotAboutToExecuteScript))
+    if (!frame->script().canExecuteScripts(NotAboutToExecuteScript))
         return 0;
-    return frame->script()->globalObject(world)->globalExec();
+    return frame->script().globalObject(world)->globalExec();
 }
 
 ScriptState* scriptStateFromPage(DOMWrapperWorld* world, Page* page)
 {
-    return page->mainFrame()->script()->globalObject(world)->globalExec();
+    return page->mainFrame()->script().globalObject(world)->globalExec();
 }
 
 #if ENABLE(WORKERS)

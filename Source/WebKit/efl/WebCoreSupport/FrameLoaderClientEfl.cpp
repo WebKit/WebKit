@@ -440,8 +440,8 @@ void FrameLoaderClientEfl::dispatchDidClearWindowObjectInWorld(DOMWrapperWorld* 
         return;
 
     Ewk_Window_Object_Cleared_Event event;
-    event.context = toGlobalRef(coreFrame->script()->globalObject(mainThreadNormalWorld())->globalExec());
-    event.windowObject = toRef(coreFrame->script()->globalObject(mainThreadNormalWorld()));
+    event.context = toGlobalRef(coreFrame->script().globalObject(mainThreadNormalWorld())->globalExec());
+    event.windowObject = toRef(coreFrame->script().globalObject(mainThreadNormalWorld()));
     event.frame = m_frame;
 
     evas_object_smart_callback_call(m_view, "window,object,cleared", &event);

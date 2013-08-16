@@ -1109,7 +1109,7 @@ void Page::setDebugger(JSC::Debugger* debugger)
     m_debugger = debugger;
 
     for (Frame* frame = m_mainFrame.get(); frame; frame = frame->tree()->traverseNext())
-        frame->script()->attachDebugger(m_debugger);
+        frame->script().attachDebugger(m_debugger);
 }
 
 StorageNamespace* Page::sessionStorage(bool optionalCreate)

@@ -360,7 +360,7 @@ void DumpRenderTree::resetToConsistentStateBeforeTesting(const String& url, cons
             mainFrame->tree()->clearName();
             mainFrame->loader()->setOpener(0);
             // [WebKit bug #86899] Reset JS state settings.
-            JSGlobalContextRef jsContext = toGlobalRef(mainFrame->script()->globalObject(WebCore::mainThreadNormalWorld())->globalExec());
+            JSGlobalContextRef jsContext = toGlobalRef(mainFrame->script().globalObject(WebCore::mainThreadNormalWorld())->globalExec());
             WebCoreTestSupport::resetInternalsObject(jsContext);
         }
     }

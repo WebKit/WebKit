@@ -87,7 +87,7 @@ void WebScriptDebugger::initGlobalCallFrame(const DebuggerCallFrame& debuggerCal
 
     WebFrame *webFrame = toWebFrame(debuggerCallFrame.dynamicGlobalObject());
 
-    m_topCallFrame = adoptNS([[WebScriptCallFrame alloc] _initWithGlobalObject:core(webFrame)->script()->windowScriptObject() debugger:this caller:m_topCallFrame.get() debuggerCallFrame:debuggerCallFrame]);
+    m_topCallFrame = adoptNS([[WebScriptCallFrame alloc] _initWithGlobalObject:core(webFrame)->script().windowScriptObject() debugger:this caller:m_topCallFrame.get() debuggerCallFrame:debuggerCallFrame]);
     m_globalCallFrame = m_topCallFrame;
 
     WebView *webView = [webFrame webView];
@@ -145,7 +145,7 @@ void WebScriptDebugger::callEvent(const DebuggerCallFrame& debuggerCallFrame, in
 
     WebFrame *webFrame = toWebFrame(debuggerCallFrame.dynamicGlobalObject());
 
-    m_topCallFrame = adoptNS([[WebScriptCallFrame alloc] _initWithGlobalObject:core(webFrame)->script()->windowScriptObject() debugger:this caller:m_topCallFrame.get() debuggerCallFrame:debuggerCallFrame]);
+    m_topCallFrame = adoptNS([[WebScriptCallFrame alloc] _initWithGlobalObject:core(webFrame)->script().windowScriptObject() debugger:this caller:m_topCallFrame.get() debuggerCallFrame:debuggerCallFrame]);
 
     WebView *webView = [webFrame webView];
     WebScriptDebugDelegateImplementationCache* implementations = WebViewGetScriptDebugDelegateImplementations(webView);

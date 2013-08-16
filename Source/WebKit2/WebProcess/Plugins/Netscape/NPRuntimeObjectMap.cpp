@@ -244,7 +244,7 @@ JSGlobalObject* NPRuntimeObjectMap::globalObject() const
     if (!frame)
         return 0;
 
-    return frame->script()->globalObject(pluginWorld());
+    return frame->script().globalObject(pluginWorld());
 }
 
 ExecState* NPRuntimeObjectMap::globalExec() const

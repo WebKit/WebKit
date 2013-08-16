@@ -1176,7 +1176,7 @@ void PluginView::performJavaScriptURLRequest(URLRequest* request)
     // Evaluate the JavaScript code. Note that running JavaScript here could cause the plug-in to be destroyed, so we
     // grab references to the plug-in here.
     RefPtr<Plugin> plugin = m_plugin;
-    ScriptValue result = frame->script()->executeScript(jsString, request->allowPopups());
+    ScriptValue result = frame->script().executeScript(jsString, request->allowPopups());
 
     // Check if evaluating the JavaScript destroyed the plug-in.
     if (!plugin->controller())
@@ -1186,7 +1186,7 @@ void PluginView::performJavaScriptURLRequest(URLRequest* request)
     if (!request->target().isNull())
         return;
 
-    ScriptState* scriptState = frame->script()->globalObject(pluginWorld())->globalExec();
+    ScriptState* scriptState = frame->script().globalObject(pluginWorld())->globalExec();
     String resultString;
     result.getString(scriptState, resultString);
   
@@ -1359,12 +1359,12 @@ NPObject* PluginView::windowScriptNPObject()
     if (!frame())
         return 0;
 
-    if (!frame()->script()->canExecuteScripts(NotAboutToExecuteScript)) {
+    if (!frame()->script().canExecuteScripts(NotAboutToExecuteScript)) {
         // FIXME: Investigate if other browsers allow plug-ins to access JavaScript objects even if JavaScript is disabled.
         return 0;
     }
 
-    return m_npRuntimeObjectMap.getOrCreateNPObject(*pluginWorld()->vm(), frame()->script()->windowShell(pluginWorld())->window());
+    return m_npRuntimeObjectMap.getOrCreateNPObject(*pluginWorld()->vm(), frame()->script().windowShell(pluginWorld())->window());
 }
 
 NPObject* PluginView::pluginElementNPObject()
@@ -1372,12 +1372,12 @@ NPObject* PluginView::pluginElementNPObject()
     if (!frame())
         return 0;
 
-    if (!frame()->script()->canExecuteScripts(NotAboutToExecuteScript)) {
+    if (!frame()->script().canExecuteScripts(NotAboutToExecuteScript)) {
         // FIXME: Investigate if other browsers allow plug-ins to access JavaScript objects even if JavaScript is disabled.
         return 0;
     }
 
-    JSObject* object = frame()->script()->jsObjectForPluginElement(m_pluginElement.get());
+    JSObject* object = frame()->script().jsObjectForPluginElement(m_pluginElement.get());
     ASSERT(object);
 
     return m_npRuntimeObjectMap.getOrCreateNPObject(*pluginWorld()->vm(), object);

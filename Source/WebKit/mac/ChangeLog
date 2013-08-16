@@ -1,3 +1,51 @@
+2013-08-16  Pratik Solanki  <psolanki@apple.com>
+
+        <https://webkit.org/b/119852> Frame::scriptController() should return a reference
+
+        Reviewed by Andreas Kling.
+
+        m_script is never NULL so we can just return a reference. Also remove some pointless null
+        checks as a result of doing this.
+
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::cleanup):
+        (WebKit::NetscapePluginInstanceProxy::getWindowNPObject):
+        (WebKit::NetscapePluginInstanceProxy::getPluginElementNPObject):
+        (WebKit::NetscapePluginInstanceProxy::evaluate):
+        (WebKit::NetscapePluginInstanceProxy::invoke):
+        (WebKit::NetscapePluginInstanceProxy::invokeDefault):
+        (WebKit::NetscapePluginInstanceProxy::construct):
+        (WebKit::NetscapePluginInstanceProxy::getProperty):
+        (WebKit::NetscapePluginInstanceProxy::setProperty):
+        (WebKit::NetscapePluginInstanceProxy::removeProperty):
+        (WebKit::NetscapePluginInstanceProxy::hasProperty):
+        (WebKit::NetscapePluginInstanceProxy::hasMethod):
+        (WebKit::NetscapePluginInstanceProxy::enumerate):
+        (WebKit::NetscapePluginInstanceProxy::demarshalValueFromArray):
+        * Plugins/WebNetscapePluginView.mm:
+        (-[WebNetscapePluginView getVariable:value:]):
+        (-[WebNetscapePluginView _destroyPlugin]):
+        * Plugins/WebPluginController.mm:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        * WebCoreSupport/WebInspectorClient.mm:
+        (WebInspectorFrontendClient::save):
+        (WebInspectorFrontendClient::append):
+        * WebView/WebFrame.mm:
+        (-[WebFrame _attachScriptDebugger]):
+        (-[WebFrame _stringByEvaluatingJavaScriptFromString:forceUserGesture:]):
+        (-[WebFrame _stringByEvaluatingJavaScriptFromString:withGlobalObject:inScriptWorld:]):
+        (-[WebFrame _globalContextForScriptWorld:]):
+        (-[WebFrame jsWrapperForNode:inScriptWorld:]):
+        (-[WebFrame windowObject]):
+        (-[WebFrame globalContext]):
+        (-[WebFrame javaScriptContext]):
+        * WebView/WebScriptDebugger.mm:
+        (WebScriptDebugger::initGlobalCallFrame):
+        (WebScriptDebugger::callEvent):
+        * WebView/WebView.mm:
+        (-[WebView windowScriptObject]):
+        (-[WebView aeDescByEvaluatingJavaScriptFromString:]):
+
 2013-08-15  Anders Carlsson  <andersca@apple.com>
 
         <https://webkit.org/b/119859> Frame::loader() should return a reference

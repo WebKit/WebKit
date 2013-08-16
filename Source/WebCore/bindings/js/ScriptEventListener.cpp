@@ -64,11 +64,11 @@ PassRefPtr<JSLazyEventListener> createAttributeEventListener(Node* node, const Q
     
     // FIXME: We should be able to provide accurate source information for frameless documents, too (e.g. for importing nodes from XMLHttpRequest.responseXML).
     if (Frame* frame = node->document()->frame()) {
-        ScriptController* scriptController = frame->script();
-        if (!scriptController->canExecuteScripts(AboutToExecuteScript))
+        ScriptController& scriptController = frame->script();
+        if (!scriptController.canExecuteScripts(AboutToExecuteScript))
             return 0;
 
-        position = scriptController->eventHandlerPosition();
+        position = scriptController.eventHandlerPosition();
         sourceURL = node->document()->url().string();
     }
 
@@ -83,11 +83,11 @@ PassRefPtr<JSLazyEventListener> createAttributeEventListener(Frame* frame, const
     if (value.isNull())
         return 0;
 
-    ScriptController* scriptController = frame->script();
-    if (!scriptController->canExecuteScripts(AboutToExecuteScript))
+    ScriptController& scriptController = frame->script();
+    if (!scriptController.canExecuteScripts(AboutToExecuteScript))
         return 0;
 
-    TextPosition position = scriptController->eventHandlerPosition();
+    TextPosition position = scriptController.eventHandlerPosition();
     String sourceURL = frame->document()->url().string();
     JSObject* wrapper = toJSDOMWindow(frame, mainThreadNormalWorld());
     return JSLazyEventListener::create(name.localName().string(), eventParameterName(frame->document()->isSVGDocument()), value, 0, sourceURL, position, wrapper, mainThreadNormalWorld());
@@ -126,10 +126,10 @@ ScriptState* eventListenerHandlerScriptState(Frame* frame, EventListener* eventL
     ASSERT(jsListener);
     if (!jsListener)
         return 0;
-    if (!frame->script()->canExecuteScripts(NotAboutToExecuteScript))
+    if (!frame->script().canExecuteScripts(NotAboutToExecuteScript))
         return 0;
     DOMWrapperWorld* world = jsListener->isolatedWorld();
-    return frame->script()->globalObject(world)->globalExec();
+    return frame->script().globalObject(world)->globalExec();
 }
 
 bool eventListenerHandlerLocation(Document* document, EventListener* eventListener, String& sourceName, String& scriptId, int& lineNumber)

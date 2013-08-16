@@ -251,7 +251,7 @@ bool PluginView::platformGetValue(NPNVariable variable, void* value, NPError* re
             return true;
         }
 
-        NPObject* windowScriptObject = m_parentFrame->script()->windowScriptNPObject();
+        NPObject* windowScriptObject = m_parentFrame->script().windowScriptNPObject();
 
         // Return value is expected to be retained, as described here: <http://www.mozilla.org/projects/plugin/npruntime.html>
         if (windowScriptObject)

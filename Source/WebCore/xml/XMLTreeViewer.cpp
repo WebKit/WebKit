@@ -56,9 +56,9 @@ void XMLTreeViewer::transformDocumentToTreeView()
 {
     m_document->setIsViewSource(true);
     String scriptString(reinterpret_cast<const char*>(XMLViewer_js), sizeof(XMLViewer_js));
-    m_document->frame()->script()->evaluate(ScriptSourceCode(scriptString));
+    m_document->frame()->script().evaluate(ScriptSourceCode(scriptString));
     String noStyleMessage("This XML file does not appear to have any style information associated with it. The document tree is shown below.");
-    m_document->frame()->script()->evaluate(ScriptSourceCode("prepareWebKitXMLViewer('" + noStyleMessage + "');"));
+    m_document->frame()->script().evaluate(ScriptSourceCode("prepareWebKitXMLViewer('" + noStyleMessage + "');"));
 
     String cssString(reinterpret_cast<const char*>(XMLViewer_css), sizeof(XMLViewer_css));
     RefPtr<Text> text = m_document->createTextNode(cssString);

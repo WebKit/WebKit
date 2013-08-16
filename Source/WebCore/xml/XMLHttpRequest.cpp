@@ -497,7 +497,7 @@ void XMLHttpRequest::open(const String& method, const KURL& url, bool async, Exc
     if (scriptExecutionContext()->isDocument()) {
         Document* document = static_cast<Document*>(scriptExecutionContext());
         if (document->frame())
-            shouldBypassMainWorldContentSecurityPolicy = document->frame()->script()->shouldBypassMainWorldContentSecurityPolicy();
+            shouldBypassMainWorldContentSecurityPolicy = document->frame()->script().shouldBypassMainWorldContentSecurityPolicy();
     }
     if (!shouldBypassMainWorldContentSecurityPolicy && !scriptExecutionContext()->contentSecurityPolicy()->allowConnectToSource(url)) {
         // FIXME: Should this be throwing an exception?

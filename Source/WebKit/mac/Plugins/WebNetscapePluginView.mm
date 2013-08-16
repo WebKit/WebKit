@@ -2001,7 +2001,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
         case NPNVWindowNPObject:
         {
             Frame* frame = core([self webFrame]);
-            NPObject* windowScriptObject = frame ? frame->script()->windowScriptNPObject() : 0;
+            NPObject* windowScriptObject = frame ? frame->script().windowScriptNPObject() : 0;
 
             // Return value is expected to be retained, as described here: <http://www.mozilla.org/projects/plugins/npruntime.html#browseraccess>
             if (windowScriptObject)
@@ -2396,7 +2396,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     LOG(Plugins, "NPP_Destroy: %d", npErr);
     
     if (Frame* frame = core([self webFrame]))
-        frame->script()->cleanupScriptObjectsForPlugin(self);
+        frame->script().cleanupScriptObjectsForPlugin(self);
         
     free(plugin);
     plugin = NULL;

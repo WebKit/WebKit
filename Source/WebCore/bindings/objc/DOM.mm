@@ -198,7 +198,7 @@ static NSArray *kit(const Vector<IntRect>& rects)
     WebCore::Frame* frame = core(self)->document()->frame();
     if (!frame)
         return 0;
-    return frame->script()->bindingRootObject();
+    return frame->script().bindingRootObject();
 }
 
 @end

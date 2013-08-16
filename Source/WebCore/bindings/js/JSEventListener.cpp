@@ -94,8 +94,8 @@ void JSEventListener::handleEvent(ScriptExecutionContext* scriptExecutionContext
         if (!window->impl()->isCurrentlyDisplayedInFrame())
             return;
         // FIXME: Is this check needed for other contexts?
-        ScriptController* script = window->impl()->frame()->script();
-        if (!script->canExecuteScripts(AboutToExecuteScript) || script->isPaused())
+        ScriptController& script = window->impl()->frame()->script();
+        if (!script.canExecuteScripts(AboutToExecuteScript) || script.isPaused())
             return;
     }
 

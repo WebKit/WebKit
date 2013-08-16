@@ -1,3 +1,117 @@
+2013-08-16  Pratik Solanki  <psolanki@apple.com>
+
+        <https://webkit.org/b/119852> Frame::scriptController() should return a reference
+
+        Reviewed by Andreas Kling.
+
+        m_script is never NULL so we can just return a reference. Also remove some pointless null
+        checks as a result of doing this.
+
+        * Modules/websockets/WebSocket.cpp:
+        (WebCore::WebSocket::connect):
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::toJS):
+        (WebCore::toJSDOMWindow):
+        * bindings/js/JSDOMWindowShell.cpp:
+        (WebCore::toJS):
+        (WebCore::toJSDOMWindowShell):
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSEventListener::handleEvent):
+        * bindings/js/JSLazyEventListener.cpp:
+        (WebCore::JSLazyEventListener::initializeJSFunction):
+        * bindings/js/PageScriptDebugServer.cpp:
+        (WebCore::PageScriptDebugServer::setJavaScriptPaused):
+        * bindings/js/ScheduledAction.cpp:
+        (WebCore::ScheduledAction::execute):
+        * bindings/js/ScriptCachedFrameData.cpp:
+        (WebCore::ScriptCachedFrameData::ScriptCachedFrameData):
+        (WebCore::ScriptCachedFrameData::restore):
+        * bindings/js/ScriptEventListener.cpp:
+        (WebCore::createAttributeEventListener):
+        (WebCore::eventListenerHandlerScriptState):
+        * bindings/js/ScriptState.cpp:
+        (WebCore::mainWorldScriptState):
+        (WebCore::scriptStateFromNode):
+        (WebCore::scriptStateFromPage):
+        * bindings/objc/DOM.mm:
+        (-[DOMNode JSC::Bindings::]):
+        * bindings/objc/DOMInternal.mm:
+        (-[WebScriptObject _initializeScriptDOMNodeImp]):
+        * dom/Document.cpp:
+        (WebCore::Document::disableEval):
+        (WebCore::Document::ensurePlugInsInjectedScript):
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElement::prepareScript):
+        (WebCore::ScriptElement::executeScript):
+        * history/CachedFrame.cpp:
+        (WebCore::CachedFrameBase::restore):
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::createRenderer):
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::rendererIsNeeded):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::controls):
+        * html/HTMLPlugInElement.cpp:
+        (WebCore::HTMLPlugInElement::getInstance):
+        (WebCore::HTMLPlugInElement::getNPObject):
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::didAddUserAgentShadowRoot):
+        * html/parser/HTMLParserOptions.cpp:
+        (WebCore::HTMLParserOptions::HTMLParserOptions):
+        * inspector/InspectorAgent.cpp:
+        (WebCore::InspectorAgent::didClearWindowObjectInWorld):
+        * inspector/InspectorClient.cpp:
+        (WebCore::InspectorClient::doDispatchMessageOnFrontendPage):
+        * inspector/InspectorFrontendClientLocal.cpp:
+        (WebCore::InspectorFrontendClientLocal::evaluateAsBoolean):
+        (WebCore::InspectorFrontendClientLocal::evaluateOnLoad):
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::InspectorOverlay::evaluateInOverlay):
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::getScriptExecutionStatus):
+        (WebCore::InspectorPageAgent::didClearWindowObjectInWorld):
+        * inspector/PageRuntimeAgent.cpp:
+        (WebCore::PageRuntimeAgent::reportExecutionContextCreation):
+        * loader/DocumentWriter.cpp:
+        (WebCore::DocumentWriter::begin):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::urlSelected):
+        (WebCore::FrameLoader::submitForm):
+        (WebCore::FrameLoader::cancelAndClear):
+        (WebCore::FrameLoader::clear):
+        (WebCore::FrameLoader::prepareForCachedPageRestore):
+        (WebCore::FrameLoader::dispatchDidClearWindowObjectsInAllWorlds):
+        (WebCore::FrameLoader::dispatchDidClearWindowObjectInWorld):
+        * loader/SubframeLoader.cpp:
+        (WebCore::SubframeLoader::requestFrame):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::canRequest):
+        * page/EventSource.cpp:
+        (WebCore::EventSource::create):
+        * page/Frame.cpp:
+        (WebCore::Frame::willDetachPage):
+        * page/Frame.h:
+        (WebCore::Frame::script):
+        * page/Navigator.cpp:
+        (WebCore::shouldHideFourDot):
+        * page/Page.cpp:
+        (WebCore::Page::setDebugger):
+        * platform/graphics/wince/MediaPlayerProxy.cpp:
+        (WebCore::WebMediaPlayerProxy::pluginInstance):
+        (WebCore::WebMediaPlayerProxy::invokeMethod):
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::~PluginView):
+        (WebCore::PluginView::performRequest):
+        (WebCore::PluginView::load):
+        (WebCore::PluginView::bindingInstance):
+        (WebCore::PluginView::getValue):
+        * plugins/efl/PluginViewEfl.cpp:
+        (WebCore::PluginView::platformGetValue):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::open):
+        * xml/XMLTreeViewer.cpp:
+        (WebCore::XMLTreeViewer::transformDocumentToTreeView):
+
 2013-08-16  Andreas Kling  <akling@apple.com>
 
         Attempt to fix the Qt/MountainLion build after r154142.

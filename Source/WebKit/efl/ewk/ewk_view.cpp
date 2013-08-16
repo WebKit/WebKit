@@ -4097,7 +4097,7 @@ Eina_Bool ewk_view_js_object_add(Evas_Object* ewkView, Ewk_JS_Object* object, co
     WebCore::JSDOMWindow* window = toJSDOMWindow(priv->mainFrame, WebCore::mainThreadNormalWorld());
     JSC::JSLockHolder lock(window->globalExec());
     JSC::Bindings::RootObject* root;
-    root = priv->mainFrame->script()->bindingRootObject();
+    root = priv->mainFrame->script().bindingRootObject();
 
     if (!window) {
         ERR("Warning: couldn't get window object");

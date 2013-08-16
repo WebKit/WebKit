@@ -116,7 +116,7 @@ void CachedFrameBase::restore()
 
     // It is necessary to update any platform script objects after restoring the
     // cached page.
-    frame.script()->updatePlatformScriptObjects();
+    frame.script().updatePlatformScriptObjects();
 
 #if USE(ACCELERATED_COMPOSITING)
     if (m_isComposited)

@@ -91,7 +91,7 @@ bool SubframeLoader::requestFrame(HTMLFrameOwnerElement* ownerElement, const Str
         return false;
 
     if (!scriptURL.isEmpty())
-        frame->script()->executeIfJavaScriptURL(scriptURL);
+        frame->script().executeIfJavaScriptURL(scriptURL);
 
     return true;
 }

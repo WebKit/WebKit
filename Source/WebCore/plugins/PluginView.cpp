@@ -308,7 +308,7 @@ PluginView::~PluginView()
 
     platformDestroy();
 
-    m_parentFrame->script()->cleanupScriptObjectsForPlugin(this);
+    m_parentFrame->script().cleanupScriptObjectsForPlugin(this);
 
     if (m_plugin && !(m_plugin->quirks().contains(PluginQuirkDontUnloadPlugin)))
         m_plugin->unload();
@@ -464,12 +464,12 @@ void PluginView::performRequest(PluginRequest* request)
     
     // Executing a script can cause the plugin view to be destroyed, so we keep a reference to it.
     RefPtr<PluginView> protector(this);
-    ScriptValue result = m_parentFrame->script()->executeScript(jsString, request->shouldAllowPopups());
+    ScriptValue result = m_parentFrame->script().executeScript(jsString, request->shouldAllowPopups());
 
     if (targetFrameName.isNull()) {
         String resultString;
 
-        ScriptState* scriptState = m_parentFrame->script()->globalObject(pluginWorld())->globalExec();
+        ScriptState* scriptState = m_parentFrame->script().globalObject(pluginWorld())->globalExec();
         CString cstr;
         if (result.getString(scriptState, resultString))
             cstr = resultString.utf8();
@@ -524,7 +524,7 @@ NPError PluginView::load(const FrameLoadRequest& frameLoadRequest, bool sendNoti
 
     if (!jsString.isNull()) {
         // Return NPERR_GENERIC_ERROR if JS is disabled. This is what Mozilla does.
-        if (!m_parentFrame->script()->canExecuteScripts(NotAboutToExecuteScript))
+        if (!m_parentFrame->script().canExecuteScripts(NotAboutToExecuteScript))
             return NPERR_GENERIC_ERROR;
 
         // For security reasons, only allow JS requests to be made on the frame that contains the plug-in.
@@ -749,7 +749,7 @@ PassRefPtr<JSC::Bindings::Instance> PluginView::bindingInstance()
         return 0;
     }
 
-    RefPtr<JSC::Bindings::RootObject> root = m_parentFrame->script()->createRootObject(this);
+    RefPtr<JSC::Bindings::RootObject> root = m_parentFrame->script().createRootObject(this);
     RefPtr<JSC::Bindings::Instance> instance = JSC::Bindings::CInstance::create(object, root.release());
 
     _NPN_ReleaseObject(object);
@@ -1319,7 +1319,7 @@ NPError PluginView::getValue(NPNVariable variable, void* value)
         if (m_isJavaScriptPaused)
             return NPERR_GENERIC_ERROR;
 
-        NPObject* windowScriptObject = m_parentFrame->script()->windowScriptNPObject();
+        NPObject* windowScriptObject = m_parentFrame->script().windowScriptNPObject();
 
         // Return value is expected to be retained, as described here: <http://www.mozilla.org/projects/plugin/npruntime.html>
         if (windowScriptObject)

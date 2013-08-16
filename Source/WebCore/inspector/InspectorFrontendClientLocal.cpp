@@ -346,14 +346,14 @@ bool InspectorFrontendClientLocal::evaluateAsBoolean(const String& expression)
 {
     if (!m_frontendPage->mainFrame())
         return false;
-    ScriptValue value = m_frontendPage->mainFrame()->script()->executeScript(expression);
+    ScriptValue value = m_frontendPage->mainFrame()->script().executeScript(expression);
     return value.toString(mainWorldScriptState(m_frontendPage->mainFrame())) == "true";
 }
 
 void InspectorFrontendClientLocal::evaluateOnLoad(const String& expression)
 {
     if (m_frontendLoaded)
-        m_frontendPage->mainFrame()->script()->executeScript("InspectorFrontendAPI.dispatch(" + expression + ")");
+        m_frontendPage->mainFrame()->script().executeScript("InspectorFrontendAPI.dispatch(" + expression + ")");
     else
         m_evaluateOnLoad.append(expression);
 }

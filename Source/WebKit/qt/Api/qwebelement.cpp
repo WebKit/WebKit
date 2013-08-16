@@ -711,7 +711,7 @@ QWebFrame *QWebElement::webFrame() const
     return frameAdapter->apiHandle();
 }
 
-static bool setupScriptContext(WebCore::Element* element, ScriptState*& state, ScriptController*& scriptController)
+static bool setupScriptContext(WebCore::Element* element, ScriptState*& state)
 {
     if (!element)
         return false;
@@ -724,11 +724,7 @@ static bool setupScriptContext(WebCore::Element* element, ScriptState*& state, S
     if (!frame)
         return false;
 
-    scriptController = frame->script();
-    if (!scriptController)
-        return false;
-
-    state = scriptController->globalObject(mainThreadNormalWorld())->globalExec();
+    state = frame->script().globalObject(mainThreadNormalWorld())->globalExec();
     if (!state)
         return false;
 
@@ -744,9 +740,8 @@ QVariant QWebElement::evaluateJavaScript(const QString& scriptSource)
         return QVariant();
 
     ScriptState* state = 0;
-    ScriptController* scriptController = 0;
 
-    if (!setupScriptContext(m_element, state, scriptController))
+    if (!setupScriptContext(m_element, state))
         return QVariant();
 
     JSC::JSLockHolder lock(state);

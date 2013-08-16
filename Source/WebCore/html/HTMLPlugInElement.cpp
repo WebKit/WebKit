@@ -130,7 +130,7 @@ PassRefPtr<JSC::Bindings::Instance> HTMLPlugInElement::getInstance()
         return m_instance;
 
     if (Widget* widget = pluginWidget())
-        m_instance = frame->script()->createScriptInstanceForWidget(widget);
+        m_instance = frame->script().createScriptInstanceForWidget(widget);
 
     return m_instance;
 }
@@ -260,7 +260,7 @@ NPObject* HTMLPlugInElement::getNPObject()
 {
     ASSERT(document()->frame());
     if (!m_NPObject)
-        m_NPObject = document()->frame()->script()->createScriptObjectForPluginElement(this);
+        m_NPObject = document()->frame()->script().createScriptObjectForPluginElement(this);
     return m_NPObject;
 }
 

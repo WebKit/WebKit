@@ -2248,8 +2248,8 @@ void WebPage::runJavaScriptInMainFrame(const String& script, uint64_t callbackID
     CoreIPC::DataReference dataReference;
 
     JSLockHolder lock(JSDOMWindow::commonVM());
-    if (JSValue resultValue = m_mainFrame->coreFrame()->script()->executeScript(script, true).jsValue()) {
-        if ((serializedResultValue = SerializedScriptValue::create(m_mainFrame->jsContext(), toRef(m_mainFrame->coreFrame()->script()->globalObject(mainThreadNormalWorld())->globalExec(), resultValue), 0)))
+    if (JSValue resultValue = m_mainFrame->coreFrame()->script().executeScript(script, true).jsValue()) {
+        if ((serializedResultValue = SerializedScriptValue::create(m_mainFrame->jsContext(), toRef(m_mainFrame->coreFrame()->script().globalObject(mainThreadNormalWorld())->globalExec(), resultValue), 0)))
             dataReference = serializedResultValue->data();
     }
 

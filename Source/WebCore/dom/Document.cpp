@@ -2683,7 +2683,7 @@ void Document::disableEval(const String& errorMessage)
     if (!frame())
         return;
 
-    frame()->script()->disableEval(errorMessage);
+    frame()->script().disableEval(errorMessage);
 }
 
 bool Document::canNavigate(Frame* targetFrame)
@@ -5983,7 +5983,7 @@ void Document::ensurePlugInsInjectedScript(DOMWrapperWorld* world)
     if (!jsString)
         jsString = plugInsJavaScript;
 
-    page()->mainFrame()->script()->evaluateInWorld(ScriptSourceCode(jsString), world);
+    page()->mainFrame()->script().evaluateInWorld(ScriptSourceCode(jsString), world);
 
     m_hasInjectedPlugInsScript = true;
 }

@@ -470,12 +470,12 @@ bool WebFrame::allowsFollowingLink(const WebCore::KURL& url) const
 
 JSGlobalContextRef WebFrame::jsContext()
 {
-    return toGlobalRef(m_coreFrame->script()->globalObject(mainThreadNormalWorld())->globalExec());
+    return toGlobalRef(m_coreFrame->script().globalObject(mainThreadNormalWorld())->globalExec());
 }
 
 JSGlobalContextRef WebFrame::jsContextForWorld(InjectedBundleScriptWorld* world)
 {
-    return toGlobalRef(m_coreFrame->script()->globalObject(world->coreWorld())->globalExec());
+    return toGlobalRef(m_coreFrame->script().globalObject(world->coreWorld())->globalExec());
 }
 
 bool WebFrame::handlesPageScaleGesture() const
@@ -649,7 +649,7 @@ JSValueRef WebFrame::jsWrapperForWorld(InjectedBundleNodeHandle* nodeHandle, Inj
     if (!m_coreFrame)
         return 0;
 
-    JSDOMWindow* globalObject = m_coreFrame->script()->globalObject(world->coreWorld());
+    JSDOMWindow* globalObject = m_coreFrame->script().globalObject(world->coreWorld());
     ExecState* exec = globalObject->globalExec();
 
     JSLockHolder lock(exec);
@@ -661,7 +661,7 @@ JSValueRef WebFrame::jsWrapperForWorld(InjectedBundleRangeHandle* rangeHandle, I
     if (!m_coreFrame)
         return 0;
 
-    JSDOMWindow* globalObject = m_coreFrame->script()->globalObject(world->coreWorld());
+    JSDOMWindow* globalObject = m_coreFrame->script().globalObject(world->coreWorld());
     ExecState* exec = globalObject->globalExec();
 
     JSLockHolder lock(exec);

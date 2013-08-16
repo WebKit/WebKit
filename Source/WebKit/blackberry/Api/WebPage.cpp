@@ -667,7 +667,7 @@ public:
 private:
     virtual void performInternal(WebPagePrivate* webPagePrivate)
     {
-        webPagePrivate->m_mainFrame->script()->executeIfJavaScriptURL(webPagePrivate->m_cachedManualScript, DoNotReplaceDocumentIfJavaScriptURL);
+        webPagePrivate->m_mainFrame->script().executeIfJavaScriptURL(webPagePrivate->m_cachedManualScript, DoNotReplaceDocumentIfJavaScriptURL);
     }
 };
 
@@ -689,7 +689,7 @@ void WebPagePrivate::load(const Platform::NetworkRequest& netReq, bool needRefer
         if (m_page->defersLoading())
             m_deferredTasks.append(adoptPtr(new DeferredTaskLoadManualScript(this, kurl)));
         else
-            m_mainFrame->script()->executeIfJavaScriptURL(kurl, DoNotReplaceDocumentIfJavaScriptURL);
+            m_mainFrame->script().executeIfJavaScriptURL(kurl, DoNotReplaceDocumentIfJavaScriptURL);
         return;
     }
 
@@ -770,7 +770,7 @@ bool WebPagePrivate::executeJavaScript(const BlackBerry::Platform::String& scrip
         return true;
     }
 
-    ScriptValue result = m_mainFrame->script()->executeScript(script, false);
+    ScriptValue result = m_mainFrame->script().executeScript(script, false);
     JSC::JSValue value = result.jsValue();
     if (!value) {
         returnType = JSException;
@@ -793,7 +793,7 @@ bool WebPagePrivate::executeJavaScript(const BlackBerry::Platform::String& scrip
         returnType = JSUndefined;
 
     if (returnType == JSBoolean || returnType == JSNumber || returnType == JSString || returnType == JSObject) {
-        JSC::ExecState* exec = m_mainFrame->script()->globalObject(mainThreadNormalWorld())->globalExec();
+        JSC::ExecState* exec = m_mainFrame->script().globalObject(mainThreadNormalWorld())->globalExec();
         returnValue = result.toString(exec);
     }
 
@@ -808,10 +808,10 @@ bool WebPage::executeJavaScript(const BlackBerry::Platform::String& script, Java
 bool WebPagePrivate::executeJavaScriptInIsolatedWorld(const ScriptSourceCode& sourceCode, JavaScriptDataType& returnType, BlackBerry::Platform::String& returnValue)
 {
     if (!m_isolatedWorld)
-        m_isolatedWorld = m_mainFrame->script()->createWorld();
+        m_isolatedWorld = m_mainFrame->script().createWorld();
 
     // Use evaluateInWorld to avoid canExecuteScripts check.
-    ScriptValue result = m_mainFrame->script()->evaluateInWorld(sourceCode, m_isolatedWorld.get());
+    ScriptValue result = m_mainFrame->script().evaluateInWorld(sourceCode, m_isolatedWorld.get());
     JSC::JSValue value = result.jsValue();
     if (!value) {
         returnType = JSException;
@@ -834,7 +834,7 @@ bool WebPagePrivate::executeJavaScriptInIsolatedWorld(const ScriptSourceCode& so
         returnType = JSUndefined;
 
     if (returnType == JSBoolean || returnType == JSNumber || returnType == JSString || returnType == JSObject) {
-        JSC::ExecState* exec = m_mainFrame->script()->globalObject(mainThreadNormalWorld())->globalExec();
+        JSC::ExecState* exec = m_mainFrame->script().globalObject(mainThreadNormalWorld())->globalExec();
         returnValue = result.toString(exec);
     }
 
@@ -876,7 +876,7 @@ void WebPage::executeJavaScriptFunction(const std::vector<BlackBerry::Platform::
         return;
     }
 
-    JSC::Bindings::RootObject* root = d->m_mainFrame->script()->bindingRootObject();
+    JSC::Bindings::RootObject* root = d->m_mainFrame->script().bindingRootObject();
     if (!root) {
         returnValue.setType(JavaScriptVariant::Exception);
         return;
@@ -890,7 +890,7 @@ void WebPage::executeJavaScriptFunction(const std::vector<BlackBerry::Platform::
     for (unsigned i = 0; i < args.size(); ++i)
         argListRef[i] = BlackBerryJavaScriptVariantToJSValueRef(ctx, args[i]);
 
-    JSValueRef windowObjectValue = toRef(d->m_mainFrame->script()->globalObject(mainThreadNormalWorld()));
+    JSValueRef windowObjectValue = toRef(d->m_mainFrame->script().globalObject(mainThreadNormalWorld()));
     JSObjectRef obj = JSValueToObject(ctx, windowObjectValue, 0);
     JSObjectRef thisObject = obj;
     for (unsigned i = 0; i < function.size(); ++i) {
@@ -4759,7 +4759,7 @@ JSGlobalContextRef WebPage::globalContext() const
     if (!d->m_mainFrame)
         return 0;
 
-    return toGlobalRef(d->m_mainFrame->script()->globalObject(mainThreadNormalWorld())->globalExec());
+    return toGlobalRef(d->m_mainFrame->script().globalObject(mainThreadNormalWorld())->globalExec());
 }
 
 // Serialize only the members of HistoryItem which are needed by the client,

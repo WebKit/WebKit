@@ -1,3 +1,21 @@
+2013-08-16  Pratik Solanki  <psolanki@apple.com>
+
+        <https://webkit.org/b/119852> Frame::scriptController() should return a reference
+
+        Reviewed by Andreas Kling.
+
+        m_script is never NULL so we can just return a reference. Also remove some pointless null
+        checks as a result of doing this.
+
+        * Api/qwebelement.cpp:
+        (setupScriptContext):
+        (QWebElement::evaluateJavaScript):
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        (DumpRenderTreeSupportQt::evaluateScriptInIsolatedWorld):
+        * WebCoreSupport/QWebFrameAdapter.cpp:
+        (QWebFrameAdapter::evaluateJavaScript):
+        (QWebFrameAdapter::addToJavaScriptWindowObject):
+
 2013-08-15  Anders Carlsson  <andersca@apple.com>
 
         <https://webkit.org/b/119859> Frame::loader() should return a reference

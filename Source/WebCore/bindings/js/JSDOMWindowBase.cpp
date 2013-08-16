@@ -205,14 +205,14 @@ JSValue toJS(ExecState* exec, DOMWindow* domWindow)
     Frame* frame = domWindow->frame();
     if (!frame)
         return jsNull();
-    return frame->script()->windowShell(currentWorld(exec));
+    return frame->script().windowShell(currentWorld(exec));
 }
 
 JSDOMWindow* toJSDOMWindow(Frame* frame, DOMWrapperWorld* world)
 {
     if (!frame)
         return 0;
-    return frame->script()->windowShell(world)->window();
+    return frame->script().windowShell(world)->window();
 }
 
 JSDOMWindow* toJSDOMWindow(JSValue value)

@@ -125,13 +125,13 @@ void ScheduledAction::execute(Document* document)
         return;
 
     RefPtr<Frame> frame = window->impl()->frame();
-    if (!frame || !frame->script()->canExecuteScripts(AboutToExecuteScript))
+    if (!frame || !frame->script().canExecuteScripts(AboutToExecuteScript))
         return;
 
     if (m_function)
         executeFunctionInContext(window, window->shell(), document);
     else
-        frame->script()->executeScriptInWorld(m_isolatedWorld.get(), m_code);
+        frame->script().executeScriptInWorld(m_isolatedWorld.get(), m_code);
 }
 
 #if ENABLE(WORKERS)

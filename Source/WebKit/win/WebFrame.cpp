@@ -531,7 +531,7 @@ JSGlobalContextRef STDMETHODCALLTYPE WebFrame::globalContext()
     if (!coreFrame)
         return 0;
 
-    return toGlobalRef(coreFrame->script()->globalObject(mainThreadNormalWorld())->globalExec());
+    return toGlobalRef(coreFrame->script().globalObject(mainThreadNormalWorld())->globalExec());
 }
 
 JSGlobalContextRef WebFrame::globalContextForScriptWorld(IWebScriptWorld* iWorld)
@@ -544,7 +544,7 @@ JSGlobalContextRef WebFrame::globalContextForScriptWorld(IWebScriptWorld* iWorld
     if (!world)
         return 0;
 
-    return toGlobalRef(coreFrame->script()->globalObject(world->world())->globalExec());
+    return toGlobalRef(coreFrame->script().globalObject(world->world())->globalExec());
 }
 
 HRESULT STDMETHODCALLTYPE WebFrame::loadRequest( 
@@ -1897,8 +1897,8 @@ void WebFrame::dispatchDidClearWindowObjectInWorld(DOMWrapperWorld* world)
     if (world != mainThreadNormalWorld())
         return;
 
-    JSContextRef context = toRef(coreFrame->script()->globalObject(world)->globalExec());
-    JSObjectRef windowObject = toRef(coreFrame->script()->globalObject(world));
+    JSContextRef context = toRef(coreFrame->script().globalObject(world)->globalExec());
+    JSObjectRef windowObject = toRef(coreFrame->script().globalObject(world));
     ASSERT(windowObject);
 
     if (FAILED(frameLoadDelegate->didClearWindowObject(d->webView, context, windowObject, this)))
@@ -2514,7 +2514,7 @@ HRESULT WebFrame::stringByEvaluatingJavaScriptInScriptWorld(IWebScriptWorld* iWo
     String string = String(script, SysStringLen(script));
 
     // Start off with some guess at a frame and a global object, we'll try to do better...!
-    JSDOMWindow* anyWorldGlobalObject = coreFrame->script()->globalObject(mainThreadNormalWorld());
+    JSDOMWindow* anyWorldGlobalObject = coreFrame->script().globalObject(mainThreadNormalWorld());
 
     // The global object is probably a shell object? - if so, we know how to use this!
     JSC::JSObject* globalObjectObj = toJS(globalObjectRef);
@@ -2524,7 +2524,7 @@ HRESULT WebFrame::stringByEvaluatingJavaScriptInScriptWorld(IWebScriptWorld* iWo
     // Get the frame frome the global object we've settled on.
     Frame* frame = anyWorldGlobalObject->impl()->frame();
     ASSERT(frame->document());
-    JSValue result = frame->script()->executeScriptInWorld(world->world(), string, true).jsValue();
+    JSValue result = frame->script().executeScriptInWorld(world->world(), string, true).jsValue();
 
     if (!frame) // In case the script removed our frame from the page.
         return S_OK;

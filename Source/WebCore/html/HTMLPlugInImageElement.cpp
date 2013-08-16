@@ -374,8 +374,8 @@ void HTMLPlugInImageElement::didAddUserAgentShadowRoot(ShadowRoot* root)
     static DOMWrapperWorld* isolatedWorld = DOMWrapperWorld::create(JSDOMWindow::commonVM()).leakRef();
     document()->ensurePlugInsInjectedScript(isolatedWorld);
 
-    ScriptController* scriptController = page->mainFrame()->script();
-    JSDOMGlobalObject* globalObject = JSC::jsCast<JSDOMGlobalObject*>(scriptController->globalObject(isolatedWorld));
+    ScriptController& scriptController = page->mainFrame()->script();
+    JSDOMGlobalObject* globalObject = JSC::jsCast<JSDOMGlobalObject*>(scriptController.globalObject(isolatedWorld));
     JSC::ExecState* exec = globalObject->globalExec();
 
     JSC::JSLockHolder lock(exec);

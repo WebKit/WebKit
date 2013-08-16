@@ -161,13 +161,13 @@ void PageRuntimeAgent::reportExecutionContextCreation()
 {
     Vector<std::pair<ScriptState*, SecurityOrigin*> > isolatedContexts;
     for (Frame* frame = m_inspectedPage->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
-        if (!frame->script()->canExecuteScripts(NotAboutToExecuteScript))
+        if (!frame->script().canExecuteScripts(NotAboutToExecuteScript))
             continue;
         String frameId = m_pageAgent->frameId(frame);
 
         ScriptState* scriptState = mainWorldScriptState(frame);
         notifyContextCreated(frameId, scriptState, 0, true);
-        frame->script()->collectIsolatedContexts(isolatedContexts);
+        frame->script().collectIsolatedContexts(isolatedContexts);
         if (isolatedContexts.isEmpty())
             continue;
         for (size_t i = 0; i< isolatedContexts.size(); i++)

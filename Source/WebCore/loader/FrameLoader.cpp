@@ -306,7 +306,7 @@ void FrameLoader::urlSelected(const FrameLoadRequest& passedRequest, PassRefPtr<
     RefPtr<Frame> protect(m_frame);
     FrameLoadRequest frameRequest(passedRequest);
 
-    if (m_frame->script()->executeIfJavaScriptURL(frameRequest.resourceRequest().url(), shouldReplaceDocumentIfJavaScriptURL))
+    if (m_frame->script().executeIfJavaScriptURL(frameRequest.resourceRequest().url(), shouldReplaceDocumentIfJavaScriptURL))
         return;
 
     if (frameRequest.frameName().isEmpty())
@@ -346,7 +346,7 @@ void FrameLoader::submitForm(PassRefPtr<FormSubmission> submission)
         if (!m_frame->document()->contentSecurityPolicy()->allowFormAction(KURL(submission->action())))
             return;
         m_isExecutingJavaScriptFormAction = true;
-        m_frame->script()->executeIfJavaScriptURL(submission->action(), DoNotReplaceDocumentIfJavaScriptURL);
+        m_frame->script().executeIfJavaScriptURL(submission->action(), DoNotReplaceDocumentIfJavaScriptURL);
         m_isExecutingJavaScriptFormAction = false;
         return;
     }
@@ -563,7 +563,7 @@ void FrameLoader::cancelAndClear()
         closeURL();
 
     clear(m_frame->document(), false);
-    m_frame->script()->updatePlatformScriptObjects();
+    m_frame->script().updatePlatformScriptObjects();
 }
 
 void FrameLoader::clear(Document* newDocument, bool clearWindowProperties, bool clearScriptObjects, bool clearFrameView)
@@ -587,7 +587,7 @@ void FrameLoader::clear(Document* newDocument, bool clearWindowProperties, bool 
     if (clearWindowProperties) {
         InspectorInstrumentation::frameWindowDiscarded(m_frame, m_frame->document()->domWindow());
         m_frame->document()->domWindow()->resetUnlessSuspendedForPageCache();
-        m_frame->script()->clearWindowShell(newDocument->domWindow(), m_frame->document()->inPageCache());
+        m_frame->script().clearWindowShell(newDocument->domWindow(), m_frame->document()->inPageCache());
     }
 
     m_frame->selection()->prepareForDestruction();
@@ -602,9 +602,9 @@ void FrameLoader::clear(Document* newDocument, bool clearWindowProperties, bool 
     m_subframeLoader.clear();
 
     if (clearScriptObjects)
-        m_frame->script()->clearScriptObjects();
+        m_frame->script().clearScriptObjects();
 
-    m_frame->script()->enableEval();
+    m_frame->script().enableEval();
 
     m_frame->navigationScheduler()->clear();
 
@@ -1970,7 +1970,7 @@ void FrameLoader::prepareForCachedPageRestore()
     closeURL();
     
     // Delete old status bar messages (if it _was_ activated on last URL).
-    if (m_frame->script()->canExecuteScripts(NotAboutToExecuteScript)) {
+    if (m_frame->script().canExecuteScripts(NotAboutToExecuteScript)) {
         DOMWindow* window = m_frame->document()->domWindow();
         window->setStatus(String());
         window->setDefaultStatus(String());
@@ -3264,7 +3264,7 @@ void FrameLoader::dispatchDocumentElementAvailable()
 
 void FrameLoader::dispatchDidClearWindowObjectsInAllWorlds()
 {
-    if (!m_frame->script()->canExecuteScripts(NotAboutToExecuteScript))
+    if (!m_frame->script().canExecuteScripts(NotAboutToExecuteScript))
         return;
 
     Vector<RefPtr<DOMWrapperWorld> > worlds;
@@ -3275,7 +3275,7 @@ void FrameLoader::dispatchDidClearWindowObjectsInAllWorlds()
 
 void FrameLoader::dispatchDidClearWindowObjectInWorld(DOMWrapperWorld* world)
 {
-    if (!m_frame->script()->canExecuteScripts(NotAboutToExecuteScript) || !m_frame->script()->existingWindowShell(world))
+    if (!m_frame->script().canExecuteScripts(NotAboutToExecuteScript) || !m_frame->script().existingWindowShell(world))
         return;
 
     m_client->dispatchDidClearWindowObjectInWorld(world);

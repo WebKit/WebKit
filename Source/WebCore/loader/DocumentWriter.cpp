@@ -139,7 +139,7 @@ void DocumentWriter::begin(const KURL& urlReference, bool dispatch, Document* ow
     clear();
 
     if (!shouldReuseDefaultView)
-        m_frame->script()->updatePlatformScriptObjects();
+        m_frame->script().updatePlatformScriptObjects();
 
     m_frame->loader().setOutgoingReferrer(url);
     m_frame->setDocument(document);

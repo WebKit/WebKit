@@ -921,8 +921,8 @@ void FrameLoaderClientBlackBerry::dispatchDidClearWindowObjectInWorld(DOMWrapper
     m_webPagePrivate->m_client->notifyWindowObjectCleared();
 
     if (m_webPagePrivate->m_dumpRenderTree) {
-        JSGlobalContextRef context = toGlobalRef(m_frame->script()->globalObject(mainThreadNormalWorld())->globalExec());
-        JSObjectRef windowObject = toRef(m_frame->script()->globalObject(mainThreadNormalWorld()));
+        JSGlobalContextRef context = toGlobalRef(m_frame->script().globalObject(mainThreadNormalWorld())->globalExec());
+        JSObjectRef windowObject = toRef(m_frame->script().globalObject(mainThreadNormalWorld()));
         ASSERT(windowObject);
         m_webPagePrivate->m_dumpRenderTree->didClearWindowObjectInWorld(world, context, windowObject);
     }

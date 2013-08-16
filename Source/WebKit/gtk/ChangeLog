@@ -1,3 +1,19 @@
+2013-08-16  Pratik Solanki  <psolanki@apple.com>
+
+        <https://webkit.org/b/119852> Frame::scriptController() should return a reference
+
+        Reviewed by Andreas Kling.
+
+        m_script is never NULL so we can just return a reference. Also remove some pointless null
+        checks as a result of doing this.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::dispatchDidClearWindowObjectInWorld):
+        * webkit/webkitwebframe.cpp:
+        (webkit_web_frame_get_global_context):
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_execute_script):
+
 2013-08-15  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed GTK build fix for debug configurations.

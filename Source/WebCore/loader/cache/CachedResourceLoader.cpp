@@ -313,7 +313,7 @@ bool CachedResourceLoader::canRequest(CachedResource::Type type, const KURL& url
     }
 
     // FIXME: Convert this to check the isolated world's Content Security Policy once webkit.org/b/104520 is solved.
-    bool shouldBypassMainWorldContentSecurityPolicy = (frame() && frame()->script()->shouldBypassMainWorldContentSecurityPolicy());
+    bool shouldBypassMainWorldContentSecurityPolicy = (frame() && frame()->script().shouldBypassMainWorldContentSecurityPolicy());
 
     // Some types of resources can be loaded only from the same origin.  Other
     // types of resources, like Images, Scripts, and CSS, can be loaded from

@@ -450,7 +450,7 @@ const char* ewk_frame_script_execute(Evas_Object* ewkFrame, const char* script)
     EINA_SAFETY_ON_NULL_RETURN_VAL(script, 0);
 
     WTF::String resultString;
-    JSC::JSValue result = smartData->frame->script()->executeScript(WTF::String::fromUTF8(script), true).jsValue();
+    JSC::JSValue result = smartData->frame->script().executeScript(WTF::String::fromUTF8(script), true).jsValue();
 
     if (!smartData->frame) // In case the script removed our frame from the page.
         return 0;
@@ -458,7 +458,7 @@ const char* ewk_frame_script_execute(Evas_Object* ewkFrame, const char* script)
     if (!result || (!result.isBoolean() && !result.isString() && !result.isNumber()))
         return 0;
 
-    JSC::ExecState* exec = smartData->frame->script()->globalObject(WebCore::mainThreadNormalWorld())->globalExec();
+    JSC::ExecState* exec = smartData->frame->script().globalObject(WebCore::mainThreadNormalWorld())->globalExec();
     JSC::JSLockHolder lock(exec);
     resultString = result.toString(exec)->value(exec);
     return eina_stringshare_add(resultString.utf8().data());

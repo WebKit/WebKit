@@ -623,11 +623,8 @@ void DumpRenderTreeSupportQt::evaluateScriptInIsolatedWorld(QWebFrameAdapter *ad
 
     WebCore::Frame* coreFrame = adapter->frame;
 
-    ScriptController* proxy = coreFrame->script();
-
-    if (!proxy)
-        return;
-    proxy->executeScriptInWorld(scriptWorld->world(), script, true);
+    ScriptController& proxy = coreFrame->script();
+    proxy.executeScriptInWorld(scriptWorld->world(), script, true);
 }
 
 void DumpRenderTreeSupportQt::addUserStyleSheet(QWebPageAdapter* adapter, const QString& sourceCode)

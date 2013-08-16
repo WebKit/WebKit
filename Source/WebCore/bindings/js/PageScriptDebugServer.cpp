@@ -197,10 +197,10 @@ void PageScriptDebugServer::setJavaScriptPaused(Frame* frame, bool paused)
 {
     ASSERT_ARG(frame, frame);
 
-    if (!frame->script()->canExecuteScripts(NotAboutToExecuteScript))
+    if (!frame->script().canExecuteScripts(NotAboutToExecuteScript))
         return;
 
-    frame->script()->setPaused(paused);
+    frame->script().setPaused(paused);
 
     Document* document = frame->document();
     if (paused) {

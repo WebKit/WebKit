@@ -1,3 +1,22 @@
+2013-08-16  Pratik Solanki  <psolanki@apple.com>
+
+        <https://webkit.org/b/119852> Frame::scriptController() should return a reference
+
+        Reviewed by Andreas Kling.
+
+        m_script is never NULL so we can just return a reference. Also remove some pointless null
+        checks as a result of doing this.
+
+        * WebCoreSupport/DumpRenderTreeSupportEfl.cpp:
+        (DumpRenderTreeSupportEfl::evaluateScriptInIsolatedWorld):
+        (DumpRenderTreeSupportEfl::globalContextRefForFrame):
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::dispatchDidClearWindowObjectInWorld):
+        * ewk/ewk_frame.cpp:
+        (ewk_frame_script_execute):
+        * ewk/ewk_view.cpp:
+        (ewk_view_js_object_add):
+
 2013-08-15  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Unreviewed build fix after r154142 and r154144.

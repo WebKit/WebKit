@@ -48,8 +48,8 @@ ScriptCachedFrameData::ScriptCachedFrameData(Frame* frame)
 {
     JSLockHolder lock(JSDOMWindowBase::commonVM());
 
-    ScriptController* scriptController = frame->script();
-    ScriptController::ShellMap& windowShells = scriptController->m_windowShells;
+    ScriptController& scriptController = frame->script();
+    ScriptController::ShellMap& windowShells = scriptController.m_windowShells;
 
     ScriptController::ShellMap::iterator windowShellsEnd = windowShells.end();
     for (ScriptController::ShellMap::iterator iter = windowShells.begin(); iter != windowShellsEnd; ++iter) {
@@ -57,7 +57,7 @@ ScriptCachedFrameData::ScriptCachedFrameData(Frame* frame)
         m_windows.add(iter->key.get(), Strong<JSDOMWindow>(window->vm(), window));
     }
 
-    scriptController->attachDebugger(0);
+    scriptController.attachDebugger(0);
 }
 
 ScriptCachedFrameData::~ScriptCachedFrameData()
@@ -69,8 +69,8 @@ void ScriptCachedFrameData::restore(Frame* frame)
 {
     JSLockHolder lock(JSDOMWindowBase::commonVM());
 
-    ScriptController* scriptController = frame->script();
-    ScriptController::ShellMap& windowShells = scriptController->m_windowShells;
+    ScriptController& scriptController = frame->script();
+    ScriptController::ShellMap& windowShells = scriptController.m_windowShells;
 
     ScriptController::ShellMap::iterator windowShellsEnd = windowShells.end();
     for (ScriptController::ShellMap::iterator iter = windowShells.begin(); iter != windowShellsEnd; ++iter) {
@@ -87,7 +87,7 @@ void ScriptCachedFrameData::restore(Frame* frame)
             windowShell->setWindow(domWindow);
 
             if (Page* page = frame->page()) {
-                scriptController->attachDebugger(windowShell, page->debugger());
+                scriptController.attachDebugger(windowShell, page->debugger());
                 windowShell->window()->setProfileGroup(page->group().identifier());
             }
         }

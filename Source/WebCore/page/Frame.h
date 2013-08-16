@@ -121,7 +121,7 @@ namespace WebCore {
         FrameSelection* selection() const;
         FrameTree* tree() const;
         AnimationController* animation() const;
-        ScriptController* script();
+        ScriptController& script();
         
         RenderView* contentRenderer() const; // Root of the render tree for the document contained in this frame.
         RenderPart* ownerRenderer() const; // Renderer for the element that contains this frame.
@@ -275,9 +275,9 @@ namespace WebCore {
         return m_view.get();
     }
 
-    inline ScriptController* Frame::script()
+    inline ScriptController& Frame::script()
     {
-        return m_script.get();
+        return *m_script;
     }
 
     inline Document* Frame::document() const

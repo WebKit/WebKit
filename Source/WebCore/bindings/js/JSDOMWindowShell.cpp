@@ -105,14 +105,14 @@ JSValue toJS(ExecState* exec, Frame* frame)
 {
     if (!frame)
         return jsNull();
-    return frame->script()->windowShell(currentWorld(exec));
+    return frame->script().windowShell(currentWorld(exec));
 }
 
 JSDOMWindowShell* toJSDOMWindowShell(Frame* frame, DOMWrapperWorld* isolatedWorld)
 {
     if (!frame)
         return 0;
-    return frame->script()->windowShell(isolatedWorld);
+    return frame->script().windowShell(isolatedWorld);
 }
 
 } // namespace WebCore

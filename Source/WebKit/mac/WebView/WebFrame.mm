@@ -299,15 +299,15 @@ WebView *getWebView(WebFrame *webFrame)
 
 - (void)_attachScriptDebugger
 {
-    ScriptController* scriptController = _private->coreFrame->script();
+    ScriptController& scriptController = _private->coreFrame->script();
 
     // Calling ScriptController::globalObject() would create a window shell, and dispatch corresponding callbacks, which may be premature
     // if the script debugger is attached before a document is created.  These calls use the debuggerWorld(), we will need to pass a world
     // to be able to debug isolated worlds.
-    if (!scriptController->existingWindowShell(debuggerWorld()))
+    if (!scriptController.existingWindowShell(debuggerWorld()))
         return;
 
-    JSGlobalObject* globalObject = scriptController->globalObject(debuggerWorld());
+    JSGlobalObject* globalObject = scriptController.globalObject(debuggerWorld());
     if (!globalObject)
         return;
 
@@ -591,7 +591,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     ASSERT(_private->coreFrame->document());
     RetainPtr<WebFrame> protect(self); // Executing arbitrary JavaScript can destroy the frame.
     
-    JSC::JSValue result = _private->coreFrame->script()->executeScript(string, forceUserGesture).jsValue();
+    JSC::JSValue result = _private->coreFrame->script().executeScript(string, forceUserGesture).jsValue();
 
     if (!_private->coreFrame) // In case the script removed our frame from the page.
         return @"";
@@ -602,7 +602,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     if (!result || (!result.isBoolean() && !result.isString() && !result.isNumber()))
         return @"";
 
-    JSC::ExecState* exec = _private->coreFrame->script()->globalObject(mainThreadNormalWorld())->globalExec();
+    JSC::ExecState* exec = _private->coreFrame->script().globalObject(mainThreadNormalWorld())->globalExec();
     JSC::JSLockHolder lock(exec);
     return result.toWTFString(exec);
 }
@@ -1059,7 +1059,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
         return @"";
 
     // Start off with some guess at a frame and a global object, we'll try to do better...!
-    JSDOMWindow* anyWorldGlobalObject = _private->coreFrame->script()->globalObject(mainThreadNormalWorld());
+    JSDOMWindow* anyWorldGlobalObject = _private->coreFrame->script().globalObject(mainThreadNormalWorld());
 
     // The global object is probably a shell object? - if so, we know how to use this!
     JSC::JSObject* globalObjectObj = toJS(globalObjectRef);
@@ -1071,7 +1071,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     ASSERT(frame->document());
     RetainPtr<WebFrame> webFrame(kit(frame)); // Running arbitrary JavaScript can destroy the frame.
 
-    JSC::JSValue result = frame->script()->executeScriptInWorld(core(world), string, true).jsValue();
+    JSC::JSValue result = frame->script().executeScriptInWorld(core(world), string, true).jsValue();
 
     if (!webFrame->_private->coreFrame) // In case the script removed our frame from the page.
         return @"";
@@ -1095,7 +1095,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     DOMWrapperWorld* coreWorld = core(world);
     if (!coreWorld)
         return 0;
-    return toGlobalRef(coreFrame->script()->globalObject(coreWorld)->globalExec());
+    return toGlobalRef(coreFrame->script().globalObject(coreWorld)->globalExec());
 }
 
 #if JSC_OBJC_API_ENABLED
@@ -1226,7 +1226,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     if (!coreFrame)
         return 0;
 
-    JSDOMWindow* globalObject = coreFrame->script()->globalObject(core(world));
+    JSDOMWindow* globalObject = coreFrame->script().globalObject(core(world));
     JSC::ExecState* exec = globalObject->globalExec();
 
     JSC::JSLockHolder lock(exec);
@@ -1487,7 +1487,7 @@ static NSURL *createUniqueWebDataURL()
     Frame* coreFrame = _private->coreFrame;
     if (!coreFrame)
         return 0;
-    return coreFrame->script()->windowScriptObject();
+    return coreFrame->script().windowScriptObject();
 }
 
 - (JSGlobalContextRef)globalContext
@@ -1495,7 +1495,7 @@ static NSURL *createUniqueWebDataURL()
     Frame* coreFrame = _private->coreFrame;
     if (!coreFrame)
         return 0;
-    return toGlobalRef(coreFrame->script()->globalObject(mainThreadNormalWorld())->globalExec());
+    return toGlobalRef(coreFrame->script().globalObject(mainThreadNormalWorld())->globalExec());
 }
 
 #if JSC_OBJC_API_ENABLED
@@ -1504,7 +1504,7 @@ static NSURL *createUniqueWebDataURL()
     Frame* coreFrame = _private->coreFrame;
     if (!coreFrame)
         return 0;
-    return coreFrame->script()->javaScriptContext();
+    return coreFrame->script().javaScriptContext();
 }
 #endif
 

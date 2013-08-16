@@ -91,8 +91,8 @@ JSObject* JSLazyEventListener::initializeJSFunction(ScriptExecutionContext* exec
     if (!document->contentSecurityPolicy()->allowInlineEventHandlers(m_sourceURL, m_position.m_line))
         return 0;
 
-    ScriptController* script = document->frame()->script();
-    if (!script->canExecuteScripts(AboutToExecuteScript) || script->isPaused())
+    ScriptController& script = document->frame()->script();
+    if (!script.canExecuteScripts(AboutToExecuteScript) || script.isPaused())
         return 0;
 
     JSDOMGlobalObject* globalObject = toJSDOMGlobalObject(executionContext, isolatedWorld());

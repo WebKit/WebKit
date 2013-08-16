@@ -197,18 +197,16 @@ void QWebFrameAdapter::handleGestureEvent(QGestureEventFacade* gestureEvent)
 
 QVariant QWebFrameAdapter::evaluateJavaScript(const QString &scriptSource)
 {
-    ScriptController* scriptController = frame->script();
+    ScriptController& scriptController = frame->script();
     QVariant rc;
-    if (scriptController) {
-        int distance = 0;
-        ScriptValue value = scriptController->executeScript(ScriptSourceCode(scriptSource));
-        JSC::ExecState* exec = scriptController->globalObject(mainThreadNormalWorld())->globalExec();
-        JSValueRef* ignoredException = 0;
-        exec->vm().apiLock().lock();
-        JSValueRef valueRef = toRef(exec, value.jsValue());
-        exec->vm().apiLock().unlock();
-        rc = JSC::Bindings::convertValueToQVariant(toRef(exec), valueRef, QMetaType::Void, &distance, ignoredException);
-    }
+    int distance = 0;
+    ScriptValue value = scriptController.executeScript(ScriptSourceCode(scriptSource));
+    JSC::ExecState* exec = scriptController.globalObject(mainThreadNormalWorld())->globalExec();
+    JSValueRef* ignoredException = 0;
+    exec->vm().apiLock().lock();
+    JSValueRef valueRef = toRef(exec, value.jsValue());
+    exec->vm().apiLock().unlock();
+    rc = JSC::Bindings::convertValueToQVariant(toRef(exec), valueRef, QMetaType::Void, &distance, ignoredException);
     return rc;
 }
 
@@ -220,9 +218,9 @@ void QWebFrameAdapter::addToJavaScriptWindowObject(const QString& name, QObject*
     JSDOMWindow* window = toJSDOMWindow(frame, mainThreadNormalWorld());
     JSC::Bindings::RootObject* root;
     if (valueOwnership == JSC::Bindings::QtInstance::QtOwnership)
-        root = frame->script()->cacheableBindingRootObject();
+        root = frame->script().cacheableBindingRootObject();
     else
-        root = frame->script()->bindingRootObject();
+        root = frame->script().bindingRootObject();
 
     if (!window) {
         qDebug() << "Warning: couldn't get window object";
