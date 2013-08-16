@@ -1,3 +1,13 @@
+2013-08-16  Mark Lam  <mark.lam@apple.com>
+
+        <https://bugs.webkit.org/show_bug.cgi?id=119913> Baseline JIT gives erroneous
+        error message that an object is not a constructor though it expects a function
+
+        Reviewed by Michael Saboff.
+
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+
 2013-08-16  Filip Pizlo  <fpizlo@apple.com>
 
         Object properties added using dot syntax (o.f = ...) from code that isn't in eval should be less likely to cause an object to become a dictionary
