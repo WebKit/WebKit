@@ -1077,9 +1077,12 @@ void WebContext::useTestingNetworkSession()
     ASSERT(m_processes.isEmpty());
 #if ENABLE(NETWORK_PROCESS)
     ASSERT(!m_networkProcess);
+
+    if (m_networkProcess)
+        return;
 #endif
 
-    if (!m_processes.isEmpty() || m_networkProcess)
+    if (!m_processes.isEmpty())
         return;
 
     m_shouldUseTestingNetworkSession = true;

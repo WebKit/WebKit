@@ -1,3 +1,12 @@
+2013-08-15  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Unreviewed build fix after r154142 and r154144.
+
+        * platform/efl/ErrorsEfl.cpp: Follow the changes of r154142.
+        (WebCore::printError):
+        (WebCore::printerNotFoundError):
+        (WebCore::invalidPageRangeToPrint):
+
 2013-08-15  Hans Muller  <hmuller@adobe.com>
 
         [CSS Shapes] Add support for shape-outside image values

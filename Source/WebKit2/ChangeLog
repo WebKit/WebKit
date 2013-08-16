@@ -1,3 +1,11 @@
+2013-08-15  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Unreviewed build fix after r154142 and r154144.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::useTestingNetworkSession):
+        Fixed build break when NETWORK_PROCESS is disabled after r154144.
+
 2013-08-15  Chris Fleizach  <cfleizach@apple.com>
 
         <https://webkit.org/b/119858> AX: Crash: com.apple.WebKit.WebContent at com.apple.WebKit2: WebKit::WebPage::accessibilityObjectForMainFramePlugin + 8

@@ -1,3 +1,11 @@
+2013-08-15  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Unreviewed build fix after r154142 and r154144.
+
+        * ewk/ewk_frame.cpp: Follow the changes of r154142.
+        (ewk_frame_uri_set):
+        (ewk_frame_certificate_status_get):
+
 2013-08-15  Anders Carlsson  <andersca@apple.com>
 
         <https://webkit.org/b/119859> Frame::loader() should return a reference

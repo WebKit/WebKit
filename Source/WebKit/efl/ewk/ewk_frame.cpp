@@ -340,8 +340,8 @@ Eina_Bool ewk_frame_uri_set(Evas_Object* ewkFrame, const char* uri)
     EWK_FRAME_SD_GET_OR_RETURN(ewkFrame, smartData, false);
     WebCore::KURL kurl(WebCore::KURL(), WTF::String::fromUTF8(uri));
     WebCore::ResourceRequest req(kurl);
-    WebCore::FrameLoader* loader = smartData->frame->loader();
-    loader->load(WebCore::FrameLoadRequest(smartData->frame, req));
+    smartData->frame->loader().load(WebCore::FrameLoadRequest(smartData->frame, req));
+
     return true;
 }
 
@@ -1705,14 +1705,14 @@ Ewk_Certificate_Status ewk_frame_certificate_status_get(Evas_Object* ewkFrame)
     EWK_FRAME_SD_GET_OR_RETURN(ewkFrame, smartData, EWK_CERTIFICATE_STATUS_NO_CERTIFICATE);
     EINA_SAFETY_ON_NULL_RETURN_VAL(smartData->frame, EWK_CERTIFICATE_STATUS_NO_CERTIFICATE);
 
-    const WebCore::FrameLoader* frameLoader = smartData->frame->loader();
-    const WebCore::DocumentLoader* documentLoader = frameLoader->documentLoader();
+    const WebCore::FrameLoader& frameLoader = smartData->frame->loader();
+    const WebCore::DocumentLoader* documentLoader = frameLoader.documentLoader();
     const WebCore::KURL documentURL = documentLoader->requestURL();
 
     if (!documentURL.protocolIs("https"))
         return EWK_CERTIFICATE_STATUS_NO_CERTIFICATE;
 
-    if (frameLoader->subframeIsLoading())
+    if (frameLoader.subframeIsLoading())
         return EWK_CERTIFICATE_STATUS_NO_CERTIFICATE;
 
     SoupMessage* soupMessage = documentLoader->request().toSoupMessage();

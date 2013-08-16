@@ -88,21 +88,21 @@ ResourceError downloadDestinationError(const ResourceResponse& response, const S
 
 ResourceError printError(const PrintContext* printContext, const String& errorMessage)
 {
-    DocumentLoader* documentLoader = printContext->frame()->loader()->documentLoader();
+    DocumentLoader* documentLoader = printContext->frame()->loader().documentLoader();
 
     return ResourceError(errorDomainPrint, PrintErrorGeneral, documentLoader ? documentLoader->url() : KURL(), errorMessage);
 }
 
 ResourceError printerNotFoundError(const PrintContext* printContext)
 {
-    DocumentLoader* documentLoader = printContext->frame()->loader()->documentLoader();
+    DocumentLoader* documentLoader = printContext->frame()->loader().documentLoader();
 
     return ResourceError(errorDomainPrint, PrintErrorPrinterNotFound, documentLoader ? documentLoader->url() : KURL(), ASCIILiteral("Printer not found"));
 }
 
 ResourceError invalidPageRangeToPrint(const PrintContext* printContext)
 {
-    DocumentLoader* documentLoader = printContext->frame()->loader()->documentLoader();
+    DocumentLoader* documentLoader = printContext->frame()->loader().documentLoader();
 
     return ResourceError(errorDomainPrint, PrintErrorInvalidPageRange, documentLoader ? documentLoader->url() : KURL(), ASCIILiteral("Invalid page range"));
 }
