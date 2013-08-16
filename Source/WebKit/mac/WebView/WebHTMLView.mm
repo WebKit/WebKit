@@ -1628,7 +1628,7 @@ static bool mouseEventIsPartOfClickOrDrag(NSEvent *event)
             context:[[NSApp currentEvent] context]
             eventNumber:0 clickCount:0 pressure:0];
         if (Frame* lastHitCoreFrame = core([lastHitView _frame]))
-            lastHitCoreFrame->eventHandler()->mouseMoved(event);
+            lastHitCoreFrame->eventHandler().mouseMoved(event);
     }
 
     lastHitView = view;
@@ -1641,9 +1641,9 @@ static bool mouseEventIsPartOfClickOrDrag(NSEvent *event)
             // If it is one of those cases where the page is not active and the mouse is not pressed, then we can
             // fire a much more restricted and efficient scrollbars-only version of the event.
             if ([[self window] isKeyWindow] || mouseEventIsPartOfClickOrDrag(event))
-                coreFrame->eventHandler()->mouseMoved(event);
+                coreFrame->eventHandler().mouseMoved(event);
             else
-                coreFrame->eventHandler()->passMouseMovedEventToScrollbars(event);
+                coreFrame->eventHandler().passMouseMovedEventToScrollbars(event);
         }
 
         [view release];
@@ -3067,7 +3067,7 @@ WEBCORE_COMMAND(yankAndSelect)
     [super rightMouseUp:event];
 
     if (Frame* coreframe = core([self _frame]))
-        coreframe->eventHandler()->mouseUp(event);
+        coreframe->eventHandler().mouseUp(event);
 }
 
 static void setMenuItemTarget(NSMenuItem* menuItem)
@@ -3112,8 +3112,8 @@ static void setMenuTargets(NSMenu* menu)
     // Match behavior of other browsers by sending a mousedown event for right clicks.
     _private->handlingMouseDownEvent = YES;
     page->contextMenuController()->clearContextMenu();
-    coreFrame->eventHandler()->mouseDown(event);
-    BOOL handledEvent = coreFrame->eventHandler()->sendContextMenuEvent(PlatformEventFactory::createPlatformMouseEvent(event, page->chrome().platformPageClient()));
+    coreFrame->eventHandler().mouseDown(event);
+    BOOL handledEvent = coreFrame->eventHandler().sendContextMenuEvent(PlatformEventFactory::createPlatformMouseEvent(event, page->chrome().platformPageClient()));
     _private->handlingMouseDownEvent = NO;
 
     if (!handledEvent)
@@ -3470,7 +3470,7 @@ static void setMenuTargets(NSMenu* menu)
     [[event retain] autorelease];
 
     Frame* frame = core([self _frame]);
-    if (!frame || !frame->eventHandler()->wheelEvent(event))
+    if (!frame || !frame->eventHandler().wheelEvent(event))
         [super scrollWheel:event];
 }
 
@@ -3504,12 +3504,12 @@ static void setMenuTargets(NSMenu* menu)
     if (hitHTMLView) {
         bool result = false;
         if (Frame* coreFrame = core([hitHTMLView _frame])) {
-            coreFrame->eventHandler()->setActivationEventNumber([event eventNumber]);
+            coreFrame->eventHandler().setActivationEventNumber([event eventNumber]);
             [hitHTMLView _setMouseDownEvent:event];
             if ([hitHTMLView _isSelectionEvent:event]) {
 #if ENABLE(DRAG_SUPPORT)
                 if (Page* page = coreFrame->page())
-                    result = coreFrame->eventHandler()->eventMayStartDrag(PlatformEventFactory::createPlatformMouseEvent(event, page->chrome().platformPageClient()));
+                    result = coreFrame->eventHandler().eventMayStartDrag(PlatformEventFactory::createPlatformMouseEvent(event, page->chrome().platformPageClient()));
 #endif
             } else if ([hitHTMLView _isScrollBarEvent:event])
                 result = true;
@@ -3536,7 +3536,7 @@ static void setMenuTargets(NSMenu* menu)
 #if ENABLE(DRAG_SUPPORT)
             if (Frame* coreFrame = core([hitHTMLView _frame])) {
                 if (Page* page = coreFrame->page())
-                    result = coreFrame->eventHandler()->eventMayStartDrag(PlatformEventFactory::createPlatformMouseEvent(event, page->chrome().platformPageClient()));
+                    result = coreFrame->eventHandler().eventMayStartDrag(PlatformEventFactory::createPlatformMouseEvent(event, page->chrome().platformPageClient()));
             }
 #endif
             [hitHTMLView _setMouseDownEvent:nil];
@@ -3575,7 +3575,7 @@ static void setMenuTargets(NSMenu* menu)
             // Let WebCore get a chance to deal with the event. This will call back to us
             // to start the autoscroll timer if appropriate.
             if (Frame* coreframe = core([self _frame]))
-                coreframe->eventHandler()->mouseDown(event);
+                coreframe->eventHandler().mouseDown(event);
         }
     }
 
@@ -3611,7 +3611,7 @@ static void setMenuTargets(NSMenu* menu)
     if (!_private->ignoringMouseDraggedEvents) {
         if (Frame* frame = core([self _frame])) {
             if (Page* page = frame->page())
-                page->mainFrame()->eventHandler()->mouseDragged(event);
+                page->mainFrame()->eventHandler().mouseDragged(event);
         }
     }
 
@@ -3739,7 +3739,7 @@ static bool matchesExtensionOrEquivalent(NSString *filename, NSString *extension
     [self _stopAutoscrollTimer];
     if (Frame* frame = core([self _frame])) {
         if (Page* page = frame->page())
-            page->mainFrame()->eventHandler()->mouseUp(event);
+            page->mainFrame()->eventHandler().mouseUp(event);
     }
     [self _updateMouseoverWithFakeEvent];
 
@@ -4135,7 +4135,7 @@ static PassRefPtr<KeyboardEvent> currentKeyboardEvent(Frame* coreFrame)
 
     BOOL completionPopupWasOpen = _private->completionController && [_private->completionController popupWindowIsOpen];
     Frame* coreFrame = core([self _frame]);
-    if (!eventWasSentToWebCore && coreFrame && coreFrame->eventHandler()->keyEvent(event)) {
+    if (!eventWasSentToWebCore && coreFrame && coreFrame->eventHandler().keyEvent(event)) {
         // WebCore processed a key event, bail on any preexisting complete: UI
         if (completionPopupWasOpen)
             [_private->completionController endRevertingChange:YES moveLeft:NO];
@@ -4162,7 +4162,7 @@ static PassRefPtr<KeyboardEvent> currentKeyboardEvent(Frame* coreFrame)
     RetainPtr<WebHTMLView> selfProtector = self;
     Frame* coreFrame = core([self _frame]);
     if (coreFrame && !eventWasSentToWebCore)
-        coreFrame->eventHandler()->keyEvent(event);
+        coreFrame->eventHandler().keyEvent(event);
     else
         [super keyUp:event];
 }
@@ -4181,7 +4181,7 @@ static PassRefPtr<KeyboardEvent> currentKeyboardEvent(Frame* coreFrame)
 
     // Don't make an event from the num lock and function keys.
     if (coreFrame && keyCode != 0 && keyCode != 10 && keyCode != 63) {
-        coreFrame->eventHandler()->keyEvent(PlatformEventFactory::createPlatformKeyboardEvent(event));
+        coreFrame->eventHandler().keyEvent(PlatformEventFactory::createPlatformKeyboardEvent(event));
         return;
     }
         
@@ -4421,7 +4421,7 @@ static PassRefPtr<KeyboardEvent> currentKeyboardEvent(Frame* coreFrame)
     // Pressing Esc results in a fake event being sent - don't pass it to WebCore.
     if (!eventWasSentToWebCore && event == [NSApp currentEvent] && self == [[self window] firstResponder])
         if (Frame* frame = core([self _frame]))
-            ret = frame->eventHandler()->keyEvent(event);
+            ret = frame->eventHandler().keyEvent(event);
 
     if (!ret)
         ret = [self _handleStyleKeyEquivalent:event] || [super performKeyEquivalent:event];
@@ -6069,7 +6069,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
         return nil;
     HitTestRequest::HitTestRequestType hitType = HitTestRequest::ReadOnly | HitTestRequest::Active
         | (allow ? 0 : HitTestRequest::DisallowShadowContent);
-    return [[[WebElementDictionary alloc] initWithHitTestResult:coreFrame->eventHandler()->hitTestResultAtPoint(IntPoint(point), hitType)] autorelease];
+    return [[[WebElementDictionary alloc] initWithHitTestResult:coreFrame->eventHandler().hitTestResultAtPoint(IntPoint(point), hitType)] autorelease];
 }
 
 - (NSUInteger)countMatchesForText:(NSString *)string inDOMRange:(DOMRange *)range options:(WebFindOptions)options limit:(NSUInteger)limit markMatches:(BOOL)markMatches

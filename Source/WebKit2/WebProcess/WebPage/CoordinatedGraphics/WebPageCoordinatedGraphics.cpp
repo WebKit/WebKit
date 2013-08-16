@@ -47,7 +47,7 @@ void WebPage::findZoomableAreaForPoint(const IntPoint& point, const IntSize& are
 {
     Node* node = 0;
     IntRect zoomableArea;
-    bool foundAreaForTouchPoint = m_mainFrame->coreFrame()->eventHandler()->bestZoomableAreaForTouchPoint(point, IntSize(area.width() / 2, area.height() / 2), zoomableArea, node);
+    bool foundAreaForTouchPoint = m_mainFrame->coreFrame()->eventHandler().bestZoomableAreaForTouchPoint(point, IntSize(area.width() / 2, area.height() / 2), zoomableArea, node);
 
     if (!foundAreaForTouchPoint)
         return;
@@ -65,7 +65,7 @@ void WebPage::findZoomableAreaForPoint(const IntPoint& point, const IntSize& are
 {
     UNUSED_PARAM(area);
     Frame* mainframe = m_mainFrame->coreFrame();
-    HitTestResult result = mainframe->eventHandler()->hitTestResultAtPoint(mainframe->view()->windowToContents(point), HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::IgnoreClipping | HitTestRequest::DisallowShadowContent);
+    HitTestResult result = mainframe->eventHandler().hitTestResultAtPoint(mainframe->view()->windowToContents(point), HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::IgnoreClipping | HitTestRequest::DisallowShadowContent);
 
     Node* node = result.innerNode();
 

@@ -90,7 +90,7 @@ void InspectorInputAgent::dispatchKeyEvent(ErrorString* error, const String& typ
         isSystemKey ? *isSystemKey : false,
         static_cast<PlatformEvent::Modifiers>(modifiers ? *modifiers : 0),
         timestamp ? *timestamp : currentTime());
-    m_page->mainFrame()->eventHandler()->keyEvent(event);
+    m_page->mainFrame()->eventHandler().keyEvent(event);
 }
 
 void InspectorInputAgent::dispatchMouseEvent(ErrorString* error, const String& type, int x, int y, const int* modifiers, const double* timestamp, const String* button, const int* clickCount)
@@ -140,16 +140,16 @@ void InspectorInputAgent::dispatchMouseEvent(ErrorString* error, const String& t
         convertedModifiers & PlatformEvent::MetaKey,
         timestamp ? *timestamp : currentTime());
 
-    EventHandler* handler = m_page->mainFrame()->eventHandler();
+    EventHandler& eventHandler = m_page->mainFrame()->eventHandler();
     switch (convertedType) {
     case PlatformEvent::MousePressed:
-        handler->handleMousePressEvent(event);
+        eventHandler.handleMousePressEvent(event);
         break;
     case PlatformEvent::MouseReleased:
-        handler->handleMouseReleaseEvent(event);
+        eventHandler.handleMouseReleaseEvent(event);
         break;
     case PlatformEvent::MouseMoved:
-        handler->handleMouseMoveEvent(event);
+        eventHandler.handleMouseMoveEvent(event);
         break;
     default:
         *error = "Unhandled type: " + type;

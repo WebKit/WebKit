@@ -1564,7 +1564,7 @@ WebContextMenu* WebPage::contextMenuAtPointInWindow(const IntPoint& point)
     
     // Simulate a mouse click to generate the correct menu.
     PlatformMouseEvent mouseEvent(point, point, RightButton, PlatformEvent::MousePressed, 1, false, false, false, false, currentTime());
-    bool handled = corePage()->mainFrame()->eventHandler()->sendContextMenuEvent(mouseEvent);
+    bool handled = corePage()->mainFrame()->eventHandler().sendContextMenuEvent(mouseEvent);
     if (!handled)
         return 0;
 
@@ -1619,13 +1619,13 @@ static bool isContextClick(const PlatformMouseEvent& event)
 static bool handleContextMenuEvent(const PlatformMouseEvent& platformMouseEvent, WebPage* page)
 {
     IntPoint point = page->corePage()->mainFrame()->view()->windowToContents(platformMouseEvent.position());
-    HitTestResult result = page->corePage()->mainFrame()->eventHandler()->hitTestResultAtPoint(point);
+    HitTestResult result = page->corePage()->mainFrame()->eventHandler().hitTestResultAtPoint(point);
 
     Frame* frame = page->corePage()->mainFrame();
     if (result.innerNonSharedNode())
         frame = result.innerNonSharedNode()->document()->frame();
     
-    bool handled = frame->eventHandler()->sendContextMenuEvent(platformMouseEvent);
+    bool handled = frame->eventHandler().sendContextMenuEvent(platformMouseEvent);
     if (handled)
         page->contextMenu()->show();
 
@@ -1648,7 +1648,7 @@ static bool handleMouseEvent(const WebMouseEvent& mouseEvent, WebPage* page, boo
                 page->corePage()->contextMenuController()->clearContextMenu();
 #endif
 
-            bool handled = frame->eventHandler()->handleMousePressEvent(platformMouseEvent);
+            bool handled = frame->eventHandler().handleMousePressEvent(platformMouseEvent);
 #if ENABLE(CONTEXT_MENUS)
             if (isContextClick(platformMouseEvent))
                 handled = handleContextMenuEvent(platformMouseEvent, page);
@@ -1656,12 +1656,12 @@ static bool handleMouseEvent(const WebMouseEvent& mouseEvent, WebPage* page, boo
             return handled;
         }
         case PlatformEvent::MouseReleased:
-            return frame->eventHandler()->handleMouseReleaseEvent(platformMouseEvent);
+            return frame->eventHandler().handleMouseReleaseEvent(platformMouseEvent);
 
         case PlatformEvent::MouseMoved:
             if (onlyUpdateScrollbars)
-                return frame->eventHandler()->passMouseMovedEventToScrollbars(platformMouseEvent);
-            return frame->eventHandler()->mouseMoved(platformMouseEvent);
+                return frame->eventHandler().passMouseMovedEventToScrollbars(platformMouseEvent);
+            return frame->eventHandler().mouseMoved(platformMouseEvent);
         default:
             ASSERT_NOT_REACHED();
             return false;
@@ -1741,7 +1741,7 @@ static bool handleWheelEvent(const WebWheelEvent& wheelEvent, Page* page)
         return false;
 
     PlatformWheelEvent platformWheelEvent = platform(wheelEvent);
-    return frame->eventHandler()->handleWheelEvent(platformWheelEvent);
+    return frame->eventHandler().handleWheelEvent(platformWheelEvent);
 }
 
 void WebPage::wheelEvent(const WebWheelEvent& wheelEvent)
@@ -1769,8 +1769,8 @@ static bool handleKeyEvent(const WebKeyboardEvent& keyboardEvent, Page* page)
         return false;
 
     if (keyboardEvent.type() == WebEvent::Char && keyboardEvent.isSystemKey())
-        return page->focusController().focusedOrMainFrame()->eventHandler()->handleAccessKey(platform(keyboardEvent));
-    return page->focusController().focusedOrMainFrame()->eventHandler()->keyEvent(platform(keyboardEvent));
+        return page->focusController().focusedOrMainFrame()->eventHandler().handleAccessKey(platform(keyboardEvent));
+    return page->focusController().focusedOrMainFrame()->eventHandler().keyEvent(platform(keyboardEvent));
 }
 
 void WebPage::keyEvent(const WebKeyboardEvent& keyboardEvent)
@@ -1805,7 +1805,7 @@ static bool handleGestureEvent(const WebGestureEvent& gestureEvent, Page* page)
         return false;
 
     PlatformGestureEvent platformGestureEvent = platform(gestureEvent);
-    return frame->eventHandler()->handleGestureEvent(platformGestureEvent);
+    return frame->eventHandler().handleGestureEvent(platformGestureEvent);
 }
 
 void WebPage::gestureEvent(const WebGestureEvent& gestureEvent)
@@ -1914,11 +1914,11 @@ void WebPage::highlightPotentialActivation(const IntPoint& point, const IntSize&
         IntPoint adjustedPoint;
 
 #if ENABLE(TOUCH_ADJUSTMENT)
-        if (!mainframe->eventHandler()->bestClickableNodeForTouchPoint(point, IntSize(area.width() / 2, area.height() / 2), adjustedPoint, adjustedNode))
+        if (!mainframe->eventHandler().bestClickableNodeForTouchPoint(point, IntSize(area.width() / 2, area.height() / 2), adjustedPoint, adjustedNode))
             return;
 
 #else
-        HitTestResult result = mainframe->eventHandler()->hitTestResultAtPoint(mainframe->view()->windowToContents(point), HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::IgnoreClipping | HitTestRequest::DisallowShadowContent);
+        HitTestResult result = mainframe->eventHandler().hitTestResultAtPoint(mainframe->view()->windowToContents(point), HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::IgnoreClipping | HitTestRequest::DisallowShadowContent);
         adjustedNode = result.innerNode();
 #endif
         // Find the node to highlight. This is not the same as the node responding the tap gesture, because many
@@ -1953,7 +1953,7 @@ static bool handleTouchEvent(const WebTouchEvent& touchEvent, Page* page)
     if (!frame->view())
         return false;
 
-    return frame->eventHandler()->handleTouchEvent(platform(touchEvent));
+    return frame->eventHandler().handleTouchEvent(platform(touchEvent));
 }
 
 void WebPage::touchEvent(const WebTouchEvent& touchEvent)
@@ -1977,12 +1977,12 @@ void WebPage::touchEventSyncForTesting(const WebTouchEvent& touchEvent, bool& ha
 
 bool WebPage::scroll(Page* page, ScrollDirection direction, ScrollGranularity granularity)
 {
-    return page->focusController().focusedOrMainFrame()->eventHandler()->scrollRecursively(direction, granularity);
+    return page->focusController().focusedOrMainFrame()->eventHandler().scrollRecursively(direction, granularity);
 }
 
 bool WebPage::logicalScroll(Page* page, ScrollLogicalDirection direction, ScrollGranularity granularity)
 {
-    return page->focusController().focusedOrMainFrame()->eventHandler()->logicalScrollRecursively(direction, granularity);
+    return page->focusController().focusedOrMainFrame()->eventHandler().logicalScrollRecursively(direction, granularity);
 }
 
 bool WebPage::scrollBy(uint32_t scrollDirection, uint32_t scrollGranularity)
@@ -2770,7 +2770,7 @@ void WebPage::dragEnded(WebCore::IntPoint clientPosition, WebCore::IntPoint glob
         return;
     // FIXME: These are fake modifier keys here, but they should be real ones instead.
     PlatformMouseEvent event(adjustedClientPosition, adjustedGlobalPosition, LeftButton, PlatformEvent::MouseMoved, 0, false, false, false, false, currentTime());
-    m_page->mainFrame()->eventHandler()->dragSourceEndedAt(event, (DragOperation)operation);
+    m_page->mainFrame()->eventHandler().dragSourceEndedAt(event, (DragOperation)operation);
 }
 
 void WebPage::willPerformLoadDragDestinationAction()

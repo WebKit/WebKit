@@ -1321,7 +1321,7 @@ void HTMLSelectElement::listBoxDefaultEventHandler(Event* event)
 #endif
             }
             if (Frame* frame = document()->frame())
-                frame->eventHandler()->setMouseDownMayStartAutoscroll();
+                frame->eventHandler().setMouseDownMayStartAutoscroll();
 
             event->setDefaultHandled();
         }
@@ -1349,7 +1349,7 @@ void HTMLSelectElement::listBoxDefaultEventHandler(Event* event)
             }
             event->setDefaultHandled();
         }
-    } else if (event->type() == eventNames().mouseupEvent && event->isMouseEvent() && static_cast<MouseEvent*>(event)->button() == LeftButton && document()->frame()->eventHandler()->autoscrollRenderer() != renderer()) {
+    } else if (event->type() == eventNames().mouseupEvent && event->isMouseEvent() && static_cast<MouseEvent*>(event)->button() == LeftButton && document()->frame()->eventHandler().autoscrollRenderer() != renderer()) {
         // This click or drag event was not over any of the options.
         if (m_lastOnChangeSelection.isEmpty())
             return;

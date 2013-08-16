@@ -233,7 +233,7 @@ RenderLayer::~RenderLayer()
 {
     if (inResizeMode() && !renderer()->documentBeingDestroyed()) {
         if (Frame* frame = renderer()->frame())
-            frame->eventHandler()->resizeLayerDestroyed();
+            frame->eventHandler().resizeLayerDestroyed();
     }
 
     if (Frame* frame = renderer()->frame()) {
@@ -2108,7 +2108,7 @@ void RenderLayer::panScrollFromPoint(const IntPoint& sourcePoint)
     if (!frame)
         return;
     
-    IntPoint lastKnownMousePosition = frame->eventHandler()->lastKnownMousePosition();
+    IntPoint lastKnownMousePosition = frame->eventHandler().lastKnownMousePosition();
     
     // We need to check if the last known mouse position is out of the window. When the mouse is out of the window, the position is incoherent
     static IntPoint previousMousePosition;
@@ -2148,7 +2148,7 @@ void RenderLayer::scrollByRecursively(const IntSize& delta, ScrollOffsetClamping
 
             Frame* frame = renderer()->frame();
             if (frame)
-                frame->eventHandler()->updateAutoscrollRenderer();
+                frame->eventHandler().updateAutoscrollRenderer();
         }
     } else if (renderer()->view()->frameView()) {
         // If we are here, we were called on a renderer that can be programmatically scrolled, but doesn't
@@ -2241,7 +2241,7 @@ void RenderLayer::scrollTo(int x, int y)
         FloatQuad quadForFakeMouseMoveEvent = FloatQuad(m_repaintRect);
         if (repaintContainer)
             quadForFakeMouseMoveEvent = repaintContainer->localToAbsoluteQuad(quadForFakeMouseMoveEvent);
-        frame->eventHandler()->dispatchFakeMouseMoveEventSoonInQuad(quadForFakeMouseMoveEvent);
+        frame->eventHandler().dispatchFakeMouseMoveEventSoonInQuad(quadForFakeMouseMoveEvent);
     }
 
     bool requiresRepaint = true;
@@ -2276,7 +2276,7 @@ static inline bool frameElementAndViewPermitScroll(HTMLFrameElementBase* frameEl
 
     // Forbid autoscrolls when scrollbars are off, but permits other programmatic scrolls,
     // like navigation to an anchor.
-    return !frameView->frame()->eventHandler()->autoscrollInProgress();
+    return !frameView->frame()->eventHandler().autoscrollInProgress();
 }
 
 void RenderLayer::scrollRectToVisible(const LayoutRect& rect, const ScrollAlignment& alignX, const ScrollAlignment& alignY)
@@ -2499,7 +2499,7 @@ void RenderLayer::resize(const PlatformMouseEvent& evt, const LayoutSize& oldOff
     RenderBox* renderer = toRenderBox(element->renderer());
 
     Document* document = element->document();
-    if (!document->frame()->eventHandler()->mousePressed())
+    if (!document->frame()->eventHandler().mousePressed())
         return;
 
     float zoomFactor = renderer->style()->effectiveZoom();
@@ -2762,12 +2762,12 @@ bool RenderLayer::scrollbarsCanBeActive() const
 
 IntPoint RenderLayer::lastKnownMousePosition() const
 {
-    return renderer()->frame() ? renderer()->frame()->eventHandler()->lastKnownMousePosition() : IntPoint();
+    return renderer()->frame() ? renderer()->frame()->eventHandler().lastKnownMousePosition() : IntPoint();
 }
 
 bool RenderLayer::isHandlingWheelEvent() const
 {
-    return renderer()->frame() ? renderer()->frame()->eventHandler()->isHandlingWheelEvent() : false;
+    return renderer()->frame() ? renderer()->frame()->eventHandler().isHandlingWheelEvent() : false;
 }
 
 IntRect RenderLayer::rectForHorizontalScrollbar(const IntRect& borderBoxRect) const

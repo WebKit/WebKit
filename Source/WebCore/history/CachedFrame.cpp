@@ -76,7 +76,7 @@ CachedFrameBase::CachedFrameBase(Frame* frame)
     : m_document(frame->document())
     , m_documentLoader(frame->loader().documentLoader())
     , m_view(frame->view())
-    , m_mousePressNode(frame->eventHandler()->mousePressNode())
+    , m_mousePressNode(frame->eventHandler().mousePressNode())
     , m_url(frame->document()->url())
     , m_isMainFrame(!frame->tree()->parent())
 #if USE(ACCELERATED_COMPOSITING)
@@ -110,7 +110,7 @@ void CachedFrameBase::restore()
 #endif
 
     frame->animation()->resumeAnimationsForDocument(m_document.get());
-    frame->eventHandler()->setMousePressNode(m_mousePressNode.get());
+    frame->eventHandler().setMousePressNode(m_mousePressNode.get());
     m_document->resumeActiveDOMObjects(ActiveDOMObject::DocumentWillBecomeInactive);
     m_document->resumeScriptedAnimationControllerCallbacks();
 

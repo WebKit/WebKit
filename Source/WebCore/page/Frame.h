@@ -115,7 +115,7 @@ namespace WebCore {
         FrameView* view() const;
 
         Editor& editor() const;
-        EventHandler* eventHandler() const;
+        EventHandler& eventHandler() const;
         FrameLoader& loader() const;
         NavigationScheduler* navigationScheduler() const;
         FrameSelection* selection() const;
@@ -221,7 +221,7 @@ namespace WebCore {
         OwnPtr<ScriptController> m_script;
         const OwnPtr<Editor> m_editor;
         OwnPtr<FrameSelection> m_selection;
-        OwnPtr<EventHandler> m_eventHandler;
+        const OwnPtr<EventHandler> m_eventHandler;
         OwnPtr<AnimationController> m_animationController;
 
         float m_pageZoomFactor;
@@ -330,9 +330,9 @@ namespace WebCore {
         m_page = 0;
     }
 
-    inline EventHandler* Frame::eventHandler() const
+    inline EventHandler& Frame::eventHandler() const
     {
-        return m_eventHandler.get();
+        return *m_eventHandler;
     }
 
 } // namespace WebCore

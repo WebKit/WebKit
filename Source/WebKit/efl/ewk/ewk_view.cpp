@@ -1612,10 +1612,10 @@ Eina_Bool ewk_view_context_menu_forward_event(Evas_Object* ewkView, const Evas_E
 
     if (mainFrame->view()) {
         mouse_press_handled =
-            mainFrame->eventHandler()->handleMousePressEvent(event);
+            mainFrame->eventHandler().handleMousePressEvent(event);
     }
 
-    if (!mainFrame->eventHandler()->sendContextMenuEvent(event))
+    if (!mainFrame->eventHandler().sendContextMenuEvent(event))
         return false;
 
     WebCore::ContextMenu* coreMenu =

@@ -450,13 +450,10 @@ void QWebPageAdapter::adjustPointForClicking(QMouseEvent* ev)
     if (!topPadding && !rightPadding && !bottomPadding && !leftPadding)
         return;
 
-    EventHandler* eventHandler = page->mainFrame()->eventHandler();
-    ASSERT(eventHandler);
-
     IntRect touchRect(ev->pos().x() - leftPadding, ev->pos().y() - topPadding, leftPadding + rightPadding, topPadding + bottomPadding);
     IntPoint adjustedPoint;
     Node* adjustedNode;
-    bool foundClickableNode = eventHandler->bestClickableNodeForTouchPoint(touchRect.center(), touchRect.size(), adjustedPoint, adjustedNode);
+    bool foundClickableNode = page->mainFrame()->eventHandler().bestClickableNodeForTouchPoint(touchRect.center(), touchRect.size(), adjustedPoint, adjustedNode);
     if (!foundClickableNode)
         return;
 
@@ -474,7 +471,7 @@ void QWebPageAdapter::mouseMoveEvent(QMouseEvent* ev)
     if (!frame->view())
         return;
 
-    bool accepted = frame->eventHandler()->mouseMoved(convertMouseEvent(ev, 0));
+    bool accepted = frame->eventHandler().mouseMoved(convertMouseEvent(ev, 0));
     ev->setAccepted(accepted);
 }
 
@@ -499,7 +496,7 @@ void QWebPageAdapter::mousePressEvent(QMouseEvent* ev)
     PlatformMouseEvent mev = convertMouseEvent(ev, 1);
     // ignore the event if we can't map Qt's mouse buttons to WebCore::MouseButton
     if (mev.button() != NoButton)
-        accepted = frame->eventHandler()->handleMousePressEvent(mev);
+        accepted = frame->eventHandler().handleMousePressEvent(mev);
     ev->setAccepted(accepted);
 
     RefPtr<WebCore::Node> newNode;
@@ -521,7 +518,7 @@ void QWebPageAdapter::mouseDoubleClickEvent(QMouseEvent *ev)
     PlatformMouseEvent mev = convertMouseEvent(ev, 2);
     // ignore the event if we can't map Qt's mouse buttons to WebCore::MouseButton
     if (mev.button() != NoButton)
-        accepted = frame->eventHandler()->handleMousePressEvent(mev);
+        accepted = frame->eventHandler().handleMousePressEvent(mev);
     ev->setAccepted(accepted);
 
     tripleClickTimer.start(qGuiApp->styleHints()->mouseDoubleClickInterval(), handle());
@@ -538,7 +535,7 @@ void QWebPageAdapter::mouseTripleClickEvent(QMouseEvent *ev)
     PlatformMouseEvent mev = convertMouseEvent(ev, 3);
     // ignore the event if we can't map Qt's mouse buttons to WebCore::MouseButton
     if (mev.button() != NoButton)
-        accepted = frame->eventHandler()->handleMousePressEvent(mev);
+        accepted = frame->eventHandler().handleMousePressEvent(mev);
     ev->setAccepted(accepted);
 }
 
@@ -552,7 +549,7 @@ void QWebPageAdapter::mouseReleaseEvent(QMouseEvent *ev)
     PlatformMouseEvent mev = convertMouseEvent(ev, 0);
     // ignore the event if we can't map Qt's mouse buttons to WebCore::MouseButton
     if (mev.button() != NoButton)
-        accepted = frame->eventHandler()->handleMouseReleaseEvent(mev);
+        accepted = frame->eventHandler().handleMouseReleaseEvent(mev);
     ev->setAccepted(accepted);
 
     handleSoftwareInputPanel(ev->button(), QPointF(ev->pos()).toPoint());
@@ -568,7 +565,7 @@ void QWebPageAdapter::handleSoftwareInputPanel(Qt::MouseButton button, const QPo
         && frame->document()->focusedElement()
             && button == Qt::LeftButton && qGuiApp->property("autoSipEnabled").toBool()) {
         if (!clickCausedFocus || requestSoftwareInputPanel()) {
-            HitTestResult result = frame->eventHandler()->hitTestResultAtPoint(frame->view()->windowToContents(pos));
+            HitTestResult result = frame->eventHandler().hitTestResultAtPoint(frame->view()->windowToContents(pos));
             if (result.isContentEditable()) {
                 QEvent event(QEvent::RequestSoftwareInputPanel);
                 QGuiApplication::sendEvent(client->ownerWidget(), &event);
@@ -587,7 +584,7 @@ void QWebPageAdapter::wheelEvent(QWheelEvent *ev, int wheelScrollLines)
         return;
 
     PlatformWheelEvent pev = convertWheelEvent(ev, wheelScrollLines);
-    bool accepted = frame->eventHandler()->handleWheelEvent(pev);
+    bool accepted = frame->eventHandler().handleWheelEvent(pev);
     ev->setAccepted(accepted);
 }
 #endif // QT_NO_WHEELEVENT
@@ -911,7 +908,7 @@ QWebHitTestResultPrivate* QWebPageAdapter::updatePositionDependentMenuActions(co
 {
     ASSERT(visitedWebActions);
     WebCore::Frame* focusedFrame = page->focusController().focusedOrMainFrame();
-    HitTestResult result = focusedFrame->eventHandler()->hitTestResultAtPoint(focusedFrame->view()->windowToContents(pos));
+    HitTestResult result = focusedFrame->eventHandler().hitTestResultAtPoint(focusedFrame->view()->windowToContents(pos));
     page->contextMenuController()->setHitTestResult(result);
 
 #if ENABLE(INSPECTOR)
@@ -1297,7 +1294,7 @@ QWebPageAdapter::ViewportAttributes QWebPageAdapter::viewportAttributesForSize(c
 bool QWebPageAdapter::handleKeyEvent(QKeyEvent *ev)
 {
     Frame* frame = page->focusController().focusedOrMainFrame();
-    return frame->eventHandler()->keyEvent(PlatformKeyboardEvent(ev, m_useNativeVirtualKeyAsDOMKey));
+    return frame->eventHandler().keyEvent(PlatformKeyboardEvent(ev, m_useNativeVirtualKeyAsDOMKey));
 }
 
 bool QWebPageAdapter::handleScrolling(QKeyEvent *ev)
@@ -1344,7 +1341,7 @@ bool QWebPageAdapter::handleScrolling(QKeyEvent *ev)
         }
     }
 
-    return frame->eventHandler()->scrollRecursively(direction, granularity);
+    return frame->eventHandler().scrollRecursively(direction, granularity);
 }
 
 void QWebPageAdapter::focusInEvent(QFocusEvent *)
@@ -1411,7 +1408,7 @@ bool QWebPageAdapter::touchEvent(QTouchEvent* event)
     event->setAccepted(true);
 
     // Return whether the default action was cancelled in the JS event handler
-    return frame->eventHandler()->handleTouchEvent(convertTouchEvent(event));
+    return frame->eventHandler().handleTouchEvent(convertTouchEvent(event));
 #else
     event->ignore();
     return false;
@@ -1453,7 +1450,7 @@ bool QWebPageAdapter::swallowContextMenuEvent(QContextMenuEvent *event, QWebFram
     }
 
     WebCore::Frame* focusedFrame = page->focusController().focusedOrMainFrame();
-    focusedFrame->eventHandler()->sendContextMenuEvent(convertMouseEvent(event, 1));
+    focusedFrame->eventHandler().sendContextMenuEvent(convertMouseEvent(event, 1));
     ContextMenu* menu = page->contextMenuController()->contextMenu();
     // If the website defines its own handler then sendContextMenuEvent takes care of
     // calling/showing it and the context menu pointer will be zero. This is the case

@@ -713,7 +713,7 @@ void RenderFrameSet::setIsResizing(bool isResizing)
             toRenderFrameSet(ancestor)->m_isChildResizing = isResizing;
     }
     if (Frame* frame = this->frame())
-        frame->eventHandler()->setResizingFrameSet(isResizing ? frameSet() : 0);
+        frame->eventHandler().setResizingFrameSet(isResizing ? frameSet() : 0);
 }
 
 bool RenderFrameSet::isResizingRow() const

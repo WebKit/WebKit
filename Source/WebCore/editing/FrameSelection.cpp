@@ -1720,7 +1720,7 @@ void FrameSelection::focusedOrActiveStateChanged()
     setCaretVisibility(activeAndFocused ? Visible : Hidden);
 
     // Update for caps lock state
-    m_frame->eventHandler()->capsLockStateMayHaveChanged();
+    m_frame->eventHandler().capsLockStateMayHaveChanged();
 
     // Because StyleResolver::checkOneSelector() and
     // RenderTheme::isFocused() check if the frame is active, we have to

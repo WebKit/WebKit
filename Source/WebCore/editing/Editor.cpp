@@ -937,12 +937,12 @@ void Editor::clear()
 
 bool Editor::insertText(const String& text, Event* triggeringEvent)
 {
-    return m_frame->eventHandler()->handleTextInputEvent(text, triggeringEvent);
+    return m_frame->eventHandler().handleTextInputEvent(text, triggeringEvent);
 }
 
 bool Editor::insertTextForConfirmedComposition(const String& text)
 {
-    return m_frame->eventHandler()->handleTextInputEvent(text, 0, TextEventInputComposition);
+    return m_frame->eventHandler().handleTextInputEvent(text, 0, TextEventInputComposition);
 }
 
 bool Editor::insertDictatedText(const String& text, const Vector<DictationAlternative>& dictationAlternatives, Event* triggeringEvent)

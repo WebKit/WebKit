@@ -99,7 +99,7 @@ void HTMLPlugInElement::detach(const AttachContext& context)
 
     if (m_isCapturingMouseEvents) {
         if (Frame* frame = document()->frame())
-            frame->eventHandler()->setCapturingMouseEventsNode(0);
+            frame->eventHandler().setCapturingMouseEventsNode(0);
         m_isCapturingMouseEvents = false;
     }
 

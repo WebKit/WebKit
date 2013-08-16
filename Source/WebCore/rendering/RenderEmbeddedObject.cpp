@@ -616,7 +616,7 @@ void RenderEmbeddedObject::handleUnavailablePluginIndicatorEvent(Event* event)
         m_mouseDownWasInUnavailablePluginIndicator = isInUnavailablePluginIndicator(mouseEvent);
         if (m_mouseDownWasInUnavailablePluginIndicator) {
             if (Frame* frame = document()->frame()) {
-                frame->eventHandler()->setCapturingMouseEventsNode(element);
+                frame->eventHandler().setCapturingMouseEventsNode(element);
                 element->setIsCapturingMouseEvents(true);
             }
             setUnavailablePluginIndicatorIsPressed(true);
@@ -626,7 +626,7 @@ void RenderEmbeddedObject::handleUnavailablePluginIndicatorEvent(Event* event)
     if (event->type() == eventNames().mouseupEvent && static_cast<MouseEvent*>(event)->button() == LeftButton) {
         if (m_unavailablePluginIndicatorIsPressed) {
             if (Frame* frame = document()->frame()) {
-                frame->eventHandler()->setCapturingMouseEventsNode(0);
+                frame->eventHandler().setCapturingMouseEventsNode(0);
                 element->setIsCapturingMouseEvents(false);
             }
             setUnavailablePluginIndicatorIsPressed(false);

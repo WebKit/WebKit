@@ -57,13 +57,13 @@ bool WebViewInputMethodFilter::canEdit()
 bool WebViewInputMethodFilter::sendSimpleKeyEvent(GdkEventKey* event, WTF::String simpleString, EventFakedForComposition)
 {
     PlatformKeyboardEvent platformEvent(event, CompositionResults(simpleString));
-    return focusedOrMainFrame()->eventHandler()->keyEvent(platformEvent);
+    return focusedOrMainFrame()->eventHandler().keyEvent(platformEvent);
 }
 
 bool WebViewInputMethodFilter::sendKeyEventWithCompositionResults(GdkEventKey* event, ResultsToSend resultsToSend, EventFakedForComposition)
 {
     PlatformKeyboardEvent platformEvent(event, CompositionResults(CompositionResults::WillSendCompositionResultsSoon));
-    if (!focusedOrMainFrame()->eventHandler()->keyEvent(platformEvent))
+    if (!focusedOrMainFrame()->eventHandler().keyEvent(platformEvent))
         return false;
 
     if (resultsToSend & Composition && !m_confirmedComposition.isNull())

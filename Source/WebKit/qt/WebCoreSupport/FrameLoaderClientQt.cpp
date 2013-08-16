@@ -582,11 +582,11 @@ void FrameLoaderClientQt::postProgressFinishedNotification()
     // Send a mousemove event to:
     // (1) update the cursor to change according to whatever is underneath the mouse cursor right now;
     // (2) display the tool tip if the mouse hovers a node which has a tool tip.
-    if (m_frame && m_frame->eventHandler() && m_webFrame) {
+    if (m_frame && m_webFrame) {
         QPoint localPos;
         if (m_webFrame->handleProgressFinished(&localPos)) {
             QMouseEvent event(QEvent::MouseMove, localPos, Qt::NoButton, Qt::NoButton, Qt::NoModifier);
-            m_frame->eventHandler()->mouseMoved(convertMouseEvent(&event, 0));
+            m_frame->eventHandler().mouseMoved(convertMouseEvent(&event, 0));
         }
     }
 }
@@ -1248,8 +1248,7 @@ void FrameLoaderClientQt::dispatchDecidePolicyForNavigationAction(FramePolicyFun
         for (const Event* event = action.event(); event; event = event->underlyingEvent()) {
             if (event->isMouseEvent()) {
                 const MouseEvent* mouseEvent =  static_cast<const MouseEvent*>(event);
-                node = m_webFrame->frame->eventHandler()->hitTestResultAtPoint(
-                    mouseEvent->absoluteLocation()).innerNonSharedNode();
+                node = m_webFrame->frame->eventHandler().hitTestResultAtPoint(mouseEvent->absoluteLocation()).innerNonSharedNode();
                 break;
             }
         }

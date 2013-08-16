@@ -943,7 +943,7 @@ void DOMWindow::focus(ScriptExecutionContext* context)
     if (focusedFrame && focusedFrame != m_frame)
         focusedFrame->document()->setFocusedElement(0);
 
-    m_frame->eventHandler()->focusDocumentView();
+    m_frame->eventHandler().focusDocumentView();
 }
 
 void DOMWindow::blur()
@@ -1486,7 +1486,7 @@ bool DOMWindow::allowedToChangeWindowGeometry() const
     if (m_frame != page->mainFrame())
         return false;
     // Prevent web content from tricking the user into initiating a drag.
-    if (m_frame->eventHandler()->mousePressed())
+    if (m_frame->eventHandler().mousePressed())
         return false;
     return true;
 }

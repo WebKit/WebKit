@@ -98,7 +98,7 @@ void WebDragClient::startDrag(DragImageRef dragImage, const IntPoint& at, const 
     if (![htmlView.get() isKindOfClass:[WebHTMLView class]])
         return;
     
-    NSEvent *event = linkDrag ? frame->eventHandler()->currentNSEvent() : [htmlView.get() _mouseDownEvent];
+    NSEvent *event = linkDrag ? frame->eventHandler().currentNSEvent() : [htmlView.get() _mouseDownEvent];
     WebHTMLView* topHTMLView = getTopHTMLView(frame);
     RetainPtr<WebHTMLView> topViewProtector = topHTMLView;
     

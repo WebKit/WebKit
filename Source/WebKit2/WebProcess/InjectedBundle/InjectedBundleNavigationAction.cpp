@@ -92,7 +92,7 @@ InjectedBundleNavigationAction::InjectedBundleNavigationAction(WebFrame* frame, 
     , m_mouseButton(WebMouseEvent::NoButton)
 {
     if (const MouseEvent* mouseEvent = mouseEventForNavigationAction(navigationAction)) {
-        m_hitTestResult = InjectedBundleHitTestResult::create(frame->coreFrame()->eventHandler()->hitTestResultAtPoint(mouseEvent->absoluteLocation()));
+        m_hitTestResult = InjectedBundleHitTestResult::create(frame->coreFrame()->eventHandler().hitTestResultAtPoint(mouseEvent->absoluteLocation()));
         m_mouseButton   = mouseButtonForMouseEvent(mouseEvent);
     }
 

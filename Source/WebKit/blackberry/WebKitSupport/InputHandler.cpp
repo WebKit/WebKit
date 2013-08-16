@@ -1855,14 +1855,14 @@ bool InputHandler::handleKeyboardInput(const Platform::KeyboardEvent& keyboardEv
         }
 
         Platform::KeyboardEvent adjustedKeyboardEvent(keyboardEvent.character(), type, adjustedModifiers, keyboardEvent.keycode(), keyboardEvent.alternateCharacter(), keyboardEvent.sourceDevice());
-        keyboardEventHandled = focusedFrame->eventHandler()->keyEvent(PlatformKeyboardEvent(adjustedKeyboardEvent));
+        keyboardEventHandled = focusedFrame->eventHandler().keyEvent(PlatformKeyboardEvent(adjustedKeyboardEvent));
 
         m_shouldNotifyWebView = true;
 
         if (isKeyChar) {
             type = Platform::KeyboardEvent::KeyUp;
             adjustedKeyboardEvent = Platform::KeyboardEvent(keyboardEvent.character(), type, adjustedModifiers, keyboardEvent.keycode(), keyboardEvent.alternateCharacter(), keyboardEvent.sourceDevice());
-            keyboardEventHandled = focusedFrame->eventHandler()->keyEvent(PlatformKeyboardEvent(adjustedKeyboardEvent)) || keyboardEventHandled;
+            keyboardEventHandled = focusedFrame->eventHandler().keyEvent(PlatformKeyboardEvent(adjustedKeyboardEvent)) || keyboardEventHandled;
         }
 
         if (!changeIsPartOfComposition && type == Platform::KeyboardEvent::KeyUp)

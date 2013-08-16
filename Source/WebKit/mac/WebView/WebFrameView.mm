@@ -564,7 +564,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
     Frame* frame = core([self webFrame]);
     if (!frame)
         return NO;
-    return frame->eventHandler()->scrollOverflow(direction, granularity);
+    return frame->eventHandler().scrollOverflow(direction, granularity);
 }
 
 

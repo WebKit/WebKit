@@ -1337,7 +1337,7 @@ bool WebView::handleContextMenuEvent(WPARAM wParam, LPARAM lParam)
         m_page->contextMenuController()->clearContextMenu();
 
         Frame* focusedFrame = m_page->focusController().focusedOrMainFrame();
-        return focusedFrame->eventHandler()->sendContextMenuEventForKey();
+        return focusedFrame->eventHandler().sendContextMenuEventForKey();
 
     } else {
         if (!::ScreenToClient(m_viewWindow, &coords))
@@ -1349,12 +1349,12 @@ bool WebView::handleContextMenuEvent(WPARAM wParam, LPARAM lParam)
     m_page->contextMenuController()->clearContextMenu();
 
     IntPoint documentPoint(m_page->mainFrame()->view()->windowToContents(coords));
-    HitTestResult result = m_page->mainFrame()->eventHandler()->hitTestResultAtPoint(documentPoint);
+    HitTestResult result = m_page->mainFrame()->eventHandler().hitTestResultAtPoint(documentPoint);
     Frame* targetFrame = result.innerNonSharedNode() ? result.innerNonSharedNode()->document()->frame() : m_page->focusController().focusedOrMainFrame();
 
     targetFrame->view()->setCursor(pointerCursor());
     PlatformMouseEvent mouseEvent(m_viewWindow, WM_RBUTTONUP, wParam, lParam);
-    bool handledEvent = targetFrame->eventHandler()->sendContextMenuEvent(mouseEvent);
+    bool handledEvent = targetFrame->eventHandler().sendContextMenuEvent(mouseEvent);
     if (!handledEvent)
         return false;
 
@@ -1478,7 +1478,7 @@ bool WebView::handleMouseEvent(UINT message, WPARAM wParam, LPARAM lParam)
     static LONG globalPrevMouseDownTime;
 
     if (message == WM_CANCELMODE) {
-        m_page->mainFrame()->eventHandler()->lostMouseCapture();
+        m_page->mainFrame()->eventHandler().lostMouseCapture();
         return true;
     }
 
@@ -1517,29 +1517,29 @@ bool WebView::handleMouseEvent(UINT message, WPARAM wParam, LPARAM lParam)
         globalPrevPoint = mouseEvent.position();
         
         mouseEvent.setClickCount(globalClickCount);
-        handled = m_page->mainFrame()->eventHandler()->handleMousePressEvent(mouseEvent);
+        handled = m_page->mainFrame()->eventHandler().handleMousePressEvent(mouseEvent);
     } else if (message == WM_LBUTTONDBLCLK || message == WM_MBUTTONDBLCLK || message == WM_RBUTTONDBLCLK) {
         globalClickCount++;
         mouseEvent.setClickCount(globalClickCount);
-        handled = m_page->mainFrame()->eventHandler()->handleMousePressEvent(mouseEvent);
+        handled = m_page->mainFrame()->eventHandler().handleMousePressEvent(mouseEvent);
     } else if (message == WM_LBUTTONUP || message == WM_MBUTTONUP || message == WM_RBUTTONUP) {
         // Record the global position and the button of the up.
         globalPrevButton = mouseEvent.button();
         globalPrevPoint = mouseEvent.position();
         mouseEvent.setClickCount(globalClickCount);
-        m_page->mainFrame()->eventHandler()->handleMouseReleaseEvent(mouseEvent);
+        m_page->mainFrame()->eventHandler().handleMouseReleaseEvent(mouseEvent);
         ::ReleaseCapture();
     } else if (message == WM_MOUSELEAVE && m_mouseOutTracker) {
         // Once WM_MOUSELEAVE is fired windows clears this tracker
         // so there is no need to disable it ourselves.
         m_mouseOutTracker.clear();
-        m_page->mainFrame()->eventHandler()->mouseMoved(mouseEvent);
+        m_page->mainFrame()->eventHandler().mouseMoved(mouseEvent);
         handled = true;
     } else if (message == WM_MOUSEMOVE) {
         if (!insideThreshold)
             globalClickCount = 0;
         mouseEvent.setClickCount(globalClickCount);
-        handled = m_page->mainFrame()->eventHandler()->mouseMoved(mouseEvent);
+        handled = m_page->mainFrame()->eventHandler().mouseMoved(mouseEvent);
         if (!m_mouseOutTracker) {
             m_mouseOutTracker = adoptPtr(new TRACKMOUSEEVENT);
             m_mouseOutTracker->cbSize = sizeof(TRACKMOUSEEVENT);
@@ -1759,7 +1759,7 @@ bool WebView::mouseWheel(WPARAM wParam, LPARAM lParam, bool isMouseHWheel)
     if (!coreFrame)
         return false;
 
-    return coreFrame->eventHandler()->handleWheelEvent(wheelEvent);
+    return coreFrame->eventHandler().handleWheelEvent(wheelEvent);
 }
 
 bool WebView::verticalScroll(WPARAM wParam, LPARAM /*lParam*/)
@@ -1789,7 +1789,7 @@ bool WebView::verticalScroll(WPARAM wParam, LPARAM /*lParam*/)
     }
     
     Frame* frame = m_page->focusController().focusedOrMainFrame();
-    return frame->eventHandler()->scrollRecursively(direction, granularity);
+    return frame->eventHandler().scrollRecursively(direction, granularity);
 }
 
 bool WebView::horizontalScroll(WPARAM wParam, LPARAM /*lParam*/)
@@ -1818,7 +1818,7 @@ bool WebView::horizontalScroll(WPARAM wParam, LPARAM /*lParam*/)
     }
 
     Frame* frame = m_page->focusController().focusedOrMainFrame();
-    return frame->eventHandler()->scrollRecursively(direction, granularity);
+    return frame->eventHandler().scrollRecursively(direction, granularity);
 }
 
 
@@ -1843,7 +1843,7 @@ bool WebView::keyUp(WPARAM virtualKeyCode, LPARAM keyData, bool systemKeyDown)
     Frame* frame = m_page->focusController().focusedOrMainFrame();
     m_currentCharacterCode = 0;
 
-    return frame->eventHandler()->keyEvent(keyEvent);
+    return frame->eventHandler().keyEvent(keyEvent);
 }
 
 static const unsigned CtrlKey = 1 << 0;
@@ -2009,7 +2009,7 @@ bool WebView::keyDown(WPARAM virtualKeyCode, LPARAM keyData, bool systemKeyDown)
     Frame* frame = m_page->focusController().focusedOrMainFrame();
 
     PlatformKeyboardEvent keyEvent(m_viewWindow, virtualKeyCode, keyData, PlatformEvent::RawKeyDown, systemKeyDown);
-    bool handled = frame->eventHandler()->keyEvent(keyEvent);
+    bool handled = frame->eventHandler().keyEvent(keyEvent);
 
     // These events cannot be canceled, and we have no default handling for them.
     // FIXME: match IE list more closely, see <http://msdn2.microsoft.com/en-us/library/ms536938.aspx>.
@@ -2073,7 +2073,7 @@ bool WebView::keyDown(WPARAM virtualKeyCode, LPARAM keyData, bool systemKeyDown)
             return false;
     }
 
-    return frame->eventHandler()->scrollRecursively(direction, granularity);
+    return frame->eventHandler().scrollRecursively(direction, granularity);
 }
 
 bool WebView::keyPress(WPARAM charCode, LPARAM keyData, bool systemKeyDown)
@@ -2083,8 +2083,8 @@ bool WebView::keyPress(WPARAM charCode, LPARAM keyData, bool systemKeyDown)
     PlatformKeyboardEvent keyEvent(m_viewWindow, charCode, keyData, PlatformEvent::Char, systemKeyDown);
     // IE does not dispatch keypress event for WM_SYSCHAR.
     if (systemKeyDown)
-        return frame->eventHandler()->handleAccessKey(keyEvent);
-    return frame->eventHandler()->keyEvent(keyEvent);
+        return frame->eventHandler().handleAccessKey(keyEvent);
+    return frame->eventHandler().keyEvent(keyEvent);
 }
 
 void WebView::setIsBeingDestroyed()
@@ -2296,7 +2296,7 @@ LRESULT CALLBACK WebView::WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam,
                 focusController.setFocused(false);
 
             // If we are pan-scrolling when we lose focus, stop the pan scrolling.
-            frame->eventHandler()->stopAutoscrollTimer();
+            frame->eventHandler().stopAutoscrollTimer();
 
             break;
         }
@@ -3668,7 +3668,7 @@ HRESULT STDMETHODCALLTYPE WebView::elementAtPoint(
     IntPoint webCorePoint = IntPoint(point->x, point->y);
     HitTestResult result = HitTestResult(webCorePoint);
     if (frame->contentRenderer())
-        result = frame->eventHandler()->hitTestResultAtPoint(webCorePoint);
+        result = frame->eventHandler().hitTestResultAtPoint(webCorePoint);
     *elementDictionary = WebElementPropertyBag::createInstance(result);
     return S_OK;
 }

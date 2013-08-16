@@ -371,10 +371,10 @@ static gboolean webkit_web_view_forward_context_menu_event(WebKitWebView* webVie
     } else
         focusedFrame = mainFrame;
 
-    if (focusedFrame->view() && focusedFrame->eventHandler()->handleMousePressEvent(event))
+    if (focusedFrame->view() && focusedFrame->eventHandler().handleMousePressEvent(event))
         mousePressEventResult = TRUE;
 
-    bool handledEvent = focusedFrame->eventHandler()->sendContextMenuEvent(event);
+    bool handledEvent = focusedFrame->eventHandler().sendContextMenuEvent(event);
     if (!handledEvent)
         return FALSE;
 
@@ -748,7 +748,7 @@ static gboolean webkit_web_view_button_press_event(GtkWidget* widget, GdkEventBu
         return FALSE;
 
     priv->imFilter.notifyMouseButtonPress();
-    gboolean result = frame->eventHandler()->handleMousePressEvent(platformEvent);
+    gboolean result = frame->eventHandler().handleMousePressEvent(platformEvent);
 
     return result;
 }
@@ -759,7 +759,7 @@ static gboolean webkit_web_view_button_release_event(GtkWidget* widget, GdkEvent
 
     Frame* mainFrame = core(webView)->mainFrame();
     if (mainFrame->view())
-        mainFrame->eventHandler()->handleMouseReleaseEvent(PlatformMouseEvent(event));
+        mainFrame->eventHandler().handleMouseReleaseEvent(PlatformMouseEvent(event));
 
     /* We always return FALSE here because WebKit can, for the same click, decide
      * to not handle press-event but handle release-event, which can totally confuse
@@ -779,7 +779,7 @@ static gboolean webkit_web_view_motion_event(GtkWidget* widget, GdkEventMotion* 
     if (!frame->view())
         return FALSE;
 
-    return frame->eventHandler()->mouseMoved(PlatformMouseEvent(event));
+    return frame->eventHandler().mouseMoved(PlatformMouseEvent(event));
 }
 
 static gboolean webkit_web_view_scroll_event(GtkWidget* widget, GdkEventScroll* event)
@@ -791,7 +791,7 @@ static gboolean webkit_web_view_scroll_event(GtkWidget* widget, GdkEventScroll* 
         return FALSE;
 
     PlatformWheelEvent wheelEvent(event);
-    return frame->eventHandler()->handleWheelEvent(wheelEvent);
+    return frame->eventHandler().handleWheelEvent(wheelEvent);
 }
 
 #ifdef GTK_API_VERSION_2
@@ -1255,7 +1255,7 @@ static gboolean webkit_web_view_real_move_cursor (WebKitWebView* webView, GtkMov
     }
 
     Frame* frame = core(webView)->focusController().focusedOrMainFrame();
-    if (!frame->eventHandler()->scrollOverflow(direction, granularity))
+    if (!frame->eventHandler().scrollOverflow(direction, granularity))
         frame->view()->scroll(direction, granularity);
 
     return true;
@@ -1520,7 +1520,7 @@ static void webkit_web_view_drag_end(GtkWidget* widget, GdkDragContext* context)
     event->button.state = modifiers;
 
     PlatformMouseEvent platformEvent(&event->button);
-    frame->eventHandler()->dragSourceEndedAt(platformEvent, gdkDragActionToDragOperation(gdk_drag_context_get_selected_action(context)));
+    frame->eventHandler().dragSourceEndedAt(platformEvent, gdkDragActionToDragOperation(gdk_drag_context_get_selected_action(context)));
 }
 
 static void webkit_web_view_drag_data_get(GtkWidget* widget, GdkDragContext* context, GtkSelectionData* selectionData, guint info, guint)

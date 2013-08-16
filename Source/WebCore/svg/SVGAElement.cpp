@@ -221,7 +221,7 @@ bool SVGAElement::isKeyboardFocusable(KeyboardEvent* event) const
     if (!document()->frame())
         return false;
     
-    return document()->frame()->eventHandler()->tabsToLinks(event);
+    return document()->frame()->eventHandler().tabsToLinks(event);
 }
 
 bool SVGAElement::childShouldCreateRenderer(const NodeRenderingContext& childContext) const

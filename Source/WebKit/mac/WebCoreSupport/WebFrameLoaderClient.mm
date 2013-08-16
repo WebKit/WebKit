@@ -1372,7 +1372,7 @@ NSDictionary *WebFrameLoaderClient::actionDictionary(const NavigationAction& act
 
     if (const MouseEvent* mouseEvent = findMouseEvent(event)) {
         WebElementDictionary *element = [[WebElementDictionary alloc]
-            initWithHitTestResult:core(m_webFrame.get())->eventHandler()->hitTestResultAtPoint(mouseEvent->absoluteLocation())];
+            initWithHitTestResult:core(m_webFrame.get())->eventHandler().hitTestResultAtPoint(mouseEvent->absoluteLocation())];
         [result setObject:element forKey:WebActionElementKey];
         [element release];
 
@@ -1600,7 +1600,7 @@ public:
         if (!frame)
             return;
         
-        NSEvent* currentNSEvent = frame->eventHandler()->currentNSEvent();
+        NSEvent* currentNSEvent = frame->eventHandler().currentNSEvent();
         if (event->type() == eventNames().mousemoveEvent)
             [(WebBaseNetscapePluginView *)platformWidget() handleMouseMoved:currentNSEvent];
         else if (event->type() == eventNames().mouseoverEvent)

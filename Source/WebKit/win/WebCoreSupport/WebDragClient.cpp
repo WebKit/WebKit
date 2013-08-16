@@ -166,7 +166,7 @@ void WebDragClient::startDrag(DragImageRef image, const IntPoint& imageOrigin, c
             else if (effect & DROPEFFECT_MOVE)
                 operation = DragOperationMove;
         }
-        frame->eventHandler()->dragSourceEndedAt(generateMouseEvent(m_webView, false), operation);
+        frame->eventHandler().dragSourceEndedAt(generateMouseEvent(m_webView, false), operation);
     }
 }
 

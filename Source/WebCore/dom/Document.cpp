@@ -1817,7 +1817,7 @@ void Document::recalcStyle(Style::Change change)
     // detached (for example, by setting display:none in the :hover style), schedule another mouseMove event
     // to check if any other elements ended up under the mouse pointer due to re-layout.
     if (m_hoveredElement && !m_hoveredElement->renderer() && frame())
-        frame()->eventHandler()->dispatchFakeMouseMoveEventSoon();
+        frame()->eventHandler().dispatchFakeMouseMoveEventSoon();
 }
 
 void Document::updateStyleIfNeeded()
@@ -3232,7 +3232,7 @@ void Document::hoveredElementDidDetach(Element* element)
     while (m_hoveredElement && !m_hoveredElement->renderer())
         m_hoveredElement = m_hoveredElement->parentElement();
     if (frame())
-        frame()->eventHandler()->scheduleHoverStateUpdate();
+        frame()->eventHandler().scheduleHoverStateUpdate();
 }
 
 void Document::elementInActiveChainDidDetach(Element* element)
@@ -3473,7 +3473,7 @@ void Document::nodeChildrenWillBeRemoved(ContainerNode* container)
 
     if (Frame* frame = this->frame()) {
         for (Node* n = container->firstChild(); n; n = n->nextSibling()) {
-            frame->eventHandler()->nodeWillBeRemoved(n);
+            frame->eventHandler().nodeWillBeRemoved(n);
             frame->selection()->nodeWillBeRemoved(n);
             frame->page()->dragCaretController()->nodeWillBeRemoved(n);
         }
@@ -3493,7 +3493,7 @@ void Document::nodeWillBeRemoved(Node* n)
     }
 
     if (Frame* frame = this->frame()) {
-        frame->eventHandler()->nodeWillBeRemoved(n);
+        frame->eventHandler().nodeWillBeRemoved(n);
         frame->selection()->nodeWillBeRemoved(n);
         frame->page()->dragCaretController()->nodeWillBeRemoved(n);
     }

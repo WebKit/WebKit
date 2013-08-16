@@ -348,7 +348,7 @@ bool EventHandler::passSubframeEventToSubframe(MouseEventWithHitTestResults& eve
             // currentNSEvent() that mouseMoved() does would have no effect.
             ASSERT(!m_sendingEventToSubview);
             m_sendingEventToSubview = true;
-            subframe->eventHandler()->handleMouseMoveEvent(currentPlatformMouseEvent(), hoveredNode);
+            subframe->eventHandler().handleMouseMoveEvent(currentPlatformMouseEvent(), hoveredNode);
             m_sendingEventToSubview = false;
             return true;
         
@@ -372,7 +372,7 @@ bool EventHandler::passSubframeEventToSubframe(MouseEventWithHitTestResults& eve
                 return false;
             ASSERT(!m_sendingEventToSubview);
             m_sendingEventToSubview = true;
-            subframe->eventHandler()->handleMouseReleaseEvent(currentPlatformMouseEvent());
+            subframe->eventHandler().handleMouseReleaseEvent(currentPlatformMouseEvent());
             m_sendingEventToSubview = false;
             return true;
         }
@@ -431,7 +431,7 @@ bool EventHandler::passWheelEventToWidget(const PlatformWheelEvent& wheelEvent, 
         if (!widget->isFrameView())
             return false;
 
-        return toFrameView(widget)->frame()->eventHandler()->handleWheelEvent(wheelEvent);
+        return toFrameView(widget)->frame()->eventHandler().handleWheelEvent(wheelEvent);
     }
 
     if ([currentNSEvent() type] != NSScrollWheel || m_sendingEventToSubview) 
@@ -625,7 +625,7 @@ bool EventHandler::passMousePressEventToSubframe(MouseEventWithHitTestResults& m
         return passSubframeEventToSubframe(mev, subframe);
 
     // WebKit2 code path.
-    subframe->eventHandler()->handleMousePressEvent(mev.event());
+    subframe->eventHandler().handleMousePressEvent(mev.event());
     return true;
 }
 
@@ -641,7 +641,7 @@ bool EventHandler::passMouseMoveEventToSubframe(MouseEventWithHitTestResults& me
         return false;
 #endif
 
-    subframe->eventHandler()->handleMouseMoveEvent(mev.event(), hoveredNode);
+    subframe->eventHandler().handleMouseMoveEvent(mev.event(), hoveredNode);
     return true;
 }
 
@@ -652,7 +652,7 @@ bool EventHandler::passMouseReleaseEventToSubframe(MouseEventWithHitTestResults&
         return passSubframeEventToSubframe(mev, subframe);
 
     // WebKit2 code path.
-    subframe->eventHandler()->handleMouseReleaseEvent(mev.event());
+    subframe->eventHandler().handleMouseReleaseEvent(mev.event());
     return true;
 }
 

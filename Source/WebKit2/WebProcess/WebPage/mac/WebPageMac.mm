@@ -398,7 +398,7 @@ void WebPage::characterIndexForPoint(IntPoint point, uint64_t& index)
     if (!frame)
         return;
 
-    HitTestResult result = frame->eventHandler()->hitTestResultAtPoint(point);
+    HitTestResult result = frame->eventHandler().hitTestResultAtPoint(point);
     frame = result.innerNonSharedNode() ? result.innerNodeFrame() : m_page->focusController().focusedOrMainFrame();
     
     RefPtr<Range> range = frame->rangeForPoint(result.roundedPointInInnerNodeFrame());
@@ -492,7 +492,7 @@ void WebPage::performDictionaryLookupAtLocation(const FloatPoint& floatPoint)
 
     // Find the frame the point is over.
     IntPoint point = roundedIntPoint(floatPoint);
-    HitTestResult result = frame->eventHandler()->hitTestResultAtPoint(frame->view()->windowToContents(point));
+    HitTestResult result = frame->eventHandler().hitTestResultAtPoint(frame->view()->windowToContents(point));
     frame = result.innerNonSharedNode() ? result.innerNonSharedNode()->document()->frame() : m_page->focusController().focusedOrMainFrame();
 
     IntPoint translatedPoint = frame->view()->windowToContents(point);
@@ -627,7 +627,7 @@ bool WebPage::performNonEditingBehaviorForSelector(const String& selector, Keybo
 {
     // First give accessibility a chance to handle the event.
     Frame* frame = frameForEvent(event);
-    frame->eventHandler()->handleKeyboardSelectionMovementForAccessibility(event);
+    frame->eventHandler().handleKeyboardSelectionMovementForAccessibility(event);
     if (event->defaultHandled())
         return true;
 
@@ -793,9 +793,9 @@ void WebPage::shouldDelayWindowOrderingEvent(const WebKit::WebMouseEvent& event,
         return;
 
 #if ENABLE(DRAG_SUPPORT)
-    HitTestResult hitResult = frame->eventHandler()->hitTestResultAtPoint(frame->view()->windowToContents(event.position()), HitTestRequest::ReadOnly | HitTestRequest::Active);
+    HitTestResult hitResult = frame->eventHandler().hitTestResultAtPoint(frame->view()->windowToContents(event.position()), HitTestRequest::ReadOnly | HitTestRequest::Active);
     if (hitResult.isSelected())
-        result = frame->eventHandler()->eventMayStartDrag(platform(event));
+        result = frame->eventHandler().eventMayStartDrag(platform(event));
 #endif
 }
 
@@ -806,11 +806,11 @@ void WebPage::acceptsFirstMouse(int eventNumber, const WebKit::WebMouseEvent& ev
     if (!frame)
         return;
     
-    HitTestResult hitResult = frame->eventHandler()->hitTestResultAtPoint(frame->view()->windowToContents(event.position()), HitTestRequest::ReadOnly | HitTestRequest::Active);
-    frame->eventHandler()->setActivationEventNumber(eventNumber);
+    HitTestResult hitResult = frame->eventHandler().hitTestResultAtPoint(frame->view()->windowToContents(event.position()), HitTestRequest::ReadOnly | HitTestRequest::Active);
+    frame->eventHandler().setActivationEventNumber(eventNumber);
 #if ENABLE(DRAG_SUPPORT)
     if (hitResult.isSelected())
-        result = frame->eventHandler()->eventMayStartDrag(platform(event));
+        result = frame->eventHandler().eventMayStartDrag(platform(event));
     else
 #endif
         result = !!hitResult.scrollbar();

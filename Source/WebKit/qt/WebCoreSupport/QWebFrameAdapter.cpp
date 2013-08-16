@@ -184,10 +184,10 @@ void QWebFrameAdapter::handleGestureEvent(QGestureEventFacade* gestureEvent)
     ASSERT(frame && frame->view());
     switch (gestureEvent->type) {
     case Qt::TapGesture:
-        frame->eventHandler()->handleGestureEvent(convertGesture(gestureEvent));
+        frame->eventHandler().handleGestureEvent(convertGesture(gestureEvent));
         break;
     case Qt::TapAndHoldGesture:
-        frame->eventHandler()->sendContextMenuEventForGesture(convertGesture(gestureEvent));
+        frame->eventHandler().sendContextMenuEventForGesture(convertGesture(gestureEvent));
         break;
     default:
         ASSERT_NOT_REACHED();
@@ -394,7 +394,7 @@ QWebHitTestResultPrivate* QWebFrameAdapter::hitTestContent(const QPoint& pos) co
     if (!frame->view() || !frame->contentRenderer())
         return 0;
 
-    HitTestResult result = frame->eventHandler()->hitTestResultAtPoint(frame->view()->windowToContents(pos), HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::IgnoreClipping | HitTestRequest::DisallowShadowContent);
+    HitTestResult result = frame->eventHandler().hitTestResultAtPoint(frame->view()->windowToContents(pos), HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::IgnoreClipping | HitTestRequest::DisallowShadowContent);
 
     if (result.scrollbar())
         return 0;

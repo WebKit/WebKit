@@ -1483,7 +1483,7 @@ void WebPagePrivate::updateViewportSize(bool setFixedReportedSize, bool sendResi
     // the page in order to get around the fixed layout size, e.g.
     // google maps when it detects a mobile user agent.
     if (sendResizeEvent && shouldSendResizeEvent())
-        m_mainFrame->eventHandler()->sendResizeEvent();
+        m_mainFrame->eventHandler().sendResizeEvent();
 
     // When the actual visible size changes, we also
     // need to reposition fixed elements.
@@ -2566,7 +2566,7 @@ Platform::IntRect WebPagePrivate::focusNodeRect()
 
 PassRefPtr<Node> WebPagePrivate::contextNode(TargetDetectionStrategy strategy)
 {
-    EventHandler* eventHandler = focusedOrMainFrame()->eventHandler();
+    EventHandler& eventHandler = focusedOrMainFrame()->eventHandler();
     const FatFingersResult lastFatFingersResult = m_touchEventHandler->lastFatFingersResult();
     bool isTouching = lastFatFingersResult.isValid() && strategy == RectBased;
 
@@ -2601,7 +2601,7 @@ PassRefPtr<Node> WebPagePrivate::contextNode(TargetDetectionStrategy strategy)
     else
         contentPos = m_webkitThreadViewportAccessor->documentContentsFromViewport(m_lastMouseEvent.position());
 
-    HitTestResult result = eventHandler->hitTestResultAtPoint(contentPos);
+    HitTestResult result = eventHandler.hitTestResultAtPoint(contentPos);
     return result.innerNode();
 }
 
@@ -2672,7 +2672,7 @@ Node* WebPagePrivate::nodeForZoomUnderPoint(const IntPoint& documentPoint)
     if (!m_mainFrame)
         return 0;
 
-    HitTestResult result = m_mainFrame->eventHandler()->hitTestResultAtPoint(documentPoint);
+    HitTestResult result = m_mainFrame->eventHandler().hitTestResultAtPoint(documentPoint);
 
     Node* node = result.innerNonSharedNode();
 
@@ -3696,7 +3696,7 @@ bool WebPagePrivate::setViewportSize(const IntSize& transformedActualVisibleSize
     // the page in order to get around the fixed layout size, e.g.
     // google maps when it detects a mobile user agent.
     if (shouldSendResizeEvent())
-        m_mainFrame->eventHandler()->sendResizeEvent();
+        m_mainFrame->eventHandler().sendResizeEvent();
 
     // As a special case if we were anchored to the top left position at the beginning
     // of the rotation then preserve that anchor.
@@ -3857,7 +3857,7 @@ bool WebPage::mouseEvent(const Platform::MouseEvent& mouseEvent, bool* wheelDelt
         return d->dispatchMouseEventToFullScreenPlugin(pluginView, mouseEvent);
 
     if (mouseEvent.type() == Platform::MouseEvent::MouseAborted) {
-        d->m_mainFrame->eventHandler()->setMousePressed(false);
+        d->m_mainFrame->eventHandler().setMousePressed(false);
         return false;
     }
 
@@ -3932,10 +3932,10 @@ bool WebPagePrivate::dispatchMouseEventToFullScreenPlugin(PluginView* plugin, co
 
 bool WebPagePrivate::handleMouseEvent(PlatformMouseEvent& mouseEvent)
 {
-    EventHandler* eventHandler = m_mainFrame->eventHandler();
+    EventHandler& eventHandler = m_mainFrame->eventHandler();
 
     if (mouseEvent.type() == WebCore::PlatformEvent::MouseMoved)
-        return eventHandler->mouseMoved(mouseEvent);
+        return eventHandler.mouseMoved(mouseEvent);
 
     if (mouseEvent.type() == WebCore::PlatformEvent::MouseScroll)
         return true;
@@ -3953,7 +3953,7 @@ bool WebPagePrivate::handleMouseEvent(PlatformMouseEvent& mouseEvent)
 
     if (!node) {
         IntPoint documentContentsPoint = m_webkitThreadViewportAccessor->documentContentsFromViewport(mouseEvent.position());
-        HitTestResult result = eventHandler->hitTestResultAtPoint(documentContentsPoint);
+        HitTestResult result = eventHandler.hitTestResultAtPoint(documentContentsPoint);
         node = result.innerNode();
     }
 
@@ -3973,12 +3973,12 @@ bool WebPagePrivate::handleMouseEvent(PlatformMouseEvent& mouseEvent)
                 element->focus();
             }
         } else
-            eventHandler->handleMousePressEvent(mouseEvent);
+            eventHandler.handleMousePressEvent(mouseEvent);
     } else if (mouseEvent.type() == WebCore::PlatformEvent::MouseReleased) {
         // Do not send the mouse event if this is a popup field as the mouse down has been
         // suppressed and symmetry should be maintained.
         if (!m_inputHandler->didNodeOpenPopup(node))
-            eventHandler->handleMouseReleaseEvent(mouseEvent);
+            eventHandler.handleMouseReleaseEvent(mouseEvent);
     }
 
     return true;
@@ -3986,7 +3986,7 @@ bool WebPagePrivate::handleMouseEvent(PlatformMouseEvent& mouseEvent)
 
 bool WebPagePrivate::handleWheelEvent(PlatformWheelEvent& wheelEvent)
 {
-    return m_mainFrame->eventHandler()->handleWheelEvent(wheelEvent);
+    return m_mainFrame->eventHandler().handleWheelEvent(wheelEvent);
 }
 
 bool WebPage::touchEvent(const Platform::TouchEvent& event)
@@ -4031,7 +4031,7 @@ bool WebPage::touchEvent(const Platform::TouchEvent& event)
     bool handled = false;
 
     if (event.m_type != Platform::TouchEvent::TouchInjected)
-        handled = d->m_mainFrame->eventHandler()->handleTouchEvent(PlatformTouchEvent(&tEvent));
+        handled = d->m_mainFrame->eventHandler().handleTouchEvent(PlatformTouchEvent(&tEvent));
 
     if (d->m_preventDefaultOnTouchStart) {
         if (tEvent.m_type == Platform::TouchEvent::TouchEnd || tEvent.m_type == Platform::TouchEvent::TouchCancel)
@@ -6145,7 +6145,7 @@ const HitTestResult& WebPagePrivate::hitTestResult(const IntPoint& contentPos)
     if (m_cachedHitTestContentPos != contentPos) {
         m_cachedHitTestContentPos = contentPos;
         m_cachedRectHitTestResults.clear();
-        m_cachedHitTestResult = m_mainFrame->eventHandler()->hitTestResultAtPoint(m_cachedHitTestContentPos, HitTestRequest::ReadOnly | HitTestRequest::Active);
+        m_cachedHitTestResult = m_mainFrame->eventHandler().hitTestResultAtPoint(m_cachedHitTestContentPos, HitTestRequest::ReadOnly | HitTestRequest::Active);
     }
 
     return m_cachedHitTestResult;

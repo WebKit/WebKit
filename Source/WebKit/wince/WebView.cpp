@@ -304,7 +304,7 @@ bool WebView::handleMouseEvent(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
 
         PlatformMouseEvent moveEvent(hWnd, WM_MOUSEMOVE, 0, lParam, false);
         moveEvent.setClickCount(0);
-        m_page->mainFrame()->eventHandler()->handleMouseMoveEvent(moveEvent);
+        m_page->mainFrame()->eventHandler().handleMouseMoveEvent(moveEvent);
 
         // Always start capturing events when the mouse goes down in our HWND.
         SetCapture(m_windowHandle);
@@ -319,23 +319,23 @@ bool WebView::handleMouseEvent(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
         globalPrevPoint = mouseEvent.position();
 
         mouseEvent.setClickCount(globalClickCount);
-        handled = m_page->mainFrame()->eventHandler()->handleMousePressEvent(mouseEvent);
+        handled = m_page->mainFrame()->eventHandler().handleMousePressEvent(mouseEvent);
     } else if (message == WM_LBUTTONDBLCLK || message == WM_MBUTTONDBLCLK || message == WM_RBUTTONDBLCLK) {
         globalClickCount++;
         mouseEvent.setClickCount(globalClickCount);
-        handled = m_page->mainFrame()->eventHandler()->handleMousePressEvent(mouseEvent);
+        handled = m_page->mainFrame()->eventHandler().handleMousePressEvent(mouseEvent);
     } else if (message == WM_LBUTTONUP || message == WM_MBUTTONUP || message == WM_RBUTTONUP) {
         // Record the global position and the button of the up.
         globalPrevButton = mouseEvent.button();
         globalPrevPoint = mouseEvent.position();
         mouseEvent.setClickCount(globalClickCount);
-        m_page->mainFrame()->eventHandler()->handleMouseReleaseEvent(mouseEvent);
+        m_page->mainFrame()->eventHandler().handleMouseReleaseEvent(mouseEvent);
         ReleaseCapture();
     } else if (message == WM_MOUSEMOVE) {
         if (!insideThreshold)
             globalClickCount = 0;
         mouseEvent.setClickCount(globalClickCount);
-        handled = m_page->mainFrame()->eventHandler()->mouseMoved(mouseEvent);
+        handled = m_page->mainFrame()->eventHandler().mouseMoved(mouseEvent);
     }
 
     return handled;
@@ -344,7 +344,7 @@ bool WebView::handleMouseEvent(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
 bool WebView::handleMouseWheel(HWND hWnd, WPARAM wParam, LPARAM lParam, bool isHorizontal)
 {
     PlatformWheelEvent wheelEvent(hWnd, wParam, lParam, isHorizontal);
-    return frame()->eventHandler()->handleWheelEvent(wheelEvent);
+    return frame()->eventHandler().handleWheelEvent(wheelEvent);
 }
 
 bool WebView::handleKeyDown(WPARAM virtualKeyCode, LPARAM keyData, bool systemKeyDown)
@@ -352,7 +352,7 @@ bool WebView::handleKeyDown(WPARAM virtualKeyCode, LPARAM keyData, bool systemKe
     Frame* frame = m_page->focusController().focusedOrMainFrame();
 
     PlatformKeyboardEvent keyEvent(m_windowHandle, virtualKeyCode, keyData, PlatformEvent::RawKeyDown, systemKeyDown);
-    bool handled = frame->eventHandler()->keyEvent(keyEvent);
+    bool handled = frame->eventHandler().keyEvent(keyEvent);
 
     // These events cannot be canceled, and we have no default handling for them.
     // FIXME: match IE list more closely, see <http://msdn2.microsoft.com/en-us/library/ms536938.aspx>.
@@ -376,8 +376,8 @@ bool WebView::handleKeyPress(WPARAM charCode, LPARAM keyData, bool systemKeyDown
     PlatformKeyboardEvent keyEvent(m_windowHandle, charCode, keyData, PlatformEvent::Char, systemKeyDown);
     // IE does not dispatch keypress event for WM_SYSCHAR.
     if (systemKeyDown)
-        return frame->eventHandler()->handleAccessKey(keyEvent);
-    if (frame->eventHandler()->keyEvent(keyEvent))
+        return frame->eventHandler().handleAccessKey(keyEvent);
+    if (frame->eventHandler().keyEvent(keyEvent))
         return true;
 
     return false;
@@ -388,7 +388,7 @@ bool WebView::handleKeyUp(WPARAM virtualKeyCode, LPARAM keyData, bool systemKeyD
     PlatformKeyboardEvent keyEvent(m_windowHandle, virtualKeyCode, keyData, PlatformEvent::KeyUp, systemKeyDown);
 
     Frame* frame = m_page->focusController().focusedOrMainFrame();
-    return frame->eventHandler()->keyEvent(keyEvent);
+    return frame->eventHandler().keyEvent(keyEvent);
 }
 
 LRESULT WebView::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)

@@ -173,7 +173,7 @@ void PopupMenuMac::show(const IntRect& r, FrameView* v, int index)
     // Save the current event that triggered the popup, so we can clean up our event
     // state after the NSMenu goes away.
     RefPtr<Frame> frame = v->frame();
-    RetainPtr<NSEvent> event = frame->eventHandler()->currentNSEvent();
+    RetainPtr<NSEvent> event = frame->eventHandler().currentNSEvent();
     
     RefPtr<PopupMenuMac> protector(this);
 
@@ -208,7 +208,7 @@ void PopupMenuMac::show(const IntRect& r, FrameView* v, int index)
 
     // Give the frame a chance to fix up its event state, since the popup eats all the
     // events during tracking.
-    frame->eventHandler()->sendFakeEventsAfterWidgetTracking(event.get());
+    frame->eventHandler().sendFakeEventsAfterWidgetTracking(event.get());
 }
 
 void PopupMenuMac::hide()

@@ -2042,7 +2042,7 @@ void RenderObject::styleDidChange(StyleDifference diff, const RenderStyle* oldSt
 
     if (oldStyle && !areCursorsEqual(oldStyle, style())) {
         if (Frame* frame = this->frame())
-            frame->eventHandler()->scheduleCursorUpdate();
+            frame->eventHandler().scheduleCursorUpdate();
     }
 }
 
@@ -2456,8 +2456,8 @@ void RenderObject::willBeDestroyed()
     // has a null frame, so we assert this. However, we don't want release builds to crash which is why we
     // check that the frame is not null.
     ASSERT(frame());
-    if (frame() && frame()->eventHandler()->autoscrollRenderer() == this)
-        frame()->eventHandler()->stopAutoscrollTimer(true);
+    if (frame() && frame()->eventHandler().autoscrollRenderer() == this)
+        frame()->eventHandler().stopAutoscrollTimer(true);
 
     animation()->cancelAnimations(this);
 

@@ -591,7 +591,7 @@ void FrameLoader::clear(Document* newDocument, bool clearWindowProperties, bool 
     }
 
     m_frame->selection()->prepareForDestruction();
-    m_frame->eventHandler()->clear();
+    m_frame->eventHandler().clear();
     if (clearFrameView && m_frame->view())
         m_frame->view()->clear();
 
@@ -1049,7 +1049,7 @@ void FrameLoader::loadInSameDocument(const KURL& url, PassRefPtr<SerializedScrip
 
     // If we were in the autoscroll/panScroll mode we want to stop it before following the link to the anchor
     if (hashChange)
-        m_frame->eventHandler()->stopAutoscrollTimer();
+        m_frame->eventHandler().stopAutoscrollTimer();
     
     // It's important to model this as a load that starts and immediately finishes.
     // Otherwise, the parent frame may think we never finished loading.

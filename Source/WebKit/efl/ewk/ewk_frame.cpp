@@ -690,7 +690,7 @@ Ewk_Hit_Test* ewk_frame_hit_test_new(const Evas_Object* ewkFrame, int x, int y)
     EINA_SAFETY_ON_NULL_RETURN_VAL(view, 0);
     EINA_SAFETY_ON_NULL_RETURN_VAL(smartData->frame->contentRenderer(), 0);
 
-    WebCore::HitTestResult result = smartData->frame->eventHandler()->hitTestResultAtPoint
+    WebCore::HitTestResult result = smartData->frame->eventHandler().hitTestResultAtPoint
                                         (view->windowToContents(WebCore::IntPoint(x, y)), 
                                         WebCore::HitTestRequest::ReadOnly | WebCore::HitTestRequest::Active | WebCore::HitTestRequest::IgnoreClipping | WebCore::HitTestRequest::DisallowShadowContent);
 
@@ -895,7 +895,7 @@ Eina_Bool ewk_frame_feed_mouse_wheel(Evas_Object* ewkFrame, const Evas_Event_Mou
     EINA_SAFETY_ON_NULL_RETURN_VAL(view, false);
 
     WebCore::PlatformWheelEvent event(wheelEvent);
-    return smartData->frame->eventHandler()->handleWheelEvent(event);
+    return smartData->frame->eventHandler().handleWheelEvent(event);
 }
 
 Eina_Bool ewk_frame_feed_mouse_down(Evas_Object* ewkFrame, const Evas_Event_Mouse_Down* downEvent)
@@ -913,7 +913,7 @@ Eina_Bool ewk_frame_feed_mouse_down(Evas_Object* ewkFrame, const Evas_Event_Mous
     evas_object_geometry_get(smartData->view, &x, &y, 0, 0);
 
     WebCore::PlatformMouseEvent event(downEvent, WebCore::IntPoint(x, y));
-    return smartData->frame->eventHandler()->handleMousePressEvent(event);
+    return smartData->frame->eventHandler().handleMousePressEvent(event);
 }
 
 Eina_Bool ewk_frame_feed_mouse_up(Evas_Object* ewkFrame, const Evas_Event_Mouse_Up* upEvent)
@@ -931,7 +931,7 @@ Eina_Bool ewk_frame_feed_mouse_up(Evas_Object* ewkFrame, const Evas_Event_Mouse_
     evas_object_geometry_get(smartData->view, &x, &y, 0, 0);
 
     WebCore::PlatformMouseEvent event(upEvent, WebCore::IntPoint(x, y));
-    return smartData->frame->eventHandler()->handleMouseReleaseEvent(event);
+    return smartData->frame->eventHandler().handleMouseReleaseEvent(event);
 }
 
 Eina_Bool ewk_frame_feed_mouse_move(Evas_Object* ewkFrame, const Evas_Event_Mouse_Move* moveEvent)
@@ -950,7 +950,7 @@ Eina_Bool ewk_frame_feed_mouse_move(Evas_Object* ewkFrame, const Evas_Event_Mous
     evas_object_geometry_get(smartData->view, &x, &y, 0, 0);
 
     WebCore::PlatformMouseEvent event(moveEvent, WebCore::IntPoint(x, y));
-    return smartData->frame->eventHandler()->mouseMoved(event);
+    return smartData->frame->eventHandler().mouseMoved(event);
 }
 
 Eina_Bool ewk_frame_feed_touch_event(Evas_Object* ewkFrame, Ewk_Touch_Event_Type action, Eina_List* points, unsigned modifiers)
@@ -965,7 +965,7 @@ Eina_Bool ewk_frame_feed_touch_event(Evas_Object* ewkFrame, Ewk_Touch_Event_Type
     Evas_Coord x, y;
     evas_object_geometry_get(smartData->view, &x, &y, 0, 0);
 
-    return smartData->frame->eventHandler()->handleTouchEvent(EWKPrivate::platformTouchEvent(x, y, points, action, modifiers));
+    return smartData->frame->eventHandler().handleTouchEvent(EWKPrivate::platformTouchEvent(x, y, points, action, modifiers));
 #else
     UNUSED_PARAM(ewkFrame);
     UNUSED_PARAM(action);
@@ -1032,7 +1032,7 @@ static inline Eina_Bool _ewk_frame_handle_key_scrolling(WebCore::Frame* frame, c
         return false;
     }
 
-    if (frame->eventHandler()->scrollOverflow(direction, granularity))
+    if (frame->eventHandler().scrollOverflow(direction, granularity))
         return false;
 
     frame->view()->scroll(direction, granularity);
@@ -1049,7 +1049,7 @@ Eina_Bool ewk_frame_feed_key_down(Evas_Object* ewkFrame, const Evas_Event_Key_Do
         ewkFrame, downEvent->keyname, downEvent->key ? downEvent->key : "", downEvent->string ? downEvent->string : "");
 
     WebCore::PlatformKeyboardEvent event(downEvent);
-    if (smartData->frame->eventHandler()->keyEvent(event))
+    if (smartData->frame->eventHandler().keyEvent(event))
         return true;
 
     return _ewk_frame_handle_key_scrolling(smartData->frame, event);
@@ -1065,7 +1065,7 @@ Eina_Bool ewk_frame_feed_key_up(Evas_Object* ewkFrame, const Evas_Event_Key_Up* 
         ewkFrame, upEvent->keyname, upEvent->key ? upEvent->key : "", upEvent->string ? upEvent->string : "");
 
     WebCore::PlatformKeyboardEvent event(upEvent);
-    return smartData->frame->eventHandler()->keyEvent(event);
+    return smartData->frame->eventHandler().keyEvent(event);
 }
 
 Ewk_Text_Selection_Type ewk_frame_text_selection_type_get(const Evas_Object* ewkFrame)

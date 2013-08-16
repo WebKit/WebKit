@@ -504,7 +504,7 @@ void RenderListBox::panScroll(const IntPoint& panStartMousePosition)
     // FIXME: This doesn't work correctly with transforms.
     FloatPoint absOffset = localToAbsolute();
 
-    IntPoint lastKnownMousePosition = frame()->eventHandler()->lastKnownMousePosition();
+    IntPoint lastKnownMousePosition = frame()->eventHandler().lastKnownMousePosition();
     // We need to check if the last known mouse position is out of the window. When the mouse is out of the window, the position is incoherent
     static IntPoint previousMousePosition;
     if (lastKnownMousePosition.y() < 0)
@@ -561,7 +561,7 @@ int RenderListBox::scrollToward(const IntPoint& destination)
 
 void RenderListBox::autoscroll(const IntPoint&)
 {
-    IntPoint pos = frame()->view()->windowToContents(frame()->eventHandler()->lastKnownMousePosition());
+    IntPoint pos = frame()->view()->windowToContents(frame()->eventHandler().lastKnownMousePosition());
 
     int endIndex = scrollToward(pos);
     if (selectElement()->isDisabledFormControl())

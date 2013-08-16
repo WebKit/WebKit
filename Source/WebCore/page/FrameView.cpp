@@ -1669,12 +1669,12 @@ bool FrameView::fixedElementsLayoutRelativeToFrame() const
 
 IntPoint FrameView::lastKnownMousePosition() const
 {
-    return m_frame ? m_frame->eventHandler()->lastKnownMousePosition() : IntPoint();
+    return m_frame ? m_frame->eventHandler().lastKnownMousePosition() : IntPoint();
 }
 
 bool FrameView::isHandlingWheelEvent() const
 {
-    return m_frame ? m_frame->eventHandler()->isHandlingWheelEvent() : false;
+    return m_frame ? m_frame->eventHandler().isHandlingWheelEvent() : false;
 }
 
 bool FrameView::shouldSetCursor() const
@@ -2015,8 +2015,8 @@ void FrameView::scrollPositionChangedViaPlatformWidget()
 
 void FrameView::scrollPositionChanged()
 {
-    frame()->eventHandler()->sendScrollEvent();
-    frame()->eventHandler()->dispatchFakeMouseMoveEventSoon();
+    frame()->eventHandler().sendScrollEvent();
+    frame()->eventHandler().dispatchFakeMouseMoveEventSoon();
 
 #if USE(ACCELERATED_COMPOSITING)
     if (RenderView* renderView = this->renderView()) {

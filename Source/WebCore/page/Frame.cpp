@@ -267,7 +267,7 @@ void Frame::setView(PassRefPtr<FrameView> view)
     if (m_view)
         m_view->unscheduleRelayout();
     
-    eventHandler()->clear();
+    eventHandler().clear();
 
     m_view = view;
 
@@ -635,7 +635,7 @@ void Frame::clearTimers(FrameView *view, Document *document)
         view->unscheduleRelayout();
         if (view->frame()) {
             view->frame()->animation()->suspendAnimationsForDocument(document);
-            view->frame()->eventHandler()->stopAutoscrollTimer();
+            view->frame()->eventHandler().stopAutoscrollTimer();
         }
     }
 }
@@ -708,7 +708,7 @@ String Frame::displayStringModifiedByEncoding(const String& str) const
 
 VisiblePosition Frame::visiblePositionForPoint(const IntPoint& framePoint)
 {
-    HitTestResult result = eventHandler()->hitTestResultAtPoint(framePoint, HitTestRequest::ReadOnly | HitTestRequest::Active);
+    HitTestResult result = eventHandler().hitTestResultAtPoint(framePoint, HitTestRequest::ReadOnly | HitTestRequest::Active);
     Node* node = result.innerNonSharedNode();
     if (!node)
         return VisiblePosition();
@@ -730,7 +730,7 @@ Document* Frame::documentAtPoint(const IntPoint& point)
     HitTestResult result = HitTestResult(pt);
 
     if (contentRenderer())
-        result = eventHandler()->hitTestResultAtPoint(pt);
+        result = eventHandler().hitTestResultAtPoint(pt);
     return result.innerNode() ? result.innerNode()->document() : 0;
 }
 
