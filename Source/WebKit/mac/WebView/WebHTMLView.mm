@@ -1366,9 +1366,17 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
 // Don't let AppKit even draw subviews. We take care of that.
 - (void)_recursive:(BOOL)recurseX displayRectIgnoringOpacity:(NSRect)displayRect inGraphicsContext:(NSGraphicsContext *)graphicsContext CGContext:(CGContextRef)ctx topView:(BOOL)isTopView shouldChangeFontReferenceColor:(BOOL)shouldChangeFontReferenceColor
 {
-    [self _setAsideSubviews];
+    BOOL didSetAsideSubviews = NO;
+
+    if (!_private->subviewsSetAside) {
+        [self _setAsideSubviews];
+        didSetAsideSubviews = YES;
+    }
+    
     [super _recursive:recurseX displayRectIgnoringOpacity:displayRect inGraphicsContext:graphicsContext CGContext:ctx topView:isTopView shouldChangeFontReferenceColor:shouldChangeFontReferenceColor];
-    [self _restoreSubviews];
+
+    if (didSetAsideSubviews)
+        [self _restoreSubviews];
 }
 
 - (BOOL)_insideAnotherHTMLView
