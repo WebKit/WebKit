@@ -5371,7 +5371,7 @@
 		E180810F16FCECDF00B80D07 /* WebCoreResourceHandleAsDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = E180810D16FCECDF00B80D07 /* WebCoreResourceHandleAsDelegate.h */; };
 		E180811216FCF42F00B80D07 /* SynchronousLoaderClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E180811016FCF42E00B80D07 /* SynchronousLoaderClient.cpp */; };
 		E180811616FCF9CB00B80D07 /* SynchronousLoaderClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = E180811416FCF9CB00B80D07 /* SynchronousLoaderClient.mm */; };
-		E180811716FCF9CB00B80D07 /* SynchronousLoaderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = E180811516FCF9CB00B80D07 /* SynchronousLoaderClient.h */; };
+		E180811716FCF9CB00B80D07 /* SynchronousLoaderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = E180811516FCF9CB00B80D07 /* SynchronousLoaderClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E182568F0EF2B02D00933242 /* JSWorkerGlobalScope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E182568D0EF2B02D00933242 /* JSWorkerGlobalScope.cpp */; };
 		E18256900EF2B02D00933242 /* JSWorkerGlobalScope.h in Headers */ = {isa = PBXBuildFile; fileRef = E182568E0EF2B02D00933242 /* JSWorkerGlobalScope.h */; };
 		E18258AC0EF3CD7000933242 /* JSWorkerGlobalScopeCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E18258AB0EF3CD7000933242 /* JSWorkerGlobalScopeCustom.cpp */; };

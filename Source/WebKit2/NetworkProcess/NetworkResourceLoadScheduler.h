@@ -41,7 +41,7 @@ class KURL;
 namespace WebKit {
 
 class HostRecord;
-class SchedulableLoader;
+class NetworkResourceLoader;
 
 class NetworkResourceLoadScheduler {
     WTF_MAKE_NONCOPYABLE(NetworkResourceLoadScheduler); WTF_MAKE_FAST_ALLOCATED;
@@ -50,15 +50,15 @@ public:
     NetworkResourceLoadScheduler();
     
     // Adds the request to the queue for its host.
-    void scheduleLoader(PassRefPtr<SchedulableLoader>);
+    void scheduleLoader(PassRefPtr<NetworkResourceLoader>);
 
     // Called by the WebProcess when a ResourceLoader is being cleaned up.
-    void removeLoader(SchedulableLoader*);
+    void removeLoader(NetworkResourceLoader*);
 
     // Called within the NetworkProcess on a background thread when a resource load has finished.
-    void scheduleRemoveLoader(SchedulableLoader*);
+    void scheduleRemoveLoader(NetworkResourceLoader*);
 
-    void receivedRedirect(SchedulableLoader*, const WebCore::KURL& redirectURL);
+    void receivedRedirect(NetworkResourceLoader*, const WebCore::KURL& redirectURL);
     void servePendingRequests(WebCore::ResourceLoadPriority = WebCore::ResourceLoadPriorityVeryLow);
 
     // For NetworkProcess statistics reporting.
@@ -86,8 +86,8 @@ private:
     typedef HashMap<String, RefPtr<HostRecord>, StringHash> HostMap;
     HostMap m_hosts;
 
-    typedef HashSet<RefPtr<SchedulableLoader>> SchedulableLoaderSet;
-    SchedulableLoaderSet m_loaders;
+    typedef HashSet<RefPtr<NetworkResourceLoader>> NetworkResourceLoaderSet;
+    NetworkResourceLoaderSet m_loaders;
 
     RefPtr<HostRecord> m_nonHTTPProtocolHost;
 
@@ -96,7 +96,7 @@ private:
     WebCore::Timer<NetworkResourceLoadScheduler> m_requestTimer;
     
     Mutex m_loadersToRemoveMutex;
-    Vector<RefPtr<SchedulableLoader>> m_loadersToRemove;
+    Vector<RefPtr<NetworkResourceLoader>> m_loadersToRemove;
 
     unsigned m_maxRequestsInFlightPerHost;
 };

@@ -28,9 +28,11 @@
 
 #if ENABLE(NETWORK_PROCESS)
 
+#include "AsynchronousNetworkLoaderClient.h"
 #include "AuthenticationManager.h"
 #include "DataReference.h"
 #include "Logging.h"
+#include "NetworkBlobRegistry.h"
 #include "NetworkConnectionToWebProcess.h"
 #include "NetworkProcess.h"
 #include "NetworkProcessConnectionMessages.h"
@@ -39,31 +41,83 @@
 #include "RemoteNetworkingContext.h"
 #include "ShareableResource.h"
 #include "SharedMemory.h"
+#include "SynchronousNetworkLoaderClient.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebErrors.h"
 #include "WebResourceLoaderMessages.h"
 #include <WebCore/NotImplemented.h>
 #include <WebCore/ResourceBuffer.h>
 #include <WebCore/ResourceHandle.h>
-#include <wtf/CurrentTime.h>
 #include <wtf/MainThread.h>
 
 using namespace WebCore;
 
 namespace WebKit {
 
-NetworkResourceLoader::NetworkResourceLoader(const NetworkResourceLoadParameters& loadParameters, NetworkConnectionToWebProcess* connection)
-    : SchedulableLoader(loadParameters, connection)
-    , m_bytesReceived(0)
+NetworkResourceLoader::NetworkResourceLoader(const NetworkResourceLoadParameters& parameters, NetworkConnectionToWebProcess* connection, PassRefPtr<Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::DelayedReply> reply)
+    : m_bytesReceived(0)
     , m_handleConvertedToDownload(false)
+    , m_identifier(parameters.identifier)
+    , m_webPageID(parameters.webPageID)
+    , m_webFrameID(parameters.webFrameID)
+    , m_request(parameters.request)
+    , m_priority(parameters.priority)
+    , m_contentSniffingPolicy(parameters.contentSniffingPolicy)
+    , m_allowStoredCredentials(parameters.allowStoredCredentials)
+    , m_clientCredentialPolicy(parameters.clientCredentialPolicy)
+    , m_inPrivateBrowsingMode(parameters.inPrivateBrowsingMode)
+    , m_shouldClearReferrerOnHTTPSToHTTPRedirect(parameters.shouldClearReferrerOnHTTPSToHTTPRedirect)
+    , m_isLoadingMainResource(parameters.isMainResource)
+    , m_sandboxExtensionsAreConsumed(false)
+    , m_connection(connection)
 {
+    // Either this loader has both a webPageID and webFrameID, or it is not allowed to ask the client for authentication credentials.
+    // FIXME: This is necessary because of the existence of EmptyFrameLoaderClient in WebCore.
+    //        Once bug 116233 is resolved, this ASSERT can just be "m_webPageID && m_webFrameID"
+    ASSERT((m_webPageID && m_webFrameID) || m_clientCredentialPolicy == DoNotAskClientForAnyCredentials);
+
+    for (size_t i = 0, count = parameters.requestBodySandboxExtensions.size(); i < count; ++i) {
+        if (RefPtr<SandboxExtension> extension = SandboxExtension::create(parameters.requestBodySandboxExtensions[i]))
+            m_requestBodySandboxExtensions.append(extension);
+    }
+
+#if ENABLE(BLOB)
+    if (m_request.httpBody()) {
+        const Vector<FormDataElement>& elements = m_request.httpBody()->elements();
+        for (size_t i = 0, count = elements.size(); i < count; ++i) {
+            if (elements[i].m_type == FormDataElement::encodedBlob) {
+                Vector<RefPtr<SandboxExtension>> blobElementExtensions = NetworkBlobRegistry::shared().sandboxExtensions(elements[i].m_url);
+                m_requestBodySandboxExtensions.appendVector(blobElementExtensions);
+            }
+        }
+    }
+
+    if (m_request.url().protocolIs("blob")) {
+        ASSERT(!SandboxExtension::create(parameters.resourceSandboxExtension));
+        m_resourceSandboxExtensions = NetworkBlobRegistry::shared().sandboxExtensions(m_request.url());
+    } else
+#endif
+    if (RefPtr<SandboxExtension> resourceSandboxExtension = SandboxExtension::create(parameters.resourceSandboxExtension))
+        m_resourceSandboxExtensions.append(resourceSandboxExtension);
+
     ASSERT(isMainThread());
+    
+    if (reply)
+        m_networkLoaderClient = SynchronousNetworkLoaderClient::create(m_request, reply);
+    else
+        m_networkLoaderClient = AsynchronousNetworkLoaderClient::create();
 }
 
 NetworkResourceLoader::~NetworkResourceLoader()
 {
     ASSERT(isMainThread());
     ASSERT(!m_handle);
+    ASSERT(!m_hostRecord);
+}
+
+bool NetworkResourceLoader::isSynchronous() const
+{
+    return m_networkLoaderClient->isSynchronous();
 }
 
 void NetworkResourceLoader::start()
@@ -74,12 +128,12 @@ void NetworkResourceLoader::start()
     ref();
     
     // FIXME (NetworkProcess): Create RemoteNetworkingContext with actual settings.
-    m_networkingContext = RemoteNetworkingContext::create(false, false, inPrivateBrowsingMode(), shouldClearReferrerOnHTTPSToHTTPRedirect());
+    m_networkingContext = RemoteNetworkingContext::create(false, false, m_inPrivateBrowsingMode, m_shouldClearReferrerOnHTTPSToHTTPRedirect);
 
     consumeSandboxExtensions();
 
     // FIXME (NetworkProcess): Pass an actual value for defersLoading
-    m_handle = ResourceHandle::create(m_networkingContext.get(), request(), this, false /* defersLoading */, contentSniffingPolicy() == SniffContent);
+    m_handle = ResourceHandle::create(m_networkingContext.get(), m_request, this, false /* defersLoading */, m_contentSniffingPolicy == SniffContent);
 }
 
 void NetworkResourceLoader::cleanup()
@@ -100,14 +154,6 @@ void NetworkResourceLoader::cleanup()
         m_handle = 0;
         deref();
     }
-}
-
-template<typename U> bool NetworkResourceLoader::sendAbortingOnFailure(const U& message, unsigned messageSendFlags)
-{
-    bool result = messageSenderConnection()->send(message, messageSenderDestinationID(), messageSendFlags);
-    if (!result)
-        abort();
-    return result;
 }
 
 void NetworkResourceLoader::didConvertHandleToDownload()
@@ -134,13 +180,13 @@ void NetworkResourceLoader::didReceiveResponseAsync(ResourceHandle* handle, cons
     if (FormData* formData = request().httpBody())
         formData->removeGeneratedFilesIfNeeded();
 
-    sendAbortingOnFailure(Messages::WebResourceLoader::DidReceiveResponseWithCertificateInfo(response, PlatformCertificateInfo(response), isLoadingMainResource()));
+    m_networkLoaderClient->didReceiveResponse(this, response);
 
     // m_handle will be 0 if the request got aborted above.
     if (!m_handle)
         return;
 
-    if (!isLoadingMainResource()) {
+    if (!m_isLoadingMainResource) {
         // For main resources, the web process is responsible for sending back a NetworkResourceLoader::ContinueDidReceiveResponse message.
         m_handle->continueDidReceiveResponse();
     }
@@ -161,30 +207,15 @@ void NetworkResourceLoader::didReceiveBuffer(ResourceHandle* handle, PassRefPtr<
     // Such buffering will need to be thread safe, as this callback is happening on a background thread.
     
     m_bytesReceived += buffer->size();
-    
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
-    ShareableResource::Handle shareableResourceHandle;
-    tryGetShareableHandleFromSharedBuffer(shareableResourceHandle, buffer.get());
-    if (!shareableResourceHandle.isNull()) {
-        // Since we're delivering this resource by ourselves all at once, we'll abort the resource handle since we don't need anymore callbacks from ResourceHandle.
-        abort();
-        send(Messages::WebResourceLoader::DidReceiveResource(shareableResourceHandle, currentTime()));
-        return;
-    }
-#endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
-
-    CoreIPC::DataReference dataReference(reinterpret_cast<const uint8_t*>(buffer->data()), buffer->size());
-    sendAbortingOnFailure(Messages::WebResourceLoader::DidReceiveData(dataReference, encodedDataLength));
+    m_networkLoaderClient->didReceiveBuffer(this, buffer.get(), encodedDataLength);
 }
 
 void NetworkResourceLoader::didFinishLoading(ResourceHandle* handle, double finishTime)
 {
     ASSERT_UNUSED(handle, handle == m_handle);
 
-    // FIXME (NetworkProcess): For the memory cache we'll need to update the finished status of the cached resource here.
-    // Such bookkeeping will need to be thread safe, as this callback is happening on a background thread.
-    send(Messages::WebResourceLoader::DidFinishResourceLoad(finishTime));
-    
+    m_networkLoaderClient->didFinishLoading(this, finishTime);
+
     cleanup();
 }
 
@@ -192,9 +223,8 @@ void NetworkResourceLoader::didFail(ResourceHandle* handle, const ResourceError&
 {
     ASSERT_UNUSED(handle, handle == m_handle);
 
-    // FIXME (NetworkProcess): For the memory cache we'll need to update the finished status of the cached resource here.
-    // Such bookkeeping will need to be thread safe, as this callback is happening on a background thread.
-    send(Messages::WebResourceLoader::DidFailResourceLoad(error));
+    m_networkLoaderClient->didFail(this, error);
+
     cleanup();
 }
 
@@ -206,11 +236,10 @@ void NetworkResourceLoader::willSendRequestAsync(ResourceHandle* handle, const R
     ASSERT(!redirectResponse.isNull());
     ASSERT(isMainThread());
 
+    ResourceRequest proposedRequest = request;
     m_suggestedRequestForWillSendRequest = request;
 
-    // This message is DispatchMessageEvenWhenWaitingForSyncReply to avoid a situation where the NetworkProcess is deadlocked waiting for 6 connections
-    // to complete while the WebProcess is waiting for a 7th to complete.
-    sendAbortingOnFailure(Messages::WebResourceLoader::WillSendRequest(request, redirectResponse), CoreIPC::DispatchMessageEvenWhenWaitingForSyncReply);
+    m_networkLoaderClient->willSendRequest(this, proposedRequest, redirectResponse);
 }
 
 void NetworkResourceLoader::continueWillSendRequest(const ResourceRequest& newRequest)
@@ -218,9 +247,16 @@ void NetworkResourceLoader::continueWillSendRequest(const ResourceRequest& newRe
     m_suggestedRequestForWillSendRequest.updateFromDelegatePreservingOldHTTPBody(newRequest.nsURLRequest(DoNotUpdateHTTPBody));
 
     RunLoop::main()->dispatch(bind(&NetworkResourceLoadScheduler::receivedRedirect, &NetworkProcess::shared().networkResourceLoadScheduler(), this, m_suggestedRequestForWillSendRequest.url()));
-    m_handle->continueWillSendRequest(m_suggestedRequestForWillSendRequest);
 
+    m_request = m_suggestedRequestForWillSendRequest;
     m_suggestedRequestForWillSendRequest = ResourceRequest();
+
+    m_handle->continueWillSendRequest(m_request);
+
+    if (m_request.isNull()) {
+        m_handle->cancel();
+        didFail(m_handle.get(), cancelledError(m_request));
+    }
 }
 
 void NetworkResourceLoader::continueDidReceiveResponse()
@@ -237,7 +273,7 @@ void NetworkResourceLoader::didSendData(ResourceHandle* handle, unsigned long lo
 {
     ASSERT_UNUSED(handle, handle == m_handle);
 
-    send(Messages::WebResourceLoader::DidSendData(bytesSent, totalBytesToBeSent));
+    m_networkLoaderClient->didSendData(this, bytesSent, totalBytesToBeSent);
 }
 
 void NetworkResourceLoader::wasBlocked(ResourceHandle* handle)
@@ -263,7 +299,7 @@ bool NetworkResourceLoader::shouldUseCredentialStorage(ResourceHandle* handle)
 
     // We still need this sync version, because ResourceHandle itself uses it internally, even when the delegate uses an async one.
 
-    return allowStoredCredentials() == AllowStoredCredentials;
+    return m_allowStoredCredentials == AllowStoredCredentials;
 }
 
 void NetworkResourceLoader::shouldUseCredentialStorageAsync(ResourceHandle* handle)
@@ -280,12 +316,12 @@ void NetworkResourceLoader::didReceiveAuthenticationChallenge(ResourceHandle* ha
     // FIXME (http://webkit.org/b/115291): Since we go straight to the UI process for authentication we don't get WebCore's
     // cross-origin check before asking the client for credentials.
     // Therefore we are too permissive in the case where the ClientCredentialPolicy is DoNotAskClientForCrossOriginCredentials.
-    if (clientCredentialPolicy() == DoNotAskClientForAnyCredentials) {
+    if (m_clientCredentialPolicy == DoNotAskClientForAnyCredentials) {
         challenge.authenticationClient()->receivedRequestToContinueWithoutCredential(challenge);
         return;
     }
 
-    NetworkProcess::shared().authenticationManager().didReceiveAuthenticationChallenge(webPageID(), webFrameID(), challenge);
+    NetworkProcess::shared().authenticationManager().didReceiveAuthenticationChallenge(m_webPageID, m_webFrameID, challenge);
 }
 
 void NetworkResourceLoader::didCancelAuthenticationChallenge(ResourceHandle* handle, const AuthenticationChallenge& challenge)
@@ -301,9 +337,30 @@ CoreIPC::Connection* NetworkResourceLoader::messageSenderConnection()
     return connectionToWebProcess()->connection();
 }
 
-uint64_t NetworkResourceLoader::messageSenderDestinationID()
+void NetworkResourceLoader::consumeSandboxExtensions()
 {
-    return identifier();
+    for (size_t i = 0, count = m_requestBodySandboxExtensions.size(); i < count; ++i)
+        m_requestBodySandboxExtensions[i]->consume();
+
+    for (size_t i = 0, count = m_resourceSandboxExtensions.size(); i < count; ++i)
+        m_resourceSandboxExtensions[i]->consume();
+
+    m_sandboxExtensionsAreConsumed = true;
+}
+
+void NetworkResourceLoader::invalidateSandboxExtensions()
+{
+    if (m_sandboxExtensionsAreConsumed) {
+        for (size_t i = 0, count = m_requestBodySandboxExtensions.size(); i < count; ++i)
+            m_requestBodySandboxExtensions[i]->revoke();
+        for (size_t i = 0, count = m_resourceSandboxExtensions.size(); i < count; ++i)
+            m_resourceSandboxExtensions[i]->revoke();
+    }
+
+    m_requestBodySandboxExtensions.clear();
+    m_resourceSandboxExtensions.clear();
+
+    m_sandboxExtensionsAreConsumed = false;
 }
 
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
@@ -312,9 +369,7 @@ void NetworkResourceLoader::canAuthenticateAgainstProtectionSpaceAsync(ResourceH
     ASSERT(isMainThread());
     ASSERT_UNUSED(handle, handle == m_handle);
 
-    // This message is DispatchMessageEvenWhenWaitingForSyncReply to avoid a situation where the NetworkProcess is deadlocked
-    // waiting for 6 connections to complete while the WebProcess is waiting for a 7th to complete.
-    sendAbortingOnFailure(Messages::WebResourceLoader::CanAuthenticateAgainstProtectionSpace(protectionSpace), CoreIPC::DispatchMessageEvenWhenWaitingForSyncReply);
+    m_networkLoaderClient->canAuthenticateAgainstProtectionSpace(this, protectionSpace);
 }
 
 void NetworkResourceLoader::continueCanAuthenticateAgainstProtectionSpace(bool result)

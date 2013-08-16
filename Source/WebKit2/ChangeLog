@@ -1,3 +1,113 @@
+2013-08-16  Brady Eidson  <beidson@apple.com>
+
+        (NetworkProcess)  Sync XHRs should load using async ResourceHandles, not ResourceHandle::loadResourceSynchronously
+        https://bugs.webkit.org/show_bug.cgi?id=119493
+
+        Reviewed by Alexey Proskuryakov.
+
+        This patch does the following:
+          - Consolidates SchedulableLoader and NetworkResourceLoader into one class.
+          - Removes SyncNetworkResourceLoader.
+          - Adds a NetworkLoaderClient interface that customizes certain behaviors of the NetworkResourceLoader.
+          - Implements a SynchronousNetworkLoaderClient and AsynchronousNetworkLoaderClient for the two different types of loads.
+
+        The AsynchronousNetworkLoaderClient results in messaging back progress to the WebProcess as the load progresses.
+        The SynchronousNetworkLoaderClient accumulates the response, data, and error to be communicated back to the WebProcess
+        only when the load is complete.
+
+        Update small swaths of code to reflect that NetworkResourceLoader is the One True Loader (tm):
+        * NetworkProcess/HostRecord.cpp:
+        (WebKit::HostRecord::scheduleResourceLoader):
+        (WebKit::HostRecord::addLoaderInProgress):
+        (WebKit::removeLoaderFromQueue):
+        (WebKit::HostRecord::removeLoader):
+        (WebKit::HostRecord::servePendingRequestsForQueue):
+        (WebKit::HostRecord::limitsRequests):
+        * NetworkProcess/HostRecord.h:
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::didClose):
+        (WebKit::NetworkConnectionToWebProcess::performSynchronousLoad):
+        (WebKit::NetworkConnectionToWebProcess::removeLoadIdentifier):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+
+        * NetworkProcess/NetworkProcess.cpp:
+        * NetworkProcess/NetworkResourceLoadScheduler.cpp:
+        (WebKit::NetworkResourceLoadScheduler::scheduleLoader):
+        (WebKit::NetworkResourceLoadScheduler::removeLoader):
+        (WebKit::NetworkResourceLoadScheduler::receivedRedirect):
+        (WebKit::NetworkResourceLoadScheduler::removeScheduledLoaders):
+        (WebKit::NetworkResourceLoadScheduler::scheduleRemoveLoader):
+        * NetworkProcess/NetworkResourceLoadScheduler.h:
+
+        Combine ScheduleableLoader and NetworkResourceLoader into NetworkResourceLoader:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::NetworkResourceLoader):
+        (WebKit::NetworkResourceLoader::~NetworkResourceLoader):
+        (WebKit::NetworkResourceLoader::isSynchronous):
+        (WebKit::NetworkResourceLoader::start):
+        (WebKit::NetworkResourceLoader::didReceiveResponseAsync):
+        (WebKit::NetworkResourceLoader::didReceiveBuffer):
+        (WebKit::NetworkResourceLoader::didFinishLoading):
+        (WebKit::NetworkResourceLoader::didFail):
+        (WebKit::NetworkResourceLoader::willSendRequestAsync):
+        (WebKit::NetworkResourceLoader::continueWillSendRequest):
+        (WebKit::NetworkResourceLoader::didSendData):
+        (WebKit::NetworkResourceLoader::shouldUseCredentialStorage):
+        (WebKit::NetworkResourceLoader::didReceiveAuthenticationChallenge):
+        (WebKit::NetworkResourceLoader::consumeSandboxExtensions):
+        (WebKit::NetworkResourceLoader::invalidateSandboxExtensions):
+        (WebKit::NetworkResourceLoader::canAuthenticateAgainstProtectionSpaceAsync):
+        * NetworkProcess/NetworkResourceLoader.h:
+        (WebKit::NetworkResourceLoader::create):
+        (WebKit::NetworkResourceLoader::connectionToWebProcess):
+        (WebKit::NetworkResourceLoader::priority):
+        (WebKit::NetworkResourceLoader::request):
+        (WebKit::NetworkResourceLoader::isLoadingMainResource):
+        (WebKit::NetworkResourceLoader::setHostRecord):
+        (WebKit::NetworkResourceLoader::hostRecord):
+        (WebKit::NetworkResourceLoader::sendAbortingOnFailure):
+
+        Add an abstract NetworkLoaderClient to adapt a load to be either synchronous or asynchronous:
+        * NetworkProcess/NetworkLoaderClient.h:
+        (WebKit::NetworkLoaderClient::~NetworkLoaderClient):
+        (WebKit::NetworkLoaderClient::isSynchronous):
+        (WebKit::NetworkLoaderClient::NetworkLoaderClient):
+
+        The asynchronous loader client, primarily to message progress back to the WebProcess as it happens:
+        * NetworkProcess/AsynchronousNetworkLoaderClient.cpp: Added.
+        (WebKit::AsynchronousNetworkLoaderClient::AsynchronousNetworkLoaderClient):
+        (WebKit::AsynchronousNetworkLoaderClient::willSendRequest):
+        (WebKit::AsynchronousNetworkLoaderClient::canAuthenticateAgainstProtectionSpace):
+        (WebKit::AsynchronousNetworkLoaderClient::didReceiveResponse):
+        (WebKit::AsynchronousNetworkLoaderClient::didReceiveBuffer):
+        (WebKit::AsynchronousNetworkLoaderClient::didSendData):
+        (WebKit::AsynchronousNetworkLoaderClient::didFinishLoading):
+        (WebKit::AsynchronousNetworkLoaderClient::didFail):
+        * NetworkProcess/AsynchronousNetworkLoaderClient.h:
+        (WebKit::AsynchronousNetworkLoaderClient::create):
+
+        The synchronous loader client, primarily to accumulate results of the load to send back to the WebProcess all at once:
+        * NetworkProcess/SynchronousNetworkLoaderClient.cpp: Added.
+        (WebKit::SynchronousNetworkLoaderClient::SynchronousNetworkLoaderClient):
+        (WebKit::SynchronousNetworkLoaderClient::~SynchronousNetworkLoaderClient):
+        (WebKit::SynchronousNetworkLoaderClient::willSendRequest):
+        (WebKit::SynchronousNetworkLoaderClient::canAuthenticateAgainstProtectionSpace):
+        (WebKit::SynchronousNetworkLoaderClient::didReceiveResponse):
+        (WebKit::SynchronousNetworkLoaderClient::didReceiveBuffer):
+        (WebKit::SynchronousNetworkLoaderClient::didFinishLoading):
+        (WebKit::SynchronousNetworkLoaderClient::didFail):
+        (WebKit::SynchronousNetworkLoaderClient::sendDelayedReply):
+        * NetworkProcess/SynchronousNetworkLoaderClient.h: Added.
+        (WebKit::SynchronousNetworkLoaderClient::create):
+
+        * NetworkProcess/SchedulableLoader.cpp: Removed.
+        * NetworkProcess/SchedulableLoader.h: Removed.
+        * NetworkProcess/SyncNetworkResourceLoader.cpp: Removed.
+        * NetworkProcess/SyncNetworkResourceLoader.h: Removed.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2013-08-16  Gabor Rapcsanyi  <rgabor@webkit.org>
 
         [Qt][ARM] Unreviewed buildfix after 154127.

@@ -1,3 +1,20 @@
+2013-08-16  Brady Eidson  <beidson@apple.com>
+
+        (NetworkProcess)  Sync XHRs should load using async ResourceHandles, not ResourceHandle::loadResourceSynchronously
+        https://bugs.webkit.org/show_bug.cgi?id=119493
+
+        Reviewed by Alexey Proskuryakov.
+
+        No new tests (Covered by plenty of existing tests).
+
+        * WebCore.exp.in:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        * platform/network/SynchronousLoaderClient.h: Make platformBadResponseError public
+
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::platformLoadResourceSynchronously): Add comments/FIXMEs spelling out how wrong this code is.
+
 2013-08-16  peavo@outlook.com  <peavo@outlook.com>
 
         <https://webkit.org/b/119889> [WinCairo] Compile error.
