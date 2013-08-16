@@ -505,20 +505,24 @@ public:
         m_formatter.oneByteOp(OP_GROUP5_Ev, GROUP1_OP_OR, dst);
     }
 
+#if CPU(X86_64)
     void decq_r(RegisterID dst)
     {
         m_formatter.oneByteOp64(OP_GROUP5_Ev, GROUP1_OP_OR, dst);
     }
+#endif // CPU(X86_64)
 
     void inc_r(RegisterID dst)
     {
         m_formatter.oneByteOp(OP_GROUP5_Ev, GROUP1_OP_ADD, dst);
     }
 
+#if CPU(X86_64)
     void incq_r(RegisterID dst)
     {
         m_formatter.oneByteOp64(OP_GROUP5_Ev, GROUP1_OP_ADD, dst);
     }
+#endif // CPU(X86_64)
 
     void negl_r(RegisterID dst)
     {

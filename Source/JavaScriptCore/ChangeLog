@@ -1,3 +1,9 @@
+2013-08-15  Benjamin Poulain  <benjamin@webkit.org>
+
+        Fix x86 32bits build after r154158
+
+        * assembler/X86Assembler.h: Add missing #ifdef for the x86_64 instructions.
+
 2013-08-15  Ryosuke Niwa  <rniwa@webkit.org>
 
         Build fix attempt after r154156.
