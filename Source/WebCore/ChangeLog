@@ -1,3 +1,12 @@
+2013-08-16  peavo@outlook.com  <peavo@outlook.com>
+
+        <https://webkit.org/b/119889> [WinCairo] Compile error.
+
+        Reviewed by Brent Fulgham.
+
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::certificatePath): Use correct function name.
+
 2013-08-16  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Unreviewed build correction after r154165.
