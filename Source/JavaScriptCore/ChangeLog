@@ -1,3 +1,10 @@
+2013-08-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build fix attempt after r154156.
+
+        * jit/JITStubs.cpp:
+        (JSC::cti_vm_handle_exception): encode!
+
 2013-08-15  Benjamin Poulain  <benjamin@webkit.org>
 
         [JSC] x86: Use inc and dec when possible
