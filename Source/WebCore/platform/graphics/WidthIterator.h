@@ -67,7 +67,7 @@ public:
 
         return !(font.typesettingFeatures() & ~(Kerning | Ligatures));
 #elif PLATFORM(QT) && QT_VERSION >= 0x050100
-        return !(font.typesettingFeatures() & ~Kerning) && !font.isSmallCaps();
+        return !(font.typesettingFeatures() & ~Kerning) && !font.isSmallCaps() && !font.letterSpacing();
 #else
         return !font.typesettingFeatures();
 #endif

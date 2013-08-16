@@ -1,3 +1,17 @@
+2013-08-16  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt] Kerning in fast font path breaks letter-spacing
+        https://bugs.webkit.org/show_bug.cgi?id=119838
+
+        Reviewed by Jocelyn Turcotte.
+
+        Mark fonts with both kerning and letter-spacing as unsupported by the simple font-path.
+
+        Test: fast/text/letter-spacing-kerned.html
+
+        * platform/graphics/WidthIterator.h:
+        (WebCore::WidthIterator::supportsTypesettingFeatures):
+
 2013-08-16  Andreas Kling  <akling@apple.com>
 
         <https://webkit.org/b/119893> FrameView::frame() should return a reference.

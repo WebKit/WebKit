@@ -1,3 +1,15 @@
+2013-08-16  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt] Kerning in fast font path breaks letter-spacing
+        https://bugs.webkit.org/show_bug.cgi?id=119838
+
+        Reviewed by Jocelyn Turcotte.
+
+        Test that kerning does not break letter spacing.
+
+        * fast/text/letter-spacing-kerned-expected.html: Added.
+        * fast/text/letter-spacing-kerned.html: Added.
+
 2013-08-16  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Unreviewed gardening. Turn on a now-passing test.
