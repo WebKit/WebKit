@@ -141,7 +141,12 @@ static RetainPtr<CFStringRef> substringFromIndex(CFStringRef string, CFIndex ind
     return adoptCF(CFStringCreateWithSubstring(kCFAllocatorDefault, string, CFRangeMake(index, CFStringGetLength(string) - index)));
 }
 
-// FIXME (119583): Make this match other platforms better.
+static wstring lastPathComponentAsWString(CFURLRef url)
+{
+    RetainPtr<CFStringRef> lastPathComponent = adoptCF(CFURLCopyLastPathComponent(url));
+    return cfStringRefToWString(lastPathComponent.get());
+}
+
 wstring urlSuitableForTestResult(const wstring& urlString)
 {
     RetainPtr<CFURLRef> url = adoptCF(CFURLCreateWithBytes(kCFAllocatorDefault, reinterpret_cast<const UInt8*>(urlString.c_str()), urlString.length() * sizeof(wstring::value_type), kCFStringEncodingUTF16, 0));
@@ -153,16 +158,16 @@ wstring urlSuitableForTestResult(const wstring& urlString)
     COMPtr<IWebDataSource> dataSource;
     if (FAILED(frame->dataSource(&dataSource))) {
         if (FAILED(frame->provisionalDataSource(&dataSource)))
-            return urlString;
+            return lastPathComponentAsWString(url.get());
     }
 
     COMPtr<IWebMutableURLRequest> request;
     if (FAILED(dataSource->request(&request)))
-        return urlString;
+        return lastPathComponentAsWString(url.get());
 
     _bstr_t requestURLString;
     if (FAILED(request->URL(requestURLString.GetAddress())))
-        return urlString;
+        return lastPathComponentAsWString(url.get());
 
     RetainPtr<CFURLRef> requestURL = adoptCF(CFURLCreateWithBytes(kCFAllocatorDefault, reinterpret_cast<const UInt8*>(requestURLString.GetBSTR()), requestURLString.length() * sizeof(OLECHAR), kCFStringEncodingUTF16, 0));
     RetainPtr<CFURLRef> baseURL = adoptCF(CFURLCreateCopyDeletingLastPathComponent(kCFAllocatorDefault, requestURL.get()));
@@ -170,7 +175,10 @@ wstring urlSuitableForTestResult(const wstring& urlString)
     RetainPtr<CFStringRef> basePath = adoptCF(CFURLCopyPath(baseURL.get()));
     RetainPtr<CFStringRef> path = adoptCF(CFURLCopyPath(url.get()));
 
-    return cfStringRefToWString(substringFromIndex(path.get(), CFStringGetLength(basePath.get())).get());
+    if (basePath.get() && CFStringHasPrefix(path.get(), basePath.get()))
+        return cfStringRefToWString(substringFromIndex(path.get(), CFStringGetLength(basePath.get())).get());
+
+    return lastPathComponentAsWString(url.get());
 }
 
 wstring lastPathComponent(const wstring& urlString)
