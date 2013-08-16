@@ -43,11 +43,41 @@
 
 // The Windows version of WKSI defines these functions as capitalized, while the Mac version defines them as lower case.
 // FIXME: Is this necessary anymore?
-#define wkMediaControllerThemeAvailable(themeStyle) WKMediaControllerThemeAvailable(themeStyle)
-#define wkHitTestMediaUIPart(part, themeStyle, bounds, point) WKHitTestMediaUIPart(part, themeStyle, bounds, point)
-#define wkMeasureMediaUIPart(part, themeStyle, bounds, naturalSize) WKMeasureMediaUIPart(part, themeStyle, bounds, naturalSize)
-#define wkDrawMediaUIPart(part, themeStyle, context, rect, state) WKDrawMediaUIPart(part, themeStyle, context, rect, state)
-#define wkDrawMediaSliderTrack(themeStyle, context, rect, timeLoaded, currentTime, duration, state) WKDrawMediaSliderTrack(themeStyle, context, rect, timeLoaded, currentTime, duration, state)
+inline bool wkHitTestMediaUIPart(int part, const CGRect& bounds, const CGPoint& point)
+{
+#if HAVE(AVCF_LEGIBLE_OUTPUT)
+    WKHitTestMediaUIPart(part, bounds, point);
+#else
+    WKHitTestMediaUIPart(part, WKMediaControllerThemeQuickTime, bounds, point);
+#endif
+}
+
+inline void wkMeasureMediaUIPart(int part, CGRect* bounds, CGSize* naturalSize)
+{
+#if HAVE(AVCF_LEGIBLE_OUTPUT)
+    WKMeasureMediaUIPart(part, bounds, naturalSize);
+#else
+    WKMeasureMediaUIPart(part, WKMediaControllerThemeQuickTime, bounds, naturalSize);
+#endif
+}
+
+inline void wkDrawMediaUIPart(int part, CGContextRef context, const CGRect& rect, unsigned state)
+{
+#if HAVE(AVCF_LEGIBLE_OUTPUT)
+    WKDrawMediaUIPart(part, context, rect, state);
+#else
+    WKDrawMediaUIPart(part, WKMediaControllerThemeQuickTime, context, rect, state);
+#endif
+}
+
+inline void wkDrawMediaSliderTrack(CGContextRef context, const CGRect& rect, float timeLoaded, float currentTime, float duration, unsigned state)
+{
+#if HAVE(AVCF_LEGIBLE_OUTPUT)
+    WKDrawMediaSliderTrack(context, rect, timeLoaded, currentTime, duration, state);
+#else
+    WKDrawMediaSliderTrack(WKMediaControllerThemeQuickTime, context, rect, timeLoaded, currentTime, duration, state);
+#endif
+}
 
 #endif
  
@@ -106,7 +136,7 @@ void RenderMediaControls::adjustMediaSliderThumbSize(RenderStyle* style)
     }
 
     CGSize size;
-    wkMeasureMediaUIPart(part, WKMediaControllerThemeQuickTime, 0, &size);
+    wkMeasureMediaUIPart(part, 0, &size);
 
     float zoomLevel = style->effectiveZoom();
     style->setWidth(Length(static_cast<int>(size.width * zoomLevel), Fixed));
@@ -115,7 +145,6 @@ void RenderMediaControls::adjustMediaSliderThumbSize(RenderStyle* style)
 
 bool RenderMediaControls::paintMediaControlsPart(MediaControlElementType part, RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
-    static const int themeStyle = WKMediaControllerThemeQuickTime;
     GraphicsContextStateSaver stateSaver(*paintInfo.context);
 
     switch (part) {
@@ -123,69 +152,69 @@ bool RenderMediaControls::paintMediaControlsPart(MediaControlElementType part, R
     case MediaExitFullscreenButton:
         if (MediaControlFullscreenButtonElement* btn = static_cast<MediaControlFullscreenButtonElement*>(o->node())) {
             bool enterButton = btn->displayType() == MediaEnterFullscreenButton;
-            wkDrawMediaUIPart(enterButton ? WKMediaUIPartFullscreenButton : WKMediaUIPartExitFullscreenButton, themeStyle, paintInfo.context->platformContext(), r, determineState(o));
+            wkDrawMediaUIPart(enterButton ? WKMediaUIPartFullscreenButton : WKMediaUIPartExitFullscreenButton, paintInfo.context->platformContext(), r, determineState(o));
         }
         break;
     case MediaShowClosedCaptionsButton:
     case MediaHideClosedCaptionsButton:
         if (MediaControlToggleClosedCaptionsButtonElement* btn = static_cast<MediaControlToggleClosedCaptionsButtonElement*>(o->node())) {
             bool captionsVisible = btn->displayType() == MediaHideClosedCaptionsButton;
-            wkDrawMediaUIPart(captionsVisible ? WKMediaUIPartHideClosedCaptionsButton : WKMediaUIPartShowClosedCaptionsButton, themeStyle, paintInfo.context->platformContext(), r, determineState(o));
+            wkDrawMediaUIPart(captionsVisible ? WKMediaUIPartHideClosedCaptionsButton : WKMediaUIPartShowClosedCaptionsButton, paintInfo.context->platformContext(), r, determineState(o));
         }
         break;
     case MediaMuteButton:
     case MediaUnMuteButton:
         if (MediaControlMuteButtonElement* btn = static_cast<MediaControlMuteButtonElement*>(o->node())) {
             bool audioEnabled = btn->displayType() == MediaMuteButton;
-            wkDrawMediaUIPart(audioEnabled ? WKMediaUIPartMuteButton : WKMediaUIPartUnMuteButton, themeStyle, paintInfo.context->platformContext(), r, determineState(o));
+            wkDrawMediaUIPart(audioEnabled ? WKMediaUIPartMuteButton : WKMediaUIPartUnMuteButton, paintInfo.context->platformContext(), r, determineState(o));
         }
         break;
     case MediaPauseButton:
     case MediaPlayButton:
         if (MediaControlPlayButtonElement* btn = static_cast<MediaControlPlayButtonElement*>(o->node())) {
             bool canPlay = btn->displayType() == MediaPlayButton;
-            wkDrawMediaUIPart(canPlay ? WKMediaUIPartPlayButton : WKMediaUIPartPauseButton, themeStyle, paintInfo.context->platformContext(), r, determineState(o));
+            wkDrawMediaUIPart(canPlay ? WKMediaUIPartPlayButton : WKMediaUIPartPauseButton, paintInfo.context->platformContext(), r, determineState(o));
         }
         break;
     case MediaRewindButton:
-        wkDrawMediaUIPart(WKMediaUIPartRewindButton, themeStyle, paintInfo.context->platformContext(), r, determineState(o));
+        wkDrawMediaUIPart(WKMediaUIPartRewindButton, paintInfo.context->platformContext(), r, determineState(o));
         break;
     case MediaReturnToRealtimeButton:
-        wkDrawMediaUIPart(WKMediaUIPartSeekToRealtimeButton, themeStyle, paintInfo.context->platformContext(), r, determineState(o));
+        wkDrawMediaUIPart(WKMediaUIPartSeekToRealtimeButton, paintInfo.context->platformContext(), r, determineState(o));
         break;
     case MediaSeekBackButton:
-        wkDrawMediaUIPart(WKMediaUIPartSeekBackButton, themeStyle, paintInfo.context->platformContext(), r, determineState(o));
+        wkDrawMediaUIPart(WKMediaUIPartSeekBackButton, paintInfo.context->platformContext(), r, determineState(o));
         break;
     case MediaSeekForwardButton:
-        wkDrawMediaUIPart(WKMediaUIPartSeekForwardButton, themeStyle, paintInfo.context->platformContext(), r, determineState(o));
+        wkDrawMediaUIPart(WKMediaUIPartSeekForwardButton, paintInfo.context->platformContext(), r, determineState(o));
         break;
     case MediaSlider: {
         if (HTMLMediaElement* mediaElement = toParentMediaElement(o)) {
             FloatRect unzoomedRect = getUnzoomedRectAndAdjustCurrentContext(o, paintInfo, r);
-            wkDrawMediaSliderTrack(themeStyle, paintInfo.context->platformContext(), unzoomedRect, mediaElement->percentLoaded() * mediaElement->duration(), mediaElement->currentTime(), mediaElement->duration(), determineState(o));
+            wkDrawMediaSliderTrack(paintInfo.context->platformContext(), unzoomedRect, mediaElement->percentLoaded() * mediaElement->duration(), mediaElement->currentTime(), mediaElement->duration(), determineState(o));
         }
         break;
     }
     case MediaSliderThumb:
-        wkDrawMediaUIPart(WKMediaUIPartTimelineSliderThumb, themeStyle, paintInfo.context->platformContext(), r, determineState(o));
+        wkDrawMediaUIPart(WKMediaUIPartTimelineSliderThumb, paintInfo.context->platformContext(), r, determineState(o));
         break;
     case MediaVolumeSliderContainer:
-        wkDrawMediaUIPart(WKMediaUIPartVolumeSliderContainer, themeStyle, paintInfo.context->platformContext(), r, determineState(o));
+        wkDrawMediaUIPart(WKMediaUIPartVolumeSliderContainer, paintInfo.context->platformContext(), r, determineState(o));
         break;
     case MediaVolumeSlider:
-        wkDrawMediaUIPart(WKMediaUIPartVolumeSlider, themeStyle, paintInfo.context->platformContext(), r, determineState(o));
+        wkDrawMediaUIPart(WKMediaUIPartVolumeSlider, paintInfo.context->platformContext(), r, determineState(o));
         break;
     case MediaVolumeSliderThumb:
-        wkDrawMediaUIPart(WKMediaUIPartVolumeSliderThumb, themeStyle, paintInfo.context->platformContext(), r, determineState(o));
+        wkDrawMediaUIPart(WKMediaUIPartVolumeSliderThumb, paintInfo.context->platformContext(), r, determineState(o));
         break;
     case MediaFullScreenVolumeSlider:
-        wkDrawMediaUIPart(WKMediaUIPartFullScreenVolumeSlider, themeStyle, paintInfo.context->platformContext(), r, determineState(o));
+        wkDrawMediaUIPart(WKMediaUIPartFullScreenVolumeSlider, paintInfo.context->platformContext(), r, determineState(o));
         break;
     case MediaFullScreenVolumeSliderThumb:
-        wkDrawMediaUIPart(WKMediaUIPartFullScreenVolumeSliderThumb, themeStyle, paintInfo.context->platformContext(), r, determineState(o));
+        wkDrawMediaUIPart(WKMediaUIPartFullScreenVolumeSliderThumb, paintInfo.context->platformContext(), r, determineState(o));
         break;
     case MediaTimelineContainer:
-        wkDrawMediaUIPart(WKMediaUIPartBackground, themeStyle, paintInfo.context->platformContext(), r, determineState(o));
+        wkDrawMediaUIPart(WKMediaUIPartBackground, paintInfo.context->platformContext(), r, determineState(o));
         break;
     case MediaCurrentTimeDisplay:
         ASSERT_NOT_REACHED();

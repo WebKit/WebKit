@@ -1,3 +1,13 @@
+2013-08-16  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Update RenderMediaControls for new API
+        https://bugs.webkit.org/show_bug.cgi?id=119910
+
+        Reviewed by Eric Carlson.
+
+        * rendering/RenderMediaControls.cpp: Update calls to WebKitSystemInterface for
+        the changed API.
+
 2013-08-16  Arunprasad Rajkumar  <arurajku@cisco.com>
 
         <https://webkit.org/b/119912> Fix WebKit build error when SVG is disabled(broken since r154174)
