@@ -1,3 +1,20 @@
+2013-08-16  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        <https://webkit.org/b/119885> [CMake] Always build our generated versions of ANGLE's glslang.cpp and glslang_tab.cpp
+
+        Reviewed by Gyuyoung Kim.
+
+        Now that r154109 has landed, all Bison versions (at least from 2.3 up
+        to the latest 3.0) should be able to generate versions of glslang* that
+        build correctly.
+
+        Since the idea is to remove the prebuilt files from future imports of
+        ANGLE, always building our own versions is a good idea, and allows us
+        to get rid of some very ugly CMake checks.
+
+        * CMakeLists.txt: Always build glslang.cpp and glslang_tab.cpp from
+        DERIVED_SOURCES_WEBCORE_DIR.
+
 2013-08-16  Julien Brianceau  <jbrianceau@nds.com>
 
         <https://webkit.org/b/119880> [Qt] Build fix (broken since r154142).
