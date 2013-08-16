@@ -149,9 +149,9 @@ SYMBOL_STRING(ctiVMHandleException) ":" "\n"
     "move  $4,$16" "\n"
 #endif
     // When cti_vm_handle_exception returns, v0 has callFrame and v1 has handler address
+    "move  $31,$3" "\n"
+    "jr    $31" "\n"
     "move  $16,$2 " "\n"
-    "jr    $3" "\n"
-    "nop" "\n"
 ".set reorder" "\n"
 ".set macro" "\n"
 ".end " SYMBOL_STRING(ctiVMHandleException) "\n"

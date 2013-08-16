@@ -1,3 +1,13 @@
+2013-08-16  Balazs Kilvady  <kilvadyb@homejinni.com>
+
+        <https://webkit.org/b/119742> REGRESSION(FTL): Fix register usage in mips implementation of ctiVMHandleException
+
+        Reviewed by Allan Sandfeld Jensen.
+
+        ctiVMHandleException must jump/return using register ra (r31).
+
+        * jit/JITStubsMIPS.h:
+
 2013-08-16  Julien Brianceau  <jbrianceau@nds.com>
 
         <https://webkit.org/b/119879> Fix sh4 build after r154156.
