@@ -832,7 +832,7 @@ void DFG_OPERATION operationPutByIdStrict(ExecState* exec, EncodedJSValue encode
     NativeCallFrameTracer tracer(vm, exec);
     
     Identifier ident(vm, uid);
-    PutPropertySlot slot(true);
+    PutPropertySlot slot(true, exec->codeBlock()->putByIdContext());
     base->methodTable()->put(base, exec, ident, JSValue::decode(encodedValue), slot);
 }
 
@@ -842,7 +842,7 @@ void DFG_OPERATION operationPutByIdNonStrict(ExecState* exec, EncodedJSValue enc
     NativeCallFrameTracer tracer(vm, exec);
     
     Identifier ident(vm, uid);
-    PutPropertySlot slot(false);
+    PutPropertySlot slot(false, exec->codeBlock()->putByIdContext());
     base->methodTable()->put(base, exec, ident, JSValue::decode(encodedValue), slot);
 }
 
@@ -852,7 +852,7 @@ void DFG_OPERATION operationPutByIdDirectStrict(ExecState* exec, EncodedJSValue 
     NativeCallFrameTracer tracer(vm, exec);
     
     Identifier ident(vm, uid);
-    PutPropertySlot slot(true);
+    PutPropertySlot slot(true, exec->codeBlock()->putByIdContext());
     ASSERT(base->isObject());
     asObject(base)->putDirect(exec->vm(), ident, JSValue::decode(encodedValue), slot);
 }
@@ -863,7 +863,7 @@ void DFG_OPERATION operationPutByIdDirectNonStrict(ExecState* exec, EncodedJSVal
     NativeCallFrameTracer tracer(vm, exec);
     
     Identifier ident(vm, uid);
-    PutPropertySlot slot(false);
+    PutPropertySlot slot(false, exec->codeBlock()->putByIdContext());
     ASSERT(base->isObject());
     asObject(base)->putDirect(exec->vm(), ident, JSValue::decode(encodedValue), slot);
 }
@@ -880,7 +880,7 @@ void DFG_OPERATION operationPutByIdStrictOptimizeWithReturnAddress(ExecState* ex
 
     JSValue value = JSValue::decode(encodedValue);
     JSValue baseValue(base);
-    PutPropertySlot slot(true);
+    PutPropertySlot slot(true, exec->codeBlock()->putByIdContext());
     
     baseValue.put(exec, ident, value, slot);
     
@@ -905,7 +905,7 @@ void DFG_OPERATION operationPutByIdNonStrictOptimizeWithReturnAddress(ExecState*
 
     JSValue value = JSValue::decode(encodedValue);
     JSValue baseValue(base);
-    PutPropertySlot slot(false);
+    PutPropertySlot slot(false, exec->codeBlock()->putByIdContext());
     
     baseValue.put(exec, ident, value, slot);
     
@@ -929,7 +929,7 @@ void DFG_OPERATION operationPutByIdDirectStrictOptimizeWithReturnAddress(ExecSta
     AccessType accessType = static_cast<AccessType>(stubInfo.accessType);
 
     JSValue value = JSValue::decode(encodedValue);
-    PutPropertySlot slot(true);
+    PutPropertySlot slot(true, exec->codeBlock()->putByIdContext());
     
     ASSERT(base->isObject());
     asObject(base)->putDirect(exec->vm(), ident, value, slot);
@@ -954,7 +954,7 @@ void DFG_OPERATION operationPutByIdDirectNonStrictOptimizeWithReturnAddress(Exec
     AccessType accessType = static_cast<AccessType>(stubInfo.accessType);
 
     JSValue value = JSValue::decode(encodedValue);
-    PutPropertySlot slot(false);
+    PutPropertySlot slot(false, exec->codeBlock()->putByIdContext());
     
     ASSERT(base->isObject());
     asObject(base)->putDirect(exec->vm(), ident, value, slot);
@@ -980,7 +980,7 @@ void DFG_OPERATION operationPutByIdStrictBuildListWithReturnAddress(ExecState* e
 
     JSValue value = JSValue::decode(encodedValue);
     JSValue baseValue(base);
-    PutPropertySlot slot(true);
+    PutPropertySlot slot(true, exec->codeBlock()->putByIdContext());
     
     baseValue.put(exec, ident, value, slot);
     
@@ -1002,7 +1002,7 @@ void DFG_OPERATION operationPutByIdNonStrictBuildListWithReturnAddress(ExecState
 
     JSValue value = JSValue::decode(encodedValue);
     JSValue baseValue(base);
-    PutPropertySlot slot(false);
+    PutPropertySlot slot(false, exec->codeBlock()->putByIdContext());
     
     baseValue.put(exec, ident, value, slot);
     
@@ -1023,7 +1023,7 @@ void DFG_OPERATION operationPutByIdDirectStrictBuildListWithReturnAddress(ExecSt
     AccessType accessType = static_cast<AccessType>(stubInfo.accessType);
     
     JSValue value = JSValue::decode(encodedValue);
-    PutPropertySlot slot(true);
+    PutPropertySlot slot(true, exec->codeBlock()->putByIdContext());
     
     ASSERT(base->isObject());
     asObject(base)->putDirect(exec->vm(), ident, value, slot);
@@ -1045,7 +1045,7 @@ void DFG_OPERATION operationPutByIdDirectNonStrictBuildListWithReturnAddress(Exe
     AccessType accessType = static_cast<AccessType>(stubInfo.accessType);
 
     JSValue value = JSValue::decode(encodedValue);
-    PutPropertySlot slot(false);
+    PutPropertySlot slot(false, exec->codeBlock()->putByIdContext());
     
     ASSERT(base->isObject());
     asObject(base)->putDirect(exec->vm(), ident, value, slot);

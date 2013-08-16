@@ -570,7 +570,7 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_id)
     const Identifier& ident = codeBlock->identifier(pc[2].u.operand);
     
     JSValue baseValue = LLINT_OP_C(1).jsValue();
-    PutPropertySlot slot(codeBlock->isStrictMode());
+    PutPropertySlot slot(codeBlock->isStrictMode(), codeBlock->putByIdContext());
     if (pc[8].u.operand)
         asObject(baseValue)->putDirect(vm, ident, LLINT_OP_C(3).jsValue(), slot);
     else

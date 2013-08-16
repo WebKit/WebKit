@@ -1,3 +1,31 @@
+2013-08-16  Filip Pizlo  <fpizlo@apple.com>
+
+        Object properties added using dot syntax (o.f = ...) from code that isn't in eval should be less likely to cause an object to become a dictionary
+        https://bugs.webkit.org/show_bug.cgi?id=119897
+
+        Reviewed by Oliver Hunt.
+        
+        6-10x speed-up on microbenchmarks that create large static objects. 40-65% speed-up
+        on Octane/gbemu. 3% overall speed-up on Octane. No slow-downs anywhere; our ability
+        to turn objects into dictionaries when you're storing using bracket syntax or using
+        eval is still in place.
+
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::putByIdContext):
+        * dfg/DFGOperations.cpp:
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * runtime/JSObject.h:
+        (JSC::JSObject::putDirectInternal):
+        * runtime/PutPropertySlot.h:
+        (JSC::PutPropertySlot::PutPropertySlot):
+        (JSC::PutPropertySlot::context):
+        * runtime/Structure.cpp:
+        (JSC::Structure::addPropertyTransition):
+        * runtime/Structure.h:
+
 2013-08-16  Balazs Kilvady  <kilvadyb@homejinni.com>
 
         <https://webkit.org/b/119742> REGRESSION(FTL): Fix register usage in mips implementation of ctiVMHandleException

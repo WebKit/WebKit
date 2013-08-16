@@ -475,7 +475,9 @@ DEFINE_STUB_FUNCTION(void, op_put_by_id_generic)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
 
-    PutPropertySlot slot(stackFrame.callFrame->codeBlock()->isStrictMode());
+    PutPropertySlot slot(
+        stackFrame.callFrame->codeBlock()->isStrictMode(),
+        stackFrame.callFrame->codeBlock()->putByIdContext());
     stackFrame.args[0].jsValue().put(stackFrame.callFrame, stackFrame.args[1].identifier(), stackFrame.args[2].jsValue(), slot);
     CHECK_FOR_EXCEPTION_AT_END();
 }
@@ -484,7 +486,9 @@ DEFINE_STUB_FUNCTION(void, op_put_by_id_direct_generic)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
     
-    PutPropertySlot slot(stackFrame.callFrame->codeBlock()->isStrictMode());
+    PutPropertySlot slot(
+        stackFrame.callFrame->codeBlock()->isStrictMode(),
+        stackFrame.callFrame->codeBlock()->putByIdContext());
     JSValue baseValue = stackFrame.args[0].jsValue();
     ASSERT(baseValue.isObject());
     asObject(baseValue)->putDirect(stackFrame.callFrame->vm(), stackFrame.args[1].identifier(), stackFrame.args[2].jsValue(), slot);
@@ -516,7 +520,9 @@ DEFINE_STUB_FUNCTION(void, op_put_by_id)
     StructureStubInfo* stubInfo = &codeBlock->getStubInfo(STUB_RETURN_ADDRESS);
     AccessType accessType = static_cast<AccessType>(stubInfo->accessType);
 
-    PutPropertySlot slot(callFrame->codeBlock()->isStrictMode());
+    PutPropertySlot slot(
+        callFrame->codeBlock()->isStrictMode(),
+        callFrame->codeBlock()->putByIdContext());
     stackFrame.args[0].jsValue().put(callFrame, ident, stackFrame.args[2].jsValue(), slot);
     
     if (accessType == static_cast<AccessType>(stubInfo->accessType)) {
@@ -537,7 +543,9 @@ DEFINE_STUB_FUNCTION(void, op_put_by_id_direct)
     StructureStubInfo* stubInfo = &codeBlock->getStubInfo(STUB_RETURN_ADDRESS);
     AccessType accessType = static_cast<AccessType>(stubInfo->accessType);
 
-    PutPropertySlot slot(callFrame->codeBlock()->isStrictMode());
+    PutPropertySlot slot(
+        callFrame->codeBlock()->isStrictMode(),
+        callFrame->codeBlock()->putByIdContext());
     JSValue baseValue = stackFrame.args[0].jsValue();
     ASSERT(baseValue.isObject());
     
@@ -558,7 +566,9 @@ DEFINE_STUB_FUNCTION(void, op_put_by_id_fail)
     CallFrame* callFrame = stackFrame.callFrame;
     Identifier& ident = stackFrame.args[1].identifier();
     
-    PutPropertySlot slot(callFrame->codeBlock()->isStrictMode());
+    PutPropertySlot slot(
+        callFrame->codeBlock()->isStrictMode(),
+        callFrame->codeBlock()->putByIdContext());
     stackFrame.args[0].jsValue().put(callFrame, ident, stackFrame.args[2].jsValue(), slot);
 
     CHECK_FOR_EXCEPTION_AT_END();
@@ -571,7 +581,9 @@ DEFINE_STUB_FUNCTION(void, op_put_by_id_direct_fail)
     CallFrame* callFrame = stackFrame.callFrame;
     Identifier& ident = stackFrame.args[1].identifier();
     
-    PutPropertySlot slot(callFrame->codeBlock()->isStrictMode());
+    PutPropertySlot slot(
+        callFrame->codeBlock()->isStrictMode(),
+        callFrame->codeBlock()->putByIdContext());
     JSValue baseValue = stackFrame.args[0].jsValue();
     ASSERT(baseValue.isObject());
     asObject(baseValue)->putDirect(callFrame->vm(), ident, stackFrame.args[2].jsValue(), slot);

@@ -380,7 +380,7 @@ NonPropertyTransition Structure::suggestedArrayStorageTransition() const
     return AllocateArrayStorage;
 }
 
-Structure* Structure::addPropertyTransition(VM& vm, Structure* structure, PropertyName propertyName, unsigned attributes, JSCell* specificValue, PropertyOffset& offset)
+Structure* Structure::addPropertyTransition(VM& vm, Structure* structure, PropertyName propertyName, unsigned attributes, JSCell* specificValue, PropertyOffset& offset, PutPropertySlot::Context context)
 {
     // If we have a specific function, we may have got to this point if there is
     // already a transition with the correct property name and attributes, but
@@ -399,7 +399,12 @@ Structure* Structure::addPropertyTransition(VM& vm, Structure* structure, Proper
     if (structure->m_specificFunctionThrashCount == maxSpecificFunctionThrashCount)
         specificValue = 0;
 
-    if (structure->transitionCount() > s_maxTransitionLength) {
+    int maxTransitionLength;
+    if (context == PutPropertySlot::PutById)
+        maxTransitionLength = s_maxTransitionLengthForNonEvalPutById;
+    else
+        maxTransitionLength = s_maxTransitionLength;
+    if (structure->transitionCount() > maxTransitionLength) {
         Structure* transition = toCacheableDictionaryTransition(vm, structure);
         ASSERT(structure != transition);
         offset = transition->putSpecificValue(vm, propertyName, attributes, specificValue);

@@ -55,6 +55,7 @@
 #include "ObjectAllocationProfile.h"
 #include "Options.h"
 #include "Operations.h"
+#include "PutPropertySlot.h"
 #include "Instruction.h"
 #include "JITCode.h"
 #include "JITWriteBarrier.h"
@@ -398,6 +399,12 @@ public:
     }
 
     CodeType codeType() const { return m_unlinkedCode->codeType(); }
+    PutPropertySlot::Context putByIdContext() const
+    {
+        if (codeType() == EvalCode)
+            return PutPropertySlot::PutByIdEval;
+        return PutPropertySlot::PutById;
+    }
 
     SourceProvider* source() const { return m_source.get(); }
     unsigned sourceOffset() const { return m_sourceOffset; }

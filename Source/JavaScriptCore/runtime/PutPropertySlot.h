@@ -37,11 +37,13 @@ namespace JSC {
     class PutPropertySlot {
     public:
         enum Type { Uncachable, ExistingProperty, NewProperty };
+        enum Context { UnknownContext, PutById, PutByIdEval };
 
-        PutPropertySlot(bool isStrictMode = false)
+        PutPropertySlot(bool isStrictMode = false, Context context = UnknownContext)
             : m_type(Uncachable)
             , m_base(0)
             , m_isStrictMode(isStrictMode)
+            , m_context(context)
         {
         }
 
@@ -58,6 +60,8 @@ namespace JSC {
             m_base = base;
             m_offset = offset;
         }
+        
+        Context context() const { return static_cast<Context>(m_context); }
 
         Type type() const { return m_type; }
         JSObject* base() const { return m_base; }
@@ -75,6 +79,7 @@ namespace JSC {
         JSObject* m_base;
         PropertyOffset m_offset;
         bool m_isStrictMode;
+        uint8_t m_context;
     };
 
 } // namespace JSC

@@ -1347,7 +1347,7 @@ inline bool JSObject::putDirectInternal(VM& vm, PropertyName propertyName, JSVal
     if ((mode == PutModePut) && !isExtensible())
         return false;
 
-    Structure* structure = Structure::addPropertyTransition(vm, this->structure(), propertyName, attributes, specificFunction, offset);
+    Structure* structure = Structure::addPropertyTransition(vm, this->structure(), propertyName, attributes, specificFunction, offset, slot.context());
     
     validateOffset(offset);
     ASSERT(structure->isValidOffset(offset));
