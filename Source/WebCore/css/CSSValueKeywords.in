@@ -114,6 +114,7 @@ monospace
 //
 // CSS_PROP_*_COLOR
 //
+alpha
 aqua
 black
 blue
@@ -151,6 +152,7 @@ inactivecaption
 inactivecaptiontext
 infobackground
 infotext
+luminance
 menutext
 scrollbar
 threeddarkshadow

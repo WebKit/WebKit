@@ -1,5 +1,19 @@
 2013-08-16  Arunprasad Rajkumar  <arurajku@cisco.com>
 
+        <https://webkit.org/b/119912> Fix WebKit build error when SVG is disabled(broken since r154174)
+
+        Reviewed by Simon Fraser.
+
+        No new tests required, just a build fix.
+
+        Since r154174 CSS keywords alpha and luminance used by -webkit-mask-source-type. Move those
+        keywords from SVGCSSValueKeywords.in to CSSValueKeywords.in.
+
+        * css/CSSValueKeywords.in:
+        * css/SVGCSSValueKeywords.in:
+
+2013-08-16  Arunprasad Rajkumar  <arurajku@cisco.com>
+
         <https://webkit.org/b/119785> Replace currentTime() with monotonicallyIncreasingTime() in WebCore
 
         Reviewed by Alexey Proskuryakov.
