@@ -1,3 +1,13 @@
+2013-08-16  Julien Brianceau  <jbrianceau@nds.com>
+
+        <https://webkit.org/b/119879> Fix sh4 build after r154156.
+
+        Reviewed by Allan Sandfeld Jensen.
+
+        Fix typo in JITStubsSH4.h file.
+
+        * jit/JITStubsSH4.h:
+
 2013-08-15  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         <https://webkit.org/b/119833> Concurrent compilation thread should not trigger WriteBarriers

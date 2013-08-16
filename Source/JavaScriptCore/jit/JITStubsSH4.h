@@ -107,9 +107,9 @@ SYMBOL_STRING(ctiVMThrowTrampoline) ":" "\n"
 );
 
 asm volatile (
-".globl " SYMBOL_STRING(ctiVMHandleExceptiom) "\n"
-HIDE_SYMBOL(ctiVMHandleExceptiom) "\n"
-SYMBOL_STRING(ctiVMHandleExceptiom) ":" "\n"
+".globl " SYMBOL_STRING(ctiVMHandleException) "\n"
+HIDE_SYMBOL(ctiVMHandleException) "\n"
+SYMBOL_STRING(ctiVMHandleException) ":" "\n"
     "mov.l .L2"SYMBOL_STRING(cti_vm_handle_exception)",r0" "\n"
     "mov r14, r4" "\n"
     "mov.l @(r0,r12),r11" "\n"
