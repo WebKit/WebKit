@@ -168,6 +168,7 @@ public:
     bool cancelledOrClientless();
     void ensureReadBuffer();
     static SoupSession* defaultSession();
+    static SoupSession* createTestingSession();
     static SoupSession* createPrivateBrowsingSession();
     static uint64_t getSoupRequestInitiatingPageID(SoupRequest*);
     static void setHostAllowsAnyHTTPSCertificate(const String&);

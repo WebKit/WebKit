@@ -33,6 +33,7 @@
 typedef const struct __CFURLStorageSession* CFURLStorageSessionRef;
 typedef struct OpaqueCFHTTPCookieStorage*  CFHTTPCookieStorageRef;
 #elif USE(SOUP)
+#include <wtf/gobject/GRefPtr.h>
 typedef struct _SoupCookieJar SoupCookieJar;
 typedef struct _SoupSession SoupSession;
 #endif
@@ -59,7 +60,7 @@ public:
     RetainPtr<CFHTTPCookieStorageRef> cookieStorage() const;
 #elif USE(SOUP)
     void setSoupSession(SoupSession* session) { m_session = session; }
-    SoupSession* soupSession() const { return m_session; }
+    SoupSession* soupSession() const { return m_session.get(); }
 #else
     NetworkStorageSession(NetworkingContext*);
     ~NetworkStorageSession();
@@ -73,7 +74,7 @@ private:
     RetainPtr<CFURLStorageSessionRef> m_platformSession;
 #elif USE(SOUP)
     NetworkStorageSession(SoupSession*);
-    SoupSession* m_session;
+    GRefPtr<SoupSession> m_session;
 #else
     RefPtr<NetworkingContext> m_context;
 #endif

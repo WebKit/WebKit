@@ -1399,6 +1399,14 @@ SoupSession* ResourceHandle::defaultSession()
     return session;
 }
 
+SoupSession* ResourceHandle::createTestingSession()
+{
+    SoupSession* session = createSoupSession();
+    // The testing session operates with the default cookie jar.
+    soup_session_add_feature(session, SOUP_SESSION_FEATURE(soupCookieJar()));
+    return session;
+}
+
 SoupSession* ResourceHandle::createPrivateBrowsingSession()
 {
     SoupSession* session = createSoupSession();

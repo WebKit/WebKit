@@ -35,7 +35,7 @@
 namespace WebCore {
 
 NetworkStorageSession::NetworkStorageSession(SoupSession* session)
-    : m_session(session)
+    : m_session(adoptGRef(session))
     , m_isPrivate(false)
 {
 }
@@ -66,7 +66,7 @@ void NetworkStorageSession::switchToNewTestingSession()
 {
     // A null session will make us fall back to the default cookie jar, which is currently
     // the expected behavior for tests.
-    defaultSession() = adoptPtr(new NetworkStorageSession(0));
+    defaultSession() = adoptPtr(new NetworkStorageSession(ResourceHandle::createTestingSession()));
 }
 
 }

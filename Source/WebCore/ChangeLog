@@ -1,3 +1,30 @@
+2013-08-16  Zan Dobersek  <zdobersek@igalia.com>
+
+        <https://webkit.org/b/119887> [Soup] The testing NetworkStorageSession should have a proper SoupSession
+
+        Reviewed by Martin Robinson.
+
+        After r154144, a testing NetworkStorageSession is enforced when running the layout tests
+        through WebKitTestRunner. Ports using the Soup networking backend don't assign any SoupSession
+        objects to such NetworkStorageSession objects as it's usually the case. This is causing problems
+        as the ResourceHandleInternal uses the SoupSession that's provided by the NetworkingContext's
+        NetworkStorageSession, which ends up being null if the testing-specific NetworkStorageSession is used.
+        As a result, all the layout tests are crashing under WKTR.
+
+        * platform/network/NetworkStorageSession.h: Make the SoupSession member a GRefPtr.
+        (WebCore::NetworkStorageSession::soupSession): Return the GRefPtr's pointer.
+        * platform/network/ResourceHandle.h: Declare the new createTestingSession method.
+        * platform/network/soup/CookieJarSoup.cpp: 
+        (WebCore::cookieJarForSession): Instead of returning the default SoupCookieJar when there's no SoupSession
+        provided by the NetworkStorageSession, assert that there now always is one, and return the session's cookie
+        jar. For testing NetworkStorageSession objects, their SoupSession objects will always use the default cookie jar.
+        * platform/network/soup/NetworkStorageSessionSoup.cpp:
+        (WebCore::NetworkStorageSession::NetworkStorageSession): Adopt the given SoupSession reference pointer.
+        (WebCore::NetworkStorageSession::switchToNewTestingSession): Use a newly-created, testing-specific SoupSession.
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::ResourceHandle::createTestingSession): Define the new createTestingSession method. It creates a new
+        SoupSession through createSoupSession, but uses the default SoupCookieJar, as provided by WebCore::soupCookieJar.
+
 2013-08-16  Pratik Solanki  <psolanki@apple.com>
 
         <https://webkit.org/b/119852> Frame::scriptController() should return a reference
