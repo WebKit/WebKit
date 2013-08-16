@@ -329,6 +329,7 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyWebkitMaskPosition,
     CSSPropertyWebkitMaskRepeat,
     CSSPropertyWebkitMaskSize,
+    CSSPropertyWebkitMaskSourceType,
     CSSPropertyWebkitNbspMode,
     CSSPropertyWebkitOrder,
 #if ENABLE(ACCELERATED_OVERFLOW_SCROLLING)
@@ -1423,6 +1424,19 @@ static PassRefPtr<CSSValue> fillRepeatToCSSValue(EFillRepeat xRepeat, EFillRepea
     return list.release();
 }
 
+static PassRefPtr<CSSValue> fillSourceTypeToCSSValue(EMaskSourceType type)
+{
+    switch (type) {
+    case MaskAlpha:
+        return cssValuePool().createValue(CSSValueAlpha);
+    case MaskLuminance:
+        return cssValuePool().createValue(CSSValueLuminance);
+    }
+
+    ASSERT_NOT_REACHED();
+
+    return 0;
+}
 static PassRefPtr<CSSValue> fillSizeToCSSValue(const FillSize& fillSize, const RenderStyle* style)
 {
     if (fillSize.type == Contain)
@@ -1762,6 +1776,21 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
             RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
             for (const FillLayer* currLayer = layers; currLayer; currLayer = currLayer->next())
                 list->append(fillRepeatToCSSValue(currLayer->repeatX(), currLayer->repeatY()));
+
+            return list.release();
+        }
+        case CSSPropertyWebkitMaskSourceType: {
+            const FillLayer* layers = style->maskLayers();
+
+            if (!layers)
+                return cssValuePool().createIdentifierValue(CSSValueNone);
+
+            if (!layers->next())
+                return fillSourceTypeToCSSValue(layers->maskSourceType());
+
+            RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
+            for (const FillLayer* currLayer = layers; currLayer; currLayer = currLayer->next())
+                list->append(fillSourceTypeToCSSValue(currLayer->maskSourceType()));
 
             return list.release();
         }

@@ -39,6 +39,13 @@ PASS innerStyle("-webkit-mask-position", "left 10px center") is "left 10px top 5
 PASS innerStyle("-webkit-mask-position", "center top 20px") is "left 50% top 20px"
 PASS innerStyle("-webkit-mask-position", "center left 30px") is "left 30px top 50%"
 PASS innerStyle("-webkit-mask-position", "left 20% top") is "left 20% top 0%"
+PASS innerStyle("-webkit-mask-source-type", "alpha") is "alpha"
+PASS innerStyle("-webkit-mask-source-type", "luminance") is "luminance"
+PASS innerStyle("-webkit-mask-source-type", "auto") is "auto"
+PASS computedStyle("-webkit-mask-source-type", "alpha") is "alpha"
+PASS computedStyle("-webkit-mask-source-type", "auto") is "alpha"
+PASS computedStyle("-webkit-mask-source-type", "luminance") is "luminance"
+PASS computedStyle("-webkit-mask-source-type", "") is "alpha"
 PASS innerStyle("-webkit-mask", "repeat-x") is "repeat-x"
 PASS innerStyle("-webkit-mask", "repeat-y") is "repeat-y"
 PASS innerStyle("-webkit-mask", "repeat") is "repeat"
@@ -109,6 +116,10 @@ PASS innerStyle("-webkit-mask", "none center center 20px / auto repeat-x scroll 
 PASS innerStyle("-webkit-mask", "none top 20px right 30px center / auto repeat-x scroll border-box border-box") is null
 PASS innerStyle("-webkit-mask", "none top 20px top 30px / auto repeat-x scroll border-box border-box") is null
 PASS innerStyle("-webkit-mask", "none top 20px bottom / auto repeat-x scroll border-box border-box") is null
+PASS innerStyle("-webkit-mask-source-type", "rubbish") is null
+PASS innerStyle("-webkit-mask-source-type", "") is null
+PASS innerStyle("-webkit-mask-source-type", "center") is null
+PASS innerStyle("-webkit-mask-source-type", "repeat") is null
 PASS successfullyParsed is true
 
 TEST COMPLETE

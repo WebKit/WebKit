@@ -359,6 +359,7 @@ z-index
 -webkit-mask-repeat-x
 -webkit-mask-repeat-y
 -webkit-mask-size
+-webkit-mask-source-type
 -webkit-max-logical-width
 -webkit-max-logical-height
 -webkit-min-logical-width

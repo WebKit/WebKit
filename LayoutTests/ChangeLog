@@ -1,3 +1,17 @@
+2013-08-16  Andrei Parvu  <parvu@adobe.com>
+
+        [CSS Masking] Add -webkit-mask-source-type property, with auto, alpha and luminance values
+        https://bugs.webkit.org/show_bug.cgi?id=119614
+
+        Added tests for the parsing of the -webkit-mask-source-type property
+
+        Reviewed by Dirk Schulze.
+
+        * fast/masking/parsing-mask-expected.txt:
+        * fast/masking/parsing-mask-source-type-expected.txt: Added.
+        * fast/masking/parsing-mask-source-type.html: Added.
+        * fast/masking/parsing-mask.html:
+
 2013-08-16  Simon Pena  <simon.pena@samsung.com>
 
         [GTK] Unreviewed gardening. Rebaseline after r154127 and add new baseline after r153647.

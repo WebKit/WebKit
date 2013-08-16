@@ -1,3 +1,44 @@
+2013-08-16  Andrei Parvu  <parvu@adobe.com>
+
+        [CSS Masking] Add -webkit-mask-source-type property, with auto, alpha and luminance values
+        https://bugs.webkit.org/show_bug.cgi?id=119614
+
+        Added the -webkit-mask-source-type property, which can have a value of auto, alpha or
+        luminance. The default value is auto. This patch contains only the parsing of the property,
+        not the actual implementation of the types of masks. The parsing of mask-source-type in the
+        -webkit-mask property will be handled in a separate patch.
+
+        Reviewed by Dirk Schulze.
+
+        Test: fast/masking/parsing-mask-source-type.html
+
+        * css/CSSComputedStyleDeclaration.cpp: Added case for CSSPropertyWebkitMaskType.
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * css/CSSParser.cpp: Parsed the values for CSSPropertyWebkitMaskType.
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseFillProperty):
+        * css/CSSProperty.cpp:
+        (WebCore::CSSProperty::isInheritedProperty):
+        * css/CSSPropertyNames.in: Added -webkit-mask-type property.
+        * css/CSSToStyleMap.cpp: map the provided mask type to the FillLayer class.
+        (WebCore::CSSToStyleMap::mapFillMaskType):
+        * css/CSSToStyleMap.h:
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::DeprecatedStyleBuilder::DeprecatedStyleBuilder):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::applyProperty):
+        * rendering/style/FillLayer.cpp: Added the m_maskType property to the FillLayer class.
+        (WebCore::FillLayer::FillLayer):
+        (WebCore::FillLayer::operator=):
+        (WebCore::FillLayer::operator==):
+        * rendering/style/FillLayer.h: Added methods for working with m_maskType.
+        (WebCore::FillLayer::maskType):
+        (WebCore::FillLayer::isMaskTypeSet):
+        (WebCore::FillLayer::setMaskType):
+        (WebCore::FillLayer::clearMaskType):
+        (WebCore::FillLayer::initialMaskType):
+        * rendering/style/RenderStyleConstants.h: Added the EMaskSourceType enum.
+
 2013-08-16  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         <https://webkit.org/b/119885> [CMake] Always build our generated versions of ANGLE's glslang.cpp and glslang_tab.cpp

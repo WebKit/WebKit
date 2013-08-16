@@ -83,6 +83,15 @@ testInner("-webkit-mask-position", "center top 20px", "left 50% top 20px");
 testInner("-webkit-mask-position", "center left 30px", "left 30px top 50%");
 testInner("-webkit-mask-position", "left 20% top", "left 20% top 0%");
 
+// test mask-source-type
+testInner("-webkit-mask-source-type", "alpha", "alpha");
+testInner("-webkit-mask-source-type", "luminance", "luminance");
+testInner("-webkit-mask-source-type", "auto", "auto");
+testComputed("-webkit-mask-source-type", "alpha", "alpha");
+testComputed("-webkit-mask-source-type", "auto", "alpha");
+testComputed("-webkit-mask-source-type", "luminance", "luminance");
+testComputed("-webkit-mask-source-type", "", "alpha");
+
 // test mask-repeat
 testInner("-webkit-mask", "repeat-x", "repeat-x");
 testInner("-webkit-mask", "repeat-y", "repeat-y");
@@ -166,6 +175,10 @@ negativeTest("-webkit-mask", "none center center 20px / auto repeat-x scroll bor
 negativeTest("-webkit-mask", "none top 20px right 30px center / auto repeat-x scroll border-box border-box");
 negativeTest("-webkit-mask", "none top 20px top 30px / auto repeat-x scroll border-box border-box");
 negativeTest("-webkit-mask", "none top 20px bottom / auto repeat-x scroll border-box border-box");
+negativeTest("-webkit-mask-source-type", "rubbish");
+negativeTest("-webkit-mask-source-type", "");
+negativeTest("-webkit-mask-source-type", "center");
+negativeTest("-webkit-mask-source-type", "repeat");
 
 </script>
 <script src="../js/resources/js-test-post.js"></script>
