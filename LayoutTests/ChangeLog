@@ -1,3 +1,12 @@
+2013-08-16  Santosh Mahto  <santosh.ma@samsung.com>
+
+        [EFL] fast/forms/datalist/input-list.html is failing
+
+        Unreviewed EFL gardening. unskip LayoutTests/fast/forms/datalist/input-list.html test.
+
+        * platform/efl/TestExpectations:
+        * platform/efl/fast/forms/datalist/input-list-expected.txt: Added. 
+
 2013-08-16  Andrei Parvu  <parvu@adobe.com>
 
         [CSS Masking] Add -webkit-mask-source-type property, with auto, alpha and luminance values

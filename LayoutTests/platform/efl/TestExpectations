@@ -1777,5 +1777,4 @@ fast/text/international/synthesized-italic-vertical-latin.html [ Skip ]
 webkit.org/b/118378 vibration/cancelVibration-after-pagevisibility-changed-to-hidden.html [ Skip ]
 
 webkit.org/b/119782 fast/forms/search-styled.html [ Failure ]
-webkit.org/b/119784 fast/forms/datalist/input-list.html [ Failure ]
 
