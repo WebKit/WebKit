@@ -269,7 +269,7 @@ h1 :hover {
   background-color: #eee;
 }
 
-.text {
+pre, .text {
     padding-left: 5px;
     white-space: pre-wrap;
     word-wrap: break-word;

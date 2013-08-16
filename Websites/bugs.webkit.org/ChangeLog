@@ -1,3 +1,14 @@
+2013-08-16  David Farler  <dfarler@apple.com>
+
+        PrettyPatch: Wrap pre blocks
+        https://bugs.webkit.org/show_bug.cgi?id=119906
+
+        Reviewed by Darin Adler.
+
+        * PrettyPatch/PrettyPatch.rb:
+        <pre> will use the same wrap settings as the text class:
+        white-space: pre-wrap and word-wrap: break-word.
+
 2013-07-16  James Craig  <james@cookiecrook.com>
 
         AX: Add a 'choose product' link for the new-ax-bug alias.
