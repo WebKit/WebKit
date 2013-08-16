@@ -251,6 +251,8 @@ webkit.org/b/99025 fast/dom/HTMLAnchorElement/anchor-download-unset.html [ Pass 
 
 # CSS Filters is disabled
 webkit.org/b/99026 css3/filters [ Skip ]
+webkit.org/b/99026 fast/filter-image/filter-image.html [ Skip ]
+webkit.org/b/99026 fast/filter-image/parse-filter-image.html [ Skip ]
 
 # Needs testRunner.enableAutoResizeMode()
 webkit.org/b/99028 fast/autoresize [ Failure ]
@@ -707,7 +709,6 @@ Bug(GTK) css3/flexbox/position-absolute-child.html [ Pass Slow ]
 Bug(GTK) css3/flexbox/multiline-justify-content.html [ Pass Slow ]
 Bug(GTK) [ Debug ] editing/selection/move-by-word-visually-crash-test-5.html [ Pass Slow ]
 Bug(GTK) [ Debug ] fast/css/visited-link-hang.html [ Pass Slow ]
-Bug(GTK) [ Debug ] fast/js/array-sort-modifying-tostring.html [ Pass Slow ]
 Bug(GTK) fast/js/create-lots-of-workers.html [ Pass Slow ]
 Bug(GTK) [ Debug ] fast/js/dfg-double-vote-fuzz.html [ Pass Slow ]
 Bug(GTK) [ Debug ] fast/js/dfg-float32array.html [ Pass Slow ]
@@ -1443,8 +1444,6 @@ webkit.org/b/119735 plugins/unavailable-plugin-indicator-obscurity.html [ Failur
 webkit.org/b/119840 http/tests/loading/authentication-after-redirect-stores-wrong-credentials/authentication-after-redirect-stores-wrong-credentials.html [ Failure ]
 
 webkit.org/b/119841 fast/sub-pixel/sub-pixel-composited-layers.html [ ImageOnlyFailure ]
-
-webkit.org/b/119842 fast/forms/search/search-size-with-decorations.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing

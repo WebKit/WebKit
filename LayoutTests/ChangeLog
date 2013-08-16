@@ -1,3 +1,23 @@
+2013-08-16  Simon Pena  <simon.pena@samsung.com>
+
+        [GTK] Unreviewed gardening. Rebaseline after r154127 and add new baseline after r153647.
+
+        * platform/gtk-wk1/TestExpectations:
+        x-frame-options-deny-meta-tag-in-body.html fails in Release and
+        Debug.
+        * platform/gtk/TestExpectations: CSS Image filter is not enabled
+        in GTK bots. Also remove entry for deleted test.
+        * platform/gtk/fast/forms/search/search-size-with-decorations-expected.png: Added.
+        * platform/gtk/fast/forms/search/search-size-with-decorations-expected.txt: Added.
+        * platform/gtk/fast/js/constructor-length-expected.txt:
+        Rebaselined after r154127.
+        * platform/gtk/fast/js/global-constructors-attributes-dedicated-worker-expected.txt:
+        ditto.
+        * platform/gtk/fast/js/global-constructors-attributes-expected.txt:
+        ditto.
+        * platform/gtk/fast/js/global-constructors-attributes-shared-worker-expected.txt:
+        ditto.
+
 2013-08-16  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         Reskip tests that times out.
