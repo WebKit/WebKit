@@ -1210,7 +1210,6 @@ WebKitWebFrame* kit(WebCore::Frame* coreFrame)
     if (!coreFrame)
         return 0;
 
-    ASSERT(coreFrame->loader());
     WebKit::FrameLoaderClient* client = static_cast<WebKit::FrameLoaderClient*>(coreFrame->loader().client());
     return client ? client->webFrame() : 0;
 }
