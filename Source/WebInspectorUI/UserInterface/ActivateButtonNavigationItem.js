@@ -23,12 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ActivateButtonNavigationItem = function(identifier, defaultToolTip, activatedToolTip, image, imageWidth, imageHeight, suppressEmboss)
+WebInspector.ActivateButtonNavigationItem = function(identifier, defaultToolTip, activatedToolTip, image, imageWidth, imageHeight, suppressEmboss, role)
 {
-    WebInspector.ButtonNavigationItem.call(this, identifier, defaultToolTip, image, imageWidth, imageHeight, suppressEmboss);
+    WebInspector.ButtonNavigationItem.call(this, identifier, defaultToolTip, image, imageWidth, imageHeight, suppressEmboss, role);
 
     this._defaultToolTip = defaultToolTip;
     this._activatedToolTip = activatedToolTip || defaultToolTip;
+    this._role = role;
 };
 
 WebInspector.ActivateButtonNavigationItem.StyleClassName = "activate";
@@ -59,9 +60,13 @@ WebInspector.ActivateButtonNavigationItem.prototype = {
         if (flag) {
             this.toolTip = this._activatedToolTip;
             this.element.classList.add(WebInspector.ActivateButtonNavigationItem.ActivatedStyleClassName);
+            if (this._role === "tab")
+                this.element.setAttribute("aria-selected", "true");
         } else {
             this.toolTip = this._defaultToolTip;
             this.element.classList.remove(WebInspector.ActivateButtonNavigationItem.ActivatedStyleClassName);
+            if (this._role === "tab")
+                this.element.removeAttribute("aria-selected");
         }
     },
 

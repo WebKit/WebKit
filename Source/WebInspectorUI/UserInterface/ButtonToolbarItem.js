@@ -23,9 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ButtonToolbarItem = function(identifier, toolTip, label, image, suppressEmboss)
+WebInspector.ButtonToolbarItem = function(identifier, toolTip, label, image, suppressEmboss, role)
 {
-    WebInspector.ButtonNavigationItem.call(this, identifier, toolTip, image, 32, 32, suppressEmboss);
+    WebInspector.ButtonNavigationItem.call(this, identifier, toolTip, image, 32, 32, suppressEmboss, role);
 
     console.assert(label);
 

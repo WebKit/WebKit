@@ -35,6 +35,7 @@ WebInspector.Toolbar = function(element, navigationItems) {
 
     this._leftSectionElement = document.createElement("div");
     this._leftSectionElement.className = WebInspector.Toolbar.ItemSectionStyleClassName + " " + WebInspector.Toolbar.LeftItemSectionStyleClassName;
+    this._leftSectionElement.setAttribute("role", "tablist");
     this._element.appendChild(this._leftSectionElement);
 
     this._centerSectionElement = document.createElement("div");
@@ -43,6 +44,7 @@ WebInspector.Toolbar = function(element, navigationItems) {
 
     this._rightSectionElement = document.createElement("div");
     this._rightSectionElement.className = WebInspector.Toolbar.ItemSectionStyleClassName + " " + WebInspector.Toolbar.RightItemSectionStyleClassName;
+    this._rightSectionElement.setAttribute("role", "tablist");
     this._element.appendChild(this._rightSectionElement);
 
     this._element.addEventListener("contextmenu", this._handleContextMenuEvent.bind(this), false);

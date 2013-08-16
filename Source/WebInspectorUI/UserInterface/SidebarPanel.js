@@ -28,7 +28,7 @@ WebInspector.SidebarPanel = function(identifier, displayName, showToolTip, hideT
 
     this._identifier = identifier;
 
-    this._toolbarItem = new WebInspector.ActivateButtonToolbarItem(identifier, showToolTip, hideToolTip, displayName, image);
+    this._toolbarItem = new WebInspector.ActivateButtonToolbarItem(identifier, showToolTip, hideToolTip, displayName, image, null, "tab");
     this._toolbarItem.addEventListener(WebInspector.ButtonNavigationItem.Event.Clicked, this.toggle, this);
     this._toolbarItem.enabled = false;
 

@@ -23,9 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ActivateButtonToolbarItem = function(identifier, defaultToolTip, activatedToolTip, label, image, suppressEmboss)
+WebInspector.ActivateButtonToolbarItem = function(identifier, defaultToolTip, activatedToolTip, label, image, suppressEmboss, role)
 {
-    WebInspector.ActivateButtonNavigationItem.call(this, identifier, defaultToolTip, activatedToolTip, image, 32, 32, suppressEmboss);
+    WebInspector.ActivateButtonNavigationItem.call(this, identifier, defaultToolTip, activatedToolTip, image, 32, 32, suppressEmboss, role);
 
     console.assert(label);
 

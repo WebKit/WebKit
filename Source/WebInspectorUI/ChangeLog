@@ -1,3 +1,23 @@
+2013-08-16  James Craig  <james@cookiecrook.com>
+
+        <https://webkit.org/b/118105> Web Inspector: AX: Add support for ARIA tablists/tabs to inspector tabs
+
+        Reviewed by Joseph Pecoraro.
+
+        Updating accessibility roles and attributes for single-select toolbar item sets.
+
+        * UserInterface/ActivateButtonNavigationItem.js:
+        (WebInspector.ActivateButtonNavigationItem):
+        (WebInspector.ActivateButtonNavigationItem.prototype.set activated):
+        * UserInterface/ActivateButtonToolbarItem.js:
+        (WebInspector.ActivateButtonToolbarItem):
+        * UserInterface/ButtonToolbarItem.js:
+        (WebInspector.ButtonToolbarItem):
+        * UserInterface/SidebarPanel.js:
+        (WebInspector.SidebarPanel):
+        * UserInterface/Toolbar.js:
+        (WebInspector.Toolbar):
+
 2013-08-13  Dean Jackson  <dino@apple.com>
 
         <https://webkit.org/b/119778> Add Canvas protocol observer
