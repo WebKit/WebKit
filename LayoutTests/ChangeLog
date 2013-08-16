@@ -1,3 +1,10 @@
+2013-08-16  Tamas Czene <tczene@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening. Rebase js tests after r154127.
+
+        * platform/qt/fast/js/constructor-length-expected.txt:
+        * platform/qt/fast/js/global-constructors-attributes-expected.txt:
+
 2013-08-16  Santosh Mahto  <santosh.ma@samsung.com>
 
         [EFL] fast/forms/datalist/input-list.html is failing
