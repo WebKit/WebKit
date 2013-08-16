@@ -1,3 +1,10 @@
+2013-08-15  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Unreviewed gardening. Correct some test expectations that now pass.
+
+        * platform/win/editing/selection/caret-ltr-right-expected.txt:
+        * platform/win/editing/selection/caret-rtl-2-left-expected.txt:
+
 2013-08-15  Hans Muller  <hmuller@adobe.com>
 
         [CSS Shapes] Add support for shape-outside image values
