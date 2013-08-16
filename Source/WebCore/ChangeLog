@@ -1,3 +1,10 @@
+2013-08-16  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Unreviewed build correction after r154165.
+
+        * WebCore.vcxproj/copyForwardingHeaders.cmd: Copy html/shadow header files
+        to WebKit include location.
+
 2013-08-15  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Prevent dangling CACFLayer when switching to/from Tiled backing.
