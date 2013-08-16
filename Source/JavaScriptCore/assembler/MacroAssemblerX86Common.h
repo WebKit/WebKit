@@ -127,7 +127,10 @@ public:
 
     void add32(TrustedImm32 imm, RegisterID dest)
     {
-        m_assembler.addl_ir(imm.m_value, dest);
+        if (imm.m_value == 1)
+            m_assembler.inc_r(dest);
+        else
+            m_assembler.addl_ir(imm.m_value, dest);
     }
     
     void add32(Address src, RegisterID dest)
@@ -374,7 +377,10 @@ public:
     
     void sub32(TrustedImm32 imm, RegisterID dest)
     {
-        m_assembler.subl_ir(imm.m_value, dest);
+        if (imm.m_value == 1)
+            m_assembler.dec_r(dest);
+        else
+            m_assembler.subl_ir(imm.m_value, dest);
     }
     
     void sub32(TrustedImm32 imm, Address address)

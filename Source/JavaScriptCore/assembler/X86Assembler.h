@@ -500,6 +500,26 @@ public:
     }
 #endif
 
+    void dec_r(RegisterID dst)
+    {
+        m_formatter.oneByteOp(OP_GROUP5_Ev, GROUP1_OP_OR, dst);
+    }
+
+    void decq_r(RegisterID dst)
+    {
+        m_formatter.oneByteOp64(OP_GROUP5_Ev, GROUP1_OP_OR, dst);
+    }
+
+    void inc_r(RegisterID dst)
+    {
+        m_formatter.oneByteOp(OP_GROUP5_Ev, GROUP1_OP_ADD, dst);
+    }
+
+    void incq_r(RegisterID dst)
+    {
+        m_formatter.oneByteOp64(OP_GROUP5_Ev, GROUP1_OP_ADD, dst);
+    }
+
     void negl_r(RegisterID dst)
     {
         m_formatter.oneByteOp(OP_GROUP3_Ev, GROUP3_OP_NEG, dst);

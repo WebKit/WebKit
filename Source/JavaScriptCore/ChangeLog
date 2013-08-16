@@ -1,3 +1,26 @@
+2013-08-15  Benjamin Poulain  <benjamin@webkit.org>
+
+        [JSC] x86: Use inc and dec when possible
+        https://bugs.webkit.org/show_bug.cgi?id=119831
+
+        Reviewed by Geoffrey Garen.
+
+        When incrementing or decrementing by an immediate of 1, use the insctructions
+        inc and dec instead of add and sub.
+        The instructions have good timing and their encoding is smaller.
+
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86_64::add32):
+        (JSC::MacroAssemblerX86_64::sub32):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::add64):
+        (JSC::MacroAssemblerX86_64::sub64):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::dec_r):
+        (JSC::X86Assembler::decq_r):
+        (JSC::X86Assembler::inc_r):
+        (JSC::X86Assembler::incq_r):
+
 2013-08-15  Filip Pizlo  <fpizlo@apple.com>
 
         Sometimes, the DFG uses a GetById for typed array length accesses despite profiling data that indicates that it's a typed array length access

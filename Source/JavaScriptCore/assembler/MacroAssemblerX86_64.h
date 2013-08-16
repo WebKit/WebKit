@@ -183,13 +183,20 @@ public:
 
     void add64(TrustedImm32 imm, RegisterID srcDest)
     {
-        m_assembler.addq_ir(imm.m_value, srcDest);
+        if (imm.m_value == 1)
+            m_assembler.incq_r(srcDest);
+        else
+            m_assembler.addq_ir(imm.m_value, srcDest);
     }
 
     void add64(TrustedImm64 imm, RegisterID dest)
     {
-        move(imm, scratchRegister);
-        add64(scratchRegister, dest);
+        if (imm.m_value == 1)
+            m_assembler.incq_r(dest);
+        else {
+            move(imm, scratchRegister);
+            add64(scratchRegister, dest);
+        }
     }
 
     void add64(TrustedImm32 imm, RegisterID src, RegisterID dest)
@@ -269,13 +276,20 @@ public:
     
     void sub64(TrustedImm32 imm, RegisterID dest)
     {
-        m_assembler.subq_ir(imm.m_value, dest);
+        if (imm.m_value == 1)
+            m_assembler.decq_r(dest);
+        else
+            m_assembler.subq_ir(imm.m_value, dest);
     }
     
     void sub64(TrustedImm64 imm, RegisterID dest)
     {
-        move(imm, scratchRegister);
-        sub64(scratchRegister, dest);
+        if (imm.m_value == 1)
+            m_assembler.decq_r(dest);
+        else {
+            move(imm, scratchRegister);
+            sub64(scratchRegister, dest);
+        }
     }
 
     void xor64(RegisterID src, RegisterID dest)
