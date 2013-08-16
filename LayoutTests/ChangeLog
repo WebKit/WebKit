@@ -1,3 +1,13 @@
+2013-08-16  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] [WK2] Some inspector tests intermittently asserts in InspectorOverlay::paint
+        https://bugs.webkit.org/show_bug.cgi?id=105988
+
+        Unreviewed gardening. Mark tests as flakey (crashing) in WK1 expectations as well as WK2.
+
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2013-08-16  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt] Kerning in fast font path breaks letter-spacing
