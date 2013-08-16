@@ -1,3 +1,10 @@
+2013-08-16  Andreas Kling  <akling@apple.com>
+
+        Windows build juice.
+
+        * WebView.cpp:
+        (WebView::paintIntoBackingStore):
+
 2013-08-15  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Consolidate WebKit Bundle handling

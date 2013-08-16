@@ -1180,7 +1180,7 @@ void WebView::paintIntoBackingStore(FrameView* frameView, HDC bitmapDC, const In
     if (uiPrivate)
         uiPrivate->drawBackground(this, reinterpret_cast<OLE_HANDLE>(bitmapDC), &rect);
 
-    if (frameView && frameView->frame() && frameView->frame()->contentRenderer()) {
+    if (frameView && frameView->frame().contentRenderer()) {
         gc.clip(dirtyRect);
         frameView->paint(&gc, dirtyRect);
         if (m_shouldInvertColors)
