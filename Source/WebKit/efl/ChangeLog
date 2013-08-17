@@ -1,3 +1,10 @@
+2013-08-16  Jaehun Lim  <ljaehun.lim@samsung.com>
+
+        [EFL] Unreviewed build fix after r154192
+
+        * WebCoreSupport/DumpRenderTreeSupportEfl.cpp:
+        (DumpRenderTreeSupportEfl::evaluateScriptInIsolatedWorld):
+
 2013-08-16  Pratik Solanki  <psolanki@apple.com>
 
         <https://webkit.org/b/119852> Frame::scriptController() should return a reference

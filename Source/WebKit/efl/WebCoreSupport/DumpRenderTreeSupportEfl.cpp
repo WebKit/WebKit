@@ -494,9 +494,7 @@ void DumpRenderTreeSupportEfl::evaluateScriptInIsolatedWorld(const Evas_Object* 
     if (!globalFrame)
         return;
 
-    WebCore::ScriptController* proxy = globalFrame->script();
-    if (!proxy)
-        return;
+    WebCore::ScriptController& proxy = globalFrame->script();
 
     static WTF::HashMap<int, WTF::RefPtr<WebCore::DOMWrapperWorld > > worldMap;
 
@@ -515,7 +513,7 @@ void DumpRenderTreeSupportEfl::evaluateScriptInIsolatedWorld(const Evas_Object* 
 
     // The code below is only valid for JSC, V8 specific code is to be added
     // when V8 will be supported in EFL port. See Qt implemenation.
-    proxy->executeScriptInWorld(scriptWorld.get(), script, true);
+    proxy.executeScriptInWorld(scriptWorld.get(), script, true);
 }
 
 JSGlobalContextRef DumpRenderTreeSupportEfl::globalContextRefForFrame(const Evas_Object* ewkFrame)
