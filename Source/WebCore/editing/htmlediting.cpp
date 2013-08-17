@@ -112,21 +112,21 @@ Node* highestEditableRoot(const Position& position, EditableType editableType)
     Node* node = position.deprecatedNode();
     if (!node)
         return 0;
-        
-    Node* highestRoot = editableRootForPosition(position, editableType);
-    if (!highestRoot)
+
+    Node* highestEditableRoot = editableRootForPosition(position, editableType);
+    if (!highestEditableRoot)
         return 0;
-    
-    node = highestRoot;
-    while (node) {
-        if (node->rendererIsEditable(editableType))
-            highestRoot = node;
-        if (node->hasTagName(bodyTag))
-            break;
+
+    node = highestEditableRoot;
+    while (!node->hasTagName(bodyTag)) {
         node = node->parentNode();
+        if (!node)
+            break;
+        if (node->rendererIsEditable(editableType))
+            highestEditableRoot = node;
     }
-    
-    return highestRoot;
+
+    return highestEditableRoot;
 }
 
 Node* lowestEditableAncestor(Node* node)
