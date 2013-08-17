@@ -41,7 +41,6 @@
 #include "ProcessingInstruction.h"
 #include "SVGNames.h"
 #include "SVGStyleElement.h"
-#include "SelectorChecker.h"
 #include "Settings.h"
 #include "StyleInvalidationAnalysis.h"
 #include "StyleResolver.h"
