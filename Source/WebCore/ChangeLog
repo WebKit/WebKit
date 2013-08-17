@@ -1,3 +1,22 @@
+2013-08-17  Darin Adler  <darin@apple.com>
+
+        <https://webkit.org/b/119941> Make Page::dragController return a reference
+
+        Reviewed by Andreas Kling.
+
+        * page/Page.h:
+        (WebCore::Page::dragController): Return a reference instead of a pointer.
+
+        * page/DragController.cpp:
+        (WebCore::DragController::concludeEditDrag):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::eventMayStartDrag):
+        (WebCore::EventHandler::updateDragSourceActionsAllowed):
+        (WebCore::EventHandler::handleDrag):
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::passSubframeEventToSubframe):
+        Updated call sites.
+
 2013-08-17  Morten Stenshorne  <mstensho@opera.com>
 
         <https://webkit.org/b/119795> Propagate writing-mode from the first region to the flow thread

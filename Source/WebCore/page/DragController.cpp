@@ -492,7 +492,7 @@ bool DragController::concludeEditDrag(DragData* dragData)
         return fileInput->receiveDroppedFiles(dragData);
     }
 
-    if (!m_page->dragController()->canProcessDrag(dragData)) {
+    if (!m_page->dragController().canProcessDrag(dragData)) {
         m_page->dragCaretController()->clear();
         return false;
     }

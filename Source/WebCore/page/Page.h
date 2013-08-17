@@ -187,7 +187,7 @@ public:
     Chrome& chrome() const { return *m_chrome; }
     DragCaretController* dragCaretController() const { return m_dragCaretController.get(); }
 #if ENABLE(DRAG_SUPPORT)
-    DragController* dragController() const { return m_dragController.get(); }
+    DragController& dragController() const { return *m_dragController; }
 #endif
     FocusController& focusController() const { return *m_focusController; }
 #if ENABLE(CONTEXT_MENUS)

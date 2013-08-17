@@ -789,7 +789,7 @@ bool EventHandler::eventMayStartDrag(const PlatformMouseEvent& event) const
     HitTestResult result(view->windowToContents(event.position()));
     m_frame->contentRenderer()->hitTest(request, result);
     DragState state;
-    return result.innerElement() && page->dragController()->draggableElement(m_frame, result.innerElement(), result.roundedPointInInnerNodeFrame(), state);
+    return result.innerElement() && page->dragController().draggableElement(m_frame, result.innerElement(), result.roundedPointInInnerNodeFrame(), state);
 }
 
 void EventHandler::updateSelectionForMouseDrag()
@@ -1025,7 +1025,7 @@ DragSourceAction EventHandler::updateDragSourceActionsAllowed() const
     if (!view)
         return DragSourceActionNone;
 
-    return page->dragController()->delegateDragSourceAction(view->contentsToRootView(m_mouseDownPos));
+    return page->dragController().delegateDragSourceAction(view->contentsToRootView(m_mouseDownPos));
 }
 #endif // ENABLE(DRAG_SUPPORT)
 
@@ -3479,7 +3479,7 @@ bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event, CheckDr
         HitTestResult result(m_mouseDownPos);
         m_frame->contentRenderer()->hitTest(request, result);
         if (m_frame->page())
-            dragState().source = m_frame->page()->dragController()->draggableElement(m_frame, result.innerElement(), m_mouseDownPos, dragState());
+            dragState().source = m_frame->page()->dragController().draggableElement(m_frame, result.innerElement(), m_mouseDownPos, dragState());
         
         if (!dragState().source)
             m_mouseDownMayStartDrag = false; // no element is draggable
@@ -3577,8 +3577,7 @@ bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event, CheckDr
     
     if (m_mouseDownMayStartDrag) {
         Page* page = m_frame->page();
-        DragController* dragController = page ? page->dragController() : 0;
-        m_didStartDrag = dragController && dragController->startDrag(m_frame, dragState(), srcOp, event.event(), m_mouseDownPos);
+        m_didStartDrag = page && page->dragController().startDrag(m_frame, dragState(), srcOp, event.event(), m_mouseDownPos);
         // In WebKit2 we could re-enter this code and start another drag.
         // On OS X this causes problems with the ownership of the pasteboard and the promised types.
         if (m_didStartDrag) {

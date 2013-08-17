@@ -339,7 +339,7 @@ bool EventHandler::passSubframeEventToSubframe(MouseEventWithHitTestResults& eve
             if (!m_mouseDownWasInSubframe)
                 return false;
 #if ENABLE(DRAG_SUPPORT)
-            if (subframe->page()->dragController()->didInitiateDrag())
+            if (subframe->page()->dragController().didInitiateDrag())
                 return false;
 #endif
         case NSMouseMoved:

@@ -1,3 +1,16 @@
+2013-08-17  Darin Adler  <darin@apple.com>
+
+        <https://webkit.org/b/119941> Make Page::dragController return a reference
+
+        Reviewed by Andreas Kling.
+
+        * webkit/webkitwebview.cpp:
+        (dragExitedCallback):
+        (webkit_web_view_drag_motion):
+        (webkit_web_view_drag_data_received):
+        (webkit_web_view_drag_drop):
+        Updated call sites.
+
 2013-08-16  Pratik Solanki  <psolanki@apple.com>
 
         <https://webkit.org/b/119852> Frame::scriptController() should return a reference

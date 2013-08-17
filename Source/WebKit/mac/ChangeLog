@@ -1,3 +1,24 @@
+2013-08-17  Darin Adler  <darin@apple.com>
+
+        <https://webkit.org/b/119941> Make Page::dragController return a reference
+
+        Reviewed by Andreas Kling.
+
+        * WebView/WebFrameView.mm:
+        (-[WebFrameView _setDocumentView:]):
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView draggingSourceOperationMaskForLocal:]):
+        (-[WebHTMLView namesOfPromisedFilesDroppedAtDestination:]):
+        * WebView/WebView.mm:
+        (-[WebView _setInitiatedDrag:]):
+        (-[WebView draggingEntered:]):
+        (-[WebView draggingUpdated:]):
+        (-[WebView draggingExited:]):
+        (-[WebView performDragOperation:]):
+        (-[WebView moveDragCaretToPoint:]):
+        (-[WebView removeDragCaret]):
+        Updated call sites.
+
 2013-08-16  Pratik Solanki  <psolanki@apple.com>
 
         <https://webkit.org/b/119852> Frame::scriptController() should return a reference

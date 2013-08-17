@@ -1,3 +1,14 @@
+2013-08-17  Darin Adler  <darin@apple.com>
+
+        <https://webkit.org/b/119941> Make Page::dragController return a reference
+
+        Reviewed by Andreas Kling.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::performDragControllerAction):
+        (WebKit::WebPage::dragEnded):
+        Updated call sites.
+
 2013-08-17  David Kilzer  <ddkilzer@apple.com>
 
         WebKit2 fails to build with trunk clang: error: 'WebPluginSiteDataManagerh' is used as a header guard here, followed by #define of a different macro [-Werror,-Wheader-guard]

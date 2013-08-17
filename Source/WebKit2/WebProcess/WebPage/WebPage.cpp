@@ -2683,19 +2683,19 @@ void WebPage::performDragControllerAction(uint64_t action, WebCore::DragData dra
 
     switch (action) {
     case DragControllerActionEntered:
-        send(Messages::WebPageProxy::DidPerformDragControllerAction(m_page->dragController()->dragEntered(&dragData)));
+        send(Messages::WebPageProxy::DidPerformDragControllerAction(m_page->dragController().dragEntered(&dragData)));
         break;
 
     case DragControllerActionUpdated:
-        send(Messages::WebPageProxy::DidPerformDragControllerAction(m_page->dragController()->dragUpdated(&dragData)));
+        send(Messages::WebPageProxy::DidPerformDragControllerAction(m_page->dragController().dragUpdated(&dragData)));
         break;
 
     case DragControllerActionExited:
-        m_page->dragController()->dragExited(&dragData);
+        m_page->dragController().dragExited(&dragData);
         break;
 
     case DragControllerActionPerformDrag: {
-        m_page->dragController()->performDrag(&dragData);
+        m_page->dragController().performDrag(&dragData);
         break;
     }
 
@@ -2723,15 +2723,15 @@ void WebPage::performDragControllerAction(uint64_t action, WebCore::IntPoint cli
     DragData dragData(dragStorageName, clientPosition, globalPosition, static_cast<DragOperation>(draggingSourceOperationMask), static_cast<DragApplicationFlags>(flags));
     switch (action) {
     case DragControllerActionEntered:
-        send(Messages::WebPageProxy::DidPerformDragControllerAction(m_page->dragController()->dragEntered(&dragData)));
+        send(Messages::WebPageProxy::DidPerformDragControllerAction(m_page->dragController().dragEntered(&dragData)));
         break;
 
     case DragControllerActionUpdated:
-        send(Messages::WebPageProxy::DidPerformDragControllerAction(m_page->dragController()->dragUpdated(&dragData)));
+        send(Messages::WebPageProxy::DidPerformDragControllerAction(m_page->dragController().dragUpdated(&dragData)));
         break;
         
     case DragControllerActionExited:
-        m_page->dragController()->dragExited(&dragData);
+        m_page->dragController().dragExited(&dragData);
         break;
         
     case DragControllerActionPerformDrag: {
@@ -2743,7 +2743,7 @@ void WebPage::performDragControllerAction(uint64_t action, WebCore::IntPoint cli
                 m_pendingDropExtensionsForFileUpload.append(extension);
         }
 
-        m_page->dragController()->performDrag(&dragData);
+        m_page->dragController().performDrag(&dragData);
 
         // If we started loading a local file, the sandbox extension tracker would have adopted this
         // pending drop sandbox extension. If not, we'll play it safe and clear it.
@@ -2761,10 +2761,10 @@ void WebPage::performDragControllerAction(uint64_t action, WebCore::IntPoint cli
 
 void WebPage::dragEnded(WebCore::IntPoint clientPosition, WebCore::IntPoint globalPosition, uint64_t operation)
 {
-    IntPoint adjustedClientPosition(clientPosition.x() + m_page->dragController()->dragOffset().x(), clientPosition.y() + m_page->dragController()->dragOffset().y());
-    IntPoint adjustedGlobalPosition(globalPosition.x() + m_page->dragController()->dragOffset().x(), globalPosition.y() + m_page->dragController()->dragOffset().y());
+    IntPoint adjustedClientPosition(clientPosition.x() + m_page->dragController().dragOffset().x(), clientPosition.y() + m_page->dragController().dragOffset().y());
+    IntPoint adjustedGlobalPosition(globalPosition.x() + m_page->dragController().dragOffset().x(), globalPosition.y() + m_page->dragController().dragOffset().y());
 
-    m_page->dragController()->dragEnded();
+    m_page->dragController().dragEnded();
     FrameView* view = m_page->mainFrame()->view();
     if (!view)
         return;

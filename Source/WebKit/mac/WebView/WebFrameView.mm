@@ -139,7 +139,7 @@ enum {
     WebDynamicScrollBarsView *sv = [self _scrollView];
     
 #if ENABLE(DRAG_SUPPORT)
-    core([self _webView])->dragController()->setDidInitiateDrag(false);
+    core([self _webView])->dragController().setDidInitiateDrag(false);
 #endif
     
     [sv setSuppressLayout:YES];
