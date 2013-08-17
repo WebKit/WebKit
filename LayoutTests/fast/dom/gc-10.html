@@ -16,6 +16,9 @@ var threshold = 5;
 
 function test()
 {
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
     if (window.GCController)
     {
         global = window.frames.myframe.location.reload; // Eagerly construct these properties so they don't influence test outcome.

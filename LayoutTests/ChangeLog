@@ -1,3 +1,23 @@
+2013-08-17  Zan Dobersek  <zdobersek@igalia.com>
+
+        <https://webkit.org/b/119944> The fast/dom/gc-10.html layout test should dump text instead of render tree
+
+        Reviewed by Darin Adler.
+
+        The fast/dom/gc-10.html layout test is unnecessarily dumping the render tree and the pixel output.
+        Dumping the text output is sufficient enough for this test.
+
+        * fast/dom/gc-10-expected.txt: Added.
+        * fast/dom/gc-10.html:
+        * platform/efl/fast/dom/gc-10-expected.png: Removed.
+        * platform/efl/fast/dom/gc-10-expected.txt: Removed.
+        * platform/gtk/fast/dom/gc-10-expected.txt: Removed.
+        * platform/mac/fast/dom/gc-10-expected.png: Removed.
+        * platform/mac/fast/dom/gc-10-expected.txt: Removed.
+        * platform/qt-5.0-wk2/fast/dom/gc-10-expected.png: Removed.
+        * platform/qt/fast/dom/gc-10-expected.png: Removed.
+        * platform/qt/fast/dom/gc-10-expected.txt: Removed.
+
 2013-08-17  Morten Stenshorne  <mstensho@opera.com>
 
         <https://webkit.org/b/119795> Propagate writing-mode from the first region to the flow thread
