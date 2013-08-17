@@ -1,3 +1,11 @@
+2013-08-17  Andreas Kling  <akling@apple.com>
+
+        [Windows] Unreviewed build fix.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
+
+            Don't export Frame::settings() as it's an inline method now.
+
 2013-08-15  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Unreviewed build fix after r154127.

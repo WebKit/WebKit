@@ -302,7 +302,6 @@ EXPORTS
         symbolWithPointer(?setPseudo@Element@WebCore@@QAEXABVAtomicString@WTF@@@Z, ?setPseudo@Element@WebCore@@QEAAXAEBVAtomicString@WTF@@@Z)
         symbolWithPointer(?setMediaTypeOverride@Settings@WebCore@@QAEXABVString@WTF@@@Z, ?setMediaTypeOverride@Settings@WebCore@@QEAAXAEBVString@WTF@@@Z)
         symbolWithPointer(?settings@Document@WebCore@@QBEPAVSettings@2@XZ, ?settings@Document@WebCore@@QEBAPEAVSettings@2@XZ)
-        symbolWithPointer(?settings@Frame@WebCore@@QBEPAVSettings@2@XZ, ?settings@Frame@WebCore@@QEBAPEAVSettings@2@XZ)
         symbolWithPointer(?substring@String@WTF@@QBE?AV12@II@Z, ?substring@String@WTF@@QEBA?AV12@II@Z)
         symbolWithPointer(?suggestedValue@HTMLInputElement@WebCore@@QBEABVString@WTF@@XZ, ?suggestedValue@HTMLInputElement@WebCore@@QEBAAEBVString@WTF@@XZ)
         symbolWithPointer(?target@HistoryItem@WebCore@@QBEABVString@WTF@@XZ, ?target@HistoryItem@WebCore@@QEBAAEBVString@WTF@@XZ)
