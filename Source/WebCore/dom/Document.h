@@ -509,12 +509,10 @@ public:
     PassRefPtr<Text> createEditingTextNode(const String&);
 
     void recalcStyle(Style::Change = Style::NoChange);
-    bool childNeedsAndNotInStyleRecalc();
     void updateStyleIfNeeded();
     void updateLayout();
     void updateLayoutIgnorePendingStylesheets();
     PassRefPtr<RenderStyle> styleForElementIgnoringPendingStylesheets(Element*);
-    PassRefPtr<RenderStyle> styleForPage(int pageIndex);
 
     // Returns true if page box (margin boxes and page borders) is visible.
     bool isPageBoxVisible(int pageIndex);

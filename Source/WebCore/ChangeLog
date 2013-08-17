@@ -1,5 +1,36 @@
 2013-08-17  Darin Adler  <darin@apple.com>
 
+        <https://webkit.org/b/119943> Clean up the Document class a bit
+
+        Reviewed by Antti Koivisto.
+
+        * dom/Document.cpp:
+        (WebCore::Document::~Document): Fixed typo in comment.
+        (WebCore::Document::suggestedMIMEType): Use ASCIILiteral for literals.
+        Also name local variable just loader rather than documentLoader.
+        (WebCore::Document::updateTitle): Call loader rather than going indirectly
+        through frame to get to the loader.
+        (WebCore::Document::setTitleElement): Fixed formatting (add braces).
+        (WebCore::Document::removeTitle): Iterate elements instead of nodes.
+        (WebCore::Document::isPageBoxVisible): Use ensureStyleResolver to call
+        styleForPage to avoid the need for a simple forwarding function. Also
+        eliminated local variable to increase clarity.
+        (WebCore::Document::pageSizeAndMarginsInPixels): Use ensureStyleResolver
+        to call styleForPage to avoid the need for a simple forwarding function.
+        (WebCore::Document::setIsViewSource): Renamed a local variable.
+
+        * dom/Document.h: Removed unneeded childNeedsAndNotInStyleRecalc and
+        styleForPage functions.
+
+        * loader/FrameLoader.cpp: Removed unnneeded setTitle function.
+        * loader/FrameLoader.h: Ditto.
+
+        * page/PrintContext.cpp:
+        (WebCore::PrintContext::pageProperty): Use ensureStyleResolver to call
+        styleForPage to avoid the need for a simple forwarding function.
+
+2013-08-17  Darin Adler  <darin@apple.com>
+
         <https://webkit.org/b/119939> Remove some unused clipboard and pasteboard code
 
         Reviewed by Andreas Kling.

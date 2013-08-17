@@ -239,8 +239,6 @@ public:
 
     bool isComplete() const;
 
-    void setTitle(const StringWithDirection&);
-
     void commitProvisionalLoad();
 
     FrameLoaderStateMachine* stateMachine() const { return &m_stateMachine; }

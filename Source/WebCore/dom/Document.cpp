@@ -591,7 +591,7 @@ Document::~Document()
     if (m_elemSheet)
         m_elemSheet->clearOwnerNode();
 
-    clearStyleResolver(); // We need to destory CSSFontSelector before destroying m_cachedResourceLoader.
+    clearStyleResolver(); // We need to destroy CSSFontSelector before destroying m_cachedResourceLoader.
 
     // It's possible for multiple Documents to end up referencing the same CachedResourceLoader (e.g., SVGImages
     // load the initial empty document and the SVGDocument with the same DocumentLoader).
@@ -674,7 +674,7 @@ void Document::buildAccessKeyMap(TreeScope* scope)
     ASSERT(scope);
     ContainerNode* rootNode = scope->rootNode();
     for (Element* element = ElementTraversal::firstWithin(rootNode); element; element = ElementTraversal::next(element, rootNode)) {
-        const AtomicString& accessKey = element->getAttribute(accesskeyAttr);
+        const AtomicString& accessKey = element->fastGetAttribute(accesskeyAttr);
         if (!accessKey.isEmpty())
             m_elementsByAccessKey.set(accessKey.impl(), element);
 
@@ -1386,16 +1386,15 @@ void Document::setContent(const String& content)
 String Document::suggestedMIMEType() const
 {
     if (isXHTMLDocument())
-        return "application/xhtml+xml";
+        return ASCIILiteral("application/xhtml+xml");
     if (isSVGDocument())
-        return "image/svg+xml";
+        return ASCIILiteral("image/svg+xml");
     if (xmlStandalone())
-        return "text/xml";
+        return ASCIILiteral("text/xml");
     if (isHTMLDocument())
-        return "text/html";
-
-    if (DocumentLoader* documentLoader = loader())
-        return documentLoader->responseMIMEType();
+        return ASCIILiteral("text/html");
+    if (DocumentLoader* loader = this->loader())
+        return loader->responseMIMEType();
     return String();
 }
 
@@ -1509,8 +1508,8 @@ void Document::updateTitle(const StringWithDirection& title)
         else
             m_title = canonicalizedTitle<UChar>(this, m_rawTitle);
     }
-    if (Frame* f = frame())
-        f->loader().setTitle(m_title);
+    if (DocumentLoader* loader = this->loader())
+        loader->setTitle(m_title);
 }
 
 void Document::setTitle(const String& title)
@@ -1539,9 +1538,10 @@ void Document::setTitle(const String& title)
 void Document::setTitleElement(const StringWithDirection& title, Element* titleElement)
 {
     if (titleElement != m_titleElement) {
-        if (m_titleElement || m_titleSetExplicitly)
+        if (m_titleElement || m_titleSetExplicitly) {
             // Only allow the first title element to change the title -- others have no effect.
             return;
+        }
         m_titleElement = titleElement;
     }
 
@@ -1558,12 +1558,13 @@ void Document::removeTitle(Element* titleElement)
 
     // Update title based on first title element in the head, if one exists.
     if (HTMLElement* headElement = head()) {
-        for (Node* e = headElement->firstChild(); e; e = e->nextSibling())
-            if (isHTMLTitleElement(e)) {
-                HTMLTitleElement* titleElement = toHTMLTitleElement(e);
+        for (Element* element = ElementTraversal::firstWithin(headElement); element; element = ElementTraversal::nextSibling(element)) {
+            if (isHTMLTitleElement(element)) {
+                HTMLTitleElement* titleElement = toHTMLTitleElement(element);
                 setTitleElement(titleElement->textWithDirection(), titleElement);
                 break;
             }
+        }
     }
 
     if (!m_titleElement)
@@ -1727,11 +1728,6 @@ bool Document::hasPendingForcedStyleRecalc() const
 void Document::styleRecalcTimerFired(Timer<Document>*)
 {
     updateStyleIfNeeded();
-}
-
-bool Document::childNeedsAndNotInStyleRecalc()
-{
-    return childNeedsStyleRecalc() && !m_inStyleRecalc;
 }
 
 void Document::recalcStyle(Style::Change change)
@@ -1903,21 +1899,14 @@ PassRefPtr<RenderStyle> Document::styleForElementIgnoringPendingStylesheets(Elem
     return style.release();
 }
 
-PassRefPtr<RenderStyle> Document::styleForPage(int pageIndex)
-{
-    RefPtr<RenderStyle> style = ensureStyleResolver().styleForPage(pageIndex);
-    return style.release();
-}
-
 bool Document::isPageBoxVisible(int pageIndex)
 {
-    RefPtr<RenderStyle> style = styleForPage(pageIndex);
-    return style->visibility() != HIDDEN; // display property doesn't apply to @page.
+    return ensureStyleResolver().styleForPage(pageIndex)->visibility() != HIDDEN; // display property doesn't apply to @page.
 }
 
 void Document::pageSizeAndMarginsInPixels(int pageIndex, IntSize& pageSize, int& marginTop, int& marginRight, int& marginBottom, int& marginLeft)
 {
-    RefPtr<RenderStyle> style = styleForPage(pageIndex);
+    RefPtr<RenderStyle> style = ensureStyleResolver().styleForPage(pageIndex);
     RenderView* view = renderView();
 
     int width = pageSize.width();
@@ -1966,8 +1955,8 @@ void Document::setIsViewSource(bool isViewSource)
 void Document::createStyleResolver()
 {
     bool matchAuthorAndUserStyles = true;
-    if (Settings* docSettings = settings())
-        matchAuthorAndUserStyles = docSettings->authorAndUserStylesEnabled();
+    if (Settings* settings = this->settings())
+        matchAuthorAndUserStyles = settings->authorAndUserStylesEnabled();
     m_styleResolver = adoptPtr(new StyleResolver(this, matchAuthorAndUserStyles));
     m_styleSheetCollection->combineCSSFeatureFlags();
 }

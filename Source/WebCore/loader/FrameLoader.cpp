@@ -1862,7 +1862,6 @@ void FrameLoader::transitionToCommitted(PassRefPtr<CachedPage> cachedPage)
                     ASSERT(cachedDocumentLoader);
                     cachedDocumentLoader->setFrame(m_frame);
                     m_client->transitionToCommittedFromCachedFrame(cachedPage->cachedMainFrame());
-
                 } else
                     m_client->transitionToCommittedForNewPage();
             }
@@ -3243,11 +3242,6 @@ ResourceError FrameLoader::cancelledError(const ResourceRequest& request) const
     ResourceError error = m_client->cancelledError(request);
     error.setIsCancellation(true);
     return error;
-}
-
-void FrameLoader::setTitle(const StringWithDirection& title)
-{
-    documentLoader()->setTitle(title);
 }
 
 String FrameLoader::referrer() const
