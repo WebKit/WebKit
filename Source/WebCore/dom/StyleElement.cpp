@@ -30,17 +30,11 @@
 #include "MediaQueryEvaluator.h"
 #include "ScriptableDocumentParser.h"
 #include "StyleSheetContents.h"
+#include "TextNodeTraversal.h"
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/TextPosition.h>
 
 namespace WebCore {
-
-static bool isValidStyleChild(Node* node)
-{
-    ASSERT(node);
-    Node::NodeType nodeType = node->nodeType();
-    return nodeType == Node::TEXT_NODE || nodeType == Node::CDATA_SECTION_NODE;
-}
 
 static bool isCSS(Element* element, const AtomicString& type)
 {
@@ -110,33 +104,14 @@ void StyleElement::finishParsingChildren(Element* element)
     m_createdByParser = false;
 }
 
-void StyleElement::process(Element* e)
+void StyleElement::process(Element* element)
 {
-    if (!e || !e->inDocument())
+    if (!element || !element->inDocument())
         return;
 
-    unsigned resultLength = 0;
-    for (Node* c = e->firstChild(); c; c = c->nextSibling()) {
-        if (isValidStyleChild(c)) {
-            unsigned length = c->nodeValue().length();
-            if (length > std::numeric_limits<unsigned>::max() - resultLength) {
-                createSheet(e, m_startLineNumber, "");
-                return;
-            }
-            resultLength += length;
-        }
-    }
-    StringBuilder sheetText;
-    sheetText.reserveCapacity(resultLength);
+    String sheetText = TextNodeTraversal::contentsAsString(element);
 
-    for (Node* c = e->firstChild(); c; c = c->nextSibling()) {
-        if (isValidStyleChild(c)) {
-            sheetText.append(c->nodeValue());
-        }
-    }
-    ASSERT(sheetText.length() == resultLength);
-
-    createSheet(e, m_startLineNumber, sheetText.toString());
+    createSheet(element, m_startLineNumber, sheetText);
 }
 
 void StyleElement::clearSheet()

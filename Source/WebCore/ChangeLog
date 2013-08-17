@@ -1,5 +1,19 @@
 2013-08-17  Antti Koivisto  <antti@apple.com>
 
+        <https://webkit.org/b/119963> Use TextNodeTraversal for getting sheet text in StyleElement
+
+        Reviewed by Andreas Kling.
+
+        * dom/StyleElement.cpp:
+        (WebCore::StyleElement::process):
+        
+            Use TextNodeTraversal::contentsAsString for the sheet text. The overflow check is removed as StringBuilder 
+            (which is used by contentsAsString) does that itself. The behavior in case of overflow changes from empty
+            sheet to CRASH(). Thats what we do elsewhere in similar situations too (scripts for example). Continuing
+            with > 4GB of style sheet text nodes is probably not going to go well anyway.
+
+2013-08-17  Antti Koivisto  <antti@apple.com>
+
         <https://webkit.org/b/119960> Remove some optimizations made obsolete by use of StringBuilder
 
         Reviewed by Andreas Kling.
