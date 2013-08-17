@@ -193,7 +193,7 @@ PassRefPtr<TypeBuilder::LayerTree::Layer> InspectorLayerTreeAgent::buildObjectFo
         if (isReflection)
             renderer = renderer->parent();
         layerObject->setIsGeneratedContent(true);
-        layerObject->setPseudoElementId(bindPseudoElement(static_cast<PseudoElement*>(renderer->node())));
+        layerObject->setPseudoElementId(bindPseudoElement(toPseudoElement(renderer->node())));
         if (renderer->isBeforeContent())
             layerObject->setPseudoElement("before");
         else if (renderer->isAfterContent())

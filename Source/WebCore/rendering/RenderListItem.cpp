@@ -27,6 +27,7 @@
 #include "ElementTraversal.h"
 #include "HTMLNames.h"
 #include "HTMLOListElement.h"
+#include "PseudoElement.h"
 #include "RenderListMarker.h"
 #include "RenderView.h"
 #include "StyleInheritedData.h"
@@ -102,8 +103,9 @@ static Node* enclosingList(const RenderListItem* listItem)
 {
     Node* listItemNode = listItem->node();
     Node* firstNode = 0;
+    Node* parent = listItemNode->isPseudoElement() ? toPseudoElement(listItemNode)->hostElement() : listItemNode->parentNode();
     // We use parentNode because the enclosing list could be a ShadowRoot that's not Element.
-    for (Node* parent = listItemNode->parentNode(); parent; parent = parent->parentNode()) {
+    for (; parent; parent = parent->parentNode()) {
         if (isList(parent))
             return parent;
         if (!firstNode)

@@ -42,7 +42,7 @@ Node* previousIncludingPseudo(const Node* current, const Node* stayWithin)
             previous = previous->pseudoAwareLastChild();
         return previous;
     }
-    return current->parentNode();
+    return current->isPseudoElement() ? toPseudoElement(current)->hostElement() : current->parentNode();
 }
 
 Node* nextIncludingPseudo(const Node* current, const Node* stayWithin)
@@ -54,7 +54,8 @@ Node* nextIncludingPseudo(const Node* current, const Node* stayWithin)
         return 0;
     if ((next = current->pseudoAwareNextSibling()))
         return next;
-    for (current = current->parentNode(); current; current = current->parentNode()) {
+    current = current->isPseudoElement() ? toPseudoElement(current)->hostElement() : current->parentNode();
+    for (; current; current = current->parentNode()) {
         if (current == stayWithin)
             return 0;
         if ((next = current->pseudoAwareNextSibling()))
@@ -70,7 +71,8 @@ Node* nextIncludingPseudoSkippingChildren(const Node* current, const Node* stayW
         return 0;
     if ((next = current->pseudoAwareNextSibling()))
         return next;
-    for (current = current->parentNode(); current; current = current->parentNode()) {
+    current = current->isPseudoElement() ? toPseudoElement(current)->hostElement() : current->parentNode();
+    for (; current; current = current->parentNode()) {
         if (current == stayWithin)
             return 0;
         if ((next = current->pseudoAwareNextSibling()))

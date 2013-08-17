@@ -36,11 +36,14 @@ namespace WebCore {
 
 class PseudoElement FINAL : public Element {
 public:
-    static PassRefPtr<PseudoElement> create(Element* parent, PseudoId pseudoId)
+    static PassRefPtr<PseudoElement> create(Element* host, PseudoId pseudoId)
     {
-        return adoptRef(new PseudoElement(parent, pseudoId));
+        return adoptRef(new PseudoElement(host, pseudoId));
     }
     ~PseudoElement();
+
+    Element* hostElement() const { return m_hostElement; }
+    void clearHostElement() { m_hostElement = 0; }
 
     virtual PassRefPtr<RenderStyle> customStyleForRenderer() OVERRIDE;
     virtual void attach(const AttachContext& = AttachContext()) OVERRIDE;
@@ -63,6 +66,7 @@ private:
     virtual void didRecalcStyle(Style::Change) OVERRIDE;
     virtual PseudoId customPseudoId() const OVERRIDE { return m_pseudoId; }
 
+    Element* m_hostElement;
     PseudoId m_pseudoId;
 };
 
@@ -71,6 +75,18 @@ const QualifiedName& pseudoElementTagName();
 inline bool pseudoElementRendererIsNeeded(const RenderStyle* style)
 {
     return style && style->display() != NONE && (style->contentData() || !style->regionThread().isEmpty());
+}
+
+inline PseudoElement* toPseudoElement(Node* node)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(!node || node->isPseudoElement());
+    return static_cast<PseudoElement*>(node);
+}
+
+inline const PseudoElement* toPseudoElement(const Node* node)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(!node || node->isPseudoElement());
+    return static_cast<const PseudoElement*>(node);
 }
 
 } // namespace

@@ -636,7 +636,7 @@ public:
     // Returns the styled node that caused the generation of this renderer.
     // This is the same as node() except for renderers of :before and :after
     // pseudo elements for which their parent node is returned.
-    Node* generatingNode() const { return isPseudoElement() ? node()->parentNode() : node(); }
+    Node* generatingNode() const { return isPseudoElement() ? generatingPseudoHostElement() : node(); }
 
     Document* document() const { return m_node->document(); }
     Frame* frame() const { return document()->frame(); }
@@ -1028,6 +1028,8 @@ private:
     StyleDifference adjustStyleDifference(StyleDifference, unsigned contextSensitiveProperties) const;
 
     Color selectionColor(int colorProperty) const;
+
+    Node* generatingPseudoHostElement() const;
 
 #if ENABLE(CSS_SHAPES)
     void removeShapeImageClient(ShapeValue*);

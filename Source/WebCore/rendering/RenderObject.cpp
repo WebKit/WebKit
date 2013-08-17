@@ -46,6 +46,7 @@
 #include "HitTestResult.h"
 #include "LogicalSelectionOffsetCaches.h"
 #include "Page.h"
+#include "PseudoElement.h"
 #include "RenderArena.h"
 #include "RenderCounter.h"
 #include "RenderDeprecatedFlexibleBox.h"
@@ -3225,6 +3226,11 @@ bool RenderObject::canUpdateSelectionOnRootLineBoxes()
 bool RenderObject::canHaveGeneratedChildren() const
 {
     return canHaveChildren();
+}
+
+Node* RenderObject::generatingPseudoHostElement() const
+{
+    return toPseudoElement(node())->hostElement();
 }
 
 bool RenderObject::canBeReplacedWithInlineRunIn() const

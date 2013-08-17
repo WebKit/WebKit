@@ -22,6 +22,7 @@
 
 #include "ContainerNode.h"
 #include "EventContext.h"
+#include "PseudoElement.h"
 #include "ShadowRoot.h"
 #include <wtf/HashMap.h>
 #include <wtf/PassRefPtr.h>
@@ -81,7 +82,7 @@ inline EventTarget* EventRetargeter::eventTargetRespectingTargetRules(Node* refe
     ASSERT(referenceNode);
 
     if (referenceNode->isPseudoElement())
-        return referenceNode->parentNode();
+        return toPseudoElement(referenceNode)->hostElement();
 
 #if ENABLE(SVG)
     if (!referenceNode->isSVGElement() || !referenceNode->isInShadowTree())

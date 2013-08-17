@@ -349,6 +349,9 @@ Node::~Node()
 #endif
 
     ASSERT(!renderer());
+    ASSERT(!parentNode());
+    ASSERT(!m_previous);
+    ASSERT(!m_next);
 
     if (hasRareData())
         clearRareData();
@@ -357,11 +360,6 @@ Node::~Node()
         if (Document* document = documentInternal())
             willBeDeletedFrom(document);
     }
-
-    if (m_previous)
-        m_previous->setNextSibling(0);
-    if (m_next)
-        m_next->setPreviousSibling(0);
 
     m_treeScope->guardDeref();
 
@@ -707,8 +705,9 @@ LayoutRect Node::renderRect(bool* isReplaced)
 
 void Node::markAncestorsWithChildNeedsStyleRecalc()
 {
-    for (ContainerNode* p = parentOrShadowHostNode(); p && !p->childNeedsStyleRecalc(); p = p->parentOrShadowHostNode())
-        p->setChildNeedsStyleRecalc();
+    ContainerNode* ancestor = isPseudoElement() ? toPseudoElement(this)->hostElement() : parentOrShadowHostNode();
+    for (; ancestor && !ancestor->childNeedsStyleRecalc(); ancestor = ancestor->parentOrShadowHostNode())
+        ancestor->setChildNeedsStyleRecalc();
 
     if (document()->childNeedsStyleRecalc())
         document()->scheduleStyleRecalc();
@@ -891,24 +890,24 @@ bool Node::containsIncludingHostElements(const Node* node) const
 
 Node* Node::pseudoAwarePreviousSibling() const
 {
-    if (parentElement() && !previousSibling()) {
-        Element* parent = parentElement();
-        if (isAfterPseudoElement() && parent->lastChild())
-            return parent->lastChild();
+    Element* parentOrHost = isPseudoElement() ? toPseudoElement(this)->hostElement() : parentElement();
+    if (parentOrHost && !previousSibling()) {
+        if (isAfterPseudoElement() && parentOrHost->lastChild())
+            return parentOrHost->lastChild();
         if (!isBeforePseudoElement())
-            return parent->pseudoElement(BEFORE);
+            return parentOrHost->pseudoElement(BEFORE);
     }
     return previousSibling();
 }
 
 Node* Node::pseudoAwareNextSibling() const
 {
-    if (parentElement() && !nextSibling()) {
-        Element* parent = parentElement();
-        if (isBeforePseudoElement() && parent->firstChild())
-            return parent->firstChild();
+    Element* parentOrHost = isPseudoElement() ? toPseudoElement(this)->hostElement() : parentElement();
+    if (parentOrHost && !nextSibling()) {
+        if (isBeforePseudoElement() && parentOrHost->firstChild())
+            return parentOrHost->firstChild();
         if (!isAfterPseudoElement())
-            return parent->pseudoElement(AFTER);
+            return parentOrHost->pseudoElement(AFTER);
     }
     return nextSibling();
 }
@@ -925,7 +924,6 @@ Node* Node::pseudoAwareFirstChild() const
             first = currentElement->pseudoElement(AFTER);
         return first;
     }
-
     return firstChild();
 }
 
@@ -941,7 +939,6 @@ Node* Node::pseudoAwareLastChild() const
             last = currentElement->pseudoElement(BEFORE);
         return last;
     }
-
     return lastChild();
 }
 

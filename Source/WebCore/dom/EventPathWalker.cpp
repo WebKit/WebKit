@@ -29,6 +29,7 @@
 
 #include "ContentDistributor.h"
 #include "InsertionPoint.h"
+#include "PseudoElement.h"
 #include "ShadowRoot.h"
 
 namespace WebCore {
@@ -59,14 +60,18 @@ void EventPathWalker::moveToParent()
             return;
         }
     }
-    if (!m_node->isShadowRoot()) {
-        m_node = m_node->parentNode();
-        m_isVisitingInsertionPointInReprojection = false;
+    m_isVisitingInsertionPointInReprojection = false;
+    if (m_node->isPseudoElement()) {
+        // FIXME: Pseudo elements should probably not be dispatching events in the first place.
+        m_node = toPseudoElement(m_node)->hostElement();
         return;
     }
-    m_node = toShadowRoot(m_node)->hostElement();
-    m_distributedNode = m_node;
-    m_isVisitingInsertionPointInReprojection = false;
+    if (m_node->isShadowRoot()) {
+        m_node = toShadowRoot(m_node)->hostElement();
+        m_distributedNode = m_node;
+        return;
+    }
+    m_node = m_node->parentNode();
 }
 
 } // namespace

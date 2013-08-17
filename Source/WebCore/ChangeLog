@@ -1,3 +1,41 @@
+2013-08-16  Antti Koivisto  <antti@apple.com>
+
+        <https://webkit.org/b/119886> PseudoElement is abusing parent node pointer
+
+        Reviewed by Darin Adler.
+
+        PseudoElement sets its host node as its parent. This is confusing and wrong as it breaks
+        the basic tree consistency (a node is a child node of its parent node).
+        
+        This patch adds an explicit host pointer PseudoElement and switches the call sites over. Memory
+        impact is negligible as there are not that many ::befores and ::afters.
+
+        * dom/ComposedShadowTreeWalker.cpp:
+        (WebCore::ComposedShadowTreeWalker::traverseParent):
+        * dom/EventPathWalker.cpp:
+        (WebCore::EventPathWalker::moveToParent):
+        * dom/EventRetargeter.h:
+        (WebCore::EventRetargeter::eventTargetRespectingTargetRules):
+        * dom/Node.cpp:
+        (WebCore::Node::~Node):
+        
+            Add consistency assertions. Remove unnecessary clearing of sibling pointers. They should be cleared already.
+
+        (WebCore::Node::markAncestorsWithChildNeedsStyleRecalc):
+        * dom/PseudoElement.cpp:
+        (WebCore::PseudoElement::PseudoElement):
+        (WebCore::PseudoElement::customStyleForRenderer):
+        * dom/PseudoElement.h:
+        (WebCore::toPseudoElement):
+        
+            Add casting functions.
+
+        * inspector/InspectorLayerTreeAgent.cpp:
+        (WebCore::InspectorLayerTreeAgent::buildObjectForLayer):
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::setInnerNode):
+        (WebCore::HitTestResult::setInnerNonSharedNode):
+
 2013-08-17  Darin Adler  <darin@apple.com>
 
         <https://webkit.org/b/119948> Change drag-specific clipboard writing in DragController to go straight to Pasteboard, not forward through Clipboard

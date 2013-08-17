@@ -40,6 +40,7 @@
 #include "HTMLTextAreaElement.h"
 #include "HTMLVideoElement.h"
 #include "HitTestLocation.h"
+#include "PseudoElement.h"
 #include "RenderBlock.h"
 #include "RenderImage.h"
 #include "RenderInline.h"
@@ -133,14 +134,14 @@ void HitTestResult::setToNonShadowAncestor()
 void HitTestResult::setInnerNode(Node* n)
 {
     if (n && n->isPseudoElement())
-        n = n->parentOrShadowHostNode();
+        n = toPseudoElement(n)->hostElement();
     m_innerNode = n;
 }
     
 void HitTestResult::setInnerNonSharedNode(Node* n)
 {
     if (n && n->isPseudoElement())
-        n = n->parentOrShadowHostNode();
+        n = toPseudoElement(n)->hostElement();
     m_innerNonSharedNode = n;
 }
 

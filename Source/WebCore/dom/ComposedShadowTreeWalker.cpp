@@ -200,7 +200,7 @@ void ComposedShadowTreeWalker::parent()
 Node* ComposedShadowTreeWalker::traverseParent(const Node* node, ParentTraversalDetails* details) const
 {
     if (node->isPseudoElement())
-        return node->parentOrShadowHostNode();
+        return toPseudoElement(node)->hostElement();
 
     if (!canCrossUpperBoundary() && node->isShadowRoot())
         return 0;

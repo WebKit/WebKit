@@ -55,18 +55,18 @@ String PseudoElement::pseudoElementNameForEvents(PseudoId pseudoId)
     }
 }
 
-PseudoElement::PseudoElement(Element* parent, PseudoId pseudoId)
-    : Element(pseudoElementTagName(), parent->document(), CreatePseudoElement)
+PseudoElement::PseudoElement(Element* host, PseudoId pseudoId)
+    : Element(pseudoElementTagName(), host->document(), CreatePseudoElement)
+    , m_hostElement(host)
     , m_pseudoId(pseudoId)
 {
-    ASSERT(pseudoId != NOPSEUDO);
-    // FIXME: This is wrong in terms of tree consistency. Pseudo element is now not a child of its parent.
-    setParentNode(parent);
+    ASSERT(pseudoId == BEFORE || pseudoId == AFTER);
     setHasCustomStyleCallbacks();
 }
 
 PseudoElement::~PseudoElement()
 {
+    ASSERT(!m_hostElement);
 #if USE(ACCELERATED_COMPOSITING)
     InspectorInstrumentation::pseudoElementDestroyed(document()->page(), this);
 #endif
@@ -74,7 +74,7 @@ PseudoElement::~PseudoElement()
 
 PassRefPtr<RenderStyle> PseudoElement::customStyleForRenderer()
 {
-    return parentOrShadowHostElement()->renderer()->getCachedPseudoStyle(m_pseudoId);
+    return m_hostElement->renderer()->getCachedPseudoStyle(m_pseudoId);
 }
 
 void PseudoElement::attach(const AttachContext& context)
