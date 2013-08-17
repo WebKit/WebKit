@@ -151,7 +151,7 @@ public:
         node->convertToConstant(constantNumber);
     }
     
-    void convertToConstant(Node* node, JSValue value)
+    unsigned constantRegisterForConstant(JSValue value)
     {
         unsigned constantRegister;
         if (!m_codeBlock->findConstant(value, constantRegister)) {
@@ -161,7 +161,12 @@ public:
                 m_codeBlock->ownerExecutable(),
                 value);
         }
-        convertToConstant(node, constantRegister);
+        return constantRegister;
+    }
+    
+    void convertToConstant(Node* node, JSValue value)
+    {
+        convertToConstant(node, constantRegisterForConstant(value));
     }
 
     // CodeBlock is optional, but may allow additional information to be dumped (e.g. Identifier names).

@@ -484,6 +484,32 @@ TypedArrayType toTypedArrayType(Array::Type type)
     }
 }
 
+Array::Type toArrayType(TypedArrayType type)
+{
+    switch (type) {
+    case TypeInt8:
+        return Array::Int8Array;
+    case TypeInt16:
+        return Array::Int16Array;
+    case TypeInt32:
+        return Array::Int32Array;
+    case TypeUint8:
+        return Array::Uint8Array;
+    case TypeUint8Clamped:
+        return Array::Uint8ClampedArray;
+    case TypeUint16:
+        return Array::Uint16Array;
+    case TypeUint32:
+        return Array::Uint32Array;
+    case TypeFloat32:
+        return Array::Float32Array;
+    case TypeFloat64:
+        return Array::Float64Array;
+    default:
+        return Array::Generic;
+    }
+}
+
 void ArrayMode::dump(PrintStream& out) const
 {
     out.print(type(), arrayClass(), speculation(), conversion());

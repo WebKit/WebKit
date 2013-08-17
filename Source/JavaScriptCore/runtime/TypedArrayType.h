@@ -64,7 +64,7 @@ inline bool isTypedView(TypedArrayType type)
     }
 }
 
-inline size_t elementSize(TypedArrayType type)
+inline unsigned logElementSize(TypedArrayType type)
 {
     switch (type) {
     case NotTypedArray:
@@ -73,19 +73,24 @@ inline size_t elementSize(TypedArrayType type)
     case TypeUint8:
     case TypeUint8Clamped:
     case TypeDataView:
-        return 1;
+        return 0;
     case TypeInt16:
     case TypeUint16:
-        return 2;
+        return 1;
     case TypeInt32:
     case TypeUint32:
     case TypeFloat32:
-        return 4;
+        return 2;
     case TypeFloat64:
-        return 8;
+        return 3;
     }
     RELEASE_ASSERT_NOT_REACHED();
     return 0;
+}
+
+inline size_t elementSize(TypedArrayType type)
+{
+    return static_cast<size_t>(1) << logElementSize(type);
 }
 
 const ClassInfo* classInfoForType(TypedArrayType);

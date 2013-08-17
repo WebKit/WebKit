@@ -1,5 +1,26 @@
 2013-08-16  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG should optimize typedArray.byteLength
+        https://bugs.webkit.org/show_bug.cgi?id=119909
+
+        Reviewed by Oliver Hunt.
+        
+        Convert two of the tyepd array tests to use byteLength instead of length.
+        These tests show speed-ups around 2.5x-5x.
+
+        * fast/js/regress/Int16Array-bubble-sort-with-byteLength-expected.txt: Added.
+        * fast/js/regress/Int16Array-bubble-sort-with-byteLength.html: Added.
+        * fast/js/regress/Int8Array-load-with-byteLength-expected.txt: Added.
+        * fast/js/regress/Int8Array-load-with-byteLength.html: Added.
+        * fast/js/regress/script-tests/Int16Array-bubble-sort-with-byteLength.js: Added.
+        (bubbleSort):
+        (myRandom):
+        (validateSort):
+        * fast/js/regress/script-tests/Int8Array-load-with-byteLength.js: Added.
+        (adler32):
+
+2013-08-16  Filip Pizlo  <fpizlo@apple.com>
+
         DFG optimizes out strict mode arguments tear off
         https://bugs.webkit.org/show_bug.cgi?id=119504
 

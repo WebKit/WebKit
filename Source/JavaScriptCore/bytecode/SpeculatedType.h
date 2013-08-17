@@ -30,6 +30,7 @@
 #define SpeculatedType_h
 
 #include "JSCJSValue.h"
+#include "TypedArrayType.h"
 #include <wtf/PrintStream.h>
 
 namespace JSC {
@@ -329,6 +330,8 @@ SpeculatedType speculationFromClassInfo(const ClassInfo*);
 SpeculatedType speculationFromStructure(Structure*);
 SpeculatedType speculationFromCell(JSCell*);
 SpeculatedType speculationFromValue(JSValue);
+
+TypedArrayType typedArrayTypeFromSpeculation(SpeculatedType);
 
 } // namespace JSC
 

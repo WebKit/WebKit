@@ -1,5 +1,36 @@
 2013-08-16  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG should optimize typedArray.byteLength
+        https://bugs.webkit.org/show_bug.cgi?id=119909
+
+        Reviewed by Oliver Hunt.
+        
+        This adds typedArray.byteLength inlining to the DFG, and does so without changing
+        the IR: byteLength is turned into GetArrayLength followed by BitLShift. This is
+        legal since the byteLength of a typed array cannot exceed
+        numeric_limits<int32_t>::max().
+
+        * bytecode/SpeculatedType.cpp:
+        (JSC::typedArrayTypeFromSpeculation):
+        * bytecode/SpeculatedType.h:
+        * dfg/DFGArrayMode.cpp:
+        (JSC::DFG::toArrayType):
+        * dfg/DFGArrayMode.h:
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::attemptToMakeGetArrayLength):
+        (JSC::DFG::FixupPhase::attemptToMakeGetByteLength):
+        (JSC::DFG::FixupPhase::convertToGetArrayLength):
+        (JSC::DFG::FixupPhase::prependGetArrayLength):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::constantRegisterForConstant):
+        (JSC::DFG::Graph::convertToConstant):
+        * runtime/TypedArrayType.h:
+        (JSC::logElementSize):
+        (JSC::elementSize):
+
+2013-08-16  Filip Pizlo  <fpizlo@apple.com>
+
         DFG optimizes out strict mode arguments tear off
         https://bugs.webkit.org/show_bug.cgi?id=119504
 

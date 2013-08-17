@@ -105,6 +105,7 @@ const char* arraySpeculationToString(Array::Speculation);
 const char* arrayConversionToString(Array::Conversion);
 
 TypedArrayType toTypedArrayType(Array::Type);
+Array::Type toArrayType(TypedArrayType);
 
 class ArrayMode {
 public:

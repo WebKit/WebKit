@@ -334,5 +334,37 @@ SpeculatedType speculationFromValue(JSValue value)
     return SpecOther;
 }
 
+TypedArrayType typedArrayTypeFromSpeculation(SpeculatedType type)
+{
+    if (isInt8ArraySpeculation(type))
+        return TypeInt8;
+        
+    if (isInt16ArraySpeculation(type))
+        return TypeInt16;
+        
+    if (isInt32ArraySpeculation(type))
+        return TypeInt32;
+        
+    if (isUint8ArraySpeculation(type))
+        return TypeUint8;
+        
+    if (isUint8ClampedArraySpeculation(type))
+        return TypeUint8Clamped;
+        
+    if (isUint16ArraySpeculation(type))
+        return TypeUint16;
+        
+    if (isUint32ArraySpeculation(type))
+        return TypeUint32;
+        
+    if (isFloat32ArraySpeculation(type))
+        return TypeFloat32;
+        
+    if (isFloat64ArraySpeculation(type))
+        return TypeFloat64;
+    
+    return NotTypedArray;
+}
+
 } // namespace JSC
 

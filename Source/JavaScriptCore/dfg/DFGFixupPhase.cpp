@@ -729,56 +729,14 @@ private:
         case GetByIdFlush: {
             if (!node->child1()->shouldSpeculateCell())
                 break;
-            setUseKindAndUnboxIfProfitable<CellUse>(node->child1());
-            if (!isInt32Speculation(node->prediction()))
+            if (m_graph.identifiers()[node->identifierNumber()] == vm().propertyNames->length.impl()) {
+                attemptToMakeGetArrayLength(node);
                 break;
-            if (m_graph.identifiers()[node->identifierNumber()] != vm().propertyNames->length.impl())
-                break;
-            CodeBlock* profiledBlock = m_graph.baselineCodeBlockFor(node->codeOrigin);
-            ArrayProfile* arrayProfile = 
-                profiledBlock->getArrayProfile(node->codeOrigin.bytecodeIndex);
-            ArrayMode arrayMode = ArrayMode(Array::SelectUsingPredictions);
-            if (arrayProfile) {
-                ConcurrentJITLocker locker(profiledBlock->m_lock);
-                arrayProfile->computeUpdatedPrediction(locker, profiledBlock);
-                arrayMode = ArrayMode::fromObserved(locker, arrayProfile, Array::Read, false);
-                if (arrayMode.type() == Array::Unprofiled) {
-                    // For normal array operations, it makes sense to treat Unprofiled
-                    // accesses as ForceExit and get more data rather than using
-                    // predictions and then possibly ending up with a Generic. But here,
-                    // we treat anything that is Unprofiled as Generic and keep the
-                    // GetById. I.e. ForceExit = Generic. So, there is no harm - and only
-                    // profit - from treating the Unprofiled case as
-                    // SelectUsingPredictions.
-                    arrayMode = ArrayMode(Array::SelectUsingPredictions);
-                }
             }
-            
-            arrayMode = arrayMode.refine(node->child1()->prediction(), node->prediction());
-            
-            if (arrayMode.type() == Array::Generic) {
-                // Check if the input is something that we can't get array length for, but for which we
-                // could insert some conversions in order to transform it into something that we can do it
-                // for.
-                if (node->child1()->shouldSpeculateStringObject())
-                    attemptToForceStringArrayModeByToStringConversion<StringObjectUse>(arrayMode, node);
-                else if (node->child1()->shouldSpeculateStringOrStringObject())
-                    attemptToForceStringArrayModeByToStringConversion<StringOrStringObjectUse>(arrayMode, node);
+            if (m_graph.identifiers()[node->identifierNumber()] == vm().propertyNames->byteLength.impl()) {
+                attemptToMakeGetByteLength(node);
+                break;
             }
-            
-            if (!arrayMode.supportsLength())
-                break;
-            node->setOp(GetArrayLength);
-            ASSERT(node->flags() & NodeMustGenerate);
-            node->clearFlags(NodeMustGenerate | NodeClobbersWorld);
-            setUseKindAndUnboxIfProfitable<KnownCellUse>(node->child1());
-            node->setArrayMode(arrayMode);
-            
-            Node* storage = checkArray(arrayMode, node->codeOrigin, node->child1().node(), 0, lengthNeedsStorage);
-            if (!storage)
-                break;
-            
-            node->child2() = Edge(storage);
             break;
         }
             
@@ -1447,6 +1405,105 @@ private:
         setUseKindAndUnboxIfProfitable<Int32Use>(node->child1());
         setUseKindAndUnboxIfProfitable<Int32Use>(node->child2());
         return true;
+    }
+    
+    bool attemptToMakeGetArrayLength(Node* node)
+    {
+        if (!isInt32Speculation(node->prediction()))
+            return false;
+        CodeBlock* profiledBlock = m_graph.baselineCodeBlockFor(node->codeOrigin);
+        ArrayProfile* arrayProfile = 
+            profiledBlock->getArrayProfile(node->codeOrigin.bytecodeIndex);
+        ArrayMode arrayMode = ArrayMode(Array::SelectUsingPredictions);
+        if (arrayProfile) {
+            ConcurrentJITLocker locker(profiledBlock->m_lock);
+            arrayProfile->computeUpdatedPrediction(locker, profiledBlock);
+            arrayMode = ArrayMode::fromObserved(locker, arrayProfile, Array::Read, false);
+            if (arrayMode.type() == Array::Unprofiled) {
+                // For normal array operations, it makes sense to treat Unprofiled
+                // accesses as ForceExit and get more data rather than using
+                // predictions and then possibly ending up with a Generic. But here,
+                // we treat anything that is Unprofiled as Generic and keep the
+                // GetById. I.e. ForceExit = Generic. So, there is no harm - and only
+                // profit - from treating the Unprofiled case as
+                // SelectUsingPredictions.
+                arrayMode = ArrayMode(Array::SelectUsingPredictions);
+            }
+        }
+            
+        arrayMode = arrayMode.refine(node->child1()->prediction(), node->prediction());
+            
+        if (arrayMode.type() == Array::Generic) {
+            // Check if the input is something that we can't get array length for, but for which we
+            // could insert some conversions in order to transform it into something that we can do it
+            // for.
+            if (node->child1()->shouldSpeculateStringObject())
+                attemptToForceStringArrayModeByToStringConversion<StringObjectUse>(arrayMode, node);
+            else if (node->child1()->shouldSpeculateStringOrStringObject())
+                attemptToForceStringArrayModeByToStringConversion<StringOrStringObjectUse>(arrayMode, node);
+        }
+            
+        if (!arrayMode.supportsLength())
+            return false;
+        
+        convertToGetArrayLength(node, arrayMode);
+        return true;
+    }
+    
+    bool attemptToMakeGetByteLength(Node* node)
+    {
+        if (!isInt32Speculation(node->prediction()))
+            return false;
+        
+        TypedArrayType type = typedArrayTypeFromSpeculation(node->child1()->prediction());
+        if (!isTypedView(type))
+            return false;
+        
+        if (elementSize(type) == 1) {
+            convertToGetArrayLength(node, ArrayMode(toArrayType(type)));
+            return true;
+        }
+        
+        Node* length = prependGetArrayLength(
+            node->codeOrigin, node->child1().node(), ArrayMode(toArrayType(type)));
+        
+        Node* shiftAmount = m_insertionSet.insertNode(
+            m_indexInBlock, SpecInt32, JSConstant, node->codeOrigin,
+            OpInfo(m_graph.constantRegisterForConstant(jsNumber(logElementSize(type)))));
+        
+        // We can use a BitLShift here because typed arrays will never have a byteLength
+        // that overflows int32.
+        node->setOp(BitLShift);
+        ASSERT(node->flags() & NodeMustGenerate);
+        node->clearFlags(NodeMustGenerate | NodeClobbersWorld);
+        observeUseKindOnNode(length, Int32Use);
+        observeUseKindOnNode(shiftAmount, Int32Use);
+        node->child1() = Edge(length, Int32Use);
+        node->child2() = Edge(shiftAmount, Int32Use);
+        return true;
+    }
+    
+    void convertToGetArrayLength(Node* node, ArrayMode arrayMode)
+    {
+        node->setOp(GetArrayLength);
+        ASSERT(node->flags() & NodeMustGenerate);
+        node->clearFlags(NodeMustGenerate | NodeClobbersWorld);
+        setUseKindAndUnboxIfProfitable<KnownCellUse>(node->child1());
+        node->setArrayMode(arrayMode);
+            
+        Node* storage = checkArray(arrayMode, node->codeOrigin, node->child1().node(), 0, lengthNeedsStorage);
+        if (!storage)
+            return;
+            
+        node->child2() = Edge(storage);
+    }
+    
+    Node* prependGetArrayLength(CodeOrigin codeOrigin, Node* child, ArrayMode arrayMode)
+    {
+        Node* storage = checkArray(arrayMode, codeOrigin, child, 0, lengthNeedsStorage);
+        return m_insertionSet.insertNode(
+            m_indexInBlock, SpecInt32, GetArrayLength, codeOrigin,
+            OpInfo(arrayMode.asWord()), Edge(child, KnownCellUse), Edge(storage));
     }
 
     BasicBlock* m_block;
