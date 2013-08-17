@@ -1,5 +1,44 @@
 2013-08-17  Darin Adler  <darin@apple.com>
 
+        <https://webkit.org/b/119942> Remove unnecessary uses of Element::ownerDocument
+
+        Reviewed by Andreas Kling.
+
+        The Element::document is a simpler faster alternative to Element::ownerDocument.
+        The only behavior difference between the two is that ownerDocument returns 0 when
+        called on a Document.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::supportsFocus): Call document instead of ownerDocument.
+        (WebCore::HTMLMediaElement::mediaPlayerOwningDocument): Removed null checking of
+        document and call to ownerDocument, since ownerDocument will never return non-null
+        if document returns null.
+        (WebCore::HTMLMediaElement::mediaPlayerSawUnsupportedTracks): Call document instead
+        of ownerDocument.
+
+        * inspector/DOMEditor.cpp:
+        (WebCore::DOMEditor::SetOuterHTMLAction::perform): Call document instead of ownerDocument.
+
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::getMatchedStylesForNode): Call document instead of ownerDocument.
+        (WebCore::InspectorCSSAgent::forcePseudoState): Call document instead of ownerDocument.
+        (WebCore::InspectorCSSAgent::resetPseudoStates): Call document instead of ownerDocument.
+
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::setOuterHTML): Call document instead of expression that
+        does the same thing in a roundabout way.
+        (WebCore::InspectorDOMAgent::focusNode): Call document instead of ownerDocument.
+        (WebCore::InspectorDOMAgent::resolveNode): Call document instead of expression that
+        does the same thing in a roundabout way.
+
+        * page/DragController.cpp:
+        (WebCore::DragController::concludeEditDrag): Call document instead of ownerDocument.
+
+        * svg/SVGElementInstance.cpp:
+        (WebCore::SVGElementInstance::ownerDocument): Call document instead of ownerDocument.
+
+2013-08-17  Darin Adler  <darin@apple.com>
+
         <https://webkit.org/b/119941> Make Page::dragController return a reference
 
         Reviewed by Andreas Kling.

@@ -462,7 +462,7 @@ bool DragController::concludeEditDrag(DragData* dragData)
     Element* element = elementUnderMouse(m_documentUnderMouse.get(), point);
     if (!element)
         return false;
-    RefPtr<Frame> innerFrame = element->ownerDocument()->frame();
+    RefPtr<Frame> innerFrame = element->document()->frame();
     ASSERT(innerFrame);
 
     if (m_page->dragCaretController()->hasCaret() && !dispatchTextInputEventFor(innerFrame.get(), dragData))

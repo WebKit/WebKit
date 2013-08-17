@@ -424,7 +424,7 @@ bool HTMLMediaElement::hasCustomFocusLogic() const
 
 bool HTMLMediaElement::supportsFocus() const
 {
-    if (ownerDocument()->isMediaDocument())
+    if (document()->isMediaDocument())
         return false;
 
     // If no controls specified, we should still be able to focus the element if it has tabIndex.
@@ -1667,12 +1667,7 @@ void HTMLMediaElement::cancelPendingEventsAndCallbacks()
 
 Document* HTMLMediaElement::mediaPlayerOwningDocument()
 {
-    Document* d = document();
-    
-    if (!d)
-        d = ownerDocument();
-    
-    return d;
+    return document();
 }
 
 void HTMLMediaElement::mediaPlayerNetworkStateChanged(MediaPlayer*)
@@ -3767,8 +3762,8 @@ void HTMLMediaElement::mediaPlayerSawUnsupportedTracks(MediaPlayer*)
     // The MediaPlayer came across content it cannot completely handle.
     // This is normally acceptable except when we are in a standalone
     // MediaDocument. If so, tell the document what has happened.
-    if (ownerDocument()->isMediaDocument()) {
-        MediaDocument* mediaDocument = toMediaDocument(ownerDocument());
+    if (document()->isMediaDocument()) {
+        MediaDocument* mediaDocument = toMediaDocument(document());
         mediaDocument->mediaElementSawUnsupportedTracks();
     }
 }

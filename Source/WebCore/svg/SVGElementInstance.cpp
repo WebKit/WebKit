@@ -166,7 +166,7 @@ PassRefPtr<SVGElementInstanceList> SVGElementInstance::childNodes()
 
 Document* SVGElementInstance::ownerDocument() const
 {
-    return m_element ? m_element->ownerDocument() : 0;
+    return m_element ? m_element->document() : 0;
 }
 
 void SVGElementInstance::setShadowTreeElement(SVGElement* element)

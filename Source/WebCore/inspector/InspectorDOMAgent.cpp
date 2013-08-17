@@ -784,7 +784,7 @@ void InspectorDOMAgent::setOuterHTML(ErrorString* errorString, int nodeId, const
     if (!node)
         return;
 
-    Document* document = node->isDocumentNode() ? toDocument(node) : node->ownerDocument();
+    Document* document = node->document();
     if (!document || (!document->isHTMLDocument() && !document->isXHTMLDocument()
 #if ENABLE(SVG)
         && !document->isSVGDocument()
@@ -1086,7 +1086,7 @@ void InspectorDOMAgent::focusNode()
     RefPtr<Node> node = m_nodeToFocus.get();
     m_nodeToFocus = 0;
 
-    Document* document = node->ownerDocument();
+    Document* document = node->document();
     if (!document)
         return;
     Frame* frame = document->frame();
@@ -1816,7 +1816,7 @@ void InspectorDOMAgent::pushNodeByBackendIdToFrontend(ErrorString* errorString, 
 
 PassRefPtr<TypeBuilder::Runtime::RemoteObject> InspectorDOMAgent::resolveNode(Node* node, const String& objectGroup)
 {
-    Document* document = node->isDocumentNode() ? node->document() : node->ownerDocument();
+    Document* document = node->document();
     Frame* frame = document ? document->frame() : 0;
     if (!frame)
         return 0;
