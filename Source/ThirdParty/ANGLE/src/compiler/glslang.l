@@ -33,6 +33,12 @@ WHICH GENERATES THE GLSL ES LEXER (glslang_lex.cpp).
 #pragma warning(disable: 4505)
 #pragma warning(disable: 4701)
 #endif
+
+#if defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunknown-pragmas"
+#pragma clang diagnostic ignored "-Wdeprecated-register"
+#endif
 }
 
 %{
@@ -249,6 +255,10 @@ O           [0-7]
 .          { assert(false); return 0; }
 
 %%
+
+#if defined(__clang__)
+#pragma clang diagnostic pop
+#endif
 
 yy_size_t string_input(char* buf, yy_size_t max_size, yyscan_t yyscanner) {
     pp::Token token;

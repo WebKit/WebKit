@@ -529,6 +529,12 @@ IF YOU MODIFY THIS FILE YOU ALSO NEED TO RUN generate_parser.sh.
 #pragma GCC diagnostic ignored "-Wmissing-noreturn"
 #endif
 
+#if defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunknown-pragmas"
+#pragma clang diagnostic ignored "-Wdeprecated-register"
+#endif
+
 typedef std::string YYSTYPE;
 typedef pp::SourceLocation YYLTYPE;
 
@@ -2287,6 +2293,10 @@ void ppfree (void * ptr , yyscan_t yyscanner)
 }
 
 #define YYTABLES_NAME "yytables"
+
+#if defined(__clang__)
+#pragma clang diagnostic pop
+#endif
 
 namespace pp {
 

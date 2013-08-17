@@ -33,6 +33,12 @@ IF YOU MODIFY THIS FILE YOU ALSO NEED TO RUN generate_parser.sh.
 #pragma GCC diagnostic ignored "-Wmissing-noreturn"
 #endif
 
+#if defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunknown-pragmas"
+#pragma clang diagnostic ignored "-Wdeprecated-register"
+#endif
+
 typedef std::string YYSTYPE;
 typedef pp::SourceLocation YYLTYPE;
 
@@ -264,6 +270,10 @@ FRACTIONAL_CONSTANT  ({DIGIT}*"."{DIGIT}+)|({DIGIT}+".")
 }
 
 %%
+
+#if defined(__clang__)
+#pragma clang diagnostic pop
+#endif
 
 namespace pp {
 

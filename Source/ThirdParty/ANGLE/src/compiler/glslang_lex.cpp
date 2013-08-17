@@ -19,6 +19,12 @@
 #pragma warning(disable: 4701)
 #endif
 
+#if defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunknown-pragmas"
+#pragma clang diagnostic ignored "-Wdeprecated-register"
+#endif
+
 
 
 #line 25 "./glslang_lex.cpp"
@@ -2858,6 +2864,10 @@ void yyfree (void * ptr , yyscan_t yyscanner)
 }
 
 #define YYTABLES_NAME "yytables"
+
+#if defined(__clang__)
+#pragma clang diagnostic pop
+#endif
 
 yy_size_t string_input(char* buf, yy_size_t max_size, yyscan_t yyscanner) {
     pp::Token token;

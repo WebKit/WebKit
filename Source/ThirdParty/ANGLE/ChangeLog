@@ -1,3 +1,19 @@
+2013-08-17  David Kilzer  <ddkilzer@apple.com>
+
+        ANGLE fails to build with trunk clang: error: 'register' storage class specifier is deprecated [-Werror,-Wdeprecated-register]
+        <http://webkit.org/b/119931>
+        <rdar://problem/14763822>
+
+        Reviewed by Darin Adler.
+
+        * src/compiler/glslang.l:
+        * src/compiler/glslang_lex.cpp:
+        * src/compiler/preprocessor/Tokenizer.cpp:
+        * src/compiler/preprocessor/Tokenizer.l:
+        Add pragma statements to ignore -Wdeprecated-register warnings
+        in generated code.  Also ignore -Wunknown-pragmas so this
+        doesn't cause a build failure in older versions of clang.
+
 2013-08-16  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r153749.
