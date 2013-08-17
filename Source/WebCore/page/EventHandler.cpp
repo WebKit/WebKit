@@ -44,6 +44,7 @@
 #include "EventNames.h"
 #include "EventPathWalker.h"
 #include "ExceptionCodePlaceholder.h"
+#include "FileList.h"
 #include "FloatPoint.h"
 #include "FloatRect.h"
 #include "FocusController.h"
@@ -1971,8 +1972,8 @@ bool EventHandler::handlePasteGlobalSelection(const PlatformMouseEvent& mouseEve
     return false;
 }
 
-
 #if ENABLE(DRAG_SUPPORT)
+
 bool EventHandler::dispatchDragEvent(const AtomicString& eventType, Node* dragTarget, const PlatformMouseEvent& event, Clipboard* clipboard)
 {
     FrameView* view = m_frame->view();
@@ -2008,6 +2009,57 @@ static bool targetIsFrame(Node* target, Frame*& frame)
     return true;
 }
 
+static DragOperation convertDropZoneOperationToDragOperation(const String& dragOperation)
+{
+    if (dragOperation == "copy")
+        return DragOperationCopy;
+    if (dragOperation == "move")
+        return DragOperationMove;
+    if (dragOperation == "link")
+        return DragOperationLink;
+    return DragOperationNone;
+}
+
+static String convertDragOperationToDropZoneOperation(DragOperation operation)
+{
+    switch (operation) {
+    case DragOperationCopy:
+        return ASCIILiteral("copy");
+    case DragOperationMove:
+        return ASCIILiteral("move");
+    case DragOperationLink:
+        return ASCIILiteral("link");
+    default:
+        return ASCIILiteral("copy");
+    }
+}
+
+static inline bool hasFileOfType(Clipboard& clipboard, const String& type)
+{
+    RefPtr<FileList> fileList = clipboard.files();
+    for (unsigned i = 0; i < fileList->length(); i++) {
+        if (equalIgnoringCase(fileList->item(i)->type(), type))
+            return true;
+    }
+    return false;
+}
+
+static inline bool hasStringOfType(Clipboard& clipboard, const String& type)
+{
+    return !type.isNull() && clipboard.types().contains(type);
+}
+
+static bool hasDropZoneType(Clipboard& clipboard, const String& keyword)
+{
+    if (keyword.startsWith("file:"))
+        return hasFileOfType(clipboard, keyword.substring(5));
+
+    if (keyword.startsWith("string:"))
+        return hasStringOfType(clipboard, keyword.substring(7));
+
+    return false;
+}
+
 static bool findDropZone(Node* target, Clipboard* clipboard)
 {
     Element* element = target->isElementNode() ? toElement(target) : target->parentElement();
@@ -2031,7 +2083,7 @@ static bool findDropZone(Node* target, Clipboard* clipboard)
                 if (dragOperation == DragOperationNone)
                     dragOperation = op;
             } else
-                matched = matched || clipboard->hasDropZoneType(keywords[i].string());
+                matched = matched || hasDropZoneType(*clipboard, keywords[i].string());
 
             if (matched && dragOperation != DragOperationNone)
                 break;

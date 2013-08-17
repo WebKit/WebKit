@@ -1,5 +1,28 @@
 2013-08-17  Darin Adler  <darin@apple.com>
 
+        <https://webkit.org/b/119946> Move some code used only by EventHandler from Clipboard to EventHandler
+
+        Reviewed by Andreas Kling.
+
+        Later it would be good to move this all to DragController, but there is no reason to have
+        these functions as member functions of the DOM-exposed Clipboard class.
+
+        * dom/Clipboard.cpp: Deleted hasFileOfType, hasStringOfType, convertDropZoneOperationToDragOperation,
+        convertDragOperationToDropZoneOperation.
+        * dom/Clipboard.h: Ditto.
+
+        * page/EventHandler.cpp:
+        (WebCore::convertDropZoneOperationToDragOperation): Moved here.
+        (WebCore::convertDragOperationToDropZoneOperation): Moved here. Also changed to use ASCIILiteral.
+        (WebCore::hasFileOfType): Moved here and made a free function instead of a member function. Removed
+        canReadTypes check because Clipboard::files already takes care of that.
+        (WebCore::hasStringOfType): Moved here and made a free function instead of a member function.
+        Added a check for the null string because HashSet::contains will not work on a null string.
+        (WebCore::hasDropZoneType): Moved here and made a free function instead of a member function.
+        (WebCore::findDropZone): Call the hasDropZoneType function instead of Clipboard::hasDropZoneType.
+
+2013-08-17  Darin Adler  <darin@apple.com>
+
         <https://webkit.org/b/119943> Clean up the Document class a bit
 
         Reviewed by Antti Koivisto.

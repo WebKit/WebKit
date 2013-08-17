@@ -121,8 +121,6 @@ namespace WebCore {
         void setSourceOperation(DragOperation);
         void setDestinationOperation(DragOperation);
         
-        bool hasDropZoneType(const String&);
-        
         void setDragHasStarted() { m_dragStarted = true; }
 
 #if ENABLE(DATA_TRANSFER_ITEMS)
@@ -151,9 +149,6 @@ namespace WebCore {
         bool dragStarted() const { return m_dragStarted; }
         
     private:
-        bool hasFileOfType(const String&) const;
-        bool hasStringOfType(const String&) const;
-
         // Instead of using this member directly, prefer to use the can*() methods above.
         ClipboardAccessPolicy m_policy;
         String m_dropEffect;
@@ -175,9 +170,6 @@ namespace WebCore {
 #endif
 #endif
     };
-
-    DragOperation convertDropZoneOperationToDragOperation(const String& dragOperation);
-    String convertDragOperationToDropZoneOperation(DragOperation);
 
 #undef LEGACY_VIRTUAL
 #undef LEGACY_PURE

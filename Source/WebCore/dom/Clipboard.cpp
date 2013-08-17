@@ -183,30 +183,6 @@ void Clipboard::setDestinationOperation(DragOperation op)
     m_dropEffect = IEOpFromDragOp(op);
 }
 
-bool Clipboard::hasFileOfType(const String& type) const
-{
-    if (!canReadTypes())
-        return false;
-    
-    RefPtr<FileList> fileList = files();
-    if (fileList->isEmpty())
-        return false;
-    
-    for (unsigned int f = 0; f < fileList->length(); f++) {
-        if (equalIgnoringCase(fileList->item(f)->type(), type))
-            return true;
-    }
-    return false;
-}
-
-bool Clipboard::hasStringOfType(const String& type) const
-{
-    if (!canReadTypes())
-        return false;
-    
-    return types().contains(type); 
-}
-    
 void Clipboard::setDropEffect(const String &effect)
 {
     if (!isForDragAndDrop())
@@ -242,42 +218,6 @@ void Clipboard::setEffectAllowed(const String &effect)
         m_effectAllowed = effect;
 }
     
-DragOperation convertDropZoneOperationToDragOperation(const String& dragOperation)
-{
-    if (dragOperation == "copy")
-        return DragOperationCopy;
-    if (dragOperation == "move")
-        return DragOperationMove;
-    if (dragOperation == "link")
-        return DragOperationLink;
-    return DragOperationNone;
-}
-
-String convertDragOperationToDropZoneOperation(DragOperation operation)
-{
-    switch (operation) {
-    case DragOperationCopy:
-        return String("copy");
-    case DragOperationMove:
-        return String("move");
-    case DragOperationLink:
-        return String("link");
-    default:
-        return String("copy");
-    }
-}
-
-bool Clipboard::hasDropZoneType(const String& keyword)
-{
-    if (keyword.startsWith("file:"))
-        return hasFileOfType(keyword.substring(5));
-
-    if (keyword.startsWith("string:"))
-        return hasStringOfType(keyword.substring(7));
-
-    return false;
-}
-
 #if USE(LEGACY_STYLE_ABSTRACT_CLIPBOARD_CLASS)
 
 void Clipboard::setDragImage(Element* element, int x, int y)
