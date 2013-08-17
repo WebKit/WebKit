@@ -1,5 +1,18 @@
 2013-08-17  Darin Adler  <darin@apple.com>
 
+        <https://webkit.org/b/119947> Remove LEGACY_STYLE_ABSTRACT_CLIPBOARD_CLASS
+
+        Reviewed by Andreas Kling.
+
+        * dom/Clipboard.cpp:
+        (WebCore::Clipboard::Clipboard):
+        (WebCore::Clipboard::~Clipboard):
+        * dom/Clipboard.h:
+        Remove LEGACY_STYLE_ABSTRACT_CLIPBOARD_CLASS, LEGACY_VIRTUAL, and LEGACY_PURE.
+        Keep only the !USE(LEGACY_STYLE_ABSTRACT_CLIPBOARD_CLASS) side of all conditionals.
+
+2013-08-17  Darin Adler  <darin@apple.com>
+
         <https://webkit.org/b/119946> Move some code used only by EventHandler from Clipboard to EventHandler
 
         Reviewed by Andreas Kling.

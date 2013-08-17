@@ -31,23 +31,6 @@
 #include "IntPoint.h"
 #include "Node.h"
 
-// This DOM object now works by calling through to classes in the platform layer.
-// Specifically, the class currently named Pasteboard. The legacy style instead
-// uses this as an abstract base class.
-#define WTF_USE_LEGACY_STYLE_ABSTRACT_CLIPBOARD_CLASS 0
-
-#if USE(LEGACY_STYLE_ABSTRACT_CLIPBOARD_CLASS)
-#define LEGACY_VIRTUAL virtual
-#else
-#define LEGACY_VIRTUAL
-#endif
-
-#if USE(LEGACY_STYLE_ABSTRACT_CLIPBOARD_CLASS)
-#define LEGACY_PURE = 0
-#else
-#define LEGACY_PURE
-#endif
-
 namespace WebCore {
 
     class CachedImage;
@@ -70,7 +53,7 @@ namespace WebCore {
         
         static PassRefPtr<Clipboard> create(ClipboardAccessPolicy, DragData*, Frame*);
 
-        LEGACY_VIRTUAL ~Clipboard();
+        ~Clipboard();
 
         bool isForCopyAndPaste() const { return m_clipboardType == CopyAndPaste; }
         bool isForDragAndDrop() const { return m_clipboardType == DragAndDrop; }
@@ -81,30 +64,26 @@ namespace WebCore {
         String effectAllowed() const { return m_effectAllowed; }
         void setEffectAllowed(const String&);
     
-        LEGACY_VIRTUAL void clearData(const String& type) LEGACY_PURE;
-        LEGACY_VIRTUAL void clearData() LEGACY_PURE;
+        void clearData(const String& type);
+        void clearData();
 
         void setDragImage(Element*, int x, int y);
-#if USE(LEGACY_STYLE_ABSTRACT_CLIPBOARD_CLASS)
-        virtual void setDragImage(CachedImage*, const IntPoint&) = 0;
-        virtual void setDragImageElement(Node*, const IntPoint&) = 0;
-#endif
 
-        LEGACY_VIRTUAL String getData(const String& type) const LEGACY_PURE;
-        LEGACY_VIRTUAL bool setData(const String& type, const String& data) LEGACY_PURE;
+        String getData(const String& type) const;
+        bool setData(const String& type, const String& data);
     
-        LEGACY_VIRTUAL ListHashSet<String> types() const LEGACY_PURE;
-        LEGACY_VIRTUAL PassRefPtr<FileList> files() const LEGACY_PURE;
+        ListHashSet<String> types() const;
+        PassRefPtr<FileList> files() const;
 
         CachedImage* dragImage() const { return m_dragImage.get(); }
         Node* dragImageElement() const { return m_dragImageElement.get(); }
         
-        LEGACY_VIRTUAL DragImageRef createDragImage(IntPoint& dragLocation) const LEGACY_PURE;
-        LEGACY_VIRTUAL void writeURL(const KURL&, const String&, Frame*) LEGACY_PURE;
-        LEGACY_VIRTUAL void writeRange(Range*, Frame*) LEGACY_PURE;
-        LEGACY_VIRTUAL void writePlainText(const String&) LEGACY_PURE;
+        DragImageRef createDragImage(IntPoint& dragLocation) const;
+        void writeURL(const KURL&, const String&, Frame*);
+        void writeRange(Range*, Frame*);
+        void writePlainText(const String&);
 
-        LEGACY_VIRTUAL bool hasData() LEGACY_PURE;
+        bool hasData();
 
         void setAccessPolicy(ClipboardAccessPolicy);
         bool canReadTypes() const;
@@ -124,27 +103,21 @@ namespace WebCore {
         void setDragHasStarted() { m_dragStarted = true; }
 
 #if ENABLE(DATA_TRANSFER_ITEMS)
-        LEGACY_VIRTUAL PassRefPtr<DataTransferItemList> items() = 0;
+        PassRefPtr<DataTransferItemList> items() = 0;
 #endif
         
-#if !USE(LEGACY_STYLE_ABSTRACT_CLIPBOARD_CLASS)
         static PassRefPtr<Clipboard> createForCopyAndPaste(ClipboardAccessPolicy);
 
         Pasteboard& pasteboard() { return *m_pasteboard; }
-#endif
 
-#if !USE(LEGACY_STYLE_ABSTRACT_CLIPBOARD_CLASS) && ENABLE(DRAG_SUPPORT)
+#if ENABLE(DRAG_SUPPORT)
         static PassRefPtr<Clipboard> createForDragAndDrop();
 
         void updateDragImage();
 #endif
 
     protected:
-#if !USE(LEGACY_STYLE_ABSTRACT_CLIPBOARD_CLASS)
         Clipboard(ClipboardAccessPolicy, ClipboardType, PassOwnPtr<Pasteboard>, bool forFileDrag = false);
-#else
-        Clipboard(ClipboardAccessPolicy, ClipboardType);
-#endif
 
         bool dragStarted() const { return m_dragStarted; }
         
@@ -161,18 +134,13 @@ namespace WebCore {
         CachedResourceHandle<CachedImage> m_dragImage;
         RefPtr<Node> m_dragImageElement;
 
-#if !USE(LEGACY_STYLE_ABSTRACT_CLIPBOARD_CLASS)
     private:
         OwnPtr<Pasteboard> m_pasteboard;
         bool m_forFileDrag;
 #if ENABLE(DRAG_SUPPORT)
         OwnPtr<DragImageLoader> m_dragImageLoader;
 #endif
-#endif
     };
-
-#undef LEGACY_VIRTUAL
-#undef LEGACY_PURE
 
 } // namespace WebCore
 

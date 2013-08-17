@@ -56,26 +56,20 @@ private:
 
 #endif
 
-Clipboard::Clipboard(ClipboardAccessPolicy policy, ClipboardType clipboardType
-#if !USE(LEGACY_STYLE_ABSTRACT_CLIPBOARD_CLASS)
-    , PassOwnPtr<Pasteboard> pasteboard, bool forFileDrag
-#endif
-)
+Clipboard::Clipboard(ClipboardAccessPolicy policy, ClipboardType clipboardType, PassOwnPtr<Pasteboard> pasteboard, bool forFileDrag)
     : m_policy(policy)
     , m_dropEffect("uninitialized")
     , m_effectAllowed("uninitialized")
     , m_dragStarted(false)
     , m_clipboardType(clipboardType)
-#if !USE(LEGACY_STYLE_ABSTRACT_CLIPBOARD_CLASS)
     , m_pasteboard(pasteboard)
     , m_forFileDrag(forFileDrag)
-#endif
 {
 }
 
 Clipboard::~Clipboard()
 {
-#if !USE(LEGACY_STYLE_ABSTRACT_CLIPBOARD_CLASS) && ENABLE(DRAG_SUPPORT)
+#if ENABLE(DRAG_SUPPORT)
     if (m_dragImageLoader && m_dragImage)
         m_dragImageLoader->stopLoading(m_dragImage);
 #endif
@@ -218,21 +212,6 @@ void Clipboard::setEffectAllowed(const String &effect)
         m_effectAllowed = effect;
 }
     
-#if USE(LEGACY_STYLE_ABSTRACT_CLIPBOARD_CLASS)
-
-void Clipboard::setDragImage(Element* element, int x, int y)
-{
-    if (!canSetDragImage())
-        return;
-
-    if (element && isHTMLImageElement(element) && !element->inDocument())
-        setDragImage(toHTMLImageElement(element)->cachedImage(), IntPoint(x, y));
-    else
-        setDragImageElement(element, IntPoint(x, y));
-}
-
-#else // !USE(LEGACY_STYLE_ABSTRACT_CLIPBOARD_CLASS)
-
 PassRefPtr<Clipboard> Clipboard::createForCopyAndPaste(ClipboardAccessPolicy policy)
 {
     return adoptRef(new Clipboard(policy, CopyAndPaste, policy == ClipboardWritable ? Pasteboard::createPrivate() : Pasteboard::createForCopyAndPaste()));
@@ -411,7 +390,5 @@ void Clipboard::writeURL(const KURL& url, const String& title, Frame* frame)
 }
 
 #endif // ENABLE(DRAG_SUPPORT)
-
-#endif // !USE(LEGACY_STYLE_ABSTRACT_CLIPBOARD_CLASS)
 
 } // namespace WebCore
