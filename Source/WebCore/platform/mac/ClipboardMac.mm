@@ -52,13 +52,13 @@ DragImageRef Clipboard::createDragImage(IntPoint& location) const
             result = snapshotDragImage(frame, m_dragImageElement.get(), &imageRect, &elementRect);
             // Client specifies point relative to element, not the whole image, which may include child
             // layers spread out all over the place.
-            location.setX(elementRect.origin.x - imageRect.origin.x + m_dragLoc.x());
-            location.setY(imageRect.size.height - (elementRect.origin.y - imageRect.origin.y + m_dragLoc.y()));
+            location.setX(elementRect.origin.x - imageRect.origin.x + m_dragLocation.x());
+            location.setY(imageRect.size.height - (elementRect.origin.y - imageRect.origin.y + m_dragLocation.y()));
         }
     } else if (m_dragImage) {
         result = m_dragImage->image()->getNSImage();
         
-        location = m_dragLoc;
+        location = m_dragLocation;
         location.setY([result size].height - location.y());
     }
     return result;

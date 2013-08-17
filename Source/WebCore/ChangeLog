@@ -1,5 +1,26 @@
 2013-08-17  Darin Adler  <darin@apple.com>
 
+        <https://webkit.org/b/119940> Rename Clipboard::m_dragLoc to m_dragLocation
+
+        Reviewed by Andreas Kling.
+
+        * dom/Clipboard.h: Removed unused dragLocation member function.
+        Renamed m_dragLoc to m_dragLocation.
+
+        * dom/Clipboard.cpp:
+        (WebCore::Clipboard::setDragImage):
+        * platform/gtk/ClipboardGtk.cpp:
+        (WebCore::Clipboard::createDragImage):
+        * platform/mac/ClipboardMac.mm:
+        (WebCore::Clipboard::createDragImage):
+        * platform/qt/ClipboardQt.cpp:
+        (WebCore::Clipboard::createDragImage):
+        * platform/win/ClipboardWin.cpp:
+        (WebCore::Clipboard::createDragImage):
+        Updated for new name.
+
+2013-08-17  Darin Adler  <darin@apple.com>
+
         <https://webkit.org/b/119942> Remove unnecessary uses of Element::ownerDocument
 
         Reviewed by Andreas Kling.

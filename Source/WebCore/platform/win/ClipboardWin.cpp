@@ -46,14 +46,14 @@ DragImageRef Clipboard::createDragImage(IntPoint& dragLocation) const
     if (m_dragImage) {
 #if USE(CAIRO) || USE(CG)
         result = createDragImageFromImage(m_dragImage->image(), ImageOrientationDescription());        
-        dragLocation = m_dragLoc;
+        dragLocation = m_dragLocation;
 #else
         notImplemented();
 #endif
     } else if (m_dragImageElement) {
         Node* node = m_dragImageElement.get();
         result = node->document()->frame()->nodeImage(node);
-        dragLocation = m_dragLoc;
+        dragLocation = m_dragLocation;
     }
     return result;
 }

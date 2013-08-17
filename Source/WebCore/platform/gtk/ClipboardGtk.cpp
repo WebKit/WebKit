@@ -28,7 +28,7 @@ namespace WebCore {
 
 DragImageRef Clipboard::createDragImage(IntPoint& location) const
 {
-    location = m_dragLoc;
+    location = m_dragLocation;
 
     if (m_dragImage)
         return createDragImageFromImage(m_dragImage->image(), ImageOrientationDescription());

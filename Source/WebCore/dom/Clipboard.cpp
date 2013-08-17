@@ -390,7 +390,7 @@ void Clipboard::setDragImage(Element* element, int x, int y)
     else
         image = 0;
 
-    m_dragLoc = IntPoint(x, y);
+    m_dragLocation = IntPoint(x, y);
 
     if (m_dragImageLoader && m_dragImage)
         m_dragImageLoader->stopLoading(m_dragImage);

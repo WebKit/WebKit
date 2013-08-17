@@ -96,7 +96,6 @@ namespace WebCore {
         LEGACY_VIRTUAL ListHashSet<String> types() const LEGACY_PURE;
         LEGACY_VIRTUAL PassRefPtr<FileList> files() const LEGACY_PURE;
 
-        IntPoint dragLocation() const { return m_dragLoc; }
         CachedImage* dragImage() const { return m_dragImage.get(); }
         Node* dragImageElement() const { return m_dragImageElement.get(); }
         
@@ -163,7 +162,7 @@ namespace WebCore {
         ClipboardType m_clipboardType;
         
     protected:
-        IntPoint m_dragLoc;
+        IntPoint m_dragLocation;
         CachedResourceHandle<CachedImage> m_dragImage;
         RefPtr<Node> m_dragImageElement;
 
