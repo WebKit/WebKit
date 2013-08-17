@@ -42,7 +42,6 @@ public:
 
 private:
     virtual void pageDestroyed() OVERRIDE;
-    virtual void frameWillDetachPage(WebCore::Frame*) OVERRIDE { }
 
     virtual bool shouldDeleteRange(WebCore::Range*) OVERRIDE;
     virtual bool smartInsertDeleteEnabled() OVERRIDE;

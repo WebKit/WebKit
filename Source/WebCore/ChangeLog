@@ -1,3 +1,20 @@
+2013-08-17  Andreas Kling  <akling@apple.com>
+
+        <https://webkit.org/b/119950> Remove unused EditorClient::frameWillDetachPage() callback.
+
+        Reviewed by Antti Koivisto.
+
+        This callback was only used by the Chromium port.
+
+        * editing/Editor.h:
+        * editing/Editor.cpp:
+
+            Remove override of FrameDestructionObserver::willDetachPage().
+
+        * page/EditorClient.h:
+
+            Remove frameWillDetachPage(). This is repeated in every EditorClient subclass.
+
 2013-08-16  Antti Koivisto  <antti@apple.com>
 
         <https://webkit.org/b/119886> PseudoElement is abusing parent node pointer

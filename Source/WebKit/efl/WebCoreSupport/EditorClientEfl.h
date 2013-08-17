@@ -80,7 +80,6 @@ public:
 
     // from EditorClient
     virtual void pageDestroyed();
-    virtual void frameWillDetachPage(Frame*) { }
 
     virtual bool shouldDeleteRange(Range*);
     virtual bool smartInsertDeleteEnabled();

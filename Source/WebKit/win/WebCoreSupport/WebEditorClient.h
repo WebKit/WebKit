@@ -41,7 +41,6 @@ public:
     ~WebEditorClient();
 
     virtual void pageDestroyed();
-    virtual void frameWillDetachPage(WebCore::Frame*) { }
 
     virtual bool isContinuousSpellCheckingEnabled();
     virtual void toggleGrammarChecking();

@@ -415,8 +415,6 @@ public:
     Vector<String> dictationAlternativesForMarker(const DocumentMarker*);
     void applyDictationAlternativelternative(const String& alternativeString);
 private:
-    virtual void willDetachPage() OVERRIDE;
-
 #if ENABLE(DELETION_UI)
     OwnPtr<DeleteButtonController> m_deleteButtonController;
 #endif

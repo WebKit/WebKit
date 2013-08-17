@@ -3108,12 +3108,6 @@ bool Editor::unifiedTextCheckerEnabled() const
     return WebCore::unifiedTextCheckerEnabled(m_frame);
 }
 
-void Editor::willDetachPage()
-{
-    if (EditorClient* editorClient = client())
-        editorClient->frameWillDetachPage(frame());
-}
-
 Vector<String> Editor::dictationAlternativesForMarker(const DocumentMarker* marker)
 {
     return m_alternativeTextController->dictationAlternativesForMarker(marker);

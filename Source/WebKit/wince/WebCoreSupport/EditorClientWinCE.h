@@ -38,7 +38,6 @@ public:
     ~EditorClientWinCE();
 
     virtual void pageDestroyed();
-    virtual void frameWillDetachPage(WebCore::Frame*) { }
 
     virtual bool shouldDeleteRange(WebCore::Range*);
     virtual bool smartInsertDeleteEnabled();

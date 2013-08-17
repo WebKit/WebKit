@@ -37,7 +37,6 @@ class EditorClientBlackBerry : public EditorClient, public TextCheckerClient {
 public:
     EditorClientBlackBerry(BlackBerry::WebKit::WebPagePrivate*);
     virtual void pageDestroyed();
-    virtual void frameWillDetachPage(Frame*) { }
     virtual bool shouldDeleteRange(Range*);
     virtual bool smartInsertDeleteEnabled();
     virtual bool isSelectTrailingWhitespaceEnabled();

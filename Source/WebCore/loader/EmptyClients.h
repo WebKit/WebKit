@@ -397,7 +397,6 @@ public:
     EmptyEditorClient() { }
     virtual ~EmptyEditorClient() { }
     virtual void pageDestroyed() { }
-    virtual void frameWillDetachPage(Frame*) { }
 
     virtual bool shouldDeleteRange(Range*) { return false; }
     virtual bool smartInsertDeleteEnabled() { return false; }
