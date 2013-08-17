@@ -394,25 +394,7 @@ bool ScriptElement::isScriptForEventSupported() const
 
 String ScriptElement::scriptContent() const
 {
-    StringBuilder content;
-    Text* firstTextNode = 0;
-    bool foundMultipleTextNodes = false;
-
-    for (Text* textNode = TextNodeTraversal::firstChild(m_element); textNode; textNode = TextNodeTraversal::nextSibling(textNode)) {
-        if (foundMultipleTextNodes)
-            content.append(textNode->data());
-        else if (firstTextNode) {
-            content.append(firstTextNode->data());
-            content.append(textNode->data());
-            foundMultipleTextNodes = true;
-        } else
-            firstTextNode = textNode;
-    }
-
-    if (firstTextNode && !foundMultipleTextNodes)
-        return firstTextNode->data();
-
-    return content.toString();
+    return TextNodeTraversal::contentsAsString(m_element);
 }
 
 ScriptElement* toScriptElementIfPossible(Element* element)

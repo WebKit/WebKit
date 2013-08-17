@@ -120,18 +120,11 @@ String Text::wholeText() const
 {
     const Text* startText = earliestLogicallyAdjacentTextNode(this);
     const Text* endText = latestLogicallyAdjacentTextNode(this);
-
-    Node* onePastEndText = TextNodeTraversal::nextSibling(endText);
-    Checked<unsigned> resultLength = 0;
-    for (const Text* text = startText; text != onePastEndText; text = TextNodeTraversal::nextSibling(text))
-        resultLength += text->length();
+    const Node* onePastEndText = TextNodeTraversal::nextSibling(endText);
 
     StringBuilder result;
-    result.reserveCapacity(resultLength.unsafeGet());
     for (const Text* text = startText; text != onePastEndText; text = TextNodeTraversal::nextSibling(text))
         result.append(text->data());
-    ASSERT(result.length() == resultLength.unsafeGet());
-
     return result.toString();
 }
 

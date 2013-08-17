@@ -1,5 +1,22 @@
 2013-08-17  Antti Koivisto  <antti@apple.com>
 
+        <https://webkit.org/b/119960> Remove some optimizations made obsolete by use of StringBuilder
+
+        Reviewed by Andreas Kling.
+
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElement::scriptContent):
+        
+            StringBuilder already optimizes for the single string case. If there is only one the original string is returned.
+
+        * dom/Text.cpp:
+        (WebCore::Text::wholeText):
+        
+            No need to traverse twice to compute the capacity. StringBuilder handles this efficiently. 
+            Also in the common case there is only one string and the optimization here is actually hurting by disabling the StringBuilder one.
+
+2013-08-17  Antti Koivisto  <antti@apple.com>
+
         <https://webkit.org/b/119959> Add TextNodeTraversal
 
         Reviewed by Andreas Kling.
