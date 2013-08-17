@@ -90,7 +90,7 @@ void RenderFlowThread::styleDidChange(StyleDifference diff, const RenderStyle* o
     RenderBlock::styleDidChange(diff, oldStyle);
 
     if (oldStyle && oldStyle->writingMode() != style()->writingMode())
-        m_regionsInvalidated = true;
+        invalidateRegions();
 }
 
 void RenderFlowThread::removeFlowChildInfo(RenderObject* child)

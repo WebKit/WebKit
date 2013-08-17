@@ -1,3 +1,32 @@
+2013-08-17  Morten Stenshorne  <mstensho@opera.com>
+
+        <https://webkit.org/b/119795> Propagate writing-mode from the first region to the flow thread
+
+        Reviewed by Darin Adler.
+
+        * fast/regions/changing-writing-mode-2-expected.html: Added.
+        * fast/regions/changing-writing-mode-2.html: Added.
+        * fast/regions/changing-writing-mode-3-expected.html: Added.
+        * fast/regions/changing-writing-mode-3.html: Added.
+        * fast/regions/changing-writing-mode-4-expected.html: Added.
+        * fast/regions/changing-writing-mode-4.html: Added.
+        * fast/regions/changing-writing-mode-5-expected.html: Added.
+        * fast/regions/changing-writing-mode-5.html: Added.
+        * fast/regions/changing-writing-mode-expected.html: Added.
+        * fast/regions/changing-writing-mode.html: Added.
+        * fast/regions/invalid-first-region-with-writing-mode-2-expected.html: Added.
+        * fast/regions/invalid-first-region-with-writing-mode-2.html: Added.
+        * fast/regions/invalid-first-region-with-writing-mode-expected.html: Added.
+        * fast/regions/invalid-first-region-with-writing-mode.html: Added.
+        * fast/regions/subtree-with-horiz-bt-expected.html: Added.
+        * fast/regions/subtree-with-horiz-bt.html: Added.
+        * fast/regions/subtree-with-horiz-tb-expected.html: Added.
+        * fast/regions/subtree-with-horiz-tb.html: Added.
+        * fast/regions/subtree-with-vert-lr-expected.html: Added.
+        * fast/regions/subtree-with-vert-lr.html: Added.
+        * fast/regions/subtree-with-vert-rl-expected.html: Added.
+        * fast/regions/subtree-with-vert-rl.html: Added.
+
 2013-08-17  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed GTK gardening.

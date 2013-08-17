@@ -88,6 +88,7 @@ public:
     // Check if the content is flown into at least a region with region styling rules.
     bool hasRegionsWithStyling() const { return m_hasRegionsWithStyling; }
     void checkRegionsWithStyling();
+    virtual void regionChangedWritingMode(RenderRegion*) { }
 
     void validateRegions();
     void invalidateRegions();

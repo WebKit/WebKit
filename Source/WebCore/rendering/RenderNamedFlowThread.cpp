@@ -89,6 +89,20 @@ void RenderNamedFlowThread::clearContentNodes()
     m_contentNodes.clear();
 }
 
+void RenderNamedFlowThread::updateWritingMode()
+{
+    RenderRegion* firstRegion = m_regionList.first();
+    if (!firstRegion)
+        return;
+    if (style()->writingMode() == firstRegion->style()->writingMode())
+        return;
+
+    // The first region defines the principal writing mode for the entire flow.
+    RefPtr<RenderStyle> newStyle = RenderStyle::clone(style());
+    newStyle->setWritingMode(firstRegion->style()->writingMode());
+    setStyle(newStyle.release());
+}
+
 RenderObject* RenderNamedFlowThread::nextRendererForNode(Node* node) const
 {
     FlowThreadChildList::const_iterator it = m_flowThreadChildList.begin();
@@ -243,6 +257,9 @@ void RenderNamedFlowThread::addRegionToNamedFlowThread(RenderRegion* renderRegio
 
     renderRegion->setIsValid(true);
     addRegionToList(m_regionList, renderRegion);
+
+    if (m_regionList.first() == renderRegion)
+        updateWritingMode();
 }
 
 void RenderNamedFlowThread::addRegionToThread(RenderRegion* renderRegion)
@@ -282,6 +299,7 @@ void RenderNamedFlowThread::removeRegionFromThread(RenderRegion* renderRegion)
     }
 
     ASSERT(m_regionList.contains(renderRegion));
+    bool wasFirst = m_regionList.first() == renderRegion;
     m_regionList.remove(renderRegion);
 
     if (canBeDestroyed())
@@ -290,8 +308,16 @@ void RenderNamedFlowThread::removeRegionFromThread(RenderRegion* renderRegion)
     // After removing all the regions in the flow the following layout needs to dispatch the regionLayoutUpdate event
     if (m_regionList.isEmpty())
         setDispatchRegionLayoutUpdateEvent(true);
+    else if (wasFirst)
+        updateWritingMode();
 
     invalidateRegions();
+}
+
+void RenderNamedFlowThread::regionChangedWritingMode(RenderRegion* region)
+{
+    if (m_regionList.first() == region)
+        updateWritingMode();
 }
 
 void RenderNamedFlowThread::computeOversetStateForRegions(LayoutUnit oldClientAfterEdge)

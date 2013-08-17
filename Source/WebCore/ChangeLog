@@ -1,3 +1,50 @@
+2013-08-17  Morten Stenshorne  <mstensho@opera.com>
+
+        <https://webkit.org/b/119795> Propagate writing-mode from the first region to the flow thread
+
+        Reviewed by Darin Adler.
+
+        Since the flow thread is a direct child of RenderView, it doesn't inherit
+        proper writing-mode automatically. It should be mentioned that if the thread's
+        contents' writing-mode differs from that of the first region, things are
+        typically going to look useless (although perhaps that's how it should be),
+        but as long as writing-mode is only specified on a common parent of the
+        thread's contents and the regions, things look fine, and also, we're now
+        following what the spec has to say on the matter:
+
+        http://www.w3.org/TR/2013/WD-css3-regions-20130528/#the-flow-into-property
+
+            "The first region defines the principal writing mode for the entire flow.
+             The writing mode on subsequent regions is ignored."
+
+        This is a back-port of the fix for Blink bug 257965.
+        Reviewed by esprehn and mihnea there.
+        Blink review URL: https://chromiumcodereview.appspot.com/18374008
+
+        Tests: fast/regions/changing-writing-mode-2.html
+               fast/regions/changing-writing-mode-3.html
+               fast/regions/changing-writing-mode-4.html
+               fast/regions/changing-writing-mode-5.html
+               fast/regions/changing-writing-mode.html
+               fast/regions/invalid-first-region-with-writing-mode-2.html
+               fast/regions/invalid-first-region-with-writing-mode.html
+               fast/regions/subtree-with-horiz-bt.html
+               fast/regions/subtree-with-horiz-tb.html
+               fast/regions/subtree-with-vert-lr.html
+               fast/regions/subtree-with-vert-rl.html
+
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::styleDidChange):
+        * rendering/RenderFlowThread.h:
+        * rendering/RenderNamedFlowThread.cpp:
+        (WebCore::RenderNamedFlowThread::updateWritingMode):
+        (WebCore::RenderNamedFlowThread::addRegionToNamedFlowThread):
+        (WebCore::RenderNamedFlowThread::removeRegionFromThread):
+        (WebCore::RenderNamedFlowThread::regionChangedWritingMode):
+        * rendering/RenderNamedFlowThread.h:
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::styleDidChange):
+
 2013-08-16  Andreas Kling  <akling@apple.com>
 
         <https://webkit.org/b/119903> Make Settings ref-counted (and let Frame keep a ref!)

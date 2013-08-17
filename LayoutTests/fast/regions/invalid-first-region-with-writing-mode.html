@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Invalid region specifying writing-mode</title>
+    </head>
+    <body style="background:white; color:black; overflow:hidden;">
+        <p>You should see the word 'PASS' below.</p>
+        <div style="-webkit-flow-into:thread; color:white;">
+            <div style="height:100px;"></div>
+            PASS
+            <div style="-webkit-flow-from:thread; height:1000px; -webkit-writing-mode:vertical-rl;"></div>
+        </div>
+        <div style="-webkit-flow-from:thread; height:100px;"></div>
+        <div style="-webkit-flow-from:thread; width:4em; height:2em; background:black;"></div>
+    </body>
+</html>
