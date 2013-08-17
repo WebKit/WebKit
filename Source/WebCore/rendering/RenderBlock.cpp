@@ -3279,15 +3279,15 @@ void RenderBlock::paintCaret(PaintInfo& paintInfo, const LayoutPoint& paintOffse
         caretPainter = frame()->selection()->caretRenderer();
         isContentEditable = frame()->selection()->rendererIsEditable();
     } else {
-        caretPainter = frame()->page()->dragCaretController()->caretRenderer();
-        isContentEditable = frame()->page()->dragCaretController()->isContentEditable();
+        caretPainter = frame()->page()->dragCaretController().caretRenderer();
+        isContentEditable = frame()->page()->dragCaretController().isContentEditable();
     }
 
     if (caretPainter == this && (isContentEditable || caretBrowsing)) {
         if (type == CursorCaret)
             frame()->selection()->paintCaret(paintInfo.context, paintOffset, paintInfo.rect);
         else
-            frame()->page()->dragCaretController()->paintDragCaret(frame(), paintInfo.context, paintOffset, paintInfo.rect);
+            frame()->page()->dragCaretController().paintDragCaret(frame(), paintInfo.context, paintOffset, paintInfo.rect);
     }
 }
 

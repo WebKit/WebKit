@@ -1,5 +1,28 @@
 2013-08-17  Andreas Kling  <akling@apple.com>
 
+        <https://webkit.org/b/119954> Page::dragCaretController() should return a reference.
+
+        Reviewed by Antti Koivisto.
+
+        Page::m_dragCaretController is never null.
+
+        * dom/Document.cpp:
+        (WebCore::Document::nodeChildrenWillBeRemoved):
+        (WebCore::Document::nodeWillBeRemoved):
+        * page/DragController.cpp:
+        (WebCore::DragController::cancelDrag):
+        (WebCore::DragController::dragEnded):
+        (WebCore::DragController::tryDocumentDrag):
+        (WebCore::DragController::dispatchTextInputEventFor):
+        (WebCore::DragController::concludeEditDrag):
+        (WebCore::DragController::placeDragCaret):
+        * page/Page.h:
+        (WebCore::Page::dragCaretController):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintCaret):
+
+2013-08-17  Andreas Kling  <akling@apple.com>
+
         <https://webkit.org/b/119952> Simplify Editor's back-pointer to the Frame.
 
         Reviewed by Antti Koivisto.

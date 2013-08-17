@@ -185,7 +185,7 @@ public:
     int subframeCount() const { checkSubframeCountConsistency(); return m_subframeCount; }
 
     Chrome& chrome() const { return *m_chrome; }
-    DragCaretController* dragCaretController() const { return m_dragCaretController.get(); }
+    DragCaretController& dragCaretController() const { return *m_dragCaretController; }
 #if ENABLE(DRAG_SUPPORT)
     DragController& dragController() const { return *m_dragController; }
 #endif
@@ -440,10 +440,10 @@ private:
     void unthrottleTimers();
 
     const OwnPtr<Chrome> m_chrome;
-    OwnPtr<DragCaretController> m_dragCaretController;
+    const OwnPtr<DragCaretController> m_dragCaretController;
 
 #if ENABLE(DRAG_SUPPORT)
-    OwnPtr<DragController> m_dragController;
+    const OwnPtr<DragController> m_dragController;
 #endif
     const OwnPtr<FocusController> m_focusController;
 #if ENABLE(CONTEXT_MENUS)
