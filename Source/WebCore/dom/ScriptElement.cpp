@@ -50,6 +50,7 @@
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "Text.h"
+#include "TextNodeTraversal.h"
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringHash.h>
@@ -397,19 +398,15 @@ String ScriptElement::scriptContent() const
     Text* firstTextNode = 0;
     bool foundMultipleTextNodes = false;
 
-    for (Node* n = m_element->firstChild(); n; n = n->nextSibling()) {
-        if (!n->isTextNode())
-            continue;
-
-        Text* t = toText(n);
+    for (Text* textNode = TextNodeTraversal::firstChild(m_element); textNode; textNode = TextNodeTraversal::nextSibling(textNode)) {
         if (foundMultipleTextNodes)
-            content.append(t->data());
+            content.append(textNode->data());
         else if (firstTextNode) {
             content.append(firstTextNode->data());
-            content.append(t->data());
+            content.append(textNode->data());
             foundMultipleTextNodes = true;
         } else
-            firstTextNode = t;
+            firstTextNode = textNode;
     }
 
     if (firstTextNode && !foundMultipleTextNodes)

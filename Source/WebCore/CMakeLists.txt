@@ -1230,6 +1230,7 @@ set(WebCore_SOURCES
     dom/TagNodeList.cpp
     dom/Text.cpp
     dom/TextEvent.cpp
+    dom/TextNodeTraversal.cpp
     dom/Touch.cpp
     dom/TouchEvent.cpp
     dom/TouchList.cpp

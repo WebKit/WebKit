@@ -1,3 +1,52 @@
+2013-08-17  Antti Koivisto  <antti@apple.com>
+
+        <https://webkit.org/b/119959> Add TextNodeTraversal
+
+        Reviewed by Andreas Kling.
+
+        Add TextNodeTraversal for cleaner and more compact traversal of Text nodes.
+        
+        Use it where appropriate.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Attr.cpp:
+        (WebCore::Attr::childrenChanged):
+        * dom/NodeTraversal.h:
+        (WebCore::NodeTraversal::next):
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElement::scriptContent):
+        * dom/Text.cpp:
+        (WebCore::Text::wholeText):
+        * dom/Text.h:
+        (WebCore::toText):
+        * dom/TextNodeTraversal.cpp: Added.
+        (WebCore::TextNodeTraversal::appendContents):
+        (WebCore::TextNodeTraversal::contentsAsString):
+        
+            Helpers for getting text content of a subtree.
+
+        * dom/TextNodeTraversal.h: Added.
+        (WebCore::TextNodeTraversal::firstTextChildTemplate):
+        (WebCore::TextNodeTraversal::firstChild):
+        (WebCore::TextNodeTraversal::firstTextWithinTemplate):
+        (WebCore::TextNodeTraversal::firstWithin):
+        (WebCore::TextNodeTraversal::traverseNextTextTemplate):
+        (WebCore::TextNodeTraversal::next):
+        (WebCore::TextNodeTraversal::nextSibling):
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::joinChildTextNodes):
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::defaultValue):
+        (WebCore::HTMLTextAreaElement::setDefaultValue):
+        * html/HTMLTitleElement.cpp:
+        (WebCore::HTMLTitleElement::text):
+        * html/track/TextTrackCue.cpp:
+        (WebCore::TextTrackCue::determineTextDirection):
+        * page/Frame.cpp:
+        (WebCore::Frame::searchForLabelsAboveCell):
+        * xml/XPathUtil.cpp:
+        (WebCore::XPath::stringValue):
+
 2013-08-17  Andreas Kling  <akling@apple.com>
 
         <https://webkit.org/b/119957> Page::contextMenuController() should return a reference.

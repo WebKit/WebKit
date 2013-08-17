@@ -29,6 +29,7 @@
 #include "StylePropertySet.h"
 #include "StyledElement.h"
 #include "Text.h"
+#include "TextNodeTraversal.h"
 #include "XMLNSNames.h"
 #include <wtf/text/AtomicString.h>
 #include <wtf/text/StringBuilder.h>
@@ -165,13 +166,8 @@ void Attr::childrenChanged(bool, Node*, Node*, int)
 
     invalidateNodeListCachesInAncestors(&qualifiedName(), m_element);
 
-    // FIXME: We should include entity references in the value
-
     StringBuilder valueBuilder;
-    for (Node *n = firstChild(); n; n = n->nextSibling()) {
-        if (n->isTextNode())
-            valueBuilder.append(toText(n)->data());
-    }
+    TextNodeTraversal::appendContents(this, valueBuilder);
 
     AtomicString newValue = valueBuilder.toAtomicString();
     if (m_element)

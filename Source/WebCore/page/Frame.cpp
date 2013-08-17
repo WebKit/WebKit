@@ -89,6 +89,7 @@
 #include "Settings.h"
 #include "StylePropertySet.h"
 #include "TextIterator.h"
+#include "TextNodeTraversal.h"
 #include "TextResourceDecoder.h"
 #include "UserContentURLPattern.h"
 #include "UserTypingGestureIndicator.h"
@@ -368,18 +369,18 @@ String Frame::searchForLabelsAboveCell(RegularExpression* regExp, HTMLTableCellE
     if (aboveCell) {
         // search within the above cell we found for a match
         size_t lengthSearched = 0;    
-        for (Node* n = aboveCell->firstChild(); n; n = NodeTraversal::next(n, aboveCell)) {
-            if (n->isTextNode() && n->renderer() && n->renderer()->style()->visibility() == VISIBLE) {
-                // For each text chunk, run the regexp
-                String nodeString = n->nodeValue();
-                int pos = regExp->searchRev(nodeString);
-                if (pos >= 0) {
-                    if (resultDistanceFromStartOfCell)
-                        *resultDistanceFromStartOfCell = lengthSearched;
-                    return nodeString.substring(pos, regExp->matchedLength());
-                }
-                lengthSearched += nodeString.length();
+        for (Text* textNode = TextNodeTraversal::firstWithin(aboveCell); textNode; textNode = TextNodeTraversal::next(textNode, aboveCell)) {
+            if (!textNode->renderer() || textNode->renderer()->style()->visibility() != VISIBLE)
+                continue;
+            // For each text chunk, run the regexp
+            String nodeString = textNode->data();
+            int pos = regExp->searchRev(nodeString);
+            if (pos >= 0) {
+                if (resultDistanceFromStartOfCell)
+                    *resultDistanceFromStartOfCell = lengthSearched;
+                return nodeString.substring(pos, regExp->matchedLength());
             }
+            lengthSearched += nodeString.length();
         }
     }
 

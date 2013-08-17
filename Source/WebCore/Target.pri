@@ -477,6 +477,7 @@ SOURCES += \
     dom/TagNodeList.cpp \
     dom/Text.cpp \
     dom/TextEvent.cpp \
+    dom/TextNodeTraversal.cpp \
     dom/Touch.cpp \
     dom/TouchEvent.cpp \
     dom/TouchList.cpp \
@@ -1677,6 +1678,7 @@ HEADERS += \
     dom/TagNodeList.h \
     dom/TemplateContentDocumentFragment.h \
     dom/TextEvent.h \
+    dom/TextNodeTraversal.h \
     dom/TextEventInputType.h \
     dom/Text.h \
     dom/Touch.h \

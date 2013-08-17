@@ -47,6 +47,7 @@
 #include "Text.h"
 #include "TextControlInnerElements.h"
 #include "TextIterator.h"
+#include "TextNodeTraversal.h"
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -399,15 +400,7 @@ void HTMLTextAreaElement::setValueCommon(const String& newValue)
 
 String HTMLTextAreaElement::defaultValue() const
 {
-    StringBuilder value;
-
-    // Since there may be comments, ignore nodes other than text nodes.
-    for (Node* n = firstChild(); n; n = n->nextSibling()) {
-        if (n->isTextNode())
-            value.append(toText(n)->data());
-    }
-
-    return value.toString();
+    return TextNodeTraversal::contentsAsString(this);
 }
 
 void HTMLTextAreaElement::setDefaultValue(const String& defaultValue)
@@ -415,11 +408,10 @@ void HTMLTextAreaElement::setDefaultValue(const String& defaultValue)
     RefPtr<Node> protectFromMutationEvents(this);
 
     // To preserve comments, remove only the text nodes, then add a single text node.
-    Vector<RefPtr<Node> > textNodes;
-    for (Node* n = firstChild(); n; n = n->nextSibling()) {
-        if (n->isTextNode())
-            textNodes.append(n);
-    }
+    Vector<RefPtr<Text>> textNodes;
+    for (Text* textNode = TextNodeTraversal::firstChild(this); textNode; textNode = TextNodeTraversal::nextSibling(textNode))
+        textNodes.append(textNode);
+
     size_t size = textNodes.size();
     for (size_t i = 0; i < size; ++i)
         removeChild(textNodes[i].get(), IGNORE_EXCEPTION);

@@ -28,7 +28,7 @@
 #include "XPathUtil.h"
 
 #include "ContainerNode.h"
-#include "NodeTraversal.h"
+#include "TextNodeTraversal.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -50,21 +50,9 @@ String stringValue(Node* node)
         case Node::XPATH_NAMESPACE_NODE:
             return node->nodeValue();
         default:
-            if (isRootDomNode(node) || node->nodeType() == Node::ELEMENT_NODE) {
-                StringBuilder result;
-                result.reserveCapacity(1024);
-
-                for (Node* n = node->firstChild(); n; n = NodeTraversal::next(n, node)) {
-                    if (n->isTextNode()) {
-                        const String& nodeValue = n->nodeValue();
-                        result.append(nodeValue);
-                    }
-                }
-
-                return result.toString();
-            }
+            if (isRootDomNode(node) || node->nodeType() == Node::ELEMENT_NODE)
+                return TextNodeTraversal::contentsAsString(node);
     }
-    
     return String();
 }
 

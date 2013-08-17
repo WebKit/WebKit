@@ -84,6 +84,12 @@ inline Text* toText(Node* node)
     return static_cast<Text*>(node);
 }
 
+inline const Text* toText(const Node* node)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(!node || node->isTextNode());
+    return static_cast<const Text*>(node);
+}
+
 } // namespace WebCore
 
 #endif // Text_h

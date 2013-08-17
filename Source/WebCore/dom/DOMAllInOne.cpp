@@ -135,6 +135,7 @@
 #include "TagNodeList.cpp"
 #include "Text.cpp"
 #include "TextEvent.cpp"
+#include "TextNodeTraversal.cpp"
 #include "Touch.cpp"
 #include "TouchEvent.cpp"
 #include "TouchList.cpp"

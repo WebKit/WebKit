@@ -48,6 +48,7 @@
 #include "StyleResolver.h"
 #include "Text.h"
 #include "TextIterator.h"
+#include "TextNodeTraversal.h"
 #include "VisibleUnits.h"
 #include "htmlediting.h"
 #include <wtf/StdLibExtras.h>
@@ -1521,13 +1522,9 @@ void ApplyStyleCommand::joinChildTextNodes(Node* node, const Position& start, co
     Position newStart = start;
     Position newEnd = end;
 
-    Vector<RefPtr<Text> > textNodes;
-    for (Node* curr = node->firstChild(); curr; curr = curr->nextSibling()) {
-        if (!curr->isTextNode())
-            continue;
-        
-        textNodes.append(toText(curr));
-    }
+    Vector<RefPtr<Text>> textNodes;
+    for (Text* textNode = TextNodeTraversal::firstChild(node); textNode; textNode = TextNodeTraversal::nextSibling(textNode))
+        textNodes.append(textNode);
 
     for (size_t i = 0; i < textNodes.size(); ++i) {
         Text* childText = textNodes[i].get();

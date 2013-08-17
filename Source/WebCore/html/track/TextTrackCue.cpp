@@ -632,6 +632,7 @@ void TextTrackCue::determineTextDirection()
     // their descendants.
     StringBuilder paragraphBuilder;
     for (Node* node = m_webVTTNodeTree->firstChild(); node; node = NodeTraversal::next(node, m_webVTTNodeTree.get())) {
+        // FIXME: The code does not match the comment above. This does not actually exclude Ruby Text Object descendant.
         if (!node->isTextNode() || node->localName() == rtTag)
             continue;
 

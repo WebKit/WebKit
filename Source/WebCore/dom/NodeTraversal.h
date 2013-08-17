@@ -26,6 +26,7 @@
 #define NodeTraversal_h
 
 #include "Node.h"
+#include "Text.h"
 
 namespace WebCore {
 namespace NodeTraversal {
@@ -38,6 +39,8 @@ Node* next(const Node*);
 Node* next(const Node*, const Node* stayWithin);
 Node* next(const ContainerNode*);
 Node* next(const ContainerNode*, const Node* stayWithin);
+Node* next(const Text*);
+Node* next(const Text*, const Node* stayWithin);
 
 // Like next, but skips children and starts with the next sibling.
 Node* nextSkippingChildren(const Node*);
@@ -81,7 +84,7 @@ inline Node* traverseNextTemplate(NodeType* current)
 }
 inline Node* next(const Node* current) { return traverseNextTemplate(current); }
 inline Node* next(const ContainerNode* current) { return traverseNextTemplate(current); }
-    
+
 template <class NodeType>
 inline Node* traverseNextTemplate(NodeType* current, const Node* stayWithin)
 {
@@ -117,6 +120,9 @@ inline Node* traverseNextSkippingChildrenTemplate(NodeType* current, const Node*
 }
 inline Node* nextSkippingChildren(const Node* current, const Node* stayWithin) { return traverseNextSkippingChildrenTemplate(current, stayWithin); }
 inline Node* nextSkippingChildren(const ContainerNode* current, const Node* stayWithin) { return traverseNextSkippingChildrenTemplate(current, stayWithin); }
+
+inline Node* next(const Text* current) { return traverseNextSkippingChildrenTemplate(current); }
+inline Node* next(const Text* current, const Node* stayWithin) { return traverseNextSkippingChildrenTemplate(current, stayWithin); }
 
 }
 }
