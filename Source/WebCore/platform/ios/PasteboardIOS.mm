@@ -210,10 +210,6 @@ void Pasteboard::writePlainText(const String&, SmartReplaceOption)
 {
 }
 
-void Pasteboard::writeClipboard(Clipboard*)
-{
-}
-
 void Pasteboard::writePasteboard(const Pasteboard&)
 {
 }

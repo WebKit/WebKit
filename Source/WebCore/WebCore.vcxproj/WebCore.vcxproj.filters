@@ -1257,9 +1257,6 @@
     <ClCompile Include="..\platform\win\DragImageWin.cpp">
       <Filter>platform\win</Filter>
     </ClCompile>
-    <ClCompile Include="..\platform\win\EditorWin.cpp">
-      <Filter>platform\win</Filter>
-    </ClCompile>
     <ClCompile Include="..\platform\win\EventLoopWin.cpp">
       <Filter>platform\win</Filter>
     </ClCompile>

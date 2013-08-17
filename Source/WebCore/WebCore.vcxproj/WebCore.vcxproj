@@ -7464,7 +7464,6 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\platform\win\DragImageWin.cpp" />
-    <ClCompile Include="..\platform\win\EditorWin.cpp" />
     <ClCompile Include="..\platform\win\EventLoopWin.cpp" />
     <ClCompile Include="..\platform\win\FileSystemWin.cpp" />
     <ClCompile Include="..\platform\win\GDIObjectCounter.cpp" />

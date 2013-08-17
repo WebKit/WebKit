@@ -700,12 +700,7 @@ bool Editor::dispatchCPPEvent(const AtomicString& eventType, ClipboardAccessPoli
     if (!target)
         return true;
 
-#if !USE(LEGACY_STYLE_ABSTRACT_CLIPBOARD_CLASS)
     RefPtr<Clipboard> clipboard = Clipboard::createForCopyAndPaste(policy);
-#else
-    // FIXME: Remove declaration of newGeneralClipboard when removing LEGACY_STYLE_ABSTRACT_CLIPBOARD_CLASS.
-    RefPtr<Clipboard> clipboard = newGeneralClipboard(policy, m_frame);
-#endif
 
 #if PLATFORM(IOS)
     clipboard->pasteboard().setFrame(m_frame);
@@ -717,11 +712,7 @@ bool Editor::dispatchCPPEvent(const AtomicString& eventType, ClipboardAccessPoli
     if (noDefaultProcessing && policy == ClipboardWritable) {
         Pasteboard* pasteboard = Pasteboard::generalPasteboard();
         pasteboard->clear();
-#if !USE(LEGACY_STYLE_ABSTRACT_CLIPBOARD_CLASS)
         pasteboard->writePasteboard(clipboard->pasteboard());
-#else
-        pasteboard->writeClipboard(clipboard.get());
-#endif
     }
 
     // invalidate clipboard here for security

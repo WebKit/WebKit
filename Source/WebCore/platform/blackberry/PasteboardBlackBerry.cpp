@@ -56,11 +56,6 @@ void Pasteboard::writeImage(Node*, KURL const&, String const&)
     notImplemented();
 }
 
-void Pasteboard::writeClipboard(Clipboard*)
-{
-    notImplemented();
-}
-
 void Pasteboard::writeSelection(Range* selectedRange, bool, Frame* frame, ShouldSerializeSelectedTextForClipboard shouldSerializeSelectedTextForClipboard)
 {
     WTF::String text = shouldSerializeSelectedTextForClipboard == IncludeImageAltTextForClipboard ? frame->editor()->selectedTextForClipboard() : frame->editor()->selectedText();

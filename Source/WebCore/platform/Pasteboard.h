@@ -49,9 +49,8 @@ typedef struct _GtkClipboard GtkClipboard;
 typedef struct HWND__* HWND;
 #endif
 
-// FIXME: This class is too high-level to be in the platform directory, since it
-// uses the DOM and makes calls to Editor. It should either be divested of its
-// knowledge of the frame and editor or moved into the editing directory.
+// FIXME: This class uses the DOM and makes calls to Editor.
+// It should be divested of its knowledge of the frame and editor.
 
 namespace WebCore {
 
@@ -142,7 +141,6 @@ public:
     static NSArray* supportedPasteboardTypes();
 #endif
     void writePasteboard(const Pasteboard& sourcePasteboard);
-    void writeClipboard(Clipboard*);
 
     void clear();
     void clear(const String& type);

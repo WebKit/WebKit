@@ -776,11 +776,6 @@ void Pasteboard::writePasteboard(const Pasteboard& sourcePasteboard)
     notImplemented();
 }
 
-void Pasteboard::writeClipboard(Clipboard*)
-{
-    notImplemented();
-}
-
 bool Pasteboard::canSmartReplace()
 { 
     return ::IsClipboardFormatAvailable(WebSmartPasteFormat);

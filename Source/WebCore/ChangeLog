@@ -1,5 +1,36 @@
 2013-08-17  Darin Adler  <darin@apple.com>
 
+        <https://webkit.org/b/119939> Remove some unused clipboard and pasteboard code
+
+        Reviewed by Andreas Kling.
+
+        * PlatformWinCE.cmake: Removed EditorWin.cpp.
+        * WebCore.vcxproj/WebCore.vcxproj: Removed EditorWin.cpp.
+        * WebCore.vcxproj/WebCore.vcxproj.filters: Removed EditorWin.cpp.
+        * WebCore.xcodeproj/project.pbxproj: Removed ClipboardIOS.h and
+        ClipboardIOS.mm, and also let Xcode edit/reorder this file.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::dispatchCPPEvent): Removed some LEGACY_STYLE_ABSTRACT_CLIPBOARD
+        class code. Will remove the rest later.
+
+        * editing/Editor.h: Removed declaration of newGeneralClipboard.
+
+        * platform/Pasteboard.h: Removed declaration of writeClipboard. Also updated a
+        comment to make it clearer.
+
+        * platform/blackberry/PasteboardBlackBerry.cpp: Removed Pasteboard::writeClipboard.
+        * platform/efl/PasteboardEfl.cpp: Ditto.
+        * platform/ios/PasteboardIOS.mm: Ditto.
+        * platform/win/PasteboardWin.cpp: Ditto.
+
+        * platform/ios/ClipboardIOS.h: Removed. Was an empty file.
+        * platform/ios/ClipboardIOS.mm: Removed. Was an empty file.
+        * platform/win/EditorWin.cpp: Removed. Had only newGeneralClipboard in the file,
+        a function that is never called.
+
+2013-08-17  Darin Adler  <darin@apple.com>
+
         <https://webkit.org/b/119940> Rename Clipboard::m_dragLoc to m_dragLocation
 
         Reviewed by Andreas Kling.
