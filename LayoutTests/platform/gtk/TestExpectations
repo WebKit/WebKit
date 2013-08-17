@@ -1170,9 +1170,6 @@ webkit.org/b/86443 plugins/npruntime/delete-plugin-within-hasProperty-return-fal
 webkit.org/b/86443 plugins/npruntime/delete-plugin-within-hasProperty-return-true.html [ Failure ]
 webkit.org/b/86443 plugins/npruntime/delete-plugin-within-setProperty.html [ Failure ]
 
-# This test is affecting other tests and seems to be behaving incorrectly itself
-webkit.org/b/86771 fast/dom/gc-10.html [ Skip ]
-
 webkit.org/b/86971 svg/hittest/svg-shapes-non-scale-stroke.html [ Failure ]
 
 Bug(GTK) http/tests/misc/favicon-loads-with-icon-loading-override.html [ Failure ]

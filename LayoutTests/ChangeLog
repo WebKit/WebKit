@@ -1,3 +1,9 @@
+2013-08-17  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK gardening.
+
+        * platform/gtk/TestExpecations: Unskip fast/dom/gc-10.html, the test seems to work now.
+
 2013-08-16  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should optimize typedArray.byteLength
