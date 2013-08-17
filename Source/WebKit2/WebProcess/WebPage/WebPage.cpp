@@ -1560,7 +1560,7 @@ WebContextMenu* WebPage::contextMenu()
 
 WebContextMenu* WebPage::contextMenuAtPointInWindow(const IntPoint& point)
 {
-    corePage()->contextMenuController()->clearContextMenu();
+    corePage()->contextMenuController().clearContextMenu();
     
     // Simulate a mouse click to generate the correct menu.
     PlatformMouseEvent mouseEvent(point, point, RightButton, PlatformEvent::MousePressed, 1, false, false, false, false, currentTime());
@@ -1645,7 +1645,7 @@ static bool handleMouseEvent(const WebMouseEvent& mouseEvent, WebPage* page, boo
         case PlatformEvent::MousePressed: {
 #if ENABLE(CONTEXT_MENUS)
             if (isContextClick(platformMouseEvent))
-                page->corePage()->contextMenuController()->clearContextMenu();
+                page->corePage()->contextMenuController().clearContextMenu();
 #endif
 
             bool handled = frame->eventHandler().handleMousePressEvent(platformMouseEvent);

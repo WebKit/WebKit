@@ -2213,7 +2213,7 @@ void Node::defaultEventHandler(Event* event)
     } else if (eventType == eventNames().contextmenuEvent) {
         if (Frame* frame = document()->frame())
             if (Page* page = frame->page())
-                page->contextMenuController()->handleContextMenuEvent(event);
+                page->contextMenuController().handleContextMenuEvent(event);
 #endif
     } else if (eventType == eventNames().textInputEvent) {
         if (event->hasInterface(eventNames().interfaceForTextEvent))

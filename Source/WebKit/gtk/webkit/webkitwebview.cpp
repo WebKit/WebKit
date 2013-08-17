@@ -345,7 +345,7 @@ static bool defaultContextMenuEnabled(WebKitWebView* webView)
 static gboolean webkit_web_view_forward_context_menu_event(WebKitWebView* webView, const PlatformMouseEvent& event, bool triggeredWithKeyboard)
 {
     Page* page = core(webView);
-    page->contextMenuController()->clearContextMenu();
+    page->contextMenuController().clearContextMenu();
     Frame* focusedFrame;
     Frame* mainFrame = page->mainFrame();
     gboolean mousePressEventResult = FALSE;
@@ -381,8 +381,7 @@ static gboolean webkit_web_view_forward_context_menu_event(WebKitWebView* webVie
     // If coreMenu is NULL, this means WebCore decided to not create
     // the default context menu; this may happen when the page is
     // handling the right-click for reasons other than the context menu.
-    ContextMenuController* controller = page->contextMenuController();
-    ContextMenu* coreMenu = controller->contextMenu();
+    ContextMenu* coreMenu = page->contextMenuController().contextMenu();
     if (!coreMenu)
         return mousePressEventResult;
 
@@ -391,7 +390,7 @@ static gboolean webkit_web_view_forward_context_menu_event(WebKitWebView* webVie
 
     // We connect the "activate" signal here rather than in ContextMenuGtk to avoid
     // a layering violation. ContextMenuGtk should not know about the ContextMenuController.
-    gtk_container_foreach(GTK_CONTAINER(defaultMenu), reinterpret_cast<GtkCallback>(contextMenuConnectActivate), controller);
+    gtk_container_foreach(GTK_CONTAINER(defaultMenu), reinterpret_cast<GtkCallback>(contextMenuConnectActivate), &page->contextMenuController());
 
     if (!hitTestResult) {
         MouseEventWithHitTestResults mev = prepareMouseEventForFrame(focusedFrame, event);
@@ -5424,7 +5423,7 @@ GtkMenu* webkit_web_view_get_context_menu(WebKitWebView* webView)
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), 0);
 
 #if ENABLE(CONTEXT_MENUS)
-    ContextMenu* menu = core(webView)->contextMenuController()->contextMenu();
+    ContextMenu* menu = core(webView)->contextMenuController().contextMenu();
     if (!menu)
         return 0;
     return menu->platformDescription();

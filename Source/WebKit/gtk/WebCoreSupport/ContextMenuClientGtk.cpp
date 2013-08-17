@@ -95,7 +95,7 @@ PlatformMenuDescription ContextMenuClient::getCustomMenuFromDefaultItems(Context
     GtkMenu* gtkmenu = menu->releasePlatformDescription();
 
     WebKitWebView* webView = m_webView;
-    HitTestResult result = core(webView)->contextMenuController()->hitTestResult();
+    HitTestResult result = core(webView)->contextMenuController().hitTestResult();
 
     if (result.isContentEditable()) {
         GtkWidget* imContextMenu = inputMethodsMenuItem(webView);

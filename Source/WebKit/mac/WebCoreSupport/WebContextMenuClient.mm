@@ -272,7 +272,7 @@ NSMutableArray* WebContextMenuClient::getCustomMenuFromDefaultItems(ContextMenu*
     if (![delegate respondsToSelector:selector])
         return defaultMenu->platformDescription();
 
-    NSDictionary *element = [[[WebElementDictionary alloc] initWithHitTestResult:[m_webView page]->contextMenuController()->hitTestResult()] autorelease];
+    NSDictionary *element = [[[WebElementDictionary alloc] initWithHitTestResult:[m_webView page]->contextMenuController().hitTestResult()] autorelease];
 
     BOOL preVersion3Client = isPreVersion3Client();
     if (preVersion3Client) {
@@ -302,7 +302,7 @@ void WebContextMenuClient::contextMenuItemSelected(ContextMenuItem* item, const 
     id delegate = [m_webView UIDelegate];
     SEL selector = @selector(webView:contextMenuItemSelected:forElement:);
     if ([delegate respondsToSelector:selector]) {
-        NSDictionary *element = [[WebElementDictionary alloc] initWithHitTestResult:[m_webView page]->contextMenuController()->hitTestResult()];
+        NSDictionary *element = [[WebElementDictionary alloc] initWithHitTestResult:[m_webView page]->contextMenuController().hitTestResult()];
         NSMenuItem *platformItem = item->releasePlatformDescription();
 
         CallUIDelegate(m_webView, selector, platformItem, element);
@@ -355,15 +355,14 @@ void WebContextMenuClient::showContextMenu()
     Page* page = [m_webView page];
     if (!page)
         return;
-    ContextMenuController* controller = page->contextMenuController();
-    Frame* frame = controller->hitTestResult().innerNodeFrame();
+    Frame* frame = page->contextMenuController().hitTestResult().innerNodeFrame();
     if (!frame)
         return;
     FrameView* frameView = frame->view();
     if (!frameView)
         return;
 
-    IntPoint point = frameView->contentsToWindow(controller->hitTestResult().roundedPointInInnerNodeFrame());
+    IntPoint point = frameView->contentsToWindow(page->contextMenuController().hitTestResult().roundedPointInInnerNodeFrame());
     NSView* view = frameView->documentView();
     NSPoint nsScreenPoint = [view convertPoint:point toView:nil];
     // Show the contextual menu for this event.

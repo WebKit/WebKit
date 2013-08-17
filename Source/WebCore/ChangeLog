@@ -1,5 +1,16 @@
 2013-08-17  Andreas Kling  <akling@apple.com>
 
+        <https://webkit.org/b/119957> Page::contextMenuController() should return a reference.
+
+        Reviewed by Antti Koivisto.
+
+        Page::m_contextMenuController is never null.
+
+        * page/Page.h:
+        (WebCore::Page::contextMenuController):
+
+2013-08-17  Andreas Kling  <akling@apple.com>
+
         <https://webkit.org/b/119954> Page::dragCaretController() should return a reference.
 
         Reviewed by Antti Koivisto.

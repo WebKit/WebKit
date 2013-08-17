@@ -3019,7 +3019,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         }
     }
     
-    page->contextMenuController()->showContextMenuAt(page->mainFrame(), rect.center());
+    page->contextMenuController().showContextMenuAt(page->mainFrame(), rect.center());
 }
 
 - (void)accessibilityScrollToVisible

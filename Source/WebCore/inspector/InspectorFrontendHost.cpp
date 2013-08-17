@@ -276,8 +276,7 @@ void InspectorFrontendHost::showContextMenu(Event* event, const Vector<ContextMe
         return;
     }
     RefPtr<FrontendMenuProvider> menuProvider = FrontendMenuProvider::create(this, frontendApiObject, items);
-    ContextMenuController* menuController = m_frontendPage->contextMenuController();
-    menuController->showContextMenu(event, menuProvider);
+    m_frontendPage->contextMenuController().showContextMenu(event, menuProvider);
     m_menuProvider = menuProvider.get();
 }
 #endif

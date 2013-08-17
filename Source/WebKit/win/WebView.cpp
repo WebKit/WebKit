@@ -1334,7 +1334,7 @@ bool WebView::handleContextMenuEvent(WPARAM wParam, LPARAM lParam)
         // through the DOM so that we can detect if we create a new menu for this event, since we
         // won't create a new menu if the DOM swallows the event and the defaultEventHandler does
         // not run.
-        m_page->contextMenuController()->clearContextMenu();
+        m_page->contextMenuController().clearContextMenu();
 
         Frame* focusedFrame = m_page->focusController().focusedOrMainFrame();
         return focusedFrame->eventHandler().sendContextMenuEventForKey();
@@ -1346,7 +1346,7 @@ bool WebView::handleContextMenuEvent(WPARAM wParam, LPARAM lParam)
 
     lParam = MAKELPARAM(coords.x, coords.y);
 
-    m_page->contextMenuController()->clearContextMenu();
+    m_page->contextMenuController().clearContextMenu();
 
     IntPoint documentPoint(m_page->mainFrame()->view()->windowToContents(coords));
     HitTestResult result = m_page->mainFrame()->eventHandler().hitTestResultAtPoint(documentPoint);
@@ -1358,14 +1358,14 @@ bool WebView::handleContextMenuEvent(WPARAM wParam, LPARAM lParam)
     if (!handledEvent)
         return false;
 
-    ContextMenuController* contextMenuController = m_page->contextMenuController();
+    ContextMenuController& contextMenuController = m_page->contextMenuController();
 
     // Show the menu
-    ContextMenu* coreMenu = contextMenuController->contextMenu();
+    ContextMenu* coreMenu = contextMenuController.contextMenu();
     if (!coreMenu)
         return false;
 
-    Frame* frame = contextMenuController->hitTestResult().innerNodeFrame();
+    Frame* frame = contextMenuController.hitTestResult().innerNodeFrame();
     if (!frame)
         return false;
 
@@ -1373,7 +1373,7 @@ bool WebView::handleContextMenuEvent(WPARAM wParam, LPARAM lParam)
     if (!view)
         return false;
 
-    POINT point(view->contentsToWindow(contextMenuController->hitTestResult().roundedPointInInnerNodeFrame()));
+    POINT point(view->contentsToWindow(contextMenuController.hitTestResult().roundedPointInInnerNodeFrame()));
 
     // Translate the point to screen coordinates
     if (!::ClientToScreen(m_viewWindow, &point))
@@ -1461,13 +1461,13 @@ bool WebView::onUninitMenuPopup(WPARAM wParam, LPARAM /*lParam*/)
 
 void WebView::performContextMenuAction(WPARAM wParam, LPARAM lParam, bool byPosition)
 {
-    ContextMenu* menu = m_page->contextMenuController()->contextMenu();
+    ContextMenu* menu = m_page->contextMenuController().contextMenu();
     ASSERT(menu);
 
     ContextMenuItem* item = byPosition ? menu->itemAtIndex((unsigned)wParam) : menu->itemWithAction((ContextMenuAction)wParam);
     if (!item)
         return;
-    m_page->contextMenuController()->contextMenuItemSelected(item);
+    m_page->contextMenuController().contextMenuItemSelected(item);
 }
 
 bool WebView::handleMouseEvent(UINT message, WPARAM wParam, LPARAM lParam)

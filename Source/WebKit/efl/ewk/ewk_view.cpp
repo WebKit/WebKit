@@ -1600,7 +1600,7 @@ Eina_Bool ewk_view_context_menu_forward_event(Evas_Object* ewkView, const Evas_E
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
     Eina_Bool mouse_press_handled = false;
 
-    priv->page->contextMenuController()->clearContextMenu();
+    priv->page->contextMenuController().clearContextMenu();
     if (priv->contextMenu)
         ewk_context_menu_free(priv->contextMenu);
 
@@ -1619,14 +1619,14 @@ Eina_Bool ewk_view_context_menu_forward_event(Evas_Object* ewkView, const Evas_E
         return false;
 
     WebCore::ContextMenu* coreMenu =
-        priv->page->contextMenuController()->contextMenu();
+        priv->page->contextMenuController().contextMenu();
     if (!coreMenu) {
         // WebCore decided not to create a context menu, return true if event
         // was handled by handleMouseReleaseEvent
         return mouse_press_handled;
     }
 
-    priv->contextMenu = ewk_context_menu_new(ewkView, priv->page->contextMenuController(), coreMenu);
+    priv->contextMenu = ewk_context_menu_new(ewkView, &priv->page->contextMenuController(), coreMenu);
     if (!priv->contextMenu)
         return false;
 

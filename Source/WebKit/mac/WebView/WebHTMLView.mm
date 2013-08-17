@@ -3111,7 +3111,7 @@ static void setMenuTargets(NSMenu* menu)
 
     // Match behavior of other browsers by sending a mousedown event for right clicks.
     _private->handlingMouseDownEvent = YES;
-    page->contextMenuController()->clearContextMenu();
+    page->contextMenuController().clearContextMenu();
     coreFrame->eventHandler().mouseDown(event);
     BOOL handledEvent = coreFrame->eventHandler().sendContextMenuEvent(PlatformEventFactory::createPlatformMouseEvent(event, page->chrome().platformPageClient()));
     _private->handlingMouseDownEvent = NO;
@@ -3124,7 +3124,7 @@ static void setMenuTargets(NSMenu* menu)
     if (!page)
         return nil;
 
-    ContextMenu* coreMenu = page->contextMenuController()->contextMenu();
+    ContextMenu* coreMenu = page->contextMenuController().contextMenu();
     if (!coreMenu)
         return nil;
 
@@ -3141,7 +3141,7 @@ static void setMenuTargets(NSMenu* menu)
         [menu addItem:[menuItems objectAtIndex:i]];
     setMenuTargets(menu);
     
-    [[WebMenuTarget sharedMenuTarget] setMenuController:page->contextMenuController()];
+    [[WebMenuTarget sharedMenuTarget] setMenuController:&page->contextMenuController()];
     
     return menu;
 }

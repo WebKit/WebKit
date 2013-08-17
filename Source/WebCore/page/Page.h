@@ -191,7 +191,7 @@ public:
 #endif
     FocusController& focusController() const { return *m_focusController; }
 #if ENABLE(CONTEXT_MENUS)
-    ContextMenuController* contextMenuController() const { return m_contextMenuController.get(); }
+    ContextMenuController& contextMenuController() const { return *m_contextMenuController; }
 #endif
 #if ENABLE(INSPECTOR)
     InspectorController* inspectorController() const { return m_inspectorController.get(); }
@@ -447,7 +447,7 @@ private:
 #endif
     const OwnPtr<FocusController> m_focusController;
 #if ENABLE(CONTEXT_MENUS)
-    OwnPtr<ContextMenuController> m_contextMenuController;
+    const OwnPtr<ContextMenuController> m_contextMenuController;
 #endif
 #if ENABLE(INSPECTOR)
     OwnPtr<InspectorController> m_inspectorController;
