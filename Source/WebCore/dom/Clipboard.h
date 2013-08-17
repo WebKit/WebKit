@@ -79,9 +79,6 @@ namespace WebCore {
         Node* dragImageElement() const { return m_dragImageElement.get(); }
         
         DragImageRef createDragImage(IntPoint& dragLocation) const;
-        void writeURL(const KURL&, const String&, Frame*);
-        void writeRange(Range*, Frame*);
-        void writePlainText(const String&);
 
         bool hasData();
 

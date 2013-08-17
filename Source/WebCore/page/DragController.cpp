@@ -61,6 +61,7 @@
 #include "ImageOrientation.h"
 #include "MoveSelectionCommand.h"
 #include "Page.h"
+#include "Pasteboard.h"
 #include "PlatformKeyboardEvent.h"
 #include "PluginDocument.h"
 #include "PluginViewBase.h"
@@ -792,9 +793,11 @@ bool DragController::startDrag(Frame* src, const DragState& state, DragOperation
             src->editor().willWriteSelectionToPasteboard(selectionRange.get());
 
             if (enclosingTextFormControl(src->selection()->start()))
-                clipboard->writePlainText(src->editor().selectedTextForClipboard());
-            else
-                clipboard->writeRange(selectionRange.get(), src);
+                clipboard->pasteboard().writePlainText(src->editor().selectedTextForClipboard(), Pasteboard::CannotSmartReplace);
+            else {
+                // FIXME: Could this instead be a helper function in Editor?
+                clipboard->pasteboard().writeSelection(selectionRange.get(), src->editor().smartInsertDeleteEnabled() && src->selection()->granularity() == WordGranularity, src, IncludeImageAltTextForClipboard);
+            }
 
             src->editor().didWriteSelectionToPasteboard();
         }
@@ -830,7 +833,7 @@ bool DragController::startDrag(Frame* src, const DragState& state, DragOperation
         if (!clipboard->hasData())
             // Simplify whitespace so the title put on the clipboard resembles what the user sees
             // on the web page. This includes replacing newlines with spaces.
-            clipboard->writeURL(linkURL, hitTestResult.textContent().simplifyWhiteSpace(), src);
+            clipboard->pasteboard().writeURL(linkURL, hitTestResult.textContent().simplifyWhiteSpace(), src);
 
         if (src->selection()->isCaret() && src->selection()->isContentEditable()) {
             // a user can initiate a drag on a link without having any text

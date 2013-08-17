@@ -366,29 +366,6 @@ void DragImageLoader::imageChanged(CachedImage*, const IntRect*)
     m_clipboard->updateDragImage();
 }
 
-void Clipboard::writeRange(Range* range, Frame* frame)
-{
-    ASSERT(range);
-    ASSERT(frame);
-    // FIXME: This is a design mistake, a layering violation that should be fixed.
-    // The code to write the range to a pasteboard should be an Editor function that takes a pasteboard argument.
-    // FIXME: The frame argument seems redundant, since a Range is in a particular document, which has a corresponding frame.
-    m_pasteboard->writeSelection(range, frame->editor().smartInsertDeleteEnabled() && frame->selection()->granularity() == WordGranularity, frame, IncludeImageAltTextForClipboard);
-}
-
-void Clipboard::writePlainText(const String& text)
-{
-    m_pasteboard->writePlainText(text, Pasteboard::CannotSmartReplace);
-}
-
-void Clipboard::writeURL(const KURL& url, const String& title, Frame* frame)
-{
-    ASSERT(frame);
-    // FIXME: This is a design mistake, a layering violation that should be fixed.
-    // The pasteboard writeURL function should not take a frame argument, nor does this function need a frame.
-    m_pasteboard->writeURL(url, title, frame);
-}
-
 #endif // ENABLE(DRAG_SUPPORT)
 
 } // namespace WebCore

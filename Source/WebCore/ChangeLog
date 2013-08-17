@@ -1,5 +1,20 @@
 2013-08-17  Darin Adler  <darin@apple.com>
 
+        <https://webkit.org/b/119948> Change drag-specific clipboard writing in DragController to go straight to Pasteboard, not forward through Clipboard
+
+        Reviewed by Andreas Kling.
+
+        * dom/Clipboard.cpp: Removed writeRange, writePlainText, and writeURL functions.
+        All three are just unneeded forwarding to pasteboard.
+        * dom/Clipboard.h: Ditto.
+
+        * page/DragController.cpp:
+        (WebCore::DragController::startDrag): Move the logic in here. Later we might
+        want to straighten this out a bit, perhaps using functions in Editor, but it's
+        not much code so fine to just have it here for now.
+
+2013-08-17  Darin Adler  <darin@apple.com>
+
         <https://webkit.org/b/119947> Remove LEGACY_STYLE_ABSTRACT_CLIPBOARD_CLASS
 
         Reviewed by Andreas Kling.
