@@ -108,7 +108,7 @@ NetworkStorageSession& WebFrameNetworkingContext::storageSession() const
 {
     ASSERT(isMainThread());
 
-    if (frame() && frame()->settings() && frame()->settings()->privateBrowsingEnabled())
+    if (frame() && frame()->settings().privateBrowsingEnabled())
         return *privateSession;
 
     return NetworkStorageSession::defaultStorageSession();

@@ -63,10 +63,7 @@ static bool shouldHideFourDot(Frame* frame)
         return false;
     if (!(sourceURL->endsWith("/dqm_script.js") || sourceURL->endsWith("/dqm_loader.js") || sourceURL->endsWith("/tdqm_loader.js")))
         return false;
-    Settings* settings = frame->settings();
-    if (!settings)
-        return false;
-    return settings->needsSiteSpecificQuirks();
+    return frame->settings().needsSiteSpecificQuirks();
 }
 
 String Navigator::appVersion() const
@@ -124,12 +121,12 @@ bool Navigator::cookieEnabled() const
 
 bool Navigator::javaEnabled() const
 {
-    if (!m_frame || !m_frame->settings())
+    if (!m_frame)
         return false;
 
-    if (!m_frame->settings()->isJavaEnabled())
+    if (!m_frame->settings().isJavaEnabled())
         return false;
-    if (m_frame->document()->securityOrigin()->isLocal() && !m_frame->settings()->isJavaEnabledForLocalFiles())
+    if (m_frame->document()->securityOrigin()->isLocal() && !m_frame->settings().isJavaEnabledForLocalFiles())
         return false;
 
     return true;

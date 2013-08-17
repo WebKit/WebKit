@@ -683,12 +683,7 @@ bool unifiedTextCheckerEnabled(const Frame* frame)
 {
     if (!frame)
         return false;
-
-    const Settings* settings = frame->settings();
-    if (!settings)
-        return false;
-
-    return settings->unifiedTextCheckerEnabled();
+    return frame->settings().unifiedTextCheckerEnabled();
 }
 
 }

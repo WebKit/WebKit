@@ -147,8 +147,7 @@ void IconController::startLoader()
 
     // People who want to avoid loading images generally want to avoid loading all images, unless an exception has been made for site icons.
     // Now that we've accounted for URL mapping, avoid starting the network load if images aren't set to display automatically.
-    Settings* settings = m_frame->settings();
-    if (settings && !settings->loadsImagesAutomatically() && !settings->loadsSiteIconsIgnoringImageLoadingSetting())
+    if (!m_frame->settings().loadsImagesAutomatically() && !m_frame->settings().loadsSiteIconsIgnoringImageLoadingSetting())
         return;
 
     // If we're reloading the page, always start the icon load now.

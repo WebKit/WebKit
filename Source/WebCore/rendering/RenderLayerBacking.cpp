@@ -145,7 +145,7 @@ RenderLayerBacking::RenderLayerBacking(RenderLayer* layer)
             if (m_isMainFrameRenderViewLayer)
                 tiledBacking->setUnparentsOffscreenTiles(true);
 
-            tiledBacking->setScrollingPerformanceLoggingEnabled(frame->settings() && frame->settings()->scrollingPerformanceLoggingEnabled());
+            tiledBacking->setScrollingPerformanceLoggingEnabled(frame->settings().scrollingPerformanceLoggingEnabled());
             adjustTiledBackingCoverage();
         }
     }

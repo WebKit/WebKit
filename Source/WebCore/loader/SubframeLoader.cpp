@@ -108,14 +108,10 @@ bool SubframeLoader::resourceWillUsePlugin(const String& url, const String& mime
 
 bool SubframeLoader::pluginIsLoadable(HTMLPlugInImageElement* pluginElement, const KURL& url, const String& mimeType)
 {
-    Settings* settings = m_frame->settings();
-    if (!settings)
-        return false;
-
     if (MIMETypeRegistry::isJavaAppletMIMEType(mimeType)) {
-        if (!settings->isJavaEnabled())
+        if (!m_frame->settings().isJavaEnabled())
             return false;
-        if (document() && document()->securityOrigin()->isLocal() && !settings->isJavaEnabledForLocalFiles())
+        if (document() && document()->securityOrigin()->isLocal() && !m_frame->settings().isJavaEnabledForLocalFiles())
             return false;
     }
 
@@ -404,8 +400,7 @@ Frame* SubframeLoader::loadSubframe(HTMLFrameOwnerElement* ownerElement, const K
 
 bool SubframeLoader::allowPlugins(ReasonForCallingAllowPlugins reason)
 {
-    Settings* settings = m_frame->settings();
-    bool allowed = m_frame->loader().client()->allowPlugins(settings && settings->arePluginsEnabled());
+    bool allowed = m_frame->loader().client()->allowPlugins(m_frame->settings().arePluginsEnabled());
     if (!allowed && reason == AboutToInstantiatePlugin)
         m_frame->loader().client()->didNotAllowPlugins();
     return allowed;

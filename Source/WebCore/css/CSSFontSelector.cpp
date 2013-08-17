@@ -214,7 +214,7 @@ void CSSFontSelector::addFontFaceRule(const StyleRuleFontFace* fontFaceRule)
         foundSVGFont = item->isSVGFontFaceSrc() || item->svgFontFaceElement();
 #endif
         if (!item->isLocal()) {
-            Settings* settings = m_document ? m_document->frame() ? m_document->frame()->settings() : 0 : 0;
+            Settings* settings = m_document ? m_document->frame() ? &m_document->frame()->settings() : 0 : 0;
             bool allowDownloading = foundSVGFont || (settings && settings->downloadableBinaryFontsEnabled());
             if (allowDownloading && item->isSupportedFormat() && m_document) {
                 CachedFont* cachedFont = item->cachedFont(m_document);
@@ -370,27 +370,25 @@ static PassRefPtr<FontData> fontDataForGenericFamily(Document* document, const F
     if (!document || !document->frame())
         return 0;
 
-    const Settings* settings = document->frame()->settings();
-    if (!settings)
-        return 0;
+    const Settings& settings = document->frame()->settings();
 
     AtomicString genericFamily;
     UScriptCode script = fontDescription.script();
 
     if (familyName == serifFamily)
-         genericFamily = settings->serifFontFamily(script);
+        genericFamily = settings.serifFontFamily(script);
     else if (familyName == sansSerifFamily)
-         genericFamily = settings->sansSerifFontFamily(script);
+        genericFamily = settings.sansSerifFontFamily(script);
     else if (familyName == cursiveFamily)
-         genericFamily = settings->cursiveFontFamily(script);
+        genericFamily = settings.cursiveFontFamily(script);
     else if (familyName == fantasyFamily)
-         genericFamily = settings->fantasyFontFamily(script);
+        genericFamily = settings.fantasyFontFamily(script);
     else if (familyName == monospaceFamily)
-         genericFamily = settings->fixedFontFamily(script);
+        genericFamily = settings.fixedFontFamily(script);
     else if (familyName == pictographFamily)
-         genericFamily = settings->pictographFontFamily(script);
+        genericFamily = settings.pictographFontFamily(script);
     else if (familyName == standardFamily)
-         genericFamily = settings->standardFontFamily(script);
+        genericFamily = settings.standardFontFamily(script);
 
     if (!genericFamily.isEmpty())
         return fontCache()->getCachedFontData(fontDescription, genericFamily);

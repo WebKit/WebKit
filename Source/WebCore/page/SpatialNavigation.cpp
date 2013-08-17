@@ -90,7 +90,7 @@ FocusCandidate::FocusCandidate(Node* node, FocusDirection direction)
 
 bool isSpatialNavigationEnabled(const Frame* frame)
 {
-    return (frame && frame->settings() && frame->settings()->spatialNavigationEnabled());
+    return (frame && frame->settings().spatialNavigationEnabled());
 }
 
 static RectsAlignment alignmentForRects(FocusDirection direction, const LayoutRect& curRect, const LayoutRect& targetRect, const LayoutSize& viewSize)

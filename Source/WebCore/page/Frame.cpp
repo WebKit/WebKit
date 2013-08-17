@@ -151,6 +151,7 @@ static inline float parentTextZoomFactor(Frame* frame)
 
 inline Frame::Frame(Page* page, HTMLFrameOwnerElement* ownerElement, FrameLoaderClient* frameLoaderClient)
     : m_page(page)
+    , m_settings(&page->settings())
     , m_treeNode(this, parentFromOwnerElement(ownerElement))
     , m_loader(this, frameLoaderClient)
     , m_navigationScheduler(this)
@@ -183,7 +184,7 @@ inline Frame::Frame(Page* page, HTMLFrameOwnerElement* ownerElement, FrameLoader
     if (!ownerElement) {
 #if USE(TILED_BACKING_STORE)
         // Top level frame only for now.
-        setTiledBackingStoreEnabled(page->settings().tiledBackingStoreEnabled());
+        setTiledBackingStoreEnabled(settings().tiledBackingStoreEnabled());
 #endif
     } else {
         page->incrementSubframeCount();
@@ -326,11 +327,6 @@ void Frame::sendOrientationChangeEvent(int orientation)
         doc->dispatchWindowEvent(Event::create(eventNames().orientationchangeEvent, false, false));
 }
 #endif // ENABLE(ORIENTATION_EVENTS)
-    
-Settings* Frame::settings() const
-{
-    return m_page ? &m_page->settings() : 0;
-}
 
 static PassOwnPtr<RegularExpression> createRegExpForLabels(const Vector<String>& labels)
 {
@@ -560,7 +556,7 @@ void Frame::injectUserScripts(UserScriptInjectionTime injectionTime)
     if (!m_page)
         return;
 
-    if (loader().stateMachine()->creatingInitialEmptyDocument() && !settings()->shouldInjectUserScriptsInInitialEmptyDocument())
+    if (loader().stateMachine()->creatingInitialEmptyDocument() && !settings().shouldInjectUserScriptsInInitialEmptyDocument())
         return;
 
     // Walk the hashtable. Inject by world.
@@ -946,7 +942,7 @@ float Frame::frameScaleFactor() const
     Page* page = this->page();
 
     // Main frame is scaled with respect to he container but inner frames are not scaled with respect to the main frame.
-    if (!page || page->mainFrame() != this || page->settings().applyPageScaleFactorInCompositor())
+    if (!page || page->mainFrame() != this || settings().applyPageScaleFactorInCompositor())
         return 1;
 
     return page->pageScaleFactor();

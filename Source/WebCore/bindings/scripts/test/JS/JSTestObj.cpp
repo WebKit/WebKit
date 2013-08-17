@@ -460,8 +460,10 @@ JSValue jsTestObjConstructorTestSubObj(ExecState* exec, JSValue slotBase, Proper
 JSValue jsTestObjTestSubObjEnabledBySettingConstructor(ExecState* exec, JSValue slotBase, PropertyName)
 {
     JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
-    Settings* settings = castedThis->impl()->frame() ? castedThis->impl()->frame()->settings() : 0;
-    if (!settings || !settings->testSettingEnabled())
+    if (!castedThis->impl()->frame())
+        return jsUndefined();
+    Settings& settings = castedThis->impl()->frame()->settings();
+    if (!settings.testSettingEnabled())
         return jsUndefined();
     return JSTestSubObj::getConstructor(exec, castedThis->globalObject());
 }

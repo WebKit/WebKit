@@ -608,7 +608,7 @@ void PluginView::didInitializePlugin()
             frame()->view()->enterCompositingMode();
             m_pluginElement->setNeedsStyleRecalc(SyntheticStyleChange);
         }
-        if (frame() && !frame()->settings()->maximumPlugInSnapshotAttempts()) {
+        if (frame() && !frame()->settings().maximumPlugInSnapshotAttempts()) {
             m_pluginElement->setDisplayState(HTMLPlugInElement::DisplayingSnapshot);
             return;
         }
@@ -1415,10 +1415,6 @@ bool PluginView::isAcceleratedCompositingEnabled()
     if (!frame())
         return false;
     
-    Settings* settings = frame()->settings();
-    if (!settings)
-        return false;
-
     // We know that some plug-ins can support snapshotting without needing
     // accelerated compositing. Since we're trying to snapshot them anyway,
     // put them into normal compositing mode. A side benefit is that this might
@@ -1426,7 +1422,7 @@ bool PluginView::isAcceleratedCompositingEnabled()
     if (m_pluginElement->displayState() < HTMLPlugInElement::Restarting && m_parameters.mimeType == "application/x-shockwave-flash")
         return false;
 
-    return settings->acceleratedCompositingEnabled();
+    return frame()->settings().acceleratedCompositingEnabled();
 }
 
 void PluginView::pluginProcessCrashed()
@@ -1531,11 +1527,7 @@ bool PluginView::isPrivateBrowsingEnabled()
     if (!frame()->document()->securityOrigin()->canAccessPluginStorage(frame()->document()->topOrigin()))
         return true;
 
-    Settings* settings = frame()->settings();
-    if (!settings)
-        return true;
-
-    return settings->privateBrowsingEnabled();
+    return frame()->settings().privateBrowsingEnabled();
 }
 
 bool PluginView::asynchronousPluginInitializationEnabled() const
@@ -1688,7 +1680,7 @@ void PluginView::pluginSnapshotTimerFired(DeferrableOneShotTimer<PluginView>*)
         m_pluginElement->updateSnapshot(snapshotImage.get());
 
 #if PLATFORM(MAC)
-        unsigned maximumSnapshotRetries = frame() ? frame()->settings()->maximumPlugInSnapshotAttempts() : 0;
+        unsigned maximumSnapshotRetries = frame() ? frame()->settings().maximumPlugInSnapshotAttempts() : 0;
         if (snapshotImage && isAlmostSolidColor(static_cast<BitmapImage*>(snapshotImage.get())) && m_countSnapshotRetries < maximumSnapshotRetries) {
             ++m_countSnapshotRetries;
             m_pluginSnapshotTimer.restart();
@@ -1719,7 +1711,7 @@ bool PluginView::shouldAlwaysAutoStart() const
 
 void PluginView::pluginDidReceiveUserInteraction()
 {
-    if (frame() && !frame()->settings()->plugInSnapshottingEnabled())
+    if (frame() && !frame()->settings().plugInSnapshottingEnabled())
         return;
 
     if (m_didReceiveUserInteraction)

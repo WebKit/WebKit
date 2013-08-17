@@ -357,8 +357,7 @@ bool DOMWindow::allowPopUp(Frame* firstFrame)
     if (ScriptController::processingUserGesture())
         return true;
 
-    Settings* settings = firstFrame->settings();
-    return settings && settings->javaScriptCanOpenWindowsAutomatically();
+    return firstFrame->settings().javaScriptCanOpenWindowsAutomatically();
 }
 
 bool DOMWindow::allowPopUp()
@@ -923,7 +922,7 @@ void DOMWindow::focus(ScriptExecutionContext* context)
     if (!page)
         return;
 
-    bool allowFocus = WindowFocusAllowedIndicator::windowFocusAllowed() || !m_frame->settings()->windowFocusRestricted();
+    bool allowFocus = WindowFocusAllowedIndicator::windowFocusAllowed() || !m_frame->settings().windowFocusRestricted();
     if (context) {
         ASSERT(isMainThread());
         Document* activeDocument = toDocument(context);
@@ -948,7 +947,6 @@ void DOMWindow::focus(ScriptExecutionContext* context)
 
 void DOMWindow::blur()
 {
-
     if (!m_frame)
         return;
 
@@ -956,7 +954,7 @@ void DOMWindow::blur()
     if (!page)
         return;
 
-    if (m_frame->settings()->windowFocusRestricted())
+    if (m_frame->settings().windowFocusRestricted())
         return;
 
     if (m_frame != page->mainFrame())
@@ -987,8 +985,7 @@ void DOMWindow::close(ScriptExecutionContext* context)
             return;
     }
 
-    Settings* settings = m_frame->settings();
-    bool allowScriptsToCloseWindows = settings && settings->allowScriptsToCloseWindows();
+    bool allowScriptsToCloseWindows = m_frame->settings().allowScriptsToCloseWindows();
 
     if (!(page->openedByDOM() || page->backForward()->count() <= 1 || allowScriptsToCloseWindows))
         return;
@@ -1386,10 +1383,8 @@ PassRefPtr<CSSRuleList> DOMWindow::getMatchedCSSRules(Element* element, const St
     unsigned rulesToInclude = StyleResolver::AuthorCSSRules;
     if (!authorOnly)
         rulesToInclude |= StyleResolver::UAAndUserCSSRules;
-    if (Settings* settings = m_frame->settings()) {
-        if (settings->crossOriginCheckInGetMatchedCSSRulesDisabled())
-            rulesToInclude |= StyleResolver::CrossOriginCSSRules;
-    }
+    if (m_frame->settings().crossOriginCheckInGetMatchedCSSRulesDisabled())
+        rulesToInclude |= StyleResolver::CrossOriginCSSRules;
 
     PseudoId pseudoId = CSSSelector::pseudoId(pseudoType);
 

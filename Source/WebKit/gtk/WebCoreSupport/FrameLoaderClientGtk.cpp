@@ -585,8 +585,7 @@ void FrameLoaderClient::dispatchDidClearWindowObjectInWorld(DOMWrapperWorld* wor
     Frame* coreFrame = core(m_frame);
     ASSERT(coreFrame);
 
-    Settings* settings = coreFrame->settings();
-    if (!settings || !settings->isScriptEnabled())
+    if (!coreFrame->settings().isScriptEnabled())
         return;
 
     // TODO: Consider using g_signal_has_handler_pending() to avoid the overhead

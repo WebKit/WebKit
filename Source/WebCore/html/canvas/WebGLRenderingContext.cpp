@@ -411,11 +411,10 @@ PassOwnPtr<WebGLRenderingContext> WebGLRenderingContext::create(HTMLCanvasElemen
     Frame* frame = document->frame();
     if (!frame)
         return nullptr;
-    Settings* settings = frame->settings();
 
     // The FrameLoaderClient might creation of a new WebGL context despite the page settings; in
     // particular, if WebGL contexts were lost one or more times via the GL_ARB_robustness extension.
-    if (!frame->loader().client()->allowWebGL(settings && settings->webGLEnabled())) {
+    if (!frame->loader().client()->allowWebGL(frame->settings().webGLEnabled())) {
         canvas->dispatchEvent(WebGLContextEvent::create(eventNames().webglcontextcreationerrorEvent, false, true, "Web page was not allowed to create a WebGL context."));
         return nullptr;
     }
@@ -424,7 +423,7 @@ PassOwnPtr<WebGLRenderingContext> WebGLRenderingContext::create(HTMLCanvasElemen
     GraphicsContext3D::Attributes attributes = attrs ? attrs->attributes() : GraphicsContext3D::Attributes();
 
     if (attributes.antialias) {
-        if (settings && !settings->openGLMultisamplingEnabled())
+        if (!frame->settings().openGLMultisamplingEnabled())
             attributes.antialias = false;
     }
 
@@ -5820,7 +5819,7 @@ void WebGLRenderingContext::maybeRestoreContext(Timer<WebGLRenderingContext>*)
     if (!frame)
         return;
 
-    if (!frame->loader().client()->allowWebGL(frame->settings() && frame->settings()->webGLEnabled()))
+    if (!frame->loader().client()->allowWebGL(frame->settings().webGLEnabled()))
         return;
 
     FrameView* view = frame->view();

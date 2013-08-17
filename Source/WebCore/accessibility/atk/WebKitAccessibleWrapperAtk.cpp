@@ -645,8 +645,7 @@ static bool isTextWithCaret(AccessibilityObject* coreObject)
     if (!frame)
         return false;
 
-    Settings* settings = frame->settings();
-    if (!settings || !settings->caretBrowsingEnabled())
+    if (!frame->settings().caretBrowsingEnabled())
         return false;
 
     // Check text objects and paragraphs only.

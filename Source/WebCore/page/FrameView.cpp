@@ -495,9 +495,7 @@ void FrameView::setMarginHeight(LayoutUnit h)
 
 bool FrameView::frameFlatteningEnabled() const
 {
-    if (Settings* settings = frame().settings())
-        return settings->frameFlatteningEnabled();
-    return false;
+    return frame().settings().frameFlatteningEnabled();
 }
 
 bool FrameView::isFrameFlatteningValidForThisFrame() const
@@ -540,10 +538,8 @@ void FrameView::updateCanHaveScrollbars()
 
 PassRefPtr<Scrollbar> FrameView::createScrollbar(ScrollbarOrientation orientation)
 {
-    if (Settings* settings = frame().settings()) {
-        if (!settings->allowCustomScrollbarInMainFrame() && isMainFrameView())
-            return ScrollView::createScrollbar(orientation);
-    }
+    if (!frame().settings().allowCustomScrollbarInMainFrame() && isMainFrameView())
+        return ScrollView::createScrollbar(orientation);
 
     // FIXME: We need to update the scrollbar dynamically as documents change (or as doc elements and bodies get discovered that have custom styles).
     Document* doc = frame().document();
@@ -797,7 +793,7 @@ bool FrameView::usesCompositedScrolling() const
     RenderView* renderView = this->renderView();
     if (!renderView)
         return false;
-    if (frame().settings() && frame().settings()->compositedScrollingForFramesEnabled())
+    if (frame().settings().compositedScrollingForFramesEnabled())
         return renderView->compositor()->inForcedCompositingMode();
     return false;
 }
@@ -1633,10 +1629,7 @@ IntPoint FrameView::maximumScrollPosition() const
 
 bool FrameView::fixedElementsLayoutRelativeToFrame() const
 {
-    if (!frame().settings())
-        return false;
-
-    return frame().settings()->fixedElementsLayoutRelativeToFrame();
+    return frame().settings().fixedElementsLayoutRelativeToFrame();
 }
 
 IntPoint FrameView::lastKnownMousePosition() const
@@ -3084,7 +3077,7 @@ IntRect FrameView::windowResizerRect() const
 
 float FrameView::visibleContentScaleFactor() const
 {
-    if (!isMainFrameView() || !frame().settings()->applyPageScaleFactorInCompositor())
+    if (!isMainFrameView() || !frame().settings().applyPageScaleFactorInCompositor())
         return 1;
 
     return frame().page()->pageScaleFactor();

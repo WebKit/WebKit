@@ -287,7 +287,7 @@ bool FocusController::advanceFocusInDocumentOrder(FocusDirection direction, Keyb
 
     Node* currentNode = document->focusedElement();
     // FIXME: Not quite correct when it comes to focus transitions leaving/entering the WebView itself
-    bool caretBrowsing = frame->settings() && frame->settings()->caretBrowsingEnabled();
+    bool caretBrowsing = frame->settings().caretBrowsingEnabled();
 
     if (caretBrowsing && !currentNode)
         currentNode = frame->selection()->start().deprecatedNode();
@@ -568,7 +568,7 @@ static void clearSelectionIfNeeded(Frame* oldFocusedFrame, Frame* newFocusedFram
     if (s->isNone())
         return;
 
-    bool caretBrowsing = oldFocusedFrame->settings()->caretBrowsingEnabled();
+    bool caretBrowsing = oldFocusedFrame->settings().caretBrowsingEnabled();
     if (caretBrowsing)
         return;
 

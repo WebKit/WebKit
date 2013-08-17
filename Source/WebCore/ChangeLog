@@ -1,3 +1,14 @@
+2013-08-16  Andreas Kling  <akling@apple.com>
+
+        <https://webkit.org/b/119903> Make Settings ref-counted (and let Frame keep a ref!)
+
+        Reviewed by Geoff Garen.
+
+        Let Frame hold a RefPtr<Settings> so Frame::settings() isn't forced to go through Page.
+        It now also returns a reference, as it can never be null.
+
+        Removed 8.8 million lines of null-checking as a result.
+
 2013-08-16  Ryosuke Niwa  <rniwa@webkit.org>
 
         <https://webkit.org/b/119536> Refactor highestEditableRoot to avoid a redundant call to rendererIsEditable

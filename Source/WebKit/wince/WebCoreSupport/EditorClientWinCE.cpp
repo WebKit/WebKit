@@ -365,7 +365,7 @@ bool EditorClientWinCE::handleEditingKeyboardEvent(KeyboardEvent* event)
     if (!keyEvent)
         return false;
 
-    bool caretBrowsing = frame->settings()->caretBrowsingEnabled();
+    bool caretBrowsing = frame->settings().caretBrowsingEnabled();
     if (caretBrowsing) {
         switch (keyEvent->windowsVirtualKeyCode()) {
         case VK_LEFT:

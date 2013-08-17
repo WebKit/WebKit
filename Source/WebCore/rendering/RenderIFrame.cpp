@@ -108,7 +108,7 @@ bool RenderIFrame::flattenFrame() const
     if (isSeamless())
         return false; // Seamless iframes are already "flat", don't try to flatten them.
 
-    bool enabled = frame && frame->settings() && frame->settings()->frameFlatteningEnabled();
+    bool enabled = frame && frame->settings().frameFlatteningEnabled();
 
     if (!enabled || !frame->page())
         return false;

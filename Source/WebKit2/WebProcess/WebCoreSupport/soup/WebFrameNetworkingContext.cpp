@@ -65,7 +65,7 @@ WebFrameNetworkingContext::WebFrameNetworkingContext(WebFrame* frame)
 
 NetworkStorageSession& WebFrameNetworkingContext::storageSession() const
 {
-    if (frame() && frame()->settings() && frame()->settings()->privateBrowsingEnabled())
+    if (frame() && frame()->settings().privateBrowsingEnabled())
         return *privateSession;
 
     return NetworkStorageSession::defaultStorageSession();

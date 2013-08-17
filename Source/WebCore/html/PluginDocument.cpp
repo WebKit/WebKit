@@ -110,9 +110,6 @@ void PluginDocumentParser::appendBytes(DocumentWriter*, const char*, size_t)
     Frame* frame = document()->frame();
     if (!frame)
         return;
-    Settings* settings = frame->settings();
-    if (!settings)
-        return;
 
     document()->updateLayout();
 

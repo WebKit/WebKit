@@ -457,7 +457,7 @@ private:
 #endif
     RefPtr<ScrollingCoordinator> m_scrollingCoordinator;
 
-    const OwnPtr<Settings> m_settings;
+    const RefPtr<Settings> m_settings;
     OwnPtr<ProgressTracker> m_progress;
 
     OwnPtr<BackForwardController> m_backForwardController;

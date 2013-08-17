@@ -661,8 +661,7 @@ Element* DragController::draggableElement(const Frame* sourceFrame, Element* sta
             if (dragMode == DRAG_AUTO) {
                 if ((m_dragSourceAction & DragSourceActionImage)
                     && isHTMLImageElement(node)
-                    && sourceFrame->settings()
-                    && sourceFrame->settings()->loadsImagesAutomatically()) {
+                    && sourceFrame->settings().loadsImagesAutomatically()) {
                     state.type = static_cast<DragSourceAction>(state.type | DragSourceActionImage);
                     return toElement(node);
                 }
@@ -845,7 +844,7 @@ bool DragController::startDrag(Frame* src, const DragState& state, DragOperation
 
         m_client->willPerformDragSourceAction(DragSourceActionLink, dragOrigin, clipboard);
         if (!dragImage) {
-            dragImage = createDragImageForLink(linkURL, hitTestResult.textContent(), src->settings() ? src->settings()->fontRenderingMode() : NormalRenderingMode);
+            dragImage = createDragImageForLink(linkURL, hitTestResult.textContent(), src->settings().fontRenderingMode());
             IntSize size = dragImageSize(dragImage);
             m_dragOffset = IntPoint(-size.width() / 2, -LinkDragBorderInset);
             dragLoc = IntPoint(mouseDraggedPoint.x() + m_dragOffset.x(), mouseDraggedPoint.y() + m_dragOffset.y());

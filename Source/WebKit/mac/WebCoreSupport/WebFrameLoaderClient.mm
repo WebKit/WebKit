@@ -1668,7 +1668,7 @@ PassRefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize& size, HTMLP
     // plug-in.
     Frame* frame = core(m_webFrame.get());
     NSMutableArray *attributeKeys = kit(paramNames);
-    if (frame && frame->settings()->needsSiteSpecificQuirks() && equalIgnoringCase(mimeType, "application/x-snkp")) {
+    if (frame && frame->settings().needsSiteSpecificQuirks() && equalIgnoringCase(mimeType, "application/x-snkp")) {
         for (NSUInteger i = 0; i < [attributeKeys count]; ++i)
             [attributeKeys replaceObjectAtIndex:i withObject:[[attributeKeys objectAtIndex:i] lowercaseString]];
     }

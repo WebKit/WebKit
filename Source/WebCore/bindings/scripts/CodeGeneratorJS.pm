@@ -1994,8 +1994,10 @@ sub GenerateImplementation
                         AddToImplIncludes("Frame.h");
                         AddToImplIncludes("Settings.h");
                         my $enable_function = ToMethodName($attribute->signature->extendedAttributes->{"EnabledBySetting"}) . "Enabled";
-                        push(@implContent, "    Settings* settings = castedThis->impl()->frame() ? castedThis->impl()->frame()->settings() : 0;\n");
-                        push(@implContent, "    if (!settings || !settings->$enable_function())\n");
+                        push(@implContent, "    if (!castedThis->impl()->frame())\n");
+                        push(@implContent, "        return jsUndefined();\n");
+                        push(@implContent, "    Settings& settings = castedThis->impl()->frame()->settings();\n");
+                        push(@implContent, "    if (!settings.$enable_function())\n");
                         push(@implContent, "        return jsUndefined();\n");
                     }
                 }

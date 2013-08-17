@@ -141,7 +141,7 @@ void SpellChecker::timerFiredToProcessQueuedRequest(Timer<SpellChecker>*)
 
 bool SpellChecker::isAsynchronousEnabled() const
 {
-    return m_frame->settings() && m_frame->settings()->asynchronousSpellCheckingEnabled();
+    return m_frame->settings().asynchronousSpellCheckingEnabled();
 }
 
 bool SpellChecker::canCheckAsynchronously(Range* range) const

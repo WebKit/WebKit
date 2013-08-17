@@ -434,10 +434,8 @@ void InspectorPageAgent::enable(ErrorString*)
     m_state->setBoolean(PageAgentState::pageAgentEnabled, true);
     m_instrumentingAgents->setInspectorPageAgent(this);
 
-    if (Frame* frame = mainFrame()) {
-        if (Settings* settings = frame->settings())
-            m_originalScriptExecutionDisabled = !settings->isScriptEnabled();
-    }
+    if (Frame* frame = mainFrame())
+        m_originalScriptExecutionDisabled = !frame->settings().isScriptEnabled();
 }
 
 void InspectorPageAgent::disable(ErrorString*)
@@ -840,8 +838,7 @@ void InspectorPageAgent::getScriptExecutionStatus(ErrorString*, PageCommandHandl
     Frame* frame = mainFrame();
     if (frame) {
         disabledByScriptController = !frame->script().canExecuteScripts(NotAboutToExecuteScript);
-        if (frame->settings())
-            disabledInSettings = !frame->settings()->isScriptEnabled();
+        disabledInSettings = !frame->settings().isScriptEnabled();
     }
 
     if (!disabledByScriptController) {
@@ -861,12 +858,9 @@ void InspectorPageAgent::setScriptExecutionDisabled(ErrorString*, bool value)
     if (!mainFrame())
         return;
 
-    Settings* settings = mainFrame()->settings();
-    if (settings) {
-        m_ignoreScriptsEnabledNotification = true;
-        settings->setScriptEnabled(!value);
-        m_ignoreScriptsEnabledNotification = false;
-    }
+    m_ignoreScriptsEnabledNotification = true;
+    mainFrame()->settings().setScriptEnabled(!value);
+    m_ignoreScriptsEnabledNotification = false;
 }
 
 void InspectorPageAgent::didClearWindowObjectInWorld(Frame* frame, DOMWrapperWorld* world)
@@ -1171,8 +1165,8 @@ void InspectorPageAgent::updateViewMetrics(int width, int height, double fontSca
 void InspectorPageAgent::updateTouchEventEmulationInPage(bool enabled)
 {
     m_state->setBoolean(PageAgentState::touchEventEmulationEnabled, enabled);
-    if (mainFrame() && mainFrame()->settings())
-        mainFrame()->settings()->setTouchEventEmulationEnabled(enabled);
+    if (mainFrame())
+        mainFrame()->settings().setTouchEventEmulationEnabled(enabled);
 }
 #endif
 

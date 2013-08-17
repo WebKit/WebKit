@@ -560,8 +560,7 @@ void FrameSelection::willBeModified(EAlteration alter, SelectionDirection direct
 
 VisiblePosition FrameSelection::positionForPlatform(bool isGetStart) const
 {
-    Settings* settings = m_frame ? m_frame->settings() : 0;
-    if (settings && settings->editingBehaviorType() == EditingMacBehavior)
+    if (m_frame && m_frame->settings().editingBehaviorType() == EditingMacBehavior)
         return isGetStart ? m_selection.visibleStart() : m_selection.visibleEnd();
     // Linux and Windows always extend selections from the extent endpoint.
     // FIXME: VisibleSelection should be fixed to ensure as an invariant that
@@ -1413,7 +1412,7 @@ bool CaretBase::shouldRepaintCaret(const RenderView* view, bool isContentEditabl
 {
     ASSERT(view);
     Frame* frame = view->frameView() ? &view->frameView()->frame() : 0; // The frame where the selection started.
-    bool caretBrowsing = frame && frame->settings() && frame->settings()->caretBrowsingEnabled();
+    bool caretBrowsing = frame && frame->settings().caretBrowsingEnabled();
     return (caretBrowsing || isContentEditable);
 }
 
@@ -1770,7 +1769,7 @@ void FrameSelection::updateAppearance()
 #if ENABLE(TEXT_CARET)
     bool caretRectChangedOrCleared = recomputeCaretRect();
 
-    bool caretBrowsing = m_frame->settings() && m_frame->settings()->caretBrowsingEnabled();
+    bool caretBrowsing = m_frame->settings().caretBrowsingEnabled();
     bool shouldBlink = caretIsVisible() && isCaret() && (isContentEditable() || caretBrowsing) && forwardPosition.isNull();
 
     // If the caret moved, stop the blink timer so we can restart with a
@@ -1884,7 +1883,7 @@ void FrameSelection::setFocusedElementIfNeeded()
     if (isNone() || !isFocused())
         return;
 
-    bool caretBrowsing = m_frame->settings() && m_frame->settings()->caretBrowsingEnabled();
+    bool caretBrowsing = m_frame->settings().caretBrowsingEnabled();
     if (caretBrowsing) {
         if (Element* anchor = enclosingAnchorElement(base())) {
             m_frame->page()->focusController().setFocusedElement(anchor, m_frame);
@@ -2037,7 +2036,7 @@ void FrameSelection::setSelectionFromNone()
     // entire WebView is editable or designMode is on for this document).
 
     Document* document = m_frame->document();
-    bool caretBrowsing = m_frame->settings() && m_frame->settings()->caretBrowsingEnabled();
+    bool caretBrowsing = m_frame->settings().caretBrowsingEnabled();
     if (!isNone() || !(document->rendererIsEditable() || caretBrowsing))
         return;
 
@@ -2064,8 +2063,9 @@ bool FrameSelection::dispatchSelectStart()
 
 inline bool FrameSelection::visualWordMovementEnabled() const
 {
-    Settings* settings = m_frame ? m_frame->settings() : 0;
-    return settings && settings->visualWordMovementEnabled();
+    if (!m_frame)
+        return false;
+    return m_frame->settings().visualWordMovementEnabled();
 }
 
 void FrameSelection::setShouldShowBlockCursor(bool shouldShowBlockCursor)

@@ -182,9 +182,9 @@ Settings::~Settings()
 {
 }
 
-PassOwnPtr<Settings> Settings::create(Page* page)
+PassRefPtr<Settings> Settings::create(Page* page)
 {
-    return adoptPtr(new Settings(page));
+    return adoptRef(new Settings(page));
 }
 
 SETTINGS_SETTER_BODIES

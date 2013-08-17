@@ -35,6 +35,7 @@
 #include "SettingsMacros.h"
 #include "Timer.h"
 #include <wtf/HashMap.h>
+#include <wtf/RefCounted.h>
 #include <wtf/text/AtomicString.h>
 #include <wtf/text/AtomicStringHash.h>
 #include <wtf/unicode/Unicode.h>
@@ -58,11 +59,10 @@ namespace WebCore {
         TextDirectionSubmenuAlwaysIncluded
     };
 
-    class Settings {
+    class Settings : public RefCounted<Settings> {
         WTF_MAKE_NONCOPYABLE(Settings); WTF_MAKE_FAST_ALLOCATED;
     public:
-        static PassOwnPtr<Settings> create(Page*);
-
+        static PassRefPtr<Settings> create(Page*);
         ~Settings();
 
         void setStandardFontFamily(const AtomicString&, UScriptCode = USCRIPT_COMMON);

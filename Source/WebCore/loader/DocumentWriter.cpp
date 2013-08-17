@@ -169,25 +169,21 @@ void DocumentWriter::begin(const KURL& urlReference, bool dispatch, Document* ow
 TextResourceDecoder* DocumentWriter::createDecoderIfNeeded()
 {
     if (!m_decoder) {
-        if (Settings* settings = m_frame->settings()) {
-            m_decoder = TextResourceDecoder::create(m_mimeType,
-                settings->defaultTextEncodingName(),
-                settings->usesEncodingDetector());
-            Frame* parentFrame = m_frame->tree()->parent();
-            // Set the hint encoding to the parent frame encoding only if
-            // the parent and the current frames share the security origin.
-            // We impose this condition because somebody can make a child frame 
-            // containing a carefully crafted html/javascript in one encoding
-            // that can be mistaken for hintEncoding (or related encoding) by
-            // an auto detector. When interpreted in the latter, it could be
-            // an attack vector.
-            // FIXME: This might be too cautious for non-7bit-encodings and
-            // we may consider relaxing this later after testing.
-            if (canReferToParentFrameEncoding(m_frame, parentFrame))
-                m_decoder->setHintEncoding(parentFrame->document()->decoder());
-        } else
-            m_decoder = TextResourceDecoder::create(m_mimeType, String());
+        m_decoder = TextResourceDecoder::create(m_mimeType,
+            m_frame->settings().defaultTextEncodingName(),
+            m_frame->settings().usesEncodingDetector());
         Frame* parentFrame = m_frame->tree()->parent();
+        // Set the hint encoding to the parent frame encoding only if
+        // the parent and the current frames share the security origin.
+        // We impose this condition because somebody can make a child frame
+        // containing a carefully crafted html/javascript in one encoding
+        // that can be mistaken for hintEncoding (or related encoding) by
+        // an auto detector. When interpreted in the latter, it could be
+        // an attack vector.
+        // FIXME: This might be too cautious for non-7bit-encodings and
+        // we may consider relaxing this later after testing.
+        if (canReferToParentFrameEncoding(m_frame, parentFrame))
+            m_decoder->setHintEncoding(parentFrame->document()->decoder());
         if (m_encoding.isEmpty()) {
             if (canReferToParentFrameEncoding(m_frame, parentFrame))
                 m_decoder->setEncoding(parentFrame->document()->inputEncoding(), TextResourceDecoder::EncodingFromParentFrame);

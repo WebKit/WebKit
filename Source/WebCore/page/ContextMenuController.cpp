@@ -183,7 +183,7 @@ static void openNewWindow(const KURL& urlToLoad, Frame* frame)
     if (Page* oldPage = frame->page()) {
         FrameLoadRequest request(frame->document()->securityOrigin(), ResourceRequest(urlToLoad, frame->loader().outgoingReferrer()));
         Page* newPage = oldPage;
-        if (!frame->settings() || frame->settings()->supportsMultipleWindows()) {
+        if (frame->settings().supportsMultipleWindows()) {
             newPage = oldPage->chrome().createWindow(frame, request, WindowFeatures(), NavigationAction(request.resourceRequest()));
             if (!newPage)
                 return;

@@ -632,7 +632,7 @@ bool FrameLoaderClientQt::canShowMIMEType(const String& MIMEType) const
     if (MIMETypeRegistry::canShowMIMEType(type))
         return true;
 
-    if (m_frame && m_frame->settings()  && m_frame->settings()->arePluginsEnabled()
+    if (m_frame && m_frame->settings().arePluginsEnabled()
         && PluginDatabase::installedPlugins()->isMIMETypeRegistered(type))
         return true;
 
@@ -1348,7 +1348,7 @@ ObjectContentType FrameLoaderClientQt::objectContentType(const KURL& url, const 
     if (!mimeType.length())
         mimeType = MIMETypeRegistry::getMIMETypeForExtension(extension);
 
-    bool arePluginsEnabled = (m_frame && m_frame->settings() && m_frame->settings()->arePluginsEnabled());
+    bool arePluginsEnabled = (m_frame && m_frame->settings().arePluginsEnabled());
     if (arePluginsEnabled && !mimeType.length())
         mimeType = PluginDatabase::installedPlugins()->MIMETypeForExtension(extension);
 

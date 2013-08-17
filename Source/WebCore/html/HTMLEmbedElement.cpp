@@ -191,11 +191,9 @@ bool HTMLEmbedElement::rendererIsNeeded(const NodeRenderingContext& context)
     }
 
 #if ENABLE(DASHBOARD_SUPPORT)
-    // Workaround for <rdar://problem/6642221>. 
-    if (Settings* settings = frame->settings()) {
-        if (settings->usesDashboardBackwardCompatibilityMode())
-            return true;
-    }
+    // Workaround for <rdar://problem/6642221>.
+    if (frame->settings().usesDashboardBackwardCompatibilityMode())
+        return true;
 #endif
 
     return HTMLPlugInImageElement::rendererIsNeeded(context);

@@ -160,10 +160,7 @@ bool JSDOMWindowBase::javaScriptExperimentsEnabled(const JSGlobalObject* object)
     Frame* frame = thisObject->impl()->frame();
     if (!frame)
         return false;
-    Settings* settings = frame->settings();
-    if (!settings)
-        return false;
-    return settings->javaScriptExperimentsEnabled();
+    return frame->settings().javaScriptExperimentsEnabled();
 }
 
 void JSDOMWindowBase::willRemoveFromWindowShell()

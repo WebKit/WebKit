@@ -1172,8 +1172,7 @@ static bool supportedCopyCut(Frame* frame)
     if (!frame)
         return false;
 
-    Settings* settings = frame->settings();
-    bool defaultValue = settings && settings->javaScriptCanAccessClipboard();
+    bool defaultValue = frame->settings().javaScriptCanAccessClipboard();
 
     EditorClient* client = frame->editor().client();
     return client ? client->canCopyCut(frame, defaultValue) : defaultValue;
@@ -1184,8 +1183,7 @@ static bool supportedPaste(Frame* frame)
     if (!frame)
         return false;
 
-    Settings* settings = frame->settings();
-    bool defaultValue = settings && settings->javaScriptCanAccessClipboard() && settings->DOMPasteAllowed();
+    bool defaultValue = frame->settings().javaScriptCanAccessClipboard() && frame->settings().DOMPasteAllowed();
 
     EditorClient* client = frame->editor().client();
     return client ? client->canPaste(frame, defaultValue) : defaultValue;
@@ -1207,7 +1205,7 @@ static bool enabledVisibleSelection(Frame* frame, Event* event, EditorCommandSou
 
 static bool caretBrowsingEnabled(Frame* frame)
 {
-    return frame->settings() && frame->settings()->caretBrowsingEnabled();
+    return frame->settings().caretBrowsingEnabled();
 }
 
 static EditorCommandSource dummyEditorCommandSource = static_cast<EditorCommandSource>(0);

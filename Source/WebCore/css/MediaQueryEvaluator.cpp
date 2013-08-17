@@ -635,7 +635,7 @@ enum PointerDeviceType { TouchPointer, MousePointer, NoPointer, UnknownPointer }
 
 static PointerDeviceType leastCapablePrimaryPointerDeviceType(Frame* frame)
 {
-    if (frame->settings()->deviceSupportsTouch())
+    if (frame->settings().deviceSupportsTouch())
         return TouchPointer;
 
     // FIXME: We should also try to determine if we know we have a mouse.

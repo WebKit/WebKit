@@ -182,10 +182,9 @@ VisibleSelection Editor::selectionForCommand(Event* event)
 // Function considers Mac editing behavior a fallback when Page or Settings is not available.
 EditingBehavior Editor::behavior() const
 {
-    if (!m_frame || !m_frame->settings())
+    if (!m_frame)
         return EditingBehavior(EditingMacBehavior);
-
-    return EditingBehavior(m_frame->settings()->editingBehaviorType());
+    return EditingBehavior(m_frame->settings().editingBehaviorType());
 }
 
 EditorClient* Editor::client() const
@@ -2118,7 +2117,7 @@ void Editor::markAllMisspellingsAndBadGrammarInRanges(TextCheckingTypeMask textC
         return;
     RefPtr<Range> paragraphRange = paragraphToCheck.paragraphRange();
 
-    bool asynchronous = m_frame && m_frame->settings() && m_frame->settings()->asynchronousSpellCheckingEnabled() && !shouldShowCorrectionPanel;
+    bool asynchronous = m_frame && m_frame->settings().asynchronousSpellCheckingEnabled() && !shouldShowCorrectionPanel;
 
     // In asynchronous mode, we intentionally check paragraph-wide sentence.
     RefPtr<SpellCheckRequest> request = SpellCheckRequest::create(resolveTextCheckingTypeMask(textCheckingOptions), TextCheckingProcessIncremental, asynchronous ? paragraphRange : rangeToCheck, paragraphRange);
@@ -2631,7 +2630,7 @@ String Editor::selectedText() const
 
 String Editor::selectedTextForClipboard() const
 {
-    if (m_frame->settings() && m_frame->settings()->selectionIncludesAltImageText())
+    if (m_frame->settings().selectionIncludesAltImageText())
         return selectedText(TextIteratorEmitsImageAltText);
     return selectedText();
 }
@@ -2989,7 +2988,7 @@ void Editor::respondToChangedSelection(const VisibleSelection& oldSelection, Fra
     if (isContinuousSpellCheckingEnabled) {
         VisibleSelection newAdjacentWords;
         VisibleSelection newSelectedSentence;
-        bool caretBrowsing = m_frame->settings() && m_frame->settings()->caretBrowsingEnabled();
+        bool caretBrowsing = m_frame->settings().caretBrowsingEnabled();
         if (m_frame->selection()->selection().isContentEditable() || caretBrowsing) {
             VisiblePosition newStart(m_frame->selection()->selection().visibleStart());
             newAdjacentWords = VisibleSelection(startOfWord(newStart, LeftWordIfOnBoundary), endOfWord(newStart, RightWordIfOnBoundary));

@@ -3272,7 +3272,7 @@ bool RenderBlock::paintChild(RenderBox* child, PaintInfo& paintInfo, const Layou
 void RenderBlock::paintCaret(PaintInfo& paintInfo, const LayoutPoint& paintOffset, CaretType type)
 {
     // Paint the caret if the FrameSelection says so or if caret browsing is enabled
-    bool caretBrowsing = frame()->settings() && frame()->settings()->caretBrowsingEnabled();
+    bool caretBrowsing = frame()->settings().caretBrowsingEnabled();
     RenderObject* caretPainter;
     bool isContentEditable;
     if (type == CursorCaret) {

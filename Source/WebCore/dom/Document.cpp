@@ -1650,7 +1650,7 @@ Page* Document::page() const
 
 Settings* Document::settings() const
 {
-    return m_frame ? m_frame->settings() : 0;
+    return m_frame ? &m_frame->settings() : 0;
 }
 
 PassRefPtr<Range> Document::createRange()

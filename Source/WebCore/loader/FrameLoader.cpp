@@ -2503,8 +2503,7 @@ void FrameLoader::addExtraFieldsToRequest(ResourceRequest& request, FrameLoadTyp
     // Only set fallback array if it's still empty (later attempts may be incorrect, see bug 117818).
     if (request.responseContentDispositionEncodingFallbackArray().isEmpty()) {
         // Always try UTF-8. If that fails, try frame encoding (if any) and then the default.
-        Settings* settings = m_frame->settings();
-        request.setResponseContentDispositionEncodingFallbackArray("UTF-8", m_frame->document()->encoding(), settings ? settings->defaultTextEncodingName() : String());
+        request.setResponseContentDispositionEncodingFallbackArray("UTF-8", m_frame->document()->encoding(), m_frame->settings().defaultTextEncodingName());
     }
 }
 
@@ -3422,7 +3421,7 @@ PassRefPtr<Frame> createWindow(Frame* openerFrame, Frame* lookupFrame, const Fra
         requestWithReferrer.resourceRequest().setHTTPReferrer(referrer);
     FrameLoader::addHTTPOriginIfNeeded(requestWithReferrer.resourceRequest(), openerFrame->loader().outgoingOrigin());
 
-    if (openerFrame->settings() && !openerFrame->settings()->supportsMultipleWindows()) {
+    if (!openerFrame->settings().supportsMultipleWindows()) {
         created = false;
         return openerFrame;
     }

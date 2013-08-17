@@ -130,8 +130,7 @@ static float pageZoomFactor(const Document* document)
 void ImageDocumentParser::appendBytes(DocumentWriter*, const char*, size_t)
 {
     Frame* frame = document()->frame();
-    Settings* settings = frame->settings();
-    if (!frame->loader().client()->allowImage(!settings || settings->areImagesEnabled(), document()->url()))
+    if (!frame->loader().client()->allowImage(frame->settings().areImagesEnabled(), document()->url()))
         return;
 
     CachedImage* cachedImage = document()->cachedImage();

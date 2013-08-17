@@ -946,7 +946,7 @@ bool EventHandler::handleMouseReleaseEvent(const MouseEventWithHitTestResults& e
             && event.event().button() != RightButton) {
         VisibleSelection newSelection;
         Node* node = event.targetNode();
-        bool caretBrowsing = m_frame->settings() && m_frame->settings()->caretBrowsingEnabled();
+        bool caretBrowsing = m_frame->settings().caretBrowsingEnabled();
         if (node && (caretBrowsing || node->rendererIsEditable()) && node->renderer()) {
             VisiblePosition pos = node->renderer()->positionForPoint(event.localPoint());
             newSelection = VisibleSelection(pos);
@@ -1214,8 +1214,7 @@ bool EventHandler::useHandCursor(Node* node, bool isOverLink, bool shiftKey)
 
     // If the link is editable, then we need to check the settings to see whether or not the link should be followed
     if (editable) {
-        ASSERT(m_frame->settings());
-        switch (m_frame->settings()->editableLinkBehavior()) {
+        switch (m_frame->settings().editableLinkBehavior()) {
         default:
         case EditableLinkDefaultBehavior:
         case EditableLinkAlwaysLive:
@@ -2635,7 +2634,7 @@ bool EventHandler::handleGestureTap(const PlatformGestureEvent& gestureEvent)
 bool EventHandler::handleGestureLongPress(const PlatformGestureEvent& gestureEvent)
 {
 #if ENABLE(DRAG_SUPPORT)
-    if (m_frame->settings() && m_frame->settings()->touchDragDropEnabled()) {
+    if (m_frame->settings().touchDragDropEnabled()) {
         IntPoint adjustedPoint = gestureEvent.position();
 #if ENABLE(TOUCH_ADJUSTMENT)
         adjustGesturePosition(gestureEvent, adjustedPoint);
@@ -2816,7 +2815,7 @@ bool EventHandler::isScrollbarHandlingGestures() const
 #if ENABLE(TOUCH_ADJUSTMENT)
 bool EventHandler::shouldApplyTouchAdjustment(const PlatformGestureEvent& event) const
 {
-    if (m_frame->settings() && !m_frame->settings()->touchAdjustmentEnabled())
+    if (!m_frame->settings().touchAdjustmentEnabled())
         return false;
     return !event.area().isEmpty();
 }
@@ -3030,8 +3029,7 @@ void EventHandler::dispatchFakeMouseMoveEventSoon()
     if (m_mousePositionIsUnknown)
         return;
 
-    Settings* settings = m_frame->settings();
-    if (settings && !settings->deviceSupportsMouse())
+    if (!m_frame->settings().deviceSupportsMouse())
         return;
 
     // If the content has ever taken longer than fakeMouseMoveShortInterval we
@@ -3070,8 +3068,7 @@ void EventHandler::fakeMouseMoveEventTimerFired(Timer<EventHandler>* timer)
     ASSERT_UNUSED(timer, timer == &m_fakeMouseMoveEventTimer);
     ASSERT(!m_mousePressed);
 
-    Settings* settings = m_frame->settings();
-    if (settings && !settings->deviceSupportsMouse())
+    if (!m_frame->settings().deviceSupportsMouse())
         return;
 
     FrameView* view = m_frame->view();
@@ -3705,7 +3702,7 @@ void EventHandler::defaultBackspaceEventHandler(KeyboardEvent* event)
     if (!page)
         return;
 
-    if (!m_frame->settings()->backspaceKeyNavigationEnabled())
+    if (!m_frame->settings().backspaceKeyNavigationEnabled())
         return;
     
     bool handledEvent = false;
@@ -4064,7 +4061,7 @@ bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
 
 bool EventHandler::dispatchSyntheticTouchEventIfEnabled(const PlatformMouseEvent& event)
 {
-    if (!m_frame || !m_frame->settings() || !m_frame->settings()->isTouchEventEmulationEnabled())
+    if (!m_frame || !m_frame->settings().isTouchEventEmulationEnabled())
         return false;
 
     PlatformEvent::Type eventType = event.type();

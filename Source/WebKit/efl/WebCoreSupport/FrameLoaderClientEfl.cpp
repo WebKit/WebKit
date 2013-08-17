@@ -435,8 +435,7 @@ void FrameLoaderClientEfl::dispatchDidClearWindowObjectInWorld(DOMWrapperWorld* 
     Frame* coreFrame = EWKPrivate::coreFrame(m_frame);
     ASSERT(coreFrame);
 
-    Settings* settings = coreFrame->settings();
-    if (!settings || !settings->isScriptEnabled())
+    if (!coreFrame->settings().isScriptEnabled())
         return;
 
     Ewk_Window_Object_Cleared_Event event;

@@ -141,7 +141,7 @@ namespace WebCore {
 
         static Frame* frameForWidget(const Widget*);
 
-        Settings* settings() const; // can be NULL
+        Settings& settings() const { return *m_settings; }
 
         void setPrinting(bool printing, const FloatSize& pageSize, const FloatSize& originalPageSize, float maximumShrinkRatio, AdjustViewSizeOrNot);
         bool shouldUsePrintingLayout() const;
@@ -210,6 +210,7 @@ namespace WebCore {
         HashSet<FrameDestructionObserver*> m_destructionObservers;
 
         Page* m_page;
+        const RefPtr<Settings> m_settings;
         mutable FrameTree m_treeNode;
         mutable FrameLoader m_loader;
         mutable NavigationScheduler m_navigationScheduler;
