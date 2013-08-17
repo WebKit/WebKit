@@ -1,5 +1,16 @@
 2013-08-17  Andreas Kling  <akling@apple.com>
 
+        <https://webkit.org/b/119952> Simplify Editor's back-pointer to the Frame.
+
+        Reviewed by Antti Koivisto.
+
+        Remove Editor's inheritance from FrameDestructionObserver. Editor is owned by Frame and
+        has no interest in observing frame destruction since its own destruction will soon follow.
+
+        Editor::m_frame is now a reference instead of a pointer. Removed some null checking.
+
+2013-08-17  Andreas Kling  <akling@apple.com>
+
         <https://webkit.org/b/119950> Remove unused EditorClient::frameWillDetachPage() callback.
 
         Reviewed by Antti Koivisto.

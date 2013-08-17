@@ -136,7 +136,7 @@ void Editor::setTextAlignmentForChangedBaseWritingDirection(WritingDirection dir
 bool Editor::insertParagraphSeparatorInQuotedContent()
 {
     // FIXME: Why is this missing calls to canEdit, canEditRichly, etc...
-    TypingCommand::insertParagraphSeparatorInQuotedContent(m_frame->document());
+    TypingCommand::insertParagraphSeparatorInQuotedContent(m_frame.document());
     revealSelectionAfterEditingOperation();
     return true;
 }
@@ -178,9 +178,9 @@ const SimpleFontData* Editor::fontForSelection(bool& hasMultipleFonts) const
 {
     hasMultipleFonts = false;
 
-    if (!m_frame->selection()->isRange()) {
+    if (!m_frame.selection()->isRange()) {
         Node* nodeToRemove;
-        RenderStyle* style = styleForSelectionStart(m_frame, nodeToRemove); // sets nodeToRemove
+        RenderStyle* style = styleForSelectionStart(&m_frame, nodeToRemove); // sets nodeToRemove
 
         const SimpleFontData* result = 0;
         if (style)
@@ -196,8 +196,8 @@ const SimpleFontData* Editor::fontForSelection(bool& hasMultipleFonts) const
     }
 
     const SimpleFontData* font = 0;
-    RefPtr<Range> range = m_frame->selection()->toNormalizedRange();
-    if (Node* startNode = adjustedSelectionStartForStyleComputation(m_frame->selection()->selection()).deprecatedNode()) {
+    RefPtr<Range> range = m_frame.selection()->toNormalizedRange();
+    if (Node* startNode = adjustedSelectionStartForStyleComputation(m_frame.selection()->selection()).deprecatedNode()) {
         Node* pastEnd = range->pastLastNode();
         // In the loop below, n should eventually match pastEnd and not become nil, but we've seen at least one
         // unreproducible case where this didn't happen, so check for null also.
@@ -222,7 +222,7 @@ const SimpleFontData* Editor::fontForSelection(bool& hasMultipleFonts) const
 NSDictionary* Editor::fontAttributesForSelectionStart() const
 {
     Node* nodeToRemove;
-    RenderStyle* style = styleForSelectionStart(m_frame, nodeToRemove);
+    RenderStyle* style = styleForSelectionStart(&m_frame, nodeToRemove);
     if (!style)
         return nil;
 
@@ -234,7 +234,7 @@ void Editor::removeUnchangeableStyles()
 {
     // This function removes styles that the user cannot modify by applying their default values.
     
-    RefPtr<EditingStyle> editingStyle = EditingStyle::create(m_frame->document()->body());
+    RefPtr<EditingStyle> editingStyle = EditingStyle::create(m_frame.document()->body());
     RefPtr<MutableStylePropertySet> defaultStyle = editingStyle.get()->style()->mutableCopy();
     
     // Text widgets implement background color via the UIView property. Their body element will not have one.
