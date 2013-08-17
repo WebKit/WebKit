@@ -1,3 +1,14 @@
+2013-08-17  David Kilzer  <ddkilzer@apple.com>
+
+        WebKit2 fails to build with trunk clang: error: 'WebPluginSiteDataManagerh' is used as a header guard here, followed by #define of a different macro [-Werror,-Wheader-guard]
+        <http://webkit.org/b/119935>
+        <rdar://problem/14764131>
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/Plugins/WebPluginSiteDataManager.h: Fix typo
+        introduced in r78647.
+
 2013-08-16  Pratik Solanki  <psolanki@apple.com>
 
         <https://webkit.org/b/119852> Frame::scriptController() should return a reference

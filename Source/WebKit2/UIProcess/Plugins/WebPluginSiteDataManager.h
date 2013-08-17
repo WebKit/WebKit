@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebPluginSiteDataManagerh
+#ifndef WebPluginSiteDataManager_h
 #define WebPluginSiteDataManager_h
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
