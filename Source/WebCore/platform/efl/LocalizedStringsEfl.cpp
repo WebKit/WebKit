@@ -630,7 +630,7 @@ String textTrackSubtitlesText()
     return String::fromUTF8("Subtitles");
 }
 
-String textTrackOffText()
+String textTrackOffMenuItemText()
 {
     return String::fromUTF8("Off");
 }

@@ -1,3 +1,16 @@
+2013-08-18  Danilo Cesar Lemes de Paula  <danilo.cesar@collabora.co.uk>
+
+        [EFL] minor method name fix for the textTrackOffMenuItemText method
+        https://bugs.webkit.org/show_bug.cgi?id=119978
+
+        the method textTrackOffMenuItemText was renamed in
+        https://bugs.webkit.org/show_bug.cgi?id=113822
+
+        Reviewed by Christophe Dumez.
+
+        * platform/efl/LocalizedStringsEfl.cpp:
+        (WebCore::textTrackOffMenuItemText):
+
 2013-08-17  Antti Koivisto  <antti@apple.com>
 
         <https://webkit.org/b/119963> Use TextNodeTraversal for getting sheet text in StyleElement
