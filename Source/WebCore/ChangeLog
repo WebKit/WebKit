@@ -1,3 +1,22 @@
+2013-08-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        <https://webkit.org/b/119917> Pasting multiple lines into a textarea can introduce extra new lines
+
+        Reviewed by Darin Adler.
+
+        Inspired by https://chromium.googlesource.com/chromium/blink/+/6152a12f7ace27beea4d284ff8416631e8aa5217.
+
+        The bug was caused by createFragmentFromText's falsely assuming that the newline were not preserved
+        if the first node's renderer didn't exist.
+
+        Fixed the bug by obtaining the renderer of the container of the first visible position in the context.
+
+        Test: editing/pasteboard/paste-into-textarea-with-new-line.html
+
+        * editing/markup.cpp:
+        (WebCore::contextPreservesNewline):
+        (WebCore::createFragmentFromText):
+
 2013-08-18  Andreas Kling  <akling@apple.com>
 
         <https://webkit.org/b/119983> Add two missing RefPtr::release() in HTMLLinkElement.

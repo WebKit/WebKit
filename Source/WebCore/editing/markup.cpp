@@ -823,19 +823,22 @@ bool isPlainTextMarkup(Node *node)
     return (node->childNodeCount() == 2 && isTabSpanTextNode(node->firstChild()->firstChild()) && node->firstChild()->nextSibling()->isTextNode());
 }
 
+static bool contextPreservesNewline(const Range& context)
+{
+    VisiblePosition position(context.startPosition());
+    Node* container = position.deepEquivalent().containerNode();
+    if (!container || !container->renderer())
+        return false;
+
+    return container->renderer()->style()->preserveNewline();
+}
+
 PassRefPtr<DocumentFragment> createFragmentFromText(Range* context, const String& text)
 {
     if (!context)
         return 0;
 
-    Node* styleNode = context->firstNode();
-    if (!styleNode) {
-        styleNode = context->startPosition().deprecatedNode();
-        if (!styleNode)
-            return 0;
-    }
-
-    Document* document = styleNode->document();
+    Document* document = context->ownerDocument();
     RefPtr<DocumentFragment> fragment = document->createDocumentFragment();
     
     if (text.isEmpty())
@@ -845,8 +848,7 @@ PassRefPtr<DocumentFragment> createFragmentFromText(Range* context, const String
     string.replace("\r\n", "\n");
     string.replace('\r', '\n');
 
-    RenderObject* renderer = styleNode->renderer();
-    if (renderer && renderer->style()->preserveNewline()) {
+    if (contextPreservesNewline(*context)) {
         fragment->appendChild(document->createTextNode(string), ASSERT_NO_EXCEPTION);
         if (string.endsWith('\n')) {
             RefPtr<Element> element = createBreakElement(document);

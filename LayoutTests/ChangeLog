@@ -1,3 +1,14 @@
+2013-08-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        <https://webkit.org/b/119917> Pasting multiple lines into a textarea can introduce extra new lines
+
+        Reviewed by Darin Adler.
+
+        Add a regression test.
+
+        * editing/pasteboard/paste-into-textarea-with-new-line-expected.txt: Added.
+        * editing/pasteboard/paste-into-textarea-with-new-line.html: Added.
+
 2013-08-18  Antti Koivisto  <antti@apple.com>
 
         <https://webkit.org/b/119963> Use TextNodeTraversal for getting sheet text in StyleElement
