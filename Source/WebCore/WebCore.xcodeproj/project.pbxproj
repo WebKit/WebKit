@@ -4524,6 +4524,8 @@
 		B59DD6AA11902A71007E9684 /* JSSQLStatementErrorCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B59DD6A811902A71007E9684 /* JSSQLStatementErrorCallback.cpp */; };
 		B5A684220FFABE9800D24689 /* SQLiteFileSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = B5A684210FFABE9800D24689 /* SQLiteFileSystem.h */; };
 		B5A684240FFABEAA00D24689 /* SQLiteFileSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B5A684230FFABEAA00D24689 /* SQLiteFileSystem.cpp */; };
+		B5B7A17017C10AA800E4AA0A /* ElementData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B5B7A16F17C1080600E4AA0A /* ElementData.cpp */; };
+		B5B7A17117C10AC000E4AA0A /* ElementData.h in Headers */ = {isa = PBXBuildFile; fileRef = B5B7A16E17C1048000E4AA0A /* ElementData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B5D31DFA11CF610B009F22B4 /* ActiveDOMCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B5D31DF811CF610B009F22B4 /* ActiveDOMCallback.cpp */; };
 		B5D31DFB11CF610B009F22B4 /* ActiveDOMCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = B5D31DF911CF610B009F22B4 /* ActiveDOMCallback.h */; };
 		B6566270120B1227006EA85C /* JSIDBTransaction.h in Headers */ = {isa = PBXBuildFile; fileRef = B656626E120B1227006EA85C /* JSIDBTransaction.h */; };
@@ -11172,6 +11174,8 @@
 		B59DD6A811902A71007E9684 /* JSSQLStatementErrorCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSQLStatementErrorCallback.cpp; sourceTree = "<group>"; };
 		B5A684210FFABE9800D24689 /* SQLiteFileSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SQLiteFileSystem.h; path = sql/SQLiteFileSystem.h; sourceTree = "<group>"; };
 		B5A684230FFABEAA00D24689 /* SQLiteFileSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SQLiteFileSystem.cpp; path = sql/SQLiteFileSystem.cpp; sourceTree = "<group>"; };
+		B5B7A16E17C1048000E4AA0A /* ElementData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ElementData.h; sourceTree = "<group>"; };
+		B5B7A16F17C1080600E4AA0A /* ElementData.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ElementData.cpp; sourceTree = "<group>"; };
 		B5D31DF811CF610B009F22B4 /* ActiveDOMCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ActiveDOMCallback.cpp; path = generic/ActiveDOMCallback.cpp; sourceTree = "<group>"; };
 		B5D31DF911CF610B009F22B4 /* ActiveDOMCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ActiveDOMCallback.h; path = generic/ActiveDOMCallback.h; sourceTree = "<group>"; };
 		B656626E120B1227006EA85C /* JSIDBTransaction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSIDBTransaction.h; sourceTree = "<group>"; };
@@ -20222,6 +20226,8 @@
 				A8C4A7F609D563270003AC8D /* Element.cpp */,
 				A8C4A7F509D563270003AC8D /* Element.h */,
 				93EEC1EA09C2877700C515D1 /* Element.idl */,
+				B5B7A16F17C1080600E4AA0A /* ElementData.cpp */,
+				B5B7A16E17C1048000E4AA0A /* ElementData.h */,
 				4FAB48641643A66D00F70C07 /* ElementRareData.cpp */,
 				637B7ADE0E8767B800E32194 /* ElementRareData.h */,
 				E4D58EBA17B8F12800CBDCA8 /* ElementTraversal.h */,
@@ -23472,6 +23478,7 @@
 				B22279A80D00BF220071B782 /* SVGCursorElement.h in Headers */,
 				B22279AE0D00BF220071B782 /* SVGDefsElement.h in Headers */,
 				B22279B10D00BF220071B782 /* SVGDescElement.h in Headers */,
+				B5B7A17117C10AC000E4AA0A /* ElementData.h in Headers */,
 				B22279B40D00BF220071B782 /* SVGDocument.h in Headers */,
 				B28C6A280D00C44800334AA4 /* SVGDocumentExtensions.h in Headers */,
 				B22279B70D00BF220071B782 /* SVGElement.h in Headers */,
@@ -26224,6 +26231,7 @@
 				A871DED00A1530C700B12A68 /* RenderPart.cpp in Sources */,
 				A43BF59C1149292800C643CA /* RenderProgress.cpp in Sources */,
 				5A574F24131DB93900471B88 /* RenderQuote.cpp in Sources */,
+				B5B7A17017C10AA800E4AA0A /* ElementData.cpp in Sources */,
 				D70AD65713E1342B005B50B4 /* RenderRegion.cpp in Sources */,
 				BCE93F471517C6D5008CCF74 /* RenderRegionSet.cpp in Sources */,
 				A871DFE20A15376B00B12A68 /* RenderReplaced.cpp in Sources */,

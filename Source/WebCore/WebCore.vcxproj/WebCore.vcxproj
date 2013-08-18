@@ -12500,6 +12500,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\dom\ElementData.cpp" />
     <ClCompile Include="..\dom\ElementRareData.cpp" />
     <ClCompile Include="..\dom\EntityReference.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -20244,6 +20245,7 @@
     <ClInclude Include="..\dom\DOMStringMap.h" />
     <ClInclude Include="..\dom\DOMTimeStamp.h" />
     <ClInclude Include="..\dom\Element.h" />
+    <ClInclude Include="..\dom\ElementData.h" />
     <ClInclude Include="..\dom\ElementTraversal.h" />
     <ClInclude Include="..\dom\Entity.h" />
     <ClInclude Include="..\dom\EntityReference.h" />

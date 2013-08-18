@@ -1,3 +1,11 @@
+2013-08-18  Andreas Kling  <akling@apple.com>
+
+        <https://webkit.org/b/119981> Move ElementData & co to their own files.
+
+        Reviewed by Antti Koivisto.
+
+        I like to move it move it.
+
 2013-08-18  David Kilzer  <ddkilzer@apple.com>
 
         BUILD FIX (r153990): Add UNUSED_PARAM for heightChanged when CSS_SHAPES is disabled

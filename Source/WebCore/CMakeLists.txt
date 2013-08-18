@@ -1154,6 +1154,7 @@ set(WebCore_SOURCES
     dom/DocumentStyleSheetCollection.cpp
     dom/DocumentType.cpp
     dom/Element.cpp
+    dom/ElementData.cpp
     dom/ElementRareData.cpp
     dom/EntityReference.cpp
     dom/ErrorEvent.cpp
