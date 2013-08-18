@@ -93,7 +93,8 @@ bool RegExpObject::getOwnPropertySlot(JSObject* object, ExecState* exec, Propert
 {
     if (propertyName == exec->propertyNames().lastIndex) {
         RegExpObject* regExp = asRegExpObject(object);
-        slot.setValue(regExp, regExp->getLastIndex());
+        unsigned attributes = regExp->m_lastIndexIsWritable ? DontDelete | DontEnum : DontDelete | DontEnum | ReadOnly;
+        slot.setValue(regExp, attributes, regExp->getLastIndex());
         return true;
     }
     return getStaticValueSlot<RegExpObject, JSObject>(exec, ExecState::regExpTable(exec), jsCast<RegExpObject*>(object), propertyName, slot);

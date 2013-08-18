@@ -33,6 +33,17 @@ namespace JSC {
 class ExecState;
 class GetterSetter;
 
+// ECMA 262-3 8.6.1
+// Property attributes
+enum Attribute {
+    None         = 0,
+    ReadOnly     = 1 << 1,  // property can be only read, not written
+    DontEnum     = 1 << 2,  // property doesn't appear in (for .. in ..)
+    DontDelete   = 1 << 3,  // property can't be deleted
+    Function     = 1 << 4,  // property is a function - only used by static hashtables
+    Accessor     = 1 << 5,  // property is a getter/setter
+};
+
 class PropertySlot {
     enum PropertyType {
         TypeUnset,
@@ -79,10 +90,11 @@ public:
         return m_slotBase;
     }
 
-    void setValue(JSObject* slotBase, JSValue value)
+    void setValue(JSObject* slotBase, unsigned attributes, JSValue value)
     {
         ASSERT(value);
         m_data.value = JSValue::encode(value);
+        m_attributes = attributes;
 
         ASSERT(slotBase);
         m_slotBase = slotBase;
@@ -90,10 +102,11 @@ public:
         m_offset = invalidOffset;
     }
     
-    void setValue(JSObject* slotBase, JSValue value, PropertyOffset offset)
+    void setValue(JSObject* slotBase, unsigned attributes, JSValue value, PropertyOffset offset)
     {
         ASSERT(value);
         m_data.value = JSValue::encode(value);
+        m_attributes = attributes;
 
         ASSERT(slotBase);
         m_slotBase = slotBase;
@@ -101,20 +114,22 @@ public:
         m_offset = offset;
     }
 
-    void setValue(JSString*, JSValue value)
+    void setValue(JSString*, unsigned attributes, JSValue value)
     {
         ASSERT(value);
         m_data.value = JSValue::encode(value);
+        m_attributes = attributes;
 
         m_slotBase = 0;
         m_propertyType = TypeValue;
         m_offset = invalidOffset;
     }
 
-    void setCustom(JSObject* slotBase, GetValueFunc getValue)
+    void setCustom(JSObject* slotBase, unsigned attributes, GetValueFunc getValue)
     {
         ASSERT(getValue);
         m_data.custom.getValue = getValue;
+        m_attributes = attributes;
 
         ASSERT(slotBase);
         m_slotBase = slotBase;
@@ -122,10 +137,11 @@ public:
         m_offset = invalidOffset;
     }
     
-    void setCacheableCustom(JSObject* slotBase, GetValueFunc getValue)
+    void setCacheableCustom(JSObject* slotBase, unsigned attributes, GetValueFunc getValue)
     {
         ASSERT(getValue);
         m_data.custom.getValue = getValue;
+        m_attributes = attributes;
 
         ASSERT(slotBase);
         m_slotBase = slotBase;
@@ -133,11 +149,12 @@ public:
         m_offset = !invalidOffset;
     }
 
-    void setCustomIndex(JSObject* slotBase, unsigned index, GetIndexValueFunc getIndexValue)
+    void setCustomIndex(JSObject* slotBase, unsigned attributes, unsigned index, GetIndexValueFunc getIndexValue)
     {
         ASSERT(getIndexValue);
         m_data.customIndex.getIndexValue = getIndexValue;
         m_data.customIndex.index = index;
+        m_attributes = attributes;
 
         ASSERT(slotBase);
         m_slotBase = slotBase;
@@ -145,10 +162,11 @@ public:
         m_offset = invalidOffset;
     }
 
-    void setGetterSlot(JSObject* slotBase, GetterSetter* getterSetter)
+    void setGetterSlot(JSObject* slotBase, unsigned attributes, GetterSetter* getterSetter)
     {
         ASSERT(getterSetter);
         m_data.getter.getterSetter = getterSetter;
+        m_attributes = attributes;
 
         ASSERT(slotBase);
         m_slotBase = slotBase;
@@ -156,10 +174,11 @@ public:
         m_offset = invalidOffset;
     }
 
-    void setCacheableGetterSlot(JSObject* slotBase, GetterSetter* getterSetter, PropertyOffset offset)
+    void setCacheableGetterSlot(JSObject* slotBase, unsigned attributes, GetterSetter* getterSetter, PropertyOffset offset)
     {
         ASSERT(getterSetter);
         m_data.getter.getterSetter = getterSetter;
+        m_attributes = attributes;
 
         ASSERT(slotBase);
         m_slotBase = slotBase;
@@ -179,6 +198,7 @@ public:
 private:
     JS_EXPORT_PRIVATE JSValue functionGetter(ExecState*) const;
 
+    unsigned m_attributes;
     union {
         EncodedJSValue value;
         struct {

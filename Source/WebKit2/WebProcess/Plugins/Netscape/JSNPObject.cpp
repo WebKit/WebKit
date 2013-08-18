@@ -276,13 +276,13 @@ bool JSNPObject::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyN
 
     // First, check if the NPObject has a property with this name.
     if (thisObject->m_npObject->_class->hasProperty && thisObject->m_npObject->_class->hasProperty(thisObject->m_npObject, npIdentifier)) {
-        slot.setCustom(thisObject, thisObject->propertyGetter);
+        slot.setCustom(thisObject, DontDelete, thisObject->propertyGetter);
         return true;
     }
 
     // Second, check if the NPObject has a method with this name.
     if (thisObject->m_npObject->_class->hasMethod && thisObject->m_npObject->_class->hasMethod(thisObject->m_npObject, npIdentifier)) {
-        slot.setCustom(thisObject, thisObject->methodGetter);
+        slot.setCustom(thisObject, DontDelete | ReadOnly, thisObject->methodGetter);
         return true;
     }
     
@@ -308,7 +308,7 @@ bool JSNPObject::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, Pro
     // First, check if the NPObject has a property with this name.
     if (thisObject->m_npObject->_class->hasProperty && thisObject->m_npObject->_class->hasProperty(thisObject->m_npObject, npIdentifier)) {
         PropertySlot slot(thisObject);
-        slot.setCustom(thisObject, propertyGetter);
+        slot.setCustom(thisObject, DontDelete, propertyGetter);
         descriptor.setDescriptor(slot.getValue(exec, propertyName), DontDelete);
         return true;
     }
@@ -316,7 +316,7 @@ bool JSNPObject::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, Pro
     // Second, check if the NPObject has a method with this name.
     if (thisObject->m_npObject->_class->hasMethod && thisObject->m_npObject->_class->hasMethod(thisObject->m_npObject, npIdentifier)) {
         PropertySlot slot(thisObject);
-        slot.setCustom(thisObject, methodGetter);
+        slot.setCustom(thisObject, DontDelete | ReadOnly, methodGetter);
         descriptor.setDescriptor(slot.getValue(exec, propertyName), DontDelete | ReadOnly);
         return true;
     }

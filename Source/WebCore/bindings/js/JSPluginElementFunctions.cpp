@@ -118,7 +118,7 @@ bool runtimeObjectCustomGetOwnPropertySlot(ExecState* exec, PropertyName propert
 
     if (!scriptObject->hasProperty(exec, propertyName))
         return false;
-    slot.setCustom(element, runtimeObjectPropertyGetter);
+    slot.setCustom(element, DontDelete | DontEnum, runtimeObjectPropertyGetter);
     return true;
 }
 
@@ -130,7 +130,7 @@ bool runtimeObjectCustomGetOwnPropertyDescriptor(ExecState* exec, PropertyName p
     if (!scriptObject->hasProperty(exec, propertyName))
         return false;
     PropertySlot slot(element);
-    slot.setCustom(element, runtimeObjectPropertyGetter);
+    slot.setCustom(element, DontDelete | DontEnum, runtimeObjectPropertyGetter);
     // While we don't know what the plugin allows, we do know that we prevent
     // enumeration or deletion of properties, so we mark plugin properties
     // as DontEnum | DontDelete

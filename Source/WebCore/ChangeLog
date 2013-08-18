@@ -1,3 +1,45 @@
+2013-08-18  Gavin Barraclough  <barraclough@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=119972
+        Add attributes field to PropertySlot
+
+        Reviewed by Geoff Garen.
+
+        For all JSC types, this makes getOwnPropertyDescriptor redundant.
+        There will be a bit more hacking required in WebCore to remove GOPD whilst maintaining current behaviour.
+        (Current behaviour is in many ways broken, particularly in that GOPD & GOPS are inconsistent, but we should fix incrementally).
+
+        * bindings/js/JSCSSStyleDeclarationCustom.cpp:
+        (WebCore::JSCSSStyleDeclaration::getOwnPropertySlotDelegate):
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::getOwnPropertySlot):
+        (WebCore::JSDOMWindow::getOwnPropertySlotByIndex):
+        (WebCore::JSDOMWindow::getOwnPropertyDescriptor):
+        * bindings/js/JSHistoryCustom.cpp:
+        (WebCore::JSHistory::getOwnPropertySlotDelegate):
+        (WebCore::JSHistory::getOwnPropertyDescriptorDelegate):
+        * bindings/js/JSLocationCustom.cpp:
+        (WebCore::JSLocation::getOwnPropertySlotDelegate):
+        (WebCore::JSLocation::getOwnPropertyDescriptorDelegate):
+        * bindings/js/JSPluginElementFunctions.cpp:
+        (WebCore::runtimeObjectCustomGetOwnPropertySlot):
+        (WebCore::runtimeObjectCustomGetOwnPropertyDescriptor):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateGetOwnPropertySlotBody):
+        (GenerateGetOwnPropertyDescriptorBody):
+        (GenerateImplementation):
+        * bridge/runtime_array.cpp:
+        (JSC::RuntimeArray::getOwnPropertySlot):
+        (JSC::RuntimeArray::getOwnPropertyDescriptor):
+        (JSC::RuntimeArray::getOwnPropertySlotByIndex):
+        * bridge/runtime_method.cpp:
+        (JSC::RuntimeMethod::getOwnPropertySlot):
+        (JSC::RuntimeMethod::getOwnPropertyDescriptor):
+        * bridge/runtime_object.cpp:
+        (JSC::Bindings::RuntimeObject::getOwnPropertySlot):
+        (JSC::Bindings::RuntimeObject::getOwnPropertyDescriptor):
+            - Pass attributes to PropertySlot::set* methods.
+
 2013-08-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         <https://webkit.org/b/119917> Pasting multiple lines into a textarea can introduce extra new lines

@@ -181,7 +181,8 @@ bool JSArray::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName
 {
     JSArray* thisObject = jsCast<JSArray*>(object);
     if (propertyName == exec->propertyNames().length) {
-        slot.setValue(thisObject, jsNumber(thisObject->length()));
+        unsigned attributes = thisObject->isLengthWritable() ? DontDelete | DontEnum : DontDelete | DontEnum | ReadOnly;
+        slot.setValue(thisObject, attributes, jsNumber(thisObject->length()));
         return true;
     }
 

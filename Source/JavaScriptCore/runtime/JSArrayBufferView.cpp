@@ -125,13 +125,13 @@ bool JSArrayBufferView::getOwnPropertySlot(
 {
     JSArrayBufferView* thisObject = jsCast<JSArrayBufferView*>(object);
     if (propertyName == exec->propertyNames().byteOffset) {
-        slot.setValue(thisObject, jsNumber(thisObject->byteOffset()));
+        slot.setValue(thisObject, DontDelete | ReadOnly, jsNumber(thisObject->byteOffset()));
         return true;
     }
     
     if (propertyName == exec->propertyNames().buffer) {
         slot.setValue(
-            thisObject, exec->vm().m_typedArrayController->toJS(
+            thisObject, DontDelete | ReadOnly, exec->vm().m_typedArrayController->toJS(
                 exec, thisObject->globalObject(), thisObject->buffer()));
         return true;
     }

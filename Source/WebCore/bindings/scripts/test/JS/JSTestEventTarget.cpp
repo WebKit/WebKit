@@ -147,16 +147,17 @@ bool JSTestEventTarget::getOwnPropertySlot(JSObject* object, ExecState* exec, Pr
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     const HashEntry* entry = getStaticValueSlotEntryWithoutCaching<JSTestEventTarget>(exec, propertyName);
     if (entry) {
-        slot.setCustom(thisObject, entry->propertyGetter());
+        slot.setCustom(thisObject, entry->attributes(), entry->propertyGetter());
         return true;
     }
     unsigned index = propertyName.asIndex();
     if (index != PropertyName::NotAnIndex && index < static_cast<TestEventTarget*>(thisObject->impl())->length()) {
-        slot.setCustomIndex(thisObject, index, indexGetter);
+        unsigned attributes = DontDelete | ReadOnly;
+        slot.setCustomIndex(thisObject, attributes, index, indexGetter);
         return true;
     }
     if (canGetItemsForName(exec, static_cast<TestEventTarget*>(thisObject->impl()), propertyName)) {
-        slot.setCustom(thisObject, thisObject->nameGetter);
+        slot.setCustom(thisObject, ReadOnly | DontDelete | DontEnum, thisObject->nameGetter);
         return true;
     }
     return getStaticValueSlot<JSTestEventTarget, Base>(exec, &JSTestEventTargetTable, thisObject, propertyName, slot);
@@ -169,20 +170,21 @@ bool JSTestEventTarget::getOwnPropertyDescriptor(JSObject* object, ExecState* ex
     const HashEntry* entry = JSTestEventTargetTable.entry(exec, propertyName);
     if (entry) {
         PropertySlot slot(thisObject);
-        slot.setCustom(thisObject, entry->propertyGetter());
+        slot.setCustom(thisObject, entry->attributes(), entry->propertyGetter());
         descriptor.setDescriptor(slot.getValue(exec, propertyName), entry->attributes());
         return true;
     }
     unsigned index = propertyName.asIndex();
     if (index != PropertyName::NotAnIndex && index < static_cast<TestEventTarget*>(thisObject->impl())->length()) {
+        unsigned attributes = DontDelete | ReadOnly;
         PropertySlot slot(thisObject);
-        slot.setCustomIndex(thisObject, index, indexGetter);
-        descriptor.setDescriptor(slot.getValue(exec, propertyName), DontDelete | ReadOnly);
+        slot.setCustomIndex(thisObject, attributes, index, indexGetter);
+        descriptor.setDescriptor(slot.getValue(exec, propertyName), attributes);
         return true;
     }
     if (canGetItemsForName(exec, static_cast<TestEventTarget*>(thisObject->impl()), propertyName)) {
         PropertySlot slot(thisObject);
-        slot.setCustom(thisObject, nameGetter);
+        slot.setCustom(thisObject, ReadOnly | DontDelete | DontEnum, nameGetter);
         descriptor.setDescriptor(slot.getValue(exec, propertyName), ReadOnly | DontDelete | DontEnum);
         return true;
     }
@@ -194,12 +196,13 @@ bool JSTestEventTarget::getOwnPropertySlotByIndex(JSObject* object, ExecState* e
     JSTestEventTarget* thisObject = jsCast<JSTestEventTarget*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     if (index < static_cast<TestEventTarget*>(thisObject->impl())->length()) {
-        slot.setCustomIndex(thisObject, index, thisObject->indexGetter);
+        unsigned attributes = DontDelete | ReadOnly;
+        slot.setCustomIndex(thisObject, attributes, index, thisObject->indexGetter);
         return true;
     }
     PropertyName propertyName = Identifier::from(exec, index);
     if (canGetItemsForName(exec, static_cast<TestEventTarget*>(thisObject->impl()), propertyName)) {
-        slot.setCustom(thisObject, thisObject->nameGetter);
+        slot.setCustom(thisObject, ReadOnly | DontDelete | DontEnum, thisObject->nameGetter);
         return true;
     }
     return Base::getOwnPropertySlotByIndex(thisObject, exec, index, slot);

@@ -1,3 +1,70 @@
+2013-08-18  Gavin Barraclough  <barraclough@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=119972
+        Add attributes field to PropertySlot
+
+        Reviewed by Geoff Garen.
+
+        For all JSC types, this makes getOwnPropertyDescriptor redundant.
+        There will be a bit more hacking required in WebCore to remove GOPD whilst maintaining current behaviour.
+        (Current behaviour is in many ways broken, particularly in that GOPD & GOPS are inconsistent, but we should fix incrementally).
+
+        No performance impact.
+
+        * runtime/PropertySlot.h:
+        (JSC::PropertySlot::setValue):
+        (JSC::PropertySlot::setCustom):
+        (JSC::PropertySlot::setCacheableCustom):
+        (JSC::PropertySlot::setCustomIndex):
+        (JSC::PropertySlot::setGetterSlot):
+        (JSC::PropertySlot::setCacheableGetterSlot):
+            - These mathods now all require 'attributes'.
+        * runtime/JSObject.h:
+        (JSC::JSObject::getDirect):
+        (JSC::JSObject::getDirectOffset):
+        (JSC::JSObject::inlineGetOwnPropertySlot):
+            - Added variants of getDirect, getDirectOffset that return the attributes.
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::::getOwnPropertySlot):
+        * runtime/Arguments.cpp:
+        (JSC::Arguments::getOwnPropertySlotByIndex):
+        (JSC::Arguments::getOwnPropertySlot):
+        * runtime/JSActivation.cpp:
+        (JSC::JSActivation::symbolTableGet):
+        (JSC::JSActivation::getOwnPropertySlot):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::getOwnPropertySlot):
+        * runtime/JSArrayBuffer.cpp:
+        (JSC::JSArrayBuffer::getOwnPropertySlot):
+        * runtime/JSArrayBufferView.cpp:
+        (JSC::JSArrayBufferView::getOwnPropertySlot):
+        * runtime/JSDataView.cpp:
+        (JSC::JSDataView::getOwnPropertySlot):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::getOwnPropertySlot):
+        * runtime/JSGenericTypedArrayViewInlines.h:
+        (JSC::::getOwnPropertySlot):
+        (JSC::::getOwnPropertySlotByIndex):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::getOwnPropertySlotByIndex):
+        (JSC::JSObject::fillGetterPropertySlot):
+        * runtime/JSString.h:
+        (JSC::JSString::getStringPropertySlot):
+        * runtime/JSSymbolTableObject.h:
+        (JSC::symbolTableGet):
+        * runtime/Lookup.cpp:
+        (JSC::setUpStaticFunctionSlot):
+        * runtime/Lookup.h:
+        (JSC::getStaticPropertySlot):
+        (JSC::getStaticPropertyDescriptor):
+        (JSC::getStaticValueSlot):
+        (JSC::getStaticValueDescriptor):
+        * runtime/RegExpObject.cpp:
+        (JSC::RegExpObject::getOwnPropertySlot):
+        * runtime/SparseArrayValueMap.cpp:
+        (JSC::SparseArrayEntry::get):
+            - Pass attributes to PropertySlot::set* methods.
+
 2013-08-17  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         <https://webkit.org/b/119919> Concurrent JIT crashes in various fast/js/dfg-* tests while the main thread is setting innerHTML

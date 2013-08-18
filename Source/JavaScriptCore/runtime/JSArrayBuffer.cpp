@@ -71,7 +71,7 @@ bool JSArrayBuffer::getOwnPropertySlot(
     JSArrayBuffer* thisObject = jsCast<JSArrayBuffer*>(object);
     
     if (propertyName == exec->propertyNames().byteLength) {
-        slot.setValue(thisObject, jsNumber(thisObject->impl()->byteLength()));
+        slot.setValue(thisObject, DontDelete | ReadOnly, jsNumber(thisObject->impl()->byteLength()));
         return true;
     }
     

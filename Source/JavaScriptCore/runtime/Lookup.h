@@ -251,7 +251,7 @@ namespace JSC {
         if (entry->attributes() & Function)
             return setUpStaticFunctionSlot(exec, entry, thisObj, propertyName, slot);
 
-        slot.setCacheableCustom(thisObj, entry->propertyGetter());
+        slot.setCacheableCustom(thisObj, entry->attributes(), entry->propertyGetter());
         return true;
     }
 
@@ -271,7 +271,7 @@ namespace JSC {
             return present;
         }
 
-        slot.setCustom(thisObj, entry->propertyGetter());
+        slot.setCustom(thisObj, entry->attributes(), entry->propertyGetter());
         descriptor.setDescriptor(slot.getValue(exec, propertyName), entry->attributes());
         return true;
     }
@@ -330,7 +330,7 @@ namespace JSC {
 
         ASSERT(!(entry->attributes() & Function));
 
-        slot.setCacheableCustom(thisObj, entry->propertyGetter());
+        slot.setCacheableCustom(thisObj, entry->attributes(), entry->propertyGetter());
         return true;
     }
 
@@ -348,7 +348,7 @@ namespace JSC {
         
         ASSERT(!(entry->attributes() & Function));
         PropertySlot slot(thisObj);
-        slot.setCustom(thisObj, entry->propertyGetter());
+        slot.setCustom(thisObj, entry->attributes(), entry->propertyGetter());
         descriptor.setDescriptor(slot.getValue(exec, propertyName), entry->attributes());
         return true;
     }

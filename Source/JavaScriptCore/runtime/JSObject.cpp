@@ -289,7 +289,7 @@ bool JSObject::getOwnPropertySlotByIndex(JSObject* thisObject, ExecState* exec, 
         
         JSValue value = butterfly->contiguous()[i].get();
         if (value) {
-            slot.setValue(thisObject, value);
+            slot.setValue(thisObject, None, value);
             return true;
         }
         
@@ -303,7 +303,7 @@ bool JSObject::getOwnPropertySlotByIndex(JSObject* thisObject, ExecState* exec, 
         
         double value = butterfly->contiguousDouble()[i];
         if (value == value) {
-            slot.setValue(thisObject, JSValue(JSValue::EncodeAsDouble, value));
+            slot.setValue(thisObject, None, JSValue(JSValue::EncodeAsDouble, value));
             return true;
         }
         
@@ -318,7 +318,7 @@ bool JSObject::getOwnPropertySlotByIndex(JSObject* thisObject, ExecState* exec, 
         if (i < storage->vectorLength()) {
             JSValue value = storage->m_vector[i].get();
             if (value) {
-                slot.setValue(thisObject, value);
+                slot.setValue(thisObject, None, value);
                 return true;
             }
         } else if (SparseArrayValueMap* map = storage->m_sparseMap.get()) {
@@ -1625,14 +1625,14 @@ bool JSObject::removeDirect(VM& vm, PropertyName propertyName)
     return true;
 }
 
-NEVER_INLINE void JSObject::fillGetterPropertySlot(PropertySlot& slot, JSValue getterSetter, PropertyOffset offset)
+NEVER_INLINE void JSObject::fillGetterPropertySlot(PropertySlot& slot, JSValue getterSetter, unsigned attributes, PropertyOffset offset)
 {
     if (structure()->isDictionary()) {
-        slot.setGetterSlot(this, jsCast<GetterSetter*>(getterSetter));
+        slot.setGetterSlot(this, attributes, jsCast<GetterSetter*>(getterSetter));
         return;
     }
 
-    slot.setCacheableGetterSlot(this, jsCast<GetterSetter*>(getterSetter), offset);
+    slot.setCacheableGetterSlot(this, attributes, jsCast<GetterSetter*>(getterSetter), offset);
 }
 
 void JSObject::putIndexedDescriptor(ExecState* exec, SparseArrayEntry* entryInMap, PropertyDescriptor& descriptor, PropertyDescriptor& oldDescriptor)

@@ -66,7 +66,7 @@ inline bool JSActivation::symbolTableGet(PropertyName propertyName, PropertySlot
     if (isTornOff() && !isValid(entry))
         return false;
 
-    slot.setValue(this, registerAt(entry.getIndex()).get());
+    slot.setValue(this, DontEnum, registerAt(entry.getIndex()).get());
     return true;
 }
 
@@ -157,7 +157,7 @@ bool JSActivation::getOwnPropertySlot(JSObject* object, ExecState* exec, Propert
     if (propertyName == exec->propertyNames().arguments) {
         // Defend against the inspector asking for the arguments object after it has been optimized out.
         if (!thisObject->isTornOff()) {
-            slot.setCustom(thisObject, thisObject->getArgumentsGetter());
+            slot.setCustom(thisObject, DontEnum, thisObject->getArgumentsGetter());
             return true;
         }
     }
@@ -165,8 +165,9 @@ bool JSActivation::getOwnPropertySlot(JSObject* object, ExecState* exec, Propert
     if (thisObject->symbolTableGet(propertyName, slot))
         return true;
 
-    if (JSValue value = thisObject->getDirect(exec->vm(), propertyName)) {
-        slot.setValue(thisObject, value);
+    unsigned attributes;
+    if (JSValue value = thisObject->getDirect(exec->vm(), propertyName, attributes)) {
+        slot.setValue(thisObject, attributes, value);
         return true;
     }
 

@@ -473,14 +473,14 @@ namespace JSC {
     ALWAYS_INLINE bool JSString::getStringPropertySlot(ExecState* exec, PropertyName propertyName, PropertySlot& slot)
     {
         if (propertyName == exec->propertyNames().length) {
-            slot.setValue(this, jsNumber(m_length));
+            slot.setValue(this, DontEnum | DontDelete | ReadOnly, jsNumber(m_length));
             return true;
         }
 
         unsigned i = propertyName.asIndex();
         if (i < m_length) {
             ASSERT(i != PropertyName::NotAnIndex); // No need for an explicit check, the above test would always fail!
-            slot.setValue(this, getIndex(exec, i));
+            slot.setValue(this, DontDelete | ReadOnly, getIndex(exec, i));
             return true;
         }
 
@@ -490,7 +490,7 @@ namespace JSC {
     ALWAYS_INLINE bool JSString::getStringPropertySlot(ExecState* exec, unsigned propertyName, PropertySlot& slot)
     {
         if (propertyName < m_length) {
-            slot.setValue(this, getIndex(exec, propertyName));
+            slot.setValue(this, DontDelete | ReadOnly, getIndex(exec, propertyName));
             return true;
         }
 

@@ -73,17 +73,6 @@ struct HashTable;
 JS_EXPORT_PRIVATE JSObject* throwTypeError(ExecState*, const String&);
 extern JS_EXPORTDATA const char* StrictModeReadonlyPropertyWriteError;
 
-// ECMA 262-3 8.6.1
-// Property attributes
-enum Attribute {
-    None         = 0,
-    ReadOnly     = 1 << 1,  // property can be only read, not written
-    DontEnum     = 1 << 2,  // property doesn't appear in (for .. in ..)
-    DontDelete   = 1 << 3,  // property can't be deleted
-    Function     = 1 << 4,  // property is a function - only used by static hashtables
-    Accessor     = 1 << 5,  // property is a getter/setter
-};
-
 COMPILE_ASSERT(None < FirstInternalAttribute, None_is_below_FirstInternalAttribute);
 COMPILE_ASSERT(ReadOnly < FirstInternalAttribute, ReadOnly_is_below_FirstInternalAttribute);
 COMPILE_ASSERT(DontEnum < FirstInternalAttribute, DontEnum_is_below_FirstInternalAttribute);
@@ -510,9 +499,25 @@ public:
         return offset != invalidOffset ? getDirect(offset) : JSValue();
     }
 
+    JSValue getDirect(VM& vm, PropertyName propertyName, unsigned& attributes) const
+    {
+        JSCell* specific;
+        PropertyOffset offset = structure()->get(vm, propertyName, attributes, specific);
+        checkOffset(offset, structure()->inlineCapacity());
+        return offset != invalidOffset ? getDirect(offset) : JSValue();
+    }
+
     PropertyOffset getDirectOffset(VM& vm, PropertyName propertyName)
     {
         PropertyOffset offset = structure()->get(vm, propertyName);
+        checkOffset(offset, structure()->inlineCapacity());
+        return offset;
+    }
+
+    PropertyOffset getDirectOffset(VM& vm, PropertyName propertyName, unsigned& attributes)
+    {
+        JSCell* specific;
+        PropertyOffset offset = structure()->get(vm, propertyName, attributes, specific);
         checkOffset(offset, structure()->inlineCapacity());
         return offset;
     }
@@ -936,7 +941,7 @@ private:
     bool putDirectInternal(VM&, PropertyName, JSValue, unsigned attr, PutPropertySlot&, JSCell*);
 
     bool inlineGetOwnPropertySlot(ExecState*, PropertyName, PropertySlot&);
-    JS_EXPORT_PRIVATE void fillGetterPropertySlot(PropertySlot&, JSValue, PropertyOffset);
+    JS_EXPORT_PRIVATE void fillGetterPropertySlot(PropertySlot&, JSValue, unsigned, PropertyOffset);
 
     const HashEntry* findPropertyHashEntry(ExecState*, PropertyName) const;
         
@@ -1168,13 +1173,15 @@ inline JSValue JSObject::prototype() const
 
 ALWAYS_INLINE bool JSObject::inlineGetOwnPropertySlot(ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
-    PropertyOffset offset = structure()->get(exec->vm(), propertyName);
+    unsigned attributes;
+    JSCell* specific;
+    PropertyOffset offset = structure()->get(exec->vm(), propertyName, attributes, specific);
     if (LIKELY(isValidOffset(offset))) {
         JSValue value = getDirect(offset);
         if (structure()->hasGetterSetterProperties() && value.isGetterSetter())
-            fillGetterPropertySlot(slot, value, offset);
+            fillGetterPropertySlot(slot, value, attributes, offset);
         else
-            slot.setValue(this, value, offset);
+            slot.setValue(this, attributes, value, offset);
         return true;
     }
 

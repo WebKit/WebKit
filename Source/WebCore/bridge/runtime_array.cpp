@@ -89,14 +89,14 @@ bool RuntimeArray::getOwnPropertySlot(JSObject* object, ExecState* exec, Propert
 {
     RuntimeArray* thisObject = jsCast<RuntimeArray*>(object);
     if (propertyName == exec->propertyNames().length) {
-        slot.setCacheableCustom(thisObject, thisObject->lengthGetter);
+        slot.setCacheableCustom(thisObject, DontDelete | ReadOnly | DontEnum, thisObject->lengthGetter);
         return true;
     }
     
     unsigned index = propertyName.asIndex();
     if (index < thisObject->getLength()) {
         ASSERT(index != PropertyName::NotAnIndex);
-        slot.setCustomIndex(thisObject, index, thisObject->indexGetter);
+        slot.setCustomIndex(thisObject, DontDelete | DontEnum, index, thisObject->indexGetter);
         return true;
     }
     
@@ -108,7 +108,7 @@ bool RuntimeArray::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, P
     RuntimeArray* thisObject = jsCast<RuntimeArray*>(object);
     if (propertyName == exec->propertyNames().length) {
         PropertySlot slot(thisObject);
-        slot.setCustom(thisObject, lengthGetter);
+        slot.setCustom(thisObject, DontDelete | ReadOnly | DontEnum, lengthGetter);
         descriptor.setDescriptor(slot.getValue(exec, propertyName), ReadOnly | DontDelete | DontEnum);
         return true;
     }
@@ -117,7 +117,7 @@ bool RuntimeArray::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, P
     if (index < thisObject->getLength()) {
         ASSERT(index != PropertyName::NotAnIndex);
         PropertySlot slot(thisObject);
-        slot.setCustomIndex(thisObject, index, indexGetter);
+        slot.setCustomIndex(thisObject, DontDelete | DontEnum, index, indexGetter);
         descriptor.setDescriptor(slot.getValue(exec, propertyName), DontDelete | DontEnum);
         return true;
     }
@@ -129,7 +129,7 @@ bool RuntimeArray::getOwnPropertySlotByIndex(JSObject* object, ExecState *exec, 
 {
     RuntimeArray* thisObject = jsCast<RuntimeArray*>(object);
     if (index < thisObject->getLength()) {
-        slot.setCustomIndex(thisObject, index, thisObject->indexGetter);
+        slot.setCustomIndex(thisObject, DontDelete | DontEnum, index, thisObject->indexGetter);
         return true;
     }
     

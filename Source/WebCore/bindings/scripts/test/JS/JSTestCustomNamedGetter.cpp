@@ -137,7 +137,7 @@ bool JSTestCustomNamedGetter::getOwnPropertySlot(JSObject* object, ExecState* ex
     JSTestCustomNamedGetter* thisObject = jsCast<JSTestCustomNamedGetter*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     if (canGetItemsForName(exec, static_cast<TestCustomNamedGetter*>(thisObject->impl()), propertyName)) {
-        slot.setCustom(thisObject, thisObject->nameGetter);
+        slot.setCustom(thisObject, ReadOnly | DontDelete | DontEnum, thisObject->nameGetter);
         return true;
     }
     return getStaticValueSlot<JSTestCustomNamedGetter, Base>(exec, &JSTestCustomNamedGetterTable, thisObject, propertyName, slot);
@@ -149,7 +149,7 @@ bool JSTestCustomNamedGetter::getOwnPropertyDescriptor(JSObject* object, ExecSta
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     if (canGetItemsForName(exec, static_cast<TestCustomNamedGetter*>(thisObject->impl()), propertyName)) {
         PropertySlot slot(thisObject);
-        slot.setCustom(thisObject, nameGetter);
+        slot.setCustom(thisObject, ReadOnly | DontDelete | DontEnum, nameGetter);
         descriptor.setDescriptor(slot.getValue(exec, propertyName), ReadOnly | DontDelete | DontEnum);
         return true;
     }
@@ -162,7 +162,7 @@ bool JSTestCustomNamedGetter::getOwnPropertySlotByIndex(JSObject* object, ExecSt
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     PropertyName propertyName = Identifier::from(exec, index);
     if (canGetItemsForName(exec, static_cast<TestCustomNamedGetter*>(thisObject->impl()), propertyName)) {
-        slot.setCustom(thisObject, thisObject->nameGetter);
+        slot.setCustom(thisObject, ReadOnly | DontDelete | DontEnum, thisObject->nameGetter);
         return true;
     }
     return Base::getOwnPropertySlotByIndex(thisObject, exec, index, slot);

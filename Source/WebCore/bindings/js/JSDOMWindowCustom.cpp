@@ -126,12 +126,12 @@ bool JSDOMWindow::getOwnPropertySlot(JSObject* object, ExecState* exec, Property
         // It ignores any custom properties that might be set on the DOMWindow (including a custom prototype).
         entry = s_info.propHashTable(exec)->entry(exec, propertyName);
         if (entry && !(entry->attributes() & JSC::Function) && entry->propertyGetter() == jsDOMWindowClosed) {
-            slot.setCustom(thisObject, entry->propertyGetter());
+            slot.setCustom(thisObject, ReadOnly | DontDelete | DontEnum, entry->propertyGetter());
             return true;
         }
         entry = JSDOMWindowPrototype::info()->propHashTable(exec)->entry(exec, propertyName);
         if (entry && (entry->attributes() & JSC::Function) && entry->function() == jsDOMWindowPrototypeFunctionClose) {
-            slot.setCustom(thisObject, nonCachingStaticFunctionGetter<jsDOMWindowPrototypeFunctionClose, 0>);
+            slot.setCustom(thisObject, ReadOnly | DontDelete | DontEnum, nonCachingStaticFunctionGetter<jsDOMWindowPrototypeFunctionClose, 0>);
             return true;
         }
 
@@ -161,22 +161,22 @@ bool JSDOMWindow::getOwnPropertySlot(JSObject* object, ExecState* exec, Property
         if (entry->attributes() & JSC::Function) {
             if (entry->function() == jsDOMWindowPrototypeFunctionBlur) {
                 if (!allowsAccess) {
-                    slot.setCustom(thisObject, nonCachingStaticFunctionGetter<jsDOMWindowPrototypeFunctionBlur, 0>);
+                    slot.setCustom(thisObject, entry->attributes(), nonCachingStaticFunctionGetter<jsDOMWindowPrototypeFunctionBlur, 0>);
                     return true;
                 }
             } else if (entry->function() == jsDOMWindowPrototypeFunctionClose) {
                 if (!allowsAccess) {
-                    slot.setCustom(thisObject, nonCachingStaticFunctionGetter<jsDOMWindowPrototypeFunctionClose, 0>);
+                    slot.setCustom(thisObject, entry->attributes(), nonCachingStaticFunctionGetter<jsDOMWindowPrototypeFunctionClose, 0>);
                     return true;
                 }
             } else if (entry->function() == jsDOMWindowPrototypeFunctionFocus) {
                 if (!allowsAccess) {
-                    slot.setCustom(thisObject, nonCachingStaticFunctionGetter<jsDOMWindowPrototypeFunctionFocus, 0>);
+                    slot.setCustom(thisObject, entry->attributes(), nonCachingStaticFunctionGetter<jsDOMWindowPrototypeFunctionFocus, 0>);
                     return true;
                 }
             } else if (entry->function() == jsDOMWindowPrototypeFunctionPostMessage) {
                 if (!allowsAccess) {
-                    slot.setCustom(thisObject, nonCachingStaticFunctionGetter<jsDOMWindowPrototypeFunctionPostMessage, 2>);
+                    slot.setCustom(thisObject, entry->attributes(), nonCachingStaticFunctionGetter<jsDOMWindowPrototypeFunctionPostMessage, 2>);
                     return true;
                 }
             } else if (entry->function() == jsDOMWindowPrototypeFunctionShowModalDialog) {
@@ -190,7 +190,7 @@ bool JSDOMWindow::getOwnPropertySlot(JSObject* object, ExecState* exec, Property
         // Allow access to toString() cross-domain, but always Object.prototype.toString.
         if (propertyName == exec->propertyNames().toString) {
             if (!allowsAccess) {
-                slot.setCustom(thisObject, objectToStringFunctionGetter);
+                slot.setCustom(thisObject, ReadOnly | DontDelete | DontEnum, objectToStringFunctionGetter);
                 return true;
             }
         }
@@ -198,7 +198,7 @@ bool JSDOMWindow::getOwnPropertySlot(JSObject* object, ExecState* exec, Property
 
     entry = JSDOMWindow::info()->propHashTable(exec)->entry(exec, propertyName);
     if (entry) {
-        slot.setCustom(thisObject, entry->propertyGetter());
+        slot.setCustom(thisObject, entry->attributes(), entry->propertyGetter());
         return true;
     }
 
@@ -208,7 +208,7 @@ bool JSDOMWindow::getOwnPropertySlot(JSObject* object, ExecState* exec, Property
     // are in Moz but not IE. Since we have some of these, we have to do
     // it the Moz way.
     if (thisObject->impl()->frame()->tree()->scopedChild(propertyNameToAtomicString(propertyName))) {
-        slot.setCustom(thisObject, childFrameGetter);
+        slot.setCustom(thisObject, ReadOnly | DontDelete | DontEnum, childFrameGetter);
         return true;
     }
 
@@ -232,7 +232,7 @@ bool JSDOMWindow::getOwnPropertySlot(JSObject* object, ExecState* exec, Property
     unsigned i = propertyName.asIndex();
     if (i < thisObject->impl()->frame()->tree()->scopedChildCount()) {
         ASSERT(i != PropertyName::NotAnIndex);
-        slot.setCustomIndex(thisObject, i, indexGetter);
+        slot.setCustomIndex(thisObject, ReadOnly | DontDelete | DontEnum, i, indexGetter);
         return true;
     }
 
@@ -247,7 +247,7 @@ bool JSDOMWindow::getOwnPropertySlot(JSObject* object, ExecState* exec, Property
     if (document->isHTMLDocument()) {
         AtomicStringImpl* atomicPropertyName = findAtomicString(propertyName);
         if (atomicPropertyName && toHTMLDocument(document)->hasWindowNamedItem(atomicPropertyName)) {
-            slot.setCustom(thisObject, namedItemGetter);
+            slot.setCustom(thisObject, ReadOnly | DontDelete | DontEnum, namedItemGetter);
             return true;
         }
     }
@@ -285,7 +285,7 @@ bool JSDOMWindow::getOwnPropertySlotByIndex(JSObject* object, ExecState* exec, u
     // are in Moz but not IE. Since we have some of these, we have to do
     // it the Moz way.
     if (thisObject->impl()->frame()->tree()->scopedChild(propertyNameToAtomicString(propertyName))) {
-        slot.setCustom(thisObject, childFrameGetter);
+        slot.setCustom(thisObject, ReadOnly | DontDelete | DontEnum, childFrameGetter);
         return true;
     }
     
@@ -308,7 +308,7 @@ bool JSDOMWindow::getOwnPropertySlotByIndex(JSObject* object, ExecState* exec, u
     // allow window[1] or parent[1] etc. (#56983)
     if (index < thisObject->impl()->frame()->tree()->scopedChildCount()) {
         ASSERT(index != PropertyName::NotAnIndex);
-        slot.setCustomIndex(thisObject, index, indexGetter);
+        slot.setCustomIndex(thisObject, ReadOnly | DontDelete | DontEnum, index, indexGetter);
         return true;
     }
 
@@ -323,7 +323,7 @@ bool JSDOMWindow::getOwnPropertySlotByIndex(JSObject* object, ExecState* exec, u
     if (document->isHTMLDocument()) {
         AtomicStringImpl* atomicPropertyName = findAtomicString(propertyName);
         if (atomicPropertyName && toHTMLDocument(document)->hasWindowNamedItem(atomicPropertyName)) {
-            slot.setCustom(thisObject, namedItemGetter);
+            slot.setCustom(thisObject, ReadOnly | DontDelete | DontEnum, namedItemGetter);
             return true;
         }
     }
@@ -352,7 +352,7 @@ bool JSDOMWindow::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, Pr
         entry = JSDOMWindowPrototype::info()->propHashTable(exec)->entry(exec, propertyName);
         if (entry && (entry->attributes() & JSC::Function) && entry->function() == jsDOMWindowPrototypeFunctionClose) {
             PropertySlot slot(thisObject);
-            slot.setCustom(thisObject, nonCachingStaticFunctionGetter<jsDOMWindowPrototypeFunctionClose, 0>);
+            slot.setCustom(thisObject, ReadOnly | DontDelete | DontEnum, nonCachingStaticFunctionGetter<jsDOMWindowPrototypeFunctionClose, 0>);
             descriptor.setDescriptor(slot.getValue(exec, propertyName), ReadOnly | DontDelete | DontEnum);
             return true;
         }
@@ -363,7 +363,7 @@ bool JSDOMWindow::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, Pr
     entry = JSDOMWindow::info()->propHashTable(exec)->entry(exec, propertyName);
     if (entry) {
         PropertySlot slot(thisObject);
-        slot.setCustom(thisObject, entry->propertyGetter());
+        slot.setCustom(thisObject, entry->attributes(), entry->propertyGetter());
         descriptor.setDescriptor(slot.getValue(exec, propertyName), entry->attributes());
         return true;
     }
@@ -375,7 +375,7 @@ bool JSDOMWindow::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, Pr
     // it the Moz way.
     if (thisObject->impl()->frame()->tree()->scopedChild(propertyNameToAtomicString(propertyName))) {
         PropertySlot slot(thisObject);
-        slot.setCustom(thisObject, childFrameGetter);
+        slot.setCustom(thisObject, ReadOnly | DontDelete | DontEnum, childFrameGetter);
         descriptor.setDescriptor(slot.getValue(exec, propertyName), ReadOnly | DontDelete | DontEnum);
         return true;
     }
@@ -384,7 +384,7 @@ bool JSDOMWindow::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, Pr
     if (i < thisObject->impl()->frame()->tree()->scopedChildCount()) {
         ASSERT(i != PropertyName::NotAnIndex);
         PropertySlot slot(thisObject);
-        slot.setCustomIndex(thisObject, i, indexGetter);
+        slot.setCustomIndex(thisObject, ReadOnly | DontDelete | DontEnum, i, indexGetter);
         descriptor.setDescriptor(slot.getValue(exec, propertyName), ReadOnly | DontDelete | DontEnum);
         return true;
     }
@@ -395,7 +395,7 @@ bool JSDOMWindow::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, Pr
         AtomicStringImpl* atomicPropertyName = findAtomicString(propertyName);
         if (atomicPropertyName && toHTMLDocument(document)->hasWindowNamedItem(atomicPropertyName)) {
             PropertySlot slot(thisObject);
-            slot.setCustom(thisObject, namedItemGetter);
+            slot.setCustom(thisObject, ReadOnly | DontDelete | DontEnum, namedItemGetter);
             descriptor.setDescriptor(slot.getValue(exec, propertyName), ReadOnly | DontDelete | DontEnum);
             return true;
         }

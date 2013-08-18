@@ -88,7 +88,7 @@ bool JSDataView::getOwnPropertySlot(
 {
     JSDataView* thisObject = jsCast<JSDataView*>(object);
     if (propertyName == exec->propertyNames().byteLength) {
-        slot.setValue(thisObject, jsNumber(thisObject->m_length));
+        slot.setValue(thisObject, DontEnum | ReadOnly, jsNumber(thisObject->m_length));
         return true;
     }
     

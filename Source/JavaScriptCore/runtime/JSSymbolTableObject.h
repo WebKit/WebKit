@@ -79,7 +79,7 @@ inline bool symbolTableGet(
         return false;
     SymbolTableEntry::Fast entry = iter->value;
     ASSERT(!entry.isNull());
-    slot.setValue(object, object->registerAt(entry.getIndex()).get());
+    slot.setValue(object, entry.getAttributes(), object->registerAt(entry.getIndex()).get());
     return true;
 }
 
@@ -111,7 +111,7 @@ inline bool symbolTableGet(
         return false;
     SymbolTableEntry::Fast entry = iter->value;
     ASSERT(!entry.isNull());
-    slot.setValue(object, object->registerAt(entry.getIndex()).get());
+    slot.setValue(object, entry.getAttributes(), object->registerAt(entry.getIndex()).get());
     slotIsWriteable = !entry.isReadOnly();
     return true;
 }

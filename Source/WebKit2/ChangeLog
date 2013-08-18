@@ -1,3 +1,19 @@
+2013-08-18  Gavin Barraclough  <barraclough@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=119972
+        Add attributes field to PropertySlot
+
+        Reviewed by Geoff Garen.
+
+        For all JSC types, this makes getOwnPropertyDescriptor redundant.
+        There will be a bit more hacking required in WebCore to remove GOPD whilst maintaining current behaviour.
+        (Current behaviour is in many ways broken, particularly in that GOPD & GOPS are inconsistent, but we should fix incrementally).
+
+        * WebProcess/Plugins/Netscape/JSNPObject.cpp:
+        (WebKit::JSNPObject::getOwnPropertySlot):
+        (WebKit::JSNPObject::getOwnPropertyDescriptor):
+            - Pass attributes to PropertySlot::set* methods.
+
 2013-08-16  Sam Weinig  <sam@webkit.org>
 
         <https://webkit.org/b/119911> Remove the unused OfflineStorageProcess

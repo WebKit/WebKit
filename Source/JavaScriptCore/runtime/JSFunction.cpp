@@ -248,16 +248,17 @@ bool JSFunction::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyN
 
     if (propertyName == exec->propertyNames().prototype) {
         VM& vm = exec->vm();
-        PropertyOffset offset = thisObject->getDirectOffset(vm, propertyName);
+        unsigned attributes;
+        PropertyOffset offset = thisObject->getDirectOffset(vm, propertyName, attributes);
         if (!isValidOffset(offset)) {
             JSObject* prototype = constructEmptyObject(exec);
             prototype->putDirect(vm, exec->propertyNames().constructor, thisObject, DontEnum);
             thisObject->putDirect(vm, exec->propertyNames().prototype, prototype, DontDelete | DontEnum);
-            offset = thisObject->getDirectOffset(vm, exec->propertyNames().prototype);
+            offset = thisObject->getDirectOffset(vm, exec->propertyNames().prototype, attributes);
             ASSERT(isValidOffset(offset));
         }
 
-        slot.setValue(thisObject, thisObject->getDirect(offset), offset);
+        slot.setValue(thisObject, attributes, thisObject->getDirect(offset), offset);
     }
 
     if (propertyName == exec->propertyNames().arguments) {
@@ -270,17 +271,17 @@ bool JSFunction::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyN
             }
             return result;
         }
-        slot.setCacheableCustom(thisObject, argumentsGetter);
+        slot.setCacheableCustom(thisObject, ReadOnly | DontEnum | DontDelete, argumentsGetter);
         return true;
     }
 
     if (propertyName == exec->propertyNames().length) {
-        slot.setCacheableCustom(thisObject, lengthGetter);
+        slot.setCacheableCustom(thisObject, ReadOnly | DontEnum | DontDelete, lengthGetter);
         return true;
     }
 
     if (propertyName == exec->propertyNames().name) {
-        slot.setCacheableCustom(thisObject, nameGetter);
+        slot.setCacheableCustom(thisObject, ReadOnly | DontEnum | DontDelete, nameGetter);
         return true;
     }
 
@@ -294,7 +295,7 @@ bool JSFunction::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyN
             }
             return result;
         }
-        slot.setCacheableCustom(thisObject, callerGetter);
+        slot.setCacheableCustom(thisObject, ReadOnly | DontEnum | DontDelete, callerGetter);
         return true;
     }
 

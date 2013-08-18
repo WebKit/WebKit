@@ -66,13 +66,13 @@ bool JSLocation::getOwnPropertySlotDelegate(ExecState* exec, PropertyName proper
     const HashEntry* entry = JSLocationPrototype::info()->propHashTable(exec)->entry(exec, propertyName);
     if (entry && (entry->attributes() & JSC::Function)) {
         if (entry->function() == jsLocationPrototypeFunctionReplace) {
-            slot.setCustom(this, nonCachingStaticReplaceFunctionGetter);
+            slot.setCustom(this, entry->attributes(), nonCachingStaticReplaceFunctionGetter);
             return true;
         } else if (entry->function() == jsLocationPrototypeFunctionReload) {
-            slot.setCustom(this, nonCachingStaticReloadFunctionGetter);
+            slot.setCustom(this, entry->attributes(), nonCachingStaticReloadFunctionGetter);
             return true;
         } else if (entry->function() == jsLocationPrototypeFunctionAssign) {
-            slot.setCustom(this, nonCachingStaticAssignFunctionGetter);
+            slot.setCustom(this, entry->attributes(), nonCachingStaticAssignFunctionGetter);
             return true;
         }
     }
@@ -103,15 +103,15 @@ bool JSLocation::getOwnPropertyDescriptorDelegate(ExecState* exec, PropertyName 
     PropertySlot slot(this);
     if (entry && (entry->attributes() & JSC::Function)) {
         if (entry->function() == jsLocationPrototypeFunctionReplace) {
-            slot.setCustom(this, nonCachingStaticReplaceFunctionGetter);
+            slot.setCustom(this, entry->attributes(), nonCachingStaticReplaceFunctionGetter);
             descriptor.setDescriptor(slot.getValue(exec, propertyName), entry->attributes());
             return true;
         } else if (entry->function() == jsLocationPrototypeFunctionReload) {
-            slot.setCustom(this, nonCachingStaticReloadFunctionGetter);
+            slot.setCustom(this, entry->attributes(), nonCachingStaticReloadFunctionGetter);
             descriptor.setDescriptor(slot.getValue(exec, propertyName), entry->attributes());
             return true;
         } else if (entry->function() == jsLocationPrototypeFunctionAssign) {
-            slot.setCustom(this, nonCachingStaticAssignFunctionGetter);
+            slot.setCustom(this, entry->attributes(), nonCachingStaticAssignFunctionGetter);
             descriptor.setDescriptor(slot.getValue(exec, propertyName), entry->attributes());
             return true;
         }

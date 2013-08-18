@@ -70,20 +70,20 @@ bool JSHistory::getOwnPropertySlotDelegate(ExecState* exec, PropertyName propert
         // Allow access to back(), forward() and go() from any frame.
         if (entry->attributes() & JSC::Function) {
             if (entry->function() == jsHistoryPrototypeFunctionBack) {
-                slot.setCustom(this, nonCachingStaticBackFunctionGetter);
+                slot.setCustom(this, entry->attributes(), nonCachingStaticBackFunctionGetter);
                 return true;
             } else if (entry->function() == jsHistoryPrototypeFunctionForward) {
-                slot.setCustom(this, nonCachingStaticForwardFunctionGetter);
+                slot.setCustom(this, entry->attributes(), nonCachingStaticForwardFunctionGetter);
                 return true;
             } else if (entry->function() == jsHistoryPrototypeFunctionGo) {
-                slot.setCustom(this, nonCachingStaticGoFunctionGetter);
+                slot.setCustom(this, entry->attributes(), nonCachingStaticGoFunctionGetter);
                 return true;
             }
         }
     } else {
         // Allow access to toString() cross-domain, but always Object.toString.
         if (propertyName == exec->propertyNames().toString) {
-            slot.setCustom(this, objectToStringFunctionGetter);
+            slot.setCustom(this, ReadOnly | DontDelete | DontEnum, objectToStringFunctionGetter);
             return true;
         }
     }
@@ -111,15 +111,15 @@ bool JSHistory::getOwnPropertyDescriptorDelegate(ExecState* exec, PropertyName p
         // Allow access to back(), forward() and go() from any frame.
         if (entry->attributes() & JSC::Function) {
             if (entry->function() == jsHistoryPrototypeFunctionBack) {
-                slot.setCustom(this, nonCachingStaticBackFunctionGetter);
+                slot.setCustom(this, entry->attributes(), nonCachingStaticBackFunctionGetter);
                 descriptor.setDescriptor(slot.getValue(exec, propertyName), entry->attributes());
                 return true;
             } else if (entry->function() == jsHistoryPrototypeFunctionForward) {
-                slot.setCustom(this, nonCachingStaticForwardFunctionGetter);
+                slot.setCustom(this, entry->attributes(), nonCachingStaticForwardFunctionGetter);
                 descriptor.setDescriptor(slot.getValue(exec, propertyName), entry->attributes());
                 return true;
             } else if (entry->function() == jsHistoryPrototypeFunctionGo) {
-                slot.setCustom(this, nonCachingStaticGoFunctionGetter);
+                slot.setCustom(this, entry->attributes(), nonCachingStaticGoFunctionGetter);
                 descriptor.setDescriptor(slot.getValue(exec, propertyName), entry->attributes());
                 return true;
             }
@@ -128,7 +128,7 @@ bool JSHistory::getOwnPropertyDescriptorDelegate(ExecState* exec, PropertyName p
         // Allow access to toString() cross-domain, but always Object.toString.
         if (propertyName == exec->propertyNames().toString) {
             PropertySlot slot(this);
-            slot.setCustom(this, objectToStringFunctionGetter);
+            slot.setCustom(this, ReadOnly | DontDelete | DontEnum, objectToStringFunctionGetter);
             descriptor.setDescriptor(slot.getValue(exec, propertyName), entry->attributes());
             return true;
         }
