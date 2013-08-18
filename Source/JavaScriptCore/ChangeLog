@@ -1,3 +1,30 @@
+2013-08-17  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        <https://webkit.org/b/119919> Concurrent JIT crashes in various fast/js/dfg-* tests while the main thread is setting innerHTML
+
+        Reviewed by Filip Pizlo.
+
+        Added a new mode for DesiredWriteBarrier that allows it to track a position in a 
+        Vector of WriteBarriers rather than the specific address. The fact that we were 
+        arbitrarily storing into a Vector's backing store for constants at the end of 
+        compilation after the Vector could have resized was causing crashes.
+
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::constants):
+        (JSC::CodeBlock::addConstantLazily):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::addConstant):
+        * dfg/DFGDesiredWriteBarriers.cpp:
+        (JSC::DFG::DesiredWriteBarrier::DesiredWriteBarrier):
+        (JSC::DFG::DesiredWriteBarrier::trigger):
+        (JSC::DFG::initializeLazyWriteBarrierForConstant):
+        * dfg/DFGDesiredWriteBarriers.h:
+        (JSC::DFG::DesiredWriteBarriers::add):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::truncateConstantToInt32):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::constantRegisterForConstant):
+
 2013-08-16  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should optimize typedArray.byteLength

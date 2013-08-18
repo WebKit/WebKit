@@ -155,8 +155,8 @@ public:
     {
         unsigned constantRegister;
         if (!m_codeBlock->findConstant(value, constantRegister)) {
-            initializeLazyWriteBarrier(
-                m_codeBlock->addConstantLazily(),
+            initializeLazyWriteBarrierForConstant(
+                m_codeBlock,
                 m_plan.writeBarriers,
                 m_codeBlock->ownerExecutable(),
                 value);

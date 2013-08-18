@@ -1372,8 +1372,8 @@ private:
         ASSERT(value.isInt32());
         unsigned constantRegister;
         if (!codeBlock()->findConstant(value, constantRegister)) {
-            initializeLazyWriteBarrier(
-                codeBlock()->addConstantLazily(),
+            initializeLazyWriteBarrierForConstant(
+                codeBlock(),
                 m_graph.m_plan.writeBarriers,
                 codeBlock()->ownerExecutable(),
                 value);

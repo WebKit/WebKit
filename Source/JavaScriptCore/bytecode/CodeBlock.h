@@ -684,6 +684,7 @@ public:
     const Identifier& identifier(int index) const { return m_unlinkedCode->identifier(index); }
 #endif
 
+    Vector<WriteBarrier<Unknown> >& constants() { return m_constantRegisters; }
     size_t numberOfConstantRegisters() const { return m_constantRegisters.size(); }
     unsigned addConstant(JSValue v)
     {
@@ -693,10 +694,11 @@ public:
         return result;
     }
 
-    WriteBarrier<Unknown>& addConstantLazily()
+    unsigned addConstantLazily()
     {
+        unsigned result = m_constantRegisters.size();
         m_constantRegisters.append(WriteBarrier<Unknown>());
-        return m_constantRegisters.last();
+        return result;
     }
 
     bool findConstant(JSValue, unsigned& result);

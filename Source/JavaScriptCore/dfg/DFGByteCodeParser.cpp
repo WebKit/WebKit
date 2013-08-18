@@ -403,8 +403,8 @@ private:
 
     void addConstant(JSValue value)
     {
-        initializeLazyWriteBarrier(
-            m_codeBlock->addConstantLazily(), 
+        initializeLazyWriteBarrierForConstant(
+            m_codeBlock,
             m_graph.m_plan.writeBarriers, 
             m_codeBlock->ownerExecutable(), 
             value);

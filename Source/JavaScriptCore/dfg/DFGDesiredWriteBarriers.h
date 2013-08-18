@@ -38,12 +38,21 @@ namespace DFG {
 class DesiredWriteBarrier {
 public:
     DesiredWriteBarrier(WriteBarrier<Unknown>*, JSCell* owner);
+    DesiredWriteBarrier(Vector<WriteBarrier<Unknown> >*, unsigned index, JSCell* owner);
 
     void trigger(VM&);
 
 private:
-    WriteBarrier<Unknown>* m_barrier;
     JSCell* m_owner;
+    enum WriteBarrierType { NormalType, VectorType };
+    WriteBarrierType m_type;
+    union {
+        WriteBarrier<Unknown>* m_barrier;
+        struct {
+            Vector<WriteBarrier<Unknown> >* m_barriers;
+            unsigned m_index;
+        } barrier_vector;
+    } u;
 };
 
 class DesiredWriteBarriers {
@@ -55,6 +64,12 @@ public:
     DesiredWriteBarrier& add(WriteBarrier<T>& barrier, JSCell* owner)
     {
         return addImpl(reinterpret_cast<WriteBarrier<Unknown>*>(&barrier), owner);
+    }
+
+    DesiredWriteBarrier& add(Vector<WriteBarrier<Unknown> >& barriers, unsigned index, JSCell* owner)
+    {
+        m_barriers.append(DesiredWriteBarrier(&barriers, index, owner));
+        return m_barriers.last();
     }
 
     void trigger(VM&);
@@ -70,6 +85,8 @@ void initializeLazyWriteBarrier(WriteBarrier<T>& barrier, DesiredWriteBarriers& 
 {
     barrier = WriteBarrier<T>(barriers.add(barrier, owner), value);
 }
+
+void initializeLazyWriteBarrierForConstant(CodeBlock*, DesiredWriteBarriers&, JSCell* owner, JSValue);
 
 } } // namespace JSC::DFG
 
