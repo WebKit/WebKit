@@ -1,5 +1,14 @@
 2013-08-18  Andreas Kling  <akling@apple.com>
 
+        <https://webkit.org/b/119983> Add two missing RefPtr::release() in HTMLLinkElement.
+
+        Reviewed by Antti Koivisto.
+
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::setCSSStyleSheet):
+
+2013-08-18  Andreas Kling  <akling@apple.com>
+
         <https://webkit.org/b/119981> Move ElementData & co to their own files.
 
         Reviewed by Antti Koivisto.
