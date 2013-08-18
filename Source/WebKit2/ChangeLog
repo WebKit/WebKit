@@ -1,3 +1,10 @@
+2013-08-18  Dan Bernstein  <mitz@apple.com>
+
+        Fix clean engineering builds after r154251.
+
+        * WebKit2.xcodeproj/project.pbxproj: Removed references to the OfflineStorage XPC services
+        from the “Copy XPC services for engineering builds” build phase.
+
 2013-08-18  Gavin Barraclough  <barraclough@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=119972
