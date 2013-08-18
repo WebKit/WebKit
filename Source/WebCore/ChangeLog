@@ -1,3 +1,18 @@
+2013-08-18  David Kilzer  <ddkilzer@apple.com>
+
+        BUILD FIX (r153990): Add UNUSED_PARAM for heightChanged when CSS_SHAPES is disabled
+
+        Fixes the following build failure:
+
+            WebCore/rendering/RenderBlock.cpp:1529:53: error: unused parameter 'heightChanged' [-Werror,-Wunused-parameter]
+            void RenderBlock::updateShapesAfterBlockLayout(bool heightChanged)
+                                                                ^
+            1 error generated.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::updateShapesAfterBlockLayout): Add
+        UNUSED_PARAM(heightChanged) when CSS_SHAPES is disabled.
+
 2013-08-18  Danilo Cesar Lemes de Paula  <danilo.cesar@collabora.co.uk>
 
         [EFL] minor method name fix for the textTrackOffMenuItemText method

@@ -1538,6 +1538,8 @@ void RenderBlock::updateShapesAfterBlockLayout(bool heightChanged)
     ShapeInsideInfo* shapeInsideInfo = layoutShapeInsideInfo();
     if (heightChanged && shapeInsideInfo)
         shapeInsideInfo->dirtyShapeSize();
+#else
+    UNUSED_PARAM(heightChanged);
 #endif
 }
 
