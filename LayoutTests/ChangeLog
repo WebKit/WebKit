@@ -1,3 +1,9 @@
+2013-08-18  Seokju Kwon  <seokju@webkit.org>
+
+        Unreviewed gardening.
+
+        * platform/efl/TestExpectations: fast/js/array-sort-modifying-tostring.html was removed after r154135.
+
 2013-08-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         <https://webkit.org/b/119917> Pasting multiple lines into a textarea can introduce extra new lines
