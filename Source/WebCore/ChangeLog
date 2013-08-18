@@ -1,5 +1,14 @@
 2013-08-18  Antti Koivisto  <antti@apple.com>
 
+        Fix crashing plugin tests caused by a logic error in the previous patch.
+        
+        Not reviewed.
+
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::willDetachRenderers):
+
+2013-08-18  Antti Koivisto  <antti@apple.com>
+
         <https://webkit.org/b/119982> Make Element::attach non-virtual
 
         Reviewed by Andreas Kling.
