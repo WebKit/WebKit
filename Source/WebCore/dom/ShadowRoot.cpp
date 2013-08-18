@@ -148,48 +148,6 @@ void ShadowRoot::setResetStyleInheritance(bool value)
     }
 }
 
-void ShadowRoot::attach(const Element::AttachContext& context)
-{
-    if (attached())
-        return;
-    StyleResolver& styleResolver = document()->ensureStyleResolver();
-    styleResolver.pushParentShadowRoot(this);
-
-    Element::AttachContext childrenContext(context);
-    childrenContext.resolvedStyle = 0;
-    for (Node* child = firstChild(); child; child = child->nextSibling()) {
-        if (child->isTextNode()) {
-            toText(child)->attachText();
-            continue;
-        }
-        if (child->isElementNode())
-            toElement(child)->attach(childrenContext);
-    }
-
-    styleResolver.popParentShadowRoot(this);
-
-    clearNeedsStyleRecalc();
-    setAttached(true);
-}
-
-void ShadowRoot::detach(const Element::AttachContext& context)
-{
-    if (!attached())
-        return;
-    Element::AttachContext childrenContext(context);
-    childrenContext.resolvedStyle = 0;
-    for (Node* child = firstChild(); child; child = child->nextSibling()) {
-        if (child->isTextNode()) {
-            toText(child)->detachText();
-            continue;
-        }
-        if (child->isElementNode())
-            toElement(child)->detach(context);
-    }
-    clearChildNeedsStyleRecalc();
-    setAttached(false);
-}
-
 void ShadowRoot::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
 {
     if (isOrphan())

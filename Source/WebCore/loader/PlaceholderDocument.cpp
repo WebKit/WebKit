@@ -34,9 +34,8 @@ void PlaceholderDocument::attach()
 {
     ASSERT(!attached());
 
-    Element::AttachContext attachContext;
     for (Element* child = ElementTraversal::firstWithin(this); child; child = ElementTraversal::nextSibling(child))
-        child->attach(attachContext);
+        Style::attachRenderTree(child);
 
     setAttached(true);
 }

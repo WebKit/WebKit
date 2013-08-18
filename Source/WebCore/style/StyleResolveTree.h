@@ -40,6 +40,16 @@ enum Change { NoChange, NoInherit, Inherit, Detach, Force };
 void resolveTree(Element*, Change);
 void resolveTree(Document*, Change);
 
+struct AttachContext {
+    RenderStyle* resolvedStyle;
+    bool performingReattach;
+
+    AttachContext() : resolvedStyle(0), performingReattach(false) { }
+};
+void attachRenderTree(Element*, const AttachContext& = AttachContext());
+void detachRenderTree(Element*, const AttachContext& = AttachContext());
+void reattachRenderTree(Element*, const AttachContext& = AttachContext());
+
 Change determineChange(const RenderStyle*, const RenderStyle*, Settings*);
 
 }

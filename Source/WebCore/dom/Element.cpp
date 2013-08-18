@@ -187,9 +187,6 @@ Element::~Element()
         ASSERT(!hasPendingResources());
     }
 #endif
-
-    if (renderer())
-        detach();
 }
 
 inline ElementRareData* Element::elementRareData() const
@@ -1389,174 +1386,19 @@ void Element::removedFrom(ContainerNode* insertionPoint)
 #endif
 }
 
-void Element::createRendererIfNeeded(const AttachContext& context)
-{
-    NodeRenderingContext(this, context).createRendererForElementIfNeeded();
-}
-
-void Element::attachChildren(const AttachContext& context)
-{
-    AttachContext childrenContext(context);
-    childrenContext.resolvedStyle = 0;
-
-    for (Node* child = firstChild(); child; child = child->nextSibling()) {
-        ASSERT(!child->attached() || childAttachedAllowedWhenAttachingChildren(this));
-        if (child->attached())
-            continue;
-        if (child->isTextNode()) {
-            toText(child)->attachText();
-            continue;
-        }
-        if (!child->isElementNode())
-            continue;
-        toElement(child)->attach(childrenContext);
-    }
-}
-
-void Element::attach(const AttachContext& context)
-{
-    PostAttachCallbackDisabler callbackDisabler(this);
-    WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
-
-    if (hasCustomStyleResolveCallbacks())
-        willAttachRenderers();
-
-    createRendererIfNeeded(context);
-
-    if (parentElement() && parentElement()->isInCanvasSubtree())
-        setIsInCanvasSubtree(true);
-
-    updatePseudoElement(BEFORE);
-
-    StyleResolverParentPusher parentPusher(this);
-
-    // When a shadow root exists, it does the work of attaching the children.
-    if (ShadowRoot* shadowRoot = this->shadowRoot()) {
-        parentPusher.push();
-        shadowRoot->attach(context);
-    } else if (firstChild())
-        parentPusher.push();
-
-    attachChildren(context);
-
-    Node* sibling = nextSibling();
-    if (renderer() && sibling && !sibling->renderer() && sibling->attached())
-        Text::createTextRenderersForSiblingsAfterAttachIfNeeded(sibling);
-
-    setAttached(true);
-    clearNeedsStyleRecalc();
-
-    if (Document* doc = documentInternal()) {
-        if (AXObjectCache* cache = doc->axObjectCache())
-            cache->updateCacheAfterNodeIsAttached(this);
-    }
-
-    updatePseudoElement(AFTER);
-
-    if (hasRareData()) {   
-        ElementRareData* data = elementRareData();
-        if (data->needsFocusAppearanceUpdateSoonAfterAttach()) {
-            if (isFocusable() && document()->focusedElement() == this)
-                document()->updateFocusAppearanceSoon(false /* don't restore selection */);
-            data->setNeedsFocusAppearanceUpdateSoonAfterAttach(false);
-        }
-    }
-
-    if (hasCustomStyleResolveCallbacks())
-        didAttachRenderers();
-}
-
 void Element::unregisterNamedFlowContentNode()
 {
     if (document()->cssRegionsEnabled() && inNamedFlow() && document()->renderView())
         document()->renderView()->flowThreadController()->unregisterNamedFlowContentNode(this);
 }
 
-void Element::detachChildren(const AttachContext& context)
-{
-    AttachContext childrenContext(context);
-    childrenContext.resolvedStyle = 0;
-
-    for (Node* child = firstChild(); child; child = child->nextSibling()) {
-        if (child->isTextNode()) {
-            toText(child)->detachText();
-            continue;
-        }
-        if (child->isElementNode())
-            toElement(child)->detach(childrenContext);
-    }
-    clearChildNeedsStyleRecalc();
-}
-
-void Element::detach(const AttachContext& context)
-{
-    WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
-
-    if (hasCustomStyleResolveCallbacks())
-        willDetachRenderers();
-
-    unregisterNamedFlowContentNode();
-    cancelFocusAppearanceUpdate();
-    if (hasRareData()) {
-        ElementRareData* data = elementRareData();
-        data->setPseudoElement(BEFORE, 0);
-        data->setPseudoElement(AFTER, 0);
-        data->setIsInCanvasSubtree(false);
-        data->resetComputedStyle();
-        data->resetDynamicRestyleObservations();
-        data->setIsInsideRegion(false);
-    }
-
-    if (ShadowRoot* shadowRoot = this->shadowRoot())
-        shadowRoot->detach(context);
-
-    // Do not remove the element's hovered and active status
-    // if performing a reattach.
-    if (!context.performingReattach) {
-        if (isUserActionElement()) {
-            if (hovered())
-                document()->hoveredElementDidDetach(this);
-            if (inActiveChain())
-                document()->elementInActiveChainDidDetach(this);
-            document()->userActionElements().didDetach(this);
-        }
-    }
-
-    detachChildren(context);
-
-    if (renderer())
-        renderer()->destroyAndCleanupAnonymousWrappers();
-    setRenderer(0);
-
-    setAttached(false);
-
-    if (hasCustomStyleResolveCallbacks())
-        didDetachRenderers();
-}
-
-void Element::reattach(const AttachContext& context)
-{
-    AttachContext reattachContext(context);
-    reattachContext.performingReattach = true;
-
-    if (attached())
-        detach(reattachContext);
-    attach(reattachContext);
-}
-
-void Element::reattachIfAttached(const AttachContext& context)
-{
-    if (attached())
-        reattach(context);
-}
-
 void Element::lazyReattach(ShouldSetAttached shouldSetAttached)
 {
-    AttachContext context;
+    Style::AttachContext context;
     context.performingReattach = true;
 
     if (attached())
-        detach(context);
+        Style::detachRenderTree(this, context);
     lazyAttach(shouldSetAttached);
 }
 
@@ -1628,8 +1470,7 @@ void Element::removeShadowRoot()
     InspectorInstrumentation::willPopShadowRoot(this, oldRoot.get());
     document()->removeFocusedNodeOfSubtree(oldRoot.get());
 
-    if (oldRoot->attached())
-        oldRoot->detach(Element::AttachContext());
+    ASSERT(!oldRoot->attached());
 
     elementRareData()->clearShadowRoot();
 
@@ -2109,6 +1950,18 @@ void Element::focus(bool restorePreviousSelection, FocusDirection direction)
     updateFocusAppearance(restorePreviousSelection);
 }
 
+void Element::updateFocusAppearanceAfterAttachIfNeeded()
+{
+    if (!hasRareData())
+        return;
+    ElementRareData* data = elementRareData();
+    if (!data->needsFocusAppearanceUpdateSoonAfterAttach())
+        return;
+    if (isFocusable() && document()->focusedElement() == this)
+        document()->updateFocusAppearanceSoon(false /* don't restore selection */);
+    data->setNeedsFocusAppearanceUpdateSoonAfterAttach(false);
+}
+
 void Element::updateFocusAppearance(bool /*restorePreviousSelection*/)
 {
     if (isRootEditableElement()) {
@@ -2477,7 +2330,7 @@ void Element::updatePseudoElement(PseudoId pseudoId, Style::Change change)
         if (!renderer() || !pseudoElementRendererIsNeeded(renderer()->getCachedPseudoStyle(pseudoId)))
             setPseudoElement(pseudoId, 0);
     } else if (RefPtr<PseudoElement> element = createPseudoElementIfNeeded(pseudoId)) {
-        element->attach();
+        Style::attachRenderTree(element.get());
         setPseudoElement(pseudoId, element.release());
     }
 }
@@ -3110,6 +2963,32 @@ void Element::resetComputedStyle()
     if (!hasRareData())
         return;
     elementRareData()->resetComputedStyle();
+}
+
+void Element::clearStyleDerivedDataBeforeDetachingRenderer()
+{
+    unregisterNamedFlowContentNode();
+    cancelFocusAppearanceUpdate();
+    if (!hasRareData())
+        return;
+    ElementRareData* data = elementRareData();
+    data->setPseudoElement(BEFORE, 0);
+    data->setPseudoElement(AFTER, 0);
+    data->setIsInCanvasSubtree(false);
+    data->resetComputedStyle();
+    data->resetDynamicRestyleObservations();
+    data->setIsInsideRegion(false);
+}
+
+void Element::clearHoverAndActiveStatusBeforeDetachingRenderer()
+{
+    if (!isUserActionElement())
+        return;
+    if (hovered())
+        document()->hoveredElementDidDetach(this);
+    if (inActiveChain())
+        document()->elementInActiveChainDidDetach(this);
+    document()->userActionElements().didDetach(this);
 }
 
 bool Element::willRecalcStyle(Style::Change)

@@ -293,16 +293,6 @@ public:
 
     virtual void copyNonAttributePropertiesFromElement(const Element&) { }
 
-    struct AttachContext {
-        RenderStyle* resolvedStyle;
-        bool performingReattach;
-
-        AttachContext() : resolvedStyle(0), performingReattach(false) { }
-    };
-    void attach(const AttachContext& = AttachContext());
-    void detach(const AttachContext& = AttachContext());
-    void reattach(const AttachContext& = AttachContext());
-    void reattachIfAttached(const AttachContext& = AttachContext());
     enum ShouldSetAttached {
         SetAttached,
         DoNotSetAttached
@@ -395,6 +385,7 @@ public:
     virtual const AtomicString& imageSourceURL() const;
     virtual String target() const { return String(); }
 
+    void updateFocusAppearanceAfterAttachIfNeeded();
     virtual void focus(bool restorePreviousSelection = true, FocusDirection = FocusDirectionNone);
     virtual void updateFocusAppearance(bool restorePreviousSelection);
     virtual void blur();
@@ -555,9 +546,15 @@ public:
 
     virtual bool willRecalcStyle(Style::Change);
     virtual void didRecalcStyle(Style::Change);
+    virtual void willAttachRenderers();
+    virtual void didAttachRenderers();
+    virtual void willDetachRenderers();
+    virtual void didDetachRenderers();
 
     void updatePseudoElement(PseudoId, Style::Change = Style::NoChange);
     void resetComputedStyle();
+    void clearStyleDerivedDataBeforeDetachingRenderer();
+    void clearHoverAndActiveStatusBeforeDetachingRenderer();
 
 protected:
     Element(const QualifiedName& tagName, Document* document, ConstructionType type)
@@ -670,16 +667,6 @@ private:
 
     void detachAllAttrNodesFromElement();
     void detachAttrNodeFromElementWithValue(Attr*, const AtomicString& value);
-
-    void attachChildren(const AttachContext&);
-    void detachChildren(const AttachContext&);
-
-    virtual void willAttachRenderers();
-    virtual void didAttachRenderers();
-    virtual void willDetachRenderers();
-    virtual void didDetachRenderers();
-
-    void createRendererIfNeeded(const AttachContext&);
 
     bool isJavaScriptURLAttribute(const Attribute&) const;
 

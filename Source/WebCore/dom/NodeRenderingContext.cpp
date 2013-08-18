@@ -67,7 +67,7 @@ NodeRenderingContext::NodeRenderingContext(Node* node, RenderStyle* style)
 {
 }
 
-NodeRenderingContext::NodeRenderingContext(Node* node, const Element::AttachContext& context)
+NodeRenderingContext::NodeRenderingContext(Node* node, const Style::AttachContext& context)
     : m_node(node)
     , m_style(context.resolvedStyle)
     , m_parentFlowRenderer(0)

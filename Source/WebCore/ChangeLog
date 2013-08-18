@@ -1,5 +1,118 @@
 2013-08-18  Antti Koivisto  <antti@apple.com>
 
+        <https://webkit.org/b/119987> Make Element::attach standalone function
+
+        Reviewed by Andreas Kling.
+
+        This patch turns Element::attach() and the related functions into standalone functions.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::attachChild):
+        (WebCore::detachChild):
+        * dom/ContainerNode.h:
+        * dom/Document.cpp:
+        (WebCore::Document::attach):
+        (WebCore::Document::detach):
+        * dom/Element.cpp:
+        (WebCore::Element::~Element):
+        (WebCore::Element::lazyReattach):
+        (WebCore::Element::removeShadowRoot):
+        
+            Shadow root should be detached by now. Remove the detach call.
+
+        (WebCore::Element::updateFocusAppearanceAfterAttachIfNeeded):
+        (WebCore::Element::updatePseudoElement):
+        (WebCore::Element::clearStyleDerivedDataBeforeDetachingRenderer):
+        (WebCore::Element::clearHoverAndActiveStatusBeforeDetachingRenderer):
+        
+            Factor some parts of former Element::attach/detach() into member functions.
+
+        * dom/Element.h:
+        * dom/ElementRareData.h:
+        (WebCore::ElementRareData::releasePseudoElement):
+        * dom/NodeRenderingContext.cpp:
+        (WebCore::NodeRenderingContext::NodeRenderingContext):
+        * dom/NodeRenderingContext.h:
+        * dom/ShadowRoot.cpp:
+        * dom/ShadowRoot.h:
+        * html/HTMLDetailsElement.cpp:
+        (WebCore::HTMLDetailsElement::parseAttribute):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::updateType):
+        (WebCore::HTMLInputElement::parseAttribute):
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::renderFallbackContent):
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::willRecalcStyle):
+        (WebCore::HTMLPlugInImageElement::restartSnapshottedPlugIn):
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::parseAttribute):
+        (WebCore::HTMLSelectElement::parseMultipleAttribute):
+        * html/HTMLViewSourceDocument.cpp:
+        (WebCore::HTMLViewSourceDocument::createContainingTable):
+        (WebCore::HTMLViewSourceDocument::addSpanWithClassName):
+        (WebCore::HTMLViewSourceDocument::addLine):
+        (WebCore::HTMLViewSourceDocument::finishLine):
+        (WebCore::HTMLViewSourceDocument::addBase):
+        (WebCore::HTMLViewSourceDocument::addLink):
+        * html/parser/HTMLConstructionSite.cpp:
+        (WebCore::executeTask):
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::callTheAdoptionAgency):
+        * html/shadow/InsertionPoint.cpp:
+        (WebCore::InsertionPoint::willAttachRenderers):
+        (WebCore::InsertionPoint::willDetachRenderers):
+        * loader/PlaceholderDocument.cpp:
+        (WebCore::PlaceholderDocument::attach):
+        * style/StyleResolveTree.cpp:
+        (WebCore::Style::createRendererIfNeeded):
+        
+            From Element::createRendererIfNeeded()
+
+        (WebCore::Style::attachShadowRoot):
+        
+            From ShadowRoot::attach()
+
+        (WebCore::Style::childAttachedAllowedWhenAttachingChildren):
+        (WebCore::Style::attachChildren):
+        
+            From Element::attachChildren()
+
+        (WebCore::Style::attachRenderTree):
+        
+            From Element::attach()
+
+        (WebCore::Style::detachShadowRoot):
+        
+            From ShadowRoot::detach()
+
+        (WebCore::Style::detachChildren):
+        
+            From Element::detachChildren()
+
+        (WebCore::Style::detachRenderTree):
+        
+            From Element::deatach()
+
+        (WebCore::Style::reattachRenderTree):
+        
+             From Element::reattach()
+
+        (WebCore::Style::resolveLocal):
+        * style/StyleResolveTree.h:
+        (WebCore::Style::AttachContext::AttachContext):
+        
+            From Element::AttachContext
+
+        * svg/SVGTests.cpp:
+        (WebCore::SVGTests::handleAttributeChange):
+        * xml/XMLErrors.cpp:
+        (WebCore::XMLErrors::insertErrorMessageBlock):
+        * xml/parser/XMLDocumentParserLibxml2.cpp:
+        (WebCore::XMLDocumentParser::startElementNs):
+
+2013-08-18  Antti Koivisto  <antti@apple.com>
+
         Fix crashing plugin tests caused by a logic error in the previous patch.
         
         Not reviewed.

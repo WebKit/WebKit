@@ -101,7 +101,7 @@ static inline void executeTask(HTMLConstructionSiteTask& task)
 
     if (task.child->parentNode() && task.parent->attached() && !task.child->attached()) {
         if (task.child->isElementNode())
-            toElement(task.child.get())->attach();
+            Style::attachRenderTree(toElement(task.child.get()));
         else if (task.child->isTextNode())
             toText(task.child.get())->attachText();
     }

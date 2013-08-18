@@ -151,10 +151,6 @@ private:
     Node* m_lastChild;
 };
 
-#ifndef NDEBUG
-bool childAttachedAllowedWhenAttachingChildren(ContainerNode*);
-#endif
-
 inline ContainerNode* toContainerNode(Node* node)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(!node || node->isContainerNode());

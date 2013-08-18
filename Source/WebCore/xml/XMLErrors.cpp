@@ -128,7 +128,7 @@ void XMLErrors::insertErrorMessageBlock()
         rootElement->parserAppendChild(body);
         m_document->parserAppendChild(rootElement);
         if (m_document->attached() && !rootElement->attached())
-            rootElement->attach();
+            Style::attachRenderTree(rootElement.get());
         documentElement = body.get();
     }
 #if ENABLE(SVG)
@@ -139,7 +139,7 @@ void XMLErrors::insertErrorMessageBlock()
 
         documentElement->parentNode()->parserRemoveChild(documentElement.get());
         if (documentElement->attached())
-            documentElement->detach();
+            Style::detachRenderTree(documentElement.get());
 
         body->parserAppendChild(documentElement);
         m_document->parserAppendChild(rootElement.get());
@@ -147,7 +147,7 @@ void XMLErrors::insertErrorMessageBlock()
         if (m_document->attached())
             // In general, rootElement shouldn't be attached right now, but it will be if there is a style element
             // in the SVG content.
-            rootElement->reattach();
+            Style::detachRenderTree(rootElement.get());
 
         documentElement = body.get();
     }
@@ -174,7 +174,7 @@ void XMLErrors::insertErrorMessageBlock()
         documentElement->parserAppendChild(reportElement);
 
     if (documentElement->attached() && !reportElement->attached())
-        reportElement->attach();
+        Style::attachRenderTree(reportElement.get());
 
     m_document->updateStyleIfNeeded();
 }

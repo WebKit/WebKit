@@ -227,7 +227,7 @@ bool HTMLPlugInImageElement::willRecalcStyle(Style::Change)
 {
     // FIXME: Why is this necessary?  Manual re-attach is almost always wrong.
     if (!useFallbackContent() && needsWidgetUpdate() && renderer() && !isImageType() && (displayState() != DisplayingSnapshot))
-        reattach();
+        Style::reattachRenderTree(this);
     return true;
 }
 
@@ -516,7 +516,7 @@ void HTMLPlugInImageElement::restartSnapshottedPlugIn()
         return;
 
     setDisplayState(Restarting);
-    reattach();
+    Style::reattachRenderTree(this);
 }
 
 void HTMLPlugInImageElement::dispatchPendingMouseClick()

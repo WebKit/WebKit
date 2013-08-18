@@ -108,7 +108,7 @@ void ContainerNode::removeDetachedChildren()
 static inline void attachChild(Node* child)
 {
     if (child->isElementNode())
-        toElement(child)->attach();
+        Style::attachRenderTree(toElement(child));
     else if (child->isTextNode())
         toText(child)->attachText();
 }
@@ -116,7 +116,7 @@ static inline void attachChild(Node* child)
 static inline void detachChild(Node* child)
 {
     if (child->isElementNode())
-        toElement(child)->detach();
+        Style::detachRenderTree(toElement(child));
     else if (child->isTextNode())
         toText(child)->detachText();
 }
@@ -1064,21 +1064,5 @@ static void updateTreeAfterInsertion(ContainerNode* parent, Node* child, AttachB
 
     dispatchChildInsertionEvents(child);
 }
-
-#ifndef NDEBUG
-bool childAttachedAllowedWhenAttachingChildren(ContainerNode* node)
-{
-    if (node->isShadowRoot())
-        return true;
-
-    if (node->isInsertionPoint())
-        return true;
-
-    if (node->isElementNode() && toElement(node)->shadowRoot())
-        return true;
-
-    return false;
-}
-#endif
 
 } // namespace WebCore

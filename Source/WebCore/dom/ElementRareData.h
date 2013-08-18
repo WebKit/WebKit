@@ -252,7 +252,7 @@ inline void ElementRareData::releasePseudoElement(PseudoElement* element)
     if (!element)
         return;
     if (element->attached())
-        element->detach();
+        Style::detachRenderTree(element);
     element->clearHostElement();
 
     ASSERT(!element->nextSibling());

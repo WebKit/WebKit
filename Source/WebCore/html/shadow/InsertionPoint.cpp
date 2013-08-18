@@ -64,7 +64,7 @@ void InsertionPoint::willAttachRenderers()
             continue;
         }
         if (current->isElementNode())
-            toElement(current)->attach();
+            Style::attachRenderTree(toElement(current));
     }
 }
 
@@ -79,7 +79,7 @@ void InsertionPoint::willDetachRenderers()
             continue;
         }
         if (current->isElementNode())
-            toElement(current)->detach();
+            Style::detachRenderTree(toElement(current));
     }
 }
 

@@ -33,6 +33,7 @@
 #include "DocumentFragment.h"
 #include "Element.h"
 #include "ExceptionCode.h"
+#include "StyleResolveTree.h"
 #include "TreeScope.h"
 
 namespace WebCore {
@@ -67,9 +68,6 @@ public:
     void setInnerHTML(const String&, ExceptionCode&);
 
     Element* activeElement() const;
-
-    void attach(const Element::AttachContext&);
-    void detach(const Element::AttachContext&);
 
     virtual void registerScopedHTMLStyleChild() OVERRIDE;
     virtual void unregisterScopedHTMLStyleChild() OVERRIDE;

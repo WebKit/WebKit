@@ -27,6 +27,7 @@
 #define NodeRenderingContext_h
 
 #include "NodeRenderingTraversal.h"
+#include "StyleResolveTree.h"
 
 #include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
@@ -46,7 +47,7 @@ class NodeRenderingContext {
 public:
     explicit NodeRenderingContext(Node*);
     NodeRenderingContext(Node*, RenderStyle*);
-    NodeRenderingContext(Node*, const Element::AttachContext&);
+    NodeRenderingContext(Node*, const Style::AttachContext&);
     ~NodeRenderingContext();
 
     void createRendererForTextIfNeeded();

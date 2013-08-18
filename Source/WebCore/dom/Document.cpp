@@ -1986,9 +1986,8 @@ void Document::attach()
     RenderObject* render = renderer();
     setRenderer(0);
 
-    Element::AttachContext attachContext;
     for (Element* child = ElementTraversal::firstWithin(this); child; child = ElementTraversal::nextSibling(child))
-        child->attach(attachContext);
+        Style::attachRenderTree(child);
 
     setRenderer(render);
     setAttached(true);
@@ -2045,9 +2044,8 @@ void Document::detach()
     m_focusedElement = 0;
     m_activeElement = 0;
 
-    Element::AttachContext attachContext;
     for (Element* child = ElementTraversal::firstWithin(this); child; child = ElementTraversal::nextSibling(child))
-        child->detach(attachContext);
+        Style::detachRenderTree(child);
 
     clearChildNeedsStyleRecalc();
     setAttached(false);
