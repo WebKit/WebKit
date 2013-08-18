@@ -63,7 +63,7 @@ HTMLFormControlElement::HTMLFormControlElement(const QualifiedName& tagName, Doc
     , m_hasAutofocused(false)
 {
     setForm(form ? form : findFormAncestor());
-    setHasCustomStyleCallbacks();
+    setHasCustomStyleResolveCallbacks();
 }
 
 HTMLFormControlElement::~HTMLFormControlElement()
@@ -208,12 +208,8 @@ static void focusPostAttach(Node* element, unsigned)
     element->deref(); 
 }
 
-void HTMLFormControlElement::attach(const AttachContext& context)
+void HTMLFormControlElement::didAttachRenderers()
 {
-    PostAttachCallbackDisabler disabler(this);
-
-    HTMLElement::attach(context);
-
     // The call to updateFromElement() needs to go after the call through
     // to the base class's attach() because that can sometimes do a close
     // on the renderer.

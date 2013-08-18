@@ -327,6 +327,8 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document* docum
     , m_reportedExtraMemoryCost(0)
 {
     LOG(Media, "HTMLMediaElement::HTMLMediaElement");
+    setHasCustomStyleResolveCallbacks();
+
     document->registerForMediaVolumeCallbacks(this);
     document->registerForPrivateBrowsingStateChangedCallbacks(this);
 
@@ -335,7 +337,6 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document* docum
         addBehaviorRestriction(RequireUserGestureForLoadRestriction);
     }
 
-    setHasCustomStyleCallbacks();
     addElementToDocumentMap(this, document);
 
 #if ENABLE(VIDEO_TRACK)
@@ -631,16 +632,17 @@ void HTMLMediaElement::removedFrom(ContainerNode* insertionPoint)
     HTMLElement::removedFrom(insertionPoint);
 }
 
-void HTMLMediaElement::attach(const AttachContext& context)
+void HTMLMediaElement::willAttachRenderers()
 {
     ASSERT(!attached());
 
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
     m_needWidgetUpdate = true;
 #endif
+}
 
-    HTMLElement::attach(context);
-
+void HTMLMediaElement::didAttachRenderers()
+{
     if (renderer())
         renderer()->updateFromElement();
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)

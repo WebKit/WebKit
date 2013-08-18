@@ -51,6 +51,7 @@ inline HTMLVideoElement::HTMLVideoElement(const QualifiedName& tagName, Document
     : HTMLMediaElement(tagName, document, createdByParser)
 {
     ASSERT(hasTagName(videoTag));
+    setHasCustomStyleResolveCallbacks();
     if (document->settings())
         m_defaultPosterURL = document->settings()->defaultVideoPosterURL();
 }
@@ -74,9 +75,9 @@ RenderObject* HTMLVideoElement::createRenderer(RenderArena* arena, RenderStyle*)
 }
 #endif
 
-void HTMLVideoElement::attach(const AttachContext& context)
+void HTMLVideoElement::didAttachRenderers()
 {
-    HTMLMediaElement::attach(context);
+    HTMLMediaElement::didAttachRenderers();
 
 #if !ENABLE(PLUGIN_PROXY_FOR_VIDEO)
     updateDisplayState();

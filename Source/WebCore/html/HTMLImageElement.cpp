@@ -52,6 +52,7 @@ HTMLImageElement::HTMLImageElement(const QualifiedName& tagName, Document* docum
     , m_compositeOperator(CompositeSourceOver)
 {
     ASSERT(hasTagName(imgTag));
+    setHasCustomStyleResolveCallbacks();
     if (form)
         form->registerImgElement(this);
 }
@@ -184,22 +185,22 @@ bool HTMLImageElement::canStartSelection() const
     return false;
 }
 
-void HTMLImageElement::attach(const AttachContext& context)
+void HTMLImageElement::didAttachRenderers()
 {
-    HTMLElement::attach(context);
+    if (!renderer() || !renderer()->isImage())
+        return;
+    if (m_imageLoader.hasPendingBeforeLoadEvent())
+        return;
+    RenderImage* renderImage = toRenderImage(renderer());
+    RenderImageResource* renderImageResource = renderImage->imageResource();
+    if (renderImageResource->hasImage())
+        return;
+    renderImageResource->setCachedImage(m_imageLoader.image());
 
-    if (renderer() && renderer()->isImage() && !m_imageLoader.hasPendingBeforeLoadEvent()) {
-        RenderImage* renderImage = toRenderImage(renderer());
-        RenderImageResource* renderImageResource = renderImage->imageResource();
-        if (renderImageResource->hasImage())
-            return;
-        renderImageResource->setCachedImage(m_imageLoader.image());
-
-        // If we have no image at all because we have no src attribute, set
-        // image height and width for the alt text instead.
-        if (!m_imageLoader.image() && !renderImageResource->cachedImage())
-            renderImage->setImageSizeForAltText();
-    }
+    // If we have no image at all because we have no src attribute, set
+    // image height and width for the alt text instead.
+    if (!m_imageLoader.image() && !renderImageResource->cachedImage())
+        renderImage->setImageSizeForAltText();
 }
 
 Node::InsertionNotificationRequest HTMLImageElement::insertedInto(ContainerNode* insertionPoint)

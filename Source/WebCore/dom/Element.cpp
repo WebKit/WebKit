@@ -1416,8 +1416,10 @@ void Element::attachChildren(const AttachContext& context)
 void Element::attach(const AttachContext& context)
 {
     PostAttachCallbackDisabler callbackDisabler(this);
-    StyleResolverParentPusher parentPusher(this);
     WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
+
+    if (hasCustomStyleResolveCallbacks())
+        willAttachRenderers();
 
     createRendererIfNeeded(context);
 
@@ -1425,6 +1427,8 @@ void Element::attach(const AttachContext& context)
         setIsInCanvasSubtree(true);
 
     updatePseudoElement(BEFORE);
+
+    StyleResolverParentPusher parentPusher(this);
 
     // When a shadow root exists, it does the work of attaching the children.
     if (ShadowRoot* shadowRoot = this->shadowRoot()) {
@@ -1457,6 +1461,9 @@ void Element::attach(const AttachContext& context)
             data->setNeedsFocusAppearanceUpdateSoonAfterAttach(false);
         }
     }
+
+    if (hasCustomStyleResolveCallbacks())
+        didAttachRenderers();
 }
 
 void Element::unregisterNamedFlowContentNode()
@@ -1484,6 +1491,10 @@ void Element::detachChildren(const AttachContext& context)
 void Element::detach(const AttachContext& context)
 {
     WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
+
+    if (hasCustomStyleResolveCallbacks())
+        willDetachRenderers();
+
     unregisterNamedFlowContentNode();
     cancelFocusAppearanceUpdate();
     if (hasRareData()) {
@@ -1518,6 +1529,9 @@ void Element::detach(const AttachContext& context)
     setRenderer(0);
 
     setAttached(false);
+
+    if (hasCustomStyleResolveCallbacks())
+        didDetachRenderers();
 }
 
 void Element::reattach(const AttachContext& context)
@@ -1563,7 +1577,7 @@ void Element::lazyAttach(ShouldSetAttached shouldSetAttached)
 
 PassRefPtr<RenderStyle> Element::styleForRenderer()
 {
-    if (hasCustomStyleCallbacks()) {
+    if (hasCustomStyleResolveCallbacks()) {
         if (RefPtr<RenderStyle> style = customStyleForRenderer())
             return style.release();
     }
@@ -3100,18 +3114,38 @@ void Element::resetComputedStyle()
 
 bool Element::willRecalcStyle(Style::Change)
 {
-    ASSERT(hasCustomStyleCallbacks());
+    ASSERT(hasCustomStyleResolveCallbacks());
     return true;
 }
 
 void Element::didRecalcStyle(Style::Change)
 {
-    ASSERT(hasCustomStyleCallbacks());
+    ASSERT(hasCustomStyleResolveCallbacks());
+}
+
+void Element::willAttachRenderers()
+{
+    ASSERT(hasCustomStyleResolveCallbacks());
+}
+
+void Element::didAttachRenderers()
+{
+    ASSERT(hasCustomStyleResolveCallbacks());
+}
+
+void Element::willDetachRenderers()
+{
+    ASSERT(hasCustomStyleResolveCallbacks());
+}
+
+void Element::didDetachRenderers()
+{
+    ASSERT(hasCustomStyleResolveCallbacks());
 }
 
 PassRefPtr<RenderStyle> Element::customStyleForRenderer()
 {
-    ASSERT(hasCustomStyleCallbacks());
+    ASSERT(hasCustomStyleResolveCallbacks());
     return 0;
 }
 

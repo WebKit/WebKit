@@ -135,6 +135,7 @@ HTMLInputElement::HTMLInputElement(const QualifiedName& tagName, Document* docum
     , m_inputType(InputType::createText(this))
 {
     ASSERT(hasTagName(inputTag) || hasTagName(isindexTag));
+    setHasCustomStyleResolveCallbacks();
 }
 
 PassRefPtr<HTMLInputElement> HTMLInputElement::create(const QualifiedName& tagName, Document* document, HTMLFormElement* form, bool createdByParser)
@@ -795,14 +796,15 @@ RenderObject* HTMLInputElement::createRenderer(RenderArena* arena, RenderStyle* 
     return m_inputType->createRenderer(arena, style);
 }
 
-void HTMLInputElement::attach(const AttachContext& context)
+void HTMLInputElement::willAttachRenderers()
 {
-    PostAttachCallbackDisabler disabler(this);
-
     if (!m_hasType)
         updateType();
+}
 
-    HTMLTextFormControlElement::attach(context);
+void HTMLInputElement::didAttachRenderers()
+{
+    HTMLTextFormControlElement::didAttachRenderers();
 
     m_inputType->attach();
 
@@ -810,9 +812,8 @@ void HTMLInputElement::attach(const AttachContext& context)
         document()->updateFocusAppearanceSoon(true /* restore selection */);
 }
 
-void HTMLInputElement::detach(const AttachContext& context)
+void HTMLInputElement::didDetachRenderers()
 {
-    HTMLTextFormControlElement::detach(context);
     setFormControlValueMatchesRenderer(false);
     m_inputType->detach();
 }

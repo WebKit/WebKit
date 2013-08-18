@@ -61,7 +61,7 @@ PseudoElement::PseudoElement(Element* host, PseudoId pseudoId)
     , m_pseudoId(pseudoId)
 {
     ASSERT(pseudoId == BEFORE || pseudoId == AFTER);
-    setHasCustomStyleCallbacks();
+    setHasCustomStyleResolveCallbacks();
 }
 
 PseudoElement::~PseudoElement()
@@ -77,12 +77,8 @@ PassRefPtr<RenderStyle> PseudoElement::customStyleForRenderer()
     return m_hostElement->renderer()->getCachedPseudoStyle(m_pseudoId);
 }
 
-void PseudoElement::attach(const AttachContext& context)
+void PseudoElement::didAttachRenderers()
 {
-    ASSERT(!renderer());
-
-    Element::attach(context);
-
     RenderObject* renderer = this->renderer();
     if (!renderer || !renderer->style()->regionThread().isEmpty())
         return;

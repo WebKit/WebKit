@@ -1,3 +1,146 @@
+2013-08-18  Antti Koivisto  <antti@apple.com>
+
+        <https://webkit.org/b/119982> Make Element::attach non-virtual
+
+        Reviewed by Andreas Kling.
+
+        This will give us more future refactoring options.
+
+        * dom/Element.cpp:
+        (WebCore::Element::attach):
+        (WebCore::Element::detach):
+        
+            Make non-virtual. Call element type specific custom functions as needed.
+
+        (WebCore::Element::styleForRenderer):
+        (WebCore::Element::willRecalcStyle):
+        (WebCore::Element::didRecalcStyle):
+        (WebCore::Element::willAttachRenderers):
+        (WebCore::Element::didAttachRenderers):
+        (WebCore::Element::willDetachRenderers):
+        (WebCore::Element::didDetachRenderers):
+        
+            Add virtual custom callbacks.
+
+        (WebCore::Element::customStyleForRenderer):
+        * dom/Element.h:
+        * dom/Node.h:
+        (WebCore::Node::pseudoId):
+        (WebCore::Node::hasCustomStyleResolveCallbacks):
+        (WebCore::Node::setHasCustomStyleResolveCallbacks):
+        
+            Use the existing bit as it largely overlaps. Rename for clarity.
+
+        (WebCore::Node::customPseudoId):
+        * dom/PseudoElement.cpp:
+        (WebCore::PseudoElement::PseudoElement):
+        (WebCore::PseudoElement::didAttachRenderers):
+        * dom/PseudoElement.h:
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::HTMLCanvasElement):
+        (WebCore::HTMLCanvasElement::willAttachRenderers):
+        * html/HTMLCanvasElement.h:
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::HTMLFormControlElement):
+        (WebCore::HTMLFormControlElement::didAttachRenderers):
+        * html/HTMLFormControlElement.h:
+        * html/HTMLFrameElement.cpp:
+        (WebCore::HTMLFrameElement::HTMLFrameElement):
+        (WebCore::HTMLFrameElement::didAttachRenderers):
+        * html/HTMLFrameElement.h:
+        * html/HTMLFrameElementBase.cpp:
+        (WebCore::HTMLFrameElementBase::HTMLFrameElementBase):
+        (WebCore::HTMLFrameElementBase::didAttachRenderers):
+        * html/HTMLFrameElementBase.h:
+        * html/HTMLFrameSetElement.cpp:
+        (WebCore::HTMLFrameSetElement::HTMLFrameSetElement):
+        (WebCore::HTMLFrameSetElement::willAttachRenderers):
+        * html/HTMLFrameSetElement.h:
+        * html/HTMLIFrameElement.cpp:
+        (WebCore::HTMLIFrameElement::HTMLIFrameElement):
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::HTMLImageElement):
+        (WebCore::HTMLImageElement::didAttachRenderers):
+        * html/HTMLImageElement.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::HTMLInputElement):
+        (WebCore::HTMLInputElement::willAttachRenderers):
+        (WebCore::HTMLInputElement::didAttachRenderers):
+        (WebCore::HTMLInputElement::didDetachRenderers):
+        * html/HTMLInputElement.h:
+        * html/HTMLLIElement.cpp:
+        (WebCore::HTMLLIElement::HTMLLIElement):
+        (WebCore::HTMLLIElement::didAttachRenderers):
+        * html/HTMLLIElement.h:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement):
+        (WebCore::HTMLMediaElement::willAttachRenderers):
+        (WebCore::HTMLMediaElement::didAttachRenderers):
+        * html/HTMLMediaElement.h:
+        * html/HTMLOptGroupElement.cpp:
+        (WebCore::HTMLOptGroupElement::HTMLOptGroupElement):
+        (WebCore::HTMLOptGroupElement::didAttachRenderers):
+        (WebCore::HTMLOptGroupElement::willDetachRenderers):
+        * html/HTMLOptGroupElement.h:
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::HTMLOptionElement):
+        (WebCore::HTMLOptionElement::didAttachRenderers):
+        (WebCore::HTMLOptionElement::willDetachRenderers):
+        * html/HTMLOptionElement.h:
+        * html/HTMLPlugInElement.cpp:
+        (WebCore::HTMLPlugInElement::HTMLPlugInElement):
+        (WebCore::HTMLPlugInElement::willDetachRenderers):
+        * html/HTMLPlugInElement.h:
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::HTMLPlugInImageElement):
+        (WebCore::HTMLPlugInImageElement::didAttachRenderers):
+        (WebCore::HTMLPlugInImageElement::willDetachRenderers):
+        * html/HTMLPlugInImageElement.h:
+        * html/HTMLProgressElement.cpp:
+        (WebCore::HTMLProgressElement::HTMLProgressElement):
+        (WebCore::HTMLProgressElement::didAttachRenderers):
+        * html/HTMLProgressElement.h:
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::HTMLTextAreaElement):
+        (WebCore::HTMLTextAreaElement::didAttachRenderers):
+        * html/HTMLTextAreaElement.h:
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::HTMLVideoElement):
+        (WebCore::HTMLVideoElement::didAttachRenderers):
+        * html/HTMLVideoElement.h:
+        * html/shadow/InsertionPoint.cpp:
+        (WebCore::InsertionPoint::InsertionPoint):
+        (WebCore::InsertionPoint::willAttachRenderers):
+        (WebCore::InsertionPoint::willDetachRenderers):
+        * html/shadow/InsertionPoint.h:
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::SliderThumbElement::SliderThumbElement):
+        (WebCore::SliderThumbElement::willDetachRenderers):
+        * html/shadow/SliderThumbElement.h:
+        * html/shadow/SpinButtonElement.cpp:
+        (WebCore::SpinButtonElement::SpinButtonElement):
+        (WebCore::SpinButtonElement::willDetachRenderers):
+        * html/shadow/SpinButtonElement.h:
+        * html/shadow/TextControlInnerElements.cpp:
+        (WebCore::TextControlInnerElement::TextControlInnerElement):
+        (WebCore::TextControlInnerTextElement::TextControlInnerTextElement):
+        (WebCore::SearchFieldCancelButtonElement::SearchFieldCancelButtonElement):
+        (WebCore::SearchFieldCancelButtonElement::willDetachRenderers):
+        (WebCore::InputFieldSpeechButtonElement::InputFieldSpeechButtonElement):
+        (WebCore::InputFieldSpeechButtonElement::willAttachRenderers):
+        (WebCore::InputFieldSpeechButtonElement::willDetachRenderers):
+        * html/shadow/TextControlInnerElements.h:
+        * style/StyleResolveTree.cpp:
+        (WebCore::Style::resolveTree):
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::SVGElement):
+        * svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::SVGImageElement):
+        (WebCore::SVGImageElement::didAttachRenderers):
+        * svg/SVGImageElement.h:
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::SVGUseElement):
+
 2013-08-18  Gavin Barraclough  <barraclough@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=119972

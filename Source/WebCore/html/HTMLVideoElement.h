@@ -78,7 +78,7 @@ private:
 #if !ENABLE(PLUGIN_PROXY_FOR_VIDEO)
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 #endif
-    virtual void attach(const AttachContext& = AttachContext()) OVERRIDE;
+    virtual void didAttachRenderers() OVERRIDE;
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
     virtual bool isPresentationAttribute(const QualifiedName&) const OVERRIDE;
     virtual void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStylePropertySet*) OVERRIDE;

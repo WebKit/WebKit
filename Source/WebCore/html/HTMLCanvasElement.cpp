@@ -80,6 +80,7 @@ HTMLCanvasElement::HTMLCanvasElement(const QualifiedName& tagName, Document* doc
     , m_didClearImageBuffer(false)
 {
     ASSERT(hasTagName(canvasTag));
+    setHasCustomStyleResolveCallbacks();
 }
 
 PassRefPtr<HTMLCanvasElement> HTMLCanvasElement::create(Document* document)
@@ -120,10 +121,9 @@ RenderObject* HTMLCanvasElement::createRenderer(RenderArena* arena, RenderStyle*
     return HTMLElement::createRenderer(arena, style);
 }
 
-void HTMLCanvasElement::attach(const AttachContext& context)
+void HTMLCanvasElement::willAttachRenderers()
 {
     setIsInCanvasSubtree(true);
-    HTMLElement::attach(context);
 }
 
 bool HTMLCanvasElement::areAuthorShadowsAllowed() const

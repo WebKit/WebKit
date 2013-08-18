@@ -65,7 +65,7 @@ RenderObject* TextControlInnerContainer::createRenderer(RenderArena* arena, Rend
 TextControlInnerElement::TextControlInnerElement(Document* document)
     : HTMLDivElement(divTag, document)
 {
-    setHasCustomStyleCallbacks();
+    setHasCustomStyleResolveCallbacks();
 }
 
 PassRefPtr<TextControlInnerElement> TextControlInnerElement::create(Document* document)
@@ -84,7 +84,7 @@ PassRefPtr<RenderStyle> TextControlInnerElement::customStyleForRenderer()
 inline TextControlInnerTextElement::TextControlInnerTextElement(Document* document)
     : HTMLDivElement(divTag, document)
 {
-    setHasCustomStyleCallbacks();
+    setHasCustomStyleResolveCallbacks();
 }
 
 PassRefPtr<TextControlInnerTextElement> TextControlInnerTextElement::create(Document* document)
@@ -182,6 +182,7 @@ inline SearchFieldCancelButtonElement::SearchFieldCancelButtonElement(Document* 
     : HTMLDivElement(divTag, document)
     , m_capturing(false)
 {
+    setHasCustomStyleResolveCallbacks();
 }
 
 PassRefPtr<SearchFieldCancelButtonElement> SearchFieldCancelButtonElement::create(Document* document)
@@ -195,15 +196,13 @@ const AtomicString& SearchFieldCancelButtonElement::shadowPseudoId() const
     return pseudoId;
 }
 
-void SearchFieldCancelButtonElement::detach(const AttachContext& context)
+void SearchFieldCancelButtonElement::willDetachRenderers()
 {
     if (m_capturing) {
         if (Frame* frame = document()->frame())
             frame->eventHandler().setCapturingMouseEventsNode(0);
     }
-    HTMLDivElement::detach(context);
 }
-
 
 void SearchFieldCancelButtonElement::defaultEventHandler(Event* event)
 {
@@ -264,6 +263,7 @@ inline InputFieldSpeechButtonElement::InputFieldSpeechButtonElement(Document* do
     , m_state(Idle)
     , m_listenerId(0)
 {
+    setHasCustomStyleResolveCallbacks();
 }
 
 InputFieldSpeechButtonElement::~InputFieldSpeechButtonElement()
@@ -404,15 +404,14 @@ void InputFieldSpeechButtonElement::setRecognitionResult(int, const SpeechInputR
         renderer()->repaint();
 }
 
-void InputFieldSpeechButtonElement::attach(const AttachContext& context)
+void InputFieldSpeechButtonElement::willAttachRenderers()
 {
     ASSERT(!m_listenerId);
     if (SpeechInput* input = SpeechInput::from(document()->page()))
         m_listenerId = input->registerListener(this);
-    HTMLDivElement::attach(context);
 }
 
-void InputFieldSpeechButtonElement::detach(const AttachContext& context)
+void InputFieldSpeechButtonElement::willDetachRenderers()
 {
     if (m_capturing) {
         if (Frame* frame = document()->frame())
@@ -425,8 +424,6 @@ void InputFieldSpeechButtonElement::detach(const AttachContext& context)
         speechInput()->unregisterListener(m_listenerId);
         m_listenerId = 0;
     }
-
-    HTMLDivElement::detach(context);
 }
 
 void InputFieldSpeechButtonElement::startSpeechInput()

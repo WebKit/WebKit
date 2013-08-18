@@ -45,6 +45,7 @@ HTMLProgressElement::HTMLProgressElement(const QualifiedName& tagName, Document*
     , m_value(0)
 {
     ASSERT(hasTagName(progressTag));
+    setHasCustomStyleResolveCallbacks();
 }
 
 HTMLProgressElement::~HTMLProgressElement()
@@ -91,9 +92,8 @@ void HTMLProgressElement::parseAttribute(const QualifiedName& name, const Atomic
         LabelableElement::parseAttribute(name, value);
 }
 
-void HTMLProgressElement::attach(const AttachContext& context)
+void HTMLProgressElement::didAttachRenderers()
 {
-    LabelableElement::attach(context);
     if (RenderProgress* render = renderProgress())
         render->updateFromElement();
 }

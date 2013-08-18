@@ -66,6 +66,7 @@ inline SVGImageElement::SVGImageElement(const QualifiedName& tagName, Document* 
 {
     ASSERT(isSVGImageElement(this));
     registerAnimatedPropertiesForSVGImageElement();
+    setHasCustomStyleResolveCallbacks();
 }
 
 PassRefPtr<SVGImageElement> SVGImageElement::create(const QualifiedName& tagName, Document* document)
@@ -193,10 +194,8 @@ bool SVGImageElement::haveLoadedRequiredResources()
     return !externalResourcesRequiredBaseValue() || !m_imageLoader.hasPendingActivity();
 }
 
-void SVGImageElement::attach(const AttachContext& context)
+void SVGImageElement::didAttachRenderers()
 {
-    SVGGraphicsElement::attach(context);
-
     if (RenderSVGImage* imageObj = toRenderSVGImage(renderer())) {
         if (imageObj->imageResource()->hasImage())
             return;

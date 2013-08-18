@@ -238,7 +238,7 @@ public:
     bool isPseudoElement() const { return pseudoId() != NOPSEUDO; }
     bool isBeforePseudoElement() const { return pseudoId() == BEFORE; }
     bool isAfterPseudoElement() const { return pseudoId() == AFTER; }
-    PseudoId pseudoId() const { return (isElementNode() && hasCustomStyleCallbacks()) ? customPseudoId() : NOPSEUDO; }
+    PseudoId pseudoId() const { return (isElementNode() && hasCustomStyleResolveCallbacks()) ? customPseudoId() : NOPSEUDO; }
 
     virtual bool isMediaControlElement() const { return false; }
     virtual bool isMediaControls() const { return false; }
@@ -266,7 +266,7 @@ public:
     void resetNeedsShadowTreeWalker() { setFlag(needsShadowTreeWalkerSlow(), NeedsShadowTreeWalkerFlag); }
 
     bool inNamedFlow() const { return getFlag(InNamedFlowFlag); }
-    bool hasCustomStyleCallbacks() const { return getFlag(HasCustomStyleCallbacksFlag); }
+    bool hasCustomStyleResolveCallbacks() const { return getFlag(HasCustomStyleResolveCallbacksFlag); }
 
     bool isRegisteredWithNamedFlow() const;
 
@@ -635,7 +635,7 @@ private:
 
         InNamedFlowFlag = 1 << 19,
         HasSyntheticAttrChildNodesFlag = 1 << 20,
-        HasCustomStyleCallbacksFlag = 1 << 21,
+        HasCustomStyleResolveCallbacksFlag = 1 << 21,
         HasScopedHTMLStyleChildFlag = 1 << 22,
         HasEventTargetDataFlag = 1 << 23,
         NeedsShadowTreeWalkerFlag = 1 << 25,
@@ -681,7 +681,7 @@ protected:
 
     void clearEventTargetData();
 
-    void setHasCustomStyleCallbacks() { setFlag(true, HasCustomStyleCallbacksFlag); }
+    void setHasCustomStyleResolveCallbacks() { setFlag(true, HasCustomStyleResolveCallbacksFlag); }
 
     Document* documentInternal() const { return treeScope()->documentScope(); }
     void setTreeScope(TreeScope* scope) { m_treeScope = scope; }
@@ -693,7 +693,7 @@ private:
 
     virtual PseudoId customPseudoId() const
     {
-        ASSERT(hasCustomStyleCallbacks());
+        ASSERT(hasCustomStyleResolveCallbacks());
         return NOPSEUDO;
     }
 

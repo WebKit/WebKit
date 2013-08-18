@@ -189,7 +189,9 @@ public:
 
     virtual bool rendererIsNeeded(const NodeRenderingContext&);
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
-    virtual void detach(const AttachContext& = AttachContext()) OVERRIDE;
+    virtual void willAttachRenderers() OVERRIDE;
+    virtual void didAttachRenderers() OVERRIDE;
+    virtual void didDetachRenderers() OVERRIDE;
 
     // FIXME: For isActivatedSubmit and setActivatedSubmit, we should use the NVI-idiom here by making
     // it private virtual in all classes and expose a public method in HTMLFormControlElement to call
@@ -351,8 +353,6 @@ private:
     virtual void finishParsingChildren();
 
     virtual void copyNonAttributePropertiesFromElement(const Element&);
-
-    virtual void attach(const AttachContext& = AttachContext()) OVERRIDE;
 
     virtual bool appendFormData(FormDataList&, bool);
 

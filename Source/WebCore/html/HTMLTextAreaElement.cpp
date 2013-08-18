@@ -97,6 +97,7 @@ HTMLTextAreaElement::HTMLTextAreaElement(const QualifiedName& tagName, Document*
 {
     ASSERT(hasTagName(textareaTag));
     setFormControlValueMatchesRenderer(true);
+    setHasCustomStyleResolveCallbacks();
 }
 
 PassRefPtr<HTMLTextAreaElement> HTMLTextAreaElement::create(const QualifiedName& tagName, Document* document, HTMLFormElement* form)
@@ -515,9 +516,9 @@ HTMLElement* HTMLTextAreaElement::placeholderElement() const
     return m_placeholder;
 }
 
-void HTMLTextAreaElement::attach(const AttachContext& context)
+void HTMLTextAreaElement::didAttachRenderers()
 {
-    HTMLTextFormControlElement::attach(context);
+    HTMLTextFormControlElement::didAttachRenderers();
     fixPlaceholderRenderer(m_placeholder, innerTextElement());
 }
 

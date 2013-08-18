@@ -54,7 +54,7 @@ public:
     virtual void defaultEventHandler(Event*);
     virtual bool willRespondToMouseMoveEvents() OVERRIDE;
     virtual bool willRespondToMouseClickEvents() OVERRIDE;
-    virtual void detach(const AttachContext& = AttachContext()) OVERRIDE;
+    virtual void willDetachRenderers() OVERRIDE;
     virtual const AtomicString& shadowPseudoId() const;
     HTMLInputElement* hostInput() const;
     void setPositionFromPoint(const LayoutPoint&);
@@ -72,12 +72,6 @@ private:
 
     bool m_inDragMode;
 };
-
-inline SliderThumbElement::SliderThumbElement(Document* document)
-    : HTMLDivElement(HTMLNames::divTag, document)
-    , m_inDragMode(false)
-{
-}
 
 inline PassRefPtr<SliderThumbElement> SliderThumbElement::create(Document* document)
 {

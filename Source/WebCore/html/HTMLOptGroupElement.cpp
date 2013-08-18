@@ -42,7 +42,7 @@ inline HTMLOptGroupElement::HTMLOptGroupElement(const QualifiedName& tagName, Do
     : HTMLElement(tagName, document)
 {
     ASSERT(hasTagName(optgroupTag));
-    setHasCustomStyleCallbacks();
+    setHasCustomStyleResolveCallbacks();
 }
 
 PassRefPtr<HTMLOptGroupElement> HTMLOptGroupElement::create(const QualifiedName& tagName, Document* document)
@@ -91,9 +91,8 @@ void HTMLOptGroupElement::recalcSelectOptions()
         toHTMLSelectElement(select)->setRecalcListItems();
 }
 
-void HTMLOptGroupElement::attach(const AttachContext& context)
+void HTMLOptGroupElement::didAttachRenderers()
 {
-    HTMLElement::attach(context);
     // If after attaching nothing called styleForRenderer() on this node we
     // manually cache the value. This happens if our parent doesn't have a
     // renderer like <optgroup> or if it doesn't allow children like <select>.
@@ -101,10 +100,9 @@ void HTMLOptGroupElement::attach(const AttachContext& context)
         updateNonRenderStyle();
 }
 
-void HTMLOptGroupElement::detach(const AttachContext& context)
+void HTMLOptGroupElement::willDetachRenderers()
 {
     m_style.clear();
-    HTMLElement::detach(context);
 }
 
 void HTMLOptGroupElement::updateNonRenderStyle()

@@ -206,6 +206,13 @@ void RenderSliderContainer::layout()
 
 // --------------------------------
 
+SliderThumbElement::SliderThumbElement(Document* document)
+    : HTMLDivElement(HTMLNames::divTag, document)
+    , m_inDragMode(false)
+{
+    setHasCustomStyleResolveCallbacks();
+}
+
 void SliderThumbElement::setPositionFromValue()
 {
     // Since the code to calculate position is in the RenderSliderThumb layout
@@ -385,13 +392,12 @@ bool SliderThumbElement::willRespondToMouseClickEvents()
     return HTMLDivElement::willRespondToMouseClickEvents();
 }
 
-void SliderThumbElement::detach(const AttachContext& context)
+void SliderThumbElement::willDetachRenderers()
 {
     if (m_inDragMode) {
         if (Frame* frame = document()->frame())
             frame->eventHandler().setCapturingMouseEventsNode(0);
     }
-    HTMLDivElement::detach(context);
 }
 
 HTMLInputElement* SliderThumbElement::hostInput() const

@@ -147,7 +147,7 @@ private:
 
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
-    virtual void attach(const AttachContext& = AttachContext()) OVERRIDE;
+    virtual void willAttachRenderers() OVERRIDE;
     virtual bool areAuthorShadowsAllowed() const OVERRIDE;
 
     virtual bool canContainRangeEndPoint() const OVERRIDE;

@@ -220,7 +220,7 @@ void resolveTree(Element* current, Change change)
 {
     ASSERT(change != Detach);
 
-    if (current->hasCustomStyleCallbacks()) {
+    if (current->hasCustomStyleResolveCallbacks()) {
         if (!current->willRecalcStyle(change))
             return;
     }
@@ -279,7 +279,7 @@ void resolveTree(Element* current, Change change)
     current->clearNeedsStyleRecalc();
     current->clearChildNeedsStyleRecalc();
     
-    if (current->hasCustomStyleCallbacks())
+    if (current->hasCustomStyleResolveCallbacks())
         current->didRecalcStyle(change);
 }
 

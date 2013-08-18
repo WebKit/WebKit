@@ -65,8 +65,8 @@ public:
     bool resetStyleInheritance() const;
     void setResetStyleInheritance(bool);
 
-    virtual void attach(const AttachContext& = AttachContext()) OVERRIDE;
-    virtual void detach(const AttachContext& = AttachContext()) OVERRIDE;
+    virtual void willAttachRenderers() OVERRIDE;
+    virtual void willDetachRenderers() OVERRIDE;
 
     bool shouldUseFallbackElements() const;
 

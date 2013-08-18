@@ -83,7 +83,7 @@ public:
 protected:
     HTMLPlugInElement(const QualifiedName& tagName, Document*);
 
-    virtual void detach(const AttachContext& = AttachContext()) OVERRIDE;
+    virtual void willDetachRenderers() OVERRIDE;
     virtual bool isPresentationAttribute(const QualifiedName&) const OVERRIDE;
     virtual void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStylePropertySet*) OVERRIDE;
 

@@ -51,6 +51,7 @@ HTMLFrameElementBase::HTMLFrameElementBase(const QualifiedName& tagName, Documen
     , m_marginHeight(-1)
     , m_viewSource(false)
 {
+    setHasCustomStyleResolveCallbacks();
 }
 
 bool HTMLFrameElementBase::isURLAllowed() const
@@ -172,10 +173,8 @@ void HTMLFrameElementBase::didNotifySubtreeInsertions(ContainerNode*)
     setNameAndOpenURL();
 }
 
-void HTMLFrameElementBase::attach(const AttachContext& context)
+void HTMLFrameElementBase::didAttachRenderers()
 {
-    HTMLFrameOwnerElement::attach(context);
-
     if (RenderPart* part = renderPart()) {
         if (Frame* frame = contentFrame())
             part->setWidget(frame->view());

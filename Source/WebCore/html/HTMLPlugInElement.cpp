@@ -61,6 +61,7 @@ HTMLPlugInElement::HTMLPlugInElement(const QualifiedName& tagName, Document* doc
     , m_isCapturingMouseEvents(false)
     , m_displayState(Playing)
 {
+    setHasCustomStyleResolveCallbacks();
 }
 
 HTMLPlugInElement::~HTMLPlugInElement()
@@ -93,7 +94,7 @@ bool HTMLPlugInElement::willRespondToMouseClickEvents()
     return true;
 }
 
-void HTMLPlugInElement::detach(const AttachContext& context)
+void HTMLPlugInElement::willDetachRenderers()
 {
     m_instance.clear();
 
@@ -109,8 +110,6 @@ void HTMLPlugInElement::detach(const AttachContext& context)
         m_NPObject = 0;
     }
 #endif
-
-    HTMLFrameOwnerElement::detach(context);
 }
 
 void HTMLPlugInElement::resetInstance()

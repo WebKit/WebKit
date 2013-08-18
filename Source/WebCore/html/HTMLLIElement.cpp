@@ -38,6 +38,7 @@ HTMLLIElement::HTMLLIElement(const QualifiedName& tagName, Document* document)
     : HTMLElement(tagName, document)
 {
     ASSERT(hasTagName(liTag));
+    setHasCustomStyleResolveCallbacks();
 }
 
 PassRefPtr<HTMLLIElement> HTMLLIElement::create(Document* document)
@@ -85,33 +86,29 @@ void HTMLLIElement::parseAttribute(const QualifiedName& name, const AtomicString
         HTMLElement::parseAttribute(name, value);
 }
 
-void HTMLLIElement::attach(const AttachContext& context)
+void HTMLLIElement::didAttachRenderers()
 {
-    ASSERT(!attached());
+    if (!renderer() || !renderer()->isListItem())
+        return;
+    RenderListItem* listItemRenderer = toRenderListItem(renderer());
 
-    HTMLElement::attach(context);
-
-    if (renderer() && renderer()->isListItem()) {
-        RenderListItem* listItemRenderer = toRenderListItem(renderer());
-
-        // Find the enclosing list node.
-        Element* listNode = 0;
-        Element* current = this;
-        while (!listNode) {
-            current = current->parentElement();
-            if (!current)
-                break;
-            if (current->hasTagName(ulTag) || current->hasTagName(olTag))
-                listNode = current;
-        }
-
-        // If we are not in a list, tell the renderer so it can position us inside.
-        // We don't want to change our style to say "inside" since that would affect nested nodes.
-        if (!listNode)
-            listItemRenderer->setNotInList(true);
-
-        parseValue(fastGetAttribute(valueAttr));
+    // Find the enclosing list node.
+    Element* listNode = 0;
+    Element* current = this;
+    while (!listNode) {
+        current = current->parentElement();
+        if (!current)
+            break;
+        if (current->hasTagName(ulTag) || current->hasTagName(olTag))
+            listNode = current;
     }
+
+    // If we are not in a list, tell the renderer so it can position us inside.
+    // We don't want to change our style to say "inside" since that would affect nested nodes.
+    if (!listNode)
+        listItemRenderer->setNotInList(true);
+
+    parseValue(fastGetAttribute(valueAttr));
 }
 
 inline void HTMLLIElement::parseValue(const AtomicString& value)

@@ -299,8 +299,8 @@ public:
 
         AttachContext() : resolvedStyle(0), performingReattach(false) { }
     };
-    virtual void attach(const AttachContext& = AttachContext());
-    virtual void detach(const AttachContext& = AttachContext());
+    void attach(const AttachContext& = AttachContext());
+    void detach(const AttachContext& = AttachContext());
     void reattach(const AttachContext& = AttachContext());
     void reattachIfAttached(const AttachContext& = AttachContext());
     enum ShouldSetAttached {
@@ -555,6 +555,7 @@ public:
 
     virtual bool willRecalcStyle(Style::Change);
     virtual void didRecalcStyle(Style::Change);
+
     void updatePseudoElement(PseudoId, Style::Change = Style::NoChange);
     void resetComputedStyle();
 
@@ -672,6 +673,11 @@ private:
 
     void attachChildren(const AttachContext&);
     void detachChildren(const AttachContext&);
+
+    virtual void willAttachRenderers();
+    virtual void didAttachRenderers();
+    virtual void willDetachRenderers();
+    virtual void didDetachRenderers();
 
     void createRendererIfNeeded(const AttachContext&);
 

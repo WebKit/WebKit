@@ -56,8 +56,7 @@ HTMLFrameSetElement::HTMLFrameSetElement(const QualifiedName& tagName, Document*
     , m_noresize(false)
 {
     ASSERT(hasTagName(framesetTag));
-    
-    setHasCustomStyleCallbacks();
+    setHasCustomStyleResolveCallbacks();
 }
 
 PassRefPtr<HTMLFrameSetElement> HTMLFrameSetElement::create(const QualifiedName& tagName, Document* document)
@@ -165,28 +164,25 @@ RenderObject *HTMLFrameSetElement::createRenderer(RenderArena *arena, RenderStyl
     return new (arena) RenderFrameSet(this);
 }
 
-void HTMLFrameSetElement::attach(const AttachContext& context)
+void HTMLFrameSetElement::willAttachRenderers()
 {
     // Inherit default settings from parent frameset
     // FIXME: This is not dynamic.
     for (ContainerNode* node = parentNode(); node; node = node->parentNode()) {
-        if (node->hasTagName(framesetTag)) {
-            HTMLFrameSetElement* frameset = static_cast<HTMLFrameSetElement*>(node);
-            if (!m_frameborderSet)
-                m_frameborder = frameset->hasFrameBorder();
-            if (m_frameborder) {
-                if (!m_borderSet)
-                    m_border = frameset->border();
-                if (!m_borderColorSet)
-                    m_borderColorSet = frameset->hasBorderColor();
-            }
-            if (!m_noresize)
-                m_noresize = frameset->noResize();
-            break;
+        if (!node->hasTagName(framesetTag))
+            continue;
+        HTMLFrameSetElement* frameset = static_cast<HTMLFrameSetElement*>(node);
+        if (!m_frameborderSet)
+            m_frameborder = frameset->hasFrameBorder();
+        if (m_frameborder) {
+            if (!m_borderSet)
+                m_border = frameset->border();
+            if (!m_borderColorSet)
+                m_borderColorSet = frameset->hasBorderColor();
         }
+        if (!m_noresize)
+            m_noresize = frameset->noResize();
     }
-
-    HTMLElement::attach(context);
 }
 
 void HTMLFrameSetElement::defaultEventHandler(Event* evt)

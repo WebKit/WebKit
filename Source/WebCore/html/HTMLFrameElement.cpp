@@ -40,6 +40,7 @@ inline HTMLFrameElement::HTMLFrameElement(const QualifiedName& tagName, Document
     , m_frameBorderSet(false)
 {
     ASSERT(hasTagName(frameTag));
+    setHasCustomStyleResolveCallbacks();
 }
 
 PassRefPtr<HTMLFrameElement> HTMLFrameElement::create(const QualifiedName& tagName, Document* document)
@@ -72,10 +73,9 @@ bool HTMLFrameElement::noResize() const
     return hasAttribute(noresizeAttr);
 }
 
-void HTMLFrameElement::attach(const AttachContext& context)
+void HTMLFrameElement::didAttachRenderers()
 {
-    HTMLFrameElementBase::attach(context);
-    
+    HTMLFrameElementBase::didAttachRenderers();
     if (HTMLFrameSetElement* frameSetElement = containingFrameSetElement(this)) {
         if (!m_frameBorderSet)
             m_frameBorder = frameSetElement->hasFrameBorder();

@@ -50,6 +50,7 @@ inline SpinButtonElement::SpinButtonElement(Document* document, SpinButtonOwner&
     , m_pressStartingState(Indeterminate)
     , m_repeatingTimer(this, &SpinButtonElement::repeatingTimerFired)
 {
+    setHasCustomStyleResolveCallbacks();
 }
 
 PassRefPtr<SpinButtonElement> SpinButtonElement::create(Document* document, SpinButtonOwner& spinButtonOwner)
@@ -63,10 +64,9 @@ const AtomicString& SpinButtonElement::shadowPseudoId() const
     return innerPseudoId;
 }
 
-void SpinButtonElement::detach(const AttachContext& context)
+void SpinButtonElement::willDetachRenderers()
 {
     releaseCapture();
-    HTMLDivElement::detach(context);
 }
 
 void SpinButtonElement::defaultEventHandler(Event* event)
