@@ -1,3 +1,38 @@
+2013-08-16  Sam Weinig  <sam@webkit.org>
+
+        <https://webkit.org/b/119911> Remove the unused OfflineStorageProcess
+
+        Reviewed by Darin Adler.
+
+        * Configurations/OfflineStorageProcess.xcconfig: Removed.
+        * Configurations/OfflineStorageService.Development.xcconfig: Removed.
+        * Configurations/OfflineStorageService.xcconfig: Removed.
+        * DerivedSources.make:
+        * OfflineStorageProcess: Removed.
+        * OfflineStorageProcess/EntryPoint: Removed.
+        * OfflineStorageProcess/EntryPoint/mac: Removed.
+        * OfflineStorageProcess/EntryPoint/mac/LegacyProcess: Removed.
+        * OfflineStorageProcess/EntryPoint/mac/LegacyProcess/Info.plist: Removed.
+        * OfflineStorageProcess/EntryPoint/mac/LegacyProcess/OfflineStorageProcessMain.mm: Removed.
+        * OfflineStorageProcess/EntryPoint/mac/XPCService: Removed.
+        * OfflineStorageProcess/EntryPoint/mac/XPCService/OfflineStorageService: Removed.
+        * OfflineStorageProcess/EntryPoint/mac/XPCService/OfflineStorageService.Development: Removed.
+        * OfflineStorageProcess/EntryPoint/mac/XPCService/OfflineStorageService.Development/Info.plist: Removed.
+        * OfflineStorageProcess/EntryPoint/mac/XPCService/OfflineStorageService/Info.plist: Removed.
+        * OfflineStorageProcess/EntryPoint/mac/XPCService/OfflineStorageServiceEntryPoint.mm: Removed.
+        * OfflineStorageProcess/OfflineStorageProcess.cpp: Removed.
+        * OfflineStorageProcess/OfflineStorageProcess.h: Removed.
+        * OfflineStorageProcess/OfflineStorageProcess.messages.in: Removed.
+        * OfflineStorageProcess/mac: Removed.
+        * OfflineStorageProcess/mac/OfflineStorageProcessMac.mm: Removed.
+        * OfflineStorageProcess/mac/com.apple.WebKit.OfflineStorage.sb: Removed.
+        * Scripts/webkit2/messages.py:
+        * Shared/OfflineStorage: Removed.
+        * Shared/OfflineStorage/OfflineStorageProcessCreationParameters.cpp: Removed.
+        * Shared/OfflineStorage/OfflineStorageProcessCreationParameters.h: Removed.
+        * WebKit2.xcodeproj/project.pbxproj:
+        Remove.
+
 2013-08-17  Darin Adler  <darin@apple.com>
 
         <https://webkit.org/b/119941> Make Page::dragController return a reference

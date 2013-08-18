@@ -32,7 +32,6 @@ VPATH = \
     $(WebKit2)/Shared/Authentication \
     $(WebKit2)/Shared/Network/CustomProtocols \
     $(WebKit2)/SharedWorkerProcess \
-    $(WebKit2)/OfflineStorageProcess \
     $(WebKit2)/WebProcess/ApplicationCache \
     $(WebKit2)/WebProcess/Cookies \
     $(WebKit2)/WebProcess/FullScreen \
@@ -71,7 +70,6 @@ MESSAGE_RECEIVERS = \
     NetworkProcessProxy \
     NetworkResourceLoader \
     NPObjectMessageReceiver \
-    OfflineStorageProcess \
     PluginControllerProxy \
     PluginProcess \
     PluginProcessConnection \

@@ -20,7 +20,6 @@
 				BCDE0AC113272712001259FB /* PBXTargetDependency */,
 				E13A8A4D16287A5B00392929 /* PBXTargetDependency */,
 				510CC8481613C85300D03ED3 /* PBXTargetDependency */,
-				BCAF35EC16CA261500D4E9FC /* PBXTargetDependency */,
 				BCA8D46815BCE0D6009DC1F1 /* PBXTargetDependency */,
 				BCAE9DFD160C0AB000A33217 /* PBXTargetDependency */,
 				BC8283D516B4C01F00A278FE /* PBXTargetDependency */,
@@ -28,8 +27,6 @@
 				BC77F95616D0459100F8F78A /* PBXTargetDependency */,
 				BC82844616B4FF6600A278FE /* PBXTargetDependency */,
 				BC82844816B4FF6F00A278FE /* PBXTargetDependency */,
-				BCAF361816CA27BD00D4E9FC /* PBXTargetDependency */,
-				BCAF361A16CA27C000D4E9FC /* PBXTargetDependency */,
 			);
 			name = All;
 			productName = WebKit2;
@@ -824,21 +821,17 @@
 		BC5D24A216CC3B9E007D5461 /* ChildProcessMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC5D249F16CC3B9E007D5461 /* ChildProcessMain.mm */; };
 		BC5D24A316CC3B9E007D5461 /* ChildProcessMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC5D249F16CC3B9E007D5461 /* ChildProcessMain.mm */; };
 		BC5D24A416CC3B9E007D5461 /* ChildProcessMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC5D249F16CC3B9E007D5461 /* ChildProcessMain.mm */; };
-		BC5D24A516CC3B9E007D5461 /* ChildProcessMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC5D249F16CC3B9E007D5461 /* ChildProcessMain.mm */; };
 		BC5D24A716CC3D5D007D5461 /* XPCServiceMain.Development.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC82839716B480F600A278FE /* XPCServiceMain.Development.mm */; };
 		BC5D24A816CC3D5E007D5461 /* XPCServiceMain.Development.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC82839716B480F600A278FE /* XPCServiceMain.Development.mm */; };
-		BC5D24A916CC3D5F007D5461 /* XPCServiceMain.Development.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC82839716B480F600A278FE /* XPCServiceMain.Development.mm */; };
 		BC5D24AA16CC3D5F007D5461 /* XPCServiceMain.Development.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC82839716B480F600A278FE /* XPCServiceMain.Development.mm */; };
 		BC5D24AB16CC3D62007D5461 /* XPCServiceMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC82839616B47EC400A278FE /* XPCServiceMain.mm */; };
 		BC5D24AC16CC3D63007D5461 /* XPCServiceMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC82839616B47EC400A278FE /* XPCServiceMain.mm */; };
-		BC5D24AD16CC3D64007D5461 /* XPCServiceMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC82839616B47EC400A278FE /* XPCServiceMain.mm */; };
 		BC5D24AE16CC3D65007D5461 /* XPCServiceMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC82839616B47EC400A278FE /* XPCServiceMain.mm */; };
 		BC5D24AF16CC3D66007D5461 /* XPCServiceMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC82839616B47EC400A278FE /* XPCServiceMain.mm */; };
 		BC5D24B116CC3F36007D5461 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC3DE46815A91763008D26FC /* Foundation.framework */; };
 		BC5D24B316CC3F3F007D5461 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC3DE46815A91763008D26FC /* Foundation.framework */; };
 		BC5D24B516CC3F46007D5461 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC3DE46815A91763008D26FC /* Foundation.framework */; };
 		BC5D24B616CC3F4D007D5461 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC3DE46815A91763008D26FC /* Foundation.framework */; };
-		BC5D24B716CC3F5D007D5461 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC3DE46815A91763008D26FC /* Foundation.framework */; };
 		BC5D24C216CD706D007D5461 /* WKDOMNodePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5D24C116CD706D007D5461 /* WKDOMNodePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC5D24C516CD7088007D5461 /* WKDOMRangePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5D24C416CD7088007D5461 /* WKDOMRangePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC5D24C716CD73C5007D5461 /* WKBundleRangeHandlePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5D24C616CD73C5007D5461 /* WKBundleRangeHandlePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -940,26 +933,10 @@
 		BCAC112012C92C1F00B08EEE /* WebDatabaseManagerProxyClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCAC111E12C92C1F00B08EEE /* WebDatabaseManagerProxyClient.cpp */; };
 		BCAE9E08160C1C0700A33217 /* WebKit2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DC2EF5B0486A6940098B216 /* WebKit2.framework */; };
 		BCAE9E09160C233B00A33217 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC3DE46815A91763008D26FC /* Foundation.framework */; };
-		BCAF35D516CA212400D4E9FC /* OfflineStorageProcessMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCAF35D116CA212400D4E9FC /* OfflineStorageProcessMac.mm */; };
-		BCAF35D716CA212400D4E9FC /* OfflineStorageProcess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCAF35D216CA212400D4E9FC /* OfflineStorageProcess.cpp */; };
-		BCAF35D916CA212400D4E9FC /* OfflineStorageProcess.h in Headers */ = {isa = PBXBuildFile; fileRef = BCAF35D316CA212400D4E9FC /* OfflineStorageProcess.h */; };
-		BCAF35DD16CA214A00D4E9FC /* OfflineStorageProcessMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCAF35B816CA1E2400D4E9FC /* OfflineStorageProcessMain.mm */; };
-		BCAF35DE16CA217700D4E9FC /* OfflineStorageServiceEntryPoint.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCAF35C416CA1F9D00D4E9FC /* OfflineStorageServiceEntryPoint.mm */; };
-		BCAF35E416CA24DA00D4E9FC /* OfflineStorageProcessMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = BCAF35DF16CA249300D4E9FC /* OfflineStorageProcessMessages.h */; };
-		BCAF35E816CA253B00D4E9FC /* OfflineStorageProcessCreationParameters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCAF35E616CA253B00D4E9FC /* OfflineStorageProcessCreationParameters.cpp */; };
-		BCAF35E916CA253B00D4E9FC /* OfflineStorageProcessCreationParameters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCAF35E616CA253B00D4E9FC /* OfflineStorageProcessCreationParameters.cpp */; };
-		BCAF35EA16CA253B00D4E9FC /* OfflineStorageProcessCreationParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = BCAF35E716CA253B00D4E9FC /* OfflineStorageProcessCreationParameters.h */; };
-		BCAF361B16CA285400D4E9FC /* OfflineStorageProcess.app in Copy Files */ = {isa = PBXBuildFile; fileRef = BCAF359A16CA1D5700D4E9FC /* OfflineStorageProcess.app */; };
-		BCAF361C16CA286700D4E9FC /* com.apple.WebKit.OfflineStorage.sb in Resources */ = {isa = PBXBuildFile; fileRef = BCAF361516CA274000D4E9FC /* com.apple.WebKit.OfflineStorage.sb */; };
-		BCAF361D16CA28C100D4E9FC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC3DE46815A91763008D26FC /* Foundation.framework */; };
-		BCAF361E16CA28C500D4E9FC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC3DE46815A91763008D26FC /* Foundation.framework */; };
 		BCAF361F16CA28CD00D4E9FC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC3DE46815A91763008D26FC /* Foundation.framework */; };
 		BCAF362016CA28D600D4E9FC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC3DE46815A91763008D26FC /* Foundation.framework */; };
-		BCAF362116CA28F300D4E9FC /* WebKit2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DC2EF5B0486A6940098B216 /* WebKit2.framework */; };
 		BCAF362216CA292B00D4E9FC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC3DE46815A91763008D26FC /* Foundation.framework */; };
-		BCAF362516CA29A200D4E9FC /* OfflineStorageProcessMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCAF35E016CA249300D4E9FC /* OfflineStorageProcessMessageReceiver.cpp */; };
 		BCAF362616CA2A4E00D4E9FC /* WebKit.icns in Resources */ = {isa = PBXBuildFile; fileRef = E133FD891423DD7F00FC7BFB /* WebKit.icns */; };
-		BCAF362716CA2A5300D4E9FC /* WebKit.icns in Resources */ = {isa = PBXBuildFile; fileRef = E133FD891423DD7F00FC7BFB /* WebKit.icns */; };
 		BCB0AD33122F285800B1341E /* MutableArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCC8049D122F0D6B00103529 /* MutableArray.cpp */; };
 		BCB0AD34122F285800B1341E /* MutableArray.h in Headers */ = {isa = PBXBuildFile; fileRef = BCC8049E122F0D6B00103529 /* MutableArray.h */; };
 		BCB0AEE9122F53E300B1341E /* MutableDictionary.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB0AEE7122F53E300B1341E /* MutableDictionary.h */; };
@@ -1306,34 +1283,6 @@
 			remoteGlobalIDString = BCAE9DE8160C097400A33217;
 			remoteInfo = WebProcessServiceForWebKitDevelopment;
 		};
-		BCAF35EB16CA261500D4E9FC /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = BCAF359916CA1D5700D4E9FC;
-			remoteInfo = OfflineStorageProcess;
-		};
-		BCAF361716CA27BD00D4E9FC /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = BCAF35F016CA263800D4E9FC;
-			remoteInfo = OfflineStorage;
-		};
-		BCAF361916CA27C000D4E9FC /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = BCAF360316CA266900D4E9FC;
-			remoteInfo = OfflineStorage.Development;
-		};
-		BCAF362316CA295F00D4E9FC /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 8DC2EF4F0486A6940098B216;
-			remoteInfo = WebKit2;
-		};
 		BCDE093513272496001259FB /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
@@ -1393,7 +1342,6 @@
 			dstSubfolderSpec = 1;
 			files = (
 				510CC8491613C85C00D03ED3 /* NetworkProcess.app in Copy Files */,
-				BCAF361B16CA285400D4E9FC /* OfflineStorageProcess.app in Copy Files */,
 				BCDE0ABF13272708001259FB /* PluginProcess.app in Copy Files */,
 				1A50DB66110A3D57000D3FE5 /* WebProcess.app in Copy Files */,
 			);
@@ -2447,26 +2395,6 @@
 		BCACC44016B24CAA00B6E092 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BCACC44316B24CAA00B6E092 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BCAE9DE9160C097400A33217 /* com.apple.WebKit.WebContent.Development.xpc */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = com.apple.WebKit.WebContent.Development.xpc; sourceTree = BUILT_PRODUCTS_DIR; };
-		BCAF359A16CA1D5700D4E9FC /* OfflineStorageProcess.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OfflineStorageProcess.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		BCAF35B716CA1E2400D4E9FC /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		BCAF35B816CA1E2400D4E9FC /* OfflineStorageProcessMain.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OfflineStorageProcessMain.mm; sourceTree = "<group>"; };
-		BCAF35BF16CA1F9D00D4E9FC /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		BCAF35C216CA1F9D00D4E9FC /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		BCAF35C416CA1F9D00D4E9FC /* OfflineStorageServiceEntryPoint.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OfflineStorageServiceEntryPoint.mm; sourceTree = "<group>"; };
-		BCAF35CA16CA204300D4E9FC /* OfflineStorageProcess.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = OfflineStorageProcess.xcconfig; sourceTree = "<group>"; };
-		BCAF35CB16CA204300D4E9FC /* OfflineStorageService.Development.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = OfflineStorageService.Development.xcconfig; sourceTree = "<group>"; };
-		BCAF35CC16CA204300D4E9FC /* OfflineStorageService.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = OfflineStorageService.xcconfig; sourceTree = "<group>"; };
-		BCAF35D116CA212400D4E9FC /* OfflineStorageProcessMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OfflineStorageProcessMac.mm; sourceTree = "<group>"; };
-		BCAF35D216CA212400D4E9FC /* OfflineStorageProcess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OfflineStorageProcess.cpp; sourceTree = "<group>"; };
-		BCAF35D316CA212400D4E9FC /* OfflineStorageProcess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OfflineStorageProcess.h; sourceTree = "<group>"; };
-		BCAF35D416CA212400D4E9FC /* OfflineStorageProcess.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = OfflineStorageProcess.messages.in; sourceTree = "<group>"; };
-		BCAF35DF16CA249300D4E9FC /* OfflineStorageProcessMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OfflineStorageProcessMessages.h; sourceTree = "<group>"; };
-		BCAF35E016CA249300D4E9FC /* OfflineStorageProcessMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OfflineStorageProcessMessageReceiver.cpp; sourceTree = "<group>"; };
-		BCAF35E616CA253B00D4E9FC /* OfflineStorageProcessCreationParameters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OfflineStorageProcessCreationParameters.cpp; sourceTree = "<group>"; };
-		BCAF35E716CA253B00D4E9FC /* OfflineStorageProcessCreationParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OfflineStorageProcessCreationParameters.h; sourceTree = "<group>"; };
-		BCAF35F116CA263800D4E9FC /* com.apple.WebKit.OfflineStorage.xpc */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = com.apple.WebKit.OfflineStorage.xpc; sourceTree = BUILT_PRODUCTS_DIR; };
-		BCAF360416CA266900D4E9FC /* com.apple.WebKit.OfflineStorage.Development.xpc */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = com.apple.WebKit.OfflineStorage.Development.xpc; sourceTree = BUILT_PRODUCTS_DIR; };
-		BCAF361516CA274000D4E9FC /* com.apple.WebKit.OfflineStorage.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = com.apple.WebKit.OfflineStorage.sb; sourceTree = "<group>"; };
 		BCB0AEE7122F53E300B1341E /* MutableDictionary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MutableDictionary.h; sourceTree = "<group>"; };
 		BCB0AEE8122F53E300B1341E /* MutableDictionary.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MutableDictionary.cpp; sourceTree = "<group>"; };
 		BCB0B0DB12305A2500B1341E /* WebContextUserMessageCoders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebContextUserMessageCoders.h; sourceTree = "<group>"; };
@@ -2853,31 +2781,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		BCAF359716CA1D5700D4E9FC /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				BC5D24B716CC3F5D007D5461 /* Foundation.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		BCAF35EE16CA263800D4E9FC /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				BCAF361D16CA28C100D4E9FC /* Foundation.framework in Frameworks */,
-				BCAF362116CA28F300D4E9FC /* WebKit2.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		BCAF360116CA266900D4E9FC /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				BCAF361E16CA28C500D4E9FC /* Foundation.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		BCDC308D15FDB99A006B6695 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -2912,15 +2815,12 @@
 			children = (
 				BC8283C516B4BFA800A278FE /* com.apple.WebKit.Networking.Development.xpc */,
 				BC8283B116B4BF7700A278FE /* com.apple.WebKit.Networking.xpc */,
-				BCAF360416CA266900D4E9FC /* com.apple.WebKit.OfflineStorage.Development.xpc */,
-				BCAF35F116CA263800D4E9FC /* com.apple.WebKit.OfflineStorage.xpc */,
 				BC8283F916B4FDDE00A278FE /* com.apple.WebKit.Plugin.32.xpc */,
 				BC82841F16B4FDF600A278FE /* com.apple.WebKit.Plugin.64.xpc */,
 				BC82843216B4FE1300A278FE /* com.apple.WebKit.Plugin.Development.xpc */,
 				BCAE9DE9160C097400A33217 /* com.apple.WebKit.WebContent.Development.xpc */,
 				BC3DE46615A91763008D26FC /* com.apple.WebKit.WebContent.xpc */,
 				510CC80E1613C79900D03ED3 /* NetworkProcess.app */,
-				BCAF359A16CA1D5700D4E9FC /* OfflineStorageProcess.app */,
 				BCDE094213272496001259FB /* PluginProcess.app */,
 				1AC25FB012A48EA700BD2671 /* PluginProcessShim.dylib */,
 				510031F61379CACB00C8DFE4 /* SecItemShim.dylib */,
@@ -2948,7 +2848,6 @@
 				510CC7DA16138E0100D03ED3 /* NetworkProcess */,
 				1A0EC6B0124BBD36007EF4A5 /* PluginProcess */,
 				E13A8A35162879AC00392929 /* SharedWorkerProcess */,
-				BCAF359D16CA1D5700D4E9FC /* OfflineStorageProcess */,
 				C0CE729D1247E71D00BC0EC4 /* Derived Sources */,
 				089C1665FE841158C02AAC07 /* Resources */,
 				C0CE73351247F70E00BC0EC4 /* Scripts */,
@@ -3095,9 +2994,6 @@
 				510CC8461613C7C600D03ED3 /* NetworkProcess.xcconfig */,
 				BC8283AA16B4BEAD00A278FE /* NetworkService.Development.xcconfig */,
 				BC8283AB16B4BEAD00A278FE /* NetworkService.xcconfig */,
-				BCAF35CA16CA204300D4E9FC /* OfflineStorageProcess.xcconfig */,
-				BCAF35CB16CA204300D4E9FC /* OfflineStorageService.Development.xcconfig */,
-				BCAF35CC16CA204300D4E9FC /* OfflineStorageService.xcconfig */,
 				BC122FA3132707F300F7EAC1 /* PluginProcess.xcconfig */,
 				BC8283F216B4FC5300A278FE /* PluginService.32.xcconfig */,
 				BC8283F416B4FC5300A278FE /* PluginService.64.xcconfig */,
@@ -3246,7 +3142,6 @@
 				E170877216D6CFEC00F99226 /* FileAPI */,
 				BC111B5A112F628200337BAB /* mac */,
 				51A8A60D1627F2AC000D90E9 /* Network */,
-				BCAF35E516CA253B00D4E9FC /* OfflineStorage */,
 				1AAE058C1279DCD400852418 /* Plugins */,
 				A7D792D51767CB6E00881CBE /* ActivityAssertion.cpp */,
 				A7D792D41767CB0900881CBE /* ActivityAssertion.h */,
@@ -4788,82 +4683,6 @@
 			path = WebContentService.Development;
 			sourceTree = "<group>";
 		};
-		BCAF359D16CA1D5700D4E9FC /* OfflineStorageProcess */ = {
-			isa = PBXGroup;
-			children = (
-				BCAF35B416CA1E2400D4E9FC /* EntryPoint */,
-				BCAF35D016CA212400D4E9FC /* mac */,
-				BCAF35D216CA212400D4E9FC /* OfflineStorageProcess.cpp */,
-				BCAF35D316CA212400D4E9FC /* OfflineStorageProcess.h */,
-				BCAF35D416CA212400D4E9FC /* OfflineStorageProcess.messages.in */,
-			);
-			path = OfflineStorageProcess;
-			sourceTree = "<group>";
-		};
-		BCAF35B416CA1E2400D4E9FC /* EntryPoint */ = {
-			isa = PBXGroup;
-			children = (
-				BCAF35B616CA1E2400D4E9FC /* LegacyProcess */,
-				BCAF35BD16CA1F9D00D4E9FC /* XPCService */,
-			);
-			path = EntryPoint;
-			sourceTree = "<group>";
-		};
-		BCAF35B616CA1E2400D4E9FC /* LegacyProcess */ = {
-			isa = PBXGroup;
-			children = (
-				BCAF35B716CA1E2400D4E9FC /* Info.plist */,
-				BCAF35B816CA1E2400D4E9FC /* OfflineStorageProcessMain.mm */,
-			);
-			name = LegacyProcess;
-			path = mac/LegacyProcess;
-			sourceTree = "<group>";
-		};
-		BCAF35BD16CA1F9D00D4E9FC /* XPCService */ = {
-			isa = PBXGroup;
-			children = (
-				BCAF35BE16CA1F9D00D4E9FC /* OfflineStorageService */,
-				BCAF35C116CA1F9D00D4E9FC /* OfflineStorageService.Development */,
-				BCAF35C416CA1F9D00D4E9FC /* OfflineStorageServiceEntryPoint.mm */,
-			);
-			name = XPCService;
-			path = mac/XPCService;
-			sourceTree = "<group>";
-		};
-		BCAF35BE16CA1F9D00D4E9FC /* OfflineStorageService */ = {
-			isa = PBXGroup;
-			children = (
-				BCAF35BF16CA1F9D00D4E9FC /* Info.plist */,
-			);
-			path = OfflineStorageService;
-			sourceTree = "<group>";
-		};
-		BCAF35C116CA1F9D00D4E9FC /* OfflineStorageService.Development */ = {
-			isa = PBXGroup;
-			children = (
-				BCAF35C216CA1F9D00D4E9FC /* Info.plist */,
-			);
-			path = OfflineStorageService.Development;
-			sourceTree = "<group>";
-		};
-		BCAF35D016CA212400D4E9FC /* mac */ = {
-			isa = PBXGroup;
-			children = (
-				BCAF361516CA274000D4E9FC /* com.apple.WebKit.OfflineStorage.sb */,
-				BCAF35D116CA212400D4E9FC /* OfflineStorageProcessMac.mm */,
-			);
-			path = mac;
-			sourceTree = "<group>";
-		};
-		BCAF35E516CA253B00D4E9FC /* OfflineStorage */ = {
-			isa = PBXGroup;
-			children = (
-				BCAF35E616CA253B00D4E9FC /* OfflineStorageProcessCreationParameters.cpp */,
-				BCAF35E716CA253B00D4E9FC /* OfflineStorageProcessCreationParameters.h */,
-			);
-			path = OfflineStorage;
-			sourceTree = "<group>";
-		};
 		BCBAAC58144E38B90053F82F /* WKView Details */ = {
 			isa = PBXGroup;
 			children = (
@@ -5061,8 +4880,6 @@
 				E152551917011819003D7ADB /* NetworkResourceLoaderMessages.h */,
 				1A2D8437127F65D5001EB962 /* NPObjectMessageReceiverMessageReceiver.cpp */,
 				1A2D8438127F65D5001EB962 /* NPObjectMessageReceiverMessages.h */,
-				BCAF35E016CA249300D4E9FC /* OfflineStorageProcessMessageReceiver.cpp */,
-				BCAF35DF16CA249300D4E9FC /* OfflineStorageProcessMessages.h */,
 				1A8EF96C1252AF6B00F7067F /* PluginControllerProxyMessageReceiver.cpp */,
 				1A8EF96D1252AF6B00F7067F /* PluginControllerProxyMessages.h */,
 				1A7865B716CAC71500ACE83A /* PluginProcessConnectionManagerMessageReceiver.cpp */,
@@ -5443,9 +5260,6 @@
 				1A2D84A3127F6AD1001EB962 /* NPVariantData.h in Headers */,
 				BC8ACA1316670D89004C1941 /* ObjCObjectGraph.h in Headers */,
 				BC8ACA1516670D89004C1941 /* ObjCObjectGraphCoders.h in Headers */,
-				BCAF35D916CA212400D4E9FC /* OfflineStorageProcess.h in Headers */,
-				BCAF35EA16CA253B00D4E9FC /* OfflineStorageProcessCreationParameters.h in Headers */,
-				BCAF35E416CA24DA00D4E9FC /* OfflineStorageProcessMessages.h in Headers */,
 				BCCF672D12C7EDF7008F9C35 /* OriginAndDatabases.h in Headers */,
 				7CF47FFB17275C57008ACB91 /* PageBanner.h in Headers */,
 				BC6EDAA6111271C600E7678B /* PageClient.h in Headers */,
@@ -6077,58 +5891,6 @@
 			productReference = BCAE9DE9160C097400A33217 /* com.apple.WebKit.WebContent.Development.xpc */;
 			productType = "com.apple.product-type.bundle";
 		};
-		BCAF359916CA1D5700D4E9FC /* OfflineStorageProcess */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = BCAF35B216CA1D5700D4E9FC /* Build configuration list for PBXNativeTarget "OfflineStorageProcess" */;
-			buildPhases = (
-				BCAF359616CA1D5700D4E9FC /* Sources */,
-				BCAF359716CA1D5700D4E9FC /* Frameworks */,
-				BCAF359816CA1D5700D4E9FC /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				BCAF362416CA295F00D4E9FC /* PBXTargetDependency */,
-			);
-			name = OfflineStorageProcess;
-			productName = OfflineStorageProcess;
-			productReference = BCAF359A16CA1D5700D4E9FC /* OfflineStorageProcess.app */;
-			productType = "com.apple.product-type.application";
-		};
-		BCAF35F016CA263800D4E9FC /* OfflineStorage */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = BCAF35FC16CA263800D4E9FC /* Build configuration list for PBXNativeTarget "OfflineStorage" */;
-			buildPhases = (
-				BCAF35ED16CA263800D4E9FC /* Sources */,
-				BCAF35EE16CA263800D4E9FC /* Frameworks */,
-				BCAF35EF16CA263800D4E9FC /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = OfflineStorage;
-			productName = OfflineStorage;
-			productReference = BCAF35F116CA263800D4E9FC /* com.apple.WebKit.OfflineStorage.xpc */;
-			productType = "com.apple.product-type.bundle";
-		};
-		BCAF360316CA266900D4E9FC /* OfflineStorage.Development */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = BCAF360F16CA266900D4E9FC /* Build configuration list for PBXNativeTarget "OfflineStorage.Development" */;
-			buildPhases = (
-				BCAF360016CA266900D4E9FC /* Sources */,
-				BCAF360116CA266900D4E9FC /* Frameworks */,
-				BCAF360216CA266900D4E9FC /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = OfflineStorage.Development;
-			productName = OfflineStorage.Development;
-			productReference = BCAF360416CA266900D4E9FC /* com.apple.WebKit.OfflineStorage.Development.xpc */;
-			productType = "com.apple.product-type.bundle";
-		};
 		BCDE093313272496001259FB /* PluginProcess */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = BCDE093E13272496001259FB /* Build configuration list for PBXNativeTarget "PluginProcess" */;
@@ -6214,7 +5976,6 @@
 				BCDE093313272496001259FB /* PluginProcess */,
 				510CC80D1613C79900D03ED3 /* NetworkProcess */,
 				E13A8A2B162879AC00392929 /* SharedWorkerProcess */,
-				BCAF359916CA1D5700D4E9FC /* OfflineStorageProcess */,
 				C0CE72851247E66800BC0EC4 /* Derived Sources */,
 				1AC25FAF12A48EA700BD2671 /* PluginProcessShim */,
 				510031EA1379CACB00C8DFE4 /* SecItemShim */,
@@ -6223,8 +5984,6 @@
 				BCAE9DE8160C097400A33217 /* WebContent.Development */,
 				BC8283B016B4BF7700A278FE /* Networking */,
 				BC8283C416B4BFA800A278FE /* Networking.Development */,
-				BCAF35F016CA263800D4E9FC /* OfflineStorage */,
-				BCAF360316CA266900D4E9FC /* OfflineStorage.Development */,
 				BC8283F816B4FDDE00A278FE /* Plugin.32 */,
 				BC82841E16B4FDF600A278FE /* Plugin.64 */,
 				BC82843116B4FE1300A278FE /* Plugin.Development */,
@@ -6255,7 +6014,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				E17AE2C316B9C63A001C42F1 /* com.apple.WebKit.NetworkProcess.sb in Resources */,
-				BCAF361C16CA286700D4E9FC /* com.apple.WebKit.OfflineStorage.sb in Resources */,
 				E11D35AD16B63D14006D23D7 /* com.apple.WebKit.SharedWorkerProcess.sb in Resources */,
 				E11D35AE16B63D1B006D23D7 /* com.apple.WebProcess.sb in Resources */,
 				1CBC945E16515ED200D68AAE /* DockBottom.pdf in Resources */,
@@ -6312,28 +6070,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				E1D26A52175964D90095BFD1 /* WebContentProcess.xib in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		BCAF359816CA1D5700D4E9FC /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				BCAF362716CA2A5300D4E9FC /* WebKit.icns in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		BCAF35EF16CA263800D4E9FC /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		BCAF360216CA266900D4E9FC /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6699,12 +6435,6 @@
 				1A2D84A4127F6AD1001EB962 /* NPVariantData.cpp in Sources */,
 				BC8ACA1416670D89004C1941 /* ObjCObjectGraph.mm in Sources */,
 				BC8ACA1616670D89004C1941 /* ObjCObjectGraphCoders.mm in Sources */,
-				BCAF35D716CA212400D4E9FC /* OfflineStorageProcess.cpp in Sources */,
-				BCAF35E816CA253B00D4E9FC /* OfflineStorageProcessCreationParameters.cpp in Sources */,
-				BCAF35D516CA212400D4E9FC /* OfflineStorageProcessMac.mm in Sources */,
-				BCAF35DD16CA214A00D4E9FC /* OfflineStorageProcessMain.mm in Sources */,
-				BCAF362516CA29A200D4E9FC /* OfflineStorageProcessMessageReceiver.cpp in Sources */,
-				BCAF35DE16CA217700D4E9FC /* OfflineStorageServiceEntryPoint.mm in Sources */,
 				BCCF673312C7F15C008F9C35 /* OriginAndDatabases.cpp in Sources */,
 				7C387434172F5615001BD88A /* PageBanner.cpp in Sources */,
 				7C6D37FC172F555F009D2847 /* PageBannerMac.mm in Sources */,
@@ -7156,31 +6886,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		BCAF359616CA1D5700D4E9FC /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				BC5D24A516CC3B9E007D5461 /* ChildProcessMain.mm in Sources */,
-				BCAF35E916CA253B00D4E9FC /* OfflineStorageProcessCreationParameters.cpp in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		BCAF35ED16CA263800D4E9FC /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				BC5D24AD16CC3D64007D5461 /* XPCServiceMain.mm in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		BCAF360016CA266900D4E9FC /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				BC5D24A916CC3D5F007D5461 /* XPCServiceMain.Development.mm in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		BCDE093A13272496001259FB /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -7268,26 +6973,6 @@
 			isa = PBXTargetDependency;
 			target = BCAE9DE8160C097400A33217 /* WebContent.Development */;
 			targetProxy = BCAE9DFC160C0AB000A33217 /* PBXContainerItemProxy */;
-		};
-		BCAF35EC16CA261500D4E9FC /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = BCAF359916CA1D5700D4E9FC /* OfflineStorageProcess */;
-			targetProxy = BCAF35EB16CA261500D4E9FC /* PBXContainerItemProxy */;
-		};
-		BCAF361816CA27BD00D4E9FC /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = BCAF35F016CA263800D4E9FC /* OfflineStorage */;
-			targetProxy = BCAF361716CA27BD00D4E9FC /* PBXContainerItemProxy */;
-		};
-		BCAF361A16CA27C000D4E9FC /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = BCAF360316CA266900D4E9FC /* OfflineStorage.Development */;
-			targetProxy = BCAF361916CA27C000D4E9FC /* PBXContainerItemProxy */;
-		};
-		BCAF362416CA295F00D4E9FC /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 8DC2EF4F0486A6940098B216 /* WebKit2 */;
-			targetProxy = BCAF362316CA295F00D4E9FC /* PBXContainerItemProxy */;
 		};
 		BCDE093413272496001259FB /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -7666,69 +7351,6 @@
 			};
 			name = Production;
 		};
-		BCAF35AF16CA1D5700D4E9FC /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = BCAF35CA16CA204300D4E9FC /* OfflineStorageProcess.xcconfig */;
-			buildSettings = {
-			};
-			name = Debug;
-		};
-		BCAF35B016CA1D5700D4E9FC /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = BCAF35CA16CA204300D4E9FC /* OfflineStorageProcess.xcconfig */;
-			buildSettings = {
-			};
-			name = Release;
-		};
-		BCAF35B116CA1D5700D4E9FC /* Production */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = BCAF35CA16CA204300D4E9FC /* OfflineStorageProcess.xcconfig */;
-			buildSettings = {
-			};
-			name = Production;
-		};
-		BCAF35FD16CA263800D4E9FC /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = BCAF35CC16CA204300D4E9FC /* OfflineStorageService.xcconfig */;
-			buildSettings = {
-			};
-			name = Debug;
-		};
-		BCAF35FE16CA263800D4E9FC /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = BCAF35CC16CA204300D4E9FC /* OfflineStorageService.xcconfig */;
-			buildSettings = {
-			};
-			name = Release;
-		};
-		BCAF35FF16CA263800D4E9FC /* Production */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = BCAF35CC16CA204300D4E9FC /* OfflineStorageService.xcconfig */;
-			buildSettings = {
-			};
-			name = Production;
-		};
-		BCAF361016CA266900D4E9FC /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = BCAF35CB16CA204300D4E9FC /* OfflineStorageService.Development.xcconfig */;
-			buildSettings = {
-			};
-			name = Debug;
-		};
-		BCAF361116CA266900D4E9FC /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = BCAF35CB16CA204300D4E9FC /* OfflineStorageService.Development.xcconfig */;
-			buildSettings = {
-			};
-			name = Release;
-		};
-		BCAF361216CA266900D4E9FC /* Production */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = BCAF35CB16CA204300D4E9FC /* OfflineStorageService.Development.xcconfig */;
-			buildSettings = {
-			};
-			name = Production;
-		};
 		BCDE093F13272496001259FB /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC122FA3132707F300F7EAC1 /* PluginProcess.xcconfig */;
@@ -7963,36 +7585,6 @@
 				BCAE9DF7160C097500A33217 /* Debug */,
 				BCAE9DF8160C097500A33217 /* Release */,
 				BCAE9DF9160C097500A33217 /* Production */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Production;
-		};
-		BCAF35B216CA1D5700D4E9FC /* Build configuration list for PBXNativeTarget "OfflineStorageProcess" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				BCAF35AF16CA1D5700D4E9FC /* Debug */,
-				BCAF35B016CA1D5700D4E9FC /* Release */,
-				BCAF35B116CA1D5700D4E9FC /* Production */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Production;
-		};
-		BCAF35FC16CA263800D4E9FC /* Build configuration list for PBXNativeTarget "OfflineStorage" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				BCAF35FD16CA263800D4E9FC /* Debug */,
-				BCAF35FE16CA263800D4E9FC /* Release */,
-				BCAF35FF16CA263800D4E9FC /* Production */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Production;
-		};
-		BCAF360F16CA266900D4E9FC /* Build configuration list for PBXNativeTarget "OfflineStorage.Development" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				BCAF361016CA266900D4E9FC /* Debug */,
-				BCAF361116CA266900D4E9FC /* Release */,
-				BCAF361216CA266900D4E9FC /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;
