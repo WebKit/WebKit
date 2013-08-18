@@ -1,3 +1,19 @@
+2013-08-18  Antti Koivisto  <antti@apple.com>
+
+        <https://webkit.org/b/119963> Use TextNodeTraversal for getting sheet text in StyleElement
+
+        Reviewed by Andreas Kling.
+        
+        As a follow-up, mark as crashing a test that is now expected to crash in controlled manner (CRASH()).
+
+        Note that the test only ever passed because the amount of data was huge enough (>4GB) for it to take
+        the special do-nothing code path. With slightly less data the test would hit CRASH() in fastRealloc() like
+        it does now.
+
+        * TestExpectations:
+        
+            Mark fast/css/giant-stylesheet-crash.html as crashing.
+
 2013-08-17  Zan Dobersek  <zdobersek@igalia.com>
 
         <https://webkit.org/b/119944> The fast/dom/gc-10.html layout test should dump text instead of render tree

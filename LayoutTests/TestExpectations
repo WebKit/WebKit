@@ -34,3 +34,6 @@ webkit.org/b/119325 dom/xhtml/level3/core/nodecomparedocumentposition38.xhtml [ 
 webkit.org/b/118301 fast/dom/timer-throttling-hidden-page.html [ Skip ]
 
 webkit.org/b/119094 fast/forms/color/input-color-onchange-event.html [ Crash Pass ]
+
+# This is an expected controlled crash. See webkit.org/b/119976 for a better solution.
+fast/css/giant-stylesheet-crash.html [ Crash ]
