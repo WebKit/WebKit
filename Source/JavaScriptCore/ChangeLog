@@ -3,7 +3,7 @@
         https://bugs.webkit.org/show_bug.cgi?id=119995
         Start removing custom implementations of getOwnPropertyDescriptor
 
-        Reviewed by Sam Weinig.
+        Reviewed by Oliver Hunt.
 
         This can now typically implemented in terms of getOwnPropertySlot.
         Add a macro to PropertyDescriptor to define an implementation of GOPD in terms of GOPS.
@@ -58,6 +58,17 @@
 
 2013-08-19  Michael Saboff  <msaboff@apple.com>
 
+        https://bugs.webkit.org/show_bug.cgi?id=120015 DFG 32Bit: Crash loading "Classic" site @ translate.google.com
+
+        Reviewed by Sam Weinig.
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillSpeculateCell): Added checks for spillFormat being
+        DataFormatInteger or DataFormatDouble similar to what is in the 64 bit code and in
+        all versions of fillSpeculateBoolean().
+
+2013-08-19  Michael Saboff  <msaboff@apple.com>
+
         https://bugs.webkit.org/show_bug.cgi?id=120020 Change Set 154207 causes wrong register to be used for 32 bit tests
 
         Reviewed by Benjamin Poulain.
@@ -67,8 +78,6 @@
 
         * assembler/MacroAssemblerX86Common.h:
         (JSC::MacroAssemblerX86Common::branchTest32):
-        * dfg/DFGSpeculativeJIT32_64.cpp:
-        (JSC::DFG::SpeculativeJIT::fillSpeculateCell):
 
 2013-08-16  Oliver Hunt  <oliver@apple.com>
 
