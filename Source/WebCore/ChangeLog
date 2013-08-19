@@ -1,5 +1,16 @@
 2013-08-19  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
+        <https://webkit.org/b/119990> Add toSVGStopElement(Node* node) to clean-up a static_cast<SVGStopElement*>
+
+        Reviewed by Darin Adler.
+
+        Clean up remained static_cast<SVGStopElement*> using toSVGStopElement(toSVGElement()).
+
+        * rendering/svg/SVGRenderTreeAsText.cpp:
+        (WebCore::writeSVGGradientStop):
+
+2013-08-19  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
         <https://webkit.org/b/119996> Introduce toSVGAnimateElement(), and use it
 
         Reviewed by Andreas Kling.
