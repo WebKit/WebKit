@@ -1,3 +1,18 @@
+2013-08-19  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
+
+        <https://webkit.org/b/120008> [GTK][ARM] javascriptcore compilation is broken
+
+        Reviewed by Oliver Hunt.
+
+        Guard the compilation of these files only if DFG_JIT is enabled.
+
+        * dfg/DFGDesiredTransitions.cpp:
+        * dfg/DFGDesiredTransitions.h:
+        * dfg/DFGDesiredWeakReferences.cpp:
+        * dfg/DFGDesiredWeakReferences.h:
+        * dfg/DFGDesiredWriteBarriers.cpp:
+        * dfg/DFGDesiredWriteBarriers.h:
+
 2013-08-17  Filip Pizlo  <fpizlo@apple.com>
 
         REGRESSION(r154218): DFG::FixupPhase no longer turns GetById's child1 into CellUse

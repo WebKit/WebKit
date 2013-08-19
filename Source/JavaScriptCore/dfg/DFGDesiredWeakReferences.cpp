@@ -24,6 +24,9 @@
  */
 
 #include "config.h"
+
+#if ENABLE(DFG_JIT)
+
 #include "DFGDesiredWeakReferences.h"
 
 #include "CodeBlock.h"
@@ -54,3 +57,5 @@ void DesiredWeakReferences::reallyAdd(VM& vm, CommonData* common)
 }
 
 } } // namespace JSC::DFG
+
+#endif // ENABLE(DFG_JIT)

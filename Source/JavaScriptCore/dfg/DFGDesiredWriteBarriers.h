@@ -29,6 +29,8 @@
 #include "WriteBarrier.h"
 #include <wtf/Vector.h>
 
+#if ENABLE(DFG_JIT)
+
 namespace JSC {
 
 class VM;
@@ -89,5 +91,7 @@ void initializeLazyWriteBarrier(WriteBarrier<T>& barrier, DesiredWriteBarriers& 
 void initializeLazyWriteBarrierForConstant(CodeBlock*, DesiredWriteBarriers&, JSCell* owner, JSValue);
 
 } } // namespace JSC::DFG
+
+#endif // ENABLE(DFG_JIT)
 
 #endif // DFGDesiredWriteBarriers_h

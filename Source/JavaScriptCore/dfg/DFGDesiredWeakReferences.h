@@ -28,6 +28,8 @@
 
 #include <wtf/Vector.h>
 
+#if ENABLE(DFG_JIT)
+
 namespace JSC { 
 
 class CodeBlock;
@@ -52,5 +54,7 @@ private:
 };
 
 } } // namespace JSC::DFG
+
+#endif // ENABLE(DFG_JIT)
 
 #endif // DFGDesiredWeakReferences_h

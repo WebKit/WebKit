@@ -24,6 +24,9 @@
  */
 
 #include "config.h"
+
+#if ENABLE(DFG_JIT)
+
 #include "DFGDesiredWriteBarriers.h"
 
 #include "CodeBlock.h"
@@ -93,3 +96,5 @@ void initializeLazyWriteBarrierForConstant(CodeBlock* codeBlock, DesiredWriteBar
 }
 
 } } // namespace JSC::DFG
+
+#endif // ENABLE(DFG_JIT)

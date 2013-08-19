@@ -24,6 +24,9 @@
  */
 
 #include "config.h"
+
+#if ENABLE(DFG_JIT)
+
 #include "DFGDesiredTransitions.h"
 
 #include "CodeBlock.h"
@@ -68,3 +71,5 @@ void DesiredTransitions::reallyAdd(VM& vm, CommonData* common)
 }
 
 } } // namespace JSC::DFG
+
+#endif // ENABLE(DFG_JIT)
