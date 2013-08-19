@@ -1,3 +1,14 @@
+2013-08-19  Arunprasad Rajkumar  <arurajku@cisco.com>
+
+        <https://webkit.org/b/119933> [Qt] Fix tst_QObjectBridge::connectAndDisconnect() fail
+
+        Reviewed by Allan Sandfeld Jensen.
+
+        Latest version of JSC has unquoted undefined in exception messages. So replaced 'undefined' with undefined.
+
+        * tests/qobjectbridge/tst_qobjectbridge.cpp:
+        (tst_QObjectBridge::connectAndDisconnect):
+
 2013-08-17  Darin Adler  <darin@apple.com>
 
         <https://webkit.org/b/119941> Make Page::dragController return a reference
