@@ -94,7 +94,7 @@ static void openFileSystem(ScriptExecutionContext* context, const String& basePa
         int playerId = 0;
         Page* page = static_cast<Document*>(context)->page();
         if (page)
-            playerId = page->chrome().client()->platformPageClient()->playerID();
+            playerId = page->chrome().client().platformPageClient()->playerID();
         AsyncFileSystemBlackBerry::openFileSystem(rootURL, basePath, context->securityOrigin()->databaseIdentifier(), type, size, create, playerId, callbacks);
     } else {
 #if ENABLE(WORKERS)

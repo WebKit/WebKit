@@ -300,7 +300,7 @@ void QWebPageAdapter::deletePage()
 
 QWebPageAdapter* QWebPageAdapter::kit(Page* page)
 {
-    return static_cast<ChromeClientQt*>(page->chrome().client())->m_webPage;
+    return static_cast<ChromeClientQt&>(page->chrome().client()).m_webPage;
 }
 
 ViewportArguments QWebPageAdapter::viewportArguments() const

@@ -285,8 +285,7 @@ void RenderLayerCompositor::cacheAcceleratedCompositingFlags()
         // on a chrome that doesn't allow accelerated compositing.
         if (hasAcceleratedCompositing) {
             if (Page* page = this->page()) {
-                ChromeClient* chromeClient = page->chrome().client();
-                m_compositingTriggers = chromeClient->allowedCompositingTriggers();
+                m_compositingTriggers = page->chrome().client().allowedCompositingTriggers();
                 hasAcceleratedCompositing = m_compositingTriggers;
             }
         }
@@ -357,7 +356,7 @@ void RenderLayerCompositor::scheduleLayerFlushNow()
 {
     m_hasPendingLayerFlush = false;
     if (Page* page = this->page())
-        page->chrome().client()->scheduleCompositingLayerFlush();
+        page->chrome().client().scheduleCompositingLayerFlush();
 }
 
 void RenderLayerCompositor::scheduleLayerFlush(bool canThrottle)
@@ -2631,7 +2630,7 @@ GraphicsLayer* RenderLayerCompositor::updateLayerForHeader(bool wantsLayer)
         scrollingCoordinator->frameViewRootLayerDidChange(m_renderView->frameView());
 
     if (Page* page = this->page())
-        page->chrome().client()->didAddHeaderLayer(m_layerForHeader.get());
+        page->chrome().client().didAddHeaderLayer(m_layerForHeader.get());
 
     return m_layerForHeader.get();
 }
@@ -2670,7 +2669,7 @@ GraphicsLayer* RenderLayerCompositor::updateLayerForFooter(bool wantsLayer)
         scrollingCoordinator->frameViewRootLayerDidChange(m_renderView->frameView());
 
     if (Page* page = this->page())
-        page->chrome().client()->didAddFooterLayer(m_layerForFooter.get());
+        page->chrome().client().didAddFooterLayer(m_layerForFooter.get());
 
     return m_layerForFooter.get();
 }
@@ -2708,7 +2707,7 @@ void RenderLayerCompositor::updateOverflowControlsLayers()
             m_layerForOverhangAreas->setDrawsContent(false);
             m_layerForOverhangAreas->setSize(m_renderView->frameView()->frameRect().size());
 
-            ScrollbarTheme::theme()->setUpOverhangAreasLayerContents(m_layerForOverhangAreas.get(), this->page()->chrome().client()->underlayColor());
+            ScrollbarTheme::theme()->setUpOverhangAreasLayerContents(m_layerForOverhangAreas.get(), this->page()->chrome().client().underlayColor());
 
             // We want the overhang areas layer to be positioned below the frame contents,
             // so insert it below the clip layer.
@@ -2933,7 +2932,7 @@ void RenderLayerCompositor::attachRootLayer(RootLayerAttachment attachment)
             if (!page)
                 return;
 
-            page->chrome().client()->attachRootGraphicsLayer(&frame, rootGraphicsLayer());
+            page->chrome().client().attachRootGraphicsLayer(&frame, rootGraphicsLayer());
             break;
         }
         case RootLayerAttachedViaEnclosingFrame: {
@@ -2977,7 +2976,7 @@ void RenderLayerCompositor::detachRootLayer()
         if (!page)
             return;
 
-        page->chrome().client()->attachRootGraphicsLayer(&frame, 0);
+        page->chrome().client().attachRootGraphicsLayer(&frame, 0);
     }
     break;
     case RootLayerUnattached:
@@ -3240,7 +3239,7 @@ ScrollingCoordinator* RenderLayerCompositor::scrollingCoordinator() const
 GraphicsLayerFactory* RenderLayerCompositor::graphicsLayerFactory() const
 {
     if (Page* page = this->page())
-        return page->chrome().client()->graphicsLayerFactory();
+        return page->chrome().client().graphicsLayerFactory();
 
     return 0;
 }
@@ -3307,7 +3306,7 @@ void RenderLayerCompositor::paintRelatedMilestonesTimerFired(Timer<RenderLayerCo
         return;
 
     // If the layer tree is frozen, we'll paint when it's unfrozen and schedule the timer again.
-    if (page->chrome().client()->layerTreeStateIsFrozen())
+    if (page->chrome().client().layerTreeStateIsFrozen())
         return;
 
     frameView->firePaintRelatedMilestones();

@@ -199,14 +199,14 @@ static void logPluginRequest(Page* page, const String& mimeType, const String& u
     String pluginFile = pluginData ? pluginData->pluginFileForMimeType(newMIMEType) : String();
     String description = !pluginFile ? newMIMEType : pluginFile;
 
-    ChromeClient* client = page->chrome().client();
-    client->logDiagnosticMessage(success ? DiagnosticLoggingKeys::pluginLoadedKey() : DiagnosticLoggingKeys::pluginLoadingFailedKey(), description, DiagnosticLoggingKeys::noopKey());
+    ChromeClient& chromeClient = page->chrome().client();
+    chromeClient.logDiagnosticMessage(success ? DiagnosticLoggingKeys::pluginLoadedKey() : DiagnosticLoggingKeys::pluginLoadingFailedKey(), description, DiagnosticLoggingKeys::noopKey());
 
     if (!page->hasSeenAnyPlugin())
-        client->logDiagnosticMessage(DiagnosticLoggingKeys::pageContainsAtLeastOnePluginKey(), emptyString(), DiagnosticLoggingKeys::noopKey());
+        chromeClient.logDiagnosticMessage(DiagnosticLoggingKeys::pageContainsAtLeastOnePluginKey(), emptyString(), DiagnosticLoggingKeys::noopKey());
     
     if (!page->hasSeenPlugin(description))
-        client->logDiagnosticMessage(DiagnosticLoggingKeys::pageContainsPluginKey(), description, DiagnosticLoggingKeys::noopKey());
+        chromeClient.logDiagnosticMessage(DiagnosticLoggingKeys::pageContainsPluginKey(), description, DiagnosticLoggingKeys::noopKey());
 
     page->sawPlugin(description);
 }

@@ -1833,7 +1833,7 @@ void FrameLoader::transitionToCommitted(PassRefPtr<CachedPage> cachedPage)
 
 #if ENABLE(TOUCH_EVENTS)
     if (isLoadingMainFrame())
-        m_frame->page()->chrome().client()->needTouchEvents(false);
+        m_frame->page()->chrome().client().needTouchEvents(false);
 #endif
 
     // Handle adding the URL to the back/forward list.

@@ -87,7 +87,7 @@ static void internalAddMessage(Page* page, MessageType type, MessageLevel level,
         return;
 
     if (gotMessage)
-        page->chrome().client()->addMessageToConsole(ConsoleAPIMessageSource, type, level, message, lastCaller.lineNumber(), lastCaller.columnNumber(), lastCaller.sourceURL());
+        page->chrome().client().addMessageToConsole(ConsoleAPIMessageSource, type, level, message, lastCaller.lineNumber(), lastCaller.columnNumber(), lastCaller.sourceURL());
 
     if (!page->settings().logsPageMessagesToSystemConsoleEnabled() && !PageConsole::shouldPrintExceptions())
         return;

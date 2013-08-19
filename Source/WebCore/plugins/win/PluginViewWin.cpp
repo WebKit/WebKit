@@ -778,7 +778,7 @@ void PluginView::handleMouseEvent(MouseEvent* event)
     // and since we don't want that we set ignoreNextSetCursor to true here to prevent that.
     ignoreNextSetCursor = true;
     if (Page* page = m_parentFrame->page())
-        page->chrome().client()->setLastSetCursorToCurrentCursor();
+        page->chrome().client().setLastSetCursorToCurrentCursor();
 #endif
 }
 

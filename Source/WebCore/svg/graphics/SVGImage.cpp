@@ -402,8 +402,7 @@ bool isInSVGImage(const Element* element)
     if (!page)
         return false;
 
-    ChromeClient* chromeClient = page->chrome().client();
-    return chromeClient && chromeClient->isSVGImageChromeClient();
+    return page->chrome().client().isSVGImageChromeClient();
 }
 
 }

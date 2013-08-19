@@ -1,3 +1,11 @@
+2013-08-19  Andreas Kling  <akling@apple.com>
+
+        <https://webkit.org/b/120000> Chrome::client() should return a reference.
+
+        Reviewed by Antti Koivisto.
+
+        Chrome::m_client should never be null.
+
 2013-08-19  Antti Koivisto  <antti@apple.com>
 
         <https://webkit.org/b/120004> Rename StyleElement to InlineStyleSheetOwner and stop inheriting from it

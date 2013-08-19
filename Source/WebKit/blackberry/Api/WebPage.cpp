@@ -5267,7 +5267,7 @@ LayerRenderingResults WebPagePrivate::lastCompositingResults() const
 
 WebCore::GraphicsLayerFactory* WebPagePrivate::graphicsLayerFactory() const
 {
-    return m_page->chrome().client()->graphicsLayerFactory();
+    return m_page->chrome().client().graphicsLayerFactory();
 }
 
 GraphicsLayer* WebPagePrivate::overlayLayer()
@@ -6014,7 +6014,7 @@ bool WebPagePrivate::openPagePopup(PagePopupClient* popupClient, const WebCore::
     closePagePopup();
     m_pagePopup = PagePopup::create(this, popupClient);
 
-    WebCore::IntRect popupRect = m_page->chrome().client()->rootViewToScreen(originBoundsInRootView);
+    WebCore::IntRect popupRect = m_page->chrome().client().rootViewToScreen(originBoundsInRootView);
     popupRect.setSize(popupClient->contentSize());
     if (!m_client->createPopupWebView(popupRect)) {
         closePagePopup();

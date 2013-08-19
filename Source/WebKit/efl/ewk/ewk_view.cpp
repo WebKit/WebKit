@@ -1233,8 +1233,8 @@ static void _ewk_view_zoom_animation_start(Ewk_View_Smart_Data* smartData)
 static WebCore::ViewportAttributes _ewk_view_viewport_attributes_compute(Ewk_View_Private_Data* priv)
 {
     int desktopWidth = 980;
-    WebCore::IntRect availableRect = enclosingIntRect(priv->page->chrome().client()->pageRect());
-    WebCore::IntRect deviceRect = enclosingIntRect(priv->page->chrome().client()->windowRect());
+    WebCore::IntRect availableRect = enclosingIntRect(priv->page->chrome().client().pageRect());
+    WebCore::IntRect deviceRect = enclosingIntRect(priv->page->chrome().client().windowRect());
 
     WebCore::ViewportAttributes attributes = WebCore::computeViewportAttributes(priv->viewportArguments, desktopWidth, deviceRect.width(), deviceRect.height(), priv->page->deviceScaleFactor(), availableRect.size());
     WebCore::restrictMinimumScaleFactorToViewportSize(attributes, availableRect.size(), priv->page->deviceScaleFactor());

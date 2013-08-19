@@ -203,7 +203,7 @@ void CSSDefaultStyleSheets::ensureDefaultStyleSheetsForElement(Element* element,
 #endif
 
     if (!plugInsStyleSheet && (element->hasTagName(objectTag) || element->hasTagName(embedTag))) {
-        String plugInsRules = RenderTheme::themeForPage(element->document()->page())->extraPlugInsStyleSheet() + element->document()->page()->chrome().client()->plugInExtraStyleSheet();
+        String plugInsRules = RenderTheme::themeForPage(element->document()->page())->extraPlugInsStyleSheet() + element->document()->page()->chrome().client().plugInExtraStyleSheet();
         if (plugInsRules.isEmpty())
             plugInsRules = String(plugInsUserAgentStyleSheet, sizeof(plugInsUserAgentStyleSheet));
         plugInsStyleSheet = parseUASheet(plugInsRules);

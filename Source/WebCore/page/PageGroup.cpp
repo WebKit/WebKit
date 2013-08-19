@@ -195,7 +195,7 @@ bool PageGroup::isLinkVisited(LinkHash visitedLinkHash)
     if (!m_visitedLinksPopulated) {
         m_visitedLinksPopulated = true;
         ASSERT(!m_pages.isEmpty());
-        (*m_pages.begin())->chrome().client()->populateVisitedLinks();
+        (*m_pages.begin())->chrome().client().populateVisitedLinks();
     }
     return m_visitedLinkHashes.contains(visitedLinkHash);
 }

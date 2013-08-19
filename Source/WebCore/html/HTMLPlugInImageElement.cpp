@@ -75,7 +75,7 @@ static const String titleText(Page* page, String mimeType)
     if (!titleText.isEmpty())
         return titleText;
 
-    titleText = page->chrome().client()->plugInStartLabelTitle(mimeType);
+    titleText = page->chrome().client().plugInStartLabelTitle(mimeType);
     if (titleText.isEmpty())
         titleText = snapshottedPlugInLabelTitle();
     mimeTypeToLabelTitleMap.set(mimeType, titleText);
@@ -89,7 +89,7 @@ static const String subtitleText(Page* page, String mimeType)
     if (!subtitleText.isEmpty())
         return subtitleText;
 
-    subtitleText = page->chrome().client()->plugInStartLabelSubtitle(mimeType);
+    subtitleText = page->chrome().client().plugInStartLabelSubtitle(mimeType);
     if (subtitleText.isEmpty())
         subtitleText = snapshottedPlugInLabelSubtitle();
     mimeTypeToLabelSubtitleMap.set(mimeType, subtitleText);

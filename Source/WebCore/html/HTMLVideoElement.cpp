@@ -140,14 +140,14 @@ bool HTMLVideoElement::supportsFullscreen() const
 #if ENABLE(FULLSCREEN_API)
     // If the full screen API is enabled and is supported for the current element
     // do not require that the player has a video track to enter full screen.
-    if (page->chrome().client()->supportsFullScreenForElement(this, false))
+    if (page->chrome().client().supportsFullScreenForElement(this, false))
         return true;
 #endif
 
     if (!player()->hasVideo())
         return false;
 
-    return page->chrome().client()->supportsFullscreenForNode(this);
+    return page->chrome().client().supportsFullscreenForNode(this);
 }
 
 unsigned HTMLVideoElement::videoWidth() const

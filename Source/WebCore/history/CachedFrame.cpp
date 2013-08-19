@@ -143,7 +143,7 @@ void CachedFrameBase::restore()
     
 #if ENABLE(TOUCH_EVENTS)
     if (m_document->hasTouchEventHandlers())
-        m_document->page()->chrome().client()->needTouchEvents(true);
+        m_document->page()->chrome().client().needTouchEvents(true);
 #endif
 
     m_document->documentDidResumeFromPageCache();

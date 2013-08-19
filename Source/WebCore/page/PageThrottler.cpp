@@ -41,8 +41,7 @@ PageThrottler::PageThrottler(Page* page)
     , m_throttleState(PageNotThrottledState)
     , m_throttleHysteresisTimer(this, &PageThrottler::throttleHysteresisTimerFired)
 {
-    if (ChromeClient* chromeClient = m_page->chrome().client())
-        chromeClient->incrementActivePageCount();
+    m_page->chrome().client().incrementActivePageCount();
 }
 
 PageThrottler::~PageThrottler()
@@ -52,18 +51,15 @@ PageThrottler::~PageThrottler()
     for (HashSet<PageActivityAssertionToken*>::iterator i = m_activityTokens.begin(); i != m_activityTokens.end(); ++i)
         (*i)->invalidate();
 
-    if (m_throttleState != PageThrottledState) {
-        if (ChromeClient* chromeClient = m_page->chrome().client())
-            chromeClient->decrementActivePageCount();
-    }
+    if (m_throttleState != PageThrottledState)
+        m_page->chrome().client().decrementActivePageCount();
 }
 
 void PageThrottler::throttlePage()
 {
     m_throttleState = PageThrottledState;
 
-    if (ChromeClient* chromeClient = m_page->chrome().client())
-        chromeClient->decrementActivePageCount();
+    m_page->chrome().client().decrementActivePageCount();
 
     for (Frame* frame = m_page->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
         if (frame->document())
@@ -81,10 +77,8 @@ void PageThrottler::unthrottlePage()
     if (oldState == PageNotThrottledState)
         return;
 
-    if (oldState == PageThrottledState) {
-        if (ChromeClient* chromeClient = m_page->chrome().client())
-            chromeClient->incrementActivePageCount();
-    }
+    if (oldState == PageThrottledState)
+        m_page->chrome().client().incrementActivePageCount();
     
     for (Frame* frame = m_page->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
         if (frame->document())

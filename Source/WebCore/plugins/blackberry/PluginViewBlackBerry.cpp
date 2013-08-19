@@ -1074,7 +1074,7 @@ bool PluginView::platformStart()
     }
 
 #if USE(ACCELERATED_COMPOSITING)
-    if (m_parentFrame->page()->chrome().client()->allowsAcceleratedCompositing()
+    if (m_parentFrame->page()->chrome().client().allowsAcceleratedCompositing()
         && m_parentFrame->page()->settings()
         && m_parentFrame->page()->settings()->acceleratedCompositingEnabled()) {
         m_private->m_platformLayer = PluginLayerWebKitThread::create(this);

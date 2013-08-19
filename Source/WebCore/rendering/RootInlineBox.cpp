@@ -188,7 +188,7 @@ void RootInlineBox::addHighlightOverflow()
 
     // Highlight acts as a selection inflation.
     FloatRect rootRect(0, selectionTop(), logicalWidth(), selectionHeight());
-    IntRect inflatedRect = enclosingIntRect(page->chrome().client()->customHighlightRect(renderer()->node(), renderer()->style()->highlight(), rootRect));
+    IntRect inflatedRect = enclosingIntRect(page->chrome().client().customHighlightRect(renderer()->node(), renderer()->style()->highlight(), rootRect));
     setOverflowFromLogicalRects(inflatedRect, inflatedRect, lineTop(), lineBottom());
 }
 
@@ -206,9 +206,9 @@ void RootInlineBox::paintCustomHighlight(PaintInfo& paintInfo, const LayoutPoint
 
     // Get the inflated rect so that we can properly hit test.
     FloatRect rootRect(paintOffset.x() + x(), paintOffset.y() + selectionTop(), logicalWidth(), selectionHeight());
-    FloatRect inflatedRect = page->chrome().client()->customHighlightRect(renderer()->node(), highlightType, rootRect);
+    FloatRect inflatedRect = page->chrome().client().customHighlightRect(renderer()->node(), highlightType, rootRect);
     if (inflatedRect.intersects(paintInfo.rect))
-        page->chrome().client()->paintCustomHighlight(renderer()->node(), highlightType, rootRect, rootRect, false, true);
+        page->chrome().client().paintCustomHighlight(renderer()->node(), highlightType, rootRect, rootRect, false, true);
 }
 
 #endif

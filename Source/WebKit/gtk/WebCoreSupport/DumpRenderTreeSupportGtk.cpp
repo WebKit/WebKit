@@ -438,7 +438,7 @@ void DumpRenderTreeSupportGtk::forceWebViewPaint(WebKitWebView* webView)
 {
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
 
-    static_cast<WebKit::ChromeClient*>(core(webView)->chrome().client())->forcePaint();
+    static_cast<WebKit::ChromeClient&>(core(webView)->chrome().client()).forcePaint();
 }
 
 void DumpRenderTreeSupportGtk::whiteListAccessFromOrigin(const gchar* sourceOrigin, const gchar* destinationProtocol, const gchar* destinationHost, bool allowDestinationSubdomains)

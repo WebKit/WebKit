@@ -345,7 +345,7 @@ void FrameView::init()
     }
 
     Page* page = frame().page();
-    if (page && page->chrome().client()->shouldPaintEntireContents())
+    if (page && page->chrome().client().shouldPaintEntireContents())
         setPaintsEntireContents(true);
 }
     
@@ -917,7 +917,7 @@ bool FrameView::flushCompositingStateForThisFrame(Frame* rootFrameForFlush)
 void FrameView::setNeedsOneShotDrawingSynchronization()
 {
     if (Page* page = frame().page())
-        page->chrome().client()->setNeedsOneShotDrawingSynchronization();
+        page->chrome().client().setNeedsOneShotDrawingSynchronization();
 }
 
 #endif // USE(ACCELERATED_COMPOSITING)
@@ -1380,7 +1380,7 @@ void FrameView::layout(bool allowSubtree)
         return;
 
     if (Page* page = frame().page())
-        page->chrome().client()->layoutUpdated(&frame());
+        page->chrome().client().layoutUpdated(&frame());
 }
 
 RenderBox* FrameView::embeddedContentBox() const
@@ -2049,7 +2049,7 @@ void FrameView::updateFixedElementsAfterScrolling()
 bool FrameView::shouldRubberBandInDirection(ScrollDirection direction) const
 {
     if (Page* page = frame().page())
-        return page->chrome().client()->shouldRubberBandInDirection(direction);
+        return page->chrome().client().shouldRubberBandInDirection(direction);
     return ScrollView::shouldRubberBandInDirection(direction);
 }
 
@@ -3088,7 +3088,7 @@ void FrameView::setVisibleScrollerThumbRect(const IntRect& scrollerThumb)
     if (!isMainFrameView())
         return;
 
-    frame().page()->chrome().client()->notifyScrollerThumbIsVisibleInRect(scrollerThumb);
+    frame().page()->chrome().client().notifyScrollerThumbIsVisibleInRect(scrollerThumb);
 }
 
 bool FrameView::scrollbarsCanBeActive() const
@@ -3176,7 +3176,7 @@ void FrameView::scrollbarStyleChanged(int newStyle, bool forceUpdate)
     if (!isMainFrameView())
         return;
 
-    frame().page()->chrome().client()->recommendedScrollbarStyleDidChange(newStyle);
+    frame().page()->chrome().client().recommendedScrollbarStyleDidChange(newStyle);
 
     if (forceUpdate)
         ScrollView::scrollbarStyleChanged(newStyle, forceUpdate);
@@ -3247,7 +3247,7 @@ void FrameView::updateAnnotatedRegions()
     Page* page = frame().page();
     if (!page)
         return;
-    page->chrome().client()->annotatedRegionsChanged();
+    page->chrome().client().annotatedRegionsChanged();
 }
 #endif
 
@@ -3657,7 +3657,7 @@ void FrameView::paintOverhangAreas(GraphicsContext* context, const IntRect& hori
     if (frame().document()->printing())
         return;
 
-    if (isMainFrameView() && frame().page()->chrome().client()->paintCustomOverhangArea(context, horizontalOverhangArea, verticalOverhangArea, dirtyRect))
+    if (isMainFrameView() && frame().page()->chrome().client().paintCustomOverhangArea(context, horizontalOverhangArea, verticalOverhangArea, dirtyRect))
         return;
 
     ScrollView::paintOverhangAreas(context, horizontalOverhangArea, verticalOverhangArea, dirtyRect);

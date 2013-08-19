@@ -1540,7 +1540,7 @@ static NSMutableArray* convertToNSArray(const AccessibilityObject::Accessibility
         
         // If we have an empty chrome client (like SVG) then we should use the page
         // of the scroll view parent to help us get to the screen rect.
-        if (parent && page && page->chrome().client()->isEmptyChromeClient())
+        if (parent && page && page->chrome().client().isEmptyChromeClient())
             page = parent->page();
         
         if (page) {
@@ -3089,12 +3089,12 @@ static NSString* roleValueToNSString(AccessibilityRole value)
             FrameView* frameView = m_object->documentFrameView();
             Page* page = m_object->page();
             if (page && frameView) {
-                ChromeClient* client = page->chrome().client();
-                client->focus();
+                ChromeClient& chromeClient = page->chrome().client();
+                chromeClient.focus();
                 if (frameView->platformWidget())
-                    client->makeFirstResponder(frameView->platformWidget());
+                    chromeClient.makeFirstResponder(frameView->platformWidget());
                 else
-                    client->makeFirstResponder();
+                    chromeClient.makeFirstResponder();
             }
         }
         

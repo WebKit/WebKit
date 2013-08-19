@@ -1684,20 +1684,20 @@ static void logMediaLoadRequest(Page* page, const String& mediaEngine, const Str
     if (!page || !page->settings().diagnosticLoggingEnabled())
         return;
 
-    ChromeClient* client = page->chrome().client();
+    ChromeClient& chromeClient = page->chrome().client();
 
     if (!succeeded) {
-        client->logDiagnosticMessage(DiagnosticLoggingKeys::mediaLoadingFailedKey(), errorMessage, DiagnosticLoggingKeys::failKey());
+        chromeClient.logDiagnosticMessage(DiagnosticLoggingKeys::mediaLoadingFailedKey(), errorMessage, DiagnosticLoggingKeys::failKey());
         return;
     }
 
-    client->logDiagnosticMessage(DiagnosticLoggingKeys::mediaLoadedKey(), mediaEngine, DiagnosticLoggingKeys::noopKey());
+    chromeClient.logDiagnosticMessage(DiagnosticLoggingKeys::mediaLoadedKey(), mediaEngine, DiagnosticLoggingKeys::noopKey());
 
     if (!page->hasSeenAnyMediaEngine())
-        client->logDiagnosticMessage(DiagnosticLoggingKeys::pageContainsAtLeastOneMediaEngineKey(), emptyString(), DiagnosticLoggingKeys::noopKey());
+        chromeClient.logDiagnosticMessage(DiagnosticLoggingKeys::pageContainsAtLeastOneMediaEngineKey(), emptyString(), DiagnosticLoggingKeys::noopKey());
 
     if (!page->hasSeenMediaEngine(mediaEngine))
-        client->logDiagnosticMessage(DiagnosticLoggingKeys::pageContainsMediaEngineKey(), mediaEngine, DiagnosticLoggingKeys::noopKey());
+        chromeClient.logDiagnosticMessage(DiagnosticLoggingKeys::pageContainsMediaEngineKey(), mediaEngine, DiagnosticLoggingKeys::noopKey());
 
     page->sawMediaEngine(mediaEngine);
 }
@@ -3823,7 +3823,7 @@ GraphicsDeviceAdapter* HTMLMediaElement::mediaPlayerGraphicsDeviceAdapter(const 
     if (!document() || !document()->page())
         return 0;
 
-    return document()->page()->chrome().client()->graphicsDeviceAdapter();
+    return document()->page()->chrome().client().graphicsDeviceAdapter();
 }
 #endif
 
@@ -4412,7 +4412,7 @@ void HTMLMediaElement::enterFullscreen()
     if (hasMediaControls())
         mediaControls()->enteredFullscreen();
     if (document() && document()->page()) {
-        document()->page()->chrome().client()->enterFullscreenForNode(this);
+        document()->page()->chrome().client().enterFullscreenForNode(this);
         scheduleEvent(eventNames().webkitbeginfullscreenEvent);
     }
 }
@@ -4435,7 +4435,7 @@ void HTMLMediaElement::exitFullscreen()
     if (document() && document()->page()) {
         if (document()->page()->chrome().requiresFullscreenForVideoPlayback())
             pauseInternal();
-        document()->page()->chrome().client()->exitFullscreenForNode(this);
+        document()->page()->chrome().client().exitFullscreenForNode(this);
         scheduleEvent(eventNames().webkitendfullscreenEvent);
     }
 }

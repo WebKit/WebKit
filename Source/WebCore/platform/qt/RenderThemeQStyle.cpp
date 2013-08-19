@@ -131,11 +131,7 @@ void RenderThemeQStyle::setPaletteFromPageClientIfExists(QPalette& palette) cons
     if (!m_page)
         return;
 
-    ChromeClient* chromeClient = m_page->chrome().client();
-    if (!chromeClient)
-        return;
-
-    if (QWebPageClient* pageClient = chromeClient->platformPageClient())
+    if (QWebPageClient* pageClient = m_page->chrome().client().platformPageClient())
         palette = pageClient->palette();
 }
 

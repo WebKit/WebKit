@@ -203,11 +203,11 @@ bool EventHandler::passMouseDownEventToWidget(Widget* pWidget)
     if (!page)
         return true;
 
-    if (page->chrome().client()->firstResponder() != view) {
+    if (page->chrome().client().firstResponder() != view) {
         // Normally [NSWindow sendEvent:] handles setting the first responder.
         // But in our case, the event was sent to the view representing the entire web page.
         if ([currentNSEvent() clickCount] <= 1 && [view acceptsFirstResponder] && [view needsPanelToBecomeKey])
-            page->chrome().client()->makeFirstResponder(view);
+            page->chrome().client().makeFirstResponder(view);
     }
 
     // We need to "defer loading" while tracking the mouse, because tearing down the
@@ -688,7 +688,7 @@ bool EventHandler::tabsToAllFormControls(KeyboardEvent* event) const
     if (!page)
         return false;
 
-    KeyboardUIMode keyboardUIMode = page->chrome().client()->keyboardUIMode();
+    KeyboardUIMode keyboardUIMode = page->chrome().client().keyboardUIMode();
     bool handlingOptionTab = isKeyboardOptionTab(event);
 
     // If tab-to-links is off, option-tab always highlights all controls

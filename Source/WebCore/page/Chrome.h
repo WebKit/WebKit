@@ -67,7 +67,7 @@ public:
 
     static PassOwnPtr<Chrome> create(Page*, ChromeClient*);
 
-    ChromeClient* client() { return m_client; }
+    ChromeClient& client() { return m_client; }
 
     // HostWindow methods.
     virtual void invalidateRootView(const IntRect&, bool) OVERRIDE;
@@ -188,7 +188,7 @@ private:
     void notifyPopupOpeningObservers() const;
 
     Page* m_page;
-    ChromeClient* m_client;
+    ChromeClient& m_client;
     PlatformDisplayID m_displayID;
     Vector<PopupOpeningObserver*> m_popupOpeningObservers;
 };

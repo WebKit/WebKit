@@ -204,11 +204,10 @@ WebView* kit(Page* page)
     if (!page)
         return 0;
     
-    ChromeClient* chromeClient = page->chrome().client();
-    if (chromeClient->isEmptyChromeClient())
+    if (page->chrome().client().isEmptyChromeClient())
         return 0;
     
-    return static_cast<WebChromeClient*>(chromeClient)->webView();
+    return static_cast<WebChromeClient&>(page->chrome().client()).webView();
 }
 
 static inline AtomicString toAtomicString(BSTR bstr)

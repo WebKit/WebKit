@@ -1597,10 +1597,10 @@ void RenderBox::paintCustomHighlight(const LayoutPoint& paintOffset, const Atomi
     if (r) {
         FloatRect rootRect(paintOffset.x() + r->x(), paintOffset.y() + r->selectionTop(), r->logicalWidth(), r->selectionHeight());
         FloatRect imageRect(paintOffset.x() + x(), rootRect.y(), width(), rootRect.height());
-        page->chrome().client()->paintCustomHighlight(node(), type, imageRect, rootRect, behindText, false);
+        page->chrome().client().paintCustomHighlight(node(), type, imageRect, rootRect, behindText, false);
     } else {
         FloatRect imageRect(paintOffset.x() + x(), paintOffset.y() + y(), width(), height());
-        page->chrome().client()->paintCustomHighlight(node(), type, imageRect, imageRect, behindText, false);
+        page->chrome().client().paintCustomHighlight(node(), type, imageRect, imageRect, behindText, false);
     }
 }
 

@@ -152,7 +152,7 @@ static String unavailablePluginReplacementText(RenderEmbeddedObject::PluginUnava
 static bool shouldUnavailablePluginMessageBeButton(Document* document, RenderEmbeddedObject::PluginUnavailabilityReason pluginUnavailabilityReason)
 {
     Page* page = document->page();
-    return page && page->chrome().client()->shouldUnavailablePluginMessageBeButton(pluginUnavailabilityReason);
+    return page && page->chrome().client().shouldUnavailablePluginMessageBeButton(pluginUnavailabilityReason);
 }
 
 void RenderEmbeddedObject::setPluginUnavailabilityReason(PluginUnavailabilityReason pluginUnavailabilityReason)
@@ -633,7 +633,7 @@ void RenderEmbeddedObject::handleUnavailablePluginIndicatorEvent(Event* event)
         }
         if (m_mouseDownWasInUnavailablePluginIndicator && isInUnavailablePluginIndicator(mouseEvent)) {
             if (Page* page = document()->page())
-                page->chrome().client()->unavailablePluginButtonClicked(element, m_pluginUnavailabilityReason);
+                page->chrome().client().unavailablePluginButtonClicked(element, m_pluginUnavailabilityReason);
         }
         m_mouseDownWasInUnavailablePluginIndicator = false;
         event->setDefaultHandled();

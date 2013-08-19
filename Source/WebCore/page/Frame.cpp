@@ -308,7 +308,7 @@ void Frame::setDocument(PassRefPtr<Document> newDoc)
         notifyChromeClientWheelEventHandlerCountChanged();
 #if ENABLE(TOUCH_EVENTS)
         if (m_doc && m_doc->hasTouchEventHandlers())
-            m_page->chrome().client()->needTouchEvents(true);
+            m_page->chrome().client().needTouchEvents(true);
 #endif
     }
 
@@ -845,7 +845,7 @@ IntRect Frame::tiledBackingStoreVisibleRect()
 {
     if (!m_page)
         return IntRect();
-    return m_page->chrome().client()->visibleRectForTiledBackingStore();
+    return m_page->chrome().client().visibleRectForTiledBackingStore();
 }
 
 Color Frame::tiledBackingStoreBackgroundColor() const
@@ -1007,7 +1007,7 @@ void Frame::notifyChromeClientWheelEventHandlerCountChanged() const
             count += frame->document()->wheelEventHandlerCount();
     }
 
-    m_page->chrome().client()->numWheelEventHandlersChanged(count);
+    m_page->chrome().client().numWheelEventHandlersChanged(count);
 }
 
 bool Frame::isURLAllowed(const KURL& url) const

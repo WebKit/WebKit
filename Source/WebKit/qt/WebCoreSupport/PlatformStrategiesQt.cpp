@@ -138,8 +138,8 @@ void PlatformStrategiesQt::refreshPlugins()
 void PlatformStrategiesQt::getPluginInfo(const WebCore::Page* page, Vector<WebCore::PluginInfo>& outPlugins)
 {
     QWebPageAdapter* qPage = 0;
-    if (!page->chrome().client()->isEmptyChromeClient())
-        qPage = static_cast<ChromeClientQt*>(page->chrome().client())->m_webPage;
+    if (!page->chrome().client().isEmptyChromeClient())
+        qPage = static_cast<ChromeClientQt&>(page->chrome().client()).m_webPage;
 
     QWebPluginFactory* factory;
     if (qPage && (factory = qPage->pluginFactory)) {

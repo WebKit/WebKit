@@ -474,7 +474,7 @@ void Element::setActive(bool flag, bool pause)
     // The rest of this function implements a feature that only works if the
     // platform supports immediate invalidations on the ChromeClient, so bail if
     // that isn't supported.
-    if (!document()->page()->chrome().client()->supportsImmediateInvalidation())
+    if (!document()->page()->chrome().client().supportsImmediateInvalidation())
         return;
 
     if (reactsToPress && pause) {
@@ -2013,7 +2013,7 @@ void Element::dispatchFocusOutEvent(const AtomicString& eventType, PassRefPtr<El
 void Element::dispatchFocusEvent(PassRefPtr<Element> oldFocusedElement, FocusDirection)
 {
     if (document()->page())
-        document()->page()->chrome().client()->elementDidFocus(this);
+        document()->page()->chrome().client().elementDidFocus(this);
 
     RefPtr<FocusEvent> event = FocusEvent::create(eventNames().focusEvent, false, false, document()->defaultView(), 0, oldFocusedElement);
     EventDispatcher::dispatchEvent(this, FocusEventDispatchMediator::create(event.release()));
@@ -2022,7 +2022,7 @@ void Element::dispatchFocusEvent(PassRefPtr<Element> oldFocusedElement, FocusDir
 void Element::dispatchBlurEvent(PassRefPtr<Element> newFocusedElement)
 {
     if (document()->page())
-        document()->page()->chrome().client()->elementDidBlur(this);
+        document()->page()->chrome().client().elementDidBlur(this);
 
     RefPtr<FocusEvent> event = FocusEvent::create(eventNames().blurEvent, false, false, document()->defaultView(), 0, newFocusedElement);
     EventDispatcher::dispatchEvent(this, BlurEventDispatchMediator::create(event.release()));

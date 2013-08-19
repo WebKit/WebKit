@@ -952,7 +952,7 @@ void InlineTextBox::paintCustomHighlight(const LayoutPoint& paintOffset, const A
     FloatRect rootRect(paintOffset.x() + r->x(), paintOffset.y() + selectionTop(), r->logicalWidth(), selectionHeight());
     FloatRect textRect(paintOffset.x() + x(), rootRect.y(), logicalWidth(), rootRect.height());
 
-    page->chrome().client()->paintCustomHighlight(renderer()->node(), type, textRect, rootRect, true, false);
+    page->chrome().client().paintCustomHighlight(renderer()->node(), type, textRect, rootRect, true, false);
 }
 
 #endif

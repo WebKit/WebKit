@@ -906,7 +906,7 @@ NetworkJob::SendRequestResult NetworkJob::sendRequestWithCredentials(ProtectionS
             updateDeferLoadingCount(1);
 
             AuthenticationChallengeManager::instance()->authenticationChallenge(newURL, protectionSpace,
-                Credential(), this, m_frame->page()->chrome().client()->platformPageClient());
+                Credential(), this, m_frame->page()->chrome().client().platformPageClient());
             return SendRequestWaiting;
         }
 
@@ -962,7 +962,7 @@ void NetworkJob::storeCredentials(AuthenticationChallenge& challenge)
 
         BlackBerry::Platform::Settings::instance()->storeProxyCredentials(proxyInfo);
         if (m_frame && m_frame->page())
-            m_frame->page()->chrome().client()->platformPageClient()->syncProxyCredential(challenge.proposedCredential());
+            m_frame->page()->chrome().client().platformPageClient()->syncProxyCredential(challenge.proposedCredential());
     }
 }
 

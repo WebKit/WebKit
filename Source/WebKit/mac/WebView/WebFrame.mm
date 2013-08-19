@@ -245,11 +245,10 @@ WebView *kit(Page* page)
     if (!page)
         return nil;
 
-    ChromeClient* chromeClient = page->chrome().client();
-    if (chromeClient->isEmptyChromeClient())
+    if (page->chrome().client().isEmptyChromeClient())
         return nil;
 
-    return static_cast<WebChromeClient*>(chromeClient)->webView();
+    return static_cast<WebChromeClient&>(page->chrome().client()).webView();
 }
 
 WebView *getWebView(WebFrame *webFrame)

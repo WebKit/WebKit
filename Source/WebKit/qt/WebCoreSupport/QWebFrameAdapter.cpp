@@ -441,7 +441,7 @@ void QWebFrameAdapter::renderCompositedLayers(WebCore::GraphicsContext* context,
     WebCore::Page* page = frame->page();
     if (!page)
         return;
-    if (TextureMapperLayerClientQt* client = static_cast<ChromeClientQt*>(page->chrome().client())->m_textureMapperLayerClient.get())
+    if (TextureMapperLayerClientQt* client = static_cast<ChromeClientQt&>(page->chrome().client()).m_textureMapperLayerClient.get())
         client->renderCompositedLayers(context, clip);
 }
 #endif
