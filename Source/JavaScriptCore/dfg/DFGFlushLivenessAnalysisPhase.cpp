@@ -49,7 +49,7 @@ public:
         ASSERT(m_graph.m_form == SSA);
         
         // Liveness is a backwards analysis; the roots are the blocks that
-        // end in a terminal (Return/Throw/ThrowReferenceError). For now, we
+        // end in a terminal (Return/Unreachable). For now, we
         // use a fixpoint formulation since liveness is a rapid analysis with
         // convergence guaranteed after O(connectivity).
         

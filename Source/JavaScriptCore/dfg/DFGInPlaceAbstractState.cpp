@@ -440,11 +440,10 @@ inline bool InPlaceAbstractState::mergeToSuccessors(BasicBlock* basicBlock)
     }
         
     case Return:
-    case Throw:
-    case ThrowReferenceError:
+    case Unreachable:
         ASSERT(basicBlock->cfaBranchDirection == InvalidBranchDirection);
         return false;
-        
+
     default:
         RELEASE_ASSERT_NOT_REACHED();
         return false;

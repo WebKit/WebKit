@@ -1,3 +1,16 @@
+2013-08-16  Oliver Hunt  <oliver@apple.com>
+
+        <https://webkit.org/b/119860> Crash during exception unwinding
+
+        Reviewed by Filip Pizlo.
+
+        Add a test
+
+        * fast/js/dfg-activation-register-overwritten-in-throw-expected.txt: Added.
+        * fast/js/dfg-activation-register-overwritten-in-throw.html: Added.
+        * fast/js/script-tests/dfg-activation-register-overwritten-in-throw.js: Added.
+        (g):
+
 2013-08-19  Chris Fleizach  <cfleizach@apple.com>
 
         <https://webkit.org/b/119916> AX: WebKit is not exposing AXLanguage correctly

@@ -78,8 +78,7 @@ public:
     // basic blocks) interrogate the basic block's notion of the state at the head.
     // Stores to local variables are handled in endBasicBlock(). This returns true
     // if execution should continue past this node. Notably, it will return true
-    // for block terminals, so long as those terminals are not Return or variants
-    // of Throw.
+    // for block terminals, so long as those terminals are not Return or Unreachable.
     //
     // This is guaranteed to be equivalent to doing:
     //

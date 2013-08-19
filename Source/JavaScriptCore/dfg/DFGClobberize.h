@@ -132,6 +132,7 @@ void clobberize(Graph& graph, Node* node, ReadFunctor& read, WriteFunctor& write
     case Throw:
     case ForceOSRExit:
     case Return:
+    case Unreachable:
         write(SideState);
         return;
 

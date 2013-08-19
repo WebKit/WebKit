@@ -1,3 +1,35 @@
+2013-08-16  Oliver Hunt  <oliver@apple.com>
+
+        <https://webkit.org/b/119860> Crash during exception unwinding
+
+        Reviewed by Filip Pizlo.
+
+        Add an "Unreachable" NodeType, and then rearrange op_throw and op_throw_reference_error
+        to plant Throw or ThrowReferenceError followed by a flush and then the Unreachable node.
+
+        We need this so that Throw and ThrowReferenceError no longer need to be treated as
+        terminals and the subsequent flush keeps the activation (and other registers) live.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::isTerminal):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2013-08-19  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
 
         <https://webkit.org/b/120008> [GTK][ARM] javascriptcore compilation is broken

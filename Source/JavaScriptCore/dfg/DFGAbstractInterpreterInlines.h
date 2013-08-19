@@ -1492,7 +1492,11 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case InlineStart:
     case CountExecution:
         break;
-        
+
+    case Unreachable:
+        RELEASE_ASSERT_NOT_REACHED();
+        break;
+
     case LastNodeType:
         RELEASE_ASSERT_NOT_REACHED();
         break;

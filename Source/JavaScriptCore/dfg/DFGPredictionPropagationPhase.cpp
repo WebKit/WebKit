@@ -542,6 +542,7 @@ private:
         case Phantom:
         case PutGlobalVar:
         case CheckWatchdogTimer:
+        case Unreachable:
             break;
             
         // These gets ignored because it doesn't do anything.
