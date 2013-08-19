@@ -22,6 +22,7 @@ AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXButton: 'test test test test test test'>
+AXLanguage: 
 AXTitleUIElement: (null)
 AXAccessKey: (null)
 AXARIABusy: 0

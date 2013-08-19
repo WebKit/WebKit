@@ -19,6 +19,7 @@ AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXWebArea>
+AXLanguage: 
 AXLinkUIElements: <array of size 0>
 AXLoaded: 1
 AXLayoutCount: 2

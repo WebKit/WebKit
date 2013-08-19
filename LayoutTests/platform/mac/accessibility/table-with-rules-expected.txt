@@ -26,6 +26,7 @@ AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXTable>
+AXLanguage: 
 AXRows: <array of size 1>
 AXVisibleRows: <array of size 1>
 AXColumns: <array of size 2>
@@ -58,6 +59,7 @@ AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXTable>
+AXLanguage: 
 AXRows: <array of size 1>
 AXVisibleRows: <array of size 1>
 AXColumns: <array of size 2>
@@ -90,6 +92,7 @@ AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXTable>
+AXLanguage: 
 AXRows: <array of size 1>
 AXVisibleRows: <array of size 1>
 AXColumns: <array of size 2>
@@ -122,6 +125,7 @@ AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
+AXLanguage: 
 AXTitleUIElement: (null)
 AXARIABusy: 0
 
@@ -147,6 +151,7 @@ AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
+AXLanguage: 
 AXTitleUIElement: (null)
 AXARIABusy: 0
 

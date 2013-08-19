@@ -1127,6 +1127,7 @@ static id textMarkerRangeFromVisiblePositions(AXObjectCache *cache, VisiblePosit
                       NSAccessibilitySelectedAttribute,
                       NSAccessibilityBlockQuoteLevelAttribute,
                       NSAccessibilityTopLevelUIElementAttribute,
+                      NSAccessibilityLanguageAttribute,
                       nil];
     }
     if (commonMenuAttrs == nil) {

@@ -32,6 +32,7 @@ AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXList>
+AXLanguage: 
 AXSelectedChildren: (null)
 AXVisibleChildren: <array of size 2>
 AXOrientation: AXVerticalOrientation
@@ -60,6 +61,7 @@ AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXList>
+AXLanguage: 
 AXSelectedChildren: (null)
 AXVisibleChildren: <array of size 2>
 AXOrientation: AXVerticalOrientation
@@ -68,7 +70,7 @@ AXARIABusy: 0
 
 ------------
 AXRole: AXList
-AXSubrole: AXDefinitionList
+AXSubrole: AXDescriptionList
 AXRoleDescription: description list
 AXChildren: <array of size 5>
 AXHelp: 
@@ -88,6 +90,7 @@ AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXList>
+AXLanguage: 
 AXSelectedChildren: (null)
 AXVisibleChildren: <array of size 5>
 AXOrientation: AXVerticalOrientation
@@ -116,6 +119,7 @@ AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
+AXLanguage: 
 AXTitleUIElement: (null)
 AXARIABusy: 0
 
@@ -141,6 +145,7 @@ AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
+AXLanguage: 
 AXTitleUIElement: (null)
 AXARIABusy: 0
 
@@ -168,6 +173,7 @@ AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup: 'test 1'>
+AXLanguage: 
 AXTitleUIElement: (null)
 AXARIABusy: 0
 
@@ -193,6 +199,7 @@ AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup: 'test 2'>
+AXLanguage: 
 AXTitleUIElement: (null)
 AXARIABusy: 0
 
@@ -220,6 +227,7 @@ AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup: 'test 1'>
+AXLanguage: 
 AXTitleUIElement: (null)
 AXARIABusy: 0
 
@@ -245,6 +253,7 @@ AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup: 'test 2'>
+AXLanguage: 
 AXTitleUIElement: (null)
 AXARIABusy: 0
 
@@ -272,6 +281,7 @@ AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
+AXLanguage: 
 AXARIABusy: 0
 
 ------------
@@ -296,6 +306,7 @@ AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
+AXLanguage: 
 AXARIABusy: 0
 
 ------------
@@ -320,6 +331,7 @@ AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
+AXLanguage: 
 AXARIABusy: 0
 
 ------------
@@ -344,6 +356,7 @@ AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
+AXLanguage: 
 AXARIABusy: 0
 
 ------------
@@ -368,6 +381,7 @@ AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: <AXGroup>
+AXLanguage: 
 AXARIABusy: 0
 
 ------------

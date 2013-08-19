@@ -27,6 +27,7 @@ AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: 
+AXLanguage: 
 AXRowIndexRange: NSRange: {0, 1}
 AXColumnIndexRange: NSRange: {0, 1}
 AXARIABusy: 0
@@ -54,6 +55,7 @@ AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: 
+AXLanguage: 
 AXRowIndexRange: NSRange: {0, 1}
 AXColumnIndexRange: NSRange: {1, 1}
 AXARIABusy: 0
@@ -81,6 +83,7 @@ AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: 
+AXLanguage: 
 AXRowIndexRange: NSRange: {0, 1}
 AXColumnIndexRange: NSRange: {2, 1}
 AXARIABusy: 0
@@ -111,6 +114,7 @@ AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: 
+AXLanguage: 
 AXRowIndexRange: NSRange: {1, 1}
 AXColumnIndexRange: NSRange: {0, 1}
 AXARIABusy: 0
@@ -138,6 +142,7 @@ AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXTopLevelUIElement: 
+AXLanguage: 
 AXRowIndexRange: NSRange: {2, 1}
 AXColumnIndexRange: NSRange: {0, 1}
 AXARIABusy: 0

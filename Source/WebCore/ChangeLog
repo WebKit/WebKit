@@ -1,3 +1,14 @@
+2013-08-19  Chris Fleizach  <cfleizach@apple.com>
+
+        <https://webkit.org/b/119916> AX: WebKit is not exposing AXLanguage correctly
+
+        Reviewed by Darin Adler.
+
+        Expose the AXLanguage attribute for all objects.
+
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeNames]):
+
 2013-08-19  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Unreviewed gardening.
