@@ -1,3 +1,9 @@
+2013-08-19  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed gardening. Partial revert of r154283 which caused test failures on all Mac ports.
+
+        * platform/mac/accessibility/lists-expected.txt:
+
 2013-08-16  Oliver Hunt  <oliver@apple.com>
 
         <https://webkit.org/b/119860> Crash during exception unwinding
