@@ -176,7 +176,7 @@ inline const CSSValue** ImmutableStylePropertySet::valueArray() const
 
 inline const StylePropertyMetadata* ImmutableStylePropertySet::metadataArray() const
 {
-    return reinterpret_cast<const StylePropertyMetadata*>(&reinterpret_cast<const char*>(&(this->m_storage))[m_arraySize * sizeof(CSSValue*)]);
+    return reinterpret_cast_ptr<const StylePropertyMetadata*>(&reinterpret_cast_ptr<const char*>(&(this->m_storage))[m_arraySize * sizeof(CSSValue*)]);
 }
 
 class MutableStylePropertySet : public StylePropertySet {

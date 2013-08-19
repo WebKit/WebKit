@@ -1,3 +1,21 @@
+2013-08-19  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
+
+        <https://webkit.org/b/119679> Remove the cast-align warnings for ARM
+
+        Reviewed by Darin Adler.
+
+        While compiling WebKitGTK+ for ARM a lot of warnings of this form
+        where shown (gcc 4.7.3):
+
+        ../../Source/WebCore/css/StylePropertySet.h: In member function 'const WebCore::StylePropertyMetadata* WebCore::ImmutableStylePropertySet::metadataArray() const':
+../../Source/WebCore/css/StylePropertySet.h:179:142: warning: cast from 'const char*' to 'const WebCore::StylePropertyMetadata*' increases required alignment of target type [-Wcast-align]
+
+        This patch changes reinterpret_cast<>() for reinterpret_cast_ptr<>()
+        which is part of WTF for this purpose, silencing the compiler.
+
+        * css/StylePropertySet.h:
+        (WebCore::ImmutableStylePropertySet::metadataArray):
+
 2013-08-19  Antti Koivisto  <antti@apple.com>
 
         <https://webkit.org/b/120014> REGRESSION(r154268): Some stylesheet media attribute tests failing
