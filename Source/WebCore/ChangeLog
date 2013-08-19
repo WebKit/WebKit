@@ -1,5 +1,20 @@
 2013-08-19  Benjamin Poulain  <benjamin@webkit.org>
 
+        <https://webkit.org/b/119937> Remove ElementRuleCollector's m_behaviorAtBoundary
+
+        Reviewed by Darin Adler.
+
+        The value DoesNotCrossBoundary is the default behavior boundary of SelectorChecker,
+        and it is never changed by ElementRuleCollector.
+
+        * css/ElementRuleCollector.cpp:
+        (WebCore::ElementRuleCollector::collectMatchingRules):
+        (WebCore::ElementRuleCollector::ruleMatches):
+        * css/ElementRuleCollector.h:
+        (WebCore::ElementRuleCollector::ElementRuleCollector):
+
+2013-08-19  Benjamin Poulain  <benjamin@webkit.org>
+
         <https://webkit.org/b/119934> Remove a repeated "private:" from ElementRuleCollector
 
         Reviewed by Darin Adler.

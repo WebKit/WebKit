@@ -51,7 +51,8 @@ public:
         , m_sameOriginOnly(false)
         , m_mode(SelectorChecker::ResolvingStyle)
         , m_canUseFastReject(m_selectorFilter.parentStackIsConsistent(state.parentNode()))
-        , m_behaviorAtBoundary(SelectorChecker::DoesNotCrossBoundary) { }
+    {
+    }
 
     void matchAllRules(bool matchAuthorAndUserStyles, bool includeSMILProperties);
     void matchUARules();
@@ -103,7 +104,6 @@ private:
     bool m_sameOriginOnly;
     SelectorChecker::Mode m_mode;
     bool m_canUseFastReject;
-    SelectorChecker::BehaviorAtBoundary m_behaviorAtBoundary;
 
     OwnPtr<Vector<const RuleData*, 32> > m_matchedRules;
 

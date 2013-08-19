@@ -154,8 +154,7 @@ void ElementRuleCollector::collectMatchingRules(const MatchRequest& matchRequest
     TreeScope* treeScope = element->treeScope();
     if (!MatchingUARulesScope::isMatchingUARules()
         && !treeScope->applyAuthorStyles()
-        && (!matchRequest.scope || matchRequest.scope->treeScope() != treeScope)
-        && m_behaviorAtBoundary == SelectorChecker::DoesNotCrossBoundary)
+        && (!matchRequest.scope || matchRequest.scope->treeScope() != treeScope))
         return;
 
     // We need to collect the rules for id, class, tag, and everything else into a buffer and
@@ -374,7 +373,6 @@ inline bool ElementRuleCollector::ruleMatches(const RuleData& ruleData, const Co
     context.pseudoId = m_pseudoStyleRequest.pseudoId;
     context.scrollbar = m_pseudoStyleRequest.scrollbar;
     context.scrollbarPart = m_pseudoStyleRequest.scrollbarPart;
-    context.behaviorAtBoundary = m_behaviorAtBoundary;
     SelectorChecker::Match match = selectorChecker.match(context, dynamicPseudo);
     if (match != SelectorChecker::SelectorMatches)
         return false;
