@@ -2922,6 +2922,8 @@ webcore_sources += \
 	Source/WebCore/dom/IdTargetObserver.h \
 	Source/WebCore/dom/IdTargetObserverRegistry.cpp \
 	Source/WebCore/dom/IdTargetObserverRegistry.h \
+	Source/WebCore/dom/InlineStyleSheetOwner.cpp \
+	Source/WebCore/dom/InlineStyleSheetOwner.h \
 	Source/WebCore/dom/LiveNodeList.cpp \
 	Source/WebCore/dom/LiveNodeList.h \
 	Source/WebCore/dom/HashChangeEvent.h \
@@ -3035,8 +3037,6 @@ webcore_sources += \
 	Source/WebCore/dom/StringCallback.h \
 	Source/WebCore/dom/StyledElement.cpp \
 	Source/WebCore/dom/StyledElement.h \
-	Source/WebCore/dom/StyleElement.cpp \
-	Source/WebCore/dom/StyleElement.h \
 	Source/WebCore/dom/TagNodeList.cpp \
 	Source/WebCore/dom/TagNodeList.h \
 	Source/WebCore/dom/TemplateContentDocumentFragment.h \

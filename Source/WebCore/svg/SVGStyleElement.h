@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2004, 2005 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -22,17 +23,17 @@
 #define SVGStyleElement_h
 
 #if ENABLE(SVG)
+#include "InlineStyleSheetOwner.h"
 #include "SVGElement.h"
-#include "StyleElement.h"
 
 namespace WebCore {
 
-class SVGStyleElement FINAL : public SVGElement, private StyleElement {
+class SVGStyleElement FINAL : public SVGElement {
 public:
     static PassRefPtr<SVGStyleElement> create(const QualifiedName&, Document*, bool createdByParser);
     virtual ~SVGStyleElement();
 
-    using StyleElement::sheet;
+    CSSStyleSheet* sheet() const { return m_styleSheetOwner.sheet(); }
 
     bool disabled() const;
     void setDisabled(bool);
@@ -57,11 +58,12 @@ private:
 
     virtual void finishParsingChildren();
 
-    virtual bool isLoading() const { return StyleElement::isLoading(); }
-    virtual bool sheetLoaded() { return StyleElement::sheetLoaded(document()); }
-    virtual void startLoadingDynamicSheet() { StyleElement::startLoadingDynamicSheet(document()); }
+    virtual bool isLoading() const { return m_styleSheetOwner.isLoading(); }
+    virtual bool sheetLoaded() { return m_styleSheetOwner.sheetLoaded(document()); }
+    virtual void startLoadingDynamicSheet() { m_styleSheetOwner.startLoadingDynamicSheet(document()); }
     virtual Timer<SVGElement>* svgLoadEventTimer() OVERRIDE { return &m_svgLoadEventTimer; }
 
+    InlineStyleSheetOwner m_styleSheetOwner;
     Timer<SVGElement> m_svgLoadEventTimer;
 };
 

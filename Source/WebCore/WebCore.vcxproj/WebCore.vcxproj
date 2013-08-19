@@ -13321,7 +13321,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\dom\StyleElement.cpp">
+    <ClCompile Include="..\dom\InlineStyleSheetOwner.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'">true</ExcludedFromBuild>
@@ -20268,6 +20268,7 @@
     <ClInclude Include="..\dom\IdTargetObserver.h" />
     <ClInclude Include="..\dom\IdTargetObserverRegistry.h" />
     <ClInclude Include="..\dom\IgnoreDestructiveWriteCountIncrementer.h" />
+    <ClInclude Include="..\dom\InlineStyleSheetOwner.h" />
     <ClInclude Include="..\dom\KeyboardEvent.h" />
     <ClInclude Include="..\dom\MessageChannel.h" />
     <ClInclude Include="..\dom\MessageEvent.h" />
@@ -20320,7 +20321,6 @@
     <ClInclude Include="..\dom\StaticNodeList.h" />
     <ClInclude Include="..\dom\StringCallback.h" />
     <ClInclude Include="..\dom\StyledElement.h" />
-    <ClInclude Include="..\dom\StyleElement.h" />
     <ClInclude Include="..\dom\TagNodeList.h" />
     <ClInclude Include="..\dom\TemplateContentDocumentFragment.h" />
     <ClInclude Include="..\dom\Text.h" />

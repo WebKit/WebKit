@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003, 2010 Apple Inc. ALl rights reserved.
+ * Copyright (C) 2003, 2010, 2013 Apple Inc. ALl rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,7 +24,7 @@
 #define HTMLStyleElement_h
 
 #include "HTMLElement.h"
-#include "StyleElement.h"
+#include "InlineStyleSheetOwner.h"
 
 namespace WebCore {
 
@@ -34,7 +34,7 @@ class StyleSheet;
 template<typename T> class EventSender;
 typedef EventSender<HTMLStyleElement> StyleEventSender;
 
-class HTMLStyleElement FINAL : public HTMLElement, private StyleElement {
+class HTMLStyleElement FINAL : public HTMLElement {
 public:
     static PassRefPtr<HTMLStyleElement> create(const QualifiedName&, Document*, bool createdByParser);
     virtual ~HTMLStyleElement();
@@ -51,7 +51,7 @@ public:
         return true;
     }
 
-    using StyleElement::sheet;
+    CSSStyleSheet* sheet() const { return m_styleSheetOwner.sheet(); }
 
     bool disabled() const;
     void setDisabled(bool);
@@ -70,10 +70,10 @@ private:
 
     virtual void finishParsingChildren();
 
-    virtual bool isLoading() const { return StyleElement::isLoading(); }
-    virtual bool sheetLoaded() { return StyleElement::sheetLoaded(document()); }
+    virtual bool isLoading() const { return m_styleSheetOwner.isLoading(); }
+    virtual bool sheetLoaded() { return m_styleSheetOwner.sheetLoaded(document()); }
     virtual void notifyLoadedSheetAndAllCriticalSubresources(bool errorOccurred);
-    virtual void startLoadingDynamicSheet() { StyleElement::startLoadingDynamicSheet(document()); }
+    virtual void startLoadingDynamicSheet() { m_styleSheetOwner.startLoadingDynamicSheet(document()); }
 
     virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
 
@@ -81,6 +81,7 @@ private:
     void registerWithScopingNode(bool);
     void unregisterWithScopingNode(ContainerNode*);
 
+    InlineStyleSheetOwner m_styleSheetOwner;
     bool m_firedLoad;
     bool m_loadedSheet;
 

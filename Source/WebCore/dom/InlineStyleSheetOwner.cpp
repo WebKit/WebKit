@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2006, 2007 Rob Buis
- * Copyright (C) 2008 Apple, Inc. All rights reserved.
+ * Copyright (C) 2008, 2013 Apple, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,7 +19,7 @@
  */
 
 #include "config.h"
-#include "StyleElement.h"
+#include "InlineStyleSheetOwner.h"
 
 #include "Attribute.h"
 #include "ContentSecurityPolicy.h"
@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-StyleElement::StyleElement(Document* document, bool createdByParser)
+InlineStyleSheetOwner::InlineStyleSheetOwner(Document* document, bool createdByParser)
     : m_isParsingChildren(createdByParser)
     , m_loading(false)
     , m_startLineNumber(WTF::OrdinalNumber::beforeFirst())
@@ -45,11 +45,11 @@ StyleElement::StyleElement(Document* document, bool createdByParser)
         m_startLineNumber = document->scriptableDocumentParser()->lineNumber();
 }
 
-StyleElement::~StyleElement()
+InlineStyleSheetOwner::~InlineStyleSheetOwner()
 {
 }
 
-void StyleElement::insertedIntoDocument(Document* document, Element* element)
+void InlineStyleSheetOwner::insertedIntoDocument(Document* document, Element* element)
 {
     ASSERT(document);
     ASSERT(element);
@@ -60,7 +60,7 @@ void StyleElement::insertedIntoDocument(Document* document, Element* element)
     createSheetFromTextContents(element);
 }
 
-void StyleElement::removedFromDocument(Document* document, Element* element)
+void InlineStyleSheetOwner::removedFromDocument(Document* document, Element* element)
 {
     ASSERT(document);
     ASSERT(element);
@@ -74,7 +74,7 @@ void StyleElement::removedFromDocument(Document* document, Element* element)
         document->styleResolverChanged(DeferRecalcStyle);
 }
 
-void StyleElement::clearDocumentData(Document* document, Element* element)
+void InlineStyleSheetOwner::clearDocumentData(Document* document, Element* element)
 {
     if (m_sheet)
         m_sheet->clearOwnerNode();
@@ -84,7 +84,7 @@ void StyleElement::clearDocumentData(Document* document, Element* element)
     document->styleSheetCollection()->removeStyleSheetCandidateNode(element);
 }
 
-void StyleElement::childrenChanged(Element* element)
+void InlineStyleSheetOwner::childrenChanged(Element* element)
 {
     ASSERT(element);
     if (m_isParsingChildren)
@@ -94,7 +94,7 @@ void StyleElement::childrenChanged(Element* element)
     createSheetFromTextContents(element);
 }
 
-void StyleElement::finishParsingChildren(Element* element)
+void InlineStyleSheetOwner::finishParsingChildren(Element* element)
 {
     ASSERT(element);
     if (element->inDocument())
@@ -102,12 +102,12 @@ void StyleElement::finishParsingChildren(Element* element)
     m_isParsingChildren = false;
 }
 
-void StyleElement::createSheetFromTextContents(Element* element)
+void InlineStyleSheetOwner::createSheetFromTextContents(Element* element)
 {
-    createSheet(element, m_startLineNumber, TextNodeTraversal::contentsAsString(element));
+    createSheet(element, TextNodeTraversal::contentsAsString(element));
 }
 
-void StyleElement::clearSheet()
+void InlineStyleSheetOwner::clearSheet()
 {
     ASSERT(m_sheet);
     m_sheet.release()->clearOwnerNode();
@@ -121,7 +121,7 @@ inline bool isValidCSSContentType(Element* element, const AtomicString& type)
     return element->isHTMLElement() ? equalIgnoringCase(type, cssContentType) : type == cssContentType;
 }
 
-void StyleElement::createSheet(Element* element, WTF::OrdinalNumber startLineNumber, const String& text)
+void InlineStyleSheetOwner::createSheet(Element* element, const String& text)
 {
     ASSERT(element);
     ASSERT(element->inDocument());
@@ -134,7 +134,7 @@ void StyleElement::createSheet(Element* element, WTF::OrdinalNumber startLineNum
 
     if (!isValidCSSContentType(element, m_contentType))
         return;
-    if (!document->contentSecurityPolicy()->allowInlineStyle(document->url(), startLineNumber))
+    if (!document->contentSecurityPolicy()->allowInlineStyle(document->url(), m_startLineNumber))
         return;
 
     RefPtr<MediaQuerySet> mediaQueries;
@@ -155,7 +155,7 @@ void StyleElement::createSheet(Element* element, WTF::OrdinalNumber startLineNum
     m_sheet = CSSStyleSheet::createInline(element, KURL(), document->inputEncoding());
     m_sheet->setMediaQueries(mediaQueries.release());
     m_sheet->setTitle(element->title());
-    m_sheet->contents()->parseStringAtLine(text, startLineNumber.zeroBasedInt(), m_isParsingChildren);
+    m_sheet->contents()->parseStringAtLine(text, m_startLineNumber.zeroBasedInt(), m_isParsingChildren);
 
     m_loading = false;
 
@@ -163,14 +163,14 @@ void StyleElement::createSheet(Element* element, WTF::OrdinalNumber startLineNum
         m_sheet->contents()->checkLoaded();
 }
 
-bool StyleElement::isLoading() const
+bool InlineStyleSheetOwner::isLoading() const
 {
     if (m_loading)
         return true;
     return m_sheet && m_sheet->isLoading();
 }
 
-bool StyleElement::sheetLoaded(Document* document)
+bool InlineStyleSheetOwner::sheetLoaded(Document* document)
 {
     ASSERT(document);
     if (isLoading())
@@ -180,7 +180,7 @@ bool StyleElement::sheetLoaded(Document* document)
     return true;
 }
 
-void StyleElement::startLoadingDynamicSheet(Document* document)
+void InlineStyleSheetOwner::startLoadingDynamicSheet(Document* document)
 {
     ASSERT(document);
     document->styleSheetCollection()->addPendingSheet();

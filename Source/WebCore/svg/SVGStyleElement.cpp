@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2004, 2005 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
- * Copyright (C) 2006 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2013 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Cameron McCormack <cam@mcc.id.au>
  *
  * This library is free software; you can redistribute it and/or
@@ -36,7 +36,7 @@ namespace WebCore {
 
 inline SVGStyleElement::SVGStyleElement(const QualifiedName& tagName, Document* document, bool createdByParser)
     : SVGElement(tagName, document)
-    , StyleElement(document, createdByParser)
+    , m_styleSheetOwner(document, createdByParser)
     , m_svgLoadEventTimer(this, &SVGElement::svgLoadEventTimerFired)
 {
     ASSERT(hasTagName(SVGNames::styleTag));
@@ -44,7 +44,7 @@ inline SVGStyleElement::SVGStyleElement(const QualifiedName& tagName, Document* 
 
 SVGStyleElement::~SVGStyleElement()
 {
-    StyleElement::clearDocumentData(document(), this);
+    m_styleSheetOwner.clearDocumentData(document(), this);
 }
 
 PassRefPtr<SVGStyleElement> SVGStyleElement::create(const QualifiedName& tagName, Document* document, bool createdByParser)
@@ -121,11 +121,11 @@ void SVGStyleElement::parseAttribute(const QualifiedName& name, const AtomicStri
         return;
     }
     if (name == SVGNames::typeAttr) {
-        setStyleSheetContentType(value);
+        m_styleSheetOwner.setContentType(value);
         return;
     }
     if (name == SVGNames::mediaAttr) {
-        setStyleSheetMedia(value);
+        m_styleSheetOwner.setMedia(value);
         return;
     }
     if (SVGLangSpace::parseAttribute(name, value))
@@ -136,7 +136,7 @@ void SVGStyleElement::parseAttribute(const QualifiedName& name, const AtomicStri
 
 void SVGStyleElement::finishParsingChildren()
 {
-    StyleElement::finishParsingChildren(this);
+    m_styleSheetOwner.finishParsingChildren(this);
     SVGElement::finishParsingChildren();
 }
 
@@ -144,7 +144,7 @@ Node::InsertionNotificationRequest SVGStyleElement::insertedInto(ContainerNode* 
 {
     SVGElement::insertedInto(rootParent);
     if (rootParent->inDocument())
-        StyleElement::insertedIntoDocument(document(), this);
+        m_styleSheetOwner.insertedIntoDocument(document(), this);
     return InsertionDone;
 }
 
@@ -152,13 +152,13 @@ void SVGStyleElement::removedFrom(ContainerNode* rootParent)
 {
     SVGElement::removedFrom(rootParent);
     if (rootParent->inDocument())
-        StyleElement::removedFromDocument(document(), this);
+        m_styleSheetOwner.removedFromDocument(document(), this);
 }
 
 void SVGStyleElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
 {
     SVGElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
-    StyleElement::childrenChanged(this);
+    m_styleSheetOwner.childrenChanged(this);
 }
 
 }

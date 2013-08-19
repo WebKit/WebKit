@@ -1,3 +1,53 @@
+2013-08-19  Antti Koivisto  <antti@apple.com>
+
+        <https://webkit.org/b/120004> Rename StyleElement to InlineStyleSheetOwner and stop inheriting from it
+
+        Reviewed by Andreas Kling.
+        
+        Saner names and class relations.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/DOMAllInOne.cpp:
+        * dom/InlineStyleSheetOwner.cpp: Copied from Source/WebCore/dom/StyleElement.cpp.
+        (WebCore::InlineStyleSheetOwner::InlineStyleSheetOwner):
+        (WebCore::InlineStyleSheetOwner::~InlineStyleSheetOwner):
+        (WebCore::InlineStyleSheetOwner::insertedIntoDocument):
+        (WebCore::InlineStyleSheetOwner::removedFromDocument):
+        (WebCore::InlineStyleSheetOwner::clearDocumentData):
+        (WebCore::InlineStyleSheetOwner::childrenChanged):
+        (WebCore::InlineStyleSheetOwner::finishParsingChildren):
+        (WebCore::InlineStyleSheetOwner::createSheetFromTextContents):
+        (WebCore::InlineStyleSheetOwner::clearSheet):
+        (WebCore::InlineStyleSheetOwner::createSheet):
+        (WebCore::InlineStyleSheetOwner::isLoading):
+        (WebCore::InlineStyleSheetOwner::sheetLoaded):
+        (WebCore::InlineStyleSheetOwner::startLoadingDynamicSheet):
+        * dom/InlineStyleSheetOwner.h: Copied from Source/WebCore/dom/StyleElement.h.
+        * dom/StyleElement.cpp: Removed.
+        * dom/StyleElement.h: Removed.
+        * html/HTMLStyleElement.cpp:
+        (WebCore::HTMLStyleElement::HTMLStyleElement):
+        (WebCore::HTMLStyleElement::~HTMLStyleElement):
+        (WebCore::HTMLStyleElement::parseAttribute):
+        (WebCore::HTMLStyleElement::finishParsingChildren):
+        (WebCore::HTMLStyleElement::insertedInto):
+        (WebCore::HTMLStyleElement::removedFrom):
+        (WebCore::HTMLStyleElement::childrenChanged):
+        * html/HTMLStyleElement.h:
+        * svg/SVGStyleElement.cpp:
+        (WebCore::SVGStyleElement::SVGStyleElement):
+        (WebCore::SVGStyleElement::~SVGStyleElement):
+        (WebCore::SVGStyleElement::parseAttribute):
+        (WebCore::SVGStyleElement::finishParsingChildren):
+        (WebCore::SVGStyleElement::insertedInto):
+        (WebCore::SVGStyleElement::removedFrom):
+        (WebCore::SVGStyleElement::childrenChanged):
+        * svg/SVGStyleElement.h:
+
 2013-08-19  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt] QtWebKit (using the Arora browser) displays the border radii (radius) of a button very ugly

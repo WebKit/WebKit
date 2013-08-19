@@ -422,6 +422,7 @@ SOURCES += \
     dom/IconURL.cpp \
     dom/IdTargetObserver.cpp \
     dom/IdTargetObserverRegistry.cpp \
+    dom/InlineStyleSheetOwner.cpp \
     dom/LiveNodeList.cpp \
     dom/KeyboardEvent.cpp \
     dom/MessageChannel.cpp \
@@ -474,7 +475,6 @@ SOURCES += \
     dom/SpaceSplitString.cpp \
     dom/StaticNodeList.cpp \
     dom/StyledElement.cpp \
-    dom/StyleElement.cpp \
     dom/TagNodeList.cpp \
     dom/Text.cpp \
     dom/TextEvent.cpp \
@@ -1630,6 +1630,7 @@ HEADERS += \
     dom/GestureEvent.h \
     dom/IdTargetObserver.h \
     dom/IdTargetObserverRegistry.h \
+    dom/InlineStyleSheetOwner.h \
     dom/LiveNodeList.h \
     dom/KeyboardEvent.h \
     dom/MessageChannel.h \
@@ -1676,7 +1677,6 @@ HEADERS += \
     dom/SpaceSplitString.h \
     dom/StaticNodeList.h \
     dom/StyledElement.h \
-    dom/StyleElement.h \
     dom/TagNodeList.h \
     dom/TemplateContentDocumentFragment.h \
     dom/TextEvent.h \

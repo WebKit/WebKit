@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006, 2007 Rob Buis
+ * Copyright (C) 2013 Apple, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -18,8 +19,8 @@
  *
  */
 
-#ifndef StyleElement_h
-#define StyleElement_h
+#ifndef InlineStyleSheetOwner_h
+#define InlineStyleSheetOwner_h
 
 #include "CSSStyleSheet.h"
 #include <wtf/text/TextPosition.h>
@@ -29,14 +30,13 @@ namespace WebCore {
 class Document;
 class Element;
 
-class StyleElement {
+class InlineStyleSheetOwner {
 public:
-    StyleElement(Document*, bool createdByParser);
-    ~StyleElement();
+    InlineStyleSheetOwner(Document*, bool createdByParser);
+    ~InlineStyleSheetOwner();
 
-protected:
-    void setStyleSheetContentType(const AtomicString& contentType) { m_contentType = contentType; }
-    void setStyleSheetMedia(const AtomicString& media) { m_media = media; }
+    void setContentType(const AtomicString& contentType) { m_contentType = contentType; }
+    void setMedia(const AtomicString& media) { m_media = media; }
 
     CSSStyleSheet* sheet() const { return m_sheet.get(); }
 
@@ -51,7 +51,7 @@ protected:
     void finishParsingChildren(Element*);
 
 private:
-    void createSheet(Element*, WTF::OrdinalNumber startLineNumber, const String& text = String());
+    void createSheet(Element*, const String& text);
     void createSheetFromTextContents(Element*);
     void clearSheet();
 
@@ -61,7 +61,6 @@ private:
     AtomicString m_contentType;
     AtomicString m_media;
     RefPtr<CSSStyleSheet> m_sheet;
-
 };
 
 }
