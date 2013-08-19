@@ -1,3 +1,17 @@
+2013-08-19  Michael Saboff  <msaboff@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=120020 Change Set 154207 causes wrong register to be used for 32 bit tests
+
+        Reviewed by Benjamin Poulain.
+
+        Change branshTest32 to only use the byte for 8 bit test on the lower 4 registers.
+        Registers 4 through 7 as byte regisers are ah, ch, dh and bh instead of sp, bp, si and di.
+
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::branchTest32):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillSpeculateCell):
+
 2013-08-16  Oliver Hunt  <oliver@apple.com>
 
         <https://webkit.org/b/119860> Crash during exception unwinding
