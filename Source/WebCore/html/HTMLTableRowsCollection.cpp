@@ -37,23 +37,45 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-static bool isInHead(Element* row)
+#if ASSERT_DISABLED
+
+static inline void assertRowIsInTable(HTMLTableRowElement*)
 {
-    return row->parentNode() && toElement(row->parentNode())->hasLocalName(theadTag);
 }
 
-static bool isInBody(Element* row)
+#else
+
+// The HTMLCollection caching mechanism along with the code in this class will
+// guarantee that this row is an immediate child of either the table, a thead,
+// a tbody, or a tfoot.
+static inline void assertRowIsInTable(HTMLTableRowElement* row)
 {
-    return row->parentNode() && toElement(row->parentNode())->hasLocalName(tbodyTag);
+    if (!row)
+        return;
+    ContainerNode* parent = row->parentNode();
+    ASSERT(parent);
+    if (parent->hasTagName(tableTag))
+        return;
+    ASSERT(parent->hasTagName(theadTag) || parent->hasTagName(tbodyTag) || parent->hasTagName(tfootTag));
+    ContainerNode* grandparent = parent->parentNode();
+    ASSERT(grandparent);
+    ASSERT(grandparent->hasTagName(tableTag));
 }
 
-static bool isInFoot(Element* row)
+#endif
+
+static inline bool isInSection(HTMLTableRowElement* row, const QualifiedName& sectionTag)
 {
-    return row->parentNode() && toElement(row->parentNode())->hasLocalName(tfootTag);
+    // Because we know that the parent is a table or a section, all of which are in the HTML
+    // namespace, it's OK to do the faster hasLocalName here instead of the more typical hasTagName,
+    // since we don't need the check for the HTML namespace.
+    return toElement(row->parentNode())->hasLocalName(sectionTag);
 }
 
 HTMLTableRowElement* HTMLTableRowsCollection::rowAfter(HTMLTableElement* table, HTMLTableRowElement* previous)
 {
+    assertRowIsInTable(previous);
+
     Node* child = 0;
 
     // Start by looking for the next row in this section.
@@ -68,7 +90,7 @@ HTMLTableRowElement* HTMLTableRowsCollection::rowAfter(HTMLTableElement* table, 
     // If still looking at head sections, find the first row in the next head section.
     if (!previous)
         child = table->firstChild();
-    else if (isInHead(previous))
+    else if (isInSection(previous, theadTag))
         child = previous->parentNode()->nextSibling();
     for (; child; child = child->nextSibling()) {
         if (child->hasTagName(theadTag)) {
@@ -80,11 +102,11 @@ HTMLTableRowElement* HTMLTableRowsCollection::rowAfter(HTMLTableElement* table, 
     }
 
     // If still looking at top level and bodies, find the next row in top level or the first in the next body section.
-    if (!previous || isInHead(previous))
+    if (!previous || isInSection(previous, theadTag))
         child = table->firstChild();
     else if (previous->parentNode() == table)
         child = previous->nextSibling();
-    else if (isInBody(previous))
+    else if (isInSection(previous, tbodyTag))
         child = previous->parentNode()->nextSibling();
     for (; child; child = child->nextSibling()) {
         if (child->hasTagName(trTag))
@@ -98,7 +120,7 @@ HTMLTableRowElement* HTMLTableRowsCollection::rowAfter(HTMLTableElement* table, 
     }
 
     // Find the first row in the next foot section.
-    if (!previous || !isInFoot(previous))
+    if (!previous || !isInSection(previous, tfootTag))
         child = table->firstChild();
     else
         child = previous->parentNode()->nextSibling();

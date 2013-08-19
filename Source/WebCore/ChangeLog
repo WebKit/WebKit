@@ -1,3 +1,24 @@
+2013-08-19  Darin Adler  <darin@apple.com>
+
+        <https://webkit.org/b/120013> Tighten up logic in HTMLTableRowsCollection
+
+        Reviewed by Andy Estes.
+
+        I was looking for incorrect uses of hasLocalName in places where hasTagName should be used.
+        The use in HTMLTableRowsCollection looked like that kind of mistake, but when I tried to
+        make a test case to show the mistake, I found I could not. So I wrote assertions to restate
+        what I learned, and removed an unneeded null check and tightened up the code a bit. This
+        should make code size slightly smaller.
+
+        * html/HTMLTableRowsCollection.cpp:
+        (WebCore::assertRowIsInTable): Added. Asserts that the row's position in the table is consistent
+        with the invariants of how the collection class works. A row that is processed here would have
+        to be an immediate child of the table, or an immediate child of a table section that in turn is
+        an immediate child of the table.
+        (WebCore::isInSection): Added. Replaces the three more-specific helper functions. Unlike those,
+        this does not do a null check.
+        (WebCore::HTMLTableRowsCollection::rowAfter): Changed to use the two new functions.
+
 2013-08-19  Pratik Solanki  <psolanki@apple.com>
 
         <https://webkit.org/b/119918> Frame::selection() should return a reference
