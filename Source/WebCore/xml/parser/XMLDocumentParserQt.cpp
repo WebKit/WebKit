@@ -499,7 +499,7 @@ void XMLDocumentParser::parseStartElement()
 
     pushCurrentNode(newElement.get());
     if (m_view && !newElement->attached())
-        newElement->attach();
+        Style::attachRenderTree(newElement.get());
 
     if (newElement->hasTagName(HTMLNames::htmlTag))
         static_cast<HTMLHtmlElement*>(newElement.get())->insertedByParser();

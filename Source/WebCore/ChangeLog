@@ -1,3 +1,14 @@
+2013-08-19  Julien Brianceau  <jbrianceau@nds.com>
+
+        <https://webkit.org/b/119998> [Qt] Build fix (broken since r154257).
+
+        Reviewed by Andreas Kling.
+
+        Element::attach() doesn't exist anymore since r154257.
+
+        * xml/parser/XMLDocumentParserQt.cpp:
+        (WebCore::XMLDocumentParser::parseStartElement):
+
 2013-08-19  Antti Koivisto  <antti@apple.com>
 
         <https://webkit.org/b/120001> Clean up StyleElement
