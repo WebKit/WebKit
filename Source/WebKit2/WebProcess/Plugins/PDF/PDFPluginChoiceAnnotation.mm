@@ -68,7 +68,7 @@ void PDFPluginChoiceAnnotation::commit()
 
 PassRefPtr<Element> PDFPluginChoiceAnnotation::createAnnotationElement()
 {
-    Document* document = parent()->ownerDocument();
+    Document* document = parent()->document();
     PDFAnnotationChoiceWidget *choiceAnnotation = this->choiceAnnotation();
 
     RefPtr<Element> element = document->createElement(selectTag, false);

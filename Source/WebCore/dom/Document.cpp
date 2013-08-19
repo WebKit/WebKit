@@ -554,9 +554,11 @@ Document::~Document()
 #endif
 
 #if ENABLE(TOUCH_EVENT_TRACKING)
+    // FIXME: This is dead code. The ownerDocument function returns 0 when called on a document.
     if (Document* ownerDocument = this->ownerDocument())
         ownerDocument->didRemoveEventTargetNode(this);
 #endif
+
     // FIXME: Should we reset m_domWindow when we detach from the Frame?
     if (m_domWindow)
         m_domWindow->resetUnlessSuspendedForPageCache();

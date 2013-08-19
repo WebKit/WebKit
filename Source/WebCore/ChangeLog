@@ -1,5 +1,35 @@
 2013-08-18  Darin Adler  <darin@apple.com>
 
+        <https://webkit.org/b/119989> Make use of Node::ownerDocument a compile time error
+
+        Reviewed by Sam Weinig.
+
+        * dom/Element.h: Deleted the ownerDocument function. For compilers that don't support
+        deleted functions, it is instead overrides the base class function with one that is
+        private and not defined, which accomplishes almost the same thing: An error, either
+        at compile time or link time.
+
+        * bindings/js/JSHTMLElementCustom.cpp:
+        (WebCore::JSHTMLElement::pushEventHandlerScope): Use document instead of ownerDocument.
+        * dom/Document.cpp:
+        (WebCore::Document::~Document): Added a comment about this clearly-incorrect code.
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::didPushShadowRoot): Use document instead of ownerDocument.
+        (WebCore::InspectorInstrumentation::willPopShadowRoot): Ditto.
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::InspectorStyleSheetForInlineStyle::setStyleText): Ditto.
+        * plugins/PluginView.cpp:
+        (WebCore::getFrame): Removed ineffective call to ownerDocument after document when it
+        returns 0. It will never return anything other than 0 in that case.
+        * rendering/RenderVideo.cpp:
+        (WebCore::RenderVideo::calculateIntrinsicSize): Use document instead of ownerDocument.
+        Did not remove the null check at this time, although I'm pretty sure it's bogus. We can
+        fix that when/if we change the return type of Element::document to a reference.
+        * svg/SVGFEImageElement.cpp:
+        (WebCore::SVGFEImageElement::requestImageResource): Use document instead of ownerDocument.
+
+2013-08-18  Darin Adler  <darin@apple.com>
+
         <https://webkit.org/b/119993> Remove most remaining platform-specific code from Clipboard class
 
         Reviewed by Sam Weinig.

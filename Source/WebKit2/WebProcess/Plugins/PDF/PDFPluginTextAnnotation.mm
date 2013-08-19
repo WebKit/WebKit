@@ -83,7 +83,7 @@ PassRefPtr<Element> PDFPluginTextAnnotation::createAnnotationElement()
 {
     RefPtr<Element> element;
 
-    Document* document = parent()->ownerDocument();
+    Document* document = parent()->document();
     PDFAnnotationTextWidget *textAnnotation = this->textAnnotation();
     bool isMultiline = textAnnotation.isMultiline;
 

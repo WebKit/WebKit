@@ -82,7 +82,7 @@ void SVGFEImageElement::clearResourceReferences()
 
 void SVGFEImageElement::requestImageResource()
 {
-    CachedResourceRequest request(ResourceRequest(ownerDocument()->completeURL(href())));
+    CachedResourceRequest request(ResourceRequest(document()->completeURL(href())));
     request.setInitiator(this);
     m_cachedImage = document()->cachedResourceLoader()->requestImage(request);
 

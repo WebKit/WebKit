@@ -1,3 +1,15 @@
+2013-08-18  Darin Adler  <darin@apple.com>
+
+        <https://webkit.org/b/119989> Make use of Node::ownerDocument a compile time error
+
+        Reviewed by Sam Weinig.
+
+        * WebProcess/Plugins/PDF/PDFPluginChoiceAnnotation.mm:
+        (WebKit::PDFPluginChoiceAnnotation::createAnnotationElement): Use document instead of
+        ownerDocument.
+        * WebProcess/Plugins/PDF/PDFPluginTextAnnotation.mm:
+        (WebKit::PDFPluginTextAnnotation::createAnnotationElement): Ditto.
+
 2013-08-18  Dan Bernstein  <mitz@apple.com>
 
         Fix clean engineering builds after r154251.

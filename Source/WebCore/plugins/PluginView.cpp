@@ -1369,8 +1369,6 @@ static Frame* getFrame(Frame* parentFrame, Element* element)
         return parentFrame;
     
     Document* document = element->document();
-    if (!document)
-        document = element->ownerDocument();
     if (document)
         return document->frame();
     

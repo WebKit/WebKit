@@ -1484,7 +1484,7 @@ bool InspectorStyleSheetForInlineStyle::setStyleText(CSSStyleDeclaration* style,
     ASSERT_UNUSED(style, style == inlineStyle());
 
     {
-        InspectorCSSAgent::InlineStyleOverrideScope overrideScope(m_element->ownerDocument());
+        InspectorCSSAgent::InlineStyleOverrideScope overrideScope(m_element->document());
         m_element->setAttribute("style", text, ec);
     }
 
