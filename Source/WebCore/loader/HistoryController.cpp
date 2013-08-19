@@ -194,48 +194,32 @@ void HistoryController::saveDocumentAndScrollState()
     }
 }
 
-static inline bool isAssociatedToRequestedHistoryItem(const HistoryItem* current, Frame* frame, const HistoryItem* requested)
-{
-    if (requested == current)
-        return true;
-    if (requested)
-        return false;
-    while ((frame = frame->tree()->parent())) {
-        requested = frame->loader().requestedHistoryItem();
-        if (!requested)
-            continue;
-        if (requested->isAncestorOf(current))
-            return true;
-    }
-    return false;
-}
-
 void HistoryController::restoreDocumentState()
 {
-    Document* doc = m_frame->document();
-        
-    HistoryItem* itemToRestore = 0;
-    
     switch (m_frame->loader().loadType()) {
         case FrameLoadTypeReload:
         case FrameLoadTypeReloadFromOrigin:
         case FrameLoadTypeSame:
         case FrameLoadTypeReplace:
-            break;
+            // Not restoring the document state.
+            return;
         case FrameLoadTypeBack:
         case FrameLoadTypeForward:
         case FrameLoadTypeIndexedBackForward:
         case FrameLoadTypeRedirectWithLockedBackForwardList:
         case FrameLoadTypeStandard:
-            itemToRestore = m_currentItem.get(); 
+            break;
     }
     
-    if (!itemToRestore)
+    if (!m_currentItem)
         return;
-    if (isAssociatedToRequestedHistoryItem(itemToRestore, m_frame, m_frame->loader().requestedHistoryItem()) && !m_frame->loader().documentLoader()->isClientRedirect()) {
-        LOG(Loading, "WebCoreLoading %s: restoring form state from %p", m_frame->tree()->uniqueName().string().utf8().data(), itemToRestore);
-        doc->setStateForNewFormElements(itemToRestore->documentState());
-    }
+    if (m_frame->loader().requestedHistoryItem() != m_currentItem.get())
+        return;
+    if (m_frame->loader().documentLoader()->isClientRedirect())
+        return;
+
+    LOG(Loading, "WebCoreLoading %s: restoring form state from %p", m_frame->tree()->uniqueName().string().utf8().data(), m_currentItem.get());
+    m_frame->document()->setStateForNewFormElements(m_currentItem->documentState());
 }
 
 void HistoryController::invalidateCurrentItemCachedPage()

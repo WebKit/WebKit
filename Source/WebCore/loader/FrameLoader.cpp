@@ -869,6 +869,7 @@ void FrameLoader::loadURLIntoChildFrame(const KURL& url, const String& referer, 
         && !m_frame->document()->loadEventFinished()) {
         HistoryItem* childItem = parentItem->childItemWithTarget(childFrame->tree()->uniqueName());
         if (childItem) {
+            childFrame->loader().m_requestedHistoryItem = childItem;
             childFrame->loader().loadDifferentDocumentItem(childItem, loadType(), MayAttemptCacheOnlyLoadForFormSubmissionItem);
             return;
         }

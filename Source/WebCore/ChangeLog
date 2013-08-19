@@ -1,3 +1,21 @@
+2013-08-19  Alexey Proskuryakov  <ap@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=120028
+        ASSERTION FAILED: m_history->provisionalItem() == m_requestedHistoryItem.get()
+        when navigating to an uncached subframe
+
+        Reviewed by Brady Eidson.
+
+        Test: http/tests/navigation/post-frames-goback1-uncached.html
+
+        * loader/FrameLoader.cpp: (WebCore::FrameLoader::loadURLIntoChildFrame):
+        Set m_requestedHistoryItem in a code path that doesn't go through FrameLoader::loadItem.
+
+        * loader/HistoryController.cpp: (WebCore::HistoryController::restoreDocumentState):
+        Now that we always set m_requestedHistoryItem, there is no need to traverse frame
+        tree to see if this document is being loaded as part of b/f navigation (which was
+        add in bug 90870).
+
 2013-08-19  Gavin Barraclough  <barraclough@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=119995
