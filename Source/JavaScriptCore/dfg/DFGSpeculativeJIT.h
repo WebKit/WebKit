@@ -1973,6 +1973,7 @@ public:
     void compileArithDiv(Node*);
     void compileArithMod(Node*);
     void compileGetIndexedPropertyStorage(Node*);
+    void compileGetTypedArrayByteOffset(Node*);
     void compileGetByValOnIntTypedArray(Node*, TypedArrayType);
     void compilePutByValForIntTypedArray(GPRReg base, GPRReg property, Node*, TypedArrayType);
     void compileGetByValOnFloatTypedArray(Node*, TypedArrayType);

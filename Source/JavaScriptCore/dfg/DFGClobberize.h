@@ -290,6 +290,8 @@ void clobberize(Graph& graph, Node* node, ReadFunctor& read, WriteFunctor& write
         case Array::Float32Array:
         case Array::Float64Array:
             read(TypedArrayProperties);
+            read(JSArrayBufferView_vector);
+            read(JSArrayBufferView_length);
             return;
         }
         RELEASE_ASSERT_NOT_REACHED();
@@ -377,6 +379,8 @@ void clobberize(Graph& graph, Node* node, ReadFunctor& read, WriteFunctor& write
         case Array::Uint32Array:
         case Array::Float32Array:
         case Array::Float64Array:
+            read(JSArrayBufferView_vector);
+            read(JSArrayBufferView_length);
             write(TypedArrayProperties);
             return;
         }
@@ -425,7 +429,14 @@ void clobberize(Graph& graph, Node* node, ReadFunctor& read, WriteFunctor& write
     case GetIndexedPropertyStorage:
         if (node->arrayMode().type() == Array::String)
             return;
-        read(TypedArrayStoragePointer);
+        read(JSArrayBufferView_vector);
+        return;
+        
+    case GetTypedArrayByteOffset:
+        read(JSArrayBufferView_vector);
+        read(JSArrayBufferView_mode);
+        read(Butterfly_arrayBuffer);
+        read(ArrayBuffer_data);
         return;
         
     case GetByOffset:
@@ -456,7 +467,7 @@ void clobberize(Graph& graph, Node* node, ReadFunctor& read, WriteFunctor& write
             return;
             
         default:
-            read(TypedArrayLength);
+            read(JSArrayBufferView_length);
             return;
         }
     }

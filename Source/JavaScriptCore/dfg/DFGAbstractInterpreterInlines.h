@@ -1376,6 +1376,12 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         forNode(node).clear();
         break; 
     }
+        
+    case GetTypedArrayByteOffset: {
+        forNode(node).setType(SpecInt32);
+        break;
+    }
+        
     case GetByOffset: {
         forNode(node).makeTop();
         break;

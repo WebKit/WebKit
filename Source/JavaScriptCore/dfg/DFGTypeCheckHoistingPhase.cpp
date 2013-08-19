@@ -254,6 +254,7 @@ private:
                 case GetArrayLength:
                 case CheckArray:
                 case GetIndexedPropertyStorage:
+                case GetTypedArrayByteOffset:
                 case Phantom:
                     // Don't count these uses.
                     break;

@@ -1,5 +1,20 @@
 2013-08-18  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG should inline typedArray.byteOffset
+        https://bugs.webkit.org/show_bug.cgi?id=119962
+
+        Reviewed by Oliver Hunt.
+
+        * fast/js/dfg-byteOffset-neuter.html: Added.
+        * fast/js/dfg-byteOffset-neuter-expected.txt: Added.
+        * fast/js/regress/ArrayBuffer-Int32Array-byteOffset-expected.txt: Added.
+        * fast/js/regress/ArrayBuffer-Int32Array-byteOffset.html: Added.
+        * fast/js/regress/script-tests/ArrayBuffer-Int32Array-byteOffset.js: Added.
+        * fast/js/script-tests/dfg-byteOffset-neuter.js: Added.
+        (foo):
+
+2013-08-18  Filip Pizlo  <fpizlo@apple.com>
+
         <https://webkit.org/b/119994> DFG new Array() inlining could get confused about global objects
 
         Reviewed by Geoffrey Garen.

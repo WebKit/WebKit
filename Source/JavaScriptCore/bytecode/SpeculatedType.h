@@ -51,6 +51,7 @@ static const SpeculatedType SpecUint16Array       = 0x00000200; // It's definite
 static const SpeculatedType SpecUint32Array       = 0x00000400; // It's definitely an Uint32Array or one of its subclasses.
 static const SpeculatedType SpecFloat32Array      = 0x00000800; // It's definitely an Uint16Array or one of its subclasses.
 static const SpeculatedType SpecFloat64Array      = 0x00001000; // It's definitely an Uint16Array or one of its subclasses.
+static const SpeculatedType SpecTypedArrayView    = SpecInt8Array | SpecInt16Array | SpecInt32Array | SpecUint8Array | SpecUint8ClampedArray | SpecUint16Array | SpecUint32Array | SpecFloat32Array | SpecFloat64Array;
 static const SpeculatedType SpecArguments         = 0x00002000; // It's definitely an Arguments object.
 static const SpeculatedType SpecStringObject      = 0x00004000; // It's definitely a StringObject.
 static const SpeculatedType SpecObjectOther       = 0x00008000; // It's definitely an object but not JSFinalObject, JSArray, or JSFunction.

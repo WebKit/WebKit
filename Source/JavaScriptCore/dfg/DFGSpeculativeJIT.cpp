@@ -4032,6 +4032,37 @@ void SpeculativeJIT::compileGetIndexedPropertyStorage(Node* node)
     storageResult(storageReg, node);
 }
 
+void SpeculativeJIT::compileGetTypedArrayByteOffset(Node* node)
+{
+    SpeculateCellOperand base(this, node->child1());
+    GPRTemporary vector(this);
+    GPRTemporary data(this);
+    
+    GPRReg baseGPR = base.gpr();
+    GPRReg vectorGPR = vector.gpr();
+    GPRReg dataGPR = data.gpr();
+    
+    JITCompiler::Jump emptyByteOffset = m_jit.branch32(
+        MacroAssembler::NotEqual,
+        MacroAssembler::Address(baseGPR, JSArrayBufferView::offsetOfMode()),
+        TrustedImm32(WastefulTypedArray));
+    
+    m_jit.loadPtr(MacroAssembler::Address(baseGPR, JSObject::butterflyOffset()), dataGPR);
+    m_jit.loadPtr(MacroAssembler::Address(baseGPR, JSArrayBufferView::offsetOfVector()), vectorGPR);
+    m_jit.loadPtr(MacroAssembler::Address(dataGPR, Butterfly::offsetOfArrayBuffer()), dataGPR);
+    m_jit.loadPtr(MacroAssembler::Address(dataGPR, ArrayBuffer::offsetOfData()), dataGPR);
+    m_jit.subPtr(dataGPR, vectorGPR);
+    
+    JITCompiler::Jump done = m_jit.jump();
+    
+    emptyByteOffset.link(&m_jit);
+    m_jit.move(TrustedImmPtr(0), vectorGPR);
+    
+    done.link(&m_jit);
+    
+    integerResult(vectorGPR, node);
+}
+
 void SpeculativeJIT::compileGetByValOnArguments(Node* node)
 {
     SpeculateCellOperand base(this, node->child1());

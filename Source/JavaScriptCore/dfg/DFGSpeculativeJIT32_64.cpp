@@ -4027,6 +4027,11 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
+    case GetTypedArrayByteOffset: {
+        compileGetTypedArrayByteOffset(node);
+        break;
+    }
+        
     case GetByOffset: {
         StorageOperand storage(this, node->child1());
         GPRTemporary resultTag(this, storage);

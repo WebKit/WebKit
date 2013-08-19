@@ -243,6 +243,9 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case StringCharCodeAt:
         return node->arrayMode().alreadyChecked(graph, node, state.forNode(node->child1()));
         
+    case GetTypedArrayByteOffset:
+        return !(state.forNode(node->child1()).m_type & ~(SpecTypedArrayView));
+        
     case PutByVal:
     case PutByValAlias:
         return node->arrayMode().modeForPut().alreadyChecked(

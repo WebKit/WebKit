@@ -45,6 +45,7 @@ public:
     
     static ptrdiff_t offsetOfIndexingHeader() { return -static_cast<ptrdiff_t>(sizeof(IndexingHeader)); }
     
+    static ptrdiff_t offsetOfArrayBuffer() { return OBJECT_OFFSETOF(IndexingHeader, u.typedArray.buffer); }
     static ptrdiff_t offsetOfPublicLength() { return OBJECT_OFFSETOF(IndexingHeader, u.lengths.publicLength); }
     static ptrdiff_t offsetOfVectorLength() { return OBJECT_OFFSETOF(IndexingHeader, u.lengths.vectorLength); }
     

@@ -445,6 +445,11 @@ static inline bool lengthNeedsStorage(const ArrayMode& arrayMode)
     return arrayMode.lengthNeedsStorage();
 }
 
+static inline bool neverNeedsStorage(const ArrayMode&)
+{
+    return false;
+}
+
 } } // namespace JSC::DFG
 
 namespace WTF {

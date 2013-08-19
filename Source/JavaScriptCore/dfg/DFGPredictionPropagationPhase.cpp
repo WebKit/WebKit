@@ -466,6 +466,7 @@ private:
             
         case PutByValAlias:
         case GetArrayLength:
+        case GetTypedArrayByteOffset:
         case Int32ToDouble:
         case DoubleAsInt32:
         case GetLocalUnlinked:

@@ -48,8 +48,13 @@ namespace JSC { namespace DFG {
     macro(Arguments_overrideLength) \
     macro(Arguments_registers) \
     macro(Arguments_slowArguments) \
+    macro(ArrayBuffer_data) \
+    macro(Butterfly_arrayBuffer) \
     macro(Butterfly_publicLength) \
     macro(Butterfly_vectorLength) \
+    macro(JSArrayBufferView_length) \
+    macro(JSArrayBufferView_mode) \
+    macro(JSArrayBufferView_vector) \
     macro(JSCell_structure) \
     macro(JSFunction_executable) \
     macro(JSFunction_scopeChain) \
@@ -61,9 +66,7 @@ namespace JSC { namespace DFG {
     macro(IndexedContiguousProperties) \
     macro(ArrayStorageProperties) \
     macro(Variables) \
-    macro(TypedArrayStoragePointer) \
     macro(TypedArrayProperties) \
-    macro(TypedArrayLength) \
     macro(GCState) \
     macro(RegExpState) \
     macro(InternalState) \
