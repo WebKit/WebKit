@@ -109,10 +109,7 @@ bool JSTestEventConstructorConstructor::getOwnPropertySlot(JSObject* object, Exe
     return getStaticValueSlot<JSTestEventConstructorConstructor, JSDOMWrapper>(exec, &JSTestEventConstructorConstructorTable, jsCast<JSTestEventConstructorConstructor*>(object), propertyName, slot);
 }
 
-bool JSTestEventConstructorConstructor::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)
-{
-    return getStaticValueDescriptor<JSTestEventConstructorConstructor, JSDOMWrapper>(exec, &JSTestEventConstructorConstructorTable, jsCast<JSTestEventConstructorConstructor*>(object), propertyName, descriptor);
-}
+GET_OWN_PROPERTY_DESCRIPTOR_IMPL(JSTestEventConstructorConstructor)
 
 ConstructType JSTestEventConstructorConstructor::getConstructData(JSCell*, ConstructData& constructData)
 {
@@ -172,12 +169,7 @@ bool JSTestEventConstructor::getOwnPropertySlot(JSObject* object, ExecState* exe
     return getStaticValueSlot<JSTestEventConstructor, Base>(exec, &JSTestEventConstructorTable, thisObject, propertyName, slot);
 }
 
-bool JSTestEventConstructor::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)
-{
-    JSTestEventConstructor* thisObject = jsCast<JSTestEventConstructor*>(object);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    return getStaticValueDescriptor<JSTestEventConstructor, Base>(exec, &JSTestEventConstructorTable, thisObject, propertyName, descriptor);
-}
+GET_OWN_PROPERTY_DESCRIPTOR_IMPL(JSTestEventConstructor)
 
 JSValue jsTestEventConstructorAttr1(ExecState* exec, JSValue slotBase, PropertyName)
 {

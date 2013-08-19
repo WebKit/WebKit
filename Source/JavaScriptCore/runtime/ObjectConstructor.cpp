@@ -99,10 +99,7 @@ bool ObjectConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec, Pr
     return getStaticFunctionSlot<JSObject>(exec, ExecState::objectConstructorTable(exec), jsCast<ObjectConstructor*>(object), propertyName, slot);
 }
 
-bool ObjectConstructor::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)
-{
-    return getStaticFunctionDescriptor<JSObject>(exec, ExecState::objectConstructorTable(exec), jsCast<ObjectConstructor*>(object), propertyName, descriptor);
-}
+GET_OWN_PROPERTY_DESCRIPTOR_IMPL(ObjectConstructor)
 
 static ALWAYS_INLINE JSObject* constructObject(ExecState* exec)
 {

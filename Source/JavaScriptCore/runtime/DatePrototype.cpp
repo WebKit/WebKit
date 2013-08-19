@@ -519,10 +519,7 @@ bool DatePrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, Proper
     return getStaticFunctionSlot<JSObject>(exec, ExecState::dateTable(exec), jsCast<DatePrototype*>(object), propertyName, slot);
 }
 
-bool DatePrototype::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)
-{
-    return getStaticFunctionDescriptor<JSObject>(exec, ExecState::dateTable(exec), jsCast<DatePrototype*>(object), propertyName, descriptor);
-}
+GET_OWN_PROPERTY_DESCRIPTOR_IMPL(DatePrototype)
 
 // Functions
 

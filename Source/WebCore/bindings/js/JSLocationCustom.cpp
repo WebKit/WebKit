@@ -63,16 +63,17 @@ bool JSLocation::getOwnPropertySlotDelegate(ExecState* exec, PropertyName proper
         return false;
 
     // Check for the few functions that we allow, even when called cross-domain.
+    // Make these read-only / non-configurable to prevent writes via defineProperty.
     const HashEntry* entry = JSLocationPrototype::info()->propHashTable(exec)->entry(exec, propertyName);
     if (entry && (entry->attributes() & JSC::Function)) {
         if (entry->function() == jsLocationPrototypeFunctionReplace) {
-            slot.setCustom(this, entry->attributes(), nonCachingStaticReplaceFunctionGetter);
+            slot.setCustom(this, ReadOnly | DontDelete | DontEnum, nonCachingStaticReplaceFunctionGetter);
             return true;
         } else if (entry->function() == jsLocationPrototypeFunctionReload) {
-            slot.setCustom(this, entry->attributes(), nonCachingStaticReloadFunctionGetter);
+            slot.setCustom(this, ReadOnly | DontDelete | DontEnum, nonCachingStaticReloadFunctionGetter);
             return true;
         } else if (entry->function() == jsLocationPrototypeFunctionAssign) {
-            slot.setCustom(this, entry->attributes(), nonCachingStaticAssignFunctionGetter);
+            slot.setCustom(this, ReadOnly | DontDelete | DontEnum, nonCachingStaticAssignFunctionGetter);
             return true;
         }
     }
@@ -83,45 +84,6 @@ bool JSLocation::getOwnPropertySlotDelegate(ExecState* exec, PropertyName proper
 
     printErrorMessageForFrame(frame, message);
     slot.setUndefined();
-    return true;
-}
-
-bool JSLocation::getOwnPropertyDescriptorDelegate(ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)
-{
-    Frame* frame = impl()->frame();
-    if (!frame) {
-        descriptor.setUndefined();
-        return true;
-    }
-    
-    // throw out all cross domain access
-    if (!shouldAllowAccessToFrame(exec, frame))
-        return true;
-    
-    // Check for the few functions that we allow, even when called cross-domain.
-    const HashEntry* entry = JSLocationPrototype::info()->propHashTable(exec)->entry(exec, propertyName);
-    PropertySlot slot(this);
-    if (entry && (entry->attributes() & JSC::Function)) {
-        if (entry->function() == jsLocationPrototypeFunctionReplace) {
-            slot.setCustom(this, entry->attributes(), nonCachingStaticReplaceFunctionGetter);
-            descriptor.setDescriptor(slot.getValue(exec, propertyName), entry->attributes());
-            return true;
-        } else if (entry->function() == jsLocationPrototypeFunctionReload) {
-            slot.setCustom(this, entry->attributes(), nonCachingStaticReloadFunctionGetter);
-            descriptor.setDescriptor(slot.getValue(exec, propertyName), entry->attributes());
-            return true;
-        } else if (entry->function() == jsLocationPrototypeFunctionAssign) {
-            slot.setCustom(this, entry->attributes(), nonCachingStaticAssignFunctionGetter);
-            descriptor.setDescriptor(slot.getValue(exec, propertyName), entry->attributes());
-            return true;
-        }
-    }
-    
-    // FIXME: Other implementers of the Window cross-domain scheme (Window, History) allow toString,
-    // but for now we have decided not to, partly because it seems silly to return "[Object Location]" in
-    // such cases when normally the string form of Location would be the URL.
-
-    descriptor.setUndefined();
     return true;
 }
 

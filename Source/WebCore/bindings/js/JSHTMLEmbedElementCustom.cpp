@@ -38,11 +38,6 @@ bool JSHTMLEmbedElement::getOwnPropertySlotDelegate(ExecState* exec, PropertyNam
     return pluginElementCustomGetOwnPropertySlot<JSHTMLEmbedElement, Base>(exec, propertyName, slot, this);
 }
 
-bool JSHTMLEmbedElement::getOwnPropertyDescriptorDelegate(ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)
-{
-    return pluginElementCustomGetOwnPropertyDescriptor<JSHTMLEmbedElement, Base>(exec, propertyName, descriptor, this);
-}
-
 bool JSHTMLEmbedElement::putDelegate(ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
     return runtimeObjectCustomPut(exec, propertyName, value, this, slot);

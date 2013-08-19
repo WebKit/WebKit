@@ -2381,74 +2381,7 @@ Butterfly* JSObject::growOutOfLineStorage(VM& vm, size_t oldSize, size_t newSize
     return m_butterfly->growPropertyStorage(vm, this, structure(), oldSize, newSize);
 }
 
-bool JSObject::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)
-{
-    unsigned attributes = 0;
-    JSCell* cell = 0;
-    PropertyOffset offset = object->structure()->get(exec->vm(), propertyName, attributes, cell);
-    if (isValidOffset(offset)) {
-        descriptor.setDescriptor(object->getDirect(offset), attributes);
-        return true;
-    }
-    
-    unsigned i = propertyName.asIndex();
-    if (i == PropertyName::NotAnIndex)
-        return false;
-    
-    switch (object->structure()->indexingType()) {
-    case ALL_BLANK_INDEXING_TYPES:
-    case ALL_UNDECIDED_INDEXING_TYPES:
-        return false;
-        
-    case ALL_INT32_INDEXING_TYPES:
-    case ALL_CONTIGUOUS_INDEXING_TYPES: {
-        Butterfly* butterfly = object->m_butterfly;
-        if (i >= butterfly->vectorLength())
-            return false;
-        JSValue value = butterfly->contiguous()[i].get();
-        if (!value)
-            return false;
-        descriptor.setDescriptor(value, 0);
-        return true;
-    }
-        
-    case ALL_DOUBLE_INDEXING_TYPES: {
-        Butterfly* butterfly = object->m_butterfly;
-        if (i >= butterfly->vectorLength())
-            return false;
-        double value = butterfly->contiguousDouble()[i];
-        if (value != value)
-            return false;
-        descriptor.setDescriptor(JSValue(JSValue::EncodeAsDouble, value), 0);
-        return true;
-    }
-        
-    case ALL_ARRAY_STORAGE_INDEXING_TYPES: {
-        ArrayStorage* storage = object->m_butterfly->arrayStorage();
-        if (i >= storage->length())
-            return false;
-        if (i < storage->vectorLength()) {
-            WriteBarrier<Unknown>& value = storage->m_vector[i];
-            if (!value)
-                return false;
-            descriptor.setDescriptor(value.get(), 0);
-            return true;
-        }
-        if (SparseArrayValueMap* map = storage->m_sparseMap.get()) {
-            SparseArrayValueMap::iterator it = map->find(i);
-            if (it == map->notFound())
-                return false;
-            it->value.get(descriptor);
-            return true;
-        }
-        return false;
-    }
-        
-    default:
-        RELEASE_ASSERT_NOT_REACHED();
-        return false;
-    }
-}
+GET_OWN_PROPERTY_DESCRIPTOR_IMPL(JSObject)
 
 bool JSObject::getPropertyDescriptor(ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)
 {

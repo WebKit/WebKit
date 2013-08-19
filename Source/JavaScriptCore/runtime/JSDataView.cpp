@@ -95,18 +95,7 @@ bool JSDataView::getOwnPropertySlot(
     return Base::getOwnPropertySlot(thisObject, exec, propertyName, slot);
 }
 
-bool JSDataView::getOwnPropertyDescriptor(
-    JSObject* object, ExecState* exec, PropertyName propertyName,
-    PropertyDescriptor& descriptor)
-{
-    JSDataView* thisObject = jsCast<JSDataView*>(object);
-    if (propertyName == exec->propertyNames().byteLength) {
-        descriptor.setDescriptor(jsNumber(thisObject->m_length), DontEnum | ReadOnly);
-        return true;
-    }
-    
-    return Base::getOwnPropertyDescriptor(thisObject, exec, propertyName, descriptor);
-}
+GET_OWN_PROPERTY_DESCRIPTOR_IMPL(JSDataView)
 
 void JSDataView::slowDownAndWasteMemory(JSArrayBufferView*)
 {

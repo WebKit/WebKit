@@ -596,10 +596,7 @@ bool JSONObject::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyN
     return getStaticFunctionSlot<JSObject>(exec, ExecState::jsonTable(exec), jsCast<JSONObject*>(object), propertyName, slot);
 }
 
-bool JSONObject::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)
-{
-    return getStaticFunctionDescriptor<JSObject>(exec, ExecState::jsonTable(exec), jsCast<JSONObject*>(object), propertyName, descriptor);
-}
+GET_OWN_PROPERTY_DESCRIPTOR_IMPL(JSONObject)
 
 class Walker {
 public:

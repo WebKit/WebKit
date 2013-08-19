@@ -336,21 +336,6 @@ bool JSCSSStyleDeclaration::getOwnPropertySlotDelegate(ExecState*, PropertyName 
     return true;
 }
 
-bool JSCSSStyleDeclaration::getOwnPropertyDescriptorDelegate(JSC::ExecState* exec, JSC::PropertyName propertyIdentifier, JSC::PropertyDescriptor& descriptor)
-{
-    CSSPropertyInfo propertyInfo = cssPropertyIDForJSCSSPropertyName(propertyIdentifier);
-    if (!propertyInfo.propertyID)
-        return false;
-
-    JSValue value;
-    if (propertyInfo.hadPixelOrPosPrefix)
-        value = cssPropertyGetterPixelOrPosPrefix(exec, this, propertyInfo.propertyID);
-    else
-        value = cssPropertyGetter(exec, this, propertyInfo.propertyID);
-    descriptor.setDescriptor(value, ReadOnly | DontDelete | DontEnum);
-    return true;
-}
-
 bool JSCSSStyleDeclaration::putDelegate(ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot&)
 {
     CSSPropertyInfo propertyInfo = cssPropertyIDForJSCSSPropertyName(propertyName);

@@ -38,11 +38,6 @@ bool JSHTMLAppletElement::getOwnPropertySlotDelegate(ExecState* exec, PropertyNa
     return pluginElementCustomGetOwnPropertySlot<JSHTMLAppletElement, Base>(exec, propertyName, slot, this);
 }
 
-bool JSHTMLAppletElement::getOwnPropertyDescriptorDelegate(ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)
-{
-    return pluginElementCustomGetOwnPropertyDescriptor<JSHTMLAppletElement, Base>(exec, propertyName, descriptor, this);
-}
-
 bool JSHTMLAppletElement::putDelegate(ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
     return runtimeObjectCustomPut(exec, propertyName, value, this, slot);

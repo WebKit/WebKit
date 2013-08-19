@@ -1,3 +1,45 @@
+2013-08-19  Gavin Barraclough  <barraclough@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=119995
+        Start removing custom implementations of getOwnPropertyDescriptor
+
+        Reviewed by Sam Weinig.
+
+        This can now typically implemented in terms of getOwnPropertySlot.
+        Add a macro to PropertyDescriptor to define an implementation of GOPD in terms of GOPS.
+        Switch over most classes in JSC & the WebCore bindings generator to use this.
+
+        * bindings/js/JSCSSStyleDeclarationCustom.cpp:
+        * bindings/js/JSHTMLAppletElementCustom.cpp:
+        * bindings/js/JSHTMLEmbedElementCustom.cpp:
+        * bindings/js/JSHTMLObjectElementCustom.cpp:
+        * bindings/js/JSHistoryCustom.cpp:
+        (WebCore::JSHistory::getOwnPropertySlotDelegate):
+        * bindings/js/JSLocationCustom.cpp:
+        (WebCore::JSLocation::getOwnPropertySlotDelegate):
+        * bindings/js/JSWorkerGlobalScopeCustom.cpp:
+            - Remove getOwnPropertyDescriptorDelegate methods,
+              Change attributes of cross-frame access properties in JSHistory/JSLocation to prevent properties from being redefined.
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        (GenerateImplementation):
+        (GenerateConstructorHelperMethods):
+            - Implement getOwnPropertySlot in terms of GET_OWN_PROPERTY_DESCRIPTOR_IMPL.
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.cpp:
+        * bindings/scripts/test/JS/JSTestCustomNamedGetter.cpp:
+        * bindings/scripts/test/JS/JSTestEventConstructor.cpp:
+        * bindings/scripts/test/JS/JSTestEventTarget.cpp:
+        * bindings/scripts/test/JS/JSTestException.cpp:
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.cpp:
+        * bindings/scripts/test/JS/JSTestNamedConstructor.cpp:
+        * bindings/scripts/test/JS/JSTestNode.cpp:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.cpp:
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+            - Update test expectations.
+
 2013-08-19  Benjamin Poulain  <benjamin@webkit.org>
 
         <https://webkit.org/b/119936> Fix some encapsulation issues of RuleSet

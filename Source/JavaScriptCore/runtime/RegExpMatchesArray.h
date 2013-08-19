@@ -84,12 +84,7 @@ namespace JSC {
             return JSArray::getOwnPropertySlotByIndex(thisObject, exec, propertyName, slot);
         }
 
-        static bool getOwnPropertyDescriptor(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)
-        {
-            RegExpMatchesArray* thisObject = jsCast<RegExpMatchesArray*>(object);
-            thisObject->reifyAllPropertiesIfNecessary(exec);
-            return JSArray::getOwnPropertyDescriptor(thisObject, exec, propertyName, descriptor);
-        }
+        static bool getOwnPropertyDescriptor(JSObject*, ExecState*, PropertyName, PropertyDescriptor&);
 
         static void put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue v, PutPropertySlot& slot)
         {

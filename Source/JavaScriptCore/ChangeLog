@@ -1,3 +1,61 @@
+2013-08-18  Gavin Barraclough  <barraclough@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=119995
+        Start removing custom implementations of getOwnPropertyDescriptor
+
+        Reviewed by Sam Weinig.
+
+        This can now typically implemented in terms of getOwnPropertySlot.
+        Add a macro to PropertyDescriptor to define an implementation of GOPD in terms of GOPS.
+        Switch over most classes in JSC & the WebCore bindings generator to use this.
+
+        * API/JSCallbackObjectFunctions.h:
+        * debugger/DebuggerActivation.cpp:
+        * runtime/Arguments.cpp:
+        * runtime/ArrayConstructor.cpp:
+        * runtime/ArrayPrototype.cpp:
+        * runtime/BooleanPrototype.cpp:
+        * runtime/DateConstructor.cpp:
+        * runtime/DatePrototype.cpp:
+        * runtime/ErrorPrototype.cpp:
+        * runtime/JSActivation.cpp:
+        * runtime/JSArray.cpp:
+        * runtime/JSArrayBuffer.cpp:
+        * runtime/JSArrayBufferView.cpp:
+        * runtime/JSCell.cpp:
+        * runtime/JSDataView.cpp:
+        * runtime/JSDataViewPrototype.cpp:
+        * runtime/JSFunction.cpp:
+        * runtime/JSGenericTypedArrayViewInlines.h:
+        * runtime/JSNotAnObject.cpp:
+        * runtime/JSONObject.cpp:
+        * runtime/JSObject.cpp:
+        * runtime/NamePrototype.cpp:
+        * runtime/NumberConstructor.cpp:
+        * runtime/NumberPrototype.cpp:
+        * runtime/ObjectConstructor.cpp:
+            - Implement getOwnPropertySlot in terms of GET_OWN_PROPERTY_DESCRIPTOR_IMPL.
+        * runtime/PropertyDescriptor.h:
+            - Added GET_OWN_PROPERTY_DESCRIPTOR_IMPL macro.
+        * runtime/PropertySlot.h:
+        (JSC::PropertySlot::isValue):
+        (JSC::PropertySlot::isGetter):
+        (JSC::PropertySlot::isCustom):
+        (JSC::PropertySlot::isCacheableValue):
+        (JSC::PropertySlot::isCacheableGetter):
+        (JSC::PropertySlot::isCacheableCustom):
+        (JSC::PropertySlot::attributes):
+        (JSC::PropertySlot::getterSetter):
+            - Add accessors necessary to convert PropertySlot to descriptor.
+        * runtime/RegExpConstructor.cpp:
+        * runtime/RegExpMatchesArray.cpp:
+        * runtime/RegExpMatchesArray.h:
+        * runtime/RegExpObject.cpp:
+        * runtime/RegExpPrototype.cpp:
+        * runtime/StringConstructor.cpp:
+        * runtime/StringObject.cpp:
+            - Implement getOwnPropertySlot in terms of GET_OWN_PROPERTY_DESCRIPTOR_IMPL.
+
 2013-08-19  Michael Saboff  <msaboff@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=120020 Change Set 154207 causes wrong register to be used for 32 bit tests

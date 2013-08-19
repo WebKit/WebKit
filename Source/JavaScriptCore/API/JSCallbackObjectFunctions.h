@@ -213,24 +213,7 @@ JSValue JSCallbackObject<Parent>::defaultValue(const JSObject* object, ExecState
 }
 
 template <class Parent>
-bool JSCallbackObject<Parent>::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)
-{
-    JSCallbackObject* thisObject = jsCast<JSCallbackObject*>(object);
-    PropertySlot slot(thisObject);
-    if (thisObject->methodTable()->getOwnPropertySlot(thisObject, exec, propertyName, slot)) {
-        // Ideally we should return an access descriptor, but returning a value descriptor is better than nothing.
-        JSValue value = slot.getValue(exec, propertyName);
-        if (!exec->hadException())
-            descriptor.setValue(value);
-        // We don't know whether the property is configurable, but assume it is.
-        descriptor.setConfigurable(true);
-        // We don't know whether the property is enumerable (we could call getOwnPropertyNames() to find out), but assume it isn't.
-        descriptor.setEnumerable(false);
-        return true;
-    }
-
-    return Parent::getOwnPropertyDescriptor(thisObject, exec, propertyName, descriptor);
-}
+GET_OWN_PROPERTY_DESCRIPTOR_IMPL(JSCallbackObject<Parent>)
 
 template <class Parent>
 void JSCallbackObject<Parent>::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)

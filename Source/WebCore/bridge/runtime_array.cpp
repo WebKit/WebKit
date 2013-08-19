@@ -103,27 +103,7 @@ bool RuntimeArray::getOwnPropertySlot(JSObject* object, ExecState* exec, Propert
     return JSObject::getOwnPropertySlot(thisObject, exec, propertyName, slot);
 }
 
-bool RuntimeArray::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)
-{
-    RuntimeArray* thisObject = jsCast<RuntimeArray*>(object);
-    if (propertyName == exec->propertyNames().length) {
-        PropertySlot slot(thisObject);
-        slot.setCustom(thisObject, DontDelete | ReadOnly | DontEnum, lengthGetter);
-        descriptor.setDescriptor(slot.getValue(exec, propertyName), ReadOnly | DontDelete | DontEnum);
-        return true;
-    }
-    
-    unsigned index = propertyName.asIndex();
-    if (index < thisObject->getLength()) {
-        ASSERT(index != PropertyName::NotAnIndex);
-        PropertySlot slot(thisObject);
-        slot.setCustomIndex(thisObject, DontDelete | DontEnum, index, indexGetter);
-        descriptor.setDescriptor(slot.getValue(exec, propertyName), DontDelete | DontEnum);
-        return true;
-    }
-    
-    return JSObject::getOwnPropertyDescriptor(thisObject, exec, propertyName, descriptor);
-}
+GET_OWN_PROPERTY_DESCRIPTOR_IMPL(RuntimeArray)
 
 bool RuntimeArray::getOwnPropertySlotByIndex(JSObject* object, ExecState *exec, unsigned index, PropertySlot& slot)
 {

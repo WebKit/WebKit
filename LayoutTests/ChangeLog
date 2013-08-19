@@ -1,3 +1,17 @@
+2013-08-19  Gavin Barraclough  <barraclough@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=119995
+        Start removing custom implementations of getOwnPropertyDescriptor
+
+        Reviewed by Sam Weinig.
+
+        This can now typically implemented in terms of getOwnPropertySlot.
+        Add a macro to PropertyDescriptor to define an implementation of GOPD in terms of GOPS.
+        Switch over most classes in JSC & the WebCore bindings generator to use this.
+
+        * http/tests/security/xss-DENIED-defineProperty-expected.txt:
+            - Remove erroneous error messages - cross frame access to reload is allowed - it's just read-only, non-configurable.
+
 2013-08-19  Jer Noble  <jer.noble@apple.com>
 
         <https://bugs.webkit.org/show_bug.cgi?id=120025> REGRESSION (r154254): fast/frames/frameset-frameborder-inheritance.html failing on Apple MountainLion Debug WK1 (Tests)

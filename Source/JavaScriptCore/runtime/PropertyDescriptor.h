@@ -55,7 +55,7 @@ namespace JSC {
         JSObject* setterObject() const;
         JS_EXPORT_PRIVATE void setUndefined();
         JS_EXPORT_PRIVATE void setDescriptor(JSValue value, unsigned attributes);
-        void setAccessorDescriptor(GetterSetter* accessor, unsigned attributes);
+        JS_EXPORT_PRIVATE void setAccessorDescriptor(GetterSetter* accessor, unsigned attributes);
         JS_EXPORT_PRIVATE void setWritable(bool);
         JS_EXPORT_PRIVATE void setEnumerable(bool);
         JS_EXPORT_PRIVATE void setConfigurable(bool);
@@ -83,6 +83,19 @@ namespace JSC {
         unsigned m_attributes;
         unsigned m_seenAttributes;
     };
+}
+
+#define GET_OWN_PROPERTY_DESCRIPTOR_IMPL(ClassName) \
+bool ClassName::getOwnPropertyDescriptor(JSC::JSObject* object, JSC::ExecState* exec, JSC::PropertyName propertyName, JSC::PropertyDescriptor& descriptor) \
+{ \
+    JSC::PropertySlot slot(object); \
+    if (!getOwnPropertySlot(object, exec, propertyName, slot)) \
+        return false; \
+    if (slot.isGetter()) \
+        descriptor.setAccessorDescriptor(slot.getterSetter(), slot.attributes()); \
+    else \
+        descriptor.setDescriptor(slot.getValue(exec, propertyName), slot.attributes()); \
+    return true; \
 }
 
 #endif

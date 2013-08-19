@@ -141,10 +141,7 @@ bool ArrayPrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, Prope
     return getStaticFunctionSlot<JSArray>(exec, ExecState::arrayPrototypeTable(exec), jsCast<ArrayPrototype*>(object), propertyName, slot);
 }
 
-bool ArrayPrototype::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)
-{
-    return getStaticFunctionDescriptor<JSArray>(exec, ExecState::arrayPrototypeTable(exec), jsCast<ArrayPrototype*>(object), propertyName, descriptor);
-}
+GET_OWN_PROPERTY_DESCRIPTOR_IMPL(ArrayPrototype)
 
 // ------------------------------ Array Functions ----------------------------
 

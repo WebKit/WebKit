@@ -77,14 +77,6 @@ bool JSWorkerGlobalScope::getOwnPropertySlotDelegate(ExecState* exec, PropertyNa
     return false;
 }
 
-bool JSWorkerGlobalScope::getOwnPropertyDescriptorDelegate(ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)
-{
-    // Look for overrides before looking at any of our own properties.
-    if (JSGlobalObject::getOwnPropertyDescriptor(this, exec, propertyName, descriptor))
-        return true;
-    return false;
-}
-
 JSValue JSWorkerGlobalScope::importScripts(ExecState* exec)
 {
     if (!exec->argumentCount())

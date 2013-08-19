@@ -68,14 +68,25 @@ public:
     JSValue getValue(ExecState*, unsigned propertyName) const;
 
     bool isCacheable() const { return m_offset != invalidOffset; }
-    bool isCacheableValue() const { return isCacheable() && m_propertyType == TypeValue; }
-    bool isCacheableGetter() const { return isCacheable() && m_propertyType == TypeGetter; }
-    bool isCacheableCustom() const { return isCacheable() && m_propertyType == TypeCustom; }
+    bool isValue() const { return m_propertyType == TypeValue; }
+    bool isGetter() const { return m_propertyType == TypeGetter; }
+    bool isCustom() const { return m_propertyType == TypeCustom; }
+    bool isCacheableValue() const { return isCacheable() && isValue(); }
+    bool isCacheableGetter() const { return isCacheable() && isGetter(); }
+    bool isCacheableCustom() const { return isCacheable() && isCustom(); }
+
+    unsigned attributes() const { return m_attributes; }
 
     PropertyOffset cachedOffset() const
     {
         ASSERT(isCacheable());
         return m_offset;
+    }
+
+    GetterSetter* getterSetter() const
+    {
+        ASSERT(isGetter());
+        return m_data.getter.getterSetter;
     }
 
     GetValueFunc customGetter() const

@@ -152,34 +152,7 @@ bool Arguments::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyNa
     return JSObject::getOwnPropertySlot(thisObject, exec, propertyName, slot);
 }
 
-bool Arguments::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)
-{
-    Arguments* thisObject = jsCast<Arguments*>(object);
-    unsigned i = propertyName.asIndex();
-    if (JSValue value = thisObject->tryGetArgument(i)) {
-        RELEASE_ASSERT(i < PropertyName::NotAnIndex);
-        descriptor.setDescriptor(value, None);
-        return true;
-    }
-    
-    if (propertyName == exec->propertyNames().length && LIKELY(!thisObject->m_overrodeLength)) {
-        descriptor.setDescriptor(jsNumber(thisObject->m_numArguments), DontEnum);
-        return true;
-    }
-    
-    if (propertyName == exec->propertyNames().callee && LIKELY(!thisObject->m_overrodeCallee)) {
-        if (!thisObject->m_isStrictMode) {
-            descriptor.setDescriptor(thisObject->m_callee.get(), DontEnum);
-            return true;
-        }
-        thisObject->createStrictModeCalleeIfNecessary(exec);
-    }
-
-    if (propertyName == exec->propertyNames().caller && thisObject->m_isStrictMode)
-        thisObject->createStrictModeCallerIfNecessary(exec);
-    
-    return JSObject::getOwnPropertyDescriptor(thisObject, exec, propertyName, descriptor);
-}
+GET_OWN_PROPERTY_DESCRIPTOR_IMPL(Arguments)
 
 void Arguments::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
