@@ -81,12 +81,12 @@ void RemoveFormatCommand::doApply()
 {
     Frame* frame = document()->frame();
 
-    if (!frame->selection()->selection().isNonOrphanedCaretOrRange())
+    if (!frame->selection().selection().isNonOrphanedCaretOrRange())
         return;
 
     // Get the default style for this editable root, it's the style that we'll give the
     // content that we're operating on.
-    Node* root = frame->selection()->rootEditableElement();
+    Node* root = frame->selection().rootEditableElement();
     RefPtr<EditingStyle> defaultStyle = EditingStyle::create(root);
 
     // We want to remove everything but transparent background.

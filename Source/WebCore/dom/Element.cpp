@@ -1970,15 +1970,15 @@ void Element::updateFocusAppearance(bool /*restorePreviousSelection*/)
             return;
         
         // When focusing an editable element in an iframe, don't reset the selection if it already contains a selection.
-        if (this == frame->selection()->rootEditableElement())
+        if (this == frame->selection().rootEditableElement())
             return;
 
         // FIXME: We should restore the previous selection if there is one.
         VisibleSelection newSelection = VisibleSelection(firstPositionInOrBeforeNode(this), DOWNSTREAM);
         
-        if (frame->selection()->shouldChangeSelection(newSelection)) {
-            frame->selection()->setSelection(newSelection);
-            frame->selection()->revealSelection();
+        if (frame->selection().shouldChangeSelection(newSelection)) {
+            frame->selection().setSelection(newSelection);
+            frame->selection().revealSelection();
         }
     } else if (renderer() && !renderer()->isWidget())
         renderer()->scrollRectToVisible(boundingBox());

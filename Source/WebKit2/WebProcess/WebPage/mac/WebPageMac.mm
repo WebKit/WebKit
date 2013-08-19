@@ -265,11 +265,11 @@ void WebPage::setComposition(const String& text, Vector<CompositionUnderline> un
 {
     Frame* frame = m_page->focusController().focusedOrMainFrame();
 
-    if (frame->selection()->isContentEditable()) {
+    if (frame->selection().isContentEditable()) {
         RefPtr<Range> replacementRange;
         if (replacementRangeStart != NSNotFound) {
             replacementRange = convertToRange(frame, NSMakeRange(replacementRangeStart, replacementRangeEnd - replacementRangeStart));
-            frame->selection()->setSelection(VisibleSelection(replacementRange.get(), SEL_DEFAULT_AFFINITY));
+            frame->selection().setSelection(VisibleSelection(replacementRange.get(), SEL_DEFAULT_AFFINITY));
         }
 
         frame->editor().setComposition(text, underlines, selectionStart, selectionEnd);
@@ -299,7 +299,7 @@ void WebPage::insertText(const String& text, uint64_t replacementRangeStart, uin
     if (replacementRangeStart != NSNotFound) {
         RefPtr<Range> replacementRange = convertToRange(frame, NSMakeRange(replacementRangeStart, replacementRangeEnd - replacementRangeStart));
         if (replacementRange)
-            frame->selection()->setSelection(VisibleSelection(replacementRange.get(), SEL_DEFAULT_AFFINITY));
+            frame->selection().setSelection(VisibleSelection(replacementRange.get(), SEL_DEFAULT_AFFINITY));
     }
 
     if (!frame->editor().hasComposition()) {
@@ -321,7 +321,7 @@ void WebPage::insertDictatedText(const String& text, uint64_t replacementRangeSt
     if (replacementRangeStart != NSNotFound) {
         RefPtr<Range> replacementRange = convertToRange(frame, NSMakeRange(replacementRangeStart, replacementRangeEnd - replacementRangeStart));
         if (replacementRange)
-            frame->selection()->setSelection(VisibleSelection(replacementRange.get(), SEL_DEFAULT_AFFINITY));
+            frame->selection().setSelection(VisibleSelection(replacementRange.get(), SEL_DEFAULT_AFFINITY));
     }
 
     ASSERT(!frame->editor().hasComposition());
@@ -340,7 +340,7 @@ void WebPage::getMarkedRange(uint64_t& location, uint64_t& length)
     RefPtr<Range> range = frame->editor().compositionRange();
     size_t locationSize;
     size_t lengthSize;
-    if (range && TextIterator::getLocationAndLengthFromRange(frame->selection()->rootEditableElementOrDocumentElement(), range.get(), locationSize, lengthSize)) {
+    if (range && TextIterator::getLocationAndLengthFromRange(frame->selection().rootEditableElementOrDocumentElement(), range.get(), locationSize, lengthSize)) {
         location = static_cast<uint64_t>(locationSize);
         length = static_cast<uint64_t>(lengthSize);
     }
@@ -356,8 +356,8 @@ void WebPage::getSelectedRange(uint64_t& location, uint64_t& length)
 
     size_t locationSize;
     size_t lengthSize;
-    RefPtr<Range> range = frame->selection()->toNormalizedRange();
-    if (range && TextIterator::getLocationAndLengthFromRange(frame->selection()->rootEditableElementOrDocumentElement(), range.get(), locationSize, lengthSize)) {
+    RefPtr<Range> range = frame->selection().toNormalizedRange();
+    if (range && TextIterator::getLocationAndLengthFromRange(frame->selection().rootEditableElementOrDocumentElement(), range.get(), locationSize, lengthSize)) {
         location = static_cast<uint64_t>(locationSize);
         length = static_cast<uint64_t>(lengthSize);
     }
@@ -371,7 +371,7 @@ void WebPage::getAttributedSubstringFromRange(uint64_t location, uint64_t length
     if (!frame)
         return;
 
-    if (frame->selection()->isNone() || !frame->selection()->isContentEditable() || frame->selection()->isInPasswordField())
+    if (frame->selection().isNone() || !frame->selection().isContentEditable() || frame->selection().isInPasswordField())
         return;
 
     RefPtr<Range> range = convertToRange(frame, nsRange);
@@ -407,7 +407,7 @@ void WebPage::characterIndexForPoint(IntPoint point, uint64_t& index)
 
     size_t location;
     size_t length;
-    if (TextIterator::getLocationAndLengthFromRange(frame->selection()->rootEditableElementOrDocumentElement(), range.get(), location, length))
+    if (TextIterator::getLocationAndLengthFromRange(frame->selection().rootEditableElementOrDocumentElement(), range.get(), location, length))
         index = static_cast<uint64_t>(location);
 }
 
@@ -424,7 +424,7 @@ PassRefPtr<Range> convertToRange(Frame* frame, NSRange nsrange)
     // directly in the document DOM, so serialization is problematic. Our solution is
     // to use the root editable element of the selection start as the positional base.
     // That fits with AppKit's idea of an input context.
-    return TextIterator::rangeFromLocationAndLength(frame->selection()->rootEditableElementOrDocumentElement(), nsrange.location, nsrange.length);
+    return TextIterator::rangeFromLocationAndLength(frame->selection().rootEditableElementOrDocumentElement(), nsrange.location, nsrange.length);
 }
     
 void WebPage::firstRectForCharacterRange(uint64_t location, uint64_t length, WebCore::IntRect& resultRect)
@@ -502,7 +502,7 @@ void WebPage::performDictionaryLookupAtLocation(const FloatPoint& floatPoint)
         return;
 
     VisiblePosition position = frame->visiblePositionForPoint(translatedPoint);
-    VisibleSelection selection = m_page->focusController().focusedOrMainFrame()->selection()->selection();
+    VisibleSelection selection = m_page->focusController().focusedOrMainFrame()->selection().selection();
     if (shouldUseSelection(position, selection)) {
         performDictionaryLookupForSelection(frame, selection);
         return;
@@ -685,7 +685,7 @@ void WebPage::registerUIProcessAccessibilityTokens(const CoreIPC::DataReference&
 void WebPage::readSelectionFromPasteboard(const String& pasteboardName, bool& result)
 {
     Frame* frame = m_page->focusController().focusedOrMainFrame();
-    if (!frame || frame->selection()->isNone()) {
+    if (!frame || frame->selection().isNone()) {
         result = false;
         return;
     }
@@ -708,7 +708,7 @@ void WebPage::getStringSelectionForPasteboard(String& stringValue)
         }
     }
 
-    if (frame->selection()->isNone())
+    if (frame->selection().isNone())
         return;
 
     stringValue = frame->editor().stringSelectionForPasteboard();
@@ -717,7 +717,7 @@ void WebPage::getStringSelectionForPasteboard(String& stringValue)
 void WebPage::getDataSelectionForPasteboard(const String pasteboardType, SharedMemory::Handle& handle, uint64_t& size)
 {
     Frame* frame = m_page->focusController().focusedOrMainFrame();
-    if (!frame || frame->selection()->isNone())
+    if (!frame || frame->selection().isNone())
         return;
 
     RefPtr<SharedBuffer> buffer = frame->editor().dataSelectionForPasteboard(pasteboardType);

@@ -171,7 +171,7 @@ using namespace WebCore;
 
         // Get preceeding word stem
         WebFrame *frame = [_htmlView _frame];
-        DOMRange *selection = kit(core(frame)->selection()->toNormalizedRange().get());
+        DOMRange *selection = kit(core(frame)->selection().toNormalizedRange().get());
         DOMRange *wholeWord = [frame _rangeByAlteringCurrentSelection:FrameSelection::AlterationExtend
             direction:DirectionBackward granularity:WordGranularity];
         DOMRange *prefix = [wholeWord cloneRange];

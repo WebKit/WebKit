@@ -354,14 +354,14 @@ bool QWebPageAdapter::hasSelection() const
 {
     Frame* frame = page->focusController().focusedOrMainFrame();
     if (frame)
-        return (frame->selection()->selection().selectionType() != VisibleSelection::NoSelection);
+        return (frame->selection().selection().selectionType() != VisibleSelection::NoSelection);
     return false;
 }
 
 QString QWebPageAdapter::selectedText() const
 {
     Frame* frame = page->focusController().focusedOrMainFrame();
-    if (frame->selection()->selection().selectionType() == VisibleSelection::NoSelection)
+    if (frame->selection().selection().selectionType() == VisibleSelection::NoSelection)
         return QString();
     return frame->editor().selectedText();
 }
@@ -421,10 +421,10 @@ bool QWebPageAdapter::findText(const QString& subString, FindFlag options)
     }
 
     if (subString.isEmpty()) {
-        page->mainFrame()->selection()->clear();
+        page->mainFrame()->selection().clear();
         Frame* frame = page->mainFrame()->tree()->firstChild();
         while (frame) {
-            frame->selection()->clear();
+            frame->selection().clear();
             frame = frame->tree()->traverseNextWithWrap(false);
         }
     }
@@ -626,8 +626,8 @@ void QWebPageAdapter::inputMethodEvent(QInputMethodEvent *ev)
     }
 
     Node* node = 0;
-    if (frame->selection()->rootEditableElement())
-        node = frame->selection()->rootEditableElement()->deprecatedShadowAncestorNode();
+    if (frame->selection().rootEditableElement())
+        node = frame->selection().rootEditableElement()->deprecatedShadowAncestorNode();
 
     Vector<CompositionUnderline> underlines;
     bool hasSelection = false;
@@ -642,9 +642,9 @@ void QWebPageAdapter::inputMethodEvent(QInputMethodEvent *ev)
             break;
         }
         case QInputMethodEvent::Cursor: {
-            frame->selection()->setCaretVisible(a.length); // if length is 0 cursor is invisible
+            frame->selection().setCaretVisible(a.length); // if length is 0 cursor is invisible
             if (a.length > 0) {
-                RenderObject* caretRenderer = frame->selection()->caretRenderer();
+                RenderObject* caretRenderer = frame->selection().caretRenderer();
                 if (caretRenderer) {
                     QColor qcolor = a.value.value<QColor>();
                     caretRenderer->style()->setColor(Color(makeRGBA(qcolor.red(), qcolor.green(), qcolor.blue(), qcolor.alpha())));
@@ -676,7 +676,7 @@ void QWebPageAdapter::inputMethodEvent(QInputMethodEvent *ev)
     }
 
     if (node && ev->replacementLength() > 0) {
-        int cursorPos = frame->selection()->extent().offsetInContainerNode();
+        int cursorPos = frame->selection().extent().offsetInContainerNode();
         int start = cursorPos + ev->replacementStart();
         if (isHTMLTextFormControlElement(node))
             toHTMLTextFormControlElement(node)->setSelectionRange(start, start + ev->replacementLength());
@@ -706,8 +706,8 @@ QVariant QWebPageAdapter::inputMethodQuery(Qt::InputMethodQuery property) const
     RenderObject* renderer = 0;
     RenderTextControl* renderTextControl = 0;
 
-    if (frame->selection()->rootEditableElement())
-        renderer = frame->selection()->rootEditableElement()->deprecatedShadowAncestorNode()->renderer();
+    if (frame->selection().rootEditableElement())
+        renderer = frame->selection().rootEditableElement()->deprecatedShadowAncestorNode()->renderer();
 
     if (renderer && renderer->isTextControl())
         renderTextControl = toRenderTextControl(renderer);
@@ -719,7 +719,7 @@ QVariant QWebPageAdapter::inputMethodQuery(Qt::InputMethodQuery property) const
             // We can't access absoluteCaretBounds() while the view needs to layout.
             return QVariant();
         }
-        return QVariant(view->contentsToWindow(frame->selection()->absoluteCaretBounds()));
+        return QVariant(view->contentsToWindow(frame->selection().absoluteCaretBounds()));
     }
     case Qt::ImFont: {
         if (renderTextControl) {
@@ -730,8 +730,8 @@ QVariant QWebPageAdapter::inputMethodQuery(Qt::InputMethodQuery property) const
     }
     case Qt::ImCursorPosition: {
         if (editor.hasComposition())
-            return QVariant(frame->selection()->end().offsetInContainerNode());
-        return QVariant(frame->selection()->extent().offsetInContainerNode());
+            return QVariant(frame->selection().end().offsetInContainerNode());
+        return QVariant(frame->selection().extent().offsetInContainerNode());
     }
     case Qt::ImSurroundingText: {
         if (renderTextControl && renderTextControl->textFormControlElement()) {
@@ -745,8 +745,8 @@ QVariant QWebPageAdapter::inputMethodQuery(Qt::InputMethodQuery property) const
     }
     case Qt::ImCurrentSelection: {
         if (!editor.hasComposition() && renderTextControl && renderTextControl->textFormControlElement()) {
-            int start = frame->selection()->start().offsetInContainerNode();
-            int end = frame->selection()->end().offsetInContainerNode();
+            int start = frame->selection().start().offsetInContainerNode();
+            int end = frame->selection().end().offsetInContainerNode();
             if (end > start)
                 return QVariant(QString(renderTextControl->textFormControlElement()->value()).mid(start, end - start));
         }
@@ -755,11 +755,11 @@ QVariant QWebPageAdapter::inputMethodQuery(Qt::InputMethodQuery property) const
     }
     case Qt::ImAnchorPosition: {
         if (editor.hasComposition())
-            return QVariant(frame->selection()->start().offsetInContainerNode());
-        return QVariant(frame->selection()->base().offsetInContainerNode());
+            return QVariant(frame->selection().start().offsetInContainerNode());
+        return QVariant(frame->selection().base().offsetInContainerNode());
     }
     case Qt::ImMaximumTextLength: {
-        if (frame->selection()->isContentEditable()) {
+        if (frame->selection().isContentEditable()) {
             if (frame->document() && frame->document()->focusedElement()) {
                 if (isHTMLInputElement(frame->document()->focusedElement())) {
                     HTMLInputElement* inputElement = toHTMLInputElement(frame->document()->focusedElement());

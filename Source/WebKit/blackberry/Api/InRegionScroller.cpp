@@ -397,7 +397,7 @@ bool InRegionScrollerPrivate::setLayerScrollPosition(RenderLayer* layer, const I
         layer->scrollToOffset(toIntSize(scrollPosition));
     }
 
-    layer->renderer()->frame()->selection()->updateAppearance();
+    layer->renderer()->frame()->selection().updateAppearance();
     // FIXME: We have code in place to handle scrolling and clipping tap highlight
     // on in-region scrolling. As soon as it is fast enough (i.e. we have it backed by
     // a backing store), we can reliably make use of it in the real world.

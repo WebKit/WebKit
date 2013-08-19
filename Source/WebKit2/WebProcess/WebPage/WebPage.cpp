@@ -599,11 +599,11 @@ EditorState WebPage::editorState() const
         }
     }
 
-    result.selectionIsNone = frame->selection()->isNone();
-    result.selectionIsRange = frame->selection()->isRange();
-    result.isContentEditable = frame->selection()->isContentEditable();
-    result.isContentRichlyEditable = frame->selection()->isContentRichlyEditable();
-    result.isInPasswordField = frame->selection()->isInPasswordField();
+    result.selectionIsNone = frame->selection().isNone();
+    result.selectionIsRange = frame->selection().isRange();
+    result.isContentEditable = frame->selection().isContentEditable();
+    result.isContentRichlyEditable = frame->selection().isContentRichlyEditable();
+    result.isInPasswordField = frame->selection().isInPasswordField();
     result.hasComposition = frame->editor().hasComposition();
     result.shouldIgnoreCompositionSelectionChange = frame->editor().ignoreCompositionSelectionChange();
 
@@ -611,7 +611,7 @@ EditorState WebPage::editorState() const
     size_t location = 0;
     size_t length = 0;
 
-    Element* selectionRoot = frame->selection()->rootEditableElementRespectingShadowTree();
+    Element* selectionRoot = frame->selection().rootEditableElementRespectingShadowTree();
     Element* scope = selectionRoot ? selectionRoot : frame->document()->documentElement();
 
     if (!scope)
@@ -650,9 +650,9 @@ EditorState WebPage::editorState() const
         result.compositionRect = frame->view()->contentsToWindow(range->boundingBox());
     }
 
-    if (!result.hasComposition && !result.selectionIsNone && (range = frame->selection()->selection().firstRange())) {
+    if (!result.hasComposition && !result.selectionIsNone && (range = frame->selection().selection().firstRange())) {
         TextIterator::getLocationAndLengthFromRange(scope, range.get(), location, length);
-        bool baseIsFirst = frame->selection()->selection().isBaseFirst();
+        bool baseIsFirst = frame->selection().selection().isBaseFirst();
 
         result.cursorPosition = (baseIsFirst) ? location + length : location;
         result.anchorPosition = (baseIsFirst) ? location : location + length;
@@ -673,7 +673,7 @@ EditorState WebPage::editorState() const
 #endif
 
 #if PLATFORM(GTK)
-    result.cursorRect = frame->selection()->absoluteCaretBounds();
+    result.cursorRect = frame->selection().absoluteCaretBounds();
 #endif
 
     return result;
@@ -1528,7 +1528,7 @@ PassRefPtr<WebImage> WebPage::scaledSnapshotWithOptions(const IntRect& rect, dou
     frameView->paintContentsForSnapshot(graphicsContext.get(), rect, shouldPaintSelection, coordinateSpace);
 
     if (options & SnapshotOptionsPaintSelectionRectangle) {
-        FloatRect selectionRectangle = m_mainFrame->coreFrame()->selection()->bounds();
+        FloatRect selectionRectangle = m_mainFrame->coreFrame()->selection().bounds();
         graphicsContext->setStrokeColor(Color(0xFF, 0, 0), ColorSpaceDeviceRGB);
         graphicsContext->strokeRect(selectionRectangle, 1);
     }
@@ -1996,7 +1996,7 @@ void WebPage::centerSelectionInVisibleArea()
     if (!frame)
         return;
     
-    frame->selection()->revealSelection(ScrollAlignment::alignCenterAlways);
+    frame->selection().revealSelection(ScrollAlignment::alignCenterAlways);
     m_findController.showFindIndicatorInSelection();
 }
 
@@ -2287,7 +2287,7 @@ void WebPage::getRenderTreeExternalRepresentation(uint64_t callbackID)
 static Frame* frameWithSelection(Page* page)
 {
     for (Frame* frame = page->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
-        if (frame->selection()->isRange())
+        if (frame->selection().isRange())
             return frame;
     }
 
@@ -3018,7 +3018,7 @@ void WebPage::replaceSelectionWithText(Frame* frame, const String& text)
 
 void WebPage::clearSelection()
 {
-    m_page->focusController().focusedOrMainFrame()->selection()->clear();
+    m_page->focusController().focusedOrMainFrame()->selection().clear();
 }
 
 void WebPage::didChangeScrollOffsetForMainFrame()
@@ -3848,13 +3848,13 @@ void WebPage::confirmComposition(const String& compositionString, int64_t select
         return;
     }
 
-    Element* scope = targetFrame->selection()->rootEditableElement();
+    Element* scope = targetFrame->selection().rootEditableElement();
     RefPtr<Range> selectionRange = TextIterator::rangeFromLocationAndLength(scope, selectionStart, selectionLength);
     ASSERT_WITH_MESSAGE(selectionRange, "Invalid selection: [%lld:%lld] in text of length %d", static_cast<long long>(selectionStart), static_cast<long long>(selectionLength), scope->innerText().length());
 
     if (selectionRange) {
         VisibleSelection selection(selectionRange.get(), SEL_DEFAULT_AFFINITY);
-        targetFrame->selection()->setSelection(selection);
+        targetFrame->selection().setSelection(selection);
     }
     send(Messages::WebPageProxy::EditorStateChanged(editorState()));
 }
@@ -3862,7 +3862,7 @@ void WebPage::confirmComposition(const String& compositionString, int64_t select
 void WebPage::setComposition(const String& text, Vector<CompositionUnderline> underlines, uint64_t selectionStart, uint64_t selectionEnd, uint64_t replacementStart, uint64_t replacementLength)
 {
     Frame* targetFrame = targetFrameForEditing(this);
-    if (!targetFrame || !targetFrame->selection()->isContentEditable()) {
+    if (!targetFrame || !targetFrame->selection().isContentEditable()) {
         send(Messages::WebPageProxy::EditorStateChanged(editorState()));
         return;
     }
@@ -3871,10 +3871,10 @@ void WebPage::setComposition(const String& text, Vector<CompositionUnderline> un
         // The layout needs to be uptodate before setting a selection
         targetFrame->document()->updateLayout();
 
-        Element* scope = targetFrame->selection()->rootEditableElement();
+        Element* scope = targetFrame->selection().rootEditableElement();
         RefPtr<Range> replacementRange = TextIterator::rangeFromLocationAndLength(scope, replacementStart, replacementLength);
         targetFrame->editor().setIgnoreCompositionSelectionChange(true);
-        targetFrame->selection()->setSelection(VisibleSelection(replacementRange.get(), SEL_DEFAULT_AFFINITY));
+        targetFrame->selection().setSelection(VisibleSelection(replacementRange.get(), SEL_DEFAULT_AFFINITY));
         targetFrame->editor().setIgnoreCompositionSelectionChange(false);
     }
 
@@ -4174,7 +4174,7 @@ PassRefPtr<Range> WebPage::currentSelectionAsRange()
     if (!frame)
         return 0;
 
-    return frame->selection()->toNormalizedRange();
+    return frame->selection().toNormalizedRange();
 }
 
 void WebPage::reportUsedFeatures()

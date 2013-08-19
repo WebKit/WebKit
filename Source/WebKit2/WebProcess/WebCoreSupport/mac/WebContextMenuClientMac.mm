@@ -43,7 +43,7 @@ namespace WebKit {
 
 void WebContextMenuClient::lookUpInDictionary(Frame* frame)
 {
-    m_page->performDictionaryLookupForSelection(frame, frame->selection()->selection());
+    m_page->performDictionaryLookupForSelection(frame, frame->selection().selection());
 }
 
 bool WebContextMenuClient::isSpeaking()
@@ -79,7 +79,7 @@ void WebContextMenuClient::searchWithSpotlight()
     
     Frame* selectionFrame = mainFrame;
     for (; selectionFrame; selectionFrame = selectionFrame->tree()->traverseNext(mainFrame)) {
-        if (selectionFrame->selection()->isRange())
+        if (selectionFrame->selection().isRange())
             break;
     }
     if (!selectionFrame)

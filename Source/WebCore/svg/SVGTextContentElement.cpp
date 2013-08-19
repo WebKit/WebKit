@@ -195,9 +195,7 @@ void SVGTextContentElement::selectSubString(unsigned charnum, unsigned nchars, E
     ASSERT(document());
     ASSERT(document()->frame());
 
-    FrameSelection* selection = document()->frame()->selection();
-    if (!selection)
-        return;
+    FrameSelection& selection = document()->frame()->selection();
 
     // Find selection start
     VisiblePosition start(firstPositionInNode(const_cast<SVGTextContentElement*>(this)));
@@ -209,7 +207,7 @@ void SVGTextContentElement::selectSubString(unsigned charnum, unsigned nchars, E
     for (unsigned i = 0; i < nchars; ++i)
         end = end.next();
 
-    selection->setSelection(VisibleSelection(start, end));
+    selection.setSelection(VisibleSelection(start, end));
 }
 
 bool SVGTextContentElement::isSupportedAttribute(const QualifiedName& attrName)

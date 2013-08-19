@@ -3486,7 +3486,7 @@ HRESULT STDMETHODCALLTYPE WebView::updateFocusedAndActiveState()
     bool active = m_page->focusController().isActive();
     Frame* mainFrame = m_page->mainFrame();
     Frame* focusedFrame = m_page->focusController().focusedOrMainFrame();
-    mainFrame->selection()->setFocused(active && mainFrame == focusedFrame);
+    mainFrame->selection().setFocused(active && mainFrame == focusedFrame);
 
     return S_OK;
 }
@@ -3574,7 +3574,7 @@ HRESULT STDMETHODCALLTYPE WebView::selectionRect(RECT* rc)
     WebCore::Frame* frame = m_page->focusController().focusedOrMainFrame();
 
     if (frame) {
-        IntRect ir = enclosingIntRect(frame->selection()->bounds());
+        IntRect ir = enclosingIntRect(frame->selection().bounds());
         ir = frame->view()->convertToContainingWindow(ir);
         ir.move(-frame->view()->scrollOffset().width(), -frame->view()->scrollOffset().height());
         rc->left = ir.x();
@@ -3734,7 +3734,7 @@ HRESULT STDMETHODCALLTYPE WebView::centerSelectionInVisibleArea(
     if (!coreFrame)
         return E_FAIL;
 
-    coreFrame->selection()->revealSelection(ScrollAlignment::alignCenterAlways);
+    coreFrame->selection().revealSelection(ScrollAlignment::alignCenterAlways);
     return S_OK;
 }
 
@@ -4298,7 +4298,7 @@ HRESULT STDMETHODCALLTYPE WebView::styleDeclarationWithText(
 HRESULT STDMETHODCALLTYPE WebView::hasSelectedRange( 
         /* [retval][out] */ BOOL* hasSelectedRange)
 {
-    *hasSelectedRange = m_page->mainFrame()->selection()->isRange();
+    *hasSelectedRange = m_page->mainFrame()->selection().isRange();
     return S_OK;
 }
     
@@ -4387,9 +4387,9 @@ HRESULT STDMETHODCALLTYPE WebView::replaceSelectionWithNode(
 HRESULT STDMETHODCALLTYPE WebView::replaceSelectionWithText( 
         /* [in] */ BSTR text)
 {
-    Position start = m_page->mainFrame()->selection()->selection().start();
+    Position start = m_page->mainFrame()->selection().selection().start();
     m_page->focusController().focusedOrMainFrame()->editor().insertText(toString(text), 0);
-    m_page->mainFrame()->selection()->setBase(start);
+    m_page->mainFrame()->selection().setBase(start);
     return S_OK;
 }
     
@@ -4416,7 +4416,7 @@ HRESULT STDMETHODCALLTYPE WebView::deleteSelection( void)
 
 HRESULT STDMETHODCALLTYPE WebView::clearSelection( void)
 {
-    m_page->focusController().focusedOrMainFrame()->selection()->clear();
+    m_page->focusController().focusedOrMainFrame()->selection().clear();
     return S_OK;
 }
     
@@ -5510,7 +5510,7 @@ void WebView::releaseIMMContext(HIMC hIMC)
 void WebView::prepareCandidateWindow(Frame* targetFrame, HIMC hInputContext) 
 {
     IntRect caret;
-    if (RefPtr<Range> range = targetFrame->selection()->selection().toNormalizedRange()) {
+    if (RefPtr<Range> range = targetFrame->selection().selection().toNormalizedRange()) {
         ExceptionCode ec = 0;
         RefPtr<Range> tempRange = range->cloneRange(ec);
         caret = targetFrame->editor().firstRectForRange(tempRange.get());
@@ -5774,7 +5774,7 @@ LRESULT WebView::onIMERequestCharPosition(Frame* targetFrame, IMECHARPOSITION* c
     if (charPos->dwCharPos && !targetFrame->editor().hasComposition())
         return 0;
     IntRect caret;
-    if (RefPtr<Range> range = targetFrame->editor().hasComposition() ? targetFrame->editor().compositionRange() : targetFrame->selection()->selection().toNormalizedRange()) {
+    if (RefPtr<Range> range = targetFrame->editor().hasComposition() ? targetFrame->editor().compositionRange() : targetFrame->selection().selection().toNormalizedRange()) {
         ExceptionCode ec = 0;
         RefPtr<Range> tempRange = range->cloneRange(ec);
         tempRange->setStart(tempRange->startContainer(ec), tempRange->startOffset(ec) + charPos->dwCharPos, ec);
@@ -5791,7 +5791,7 @@ LRESULT WebView::onIMERequestCharPosition(Frame* targetFrame, IMECHARPOSITION* c
 
 LRESULT WebView::onIMERequestReconvertString(Frame* targetFrame, RECONVERTSTRING* reconvertString)
 {
-    RefPtr<Range> selectedRange = targetFrame->selection()->toNormalizedRange();
+    RefPtr<Range> selectedRange = targetFrame->selection().toNormalizedRange();
     String text = selectedRange->text();
     if (!reconvertString)
         return sizeof(RECONVERTSTRING) + text.length() * sizeof(UChar);
@@ -7045,7 +7045,7 @@ HRESULT STDMETHODCALLTYPE WebView::firstRectForCharacterRangeForTesting(
     if (length > INT_MAX || location + length > INT_MAX)
         length = INT_MAX - location;
         
-    RefPtr<Range> range = TextIterator::rangeFromLocationAndLength(frame->selection()->rootEditableElementOrDocumentElement(), location, length);
+    RefPtr<Range> range = TextIterator::rangeFromLocationAndLength(frame->selection().rootEditableElementOrDocumentElement(), location, length);
 
     if (!range)
         return E_FAIL;
@@ -7077,7 +7077,7 @@ HRESULT STDMETHODCALLTYPE WebView::selectedRangeForTesting(/* [out] */ UINT* loc
 
     size_t locationSize;
     size_t lengthSize;
-    if (range && TextIterator::getLocationAndLengthFromRange(frame->selection()->rootEditableElementOrDocumentElement(), range.get(), locationSize, lengthSize)) {
+    if (range && TextIterator::getLocationAndLengthFromRange(frame->selection().rootEditableElementOrDocumentElement(), range.get(), locationSize, lengthSize)) {
         *location = static_cast<UINT>(locationSize);
         *length = static_cast<UINT>(lengthSize);
     }

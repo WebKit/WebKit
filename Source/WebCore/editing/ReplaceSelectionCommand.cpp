@@ -1013,7 +1013,7 @@ void ReplaceSelectionCommand::doApply()
     // FIXME: Can this wait until after the operation has been performed?  There doesn't seem to be
     // any work performed after this that queries or uses the typing style.
     if (Frame* frame = document()->frame())
-        frame->selection()->clearTypingStyle();
+        frame->selection().clearTypingStyle();
 
     removeHeadContents(fragment);
 

@@ -93,7 +93,7 @@ void DictationCommand::insertText(Document* document, const String& text, const 
     RefPtr<Frame> frame = document->frame();
     ASSERT(frame);
 
-    VisibleSelection currentSelection = frame->selection()->selection();
+    VisibleSelection currentSelection = frame->selection().selection();
 
     String newText = dispatchBeforeTextInsertedEvent(text, selectionForInsertion, false);
 

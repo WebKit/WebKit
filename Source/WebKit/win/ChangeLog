@@ -1,3 +1,27 @@
+2013-08-19  Pratik Solanki  <psolanki@apple.com>
+
+        <https://webkit.org/b/119918> Frame::selection() should return a reference
+
+        Reviewed by Darin Adler.
+
+        m_selection is never NULL so return a reference from Frame::selection(). Also removed some
+        unnecessary null checks and assert diff ts exposed as a result.
+
+        * WebFrame.cpp:
+        (WebFrame::currentForm):
+        * WebView.cpp:
+        (WebView::updateFocusedAndActiveState):
+        (WebView::selectionRect):
+        (WebView::centerSelectionInVisibleArea):
+        (WebView::hasSelectedRange):
+        (WebView::replaceSelectionWithText):
+        (WebView::clearSelection):
+        (WebView::prepareCandidateWindow):
+        (WebView::onIMERequestCharPosition):
+        (WebView::onIMERequestReconvertString):
+        (WebView::firstRectForCharacterRangeForTesting):
+        (WebView::selectedRangeForTesting):
+
 2013-08-17  Andreas Kling  <akling@apple.com>
 
         Windows build fix after r154219.

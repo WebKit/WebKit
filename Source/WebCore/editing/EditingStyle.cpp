@@ -956,7 +956,7 @@ void EditingStyle::mergeTypingStyle(Document* document)
 {
     ASSERT(document);
 
-    RefPtr<EditingStyle> typingStyle = document->frame()->selection()->typingStyle();
+    RefPtr<EditingStyle> typingStyle = document->frame()->selection().typingStyle();
     if (!typingStyle || typingStyle == this)
         return;
 

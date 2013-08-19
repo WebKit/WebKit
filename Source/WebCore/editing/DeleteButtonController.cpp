@@ -176,7 +176,7 @@ void DeleteButtonController::respondToChangedSelection(const VisibleSelection& o
         return;
 
     HTMLElement* oldElement = enclosingDeletableElement(oldSelection);
-    HTMLElement* newElement = enclosingDeletableElement(m_frame->selection()->selection());
+    HTMLElement* newElement = enclosingDeletableElement(m_frame->selection().selection());
     if (oldElement == newElement)
         return;
 
@@ -350,7 +350,7 @@ void DeleteButtonController::enable()
         // because whether something is editable depends on style, so we need
         // to recalculate style before calling enclosingDeletableElement.
         m_frame->document()->updateStyleIfNeeded();
-        show(enclosingDeletableElement(m_frame->selection()->selection()));
+        show(enclosingDeletableElement(m_frame->selection().selection()));
     }
 }
 
@@ -395,7 +395,7 @@ void DeleteButtonController::deleteTarget()
     // a caret where the target had been.
     Position pos = positionInParentBeforeNode(m_target.get());
     applyCommand(RemoveTargetCommand::create(m_frame->document(), m_target));
-    m_frame->selection()->setSelection(VisiblePosition(pos));
+    m_frame->selection().setSelection(VisiblePosition(pos));
 }
 #endif
 

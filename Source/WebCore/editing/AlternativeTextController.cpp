@@ -165,7 +165,7 @@ void AlternativeTextController::stopAlternativeTextUITimer()
 void AlternativeTextController::stopPendingCorrection(const VisibleSelection& oldSelection)
 {
     // Make sure there's no pending autocorrection before we call markMisspellingsAndBadGrammar() below.
-    VisibleSelection currentSelection(m_frame->selection()->selection());
+    VisibleSelection currentSelection(m_frame->selection().selection());
     if (currentSelection == oldSelection)
         return;
 
@@ -281,7 +281,7 @@ void AlternativeTextController::applyAlternativeTextToRange(const Range* range, 
     // Recalculate pragraphRangeContainingCorrection, since SpellingCorrectionCommand modified the DOM, such that the original paragraphRangeContainingCorrection is no longer valid. Radar: 10305315 Bugzilla: 89526
     paragraphRangeContainingCorrection = TextIterator::rangeFromLocationAndLength(m_frame->document(), paragraphStartIndex, correctionStartOffsetInParagraph + alternative.length());
     
-    setEnd(paragraphRangeContainingCorrection.get(), m_frame->selection()->selection().start());
+    setEnd(paragraphRangeContainingCorrection.get(), m_frame->selection().selection().start());
     RefPtr<Range> replacementRange = TextIterator::subrange(paragraphRangeContainingCorrection.get(), correctionStartOffsetInParagraph, alternative.length());
     String newText = plainText(replacementRange.get());
 
@@ -303,7 +303,7 @@ bool AlternativeTextController::applyAutocorrectionBeforeTypingIfAppropriate()
     if (m_alternativeTextInfo.type != AlternativeTextTypeCorrection)
         return false;
 
-    Position caretPosition = m_frame->selection()->selection().start();
+    Position caretPosition = m_frame->selection().selection().start();
 
     if (m_alternativeTextInfo.rangeWithAlternative->endPosition() == caretPosition) {
         handleAlternativeTextUIResult(dismissSoon(ReasonForDismissingAlternativeTextAccepted));
@@ -321,8 +321,8 @@ void AlternativeTextController::respondToUnappliedSpellCorrection(const VisibleS
     if (AlternativeTextClient* client = alternativeTextClient())
         client->recordAutocorrectionResponse(AutocorrectionReverted, corrected, correction);
     m_frame->document()->updateLayout();
-    m_frame->selection()->setSelection(selectionOfCorrected, FrameSelection::CloseTyping | FrameSelection::ClearTypingStyle | FrameSelection::SpellCorrectionTriggered);
-    RefPtr<Range> range = Range::create(m_frame->document(), m_frame->selection()->selection().start(), m_frame->selection()->selection().end());
+    m_frame->selection().setSelection(selectionOfCorrected, FrameSelection::CloseTyping | FrameSelection::ClearTypingStyle | FrameSelection::SpellCorrectionTriggered);
+    RefPtr<Range> range = Range::create(m_frame->document(), m_frame->selection().selection().start(), m_frame->selection().selection().end());
 
     DocumentMarkerController* markers = m_frame->document()->markers();
     markers->removeMarkers(range.get(), DocumentMarker::Spelling | DocumentMarker::Autocorrected, DocumentMarkerController::RemovePartiallyOverlappingMarker);
@@ -335,7 +335,7 @@ void AlternativeTextController::timerFired(Timer<AlternativeTextController>*)
     m_isDismissedByEditing = false;
     switch (m_alternativeTextInfo.type) {
     case AlternativeTextTypeCorrection: {
-        VisibleSelection selection(m_frame->selection()->selection());
+        VisibleSelection selection(m_frame->selection().selection());
         VisiblePosition start(selection.start(), selection.affinity());
         VisiblePosition p = startOfWord(start, LeftWordIfOnBoundary);
         VisibleSelection adjacentWords = VisibleSelection(p, start);
@@ -449,7 +449,7 @@ FloatRect AlternativeTextController::rootViewRectForRange(const Range* range) co
 
 void AlternativeTextController::respondToChangedSelection(const VisibleSelection& oldSelection, FrameSelection::SetSelectionOptions options)
 {
-    VisibleSelection currentSelection(m_frame->selection()->selection());
+    VisibleSelection currentSelection(m_frame->selection().selection());
     // When user moves caret to the end of autocorrected word and pauses, we show the panel
     // containing the original pre-correction word so that user can quickly revert the
     // undesired autocorrection. Here, we start correction panel timer once we confirm that

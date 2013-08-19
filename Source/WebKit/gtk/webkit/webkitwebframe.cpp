@@ -1155,10 +1155,10 @@ WebKitDOMRange* webkit_web_frame_get_range_for_word_around_caret(WebKitWebFrame*
     g_return_val_if_fail(WEBKIT_IS_WEB_FRAME(frame), 0);
 
     Frame* coreFrame = core(frame);
-    FrameSelection* selection = coreFrame->selection();
-    if (selection->isNone() || selection->isRange())
+    FrameSelection& selection = coreFrame->selection();
+    if (selection.isNone() || selection.isRange())
         return 0;
-    VisibleSelection visibleSelection(selection->selection().visibleStart());
+    VisibleSelection visibleSelection(selection.selection().visibleStart());
     visibleSelection.expandUsingGranularity(WordGranularity);
 
     return kit(visibleSelection.firstRange().get());

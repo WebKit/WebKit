@@ -200,7 +200,7 @@ WebCore::IntRect DumpRenderTreeSupportEfl::selectionRectangle(const Evas_Object*
 {
     DRT_SUPPORT_FRAME_GET_OR_RETURN(ewkFrame, frame, WebCore::IntRect());
 
-    return enclosingIntRect(frame->selection()->bounds());
+    return enclosingIntRect(frame->selection().bounds());
 }
 
 // Compare with "WebKit/Tools/DumpRenderTree/mac/FrameLoadDelegate.mm
@@ -642,7 +642,7 @@ WebCore::IntRect DumpRenderTreeSupportEfl::firstRectForCharacterRange(Evas_Objec
 
     WebCore::Frame* frame = page->focusController().focusedOrMainFrame();
 
-    RefPtr<WebCore::Range> range = WebCore::TextIterator::rangeFromLocationAndLength(frame->selection()->rootEditableElementOrDocumentElement(), location, length);
+    RefPtr<WebCore::Range> range = WebCore::TextIterator::rangeFromLocationAndLength(frame->selection().rootEditableElementOrDocumentElement(), location, length);
     if (!range)
         return WebCore::IntRect();
 
@@ -660,11 +660,11 @@ bool DumpRenderTreeSupportEfl::selectedRange(Evas_Object* ewkView, int* start, i
         return false;
 
     WebCore::Frame* frame = page->focusController().focusedOrMainFrame();
-    RefPtr<WebCore::Range> range = frame->selection()->toNormalizedRange().get();
+    RefPtr<WebCore::Range> range = frame->selection().toNormalizedRange().get();
     if (!range)
         return false;
 
-    WebCore::Element* selectionRoot = frame->selection()->rootEditableElement();
+    WebCore::Element* selectionRoot = frame->selection().rootEditableElement();
     WebCore::Element* scope = selectionRoot ? selectionRoot : frame->document()->documentElement();
 
     RefPtr<WebCore::Range> testRange = WebCore::Range::create(scope->document(), scope, 0, range->startContainer(), range->startOffset());

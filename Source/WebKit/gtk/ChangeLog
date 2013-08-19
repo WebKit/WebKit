@@ -1,3 +1,26 @@
+2013-08-19  Pratik Solanki  <psolanki@apple.com>
+
+        <https://webkit.org/b/119918> Frame::selection() should return a reference
+
+        Reviewed by Darin Adler.
+
+        m_selection is never NULL so return a reference from Frame::selection(). Also removed some
+        unnecessary null checks and assert diff ts exposed as a result.
+
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        (WebKit::ChromeClient::paint):
+        * WebCoreSupport/DumpRenderTreeSupportGtk.cpp:
+        (DumpRenderTreeSupportGtk::firstRectForCharacterRange):
+        (DumpRenderTreeSupportGtk::selectedRange):
+        (DumpRenderTreeSupportGtk::rectangleForSelection):
+        * WebCoreSupport/EditorClientGtk.cpp:
+        (WebKit::collapseSelection):
+        (WebKit::setSelectionPrimaryClipboardIfNeeded):
+        * webkit/webkitwebframe.cpp:
+        (webkit_web_frame_get_range_for_word_around_caret):
+        * webkit/webkitwebview.cpp:
+        (getLocationForKeyboardGeneratedContextMenu):
+
 2013-08-17  Darin Adler  <darin@apple.com>
 
         <https://webkit.org/b/119941> Make Page::dragController return a reference

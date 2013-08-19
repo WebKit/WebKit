@@ -934,7 +934,7 @@ unsigned SelectorChecker::determineLinkMatchType(const CSSSelector* selector)
 
 bool SelectorChecker::isFrameFocused(const Element* element)
 {
-    return element->document()->frame() && element->document()->frame()->selection()->isFocusedAndActive();
+    return element->document()->frame() && element->document()->frame()->selection().isFocusedAndActive();
 }
 
 bool SelectorChecker::matchesFocusPseudoClass(const Element* element)

@@ -413,7 +413,7 @@ WebView *getWebView(WebFrame *webFrame)
     // optimization for common case to avoid creating potentially large selection string
     if ([documentView isKindOfClass:[WebHTMLView class]])
         if (Frame* coreFrame = _private->coreFrame)
-            return coreFrame->selection()->isRange();
+            return coreFrame->selection().isRange();
 
     if ([documentView conformsToProtocol:@protocol(WebDocumentText)])
         return [[documentView selectedString] length] > 0;
@@ -633,18 +633,18 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 
 - (DOMRange *)_rangeByAlteringCurrentSelection:(FrameSelection::EAlteration)alteration direction:(SelectionDirection)direction granularity:(TextGranularity)granularity
 {
-    if (_private->coreFrame->selection()->isNone())
+    if (_private->coreFrame->selection().isNone())
         return nil;
 
     FrameSelection selection;
-    selection.setSelection(_private->coreFrame->selection()->selection());
+    selection.setSelection(_private->coreFrame->selection().selection());
     selection.modify(alteration, direction, granularity);
     return kit(selection.toNormalizedRange().get());
 }
 
 - (TextGranularity)_selectionGranularity
 {
-    return _private->coreFrame->selection()->granularity();
+    return _private->coreFrame->selection().granularity();
 }
 
 - (NSRange)_convertToNSRange:(Range *)range
@@ -654,7 +654,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 
     size_t location;
     size_t length;
-    if (!TextIterator::getLocationAndLengthFromRange(_private->coreFrame->selection()->rootEditableElementOrDocumentElement(), range, location, length))
+    if (!TextIterator::getLocationAndLengthFromRange(_private->coreFrame->selection().rootEditableElementOrDocumentElement(), range, location, length))
         return NSMakeRange(NSNotFound, 0);
 
     return NSMakeRange(location, length);
@@ -673,7 +673,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     // directly in the document DOM, so serialization is problematic. Our solution is
     // to use the root editable element of the selection start as the positional base.
     // That fits with AppKit's idea of an input context.
-    return TextIterator::rangeFromLocationAndLength(_private->coreFrame->selection()->rootEditableElementOrDocumentElement(), nsrange.location, nsrange.length);
+    return TextIterator::rangeFromLocationAndLength(_private->coreFrame->selection().rootEditableElementOrDocumentElement(), nsrange.location, nsrange.length);
 }
 
 - (DOMRange *)_convertNSRangeToDOMRange:(NSRange)nsrange
@@ -755,7 +755,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 
 - (void)_insertParagraphSeparatorInQuotedContent
 {
-    if (_private->coreFrame->selection()->isNone())
+    if (_private->coreFrame->selection().isNone())
         return;
 
     _private->coreFrame->editor().insertParagraphSeparatorInQuotedContent();
@@ -776,7 +776,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 {
     if (!_private->coreFrame)
         return nil;
-    RefPtr<MutableStylePropertySet> typingStyle = _private->coreFrame->selection()->copyTypingStyle();
+    RefPtr<MutableStylePropertySet> typingStyle = _private->coreFrame->selection().copyTypingStyle();
     if (!typingStyle)
         return nil;
     return kit(typingStyle->ensureCSSStyleDeclaration());
@@ -894,14 +894,14 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 
 - (NSRange)_selectedNSRange
 {
-    return [self _convertToNSRange:_private->coreFrame->selection()->toNormalizedRange().get()];
+    return [self _convertToNSRange:_private->coreFrame->selection().toNormalizedRange().get()];
 }
 
 - (void)_selectNSRange:(NSRange)range
 {
     RefPtr<Range> domRange = [self _convertToDOMRange:range];
     if (domRange)
-        _private->coreFrame->selection()->setSelection(VisibleSelection(domRange.get(), SEL_DEFAULT_AFFINITY));
+        _private->coreFrame->selection().setSelection(VisibleSelection(domRange.get(), SEL_DEFAULT_AFFINITY));
 }
 
 - (BOOL)_isDisplayingStandaloneImage
@@ -939,14 +939,14 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 
 - (void)_replaceSelectionWithFragment:(DOMDocumentFragment *)fragment selectReplacement:(BOOL)selectReplacement smartReplace:(BOOL)smartReplace matchStyle:(BOOL)matchStyle
 {
-    if (_private->coreFrame->selection()->isNone() || !fragment)
+    if (_private->coreFrame->selection().isNone() || !fragment)
         return;
     _private->coreFrame->editor().replaceSelectionWithFragment(core(fragment), selectReplacement, smartReplace, matchStyle);
 }
 
 - (void)_replaceSelectionWithText:(NSString *)text selectReplacement:(BOOL)selectReplacement smartReplace:(BOOL)smartReplace
 {   
-    DOMDocumentFragment* fragment = kit(createFragmentFromText(_private->coreFrame->selection()->toNormalizedRange().get(), text).get());
+    DOMDocumentFragment* fragment = kit(createFragmentFromText(_private->coreFrame->selection().toNormalizedRange().get(), text).get());
     [self _replaceSelectionWithFragment:fragment selectReplacement:selectReplacement smartReplace:smartReplace matchStyle:YES];
 }
 

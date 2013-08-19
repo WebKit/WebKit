@@ -137,7 +137,7 @@ void DatePickerClient::setValueAndClosePopup(const String& value)
         return;
 
     // We hide caret when we select date input field, restore it when we close date picker.
-    m_element->document()->frame()->selection()->setCaretVisible(true);
+    m_element->document()->frame()->selection().setCaretVisible(true);
 
     // Return -1 if user cancel the selection.
     if (value != "-1")

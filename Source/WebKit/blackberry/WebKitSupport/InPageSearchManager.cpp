@@ -128,10 +128,10 @@ bool InPageSearchManager::findNextString(const String& text, FindOptions findOpt
 
     // If there is any active selection, new search should start from the beginning of it.
     bool startFromSelection = false;
-    VisibleSelection selection = m_webPage->focusedOrMainFrame()->selection()->selection();
+    VisibleSelection selection = m_webPage->focusedOrMainFrame()->selection().selection();
     if (!selection.isNone()) {
         searchStartingPoint = selection.firstRange().get();
-        m_webPage->focusedOrMainFrame()->selection()->clear();
+        m_webPage->focusedOrMainFrame()->selection().clear();
         startFromSelection = true;
     }
 
@@ -235,7 +235,7 @@ void InPageSearchManager::clearTextMatches(bool selectActiveMatchOnClear)
 {
     if (selectActiveMatchOnClear && m_activeMatch.get()) {
         VisibleSelection selection(m_activeMatch.get());
-        m_activeMatch->ownerDocument()->frame()->selection()->setSelection(selection);
+        m_activeMatch->ownerDocument()->frame()->selection().setSelection(selection);
     }
     m_webPage->m_page->unmarkAllTextMatches();
     m_activeMatch = 0;

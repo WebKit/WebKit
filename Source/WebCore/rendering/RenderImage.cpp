@@ -418,7 +418,7 @@ void RenderImage::paintAreaElementFocusRing(PaintInfo& paintInfo)
 {
     Document* document = this->document();
     
-    if (document->printing() || !document->frame()->selection()->isFocusedAndActive())
+    if (document->printing() || !document->frame()->selection().isFocusedAndActive())
         return;
     
     if (paintInfo.context->paintingDisabled() && !paintInfo.context->updatingControlTints())

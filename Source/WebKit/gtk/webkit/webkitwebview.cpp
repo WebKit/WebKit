@@ -427,9 +427,9 @@ static gboolean webkit_web_view_forward_context_menu_event(WebKitWebView* webVie
 static const int gContextMenuMargin = 1;
 static IntPoint getLocationForKeyboardGeneratedContextMenu(Frame* frame)
 {
-    FrameSelection* selection = frame->selection();
-    if (!selection->selection().isNonOrphanedCaretOrRange()
-         || (selection->selection().isCaret() && !selection->selection().isContentEditable())) {
+    FrameSelection& selection = frame->selection();
+    if (!selection.selection().isNonOrphanedCaretOrRange()
+        || (selection.selection().isCaret() && !selection.selection().isContentEditable())) {
         if (Node* focusedNode = getFocusedNode(frame))
             return focusedNode->pixelSnappedBoundingBox().location();
 
@@ -441,7 +441,7 @@ static IntPoint getLocationForKeyboardGeneratedContextMenu(Frame* frame)
     // selection->selection().firstRange can return 0 here, but if that was the case
     // selection->selection().isNonOrphanedCaretOrRange() would have returned false
     // above, so we do not have to check it.
-    IntRect firstRect = frame->editor().firstRectForRange(selection->selection().firstRange().get());
+    IntRect firstRect = frame->editor().firstRectForRange(selection.selection().firstRange().get());
     return IntPoint(firstRect.x(), firstRect.maxY());
 }
 

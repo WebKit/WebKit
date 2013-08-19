@@ -206,10 +206,10 @@ void WebEditorClient::respondToChangedSelection(Frame* frame)
 // FIXME: Use this function for other X11-based platforms that need to manually update the global selection.
 void WebEditorClient::updateGlobalSelection(Frame* frame)
 {
-    if (supportsGlobalSelection() && frame->selection()->isRange()) {
+    if (supportsGlobalSelection() && frame->selection().isRange()) {
         bool oldSelectionMode = Pasteboard::generalPasteboard()->isSelectionMode();
         Pasteboard::generalPasteboard()->setSelectionMode(true);
-        Pasteboard::generalPasteboard()->writeSelection(frame->selection()->toNormalizedRange().get(), frame->editor().canSmartCopyOrDelete(), frame);
+        Pasteboard::generalPasteboard()->writeSelection(frame->selection().toNormalizedRange().get(), frame->editor().canSmartCopyOrDelete(), frame);
         Pasteboard::generalPasteboard()->setSelectionMode(oldSelectionMode);
     }
 }

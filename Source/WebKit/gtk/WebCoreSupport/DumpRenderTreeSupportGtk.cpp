@@ -393,7 +393,7 @@ bool DumpRenderTreeSupportGtk::firstRectForCharacterRange(WebKitWebView* webView
 
     Editor& editor = frame->editor();
 
-    RefPtr<Range> range = TextIterator::rangeFromLocationAndLength(frame->selection()->rootEditableElementOrDocumentElement(), location, length);
+    RefPtr<Range> range = TextIterator::rangeFromLocationAndLength(frame->selection().rootEditableElementOrDocumentElement(), location, length);
     if (!range)
         return false;
 
@@ -410,11 +410,11 @@ bool DumpRenderTreeSupportGtk::selectedRange(WebKitWebView* webView, int* start,
     if (!frame)
         return false;
 
-    RefPtr<Range> range = frame->selection()->toNormalizedRange().get();
+    RefPtr<Range> range = frame->selection().toNormalizedRange().get();
     if (!range)
         return false;
 
-    Element* selectionRoot = frame->selection()->rootEditableElement();
+    Element* selectionRoot = frame->selection().rootEditableElement();
     Element* scope = selectionRoot ? selectionRoot : frame->document()->documentElement();
 
     RefPtr<Range> testRange = Range::create(scope->document(), scope, 0, range->startContainer(), range->startOffset());
@@ -531,7 +531,7 @@ void DumpRenderTreeSupportGtk::rectangleForSelection(WebKitWebFrame* frame, cair
     if (!coreFrame)
         return;
 
-    IntRect bounds = enclosingIntRect(coreFrame->selection()->bounds());
+    IntRect bounds = enclosingIntRect(coreFrame->selection().bounds());
     rectangle->x = bounds.x();
     rectangle->y = bounds.y();
     rectangle->width = bounds.width();

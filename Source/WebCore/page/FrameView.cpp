@@ -2716,8 +2716,8 @@ void FrameView::performPostLayoutTasks()
 {
     m_postLayoutTasksTimer.stop();
 
-    frame().selection()->setCaretRectNeedsUpdate();
-    frame().selection()->updateAppearance();
+    frame().selection().setCaretRectNeedsUpdate();
+    frame().selection().updateAppearance();
 
     LayoutMilestones requestedMilestones = 0;
     LayoutMilestones milestonesAchieved = 0;
@@ -3642,7 +3642,7 @@ void FrameView::paintContentsForSnapshot(GraphicsContext* context, const IntRect
     // Restore selection.
     if (shouldPaintSelection == ExcludeSelection) {
         for (Frame* frame = m_frame.get(); frame; frame = frame->tree()->traverseNext(m_frame.get()))
-            frame->selection()->updateAppearance();
+            frame->selection().updateAppearance();
     }
 
     // Restore cached paint behavior.

@@ -46,7 +46,7 @@ namespace WebCore {
 
 static Node* selectionShadowAncestor(Frame* frame)
 {
-    Node* node = frame->selection()->selection().base().anchorNode();
+    Node* node = frame->selection().selection().base().anchorNode();
     if (!node)
         return 0;
 
@@ -70,7 +70,7 @@ void DOMSelection::clearTreeScope()
 const VisibleSelection& DOMSelection::visibleSelection() const
 {
     ASSERT(m_frame);
-    return m_frame->selection()->selection();
+    return m_frame->selection().selection();
 }
 
 static Position anchorPosition(const VisibleSelection& selection)
@@ -163,7 +163,7 @@ bool DOMSelection::isCollapsed() const
 {
     if (!m_frame || selectionShadowAncestor(m_frame))
         return true;
-    return !m_frame->selection()->isRange();
+    return !m_frame->selection().isRange();
 }
 
 String DOMSelection::type() const
@@ -171,14 +171,14 @@ String DOMSelection::type() const
     if (!m_frame)
         return String();
 
-    FrameSelection* selection = m_frame->selection();
+    FrameSelection& selection = m_frame->selection();
 
     // This is a WebKit DOM extension, incompatible with an IE extension
     // IE has this same attribute, but returns "none", "text" and "control"
     // http://msdn.microsoft.com/en-us/library/ms534692(VS.85).aspx
-    if (selection->isNone())
+    if (selection.isNone())
         return "None";
-    if (selection->isCaret())
+    if (selection.isCaret())
         return "Caret";
     return "Range";
 }
@@ -187,7 +187,7 @@ int DOMSelection::rangeCount() const
 {
     if (!m_frame)
         return 0;
-    return m_frame->selection()->isNone() ? 0 : 1;
+    return m_frame->selection().isNone() ? 0 : 1;
 }
 
 void DOMSelection::collapse(Node* node, int offset, ExceptionCode& ec)
@@ -204,7 +204,7 @@ void DOMSelection::collapse(Node* node, int offset, ExceptionCode& ec)
         return;
 
     // FIXME: Eliminate legacy editing positions
-    m_frame->selection()->moveTo(VisiblePosition(createLegacyEditingPosition(node, offset), DOWNSTREAM));
+    m_frame->selection().moveTo(VisiblePosition(createLegacyEditingPosition(node, offset), DOWNSTREAM));
 }
 
 void DOMSelection::collapseToEnd(ExceptionCode& ec)
@@ -212,14 +212,14 @@ void DOMSelection::collapseToEnd(ExceptionCode& ec)
     if (!m_frame)
         return;
 
-    const VisibleSelection& selection = m_frame->selection()->selection();
+    const VisibleSelection& selection = m_frame->selection().selection();
 
     if (selection.isNone()) {
         ec = INVALID_STATE_ERR;
         return;
     }
 
-    m_frame->selection()->moveTo(VisiblePosition(selection.end(), DOWNSTREAM));
+    m_frame->selection().moveTo(VisiblePosition(selection.end(), DOWNSTREAM));
 }
 
 void DOMSelection::collapseToStart(ExceptionCode& ec)
@@ -227,21 +227,21 @@ void DOMSelection::collapseToStart(ExceptionCode& ec)
     if (!m_frame)
         return;
 
-    const VisibleSelection& selection = m_frame->selection()->selection();
+    const VisibleSelection& selection = m_frame->selection().selection();
 
     if (selection.isNone()) {
         ec = INVALID_STATE_ERR;
         return;
     }
 
-    m_frame->selection()->moveTo(VisiblePosition(selection.start(), DOWNSTREAM));
+    m_frame->selection().moveTo(VisiblePosition(selection.start(), DOWNSTREAM));
 }
 
 void DOMSelection::empty()
 {
     if (!m_frame)
         return;
-    m_frame->selection()->clear();
+    m_frame->selection().clear();
 }
 
 void DOMSelection::setBaseAndExtent(Node* baseNode, int baseOffset, Node* extentNode, int extentOffset, ExceptionCode& ec)
@@ -261,7 +261,7 @@ void DOMSelection::setBaseAndExtent(Node* baseNode, int baseOffset, Node* extent
     VisiblePosition visibleBase = VisiblePosition(createLegacyEditingPosition(baseNode, baseOffset), DOWNSTREAM);
     VisiblePosition visibleExtent = VisiblePosition(createLegacyEditingPosition(extentNode, extentOffset), DOWNSTREAM);
 
-    m_frame->selection()->moveTo(visibleBase, visibleExtent);
+    m_frame->selection().moveTo(visibleBase, visibleExtent);
 }
 
 void DOMSelection::setPosition(Node* node, int offset, ExceptionCode& ec)
@@ -277,7 +277,7 @@ void DOMSelection::setPosition(Node* node, int offset, ExceptionCode& ec)
         return;
 
     // FIXME: Eliminate legacy editing positions
-    m_frame->selection()->moveTo(VisiblePosition(createLegacyEditingPosition(node, offset), DOWNSTREAM));
+    m_frame->selection().moveTo(VisiblePosition(createLegacyEditingPosition(node, offset), DOWNSTREAM));
 }
 
 void DOMSelection::modify(const String& alterString, const String& directionString, const String& granularityString)
@@ -327,7 +327,7 @@ void DOMSelection::modify(const String& alterString, const String& directionStri
     else
         return;
 
-    m_frame->selection()->modify(alter, direction, granularity);
+    m_frame->selection().modify(alter, direction, granularity);
 }
 
 void DOMSelection::extend(Node* node, int offset, ExceptionCode& ec)
@@ -349,7 +349,7 @@ void DOMSelection::extend(Node* node, int offset, ExceptionCode& ec)
         return;
 
     // FIXME: Eliminate legacy editing positions
-    m_frame->selection()->setExtent(VisiblePosition(createLegacyEditingPosition(node, offset), DOWNSTREAM));
+    m_frame->selection().setExtent(VisiblePosition(createLegacyEditingPosition(node, offset), DOWNSTREAM));
 }
 
 PassRefPtr<Range> DOMSelection::getRangeAt(int index, ExceptionCode& ec)
@@ -371,7 +371,7 @@ PassRefPtr<Range> DOMSelection::getRangeAt(int index, ExceptionCode& ec)
         return Range::create(shadowAncestor->document(), container, offset, container, offset);
     }
 
-    const VisibleSelection& selection = m_frame->selection()->selection();
+    const VisibleSelection& selection = m_frame->selection().selection();
     return selection.firstRange();
 }
 
@@ -379,7 +379,7 @@ void DOMSelection::removeAllRanges()
 {
     if (!m_frame)
         return;
-    m_frame->selection()->clear();
+    m_frame->selection().clear();
 }
 
 void DOMSelection::addRange(Range* r)
@@ -389,23 +389,23 @@ void DOMSelection::addRange(Range* r)
     if (!r)
         return;
 
-    FrameSelection* selection = m_frame->selection();
+    FrameSelection& selection = m_frame->selection();
 
-    if (selection->isNone()) {
-        selection->setSelection(VisibleSelection(r));
+    if (selection.isNone()) {
+        selection.setSelection(VisibleSelection(r));
         return;
     }
 
-    RefPtr<Range> range = selection->selection().toNormalizedRange();
+    RefPtr<Range> range = selection.selection().toNormalizedRange();
     if (r->compareBoundaryPoints(Range::START_TO_START, range.get(), IGNORE_EXCEPTION) == -1) {
         // We don't support discontiguous selection. We don't do anything if r and range don't intersect.
         if (r->compareBoundaryPoints(Range::START_TO_END, range.get(), IGNORE_EXCEPTION) > -1) {
             if (r->compareBoundaryPoints(Range::END_TO_END, range.get(), IGNORE_EXCEPTION) == -1)
                 // The original range and r intersect.
-                selection->setSelection(VisibleSelection(r->startPosition(), range->endPosition(), DOWNSTREAM));
+                selection.setSelection(VisibleSelection(r->startPosition(), range->endPosition(), DOWNSTREAM));
             else
                 // r contains the original range.
-                selection->setSelection(VisibleSelection(r));
+                selection.setSelection(VisibleSelection(r));
         }
     } else {
         // We don't support discontiguous selection. We don't do anything if r and range don't intersect.
@@ -413,10 +413,10 @@ void DOMSelection::addRange(Range* r)
         if (r->compareBoundaryPoints(Range::END_TO_START, range.get(), ec) < 1 && !ec) {
             if (r->compareBoundaryPoints(Range::END_TO_END, range.get(), IGNORE_EXCEPTION) == -1)
                 // The original range contains r.
-                selection->setSelection(VisibleSelection(range.get()));
+                selection.setSelection(VisibleSelection(range.get()));
             else
                 // The original range and r intersect.
-                selection->setSelection(VisibleSelection(range->startPosition(), r->endPosition(), DOWNSTREAM));
+                selection.setSelection(VisibleSelection(range->startPosition(), r->endPosition(), DOWNSTREAM));
         }
     }
 }
@@ -426,15 +426,15 @@ void DOMSelection::deleteFromDocument()
     if (!m_frame)
         return;
 
-    FrameSelection* selection = m_frame->selection();
+    FrameSelection& selection = m_frame->selection();
 
-    if (selection->isNone())
+    if (selection.isNone())
         return;
 
     if (isCollapsed())
-        selection->modify(FrameSelection::AlterationExtend, DirectionBackward, CharacterGranularity);
+        selection.modify(FrameSelection::AlterationExtend, DirectionBackward, CharacterGranularity);
 
-    RefPtr<Range> selectedRange = selection->selection().toNormalizedRange();
+    RefPtr<Range> selectedRange = selection.selection().toNormalizedRange();
     if (!selectedRange)
         return;
 
@@ -448,13 +448,13 @@ bool DOMSelection::containsNode(Node* n, bool allowPartial) const
     if (!m_frame)
         return false;
 
-    FrameSelection* selection = m_frame->selection();
+    FrameSelection& selection = m_frame->selection();
 
-    if (!n || m_frame->document() != n->document() || selection->isNone())
+    if (!n || m_frame->document() != n->document() || selection.isNone())
         return false;
 
     RefPtr<Node> node = n;
-    RefPtr<Range> selectedRange = selection->selection().toNormalizedRange();
+    RefPtr<Range> selectedRange = selection.selection().toNormalizedRange();
 
     ContainerNode* parentNode = node->parentNode();
     if (!parentNode || !parentNode->inDocument())
@@ -491,7 +491,7 @@ String DOMSelection::toString()
     if (!m_frame)
         return String();
 
-    return plainText(m_frame->selection()->selection().toNormalizedRange().get());
+    return plainText(m_frame->selection().selection().toNormalizedRange().get());
 }
 
 Node* DOMSelection::shadowAdjustedNode(const Position& position) const

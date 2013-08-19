@@ -99,7 +99,7 @@ void FindController::countStringMatches(const String& string, FindOptions option
 static Frame* frameWithSelection(Page* page)
 {
     for (Frame* frame = page->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
-        if (frame->selection()->isRange())
+        if (frame->selection().isRange())
             return frame;
     }
 
@@ -119,7 +119,7 @@ void FindController::updateFindUIAfterPageScroll(bool found, const String& strin
             m_webPage->corePage()->unmarkAllTextMatches();
 
         if (selectedFrame)
-            selectedFrame->selection()->clear();
+            selectedFrame->selection().clear();
 
         hideFindIndicator();
 
@@ -201,7 +201,7 @@ void FindController::findStringMatches(const String& string, FindOptions options
 
 bool FindController::getFindIndicatorBitmapAndRect(Frame* frame, ShareableBitmap::Handle& handle, IntRect& selectionRect)
 {
-    selectionRect = enclosingIntRect(frame->selection()->bounds());
+    selectionRect = enclosingIntRect(frame->selection().bounds());
 
     // Selection rect can be empty for matches that are currently obscured from view.
     if (selectionRect.isEmpty())
@@ -242,14 +242,14 @@ void FindController::getImageForFindMatch(uint32_t matchIndex)
     if (!frame)
         return;
 
-    VisibleSelection oldSelection = frame->selection()->selection();
-    frame->selection()->setSelection(VisibleSelection(m_findMatches[matchIndex].get()));
+    VisibleSelection oldSelection = frame->selection().selection();
+    frame->selection().setSelection(VisibleSelection(m_findMatches[matchIndex].get()));
 
     IntRect selectionRect;
     ShareableBitmap::Handle handle;
     getFindIndicatorBitmapAndRect(frame, handle, selectionRect);
 
-    frame->selection()->setSelection(oldSelection);
+    frame->selection().setSelection(oldSelection);
 
     if (handle.isNull())
         return;
@@ -264,7 +264,7 @@ void FindController::selectFindMatch(uint32_t matchIndex)
     Frame* frame = m_findMatches[matchIndex]->startContainer()->document()->frame();
     if (!frame)
         return;
-    frame->selection()->setSelection(VisibleSelection(m_findMatches[matchIndex].get()));
+    frame->selection().setSelection(VisibleSelection(m_findMatches[matchIndex].get()));
 }
 
 void FindController::hideFindUI()
@@ -297,7 +297,7 @@ bool FindController::updateFindIndicator(Frame* selectedFrame, bool isShowingOve
     IntRect selectionRectInWindowCoordinates = selectedFrame->view()->contentsToWindow(selectionRect);
 
     Vector<FloatRect> textRects;
-    selectedFrame->selection()->getClippedVisibleTextRectangles(textRects);
+    selectedFrame->selection().getClippedVisibleTextRectangles(textRects);
 
     // We want the text rects in selection rect coordinates.
     Vector<FloatRect> textRectsInSelectionRectCoordinates;
@@ -431,7 +431,7 @@ void FindController::drawRect(PageOverlay* pageOverlay, GraphicsContext& graphic
         return;
 
     if (Frame* selectedFrame = frameWithSelection(m_webPage->corePage())) {
-        IntRect findIndicatorRect = selectedFrame->view()->contentsToWindow(enclosingIntRect(selectedFrame->selection()->bounds()));
+        IntRect findIndicatorRect = selectedFrame->view()->contentsToWindow(enclosingIntRect(selectedFrame->selection().bounds()));
 
         if (findIndicatorRect != m_findIndicatorRect)
             hideFindIndicator();

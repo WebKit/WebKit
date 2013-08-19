@@ -197,7 +197,7 @@ static void openNewWindow(const KURL& urlToLoad, Frame* frame)
 static void insertUnicodeCharacter(UChar character, Frame* frame)
 {
     String text(&character, 1);
-    if (!frame->editor().shouldInsertText(text, frame->selection()->toNormalizedRange().get(), EditorInsertActionTyped))
+    if (!frame->editor().shouldInsertText(text, frame->selection().toNormalizedRange().get(), EditorInsertActionTyped))
         return;
 
     TypingCommand::insertText(frame->document(), text, 0, TypingCommand::TextCompositionNone);
@@ -351,16 +351,16 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
         break;
 #endif
     case ContextMenuItemTagSpellingGuess: {
-        FrameSelection* frameSelection = frame->selection();
-        if (frame->editor().shouldInsertText(item->title(), frameSelection->toNormalizedRange().get(), EditorInsertActionPasted)) {
+        FrameSelection& frameSelection = frame->selection();
+        if (frame->editor().shouldInsertText(item->title(), frameSelection.toNormalizedRange().get(), EditorInsertActionPasted)) {
             Document* document = frame->document();
             ReplaceSelectionCommand::CommandOptions replaceOptions = ReplaceSelectionCommand::MatchStyle | ReplaceSelectionCommand::PreventNesting;
 
             if (frame->editor().behavior().shouldAllowSpellingSuggestionsWithoutSelection()) {
-                ASSERT(frameSelection->isCaretOrRange());
-                VisibleSelection wordSelection(frameSelection->base());
+                ASSERT(frameSelection.isCaretOrRange());
+                VisibleSelection wordSelection(frameSelection.base());
                 wordSelection.expandUsingGranularity(WordGranularity);
-                frameSelection->setSelection(wordSelection);
+                frameSelection.setSelection(wordSelection);
             } else {
                 ASSERT(frame->editor().selectedText().length());
                 replaceOptions |= ReplaceSelectionCommand::SelectReplacement;
@@ -368,7 +368,7 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
 
             RefPtr<ReplaceSelectionCommand> command = ReplaceSelectionCommand::create(document, createFragmentFromMarkup(document, item->title(), ""), replaceOptions);
             applyCommand(command);
-            frameSelection->revealSelection(ScrollAlignment::alignToEdgeIfNeeded);
+            frameSelection.revealSelection(ScrollAlignment::alignToEdgeIfNeeded);
         }
         break;
     }
@@ -408,7 +408,7 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
         // which may make this difficult to implement. Maybe a special case of text-shadow?
         break;
     case ContextMenuItemTagStartSpeaking: {
-        RefPtr<Range> selectedRange = frame->selection()->toNormalizedRange();
+        RefPtr<Range> selectedRange = frame->selection().toNormalizedRange();
         if (!selectedRange || selectedRange->collapsed(IGNORE_EXCEPTION)) {
             Document* document = m_hitTestResult.innerNonSharedNode()->document();
             selectedRange = document->createRange();
@@ -722,7 +722,7 @@ void ContextMenuController::createAndAppendTransformationsSubMenu(ContextMenuIte
 static bool selectionContainsPossibleWord(Frame* frame)
 {
     // Current algorithm: look for a character that's not just a separator.
-    for (TextIterator it(frame->selection()->toNormalizedRange().get()); !it.atEnd(); it.advance()) {
+    for (TextIterator it(frame->selection().toNormalizedRange().get()); !it.atEnd(); it.advance()) {
         int length = it.length();
         for (int i = 0; i < length; ++i)
             if (!(category(it.characterAt(i)) & (Separator_Space | Separator_Line | Separator_Paragraph)))
@@ -950,8 +950,7 @@ void ContextMenuController::populate()
             }
         }
     } else { // Make an editing context menu
-        FrameSelection* selection = frame->selection();
-        bool inPasswordField = selection->isInPasswordField();
+        bool inPasswordField = frame->selection().isInPasswordField();
         if (!inPasswordField) {
             bool haveContextMenuItemsForMisspellingOrGrammer = false;
             bool spellCheckingEnabled = frame->editor().isSpellCheckingEnabledFor(node);
@@ -1207,7 +1206,7 @@ void ContextMenuController::checkOrEnableIfNeeded(ContextMenuItem& item) const
             break;
         case ContextMenuItemTagIgnoreSpelling:
         case ContextMenuItemTagLearnSpelling:
-            shouldEnable = frame->selection()->isRange();
+            shouldEnable = frame->selection().isRange();
             break;
         case ContextMenuItemTagPaste:
             shouldEnable = frame->editor().canDHTMLPaste() || frame->editor().canPaste();
@@ -1242,7 +1241,7 @@ void ContextMenuController::checkOrEnableIfNeeded(ContextMenuItem& item) const
             break;
         }
         case ContextMenuItemTagLookUpInDictionary:
-            shouldEnable = frame->selection()->isRange();
+            shouldEnable = frame->selection().isRange();
             break;
         case ContextMenuItemTagCheckGrammarWithSpelling:
             if (frame->editor().isGrammarCheckingEnabled())

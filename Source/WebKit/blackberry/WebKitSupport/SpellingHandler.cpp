@@ -51,7 +51,7 @@ void SpellingHandler::spellCheckTextBlock(const WebCore::Element* element, WebCo
     if (!(element->document() && element->document()->frame() && element->document()->frame()->selection()))
         return;
 
-    VisiblePosition caretPosition = element->document()->frame()->selection()->start();
+    VisiblePosition caretPosition = element->document()->frame()->selection().start();
     // Expand the range to include the previous line. This should handle cases when the user hits enter to finish composing a word and create a new line.
     // Account for word wrapping by jumping to the start of the previous line, then moving to the start of any word which might be there.
     VisibleSelection visibleSelection = VisibleSelection(

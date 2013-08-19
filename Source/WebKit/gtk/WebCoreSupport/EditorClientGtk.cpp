@@ -216,7 +216,7 @@ static void collapseSelection(GtkClipboard* clipboard, WebKitWebView* webView)
 
     // Collapse the selection without clearing it
     ASSERT(frame);
-    frame->selection()->setBase(frame->selection()->extent(), frame->selection()->affinity());
+    frame->selection().setBase(frame->selection().extent(), frame->selection().affinity());
 }
 
 #if PLATFORM(X11)
@@ -230,11 +230,11 @@ static void setSelectionPrimaryClipboardIfNeeded(WebKitWebView* webView)
     WebCore::Page* corePage = core(webView);
     Frame* targetFrame = corePage->focusController().focusedOrMainFrame();
 
-    if (!targetFrame->selection()->isRange())
+    if (!targetFrame->selection().isRange())
         return;
 
     dataObject->clearAll();
-    dataObject->setRange(targetFrame->selection()->toNormalizedRange());
+    dataObject->setRange(targetFrame->selection().toNormalizedRange());
 
     viewSettingClipboard = webView;
     GClosure* callback = g_cclosure_new_object(G_CALLBACK(collapseSelection), G_OBJECT(webView));

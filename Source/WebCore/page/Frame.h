@@ -118,7 +118,7 @@ namespace WebCore {
         EventHandler& eventHandler() const;
         FrameLoader& loader() const;
         NavigationScheduler* navigationScheduler() const;
-        FrameSelection* selection() const;
+        FrameSelection& selection() const;
         FrameTree* tree() const;
         AnimationController* animation() const;
         ScriptController& script();
@@ -286,9 +286,9 @@ namespace WebCore {
         return m_doc.get();
     }
 
-    inline FrameSelection* Frame::selection() const
+    inline FrameSelection& Frame::selection() const
     {
-        return m_selection.get();
+        return *m_selection;
     }
 
     inline Editor& Frame::editor() const

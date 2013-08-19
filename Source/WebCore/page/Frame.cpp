@@ -1097,14 +1097,14 @@ DragImageRef Frame::nodeImage(Node* node)
 
 DragImageRef Frame::dragImageForSelection()
 {
-    if (!selection()->isRange())
+    if (!selection().isRange())
         return 0;
 
     const ScopedFramePaintingState state(this, 0);
     m_view->setPaintBehavior(PaintBehaviorSelectionOnly);
     m_doc->updateLayout();
 
-    IntRect paintingRect = enclosingIntRect(selection()->bounds());
+    IntRect paintingRect = enclosingIntRect(selection().bounds());
 
     float deviceScaleFactor = 1;
     if (m_page)

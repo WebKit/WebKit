@@ -625,7 +625,7 @@ void ChromeClient::paint(WebCore::Timer<ChromeClient>*)
     // the selection changing.
     Frame* focusedFrame = core(m_webView)->focusController().focusedOrMainFrame();
     if (focusedFrame && focusedFrame->editor().canEdit())
-        m_webView->priv->imFilter.setCursorRect(frame->selection()->absoluteCaretBounds());
+        m_webView->priv->imFilter.setCursorRect(frame->selection().absoluteCaretBounds());
 }
 
 void ChromeClient::forcePaint()

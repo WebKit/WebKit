@@ -573,7 +573,7 @@ bool Page::findString(const String& target, FindOptions options)
     do {
         if (frame->editor().findString(target, (options & ~WrapAround) | StartInSelection)) {
             if (frame != startFrame)
-                startFrame->selection()->clear();
+                startFrame->selection().clear();
             focusController().setFocusedFrame(frame);
             return true;
         }
@@ -582,7 +582,7 @@ bool Page::findString(const String& target, FindOptions options)
 
     // Search contents of startFrame, on the other side of the selection that we did earlier.
     // We cheat a bit and just research with wrap on
-    if (shouldWrap && !startFrame->selection()->isNone()) {
+    if (shouldWrap && !startFrame->selection().isNone()) {
         bool found = startFrame->editor().findString(target, options | WrapAround | StartInSelection);
         focusController().setFocusedFrame(frame);
         return found;
@@ -601,7 +601,7 @@ void Page::findStringMatchingRanges(const String& target, FindOptions options, i
     Frame* frameWithSelection = 0;
     do {
         frame->editor().countMatchesForText(target, 0, options, limit ? (limit - matchRanges->size()) : 0, true, matchRanges);
-        if (frame->selection()->isRange())
+        if (frame->selection().isRange())
             frameWithSelection = frame;
         frame = incrementFrame(frame, true, false);
     } while (frame);
@@ -611,7 +611,7 @@ void Page::findStringMatchingRanges(const String& target, FindOptions options, i
 
     if (frameWithSelection) {
         indexForSelection = NoMatchAfterUserSelection;
-        RefPtr<Range> selectedRange = frameWithSelection->selection()->selection().firstRange();
+        RefPtr<Range> selectedRange = frameWithSelection->selection().selection().firstRange();
         if (options & Backwards) {
             for (size_t i = matchRanges->size(); i > 0; --i) {
                 if (selectedRange->compareBoundaryPoints(Range::END_TO_START, matchRanges->at(i - 1).get(), IGNORE_EXCEPTION) > 0) {
@@ -705,7 +705,7 @@ void Page::unmarkAllTextMatches()
 
 const VisibleSelection& Page::selection() const
 {
-    return focusController().focusedOrMainFrame()->selection()->selection();
+    return focusController().focusedOrMainFrame()->selection().selection();
 }
 
 void Page::setDefersLoading(bool defers)

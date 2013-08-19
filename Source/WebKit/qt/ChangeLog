@@ -1,3 +1,25 @@
+2013-08-19  Pratik Solanki  <psolanki@apple.com>
+
+        <https://webkit.org/b/119918> Frame::selection() should return a reference
+
+        Reviewed by Darin Adler.
+
+        m_selection is never NULL so return a reference from Frame::selection(). Also removed some
+        unnecessary null checks and assert diff ts exposed as a result.
+
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        (DumpRenderTreeSupportQt::selectedRange):
+        (DumpRenderTreeSupportQt::firstRectForCharacterRange):
+        * WebCoreSupport/EditorClientQt.cpp:
+        (WebCore::EditorClientQt::respondToChangedSelection):
+        (WebCore::EditorClientQt::handleKeyboardEvent):
+        * WebCoreSupport/QWebPageAdapter.cpp:
+        (QWebPageAdapter::hasSelection):
+        (QWebPageAdapter::selectedText):
+        (QWebPageAdapter::findText):
+        (QWebPageAdapter::inputMethodEvent):
+        (QWebPageAdapter::inputMethodQuery):
+
 2013-08-19  Arunprasad Rajkumar  <arurajku@cisco.com>
 
         <https://webkit.org/b/119933> [Qt] Fix tst_QObjectBridge::connectAndDisconnect() fail

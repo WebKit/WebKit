@@ -195,7 +195,7 @@ void CharacterData::setDataAndUpdate(const String& newData, unsigned offsetOfRep
         toText(this)->updateTextRenderer(offsetOfReplacedData, oldLength);
 
     if (document()->frame())
-        document()->frame()->selection()->textWasReplaced(this, offsetOfReplacedData, oldLength, newLength);
+        document()->frame()->selection().textWasReplaced(this, offsetOfReplacedData, oldLength, newLength);
 
     document()->incDOMTreeVersion();
     dispatchModifiedEvent(oldData);

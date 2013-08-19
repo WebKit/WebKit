@@ -164,9 +164,9 @@ static PassRefPtr<DocumentFragment> documentFragmentFromDragData(DragData* dragD
     return 0;
 }
 
-bool DragController::dragIsMove(FrameSelection* selection, DragData* dragData)
+bool DragController::dragIsMove(FrameSelection& selection, DragData* dragData)
 {
-    return m_documentUnderMouse == m_dragInitiator && selection->isContentEditable() && selection->isRange() && !isCopyKeyDown(dragData);
+    return m_documentUnderMouse == m_dragInitiator && selection.isContentEditable() && selection.isRange() && !isCopyKeyDown(dragData);
 }
 
 // FIXME: This method is poorly named.  We're just clearing the selection from the document this drag is exiting.
@@ -429,13 +429,13 @@ DragOperation DragController::operationForLoad(DragData* dragData)
 
 static bool setSelectionToDragCaret(Frame* frame, VisibleSelection& dragCaret, RefPtr<Range>& range, const IntPoint& point)
 {
-    frame->selection()->setSelection(dragCaret);
-    if (frame->selection()->isNone()) {
+    frame->selection().setSelection(dragCaret);
+    if (frame->selection().isNone()) {
         dragCaret = frame->visiblePositionForPoint(point);
-        frame->selection()->setSelection(dragCaret);
+        frame->selection().setSelection(dragCaret);
         range = dragCaret.toNormalizedRange();
     }
-    return !frame->selection()->isNone() && frame->selection()->isContentEditable();
+    return !frame->selection().isNone() && frame->selection().isContentEditable();
 }
 
 bool DragController::dispatchTextInputEventFor(Frame* innerFrame, DragData* dragData)
@@ -473,7 +473,7 @@ bool DragController::concludeEditDrag(DragData* dragData)
         Color color = dragData->asColor();
         if (!color.isValid())
             return false;
-        RefPtr<Range> innerRange = innerFrame->selection()->toNormalizedRange();
+        RefPtr<Range> innerRange = innerFrame->selection().toNormalizedRange();
         RefPtr<MutableStylePropertySet> style = MutableStylePropertySet::create();
         style->setProperty(CSSPropertyColor, color.serialized(), false);
         if (!innerFrame->editor().shouldApplyStyle(style.get(), innerRange.get()))
@@ -501,7 +501,7 @@ bool DragController::concludeEditDrag(DragData* dragData)
     VisibleSelection dragCaret = m_page->dragCaretController().caretPosition();
     m_page->dragCaretController().clear();
     RefPtr<Range> range = dragCaret.toNormalizedRange();
-    RefPtr<Element> rootEditableElement = innerFrame->selection()->rootEditableElement();
+    RefPtr<Element> rootEditableElement = innerFrame->selection().rootEditableElement();
 
     // For range to be null a WebKit client must have done something bad while
     // manually controlling drag behaviour
@@ -521,7 +521,7 @@ bool DragController::concludeEditDrag(DragData* dragData)
             // NSTextView behavior is to always smart delete on moving a selection,
             // but only to smart insert if the selection granularity is word granularity.
             bool smartDelete = innerFrame->editor().smartInsertDeleteEnabled();
-            bool smartInsert = smartDelete && innerFrame->selection()->granularity() == WordGranularity && dragData->canSmartReplace();
+            bool smartInsert = smartDelete && innerFrame->selection().granularity() == WordGranularity && dragData->canSmartReplace();
             applyCommand(MoveSelectionCommand::create(fragment, dragCaret.base(), smartInsert, smartDelete));
         } else {
             if (setSelectionToDragCaret(innerFrame.get(), dragCaret, range, point)) {
@@ -638,7 +638,7 @@ bool DragController::tryDHTMLDrag(DragData* dragData, DragOperation& operation)
 
 Element* DragController::draggableElement(const Frame* sourceFrame, Element* startElement, const IntPoint& dragOrigin, DragState& state) const
 {
-    state.type = (sourceFrame->selection()->contains(dragOrigin)) ? DragSourceActionSelection : DragSourceActionNone;
+    state.type = (sourceFrame->selection().contains(dragOrigin)) ? DragSourceActionSelection : DragSourceActionNone;
     if (!startElement)
         return 0;
 
@@ -705,7 +705,7 @@ static void selectElement(Element* element)
 {
     RefPtr<Range> range = element->document()->createRange();
     range->selectNode(element);
-    element->document()->frame()->selection()->setSelection(VisibleSelection(range.get(), DOWNSTREAM));
+    element->document()->frame()->selection().setSelection(VisibleSelection(range.get(), DOWNSTREAM));
 }
 
 static IntPoint dragLocForDHTMLDrag(const IntPoint& mouseDraggedPoint, const IntPoint& dragOrigin, const IntPoint& dragImageOffset, bool isLinkImage)
@@ -726,7 +726,7 @@ static IntPoint dragLocForDHTMLDrag(const IntPoint& mouseDraggedPoint, const Int
 
 static IntPoint dragLocForSelectionDrag(Frame* src)
 {
-    IntRect draggingRect = enclosingIntRect(src->selection()->bounds());
+    IntRect draggingRect = enclosingIntRect(src->selection().bounds());
     int xpos = draggingRect.maxX();
     xpos = draggingRect.x() < xpos ? draggingRect.x() : xpos;
     int ypos = draggingRect.maxY();
@@ -787,16 +787,16 @@ bool DragController::startDrag(Frame* src, const DragState& state, DragOperation
     Image* image = getImage(element);
     if (state.type == DragSourceActionSelection) {
         if (!clipboard->hasData()) {
-            RefPtr<Range> selectionRange = src->selection()->toNormalizedRange();
+            RefPtr<Range> selectionRange = src->selection().toNormalizedRange();
             ASSERT(selectionRange);
 
             src->editor().willWriteSelectionToPasteboard(selectionRange.get());
 
-            if (enclosingTextFormControl(src->selection()->start()))
+            if (enclosingTextFormControl(src->selection().start()))
                 clipboard->pasteboard().writePlainText(src->editor().selectedTextForClipboard(), Pasteboard::CannotSmartReplace);
             else {
                 // FIXME: Could this instead be a helper function in Editor?
-                clipboard->pasteboard().writeSelection(selectionRange.get(), src->editor().smartInsertDeleteEnabled() && src->selection()->granularity() == WordGranularity, src, IncludeImageAltTextForClipboard);
+                clipboard->pasteboard().writeSelection(selectionRange.get(), src->editor().smartInsertDeleteEnabled() && src->selection().granularity() == WordGranularity, src, IncludeImageAltTextForClipboard);
             }
 
             src->editor().didWriteSelectionToPasteboard();
@@ -835,14 +835,14 @@ bool DragController::startDrag(Frame* src, const DragState& state, DragOperation
             // on the web page. This includes replacing newlines with spaces.
             clipboard->pasteboard().writeURL(linkURL, hitTestResult.textContent().simplifyWhiteSpace(), src);
 
-        if (src->selection()->isCaret() && src->selection()->isContentEditable()) {
+        if (src->selection().isCaret() && src->selection().isContentEditable()) {
             // a user can initiate a drag on a link without having any text
             // selected.  In this case, we should expand the selection to
             // the enclosing anchor element
-            Position pos = src->selection()->base();
+            Position pos = src->selection().base();
             Node* node = enclosingAnchorElement(pos);
             if (node)
-                src->selection()->setSelection(VisibleSelection::selectionFromContentsOfNode(node));
+                src->selection().setSelection(VisibleSelection::selectionFromContentsOfNode(node));
         }
 
         m_client->willPerformDragSourceAction(DragSourceActionLink, dragOrigin, clipboard);

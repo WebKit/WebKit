@@ -72,7 +72,7 @@ void Editor::setTextAlignmentForChangedBaseWritingDirection(WritingDirection dir
     // If the text has left or right alignment, flip left->right and right->left. 
     // Otherwise, do nothing.
 
-    RefPtr<EditingStyle> selectionStyle = EditingStyle::styleAtSelectionStart(frame()->selection()->selection());
+    RefPtr<EditingStyle> selectionStyle = EditingStyle::styleAtSelectionStart(frame()->selection().selection());
     if (!selectionStyle || !selectionStyle->style())
          return;
 
@@ -147,14 +147,14 @@ static RenderStyle* styleForSelectionStart(Frame* frame, Node *&nodeToRemove)
 {
     nodeToRemove = 0;
 
-    if (frame->selection()->isNone())
+    if (frame->selection().isNone())
         return 0;
 
-    Position position = frame->selection()->selection().visibleStart().deepEquivalent();
+    Position position = frame->selection().selection().visibleStart().deepEquivalent();
     if (!position.isCandidate() || position.isNull())
         return 0;
 
-    RefPtr<EditingStyle> typingStyle = frame->selection()->typingStyle();
+    RefPtr<EditingStyle> typingStyle = frame->selection().typingStyle();
     if (!typingStyle || !typingStyle->style())
         return position.deprecatedNode()->renderer()->style();
 
@@ -178,7 +178,7 @@ const SimpleFontData* Editor::fontForSelection(bool& hasMultipleFonts) const
 {
     hasMultipleFonts = false;
 
-    if (!m_frame.selection()->isRange()) {
+    if (!m_frame.selection().isRange()) {
         Node* nodeToRemove;
         RenderStyle* style = styleForSelectionStart(&m_frame, nodeToRemove); // sets nodeToRemove
 
@@ -196,8 +196,8 @@ const SimpleFontData* Editor::fontForSelection(bool& hasMultipleFonts) const
     }
 
     const SimpleFontData* font = 0;
-    RefPtr<Range> range = m_frame.selection()->toNormalizedRange();
-    if (Node* startNode = adjustedSelectionStartForStyleComputation(m_frame.selection()->selection()).deprecatedNode()) {
+    RefPtr<Range> range = m_frame.selection().toNormalizedRange();
+    if (Node* startNode = adjustedSelectionStartForStyleComputation(m_frame.selection().selection()).deprecatedNode()) {
         Node* pastEnd = range->pastLastNode();
         // In the loop below, n should eventually match pastEnd and not become nil, but we've seen at least one
         // unreproducible case where this didn't happen, so check for null also.

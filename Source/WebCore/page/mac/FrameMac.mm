@@ -56,7 +56,7 @@ DragImageRef Frame::nodeImage(Node* node)
 
 DragImageRef Frame::dragImageForSelection()
 {
-    if (!selection()->isRange())
+    if (!selection().isRange())
         return nil;
     return selectionImage(this);
 }

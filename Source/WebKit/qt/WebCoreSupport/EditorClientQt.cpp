@@ -203,10 +203,10 @@ void EditorClientQt::respondToChangedSelection(Frame* frame)
 //     selection.formatForDebugger(buffer, sizeof(buffer));
 //     printf("%s\n", buffer);
 
-    if (supportsGlobalSelection() && frame->selection()->isRange()) {
+    if (supportsGlobalSelection() && frame->selection().isRange()) {
         bool oldSelectionMode = Pasteboard::generalPasteboard()->isSelectionMode();
         Pasteboard::generalPasteboard()->setSelectionMode(true);
-        Pasteboard::generalPasteboard()->writeSelection(frame->selection()->toNormalizedRange().get(), frame->editor().canSmartCopyOrDelete(), frame);
+        Pasteboard::generalPasteboard()->writeSelection(frame->selection().toNormalizedRange().get(), frame->editor().canSmartCopyOrDelete(), frame);
         Pasteboard::generalPasteboard()->setSelectionMode(oldSelectionMode);
     }
 
@@ -430,7 +430,7 @@ void EditorClientQt::handleKeyboardEvent(KeyboardEvent* event)
     if (!kevent || kevent->type() == PlatformEvent::KeyUp)
         return;
 
-    Node* start = frame->selection()->start().containerNode();
+    Node* start = frame->selection().start().containerNode();
     if (!start)
         return;
 

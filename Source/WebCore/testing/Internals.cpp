@@ -768,12 +768,12 @@ void Internals::enableMockSpeechSynthesizer()
 PassRefPtr<ClientRect> Internals::absoluteCaretBounds(ExceptionCode& ec)
 {
     Document* document = contextDocument();
-    if (!document || !document->frame() || !document->frame()->selection()) {
+    if (!document || !document->frame()) {
         ec = INVALID_ACCESS_ERR;
         return ClientRect::create();
     }
 
-    return ClientRect::create(document->frame()->selection()->absoluteCaretBounds());
+    return ClientRect::create(document->frame()->selection().absoluteCaretBounds());
 }
 
 PassRefPtr<ClientRect> Internals::boundingBox(Element* element, ExceptionCode& ec)
@@ -2165,12 +2165,12 @@ double Internals::closestTimeToTimeRanges(double time, TimeRanges* ranges)
 PassRefPtr<ClientRect> Internals::selectionBounds(ExceptionCode& ec)
 {
     Document* document = contextDocument();
-    if (!document || !document->frame() || !document->frame()->selection()) {
+    if (!document || !document->frame()) {
         ec = INVALID_ACCESS_ERR;
         return ClientRect::create();
     }
 
-    return ClientRect::create(document->frame()->selection()->bounds());
+    return ClientRect::create(document->frame()->selection().bounds());
 }
 
 #if ENABLE(VIBRATION)

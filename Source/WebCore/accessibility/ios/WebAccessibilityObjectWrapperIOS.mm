@@ -1337,17 +1337,17 @@ static RenderObject* rendererForView(WAKView* view)
     if (![self _prepareAccessibilityCall])
         return;
     
-    FrameSelection* frameSelection = m_object->document()->frame()->selection();
+    FrameSelection& frameSelection = m_object->document()->frame()->selection();
     VisibleSelection selection = m_object->selection();
     VisiblePositionRange range = m_object->visiblePositionRange();
     
     // Before a selection with length exists, the cursor position needs to move to the right starting place.
     // That should be the beginning of this element (range.start). However, if the cursor is already within the 
     // range of this element (the cursor is represented by selection), then the cursor does not need to move.
-    if (frameSelection->isNone() && (selection.visibleStart() < range.start || selection.visibleEnd() > range.end))
-        frameSelection->moveTo(range.start, UserTriggered);
+    if (frameSelection.isNone() && (selection.visibleStart() < range.start || selection.visibleEnd() > range.end))
+        frameSelection.moveTo(range.start, UserTriggered);
     
-    frameSelection->modify(FrameSelection::AlterationExtend, (increase) ? DirectionRight : DirectionLeft, granularity, UserTriggered);
+    frameSelection.modify(FrameSelection::AlterationExtend, (increase) ? DirectionRight : DirectionLeft, granularity, UserTriggered);
 }
 
 - (void)accessibilityIncreaseSelection:(TextGranularity)granularity
@@ -1369,8 +1369,8 @@ static RenderObject* rendererForView(WAKView* view)
     if (visiblePosition.isNull())
         return;
 
-    FrameSelection* frameSelection = m_object->document()->frame()->selection();
-    frameSelection->moveTo(visiblePosition, UserTriggered);
+    FrameSelection& frameSelection = m_object->document()->frame()->selection();
+    frameSelection.moveTo(visiblePosition, UserTriggered);
 }
 
 - (void)accessibilityIncrement
@@ -1634,9 +1634,9 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
         return NSMakeRange(NSNotFound, 0);
     
     Document* document = m_object->document();
-    FrameSelection* frameSelection = document->frame()->selection();
+    FrameSelection& frameSelection = document->frame()->selection();
     
-    Element* selectionRoot = frameSelection->rootEditableElement();
+    Element* selectionRoot = frameSelection.rootEditableElement();
     Element* scope = selectionRoot ? selectionRoot : document->documentElement();
     
     // Mouse events may cause TSM to attempt to create an NSRange for a portion of the view
@@ -1672,8 +1672,8 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
     // to use the root editable element of the selection start as the positional base.
     // That fits with AppKit's idea of an input context.
     Document* document = m_object->document();
-    FrameSelection* frameSelection = document->frame()->selection();
-    Element* selectionRoot = frameSelection->rootEditableElement();
+    FrameSelection& frameSelection = document->frame()->selection();
+    Element* selectionRoot = frameSelection.rootEditableElement();
     Element* scope = selectionRoot ? selectionRoot : document->documentElement();
     return TextIterator::rangeFromLocationAndLength(scope, nsrange.location, nsrange.length);
 }

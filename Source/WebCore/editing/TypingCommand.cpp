@@ -98,7 +98,7 @@ void TypingCommand::deleteSelection(Document* document, Options options)
     Frame* frame = document->frame();
     ASSERT(frame);
 
-    if (!frame->selection()->isRange())
+    if (!frame->selection().isRange())
         return;
 
     if (RefPtr<TypingCommand> lastTypingCommand = lastTypingCommandIfStillOpenForTyping(frame)) {
@@ -145,7 +145,7 @@ void TypingCommand::forwardDeleteKeyPressed(Document *document, Options options,
 void TypingCommand::updateSelectionIfDifferentFromCurrentSelection(TypingCommand* typingCommand, Frame* frame)
 {
     ASSERT(frame);
-    VisibleSelection currentSelection = frame->selection()->selection();
+    VisibleSelection currentSelection = frame->selection().selection();
     if (currentSelection == typingCommand->endingSelection())
         return;
 
@@ -163,7 +163,7 @@ void TypingCommand::insertText(Document* document, const String& text, Options o
     if (!text.isEmpty())
         document->frame()->editor().updateMarkersForWordsAffectedByEditing(isSpaceOrNewline(text.characters()[0]));
     
-    insertText(document, text, frame->selection()->selection(), options, composition);
+    insertText(document, text, frame->selection().selection(), options, composition);
 }
 
 // FIXME: We shouldn't need to take selectionForInsertion. It should be identical to FrameSelection's current selection.
@@ -174,7 +174,7 @@ void TypingCommand::insertText(Document* document, const String& text, const Vis
     RefPtr<Frame> frame = document->frame();
     ASSERT(frame);
 
-    VisibleSelection currentSelection = frame->selection()->selection();
+    VisibleSelection currentSelection = frame->selection().selection();
 
     String newText = dispatchBeforeTextInsertedEvent(text, selectionForInsertion, compositionType == TextCompositionUpdate);
     
@@ -510,7 +510,7 @@ void TypingCommand::deleteKeyPressed(TextGranularity granularity, bool killRing)
     if (selectionToDelete.isNone())
         return;
     
-    if (selectionToDelete.isCaret() || !frame->selection()->shouldDeleteSelection(selectionToDelete))
+    if (selectionToDelete.isCaret() || !frame->selection().shouldDeleteSelection(selectionToDelete))
         return;
     
     if (killRing)
@@ -603,7 +603,7 @@ void TypingCommand::forwardDeleteKeyPressed(TextGranularity granularity, bool ki
     if (selectionToDelete.isNone())
         return;
     
-    if (selectionToDelete.isCaret() || !frame->selection()->shouldDeleteSelection(selectionToDelete))
+    if (selectionToDelete.isCaret() || !frame->selection().shouldDeleteSelection(selectionToDelete))
         return;
         
     if (killRing)

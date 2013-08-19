@@ -5446,7 +5446,7 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSC::JSValue j
         return;
 
     if (range == nil)
-        coreFrame->selection()->clear();
+        coreFrame->selection().clear();
     else {
         // Derive the frame to use from the range passed in.
         // Using _selectedOrMainFrame could give us a different document than
@@ -5455,7 +5455,7 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSC::JSValue j
         if (!coreFrame)
             return;
 
-        coreFrame->selection()->setSelectedRange(core(range), core(selectionAffinity), true);
+        coreFrame->selection().setSelectedRange(core(range), core(selectionAffinity), true);
     }
 }
 
@@ -5464,7 +5464,7 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSC::JSValue j
     Frame* coreFrame = core([self _selectedOrMainFrame]);
     if (!coreFrame)
         return nil;
-    return kit(coreFrame->selection()->toNormalizedRange().get());
+    return kit(coreFrame->selection().toNormalizedRange().get());
 }
 
 - (NSSelectionAffinity)selectionAffinity
@@ -5472,7 +5472,7 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSC::JSValue j
     Frame* coreFrame = core([self _selectedOrMainFrame]);
     if (!coreFrame)
         return NSSelectionAffinityDownstream;
-    return kit(coreFrame->selection()->affinity());
+    return kit(coreFrame->selection().affinity());
 }
 
 - (void)setEditable:(BOOL)flag
@@ -5487,7 +5487,7 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSC::JSValue j
                 mainFrame->editor().applyEditingStyleToBodyElement();
                 // If the WebView is made editable and the selection is empty, set it to something.
                 if (![self selectedDOMRange])
-                    mainFrame->selection()->setSelectionFromNone();
+                    mainFrame->selection().setSelectionFromNone();
             }
         }
     }
@@ -5854,7 +5854,7 @@ FOR_EACH_RESPONDER_SELECTOR(FORWARD)
     Frame* coreFrame = core([self _selectedOrMainFrame]);
     if (!coreFrame)
         return NO;
-    return coreFrame->selection()->isCaret();
+    return coreFrame->selection().isCaret();
 }
 
 - (BOOL)_selectionIsAll
@@ -5862,7 +5862,7 @@ FOR_EACH_RESPONDER_SELECTOR(FORWARD)
     Frame* coreFrame = core([self _selectedOrMainFrame]);
     if (!coreFrame)
         return NO;
-    return coreFrame->selection()->isAll(CanCrossEditingBoundary);
+    return coreFrame->selection().isAll(CanCrossEditingBoundary);
 }
 
 - (void)_simplifyMarkup:(DOMNode *)startNode endNode:(DOMNode *)endNode

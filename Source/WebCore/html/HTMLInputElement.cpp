@@ -413,7 +413,7 @@ void HTMLInputElement::updateFocusAppearance(bool restorePreviousSelection)
         else
             restoreCachedSelection();
         if (document()->frame())
-            document()->frame()->selection()->revealSelection();
+            document()->frame()->selection().revealSelection();
     } else
         HTMLTextFormControlElement::updateFocusAppearance(restorePreviousSelection);
 }

@@ -1,3 +1,51 @@
+2013-08-19  Pratik Solanki  <psolanki@apple.com>
+
+        <https://webkit.org/b/119918> Frame::selection() should return a reference
+
+        Reviewed by Darin Adler.
+
+        m_selection is never NULL so return a reference from Frame::selection(). Also removed some
+        unnecessary null checks and assert diff ts exposed as a result.
+
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::updateGlobalSelection):
+        * WebProcess/WebCoreSupport/gtk/WebEditorClientGtk.cpp:
+        (WebKit::collapseSelection):
+        (WebKit::WebEditorClient::updateGlobalSelection):
+        * WebProcess/WebCoreSupport/mac/WebContextMenuClientMac.mm:
+        (WebKit::WebContextMenuClient::lookUpInDictionary):
+        (WebKit::WebContextMenuClient::searchWithSpotlight):
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::frameWithSelection):
+        (WebKit::FindController::updateFindUIAfterPageScroll):
+        (WebKit::FindController::getFindIndicatorBitmapAndRect):
+        (WebKit::FindController::getImageForFindMatch):
+        (WebKit::FindController::selectFindMatch):
+        (WebKit::FindController::updateFindIndicator):
+        (WebKit::FindController::drawRect):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::editorState):
+        (WebKit::WebPage::scaledSnapshotWithOptions):
+        (WebKit::WebPage::centerSelectionInVisibleArea):
+        (WebKit::frameWithSelection):
+        (WebKit::WebPage::clearSelection):
+        (WebKit::WebPage::confirmComposition):
+        (WebKit::WebPage::setComposition):
+        (WebKit::WebPage::currentSelectionAsRange):
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::setComposition):
+        (WebKit::WebPage::insertText):
+        (WebKit::WebPage::insertDictatedText):
+        (WebKit::WebPage::getMarkedRange):
+        (WebKit::WebPage::getSelectedRange):
+        (WebKit::WebPage::getAttributedSubstringFromRange):
+        (WebKit::WebPage::characterIndexForPoint):
+        (WebKit::convertToRange):
+        (WebKit::WebPage::performDictionaryLookupAtLocation):
+        (WebKit::WebPage::readSelectionFromPasteboard):
+        (WebKit::WebPage::getStringSelectionForPasteboard):
+        (WebKit::WebPage::getDataSelectionForPasteboard):
+
 2013-08-18  Darin Adler  <darin@apple.com>
 
         <https://webkit.org/b/119989> Make use of Node::ownerDocument a compile time error

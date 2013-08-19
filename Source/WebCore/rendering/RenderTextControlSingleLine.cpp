@@ -284,9 +284,9 @@ void RenderTextControlSingleLine::capsLockStateMayHaveChanged()
 
     if (Frame* frame = document()->frame())
         shouldDrawCapsLockIndicator = inputElement()->isPasswordField()
-                                      && frame->selection()->isFocusedAndActive()
-                                      && document()->focusedElement() == node()
-                                      && PlatformKeyboardEvent::currentCapsLockState();
+            && frame->selection().isFocusedAndActive()
+            && document()->focusedElement() == node()
+            && PlatformKeyboardEvent::currentCapsLockState();
 
     if (shouldDrawCapsLockIndicator != m_shouldDrawCapsLockIndicator) {
         m_shouldDrawCapsLockIndicator = shouldDrawCapsLockIndicator;

@@ -75,7 +75,7 @@ NSImage* selectionImage(Frame* frame, bool forceBlackText)
 {
     frame->view()->setPaintBehavior(PaintBehaviorSelectionOnly | (forceBlackText ? PaintBehaviorForceBlackText : 0));
     frame->document()->updateLayout();
-    NSImage* result = imageFromRect(frame, frame->selection()->bounds());
+    NSImage* result = imageFromRect(frame, frame->selection().bounds());
     frame->view()->setPaintBehavior(PaintBehaviorNormal);
     return result;
 }

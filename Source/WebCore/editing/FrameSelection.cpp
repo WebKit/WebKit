@@ -280,7 +280,7 @@ void FrameSelection::setSelection(const VisibleSelection& newSelection, SetSelec
         Document* document = s.base().anchorNode()->document();
         if (document && document->frame() && document->frame() != m_frame && document != m_frame->document()) {
             RefPtr<Frame> guard = document->frame();
-            document->frame()->selection()->setSelection(s, options, align, granularity);
+            document->frame()->selection().setSelection(s, options, align, granularity);
             // It's possible that during the above set selection, this FrameSelection has been modified by
             // selectFrameElementInParentIfFullySelected, but that the selection is no longer valid since
             // the frame is about to be destroyed. If this is the case, clear our selection.
@@ -1625,9 +1625,9 @@ void FrameSelection::selectFrameElementInParentIfFullySelected()
 
     // Focus on the parent frame, and then select from before this element to after.
     VisibleSelection newSelection(beforeOwnerElement, afterOwnerElement);
-    if (parent->selection()->shouldChangeSelection(newSelection)) {
+    if (parent->selection().shouldChangeSelection(newSelection)) {
         page->focusController().setFocusedFrame(parent);
-        parent->selection()->setSelection(newSelection);
+        parent->selection().setSelection(newSelection);
     }
 }
 

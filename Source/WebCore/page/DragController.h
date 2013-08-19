@@ -102,7 +102,7 @@ namespace WebCore {
         bool tryDHTMLDrag(DragData*, DragOperation&);
         DragOperation dragOperation(DragData*);
         void cancelDrag();
-        bool dragIsMove(FrameSelection*, DragData*);
+        bool dragIsMove(FrameSelection&, DragData*);
         bool isCopyKeyDown(DragData*);
 
         void mouseMovedIntoDocument(Document*);

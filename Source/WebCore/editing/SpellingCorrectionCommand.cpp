@@ -95,7 +95,7 @@ void SpellingCorrectionCommand::doApply()
     if (!m_corrected.length())
         return;
 
-    if (!document()->frame()->selection()->shouldChangeSelection(m_selectionToBeCorrected))
+    if (!document()->frame()->selection().shouldChangeSelection(m_selectionToBeCorrected))
         return;
 
     RefPtr<DocumentFragment> fragment = createFragmentFromText(m_rangeToBeCorrected.get(), m_correction);
