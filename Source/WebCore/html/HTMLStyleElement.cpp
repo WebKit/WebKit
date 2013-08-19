@@ -76,10 +76,13 @@ void HTMLStyleElement::parseAttribute(const QualifiedName& name, const AtomicStr
         sheet()->setTitle(value);
     else if (name == scopedAttr && ContextFeatures::styleScopedEnabled(document()))
         scopedAttributeChanged(!value.isNull());
-    else if (name == mediaAttr && inDocument() && document()->renderer() && sheet()) {
+    else if (name == mediaAttr) {
         m_styleSheetOwner.setMedia(value);
-        sheet()->setMediaQueries(MediaQuerySet::createAllowingDescriptionSyntax(value));
-        document()->styleResolverChanged(RecalcStyleImmediately);
+        if (sheet()) {
+            sheet()->setMediaQueries(MediaQuerySet::createAllowingDescriptionSyntax(value));
+            if (inDocument() && document()->renderer())
+                document()->styleResolverChanged(RecalcStyleImmediately);
+        }
     } else if (name == typeAttr)
         m_styleSheetOwner.setContentType(value);
     else

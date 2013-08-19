@@ -1,3 +1,12 @@
+2013-08-19  Antti Koivisto  <antti@apple.com>
+
+        <https://webkit.org/b/120014> REGRESSION(r154268): Some stylesheet media attribute tests failing
+
+        Reviewed by Dan Bernstein.
+
+        * html/HTMLStyleElement.cpp:
+        (WebCore::HTMLStyleElement::parseAttribute): Always set the media on InlineStyleSheetOwner.
+
 2013-08-19  Chris Fleizach  <cfleizach@apple.com>
 
         <https://webkit.org/b/119916> AX: WebKit is not exposing AXLanguage correctly
