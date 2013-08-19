@@ -1,5 +1,24 @@
 2013-08-19  Benjamin Poulain  <benjamin@webkit.org>
 
+        <https://webkit.org/b/119936> Fix some encapsulation issues of RuleSet
+
+        Reviewed by Darin Adler.
+
+        None of the attributes of RuleSet should be modified directly.
+
+        * css/DocumentRuleSets.cpp:
+        (WebCore::DocumentRuleSets::initUserStyle):
+        * css/ElementRuleCollector.cpp:
+        (WebCore::ElementRuleCollector::collectMatchingRulesForRegion):
+        * css/RuleSet.h:
+        (WebCore::RuleSet::RuleSetSelectorPair::RuleSetSelectorPair):
+        (WebCore::RuleSet::regionSelectorsAndRuleSets):
+        (WebCore::RuleSet::ruleCount):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::checkRegionStyle):
+
+2013-08-19  Benjamin Poulain  <benjamin@webkit.org>
+
         <https://webkit.org/b/119937> Remove ElementRuleCollector's m_behaviorAtBoundary
 
         Reviewed by Darin Adler.

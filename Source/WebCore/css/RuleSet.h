@@ -106,6 +106,14 @@ COMPILE_ASSERT(sizeof(RuleData) == sizeof(SameSizeAsRuleData), RuleData_should_s
 class RuleSet {
     WTF_MAKE_NONCOPYABLE(RuleSet); WTF_MAKE_FAST_ALLOCATED;
 public:
+    struct RuleSetSelectorPair {
+        RuleSetSelectorPair(const CSSSelector* selector, PassOwnPtr<RuleSet> ruleSet) : selector(selector), ruleSet(ruleSet) { }
+        RuleSetSelectorPair(const RuleSetSelectorPair& pair) : selector(pair.selector), ruleSet(const_cast<RuleSetSelectorPair*>(&pair)->ruleSet.release()) { }
+
+        const CSSSelector* selector;
+        OwnPtr<RuleSet> ruleSet;
+    };
+
     static PassOwnPtr<RuleSet> create() { return adoptPtr(new RuleSet); }
 
     typedef HashMap<AtomicStringImpl*, OwnPtr<Vector<RuleData> > > AtomRuleMap;
@@ -133,12 +141,14 @@ public:
     const Vector<RuleData>* focusPseudoClassRules() const { return &m_focusPseudoClassRules; }
     const Vector<RuleData>* universalRules() const { return &m_universalRules; }
     const Vector<StyleRulePage*>& pageRules() const { return m_pageRules; }
+    const Vector<RuleSetSelectorPair>& regionSelectorsAndRuleSets() const { return m_regionSelectorsAndRuleSets; }
+
+    unsigned ruleCount() const { return m_ruleCount; }
 
 private:
     void addChildRules(const Vector<RefPtr<StyleRuleBase> >&, const MediaQueryEvaluator& medium, StyleResolver*, const ContainerNode* scope, bool hasDocumentSecurityOrigin, AddRuleFlags);
     bool findBestRuleSetAndAdd(const CSSSelector*, RuleData&);
 
-public:
     RuleSet();
 
     AtomRuleMap m_idRules;
@@ -155,15 +165,6 @@ public:
     unsigned m_ruleCount;
     bool m_autoShrinkToFitEnabled;
     RuleFeatureSet m_features;
-
-    struct RuleSetSelectorPair {
-        RuleSetSelectorPair(const CSSSelector* selector, PassOwnPtr<RuleSet> ruleSet) : selector(selector), ruleSet(ruleSet) { }
-        RuleSetSelectorPair(const RuleSetSelectorPair& rs) : selector(rs.selector), ruleSet(const_cast<RuleSetSelectorPair*>(&rs)->ruleSet.release()) { }
-
-        const CSSSelector* selector;
-        OwnPtr<RuleSet> ruleSet;
-    };
-
     Vector<RuleSetSelectorPair> m_regionSelectorsAndRuleSets;
 };
 

@@ -53,7 +53,7 @@ void DocumentRuleSets::initUserStyle(DocumentStyleSheetCollection* styleSheetCol
         tempUserStyle->addRulesFromSheet(pageUserSheet->contents(), medium, &resolver);
     collectRulesFromUserStyleSheets(styleSheetCollection->injectedUserStyleSheets(), *tempUserStyle, medium, resolver);
     collectRulesFromUserStyleSheets(styleSheetCollection->documentUserStyleSheets(), *tempUserStyle, medium, resolver);
-    if (tempUserStyle->m_ruleCount > 0 || tempUserStyle->m_pageRules.size() > 0)
+    if (tempUserStyle->ruleCount() > 0 || tempUserStyle->pageRules().size() > 0)
         m_userStyle = tempUserStyle.release();
 }
 
