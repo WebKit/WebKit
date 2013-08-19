@@ -33,6 +33,7 @@ import logging
 import re
 import sys
 import os
+import platform
 
 from webkitpy.common.memoized import memoized
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration
@@ -47,7 +48,7 @@ class QtPort(Port):
     port_name = "qt"
 
     def _wk2_port_name(self):
-        return "qt-5.0-wk2"
+        return "qt-wk2"
 
     def _port_flag_for_scripts(self):
         return "--qt"
@@ -62,8 +63,6 @@ class QtPort(Port):
     def __init__(self, host, port_name, **kwargs):
         super(QtPort, self).__init__(host, port_name, **kwargs)
 
-        # FIXME: This will allow Port.baseline_search_path
-        # to do the right thing, but doesn't include support for qt-4.8 or qt-arm (seen in LayoutTests/platform) yet.
         self._operating_system = port_name.replace('qt-', '')
 
         # FIXME: Why is this being set at all?
@@ -114,29 +113,44 @@ class QtPort(Port):
                     version = match.group('version')
                     break
         except OSError:
-            version = '4.8'
+            version = '5.0'
         return version
 
+    def architecture(self):
+        py_machine = platform.machine()
+        if 'i386' == py_machine:
+            return 'x86'
+        if 'x86_64' == py_machine:
+            return 'x64'
+        if 'arm' in py_machine:
+            return 'arm'
+        return ''
+
     def _search_paths(self):
-        #                 qt-5.0-mac-wk2
+        #                 qt-mac-wk2
         #                /
-        #   qt-5.0-wk1  qt-5.0-wk2
+        #       qt-wk1  qt-wk2
         #             \/
-        #           qt-5.0
+        #           qt-5.x
+        #              |
+        #     (qt-x86|qt-x64|qt-arm)
         #               \
         #    (qt-linux|qt-mac|qt-win)
         #                |
         #               qt
         search_paths = []
-        version = self.qt_version()
         if self.get_option('webkit_test_runner'):
             if self.operating_system() == 'mac':
-                search_paths.append('qt-5.0-mac-wk2')
-            search_paths.append('qt-5.0-wk2')
+                search_paths.append('qt-mac-wk2')
+            search_paths.append('qt-wk2')
         else:
-            search_paths.append('qt-5.0-wk1')
+            search_paths.append('qt-wk1')
 
-        search_paths.append('qt-5.0')
+        search_paths.append('qt-' + self.qt_version())
+
+        architecture = self.architecture();
+        if architecture:
+            search_paths.append('qt-' + architecture)
 
         search_paths.append(self.port_name + '-' + self.operating_system())
         search_paths.append(self.port_name)
@@ -151,7 +165,7 @@ class QtPort(Port):
             paths.append('wk2')
 
         # expectations_files() uses the directories listed in _search_paths reversed.
-        # e.g. qt -> qt-linux -> qt-5.0 -> qt-5.0-wk1
+        # e.g. qt -> qt-linux -> qt-x86 -> qt-5.x -> qt-wk1
         return list(reversed([self._filesystem.join(self._webkit_baseline_path(p), 'TestExpectations') for p in paths]))
 
     def setup_environ_for_server(self, server_name=None):

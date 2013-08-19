@@ -52,7 +52,6 @@ traversal [ Skip ]
 userscripts [ Skip ]
 webarchive [ Skip ]
 webaudio [ Skip ]
-xmlviewer [ Skip ]
 
 #
 # We are whitelisting a few specific tests we are interested in.

@@ -1,3 +1,105 @@
+2013-08-19  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        Restructure Qt test expectations
+
+        Unreviewed meta gardening.
+
+        Removed 5.0 name from WK1 and WK2 results and made it possible to set
+        expectations by both Qt version and mayor architectures.
+
+        Qt-5.0-WK2 will be moved later due to its size.
+
+        * platform/qt-mac-wk2/TestExpectations: Renamed from LayoutTests/platform/qt-5.0-mac-wk2/TestExpectations.
+        * platform/qt-wk1/TestExpectations: Renamed from LayoutTests/platform/qt-5.0-wk1/TestExpectations.
+        * platform/qt-wk1/compositing/backing/no-backing-for-clip-overhang-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk1/compositing/backing/no-backing-for-clip-overhang-expected.txt.
+        * platform/qt-wk1/compositing/geometry/bounds-ignores-hidden-composited-descendant-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk1/compositing/geometry/bounds-ignores-hidden-composited-descendant-expected.txt.
+        * platform/qt-wk1/compositing/geometry/fixed-in-composited-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk1/compositing/geometry/fixed-in-composited-expected.png.
+        * platform/qt-wk1/compositing/geometry/fixed-in-composited-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk1/compositing/geometry/fixed-in-composited-expected.txt.
+        * platform/qt-wk1/compositing/geometry/layer-due-to-layer-children-deep-switch-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk1/compositing/geometry/layer-due-to-layer-children-deep-switch-expected.txt.
+        * platform/qt-wk1/compositing/geometry/layer-due-to-layer-children-switch-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk1/compositing/geometry/layer-due-to-layer-children-switch-expected.txt.
+        * platform/qt-wk1/compositing/geometry/limit-layer-bounds-clipping-ancestor-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk1/compositing/geometry/limit-layer-bounds-clipping-ancestor-expected.txt.
+        * platform/qt-wk1/compositing/geometry/limit-layer-bounds-fixed-positioned-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk1/compositing/geometry/limit-layer-bounds-fixed-positioned-expected.txt.
+        * platform/qt-wk1/compositing/geometry/limit-layer-bounds-opacity-transition-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk1/compositing/geometry/limit-layer-bounds-opacity-transition-expected.txt.
+        * platform/qt-wk1/compositing/geometry/limit-layer-bounds-overflow-root-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk1/compositing/geometry/limit-layer-bounds-overflow-root-expected.txt.
+        * platform/qt-wk1/compositing/geometry/limit-layer-bounds-positioned-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk1/compositing/geometry/limit-layer-bounds-positioned-expected.txt.
+        * platform/qt-wk1/compositing/geometry/limit-layer-bounds-positioned-transition-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk1/compositing/geometry/limit-layer-bounds-positioned-transition-expected.txt.
+        * platform/qt-wk1/compositing/geometry/limit-layer-bounds-transformed-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk1/compositing/geometry/limit-layer-bounds-transformed-expected.txt.
+        * platform/qt-wk1/compositing/geometry/limit-layer-bounds-transformed-overflow-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk1/compositing/geometry/limit-layer-bounds-transformed-overflow-expected.txt.
+        * platform/qt-wk1/compositing/geometry/video-fixed-scrolling-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk1/compositing/geometry/video-fixed-scrolling-expected.png.
+        * platform/qt-wk1/compositing/geometry/video-fixed-scrolling-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk1/compositing/geometry/video-fixed-scrolling-expected.txt.
+        * platform/qt-wk1/compositing/iframes/iframe-copy-on-scroll-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk1/compositing/iframes/iframe-copy-on-scroll-expected.png.
+        * platform/qt-wk1/compositing/iframes/iframe-copy-on-scroll-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk1/compositing/iframes/iframe-copy-on-scroll-expected.txt.
+        * platform/qt-wk1/compositing/iframes/iframe-size-from-zero-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk1/compositing/iframes/iframe-size-from-zero-expected.txt.
+        * platform/qt-wk1/compositing/layer-creation/scroll-partial-update-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk1/compositing/layer-creation/scroll-partial-update-expected.txt.
+        * platform/qt-wk1/compositing/layer-creation/spanOverlapsCanvas-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk1/compositing/layer-creation/spanOverlapsCanvas-expected.png.
+        * platform/qt-wk1/compositing/layer-creation/spanOverlapsCanvas-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk1/compositing/layer-creation/spanOverlapsCanvas-expected.txt.
+        * platform/qt-wk1/compositing/overflow/overflow-auto-with-touch-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk1/compositing/overflow/overflow-auto-with-touch-expected.txt.
+        * platform/qt-wk1/compositing/overflow/overflow-auto-with-touch-toggle-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk1/compositing/overflow/overflow-auto-with-touch-toggle-expected.txt.
+        * platform/qt-wk1/compositing/overflow/overflow-overlay-with-touch-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk1/compositing/overflow/overflow-overlay-with-touch-expected.txt.
+        * platform/qt-wk1/compositing/overflow/scroll-ancestor-update-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk1/compositing/overflow/scroll-ancestor-update-expected.png.
+        * platform/qt-wk1/compositing/overflow/scroll-ancestor-update-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk1/compositing/overflow/scroll-ancestor-update-expected.txt.
+        * platform/qt-wk1/compositing/overflow/scrolling-content-clip-to-viewport-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk1/compositing/overflow/scrolling-content-clip-to-viewport-expected.txt.
+        * platform/qt-wk1/compositing/overflow/scrolling-without-painting-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk1/compositing/overflow/scrolling-without-painting-expected.txt.
+        * platform/qt-wk1/compositing/overflow/textarea-scroll-touch-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk1/compositing/overflow/textarea-scroll-touch-expected.txt.
+        * platform/qt-wk1/compositing/overflow/updating-scrolling-content-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk1/compositing/overflow/updating-scrolling-content-expected.txt.
+        * platform/qt-wk1/compositing/plugins/no-backing-store-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk1/compositing/plugins/no-backing-store-expected.txt.
+        * platform/qt-wk1/compositing/plugins/small-to-large-composited-plugin-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk1/compositing/plugins/small-to-large-composited-plugin-expected.txt.
+        * platform/qt-wk1/compositing/repaint/invalidations-on-composited-layers-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk1/compositing/repaint/invalidations-on-composited-layers-expected.txt.
+        * platform/qt-wk1/compositing/self-painting-layers-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk1/compositing/self-painting-layers-expected.png.
+        * platform/qt-wk1/compositing/self-painting-layers-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk1/compositing/self-painting-layers-expected.txt.
+        * platform/qt-wk1/compositing/video/video-poster-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk1/compositing/video/video-poster-expected.txt.
+        * platform/qt-wk1/editing/deleting/delete-by-word-002-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk1/editing/deleting/delete-by-word-002-expected.txt.
+        * platform/qt-wk1/editing/deleting/delete-cell-contents-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk1/editing/deleting/delete-cell-contents-expected.txt.
+        * platform/qt-wk1/editing/execCommand/button-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk1/editing/execCommand/button-expected.txt.
+        * platform/qt-wk1/editing/execCommand/createLink-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk1/editing/execCommand/createLink-expected.txt.
+        * platform/qt-wk1/editing/execCommand/indent-pre-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk1/editing/execCommand/indent-pre-expected.txt.
+        * platform/qt-wk1/editing/execCommand/unlink-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk1/editing/execCommand/unlink-expected.txt.
+        * platform/qt-wk1/editing/input/emacs-ctrl-o-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk1/editing/input/emacs-ctrl-o-expected.txt.
+        * platform/qt-wk1/editing/inserting/insert-before-link-1-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk1/editing/inserting/insert-before-link-1-expected.txt.
+        * platform/qt-wk1/editing/pasteboard/display-block-on-spans-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk1/editing/pasteboard/display-block-on-spans-expected.txt.
+        * platform/qt-wk1/editing/pasteboard/emacs-cntl-y-001-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk1/editing/pasteboard/emacs-cntl-y-001-expected.txt.
+        * platform/qt-wk1/editing/pasteboard/merge-end-list-2-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk1/editing/pasteboard/merge-end-list-2-expected.txt.
+        * platform/qt-wk1/editing/pasteboard/merge-end-table-2-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk1/editing/pasteboard/merge-end-table-2-expected.txt.
+        * platform/qt-wk1/editing/pasteboard/page-zoom-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk1/editing/pasteboard/page-zoom-expected.txt.
+        * platform/qt-wk1/editing/selection/extend-selection-word-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk1/editing/selection/extend-selection-word-expected.txt.
+        * platform/qt-wk1/editing/style/apply-through-end-of-document-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk1/editing/style/apply-through-end-of-document-expected.txt.
+        * platform/qt-wk1/editing/style/remove-underline-across-paragraph-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk1/editing/style/remove-underline-across-paragraph-expected.txt.
+        * platform/qt-wk1/editing/style/remove-underline-across-paragraph-in-bold-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk1/editing/style/remove-underline-across-paragraph-in-bold-expected.txt.
+        * platform/qt-wk1/editing/style/remove-underline-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk1/editing/style/remove-underline-expected.txt.
+        * platform/qt-wk1/editing/style/remove-underline-from-stylesheet-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk1/editing/style/remove-underline-from-stylesheet-expected.txt.
+        * platform/qt-wk1/editing/style/remove-underline-in-bold-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk1/editing/style/remove-underline-in-bold-expected.txt.
+        * platform/qt-wk1/editing/style/unbold-in-bold-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk1/editing/style/unbold-in-bold-expected.txt.
+        * platform/qt-wk1/editing/undo/replace-text-in-node-preserving-markers-crash-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk1/editing/undo/replace-text-in-node-preserving-markers-crash-expected.txt.
+        * platform/qt-wk1/fast/css3-text/css3-text-decoration/repaint/repaint-text-decoration-style-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk1/fast/css3-text/css3-text-decoration/repaint/repaint-text-decoration-style-expected.png.
+        * platform/qt-wk1/fast/css3-text/css3-text-decoration/text-decoration-style-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk1/fast/css3-text/css3-text-decoration/text-decoration-style-expected.png.
+        * platform/qt-wk1/fast/history/history-back-initial-vs-final-url-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk1/fast/history/history-back-initial-vs-final-url-expected.txt.
+        * platform/qt-wk1/fast/loader/main-document-url-for-non-http-loads-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk1/fast/loader/main-document-url-for-non-http-loads-expected.txt.
+        * platform/qt-wk1/fast/loader/show-only-one-beforeunload-dialog-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk1/fast/loader/show-only-one-beforeunload-dialog-expected.txt.
+        * platform/qt-wk1/fast/loader/willsendrequest-returns-null-for-memory-cache-load-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk1/fast/loader/willsendrequest-returns-null-for-memory-cache-load-expected.txt.
+        * platform/qt-wk1/fast/text/whitespace/028-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk1/fast/text/whitespace/028-expected.png.
+        * platform/qt-wk1/fast/text/whitespace/028-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk1/fast/text/whitespace/028-expected.txt.
+        * platform/qt-wk1/http/tests/cache/iframe-304-crash-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk1/http/tests/cache/iframe-304-crash-expected.txt.
+        * platform/qt-wk1/http/tests/loading/307-after-303-after-post-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk1/http/tests/loading/307-after-303-after-post-expected.txt.
+        * platform/qt-wk1/http/tests/loading/redirect-methods-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk1/http/tests/loading/redirect-methods-expected.txt.
+        * platform/qt-wk1/http/tests/misc/favicon-loads-with-images-disabled-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk1/http/tests/misc/favicon-loads-with-images-disabled-expected.txt.
+        * platform/qt-wk1/http/tests/misc/iframe-beforeunload-dialog-matching-ancestor-securityorigin-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk1/http/tests/misc/iframe-beforeunload-dialog-matching-ancestor-securityorigin-expected.txt.
+        * platform/qt-wk1/http/tests/misc/object-embedding-svg-delayed-size-negotiation-2-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk1/http/tests/misc/object-embedding-svg-delayed-size-negotiation-2-expected.png.
+        * platform/qt-wk1/http/tests/misc/object-embedding-svg-delayed-size-negotiation-2-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk1/http/tests/misc/object-embedding-svg-delayed-size-negotiation-2-expected.txt.
+        * platform/qt-wk1/http/tests/navigation/forward-and-cancel-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk1/http/tests/navigation/forward-and-cancel-expected.txt.
+        * platform/qt-wk1/http/tests/navigation/postredirect-frames-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk1/http/tests/navigation/postredirect-frames-expected.txt.
+        * platform/qt-wk1/http/tests/navigation/postredirect-goback2-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk1/http/tests/navigation/postredirect-goback2-expected.txt.
+        * platform/qt-wk1/http/tests/security/XFrameOptions/x-frame-options-allowall-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk1/http/tests/security/XFrameOptions/x-frame-options-allowall-expected.txt.
+        * platform/qt-wk1/http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-allow-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk1/http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-allow-expected.txt.
+        * platform/qt-wk1/http/tests/security/XFrameOptions/x-frame-options-invalid-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk1/http/tests/security/XFrameOptions/x-frame-options-invalid-expected.txt.
+        * platform/qt-wk1/http/tests/security/XFrameOptions/x-frame-options-multiple-headers-sameorigin-allow-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk1/http/tests/security/XFrameOptions/x-frame-options-multiple-headers-sameorigin-allow-expected.txt.
+        * platform/qt-wk1/http/tests/security/XFrameOptions/x-frame-options-parent-same-origin-allow-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk1/http/tests/security/XFrameOptions/x-frame-options-parent-same-origin-allow-expected.txt.
+        * platform/qt-wk1/http/tests/security/contentSecurityPolicy/object-src-none-allowed-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk1/http/tests/security/contentSecurityPolicy/object-src-none-allowed-expected.txt.
+        * platform/qt-wk1/loader/go-back-cached-main-resource-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk1/loader/go-back-cached-main-resource-expected.txt.
+        * platform/qt-wk1/scrollingcoordinator/non-fast-scrollable-region-scaled-iframe-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk1/scrollingcoordinator/non-fast-scrollable-region-scaled-iframe-expected.png.
+        * platform/qt-wk1/scrollingcoordinator/non-fast-scrollable-region-scaled-iframe-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk1/scrollingcoordinator/non-fast-scrollable-region-scaled-iframe-expected.txt.
+        * platform/qt-wk1/scrollingcoordinator/non-fast-scrollable-region-transformed-iframe-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk1/scrollingcoordinator/non-fast-scrollable-region-transformed-iframe-expected.png.
+        * platform/qt-wk1/scrollingcoordinator/non-fast-scrollable-region-transformed-iframe-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk1/scrollingcoordinator/non-fast-scrollable-region-transformed-iframe-expected.txt.
+
 2013-08-19  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         <https://webkit.org/b/119882> Speed up moving cursor/selection up or down past non-rendered elements.

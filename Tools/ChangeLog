@@ -1,3 +1,20 @@
+2013-08-19  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        Restructure Qt test expectations
+
+        Unreviewed meta gardening.
+
+        Removed 5.0 name from WK1 and WK2 results and made it possible to set
+        expectations by both Qt version and mayor architectures.
+
+        * Scripts/webkitpy/port/qt.py:
+        (QtPort._wk2_port_name):
+        (QtPort.__init__):
+        (QtPort.qt_version):
+        (QtPort.architecture):
+        (QtPort._search_paths):
+        (QtPort._port_specific_expectations_files):
+
 2013-08-16  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] DRT is not using the same preferences as the Mac build.
