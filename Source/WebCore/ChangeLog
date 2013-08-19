@@ -1,3 +1,15 @@
+2013-08-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        ASSERTION FAILED: !node || node->isShadowRoot() in WebCore::EventRetargeter::eventTargetRespectingTargetRules
+        https://bugs.webkit.org/show_bug.cgi?id=119720
+
+        Reviewed by Andy Estes.
+
+        Merge https://chromium.googlesource.com/chromium/blink/+/4ce9bfbf54410179cd0f18b3d1a912045fc0ec3d
+
+        * dom/EventRetargeter.h:
+        (WebCore::EventRetargeter::eventTargetRespectingTargetRules):
+
 2013-08-19  Darin Adler  <darin@apple.com>
 
         <https://webkit.org/b/120013> Tighten up logic in HTMLTableRowsCollection
