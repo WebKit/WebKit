@@ -1,3 +1,12 @@
+2013-08-19  Darin Adler  <darin@apple.com>
+
+        Clear executable bits from most HTML files.
+
+        These likely got set by people committing from Windows; for some reason the
+        executable bit often gets set there.
+
+        * <many files>
+
 2013-08-19  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         Moving expectations from Qt 5.0 WK2 to Qt WK2 - Part 3
