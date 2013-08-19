@@ -1276,6 +1276,8 @@ webkit.org/b/105988 [ Debug ] inspector/debugger/properties-special.html [ Pass 
 webkit.org/b/105988 [ Debug ] inspector/debugger/reveal-execution-line.html [ Pass Crash ]
 webkit.org/b/105988 [ Debug ] inspector/debugger/watch-expressions-preserve-expansion.html [ Pass Crash ]
 
+webkit.org/b/120025 fast/frames/frameset-frameborder-inheritance.html [ Failure ]
+
 # Fails with WebKit1 only.
 editing/secure-input/reset-state-on-navigation.html [ Failure ]
 

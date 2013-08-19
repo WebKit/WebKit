@@ -1,3 +1,11 @@
+2013-08-19  Jer Noble  <jer.noble@apple.com>
+
+        <https://bugs.webkit.org/show_bug.cgi?id=120025> REGRESSION (r154254): fast/frames/frameset-frameborder-inheritance.html failing on Apple MountainLion Debug WK1 (Tests)
+
+        Unreviewed gardening. Add failing test to TestExpectations.
+
+        * platform/mac/TestExpectations:
+
 2013-08-19  Antti Koivisto  <antti@apple.com>
 
         Skip these failing tests pending fix:
