@@ -1,3 +1,25 @@
+2013-08-19  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        <https://webkit.org/b/119882> Speed up moving cursor/selection up or down past non-rendered elements.
+
+        Reviewed by Darin Adler.
+
+        This is a port from Blink originally written by Dominic Mazzoni:
+        https://src.chromium.org/viewvc/blink?revision=154977&view=revision
+
+        From the original commit:
+
+        Skips calling firstPositionInOrBeforeNode when a node doesn't have a
+        renderer, since there couldn't possibly be a visible position there.
+        This was particularly wasteful when trying to move the cursor up when at
+        the beginning of a document, as it did a O(n^2) scan through the document head.
+
+        Test: editing/execCommand/move-up-down-should-skip-hidden-elements.html
+
+        * editing/VisibleUnits.cpp:
+        (WebCore::previousRootInlineBoxCandidatePosition): Updated.
+        (WebCore::nextRootInlineBoxCandidatePosition): Updates.
+
 2013-08-19  Andreas Kling  <akling@apple.com>
 
         <https://webkit.org/b/120000> Chrome::client() should return a reference.

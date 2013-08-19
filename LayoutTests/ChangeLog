@@ -1,3 +1,15 @@
+2013-08-19  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        <https://webkit.org/b/119882> Speed up moving cursor/selection up or down past non-rendered elements.
+
+        Reviewed by Darin Adler.
+
+        This is a port from Blink originally written by Dominic Mazzoni:
+        https://src.chromium.org/viewvc/blink?revision=154977&view=revision
+
+        * editing/execCommand/move-up-down-should-skip-hidden-elements-expected.txt: Added.
+        * editing/execCommand/move-up-down-should-skip-hidden-elements.html: Added.
+
 2013-08-18  Seokju Kwon  <seokju@webkit.org>
 
         Unreviewed gardening after r154135
