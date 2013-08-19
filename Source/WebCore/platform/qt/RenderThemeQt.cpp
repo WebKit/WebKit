@@ -873,22 +873,10 @@ String RenderThemeQt::fileListNameForWidth(const FileList* fileList, const Font&
     return string;
 }
 
-StylePainter::StylePainter(RenderThemeQt* theme, const PaintInfo& paintInfo)
-    : painter(0)
+StylePainter::StylePainter(GraphicsContext* context)
+    : painter(context->platformContext())
 {
-    Q_UNUSED(theme);
-    ASSERT(paintInfo.context);
-    init(paintInfo.context);
-}
-
-StylePainter::StylePainter()
-    : painter(0)
-{
-}
-
-void StylePainter::init(GraphicsContext* context)
-{
-    painter = static_cast<QPainter*>(context->platformContext());
+    ASSERT(context);
 
     if (painter) {
         // the styles often assume being called with a pristine painter where no brush is set,

@@ -209,7 +209,7 @@ QPalette RenderThemeQtMobile::colorPalette() const
 }
 
 StylePainterMobile::StylePainterMobile(RenderThemeQtMobile* theme, const PaintInfo& paintInfo)
-    : StylePainter(theme, paintInfo)
+    : StylePainter(paintInfo.context)
 {
     m_previousSmoothPixmapTransform = painter->testRenderHint(QPainter::SmoothPixmapTransform);
     if (!m_previousSmoothPixmapTransform)

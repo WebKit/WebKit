@@ -148,7 +148,7 @@ public:
     { qStyle->paintScrollBar(painter, styleOption); }
 
 private:
-    void init(GraphicsContext*);
+    void setupStyleOption();
 
     Q_DISABLE_COPY(StylePainterQStyle)
 };

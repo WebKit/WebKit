@@ -1,3 +1,24 @@
+2013-08-19  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt] QtWebKit (using the Arora browser) displays the border radii (radius) of a button very ugly
+        https://bugs.webkit.org/show_bug.cgi?id=28113
+
+        Reviewed by Jocelyn Turcotte.
+
+        StylePainter::init() was called twice making it clobber the previous antialiasing setting.
+
+        This patch cleans up the construction so we only have one constructor with init inlined.
+
+        * platform/qt/RenderThemeQStyle.cpp:
+        (WebCore::StylePainterQStyle::StylePainterQStyle):
+        (WebCore::StylePainterQStyle::setupStyleOption):
+        * platform/qt/RenderThemeQStyle.h:
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::StylePainter::StylePainter):
+        * platform/qt/RenderThemeQt.h:
+        * platform/qt/RenderThemeQtMobile.cpp:
+        (WebCore::StylePainterMobile::StylePainterMobile):
+
 2013-08-19  Julien Brianceau  <jbrianceau@nds.com>
 
         <https://webkit.org/b/119998> [Qt] Build fix (broken since r154257).

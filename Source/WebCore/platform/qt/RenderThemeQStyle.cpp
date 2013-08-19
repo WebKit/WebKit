@@ -68,33 +68,30 @@ QSharedPointer<StylePainter> RenderThemeQStyle::getStylePainter(const PaintInfo&
 }
 
 StylePainterQStyle::StylePainterQStyle(RenderThemeQStyle* theme, const PaintInfo& paintInfo, RenderObject* renderObject)
-    : StylePainter(theme, paintInfo)
+    : StylePainter(paintInfo.context)
     , qStyle(theme->qStyle())
     , appearance(NoControlPart)
 {
-    init(paintInfo.context ? paintInfo.context : 0);
+    setupStyleOption();
     if (renderObject)
         appearance = theme->initializeCommonQStyleOptions(styleOption, renderObject);
 }
 
 StylePainterQStyle::StylePainterQStyle(ScrollbarThemeQStyle* theme, GraphicsContext* context)
-    : StylePainter()
+    : StylePainter(context)
     , qStyle(theme->qStyle())
     , appearance(NoControlPart)
 {
-    init(context);
+    setupStyleOption();
 }
 
-void StylePainterQStyle::init(GraphicsContext* context)
+void StylePainterQStyle::setupStyleOption()
 {
-    painter = static_cast<QPainter*>(context->platformContext());
     if (QObject* widget = qStyle->widgetForPainter(painter)) {
         styleOption.palette = widget->property("palette").value<QPalette>();
         styleOption.rect = widget->property("rect").value<QRect>();
         styleOption.direction = static_cast<Qt::LayoutDirection>(widget->property("layoutDirection").toInt());
     }
-
-    StylePainter::init(context);
 }
 
 PassRefPtr<RenderTheme> RenderThemeQStyle::create(Page* page)
