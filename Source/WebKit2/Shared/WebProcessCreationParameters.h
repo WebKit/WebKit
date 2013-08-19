@@ -114,6 +114,8 @@ struct WebProcessCreationParameters {
 #if PLATFORM(MAC)
     pid_t presenterApplicationPid;
 
+    bool accessibilityEnhancedUserInterfaceEnabled;
+
     uint64_t nsURLCacheMemoryCapacity;
     uint64_t nsURLCacheDiskCapacity;
 

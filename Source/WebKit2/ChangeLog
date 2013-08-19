@@ -1,3 +1,25 @@
+2013-08-19  Beth Dakin  <bdakin@apple.com>
+
+        <https://webkit.org/b/120027> AXObjectCache's 
+        accessibilityEnhancedUserInterfaceEnabled should be initialized on process 
+        creation
+
+        Reviewed by Sam Weinig.
+
+        Right now we only call AXObjectCache::setEnhancedAccessibility() when AppKit sends 
+        us a notification indicating that the value has changed. We should not have to 
+        rely on that to properly initialize this value. It should be done with the 
+        WebProcessCreationParamters. 
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/mac/WebContextMac.mm:
+        (WebKit::WebContext::platformInitializeWebProcess):
+        * WebProcess/mac/WebProcessMac.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2013-08-19  Pratik Solanki  <psolanki@apple.com>
 
         <https://webkit.org/b/119918> Frame::selection() should return a reference

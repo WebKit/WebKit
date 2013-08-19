@@ -94,6 +94,7 @@ void WebProcessCreationParameters::encode(CoreIPC::ArgumentEncoder& encoder) con
 #endif
 #if PLATFORM(MAC)
     encoder << presenterApplicationPid;
+    encoder << accessibilityEnhancedUserInterfaceEnabled;
     encoder << nsURLCacheMemoryCapacity;
     encoder << nsURLCacheDiskCapacity;
     encoder << acceleratedCompositingPort;
@@ -200,6 +201,8 @@ bool WebProcessCreationParameters::decode(CoreIPC::ArgumentDecoder& decoder, Web
 
 #if PLATFORM(MAC)
     if (!decoder.decode(parameters.presenterApplicationPid))
+        return false;
+    if (!decoder.decode(parameters.accessibilityEnhancedUserInterfaceEnabled))
         return false;
     if (!decoder.decode(parameters.nsURLCacheMemoryCapacity))
         return false;
