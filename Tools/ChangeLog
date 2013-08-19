@@ -1,5 +1,16 @@
 2013-08-19  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
+        [Qt] Keep the qt-5.0-wk2 search path until the expectation migration is completed
+
+        Unreviewed meta gardening.
+
+        We need to keep using the qt-5.0-wk2 path until it is fully migrated.
+
+        * Scripts/webkitpy/port/qt.py:
+        (QtPort._search_paths):
+
+2013-08-19  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
         Restructure Qt test expectations
 
         Unreviewed meta gardening.
