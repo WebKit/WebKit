@@ -1,3 +1,22 @@
+2013-08-18  David Kilzer  <ddkilzer@apple.com>
+
+        WebCore fails to build with trunk clang: error: 'register' storage class specifier is deprecated [-Werror,-Wdeprecated-register]
+        <http://webkit.org/b/119932>
+        <rdar://problem/14764085>
+
+        Reviewed by Darin Adler.
+
+        Add pragma statements to ignore -Wdeprecated-register warnings
+        in generated code.  Also ignore -Wunknown-pragmas so this
+        doesn't cause a build failure in older versions of clang.
+
+        * css/makeprop.pl:
+        (WebCore::findProperty): Remove register hints from parameters.
+        * css/makevalues.pl:
+        (WebCore::findValue): Ditto.
+        * platform/ColorData.gperf:
+        (WebCore::findColor): Ditto.
+
 2013-08-18  Antti Koivisto  <antti@apple.com>
 
         <https://webkit.org/b/119987> Make Element::attach standalone function

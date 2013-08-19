@@ -74,6 +74,12 @@ print GPERF << "EOF";
 #include <wtf/text/AtomicString.h>
 #include <wtf/text/WTFString.h>
 
+#if defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored \"-Wunknown-pragmas\"
+#pragma clang diagnostic ignored \"-Wdeprecated-register\"
+#endif
+
 namespace WebCore {
 EOF
 
@@ -116,7 +122,7 @@ foreach my $alias (@aliases) {
 
 print GPERF<< "EOF";
 %%
-const Property* findProperty(register const char* str, register unsigned int len)
+const Property* findProperty(const char* str, unsigned int len)
 {
     return CSSPropertyNamesHash::findPropertyImpl(str, len);
 }
@@ -177,6 +183,10 @@ String getJSPropertyName(CSSPropertyID id)
 }
 
 } // namespace WebCore
+
+#if defined(__clang__)
+#pragma clang diagnostic pop
+#endif
 EOF
 
 open HEADER, ">CSSPropertyNames.h" || die "Could not open CSSPropertyNames.h for writing";
