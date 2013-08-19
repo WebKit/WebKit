@@ -1,3 +1,21 @@
+2013-08-19  Pratik Solanki  <psolanki@apple.com>
+
+        <https://webkit.org/b/120019> Document::visitedLinkState() should return a reference
+
+        Reviewed by Andreas Kling.
+
+        Document::m_visitedLinkState is never NULL so we can just return a reference. Also make it a const.
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::State::initElement):
+        * dom/Document.h:
+        (WebCore::Document::visitedLinkState):
+        * history/CachedPage.cpp:
+        (WebCore::CachedPage::restore):
+        * page/Page.cpp:
+        (WebCore::Page::allVisitedStateChanged):
+        (WebCore::Page::visitedStateChanged):
+
 2013-08-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         ASSERTION FAILED: !node || node->isShadowRoot() in WebCore::EventRetargeter::eventTargetRespectingTargetRules

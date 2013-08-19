@@ -90,7 +90,7 @@ void CachedPage::restore(Page* page)
 
     if (m_needStyleRecalcForVisitedLinks) {
         for (Frame* frame = page->mainFrame(); frame; frame = frame->tree()->traverseNext())
-            frame->document()->visitedLinkState()->invalidateStyleForAllLinks();
+            frame->document()->visitedLinkState().invalidateStyleForAllLinks();
     }
 
 #if USE(ACCELERATED_COMPOSITING)
