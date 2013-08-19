@@ -27,21 +27,14 @@
 #import "Clipboard.h"
 
 #import "CachedImage.h"
-#import "DOMElementInternal.h"
-#import "Document.h"
-#import "DragClient.h"
-#import "DragController.h"
-#import "DragData.h"
 #import "Element.h"
-#import "Frame.h"
 #import "FrameSnapshottingMac.h"
-#import "Page.h"
-#import "Pasteboard.h"
-#import "PasteboardStrategy.h"
-#import "PlatformStrategies.h"
 
 namespace WebCore {
-    
+
+// FIXME: Need to refactor and figure out how to handle the flipping in a more sensible way so we can
+// use the default Clipboard::dragImage from Clipboard.cpp. Note also that this handles cases that
+// Clipboard::dragImage in Clipboard.cpp does not handle correctly, so must resolve that as well.
 DragImageRef Clipboard::createDragImage(IntPoint& location) const
 {
     NSImage *result = nil;

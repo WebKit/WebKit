@@ -7440,7 +7440,6 @@
     <ClCompile Include="..\platform\win\BitmapInfo.cpp" />
     <ClCompile Include="..\platform\win\BString.cpp" />
     <ClCompile Include="..\platform\win\ClipboardUtilitiesWin.cpp" />
-    <ClCompile Include="..\platform\win\ClipboardWin.cpp" />
     <ClCompile Include="..\platform\win\ContextMenuItemWin.cpp" />
     <ClCompile Include="..\platform\win\ContextMenuWin.cpp" />
     <ClCompile Include="..\platform\win\CursorWin.cpp" />
@@ -19293,7 +19292,6 @@
     <ClInclude Include="..\platform\win\BitmapInfo.h" />
     <ClInclude Include="..\platform\win\BString.h" />
     <ClInclude Include="..\platform\win\ClipboardUtilitiesWin.h" />
-    <ClInclude Include="..\platform\win\ClipboardWin.h" />
     <ClInclude Include="..\platform\win\COMPtr.h" />
     <ClInclude Include="..\platform\win\DefWndProcWindowClass.h" />
     <ClInclude Include="..\platform\win\DelayLoadedModulesEnumerator.h" />

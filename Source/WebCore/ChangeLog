@@ -1,3 +1,32 @@
+2013-08-18  Darin Adler  <darin@apple.com>
+
+        <https://webkit.org/b/119993> Remove most remaining platform-specific code from Clipboard class
+
+        Reviewed by Sam Weinig.
+
+        * GNUmakefile.list.am: Removed ClipboardGtk.cpp.
+        * PlatformEfl.cmake: Removed ClipboardEfl.cpp.
+        * PlatformGTK.cmake: Removed ClipboardGtk.cpp.
+        * PlatformWinCE.cmake: Removed ClipboardWin.cpp.
+        * Target.pri: Removed ClipboardQt.cpp.
+        * WebCore.vcxproj/WebCore.vcxproj: Removed ClipboardWin.cpp and ClipboardWin.h.
+        * WebCore.vcxproj/WebCore.vcxproj.filters: Removed ClipboardWin.cpp and ClipboardWin.h.
+
+        * dom/Clipboard.cpp:
+        (WebCore::Clipboard::createDragImage): Added. Version that works for all platforms
+        other than Mac, identical to the old one used in GTK and Qt, and close to the one used
+        on Windows.
+
+        * platform/mac/ClipboardMac.mm: Trimmed includes down, and added a FIXME about next steps.
+
+        * platform/qt/DataTransferItemListQt.h: Removed "friend class ClipboardQt", which refers
+        to a now-nonexistent class.
+
+        * platform/efl/ClipboardEfl.cpp: Removed.
+        * platform/gtk/ClipboardGtk.cpp: Removed.
+        * platform/qt/ClipboardQt.cpp: Removed.
+        * platform/win/ClipboardWin.cpp: Removed.
+
 2013-08-17  Darin Adler  <darin@apple.com>
 
         <https://webkit.org/b/119949> Factor Clipboard into drag and non-drag parts

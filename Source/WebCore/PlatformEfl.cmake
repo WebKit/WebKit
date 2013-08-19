@@ -55,7 +55,6 @@ list(APPEND WebCore_SOURCES
 
     platform/efl/AsyncFileSystemEfl.cpp
     platform/efl/BatteryProviderEfl.cpp
-    platform/efl/ClipboardEfl.cpp
     platform/ContextMenuNone.cpp
     platform/ContextMenuItemNone.cpp
     platform/efl/CursorEfl.cpp

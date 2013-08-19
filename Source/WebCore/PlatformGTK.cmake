@@ -59,7 +59,6 @@ list(APPEND WebCore_SOURCES
     platform/audio/gstreamer/WebKitWebAudioSourceGStreamer.cpp
 
     platform/gtk/AsyncFileSystemGtk.cpp
-    platform/gtk/ClipboardGtk.cpp
     platform/gtk/ClipboardUtilitiesGtk.cpp
     platform/gtk/ContextMenuGtk.cpp
     platform/gtk/ContextMenuItemGtk.cpp

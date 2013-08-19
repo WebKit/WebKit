@@ -36,7 +36,6 @@ list(APPEND WebCore_SOURCES
 
     platform/win/BitmapInfo.cpp
     platform/win/ClipboardUtilitiesWin.cpp
-    platform/win/ClipboardWin.cpp
     platform/win/ContextMenuItemWin.cpp
     platform/win/ContextMenuWin.cpp
     platform/win/CursorWin.cpp

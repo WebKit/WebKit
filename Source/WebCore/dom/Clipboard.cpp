@@ -271,6 +271,25 @@ void Clipboard::updateDragImage()
     m_pasteboard->setDragImage(computedImage, computedHotSpot);
 }
 
+#if !PLATFORM(MAC)
+
+DragImageRef Clipboard::createDragImage(IntPoint& location) const
+{
+    location = m_dragLocation;
+
+    if (m_dragImage)
+        return createDragImageFromImage(m_dragImage->image(), ImageOrientationDescription());
+
+    if (m_dragImageElement) {
+        if (Frame* frame = m_dragImageElement->document()->frame())
+            return frame->nodeImage(m_dragImageElement.get());
+    }
+
+    return 0; // We do not have enough information to create a drag image, use the default icon.
+}
+
+#endif
+
 PassOwnPtr<DragImageLoader> DragImageLoader::create(Clipboard* clipboard)
 {
     return adoptPtr(new DragImageLoader(clipboard));

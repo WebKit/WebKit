@@ -50,7 +50,6 @@ public:
     virtual void add(PassRefPtr<File>);
 
 
-    friend class ClipboardQt;
 private:
     DataTransferItemListQt(PassRefPtr<Clipboard>, ScriptExecutionContext*);
 

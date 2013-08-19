@@ -2908,7 +2908,6 @@ SOURCES += \
     platform/Cursor.cpp \
     platform/ContextMenu.cpp \
     platform/ContextMenuItem.cpp \
-    platform/qt/ClipboardQt.cpp \
     platform/ContextMenuItemNone.cpp \
     platform/ContextMenuNone.cpp \
     platform/qt/CursorQt.cpp \

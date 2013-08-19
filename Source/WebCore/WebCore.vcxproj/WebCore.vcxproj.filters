@@ -1227,9 +1227,6 @@
     <ClCompile Include="..\platform\win\ClipboardUtilitiesWin.cpp">
       <Filter>platform\win</Filter>
     </ClCompile>
-    <ClCompile Include="..\platform\win\ClipboardWin.cpp">
-      <Filter>platform\win</Filter>
-    </ClCompile>
     <ClCompile Include="..\platform\win\ContextMenuItemWin.cpp">
       <Filter>platform\win</Filter>
     </ClCompile>
@@ -8309,9 +8306,6 @@
       <Filter>platform\win</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\win\ClipboardUtilitiesWin.h">
-      <Filter>platform\win</Filter>
-    </ClInclude>
-    <ClInclude Include="..\platform\win\ClipboardWin.h">
       <Filter>platform\win</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\win\COMPtr.h">
