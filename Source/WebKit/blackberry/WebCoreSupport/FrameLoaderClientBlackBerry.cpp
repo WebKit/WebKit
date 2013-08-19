@@ -865,7 +865,7 @@ void FrameLoaderClientBlackBerry::postProgressEstimateChangedNotification()
     if (!isMainFrame() || !m_frame->page())
         return;
 
-    m_webPagePrivate->m_client->notifyLoadProgress(m_frame->page()->progress()->estimatedProgress() * 100);
+    m_webPagePrivate->m_client->notifyLoadProgress(m_frame->page()->progress().estimatedProgress() * 100);
 }
 
 void FrameLoaderClientBlackBerry::dispatchDidLayout(LayoutMilestones milestones)

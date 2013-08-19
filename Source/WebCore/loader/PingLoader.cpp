@@ -129,7 +129,7 @@ void PingLoader::sendViolationReport(Frame* frame, const KURL& reportURL, PassRe
 PingLoader::PingLoader(Frame* frame, ResourceRequest& request)
     : m_timeout(this, &PingLoader::timeout)
 {
-    unsigned long identifier = frame->page()->progress()->createUniqueIdentifier();
+    unsigned long identifier = frame->page()->progress().createUniqueIdentifier();
     // FIXME: Why activeDocumentLoader? I would have expected documentLoader().
     // Itseems like the PingLoader should be associated with the current
     // Document in the Frame, but the activeDocumentLoader will be associated

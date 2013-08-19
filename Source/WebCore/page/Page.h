@@ -208,7 +208,7 @@ public:
     PassRefPtr<ClientRectList> nonFastScrollableRects(const Frame*);
 
     Settings& settings() const { return *m_settings; }
-    ProgressTracker* progress() const { return m_progress.get(); }
+    ProgressTracker& progress() const { return *m_progress; }
     BackForwardController* backForward() const { return m_backForwardController.get(); }
 
     FeatureObserver* featureObserver() { return &m_featureObserver; }
@@ -458,7 +458,7 @@ private:
     RefPtr<ScrollingCoordinator> m_scrollingCoordinator;
 
     const RefPtr<Settings> m_settings;
-    OwnPtr<ProgressTracker> m_progress;
+    const OwnPtr<ProgressTracker> m_progress;
 
     OwnPtr<BackForwardController> m_backForwardController;
     RefPtr<Frame> m_mainFrame;

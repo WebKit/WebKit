@@ -69,7 +69,7 @@ void ResourceLoadNotifier::didReceiveResponse(ResourceLoader* loader, const Reso
     loader->documentLoader()->addResponse(r);
 
     if (Page* page = m_frame->page())
-        page->progress()->incrementProgress(loader->identifier(), r);
+        page->progress().incrementProgress(loader->identifier(), r);
 
     dispatchDidReceiveResponse(loader->documentLoader(), loader->identifier(), r, loader);
 }
@@ -77,7 +77,7 @@ void ResourceLoadNotifier::didReceiveResponse(ResourceLoader* loader, const Reso
 void ResourceLoadNotifier::didReceiveData(ResourceLoader* loader, const char* data, int dataLength, int encodedDataLength)
 {
     if (Page* page = m_frame->page())
-        page->progress()->incrementProgress(loader->identifier(), data, dataLength);
+        page->progress().incrementProgress(loader->identifier(), data, dataLength);
 
     dispatchDidReceiveData(loader->documentLoader(), loader->identifier(), data, dataLength, encodedDataLength);
 }
@@ -85,14 +85,14 @@ void ResourceLoadNotifier::didReceiveData(ResourceLoader* loader, const char* da
 void ResourceLoadNotifier::didFinishLoad(ResourceLoader* loader, double finishTime)
 {    
     if (Page* page = m_frame->page())
-        page->progress()->completeProgress(loader->identifier());
+        page->progress().completeProgress(loader->identifier());
     dispatchDidFinishLoading(loader->documentLoader(), loader->identifier(), finishTime);
 }
 
 void ResourceLoadNotifier::didFailToLoad(ResourceLoader* loader, const ResourceError& error)
 {
     if (Page* page = m_frame->page())
-        page->progress()->completeProgress(loader->identifier());
+        page->progress().completeProgress(loader->identifier());
 
     if (!error.isNull())
         m_frame->loader().client()->dispatchDidFailLoading(loader->documentLoader(), loader->identifier(), error);

@@ -3621,7 +3621,7 @@ HRESULT STDMETHODCALLTYPE WebView::groupName(
 HRESULT STDMETHODCALLTYPE WebView::estimatedProgress( 
         /* [retval][out] */ double* estimatedProgress)
 {
-    *estimatedProgress = m_page->progress()->estimatedProgress();
+    *estimatedProgress = m_page->progress().estimatedProgress();
     return S_OK;
 }
     

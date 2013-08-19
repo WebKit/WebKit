@@ -4463,7 +4463,7 @@ static WebFrame *incrementFrame(WebFrame *frame, WebFindOptions options = 0)
 {
     if (!_private->page)
         return 0.0;
-    return _private->page->progress()->estimatedProgress();
+    return _private->page->progress().estimatedProgress();
 }
 
 - (NSArray *)pasteboardTypesForSelection

@@ -179,14 +179,14 @@ public:
     {
         ASSERT(!m_inProgress || m_frame->page());
         if (m_inProgress)
-            m_frame->page()->progress()->progressCompleted(m_frame);
+            m_frame->page()->progress().progressCompleted(m_frame);
     }
 
     void progressStarted()
     {
         ASSERT(m_frame->page());
         if (!m_inProgress)
-            m_frame->page()->progress()->progressStarted(m_frame);
+            m_frame->page()->progress().progressStarted(m_frame);
         m_inProgress = true;
     }
 
@@ -195,7 +195,7 @@ public:
         ASSERT(m_inProgress);
         ASSERT(m_frame->page());
         m_inProgress = false;
-        m_frame->page()->progress()->progressCompleted(m_frame);
+        m_frame->page()->progress().progressCompleted(m_frame);
     }
 
 private:
@@ -2923,7 +2923,7 @@ void FrameLoader::requestFromDelegate(ResourceRequest& request, unsigned long& i
 
     identifier = 0;
     if (Page* page = m_frame->page()) {
-        identifier = page->progress()->createUniqueIdentifier();
+        identifier = page->progress().createUniqueIdentifier();
         notifier()->assignIdentifierToInitialRequest(identifier, m_documentLoader.get(), request);
     }
 

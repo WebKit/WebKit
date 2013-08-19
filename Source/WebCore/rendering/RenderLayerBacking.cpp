@@ -221,7 +221,7 @@ static TiledBacking::TileCoverage computeTileCoverage(RenderLayerBacking* backin
     bool useMinimalTilesDuringLoading = false;
     // Avoid churn.
     if (!backing->didSwitchToFullTileCoverageDuringLoading()) {
-        useMinimalTilesDuringLoading = !frameView->isVisuallyNonEmpty() || (frame->page()->progress()->isMainLoadProgressing() && !frameView->wasScrolledByUser());
+        useMinimalTilesDuringLoading = !frameView->isVisuallyNonEmpty() || (frame->page()->progress().isMainLoadProgressing() && !frameView->wasScrolledByUser());
         if (!useMinimalTilesDuringLoading)
             backing->setDidSwitchToFullTileCoverageDuringLoading();
     }

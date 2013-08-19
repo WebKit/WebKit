@@ -231,7 +231,7 @@ void ResourceLoader::willSendRequest(ResourceRequest& request, const ResourceRes
     // We need a resource identifier for all requests, even if FrameLoader is never going to see it (such as with CORS preflight requests).
     bool createdResourceIdentifier = false;
     if (!m_identifier) {
-        m_identifier = m_frame->page()->progress()->createUniqueIdentifier();
+        m_identifier = m_frame->page()->progress().createUniqueIdentifier();
         createdResourceIdentifier = true;
     }
 

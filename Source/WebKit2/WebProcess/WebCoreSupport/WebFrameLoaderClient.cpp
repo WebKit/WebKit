@@ -807,7 +807,7 @@ void WebFrameLoaderClient::postProgressEstimateChangedNotification()
 {
     if (WebPage* webPage = m_frame->page()) {
         if (m_frame->isMainFrame()) {
-            double progress = webPage->corePage()->progress()->estimatedProgress();
+            double progress = webPage->corePage()->progress().estimatedProgress();
             webPage->send(Messages::WebPageProxy::DidChangeProgress(progress));
         }
     }

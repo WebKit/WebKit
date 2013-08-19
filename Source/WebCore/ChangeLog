@@ -1,3 +1,11 @@
+2013-08-19  Andreas Kling  <akling@apple.com>
+
+        <https://webkit.org/b/119997> Page::progress() should return a reference.
+
+        Reviewed by Antti Koivisto.
+
+        Page::m_progress is never null.
+
 2013-08-18  Darin Adler  <darin@apple.com>
 
         <https://webkit.org/b/119989> Make use of Node::ownerDocument a compile time error

@@ -336,7 +336,7 @@ void InspectorResourceAgent::didLoadResourceFromMemoryCache(DocumentLoader* load
 {
     String loaderId = m_pageAgent->loaderId(loader);
     String frameId = m_pageAgent->frameId(loader->frame());
-    unsigned long identifier = loader->frame()->page()->progress()->createUniqueIdentifier();
+    unsigned long identifier = loader->frame()->page()->progress().createUniqueIdentifier();
     String requestId = IdentifiersFactory::requestId(identifier);
     m_resourcesData->resourceCreated(requestId, loaderId);
     m_resourcesData->addCachedResource(requestId, resource);

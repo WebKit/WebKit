@@ -92,7 +92,7 @@ WebSocketChannel::WebSocketChannel(Document* document, WebSocketChannelClient* c
 #endif
 {
     if (Page* page = m_document->page())
-        m_identifier = page->progress()->createUniqueIdentifier();
+        m_identifier = page->progress().createUniqueIdentifier();
 }
 
 WebSocketChannel::~WebSocketChannel()

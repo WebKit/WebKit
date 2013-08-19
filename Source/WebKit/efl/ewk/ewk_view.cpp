@@ -1644,7 +1644,7 @@ double ewk_view_load_progress_get(const Evas_Object* ewkView)
 {
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, -1.0);
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, -1.0);
-    return priv->page->progress()->estimatedProgress();
+    return priv->page->progress().estimatedProgress();
 }
 
 Eina_Bool ewk_view_stop(Evas_Object* ewkView)
@@ -3173,7 +3173,7 @@ void ewk_view_load_progress_changed(Evas_Object* ewkView)
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv);
 
     // Evas_Coord width, height;
-    double progress = priv->page->progress()->estimatedProgress();
+    double progress = priv->page->progress().estimatedProgress();
 
     DBG("ewkView=%p (p=%0.3f)", ewkView, progress);
 

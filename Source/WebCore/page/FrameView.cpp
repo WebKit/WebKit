@@ -2346,7 +2346,7 @@ void FrameView::endDisableRepaints()
 void FrameView::updateLayerFlushThrottlingInAllFrames()
 {
 #if USE(ACCELERATED_COMPOSITING)
-    bool isMainLoadProgressing = frame().page()->progress()->isMainLoadProgressing();
+    bool isMainLoadProgressing = frame().page()->progress().isMainLoadProgressing();
     for (Frame* frame = m_frame.get(); frame; frame = frame->tree()->traverseNext(m_frame.get())) {
         if (RenderView* renderView = frame->contentRenderer())
             renderView->compositor()->setLayerFlushThrottlingEnabled(isMainLoadProgressing);

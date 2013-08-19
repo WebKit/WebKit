@@ -971,8 +971,8 @@ void QWebPageAdapter::_q_cleanupLeakMessages()
 
 void QWebPageAdapter::_q_onLoadProgressChanged(int)
 {
-    m_totalBytes = page->progress()->totalPageAndResourceBytesToLoad();
-    m_bytesReceived = page->progress()->totalBytesReceived();
+    m_totalBytes = page->progress().totalPageAndResourceBytesToLoad();
+    m_bytesReceived = page->progress().totalBytesReceived();
 }
 
 bool QWebPageAdapter::supportsContentType(const QString& mimeType) const

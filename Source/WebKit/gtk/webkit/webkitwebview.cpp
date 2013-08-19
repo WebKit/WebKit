@@ -4924,7 +4924,7 @@ gdouble webkit_web_view_get_progress(WebKitWebView* webView)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), 1.0);
 
-    return core(webView)->progress()->estimatedProgress();
+    return core(webView)->progress().estimatedProgress();
 }
 
 /**

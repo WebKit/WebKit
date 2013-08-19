@@ -571,7 +571,7 @@ void FrameLoaderClientQt::postProgressStartedNotification()
 void FrameLoaderClientQt::postProgressEstimateChangedNotification()
 {
     if (m_webFrame && m_frame->page())
-        emit loadProgress(qRound(m_frame->page()->progress()->estimatedProgress() * 100));
+        emit loadProgress(qRound(m_frame->page()->progress().estimatedProgress() * 100));
 }
 
 void FrameLoaderClientQt::postProgressFinishedNotification()
