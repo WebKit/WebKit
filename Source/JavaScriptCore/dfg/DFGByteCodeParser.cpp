@@ -1599,6 +1599,9 @@ bool ByteCodeParser::handleConstantInternalFunction(
     UNUSED_PARAM(prediction); // Remove this once we do more things.
     
     if (function->classInfo() == ArrayConstructor::info()) {
+        if (function->globalObject() != m_inlineStackTop->m_codeBlock->globalObject())
+            return false;
+        
         if (argumentCountIncludingThis == 2) {
             set(resultOperand,
                 addToGraph(NewArrayWithSize, OpInfo(ArrayWithUndecided), get(registerOffset + argumentToOperand(1))));

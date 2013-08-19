@@ -1,3 +1,16 @@
+2013-08-18  Filip Pizlo  <fpizlo@apple.com>
+
+        <https://webkit.org/b/119994> DFG new Array() inlining could get confused about global objects
+
+        Reviewed by Geoffrey Garen.
+
+        * fast/js/dfg-cross-global-object-new-array.html: Added.
+        * fast/js/dfg-cross-global-object-new-array-expected.txt: Added.
+        * fast/js/script-tests/dfg-cross-global-object-new-array.js: Added.
+        (foo):
+        (runTest):
+        (doit):
+
 2013-08-19  Alexey Proskuryakov  <ap@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=119915
