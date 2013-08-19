@@ -1,3 +1,56 @@
+2013-08-17  Darin Adler  <darin@apple.com>
+
+        <https://webkit.org/b/119949> Factor Clipboard into drag and non-drag parts
+
+        Reviewed by Sam Weinig.
+
+        * dom/Clipboard.cpp:
+        (WebCore::Clipboard::Clipboard): Move the ClipboardType argument to go after the pasteboard.
+        Initialize strings more efficiently. Put drag-specific data members inside an if statement.
+        Replace m_clipboardType with m_forDrag.
+        (WebCore::Clipboard::createForCopyAndPaste): Moved function up to be close to constructor.
+        Removed explicit clipboard type since constructor now defaults to copy and paste style.
+        (WebCore::Clipboard::setAccessPolicy): Tweaked comment.
+        (WebCore::Clipboard::getData): Put drag-specific code inside #if ENABLE(DRAG_SUPPORT).
+        (WebCore::Clipboard::setData): Ditto.
+        (WebCore::Clipboard::files): Ditto.
+        (WebCore::Clipboard::dropEffect): Added trivial non-drag versions of these functions to
+        be used when !ENABLE(DRAG_SUPPORT).
+        (WebCore::Clipboard::setDropEffect): Ditto.
+        (WebCore::Clipboard::effectAllowed): Ditto.
+        (WebCore::Clipboard::setEffectAllowed): Ditto.
+        (WebCore::Clipboard::createForDragAndDrop): Renamed Clipboard::create that takes DragData
+        to this, and kep the overload that does not as well. Made the DragData argument a const&.
+        (WebCore::Clipboard::canSetDragImage): Moved down here since it is drag-specific.
+        (WebCore::Clipboard::updateDragImage): Use m_shouldUpdateDragImage directly insted of
+        calling a dragStarted function.
+        (WebCore::dragOpFromIEOp): Moved this function down here to the drag-specific section.
+        (WebCore::IEOpFromDragOp): Ditto.
+        (WebCore::Clipboard::sourceOperation): Ditto.
+        (WebCore::Clipboard::destinationOperation): Ditto.
+        (WebCore::Clipboard::setSourceOperation): Ditto.
+        (WebCore::Clipboard::setDestinationOperation): Ditto.
+
+        * dom/Clipboard.h: Removed unneeded include of "Node.h" and added and removed forward
+        class declarations as required. Removed non-helpful comment. Made ClipboardType a private
+        implementation detail. Moved functions that are not part of the DOM API down to a separate
+        section lower down in the class, and sorted the functions to match the order they appear
+        in the IDL file. Removed isForCopyAndPaste and isForDragAndDrop. Changed dropEffect and
+        effectAllowed to not be inlined. Moved the long comment before canSetDragImage into the
+        implementation since it's an implementation detail. Since this class is no longer polymorphic,
+        use only private, not protected. Make m_dragImageElement an Element, not a Node.
+
+        * dom/Clipboard.idl: Removed flags to tell bindings how to deal with null strings, since
+        these string properties can never return null strings anyway.
+
+        * page/DragController.cpp:
+        (WebCore::DragController::dragExited): Updated to call the new createForDragAndDrop function.
+        (WebCore::DragController::performDrag): Ditto.
+        (WebCore::DragController::tryDHTMLDrag): Ditto.
+
+        * platform/mac/ClipboardMac.mm: Added now-needed include of Element.h since Clipboard.h no
+        longer includes it.
+
 2013-08-18  David Kilzer  <ddkilzer@apple.com>
 
         WebCore fails to build with trunk clang: error: 'register' storage class specifier is deprecated [-Werror,-Wdeprecated-register]

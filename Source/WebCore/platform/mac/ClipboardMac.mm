@@ -32,6 +32,7 @@
 #import "DragClient.h"
 #import "DragController.h"
 #import "DragData.h"
+#import "Element.h"
 #import "Frame.h"
 #import "FrameSnapshottingMac.h"
 #import "Page.h"

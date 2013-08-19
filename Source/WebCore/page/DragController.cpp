@@ -196,7 +196,7 @@ void DragController::dragExited(DragData* dragData)
 
     if (RefPtr<FrameView> v = mainFrame->view()) {
         ClipboardAccessPolicy policy = (!m_documentUnderMouse || m_documentUnderMouse->securityOrigin()->isLocal()) ? ClipboardReadable : ClipboardTypesReadable;
-        RefPtr<Clipboard> clipboard = Clipboard::create(policy, dragData, mainFrame);
+        RefPtr<Clipboard> clipboard = Clipboard::createForDragAndDrop(policy, *dragData);
         clipboard->setSourceOperation(dragData->draggingSourceOperationMask());
         mainFrame->eventHandler().cancelDragAndDrop(createMouseEvent(dragData), clipboard.get());
         clipboard->setAccessPolicy(ClipboardNumb);    // invalidate clipboard here for security
@@ -222,7 +222,7 @@ bool DragController::performDrag(DragData* dragData)
         bool preventedDefault = false;
         if (mainFrame->view()) {
             // Sending an event can result in the destruction of the view and part.
-            RefPtr<Clipboard> clipboard = Clipboard::create(ClipboardReadable, dragData, mainFrame.get());
+            RefPtr<Clipboard> clipboard = Clipboard::createForDragAndDrop(ClipboardReadable, *dragData);
             clipboard->setSourceOperation(dragData->draggingSourceOperationMask());
             preventedDefault = mainFrame->eventHandler().performDragAndDrop(createMouseEvent(dragData), clipboard.get());
             clipboard->setAccessPolicy(ClipboardNumb); // Invalidate clipboard here for security
@@ -614,7 +614,7 @@ bool DragController::tryDHTMLDrag(DragData* dragData, DragOperation& operation)
         return false;
 
     ClipboardAccessPolicy policy = m_documentUnderMouse->securityOrigin()->isLocal() ? ClipboardReadable : ClipboardTypesReadable;
-    RefPtr<Clipboard> clipboard = Clipboard::create(policy, dragData, mainFrame.get());
+    RefPtr<Clipboard> clipboard = Clipboard::createForDragAndDrop(policy, *dragData);
     DragOperation srcOpMask = dragData->draggingSourceOperationMask();
     clipboard->setSourceOperation(srcOpMask);
 

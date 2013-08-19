@@ -29,7 +29,9 @@
 #include "DragActions.h"
 #include "DragImage.h"
 #include "IntPoint.h"
-#include "Node.h"
+#include <wtf/ListHashSet.h>
+#include <wtf/RefCounted.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -37,104 +39,83 @@ namespace WebCore {
     class DataTransferItemList;
     class DragData;
     class DragImageLoader;
+    class Element;
     class FileList;
-    class Frame;
     class Pasteboard;
-    class Range;
 
-    // State available during IE's events for drag and drop and copy/paste
     class Clipboard : public RefCounted<Clipboard> {
     public:
-        // Whether this clipboard is serving a drag-drop or copy-paste request.
-        enum ClipboardType {
-            CopyAndPaste,
-            DragAndDrop,
-        };
-        
-        static PassRefPtr<Clipboard> create(ClipboardAccessPolicy, DragData*, Frame*);
+        static PassRefPtr<Clipboard> createForCopyAndPaste(ClipboardAccessPolicy);
 
         ~Clipboard();
 
-        bool isForCopyAndPaste() const { return m_clipboardType == CopyAndPaste; }
-        bool isForDragAndDrop() const { return m_clipboardType == DragAndDrop; }
-
-        String dropEffect() const { return dropEffectIsUninitialized() ? "none" : m_dropEffect; }
+        String dropEffect() const;
         void setDropEffect(const String&);
-        bool dropEffectIsUninitialized() const { return m_dropEffect == "uninitialized"; }
-        String effectAllowed() const { return m_effectAllowed; }
+
+        String effectAllowed() const;
         void setEffectAllowed(const String&);
-    
+
+        ListHashSet<String> types() const;
+
+        PassRefPtr<FileList> files() const;
+
         void clearData(const String& type);
         void clearData();
 
+        String getData(const String& type) const;
+
+        bool setData(const String& type, const String& data);
+
         void setDragImage(Element*, int x, int y);
 
-        String getData(const String& type) const;
-        bool setData(const String& type, const String& data);
-    
-        ListHashSet<String> types() const;
-        PassRefPtr<FileList> files() const;
-
-        CachedImage* dragImage() const { return m_dragImage.get(); }
-        Node* dragImageElement() const { return m_dragImageElement.get(); }
-        
-        DragImageRef createDragImage(IntPoint& dragLocation) const;
-
-        bool hasData();
+#if ENABLE(DATA_TRANSFER_ITEMS)
+        PassRefPtr<DataTransferItemList> items() = 0;
+#endif
 
         void setAccessPolicy(ClipboardAccessPolicy);
         bool canReadTypes() const;
         bool canReadData() const;
         bool canWriteData() const;
-        // Note that the spec doesn't actually allow drag image modification outside the dragstart
-        // event. This capability is maintained for backwards compatiblity for ports that have
-        // supported this in the past. On many ports, attempting to set a drag image outside the
-        // dragstart operation is a no-op anyway.
-        bool canSetDragImage() const;
-
-        DragOperation sourceOperation() const;
-        DragOperation destinationOperation() const;
-        void setSourceOperation(DragOperation);
-        void setDestinationOperation(DragOperation);
-        
-        void setDragHasStarted() { m_dragStarted = true; }
-
-#if ENABLE(DATA_TRANSFER_ITEMS)
-        PassRefPtr<DataTransferItemList> items() = 0;
-#endif
-        
-        static PassRefPtr<Clipboard> createForCopyAndPaste(ClipboardAccessPolicy);
 
         Pasteboard& pasteboard() { return *m_pasteboard; }
 
 #if ENABLE(DRAG_SUPPORT)
         static PassRefPtr<Clipboard> createForDragAndDrop();
+        static PassRefPtr<Clipboard> createForDragAndDrop(ClipboardAccessPolicy, const DragData&);
 
+        bool dropEffectIsUninitialized() const { return m_dropEffect == "uninitialized"; }
+        bool hasData();
+
+        DragOperation sourceOperation() const;
+        DragOperation destinationOperation() const;
+        void setSourceOperation(DragOperation);
+        void setDestinationOperation(DragOperation);
+
+        void setDragHasStarted() { m_shouldUpdateDragImage = true; }
+        DragImageRef createDragImage(IntPoint& dragLocation) const;
         void updateDragImage();
 #endif
 
-    protected:
-        Clipboard(ClipboardAccessPolicy, ClipboardType, PassOwnPtr<Pasteboard>, bool forFileDrag = false);
-
-        bool dragStarted() const { return m_dragStarted; }
-        
     private:
-        // Instead of using this member directly, prefer to use the can*() methods above.
+        enum ClipboardType { CopyAndPaste, DragAndDrop };
+        Clipboard(ClipboardAccessPolicy, PassOwnPtr<Pasteboard>, ClipboardType = CopyAndPaste, bool forFileDrag = false);
+
+#if ENABLE(DRAG_SUPPORT)
+        bool canSetDragImage() const;
+#endif
+
         ClipboardAccessPolicy m_policy;
+        OwnPtr<Pasteboard> m_pasteboard;
+
+#if ENABLE(DRAG_SUPPORT)
+        bool m_forDrag;
+        bool m_forFileDrag;
         String m_dropEffect;
         String m_effectAllowed;
-        bool m_dragStarted;
-        ClipboardType m_clipboardType;
-        
-    protected:
+        bool m_shouldUpdateDragImage;
         IntPoint m_dragLocation;
         CachedResourceHandle<CachedImage> m_dragImage;
-        RefPtr<Node> m_dragImageElement;
-
-    private:
-        OwnPtr<Pasteboard> m_pasteboard;
-        bool m_forFileDrag;
-#if ENABLE(DRAG_SUPPORT)
+        RefPtr<Element> m_dragImageElement;
         OwnPtr<DragImageLoader> m_dragImageLoader;
 #endif
     };
