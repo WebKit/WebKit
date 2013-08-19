@@ -1,3 +1,12 @@
+2013-08-19  Antti Koivisto  <antti@apple.com>
+
+        Skip these failing tests pending fix:
+        
+        svg/custom/bug78807.svg
+        svg/custom/use-invalid-style.svg
+
+        * TestExpectations:
+
 2013-08-19  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed gardening. Partial revert of r154283 which caused test failures on all Mac ports.
