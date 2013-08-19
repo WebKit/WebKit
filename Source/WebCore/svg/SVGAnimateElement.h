@@ -27,6 +27,7 @@
 #include "SVGAnimatedType.h"
 #include "SVGAnimatedTypeAnimator.h"
 #include "SVGAnimationElement.h"
+#include "SVGNames.h"
 #include <wtf/OwnPtr.h>
 
 namespace WebCore {
@@ -74,6 +75,16 @@ private:
     SVGElementAnimatedPropertyList m_animatedProperties;
     OwnPtr<SVGAnimatedTypeAnimator> m_animator;
 };
+
+inline SVGAnimateElement* toSVGAnimateElement(Element* element)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(!element
+        || element->hasTagName(SVGNames::animateTag)
+        || element->hasTagName(SVGNames::animateColorTag)
+        || element->hasTagName(SVGNames::animateTransformTag)
+        || element->hasTagName(SVGNames::setTag));
+    return static_cast<SVGAnimateElement*>(element);
+}
 
 } // namespace WebCore
 

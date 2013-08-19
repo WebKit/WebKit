@@ -1,3 +1,19 @@
+2013-08-19  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        <https://webkit.org/b/119996> Introduce toSVGAnimateElement(), and use it
+
+        Reviewed by Andreas Kling.
+
+        As a step to clean-up static_cast<SVGXXX>, static_cast<SVGAnimateElement*> also can be changed
+        with toSVGAnimateElement().
+
+        * svg/SVGAnimateElement.cpp:
+        (WebCore::SVGAnimateElement::calculateAnimatedValue):
+        * svg/SVGAnimateElement.h:
+        (WebCore::toSVGAnimateElement):
+        * svg/SVGAnimationElement.cpp:
+        (WebCore::SVGAnimationElement::currentValuesForValuesAnimation):
+
 2013-08-19  Andreas Kling  <akling@apple.com>
 
         <https://webkit.org/b/119997> Page::progress() should return a reference.

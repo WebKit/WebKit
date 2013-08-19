@@ -111,12 +111,7 @@ void SVGAnimateElement::calculateAnimatedValue(float percentage, unsigned repeat
     ASSERT(m_fromType->type() == m_animatedPropertyType);
     ASSERT(m_toType);
 
-    ASSERT(resultElement->hasTagName(SVGNames::animateTag)
-        || resultElement->hasTagName(SVGNames::animateColorTag)
-        || resultElement->hasTagName(SVGNames::animateTransformTag)
-        || resultElement->hasTagName(SVGNames::setTag));
-
-    SVGAnimateElement* resultAnimationElement = static_cast<SVGAnimateElement*>(resultElement);
+    SVGAnimateElement* resultAnimationElement = toSVGAnimateElement(resultElement);
     ASSERT(resultAnimationElement->m_animatedType);
     ASSERT(resultAnimationElement->m_animatedPropertyType == m_animatedPropertyType);
 
