@@ -737,6 +737,7 @@ private:
                 attemptToMakeGetByteLength(node);
                 break;
             }
+            setUseKindAndUnboxIfProfitable<CellUse>(node->child1());
             break;
         }
             
