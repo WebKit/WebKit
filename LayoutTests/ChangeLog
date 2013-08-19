@@ -1,5 +1,16 @@
 2013-08-18  Seokju Kwon  <seokju@webkit.org>
 
+        Unreviewed gardening after r154135
+
+        fast/js/array-sort-modifying-tostring.html was removed.
+
+        * platform/qt-mac/TestExpectations:
+        * platform/qt/TestExpectations:
+        * platform/win/TestExpectations:
+        * platform/wincairo/TestExpectations:
+
+2013-08-18  Seokju Kwon  <seokju@webkit.org>
+
         Unreviewed gardening.
 
         * platform/efl/TestExpectations: fast/js/array-sort-modifying-tostring.html was removed after r154135.
