@@ -91,8 +91,15 @@
 #if COMPILER(GCC) && !defined(__OBJC__)
 #define WTF_ATTRIBUTE_PRINTF(formatStringArgument, extraArguments) __attribute__((__format__(printf, formatStringArgument, extraArguments)))
 #else
-#define WTF_ATTRIBUTE_PRINTF(formatStringArgument, extraArguments) 
+#define WTF_ATTRIBUTE_PRINTF(formatStringArgument, extraArguments)
 #endif
+
+#if PLATFORM(IOS)
+/* For a project that uses WTF but has no config.h, we need to explicitly set the export defines here. */
+#ifndef WTF_EXPORT_PRIVATE
+#define WTF_EXPORT_PRIVATE
+#endif
+#endif // PLATFORM(IOS)
 
 /* These helper functions are always declared, but not necessarily always defined if the corresponding function is disabled. */
 

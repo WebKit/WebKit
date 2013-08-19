@@ -68,6 +68,10 @@
 #define ENABLE_CSS_IMAGE_SET 1
 #endif
 
+#if !defined(ENABLE_DISK_IMAGE_CACHE)
+#define ENABLE_DISK_IMAGE_CACHE 1
+#endif
+
 #if !defined(ENABLE_DRAG_SUPPORT)
 #define ENABLE_DRAG_SUPPORT 0
 #endif
@@ -80,6 +84,14 @@
 #define ENABLE_ICONDATABASE 0
 #endif
 
+#if !defined(ENABLE_IOS_GESTURE_EVENTS)
+#define ENABLE_IOS_GESTURE_EVENTS 1
+#endif
+
+#if !defined(ENABLE_LETTERPRESS)
+#define ENABLE_LETTERPRESS 1
+#endif
+
 #if !defined(ENABLE_METER_ELEMENT)
 #define ENABLE_METER_ELEMENT 0
 #endif
@@ -89,15 +101,27 @@
 #endif
 
 #if !defined(ENABLE_ORIENTATION_EVENTS)
-#define ENABLE_ORIENTATION_EVENTS 1 
+#define ENABLE_ORIENTATION_EVENTS 1
+#endif
+
+#if !defined(ENABLE_POINTER_LOCK)
+#define ENABLE_POINTER_LOCK 0
 #endif
 
 #if !defined(ENABLE_REPAINT_THROTTLING)
-#define ENABLE_REPAINT_THROTTLING 1 
+#define ENABLE_REPAINT_THROTTLING 0
+#endif
+
+#if !defined(ENABLE_RESPECT_EXIF_ORIENTATION)
+#define ENABLE_RESPECT_EXIF_ORIENTATION 1
 #endif
 
 #if !defined(ENABLE_TEXT_CARET)
 #define ENABLE_TEXT_CARET 0
+#endif
+
+#if !defined(ENABLE_TOUCH_EVENTS)
+#define ENABLE_TOUCH_EVENTS 1
 #endif
 
 #if !defined(ENABLE_WEB_ARCHIVE)

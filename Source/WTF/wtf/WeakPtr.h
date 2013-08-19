@@ -32,6 +32,10 @@
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Threading.h>
 
+#if USE(WEB_THREAD)
+#include <wtf/MainThread.h>
+#endif
+
 namespace WTF {
 
 template<typename T>
@@ -44,13 +48,21 @@ public:
 
     T* get() const
     {
+#if USE(WEB_THREAD)
+        ASSERT(canAccessThreadLocalDataForThread(m_boundThread));
+#else
         ASSERT(m_boundThread == currentThread());
+#endif
         return m_ptr;
     }
 
     void clear()
     {
+#if USE(WEB_THREAD)
+        ASSERT(canAccessThreadLocalDataForThread(m_boundThread));
+#else
         ASSERT(m_boundThread == currentThread());
+#endif
         m_ptr = 0;
     }
 

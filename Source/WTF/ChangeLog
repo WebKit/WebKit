@@ -1,3 +1,48 @@
+2013-08-19  Joseph Pecoraro  <pecoraro@apple.com>
+
+        <https://webkit.org/b/119905> [iOS] Upstream Source/WTF
+
+        Reviewed by Benjamin Poulain.
+
+        Upstream iOS WebKit Source/WTF.
+
+        * Configurations/Base.xcconfig:
+        JavaScriptCore.framework is a public framework.
+
+        * wtf/Assertions.h:
+        Define an export macro for iOS projects just including <wtf/Assertions.h>.
+
+        * wtf/Platform.h:
+        * wtf/FeatureDefines.h:
+        iOS ENABLE and USE defines.
+
+        * wtf/MainThread.h:
+        * wtf/mac/MainThreadMac.mm:
+        (WTF::initializeApplicationUIThreadIdentifier):
+        (WTF::initializeWebThreadIdentifier):
+        (WTF::canAccessThreadLocalDataForThread):
+        * wtf/WeakPtr.h:
+        (WTF::WeakReference::get):
+        (WTF::WeakReference::clear):
+        Shared WebThread and MainThread access to thread local data.
+
+        * wtf/WTFThreadData.cpp:
+        (WTF::WTFThreadData::WTFThreadData):
+        Shared WebThread and MainThread identifier tables.
+
+        * wtf/ThreadSpecific.h:
+        (WTF::::replace):
+        Used later on so that WebThread can share the MainThread's thread global data.
+
+        * wtf/text/StringStatics.cpp:
+        (WTF::AtomicString::init):
+        When USE(WEB_THREAD) assert AtomicString::init is initialized on the realMainThread.
+
+        * wtf/unicode/CharacterNames.h:
+        * wtf/unicode/icu/UnicodeIcu.h:
+        (WTF::Unicode::hasLineBreakingPropertyComplexContextOrIdeographic):
+        Minor iOS constants and functions used later by WebCore.
+
 2013-08-16  Arunprasad Rajkumar  <arurajku@cisco.com>
 
         <https://webkit.org/b/119785> Replace currentTime() with monotonicallyIncreasingTime() in WebCore

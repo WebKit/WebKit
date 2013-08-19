@@ -35,6 +35,10 @@
 #include "StaticConstructors.h"
 #include "StringImpl.h"
 
+#if USE(WEB_THREAD)
+#include <pthread.h>
+#endif
+
 namespace WTF {
 
 StringImpl* StringImpl::empty()
@@ -75,7 +79,7 @@ void AtomicString::init()
     static bool initialized;
     if (!initialized) {
         // Initialization is not thread safe, so this function must be called from the main thread first.
-        ASSERT(isMainThread());
+        ASSERT(isUIThread());
 
         // Use placement new to initialize the globals.
         new (NotNull, (void*)&nullAtom) AtomicString;

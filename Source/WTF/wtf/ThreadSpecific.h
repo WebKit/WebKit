@@ -68,6 +68,10 @@ public:
     operator T*();
     T& operator*();
 
+#if USE(WEB_THREAD)
+    void replace(T*);
+#endif
+
 private:
 #if OS(WINDOWS)
     friend void ThreadSpecificThreadExit();
@@ -272,6 +276,19 @@ inline T& ThreadSpecific<T>::operator*()
 {
     return *operator T*();
 }
+
+#if USE(WEB_THREAD)
+template<typename T>
+inline void ThreadSpecific<T>::replace(T* newPtr)
+{
+    ASSERT(newPtr);
+    Data* data = static_cast<Data*>(pthread_getspecific(m_key));
+    ASSERT(data);
+    data->value->~T();
+    fastFree(data->value);
+    data->value = newPtr;
+}
+#endif
 
 } // namespace WTF
 

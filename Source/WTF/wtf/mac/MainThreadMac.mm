@@ -62,6 +62,11 @@ static bool mainThreadEstablishedAsPthreadMain;
 static pthread_t mainThreadPthread;
 static NSThread* mainThreadNSThread;
 
+#if USE(WEB_THREAD)
+static ThreadIdentifier sApplicationUIThreadIdentifier;
+static ThreadIdentifier sWebThreadIdentifier;
+#endif
+
 void initializeMainThreadPlatform()
 {
     ASSERT(!staticMainThreadCaller);
@@ -143,6 +148,30 @@ bool isUIThread()
 bool isWebThread()
 {
     return pthread_equal(pthread_self(), mainThreadPthread);
+}
+
+void initializeApplicationUIThreadIdentifier()
+{
+    ASSERT(pthread_main_np());
+    sApplicationUIThreadIdentifier = currentThread();
+}
+
+void initializeWebThreadIdentifier()
+{
+    ASSERT(!pthread_main_np());
+    sWebThreadIdentifier = currentThread();
+}
+
+bool canAccessThreadLocalDataForThread(ThreadIdentifier threadId)
+{
+    ThreadIdentifier currentThreadId = currentThread();
+    if (threadId == currentThreadId)
+        return true;
+
+    if (threadId == sWebThreadIdentifier || threadId == sApplicationUIThreadIdentifier)
+        return (currentThreadId == sWebThreadIdentifier || currentThreadId == sApplicationUIThreadIdentifier) && WebCoreWebThreadIsLockedOrDisabled();
+
+    return false;
 }
 #else
 bool isMainThread()

@@ -54,6 +54,9 @@ WTF_EXPORT_PRIVATE bool isMainThread();
 #if USE(WEB_THREAD)
 WTF_EXPORT_PRIVATE bool isWebThread();
 WTF_EXPORT_PRIVATE bool isUIThread();
+WTF_EXPORT_PRIVATE void initializeApplicationUIThreadIdentifier();
+WTF_EXPORT_PRIVATE void initializeWebThreadIdentifier();
+WTF_EXPORT_PRIVATE bool canAccessThreadLocalDataForThread(ThreadIdentifier);
 #else
 inline bool isWebThread() { return isMainThread(); }
 inline bool isUIThread() { return isMainThread(); }
@@ -64,7 +67,7 @@ void initializeGCThreads();
 #if ENABLE(PARALLEL_GC)
 void registerGCThread();
 WTF_EXPORT_PRIVATE bool isMainThreadOrGCThread();
-#elif PLATFORM(MAC)
+#elif PLATFORM(MAC) || PLATFORM(IOS)
 WTF_EXPORT_PRIVATE bool isMainThreadOrGCThread();
 #else
 inline bool isMainThreadOrGCThread() { return isMainThread(); }
@@ -93,4 +96,10 @@ using WTF::cancelCallOnMainThread;
 using WTF::setMainThreadCallbacksPaused;
 using WTF::isMainThread;
 using WTF::isMainThreadOrGCThread;
+#if USE(WEB_THREAD)
+using WTF::initializeApplicationUIThreadIdentifier;
+using WTF::initializeWebThreadIdentifier;
+using WTF::canAccessThreadLocalDataForThread;
+#endif
+
 #endif // MainThread_h

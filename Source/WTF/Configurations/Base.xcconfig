@@ -71,10 +71,7 @@ TARGET_MAC_OS_X_VERSION_MAJOR = $(MAC_OS_X_VERSION_MAJOR);
 
 SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx;
 
-JAVASCRIPTCORE_FRAMEWORKS_DIR = $(JAVASCRIPTCORE_FRAMEWORKS_DIR_$(PLATFORM_NAME));
-JAVASCRIPTCORE_FRAMEWORKS_DIR_iphoneos = $(SYSTEM_LIBRARY_DIR)/PrivateFrameworks;
-JAVASCRIPTCORE_FRAMEWORKS_DIR_iphonesimulator = $(JAVASCRIPTCORE_FRAMEWORKS_DIR_iphoneos);
-JAVASCRIPTCORE_FRAMEWORKS_DIR_macosx = $(SYSTEM_LIBRARY_DIR)/Frameworks;
+JAVASCRIPTCORE_FRAMEWORKS_DIR = $(SYSTEM_LIBRARY_DIR)/Frameworks;
 
 // DEBUG_DEFINES, GCC_OPTIMIZATION_LEVEL, STRIP_INSTALLED_PRODUCT and DEAD_CODE_STRIPPING vary between the debug and normal variants.
 // We set up the values for each variant here, and have the Debug configuration in the Xcode project use the _debug variant.

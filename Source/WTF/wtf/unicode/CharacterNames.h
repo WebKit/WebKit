@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #ifndef CharacterNames_h
@@ -36,6 +36,7 @@ namespace Unicode {
 // Most of these are UChar constants, not UChar32, which makes them
 // more convenient for WebCore code that mostly uses UTF-16.
 
+const UChar AppleLogo = 0xF8FF;
 const UChar32 aegeanWordSeparatorLine = 0x10100;
 const UChar32 aegeanWordSeparatorDot = 0x10101;
 const UChar apostrophe = 0x0027;
@@ -94,6 +95,7 @@ const UChar zeroWidthNoBreakSpace = 0xFEFF;
 } // namespace Unicode
 } // namespace WTF
 
+using WTF::Unicode::AppleLogo;
 using WTF::Unicode::aegeanWordSeparatorLine;
 using WTF::Unicode::aegeanWordSeparatorDot;
 using WTF::Unicode::blackCircle;
