@@ -116,24 +116,12 @@ class QtPort(Port):
             version = '5.0'
         return version
 
-    def architecture(self):
-        py_machine = platform.machine()
-        if 'i386' == py_machine:
-            return 'x86'
-        if 'x86_64' == py_machine:
-            return 'x64'
-        if 'arm' in py_machine:
-            return 'arm'
-        return ''
-
     def _search_paths(self):
         #                 qt-mac-wk2
         #                /
         #       qt-wk1  qt-wk2
         #             \/
         #           qt-5.x
-        #              |
-        #     (qt-x86|qt-x64|qt-arm)
         #               \
         #    (qt-linux|qt-mac|qt-win)
         #                |
@@ -150,10 +138,6 @@ class QtPort(Port):
 
         search_paths.append('qt-' + self.qt_version())
 
-        architecture = self.architecture();
-        if architecture:
-            search_paths.append('qt-' + architecture)
-
         search_paths.append(self.port_name + '-' + self.operating_system())
         search_paths.append(self.port_name)
         return search_paths
@@ -167,7 +151,7 @@ class QtPort(Port):
             paths.append('wk2')
 
         # expectations_files() uses the directories listed in _search_paths reversed.
-        # e.g. qt -> qt-linux -> qt-x86 -> qt-5.x -> qt-wk1
+        # e.g. qt -> qt-linux -> qt-5.x -> qt-wk1
         return list(reversed([self._filesystem.join(self._webkit_baseline_path(p), 'TestExpectations') for p in paths]))
 
     def setup_environ_for_server(self, server_name=None):
