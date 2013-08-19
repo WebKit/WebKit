@@ -87,8 +87,7 @@ private:
 
     void addMatchedRule(const RuleData*);
     void clearMatchedRules();
-        
-private:
+
     template<bool hasInspectorFrontends>
     void doCollectMatchingRulesForList(const Vector<RuleData>*, const MatchRequest&, StyleResolver::RuleRange&);
 

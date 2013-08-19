@@ -1,3 +1,11 @@
+2013-08-19  Benjamin Poulain  <benjamin@webkit.org>
+
+        <https://webkit.org/b/119934> Remove a repeated "private:" from ElementRuleCollector
+
+        Reviewed by Darin Adler.
+
+        * css/ElementRuleCollector.h:
+
 2013-08-19  Pratik Solanki  <psolanki@apple.com>
 
         <https://webkit.org/b/120019> Document::visitedLinkState() should return a reference
