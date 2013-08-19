@@ -1,3 +1,12 @@
+2013-08-19  Alexey Proskuryakov  <ap@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=119915
+        REGRESSION(r154144): ASSERTION FAILED: m_history->provisionalItem() == m_requestedHistoryItem.get()
+
+        Reviewed by Darin Adler.
+
+        * platform/mac-wk2/TestExpectations: Unskipping the failing test.
+
 2013-08-19  Gavin Barraclough  <barraclough@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=119995

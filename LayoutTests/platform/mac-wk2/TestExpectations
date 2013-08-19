@@ -335,9 +335,6 @@ webkit.org/b/118925 [ Debug ] svg/repaint/buffered-rendering-static-image.html  
 # Only failing on WK1
 webkit.org/b/104104 fast/overflow/scrollbar-click-retains-focus.html [ Pass ]
 
-webkit.org/b/119915 [ Release ] http/tests/navigation/post-frames-goback1.html [ Failure ]
-webkit.org/b/119915 [ Debug ] http/tests/navigation/post-frames-goback1.html [ Crash ]
-
 ### END OF (1) Classified failures with bug reports
 ########################################
 

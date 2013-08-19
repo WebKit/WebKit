@@ -376,6 +376,7 @@ void TestController::initialize(int argc, const char* argv[])
     }
 
     WKContextUseTestingNetworkSession(m_context.get());
+    WKContextSetCacheModel(m_context.get(), kWKCacheModelDocumentBrowser);
 
     platformInitializeContext();
 
