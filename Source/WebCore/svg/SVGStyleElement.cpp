@@ -54,10 +54,7 @@ PassRefPtr<SVGStyleElement> SVGStyleElement::create(const QualifiedName& tagName
 
 bool SVGStyleElement::disabled() const
 {
-    if (!m_sheet)
-        return false;
-    
-    return m_sheet->disabled();
+    return sheet() && sheet()->disabled();
 }
 
 void SVGStyleElement::setDisabled(bool setDisabled)
@@ -106,6 +103,8 @@ bool SVGStyleElement::isSupportedAttribute(const QualifiedName& attrName)
     if (supportedAttributes.isEmpty()) {
         SVGLangSpace::addSupportedAttributes(supportedAttributes);
         supportedAttributes.add(SVGNames::titleAttr);
+        supportedAttributes.add(SVGNames::mediaAttr);
+        supportedAttributes.add(SVGNames::typeAttr);
     }
     return supportedAttributes.contains<SVGAttributeHashTranslator>(attrName);
 }
@@ -116,13 +115,19 @@ void SVGStyleElement::parseAttribute(const QualifiedName& name, const AtomicStri
         SVGElement::parseAttribute(name, value);
         return;
     }
-
     if (name == SVGNames::titleAttr) {
-        if (m_sheet)
-            m_sheet->setTitle(value);
+        if (sheet())
+            sheet()->setTitle(value);
         return;
     }
-
+    if (name == SVGNames::typeAttr) {
+        setStyleSheetContentType(value);
+        return;
+    }
+    if (name == SVGNames::mediaAttr) {
+        setStyleSheetMedia(value);
+        return;
+    }
     if (SVGLangSpace::parseAttribute(name, value))
         return;
 

@@ -72,14 +72,17 @@ PassRefPtr<HTMLStyleElement> HTMLStyleElement::create(const QualifiedName& tagNa
 
 void HTMLStyleElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    if (name == titleAttr && m_sheet)
-        m_sheet->setTitle(value);
+    if (name == titleAttr && sheet())
+        sheet()->setTitle(value);
     else if (name == scopedAttr && ContextFeatures::styleScopedEnabled(document()))
         scopedAttributeChanged(!value.isNull());
-    else if (name == mediaAttr && inDocument() && document()->renderer() && m_sheet) {
-        m_sheet->setMediaQueries(MediaQuerySet::createAllowingDescriptionSyntax(value));
+    else if (name == mediaAttr && inDocument() && document()->renderer() && sheet()) {
+        setStyleSheetMedia(value);
+        sheet()->setMediaQueries(MediaQuerySet::createAllowingDescriptionSyntax(value));
         document()->styleResolverChanged(RecalcStyleImmediately);
-    } else
+    } else if (name == typeAttr)
+        setStyleSheetContentType(value);
+    else
         HTMLElement::parseAttribute(name, value);
 }
 
@@ -206,16 +209,6 @@ void HTMLStyleElement::childrenChanged(bool changedByParser, Node* beforeChange,
     StyleElement::childrenChanged(this);
 }
 
-const AtomicString& HTMLStyleElement::media() const
-{
-    return getAttribute(mediaAttr);
-}
-
-const AtomicString& HTMLStyleElement::type() const
-{
-    return getAttribute(typeAttr);
-}
-
 bool HTMLStyleElement::scoped() const
 {
     return fastHasAttribute(scopedAttr) && ContextFeatures::styleScopedEnabled(document());
@@ -274,10 +267,10 @@ void HTMLStyleElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) cons
 
 bool HTMLStyleElement::disabled() const
 {
-    if (!m_sheet)
+    if (!sheet())
         return false;
 
-    return m_sheet->disabled();
+    return sheet()->disabled();
 }
 
 void HTMLStyleElement::setDisabled(bool setDisabled)

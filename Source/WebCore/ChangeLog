@@ -1,3 +1,34 @@
+2013-08-19  Antti Koivisto  <antti@apple.com>
+
+        <https://webkit.org/b/120001> Clean up StyleElement
+
+        Reviewed by Andreas Kling.
+
+        - Make it non-virtual so we don't use virtual multiple inheritance
+        - Improve names
+        - Improve code clarity
+
+        * dom/StyleElement.cpp:
+        (WebCore::StyleElement::StyleElement):
+        (WebCore::StyleElement::insertedIntoDocument):
+        (WebCore::StyleElement::clearDocumentData):
+        (WebCore::StyleElement::childrenChanged):
+        (WebCore::StyleElement::finishParsingChildren):
+        (WebCore::StyleElement::createSheetFromTextContents):
+        (WebCore::isValidCSSContentType):
+        (WebCore::StyleElement::createSheet):
+        (WebCore::StyleElement::isLoading):
+        * dom/StyleElement.h:
+        (WebCore::StyleElement::setStyleSheetContentType):
+        (WebCore::StyleElement::setStyleSheetMedia):
+        * html/HTMLStyleElement.cpp:
+        (WebCore::HTMLStyleElement::parseAttribute):
+        * html/HTMLStyleElement.h:
+        * svg/SVGStyleElement.cpp:
+        (WebCore::SVGStyleElement::isSupportedAttribute):
+        (WebCore::SVGStyleElement::parseAttribute):
+        * svg/SVGStyleElement.h:
+
 2013-08-19  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         <https://webkit.org/b/119990> Add toSVGStopElement(Node* node) to clean-up a static_cast<SVGStopElement*>

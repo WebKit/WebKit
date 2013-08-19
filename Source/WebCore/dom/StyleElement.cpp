@@ -36,13 +36,8 @@
 
 namespace WebCore {
 
-static bool isCSS(Element* element, const AtomicString& type)
-{
-    return type.isEmpty() || (element->isHTMLElement() ? equalIgnoringCase(type, "text/css") : (type == "text/css"));
-}
-
 StyleElement::StyleElement(Document* document, bool createdByParser)
-    : m_createdByParser(createdByParser)
+    : m_isParsingChildren(createdByParser)
     , m_loading(false)
     , m_startLineNumber(WTF::OrdinalNumber::beforeFirst())
 {
@@ -58,11 +53,11 @@ void StyleElement::insertedIntoDocument(Document* document, Element* element)
 {
     ASSERT(document);
     ASSERT(element);
-    document->styleSheetCollection()->addStyleSheetCandidateNode(element, m_createdByParser);
-    if (m_createdByParser)
-        return;
+    document->styleSheetCollection()->addStyleSheetCandidateNode(element, m_isParsingChildren);
 
-    process(element);
+    if (m_isParsingChildren)
+        return;
+    createSheetFromTextContents(element);
 }
 
 void StyleElement::removedFromDocument(Document* document, Element* element)
@@ -84,34 +79,32 @@ void StyleElement::clearDocumentData(Document* document, Element* element)
     if (m_sheet)
         m_sheet->clearOwnerNode();
 
-    if (element->inDocument())
-        document->styleSheetCollection()->removeStyleSheetCandidateNode(element);
+    if (!element->inDocument())
+        return;
+    document->styleSheetCollection()->removeStyleSheetCandidateNode(element);
 }
 
 void StyleElement::childrenChanged(Element* element)
 {
     ASSERT(element);
-    if (m_createdByParser)
+    if (m_isParsingChildren)
         return;
-
-    process(element);
+    if (!element->inDocument())
+        return;
+    createSheetFromTextContents(element);
 }
 
 void StyleElement::finishParsingChildren(Element* element)
 {
     ASSERT(element);
-    process(element);
-    m_createdByParser = false;
+    if (element->inDocument())
+        createSheetFromTextContents(element);
+    m_isParsingChildren = false;
 }
 
-void StyleElement::process(Element* element)
+void StyleElement::createSheetFromTextContents(Element* element)
 {
-    if (!element || !element->inDocument())
-        return;
-
-    String sheetText = TextNodeTraversal::contentsAsString(element);
-
-    createSheet(element, m_startLineNumber, sheetText);
+    createSheet(element, m_startLineNumber, TextNodeTraversal::contentsAsString(element));
 }
 
 void StyleElement::clearSheet()
@@ -120,40 +113,51 @@ void StyleElement::clearSheet()
     m_sheet.release()->clearOwnerNode();
 }
 
-void StyleElement::createSheet(Element* e, WTF::OrdinalNumber startLineNumber, const String& text)
+inline bool isValidCSSContentType(Element* element, const AtomicString& type)
 {
-    ASSERT(e);
-    ASSERT(e->inDocument());
-    Document* document = e->document();
+    DEFINE_STATIC_LOCAL(const AtomicString, cssContentType, ("text/css", AtomicString::ConstructFromLiteral));
+    if (type.isEmpty())
+        return true;
+    return element->isHTMLElement() ? equalIgnoringCase(type, cssContentType) : type == cssContentType;
+}
+
+void StyleElement::createSheet(Element* element, WTF::OrdinalNumber startLineNumber, const String& text)
+{
+    ASSERT(element);
+    ASSERT(element->inDocument());
+    Document* document = element->document();
     if (m_sheet) {
         if (m_sheet->isLoading())
             document->styleSheetCollection()->removePendingSheet();
         clearSheet();
     }
 
-    // If type is empty or CSS, this is a CSS style sheet.
-    const AtomicString& type = this->type();
-    if (document->contentSecurityPolicy()->allowInlineStyle(e->document()->url(), startLineNumber) && isCSS(e, type)) {
-        RefPtr<MediaQuerySet> mediaQueries;
-        if (e->isHTMLElement())
-            mediaQueries = MediaQuerySet::createAllowingDescriptionSyntax(media());
-        else
-            mediaQueries = MediaQuerySet::create(media());
+    if (!isValidCSSContentType(element, m_contentType))
+        return;
+    if (!document->contentSecurityPolicy()->allowInlineStyle(document->url(), startLineNumber))
+        return;
 
-        MediaQueryEvaluator screenEval("screen", true);
-        MediaQueryEvaluator printEval("print", true);
-        if (screenEval.eval(mediaQueries.get()) || printEval.eval(mediaQueries.get())) {
-            document->styleSheetCollection()->addPendingSheet();
-            m_loading = true;
+    RefPtr<MediaQuerySet> mediaQueries;
+    if (element->isHTMLElement())
+        mediaQueries = MediaQuerySet::createAllowingDescriptionSyntax(m_media);
+    else
+        mediaQueries = MediaQuerySet::create(m_media);
 
-            m_sheet = CSSStyleSheet::createInline(e, KURL(), document->inputEncoding());
-            m_sheet->setMediaQueries(mediaQueries.release());
-            m_sheet->setTitle(e->title());
-            m_sheet->contents()->parseStringAtLine(text, startLineNumber.zeroBasedInt(), m_createdByParser);
+    MediaQueryEvaluator screenEval(ASCIILiteral("screen"), true);
+    MediaQueryEvaluator printEval(ASCIILiteral("print"), true);
+    if (!screenEval.eval(mediaQueries.get()) && !printEval.eval(mediaQueries.get()))
+        return;
 
-            m_loading = false;
-        }
-    }
+    document->styleSheetCollection()->addPendingSheet();
+
+    m_loading = true;
+
+    m_sheet = CSSStyleSheet::createInline(element, KURL(), document->inputEncoding());
+    m_sheet->setMediaQueries(mediaQueries.release());
+    m_sheet->setTitle(element->title());
+    m_sheet->contents()->parseStringAtLine(text, startLineNumber.zeroBasedInt(), m_isParsingChildren);
+
+    m_loading = false;
 
     if (m_sheet)
         m_sheet->contents()->checkLoaded();
@@ -163,7 +167,7 @@ bool StyleElement::isLoading() const
 {
     if (m_loading)
         return true;
-    return m_sheet ? m_sheet->isLoading() : false;
+    return m_sheet && m_sheet->isLoading();
 }
 
 bool StyleElement::sheetLoaded(Document* document)

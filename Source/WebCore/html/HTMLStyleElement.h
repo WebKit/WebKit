@@ -39,8 +39,6 @@ public:
     static PassRefPtr<HTMLStyleElement> create(const QualifiedName&, Document*, bool createdByParser);
     virtual ~HTMLStyleElement();
 
-    void setType(const AtomicString&);
-
     bool scoped() const;
     void setScoped(bool);
     Element* scopingElement() const;
@@ -78,9 +76,6 @@ private:
     virtual void startLoadingDynamicSheet() { StyleElement::startLoadingDynamicSheet(document()); }
 
     virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
-
-    virtual const AtomicString& media() const;
-    virtual const AtomicString& type() const;
 
     void scopedAttributeChanged(bool);
     void registerWithScopingNode(bool);

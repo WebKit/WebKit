@@ -32,11 +32,11 @@ class Element;
 class StyleElement {
 public:
     StyleElement(Document*, bool createdByParser);
-    virtual ~StyleElement();
+    ~StyleElement();
 
 protected:
-    virtual const AtomicString& type() const = 0;
-    virtual const AtomicString& media() const = 0;
+    void setStyleSheetContentType(const AtomicString& contentType) { m_contentType = contentType; }
+    void setStyleSheetMedia(const AtomicString& media) { m_media = media; }
 
     CSSStyleSheet* sheet() const { return m_sheet.get(); }
 
@@ -50,16 +50,18 @@ protected:
     void childrenChanged(Element*);
     void finishParsingChildren(Element*);
 
-    RefPtr<CSSStyleSheet> m_sheet;
-
 private:
     void createSheet(Element*, WTF::OrdinalNumber startLineNumber, const String& text = String());
-    void process(Element*);
+    void createSheetFromTextContents(Element*);
     void clearSheet();
 
-    bool m_createdByParser;
+    bool m_isParsingChildren;
     bool m_loading;
     WTF::OrdinalNumber m_startLineNumber;
+    AtomicString m_contentType;
+    AtomicString m_media;
+    RefPtr<CSSStyleSheet> m_sheet;
+
 };
 
 }
