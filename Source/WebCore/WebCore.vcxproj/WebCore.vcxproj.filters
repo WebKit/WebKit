@@ -14814,6 +14814,9 @@
     <ClInclude Include="..\platform\win\WebCoreBundleWin.h">
       <Filter>platform\win</Filter>
     </ClInclude>
+    <ClInclude Include="..\platform\graphics\ca\PlatformCAFilters.h">
+      <Filter>platform\graphics\ca</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\css\CSSGrammar.y.in">

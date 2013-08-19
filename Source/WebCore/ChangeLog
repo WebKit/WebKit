@@ -1,3 +1,10 @@
+2013-08-19  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Unreviewed gardening.
+
+        * WebCore.vcxproj/WebCore.vcxproj: Add missing header for easy access/editing.
+        * WebCore.vcxproj/WebCore.vcxproj.filters: Ditto.
+
 2013-08-19  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         <https://webkit.org/b/119882> Speed up moving cursor/selection up or down past non-rendered elements.

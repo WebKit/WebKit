@@ -19198,6 +19198,7 @@
     <ClInclude Include="..\platform\graphics\avfoundation\cf\InbandTextTrackPrivateAVCF.h" />
     <ClInclude Include="..\platform\graphics\avfoundation\cf\InbandTextTrackPrivateLegacyAVCF.h" />
     <ClInclude Include="..\platform\graphics\avfoundation\InbandTextTrackPrivateAVF.h" />
+    <ClInclude Include="..\platform\graphics\ca\PlatformCAFilters.h" />
     <ClInclude Include="..\platform\graphics\GLContext.h" />
     <ClInclude Include="..\platform\graphics\GraphicsContext3DPrivate.h" />
     <ClInclude Include="..\platform\graphics\cg\SubimageCacheWithTimer.h">
