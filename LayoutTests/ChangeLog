@@ -1,3 +1,15 @@
+2013-08-20  Daniel Bates  <dabates@apple.com>
+
+        <https://webkit.org/b/120032> Add DRT test to ensure that AccessibilityObject::stringValue()
+        of <input type="file"> is meaningful
+
+        Following <http://trac.webkit.org/changeset/154332>, add GTK-specific expected results for test
+        LayoutTests/accessibility/file-upload-button-stringvalue.html.
+
+        * platform/gtk-wk2/accessibility/file-upload-button-stringvalue-expected.txt: Added; expected failure
+        results until we fix <https://webkit.org/b/64285>.
+        * platform/gtk/accessibility/file-upload-button-stringvalue-expected.txt: Added.
+
 2013-08-20  Tim Horton  <timothy_horton@apple.com>
 
         Failing test expectations for two tests
