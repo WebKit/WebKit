@@ -1,3 +1,13 @@
+2013-08-20  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
+
+        <https://webkit.org/b/120056> [GTK][ARM] enable DFG_JIT
+
+        Reviewed by Martin Robinson.
+
+        Enable DFG_JIT in GTK+ platform for ARM/Thumb architecture
+
+        * wtf/Platform.h:
+
 2013-08-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         <https://webkit.org/b/120049> Delete code for Snow Leopard
