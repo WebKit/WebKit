@@ -504,7 +504,7 @@
     <CustomBuildStep Include="..\WebLocalizableStrings.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="$(ConfigurationBuildDir)\obj32\WebKitExportGenerator\WebKitExports.def" />
+    <None Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebKitExportGenerator\WebKitExports.def" />
     <None Include="..\..\win\WebKit.resources\deleteButton.png" />
     <None Include="..\..\win\WebKit.resources\deleteButtonPressed.png" />
     <None Include="..\..\win\WebKit.resources\fsVideoAudioVolumeHigh.png" />

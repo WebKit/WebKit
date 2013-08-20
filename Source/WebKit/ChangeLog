@@ -1,3 +1,21 @@
+2013-08-20  Alex Christensen  <achristensen@apple.com>
+
+        Use PlatformArchitecture to distinguish between 32-bit and 64-bit builds on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=119512
+
+        Reviewed by Brent Fulgham.
+
+        * WebKit.vcxproj/Interfaces/InterfacesCommon.props:
+        * WebKit.vcxproj/WebKit/WebKit.vcxproj:
+        * WebKit.vcxproj/WebKit/WebKit.vcxproj.filters:
+        * WebKit.vcxproj/WebKit/WebKitCommon.props:
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExportGenerator.vcxproj:
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExportGenerator.vcxproj.filters:
+        * WebKit.vcxproj/WebKitGUID/WebKitGUID.vcxproj:
+        * WebKit.vcxproj/WebKitGUID/WebKitGUID.vcxproj.filters:
+        * WebKit.vcxproj/WebKitGUID/WebKitGUIDCommon.props:
+        Replaced obj32, bin32, and lib32 with macros for 64-bit build.
+
 2013-08-17  Andreas Kling  <akling@apple.com>
 
         [Windows] Unreviewed build fix.

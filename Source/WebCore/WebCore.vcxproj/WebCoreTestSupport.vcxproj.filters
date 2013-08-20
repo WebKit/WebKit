@@ -9,25 +9,25 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\InternalSettingsGenerated.cpp">
+    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\InternalSettingsGenerated.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\JSMallocStatistics.cpp">
+    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\JSMallocStatistics.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\JSMemoryInfo.cpp">
+    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\JSMemoryInfo.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\JSTypeConversions.cpp">
+    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\JSTypeConversions.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\JSInternals.cpp">
+    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\JSInternals.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\JSInternalSettings.cpp">
+    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\JSInternalSettings.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\JSInternalSettingsGenerated.cpp">
+    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\JSInternalSettingsGenerated.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
     <ClCompile Include="..\testing\Internals.cpp">
@@ -41,25 +41,25 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\InternalSettingsGenerated.h">
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\InternalSettingsGenerated.h">
       <Filter>DerivedSources</Filter>
     </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\JSMallocStatistics.h">
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\JSMallocStatistics.h">
       <Filter>DerivedSources</Filter>
     </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\JSMemoryInfo.h">
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\JSMemoryInfo.h">
       <Filter>DerivedSources</Filter>
     </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\JSTypeConversions.h">
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\JSTypeConversions.h">
       <Filter>DerivedSources</Filter>
     </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\JSInternals.h">
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\JSInternals.h">
       <Filter>DerivedSources</Filter>
     </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\JSInternalSettings.h">
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\JSInternalSettings.h">
       <Filter>DerivedSources</Filter>
     </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj32\WebCore\DerivedSources\JSInternalSettingsGenerated.h">
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\JSInternalSettingsGenerated.h">
       <Filter>DerivedSources</Filter>
     </ClInclude>
     <ClInclude Include="..\testing\MallocStatistics.h">

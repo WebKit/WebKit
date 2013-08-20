@@ -1,3 +1,13 @@
+2013-08-20  Alex Christensen  <achristensen@apple.com>
+
+        Use PlatformArchitecture to distinguish between 32-bit and 64-bit builds on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=119512
+
+        Reviewed by Brent Fulgham.
+
+        * WTF.vcxproj/WTFGeneratedCommon.props:
+        Replaced obj32, bin32, and lib32 with macros for 64-bit build.
+
 2013-08-20  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
 
         <https://webkit.org/b/120056> [GTK][ARM] enable DFG_JIT

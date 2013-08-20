@@ -7,7 +7,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup>
     <Midl>
-      <AdditionalIncludeDirectories>$(ConfigurationBuildDir)\obj32\WebKit\DerivedSources;../../win/Interfaces;../../win/Interfaces/Accessible2;$(IntDir)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebKit\DerivedSources;../../win/Interfaces;../../win/Interfaces/Accessible2;$(IntDir)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </Midl>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup>
@@ -18,9 +18,9 @@
   <ItemDefinitionGroup>
     <Midl>
       <GenerateStublessProxies>false</GenerateStublessProxies>
-      <OutputDirectory>$(ConfigurationBuildDir)\obj32\WebKit\$(ProjectName)</OutputDirectory>
+      <OutputDirectory>$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebKit\$(ProjectName)</OutputDirectory>
       <DllDataFileName>dlldata.c</DllDataFileName>
-      <TypeLibraryName>$(ConfigurationBuildDir)\lib32\WebKit.tlb</TypeLibraryName>
+      <TypeLibraryName>$(ConfigurationBuildDir)\lib$(PlatformArchitecture)\WebKit.tlb</TypeLibraryName>
       <ValidateAllParameters>true</ValidateAllParameters>
     </Midl>
   </ItemDefinitionGroup>

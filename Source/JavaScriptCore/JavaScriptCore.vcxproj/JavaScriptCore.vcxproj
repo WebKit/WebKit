@@ -535,24 +535,24 @@
     <ClCompile Include="..\yarr\YarrSyntaxChecker.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\ArrayPrototype.lut.h" />
-    <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\BooleanPrototype.lut.h" />
-    <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\DatePrototype.lut.h" />
-    <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\ErrorPrototype.lut.h" />
-    <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\HeaderDetection.h" />
-    <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\JSDataViewPrototype.lut.h" />
-    <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\JSGlobalObject.lut.h" />
-    <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\JSONObject.lut.h" />
-    <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\Lexer.lut.h" />
-    <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\LLIntAssembly.h" />
-    <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\NumberConstructor.lut.h" />
-    <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\NumberPrototype.lut.h" />
-    <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\ObjectConstructor.lut.h" />
-    <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\ObjectPrototype.lut.h" />
-    <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\RegExpConstructor.lut.h" />
-    <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\RegExpJitTables.h" />
-    <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\RegExpPrototype.lut.h" />
-    <ClInclude Include="$(ConfigurationBuildDir)\obj32\$(ProjectName)\DerivedSources\StringConstructor.lut.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\ArrayPrototype.lut.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\BooleanPrototype.lut.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\DatePrototype.lut.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\ErrorPrototype.lut.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\HeaderDetection.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSDataViewPrototype.lut.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSGlobalObject.lut.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSONObject.lut.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\Lexer.lut.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\LLIntAssembly.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\NumberConstructor.lut.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\NumberPrototype.lut.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\ObjectConstructor.lut.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\ObjectPrototype.lut.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\RegExpConstructor.lut.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\RegExpJitTables.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\RegExpPrototype.lut.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\StringConstructor.lut.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\API\APICallbackFunction.h" />

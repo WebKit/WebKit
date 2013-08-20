@@ -279,7 +279,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj32\WebKitExportGenerator\DerivedSources\WebKitExportGenerator.cpp" />
+    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebKitExportGenerator\DerivedSources\WebKitExportGenerator.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

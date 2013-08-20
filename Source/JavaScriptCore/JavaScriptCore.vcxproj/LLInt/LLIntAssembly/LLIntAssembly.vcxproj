@@ -160,18 +160,18 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ConfigurationBuildDir)\obj32\$(ProjectName)\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ConfigurationBuildDir)\obj32\$(ProjectName)\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'">$(ConfigurationBuildDir)\obj32\$(ProjectName)\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|x64'">$(ConfigurationBuildDir)\obj32\$(ProjectName)\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'">$(ConfigurationBuildDir)\obj32\$(ProjectName)\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|x64'">$(ConfigurationBuildDir)\obj32\$(ProjectName)\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ConfigurationBuildDir)\obj32\$(ProjectName)\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ConfigurationBuildDir)\obj32\$(ProjectName)\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'">$(ConfigurationBuildDir)\obj32\$(ProjectName)\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|x64'">$(ConfigurationBuildDir)\obj32\$(ProjectName)\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'">$(ConfigurationBuildDir)\obj32\$(ProjectName)\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|x64'">$(ConfigurationBuildDir)\obj32\$(ProjectName)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'">$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|x64'">$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'">$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|x64'">$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'">$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|x64'">$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'">$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|x64'">$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\</IntDir>
     <NMakeOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">LLIntAssembly.h</NMakeOutput>
     <NMakeOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">LLIntAssembly.h</NMakeOutput>
     <NMakeOutput Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'">LLIntAssembly.h</NMakeOutput>
@@ -202,18 +202,18 @@
     <NMakeForcedUsingAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|x64'" />
     <NMakeForcedUsingAssemblies Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'" />
     <NMakeForcedUsingAssemblies Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|x64'" />
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ConfigurationBuildDir)\obj32\$(ProjectName)\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ConfigurationBuildDir)\obj32\$(ProjectName)\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">$(ConfigurationBuildDir)\obj32\$(ProjectName)\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|x64'">$(ConfigurationBuildDir)\obj32\$(ProjectName)\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">$(ConfigurationBuildDir)\obj32\$(ProjectName)\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Production|x64'">$(ConfigurationBuildDir)\obj32\$(ProjectName)\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ConfigurationBuildDir)\obj32\$(ProjectName)\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ConfigurationBuildDir)\obj32\$(ProjectName)\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">$(ConfigurationBuildDir)\obj32\$(ProjectName)\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|x64'">$(ConfigurationBuildDir)\obj32\$(ProjectName)\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">$(ConfigurationBuildDir)\obj32\$(ProjectName)\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Production|x64'">$(ConfigurationBuildDir)\obj32\$(ProjectName)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|x64'">$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Production|x64'">$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|x64'">$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Production|x64'">$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\</IntDir>
     <NMakeOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">LLIntAssembly.h</NMakeOutput>
     <NMakeOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">LLIntAssembly.h</NMakeOutput>
     <NMakeOutput Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">LLIntAssembly.h</NMakeOutput>
