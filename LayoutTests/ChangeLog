@@ -1,3 +1,17 @@
+2013-08-20  Daniel Bates  <dabates@apple.com>
+
+        <https://webkit.org/b/120032> Add DRT test to ensure that AccessibilityObject::stringValue()
+        of <input type="file"> is meaningful
+
+        Reviewed by Chris Fleizach.
+
+        Adds a DRT test to ensure that AccessibilityObject::stringValue() returns a meaningful string
+        for a single file- and multiple files-file upload control.
+
+        * accessibility/file-upload-button-stringvalue.html: Added.
+        * platform/mac-wk2/accessibility/file-upload-button-stringvalue-expected.txt: Added.
+        * platform/mac/accessibility/file-upload-button-stringvalue-expected.txt: Added.
+
 2013-08-20  Antti Koivisto  <antti@apple.com>
 
         <https://webkit.org/b/120025> REGRESSION (r154254): fast/frames/frameset-frameborder-inheritance.html failing on Apple MountainLion Debug WK1 (Tests)
