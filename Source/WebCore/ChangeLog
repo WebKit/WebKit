@@ -1,3 +1,33 @@
+2013-08-20  David Barr <davidbarr@chromium.org>, Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        <https://webkit.org/b/92330> [CSS] Pass an image orientation data to drawImage()
+
+        Reviewed by Beth Dakin.
+
+        In support of ongoing css3-images image-orientation implementation. This patch passes
+        an imageOrientationDescription object to drawImage() function as a argument. The drawImage()
+        can know information of image orientation by the argument.
+
+        Spec: http://www.w3.org/TR/2012/CR-css3-images-20120417/#the-image-orientation
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::paint):
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::drawImage):
+        (WebCore::drawImageToContext):
+        * platform/graphics/ImageOrientation.h: Add setter functions.
+        (WebCore::ImageOrientationDescription::setRespectImageOrientation):
+        (WebCore::ImageOrientationDescription::setImageOrientationEnum):
+        * platform/graphics/texmap/TextureMapperImageBuffer.cpp:
+        (WebCore::BitmapTextureImageBuffer::updateContents):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintNinePieceImage):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paintReplaced):
+        (WebCore::RenderImage::paintIntoRect):
+        * rendering/RenderSnapshottedPlugIn.cpp:
+        (WebCore::RenderSnapshottedPlugIn::paintSnapshot):
+
 2013-08-20  Gavin Barraclough  <barraclough@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=120093

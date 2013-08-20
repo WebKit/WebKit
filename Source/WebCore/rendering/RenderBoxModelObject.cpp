@@ -1453,13 +1453,13 @@ bool RenderBoxModelObject::paintNinePieceImage(GraphicsContext* graphicsContext,
         // The rect to use from within the image is obtained from our slice, and is (0, 0, leftSlice, topSlice)
         if (drawTop)
             graphicsContext->drawImage(image.get(), colorSpace, IntRect(borderImageRect.location(), IntSize(leftWidth, topWidth)),
-                                       LayoutRect(0, 0, leftSlice, topSlice), op);
+                LayoutRect(0, 0, leftSlice, topSlice), op, ImageOrientationDescription());
 
         // The bottom left corner rect is (tx, ty + h - bottomWidth, leftWidth, bottomWidth)
         // The rect to use from within the image is (0, imageHeight - bottomSlice, leftSlice, botomSlice)
         if (drawBottom)
             graphicsContext->drawImage(image.get(), colorSpace, IntRect(borderImageRect.x(), borderImageRect.maxY() - bottomWidth, leftWidth, bottomWidth),
-                                       LayoutRect(0, imageHeight - bottomSlice, leftSlice, bottomSlice), op);
+                LayoutRect(0, imageHeight - bottomSlice, leftSlice, bottomSlice), op, ImageOrientationDescription());
 
         // Paint the left edge.
         // Have to scale and tile into the border rect.
@@ -1476,13 +1476,13 @@ bool RenderBoxModelObject::paintNinePieceImage(GraphicsContext* graphicsContext,
         // The rect to use from within the image is obtained from our slice, and is (imageWidth - rightSlice, 0, rightSlice, topSlice)
         if (drawTop)
             graphicsContext->drawImage(image.get(), colorSpace, IntRect(borderImageRect.maxX() - rightWidth, borderImageRect.y(), rightWidth, topWidth),
-                                       LayoutRect(imageWidth - rightSlice, 0, rightSlice, topSlice), op);
+                LayoutRect(imageWidth - rightSlice, 0, rightSlice, topSlice), op, ImageOrientationDescription());
 
         // The bottom right corner rect is (tx + w - rightWidth, ty + h - bottomWidth, rightWidth, bottomWidth)
         // The rect to use from within the image is (imageWidth - rightSlice, imageHeight - bottomSlice, rightSlice, bottomSlice)
         if (drawBottom)
             graphicsContext->drawImage(image.get(), colorSpace, IntRect(borderImageRect.maxX() - rightWidth, borderImageRect.maxY() - bottomWidth, rightWidth, bottomWidth),
-                                       LayoutRect(imageWidth - rightSlice, imageHeight - bottomSlice, rightSlice, bottomSlice), op);
+                LayoutRect(imageWidth - rightSlice, imageHeight - bottomSlice, rightSlice, bottomSlice), op, ImageOrientationDescription());
 
         // Paint the right edge.
         if (sourceHeight > 0)

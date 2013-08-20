@@ -404,9 +404,13 @@ void HTMLCanvasElement::paint(GraphicsContext* context, const LayoutRect& r, boo
     if (hasCreatedImageBuffer()) {
         ImageBuffer* imageBuffer = buffer();
         if (imageBuffer) {
-            if (m_presentedImage)
-                context->drawImage(m_presentedImage.get(), ColorSpaceDeviceRGB, pixelSnappedIntRect(r), CompositeSourceOver, ImageOrientationDescription(), useLowQualityScale);
-            else
+            if (m_presentedImage) {
+                ImageOrientationDescription orientationDescription;
+#if ENABLE(CSS_IMAGE_ORIENTATION)
+                orientationDescription.setImageOrientationEnum(renderer()->style()->imageOrientation());
+#endif 
+                context->drawImage(m_presentedImage.get(), ColorSpaceDeviceRGB, pixelSnappedIntRect(r), CompositeSourceOver, orientationDescription, useLowQualityScale);
+            } else
                 context->drawImageBuffer(imageBuffer, ColorSpaceDeviceRGB, pixelSnappedIntRect(r), CompositeSourceOver, BlendModeNormal, useLowQualityScale);
         }
     }

@@ -1308,17 +1308,17 @@ void CanvasRenderingContext2D::drawImage(HTMLImageElement* image, const FloatRec
     checkOrigin(image);
 
     if (rectContainsCanvas(normalizedDstRect)) {
-        c->drawImage(cachedImage->imageForRenderer(image->renderer()), ColorSpaceDeviceRGB, normalizedDstRect, normalizedSrcRect, op, blendMode);
+        c->drawImage(cachedImage->imageForRenderer(image->renderer()), ColorSpaceDeviceRGB, normalizedDstRect, normalizedSrcRect, op, blendMode, ImageOrientationDescription());
         didDrawEntireCanvas();
     } else if (isFullCanvasCompositeMode(op)) {
         fullCanvasCompositedDrawImage(cachedImage->imageForRenderer(image->renderer()), ColorSpaceDeviceRGB, normalizedDstRect, normalizedSrcRect, op);
         didDrawEntireCanvas();
     } else if (op == CompositeCopy) {
         clearCanvas();
-        c->drawImage(cachedImage->imageForRenderer(image->renderer()), ColorSpaceDeviceRGB, normalizedDstRect, normalizedSrcRect, op, blendMode);
+        c->drawImage(cachedImage->imageForRenderer(image->renderer()), ColorSpaceDeviceRGB, normalizedDstRect, normalizedSrcRect, op, blendMode, ImageOrientationDescription());
         didDrawEntireCanvas();
     } else {
-        c->drawImage(cachedImage->imageForRenderer(image->renderer()), ColorSpaceDeviceRGB, normalizedDstRect, normalizedSrcRect, op, blendMode);
+        c->drawImage(cachedImage->imageForRenderer(image->renderer()), ColorSpaceDeviceRGB, normalizedDstRect, normalizedSrcRect, op, blendMode, ImageOrientationDescription());
         didDraw(normalizedDstRect);
     }
 }
@@ -1577,7 +1577,7 @@ void CanvasRenderingContext2D::compositeBuffer(ImageBuffer* buffer, const IntRec
 
 static void drawImageToContext(Image* image, GraphicsContext* context, ColorSpace styleColorSpace, const FloatRect& dest, const FloatRect& src, CompositeOperator op)
 {
-    context->drawImage(image, styleColorSpace, dest, src, op);
+    context->drawImage(image, styleColorSpace, dest, src, op, ImageOrientationDescription());
 }
 
 static void drawImageToContext(ImageBuffer* imageBuffer, GraphicsContext* context, ColorSpace styleColorSpace, const FloatRect& dest, const FloatRect& src, CompositeOperator op)

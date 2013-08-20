@@ -72,7 +72,10 @@ struct ImageOrientationDescription {
     {
     }
 
+    void setRespectImageOrientation(RespectImageOrientationEnum shouldRespectImageOrientation) { m_respectOrientation = shouldRespectImageOrientation; }
     RespectImageOrientationEnum respectImageOrientation() { return m_respectOrientation; }
+
+    void setImageOrientationEnum(ImageOrientationEnum orientation) { m_orientation = orientation; }
     ImageOrientationEnum imageOrientation() { return m_orientation; }
 
     RespectImageOrientationEnum m_respectOrientation;

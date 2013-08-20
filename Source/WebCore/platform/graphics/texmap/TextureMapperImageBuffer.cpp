@@ -79,7 +79,7 @@ void BitmapTextureImageBuffer::didReset()
 
 void BitmapTextureImageBuffer::updateContents(Image* image, const IntRect& targetRect, const IntPoint& offset, UpdateContentsFlag)
 {
-    m_image->context()->drawImage(image, ColorSpaceDeviceRGB, targetRect, IntRect(offset, targetRect.size()), CompositeCopy);
+    m_image->context()->drawImage(image, ColorSpaceDeviceRGB, targetRect, IntRect(offset, targetRect.size()), CompositeCopy, ImageOrientationDescription());
 }
 
 IntSize TextureMapperImageBuffer::maxTextureSize() const
