@@ -5655,7 +5655,6 @@ svg/as-image/image-respects-pageScaleFactor.html
 # new crashing tests
 canvas/philip/tests/2d.pattern.basic.zerocanvas.html
 fast/css-generated-content/reset-content-to-initial.html
-fast/css/giant-stylesheet-crash.html
 
 # new failing tests
 css1/box_properties/acid_test.html

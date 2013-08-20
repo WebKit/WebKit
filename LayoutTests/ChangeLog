@@ -1,3 +1,9 @@
+2013-08-20  Seokju Kwon  <seokju@webkit.org>
+
+        Unreviewed gardening. Rebaseline after r154372.
+
+        * platform/qt-mac/TestExpectations: fast/css/giant-stylesheet-crash.html was removed.
+
 2013-08-20  Ryosuke Niwa  <rniwa@webkit.org>
 
         <https://webkit.org/b/120095> Delete fast/css/giant-stylesheet-crash.html since it flakily timeout or crash
