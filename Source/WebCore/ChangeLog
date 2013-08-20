@@ -1,3 +1,53 @@
+2013-08-19  Gustavo Noronha Silva  <gns@gnome.org>
+
+        <https://webkit.org/b/120048> [GTK] Add stubs for APIs that went missing in the DOM bindings
+
+        Reviewed by Martin Robinson.
+
+        No new tests, these are just stubs for the DOM bindings API.
+
+        * bindings/gobject/WebKitDOMCustom.cpp:
+        (webkit_dom_bar_info_get_property):
+        (webkit_dom_bar_info_class_init):
+        (webkit_dom_bar_info_init):
+        (webkit_dom_bar_info_get_visible):
+        (webkit_dom_console_get_memory):
+        (webkit_dom_css_style_declaration_get_property_css_value):
+        (webkit_dom_document_get_webkit_hidden):
+        (webkit_dom_document_get_webkit_visibility_state):
+        (webkit_dom_html_document_open):
+        (webkit_dom_html_element_set_item_id):
+        (webkit_dom_html_element_get_item_id):
+        (webkit_dom_html_element_get_item_ref):
+        (webkit_dom_html_element_get_item_prop):
+        (webkit_dom_html_element_set_item_scope):
+        (webkit_dom_html_element_get_item_scope):
+        (webkit_dom_html_element_get_item_type):
+        (webkit_dom_html_properties_collection_get_property):
+        (webkit_dom_html_properties_collection_class_init):
+        (webkit_dom_html_properties_collection_init):
+        (webkit_dom_html_properties_collection_item):
+        (webkit_dom_html_properties_collection_named_item):
+        (webkit_dom_html_properties_collection_get_length):
+        (webkit_dom_html_properties_collection_get_names):
+        (webkit_dom_node_get_attributes):
+        (webkit_dom_node_has_attributes):
+        (webkit_dom_memory_info_get_property):
+        (webkit_dom_memory_info_class_init):
+        (webkit_dom_memory_info_init):
+        (webkit_dom_memory_info_get_total_js_heap_size):
+        (webkit_dom_memory_info_get_used_js_heap_size):
+        (webkit_dom_memory_info_get_js_heap_size_limit):
+        (webkit_dom_micro_data_item_value_class_init):
+        (webkit_dom_micro_data_item_value_init):
+        (webkit_dom_performance_get_memory):
+        (webkit_dom_property_node_list_get_property):
+        (webkit_dom_property_node_list_class_init):
+        (webkit_dom_property_node_list_init):
+        (webkit_dom_property_node_list_item):
+        (webkit_dom_property_node_list_get_length):
+        * bindings/gobject/WebKitDOMCustom.h:
+
 2013-08-20  Antti Koivisto  <antti@apple.com>
 
         <https://webkit.org/b/120017> Remove NodeRenderingTraversal::ParentDetails

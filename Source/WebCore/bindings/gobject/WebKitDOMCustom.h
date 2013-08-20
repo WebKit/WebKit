@@ -19,6 +19,7 @@
 #ifndef WebKitDOMCustom_h
 #define WebKitDOMCustom_h
 
+#include <glib-object.h>
 #include <glib.h>
 #include <webkitdom/webkitdomdefines.h>
 
@@ -125,6 +126,295 @@ WEBKIT_API WebKitDOMNodeList* webkit_dom_webkit_named_flow_get_content_nodes(Web
  *
  */
 WEBKIT_API WebKitDOMNodeList* webkit_dom_webkit_named_flow_get_regions_by_content_node(WebKitDOMWebKitNamedFlow* flow, WebKitDOMNode* content_node);
+
+WEBKIT_API GType webkit_dom_bar_info_get_type(void);
+
+/**
+ * webkit_dom_bar_info_get_visible:
+ * @self: A #WebKitDOMBarInfo
+ *
+ * The BarInfo type has been removed from the DOM spec, this function does nothing.
+ *
+ * Returns:
+ *
+**/
+WEBKIT_API gboolean webkit_dom_bar_info_get_visible(void* self);
+
+/**
+ * webkit_dom_console_get_memory:
+ * @self: A #WebKitDOMConsole
+ *
+ * This functionality has been removed from WebKit, this function does nothing.
+ *
+ * Returns: (transfer none):
+ *
+**/
+WEBKIT_API void* webkit_dom_console_get_memory(WebKitDOMConsole* self);
+
+/**
+ * webkit_dom_css_style_declaration_get_property_css_value:
+ * @self: A #WebKitDOMCSSStyleDeclaration
+ * @propertyName: A #gchar
+ *
+ * This functionality has been removed from WebKit, this function does nothing.
+ *
+ * Returns: (transfer none):
+ *
+**/
+WEBKIT_API WebKitDOMCSSValue* webkit_dom_css_style_declaration_get_property_css_value(WebKitDOMCSSStyleDeclaration* self, const gchar* propertyName);
+
+/**
+ * webkit_dom_document_get_webkit_hidden:
+ * @self: A #WebKitDOMDocument
+ *
+ * This functionality has been removed from WebKit, this function does nothing.
+ *
+ * Returns:
+ *
+**/
+WEBKIT_API gboolean webkit_dom_document_get_webkit_hidden(WebKitDOMDocument* self);
+
+/**
+ * webkit_dom_document_get_webkit_visibility_state:
+ * @self: A #WebKitDOMDocument
+ *
+ * This functionality has been removed from WebKit, this function does nothing.
+ *
+ * Returns:
+ *
+**/
+WEBKIT_API gchar* webkit_dom_document_get_webkit_visibility_state(WebKitDOMDocument* self);
+
+/**
+ * webkit_dom_html_document_open:
+ * @self: A #WebKitDOMHTMLDocument
+ *
+ * Returns:
+ *
+**/
+WEBKIT_API void webkit_dom_html_document_open(WebKitDOMHTMLDocument* self);
+
+/**
+ * webkit_dom_html_element_set_item_id:
+ * @self: A #WebKitDOMHTMLElement
+ * @value: A #gchar
+ *
+ * This functionality has been removed from WebKit, this function does nothing.
+ *
+ * Returns:
+ *
+**/
+WEBKIT_API void webkit_dom_html_element_set_item_id(WebKitDOMHTMLElement* self, const gchar* value);
+
+/**
+ * webkit_dom_html_element_get_item_id:
+ * @self: A #WebKitDOMHTMLElement
+ *
+ * This functionality has been removed from WebKit, this function does nothing.
+ *
+ * Returns:
+ *
+**/
+WEBKIT_API gchar* webkit_dom_html_element_get_item_id(WebKitDOMHTMLElement* self);
+
+/**
+ * webkit_dom_html_element_get_item_ref:
+ * @self: A #WebKitDOMHTMLElement
+ *
+ * This functionality has been removed from WebKit, this function does nothing.
+ *
+ * Returns: (transfer none):
+ *
+**/
+WEBKIT_API WebKitDOMDOMSettableTokenList* webkit_dom_html_element_get_item_ref(WebKitDOMHTMLElement* self);
+
+/**
+ * webkit_dom_html_element_get_item_prop:
+ * @self: A #WebKitDOMHTMLElement
+ *
+ * This functionality has been removed from WebKit, this function does nothing.
+ *
+ * Returns: (transfer none):
+ *
+**/
+WEBKIT_API WebKitDOMDOMSettableTokenList* webkit_dom_html_element_get_item_prop(WebKitDOMHTMLElement* self);
+
+/**
+ * webkit_dom_html_element_set_item_scope:
+ * @self: A #WebKitDOMHTMLElement
+ * @value: A #gboolean
+ *
+ * This functionality has been removed from WebKit, this function does nothing.
+ *
+ * Returns:
+ *
+**/
+WEBKIT_API void webkit_dom_html_element_set_item_scope(WebKitDOMHTMLElement* self, gboolean value);
+
+/**
+ * webkit_dom_html_element_get_item_scope:
+ * @self: A #WebKitDOMHTMLElement
+ *
+ * This functionality has been removed from WebKit, this function does nothing.
+ *
+ * Returns:
+ *
+**/
+WEBKIT_API gboolean webkit_dom_html_element_get_item_scope(WebKitDOMHTMLElement* self);
+
+/**
+ * webkit_dom_html_element_get_item_type:
+ * @self: A #WebKitDOMHTMLElement
+ *
+ * This functionality has been removed from WebKit, this function does nothing.
+ *
+ * Returns: (transfer none):
+ *
+**/
+WEBKIT_API void* webkit_dom_html_element_get_item_type(WebKitDOMHTMLElement* self);
+
+WEBKIT_API GType webkit_dom_html_properties_collection_get_type(void);
+
+/**
+ * webkit_dom_html_properties_collection_item:
+ * @self: A #WebKitDOMHTMLPropertiesCollection
+ * @index: A #gulong
+ *
+ * The PropertiesCollection object has been removed from WebKit, this function does nothing.
+ *
+ * Returns: (transfer none):
+ *
+**/
+WEBKIT_API WebKitDOMNode* webkit_dom_html_properties_collection_item(void* self, gulong index);
+
+/**
+ * webkit_dom_html_properties_collection_named_item:
+ * @self: A #WebKitDOMHTMLPropertiesCollection
+ * @name: A #gchar
+ *
+ * The PropertiesCollection object has been removed from WebKit, this function does nothing.
+ *
+ * Returns: (transfer none):
+ *
+**/
+WEBKIT_API void* webkit_dom_html_properties_collection_named_item(void* self, const gchar* name);
+
+/**
+ * webkit_dom_html_properties_collection_get_length:
+ * @self: A #WebKitDOMHTMLPropertiesCollection
+ *
+ * The PropertiesCollection object has been removed from WebKit, this function does nothing.
+ *
+ * Returns:
+ *
+**/
+WEBKIT_API gulong webkit_dom_html_properties_collection_get_length(void* self);
+
+/**
+ * webkit_dom_html_properties_collection_get_names:
+ * @self: A #WebKitDOMHTMLPropertiesCollection
+ *
+ * The PropertiesCollection object has been removed from WebKit, this function does nothing.
+ *
+ * Returns: (transfer none):
+ *
+**/
+WEBKIT_API WebKitDOMDOMStringList* webkit_dom_html_properties_collection_get_names(void* self);
+
+/**
+ * webkit_dom_node_get_attributes:
+ * @self: A #WebKitDOMNode
+ *
+ * This functionality has been removed from WebKit, this function does nothing.
+ *
+ * Returns: (transfer none):
+ *
+**/
+WEBKIT_API WebKitDOMNamedNodeMap* webkit_dom_node_get_attributes(WebKitDOMNode* self);
+
+/**
+ * webkit_dom_node_has_attributes:
+ * @self: A #WebKitDOMNode
+ *
+ * This functionality has been removed from WebKit, this function does nothing.
+ *
+ * Returns:
+ *
+**/
+WEBKIT_API gboolean webkit_dom_node_has_attributes(WebKitDOMNode* self);
+
+WEBKIT_API GType webkit_dom_memory_info_get_type(void);
+
+/**
+ * webkit_dom_memory_info_get_total_js_heap_size:
+ * @self: A #WebKitDOMMemoryInfo
+ *
+ * The MemoryInfo object has been removed from WebKit, this function does nothing.
+ *
+ * Returns:
+ *
+**/
+WEBKIT_API gulong webkit_dom_memory_info_get_total_js_heap_size(void* self);
+
+/**
+ * webkit_dom_memory_info_get_used_js_heap_size:
+ * @self: A #WebKitDOMMemoryInfo
+ *
+ * The MemoryInfo object has been removed from WebKit, this function does nothing.
+ *
+ * Returns:
+ *
+**/
+WEBKIT_API gulong webkit_dom_memory_info_get_used_js_heap_size(void* self);
+
+/**
+ * webkit_dom_memory_info_get_js_heap_size_limit:
+ * @self: A #WebKitDOMMemoryInfo
+ *
+ * The MemoryInfo object has been removed from WebKit, this function does nothing.
+ *
+ * Returns:
+ *
+**/
+WEBKIT_API gulong webkit_dom_memory_info_get_js_heap_size_limit(void* self);
+
+WEBKIT_API GType webkit_dom_micro_data_item_value_get_type(void);
+
+/**
+ * webkit_dom_performance_get_memory:
+ * @self: A #WebKitDOMPerformance
+ *
+ * This functionality has been removed from WebKit, this function does nothing.
+ *
+ * Returns: (transfer none):
+ *
+**/
+WEBKIT_API void* webkit_dom_performance_get_memory(WebKitDOMPerformance* self);
+
+WEBKIT_API GType webkit_dom_property_node_list_get_type(void);
+
+/**
+ * webkit_dom_property_node_list_item:
+ * @self: A #WebKitDOMPropertyNodeList
+ * @index: A #gulong
+ *
+ * The PropertyNodeList object has been removed from WebKit, this function does nothing.
+ *
+ * Returns: (transfer none):
+ *
+**/
+WEBKIT_API WebKitDOMNode* webkit_dom_property_node_list_item(void* self, gulong index);
+
+/**
+ * webkit_dom_property_node_list_get_length:
+ * @self: A #WebKitDOMPropertyNodeList
+ *
+ * The PropertyNodeList object has been removed from WebKit, this function does nothing.
+ *
+ * Returns:
+ *
+**/
+WEBKIT_API gulong webkit_dom_property_node_list_get_length(void* self);
 
 G_END_DECLS
 
