@@ -1,3 +1,18 @@
+2013-08-20  Pratik Solanki  <psolanki@apple.com>
+
+        <https://webkit.org/b/119875> localeToScriptCodeForFontSelection should use hash tables with larger default capacity
+
+        Reviewed by Darin Adler.
+
+        The two static hash tables used in this file have 106 and 198 entries. Set a minimumTableSize for
+        these hash tables so we don't have to expand them during initialization.
+
+        No new tests because no functional changes.
+
+        * platform/text/LocaleToScriptMappingDefault.cpp:
+        (WebCore::scriptNameToCode):
+        (WebCore::localeToScriptCodeForFontSelection):
+
 2013-08-20  Eric Carlson  <eric.carlson@apple.com>
 
         <https://webkit.org/b/120068> Media controls can be attached lazily
