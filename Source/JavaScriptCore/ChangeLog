@@ -1,5 +1,15 @@
 2013-08-20  Alex Christensen  <achristensen@apple.com>
 
+        Compile fix for Win64 after r154156.
+
+        Rubber stamped by Oliver Hunt.
+
+        * jit/JITStubsMSVC64.asm:
+        Renamed ctiVMThrowTrampolineSlowpath to ctiVMHandleException and
+        cti_vm_throw_slowpath to cti_vm_handle_exception.
+
+2013-08-20  Alex Christensen  <achristensen@apple.com>
+
         <https://webkit.org/b/120076> More work towards a Win64 build
 
         Reviewed by Brent Fulgham.
