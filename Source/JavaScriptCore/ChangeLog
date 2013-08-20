@@ -1,3 +1,49 @@
+2013-08-20  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        <https://webkit.org/b/120079> Flattening a dictionary can cause CopiedSpace corruption
+
+        Reviewed by Oliver Hunt.
+
+        When we flatten an object in dictionary mode, we compact its properties. If the object 
+        had out-of-line storage in the form of a Butterfly prior to this compaction, and after 
+        compaction its properties fit inline, the object's Structure "forgets" that the object 
+        has a non-zero Butterfly pointer. During GC, we check the Butterfly and reportLiveBytes 
+        with bytes = 0, which causes all sorts of badness in CopiedSpace.
+
+        Instead, after we flatten a dictionary, if properties fit inline we should clear the 
+        Butterfly pointer so that the GC doesn't get confused later.
+
+        This patch does this clearing, and it also adds JSObject::checkStructure, which overrides
+        JSCell::checkStructure to add an ASSERT that makes sure that the Structure being assigned
+        agrees with the whether or not the object has a Butterfly. Also added an ASSERT to check
+        that the number of bytes reported to SlotVisitor::copyLater is non-zero.
+
+        * heap/SlotVisitorInlines.h:
+        (JSC::SlotVisitor::copyLater):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::notifyPresenceOfIndexedAccessors):
+        (JSC::JSObject::convertUndecidedToInt32):
+        (JSC::JSObject::convertUndecidedToDouble):
+        (JSC::JSObject::convertUndecidedToContiguous):
+        (JSC::JSObject::convertInt32ToDouble):
+        (JSC::JSObject::convertInt32ToContiguous):
+        (JSC::JSObject::genericConvertDoubleToContiguous):
+        (JSC::JSObject::switchToSlowPutArrayStorage):
+        (JSC::JSObject::setPrototype):
+        (JSC::JSObject::putDirectAccessor):
+        (JSC::JSObject::seal):
+        (JSC::JSObject::freeze):
+        (JSC::JSObject::preventExtensions):
+        (JSC::JSObject::reifyStaticFunctionsForDelete):
+        (JSC::JSObject::removeDirect):
+        * runtime/JSObject.h:
+        (JSC::JSObject::setButterfly):
+        (JSC::JSObject::putDirectInternal):
+        (JSC::JSObject::setStructure):
+        (JSC::JSObject::setStructureAndReallocateStorageIfNecessary):
+        * runtime/Structure.cpp:
+        (JSC::Structure::flattenDictionaryStructure):
+
 2013-08-20  Alex Christensen  <achristensen@apple.com>
 
         Compile fix for Win64 after r154156.
