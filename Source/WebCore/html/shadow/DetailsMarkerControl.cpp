@@ -50,9 +50,9 @@ RenderObject* DetailsMarkerControl::createRenderer(RenderArena* arena, RenderSty
     return new (arena) RenderDetailsMarker(this);
 }
 
-bool DetailsMarkerControl::rendererIsNeeded(const NodeRenderingContext& context)
+bool DetailsMarkerControl::rendererIsNeeded(const RenderStyle& style)
 {
-    return summaryElement()->isMainSummary() && HTMLDivElement::rendererIsNeeded(context);
+    return summaryElement()->isMainSummary() && HTMLDivElement::rendererIsNeeded(style);
 }
 
 const AtomicString& DetailsMarkerControl::shadowPseudoId() const

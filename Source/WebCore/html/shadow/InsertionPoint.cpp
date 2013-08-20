@@ -107,9 +107,9 @@ bool InsertionPoint::isActive() const
     return true;
 }
 
-bool InsertionPoint::rendererIsNeeded(const NodeRenderingContext& context)
+bool InsertionPoint::rendererIsNeeded(const RenderStyle& style)
 {
-    return !isShadowBoundary() && HTMLElement::rendererIsNeeded(context);
+    return !isShadowBoundary() && HTMLElement::rendererIsNeeded(style);
 }
 
 void InsertionPoint::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)

@@ -151,7 +151,7 @@ private:
     virtual RenderStyle* virtualComputedStyle(PseudoId pseudoElementSpecifier = NOPSEUDO) { return computedStyle(pseudoElementSpecifier); }
     virtual bool willRecalcStyle(Style::Change);
 
-    virtual bool rendererIsNeeded(const NodeRenderingContext&) { return false; }
+    virtual bool rendererIsNeeded(const RenderStyle&) { return false; }
 
     virtual bool isSupported(StringImpl* feature, StringImpl* version) const;
 

@@ -105,7 +105,7 @@ RenderObject* SVGStopElement::createRenderer(RenderArena* arena, RenderStyle*)
     return new (arena) RenderSVGGradientStop(this);
 }
 
-bool SVGStopElement::rendererIsNeeded(const NodeRenderingContext&)
+bool SVGStopElement::rendererIsNeeded(const RenderStyle&)
 {
     return true;
 }

@@ -74,7 +74,7 @@ public:
 private:
     HTMLVideoElement(const QualifiedName&, Document*, bool);
 
-    virtual bool rendererIsNeeded(const NodeRenderingContext&);
+    virtual bool rendererIsNeeded(const RenderStyle&);
 #if !ENABLE(PLUGIN_PROXY_FOR_VIDEO)
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 #endif

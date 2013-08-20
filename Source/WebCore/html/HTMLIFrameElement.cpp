@@ -91,9 +91,9 @@ void HTMLIFrameElement::parseAttribute(const QualifiedName& name, const AtomicSt
         HTMLFrameElementBase::parseAttribute(name, value);
 }
 
-bool HTMLIFrameElement::rendererIsNeeded(const NodeRenderingContext& context)
+bool HTMLIFrameElement::rendererIsNeeded(const RenderStyle& style)
 {
-    return isURLAllowed() && context.style()->display() != NONE;
+    return isURLAllowed() && style.display() != NONE;
 }
 
 RenderObject* HTMLIFrameElement::createRenderer(RenderArena* arena, RenderStyle*)

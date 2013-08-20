@@ -50,10 +50,10 @@ HTMLProgressElement* ProgressShadowElement::progressElement() const
     return toHTMLProgressElement(shadowHost());
 }
 
-bool ProgressShadowElement::rendererIsNeeded(const NodeRenderingContext& context)
+bool ProgressShadowElement::rendererIsNeeded(const RenderStyle& style)
 {
     RenderObject* progressRenderer = progressElement()->renderer();
-    return progressRenderer && !progressRenderer->style()->hasAppearance() && HTMLDivElement::rendererIsNeeded(context);
+    return progressRenderer && !progressRenderer->style()->hasAppearance() && HTMLDivElement::rendererIsNeeded(style);
 }
 
 ProgressInnerElement::ProgressInnerElement(Document* document)
@@ -66,13 +66,13 @@ RenderObject* ProgressInnerElement::createRenderer(RenderArena* arena, RenderSty
     return new (arena) RenderProgress(this);
 }
 
-bool ProgressInnerElement::rendererIsNeeded(const NodeRenderingContext& context)
+bool ProgressInnerElement::rendererIsNeeded(const RenderStyle& style)
 {
     if (progressElement()->hasAuthorShadowRoot())
-        return HTMLDivElement::rendererIsNeeded(context);
+        return HTMLDivElement::rendererIsNeeded(style);
 
     RenderObject* progressRenderer = progressElement()->renderer();
-    return progressRenderer && !progressRenderer->style()->hasAppearance() && HTMLDivElement::rendererIsNeeded(context);    
+    return progressRenderer && !progressRenderer->style()->hasAppearance() && HTMLDivElement::rendererIsNeeded(style);    
 }
 
 ProgressBarElement::ProgressBarElement(Document* document)

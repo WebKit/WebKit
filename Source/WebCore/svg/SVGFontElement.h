@@ -73,7 +73,7 @@ public:
 private:
     SVGFontElement(const QualifiedName&, Document*);
 
-    virtual bool rendererIsNeeded(const NodeRenderingContext&) { return false; }  
+    virtual bool rendererIsNeeded(const RenderStyle&) { return false; }  
 
     void ensureGlyphCache();
     void registerLigaturesInGlyphCache(Vector<String>&);

@@ -54,10 +54,10 @@ HTMLMeterElement* MeterShadowElement::meterElement() const
     return toHTMLMeterElement(shadowHost());
 }
 
-bool MeterShadowElement::rendererIsNeeded(const NodeRenderingContext& context)
+bool MeterShadowElement::rendererIsNeeded(const RenderStyle& style)
 {
     RenderObject* render = meterElement()->renderer();
-    return render && !render->theme()->supportsMeter(render->style()->appearance()) && HTMLDivElement::rendererIsNeeded(context);
+    return render && !render->theme()->supportsMeter(render->style()->appearance()) && HTMLDivElement::rendererIsNeeded(style);
 }
 
 MeterInnerElement::MeterInnerElement(Document* document)
@@ -67,13 +67,13 @@ MeterInnerElement::MeterInnerElement(Document* document)
     setPseudo(pseudoId);
 }
 
-bool MeterInnerElement::rendererIsNeeded(const NodeRenderingContext& context)
+bool MeterInnerElement::rendererIsNeeded(const RenderStyle& style)
 {
     if (meterElement()->hasAuthorShadowRoot())
-        return HTMLDivElement::rendererIsNeeded(context);
+        return HTMLDivElement::rendererIsNeeded(style);
 
     RenderObject* render = meterElement()->renderer();
-    return render && !render->theme()->supportsMeter(render->style()->appearance()) && HTMLDivElement::rendererIsNeeded(context);
+    return render && !render->theme()->supportsMeter(render->style()->appearance()) && HTMLDivElement::rendererIsNeeded(style);
 }
 
 RenderObject* MeterInnerElement::createRenderer(RenderArena* arena, RenderStyle*)

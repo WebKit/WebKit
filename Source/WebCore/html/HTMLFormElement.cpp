@@ -95,10 +95,10 @@ bool HTMLFormElement::formWouldHaveSecureSubmission(const String& url)
     return document()->completeURL(url).protocolIs("https");
 }
 
-bool HTMLFormElement::rendererIsNeeded(const NodeRenderingContext& context)
+bool HTMLFormElement::rendererIsNeeded(const RenderStyle& style)
 {
     if (!m_wasDemoted)
-        return HTMLElement::rendererIsNeeded(context);
+        return HTMLElement::rendererIsNeeded(style);
 
     ContainerNode* node = parentNode();
     RenderObject* parentRenderer = node->renderer();
@@ -112,7 +112,7 @@ bool HTMLFormElement::rendererIsNeeded(const NodeRenderingContext& context)
     if (!parentIsTableElementPart)
         return true;
 
-    EDisplay display = context.style()->display();
+    EDisplay display = style.display();
     bool formIsTablePart = display == TABLE || display == INLINE_TABLE || display == TABLE_ROW_GROUP
         || display == TABLE_HEADER_GROUP || display == TABLE_FOOTER_GROUP || display == TABLE_ROW
         || display == TABLE_COLUMN_GROUP || display == TABLE_COLUMN || display == TABLE_CELL

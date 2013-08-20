@@ -477,7 +477,7 @@ AffineTransform SVGSVGElement::localCoordinateSpaceTransform(SVGLocatable::CTMSc
     return transform.multiply(viewBoxTransform);
 }
 
-bool SVGSVGElement::rendererIsNeeded(const NodeRenderingContext& context)
+bool SVGSVGElement::rendererIsNeeded(const RenderStyle& style)
 {
     // FIXME: We should respect display: none on the documentElement svg element
     // but many things in FrameView and SVGImage depend on the RenderSVGRoot when
@@ -485,7 +485,7 @@ bool SVGSVGElement::rendererIsNeeded(const NodeRenderingContext& context)
     // https://bugs.webkit.org/show_bug.cgi?id=103493
     if (document()->documentElement() == this)
         return true;
-    return StyledElement::rendererIsNeeded(context);
+    return StyledElement::rendererIsNeeded(style);
 }
 
 RenderObject* SVGSVGElement::createRenderer(RenderArena* arena, RenderStyle*)

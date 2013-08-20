@@ -301,7 +301,7 @@ public:
     void lazyReattach(ShouldSetAttached = SetAttached);
 
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
-    virtual bool rendererIsNeeded(const NodeRenderingContext&);
+    virtual bool rendererIsNeeded(const RenderStyle&);
     void didAffectSelector(AffectedSelectorMask);
 
     ShadowRoot* shadowRoot() const;

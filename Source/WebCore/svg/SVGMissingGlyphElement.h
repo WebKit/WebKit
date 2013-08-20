@@ -32,7 +32,7 @@ public:
 private:
     SVGMissingGlyphElement(const QualifiedName&, Document*);
 
-    virtual bool rendererIsNeeded(const NodeRenderingContext&) { return false; }
+    virtual bool rendererIsNeeded(const RenderStyle&) { return false; }
 };
 
 } // namespace WebCore

@@ -142,7 +142,7 @@ bool SVGForeignObjectElement::childShouldCreateRenderer(const NodeRenderingConte
     return StyledElement::childShouldCreateRenderer(childContext);
 }
 
-bool SVGForeignObjectElement::rendererIsNeeded(const NodeRenderingContext& context)
+bool SVGForeignObjectElement::rendererIsNeeded(const RenderStyle& style)
 {
     // Suppress foreignObject renderers in SVG hidden containers.
     // (https://bugs.webkit.org/show_bug.cgi?id=87297)
@@ -157,7 +157,7 @@ bool SVGForeignObjectElement::rendererIsNeeded(const NodeRenderingContext& conte
         ancestor = ancestor->parentElement();
     }
 
-    return SVGGraphicsElement::rendererIsNeeded(context);
+    return SVGGraphicsElement::rendererIsNeeded(style);
 }
 
 bool SVGForeignObjectElement::selfHasRelativeLengths() const
