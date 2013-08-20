@@ -1147,6 +1147,10 @@ static void webFrameLoadStatusNotified(WebKitWebFrame* frame, gpointer user_data
             if (!done)
                 printf("%s - didFinishLoadForFrame\n", frameName.get());
             break;
+        case WEBKIT_LOAD_FAILED:
+            if (!done)
+                printf("%s - didFailLoadWithError\n", frameName.get());
+            break;
         default:
             break;
         }

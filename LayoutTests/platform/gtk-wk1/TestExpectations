@@ -219,9 +219,6 @@ Bug(GTK) plugins/form-value.html [ Failure ]
 
 webkit.org/b/116807 fast/dom/Window/window-focus-self.html [ Failure ]
 
-webkit.org/b/117584 http/tests/loading/unfinished-load-back-to-cached-page-callbacks.html [ Failure ]
-webkit.org/b/117584 http/tests/loading/unfinished-main-resource-back-to-cached-page-callbacks.html [ Failure ]
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
 #////////////////////////////////////////////////////////////////////////////////////////
