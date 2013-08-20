@@ -155,7 +155,6 @@
     }
 }
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 static NSString *testPathFromURL(NSURL* url)
 {
     if ([url isFileURL]) {
@@ -176,19 +175,16 @@ static NSString *testPathFromURL(NSURL* url)
 
     return nil;
 }
-#endif
 
 - (void)webView:(WebView *)sender didStartProvisionalLoadForFrame:(WebFrame *)frame
 {
     ASSERT([frame provisionalDataSource]);
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     if (!done && [[sender mainFrame] isEqual:frame]) {
         NSURL *provisionalLoadURL = [[[frame provisionalDataSource] initialRequest] URL];
         if (NSString *testPath = testPathFromURL(provisionalLoadURL))
             WKSetCrashReportApplicationSpecificInformation((CFStringRef)[@"CRASHING TEST: " stringByAppendingString:testPath]);
     }
-#endif
 
     if (!done && gTestRunner->dumpFrameLoadCallbacks()) {
         NSString *string = [NSString stringWithFormat:@"%@ - didStartProvisionalLoadForFrame", [frame _drt_descriptionSuitableForTestResult]];

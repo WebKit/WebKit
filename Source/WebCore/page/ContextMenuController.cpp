@@ -732,14 +732,6 @@ static bool selectionContainsPossibleWord(Frame* frame)
 }
 
 #if PLATFORM(MAC)
-#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1060
-#define INCLUDE_SPOTLIGHT_CONTEXT_MENU_ITEM 1
-#else
-#define INCLUDE_SPOTLIGHT_CONTEXT_MENU_ITEM 0
-#endif
-#endif
-
-#if PLATFORM(MAC)
 #define SUPPORTS_TOGGLE_VIDEO_FULLSCREEN 1
 #else
 #define SUPPORTS_TOGGLE_VIDEO_FULLSCREEN 0
@@ -890,20 +882,11 @@ void ContextMenuController::populate()
                     String selectedString = frame->displayStringModifiedByEncoding(frame->editor().selectedText());
                     ContextMenuItem LookUpInDictionaryItem(ActionType, ContextMenuItemTagLookUpInDictionary, contextMenuItemTagLookUpInDictionary(selectedString));
 
-#if INCLUDE_SPOTLIGHT_CONTEXT_MENU_ITEM
-                    appendItem(SearchSpotlightItem, m_contextMenu.get());
-#else
                     appendItem(LookUpInDictionaryItem, m_contextMenu.get());
-#endif
 #endif
 
 #if !PLATFORM(GTK)
                     appendItem(SearchWebItem, m_contextMenu.get());
-                    appendItem(*separatorItem(), m_contextMenu.get());
-#endif
-
-#if PLATFORM(MAC) && INCLUDE_SPOTLIGHT_CONTEXT_MENU_ITEM
-                    appendItem(LookUpInDictionaryItem, m_contextMenu.get());
                     appendItem(*separatorItem(), m_contextMenu.get());
 #endif
                 }
@@ -1030,20 +1013,11 @@ void ContextMenuController::populate()
             String selectedString = frame->displayStringModifiedByEncoding(frame->editor().selectedText());
             ContextMenuItem LookUpInDictionaryItem(ActionType, ContextMenuItemTagLookUpInDictionary, contextMenuItemTagLookUpInDictionary(selectedString));
 
-#if INCLUDE_SPOTLIGHT_CONTEXT_MENU_ITEM
-            appendItem(SearchSpotlightItem, m_contextMenu.get());
-#else
             appendItem(LookUpInDictionaryItem, m_contextMenu.get());
-#endif
 #endif
 
 #if !PLATFORM(GTK)
             appendItem(SearchWebItem, m_contextMenu.get());
-            appendItem(*separatorItem(), m_contextMenu.get());
-#endif
-
-#if PLATFORM(MAC) && INCLUDE_SPOTLIGHT_CONTEXT_MENU_ITEM
-            appendItem(LookUpInDictionaryItem, m_contextMenu.get());
             appendItem(*separatorItem(), m_contextMenu.get());
 #endif
         }

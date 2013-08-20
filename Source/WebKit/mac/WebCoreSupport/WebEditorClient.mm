@@ -77,11 +77,9 @@ using namespace WebCore;
 
 using namespace HTMLNames;
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 @interface NSSpellChecker (WebNSSpellCheckerDetails)
 - (NSString *)languageForWordRange:(NSRange)range inString:(NSString *)string orthography:(NSOrthography *)orthography;
 @end
-#endif
 
 @interface NSAttributedString (WebNSAttributedStringDetails)
 - (id)_initWithDOMRange:(DOMRange*)range;
@@ -720,11 +718,7 @@ void WebEditorClient::textDidChangeInTextArea(Element* element)
 bool WebEditorClient::shouldEraseMarkersAfterChangeSelection(TextCheckingType type) const
 {
     // This prevents erasing spelling markers on OS X Lion or later to match AppKit on these Mac OS X versions.
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     return type != TextCheckingTypeSpelling;
-#else
-    return true;
-#endif
 }
 
 void WebEditorClient::ignoreWordInSpellDocument(const String& text)
@@ -913,7 +907,6 @@ bool WebEditorClient::spellingUIIsShowing()
 
 void WebEditorClient::getGuessesForWord(const String& word, const String& context, Vector<String>& guesses) {
     guesses.clear();
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     NSString* language = nil;
     NSOrthography* orthography = nil;
     NSSpellChecker *checker = [NSSpellChecker sharedSpellChecker];
@@ -922,9 +915,6 @@ void WebEditorClient::getGuessesForWord(const String& word, const String& contex
         language = [checker languageForWordRange:NSMakeRange(0, context.length()) inString:context orthography:orthography];
     }
     NSArray* stringsArray = [checker guessesForWordRange:NSMakeRange(0, word.length()) inString:word language:language inSpellDocumentWithTag:spellCheckerDocumentTag()];
-#else
-    NSArray* stringsArray = [[NSSpellChecker sharedSpellChecker] guessesForWord:word];
-#endif
     unsigned count = [stringsArray count];
 
     if (count > 0) {

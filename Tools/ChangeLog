@@ -1,3 +1,27 @@
+2013-08-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        <https://webkit.org/b/120049> Delete code for Snow Leopard
+
+        Reviewed by Benjamin Poulain.
+
+        * DumpRenderTree/mac/CheckedMalloc.cpp:
+        (protectionOfRegion):
+        (makeLargeMallocFailSilently):
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetDefaultsToConsistentValues):
+        * DumpRenderTree/mac/DumpRenderTreeDraggingInfo.mm:
+        (-[DumpRenderTreeDraggingInfo enumerateDraggingItemsWithOptions:forView:classes:searchOptions:usingBlock:]):
+        * DumpRenderTree/mac/FrameLoadDelegate.mm:
+        (testPathFromURL):
+        (-[FrameLoadDelegate webView:didStartProvisionalLoadForFrame:]):
+        * DumpRenderTree/mac/LayoutTestHelper.m:
+        * DumpRenderTree/mac/TestRunnerMac.mm:
+        * WebKitTestRunner/InjectedBundle/mac/InjectedBundleMac.mm:
+        (WTR::InjectedBundle::platformInitialize):
+        * WebKitTestRunner/InjectedBundle/mac/InjectedBundlePageMac.mm:
+        (WTR::testPathFromURL):
+        (WTR::InjectedBundlePage::platformDidStartProvisionalLoadForFrame):
+
 2013-08-19  Alexey Proskuryakov  <ap@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=119915

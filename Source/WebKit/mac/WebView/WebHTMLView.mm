@@ -860,26 +860,11 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
 
     DOMRange *range = [self _selectedRange];
     Frame* coreFrame = core([self _frame]);
-    
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
+
     DOMDocumentFragment *fragment = [self _documentFragmentFromPasteboard:pasteboard inContext:range allowPlainText:allowPlainText];
     if (fragment && [self _shouldInsertFragment:fragment replacingDOMRange:range givenAction:WebViewInsertActionPasted])
         coreFrame->editor().pasteAsFragment(core(fragment), [self _canSmartReplaceWithPasteboard:pasteboard], false);
-#else
-    // Mail is ignoring the frament passed to the delegate and creates a new one.
-    // We want to avoid creating the fragment twice.
-    if (applicationIsAppleMail()) {
-        if ([self _shouldInsertFragment:nil replacingDOMRange:range givenAction:WebViewInsertActionPasted]) {
-            DOMDocumentFragment *fragment = [self _documentFragmentFromPasteboard:pasteboard inContext:range allowPlainText:allowPlainText];
-            if (fragment)
-                coreFrame->editor().pasteAsFragment(core(fragment), [self _canSmartReplaceWithPasteboard:pasteboard], false);
-        }        
-    } else {
-        DOMDocumentFragment *fragment = [self _documentFragmentFromPasteboard:pasteboard inContext:range allowPlainText:allowPlainText];
-        if (fragment && [self _shouldInsertFragment:fragment replacingDOMRange:range givenAction:WebViewInsertActionPasted])
-            coreFrame->editor().pasteAsFragment(core(fragment), [self _canSmartReplaceWithPasteboard:pasteboard], false);
-    }
-#endif
+
     [webView _setInsertionPasteboard:nil];
     [webView release];
 }
@@ -2832,11 +2817,9 @@ WEBCORE_COMMAND(yankAndSelect)
         return;
 #endif
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     // Legacy scrollbars require tracking the mouse at all times.
     if (WKRecommendedScrollerStyle() == NSScrollerStyleLegacy)
         return;
-#endif
 
     [[self _webView] _mouseDidMoveOverElement:nil modifierFlags:0];
     [self _removeMouseMovedObserverUnconditionally];
@@ -3380,13 +3363,11 @@ static void setMenuTargets(NSMenu* menu)
         return;
     }
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     if (_private->trackingAreaForNonKeyWindow) {
         [self removeTrackingArea:_private->trackingAreaForNonKeyWindow];
         [_private->trackingAreaForNonKeyWindow release];
         _private->trackingAreaForNonKeyWindow = nil;
     }
-#endif
 
     NSWindow *keyWindow = [notification object];
 
@@ -3413,7 +3394,6 @@ static void setMenuTargets(NSMenu* menu)
         [_private->completionController endRevertingChange:NO moveLeft:NO];
     }
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     if (WKRecommendedScrollerStyle() == NSScrollerStyleLegacy) {
         // Legacy style scrollbars have design details that rely on tracking the mouse all the time.
         // It's easiest to do this with a tracking area, which we will remove when the window is key
@@ -3424,7 +3404,6 @@ static void setMenuTargets(NSMenu* menu)
                                                     userInfo:nil];
         [self addTrackingArea:_private->trackingAreaForNonKeyWindow];
     }
-#endif
 }
 
 - (void)windowWillOrderOnScreen:(NSNotification *)notification

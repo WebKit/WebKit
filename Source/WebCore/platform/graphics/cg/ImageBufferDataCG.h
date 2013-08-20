@@ -30,7 +30,7 @@
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
 
-#if (PLATFORM(MAC) && USE(CA) && (PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070))
+#if PLATFORM(MAC) && USE(CA)
 #define WTF_USE_IOSURFACE_CANVAS_BACKING_STORE 1
 #endif
 

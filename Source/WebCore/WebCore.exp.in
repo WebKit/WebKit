@@ -2305,23 +2305,17 @@ __ZN7WebCore7IntSizeC1ERK7_NSSize
 __ZNK7WebCore7IntSizecv7_NSSizeEv
 #endif
 
-#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED == 1060
-_wkGetNSEventMomentumPhase
-#endif
-
-#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 _wkCALayerEnumerateRectsBeingDrawnWithBlock
 _wkCFURLRequestAllowAllPostCaching
 _wkCGPathAddRoundedRect
 _wkCreateCTTypesetterWithUniCharProviderAndOptions
-#endif
 
-#if (PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070) && !PLATFORM(IOS_SIMULATOR)
+#if !PLATFORM(IOS_SIMULATOR)
 _wkIOSurfaceContextCreate
 _wkIOSurfaceContextCreateImage
 #endif
 
-#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
+#if !PLATFORM(IOS)
 _wkAVAssetResolvedURL
 _wkCopyDefaultSearchProviderDisplayName
 _wkSetCrashReportApplicationSpecificInformation

@@ -49,7 +49,6 @@
 
 #ifdef __OBJC__
 #import <Foundation/Foundation.h>
-#import <WebCore/EmptyProtocolDefinitions.h>
 #if USE(APPKIT)
 #import <Cocoa/Cocoa.h>
 #endif

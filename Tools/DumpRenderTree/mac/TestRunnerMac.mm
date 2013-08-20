@@ -923,11 +923,6 @@ void TestRunner::setWebViewEditable(bool editable)
 
 static NSString *SynchronousLoaderRunLoopMode = @"DumpRenderTreeSynchronousLoaderRunLoopMode";
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1060
-@protocol NSURLConnectionDelegate <NSObject>
-@end
-#endif
-
 @interface SynchronousLoader : NSObject <NSURLConnectionDelegate>
 {
     NSString *m_username;

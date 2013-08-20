@@ -62,18 +62,6 @@ ImageBufferData::ImageBufferData(const IntSize&)
 
 #if USE(ACCELERATE)
 
-#if __MAC_OS_X_VERSION_MAX_ALLOWED >= 1070
-static bool haveVImageRoundingErrorFix() { return true; }
-#else
-// The vImage unpremultiply routine had a rounding bug before 10.6.7 <rdar://problem/8631548>
-static bool haveVImageRoundingErrorFix()
-{
-    SInt32 version;
-    static bool result = (Gestalt(gestaltSystemVersion, &version) == noErr && version > 0x1066);
-    return result;
-}
-#endif // __MAC_OS_X_VERSION_MAX_ALLOWED >= 1070
-
 #if USE(IOSURFACE_CANVAS_BACKING_STORE)
 static void convertScanline(void* data, size_t tileNumber, bool premultiply)
 {
@@ -176,7 +164,7 @@ PassRefPtr<Uint8ClampedArray> ImageBufferData::getData(const IntRect& rect, cons
         srcRows = reinterpret_cast<unsigned char*>(m_data) + originy * srcBytesPerRow + originx * 4;
         
 #if USE(ACCELERATE)
-        if (unmultiplied && haveVImageRoundingErrorFix()) {
+        if (unmultiplied) {
             vImage_Buffer src;
             src.height = height.unsafeGet();
             src.width = width.unsafeGet();
@@ -399,7 +387,7 @@ void ImageBufferData::putData(Uint8ClampedArray*& source, const IntSize& sourceS
         destRows = reinterpret_cast<unsigned char*>(m_data) + (desty * destBytesPerRow + destx * 4).unsafeGet();
         
 #if  USE(ACCELERATE)
-        if (haveVImageRoundingErrorFix() && unmultiplied) {
+        if (unmultiplied) {
             vImage_Buffer src;
             src.height = height.unsafeGet();
             src.width = width.unsafeGet();

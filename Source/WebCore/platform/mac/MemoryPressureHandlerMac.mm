@@ -39,7 +39,7 @@
 #import <wtf/FastMalloc.h>
 #import <wtf/Functional.h>
 
-#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
+#if !PLATFORM(IOS)
 #import "WebCoreSystemInterface.h"
 #import <notify.h>
 #endif
@@ -47,8 +47,6 @@
 using std::max;
 
 namespace WebCore {
-
-#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 
 #if !PLATFORM(IOS)
 static dispatch_source_t _cache_event_source = 0;
@@ -177,6 +175,5 @@ void MemoryPressureHandler::releaseMemory(bool)
 #endif
     WTF::releaseFastMallocFreeMemory();
 }
-#endif
 
 } // namespace WebCore

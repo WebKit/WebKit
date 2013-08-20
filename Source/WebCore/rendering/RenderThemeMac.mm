@@ -2122,11 +2122,7 @@ void RenderThemeMac::adjustSliderThumbSize(RenderStyle* style, Element*) const
 
 bool RenderThemeMac::shouldShowPlaceholderWhenFocused() const
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     return true;
-#else
-    return false;
-#endif
 }
 
 NSPopUpButtonCell* RenderThemeMac::popupButton() const

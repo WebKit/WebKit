@@ -78,25 +78,9 @@ void Editor::pasteWithPasteboard(Pasteboard* pasteboard, bool allowPlainText)
     bool choosePlainText;
     
     m_frame.editor().client()->setInsertionPasteboard(NSGeneralPboard);
-#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     RefPtr<DocumentFragment> fragment = pasteboard->documentFragment(&m_frame, range, allowPlainText, choosePlainText);
     if (fragment && shouldInsertFragment(fragment, range, EditorInsertActionPasted))
         pasteAsFragment(fragment, canSmartReplaceWithPasteboard(pasteboard), false);
-#else
-    // Mail is ignoring the frament passed to the delegate and creates a new one.
-    // We want to avoid creating the fragment twice.
-    if (applicationIsAppleMail()) {
-        if (shouldInsertFragment(NULL, range, EditorInsertActionPasted)) {
-            RefPtr<DocumentFragment> fragment = pasteboard->documentFragment(&m_frame, range, allowPlainText, choosePlainText);
-            if (fragment)
-                pasteAsFragment(fragment, canSmartReplaceWithPasteboard(pasteboard), false);
-        }        
-    } else {
-        RefPtr<DocumentFragment>fragment = pasteboard->documentFragment(&m_frame, range, allowPlainText, choosePlainText);
-        if (fragment && shouldInsertFragment(fragment, range, EditorInsertActionPasted))
-            pasteAsFragment(fragment, canSmartReplaceWithPasteboard(pasteboard), false);
-    }
-#endif
     m_frame.editor().client()->setInsertionPasteboard(String());
 }
 

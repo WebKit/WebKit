@@ -100,20 +100,16 @@ static double mediaTimeToCurrentTime(CFTimeInterval t)
 
 @end
 
-#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 @interface CATiledLayer(GraphicsLayerCAPrivate)
 - (void)displayInRect:(CGRect)r levelOfDetail:(int)lod options:(NSDictionary *)dict;
 - (BOOL)canDrawConcurrently;
 - (void)setCanDrawConcurrently:(BOOL)flag;
 @end
-#endif
 
 @interface CALayer(Private)
 - (void)setContentsChanged;
-#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 - (void)setAcceleratesDrawing:(BOOL)flag;
 - (BOOL)acceleratesDrawing;
-#endif
 @end
 
 static NSString * const platformCALayerPointer = @"WKPlatformCALayer";
@@ -601,22 +597,14 @@ void PlatformCALayer::setMasksToBounds(bool value)
 
 bool PlatformCALayer::acceleratesDrawing() const
 {
-#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     return [m_layer.get() acceleratesDrawing];
-#else
-    return false;
-#endif
 }
 
 void PlatformCALayer::setAcceleratesDrawing(bool acceleratesDrawing)
 {
-#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_layer.get() setAcceleratesDrawing:acceleratesDrawing];
     END_BLOCK_OBJC_EXCEPTIONS
-#else
-    UNUSED_PARAM(acceleratesDrawing);
-#endif
 }
 
 CFTypeRef PlatformCALayer::contents() const
@@ -809,22 +797,14 @@ void PlatformCALayer::setTimeOffset(CFTimeInterval value)
 
 float PlatformCALayer::contentsScale() const
 {
-#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     return [m_layer.get() contentsScale];
-#else
-    return 1;
-#endif
 }
 
 void PlatformCALayer::setContentsScale(float value)
 {
-#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_layer.get() setContentsScale:value];
     END_BLOCK_OBJC_EXCEPTIONS
-#else
-    UNUSED_PARAM(value);
-#endif
 }
 
 TiledBacking* PlatformCALayer::tiledBacking()
@@ -836,7 +816,6 @@ TiledBacking* PlatformCALayer::tiledBacking()
     return [tiledBackingLayer tiledBacking];
 }
 
-#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 void PlatformCALayer::synchronouslyDisplayTilesInRect(const FloatRect& rect)
 {
     if (m_layerType != LayerTypeWebTiledLayer)
@@ -851,7 +830,6 @@ void PlatformCALayer::synchronouslyDisplayTilesInRect(const FloatRect& rect)
     [tiledLayer setCanDrawConcurrently:oldCanDrawConcurrently];
     END_BLOCK_OBJC_EXCEPTIONS
 }
-#endif
 
 AVPlayerLayer* PlatformCALayer::playerLayer() const
 {

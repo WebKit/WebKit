@@ -1,3 +1,14 @@
+2013-08-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        <https://webkit.org/b/120049> Delete code for Snow Leopard
+
+        Reviewed by Benjamin Poulain.
+
+        * wtf/FastMalloc.cpp:
+        (WTF::TCMalloc_ThreadCache::CreateCacheIfNecessary):
+        * wtf/FeatureDefines.h:
+        * wtf/Platform.h:
+
 2013-08-19  Joseph Pecoraro  <pecoraro@apple.com>
 
         <https://webkit.org/b/120036> [iOS] Upstream Source/WTF Xcode project for iOS

@@ -46,11 +46,7 @@
     NSRect windowFrame = [window frame];
 
     CGFloat backingScaleFactor;
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     backingScaleFactor = [window backingScaleFactor];
-#else
-    backingScaleFactor = [window userSpaceScaleFactor];
-#endif
 
     windowFrame.size.height += heightDelta * backingScaleFactor;
     [window setFrame:windowFrame display:NO];

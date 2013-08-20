@@ -88,10 +88,8 @@ void ResourceRequest::doUpdateResourceRequest()
         m_httpMethod = method;
     m_allowCookies = [m_nsRequest.get() HTTPShouldHandleCookies];
 
-#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     if (ResourceRequest::httpPipeliningEnabled())
         m_priority = toResourceLoadPriority(wkGetHTTPPipeliningPriority([m_nsRequest.get() _CFURLRequest]));
-#endif
 
     NSDictionary *headers = [m_nsRequest.get() allHTTPHeaderFields];
     NSEnumerator *e = [headers keyEnumerator];
@@ -144,16 +142,11 @@ void ResourceRequest::doUpdatePlatformRequest()
     else
         nsRequest = [[NSMutableURLRequest alloc] initWithURL:url()];
 
-
-#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     if (ResourceRequest::httpPipeliningEnabled())
         wkSetHTTPPipeliningPriority([nsRequest _CFURLRequest], toHTTPPipeliningPriority(m_priority));
-#endif
 
     [nsRequest setCachePolicy:(NSURLRequestCachePolicy)cachePolicy()];
-#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     wkCFURLRequestAllowAllPostCaching([nsRequest _CFURLRequest]);
-#endif
 
     double timeoutInterval = ResourceRequestBase::timeoutInterval();
     if (timeoutInterval)

@@ -30,7 +30,6 @@
 #include "ScrollAnimatorMac.h"
 
 #include "BlockExceptions.h"
-#include "EmptyProtocolDefinitions.h"
 #include "FloatPoint.h"
 #include "NSScrollerImpDetails.h"
 #include "PlatformGestureEvent.h"

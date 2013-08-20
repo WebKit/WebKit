@@ -1,3 +1,14 @@
+2013-08-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        <https://webkit.org/b/120049> Delete code for Snow Leopard
+
+        Reviewed by Benjamin Poulain.
+
+        * NetworkProcess/mac/NetworkProcessMac.mm:
+        (WebKit::overrideSystemProxies):
+        (WebKit::NetworkProcess::platformInitializeNetworkProcess):
+        * WebKit2Prefix.h:
+
 2013-08-19  Beth Dakin  <bdakin@apple.com>
 
         <https://webkit.org/b/120027> AXObjectCache's 

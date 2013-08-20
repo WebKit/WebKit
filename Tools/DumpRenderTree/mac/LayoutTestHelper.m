@@ -40,8 +40,6 @@
 // test script, so it can do the job for multiple DumpRenderTree while they are
 // running layout tests.
 
-#if MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
-
 static CFURLRef sUserColorProfileURL;
 
 static void installLayoutTestColorProfile()
@@ -123,59 +121,6 @@ static void restoreUserColorProfile(void)
     CFRelease(mainDisplayID);
     CFRelease(profileInfo);
 }
-
-#else // For Snow Leopard and before, use older CM* API.
-
-const char colorProfilePath[] = "/System/Library/ColorSync/Profiles/Generic RGB Profile.icc";
-
-CMProfileLocation initialColorProfileLocation; // The locType field is initialized to 0 which is the same as cmNoProfileBase.
-
-static void installLayoutTestColorProfile()
-{
-    // To make sure we get consistent colors (not dependent on the chosen color
-    // space of the main display), we force the generic RGB color profile.
-    // This causes a change the user can see.
-    
-    const CMDeviceScope scope = { kCFPreferencesCurrentUser, kCFPreferencesCurrentHost };
-
-    CMProfileRef profile = 0;
-    int error = CMGetProfileByAVID((CMDisplayIDType)kCGDirectMainDisplay, &profile);
-    if (!error) {
-        UInt32 size = sizeof(initialColorProfileLocation);
-        error = NCMGetProfileLocation(profile, &initialColorProfileLocation, &size);
-        CMCloseProfile(profile);
-    }
-    if (error) {
-        NSLog(@"Failed to get the current color profile. Many pixel tests may fail as a result. Error: %d", (int)error);
-        initialColorProfileLocation.locType = cmNoProfileBase;
-        return;
-    }
-
-    CMProfileLocation location;
-    location.locType = cmPathBasedProfile;
-    strncpy(location.u.pathLoc.path, colorProfilePath, sizeof(location.u.pathLoc.path));
-    error = CMSetDeviceProfile(cmDisplayDeviceClass, (CMDeviceID)kCGDirectMainDisplay, &scope, cmDefaultProfileID, &location);
-    if (error) {
-        NSLog(@"Failed install the GenericRGB color profile. Many pixel tests may fail as a result. Error: %d", (int)error);
-        initialColorProfileLocation.locType = cmNoProfileBase;
-    }
-}
-
-static void restoreUserColorProfile(void)
-{
-    // This is used as a signal handler, and thus the calls into ColorSync are unsafe.
-    // But we might as well try to restore the user's color profile, we're going down anyway...
-    if (initialColorProfileLocation.locType != cmNoProfileBase) {
-        const CMDeviceScope scope = { kCFPreferencesCurrentUser, kCFPreferencesCurrentHost };
-        int error = CMSetDeviceProfile(cmDisplayDeviceClass, (CMDeviceID)kCGDirectMainDisplay, &scope, cmDefaultProfileID, &initialColorProfileLocation);
-        if (error) {
-            NSLog(@"Failed to restore color profile, use System Preferences -> Displays -> Color to reset. Error: %d", (int)error);
-        }
-        initialColorProfileLocation.locType = cmNoProfileBase;
-    }
-}
-
-#endif
 
 static void simpleSignalHandler(int sig)
 {

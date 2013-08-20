@@ -34,7 +34,6 @@
 #import "CookieStorage.h"
 #import "CredentialStorage.h"
 #import "CachedResourceLoader.h"
-#import "EmptyProtocolDefinitions.h"
 #import "FormDataStreamMac.h"
 #import "Frame.h"
 #import "FrameLoader.h"

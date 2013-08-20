@@ -53,18 +53,6 @@ bool Font::canExpandAroundIdeographsInComplexText()
     return true;
 }
 
-// CTFontGetVerticalTranslationsForGlyphs is different on Snow Leopard.  It returns values for a font-size of 1
-// without unitsPerEm applied.  We have to apply a transform that scales up to the point size and that also 
-// divides by unitsPerEm.
-static bool hasBrokenCTFontGetVerticalTranslationsForGlyphs()
-{
-#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED == 1060
-    return true;
-#else
-    return false;
-#endif
-}
-
 static void showGlyphsWithAdvances(const FloatPoint& point, const SimpleFontData* font, CGContextRef context, const CGGlyph* glyphs, const CGSize* advances, size_t count)
 {
     if (!count)
@@ -91,15 +79,6 @@ static void showGlyphsWithAdvances(const FloatPoint& point, const SimpleFontData
         CGAffineTransform runMatrix = CGAffineTransformConcat(savedMatrix, rotateLeftTransform);
         CGContextSetTextMatrix(context, runMatrix);
 
-        CGAffineTransform translationsTransform;
-        if (hasBrokenCTFontGetVerticalTranslationsForGlyphs()) {
-            translationsTransform = CGAffineTransformMake(platformData.m_size, 0, 0, platformData.m_size, 0, 0);
-            translationsTransform = CGAffineTransformConcat(translationsTransform, rotateLeftTransform);
-            CGFloat unitsPerEm = CGFontGetUnitsPerEm(platformData.cgFont());
-            translationsTransform = CGAffineTransformConcat(translationsTransform, CGAffineTransformMakeScale(1 / unitsPerEm, 1 / unitsPerEm));
-        } else
-            translationsTransform = rotateLeftTransform;
-
         Vector<CGSize, 256> translations(count);
         CTFontGetVerticalTranslationsForGlyphs(platformData.ctFont(), glyphs, translations.data(), count);
 
@@ -107,17 +86,15 @@ static void showGlyphsWithAdvances(const FloatPoint& point, const SimpleFontData
 
         CGPoint position = FloatPoint(point.x(), point.y() + font->fontMetrics().floatAscent(IdeographicBaseline) - font->fontMetrics().floatAscent());
         for (size_t i = 0; i < count; ++i) {
-            CGSize translation = CGSizeApplyAffineTransform(translations[i], translationsTransform);
+            CGSize translation = CGSizeApplyAffineTransform(translations[i], rotateLeftTransform);
             positions[i] = CGPointApplyAffineTransform(CGPointMake(position.x - translation.width, position.y + translation.height), transform);
             position.x += advances[i].width;
             position.y += advances[i].height;
         }
         if (!platformData.isColorBitmapFont())
             CGContextShowGlyphsAtPositions(context, glyphs, positions.data(), count);
-#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
         else
             CTFontDrawGlyphs(platformData.ctFont(), glyphs, positions.data(), count, context);
-#endif
         CGContextSetTextMatrix(context, savedMatrix);
     } else {
         if (!platformData.isColorBitmapFont())
@@ -125,10 +102,8 @@ static void showGlyphsWithAdvances(const FloatPoint& point, const SimpleFontData
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
             CGContextShowGlyphsWithAdvances(context, glyphs, advances, count);
 #pragma clang diagnostic pop
-#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
         else
             CTFontDrawGlyphs(platformData.ctFont(), glyphs, positions.data(), count, context);
-#endif
     }
 }
 

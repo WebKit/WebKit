@@ -105,7 +105,6 @@
     return nil;
 }
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 - (NSDraggingFormation)draggingFormation
 {
     return NSDraggingFormationDefault;
@@ -140,7 +139,6 @@
 {
     // Ignored.
 }
-#endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 
 @end
 

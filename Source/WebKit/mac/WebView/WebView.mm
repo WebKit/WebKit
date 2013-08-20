@@ -660,14 +660,6 @@ static bool shouldRestrictWindowFocus()
     [types release];
 }
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1060
-// This method should be removed once we no longer want to keep Safari 5.0.x working with nightly builds.
-- (BOOL)_usesDocumentViews
-{
-    return true;
-}
-#endif
-
 static bool needsOutlookQuirksScript()
 {
     static bool isOutlookNeedingQuirksScript = !WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_HTML5_PARSER)
@@ -5894,19 +5886,11 @@ static WebFrameView *containingFrameView(NSView *view)
 
     NSWindow *window = [self window];
     NSWindow *hostWindow = [self hostWindow];
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     if (window)
         return [window backingScaleFactor];
     if (hostWindow)
         return [hostWindow backingScaleFactor];
     return [[NSScreen mainScreen] backingScaleFactor];
-#else
-    if (window)
-        return [window userSpaceScaleFactor];
-    if (hostWindow)
-        return [hostWindow userSpaceScaleFactor];
-    return [[NSScreen mainScreen] userSpaceScaleFactor];
-#endif
 }
 
 static inline uint64_t roundUpToPowerOf2(uint64_t num)

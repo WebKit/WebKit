@@ -89,12 +89,8 @@
             action = @selector(_searchWithSpotlightFromMenu:);
             break;
         case WebMenuItemTagSearchWeb: {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
             RetainPtr<CFStringRef> searchProviderName = adoptCF(WKCopyDefaultSearchProviderDisplayName());
             title = [NSString stringWithFormat:UI_STRING_INTERNAL("Search with %@", "Search with search provider context menu item with provider name inserted"), searchProviderName.get()];
-#else
-            title = UI_STRING_INTERNAL("Search with Google", "Search with Google context menu item");
-#endif
             action = @selector(_searchWithGoogleFromMenu:);
             break;
         }
@@ -136,12 +132,6 @@
     }
 }
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1060
-#define INCLUDE_SPOTLIGHT_CONTEXT_MENU_ITEM 1
-#else
-#define INCLUDE_SPOTLIGHT_CONTEXT_MENU_ITEM 0
-#endif
-
 - (NSArray *)webView:(WebView *)wv contextMenuItemsForElement:(NSDictionary *)element  defaultMenuItems:(NSArray *)defaultMenuItems
 {
     // The defaultMenuItems here are ones supplied by the WebDocumentView protocol implementation. WebPDFView is
@@ -161,21 +151,12 @@
         // existing clients that have code that relies on it being present (unlikely for clients outside of Apple, 
         // but Safari has such code).
 
-#if INCLUDE_SPOTLIGHT_CONTEXT_MENU_ITEM
-        [menuItems addObject:[self menuItemWithTag:WebMenuItemTagSearchInSpotlight target:nil representedObject:element]];
-#else
         NSMenuItem *lookupMenuItem = [self menuItemWithTag:WebMenuItemTagLookUpInDictionary target:nil representedObject:element];
         NSString *selectedString = [(id <WebDocumentText>)[[webFrame frameView] documentView] selectedString];
         [lookupMenuItem setTitle:[NSString stringWithFormat:UI_STRING_INTERNAL("Look Up “%@”", "Look Up context menu item with selected word"), selectedString]];
         [menuItems addObject:lookupMenuItem];
-#endif
 
         [menuItems addObject:[self menuItemWithTag:WebMenuItemTagSearchWeb target:nil representedObject:element]];
-
-#if INCLUDE_SPOTLIGHT_CONTEXT_MENU_ITEM
-        [menuItems addObject:[NSMenuItem separatorItem]];
-        [menuItems addObject:[self menuItemWithTag:WebMenuItemTagLookUpInDictionary target:nil representedObject:element]];
-#endif
 
         [menuItems addObject:[NSMenuItem separatorItem]];
         [menuItems addObject:[self menuItemWithTag:WebMenuItemTagCopy target:nil representedObject:element]];

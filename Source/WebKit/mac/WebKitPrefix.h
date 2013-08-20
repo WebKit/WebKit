@@ -74,7 +74,6 @@ typedef float CGFloat;
 #include <wtf/ExportMacros.h>
 #include <runtime/JSExportMacros.h>
 #include <WebCore/PlatformExportMacros.h>
-#include <WebCore/EmptyProtocolDefinitions.h>
 
 /* Work around bug with C++ library that screws up Objective-C++ when exception support is disabled. */
 #undef try

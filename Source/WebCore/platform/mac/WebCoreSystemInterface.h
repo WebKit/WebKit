@@ -59,7 +59,7 @@ typedef UInt32 FMFont;
 typedef FMFont ATSUFontID;
 typedef UInt16 ATSGlyphRef;
 
-#if PLATFORM(MAC) && USE(CA) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
+#if PLATFORM(MAC) && USE(CA)
 typedef struct __IOSurface *IOSurfaceRef;
 #endif
 
@@ -111,9 +111,7 @@ extern "C" {
 // In alphabetical order.
 
 extern void (*wkAdvanceDefaultButtonPulseAnimation)(NSButtonCell *);
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 extern void (*wkCALayerEnumerateRectsBeingDrawnWithBlock)(CALayer *, CGContextRef, void (^block)(CGRect rect));
-#endif
 
 extern BOOL (*wkCGContextGetShouldSmoothFonts)(CGContextRef);
 typedef enum {
@@ -222,20 +220,7 @@ extern bool (*wkGetVerticalGlyphsForCharacters)(CTFontRef, const UniChar[], CGGl
 
 extern BOOL (*wkUseSharedMediaUI)();
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 extern void* wkGetHyphenationLocationBeforeIndex;
-#else
-extern CFIndex (*wkGetHyphenationLocationBeforeIndex)(CFStringRef string, CFIndex index);
-
-typedef enum {
-    wkEventPhaseNone = 0,
-    wkEventPhaseBegan = 1,
-    wkEventPhaseChanged = 2,
-    wkEventPhaseEnded = 3,
-} wkEventPhase;
-
-extern int (*wkGetNSEventMomentumPhase)(NSEvent *);
-#endif
 
 extern CTLineRef (*wkCreateCTLineWithUniCharProvider)(const UniChar* (*provide)(CFIndex stringIndex, CFIndex* charCount, CFDictionaryRef* attributes, void*), void (*dispose)(const UniChar* chars, void*), void*);
 
@@ -249,8 +234,6 @@ typedef int wkCTFontTransformOptions;
 
 extern bool (*wkCTFontTransformGlyphs)(CTFontRef font, CGGlyph glyphs[], CGSize advances[], CFIndex count, wkCTFontTransformOptions options);
 #endif
-
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 
 extern CTTypesetterRef (*wkCreateCTTypesetterWithUniCharProviderAndOptions)(const UniChar* (*provide)(CFIndex stringIndex, CFIndex* charCount, CFDictionaryRef* attributes, void*), void (*dispose)(const UniChar* chars, void*), void*, CFDictionaryRef options);
 
@@ -271,8 +254,6 @@ extern void (*wkSetCrashReportApplicationSpecificInformation)(CFStringRef);
 extern NSURL *(*wkAVAssetResolvedURL)(AVAsset*);
 
 extern NSCursor *(*wkCursor)(const char*);
-
-#endif
     
 #if PLATFORM(MAC)
 extern NSArray *(*wkSpeechSynthesisGetVoiceIdentifiers)(void);
@@ -290,11 +271,7 @@ extern CFTypeRef (*wkCreateAXTextMarker)(const void *bytes, size_t len);
 extern BOOL (*wkGetBytesFromAXTextMarker)(CFTypeRef textMarker, void *bytes, size_t length);
 extern AXUIElementRef (*wkCreateAXUIElementRef)(id element);
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1060
-typedef struct __CFURLStorageSession* CFURLStorageSessionRef;
-#else
 typedef const struct __CFURLStorageSession* CFURLStorageSessionRef;
-#endif
 extern CFURLStorageSessionRef (*wkCreatePrivateStorageSession)(CFStringRef);
 extern NSURLRequest* (*wkCopyRequestWithStorageSession)(CFURLStorageSessionRef, NSURLRequest*);
 
@@ -325,13 +302,10 @@ extern void (*wkCFURLRequestSetHTTPRequestBodyParts)(CFMutableURLRequestRef, CFA
 extern void (*wkSetRequestStorageSession)(CFURLStorageSessionRef, CFMutableURLRequestRef);
 #endif
 extern void (*wkSetMetadataURL)(NSString *urlString, NSString *referrer, NSString *path);
-    
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
+
 #import <dispatch/dispatch.h>
 
 extern dispatch_source_t (*wkCreateVMPressureDispatchOnMainQueue)(void);
-
-#endif
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
 extern dispatch_source_t (*wkCreateMemoryStatusPressureCriticalDispatchOnMainQueue)(void);
@@ -341,13 +315,9 @@ extern dispatch_source_t (*wkCreateMemoryStatusPressureCriticalDispatchOnMainQue
 extern bool (*wkExecutableWasLinkedOnOrBeforeLion)(void);
 #endif
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 extern void (*wkCGPathAddRoundedRect)(CGMutablePathRef path, const CGAffineTransform* matrix, CGRect rect, CGFloat cornerWidth, CGFloat cornerHeight);
-#endif
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 extern void (*wkCFURLRequestAllowAllPostCaching)(CFURLRequestRef);
-#endif
 
 #if USE(CONTENT_FILTERING)
 extern BOOL (*wkFilterIsManagedSession)(void);

@@ -71,20 +71,10 @@ static IntRect screenRectOfContents(Element* element)
 - (void)_startExitFullScreenAnimationWithDuration:(NSTimeInterval)duration;
 @end
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 static NSRect convertRectToScreen(NSWindow *window, NSRect rect)
 {
     return [window convertRectToScreen:rect];
 }
-#else
-static NSRect convertRectToScreen(NSWindow *window, NSRect rect)
-{
-    NSRect frame = [window frame];
-    rect.origin.x += frame.origin.x;
-    rect.origin.y += frame.origin.y;
-    return rect;
-}
-#endif
 
 @interface NSWindow(IsOnActiveSpaceAdditionForTigerAndLeopard)
 - (BOOL)isOnActiveSpace;
@@ -278,16 +268,12 @@ static NSRect convertRectToScreen(NSWindow *window, NSRect rect)
         WKWindowSetClipRect([self window], windowBounds);
         
         NSWindow *webWindow = [_webViewPlaceholder.get() window];
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
         // In Lion, NSWindow will animate into and out of orderOut operations. Suppress that
         // behavior here, making sure to reset the animation behavior afterward.
         NSWindowAnimationBehavior animationBehavior = [webWindow animationBehavior];
         [webWindow setAnimationBehavior:NSWindowAnimationBehaviorNone];
-#endif
         [webWindow orderOut:self];
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
         [webWindow setAnimationBehavior:animationBehavior];
-#endif
         
         [_fadeAnimation.get() stopAnimation];
         [_fadeAnimation.get() setWindow:nil];
@@ -328,12 +314,10 @@ static NSRect convertRectToScreen(NSWindow *window, NSRect rect)
     [self _updateMenuAndDockForFullScreen];
     
     NSWindow* webWindow = [_webViewPlaceholder.get() window];
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     // In Lion, NSWindow will animate into and out of orderOut operations. Suppress that
     // behavior here, making sure to reset the animation behavior afterward.
     NSWindowAnimationBehavior animationBehavior = [webWindow animationBehavior];
     [webWindow setAnimationBehavior:NSWindowAnimationBehaviorNone];
-#endif
     // If the user has moved the fullScreen window into a new space, temporarily change
     // the collectionBehavior of the webView's window so that it is pulled into the active space:
     if (!([webWindow respondsToSelector:@selector(isOnActiveSpace)] ? [webWindow isOnActiveSpace] : YES)) {
@@ -343,9 +327,7 @@ static NSRect convertRectToScreen(NSWindow *window, NSRect rect)
         [webWindow setCollectionBehavior:behavior];
     } else
         [webWindow orderWindow:NSWindowBelow relativeTo:[[self window] windowNumber]];
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     [webWindow setAnimationBehavior:animationBehavior];
-#endif
 
     [self _startExitFullScreenAnimationWithDuration:defaultAnimationDuration];
     _isExitingFullScreen = YES;    

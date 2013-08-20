@@ -87,7 +87,6 @@ void drawLayerContents(CGContextRef context, CALayer *layer, WebCore::PlatformCA
 #endif
     ThemeMac::setFocusRingClipRect(focusRingClipRect);
 
-#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     const float wastedSpaceThreshold = 0.75f;
     const unsigned maxRectsToPaint = 5;
 
@@ -118,11 +117,6 @@ void drawLayerContents(CGContextRef context, CALayer *layer, WebCore::PlatformCA
         // encompasses all the dirty rects.
         layerContents->platformCALayerPaintContents(graphicsContext, enclosingIntRect(clipBounds));
     }
-
-#else
-    IntRect clip(enclosingIntRect(clipBounds));
-    layerContents->platformCALayerPaintContents(graphicsContext, clip);
-#endif
 
     ThemeMac::setFocusRingClipRect(FloatRect());
 

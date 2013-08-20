@@ -39,10 +39,6 @@ static CFRunLoopTimerRef sharedTimer;
 static void (*sharedTimerFiredFunction)();
 static void timerFired(CFRunLoopTimerRef, void*);
 
-#if !defined(IOKIT_WITHOUT_LIBDISPATCH) && !PLATFORM(IOS) && __MAC_OS_X_VERSION_MAX_ALLOWED == 1060
-extern "C" void IONotificationPortSetDispatchQueue(IONotificationPortRef notify, dispatch_queue_t queue);
-#endif
-
 class PowerObserver {
     WTF_MAKE_NONCOPYABLE(PowerObserver);
     

@@ -1,5 +1,40 @@
 2013-08-19  Ryosuke Niwa  <rniwa@webkit.org>
 
+        <https://webkit.org/b/120049> Delete code for Snow Leopard
+
+        Reviewed by Benjamin Poulain.
+
+        * DefaultDelegates/WebDefaultContextMenuDelegate.mm:
+        (-[WebDefaultUIDelegate menuItemWithTag:target:representedObject:]):
+        (-[WebDefaultUIDelegate webView:contextMenuItemsForElement:defaultMenuItems:]):
+        * Misc/WebNSControlExtras.m:
+        (-[NSControl sizeToFitAndAdjustWindowHeight]):
+        * Misc/WebNSFileManagerExtras.mm:
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::shouldEraseMarkersAfterChangeSelection):
+        (WebEditorClient::getGuessesForWord):
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::dispatchDidLayout):
+        (WebFrameLoaderClient::provisionalLoadStarted):
+        * WebCoreSupport/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface):
+        * WebKitPrefix.h:
+        * WebView/WebDynamicScrollBarsView.mm:
+        (-[WebDynamicScrollBarsView scrollWheel:]):
+        * WebView/WebFullScreenController.mm:
+        (convertRectToScreen):
+        (-[WebFullScreenController finishedEnterFullScreenAnimation:]):
+        (-[WebFullScreenController exitFullScreen]):
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _pasteWithPasteboard:allowPlainText:]):
+        (-[WebHTMLView removeMouseMovedObserver]):
+        (-[WebHTMLView windowDidBecomeKey:]):
+        (-[WebHTMLView windowDidResignKey:]):
+        * WebView/WebView.mm:
+        (-[WebView _deviceScaleFactor]):
+
+2013-08-19  Ryosuke Niwa  <rniwa@webkit.org>
+
         <https://webkit.org/b/120051> Remove the Mail thread workaround
 
         Reviewed by Sam Weinig.

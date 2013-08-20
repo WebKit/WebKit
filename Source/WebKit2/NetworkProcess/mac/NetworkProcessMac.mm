@@ -74,7 +74,6 @@ void NetworkProcess::initializeProcessName(const ChildProcessInitializationParam
     WKSetVisibleApplicationName((CFStringRef)applicationName);
 }
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 static void overrideSystemProxies(const String& httpProxy, const String& httpsProxy)
 {
     NSMutableDictionary *proxySettings = [NSMutableDictionary dictionary];
@@ -107,7 +106,6 @@ static void overrideSystemProxies(const String& httpProxy, const String& httpsPr
     if ([proxySettings count] > 0)
         WKCFNetworkSetOverrideSystemProxySettings((CFDictionaryRef)proxySettings);
 }
-#endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 
 void NetworkProcess::platformInitializeNetworkProcess(const NetworkProcessCreationParameters& parameters)
 {
@@ -125,10 +123,8 @@ void NetworkProcess::platformInitializeNetworkProcess(const NetworkProcessCreati
     SecItemShim::shared().initialize(this);
 #endif
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     if (!parameters.httpProxy.isNull() || !parameters.httpsProxy.isNull())
         overrideSystemProxies(parameters.httpProxy, parameters.httpsProxy);
-#endif
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     RetainPtr<CFURLCacheRef> cache = adoptCF(CFURLCacheCopySharedURLCache());

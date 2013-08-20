@@ -393,12 +393,6 @@ void MediaPlayerPrivateQTKit::createQTMovie(NSURL *url, NSDictionary *movieAttri
                                              selector:@selector(didEnd:) 
                                                  name:QTMovieDidEndNotification 
                                                object:m_qtMovie.get()];
-#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1060
-    [[NSNotificationCenter defaultCenter] addObserver:m_objcObserver.get()
-                                             selector:@selector(layerHostChanged:)
-                                                 name:@"WebKitLayerHostChanged"
-                                               object:nil];
-#endif
 }
 
 static void mainThreadSetNeedsDisplay(id self, SEL)
@@ -1228,38 +1222,9 @@ void MediaPlayerPrivateQTKit::didEnd()
 }
 
 #if USE(ACCELERATED_COMPOSITING)
-#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1060
-static bool layerIsDescendentOf(PlatformLayer* child, PlatformLayer* descendent)
-{
-    if (!child || !descendent)
-        return false;
-
-    do {
-        if (child == descendent)
-            return true;
-    } while((child = [child superlayer]));
-
-    return false;
-}
-#endif
-
 void MediaPlayerPrivateQTKit::layerHostChanged(PlatformLayer* rootLayer)
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1060
-    if (!rootLayer)
-        return;
-
-    if (layerIsDescendentOf(m_qtVideoLayer.get(), rootLayer)) {
-        // We own a child layer of a layer which has switched contexts.  
-        // Tear down our layer, and set m_visible to false, so that the 
-        // next time setVisible(true) is called, the layer will be re-
-        // created in the correct context.
-        tearDownVideoRendering();
-        m_visible = false;
-    }
-#else
     UNUSED_PARAM(rootLayer);
-#endif
 }
 #endif
 

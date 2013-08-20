@@ -708,10 +708,8 @@ void WebFrameLoaderClient::dispatchDidLayout(LayoutMilestones milestones)
         WebDynamicScrollBarsView *scrollView = [m_webFrame->_private->webFrameView _scrollView];
         if ([getWebView(m_webFrame.get()) drawsBackground])
             [scrollView setDrawsBackground:YES];
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
         [scrollView setVerticalScrollElasticity:NSScrollElasticityAutomatic];
         [scrollView setHorizontalScrollElasticity:NSScrollElasticityAutomatic];
-#endif
     }
 
     if (milestones & DidFirstVisuallyNonEmptyLayout) {
@@ -1148,10 +1146,8 @@ void WebFrameLoaderClient::provisionalLoadStarted()
 
     WebDynamicScrollBarsView *scrollView = [m_webFrame->_private->webFrameView _scrollView];
     [scrollView setDrawsBackground:NO];
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     [scrollView setVerticalScrollElasticity:NSScrollElasticityNone];
     [scrollView setHorizontalScrollElasticity:NSScrollElasticityNone];
-#endif
 }
 
 void WebFrameLoaderClient::didFinishLoad()

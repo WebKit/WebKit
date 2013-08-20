@@ -157,7 +157,6 @@ static PlatformWheelEventPhase momentumPhaseForEvent(NSEvent *event)
 {
     uint32_t phase = PlatformWheelEventPhaseNone;
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     if ([event momentumPhase] & NSEventPhaseBegan)
         phase |= PlatformWheelEventPhaseBegan;
     if ([event momentumPhase] & NSEventPhaseStationary)
@@ -168,29 +167,12 @@ static PlatformWheelEventPhase momentumPhaseForEvent(NSEvent *event)
         phase |= PlatformWheelEventPhaseEnded;
     if ([event momentumPhase] & NSEventPhaseCancelled)
         phase |= PlatformWheelEventPhaseCancelled;
-#else
-    switch (wkGetNSEventMomentumPhase(event)) {
-    case wkEventPhaseNone:
-        phase = PlatformWheelEventPhaseNone;
-        break;
-    case wkEventPhaseBegan:
-        phase = PlatformWheelEventPhaseBegan;
-        break;
-    case wkEventPhaseChanged:
-        phase = PlatformWheelEventPhaseChanged;
-        break;
-    case wkEventPhaseEnded:
-        phase = PlatformWheelEventPhaseEnded;
-        break;
-    }
-#endif
 
     return static_cast<PlatformWheelEventPhase>(phase);
 }
 
 static PlatformWheelEventPhase phaseForEvent(NSEvent *event)
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     uint32_t phase = PlatformWheelEventPhaseNone; 
     if ([event phase] & NSEventPhaseBegan)
         phase |= PlatformWheelEventPhaseBegan;
@@ -208,10 +190,6 @@ static PlatformWheelEventPhase phaseForEvent(NSEvent *event)
 #endif
 
     return static_cast<PlatformWheelEventPhase>(phase);
-#else
-    UNUSED_PARAM(event);
-    return PlatformWheelEventPhaseNone;
-#endif
 }
 
 #if ENABLE(GESTURE_EVENTS)

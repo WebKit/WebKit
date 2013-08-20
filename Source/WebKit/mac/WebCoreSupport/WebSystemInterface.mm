@@ -43,9 +43,7 @@ void InitWebCoreSystemInterface(void)
         return;
 
     INIT(AdvanceDefaultButtonPulseAnimation);
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     INIT(CALayerEnumerateRectsBeingDrawnWithBlock);
-#endif
     INIT(CGContextGetShouldSmoothFonts);
     INIT(CGPatternCreateWithImageAndTransform);
     INIT(CGContextResetClip);
@@ -125,14 +123,8 @@ void InitWebCoreSystemInterface(void)
     INIT(GetGlyphsForCharacters);
     INIT(GetVerticalGlyphsForCharacters);
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1060
-    INIT(GetHyphenationLocationBeforeIndex);
-    INIT(GetNSEventMomentumPhase);
-#endif
-
     INIT(CreateCTLineWithUniCharProvider);
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     INIT(IOSurfaceContextCreate);
     INIT(IOSurfaceContextCreateImage);
     INIT(CreateCTTypesetterWithUniCharProviderAndOptions);
@@ -143,7 +135,7 @@ void InitWebCoreSystemInterface(void)
     INIT(CopyDefaultSearchProviderDisplayName);
     INIT(AVAssetResolvedURL);
     INIT(Cursor);
-#endif
+
 #if USE(CFNETWORK)
     INIT(GetDefaultHTTPCookieStorage);
     INIT(CopyCredentialFromCFPersistentStorage);
@@ -194,10 +186,8 @@ void InitWebCoreSystemInterface(void)
 
     INIT(DestroyRenderingResources);
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     INIT(CreateVMPressureDispatchOnMainQueue);
-#endif
-    
+
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     INIT(CreateMemoryStatusPressureCriticalDispatchOnMainQueue);
 #endif
@@ -206,13 +196,9 @@ void InitWebCoreSystemInterface(void)
     INIT(ExecutableWasLinkedOnOrBeforeLion);
 #endif
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     INIT(CGPathAddRoundedRect);
-#endif
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     INIT(CFURLRequestAllowAllPostCaching);
-#endif
 
 #if USE(CONTENT_FILTERING)
     INIT(FilterIsManagedSession);

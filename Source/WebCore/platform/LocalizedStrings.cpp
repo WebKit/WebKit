@@ -71,7 +71,6 @@ static String formatLocalizedString(String format, ...)
 #endif
 }
 
-#if !PLATFORM(MAC) || PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 static String truncatedStringForLookupMenuItem(const String& original)
 {
     if (original.isEmpty())
@@ -85,7 +84,6 @@ static String truncatedStringForLookupMenuItem(const String& original)
     unsigned numberOfCharacters = numCharactersInGraphemeClusters(trimmed, maxNumberOfGraphemeClustersInLookupMenuItem);
     return numberOfCharacters == trimmed.length() ? trimmed : trimmed.left(numberOfCharacters) + ellipsis;
 }
-#endif
 
 String inputElementAltText()
 {
@@ -243,7 +241,7 @@ String contextMenuItemTagSearchInSpotlight()
 
 String contextMenuItemTagSearchWeb()
 {
-#if PLATFORM(MAC) && (PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070)
+#if PLATFORM(MAC)
     RetainPtr<CFStringRef> searchProviderName = adoptCF(wkCopyDefaultSearchProviderDisplayName());
     return formatLocalizedString(WEB_UI_STRING("Search with %@", "Search with search provider context menu item with provider name inserted"), searchProviderName.get());
 #else
@@ -253,16 +251,11 @@ String contextMenuItemTagSearchWeb()
 
 String contextMenuItemTagLookUpInDictionary(const String& selectedString)
 {
-#if PLATFORM(MAC) && !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED == 1060
-    UNUSED_PARAM(selectedString);
-    return WEB_UI_STRING("Look Up in Dictionary", "Look Up in Dictionary context menu item");
-#else
 #if USE(CF)
     RetainPtr<CFStringRef> selectedCFString = truncatedStringForLookupMenuItem(selectedString).createCFString();
     return formatLocalizedString(WEB_UI_STRING("Look Up “%@”", "Look Up context menu item with selected word"), selectedCFString.get());
 #else
     return WEB_UI_STRING("Look Up “<selection>”", "Look Up context menu item with selected word").replace("<selection>", truncatedStringForLookupMenuItem(selectedString));
-#endif
 #endif
 }
 

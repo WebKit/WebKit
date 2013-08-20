@@ -170,16 +170,12 @@
 #define ENABLE_FULLSCREEN_API 1
 #endif
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 #if !defined(ENABLE_GESTURE_EVENTS)
 #define ENABLE_GESTURE_EVENTS 1
 #endif
-#endif
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 #if !defined(ENABLE_RUBBER_BANDING)
 #define ENABLE_RUBBER_BANDING 1
-#endif
 #endif
 
 #if !defined(ENABLE_SMOOTH_SCROLLING)

@@ -1,5 +1,81 @@
 2013-08-19  Ryosuke Niwa  <rniwa@webkit.org>
 
+        <https://webkit.org/b/120049> Delete code for Snow Leopard
+
+        Reviewed by Benjamin Poulain.
+
+        Delete all the code for Mac OS 10.6. Nobody builds on Snow Leopard at this point.
+
+        * WebCore.exp.in:
+        * WebCore.xcodeproj/project.pbxproj:
+        * editing/mac/EditorMac.mm:
+        (WebCore::Editor::pasteWithPasteboard):
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::populate):
+        * platform/LocalizedStrings.cpp:
+        (WebCore::truncatedStringForLookupMenuItem):
+        (WebCore::contextMenuItemTagSearchWeb):
+        (WebCore::contextMenuItemTagLookUpInDictionary):
+        * platform/MemoryPressureHandler.cpp:
+        * platform/audio/mac/AudioBusMac.mm:
+        (WebCore::AudioBus::loadPlatformResource):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::createTransformAnimationsFromKeyframes):
+        * platform/graphics/ca/PlatformCALayer.h:
+        * platform/graphics/ca/mac/PlatformCALayerMac.mm:
+        (PlatformCALayer::acceleratesDrawing):
+        (PlatformCALayer::setAcceleratesDrawing):
+        (PlatformCALayer::contentsScale):
+        (PlatformCALayer::setContentsScale):
+        (PlatformCALayer::synchronouslyDisplayTilesInRect):
+        * platform/graphics/ca/mac/TileController.mm:
+        (WebCore::TileController::setScale):
+        (WebCore::TileController::setAcceleratesDrawing):
+        (WebCore::TileController::createTileLayer):
+        * platform/graphics/cg/ImageBufferDataCG.cpp:
+        (WebCore::ImageBufferData::getData):
+        (WebCore::ImageBufferData::putData):
+        * platform/graphics/cg/ImageBufferDataCG.h:
+        * platform/graphics/cg/PathCG.cpp:
+        (WebCore::Path::platformAddPathForRoundedRect):
+        * platform/graphics/cocoa/FontPlatformDataCocoa.mm:
+        (WebCore::FontPlatformData::FontPlatformData):
+        (WebCore::FontPlatformData::setFont):
+        * platform/graphics/mac/FontMac.mm:
+        (WebCore::showGlyphsWithAdvances):
+        * platform/graphics/mac/GraphicsContextMac.mm:
+        (WebCore::GraphicsContext::drawLineForDocumentMarker):
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivateQTKit::createQTMovie):
+        (WebCore::MediaPlayerPrivateQTKit::layerHostChanged):
+        * platform/graphics/mac/WebLayer.mm:
+        (drawLayerContents):
+        * platform/mac/CursorMac.mm:
+        (WebCore::Cursor::ensurePlatformCursor):
+        * platform/mac/EmptyProtocolDefinitions.h: Removed.
+        * platform/mac/MemoryPressureHandlerMac.mm:
+        (WebCore::MemoryPressureHandler::releaseMemory):
+        * platform/mac/NSScrollerImpDetails.h:
+        * platform/mac/PlatformEventFactoryMac.mm:
+        (WebCore::momentumPhaseForEvent):
+        (WebCore::phaseForEvent):
+        * platform/mac/ScrollAnimatorMac.mm:
+        * platform/mac/SharedTimerMac.mm:
+        * platform/mac/WebCoreSystemInterface.h:
+        * platform/mac/WebCoreSystemInterface.mm:
+        * platform/network/mac/ResourceHandleMac.mm:
+        * platform/network/mac/ResourceRequestMac.mm:
+        (WebCore::ResourceRequest::doUpdateResourceRequest):
+        (WebCore::ResourceRequest::doUpdatePlatformRequest):
+        * platform/text/cf/HyphenationCF.cpp:
+        * platform/text/mac/HyphenationMac.mm: Removed.
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::containsPaintedContent):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::shouldShowPlaceholderWhenFocused):
+
+2013-08-19  Ryosuke Niwa  <rniwa@webkit.org>
+
         <https://webkit.org/b/120041> Remove superfluous min calls in RenderBlock::computeOverflow
 
         Reviewed by Simon Fraser.

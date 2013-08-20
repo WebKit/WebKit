@@ -615,7 +615,6 @@ static void resetDefaultsToConsistentValues()
     [defaults setBool:YES forKey:WebKitFullScreenEnabledPreferenceKey];
     [defaults setBool:YES forKey:@"UseWebKitWebInspector"];
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     [defaults setObject:[NSDictionary dictionaryWithObjectsAndKeys:
         @"notational", @"notationl",
         @"message", @"mesage",
@@ -623,7 +622,6 @@ static void resetDefaultsToConsistentValues()
         @"welcome", @"wellcome",
         @"hello\nworld", @"hellolfworld",
         nil] forKey:@"NSTestCorrectionDictionary"];
-#endif
 
     // Scrollbars are drawn either using AppKit (which uses NSUserDefaults) or using HIToolbox (which uses CFPreferences / kCFPreferencesAnyApplication / kCFPreferencesCurrentUser / kCFPreferencesAnyHost)
     [defaults setObject:@"DoubleMax" forKey:@"AppleScrollBarVariant"];
@@ -703,7 +701,7 @@ static void resetDefaultsToConsistentValues()
     // So, turn it off for now, but we might want to turn it back on some day.
     [preferences setUsesPageCache:NO];
     [preferences setAcceleratedCompositingEnabled:YES];
-#if USE(CA) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
+#if USE(CA)
     [preferences setCanvasUsesAcceleratedDrawing:YES];
     [preferences setAcceleratedDrawingEnabled:NO];
 #endif
