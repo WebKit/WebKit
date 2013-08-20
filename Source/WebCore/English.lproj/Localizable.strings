@@ -31,9 +31,6 @@
 /* visible name of the network process. The argument is the application name. */
 "%@ Networking" = "%@ Networking";
 
-/* visible name of the offline storage process. The argument is the application name. */
-"%@ Offline Storage" = "%@ Offline Storage";
-
 /* Text track contains subtitles for the deaf and hard of hearing */
 "%@ SDH" = "%@ SDH";
 
