@@ -101,8 +101,13 @@ else if (ENVIRONMENT_IS_WEB || ENVIRONMENT_IS_WORKER) {
     Module['arguments'] = arguments;
   }
   if (ENVIRONMENT_IS_WEB) {
-    Module['print'] = function(x) {
-      console.log(x);
+    Module['print'] = function() {
+      for (var i = 0; i < arguments.length; ++i) {
+          if (i)
+              JSRegress_outputBuffer += " ";
+          JSRegress_outputBuffer += arguments[i];
+      }
+      JSRegress_outputBuffer += "\n";      
     };
     Module['printErr'] = function(x) {
       console.log(x);
@@ -8496,7 +8501,7 @@ Module['callMain'] = Module.callMain = function callMain(args) {
   assert(__ATPRERUN__.length == 0, 'cannot call main when preRun functions remain to be called');
   args = args || [];
   if (ENVIRONMENT_IS_WEB && preloadStartTime !== null) {
-    Module.printErr('preload time: ' + (Date.now() - preloadStartTime) + ' ms');
+    //Module.printErr('preload time: ' + (Date.now() - preloadStartTime) + ' ms');
   }
   ensureInitRuntime();
   var argc = args.length+1;
