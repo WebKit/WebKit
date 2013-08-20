@@ -1,3 +1,14 @@
+2013-08-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        <https://webkit.org/b/119930> input[type=range]: Fix a crash by changing input type in 'input' event handler
+
+        Reviewed by Kent Tamura.
+
+        Add a regresion test from https://chromium.googlesource.com/chromium/blink/+/99afc9b55ce176b4f5fe053070e19dbebc1891a5
+
+        * fast/forms/range/range-type-change-oninput-expected.txt: Added.
+        * fast/forms/range/range-type-change-oninput.html: Added.
+
 2013-08-19  Alexey Proskuryakov  <ap@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=120028
