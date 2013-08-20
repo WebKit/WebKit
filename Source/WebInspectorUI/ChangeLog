@@ -1,3 +1,15 @@
+2013-08-19  James Craig  <james@cookiecrook.com>
+
+        <https://webkit.org/b/118106> Web Inspector: AX: Add additional contextual labels for Error/Warnings/Logs that will be spoken for screen readers
+
+        Reviewed by Joseph Pecoraro.
+
+        Changed general console "Output" string to more specific "Error", "Warning", etc for accessibility.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/ConsoleCommandResult.js:
+        * UserInterface/ConsoleMessageImpl.js:
+
 2013-08-16  James Craig  <james@cookiecrook.com>
 
         <https://webkit.org/b/118105> Web Inspector: AX: Add support for ARIA tablists/tabs to inspector tabs

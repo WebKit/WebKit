@@ -483,18 +483,23 @@ WebInspector.ConsoleMessageImpl.prototype = {
         switch (this.level) {
             case WebInspector.ConsoleMessage.MessageLevel.Tip:
                 element.classList.add("console-tip-level");
+                element.setAttribute("data-labelprefix", WebInspector.UIString("Tip: "));
                 break;
             case WebInspector.ConsoleMessage.MessageLevel.Log:
                 element.classList.add("console-log-level");
+                element.setAttribute("data-labelprefix", WebInspector.UIString("Log: "));
                 break;
             case WebInspector.ConsoleMessage.MessageLevel.Debug:
                 element.classList.add("console-debug-level");
+                element.setAttribute("data-labelprefix", WebInspector.UIString("Debug: "));
                 break;
             case WebInspector.ConsoleMessage.MessageLevel.Warning:
                 element.classList.add("console-warning-level");
+                element.setAttribute("data-labelprefix", WebInspector.UIString("Warning: "));
                 break;
             case WebInspector.ConsoleMessage.MessageLevel.Error:
                 element.classList.add("console-error-level");
+                element.setAttribute("data-labelprefix", WebInspector.UIString("Error: "));
                 break;
         }
 
