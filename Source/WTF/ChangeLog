@@ -1,5 +1,18 @@
 2013-08-19  Joseph Pecoraro  <pecoraro@apple.com>
 
+        <https://webkit.org/b/120036> [iOS] Upstream Source/WTF Xcode project for iOS
+
+        Reviewed by David Kilzer.
+
+        Include iOS only WebCoreThread.* files in an ios group, and clean up
+        the included files a bit.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/ios/WebCoreThread.cpp:
+        * wtf/ios/WebCoreThread.h:
+
+2013-08-19  Joseph Pecoraro  <pecoraro@apple.com>
+
         <https://webkit.org/b/119905> [iOS] Upstream Source/WTF
 
         Reviewed by Benjamin Poulain.

@@ -6,10 +6,10 @@
  * are met:
  *
  * 1.  Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer. 
+ *     notice, this list of conditions and the following disclaimer.
  * 2.  Redistributions in binary form must reproduce the above copyright
  *     notice, this list of conditions and the following disclaimer in the
- *     documentation and/or other materials provided with the distribution. 
+ *     documentation and/or other materials provided with the distribution.
  *
  * THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -24,9 +24,9 @@
  */
 
 // Since this is a shared header, with the same file name as a file in
-// WebCore we prefix this with JavaScriptCore to make it unique.
-#ifndef JavaScriptCore_WebCoreThread_h
-#define JavaScriptCore_WebCoreThread_h
+// WebCore we prefix this with WTF to make it unique.
+#ifndef WTF_WebCoreThread_h
+#define WTF_WebCoreThread_h
 
 #ifdef __cplusplus
 extern "C" {
@@ -38,4 +38,4 @@ extern bool (*WebCoreWebThreadIsLockedOrDisabled)(void);
 }
 #endif
 
-#endif
+#endif // WTF_WebCoreThread_h
