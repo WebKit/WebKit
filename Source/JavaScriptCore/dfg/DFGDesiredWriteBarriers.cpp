@@ -34,33 +34,35 @@
 
 namespace JSC { namespace DFG {
 
-DesiredWriteBarrier::DesiredWriteBarrier(WriteBarrier<Unknown>* barrier, JSCell* owner)
+DesiredWriteBarrier::DesiredWriteBarrier(Type type, CodeBlock* codeBlock, unsigned index, JSCell* owner)
     : m_owner(owner)
-    , m_type(NormalType)
+    , m_type(type)
+    , m_codeBlock(codeBlock)
+    , m_index(index)
 {
-    u.m_barrier = barrier;
-}
-
-DesiredWriteBarrier::DesiredWriteBarrier(Vector<WriteBarrier<Unknown> >* barriers, unsigned index, JSCell* owner)
-    : m_owner(owner)
-    , m_type(VectorType)
-{
-    u.barrier_vector.m_barriers = barriers;
-    u.barrier_vector.m_index = index;
 }
 
 void DesiredWriteBarrier::trigger(VM& vm)
 {
     switch (m_type) {
-    case NormalType: {
-        u.m_barrier->set(vm, m_owner, u.m_barrier->get());
+    case ConstantType: {
+        WriteBarrier<Unknown>& barrier = m_codeBlock->constants()[m_index];
+        barrier.set(vm, m_owner, barrier.get());
         break;
     }
 
-    case VectorType: {
-        unsigned index = u.barrier_vector.m_index;
-        WriteBarrier<Unknown>& barrier = u.barrier_vector.m_barriers->at(index);
-        barrier.set(vm, m_owner, barrier.get());
+    case InlineCallFrameExecutableType: {
+        InlineCallFrame& inlineCallFrame = m_codeBlock->inlineCallFrames()[m_index];
+        WriteBarrier<ScriptExecutable>& executable = inlineCallFrame.executable;
+        executable.set(vm, m_owner, executable.get());
+        break;
+    }
+
+    case InlineCallFrameCalleeType: {
+        InlineCallFrame& inlineCallFrame = m_codeBlock->inlineCallFrames()[m_index];
+        ASSERT(!!inlineCallFrame.callee);
+        WriteBarrier<JSFunction>& callee = inlineCallFrame.callee;
+        callee.set(vm, m_owner, callee.get());
         break;
     }
 
@@ -75,24 +77,10 @@ DesiredWriteBarriers::~DesiredWriteBarriers()
 {
 }
 
-DesiredWriteBarrier& DesiredWriteBarriers::addImpl(WriteBarrier<Unknown>* barrier, JSCell* owner)
-{
-    m_barriers.append(DesiredWriteBarrier(barrier, owner));
-    return m_barriers.last();
-}
-
 void DesiredWriteBarriers::trigger(VM& vm)
 {
     for (unsigned i = 0; i < m_barriers.size(); i++)
         m_barriers[i].trigger(vm);
-}
-
-void initializeLazyWriteBarrierForConstant(CodeBlock* codeBlock, DesiredWriteBarriers& barriers, JSCell* owner, JSValue value)
-{
-    unsigned constantIndex = codeBlock->addConstantLazily();
-    WriteBarrier<Unknown>& barrier = codeBlock->constants()[constantIndex];
-    barrier = WriteBarrier<Unknown>(
-        barriers.add(codeBlock->constants(), constantIndex, owner), value);
 }
 
 } } // namespace JSC::DFG

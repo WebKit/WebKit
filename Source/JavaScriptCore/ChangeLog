@@ -1,3 +1,35 @@
+2013-08-20  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        <https://webkit.org/b/119919> Concurrent JIT crashes in various fast/js/dfg-* tests while the main thread is setting innerHTML
+
+        Reviewed by Geoffrey Garen.
+
+        More fixes for WriteBarrier deferral during concurrent JIT-ing. This patch makes the use of DesiredWriteBarriers class and the 
+        initializeLazyWriteBarrierFor* wrapper functions more sane. 
+
+        Refactored DesiredWriteBarrier to require an owner, a type, a CodeBlock, and an index. The type indicates how to use the CodeBlock
+        and index when triggering the WriteBarrier at the end of compilation. 
+
+        The client code of initializeLazy* is now responsible for creating the WriteBarrier that will be initialized as well as passing
+        in the relevant index to be used at the end of compilation. Things were kind of muddled before in that one function did a 
+        little extra work that really shouldn't have been its responsibility.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::addConstant):
+        (JSC::DFG::ByteCodeParser::InlineStackEntry::InlineStackEntry):
+        * dfg/DFGDesiredWriteBarriers.cpp:
+        (JSC::DFG::DesiredWriteBarrier::DesiredWriteBarrier):
+        (JSC::DFG::DesiredWriteBarrier::trigger):
+        * dfg/DFGDesiredWriteBarriers.h:
+        (JSC::DFG::DesiredWriteBarriers::add):
+        (JSC::DFG::initializeLazyWriteBarrierForInlineCallFrameExecutable):
+        (JSC::DFG::initializeLazyWriteBarrierForInlineCallFrameCallee):
+        (JSC::DFG::initializeLazyWriteBarrierForConstant):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::truncateConstantToInt32):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::constantRegisterForConstant):
+
 2013-08-20  Michael Saboff  <msaboff@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=120075

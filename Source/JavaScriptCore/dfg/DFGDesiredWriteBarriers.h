@@ -33,28 +33,24 @@
 
 namespace JSC {
 
+class JSFunction;
+class ScriptExecutable;
 class VM;
 
 namespace DFG {
 
 class DesiredWriteBarrier {
 public:
-    DesiredWriteBarrier(WriteBarrier<Unknown>*, JSCell* owner);
-    DesiredWriteBarrier(Vector<WriteBarrier<Unknown> >*, unsigned index, JSCell* owner);
+    enum Type { ConstantType, InlineCallFrameExecutableType, InlineCallFrameCalleeType };
+    DesiredWriteBarrier(Type, CodeBlock*, unsigned index, JSCell* owner);
 
     void trigger(VM&);
 
 private:
     JSCell* m_owner;
-    enum WriteBarrierType { NormalType, VectorType };
-    WriteBarrierType m_type;
-    union {
-        WriteBarrier<Unknown>* m_barrier;
-        struct {
-            Vector<WriteBarrier<Unknown> >* m_barriers;
-            unsigned m_index;
-        } barrier_vector;
-    } u;
+    Type m_type;
+    CodeBlock* m_codeBlock;
+    unsigned m_index;
 };
 
 class DesiredWriteBarriers {
@@ -62,33 +58,35 @@ public:
     DesiredWriteBarriers();
     ~DesiredWriteBarriers();
 
-    template <typename T>
-    DesiredWriteBarrier& add(WriteBarrier<T>& barrier, JSCell* owner)
+    DesiredWriteBarrier& add(DesiredWriteBarrier::Type type, CodeBlock* codeBlock, unsigned index, JSCell* owner)
     {
-        return addImpl(reinterpret_cast<WriteBarrier<Unknown>*>(&barrier), owner);
-    }
-
-    DesiredWriteBarrier& add(Vector<WriteBarrier<Unknown> >& barriers, unsigned index, JSCell* owner)
-    {
-        m_barriers.append(DesiredWriteBarrier(&barriers, index, owner));
+        m_barriers.append(DesiredWriteBarrier(type, codeBlock, index, owner));
         return m_barriers.last();
     }
 
     void trigger(VM&);
 
 private:
-    DesiredWriteBarrier& addImpl(WriteBarrier<Unknown>*, JSCell*);
-
     Vector<DesiredWriteBarrier> m_barriers;
 };
 
-template <typename T, typename U>
-void initializeLazyWriteBarrier(WriteBarrier<T>& barrier, DesiredWriteBarriers& barriers, JSCell* owner, U value)
+inline void initializeLazyWriteBarrierForInlineCallFrameExecutable(DesiredWriteBarriers& barriers, WriteBarrier<ScriptExecutable>& barrier, CodeBlock* codeBlock, unsigned index, JSCell* owner, ScriptExecutable* value)
 {
-    barrier = WriteBarrier<T>(barriers.add(barrier, owner), value);
+    DesiredWriteBarrier& desiredBarrier = barriers.add(DesiredWriteBarrier::InlineCallFrameExecutableType, codeBlock, index, owner);
+    barrier = WriteBarrier<ScriptExecutable>(desiredBarrier, value);
 }
 
-void initializeLazyWriteBarrierForConstant(CodeBlock*, DesiredWriteBarriers&, JSCell* owner, JSValue);
+inline void initializeLazyWriteBarrierForInlineCallFrameCallee(DesiredWriteBarriers& barriers, WriteBarrier<JSFunction>& barrier, CodeBlock* codeBlock, unsigned index, JSCell* owner, JSFunction* value)
+{
+    DesiredWriteBarrier& desiredBarrier = barriers.add(DesiredWriteBarrier::InlineCallFrameCalleeType, codeBlock, index, owner);
+    barrier = WriteBarrier<JSFunction>(desiredBarrier, value);
+}
+
+inline void initializeLazyWriteBarrierForConstant(DesiredWriteBarriers& barriers, WriteBarrier<Unknown>& barrier, CodeBlock* codeBlock, unsigned index, JSCell* owner, JSValue value)
+{
+    DesiredWriteBarrier& desiredBarrier = barriers.add(DesiredWriteBarrier::ConstantType, codeBlock, index, owner);
+    barrier = WriteBarrier<Unknown>(desiredBarrier, value);
+}
 
 } } // namespace JSC::DFG
 

@@ -403,9 +403,12 @@ private:
 
     void addConstant(JSValue value)
     {
+        unsigned constantIndex = m_codeBlock->addConstantLazily();
         initializeLazyWriteBarrierForConstant(
+            m_graph.m_plan.writeBarriers,
+            m_codeBlock->constants()[constantIndex],
             m_codeBlock,
-            m_graph.m_plan.writeBarriers, 
+            constantIndex,
             m_codeBlock->ownerExecutable(), 
             value);
     }
@@ -3290,16 +3293,20 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(
         ASSERT(callsiteBlockHead);
         
         InlineCallFrame inlineCallFrame;
-        initializeLazyWriteBarrier(
-            inlineCallFrame.executable,
+        initializeLazyWriteBarrierForInlineCallFrameExecutable(
             byteCodeParser->m_graph.m_plan.writeBarriers,
+            inlineCallFrame.executable,
+            byteCodeParser->m_codeBlock,
+            byteCodeParser->m_codeBlock->inlineCallFrames().size(),
             byteCodeParser->m_codeBlock->ownerExecutable(), 
             codeBlock->ownerExecutable());
         inlineCallFrame.stackOffset = inlineCallFrameStart + JSStack::CallFrameHeaderSize;
         if (callee) {
-            initializeLazyWriteBarrier(
-                inlineCallFrame.callee,
+            initializeLazyWriteBarrierForInlineCallFrameCallee(
                 byteCodeParser->m_graph.m_plan.writeBarriers,
+                inlineCallFrame.callee,
+                byteCodeParser->m_codeBlock,
+                byteCodeParser->m_codeBlock->inlineCallFrames().size(),
                 byteCodeParser->m_codeBlock->ownerExecutable(), 
                 callee);
         }
