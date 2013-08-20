@@ -2,6 +2,8 @@
 
         <https://webkit.org/b/117584> [GTK][WK1] http/tests/loading/unfinished-load-back-to-cached-page-callbacks.html is failing
 
+        Reviewed by Alexey Proskuryakov.
+
         Update DumpRenderTree to handle the WEBKIT_LOAD_FAILED status,
         printing didFailLoadWithError.
 
