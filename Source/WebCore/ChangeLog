@@ -1,3 +1,15 @@
+2013-08-20  Daniel Bates  <dabates@apple.com>
+
+        <https://webkit.org/b/120088> Define Clipboard::hasData() only when building with drag support
+
+        Reviewed by Darin Adler.
+
+        Clipboard::hasData() is specific to drag-and-drop support. We should only define it when
+        such support is enabled.
+
+        * dom/Clipboard.cpp: Move hasData() to DRAG_SUPPORT section of the file.
+        * dom/Clipboard.h: Ditto.
+
 2013-08-20  Antti Koivisto  <antti@apple.com>
 
         <https://webkit.org/b/120078> Replace NodeRenderingContext with RenderStyle& as shouldCreateRenderer() argument

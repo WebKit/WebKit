@@ -108,11 +108,6 @@ bool Clipboard::canWriteData() const
     return m_policy == ClipboardWritable;
 }
 
-bool Clipboard::hasData()
-{
-    return m_pasteboard->hasData();
-}
-
 void Clipboard::clearData(const String& type)
 {
     if (!canWriteData())
@@ -218,6 +213,11 @@ PassRefPtr<Clipboard> Clipboard::createForDragAndDrop()
 PassRefPtr<Clipboard> Clipboard::createForDragAndDrop(ClipboardAccessPolicy policy, const DragData& dragData)
 {
     return adoptRef(new Clipboard(policy, Pasteboard::createForDragAndDrop(dragData), DragAndDrop, dragData.containsFiles()));
+}
+
+bool Clipboard::hasData()
+{
+    return m_pasteboard->hasData();
 }
 
 bool Clipboard::canSetDragImage() const
