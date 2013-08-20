@@ -143,6 +143,7 @@ fast/js/dfg-float32array
 fast/js/dfg-float64array
 fast/js/dfg-flush-get-local
 fast/js/dfg-force-exit-then-sparse-conditional-constant-prop-in-loop
+fast/js/dfg-get-closure-var-put-closure-var-interference
 fast/js/dfg-get-by-id-unset-then-proto
 fast/js/dfg-get-by-id-unset-then-proto-less-warmup
 fast/js/dfg-get-by-id-unset-then-proto-more-warmup
