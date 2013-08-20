@@ -1307,3 +1307,5 @@ plugins/unavailable-plugin-indicator-obscurity.html
 webkit.org/b/82747 fast/events/scroll-div-with-prevent-default-in-subframe.html [ Pass Failure ]
 
 webkit.org/b/90708 fullscreen/exit-full-screen-iframe.html [ Pass Failure ]
+
+webkit.org/b/120085 [ Lion ] http/tests/inspector/resource-tree/resource-tree-document-url.html [ Pass Failure ]
