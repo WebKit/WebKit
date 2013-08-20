@@ -69,10 +69,10 @@ public:
 
     bool isCacheable() const { return m_offset != invalidOffset; }
     bool isValue() const { return m_propertyType == TypeValue; }
-    bool isGetter() const { return m_propertyType == TypeGetter; }
+    bool isAccessor() const { return m_propertyType == TypeGetter; }
     bool isCustom() const { return m_propertyType == TypeCustom; }
     bool isCacheableValue() const { return isCacheable() && isValue(); }
-    bool isCacheableGetter() const { return isCacheable() && isGetter(); }
+    bool isCacheableGetter() const { return isCacheable() && isAccessor(); }
     bool isCacheableCustom() const { return isCacheable() && isCustom(); }
 
     unsigned attributes() const { return m_attributes; }
@@ -85,7 +85,7 @@ public:
 
     GetterSetter* getterSetter() const
     {
-        ASSERT(isGetter());
+        ASSERT(isAccessor());
         return m_data.getter.getterSetter;
     }
 

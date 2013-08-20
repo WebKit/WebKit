@@ -1,5 +1,29 @@
 2013-08-20  Gavin Barraclough  <barraclough@apple.com>
 
+        https://bugs.webkit.org/show_bug.cgi?id=120067
+        Remove getPropertyDescriptor
+
+        Reviewed by Oliver Hunt.
+
+        This is used by lookupGetter/lookupSetter - this can easily bee replaced by getPropertySlot.
+        Since we'll be getting the GetterSetter from the slot in the setter case, rename isGetter() to isAccessor().
+
+        * runtime/JSObject.cpp:
+        * runtime/JSObject.h:
+            - remove getPropertyDescriptor
+        * runtime/ObjectPrototype.cpp:
+        (JSC::objectProtoFuncLookupGetter):
+        (JSC::objectProtoFuncLookupSetter):
+            - replace call to getPropertyDescriptor with getPropertySlot
+        * runtime/PropertyDescriptor.h:
+        * runtime/PropertySlot.h:
+        (JSC::PropertySlot::isAccessor):
+        (JSC::PropertySlot::isCacheableGetter):
+        (JSC::PropertySlot::getterSetter):
+            - rename isGetter() to isAccessor()
+
+2013-08-20  Gavin Barraclough  <barraclough@apple.com>
+
         https://bugs.webkit.org/show_bug.cgi?id=120054
         Remove some dead code following getOwnPropertyDescriptor cleanup
 

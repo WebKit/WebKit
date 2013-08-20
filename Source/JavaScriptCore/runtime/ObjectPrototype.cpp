@@ -22,6 +22,7 @@
 #include "ObjectPrototype.h"
 
 #include "Error.h"
+#include "GetterSetter.h"
 #include "JSFunction.h"
 #include "JSString.h"
 #include "JSStringBuilder.h"
@@ -155,10 +156,10 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncLookupGetter(ExecState* exec)
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
-    PropertyDescriptor descriptor;
-    if (thisObject->getPropertyDescriptor(exec, Identifier(exec, exec->argument(0).toString(exec)->value(exec)), descriptor)
-        && descriptor.getterPresent())
-        return JSValue::encode(descriptor.getter());
+    PropertySlot slot(thisObject);
+    if (thisObject->getPropertySlot(exec, Identifier(exec, exec->argument(0).toString(exec)->value(exec)), slot)
+        && slot.isAccessor())
+        return JSValue::encode(slot.getterSetter()->getter());
 
     return JSValue::encode(jsUndefined());
 }
@@ -169,10 +170,10 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncLookupSetter(ExecState* exec)
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
-    PropertyDescriptor descriptor;
-    if (thisObject->getPropertyDescriptor(exec, Identifier(exec, exec->argument(0).toString(exec)->value(exec)), descriptor)
-        && descriptor.setterPresent())
-        return JSValue::encode(descriptor.setter());
+    PropertySlot slot(thisObject);
+    if (thisObject->getPropertySlot(exec, Identifier(exec, exec->argument(0).toString(exec)->value(exec)), slot)
+        && slot.isAccessor())
+        return JSValue::encode(slot.getterSetter()->setter());
 
     return JSValue::encode(jsUndefined());
 }
