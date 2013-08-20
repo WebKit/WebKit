@@ -204,9 +204,11 @@ ImageBuffer::~ImageBuffer()
             &CanvasLayerWebKitThread::clearBuffer, m_data.m_platformLayer.get()));
     }
 
-    BlackBerry::Platform::Graphics::releaseBufferDrawable(m_data.m_buffer);
-    BlackBerry::Platform::Graphics::destroyBuffer(m_data.m_buffer);
-    m_data.m_buffer = 0;
+    if (m_data.m_buffer) {
+        BlackBerry::Platform::Graphics::releaseBufferDrawable(m_data.m_buffer);
+        BlackBerry::Platform::Graphics::destroyBuffer(m_data.m_buffer);
+        m_data.m_buffer = 0;
+    }
 }
 
 GraphicsContext* ImageBuffer::context() const
