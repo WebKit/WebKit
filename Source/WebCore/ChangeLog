@@ -1,3 +1,34 @@
+2013-08-20  Bruno de Oliveira Abinader  <bruno.d@partner.samsung.com>
+
+        [css3-text] Implement CSS3 text-decoration shorthand
+        https://bugs.webkit.org/show_bug.cgi?id=92000
+
+        Reviewed by Darin Adler.
+
+        Implements the text-decoration shorthand (with -webkit- prefix), as specified by the CSS3 Text Decoration specification:
+        http://dev.w3.org/csswg/css-text-decor-3/#text-decoration-property
+
+        Backported from Blink:
+        https://src.chromium.org/viewvc/blink?revision=156266&view=revision
+
+        Tests: fast/css3-text/css3-text-decoration/getComputedStyle/getComputedStyle-text-decoration-shorthand-ordering.html
+               fast/css3-text/css3-text-decoration/getComputedStyle/getComputedStyle-text-decoration-shorthand.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::addTextDecorationProperty):
+        (WebCore::CSSParser::parseTextDecoration):
+        * css/CSSProperty.cpp:
+        (WebCore::CSSProperty::isInheritedProperty):
+        * css/CSSPropertyNames.in:
+        * css/StylePropertyShorthand.cpp:
+        (WebCore::webkitTextDecorationShorthand):
+        (WebCore::shorthandForProperty):
+        (WebCore::matchingShorthandsForLonghand):
+        * css/StylePropertyShorthand.h:
+
 2013-08-20  Gavin Barraclough  <barraclough@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=120054

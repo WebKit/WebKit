@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="../../../js/resources/js-test-pre.js"></script>
+    </head>
+    <body>
+        <script>
+            function testElementStyle(propertyJS, propertyCSS, value)
+            {
+                shouldBe("e.style.getPropertyCSSValue('" + propertyCSS + "').cssText", "'" + value + "'");
+            }
+
+            description("Test to make sure -webkit-text-decoration longhand values are accepted in every possible ordering in shorthand.")
+
+            var testContainer = document.createElement("div");
+            testContainer.contentEditable = true;
+            document.body.appendChild(testContainer);
+
+            testContainer.innerHTML = '<div id="test">hello world</div>';
+
+            var e = document.getElementById('test');
+
+            debug("-line -style -color ordering (underline dashed red):");
+            e.style.webkitTextDecoration = 'underline dashed red';
+            testElementStyle("webkitTextDecorationLine", "-webkit-text-decoration-line", "underline");
+            testElementStyle("webkitTextDecorationStyle", "-webkit-text-decoration-style", "dashed");
+            testElementStyle("webkitTextDecorationColor", "-webkit-text-decoration-color", "red");
+            debug("");
+
+            debug("-line -color -style ordering (overline blue dotted):");
+            e.style.webkitTextDecoration = 'overline blue dotted';
+            testElementStyle("webkitTextDecorationLine", "-webkit-text-decoration-line", "overline");
+            testElementStyle("webkitTextDecorationStyle", "-webkit-text-decoration-style", "dotted");
+            testElementStyle("webkitTextDecorationColor", "-webkit-text-decoration-color", "blue");
+            debug("");
+
+            debug("-style -line -color ordering (double line-through underline overline green):");
+            e.style.webkitTextDecoration = 'double line-through underline overline green';
+            testElementStyle("webkitTextDecorationLine", "-webkit-text-decoration-line", "line-through underline overline");
+            testElementStyle("webkitTextDecorationStyle", "-webkit-text-decoration-style", "double");
+            testElementStyle("webkitTextDecorationColor", "-webkit-text-decoration-color", "green");
+            debug("");
+
+            debug("-style -color -line ordering (wavy yellow line-through):");
+            e.style.webkitTextDecoration = 'wavy yellow line-through';
+            testElementStyle("webkitTextDecorationLine", "-webkit-text-decoration-line", "line-through");
+            testElementStyle("webkitTextDecorationStyle", "-webkit-text-decoration-style", "wavy");
+            testElementStyle("webkitTextDecorationColor", "-webkit-text-decoration-color", "yellow");
+            debug("");
+
+            debug("-color -line -style ordering (black underline solid):");
+            e.style.webkitTextDecoration = 'black underline solid';
+            testElementStyle("webkitTextDecorationLine", "-webkit-text-decoration-line", "underline");
+            testElementStyle("webkitTextDecorationStyle", "-webkit-text-decoration-style", "solid");
+            testElementStyle("webkitTextDecorationColor", "-webkit-text-decoration-color", "black");
+            debug("");
+
+            debug("-color style -line -style ordering (navy dashed overline):");
+            e.style.webkitTextDecoration = 'navy dashed overline';
+            testElementStyle("webkitTextDecorationLine", "-webkit-text-decoration-line", "overline");
+            testElementStyle("webkitTextDecorationStyle", "-webkit-text-decoration-style", "dashed");
+            testElementStyle("webkitTextDecorationColor", "-webkit-text-decoration-color", "navy");
+            debug("");
+
+            document.body.removeChild(testContainer);
+        </script>
+        <script src="../../../js/resources/js-test-post.js"></script>
+    </body>
+</html>

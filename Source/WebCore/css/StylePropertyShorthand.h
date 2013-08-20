@@ -116,6 +116,10 @@ const StylePropertyShorthand& webkitTransitionShorthand();
 const StylePropertyShorthand& webkitTransformOriginShorthand();
 const StylePropertyShorthand& widthShorthand();
 
+#if ENABLE(CSS3_TEXT)
+const StylePropertyShorthand& webkitTextDecorationShorthand();
+#endif
+
 // Returns an empty list if the property is not a shorthand.
 const StylePropertyShorthand& shorthandForProperty(CSSPropertyID);
 

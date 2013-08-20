@@ -1,3 +1,17 @@
+2013-08-20  Bruno de Oliveira Abinader  <bruno.d@partner.samsung.com>
+
+        [css3-text] Implement CSS3 text-decoration shorthand
+        https://bugs.webkit.org/show_bug.cgi?id=92000
+
+        Reviewed by Darin Adler.
+
+        Added computed style tests for text-decoration shorthand.
+
+        * fast/css3-text/css3-text-decoration/getComputedStyle/getComputedStyle-text-decoration-shorthand-expected.txt: Added.
+        * fast/css3-text/css3-text-decoration/getComputedStyle/getComputedStyle-text-decoration-shorthand-ordering-expected.txt: Added.
+        * fast/css3-text/css3-text-decoration/getComputedStyle/getComputedStyle-text-decoration-shorthand-ordering.html: Added.
+        * fast/css3-text/css3-text-decoration/getComputedStyle/getComputedStyle-text-decoration-shorthand.html: Added.
+
 2013-08-20  Daniel Bates  <dabates@apple.com>
 
         <https://webkit.org/b/120032> Add DRT test to ensure that AccessibilityObject::stringValue()

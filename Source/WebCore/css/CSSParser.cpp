@@ -2335,6 +2335,12 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         break;
     }
 
+#if ENABLE(CSS3_TEXT)
+    case CSSPropertyWebkitTextDecoration:
+        // [ <text-decoration-line> || <text-decoration-style> || <text-decoration-color> ] | inherit
+        return parseShorthand(CSSPropertyWebkitTextDecoration, webkitTextDecorationShorthand(), important);
+#endif
+
     case CSSPropertyTextDecoration:
     case CSSPropertyWebkitTextDecorationsInEffect:
 #if ENABLE(CSS3_TEXT)
@@ -9522,7 +9528,7 @@ void CSSParser::addTextDecorationProperty(CSSPropertyID propId, PassRefPtr<CSSVa
 {
 #if ENABLE(CSS3_TEXT)
     // The text-decoration-line property takes priority over text-decoration, unless the latter has important priority set.
-    if (propId == CSSPropertyTextDecoration && !important && m_currentShorthand == CSSPropertyInvalid) {
+    if (propId == CSSPropertyTextDecoration && !important && !inShorthand()) {
         for (unsigned i = 0; i < m_parsedProperties.size(); ++i) {
             if (m_parsedProperties[i].id() == CSSPropertyWebkitTextDecorationLine)
                 return;
@@ -9535,7 +9541,7 @@ void CSSParser::addTextDecorationProperty(CSSPropertyID propId, PassRefPtr<CSSVa
 bool CSSParser::parseTextDecoration(CSSPropertyID propId, bool important)
 {
     CSSParserValue* value = m_valueList->current();
-    if (value->id == CSSValueNone) {
+    if (value && value->id == CSSValueNone) {
         addTextDecorationProperty(propId, cssValuePool().createIdentifierValue(CSSValueNone), important);
         m_valueList->next();
         return true;
@@ -9559,7 +9565,8 @@ bool CSSParser::parseTextDecoration(CSSPropertyID propId, bool important)
             value = m_valueList->next();
     }
 
-    if (list->length() && isValid) {
+    // Values are either valid or in shorthand scope.
+    if (list->length() && (isValid || inShorthand())) {
         addTextDecorationProperty(propId, list.release(), important);
         return true;
     }

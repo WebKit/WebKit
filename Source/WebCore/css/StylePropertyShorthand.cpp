@@ -457,6 +457,19 @@ const StylePropertyShorthand& webkitMaskRepeatShorthand()
     return webkitMaskRepeatLonghands;
 }
 
+#if ENABLE(CSS3_TEXT)
+const StylePropertyShorthand& webkitTextDecorationShorthand()
+{
+    static const CSSPropertyID textDecorationProperties[] = {
+        CSSPropertyWebkitTextDecorationLine,
+        CSSPropertyWebkitTextDecorationStyle,
+        CSSPropertyWebkitTextDecorationColor
+    };
+    DEFINE_STATIC_LOCAL(StylePropertyShorthand, webkitTextDecorationLonghands, (CSSPropertyWebkitTextDecoration, textDecorationProperties, WTF_ARRAY_LENGTH(textDecorationProperties)));
+    return webkitTextDecorationLonghands;
+}
+#endif
+
 const StylePropertyShorthand& webkitTextEmphasisShorthand()
 {
     static const CSSPropertyID textEmphasisProperties[] = {
@@ -597,6 +610,10 @@ const StylePropertyShorthand& shorthandForProperty(CSSPropertyID propertyID)
         return webkitMaskPositionShorthand();
     case CSSPropertyWebkitMaskRepeat:
         return webkitMaskRepeatShorthand();
+#if ENABLE(CSS3_TEXT)
+    case CSSPropertyWebkitTextDecoration:
+        return webkitTextDecorationShorthand();
+#endif
     case CSSPropertyWebkitTextEmphasis:
         return webkitTextEmphasisShorthand();
     case CSSPropertyWebkitTextStroke:
@@ -894,6 +911,14 @@ const Vector<const StylePropertyShorthand*> matchingShorthandsForLonghand(CSSPro
         maskRepeat.uncheckedAppend(&webkitMaskRepeatShorthand());
         map.set(CSSPropertyWebkitMaskRepeatX, maskRepeat);
         map.set(CSSPropertyWebkitMaskRepeatY, maskRepeat);
+
+#if ENABLE(CSS3_TEXT)
+        Vector<const StylePropertyShorthand*, 3> textDecoration;
+        textDecoration.uncheckedAppend(&webkitTextDecorationShorthand());
+        map.set(CSSPropertyWebkitTextDecorationLine, textDecoration);
+        map.set(CSSPropertyWebkitTextDecorationStyle, textDecoration);
+        map.set(CSSPropertyWebkitTextDecorationColor, textDecoration);
+#endif
 
         Vector<const StylePropertyShorthand*, 1> textEmphasis;
         textEmphasis.uncheckedAppend(&webkitTextEmphasisShorthand());

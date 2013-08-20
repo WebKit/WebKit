@@ -2293,6 +2293,8 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
         case CSSPropertyTextDecoration:
             return renderTextDecorationFlagsToCSSValue(style->textDecoration());
 #if ENABLE(CSS3_TEXT)
+        case CSSPropertyWebkitTextDecoration:
+            return getCSSPropertyValuesForShorthandProperties(webkitTextDecorationShorthand());
         case CSSPropertyWebkitTextDecorationLine:
             return renderTextDecorationFlagsToCSSValue(style->textDecoration());
         case CSSPropertyWebkitTextDecorationStyle:
