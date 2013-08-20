@@ -15,6 +15,12 @@ CONFIG += staticlib
 
 RESOURCES += $$PWD/WebKit2.qrc
 
+enable?(netscape_plugin_api):enable?(plugin_architecture_unsupported) {
+    # Netscape plugins are not supported for this architecture on WebKit2,
+    # but they may have been enabled for WebKit1.
+    WEBKIT_CONFIG -= netscape_plugin_api
+}
+
 HEADERS += \
     Platform/CoreIPC/ArgumentDecoder.h \
     Platform/CoreIPC/ArgumentEncoder.h \
