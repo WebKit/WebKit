@@ -2550,7 +2550,7 @@ void WebFrame::unmarkAllMisspellings()
         if (!doc)
             return;
 
-        doc->markers()->removeMarkers(DocumentMarker::Spelling);
+        doc->markers().removeMarkers(DocumentMarker::Spelling);
     }
 }
 
@@ -2562,7 +2562,7 @@ void WebFrame::unmarkAllBadGrammar()
         if (!doc)
             return;
 
-        doc->markers()->removeMarkers(DocumentMarker::Grammar);
+        doc->markers().removeMarkers(DocumentMarker::Grammar);
     }
 }
 

@@ -534,13 +534,13 @@ static void copyMarkers(const Vector<DocumentMarker*>& markerPointers, Vector<Do
 void CompositeEditCommand::replaceTextInNodePreservingMarkers(PassRefPtr<Text> prpNode, unsigned offset, unsigned count, const String& replacementText)
 {
     RefPtr<Text> node(prpNode);
-    DocumentMarkerController* markerController = document()->markers();
+    DocumentMarkerController& markerController = document()->markers();
     Vector<DocumentMarker> markers;
-    copyMarkers(markerController->markersInRange(Range::create(document(), node, offset, node, offset + count).get(), DocumentMarker::AllMarkers()), markers);
+    copyMarkers(markerController.markersInRange(Range::create(document(), node, offset, node, offset + count).get(), DocumentMarker::AllMarkers()), markers);
     replaceTextInNode(node, offset, count, replacementText);
     RefPtr<Range> newRange = Range::create(document(), node, offset, node, offset + replacementText.length());
     for (size_t i = 0; i < markers.size(); ++i)
-        markerController->addMarker(newRange.get(), markers[i].type(), markers[i].description());
+        markerController.addMarker(newRange.get(), markers[i].type(), markers[i].description());
 }
 
 Position CompositeEditCommand::positionOutsideTabSpan(const Position& pos)

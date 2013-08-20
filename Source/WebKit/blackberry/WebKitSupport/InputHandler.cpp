@@ -764,7 +764,7 @@ bool InputHandler::shouldRequestSpellCheckingOptionsForPoint(const Platform::Int
     Document* document = currentFocusElement->document();
     ASSERT(document);
 
-    RenderedDocumentMarker* marker = document->markers()->renderedMarkerContainingPoint(contentPos, DocumentMarker::Spelling);
+    RenderedDocumentMarker* marker = document->markers().renderedMarkerContainingPoint(contentPos, DocumentMarker::Spelling);
     if (!marker)
         return false;
 
@@ -1956,14 +1956,14 @@ void InputHandler::addAttributedTextMarker(int start, int end, const AttributeTe
         return;
 
     RefPtr<Range> markerRange = DOMSupport::visibleSelectionForRangeInputElement(m_currentFocusElement.get(), start, end).toNormalizedRange();
-    m_currentFocusElement->document()->markers()->addMarker(markerRange.get(), DocumentMarker::AttributeText, WTF::String("Input Marker"), style);
+    m_currentFocusElement->document()->markers().addMarker(markerRange.get(), DocumentMarker::AttributeText, WTF::String("Input Marker"), style);
 }
 
 void InputHandler::removeAttributedTextMarker()
 {
     // Remove all attribute text markers.
     if (m_currentFocusElement && m_currentFocusElement->document())
-        m_currentFocusElement->document()->markers()->removeMarkers(DocumentMarker::AttributeText);
+        m_currentFocusElement->document()->markers().removeMarkers(DocumentMarker::AttributeText);
 
     m_composingTextStart = 0;
     m_composingTextEnd = 0;

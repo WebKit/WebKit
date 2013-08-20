@@ -275,7 +275,7 @@ String TextCheckingHelper::findFirstMisspelling(int& firstMisspellingOffset, boo
                 }
 
                 // Store marker for misspelled word.
-                misspellingRange->startContainer()->document()->markers()->addMarker(misspellingRange.get(), DocumentMarker::Spelling);
+                misspellingRange->startContainer()->document()->markers().addMarker(misspellingRange.get(), DocumentMarker::Spelling);
 
                 // Bail out if we're marking only the first misspelling, and not all instances.
                 if (!markAll)
@@ -437,7 +437,7 @@ int TextCheckingHelper::findFirstGrammarDetail(const Vector<GrammarDetail>& gram
         
         if (markAll) {
             RefPtr<Range> badGrammarRange = TextIterator::subrange(m_range.get(), badGrammarPhraseLocation - startOffset + detail->location, detail->length);
-            badGrammarRange->startContainer()->document()->markers()->addMarker(badGrammarRange.get(), DocumentMarker::Grammar, detail->userDescription);
+            badGrammarRange->startContainer()->document()->markers().addMarker(badGrammarRange.get(), DocumentMarker::Grammar, detail->userDescription);
         }
         
         // Remember this detail only if it's earlier than our current candidate (the details aren't in a guaranteed order)

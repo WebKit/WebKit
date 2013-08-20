@@ -1,5 +1,76 @@
 2013-08-20  Pratik Solanki  <psolanki@apple.com>
 
+        <https://webkit.org/b/120029> Document::markers() should return a reference
+
+        Reviewed by Andreas Kling.
+
+        Document::m_markers is never NULL so return a reference from Document::markers(). Also mark
+        m_markers as const and initialize it in member initialization.
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        * dom/Document.h:
+        (WebCore::Document::markers):
+        * editing/AlternativeTextController.cpp:
+        (WebCore::AlternativeTextController::isSpellingMarkerAllowed):
+        (WebCore::AlternativeTextController::applyAlternativeTextToRange):
+        (WebCore::AlternativeTextController::respondToUnappliedSpellCorrection):
+        (WebCore::AlternativeTextController::handleAlternativeTextUIResult):
+        (WebCore::AlternativeTextController::respondToChangedSelection):
+        (WebCore::AlternativeTextController::respondToAppliedEditing):
+        (WebCore::AlternativeTextController::respondToUnappliedEditing):
+        (WebCore::AlternativeTextController::markReversed):
+        (WebCore::AlternativeTextController::markCorrection):
+        (WebCore::AlternativeTextController::recordSpellcheckerResponseForModifiedCorrection):
+        (WebCore::AlternativeTextController::markPrecedingWhitespaceForDeletedAutocorrectionAfterCommand):
+        (WebCore::AlternativeTextController::processMarkersOnTextToBeReplacedByResult):
+        (WebCore::AlternativeTextController::applyDictationAlternative):
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::replaceTextInNodePreservingMarkers):
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::originalStringForAutocorrectionAtBeginningOfSelection):
+        * editing/DictationCommand.cpp:
+        (WebCore::DictationMarkerSupplier::addMarkersToTextNode):
+        * editing/Editor.cpp:
+        (WebCore::Editor::ignoreSpelling):
+        (WebCore::Editor::learnSpelling):
+        (WebCore::Editor::advanceToNextMisspelling):
+        (WebCore::Editor::clearMisspellingsAndBadGrammar):
+        (WebCore::Editor::markAndReplaceFor):
+        (WebCore::Editor::changeBackToReplacedString):
+        (WebCore::Editor::updateMarkersForWordsAffectedByEditing):
+        (WebCore::Editor::countMatchesForText):
+        (WebCore::Editor::setMarkedTextMatchesAreHighlighted):
+        (WebCore::Editor::respondToChangedSelection):
+        (WebCore::Editor::selectionStartHasMarkerFor):
+        * editing/SpellChecker.cpp:
+        (WebCore::SpellChecker::didCheckSucceed):
+        * editing/SplitTextNodeCommand.cpp:
+        (WebCore::SplitTextNodeCommand::doApply):
+        (WebCore::SplitTextNodeCommand::doUnapply):
+        * editing/TextCheckingHelper.cpp:
+        (WebCore::TextCheckingHelper::findFirstMisspelling):
+        (WebCore::TextCheckingHelper::findFirstGrammarDetail):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::getTickmarks):
+        (WebCore::FrameView::paintContents):
+        * page/Page.cpp:
+        (WebCore::Page::unmarkAllTextMatches):
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::spellingToolTip):
+        (WebCore::HitTestResult::replacedString):
+        (WebCore::HitTestResult::dictationAlternatives):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paintDocumentMarkers):
+        * rendering/svg/SVGInlineFlowBox.cpp:
+        (WebCore::SVGInlineFlowBox::computeTextMatchMarkerRectForRenderer):
+        * testing/Internals.cpp:
+        (WebCore::Internals::markerCountForNode):
+        (WebCore::Internals::markerAt):
+        (WebCore::Internals::addTextMatchMarker):
+
+2013-08-20  Pratik Solanki  <psolanki@apple.com>
+
         <https://webkit.org/b/119875> localeToScriptCodeForFontSelection should use hash tables with larger default capacity
 
         Reviewed by Darin Adler.

@@ -356,7 +356,7 @@ Vector<IntRect> FindController::rectsForTextMatches()
             continue;
 
         IntRect visibleRect = frame->view()->visibleContentRect();
-        Vector<IntRect> frameRects = document->markers()->renderedRectsForMarkers(DocumentMarker::TextMatch);
+        Vector<IntRect> frameRects = document->markers().renderedRectsForMarkers(DocumentMarker::TextMatch);
         IntPoint frameOffset(-frame->view()->scrollOffsetRelativeToDocument().width(), -frame->view()->scrollOffsetRelativeToDocument().height());
         frameOffset = frame->view()->convertToContainingWindow(frameOffset);
 

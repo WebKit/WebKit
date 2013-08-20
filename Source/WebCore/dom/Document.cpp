@@ -420,6 +420,7 @@ Document::Document(Frame* frame, const KURL& url, unsigned documentClasses)
     , m_updateFocusAppearanceRestoresSelection(false)
     , m_ignoreDestructiveWriteCount(0)
     , m_titleSetExplicitly(false)
+    , m_markers(adoptPtr(new DocumentMarkerController))
     , m_updateFocusAppearanceTimer(this, &Document::updateFocusAppearanceTimerFired)
     , m_cssTarget(0)
     , m_processingLoadEvent(false)
@@ -489,8 +490,6 @@ Document::Document(Frame* frame, const KURL& url, unsigned documentClasses)
     // FIXME: Can/should we unify this behavior?
     if ((frame && frame->ownerElement()) || !url.isEmpty())
         setURL(url);
-
-    m_markers = adoptPtr(new DocumentMarkerController);
 
     if (m_frame)
         m_cachedResourceLoader = m_frame->loader().activeDocumentLoader()->cachedResourceLoader();

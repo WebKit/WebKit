@@ -232,7 +232,7 @@ void SpellChecker::didCheckSucceed(int sequence, const Vector<TextCheckingResult
         if (requestData.mask() & TextCheckingTypeGrammar)
             markers |= DocumentMarker::Grammar;
         if (markers)
-            m_frame->document()->markers()->removeMarkers(m_processingRequest->checkingRange().get(), markers);
+            m_frame->document()->markers().removeMarkers(m_processingRequest->checkingRange().get(), markers);
     }
     didCheck(sequence, results);
 }

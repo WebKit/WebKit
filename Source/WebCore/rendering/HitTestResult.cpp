@@ -196,7 +196,7 @@ String HitTestResult::spellingToolTip(TextDirection& dir) const
     if (!m_innerNonSharedNode)
         return String();
     
-    DocumentMarker* marker = m_innerNonSharedNode->document()->markers()->markerContainingPoint(m_hitTestLocation.point(), DocumentMarker::Grammar);
+    DocumentMarker* marker = m_innerNonSharedNode->document()->markers().markerContainingPoint(m_hitTestLocation.point(), DocumentMarker::Grammar);
     if (!marker)
         return String();
 
@@ -212,7 +212,7 @@ String HitTestResult::replacedString() const
     if (!m_innerNonSharedNode)
         return String();
     
-    DocumentMarker* marker = m_innerNonSharedNode->document()->markers()->markerContainingPoint(m_hitTestLocation.point(), DocumentMarker::Replacement);
+    DocumentMarker* marker = m_innerNonSharedNode->document()->markers().markerContainingPoint(m_hitTestLocation.point(), DocumentMarker::Replacement);
     if (!marker)
         return String();
     
@@ -662,7 +662,7 @@ Vector<String> HitTestResult::dictationAlternatives() const
     if (!m_innerNonSharedNode)
         return Vector<String>();
 
-    DocumentMarker* marker = m_innerNonSharedNode->document()->markers()->markerContainingPoint(pointInInnerNodeFrame(), DocumentMarker::DictationAlternatives);
+    DocumentMarker* marker = m_innerNonSharedNode->document()->markers().markerContainingPoint(pointInInnerNodeFrame(), DocumentMarker::DictationAlternatives);
     if (!marker)
         return Vector<String>();
 

@@ -1,3 +1,21 @@
+2013-08-20  Pratik Solanki  <psolanki@apple.com>
+
+        <https://webkit.org/b/120029> Document::markers() should return a reference
+
+        Reviewed by Andreas Kling.
+
+        Document::m_markers is never NULL so return a reference from Document::markers(). Also mark
+        m_markers as const and initialize it in member initialization.
+
+        * WebKitSupport/InPageSearchManager.cpp:
+        (BlackBerry::WebKit::InPageSearchManager::findAndMarkText):
+        (BlackBerry::WebKit::InPageSearchManager::setActiveMatchAndMarker):
+        (BlackBerry::WebKit::InPageSearchManager::scopeStringMatches):
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::shouldRequestSpellCheckingOptionsForPoint):
+        (BlackBerry::WebKit::InputHandler::addAttributedTextMarker):
+        (BlackBerry::WebKit::InputHandler::removeAttributedTextMarker):
+
 2013-08-19  Pratik Solanki  <psolanki@apple.com>
 
         <https://webkit.org/b/119918> Frame::selection() should return a reference

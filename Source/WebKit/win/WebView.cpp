@@ -3538,7 +3538,7 @@ HRESULT STDMETHODCALLTYPE WebView::rectsForTextMatches(
     do {
         if (Document* document = frame->document()) {
             IntRect visibleRect = frame->view()->visibleContentRect();
-            Vector<IntRect> frameRects = document->markers()->renderedRectsForMarkers(DocumentMarker::TextMatch);
+            Vector<IntRect> frameRects = document->markers().renderedRectsForMarkers(DocumentMarker::TextMatch);
             IntPoint frameOffset(-frame->view()->scrollOffset().width(), -frame->view()->scrollOffset().height());
             frameOffset = frame->view()->convertToContainingWindow(frameOffset);
 

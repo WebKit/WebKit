@@ -92,7 +92,7 @@ void SVGInlineFlowBox::computeTextMatchMarkerRectForRenderer(RenderSVGInlineText
 
     AffineTransform fragmentTransform;
     Document* document = textRenderer->document();
-    Vector<DocumentMarker*> markers = document->markers()->markersFor(textRenderer->node());
+    Vector<DocumentMarker*> markers = document->markers().markersFor(textRenderer->node());
 
     Vector<DocumentMarker*>::iterator markerEnd = markers.end();
     for (Vector<DocumentMarker*>::iterator markerIt = markers.begin(); markerIt != markerEnd; ++markerIt) {

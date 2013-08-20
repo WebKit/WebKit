@@ -2951,7 +2951,7 @@ void WebPage::unmarkAllMisspellings()
 {
     for (Frame* frame = m_page->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
         if (Document* document = frame->document())
-            document->markers()->removeMarkers(DocumentMarker::Spelling);
+            document->markers().removeMarkers(DocumentMarker::Spelling);
     }
 }
 
@@ -2959,7 +2959,7 @@ void WebPage::unmarkAllBadGrammar()
 {
     for (Frame* frame = m_page->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
         if (Document* document = frame->document())
-            document->markers()->removeMarkers(DocumentMarker::Grammar);
+            document->markers().removeMarkers(DocumentMarker::Grammar);
     }
 }
 

@@ -64,11 +64,11 @@ public:
     virtual void addMarkersToTextNode(Text* textNode, unsigned offsetOfInsertion, const String& textToBeInserted)
     {
         Document* document = textNode->document();
-        DocumentMarkerController* markerController =document->markers();
+        DocumentMarkerController& markerController = document->markers();
         for (size_t i = 0; i < m_alternatives.size(); ++i) {
             const DictationAlternative& alternative = m_alternatives[i];
-            markerController->addMarkerToNode(textNode, alternative.rangeStart + offsetOfInsertion, alternative.rangeLength, DocumentMarker::DictationAlternatives, DictationMarkerDetails::create(textToBeInserted.substring(alternative.rangeStart, alternative.rangeLength), alternative.dictationContext));
-            markerController->addMarkerToNode(textNode, alternative.rangeStart + offsetOfInsertion, alternative.rangeLength, DocumentMarker::SpellCheckingExemption);
+            markerController.addMarkerToNode(textNode, alternative.rangeStart + offsetOfInsertion, alternative.rangeLength, DocumentMarker::DictationAlternatives, DictationMarkerDetails::create(textToBeInserted.substring(alternative.rangeStart, alternative.rangeLength), alternative.dictationContext));
+            markerController.addMarkerToNode(textNode, alternative.rangeStart + offsetOfInsertion, alternative.rangeLength, DocumentMarker::SpellCheckingExemption);
         }
     }
 

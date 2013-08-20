@@ -844,7 +844,7 @@ public:
 
     HTMLHeadElement* head();
 
-    DocumentMarkerController* markers() const { return m_markers.get(); }
+    DocumentMarkerController& markers() const { return *m_markers; }
 
     bool directionSetOnDocumentElement() const { return m_directionSetOnDocumentElement; }
     bool writingModeSetOnDocumentElement() const { return m_writingModeSetOnDocumentElement; }
@@ -1380,7 +1380,7 @@ private:
     RefPtr<RenderArena> m_renderArena;
 
     OwnPtr<AXObjectCache> m_axObjectCache;
-    OwnPtr<DocumentMarkerController> m_markers;
+    const OwnPtr<DocumentMarkerController> m_markers;
     
     Timer<Document> m_updateFocusAppearanceTimer;
 

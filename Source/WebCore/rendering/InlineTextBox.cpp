@@ -1415,7 +1415,7 @@ void InlineTextBox::paintDocumentMarkers(GraphicsContext* pt, const FloatPoint& 
     if (!renderer()->node())
         return;
 
-    Vector<DocumentMarker*> markers = renderer()->document()->markers()->markersFor(renderer()->node());
+    Vector<DocumentMarker*> markers = renderer()->document()->markers().markersFor(renderer()->node());
     Vector<DocumentMarker*>::const_iterator markerIt = markers.begin();
 
     // Give any document markers that touch this run a chance to draw before the text has been drawn.
