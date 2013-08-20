@@ -59,7 +59,6 @@ public:
     RenderObject* parentRenderer() const;
     RenderObject* nextRenderer() const;
     RenderObject* previousRenderer() const;
-    InsertionPoint* insertionPoint() const;
 
     const RenderStyle* style() const;
 
@@ -73,7 +72,6 @@ private:
 
     Node* m_node;
     ContainerNode* m_renderingParent;
-    NodeRenderingTraversal::ParentDetails m_parentDetails;
     RefPtr<RenderStyle> m_style;
     RenderNamedFlowThread* m_parentFlowRenderer;
 };
@@ -88,19 +86,9 @@ inline ContainerNode* NodeRenderingContext::parentNodeForRenderingAndStyle() con
     return m_renderingParent;
 }
 
-inline bool NodeRenderingContext::resetStyleInheritance() const
-{
-    return m_parentDetails.resetStyleInheritance();
-}
-
 inline const RenderStyle* NodeRenderingContext::style() const
 {
     return m_style.get();
-}
-
-inline InsertionPoint* NodeRenderingContext::insertionPoint() const
-{
-    return m_parentDetails.insertionPoint();
 }
 
 } // namespace WebCore

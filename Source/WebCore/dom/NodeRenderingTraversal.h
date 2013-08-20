@@ -35,37 +35,8 @@ class InsertionPoint;
 
 namespace NodeRenderingTraversal {
 
-class ParentDetails {
-public:
-    ParentDetails()
-        : m_insertionPoint(0)
-        , m_resetStyleInheritance(false)
-        , m_outOfComposition(false)
-    { }
-
-    InsertionPoint* insertionPoint() const { return m_insertionPoint; }
-    bool resetStyleInheritance() const { return m_resetStyleInheritance; }
-    bool outOfComposition() const { return m_outOfComposition; }
-
-    void didTraverseInsertionPoint(InsertionPoint*);
-    void didTraverseShadowRoot(const ShadowRoot*);
-    void childWasOutOfComposition() { m_outOfComposition = true; }
-
-    bool operator==(const ParentDetails& other)
-    {
-        return m_insertionPoint == other.m_insertionPoint
-            && m_resetStyleInheritance == other.m_resetStyleInheritance
-            && m_outOfComposition == other.m_outOfComposition;
-    }
-
-private:
-    InsertionPoint* m_insertionPoint;
-    bool m_resetStyleInheritance;
-    bool m_outOfComposition;
-};
-
-ContainerNode* parent(const Node*, ParentDetails*);
-ContainerNode* parentSlow(const Node*, ParentDetails*);
+ContainerNode* parent(const Node*);
+ContainerNode* parentSlow(const Node*);
 Node* nextSibling(const Node*);
 Node* nextSiblingSlow(const Node*);
 Node* previousSibling(const Node*);
@@ -76,18 +47,16 @@ Node* previousInScope(const Node*);
 Node* parentInScope(const Node*);
 Node* lastChildInScope(const Node*);
 
-inline ContainerNode* parent(const Node* node, ParentDetails* details)
+inline ContainerNode* parent(const Node* node)
 {
     if (!node->needsShadowTreeWalker()) {
 #ifndef NDEBUG
-        ParentDetails slowDetails;
-        ASSERT(node->parentNode() == parentSlow(node, &slowDetails));
-        ASSERT(slowDetails == *details);
+        ASSERT(node->parentNode() == parentSlow(node));
 #endif
         return node->parentNodeGuaranteedHostFree();
     }
 
-    return parentSlow(node, details);
+    return parentSlow(node);
 }
 
 inline Node* nextSibling(const Node* node)

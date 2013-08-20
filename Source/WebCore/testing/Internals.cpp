@@ -668,14 +668,10 @@ String Internals::shadowRootType(const Node* root, ExceptionCode& ec) const
     }
 }
 
-Element* Internals::includerFor(Node* node, ExceptionCode& ec)
+Element* Internals::includerFor(Node*, ExceptionCode& ec)
 {
-    if (!node) {
-        ec = INVALID_ACCESS_ERR;
-        return 0;
-    }
-
-    return NodeRenderingContext(node).insertionPoint();
+    ec = INVALID_ACCESS_ERR;
+    return 0;
 }
 
 String Internals::shadowPseudoId(Element* element, ExceptionCode& ec)

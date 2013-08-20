@@ -62,9 +62,6 @@ public:
     virtual MatchType matchTypeFor(Node*) const { return AlwaysMatches; }
     virtual Type insertionPointType() const { return InternalType; }
 
-    bool resetStyleInheritance() const;
-    void setResetStyleInheritance(bool);
-
     virtual void willAttachRenderers() OVERRIDE;
     virtual void willDetachRenderers() OVERRIDE;
 
@@ -81,7 +78,6 @@ protected:
     virtual void childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta) OVERRIDE;
     virtual InsertionNotificationRequest insertedInto(ContainerNode*) OVERRIDE;
     virtual void removedFrom(ContainerNode*) OVERRIDE;
-    virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
     virtual bool isInsertionPointNode() const OVERRIDE { return true; }
 
 private:
@@ -145,7 +141,7 @@ inline ShadowRoot* shadowRootOfParentForDistribution(const Node* node)
     return 0;
 }
 
-InsertionPoint* resolveReprojection(const Node*);
+InsertionPoint* findInsertionPointOf(const Node*);
 
 } // namespace WebCore
 

@@ -1039,7 +1039,7 @@ Element* Node::parentOrShadowHostElement() const
 
 Node* Node::insertionParentForBinding() const
 {
-    return resolveReprojection(this);
+    return findInsertionPointOf(this);
 }
 
 Node::InsertionNotificationRequest Node::insertedInto(ContainerNode* insertionPoint)

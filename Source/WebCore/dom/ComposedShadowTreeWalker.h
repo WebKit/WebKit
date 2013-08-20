@@ -40,8 +40,6 @@ class ShadowRoot;
 // https://bugs.webkit.org/show_bug.cgi?id=82702
 class ComposedShadowTreeWalker {
 public:
-    typedef NodeRenderingTraversal::ParentDetails ParentTraversalDetails;
-
     enum Policy {
         CrossUpperBoundary,
         DoNotCrossUpperBoundary,
@@ -71,11 +69,9 @@ public:
     void next();
     void previous();
 
-    Node* traverseParent(const Node*, ParentTraversalDetails* = 0) const;
+    Node* traverseParent(const Node*) const;
 
 private:
-    ComposedShadowTreeWalker(const Node*, ParentTraversalDetails*);
-
     enum TraversalDirection {
         TraversalDirectionForward,
         TraversalDirectionBackward
@@ -119,9 +115,9 @@ private:
 
     static Node* escapeFallbackContentElement(const Node*, TraversalDirection);
 
-    Node* traverseNodeEscapingFallbackContents(const Node*, ParentTraversalDetails* = 0) const;
-    Node* traverseParentInCurrentTree(const Node*, ParentTraversalDetails* = 0) const;
-    Node* traverseParentBackToShadowRootOrHost(const ShadowRoot*, ParentTraversalDetails* = 0) const;
+    Node* traverseNodeEscapingFallbackContents(const Node*) const;
+    Node* traverseParentInCurrentTree(const Node*) const;
+    Node* traverseParentBackToShadowRootOrHost(const ShadowRoot*) const;
 
     const Node* m_node;
     Policy m_policy;

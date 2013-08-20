@@ -433,11 +433,9 @@ inline void StyleResolver::State::initForStyleResolve(Document* document, Elemen
         m_parentStyle = context.resetStyleInheritance() ? 0 :
             parentStyle ? parentStyle :
             m_parentNode ? m_parentNode->renderStyle() : 0;
-        m_distributedToInsertionPoint = context.insertionPoint();
     } else {
         m_parentNode = 0;
         m_parentStyle = parentStyle;
-        m_distributedToInsertionPoint = false;
     }
 
     Node* docElement = e ? e->document()->documentElement() : 0;
@@ -809,7 +807,7 @@ PassRefPtr<RenderStyle> StyleResolver::styleForElement(Element* element, RenderS
     State& state = m_state;
     initElement(element);
     state.initForStyleResolve(document(), element, defaultParent, regionForStyling);
-    if (sharingBehavior == AllowStyleSharing && !state.distributedToInsertionPoint()) {
+    if (sharingBehavior == AllowStyleSharing) {
         RenderStyle* sharedStyle = locateSharedStyle();
         if (sharedStyle) {
             state.clear();
@@ -823,14 +821,6 @@ PassRefPtr<RenderStyle> StyleResolver::styleForElement(Element* element, RenderS
     } else {
         state.setStyle(defaultStyleForElement());
         state.setParentStyle(RenderStyle::clone(state.style()));
-    }
-    // contenteditable attribute (implemented by -webkit-user-modify) should
-    // be propagated from shadow host to distributed node.
-    if (state.distributedToInsertionPoint()) {
-        if (Element* parent = element->parentElement()) {
-            if (RenderStyle* styleOfShadowHost = parent->renderStyle())
-                state.style()->setUserModify(styleOfShadowHost->userModify());
-        }
     }
 
     if (element->isLink()) {

@@ -415,7 +415,6 @@ public:
         , m_rootElementStyle(0)
         , m_regionForStyling(0)
         , m_elementLinkState(NotInsideLink)
-        , m_distributedToInsertionPoint(false)
         , m_elementAffectedByClassRules(false)
         , m_applyPropertyToRegularStyle(true)
         , m_applyPropertyToVisitedLinkStyle(false)
@@ -446,7 +445,6 @@ public:
 
         const RenderRegion* regionForStyling() const { return m_regionForStyling; }
         EInsideLink elementLinkState() const { return m_elementLinkState; }
-        bool distributedToInsertionPoint() const { return m_distributedToInsertionPoint; }
         void setElementAffectedByClassRules(bool isAffected) { m_elementAffectedByClassRules = isAffected; }
         bool elementAffectedByClassRules() const { return m_elementAffectedByClassRules; }
 
@@ -499,8 +497,6 @@ public:
         RenderRegion* m_regionForStyling;
         
         EInsideLink m_elementLinkState;
-
-        bool m_distributedToInsertionPoint;
 
         bool m_elementAffectedByClassRules;
 
