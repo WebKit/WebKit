@@ -1,3 +1,15 @@
+2013-08-20  Gavin Barraclough  <barraclough@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=120053
+        Remove custom getOwnPropertyDescriptor for JSNPObject
+
+        Reviewed by Oliver Hunt.
+
+        Think this is the last one!
+
+        * WebProcess/Plugins/Netscape/JSNPObject.cpp:
+            - Remove custom getOwnPropertyDescriptor implementation.
+
 2013-08-20  Anton Obzhirov  <a.obzhirov@samsung.com>
 
         <https://webkit.org/b/119487> [Gtk] Cancel authentication on load failed

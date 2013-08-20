@@ -289,40 +289,7 @@ bool JSNPObject::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyN
     return false;
 }
 
-bool JSNPObject::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)
-{
-    JSNPObject* thisObject = jsCast<JSNPObject*>(object);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    if (!thisObject->m_npObject) {
-        throwInvalidAccessError(exec);
-        return false;
-    }
-
-    NPIdentifier npIdentifier = npIdentifierFromIdentifier(propertyName);
-
-    // Calling NPClass::invoke will call into plug-in code, and there's no telling what the plug-in can do.
-    // (including destroying the plug-in). Because of this, we make sure to keep the plug-in alive until 
-    // the call has finished.
-    NPRuntimeObjectMap::PluginProtector protector(thisObject->m_objectMap);
-
-    // First, check if the NPObject has a property with this name.
-    if (thisObject->m_npObject->_class->hasProperty && thisObject->m_npObject->_class->hasProperty(thisObject->m_npObject, npIdentifier)) {
-        PropertySlot slot(thisObject);
-        slot.setCustom(thisObject, DontDelete, propertyGetter);
-        descriptor.setDescriptor(slot.getValue(exec, propertyName), DontDelete);
-        return true;
-    }
-
-    // Second, check if the NPObject has a method with this name.
-    if (thisObject->m_npObject->_class->hasMethod && thisObject->m_npObject->_class->hasMethod(thisObject->m_npObject, npIdentifier)) {
-        PropertySlot slot(thisObject);
-        slot.setCustom(thisObject, DontDelete | ReadOnly, methodGetter);
-        descriptor.setDescriptor(slot.getValue(exec, propertyName), DontDelete | ReadOnly);
-        return true;
-    }
-
-    return false;
-}
+GET_OWN_PROPERTY_DESCRIPTOR_IMPL(JSNPObject)
 
 void JSNPObject::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot&)
 {
