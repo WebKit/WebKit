@@ -67,6 +67,7 @@ static const gdouble minimumZoomLevel = 0.5;
 static const gdouble maximumZoomLevel = 3;
 static const gdouble zoomStep = 1.2;
 static gint windowCount = 0;
+static GtkToolButton* reloadOrStopButton = 0;
 
 G_DEFINE_TYPE(BrowserWindow, browser_window, GTK_TYPE_WINDOW)
 
@@ -104,9 +105,12 @@ static void activateUriEntryCallback(BrowserWindow *window)
     browser_window_load_uri(window, gtk_entry_get_text(GTK_ENTRY(window->uriEntry)));
 }
 
-static void reloadCallback(BrowserWindow *window)
+static void reloadOrStopCallback(BrowserWindow *window)
 {
-    webkit_web_view_reload(window->webView);
+    if (!g_strcmp0(gtk_tool_button_get_stock_id(reloadOrStopButton), GTK_STOCK_STOP))
+        webkit_web_view_stop_loading(window->webView);
+    else
+        webkit_web_view_reload(window->webView);
 }
 
 static void goBackCallback(BrowserWindow *window)
@@ -155,8 +159,14 @@ static void webViewLoadProgressChanged(WebKitWebView *webView, GParamSpec *pspec
 {
     gdouble progress = webkit_web_view_get_estimated_load_progress(webView);
     gtk_entry_set_progress_fraction(GTK_ENTRY(window->uriEntry), progress);
-    if (progress == 1.0)
+
+    if (progress > 0.0 && progress < 1.0)
+        gtk_tool_button_set_stock_id(reloadOrStopButton, GTK_STOCK_STOP);
+
+    if (progress == 1.0) {
+        gtk_tool_button_set_stock_id(reloadOrStopButton, GTK_STOCK_REFRESH);
         g_timeout_add(500, (GSourceFunc)resetEntryProgress, window->uriEntry);
+    }
 }
 
 static void downloadStarted(WebKitWebContext *webContext, WebKitDownload *download, BrowserWindow *window)
@@ -571,11 +581,11 @@ static void browser_window_init(BrowserWindow *window)
     gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
     gtk_widget_show(GTK_WIDGET(item));
 
-    item = gtk_tool_button_new_from_stock(GTK_STOCK_REFRESH);
-    g_signal_connect_swapped(item, "clicked", G_CALLBACK(reloadCallback), window);
-    gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
-    gtk_widget_add_accelerator(GTK_WIDGET(item), "clicked", accelGroup, GDK_KEY_F5, 0, GTK_ACCEL_VISIBLE);
-    gtk_widget_show(GTK_WIDGET(item));
+    reloadOrStopButton = gtk_tool_button_new_from_stock(GTK_STOCK_REFRESH);
+    g_signal_connect_swapped(reloadOrStopButton, "clicked", G_CALLBACK(reloadOrStopCallback), window);
+    gtk_toolbar_insert(GTK_TOOLBAR(toolbar), reloadOrStopButton, -1);
+    gtk_widget_add_accelerator(GTK_WIDGET(reloadOrStopButton), "clicked", accelGroup, GDK_KEY_F5, 0, GTK_ACCEL_VISIBLE);
+    gtk_widget_show(GTK_WIDGET(reloadOrStopButton));
 
     GtkWidget *vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
     window->mainBox = vbox;

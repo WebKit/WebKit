@@ -1,3 +1,16 @@
+2013-08-20  Anton Obzhirov  <a.obzhirov@samsung.com>
+
+        <https://webkit.org/b/120009> [GTK] Stop button should be added to MiniBrowser
+
+        Reviewed by Martin Robinson.
+
+        Added stop button in MiniBrowser
+
+        * MiniBrowser/gtk/BrowserWindow.c:
+        (reloadOrStopCallback): Callback to handle stop or reload button click.
+        (webViewLoadProgressChanged): Update reload or stop button icon.
+        (browser_window_init): Save button pointer for further icon updates.
+
 2013-08-20  Simon Pena  <simon.pena@samsung.com>
 
         <https://webkit.org/b/117584> [GTK][WK1] http/tests/loading/unfinished-load-back-to-cached-page-callbacks.html is failing
