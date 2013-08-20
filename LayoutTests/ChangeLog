@@ -1,3 +1,19 @@
+2013-08-20  Hans Muller  <hmuller@adobe.com>
+        <https://webkit.org/b/119849> [CSS Shapes] Complete RasterShape::firstIncludedIntervalLogicalTop()
+
+        Reviewed by Alexandru Chiculita.
+
+        Verify that the first fit algorithm works correctly for complex image shapes.
+        For this set of tests the image is specified with an SVG file.
+
+        * fast/shapes/resources/svg-shape-001.svg: Added.
+        * fast/shapes/shape-inside/shape-inside-image-003-expected.html: Added.
+        * fast/shapes/shape-inside/shape-inside-image-003.html: Added.
+        * fast/shapes/shape-inside/shape-inside-image-004-expected.html: Added.
+        * fast/shapes/shape-inside/shape-inside-image-004.html: Added.
+        * fast/shapes/shape-inside/shape-inside-image-005-expected.html: Added.
+        * fast/shapes/shape-inside/shape-inside-image-005.html: Added.
+
 2013-08-20  Michael Saboff  <msaboff@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=120075

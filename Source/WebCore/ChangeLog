@@ -1,3 +1,30 @@
+2013-08-20  Hans Muller  <hmuller@adobe.com>
+
+        <https://webkit.org/b/119849> [CSS Shapes] Complete RasterShape::firstIncludedIntervalLogicalTop()
+
+        Reviewed by Alexandru Chiculita.
+
+        Completed the implementation of RasterShape::firstIncludedIntervalLogicalTop(). The
+        method now computes first logical top location where a line segment can be laid
+        out within a RasterShape, i.e. a shape derived from an image valued URL resource.
+
+        A detailed description of the algorithm can be found in
+        http://hansmuller-webkit.blogspot.com/2013/08/first-fit-location-for-image-shapes.html.
+
+        The new tests exposed a bug in the existing getIncludedIntervals() method. A shape
+        with a vertical gap that spans the entire line now causes the method to short circuit
+        and return an empty interval list.
+
+        Tests: fast/shapes/shape-inside/shape-inside-image-003.html
+               fast/shapes/shape-inside/shape-inside-image-004.html
+               fast/shapes/shape-inside/shape-inside-image-005.html
+
+        * rendering/shapes/RasterShape.cpp:
+        (WebCore::RasterShapeIntervals::firstIncludedIntervalY):
+        (WebCore::RasterShapeIntervals::getIncludedIntervals):
+        (WebCore::RasterShape::firstIncludedIntervalLogicalTop):
+        * rendering/shapes/RasterShape.h:
+
 2013-08-20  Pratik Solanki  <psolanki@apple.com>
 
         <https://webkit.org/b/120029> Document::markers() should return a reference

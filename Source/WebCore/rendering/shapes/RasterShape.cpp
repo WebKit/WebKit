@@ -48,6 +48,28 @@ void RasterShapeIntervals::addInterval(int y, int x1, int x2)
     m_bounds.clear();
 }
 
+bool RasterShapeIntervals::firstIncludedIntervalY(int minY, const IntSize& minSize, LayoutUnit& result) const
+{
+    for (int y = minY; y <= bounds().maxY() - minSize.height(); y++) {
+        Region lineRegion(IntRect(bounds().x(), y, bounds().width(), minSize.height()));
+        lineRegion.intersect(m_region);
+        if (lineRegion.isEmpty())
+            continue;
+
+        const Vector<IntRect>& lineRects = lineRegion.rects();
+        ASSERT(lineRects.size() > 0);
+
+        for (unsigned i = 0; i < lineRects.size(); i++) {
+            IntRect rect = lineRects[i];
+            if (rect.width() >= minSize.width() && lineRegion.contains(Region(IntRect(IntPoint(rect.x(), y), minSize)))) {
+                result = y;
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
 static inline IntRect alignedRect(IntRect r, int y1, int y2)
 {
     return IntRect(r.x(), y1, r.width(), y2 - y1);
@@ -63,7 +85,7 @@ void RasterShapeIntervals::getIncludedIntervals(int y1, int y2, SegmentList& res
     if (lineRegion.isEmpty())
         return;
 
-    Vector<IntRect> lineRects = lineRegion.rects();
+    const Vector<IntRect>& lineRects = lineRegion.rects();
     ASSERT(lineRects.size() > 0);
 
     Region segmentsRegion(lineRect);
@@ -71,19 +93,28 @@ void RasterShapeIntervals::getIncludedIntervals(int y1, int y2, SegmentList& res
 
     // The loop below uses Regions to compute the intersection of the horizontal
     // shape intervals that fall within the line's box.
-    int lineY = lineRects[0].y();
+    int currentLineY = lineRects[0].y();
+    int currentLineMaxY = lineRects[0].maxY();
     for (unsigned i = 0; i < lineRects.size(); ++i) {
-        if (lineRects[i].y() != lineY) {
+        int lineY = lineRects[i].y();
+        ASSERT(lineY >= currentLineY);
+        if (lineY > currentLineMaxY) {
+            // We've encountered a vertical gap in lineRects, there are no included intervals.
+            return;
+        }
+        if (lineY > currentLineY) {
+            currentLineY = lineY;
+            currentLineMaxY = lineRects[i].maxY();
             segmentsRegion.intersect(intervalsRegion);
             intervalsRegion = Region();
-        }
+        } else
+            currentLineMaxY = std::max<int>(currentLineMaxY, lineRects[i].maxY());
         intervalsRegion.unite(Region(alignedRect(lineRects[i], y1, y2)));
-        lineY = lineRects[i].y();
     }
     if (!intervalsRegion.isEmpty())
         segmentsRegion.intersect(intervalsRegion);
 
-    Vector<IntRect> segmentRects = segmentsRegion.rects();
+    const Vector<IntRect>& segmentRects = segmentsRegion.rects();
     for (unsigned i = 0; i < segmentRects.size(); ++i)
         result.append(LineSegment(segmentRects[i].x(), segmentRects[i].maxX()));
 }
@@ -98,14 +129,14 @@ void RasterShapeIntervals::getExcludedIntervals(int y1, int y2, SegmentList& res
     if (lineRegion.isEmpty())
         return;
 
-    Vector<IntRect> lineRects = lineRegion.rects();
+    const Vector<IntRect>& lineRects = lineRegion.rects();
     ASSERT(lineRects.size() > 0);
 
     Region segmentsRegion;
     for (unsigned i = 0; i < lineRects.size(); i++)
         segmentsRegion.unite(Region(alignedRect(lineRects[i], y1, y2)));
 
-    Vector<IntRect> segmentRects = segmentsRegion.rects();
+    const Vector<IntRect>& segmentRects = segmentsRegion.rects();
     for (unsigned i = 0; i < segmentRects.size(); i++)
         result.append(LineSegment(segmentRects[i].x(), segmentRects[i].maxX() + 1));
 }
@@ -172,13 +203,10 @@ bool RasterShape::firstIncludedIntervalLogicalTop(LayoutUnit minLogicalIntervalT
 
     float minY = std::max<float>(intervals.bounds().y(), minIntervalTop);
     float maxY = minY + minIntervalHeight;
-
     if (maxY > intervals.bounds().maxY())
         return false;
 
-    // FIXME: Complete this method, see https://bugs.webkit.org/show_bug.cgi?id=116348.
-    result = minY;
-    return true;
+    return intervals.firstIncludedIntervalY(minY, flooredIntSize(minLogicalIntervalSize), result);
 }
 
 } // namespace WebCore

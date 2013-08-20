@@ -47,6 +47,7 @@ public:
     void addInterval(int y, int x1, int x2);
     void getIncludedIntervals(int y1, int y2, SegmentList&) const;
     void getExcludedIntervals(int y1, int y2, SegmentList&) const;
+    bool firstIncludedIntervalY(int minY, const IntSize& minIntervalSize, LayoutUnit&) const;
 
 private:
     Region m_region;
