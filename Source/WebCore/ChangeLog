@@ -1,5 +1,17 @@
 2013-08-20  Daniel Bates  <dabates@apple.com>
 
+        <https://webkit.org/b/120072> Use nullAtom instead of defining static local in
+        Accessibility{Object, RenderObject}::actionVerb()
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::actionVerb):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::actionVerb):
+
+2013-08-20  Daniel Bates  <dabates@apple.com>
+
         <https://webkit.org/b/119914> [iOS] Upstream changes to WebCore/accessibility
 
         Reviewed by Darin Adler and Chris Fleizach.

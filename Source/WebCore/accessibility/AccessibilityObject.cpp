@@ -1302,7 +1302,6 @@ const String& AccessibilityObject::actionVerb() const
     DEFINE_STATIC_LOCAL(const String, menuListAction, (AXMenuListActionVerb()));
     DEFINE_STATIC_LOCAL(const String, menuListPopupAction, (AXMenuListPopupActionVerb()));
     DEFINE_STATIC_LOCAL(const String, listItemAction, (AXListItemActionVerb()));
-    DEFINE_STATIC_LOCAL(const String, noAction, ());
 
     switch (roleValue()) {
     case ButtonRole:
@@ -1325,11 +1324,10 @@ const String& AccessibilityObject::actionVerb() const
     case ListItemRole:
         return listItemAction;
     default:
-        return noAction;
+        return nullAtom;
     }
 #else
-    DEFINE_STATIC_LOCAL(const String, noAction, ());
-    return noAction;
+    return nullAtom;
 #endif
 }
 #endif

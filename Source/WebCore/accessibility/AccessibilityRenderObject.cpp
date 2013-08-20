@@ -3151,8 +3151,7 @@ const String& AccessibilityRenderObject::actionVerb() const
     DEFINE_STATIC_LOCAL(const String, checkedCheckBoxAction, (AXCheckedCheckBoxActionVerb()));
     DEFINE_STATIC_LOCAL(const String, uncheckedCheckBoxAction, (AXUncheckedCheckBoxActionVerb()));
     DEFINE_STATIC_LOCAL(const String, linkAction, (AXLinkActionVerb()));
-    DEFINE_STATIC_LOCAL(const String, noAction, ());
-    
+
     switch (roleValue()) {
     case ButtonRole:
     case ToggleButtonRole:
@@ -3168,11 +3167,10 @@ const String& AccessibilityRenderObject::actionVerb() const
     case WebCoreLinkRole:
         return linkAction;
     default:
-        return noAction;
+        return nullAtom;
     }
 #else
-    DEFINE_STATIC_LOCAL(const String, noAction, ());
-    return noAction;
+    return nullAtom;
 #endif
 }
     
