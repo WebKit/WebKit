@@ -45,6 +45,8 @@ public:
     const Length* rowLengths() const { return m_rowLengths.get(); }
     const Length* colLengths() const { return m_colLengths.get(); }
 
+    static HTMLFrameSetElement* findContaining(Node* descendant);
+
     // Declared virtual in Element
     DEFINE_WINDOW_ATTRIBUTE_EVENT_LISTENER(blur);
     DEFINE_WINDOW_ATTRIBUTE_EVENT_LISTENER(error);
@@ -97,6 +99,28 @@ private:
     bool m_frameborderSet;
     bool m_noresize;
 };
+
+inline bool isHTMLFrameSetElement(const Node* node)
+{
+    return node->hasTagName(HTMLNames::framesetTag);
+}
+
+inline bool isHTMLFrameSetElement(const Element* element)
+{
+    return element->hasTagName(HTMLNames::framesetTag);
+}
+
+inline HTMLFrameSetElement* toHTMLFrameSetElement(Node* node)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(!node || isHTMLFrameSetElement(node));
+    return static_cast<HTMLFrameSetElement*>(node);
+}
+
+inline const HTMLFrameSetElement* toHTMLFrameSetElement(const Node* node)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(!node || isHTMLFrameSetElement(node));
+    return static_cast<const HTMLFrameSetElement*>(node);
+}
 
 } // namespace WebCore
 

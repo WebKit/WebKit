@@ -68,6 +68,7 @@
 #include "HTMLBodyElement.h"
 #include "HTMLElementFactory.h"
 #include "HTMLFrameOwnerElement.h"
+#include "HTMLFrameSetElement.h"
 #include "HTMLNames.h"
 #include "InspectorInstrumentation.h"
 #include "KURL.h"
@@ -392,7 +393,7 @@ void HTMLDocument::clear()
 bool HTMLDocument::isFrameSet() const
 {
     HTMLElement* bodyElement = body();
-    return bodyElement && bodyElement->hasTagName(framesetTag);
+    return bodyElement && isHTMLFrameSetElement(bodyElement);
 }
 
 }

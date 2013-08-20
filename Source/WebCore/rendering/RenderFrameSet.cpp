@@ -63,7 +63,7 @@ RenderFrameSet::GridAxis::GridAxis()
 
 inline HTMLFrameSetElement* RenderFrameSet::frameSet() const
 {
-    return static_cast<HTMLFrameSetElement*>(node());
+    return toHTMLFrameSetElement(node());
 }
 
 static Color borderStartEdgeColor()
