@@ -247,7 +247,7 @@ EXPORTS
         symbolWithPointer(?firstChild@ComposedShadowTreeWalker@WebCore@@QAEXXZ, ?firstChild@ComposedShadowTreeWalker@WebCore@@QEAAXXZ)
         symbolWithPointer(?lastChild@ComposedShadowTreeWalker@WebCore@@QAEXXZ, ?lastChild@ComposedShadowTreeWalker@WebCore@@QEAAXXZ)
         symbolWithPointer(?length@StaticNodeList@WebCore@@UBEIXZ, ?length@StaticNodeList@WebCore@@UEBAIXZ)
-        symbolWithPointer(?shadowRoot@Element@WebCore@@QBEPAVShadowRoot@2@XZ, ?shadowRoot@Element@WebCore@@QBEPAVShadowRoot@2@XZ)
+        symbolWithPointer(?shadowRoot@Element@WebCore@@QBEPAVShadowRoot@2@XZ, ?shadowRoot@Element@WebCore@@QEBAPEAVShadowRoot@2@XZ)
         ?localUserSpecificStorageDirectory@WebCore@@YA?AVString@WTF@@XZ
         symbolWithPointer(?namedItem@StaticNodeList@WebCore@@UBEPAVNode@2@ABVAtomicString@WTF@@@Z, ?namedItem@StaticNodeList@WebCore@@UEBAPEAVNode@2@AEBVAtomicString@WTF@@@Z)
         symbolWithPointer(?next@ComposedShadowTreeWalker@WebCore@@QAEXXZ, ?next@ComposedShadowTreeWalker@WebCore@@QEAAXXZ)

@@ -1,5 +1,11 @@
 2013-08-20  Alex Christensen  <achristensen@apple.com>
 
+        [Windows] Unreviewed build fix for Win64 after r154118.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
+
+2013-08-20  Alex Christensen  <achristensen@apple.com>
+
         <https://webkit.org/b/120076> More work towards a Win64 build
 
         Reviewed by Brent Fulgham.
