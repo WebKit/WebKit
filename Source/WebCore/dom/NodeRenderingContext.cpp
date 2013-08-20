@@ -190,7 +190,7 @@ bool NodeRenderingContext::shouldCreateRenderer() const
         return false;
     if (!parentRenderer->canHaveChildren() && !(m_node->isPseudoElement() && parentRenderer->canHaveGeneratedChildren()))
         return false;
-    if (!m_renderingParent->childShouldCreateRenderer(*this))
+    if (!m_renderingParent->childShouldCreateRenderer(m_node))
         return false;
     return true;
 }
@@ -233,18 +233,6 @@ void NodeRenderingContext::moveToFlowThreadIfNeeded()
     m_parentFlowRenderer = &flowThreadController->ensureRenderFlowThreadWithName(m_style->flowThread());
     flowThreadController->registerNamedFlowContentNode(m_node, m_parentFlowRenderer);
 #endif
-}
-
-bool NodeRenderingContext::isOnEncapsulationBoundary() const
-{
-    return isOnUpperEncapsulationBoundary()
-        || isLowerEncapsulationBoundary(findInsertionPointOf(m_node))
-        || isLowerEncapsulationBoundary(m_node->parentNode());
-}
-
-bool NodeRenderingContext::isOnUpperEncapsulationBoundary() const
-{
-    return m_node->parentNode() && m_node->parentNode()->isShadowRoot();
 }
 
 void NodeRenderingContext::createRendererForElementIfNeeded()

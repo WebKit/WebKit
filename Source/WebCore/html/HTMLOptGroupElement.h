@@ -63,12 +63,12 @@ private:
     RefPtr<RenderStyle> m_style;
 };
 
-inline bool isHTMLOptGroupElement(Node* node)
+inline bool isHTMLOptGroupElement(const Node* node)
 {
     return node->hasTagName(HTMLNames::optgroupTag);
 }
 
-inline bool isHTMLOptGroupElement(Element* element)
+inline bool isHTMLOptGroupElement(const Element* element)
 {
     return element->hasTagName(HTMLNames::optgroupTag);
 }

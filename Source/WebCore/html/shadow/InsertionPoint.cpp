@@ -88,11 +88,6 @@ bool InsertionPoint::shouldUseFallbackElements() const
     return isActive() && !hasDistribution();
 }
 
-bool InsertionPoint::isShadowBoundary() const
-{
-    return treeScope()->rootNode()->isShadowRoot() && isActive();
-}
-
 bool InsertionPoint::isActive() const
 {
     if (!containingShadowRoot())
@@ -109,7 +104,7 @@ bool InsertionPoint::isActive() const
 
 bool InsertionPoint::rendererIsNeeded(const RenderStyle& style)
 {
-    return !isShadowBoundary() && HTMLElement::rendererIsNeeded(style);
+    return !isActive() && HTMLElement::rendererIsNeeded(style);
 }
 
 void InsertionPoint::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)

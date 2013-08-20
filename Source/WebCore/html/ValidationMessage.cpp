@@ -226,7 +226,7 @@ void ValidationMessage::requestToHideMessage()
     m_timer->startOneShot(0);
 }
 
-bool ValidationMessage::shadowTreeContains(Node* node) const
+bool ValidationMessage::shadowTreeContains(const Node* node) const
 {
     if (validationMessageClient() || !m_bubble)
         return false;

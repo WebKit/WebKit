@@ -1,3 +1,109 @@
+2013-08-20  Antti Koivisto  <antti@apple.com>
+
+        <https://webkit.org/b/120078> Replace NodeRenderingContext with RenderStyle& as shouldCreateRenderer() argument
+
+        Reviewed by Darin Adler.
+
+        This simplifies the code. NodeRenderingContext was only used for getting the RenderStyle.
+
+        * dom/Element.cpp:
+        (WebCore::Element::rendererIsNeeded):
+        * dom/Element.h:
+        * dom/NodeRenderingContext.cpp:
+        (WebCore::NodeRenderingContext::elementInsideRegionNeedsRenderer):
+        (WebCore::NodeRenderingContext::createRendererForElementIfNeeded):
+        * dom/PseudoElement.cpp:
+        (WebCore::PseudoElement::rendererIsNeeded):
+        * dom/PseudoElement.h:
+        * html/HTMLAppletElement.cpp:
+        (WebCore::HTMLAppletElement::rendererIsNeeded):
+        * html/HTMLAppletElement.h:
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::rendererIsNeeded):
+        * html/HTMLElement.h:
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::rendererIsNeeded):
+        * html/HTMLEmbedElement.h:
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::rendererIsNeeded):
+        * html/HTMLFormElement.h:
+        * html/HTMLFrameElement.cpp:
+        (WebCore::HTMLFrameElement::rendererIsNeeded):
+        * html/HTMLFrameElement.h:
+        * html/HTMLFrameSetElement.cpp:
+        (WebCore::HTMLFrameSetElement::rendererIsNeeded):
+        * html/HTMLFrameSetElement.h:
+        * html/HTMLIFrameElement.cpp:
+        (WebCore::HTMLIFrameElement::rendererIsNeeded):
+        * html/HTMLIFrameElement.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::rendererIsNeeded):
+        * html/HTMLInputElement.h:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::rendererIsNeeded):
+        * html/HTMLMediaElement.h:
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::rendererIsNeeded):
+        * html/HTMLObjectElement.h:
+        * html/HTMLOptGroupElement.h:
+        * html/HTMLOptionElement.h:
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::rendererIsNeeded):
+        * html/HTMLVideoElement.h:
+        * html/shadow/DetailsMarkerControl.cpp:
+        (WebCore::DetailsMarkerControl::rendererIsNeeded):
+        * html/shadow/DetailsMarkerControl.h:
+        * html/shadow/InsertionPoint.cpp:
+        (WebCore::InsertionPoint::rendererIsNeeded):
+        * html/shadow/InsertionPoint.h:
+        * html/shadow/MeterShadowElement.cpp:
+        (WebCore::MeterShadowElement::rendererIsNeeded):
+        (WebCore::MeterInnerElement::rendererIsNeeded):
+        * html/shadow/MeterShadowElement.h:
+        * html/shadow/ProgressShadowElement.cpp:
+        (WebCore::ProgressShadowElement::rendererIsNeeded):
+        (WebCore::ProgressInnerElement::rendererIsNeeded):
+        * html/shadow/ProgressShadowElement.h:
+        * svg/SVGDescElement.h:
+        * svg/SVGElement.h:
+        (WebCore::SVGElement::rendererIsNeeded):
+        * svg/SVGFilterPrimitiveStandardAttributes.cpp:
+        (WebCore::SVGFilterPrimitiveStandardAttributes::rendererIsNeeded):
+        * svg/SVGFilterPrimitiveStandardAttributes.h:
+        * svg/SVGFontElement.h:
+        * svg/SVGForeignObjectElement.cpp:
+        (WebCore::SVGForeignObjectElement::rendererIsNeeded):
+        * svg/SVGForeignObjectElement.h:
+        * svg/SVGGElement.cpp:
+        (WebCore::SVGGElement::rendererIsNeeded):
+        * svg/SVGGElement.h:
+        * svg/SVGGlyphElement.h:
+        * svg/SVGGlyphRefElement.h:
+        * svg/SVGHKernElement.h:
+        * svg/SVGMarkerElement.h:
+        * svg/SVGMissingGlyphElement.h:
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::rendererIsNeeded):
+        * svg/SVGSVGElement.h:
+        * svg/SVGStopElement.cpp:
+        (WebCore::SVGStopElement::rendererIsNeeded):
+        * svg/SVGStopElement.h:
+        * svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::rendererIsNeeded):
+        * svg/SVGStyledElement.h:
+        * svg/SVGTRefElement.cpp:
+        (WebCore::SVGTRefElement::rendererIsNeeded):
+        * svg/SVGTRefElement.h:
+        * svg/SVGTSpanElement.cpp:
+        (WebCore::SVGTSpanElement::rendererIsNeeded):
+        * svg/SVGTSpanElement.h:
+        * svg/SVGTextPathElement.cpp:
+        (WebCore::SVGTextPathElement::rendererIsNeeded):
+        * svg/SVGTextPathElement.h:
+        * svg/SVGTitleElement.h:
+        * svg/SVGVKernElement.h:
+        * svg/SVGViewElement.h:
+
 2013-08-20  Daniel Bates  <dabates@apple.com>
 
         <https://webkit.org/b/120088> Define Clipboard::hasData() only when building with drag support

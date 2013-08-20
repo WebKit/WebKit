@@ -135,6 +135,11 @@ inline ContainerNode* Node::parentOrShadowHostNode() const
     return parentNode();
 }
 
+inline bool hasShadowRootParent(const Node* node)
+{
+    return node->parentNode() && node->parentNode()->isShadowRoot();
+}
+
 } // namespace
 
 #endif

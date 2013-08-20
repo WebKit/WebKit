@@ -224,16 +224,16 @@ bool SVGAElement::isKeyboardFocusable(KeyboardEvent* event) const
     return document()->frame()->eventHandler().tabsToLinks(event);
 }
 
-bool SVGAElement::childShouldCreateRenderer(const NodeRenderingContext& childContext) const
+bool SVGAElement::childShouldCreateRenderer(const Node* child) const
 {
     // http://www.w3.org/2003/01/REC-SVG11-20030114-errata#linking-text-environment
     // The 'a' element may contain any element that its parent may contain, except itself.
-    if (childContext.node()->hasTagName(SVGNames::aTag))
+    if (child->hasTagName(SVGNames::aTag))
         return false;
     if (parentNode() && parentNode()->isSVGElement())
-        return parentNode()->childShouldCreateRenderer(childContext);
+        return parentNode()->childShouldCreateRenderer(child);
 
-    return SVGElement::childShouldCreateRenderer(childContext);
+    return SVGElement::childShouldCreateRenderer(child);
 }
 
 } // namespace WebCore

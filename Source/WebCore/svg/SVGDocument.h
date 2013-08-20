@@ -51,7 +51,7 @@ public:
 private:
     SVGDocument(Frame*, const KURL&);
 
-    virtual bool childShouldCreateRenderer(const NodeRenderingContext&) const;
+    virtual bool childShouldCreateRenderer(const Node*) const;
 
     FloatPoint m_translate;
 };

@@ -38,7 +38,7 @@ private:
     virtual bool supportsFocus() const OVERRIDE { return true; }
 
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
-    virtual bool childShouldCreateRenderer(const NodeRenderingContext&) const;
+    virtual bool childShouldCreateRenderer(const Node*) const;
 };
 
 } // namespace WebCore

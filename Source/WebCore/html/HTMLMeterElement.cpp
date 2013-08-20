@@ -65,9 +65,9 @@ RenderObject* HTMLMeterElement::createRenderer(RenderArena* arena, RenderStyle* 
     return new (arena) RenderMeter(this);
 }
 
-bool HTMLMeterElement::childShouldCreateRenderer(const NodeRenderingContext& childContext) const
+bool HTMLMeterElement::childShouldCreateRenderer(const Node* child) const
 {
-    return childContext.isOnUpperEncapsulationBoundary() && HTMLElement::childShouldCreateRenderer(childContext);
+    return hasShadowRootParent(child) && HTMLElement::childShouldCreateRenderer(child);
 }
 
 void HTMLMeterElement::parseAttribute(const QualifiedName& name, const AtomicString& value)

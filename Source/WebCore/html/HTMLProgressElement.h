@@ -55,7 +55,7 @@ private:
     virtual bool supportLabels() const OVERRIDE { return true; }
 
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
-    virtual bool childShouldCreateRenderer(const NodeRenderingContext&) const OVERRIDE;
+    virtual bool childShouldCreateRenderer(const Node*) const OVERRIDE;
     RenderProgress* renderProgress() const;
 
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
