@@ -1,3 +1,10 @@
+2013-08-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Windows build fix after r154314.
+
+        * platform/graphics/cg/PathCG.cpp:
+        (WebCore::Path::platformAddPathForRoundedRect):
+
 2013-08-19  Hurnjoo Lee  <hurnjoo.lee@samsung.com>
 
         [Cairo] Canvas putImageData is not working as expected
