@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -148,6 +148,21 @@ static bool modifyPath(const wstring& programName)
     return false;
 }
 
+static wstring getLastErrorString(HRESULT hr)
+{
+    static const DWORD kFlags = FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS;
+    static const size_t bufSize = 4096;
+
+    wchar_t errorMessage[bufSize];
+    DWORD len = ::FormatMessageW(kFlags, 0, hr, 0, errorMessage, bufSize, 0);
+    if (len >= bufSize)
+        len = bufSize - 1;
+
+    errorMessage[len + 1] = 0;
+
+    return errorMessage;
+}
+
 #if USE_CONSOLE_ENTRY_POINT
 int main(int argc, const char* argv[])
 #else
@@ -159,7 +174,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpstrCm
     // Get the path of our executable.
     wchar_t exePath[MAX_PATH];
     if (!::GetModuleFileNameW(0, exePath, _countof(exePath)))
-        return fatalError(L"Unknown Program", L"Failed to determine name of executable.");
+        return fatalError(L"Unknown Program", L"Failed to determine name of executable: " + getLastErrorString(::GetLastError()));
 
     ::PathRemoveExtensionW(exePath);
 
@@ -171,12 +186,12 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpstrCm
     // Load our corresponding DLL.
     wstring dllName = programName + L".dll";
     if (!::PathRemoveFileSpecW(exePath))
-        return fatalError(programName, L"::PathRemoveFileSpecW failed.");
+        return fatalError(programName, L"::PathRemoveFileSpecW failed: " + getLastErrorString(::GetLastError()));
     if (!::PathAppendW(exePath, dllName.c_str()))
-        return fatalError(programName, L"::PathAppendW failed.");
+        return fatalError(programName, L"::PathAppendW failed: " + getLastErrorString(::GetLastError()));
     HMODULE module = ::LoadLibraryW(exePath);
     if (!module)
-        return fatalError(programName, L"::LoadLibraryW failed.");
+        return fatalError(programName, L"::LoadLibraryW failed: \npath=" + wstring(exePath) + L"\n" + getLastErrorString(::GetLastError()));
 
 #if USE_CONSOLE_ENTRY_POINT
     typedef int (WINAPI*EntryPoint)(int, const char*[]);
@@ -196,7 +211,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpstrCm
 
     EntryPoint entryPoint = reinterpret_cast<EntryPoint>(::GetProcAddress(module, entryPointName));
     if (!entryPoint)
-        return fatalError(programName, L"Failed to find dllLauncherEntryPoint function.");
+        return fatalError(programName, L"Failed to find dllLauncherEntryPoint function: " + getLastErrorString(::GetLastError()));
 
 #if USE_CONSOLE_ENTRY_POINT
     return entryPoint(argc, argv);
