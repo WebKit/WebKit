@@ -1,3 +1,17 @@
+2013-08-20  Tim Horton  <timothy_horton@apple.com>
+
+        <https://webkit.org/b/105988> [Mac] Some inspector tests intermittently assert in InspectorOverlay::paint
+        <rdar://problem/12958038>
+
+        Reviewed by Joseph Pecoraro.
+
+        Update the inspector overlay's layout before painting, if it is stale.
+
+        No new tests; fixes an intermittent assertion failure in some existing tests.
+
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::InspectorOverlay::paint):
+
 2013-08-20  Daniel Bates  <dabates@apple.com>
 
         Build fix after <http://trac.webkit.org/changeset/154260> (https://webkit.org/b/119949);
