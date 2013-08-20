@@ -1,3 +1,15 @@
+2013-08-20  Tim Horton  <timothy_horton@apple.com>
+
+        Failing test expectations for two tests
+
+        One recently regressed:
+        webkit.org/b/120086 http/tests/security/cross-frame-access-getOwnPropertyDescriptor.html
+
+        One was recently added in a failing state:
+        webkit.org/b/120083 fast/js/regress/emscripten-cube2hash.html
+
+        * platform/mac/TestExpectations:
+
 2013-08-20  Ryosuke Niwa  <rniwa@webkit.org>
 
         <https://webkit.org/b/120087> Lion: fast/forms/submit-to-url-fragment.html intermittently crashes
