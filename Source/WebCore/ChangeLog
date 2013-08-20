@@ -1,3 +1,18 @@
+2013-08-19  Santosh Mahto  <santosh.ma@samsung.com>
+
+        <https://webkit.org/b/119991> change usage of calculateUTCOffset()/calculateDSTOffset  to calculateLocalTimeOffset
+
+        Reviewed by Darin Adler.
+
+        Resolving code error.
+
+        * html/BaseDateAndTimeInputType.cpp:
+        (WebCore::BaseDateAndTimeInputType::defaultValueForStepUp):
+        * html/MonthInputType.cpp:
+        (WebCore::MonthInputType::defaultValueForStepUp):
+        * html/TimeInputType.cpp:
+        (WebCore::TimeInputType::defaultValueForStepUp):
+
 2013-08-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         <https://webkit.org/b/120049> Delete code for Snow Leopard
