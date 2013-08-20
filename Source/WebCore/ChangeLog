@@ -1,3 +1,27 @@
+2013-08-20  Benjamin Poulain  <benjamin@webkit.org>
+
+        <https://webkit.org/b/120050> Don't bother using a Vector for the ouput of querySelector, just return the first element found
+
+        Reviewed by Ryosuke Niwa.
+
+        Simplify the case of querySelector. Instead of using the same output type as querySelectorAll,
+        simply use a trait to define what to do in the loop.
+
+        * dom/SelectorQuery.cpp:
+        (WebCore::AllElementExtractorSelectorQueryTrait::appendOutputForElement):
+        (WebCore::SelectorDataList::queryAll):
+        (WebCore::SingleElementExtractorSelectorQueryTrait::appendOutputForElement):
+        (WebCore::SelectorDataList::queryFirst):
+        (WebCore::SelectorDataList::executeFastPathForIdSelector):
+        (WebCore::elementsForLocalName):
+        (WebCore::anyElement):
+        (WebCore::SelectorDataList::executeSingleTagNameSelectorData):
+        (WebCore::SelectorDataList::executeSingleClassNameSelectorData):
+        (WebCore::SelectorDataList::executeSingleSelectorData):
+        (WebCore::SelectorDataList::executeSingleMultiSelectorData):
+        (WebCore::SelectorDataList::execute):
+        * dom/SelectorQuery.h:
+
 2013-08-20  Antti Koivisto  <antti@apple.com>
 
         Rollout the previous patch for landing with the correct ChangeLog.
