@@ -617,6 +617,7 @@ public:
     AXID axObjectID() const { return m_id; }
     
     static AccessibilityObject* anchorElementForNode(Node*);
+    static AccessibilityObject* headingElementForNode(Node*);
     virtual Element* anchorElement() const { return 0; }
     virtual Element* actionElement() const { return 0; }
     virtual LayoutRect boundingBoxRect() const { return LayoutRect(); }
@@ -868,6 +869,10 @@ public:
     AccessibilityObjectInclusion accessibilityPlatformIncludesObject() const { return DefaultBehavior; }
 #endif
 
+#if PLATFORM(IOS)
+    int accessibilityPasswordFieldLength();
+#endif
+    
     // allows for an AccessibilityObject to update its render tree or perform
     // other operations update type operations
     void updateBackingStore();

@@ -50,7 +50,7 @@
 #import "WAKView.h"
 #import "WAKWindow.h"
 #import "WebCoreThread.h"
-#import "visible_units.h"
+#import "VisibleUnits.h"
 
 #import <GraphicsServices/GraphicsServices.h>
 

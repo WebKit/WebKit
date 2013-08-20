@@ -44,12 +44,16 @@ PassRefPtr<AccessibilityMenuList> AccessibilityMenuList::create(RenderMenuList* 
 
 bool AccessibilityMenuList::press() const
 {
+#if !PLATFORM(IOS)
     RenderMenuList* menuList = static_cast<RenderMenuList*>(m_renderer);
     if (menuList->popupIsVisible())
         menuList->hidePopup();
     else
         menuList->showPopup();
     return true;
+#else
+    return false;
+#endif
 }
 
 void AccessibilityMenuList::addChildren()
@@ -84,7 +88,11 @@ void AccessibilityMenuList::childrenChanged()
 
 bool AccessibilityMenuList::isCollapsed() const
 {
+#if !PLATFORM(IOS)
     return !static_cast<RenderMenuList*>(m_renderer)->popupIsVisible();
+#else
+    return true;
+#endif
 }
 
 bool AccessibilityMenuList::canSetFocusAttribute() const

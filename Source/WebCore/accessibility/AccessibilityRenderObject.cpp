@@ -1952,7 +1952,7 @@ IntRect AccessibilityRenderObject::boundsForVisiblePositionRange(const VisiblePo
             ourrect = boundingBox;
     }
     
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) && !PLATFORM(IOS)
     return m_renderer->document()->view()->contentsToScreen(pixelSnappedIntRect(ourrect));
 #else
     return pixelSnappedIntRect(ourrect);
@@ -3143,6 +3143,7 @@ void AccessibilityRenderObject::tabChildren(AccessibilityChildrenVector& result)
     
 const String& AccessibilityRenderObject::actionVerb() const
 {
+#if !PLATFORM(IOS)
     // FIXME: Need to add verbs for select elements.
     DEFINE_STATIC_LOCAL(const String, buttonAction, (AXButtonActionVerb()));
     DEFINE_STATIC_LOCAL(const String, textFieldAction, (AXTextFieldActionVerb()));
@@ -3169,6 +3170,10 @@ const String& AccessibilityRenderObject::actionVerb() const
     default:
         return noAction;
     }
+#else
+    DEFINE_STATIC_LOCAL(const String, noAction, ());
+    return noAction;
+#endif
 }
     
 void AccessibilityRenderObject::setAccessibleName(const AtomicString& name)
