@@ -9,4 +9,4 @@ all:
 clean:
     -del "%ConfigurationBuildDir%\buildfailed"
     copy-files.cmd clean
-    -del /s /q "%ConfigurationBuildDir%\obj32\JavaScriptCore\DerivedSources"
+    -del /s /q "%ConfigurationBuildDir%\obj%PlatformArchitecture%\JavaScriptCore\DerivedSources"
