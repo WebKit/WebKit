@@ -59,6 +59,8 @@ namespace WebCore {
 
         PassRefPtr<FileList> files() const;
 
+        bool hasData();
+
         void clearData(const String& type);
         void clearData();
 
@@ -84,7 +86,6 @@ namespace WebCore {
         static PassRefPtr<Clipboard> createForDragAndDrop(ClipboardAccessPolicy, const DragData&);
 
         bool dropEffectIsUninitialized() const { return m_dropEffect == "uninitialized"; }
-        bool hasData();
 
         DragOperation sourceOperation() const;
         DragOperation destinationOperation() const;

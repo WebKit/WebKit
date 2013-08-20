@@ -1,3 +1,10 @@
+2013-08-20  Daniel Bates  <dabates@apple.com>
+
+        Build fix after <http://trac.webkit.org/changeset/154260> (https://webkit.org/b/119949);
+        declare Clipboard::hasData() when building with and without drag support
+
+        * dom/Clipboard.h:
+
 2013-08-20  Hans Muller  <hmuller@adobe.com>
 
         <https://webkit.org/b/119849> [CSS Shapes] Complete RasterShape::firstIncludedIntervalLogicalTop()
