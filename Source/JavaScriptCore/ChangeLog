@@ -1,3 +1,21 @@
+2013-08-20  Gavin Barraclough  <barraclough@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=120052
+        Remove custom getOwnPropertyDescriptor for JSProxy
+
+        Reviewed by Geoff Garen.
+
+        GET_OWN_PROPERTY_DESCRIPTOR_IMPL runs afoul with JSProxy due to the workaround for JSDOMWindow's broken behavior.
+        Because the window object incorrectly searches the prototype chain in getOwnPropertySlot we check that the base
+        object matches, but in the case of JSProxy we can end up comparing the window object to the window shell & falsely
+        assuming this is a prototype property. Add toThis conversion to correctly identify proxied own access. I've kept
+        the original slotBase check as a fast case, and also so that direct access on JSDOMWindow still works.
+
+        * runtime/JSProxy.cpp:
+            - Remove custom getOwnPropertyDescriptor implementation.
+        * runtime/PropertyDescriptor.h:
+            - Modify own property access check to perform toThis conversion.
+
 2013-08-20  Alex Christensen  <achristensen@apple.com>
 
         Use PlatformArchitecture to distinguish between 32-bit and 64-bit builds on Windows.

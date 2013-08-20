@@ -92,7 +92,7 @@ bool ClassName::getOwnPropertyDescriptor(JSC::JSObject* object, JSC::ExecState* 
     if (!getOwnPropertySlot(object, exec, propertyName, slot)) \
         return false; \
     /* Workaround, JSDOMWindow::getOwnPropertySlot searches the prototype chain. :-( */ \
-    if (slot.slotBase() && slot.slotBase() != object) \
+    if (slot.slotBase() != object && slot.slotBase() && slot.slotBase()->methodTable()->toThis(slot.slotBase(), exec, NotStrictMode) != object) \
         return false; \
     if (slot.isGetter()) \
         descriptor.setAccessorDescriptor(slot.getterSetter(), slot.attributes()); \
