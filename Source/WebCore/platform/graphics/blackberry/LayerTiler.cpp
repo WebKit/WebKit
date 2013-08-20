@@ -224,7 +224,6 @@ void LayerTiler::updateTextureContentsIfNeeded(double scale)
         dirtyRect = IntRect(IntPoint::zero(), requiredTextureSize);
     }
 
-    IntRect previousTextureRect(IntPoint::zero(), m_pendingTextureSize);
     if (m_pendingTextureSize != requiredTextureSize) {
         m_pendingTextureSize = requiredTextureSize;
         addTextureJob(TextureJob::resizeContents(m_pendingTextureSize));
