@@ -522,7 +522,7 @@ void SVGElement::finishParsingChildren()
     sendSVGLoadEventIfPossible();
 }
 
-bool SVGElement::childShouldCreateRenderer(const Node* child) const
+bool SVGElement::childShouldCreateRenderer(const NodeRenderingContext& childContext) const
 {
     DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, invalidTextContent, ());
 
@@ -534,8 +534,8 @@ bool SVGElement::childShouldCreateRenderer(const Node* child) const
         invalidTextContent.add(SVGNames::trefTag);
         invalidTextContent.add(SVGNames::tspanTag);
     }
-    if (child->isSVGElement()) {
-        const SVGElement* svgChild = toSVGElement(child);
+    if (childContext.node()->isSVGElement()) {
+        SVGElement* svgChild = toSVGElement(childContext.node());
         if (invalidTextContent.contains(svgChild->tagQName()))
             return false;
 

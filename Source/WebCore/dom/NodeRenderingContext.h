@@ -62,6 +62,9 @@ public:
 
     const RenderStyle* style() const;
 
+    bool isOnUpperEncapsulationBoundary() const;
+    bool isOnEncapsulationBoundary() const;
+
 private:
     bool shouldCreateRenderer() const;
     void moveToFlowThreadIfNeeded();

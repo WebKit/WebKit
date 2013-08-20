@@ -345,13 +345,13 @@ RenderObject* HTMLSelectElement::createRenderer(RenderArena* arena, RenderStyle*
     return new (arena) RenderListBox(this);
 }
 
-bool HTMLSelectElement::childShouldCreateRenderer(const Node* child) const
+bool HTMLSelectElement::childShouldCreateRenderer(const NodeRenderingContext& childContext) const
 {
-    if (!HTMLFormControlElementWithState::childShouldCreateRenderer(child))
+    if (!HTMLFormControlElementWithState::childShouldCreateRenderer(childContext))
         return false;
     if (!usesMenuList())
-        return isHTMLOptionElement(child) || isHTMLOptGroupElement(child) || validationMessageShadowTreeContains(child);
-    return validationMessageShadowTreeContains(child);
+        return isHTMLOptionElement(childContext.node()) || isHTMLOptGroupElement(childContext.node()) || validationMessageShadowTreeContains(childContext.node());
+    return validationMessageShadowTreeContains(childContext.node());
 }
 
 PassRefPtr<HTMLCollection> HTMLSelectElement::selectedOptions()

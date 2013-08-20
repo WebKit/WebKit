@@ -44,7 +44,6 @@
 #include "RenderTextControl.h"
 #include "RenderTheme.h"
 #include "ScriptEventListener.h"
-#include "ShadowRoot.h"
 #include "Text.h"
 #include "TextIterator.h"
 #include <wtf/text/StringBuilder.h>
@@ -67,13 +66,13 @@ HTMLTextFormControlElement::~HTMLTextFormControlElement()
 {
 }
 
-bool HTMLTextFormControlElement::childShouldCreateRenderer(const Node* child) const
+bool HTMLTextFormControlElement::childShouldCreateRenderer(const NodeRenderingContext& childContext) const
 {
     // FIXME: We shouldn't force the pseudo elements down into the shadow, but
     // this perserves the current behavior of WebKit.
-    if (child->isPseudoElement())
-        return HTMLFormControlElementWithState::childShouldCreateRenderer(child);
-    return hasShadowRootParent(child) && HTMLFormControlElementWithState::childShouldCreateRenderer(child);
+    if (childContext.node()->isPseudoElement())
+        return HTMLFormControlElementWithState::childShouldCreateRenderer(childContext);
+    return childContext.isOnEncapsulationBoundary() && HTMLFormControlElementWithState::childShouldCreateRenderer(childContext);
 }
 
 Node::InsertionNotificationRequest HTMLTextFormControlElement::insertedInto(ContainerNode* insertionPoint)
@@ -627,7 +626,7 @@ HTMLTextFormControlElement* enclosingTextFormControl(const Position& position)
 {
     ASSERT(position.isNull() || position.anchorType() == Position::PositionIsOffsetInAnchor
         || position.containerNode() || !position.anchorNode()->shadowHost()
-        || hasShadowRootParent(position.anchorNode()));
+        || (position.anchorNode()->parentNode() && position.anchorNode()->parentNode()->isShadowRoot()));
         
     Node* container = position.containerNode();
     if (!container)

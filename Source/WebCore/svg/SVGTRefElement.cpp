@@ -226,9 +226,9 @@ RenderObject* SVGTRefElement::createRenderer(RenderArena* arena, RenderStyle*)
     return new (arena) RenderSVGInline(this);
 }
 
-bool SVGTRefElement::childShouldCreateRenderer(const Node* child) const
+bool SVGTRefElement::childShouldCreateRenderer(const NodeRenderingContext& childContext) const
 {
-    return child->isInShadowTree();
+    return childContext.node()->isInShadowTree();
 }
 
 bool SVGTRefElement::rendererIsNeeded(const RenderStyle& style)

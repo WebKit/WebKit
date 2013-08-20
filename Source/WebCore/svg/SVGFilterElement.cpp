@@ -194,12 +194,12 @@ RenderObject* SVGFilterElement::createRenderer(RenderArena* arena, RenderStyle*)
     return new (arena) RenderSVGResourceFilter(this);
 }
 
-bool SVGFilterElement::childShouldCreateRenderer(const Node* child) const
+bool SVGFilterElement::childShouldCreateRenderer(const NodeRenderingContext& childContext) const
 {
-    if (!child->isSVGElement())
+    if (!childContext.node()->isSVGElement())
         return false;
 
-    const SVGElement* svgElement = toSVGElement(child);
+    SVGElement* svgElement = toSVGElement(childContext.node());
 
     DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, allowedChildElementTags, ());
     if (allowedChildElementTags.isEmpty()) {

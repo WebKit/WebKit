@@ -74,16 +74,16 @@ RenderObject* SVGTextElement::createRenderer(RenderArena* arena, RenderStyle*)
     return new (arena) RenderSVGText(this);
 }
 
-bool SVGTextElement::childShouldCreateRenderer(const Node* child) const
+bool SVGTextElement::childShouldCreateRenderer(const NodeRenderingContext& childContext) const
 {
-    if (child->isTextNode()
-        || child->hasTagName(SVGNames::aTag)
+    if (childContext.node()->isTextNode()
+        || childContext.node()->hasTagName(SVGNames::aTag)
 #if ENABLE(SVG_FONTS)
-        || child->hasTagName(SVGNames::altGlyphTag)
+        || childContext.node()->hasTagName(SVGNames::altGlyphTag)
 #endif
-        || child->hasTagName(SVGNames::textPathTag)
-        || child->hasTagName(SVGNames::trefTag)
-        || child->hasTagName(SVGNames::tspanTag))
+        || childContext.node()->hasTagName(SVGNames::textPathTag)
+        || childContext.node()->hasTagName(SVGNames::trefTag)
+        || childContext.node()->hasTagName(SVGNames::tspanTag))
         return true;
 
     return false;

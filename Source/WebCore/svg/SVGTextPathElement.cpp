@@ -134,12 +134,12 @@ RenderObject* SVGTextPathElement::createRenderer(RenderArena* arena, RenderStyle
     return new (arena) RenderSVGTextPath(this);
 }
 
-bool SVGTextPathElement::childShouldCreateRenderer(const Node* child) const
+bool SVGTextPathElement::childShouldCreateRenderer(const NodeRenderingContext& childContext) const
 {
-    if (child->isTextNode()
-        || child->hasTagName(SVGNames::aTag)
-        || child->hasTagName(SVGNames::trefTag)
-        || child->hasTagName(SVGNames::tspanTag))
+    if (childContext.node()->isTextNode()
+        || childContext.node()->hasTagName(SVGNames::aTag)
+        || childContext.node()->hasTagName(SVGNames::trefTag)
+        || childContext.node()->hasTagName(SVGNames::tspanTag))
         return true;
 
     return false;

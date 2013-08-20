@@ -67,9 +67,9 @@ RenderObject* HTMLProgressElement::createRenderer(RenderArena* arena, RenderStyl
     return new (arena) RenderProgress(this);
 }
 
-bool HTMLProgressElement::childShouldCreateRenderer(const Node* child) const
+bool HTMLProgressElement::childShouldCreateRenderer(const NodeRenderingContext& childContext) const
 {
-    return hasShadowRootParent(child) && HTMLElement::childShouldCreateRenderer(child);
+    return childContext.isOnUpperEncapsulationBoundary() && HTMLElement::childShouldCreateRenderer(childContext);
 }
 
 RenderProgress* HTMLProgressElement::renderProgress() const

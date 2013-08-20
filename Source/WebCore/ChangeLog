@@ -1,3 +1,7 @@
+2013-08-20  Antti Koivisto  <antti@apple.com>
+
+        Rollout the previous patch for landing with the correct ChangeLog.
+
 013-08-20  Jacky Jiang  <zhajiang@blackberry.com>
 
         <https://webkit.org/b/120082> [BlackBerry] Remove unused previousTextureRect in LayerTiler

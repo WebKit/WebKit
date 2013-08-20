@@ -94,10 +94,10 @@ void SVGDocument::updatePan(const FloatPoint& pos) const
     }
 }
 
-bool SVGDocument::childShouldCreateRenderer(const Node* child) const
+bool SVGDocument::childShouldCreateRenderer(const NodeRenderingContext& childContext) const
 {
-    if (child->hasTagName(SVGNames::svgTag))
-        return toSVGSVGElement(child)->isValid();
+    if (childContext.node()->hasTagName(SVGNames::svgTag))
+        return toSVGSVGElement(childContext.node())->isValid();
     return true;
 }
 

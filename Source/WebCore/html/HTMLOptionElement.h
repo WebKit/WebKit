@@ -95,12 +95,12 @@ private:
     RefPtr<RenderStyle> m_style;
 };
 
-inline bool isHTMLOptionElement(const Node* node)
+inline bool isHTMLOptionElement(Node* node)
 {
     return node->hasTagName(HTMLNames::optionTag);
 }
 
-inline bool isHTMLOptionElement(const Element* element)
+inline bool isHTMLOptionElement(Element* element)
 {
     return element->hasTagName(HTMLNames::optionTag);
 }

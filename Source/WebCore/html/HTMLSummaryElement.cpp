@@ -71,12 +71,12 @@ RenderObject* HTMLSummaryElement::createRenderer(RenderArena* arena, RenderStyle
     return new (arena) RenderBlock(this);
 }
 
-bool HTMLSummaryElement::childShouldCreateRenderer(const Node* child) const
+bool HTMLSummaryElement::childShouldCreateRenderer(const NodeRenderingContext& childContext) const
 {
-    if (child->isPseudoElement())
-        return HTMLElement::childShouldCreateRenderer(child);
+    if (childContext.node()->isPseudoElement())
+        return HTMLElement::childShouldCreateRenderer(childContext);
 
-    return hasShadowRootOrActiveInsertionPointParent(child) && HTMLElement::childShouldCreateRenderer(child);
+    return childContext.isOnEncapsulationBoundary() && HTMLElement::childShouldCreateRenderer(childContext);
 }
 
 void HTMLSummaryElement::didAddUserAgentShadowRoot(ShadowRoot* root)

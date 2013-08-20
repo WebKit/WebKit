@@ -128,7 +128,7 @@ protected:
     void setNeedsWillValidateCheck();
     virtual bool recalcWillValidate() const;
 
-    bool validationMessageShadowTreeContains(const Node*) const;
+    bool validationMessageShadowTreeContains(Node*) const;
 
 private:
     virtual void refFormAssociatedElement() { ref(); }

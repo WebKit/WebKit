@@ -192,13 +192,6 @@ inline SVGSVGElement* toSVGSVGElement(Node* node)
     return static_cast<SVGSVGElement*>(node);
 }
 
-inline const SVGSVGElement* toSVGSVGElement(const Node* node)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(!node || node->isSVGElement());
-    ASSERT_WITH_SECURITY_IMPLICATION(!node || toSVGElement(node)->isSVGSVGElement());
-    return static_cast<const SVGSVGElement*>(node);
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(SVG)

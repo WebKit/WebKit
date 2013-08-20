@@ -56,6 +56,7 @@ public:
     bool hasDistribution() const { return m_hasDistribution; }
     void setHasDistribution() { m_hasDistribution = true; }
     void clearDistribution() { m_hasDistribution = false; }
+    bool isShadowBoundary() const;
     bool isActive() const;
 
     virtual MatchType matchTypeFor(Node*) const { return AlwaysMatches; }
@@ -98,7 +99,14 @@ inline const InsertionPoint* toInsertionPoint(const Node* node)
 
 inline bool isActiveInsertionPoint(const Node* node)
 {
-    return node && node->isInsertionPoint() && toInsertionPoint(node)->isActive();
+    return node->isInsertionPoint() && toInsertionPoint(node)->isActive();
+}
+
+inline bool isLowerEncapsulationBoundary(Node* node)
+{
+    if (!node || !node->isInsertionPoint())
+        return false;
+    return toInsertionPoint(node)->isShadowBoundary();
 }
 
 inline Node* parentNodeForDistribution(const Node* node)
@@ -134,13 +142,6 @@ inline ShadowRoot* shadowRootOfParentForDistribution(const Node* node)
 }
 
 InsertionPoint* findInsertionPointOf(const Node*);
-
-inline bool hasShadowRootOrActiveInsertionPointParent(const Node* node)
-{
-    return hasShadowRootParent(node)
-        || isActiveInsertionPoint(findInsertionPointOf(node))
-        || isActiveInsertionPoint(node->parentNode());
-}
 
 } // namespace WebCore
 

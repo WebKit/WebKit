@@ -76,9 +76,9 @@ const AtomicString& SVGAltGlyphElement::format() const
     return fastGetAttribute(SVGNames::formatAttr);
 }
 
-bool SVGAltGlyphElement::childShouldCreateRenderer(const Node* child) const
+bool SVGAltGlyphElement::childShouldCreateRenderer(const NodeRenderingContext& childContext) const
 {
-    if (child->isTextNode())
+    if (childContext.node()->isTextNode())
         return true;
     return false;
 }
