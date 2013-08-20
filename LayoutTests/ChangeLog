@@ -1,3 +1,15 @@
+2013-08-19  James Craig  <james@cookiecrook.com>
+
+        <https://webkit.org/b/118754> AX: aria-required.html needs to test @required vs @aria-required mismatch reconciliation
+
+        Reviewed by Chris Fleizach.
+
+        More thorough testing of @required and @aria-required, especially regarding conflict resolution.
+        Found https://webkit.org/b/119988 as a result of the updated test.
+
+        * accessibility/aria-required-expected.txt:
+        * accessibility/aria-required.html:
+
 2013-08-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         <https://webkit.org/b/119930> input[type=range]: Fix a crash by changing input type in 'input' event handler
