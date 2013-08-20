@@ -1,5 +1,14 @@
 2013-08-20  Antti Koivisto  <antti@apple.com>
 
+        <https://webkit.org/b/120023> REGRESSION(r154257): svg/custom/bug78807.svg and svg/custom/use-invalid-style.svg failing
+
+        Reviewed by Andreas Kling.
+
+        * xml/XMLErrors.cpp:
+        (WebCore::XMLErrors::insertErrorMessageBlock): "reattach" had accidentally turned into "detach" in refactoring.
+
+2013-08-20  Antti Koivisto  <antti@apple.com>
+
         <https://webkit.org/b/119969> REGRESSION (r154232): Crash on the japantimes.co.jp
 
         Reviewed by Andreas Kling.

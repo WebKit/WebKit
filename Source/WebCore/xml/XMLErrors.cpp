@@ -147,7 +147,7 @@ void XMLErrors::insertErrorMessageBlock()
         if (m_document->attached())
             // In general, rootElement shouldn't be attached right now, but it will be if there is a style element
             // in the SVG content.
-            Style::detachRenderTree(rootElement.get());
+            Style::reattachRenderTree(rootElement.get());
 
         documentElement = body.get();
     }
