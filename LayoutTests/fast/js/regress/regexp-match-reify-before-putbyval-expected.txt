@@ -1,0 +1,11 @@
+JSRegress/regexp-match-reify-before-putbyval
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS matches is ['http://www.dummy.com/images/123x456/image.jpg','http://www.dummy.com/images/',111,'x',222,'/image.jpg']
+PASS no exception thrown
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

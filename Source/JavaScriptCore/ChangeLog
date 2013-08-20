@@ -1,3 +1,14 @@
+2013-08-20  Michael Saboff  <msaboff@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=120075
+        REGRESSION (r128400): BBC4 website not displaying pictures
+
+        Reviewed by Oliver Hunt.
+
+        * runtime/RegExpMatchesArray.h:
+        (JSC::RegExpMatchesArray::createStructure): Changed the array IndexingType to be ArrayWithSlowPutArrayStorage
+        so that the match results will be reified before any other modification to the results array.
+
 2013-08-19  Filip Pizlo  <fpizlo@apple.com>
 
         Incorrect behavior on emscripten-compiled cube2hash
