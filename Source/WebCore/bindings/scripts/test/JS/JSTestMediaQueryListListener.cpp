@@ -69,8 +69,6 @@ bool JSTestMediaQueryListListenerConstructor::getOwnPropertySlot(JSObject* objec
     return getStaticValueSlot<JSTestMediaQueryListListenerConstructor, JSDOMWrapper>(exec, &JSTestMediaQueryListListenerConstructorTable, jsCast<JSTestMediaQueryListListenerConstructor*>(object), propertyName, slot);
 }
 
-GET_OWN_PROPERTY_DESCRIPTOR_IMPL(JSTestMediaQueryListListenerConstructor)
-
 /* Hash table for prototype */
 
 static const HashTableValue JSTestMediaQueryListListenerPrototypeTableValues[] =
@@ -92,8 +90,6 @@ bool JSTestMediaQueryListListenerPrototype::getOwnPropertySlot(JSObject* object,
     JSTestMediaQueryListListenerPrototype* thisObject = jsCast<JSTestMediaQueryListListenerPrototype*>(object);
     return getStaticFunctionSlot<JSObject>(exec, &JSTestMediaQueryListListenerPrototypeTable, thisObject, propertyName, slot);
 }
-
-GET_OWN_PROPERTY_DESCRIPTOR_IMPL(JSTestMediaQueryListListenerPrototype)
 
 const ClassInfo JSTestMediaQueryListListener::s_info = { "TestMediaQueryListListener", &Base::s_info, &JSTestMediaQueryListListenerTable, 0 , CREATE_METHOD_TABLE(JSTestMediaQueryListListener) };
 
@@ -131,8 +127,6 @@ bool JSTestMediaQueryListListener::getOwnPropertySlot(JSObject* object, ExecStat
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     return getStaticValueSlot<JSTestMediaQueryListListener, Base>(exec, &JSTestMediaQueryListListenerTable, thisObject, propertyName, slot);
 }
-
-GET_OWN_PROPERTY_DESCRIPTOR_IMPL(JSTestMediaQueryListListener)
 
 JSValue jsTestMediaQueryListListenerConstructor(ExecState* exec, JSValue slotBase, PropertyName)
 {

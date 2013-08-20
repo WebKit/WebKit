@@ -55,7 +55,6 @@ namespace JSC {
         static CallType getCallData(JSCell*, CallData&);
 
         static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
-        static bool getOwnPropertyDescriptor(JSObject*, ExecState*, PropertyName, PropertyDescriptor&);
     };
     
     JSCell* JSC_HOST_CALL stringFromCharCode(ExecState*, int32_t);

@@ -46,8 +46,6 @@ public:
 
 protected:
     static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
-    static bool getOwnPropertyDescriptor(
-        JSObject*, ExecState*, PropertyName, PropertyDescriptor&);
     
     static const unsigned StructureFlags = OverridesGetOwnPropertySlot | Base::StructureFlags;
 };

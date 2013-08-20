@@ -289,8 +289,6 @@ bool JSNPObject::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyN
     return false;
 }
 
-GET_OWN_PROPERTY_DESCRIPTOR_IMPL(JSNPObject)
-
 void JSNPObject::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot&)
 {
     JSNPObject* thisObject = JSC::jsCast<JSNPObject*>(cell);

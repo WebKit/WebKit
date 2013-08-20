@@ -60,8 +60,6 @@ bool StringObject::getOwnPropertySlotByIndex(JSObject* object, ExecState* exec, 
     return JSObject::getOwnPropertySlot(thisObject, exec, Identifier::from(exec, propertyName), slot);
 }
 
-GET_OWN_PROPERTY_DESCRIPTOR_IMPL(StringObject)
-
 void StringObject::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
     if (propertyName == exec->propertyNames().length) {

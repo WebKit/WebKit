@@ -100,8 +100,6 @@ bool RegExpObject::getOwnPropertySlot(JSObject* object, ExecState* exec, Propert
     return getStaticValueSlot<RegExpObject, JSObject>(exec, ExecState::regExpTable(exec), jsCast<RegExpObject*>(object), propertyName, slot);
 }
 
-GET_OWN_PROPERTY_DESCRIPTOR_IMPL(RegExpObject)
-
 bool RegExpObject::deleteProperty(JSCell* cell, ExecState* exec, PropertyName propertyName)
 {
     if (propertyName == exec->propertyNames().lastIndex)

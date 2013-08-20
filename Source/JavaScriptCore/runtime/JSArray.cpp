@@ -189,8 +189,6 @@ bool JSArray::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName
     return JSObject::getOwnPropertySlot(thisObject, exec, propertyName, slot);
 }
 
-GET_OWN_PROPERTY_DESCRIPTOR_IMPL(JSArray)
-
 // ECMA 15.4.5.1
 void JSArray::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {

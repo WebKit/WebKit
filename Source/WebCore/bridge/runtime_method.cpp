@@ -72,8 +72,6 @@ bool RuntimeMethod::getOwnPropertySlot(JSObject* object, ExecState* exec, Proper
     return InternalFunction::getOwnPropertySlot(thisObject, exec, propertyName, slot);
 }
 
-GET_OWN_PROPERTY_DESCRIPTOR_IMPL(RuntimeMethod)
-
 static EncodedJSValue JSC_HOST_CALL callRuntimeMethod(ExecState* exec)
 {
     RuntimeMethod* method = static_cast<RuntimeMethod*>(exec->callee());

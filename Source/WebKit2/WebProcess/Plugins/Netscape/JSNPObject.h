@@ -86,7 +86,6 @@ private:
     static JSC::ConstructType getConstructData(JSC::JSCell*, JSC::ConstructData&);
 
     static bool getOwnPropertySlot(JSC::JSObject*, JSC::ExecState*, JSC::PropertyName, JSC::PropertySlot&);
-    static bool getOwnPropertyDescriptor(JSC::JSObject*, JSC::ExecState*, JSC::PropertyName, JSC::PropertyDescriptor&);
     static void put(JSC::JSCell*, JSC::ExecState*, JSC::PropertyName, JSC::JSValue, JSC::PutPropertySlot&);
 
     static bool deleteProperty(JSC::JSCell*, JSC::ExecState*, JSC::PropertyName);

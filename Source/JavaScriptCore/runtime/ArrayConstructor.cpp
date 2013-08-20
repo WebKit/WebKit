@@ -71,8 +71,6 @@ bool ArrayConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec, Pro
     return getStaticFunctionSlot<InternalFunction>(exec, ExecState::arrayConstructorTable(exec), jsCast<ArrayConstructor*>(object), propertyName, slot);
 }
 
-GET_OWN_PROPERTY_DESCRIPTOR_IMPL(ArrayConstructor)
-
 // ------------------------------ Functions ---------------------------
 
 JSObject* constructArrayWithSizeQuirk(ExecState* exec, ArrayAllocationProfile* profile, JSGlobalObject* globalObject, JSValue length)

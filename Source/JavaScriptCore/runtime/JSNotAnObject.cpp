@@ -58,8 +58,6 @@ bool JSNotAnObject::getOwnPropertySlotByIndex(JSObject*, ExecState* exec, unsign
     return false;
 }
 
-GET_OWN_PROPERTY_DESCRIPTOR_IMPL(JSNotAnObject)
-
 void JSNotAnObject::put(JSCell*, ExecState* exec, PropertyName , JSValue, PutPropertySlot&)
 {
     ASSERT_UNUSED(exec, exec->hadException());

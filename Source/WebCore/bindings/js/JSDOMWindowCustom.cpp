@@ -331,8 +331,6 @@ bool JSDOMWindow::getOwnPropertySlotByIndex(JSObject* object, ExecState* exec, u
     return Base::getOwnPropertySlotByIndex(thisObject, exec, index, slot);
 }
 
-GET_OWN_PROPERTY_DESCRIPTOR_IMPL(JSDOMWindow)
-
 void JSDOMWindow::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
     JSDOMWindow* thisObject = jsCast<JSDOMWindow*>(cell);

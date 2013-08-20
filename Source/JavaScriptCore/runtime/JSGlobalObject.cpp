@@ -641,8 +641,6 @@ bool JSGlobalObject::getOwnPropertySlot(JSObject* object, ExecState* exec, Prope
     return symbolTableGet(thisObject, propertyName, slot);
 }
 
-GET_OWN_PROPERTY_DESCRIPTOR_IMPL(JSGlobalObject)
-
 void JSGlobalObject::clearRareData(JSCell* cell)
 {
     jsCast<JSGlobalObject*>(cell)->m_rareData.clear();

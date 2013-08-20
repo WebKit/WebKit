@@ -101,8 +101,6 @@ bool JSTestTypedefsConstructor::getOwnPropertySlot(JSObject* object, ExecState* 
     return getStaticValueSlot<JSTestTypedefsConstructor, JSDOMWrapper>(exec, &JSTestTypedefsConstructorTable, jsCast<JSTestTypedefsConstructor*>(object), propertyName, slot);
 }
 
-GET_OWN_PROPERTY_DESCRIPTOR_IMPL(JSTestTypedefsConstructor)
-
 ConstructType JSTestTypedefsConstructor::getConstructData(JSCell*, ConstructData& constructData)
 {
     constructData.native.function = constructJSTestTypedefs;
@@ -138,8 +136,6 @@ bool JSTestTypedefsPrototype::getOwnPropertySlot(JSObject* object, ExecState* ex
     JSTestTypedefsPrototype* thisObject = jsCast<JSTestTypedefsPrototype*>(object);
     return getStaticFunctionSlot<JSObject>(exec, &JSTestTypedefsPrototypeTable, thisObject, propertyName, slot);
 }
-
-GET_OWN_PROPERTY_DESCRIPTOR_IMPL(JSTestTypedefsPrototype)
 
 const ClassInfo JSTestTypedefs::s_info = { "TestTypedefs", &Base::s_info, &JSTestTypedefsTable, 0 , CREATE_METHOD_TABLE(JSTestTypedefs) };
 
@@ -177,8 +173,6 @@ bool JSTestTypedefs::getOwnPropertySlot(JSObject* object, ExecState* exec, Prope
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     return getStaticValueSlot<JSTestTypedefs, Base>(exec, &JSTestTypedefsTable, thisObject, propertyName, slot);
 }
-
-GET_OWN_PROPERTY_DESCRIPTOR_IMPL(JSTestTypedefs)
 
 JSValue jsTestTypedefsUnsignedLongLongAttr(ExecState* exec, JSValue slotBase, PropertyName)
 {

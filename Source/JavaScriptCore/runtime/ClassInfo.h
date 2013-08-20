@@ -95,9 +95,6 @@ struct MethodTable {
     typedef bool (*DefineOwnPropertyFunctionPtr)(JSObject*, ExecState*, PropertyName, PropertyDescriptor&, bool);
     DefineOwnPropertyFunctionPtr defineOwnProperty;
 
-    typedef bool (*GetOwnPropertyDescriptorFunctionPtr)(JSObject*, ExecState*, PropertyName, PropertyDescriptor&);
-    GetOwnPropertyDescriptorFunctionPtr getOwnPropertyDescriptor;
-    
     typedef void (*SlowDownAndWasteMemory)(JSArrayBufferView*);
     SlowDownAndWasteMemory slowDownAndWasteMemory;
     
@@ -145,7 +142,6 @@ struct MethodTable {
         &ClassName::customHasInstance, \
         &ClassName::putDirectVirtual, \
         &ClassName::defineOwnProperty, \
-        &ClassName::getOwnPropertyDescriptor, \
         &ClassName::slowDownAndWasteMemory, \
         &ClassName::getTypedArrayImpl \
     }, \

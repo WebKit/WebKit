@@ -77,8 +77,6 @@ bool JSTestSerializedScriptValueInterfaceConstructor::getOwnPropertySlot(JSObjec
     return getStaticValueSlot<JSTestSerializedScriptValueInterfaceConstructor, JSDOMWrapper>(exec, &JSTestSerializedScriptValueInterfaceConstructorTable, jsCast<JSTestSerializedScriptValueInterfaceConstructor*>(object), propertyName, slot);
 }
 
-GET_OWN_PROPERTY_DESCRIPTOR_IMPL(JSTestSerializedScriptValueInterfaceConstructor)
-
 /* Hash table for prototype */
 
 static const HashTableValue JSTestSerializedScriptValueInterfacePrototypeTableValues[] =
@@ -130,8 +128,6 @@ bool JSTestSerializedScriptValueInterface::getOwnPropertySlot(JSObject* object, 
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     return getStaticValueSlot<JSTestSerializedScriptValueInterface, Base>(exec, &JSTestSerializedScriptValueInterfaceTable, thisObject, propertyName, slot);
 }
-
-GET_OWN_PROPERTY_DESCRIPTOR_IMPL(JSTestSerializedScriptValueInterface)
 
 JSValue jsTestSerializedScriptValueInterfaceValue(ExecState* exec, JSValue slotBase, PropertyName)
 {

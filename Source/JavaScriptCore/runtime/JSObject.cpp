@@ -1410,7 +1410,7 @@ bool JSObject::defaultHasInstance(ExecState* exec, JSValue value, JSValue proto)
 bool JSObject::propertyIsEnumerable(ExecState* exec, const Identifier& propertyName) const
 {
     PropertyDescriptor descriptor;
-    if (!const_cast<JSObject*>(this)->methodTable()->getOwnPropertyDescriptor(const_cast<JSObject*>(this), exec, propertyName, descriptor))
+    if (!const_cast<JSObject*>(this)->getOwnPropertyDescriptor(exec, propertyName, descriptor))
         return false;
     return descriptor.enumerable();
 }
@@ -2381,7 +2381,20 @@ Butterfly* JSObject::growOutOfLineStorage(VM& vm, size_t oldSize, size_t newSize
     return m_butterfly->growPropertyStorage(vm, this, structure(), oldSize, newSize);
 }
 
-GET_OWN_PROPERTY_DESCRIPTOR_IMPL(JSObject)
+bool JSObject::getOwnPropertyDescriptor(ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)
+{
+    JSC::PropertySlot slot(this);
+    if (!methodTable()->getOwnPropertySlot(this, exec, propertyName, slot))
+        return false;
+    /* Workaround, JSDOMWindow::getOwnPropertySlot searches the prototype chain. :-( */
+    if (slot.slotBase() != this && slot.slotBase() && slot.slotBase()->methodTable()->toThis(slot.slotBase(), exec, NotStrictMode) != this)
+        return false;
+    if (slot.isAccessor())
+        descriptor.setAccessorDescriptor(slot.getterSetter(), slot.attributes());
+    else
+        descriptor.setDescriptor(slot.getValue(exec, propertyName), slot.attributes());
+    return true;
+}
 
 static bool putDescriptor(ExecState* exec, JSObject* target, PropertyName propertyName, PropertyDescriptor& descriptor, unsigned attributes, const PropertyDescriptor& oldDescriptor)
 {
@@ -2457,7 +2470,7 @@ bool JSObject::defineOwnNonIndexProperty(ExecState* exec, PropertyName propertyN
     
     // If we have a new property we can just put it on normally
     PropertyDescriptor current;
-    if (!methodTable()->getOwnPropertyDescriptor(this, exec, propertyName, current)) {
+    if (!getOwnPropertyDescriptor(exec, propertyName, current)) {
         // unless extensions are prevented!
         if (!isExtensible()) {
             if (throwException)

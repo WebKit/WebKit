@@ -85,20 +85,4 @@ namespace JSC {
     };
 }
 
-#define GET_OWN_PROPERTY_DESCRIPTOR_IMPL(ClassName) \
-bool ClassName::getOwnPropertyDescriptor(JSC::JSObject* object, JSC::ExecState* exec, JSC::PropertyName propertyName, JSC::PropertyDescriptor& descriptor) \
-{ \
-    JSC::PropertySlot slot(object); \
-    if (!getOwnPropertySlot(object, exec, propertyName, slot)) \
-        return false; \
-    /* Workaround, JSDOMWindow::getOwnPropertySlot searches the prototype chain. :-( */ \
-    if (slot.slotBase() != object && slot.slotBase() && slot.slotBase()->methodTable()->toThis(slot.slotBase(), exec, NotStrictMode) != object) \
-        return false; \
-    if (slot.isAccessor()) \
-        descriptor.setAccessorDescriptor(slot.getterSetter(), slot.attributes()); \
-    else \
-        descriptor.setDescriptor(slot.getValue(exec, propertyName), slot.attributes()); \
-    return true; \
-}
-
 #endif

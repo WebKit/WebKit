@@ -215,8 +215,6 @@ bool ObjcFallbackObjectImp::getOwnPropertySlot(JSObject*, ExecState*, PropertyNa
     return true;
 }
 
-GET_OWN_PROPERTY_DESCRIPTOR_IMPL(ObjcFallbackObjectImp)
-
 void ObjcFallbackObjectImp::put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&)
 {
 }

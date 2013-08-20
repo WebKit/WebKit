@@ -234,9 +234,6 @@ bool JSGenericTypedArrayView<Adaptor>::getOwnPropertySlot(
 }
 
 template<typename Adaptor>
-GET_OWN_PROPERTY_DESCRIPTOR_IMPL(JSGenericTypedArrayView<Adaptor>)
-
-template<typename Adaptor>
 void JSGenericTypedArrayView<Adaptor>::put(
     JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value,
     PutPropertySlot& slot)

@@ -240,8 +240,6 @@ bool JSTestObjConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec,
     return getStaticPropertySlot<JSTestObjConstructor, JSDOMWrapper>(exec, &JSTestObjConstructorTable, jsCast<JSTestObjConstructor*>(object), propertyName, slot);
 }
 
-GET_OWN_PROPERTY_DESCRIPTOR_IMPL(JSTestObjConstructor)
-
 ConstructType JSTestObjConstructor::getConstructData(JSCell*, ConstructData& constructData)
 {
     constructData.native.function = constructJSTestObj;
@@ -349,8 +347,6 @@ bool JSTestObjPrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, P
     return getStaticPropertySlot<JSTestObjPrototype, JSObject>(exec, &JSTestObjPrototypeTable, thisObject, propertyName, slot);
 }
 
-GET_OWN_PROPERTY_DESCRIPTOR_IMPL(JSTestObjPrototype)
-
 const ClassInfo JSTestObj::s_info = { "TestObject", &Base::s_info, &JSTestObjTable, 0 , CREATE_METHOD_TABLE(JSTestObj) };
 
 JSTestObj::JSTestObj(Structure* structure, JSDOMGlobalObject* globalObject, PassRefPtr<TestObj> impl)
@@ -387,8 +383,6 @@ bool JSTestObj::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyNa
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     return getStaticValueSlot<JSTestObj, Base>(exec, &JSTestObjTable, thisObject, propertyName, slot);
 }
-
-GET_OWN_PROPERTY_DESCRIPTOR_IMPL(JSTestObj)
 
 JSValue jsTestObjReadOnlyLongAttr(ExecState* exec, JSValue slotBase, PropertyName)
 {

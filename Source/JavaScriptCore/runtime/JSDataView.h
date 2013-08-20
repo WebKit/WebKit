@@ -56,7 +56,6 @@ public:
 
 protected:
     static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
-    static bool getOwnPropertyDescriptor(JSObject*, ExecState*, PropertyName, PropertyDescriptor&);
 
     static void slowDownAndWasteMemory(JSArrayBufferView*);
     static PassRefPtr<ArrayBufferView> getTypedArrayImpl(JSArrayBufferView*);

@@ -66,8 +66,6 @@ bool ErrorPrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, Prope
     return getStaticFunctionSlot<ErrorInstance>(exec, ExecState::errorPrototypeTable(exec), jsCast<ErrorPrototype*>(object), propertyName, slot);
 }
 
-GET_OWN_PROPERTY_DESCRIPTOR_IMPL(ErrorPrototype)
-
 // ------------------------------ Functions ---------------------------
 
 // ECMA-262 5.1, 15.11.4.4

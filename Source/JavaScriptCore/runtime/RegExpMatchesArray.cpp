@@ -57,8 +57,6 @@ void RegExpMatchesArray::finishCreation(VM& vm)
     Base::finishCreation(vm);
 }
 
-GET_OWN_PROPERTY_DESCRIPTOR_IMPL(RegExpMatchesArray)
-
 void RegExpMatchesArray::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     RegExpMatchesArray* thisObject = jsCast<RegExpMatchesArray*>(cell);

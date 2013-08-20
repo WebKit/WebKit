@@ -686,7 +686,6 @@ sub GenerateHeader
     # Getters
     if ($hasGetter) {
         push(@headerContent, "    static bool getOwnPropertySlot(JSC::JSObject*, JSC::ExecState*, JSC::PropertyName, JSC::PropertySlot&);\n");
-        push(@headerContent, "    static bool getOwnPropertyDescriptor(JSC::JSObject*, JSC::ExecState*, JSC::PropertyName, JSC::PropertyDescriptor&);\n");
         push(@headerContent, "    static bool getOwnPropertySlotByIndex(JSC::JSObject*, JSC::ExecState*, unsigned propertyName, JSC::PropertySlot&);\n") if ($hasComplexGetter);
         push(@headerContent, "    bool getOwnPropertySlotDelegate(JSC::ExecState*, JSC::PropertyName, JSC::PropertySlot&);\n") if $interface->extendedAttributes->{"JSCustomGetOwnPropertySlotAndDescriptor"};
         $structureFlags{"JSC::OverridesGetOwnPropertySlot"} = 1;
@@ -973,7 +972,6 @@ sub GenerateHeader
     push(@headerContent, "    DECLARE_INFO;\n");
     if ($numFunctions > 0 || $numConstants > 0) {
         push(@headerContent, "    static bool getOwnPropertySlot(JSC::JSObject*, JSC::ExecState*, JSC::PropertyName, JSC::PropertySlot&);\n");
-        push(@headerContent, "    static bool getOwnPropertyDescriptor(JSC::JSObject*, JSC::ExecState*, JSC::PropertyName, JSC::PropertyDescriptor&);\n");
         $structureFlags{"JSC::OverridesGetOwnPropertySlot"} = 1;
     }
     if ($interface->extendedAttributes->{"JSCustomMarkFunction"} or $needsMarkChildren) {
@@ -1657,8 +1655,6 @@ sub GenerateImplementation
             push(@implContent, "    return getStaticPropertySlot<${className}Prototype, JSObject>(exec, " . prototypeHashTableAccessor($interface->extendedAttributes->{"JSNoStaticTables"}, $className) . ", thisObject, propertyName, slot);\n");
         }
         push(@implContent, "}\n\n");
-
-        push(@implContent, "GET_OWN_PROPERTY_DESCRIPTOR_IMPL(${className}Prototype)\n\n");
     }
 
     if ($interface->extendedAttributes->{"JSCustomNamedGetterOnPrototype"}) {
@@ -1784,7 +1780,6 @@ sub GenerateImplementation
                 push(@implContent, GenerateGetOwnPropertySlotBody($interface, $interfaceName, $className, $numAttributes > 0, 0));
                 push(@implContent, "}\n\n");
             }
-            push(@implContent, "GET_OWN_PROPERTY_DESCRIPTOR_IMPL(${className})\n\n");
         }
 
         if ($indexedGetterFunction || $namedGetterFunction
@@ -3751,7 +3746,6 @@ sub GenerateConstructorDeclaration
     push(@$outputArray, "    }\n\n");
 
     push(@$outputArray, "    static bool getOwnPropertySlot(JSC::JSObject*, JSC::ExecState*, JSC::PropertyName, JSC::PropertySlot&);\n");
-    push(@$outputArray, "    static bool getOwnPropertyDescriptor(JSC::JSObject*, JSC::ExecState*, JSC::PropertyName, JSC::PropertyDescriptor&);\n");
     push(@$outputArray, "    DECLARE_INFO;\n");
 
     push(@$outputArray, "    static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)\n");
@@ -4113,8 +4107,6 @@ sub GenerateConstructorHelperMethods
         push(@$outputArray, "{\n");
         push(@$outputArray, "    return getStatic${kind}Slot<${constructorClassName}, JSDOMWrapper>(exec, " . constructorHashTableAccessor($interface->extendedAttributes->{"JSNoStaticTables"}, $constructorClassName) . ", jsCast<${constructorClassName}*>(object), propertyName, slot);\n");
         push(@$outputArray, "}\n\n");
-
-        push(@$outputArray, "GET_OWN_PROPERTY_DESCRIPTOR_IMPL(${constructorClassName})\n\n");
     }
 
     if (IsConstructable($interface)) {

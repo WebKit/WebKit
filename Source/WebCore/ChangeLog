@@ -1,3 +1,58 @@
+2013-08-20  Gavin Barraclough  <barraclough@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=120093
+        Remove getOwnPropertyDescriptor trap
+
+        Reviewed by Geoff Garen.
+
+        All implementations of this method are now called via the method table, and equivalent in behaviour.
+        Remove all duplicate implementations (and the method table trap), and add a single member function implementation on JSObject.
+
+        * WebCore.exp.in:
+        * bindings/js/JSDOMWindowCustom.cpp:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        (GenerateImplementation):
+        (GenerateConstructorDeclaration):
+        (GenerateConstructorHelperMethods):
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.cpp:
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.h:
+        * bindings/scripts/test/JS/JSTestCustomNamedGetter.cpp:
+        * bindings/scripts/test/JS/JSTestCustomNamedGetter.h:
+        * bindings/scripts/test/JS/JSTestEventConstructor.cpp:
+        * bindings/scripts/test/JS/JSTestEventConstructor.h:
+        * bindings/scripts/test/JS/JSTestEventTarget.cpp:
+        * bindings/scripts/test/JS/JSTestEventTarget.h:
+        * bindings/scripts/test/JS/JSTestException.cpp:
+        * bindings/scripts/test/JS/JSTestException.h:
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        * bindings/scripts/test/JS/JSTestInterface.h:
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.cpp:
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.h:
+        * bindings/scripts/test/JS/JSTestNamedConstructor.cpp:
+        * bindings/scripts/test/JS/JSTestNamedConstructor.h:
+        * bindings/scripts/test/JS/JSTestNode.cpp:
+        * bindings/scripts/test/JS/JSTestNode.h:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/JS/JSTestObj.h:
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.cpp:
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.h:
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.h:
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        * bindings/scripts/test/JS/JSTestTypedefs.h:
+        * bridge/jsc/BridgeJSC.h:
+        (JSC::Bindings::Instance::getOwnPropertySlot):
+        * bridge/objc/objc_runtime.h:
+        * bridge/objc/objc_runtime.mm:
+        * bridge/runtime_array.cpp:
+        * bridge/runtime_array.h:
+        * bridge/runtime_method.cpp:
+        * bridge/runtime_method.h:
+        * bridge/runtime_object.cpp:
+        * bridge/runtime_object.h:
+            - remove getOwnPropertyDescriptor
+
 2013-08-20  Antti Koivisto  <antti@apple.com>
 
         <https://webkit.org/b/120071> Replace NodeRenderingContext with Node* as childShouldCreateRenderer() argument

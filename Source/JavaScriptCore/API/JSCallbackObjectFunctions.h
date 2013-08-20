@@ -213,9 +213,6 @@ JSValue JSCallbackObject<Parent>::defaultValue(const JSObject* object, ExecState
 }
 
 template <class Parent>
-GET_OWN_PROPERTY_DESCRIPTOR_IMPL(JSCallbackObject<Parent>)
-
-template <class Parent>
 void JSCallbackObject<Parent>::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
     JSCallbackObject* thisObject = jsCast<JSCallbackObject*>(cell);

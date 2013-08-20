@@ -95,8 +95,6 @@ bool JSDataView::getOwnPropertySlot(
     return Base::getOwnPropertySlot(thisObject, exec, propertyName, slot);
 }
 
-GET_OWN_PROPERTY_DESCRIPTOR_IMPL(JSDataView)
-
 void JSDataView::slowDownAndWasteMemory(JSArrayBufferView*)
 {
     UNREACHABLE_FOR_PLATFORM();

@@ -75,8 +75,6 @@ bool JSTestEventTargetConstructor::getOwnPropertySlot(JSObject* object, ExecStat
     return getStaticValueSlot<JSTestEventTargetConstructor, JSDOMWrapper>(exec, &JSTestEventTargetConstructorTable, jsCast<JSTestEventTargetConstructor*>(object), propertyName, slot);
 }
 
-GET_OWN_PROPERTY_DESCRIPTOR_IMPL(JSTestEventTargetConstructor)
-
 /* Hash table for prototype */
 
 static const HashTableValue JSTestEventTargetPrototypeTableValues[] =
@@ -101,8 +99,6 @@ bool JSTestEventTargetPrototype::getOwnPropertySlot(JSObject* object, ExecState*
     JSTestEventTargetPrototype* thisObject = jsCast<JSTestEventTargetPrototype*>(object);
     return getStaticFunctionSlot<JSObject>(exec, &JSTestEventTargetPrototypeTable, thisObject, propertyName, slot);
 }
-
-GET_OWN_PROPERTY_DESCRIPTOR_IMPL(JSTestEventTargetPrototype)
 
 const ClassInfo JSTestEventTarget::s_info = { "TestEventTarget", &Base::s_info, &JSTestEventTargetTable, 0 , CREATE_METHOD_TABLE(JSTestEventTarget) };
 
@@ -155,8 +151,6 @@ bool JSTestEventTarget::getOwnPropertySlot(JSObject* object, ExecState* exec, Pr
     }
     return getStaticValueSlot<JSTestEventTarget, Base>(exec, &JSTestEventTargetTable, thisObject, propertyName, slot);
 }
-
-GET_OWN_PROPERTY_DESCRIPTOR_IMPL(JSTestEventTarget)
 
 bool JSTestEventTarget::getOwnPropertySlotByIndex(JSObject* object, ExecState* exec, unsigned index, PropertySlot& slot)
 {

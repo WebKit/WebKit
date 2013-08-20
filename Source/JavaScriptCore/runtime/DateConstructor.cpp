@@ -91,8 +91,6 @@ bool DateConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec, Prop
     return getStaticFunctionSlot<InternalFunction>(exec, ExecState::dateConstructorTable(exec), jsCast<DateConstructor*>(object), propertyName, slot);
 }
 
-GET_OWN_PROPERTY_DESCRIPTOR_IMPL(DateConstructor)
-
 // ECMA 15.9.3
 JSObject* constructDate(ExecState* exec, JSGlobalObject* globalObject, const ArgList& args)
 {

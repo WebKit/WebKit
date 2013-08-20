@@ -48,7 +48,6 @@ namespace JSC {
         static void putDirectVirtual(JSObject*, ExecState*, PropertyName, JSValue, unsigned attributes);
         static bool deleteProperty(JSCell*, ExecState*, PropertyName);
         static void getOwnPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
-        static bool getOwnPropertyDescriptor(JSObject*, ExecState*, PropertyName, PropertyDescriptor&);
         static bool defineOwnProperty(JSObject*, ExecState*, PropertyName, PropertyDescriptor&, bool shouldThrow);
 
         DECLARE_EXPORT_INFO;

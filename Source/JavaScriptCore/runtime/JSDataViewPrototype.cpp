@@ -90,8 +90,6 @@ bool JSDataViewPrototype::getOwnPropertySlot(
         propertyName, slot);
 }
 
-GET_OWN_PROPERTY_DESCRIPTOR_IMPL(JSDataViewPrototype)
-
 template<typename Adaptor>
 EncodedJSValue getData(ExecState* exec)
 {

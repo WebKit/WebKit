@@ -68,8 +68,6 @@ bool JSTestExceptionConstructor::getOwnPropertySlot(JSObject* object, ExecState*
     return getStaticValueSlot<JSTestExceptionConstructor, JSDOMWrapper>(exec, &JSTestExceptionConstructorTable, jsCast<JSTestExceptionConstructor*>(object), propertyName, slot);
 }
 
-GET_OWN_PROPERTY_DESCRIPTOR_IMPL(JSTestExceptionConstructor)
-
 /* Hash table for prototype */
 
 static const HashTableValue JSTestExceptionPrototypeTableValues[] =
@@ -121,8 +119,6 @@ bool JSTestException::getOwnPropertySlot(JSObject* object, ExecState* exec, Prop
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     return getStaticValueSlot<JSTestException, Base>(exec, &JSTestExceptionTable, thisObject, propertyName, slot);
 }
-
-GET_OWN_PROPERTY_DESCRIPTOR_IMPL(JSTestException)
 
 JSValue jsTestExceptionName(ExecState* exec, JSValue slotBase, PropertyName)
 {

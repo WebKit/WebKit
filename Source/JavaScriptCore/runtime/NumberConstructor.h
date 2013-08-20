@@ -41,7 +41,6 @@ namespace JSC {
         static void put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
 
         static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
-        static bool getOwnPropertyDescriptor(JSObject*, ExecState*, PropertyName, PropertyDescriptor&);
         JSValue getValueProperty(ExecState*, int token) const;
 
         DECLARE_INFO;

@@ -218,8 +218,6 @@ bool JSCell::defineOwnProperty(JSObject*, ExecState*, PropertyName, PropertyDesc
     return false;
 }
 
-GET_OWN_PROPERTY_DESCRIPTOR_IMPL(JSCell)
-
 void JSCell::slowDownAndWasteMemory(JSArrayBufferView*)
 {
     RELEASE_ASSERT_NOT_REACHED();

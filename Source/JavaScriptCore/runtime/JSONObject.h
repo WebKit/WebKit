@@ -57,7 +57,6 @@ namespace JSC {
     private:
         JSONObject(JSGlobalObject*, Structure*);
         static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
-        static bool getOwnPropertyDescriptor(JSObject*, ExecState*, PropertyName, PropertyDescriptor&);
 
     };
 

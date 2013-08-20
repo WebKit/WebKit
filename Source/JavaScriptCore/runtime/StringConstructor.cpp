@@ -65,8 +65,6 @@ bool StringConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec, Pr
     return getStaticFunctionSlot<InternalFunction>(exec, ExecState::stringConstructorTable(exec), jsCast<StringConstructor*>(object), propertyName, slot);
 }
 
-GET_OWN_PROPERTY_DESCRIPTOR_IMPL(StringConstructor)
-
 // ------------------------------ Functions --------------------------------
 
 static NEVER_INLINE JSValue stringFromCharCodeSlowCase(ExecState* exec)

@@ -53,7 +53,6 @@ namespace JSC {
 
     private:
         static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
-        static bool getOwnPropertyDescriptor(JSObject*, ExecState*, PropertyName, PropertyDescriptor&);
     };
 
 } // namespace JSC

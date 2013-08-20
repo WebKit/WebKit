@@ -75,8 +75,6 @@ bool JSTestNodeConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec
     return getStaticValueSlot<JSTestNodeConstructor, JSDOMWrapper>(exec, &JSTestNodeConstructorTable, jsCast<JSTestNodeConstructor*>(object), propertyName, slot);
 }
 
-GET_OWN_PROPERTY_DESCRIPTOR_IMPL(JSTestNodeConstructor)
-
 ConstructType JSTestNodeConstructor::getConstructData(JSCell*, ConstructData& constructData)
 {
     constructData.native.function = constructJSTestNode;
@@ -122,8 +120,6 @@ bool JSTestNode::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyN
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     return getStaticValueSlot<JSTestNode, Base>(exec, &JSTestNodeTable, thisObject, propertyName, slot);
 }
-
-GET_OWN_PROPERTY_DESCRIPTOR_IMPL(JSTestNode)
 
 JSValue jsTestNodeConstructor(ExecState* exec, JSValue slotBase, PropertyName)
 {

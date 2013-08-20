@@ -95,8 +95,6 @@ void DebuggerActivation::getOwnPropertyNames(JSObject* object, ExecState* exec, 
     thisObject->m_activation->methodTable()->getPropertyNames(thisObject->m_activation.get(), exec, propertyNames, mode);
 }
 
-GET_OWN_PROPERTY_DESCRIPTOR_IMPL(DebuggerActivation)
-
 bool DebuggerActivation::defineOwnProperty(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor, bool shouldThrow)
 {
     DebuggerActivation* thisObject = jsCast<DebuggerActivation*>(object);

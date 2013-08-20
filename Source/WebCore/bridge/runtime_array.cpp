@@ -103,8 +103,6 @@ bool RuntimeArray::getOwnPropertySlot(JSObject* object, ExecState* exec, Propert
     return JSObject::getOwnPropertySlot(thisObject, exec, propertyName, slot);
 }
 
-GET_OWN_PROPERTY_DESCRIPTOR_IMPL(RuntimeArray)
-
 bool RuntimeArray::getOwnPropertySlotByIndex(JSObject* object, ExecState *exec, unsigned index, PropertySlot& slot)
 {
     RuntimeArray* thisObject = jsCast<RuntimeArray*>(object);

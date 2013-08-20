@@ -70,8 +70,6 @@ bool RegExpPrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, Prop
     return getStaticFunctionSlot<RegExpObject>(exec, ExecState::regExpPrototypeTable(exec), jsCast<RegExpPrototype*>(object), propertyName, slot);
 }
 
-GET_OWN_PROPERTY_DESCRIPTOR_IMPL(RegExpPrototype)
-
 // ------------------------------ Functions ---------------------------
 
 EncodedJSValue JSC_HOST_CALL regExpProtoFuncTest(ExecState* exec)

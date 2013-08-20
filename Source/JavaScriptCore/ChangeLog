@@ -1,3 +1,101 @@
+2013-08-20  Gavin Barraclough  <barraclough@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=120093
+        Remove getOwnPropertyDescriptor trap
+
+        Reviewed by Geoff Garen.
+
+        All implementations of this method are now called via the method table, and equivalent in behaviour.
+        Remove all duplicate implementations (and the method table trap), and add a single member function implementation on JSObject.
+
+        * API/JSCallbackObject.h:
+        * API/JSCallbackObjectFunctions.h:
+        * debugger/DebuggerActivation.cpp:
+        * debugger/DebuggerActivation.h:
+        * runtime/Arguments.cpp:
+        * runtime/Arguments.h:
+        * runtime/ArrayConstructor.cpp:
+        * runtime/ArrayConstructor.h:
+        * runtime/ArrayPrototype.cpp:
+        * runtime/ArrayPrototype.h:
+        * runtime/BooleanPrototype.cpp:
+        * runtime/BooleanPrototype.h:
+            - remove getOwnPropertyDescriptor
+        * runtime/ClassInfo.h:
+            - remove getOwnPropertyDescriptor from MethodTable
+        * runtime/DateConstructor.cpp:
+        * runtime/DateConstructor.h:
+        * runtime/DatePrototype.cpp:
+        * runtime/DatePrototype.h:
+        * runtime/ErrorPrototype.cpp:
+        * runtime/ErrorPrototype.h:
+        * runtime/JSActivation.cpp:
+        * runtime/JSActivation.h:
+        * runtime/JSArray.cpp:
+        * runtime/JSArray.h:
+        * runtime/JSArrayBuffer.cpp:
+        * runtime/JSArrayBuffer.h:
+        * runtime/JSArrayBufferView.cpp:
+        * runtime/JSArrayBufferView.h:
+        * runtime/JSCell.cpp:
+        * runtime/JSCell.h:
+        * runtime/JSDataView.cpp:
+        * runtime/JSDataView.h:
+        * runtime/JSDataViewPrototype.cpp:
+        * runtime/JSDataViewPrototype.h:
+        * runtime/JSFunction.cpp:
+        * runtime/JSFunction.h:
+        * runtime/JSGenericTypedArrayView.h:
+        * runtime/JSGenericTypedArrayViewInlines.h:
+        * runtime/JSGlobalObject.cpp:
+        * runtime/JSGlobalObject.h:
+        * runtime/JSNotAnObject.cpp:
+        * runtime/JSNotAnObject.h:
+        * runtime/JSONObject.cpp:
+        * runtime/JSONObject.h:
+            - remove getOwnPropertyDescriptor
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::propertyIsEnumerable):
+            - switch to call new getOwnPropertyDescriptor member function
+        (JSC::JSObject::getOwnPropertyDescriptor):
+            - new, based on imlementation from GET_OWN_PROPERTY_DESCRIPTOR_IMPL
+        (JSC::JSObject::defineOwnNonIndexProperty):
+            - switch to call new getOwnPropertyDescriptor member function
+        * runtime/JSObject.h:
+        * runtime/JSProxy.cpp:
+        * runtime/JSProxy.h:
+        * runtime/NamePrototype.cpp:
+        * runtime/NamePrototype.h:
+        * runtime/NumberConstructor.cpp:
+        * runtime/NumberConstructor.h:
+        * runtime/NumberPrototype.cpp:
+        * runtime/NumberPrototype.h:
+            - remove getOwnPropertyDescriptor
+        * runtime/ObjectConstructor.cpp:
+        (JSC::objectConstructorGetOwnPropertyDescriptor):
+        (JSC::objectConstructorSeal):
+        (JSC::objectConstructorFreeze):
+        (JSC::objectConstructorIsSealed):
+        (JSC::objectConstructorIsFrozen):
+            - switch to call new getOwnPropertyDescriptor member function
+        * runtime/ObjectConstructor.h:
+            - remove getOwnPropertyDescriptor
+        * runtime/PropertyDescriptor.h:
+            - remove GET_OWN_PROPERTY_DESCRIPTOR_IMPL
+        * runtime/RegExpConstructor.cpp:
+        * runtime/RegExpConstructor.h:
+        * runtime/RegExpMatchesArray.cpp:
+        * runtime/RegExpMatchesArray.h:
+        * runtime/RegExpObject.cpp:
+        * runtime/RegExpObject.h:
+        * runtime/RegExpPrototype.cpp:
+        * runtime/RegExpPrototype.h:
+        * runtime/StringConstructor.cpp:
+        * runtime/StringConstructor.h:
+        * runtime/StringObject.cpp:
+        * runtime/StringObject.h:
+            - remove getOwnPropertyDescriptor
+
 2013-08-20  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         <https://webkit.org/b/120079> Flattening a dictionary can cause CopiedSpace corruption

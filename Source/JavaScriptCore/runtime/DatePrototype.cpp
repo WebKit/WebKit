@@ -519,8 +519,6 @@ bool DatePrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, Proper
     return getStaticFunctionSlot<JSObject>(exec, ExecState::dateTable(exec), jsCast<DatePrototype*>(object), propertyName, slot);
 }
 
-GET_OWN_PROPERTY_DESCRIPTOR_IMPL(DatePrototype)
-
 // Functions
 
 EncodedJSValue JSC_HOST_CALL dateProtoFuncToString(ExecState* exec)

@@ -178,8 +178,6 @@ bool JSActivation::getOwnPropertySlot(JSObject* object, ExecState* exec, Propert
     return false;
 }
 
-GET_OWN_PROPERTY_DESCRIPTOR_IMPL(JSActivation)
-
 void JSActivation::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
     JSActivation* thisObject = jsCast<JSActivation*>(cell);

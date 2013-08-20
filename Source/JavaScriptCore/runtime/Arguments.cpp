@@ -152,8 +152,6 @@ bool Arguments::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyNa
     return JSObject::getOwnPropertySlot(thisObject, exec, propertyName, slot);
 }
 
-GET_OWN_PROPERTY_DESCRIPTOR_IMPL(Arguments)
-
 void Arguments::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
     Arguments* thisObject = jsCast<Arguments*>(object);

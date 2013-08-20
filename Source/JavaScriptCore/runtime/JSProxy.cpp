@@ -82,8 +82,6 @@ bool JSProxy::getOwnPropertySlotByIndex(JSObject* object, ExecState* exec, unsig
     return thisObject->target()->methodTable()->getOwnPropertySlotByIndex(thisObject->target(), exec, propertyName, slot);
 }
 
-GET_OWN_PROPERTY_DESCRIPTOR_IMPL(JSProxy)
-
 void JSProxy::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
     JSProxy* thisObject = jsCast<JSProxy*>(cell);

@@ -88,8 +88,6 @@ bool NumberPrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, Prop
     return getStaticFunctionSlot<NumberObject>(exec, ExecState::numberPrototypeTable(exec), jsCast<NumberPrototype*>(object), propertyName, slot);
 }
 
-GET_OWN_PROPERTY_DESCRIPTOR_IMPL(NumberPrototype)
-
 // ------------------------------ Functions ---------------------------
 
 static ALWAYS_INLINE bool toThisNumber(JSValue thisValue, double& x)

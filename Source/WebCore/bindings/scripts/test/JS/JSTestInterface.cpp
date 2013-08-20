@@ -175,8 +175,6 @@ bool JSTestInterfaceConstructor::getOwnPropertySlot(JSObject* object, ExecState*
     return getStaticPropertySlot<JSTestInterfaceConstructor, JSDOMWrapper>(exec, &JSTestInterfaceConstructorTable, jsCast<JSTestInterfaceConstructor*>(object), propertyName, slot);
 }
 
-GET_OWN_PROPERTY_DESCRIPTOR_IMPL(JSTestInterfaceConstructor)
-
 #if ENABLE(TEST_INTERFACE)
 ConstructType JSTestInterfaceConstructor::getConstructData(JSCell*, ConstructData& constructData)
 {
@@ -236,8 +234,6 @@ bool JSTestInterfacePrototype::getOwnPropertySlot(JSObject* object, ExecState* e
     return getStaticPropertySlot<JSTestInterfacePrototype, JSObject>(exec, &JSTestInterfacePrototypeTable, thisObject, propertyName, slot);
 }
 
-GET_OWN_PROPERTY_DESCRIPTOR_IMPL(JSTestInterfacePrototype)
-
 const ClassInfo JSTestInterface::s_info = { "TestInterface", &Base::s_info, &JSTestInterfaceTable, 0 , CREATE_METHOD_TABLE(JSTestInterface) };
 
 JSTestInterface::JSTestInterface(Structure* structure, JSDOMGlobalObject* globalObject, PassRefPtr<TestInterface> impl)
@@ -274,8 +270,6 @@ bool JSTestInterface::getOwnPropertySlot(JSObject* object, ExecState* exec, Prop
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     return getStaticValueSlot<JSTestInterface, Base>(exec, &JSTestInterfaceTable, thisObject, propertyName, slot);
 }
-
-GET_OWN_PROPERTY_DESCRIPTOR_IMPL(JSTestInterface)
 
 #if ENABLE(Condition22) || ENABLE(Condition23)
 JSValue jsTestInterfaceConstructorImplementsStaticReadOnlyAttr(ExecState* exec, JSValue slotBase, PropertyName)

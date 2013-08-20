@@ -161,8 +161,6 @@ bool RuntimeObject::getOwnPropertySlot(JSObject* object, ExecState *exec, Proper
     return instance->getOwnPropertySlot(thisObject, exec, propertyName, slot);
 }
 
-GET_OWN_PROPERTY_DESCRIPTOR_IMPL(RuntimeObject)
-
 void RuntimeObject::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
     RuntimeObject* thisObject = jsCast<RuntimeObject*>(cell);

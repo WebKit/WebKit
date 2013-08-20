@@ -55,8 +55,6 @@ namespace JSC {
         static CallType getCallData(JSCell*, CallData&);
 
         static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
-
-        static bool getOwnPropertyDescriptor(JSObject*, ExecState*, PropertyName, PropertyDescriptor&);
     };
 
     JSObject* constructDate(ExecState*, JSGlobalObject*, const ArgList&);

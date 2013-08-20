@@ -68,8 +68,6 @@ bool JSTestNamedConstructorConstructor::getOwnPropertySlot(JSObject* object, Exe
     return getStaticValueSlot<JSTestNamedConstructorConstructor, JSDOMWrapper>(exec, &JSTestNamedConstructorConstructorTable, jsCast<JSTestNamedConstructorConstructor*>(object), propertyName, slot);
 }
 
-GET_OWN_PROPERTY_DESCRIPTOR_IMPL(JSTestNamedConstructorConstructor)
-
 EncodedJSValue JSC_HOST_CALL JSTestNamedConstructorNamedConstructor::constructJSTestNamedConstructor(ExecState* exec)
 {
     JSTestNamedConstructorNamedConstructor* castedThis = jsCast<JSTestNamedConstructorNamedConstructor*>(exec->callee());
@@ -165,8 +163,6 @@ bool JSTestNamedConstructor::getOwnPropertySlot(JSObject* object, ExecState* exe
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     return getStaticValueSlot<JSTestNamedConstructor, Base>(exec, &JSTestNamedConstructorTable, thisObject, propertyName, slot);
 }
-
-GET_OWN_PROPERTY_DESCRIPTOR_IMPL(JSTestNamedConstructor)
 
 JSValue jsTestNamedConstructorConstructor(ExecState* exec, JSValue slotBase, PropertyName)
 {
