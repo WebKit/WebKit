@@ -203,11 +203,6 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
 
 - (NSData *)data
 {
-#ifdef MAIL_THREAD_WORKAROUND
-    if (needMailThreadWorkaround())
-        return [[self _webkit_invokeOnMainThread] data];
-#endif
-
     WebCoreThreadViolationCheckRoundTwo();
 
     if (!_private->coreResource)
@@ -219,11 +214,6 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
 
 - (NSURL *)URL
 {
-#ifdef MAIL_THREAD_WORKAROUND
-    if (needMailThreadWorkaround())
-        return [[self _webkit_invokeOnMainThread] URL];
-#endif
-
     WebCoreThreadViolationCheckRoundTwo();
 
     if (!_private->coreResource)
@@ -234,11 +224,6 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
 
 - (NSString *)MIMEType
 {
-#ifdef MAIL_THREAD_WORKAROUND
-    if (needMailThreadWorkaround())
-        return [[self _webkit_invokeOnMainThread] MIMEType];
-#endif
-
     WebCoreThreadViolationCheckRoundTwo();
 
     if (!_private->coreResource)
@@ -249,11 +234,6 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
 
 - (NSString *)textEncodingName
 {
-#ifdef MAIL_THREAD_WORKAROUND
-    if (needMailThreadWorkaround())
-        return [[self _webkit_invokeOnMainThread] textEncodingName];
-#endif
-
     WebCoreThreadViolationCheckRoundTwo();
 
     if (!_private->coreResource)
@@ -264,11 +244,6 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
 
 - (NSString *)frameName
 {
-#ifdef MAIL_THREAD_WORKAROUND
-    if (needMailThreadWorkaround())
-        return [[self _webkit_invokeOnMainThread] frameName];
-#endif
-
     WebCoreThreadViolationCheckRoundTwo();
 
     if (!_private->coreResource)
@@ -319,13 +294,6 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
 // FIXME: This "ignoreWhenUnarchiving" concept is an ugly one - can we find a cleaner solution for those who need this SPI?
 - (void)_ignoreWhenUnarchiving
 {
-#ifdef MAIL_THREAD_WORKAROUND
-    if (needMailThreadWorkaround()) {
-        [[self _webkit_invokeOnMainThread] _ignoreWhenUnarchiving];
-        return;
-    }
-#endif
-
     WebCoreThreadViolationCheckRoundTwo();
 
     if (!_private->coreResource)
@@ -341,11 +309,6 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
            response:(NSURLResponse *)response
            copyData:(BOOL)copyData
 {
-#ifdef MAIL_THREAD_WORKAROUND
-    if (needMailThreadWorkaround())
-        return [[self _webkit_invokeOnMainThread] _initWithData:data URL:URL MIMEType:MIMEType textEncodingName:textEncodingName frameName:frameName response:response copyData:copyData];
-#endif
-
     WebCoreThreadViolationCheckRoundTwo();
 
     self = [super init];
@@ -377,11 +340,6 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
 
 - (NSString *)_suggestedFilename
 {
-#ifdef MAIL_THREAD_WORKAROUND
-    if (needMailThreadWorkaround())
-        return [[self _webkit_invokeOnMainThread] _suggestedFilename];
-#endif
-
     WebCoreThreadViolationCheckRoundTwo();
 
     if (!_private->coreResource)
@@ -402,11 +360,6 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
 
 - (NSURLResponse *)_response
 {
-#ifdef MAIL_THREAD_WORKAROUND
-    if (needMailThreadWorkaround())
-        return [[self _webkit_invokeOnMainThread] _response];
-#endif
-
     WebCoreThreadViolationCheckRoundTwo();
 
     NSURLResponse *response = nil;
@@ -417,11 +370,6 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
 
 - (NSString *)_stringValue
 {
-#ifdef MAIL_THREAD_WORKAROUND
-    if (needMailThreadWorkaround())
-        return [[self _webkit_invokeOnMainThread] _stringValue];
-#endif
-
     WebCoreThreadViolationCheckRoundTwo();
 
     WebCore::TextEncoding encoding;
@@ -435,19 +383,3 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
 }
 
 @end
-
-#ifdef MAIL_THREAD_WORKAROUND
-
-static const double newMailBundleVersion = 1050.0;
-
-@implementation WebResource (WebMailThreadWorkaround)
-
-+ (BOOL)_needMailThreadWorkaroundIfCalledOffMainThread
-{
-    static BOOL isOldMail = applicationIsAppleMail() && [[[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString *)kCFBundleVersionKey] doubleValue] < newMailBundleVersion;
-    return isOldMail;
-}
-
-@end
-
-#endif

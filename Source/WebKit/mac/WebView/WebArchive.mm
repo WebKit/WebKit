@@ -146,11 +146,6 @@ static BOOL isArrayOfClass(id object, Class elementClass)
 
 - (id)initWithMainResource:(WebResource *)mainResource subresources:(NSArray *)subresources subframeArchives:(NSArray *)subframeArchives
 {
-#ifdef MAIL_THREAD_WORKAROUND
-    if (needMailThreadWorkaround())
-        return [[self _webkit_invokeOnMainThread] initWithMainResource:mainResource subresources:subresources subframeArchives:subframeArchives];
-#endif
-
     WebCoreThreadViolationCheckRoundTwo();
 
     self = [super init];
@@ -276,11 +271,6 @@ static BOOL isArrayOfClass(id object, Class elementClass)
 
 - (WebResource *)mainResource
 {
-#ifdef MAIL_THREAD_WORKAROUND
-    if (needMailThreadWorkaround())
-        return [[self _webkit_invokeOnMainThread] mainResource];
-#endif
-
     WebCoreThreadViolationCheckRoundTwo();
 
     // Currently from WebKit API perspective, WebArchives are entirely immutable once created
@@ -296,11 +286,6 @@ static BOOL isArrayOfClass(id object, Class elementClass)
 
 - (NSArray *)subresources
 {
-#ifdef MAIL_THREAD_WORKAROUND
-    if (needMailThreadWorkaround())
-        return [[self _webkit_invokeOnMainThread] subresources];
-#endif
-
     WebCoreThreadViolationCheckRoundTwo();
 
     // Currently from WebKit API perspective, WebArchives are entirely immutable once created
@@ -329,11 +314,6 @@ static BOOL isArrayOfClass(id object, Class elementClass)
 
 - (NSArray *)subframeArchives
 {
-#ifdef MAIL_THREAD_WORKAROUND
-    if (needMailThreadWorkaround())
-        return [[self _webkit_invokeOnMainThread] subframeArchives];
-#endif
-
     WebCoreThreadViolationCheckRoundTwo();
 
     // Currently from WebKit API perspective, WebArchives are entirely immutable once created
