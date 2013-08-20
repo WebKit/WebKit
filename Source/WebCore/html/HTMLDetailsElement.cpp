@@ -27,7 +27,6 @@
 #include "HTMLSummaryElement.h"
 #include "LocalizedStrings.h"
 #include "MouseEvent.h"
-#include "NodeRenderingContext.h"
 #include "RenderBlock.h"
 #include "ShadowRoot.h"
 #include "Text.h"
@@ -144,21 +143,21 @@ void HTMLDetailsElement::parseAttribute(const QualifiedName& name, const AtomicS
         HTMLElement::parseAttribute(name, value);
 }
 
-bool HTMLDetailsElement::childShouldCreateRenderer(const NodeRenderingContext& childContext) const
+bool HTMLDetailsElement::childShouldCreateRenderer(const Node* child) const
 {
-    if (childContext.node()->isPseudoElement())
-        return HTMLElement::childShouldCreateRenderer(childContext);
+    if (child->isPseudoElement())
+        return HTMLElement::childShouldCreateRenderer(child);
 
-    if (!childContext.isOnEncapsulationBoundary())
+    if (!hasShadowRootOrActiveInsertionPointParent(child))
         return false;
 
     if (m_isOpen)
-        return HTMLElement::childShouldCreateRenderer(childContext);
+        return HTMLElement::childShouldCreateRenderer(child);
 
-    if (!childContext.node()->hasTagName(summaryTag))
+    if (!child->hasTagName(summaryTag))
         return false;
 
-    return childContext.node() == findMainSummary() && HTMLElement::childShouldCreateRenderer(childContext);
+    return child == findMainSummary() && HTMLElement::childShouldCreateRenderer(child);
 }
 
 void HTMLDetailsElement::toggleOpen()

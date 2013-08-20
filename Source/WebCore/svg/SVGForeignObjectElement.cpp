@@ -25,7 +25,6 @@
 
 #include "Attribute.h"
 #include "CSSPropertyNames.h"
-#include "NodeRenderingContext.h"
 #include "RenderSVGForeignObject.h"
 #include "RenderSVGResource.h"
 #include "SVGElementInstance.h"
@@ -132,14 +131,14 @@ RenderObject* SVGForeignObjectElement::createRenderer(RenderArena* arena, Render
     return new (arena) RenderSVGForeignObject(this);
 }
 
-bool SVGForeignObjectElement::childShouldCreateRenderer(const NodeRenderingContext& childContext) const
+bool SVGForeignObjectElement::childShouldCreateRenderer(const Node* child) const
 {
     // Disallow arbitary SVG content. Only allow proper <svg xmlns="svgNS"> subdocuments.
-    if (childContext.node()->isSVGElement())
-        return childContext.node()->hasTagName(SVGNames::svgTag);
+    if (child->isSVGElement())
+        return child->hasTagName(SVGNames::svgTag);
 
     // Skip over SVG rules which disallow non-SVG kids
-    return StyledElement::childShouldCreateRenderer(childContext);
+    return StyledElement::childShouldCreateRenderer(child);
 }
 
 bool SVGForeignObjectElement::rendererIsNeeded(const RenderStyle& style)

@@ -452,7 +452,7 @@ void HTMLFormControlElement::setCustomValidity(const String& error)
     setNeedsValidityCheck();
 }
 
-bool HTMLFormControlElement::validationMessageShadowTreeContains(Node* node) const
+bool HTMLFormControlElement::validationMessageShadowTreeContains(const Node* node) const
 {
     return m_validationMessage && m_validationMessage->shadowTreeContains(node);
 }

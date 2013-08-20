@@ -28,7 +28,6 @@
 #include "HTMLDivElement.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
-#include "NodeRenderingContext.h"
 #include "ProgressShadowElement.h"
 #include "RenderProgress.h"
 #include "ShadowRoot.h"
@@ -67,9 +66,9 @@ RenderObject* HTMLProgressElement::createRenderer(RenderArena* arena, RenderStyl
     return new (arena) RenderProgress(this);
 }
 
-bool HTMLProgressElement::childShouldCreateRenderer(const NodeRenderingContext& childContext) const
+bool HTMLProgressElement::childShouldCreateRenderer(const Node* child) const
 {
-    return childContext.isOnUpperEncapsulationBoundary() && HTMLElement::childShouldCreateRenderer(childContext);
+    return hasShadowRootParent(child) && HTMLElement::childShouldCreateRenderer(child);
 }
 
 RenderProgress* HTMLProgressElement::renderProgress() const

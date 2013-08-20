@@ -28,6 +28,7 @@
 
 namespace WebCore {
 
+class NodeRenderingContext;
 class RenderText;
 
 class Text : public CharacterData {

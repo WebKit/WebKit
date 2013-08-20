@@ -41,7 +41,6 @@
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HTMLTableElement.h"
-#include "NodeRenderingContext.h"
 #include "Page.h"
 #include "RenderTextControl.h"
 #include "ScriptController.h"

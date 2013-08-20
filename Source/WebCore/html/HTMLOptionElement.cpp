@@ -36,7 +36,6 @@
 #include "HTMLParserIdioms.h"
 #include "HTMLSelectElement.h"
 #include "NodeRenderStyle.h"
-#include "NodeRenderingContext.h"
 #include "NodeTraversal.h"
 #include "RenderMenuList.h"
 #include "RenderTheme.h"

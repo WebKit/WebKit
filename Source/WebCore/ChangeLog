@@ -1,3 +1,106 @@
+2013-08-20  Antti Koivisto  <antti@apple.com>
+
+        <https://webkit.org/b/120071> Replace NodeRenderingContext with Node* as childShouldCreateRenderer() argument
+
+        Reviewed by Darin Adler.
+
+        This simplifies the code. NodeRenderingContext was basically only used for getting the Node.
+
+        * dom/ContainerNode.h:
+        (WebCore::ContainerNode::childShouldCreateRenderer):
+        * dom/Element.cpp:
+        (WebCore::Element::childShouldCreateRenderer):
+        * dom/Element.h:
+        * dom/NodeRenderingContext.cpp:
+        (WebCore::NodeRenderingContext::shouldCreateRenderer):
+        * dom/NodeRenderingContext.h:
+        
+            Move isOnEncapsulationBoundary() to InsertionPoint.h and call it hasShadowRootOrActiveInsertionPointParent().
+            Move isOnUpperEncapsulationBoundary() to ShadowRoot.h and call it hasShadowRootParent().
+
+        * dom/ShadowRoot.h:
+        (WebCore::hasShadowRootParent):
+        * html/HTMLDetailsElement.cpp:
+        (WebCore::HTMLDetailsElement::childShouldCreateRenderer):
+        * html/HTMLDetailsElement.h:
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::validationMessageShadowTreeContains):
+        * html/HTMLFormControlElement.h:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::childShouldCreateRenderer):
+        * html/HTMLMediaElement.h:
+        * html/HTMLMeterElement.cpp:
+        (WebCore::HTMLMeterElement::childShouldCreateRenderer):
+        * html/HTMLMeterElement.h:
+        * html/HTMLOptGroupElement.h:
+        (WebCore::isHTMLOptGroupElement):
+        * html/HTMLOptionElement.h:
+        (WebCore::isHTMLOptionElement):
+        * html/HTMLProgressElement.cpp:
+        (WebCore::HTMLProgressElement::childShouldCreateRenderer):
+        * html/HTMLProgressElement.h:
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::childShouldCreateRenderer):
+        * html/HTMLSelectElement.h:
+        * html/HTMLSummaryElement.cpp:
+        (WebCore::HTMLSummaryElement::childShouldCreateRenderer):
+        * html/HTMLSummaryElement.h:
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::childShouldCreateRenderer):
+        (WebCore::enclosingTextFormControl):
+        * html/HTMLTextFormControlElement.h:
+        * html/ValidationMessage.cpp:
+        (WebCore::ValidationMessage::shadowTreeContains):
+        * html/ValidationMessage.h:
+        * html/shadow/InsertionPoint.cpp:
+        (WebCore::InsertionPoint::rendererIsNeeded):
+        * html/shadow/InsertionPoint.h:
+        (WebCore::isActiveInsertionPoint):
+        
+            Remove isShadowBoundary() as it was equivalent to isActive(). 
+            Remove isLowerEncapsulationBoundary() as it was equivalent to isActiveInsertionPoint().
+
+        (WebCore::hasShadowRootOrActiveInsertionPointParent):
+        
+            Moved and renamed from NodeRenderingContext::isOnEncapsulationBoundary().
+
+        * svg/SVGAElement.cpp:
+        (WebCore::SVGAElement::childShouldCreateRenderer):
+        * svg/SVGAElement.h:
+        * svg/SVGAltGlyphElement.cpp:
+        (WebCore::SVGAltGlyphElement::childShouldCreateRenderer):
+        * svg/SVGAltGlyphElement.h:
+        * svg/SVGDocument.cpp:
+        (WebCore::SVGDocument::childShouldCreateRenderer):
+        * svg/SVGDocument.h:
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::childShouldCreateRenderer):
+        * svg/SVGElement.h:
+        * svg/SVGFilterElement.cpp:
+        (WebCore::SVGFilterElement::childShouldCreateRenderer):
+        * svg/SVGFilterElement.h:
+        * svg/SVGFilterPrimitiveStandardAttributes.h:
+        * svg/SVGForeignObjectElement.cpp:
+        (WebCore::SVGForeignObjectElement::childShouldCreateRenderer):
+        * svg/SVGForeignObjectElement.h:
+        * svg/SVGSVGElement.h:
+        (WebCore::toSVGSVGElement):
+        * svg/SVGSwitchElement.cpp:
+        (WebCore::SVGSwitchElement::childShouldCreateRenderer):
+        * svg/SVGSwitchElement.h:
+        * svg/SVGTRefElement.cpp:
+        (WebCore::SVGTRefElement::childShouldCreateRenderer):
+        * svg/SVGTRefElement.h:
+        * svg/SVGTSpanElement.cpp:
+        (WebCore::SVGTSpanElement::childShouldCreateRenderer):
+        * svg/SVGTSpanElement.h:
+        * svg/SVGTextElement.cpp:
+        (WebCore::SVGTextElement::childShouldCreateRenderer):
+        * svg/SVGTextElement.h:
+        * svg/SVGTextPathElement.cpp:
+        (WebCore::SVGTextPathElement::childShouldCreateRenderer):
+        * svg/SVGTextPathElement.h:
+
 2013-08-20  Benjamin Poulain  <benjamin@webkit.org>
 
         <https://webkit.org/b/120050> Don't bother using a Vector for the ouput of querySelector, just return the first element found

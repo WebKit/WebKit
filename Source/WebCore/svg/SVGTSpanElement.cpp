@@ -23,7 +23,6 @@
 #if ENABLE(SVG)
 #include "SVGTSpanElement.h"
 
-#include "NodeRenderingContext.h"
 #include "RenderInline.h"
 #include "RenderSVGTSpan.h"
 #include "SVGNames.h"
@@ -46,15 +45,15 @@ RenderObject* SVGTSpanElement::createRenderer(RenderArena* arena, RenderStyle*)
     return new (arena) RenderSVGTSpan(this);
 }
 
-bool SVGTSpanElement::childShouldCreateRenderer(const NodeRenderingContext& childContext) const
+bool SVGTSpanElement::childShouldCreateRenderer(const Node* child) const
 {
-    if (childContext.node()->isTextNode()
-        || childContext.node()->hasTagName(SVGNames::aTag)
+    if (child->isTextNode()
+        || child->hasTagName(SVGNames::aTag)
 #if ENABLE(SVG_FONTS)
-        || childContext.node()->hasTagName(SVGNames::altGlyphTag)
+        || child->hasTagName(SVGNames::altGlyphTag)
 #endif
-        || childContext.node()->hasTagName(SVGNames::trefTag)
-        || childContext.node()->hasTagName(SVGNames::tspanTag))
+        || child->hasTagName(SVGNames::trefTag)
+        || child->hasTagName(SVGNames::tspanTag))
         return true;
 
     return false;

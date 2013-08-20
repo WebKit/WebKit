@@ -27,7 +27,6 @@
 #include "SVGFilterElement.h"
 
 #include "Attr.h"
-#include "NodeRenderingContext.h"
 #include "RenderSVGResourceFilter.h"
 #include "SVGElementInstance.h"
 #include "SVGFilterBuilder.h"
@@ -194,12 +193,12 @@ RenderObject* SVGFilterElement::createRenderer(RenderArena* arena, RenderStyle*)
     return new (arena) RenderSVGResourceFilter(this);
 }
 
-bool SVGFilterElement::childShouldCreateRenderer(const NodeRenderingContext& childContext) const
+bool SVGFilterElement::childShouldCreateRenderer(const Node* child) const
 {
-    if (!childContext.node()->isSVGElement())
+    if (!child->isSVGElement())
         return false;
 
-    SVGElement* svgElement = toSVGElement(childContext.node());
+    const SVGElement* svgElement = toSVGElement(child);
 
     DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, allowedChildElementTags, ());
     if (allowedChildElementTags.isEmpty()) {

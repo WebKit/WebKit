@@ -70,7 +70,6 @@ class NameNodeList;
 class NodeList;
 class NodeListsNodeData;
 class NodeRareData;
-class NodeRenderingContext;
 class PlatformKeyboardEvent;
 class PlatformMouseEvent;
 class PlatformWheelEvent;

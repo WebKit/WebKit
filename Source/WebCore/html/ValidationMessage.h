@@ -54,7 +54,7 @@ public:
     void updateValidationMessage(const String&);
     void requestToHideMessage();
     bool isVisible() const;
-    bool shadowTreeContains(Node*) const;
+    bool shadowTreeContains(const Node*) const;
 
 private:
     ValidationMessage(HTMLFormControlElement*);

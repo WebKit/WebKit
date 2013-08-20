@@ -30,7 +30,6 @@
 #include "Frame.h"
 #include "HTMLDocument.h"
 #include "HTMLNames.h"
-#include "NodeRenderingContext.h"
 #include "RenderIFrame.h"
 #include "ScriptableDocumentParser.h"
 

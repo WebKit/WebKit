@@ -30,7 +30,6 @@
 #include "HTMLSelectElement.h"
 #include "RenderMenuList.h"
 #include "NodeRenderStyle.h"
-#include "NodeRenderingContext.h"
 #include "StyleResolver.h"
 #include <wtf/StdLibExtras.h>
 
