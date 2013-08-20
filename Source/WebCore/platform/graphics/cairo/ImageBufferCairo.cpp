@@ -335,7 +335,7 @@ void ImageBuffer::putByteArray(Multiply multiplied, Uint8ClampedArray* source, c
             unsigned alpha = srcRows[basex + 3];
 
             if (multiplied == Unmultiplied) {
-                if (alpha && alpha != 255) {
+                if (alpha != 255) {
                     red = (red * alpha + 254) / 255;
                     green = (green * alpha + 254) / 255;
                     blue = (blue * alpha + 254) / 255;

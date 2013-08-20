@@ -1,3 +1,15 @@
+2013-08-19  Hurnjoo Lee  <hurnjoo.lee@samsung.com>
+
+        [Cairo] Canvas putImageData is not working as expected
+        https://bugs.webkit.org/show_bug.cgi?id=119992
+
+        Reviewed by Darin Adler.
+
+        Add a ref test that ensures that putImageData of canvas with zero alpha work correctly.
+
+        * fast/canvas/canvas-putImageData-zero-alpha-expected.html: Added.
+        * fast/canvas/canvas-putImageData-zero-alpha.html: Added.
+
 2013-08-19  James Craig  <james@cookiecrook.com>
 
         <https://webkit.org/b/118754> AX: aria-required.html needs to test @required vs @aria-required mismatch reconciliation

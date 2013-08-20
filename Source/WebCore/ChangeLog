@@ -1,3 +1,18 @@
+2013-08-19  Hurnjoo Lee  <hurnjoo.lee@samsung.com>
+
+        [Cairo] Canvas putImageData is not working as expected
+        https://bugs.webkit.org/show_bug.cgi?id=119992
+
+        Reviewed by Darin Adler.
+
+        ImageBufferCairo::putImageArray didn't perform pre-multiply in case of zero alpha value.
+        If the alpha value is not 255, image data should always be pre-multiplied.
+
+        Test: fast/canvas/canvas-putImageData-zero-alpha.html
+
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        (WebCore::ImageBuffer::putByteArray):
+
 2013-08-19  Santosh Mahto  <santosh.ma@samsung.com>
 
         <https://webkit.org/b/119991> change usage of calculateUTCOffset()/calculateDSTOffset  to calculateLocalTimeOffset
