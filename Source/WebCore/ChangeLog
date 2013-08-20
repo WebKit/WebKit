@@ -1,5 +1,18 @@
 2013-08-19  Ryosuke Niwa  <rniwa@webkit.org>
 
+        <https://webkit.org/b/120041> Remove superfluous min calls in RenderBlock::computeOverflow
+
+        Reviewed by Simon Fraser.
+
+        Merge https://chromium.googlesource.com/chromium/blink/+/29cad35d6b4642804e6b7c1a30f0b4435dd7a71d
+
+        They are contained in an "if" statement that ensures that textIndent < 0 and so the min will never be 0.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::computeOverflow):
+
+2013-08-19  Ryosuke Niwa  <rniwa@webkit.org>
+
         <https://webkit.org/b/119930> input[type=range]: Fix a crash by changing input type in 'input' event handler
 
         Reviewed by Kent Tamura.
