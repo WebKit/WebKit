@@ -200,6 +200,7 @@ public:
     void setUndefined()
     {
         m_data.value = JSValue::encode(jsUndefined());
+        m_attributes = ReadOnly | DontDelete | DontEnum;
 
         m_slotBase = 0;
         m_propertyType = TypeValue;

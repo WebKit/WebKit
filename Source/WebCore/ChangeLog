@@ -53,6 +53,20 @@
 
 2013-08-19  Gavin Barraclough  <barraclough@apple.com>
 
+        https://bugs.webkit.org/show_bug.cgi?id=120034
+        Remove custom getOwnPropertyDescriptor for global objects
+
+        Reviewed by Geoff Garen.
+
+        Fix attributes of JSC SynbolTableObject entries, ensure that cross frame access is safe, and suppress prototype chain walk.
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::getOwnPropertySlot):
+            - Remove custom getOwnPropertyDescriptor implementation, on cross-frame access ensure
+              all properties are marked as read-only, non-configurable to prevent defineProperty.
+
+2013-08-19  Gavin Barraclough  <barraclough@apple.com>
+
         https://bugs.webkit.org/show_bug.cgi?id=119995
         Start removing custom implementations of getOwnPropertyDescriptor
 

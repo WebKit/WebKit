@@ -1,3 +1,24 @@
+2013-08-19  Gavin Barraclough  <barraclough@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=120034
+        Remove custom getOwnPropertyDescriptor for global objects
+
+        Reviewed by Geoff Garen.
+
+        Fix attributes of JSC SynbolTableObject entries, ensure that cross frame access is safe, and suppress prototype chain walk.
+
+        * runtime/JSGlobalObject.cpp:
+            - Remove custom getOwnPropertyDescriptor implementation.
+        * runtime/JSSymbolTableObject.h:
+        (JSC::symbolTableGet):
+            - The symbol table does not store the DontDelete attribute, we should be adding it back in.
+        * runtime/PropertyDescriptor.h:
+            - JSDOMWindow walks the prototype chain on own access. This is bad, but for now workaround for the getOwnPropertyDescriptor case.
+        * runtime/PropertySlot.h:
+        (JSC::PropertySlot::setUndefined):
+            - This is used by WebCore when blocking access to properties on cross-frame access.
+              Mark blocked properties as read-only, non-configurable to prevent defineProperty.
+
 2013-08-17  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should inline typedArray.byteOffset
