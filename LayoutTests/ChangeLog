@@ -1,3 +1,18 @@
+2013-08-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        <https://webkit.org/b/120095> Delete fast/css/giant-stylesheet-crash.html since it flakily timeout or crash
+
+        Reviewed by Antti Koivisto.
+
+        Deleted the test. This test was added in r82054 but it has been crashing since r154242.
+
+        Since our expected behavior is to crash at the moment, this test's description doesn't even match
+        the expected behavior anymore. Furthermore, it intermittently times out due to DRT taking too long to
+        allocate memory before it can crash.
+
+        * fast/css/giant-stylesheet-crash-expected.txt: Removed.
+        * fast/css/giant-stylesheet-crash.html: Removed.
+
 2013-08-20  Daniel Bates  <dabates@apple.com>
 
         <https://webkit.org/b/120032> Add DRT test to ensure that AccessibilityObject::stringValue()
