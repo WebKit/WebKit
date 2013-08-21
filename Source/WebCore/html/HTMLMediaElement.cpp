@@ -4155,6 +4155,10 @@ void HTMLMediaElement::clearMediaPlayer(int flags)
     if (m_textTracks)
         configureTextTrackDisplay();
 #endif
+
+#if PLATFORM(MAC)
+    updateDisableSleep();
+#endif
 }
 
 bool HTMLMediaElement::canSuspend() const
@@ -4182,6 +4186,10 @@ void HTMLMediaElement::stop()
     cancelPendingEventsAndCallbacks();
 
     m_asyncEventQueue->close();
+
+#if PLATFORM(MAC)
+    updateDisableSleep();
+#endif
 }
 
 void HTMLMediaElement::suspend(ReasonForSuspension why)
