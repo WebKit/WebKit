@@ -1,3 +1,26 @@
+2013-08-21  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION (r145458?): WebProcess doesn't respect UI process localization
+        https://bugs.webkit.org/show_bug.cgi?id=120096
+
+        Reviewed by Darin Adler.
+
+        We used to get into a situation where CFBundle thought that we had no good localization,
+        and used one passed as default. This is never the case with mixed localizations,
+        so default is just ignored now.
+
+        I think that the previous behavior was a bit of a hack. As WebProcess is not localized,
+        it's more honest to say that we want mixed localizations, and force the language
+        to match UI process localization.
+
+        * Shared/EntryPointUtilities/mac/LegacyProcess/ChildProcessEntryPoint.h:
+        (WebKit::ChildProcessMain): Don't set default localization, it's not taken into
+        consideration unless all other attempts to compute bundle localization fail.
+
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm: (WebKit::createProcess): Pass
+        UI process localization as -AppleLanguages argument, so that Core Foundation uses
+        that instead of actual user languages. We want to match UI process localization.
+
 2013-08-20  Gavin Barraclough  <barraclough@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=120093

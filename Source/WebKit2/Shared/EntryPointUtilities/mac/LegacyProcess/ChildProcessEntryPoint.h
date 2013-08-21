@@ -86,12 +86,6 @@ int ChildProcessMain(int argc, char** argv)
         if (!delegate.getExtraInitializationData(parameters.extraInitializationData))
             return EXIT_FAILURE;
 
-        // FIXME: This should be moved to ChildProcessMac if it is still necessary.
-        String localization = commandLine["localization"];
-        RetainPtr<CFStringRef> cfLocalization = adoptCF(CFStringCreateWithCharacters(0, reinterpret_cast<const UniChar*>(localization.characters()), localization.length()));
-        if (cfLocalization)
-            WKSetDefaultLocalization(cfLocalization.get());
-
         ChildProcessType::shared().initialize(parameters);
     }
 

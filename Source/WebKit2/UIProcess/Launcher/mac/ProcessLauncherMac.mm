@@ -383,9 +383,6 @@ static void createProcess(const ProcessLauncher::LaunchOptions& launchOptions, b
     // Insert a send right so we can send to it.
     mach_port_insert_right(mach_task_self(), listeningPort, listeningPort, MACH_MSG_TYPE_MAKE_SEND);
 
-    RetainPtr<CFStringRef> cfLocalization = adoptCF(WKCopyCFLocalizationPreferredName(NULL));
-    CString localization = String(cfLocalization.get()).utf8();
-
     NSBundle *webKit2Bundle = [NSBundle bundleWithIdentifier:@"com.apple.WebKit2"];
 
     NSString *processPath = nil;
@@ -419,6 +416,12 @@ static void createProcess(const ProcessLauncher::LaunchOptions& launchOptions, b
     // Make a unique, per pid, per process launcher web process service name.
     CString serviceName = String::format("com.apple.WebKit.WebProcess-%d-%p", getpid(), that).utf8();
 
+    // Inherit UI process localization. It can be different from child process default localization:
+    // 1. When the application and system frameworks simply have different localized resources available, we should match the application.
+    // 1.1. An important case is WebKitTestRunner, where we should use English localizations for all system frameworks.
+    // 2. When AppleLanguages is passed as command line argument for UI process, or set in its preferences, we should respect it in child processes.
+    CString appleLanguagesArgument = String("('" + String(adoptCF(WKCopyCFLocalizationPreferredName(0)).get()) + "')").utf8();
+
     Vector<const char*> args;
     args.append([processAppExecutablePath fileSystemRepresentation]);
     args.append([frameworkExecutablePath fileSystemRepresentation]);
@@ -426,12 +429,12 @@ static void createProcess(const ProcessLauncher::LaunchOptions& launchOptions, b
     args.append(ProcessLauncher::processTypeAsString(launchOptions.processType));
     args.append("-servicename");
     args.append(serviceName.data());
-    args.append("-localization");
-    args.append(localization.data());
     args.append("-client-identifier");
     args.append(clientIdentifier.data());
     args.append("-ui-process-name");
     args.append([[[NSProcessInfo processInfo] processName] UTF8String]);
+    args.append("-AppleLanguages"); // This argument will be handled by Core Foundation.
+    args.append(appleLanguagesArgument.data());
 
     HashMap<String, String>::const_iterator it = launchOptions.extraInitializationData.begin();
     HashMap<String, String>::const_iterator end = launchOptions.extraInitializationData.end();
