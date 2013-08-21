@@ -670,11 +670,15 @@ void WebChromeClient::runOpenPanel(Frame*, PassRefPtr<FileChooser> prpFileChoose
     ofn.hwndOwner = viewWindow;
     String allFiles = allFilesText();
     allFiles.append(L"\0*.*\0\0", 6);
-    ofn.lpstrFilter = allFiles.charactersWithNullTermination().data();
+
+    Vector<UChar> filterCharacters = allFiles.charactersWithNullTermination(); // Retain buffer long enough to make the GetOpenFileName call
+    ofn.lpstrFilter = filterCharacters.data();
+
     ofn.lpstrFile = fileBuf.data();
     ofn.nMaxFile = fileBuf.size();
     String dialogTitle = uploadFileText();
-    ofn.lpstrTitle = dialogTitle.charactersWithNullTermination().data();
+    Vector<UChar> dialogTitleCharacters = dialogTitle.charactersWithNullTermination(); // Retain buffer long enough to make the GetOpenFileName call
+    ofn.lpstrTitle = dialogTitleCharacters.data();
     ofn.Flags = OFN_ENABLESIZING | OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST | OFN_EXPLORER;
     if (multiFile)
         ofn.Flags = ofn.Flags | OFN_ALLOWMULTISELECT;
