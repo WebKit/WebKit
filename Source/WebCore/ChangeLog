@@ -1,3 +1,21 @@
+2013-08-21  Gavin Barraclough  <barraclough@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=120139
+        PropertyDescriptor argument to define methods should be const
+
+        Rubber stamped by Sam Weinig.
+
+        This should never be modified, and this way we can use rvalues.
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::defineOwnProperty):
+        * bindings/js/JSLocationCustom.cpp:
+        (WebCore::JSLocation::defineOwnProperty):
+        (WebCore::JSLocationPrototype::defineOwnProperty):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+            - make PropertyDescriptor const
+
 2013-08-21  Jacky Jiang  <zhajiang@blackberry.com>
 
         <https://webkit.org/b/120123> [BlackBerry] Incorrect origin of indexOfTile in LayerTiler can cause unnecessary texture jobs and waste memory

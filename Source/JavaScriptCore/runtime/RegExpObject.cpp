@@ -128,7 +128,7 @@ static bool reject(ExecState* exec, bool throwException, const char* message)
     return false;
 }
 
-bool RegExpObject::defineOwnProperty(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor, bool shouldThrow)
+bool RegExpObject::defineOwnProperty(JSObject* object, ExecState* exec, PropertyName propertyName, const PropertyDescriptor& descriptor, bool shouldThrow)
 {
     if (propertyName == exec->propertyNames().lastIndex) {
         RegExpObject* regExp = asRegExpObject(object);

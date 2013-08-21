@@ -186,7 +186,7 @@ void JSGlobalObject::putDirectVirtual(JSObject* object, ExecState* exec, Propert
     }
 }
 
-bool JSGlobalObject::defineOwnProperty(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor, bool shouldThrow)
+bool JSGlobalObject::defineOwnProperty(JSObject* object, ExecState* exec, PropertyName propertyName, const PropertyDescriptor& descriptor, bool shouldThrow)
 {
     JSGlobalObject* thisObject = jsCast<JSGlobalObject*>(object);
     PropertySlot slot(thisObject);

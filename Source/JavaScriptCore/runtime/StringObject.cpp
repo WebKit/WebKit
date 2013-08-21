@@ -81,7 +81,7 @@ void StringObject::putByIndex(JSCell* cell, ExecState* exec, unsigned propertyNa
     JSObject::putByIndex(cell, exec, propertyName, value, shouldThrow);
 }
 
-bool StringObject::defineOwnProperty(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor, bool throwException)
+bool StringObject::defineOwnProperty(JSObject* object, ExecState* exec, PropertyName propertyName, const PropertyDescriptor& descriptor, bool throwException)
 {
     StringObject* thisObject = jsCast<StringObject*>(object);
 

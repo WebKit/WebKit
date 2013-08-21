@@ -92,7 +92,7 @@ struct MethodTable {
     typedef void (*PutWithAttributesFunctionPtr)(JSObject*, ExecState*, PropertyName propertyName, JSValue, unsigned attributes);
     PutWithAttributesFunctionPtr putDirectVirtual;
 
-    typedef bool (*DefineOwnPropertyFunctionPtr)(JSObject*, ExecState*, PropertyName, PropertyDescriptor&, bool);
+    typedef bool (*DefineOwnPropertyFunctionPtr)(JSObject*, ExecState*, PropertyName, const PropertyDescriptor&, bool);
     DefineOwnPropertyFunctionPtr defineOwnProperty;
 
     typedef ArrayBuffer* (*SlowDownAndWasteMemory)(JSArrayBufferView*);

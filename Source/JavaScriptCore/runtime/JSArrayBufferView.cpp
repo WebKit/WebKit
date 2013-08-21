@@ -171,7 +171,7 @@ void JSArrayBufferView::put(
 
 bool JSArrayBufferView::defineOwnProperty(
     JSObject* object, ExecState* exec, PropertyName propertyName,
-    PropertyDescriptor& descriptor, bool shouldThrow)
+    const PropertyDescriptor& descriptor, bool shouldThrow)
 {
     JSArrayBufferView* thisObject = jsCast<JSArrayBufferView*>(object);
     if (propertyName == exec->propertyNames().byteLength

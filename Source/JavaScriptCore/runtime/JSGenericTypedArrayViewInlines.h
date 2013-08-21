@@ -258,7 +258,7 @@ void JSGenericTypedArrayView<Adaptor>::put(
 template<typename Adaptor>
 bool JSGenericTypedArrayView<Adaptor>::defineOwnProperty(
     JSObject* object, ExecState* exec, PropertyName propertyName,
-    PropertyDescriptor& descriptor, bool shouldThrow)
+    const PropertyDescriptor& descriptor, bool shouldThrow)
 {
     JSGenericTypedArrayView* thisObject = jsCast<JSGenericTypedArrayView*>(object);
     

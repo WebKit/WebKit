@@ -59,7 +59,7 @@ public:
     //   - call 'initializeIndex' for all properties in sequence, for 0 <= i < initialLength.
     static JSArray* tryCreateUninitialized(VM&, Structure*, unsigned initialLength);
 
-    JS_EXPORT_PRIVATE static bool defineOwnProperty(JSObject*, ExecState*, PropertyName, PropertyDescriptor&, bool throwException);
+    JS_EXPORT_PRIVATE static bool defineOwnProperty(JSObject*, ExecState*, PropertyName, const PropertyDescriptor&, bool throwException);
 
     static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
 

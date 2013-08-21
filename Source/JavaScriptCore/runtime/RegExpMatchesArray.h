@@ -119,7 +119,7 @@ namespace JSC {
             JSArray::getOwnPropertyNames(thisObject, exec, arr, mode);
         }
 
-        static bool defineOwnProperty(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor, bool shouldThrow)
+        static bool defineOwnProperty(JSObject* object, ExecState* exec, PropertyName propertyName, const PropertyDescriptor& descriptor, bool shouldThrow)
         {
             RegExpMatchesArray* thisObject = jsCast<RegExpMatchesArray*>(object);
             thisObject->reifyAllPropertiesIfNecessary(exec);

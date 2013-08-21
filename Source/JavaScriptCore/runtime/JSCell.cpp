@@ -212,7 +212,7 @@ void JSCell::putDirectVirtual(JSObject*, ExecState*, PropertyName, JSValue, unsi
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-bool JSCell::defineOwnProperty(JSObject*, ExecState*, PropertyName, PropertyDescriptor&, bool)
+bool JSCell::defineOwnProperty(JSObject*, ExecState*, PropertyName, const PropertyDescriptor&, bool)
 {
     RELEASE_ASSERT_NOT_REACHED();
     return false;

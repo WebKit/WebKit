@@ -94,7 +94,7 @@ void JSArrayBuffer::put(
 
 bool JSArrayBuffer::defineOwnProperty(
     JSObject* object, ExecState* exec, PropertyName propertyName,
-    PropertyDescriptor& descriptor, bool shouldThrow)
+    const PropertyDescriptor& descriptor, bool shouldThrow)
 {
     JSArrayBuffer* thisObject = jsCast<JSArrayBuffer*>(object);
     

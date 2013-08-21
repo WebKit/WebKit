@@ -1,3 +1,60 @@
+2013-08-21  Gavin Barraclough  <barraclough@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=120139
+        PropertyDescriptor argument to define methods should be const
+
+        Rubber stamped by Sam Weinig.
+
+        This should never be modified, and this way we can use rvalues.
+
+        * debugger/DebuggerActivation.cpp:
+        (JSC::DebuggerActivation::defineOwnProperty):
+        * debugger/DebuggerActivation.h:
+        * runtime/Arguments.cpp:
+        (JSC::Arguments::defineOwnProperty):
+        * runtime/Arguments.h:
+        * runtime/ClassInfo.h:
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::defineOwnProperty):
+        * runtime/JSArray.h:
+        * runtime/JSArrayBuffer.cpp:
+        (JSC::JSArrayBuffer::defineOwnProperty):
+        * runtime/JSArrayBuffer.h:
+        * runtime/JSArrayBufferView.cpp:
+        (JSC::JSArrayBufferView::defineOwnProperty):
+        * runtime/JSArrayBufferView.h:
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::defineOwnProperty):
+        * runtime/JSCell.h:
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::defineOwnProperty):
+        * runtime/JSFunction.h:
+        * runtime/JSGenericTypedArrayView.h:
+        * runtime/JSGenericTypedArrayViewInlines.h:
+        (JSC::::defineOwnProperty):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::defineOwnProperty):
+        * runtime/JSGlobalObject.h:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::putIndexedDescriptor):
+        (JSC::JSObject::defineOwnIndexedProperty):
+        (JSC::putDescriptor):
+        (JSC::JSObject::defineOwnNonIndexProperty):
+        (JSC::JSObject::defineOwnProperty):
+        * runtime/JSObject.h:
+        * runtime/JSProxy.cpp:
+        (JSC::JSProxy::defineOwnProperty):
+        * runtime/JSProxy.h:
+        * runtime/RegExpMatchesArray.h:
+        (JSC::RegExpMatchesArray::defineOwnProperty):
+        * runtime/RegExpObject.cpp:
+        (JSC::RegExpObject::defineOwnProperty):
+        * runtime/RegExpObject.h:
+        * runtime/StringObject.cpp:
+        (JSC::StringObject::defineOwnProperty):
+        * runtime/StringObject.h:
+            - make PropertyDescriptor const
+
 2013-08-21  Filip Pizlo  <fpizlo@apple.com>
 
         REGRESSION: Crash under JITCompiler::link while loading Gmail

@@ -100,7 +100,7 @@ void JSProxy::putDirectVirtual(JSObject* object, ExecState* exec, PropertyName p
     thisObject->target()->putDirectVirtual(thisObject->target(), exec, propertyName, value, attributes);
 }
 
-bool JSProxy::defineOwnProperty(JSC::JSObject* object, JSC::ExecState* exec, JSC::PropertyName propertyName, JSC::PropertyDescriptor& descriptor, bool shouldThrow)
+bool JSProxy::defineOwnProperty(JSObject* object, ExecState* exec, PropertyName propertyName, const PropertyDescriptor& descriptor, bool shouldThrow)
 {
     JSProxy* thisObject = jsCast<JSProxy*>(object);
     return thisObject->target()->methodTable()->defineOwnProperty(thisObject->target(), exec, propertyName, descriptor, shouldThrow);
