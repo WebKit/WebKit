@@ -1,3 +1,10 @@
+2013-08-21  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Unreviewed gardening: WebInspector should always be enabled for WinLauncher.
+
+        * WinLauncher/WinLauncher.cpp:
+        (setToDefaultPreferences): Activate Developer Extras on Release (as well as Debug) builds.
+
 2013-08-21  Zan Dobersek  <zdobersek@igalia.com>
 
         <https://webkit.org/b/120116> [GTK] Fix a typo in ActivateFontsGtk.cpp

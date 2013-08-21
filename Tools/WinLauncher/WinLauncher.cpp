@@ -290,6 +290,8 @@ static bool setToDefaultPreferences()
     gPrefsPrivate->setAllowUniversalAccessFromFileURLs(FALSE);
     gPrefsPrivate->setAllowFileAccessFromFileURLs(TRUE);
 
+    gPrefsPrivate->setDeveloperExtrasEnabled(TRUE);
+
     return true;
 }
 
