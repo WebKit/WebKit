@@ -1,3 +1,16 @@
+2013-08-21  Tim Horton  <timothy_horton@apple.com>
+
+        revalidateTiles and ensureTilesForRect can share a lot of code
+        https://bugs.webkit.org/show_bug.cgi?id=119282
+
+        Missed the review comments, whoops.
+
+        * platform/graphics/ca/mac/TileController.h:
+        * platform/graphics/ca/mac/TileController.mm:
+        (WebCore::TileController::prepopulateRect):
+        (WebCore::TileController::revalidateTiles):
+        (WebCore::TileController::ensureTilesForRect):
+
 2013-08-21  Andreas Kling  <akling@apple.com>
 
         <https://webkit.org/b/120115> SVG elements always have custom style resolve callbacks.

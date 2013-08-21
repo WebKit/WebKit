@@ -146,8 +146,10 @@ private:
     typedef unsigned TileValidationPolicyFlags;
 
     void revalidateTiles(TileValidationPolicyFlags foregroundValidationPolicy = 0, TileValidationPolicyFlags backgroundValidationPolicy = 0);
-    enum class NewTileType { PrimaryTiles, SecondaryTiles };
-    IntRect ensureTilesForRect(const FloatRect&, NewTileType);
+    enum class CoverageType { PrimaryTiles, SecondaryTiles };
+
+    // Returns the bounds of the covered tiles.
+    IntRect ensureTilesForRect(const FloatRect&, CoverageType);
     void updateTileCoverageMap();
 
     void removeAllTiles();

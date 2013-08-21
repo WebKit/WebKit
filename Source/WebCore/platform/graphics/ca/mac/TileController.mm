@@ -357,7 +357,7 @@ void TileController::prepopulateRect(const FloatRect& rect)
     if (m_primaryTileCoverageRect.contains(rectInTileCoords))
         return;
 
-    ensureTilesForRect(rect, NewTileType::SecondaryTiles);
+    ensureTilesForRect(rect, CoverageType::SecondaryTiles);
 
     if (m_tiledScrollingIndicatorLayer)
         updateTileCoverageMap();
@@ -673,7 +673,7 @@ void TileController::revalidateTiles(TileValidationPolicyFlags foregroundValidat
     }
     
     // Ensure primary tile coverage tiles.
-    m_primaryTileCoverageRect = ensureTilesForRect(tileCoverageRect, NewTileType::PrimaryTiles);
+    m_primaryTileCoverageRect = ensureTilesForRect(tileCoverageRect, CoverageType::PrimaryTiles);
 
     if (validationPolicy & PruneSecondaryTiles) {
         removeAllSecondaryTiles();
@@ -768,7 +768,7 @@ void TileController::cohortRemovalTimerFired(Timer<TileController>*)
         updateTileCoverageMap();
 }
 
-IntRect TileController::ensureTilesForRect(const FloatRect& rect, NewTileType newTileType)
+IntRect TileController::ensureTilesForRect(const FloatRect& rect, CoverageType newTileType)
 {
     if (m_unparentsOffscreenTiles && !m_isInWindow)
         return IntRect();
@@ -813,7 +813,7 @@ IntRect TileController::ensureTilesForRect(const FloatRect& rect, NewTileType ne
                     [tileInfo.layer.get() setFrame:tileRect];
             }
 
-            if (newTileType == NewTileType::SecondaryTiles && !tileRect.intersects(m_primaryTileCoverageRect)) {
+            if (newTileType == CoverageType::SecondaryTiles && !tileRect.intersects(m_primaryTileCoverageRect)) {
                 tileInfo.cohort = currCohort;
                 ++tilesInCohort;
             }
