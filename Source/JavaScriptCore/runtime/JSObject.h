@@ -123,7 +123,7 @@ public:
     JS_EXPORT_PRIVATE static bool getOwnPropertySlotByIndex(JSObject*, ExecState*, unsigned propertyName, PropertySlot&);
 
     // The key difference between this and getOwnPropertySlot is that getOwnPropertySlot
-    // currently returns incorrect results for the DOM window (wiith non-own properties)
+    // currently returns incorrect results for the DOM window (with non-own properties)
     // being returned. Once this is fixed we should migrate code & remove this method.
     bool getOwnPropertyDescriptor(ExecState*, PropertyName, PropertyDescriptor&);
 
