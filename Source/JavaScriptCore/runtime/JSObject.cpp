@@ -583,7 +583,7 @@ void JSObject::notifyPresenceOfIndexedAccessors(VM& vm)
     if (mayInterceptIndexedAccesses())
         return;
     
-    setStructure(vm, Structure::nonPropertyTransition(vm, structure(), AddIndexedAccessors), m_butterfly);
+    setStructure(vm, Structure::nonPropertyTransition(vm, structure(), AddIndexedAccessors));
     
     if (!vm.prototypeMap.isPrototype(this))
         return;
@@ -611,7 +611,7 @@ Butterfly* JSObject::createInitialUndecided(VM& vm, unsigned length)
 {
     Butterfly* newButterfly = createInitialIndexedStorage(vm, length, sizeof(EncodedJSValue));
     Structure* newStructure = Structure::nonPropertyTransition(vm, structure(), AllocateUndecided);
-    setButterfly(vm, newButterfly, newStructure);
+    setStructureAndButterfly(vm, newStructure, newButterfly);
     return newButterfly;
 }
 
@@ -619,7 +619,7 @@ ContiguousJSValues JSObject::createInitialInt32(VM& vm, unsigned length)
 {
     Butterfly* newButterfly = createInitialIndexedStorage(vm, length, sizeof(EncodedJSValue));
     Structure* newStructure = Structure::nonPropertyTransition(vm, structure(), AllocateInt32);
-    setButterfly(vm, newButterfly, newStructure);
+    setStructureAndButterfly(vm, newStructure, newButterfly);
     return newButterfly->contiguousInt32();
 }
 
@@ -629,7 +629,7 @@ ContiguousDoubles JSObject::createInitialDouble(VM& vm, unsigned length)
     for (unsigned i = newButterfly->vectorLength(); i--;)
         newButterfly->contiguousDouble()[i] = QNaN;
     Structure* newStructure = Structure::nonPropertyTransition(vm, structure(), AllocateDouble);
-    setButterfly(vm, newButterfly, newStructure);
+    setStructureAndButterfly(vm, newStructure, newButterfly);
     return newButterfly->contiguousDouble();
 }
 
@@ -637,7 +637,7 @@ ContiguousJSValues JSObject::createInitialContiguous(VM& vm, unsigned length)
 {
     Butterfly* newButterfly = createInitialIndexedStorage(vm, length, sizeof(EncodedJSValue));
     Structure* newStructure = Structure::nonPropertyTransition(vm, structure(), AllocateContiguous);
-    setButterfly(vm, newButterfly, newStructure);
+    setStructureAndButterfly(vm, newStructure, newButterfly);
     return newButterfly->contiguous();
 }
 
@@ -657,7 +657,7 @@ ArrayStorage* JSObject::createArrayStorage(VM& vm, unsigned length, unsigned vec
     result->m_numValuesInVector = 0;
     result->m_indexBias = 0;
     Structure* newStructure = Structure::nonPropertyTransition(vm, structure(), structure()->suggestedArrayStorageTransition());
-    setButterfly(vm, newButterfly, newStructure);
+    setStructureAndButterfly(vm, newStructure, newButterfly);
     return result;
 }
 
@@ -669,7 +669,7 @@ ArrayStorage* JSObject::createInitialArrayStorage(VM& vm)
 ContiguousJSValues JSObject::convertUndecidedToInt32(VM& vm)
 {
     ASSERT(hasUndecided(structure()->indexingType()));
-    setStructure(vm, Structure::nonPropertyTransition(vm, structure(), AllocateInt32), m_butterfly);
+    setStructure(vm, Structure::nonPropertyTransition(vm, structure(), AllocateInt32));
     return m_butterfly->contiguousInt32();
 }
 
@@ -680,14 +680,14 @@ ContiguousDoubles JSObject::convertUndecidedToDouble(VM& vm)
     for (unsigned i = m_butterfly->vectorLength(); i--;)
         m_butterfly->contiguousDouble()[i] = QNaN;
     
-    setStructure(vm, Structure::nonPropertyTransition(vm, structure(), AllocateDouble), m_butterfly);
+    setStructure(vm, Structure::nonPropertyTransition(vm, structure(), AllocateDouble));
     return m_butterfly->contiguousDouble();
 }
 
 ContiguousJSValues JSObject::convertUndecidedToContiguous(VM& vm)
 {
     ASSERT(hasUndecided(structure()->indexingType()));
-    setStructure(vm, Structure::nonPropertyTransition(vm, structure(), AllocateContiguous), m_butterfly);
+    setStructure(vm, Structure::nonPropertyTransition(vm, structure(), AllocateContiguous));
     return m_butterfly->contiguous();
 }
 
@@ -723,7 +723,7 @@ ArrayStorage* JSObject::convertUndecidedToArrayStorage(VM& vm, NonPropertyTransi
     // No need to copy elements.
     
     Structure* newStructure = Structure::nonPropertyTransition(vm, structure(), transition);
-    setButterfly(vm, storage->butterfly(), newStructure);
+    setStructureAndButterfly(vm, newStructure, storage->butterfly());
     return storage;
 }
 
@@ -753,7 +753,7 @@ ContiguousDoubles JSObject::convertInt32ToDouble(VM& vm)
         *currentAsDouble = v.asInt32();
     }
     
-    setStructure(vm, Structure::nonPropertyTransition(vm, structure(), AllocateDouble), m_butterfly);
+    setStructure(vm, Structure::nonPropertyTransition(vm, structure(), AllocateDouble));
     return m_butterfly->contiguousDouble();
 }
 
@@ -761,7 +761,7 @@ ContiguousJSValues JSObject::convertInt32ToContiguous(VM& vm)
 {
     ASSERT(hasInt32(structure()->indexingType()));
     
-    setStructure(vm, Structure::nonPropertyTransition(vm, structure(), AllocateContiguous), m_butterfly);
+    setStructure(vm, Structure::nonPropertyTransition(vm, structure(), AllocateContiguous));
     return m_butterfly->contiguous();
 }
 
@@ -779,7 +779,7 @@ ArrayStorage* JSObject::convertInt32ToArrayStorage(VM& vm, NonPropertyTransition
     }
     
     Structure* newStructure = Structure::nonPropertyTransition(vm, structure(), transition);
-    setButterfly(vm, newStorage->butterfly(), newStructure);
+    setStructureAndButterfly(vm, newStructure, newStorage->butterfly());
     return newStorage;
 }
 
@@ -819,7 +819,7 @@ ContiguousJSValues JSObject::genericConvertDoubleToContiguous(VM& vm)
         currentAsValue->setWithoutWriteBarrier(v);
     }
     
-    setStructure(vm, Structure::nonPropertyTransition(vm, structure(), AllocateContiguous), m_butterfly);
+    setStructure(vm, Structure::nonPropertyTransition(vm, structure(), AllocateContiguous));
     return m_butterfly->contiguous();
 }
 
@@ -847,7 +847,7 @@ ArrayStorage* JSObject::convertDoubleToArrayStorage(VM& vm, NonPropertyTransitio
     }
     
     Structure* newStructure = Structure::nonPropertyTransition(vm, structure(), transition);
-    setButterfly(vm, newStorage->butterfly(), newStructure);
+    setStructureAndButterfly(vm, newStructure, newStorage->butterfly());
     return newStorage;
 }
 
@@ -875,7 +875,7 @@ ArrayStorage* JSObject::convertContiguousToArrayStorage(VM& vm, NonPropertyTrans
     }
     
     Structure* newStructure = Structure::nonPropertyTransition(vm, structure(), transition);
-    setButterfly(vm, newStorage->butterfly(), newStructure);
+    setStructureAndButterfly(vm, newStructure, newStorage->butterfly());
     return newStorage;
 }
 
@@ -1117,7 +1117,7 @@ void JSObject::switchToSlowPutArrayStorage(VM& vm)
     case NonArrayWithArrayStorage:
     case ArrayWithArrayStorage: {
         Structure* newStructure = Structure::nonPropertyTransition(vm, structure(), SwitchToSlowPutArrayStorage);
-        setStructure(vm, newStructure, m_butterfly);
+        setStructure(vm, newStructure);
         break;
     }
         
@@ -1141,7 +1141,7 @@ void JSObject::setPrototype(VM& vm, JSValue prototype)
         vm.prototypeMap.addPrototype(asObject(prototype));
     
     Structure* newStructure = Structure::changePrototypeTransition(vm, structure(), prototype);
-    setStructure(vm, newStructure, m_butterfly);
+    setStructure(vm, newStructure);
     
     if (!newStructure->anyObjectInChainMayInterceptIndexedAccesses())
         return;
@@ -1198,7 +1198,7 @@ void JSObject::putDirectAccessor(ExecState* exec, PropertyName propertyName, JSV
     // getters and setters, though, we also need to change our Structure
     // if we override an existing non-getter or non-setter.
     if (slot.type() != PutPropertySlot::NewProperty)
-        setStructure(vm, Structure::attributeChangeTransition(vm, structure(), propertyName, attributes), m_butterfly);
+        setStructure(vm, Structure::attributeChangeTransition(vm, structure(), propertyName, attributes));
 
     if (attributes & ReadOnly)
         structure()->setContainsReadOnlyProperties();
@@ -1547,7 +1547,7 @@ void JSObject::seal(VM& vm)
     if (isSealed(vm))
         return;
     preventExtensions(vm);
-    setStructure(vm, Structure::sealTransition(vm, structure()), m_butterfly);
+    setStructure(vm, Structure::sealTransition(vm, structure()));
 }
 
 void JSObject::freeze(VM& vm)
@@ -1555,14 +1555,14 @@ void JSObject::freeze(VM& vm)
     if (isFrozen(vm))
         return;
     preventExtensions(vm);
-    setStructure(vm, Structure::freezeTransition(vm, structure()), m_butterfly);
+    setStructure(vm, Structure::freezeTransition(vm, structure()));
 }
 
 void JSObject::preventExtensions(VM& vm)
 {
     enterDictionaryIndexingMode(vm);
     if (isExtensible())
-        setStructure(vm, Structure::preventExtensionsTransition(vm, structure()), m_butterfly);
+        setStructure(vm, Structure::preventExtensionsTransition(vm, structure()));
 }
 
 // This presently will flatten to an uncachable dictionary; this is suitable
@@ -1580,7 +1580,7 @@ void JSObject::reifyStaticFunctionsForDelete(ExecState* exec)
     }
 
     if (!structure()->isUncacheableDictionary())
-        setStructure(vm, Structure::toUncacheableDictionaryTransition(vm, structure()), m_butterfly);
+        setStructure(vm, Structure::toUncacheableDictionaryTransition(vm, structure()));
 
     for (const ClassInfo* info = classInfo(); info; info = info->parentClass) {
         const HashTable* hashTable = info->propHashTable(globalObject()->globalExec());
@@ -1610,7 +1610,7 @@ bool JSObject::removeDirect(VM& vm, PropertyName propertyName)
         return true;
     }
 
-    setStructure(vm, Structure::removePropertyTransition(vm, structure(), propertyName, offset), m_butterfly);
+    setStructure(vm, Structure::removePropertyTransition(vm, structure(), propertyName, offset));
     if (offset == invalidOffset)
         return false;
     putDirectUndefined(offset);

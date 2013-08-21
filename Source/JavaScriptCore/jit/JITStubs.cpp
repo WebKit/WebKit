@@ -607,7 +607,7 @@ DEFINE_STUB_FUNCTION(JSObject*, op_put_by_id_transition_realloc)
     JSObject* base = asObject(baseValue);
     VM& vm = *stackFrame.vm;
     Butterfly* butterfly = base->growOutOfLineStorage(vm, oldSize, newSize);
-    base->setButterfly(vm, butterfly, newStructure);
+    base->setStructureAndButterfly(vm, newStructure, butterfly);
 
     return base;
 }
