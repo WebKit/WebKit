@@ -246,6 +246,8 @@ void Graph::dump(PrintStream& out, const char* prefix, Node* node, DumpContext* 
     }
     if (node->hasIndexingType())
         out.print(comma, IndexingTypeDump(node->indexingType()));
+    if (node->hasTypedArrayType())
+        out.print(comma, node->typedArrayType());
     if (node->hasPhi())
         out.print(comma, "^", node->phi()->index());
     if (node->hasExecutionCounter())

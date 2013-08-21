@@ -231,6 +231,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case ForceOSRExit:
     case CheckWatchdogTimer:
     case StringFromCharCode:
+    case NewTypedArray:
     case Unreachable:
         return true;
         

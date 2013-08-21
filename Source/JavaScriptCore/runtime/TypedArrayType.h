@@ -53,6 +53,13 @@ inline unsigned toIndex(TypedArrayType type)
     return static_cast<unsigned>(type) - 1;
 }
 
+inline TypedArrayType indexToTypedArrayType(unsigned index)
+{
+    TypedArrayType result = static_cast<TypedArrayType>(index + 1);
+    ASSERT(result >= TypeInt8 && result <= TypeDataView);
+    return result;
+}
+
 inline bool isTypedView(TypedArrayType type)
 {
     switch (type) {
@@ -94,6 +101,7 @@ inline size_t elementSize(TypedArrayType type)
 }
 
 const ClassInfo* classInfoForType(TypedArrayType);
+const ClassInfo* constructorClassInfoForType(TypedArrayType);
 
 inline bool isInt(TypedArrayType type)
 {

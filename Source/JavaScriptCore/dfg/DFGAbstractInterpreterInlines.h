@@ -1043,6 +1043,24 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         forNode(node).setType(SpecArray);
         m_state.setHaveStructures(true);
         break;
+        
+    case NewTypedArray:
+        switch (node->child1().useKind()) {
+        case Int32Use:
+            break;
+        case UntypedUse:
+            clobberWorld(node->codeOrigin, clobberLimit);
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+        }
+        forNode(node).set(
+            m_graph,
+            m_graph.globalObjectFor(node->codeOrigin)->typedArrayStructure(
+                node->typedArrayType()));
+        m_state.setHaveStructures(true);
+        break;
             
     case NewRegexp:
         forNode(node).set(m_graph, m_graph.globalObjectFor(node->codeOrigin)->regExpStructure());

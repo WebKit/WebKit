@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -46,6 +46,7 @@
 #include "ObjectConstructor.h"
 #include "Operations.h"
 #include "StringConstructor.h"
+#include "TypedArrayInlines.h"
 #include <wtf/InlineASM.h>
 
 #if ENABLE(JIT)
@@ -385,6 +386,76 @@ ALWAYS_INLINE static void DFG_OPERATION operationPutByValInternal(ExecState* exe
         PutPropertySlot slot(strict);
         baseValue.put(exec, ident, value, slot);
     }
+}
+
+template<typename ViewClass>
+char* newTypedArrayWithSize(ExecState* exec, Structure* structure, int32_t size)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+    if (size < 0) {
+        throwError(exec, createRangeError(exec, "Requested length is negative"));
+        return 0;
+    }
+    return bitwise_cast<char*>(ViewClass::create(exec, structure, size));
+}
+
+template<typename ViewClass>
+char* newTypedArrayWithOneArgument(
+    ExecState* exec, Structure* structure, EncodedJSValue encodedValue)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+    
+    JSValue value = JSValue::decode(encodedValue);
+    
+    if (JSArrayBuffer* jsBuffer = jsDynamicCast<JSArrayBuffer*>(value)) {
+        RefPtr<ArrayBuffer> buffer = jsBuffer->impl();
+        
+        if (buffer->byteLength() % ViewClass::elementSize) {
+            throwError(exec, createRangeError(exec, "ArrayBuffer length minus the byteOffset is not a multiple of the element size"));
+            return 0;
+        }
+        return bitwise_cast<char*>(
+            ViewClass::create(
+                exec, structure, buffer, 0, buffer->byteLength() / ViewClass::elementSize));
+    }
+    
+    if (JSObject* object = jsDynamicCast<JSObject*>(value)) {
+        unsigned length = object->get(exec, vm.propertyNames->length).toUInt32(exec);
+        if (exec->hadException())
+            return 0;
+        
+        ViewClass* result = ViewClass::createUninitialized(exec, structure, length);
+        if (!result)
+            return 0;
+        
+        if (!result->set(exec, object, 0, length))
+            return 0;
+        
+        return bitwise_cast<char*>(result);
+    }
+    
+    int length;
+    if (value.isInt32())
+        length = value.asInt32();
+    else if (!value.isNumber()) {
+        throwError(exec, createTypeError(exec, "Invalid array length argument"));
+        return 0;
+    } else {
+        length = static_cast<int>(value.asNumber());
+        if (length != value.asNumber()) {
+            throwError(exec, createTypeError(exec, "Invalid array length argument (fractional lengths not allowed)"));
+            return 0;
+        }
+    }
+    
+    if (length < 0) {
+        throwError(exec, createRangeError(exec, "Requested length is negative"));
+        return 0;
+    }
+    
+    return bitwise_cast<char*>(ViewClass::create(exec, structure, length));
 }
 
 extern "C" {
@@ -1364,6 +1435,114 @@ char* DFG_OPERATION operationNewArrayBuffer(ExecState* exec, Structure* arrayStr
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
     return bitwise_cast<char*>(constructArray(exec, arrayStructure, exec->codeBlock()->constantBuffer(start), size));
+}
+
+char* DFG_OPERATION operationNewInt8ArrayWithSize(
+    ExecState* exec, Structure* structure, int32_t length)
+{
+    return newTypedArrayWithSize<JSInt8Array>(exec, structure, length);
+}
+
+char* DFG_OPERATION operationNewInt8ArrayWithOneArgument(
+    ExecState* exec, Structure* structure, EncodedJSValue encodedValue)
+{
+    return newTypedArrayWithOneArgument<JSInt8Array>(exec, structure, encodedValue);
+}
+
+char* DFG_OPERATION operationNewInt16ArrayWithSize(
+    ExecState* exec, Structure* structure, int32_t length)
+{
+    return newTypedArrayWithSize<JSInt16Array>(exec, structure, length);
+}
+
+char* DFG_OPERATION operationNewInt16ArrayWithOneArgument(
+    ExecState* exec, Structure* structure, EncodedJSValue encodedValue)
+{
+    return newTypedArrayWithOneArgument<JSInt16Array>(exec, structure, encodedValue);
+}
+
+char* DFG_OPERATION operationNewInt32ArrayWithSize(
+    ExecState* exec, Structure* structure, int32_t length)
+{
+    return newTypedArrayWithSize<JSInt32Array>(exec, structure, length);
+}
+
+char* DFG_OPERATION operationNewInt32ArrayWithOneArgument(
+    ExecState* exec, Structure* structure, EncodedJSValue encodedValue)
+{
+    return newTypedArrayWithOneArgument<JSInt32Array>(exec, structure, encodedValue);
+}
+
+char* DFG_OPERATION operationNewUint8ArrayWithSize(
+    ExecState* exec, Structure* structure, int32_t length)
+{
+    return newTypedArrayWithSize<JSUint8Array>(exec, structure, length);
+}
+
+char* DFG_OPERATION operationNewUint8ArrayWithOneArgument(
+    ExecState* exec, Structure* structure, EncodedJSValue encodedValue)
+{
+    return newTypedArrayWithOneArgument<JSUint8Array>(exec, structure, encodedValue);
+}
+
+char* DFG_OPERATION operationNewUint8ClampedArrayWithSize(
+    ExecState* exec, Structure* structure, int32_t length)
+{
+    return newTypedArrayWithSize<JSUint8ClampedArray>(exec, structure, length);
+}
+
+char* DFG_OPERATION operationNewUint8ClampedArrayWithOneArgument(
+    ExecState* exec, Structure* structure, EncodedJSValue encodedValue)
+{
+    return newTypedArrayWithOneArgument<JSUint8ClampedArray>(exec, structure, encodedValue);
+}
+
+char* DFG_OPERATION operationNewUint16ArrayWithSize(
+    ExecState* exec, Structure* structure, int32_t length)
+{
+    return newTypedArrayWithSize<JSUint16Array>(exec, structure, length);
+}
+
+char* DFG_OPERATION operationNewUint16ArrayWithOneArgument(
+    ExecState* exec, Structure* structure, EncodedJSValue encodedValue)
+{
+    return newTypedArrayWithOneArgument<JSUint16Array>(exec, structure, encodedValue);
+}
+
+char* DFG_OPERATION operationNewUint32ArrayWithSize(
+    ExecState* exec, Structure* structure, int32_t length)
+{
+    return newTypedArrayWithSize<JSUint32Array>(exec, structure, length);
+}
+
+char* DFG_OPERATION operationNewUint32ArrayWithOneArgument(
+    ExecState* exec, Structure* structure, EncodedJSValue encodedValue)
+{
+    return newTypedArrayWithOneArgument<JSUint32Array>(exec, structure, encodedValue);
+}
+
+char* DFG_OPERATION operationNewFloat32ArrayWithSize(
+    ExecState* exec, Structure* structure, int32_t length)
+{
+    return newTypedArrayWithSize<JSFloat32Array>(exec, structure, length);
+}
+
+char* DFG_OPERATION operationNewFloat32ArrayWithOneArgument(
+    ExecState* exec, Structure* structure, EncodedJSValue encodedValue)
+{
+    return newTypedArrayWithOneArgument<JSFloat32Array>(exec, structure, encodedValue);
+}
+
+char* DFG_OPERATION operationNewFloat64ArrayWithSize(
+    ExecState* exec, Structure* structure, int32_t length)
+{
+    return newTypedArrayWithSize<JSFloat64Array>(exec, structure, length);
+}
+
+char* DFG_OPERATION operationNewFloat64ArrayWithOneArgument(
+    ExecState* exec, Structure* structure, EncodedJSValue encodedValue)
+{
+    return newTypedArrayWithOneArgument<JSFloat64Array>(exec, structure, encodedValue);
 }
 
 EncodedJSValue DFG_OPERATION operationNewRegexp(ExecState* exec, void* regexpPtr)

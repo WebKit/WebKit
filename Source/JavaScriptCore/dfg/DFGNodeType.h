@@ -202,6 +202,7 @@ namespace JSC { namespace DFG {
     macro(NewArray, NodeResultJS | NodeHasVarArgs) \
     macro(NewArrayWithSize, NodeResultJS) \
     macro(NewArrayBuffer, NodeResultJS) \
+    macro(NewTypedArray, NodeResultJS | NodeClobbersWorld | NodeMustGenerate) \
     macro(NewRegexp, NodeResultJS) \
     \
     /* Nodes for misc operations. */\

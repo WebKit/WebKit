@@ -673,6 +673,15 @@ private:
             break;
         }
             
+        case NewTypedArray: {
+            if (node->child1()->shouldSpeculateInteger()) {
+                setUseKindAndUnboxIfProfitable<Int32Use>(node->child1());
+                node->clearFlags(NodeMustGenerate | NodeClobbersWorld);
+                break;
+            }
+            break;
+        }
+            
         case NewArrayWithSize: {
             setUseKindAndUnboxIfProfitable<Int32Use>(node->child1());
             break;

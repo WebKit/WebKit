@@ -3527,6 +3527,36 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
         
+    case NewTypedArray: {
+        switch (node->child1().useKind()) {
+        case Int32Use:
+            compileNewTypedArray(node);
+            break;
+        case UntypedUse: {
+            JSValueOperand argument(this, node->child1());
+            GPRReg argumentGPR = argument.gpr();
+            
+            flushRegisters();
+            
+            GPRResult result(this);
+            GPRReg resultGPR = result.gpr();
+            
+            JSGlobalObject* globalObject = m_jit.graph().globalObjectFor(node->codeOrigin);
+            callOperation(
+                operationNewTypedArrayWithOneArgumentForType(node->typedArrayType()),
+                resultGPR, globalObject->typedArrayStructure(node->typedArrayType()),
+                argumentGPR);
+            
+            cellResult(resultGPR, node);
+            break;
+        }
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+        }
+        break;
+    }
+        
     case NewRegexp: {
         flushRegisters();
         GPRResult result(this);
@@ -3603,7 +3633,7 @@ void SpeculativeJIT::compile(Node* node)
         MacroAssembler::JumpList slowPath;
 
         Structure* structure = node->structure();
-        size_t allocationSize = JSObject::allocationSize(structure->inlineCapacity());
+        size_t allocationSize = JSFinalObject::allocationSize(structure->inlineCapacity());
         MarkedAllocator* allocatorPtr = &m_jit.vm()->heap.allocatorForObjectWithoutDestructor(allocationSize);
 
         m_jit.move(TrustedImmPtr(allocatorPtr), allocatorGPR);

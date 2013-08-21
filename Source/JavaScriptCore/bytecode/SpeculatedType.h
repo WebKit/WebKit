@@ -332,6 +332,7 @@ SpeculatedType speculationFromStructure(Structure*);
 SpeculatedType speculationFromCell(JSCell*);
 SpeculatedType speculationFromValue(JSValue);
 
+SpeculatedType speculationFromTypedArrayType(TypedArrayType); // only valid for typed views.
 TypedArrayType typedArrayTypeFromSpeculation(SpeculatedType);
 
 } // namespace JSC

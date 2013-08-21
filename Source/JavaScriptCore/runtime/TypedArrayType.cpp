@@ -27,6 +27,7 @@
 #include "TypedArrayType.h"
 
 #include "JSDataView.h"
+#include "JSTypedArrayConstructors.h"
 #include "JSTypedArrays.h"
 
 namespace JSC {
@@ -56,6 +57,36 @@ const ClassInfo* classInfoForType(TypedArrayType type)
         return JSFloat64Array::info();
     case TypeDataView:
         return JSDataView::info();
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+    return 0;
+}
+
+const ClassInfo* constructorClassInfoForType(TypedArrayType type)
+{
+    switch (type) {
+    case NotTypedArray:
+        return 0;
+    case TypeInt8:
+        return JSInt8ArrayConstructor::info();
+    case TypeUint8:
+        return JSUint8ArrayConstructor::info();
+    case TypeUint8Clamped:
+        return JSUint8ClampedArrayConstructor::info();
+    case TypeInt16:
+        return JSInt16ArrayConstructor::info();
+    case TypeUint16:
+        return JSUint16ArrayConstructor::info();
+    case TypeInt32:
+        return JSInt32ArrayConstructor::info();
+    case TypeUint32:
+        return JSUint32ArrayConstructor::info();
+    case TypeFloat32:
+        return JSFloat32ArrayConstructor::info();
+    case TypeFloat64:
+        return JSFloat64ArrayConstructor::info();
+    case TypeDataView:
+        return JSDataViewConstructor::info();
     }
     RELEASE_ASSERT_NOT_REACHED();
     return 0;

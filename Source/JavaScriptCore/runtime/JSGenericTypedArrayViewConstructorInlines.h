@@ -100,7 +100,7 @@ static EncodedJSValue JSC_HOST_CALL constructGenericTypedArrayView(ExecState* ex
                 return JSValue::encode(jsUndefined());
         } else {
             if ((buffer->byteLength() - offset) % ViewClass::elementSize)
-                return throwVMError(exec, createRangeError(exec, "ArrayBuffer length minus the byteOffset is not a multiple of the element size."));
+                return throwVMError(exec, createRangeError(exec, "ArrayBuffer length minus the byteOffset is not a multiple of the element size"));
             length = (buffer->byteLength() - offset) / ViewClass::elementSize;
         }
         return JSValue::encode(ViewClass::create(exec, structure, buffer, offset, length));
@@ -135,15 +135,15 @@ static EncodedJSValue JSC_HOST_CALL constructGenericTypedArrayView(ExecState* ex
     if (exec->argument(0).isInt32())
         length = exec->argument(0).asInt32();
     else if (!exec->argument(0).isNumber())
-        return throwVMError(exec, createTypeError(exec, "Invalid array length argument."));
+        return throwVMError(exec, createTypeError(exec, "Invalid array length argument"));
     else {
         length = static_cast<int>(exec->argument(0).asNumber());
         if (length != exec->argument(0).asNumber())
-            return throwVMError(exec, createTypeError(exec, "Invalid array length argument (fractional lengths not allowed)."));
+            return throwVMError(exec, createTypeError(exec, "Invalid array length argument (fractional lengths not allowed)"));
     }
 
     if (length < 0)
-        return throwVMError(exec, createRangeError(exec, "Requested length is negative."));
+        return throwVMError(exec, createRangeError(exec, "Requested length is negative"));
     return JSValue::encode(ViewClass::create(exec, structure, length));
 }
 

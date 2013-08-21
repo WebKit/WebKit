@@ -249,24 +249,9 @@ void dumpSpeculationAbbreviated(PrintStream& out, SpeculatedType value)
     out.print(speculationToAbbreviatedString(value));
 }
 
-SpeculatedType speculationFromClassInfo(const ClassInfo* classInfo)
+SpeculatedType speculationFromTypedArrayType(TypedArrayType type)
 {
-    if (classInfo == JSFinalObject::info())
-        return SpecFinalObject;
-    
-    if (classInfo == JSArray::info())
-        return SpecArray;
-    
-    if (classInfo == Arguments::info())
-        return SpecArguments;
-    
-    if (classInfo == StringObject::info())
-        return SpecStringObject;
-    
-    if (classInfo->isSubClassOf(JSFunction::info()))
-        return SpecFunction;
-    
-    switch (classInfo->typedArrayStorageType) {
+    switch (type) {
     case TypeInt8:
         return SpecInt8Array;
     case TypeInt16:
@@ -285,9 +270,33 @@ SpeculatedType speculationFromClassInfo(const ClassInfo* classInfo)
         return SpecFloat32Array;
     case TypeFloat64:
         return SpecFloat64Array;
-    default:
+    case NotTypedArray:
+    case TypeDataView:
         break;
     }
+    RELEASE_ASSERT_NOT_REACHED();
+    return SpecNone;
+}
+
+SpeculatedType speculationFromClassInfo(const ClassInfo* classInfo)
+{
+    if (classInfo == JSFinalObject::info())
+        return SpecFinalObject;
+    
+    if (classInfo == JSArray::info())
+        return SpecArray;
+    
+    if (classInfo == Arguments::info())
+        return SpecArguments;
+    
+    if (classInfo == StringObject::info())
+        return SpecStringObject;
+    
+    if (classInfo->isSubClassOf(JSFunction::info()))
+        return SpecFunction;
+    
+    if (isTypedView(classInfo->typedArrayStorageType))
+        return speculationFromTypedArrayType(classInfo->typedArrayStorageType);
     
     if (classInfo->isSubClassOf(JSObject::info()))
         return SpecObjectOther;

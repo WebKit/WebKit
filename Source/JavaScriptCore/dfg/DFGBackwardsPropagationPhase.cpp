@@ -324,6 +324,14 @@ private:
             break;
         }
             
+        case NewTypedArray: {
+            // Negative zero is not observable. NaN versus undefined are only observable
+            // in that you would get a different exception message. So, like, whatever: we
+            // claim here that NaN v. undefined is observable.
+            node->child1()->mergeFlags(NodeUsedAsInt | NodeUsedAsNumber | NodeUsedAsOther);
+            break;
+        }
+            
         case StringCharAt: {
             node->child1()->mergeFlags(NodeUsedAsValue);
             node->child2()->mergeFlags(NodeUsedAsValue | NodeUsedAsInt);

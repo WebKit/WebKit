@@ -635,6 +635,24 @@ struct Node {
         return m_opInfo;
     }
     
+    bool hasTypedArrayType()
+    {
+        switch (op()) {
+        case NewTypedArray:
+            return true;
+        default:
+            return false;
+        }
+    }
+    
+    TypedArrayType typedArrayType()
+    {
+        ASSERT(hasTypedArrayType());
+        TypedArrayType result = static_cast<TypedArrayType>(m_opInfo);
+        ASSERT(isTypedView(result));
+        return result;
+    }
+    
     bool hasInlineCapacity()
     {
         return op() == CreateThis;

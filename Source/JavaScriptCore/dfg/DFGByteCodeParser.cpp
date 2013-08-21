@@ -168,6 +168,7 @@ private:
     bool handleInlining(Node* callTargetNode, int resultOperand, const CallLinkStatus&, int registerOffset, int argumentCountIncludingThis, unsigned nextOffset, CodeSpecializationKind);
     // Handle intrinsic functions. Return true if it succeeded, false if we need to plant a call.
     bool handleIntrinsic(int resultOperand, Intrinsic, int registerOffset, int argumentCountIncludingThis, SpeculatedType prediction);
+    bool handleTypedArrayConstructor(int resultOperand, InternalFunction*, int registerOffset, int argumentCountIncludingThis, TypedArrayType);
     bool handleConstantInternalFunction(int resultOperand, InternalFunction*, int registerOffset, int argumentCountIncludingThis, SpeculatedType prediction, CodeSpecializationKind);
     Node* handlePutByOffset(Node* base, unsigned identifier, PropertyOffset, Node* value);
     Node* handleGetByOffset(SpeculatedType, Node* base, unsigned identifierNumber, PropertyOffset);
@@ -1588,6 +1589,58 @@ bool ByteCodeParser::handleIntrinsic(int resultOperand, Intrinsic intrinsic, int
     }
 }
 
+bool ByteCodeParser::handleTypedArrayConstructor(
+    int resultOperand, InternalFunction* function, int registerOffset,
+    int argumentCountIncludingThis, TypedArrayType type)
+{
+    if (!isTypedView(type))
+        return false;
+    
+    if (function->classInfo() != constructorClassInfoForType(type))
+        return false;
+    
+    if (function->globalObject() != m_inlineStackTop->m_codeBlock->globalObject())
+        return false;
+    
+    // We only have an intrinsic for the case where you say:
+    //
+    // new FooArray(blah);
+    //
+    // Of course, 'blah' could be any of the following:
+    //
+    // - Integer, indicating that you want to allocate an array of that length.
+    //   This is the thing we're hoping for, and what we can actually do meaningful
+    //   optimizations for.
+    //
+    // - Array buffer, indicating that you want to create a view onto that _entire_
+    //   buffer.
+    //
+    // - Non-buffer object, indicating that you want to create a copy of that
+    //   object by pretending that it quacks like an array.
+    //
+    // - Anything else, indicating that you want to have an exception thrown at
+    //   you.
+    //
+    // The intrinsic, NewTypedArray, will behave as if it could do any of these
+    // things up until we do Fixup. Thereafter, if child1 (i.e. 'blah') is
+    // predicted Int32, then we lock it in as a normal typed array allocation.
+    // Otherwise, NewTypedArray turns into a totally opaque function call that
+    // may clobber the world - by virtue of it accessing properties on what could
+    // be an object.
+    //
+    // Note that although the generic form of NewTypedArray sounds sort of awful,
+    // it is actually quite likely to be more efficient than a fully generic
+    // Construct. So, we might want to think about making NewTypedArray variadic,
+    // or else making Construct not super slow.
+    
+    if (argumentCountIncludingThis != 2)
+        return false;
+    
+    set(resultOperand,
+        addToGraph(NewTypedArray, OpInfo(type), get(registerOffset + argumentToOperand(1))));
+    return true;
+}
+
 bool ByteCodeParser::handleConstantInternalFunction(
     int resultOperand, InternalFunction* function, int registerOffset,
     int argumentCountIncludingThis, SpeculatedType prediction, CodeSpecializationKind kind)
@@ -1616,7 +1669,9 @@ bool ByteCodeParser::handleConstantInternalFunction(
         set(resultOperand,
             addToGraph(Node::VarArg, NewArray, OpInfo(ArrayWithUndecided), OpInfo(0)));
         return true;
-    } else if (function->classInfo() == StringConstructor::info()) {
+    }
+    
+    if (function->classInfo() == StringConstructor::info()) {
         Node* result;
         
         if (argumentCountIncludingThis <= 1)
@@ -1629,6 +1684,14 @@ bool ByteCodeParser::handleConstantInternalFunction(
         
         set(resultOperand, result);
         return true;
+    }
+    
+    for (unsigned typeIndex = 0; typeIndex < NUMBER_OF_TYPED_ARRAY_TYPES; ++typeIndex) {
+        bool result = handleTypedArrayConstructor(
+            resultOperand, function, registerOffset, argumentCountIncludingThis,
+            indexToTypedArrayType(typeIndex));
+        if (result)
+            return true;
     }
     
     return false;

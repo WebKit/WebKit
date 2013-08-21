@@ -1,3 +1,86 @@
+2013-08-20  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should inline new typedArray()
+        https://bugs.webkit.org/show_bug.cgi?id=120022
+
+        Reviewed by Oliver Hunt.
+        
+        Adds inlining of typed array allocations in the DFG. Any operation of the
+        form:
+        
+            new foo(blah)
+        
+        or:
+        
+            foo(blah)
+        
+        where 'foo' is a typed array constructor and 'blah' is exactly one argument,
+        is turned into the NewTypedArray intrinsic. Later, of child1 (i.e. 'blah')
+        is predicted integer, we generate inline code for an allocation. Otherwise
+        it turns into a call to an operation that behaves like the constructor would
+        if it was passed one argument (i.e. it may wrap a buffer or it may create a
+        copy or another array, or it may allocate an array of that length).
+
+        * bytecode/SpeculatedType.cpp:
+        (JSC::speculationFromTypedArrayType):
+        (JSC::speculationFromClassInfo):
+        * bytecode/SpeculatedType.h:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::::executeEffects):
+        * dfg/DFGBackwardsPropagationPhase.cpp:
+        (JSC::DFG::BackwardsPropagationPhase::propagate):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleTypedArrayConstructor):
+        (JSC::DFG::ByteCodeParser::handleConstantInternalFunction):
+        * dfg/DFGCCallHelpers.h:
+        (JSC::DFG::CCallHelpers::setupArgumentsWithExecState):
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::putStructureStoreElimination):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasTypedArrayType):
+        (JSC::DFG::Node::typedArrayType):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::newTypedArrayWithSize):
+        (JSC::DFG::newTypedArrayWithOneArgument):
+        * dfg/DFGOperations.h:
+        (JSC::DFG::operationNewTypedArrayWithSizeForType):
+        (JSC::DFG::operationNewTypedArrayWithOneArgumentForType):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileNewTypedArray):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_new_object):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_new_object):
+        * runtime/JSArray.h:
+        (JSC::JSArray::allocationSize):
+        * runtime/JSArrayBufferView.h:
+        (JSC::JSArrayBufferView::allocationSize):
+        * runtime/JSGenericTypedArrayViewConstructorInlines.h:
+        (JSC::constructGenericTypedArrayView):
+        * runtime/JSObject.h:
+        (JSC::JSFinalObject::allocationSize):
+        * runtime/TypedArrayType.cpp:
+        (JSC::constructorClassInfoForType):
+        * runtime/TypedArrayType.h:
+        (JSC::indexToTypedArrayType):
+
 2013-08-21  Julien Brianceau  <jbrianceau@nds.com>
 
         <https://webkit.org/b/120106> Fix V_DFGOperation_EJPP signature in DFG.

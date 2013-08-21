@@ -4476,6 +4476,83 @@ void SpeculativeJIT::compileNewStringObject(Node* node)
     cellResult(resultGPR, node);
 }
 
+void SpeculativeJIT::compileNewTypedArray(Node* node)
+{
+    JSGlobalObject* globalObject = m_jit.graph().globalObjectFor(node->codeOrigin);
+    TypedArrayType type = node->typedArrayType();
+    Structure* structure = globalObject->typedArrayStructure(type);
+    
+    SpeculateIntegerOperand size(this, node->child1());
+    GPRReg sizeGPR = size.gpr();
+    
+    GPRTemporary result(this);
+    GPRTemporary storage(this);
+    GPRTemporary scratch(this);
+    GPRTemporary scratch2(this);
+    GPRReg resultGPR = result.gpr();
+    GPRReg storageGPR = storage.gpr();
+    GPRReg scratchGPR = scratch.gpr();
+    GPRReg scratchGPR2 = scratch2.gpr();
+    
+    JITCompiler::JumpList slowCases;
+
+    slowCases.append(m_jit.branch32(
+        MacroAssembler::Above, sizeGPR, TrustedImm32(JSArrayBufferView::fastSizeLimit)));
+    
+    m_jit.move(sizeGPR, scratchGPR);
+    m_jit.lshift32(TrustedImm32(logElementSize(type)), scratchGPR);
+    if (elementSize(type) < 8) {
+        m_jit.add32(TrustedImm32(7), scratchGPR);
+        m_jit.and32(TrustedImm32(~7), scratchGPR);
+    }
+    slowCases.append(
+        emitAllocateBasicStorage(scratchGPR, storageGPR));
+    
+    m_jit.subPtr(scratchGPR, storageGPR);
+    
+    emitAllocateJSObject<JSArrayBufferView>(
+        resultGPR, TrustedImmPtr(structure), TrustedImmPtr(0), scratchGPR, scratchGPR2,
+        slowCases);
+    
+    m_jit.storePtr(
+        storageGPR,
+        MacroAssembler::Address(resultGPR, JSArrayBufferView::offsetOfVector()));
+    m_jit.store32(
+        sizeGPR,
+        MacroAssembler::Address(resultGPR, JSArrayBufferView::offsetOfLength()));
+    m_jit.store32(
+        TrustedImm32(FastTypedArray),
+        MacroAssembler::Address(resultGPR, JSArrayBufferView::offsetOfMode()));
+    
+#if USE(JSVALUE32_64)
+    MacroAssembler::Jump done = m_jit.branchTest32(MacroAssembler::Zero, sizeGPR);
+    m_jit.move(sizeGPR, scratchGPR);
+    if (elementSize(type) != 4) {
+        if (elementSize(type) > 4)
+            m_jit.lshift32(TrustedImm32(logElementSize(type) - 2), scratchGPR);
+        else {
+            if (elementSize(type) > 1)
+                m_jit.lshift32(TrustedImm32(logElementSize(type)), scratchGPR);
+            m_jit.add32(TrustedImm32(3), scratchGPR);
+            m_jit.urshift32(TrustedImm32(2), scratchGPR);
+        }
+    }
+    MacroAssembler::Label loop = m_jit.label();
+    m_jit.sub32(TrustedImm32(1), scratchGPR);
+    m_jit.store32(
+        TrustedImm32(0),
+        MacroAssembler::BaseIndex(storageGPR, scratchGPR, MacroAssembler::TimesFour));
+    m_jit.branchTest32(MacroAssembler::NonZero, scratchGPR).linkTo(loop, &m_jit);
+    done.link(&m_jit);
+#endif // USE(JSVALUE32_64)
+    
+    addSlowPathGenerator(slowPathCall(
+        slowCases, this, operationNewTypedArrayWithSizeForType(type),
+        resultGPR, structure, sizeGPR));
+    
+    cellResult(resultGPR, node);
+}
+
 void SpeculativeJIT::speculateInt32(Edge edge)
 {
     if (!needsTypeCheck(edge, SpecInt32))

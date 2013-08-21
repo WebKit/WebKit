@@ -585,6 +585,7 @@ private:
             case ToString:
             case NewStringObject:
             case MakeRope:
+            case NewTypedArray:
                 return 0;
                 
             // This either exits, causes a GC (lazy string allocation), or clobbers

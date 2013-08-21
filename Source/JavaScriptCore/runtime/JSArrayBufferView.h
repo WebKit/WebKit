@@ -91,6 +91,12 @@ public:
             & ~(sizeof(EncodedJSValue) - 1);
     }
 
+    static size_t allocationSize(size_t inlineCapacity)
+    {
+        ASSERT_UNUSED(inlineCapacity, !inlineCapacity);
+        return sizeof(JSArrayBufferView);
+    }
+        
 protected:
     class ConstructionContext {
         WTF_MAKE_NONCOPYABLE(ConstructionContext);

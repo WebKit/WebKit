@@ -1,7 +1,7 @@
 var array = new Array(100000);
 
 for (var i = 0; i < 2000000; ++i)
-    array[i % array.length] = new Int32Array(9);
+    array[i % array.length] = new Int8Array(9);
 
 for (var i = 0; i < array.length; ++i) {
     var subArray = array[i];

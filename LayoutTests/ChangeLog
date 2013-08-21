@@ -1,3 +1,21 @@
+2013-08-20  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should inline new typedArray()
+        https://bugs.webkit.org/show_bug.cgi?id=120022
+
+        Reviewed by Oliver Hunt.
+
+        * fast/js/regress/Float64Array-alloc-long-lived-expected.txt: Added.
+        * fast/js/regress/Float64Array-alloc-long-lived.html: Added.
+        * fast/js/regress/Int16Array-alloc-long-lived-expected.txt: Added.
+        * fast/js/regress/Int16Array-alloc-long-lived.html: Added.
+        * fast/js/regress/Int8Array-alloc-long-lived-expected.txt: Added.
+        * fast/js/regress/Int8Array-alloc-long-lived.html: Added.
+        * fast/js/regress/script-tests/Float64Array-alloc-long-lived.js: Added.
+        * fast/js/regress/script-tests/Int16Array-alloc-long-lived.js: Added.
+        * fast/js/regress/script-tests/Int32Array-alloc-long-lived.js:
+        * fast/js/regress/script-tests/Int8Array-alloc-long-lived.js: Added.
+
 2013-08-21  Tim Horton  <timothy_horton@apple.com>
 
         <https://webkit.org/b/120099> Assertion failure in JSC::SlotVisitor::copyLater when marking DataView

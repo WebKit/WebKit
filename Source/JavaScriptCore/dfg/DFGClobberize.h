@@ -519,6 +519,21 @@ void clobberize(Graph& graph, Node* node, ReadFunctor& read, WriteFunctor& write
         write(GCState);
         return;
         
+    case NewTypedArray:
+        switch (node->child1().useKind()) {
+        case Int32Use:
+            read(GCState);
+            write(GCState);
+            return;
+        case UntypedUse:
+            read(World);
+            write(World);
+            return;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            return;
+        }
+        
     case RegExpExec:
     case RegExpTest:
         read(RegExpState);

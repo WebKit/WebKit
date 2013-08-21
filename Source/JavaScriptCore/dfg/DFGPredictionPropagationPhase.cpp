@@ -414,6 +414,11 @@ private:
             break;
         }
             
+        case NewTypedArray: {
+            changed |= setPrediction(speculationFromTypedArrayType(node->typedArrayType()));
+            break;
+        }
+            
         case NewRegexp:
         case CreateActivation: {
             changed |= setPrediction(SpecObjectOther);

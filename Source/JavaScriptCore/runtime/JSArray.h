@@ -38,6 +38,12 @@ class JSArray : public JSNonFinalObject {
 public:
     typedef JSNonFinalObject Base;
 
+    static size_t allocationSize(size_t inlineCapacity)
+    {
+        ASSERT_UNUSED(inlineCapacity, !inlineCapacity);
+        return sizeof(JSArray);
+    }
+        
 protected:
     explicit JSArray(VM& vm, Structure* structure, Butterfly* butterfly)
         : JSNonFinalObject(vm, structure, butterfly)
