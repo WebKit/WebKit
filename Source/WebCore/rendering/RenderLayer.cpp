@@ -1379,11 +1379,33 @@ RenderLayer* RenderLayer::enclosingPositionedAncestor() const
     return curr;
 }
 
+static RenderLayer* parentLayerCrossFrame(const RenderLayer* layer)
+{
+    ASSERT(layer);
+    if (layer->parent())
+        return layer->parent();
+
+    RenderObject* renderer = layer->renderer();
+    Document* document = renderer->document();
+    if (!document)
+        return 0;
+
+    HTMLFrameOwnerElement* ownerElement = document->ownerElement();
+    if (!ownerElement)
+        return 0;
+
+    RenderObject* ownerRenderer = ownerElement->renderer();
+    if (!ownerRenderer)
+        return 0;
+
+    return ownerRenderer->enclosingLayer();
+}
+
 RenderLayer* RenderLayer::enclosingScrollableLayer() const
 {
-    for (RenderObject* nextRenderer = renderer()->parent(); nextRenderer; nextRenderer = nextRenderer->parent()) {
-        if (nextRenderer->isBox() && toRenderBox(nextRenderer)->canBeScrolledAndHasScrollableArea())
-            return nextRenderer->enclosingLayer();
+    for (RenderLayer* nextLayer = parentLayerCrossFrame(this); nextLayer; nextLayer = parentLayerCrossFrame(nextLayer)) {
+        if (nextLayer->renderer()->isBox() && toRenderBox(nextLayer->renderer())->canBeScrolledAndHasScrollableArea())
+            return nextLayer;
     }
 
     return 0;
@@ -2366,6 +2388,9 @@ void RenderLayer::scrollRectToVisible(const LayoutRect& rect, const ScrollAlignm
         }
     }
     
+    if (renderer()->frame()->eventHandler().autoscrollInProgress())
+        parentLayer = enclosingScrollableLayer();
+
     if (parentLayer)
         parentLayer->scrollRectToVisible(newRect, alignX, alignY);
 

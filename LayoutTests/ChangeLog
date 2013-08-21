@@ -1,3 +1,14 @@
+2013-08-19  Antonio Gomes  <a1.gomes@sisa.samsung.com>
+
+        Text dragging can scroll overflow:hidden boxes
+        https://bugs.webkit.org/show_bug.cgi?id=119760
+
+        Reviewed by Darin Adler.
+        Patch by Antonio Gomes <a1.gomes@sisa.samsung.com>
+
+        * fast/events/autoscroll-upwards-propagation-expected.txt: Added.
+        * fast/events/autoscroll-upwards-propagation.html: Added.
+
 2013-08-20  Gavin Barraclough  <barraclough@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=120086
