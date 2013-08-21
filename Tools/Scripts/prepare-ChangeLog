@@ -22,6 +22,7 @@
 #  Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #
 
+
 # Perl script to create a ChangeLog entry with names of files
 # and functions from a diff.
 #
@@ -78,7 +79,7 @@ sub findChangeLogs($);
 sub findOriginalFileFromSvn($);
 sub generateFileList(\%$$$);
 sub generateFunctionLists($$$$$);
-sub generateNewChangeLogs($$$$$$$$$$$$);
+sub generateNewChangeLogs($$$$$$$$$$$);
 sub getLatestChangeLogs($);
 sub get_function_line_ranges($$);
 sub get_function_line_ranges_for_cpp($$);
@@ -194,10 +195,8 @@ sub main()
     $name =~ s/\(.*?\)\s*$//g;
 
     my $bugURL;
-    my $readableBugURL;
     if ($bugNumber) {
         $bugURL = "https://bugs.webkit.org/show_bug.cgi?id=$bugNumber";
-        $readableBugURL = "https://webkit.org/b/$bugNumber";
     }
 
     if ($bugNumber && !$bugDescription) {
@@ -213,7 +212,7 @@ sub main()
         resolveConflictedChangeLogs($changeLogs);
     }
 
-    generateNewChangeLogs($prefixes, $filesInChangeLog, $addedRegressionTests, $functionLists, $bugURL, $readableBugURL, $bugDescription, $name, $emailAddress, $gitReviewer, $gitCommit, $writeChangeLogs);
+    generateNewChangeLogs($prefixes, $filesInChangeLog, $addedRegressionTests, $functionLists, $bugURL, $bugDescription, $name, $emailAddress, $gitReviewer, $gitCommit, $writeChangeLogs);
 
     if ($writeChangeLogs) {
         print STDERR "-- Please remember to include a detailed description in your ChangeLog entry. --\n-- See <http://webkit.org/coding/contributing.html> for more info --\n";
@@ -460,9 +459,9 @@ sub resolveConflictedChangeLogs($)
     close RESOLVE;
 }
 
-sub generateNewChangeLogs($$$$$$$$$$$$)
+sub generateNewChangeLogs($$$$$$$$$$$)
 {
-    my ($prefixes, $filesInChangeLog, $addedRegressionTests, $functionLists, $bugURL, $readableBugURL, $bugDescription, $name, $emailAddress, $gitReviewer, $gitCommit, $writeChangeLogs) = @_;
+    my ($prefixes, $filesInChangeLog, $addedRegressionTests, $functionLists, $bugURL, $bugDescription, $name, $emailAddress, $gitReviewer, $gitCommit, $writeChangeLogs) = @_;
 
     # Generate new ChangeLog entries and (optionally) write out new ChangeLog files.
     foreach my $prefix (@$prefixes) {
@@ -496,9 +495,9 @@ sub generateNewChangeLogs($$$$$$$$$$$$)
 
         print CHANGE_LOG normalizeLineEndings($description . "\n", $endl) if $description;
 
-        $bugDescription = "Need a short description (OOPS!)" unless $bugDescription;
-        $readableBugURL = "Need the bug URL (OOPS!)" unless $readableBugURL;
-        print CHANGE_LOG normalizeLineEndings("        <$readableBugURL> $bugDescription\n", $endl);
+        $bugDescription = "Need a short description (OOPS!).\n        Need the bug URL (OOPS!)." unless $bugDescription;
+        print CHANGE_LOG normalizeLineEndings("        $bugDescription\n", $endl) if $bugDescription;
+        print CHANGE_LOG normalizeLineEndings("        $bugURL\n", $endl) if $bugURL;
         print CHANGE_LOG normalizeLineEndings("\n", $endl);
 
         print CHANGE_LOG normalizeLineEndings("        Reviewed by $reviewer.\n\n", $endl);
