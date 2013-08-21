@@ -1,3 +1,16 @@
+2013-08-21  Zan Dobersek  <zdobersek@igalia.com>
+
+        <https://webkit.org/b/119836> [GTK] ChromeClient::paint is susceptible to system time changes
+
+        Reviewed by Martin Robinson.
+
+        Instead of using WTF::currentTime() as the value of the last display occurrence,
+        WTF::monotonicallyIncreasingTime() should be used. The latter is not affected by
+        the changes is the system's time, which can cause a halt in the display updating.
+
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        (WebKit::ChromeClient::paint):
+
 2013-08-19  Pratik Solanki  <psolanki@apple.com>
 
         <https://webkit.org/b/119918> Frame::selection() should return a reference
