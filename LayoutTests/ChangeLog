@@ -1,3 +1,16 @@
+2013-08-21  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Remove incorrect ASSERT from CopyVisitor::visitItem
+
+        Rubber stamped by Filip Pizlo.
+
+        Added a new test that triggered the old ASSERT. It's a useful test to have because we create
+        TypedArrays with custom properties.
+
+        * fast/js/regress/ArrayBuffer-Int8Array-alloc-large-long-lived-fragmented-expected.txt: Added.
+        * fast/js/regress/ArrayBuffer-Int8Array-alloc-large-long-lived-fragmented.html: Added.
+        * fast/js/regress/script-tests/ArrayBuffer-Int8Array-alloc-large-long-lived-fragmented.js: Added.
+
 2013-08-21  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION(r154399): broke Mac ML debug WK1 tests > 50 crashes (Requested by thorton on #webkit).

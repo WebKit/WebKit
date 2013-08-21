@@ -37,7 +37,6 @@ namespace JSC {
 inline void CopyVisitor::visitItem(CopyWorklistItem item)
 {
     if (item.token() == ButterflyCopyToken) {
-        ASSERT(item.cell()->structure()->classInfo()->methodTable.copyBackingStore == JSObject::copyBackingStore);
         JSObject::copyBackingStore(item.cell(), *this, ButterflyCopyToken);
         return;
     }

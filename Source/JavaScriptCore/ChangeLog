@@ -1,3 +1,12 @@
+2013-08-21  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Remove incorrect ASSERT from CopyVisitor::visitItem
+
+        Rubber stamped by Filip Pizlo.
+
+        * heap/CopyVisitorInlines.h:
+        (JSC::CopyVisitor::visitItem):
+
 2013-08-21  Gavin Barraclough  <barraclough@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=120127
