@@ -790,7 +790,18 @@ bool RenderBox::canBeScrolledAndHasScrollableArea() const
     
 bool RenderBox::canBeProgramaticallyScrolled() const
 {
-    return (hasOverflowClip() && (scrollsOverflow() || (node() && node()->rendererIsEditable()))) || (node() && node()->isDocumentNode());
+    Node* node = this->node();
+    if (node && node->isDocumentNode())
+        return true;
+
+    if (!hasOverflowClip())
+        return false;
+
+    bool hasScrollableOverflow = hasScrollableOverflowX() || hasScrollableOverflowY();
+    if (scrollsOverflow() && hasScrollableOverflow)
+        return true;
+
+    return node && node->rendererIsEditable();
 }
 
 bool RenderBox::usesCompositedScrolling() const

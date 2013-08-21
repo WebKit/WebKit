@@ -1,3 +1,16 @@
+2013-08-20  Antonio Gomes  <a1.gomes@sisa.samsung.com>
+
+        Harden RenderBox::canBeScrolledAndHasScrollableArea logic
+        https://bugs.webkit.org/show_bug.cgi?id=104373
+
+        Reviewed by Simon Fraser.
+
+        Patch adds a test to ensure autoscrolling only happens on a given
+        axis if it is scrollable in that direction, according to its style.
+
+        * fast/events/autoscroll-overflow-hidden-longhands-expected.txt: Added.
+        * fast/events/autoscroll-overflow-hidden-longhands.html: Added.
+
 2013-08-19  Antonio Gomes  <a1.gomes@sisa.samsung.com>
 
         Text dragging can scroll overflow:hidden boxes
