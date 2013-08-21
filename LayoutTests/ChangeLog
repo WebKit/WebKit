@@ -1,3 +1,9 @@
+2013-08-21  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Reenable some tests that pass now.
+
+        * platform/win/TestExpectations:  Renable some tests
+
 2013-08-21  Tim Horton  <timothy_horton@apple.com>
 
         Remove a deleted test from the global TestExpectations
