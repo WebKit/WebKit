@@ -7,14 +7,16 @@
   </PropertyGroup>
   <PropertyGroup>
     <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
-    <OutDir>$(ConfigurationBuildDir)\bin32\</OutDir>
-    <IntDir>$(ConfigurationBuildDir)\obj32\$(ProjectName)\</IntDir>
+    <OutDir>$(ConfigurationBuildDir)\bin$(PlatformArchitecture)\</OutDir>
+    <IntDir>$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\</IntDir>
     <LinkIncremental>false</LinkIncremental>
     <NMakeBuildCommandLine>%SystemDrive%\cygwin\bin\which.exe bash
 if errorlevel 1 set PATH=%SystemDrive%\cygwin\bin;%PATH%
+set PLATFORMARCHITECTURE=$(PlatformArchitecture)
 nmake /nologo -f $(ProjectName).make</NMakeBuildCommandLine>
     <NMakeReBuildCommandLine>%SystemDrive%\cygwin\bin\which.exe bash
 if errorlevel 1 set PATH=%SystemDrive%\cygwin\bin;%PATH%
+set PLATFORMARCHITECTURE=$(PlatformArchitecture)
 nmake /nologo -f $(ProjectName).make clean
 nmake /nologo -f $(ProjectName).make</NMakeReBuildCommandLine>
     <NMakeCleanCommandLine>%SystemDrive%\cygwin\bin\which.exe bash
@@ -24,6 +26,7 @@ set PATH=$(VSInstallDir)\VC\bin;%PATH%
 
 REM VS2010 has a known bug where the clean command does not recognize environment variables properly unless explicitly set here
 set CONFIGURATIONBUILDDIR=$(ConfigurationBuildDir)
+set PLATFORMARCHITECTURE=$(PlatformArchitecture)
 nmake /nologo -f $(ProjectName).make clean</NMakeCleanCommandLine>
     <TargetName>$(ProjectName)$(DebugSuffix)</TargetName>
   </PropertyGroup>
@@ -72,6 +75,7 @@ set INPUTFILENAME=$(InputFileName)
 set INPUTPATH=$(InputPath)
 set INTDIR=$(IntDir)
 set OUTDIR=$(OutDir)
+set PLATFORMARCHITECTURE=$(PlatformArchitecture)
 set PLATFORMNAME=$(PlatformName)
 set PROJECTDIR=$(ProjectDir)
 set PROJECTFILENAME=$(ProjectFileName)
@@ -107,6 +111,7 @@ set INPUTFILENAME=$(InputFileName)
 set INPUTPATH=$(InputPath)
 set INTDIR=$(IntDir)
 set OUTDIR=$(OutDir)
+set PLATFORMARCHITECTURE=$(PlatformArchitecture)
 set PLATFORMNAME=$(PlatformName)
 set PROJECTDIR=$(ProjectDir)
 set PROJECTFILENAME=$(ProjectFileName)
@@ -142,6 +147,7 @@ set INPUTFILENAME=$(InputFileName)
 set INPUTPATH=$(InputPath)
 set INTDIR=$(IntDir)
 set OUTDIR=$(OutDir)
+set PLATFORMARCHITECTURE=$(PlatformArchitecture)
 set PLATFORMNAME=$(PlatformName)
 set PROJECTDIR=$(ProjectDir)
 set PROJECTFILENAME=$(ProjectFileName)
@@ -172,7 +178,7 @@ cmd /c
     </ResourceCompile>
     <BuildLog />
     <Link>
-      <AdditionalLibraryDirectories>$(IntDir)lib32;$(ConfigurationBuildDir)\lib32;$(WEBKIT_LIBRARIES)\lib32</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(IntDir)lib$(PlatformArchitecture);$(ConfigurationBuildDir)\lib$(PlatformArchitecture);$(WEBKIT_LIBRARIES)\lib$(PlatformArchitecture)</AdditionalLibraryDirectories>
       <LinkErrorReporting>PromptImmediately</LinkErrorReporting>
       <CLRUnmanagedCodeCheck>false</CLRUnmanagedCodeCheck>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
@@ -195,7 +201,7 @@ cmd /c
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <CLRThreadAttribute>DefaultThreadingAttribute</CLRThreadAttribute>
-      <ImportLibrary>$(ConfigurationBuildDir)\lib32\$(TargetName).lib</ImportLibrary>
+      <ImportLibrary>$(ConfigurationBuildDir)\lib$(PlatformArchitecture)\$(TargetName).lib</ImportLibrary>
     </Link>
     <Bscmake />
     <Xdcmake />

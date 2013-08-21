@@ -1,4 +1,4 @@
-set GeneratorDirectory=%CONFIGURATIONBUILDDIR%\obj32\WebKitExportGenerator
+set GeneratorDirectory=%CONFIGURATIONBUILDDIR%\obj%PlatformArchitecture%\WebKitExportGenerator
 echo Exporting link definition output (%GeneratorDirectory%\WebKitExports.def)
 if exist "%OUTDIR%\WebKitExportGenerator%DEBUGSUFFIX%.exe" "%OUTDIR%\WebKitExportGenerator%DEBUGSUFFIX%.exe" > "%GeneratorDirectory%\WebKitExports.def"
 

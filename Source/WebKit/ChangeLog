@@ -1,3 +1,15 @@
+2013-08-21  Alex Christensen  <achristensen@apple.com>
+
+        <https://webkit.org/b/120137> Separating Win32 and Win64 builds.
+
+        Reviewed by Brent Fulgham.
+
+        * WebKit.vcxproj/WebKit/WebKitPostBuild.cmd:
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExportGeneratorBuildCmd.cmd:
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExportGeneratorPostBuild.cmd:
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExportGeneratorPreBuild.cmd:
+        Use PlatformArchitecture to determine correct object directory (obj32 or obj64).
+
 2013-08-20  Brent Fulgham  <bfulgham@apple.com>
 
         <https://webkit.org/b/120098> [Windows] Enable the new Web Inspector

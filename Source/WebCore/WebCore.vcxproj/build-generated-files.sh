@@ -53,7 +53,7 @@ SDKROOT=`cygpath -m -s "$SDKROOT"`
 SDKROOT=`cygpath -u "$SDKROOT"`
 export SDKROOT
 
-export BUILT_PRODUCTS_DIR="$XDSTROOT/obj32/WebCore"
+export BUILT_PRODUCTS_DIR="$XDSTROOT/obj${4}/WebCore"
 
 mkdir -p "${BUILT_PRODUCTS_DIR}/DerivedSources"
 cd "${BUILT_PRODUCTS_DIR}/DerivedSources"

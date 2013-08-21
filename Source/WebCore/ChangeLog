@@ -1,3 +1,22 @@
+2013-08-21  Alex Christensen  <achristensen@apple.com>
+
+        <https://webkit.org/b/120137> Separating Win32 and Win64 builds.
+
+        Reviewed by Brent Fulgham.
+
+        * WebCore.vcxproj/WebCoreGenerated.make:
+        * WebCore.vcxproj/WebCoreGeneratedWinCairo.make:
+        Pass PlatformArchitecture as a command line parameter to bash scripts
+        and use PlatformArchitecture to determine which directory to delete
+        while cleaning (obj32 or obj64).
+        * WebCore.vcxproj/WebCoreGeneratedWinCairoCommon.props:
+        Export PlatformArchitecture to be used by make and cmd scripts.
+        * WebCore.vcxproj/build-generated-files.sh:
+        Use PlatformArchitecture from command line to determine which object directory to use (obj32 or obj64).
+        * WebCore.vcxproj/copyForwardingHeaders.cmd:
+        * WebCore.vcxproj/copyWebCoreResourceFiles.cmd:
+        Use PlatformArchitecture to determine which directory to copy to (obj32 or obj64).
+
 2013-08-21  Tim Horton  <timothy_horton@apple.com>
 
         revalidateTiles and ensureTilesForRect can share a lot of code

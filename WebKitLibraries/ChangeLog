@@ -1,3 +1,14 @@
+2013-08-21  Alex Christensen  <achristensen@apple.com>
+
+        <https://webkit.org/b/120137> Separating Win32 and Win64 builds.
+
+        Reviewed by Brent Fulgham.
+
+        * win/tools/vsprops/common.props:
+        Export PlatformArchitecture to be used by make and cmd scripts.
+        Use PlatformArchitecture to determine correct build directory
+        (lib32/bin32/obj32 or lib64/bin64/obj64).
+
 2013-08-21  Brent Fulgham  <bfulgham@apple.com>
 
         <https://webkit.org/b/120113> [Windows] Enable CSS_IMAGE_SET

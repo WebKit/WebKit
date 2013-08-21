@@ -16,7 +16,7 @@ XDSTROOT=`cygpath -m -s "$XDSTROOT"`
 XDSTROOT=`cygpath -u "$XDSTROOT"`
 export XDSTROOT
 
-export BUILT_PRODUCTS_DIR="$XDSTROOT/obj32/JavaScriptCore/DerivedSources"
+export BUILT_PRODUCTS_DIR="$XDSTROOT/obj${3}/JavaScriptCore/DerivedSources"
 
 ##############################################################################
 # Step 1: Generate LLIntDesiredOffsets.h

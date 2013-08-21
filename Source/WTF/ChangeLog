@@ -1,3 +1,14 @@
+2013-08-21  Alex Christensen  <achristensen@apple.com>
+
+        <https://webkit.org/b/120137> Separating Win32 and Win64 builds.
+
+        Reviewed by Brent Fulgham.
+
+        * WTF.vcxproj/WTFGenerated.make:
+        Pass PlatformArchitecture as a command line parameter to bash scripts.
+        * WTF.vcxproj/build-generated-files.sh:
+        Use PlatformArchitecture from command line to determine which object directory to use (obj32 or obj64).
+
 2013-08-21  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         Disable maybe-uninitialized warning in GCC 4.8

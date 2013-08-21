@@ -6,13 +6,15 @@
   <PropertyGroup>
     <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
     <OutDir>$(ConfigurationBuildDir)\bin\</OutDir>
-    <IntDir>$(ConfigurationBuildDir)\obj\$(ProjectName)\</IntDir>
+    <IntDir>$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\</IntDir>
     <LinkIncremental>false</LinkIncremental>
     <NMakeBuildCommandLine>%SystemDrive%\cygwin\bin\which.exe bash
 if errorlevel 1 set PATH=%SystemDrive%\cygwin\bin;%PATH%
+set PLATFORMARCHITECTURE=$(PlatformArchitecture)
 nmake /nologo -f $(ProjectName)WinCairo.make</NMakeBuildCommandLine>
     <NMakeReBuildCommandLine>%SystemDrive%\cygwin\bin\which.exe bash
 if errorlevel 1 set PATH=%SystemDrive%\cygwin\bin;%PATH%
+set PLATFORMARCHITECTURE=$(PlatformArchitecture)
 nmake /nologo -f $(ProjectName)WinCairo.make clean
 nmake /nologo -f $(ProjectName)WinCairo.make</NMakeReBuildCommandLine>
     <NMakeCleanCommandLine>%SystemDrive%\cygwin\bin\which.exe bash
@@ -21,6 +23,7 @@ if errorlevel 1 set PATH=%SystemDrive%\cygwin\bin;%PATH%
 set PATH=$(VSInstallDir)\VC\bin;%PATH%
 
 REM VS2010 has a known bug where the clean command does not recognize environment variables properly unless explicitly set here
+set PLATFORMARCHITECTURE=$(PlatformArchitecture)
 set CONFIGURATIONBUILDDIR=$(ConfigurationBuildDir)
 nmake /nologo -f $(ProjectName)WinCairo.make clean</NMakeCleanCommandLine>
     <TargetName>$(ProjectName)$(DebugSuffix)</TargetName>
