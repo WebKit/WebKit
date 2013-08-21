@@ -109,7 +109,7 @@ typedef void DFG_OPERATION (*V_DFGOperation_ECZ)(ExecState*, JSCell*, int32_t);
 typedef void DFG_OPERATION (*V_DFGOperation_ECC)(ExecState*, JSCell*, JSCell*);
 typedef void DFG_OPERATION (*V_DFGOperation_EJCI)(ExecState*, EncodedJSValue, JSCell*, StringImpl*);
 typedef void DFG_OPERATION (*V_DFGOperation_EJJJ)(ExecState*, EncodedJSValue, EncodedJSValue, EncodedJSValue);
-typedef void DFG_OPERATION (*V_DFGOperation_EJPP)(ExecState*, EncodedJSValue, EncodedJSValue, void*);
+typedef void DFG_OPERATION (*V_DFGOperation_EJPP)(ExecState*, EncodedJSValue, void*, void*);
 typedef void DFG_OPERATION (*V_DFGOperation_EPZJ)(ExecState*, void*, int32_t, EncodedJSValue);
 typedef void DFG_OPERATION (*V_DFGOperation_W)(WatchpointSet*);
 typedef char* DFG_OPERATION (*P_DFGOperation_E)(ExecState*);
