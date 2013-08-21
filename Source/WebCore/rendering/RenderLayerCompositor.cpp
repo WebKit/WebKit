@@ -958,6 +958,7 @@ void RenderLayerCompositor::addToOverlapMapRecursive(OverlapMap& overlapMap, Ren
 //
 void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestorLayer, RenderLayer* layer, OverlapMap* overlapMap, CompositingState& compositingState, bool& layersChanged, bool& descendantHas3DTransform)
 {
+    layer->updateDescendantDependentFlags();
     layer->updateLayerListsIfNeeded();
 
     if (layer->isOutOfFlowRenderFlowThread())

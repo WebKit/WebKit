@@ -1,3 +1,24 @@
+2013-08-21  Simon Fraser  <simon.fraser@apple.com>
+
+        <https://webkit.org/b/116901> ASSERTION FAILED: !m_visibleDescendantStatusDirty on twitter
+
+        Reviewed by Beth Dakin.
+        
+        In order to make decisions about compositing, the m_hasVisibleDescendant bit on RenderLayers
+        needs to be up-to-date when RenderLayerCompositor::computeCompositingRequirements is recursing
+        over the RenderLayer tree.
+        
+        However, was possible for computeCompositingRequirements() to hit a layer whose m_visibleDescendantStatusDirty
+        bit was set; we only clear this bit from collectLayers() (when updating z-order lists), and from styleChanged()
+        which requires that style changed on the layer itself.
+        
+        Fix by always calling updateDescendantDependentFlags() from computeCompositingRequirements().
+
+        Wasn't able to easily get a reduced testcase.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::computeCompositingRequirements):
+
 2013-08-21  Alex Christensen  <achristensen@apple.com>
 
         <https://webkit.org/b/120137> Separating Win32 and Win64 builds.
