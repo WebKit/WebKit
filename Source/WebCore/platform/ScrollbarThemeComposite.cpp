@@ -75,6 +75,8 @@ bool ScrollbarThemeComposite::paint(ScrollbarThemeClient* scrollbar, GraphicsCon
             scrollMask |= ForwardTrackPart;
     }
 
+    willPaintScrollbar(graphicsContext, scrollbar);
+    
     // Paint the scrollbar background (only used by custom CSS scrollbars).
     paintScrollbarBackground(graphicsContext, scrollbar);
 
@@ -105,6 +107,7 @@ bool ScrollbarThemeComposite::paint(ScrollbarThemeClient* scrollbar, GraphicsCon
     if (scrollMask & ThumbPart)
         paintThumb(graphicsContext, scrollbar, thumbRect);
 
+    didPaintScrollbar(graphicsContext, scrollbar);
     return true;
 }
 

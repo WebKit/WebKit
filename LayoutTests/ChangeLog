@@ -1,3 +1,16 @@
+2013-08-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Allow opacity to apply to custom scrollbars
+        https://bugs.webkit.org/show_bug.cgi?id=120104
+
+        Reviewed by David Hyatt.
+        
+        Ref test for custom scrollbars with opacity on the bar itself,
+        and on the thumb.
+
+        * scrollbars/scrollbar-parts-opacity-expected.html: Added.
+        * scrollbars/scrollbar-parts-opacity.html: Added.
+
 2013-08-21  Robert Hogan  <robert@webkit.org>
 
         REGRESSION(r127163): Respect clearance set on ancestors when placing floats

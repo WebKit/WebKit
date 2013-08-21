@@ -67,6 +67,9 @@ protected:
     virtual IntRect backButtonRect(ScrollbarThemeClient*, ScrollbarPart, bool painting = false);
     virtual IntRect forwardButtonRect(ScrollbarThemeClient*, ScrollbarPart, bool painting = false);
     virtual IntRect trackRect(ScrollbarThemeClient*, bool painting = false);
+
+    virtual void willPaintScrollbar(GraphicsContext*, ScrollbarThemeClient*) OVERRIDE;
+    virtual void didPaintScrollbar(GraphicsContext*, ScrollbarThemeClient*) OVERRIDE;
     
     virtual void paintScrollbarBackground(GraphicsContext*, ScrollbarThemeClient*);
     virtual void paintTrackBackground(GraphicsContext*, ScrollbarThemeClient*, const IntRect&);

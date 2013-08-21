@@ -107,6 +107,25 @@ IntRect RenderScrollbarTheme::constrainTrackRectToTrackPieces(ScrollbarThemeClie
     return result;
 }
 
+void RenderScrollbarTheme::willPaintScrollbar(GraphicsContext* context, ScrollbarThemeClient* scrollbar)
+{
+    float opacity = toRenderScrollbar(scrollbar)->opacity();
+    if (opacity != 1) {
+        context->save();
+        context->clip(scrollbar->frameRect());
+        context->beginTransparencyLayer(opacity);
+    }
+}
+
+void RenderScrollbarTheme::didPaintScrollbar(GraphicsContext* context, ScrollbarThemeClient* scrollbar)
+{
+    float opacity = toRenderScrollbar(scrollbar)->opacity();
+    if (opacity != 1) {
+        context->endTransparencyLayer();
+        context->restore();
+    }
+}
+
 void RenderScrollbarTheme::paintScrollCorner(ScrollView*, GraphicsContext* context, const IntRect& cornerRect)
 {
     // FIXME: Implement.

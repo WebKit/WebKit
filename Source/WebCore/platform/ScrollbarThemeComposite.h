@@ -55,6 +55,9 @@ public:
     
     virtual int minimumThumbLength(ScrollbarThemeClient*);
 
+    virtual void willPaintScrollbar(GraphicsContext*, ScrollbarThemeClient*) { }
+    virtual void didPaintScrollbar(GraphicsContext*, ScrollbarThemeClient*) { }
+
     virtual void paintScrollbarBackground(GraphicsContext*, ScrollbarThemeClient*) { }
     virtual void paintTrackBackground(GraphicsContext*, ScrollbarThemeClient*, const IntRect&) { }
     virtual void paintTrackPiece(GraphicsContext*, ScrollbarThemeClient*, const IntRect&, ScrollbarPart) { }

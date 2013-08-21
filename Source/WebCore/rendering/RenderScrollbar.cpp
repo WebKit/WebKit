@@ -357,4 +357,13 @@ int RenderScrollbar::minimumThumbLength()
     return orientation() == HorizontalScrollbar ? partRenderer->width() : partRenderer->height();
 }
 
+float RenderScrollbar::opacity()
+{
+    RenderScrollbarPart* partRenderer = m_parts.get(ScrollbarBGPart);
+    if (!partRenderer)
+        return 1;
+
+    return partRenderer->style()->opacity();
+}
+
 }

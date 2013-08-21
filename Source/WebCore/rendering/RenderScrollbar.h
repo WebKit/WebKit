@@ -59,6 +59,8 @@ public:
 
     virtual bool isOverlayScrollbar() const { return false; }
 
+    float opacity();
+
 private:
     virtual void setParent(ScrollView*);
     virtual void setEnabled(bool);
