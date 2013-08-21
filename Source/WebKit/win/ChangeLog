@@ -1,3 +1,15 @@
+2013-08-20  Brent Fulgham  <bfulgham@apple.com>
+
+        <https://webkit.org/b/120098> [Windows] Enable the New Web Inspector
+
+        Reviewed by Brian Weinstein.
+
+        * WebCoreSupport/WebInspectorClient.cpp:
+        (WebInspectorClient::openInspectorFrontend): Use the new inspector
+        if present in the WebKit distribution.
+        (WebInspectorFrontendClient::localizedStringsURL): Use the new
+        Web Inspector's localized strings (if present).
+
 2013-08-20  Pratik Solanki  <psolanki@apple.com>
 
         <https://webkit.org/b/120029> Document::markers() should return a reference

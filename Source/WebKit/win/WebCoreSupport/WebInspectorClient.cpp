@@ -158,7 +158,9 @@ WebCore::InspectorFrontendChannel* WebInspectorClient::openInspectorFrontend(Ins
 
     COMPtr<WebMutableURLRequest> request(AdoptCOM, WebMutableURLRequest::createInstance());
 
-    RetainPtr<CFURLRef> htmlURLRef = adoptCF(CFBundleCopyResourceURL(webKitBundle(), CFSTR("inspector"), CFSTR("html"), CFSTR("inspector")));
+    RetainPtr<CFURLRef> htmlURLRef = adoptCF(CFBundleCopyResourceURL(webKitBundle(), CFSTR("Main"), CFSTR("html"), CFSTR("WebInspectorUI")));
+    if (!htmlURLRef)
+        htmlURLRef = adoptCF(CFBundleCopyResourceURL(webKitBundle(), CFSTR("inspector"), CFSTR("html"), CFSTR("inspector")));
     if (!htmlURLRef)
         return 0;
 
@@ -258,7 +260,10 @@ void WebInspectorFrontendClient::frontendLoaded()
 
 String WebInspectorFrontendClient::localizedStringsURL()
 {
-    RetainPtr<CFURLRef> url = adoptCF(CFBundleCopyResourceURL(webKitBundle(), CFSTR("localizedStrings"), CFSTR("js"), 0));
+    RetainPtr<CFURLRef> url = adoptCF(CFBundleCopyResourceURL(webKitBundle(), CFSTR("localizedStrings"), CFSTR("js"), CFSTR("WebInspectorUI")));
+    if (!url)
+        url = adoptCF(CFBundleCopyResourceURL(webKitBundle(), CFSTR("localizedStrings"), CFSTR("js"), 0));
+
     if (!url)
         return String();
 

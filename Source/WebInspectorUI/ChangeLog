@@ -1,3 +1,18 @@
+2013-08-20  Brent Fulgham  <bfulgham@apple.com>
+
+        <http://webkit.org/b/120098> [Windows] Enable the New Web Inspector
+
+        Reviewed by Brian Weinstein.
+
+        Add a new project to copy files to the appropriate spots in the
+        Windows port.
+
+        * WebInspectorUI.vcxproj: Added.
+        * WebInspectorUI.vcxproj/WebInspectorUI.vcxproj: Added.
+        * WebInspectorUI.vcxproj/WebInspectorUI.vcxproj.filters: Added.
+        * WebInspectorUI.vcxproj/WebInspectorUIPostBuild.cmd: Added.
+        * WebInspectorUI.vcxproj/WebInspectorUIPreBuild.cmd: Added.
+
 2013-08-19  James Craig  <james@cookiecrook.com>
 
         <https://webkit.org/b/118106> Web Inspector: AX: Add additional contextual labels for Error/Warnings/Logs that will be spoken for screen readers
