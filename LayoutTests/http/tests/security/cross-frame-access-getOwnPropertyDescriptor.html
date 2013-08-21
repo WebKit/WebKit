@@ -268,19 +268,29 @@
             }
             log("----- tests access to cross domain location object -----");
             window.targetLocation = targetWindow.location;
-            var locationProperties = [
-                "assign", "replace", "reload", "protocol", "host", "hostname", "port", "pathname", "search", "hash", "toString", "valueOf", "customProperty"
+            var locationPropertiesNotAllowed = [
+                "protocol", "host", "hostname", "port", "pathname", "search", "hash", "toString", "valueOf", "customProperty"
             ];
-            for (var i = 0; i < locationProperties.length; i++)
-                shouldBeFalse("canGetDescriptor(targetLocation, '" + locationProperties[i] + "')");
+            var locationPropertiesAllowed = [
+                "assign", "replace", "reload"
+            ];
+            for (var i = 0; i < locationPropertiesNotAllowed.length; i++)
+                shouldBeFalse("canGetDescriptor(targetLocation, '" + locationPropertiesNotAllowed[i] + "')");
+            for (var i = 0; i < locationPropertiesAllowed.length; i++)
+                shouldBeTrue("canGetDescriptor(targetLocation, '" + locationPropertiesAllowed[i] + "')");
 
             log("----- tests access to cross domain history object -----");
             window.targetHistory = targetWindow.history;
-            var historyProperties = [
-                "length", "back", "forward", "go", "pushState", "replaceState", "customProperty"
+            var historyPropertiesNotAllowed = [
+                "length", "pushState", "replaceState", "customProperty"
             ];
-            for (var i = 0; i < historyProperties.length; i++)
-                shouldBeFalse("canGetDescriptor(targetHistory, '" + historyProperties[i] + "')");
+            var historyPropertiesAllowed = [
+                "back", "forward", "go"
+            ];
+            for (var i = 0; i < historyPropertiesNotAllowed.length; i++)
+                shouldBeFalse("canGetDescriptor(targetHistory, '" + historyPropertiesNotAllowed[i] + "')");
+            for (var i = 0; i < historyPropertiesAllowed.length; i++)
+                shouldBeTrue("canGetDescriptor(targetHistory, '" + historyPropertiesAllowed[i] + "')");
         }
     </script>
 </head>

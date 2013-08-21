@@ -1,3 +1,18 @@
+2013-08-20  Gavin Barraclough  <barraclough@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=120086
+        REGRESSION (r154300): http/tests/security/cross-frame-access-getOwnPropertyDescriptor is failing or crashing on the bots
+
+        Reviewed by Geoff Garen.
+
+        Previously we allowed cross-frame access to these properties, but hid the descriptors.
+        Now we allow access, but make them read-only, non-configurable.
+
+        * http/tests/security/cross-frame-access-getOwnPropertyDescriptor-expected.txt:
+        * http/tests/security/cross-frame-access-getOwnPropertyDescriptor.html:
+        * platform/mac/TestExpectations:
+            - Update test/results/expectations.
+
 2013-08-20  Filip Pizlo  <fpizlo@apple.com>
 
         fast/js/regress/emscripten-cube2hash is failing on all the Mac bots

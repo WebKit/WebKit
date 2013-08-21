@@ -1311,5 +1311,3 @@ webkit.org/b/90708 fullscreen/exit-full-screen-iframe.html [ Pass Failure ]
 webkit.org/b/120085 [ Lion ] http/tests/inspector/resource-tree/resource-tree-document-url.html [ Pass Failure ]
 
 webkit.org/b/120087 [ Lion ] fast/forms/submit-to-url-fragment.html [ Pass Crash ]
-
-webkit.org/b/120086 http/tests/security/cross-frame-access-getOwnPropertyDescriptor.html [ Failure ]
