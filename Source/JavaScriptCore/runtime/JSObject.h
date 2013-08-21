@@ -121,6 +121,10 @@ public:
 
     static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
     JS_EXPORT_PRIVATE static bool getOwnPropertySlotByIndex(JSObject*, ExecState*, unsigned propertyName, PropertySlot&);
+
+    // The key difference between this and getOwnPropertySlot is that getOwnPropertySlot
+    // currently returns incorrect results for the DOM window (wiith non-own properties)
+    // being returned. Once this is fixed we should migrate code & remove this method.
     bool getOwnPropertyDescriptor(ExecState*, PropertyName, PropertyDescriptor&);
 
     bool allowsAccessFrom(ExecState*);
@@ -457,8 +461,6 @@ public:
     void putDirect(VM&, PropertyName, JSValue, PutPropertySlot&);
     void putDirectWithoutTransition(VM&, PropertyName, JSValue, unsigned attributes = 0);
     void putDirectAccessor(ExecState*, PropertyName, JSValue, unsigned attributes);
-
-    bool propertyIsEnumerable(ExecState*, const Identifier& propertyName) const;
 
     JS_EXPORT_PRIVATE bool hasProperty(ExecState*, PropertyName) const;
     JS_EXPORT_PRIVATE bool hasProperty(ExecState*, unsigned propertyName) const;

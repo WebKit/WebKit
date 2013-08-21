@@ -1407,14 +1407,6 @@ bool JSObject::defaultHasInstance(ExecState* exec, JSValue value, JSValue proto)
     return false;
 }
 
-bool JSObject::propertyIsEnumerable(ExecState* exec, const Identifier& propertyName) const
-{
-    PropertyDescriptor descriptor;
-    if (!const_cast<JSObject*>(this)->getOwnPropertyDescriptor(exec, propertyName, descriptor))
-        return false;
-    return descriptor.enumerable();
-}
-
 bool JSObject::getPropertySpecificValue(ExecState* exec, PropertyName propertyName, JSCell*& specificValue) const
 {
     unsigned attributes;

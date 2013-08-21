@@ -1,3 +1,19 @@
+2013-08-21  Gavin Barraclough  <barraclough@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=120127
+        Remove JSObject::propertyIsEnumerable
+
+        Reviewed by Sam Weinig.
+
+        This method is just a wart - it contains unnecessary const-casting, function call overhead, and LOC.
+
+        * runtime/JSObject.cpp:
+        * runtime/JSObject.h:
+            - remove propertyIsEnumerable
+        * runtime/ObjectPrototype.cpp:
+        (JSC::objectProtoFuncPropertyIsEnumerable):
+            - Move implementation here using getOwnPropertyDescriptor directly.
+
 2013-08-20  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should inline new typedArray()
