@@ -80,7 +80,7 @@ static CString getFontsPath()
     return CString();
 }
 
-void inititializeFontConfigSetting()
+void initializeFontConfigSetting()
 {
     FcInit();
 
@@ -151,7 +151,7 @@ void inititializeFontConfigSetting()
 void activateFonts()
 {
     initializeGtkSettings();
-    inititializeFontConfigSetting();
+    initializeFontConfigSetting();
 }
 
 }

@@ -1,3 +1,13 @@
+2013-08-21  Zan Dobersek  <zdobersek@igalia.com>
+
+        <https://webkit.org/b/120116> [GTK] Fix a typo in ActivateFontsGtk.cpp
+
+        Reviewed by Andreas Kling.
+
+        * WebKitTestRunner/InjectedBundle/gtk/ActivateFontsGtk.cpp:
+        (WTR::initializeFontConfigSetting): Fix a typo - inititialize -> initialize.
+        (WTR::activateFonts): Ditto.
+
 2013-08-21  Brian Holt  <brian.holt@samsung.com>
 
         [GTK] Suppress irrelevant or known leaks for Valgrind
