@@ -1,5 +1,11 @@
 2013-08-21  Brent Fulgham  <bfulgham@apple.com>
 
+        [Windows] Unreviewed gardening. One more CSS_IMAGE_SET test can be activated.
+
+        * platform/win/TestExpectations: We can reactivate cssom/cssvalue-comparison.html
+
+2013-08-21  Brent Fulgham  <bfulgham@apple.com>
+
         <https://webkit.org/b/120113> Enable CSS_IMAGE_SET
 
         Reviewed by Anders Carlsson.
