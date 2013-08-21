@@ -1,3 +1,18 @@
+2013-08-21  Brent Fulgham  <bfulgham@apple.com>
+
+        <https://webkit.org/b/120113> [Windows] Enable CSS_IMAGE_SET
+
+        Reviewed by Anders Carlsson.
+
+        We can now activate:
+        fast/css/image-set-parsing.html
+        fast/css/image-set-parsing-invalid.html
+
+        * WebCore.vcxproj/WebCore.vcxproj: Add missing image set implementation files.
+        * WebCore.vcxproj/WebCore.vcxproj.filters: Ditto.
+        * css/CSSAllInOne.cpp: Add missing CSSImageSetValue.cpp
+        * rendering/style/StyleAllInOne.cpp: Add missing StyeCachedImageSet.cpp
+
 2013-08-21  Robert Hogan  <robert@webkit.org>
 
         In RenderTableCell::paintCollapsedBorders() check surrounding cells using physical rather than logical direction
