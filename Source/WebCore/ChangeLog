@@ -1,3 +1,22 @@
+2013-08-21  Jae Hyun Park  <jae.park@company100.net>
+
+        [Qt] Remove unused code path in PluginView
+        https://bugs.webkit.org/show_bug.cgi?id=113173
+
+        Reviewed by Anders Carlsson.
+
+        m_platformLayer in PluginView has been removed in r121710, but there are
+        still some leftover code path related to m_platformLayer. This patch
+        removes unused code path.
+
+        No new tests, removing unused code paths.
+
+        * plugins/PluginView.h:
+        (PluginView):
+        * plugins/qt/PluginViewQt.cpp:
+        (WebCore::PluginView::updatePluginWidget):
+        (WebCore::PluginView::paint):
+
 2013-08-21  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         Font’s fast code path doesn’t handle partial runs correctly when kerning or ligatures are enabled 

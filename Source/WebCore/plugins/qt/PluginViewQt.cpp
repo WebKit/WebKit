@@ -169,14 +169,7 @@ void PluginView::updatePluginWidget()
         || (s_isRunningUnderDRT && platformPluginWidget() && (m_windowRect != oldWindowRect || m_clipRect != oldClipRect)))
         setNPWindowIfNeeded();
 
-    if (!m_platformLayer) {
-        // Make sure we get repainted afterwards. This is necessary for downward
-        // scrolling to move the plugin widget properly.
-        // Note that we don't invalidate the frameRect() here. This is because QWebFrame::renderRelativeCoords()
-        // imitates ScrollView and adds the scroll offset back on to the rect we damage here (making the co-ordinates absolute
-        // to the frame again) before passing it to FrameView.
-        invalidate();
-    }
+    invalidate();
 }
 
 void PluginView::setFocus(bool focused)
@@ -240,11 +233,6 @@ void PluginView::paint(GraphicsContext* context, const IntRect& rect)
 
     if (m_isWindowed)
         return;
-
-#if USE(ACCELERATED_COMPOSITING)
-    if (m_platformLayer)
-        return;
-#endif
 
     if (!m_drawable)
         return;
@@ -807,12 +795,5 @@ void PluginView::platformDestroy()
     if (m_colormap)
         XFreeColormap(x11Display(), m_colormap);
 }
-
-#if USE(ACCELERATED_COMPOSITING)
-PlatformLayer* PluginView::platformLayer() const
-{
-    return m_platformLayer.get();
-}
-#endif
 
 } // namespace WebCore
