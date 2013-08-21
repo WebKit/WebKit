@@ -254,7 +254,7 @@ void LayerTiler::updateTextureContentsIfNeeded(double scale)
         first = last = TileIndex(0, 0);
     } else {
         first = indexOfTile(flooredIntPoint(visibleRect.minXMinYCorner()));
-        last = indexOfTile(ceiledIntPoint(visibleRect.maxXMaxYCorner()));
+        last = indexOfTile(ceiledIntPoint(visibleRect.maxXMaxYCorner()) + IntPoint(-1, -1)); // The origin should be the top left of the bottom right pixel.
     }
     for (unsigned i = first.i(); i <= last.i(); ++i) {
         for (unsigned j = first.j(); j <= last.j(); ++j) {
@@ -412,7 +412,7 @@ void LayerTiler::processTextureJob(const TextureJob& job, TileJobsMap& tileJobsM
         return;
     } else if (job.m_type == TextureJob::DirtyContents) {
         TileIndex first = indexOfTile(job.m_dirtyRect.minXMinYCorner());
-        TileIndex last = indexOfTile(job.m_dirtyRect.maxXMaxYCorner());
+        TileIndex last = indexOfTile(job.m_dirtyRect.maxXMaxYCorner() + IntPoint(-1, -1)); // The origin should be the top left of the bottom right pixel.
         for (TileMap::iterator it = m_tiles.begin(); it != m_tiles.end(); ++it) {
             TileIndex index = (*it).key;
             if (index.i() >= first.i() && index.j() >= first.j() && index.i() <= last.i() && index.j() <= last.j())

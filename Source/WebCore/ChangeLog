@@ -1,3 +1,21 @@
+2013-08-21  Jacky Jiang  <zhajiang@blackberry.com>
+
+        <https://webkit.org/b/120123> [BlackBerry] Incorrect origin of indexOfTile in LayerTiler can cause unnecessary texture jobs and waste memory
+
+        Reviewed by Yong Li.
+        Internally reviewed by Arvid Nilsson.
+
+        JIRA 481356
+        The origin of indexOfTile(origin) is incorrect in these two places. For
+        example, if the maxXMaxYCorner of the rect is (768, 768), there can be
+        three other redundant indexOfTile (0, 1), (1, 0), (1, 1) which can cause
+        unnecessary texture jobs and waste memory.
+        The origin should be the top left of the bottom right pixel of a rect.
+
+        * platform/graphics/blackberry/LayerTiler.cpp:
+        (WebCore::LayerTiler::updateTextureContentsIfNeeded):
+        (WebCore::LayerTiler::processTextureJob):
+
 2013-08-21  Simon Fraser  <simon.fraser@apple.com>
 
         <https://webkit.org/b/116901> ASSERTION FAILED: !m_visibleDescendantStatusDirty on twitter
