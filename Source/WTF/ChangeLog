@@ -1,3 +1,14 @@
+2013-08-21  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        Disable maybe-uninitialized warning in GCC 4.8
+        https://bugs.webkit.org/show_bug.cgi?id=119835
+
+        Reviewed by Anders Carlsson.
+
+        Disable the maybe-uninitialized warning.
+
+        * wtf/Compiler.h:
+
 2013-08-20  Alex Christensen  <achristensen@apple.com>
 
         Use PlatformArchitecture to distinguish between 32-bit and 64-bit builds on Windows.

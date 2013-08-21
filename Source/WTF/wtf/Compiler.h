@@ -135,6 +135,7 @@
 #if COMPILER(GCC) && !COMPILER(CLANG)
 #if GCC_VERSION_AT_LEAST(4, 8, 0)
 #pragma GCC diagnostic ignored "-Wunused-local-typedefs"
+#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
 #endif
 #if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L
 /* C11 support */
