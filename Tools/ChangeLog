@@ -1,3 +1,14 @@
+2013-08-21  Joseph Pecoraro  <pecoraro@apple.com>
+
+        <https://webkit.org/b/120134> [Tools] lldb_webkit.py helpers is incorrectly printing 8bit Strings
+
+        Reviewed by Benjamin Poulain.
+
+        WTFString moved the is8bit bit by one in r152201.
+
+        * lldb/lldb_webkit.py:
+        (WTFStringImplProvider.is_8bit):
+
 2013-08-21  Tim Horton  <timothy_horton@apple.com>
 
         Revert http://trac.webkit.org/changeset/154022, as it failed to update
