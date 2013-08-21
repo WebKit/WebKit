@@ -1,3 +1,16 @@
+2013-08-20  Jer Noble  <jer.noble@apple.com>
+
+        <https://webkit.org/b/120101> [Mac] Suspended HTMLMediaElements can still hold power assertion after playback stops.
+
+        Reviewed by Eric Carlson.
+
+        Call updateDisplaySleep() when we clear our MediaPlayer, as doing so may kill any in-flight
+        rateChanged() notifications.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::clearMediaPlayer):
+        (WebCore::HTMLMediaElement::stop):
+
 2013-08-20  David Barr <davidbarr@chromium.org>, Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         <https://webkit.org/b/92330> [CSS] Pass an image orientation data to drawImage()

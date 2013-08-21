@@ -4148,6 +4148,10 @@ void HTMLMediaElement::clearMediaPlayer(int flags)
     if (m_textTracks)
         configureTextTrackDisplay();
 #endif
+
+#if PLATFORM(MAC)
+    updateDisableSleep();
+#endif
 }
 
 bool HTMLMediaElement::canSuspend() const
@@ -4180,6 +4184,10 @@ void HTMLMediaElement::stop()
     // the media player now. Note that userCancelledLoad will already have cleared the player
     // if the media was not fully loaded. This handles all other cases.
     m_player.clear();
+
+#if PLATFORM(MAC)
+    updateDisableSleep();
+#endif
 }
 
 void HTMLMediaElement::suspend(ReasonForSuspension why)
