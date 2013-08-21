@@ -1,3 +1,19 @@
+2013-08-21  Brian Holt  <brian.holt@samsung.com>
+
+        [GTK] Suppress irrelevant or known leaks for Valgrind
+        https://bugs.webkit.org/show_bug.cgi?id=119448
+
+        Reviewed by Martin Robinson.
+
+        Add a suppressions file to suppress known leaks for Valgrind.
+        Valgrind also takes longer when using suppressions and
+        times out unless the driver timeout is increased.
+
+        * Scripts/valgrind/suppressions.txt: Added.
+        * Scripts/webkitpy/port/gtk.py:
+        (GtkPort.driver_stop_timeout):
+        (GtkPort.setup_environ_for_server):
+
 2013-08-20  Alex Christensen  <achristensen@apple.com>
 
         [Windows] Linking fix for Win64.

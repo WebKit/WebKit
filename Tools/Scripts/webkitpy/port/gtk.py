@@ -70,6 +70,12 @@ class GtkPort(Port):
             return multiplier * 12 * 1000
         return multiplier * 6 * 1000
 
+    def driver_stop_timeout(self):
+        if self.get_option("leaks"):
+            # Wait the default timeout time before killing the process in driver.stop().
+            return self.default_timeout_ms()
+        return super(GtkPort, self).driver_stop_timeout()
+
     def setup_test_run(self):
         super(GtkPort, self).setup_test_run()
         self._pulseaudio_sanitizer.unload_pulseaudio_module()
@@ -94,6 +100,7 @@ class GtkPort(Port):
             environment['G_DEBUG'] = 'gc-friendly'
             xmlfilename = "".join(("drt-%p-", uuid.uuid1().hex, "-leaks.xml"))
             xmlfile = os.path.join(self.results_directory(), xmlfilename)
+            suppressionsfile = self.path_from_webkit_base('Tools', 'Scripts', 'valgrind', 'suppressions.txt')
             environment['VALGRIND_OPTS'] = \
                 "--tool=memcheck " \
                 "--num-callers=40 " \
@@ -108,7 +115,8 @@ class GtkPort(Port):
                 "--undef-value-errors=no " \
                 "--gen-suppressions=all " \
                 "--xml=yes " \
-                "--xml-file=\"%s\" " % (xmlfile)
+                "--xml-file=\"%s\" " \
+                "--suppressions=%s" % (xmlfile, suppressionsfile)
         return environment
 
     def _generate_all_test_configurations(self):
