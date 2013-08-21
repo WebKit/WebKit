@@ -1,3 +1,11 @@
+2013-08-21  Tim Horton  <timothy_horton@apple.com>
+
+        <https://webkit.org/b/120099> Assertion failure in JSC::SlotVisitor::copyLater when marking DataView
+
+        Mark fast/canvas/webgl/array-message-passing.html as crashing on debug, for now.
+
+        * platform/mac/TestExpectations:
+
 2013-08-21  Simon Fraser  <simon.fraser@apple.com>
 
         Allow opacity to apply to custom scrollbars
