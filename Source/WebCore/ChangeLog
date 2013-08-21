@@ -1,3 +1,13 @@
+2013-08-21  Róbert Sipka  <sipka@inf.u-szeged.hu>
+
+        <https://webkit.org/b/120109> [curl] only include WebCoreBundleWin on Windows
+
+        Reviewed by Brent Fulgham.
+
+        The WebCoreBundleWin is a windows specific file, it is only needed on Windows.
+
+        * platform/network/curl/ResourceHandleManager.cpp:
+
 2013-08-21  Jae Hyun Park  <jae.park@company100.net>
 
         [Qt] Remove unused code path in PluginView
