@@ -264,12 +264,7 @@ void Font::drawText(GraphicsContext* context, const TextRun& run, const FloatPoi
     
     to = (to == -1 ? run.length() : to);
 
-    CodePath codePathToUse = codePath(run);
-    // FIXME: Use the fast code path once it handles partial runs with kerning and ligatures. See http://webkit.org/b/100050
-    if (codePathToUse != Complex && typesettingFeatures() && (from || to != run.length()) && !run.renderingContext())
-        codePathToUse = Complex;
-
-    if (codePathToUse != Complex)
+    if (codePath(run) != Complex)
         return drawSimpleText(context, run, point, from, to);
 
     return drawComplexText(context, run, point, from, to);
@@ -283,12 +278,7 @@ void Font::drawEmphasisMarks(GraphicsContext* context, const TextRun& run, const
     if (to < 0)
         to = run.length();
 
-    CodePath codePathToUse = codePath(run);
-    // FIXME: Use the fast code path once it handles partial runs with kerning and ligatures. See http://webkit.org/b/100050
-    if (codePathToUse != Complex && typesettingFeatures() && (from || to != run.length()) && !run.renderingContext())
-        codePathToUse = Complex;
-
-    if (codePathToUse != Complex)
+    if (codePath(run) != Complex)
         drawEmphasisMarksForSimpleText(context, run, mark, point, from, to);
     else
         drawEmphasisMarksForComplexText(context, run, mark, point, from, to);
@@ -360,12 +350,7 @@ FloatRect Font::selectionRectForText(const TextRun& run, const FloatPoint& point
 {
     to = (to == -1 ? run.length() : to);
 
-    CodePath codePathToUse = codePath(run);
-    // FIXME: Use the fast code path once it handles partial runs with kerning and ligatures. See http://webkit.org/b/100050
-    if (codePathToUse != Complex && typesettingFeatures() && (from || to != run.length()) && !run.renderingContext())
-        codePathToUse = Complex;
-
-    if (codePathToUse != Complex)
+    if (codePath(run) != Complex)
         return selectionRectForSimpleText(run, point, h, from, to);
 
     return selectionRectForComplexText(run, point, h, from, to);
@@ -373,8 +358,7 @@ FloatRect Font::selectionRectForText(const TextRun& run, const FloatPoint& point
 
 int Font::offsetForPosition(const TextRun& run, float x, bool includePartialGlyphs) const
 {
-    // FIXME: Use the fast code path once it handles partial runs with kerning and ligatures. See http://webkit.org/b/100050
-    if (codePath(run) != Complex && !typesettingFeatures())
+    if (codePath(run) != Complex)
         return offsetForPositionForSimpleText(run, x, includePartialGlyphs);
 
     return offsetForPositionForComplexText(run, x, includePartialGlyphs);

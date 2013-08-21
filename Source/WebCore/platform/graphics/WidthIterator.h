@@ -43,7 +43,6 @@ public:
     WidthIterator(const Font*, const TextRun&, HashSet<const SimpleFontData*>* fallbackFonts = 0, bool accountForGlyphBounds = false, bool forTextEmphasis = false);
 
     unsigned advance(int to, GlyphBuffer*);
-    bool advanceOneCharacter(float& width, GlyphBuffer&);
 
     float maxGlyphBoundingBoxY() const { ASSERT(m_accountForGlyphBounds); return m_maxGlyphBoundingBoxY; }
     float minGlyphBoundingBoxY() const { ASSERT(m_accountForGlyphBounds); return m_minGlyphBoundingBoxY; }
@@ -83,6 +82,7 @@ public:
     float m_expansionPerOpportunity;
     bool m_isAfterExpansion;
     float m_finalRoundingWidth;
+    Vector<int> m_characterIndex;
 
 #if ENABLE(SVG_FONTS)
     String m_lastGlyphName;

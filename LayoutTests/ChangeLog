@@ -1,3 +1,14 @@
+2013-08-21  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        Font’s fast code path doesn’t handle partial runs correctly when kerning or ligatures are enabled 
+        https://bugs.webkit.org/show_bug.cgi?id=100050
+
+        Reviewed by Antti Koivisto.
+
+        * fast/text/resources/PTS55F-webfont.ttf: Added.
+        * fast/text/partial-textruns-expected.html: Added.
+        * fast/text/partial-textruns.html: Added.
+
 2013-08-20  Antonio Gomes  <a1.gomes@sisa.samsung.com>
 
         Harden RenderBox::canBeScrolledAndHasScrollableArea logic
