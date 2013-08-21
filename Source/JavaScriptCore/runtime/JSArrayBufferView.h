@@ -70,7 +70,18 @@ enum TypedArrayMode {
     // vector allocated using who-knows-what, and M = WastefulTypedArray.
     // The view does not own the vector.
     WastefulTypedArray,
+    
+    // A data view. B is unused, V points to a vector allocated using who-
+    // knows-what, and M = DataViewMode. The view does not own the vector.
+    // There is an extra field (in JSDataView) that points to the
+    // ArrayBuffer.
+    DataViewMode
 };
+
+inline bool hasArrayBuffer(TypedArrayMode mode)
+{
+    return mode >= WastefulTypedArray;
+}
 
 // When WebCore uses a JSArrayBufferView, it expects to be able to get the native
 // ArrayBuffer and little else. This requires slowing down and wasting memory,
@@ -110,6 +121,11 @@ protected:
             VM&, Structure*, PassRefPtr<ArrayBuffer>,
             unsigned byteOffset, unsigned length);
         
+        enum DataViewTag { DataView };
+        ConstructionContext(
+            Structure*, PassRefPtr<ArrayBuffer>,
+            unsigned byteOffset, unsigned length, DataViewTag);
+        
         bool operator!() const { return !m_structure; }
         
         Structure* structure() const { return m_structure; }
@@ -137,10 +153,6 @@ protected:
     static void getOwnNonIndexPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
     
 public:
-    // Allocates the full-on native buffer. Also moves the data into the C heap
-    // if necessary.
-    void slowDownAndWasteMemoryIfNecessary();
-    
     TypedArrayMode mode() const { return m_mode; }
     ArrayBuffer* buffer();
     PassRefPtr<ArrayBufferView> impl();

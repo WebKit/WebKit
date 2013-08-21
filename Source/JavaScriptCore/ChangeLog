@@ -1,3 +1,37 @@
+2013-08-21  Filip Pizlo  <fpizlo@apple.com>
+
+        Assertion failure in JSC::SlotVisitor::copyLater when marking JSDataView
+        https://bugs.webkit.org/show_bug.cgi?id=120099
+
+        Reviewed by Mark Hahnenberg.
+        
+        JSDataView should not store the ArrayBuffer* in the butterfly indexing header, since
+        JSDataView may have ordinary JS indexed properties.
+
+        * runtime/ClassInfo.h:
+        * runtime/JSArrayBufferView.cpp:
+        (JSC::JSArrayBufferView::ConstructionContext::ConstructionContext):
+        (JSC::JSArrayBufferView::finishCreation):
+        * runtime/JSArrayBufferView.h:
+        (JSC::hasArrayBuffer):
+        * runtime/JSArrayBufferViewInlines.h:
+        (JSC::JSArrayBufferView::buffer):
+        (JSC::JSArrayBufferView::neuter):
+        (JSC::JSArrayBufferView::byteOffset):
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::slowDownAndWasteMemory):
+        * runtime/JSCell.h:
+        * runtime/JSDataView.cpp:
+        (JSC::JSDataView::JSDataView):
+        (JSC::JSDataView::create):
+        (JSC::JSDataView::slowDownAndWasteMemory):
+        * runtime/JSDataView.h:
+        (JSC::JSDataView::buffer):
+        * runtime/JSGenericTypedArrayView.h:
+        * runtime/JSGenericTypedArrayViewInlines.h:
+        (JSC::::visitChildren):
+        (JSC::::slowDownAndWasteMemory):
+
 2013-08-21  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Remove incorrect ASSERT from CopyVisitor::visitItem

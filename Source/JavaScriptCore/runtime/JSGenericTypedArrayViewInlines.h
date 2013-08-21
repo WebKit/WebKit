@@ -379,6 +379,10 @@ void JSGenericTypedArrayView<Adaptor>::visitChildren(JSCell* cell, SlotVisitor& 
         
     case WastefulTypedArray:
         break;
+        
+    case DataViewMode:
+        RELEASE_ASSERT_NOT_REACHED();
+        break;
     }
     
     Base::visitChildren(thisObject, visitor);
@@ -403,7 +407,7 @@ void JSGenericTypedArrayView<Adaptor>::copyBackingStore(
 }
 
 template<typename Adaptor>
-void JSGenericTypedArrayView<Adaptor>::slowDownAndWasteMemory(JSArrayBufferView* object)
+ArrayBuffer* JSGenericTypedArrayView<Adaptor>::slowDownAndWasteMemory(JSArrayBufferView* object)
 {
     JSGenericTypedArrayView* thisObject = jsCast<JSGenericTypedArrayView*>(object);
     
@@ -451,7 +455,7 @@ void JSGenericTypedArrayView<Adaptor>::slowDownAndWasteMemory(JSArrayBufferView*
         buffer = ArrayBuffer::createAdopted(thisObject->m_vector, thisObject->byteLength());
         break;
         
-    case WastefulTypedArray:
+    default:
         RELEASE_ASSERT_NOT_REACHED();
         break;
     }
@@ -460,6 +464,8 @@ void JSGenericTypedArrayView<Adaptor>::slowDownAndWasteMemory(JSArrayBufferView*
     thisObject->m_vector = buffer->data();
     thisObject->m_mode = WastefulTypedArray;
     heap->addReference(thisObject, buffer.get());
+    
+    return buffer.get();
 }
 
 template<typename Adaptor>

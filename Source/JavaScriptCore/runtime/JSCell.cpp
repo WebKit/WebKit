@@ -218,9 +218,10 @@ bool JSCell::defineOwnProperty(JSObject*, ExecState*, PropertyName, PropertyDesc
     return false;
 }
 
-void JSCell::slowDownAndWasteMemory(JSArrayBufferView*)
+ArrayBuffer* JSCell::slowDownAndWasteMemory(JSArrayBufferView*)
 {
     RELEASE_ASSERT_NOT_REACHED();
+    return 0;
 }
 
 PassRefPtr<ArrayBufferView> JSCell::getTypedArrayImpl(JSArrayBufferView*)

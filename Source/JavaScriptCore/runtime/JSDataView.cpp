@@ -36,8 +36,9 @@ namespace JSC {
 const ClassInfo JSDataView::s_info = {
     "DataView", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSDataView)};
 
-JSDataView::JSDataView(VM& vm, ConstructionContext& context)
+JSDataView::JSDataView(VM& vm, ConstructionContext& context, ArrayBuffer* buffer)
     : Base(vm, context)
+    , m_buffer(buffer)
 {
 }
 
@@ -52,10 +53,11 @@ JSDataView* JSDataView::create(
         return 0;
     }
     VM& vm = exec->vm();
-    ConstructionContext context(vm, structure, buffer, byteOffset, byteLength);
+    ConstructionContext context(
+        structure, buffer, byteOffset, byteLength, ConstructionContext::DataView);
     ASSERT(context);
     JSDataView* result =
-        new (NotNull, allocateCell<JSDataView>(vm.heap)) JSDataView(vm, context);
+        new (NotNull, allocateCell<JSDataView>(vm.heap)) JSDataView(vm, context, buffer.get());
     result->finishCreation(vm);
     return result;
 }
@@ -95,9 +97,10 @@ bool JSDataView::getOwnPropertySlot(
     return Base::getOwnPropertySlot(thisObject, exec, propertyName, slot);
 }
 
-void JSDataView::slowDownAndWasteMemory(JSArrayBufferView*)
+ArrayBuffer* JSDataView::slowDownAndWasteMemory(JSArrayBufferView*)
 {
     UNREACHABLE_FOR_PLATFORM();
+    return 0;
 }
 
 PassRefPtr<ArrayBufferView> JSDataView::getTypedArrayImpl(JSArrayBufferView* object)

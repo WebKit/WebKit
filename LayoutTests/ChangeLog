@@ -1,3 +1,21 @@
+2013-08-21  Filip Pizlo  <fpizlo@apple.com>
+
+        Assertion failure in JSC::SlotVisitor::copyLater when marking JSDataView
+        https://bugs.webkit.org/show_bug.cgi?id=120099
+
+        Reviewed by Mark Hahnenberg.
+
+        * fast/js/regress/ArrayBuffer-DataView-alloc-large-long-lived-expected.txt: Added.
+        * fast/js/regress/ArrayBuffer-DataView-alloc-large-long-lived.html: Added.
+        * fast/js/regress/ArrayBuffer-DataView-alloc-long-lived-expected.txt: Added.
+        * fast/js/regress/ArrayBuffer-DataView-alloc-long-lived.html: Added.
+        * fast/js/regress/DataView-custom-properties-expected.txt: Added.
+        * fast/js/regress/DataView-custom-properties.html: Added.
+        * fast/js/regress/script-tests/ArrayBuffer-DataView-alloc-large-long-lived.js: Added.
+        * fast/js/regress/script-tests/ArrayBuffer-DataView-alloc-long-lived.js: Added.
+        * fast/js/regress/script-tests/DataView-custom-properties.js: Added.
+        * platform/mac/TestExpectations: 
+
 2013-08-21  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Remove incorrect ASSERT from CopyVisitor::visitItem

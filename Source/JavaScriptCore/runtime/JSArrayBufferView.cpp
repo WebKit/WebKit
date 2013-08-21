@@ -96,6 +96,17 @@ JSArrayBufferView::ConstructionContext::ConstructionContext(
     m_butterfly = Butterfly::create(vm, 0, 0, 0, true, indexingHeader, 0);
 }
 
+JSArrayBufferView::ConstructionContext::ConstructionContext(
+    Structure* structure, PassRefPtr<ArrayBuffer> arrayBuffer,
+    unsigned byteOffset, unsigned length, DataViewTag)
+    : m_structure(structure)
+    , m_vector(static_cast<uint8_t*>(arrayBuffer->data()) + byteOffset)
+    , m_length(length)
+    , m_mode(DataViewMode)
+    , m_butterfly(0)
+{
+}
+
 JSArrayBufferView::JSArrayBufferView(VM& vm, ConstructionContext& context)
     : Base(vm, context.structure(), context.butterfly())
     , m_vector(context.vector())
@@ -115,6 +126,10 @@ void JSArrayBufferView::finishCreation(VM& vm)
         return;
     case WastefulTypedArray:
         vm.heap.addReference(this, butterfly()->indexingHeader()->arrayBuffer());
+        return;
+    case DataViewMode:
+        ASSERT(!butterfly());
+        vm.heap.addReference(this, jsCast<JSDataView*>(this)->buffer());
         return;
     }
     RELEASE_ASSERT_NOT_REACHED();

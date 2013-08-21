@@ -95,7 +95,7 @@ struct MethodTable {
     typedef bool (*DefineOwnPropertyFunctionPtr)(JSObject*, ExecState*, PropertyName, PropertyDescriptor&, bool);
     DefineOwnPropertyFunctionPtr defineOwnProperty;
 
-    typedef void (*SlowDownAndWasteMemory)(JSArrayBufferView*);
+    typedef ArrayBuffer* (*SlowDownAndWasteMemory)(JSArrayBufferView*);
     SlowDownAndWasteMemory slowDownAndWasteMemory;
     
     typedef PassRefPtr<ArrayBufferView> (*GetTypedArrayImpl)(JSArrayBufferView*);

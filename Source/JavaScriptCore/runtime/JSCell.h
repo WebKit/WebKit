@@ -167,7 +167,7 @@ protected:
     static bool defineOwnProperty(JSObject*, ExecState*, PropertyName, PropertyDescriptor&, bool shouldThrow);
     static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
     static bool getOwnPropertySlotByIndex(JSObject*, ExecState*, unsigned propertyName, PropertySlot&);
-    JS_EXPORT_PRIVATE static NO_RETURN_DUE_TO_CRASH void slowDownAndWasteMemory(JSArrayBufferView*);
+    JS_EXPORT_PRIVATE static ArrayBuffer* slowDownAndWasteMemory(JSArrayBufferView*);
     JS_EXPORT_PRIVATE static PassRefPtr<ArrayBufferView> getTypedArrayImpl(JSArrayBufferView*);
 
 private:

@@ -37,7 +37,7 @@ public:
     static const unsigned elementSize = 1;
     
 protected:
-    JSDataView(VM&, ConstructionContext&);
+    JSDataView(VM&, ConstructionContext&, ArrayBuffer*);
     
 public:
     static JSDataView* create(
@@ -50,6 +50,8 @@ public:
     static JSDataView* create(ExecState*, Structure*, unsigned length);
     bool set(ExecState*, JSObject*, unsigned offset, unsigned length);
     
+    ArrayBuffer* buffer() const { return m_buffer; }
+    
     PassRefPtr<DataView> typedImpl();
     
     static const TypedArrayType TypedArrayStorageType = TypeDataView;
@@ -57,13 +59,16 @@ public:
 protected:
     static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
 
-    static void slowDownAndWasteMemory(JSArrayBufferView*);
+    static ArrayBuffer* slowDownAndWasteMemory(JSArrayBufferView*);
     static PassRefPtr<ArrayBufferView> getTypedArrayImpl(JSArrayBufferView*);
     
 public:
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue prototype);
     
     DECLARE_EXPORT_INFO;
+
+private:
+    ArrayBuffer* m_buffer;
 };
 
 } // namespace JSC
