@@ -125,7 +125,7 @@ public:
 #endif
 
 protected:
-    SVGElement(const QualifiedName&, Document*, ConstructionType = CreateSVGElement);
+    SVGElement(const QualifiedName&, Document*);
 
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
 

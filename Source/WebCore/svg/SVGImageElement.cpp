@@ -66,7 +66,6 @@ inline SVGImageElement::SVGImageElement(const QualifiedName& tagName, Document* 
 {
     ASSERT(isSVGImageElement(this));
     registerAnimatedPropertiesForSVGImageElement();
-    setHasCustomStyleResolveCallbacks();
 }
 
 PassRefPtr<SVGImageElement> SVGImageElement::create(const QualifiedName& tagName, Document* document)

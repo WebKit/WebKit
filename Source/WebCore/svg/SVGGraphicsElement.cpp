@@ -42,8 +42,8 @@ BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGGraphicsElement)
     REGISTER_PARENT_ANIMATED_PROPERTIES(SVGTests)
 END_REGISTER_ANIMATED_PROPERTIES
 
-SVGGraphicsElement::SVGGraphicsElement(const QualifiedName& tagName, Document* document, ConstructionType constructionType)
-    : SVGStyledElement(tagName, document, constructionType)
+SVGGraphicsElement::SVGGraphicsElement(const QualifiedName& tagName, Document* document)
+    : SVGStyledElement(tagName, document)
 {
     registerAnimatedPropertiesForSVGGraphicsElement();
 }

@@ -34,7 +34,7 @@ public:
     static PassRefPtr<SVGGElement> create(const QualifiedName&, Document*);
 
 protected:
-    SVGGElement(const QualifiedName&, Document*, ConstructionType = CreateSVGElement);
+    SVGGElement(const QualifiedName&, Document*);
 
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 

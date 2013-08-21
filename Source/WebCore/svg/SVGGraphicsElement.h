@@ -52,7 +52,7 @@ public:
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 
 protected:
-    SVGGraphicsElement(const QualifiedName&, Document*, ConstructionType = CreateSVGElement);
+    SVGGraphicsElement(const QualifiedName&, Document*);
 
     bool isSupportedAttribute(const QualifiedName&);
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;

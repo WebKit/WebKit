@@ -49,10 +49,9 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-SVGElement::SVGElement(const QualifiedName& tagName, Document* document, ConstructionType constructionType)
-    : StyledElement(tagName, document, constructionType)
+SVGElement::SVGElement(const QualifiedName& tagName, Document* document)
+    : StyledElement(tagName, document, CreateSVGElement)
 {
-    setHasCustomStyleResolveCallbacks();
 }
 
 PassRefPtr<SVGElement> SVGElement::create(const QualifiedName& tagName, Document* document)

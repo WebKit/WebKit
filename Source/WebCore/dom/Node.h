@@ -661,7 +661,7 @@ protected:
         CreateDocumentFragment = CreateContainer | IsDocumentFragmentFlag,
         CreateStyledElement = CreateElement | IsStyledElementFlag, 
         CreateHTMLElement = CreateStyledElement | IsHTMLFlag,
-        CreateSVGElement = CreateStyledElement | IsSVGFlag,
+        CreateSVGElement = CreateStyledElement | IsSVGFlag | HasCustomStyleResolveCallbacksFlag,
         CreateDocument = CreateContainer | InDocumentFlag,
         CreateInsertionPoint = CreateHTMLElement | NeedsShadowTreeWalkerFlag,
         CreateEditingText = CreateText | IsEditingTextFlag,
