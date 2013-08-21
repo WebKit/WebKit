@@ -19,7 +19,7 @@ cookiesShouldBe("test=foobar; Max-Age=90000000", "test=foobar");
 clearCookies();
 
 debug("Check setting a cookie that timed out.");
-cookiesShouldBe("test2=foobar; Max-Age=0", "");
+cookiesShouldBe("test2=foobar; Max-Age=-1", "");
 clearCookies();
 
 successfullyParsed = true;

@@ -365,12 +365,10 @@ fast/forms/range/slider-delete-while-dragging-thumb.html
 http/tests/security/credentials-in-referer.html
 svg/W3C-SVG-1.1/fonts-elem-04-b.svg
 
-# All additional tests that failed on the Lion WebKit2 Debug bot in r111739
-http/tests/cookies/simple-cookies-expired.html
+# An additional test that failed on the Lion WebKit2 Debug bot in r111739
 inspector/elements/edit-dom-actions.html
 
-# All tests that failed more than once on the Lion WebKit2 Debug bot between r111808 and r111849
-http/tests/cookies/simple-cookies-max-age.html
+# A test that failed more than once on the Lion WebKit2 Debug bot between r111808 and r111849
 fast/workers/worker-cloneport.html
 
 # Intermittent crashes

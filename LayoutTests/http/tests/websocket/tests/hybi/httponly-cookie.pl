@@ -3,8 +3,8 @@ use strict;
 
 if ($ENV{"QUERY_STRING"} eq "clear=1") {
     print "Content-Type: text/plain\r\n";
-    print "Set-Cookie: WK-websocket-test=0; Max-Age=0\r\n";
-    print "Set-Cookie: WK-websocket-test-httponly=0; HttpOnly; Max-Age=0\r\n";
+    print "Set-Cookie: WK-websocket-test=0; Max-Age=-1\r\n";
+    print "Set-Cookie: WK-websocket-test-httponly=0; HttpOnly; Max-Age=-1\r\n";
     print "\r\n";
     print "Cookies are cleared.";
     exit;

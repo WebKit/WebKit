@@ -8,11 +8,11 @@ print 'Cache-Control: no-cache="set-cookie"' . "\n";
 my $cookie = $ENV{"HTTP_CLEAR_COOKIE"};
 
 if ($cookie =~ /Max-Age/i) {
-    $cookie =~ s/Max-Age *= *[0-9]+/Max-Age=0/i;
+    $cookie =~ s/Max-Age *= *[0-9]+/Max-Age=-1/i;
 } else {
     $cookie .= ";" unless ($cookie =~ m/;$/);
     $cookie .= " " unless ($cookie =~ m/ $/);
-    $cookie .= "Max-Age=0";
+    $cookie .= "Max-Age=-1";
 }
 
 if ($cookie =~ /Expires/i) {

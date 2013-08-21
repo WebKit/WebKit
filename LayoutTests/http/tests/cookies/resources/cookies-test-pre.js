@@ -50,6 +50,10 @@ function testCookies(result)
 
 function clearAllCookies()
 {
+    // FIXME: This function is very wrong. If there is a cookie with a path (or any other
+    // parameter) it will just spin forever. It is not possible to delete all cookies from
+    // JavaScript, we should add a TestRunner API and switch to it.
+
     var cookieString;
     while (cookieString = document.cookie) {
         var cookieName = cookieString.substr(0, cookieString.indexOf("=") || cookieString.length());
@@ -58,7 +62,7 @@ function clearAllCookies()
 
         // In case clearCookies.cgi failed, for example,
         // the domain/path do not match exactly:
-        document.cookie = cookieName + "=;Max-Age=0";
+        document.cookie = cookieName + "=;Max-Age=-1";
     }
 }
 

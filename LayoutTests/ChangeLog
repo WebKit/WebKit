@@ -1,3 +1,27 @@
+2013-08-21  Alexey Proskuryakov  <ap@apple.com>
+
+        http/tests/cookies/simple-cookies-expired.html sometimes fails on Lion Intel Release (Tests)
+        https://bugs.webkit.org/show_bug.cgi?id=73694
+
+        http/tests/cookies/simple-cookies-max-age.html sometimes fails on Lion Intel Release (Tests)
+        https://bugs.webkit.org/show_bug.cgi?id=73695
+
+        http/tests/cookies/single-quoted-value.html intermittently fails on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=105603
+
+        Reviewed by Dan Bernstein.
+
+        Woark around a CFNetwork issue by using Max-Age=-1 instead of Max-Age=0. Since it's
+        WebKit that we are testing and not the lower level networking, this does not change
+        test coverage.
+
+        * http/tests/cookies/resources/clearCookies.cgi:
+        * http/tests/cookies/resources/cookies-test-pre.js:
+        * http/tests/cookies/simple-cookies-max-age.html:
+        * http/tests/websocket/tests/hybi/httponly-cookie.pl:
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2013-08-21  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Reenable some tests that pass now.
