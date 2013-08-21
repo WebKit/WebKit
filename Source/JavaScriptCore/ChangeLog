@@ -1,3 +1,15 @@
+2013-08-21  Filip Pizlo  <fpizlo@apple.com>
+
+        REGRESSION: Crash under JITCompiler::link while loading Gmail
+        https://bugs.webkit.org/show_bug.cgi?id=119872
+
+        Reviewed by Mark Hahnenberg.
+        
+        Apparently, unsigned + signed = unsigned. Work around it with a cast.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+
 2013-08-21  Alex Christensen  <achristensen@apple.com>
 
         <https://webkit.org/b/120137> Separating Win32 and Win64 builds.

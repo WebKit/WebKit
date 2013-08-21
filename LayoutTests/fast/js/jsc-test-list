@@ -223,6 +223,7 @@ fast/js/dfg-string-out-of-bounds-cse
 fast/js/dfg-string-out-of-bounds-negative-check-structure
 fast/js/dfg-string-out-of-bounds-negative-proto-value
 fast/js/dfg-string-stricteq
+fast/js/dfg-switch-imm-negative
 fast/js/dfg-tear-off-arguments-not-activation
 fast/js/dfg-tear-off-function-dot-arguments
 fast/js/dfg-to-string-bad-toString

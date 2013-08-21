@@ -1,3 +1,16 @@
+2013-08-21  Filip Pizlo  <fpizlo@apple.com>
+
+        REGRESSION: Crash under JITCompiler::link while loading Gmail
+        https://bugs.webkit.org/show_bug.cgi?id=119872
+
+        Reviewed by Mark Hahnenberg.
+
+        * fast/js/dfg-switch-imm-negative-expected.txt: Added.
+        * fast/js/dfg-switch-imm-negative.html: Added.
+        * fast/js/jsc-test-list:
+        * fast/js/script-tests/dfg-switch-imm-negative.js: Added.
+        (foo):
+
 2013-08-21  Tim Horton  <timothy_horton@apple.com>
 
         isReplacementObscured is wrong when the indicator is clipped by an iframe

@@ -2851,7 +2851,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 unsigned target = m_currentIndex + table.branchOffsets[i];
                 if (target == data.fallThroughBytecodeIndex())
                     continue;
-                data.cases.append(SwitchCase::withBytecodeIndex(jsNumber(table.min + i), target));
+                data.cases.append(SwitchCase::withBytecodeIndex(jsNumber(static_cast<int32_t>(table.min + i)), target));
             }
             m_graph.m_switchData.append(data);
             addToGraph(Switch, OpInfo(&m_graph.m_switchData.last()), get(currentInstruction[3].u.operand));
