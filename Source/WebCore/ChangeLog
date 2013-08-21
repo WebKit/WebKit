@@ -1,3 +1,23 @@
+2013-08-21  Robert Hogan  <robert@webkit.org>
+
+        REGRESSION(r127163): Respect clearance set on ancestors when placing floats
+        https://bugs.webkit.org/show_bug.cgi?id=119979
+
+        Reviewed by David Hyatt.
+
+        If a float has a self-collapsing ancestor with clearance then it needs to respect
+        that clearance when placing itself on the line.
+
+        Test: fast/block/margin-collapse/self-collapsing-block-with-float-descendant.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::marginOffsetForSelfCollapsingBlock):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::LineBreaker::skipLeadingWhitespace):
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::previousInFlowSiblingBox):
+
 2013-08-21  Brent Fulgham  <bfulgham@apple.com>
 
         <https://webkit.org/b/120113> [Windows] Enable CSS_IMAGE_SET

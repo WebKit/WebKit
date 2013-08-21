@@ -1,3 +1,13 @@
+2013-08-21  Robert Hogan  <robert@webkit.org>
+
+        REGRESSION(r127163): Respect clearance set on ancestors when placing floats
+        https://bugs.webkit.org/show_bug.cgi?id=119979
+
+        Reviewed by David Hyatt.
+
+        * fast/block/margin-collapse/self-collapsing-block-with-float-descendant-expected.html: Added.
+        * fast/block/margin-collapse/self-collapsing-block-with-float-descendant.html: Added.
+
 2013-08-21  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Unreviewed gardening. One more CSS_IMAGE_SET test can be activated.

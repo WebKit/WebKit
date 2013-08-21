@@ -1110,6 +1110,7 @@ private:
     void marginBeforeEstimateForChild(RenderBox*, LayoutUnit&, LayoutUnit&, bool&) const;
     void handleAfterSideOfBlock(LayoutUnit top, LayoutUnit bottom, MarginInfo&);
     void setCollapsedBottomMargin(const MarginInfo&);
+    LayoutUnit marginOffsetForSelfCollapsingBlock();
     // End helper functions and structs used by layoutBlockChildren.
 
     // Helper function for layoutInlineChildren()
