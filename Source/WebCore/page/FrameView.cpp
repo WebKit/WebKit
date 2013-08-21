@@ -2508,7 +2508,7 @@ void FrameView::serviceScriptedAnimations(double monotonicAnimationStartTime)
 {
     for (Frame* frame = m_frame.get(); frame; frame = frame->tree()->traverseNext()) {
         frame->view()->serviceScrollAnimations();
-        frame->animation()->serviceAnimations();
+        frame->animation().serviceAnimations();
     }
 
     Vector<RefPtr<Document> > documents;

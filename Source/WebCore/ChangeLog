@@ -1,3 +1,13 @@
+2013-08-21  Andreas Kling  <akling@apple.com>
+
+        <https://webkit.org/b/120118> Frame::animation() should return a reference.
+
+        Reviewed by Anders Carlsson.
+
+        Frame::m_animationController is never null.
+        Also changed RenderObject::animation() to return a reference since it's just a wrapper
+        around RenderObject::frame()->animation() with no null checking of frame().
+
 2013-08-21  Simon Fraser  <simon.fraser@apple.com>
 
         Allow opacity to apply to custom scrollbars

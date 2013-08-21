@@ -1828,7 +1828,7 @@ void Document::updateStyleIfNeeded()
     if ((!m_pendingStyleRecalcShouldForce && !childNeedsStyleRecalc()) || inPageCache())
         return;
 
-    AnimationUpdateBlock animationUpdateBlock(m_frame ? m_frame->animation() : 0);
+    AnimationUpdateBlock animationUpdateBlock(m_frame ? &m_frame->animation() : 0);
     recalcStyle(Style::NoChange);
 }
 
@@ -2352,7 +2352,7 @@ void Document::implicitClose()
     Frame* f = frame();
     if (f) {
         f->loader().icon()->startLoader();
-        f->animation()->startAnimationsIfNotSuspended(this);
+        f->animation().startAnimationsIfNotSuspended(this);
     }
 
     ImageLoader::dispatchPendingBeforeLoadEvents();
@@ -3158,7 +3158,7 @@ void Document::styleResolverChanged(StyleResolverUpdateFlag updateFlag)
     // This recalcStyle initiates a new recalc cycle. We need to bracket it to
     // make sure animations get the correct update time
     {
-        AnimationUpdateBlock animationUpdateBlock(m_frame ? m_frame->animation() : 0);
+        AnimationUpdateBlock animationUpdateBlock(m_frame ? &m_frame->animation() : 0);
         recalcStyle(Style::Force);
     }
 

@@ -382,7 +382,7 @@ void RenderLayerCompositor::flushPendingLayerChanges(bool isFlushRoot)
         return;
     }
 
-    AnimationUpdateBlock animationUpdateBlock(m_renderView->frameView()->frame().animation());
+    AnimationUpdateBlock animationUpdateBlock(&m_renderView->frameView()->frame().animation());
 
     ASSERT(!m_flushingLayers);
     m_flushingLayers = true;
@@ -521,7 +521,7 @@ void RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
     if (!m_reevaluateCompositingAfterLayout && !m_compositing)
         return;
 
-    AnimationUpdateBlock animationUpdateBlock(m_renderView->frameView()->frame().animation());
+    AnimationUpdateBlock animationUpdateBlock(&m_renderView->frameView()->frame().animation());
 
     TemporaryChange<bool> postLayoutChange(m_inPostLayoutUpdate, true);
     
@@ -2180,18 +2180,16 @@ bool RenderLayerCompositor::requiresCompositingForAnimation(RenderObject* render
     if (!(m_compositingTriggers & ChromeClient::AnimationTrigger))
         return false;
 
-    if (AnimationController* animController = renderer->animation()) {
-        return (animController->isRunningAnimationOnRenderer(renderer, CSSPropertyOpacity)
-                && (inCompositingMode() || (m_compositingTriggers & ChromeClient::AnimatedOpacityTrigger)))
+    AnimationController& animController = renderer->animation();
+    return (animController.isRunningAnimationOnRenderer(renderer, CSSPropertyOpacity)
+            && (inCompositingMode() || (m_compositingTriggers & ChromeClient::AnimatedOpacityTrigger)))
 #if ENABLE(CSS_FILTERS)
 #if !PLATFORM(MAC) || (!PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080)
             // <rdar://problem/10907251> - WebKit2 doesn't support CA animations of CI filters on Lion and below
-            || animController->isRunningAnimationOnRenderer(renderer, CSSPropertyWebkitFilter)
+            || animController.isRunningAnimationOnRenderer(renderer, CSSPropertyWebkitFilter)
 #endif // !PLATFORM(MAC) || (!PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080)
 #endif // CSS_FILTERS
-            || animController->isRunningAnimationOnRenderer(renderer, CSSPropertyWebkitTransform);
-    }
-    return false;
+            || animController.isRunningAnimationOnRenderer(renderer, CSSPropertyWebkitTransform);
 }
 
 bool RenderLayerCompositor::requiresCompositingForIndirectReason(RenderObject* renderer, bool hasCompositedDescendants, bool has3DTransformedDescendants, RenderLayer::IndirectCompositingReason& reason) const
@@ -2341,10 +2339,7 @@ bool RenderLayerCompositor::isRunningAcceleratedTransformAnimation(RenderObject*
     if (!(m_compositingTriggers & ChromeClient::AnimationTrigger))
         return false;
 
-    if (AnimationController* animController = renderer->animation())
-        return animController->isRunningAnimationOnRenderer(renderer, CSSPropertyWebkitTransform);
-
-    return false;
+    return renderer->animation().isRunningAnimationOnRenderer(renderer, CSSPropertyWebkitTransform);
 }
 
 // If an element has negative z-index children, those children render in front of the 

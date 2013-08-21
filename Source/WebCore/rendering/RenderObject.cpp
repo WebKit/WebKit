@@ -1728,7 +1728,7 @@ void RenderObject::removeAnonymousWrappersForInlinesIfNecessary()
 void RenderObject::setAnimatableStyle(PassRefPtr<RenderStyle> style)
 {
     if (!isText() && style)
-        setStyle(animation()->updateAnimations(this, style.get()));
+        setStyle(animation().updateAnimations(this, style.get()));
     else
         setStyle(style);
 }
@@ -2460,7 +2460,7 @@ void RenderObject::willBeDestroyed()
     if (frame() && frame()->eventHandler().autoscrollRenderer() == this)
         frame()->eventHandler().stopAutoscrollTimer(true);
 
-    animation()->cancelAnimations(this);
+    animation().cancelAnimations(this);
 
     // For accessibility management, notify the parent of the imminent change to its child set.
     // We do it now, before remove(), while the parent pointer is still available.
@@ -3062,7 +3062,7 @@ void RenderObject::adjustRectForOutlineAndShadow(LayoutRect& rect) const
     rect.inflate(outlineSize);
 }
 
-AnimationController* RenderObject::animation() const
+AnimationController& RenderObject::animation() const
 {
     return frame()->animation();
 }

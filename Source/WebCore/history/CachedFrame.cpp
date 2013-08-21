@@ -109,7 +109,7 @@ void CachedFrameBase::restore()
         m_document->accessSVGExtensions()->unpauseAnimations();
 #endif
 
-    frame.animation()->resumeAnimationsForDocument(m_document.get());
+    frame.animation().resumeAnimationsForDocument(m_document.get());
     frame.eventHandler().setMousePressNode(m_mousePressNode.get());
     m_document->resumeActiveDOMObjects(ActiveDOMObject::DocumentWillBecomeInactive);
     m_document->resumeScriptedAnimationControllerCallbacks();

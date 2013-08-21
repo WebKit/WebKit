@@ -894,7 +894,7 @@ TransformationMatrix RenderLayer::currentTransform(RenderStyle::ApplyTransformOr
 #if USE(ACCELERATED_COMPOSITING)
     if (renderer()->style()->isRunningAcceleratedAnimation()) {
         TransformationMatrix currTransform;
-        RefPtr<RenderStyle> style = renderer()->animation()->getAnimatedStyleForRenderer(renderer());
+        RefPtr<RenderStyle> style = renderer()->animation().getAnimatedStyleForRenderer(renderer());
         style->applyTransform(currTransform, renderBox()->pixelSnappedBorderBoxRect().size(), applyOrigin);
         makeMatrixRenderable(currTransform, canRender3DTransforms());
         return currTransform;

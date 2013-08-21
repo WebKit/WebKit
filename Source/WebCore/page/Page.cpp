@@ -1290,11 +1290,11 @@ void Page::setVisibilityState(PageVisibilityState visibilityState, bool isInitia
         if (m_pageThrottler->shouldThrottleTimers())
             throttleTimers();
         if (m_settings->hiddenPageCSSAnimationSuspensionEnabled())
-            mainFrame()->animation()->suspendAnimations();
+            mainFrame()->animation().suspendAnimations();
     } else {
         unthrottleTimers();
         if (m_settings->hiddenPageCSSAnimationSuspensionEnabled())
-            mainFrame()->animation()->resumeAnimations();
+            mainFrame()->animation().resumeAnimations();
     }
 #if !ENABLE(PAGE_VISIBILITY_API)
     UNUSED_PARAM(isInitialState);
@@ -1555,9 +1555,9 @@ void Page::hiddenPageCSSAnimationSuspensionStateChanged()
 {
     if (m_visibilityState == WebCore::PageVisibilityStateHidden) {
         if (m_settings->hiddenPageCSSAnimationSuspensionEnabled())
-            mainFrame()->animation()->suspendAnimations();
+            mainFrame()->animation().suspendAnimations();
         else
-            mainFrame()->animation()->resumeAnimations();
+            mainFrame()->animation().resumeAnimations();
     }
 }
 #endif

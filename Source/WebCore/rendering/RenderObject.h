@@ -954,7 +954,7 @@ public:
     
     void remove() { if (parent()) parent()->removeChild(this); }
 
-    AnimationController* animation() const;
+    AnimationController& animation() const;
 
     bool visibleToHitTesting() const { return style()->visibility() == VISIBLE && style()->pointerEvents() != PE_NONE; }
 

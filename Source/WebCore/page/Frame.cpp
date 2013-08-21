@@ -630,7 +630,7 @@ void Frame::clearTimers(FrameView *view, Document *document)
 {
     if (view) {
         view->unscheduleRelayout();
-        view->frame().animation()->suspendAnimationsForDocument(document);
+        view->frame().animation().suspendAnimationsForDocument(document);
         view->frame().eventHandler().stopAutoscrollTimer();
     }
 }
@@ -961,7 +961,7 @@ void Frame::suspendActiveDOMObjectsAndAnimations()
     // FIXME: Suspend/resume calls will not match if the frame is navigated, and gets a new document.
     if (document()) {
         document()->suspendScriptedAnimationControllerCallbacks();
-        animation()->suspendAnimationsForDocument(document());
+        animation().suspendAnimationsForDocument(document());
         document()->suspendActiveDOMObjects(ActiveDOMObject::PageWillBeSuspended);
     }
 }
@@ -977,7 +977,7 @@ void Frame::resumeActiveDOMObjectsAndAnimations()
 
     if (document()) {
         document()->resumeActiveDOMObjects(ActiveDOMObject::PageWillBeSuspended);
-        animation()->resumeAnimationsForDocument(document());
+        animation().resumeAnimationsForDocument(document());
         document()->resumeScriptedAnimationControllerCallbacks();
     }
 
