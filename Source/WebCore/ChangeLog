@@ -1,3 +1,24 @@
+2013-08-21  Tim Horton  <timothy_horton@apple.com>
+
+        isReplacementObscured is wrong when the indicator is clipped by an iframe
+        https://bugs.webkit.org/show_bug.cgi?id=120031
+        <rdar://problem/14606819>
+
+        Reviewed by Simon Fraser.
+
+        Hit-test for plugin obscurity in the root document. To do this, we also need
+        to convert the indicator rectangle into root view coordinates before
+        hit testing its edges.
+
+        This resolves the case where an iframe which clips its content was reporting
+        the indicator as not obscured, despite the fact that it was obscured from the
+        point of view of the user.
+
+        Updated test plugins/unavailable-plugin-indicator-obscurity.html
+
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::isReplacementObscured):
+
 2013-08-21  Andreas Kling  <akling@apple.com>
 
         <https://webkit.org/b/120132> Frame::navigationScheduler() should return a reference.

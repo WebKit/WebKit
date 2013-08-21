@@ -407,45 +407,47 @@ bool RenderEmbeddedObject::isReplacementObscured() const
     if (rect.isEmpty())
         return true;
 
-    RenderView* docRenderer = document()->renderView();
-    ASSERT(docRenderer);
-    if (!docRenderer)
+    RenderView* rootRenderView = document()->topDocument()->renderView();
+    ASSERT(rootRenderView);
+    if (!rootRenderView)
         return true;
+
+    IntRect rootViewRect = frameView()->convertToRootView(pixelSnappedIntRect(rect));
     
-    HitTestRequest request(HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::IgnoreClipping | HitTestRequest::DisallowShadowContent);
+    HitTestRequest request(HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::IgnoreClipping | HitTestRequest::DisallowShadowContent | HitTestRequest::AllowChildFrameContent);
     HitTestResult result;
     HitTestLocation location;
     
-    LayoutUnit x = rect.x();
-    LayoutUnit y = rect.y();
-    LayoutUnit width = rect.width();
-    LayoutUnit height = rect.height();
+    LayoutUnit x = rootViewRect.x();
+    LayoutUnit y = rootViewRect.y();
+    LayoutUnit width = rootViewRect.width();
+    LayoutUnit height = rootViewRect.height();
     
     // Hit test the center and near the corners of the replacement text to ensure
     // it is visible and is not masked by other elements.
     bool hit = false;
     location = LayoutPoint(x + width / 2, y + height / 2);
-    hit = docRenderer->hitTest(request, location, result);
+    hit = rootRenderView->hitTest(request, location, result);
     if (!hit || result.innerNode() != node())
         return true;
     
     location = LayoutPoint(x, y);
-    hit = docRenderer->hitTest(request, location, result);
+    hit = rootRenderView->hitTest(request, location, result);
     if (!hit || result.innerNode() != node())
         return true;
     
     location = LayoutPoint(x + width, y);
-    hit = docRenderer->hitTest(request, location, result);
+    hit = rootRenderView->hitTest(request, location, result);
     if (!hit || result.innerNode() != node())
         return true;
     
     location = LayoutPoint(x + width, y + height);
-    hit = docRenderer->hitTest(request, location, result);
+    hit = rootRenderView->hitTest(request, location, result);
     if (!hit || result.innerNode() != node())
         return true;
     
     location = LayoutPoint(x, y + height);
-    hit = docRenderer->hitTest(request, location, result);
+    hit = rootRenderView->hitTest(request, location, result);
     if (!hit || result.innerNode() != node())
         return true;
 

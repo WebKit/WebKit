@@ -18,12 +18,17 @@
         var expectedObscuredPlugins = document.getElementsByClassName(className);
         for (var i = 0; i < expectedObscuredPlugins.length; i++) {
             var plugin = expectedObscuredPlugins[i];
+            var pluginName = plugin.id;
+
+            if (plugin.tagName == "IFRAME")
+                plugin = plugin.contentDocument.getElementById("testPlugin");
+
             var obscured = internals.isPluginUnavailabilityIndicatorObscured(plugin);
             var passed = expectedObscured == obscured;
             if (!passed)
                 failedAnyTest = true;
 
-            log("'" + plugin.id + "' was obscured: " + obscured + " (expected " + expectedObscured + "; " + (passed ? "PASS" : "FAIL") + ")");
+            log("'" + pluginName + "' was obscured: " + obscured + " (expected " + expectedObscured + "; " + (passed ? "PASS" : "FAIL") + ")");
         };
 
         return failedAnyTest;
@@ -154,6 +159,15 @@
         <embed id="offScreenTopLeft" class="shouldBeObscured" type="application/x-webkit-test-netscape" style="position: absolute; top: -1000px; left: -1000px;"></embed>
         <embed id="offScreenTop" class="shouldBeObscured" type="application/x-webkit-test-netscape" style="position: absolute; top: -1000px; left: 0;"></embed>
         <embed id="offScreenLeft" class="shouldBeObscured" type="application/x-webkit-test-netscape" style="position: absolute; top: 0; left: -1000px;"></embed>
+
+        <!-- Obscured by overflow clipping -->
+        <div style="overflow: scroll; width: 100px; height: 100px;">
+            <embed id="overflowScrollObscured" class="shouldBeObscured" type="application/x-webkit-test-netscape"></embed>
+        </div>
+
+        <!-- Obscured by iframe clipping -->
+        <iframe id="smallIFrame" src="resources/plugin-page.html" style="width: 100px; height: 100px;" class="shouldBeObscured"></iframe>
+        <iframe id="largeIFrame" src="resources/plugin-page.html" style="width: 500px; height: 500px;" class="shouldNotBeObscured"></iframe>
 
         <div id="log"></div>
     </body>
