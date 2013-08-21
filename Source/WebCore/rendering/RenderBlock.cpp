@@ -2300,19 +2300,6 @@ LayoutUnit RenderBlock::clearFloatsIfNeeded(RenderBox* child, MarginInfo& margin
     return logicalTop;
 }
 
-LayoutUnit RenderBlock::marginOffsetForSelfCollapsingBlock()
-{
-    RenderBlock* current = this;
-    while (current) {
-        if (current->isSelfCollapsingBlock() && current->style()->clear() && current->getClearDelta(current, LayoutUnit()))
-            return current->collapsedMarginBeforeForChild(current);
-        if (current->previousInFlowSiblingBox() || !current->parent() || !current->parent()->isRenderBlock())
-            return LayoutUnit();
-        current = toRenderBlock(current->parent());
-    }
-    return LayoutUnit();
-}
-
 void RenderBlock::marginBeforeEstimateForChild(RenderBox* child, LayoutUnit& positiveMarginBefore, LayoutUnit& negativeMarginBefore, bool& discardMarginBefore) const
 {
     // Give up if in quirks mode and we're a body/table cell and the top margin of the child box is quirky.

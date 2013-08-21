@@ -178,13 +178,6 @@ public:
     RenderBox* previousSiblingBox() const;
     RenderBox* nextSiblingBox() const;
     RenderBox* parentBox() const;
-    RenderBox* previousInFlowSiblingBox() const
-    {
-        RenderBox* current = previousSiblingBox();
-        while (current && current->isFloatingOrOutOfFlowPositioned())
-            current = current->previousSiblingBox();
-        return current;
-    }
 
     // Visual and layout overflow are in the coordinate space of the box.  This means that they aren't purely physical directions.
     // For horizontal-tb and vertical-lr they will match physical directions, but for horizontal-bt and vertical-rl, the top/bottom and left/right

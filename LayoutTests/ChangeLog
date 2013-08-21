@@ -1,3 +1,13 @@
+2013-08-21  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION(r154399): broke Mac ML debug WK1 tests > 50 crashes (Requested by thorton on #webkit).
+        https://bugs.webkit.org/show_bug.cgi?id=120129
+
+        Rolling out http://trac.webkit.org/changeset/154399.
+
+        * fast/block/margin-collapse/self-collapsing-block-with-float-descendant-expected.html: Removed.
+        * fast/block/margin-collapse/self-collapsing-block-with-float-descendant.html: Removed.
+
 2013-08-20  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should inline new typedArray()
