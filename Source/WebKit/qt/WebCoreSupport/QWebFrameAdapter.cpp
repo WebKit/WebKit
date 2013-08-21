@@ -808,7 +808,7 @@ void QWebFrameAdapter::updateBackgroundRecursively(const QColor& backgroundColor
 
 void QWebFrameAdapter::cancelLoad()
 {
-    frame->navigationScheduler()->cancel();
+    frame->navigationScheduler().cancel();
 }
 
 // ========== QWebHitTestResultPrivate implementation ===========

@@ -280,7 +280,7 @@ void FrameLoader::setDefersLoading(bool defers)
     history()->setDefersLoading(defers);
 
     if (!defers) {
-        m_frame->navigationScheduler()->startTimer();
+        m_frame->navigationScheduler().startTimer();
         startCheckCompleteTimer();
     }
 }
@@ -391,7 +391,7 @@ void FrameLoader::submitForm(PassRefPtr<FormSubmission> submission)
     submission->setReferrer(outgoingReferrer());
     submission->setOrigin(outgoingOrigin());
 
-    targetFrame->navigationScheduler()->scheduleFormSubmission(submission);
+    targetFrame->navigationScheduler().scheduleFormSubmission(submission);
 }
 
 void FrameLoader::stopLoading(UnloadEventPolicy unloadEventPolicy)
@@ -469,7 +469,7 @@ void FrameLoader::stopLoading(UnloadEventPolicy unloadEventPolicy)
     }
 
     // FIXME: This will cancel redirection timer, which really needs to be restarted when restoring the frame from b/f cache.
-    m_frame->navigationScheduler()->cancel();
+    m_frame->navigationScheduler().cancel();
 }
 
 void FrameLoader::stop()
@@ -512,13 +512,13 @@ bool FrameLoader::closeURL()
 
 bool FrameLoader::didOpenURL()
 {
-    if (m_frame->navigationScheduler()->redirectScheduledDuringLoad()) {
+    if (m_frame->navigationScheduler().redirectScheduledDuringLoad()) {
         // A redirect was scheduled before the document was created.
         // This can happen when one frame changes another frame's location.
         return false;
     }
 
-    m_frame->navigationScheduler()->cancel();
+    m_frame->navigationScheduler().cancel();
     m_frame->editor().clearLastEditCommand();
 
     m_isComplete = false;
@@ -551,13 +551,13 @@ void FrameLoader::didExplicitOpen()
     // from a subsequent window.document.open / window.document.write call. 
     // Canceling redirection here works for all cases because document.open 
     // implicitly precedes document.write.
-    m_frame->navigationScheduler()->cancel();
+    m_frame->navigationScheduler().cancel();
 }
 
 
 void FrameLoader::cancelAndClear()
 {
-    m_frame->navigationScheduler()->cancel();
+    m_frame->navigationScheduler().cancel();
 
     if (!m_isComplete)
         closeURL();
@@ -606,7 +606,7 @@ void FrameLoader::clear(Document* newDocument, bool clearWindowProperties, bool 
 
     m_frame->script().enableEval();
 
-    m_frame->navigationScheduler()->clear();
+    m_frame->navigationScheduler().clear();
 
     m_checkTimer.stop();
     m_shouldCallCheckCompleted = false;
@@ -643,7 +643,7 @@ void FrameLoader::receivedFirstData()
     else
         url = m_frame->document()->completeURL(url).string();
 
-    m_frame->navigationScheduler()->scheduleRedirect(delay, url);
+    m_frame->navigationScheduler().scheduleRedirect(delay, url);
 }
 
 void FrameLoader::setOutgoingReferrer(const KURL& url)
@@ -792,7 +792,7 @@ void FrameLoader::checkCompleted()
 
     checkCallImplicitClose(); // if we didn't do it before
 
-    m_frame->navigationScheduler()->startTimer();
+    m_frame->navigationScheduler().startTimer();
 
     completed();
     if (m_frame->page())
@@ -994,7 +994,7 @@ void FrameLoader::provisionalLoadStarted()
 {
     if (m_stateMachine.firstLayoutDone())
         m_stateMachine.advanceTo(FrameLoaderStateMachine::CommittedFirstRealLoad);
-    m_frame->navigationScheduler()->cancel(true);
+    m_frame->navigationScheduler().cancel(true);
     m_client->provisionalLoadStarted();
 }
 
@@ -1094,7 +1094,7 @@ void FrameLoader::completed()
     RefPtr<Frame> protect(m_frame);
 
     for (Frame* descendant = m_frame->tree()->traverseNext(m_frame); descendant; descendant = descendant->tree()->traverseNext(m_frame))
-        descendant->navigationScheduler()->startTimer();
+        descendant->navigationScheduler().startTimer();
 
     if (Frame* parent = m_frame->tree()->parent())
         parent->loader().checkCompleted();
@@ -1964,7 +1964,7 @@ void FrameLoader::prepareForCachedPageRestore()
     ASSERT(m_frame->page());
     ASSERT(m_frame->page()->mainFrame() == m_frame);
 
-    m_frame->navigationScheduler()->cancel();
+    m_frame->navigationScheduler().cancel();
 
     // We still have to close the previous part page.
     closeURL();

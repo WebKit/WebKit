@@ -1,3 +1,11 @@
+2013-08-21  Andreas Kling  <akling@apple.com>
+
+        <https://webkit.org/b/120132> Frame::navigationScheduler() should return a reference.
+
+        Reviewed by Anders Carlzon.
+
+        Frame::m_navigationScheduler is an inline member, not a pointer.
+
 2013-08-21  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION(r154399): broke Mac ML debug WK1 tests > 50 crashes (Requested by thorton on #webkit).
