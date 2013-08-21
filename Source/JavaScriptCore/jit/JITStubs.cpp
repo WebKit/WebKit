@@ -2268,6 +2268,11 @@ DEFINE_STUB_FUNCTION(void, op_put_to_scope)
 
     PutPropertySlot slot(codeBlock->isStrictMode());
     scope->methodTable()->put(scope, exec, ident, value, slot);
+    
+    if (exec->vm().exception) {
+        VM_THROW_EXCEPTION_AT_END();
+        return;
+    }
 
     // Covers implicit globals. Since they don't exist until they first execute, we didn't know how to cache them at compile time.
     if (modeAndType.type() == GlobalProperty || modeAndType.type() == GlobalPropertyWithVarInjectionChecks) {

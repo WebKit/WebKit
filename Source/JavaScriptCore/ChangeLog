@@ -1,3 +1,15 @@
+2013-08-21  Yi Shen  <max.hong.shen@gmail.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=119900
+        Exception in global setter doesn't unwind correctly
+
+        Reviewed by Geoffrey Garen.
+
+        Call VM_THROW_EXCEPTION_AT_END in op_put_to_scope if the setter throws exception.
+
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+
 2013-08-21  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Rename/refactor setButterfly/setStructure
