@@ -895,6 +895,34 @@ inline CollapsedBorderValue RenderTableCell::cachedCollapsedBottomBorder(const R
     return styleForCellFlow->isLeftToRightDirection() ? section()->cachedCollapsedBorder(this, CBSEnd) : section()->cachedCollapsedBorder(this, CBSStart);
 }
 
+inline RenderTableCell* RenderTableCell::cellAtLeft(const RenderStyle* styleForCellFlow) const
+{
+    if (styleForCellFlow->isHorizontalWritingMode())
+        return styleForCellFlow->isLeftToRightDirection() ? table()->cellBefore(this) : table()->cellAfter(this);
+    return styleForCellFlow->isFlippedBlocksWritingMode() ? table()->cellBelow(this) : table()->cellAbove(this);
+}
+
+inline RenderTableCell* RenderTableCell::cellAtRight(const RenderStyle* styleForCellFlow) const
+{
+    if (styleForCellFlow->isHorizontalWritingMode())
+        return styleForCellFlow->isLeftToRightDirection() ? table()->cellAfter(this) : table()->cellBefore(this);
+    return styleForCellFlow->isFlippedBlocksWritingMode() ? table()->cellAbove(this) : table()->cellBelow(this);
+}
+
+inline RenderTableCell* RenderTableCell::cellAtTop(const RenderStyle* styleForCellFlow) const
+{
+    if (styleForCellFlow->isHorizontalWritingMode())
+        return styleForCellFlow->isFlippedBlocksWritingMode() ? table()->cellBelow(this) : table()->cellAbove(this);
+    return styleForCellFlow->isLeftToRightDirection() ? table()->cellBefore(this) : table()->cellAfter(this);
+}
+
+inline RenderTableCell* RenderTableCell::cellAtBottom(const RenderStyle* styleForCellFlow) const
+{
+    if (styleForCellFlow->isHorizontalWritingMode())
+        return styleForCellFlow->isFlippedBlocksWritingMode() ? table()->cellAbove(this) : table()->cellBelow(this);
+    return styleForCellFlow->isLeftToRightDirection() ? table()->cellAfter(this) : table()->cellBefore(this);
+}
+
 int RenderTableCell::borderLeft() const
 {
     return table()->collapseBorders() ? borderHalfLeft(false) : RenderBlock::borderLeft();
@@ -1172,19 +1200,19 @@ void RenderTableCell::paintCollapsedBorders(PaintInfo& paintInfo, const LayoutPo
     bool shouldDrawLeftBorder = true;
     bool shouldDrawRightBorder = true;
 
-    if (RenderTableCell* top = table()->cellAbove(this)) {
+    if (RenderTableCell* top = cellAtTop(styleForCellFlow)) {
         shouldDrawTopBorder = top->alignLeftRightBorderPaintRect(leftXOffsetTop, rightXOffsetTop);
         if (this->colSpan() > 1)
             shouldDrawTopBorder = false;
     }
 
-    if (RenderTableCell* bottom = table()->cellBelow(this))
+    if (RenderTableCell* bottom = cellAtBottom(styleForCellFlow))
         bottom->alignLeftRightBorderPaintRect(leftXOffsetBottom, rightXOffsetBottom);
 
-    if (RenderTableCell* left = table()->cellBefore(this))
+    if (RenderTableCell* left = cellAtLeft(styleForCellFlow))
         shouldDrawLeftBorder = left->alignTopBottomBorderPaintRect(topYOffsetLeft, bottomYOffsetLeft);
 
-    if (RenderTableCell* right = table()->cellAfter(this))
+    if (RenderTableCell* right = cellAtRight(styleForCellFlow))
         shouldDrawRightBorder = right->alignTopBottomBorderPaintRect(topYOffsetRight, bottomYOffsetRight);
 
     IntRect cellRect = pixelSnappedIntRect(paintRect.x(), paintRect.y(), paintRect.width(), paintRect.height());

@@ -1,3 +1,26 @@
+2013-08-21  Robert Hogan  <robert@webkit.org>
+
+        In RenderTableCell::paintCollapsedBorders() check surrounding cells using physical rather than logical direction
+        https://bugs.webkit.org/show_bug.cgi?id=120074
+
+        Reviewed by David Hyatt.
+
+        No new tests, covered by existing tests.
+
+        The functions cellAbove(), cellBelow() etc. check the logical rather than the physical direction but they're being
+        used to decide the painting of the physical borders of the cell. As we paint all four sides of every cell, and
+        the borders of adjoining cells twice over, this has no impact on painting currently but making the check consistent
+        in its treatment of physical and logical direction will help with webkit.org/b/119759 and make the code less confusing
+        to the next guy.
+
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::cellAtLeft):
+        (WebCore::RenderTableCell::cellAtRight):
+        (WebCore::RenderTableCell::cellAtTop):
+        (WebCore::RenderTableCell::cellAtBottom):
+        (WebCore::RenderTableCell::paintCollapsedBorders):
+        * rendering/RenderTableCell.h:
+
 2013-08-21  Róbert Sipka  <sipka@inf.u-szeged.hu>
 
         <https://webkit.org/b/120109> [curl] only include WebCoreBundleWin on Windows

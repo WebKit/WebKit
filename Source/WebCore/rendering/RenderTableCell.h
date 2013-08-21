@@ -266,6 +266,11 @@ private:
     CollapsedBorderValue computeCollapsedBeforeBorder(IncludeBorderColorOrNot = IncludeBorderColor) const;
     CollapsedBorderValue computeCollapsedAfterBorder(IncludeBorderColorOrNot = IncludeBorderColor) const;
 
+    RenderTableCell* cellAtLeft(const RenderStyle*) const;
+    RenderTableCell* cellAtRight(const RenderStyle*) const;
+    RenderTableCell* cellAtTop(const RenderStyle*) const;
+    RenderTableCell* cellAtBottom(const RenderStyle*) const;
+
     Length logicalWidthFromColumns(RenderTableCol* firstColForThisCell, Length widthFromStyle) const;
 
     void updateColAndRowSpanFlags();
