@@ -1,3 +1,12 @@
+2013-08-21  Brent Fulgham  <bfulgham@apple.com>
+
+        <https://webkit.org/b/120113> Enable CSS_IMAGE_SET
+
+        Reviewed by Anders Carlsson.
+
+        * platform/win/TestExpectations: Turn on two CSS_IMAGE_SET-based tests that
+        now pass on Windows.
+
 2013-08-21  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         Font’s fast code path doesn’t handle partial runs correctly when kerning or ligatures are enabled 
