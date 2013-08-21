@@ -146,7 +146,8 @@ private:
     typedef unsigned TileValidationPolicyFlags;
 
     void revalidateTiles(TileValidationPolicyFlags foregroundValidationPolicy = 0, TileValidationPolicyFlags backgroundValidationPolicy = 0);
-    void ensureTilesForRect(const FloatRect&);
+    enum class NewTileType { PrimaryTiles, SecondaryTiles };
+    IntRect ensureTilesForRect(const FloatRect&, NewTileType);
     void updateTileCoverageMap();
 
     void removeAllTiles();

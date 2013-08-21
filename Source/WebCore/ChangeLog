@@ -1,5 +1,33 @@
 2013-08-21  Tim Horton  <timothy_horton@apple.com>
 
+        revalidateTiles and ensureTilesForRect can share a lot of code
+        https://bugs.webkit.org/show_bug.cgi?id=119282
+
+        Reviewed by Simon Fraser.
+
+        No new tests, just a refactoring.
+
+        The bodies of ensureTilesForRect and revalidateTiles are nearly equivalent.
+
+        * platform/graphics/ca/mac/TileController.h:
+        Add an enum, NewTileType, to note whether the tiles created by ensureTilesForRect will
+        be primary coverage tiles or secondary out-of-view tiles.
+
+        * platform/graphics/ca/mac/TileController.mm:
+        (WebCore::TileController::prepopulateRect):
+        Move the code to see if we already have the requisite tiles in the
+        primary coverage rect, as well as our call to updateTileCoverageMap,
+        out into prepopulateRect, to generalize ensureTilesForRect.
+
+        (WebCore::TileController::revalidateTiles):
+        Make use of ensureTilesForRect. The platformCALayerDidCreateTiles call will happen there, now.
+
+        (WebCore::TileController::ensureTilesForRect):
+        Make ensureTilesForRect return the rect that it created tiles for, and only put
+        tiles in a cohort if we're creating secondary tiles.
+
+2013-08-21  Tim Horton  <timothy_horton@apple.com>
+
         isReplacementObscured is wrong when the indicator is clipped by an iframe
         https://bugs.webkit.org/show_bug.cgi?id=120031
         <rdar://problem/14606819>
