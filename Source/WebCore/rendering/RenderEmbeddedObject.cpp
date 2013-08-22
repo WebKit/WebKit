@@ -70,6 +70,7 @@ static const float replacementTextRoundedRectHeight = 22;
 static const float replacementTextRoundedRectLeftTextMargin = 10;
 static const float replacementTextRoundedRectRightTextMargin = 10;
 static const float replacementTextRoundedRectRightTextMarginWithArrow = 5;
+static const float replacementTextRoundedRectTopTextMargin = -1;
 static const float replacementTextRoundedRectRadius = 11;
 static const float replacementArrowLeftMargin = -4;
 static const float replacementArrowPadding = 4;
@@ -307,7 +308,7 @@ void RenderEmbeddedObject::paintReplaced(PaintInfo& paintInfo, const LayoutPoint
 
     const FontMetrics& fontMetrics = font.fontMetrics();
     float labelX = roundf(replacementTextRect.location().x() + replacementTextRoundedRectLeftTextMargin);
-    float labelY = roundf(replacementTextRect.location().y() + (replacementTextRect.size().height() - fontMetrics.height()) / 2 + fontMetrics.ascent());
+    float labelY = roundf(replacementTextRect.location().y() + (replacementTextRect.size().height() - fontMetrics.height()) / 2 + fontMetrics.ascent() + replacementTextRoundedRectTopTextMargin);
     context->setFillColor(replacementTextColor(), style()->colorSpace());
     context->drawBidiText(font, run, FloatPoint(labelX, labelY));
 
