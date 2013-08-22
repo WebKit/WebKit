@@ -597,8 +597,7 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle* other, unsigned& chang
     if ((visibility() == COLLAPSE) != (other->visibility() == COLLAPSE))
         return true;
 
-    if ((rareNonInheritedData->opacity == 1 && other->rareNonInheritedData->opacity < 1)
-        || (rareNonInheritedData->opacity < 1 && other->rareNonInheritedData->opacity == 1)) {
+    if (rareNonInheritedData->hasOpacity() != other->rareNonInheritedData->hasOpacity()) {
         // FIXME: We would like to use SimplifiedLayout here, but we can't quite do that yet.
         // We need to make sure SimplifiedLayout can operate correctly on RenderInlines (we will need
         // to add a selfNeedsSimplifiedLayout bit in order to not get confused and taint every line).
@@ -606,6 +605,11 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle* other, unsigned& chang
         // a full layout is necessary to keep floating object lists sane.
         return true;
     }
+
+#if ENABLE(CSS_FILTERS)
+    if (rareNonInheritedData->hasFilters() != other->rareNonInheritedData->hasFilters())
+        return true;
+#endif
 
     const QuotesData* quotesDataA = rareInheritedData->quotes.get();
     const QuotesData* quotesDataB = other->rareInheritedData->quotes.get();

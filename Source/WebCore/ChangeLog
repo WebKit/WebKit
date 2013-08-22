@@ -1,3 +1,30 @@
+2013-08-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Setting -webkit-filter: in :active selector causes failure to redraw
+        https://bugs.webkit.org/show_bug.cgi?id=120135
+
+        Reviewed by Jer Noble.
+        
+        When removing a filter on an inline child of a compositing layer,
+        the inline loses its RenderLayer and compositing layer, but we fail to
+        repaint the compositing layer that the inline is now painting into.
+        
+        This worked correctly for opacity, because opacity toggles cause
+        layouts (which then paint the correct layer), so do the same for filters.
+
+        Test: css3/filters/remove-filter-repaint.html
+
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::changeRequiresLayout): Return true if we toggled
+        between having filters and not. Drive-by cleanup, making use of new convenience
+        function for hasOpacity().
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::hasFilters): Returns true if we have any
+        filters.
+        * rendering/style/StyleRareNonInheritedData.h:
+        (WebCore::StyleRareNonInheritedData::hasOpacity): Convenience function that
+        returns true if opacity is < 1.
+
 2013-08-21  Gavin Barraclough  <barraclough@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=120139

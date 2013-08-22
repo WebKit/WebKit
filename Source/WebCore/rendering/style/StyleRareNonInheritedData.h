@@ -90,8 +90,10 @@ public:
     bool reflectionDataEquivalent(const StyleRareNonInheritedData&) const;
     bool animationDataEquivalent(const StyleRareNonInheritedData&) const;
     bool transitionDataEquivalent(const StyleRareNonInheritedData&) const;
+    bool hasFilters() const;
+    bool hasOpacity() const { return opacity < 1; }
 
-    float opacity; // Whether or not we're transparent.
+    float opacity;
 
     float m_aspectRatioDenominator;
     float m_aspectRatioNumerator;

@@ -1,3 +1,15 @@
+2013-08-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Setting -webkit-filter: in :active selector causes failure to redraw
+        https://bugs.webkit.org/show_bug.cgi?id=120135
+
+        Reviewed by Jer Noble.
+        
+        Ref test for removing a filter on an inline.
+
+        * css3/filters/remove-filter-repaint-expected.html: Added.
+        * css3/filters/remove-filter-repaint.html: Added.
+
 2013-08-21  Yi Shen  <max.hong.shen@gmail.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=119900
