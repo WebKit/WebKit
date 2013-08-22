@@ -1,3 +1,10 @@
+2013-08-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        WKR build fix. Somehow tool.bugs.quips() doesn't work in WKR so work around that.
+
+        * Scripts/webkitpy/tool/bot/irc_command.py:
+        (Hi.execute):
+
 2013-08-22  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt] DRT bug revealed/caused by r154300

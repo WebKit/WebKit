@@ -116,6 +116,8 @@ class Hi(IRCCommand):
     def execute(self, nick, args, tool, sheriff):
         if len(args) and re.match(sheriff.name() + r'_*\s*!\s*', ' '.join(args)):
             return "%s: hi %s!" % (nick, nick)
+        if sheriff.name() == 'WKR':  # For some unknown reason, WKR can't use tool.bugs.quips().
+            return "You're doing it wrong"
         quips = tool.bugs.quips()
         quips.append('"Only you can prevent forest fires." -- Smokey the Bear')
         return random.choice(quips)
