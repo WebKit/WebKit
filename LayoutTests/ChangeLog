@@ -1,3 +1,24 @@
+2013-08-08  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] Refactor testing code
+        https://bugs.webkit.org/show_bug.cgi?id=119552
+
+        Reviewed by Darin Adler.
+
+        Based on Blink r148922 & r149060 by <jchaffraix@chromium.org>
+
+        The old testing code was a huge copy&paste of big testing code
+        blocks. Refactor it in some new utility functions so that we could
+        reduce the size of the layout test file and ease the maintenance.
+
+        * fast/css-grid-layout/grid-item-column-row-get-set-expected.txt:
+        * fast/css-grid-layout/grid-item-column-row-get-set.html:
+        * fast/css-grid-layout/grid-item-end-after-get-set-expected.txt:
+        * fast/css-grid-layout/grid-item-end-after-get-set.html:
+        * fast/css-grid-layout/grid-item-start-before-get-set-expected.txt:
+        * fast/css-grid-layout/grid-item-start-before-get-set.html:
+        * fast/css-grid-layout/resources/grid-item-column-row-parsing-utils.js: Added.
+
 2013-08-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         Update Mac test expectations.
