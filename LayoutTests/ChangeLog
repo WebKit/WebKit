@@ -1,4 +1,17 @@
-2013-08-22  Anton Obzhirov  <a.obzhirov@samsung.com>
+2013-08-22  Gavin Barraclough  <barraclough@apple.com>
+
+        Error.stack should not be enumerable
+        https://bugs.webkit.org/show_bug.cgi?id=120171
+
+        Reviewed by Oliver Hunt.
+
+        Breaks ECMA tests.
+
+        * fast/js/exception-properties-expected.txt:
+        * fast/js/script-tests/exception-properties.js:
+            - Update test expectations.
+2
+013-08-22  Anton Obzhirov  <a.obzhirov@samsung.com>
 
         [CSSRegions] Min-width and max-width for a region should support values other than length
         https://bugs.webkit.org/show_bug.cgi?id=115248
