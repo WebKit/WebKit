@@ -1,3 +1,25 @@
+2013-08-21  Gavin Barraclough  <barraclough@apple.com>
+
+        Clarify var/const/function declaration
+        https://bugs.webkit.org/show_bug.cgi?id=120144
+
+        Reviewed by Sam Weinig.
+
+        Add methods to JSGlobalObject to declare vars, consts, and functions.
+
+        * runtime/Executable.cpp:
+        (JSC::ProgramExecutable::initializeGlobalProperties):
+        * runtime/Executable.h:
+            - Moved declaration code to JSGlobalObject
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::addGlobalVar):
+            - internal implementation of addVar, addConst, addFunction
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::addVar):
+        (JSC::JSGlobalObject::addConst):
+        (JSC::JSGlobalObject::addFunction):
+            - Added methods to declare vars, consts, and functions
+
 2013-08-21  Yi Shen  <max.hong.shen@gmail.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=119900

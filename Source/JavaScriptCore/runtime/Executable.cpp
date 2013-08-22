@@ -371,24 +371,6 @@ void ProgramExecutable::unlinkCalls()
 #endif
 }
 
-int ProgramExecutable::addGlobalVar(JSGlobalObject* globalObject, const Identifier& ident, ConstantMode constantMode, FunctionMode functionMode)
-{
-    // Try to share the symbolTable if possible
-    SharedSymbolTable* symbolTable = globalObject->symbolTable();
-    UNUSED_PARAM(functionMode);
-    ConcurrentJITLocker locker(symbolTable->m_lock);
-    int index = symbolTable->size(locker);
-    SymbolTableEntry newEntry(index, (constantMode == IsConstant) ? ReadOnly : 0);
-    if (functionMode == IsFunctionToSpecialize)
-        newEntry.attemptToWatch();
-    SymbolTable::Map::AddResult result = symbolTable->add(locker, ident.impl(), newEntry);
-    if (!result.isNewEntry) {
-        result.iterator->value.notifyWrite();
-        index = result.iterator->value.getIndex();
-    }
-    return index;
-}
-
 JSObject* ProgramExecutable::initializeGlobalProperties(VM& vm, CallFrame* callFrame, JSScope* scope)
 {
     RELEASE_ASSERT(scope);
@@ -415,20 +397,16 @@ JSObject* ProgramExecutable::initializeGlobalProperties(VM& vm, CallFrame* callF
     CallFrame* globalExec = globalObject->globalExec();
 
     for (size_t i = 0; i < functionDeclarations.size(); ++i) {
-        bool propertyDidExist = globalObject->removeDirect(vm, functionDeclarations[i].first); // Newly declared functions overwrite existing properties.
         UnlinkedFunctionExecutable* unlinkedFunctionExecutable = functionDeclarations[i].second.get();
         JSValue value = JSFunction::create(globalExec, unlinkedFunctionExecutable->link(vm, m_source, lineNo(), 0), scope);
-        int index = addGlobalVar(globalObject, functionDeclarations[i].first, IsVariable,
-            !propertyDidExist ? IsFunctionToSpecialize : NotFunctionOrNotSpecializable);
-        globalObject->registerAt(index).set(vm, globalObject, value);
+        globalObject->addFunction(callFrame, functionDeclarations[i].first, value);
     }
 
     for (size_t i = 0; i < variableDeclarations.size(); ++i) {
-        if (globalObject->hasProperty(globalExec, variableDeclarations[i].first))
-            continue;
-        addGlobalVar(globalObject, variableDeclarations[i].first,
-            (variableDeclarations[i].second & DeclarationStacks::IsConstant) ? IsConstant : IsVariable,
-            NotFunctionOrNotSpecializable);
+        if (variableDeclarations[i].second & DeclarationStacks::IsConstant)
+            globalObject->addConst(callFrame, variableDeclarations[i].first);
+        else
+            globalObject->addVar(callFrame, variableDeclarations[i].first);
     }
     return 0;
 }

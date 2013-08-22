@@ -196,6 +196,20 @@ bool JSGlobalObject::defineOwnProperty(JSObject* object, ExecState* exec, Proper
     return Base::defineOwnProperty(thisObject, exec, propertyName, descriptor, shouldThrow);
 }
 
+int JSGlobalObject::addGlobalVar(const Identifier& ident, ConstantMode constantMode, FunctionMode functionMode)
+{
+    ConcurrentJITLocker locker(symbolTable()->m_lock);
+    int index = symbolTable()->size(locker);
+    SymbolTableEntry newEntry(index, (constantMode == IsConstant) ? ReadOnly : 0);
+    if (functionMode == IsFunctionToSpecialize)
+        newEntry.attemptToWatch();
+    SymbolTable::Map::AddResult result = symbolTable()->add(locker, ident.impl(), newEntry);
+    if (!result.isNewEntry) {
+        result.iterator->value.notifyWrite();
+        index = result.iterator->value.getIndex();
+    }
+    return index;
+}
 
 static inline JSObject* lastInPrototypeChain(JSObject* object)
 {

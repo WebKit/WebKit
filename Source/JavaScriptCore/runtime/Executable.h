@@ -561,10 +561,6 @@ namespace JSC {
 
         ProgramExecutable(ExecState*, const SourceCode&);
 
-        enum ConstantMode { IsConstant, IsVariable };
-        enum FunctionMode { IsFunctionToSpecialize, NotFunctionOrNotSpecializable };
-        int addGlobalVar(JSGlobalObject*, const Identifier&, ConstantMode, FunctionMode);
-
         JSObject* compileInternal(ExecState*, JSScope*, JITCode::JITType, CompilationResult* = 0, unsigned bytecodeIndex = UINT_MAX);
         static void visitChildren(JSCell*, SlotVisitor&);
 

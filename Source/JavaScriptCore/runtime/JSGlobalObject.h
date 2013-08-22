@@ -239,6 +239,10 @@ protected:
         init(thisValue);
     }
 
+    enum ConstantMode { IsConstant, IsVariable };
+    enum FunctionMode { IsFunctionToSpecialize, NotFunctionOrNotSpecializable };
+    int addGlobalVar(const Identifier&, ConstantMode, FunctionMode);
+
 public:
     JS_EXPORT_PRIVATE ~JSGlobalObject();
     JS_EXPORT_PRIVATE static void destroy(JSCell*);
@@ -260,6 +264,23 @@ public:
     // We use this in the code generator as we perform symbol table
     // lookups prior to initializing the properties
     bool symbolTableHasProperty(PropertyName);
+
+    void addVar(ExecState* exec, const Identifier& propertyName)
+    {
+        if (!hasProperty(exec, propertyName))
+            addGlobalVar(propertyName, IsVariable, NotFunctionOrNotSpecializable);
+    }
+    void addConst(ExecState* exec, const Identifier& propertyName)
+    {
+        if (!hasProperty(exec, propertyName))
+            addGlobalVar(propertyName, IsConstant, NotFunctionOrNotSpecializable);
+    }
+    void addFunction(ExecState* exec, const Identifier& propertyName, JSValue value)
+    {
+        bool propertyDidExist = removeDirect(exec->vm(), propertyName); // Newly declared functions overwrite existing properties.
+        int index = addGlobalVar(propertyName, IsVariable, !propertyDidExist ? IsFunctionToSpecialize : NotFunctionOrNotSpecializable);
+        registerAt(index).set(exec->vm(), this, value);
+    }
 
     // The following accessors return pristine values, even if a script 
     // replaces the global object's associated property.
