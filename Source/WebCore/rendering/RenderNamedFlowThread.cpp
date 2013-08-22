@@ -30,7 +30,7 @@
 #include "FlowThreadController.h"
 #include "InlineTextBox.h"
 #include "InspectorInstrumentation.h"
-#include "NodeRenderingContext.h"
+#include "NodeRenderingTraversal.h"
 #include "NodeTraversal.h"
 #include "Position.h"
 #include "Range.h"
@@ -38,6 +38,7 @@
 #include "RenderRegion.h"
 #include "RenderText.h"
 #include "RenderView.h"
+#include "ShadowRoot.h"
 #include "Text.h"
 #include "WebKitNamedFlow.h"
 
@@ -480,18 +481,16 @@ const AtomicString& RenderNamedFlowThread::flowThreadName() const
 
 bool RenderNamedFlowThread::isChildAllowed(RenderObject* child, RenderStyle* style) const
 {
-    ASSERT(child);
-    ASSERT(style);
-
     if (!child->node())
         return true;
 
     ASSERT(child->node()->isElementNode());
-    RenderObject* parentRenderer = NodeRenderingContext(child->node()).parentRenderer();
-    if (!parentRenderer)
+    Node* originalParent = NodeRenderingTraversal::parent(child->node());
+
+    if (!originalParent || !originalParent->renderer())
         return true;
 
-    return parentRenderer->isChildAllowed(child, style);
+    return originalParent->renderer()->isChildAllowed(child, style);
 }
 
 void RenderNamedFlowThread::dispatchRegionLayoutUpdateEvent()

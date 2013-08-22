@@ -1,3 +1,24 @@
+2013-08-22  Andrei Bucur  <abucur@adobe.com>
+
+        RenderNamedFlowThread should not create NodeRenderingContext objects
+        https://bugs.webkit.org/show_bug.cgi?id=119923
+
+        Reviewed by Antti Koivisto.
+
+        Port of https://chromium.googlesource.com/chromium/blink/+/949d7d7e7b8685454742a55cf0ca912bb9a7b177.
+        Original patch by Elliott Sprehn.
+
+        RenderNamedFlowThread should not create NodeRenderingContext objects
+
+        RenderNamedFlowThread is using NodeRenderingContext to get the original
+        parent renderer, but should just be using NodeRenderingTraversal::parent
+        instead (which is what NodeRenderingContext does internally anyway).
+
+        Tests: No change in functionality. No new tests.
+
+        * rendering/RenderNamedFlowThread.cpp:
+        (WebCore::RenderNamedFlowThread::isChildAllowed):
+
 2013-08-22  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Introduce a SVGUnknownElement class for unknown SVG elements
