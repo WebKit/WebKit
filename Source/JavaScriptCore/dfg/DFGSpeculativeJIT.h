@@ -1497,7 +1497,7 @@ public:
 
     JITCompiler::Call callOperation(P_DFGOperation_EJS operation, GPRReg result, JSValueRegs value, size_t index)
     {
-        m_jit.setupArgumentsWithExecState(value.payloadGPR(), value.tagGPR(), TrustedImmPtr(index));
+        m_jit.setupArgumentsWithExecState(EABI_32BIT_DUMMY_ARG value.payloadGPR(), value.tagGPR(), TrustedImmPtr(index));
         return appendCallSetResult(operation, result);
     }
 
