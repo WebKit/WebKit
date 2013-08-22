@@ -1,5 +1,12 @@
 2013-08-22  Andreas Kling  <akling@apple.com>
 
+        Remove accidental cruft from r154449.
+
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::destroy):
+
+2013-08-22  Andreas Kling  <akling@apple.com>
+
         FrameLoader: frame() and client() should return references.
         <https://webkit.org/b/120158>
 
