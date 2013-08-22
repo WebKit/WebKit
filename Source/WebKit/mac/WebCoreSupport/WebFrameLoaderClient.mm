@@ -1113,7 +1113,7 @@ void WebFrameLoaderClient::saveViewStateToItem(HistoryItem* item)
 
 void WebFrameLoaderClient::restoreViewState()
 {
-    HistoryItem* currentItem = core(m_webFrame.get())->loader().history()->currentItem();
+    HistoryItem* currentItem = core(m_webFrame.get())->loader().history().currentItem();
     ASSERT(currentItem);
 
     // FIXME: As the ASSERT attests, it seems we should always have a currentItem here.

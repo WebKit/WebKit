@@ -1,3 +1,16 @@
+2013-08-22  Andreas Kling  <akling@apple.com>
+
+        FrameLoader::history() should return a reference.
+        <https://webkit.org/b/120163>
+
+        Reviewed by Anders Carlsson.
+
+        Rehued by Anders Carlsson.
+
+        FrameLoader::m_history is never null, so make history() return a reference.
+        Also made HistoryController::m_frame a reference, since HistoryController's
+        lifetime is tied to FrameLoader, which is tied to the Frame.
+
 2013-08-21  Simon Fraser  <simon.fraser@apple.com>
 
         Reloading this video test shows garbage briefly

@@ -1113,7 +1113,7 @@ void WebFrameLoaderClient::saveViewStateToItem(HistoryItem*)
 void WebFrameLoaderClient::restoreViewState()
 {
     // Inform the UI process of the scale factor.
-    double scaleFactor = m_frame->coreFrame()->loader().history()->currentItem()->pageScaleFactor();
+    double scaleFactor = m_frame->coreFrame()->loader().history().currentItem()->pageScaleFactor();
 
     // A scale factor of 0 means the history item has the default scale factor, thus we do not need to update it.
     if (scaleFactor)

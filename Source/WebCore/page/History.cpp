@@ -67,7 +67,7 @@ PassRefPtr<SerializedScriptValue> History::stateInternal() const
     if (!m_frame)
         return 0;
 
-    if (HistoryItem* historyItem = m_frame->loader().history()->currentItem())
+    if (HistoryItem* historyItem = m_frame->loader().history().currentItem())
         return historyItem->stateObject();
 
     return 0;
@@ -148,9 +148,9 @@ void History::stateObjectAdded(PassRefPtr<SerializedScriptValue> data, const Str
     }
 
     if (stateObjectType == StateObjectPush)
-        m_frame->loader().history()->pushState(data, title, fullURL.string());
+        m_frame->loader().history().pushState(data, title, fullURL.string());
     else if (stateObjectType == StateObjectReplace)
-        m_frame->loader().history()->replaceState(data, title, fullURL.string());
+        m_frame->loader().history().replaceState(data, title, fullURL.string());
             
     if (!urlString.isEmpty())
         m_frame->document()->updateURLForPushOrReplaceState(fullURL);

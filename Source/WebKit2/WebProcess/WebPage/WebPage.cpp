@@ -1053,7 +1053,7 @@ void WebPage::goToBackForwardItem(uint64_t backForwardItemID)
 
 void WebPage::tryRestoreScrollPosition()
 {
-    m_page->mainFrame()->loader().history()->restoreScrollPositionAndViewState();
+    m_page->mainFrame()->loader().history().restoreScrollPositionAndViewState();
 }
 
 void WebPage::layoutIfNeeded()

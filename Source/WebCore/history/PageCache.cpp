@@ -136,7 +136,7 @@ static unsigned logCanCacheFrameDecision(Frame* frame, int indentLevel)
         rejectReasons |= 1 << HasSharedWorkers;
     }
 #endif
-    if (!frame->loader().history()->currentItem()) {
+    if (!frame->loader().history().currentItem()) {
         PCLOG("   -No current history item");
         rejectReasons |= 1 << NoHistoryItem;
     }
@@ -325,7 +325,7 @@ bool PageCache::canCachePageContainingThisFrame(Frame* frame)
 #if ENABLE(SHARED_WORKERS)
         && !SharedWorkerRepository::hasSharedWorkers(document)
 #endif
-        && frameLoader.history()->currentItem()
+        && frameLoader.history().currentItem()
         && !frameLoader.quickRedirectComing()
         && !documentLoader->isLoadingInAPISense()
         && !documentLoader->isStopping()
