@@ -83,7 +83,7 @@ String SVGAElement::title() const
         return title;
 
     // Otherwise, use the title of this element.
-    return SVGStyledElement::title();
+    return SVGElement::title();
 }
 
 bool SVGAElement::isSupportedAttribute(const QualifiedName& attrName)

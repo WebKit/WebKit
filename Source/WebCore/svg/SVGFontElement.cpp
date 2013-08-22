@@ -41,11 +41,11 @@ DEFINE_ANIMATED_BOOLEAN(SVGFontElement, SVGNames::externalResourcesRequiredAttr,
 
 BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGFontElement)
     REGISTER_LOCAL_ANIMATED_PROPERTY(externalResourcesRequired)
-    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGStyledElement)
+    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGElement)
 END_REGISTER_ANIMATED_PROPERTIES
 
 inline SVGFontElement::SVGFontElement(const QualifiedName& tagName, Document* document)
-    : SVGStyledElement(tagName, document) 
+    : SVGElement(tagName, document) 
     , m_missingGlyph(0)
     , m_isGlyphCacheValid(false)
 {

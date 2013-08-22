@@ -26,9 +26,9 @@
 
 #include "AffineTransform.h"
 #include "FloatConversion.h"
+#include "SVGElement.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
-#include "SVGStyledElement.h"
 #include "SVGTransformList.h"
 
 namespace WebCore {

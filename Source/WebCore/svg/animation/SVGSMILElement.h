@@ -116,6 +116,8 @@ protected:
 
     void setInactive() { m_activeState = Inactive; }
 
+    virtual bool rendererIsNeeded(const RenderStyle&) OVERRIDE { return false; }
+
     // Sub-classes may need to take action when the target is changed.
     virtual void setTargetElement(SVGElement*);
     virtual void setAttributeName(const QualifiedName&);

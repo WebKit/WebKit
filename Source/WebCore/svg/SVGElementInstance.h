@@ -35,7 +35,7 @@ void addChildNodesToDeletionQueue(GenericNode*& head, GenericNode*& tail, Generi
 class Document;
 class SVGElement;
 class SVGElementInstanceList;
-class SVGStyledElement;
+class SVGElement;
 class SVGUseElement;
 
 // SVGElementInstance mimics Node, but without providing all its functionality
@@ -91,7 +91,7 @@ public:
         ~InstanceUpdateBlocker();
 
     private:
-        SVGStyledElement* m_targetElement;
+        SVGElement* m_targetElement;
     };
     
     static void invalidateAllInstancesOfElement(SVGElement*);

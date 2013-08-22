@@ -89,8 +89,7 @@ AffineTransform SVGLocatable::computeCTM(SVGElement* element, CTMScope mode, Sty
         if (!currentElement->isSVGElement())
             break;
 
-        if (toSVGElement(currentElement)->isSVGStyledElement())
-            ctm = toSVGStyledElement(currentElement)->localCoordinateSpaceTransform(mode).multiply(ctm);
+        ctm = toSVGElement(currentElement)->localCoordinateSpaceTransform(mode).multiply(ctm);
 
         // For getCTM() computation, stop at the nearest viewport element
         if (currentElement == stopAtElement)

@@ -2794,7 +2794,6 @@ HEADERS += \
     svg/SVGStopElement.h \
     svg/SVGStringList.h \
     svg/SVGStyleElement.h \
-    svg/SVGStyledElement.h \
     svg/SVGSVGElement.h \
     svg/SVGSwitchElement.h \
     svg/SVGSymbolElement.h \
@@ -3861,7 +3860,6 @@ enable?(SVG) {
         svg/SVGStopElement.cpp \
         svg/SVGStringList.cpp \
         svg/SVGStyleElement.cpp \
-        svg/SVGStyledElement.cpp \
         svg/SVGSwitchElement.cpp \
         svg/SVGSymbolElement.cpp \
         svg/SVGTRefElement.cpp \

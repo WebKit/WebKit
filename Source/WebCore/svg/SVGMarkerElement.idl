@@ -25,7 +25,7 @@
 
 [
     Conditional=SVG
-] interface SVGMarkerElement : SVGStyledElement {
+] interface SVGMarkerElement : SVGElement {
     // Marker Unit Types
     const unsigned short SVG_MARKERUNITS_UNKNOWN        = 0;
     const unsigned short SVG_MARKERUNITS_USERSPACEONUSE = 1;

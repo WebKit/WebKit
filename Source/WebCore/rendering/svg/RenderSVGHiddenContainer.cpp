@@ -23,12 +23,12 @@
 #include "RenderSVGHiddenContainer.h"
 
 #include "RenderSVGPath.h"
-#include "SVGStyledElement.h"
+#include "SVGElement.h"
 #include <wtf/StackStats.h>
 
 namespace WebCore {
 
-RenderSVGHiddenContainer::RenderSVGHiddenContainer(SVGStyledElement* element)
+RenderSVGHiddenContainer::RenderSVGHiddenContainer(SVGElement* element)
     : RenderSVGContainer(element)
 {
 }

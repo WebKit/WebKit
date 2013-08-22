@@ -26,7 +26,7 @@
 [
     Conditional=SVG&FILTERS,
     DoNotCheckConstants
-] interface SVGFECompositeElement : SVGStyledElement {
+] interface SVGFECompositeElement : SVGElement {
     // Composite Operators
     const unsigned short SVG_FECOMPOSITE_OPERATOR_UNKNOWN    = 0;
     const unsigned short SVG_FECOMPOSITE_OPERATOR_OVER       = 1;

@@ -43,11 +43,11 @@ namespace WebCore {
 // required by SVG renders need to be declared on RenderObject, but shared
 // logic can go in this class or in SVGRenderSupport.
 
-class SVGStyledElement;
+class SVGElement;
 
 class RenderSVGModelObject : public RenderObject {
 public:
-    explicit RenderSVGModelObject(SVGStyledElement*);
+    explicit RenderSVGModelObject(SVGElement*);
 
     virtual LayoutRect clippedOverflowRectForRepaint(const RenderLayerModelObject* repaintContainer) const OVERRIDE;
     virtual void computeFloatRectForRepaint(const RenderLayerModelObject* repaintContainer, FloatRect&, bool fixed = false) const OVERRIDE FINAL;

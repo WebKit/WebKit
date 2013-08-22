@@ -40,11 +40,11 @@ BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGViewElement)
     REGISTER_LOCAL_ANIMATED_PROPERTY(externalResourcesRequired)
     REGISTER_LOCAL_ANIMATED_PROPERTY(viewBox)
     REGISTER_LOCAL_ANIMATED_PROPERTY(preserveAspectRatio)
-    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGStyledElement)
+    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGElement)
 END_REGISTER_ANIMATED_PROPERTIES
 
 inline SVGViewElement::SVGViewElement(const QualifiedName& tagName, Document* document)
-    : SVGStyledElement(tagName, document)
+    : SVGElement(tagName, document)
     , m_zoomAndPan(SVGZoomAndPanMagnify)
     , m_viewTarget(SVGNames::viewTargetAttr)
 {
@@ -72,7 +72,7 @@ bool SVGViewElement::isSupportedAttribute(const QualifiedName& attrName)
 void SVGViewElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     if (!isSupportedAttribute(name)) {
-        SVGStyledElement::parseAttribute(name, value);
+        SVGElement::parseAttribute(name, value);
         return;
     }
 

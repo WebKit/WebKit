@@ -28,10 +28,10 @@
 #include "SVGAnimatedPreserveAspectRatio.h"
 #include "SVGAnimatedRect.h"
 #include "SVGAnimatedTransformList.h"
+#include "SVGElement.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGFitToViewBox.h"
 #include "SVGNames.h"
-#include "SVGStyledElement.h"
 #include "SVGTests.h"
 #include "SVGURIReference.h"
 #include "SVGUnitTypes.h"
@@ -40,7 +40,7 @@ namespace WebCore {
 
 struct PatternAttributes;
  
-class SVGPatternElement FINAL : public SVGStyledElement,
+class SVGPatternElement FINAL : public SVGElement,
                                 public SVGURIReference,
                                 public SVGTests,
                                 public SVGExternalResourcesRequired,

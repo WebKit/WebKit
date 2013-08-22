@@ -38,13 +38,13 @@
 #include "RenderSVGResource.h"
 #include "RenderSVGResourceContainer.h"
 #include "RenderView.h"
+#include "SVGElement.h"
 #include "SVGImage.h"
 #include "SVGLength.h"
 #include "SVGRenderingContext.h"
 #include "SVGResources.h"
 #include "SVGResourcesCache.h"
 #include "SVGSVGElement.h"
-#include "SVGStyledElement.h"
 #include "SVGViewSpec.h"
 #include "TransformState.h"
 #include <wtf/StackStats.h>
@@ -57,7 +57,7 @@ using namespace std;
 
 namespace WebCore {
 
-RenderSVGRoot::RenderSVGRoot(SVGStyledElement* node)
+RenderSVGRoot::RenderSVGRoot(SVGElement* node)
     : RenderReplaced(node)
     , m_objectBoundingBoxValid(false)
     , m_isLayoutSizeChanged(false)

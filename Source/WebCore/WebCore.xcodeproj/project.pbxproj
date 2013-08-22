@@ -4073,9 +4073,7 @@
 		B2227AB50D00BF220071B782 /* SVGGraphicsElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B222791F0D00BF210071B782 /* SVGGraphicsElement.cpp */; };
 		B2227AB60D00BF220071B782 /* SVGGraphicsElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B22279200D00BF210071B782 /* SVGGraphicsElement.h */; };
 		B2227AB70D00BF220071B782 /* SVGStyleElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22279210D00BF210071B782 /* SVGStyleElement.cpp */; };
-		B2227AB70D00BF220071B783 /* SVGStyledElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22279210D00BF210071B783 /* SVGStyledElement.cpp */; };
 		B2227AB80D00BF220071B782 /* SVGStyleElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B22279220D00BF210071B782 /* SVGStyleElement.h */; };
-		B2227AB80D00BF220071B783 /* SVGStyledElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B22279220D00BF210071B783 /* SVGStyledElement.h */; };
 		B2227ABA0D00BF220071B782 /* SVGSVGElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22279240D00BF210071B782 /* SVGSVGElement.cpp */; };
 		B2227ABB0D00BF220071B782 /* SVGSVGElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B22279250D00BF210071B782 /* SVGSVGElement.h */; };
 		B2227ABD0D00BF220071B782 /* SVGSwitchElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22279270D00BF210071B782 /* SVGSwitchElement.cpp */; };
@@ -4465,9 +4463,7 @@
 		B2FA3DF80AB75A6F000E5AC4 /* JSSVGStringList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2FA3D100AB75A6E000E5AC4 /* JSSVGStringList.cpp */; };
 		B2FA3DF90AB75A6F000E5AC4 /* JSSVGStringList.h in Headers */ = {isa = PBXBuildFile; fileRef = B2FA3D110AB75A6E000E5AC4 /* JSSVGStringList.h */; };
 		B2FA3DFA0AB75A6F000E5AC4 /* JSSVGStyleElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2FA3D120AB75A6E000E5AC4 /* JSSVGStyleElement.cpp */; };
-		B2FA3DFA0AB75A6F000E5AC5 /* JSSVGStyledElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2FA3D120AB75A6E000E5AC5 /* JSSVGStyledElement.cpp */; };
 		B2FA3DFB0AB75A6F000E5AC4 /* JSSVGStyleElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B2FA3D130AB75A6E000E5AC4 /* JSSVGStyleElement.h */; };
-		B2FA3DFB0AB75A6F000E5AC5 /* JSSVGStyledElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B2FA3D130AB75A6E000E5AC5 /* JSSVGStyledElement.h */; };
 		B2FA3DFC0AB75A6F000E5AC4 /* JSSVGSVGElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2FA3D140AB75A6F000E5AC4 /* JSSVGSVGElement.cpp */; };
 		B2FA3DFD0AB75A6F000E5AC4 /* JSSVGSVGElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B2FA3D150AB75A6F000E5AC4 /* JSSVGSVGElement.h */; };
 		B2FA3DFE0AB75A6F000E5AC4 /* JSSVGSwitchElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2FA3D160AB75A6F000E5AC4 /* JSSVGSwitchElement.cpp */; };
@@ -10689,11 +10685,8 @@
 		B222791F0D00BF210071B782 /* SVGGraphicsElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGGraphicsElement.cpp; sourceTree = "<group>"; };
 		B22279200D00BF210071B782 /* SVGGraphicsElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGGraphicsElement.h; sourceTree = "<group>"; };
 		B22279210D00BF210071B782 /* SVGStyleElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGStyleElement.cpp; sourceTree = "<group>"; };
-		B22279210D00BF210071B783 /* SVGStyledElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGStyledElement.cpp; sourceTree = "<group>"; };
 		B22279220D00BF210071B782 /* SVGStyleElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGStyleElement.h; sourceTree = "<group>"; };
-		B22279220D00BF210071B783 /* SVGStyledElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGStyledElement.h; sourceTree = "<group>"; };
 		B22279230D00BF210071B782 /* SVGStyleElement.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGStyleElement.idl; sourceTree = "<group>"; };
-		B22279230D00BF210071B783 /* SVGStyledElement.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGStyledElement.idl; sourceTree = "<group>"; };
 		B22279240D00BF210071B782 /* SVGSVGElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGSVGElement.cpp; sourceTree = "<group>"; };
 		B22279250D00BF210071B782 /* SVGSVGElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGSVGElement.h; sourceTree = "<group>"; };
 		B22279260D00BF210071B782 /* SVGSVGElement.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGSVGElement.idl; sourceTree = "<group>"; };
@@ -11113,9 +11106,7 @@
 		B2FA3D100AB75A6E000E5AC4 /* JSSVGStringList.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGStringList.cpp; sourceTree = "<group>"; };
 		B2FA3D110AB75A6E000E5AC4 /* JSSVGStringList.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSSVGStringList.h; sourceTree = "<group>"; };
 		B2FA3D120AB75A6E000E5AC4 /* JSSVGStyleElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGStyleElement.cpp; sourceTree = "<group>"; };
-		B2FA3D120AB75A6E000E5AC5 /* JSSVGStyledElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGStyledElement.cpp; sourceTree = "<group>"; };
 		B2FA3D130AB75A6E000E5AC4 /* JSSVGStyleElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSSVGStyleElement.h; sourceTree = "<group>"; };
-		B2FA3D130AB75A6E000E5AC5 /* JSSVGStyledElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSSVGStyledElement.h; sourceTree = "<group>"; };
 		B2FA3D140AB75A6F000E5AC4 /* JSSVGSVGElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGSVGElement.cpp; sourceTree = "<group>"; };
 		B2FA3D150AB75A6F000E5AC4 /* JSSVGSVGElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSSVGSVGElement.h; sourceTree = "<group>"; };
 		B2FA3D160AB75A6F000E5AC4 /* JSSVGSwitchElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGSwitchElement.cpp; sourceTree = "<group>"; };
@@ -17096,8 +17087,6 @@
 				B2FA3D0F0AB75A6E000E5AC4 /* JSSVGStopElement.h */,
 				B2FA3D100AB75A6E000E5AC4 /* JSSVGStringList.cpp */,
 				B2FA3D110AB75A6E000E5AC4 /* JSSVGStringList.h */,
-				B2FA3D120AB75A6E000E5AC5 /* JSSVGStyledElement.cpp */,
-				B2FA3D130AB75A6E000E5AC5 /* JSSVGStyledElement.h */,
 				B2FA3D120AB75A6E000E5AC4 /* JSSVGStyleElement.cpp */,
 				B2FA3D130AB75A6E000E5AC4 /* JSSVGStyleElement.h */,
 				B2FA3D140AB75A6F000E5AC4 /* JSSVGSVGElement.cpp */,
@@ -18075,9 +18064,6 @@
 				B22279150D00BF210071B782 /* SVGStringList.cpp */,
 				B22279160D00BF210071B782 /* SVGStringList.h */,
 				B22279170D00BF210071B782 /* SVGStringList.idl */,
-				B22279210D00BF210071B783 /* SVGStyledElement.cpp */,
-				B22279220D00BF210071B783 /* SVGStyledElement.h */,
-				B22279230D00BF210071B783 /* SVGStyledElement.idl */,
 				B22279210D00BF210071B782 /* SVGStyleElement.cpp */,
 				B22279220D00BF210071B782 /* SVGStyleElement.h */,
 				B22279230D00BF210071B782 /* SVGStyleElement.idl */,
@@ -22602,7 +22588,6 @@
 				B2FA3DF50AB75A6F000E5AC4 /* JSSVGSetElement.h in Headers */,
 				B2FA3DF70AB75A6F000E5AC4 /* JSSVGStopElement.h in Headers */,
 				B2FA3DF90AB75A6F000E5AC4 /* JSSVGStringList.h in Headers */,
-				B2FA3DFB0AB75A6F000E5AC5 /* JSSVGStyledElement.h in Headers */,
 				B2FA3DFB0AB75A6F000E5AC4 /* JSSVGStyleElement.h in Headers */,
 				B2FA3DFD0AB75A6F000E5AC4 /* JSSVGSVGElement.h in Headers */,
 				B2FA3DFF0AB75A6F000E5AC4 /* JSSVGSwitchElement.h in Headers */,
@@ -23616,7 +23601,6 @@
 				08CA3D4412894A3800FFF260 /* SVGStaticPropertyWithParentTearOff.h in Headers */,
 				B2227AA90D00BF220071B782 /* SVGStopElement.h in Headers */,
 				B2227AAC0D00BF220071B782 /* SVGStringList.h in Headers */,
-				B2227AB80D00BF220071B783 /* SVGStyledElement.h in Headers */,
 				B2227AB80D00BF220071B782 /* SVGStyleElement.h in Headers */,
 				B2227ABB0D00BF220071B782 /* SVGSVGElement.h in Headers */,
 				B2227ABE0D00BF220071B782 /* SVGSwitchElement.h in Headers */,
@@ -25797,7 +25781,6 @@
 				B2FA3DF40AB75A6F000E5AC4 /* JSSVGSetElement.cpp in Sources */,
 				B2FA3DF60AB75A6F000E5AC4 /* JSSVGStopElement.cpp in Sources */,
 				B2FA3DF80AB75A6F000E5AC4 /* JSSVGStringList.cpp in Sources */,
-				B2FA3DFA0AB75A6F000E5AC5 /* JSSVGStyledElement.cpp in Sources */,
 				B2FA3DFA0AB75A6F000E5AC4 /* JSSVGStyleElement.cpp in Sources */,
 				B2FA3DFC0AB75A6F000E5AC4 /* JSSVGSVGElement.cpp in Sources */,
 				B2FA3DFE0AB75A6F000E5AC4 /* JSSVGSwitchElement.cpp in Sources */,
@@ -26656,7 +26639,6 @@
 				E4AFD00F0DAF335500F5F55C /* SVGSMILElement.cpp in Sources */,
 				B2227AA80D00BF220071B782 /* SVGStopElement.cpp in Sources */,
 				B2227AAB0D00BF220071B782 /* SVGStringList.cpp in Sources */,
-				B2227AB70D00BF220071B783 /* SVGStyledElement.cpp in Sources */,
 				B2227AB70D00BF220071B782 /* SVGStyleElement.cpp in Sources */,
 				B2227ABA0D00BF220071B782 /* SVGSVGElement.cpp in Sources */,
 				B2227ABD0D00BF220071B782 /* SVGSwitchElement.cpp in Sources */,

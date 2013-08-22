@@ -38,6 +38,8 @@ private:
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
     virtual void svgAttributeChanged(const QualifiedName&);
 
+    virtual bool rendererIsNeeded(const RenderStyle&) OVERRIDE { return false; }
+
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGFEMergeNodeElement)
         DECLARE_ANIMATED_STRING(In1, in1)
     END_DECLARE_ANIMATED_PROPERTIES

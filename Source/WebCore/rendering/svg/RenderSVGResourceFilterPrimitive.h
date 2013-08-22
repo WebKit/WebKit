@@ -38,7 +38,7 @@ class FilterEffect;
 
 class RenderSVGResourceFilterPrimitive FINAL : public RenderSVGHiddenContainer {
 public:
-    explicit RenderSVGResourceFilterPrimitive(SVGStyledElement* filterPrimitiveElement)
+    explicit RenderSVGResourceFilterPrimitive(SVGElement* filterPrimitiveElement)
         : RenderSVGHiddenContainer(filterPrimitiveElement)
     {
     }

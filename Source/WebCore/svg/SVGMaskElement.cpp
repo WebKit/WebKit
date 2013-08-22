@@ -53,12 +53,12 @@ BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGMaskElement)
     REGISTER_LOCAL_ANIMATED_PROPERTY(width)
     REGISTER_LOCAL_ANIMATED_PROPERTY(height)
     REGISTER_LOCAL_ANIMATED_PROPERTY(externalResourcesRequired)
-    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGStyledElement)
+    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGElement)
     REGISTER_PARENT_ANIMATED_PROPERTIES(SVGTests)
 END_REGISTER_ANIMATED_PROPERTIES
 
 inline SVGMaskElement::SVGMaskElement(const QualifiedName& tagName, Document* document)
-    : SVGStyledElement(tagName, document)
+    : SVGElement(tagName, document)
     , m_maskUnits(SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
     , m_maskContentUnits(SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE)
     , m_x(LengthModeWidth, "-10%")
@@ -99,7 +99,7 @@ void SVGMaskElement::parseAttribute(const QualifiedName& name, const AtomicStrin
     SVGParsingError parseError = NoError;
 
     if (!isSupportedAttribute(name))
-        SVGStyledElement::parseAttribute(name, value);
+        SVGElement::parseAttribute(name, value);
     else if (name == SVGNames::maskUnitsAttr) {
         SVGUnitTypes::SVGUnitType propertyValue = SVGPropertyTraits<SVGUnitTypes::SVGUnitType>::fromString(value);
         if (propertyValue > 0)
@@ -130,7 +130,7 @@ void SVGMaskElement::parseAttribute(const QualifiedName& name, const AtomicStrin
 void SVGMaskElement::svgAttributeChanged(const QualifiedName& attrName)
 {
     if (!isSupportedAttribute(attrName)) {
-        SVGStyledElement::svgAttributeChanged(attrName);
+        SVGElement::svgAttributeChanged(attrName);
         return;
     }
 
@@ -148,7 +148,7 @@ void SVGMaskElement::svgAttributeChanged(const QualifiedName& attrName)
 
 void SVGMaskElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
 {
-    SVGStyledElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
+    SVGElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
 
     if (changedByParser)
         return;

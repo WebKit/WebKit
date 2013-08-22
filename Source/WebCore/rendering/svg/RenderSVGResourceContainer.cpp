@@ -39,7 +39,7 @@ static inline SVGDocumentExtensions* svgExtensionsFromNode(Node* node)
     return node->document()->accessSVGExtensions();
 }
 
-RenderSVGResourceContainer::RenderSVGResourceContainer(SVGStyledElement* node)
+RenderSVGResourceContainer::RenderSVGResourceContainer(SVGElement* node)
     : RenderSVGHiddenContainer(node)
     , m_id(node->getIdAttribute())
     , m_registered(false)

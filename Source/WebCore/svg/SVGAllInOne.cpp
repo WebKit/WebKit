@@ -157,7 +157,6 @@
 #include "SVGStopElement.cpp"
 #include "SVGStringList.cpp"
 #include "SVGStyleElement.cpp"
-#include "SVGStyledElement.cpp"
 #include "SVGSwitchElement.cpp"
 #include "SVGSymbolElement.cpp"
 #include "SVGTRefElement.cpp"

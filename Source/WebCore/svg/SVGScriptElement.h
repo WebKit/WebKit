@@ -71,6 +71,7 @@ private:
     virtual void dispatchLoadEvent() { SVGExternalResourcesRequired::dispatchLoadEvent(this); }
 
     virtual PassRefPtr<Element> cloneElementWithoutAttributesAndChildren();
+    virtual bool rendererIsNeeded(const RenderStyle&) OVERRIDE { return false; }
 
     // SVGExternalResourcesRequired
     virtual void setHaveFiredLoadEvent(bool haveFiredLoadEvent) { ScriptElement::setHaveFiredLoadEvent(haveFiredLoadEvent); }

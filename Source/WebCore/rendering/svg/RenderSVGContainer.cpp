@@ -31,15 +31,15 @@
 #include "RenderSVGResource.h"
 #include "RenderSVGResourceFilter.h"
 #include "RenderView.h"
+#include "SVGElement.h"
 #include "SVGRenderingContext.h"
 #include "SVGResources.h"
 #include "SVGResourcesCache.h"
-#include "SVGStyledElement.h"
 #include <wtf/StackStats.h>
 
 namespace WebCore {
 
-RenderSVGContainer::RenderSVGContainer(SVGStyledElement* node)
+RenderSVGContainer::RenderSVGContainer(SVGElement* node)
     : RenderSVGModelObject(node)
     , m_objectBoundingBoxValid(false)
     , m_needsBoundariesUpdate(true)

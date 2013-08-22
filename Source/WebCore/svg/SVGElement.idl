@@ -30,5 +30,10 @@
 
     attribute DOMString xmllang;
     attribute DOMString xmlspace;
+
+    readonly attribute SVGAnimatedString className;
+    readonly attribute CSSStyleDeclaration style;
+
+    CSSValue getPresentationAttribute([Default=Undefined] optional DOMString name);
 };
 

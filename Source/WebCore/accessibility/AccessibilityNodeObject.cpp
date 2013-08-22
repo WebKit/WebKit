@@ -68,7 +68,6 @@
 #include "ProgressTracker.h"
 #include "SVGElement.h"
 #include "SVGNames.h"
-#include "SVGStyledElement.h"
 #include "Text.h"
 #include "TextControlInnerElements.h"
 #include "TextIterator.h"
@@ -1222,8 +1221,8 @@ void AccessibilityNodeObject::alternativeText(Vector<AccessibilityText>& textOrd
     
 #if ENABLE(SVG)
     // SVG elements all can have a <svg:title> element inside which should act as the descriptive text.
-    if (node->isSVGElement() && toSVGElement(node)->isSVGStyledElement())
-        textOrder.append(AccessibilityText(toSVGStyledElement(node)->title(), AlternativeText));
+    if (node->isSVGElement())
+        textOrder.append(AccessibilityText(toSVGElement(node)->title(), AlternativeText));
 #endif
     
 #if ENABLE(MATHML)
@@ -1421,8 +1420,8 @@ String AccessibilityNodeObject::accessibilityDescription() const
 
 #if ENABLE(SVG)
     // SVG elements all can have a <svg:title> element inside which should act as the descriptive text.
-    if (m_node && m_node->isSVGElement() && toSVGElement(m_node)->isSVGStyledElement())
-        return toSVGStyledElement(m_node)->title();
+    if (m_node && m_node->isSVGElement())
+        return toSVGElement(m_node)->title();
 #endif
     
 #if ENABLE(MATHML)

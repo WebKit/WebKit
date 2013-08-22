@@ -25,7 +25,7 @@
 
 [
     Conditional=SVG
-] interface SVGMaskElement : SVGStyledElement {
+] interface SVGMaskElement : SVGElement {
     readonly attribute SVGAnimatedEnumeration maskUnits;
     readonly attribute SVGAnimatedEnumeration maskContentUnits;
 

@@ -37,11 +37,11 @@
 #include "Document.h"
 #include "ShadowValue.h"
 #include "SVGColor.h"
+#include "SVGElement.h"
 #include "SVGNames.h"
 #include "SVGPaint.h"
 #include "SVGRenderStyle.h"
 #include "SVGRenderStyleDefs.h"
-#include "SVGStyledElement.h"
 #include "SVGURIReference.h"
 #include <stdlib.h>
 #include <wtf/MathExtras.h>

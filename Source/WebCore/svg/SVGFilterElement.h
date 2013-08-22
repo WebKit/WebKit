@@ -28,15 +28,15 @@
 #include "SVGAnimatedEnumeration.h"
 #include "SVGAnimatedInteger.h"
 #include "SVGAnimatedLength.h"
+#include "SVGElement.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGNames.h"
-#include "SVGStyledElement.h"
 #include "SVGURIReference.h"
 #include "SVGUnitTypes.h"
 
 namespace WebCore {
 
-class SVGFilterElement FINAL : public SVGStyledElement,
+class SVGFilterElement FINAL : public SVGElement,
                                public SVGURIReference,
                                public SVGExternalResourcesRequired {
 public:

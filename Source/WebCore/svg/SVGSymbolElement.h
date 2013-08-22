@@ -25,13 +25,13 @@
 #include "SVGAnimatedBoolean.h"
 #include "SVGAnimatedPreserveAspectRatio.h"
 #include "SVGAnimatedRect.h"
+#include "SVGElement.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGFitToViewBox.h"
-#include "SVGStyledElement.h"
 
 namespace WebCore {
 
-class SVGSymbolElement FINAL : public SVGStyledElement,
+class SVGSymbolElement FINAL : public SVGElement,
                                public SVGExternalResourcesRequired,
                                public SVGFitToViewBox {
 public:

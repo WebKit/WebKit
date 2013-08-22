@@ -34,7 +34,7 @@
 namespace WebCore {
 
 inline SVGGlyphElement::SVGGlyphElement(const QualifiedName& tagName, Document* document)
-    : SVGStyledElement(tagName, document)
+    : SVGElement(tagName, document)
 {
     ASSERT(hasTagName(SVGNames::glyphTag));
 }
@@ -56,20 +56,20 @@ void SVGGlyphElement::parseAttribute(const QualifiedName& name, const AtomicStri
     if (name == SVGNames::dAttr)
         invalidateGlyphCache();
     else
-        SVGStyledElement::parseAttribute(name, value);
+        SVGElement::parseAttribute(name, value);
 }
 
 Node::InsertionNotificationRequest SVGGlyphElement::insertedInto(ContainerNode* rootParent)
 {
     invalidateGlyphCache();
-    return SVGStyledElement::insertedInto(rootParent);
+    return SVGElement::insertedInto(rootParent);
 }
 
 void SVGGlyphElement::removedFrom(ContainerNode* rootParent)
 {
     if (rootParent->inDocument())
         invalidateGlyphCache();
-    SVGStyledElement::removedFrom(rootParent);
+    SVGElement::removedFrom(rootParent);
 }
 
 static inline SVGGlyph::ArabicForm parseArabicForm(const AtomicString& value)

@@ -32,11 +32,11 @@
 namespace WebCore {
 
 class AffineTransform;
-class SVGStyledElement;
+class SVGElement;
 
 class RenderSVGRoot FINAL : public RenderReplaced {
 public:
-    explicit RenderSVGRoot(SVGStyledElement*);
+    explicit RenderSVGRoot(SVGElement*);
     virtual ~RenderSVGRoot();
 
     bool isEmbeddedThroughSVGImage() const;

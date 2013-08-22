@@ -54,6 +54,8 @@ private:
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
     virtual void svgAttributeChanged(const QualifiedName&);
 
+    virtual bool rendererIsNeeded(const RenderStyle&) OVERRIDE { return false; }
+
     virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
 
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGCursorElement)

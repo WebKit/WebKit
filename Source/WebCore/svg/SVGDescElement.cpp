@@ -26,7 +26,7 @@
 namespace WebCore {
 
 inline SVGDescElement::SVGDescElement(const QualifiedName& tagName, Document* document)
-    : SVGStyledElement(tagName, document)
+    : SVGElement(tagName, document)
 {
     ASSERT(hasTagName(SVGNames::descTag));
 }

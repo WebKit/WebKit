@@ -4803,9 +4803,6 @@
     <ClCompile Include="..\svg\SVGMaskElement.cpp">
       <Filter>rendering\svg</Filter>
     </ClCompile>
-    <ClCompile Include="..\svg\SVGStyledElement.cpp">
-      <Filter>rendering\svg</Filter>
-    </ClCompile>
     <ClCompile Include="..\svg\SVGStyleElement.cpp">
       <Filter>rendering\svg</Filter>
     </ClCompile>
@@ -12152,9 +12149,6 @@
       <Filter>rendering\svg</Filter>
     </ClInclude>
     <ClInclude Include="..\svg\SVGStringList.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGStyledElement.h">
       <Filter>rendering\svg</Filter>
     </ClInclude>
     <ClInclude Include="..\svg\SVGGraphicsElement.h">

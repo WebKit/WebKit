@@ -26,7 +26,7 @@
 #include "RenderSVGResourceFilterPrimitive.h"
 #include "SVGAnimatedLength.h"
 #include "SVGAnimatedString.h"
-#include "SVGStyledElement.h"
+#include "SVGElement.h"
 
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
@@ -37,7 +37,7 @@ class Filter;
 class FilterEffect;
 class SVGFilterBuilder;
 
-class SVGFilterPrimitiveStandardAttributes : public SVGStyledElement {
+class SVGFilterPrimitiveStandardAttributes : public SVGElement {
 public:
     void setStandardAttributes(FilterEffect*) const;
 

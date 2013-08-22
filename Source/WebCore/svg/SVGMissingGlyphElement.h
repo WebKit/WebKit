@@ -21,11 +21,11 @@
 #define SVGMissingGlyphElement_h
 
 #if ENABLE(SVG_FONTS)
-#include "SVGStyledElement.h"
+#include "SVGElement.h"
 
 namespace WebCore {
 
-class SVGMissingGlyphElement FINAL : public SVGStyledElement {
+class SVGMissingGlyphElement FINAL : public SVGElement {
 public:
     static PassRefPtr<SVGMissingGlyphElement> create(const QualifiedName&, Document*);
 

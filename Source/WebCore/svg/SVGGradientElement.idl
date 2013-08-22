@@ -26,7 +26,7 @@
 [
     Conditional=SVG,
     DoNotCheckConstants
-] interface SVGGradientElement : SVGStyledElement {
+] interface SVGGradientElement : SVGElement {
     // Spread Method Types
     const unsigned short SVG_SPREADMETHOD_UNKNOWN = 0;
     const unsigned short SVG_SPREADMETHOD_PAD     = 1;

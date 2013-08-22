@@ -1,7 +1,8 @@
 /*
  * Copyright (C) 2004, 2005, 2006, 2008 Nikolas Zimmermann <zimmermann@kde.org>
- * Copyright (C) 2004, 2005, 2006 Rob Buis <buis@kde.org>
+ * Copyright (C) 2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
  * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Samsung Electronics. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -23,6 +24,8 @@
 #define SVGElement_h
 
 #if ENABLE(SVG)
+#include "CSSPropertyNames.h"
+#include "SVGAnimatedString.h"
 #include "SVGLangSpace.h"
 #include "SVGLocatable.h"
 #include "SVGParsingError.h"
@@ -30,11 +33,15 @@
 #include "StyledElement.h"
 #include "Timer.h"
 #include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
+#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 
 class AffineTransform;
 class CSSCursorImageValue;
+class CSSStyleDeclaration;
+class CSSValue;
 class Document;
 class SVGAttributeToPropertyMap;
 class SVGCursorElement;
@@ -42,6 +49,8 @@ class SVGDocumentExtensions;
 class SVGElementInstance;
 class SVGElementRareData;
 class SVGSVGElement;
+
+void mapAttributeToCSSProperty(HashMap<AtomicStringImpl*, CSSPropertyID>* propertyNameToIdMap, const QualifiedName& attrName);
 
 class SVGElement : public StyledElement, public SVGLangSpace {
 public:
@@ -53,9 +62,19 @@ public:
     SVGSVGElement* ownerSVGElement() const;
     SVGElement* viewportElement() const;
 
+    virtual String title() const OVERRIDE;
+    static bool isAnimatableCSSProperty(const QualifiedName&);
+    bool isKnownAttribute(const QualifiedName&);
+    PassRefPtr<CSSValue> getPresentationAttribute(const String& name);
+    virtual bool supportsMarkers() const { return false; }
+    bool hasRelativeLengths() const { return !m_elementsWithRelativeLengths.isEmpty(); }
+    virtual bool needsPendingResourceHandling() const { return true; }
+    bool instanceUpdatesBlocked() const;
+    void setInstanceUpdatesBlocked(bool);
+    virtual AffineTransform localCoordinateSpaceTransform(SVGLocatable::CTMScope) const;
+
     SVGDocumentExtensions* accessDocumentSVGExtensions();
 
-    virtual bool isSVGStyledElement() const { return false; }
     virtual bool isSVGGraphicsElement() const { return false; }
     virtual bool isSVGSVGElement() const { return false; }
     virtual bool isFilterEffect() const { return false; }
@@ -65,7 +84,7 @@ public:
     // For SVGTests
     virtual bool isValid() const { return true; }
 
-    virtual void svgAttributeChanged(const QualifiedName&) { }
+    virtual void svgAttributeChanged(const QualifiedName&);
 
     virtual void animatedPropertyTypeForAttribute(const QualifiedName&, Vector<AnimatedPropertyType>&);
 
@@ -102,8 +121,6 @@ public:
     virtual void synchronizeRequiredExtensions() { }
     virtual void synchronizeSystemLanguage() { }
 
-    virtual SVGAttributeToPropertyMap& localAttributeToPropertyMap();
-
 #ifndef NDEBUG
     bool isAnimatableAttribute(const QualifiedName&) const;
 #endif
@@ -125,6 +142,7 @@ protected:
     SVGElement(const QualifiedName&, Document*);
     virtual ~SVGElement();
 
+    virtual bool rendererIsNeeded(const RenderStyle&);
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
 
     virtual void finishParsingChildren();
@@ -137,6 +155,15 @@ protected:
     SVGElementRareData& ensureSVGRareData();
 
     void reportAttributeParsingError(SVGParsingError, const QualifiedName&, const AtomicString&);
+    static CSSPropertyID cssPropertyIdForSVGAttributeName(const QualifiedName&);
+
+    virtual bool isPresentationAttribute(const QualifiedName&) const OVERRIDE;
+    virtual void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStylePropertySet*) OVERRIDE;
+    virtual InsertionNotificationRequest insertedInto(ContainerNode*) OVERRIDE;
+    virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);
+    virtual bool selfHasRelativeLengths() const { return false; }
+    void updateRelativeLengthsInformation() { updateRelativeLengthsInformation(selfHasRelativeLengths(), this); }
+    void updateRelativeLengthsInformation(bool hasRelativeLengths, SVGElement*);
 
 private:
     friend class SVGElementInstance;
@@ -149,12 +176,20 @@ private:
     virtual RenderStyle* virtualComputedStyle(PseudoId pseudoElementSpecifier = NOPSEUDO) { return computedStyle(pseudoElementSpecifier); }
     virtual bool willRecalcStyle(Style::Change);
 
-    virtual bool rendererIsNeeded(const RenderStyle&) { return false; }
-
     virtual bool isSupported(StringImpl* feature, StringImpl* version) const;
 
     void mapInstanceToElement(SVGElementInstance*);
     void removeInstanceMapping(SVGElementInstance*);
+
+    void buildPendingResourcesIfNeeded();
+    virtual bool isKeyboardFocusable(KeyboardEvent*) const OVERRIDE;
+    virtual bool isMouseFocusable() const OVERRIDE;
+
+    HashSet<SVGElement*> m_elementsWithRelativeLengths;
+
+    BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGElement)
+        DECLARE_ANIMATED_STRING(ClassName, className)
+    END_DECLARE_ANIMATED_PROPERTIES
 
 };
 

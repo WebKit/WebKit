@@ -23,11 +23,11 @@
 
 #if ENABLE(SVG)
 #include "SVGAnimatedNumber.h"
-#include "SVGStyledElement.h"
+#include "SVGElement.h"
 
 namespace WebCore {
 
-class SVGStopElement FINAL : public SVGStyledElement {
+class SVGStopElement FINAL : public SVGElement {
 public:
     static PassRefPtr<SVGStopElement> create(const QualifiedName&, Document*);
 

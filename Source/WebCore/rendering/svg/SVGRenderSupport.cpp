@@ -38,9 +38,9 @@
 #include "RenderSVGRoot.h"
 #include "RenderSVGText.h"
 #include "RenderSVGViewportContainer.h"
+#include "SVGElement.h"
 #include "SVGResources.h"
 #include "SVGResourcesCache.h"
-#include "SVGStyledElement.h"
 #include "TransformState.h"
 
 namespace WebCore {
@@ -254,7 +254,7 @@ void SVGRenderSupport::layoutChildren(RenderObject* start, bool selfNeedsLayout)
         if (layoutSizeChanged) {
             // When selfNeedsLayout is false and the layout size changed, we have to check whether this child uses relative lengths
             if (SVGElement* element = child->node()->isSVGElement() ? toSVGElement(child->node()) : 0) {
-                if (element->isSVGStyledElement() && toSVGStyledElement(element)->hasRelativeLengths()) {
+                if (element->hasRelativeLengths()) {
                     // When the layout size changed and when using relative values tell the RenderSVGShape to update its shape object
                     if (child->isSVGShape())
                         toRenderSVGShape(child)->setNeedsShapeUpdate();

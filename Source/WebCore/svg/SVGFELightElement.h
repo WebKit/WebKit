@@ -38,6 +38,8 @@ public:
 protected:
     SVGFELightElement(const QualifiedName&, Document*);
 
+    virtual bool rendererIsNeeded(const RenderStyle&) OVERRIDE { return false; }
+
 private:
     bool isSupportedAttribute(const QualifiedName&);
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;

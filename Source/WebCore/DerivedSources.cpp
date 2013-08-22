@@ -463,7 +463,6 @@
 #include "JSSVGStopElement.cpp"
 #include "JSSVGStringList.cpp"
 #include "JSSVGStyleElement.cpp"
-#include "JSSVGStyledElement.cpp"
 #include "JSSVGSwitchElement.cpp"
 #include "JSSVGSymbolElement.cpp"
 #include "JSSVGTextContentElement.cpp"

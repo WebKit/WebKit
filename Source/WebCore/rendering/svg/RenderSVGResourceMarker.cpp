@@ -31,7 +31,6 @@
 #include "SVGGraphicsElement.h"
 #include "SVGMarkerElement.h"
 #include "SVGRenderSupport.h"
-#include "SVGStyledElement.h"
 #include <wtf/StackStats.h>
 
 namespace WebCore {

@@ -30,10 +30,10 @@
 #include "GraphicsContext.h"
 #include "RenderObject.h"
 #include "RenderTreeAsText.h"
+#include "SVGElement.h"
 #include "SVGFilter.h"
 #include "SVGPreserveAspectRatio.h"
 #include "SVGRenderingContext.h"
-#include "SVGStyledElement.h"
 #include "SVGURIReference.h"
 #include "TextStream.h"
 
@@ -126,7 +126,7 @@ void FEImage::platformApplySoftware()
         resultImage->context()->concatCTM(absoluteTransform);
 
         SVGElement* contextNode = toSVGElement(renderer->node());
-        if (contextNode->isSVGStyledElement() && toSVGStyledElement(contextNode)->hasRelativeLengths()) {
+        if (contextNode->hasRelativeLengths()) {
             SVGLengthContext lengthContext(contextNode);
             float width = 0;
             float height = 0;

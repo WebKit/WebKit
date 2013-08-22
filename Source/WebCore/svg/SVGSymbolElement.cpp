@@ -39,11 +39,11 @@ BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGSymbolElement)
     REGISTER_LOCAL_ANIMATED_PROPERTY(externalResourcesRequired)
     REGISTER_LOCAL_ANIMATED_PROPERTY(viewBox)
     REGISTER_LOCAL_ANIMATED_PROPERTY(preserveAspectRatio) 
-    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGStyledElement)
+    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGElement)
 END_REGISTER_ANIMATED_PROPERTIES
 
 inline SVGSymbolElement::SVGSymbolElement(const QualifiedName& tagName, Document* document)
-    : SVGStyledElement(tagName, document)
+    : SVGElement(tagName, document)
 {
     ASSERT(hasTagName(SVGNames::symbolTag));
     registerAnimatedPropertiesForSVGSymbolElement();
@@ -68,7 +68,7 @@ bool SVGSymbolElement::isSupportedAttribute(const QualifiedName& attrName)
 void SVGSymbolElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     if (!isSupportedAttribute(name)) {
-        SVGStyledElement::parseAttribute(name, value);
+        SVGElement::parseAttribute(name, value);
         return;
     }
 
@@ -85,7 +85,7 @@ void SVGSymbolElement::parseAttribute(const QualifiedName& name, const AtomicStr
 void SVGSymbolElement::svgAttributeChanged(const QualifiedName& attrName)
 {
     if (!isSupportedAttribute(attrName)) {
-        SVGStyledElement::svgAttributeChanged(attrName);
+        SVGElement::svgAttributeChanged(attrName);
         return;
     }
 

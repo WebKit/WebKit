@@ -32,6 +32,8 @@ public:
 
 private:
     SVGMetadataElement(const QualifiedName&, Document*);
+
+    virtual bool rendererIsNeeded(const RenderStyle&) OVERRIDE { return false; }
 };
 
 } // namespace WebCore

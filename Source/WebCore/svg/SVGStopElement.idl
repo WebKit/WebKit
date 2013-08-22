@@ -25,7 +25,7 @@
 
 [
     Conditional=SVG
-] interface SVGStopElement : SVGStyledElement {
+] interface SVGStopElement : SVGElement {
     readonly attribute SVGAnimatedNumber offset;
 };
 

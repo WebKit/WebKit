@@ -103,7 +103,7 @@ RenderObject* SVGGElement::createRenderer(RenderArena* arena, RenderStyle* style
 
 bool SVGGElement::rendererIsNeeded(const RenderStyle&)
 {
-    // Unlike SVGStyledElement::rendererIsNeeded(), we still create renderers, even if
+    // Unlike SVGElement::rendererIsNeeded(), we still create renderers, even if
     // display is set to 'none' - which is special to SVG <g> container elements.
     return parentOrShadowHostElement() && parentOrShadowHostElement()->isSVGElement();
 }

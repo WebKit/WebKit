@@ -26,7 +26,7 @@
 namespace WebCore {
 
 inline SVGMissingGlyphElement::SVGMissingGlyphElement(const QualifiedName& tagName, Document* document)
-    : SVGStyledElement(tagName, document)
+    : SVGElement(tagName, document)
 {
     ASSERT(hasTagName(SVGNames::missing_glyphTag));
 }

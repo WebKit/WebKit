@@ -25,6 +25,6 @@
 
 [
     Conditional=SVG
-] interface SVGDescElement : SVGStyledElement {
+] interface SVGDescElement : SVGElement {
 };
 

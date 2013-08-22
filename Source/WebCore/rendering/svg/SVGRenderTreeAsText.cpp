@@ -59,6 +59,7 @@
 #include "RenderSVGText.h"
 #include "RenderTreeAsText.h"
 #include "SVGCircleElement.h"
+#include "SVGElement.h"
 #include "SVGEllipseElement.h"
 #include "SVGInlineTextBox.h"
 #include "SVGLineElement.h"
@@ -73,7 +74,6 @@
 #include "SVGRectElement.h"
 #include "SVGRootInlineBox.h"
 #include "SVGStopElement.h"
-#include "SVGStyledElement.h"
 
 #include <math.h>
 

@@ -34,7 +34,7 @@
 #include "CSSValueList.h"
 #include "IntRect.h"
 #include "NodeRenderStyle.h"
-#include "SVGStyledElement.h"
+#include "SVGElement.h"
 
 using namespace std;
 

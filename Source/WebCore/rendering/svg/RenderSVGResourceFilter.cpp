@@ -44,7 +44,6 @@
 #include "SVGFilterPrimitiveStandardAttributes.h"
 #include "SVGNames.h"
 #include "SVGRenderingContext.h"
-#include "SVGStyledElement.h"
 #include "SVGUnitTypes.h"
 #include "Settings.h"
 #include "SourceAlpha.h"

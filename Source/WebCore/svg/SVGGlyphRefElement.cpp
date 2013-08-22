@@ -35,11 +35,11 @@ DEFINE_ANIMATED_STRING(SVGGlyphRefElement, XLinkNames::hrefAttr, Href, href)
 
 BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGGlyphRefElement)
     REGISTER_LOCAL_ANIMATED_PROPERTY(href)
-    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGStyledElement)
+    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGElement)
 END_REGISTER_ANIMATED_PROPERTIES
 
 inline SVGGlyphRefElement::SVGGlyphRefElement(const QualifiedName& tagName, Document* document)
-    : SVGStyledElement(tagName, document)
+    : SVGElement(tagName, document)
     , m_x(0)
     , m_y(0)
     , m_dx(0)
@@ -81,7 +81,7 @@ void SVGGlyphRefElement::parseAttribute(const QualifiedName& name, const AtomicS
     else {
         if (SVGURIReference::parseAttribute(name, value))
             return;
-        SVGStyledElement::parseAttribute(name, value);
+        SVGElement::parseAttribute(name, value);
     }
 }
 

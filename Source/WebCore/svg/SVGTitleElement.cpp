@@ -28,7 +28,7 @@
 namespace WebCore {
 
 inline SVGTitleElement::SVGTitleElement(const QualifiedName& tagName, Document* document)
-    : SVGStyledElement(tagName, document)
+    : SVGElement(tagName, document)
 {
     ASSERT(hasTagName(SVGNames::titleTag));
 }
@@ -40,7 +40,7 @@ PassRefPtr<SVGTitleElement> SVGTitleElement::create(const QualifiedName& tagName
 
 Node::InsertionNotificationRequest SVGTitleElement::insertedInto(ContainerNode* rootParent)
 {
-    SVGStyledElement::insertedInto(rootParent);
+    SVGElement::insertedInto(rootParent);
     if (!rootParent->inDocument())
         return InsertionDone;
     if (firstChild())

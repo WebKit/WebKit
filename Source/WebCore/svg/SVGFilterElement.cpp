@@ -63,7 +63,7 @@ BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGFilterElement)
 END_REGISTER_ANIMATED_PROPERTIES
 
 inline SVGFilterElement::SVGFilterElement(const QualifiedName& tagName, Document* document)
-    : SVGStyledElement(tagName, document)
+    : SVGElement(tagName, document)
     , m_filterUnits(SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
     , m_primitiveUnits(SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE)
     , m_x(LengthModeWidth, "-10%")
@@ -126,7 +126,7 @@ void SVGFilterElement::parseAttribute(const QualifiedName& name, const AtomicStr
     SVGParsingError parseError = NoError;
 
     if (!isSupportedAttribute(name))
-        SVGStyledElement::parseAttribute(name, value);
+        SVGElement::parseAttribute(name, value);
     else if (name == SVGNames::filterUnitsAttr) {
         SVGUnitTypes::SVGUnitType propertyValue = SVGPropertyTraits<SVGUnitTypes::SVGUnitType>::fromString(value);
         if (propertyValue > 0)
@@ -161,7 +161,7 @@ void SVGFilterElement::parseAttribute(const QualifiedName& name, const AtomicStr
 void SVGFilterElement::svgAttributeChanged(const QualifiedName& attrName)
 {
     if (!isSupportedAttribute(attrName)) {
-        SVGStyledElement::svgAttributeChanged(attrName);
+        SVGElement::svgAttributeChanged(attrName);
         return;
     }
 
@@ -179,7 +179,7 @@ void SVGFilterElement::svgAttributeChanged(const QualifiedName& attrName)
 
 void SVGFilterElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
 {
-    SVGStyledElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
+    SVGElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
 
     if (changedByParser)
         return;

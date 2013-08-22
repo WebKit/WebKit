@@ -22,11 +22,11 @@
 #define SVGDescElement_h
 
 #if ENABLE(SVG)
-#include "SVGStyledElement.h"
+#include "SVGElement.h"
 
 namespace WebCore {
 
-class SVGDescElement FINAL : public SVGStyledElement {
+class SVGDescElement FINAL : public SVGElement {
 public:
     static PassRefPtr<SVGDescElement> create(const QualifiedName&, Document*);
 

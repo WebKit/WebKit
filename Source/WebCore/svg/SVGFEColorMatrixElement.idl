@@ -26,7 +26,7 @@
 [
     Conditional=SVG&FILTERS,
     DoNotCheckConstants
-] interface SVGFEColorMatrixElement : SVGStyledElement {
+] interface SVGFEColorMatrixElement : SVGElement {
     // Color Matrix Types
     const unsigned short SVG_FECOLORMATRIX_TYPE_UNKNOWN          = 0;
     const unsigned short SVG_FECOLORMATRIX_TYPE_MATRIX           = 1;

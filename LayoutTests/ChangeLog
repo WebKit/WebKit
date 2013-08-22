@@ -1,3 +1,15 @@
+2013-08-22  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        [SVG2] Merge SVGStyledElement and SVGElement
+        https://bugs.webkit.org/show_bug.cgi?id=107386
+
+        Reviewed by Andreas Kling.
+
+        Add layout test to validate the SVG2 inheritance model.
+
+        * svg/dom/svg2-inheritance-expected.txt: Added.
+        * svg/dom/svg2-inheritance.html: Added.
+
 2013-08-22  Gavin Barraclough  <barraclough@apple.com>
 
         Error.stack should not be enumerable

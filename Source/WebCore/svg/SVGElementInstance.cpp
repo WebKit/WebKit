@@ -185,7 +185,7 @@ void SVGElementInstance::invalidateAllInstancesOfElement(SVGElement* element)
     if (!element || !element->inDocument())
         return;
 
-    if (element->isSVGStyledElement() && toSVGStyledElement(element)->instanceUpdatesBlocked())
+    if (element->instanceUpdatesBlocked())
         return;
 
     const HashSet<SVGElementInstance*>& set = element->instancesForElement();
@@ -259,7 +259,7 @@ EventTargetData& SVGElementInstance::ensureEventTargetData()
 }
 
 SVGElementInstance::InstanceUpdateBlocker::InstanceUpdateBlocker(SVGElement* targetElement)
-    : m_targetElement(targetElement->isSVGStyledElement() ? toSVGStyledElement(targetElement) : 0)
+    : m_targetElement(targetElement)
 {
     if (m_targetElement)
         m_targetElement->setInstanceUpdatesBlocked(true);

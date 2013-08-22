@@ -38,11 +38,11 @@ DEFINE_ANIMATED_NUMBER(SVGStopElement, SVGNames::offsetAttr, Offset, offset)
 
 BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGStopElement)
     REGISTER_LOCAL_ANIMATED_PROPERTY(offset)
-    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGStyledElement)
+    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGElement)
 END_REGISTER_ANIMATED_PROPERTIES
 
 inline SVGStopElement::SVGStopElement(const QualifiedName& tagName, Document* document)
-    : SVGStyledElement(tagName, document)
+    : SVGElement(tagName, document)
     , m_offset(0)
 {
     ASSERT(hasTagName(SVGNames::stopTag));
@@ -65,7 +65,7 @@ bool SVGStopElement::isSupportedAttribute(const QualifiedName& attrName)
 void SVGStopElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     if (!isSupportedAttribute(name)) {
-        SVGStyledElement::parseAttribute(name, value);
+        SVGElement::parseAttribute(name, value);
         return;
     }
 
@@ -83,7 +83,7 @@ void SVGStopElement::parseAttribute(const QualifiedName& name, const AtomicStrin
 void SVGStopElement::svgAttributeChanged(const QualifiedName& attrName)
 {
     if (!isSupportedAttribute(attrName)) {
-        SVGStyledElement::svgAttributeChanged(attrName);
+        SVGElement::svgAttributeChanged(attrName);
         return;
     }
 

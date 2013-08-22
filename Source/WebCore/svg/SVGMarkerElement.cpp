@@ -70,11 +70,11 @@ BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGMarkerElement)
     REGISTER_LOCAL_ANIMATED_PROPERTY(externalResourcesRequired)
     REGISTER_LOCAL_ANIMATED_PROPERTY(viewBox)
     REGISTER_LOCAL_ANIMATED_PROPERTY(preserveAspectRatio)
-    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGStyledElement)
+    REGISTER_PARENT_ANIMATED_PROPERTIES(SVGElement)
 END_REGISTER_ANIMATED_PROPERTIES
 
 inline SVGMarkerElement::SVGMarkerElement(const QualifiedName& tagName, Document* document)
-    : SVGStyledElement(tagName, document)
+    : SVGElement(tagName, document)
     , m_refX(LengthModeWidth)
     , m_refY(LengthModeHeight)
     , m_markerWidth(LengthModeWidth, "3")
@@ -131,7 +131,7 @@ void SVGMarkerElement::parseAttribute(const QualifiedName& name, const AtomicStr
     SVGParsingError parseError = NoError;
 
     if (!isSupportedAttribute(name))
-        SVGStyledElement::parseAttribute(name, value);
+        SVGElement::parseAttribute(name, value);
     else if (name == SVGNames::markerUnitsAttr) {
         SVGMarkerUnitsType propertyValue = SVGPropertyTraits<SVGMarkerUnitsType>::fromString(value);
         if (propertyValue > 0)
@@ -163,7 +163,7 @@ void SVGMarkerElement::parseAttribute(const QualifiedName& name, const AtomicStr
 void SVGMarkerElement::svgAttributeChanged(const QualifiedName& attrName)
 {
     if (!isSupportedAttribute(attrName)) {
-        SVGStyledElement::svgAttributeChanged(attrName);
+        SVGElement::svgAttributeChanged(attrName);
         return;
     }
 
@@ -181,7 +181,7 @@ void SVGMarkerElement::svgAttributeChanged(const QualifiedName& attrName)
 
 void SVGMarkerElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
 {
-    SVGStyledElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
+    SVGElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
 
     if (changedByParser)
         return;

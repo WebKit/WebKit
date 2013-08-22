@@ -30,8 +30,8 @@
 #include "QualifiedName.h"
 #include "RenderObject.h"
 #include "SVGAnimatorFactory.h"
+#include "SVGElement.h"
 #include "SVGNames.h"
-#include "SVGStyledElement.h"
 #include "StylePropertySet.h"
 
 namespace WebCore {

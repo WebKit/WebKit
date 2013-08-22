@@ -21,12 +21,12 @@
 #define SVGGlyphRefElement_h
 
 #if ENABLE(SVG) && ENABLE(SVG_FONTS)
-#include "SVGStyledElement.h"
+#include "SVGElement.h"
 #include "SVGURIReference.h"
 
 namespace WebCore {
 
-class SVGGlyphRefElement FINAL : public SVGStyledElement,
+class SVGGlyphRefElement FINAL : public SVGElement,
                                  public SVGURIReference {
 public:
     static PassRefPtr<SVGGlyphRefElement> create(const QualifiedName&, Document*);

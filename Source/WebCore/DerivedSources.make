@@ -587,7 +587,6 @@ BINDING_IDLS = \
     $(WebCore)/svg/SVGStopElement.idl \
     $(WebCore)/svg/SVGStringList.idl \
     $(WebCore)/svg/SVGStyleElement.idl \
-    $(WebCore)/svg/SVGStyledElement.idl \
     $(WebCore)/svg/SVGSwitchElement.idl \
     $(WebCore)/svg/SVGSymbolElement.idl \
     $(WebCore)/svg/SVGTRefElement.idl \

@@ -24,15 +24,15 @@
 #include "SVGAnimatedBoolean.h"
 #include "SVGAnimatedEnumeration.h"
 #include "SVGAnimatedLength.h"
+#include "SVGElement.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGNames.h"
-#include "SVGStyledElement.h"
 #include "SVGTests.h"
 #include "SVGUnitTypes.h"
 
 namespace WebCore {
 
-class SVGMaskElement FINAL : public SVGStyledElement,
+class SVGMaskElement FINAL : public SVGElement,
                              public SVGTests,
                              public SVGExternalResourcesRequired {
 public:
