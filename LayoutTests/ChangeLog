@@ -1,5 +1,12 @@
 2013-08-22  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Actually, this test is failing on Debug builds as well.
+        Update the test expectation accordingly.
+
+        * platform/mac-wk2/TestExpectations:
+
+2013-08-22  Ryosuke Niwa  <rniwa@webkit.org>
+
         Add the failing test expectation to webaudio/codec-tests/mp3/128kbps-44khz.html on Lion Release WK2.
         The failure is tracked by the bug 120161.
 
