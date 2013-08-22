@@ -887,8 +887,8 @@ bool ApplyStyleCommand::removeInlineStyleFromElement(EditingStyle* style, PassRe
     if (isStyledInlineElementToRemove(element.get())) {
         if (mode == RemoveNone)
             return true;
-        ASSERT(extractedStyle);
-        extractedStyle->mergeInlineStyleOfElement(element.get(), EditingStyle::OverrideValues);
+        if (extractedStyle)
+            extractedStyle->mergeInlineStyleOfElement(element.get(), EditingStyle::OverrideValues);
         removeNodePreservingChildren(element);
         return true;
     }

@@ -1,3 +1,15 @@
+2013-08-22  Renata Hodovan  <reni@webkit.org>
+
+        ASSERTION FAILED: extractedStyle in WebCore::ApplyStyleCommand::removeInlineStyleFromElement
+        https://bugs.webkit.org/show_bug.cgi?id=119672
+
+        Reviewed by Darin Adler.
+
+        Test with NULL extractedStyle.
+
+        * editing/execCommand/extracted_style_assert-expected.txt: Added.
+        * editing/execCommand/extracted_style_assert.html: Added.
+
 2013-08-08  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] Refactor testing code
