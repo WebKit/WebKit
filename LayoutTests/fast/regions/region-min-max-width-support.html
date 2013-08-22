@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/check-layout.js"></script>
+<style>
+    body { font: 16px/1.25 monospace; }
+    .box { height: 20px; border: 1px solid black; position: absolute; left: 200px; }
+    .region { -webkit-flow-from: flow; }
+    .reference { background-color: red; }
+
+    #content { -webkit-flow-into: flow; background-color: green;}    
+
+    #region1 { max-width: 1%; top: 200px; }
+    #region2 { max-width: 1vw; top: 221px; }
+    #region3 { max-width: 1vmin; top: 242px; }
+    #region4 { max-width: 1rem; top: 263px; }
+    #region5 { max-width: calc(1% + 10px); top: 284px; }
+    #region6 { max-width: 1px; top: 305px; }
+    
+    #region7 { min-width: 50%; top: 326px; }
+    #region8 { min-width: calc(50% - 100px); top: 347px; }
+    #region9 { min-width: 50vw; top: 368px; }
+    #region10 { min-width: 50vmin; top: 389px; }
+    #region11 { min-width: 10rem; top: 410px; }
+    #region12 { min-width: 200px; top: 431px; }
+
+    #reference1 { max-width: 1%; top: 200px; }
+    #reference2 { max-width: 1vw; top: 221px; }
+    #reference3 { max-width: 1vmin; top: 242px; }
+    #reference4 { max-width: 1rem; top: 263px; }
+    #reference5 { max-width: calc(1% + 10px); top: 284px; }
+    #reference6 { max-width: 1px; top: 305px; }
+    
+    #reference7 { min-width: 50%; top: 326px; }
+    #reference8 { min-width: calc(50% - 100px); top: 347px; }
+    #reference9 { min-width: 50vw; top: 368px; }
+    #reference10 { min-width: 50vmin; top: 389px; }
+    #reference11 { min-width: 10rem; top: 410px; }
+    #reference12 { min-width: 200px; top: 431px; }
+</style>
+</head>
+<body onload="checkLayout('.region')">
+<p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=115248">[CSSRegions] Min-width and max-width for a region should support values other than length</a>.</p>
+<p>On success you should see PASS below</p>
+<div id="content">
+region1<br>
+region2<br>
+region3<br>
+region4<br>
+region5<br>
+region6<br>
+region7<br>
+region8<br>
+region9<br>
+region10<br>
+region11<br>
+region12
+</div>
+<div id="reference1" class="box reference">region1</div>
+<div id="reference2" class="box reference">region2</div>
+<div id="reference3" class="box reference">region3</div>
+<div id="reference4" class="box reference">region4</div>
+<div id="reference5" class="box reference">region5</div>
+<div id="reference6" class="box reference">region6</div>
+<div id="reference7" class="box reference">region7</div>
+<div id="reference8" class="box reference">region8</div>
+<div id="reference9" class="box reference">region9</div>
+<div id="reference10" class="box reference">region10</div>
+<div id="reference11" class="box reference">region11</div>
+<div id="reference12" class="box reference">region12</div>
+<div id="region1" class="box region"></div>
+<div id="region2" class="box region"></div>
+<div id="region3" class="box region"></div>
+<div id="region4" class="box region"></div>
+<div id="region5" class="box region"></div>
+<div id="region6" class="box region"></div>
+<div id="region7" class="box region"></div>
+<div id="region8" class="box region"></div>
+<div id="region9" class="box region"></div>
+<div id="region10" class="box region"></div>
+<div id="region11" class="box region"></div>
+<div id="region12" class="box region"></div>
+<script>
+for (i = 1;i < 13;i++) 
+    document.getElementById("region"+i).setAttribute("data-expected-width", document.getElementById("reference"+i).offsetWidth);
+</script>
+</body>
+</html>

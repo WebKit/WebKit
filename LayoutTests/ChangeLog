@@ -1,3 +1,13 @@
+2013-08-22  Anton Obzhirov  <a.obzhirov@samsung.com>
+
+        [CSSRegions] Min-width and max-width for a region should support values other than length
+        https://bugs.webkit.org/show_bug.cgi?id=115248
+
+        Reviewed by Alexandru Chiculita.
+
+        * fast/regions/region-min-max-width-support-expected.txt: Added.
+        * fast/regions/region-min-max-width-support.html: Added.
+
 2013-08-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         Actually, this test is failing on Debug builds as well.
