@@ -54,11 +54,6 @@ SVGElement::SVGElement(const QualifiedName& tagName, Document* document)
 {
 }
 
-PassRefPtr<SVGElement> SVGElement::create(const QualifiedName& tagName, Document* document)
-{
-    return adoptRef(new SVGElement(tagName, document));
-}
-
 SVGElement::~SVGElement()
 {
     if (!hasSVGRareData())

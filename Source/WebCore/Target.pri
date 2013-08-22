@@ -2811,6 +2811,7 @@ HEADERS += \
     svg/SVGTRefElement.h \
     svg/SVGTSpanElement.h \
     svg/SVGURIReference.h \
+    svg/SVGUnknownElement.h \
     svg/SVGUseElement.h \
     svg/SVGViewElement.h \
     svg/SVGViewSpec.h \

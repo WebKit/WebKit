@@ -12214,6 +12214,9 @@
     <ClInclude Include="..\svg\SVGURIReference.h">
       <Filter>rendering\svg</Filter>
     </ClInclude>
+    <ClInclude Include="..\svg\SVGUnknownElement.h">
+      <Filter>rendering\svg</Filter>
+    </ClInclude>
     <ClInclude Include="..\svg\SVGUseElement.h">
       <Filter>rendering\svg</Filter>
     </ClInclude>

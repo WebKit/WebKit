@@ -45,9 +45,6 @@ class SVGSVGElement;
 
 class SVGElement : public StyledElement, public SVGLangSpace {
 public:
-    static PassRefPtr<SVGElement> create(const QualifiedName&, Document*);
-    virtual ~SVGElement();
-
     bool isOutermostSVGSVGElement() const;
 
     String xmlbase() const;
@@ -126,6 +123,7 @@ public:
 
 protected:
     SVGElement(const QualifiedName&, Document*);
+    virtual ~SVGElement();
 
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
 

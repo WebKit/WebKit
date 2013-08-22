@@ -20930,6 +20930,7 @@
     <ClInclude Include="..\svg\SVGTSpanElement.h" />
     <ClInclude Include="..\svg\SVGUnitTypes.h" />
     <ClInclude Include="..\svg\SVGURIReference.h" />
+    <ClInclude Include="..\svg\SVGUnknownElement.h" />
     <ClInclude Include="..\svg\SVGUseElement.h" />
     <ClInclude Include="..\svg\SVGViewElement.h" />
     <ClInclude Include="..\svg\SVGViewSpec.h" />

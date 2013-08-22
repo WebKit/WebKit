@@ -5307,6 +5307,7 @@ webcore_svg_sources += \
 	Source/WebCore/svg/SVGUnitTypes.h \
 	Source/WebCore/svg/SVGURIReference.cpp \
 	Source/WebCore/svg/SVGURIReference.h \
+	Source/WebCore/svg/SVGUnknownElement.h \
 	Source/WebCore/svg/SVGUseElement.cpp \
 	Source/WebCore/svg/SVGUseElement.h \
 	Source/WebCore/svg/SVGViewElement.cpp \

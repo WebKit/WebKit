@@ -38,8 +38,8 @@
 #include "Document.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
-#include "SVGElement.h"
 #include "SVGNames.h"
+#include "SVGUnknownElement.h"
 #include <wtf/Assertions.h>
 
 namespace WebCore {
@@ -83,7 +83,7 @@ PassRefPtr<Element> CustomElementConstructor::createElementInternal()
         return HTMLElement::create(m_typeName, document());
 #if ENABLE(SVG)
     if (SVGNames::svgNamespaceURI == m_typeName.namespaceURI())
-        return SVGElement::create(m_typeName, document());
+        return SVGUnknownElement::create(m_typeName, document());
 #endif
     return Element::create(m_typeName, document());
 }

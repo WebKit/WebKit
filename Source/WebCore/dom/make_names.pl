@@ -153,6 +153,7 @@ die "You must specify a namespace (e.g. SVG) for <namespace>Names.h" unless $par
 die "You must specify a namespaceURI (e.g. http://www.w3.org/2000/svg)" unless $parameters{namespaceURI};
 
 $parameters{namespacePrefix} = $parameters{namespace} unless $parameters{namespacePrefix};
+$parameters{fallbackJSInterfaceName} = $parameters{fallbackInterfaceName} unless $parameters{fallbackJSInterfaceName};
 
 my $namesBasePath = "$outputDir/$parameters{namespace}Names";
 my $factoryBasePath = "$outputDir/$parameters{namespace}ElementFactory";
@@ -199,7 +200,8 @@ sub defaultParametersHash
         'guardFactoryWith' => '',
         'tagsNullNamespace' => 0,
         'attrsNullNamespace' => 0,
-        'fallbackInterfaceName' => ''
+        'fallbackInterfaceName' => '',
+        'fallbackJSInterfaceName' => ''
     );
 }
 
@@ -731,7 +733,7 @@ sub printJSElementIncludes
 
         print F "#include \"JS${JSInterfaceName}.h\"\n";
     }
-    print F "#include \"JS$parameters{fallbackInterfaceName}.h\"\n";
+    print F "#include \"JS$parameters{fallbackJSInterfaceName}.h\"\n";
 }
 
 sub printElementIncludes
@@ -1033,7 +1035,7 @@ sub printWrapperFunctions
     for my $tagName (sort keys %enabledTags) {
         # Avoid defining the same wrapper method twice.
         my $JSInterfaceName = $enabledTags{$tagName}{JSInterfaceName};
-        next if defined($tagsSeen{$JSInterfaceName}) || (usesDefaultJSWrapper($tagName) && ($parameters{fallbackInterfaceName} eq $parameters{namespace} . "Element"));
+        next if defined($tagsSeen{$JSInterfaceName}) || (usesDefaultJSWrapper($tagName) && ($parameters{fallbackJSInterfaceName} eq $parameters{namespace} . "Element"));
         $tagsSeen{$JSInterfaceName} = 1;
 
         my $conditional = $enabledTags{$tagName}{conditional};
@@ -1063,7 +1065,7 @@ static JSDOMWrapper* create${JSInterfaceName}Wrapper(ExecState* exec, JSDOMGloba
 {
     if (!ContextFeatures::${contextConditional}Enabled(element->document())) {
         ASSERT(!element || element->is$parameters{fallbackInterfaceName}());
-        return CREATE_DOM_WRAPPER(exec, globalObject, $parameters{fallbackInterfaceName}, element.get());
+        return CREATE_DOM_WRAPPER(exec, globalObject, $parameters{fallbackJSInterfaceName}, element.get());
     }
 
     return CREATE_DOM_WRAPPER(exec, globalObject, ${JSInterfaceName}, element.get());
@@ -1077,7 +1079,7 @@ static JSDOMWrapper* create${JSInterfaceName}Wrapper(ExecState* exec, JSDOMGloba
 {
     if (!RuntimeEnabledFeatures::${runtimeConditional}Enabled()) {
         ASSERT(!element || element->is$parameters{fallbackInterfaceName}());
-        return CREATE_DOM_WRAPPER(exec, globalObject, $parameters{fallbackInterfaceName}, element.get());
+        return CREATE_DOM_WRAPPER(exec, globalObject, $parameters{fallbackJSInterfaceName}, element.get());
     }
 
     return CREATE_DOM_WRAPPER(exec, globalObject, ${JSInterfaceName}, element.get());
@@ -1170,7 +1172,7 @@ END
 
     for my $tag (sort keys %enabledTags) {
         # Do not add the name to the map if it does not have a JS wrapper constructor or uses the default wrapper.
-        next if (usesDefaultJSWrapper($tag, \%enabledTags) && ($parameters{fallbackInterfaceName} eq $parameters{namespace} . "Element"));
+        next if (usesDefaultJSWrapper($tag, \%enabledTags) && ($parameters{fallbackJSInterfaceName} eq $parameters{namespace} . "Element"));
 
         my $conditional = $enabledTags{$tag}{conditional};
         if ($conditional) {
@@ -1198,7 +1200,7 @@ END
 ;
     print F <<END
         return createWrapperFunction(exec, globalObject, element);
-    return CREATE_DOM_WRAPPER(exec, globalObject, $parameters{fallbackInterfaceName}, element.get());
+    return CREATE_DOM_WRAPPER(exec, globalObject, $parameters{fallbackJSInterfaceName}, element.get());
 END
 ;
     print F <<END
