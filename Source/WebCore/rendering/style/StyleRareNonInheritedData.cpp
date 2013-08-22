@@ -328,7 +328,11 @@ bool StyleRareNonInheritedData::transitionDataEquivalent(const StyleRareNonInher
 
 bool StyleRareNonInheritedData::hasFilters() const
 {
+#if ENABLE(CSS_FILTERS)
     return m_filter.get() && !m_filter->m_operations.isEmpty();
+#else
+    return false;
+#endif
 }
 
 } // namespace WebCore
