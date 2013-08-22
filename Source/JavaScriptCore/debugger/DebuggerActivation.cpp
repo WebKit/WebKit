@@ -77,12 +77,6 @@ void DebuggerActivation::put(JSCell* cell, ExecState* exec, PropertyName propert
     thisObject->m_activation->methodTable()->put(thisObject->m_activation.get(), exec, propertyName, value, slot);
 }
 
-void DebuggerActivation::putDirectVirtual(JSObject* object, ExecState* exec, PropertyName propertyName, JSValue value, unsigned attributes)
-{
-    DebuggerActivation* thisObject = jsCast<DebuggerActivation*>(object);
-    thisObject->m_activation->methodTable()->putDirectVirtual(thisObject->m_activation.get(), exec, propertyName, value, attributes);
-}
-
 bool DebuggerActivation::deleteProperty(JSCell* cell, ExecState* exec, PropertyName propertyName)
 {
     DebuggerActivation* thisObject = jsCast<DebuggerActivation*>(cell);

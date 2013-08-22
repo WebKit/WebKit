@@ -67,7 +67,6 @@ namespace JSC {
 
         static void put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
 
-        static void putDirectVirtual(JSObject*, ExecState*, PropertyName, JSValue, unsigned attributes);
         static bool deleteProperty(JSCell*, ExecState*, PropertyName);
 
         static JSValue toThis(JSCell*, ExecState*, ECMAMode);

@@ -94,12 +94,6 @@ void JSProxy::putByIndex(JSCell* cell, ExecState* exec, unsigned propertyName, J
     thisObject->target()->methodTable()->putByIndex(thisObject->target(), exec, propertyName, value, shouldThrow);
 }
 
-void JSProxy::putDirectVirtual(JSObject* object, ExecState* exec, PropertyName propertyName, JSValue value, unsigned attributes)
-{
-    JSProxy* thisObject = jsCast<JSProxy*>(object);
-    thisObject->target()->putDirectVirtual(thisObject->target(), exec, propertyName, value, attributes);
-}
-
 bool JSProxy::defineOwnProperty(JSObject* object, ExecState* exec, PropertyName propertyName, const PropertyDescriptor& descriptor, bool shouldThrow)
 {
     JSProxy* thisObject = jsCast<JSProxy*>(object);

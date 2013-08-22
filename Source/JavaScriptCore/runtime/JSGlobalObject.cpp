@@ -168,24 +168,6 @@ void JSGlobalObject::put(JSCell* cell, ExecState* exec, PropertyName propertyNam
     Base::put(thisObject, exec, propertyName, value, slot);
 }
 
-void JSGlobalObject::putDirectVirtual(JSObject* object, ExecState* exec, PropertyName propertyName, JSValue value, unsigned attributes)
-{
-    JSGlobalObject* thisObject = jsCast<JSGlobalObject*>(object);
-    ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(thisObject));
-
-    if (symbolTablePutWithAttributes(thisObject, exec->vm(), propertyName, value, attributes))
-        return;
-
-    JSValue valueBefore = thisObject->getDirect(exec->vm(), propertyName);
-    PutPropertySlot slot;
-    Base::put(thisObject, exec, propertyName, value, slot);
-    if (!valueBefore) {
-        JSValue valueAfter = thisObject->getDirect(exec->vm(), propertyName);
-        if (valueAfter)
-            JSObject::putDirectVirtual(thisObject, exec, propertyName, valueAfter, attributes);
-    }
-}
-
 bool JSGlobalObject::defineOwnProperty(JSObject* object, ExecState* exec, PropertyName propertyName, const PropertyDescriptor& descriptor, bool shouldThrow)
 {
     JSGlobalObject* thisObject = jsCast<JSGlobalObject*>(object);

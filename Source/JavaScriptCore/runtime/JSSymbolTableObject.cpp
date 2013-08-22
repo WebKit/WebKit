@@ -72,9 +72,4 @@ void JSSymbolTableObject::getOwnNonIndexPropertyNames(JSObject* object, ExecStat
     JSObject::getOwnNonIndexPropertyNames(thisObject, exec, propertyNames, mode);
 }
 
-void JSSymbolTableObject::putDirectVirtual(JSObject*, ExecState*, PropertyName, JSValue, unsigned)
-{
-    RELEASE_ASSERT_NOT_REACHED();
-}
-
 } // namespace JSC

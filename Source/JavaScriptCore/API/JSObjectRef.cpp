@@ -327,9 +327,10 @@ void JSObjectSetProperty(JSContextRef ctx, JSObjectRef object, JSStringRef prope
     Identifier name(propertyName->identifier(&exec->vm()));
     JSValue jsValue = toJS(exec, value);
 
-    if (attributes && !jsObject->hasProperty(exec, name))
-        jsObject->methodTable()->putDirectVirtual(jsObject, exec, name, jsValue, attributes);
-    else {
+    if (attributes && !jsObject->hasProperty(exec, name)) {
+        PropertyDescriptor desc(jsValue, attributes);
+        jsObject->methodTable()->defineOwnProperty(jsObject, exec, name, desc, false);
+    } else {
         PutPropertySlot slot;
         jsObject->methodTable()->put(jsObject, exec, name, jsValue, slot);
     }

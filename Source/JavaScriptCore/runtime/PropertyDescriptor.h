@@ -41,6 +41,14 @@ namespace JSC {
             , m_seenAttributes(0)
         {
         }
+        PropertyDescriptor(JSValue value, unsigned attributes)
+            : m_value(value)
+            , m_attributes(attributes)
+            , m_seenAttributes(EnumerablePresent | ConfigurablePresent | WritablePresent)
+        {
+            ASSERT(m_value);
+            ASSERT(!m_value.isGetterSetter());
+        }
         JS_EXPORT_PRIVATE bool writable() const;
         JS_EXPORT_PRIVATE bool enumerable() const;
         JS_EXPORT_PRIVATE bool configurable() const;

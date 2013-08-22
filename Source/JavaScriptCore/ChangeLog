@@ -1,3 +1,40 @@
+2013-08-21  Gavin Barraclough  <barraclough@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=120128
+        Remove putDirectVirtual
+
+        Reviewed by Sam Weinig.
+
+        This could most generously be described as 'vestigial'.
+        No performance impact.
+
+        * API/JSObjectRef.cpp:
+        (JSObjectSetProperty):
+            - changed to use defineOwnProperty
+        * debugger/DebuggerActivation.cpp:
+        * debugger/DebuggerActivation.h:
+            - remove putDirectVirtual
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute):
+            - changed to use defineOwnProperty
+        * runtime/ClassInfo.h:
+        * runtime/JSActivation.cpp:
+        * runtime/JSActivation.h:
+        * runtime/JSCell.cpp:
+        * runtime/JSCell.h:
+        * runtime/JSGlobalObject.cpp:
+        * runtime/JSGlobalObject.h:
+        * runtime/JSObject.cpp:
+        * runtime/JSObject.h:
+        * runtime/JSProxy.cpp:
+        * runtime/JSProxy.h:
+        * runtime/JSSymbolTableObject.cpp:
+        * runtime/JSSymbolTableObject.h:
+            - remove putDirectVirtual
+        * runtime/PropertyDescriptor.h:
+        (JSC::PropertyDescriptor::PropertyDescriptor):
+            - added constructor for convenience
+
 2013-08-22  Chris Curtis  <chris_curtis@apple.com>
 
         errorDescriptionForValue() should not assume error value is an Object

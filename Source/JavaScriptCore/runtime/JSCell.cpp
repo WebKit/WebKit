@@ -207,11 +207,6 @@ bool JSCell::customHasInstance(JSObject*, ExecState*, JSValue)
     return false;
 }
 
-void JSCell::putDirectVirtual(JSObject*, ExecState*, PropertyName, JSValue, unsigned)
-{
-    RELEASE_ASSERT_NOT_REACHED();
-}
-
 bool JSCell::defineOwnProperty(JSObject*, ExecState*, PropertyName, const PropertyDescriptor&, bool)
 {
     RELEASE_ASSERT_NOT_REACHED();
