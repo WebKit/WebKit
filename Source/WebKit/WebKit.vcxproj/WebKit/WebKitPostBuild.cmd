@@ -11,7 +11,7 @@ xcopy /y /d "%CONFIGURATIONBUILDDIR%\include\WebCore\npruntime.h" "%CONFIGURATIO
 xcopy /y /d "%CONFIGURATIONBUILDDIR%\include\WebCore\npruntime_internal.h" "%CONFIGURATIONBUILDDIR%\include\WebKit"
 xcopy /y /d "%CONFIGURATIONBUILDDIR%\include\WebCore\nptypes.h" "%CONFIGURATIONBUILDDIR%\include\WebKit"
 
-mkdir 2>NUL "%CONFIGURATIONBUILDDIR%\bin%PlatformArchitecture%\WebKit.resources"
-xcopy /y /d "%PROJECTDIR%..\..\WebKit.resources\*" "%CONFIGURATIONBUILDDIR%\bin%PlatformArchitecture%\WebKit.resources"
+mkdir 2>NUL "%CONFIGURATIONBUILDDIR%\bin32\WebKit.resources"
+xcopy /y /d "%PROJECTDIR%..\..\WebKit.resources\*" "%CONFIGURATIONBUILDDIR%\bin32\WebKit.resources"
 
 if exist "%CONFIGURATIONBUILDDIR%\buildfailed" del "%CONFIGURATIONBUILDDIR%\buildfailed"

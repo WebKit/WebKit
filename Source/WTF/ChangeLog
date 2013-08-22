@@ -1,3 +1,14 @@
+2013-08-21  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r154416.
+        http://trac.webkit.org/changeset/154416
+        https://bugs.webkit.org/show_bug.cgi?id=120147
+
+        Broke Windows builds (Requested by rniwa on #webkit).
+
+        * WTF.vcxproj/WTFGenerated.make:
+        * WTF.vcxproj/build-generated-files.sh:
+
 2013-08-21  Alex Christensen  <achristensen@apple.com>
 
         <https://webkit.org/b/120137> Separating Win32 and Win64 builds.
