@@ -43,7 +43,7 @@ RenderSVGResourceRadialGradient::~RenderSVGResourceRadialGradient()
 bool RenderSVGResourceRadialGradient::collectGradientAttributes(SVGGradientElement* gradientElement)
 {
     m_attributes = RadialGradientAttributes();
-    return static_cast<SVGRadialGradientElement*>(gradientElement)->collectGradientAttributes(m_attributes);
+    return toSVGRadialGradientElement(gradientElement)->collectGradientAttributes(m_attributes);
 }
 
 FloatPoint RenderSVGResourceRadialGradient::centerPoint(const RadialGradientAttributes& attributes) const

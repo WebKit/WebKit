@@ -1,3 +1,22 @@
+2013-08-22  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Introduce toSVGRadialGradientElement(), and use it
+        https://bugs.webkit.org/show_bug.cgi?id=120153
+
+        Reviewed by Andreas Kling.
+
+        As a step to clean-up static_cast<SVGXXX>, toSVGRadialGradientElement() is added to clean-up
+        static_cast<SVGRadialGradientElement*>.
+
+        * rendering/svg/RenderSVGResourceRadialGradient.cpp:
+        (WebCore::RenderSVGResourceRadialGradient::collectGradientAttributes):
+        * rendering/svg/SVGRenderTreeAsText.cpp:
+        (WebCore::writeSVGResourceContainer):
+        * svg/SVGRadialGradientElement.cpp:
+        (WebCore::SVGRadialGradientElement::collectGradientAttributes):
+        * svg/SVGRadialGradientElement.h:
+        (WebCore::toSVGRadialGradientElement):
+
 2013-08-22  Renata Hodovan  <reni@webkit.org>
 
         ASSERTION FAILED: extractedStyle in WebCore::ApplyStyleCommand::removeInlineStyleFromElement

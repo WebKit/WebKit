@@ -165,7 +165,7 @@ bool SVGRadialGradientElement::collectGradientAttributes(RadialGradientAttribute
         }
 
         if (isRadial) {
-            SVGRadialGradientElement* radial = static_cast<SVGRadialGradientElement*>(current);
+            SVGRadialGradientElement* radial = toSVGRadialGradientElement(current);
 
             if (!attributes.hasCx() && current->hasAttribute(SVGNames::cxAttr))
                 attributes.setCx(radial->cx());
