@@ -1,3 +1,21 @@
+2013-08-22  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt] DRT bug revealed/caused by r154300
+        https://bugs.webkit.org/show_bug.cgi?id=120151
+
+        Reviewed by Simon Hausmann.
+
+        Since QtInstance had an implementation of getOwnPropertySlot and not getOwnPropertyDescriptor,
+        the behavior of getOwnPropertyDescriptor changed when it got implemented using getOwnPropertySlot
+        in r154300.
+
+        DRT relied on getOwnPropertyDescriptor returning undefined for JS set properties to distinguish
+        between native Qt methods and JSC bound methods. This patch changes the check to see if the 
+        property is writable since the Qt methods are ReadOnly.
+
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (DumpRenderTree::initJSObjects):
+
 2013-08-21  Joseph Pecoraro  <pecoraro@apple.com>
 
         <https://webkit.org/b/120134> [Tools] lldb_webkit.py helpers is incorrectly printing 8bit Strings
