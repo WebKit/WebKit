@@ -336,6 +336,7 @@ webkit.org/b/118925 [ Debug ] svg/repaint/buffered-rendering-static-image.html  
 webkit.org/b/104104 fast/overflow/scrollbar-click-retains-focus.html [ Pass ]
 
 webkit.org/b/120148 [ Lion Release ] webaudio/javascriptaudionode-upmix2-8channel-input.html [ Pass Failure ]
+webkit.org/b/120161 [ Lion Release ] webaudio/codec-tests/mp3/128kbps-44khz.html [ Failure ]
 
 ### END OF (1) Classified failures with bug reports
 ########################################
