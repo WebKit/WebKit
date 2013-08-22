@@ -1,3 +1,16 @@
+2013-08-21  Tim Horton  <timothy_horton@apple.com>
+
+        Another null-deref under WebDragClient::startDrag
+        https://bugs.webkit.org/show_bug.cgi?id=120145
+        <rdar://problem/14650652>
+
+        Reviewed by Simon Fraser.
+
+        convertImageToBitmap can legitimately return null, so don't dereference it.
+
+        * WebProcess/WebCoreSupport/mac/WebDragClientMac.mm:
+        (WebKit::WebDragClient::startDrag):
+
 2013-08-21  Beth Dakin  <bdakin@apple.com>
 
         <https://webkit.org/b/120140> Clients expect didFirstLayout-related calls to 

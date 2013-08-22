@@ -82,7 +82,7 @@ void WebDragClient::startDrag(RetainPtr<NSImage> image, const IntPoint& point, c
     bitmapSize.scale(frame->page()->deviceScaleFactor());
     RefPtr<ShareableBitmap> bitmap = convertImageToBitmap(image.get(), bitmapSize);
     ShareableBitmap::Handle handle;
-    if (!bitmap->createHandle(handle))
+    if (!bitmap || !bitmap->createHandle(handle))
         return;
 
     // FIXME: Seems this message should be named StartDrag, not SetDragImage.
