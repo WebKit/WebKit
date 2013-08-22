@@ -40,6 +40,7 @@ import random
 import sys
 import time
 
+from webkitpy.common.net.file_uploader import FileUploader
 from webkitpy.layout_tests.controllers.layout_test_finder import LayoutTestFinder
 from webkitpy.layout_tests.controllers.layout_test_runner import LayoutTestRunner
 from webkitpy.layout_tests.controllers.test_result_writer import TestResultWriter
@@ -225,11 +226,14 @@ class Manager(object):
 
         _log.debug("summarizing results")
         summarized_results = test_run_results.summarize_results(self._port, self._expectations, initial_results, retry_results, enabled_pixel_tests_in_retry)
+        results_including_passes = None
+        if self._options.results_server_host:
+            results_including_passes = test_run_results.summarize_results(self._port, self._expectations, initial_results, retry_results, enabled_pixel_tests_in_retry, include_passes=True)
         self._printer.print_results(end_time - start_time, initial_results, summarized_results)
 
         if not self._options.dry_run:
             self._port.print_leaks_summary()
-            self._upload_json_files(summarized_results, initial_results)
+            self._upload_json_files(summarized_results, initial_results, results_including_passes, start_time, end_time)
 
             results_path = self._filesystem.join(self._results_directory, "results.html")
             self._copy_results_html_file(results_path)
@@ -319,7 +323,7 @@ class Manager(object):
                     (result.type != test_expectations.MISSING) and
                     (result.type != test_expectations.CRASH or include_crashes))]
 
-    def _upload_json_files(self, summarized_results, initial_results):
+    def _upload_json_files(self, summarized_results, initial_results, results_including_passes=None, start_time=None, end_time=None):
         """Writes the results of the test run as JSON files into the results
         dir and upload the files to the appengine server.
 
@@ -342,6 +346,10 @@ class Manager(object):
         # We write full_results.json out as jsonp because we need to load it from a file url and Chromium doesn't allow that.
         json_results_generator.write_json(self._filesystem, summarized_results, full_results_path, callback="ADD_RESULTS")
 
+        results_json_path = self._filesystem.join(self._results_directory, "results_including_passes.json")
+        if results_including_passes:
+            json_results_generator.write_json(self._filesystem, results_including_passes, results_json_path)
+
         generator = json_layout_results_generator.JSONLayoutResultsGenerator(
             self._port, self._options.builder_name, self._options.build_name,
             self._options.build_number, self._results_directory,
@@ -357,6 +365,8 @@ class Manager(object):
         json_files = ["incremental_results.json", "full_results.json", "times_ms.json"]
 
         generator.upload_json_files(json_files)
+        if results_including_passes:
+            self.upload_results(results_json_path, start_time, end_time)
 
         incremental_results_path = self._filesystem.join(self._results_directory, "incremental_results.json")
 
@@ -364,6 +374,60 @@ class Manager(object):
         # The tools use the version we uploaded to the results server anyway.
         self._filesystem.remove(times_json_path)
         self._filesystem.remove(incremental_results_path)
+        if results_including_passes:
+            self._filesystem.remove(results_json_path)
+
+    def upload_results(self, results_json_path, start_time, end_time):
+        host = self._options.results_server_host
+        if not host:
+            return
+        master_name = self._options.master_name
+        builder_name = self._options.builder_name
+        build_number = self._options.build_number
+        build_slave = self._options.build_slave
+        got_revision = self._options.got_revision
+        if not master_name or not builder_name or not build_number or not build_slave or not got_revision:
+            _log.error("--results-dashboard-host was set, but --master-name, --builder-name, --build-number, --build-slave, or --got-revision was not. Not uploading JSON files.")
+            return
+
+        _log.info("Uploading JSON files for master: %s builder: %s build: %s slave: %s to %s", master_name, builder_name, build_number, build_slave, host)
+
+        attrs = [
+            ('master', master_name),
+            ('builder_name', builder_name),
+            ('build_number', build_number),
+            ('build_slave', build_slave),
+            ('revision', got_revision),
+            ('start_time', str(start_time)),
+            ('end_time', str(end_time)),
+        ]
+
+        uploader = FileUploader("http://%s/api/report" % host, 360)
+        try:
+            response = uploader.upload_as_multipart_form_data(self._filesystem, [('results.json', results_json_path)], attrs)
+            if not response:
+                _log.error("JSON upload failed; no response returned")
+                return
+
+            if response.code != 200:
+                _log.error("JSON upload failed, %d: '%s'" % (response.code, response.read()))
+                return
+
+            response_text = response.read()
+            try:
+                response_json = json.loads(response_text)
+            except ValueError, error:
+                _log.error("JSON upload failed; failed to parse the response: %s", response_text)
+                return
+
+            if response_json['status'] != 'OK':
+                _log.error("JSON upload failed, %s: %s", response_json['status'], response_text)
+                return
+
+            _log.info("JSON uploaded.")
+        except Exception, error:
+            _log.error("Upload failed: %s" % error)
+            return
 
     def _copy_results_html_file(self, destination_path):
         base_dir = self._port.path_from_webkit_base('LayoutTests', 'fast', 'harness')

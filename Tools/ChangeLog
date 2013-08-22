@@ -1,5 +1,38 @@
 2013-08-22  Ryosuke Niwa  <rniwa@webkit.org>
 
+        NRWT: Add the ability to upload test results to new test results server
+        https://bugs.webkit.org/show_bug.cgi?id=120146
+
+        Reviewed by Andreas Kling.
+        
+        For the upcoming replacement for webkit-test-results.appspot.com, new-run-webkit-tests needs to use a new JSON format
+        that contains the full summary of the test run including information about passed tests.
+
+        Add this ability to NRWT so that I can start testing this feature. This patch adds the following optoins to NRWT:
+        --build-slave
+        --got-revision
+        --results-server-host
+
+        The last option is somewhat ambigious with --test-results-server but we're intending to deprecate the old server
+        so we should be able to delete --test-results-server in time.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager.run):
+        (Manager._upload_json_files):
+        (Manager):
+        (Manager.upload_results):
+        * Scripts/webkitpy/layout_tests/models/test_run_results.py:
+        (summarize_results):
+        * Scripts/webkitpy/layout_tests/models/test_run_results_unittest.py:
+        (summarized_results):
+        (SummarizedResultsTest.test_summarized_results_wontfix):
+        (SummarizedResultsTest):
+        (SummarizedResultsTest.test_summarized_results_include_passes):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (parse_args):
+
+2013-08-22  Ryosuke Niwa  <rniwa@webkit.org>
+
         WKR build fix. Somehow tool.bugs.quips() doesn't work in WKR so work around that.
 
         * Scripts/webkitpy/tool/bot/irc_command.py:
