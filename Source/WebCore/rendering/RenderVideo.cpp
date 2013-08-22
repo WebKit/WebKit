@@ -343,7 +343,13 @@ bool RenderVideo::foregroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect,
     if (videoElement()->shouldDisplayPosterImage())
         return RenderImage::foregroundIsKnownToBeOpaqueInRect(localRect, maxDepthToTest);
 
-    return videoBox().contains(enclosingIntRect(localRect));
+    if (!videoBox().contains(enclosingIntRect(localRect)))
+        return false;
+
+    if (MediaPlayer* player = mediaElement()->player())
+        return player->hasAvailableVideoFrame();
+
+    return false;
 }
 
 } // namespace WebCore

@@ -1,3 +1,16 @@
+2013-08-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Reloading this video test shows garbage briefly
+        https://bugs.webkit.org/show_bug.cgi?id=119377
+
+        Reviewed by Anders Carlson.
+
+        RenderVideo should not claim that it's foreground is opaque
+        unless it has a video frame to display.
+
+        * rendering/RenderVideo.cpp:
+        (WebCore::RenderVideo::foregroundIsKnownToBeOpaqueInRect):
+
 2013-08-22  Andreas Kling  <akling@apple.com>
 
         Remove accidental cruft from r154449.
