@@ -1,5 +1,12 @@
 2013-08-22  Andreas Kling  <akling@apple.com>
 
+        Another Windows build fix.
+
+        * WebDataSource.cpp:
+        (WebDataSource::subresourceForURL):
+
+2013-08-22  Andreas Kling  <akling@apple.com>
+
         Windows build juice.
 
         * WebDataSource.cpp:

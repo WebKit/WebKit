@@ -294,7 +294,7 @@ HRESULT STDMETHODCALLTYPE WebDataSource::subresourceForURL(
 
     *resource = 0;
 
-    Document *doc = m_loader->frameLoader()->frame()->document();
+    Document *doc = m_loader->frameLoader()->frame().document();
 
     if (!doc)
         return E_FAIL;
