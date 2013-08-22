@@ -106,8 +106,12 @@ JSString* errorDescriptionForValue(ExecState* exec, JSValue v)
         JSObject* object = asObject(v);
         if (object->methodTable()->getCallData(object, callData) != CallTypeNone)
             return vm.smallStrings.functionString();
+        return jsString(exec, object->methodTable()->className(object));
     }
-    return jsString(exec, asObject(v)->methodTable()->className(asObject(v)));
+    
+    ASSERT(v.isEmpty());
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=120080 The JSValue should never be empty in this function.
+    return vm.smallStrings.emptyString();
 }
     
 JSObject* createError(ExecState* exec, ErrorFactory errorFactory, JSValue value, const String& message)

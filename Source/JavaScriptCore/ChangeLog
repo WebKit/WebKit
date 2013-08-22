@@ -1,3 +1,15 @@
+2013-08-22  Chris Curtis  <chris_curtis@apple.com>
+
+        errorDescriptionForValue() should not assume error value is an Object
+        https://bugs.webkit.org/show_bug.cgi?id=119812
+
+        Reviewed by Geoffrey Garen.
+
+        Added a check to make sure that the JSValue was an object before casting it as an object. Also, in case the parameterized JSValue
+        has no type, the function now returns the empty string. 
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::errorDescriptionForValue):
+
 2013-08-22  Julien Brianceau  <jbrianceau@nds.com>
 
         Fix P_DFGOperation_EJS call for MIPS and ARM EABI.
