@@ -1,3 +1,17 @@
+2013-08-22  Rob Buis  <rwlbuis@webkit.org>
+
+        REGRESSION: Assertion failure !collection->hasExactlyOneItem() in WebCore::namedItemGetter
+        https://bugs.webkit.org/show_bug.cgi?id=118056
+
+        Reviewed by Ryosuke Niwa.
+
+        Add test to verify that SVG and HTML elements with id's are both found when using document.all or named properties.
+
+        * svg/custom/document-all-includes-svg-expected.txt: Added.
+        * svg/custom/document-all-includes-svg.html: Added.
+        * svg/custom/window-named-item-lookup-expected.txt: Added.
+        * svg/custom/window-named-item-lookup.html: Added.
+
 2013-08-22  Renata Hodovan  <reni@webkit.org>
 
         ASSERTION FAILED: extractedStyle in WebCore::ApplyStyleCommand::removeInlineStyleFromElement

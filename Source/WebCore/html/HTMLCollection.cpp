@@ -182,7 +182,7 @@ inline bool isMatchingElement(const NodeListType*, Element*);
 template <> inline bool isMatchingElement(const HTMLCollection* htmlCollection, Element* element)
 {
     CollectionType type = htmlCollection->type();
-    if (!element->isHTMLElement() && !(type == DocAll || type == NodeChildren))
+    if (!element->isHTMLElement() && !(type == DocAll || type == NodeChildren || type == WindowNamedItems))
         return false;
 
     switch (type) {
@@ -627,15 +627,14 @@ void HTMLCollection::updateNameCache() const
 
     unsigned arrayOffset = 0;
     for (Element* element = traverseFirstElement(arrayOffset, root); element; element = traverseNextElement(arrayOffset, element, root)) {
+        const AtomicString& idAttrVal = element->getIdAttribute();
+        if (!idAttrVal.isEmpty())
+            appendIdCache(idAttrVal, element);
         if (!element->isHTMLElement())
             continue;
-        HTMLElement* htmlElement = toHTMLElement(element);
-        const AtomicString& idAttrVal = htmlElement->getIdAttribute();
-        const AtomicString& nameAttrVal = htmlElement->getNameAttribute();
-        if (!idAttrVal.isEmpty())
-            appendIdCache(idAttrVal, htmlElement);
-        if (!nameAttrVal.isEmpty() && idAttrVal != nameAttrVal && (type() != DocAll || nameShouldBeVisibleInDocumentAll(htmlElement)))
-            appendNameCache(nameAttrVal, htmlElement);
+        const AtomicString& nameAttrVal = element->getNameAttribute();
+        if (!nameAttrVal.isEmpty() && idAttrVal != nameAttrVal && (type() != DocAll || nameShouldBeVisibleInDocumentAll(toHTMLElement(element))))
+            appendNameCache(nameAttrVal, element);
     }
 
     setHasNameCache();
