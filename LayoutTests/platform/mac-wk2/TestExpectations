@@ -310,7 +310,7 @@ webkit.org/b/117767 media/W3C/video/error/error_onerror_called_on_bogus_source.h
 webkit.org/b/117767 media/broken-video.html [ Failure ]
 webkit.org/b/117767 media/event-attributes.html [ Failure ]
 
-webkit.org/b/117962 [ MountainLion ] media/video-played-collapse.html [ Skip ]
+webkit.org/b/117962 media/video-played-collapse.html [ Failure ]
 
 webkit.org/b/118925 [ Debug ] compositing/background-color/background-color-alpha.html  [ ImageOnlyFailure ]  
 webkit.org/b/118925 [ Debug ] compositing/background-color/background-color-change-to-text.html  [ ImageOnlyFailure ]
@@ -334,6 +334,8 @@ webkit.org/b/118925 [ Debug ] svg/repaint/buffered-rendering-static-image.html  
 
 # Only failing on WK1
 webkit.org/b/104104 fast/overflow/scrollbar-click-retains-focus.html [ Pass ]
+
+webkit.org/b/120148 [ Lion Release ] webaudio/javascriptaudionode-upmix2-8channel-input.html [ Pass Failure ]
 
 ### END OF (1) Classified failures with bug reports
 ########################################
