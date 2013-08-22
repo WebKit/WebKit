@@ -85,7 +85,7 @@ void HistoryController::saveScrollPositionAndViewStateToItem(HistoryItem* item)
         item->setPageScaleFactor(page->pageScaleFactor());
 
     // FIXME: It would be great to work out a way to put this code in WebCore instead of calling through to the client.
-    m_frame->loader().client()->saveViewStateToItem(item);
+    m_frame->loader().client().saveViewStateToItem(item);
 }
 
 void HistoryController::clearScrollPositionAndViewState()
@@ -125,7 +125,7 @@ void HistoryController::restoreScrollPositionAndViewState()
     
     // FIXME: It would be great to work out a way to put this code in WebCore instead of calling
     // through to the client. It's currently used only for the PDF view on Mac.
-    m_frame->loader().client()->restoreViewState();
+    m_frame->loader().client().restoreViewState();
 
     // FIXME: There is some scrolling related work that needs to happen whenever a page goes into the
     // page cache and similar work that needs to occur when it comes out. This is where we do the work
@@ -250,7 +250,7 @@ bool HistoryController::shouldStopLoadingForHistoryItem(HistoryItem* targetItem)
     if (m_currentItem->shouldDoSameDocumentNavigationTo(targetItem))
         return false;
 
-    return m_frame->loader().client()->shouldStopLoadingForHistoryItem(targetItem);
+    return m_frame->loader().client().shouldStopLoadingForHistoryItem(targetItem);
 }
 
 // Main funnel for navigating to a previous location (back/forward, non-search snap-back)
@@ -266,7 +266,7 @@ void HistoryController::goToItem(HistoryItem* targetItem, FrameLoadType type)
     Page* page = m_frame->page();
     if (!page)
         return;
-    if (!m_frame->loader().client()->shouldGoToHistoryItem(targetItem))
+    if (!m_frame->loader().client().shouldGoToHistoryItem(targetItem))
         return;
     if (m_defersLoading) {
         m_deferredItem = targetItem;
@@ -279,7 +279,7 @@ void HistoryController::goToItem(HistoryItem* targetItem, FrameLoadType type)
     // as opposed to happening for some/one of the page commits that might happen soon
     RefPtr<HistoryItem> currentItem = page->backForward()->currentItem();
     page->backForward()->setCurrentItem(targetItem);
-    m_frame->loader().client()->updateGlobalHistoryItemForPage();
+    m_frame->loader().client().updateGlobalHistoryItemForPage();
 
     // First set the provisional item of any frames that are not actually navigating.
     // This must be done before trying to navigate the desired frame, because some
@@ -354,13 +354,13 @@ void HistoryController::updateForStandardLoad(HistoryUpdateType updateType)
             if (updateType != UpdateAllExceptBackForwardList)
                 updateBackForwardListClippedAtTarget(true);
             if (!needPrivacy) {
-                frameLoader.client()->updateGlobalHistory();
+                frameLoader.client().updateGlobalHistory();
                 frameLoader.documentLoader()->setDidCreateGlobalHistoryEntry(true);
                 if (frameLoader.documentLoader()->unreachableURL().isEmpty())
-                    frameLoader.client()->updateGlobalHistoryRedirectLinks();
+                    frameLoader.client().updateGlobalHistoryRedirectLinks();
             }
 
-            m_frame->loader().client()->updateGlobalHistoryItemForPage();
+            m_frame->loader().client().updateGlobalHistoryItemForPage();
         }
     } else {
         // The client redirect replaces the current history item.
@@ -372,7 +372,7 @@ void HistoryController::updateForStandardLoad(HistoryUpdateType updateType)
             addVisitedLink(page, historyURL);
 
         if (!frameLoader.documentLoader()->didCreateGlobalHistoryEntry() && frameLoader.documentLoader()->unreachableURL().isEmpty() && !m_frame->document()->url().isEmpty())
-            frameLoader.client()->updateGlobalHistoryRedirectLinks();
+            frameLoader.client().updateGlobalHistoryRedirectLinks();
     }
 }
 
@@ -391,13 +391,13 @@ void HistoryController::updateForRedirectWithLockedBackForwardList()
             if (!historyURL.isEmpty()) {
                 updateBackForwardListClippedAtTarget(true);
                 if (!needPrivacy) {
-                    m_frame->loader().client()->updateGlobalHistory();
+                    m_frame->loader().client().updateGlobalHistory();
                     m_frame->loader().documentLoader()->setDidCreateGlobalHistoryEntry(true);
                     if (m_frame->loader().documentLoader()->unreachableURL().isEmpty())
-                        m_frame->loader().client()->updateGlobalHistoryRedirectLinks();
+                        m_frame->loader().client().updateGlobalHistoryRedirectLinks();
                 }
 
-                m_frame->loader().client()->updateGlobalHistoryItemForPage();
+                m_frame->loader().client().updateGlobalHistoryItemForPage();
             }
         }
         // The client redirect replaces the current history item.
@@ -413,7 +413,7 @@ void HistoryController::updateForRedirectWithLockedBackForwardList()
             addVisitedLink(page, historyURL);
 
         if (!m_frame->loader().documentLoader()->didCreateGlobalHistoryEntry() && m_frame->loader().documentLoader()->unreachableURL().isEmpty() && !m_frame->document()->url().isEmpty())
-            m_frame->loader().client()->updateGlobalHistoryRedirectLinks();
+            m_frame->loader().client().updateGlobalHistoryRedirectLinks();
     }
 }
 
@@ -535,7 +535,7 @@ void HistoryController::updateForSameDocumentNavigation()
 
     if (m_currentItem) {
         m_currentItem->setURL(m_frame->document()->url());
-        m_frame->loader().client()->updateGlobalHistory();
+        m_frame->loader().client().updateGlobalHistory();
     }
 }
 
@@ -855,7 +855,7 @@ void HistoryController::pushState(PassRefPtr<SerializedScriptValue> stateObject,
         return;
 
     addVisitedLink(page, KURL(ParsedURLString, urlString));
-    m_frame->loader().client()->updateGlobalHistory();
+    m_frame->loader().client().updateGlobalHistory();
 
 }
 
@@ -876,7 +876,7 @@ void HistoryController::replaceState(PassRefPtr<SerializedScriptValue> stateObje
 
     ASSERT(m_frame->page());
     addVisitedLink(m_frame->page(), KURL(ParsedURLString, urlString));
-    m_frame->loader().client()->updateGlobalHistory();
+    m_frame->loader().client().updateGlobalHistory();
 }
 
 } // namespace WebCore

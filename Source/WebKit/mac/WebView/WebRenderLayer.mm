@@ -135,7 +135,7 @@ using namespace WebCore;
     self = [super init];
     
     Frame* frame = core(webFrame);
-    if (!frame->loader().client()->hasHTMLView()) {
+    if (!frame->loader().client().hasHTMLView()) {
         [self release];
         return nil;
     }

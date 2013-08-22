@@ -567,7 +567,7 @@ RenderObject* HTMLMediaElement::createRenderer(RenderArena* arena, RenderStyle*)
         mediaRenderer->setWidget(m_proxyWidget);
 
         if (Frame* frame = document()->frame())
-            frame->loader().client()->showMediaPlayerProxyPlugin(m_proxyWidget.get());
+            frame->loader().client().showMediaPlayerProxyPlugin(m_proxyWidget.get());
     }
     return mediaRenderer;
 #else
@@ -648,7 +648,7 @@ void HTMLMediaElement::didAttachRenderers()
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
     else if (m_proxyWidget) {
         if (Frame* frame = document()->frame())
-            frame->loader().client()->hideMediaPlayerProxyPlugin(m_proxyWidget.get());
+            frame->loader().client().hideMediaPlayerProxyPlugin(m_proxyWidget.get());
     }
 #endif
 }

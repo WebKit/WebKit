@@ -49,12 +49,12 @@ ResourceLoadNotifier::ResourceLoadNotifier(Frame* frame)
 
 void ResourceLoadNotifier::didReceiveAuthenticationChallenge(ResourceLoader* loader, const AuthenticationChallenge& currentWebChallenge)
 {
-    m_frame->loader().client()->dispatchDidReceiveAuthenticationChallenge(loader->documentLoader(), loader->identifier(), currentWebChallenge);
+    m_frame->loader().client().dispatchDidReceiveAuthenticationChallenge(loader->documentLoader(), loader->identifier(), currentWebChallenge);
 }
 
 void ResourceLoadNotifier::didCancelAuthenticationChallenge(ResourceLoader* loader, const AuthenticationChallenge& currentWebChallenge)
 {
-    m_frame->loader().client()->dispatchDidCancelAuthenticationChallenge(loader->documentLoader(), loader->identifier(), currentWebChallenge);
+    m_frame->loader().client().dispatchDidCancelAuthenticationChallenge(loader->documentLoader(), loader->identifier(), currentWebChallenge);
 }
 
 void ResourceLoadNotifier::willSendRequest(ResourceLoader* loader, ResourceRequest& clientRequest, const ResourceResponse& redirectResponse)
@@ -95,14 +95,14 @@ void ResourceLoadNotifier::didFailToLoad(ResourceLoader* loader, const ResourceE
         page->progress().completeProgress(loader->identifier());
 
     if (!error.isNull())
-        m_frame->loader().client()->dispatchDidFailLoading(loader->documentLoader(), loader->identifier(), error);
+        m_frame->loader().client().dispatchDidFailLoading(loader->documentLoader(), loader->identifier(), error);
 
     InspectorInstrumentation::didFailLoading(m_frame, loader->documentLoader(), loader->identifier(), error);
 }
 
 void ResourceLoadNotifier::assignIdentifierToInitialRequest(unsigned long identifier, DocumentLoader* loader, const ResourceRequest& request)
 {
-    m_frame->loader().client()->assignIdentifierToInitialRequest(identifier, loader, request);
+    m_frame->loader().client().assignIdentifierToInitialRequest(identifier, loader, request);
 }
 
 void ResourceLoadNotifier::dispatchWillSendRequest(DocumentLoader* loader, unsigned long identifier, ResourceRequest& request, const ResourceResponse& redirectResponse)
@@ -110,7 +110,7 @@ void ResourceLoadNotifier::dispatchWillSendRequest(DocumentLoader* loader, unsig
     String oldRequestURL = request.url().string();
     m_frame->loader().documentLoader()->didTellClientAboutLoad(request.url());
 
-    m_frame->loader().client()->dispatchWillSendRequest(loader, identifier, request, redirectResponse);
+    m_frame->loader().client().dispatchWillSendRequest(loader, identifier, request, redirectResponse);
 
     // If the URL changed, then we want to put that new URL in the "did tell client" set too.
     if (!request.isNull() && oldRequestURL != request.url().string())
@@ -130,27 +130,27 @@ void ResourceLoadNotifier::dispatchWillSendRequest(DocumentLoader* loader, unsig
 void ResourceLoadNotifier::dispatchDidReceiveResponse(DocumentLoader* loader, unsigned long identifier, const ResourceResponse& r, ResourceLoader* resourceLoader)
 {
     InspectorInstrumentationCookie cookie = InspectorInstrumentation::willReceiveResourceResponse(m_frame, identifier, r);
-    m_frame->loader().client()->dispatchDidReceiveResponse(loader, identifier, r);
+    m_frame->loader().client().dispatchDidReceiveResponse(loader, identifier, r);
     InspectorInstrumentation::didReceiveResourceResponse(cookie, identifier, loader, r, resourceLoader);
 }
 
 void ResourceLoadNotifier::dispatchDidReceiveData(DocumentLoader* loader, unsigned long identifier, const char* data, int dataLength, int encodedDataLength)
 {
-    m_frame->loader().client()->dispatchDidReceiveContentLength(loader, identifier, dataLength);
+    m_frame->loader().client().dispatchDidReceiveContentLength(loader, identifier, dataLength);
 
     InspectorInstrumentation::didReceiveData(m_frame, identifier, data, dataLength, encodedDataLength);
 }
 
 void ResourceLoadNotifier::dispatchDidFinishLoading(DocumentLoader* loader, unsigned long identifier, double finishTime)
 {
-    m_frame->loader().client()->dispatchDidFinishLoading(loader, identifier);
+    m_frame->loader().client().dispatchDidFinishLoading(loader, identifier);
 
     InspectorInstrumentation::didFinishLoading(m_frame, loader, identifier, finishTime);
 }
 
 void ResourceLoadNotifier::dispatchDidFailLoading(DocumentLoader* loader, unsigned long identifier, const ResourceError& error)
 {
-    m_frame->loader().client()->dispatchDidFailLoading(loader, identifier, error);
+    m_frame->loader().client().dispatchDidFailLoading(loader, identifier, error);
 
     InspectorInstrumentation::didFailLoading(m_frame, loader, identifier, error);
 }

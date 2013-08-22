@@ -50,7 +50,7 @@ void DOMWindowExtension::disconnectFrameForPageCache()
     RefPtr<DOMWindowExtension> protector = this;
     
     Frame* frame = this->frame();
-    frame->loader().client()->dispatchWillDisconnectDOMWindowExtensionFromGlobalObject(this);
+    frame->loader().client().dispatchWillDisconnectDOMWindowExtensionFromGlobalObject(this);
 
     m_disconnectedFrame = frame;
 
@@ -64,7 +64,7 @@ void DOMWindowExtension::reconnectFrameFromPageCache(Frame* frame)
     DOMWindowProperty::reconnectFrameFromPageCache(frame);
     m_disconnectedFrame = 0;
 
-    this->frame()->loader().client()->dispatchDidReconnectDOMWindowExtensionToGlobalObject(this);
+    this->frame()->loader().client().dispatchDidReconnectDOMWindowExtensionToGlobalObject(this);
 }
 
 void DOMWindowExtension::willDestroyGlobalObjectInCachedFrame()
@@ -75,7 +75,7 @@ void DOMWindowExtension::willDestroyGlobalObjectInCachedFrame()
     // while there is still work to do.
     RefPtr<DOMWindowExtension> protector = this;
     
-    m_disconnectedFrame->loader().client()->dispatchWillDestroyGlobalObjectForDOMWindowExtension(this);
+    m_disconnectedFrame->loader().client().dispatchWillDestroyGlobalObjectForDOMWindowExtension(this);
     m_disconnectedFrame = 0;
 
     DOMWindowProperty::willDestroyGlobalObjectInCachedFrame();
@@ -92,7 +92,7 @@ void DOMWindowExtension::willDestroyGlobalObjectInFrame()
     if (!m_wasDetached) {
         Frame* frame = this->frame();
         ASSERT(frame);
-        frame->loader().client()->dispatchWillDestroyGlobalObjectForDOMWindowExtension(this);
+        frame->loader().client().dispatchWillDestroyGlobalObjectForDOMWindowExtension(this);
     }
 
     DOMWindowProperty::willDestroyGlobalObjectInFrame();
@@ -109,7 +109,7 @@ void DOMWindowExtension::willDetachGlobalObjectFromFrame()
 
     Frame* frame = this->frame();
     ASSERT(frame);
-    frame->loader().client()->dispatchWillDestroyGlobalObjectForDOMWindowExtension(this);
+    frame->loader().client().dispatchWillDestroyGlobalObjectForDOMWindowExtension(this);
 
     m_wasDetached = true;
     DOMWindowProperty::willDetachGlobalObjectFromFrame();

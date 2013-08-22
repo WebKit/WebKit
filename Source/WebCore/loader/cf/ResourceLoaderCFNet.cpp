@@ -42,7 +42,7 @@ bool ResourceLoader::shouldCacheResponse(ResourceHandle*, CFCachedURLResponseRef
 
     CFURLResponseRef response = CFCachedURLResponseGetWrappedResponse(cachedResponse);
     CFDataRef data = CFCachedURLResponseGetReceiverData(cachedResponse);
-    return frameLoader()->client()->shouldCacheResponse(documentLoader(), identifier(), response, CFDataGetBytePtr(data), CFDataGetLength(data));
+    return frameLoader()->client().shouldCacheResponse(documentLoader(), identifier(), response, CFDataGetBytePtr(data), CFDataGetLength(data));
 }
 
 #endif

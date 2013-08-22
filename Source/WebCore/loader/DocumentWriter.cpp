@@ -104,9 +104,9 @@ void DocumentWriter::begin()
 
 PassRefPtr<Document> DocumentWriter::createDocument(const KURL& url)
 {
-    if (!m_frame->loader().stateMachine()->isDisplayingInitialEmptyDocument() && m_frame->loader().client()->shouldAlwaysUsePluginDocument(m_mimeType))
+    if (!m_frame->loader().stateMachine()->isDisplayingInitialEmptyDocument() && m_frame->loader().client().shouldAlwaysUsePluginDocument(m_mimeType))
         return PluginDocument::create(m_frame, url);
-    if (!m_frame->loader().client()->hasHTMLView())
+    if (!m_frame->loader().client().hasHTMLView())
         return PlaceholderDocument::create(m_frame, url);
     return DOMImplementation::createDocument(m_mimeType, m_frame, url, m_frame->inViewSourceMode());
 }
@@ -160,7 +160,7 @@ void DocumentWriter::begin(const KURL& urlReference, bool dispatch, Document* ow
     // document.open).
     m_parser = document->parser();
 
-    if (m_frame->view() && m_frame->loader().client()->hasHTMLView())
+    if (m_frame->view() && m_frame->loader().client().hasHTMLView())
         m_frame->view()->setContentsSize(IntSize());
 
     m_state = StartedWritingState;

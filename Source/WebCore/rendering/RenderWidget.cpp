@@ -115,6 +115,8 @@ void RenderWidget::willBeDestroyed()
 
 void RenderWidget::destroy()
 {
+    RenderObject::destroy();
+#if 0
     willBeDestroyed();
 
     // Grab the arena from node()->document()->renderArena() before clearing the node pointer.
@@ -122,6 +124,7 @@ void RenderWidget::destroy()
     RenderArena* arena = renderArena();
     clearNode();
     deref(arena);
+#endif
 }
 
 RenderWidget::~RenderWidget()

@@ -137,12 +137,9 @@ Eina_List* DumpRenderTreeSupportEfl::frameChildren(const Evas_Object* ewkFrame)
 
     for (unsigned index = 0; index < frame->tree()->childCount(); index++) {
         WebCore::Frame *childFrame = frame->tree()->child(index);
-        WebCore::FrameLoaderClientEfl *client = static_cast<WebCore::FrameLoaderClientEfl*>(childFrame->loader().client());
+        WebCore::FrameLoaderClientEfl& client = static_cast<WebCore::FrameLoaderClientEfl&>(childFrame->loader().client());
 
-        if (!client)
-            continue;
-
-        childFrames = eina_list_append(childFrames, client->webFrame());
+        childFrames = eina_list_append(childFrames, client.webFrame());
     }
 
     return childFrames;

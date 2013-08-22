@@ -47,7 +47,7 @@ static WebRenderNode *copyRenderNode(RenderObject*);
 {
     [self release];
     
-    if (!frame->loader().client()->hasHTMLView())
+    if (!frame->loader().client().hasHTMLView())
         return nil;
     
     RenderObject* renderer = frame->contentRenderer();

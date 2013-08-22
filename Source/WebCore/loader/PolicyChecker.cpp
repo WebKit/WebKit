@@ -95,7 +95,7 @@ void PolicyChecker::checkNavigationPolicy(const ResourceRequest& request, Docume
     m_callback.set(request, formState.get(), function, argument);
 
     m_delegateIsDecidingNavigationPolicy = true;
-    m_frame->loader().client()->dispatchDecidePolicyForNavigationAction(&PolicyChecker::continueAfterNavigationPolicy,
+    m_frame->loader().client().dispatchDecidePolicyForNavigationAction(&PolicyChecker::continueAfterNavigationPolicy,
         action, request, formState);
     m_delegateIsDecidingNavigationPolicy = false;
 }
@@ -110,26 +110,26 @@ void PolicyChecker::checkNewWindowPolicy(const NavigationAction& action, NewWind
         return continueAfterNavigationPolicy(PolicyIgnore);
 
     m_callback.set(request, formState, frameName, action, function, argument);
-    m_frame->loader().client()->dispatchDecidePolicyForNewWindowAction(&PolicyChecker::continueAfterNewWindowPolicy,
+    m_frame->loader().client().dispatchDecidePolicyForNewWindowAction(&PolicyChecker::continueAfterNewWindowPolicy,
         action, request, formState, frameName);
 }
 
 void PolicyChecker::checkContentPolicy(const ResourceResponse& response, ContentPolicyDecisionFunction function, void* argument)
 {
     m_callback.set(function, argument);
-    m_frame->loader().client()->dispatchDecidePolicyForResponse(&PolicyChecker::continueAfterContentPolicy,
+    m_frame->loader().client().dispatchDecidePolicyForResponse(&PolicyChecker::continueAfterContentPolicy,
         response, m_frame->loader().activeDocumentLoader()->request());
 }
 
 void PolicyChecker::cancelCheck()
 {
-    m_frame->loader().client()->cancelPolicyCheck();
+    m_frame->loader().client().cancelPolicyCheck();
     m_callback.clear();
 }
 
 void PolicyChecker::stopCheck()
 {
-    m_frame->loader().client()->cancelPolicyCheck();
+    m_frame->loader().client().cancelPolicyCheck();
     PolicyCallback callback = m_callback;
     m_callback.clear();
     callback.cancel();
@@ -137,7 +137,7 @@ void PolicyChecker::stopCheck()
 
 void PolicyChecker::cannotShowMIMEType(const ResourceResponse& response)
 {
-    handleUnimplementablePolicy(m_frame->loader().client()->cannotShowMIMETypeError(response));
+    handleUnimplementablePolicy(m_frame->loader().client().cannotShowMIMETypeError(response));
 }
 
 void PolicyChecker::continueLoadAfterWillSubmitForm(PolicyAction)
@@ -161,15 +161,15 @@ void PolicyChecker::continueAfterNavigationPolicy(PolicyAction policy)
         case PolicyDownload: {
             ResourceRequest request = callback.request();
             m_frame->loader().setOriginalURLForDownloadRequest(request);
-            m_frame->loader().client()->startDownload(request);
+            m_frame->loader().client().startDownload(request);
             callback.clearRequest();
             break;
         }
         case PolicyUse: {
             ResourceRequest request(callback.request());
 
-            if (!m_frame->loader().client()->canHandleRequest(request)) {
-                handleUnimplementablePolicy(m_frame->loader().client()->cannotShowURLError(callback.request()));
+            if (!m_frame->loader().client().canHandleRequest(request)) {
+                handleUnimplementablePolicy(m_frame->loader().client().cannotShowURLError(callback.request()));
                 callback.clearRequest();
                 shouldContinue = false;
             }
@@ -190,7 +190,7 @@ void PolicyChecker::continueAfterNewWindowPolicy(PolicyAction policy)
             callback.clearRequest();
             break;
         case PolicyDownload:
-            m_frame->loader().client()->startDownload(callback.request());
+            m_frame->loader().client().startDownload(callback.request());
             callback.clearRequest();
             break;
         case PolicyUse:
@@ -210,7 +210,7 @@ void PolicyChecker::continueAfterContentPolicy(PolicyAction policy)
 void PolicyChecker::handleUnimplementablePolicy(const ResourceError& error)
 {
     m_delegateIsHandlingUnimplementablePolicy = true;
-    m_frame->loader().client()->dispatchUnableToImplementPolicy(error);
+    m_frame->loader().client().dispatchUnableToImplementPolicy(error);
     m_delegateIsHandlingUnimplementablePolicy = false;
 }
 

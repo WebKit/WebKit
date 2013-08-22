@@ -153,7 +153,7 @@ static inline void _ewk_frame_debug(Evas_Object* ewkFrame)
 
 static WebCore::FrameLoaderClientEfl* _ewk_frame_loader_efl_get(const WebCore::Frame* frame)
 {
-    return static_cast<WebCore::FrameLoaderClientEfl*>(frame->loader().client());
+    return &static_cast<WebCore::FrameLoaderClientEfl&>(frame->loader().client());
 }
 
 static Eina_Bool _ewk_frame_children_iterator_next(Eina_Iterator_Ewk_Frame* iterator, Evas_Object** data)

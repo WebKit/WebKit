@@ -4692,7 +4692,7 @@ gboolean webkit_web_view_can_show_mime_type(WebKitWebView* webView, const gchar*
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), FALSE);
 
     Frame* frame = core(webkit_web_view_get_main_frame(webView));
-    return frame->loader().client()->canShowMIMEType(String::fromUTF8(mimeType));
+    return frame->loader().client().canShowMIMEType(String::fromUTF8(mimeType));
 }
 
 /**

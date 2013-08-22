@@ -216,7 +216,7 @@ Node::InsertionNotificationRequest HTMLFrameSetElement::insertedInto(ContainerNo
     HTMLElement::insertedInto(insertionPoint);
     if (insertionPoint->inDocument()) {
         if (Frame* frame = document()->frame())
-            frame->loader().client()->dispatchDidBecomeFrameset(document()->isFrameSet());
+            frame->loader().client().dispatchDidBecomeFrameset(document()->isFrameSet());
     }
 
     return InsertionDone;
@@ -227,7 +227,7 @@ void HTMLFrameSetElement::removedFrom(ContainerNode* insertionPoint)
     HTMLElement::removedFrom(insertionPoint);
     if (insertionPoint->inDocument()) {
         if (Frame* frame = document()->frame())
-            frame->loader().client()->dispatchDidBecomeFrameset(document()->isFrameSet());
+            frame->loader().client().dispatchDidBecomeFrameset(document()->isFrameSet());
     }
 }
 

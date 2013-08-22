@@ -207,7 +207,7 @@ WebKitWebFrame* webkit_web_data_source_get_web_frame(WebKitWebDataSource* webDat
     if (!frameLoader)
         return NULL;
 
-    return static_cast<WebKit::FrameLoaderClient*>(frameLoader->client())->webFrame();
+    return static_cast<WebKit::FrameLoaderClient&>(frameLoader->client()).webFrame();
 }
 
 /**

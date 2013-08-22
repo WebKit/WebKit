@@ -495,7 +495,7 @@ static PassRefPtr<DocumentFragment> fragmentFromWebArchive(Frame* frame, PassRef
     if (!frame || !frame->document())
         return 0;
 
-    if (frame->loader().client()->canShowMIMETypeAsHTML(MIMEType)) {
+    if (frame->loader().client().canShowMIMETypeAsHTML(MIMEType)) {
         RetainPtr<NSString> markupString = adoptNS([[NSString alloc] initWithData:[mainResource->data()->createNSData() autorelease] encoding:NSUTF8StringEncoding]);
         // FIXME: seems poor form to do this as a side effect of getting a document fragment
         if (DocumentLoader* loader = frame->loader().documentLoader())

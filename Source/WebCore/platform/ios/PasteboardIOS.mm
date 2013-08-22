@@ -349,7 +349,7 @@ PassRefPtr<DocumentFragment> Pasteboard::documentFragmentForPasteboardItemAtInde
                 RefPtr<ArchiveResource> mainResource = coreArchive->mainResource();
                 if (mainResource) {
                     NSString *MIMEType = mainResource->mimeType();
-                    if (frame->loader().client()->canShowMIMETypeAsHTML(MIMEType)) {
+                    if (frame->loader().client().canShowMIMETypeAsHTML(MIMEType)) {
                         RetainPtr<NSString> markupString = adoptNS([[NSString alloc] initWithData:[mainResource->data()->createNSData() autorelease] encoding:NSUTF8StringEncoding]);
                         if (DocumentLoader* loader = frame->loader().documentLoader())
                             loader->addAllArchiveResources(coreArchive.get());

@@ -1307,7 +1307,7 @@ String PluginView::userAgent()
     if (!frame)
         return String();
     
-    return frame->loader().client()->userAgent(KURL());
+    return frame->loader().client().userAgent(KURL());
 }
 
 void PluginView::loadURL(uint64_t requestID, const String& method, const String& urlString, const String& target, 

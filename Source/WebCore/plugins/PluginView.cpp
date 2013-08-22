@@ -284,7 +284,7 @@ void PluginView::mediaCanStart()
 {
     ASSERT(!m_isStarted);
     if (!start())
-        parentFrame()->loader().client()->dispatchDidFailToStartPlugin(this);
+        parentFrame()->loader().client().dispatchDidFailToStartPlugin(this);
 }
 
 PluginView::~PluginView()

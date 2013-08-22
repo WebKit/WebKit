@@ -95,7 +95,7 @@ void WebFrameNetworkingContext::destroyPrivateBrowsingSession()
 
 ResourceError WebFrameNetworkingContext::blockedError(const ResourceRequest& request) const
 {
-    return frame()->loader().client()->blockedError(request);
+    return frame()->loader().client().blockedError(request);
 }
 
 String WebFrameNetworkingContext::referrer() const

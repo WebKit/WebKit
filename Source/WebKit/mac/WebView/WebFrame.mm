@@ -228,11 +228,11 @@ WebFrame *kit(Frame* frame)
     if (!frame)
         return nil;
 
-    FrameLoaderClient* frameLoaderClient = frame->loader().client();
-    if (frameLoaderClient->isEmptyFrameLoaderClient())
+    FrameLoaderClient& frameLoaderClient = frame->loader().client();
+    if (frameLoaderClient.isEmptyFrameLoaderClient())
         return nil;
 
-    return static_cast<WebFrameLoaderClient*>(frameLoaderClient)->webFrame();
+    return static_cast<WebFrameLoaderClient&>(frameLoaderClient).webFrame();
 }
 
 Page* core(WebView *webView)

@@ -1397,10 +1397,8 @@ Evas_Object* ewk_view_frame_focused_get(const Evas_Object* ewkView)
     if (!core)
         return 0;
 
-    WebCore::FrameLoaderClientEfl* client = static_cast<WebCore::FrameLoaderClientEfl*>(core->loader().client());
-    if (!client)
-        return 0;
-    return client->webFrame();
+    WebCore::FrameLoaderClientEfl& client = static_cast<WebCore::FrameLoaderClientEfl&>(core->loader().client());
+    return client.webFrame();
 }
 
 Eina_Bool ewk_view_uri_set(Evas_Object* ewkView, const char* uri)
@@ -2044,8 +2042,8 @@ Eina_Bool ewk_view_setting_user_agent_set(Evas_Object* ewkView, const char* user
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
     if (eina_stringshare_replace(&priv->settings.userAgent, userAgent)) {
-        WebCore::FrameLoaderClientEfl* client = static_cast<WebCore::FrameLoaderClientEfl*>(priv->mainFrame->loader().client());
-        client->setCustomUserAgent(String::fromUTF8(userAgent));
+        WebCore::FrameLoaderClientEfl& client = static_cast<WebCore::FrameLoaderClientEfl&>(priv->mainFrame->loader().client());
+        client.setCustomUserAgent(String::fromUTF8(userAgent));
     }
     return true;
 }

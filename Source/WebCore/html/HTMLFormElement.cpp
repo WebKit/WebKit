@@ -269,7 +269,7 @@ bool HTMLFormElement::prepareForSubmission(Event* event)
     StringPairVector controlNamesAndValues;
     getTextFieldValues(controlNamesAndValues);
     RefPtr<FormState> formState = FormState::create(this, controlNamesAndValues, document(), NotSubmittedByJavaScript);
-    frame->loader().client()->dispatchWillSendSubmitEvent(formState.release());
+    frame->loader().client().dispatchWillSendSubmitEvent(formState.release());
 
     if (dispatchEvent(Event::create(eventNames().submitEvent, true, true)))
         m_shouldSubmit = true;

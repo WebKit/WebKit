@@ -188,7 +188,7 @@ static NSMutableArray *newArrayByConcatenatingArrays(NSArray *first, NSArray *se
     // If the document is a stand-alone media document, now is the right time to cancel the WebKit load
     Frame* coreFrame = core(webFrame);
     if (coreFrame->document()->isMediaDocument())
-        coreFrame->loader().documentLoader()->cancelMainResourceLoad(coreFrame->loader().client()->pluginWillHandleLoadError(coreFrame->loader().documentLoader()->response()));
+        coreFrame->loader().documentLoader()->cancelMainResourceLoad(coreFrame->loader().client().pluginWillHandleLoadError(coreFrame->loader().documentLoader()->response()));
 
     if (_private->pluginView) {
         if (!_private->hasSentResponseToPlugin) {

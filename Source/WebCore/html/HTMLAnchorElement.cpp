@@ -545,7 +545,7 @@ void HTMLAnchorElement::handleClick(Event* event)
             frame->loader().addExtraFieldsToMainResourceRequest(request);
         }
 
-        frame->loader().client()->startDownload(request, fastGetAttribute(downloadAttr));
+        frame->loader().client().startDownload(request, fastGetAttribute(downloadAttr));
     } else
 #endif
         frame->loader().urlSelected(kurl, target(), event, false, false, hasRel(RelationNoReferrer) ? NeverSendReferrer : MaybeSendReferrer);

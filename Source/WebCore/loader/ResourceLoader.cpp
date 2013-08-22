@@ -252,7 +252,7 @@ void ResourceLoader::willSendRequest(ResourceRequest& request, const ResourceRes
     m_request = request;
 
     if (!redirectResponse.isNull() && !m_documentLoader->isCommitted())
-        frameLoader()->client()->dispatchDidReceiveServerRedirectForProvisionalLoad();
+        frameLoader()->client().dispatchDidReceiveServerRedirectForProvisionalLoad();
 }
 
 void ResourceLoader::didSendData(unsigned long long, unsigned long long)
@@ -375,7 +375,7 @@ void ResourceLoader::cleanupForError(const ResourceError& error)
 void ResourceLoader::didChangePriority(ResourceLoadPriority loadPriority)
 {
     if (handle()) {
-        frameLoader()->client()->dispatchDidChangeResourcePriority(identifier(), loadPriority);
+        frameLoader()->client().dispatchDidChangeResourcePriority(identifier(), loadPriority);
         handle()->didChangePriority(loadPriority);
     }
 }
@@ -442,12 +442,12 @@ ResourceError ResourceLoader::cancelledError()
 
 ResourceError ResourceLoader::blockedError()
 {
-    return frameLoader()->client()->blockedError(m_request);
+    return frameLoader()->client().blockedError(m_request);
 }
 
 ResourceError ResourceLoader::cannotShowURLError()
 {
-    return frameLoader()->client()->cannotShowURLError(m_request);
+    return frameLoader()->client().cannotShowURLError(m_request);
 }
 
 void ResourceLoader::willSendRequest(ResourceHandle*, ResourceRequest& request, const ResourceResponse& redirectResponse)
@@ -511,7 +511,7 @@ bool ResourceLoader::shouldUseCredentialStorage()
         return false;
     
     RefPtr<ResourceLoader> protector(this);
-    return frameLoader()->client()->shouldUseCredentialStorage(documentLoader(), identifier());
+    return frameLoader()->client().shouldUseCredentialStorage(documentLoader(), identifier());
 }
 
 void ResourceLoader::didReceiveAuthenticationChallenge(const AuthenticationChallenge& challenge)
@@ -550,7 +550,7 @@ void ResourceLoader::didCancelAuthenticationChallenge(const AuthenticationChalle
 bool ResourceLoader::canAuthenticateAgainstProtectionSpace(const ProtectionSpace& protectionSpace)
 {
     RefPtr<ResourceLoader> protector(this);
-    return frameLoader()->client()->canAuthenticateAgainstProtectionSpace(documentLoader(), identifier(), protectionSpace);
+    return frameLoader()->client().canAuthenticateAgainstProtectionSpace(documentLoader(), identifier(), protectionSpace);
 }
 #endif
 

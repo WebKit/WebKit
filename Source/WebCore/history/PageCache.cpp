@@ -160,7 +160,7 @@ static unsigned logCanCacheFrameDecision(Frame* frame, int indentLevel)
         PCLOG("   -The DocumentLoader uses an application cache");
         rejectReasons |= 1 << DocumentLoaderUsesApplicationCache;
     }
-    if (!frame->loader().client()->canCachePage()) {
+    if (!frame->loader().client().canCachePage()) {
         PCLOG("   -The client says this frame cannot be cached");
         rejectReasons |= 1 << ClientDeniesCaching;
     }
@@ -333,7 +333,7 @@ bool PageCache::canCachePageContainingThisFrame(Frame* frame)
         // FIXME: We should investigating caching frames that have an associated
         // application cache. <rdar://problem/5917899> tracks that work.
         && documentLoader->applicationCacheHost()->canCacheInPageCache()
-        && frameLoader.client()->canCachePage();
+        && frameLoader.client().canCachePage();
 }
     
 bool PageCache::canCache(Page* page) const

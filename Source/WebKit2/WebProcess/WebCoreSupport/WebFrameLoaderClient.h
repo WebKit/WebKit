@@ -232,9 +232,9 @@ private:
 };
 
 // As long as EmptyFrameLoaderClient exists in WebCore, this can return 0.
-inline WebFrameLoaderClient* toWebFrameLoaderClient(WebCore::FrameLoaderClient* client)
+inline WebFrameLoaderClient* toWebFrameLoaderClient(WebCore::FrameLoaderClient& client)
 {
-    return client->isEmptyFrameLoaderClient() ? 0 : static_cast<WebFrameLoaderClient*>(client);
+    return client.isEmptyFrameLoaderClient() ? 0 : static_cast<WebFrameLoaderClient*>(&client);
 }
 
 } // namespace WebKit

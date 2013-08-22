@@ -248,7 +248,7 @@ void WebSocketChannel::willOpenSocketStream(SocketStreamHandle* handle)
     LOG(Network, "WebSocketChannel %p willOpenSocketStream()", this);
     ASSERT(handle);
     if (m_document->frame())
-        m_document->frame()->loader().client()->dispatchWillOpenSocketStream(handle);
+        m_document->frame()->loader().client().dispatchWillOpenSocketStream(handle);
 }
 
 void WebSocketChannel::didOpenSocketStream(SocketStreamHandle* handle)

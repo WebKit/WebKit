@@ -1091,10 +1091,10 @@ void QWebPageAdapter::triggerAction(QWebPageAdapter::MenuAction action, QWebHitT
         openNewWindow(hitTestResult->imageUrl, frame);
         break;
     case DownloadImageToDisk:
-        frame->loader().client()->startDownload(WebCore::ResourceRequest(hitTestResult->imageUrl, frame->loader().outgoingReferrer()));
+        frame->loader().client().startDownload(WebCore::ResourceRequest(hitTestResult->imageUrl, frame->loader().outgoingReferrer()));
         break;
     case DownloadLinkToDisk:
-        frame->loader().client()->startDownload(WebCore::ResourceRequest(hitTestResult->linkUrl, frame->loader().outgoingReferrer()));
+        frame->loader().client().startDownload(WebCore::ResourceRequest(hitTestResult->linkUrl, frame->loader().outgoingReferrer()));
         break;
     case Back:
         page->goBack();

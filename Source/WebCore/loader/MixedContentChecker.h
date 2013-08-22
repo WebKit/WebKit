@@ -52,7 +52,7 @@ public:
 
 private:
     // FIXME: This should probably have a separate client from FrameLoader.
-    FrameLoaderClient* client() const;
+    FrameLoaderClient& client() const;
 
     void logWarning(bool allowed, const String& action, const KURL&) const;
 

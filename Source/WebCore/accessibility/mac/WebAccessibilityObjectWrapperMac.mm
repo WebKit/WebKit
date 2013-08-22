@@ -1468,7 +1468,7 @@ static id textMarkerRangeFromVisiblePositions(AXObjectCache *cache, VisiblePosit
     if (!frame)
         return nil;
     
-    return frame->loader().client()->accessibilityRemoteObject();
+    return frame->loader().client().accessibilityRemoteObject();
 }
 
 static void convertToVector(NSArray* array, AccessibilityObject::AccessibilityChildrenVector& vector)

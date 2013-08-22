@@ -90,7 +90,7 @@ void NetscapePlugInStreamLoader::didReceiveResponse(const ResourceResponse& resp
 
     // Status code can be null when serving from a Web archive.
     if (response.httpStatusCode() && (response.httpStatusCode() < 100 || response.httpStatusCode() >= 400))
-        cancel(frameLoader()->client()->fileDoesNotExistError(response));
+        cancel(frameLoader()->client().fileDoesNotExistError(response));
 }
 
 void NetscapePlugInStreamLoader::didReceiveData(const char* data, int length, long long encodedDataLength, DataPayloadType dataPayloadType)

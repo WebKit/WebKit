@@ -154,7 +154,7 @@ inline Frame::Frame(Page* page, HTMLFrameOwnerElement* ownerElement, FrameLoader
     : m_page(page)
     , m_settings(&page->settings())
     , m_treeNode(this, parentFromOwnerElement(ownerElement))
-    , m_loader(this, frameLoaderClient)
+    , m_loader(*this, *frameLoaderClient)
     , m_navigationScheduler(this)
     , m_ownerElement(ownerElement)
     , m_script(adoptPtr(new ScriptController(this)))

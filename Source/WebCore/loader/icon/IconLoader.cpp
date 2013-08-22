@@ -109,7 +109,7 @@ void IconLoader::notifyFinished(CachedResource* resource)
     // kept in memory (so it does not have to be read from the database asynchronously), since
     // there is a page URL referencing it.
     iconDatabase().setIconDataForIconURL(data ? data->sharedBuffer() : 0, resource->url().string());
-    m_frame->loader().client()->dispatchDidReceiveIcon();
+    m_frame->loader().client().dispatchDidReceiveIcon();
     stopLoading();
 }
 

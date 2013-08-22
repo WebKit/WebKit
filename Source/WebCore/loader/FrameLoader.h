@@ -84,12 +84,12 @@ bool isBackForwardLoadType(FrameLoadType);
 class FrameLoader {
     WTF_MAKE_NONCOPYABLE(FrameLoader);
 public:
-    FrameLoader(Frame*, FrameLoaderClient*);
+    FrameLoader(Frame&, FrameLoaderClient&);
     ~FrameLoader();
 
     void init();
 
-    Frame* frame() const { return m_frame; }
+    Frame& frame() const { return m_frame; }
 
     PolicyChecker* policyChecker() const { return m_policyChecker.get(); }
     HistoryController* history() const { return m_history.get(); }
@@ -195,7 +195,7 @@ public:
     
     static void addHTTPOriginIfNeeded(ResourceRequest&, const String& origin);
 
-    FrameLoaderClient* client() const { return m_client; }
+    FrameLoaderClient& client() const { return m_client; }
 
     void setDefersLoading(bool);
 
@@ -379,8 +379,8 @@ private:
 
     void dispatchGlobalObjectAvailableInAllWorlds();
 
-    Frame* m_frame;
-    FrameLoaderClient* m_client;
+    Frame& m_frame;
+    FrameLoaderClient& m_client;
 
     // FIXME: These should be OwnPtr<T> to reduce build times and simplify
     // header dependencies unless performance testing proves otherwise.

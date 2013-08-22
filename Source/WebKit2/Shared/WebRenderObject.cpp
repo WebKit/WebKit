@@ -45,7 +45,7 @@ PassRefPtr<WebRenderObject> WebRenderObject::create(WebPage* page)
     if (!mainFrame)
         return 0;
 
-    if (!mainFrame->loader().client()->hasHTMLView())
+    if (!mainFrame->loader().client().hasHTMLView())
         return 0;
 
     RenderView* contentRenderer = mainFrame->contentRenderer();

@@ -269,7 +269,7 @@ PassRefPtr<Widget> SubframeLoader::loadMediaPlayerProxyPlugin(Node* node, const 
     if (!m_frame->loader().mixedContentChecker()->canRunInsecureContent(m_frame->document()->securityOrigin(), completedURL))
         return 0;
 
-    RefPtr<Widget> widget = m_frame->loader().client()->createMediaPlayerProxyPlugin(size, mediaElement, completedURL,
+    RefPtr<Widget> widget = m_frame->loader().client().createMediaPlayerProxyPlugin(size, mediaElement, completedURL,
                                          paramNames, paramValues, "application/x-media-element-proxy-plugin");
 
     if (widget && renderer) {
@@ -313,7 +313,7 @@ PassRefPtr<Widget> SubframeLoader::createJavaAppletWidget(const IntSize& size, H
 
     RefPtr<Widget> widget;
     if (allowPlugins(AboutToInstantiatePlugin))
-        widget = m_frame->loader().client()->createJavaAppletWidget(size, element, baseURL, paramNames, paramValues);
+        widget = m_frame->loader().client().createJavaAppletWidget(size, element, baseURL, paramNames, paramValues);
 
     logPluginRequest(document()->page(), element->serviceType(), String(), widget);
 
@@ -361,7 +361,7 @@ Frame* SubframeLoader::loadSubframe(HTMLFrameOwnerElement* ownerElement, const K
     }
 
     String referrerToUse = SecurityPolicy::generateReferrerHeader(ownerElement->document()->referrerPolicy(), url, referrer);
-    RefPtr<Frame> frame = m_frame->loader().client()->createFrame(url, name, ownerElement, referrerToUse, allowsScrolling, marginWidth, marginHeight);
+    RefPtr<Frame> frame = m_frame->loader().client().createFrame(url, name, ownerElement, referrerToUse, allowsScrolling, marginWidth, marginHeight);
 
     if (!frame)  {
         m_frame->loader().checkCallImplicitClose();
@@ -400,15 +400,15 @@ Frame* SubframeLoader::loadSubframe(HTMLFrameOwnerElement* ownerElement, const K
 
 bool SubframeLoader::allowPlugins(ReasonForCallingAllowPlugins reason)
 {
-    bool allowed = m_frame->loader().client()->allowPlugins(m_frame->settings().arePluginsEnabled());
+    bool allowed = m_frame->loader().client().allowPlugins(m_frame->settings().arePluginsEnabled());
     if (!allowed && reason == AboutToInstantiatePlugin)
-        m_frame->loader().client()->didNotAllowPlugins();
+        m_frame->loader().client().didNotAllowPlugins();
     return allowed;
 }
 
 bool SubframeLoader::shouldUsePlugin(const KURL& url, const String& mimeType, bool shouldPreferPlugInsForImages, bool hasFallback, bool& useFallback)
 {
-    if (m_frame->loader().client()->shouldAlwaysUsePluginDocument(mimeType)) {
+    if (m_frame->loader().client().shouldAlwaysUsePluginDocument(mimeType)) {
         useFallback = false;
         return true;
     }
@@ -422,7 +422,7 @@ bool SubframeLoader::shouldUsePlugin(const KURL& url, const String& mimeType, bo
             return true;
     }
         
-    ObjectContentType objectType = m_frame->loader().client()->objectContentType(url, mimeType, shouldPreferPlugInsForImages);
+    ObjectContentType objectType = m_frame->loader().client().objectContentType(url, mimeType, shouldPreferPlugInsForImages);
     // If an object's content can't be handled and it has no fallback, let
     // it be handled as a plugin to show the broken plugin icon.
     useFallback = objectType == ObjectContentNone && hasFallback;
@@ -447,7 +447,7 @@ bool SubframeLoader::loadPlugin(HTMLPlugInImageElement* pluginElement, const KUR
 
     IntSize contentSize = roundedIntSize(LayoutSize(renderer->contentWidth(), renderer->contentHeight()));
     bool loadManually = document()->isPluginDocument() && !m_containsPlugins && toPluginDocument(document())->shouldLoadPluginManually();
-    RefPtr<Widget> widget = m_frame->loader().client()->createPlugin(contentSize,
+    RefPtr<Widget> widget = m_frame->loader().client().createPlugin(contentSize,
         pluginElement, url, paramNames, paramValues, mimeType, loadManually);
 
     if (!widget) {

@@ -1,3 +1,12 @@
+2013-08-22  Andreas Kling  <akling@apple.com>
+
+        FrameLoader: frame() and client() should return references.
+        <https://webkit.org/b/120158>
+
+        Reviewed by Anders Carlsson.
+
+        These two are never null so change them to return references.
+
 2013-08-22  Andrei Bucur  <abucur@adobe.com>
 
         RenderNamedFlowThread should not create NodeRenderingContext objects

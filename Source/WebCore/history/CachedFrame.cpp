@@ -123,7 +123,7 @@ void CachedFrameBase::restore()
         frame.view()->restoreBackingStores();
 #endif
 
-    frame.loader().client()->didRestoreFromPageCache();
+    frame.loader().client().didRestoreFromPageCache();
 
     // Reconstruct the FrameTree
     for (unsigned i = 0; i < m_childFrames.size(); ++i)
@@ -183,7 +183,7 @@ CachedFrame::CachedFrame(Frame* frame)
 
     m_document->domWindow()->suspendForPageCache();
 
-    frame->loader().client()->savePlatformDataToCachedFrame(this);
+    frame->loader().client().savePlatformDataToCachedFrame(this);
 
 #if USE(ACCELERATED_COMPOSITING)
     if (m_isComposited && pageCache()->shouldClearBackingStores())
@@ -203,7 +203,7 @@ CachedFrame::CachedFrame(Frame* frame)
     if (!m_isMainFrame)
         frame->page()->decrementSubframeCount();
 
-    frame->loader().client()->didSaveToPageCache();
+    frame->loader().client().didSaveToPageCache();
 
 #ifndef NDEBUG
     if (m_isMainFrame)
