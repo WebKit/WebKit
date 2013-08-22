@@ -189,7 +189,7 @@ HRESULT STDMETHODCALLTYPE WebDataSource::representation(
 {
     HRESULT hr = S_OK;
     if (!m_representation) {
-        WebHTMLRepresentation* htmlRep = WebHTMLRepresentation::createInstance(static_cast<WebFrame*>(m_loader->frameLoader()->client()));
+        WebHTMLRepresentation* htmlRep = WebHTMLRepresentation::createInstance(static_cast<WebFrame*>(&m_loader->frameLoader()->client()));
         hr = htmlRep->QueryInterface(IID_IWebDocumentRepresentation, (void**) &m_representation);
         htmlRep->Release();
     }
@@ -200,7 +200,7 @@ HRESULT STDMETHODCALLTYPE WebDataSource::representation(
 HRESULT STDMETHODCALLTYPE WebDataSource::webFrame( 
     /* [retval][out] */ IWebFrame** frame)
 {
-    *frame = static_cast<WebFrame*>(m_loader->frameLoader()->client());
+    *frame = static_cast<WebFrame*>(&m_loader->frameLoader()->client());
     (*frame)->AddRef();
     return S_OK;
 }

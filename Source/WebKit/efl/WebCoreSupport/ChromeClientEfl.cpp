@@ -87,7 +87,7 @@ static inline Evas_Object* kit(Frame* frame)
         return 0;
 
     FrameLoaderClientEfl& client = static_cast<FrameLoaderClientEfl&>(frame->loader().client());
-    return &client;
+    return client.webFrame();
 }
 
 namespace WebCore {

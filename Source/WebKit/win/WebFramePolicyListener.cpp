@@ -122,7 +122,7 @@ void WebFramePolicyListener::receivedPolicyDecision(PolicyAction action)
 {
     RefPtr<Frame> frame = m_frame.release();
     if (frame)
-        static_cast<WebFrame*>(frame->loader().client())->receivedPolicyDecision(action);
+        static_cast<WebFrame*>(&frame->loader().client())->receivedPolicyDecision(action);
 }
 
 void WebFramePolicyListener::invalidate()

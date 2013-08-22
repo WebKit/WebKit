@@ -1,3 +1,10 @@
+2013-08-22  Andreas Kling  <akling@apple.com>
+
+        EFL build juice.
+
+        * WebCoreSupport/ChromeClientEfl.cpp:
+        (kit):
+
 2013-08-20  Pratik Solanki  <psolanki@apple.com>
 
         <https://webkit.org/b/120029> Document::markers() should return a reference

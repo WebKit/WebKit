@@ -129,7 +129,7 @@ HRESULT STDMETHODCALLTYPE WebElementPropertyBag::Read(LPCOLESTR pszPropName, VAR
            && m_result->innerNonSharedNode()->document()->frame()))
             return E_FAIL;
         Frame* coreFrame = m_result->innerNonSharedNode()->document()->frame();
-        WebFrame* webFrame = static_cast<WebFrame*>(coreFrame->loader().client());
+        WebFrame* webFrame = static_cast<WebFrame*>(&coreFrame->loader().client());
         IWebFrame* iWebFrame;
         if (FAILED(webFrame->QueryInterface(IID_IWebFrame, (void**)&iWebFrame)))
             return E_FAIL;
