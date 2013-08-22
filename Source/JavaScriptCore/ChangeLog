@@ -1,5 +1,16 @@
 2013-08-22  Gavin Barraclough  <barraclough@apple.com>
 
+        https://bugs.webkit.org/show_bug.cgi?id=120128
+        Remove putDirectVirtual
+
+        Unreviewed, checked in commented out code. :-(
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute):
+            - delete commented out code
+
+2013-08-22  Gavin Barraclough  <barraclough@apple.com>
+
         Error.stack should not be enumerable
         https://bugs.webkit.org/show_bug.cgi?id=120171
 
