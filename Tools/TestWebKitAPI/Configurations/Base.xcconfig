@@ -43,7 +43,6 @@ GCC_WARN_UNUSED_FUNCTION = YES
 GCC_WARN_UNUSED_VARIABLE = YES
 WARNING_CFLAGS = -Wall -W -Wno-unused-parameter
 LINKER_DISPLAYS_MANGLED_NAMES = YES;
-OTHER_CPLUSPLUSFLAGS = $(OTHER_CPLUSPLUSFLAGS) -ftemplate-depth=256;
 
 // DEBUG_DEFINES, GCC_OPTIMIZATION_LEVEL, STRIP_INSTALLED_PRODUCT and DEAD_CODE_STRIPPING vary between the debug and normal variants.
 // We set up the values for each variant here, and have the Debug configuration in the Xcode project use the _debug variant.

@@ -31,7 +31,10 @@ DYLIB_INSTALL_NAME_BASE = $(NORMAL_WEBKIT2_FRAMEWORKS_DIR);
 
 FRAMEWORK_AND_LIBRARY_LDFLAGS = -framework ApplicationServices -framework Carbon -framework Cocoa -framework CoreServices -framework IOKit -framework JavaScriptCore -licucore -framework QuartzCore -framework Security -framework WebCore -framework CoreAudio;
 
-OTHER_LDFLAGS = $(inherited) $(OTHER_LDFLAGS_$(PLATFORM_NAME));
+// Prevent C++ standard library operator new, delete and their related exception types from being exported as weak symbols.
+UNEXPORTED_SYMBOL_LDFLAGS = -Wl,-unexported_symbol -Wl,__ZTISt9bad_alloc -Wl,-unexported_symbol -Wl,__ZTISt9exception -Wl,-unexported_symbol -Wl,__ZTSSt9bad_alloc -Wl,-unexported_symbol -Wl,__ZTSSt9exception -Wl,-unexported_symbol -Wl,__ZdlPvS_ -Wl,-unexported_symbol -Wl,__ZnwmPv -Wl,-unexported_symbol -Wl,__Znwm;
+
+OTHER_LDFLAGS = $(inherited) $(UNEXPORTED_SYMBOL_LDFLAGS) $(OTHER_LDFLAGS_$(PLATFORM_NAME));
 OTHER_LDFLAGS_macosx = $(FRAMEWORK_AND_LIBRARY_LDFLAGS);
 
 EXCLUDED_SOURCE_FILE_NAMES = $(EXCLUDED_SOURCE_FILE_NAMES_$(PLATFORM_NAME));

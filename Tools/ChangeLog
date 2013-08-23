@@ -1,3 +1,13 @@
+2013-08-22  Andy Estes  <aestes@apple.com>
+
+        <https://webkit.org/b/120180> Fix issues with OTHER_LDFLAGS in various .xcconfig files
+
+        Reviewed by David Kilzer.
+
+        * TestWebKitAPI/Configurations/Base.xcconfig: Removed the definition of
+        OTHER_CPLUSPLUSFLAGS since -ftemplate-depth=256 is already set in
+        DebugRelease.xcconfig and TestWebKitAPI isn't built in Production.
+
 2013-08-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         NRWT: Add the ability to upload test results to new test results server
