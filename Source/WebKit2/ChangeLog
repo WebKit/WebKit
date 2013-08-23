@@ -1,3 +1,23 @@
+2013-08-23  Alexey Proskuryakov  <ap@apple.com>
+
+        [WK2] Assertion failures when loading XSL stylesheets with NetworkProcess
+        https://bugs.webkit.org/show_bug.cgi?id=120186
+        <rdar://problem/14080273>
+
+        Reviewed by Brady Eidson.
+
+        Covered by many existing tests.
+
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::loadResourceSynchronously): Pass frame ID and page ID.
+        They are mostly needed for authentication, which is not supported with sync requests,
+        but it will be supported some day.
+
+        * WebProcess/WebCoreSupport/mac/WebFrameNetworkingContext.h:
+        * WebProcess/WebCoreSupport/mac/WebFrameNetworkingContext.mm:
+        (WebKit::WebFrameNetworkingContext::webFrameLoaderClient):
+        Added a way to get frame loader client from WebKit NetworkingContext subclass.
+
 2013-08-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Wrong interface version used in WebKitWebPage for loader client

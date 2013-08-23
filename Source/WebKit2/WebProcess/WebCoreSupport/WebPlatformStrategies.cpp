@@ -35,6 +35,7 @@
 #include "WebCookieManager.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebErrors.h"
+#include "WebFrameNetworkingContext.h"
 #include "WebPage.h"
 #include "WebProcess.h"
 #include "WebProcessProxyMessages.h"
@@ -233,10 +234,20 @@ void WebPlatformStrategies::loadResourceSynchronously(NetworkingContext* context
         return;
     }
 
+    WebFrameNetworkingContext* webContext = static_cast<WebFrameNetworkingContext*>(context);
+    // FIXME: Some entities in WebCore use WebCore's "EmptyFrameLoaderClient" instead of having a proper WebFrameLoaderClient.
+    // EmptyFrameLoaderClient shouldn't exist and everything should be using a WebFrameLoaderClient,
+    // but in the meantime we have to make sure not to mis-cast.
+    WebFrameLoaderClient* webFrameLoaderClient = webContext->webFrameLoaderClient();
+    WebFrame* webFrame = webFrameLoaderClient ? webFrameLoaderClient->webFrame() : 0;
+    WebPage* webPage = webFrame ? webFrame->page() : 0;
+
     CoreIPC::DataReference dataReference;
 
     NetworkResourceLoadParameters loadParameters;
     loadParameters.identifier = resourceLoadIdentifier;
+    loadParameters.webPageID = webPage ? webPage->pageID() : 0;
+    loadParameters.webFrameID = webFrame ? webFrame->frameID() : 0;
     loadParameters.request = request;
     loadParameters.priority = ResourceLoadPriorityHighest;
     loadParameters.contentSniffingPolicy = SniffContent;

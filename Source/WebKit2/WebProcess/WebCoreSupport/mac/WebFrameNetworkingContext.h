@@ -44,6 +44,8 @@ public:
     static void destroyPrivateBrowsingSession();
     static void setCookieAcceptPolicyForAllContexts(HTTPCookieAcceptPolicy);
 
+    WebFrameLoaderClient* webFrameLoaderClient() const;
+
 private:
     WebFrameNetworkingContext(WebFrame* frame)
         : WebCore::FrameNetworkingContext(frame->coreFrame())

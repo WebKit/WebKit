@@ -123,4 +123,12 @@ NetworkStorageSession& WebFrameNetworkingContext::storageSession() const
     return NetworkStorageSession::defaultStorageSession();
 }
     
+WebFrameLoaderClient* WebFrameNetworkingContext::webFrameLoaderClient() const
+{
+    if (!frame())
+        return 0;
+
+    return toWebFrameLoaderClient(frame()->loader().client());
+}
+
 }
