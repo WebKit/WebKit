@@ -154,6 +154,8 @@ protected:
     
 public:
     TypedArrayMode mode() const { return m_mode; }
+    bool hasArrayBuffer() const { return JSC::hasArrayBuffer(mode()); }
+    
     ArrayBuffer* buffer();
     PassRefPtr<ArrayBufferView> impl();
     void neuter();
@@ -173,6 +175,8 @@ private:
 
 protected:
     static const unsigned StructureFlags = OverridesGetPropertyNames | OverridesGetOwnPropertySlot | Base::StructureFlags;
+    
+    ArrayBuffer* existingBufferInButterfly();
 
     void* m_vector;
     uint32_t m_length;

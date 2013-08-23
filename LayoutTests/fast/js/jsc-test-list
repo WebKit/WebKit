@@ -437,6 +437,11 @@ fast/js/toString-prefix-postfix-preserve-parens
 fast/js/toString-recursion
 fast/js/try-catch-try-try-catch-try-finally-return-catch-finally
 fast/js/try-try-return-finally-finally
+fast/js/typed-array-copy
+fast/js/typedarray-set-destination-smaller-than-source
+fast/js/typedarray-set-overlapping-elements-of-same-size
+fast/js/typedarray-set-same-type-memmove
+fast/js/typedarray-set-source-smaller-than-destination
 fast/js/typeof-codegen-crash
 fast/js/typeof-constant-string
 fast/js/unexpected-constant-crash

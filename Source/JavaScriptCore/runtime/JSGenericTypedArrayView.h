@@ -173,10 +173,6 @@ public:
     // appropriate exception.
     bool validateRange(ExecState*, unsigned offset, unsigned length);
     
-    // Returns true if successful, and false on error; it will throw on error.
-    template<typename OtherType>
-    bool setWithSpecificType(ExecState*, OtherType*, unsigned offset, unsigned length);
-    
     // Returns true if successful, and false on error; if it returns false
     // then it will have thrown an exception.
     bool set(ExecState*, JSObject*, unsigned offset, unsigned length);
@@ -220,6 +216,8 @@ public:
         }
     }
     
+    ArrayBuffer* existingBuffer();
+
     static const TypedArrayType TypedArrayStorageType = Adaptor::typeValue;
     
 protected:
@@ -246,6 +244,11 @@ protected:
     // necessary. Note that this never allocates in the GC heap.
     static ArrayBuffer* slowDownAndWasteMemory(JSArrayBufferView*);
     static PassRefPtr<ArrayBufferView> getTypedArrayImpl(JSArrayBufferView*);
+
+private:
+    // Returns true if successful, and false on error; it will throw on error.
+    template<typename OtherType>
+    bool setWithSpecificType(ExecState*, OtherType*, unsigned offset, unsigned length);
 };
 
 template<typename Adaptor>

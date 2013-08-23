@@ -151,8 +151,55 @@ bool JSGenericTypedArrayView<Adaptor>::setWithSpecificType(
         return false;
     }
     
+    // This method doesn't support copying between the same array. Note that
+    // set() will only call this if the types differ, which implicitly guarantees
+    // that we can't be the same array. This is relevant because the way we detect
+    // non-overlapping is by checking if either (a) either array doesn't have a
+    // backing buffer or (b) the backing buffers are different, but that doesn't
+    // catch the case where it's the *same* array - fortunately though, this code
+    // path never needs to worry about that case.
+    ASSERT(static_cast<JSCell*>(this) != static_cast<JSCell*>(other));
+    
+    // 1) If the two arrays are non-overlapping, we can copy in any order we like
+    //    and we don't need an intermediate buffer. Arrays are definitely
+    //    non-overlapping if either one of them has no backing buffer (that means
+    //    that it *owns* its philosophical backing buffer) or if they have
+    //    different backing buffers.
+    // 2) If the two arrays overlap but have the same element size, we can do a
+    //    memmove-like copy where we flip-flop direction based on which vector
+    //    starts before the other:
+    //    A) If the destination vector is before the source vector, then a forward
+    //       copy is in order.
+    //    B) If the destination vector is after the source vector, then a backward
+    //       copy is in order.
+    // 3) If we have different element sizes and there is a chance of overlap then
+    //    we need an intermediate vector.
+    
+    // NB. Comparisons involving elementSize will be constant-folded by template
+    // specialization.
+    
+    // Handle cases (1) and (2B).
+    if (!hasArrayBuffer() || !other->hasArrayBuffer()
+        || existingBuffer() != other->existingBuffer()
+        || (elementSize == OtherType::elementSize && vector() > other->vector())) {
+        for (unsigned i = length; i--;)
+            setIndexQuickly(offset + i, other->getIndexQuickly(i));
+        return true;
+    }
+    
+    // Now we either have (2A) or (3) - so first we try to cover (2A).
+    if (elementSize == OtherType::elementSize) {
+        for (unsigned i = 0; i < length; ++i)
+            setIndexQuickly(offset + i, other->getIndexQuickly(i));
+        return true;
+    }
+    
+    // Fail: we need an intermediate transfer buffer (i.e. case (3)).
+    Vector<typename Adaptor::Type, 32> transferBuffer(length);
     for (unsigned i = length; i--;)
-        setIndexQuickly(offset + i, other->getIndexQuickly(i));
+        transferBuffer[i] = Adaptor::toNative(other->getIndexQuickly(i));
+    for (unsigned i = length; i--;)
+        setIndexQuicklyToNativeValue(offset + i, transferBuffer[i]);
     
     return true;
 }
@@ -170,7 +217,7 @@ bool JSGenericTypedArrayView<Adaptor>::set(
         if (!validateRange(exec, offset, length))
             return false;
         
-        memcpy(typedVector() + offset, other->typedVector(), other->byteLength());
+        memmove(typedVector() + offset, other->typedVector(), other->byteLength());
         return true;
     }
     
@@ -207,6 +254,12 @@ bool JSGenericTypedArrayView<Adaptor>::set(
     
     RELEASE_ASSERT_NOT_REACHED();
     return false;
+}
+
+template<typename Adaptor>
+ArrayBuffer* JSGenericTypedArrayView<Adaptor>::existingBuffer()
+{
+    return existingBufferInButterfly();
 }
 
 template<typename Adaptor>

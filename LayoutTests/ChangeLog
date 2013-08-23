@@ -1,3 +1,43 @@
+2013-08-23  Filip Pizlo  <fpizlo@apple.com>
+
+        Incorrect TypedArray#set behavior
+        https://bugs.webkit.org/show_bug.cgi?id=83818
+
+        Reviewed by Oliver Hunt and Mark Hahnenberg.
+        
+        Made it possible for shouldBe() to compare typed arrays to each other and to any array-like
+        object.
+        
+        Added a bunch of tests for different kinds of overlapping typedArray.set()'s.
+        
+        For sanity, also added the reduced test case from the bug. Interestingly, though, that test
+        case already passed on trunk - probably by luck (we had incidentally changed the default
+        copy direction from one that happened to not work to one that happened to be fine, but only
+        for this test).
+
+        * fast/js/jsc-test-list:
+        * fast/js/resources/js-test-pre.js:
+        (isTypedArray):
+        (isResultCorrect):
+        (stringify):
+        (shouldBe):
+        * fast/js/script-tests/typed-array-copy.js: Added.
+        * fast/js/script-tests/typedarray-set-destination-smaller-than-source.js: Added.
+        * fast/js/script-tests/typedarray-set-overlapping-elements-of-same-size.js: Added.
+        * fast/js/script-tests/typedarray-set-same-type-memmove.js: Added.
+        (arraysEqual):
+        * fast/js/script-tests/typedarray-set-source-smaller-than-destination.js: Added.
+        * fast/js/typed-array-copy-expected.txt: Added.
+        * fast/js/typed-array-copy.html: Added.
+        * fast/js/typedarray-set-destination-smaller-than-source-expected.txt: Added.
+        * fast/js/typedarray-set-destination-smaller-than-source.html: Added.
+        * fast/js/typedarray-set-overlapping-elements-of-same-size-expected.txt: Added.
+        * fast/js/typedarray-set-overlapping-elements-of-same-size.html: Added.
+        * fast/js/typedarray-set-same-type-memmove-expected.txt: Added.
+        * fast/js/typedarray-set-same-type-memmove.html: Added.
+        * fast/js/typedarray-set-source-smaller-than-destination-expected.txt: Added.
+        * fast/js/typedarray-set-source-smaller-than-destination.html: Added.
+
 2013-08-23  Andre Moreira Magalhaes   <andre.magalhaes@collabora.co.uk>
 
         LayoutTests/http/tests/media/video-throttled-load.cgi issue on range support

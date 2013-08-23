@@ -1,3 +1,29 @@
+2013-08-23  Filip Pizlo  <fpizlo@apple.com>
+
+        Incorrect TypedArray#set behavior
+        https://bugs.webkit.org/show_bug.cgi?id=83818
+
+        Reviewed by Oliver Hunt and Mark Hahnenberg.
+        
+        This was so much fun! typedArray.set() is like a memmove on steroids, and I'm
+        not smart enough to figure out optimal versions for *all* of the cases. But I
+        did come up with optimal implementations for most of the cases, and I wrote
+        spec-literal code (i.e. copy via a transfer buffer) for the cases I'm not smart
+        enough to write optimal code for.
+
+        * runtime/JSArrayBufferView.h:
+        (JSC::JSArrayBufferView::hasArrayBuffer):
+        * runtime/JSArrayBufferViewInlines.h:
+        (JSC::JSArrayBufferView::buffer):
+        (JSC::JSArrayBufferView::existingBufferInButterfly):
+        (JSC::JSArrayBufferView::neuter):
+        (JSC::JSArrayBufferView::byteOffset):
+        * runtime/JSGenericTypedArrayView.h:
+        * runtime/JSGenericTypedArrayViewInlines.h:
+        (JSC::::setWithSpecificType):
+        (JSC::::set):
+        (JSC::::existingBuffer):
+
 2013-08-23  Alex Christensen  <achristensen@apple.com>
 
         Re-separating Win32 and Win64 builds.

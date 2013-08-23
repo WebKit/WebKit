@@ -36,12 +36,18 @@ inline ArrayBuffer* JSArrayBufferView::buffer()
 {
     switch (m_mode) {
     case WastefulTypedArray:
-        return butterfly()->indexingHeader()->arrayBuffer();
+        return existingBufferInButterfly();
     case DataViewMode:
         return jsCast<JSDataView*>(this)->buffer();
     default:
         return methodTable()->slowDownAndWasteMemory(this);
     }
+}
+
+inline ArrayBuffer* JSArrayBufferView::existingBufferInButterfly()
+{
+    ASSERT(m_mode == WastefulTypedArray);
+    return butterfly()->indexingHeader()->arrayBuffer();
 }
 
 inline PassRefPtr<ArrayBufferView> JSArrayBufferView::impl()
@@ -51,14 +57,14 @@ inline PassRefPtr<ArrayBufferView> JSArrayBufferView::impl()
 
 inline void JSArrayBufferView::neuter()
 {
-    ASSERT(hasArrayBuffer(m_mode));
+    ASSERT(hasArrayBuffer());
     m_length = 0;
     m_vector = 0;
 }
 
 inline unsigned JSArrayBufferView::byteOffset()
 {
-    if (!hasArrayBuffer(m_mode))
+    if (!hasArrayBuffer())
         return 0;
     
     ptrdiff_t delta =
