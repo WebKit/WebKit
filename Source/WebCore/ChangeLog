@@ -1,3 +1,10 @@
+2013-08-23  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Unreviewed build correction. Need to force environment variable
+        to be escaped when running nmake command.
+
+        * WebCore.vcxproj/WebCoreGenerated.make:
+
 2013-08-23  Antti Koivisto  <antti@apple.com>
 
         Use ElementTraversal some more
