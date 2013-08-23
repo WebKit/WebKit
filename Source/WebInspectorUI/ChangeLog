@@ -1,3 +1,17 @@
+2013-08-23  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Fix js minification of updated CodeMirror
+        https://bugs.webkit.org/show_bug.cgi?id=120231
+
+        Reviewed by Andy Estes.
+
+        Workaround a jsmin issue with "return //.test();" lines when
+        minifying JavaScript in production builds.
+
+        * Scripts/copy-user-interface-resources.sh:
+        * UserInterface/External/CodeMirror/codemirror.js:
+        (window.CodeMirror):
+
 2013-08-22  Joseph Pecoraro  <pecoraro@apple.com>
 
         <https://webkit.org/b/120165> Web Inspector: Update CodeMirror to 3.16.1
