@@ -470,7 +470,8 @@ static void willRemoveChild(Node* child)
     child->notifyMutationObserversNodeWillDetach();
     dispatchChildRemovalEvents(child);
     child->document()->nodeWillBeRemoved(child); // e.g. mutation event listener can create a new range.
-    ChildFrameDisconnector(child).disconnect();
+    if (child->isContainerNode())
+        ChildFrameDisconnector(toContainerNode(child)).disconnect();
 }
 
 static void willRemoveChildren(ContainerNode* container)

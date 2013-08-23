@@ -922,18 +922,12 @@ void HTMLMediaElement::selectMediaResource()
     // 3 - If the media element has a src attribute, then let mode be attribute.
     Mode mode = attribute;
     if (!fastHasAttribute(srcAttr)) {
-        Node* node;
-        for (node = firstChild(); node; node = node->nextSibling()) {
-            if (node->hasTagName(sourceTag))
-                break;
-        }
-
         // Otherwise, if the media element does not have a src attribute but has a source 
         // element child, then let mode be children and let candidate be the first such 
         // source element child in tree order.
-        if (node) {
+        if (auto sourceElement = Traversal<HTMLSourceElement>::firstChild(this)) {
             mode = children;
-            m_nextChildNodeToConsider = node;
+            m_nextChildNodeToConsider = sourceElement;
             m_currentSourceNode = 0;
         } else {
             // Otherwise the media element has neither a src attribute nor a source element 
@@ -1421,11 +1415,7 @@ void HTMLMediaElement::textTrackModeChanged(TextTrack* track)
     bool trackIsLoaded = true;
     if (track->trackType() == TextTrack::TrackElement) {
         trackIsLoaded = false;
-        for (Node* node = firstChild(); node; node = node->nextSibling()) {
-            if (!node->hasTagName(trackTag))
-                continue;
-
-            HTMLTrackElement* trackElement = static_cast<HTMLTrackElement*>(node);
+        for (auto trackElement = Traversal<HTMLTrackElement>::firstChild(this); trackElement; trackElement = Traversal<HTMLTrackElement>::nextSibling(trackElement)) {
             if (trackElement->track() == track) {
                 if (trackElement->readyState() == HTMLTrackElement::LOADING || trackElement->readyState() == HTMLTrackElement::LOADED)
                     trackIsLoaded = true;
@@ -1657,10 +1647,8 @@ void HTMLMediaElement::cancelPendingEventsAndCallbacks()
     LOG(Media, "HTMLMediaElement::cancelPendingEventsAndCallbacks");
     m_asyncEventQueue->cancelAllEvents();
 
-    for (Node* node = firstChild(); node; node = node->nextSibling()) {
-        if (node->hasTagName(sourceTag))
-            static_cast<HTMLSourceElement*>(node)->cancelPendingErrorEvent();
-    }
+    for (auto source = Traversal<HTMLSourceElement>::firstChild(this); source; source = Traversal<HTMLSourceElement>::nextSibling(source))
+        source->cancelPendingErrorEvent();
 }
 
 Document* HTMLMediaElement::mediaPlayerOwningDocument()

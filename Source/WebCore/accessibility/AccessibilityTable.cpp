@@ -34,6 +34,7 @@
 #include "AccessibilityTableColumn.h"
 #include "AccessibilityTableHeaderContainer.h"
 #include "AccessibilityTableRow.h"
+#include "ElementTraversal.h"
 #include "HTMLNames.h"
 #include "HTMLTableCaptionElement.h"
 #include "HTMLTableCellElement.h"
@@ -124,7 +125,7 @@ bool AccessibilityTable::isDataTable() const
         return true;    
 
     // if there's a colgroup or col element, it's probably a data table.
-    for (Node* child = tableElement->firstChild(); child; child = child->nextSibling()) {
+    for (Element* child = ElementTraversal::firstChild(tableElement); child; child = ElementTraversal::nextSibling(child)) {
         if (child->hasTagName(colTag) || child->hasTagName(colgroupTag))
             return true;
     }

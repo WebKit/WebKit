@@ -34,6 +34,7 @@
 #include "AccessibilityListBox.h"
 #include "AccessibilitySpinButton.h"
 #include "AccessibilityTable.h"
+#include "ElementTraversal.h"
 #include "EventNames.h"
 #include "FloatRect.h"
 #include "Frame.h"
@@ -416,12 +417,7 @@ bool AccessibilityNodeObject::canvasHasFallbackContent() const
     // If it has any children that are elements, we'll assume it might be fallback
     // content. If it has no children or its only children are not elements
     // (e.g. just text nodes), it doesn't have fallback content.
-    for (Node* child = node->firstChild(); child; child = child->nextSibling()) {
-        if (child->isElementNode())
-            return true;
-    }
-
-    return false;
+    return !!ElementTraversal::firstChild(node);
 }
 
 bool AccessibilityNodeObject::isImageButton() const
@@ -1126,14 +1122,12 @@ static Element* siblingWithAriaRole(String role, Node* node)
     if (!parent)
         return 0;
     
-    for (Node* sibling = parent->firstChild(); sibling; sibling = sibling->nextSibling()) {
-        if (sibling->isElementNode()) {
-            const AtomicString& siblingAriaRole = toElement(sibling)->getAttribute(roleAttr);
-            if (equalIgnoringCase(siblingAriaRole, role))
-                return toElement(sibling);
-        }
+    for (Element* sibling = ElementTraversal::firstChild(parent); sibling; sibling = ElementTraversal::nextSibling(sibling)) {
+        const AtomicString& siblingAriaRole = sibling->fastGetAttribute(roleAttr);
+        if (equalIgnoringCase(siblingAriaRole, role))
+            return sibling;
     }
-    
+
     return 0;
 }
 

@@ -23,6 +23,7 @@
 #define ContainerNodeAlgorithms_h
 
 #include "Document.h"
+#include "ElementTraversal.h"
 #include "Frame.h"
 #include "HTMLFrameOwnerElement.h"
 #include "InspectorInstrumentation.h"
@@ -267,7 +268,7 @@ public:
         DescendantsOnly
     };
 
-    explicit ChildFrameDisconnector(Node* root)
+    explicit ChildFrameDisconnector(ContainerNode* root)
         : m_root(root)
     {
     }
@@ -275,18 +276,18 @@ public:
     void disconnect(DisconnectPolicy = RootAndDescendants);
 
 private:
-    void collectFrameOwners(Node* root);
+    void collectFrameOwners(ContainerNode* root);
     void disconnectCollectedFrameOwners();
 
     Vector<RefPtr<HTMLFrameOwnerElement>, 10> m_frameOwners;
-    Node* m_root;
+    ContainerNode* m_root;
 };
 
 #ifndef NDEBUG
 unsigned assertConnectedSubrameCountIsConsistent(Node*);
 #endif
 
-inline void ChildFrameDisconnector::collectFrameOwners(Node* root)
+inline void ChildFrameDisconnector::collectFrameOwners(ContainerNode* root)
 {
     if (!root->connectedSubframeCount())
         return;
@@ -294,7 +295,7 @@ inline void ChildFrameDisconnector::collectFrameOwners(Node* root)
     if (root->isHTMLElement() && root->isFrameOwnerElement())
         m_frameOwners.append(toFrameOwnerElement(root));
 
-    for (Node* child = root->firstChild(); child; child = child->nextSibling())
+    for (Element* child = ElementTraversal::firstChild(root); child; child = ElementTraversal::nextSibling(child))
         collectFrameOwners(child);
 
     ShadowRoot* shadow = root->isElementNode() ? toElement(root)->shadowRoot() : 0;
@@ -329,7 +330,7 @@ inline void ChildFrameDisconnector::disconnect(DisconnectPolicy policy)
     if (policy == RootAndDescendants)
         collectFrameOwners(m_root);
     else {
-        for (Node* child = m_root->firstChild(); child; child = child->nextSibling())
+        for (Element* child = ElementTraversal::firstChild(m_root); child; child = ElementTraversal::nextSibling(child))
             collectFrameOwners(child);
     }
 

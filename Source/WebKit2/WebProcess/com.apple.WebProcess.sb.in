@@ -1,5 +1,5 @@
 (version 1)
-(deny default (with partial-symbolication))
+(allow default (with partial-symbolication))
 (allow system-audit file-read-metadata)
 #if __MAC_OS_X_VERSION_MIN_REQUIRED == 1070
 (allow ipc-posix-shm)
