@@ -1,5 +1,11 @@
 2013-08-23  Oliver Hunt  <oliver@apple.com>
 
+        Re-sort xcode project file
+
+        * WTF.xcodeproj/project.pbxproj:
+
+2013-08-23  Oliver Hunt  <oliver@apple.com>
+
         Support in memory compression of rarely used data
         https://bugs.webkit.org/show_bug.cgi?id=120143
 
