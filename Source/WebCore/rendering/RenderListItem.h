@@ -75,8 +75,9 @@ private:
     virtual bool requiresForcedStyleRecalcPropagation() const { return true; }
 
     virtual void addOverflowFromChildren();
+    virtual void computePreferredLogicalWidths() OVERRIDE;
 
-    void updateMarkerLocation();
+    void insertOrMoveMarkerRendererIfNeeded();
     inline int calcValue() const;
     void updateValueNow() const;
     void explicitValueChanged();

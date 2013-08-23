@@ -1,3 +1,17 @@
+2013-08-23  Zalan Bujtas  <zalan@apple.com>
+
+        MathML: ASSERTION FAILED: !isPreferredLogicalHeightDirty() in RenderMathMLBlock::preferredLogicalHeight() const
+        https://bugs.webkit.org/show_bug.cgi?id=120157
+
+        Reviewed by Antti Koivisto.
+
+        RenderListMarker needs to be inserted to the render tree before
+        we start computing the preferred logical widths for the associated
+        RenderListItem.
+
+        * mathml/mn-as-list-item-assert-expected.txt: Added.
+        * mathml/mn-as-list-item-assert.html: Added.
+
 2013-08-22  Simon Fraser  <simon.fraser@apple.com>
 
         compositing/geometry/bounds-ignores-hidden-dynamic.html has incorrect initial rendering

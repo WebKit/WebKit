@@ -1,3 +1,22 @@
+2013-08-23  Zalan Bujtas  <zalan@apple.com>
+
+        MathML: ASSERTION FAILED: !isPreferredLogicalHeightDirty() in RenderMathMLBlock::preferredLogicalHeight() const
+        https://bugs.webkit.org/show_bug.cgi?id=120157
+
+        Reviewed by Antti Koivisto.
+
+        RenderListMarker needs to be inserted to the render tree before
+        we start computing the preferred logical widths for the associated
+        RenderListItem.
+
+        Test: mathml/mn-as-list-item-assert.html
+
+        * rendering/RenderListItem.cpp:
+        (WebCore::RenderListItem::insertOrMoveMarkerRendererIfNeeded):
+        (WebCore::RenderListItem::layout):
+        (WebCore::RenderListItem::computePreferredLogicalWidths):
+        * rendering/RenderListItem.h:
+
 2013-08-22  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Introduce toSVGLinearGradientElement(), and use it
