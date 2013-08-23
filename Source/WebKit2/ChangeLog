@@ -1,3 +1,15 @@
+2013-08-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Wrong interface version used in WebKitWebPage for loader client
+        https://bugs.webkit.org/show_bug.cgi?id=120199
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * WebProcess/InjectedBundle/API/gtk/WebKitWebPage.cpp:
+        (webkitWebPageCreate): Use kWKBundlePageLoaderClientCurrentVersion
+        instead of kWKBundlePageResourceLoadClientCurrentVersion in loader
+        client initialization.
+
 2013-08-22  Simon Cooper  <scooper@apple.com>
 
         Need to disable FakeSYSVSHM when sandboxing is not enabled

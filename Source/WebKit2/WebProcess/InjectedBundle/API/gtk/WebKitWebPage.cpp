@@ -277,7 +277,7 @@ WebKitWebPage* webkitWebPageCreate(WebPage* webPage)
     page->priv->webPage = webPage;
 
     WKBundlePageLoaderClient loaderClient = {
-        kWKBundlePageResourceLoadClientCurrentVersion,
+        kWKBundlePageLoaderClientCurrentVersion,
         page,
         didStartProvisionalLoadForFrame,
         didReceiveServerRedirectForProvisionalLoadForFrame,
