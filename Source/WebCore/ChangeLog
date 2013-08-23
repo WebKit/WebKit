@@ -1,3 +1,25 @@
+2013-08-17  Darin Adler  <darin@apple.com>
+
+        <https://webkit.org/b/119945> Some cleanup for PasteboardIOS
+
+        Reviewed by Andreas Kling.
+
+        * platform/ios/PasteboardIOS.mm:
+        (WebCore::Pasteboard::setFrame): Moved this function up near the
+        create functions and constructors.
+        (WebCore::documentFragmentWithRTF): Tweaked formatting.
+        (WebCore::Pasteboard::documentFragmentForPasteboardItemAtIndex):
+        Ditto.
+        (WebCore::utiTypeFromCocoaType): Changed to use early return and removed
+        an unneeded local variable.
+        (WebCore::cocoaTypeFromHTMLClipboardType): Renamed the quaint qType and
+        pbType local variables, and tweaked formatting.
+        (WebCore::Pasteboard::clear): Tweaked comment.
+        (WebCore::Pasteboard::readString): Tweaked formatting.
+        (WebCore::addHTMLClipboardTypesForCocoaType): Tweaked formatting.
+        (WebCore::Pasteboard::writeString): Streamlined logic and tweaked formatting
+        (WebCore::Pasteboard::types): Renamed pbType to just type.
+
 2013-08-23  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         Attempt to make it more clear what FloatIntervalSearchAdaptor::collectIfNeeded is doing
