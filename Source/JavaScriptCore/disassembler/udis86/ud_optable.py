@@ -50,7 +50,7 @@ class UdOptableXmlParser:
             elif def_node.localName == 'vendor':
                 ven = ( def_node.firstChild.data );
             else:
-                print "warning: invalid node - %s" % def_node.localName
+                print("warning: invalid node - %s" % def_node.localName)
                 continue
         return ( pfx, opc, opr, ven )
 
@@ -65,7 +65,7 @@ class UdOptableXmlParser:
             if not insnNode.localName:
                 continue
             if insnNode.localName != "instruction":
-                print "warning: invalid insn node - %s" % insnNode.localName
+                print("warning: invalid insn node - %s" % insnNode.localName)
                 continue
 
             mnemonic = insnNode.getElementsByTagName( 'mnemonic' )[ 0 ].firstChild.data
@@ -84,11 +84,11 @@ class UdOptableXmlParser:
 
 
 def printFn( pfx, mnm, opc, opr, ven ):
-    print 'def: ',
+    print('def: '),
     if len( pfx ):
-        print ' '.join( pfx ),
-    print "%s %s %s %s" % \
-            ( mnm, ' '.join( opc ), ' '.join( opr ), ven )
+        print(' '.join( pfx )),
+    print("%s %s %s %s" % \
+            ( mnm, ' '.join( opc ), ' '.join( opr ), ven ))
 
 
 def parse( xml, callback ):

@@ -1,3 +1,22 @@
+2013-08-23  Laszlo Papp  <lpapp@kde.org>
+
+        Failure building with python3
+        https://bugs.webkit.org/show_bug.cgi?id=106645
+
+        Reviewed by Benjamin Poulain.
+
+        Use print functions instead of python statements to be compatible with python 3.X and 2.7 as well.
+        Archlinux has been using python3 and that is what causes issues while packaging QtWebKit along with Qt5.
+
+        * disassembler/udis86/itab.py:
+        (UdItabGenerator.genInsnTable):
+        * disassembler/udis86/ud_opcode.py:
+        (UdOpcodeTables.print_table):
+        * disassembler/udis86/ud_optable.py:
+        (UdOptableXmlParser.parseDef):
+        (UdOptableXmlParser.parse):
+        (printFn):
+
 2013-08-23  Filip Pizlo  <fpizlo@apple.com>
 
         Incorrect TypedArray#set behavior

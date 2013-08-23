@@ -268,13 +268,13 @@ class UdItabGenerator( ud_opcode.UdOpcodeTables ):
             opr   = e[ 'operands' ]
             for i in range(len(opr)): 
                 if not (opr[i] in self.OperandDict.keys()):
-                    print "error: invalid operand declaration: %s\n" % opr[i]
+                    print("error: invalid operand declaration: %s\n" % opr[i])
                 opr_c[i] = "O_" + opr[i]
             opr = "%s %s %s" % (opr_c[0] + ",", opr_c[1] + ",", opr_c[2])
 
             for p in e['prefixes']:
                 if not ( p in self.PrefixDict.keys() ):
-                    print "error: invalid prefix specification: %s \n" % pfx
+                    print("error: invalid prefix specification: %s \n" % pfx)
                 pfx_c.append( self.PrefixDict[p] )
             if len(e['prefixes']) == 0:
                 pfx_c.append( "P_none" )
