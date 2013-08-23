@@ -202,6 +202,7 @@ extern void (*wkSetNSURLRequestShouldContentSniff)(NSMutableURLRequest *, BOOL);
 extern void (*wkSetBaseCTM)(CGContextRef, CGAffineTransform);
 extern void (*wkSetPatternPhaseInUserSpace)(CGContextRef, CGPoint);
 extern CGAffineTransform (*wkGetUserToBaseCTM)(CGContextRef);
+extern bool (*wkCGContextIsPDFContext)(CGContextRef);
 extern void (*wkSetUpFontCache)();
 extern void (*wkSignalCFReadStreamEnd)(CFReadStreamRef stream);
 extern void (*wkSignalCFReadStreamError)(CFReadStreamRef stream, CFStreamError *error);

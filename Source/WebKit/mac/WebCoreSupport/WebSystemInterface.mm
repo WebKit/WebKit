@@ -99,6 +99,7 @@ void InitWebCoreSystemInterface(void)
     INIT(SetNSURLConnectionDefersCallbacks);
     INIT(SetNSURLRequestShouldContentSniff);
     INIT(SetPatternPhaseInUserSpace);
+    INIT(CGContextIsPDFContext);
     INIT(GetUserToBaseCTM);
     INIT(SetUpFontCache);
     INIT(SignalCFReadStreamEnd);

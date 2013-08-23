@@ -92,6 +92,7 @@ void (*wkSetDragImage)(NSImage*, NSPoint offset);
 void (*wkSetBaseCTM)(CGContextRef, CGAffineTransform);
 void (*wkSetPatternPhaseInUserSpace)(CGContextRef, CGPoint point);
 CGAffineTransform (*wkGetUserToBaseCTM)(CGContextRef);
+bool (*wkCGContextIsPDFContext)(CGContextRef);
 void (*wkSetUpFontCache)();
 void (*wkSignalCFReadStreamEnd)(CFReadStreamRef stream);
 void (*wkSignalCFReadStreamHasBytes)(CFReadStreamRef stream);
