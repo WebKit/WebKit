@@ -261,6 +261,7 @@ video::-webkit-media-controls-closed-captions-container {
     border-radius: 10px;
     cursor: default;
     z-index: 2;
+    text-align: initial;
 }
 
 video::-webkit-media-controls-closed-captions-track-list {
