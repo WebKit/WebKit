@@ -235,9 +235,9 @@ namespace JSC {
         JSStack& stack();
         BlockAllocator& blockAllocator();
         
-        void incrementDeferralDepth();
+        JS_EXPORT_PRIVATE void incrementDeferralDepth();
         void decrementDeferralDepth();
-        void decrementDeferralDepthAndGCIfNeeded();
+        JS_EXPORT_PRIVATE void decrementDeferralDepthAndGCIfNeeded();
 
         const HeapType m_heapType;
         const size_t m_ramSize;

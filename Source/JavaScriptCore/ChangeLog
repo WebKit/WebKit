@@ -1,3 +1,39 @@
+2013-08-22  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        JSObject and JSArray code shouldn't have to tiptoe around garbage collection
+        https://bugs.webkit.org/show_bug.cgi?id=120179
+
+        Reviewed by Geoffrey Garen.
+
+        There are many places in the code for JSObject and JSArray where they are manipulating their 
+        Butterfly/Structure, e.g. after expanding their out-of-line backing storage via allocating. Within 
+        these places there are certain "critical sections" where a GC would be disastrous. Gen GC looks 
+        like it will make this dance even more intricate. To make everybody's lives easier we should use 
+        the DeferGC mechanism in these functions to make these GC critical sections both obvious in the 
+        code and trivially safe. Deferring collections will usually only last marginally longer, thus we 
+        should not incur any additional overhead.
+
+        * heap/Heap.h:
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::unshiftCountSlowCase):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::enterDictionaryIndexingModeWhenArrayStorageAlreadyExists):
+        (JSC::JSObject::createInitialUndecided):
+        (JSC::JSObject::createInitialInt32):
+        (JSC::JSObject::createInitialDouble):
+        (JSC::JSObject::createInitialContiguous):
+        (JSC::JSObject::createArrayStorage):
+        (JSC::JSObject::convertUndecidedToArrayStorage):
+        (JSC::JSObject::convertInt32ToArrayStorage):
+        (JSC::JSObject::convertDoubleToArrayStorage):
+        (JSC::JSObject::convertContiguousToArrayStorage):
+        (JSC::JSObject::increaseVectorLength):
+        (JSC::JSObject::ensureLengthSlow):
+        * runtime/JSObject.h:
+        (JSC::JSObject::putDirectInternal):
+        (JSC::JSObject::setStructureAndReallocateStorageIfNecessary):
+        (JSC::JSObject::putDirectWithoutTransition):
+
 2013-08-22  Filip Pizlo  <fpizlo@apple.com>
 
         Update LLVM binary drops and scripts to the latest version from SVN

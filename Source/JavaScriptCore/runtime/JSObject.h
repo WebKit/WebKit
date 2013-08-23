@@ -30,6 +30,7 @@
 #include "ClassInfo.h"
 #include "CommonIdentifiers.h"
 #include "CallFrame.h"
+#include "DeferGC.h"
 #include "JSCell.h"
 #include "PropertySlot.h"
 #include "PropertyStorage.h"
@@ -1290,6 +1291,7 @@ inline bool JSObject::putDirectInternal(VM& vm, PropertyName propertyName, JSVal
         if ((mode == PutModePut) && !isExtensible())
             return false;
 
+        DeferGC deferGC(vm.heap);
         Butterfly* newButterfly = m_butterfly;
         if (structure()->putWillGrowOutOfLineStorage())
             newButterfly = growOutOfLineStorage(vm, structure()->outOfLineCapacity(), structure()->suggestedNewOutOfLineStorageCapacity());
@@ -1310,6 +1312,7 @@ inline bool JSObject::putDirectInternal(VM& vm, PropertyName propertyName, JSVal
     PropertyOffset offset;
     size_t currentCapacity = structure()->outOfLineCapacity();
     if (Structure* structure = Structure::addPropertyTransitionToExistingStructure(this->structure(), propertyName, attributes, specificFunction, offset)) {
+        DeferGC deferGC(vm.heap);
         Butterfly* newButterfly = m_butterfly;
         if (currentCapacity != structure->outOfLineCapacity())
             newButterfly = growOutOfLineStorage(vm, currentCapacity, structure->outOfLineCapacity());
@@ -1384,7 +1387,8 @@ inline void JSObject::setStructureAndReallocateStorageIfNecessary(VM& vm, unsign
         setStructure(vm, newStructure);
         return;
     }
-    
+
+    DeferGC deferGC(vm.heap); 
     Butterfly* newButterfly = growOutOfLineStorage(
         vm, oldCapacity, newStructure->outOfLineCapacity());
     setStructureAndButterfly(vm, newStructure, newButterfly);
@@ -1420,6 +1424,7 @@ inline void JSObject::putDirect(VM& vm, PropertyName propertyName, JSValue value
 
 inline void JSObject::putDirectWithoutTransition(VM& vm, PropertyName propertyName, JSValue value, unsigned attributes)
 {
+    DeferGC deferGC(vm.heap);
     ASSERT(!value.isGetterSetter() && !(attributes & Accessor));
     Butterfly* newButterfly = m_butterfly;
     if (structure()->putWillGrowOutOfLineStorage())

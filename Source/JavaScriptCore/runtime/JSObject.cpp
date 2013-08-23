@@ -546,6 +546,7 @@ ArrayStorage* JSObject::enterDictionaryIndexingModeWhenArrayStorageAlreadyExists
             map->add(this, i).iterator->value.set(vm, this, value);
     }
 
+    DeferGC deferGC(vm.heap);
     Butterfly* newButterfly = storage->butterfly()->resizeArray(vm, this, structure(), 0, ArrayStorage::sizeFor(0));
     RELEASE_ASSERT(newButterfly);
     
@@ -609,6 +610,7 @@ Butterfly* JSObject::createInitialIndexedStorage(VM& vm, unsigned length, size_t
 
 Butterfly* JSObject::createInitialUndecided(VM& vm, unsigned length)
 {
+    DeferGC deferGC(vm.heap);
     Butterfly* newButterfly = createInitialIndexedStorage(vm, length, sizeof(EncodedJSValue));
     Structure* newStructure = Structure::nonPropertyTransition(vm, structure(), AllocateUndecided);
     setStructureAndButterfly(vm, newStructure, newButterfly);
@@ -617,6 +619,7 @@ Butterfly* JSObject::createInitialUndecided(VM& vm, unsigned length)
 
 ContiguousJSValues JSObject::createInitialInt32(VM& vm, unsigned length)
 {
+    DeferGC deferGC(vm.heap);
     Butterfly* newButterfly = createInitialIndexedStorage(vm, length, sizeof(EncodedJSValue));
     Structure* newStructure = Structure::nonPropertyTransition(vm, structure(), AllocateInt32);
     setStructureAndButterfly(vm, newStructure, newButterfly);
@@ -625,6 +628,7 @@ ContiguousJSValues JSObject::createInitialInt32(VM& vm, unsigned length)
 
 ContiguousDoubles JSObject::createInitialDouble(VM& vm, unsigned length)
 {
+    DeferGC deferGC(vm.heap);
     Butterfly* newButterfly = createInitialIndexedStorage(vm, length, sizeof(double));
     for (unsigned i = newButterfly->vectorLength(); i--;)
         newButterfly->contiguousDouble()[i] = QNaN;
@@ -635,6 +639,7 @@ ContiguousDoubles JSObject::createInitialDouble(VM& vm, unsigned length)
 
 ContiguousJSValues JSObject::createInitialContiguous(VM& vm, unsigned length)
 {
+    DeferGC deferGC(vm.heap);
     Butterfly* newButterfly = createInitialIndexedStorage(vm, length, sizeof(EncodedJSValue));
     Structure* newStructure = Structure::nonPropertyTransition(vm, structure(), AllocateContiguous);
     setStructureAndButterfly(vm, newStructure, newButterfly);
@@ -643,6 +648,7 @@ ContiguousJSValues JSObject::createInitialContiguous(VM& vm, unsigned length)
 
 ArrayStorage* JSObject::createArrayStorage(VM& vm, unsigned length, unsigned vectorLength)
 {
+    DeferGC deferGC(vm.heap);
     IndexingType oldType = structure()->indexingType();
     ASSERT_UNUSED(oldType, !hasIndexedProperties(oldType));
     Butterfly* newButterfly = Butterfly::createOrGrowArrayRight(
@@ -717,6 +723,7 @@ ArrayStorage* JSObject::constructConvertedArrayStorageWithoutCopyingElements(VM&
 
 ArrayStorage* JSObject::convertUndecidedToArrayStorage(VM& vm, NonPropertyTransition transition, unsigned neededLength)
 {
+    DeferGC deferGC(vm.heap);
     ASSERT(hasUndecided(structure()->indexingType()));
     
     ArrayStorage* storage = constructConvertedArrayStorageWithoutCopyingElements(vm, neededLength);
@@ -769,6 +776,7 @@ ArrayStorage* JSObject::convertInt32ToArrayStorage(VM& vm, NonPropertyTransition
 {
     ASSERT(hasInt32(structure()->indexingType()));
     
+    DeferGC deferGC(vm.heap);
     ArrayStorage* newStorage = constructConvertedArrayStorageWithoutCopyingElements(vm, neededLength);
     for (unsigned i = m_butterfly->publicLength(); i--;) {
         JSValue v = m_butterfly->contiguous()[i].get();
@@ -835,6 +843,7 @@ ContiguousJSValues JSObject::rageConvertDoubleToContiguous(VM& vm)
 
 ArrayStorage* JSObject::convertDoubleToArrayStorage(VM& vm, NonPropertyTransition transition, unsigned neededLength)
 {
+    DeferGC deferGC(vm.heap);
     ASSERT(hasDouble(structure()->indexingType()));
     
     ArrayStorage* newStorage = constructConvertedArrayStorageWithoutCopyingElements(vm, neededLength);
@@ -863,6 +872,7 @@ ArrayStorage* JSObject::convertDoubleToArrayStorage(VM& vm)
 
 ArrayStorage* JSObject::convertContiguousToArrayStorage(VM& vm, NonPropertyTransition transition, unsigned neededLength)
 {
+    DeferGC deferGC(vm.heap);
     ASSERT(hasContiguous(structure()->indexingType()));
     
     ArrayStorage* newStorage = constructConvertedArrayStorageWithoutCopyingElements(vm, neededLength);
@@ -2310,6 +2320,7 @@ bool JSObject::increaseVectorLength(VM& vm, unsigned newLength)
 
     // Fast case - there is no precapacity. In these cases a realloc makes sense.
     if (LIKELY(!indexBias)) {
+        DeferGC deferGC(vm.heap);
         Butterfly* newButterfly = storage->butterfly()->growArrayRight(
             vm, this, structure(), structure()->outOfLineCapacity(), true,
             ArrayStorage::sizeFor(vectorLength), ArrayStorage::sizeFor(newVectorLength));
@@ -2321,6 +2332,7 @@ bool JSObject::increaseVectorLength(VM& vm, unsigned newLength)
     }
     
     // Remove some, but not all of the precapacity. Atomic decay, & capped to not overflow array length.
+    DeferGC deferGC(vm.heap);
     unsigned newIndexBias = std::min(indexBias >> 1, MAX_STORAGE_VECTOR_LENGTH - newVectorLength);
     Butterfly* newButterfly = storage->butterfly()->resizeArray(
         vm, this,
@@ -2345,6 +2357,7 @@ void JSObject::ensureLengthSlow(VM& vm, unsigned length)
         length << 1,
         MAX_STORAGE_VECTOR_LENGTH);
     unsigned oldVectorLength = m_butterfly->vectorLength();
+    DeferGC deferGC(vm.heap);
     m_butterfly = m_butterfly->growArrayRight(
         vm, this, structure(), structure()->outOfLineCapacity(), true,
         oldVectorLength * sizeof(EncodedJSValue),
