@@ -51,7 +51,7 @@ private:
     }
     uint32_t m_originalSize;
     uint32_t m_compressedSize;
-    uint8_t m_data[];
+    uint8_t m_data[1];
 };
 
 template <typename T> class CompressedVector : private GenericCompressedData {

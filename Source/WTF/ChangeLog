@@ -1,5 +1,11 @@
 2013-08-23  Oliver Hunt  <oliver@apple.com>
 
+        Attempt to appease windows bot.
+
+        * wtf/Compression.h:
+
+2013-08-23  Oliver Hunt  <oliver@apple.com>
+
         Re-sort xcode project file
 
         * WTF.xcodeproj/project.pbxproj:
