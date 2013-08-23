@@ -38,7 +38,7 @@ public:
     uint32_t compressedSize() const { return m_compressedSize; }
     uint32_t originalSize() const { return m_originalSize; }
 
-    WTF_EXPORT_PRIVATE bool decompress(uint8_t* destination, size_t bufferSize);
+    WTF_EXPORT_PRIVATE bool decompress(uint8_t* destination, size_t bufferSize, size_t* decompressedByteCount = 0);
     
 private:
     GenericCompressedData(size_t originalSize, size_t compressedSize)
@@ -65,7 +65,12 @@ public:
     void decompress(Vector<T>& destination)
     {
         Vector<T> output(originalSize() / sizeof(T));
-        GenericCompressedData::decompress(reinterpret_cast<uint8_t*>(output.data()), originalSize());
+        ASSERT(output.size() * sizeof(T) == originalSize());
+        size_t decompressedByteCount = 0;
+        GenericCompressedData::decompress(reinterpret_cast<uint8_t*>(output.data()), originalSize(), &decompressedByteCount);
+        ASSERT(decompressedByteCount == originalSize());
+        ASSERT(output.size() * sizeof(T) == decompressedByteCount);
+
         destination.swap(output);
     }
 

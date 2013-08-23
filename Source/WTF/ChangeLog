@@ -1,3 +1,19 @@
+2013-08-23  Oliver Hunt  <oliver@apple.com>
+
+        Add more validation logic to CompressibleVector
+        https://bugs.webkit.org/show_bug.cgi?id=120227
+
+        Reviewed by Brent Fulgham.
+
+        Add a pile of assertions to try on catch whatever is going wrong
+        in the windows environment or other platforms.
+
+        * wtf/Compression.cpp:
+        (WTF::GenericCompressedData::create):
+        (WTF::GenericCompressedData::decompress):
+        * wtf/Compression.h:
+        (WTF::CompressedVector::decompress):
+
 2013-08-23  Alex Christensen  <achristensen@apple.com>
 
         Re-separating Win32 and Win64 builds.

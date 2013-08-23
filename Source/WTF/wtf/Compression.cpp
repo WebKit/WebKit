@@ -71,7 +71,7 @@ PassOwnPtr<GenericCompressedData> GenericCompressedData::create(const uint8_t* d
     size_t currentOffset = OBJECT_OFFSETOF(GenericCompressedData, m_data);
     size_t currentCapacity = fastMallocGoodSize(MinimumSize);
     Bytef* compressedData = static_cast<Bytef*>(fastMalloc(currentCapacity));
-    memset(compressedData, 0, currentCapacity);
+    memset(compressedData, 0, sizeof(GenericCompressedData));
     stream.next_out = compressedData + currentOffset;
     stream.avail_out = currentCapacity - currentOffset;
 
@@ -126,8 +126,10 @@ PassOwnPtr<GenericCompressedData> GenericCompressedData::create(const uint8_t* d
     return adoptPtr(result);
 }
 
-bool GenericCompressedData::decompress(uint8_t* destination, size_t bufferSize)
+bool GenericCompressedData::decompress(uint8_t* destination, size_t bufferSize, size_t* decompressedByteCount)
 {
+    if (decompressedByteCount)
+        *decompressedByteCount = 0;
     z_stream stream;
     memset(&stream, 0, sizeof(stream));
     stream.zalloc = zAlloc;
@@ -145,6 +147,10 @@ bool GenericCompressedData::decompress(uint8_t* destination, size_t bufferSize)
 
     int inflateResult = inflate(&stream, Z_FINISH);
     inflateEnd(&stream);
+
+    ASSERT(stream.total_out <= bufferSize);
+    if (decompressedByteCount)
+        *decompressedByteCount = stream.total_out;
 
     if (inflateResult != Z_STREAM_END) {
         ASSERT_NOT_REACHED();
