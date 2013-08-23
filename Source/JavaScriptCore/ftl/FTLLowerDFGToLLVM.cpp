@@ -1160,7 +1160,7 @@ private:
     
     void compilePutStructure()
     {
-        m_ftlState.jitCode->common.notifyCompilingStructureTransition(codeBlock(), m_node);
+        m_ftlState.jitCode->common.notifyCompilingStructureTransition(m_graph.m_plan, codeBlock(), m_node);
         
         m_out.store64(
             m_out.constIntPtr(m_node->structureTransitionData().newStructure),
@@ -1169,7 +1169,7 @@ private:
     
     void compilePhantomPutStructure()
     {
-        m_ftlState.jitCode->common.notifyCompilingStructureTransition(codeBlock(), m_node);
+        m_ftlState.jitCode->common.notifyCompilingStructureTransition(m_graph.m_plan, codeBlock(), m_node);
     }
     
     void compileGetButterfly()

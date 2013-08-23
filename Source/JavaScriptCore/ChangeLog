@@ -1,3 +1,17 @@
+2013-08-22  Filip Pizlo  <fpizlo@apple.com>
+
+        build-jsc --ftl-jit should work
+        https://bugs.webkit.org/show_bug.cgi?id=120194
+
+        Reviewed by Oliver Hunt.
+
+        * Configurations/Base.xcconfig: CPPFLAGS should include FEATURE_DEFINES
+        * Configurations/JSC.xcconfig: The 'jsc' tool includes headers where field layout may depend on FEATURE_DEFINES
+        * Configurations/ToolExecutable.xcconfig: All other tools include headers where field layout may depend on FEATURE_DEFINES
+        * ftl/FTLLowerDFGToLLVM.cpp: Build fix
+        (JSC::FTL::LowerDFGToLLVM::compilePutStructure):
+        (JSC::FTL::LowerDFGToLLVM::compilePhantomPutStructure):
+
 2013-08-23  Oliver Hunt  <oliver@apple.com>
 
         Re-sort xcode project file

@@ -21,6 +21,9 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
 
+#include "FeatureDefines.xcconfig"
+#include "Version.xcconfig"
+
 INSTALL_PATH = $(INSTALL_PATH_$(PLATFORM_NAME));
 INSTALL_PATH_iphoneos = $(JAVASCRIPTCORE_FRAMEWORKS_DIR)/JavaScriptCore.framework/Resources;
 INSTALL_PATH_iphonesimulator = $(INSTALL_PATH_iphoneos);

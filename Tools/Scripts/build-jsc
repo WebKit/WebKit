@@ -78,7 +78,10 @@ if (isQt()) {
 }
 
 if (isAppleMacWebKit()) {
-    $ENV{ENABLE_FTL_JIT} = 1 if $ftlJIT;
+    if ($ftlJIT) {
+        $ENV{ENABLE_FTL_JIT} = 1;
+        push @options, "ENABLE_FTL_JIT=ENABLE_FTL_JIT";
+    }
     (system("perl", "Tools/Scripts/copy-webkitlibraries-to-product-directory", productDir()) == 0) or die;
 }
 

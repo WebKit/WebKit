@@ -28,7 +28,7 @@
 
 #include <wtf/Platform.h>
 
-#if HAVE(LLVM) && ENABLE(FTL_JIT) && 0
+#if HAVE(LLVM)
 
 // It is necessary to include LLVM headers via this file, because:
 // - LLVM requires defining things that we don't normally define, and
