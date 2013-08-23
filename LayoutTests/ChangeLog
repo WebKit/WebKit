@@ -1,3 +1,15 @@
+2013-08-23  Renata Hodovan  <reni@webkit.org>
+
+        Missing null-check in HTMLFormElement::rendererIsNeeded()
+        https://bugs.webkit.org/show_bug.cgi?id=120159
+
+        Reviewed by Ryosuke Niwa.
+
+        Test for the handling of null parentRederer.
+
+        * fast/forms/missing-parentrenderer-crash-expected.txt: Added.
+        * fast/forms/missing-parentrenderer-crash.html: Added.
+
 2013-08-23  Zalan Bujtas  <zalan@apple.com>
 
         MathML: ASSERTION FAILED: !isPreferredLogicalHeightDirty() in RenderMathMLBlock::preferredLogicalHeight() const

@@ -101,6 +101,10 @@ bool HTMLFormElement::rendererIsNeeded(const RenderStyle& style)
 
     ContainerNode* node = parentNode();
     RenderObject* parentRenderer = node->renderer();
+
+    if (!parentRenderer)
+        return false;
+
     // FIXME: Shouldn't we also check for table caption (see |formIsTablePart| below).
     bool parentIsTableElementPart = (parentRenderer->isTable() && isHTMLTableElement(node))
         || (parentRenderer->isTableRow() && node->hasTagName(trTag))
