@@ -1,3 +1,12 @@
+2013-08-23  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt] Update outdated source-paths in documentation
+        https://bugs.webkit.org/show_bug.cgi?id=120206
+
+        Reviewed by Anders Carlsson.
+
+        * docs/qtwebkit.qdoc:
+
 2013-08-19  Pratik Solanki  <psolanki@apple.com>
 
         <https://webkit.org/b/119918> Frame::selection() should return a reference
