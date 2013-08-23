@@ -1,5 +1,46 @@
 2013-08-23  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
+        Moving expectations from Qt 5.0 WK2 to Qt WK2 - Part 5
+
+        Unreviewed gardening.
+
+        * platform/qt-wk2/fonts/cursive-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/fonts/cursive-expected.png.
+        * platform/qt-wk2/fonts/default-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/fonts/default-expected.png.
+        * platform/qt-wk2/fonts/fantasy-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/fonts/fantasy-expected.png.
+        * platform/qt-wk2/fonts/monospace-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/fonts/monospace-expected.png.
+        * platform/qt-wk2/fonts/sans-serif-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/fonts/sans-serif-expected.png.
+        * platform/qt-wk2/fonts/serif-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/fonts/serif-expected.png.
+        * platform/qt-wk2/fullscreen/full-screen-iframe-zIndex-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/fullscreen/full-screen-iframe-zIndex-expected.png.
+        * platform/qt-wk2/fullscreen/full-screen-placeholder-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk2/fullscreen/full-screen-placeholder-expected.txt.
+        * platform/qt-wk2/fullscreen/full-screen-remove-ancestor-after-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/fullscreen/full-screen-remove-ancestor-after-expected.png.
+        * platform/qt-wk2/fullscreen/full-screen-render-inline-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk2/fullscreen/full-screen-render-inline-expected.txt.
+        * platform/qt-wk2/fullscreen/full-screen-stacking-context-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/fullscreen/full-screen-stacking-context-expected.png.
+        * platform/qt-wk2/fullscreen/full-screen-zIndex-after-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/fullscreen/full-screen-zIndex-after-expected.png.
+        * platform/qt-wk2/fullscreen/full-screen-zIndex-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/fullscreen/full-screen-zIndex-expected.png.
+        * platform/qt-wk2/fullscreen/parent-flow-inline-with-block-child-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk2/fullscreen/parent-flow-inline-with-block-child-expected.txt.
+        * platform/qt-wk2/loader/go-back-cached-main-resource-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk2/loader/go-back-cached-main-resource-expected.txt.
+        * platform/qt-wk2/plugins/netscape-dom-access-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk2/plugins/netscape-dom-access-expected.txt.
+        * platform/qt-wk2/printing/return-from-printing-mode-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/printing/return-from-printing-mode-expected.png.
+        * platform/qt-wk2/scrollbars/basic-scrollbar-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/scrollbars/basic-scrollbar-expected.png.
+        * platform/qt-wk2/scrollbars/custom-scrollbar-with-incomplete-style-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/scrollbars/custom-scrollbar-with-incomplete-style-expected.png.
+        * platform/qt-wk2/scrollbars/disabled-scrollbar-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/scrollbars/disabled-scrollbar-expected.png.
+        * platform/qt-wk2/scrollbars/listbox-scrollbar-combinations-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/scrollbars/listbox-scrollbar-combinations-expected.png.
+        * platform/qt-wk2/scrollbars/overflow-scrollbar-combinations-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/scrollbars/overflow-scrollbar-combinations-expected.png.
+        * platform/qt-wk2/scrollbars/scrollbar-buttons-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/scrollbars/scrollbar-buttons-expected.png.
+        * platform/qt-wk2/scrollbars/scrollbar-orientation-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/scrollbars/scrollbar-orientation-expected.png.
+        * platform/qt-wk2/scrollbars/scrollbars-on-positioned-content-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/scrollbars/scrollbars-on-positioned-content-expected.png.
+        * platform/qt-wk2/scrollingcoordinator/non-fast-scrollable-region-scaled-iframe-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/scrollingcoordinator/non-fast-scrollable-region-scaled-iframe-expected.png.
+        * platform/qt-wk2/scrollingcoordinator/non-fast-scrollable-region-scaled-iframe-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk2/scrollingcoordinator/non-fast-scrollable-region-scaled-iframe-expected.txt.
+        * platform/qt-wk2/scrollingcoordinator/non-fast-scrollable-region-transformed-iframe-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/scrollingcoordinator/non-fast-scrollable-region-transformed-iframe-expected.png.
+        * platform/qt-wk2/scrollingcoordinator/non-fast-scrollable-region-transformed-iframe-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk2/scrollingcoordinator/non-fast-scrollable-region-transformed-iframe-expected.txt.
+        * platform/qt-wk2/transitions/cross-fade-background-image-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/transitions/cross-fade-background-image-expected.png.
+        * platform/qt-wk2/transitions/cross-fade-border-image-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/transitions/cross-fade-border-image-expected.png.
+        * platform/qt-wk2/transitions/move-after-transition-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/transitions/move-after-transition-expected.png.
+        * platform/qt-wk2/transitions/suspend-transform-transition-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/transitions/suspend-transform-transition-expected.png.
+        * platform/qt-wk2/transitions/svg-text-shadow-transition-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/transitions/svg-text-shadow-transition-expected.png.
+
+2013-08-23  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
         Moving expectations from Qt 5.0 WK2 to Qt WK2 - Part 4
 
         Unreviewed gardening.
