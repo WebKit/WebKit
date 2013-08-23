@@ -2694,7 +2694,6 @@ __ZN7WebCore22RuntimeEnabledFeatures22isDialogElementEnabledE
 #endif
 
 #if ENABLE(SVG)
-__ZN7WebCore14SVGSMILElement13isSMILElementEPNS_4NodeE
 __ZN7WebCore8Document13svgExtensionsEv
 __ZN7WebCore8Document19accessSVGExtensionsEv
 #endif

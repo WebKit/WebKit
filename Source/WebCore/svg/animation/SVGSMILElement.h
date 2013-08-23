@@ -42,7 +42,7 @@ public:
     SVGSMILElement(const QualifiedName&, Document*);
     virtual ~SVGSMILElement();
 
-    static bool isSMILElement(Node*);
+    static bool isSMILElement(const Node*);
 
     bool isSupportedAttribute(const QualifiedName&);
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
@@ -241,6 +241,8 @@ inline SVGSMILElement* toSVGSMILElement(Element* element)
     ASSERT_WITH_SECURITY_IMPLICATION(!element || SVGSMILElement::isSMILElement(element));
     return static_cast<SVGSMILElement*>(element);
 }
+
+template <> inline bool isElementOfType<SVGSMILElement>(const Element* element) { return SVGSMILElement::isSMILElement(element); }
 
 }
 

@@ -51,6 +51,7 @@
 #include "SVGRenderStyle.h"
 #include "SVGRenderSupport.h"
 #include "SVGSVGElement.h"
+#include "SVGTitleElement.h"
 #include "SVGUseElement.h"
 #include "ScriptEventListener.h"
 #include "ShadowRoot.h"
@@ -877,14 +878,8 @@ String SVGElement::title() const
 
     // If we aren't an instance in a <use> or the <use> title was not found, then find the first
     // <title> child of this element.
-    Element* titleElement = ElementTraversal::firstWithin(this);
-    for (; titleElement; titleElement = ElementTraversal::nextSibling(titleElement)) {
-        if (titleElement->hasTagName(SVGNames::titleTag) && titleElement->isSVGElement())
-            break;
-    }
-
     // If a title child was found, return the text contents.
-    if (titleElement)
+    if (SVGTitleElement* titleElement = Traversal<SVGTitleElement>::firstWithin(this))
         return titleElement->innerText();
 
     // Otherwise return a null/empty string.

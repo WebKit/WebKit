@@ -298,13 +298,10 @@ HTMLLabelElement* TreeScope::labelElementForId(const AtomicString& forAttributeV
     if (!m_labelsByForAttribute) {
         // Populate the map on first access.
         m_labelsByForAttribute = adoptPtr(new DocumentOrderedMap);
-        for (Element* element = ElementTraversal::firstWithin(rootNode()); element; element = ElementTraversal::next(element)) {
-            if (isHTMLLabelElement(element)) {
-                HTMLLabelElement* label = toHTMLLabelElement(element);
-                const AtomicString& forValue = label->fastGetAttribute(forAttr);
-                if (!forValue.isEmpty())
-                    addLabel(forValue, label);
-            }
+        for (HTMLLabelElement* label = Traversal<HTMLLabelElement>::firstWithin(rootNode()); label; label = Traversal<HTMLLabelElement>::next(label)) {
+            const AtomicString& forValue = label->fastGetAttribute(forAttr);
+            if (!forValue.isEmpty())
+                addLabel(forValue, label);
         }
     }
 
@@ -342,18 +339,15 @@ Element* TreeScope::findAnchor(const String& name)
         return 0;
     if (Element* element = getElementById(name))
         return element;
-    for (Element* element = ElementTraversal::firstWithin(rootNode()); element; element = ElementTraversal::next(element)) {
-        if (isHTMLAnchorElement(element)) {
-            HTMLAnchorElement* anchor = toHTMLAnchorElement(element);
-            if (rootNode()->document()->inQuirksMode()) {
-                // Quirks mode, case insensitive comparison of names.
-                if (equalIgnoringCase(anchor->name(), name))
-                    return anchor;
-            } else {
-                // Strict mode, names need to match exactly.
-                if (anchor->name() == name)
-                    return anchor;
-            }
+    for (HTMLAnchorElement* anchor = Traversal<HTMLAnchorElement>::firstWithin(rootNode()); anchor; anchor = Traversal<HTMLAnchorElement>::next(anchor)) {
+        if (rootNode()->document()->inQuirksMode()) {
+            // Quirks mode, case insensitive comparison of names.
+            if (equalIgnoringCase(anchor->name(), name))
+                return anchor;
+        } else {
+            // Strict mode, names need to match exactly.
+            if (anchor->name() == name)
+                return anchor;
         }
     }
     return 0;

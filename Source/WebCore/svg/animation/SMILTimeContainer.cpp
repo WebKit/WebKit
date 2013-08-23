@@ -222,10 +222,9 @@ void SMILTimeContainer::timerFired(Timer<SMILTimeContainer>*)
 void SMILTimeContainer::updateDocumentOrderIndexes()
 {
     unsigned timingElementCount = 0;
-    for (Element* element = m_ownerSVGElement; element; element = ElementTraversal::next(element, m_ownerSVGElement)) {
-        if (SVGSMILElement::isSMILElement(element))
-            toSVGSMILElement(element)->setDocumentOrderIndex(timingElementCount++);
-    }
+    SVGSMILElement* smilElement = Traversal<SVGSMILElement>::firstWithin(m_ownerSVGElement);
+    for (; smilElement; smilElement = Traversal<SVGSMILElement>::next(smilElement, m_ownerSVGElement))
+        smilElement->setDocumentOrderIndex(timingElementCount++);
     m_documentOrderIndexesDirty = false;
 }
 

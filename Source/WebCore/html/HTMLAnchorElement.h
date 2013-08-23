@@ -149,12 +149,12 @@ inline LinkHash HTMLAnchorElement::visitedLinkHash() const
     return m_cachedVisitedLinkHash; 
 }
 
-inline bool isHTMLAnchorElement(Node* node)
+inline bool isHTMLAnchorElement(const Node* node)
 {
     return node->hasTagName(HTMLNames::aTag);
 }
 
-inline bool isHTMLAnchorElement(Element* element)
+inline bool isHTMLAnchorElement(const Element* element)
 {
     return element->hasTagName(HTMLNames::aTag);
 }
@@ -164,6 +164,8 @@ inline HTMLAnchorElement* toHTMLAnchorElement(Node* node)
     ASSERT_WITH_SECURITY_IMPLICATION(!node || isHTMLAnchorElement(node));
     return static_cast<HTMLAnchorElement*>(node);
 }
+
+template <> inline bool isElementOfType<HTMLAnchorElement>(const Element* element) { return isHTMLAnchorElement(element); }
 
 // Functions shared with the other anchor elements (i.e., SVG).
 

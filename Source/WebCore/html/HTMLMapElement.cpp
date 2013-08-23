@@ -62,16 +62,12 @@ HTMLMapElement::~HTMLMapElement()
 bool HTMLMapElement::mapMouseEvent(LayoutPoint location, const LayoutSize& size, HitTestResult& result)
 {
     HTMLAreaElement* defaultArea = 0;
-    Element* element = this;
-    while ((element = ElementTraversal::next(element, this))) {
-        if (isHTMLAreaElement(element)) {
-            HTMLAreaElement* areaElt = toHTMLAreaElement(element);
-            if (areaElt->isDefault()) {
-                if (!defaultArea)
-                    defaultArea = areaElt;
-            } else if (areaElt->mapMouseEvent(location, size, result))
-                return true;
-        }
+    for (HTMLAreaElement* area = Traversal<HTMLAreaElement>::firstWithin(this); area; area = Traversal<HTMLAreaElement>::next(area, this)) {
+        if (area->isDefault()) {
+            if (!defaultArea)
+                defaultArea = area;
+        } else if (area->mapMouseEvent(location, size, result))
+            return true;
     }
     
     if (defaultArea) {

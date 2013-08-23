@@ -154,6 +154,8 @@ inline HTMLElement::HTMLElement(const QualifiedName& tagName, Document* document
     ASSERT(tagName.localName().impl());
 }
 
+template <> inline bool isElementOfType<HTMLElement>(const Element* element) { return element->isHTMLElement(); }
+
 } // namespace WebCore
 
 #endif // HTMLElement_h

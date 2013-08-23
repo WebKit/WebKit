@@ -78,6 +78,7 @@
 #include "History.h"
 #include "HTMLAllCollection.h"
 #include "HTMLAnchorElement.h"
+#include "HTMLBaseElement.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLCollection.h"
 #include "HTMLDocument.h"
@@ -1559,13 +1560,8 @@ void Document::removeTitle(Element* titleElement)
 
     // Update title based on first title element in the head, if one exists.
     if (HTMLElement* headElement = head()) {
-        for (Element* element = ElementTraversal::firstWithin(headElement); element; element = ElementTraversal::nextSibling(element)) {
-            if (isHTMLTitleElement(element)) {
-                HTMLTitleElement* titleElement = toHTMLTitleElement(element);
-                setTitleElement(titleElement->textWithDirection(), titleElement);
-                break;
-            }
-        }
+        if (HTMLTitleElement* titleElement = Traversal<HTMLTitleElement>::firstWithin(headElement))
+            setTitleElement(titleElement->textWithDirection(), titleElement);
     }
 
     if (!m_titleElement)
@@ -2613,10 +2609,8 @@ void Document::updateBaseURL()
     if (!equalIgnoringFragmentIdentifier(oldBaseURL, m_baseURL)) {
         // Base URL change changes any relative visited links.
         // FIXME: There are other URLs in the tree that would need to be re-evaluated on dynamic base URL change. Style should be invalidated too.
-        for (Element* element = ElementTraversal::firstWithin(this); element; element = ElementTraversal::next(element)) {
-            if (isHTMLAnchorElement(element))
-                toHTMLAnchorElement(element)->invalidateCachedVisitedLinkHash();
-        }
+        for (HTMLAnchorElement* anchor = Traversal<HTMLAnchorElement>::firstWithin(this); anchor; anchor = Traversal<HTMLAnchorElement>::next(anchor))
+            anchor->invalidateCachedVisitedLinkHash();
     }
 }
 
@@ -2631,18 +2625,16 @@ void Document::processBaseElement()
     // Find the first href attribute in a base element and the first target attribute in a base element.
     const AtomicString* href = 0;
     const AtomicString* target = 0;
-    for (Element* element = ElementTraversal::firstWithin(this); element && (!href || !target); element = ElementTraversal::next(element)) {
-        if (element->hasTagName(baseTag)) {
-            if (!href) {
-                const AtomicString& value = element->fastGetAttribute(hrefAttr);
-                if (!value.isNull())
-                    href = &value;
-            }
-            if (!target) {
-                const AtomicString& value = element->fastGetAttribute(targetAttr);
-                if (!value.isNull())
-                    target = &value;
-            }
+    for (HTMLBaseElement* base = Traversal<HTMLBaseElement>::firstWithin(this); base && (!href || !target); base = Traversal<HTMLBaseElement>::next(base)) {
+        if (!href) {
+            const AtomicString& value = base->fastGetAttribute(hrefAttr);
+            if (!value.isNull())
+                href = &value;
+        }
+        if (!target) {
+            const AtomicString& value = base->fastGetAttribute(targetAttr);
+            if (!value.isNull())
+                target = &value;
         }
     }
 

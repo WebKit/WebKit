@@ -36,19 +36,13 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-static LabelableElement* nodeAsLabelableElement(Node* node)
+static LabelableElement* nodeAsSupportedLabelableElement(Node* node)
 {
-    if (!node || !node->isHTMLElement())
+    if (!node || !isLabelableElement(node))
         return 0;
-    
-    HTMLElement* element = static_cast<HTMLElement*>(node);
-    if (!element->isLabelable())
-        return 0;
-
-    LabelableElement* labelableElement = static_cast<LabelableElement*>(element);
+    LabelableElement* labelableElement = static_cast<LabelableElement*>(node);
     if (!labelableElement->supportLabels())
         return 0;
-
     return labelableElement;
 }
 
@@ -75,9 +69,10 @@ LabelableElement* HTMLLabelElement::control()
         // Search the children and descendants of the label element for a form element.
         // per http://dev.w3.org/html5/spec/Overview.html#the-label-element
         // the form element must be "labelable form-associated element".
-        Element* element = this;
-        while ((element = ElementTraversal::next(element, this))) {
-            if (LabelableElement* labelableElement = nodeAsLabelableElement(element))
+
+        LabelableElement* labelableElement = Traversal<LabelableElement>::firstWithin(this);
+        for (; labelableElement; labelableElement = Traversal<LabelableElement>::next(labelableElement, this)) {
+            if (labelableElement->supportLabels())
                 return labelableElement;
         }
         return 0;
@@ -85,7 +80,7 @@ LabelableElement* HTMLLabelElement::control()
     
     // Find the first element whose id is controlId. If it is found and it is a labelable form control,
     // return it, otherwise return 0.
-    return nodeAsLabelableElement(treeScope()->getElementById(controlId));
+    return nodeAsSupportedLabelableElement(treeScope()->getElementById(controlId));
 }
 
 HTMLFormElement* HTMLLabelElement::form() const

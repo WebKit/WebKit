@@ -2753,9 +2753,9 @@ void AccessibilityRenderObject::addImageMapChildren()
     if (!map)
         return;
 
-    for (Element* current = ElementTraversal::firstWithin(map); current; current = ElementTraversal::next(current, map)) {
+    for (HTMLAreaElement* current = Traversal<HTMLAreaElement>::firstWithin(map); current; current = Traversal<HTMLAreaElement>::next(current, map)) {
         // add an <area> element for this child if it has a link
-        if (isHTMLAreaElement(current) && current->isLink()) {
+        if (current->isLink()) {
             AccessibilityImageMapLink* areaObject = static_cast<AccessibilityImageMapLink*>(axObjectCache()->getOrCreate(ImageMapLinkRole));
             areaObject->setHTMLAreaElement(toHTMLAreaElement(current));
             areaObject->setHTMLMapElement(map);

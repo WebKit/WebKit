@@ -1970,11 +1970,11 @@ static HTMLFormElement* scanForForm(Node* start)
 {
     if (!start)
         return 0;
-    Element* element = start->isElementNode() ? toElement(start) : ElementTraversal::next(start);
-    for (; element; element = ElementTraversal::next(element)) {
+    HTMLElement* element = start->isHTMLElement() ? toHTMLElement(start) : Traversal<HTMLElement>::next(start);
+    for (; element; element = Traversal<HTMLElement>::next(element)) {
         if (isHTMLFormElement(element))
             return toHTMLFormElement(element);
-        if (element->isHTMLElement() && toHTMLElement(element)->isFormControlElement())
+        if (element->isFormControlElement())
             return static_cast<HTMLFormControlElement*>(element)->form();
         if (element->hasTagName(frameTag) || element->hasTagName(iframeTag))
             if (HTMLFormElement* frameResult = scanForForm(toHTMLFrameElementBase(element)->contentDocument()))

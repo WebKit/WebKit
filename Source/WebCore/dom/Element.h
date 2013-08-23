@@ -692,6 +692,10 @@ inline const Element* toElement(const Node* node)
 // This will catch anyone doing an unnecessary cast.
 void toElement(const Element*);
 
+template <typename Type> bool isElementOfType(const Element*);
+template <typename Type> bool isElementOfType(const Node* node) { return node->isElementNode() && isElementOfType<Type>(toElement(node)); }
+template <> inline bool isElementOfType<Element>(const Element*) { return true; }
+
 inline bool isDisabledFormControl(const Node* node)
 {
     return node->isElementNode() && toElement(node)->isDisabledFormControl();

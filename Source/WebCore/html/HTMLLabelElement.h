@@ -55,15 +55,17 @@ private:
     virtual void focus(bool restorePreviousSelection, FocusDirection) OVERRIDE;
 };
 
-inline bool isHTMLLabelElement(Node* node)
+inline bool isHTMLLabelElement(const Node* node)
 {
     return node->hasTagName(HTMLNames::labelTag);
 }
 
-inline bool isHTMLLabelElement(Element* element)
+inline bool isHTMLLabelElement(const Element* element)
 {
     return element->hasTagName(HTMLNames::labelTag);
 }
+
+template <> inline bool isElementOfType<HTMLLabelElement>(const Element* element) { return isHTMLLabelElement(element); }
 
 inline HTMLLabelElement* toHTMLLabelElement(Node* node)
 {

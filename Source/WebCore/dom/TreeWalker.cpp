@@ -35,7 +35,7 @@
 namespace WebCore {
 
 TreeWalker::TreeWalker(PassRefPtr<Node> rootNode, unsigned whatToShow, PassRefPtr<NodeFilter> filter, bool expandEntityReferences)
-    : Traversal(rootNode, whatToShow, filter, expandEntityReferences)
+    : NodeIteratorBase(rootNode, whatToShow, filter, expandEntityReferences)
     , m_current(root())
 {
 }

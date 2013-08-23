@@ -160,10 +160,7 @@ PassRefPtr<FilterEffect> FilterEffectRenderer::buildReferenceFilter(RenderObject
     // This may need a spec clarification.
     RefPtr<SVGFilterBuilder> builder = SVGFilterBuilder::create(previousEffect, SourceAlpha::create(this));
 
-    for (Element* element = ElementTraversal::firstWithin(filter); element; element = ElementTraversal::nextSibling(element)) {
-        if (!element->isSVGElement())
-            continue;
-        SVGElement* svgElement = toSVGElement(element);
+    for (SVGElement* svgElement = Traversal<SVGElement>::firstChild(filter); svgElement; svgElement = Traversal<SVGElement>::nextSibling(svgElement)) {
         if (!svgElement->isFilterEffect())
             continue;
         SVGFilterPrimitiveStandardAttributes* effectElement = static_cast<SVGFilterPrimitiveStandardAttributes*>(svgElement);

@@ -1,3 +1,132 @@
+2013-08-23  Antti Koivisto  <antti@apple.com>
+
+        <https://webkit.org/b/120166> Add Traversal<ElementType> template
+
+        Reviewed by Andreas Kling.
+
+        It is common to traverse through a subtree looking for elements of specific type and then casting to the type. This pattern can be generalized.
+        
+        This patch adds a new Traversal<typename ElementType> template. It works like ElementTraversal except that the traversal is limited to the specified type.
+        The patch also uses the template in a bunch of applicable places.
+
+        * WebCore.exp.in:
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::addImageMapChildren):
+        * dom/Document.cpp:
+        (WebCore::Document::removeTitle):
+        (WebCore::Document::updateBaseURL):
+        (WebCore::Document::processBaseElement):
+        * dom/Element.h:
+        * dom/ElementTraversal.h:
+        (WebCore::::firstChildTemplate):
+        (WebCore::::firstWithinTemplate):
+        (WebCore::::lastChildTemplate):
+        (WebCore::::lastWithinTemplate):
+        (WebCore::::nextTemplate):
+        (WebCore::::previousTemplate):
+        (WebCore::::nextSiblingTemplate):
+        (WebCore::::previousSiblingTemplate):
+        (WebCore::::nextSkippingChildrenTemplate):
+        (WebCore::::firstChild):
+        (WebCore::::lastChild):
+        (WebCore::::firstWithin):
+        (WebCore::::lastWithin):
+        (WebCore::::next):
+        (WebCore::::previous):
+        (WebCore::::nextSibling):
+        (WebCore::::previousSibling):
+        (WebCore::::nextSkippingChildren):
+        (WebCore::ElementTraversal::previousIncludingPseudo):
+        (WebCore::ElementTraversal::nextIncludingPseudo):
+        (WebCore::ElementTraversal::nextIncludingPseudoSkippingChildren):
+        (WebCore::ElementTraversal::pseudoAwarePreviousSibling):
+        * dom/Node.cpp:
+        (WebCore::Node::numberOfScopedHTMLStyleChildren):
+        * dom/NodeIterator.cpp:
+        (WebCore::NodeIterator::NodeIterator):
+        * dom/NodeIterator.h:
+        * dom/Traversal.cpp:
+        (WebCore::NodeIteratorBase::NodeIteratorBase):
+        (WebCore::NodeIteratorBase::acceptNode):
+        * dom/Traversal.h:
+        
+            Renamed existing class called Traversal to less generic NodeIteratorBase.
+
+        * dom/TreeScope.cpp:
+        (WebCore::TreeScope::labelElementForId):
+        (WebCore::TreeScope::findAnchor):
+        * dom/TreeWalker.cpp:
+        (WebCore::TreeWalker::TreeWalker):
+        * dom/TreeWalker.h:
+        * editing/FrameSelection.cpp:
+        (WebCore::scanForForm):
+        * editing/markup.cpp:
+        (WebCore::createContextualFragment):
+        * html/HTMLAnchorElement.h:
+        (WebCore::isHTMLAnchorElement):
+        (WebCore::HTMLAnchorElement):
+        * html/HTMLAreaElement.h:
+        (WebCore::isHTMLAreaElement):
+        (WebCore::HTMLAreaElement):
+        * html/HTMLBaseElement.h:
+        (WebCore::isHTMLBaseElement):
+        (WebCore::HTMLBaseElement):
+        * html/HTMLElement.h:
+        (WebCore::HTMLElement):
+        * html/HTMLFieldSetElement.cpp:
+        (WebCore::HTMLFieldSetElement::invalidateDisabledStateUnder):
+        (WebCore::HTMLFieldSetElement::childrenChanged):
+        (WebCore::HTMLFieldSetElement::legend):
+        * html/HTMLFormControlElement.h:
+        (WebCore::toHTMLFormControlElement):
+        (WebCore::HTMLFormControlElement):
+        * html/HTMLLabelElement.cpp:
+        (WebCore::nodeAsSupportedLabelableElement):
+        (WebCore::HTMLLabelElement::control):
+        * html/HTMLLabelElement.h:
+        (WebCore::isHTMLLabelElement):
+        (WebCore::HTMLLabelElement):
+        * html/HTMLLegendElement.h:
+        (WebCore::isHTMLLegendElement):
+        (WebCore::HTMLLegendElement):
+        * html/HTMLMapElement.cpp:
+        (WebCore::HTMLMapElement::mapMouseEvent):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::finishParsingChildren):
+        * html/HTMLStyleElement.h:
+        (WebCore::isHTMLStyleElement):
+        (WebCore::HTMLStyleElement):
+        * html/HTMLTitleElement.h:
+        (WebCore::HTMLTitleElement):
+        * html/HTMLTrackElement.h:
+        (WebCore::isHTMLTrackElement):
+        (WebCore::HTMLTrackElement):
+        * html/LabelableElement.h:
+        (WebCore::isLabelableElement):
+        (WebCore::LabelableElement):
+        * rendering/FilterEffectRenderer.cpp:
+        (WebCore::FilterEffectRenderer::buildReferenceFilter):
+        * svg/SVGElement.h:
+        (WebCore::SVGElement):
+        * svg/SVGForeignObjectElement.h:
+        (WebCore::isSVGForeignObjectElement):
+        (WebCore::SVGForeignObjectElement):
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::collectIntersectionOrEnclosureList):
+        (WebCore::SVGSVGElement::getElementById):
+        * svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::title):
+        * svg/SVGTitleElement.h:
+        (WebCore::SVGTitleElement):
+        * svg/animation/SMILTimeContainer.cpp:
+        (WebCore::SMILTimeContainer::updateDocumentOrderIndexes):
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::SVGSMILElement::isSMILElement):
+        * svg/animation/SVGSMILElement.h:
+        (WebCore::SVGSMILElement):
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::hasSingleSecurityOrigin):
+
 2013-08-23  Arpita Bahuguna  <a.bah@samsung.com>
 
         <br> does not get deleted when inlined after some non-textual content.

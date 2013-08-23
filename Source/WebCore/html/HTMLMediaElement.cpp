@@ -535,12 +535,8 @@ void HTMLMediaElement::finishParsingChildren()
     if (!RuntimeEnabledFeatures::webkitVideoTrackEnabled())
         return;
 
-    for (Element* element = ElementTraversal::firstWithin(this); element; element = ElementTraversal::nextSibling(element)) {
-        if (element->hasTagName(trackTag)) {
-            scheduleDelayedAction(ConfigureTextTracks);
-            break;
-        }
-    }
+    if (Traversal<HTMLTrackElement>::firstWithin(this))
+        scheduleDelayedAction(ConfigureTextTracks);
 #endif
 }
 

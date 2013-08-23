@@ -51,10 +51,8 @@ PassRefPtr<HTMLFieldSetElement> HTMLFieldSetElement::create(const QualifiedName&
 
 void HTMLFieldSetElement::invalidateDisabledStateUnder(Element* base)
 {
-    for (Element* element = ElementTraversal::firstWithin(base); element; element = ElementTraversal::next(element, base)) {
-        if (element->isFormControlElement())
-            static_cast<HTMLFormControlElement*>(element)->ancestorDisabledStateWasChanged();
-    }
+    for (HTMLFormControlElement* control = Traversal<HTMLFormControlElement>::firstWithin(base); control; control = Traversal<HTMLFormControlElement>::next(control, base))
+        control->ancestorDisabledStateWasChanged();
 }
 
 void HTMLFieldSetElement::disabledAttributeChanged()
@@ -67,10 +65,8 @@ void HTMLFieldSetElement::disabledAttributeChanged()
 void HTMLFieldSetElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
 {
     HTMLFormControlElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
-    for (Element* element = ElementTraversal::firstWithin(this); element; element = ElementTraversal::nextSibling(element)) {
-        if (element->hasTagName(legendTag))
-            invalidateDisabledStateUnder(element);
-    }
+    for (HTMLLegendElement* legend = Traversal<HTMLLegendElement>::firstChild(this); legend; legend = Traversal<HTMLLegendElement>::nextSibling(legend))
+        invalidateDisabledStateUnder(legend);
 }
 
 bool HTMLFieldSetElement::supportsFocus() const
@@ -91,11 +87,7 @@ RenderObject* HTMLFieldSetElement::createRenderer(RenderArena* arena, RenderStyl
 
 HTMLLegendElement* HTMLFieldSetElement::legend() const
 {
-    for (Element* child = ElementTraversal::firstWithin(this); child; child = ElementTraversal::nextSibling(child)) {
-        if (child->hasTagName(legendTag))
-            return static_cast<HTMLLegendElement*>(child);
-    }
-    return 0;
+    return Traversal<HTMLLegendElement>::firstWithin(this);
 }
 
 PassRefPtr<HTMLCollection> HTMLFieldSetElement::elements()

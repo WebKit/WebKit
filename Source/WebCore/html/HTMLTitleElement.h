@@ -62,6 +62,8 @@ inline HTMLTitleElement* toHTMLTitleElement(Node* node)
     return static_cast<HTMLTitleElement*>(node);
 }
 
+template <> inline bool isElementOfType<HTMLTitleElement>(const Element* element) { return isHTMLTitleElement(element); }
+
 } //namespace
 
 #endif

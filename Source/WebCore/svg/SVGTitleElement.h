@@ -23,6 +23,7 @@
 #if ENABLE(SVG)
 
 #include "SVGElement.h"
+#include "SVGNames.h"
 
 namespace WebCore {
 
@@ -39,6 +40,8 @@ private:
 
     virtual bool rendererIsNeeded(const RenderStyle&) { return false; }
 };
+
+template <> inline bool isElementOfType<SVGTitleElement>(const Element* element) { return element->hasTagName(SVGNames::titleTag); }
 
 } // namespace WebCore
 

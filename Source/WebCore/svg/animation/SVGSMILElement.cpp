@@ -415,7 +415,7 @@ bool SVGSMILElement::parseCondition(const String& value, BeginOrEnd beginOrEnd)
     return true;
 }
 
-bool SVGSMILElement::isSMILElement(Node* node)
+bool SVGSMILElement::isSMILElement(const Node* node)
 {
     if (!node)
         return false;

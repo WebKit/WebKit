@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-Traversal::Traversal(PassRefPtr<Node> rootNode, unsigned whatToShow, PassRefPtr<NodeFilter> nodeFilter, bool expandEntityReferences)
+NodeIteratorBase::NodeIteratorBase(PassRefPtr<Node> rootNode, unsigned whatToShow, PassRefPtr<NodeFilter> nodeFilter, bool expandEntityReferences)
     : m_root(rootNode)
     , m_whatToShow(whatToShow)
     , m_filter(nodeFilter)
@@ -38,7 +38,7 @@ Traversal::Traversal(PassRefPtr<Node> rootNode, unsigned whatToShow, PassRefPtr<
 {
 }
 
-short Traversal::acceptNode(ScriptState* state, Node* node) const
+short NodeIteratorBase::acceptNode(ScriptState* state, Node* node) const
 {
     // FIXME: To handle XML properly we would have to check m_expandEntityReferences.
 

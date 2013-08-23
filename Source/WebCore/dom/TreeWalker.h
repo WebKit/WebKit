@@ -35,7 +35,7 @@ namespace WebCore {
 
     typedef int ExceptionCode;
 
-    class TreeWalker : public ScriptWrappable, public RefCounted<TreeWalker>, public Traversal {
+    class TreeWalker : public ScriptWrappable, public RefCounted<TreeWalker>, public NodeIteratorBase {
     public:
         static PassRefPtr<TreeWalker> create(PassRefPtr<Node> rootNode, unsigned whatToShow, PassRefPtr<NodeFilter> filter, bool expandEntityReferences)
         {

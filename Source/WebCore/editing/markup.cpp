@@ -1055,14 +1055,13 @@ PassRefPtr<DocumentFragment> createContextualFragment(const String& markup, HTML
     // accommodate folks passing complete HTML documents to make the
     // child of an element.
 
-    RefPtr<Element> nextElement;
-    for (RefPtr<Element> element = ElementTraversal::firstWithin(fragment.get()); element; element = nextElement) {
-        nextElement = ElementTraversal::nextSibling(element.get());
+    RefPtr<HTMLElement> nextElement;
+    for (RefPtr<HTMLElement> element = Traversal<HTMLElement>::firstWithin(fragment.get()); element; element = nextElement) {
+        nextElement = Traversal<HTMLElement>::nextSibling(element.get());
         if (element->hasTagName(htmlTag) || element->hasTagName(headTag) || element->hasTagName(bodyTag)) {
-            HTMLElement* htmlElement = toHTMLElement(element.get());
-            if (Element* firstChild = ElementTraversal::firstWithin(htmlElement))
+            if (HTMLElement* firstChild = Traversal<HTMLElement>::firstChild(element.get()))
                 nextElement = firstChild;
-            removeElementPreservingChildren(fragment, htmlElement);
+            removeElementPreservingChildren(fragment, element.get());
         }
     }
     return fragment.release();

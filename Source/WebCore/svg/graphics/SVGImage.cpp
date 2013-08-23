@@ -40,6 +40,7 @@
 #include "RenderSVGRoot.h"
 #include "RenderStyle.h"
 #include "SVGDocument.h"
+#include "SVGForeignObjectElement.h"
 #include "SVGImageChromeClient.h"
 #include "SVGSVGElement.h"
 #include "Settings.h"
@@ -74,10 +75,8 @@ bool SVGImage::hasSingleSecurityOrigin() const
         return true;
 
     // Don't allow foreignObject elements since they can leak information with arbitrary HTML (like spellcheck or control theme).
-    for (Element* current = ElementTraversal::firstWithin(rootElement); current; current = ElementTraversal::next(current, rootElement)) {
-        if (current->hasTagName(SVGNames::foreignObjectTag))
-            return false;
-    }
+    if (Traversal<SVGForeignObjectElement>::firstWithin(rootElement))
+        return false;
 
     // Because SVG image rendering disallows external resources and links,
     // these images effectively are restricted to a single security origin.
