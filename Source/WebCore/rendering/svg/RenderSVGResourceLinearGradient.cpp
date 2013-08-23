@@ -42,7 +42,7 @@ RenderSVGResourceLinearGradient::~RenderSVGResourceLinearGradient()
 bool RenderSVGResourceLinearGradient::collectGradientAttributes(SVGGradientElement* gradientElement)
 {
     m_attributes = LinearGradientAttributes();
-    return static_cast<SVGLinearGradientElement*>(gradientElement)->collectGradientAttributes(m_attributes);
+    return toSVGLinearGradientElement(gradientElement)->collectGradientAttributes(m_attributes);
 }
 
 FloatPoint RenderSVGResourceLinearGradient::startPoint(const LinearGradientAttributes& attributes) const

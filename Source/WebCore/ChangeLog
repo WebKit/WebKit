@@ -1,3 +1,22 @@
+2013-08-22  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Introduce toSVGLinearGradientElement(), and use it
+        https://bugs.webkit.org/show_bug.cgi?id=120154
+
+        Reviewed by Andreas Kling.
+
+        As a step to clean-up static_cast<SVGXXX>, toSVGLinearGradientElement() is added to clean-up
+        static_cast<SVGLinearGradientElement*>.
+
+        * rendering/svg/RenderSVGResourceLinearGradient.cpp:
+        (WebCore::RenderSVGResourceLinearGradient::collectGradientAttributes):
+        * rendering/svg/SVGRenderTreeAsText.cpp:
+        (WebCore::writeSVGResourceContainer):
+        * svg/SVGLinearGradientElement.cpp:
+        (WebCore::SVGLinearGradientElement::collectGradientAttributes):
+        * svg/SVGLinearGradientElement.h:
+        (WebCore::toSVGLinearGradientElement):
+
 2013-08-22  Simon Fraser  <simon.fraser@apple.com>
 
         compositing/geometry/bounds-ignores-hidden-dynamic.html has incorrect initial rendering

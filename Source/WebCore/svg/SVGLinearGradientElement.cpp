@@ -153,7 +153,7 @@ bool SVGLinearGradientElement::collectGradientAttributes(LinearGradientAttribute
         }
 
         if (isLinear) {
-            SVGLinearGradientElement* linear = static_cast<SVGLinearGradientElement*>(current);
+            SVGLinearGradientElement* linear = toSVGLinearGradientElement(current);
 
             if (!attributes.hasX1() && current->hasAttribute(SVGNames::x1Attr))
                 attributes.setX1(linear->x1());

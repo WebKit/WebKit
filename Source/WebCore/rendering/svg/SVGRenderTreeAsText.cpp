@@ -552,7 +552,7 @@ void writeSVGResourceContainer(TextStream& ts, const RenderObject& object, int i
 
         // Dump final results that are used for rendering. No use in asking SVGGradientElement for its gradientUnits(), as it may
         // link to other gradients using xlink:href, we need to build the full inheritance chain, aka. collectGradientProperties()
-        SVGLinearGradientElement* linearGradientElement = static_cast<SVGLinearGradientElement*>(gradient->node());
+        SVGLinearGradientElement* linearGradientElement = toSVGLinearGradientElement(gradient->node());
 
         LinearGradientAttributes attributes;
         linearGradientElement->collectGradientAttributes(attributes);
