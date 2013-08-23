@@ -235,7 +235,6 @@ editing/text-iterator/findString-selection-disabled.html
 
 # WebKit2 needs an implementation of FrameLoaderClient::revertToProvisionalState
 # https://bugs.webkit.org/show_bug.cgi?id=81365
-http/tests/multipart/load-last-non-html-frame.php
 http/tests/multipart/multipart-wait-before-boundary.html
 
 # layoutTestController.setWindowIsKey() has no effect on the web process side in WebKit2

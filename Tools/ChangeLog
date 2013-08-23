@@ -1,3 +1,16 @@
+2013-08-23  Peter Gal  <galpeter@inf.u-szeged.hu>
+
+        [WTR] Should dump as text when the mimetype is text/plain
+        https://bugs.webkit.org/show_bug.cgi?id=118306
+
+        Reviewed by Christophe Dumez.
+
+        Check for the text/plain mimetype and if true then mark it as
+        text dump.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::dump):
+
 2013-08-22  Filip Pizlo  <fpizlo@apple.com>
 
         Update LLVM binary drops and scripts to the latest version from SVN

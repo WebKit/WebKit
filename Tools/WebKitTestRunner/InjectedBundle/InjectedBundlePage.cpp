@@ -848,8 +848,10 @@ void InjectedBundlePage::dump()
     WKBundlePageForceRepaint(m_page);
 
     WKBundleFrameRef frame = WKBundlePageGetMainFrame(m_page);
-    WTF::String url = toWTFString(adoptWK(WKURLCopyString(adoptWK(WKBundleFrameCopyURL(frame)).get())));
-    if (url.find("dumpAsText/") != WTF::notFound)
+    WKRetainPtr<WKURLRef> urlRef = adoptWK(WKBundleFrameCopyURL(frame));
+    String url = toWTFString(adoptWK(WKURLCopyString(urlRef.get())));
+    WKRetainPtr<WKStringRef> mimeType = adoptWK(WKBundleFrameCopyMIMETypeForResourceWithURL(frame, urlRef.get()));
+    if (url.find("dumpAsText/") != notFound || WKStringIsEqualToUTF8CString(mimeType.get(), "text/plain"))
         InjectedBundle::shared().testRunner()->dumpAsText(false);
 
     StringBuilder stringBuilder;
