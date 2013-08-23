@@ -1,5 +1,121 @@
 2013-08-23  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
+        Moving expectations from Qt 5.0 WK2 to Qt WK2 - Part 6
+
+        Unreviewed gardening.
+
+        * platform/qt-wk2/http/tests/cache/cancel-multiple-post-xhrs-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk2/http/tests/cache/cancel-multiple-post-xhrs-expected.txt.
+        * platform/qt-wk2/http/tests/loading/simple-subframe-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/http/tests/loading/simple-subframe-expected.png.
+        * platform/qt-wk2/http/tests/local/file-url-sent-as-referer-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/http/tests/local/file-url-sent-as-referer-expected.png.
+        * platform/qt-wk2/http/tests/misc/acid2-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/http/tests/misc/acid2-expected.png.
+        * platform/qt-wk2/http/tests/misc/acid3-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/http/tests/misc/acid3-expected.png.
+        * platform/qt-wk2/http/tests/misc/error404-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/http/tests/misc/error404-expected.png.
+        * platform/qt-wk2/http/tests/misc/favicon-as-image-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/http/tests/misc/favicon-as-image-expected.png.
+        * platform/qt-wk2/http/tests/misc/frame-access-during-load-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/http/tests/misc/frame-access-during-load-expected.png.
+        * platform/qt-wk2/http/tests/misc/iframe404-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/http/tests/misc/iframe404-expected.png.
+        * platform/qt-wk2/http/tests/misc/object-embedding-svg-delayed-size-negotiation-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/http/tests/misc/object-embedding-svg-delayed-size-negotiation-expected.png.
+        * platform/qt-wk2/http/tests/misc/slow-loading-image-in-pattern-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/http/tests/misc/slow-loading-image-in-pattern-expected.png.
+        * platform/qt-wk2/http/tests/misc/will-send-request-returns-null-on-redirect-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk2/http/tests/misc/will-send-request-returns-null-on-redirect-expected.txt.
+        * platform/qt-wk2/http/tests/misc/window-dot-stop-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk2/http/tests/misc/window-dot-stop-expected.txt.
+        * platform/qt-wk2/http/tests/navigation/error404-basic-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/http/tests/navigation/error404-basic-expected.png.
+        * platform/qt-wk2/http/tests/navigation/error404-goback-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/http/tests/navigation/error404-goback-expected.png.
+        * platform/qt-wk2/http/tests/navigation/javascriptlink-frames-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/http/tests/navigation/javascriptlink-frames-expected.png.
+        * platform/qt-wk2/http/tests/navigation/postredirect-basic-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/http/tests/navigation/postredirect-basic-expected.png.
+        * platform/qt-wk2/http/tests/navigation/postredirect-basic-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk2/http/tests/navigation/postredirect-basic-expected.txt.
+        * platform/qt-wk2/http/tests/navigation/postredirect-goback1-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/http/tests/navigation/postredirect-goback1-expected.png.
+        * platform/qt-wk2/http/tests/navigation/postredirect-goback1-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk2/http/tests/navigation/postredirect-goback1-expected.txt.
+        * platform/qt-wk2/http/tests/security/XFrameOptions/x-frame-options-deny-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk2/http/tests/security/XFrameOptions/x-frame-options-deny-expected.txt.
+        * platform/qt-wk2/http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk2/http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-expected.txt.
+        * platform/qt-wk2/http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-in-body-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk2/http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-in-body-expected.txt.
+        * platform/qt-wk2/http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-deny-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk2/http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-deny-expected.txt.
+        * platform/qt-wk2/http/tests/security/XFrameOptions/x-frame-options-multiple-headers-conflict-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk2/http/tests/security/XFrameOptions/x-frame-options-multiple-headers-conflict-expected.txt.
+        * platform/qt-wk2/http/tests/security/XFrameOptions/x-frame-options-multiple-headers-sameorigin-deny-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk2/http/tests/security/XFrameOptions/x-frame-options-multiple-headers-sameorigin-deny-expected.txt.
+        * platform/qt-wk2/http/tests/security/XFrameOptions/x-frame-options-parent-same-origin-deny-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk2/http/tests/security/XFrameOptions/x-frame-options-parent-same-origin-deny-expected.txt.
+        * platform/qt-wk2/http/tests/uri/css-href-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/http/tests/uri/css-href-expected.png.
+        * platform/qt-wk2/http/tests/websocket/tests/hybi/bad-sub-protocol-non-ascii-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk2/http/tests/websocket/tests/hybi/bad-sub-protocol-non-ascii-expected.txt.
+        * platform/qt-wk2/http/tests/xmlhttprequest/abort-should-cancel-load-expected.txt: Renamed from LayoutTests/platform/qt-5.0-wk2/http/tests/xmlhttprequest/abort-should-cancel-load-expected.txt.
+        * platform/qt-wk2/ietestcenter/css3/bordersbackgrounds/background-attachment-local-scrolling-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/ietestcenter/css3/bordersbackgrounds/background-attachment-local-scrolling-expected.png.
+        * platform/qt-wk2/ietestcenter/css3/bordersbackgrounds/background-color-applied-to-rounded-inline-element-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/ietestcenter/css3/bordersbackgrounds/background-color-applied-to-rounded-inline-element-expected.png.
+        * platform/qt-wk2/ietestcenter/css3/bordersbackgrounds/background-color-border-box-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/ietestcenter/css3/bordersbackgrounds/background-color-border-box-expected.png.
+        * platform/qt-wk2/ietestcenter/css3/bordersbackgrounds/background-size-002-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/ietestcenter/css3/bordersbackgrounds/background-size-002-expected.png.
+        * platform/qt-wk2/ietestcenter/css3/bordersbackgrounds/background-size-applies-to-block-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/ietestcenter/css3/bordersbackgrounds/background-size-applies-to-block-expected.png.
+        * platform/qt-wk2/ietestcenter/css3/bordersbackgrounds/background-size-aspect-ratio-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/ietestcenter/css3/bordersbackgrounds/background-size-aspect-ratio-expected.png.
+        * platform/qt-wk2/ietestcenter/css3/bordersbackgrounds/background_color_padding_box-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/ietestcenter/css3/bordersbackgrounds/background_color_padding_box-expected.png.
+        * platform/qt-wk2/ietestcenter/css3/bordersbackgrounds/background_position_three_four_values-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/ietestcenter/css3/bordersbackgrounds/background_position_three_four_values-expected.png.
+        * platform/qt-wk2/ietestcenter/css3/bordersbackgrounds/background_properties_greater_than_images-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/ietestcenter/css3/bordersbackgrounds/background_properties_greater_than_images-expected.png.
+        * platform/qt-wk2/ietestcenter/css3/bordersbackgrounds/background_repeat_space_border_box-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/ietestcenter/css3/bordersbackgrounds/background_repeat_space_border_box-expected.png.
+        * platform/qt-wk2/ietestcenter/css3/bordersbackgrounds/background_repeat_space_content_box-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/ietestcenter/css3/bordersbackgrounds/background_repeat_space_content_box-expected.png.
+        * platform/qt-wk2/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-001-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-001-expected.png.
+        * platform/qt-wk2/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-002-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-002-expected.png.
+        * platform/qt-wk2/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-003-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-003-expected.png.
+        * platform/qt-wk2/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-004-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-004-expected.png.
+        * platform/qt-wk2/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-005-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-005-expected.png.
+        * platform/qt-wk2/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-006-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-006-expected.png.
+        * platform/qt-wk2/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-007-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-007-expected.png.
+        * platform/qt-wk2/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-008-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-008-expected.png.
+        * platform/qt-wk2/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-009-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-009-expected.png.
+        * platform/qt-wk2/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-010-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-010-expected.png.
+        * platform/qt-wk2/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-011-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-011-expected.png.
+        * platform/qt-wk2/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-012-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-012-expected.png.
+        * platform/qt-wk2/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-013-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-013-expected.png.
+        * platform/qt-wk2/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-014-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-014-expected.png.
+        * platform/qt-wk2/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-015-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-015-expected.png.
+        * platform/qt-wk2/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-016-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-016-expected.png.
+        * platform/qt-wk2/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-017-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/ietestcenter/css3/bordersbackgrounds/border-radius-applies-to-017-expected.png.
+        * platform/qt-wk2/ietestcenter/css3/bordersbackgrounds/border-radius-clip-001-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/ietestcenter/css3/bordersbackgrounds/border-radius-clip-001-expected.png.
+        * platform/qt-wk2/ietestcenter/css3/bordersbackgrounds/border-radius-clip-002-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/ietestcenter/css3/bordersbackgrounds/border-radius-clip-002-expected.png.
+        * platform/qt-wk2/ietestcenter/css3/bordersbackgrounds/border-radius-content-edge-001-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/ietestcenter/css3/bordersbackgrounds/border-radius-content-edge-001-expected.png.
+        * platform/qt-wk2/ietestcenter/css3/bordersbackgrounds/border-radius-different-width-001-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/ietestcenter/css3/bordersbackgrounds/border-radius-different-width-001-expected.png.
+        * platform/qt-wk2/ietestcenter/css3/bordersbackgrounds/border-radius-initial-value-001-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/ietestcenter/css3/bordersbackgrounds/border-radius-initial-value-001-expected.png.
+        * platform/qt-wk2/ietestcenter/css3/bordersbackgrounds/border-radius-not-inherited-001-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/ietestcenter/css3/bordersbackgrounds/border-radius-not-inherited-001-expected.png.
+        * platform/qt-wk2/ietestcenter/css3/bordersbackgrounds/border-radius-shorthand-001-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/ietestcenter/css3/bordersbackgrounds/border-radius-shorthand-001-expected.png.
+        * platform/qt-wk2/ietestcenter/css3/bordersbackgrounds/border-radius-style-003-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/ietestcenter/css3/bordersbackgrounds/border-radius-style-003-expected.png.
+        * platform/qt-wk2/ietestcenter/css3/bordersbackgrounds/border-radius-style-004-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/ietestcenter/css3/bordersbackgrounds/border-radius-style-004-expected.png.
+        * platform/qt-wk2/ietestcenter/css3/bordersbackgrounds/border-radius-style-005-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/ietestcenter/css3/bordersbackgrounds/border-radius-style-005-expected.png.
+        * platform/qt-wk2/ietestcenter/css3/bordersbackgrounds/border-radius-sum-of-radii-001-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/ietestcenter/css3/bordersbackgrounds/border-radius-sum-of-radii-001-expected.png.
+        * platform/qt-wk2/ietestcenter/css3/bordersbackgrounds/border-radius-sum-of-radii-002-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/ietestcenter/css3/bordersbackgrounds/border-radius-sum-of-radii-002-expected.png.
+        * platform/qt-wk2/ietestcenter/css3/bordersbackgrounds/border-radius-with-three-values-001-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/ietestcenter/css3/bordersbackgrounds/border-radius-with-three-values-001-expected.png.
+        * platform/qt-wk2/ietestcenter/css3/bordersbackgrounds/border-radius-with-two-values-001-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/ietestcenter/css3/bordersbackgrounds/border-radius-with-two-values-001-expected.png.
+        * platform/qt-wk2/ietestcenter/css3/bordersbackgrounds/border-top-left-radius-values-001-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/ietestcenter/css3/bordersbackgrounds/border-top-left-radius-values-001-expected.png.
+        * platform/qt-wk2/ietestcenter/css3/bordersbackgrounds/border-top-left-radius-values-002-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/ietestcenter/css3/bordersbackgrounds/border-top-left-radius-values-002-expected.png.
+        * platform/qt-wk2/ietestcenter/css3/bordersbackgrounds/border-top-left-radius-values-003-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/ietestcenter/css3/bordersbackgrounds/border-top-left-radius-values-003-expected.png.
+        * platform/qt-wk2/ietestcenter/css3/bordersbackgrounds/border-top-left-radius-values-004-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/ietestcenter/css3/bordersbackgrounds/border-top-left-radius-values-004-expected.png.
+        * platform/qt-wk2/ietestcenter/css3/bordersbackgrounds/border-top-right-radius-values-004-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/ietestcenter/css3/bordersbackgrounds/border-top-right-radius-values-004-expected.png.
+        * platform/qt-wk2/ietestcenter/css3/bordersbackgrounds/box-shadow-001-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/ietestcenter/css3/bordersbackgrounds/box-shadow-001-expected.png.
+        * platform/qt-wk2/ietestcenter/css3/bordersbackgrounds/box-shadow-002-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/ietestcenter/css3/bordersbackgrounds/box-shadow-002-expected.png.
+        * platform/qt-wk2/ietestcenter/css3/bordersbackgrounds/box-shadow-003-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/ietestcenter/css3/bordersbackgrounds/box-shadow-003-expected.png.
+        * platform/qt-wk2/ietestcenter/css3/bordersbackgrounds/box-shadow-004-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/ietestcenter/css3/bordersbackgrounds/box-shadow-004-expected.png.
+        * platform/qt-wk2/ietestcenter/css3/bordersbackgrounds/color-behind-images-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/ietestcenter/css3/bordersbackgrounds/color-behind-images-expected.png.
+        * platform/qt-wk2/ietestcenter/css3/bordersbackgrounds/none-as-image-layer-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/ietestcenter/css3/bordersbackgrounds/none-as-image-layer-expected.png.
+        * platform/qt-wk2/ietestcenter/css3/bordersbackgrounds/order-of-images-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/ietestcenter/css3/bordersbackgrounds/order-of-images-expected.png.
+        * platform/qt-wk2/ietestcenter/css3/text/textshadow-001-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/ietestcenter/css3/text/textshadow-001-expected.png.
+        * platform/qt-wk2/ietestcenter/css3/text/textshadow-003-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/ietestcenter/css3/text/textshadow-003-expected.png.
+        * platform/qt-wk2/ietestcenter/css3/text/textshadow-004-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/ietestcenter/css3/text/textshadow-004-expected.png.
+        * platform/qt-wk2/ietestcenter/css3/text/textshadow-005-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/ietestcenter/css3/text/textshadow-005-expected.png.
+        * platform/qt-wk2/ietestcenter/css3/text/textshadow-006-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/ietestcenter/css3/text/textshadow-006-expected.png.
+        * platform/qt-wk2/ietestcenter/css3/text/textshadow-007-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/ietestcenter/css3/text/textshadow-007-expected.png.
+        * platform/qt-wk2/ietestcenter/css3/text/textshadow-008-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/ietestcenter/css3/text/textshadow-008-expected.png.
+        * platform/qt-wk2/ietestcenter/css3/text/textshadow-009-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/ietestcenter/css3/text/textshadow-009-expected.png.
+        * platform/qt-wk2/ietestcenter/css3/text/textshadow-010-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/ietestcenter/css3/text/textshadow-010-expected.png.
+        * platform/qt-wk2/platform/qt/fast/forms/button-line-break-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/platform/qt/fast/forms/button-line-break-expected.png.
+        * platform/qt-wk2/transforms/2d/compound-transforms-vs-containers-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/transforms/2d/compound-transforms-vs-containers-expected.png.
+        * platform/qt-wk2/transforms/2d/transform-borderbox-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/transforms/2d/transform-borderbox-expected.png.
+        * platform/qt-wk2/transforms/2d/transform-fixed-container-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/transforms/2d/transform-fixed-container-expected.png.
+        * platform/qt-wk2/transforms/2d/transform-origin-borderbox-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/transforms/2d/transform-origin-borderbox-expected.png.
+        * platform/qt-wk2/transforms/2d/zoom-menulist-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/transforms/2d/zoom-menulist-expected.png.
+        * platform/qt-wk2/transforms/3d/general/matrix-with-zoom-3d-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/transforms/3d/general/matrix-with-zoom-3d-expected.png.
+        * platform/qt-wk2/transforms/3d/hit-testing/backface-hit-test-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/transforms/3d/hit-testing/backface-hit-test-expected.png.
+        * platform/qt-wk2/transforms/3d/hit-testing/backface-no-transform-hit-test-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/transforms/3d/hit-testing/backface-no-transform-hit-test-expected.png.
+        * platform/qt-wk2/transforms/3d/point-mapping/3d-point-mapping-3-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/transforms/3d/point-mapping/3d-point-mapping-3-expected.png.
+        * platform/qt-wk2/transforms/3d/point-mapping/3d-point-mapping-coplanar-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/transforms/3d/point-mapping/3d-point-mapping-coplanar-expected.png.
+        * platform/qt-wk2/transforms/3d/point-mapping/3d-point-mapping-deep-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/transforms/3d/point-mapping/3d-point-mapping-deep-expected.png.
+        * platform/qt-wk2/transforms/3d/point-mapping/3d-point-mapping-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/transforms/3d/point-mapping/3d-point-mapping-expected.png.
+        * platform/qt-wk2/transforms/3d/point-mapping/3d-point-mapping-overlapping-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/transforms/3d/point-mapping/3d-point-mapping-overlapping-expected.png.
+        * platform/qt-wk2/transforms/3d/point-mapping/3d-point-mapping-preserve-3d-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/transforms/3d/point-mapping/3d-point-mapping-preserve-3d-expected.png.
+        * platform/qt-wk2/transforms/svg-vs-css-expected.png: Renamed from LayoutTests/platform/qt-5.0-wk2/transforms/svg-vs-css-expected.png.
+
+2013-08-23  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
         Moving expectations from Qt 5.0 WK2 to Qt WK2 - Part 5
 
         Unreviewed gardening.
