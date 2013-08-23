@@ -1,3 +1,13 @@
+2013-08-23  Alexey Proskuryakov  <ap@apple.com>
+
+        http/tests/cache/partitioned-cache.html breaks subsequent cookie tests
+        https://bugs.webkit.org/show_bug.cgi?id=120212
+
+        Updating test results for a last minute change that moved lines.
+
+        * http/tests/cache/partitioned-cache-expected.txt:
+        * platform/qt/http/tests/cache/partitioned-cache-expected.txt:
+
 2013-08-23  Michael Saboff  <msaboff@apple.com>
 
         regexp-match-reify-before-putbyval is not a JSRegress test
