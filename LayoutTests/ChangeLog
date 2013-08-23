@@ -1,3 +1,28 @@
+2013-08-23  Alexey Proskuryakov  <ap@apple.com>
+
+        http/tests/cache/partitioned-cache.html breaks subsequent cookie tests
+        https://bugs.webkit.org/show_bug.cgi?id=120212
+
+        Reviewed by Tim Horton.
+
+        The test never deleted its localhost cookie, so subsequent third party cookie
+        relaxing tests saw the existing cookie and failed.
+
+        There is no need to use cookies in this test, and it's actually slightly incorrect,
+        as the network layer may refuse to use a cached result simply because cookies changed,
+        and then we wouldn't test 3rd party data blocking.
+
+        * platform/qt/http/tests/cache/partitioned-cache-expected.txt:
+        * http/tests/cache/partitioned-cache-expected.txt: Updated results. It took me 
+        a long time to understand what the test was doing, so made it a bit more self-descriptive.
+
+        * http/tests/cache/partitioned-cache.html: Tabs to spaces.
+
+        * http/tests/cache/resources/echo-cookie.cgi: Removed.
+        * http/tests/cache/resources/partitioned-cache-echo-state.php: Added.
+        * http/tests/cache/resources/partitioned-cache-loader.html:
+        Changed to use a local file on the server to modify resource content.
+
 2013-08-23  Bear Travis  <betravis@adobe.com>
 
         <https://webkit.org/b/119864> [CSS Shapes] Remove extraneous window.internals calls in layout tests

@@ -1,4 +1,8 @@
-CONSOLE MESSAGE: line 10: localhost
-CONSOLE MESSAGE: line 10: 127.0.0.1
+CONSOLE MESSAGE: line 13: Document domain is now localhost
+CONSOLE MESSAGE: line 14: Setting server-side persistent state to "localhost"
+CONSOLE MESSAGE: line 23: Server state retrieved via a 1st party resource: "localhost"
+CONSOLE MESSAGE: line 13: Document domain is now 127.0.0.1
+CONSOLE MESSAGE: line 14: Setting server-side persistent state to "127.0.0.1"
+CONSOLE MESSAGE: line 26: Server state retrieved via a 3rd party resource (possibly a cached result, but it shouldn't be): "127.0.0.1"
 PASS response is "127.0.0.1"
 
