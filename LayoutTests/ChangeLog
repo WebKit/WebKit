@@ -1,3 +1,12 @@
+2013-08-23  Chris Fleizach  <cfleizach@apple.com>
+
+        <https://webkit.org/b/113895> Webkit exposes aria-expanded="undefined" as aria-expanded="false" (AXExpanded = NO)
+
+        Reviewed by Darin Adler.
+
+        * platform/mac/accessibility/aria-expanded-not-exposed-when-undefined-expected.txt: Added.
+        * platform/mac/accessibility/aria-expanded-not-exposed-when-undefined.html: Added.
+
 2013-08-23  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         Moving expectations from Qt 5.0 WK2 to Qt WK2 - Part 7

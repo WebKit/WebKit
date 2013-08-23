@@ -1648,7 +1648,9 @@ int AccessibilityObject::ariaPosInSet() const
     
 bool AccessibilityObject::supportsARIAExpanded() const
 {
-    return !getAttribute(aria_expandedAttr).isEmpty();
+    // Undefined values should not result in this attribute being exposed to ATs according to ARIA.
+    const AtomicString& expanded = getAttribute(aria_expandedAttr);
+    return equalIgnoringCase(expanded, "true") || equalIgnoringCase(expanded, "false");
 }
     
 bool AccessibilityObject::isExpanded() const
