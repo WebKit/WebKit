@@ -186,7 +186,9 @@ int JSGlobalObject::addGlobalVar(const Identifier& ident, ConstantMode constantM
     if (functionMode == IsFunctionToSpecialize)
         newEntry.attemptToWatch();
     SymbolTable::Map::AddResult result = symbolTable()->add(locker, ident.impl(), newEntry);
-    if (!result.isNewEntry) {
+    if (result.isNewEntry)
+        addRegisters(1);
+    else {
         result.iterator->value.notifyWrite();
         index = result.iterator->value.getIndex();
     }

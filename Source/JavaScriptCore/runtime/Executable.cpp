@@ -390,10 +390,6 @@ JSObject* ProgramExecutable::initializeGlobalProperties(VM& vm, CallFrame* callF
     const UnlinkedProgramCodeBlock::VariableDeclations& variableDeclarations = unlinkedCode->variableDeclarations();
     const UnlinkedProgramCodeBlock::FunctionDeclations& functionDeclarations = unlinkedCode->functionDeclarations();
 
-    size_t newGlobals = variableDeclarations.size() + functionDeclarations.size();
-    if (!newGlobals)
-        return 0;
-    globalObject->addRegisters(newGlobals);
     CallFrame* globalExec = globalObject->globalExec();
 
     for (size_t i = 0; i < functionDeclarations.size(); ++i) {

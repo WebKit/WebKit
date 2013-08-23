@@ -1,5 +1,26 @@
 2013-08-22  Gavin Barraclough  <barraclough@apple.com>
 
+        Don't leak registers for redeclared variables
+        https://bugs.webkit.org/show_bug.cgi?id=120174
+
+        Reviewed by Geoff Garen.
+
+        We currently always allocate registers for new global variables, but these are wasted when the variable is being redeclared.
+        Only allocate new registers when necessary.
+
+        No performance impact.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute):
+        * runtime/Executable.cpp:
+        (JSC::ProgramExecutable::initializeGlobalProperties):
+            - Don't allocate the register here.
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::addGlobalVar):
+            - Allocate the register here instead.
+
+2013-08-22  Gavin Barraclough  <barraclough@apple.com>
+
         https://bugs.webkit.org/show_bug.cgi?id=120128
         Remove putDirectVirtual
 

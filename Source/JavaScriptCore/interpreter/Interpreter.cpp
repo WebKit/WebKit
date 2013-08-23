@@ -735,7 +735,6 @@ JSValue Interpreter::execute(ProgramExecutable* program, CallFrame* callFrame, J
             JSONPPath.swap(JSONPData[entry].m_path);
             JSValue JSONPValue = JSONPData[entry].m_value.get();
             if (JSONPPath.size() == 1 && JSONPPath[0].m_type == JSONPPathEntryTypeDeclare) {
-                globalObject->addRegisters(1);
                 globalObject->addVar(callFrame, JSONPPath[0].m_pathEntryName);
                 PutPropertySlot slot;
                 globalObject->methodTable()->put(globalObject, callFrame, JSONPPath[0].m_pathEntryName, JSONPValue, slot);
