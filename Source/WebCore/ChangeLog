@@ -1,3 +1,23 @@
+2013-08-23  David Kilzer  <ddkilzer@apple.com>
+
+        WebCore fails to link due to changes in Objective-C++ ABI in trunk clang
+        <http://webkit.org/b/120183>
+        <rdar://problem/14764114>
+
+        Reviewed by Eric Carlson.
+
+        The trunk version of clang made an ABI change for Objective-C++
+        parameters that caused WebCore to fail to link.  The short-term
+        fix is to change the parameter type from id<protocol> to just id
+        and add an ASSERT that the parameter still conforms to the
+        protocol.
+
+        * platform/DragData.h:
+        (DragDataRef): Change typedef from id<NSDragInfo> to id.
+        * platform/mac/DragDataMac.mm:
+        (WebCore::DragData::DragData): Add ASSERT that checks that the
+        DragDataRef object implements the NSDragInfo protocol.
+
 2013-08-23  Andreas Kling  <akling@apple.com>
 
         RenderLayerCompositor::m_renderView should be a reference.
