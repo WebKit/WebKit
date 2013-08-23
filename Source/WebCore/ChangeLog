@@ -1,112 +1,41 @@
-2013-08-23  Brent Fulgham  <bfulgham@apple.com>
+2013-08-23  Eric Carlson  <eric.carlson@apple.com>
 
-        [Windows] Unreviewed build correction. Need to force environment variable
-        to be escaped when running nmake command.
+        [Mac] some track language tags are not recognized
+        https://bugs.webkit.org/show_bug.cgi?id=119643
 
-        * WebCore.vcxproj/WebCoreGenerated.make:
+        Reviewed by Jere Noble.
 
-2013-08-23  Antti Koivisto  <antti@apple.com>
+        No new tests, existing tests updated.
 
-        Use ElementTraversal some more
-        https://bugs.webkit.org/show_bug.cgi?id=120226
-
-        Reviewed by Darin Adler.
-
-        More traversal with tighter typing.
-
-        * accessibility/AccessibilityNodeObject.cpp:
-        (WebCore::AccessibilityNodeObject::canvasHasFallbackContent):
-        (WebCore::siblingWithAriaRole):
-        * accessibility/AccessibilityTable.cpp:
-        (WebCore::AccessibilityTable::isDataTable):
-        * css/CSSFontFaceSource.cpp:
-        (WebCore::CSSFontFaceSource::getFontData):
-        * dom/ContainerNode.cpp:
-        (WebCore::willRemoveChild):
-        * dom/ContainerNodeAlgorithms.h:
-        (WebCore::ChildFrameDisconnector::ChildFrameDisconnector):
-        (WebCore::ChildFrameDisconnector::collectFrameOwners):
-        (WebCore::ChildFrameDisconnector::disconnect):
         * html/HTMLMediaElement.cpp:
-        (WebCore::HTMLMediaElement::selectMediaResource):
-        (WebCore::HTMLMediaElement::textTrackModeChanged):
-        (WebCore::HTMLMediaElement::cancelPendingEventsAndCallbacks):
-        * html/HTMLObjectElement.cpp:
-        (WebCore::HTMLObjectElement::parametersForPlugin):
-        (WebCore::HTMLObjectElement::containsJavaApplet):
-        * html/HTMLParamElement.h:
-        (WebCore::isHTMLParamElement):
-        (WebCore::HTMLParamElement):
-        * html/HTMLSourceElement.h:
-        (WebCore::isHTMLSourceElement):
-        (WebCore::HTMLSourceElement):
-        * svg/SVGFontFaceElement.h:
-        (WebCore::isSVGFontFaceElement):
-        (WebCore::SVGFontFaceElement):
-        (WebCore::toSVGFontFaceElement):
+        (WebCore::HTMLMediaElement::HTMLMediaElement): Initialize m_captionDisplayMode from settings
+            if possible.
+        (WebCore::HTMLMediaElement::configureTextTrackGroup): Don't enable a default track when preferences
+            say captions should be disabled. Don't disable an already visible track if we don't find
+            a match unless preferences say captions should be disabled. m_forcedOrAutomaticSubtitleTrackLanguage ->
+            m_subtitleTrackLanguage.
+        (WebCore::HTMLMediaElement::mediaPlayerCharacteristicChanged): If the language of the primary
+            audio track changes, only kick off a text track recalc if caption preference are set to "automatic".
+        * html/HTMLMediaElement.h:
 
-2013-08-23  Andreas Kling  <akling@apple.com>
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::MediaPlayerPrivateAVFoundation): Initialize m_characteristicsChanged
+            and m_delayCharacteristicsChangedNotification.
+        (WebCore::MediaPlayerPrivateAVFoundation::setHasVideo): Call characteristicsChanged.
+        (WebCore::MediaPlayerPrivateAVFoundation::setHasAudio): Ditto.
+        (WebCore::MediaPlayerPrivateAVFoundation::setHasClosedCaptions): Ditto.
+        (WebCore::MediaPlayerPrivateAVFoundation::characteristicsChanged): New, allows us to coalesce 
+            calls to the media player when we know several characteristics may change.
+        (WebCore::MediaPlayerPrivateAVFoundation::setDelayCharacteristicsChangedNotification): Enable or
+            disable notification delay.
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h:
 
-        Let Document keep its RenderView during render tree attach.
-        <https://webkit.org/b/120224>
-
-        Reviewed by Antti Koivisto.
-
-        Remove prehistoric code that cleared Document's renderer pointer during tree attach.
-
-        * dom/Document.cpp:
-        (WebCore::Document::attach):
-
-2013-08-23  Darin Adler  <darin@apple.com>
-
-        Reduce use of Node in HTMLTableRowsCollection, and use modern traversal idiom
-        https://bugs.webkit.org/show_bug.cgi?id=120222
-
-        Reviewed by Antti Koivisto.
-
-        * html/HTMLTableRowElement.h:
-        (WebCore::isHTMLTableRowElement): Added.
-        (WebCore::isElementOfType<HTMLTableRowElement>): Added.
-        (WebCore::toHTMLTableRowElement): Added.
-
-        * html/HTMLTableRowsCollection.cpp:
-        (WebCore::assertRowIsInTable): Refactored a bit. Changed #if as Andy Estes
-        requested during rewview and got rid of local variables.
-        (WebCore::HTMLTableRowsCollection::rowAfter): Moved a ocmment in here.
-        Changed code to traverse elements instead of nodes, and used the Traversal<>
-        template to eliminate some loops entirely.
-        (WebCore::HTMLTableRowsCollection::lastRow): Ditto.
-        (WebCore::HTMLTableRowsCollection::HTMLTableRowsCollection): Changed argument
-        type from Node to HTMLTableElement.
-        (WebCore::HTMLTableRowsCollection::create): Added an assertion for the value
-        of the collection type argument, and added the typecast here needed for the
-        change above.
-        (WebCore::HTMLTableRowsCollection::virtualItemAfter): Removed the assertion
-        here that was a subset of the assertion we now have inside the rowAfter function.
-
-        * html/HTMLTableRowsCollection.h: Added FINAL. Made single-argument constructor
-        explicit.
-
-2013-08-23  Alex Christensen  <achristensen@apple.com>
-
-        Re-separating Win32 and Win64 builds.
-        https://bugs.webkit.org/show_bug.cgi?id=120178
-
-        Reviewed by Brent Fulgham.
-
-        * WebCore.vcxproj/WebCoreGenerated.make:
-        * WebCore.vcxproj/WebCoreGeneratedWinCairo.make:
-        Pass PlatformArchitecture as a command line parameter to bash scripts
-        and use PlatformArchitecture to determine which directory to delete
-        while cleaning (obj32 or obj64).
-        * WebCore.vcxproj/WebCoreGeneratedWinCairoCommon.props:
-        Export PlatformArchitecture to be used by make and cmd scripts.
-        * WebCore.vcxproj/build-generated-files.sh:
-        Use PlatformArchitecture from command line to determine which object directory to use (obj32 or obj64).
-        * WebCore.vcxproj/copyForwardingHeaders.cmd:
-        * WebCore.vcxproj/copyWebCoreResourceFiles.cmd:
-        Use PlatformArchitecture to determine which directory to copy to (obj32 or obj64).
-
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::tracksChanged): Always call languageOfPrimaryAudioTrack(),
+            a track may have changed so we may have a new language.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::languageOfPrimaryAudioTrack): Call [AVAssetTrack languageCode]
+            if [AVAssetTrack extendedLanguageTag] returns NULL in case the media file has an old
+            QuickTime language code.
 
 2013-08-23  Andreas Kling  <akling@apple.com>
 

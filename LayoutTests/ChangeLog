@@ -1,3 +1,31 @@
+2013-08-23  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac] some track language tags are not recognized
+        https://bugs.webkit.org/show_bug.cgi?id=119643
+
+        Reviewed by Jer Noble.
+
+        Explicitly set caption mode to "Automatic" so the track 'default' attribute works.
+
+        * media/track/text-track-cue-is-reachable.html: 
+        * media/track/text-track-is-reachable.html: 
+        * media/track/track-active-cues.html:
+        * media/track/track-cue-overlap-snap-to-lines-not-set.html:
+        * media/track/track-cue-rendering-horizontal.html:
+        * media/track/track-cue-rendering-vertical.html:
+        * media/track/track-kind.html:
+        * media/track/track-large-timestamp.html:
+        * media/track/track-mode.html:
+        * media/track/track-text-track-cue-list.html:
+        * media/track/track-webvtt-tc000-empty.html:
+        * media/track/track-webvtt-tc002-bom.html:
+        * media/track/track-webvtt-tc010-no-timings.html:
+        * media/track/track-webvtt-tc027-empty-cue.html:
+        * media/track/track-webvtt-tc028-unsupported-markup.html:
+        * media/track/track-word-breaking.html:
+        * media/video-test.js:
+        (setCaptionDisplayMode):
+
 2013-08-23  Filip Pizlo  <fpizlo@apple.com>
 
         Incorrect TypedArray#set behavior
