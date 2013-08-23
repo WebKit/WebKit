@@ -1980,13 +1980,9 @@ void Document::attach()
 
     recalcStyle(Style::Force);
 
-    RenderObject* render = renderer();
-    setRenderer(0);
-
     for (Element* child = ElementTraversal::firstWithin(this); child; child = ElementTraversal::nextSibling(child))
         Style::attachRenderTree(child);
 
-    setRenderer(render);
     setAttached(true);
 }
 
