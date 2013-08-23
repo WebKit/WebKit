@@ -1,3 +1,9 @@
+2013-08-23  Simon Pena  <simon.pena@samsung.com>
+
+        [GTK] Unreviewed gardening. Update test expectations.
+
+        * platform/gtk/TestExpectations:
+
 2013-08-23  Renata Hodovan  <reni@webkit.org>
 
         Missing null-check in HTMLFormElement::rendererIsNeeded()
