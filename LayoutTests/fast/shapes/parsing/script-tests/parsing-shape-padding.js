@@ -1,8 +1,5 @@
 description('Test parsing of the CSS shape-padding property.');
 
-if (window.internals)
-    window.internals.settings.setCSSShapesEnabled(true);
-
 // The test functions and globals used here are defined parsing-test-utils.js.
 
 validShapeLengths.forEach(function(value, i, a) {

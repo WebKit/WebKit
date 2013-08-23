@@ -1,3 +1,117 @@
+2013-08-23  Bear Travis  <betravis@adobe.com>
+
+        <https://webkit.org/b/119864> [CSS Shapes] Remove extraneous window.internals calls in layout tests
+
+        Reviewed by Alexandru Chiculita.
+
+        Removing calls to window.internals.settings.setCSSShapesEnabled from these files, as
+        CSS Shapes is enabled by default in test builds.
+
+        * fast/regions/shape-inside/shape-inside-on-additional-regions.html:
+        * fast/regions/shape-inside/shape-inside-on-first-region-block-content.html:
+        * fast/regions/shape-inside/shape-inside-on-first-region-inline-content.html:
+        * fast/regions/shape-inside/shape-inside-on-regions-block-content-basic-overflow-shape-top-offset.html:
+        * fast/regions/shape-inside/shape-inside-on-regions-block-content-overflow-bottom-positioned-multiple-shapes.html:
+        * fast/regions/shape-inside/shape-inside-on-regions-block-content-overflow-multiple-shapes.html:
+        * fast/regions/shape-inside/shape-inside-on-regions-block-content-polygon-with-adjustment-expected.html:
+        * fast/regions/shape-inside/shape-inside-on-regions-block-content-polygon-with-adjustment.html:
+        * fast/regions/shape-inside/shape-inside-on-regions-expected.html:
+        * fast/regions/shape-inside/shape-inside-on-regions-inline-content-basic-overflow-shape-top-offset.html:
+        * fast/regions/shape-inside/shape-inside-on-regions-inline-content-overflow-bottom-positioned-multiple-shapes.html:
+        * fast/regions/shape-inside/shape-inside-on-regions-inline-content-overflow-multiple-shapes.html:
+        * fast/regions/shape-inside/shape-inside-on-regions-inline-content-polygon-with-adjustment-expected.html:
+        * fast/regions/shape-inside/shape-inside-on-regions-inline-content-polygon-with-adjustment.html:
+        * fast/regions/shape-inside/shape-inside-on-regions-inline-content.html:
+        * fast/regions/shape-inside/shape-inside-on-regions.html:
+        * fast/regions/shape-inside/shape-inside-on-second-region-block-content.html:
+        * fast/regions/shape-inside/shape-inside-on-second-region-inline-content.html:
+        * fast/regions/shape-inside/shape-inside-recursive-layout.html:
+        * fast/regions/shape-inside/shape-inside-with-region-borders.html:
+        * fast/regions/shape-inside/shape-inside-with-region-padding.html:
+        * fast/shapes/css-shapes-disabled.html:
+        * fast/shapes/parsing/script-tests/parsing-shape-inside.js:
+        * fast/shapes/parsing/script-tests/parsing-shape-lengths.js:
+        * fast/shapes/parsing/script-tests/parsing-shape-margin.js:
+        * fast/shapes/parsing/script-tests/parsing-shape-outside.js:
+        * fast/shapes/parsing/script-tests/parsing-shape-padding.js:
+        * fast/shapes/resources/multi-segment-polygon.js:
+        * fast/shapes/resources/simple-polygon.js:
+        * fast/shapes/resources/simple-rectangle.js:
+        * fast/shapes/shape-inside/shape-inside-animation.html:
+        * fast/shapes/shape-inside/shape-inside-bottom-edge.html:
+        * fast/shapes/shape-inside/shape-inside-box-sizing.html:
+        * fast/shapes/shape-inside/shape-inside-circle-padding.html:
+        * fast/shapes/shape-inside/shape-inside-circle.html:
+        * fast/shapes/shape-inside/shape-inside-coincident-vertices-expected.html:
+        * fast/shapes/shape-inside/shape-inside-coincident-vertices.html:
+        * fast/shapes/shape-inside/shape-inside-collinear-vertices-expected.html:
+        * fast/shapes/shape-inside/shape-inside-collinear-vertices.html:
+        * fast/shapes/shape-inside/shape-inside-counterclockwise-polygon-expected.html:
+        * fast/shapes/shape-inside/shape-inside-counterclockwise-polygon.html:
+        * fast/shapes/shape-inside/shape-inside-dynamic-nested-expected.html:
+        * fast/shapes/shape-inside/shape-inside-dynamic-nested.html:
+        * fast/shapes/shape-inside/shape-inside-dynamic-shape.html:
+        * fast/shapes/shape-inside/shape-inside-dynamic-text.html:
+        * fast/shapes/shape-inside/shape-inside-ellipse-padding.html:
+        * fast/shapes/shape-inside/shape-inside-ellipse.html:
+        * fast/shapes/shape-inside/shape-inside-empty.html:
+        * fast/shapes/shape-inside/shape-inside-first-fit-001-horizontal.html:
+        * fast/shapes/shape-inside/shape-inside-first-fit-001-vertical.html:
+        * fast/shapes/shape-inside/shape-inside-first-fit-002.html:
+        * fast/shapes/shape-inside/shape-inside-first-fit-003.html:
+        * fast/shapes/shape-inside/shape-inside-first-fit-004-expected.html:
+        * fast/shapes/shape-inside/shape-inside-first-fit-004.html:
+        * fast/shapes/shape-inside/shape-inside-first-fit-reflex.html:
+        * fast/shapes/shape-inside/shape-inside-inline-elements.html:
+        * fast/shapes/shape-inside/shape-inside-multiple-blocks-vertical.html:
+        * fast/shapes/shape-inside/shape-inside-multiple-blocks.html:
+        * fast/shapes/shape-inside/shape-inside-on-nested-container-with-unresolved-height.html:
+        * fast/shapes/shape-inside/shape-inside-overflow-fixed-dimensions-block-content.html:
+        * fast/shapes/shape-inside/shape-inside-overflow-fixed-dimensions.html:
+        * fast/shapes/shape-inside/shape-inside-overflow.html:
+        * fast/shapes/shape-inside/shape-inside-partial-fill-001.html:
+        * fast/shapes/shape-inside/shape-inside-partial-fill-002.html:
+        * fast/shapes/shape-inside/shape-inside-percentage-auto.html:
+        * fast/shapes/shape-inside/shape-inside-percentage.html:
+        * fast/shapes/shape-inside/shape-inside-polygon-layout.html:
+        * fast/shapes/shape-inside/shape-inside-polygon-padding-001.html:
+        * fast/shapes/shape-inside/shape-inside-polygon-padding-002.html:
+        * fast/shapes/shape-inside/shape-inside-polygon-padding-003.html:
+        * fast/shapes/shape-inside/shape-inside-polygon-rectangle.html:
+        * fast/shapes/shape-inside/shape-inside-polygon-zoom.html:
+        * fast/shapes/shape-inside/shape-inside-rectangle-padding.html:
+        * fast/shapes/shape-inside/shape-inside-rectilinear-polygon-001-expected.html:
+        * fast/shapes/shape-inside/shape-inside-rectilinear-polygon-001.html:
+        * fast/shapes/shape-inside/shape-inside-rectilinear-polygon-002-expected.html:
+        * fast/shapes/shape-inside/shape-inside-rectilinear-polygon-002.html:
+        * fast/shapes/shape-inside/shape-inside-rectilinear-polygon-003-expected.html:
+        * fast/shapes/shape-inside/shape-inside-rectilinear-polygon-003.html:
+        * fast/shapes/shape-inside/shape-inside-rectilinear-polygon-004-expected.html:
+        * fast/shapes/shape-inside/shape-inside-rectilinear-polygon-004.html:
+        * fast/shapes/shape-inside/shape-inside-regular-polygon16-expected.html:
+        * fast/shapes/shape-inside/shape-inside-regular-polygon16.html:
+        * fast/shapes/shape-inside/shape-inside-regular-polygon8-expected.html:
+        * fast/shapes/shape-inside/shape-inside-regular-polygon8.html:
+        * fast/shapes/shape-inside/shape-inside-rounded-rectangle-001.html:
+        * fast/shapes/shape-inside/shape-inside-rounded-rectangle-fit-001-expected.html:
+        * fast/shapes/shape-inside/shape-inside-rounded-rectangle-fit-001.html:
+        * fast/shapes/shape-inside/shape-inside-rounded-rectangle-fit-002-expected.html:
+        * fast/shapes/shape-inside/shape-inside-rounded-rectangle-fit-002.html:
+        * fast/shapes/shape-inside/shape-inside-rounded-rectangle-fit-003-expected.html:
+        * fast/shapes/shape-inside/shape-inside-rounded-rectangle-fit-003.html:
+        * fast/shapes/shape-inside/shape-inside-rounded-rectangle-large-radius-expected.html:
+        * fast/shapes/shape-inside/shape-inside-rounded-rectangle-large-radius.html:
+        * fast/shapes/shape-inside/shape-inside-rounded-rectangle-padding.html:
+        * fast/shapes/shape-inside/shape-inside-shape-logical-top.html:
+        * fast/shapes/shape-inside/shape-inside-sibling-block-dimension-change-needs-relayout-expected.html:
+        * fast/shapes/shape-inside/shape-inside-sibling-block-dimension-change-needs-relayout.html:
+        * fast/shapes/shape-inside/shape-inside-text.html:
+        * fast/shapes/shape-inside/shape-inside-vertical-text.html:
+        * fast/shapes/shape-outside-floats/shape-outside-floats-diamond-margin-polygon.html:
+        * fast/shapes/shape-outside-floats/shape-outside-floats-ellipse-margin-bottom.html:
+        * fast/shapes/shape-outside-floats/shape-outside-floats-ellipse-margin-left.html:
+        * fast/shapes/shape-outside-floats/shape-outside-floats-ellipse-margin-right.html:
+
 2013-08-23  Yoav Weiss  <yoav@yoav.ws>
 
         Fix srcset's image candidate algorithm when DPR exceeds all candidates

@@ -1,8 +1,5 @@
 description('Testing parsing of the -webkit-shape-inside property.');
 
-if (window.internals)
-    window.internals.settings.setCSSShapesEnabled(true);
-
 // The test functions and globals used here are defined parsing-test-utils.js.
 
 validShapeValues.concat("outside-shape").forEach(function(elt, i, a) { 

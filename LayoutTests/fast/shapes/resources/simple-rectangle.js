@@ -1,6 +1,3 @@
-if (window.internals)
-    window.internals.settings.setCSSShapesEnabled(true);
-
 function createRectangleTest(elementId, stylesheetId, bounds, shapeBounds, units, content) {
     var elem;
     if (elementId)

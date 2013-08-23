@@ -1,6 +1,4 @@
 function generatePolygon(width, height, fontSize, points, content, elementId) {
-    if (window.internals)
-        window.internals.settings.setCSSShapesEnabled(true);
     var div = createOrInsert(elementId);
     var polygon = points.map(function(elem, index, array) {
         return elem.toString() + 'px' + (index < array.length - 1 && index % 2 == 1 ? ',' : '');

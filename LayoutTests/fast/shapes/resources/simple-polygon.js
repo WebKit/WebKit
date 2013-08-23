@@ -1,7 +1,5 @@
 // The functions in this file are intended to be used to test non-complex polygons
 // where horizontal lines that overlap the polygon only cross the polygon twice.
-if (window.internals)
-    window.internals.settings.setCSSShapesEnabled(true);
 
 function createPolygon(vertices) {
     var xCoordinates = vertices.map( function(p) { return p.x; } );

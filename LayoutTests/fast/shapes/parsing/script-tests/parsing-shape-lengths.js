@@ -1,8 +1,5 @@
 description('Test that exclusion shapes accept different length units');
 
-if (window.internals)
-    window.internals.settings.setCSSShapesEnabled(true);
-
 // The test functions and globals used here are defined parsing-test-utils.js.
 
 function getStyleValue(property, value) {
