@@ -1,3 +1,11 @@
+2013-08-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build fix after r154515.
+
+        * dom/ElementTraversal.h:
+        (WebCore::Traversal<ElementType>::firstChild):
+        (WebCore::Traversal<ElementType>::lastChild):
+
 2013-08-23  Andreas Kling  <akling@apple.com>
 
         Simplify some Settings access where we have a Frame in reach.

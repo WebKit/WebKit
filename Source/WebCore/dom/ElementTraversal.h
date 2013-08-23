@@ -271,14 +271,14 @@ inline ElementType* Traversal<ElementType>::nextSkippingChildrenTemplate(Current
 }
 
 template <typename ElementType>
-inline ElementType* Traversal<ElementType>::firstChild(const ContainerNode* current) { return firstWithinTemplate(current); }
+inline ElementType* Traversal<ElementType>::firstChild(const ContainerNode* current) { return firstChildTemplate(current); }
 template <typename ElementType>
-inline ElementType* Traversal<ElementType>::firstChild(const Node* current) { return firstWithinTemplate(current); }
+inline ElementType* Traversal<ElementType>::firstChild(const Node* current) { return firstChildTemplate(current); }
 template <typename ElementType>
 
-inline ElementType* Traversal<ElementType>::lastChild(const ContainerNode* current) { return lastWithinTemplate(current); }
+inline ElementType* Traversal<ElementType>::lastChild(const ContainerNode* current) { return lastChildTemplate(current); }
 template <typename ElementType>
-inline ElementType* Traversal<ElementType>::lastChild(const Node* current) { return lastWithinTemplate(current); }
+inline ElementType* Traversal<ElementType>::lastChild(const Node* current) { return lastChildTemplate(current); }
 
 template <typename ElementType>
 inline ElementType* Traversal<ElementType>::firstWithin(const ContainerNode* current) { return firstWithinTemplate(current); }
