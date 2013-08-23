@@ -864,7 +864,7 @@ String Frame::layerTreeAsText(LayerTreeFlags flags) const
     if (!contentRenderer())
         return String();
 
-    return contentRenderer()->compositor()->layerTreeAsText(flags);
+    return contentRenderer()->compositor().layerTreeAsText(flags);
 #else
     UNUSED_PARAM(flags);
     return String();
@@ -991,9 +991,8 @@ void Frame::deviceOrPageScaleFactorChanged()
     for (RefPtr<Frame> child = tree()->firstChild(); child; child = child->tree()->nextSibling())
         child->deviceOrPageScaleFactorChanged();
 
-    RenderView* root = contentRenderer();
-    if (root && root->compositor())
-        root->compositor()->deviceOrPageScaleFactorChanged();
+    if (RenderView* root = contentRenderer())
+        root->compositor().deviceOrPageScaleFactorChanged();
 }
 #endif
 void Frame::notifyChromeClientWheelEventHandlerCountChanged() const

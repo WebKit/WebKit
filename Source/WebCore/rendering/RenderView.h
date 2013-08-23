@@ -190,7 +190,7 @@ public:
     void setIsInWindow(bool);
 
 #if USE(ACCELERATED_COMPOSITING)
-    RenderLayerCompositor* compositor();
+    RenderLayerCompositor& compositor();
     bool usesCompositing() const;
 #endif
 

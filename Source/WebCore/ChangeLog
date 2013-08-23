@@ -1,3 +1,12 @@
+2013-08-23  Andreas Kling  <akling@apple.com>
+
+        RenderView::compositor() should return a reference.
+        <https://webkit.org/b/120217>
+
+        Reviewed by Beth Dakin.
+
+        The RenderLayerCompositor is lazily constructed by compositor() and never returns null.
+
 2013-08-23  Yoav Weiss  <yoav@yoav.ws>
 
         Fix srcset's image candidate algorithm when DPR exceeds all candidates

@@ -312,7 +312,7 @@ RenderLayerCompositor* RenderLayer::compositor() const
 {
     if (!renderer()->view())
         return 0;
-    return renderer()->view()->compositor();
+    return &renderer()->view()->compositor();
 }
 
 void RenderLayer::contentChanged(ContentChangeType changeType)

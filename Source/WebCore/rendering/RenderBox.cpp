@@ -275,7 +275,7 @@ void RenderBox::styleWillChange(StyleDifference diff, const RenderStyle* newStyl
             view()->repaintRootContents();
 #if USE(ACCELERATED_COMPOSITING)
             if (oldStyle->hasEntirelyFixedBackground() != newStyle->hasEntirelyFixedBackground())
-                view()->compositor()->rootFixedBackgroundsChanged();
+                view()->compositor().rootFixedBackgroundsChanged();
 #endif
         }
         

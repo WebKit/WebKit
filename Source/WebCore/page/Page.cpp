@@ -1323,7 +1323,7 @@ void Page::addHeaderWithHeight(int headerHeight)
         return;
 
     frameView->setHeaderHeight(m_headerHeight);
-    renderView->compositor()->updateLayerForHeader(m_headerHeight);
+    renderView->compositor().updateLayerForHeader(m_headerHeight);
 }
 
 void Page::addFooterWithHeight(int footerHeight)
@@ -1339,7 +1339,7 @@ void Page::addFooterWithHeight(int footerHeight)
         return;
 
     frameView->setFooterHeight(m_footerHeight);
-    renderView->compositor()->updateLayerForFooter(m_footerHeight);
+    renderView->compositor().updateLayerForFooter(m_footerHeight);
 }
 #endif
 

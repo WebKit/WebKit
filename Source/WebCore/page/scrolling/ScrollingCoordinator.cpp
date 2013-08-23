@@ -294,7 +294,7 @@ GraphicsLayer* ScrollingCoordinator::scrollLayerForFrameView(FrameView* frameVie
 {
 #if USE(ACCELERATED_COMPOSITING)
     if (RenderView* renderView = frameView->frame().contentRenderer())
-        return renderView->compositor()->scrollLayer();
+        return renderView->compositor().scrollLayer();
     return 0;
 #else
     UNUSED_PARAM(frameView);
@@ -306,7 +306,7 @@ GraphicsLayer* ScrollingCoordinator::headerLayerForFrameView(FrameView* frameVie
 {
 #if USE(ACCELERATED_COMPOSITING) && ENABLE(RUBBER_BANDING)
     if (RenderView* renderView = frameView->frame().contentRenderer())
-        renderView->compositor()->headerLayer();
+        renderView->compositor().headerLayer();
     return 0;
 #else
     UNUSED_PARAM(frameView);
@@ -318,7 +318,7 @@ GraphicsLayer* ScrollingCoordinator::footerLayerForFrameView(FrameView* frameVie
 {
 #if USE(ACCELERATED_COMPOSITING) && ENABLE(RUBBER_BANDING)
     if (RenderView* renderView = frameView->frame().contentRenderer())
-        return renderView->compositor()->footerLayer();
+        return renderView->compositor().footerLayer();
     return 0;
 #else
     UNUSED_PARAM(frameView);
@@ -330,7 +330,7 @@ GraphicsLayer* ScrollingCoordinator::counterScrollingLayerForFrameView(FrameView
 {
 #if USE(ACCELERATED_COMPOSITING)
     if (RenderView* renderView = frameView->frame().contentRenderer())
-        return renderView->compositor()->fixedRootBackgroundLayer();
+        return renderView->compositor().fixedRootBackgroundLayer();
     return 0;
 #else
     UNUSED_PARAM(frameView);

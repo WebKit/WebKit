@@ -584,9 +584,10 @@ void RenderView::repaintRectangleInViewAndCompositedLayers(const LayoutRect& ur,
     repaintViewRectangle(ur, immediate);
     
 #if USE(ACCELERATED_COMPOSITING)
-    if (compositor()->inCompositingMode()) {
+    RenderLayerCompositor& compositor = this->compositor();
+    if (compositor.inCompositingMode()) {
         IntRect repaintRect = pixelSnappedIntRect(ur);
-        compositor()->repaintCompositedLayers(&repaintRect);
+        compositor.repaintCompositedLayers(&repaintRect);
     }
 #endif
 }
@@ -595,8 +596,9 @@ void RenderView::repaintViewAndCompositedLayers()
 {
     repaintRootContents();
 #if USE(ACCELERATED_COMPOSITING)
-    if (compositor()->inCompositingMode())
-        compositor()->repaintCompositedLayers();
+    RenderLayerCompositor& compositor = this->compositor();
+    if (compositor.inCompositingMode())
+        compositor.repaintCompositedLayers();
 #endif
 }
 
@@ -731,7 +733,7 @@ void RenderView::setMaximalOutlineSize(int o)
         m_maximalOutlineSize = o;
 
         // maximalOutlineSize affects compositing layer dimensions.
-        compositor()->setCompositingLayersNeedRebuild();    // FIXME: this really just needs to be a geometry update.
+        compositor().setCompositingLayersNeedRebuild();    // FIXME: this really just needs to be a geometry update.
     }
 }
 #endif
@@ -1133,12 +1135,12 @@ bool RenderView::usesCompositing() const
     return m_compositor && m_compositor->inCompositingMode();
 }
 
-RenderLayerCompositor* RenderView::compositor()
+RenderLayerCompositor& RenderView::compositor()
 {
     if (!m_compositor)
         m_compositor = adoptPtr(new RenderLayerCompositor(*this));
 
-    return m_compositor.get();
+    return *m_compositor;
 }
 #endif
 
