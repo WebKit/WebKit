@@ -357,13 +357,16 @@ String bestFitSourceForImageAttributes(float deviceScaleFactor, const String& sr
         imageCandidates.append(image);
     }
 
+    if (imageCandidates.isEmpty())
+        return String();
+
     std::stable_sort(imageCandidates.begin(), imageCandidates.end(), compareByScaleFactor);
 
     for (size_t i = 0; i < imageCandidates.size(); ++i) {
         if (imageCandidates[i].scaleFactor >= deviceScaleFactor)
             return imageCandidates[i].imageURL;
     }
-    return String();
+    return imageCandidates.last().imageURL;
 }
 
 }

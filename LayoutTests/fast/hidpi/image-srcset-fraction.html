@@ -1,0 +1,25 @@
+<html>
+<head>
+<script>
+    window.targetScaleFactor = 2.5;
+</script>
+<script src="resources/srcset-helper.js"></script>
+<script src="../js/resources/js-test-pre.js"></script>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.dumpResourceResponseMIMETypes();
+    }
+
+    addEventListener("load", function() {
+        if (internals)
+            shouldBeTrue('document.getElementById("testimg").clientWidth==200');
+    }, false);
+</script>
+</head>
+<body>
+<div>This test passes if the srcset resource is loaded and displayed as the image</div>
+<img src="resources/blue-100-px-square.png" srcset="resources/green-200-px-square.png 2x" id="testimg">
+</body>
+</html>
+

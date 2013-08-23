@@ -1,3 +1,19 @@
+2013-08-23  Yoav Weiss  <yoav@yoav.ws>
+
+        Fix srcset's image candidate algorithm when DPR exceeds all candidates
+        https://bugs.webkit.org/show_bug.cgi?id=120168
+
+        From the srcset spec: "If there are any entries in candidates that have an associated pixel density that is less than a
+        user-agent-defined value giving the nominal pixel density of the display, then remove them, unless that would remove all the
+        entries, in which case remove only the entries whose associated pixel density is less than the greatest such pixel density."
+
+        This test verifies that when all the candidates' qualifiers are smaller than the DPR, the highest one is returned.
+
+        Reviewed by Andreas Kling.
+
+        * fast/hidpi/image-srcset-fraction-expected.txt: Added.
+        * fast/hidpi/image-srcset-fraction.html: Added.
+
 2013-08-23  Chris Fleizach  <cfleizach@apple.com>
 
         <https://webkit.org/b/113895> Webkit exposes aria-expanded="undefined" as aria-expanded="false" (AXExpanded = NO)
