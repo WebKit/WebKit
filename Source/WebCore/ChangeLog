@@ -1,5 +1,45 @@
 2013-08-22  Simon Fraser  <simon.fraser@apple.com>
 
+        compositing/geometry/bounds-ignores-hidden-dynamic.html has incorrect initial rendering
+        https://bugs.webkit.org/show_bug.cgi?id=119825
+
+        Reviewed by Tim Horton.
+        
+        r137526 and some earlier commits attempted to avoid unconditionally
+        repainting layers when their size changes, because this was causing
+        TiledBacking layers to repaint when the document size changed.
+        
+        However, the approach required that we have good information about
+        whether size changes require a repaint, which in some cases is hard
+        to determine, especially when RenderLayer changes affect our
+        decisions about which layers are composited.
+        
+        Fix by pushing the decision about whether to repaint on size change
+        into GraphicsLayer. The default is to repaint on size change,
+        but GraphicsLayer provides a function that can be overridden to
+        modify this behavior; GraphicsLayerCA does so to avoid repaints
+        when layers with TiledBackings get resized.
+
+        Test: compositing/repaint/repaint-on-layer-grouping-change.html
+
+        * WebCore.exp.in: WebKit2 needs GraphicsLayer::setSize, which is no longer inline.
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::setOffsetFromRenderer):
+        (WebCore::GraphicsLayer::setSize):
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::GraphicsLayer::shouldRepaintOnSizeChange):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::shouldRepaintOnSizeChange):
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        * rendering/RenderLayerBacking.h: No longer need m_boundsConstrainedByClipping
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::RenderLayerBacking):
+        (WebCore::RenderLayerBacking::updateCompositedBounds):
+        (WebCore::RenderLayerBacking::updateGraphicsLayerGeometry): setSize takes
+        care of repainting for us now, so we can remove all the conditional code.
+
+2013-08-22  Simon Fraser  <simon.fraser@apple.com>
+
         Repaint counters are sometimes not in the corner of the compositing layer
         https://bugs.webkit.org/show_bug.cgi?id=120176
 

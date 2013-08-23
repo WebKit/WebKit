@@ -176,6 +176,8 @@ private:
 
     virtual double backingStoreMemoryEstimate() const;
 
+    virtual bool shouldRepaintOnSizeChange() const OVERRIDE;
+
     void updateOpacityOnLayer();
     
 #if ENABLE(CSS_FILTERS)

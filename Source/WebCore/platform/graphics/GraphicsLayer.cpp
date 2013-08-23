@@ -307,6 +307,17 @@ void GraphicsLayer::setOffsetFromRenderer(const IntSize& offset, ShouldSetNeedsD
         setNeedsDisplay();
 }
 
+void GraphicsLayer::setSize(const FloatSize& size)
+{
+    if (size == m_size)
+        return;
+    
+    m_size = size;
+
+    if (shouldRepaintOnSizeChange())
+        setNeedsDisplay();
+}
+
 void GraphicsLayer::setBackgroundColor(const Color& color)
 {
     m_backgroundColor = color;

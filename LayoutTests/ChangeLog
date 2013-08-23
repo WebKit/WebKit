@@ -1,3 +1,17 @@
+2013-08-22  Simon Fraser  <simon.fraser@apple.com>
+
+        compositing/geometry/bounds-ignores-hidden-dynamic.html has incorrect initial rendering
+        https://bugs.webkit.org/show_bug.cgi?id=119825
+
+        Reviewed by Tim Horton.
+        
+        Test that dumps repaint rects on layers after visibility changes affect
+        the layer hierarchy.
+
+        * compositing/repaint/repaint-on-layer-grouping-change-expected.txt: Added.
+        * compositing/repaint/repaint-on-layer-grouping-change.html: Added.
+        * compositing/repaint/resize-repaint-expected.txt: Update result.
+
 2013-08-22  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         [SVG2] Merge SVGStyledElement and SVGElement
