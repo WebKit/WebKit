@@ -126,6 +126,8 @@ void drawLayerContents(CGContextRef context, CALayer *layer, WebCore::PlatformCA
     layerContents = platformLayer->owner();
     ASSERT(layerContents);
 
+    CGContextRestoreGState(context);
+
     // Always update the repain count so that it's accurate even if the count itself is not shown. This will be useful
     // for the Web Inspector feeding this information through the LayerTreeAgent. 
     int repaintCount = layerContents->platformCALayerIncrementRepaintCount();
@@ -166,8 +168,6 @@ void drawLayerContents(CGContextRef context, CALayer *layer, WebCore::PlatformCA
         CGContextEndTransparencyLayer(context);
         CGContextRestoreGState(context);
     }
-
-    CGContextRestoreGState(context);
 }
 
 

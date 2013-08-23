@@ -1,3 +1,22 @@
+2013-08-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Repaint counters are sometimes not in the corner of the compositing layer
+        https://bugs.webkit.org/show_bug.cgi?id=120176
+
+        Reviewed by Beth Dakin.
+
+        Sometimes the repaint counters are not in the corner of the compositing layer;
+        they are either inset, or partially or entirely outside the layer.
+        
+        Fix by making sure that we restore the CGContext before drawing
+        the counter, since the WebCore code may have translated the CTM.
+        
+        The counter-painting code saves and restores the context itself,
+        so this is safe.
+
+        * platform/graphics/mac/WebLayer.mm:
+        (drawLayerContents):
+
 2013-08-22  Tim Horton  <timothy_horton@apple.com>
 
         Unavailable plug-in indicator text is one pixel too low
