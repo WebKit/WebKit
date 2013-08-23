@@ -66,7 +66,7 @@ print "\n";
 open FILE, $name or die;
 binmode FILE;
 my ($data, $n);
-my $total = 0;
+my $total = $parsedRange[0];
 
 seek(FILE, $parsedRange[0], 0);
 

@@ -1,3 +1,14 @@
+2013-08-23  Andre Moreira Magalhaes   <andre.magalhaes@collabora.co.uk>
+
+        LayoutTests/http/tests/media/video-throttled-load.cgi issue on range support
+        https://bugs.webkit.org/show_bug.cgi?id=120219
+
+        Reviewed by Eric Carlson.
+
+        Properly count bytes when handling range requests.
+
+        * http/tests/media/video-throttled-load.cgi:
+
 2013-08-23  Alexey Proskuryakov  <ap@apple.com>
 
         http/tests/cache/partitioned-cache.html breaks subsequent cookie tests
