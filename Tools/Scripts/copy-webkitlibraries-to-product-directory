@@ -138,11 +138,9 @@ if ($ENV{ENABLE_FTL_JIT}) {
     my $shouldUpdateLLVMLibraryToken = 0;
 
     if ($useOwnLLVM) {
-
-        chdir $ownLLVMDirectory;
-        if (!-e "Makefile.config") {
+        if (!-e "$ownLLVMDirectory/Makefile.config") {
             print("Configuring LLVM.\n");
-            (system("./configure --enable-optimized=yes --enable-backtraces=no --enable-targets=x86_64 --enable-libcpp=yes --enable-zlib=no")==0) or die;
+            (system("sh", "Tools/Scripts/configure-llvm", $ownLLVMDirectory)==0) or die;
         }
 
         print("Building LLVM.\n");

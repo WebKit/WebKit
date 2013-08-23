@@ -98,7 +98,11 @@ def compressionChar
 end
 
 Dir.chdir($llvmPath + $llvmBuild + "lib") {
-    mysys("tar", "-c#{compressionChar}vf", $currentPath + $libraryPackage, *Dir.entries('.').select{|value| value =~ /\.a$/})
+    mysys("tar", "-c#{compressionChar}vf", $currentPath + $libraryPackage,
+          *Dir.entries('.').select {
+              | value |
+              value =~ /\.a$/ and value !~ /libgtest/
+          })
 }
 
 Dir.mktmpdir {

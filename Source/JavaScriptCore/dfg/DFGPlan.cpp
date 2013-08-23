@@ -245,6 +245,8 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
         FTL::link(state);
         return FTLPath;
     }
+#else
+    RELEASE_ASSERT(!Options::useExperimentalFTL());
 #endif // ENABLE(FTL_JIT)
     
     performCPSRethreading(dfg);

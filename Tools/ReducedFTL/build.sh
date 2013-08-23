@@ -11,4 +11,4 @@ else
 fi
 
 clang -c -o ReducedFTL.o ReducedFTL.c `${configPath} --cppflags --cflags`
-clang++ -o ReducedFTL ReducedFTL.o -stdlib=libc++ `${configPath} --ldflags --libs`
+clang++ -o ReducedFTL ReducedFTL.o -stdlib=libc++ `${configPath} --ldflags --libs` -lcurses

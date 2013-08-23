@@ -1,3 +1,15 @@
+2013-08-22  Filip Pizlo  <fpizlo@apple.com>
+
+        Update LLVM binary drops and scripts to the latest version from SVN
+        https://bugs.webkit.org/show_bug.cgi?id=120184
+
+        Reviewed by Mark Hahnenberg.
+
+        Updated binary drops to r189066.
+
+        * LLVMIncludesMountainLion.tar.bz2:
+        * LLVMLibrariesMountainLion.tar.bz2:
+
 2013-08-21  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r154416.

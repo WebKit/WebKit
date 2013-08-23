@@ -1,3 +1,15 @@
+2013-08-22  Filip Pizlo  <fpizlo@apple.com>
+
+        Update LLVM binary drops and scripts to the latest version from SVN
+        https://bugs.webkit.org/show_bug.cgi?id=120184
+
+        Reviewed by Mark Hahnenberg.
+
+        * ReducedFTL/build.sh:
+        * Scripts/configure-llvm: Added.
+        * Scripts/copy-webkitlibraries-to-product-directory:
+        * Scripts/export-llvm-build:
+
 2013-08-22  Andy Estes  <aestes@apple.com>
 
         <https://webkit.org/b/120180> Fix issues with OTHER_LDFLAGS in various .xcconfig files
