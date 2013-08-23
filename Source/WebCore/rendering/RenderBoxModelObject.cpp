@@ -620,8 +620,8 @@ LayoutSize RenderBoxModelObject::stickyPositionOffset() const
         FloatPoint scrollOffset = FloatPoint() + enclosingClippingLayer->scrollOffset();
         constrainingRect.setLocation(scrollOffset);
     } else {
-        LayoutRect viewportRect = view()->frameView()->viewportConstrainedVisibleContentRect();
-        float scale = view()->frameView()->frame().frameScaleFactor();
+        LayoutRect viewportRect = view()->frameView().viewportConstrainedVisibleContentRect();
+        float scale = view()->frameView().frame().frameScaleFactor();
         viewportRect.scale(1 / scale);
         constrainingRect = viewportRect;
     }
@@ -922,7 +922,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
     bool isOpaqueRoot = false;
     if (isRoot) {
         isOpaqueRoot = true;
-        if (!bgLayer->next() && !(bgColor.isValid() && bgColor.alpha() == 255) && view()->frameView()) {
+        if (!bgLayer->next() && !(bgColor.isValid() && bgColor.alpha() == 255)) {
             Element* ownerElement = document()->ownerElement();
             if (ownerElement) {
                 if (!ownerElement->hasTagName(frameTag)) {
@@ -943,9 +943,9 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
 #endif
                 }
             } else
-                isOpaqueRoot = !view()->frameView()->isTransparent();
+                isOpaqueRoot = !view()->frameView().isTransparent();
         }
-        view()->frameView()->setContentIsOpaque(isOpaqueRoot);
+        view()->frameView().setContentIsOpaque(isOpaqueRoot);
     }
 
     // Paint the color first underneath all images, culled if background image occludes it.
@@ -962,7 +962,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
             Color baseColor;
             bool shouldClearBackground = false;
             if (isOpaqueRoot) {
-                baseColor = view()->frameView()->baseBackgroundColor();
+                baseColor = view()->frameView().baseBackgroundColor();
                 if (!baseColor.alpha())
                     shouldClearBackground = true;
             }
@@ -1212,7 +1212,7 @@ bool RenderBoxModelObject::fixedBackgroundPaintsInLocalCoordinates() const
     if (!isRoot())
         return false;
 
-    if (view()->frameView() && view()->frameView()->paintBehavior() & PaintBehaviorFlattenCompositingLayers)
+    if (view()->frameView().paintBehavior() & PaintBehaviorFlattenCompositingLayers)
         return false;
 
     RenderLayer* rootLayer = view()->layer();
@@ -1239,7 +1239,7 @@ void RenderBoxModelObject::calculateBackgroundImageGeometry(const RenderLayerMod
     bool fixedAttachment = fillLayer->attachment() == FixedBackgroundAttachment;
     
 #if ENABLE(FAST_MOBILE_SCROLLING)
-    if (view()->frameView() && view()->frameView()->canBlitOnScroll()) {
+    if (view()->frameView().canBlitOnScroll()) {
         // As a side effect of an optimization to blit on scroll, we do not honor the CSS
         // property "background-attachment: fixed" because it may result in rendering
         // artifacts. Note, these artifacts only appear if we are blitting on scroll of
@@ -1282,8 +1282,8 @@ void RenderBoxModelObject::calculateBackgroundImageGeometry(const RenderLayerMod
         IntRect viewportRect = pixelSnappedIntRect(viewRect());
         if (fixedBackgroundPaintsInLocalCoordinates())
             viewportRect.setLocation(IntPoint());
-        else if (FrameView* frameView = view()->frameView())
-            viewportRect.setLocation(IntPoint(frameView->scrollOffsetForFixedPosition()));
+        else
+            viewportRect.setLocation(IntPoint(view()->frameView().scrollOffsetForFixedPosition()));
 
         if (paintContainer) {
             IntPoint absoluteContainerOffset = roundedIntPoint(paintContainer->localToAbsolute(FloatPoint()));

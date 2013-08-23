@@ -1421,7 +1421,7 @@ bool RenderLayer::scrollbarAnimationsAreSuppressed() const
     RenderView* view = renderer()->view();
     if (!view)
         return false;
-    return view->frameView()->scrollbarAnimationsAreSuppressed();
+    return view->frameView().scrollbarAnimationsAreSuppressed();
 }
 
 RenderLayer* RenderLayer::enclosingTransformedAncestor() const
@@ -2069,8 +2069,7 @@ void RenderLayer::updateNeedsCompositedScrolling()
 {
     bool oldNeedsCompositedScrolling = m_needsCompositedScrolling;
 
-    FrameView* frameView = renderer()->view()->frameView();
-    if (!frameView || !frameView->containsScrollableArea(this))
+    if (!renderer()->view()->frameView().containsScrollableArea(this))
         m_needsCompositedScrolling = false;
     else {
         bool forceUseCompositedScrolling = acceleratedCompositingForOverflowScrollEnabled()
@@ -2172,10 +2171,10 @@ void RenderLayer::scrollByRecursively(const IntSize& delta, ScrollOffsetClamping
             if (frame)
                 frame->eventHandler().updateAutoscrollRenderer();
         }
-    } else if (renderer()->view()->frameView()) {
+    } else {
         // If we are here, we were called on a renderer that can be programmatically scrolled, but doesn't
         // have an overflow clip. Which means that it is a document node that can be scrolled.
-        renderer()->view()->frameView()->scrollBy(delta);
+        renderer()->view()->frameView().scrollBy(delta);
 
         // FIXME: If we didn't scroll the whole way, do we want to try looking at the frames ownerElement? 
         // https://bugs.webkit.org/show_bug.cgi?id=28237
@@ -2234,14 +2233,14 @@ void RenderLayer::scrollTo(int x, int y)
 
     // Update the positions of our child layers (if needed as only fixed layers should be impacted by a scroll).
     // We don't update compositing layers, because we need to do a deep update from the compositing ancestor.
-    bool inLayout = view ? view->frameView()->isInLayout() : false;
+    bool inLayout = view ? view->frameView().isInLayout() : false;
     if (!inLayout) {
         // If we're in the middle of layout, we'll just update layers once layout has finished.
         updateLayerPositionsAfterOverflowScroll();
         if (view) {
             // Update regions, scrolling may change the clip of a particular region.
 #if ENABLE(DASHBOARD_SUPPORT) || ENABLE(DRAGGABLE_REGION)
-            view->frameView()->updateAnnotatedRegions();
+            view->frameView().updateAnnotatedRegions();
 #endif
             view->updateWidgetPositions();
         }
@@ -2715,7 +2714,7 @@ IntRect RenderLayer::convertFromScrollbarToContainingView(const Scrollbar* scrol
     IntRect rect = scrollbarRect;
     rect.move(scrollbarOffset(scrollbar));
 
-    return view->frameView()->convertFromRenderer(renderer(), rect);
+    return view->frameView().convertFromRenderer(renderer(), rect);
 }
 
 IntRect RenderLayer::convertFromContainingViewToScrollbar(const Scrollbar* scrollbar, const IntRect& parentRect) const
@@ -2724,7 +2723,7 @@ IntRect RenderLayer::convertFromContainingViewToScrollbar(const Scrollbar* scrol
     if (!view)
         return parentRect;
 
-    IntRect rect = view->frameView()->convertToRenderer(renderer(), parentRect);
+    IntRect rect = view->frameView().convertToRenderer(renderer(), parentRect);
     rect.move(-scrollbarOffset(scrollbar));
     return rect;
 }
@@ -2737,7 +2736,7 @@ IntPoint RenderLayer::convertFromScrollbarToContainingView(const Scrollbar* scro
 
     IntPoint point = scrollbarPoint;
     point.move(scrollbarOffset(scrollbar));
-    return view->frameView()->convertFromRenderer(renderer(), point);
+    return view->frameView().convertFromRenderer(renderer(), point);
 }
 
 IntPoint RenderLayer::convertFromContainingViewToScrollbar(const Scrollbar* scrollbar, const IntPoint& parentPoint) const
@@ -2746,7 +2745,7 @@ IntPoint RenderLayer::convertFromContainingViewToScrollbar(const Scrollbar* scro
     if (!view)
         return parentPoint;
 
-    IntPoint point = view->frameView()->convertToRenderer(renderer(), parentPoint);
+    IntPoint point = view->frameView().convertToRenderer(renderer(), parentPoint);
 
     point.move(-scrollbarOffset(scrollbar));
     return point;
@@ -2772,7 +2771,7 @@ bool RenderLayer::shouldSuspendScrollAnimations() const
     RenderView* view = renderer()->view();
     if (!view)
         return true;
-    return view->frameView()->shouldSuspendScrollAnimations();
+    return view->frameView().shouldSuspendScrollAnimations();
 }
 
 bool RenderLayer::scrollbarsCanBeActive() const
@@ -2780,7 +2779,7 @@ bool RenderLayer::scrollbarsCanBeActive() const
     RenderView* view = renderer()->view();
     if (!view)
         return false;
-    return view->frameView()->scrollbarsCanBeActive();
+    return view->frameView().scrollbarsCanBeActive();
 }
 
 IntPoint RenderLayer::lastKnownMousePosition() const
@@ -5087,7 +5086,7 @@ void RenderLayer::calculateClipRects(const ClipRectsContext& clipRectsContext, C
         RenderView* view = renderer()->view();
         ASSERT(view);
         if (view && clipRects.fixed() && clipRectsContext.rootLayer->renderer() == view) {
-            offset -= view->frameView()->scrollOffsetForFixedPosition();
+            offset -= view->frameView().scrollOffsetForFixedPosition();
         }
         
         if (renderer()->hasOverflowClip()) {
@@ -5151,7 +5150,7 @@ ClipRect RenderLayer::backgroundClipRect(const ClipRectsContext& clipRectsContex
 
     // Note: infinite clipRects should not be scrolled here, otherwise they will accidentally no longer be considered infinite.
     if (parentRects.fixed() && clipRectsContext.rootLayer->renderer() == view && backgroundClipRect != PaintInfo::infiniteRect())
-        backgroundClipRect.move(view->frameView()->scrollOffsetForFixedPosition());
+        backgroundClipRect.move(view->frameView().scrollOffsetForFixedPosition());
 
     return backgroundClipRect;
 }
@@ -5432,13 +5431,9 @@ LayoutRect RenderLayer::calculateLayerBounds(const RenderLayer* ancestorLayer, c
         // If the root layer becomes composited (e.g. because some descendant with negative z-index is composited),
         // then it has to be big enough to cover the viewport in order to display the background. This is akin
         // to the code in RenderBox::paintRootBoxFillLayers().
-        if (FrameView* frameView = renderer->view()->frameView()) {
-            LayoutUnit contentsWidth = frameView->contentsWidth();
-            LayoutUnit contentsHeight = frameView->contentsHeight();
-        
-            boundingBoxRect.setWidth(max(boundingBoxRect.width(), contentsWidth - boundingBoxRect.x()));
-            boundingBoxRect.setHeight(max(boundingBoxRect.height(), contentsHeight - boundingBoxRect.y()));
-        }
+        const FrameView& frameView = renderer->view()->frameView();
+        boundingBoxRect.setWidth(max(boundingBoxRect.width(), frameView.contentsWidth() - boundingBoxRect.x()));
+        boundingBoxRect.setHeight(max(boundingBoxRect.height(), frameView.contentsHeight() - boundingBoxRect.y()));
     }
 
     LayoutRect unionBounds = boundingBoxRect;

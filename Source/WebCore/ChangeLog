@@ -1,3 +1,13 @@
+2013-08-23  Andreas Kling  <akling@apple.com>
+
+        RenderView::frameView() should return a reference.
+        <https://webkit.org/b/120208>
+
+        Reviewed by Antti Koivisto.
+
+        A RenderView should always have a corresponding FrameView, so make frameView()
+        return a reference. Also remove a myriad of now-impossible null checks.
+
 2013-08-23  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         REGRESSION(r153939) Fix typo in Qt build-files

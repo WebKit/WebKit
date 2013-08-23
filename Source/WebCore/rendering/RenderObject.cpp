@@ -1964,31 +1964,29 @@ void RenderObject::styleWillChange(StyleDifference diff, const RenderStyle* newS
         s_noLongerAffectsParentBlock = false;
     }
 
-    if (FrameView* frameView = view()->frameView()) {
-        bool repaintFixedBackgroundsOnScroll = shouldRepaintFixedBackgroundsOnScroll(frameView);
+    bool repaintFixedBackgroundsOnScroll = shouldRepaintFixedBackgroundsOnScroll(&view()->frameView());
 
-        bool newStyleSlowScroll = newStyle && repaintFixedBackgroundsOnScroll && newStyle->hasFixedBackgroundImage();
-        bool oldStyleSlowScroll = m_style && repaintFixedBackgroundsOnScroll && m_style->hasFixedBackgroundImage();
+    bool newStyleSlowScroll = newStyle && repaintFixedBackgroundsOnScroll && newStyle->hasFixedBackgroundImage();
+    bool oldStyleSlowScroll = m_style && repaintFixedBackgroundsOnScroll && m_style->hasFixedBackgroundImage();
 
 #if USE(ACCELERATED_COMPOSITING)
-        bool drawsRootBackground = isRoot() || (isBody() && !rendererHasBackground(document()->documentElement()->renderer()));
-        if (drawsRootBackground && repaintFixedBackgroundsOnScroll) {
-            if (view()->compositor()->supportsFixedRootBackgroundCompositing()) {
-                if (newStyleSlowScroll && newStyle->hasEntirelyFixedBackground())
-                    newStyleSlowScroll = false;
+    bool drawsRootBackground = isRoot() || (isBody() && !rendererHasBackground(document()->documentElement()->renderer()));
+    if (drawsRootBackground && repaintFixedBackgroundsOnScroll) {
+        if (view()->compositor()->supportsFixedRootBackgroundCompositing()) {
+            if (newStyleSlowScroll && newStyle->hasEntirelyFixedBackground())
+                newStyleSlowScroll = false;
 
-                if (oldStyleSlowScroll && m_style->hasEntirelyFixedBackground())
-                    oldStyleSlowScroll = false;
-            }
+            if (oldStyleSlowScroll && m_style->hasEntirelyFixedBackground())
+                oldStyleSlowScroll = false;
         }
+    }
 #endif
-        if (oldStyleSlowScroll != newStyleSlowScroll) {
-            if (oldStyleSlowScroll)
-                frameView->removeSlowRepaintObject(this);
+    if (oldStyleSlowScroll != newStyleSlowScroll) {
+        if (oldStyleSlowScroll)
+            view()->frameView().removeSlowRepaintObject(this);
 
-            if (newStyleSlowScroll)
-                frameView->addSlowRepaintObject(this);
-        }
+        if (newStyleSlowScroll)
+            view()->frameView().addSlowRepaintObject(this);
     }
 }
 
@@ -2541,11 +2539,9 @@ void RenderObject::willBeRemovedFromTree()
     // FIXME: We should ASSERT(isRooted()) but we have some out-of-order removals which would need to be fixed first.
 
     if (!isText()) {
-        if (FrameView* frameView = view()->frameView()) {
-            bool repaintFixedBackgroundsOnScroll = shouldRepaintFixedBackgroundsOnScroll(frameView);
-            if (repaintFixedBackgroundsOnScroll && m_style && m_style->hasFixedBackgroundImage())
-                frameView->removeSlowRepaintObject(this);
-        }
+        bool repaintFixedBackgroundsOnScroll = shouldRepaintFixedBackgroundsOnScroll(&view()->frameView());
+        if (repaintFixedBackgroundsOnScroll && m_style && m_style->hasFixedBackgroundImage())
+            view()->frameView().removeSlowRepaintObject(this);
     }
 
     // If we remove a visible child from an invisible parent, we don't know the layer visibility any more.
@@ -2752,16 +2748,12 @@ bool RenderObject::nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitT
 
 void RenderObject::scheduleRelayout()
 {
-    if (isRenderView()) {
-        FrameView* view = toRenderView(this)->frameView();
-        if (view)
-            view->scheduleRelayout();
-    } else {
+    if (isRenderView())
+        toRenderView(this)->frameView().scheduleRelayout();
+    else {
         if (isRooted()) {
-            if (RenderView* renderView = view()) {
-                if (FrameView* frameView = renderView->frameView())
-                    frameView->scheduleRelayoutOfSubtree(this);
-            }
+            if (RenderView* renderView = view())
+                renderView->frameView().scheduleRelayoutOfSubtree(this);
         }
     }
 }

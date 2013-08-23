@@ -45,7 +45,7 @@ RenderHTMLCanvas::RenderHTMLCanvas(HTMLCanvasElement* element)
     : RenderReplaced(element, element->size())
 {
     // Actual size is not known yet, report the default intrinsic size.
-    view()->frameView()->incrementVisuallyNonEmptyPixelCount(roundedIntSize(intrinsicSize()));
+    view()->frameView().incrementVisuallyNonEmptyPixelCount(roundedIntSize(intrinsicSize()));
 }
 
 bool RenderHTMLCanvas::requiresLayer() const

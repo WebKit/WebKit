@@ -461,10 +461,8 @@ using namespace WebCore;
 - (BOOL)inFlatteningPaint
 {
     RenderObject* renderer = _element->renderer();
-    if (renderer && renderer->view()) {
-        if (FrameView* frameView = renderer->view()->frameView())
-            return frameView->paintBehavior() & PaintBehaviorFlattenCompositingLayers;
-    }
+    if (renderer && renderer->view())
+        return renderer->view()->frameView().paintBehavior() & PaintBehaviorFlattenCompositingLayers;
 
     return NO;
 }
@@ -869,12 +867,8 @@ using namespace WebCore;
     if (!renderer || !renderer->view())
         return NSZeroRect;
 
-    FrameView* frameView = renderer->view()->frameView();
-    if (!frameView)
-        return NSZeroRect;
-
     IntRect widgetRect = renderer->pixelSnappedAbsoluteClippedOverflowRect();
-    widgetRect = frameView->contentsToWindow(widgetRect);
+    widgetRect = renderer->view()->frameView().contentsToWindow(widgetRect);
     return intersection(toRenderWidget(renderer)->windowClipRect(), widgetRect);
 }
 

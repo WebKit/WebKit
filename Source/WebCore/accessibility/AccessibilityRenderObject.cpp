@@ -1345,7 +1345,7 @@ int AccessibilityRenderObject::layoutCount() const
 {
     if (!m_renderer->isRenderView())
         return 0;
-    return toRenderView(m_renderer)->frameView()->layoutCount();
+    return toRenderView(m_renderer)->frameView().layoutCount();
 }
 
 String AccessibilityRenderObject::text() const
@@ -1700,7 +1700,7 @@ FrameView* AccessibilityRenderObject::topDocumentFrameView() const
     RenderView* renderView = topRenderer();
     if (!renderView || !renderView->view())
         return 0;
-    return renderView->view()->frameView();
+    return &renderView->view()->frameView();
 }
 
 Widget* AccessibilityRenderObject::widget() const
@@ -1770,7 +1770,7 @@ FrameView* AccessibilityRenderObject::frameViewIfRenderView() const
     if (!m_renderer->isRenderView())
         return 0;
     // this is the RenderObject's Document's renderer's FrameView
-    return m_renderer->view()->frameView();
+    return &m_renderer->view()->frameView();
 }
 
 // This function is like a cross-platform version of - (WebCoreTextMarkerRange*)textMarkerRange. It returns
@@ -1983,9 +1983,9 @@ VisiblePosition AccessibilityRenderObject::visiblePositionForPoint(const IntPoin
     if (!renderView)
         return VisiblePosition();
 
-    FrameView* frameView = renderView->frameView();
-    if (!frameView)
-        return VisiblePosition();
+#if PLATFORM(MAC)
+    FrameView* frameView = &renderView->frameView();
+#endif
 
     Node* innerNode = 0;
     
@@ -2022,7 +2022,9 @@ VisiblePosition AccessibilityRenderObject::visiblePositionForPoint(const IntPoin
             break;
         Frame& frame = toFrameView(widget)->frame();
         renderView = frame.document()->renderView();
+#if PLATFORM(MAC)
         frameView = toFrameView(widget);
+#endif
     }
     
     return innerNode->renderer()->positionForPoint(pointResult);

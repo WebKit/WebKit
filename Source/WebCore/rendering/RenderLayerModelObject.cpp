@@ -172,15 +172,13 @@ void RenderLayerModelObject::styleDidChange(StyleDifference diff, const RenderSt
             setChildNeedsLayout(true);
     }
 
-    if (FrameView *frameView = view()->frameView()) {
-        bool newStyleIsViewportConstained = style()->hasViewportConstrainedPosition();
-        bool oldStyleIsViewportConstrained = oldStyle && oldStyle->hasViewportConstrainedPosition();
-        if (newStyleIsViewportConstained != oldStyleIsViewportConstrained) {
-            if (newStyleIsViewportConstained && layer())
-                frameView->addViewportConstrainedObject(this);
-            else
-                frameView->removeViewportConstrainedObject(this);
-        }
+    bool newStyleIsViewportConstained = style()->hasViewportConstrainedPosition();
+    bool oldStyleIsViewportConstrained = oldStyle && oldStyle->hasViewportConstrainedPosition();
+    if (newStyleIsViewportConstained != oldStyleIsViewportConstrained) {
+        if (newStyleIsViewportConstained && layer())
+            view()->frameView().addViewportConstrainedObject(this);
+        else
+            view()->frameView().removeViewportConstrainedObject(this);
     }
 }
 

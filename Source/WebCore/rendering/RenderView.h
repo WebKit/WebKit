@@ -72,7 +72,7 @@ public:
 
     float zoomFactor() const;
 
-    FrameView* frameView() const { return m_frameView; }
+    FrameView& frameView() const { return m_frameView; }
 
     virtual LayoutRect visualOverflowRect() const OVERRIDE;
     virtual void computeRectForRepaint(const RenderLayerModelObject* repaintContainer, LayoutRect&, bool fixed = false) const OVERRIDE;
@@ -147,7 +147,7 @@ public:
     }
 #endif
 
-    bool doingFullRepaint() const { return m_frameView->needsFullRepaint(); }
+    bool doingFullRepaint() const { return frameView().needsFullRepaint(); }
 
     // Subtree push/pop
     void pushLayoutState(RenderObject*);
@@ -296,7 +296,7 @@ private:
     friend class LayoutStateDisabler;
 
 protected:
-    FrameView* m_frameView;
+    FrameView& m_frameView;
 
     RenderObject* m_selectionStart;
     RenderObject* m_selectionEnd;

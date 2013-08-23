@@ -753,7 +753,7 @@ IntRect RenderListBox::convertFromScrollbarToContainingView(const Scrollbar* scr
     int scrollbarTop = borderTop();
     rect.move(scrollbarLeft, scrollbarTop);
 
-    return view->frameView()->convertFromRenderer(this, rect);
+    return view->frameView().convertFromRenderer(this, rect);
 }
 
 IntRect RenderListBox::convertFromContainingViewToScrollbar(const Scrollbar* scrollbar, const IntRect& parentRect) const
@@ -762,7 +762,7 @@ IntRect RenderListBox::convertFromContainingViewToScrollbar(const Scrollbar* scr
     if (!view)
         return parentRect;
 
-    IntRect rect = view->frameView()->convertToRenderer(this, parentRect);
+    IntRect rect = view->frameView().convertToRenderer(this, parentRect);
 
     int scrollbarLeft = width() - borderRight() - scrollbar->width();
     int scrollbarTop = borderTop();
@@ -782,7 +782,7 @@ IntPoint RenderListBox::convertFromScrollbarToContainingView(const Scrollbar* sc
     int scrollbarTop = borderTop();
     point.move(scrollbarLeft, scrollbarTop);
 
-    return view->frameView()->convertFromRenderer(this, point);
+    return view->frameView().convertFromRenderer(this, point);
 }
 
 IntPoint RenderListBox::convertFromContainingViewToScrollbar(const Scrollbar* scrollbar, const IntPoint& parentPoint) const
@@ -791,7 +791,7 @@ IntPoint RenderListBox::convertFromContainingViewToScrollbar(const Scrollbar* sc
     if (!view)
         return parentPoint;
 
-    IntPoint point = view->frameView()->convertToRenderer(this, parentPoint);
+    IntPoint point = view->frameView().convertToRenderer(this, parentPoint);
 
     int scrollbarLeft = width() - borderRight() - scrollbar->width();
     int scrollbarTop = borderTop();
@@ -819,7 +819,7 @@ IntPoint RenderListBox::lastKnownMousePosition() const
     RenderView* view = this->view();
     if (!view)
         return IntPoint();
-    return view->frameView()->lastKnownMousePosition();
+    return view->frameView().lastKnownMousePosition();
 }
 
 bool RenderListBox::isHandlingWheelEvent() const
@@ -827,7 +827,7 @@ bool RenderListBox::isHandlingWheelEvent() const
     RenderView* view = this->view();
     if (!view)
         return false;
-    return view->frameView()->isHandlingWheelEvent();
+    return view->frameView().isHandlingWheelEvent();
 }
 
 bool RenderListBox::shouldSuspendScrollAnimations() const
@@ -835,7 +835,7 @@ bool RenderListBox::shouldSuspendScrollAnimations() const
     RenderView* view = this->view();
     if (!view)
         return true;
-    return view->frameView()->shouldSuspendScrollAnimations();
+    return view->frameView().shouldSuspendScrollAnimations();
 }
 
 bool RenderListBox::scrollbarsCanBeActive() const
@@ -843,7 +843,7 @@ bool RenderListBox::scrollbarsCanBeActive() const
     RenderView* view = this->view();
     if (!view)
         return false;
-    return view->frameView()->scrollbarsCanBeActive();
+    return view->frameView().scrollbarsCanBeActive();
 }
 
 bool RenderListBox::scrollbarAnimationsAreSuppressed() const
@@ -851,7 +851,7 @@ bool RenderListBox::scrollbarAnimationsAreSuppressed() const
     RenderView* view = this->view();
     if (!view)
         return false;
-    return view->frameView()->scrollbarAnimationsAreSuppressed();
+    return view->frameView().scrollbarAnimationsAreSuppressed();
 }
 
 ScrollableArea* RenderListBox::enclosingScrollableArea() const

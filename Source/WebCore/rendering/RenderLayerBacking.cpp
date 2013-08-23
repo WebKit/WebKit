@@ -120,7 +120,7 @@ RenderLayerBacking::RenderLayerBacking(RenderLayer* layer)
     , m_didSwitchToFullTileCoverageDuringLoading(false)
 {
     if (layer->isRootLayer()) {
-        Frame& frame = toRenderView(renderer())->frameView()->frame();
+        Frame& frame = toRenderView(renderer())->frameView().frame();
         Page* page = frame.page();
         if (page && page->mainFrame() == &frame) {
             m_isMainFrameRenderViewLayer = true;
@@ -435,7 +435,7 @@ void RenderLayerBacking::updateCompositedBounds()
 
         LayoutRect clippingBounds;
         if (renderer()->style()->position() == FixedPosition && renderer()->container() == view)
-            clippingBounds = view->frameView()->viewportConstrainedVisibleContentRect();
+            clippingBounds = view->frameView().viewportConstrainedVisibleContentRect();
         else
             clippingBounds = view->unscaledDocumentRect();
 
@@ -786,9 +786,9 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
         FloatPoint backgroundPosition;
         FloatSize backgroundSize = contentsSize;
         if (backgroundLayerPaintsFixedRootBackground()) {
-            FrameView* frameView = toRenderView(renderer())->frameView();
-            backgroundPosition = IntPoint(frameView->scrollOffsetForFixedPosition());
-            backgroundSize = frameView->visibleContentRect().size();
+            const FrameView& frameView = toRenderView(renderer())->frameView();
+            backgroundPosition = IntPoint(frameView.scrollOffsetForFixedPosition());
+            backgroundSize = frameView.visibleContentRect().size();
         }
         m_backgroundLayer->setPosition(backgroundPosition);
         m_backgroundLayer->setSize(backgroundSize);
