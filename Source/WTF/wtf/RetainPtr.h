@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2005, 2006, 2007, 2008, 2010 Apple Inc. All rights reserved.
+ *  Copyright (C) 2005, 2006, 2007, 2008, 2010, 2013 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -186,74 +186,53 @@ namespace WTF {
         return ptr;
     }
 
-    template<typename T> inline RetainPtr<T>& RetainPtr<T>::operator=(const RetainPtr<T>& o)
+    template<typename T> inline RetainPtr<T>& RetainPtr<T>::operator=(const RetainPtr& o)
     {
-        PtrType optr = o.get();
-        if (optr)
-            retain(optr);
-        PtrType ptr = m_ptr;
-        m_ptr = optr;
-        if (ptr)
-            release(ptr);
+        RetainPtr ptr = o;
+        swap(ptr);
         return *this;
     }
 
     template<typename T> template<typename U> inline RetainPtr<T>& RetainPtr<T>::operator=(const RetainPtr<U>& o)
     {
-        PtrType optr = o.get();
-        if (optr)
-            retain(optr);
-        PtrType ptr = m_ptr;
-        m_ptr = optr;
-        if (ptr)
-            release(ptr);
+        RetainPtr ptr = o;
+        swap(ptr);
         return *this;
     }
 
     template<typename T> inline RetainPtr<T>& RetainPtr<T>::operator=(PtrType optr)
     {
-        if (optr)
-            retain(optr);
-        PtrType ptr = m_ptr;
-        m_ptr = optr;
-        if (ptr)
-            release(ptr);
+        RetainPtr ptr = optr;
+        swap(ptr);
         return *this;
     }
 
     template<typename T> template<typename U> inline RetainPtr<T>& RetainPtr<T>::operator=(U* optr)
     {
-        if (optr)
-            retain(optr);
-        PtrType ptr = m_ptr;
-        m_ptr = optr;
-        if (ptr)
-            release(ptr);
+        RetainPtr ptr = optr;
+        swap(ptr);
         return *this;
     }
 
 #if COMPILER_SUPPORTS(CXX_RVALUE_REFERENCES)
-    template<typename T> inline RetainPtr<T>& RetainPtr<T>::operator=(RetainPtr<T>&& o)
-    {
-        PtrType ptr = m_ptr;
-        m_ptr = o.leakRef();
-        if (ptr)
-            release(ptr);
 
+    template<typename T> inline RetainPtr<T>& RetainPtr<T>::operator=(RetainPtr&& o)
+    {
+        RetainPtr ptr = std::move(o);
+        swap(ptr);
         return *this;
     }
 
     template<typename T> template<typename U> inline RetainPtr<T>& RetainPtr<T>::operator=(RetainPtr<U>&& o)
     {
-        PtrType ptr = m_ptr;
-        m_ptr = o.leakRef();
-        if (ptr)
-            release(ptr);
+        RetainPtr ptr = std::move(o);
+        swap(ptr);
         return *this;
     }
+
 #endif
 
-    template<typename T> inline void RetainPtr<T>::swap(RetainPtr<T>& o)
+    template<typename T> inline void RetainPtr<T>::swap(RetainPtr& o)
     {
         std::swap(m_ptr, o.m_ptr);
     }
@@ -269,15 +248,15 @@ namespace WTF {
     }
 
     template<typename T, typename U> inline bool operator==(const RetainPtr<T>& a, U* b)
-    { 
+    {
         return a.get() == b; 
     }
-    
+
     template<typename T, typename U> inline bool operator==(T* a, const RetainPtr<U>& b) 
     {
         return a == b.get(); 
     }
-    
+
     template<typename T, typename U> inline bool operator!=(const RetainPtr<T>& a, const RetainPtr<U>& b)
     { 
         return a.get() != b.get(); 

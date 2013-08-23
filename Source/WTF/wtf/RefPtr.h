@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
+ *  Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2013 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -107,66 +107,60 @@ namespace WTF {
         derefIfNotNull(ptr);
     }
 
-    template<typename T> inline RefPtr<T>& RefPtr<T>::operator=(const RefPtr<T>& o)
+    template<typename T> inline RefPtr<T>& RefPtr<T>::operator=(const RefPtr& o)
     {
-        T* optr = o.get();
-        refIfNotNull(optr);
-        T* ptr = m_ptr;
-        m_ptr = optr;
-        derefIfNotNull(ptr);
+        RefPtr ptr = o;
+        swap(ptr);
         return *this;
     }
     
     template<typename T> template<typename U> inline RefPtr<T>& RefPtr<T>::operator=(const RefPtr<U>& o)
     {
-        T* optr = o.get();
-        refIfNotNull(optr);
-        T* ptr = m_ptr;
-        m_ptr = optr;
-        derefIfNotNull(ptr);
+        RefPtr ptr = o;
+        swap(ptr);
         return *this;
     }
     
     template<typename T> inline RefPtr<T>& RefPtr<T>::operator=(T* optr)
     {
-        refIfNotNull(optr);
-        T* ptr = m_ptr;
-        m_ptr = optr;
-        derefIfNotNull(ptr);
+        RefPtr ptr = optr;
+        swap(ptr);
         return *this;
     }
 
     template<typename T> inline RefPtr<T>& RefPtr<T>::operator=(const PassRefPtr<T>& o)
     {
-        T* ptr = m_ptr;
-        m_ptr = o.leakRef();
-        derefIfNotNull(ptr);
+        RefPtr ptr = o;
+        swap(ptr);
         return *this;
     }
 
     template<typename T> template<typename U> inline RefPtr<T>& RefPtr<T>::operator=(const PassRefPtr<U>& o)
     {
-        T* ptr = m_ptr;
-        m_ptr = o.leakRef();
-        derefIfNotNull(ptr);
+        RefPtr ptr = o;
+        swap(ptr);
         return *this;
     }
+
 #if COMPILER_SUPPORTS(CXX_RVALUE_REFERENCES)
-    template<typename T> inline RefPtr<T>& RefPtr<T>::operator=(RefPtr<T>&& o)
+
+    template<typename T> inline RefPtr<T>& RefPtr<T>::operator=(RefPtr&& o)
     {
-        RefPtr<T> ptr = std::move(o);
+        RefPtr ptr = std::move(o);
         swap(ptr);
         return *this;
     }
 
     template<typename T> template<typename U> inline RefPtr<T>& RefPtr<T>::operator=(RefPtr<U>&& o)
     {
-        RefPtr<T> ptr = std::move(o);
+        RefPtr ptr = std::move(o);
         swap(ptr);
         return *this;
     }
+
 #endif
-    template<class T> inline void RefPtr<T>::swap(RefPtr<T>& o)
+
+    template<class T> inline void RefPtr<T>::swap(RefPtr& o)
     {
         std::swap(m_ptr, o.m_ptr);
     }
