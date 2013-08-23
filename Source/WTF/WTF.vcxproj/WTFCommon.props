@@ -5,7 +5,7 @@
   <ItemGroup />
   <ItemDefinitionGroup>
     <ClCompile>
-      <AdditionalIncludeDirectories>../;../wtf/;../wtf/threads/;../wtf/unicode/;$(ConfigurationBuildDir)\include\private;$(ConfigurationBuildDir)\include\JavaScriptCore;$(WebKit_Libraries)\include\private;$(WebKit_Libraries)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../;../wtf/;../wtf/threads/;../wtf/unicode/;$(ConfigurationBuildDir)\include\private;$(ConfigurationBuildDir)\include\JavaScriptCore;$(WebKit_Libraries)\include\private;$(WebKit_Libraries)\include;$(WebKit_Libraries)\include\zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;__STD_C;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ForcedIncludeFiles>ICUVersion.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
       <DisableSpecificWarnings>%(DisableSpecificWarnings)</DisableSpecificWarnings>
@@ -23,7 +23,7 @@
       <OutputFile>$(OutDir)\$(TargetName).bsc</OutputFile>
     </Bscmake>
     <Link>
-      <AdditionalDependencies>winmm.lib;libicuuc$(DebugSuffix).lib;libicuin$(DebugSuffix).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>winmm.lib;libicuuc$(DebugSuffix).lib;libicuin$(DebugSuffix).lib;zdll$(DebugSuffix).lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
 </Project>

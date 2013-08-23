@@ -219,6 +219,9 @@
     <ClCompile Include="..\wtf\SixCharacterHash.cpp">
       <Filter>wtf</Filter>
     </ClCompile>
+    <ClCompile Include="..\wtf\Compression.cpp">
+      <Filter>wtf</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\wtf\dtoa\utils.h">
@@ -679,6 +682,15 @@
       <Filter>wtf</Filter>
     </ClInclude>
     <ClInclude Include="..\wtf\SixCharacterHash.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\Compression.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\FlipBytes.h">
+      <Filter>wtf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wtf\DeferrableRefCounted.h">
       <Filter>wtf</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,3 +1,12 @@
+2013-08-23  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Unreviewed build correction after r154498.
+
+        * WTF.vcxproj/WTF.vcxproj.filters: Adjust files so they show up
+        in the proper folders.
+        * WTF.vcxproj/WTFCommon.props: Add search path for zlib header and
+        include link directive.
+
 2013-08-23  Oliver Hunt  <oliver@apple.com>
 
         Attempt to appease windows bot.
