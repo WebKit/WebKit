@@ -1,3 +1,33 @@
+2013-08-23  Darin Adler  <darin@apple.com>
+
+        Reduce use of Node in HTMLTableRowsCollection, and use modern traversal idiom
+        https://bugs.webkit.org/show_bug.cgi?id=120222
+
+        Reviewed by Antti Koivisto.
+
+        * html/HTMLTableRowElement.h:
+        (WebCore::isHTMLTableRowElement): Added.
+        (WebCore::isElementOfType<HTMLTableRowElement>): Added.
+        (WebCore::toHTMLTableRowElement): Added.
+
+        * html/HTMLTableRowsCollection.cpp:
+        (WebCore::assertRowIsInTable): Refactored a bit. Changed #if as Andy Estes
+        requested during rewview and got rid of local variables.
+        (WebCore::HTMLTableRowsCollection::rowAfter): Moved a ocmment in here.
+        Changed code to traverse elements instead of nodes, and used the Traversal<>
+        template to eliminate some loops entirely.
+        (WebCore::HTMLTableRowsCollection::lastRow): Ditto.
+        (WebCore::HTMLTableRowsCollection::HTMLTableRowsCollection): Changed argument
+        type from Node to HTMLTableElement.
+        (WebCore::HTMLTableRowsCollection::create): Added an assertion for the value
+        of the collection type argument, and added the typecast here needed for the
+        change above.
+        (WebCore::HTMLTableRowsCollection::virtualItemAfter): Removed the assertion
+        here that was a subset of the assertion we now have inside the rowAfter function.
+
+        * html/HTMLTableRowsCollection.h: Added FINAL. Made single-argument constructor
+        explicit.
+
 2013-08-23  Alex Christensen  <achristensen@apple.com>
 
         Re-separating Win32 and Win64 builds.

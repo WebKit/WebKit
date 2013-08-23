@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2011, 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 #include "config.h"
 #include "HTMLTableRowsCollection.h"
 
+#include "ElementTraversal.h"
 #include "HTMLNames.h"
 #include "HTMLTableElement.h"
 #include "HTMLTableRowElement.h"
@@ -37,32 +38,21 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-#if ASSERT_DISABLED
-
-static inline void assertRowIsInTable(HTMLTableRowElement*)
+static inline void assertRowIsInTable(HTMLTableElement* table, HTMLTableRowElement* row)
 {
-}
-
+#if !ASSERT_DISABLED
+    UNUSED_PARAM(table);
+    UNUSED_PARAM(row);
 #else
-
-// The HTMLCollection caching mechanism along with the code in this class will
-// guarantee that this row is an immediate child of either the table, a thead,
-// a tbody, or a tfoot.
-static inline void assertRowIsInTable(HTMLTableRowElement* row)
-{
     if (!row)
         return;
-    ContainerNode* parent = row->parentNode();
-    ASSERT(parent);
-    if (parent->hasTagName(tableTag))
+    if (row->parentNode() == table)
         return;
-    ASSERT(parent->hasTagName(theadTag) || parent->hasTagName(tbodyTag) || parent->hasTagName(tfootTag));
-    ContainerNode* grandparent = parent->parentNode();
-    ASSERT(grandparent);
-    ASSERT(grandparent->hasTagName(tableTag));
-}
-
+    ASSERT(row->parentNode());
+    ASSERT(row->parentNode()->hasTagName(theadTag) || row->parentNode()->hasTagName(tbodyTag) || row->parentNode()->hasTagName(tfootTag));
+    ASSERT(row->parentNode()->parentNode() == table);
 #endif
+}
 
 static inline bool isInSection(HTMLTableRowElement* row, const QualifiedName& sectionTag)
 {
@@ -74,62 +64,55 @@ static inline bool isInSection(HTMLTableRowElement* row, const QualifiedName& se
 
 HTMLTableRowElement* HTMLTableRowsCollection::rowAfter(HTMLTableElement* table, HTMLTableRowElement* previous)
 {
-    assertRowIsInTable(previous);
+    // The HTMLCollection caching mechanism, along with the code in this class, will guarantee that the previous row
+    // is an immediate child of either the table, or a table section that is itself an immediate child of the table.
+    assertRowIsInTable(table, previous);
 
-    Node* child = 0;
-
-    // Start by looking for the next row in this section.
-    // Continue only if there is none.
+    // Start by looking for the next row in this section. Continue only if there is none.
     if (previous && previous->parentNode() != table) {
-        for (child = previous->nextSibling(); child; child = child->nextSibling()) {
-            if (child->hasTagName(trTag))
-                return static_cast<HTMLTableRowElement*>(child);
-        }
+        if (auto row = Traversal<HTMLTableRowElement>::nextSibling(previous))
+            return row;
     }
+
+    Element* child = 0;
 
     // If still looking at head sections, find the first row in the next head section.
     if (!previous)
-        child = table->firstChild();
+        child = ElementTraversal::firstChild(table);
     else if (isInSection(previous, theadTag))
-        child = previous->parentNode()->nextSibling();
-    for (; child; child = child->nextSibling()) {
+        child = ElementTraversal::nextSibling(previous->parentNode());
+    for (; child; child = ElementTraversal::nextSibling(child)) {
         if (child->hasTagName(theadTag)) {
-            for (Node* grandchild = child->firstChild(); grandchild; grandchild = grandchild->nextSibling()) {
-                if (grandchild->hasTagName(trTag))
-                    return static_cast<HTMLTableRowElement*>(grandchild);
-            }
+            if (auto row = Traversal<HTMLTableRowElement>::firstChild(child))
+                return row;
         }
     }
 
     // If still looking at top level and bodies, find the next row in top level or the first in the next body section.
     if (!previous || isInSection(previous, theadTag))
-        child = table->firstChild();
+        child = ElementTraversal::firstChild(table);
     else if (previous->parentNode() == table)
-        child = previous->nextSibling();
+        child = ElementTraversal::nextSibling(previous);
     else if (isInSection(previous, tbodyTag))
-        child = previous->parentNode()->nextSibling();
-    for (; child; child = child->nextSibling()) {
-        if (child->hasTagName(trTag))
-            return static_cast<HTMLTableRowElement*>(child);
+        child = ElementTraversal::nextSibling(previous->parentNode());
+    for (; child; child = ElementTraversal::nextSibling(child)) {
+        if (isHTMLTableRowElement(child))
+            return toHTMLTableRowElement(child);
         if (child->hasTagName(tbodyTag)) {
-            for (Node* grandchild = child->firstChild(); grandchild; grandchild = grandchild->nextSibling()) {
-                if (grandchild->hasTagName(trTag))
-                    return static_cast<HTMLTableRowElement*>(grandchild);
-            }
+            if (auto row = Traversal<HTMLTableRowElement>::firstChild(child))
+                return row;
         }
     }
 
     // Find the first row in the next foot section.
     if (!previous || !isInSection(previous, tfootTag))
-        child = table->firstChild();
+        child = ElementTraversal::firstChild(table);
     else
-        child = previous->parentNode()->nextSibling();
-    for (; child; child = child->nextSibling()) {
+        child = ElementTraversal::nextSibling(previous->parentNode());
+    for (; child; child = ElementTraversal::nextSibling(child)) {
         if (child->hasTagName(tfootTag)) {
-            for (Node* grandchild = child->firstChild(); grandchild; grandchild = grandchild->nextSibling()) {
-                if (grandchild->hasTagName(trTag))
-                    return static_cast<HTMLTableRowElement*>(grandchild);
-            }
+            if (auto row = Traversal<HTMLTableRowElement>::firstChild(child))
+                return row;
         }
     }
 
@@ -138,57 +121,47 @@ HTMLTableRowElement* HTMLTableRowsCollection::rowAfter(HTMLTableElement* table, 
 
 HTMLTableRowElement* HTMLTableRowsCollection::lastRow(HTMLTableElement* table)
 {
-    for (Node* child = table->lastChild(); child; child = child->previousSibling()) {
+    for (auto child = ElementTraversal::lastChild(table); child; child = ElementTraversal::previousSibling(child)) {
         if (child->hasTagName(tfootTag)) {
-            for (Node* grandchild = child->lastChild(); grandchild; grandchild = grandchild->previousSibling()) {
-                if (grandchild->hasTagName(trTag))
-                    return static_cast<HTMLTableRowElement*>(grandchild);
-            }
+            if (auto row = Traversal<HTMLTableRowElement>::lastChild(child))
+                return row;
         }
     }
 
-    for (Node* child = table->lastChild(); child; child = child->previousSibling()) {
-        if (child->hasTagName(trTag))
-            return static_cast<HTMLTableRowElement*>(child);
+    for (auto child = ElementTraversal::lastChild(table); child; child = ElementTraversal::previousSibling(child)) {
+        if (isHTMLTableRowElement(child))
+            return toHTMLTableRowElement(child);
         if (child->hasTagName(tbodyTag)) {
-            for (Node* grandchild = child->lastChild(); grandchild; grandchild = grandchild->previousSibling()) {
-                if (grandchild->hasTagName(trTag))
-                    return static_cast<HTMLTableRowElement*>(grandchild);
-            }
+            if (auto row = Traversal<HTMLTableRowElement>::lastChild(child))
+                return row;
         }
     }
 
-    for (Node* child = table->lastChild(); child; child = child->previousSibling()) {
+    for (auto child = ElementTraversal::lastChild(table); child; child = ElementTraversal::previousSibling(child)) {
         if (child->hasTagName(theadTag)) {
-            for (Node* grandchild = child->lastChild(); grandchild; grandchild = grandchild->previousSibling()) {
-                if (grandchild->hasTagName(trTag))
-                    return static_cast<HTMLTableRowElement*>(grandchild);
-            }
+            if (auto row = Traversal<HTMLTableRowElement>::lastChild(child))
+                return row;
         }
     }
 
     return 0;
 }
 
-// Must call get() on the table in case that argument is compiled before dereferencing the
-// table to get at the collection cache. Order of argument evaluation is undefined and can
-// differ between compilers.
-HTMLTableRowsCollection::HTMLTableRowsCollection(Node* table)
+HTMLTableRowsCollection::HTMLTableRowsCollection(HTMLTableElement* table)
     : HTMLCollection(table, TableRows, OverridesItemAfter)
 {
-    ASSERT(isHTMLTableElement(table));
 }
 
-PassRefPtr<HTMLTableRowsCollection> HTMLTableRowsCollection::create(Node* table, CollectionType)
+PassRefPtr<HTMLTableRowsCollection> HTMLTableRowsCollection::create(Node* table, CollectionType type)
 {
-    return adoptRef(new HTMLTableRowsCollection(table));
+    ASSERT_UNUSED(type, type == TableRows);
+    return adoptRef(new HTMLTableRowsCollection(toHTMLTableElement(table)));
 }
 
 Element* HTMLTableRowsCollection::virtualItemAfter(unsigned& offsetInArray, Element* previous) const
 {
     ASSERT_UNUSED(offsetInArray, !offsetInArray);
-    ASSERT(!previous || (previous->isHTMLElement() && toHTMLElement(previous)->hasLocalName(trTag)));
-    return rowAfter(toHTMLTableElement(ownerNode()), static_cast<HTMLTableRowElement*>(previous));
+    return rowAfter(toHTMLTableElement(ownerNode()), toHTMLTableRowElement(previous));
 }
 
 }

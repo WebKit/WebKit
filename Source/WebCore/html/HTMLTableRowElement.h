@@ -4,7 +4,7 @@
  *           (C) 1998 Waldo Bastian (bastian@kde.org)
  *           (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2010, 2013 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -50,6 +50,24 @@ public:
 private:
     HTMLTableRowElement(const QualifiedName&, Document*);
 };
+
+inline bool isHTMLTableRowElement(const Node* node)
+{
+    return node->hasTagName(HTMLNames::trTag);
+}
+
+inline bool isHTMLTableRowElement(const Element* element)
+{
+    return element->hasTagName(HTMLNames::trTag);
+}
+
+template<> inline bool isElementOfType<HTMLTableRowElement>(const Element* element) { return isHTMLTableRowElement(element); }
+
+inline HTMLTableRowElement* toHTMLTableRowElement(Node* node)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(!node || isHTMLTableRowElement(node));
+    return static_cast<HTMLTableRowElement*>(node);
+}
 
 } // namespace
 
