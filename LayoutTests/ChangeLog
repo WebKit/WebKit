@@ -1,3 +1,24 @@
+2013-08-23  Arpita Bahuguna  <a.bah@samsung.com>
+
+        <br> does not get deleted when inlined after some non-textual content.
+        https://bugs.webkit.org/show_bug.cgi?id=120006
+
+        Reviewed by Ryosuke Niwa.
+
+        * editing/deleting/delete-inline-br-expected.txt: Added.
+        * editing/deleting/delete-inline-br.html: Added.
+        Added a testcase that verifies that the caret is placed at the correct
+        position after performing a back-delete operation.
+
+        * editing/deleting/delete-before-block-image-2-expected.txt:
+        * platform/mac/editing/deleting/delete-br-004-expected.txt:
+        * platform/mac/editing/deleting/delete-br-005-expected.txt:
+        * platform/mac/editing/deleting/delete-br-006-expected.txt:
+        * platform/qt/editing/deleting/delete-br-004-expected.txt:
+        * platform/qt/editing/deleting/delete-br-005-expected.txt:
+        * platform/qt/editing/deleting/delete-br-006-expected.txt:
+        Rebaselining existing tests. No visual change in behavior for these tests.
+
 2013-08-23  Peter Gal  <galpeter@inf.u-szeged.hu>
 
         [WTR] Should dump as text when the mimetype is text/plain

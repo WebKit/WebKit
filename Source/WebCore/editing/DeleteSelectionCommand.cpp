@@ -320,7 +320,9 @@ bool DeleteSelectionCommand::handleSpecialCaseBRDelete()
 
     // FIXME: This code doesn't belong in here.
     // We detect the case where the start is an empty line consisting of BR not wrapped in a block element.
-    if (upstreamStartIsBR && downstreamStartIsBR && !(isStartOfBlock(positionBeforeNode(nodeAfterUpstreamStart)) && isEndOfBlock(positionAfterNode(nodeAfterUpstreamStart)))) {
+    if (upstreamStartIsBR && downstreamStartIsBR
+        && !(isStartOfBlock(positionBeforeNode(nodeAfterUpstreamStart)) && isEndOfBlock(positionAfterNode(nodeAfterDownstreamStart)))
+        && (!nodeAfterUpstreamEnd || nodeAfterUpstreamEnd->hasTagName(brTag) || nodeAfterUpstreamEnd->previousSibling() != nodeAfterUpstreamStart)) {
         m_startsAtEmptyLine = true;
         m_endingPosition = m_downstreamEnd;
     }
