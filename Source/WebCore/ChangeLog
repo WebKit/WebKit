@@ -1,5 +1,22 @@
 2013-08-23  Andreas Kling  <akling@apple.com>
 
+        RenderLayerCompositor::m_renderView should be a reference.
+        <https://webkit.org/b/120210>
+
+        Reviewed by Antti Koivisto.
+
+        The RenderLayerCompositor is always created by a RenderView passing itself to the constructor.
+        By making m_renderView a reference, we flush out some unnecessary null checks.
+        We also gain a pointer-free path to Settings through m_renderView.frameView().frame().settings()
+        so we don't have to make those blocks conditional anymore, reducing ambiguity.
+
+        * rendering/RenderLayerCompositor.cpp:
+        * rendering/RenderLayerCompositor.h:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::compositor):
+
+2013-08-23  Andreas Kling  <akling@apple.com>
+
         RenderView::frameView() should return a reference.
         <https://webkit.org/b/120208>
 
