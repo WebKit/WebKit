@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2009, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,26 +32,34 @@
 #include "CFDictionaryPropertyBag.h"
 #include "COMPropertyBag.h"
 #include "DOMHTMLClasses.h"
+#include "DefaultPolicyDelegate.h"
 #include "EmbeddedWidget.h"
 #include "MarshallingHelpers.h"
 #include "NotImplemented.h"
+#include "WebActionPropertyBag.h"
 #include "WebCachedFramePlatformData.h"
 #include "WebChromeClient.h"
 #include "WebDocumentLoader.h"
+#include "WebDownload.h"
 #include "WebError.h"
 #include "WebFrame.h"
+#include "WebFrameNetworkingContext.h"
+#include "WebFramePolicyListener.h"
 #include "WebHistory.h"
 #include "WebHistoryItem.h"
 #include "WebMutableURLRequest.h"
 #include "WebNavigationData.h"
 #include "WebNotificationCenter.h"
+#include "WebScriptWorld.h"
 #include "WebSecurityOrigin.h"
 #include "WebURLAuthenticationChallenge.h"
 #include "WebURLResponse.h"
 #include "WebView.h"
+#include <JavaScriptCore/APICast.h>
 #include <WebCore/BackForwardController.h>
 #include <WebCore/CachedFrame.h>
 #include <WebCore/DocumentLoader.h>
+#include <WebCore/FormState.h>
 #include <WebCore/Frame.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/FrameTree.h>
@@ -66,9 +74,11 @@
 #include <WebCore/Page.h>
 #include <WebCore/PluginPackage.h>
 #include <WebCore/PluginView.h>
+#include <WebCore/PolicyChecker.h>
 #include <WebCore/RenderPart.h>
 #include <WebCore/ResourceHandle.h>
 #include <WebCore/ResourceLoader.h>
+#include <WebCore/ScriptController.h>
 #include <WebCore/Settings.h>
 
 using namespace WebCore;
@@ -79,9 +89,23 @@ static WebDataSource* getWebDataSource(DocumentLoader* loader)
     return loader ? static_cast<WebDocumentLoader*>(loader)->dataSource() : 0;
 }
 
+class WebFrameLoaderClient::WebFramePolicyListenerPrivate {
+public:
+    WebFramePolicyListenerPrivate() 
+        : m_policyFunction(0)
+    { 
+    }
+
+    ~WebFramePolicyListenerPrivate() { }
+
+    FramePolicyFunction m_policyFunction;
+    COMPtr<WebFramePolicyListener> m_policyListener;
+};
+
 WebFrameLoaderClient::WebFrameLoaderClient(WebFrame* webFrame)
     : m_webFrame(webFrame)
-    , m_manualLoader(0) 
+    , m_manualLoader(0)
+    , m_policyListenerPrivate(adoptPtr(new WebFramePolicyListenerPrivate))
     , m_hasSentResponseToPlugin(false) 
 {
     ASSERT_ARG(webFrame, webFrame);
@@ -91,9 +115,18 @@ WebFrameLoaderClient::~WebFrameLoaderClient()
 {
 }
 
+void WebFrameLoaderClient::frameLoaderDestroyed()
+{
+}
+
 bool WebFrameLoaderClient::hasWebView() const
 {
     return m_webFrame->webView();
+}
+
+void WebFrameLoaderClient::makeRepresentation(DocumentLoader*)
+{
+    notImplemented();
 }
 
 void WebFrameLoaderClient::forceLayout()
@@ -111,6 +144,51 @@ void WebFrameLoaderClient::forceLayout()
 
     view->setNeedsLayout();
     view->forceLayout(true);
+}
+
+void WebFrameLoaderClient::forceLayoutForNonHTML()
+{
+    notImplemented();
+}
+
+void WebFrameLoaderClient::setCopiesOnScroll()
+{
+    notImplemented();
+}
+
+void WebFrameLoaderClient::detachedFromParent2()
+{
+    notImplemented();
+}
+
+void WebFrameLoaderClient::detachedFromParent3()
+{
+    notImplemented();
+}
+
+void WebFrameLoaderClient::convertMainResourceLoadToDownload(DocumentLoader* documentLoader, const ResourceRequest& request, const ResourceResponse& response)
+{
+    COMPtr<IWebDownloadDelegate> downloadDelegate;
+    COMPtr<IWebView> webView;
+    if (SUCCEEDED(m_webFrame->webView(&webView))) {
+        if (FAILED(webView->downloadDelegate(&downloadDelegate))) {
+            // If the WebView doesn't successfully provide a download delegate we'll pass a null one
+            // into the WebDownload - which may or may not decide to use a DefaultDownloadDelegate
+            LOG_ERROR("Failed to get downloadDelegate from WebView");
+            downloadDelegate = 0;
+        }
+    }
+
+    // Its the delegate's job to ref the WebDownload to keep it alive - otherwise it will be destroyed
+    // when this method returns
+    COMPtr<WebDownload> download;
+    download.adoptRef(WebDownload::createInstance(documentLoader->mainResourceLoader()->handle(), request, response, downloadDelegate.get()));
+}
+
+bool WebFrameLoaderClient::dispatchDidLoadResourceFromMemoryCache(DocumentLoader*, const ResourceRequest&, const ResourceResponse&, int /*length*/)
+{
+    notImplemented();
+    return false;
 }
 
 void WebFrameLoaderClient::assignIdentifierToInitialRequest(unsigned long identifier, DocumentLoader* loader, const ResourceRequest& request)
@@ -396,6 +474,28 @@ void WebFrameLoaderClient::dispatchDidCommitLoad()
         frameLoadDelegate->didCommitLoadForFrame(webView, m_webFrame);
 }
 
+void WebFrameLoaderClient::dispatchDidFailProvisionalLoad(const ResourceError& error)
+{
+    WebView* webView = m_webFrame->webView();
+    COMPtr<IWebFrameLoadDelegate> frameLoadDelegate;
+    if (SUCCEEDED(webView->frameLoadDelegate(&frameLoadDelegate))) {
+        COMPtr<IWebError> webError;
+        webError.adoptRef(WebError::createInstance(error));
+        frameLoadDelegate->didFailProvisionalLoadWithError(webView, webError.get(), m_webFrame);
+    }
+}
+
+void WebFrameLoaderClient::dispatchDidFailLoad(const ResourceError& error)
+{
+    WebView* webView = m_webFrame->webView();
+    COMPtr<IWebFrameLoadDelegate> frameLoadDelegate;
+    if (SUCCEEDED(webView->frameLoadDelegate(&frameLoadDelegate))) {
+        COMPtr<IWebError> webError;
+        webError.adoptRef(WebError::createInstance(error));
+        frameLoadDelegate->didFailLoadWithError(webView, webError.get(), m_webFrame);
+    }
+}
+
 void WebFrameLoaderClient::dispatchDidFinishDocumentLoad()
 {
     WebView* webView = m_webFrame->webView();
@@ -457,6 +557,108 @@ void WebFrameLoaderClient::dispatchShow()
         ui->webViewShow(webView);
 }
 
+void WebFrameLoaderClient::dispatchDecidePolicyForResponse(FramePolicyFunction function, const ResourceResponse& response, const ResourceRequest& request)
+{
+    WebView* webView = m_webFrame->webView();
+    Frame* coreFrame = core(m_webFrame);
+    ASSERT(coreFrame);
+
+    COMPtr<IWebPolicyDelegate> policyDelegate;
+    if (FAILED(webView->policyDelegate(&policyDelegate)))
+        policyDelegate = DefaultPolicyDelegate::sharedInstance();
+
+    COMPtr<IWebURLRequest> urlRequest(AdoptCOM, WebMutableURLRequest::createInstance(request));
+
+    if (SUCCEEDED(policyDelegate->decidePolicyForMIMEType(webView, BString(response.mimeType()), urlRequest.get(), m_webFrame, setUpPolicyListener(function).get())))
+        return;
+
+    (coreFrame->loader().policyChecker()->*function)(PolicyUse);
+}
+
+void WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(FramePolicyFunction function, const NavigationAction& action, const ResourceRequest& request, PassRefPtr<FormState> formState, const String& frameName)
+{
+    WebView* webView = m_webFrame->webView();
+    Frame* coreFrame = core(m_webFrame);
+    ASSERT(coreFrame);
+
+    COMPtr<IWebPolicyDelegate> policyDelegate;
+    if (FAILED(webView->policyDelegate(&policyDelegate)))
+        policyDelegate = DefaultPolicyDelegate::sharedInstance();
+
+    COMPtr<IWebURLRequest> urlRequest(AdoptCOM, WebMutableURLRequest::createInstance(request));
+    COMPtr<WebActionPropertyBag> actionInformation(AdoptCOM, WebActionPropertyBag::createInstance(action, formState ? formState->form() : 0, coreFrame));
+
+    if (SUCCEEDED(policyDelegate->decidePolicyForNewWindowAction(webView, actionInformation.get(), urlRequest.get(), BString(frameName), setUpPolicyListener(function).get())))
+        return;
+
+    (coreFrame->loader().policyChecker()->*function)(PolicyUse);
+}
+
+void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(FramePolicyFunction function, const NavigationAction& action, const ResourceRequest& request, PassRefPtr<FormState> formState)
+{
+    WebView* webView = m_webFrame->webView();
+    Frame* coreFrame = core(m_webFrame);
+    ASSERT(coreFrame);
+
+    COMPtr<IWebPolicyDelegate> policyDelegate;
+    if (FAILED(webView->policyDelegate(&policyDelegate)))
+        policyDelegate = DefaultPolicyDelegate::sharedInstance();
+
+    COMPtr<IWebURLRequest> urlRequest(AdoptCOM, WebMutableURLRequest::createInstance(request));
+    COMPtr<WebActionPropertyBag> actionInformation(AdoptCOM, WebActionPropertyBag::createInstance(action, formState ? formState->form() : 0, coreFrame));
+
+    if (SUCCEEDED(policyDelegate->decidePolicyForNavigationAction(webView, actionInformation.get(), urlRequest.get(), m_webFrame, setUpPolicyListener(function).get())))
+        return;
+
+    (coreFrame->loader().policyChecker()->*function)(PolicyUse);
+}
+
+void WebFrameLoaderClient::dispatchUnableToImplementPolicy(const ResourceError& error)
+{
+    WebView* webView = m_webFrame->webView();
+    COMPtr<IWebPolicyDelegate> policyDelegate;
+    if (FAILED(webView->policyDelegate(&policyDelegate)))
+        policyDelegate = DefaultPolicyDelegate::sharedInstance();
+
+    COMPtr<IWebError> webError(AdoptCOM, WebError::createInstance(error));
+    policyDelegate->unableToImplementPolicyWithError(webView, webError.get(), m_webFrame);
+}
+
+void WebFrameLoaderClient::dispatchWillSendSubmitEvent(PassRefPtr<WebCore::FormState>)
+{
+}
+
+void WebFrameLoaderClient::dispatchWillSubmitForm(FramePolicyFunction function, PassRefPtr<FormState> formState)
+{
+    WebView* webView = m_webFrame->webView();
+    Frame* coreFrame = core(m_webFrame);
+    ASSERT(coreFrame);
+
+    COMPtr<IWebFormDelegate> formDelegate;
+
+    if (FAILED(webView->formDelegate(&formDelegate))) {
+        (coreFrame->loader().policyChecker()->*function)(PolicyUse);
+        return;
+    }
+
+    COMPtr<IDOMElement> formElement(AdoptCOM, DOMElement::createInstance(formState->form()));
+
+    HashMap<String, String> formValuesMap;
+    const StringPairVector& textFieldValues = formState->textFieldValues();
+    size_t size = textFieldValues.size();
+    for (size_t i = 0; i < size; ++i)
+        formValuesMap.add(textFieldValues[i].first, textFieldValues[i].second);
+
+    COMPtr<IPropertyBag> formValuesPropertyBag(AdoptCOM, COMPropertyBag<String>::createInstance(formValuesMap));
+
+    COMPtr<WebFrame> sourceFrame(kit(formState->sourceDocument()->frame()));
+    if (SUCCEEDED(formDelegate->willSubmitForm(m_webFrame, sourceFrame.get(), formElement.get(), formValuesPropertyBag.get(), setUpPolicyListener(function).get())))
+        return;
+
+    // FIXME: Add a sane default implementation
+    (coreFrame->loader().policyChecker()->*function)(PolicyUse);
+}
+
 void WebFrameLoaderClient::setMainDocumentError(DocumentLoader*, const ResourceError& error)
 {
     if (!m_manualLoader)
@@ -486,6 +688,21 @@ void WebFrameLoaderClient::postProgressFinishedNotification()
     static BSTR progressFinishedName = SysAllocString(WebViewProgressFinishedNotification);
     IWebNotificationCenter* notifyCenter = WebNotificationCenter::defaultCenterInternal();
     notifyCenter->postNotificationName(progressFinishedName, static_cast<IWebView*>(m_webFrame->webView()), 0);
+}
+
+void WebFrameLoaderClient::startDownload(const ResourceRequest& request, const String& /* suggestedName */)
+{
+    m_webFrame->webView()->downloadURL(request.url());
+}
+
+void WebFrameLoaderClient::willChangeTitle(DocumentLoader*)
+{
+    notImplemented();
+}
+
+void WebFrameLoaderClient::didChangeTitle(DocumentLoader*)
+{
+    notImplemented();
 }
 
 void WebFrameLoaderClient::committedLoad(DocumentLoader* loader, const char* data, int length)
@@ -649,6 +866,116 @@ void WebFrameLoaderClient::didDetectXSS(const KURL&, bool)
     // FIXME: propogate call into the private delegate.
 }
 
+ResourceError WebFrameLoaderClient::cancelledError(const ResourceRequest& request)
+{
+    // FIXME: Need ChickenCat to include CFNetwork/CFURLError.h to get these values
+    // Alternatively, we could create our own error domain/codes.
+    return ResourceError(String(WebURLErrorDomain), -999, request.url().string(), String());
+}
+
+ResourceError WebFrameLoaderClient::blockedError(const ResourceRequest& request)
+{
+    // FIXME: Need to implement the String descriptions for errors in the WebKitErrorDomain and have them localized
+    return ResourceError(String(WebKitErrorDomain), WebKitErrorCannotUseRestrictedPort, request.url().string(), String());
+}
+
+ResourceError WebFrameLoaderClient::cannotShowURLError(const ResourceRequest& request)
+{
+    // FIXME: Need to implement the String descriptions for errors in the WebKitErrorDomain and have them localized
+    return ResourceError(String(WebKitErrorDomain), WebKitErrorCannotShowURL, request.url().string(), String());
+}
+
+ResourceError WebFrameLoaderClient::interruptedForPolicyChangeError(const ResourceRequest& request)
+{
+    // FIXME: Need to implement the String descriptions for errors in the WebKitErrorDomain and have them localized
+    return ResourceError(String(WebKitErrorDomain), WebKitErrorFrameLoadInterruptedByPolicyChange, request.url().string(), String());
+}
+
+ResourceError WebFrameLoaderClient::cannotShowMIMETypeError(const ResourceResponse&)
+{
+    notImplemented();
+    return ResourceError();
+}
+
+ResourceError WebFrameLoaderClient::fileDoesNotExistError(const ResourceResponse&)
+{
+    notImplemented();
+    return ResourceError();
+}
+
+ResourceError WebFrameLoaderClient::pluginWillHandleLoadError(const ResourceResponse& response)
+{
+    return ResourceError(String(WebKitErrorDomain), WebKitErrorPlugInWillHandleLoad, response.url().string(), String());
+}
+
+bool WebFrameLoaderClient::shouldFallBack(const ResourceError& error)
+{
+    if (error.errorCode() == WebURLErrorCancelled && error.domain() == String(WebURLErrorDomain))
+        return false;
+
+    if (error.errorCode() == WebKitErrorPlugInWillHandleLoad && error.domain() == String(WebKitErrorDomain))
+        return false;
+
+    return true;
+}
+
+bool WebFrameLoaderClient::canHandleRequest(const ResourceRequest& request) const
+{
+    return WebView::canHandleRequest(request);
+}
+
+bool WebFrameLoaderClient::canShowMIMEType(const String& /*MIMEType*/) const
+{
+    notImplemented();
+    return true;
+}
+
+bool WebFrameLoaderClient::canShowMIMETypeAsHTML(const String& /*MIMEType*/) const
+{
+    notImplemented();
+    return true;
+}
+
+bool WebFrameLoaderClient::representationExistsForURLScheme(const String& /*URLScheme*/) const
+{
+    notImplemented();
+    return false;
+}
+
+String WebFrameLoaderClient::generatedMIMETypeForURLScheme(const String& /*URLScheme*/) const
+{
+    notImplemented();
+    ASSERT_NOT_REACHED();
+    return String();
+}
+
+void WebFrameLoaderClient::frameLoadCompleted()
+{
+}
+
+void WebFrameLoaderClient::saveViewStateToItem(HistoryItem*)
+{
+}
+
+void WebFrameLoaderClient::restoreViewState()
+{
+}
+
+void WebFrameLoaderClient::provisionalLoadStarted()
+{
+    notImplemented();
+}
+
+void WebFrameLoaderClient::didFinishLoad()
+{
+    notImplemented();
+}
+
+void WebFrameLoaderClient::prepareForDataSourceReplacement()
+{
+    notImplemented();
+}
+
 PassRefPtr<DocumentLoader> WebFrameLoaderClient::createDocumentLoader(const ResourceRequest& request, const SubstituteData& substituteData)
 {
     RefPtr<WebDocumentLoader> loader = WebDocumentLoader::create(request, substituteData);
@@ -736,6 +1063,11 @@ void WebFrameLoaderClient::dispatchDidBecomeFrameset(bool)
 {
 }
 
+String WebFrameLoaderClient::userAgent(const KURL& url)
+{
+    return m_webFrame->webView()->userAgentForKURL(url);
+}
+
 bool WebFrameLoaderClient::canCachePage() const
 {
     return true;
@@ -770,6 +1102,11 @@ PassRefPtr<Frame> WebFrameLoaderClient::createFrame(const KURL& URL, const Strin
         return 0;
 
     return childFrame.release();
+}
+
+ObjectContentType WebFrameLoaderClient::objectContentType(const KURL& url, const String& mimeType, bool shouldPreferPlugInsForImages)
+{
+    return WebCore::FrameLoader::defaultObjectContentType(url, mimeType, shouldPreferPlugInsForImages);
 }
 
 void WebFrameLoaderClient::dispatchDidFailToStartPlugin(const PluginView* pluginView) const
@@ -884,12 +1221,108 @@ void WebFrameLoaderClient::redirectDataToPlugin(Widget* pluginWidget)
         m_manualLoader = static_cast<EmbeddedWidget*>(pluginWidget);
 }
 
+PassRefPtr<Widget> WebFrameLoaderClient::createJavaAppletWidget(const IntSize& pluginSize, HTMLAppletElement* element, const KURL& /*baseURL*/, const Vector<String>& paramNames, const Vector<String>& paramValues)
+{
+    RefPtr<PluginView> pluginView = PluginView::create(core(m_webFrame), pluginSize, element, KURL(), paramNames, paramValues, "application/x-java-applet", false);
+
+    // Check if the plugin can be loaded successfully
+    if (pluginView->plugin() && pluginView->plugin()->load())
+        return pluginView;
+
+    WebView* webView = m_webFrame->webView();
+    COMPtr<IWebResourceLoadDelegate> resourceLoadDelegate;
+    if (FAILED(webView->resourceLoadDelegate(&resourceLoadDelegate)))
+        return pluginView;
+
+    COMPtr<CFDictionaryPropertyBag> userInfoBag = CFDictionaryPropertyBag::createInstance();
+
+    ResourceError resourceError(String(WebKitErrorDomain), WebKitErrorJavaUnavailable, String(), String());
+    COMPtr<IWebError> error(AdoptCOM, WebError::createInstance(resourceError, userInfoBag.get()));
+
+    Frame* coreFrame = core(m_webFrame);
+    ASSERT(coreFrame);
+
+    resourceLoadDelegate->plugInFailedWithError(webView, error.get(), getWebDataSource(coreFrame->loader().documentLoader()));
+
+    return pluginView;
+}
+
 WebHistory* WebFrameLoaderClient::webHistory() const
 {
     if (m_webFrame != m_webFrame->webView()->topLevelFrame())
         return 0;
 
     return WebHistory::sharedHistory();
+}
+
+
+String WebFrameLoaderClient::overrideMediaType() const
+{
+    notImplemented();
+    return String();
+}
+
+void WebFrameLoaderClient::documentElementAvailable()
+{
+}
+
+void WebFrameLoaderClient::dispatchDidClearWindowObjectInWorld(DOMWrapperWorld* world)
+{
+    Frame* coreFrame = core(m_webFrame);
+    ASSERT(coreFrame);
+
+    if (!coreFrame->settings().isScriptEnabled())
+        return;
+
+    WebView* webView = m_webFrame->webView();
+    COMPtr<IWebFrameLoadDelegate> frameLoadDelegate;
+    if (FAILED(webView->frameLoadDelegate(&frameLoadDelegate)))
+        return;
+
+    COMPtr<IWebFrameLoadDelegatePrivate2> delegatePrivate(Query, frameLoadDelegate);
+    if (delegatePrivate && delegatePrivate->didClearWindowObjectForFrameInScriptWorld(webView, m_webFrame, WebScriptWorld::findOrCreateWorld(world).get()) != E_NOTIMPL)
+        return;
+
+    if (world != mainThreadNormalWorld())
+        return;
+
+    JSContextRef context = toRef(coreFrame->script().globalObject(world)->globalExec());
+    JSObjectRef windowObject = toRef(coreFrame->script().globalObject(world));
+    ASSERT(windowObject);
+
+    if (FAILED(frameLoadDelegate->didClearWindowObject(webView, context, windowObject, m_webFrame)))
+        frameLoadDelegate->windowScriptObjectAvailable(webView, context, windowObject);
+}
+
+void WebFrameLoaderClient::registerForIconNotification(bool listen)
+{
+    m_webFrame->webView()->registerForIconNotification(listen);
+}
+
+void WebFrameLoaderClient::didPerformFirstNavigation() const
+{
+    COMPtr<IWebPreferences> preferences;
+    if (FAILED(m_webFrame->webView()->preferences(&preferences)))
+        return;
+
+    COMPtr<IWebPreferencesPrivate> preferencesPrivate(Query, preferences);
+    if (!preferencesPrivate)
+        return;
+    BOOL automaticallyDetectsCacheModel;
+    if (FAILED(preferencesPrivate->automaticallyDetectsCacheModel(&automaticallyDetectsCacheModel)))
+        return;
+
+    WebCacheModel cacheModel;
+    if (FAILED(preferences->cacheModel(&cacheModel)))
+        return;
+
+    if (automaticallyDetectsCacheModel && cacheModel < WebCacheModelDocumentBrowser)
+        preferences->setCacheModel(WebCacheModelDocumentBrowser);
+}
+
+PassRefPtr<FrameNetworkingContext> WebFrameLoaderClient::createNetworkingContext()
+{
+    return WebFrameNetworkingContext::create(core(m_webFrame), userAgent(m_webFrame->url()));
 }
 
 bool WebFrameLoaderClient::shouldAlwaysUsePluginDocument(const String& mimeType) const
@@ -899,4 +1332,56 @@ bool WebFrameLoaderClient::shouldAlwaysUsePluginDocument(const String& mimeType)
         return false;
 
     return webView->shouldUseEmbeddedView(mimeType);
+}
+
+void WebFrameLoaderClient::revertToProvisionalState(DocumentLoader*)
+{
+    notImplemented();
+}
+
+void WebFrameLoaderClient::setMainFrameDocumentReady(bool)
+{
+    notImplemented();
+}
+
+void WebFrameLoaderClient::cancelPolicyCheck()
+{
+    if (m_policyListenerPrivate->m_policyListener) {
+        m_policyListenerPrivate->m_policyListener->invalidate();
+        m_policyListenerPrivate->m_policyListener = 0;
+    }
+
+    m_policyListenerPrivate->m_policyFunction = 0;
+}
+
+COMPtr<WebFramePolicyListener> WebFrameLoaderClient::setUpPolicyListener(WebCore::FramePolicyFunction function)
+{
+    // FIXME: <rdar://5634381> We need to support multiple active policy listeners.
+
+    if (m_policyListenerPrivate->m_policyListener)
+        m_policyListenerPrivate->m_policyListener->invalidate();
+
+    Frame* coreFrame = core(m_webFrame);
+    ASSERT(coreFrame);
+
+    m_policyListenerPrivate->m_policyListener.adoptRef(WebFramePolicyListener::createInstance(coreFrame));
+    m_policyListenerPrivate->m_policyFunction = function;
+
+    return m_policyListenerPrivate->m_policyListener;
+}
+
+void WebFrameLoaderClient::receivedPolicyDecision(PolicyAction action)
+{
+    ASSERT(m_policyListenerPrivate->m_policyListener);
+    ASSERT(m_policyListenerPrivate->m_policyFunction);
+
+    FramePolicyFunction function = m_policyListenerPrivate->m_policyFunction;
+
+    m_policyListenerPrivate->m_policyListener = 0;
+    m_policyListenerPrivate->m_policyFunction = 0;
+
+    Frame* coreFrame = core(m_webFrame);
+    ASSERT(coreFrame);
+
+    (coreFrame->loader().policyChecker()->*function)(action);
 }

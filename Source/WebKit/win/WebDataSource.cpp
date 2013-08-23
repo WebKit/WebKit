@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007, 2013 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +32,7 @@
 #include "WebDocumentLoader.h"
 #include "WebError.h"
 #include "WebFrame.h"
+#include "WebFrameLoaderClient.h"
 #include "WebKit.h"
 #include "WebHTMLRepresentation.h"
 #include "WebKitStatisticsPrivate.h"
@@ -184,12 +185,11 @@ HRESULT STDMETHODCALLTYPE WebDataSource::data(
     return MemoryStream::createInstance(buffer ? buffer->sharedBuffer() : 0).copyRefTo(stream);
 }
 
-HRESULT STDMETHODCALLTYPE WebDataSource::representation( 
-    /* [retval][out] */ IWebDocumentRepresentation** rep)
+HRESULT WebDataSource::representation(/* [retval][out] */ IWebDocumentRepresentation** rep)
 {
     HRESULT hr = S_OK;
     if (!m_representation) {
-        WebHTMLRepresentation* htmlRep = WebHTMLRepresentation::createInstance(static_cast<WebFrame*>(&m_loader->frameLoader()->client()));
+        WebHTMLRepresentation* htmlRep = WebHTMLRepresentation::createInstance(static_cast<WebFrameLoaderClient&>(m_loader->frameLoader()->client()).webFrame());
         hr = htmlRep->QueryInterface(IID_IWebDocumentRepresentation, (void**) &m_representation);
         htmlRep->Release();
     }
@@ -197,10 +197,9 @@ HRESULT STDMETHODCALLTYPE WebDataSource::representation(
     return m_representation.copyRefTo(rep);
 }
 
-HRESULT STDMETHODCALLTYPE WebDataSource::webFrame( 
-    /* [retval][out] */ IWebFrame** frame)
+HRESULT WebDataSource::webFrame(/* [retval][out] */ IWebFrame** frame)
 {
-    *frame = static_cast<WebFrame*>(&m_loader->frameLoader()->client());
+    *frame = static_cast<WebFrameLoaderClient&>(m_loader->frameLoader()->client()).webFrame();
     (*frame)->AddRef();
     return S_OK;
 }

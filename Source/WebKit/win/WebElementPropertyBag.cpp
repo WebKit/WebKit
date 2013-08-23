@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007, 2013 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,7 @@
 #include "MarshallingHelpers.h"
 #include "DOMCoreClasses.h"
 #include "WebFrame.h"
+#include "WebFrameLoaderClient.h"
 #include <WebCore/Document.h>
 #include <WebCore/Frame.h>
 #include <WebCore/HitTestResult.h>
@@ -109,7 +110,7 @@ static HRESULT convertStringToVariant(VARIANT* pVar, const String& string)
 }
 
 
-HRESULT STDMETHODCALLTYPE WebElementPropertyBag::Read(LPCOLESTR pszPropName, VARIANT *pVar, IErrorLog * /*pErrorLog*/)
+HRESULT WebElementPropertyBag::Read(LPCOLESTR pszPropName, VARIANT *pVar, IErrorLog * /*pErrorLog*/)
 {
     if (!pszPropName)
         return E_POINTER;
@@ -129,7 +130,7 @@ HRESULT STDMETHODCALLTYPE WebElementPropertyBag::Read(LPCOLESTR pszPropName, VAR
            && m_result->innerNonSharedNode()->document()->frame()))
             return E_FAIL;
         Frame* coreFrame = m_result->innerNonSharedNode()->document()->frame();
-        WebFrame* webFrame = static_cast<WebFrame*>(&coreFrame->loader().client());
+        WebFrame* webFrame = static_cast<WebFrameLoaderClient&>(coreFrame->loader().client()).webFrame();
         IWebFrame* iWebFrame;
         if (FAILED(webFrame->QueryInterface(IID_IWebFrame, (void**)&iWebFrame)))
             return E_FAIL;

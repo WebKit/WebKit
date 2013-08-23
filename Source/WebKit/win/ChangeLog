@@ -1,3 +1,100 @@
+2013-08-23  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Refactor WebFrame to compose with WebFrameLoaderClient
+        https://bugs.webkit.org/show_bug.cgi?id=120092
+
+        Reviewed by Anders Carlsson.
+
+        Revise WebFrame implementation on Windows to no longer subclass from
+        WebFrameLoaderClient, instead using a fully-functional WebFrameLoaderClient
+        as a helper object to perform the tasks, as is done in the other
+        ports. This is a step towards completing
+        https://bugs.webkit.org/show_bug.cgi?id=119964.
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp: Add a new 'private data'
+        object to house the policy delegate and function.
+        (WebFrameLoaderClient::WebFramePolicyListenerPrivate::WebFramePolicyListenerPrivate):
+        Create the new private data object.
+        (WebFrameLoaderClient::WebFramePolicyListenerPrivate::~WebFramePolicyListenerPrivate):
+        Destroy the new private data object.
+        (WebFrameLoaderClient::WebFrameLoaderClient): Moved from WebFrame.cpp
+        (WebFrameLoaderClient::frameLoaderDestroyed): Ditto
+        (WebFrameLoaderClient::makeRepresentation): Ditto
+        (WebFrameLoaderClient::forceLayoutForNonHTML): Ditto
+        (WebFrameLoaderClient::setCopiesOnScroll): Ditto
+        (WebFrameLoaderClient::detachedFromParent2): Ditto
+        (WebFrameLoaderClient::detachedFromParent3): Ditto
+        (WebFrameLoaderClient::convertMainResourceLoadToDownload): Ditto
+        (WebFrameLoaderClient::dispatchDidLoadResourceFromMemoryCache): Ditto
+        (WebFrameLoaderClient::dispatchDidFailProvisionalLoad): Ditto
+        (WebFrameLoaderClient::dispatchDidFailLoad): Ditto
+        (WebFrameLoaderClient::dispatchDecidePolicyForResponse): Ditto
+        (WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction): Ditto
+        (WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction): Ditto
+        (WebFrameLoaderClient::dispatchUnableToImplementPolicy): Ditto
+        (WebFrameLoaderClient::dispatchWillSendSubmitEvent): Ditto
+        (WebFrameLoaderClient::dispatchWillSubmitForm): Ditto
+        (WebFrameLoaderClient::startDownload): Ditto
+        (WebFrameLoaderClient::willChangeTitle): Ditto
+        (WebFrameLoaderClient::didChangeTitle): Ditto
+        (WebFrameLoaderClient::cancelledError): Ditto
+        (WebFrameLoaderClient::blockedError): Ditto
+        (WebFrameLoaderClient::cannotShowURLError): Ditto
+        (WebFrameLoaderClient::interruptedForPolicyChangeError): Ditto
+        (WebFrameLoaderClient::cannotShowMIMETypeError): Ditto
+        (WebFrameLoaderClient::fileDoesNotExistError): Ditto
+        (WebFrameLoaderClient::pluginWillHandleLoadError): Ditto
+        (WebFrameLoaderClient::shouldFallBack): Ditto
+        (WebFrameLoaderClient::canHandleRequest): Ditto
+        (WebFrameLoaderClient::canShowMIMEType): Ditto
+        (WebFrameLoaderClient::canShowMIMETypeAsHTML): Ditto
+        (WebFrameLoaderClient::representationExistsForURLScheme): Ditto
+        (WebFrameLoaderClient::generatedMIMETypeForURLScheme): Ditto
+        (WebFrameLoaderClient::frameLoadCompleted): Ditto
+        (WebFrameLoaderClient::saveViewStateToItem): Ditto
+        (WebFrameLoaderClient::restoreViewState): Ditto
+        (WebFrameLoaderClient::provisionalLoadStarted): Ditto
+        (WebFrameLoaderClient::didFinishLoad): Ditto
+        (WebFrameLoaderClient::prepareForDataSourceReplacement): Ditto
+        (WebFrameLoaderClient::userAgent): Ditto
+        (WebFrameLoaderClient::objectContentType): Ditto
+        (WebFrameLoaderClient::createJavaAppletWidget): Ditto
+        (WebFrameLoaderClient::overrideMediaType): Ditto
+        (WebFrameLoaderClient::documentElementAvailable): Ditto
+        (WebFrameLoaderClient::dispatchDidClearWindowObjectInWorld): Ditto
+        (WebFrameLoaderClient::registerForIconNotification): Ditto
+        (WebFrameLoaderClient::didPerformFirstNavigation): Ditto
+        (WebFrameLoaderClient::createNetworkingContext): Ditto
+        (WebFrameLoaderClient::shouldAlwaysUsePluginDocument): Ditto
+        (WebFrameLoaderClient::revertToProvisionalState): Ditto
+        (WebFrameLoaderClient::setMainFrameDocumentReady): Ditto
+        (WebFrameLoaderClient::cancelPolicyCheck): Ditto
+        (WebFrameLoaderClient::setUpPolicyListener): Ditto
+        (WebFrameLoaderClient::receivedPolicyDecision): Ditto
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        (WebFrameLoaderClient::webFrame): Add accessor method
+        * WebDataSource.cpp:
+        (WebDataSource::representation): Loader client is now
+        a WebFrameLoaderClient (not a WebFrame).
+        (WebDataSource::webFrame): Ditto
+        * WebElementPropertyBag.cpp:
+        (WebElementPropertyBag::Read): Loader client is now
+        a WebFrameLoaderClient (not a WebFrame)
+        * WebFrame.cpp:
+        (kit): Revise for WebFrameLoaderClient use.
+        (WebFrame::WebFramePrivate::WebFramePrivate): Remove
+        WebFramePolicyListener and FramePolicyFunction, since
+        they are no longer needed here. They were moved to
+        the WebFrameLoaderClient object.
+        (WebFrame::WebFrame): No longer inheriting from
+        WebFramePolicyListener.
+        (WebFrame::init): Frame::create now needs to be supplied
+        with a new WebFramePolicyListener, rather than 'this'
+        * WebFrame.h:
+        * WebFramePolicyListener.cpp:
+        (WebFramePolicyListener::receivedPolicyDecision): Loader
+        client is now a WebFramePolicyClient, not a WebFrame.
+
 2013-08-22  Andreas Kling  <akling@apple.com>
 
         Another Windows build fix.

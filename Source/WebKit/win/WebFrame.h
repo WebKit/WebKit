@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2011, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,8 +25,6 @@
 
 #ifndef WebFrame_H
 #define WebFrame_H
-
-#include "WebFrameLoaderClient.h"
 
 #include "WebKit.h"
 #include "WebDataSource.h"
@@ -81,7 +79,6 @@ WebFrame* kit(WebCore::Frame*);
 WebCore::Frame* core(WebFrame*);
 
 class DECLSPEC_UUID("{A3676398-4485-4a9d-87DC-CB5A40E6351D}") WebFrame : public IWebFrame, IWebFramePrivate, IWebDocumentText
-    , public WebFrameLoaderClient
 {
 public:
     static WebFrame* createInstance();
@@ -299,64 +296,6 @@ public:
     
     // FrameLoaderClient
     virtual void frameLoaderDestroyed();
-    virtual void makeRepresentation(WebCore::DocumentLoader*);
-    virtual void forceLayoutForNonHTML();
-    virtual void setCopiesOnScroll();
-    virtual void detachedFromParent2();
-    virtual void detachedFromParent3();
-    virtual void cancelPolicyCheck();
-    virtual void dispatchWillSendSubmitEvent(PassRefPtr<WebCore::FormState>);
-    virtual void dispatchWillSubmitForm(WebCore::FramePolicyFunction, PassRefPtr<WebCore::FormState>);
-    virtual void revertToProvisionalState(WebCore::DocumentLoader*);
-    virtual void setMainFrameDocumentReady(bool);
-    virtual void willChangeTitle(WebCore::DocumentLoader*);
-    virtual void didChangeTitle(WebCore::DocumentLoader*);
-    virtual void didChangeIcons(WebCore::DocumentLoader*);
-    virtual bool canHandleRequest(const WebCore::ResourceRequest&) const;
-    virtual bool canShowMIMEType(const WTF::String& MIMEType) const;
-    virtual bool canShowMIMETypeAsHTML(const WTF::String& MIMEType) const;
-    virtual bool representationExistsForURLScheme(const WTF::String& URLScheme) const;
-    virtual WTF::String generatedMIMETypeForURLScheme(const WTF::String& URLScheme) const;
-    virtual void frameLoadCompleted();
-    virtual void restoreViewState();
-    virtual void provisionalLoadStarted();
-    virtual bool shouldTreatURLAsSameAsCurrent(const WebCore::KURL&) const;
-    virtual void addHistoryItemForFragmentScroll();
-    virtual void didFinishLoad();
-    virtual void prepareForDataSourceReplacement();
-    virtual WTF::String userAgent(const WebCore::KURL&);
-    virtual void saveViewStateToItem(WebCore::HistoryItem *);
-    virtual WebCore::ResourceError cancelledError(const WebCore::ResourceRequest&);
-    virtual WebCore::ResourceError blockedError(const WebCore::ResourceRequest&);
-    virtual WebCore::ResourceError cannotShowURLError(const WebCore::ResourceRequest&);
-    virtual WebCore::ResourceError interruptedForPolicyChangeError(const WebCore::ResourceRequest&);
-    virtual WebCore::ResourceError cannotShowMIMETypeError(const WebCore::ResourceResponse&);
-    virtual WebCore::ResourceError fileDoesNotExistError(const WebCore::ResourceResponse&);
-    virtual WebCore::ResourceError pluginWillHandleLoadError(const WebCore::ResourceResponse&);
-    virtual bool shouldFallBack(const WebCore::ResourceError&);
-    virtual void dispatchDecidePolicyForResponse(WebCore::FramePolicyFunction, const WebCore::ResourceResponse&, const WebCore::ResourceRequest&);
-    virtual void dispatchDecidePolicyForNewWindowAction(WebCore::FramePolicyFunction, const WebCore::NavigationAction&, const WebCore::ResourceRequest&, PassRefPtr<WebCore::FormState>, const WTF::String& frameName);
-    virtual void dispatchDecidePolicyForNavigationAction(WebCore::FramePolicyFunction, const WebCore::NavigationAction&, const WebCore::ResourceRequest&, PassRefPtr<WebCore::FormState>);
-    virtual void dispatchUnableToImplementPolicy(const WebCore::ResourceError&);
-    virtual void convertMainResourceLoadToDownload(WebCore::DocumentLoader*, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
-
-    virtual bool dispatchDidLoadResourceFromMemoryCache(WebCore::DocumentLoader*, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&, int length);
-    virtual void dispatchDidFailProvisionalLoad(const WebCore::ResourceError&);
-    virtual void dispatchDidFailLoad(const WebCore::ResourceError&);
-    virtual void startDownload(const WebCore::ResourceRequest&, const String& suggestedName = String());
-        
-    virtual PassRefPtr<WebCore::Widget> createJavaAppletWidget(const WebCore::IntSize&, WebCore::HTMLAppletElement*, const WebCore::KURL& baseURL, const Vector<WTF::String>& paramNames, const Vector<WTF::String>& paramValues);
-
-    virtual WebCore::ObjectContentType objectContentType(const WebCore::KURL&, const WTF::String& mimeType, bool shouldPreferPlugInsForImages);
-    virtual WTF::String overrideMediaType() const;
-
-    virtual void dispatchDidClearWindowObjectInWorld(WebCore::DOMWrapperWorld*);
-    virtual void documentElementAvailable();
-    virtual void didPerformFirstNavigation() const;
-
-    virtual void registerForIconNotification(bool listen);
-
-    virtual PassRefPtr<WebCore::FrameNetworkingContext> createNetworkingContext();
 
     // WebFrame
     PassRefPtr<WebCore::Frame> init(IWebView*, WebCore::Page*, WebCore::HTMLFrameOwnerElement*);
@@ -377,9 +316,6 @@ public:
     HRESULT searchForLabelsBeforeElement(const BSTR* labels, unsigned cLabels, IDOMElement* beforeElement, unsigned* resultDistance, BOOL* resultIsInCellAbove, BSTR* result);
     HRESULT matchLabelsAgainstElement(const BSTR* labels, int cLabels, IDOMElement* againstElement, BSTR* result);
     HRESULT canProvideDocumentSource(bool* result);
-
-    COMPtr<WebFramePolicyListener> setUpPolicyListener(WebCore::FramePolicyFunction function);
-    void receivedPolicyDecision(WebCore::PolicyAction);
 
     WebCore::KURL url() const;
 
