@@ -1,3 +1,19 @@
+2013-08-23  Andreas Kling  <akling@apple.com>
+
+        Simplify some Settings access where we have a Frame in reach.
+        <http://webkit.org/b/120239>
+
+        Reviewed by Anders Carlsson.
+
+        In three cases where we can grab at a Frame, we can reach all the way to some Settings
+        without having to use pointers.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::didBeginDocument):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::addToOverlapMap):
+        (WebCore::RenderLayerCompositor::requiresCompositingForPosition):
+
 2013-08-23  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION (r150516): Media controls are messed up on right-to-left webpages

@@ -876,9 +876,9 @@ void RenderLayerCompositor::addToOverlapMap(OverlapMap& overlapMap, RenderLayer*
     }
 
     IntRect clipRect = pixelSnappedIntRect(layer->backgroundClipRect(RenderLayer::ClipRectsContext(rootRenderLayer(), 0, AbsoluteClipRects)).rect()); // FIXME: Incorrect for CSS regions.
-    if (Settings* settings = m_renderView.document()->settings())
-        if (!settings->applyPageScaleFactorInCompositor())
-            clipRect.scale(pageScaleFactor());
+    const Settings& settings = m_renderView.frameView().frame().settings();
+    if (!settings.applyPageScaleFactorInCompositor())
+        clipRect.scale(pageScaleFactor());
     clipRect.intersect(layerBounds);
     overlapMap.add(layer, clipRect);
 }
@@ -2260,10 +2260,9 @@ bool RenderLayerCompositor::requiresCompositingForPosition(RenderObject* rendere
         return false;
 
     // FIXME: acceleratedCompositingForFixedPositionEnabled should probably be renamed acceleratedCompositingForViewportConstrainedPositionEnabled().
-    if (Settings* settings = m_renderView.document()->settings()) {
-        if (!settings->acceleratedCompositingForFixedPositionEnabled())
-            return false;
-    }
+    const Settings& settings = m_renderView.frameView().frame().settings();
+    if (!settings.acceleratedCompositingForFixedPositionEnabled())
+        return false;
 
     if (isSticky)
         return hasCoordinatedScrolling() && isViewportConstrainedFixedOrStickyLayer(layer);
