@@ -1,0 +1,23 @@
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <style type="text/css">
+    .content {
+      font-size: 500%;
+    }
+
+    .region {
+      width: 400px;
+      height: 15em;
+      background-color: lightgray;
+      overflow: visible;
+    }
+    </style>
+  </head>
+  <body>
+    <p>Test for https://bugs.webkit.org/show_bug.cgi?id=74737.</p>
+    <div class="region"><span class="content">Gigantic text to ensure that the window isn't large enough to
+      view it all. You should be able to scroll to see all of the
+      overflow content right to the very end.</span></div>
+  </body>
+</html>
