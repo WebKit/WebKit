@@ -1,3 +1,13 @@
+2013-08-23  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        REGRESSION(r153939) Fix typo in Qt build-files
+
+        Reviewed by Antti Koivisto.
+
+        Fix simple typo in Target.pri introduced in r153939.
+
+        * Target.pri:
+
 2013-08-23  Antti Koivisto  <antti@apple.com>
 
         <https://webkit.org/b/120166> Add Traversal<ElementType> template

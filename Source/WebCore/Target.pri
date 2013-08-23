@@ -1612,7 +1612,7 @@ HEADERS += \
     dom/DatasetDOMStringMap.h \
     dom/Element.h \
     dom/ElementData.h \
-    dom/ElementTravesal.h \
+    dom/ElementTraversal.h \
     dom/Entity.h \
     dom/EntityReference.h \
     dom/Event.h \
