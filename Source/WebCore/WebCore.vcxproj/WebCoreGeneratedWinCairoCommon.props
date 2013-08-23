@@ -6,7 +6,7 @@
   <PropertyGroup>
     <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
     <OutDir>$(ConfigurationBuildDir)\bin\</OutDir>
-    <IntDir>$(ConfigurationBuildDir)\obj\$(ProjectName)\</IntDir>
+    <IntDir>$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\</IntDir>
     <LinkIncremental>false</LinkIncremental>
     <NMakeBuildCommandLine>%SystemDrive%\cygwin\bin\which.exe bash
 if errorlevel 1 set PATH=%SystemDrive%\cygwin\bin;%PATH%
@@ -22,6 +22,7 @@ set PATH=$(VSInstallDir)\VC\bin;%PATH%
 
 REM VS2010 has a known bug where the clean command does not recognize environment variables properly unless explicitly set here
 set CONFIGURATIONBUILDDIR=$(ConfigurationBuildDir)
+set PLATFORMARCHITECTURE=$(PlatformArchitecture)
 nmake /nologo -f $(ProjectName)WinCairo.make clean</NMakeCleanCommandLine>
     <TargetName>$(ProjectName)$(DebugSuffix)</TargetName>
   </PropertyGroup>
@@ -71,6 +72,7 @@ set INPUTPATH=$(InputPath)
 set INTDIR=$(IntDir)
 set LIBRARYCONFIGSUFFIX=$(LibraryConfigSuffix)
 set OUTDIR=$(OutDir)
+set PLATFORMARCHITECTURE=$(PlatformArchitecture)
 set PLATFORMNAME=$(PlatformName)
 set PROJECTDIR=$(ProjectDir)
 set PROJECTFILENAME=$(ProjectFileName)
@@ -107,6 +109,7 @@ set INPUTPATH=$(InputPath)
 set INTDIR=$(IntDir)
 set LIBRARYCONFIGSUFFIX=$(LibraryConfigSuffix)
 set OUTDIR=$(OutDir)
+set PLATFORMARCHITECTURE=$(PlatformArchitecture)
 set PLATFORMNAME=$(PlatformName)
 set PROJECTDIR=$(ProjectDir)
 set PROJECTFILENAME=$(ProjectFileName)
@@ -143,6 +146,7 @@ set INPUTPATH=$(InputPath)
 set INTDIR=$(IntDir)
 set LIBRARYCONFIGSUFFIX=$(LibraryConfigSuffix)
 set OUTDIR=$(OutDir)
+set PLATFORMARCHITECTURE=$(PlatformArchitecture)
 set PLATFORMNAME=$(PlatformName)
 set PROJECTDIR=$(ProjectDir)
 set PROJECTFILENAME=$(ProjectFileName)
@@ -213,6 +217,10 @@ cmd /c
   <ItemGroup>
     <BuildMacro Include="CONFIGURATIONBUILDDIR">
       <Value>$(CONFIGURATIONBUILDDIR)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="PLATFORMARCHITECTURE">
+      <Value>$(PLATFORMARCHITECTURE)</Value>
       <EnvironmentVariable>true</EnvironmentVariable>
     </BuildMacro>
   </ItemGroup>

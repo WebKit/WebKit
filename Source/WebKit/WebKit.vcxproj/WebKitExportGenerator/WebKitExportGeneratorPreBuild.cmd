@@ -2,7 +2,7 @@
 if errorlevel 1 set PATH=%SystemDrive%\cygwin\bin;%PATH%
 
 echo Preparing generator output directory...
-set GeneratorDirectory=%CONFIGURATIONBUILDDIR%/obj32/WebKitExportGenerator
+set GeneratorDirectory=%CONFIGURATIONBUILDDIR%/obj%PlatformArchitecture%/WebKitExportGenerator
 mkdir "%GeneratorDirectory%" 2>NUL
 mkdir "%GeneratorDirectory%\DerivedSources" 2>NUL
 

@@ -1,3 +1,15 @@
+2013-08-23  Alex Christensen  <achristensen@apple.com>
+
+        Re-separating Win32 and Win64 builds.
+        https://bugs.webkit.org/show_bug.cgi?id=120178
+
+        Reviewed by Brent Fulgham.
+
+        * win/tools/vsprops/common.props:
+        Export PlatformArchitecture to be used by make and cmd scripts.
+        Use PlatformArchitecture to determine correct build directory
+        (lib32/bin32/obj32 or lib64/bin64/obj64).
+
 2013-08-22  Filip Pizlo  <fpizlo@apple.com>
 
         Update LLVM binary drops and scripts to the latest version from SVN

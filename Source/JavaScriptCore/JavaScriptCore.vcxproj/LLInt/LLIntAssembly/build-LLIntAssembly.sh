@@ -16,7 +16,7 @@ XDSTROOT=`cygpath -m -s "$XDSTROOT"`
 XDSTROOT=`cygpath -u "$XDSTROOT"`
 export XDSTROOT
 
-export BUILT_PRODUCTS_DIR="$XDSTROOT/obj32"
+export BUILT_PRODUCTS_DIR="$XDSTROOT/obj${4}"
 
 cd "${BUILT_PRODUCTS_DIR}/JavaScriptCore/DerivedSources"
 

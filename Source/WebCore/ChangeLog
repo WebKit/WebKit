@@ -1,3 +1,24 @@
+2013-08-23  Alex Christensen  <achristensen@apple.com>
+
+        Re-separating Win32 and Win64 builds.
+        https://bugs.webkit.org/show_bug.cgi?id=120178
+
+        Reviewed by Brent Fulgham.
+
+        * WebCore.vcxproj/WebCoreGenerated.make:
+        * WebCore.vcxproj/WebCoreGeneratedWinCairo.make:
+        Pass PlatformArchitecture as a command line parameter to bash scripts
+        and use PlatformArchitecture to determine which directory to delete
+        while cleaning (obj32 or obj64).
+        * WebCore.vcxproj/WebCoreGeneratedWinCairoCommon.props:
+        Export PlatformArchitecture to be used by make and cmd scripts.
+        * WebCore.vcxproj/build-generated-files.sh:
+        Use PlatformArchitecture from command line to determine which object directory to use (obj32 or obj64).
+        * WebCore.vcxproj/copyForwardingHeaders.cmd:
+        * WebCore.vcxproj/copyWebCoreResourceFiles.cmd:
+        Use PlatformArchitecture to determine which directory to copy to (obj32 or obj64).
+
+
 2013-08-23  Andreas Kling  <akling@apple.com>
 
         RenderView::compositor() should return a reference.
