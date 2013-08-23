@@ -1235,6 +1235,8 @@ protected:
 #endif
 
     private:
+        bool updateOffsetIfNeeded(const FloatingObject*) const;
+
         const RenderBlock* m_renderer;
         int m_lowValue;
         int m_highValue;

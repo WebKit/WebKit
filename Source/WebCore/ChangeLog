@@ -1,3 +1,50 @@
+2013-08-23  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        Attempt to make it more clear what FloatIntervalSearchAdaptor::collectIfNeeded is doing
+        https://bugs.webkit.org/show_bug.cgi?id=119816
+
+        Reviewed by David Hyatt.
+
+        This is a port from Blink of
+        https://src.chromium.org/viewvc/blink?revision=155885&view=revision
+        Original Patch by Eric Seidel
+
+        Original comments:
+
+        "It seemed to me that template specifications would be clearer than an
+        if.  They also allow for compile-time error checking were a 3rd type
+        of float to come into existance in CSS4. :p
+
+        For any unfamiliar with this method, this the object used for
+        performing a search on a RedBlackTree in WTF.
+
+        We create one of these adaptors, specifying that we want to search for
+        values in a specific (logical) Y interval, and this adaptor is called
+        back for any values in the RBTree cooresponding to that interval
+        range.
+
+        The job of this adaptor is to collect the various values we care
+        about, including the left or right-most offset of the floats in that
+        Y-range as well as what the last (document order) float seen in that
+        range.
+
+        It also collects the remaining available height for the block but I'm
+        less clear on how that parameter is used."
+
+        Note that in addition to the original change, I have made the
+        updateOffsetIfNeeded and rangesIntersect methods inline, as this was
+        shown to be a performance win in
+        https://src.chromium.org/viewvc/blink?revision=156064&view=revision
+        and it seemed a rather trivial change to be subject to a separate
+        patch when porting.
+
+        No new tests, no behavior change.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::::updateOffsetIfNeeded):
+        (WebCore::::collectIfNeeded):
+        * rendering/RenderBlock.h:
+
 2013-08-23  David Kilzer  <ddkilzer@apple.com>
 
         WebCore fails to link due to changes in Objective-C++ ABI in trunk clang
