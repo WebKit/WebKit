@@ -1,3 +1,13 @@
+2013-08-23  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION (r150516): Media controls are messed up on right-to-left webpages
+        https://bugs.webkit.org/show_bug.cgi?id=120234
+
+        Reviewed by Dan Bernstein.
+
+        * media/video-rtl-expected.html: Added.
+        * media/video-rtl.html: Added.
+
 2013-08-23  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac] some track language tags are not recognized
