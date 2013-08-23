@@ -37,6 +37,16 @@
 #include <sys/ipc.h>
 #include <sys/mman.h>
 
+#undef __APPLE_API_PRIVATE
+#include <sandbox.h>
+
+#ifndef _SANDBOX_PRIVATE_H_
+enum sandbox_filter_type {
+        SANDBOX_FILTER_NONE,
+};
+extern "C" int sandbox_check(pid_t pid, const char *operation, enum sandbox_filter_type type, ...);
+#endif
+
 namespace WebKit {
 
 extern "C" void WebKitPluginProcessShimInitialize(const PluginProcessShimCallbacks& callbacks);
@@ -178,8 +188,11 @@ static Boolean shim_disabled(void)
 
         if (keyExistsAndHasValidFormat && prefValue)
             isFakeSHMDisabled = true;
+        else if (sandbox_check(getpid(), NULL, SANDBOX_FILTER_NONE) == 1)
+            isFakeSHMDisabled = false;  // Sandboxed
         else
-            isFakeSHMDisabled = false;
+            isFakeSHMDisabled = true;   // Not Sandboxed
+
     });
 
     return isFakeSHMDisabled;
