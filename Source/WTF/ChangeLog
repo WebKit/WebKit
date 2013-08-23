@@ -1,3 +1,9 @@
+2013-08-23  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Unreviewed build correction after r154513.
+
+        * WTF.vcxproj/build-generated-files.sh: Variable was missing '$' character.
+
 2013-08-23  Darin Adler  <darin@apple.com>
 
         Cut down repeated code in RefPtr and RetainPtr by using copy/move-and-swap for assignment operators
