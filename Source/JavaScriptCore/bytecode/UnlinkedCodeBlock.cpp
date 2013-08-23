@@ -263,7 +263,7 @@ void UnlinkedCodeBlock::expressionRangeForBytecodeOffset(unsigned bytecodeOffset
         return;
     }
 
-    Vector<ExpressionRangeInfo>& expressionInfo = m_expressionInfo;
+    Vector<ExpressionRangeInfo>& expressionInfo = m_expressionInfo.data();
 
     int low = 0;
     int high = expressionInfo.size();
@@ -351,7 +351,7 @@ void UnlinkedCodeBlock::addExpressionInfo(unsigned instructionOffset,
     }
     } // switch
 
-    m_expressionInfo.append(info);
+    m_expressionInfo.data().append(info);
 }
 
 void UnlinkedProgramCodeBlock::visitChildren(JSCell* cell, SlotVisitor& visitor)

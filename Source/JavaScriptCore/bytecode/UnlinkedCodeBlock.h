@@ -39,6 +39,7 @@
 #include "SpecialPointer.h"
 #include "SymbolTable.h"
 
+#include <wtf/Compression.h>
 #include <wtf/RefCountedArray.h>
 #include <wtf/Vector.h>
 
@@ -539,7 +540,7 @@ public:
 
 private:
     OwnPtr<RareData> m_rareData;
-    Vector<ExpressionRangeInfo> m_expressionInfo;
+    CompressibleVector<ExpressionRangeInfo> m_expressionInfo;
 
 protected:
 

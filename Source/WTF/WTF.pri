@@ -28,6 +28,8 @@ linux-*:use?(GSTREAMER) {
 win32-* {
     LIBS += -lwinmm
     LIBS += -lgdi32
+} else {
+    LIBS += -lz
 }
 
 qnx {

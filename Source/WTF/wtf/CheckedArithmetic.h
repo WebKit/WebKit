@@ -721,6 +721,7 @@ typedef Checked<int32_t, RecordOverflow> CheckedInt32;
 typedef Checked<uint32_t, RecordOverflow> CheckedUint32;
 typedef Checked<int64_t, RecordOverflow> CheckedInt64;
 typedef Checked<uint64_t, RecordOverflow> CheckedUint64;
+typedef Checked<size_t, RecordOverflow> CheckedSize;
 
 }
 
@@ -735,5 +736,6 @@ using WTF::CheckedInt32;
 using WTF::CheckedUint32;
 using WTF::CheckedInt64;
 using WTF::CheckedUint64;
+using WTF::CheckedSize;
 
 #endif

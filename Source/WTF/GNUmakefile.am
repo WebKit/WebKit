@@ -16,7 +16,8 @@ libWTF_la_LIBADD = \
 	$(UNICODE_LIBS) \
 	$(GLIB_LIBS) \
 	$(WINMM_LIBS) \
-	-lpthread
+	-lpthread \
+	-lz
 
 if TARGET_WIN32
 # OwnPtrWin.cpp needs the symbols from gdi32 dll

@@ -34,6 +34,7 @@ HEADERS += \
     ByteOrder.h \
     CheckedArithmetic.h \
     Compiler.h \
+    Compression.h \
     CryptographicallyRandomNumber.h \
     CurrentTime.h \
     DateMath.h \
@@ -177,6 +178,7 @@ SOURCES += \
     Atomics.cpp \
     BitVector.cpp \
     CompilationThread.cpp \
+    Compression.cpp \
     CryptographicallyRandomNumber.cpp \
     CurrentTime.cpp \
     DateMath.cpp \

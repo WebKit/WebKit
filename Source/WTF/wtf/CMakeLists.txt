@@ -12,6 +12,7 @@ set(WTF_HEADERS
     ByteOrder.h
     CompilationThread.h
     Compiler.h
+    Compression.h
     CryptographicallyRandomNumber.h
     CurrentTime.h
     DateMath.h
@@ -151,6 +152,7 @@ set(WTF_SOURCES
     Atomics.cpp
     BitVector.cpp
     CompilationThread.cpp
+    Compression.cpp
     CryptographicallyRandomNumber.cpp
     CurrentTime.cpp
     DateMath.cpp
