@@ -55,7 +55,7 @@ private:
     uint8_t m_data[1];
 };
 
-template <typename T> class CompressedVector : private GenericCompressedData {
+template <typename T> class CompressedVector : public GenericCompressedData {
 public:
     static PassOwnPtr<CompressedVector> create(const Vector<T>& source)
     {
