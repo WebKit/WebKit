@@ -1,3 +1,13 @@
+2013-08-24  Darin Adler  <darin@apple.com>
+
+        RetainPtr lacks move constructor for case when argument is a RetainPtr of a different type
+        https://bugs.webkit.org/show_bug.cgi?id=120255
+
+        Reviewed by Andreas Kling.
+
+        * wtf/RetainPtr.h: Added missing move constructor, modeled on the other move constructor,
+        and the one from RetPtr.
+
 2013-08-24  Oliver Hunt  <oliver@apple.com>
 
         Make the world build.

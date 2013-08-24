@@ -99,6 +99,7 @@ namespace WTF {
 
 #if COMPILER_SUPPORTS(CXX_RVALUE_REFERENCES)
         RetainPtr(RetainPtr&& o) : m_ptr(toStorageType(o.leakRef())) { }
+        template<typename U> RetainPtr(RetainPtr<U>&& o) : m_ptr(toStorageType(o.leakRef())) { }
 #endif
 
         // Hash table deleted values, which are only constructed and never copied or destroyed.

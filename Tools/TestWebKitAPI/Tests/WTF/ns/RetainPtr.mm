@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,6 +37,82 @@ TEST(RetainPtr, AdoptNS)
     RetainPtr<NSObject> foo = adoptNS([[NSObject alloc] init]);
 
     EXPECT_EQ(1, CFGetRetainCount(foo.get()));
+}
+
+TEST(RetainPtr, MoveAssignmentFromSameType)
+{
+    NSString *string = @"foo";
+    RetainPtr<NSString> ptr;
+
+    // This should invoke RetainPtr's move assignment operator.
+    ptr = RetainPtr<NSString>(string);
+
+    EXPECT_EQ(string, ptr);
+
+    ptr = 0;
+    RetainPtr<NSString> temp = string;
+
+    // This should invoke RetainPtr's move assignment operator.
+    ptr = std::move(temp);
+
+    EXPECT_EQ(string, ptr);
+    EXPECT_EQ((NSString *)0, temp);
+}
+
+TEST(RetainPtr, MoveAssignmentFromSimilarType)
+{
+    NSMutableString *string = [NSMutableString stringWithUTF8String:"foo"];
+    RetainPtr<NSString> ptr;
+
+    // This should invoke RetainPtr's move assignment operator.
+    ptr = RetainPtr<NSMutableString>(string);
+
+    EXPECT_EQ(string, ptr);
+
+    ptr = 0;
+    RetainPtr<NSMutableString> temp = string;
+
+    // This should invoke RetainPtr's move assignment operator.
+    ptr = std::move(temp);
+
+    EXPECT_EQ(string, ptr);
+    EXPECT_EQ((NSString *)0, temp);
+}
+
+TEST(RetainPtr, ConstructionFromSameType)
+{
+    NSString *string = @"foo";
+
+    // This should invoke RetainPtr's move constructor.
+    RetainPtr<NSString> ptr = std::move(RetainPtr<NSString>(string));
+
+    EXPECT_EQ(string, ptr);
+
+    RetainPtr<NSString> temp = string;
+
+    // This should invoke RetainPtr's move constructor.
+    RetainPtr<NSString> ptr2(std::move(temp));
+
+    EXPECT_EQ(string, ptr2);
+    EXPECT_EQ((NSString *)0, temp);
+}
+
+TEST(RetainPtr, ConstructionFromSimilarType)
+{
+    NSMutableString *string = [NSMutableString stringWithUTF8String:"foo"];
+
+    // This should invoke RetainPtr's move constructor.
+    RetainPtr<NSString> ptr = RetainPtr<NSMutableString>(string);
+
+    EXPECT_EQ(string, ptr);
+
+    RetainPtr<NSMutableString> temp = string;
+
+    // This should invoke RetainPtr's move constructor.
+    RetainPtr<NSString> ptr2(std::move(temp));
+
+    EXPECT_EQ(string, ptr2);
+    EXPECT_EQ((NSString *)0, temp);
 }
 
 } // namespace TestWebKitAPI
