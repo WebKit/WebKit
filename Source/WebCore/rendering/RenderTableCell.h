@@ -94,7 +94,7 @@ public:
     {
         // FIXME: This function does too much work, and is very hot during table layout!
         int adjustedLogicalHeight = pixelSnappedLogicalHeight() - (intrinsicPaddingBefore() + intrinsicPaddingAfter());
-        int styleLogicalHeight = valueForLength(style()->logicalHeight(), 0, view());
+        int styleLogicalHeight = valueForLength(style()->logicalHeight(), 0, &view());
         // In strict mode, box-sizing: content-box do the right thing and actually add in the border and padding.
         // Call computedCSSPadding* directly to avoid including implicitPadding.
         if (!document()->inQuirksMode() && style()->boxSizing() != BORDER_BOX)

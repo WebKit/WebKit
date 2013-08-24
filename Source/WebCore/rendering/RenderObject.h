@@ -622,7 +622,7 @@ public:
     
     virtual void updateDragState(bool dragOn);
 
-    RenderView* view() const { return document()->renderView(); };
+    RenderView& view() const { return *document()->renderView(); };
 
     // Returns true if this renderer is rooted, and optionally returns the hosting view (the root of the hierarchy).
     bool isRooted(RenderView** = 0) const;

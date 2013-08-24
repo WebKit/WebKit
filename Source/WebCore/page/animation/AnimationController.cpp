@@ -525,7 +525,7 @@ PassRefPtr<RenderStyle> AnimationController::updateAnimations(RenderObject* rend
         return newStyle;
 
     // Don't run transitions when printing.
-    if (renderer->view()->printing())
+    if (renderer->view().printing())
         return newStyle;
 
     // Fetch our current set of implicit animations from a hashtable.  We then compare them

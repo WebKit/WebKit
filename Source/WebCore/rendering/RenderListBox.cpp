@@ -188,7 +188,7 @@ void RenderListBox::layout()
     }
 
     if (m_scrollToRevealSelectionAfterLayout) {
-        LayoutStateDisabler layoutStateDisabler(view());
+        LayoutStateDisabler layoutStateDisabler(&view());
         scrollToRevealSelection();
     }
 }
@@ -743,27 +743,16 @@ void RenderListBox::invalidateScrollbarRect(Scrollbar* scrollbar, const IntRect&
 
 IntRect RenderListBox::convertFromScrollbarToContainingView(const Scrollbar* scrollbar, const IntRect& scrollbarRect) const
 {
-    RenderView* view = this->view();
-    if (!view)
-        return scrollbarRect;
-
     IntRect rect = scrollbarRect;
-
     int scrollbarLeft = width() - borderRight() - scrollbar->width();
     int scrollbarTop = borderTop();
     rect.move(scrollbarLeft, scrollbarTop);
-
-    return view->frameView().convertFromRenderer(this, rect);
+    return view().frameView().convertFromRenderer(this, rect);
 }
 
 IntRect RenderListBox::convertFromContainingViewToScrollbar(const Scrollbar* scrollbar, const IntRect& parentRect) const
 {
-    RenderView* view = this->view();
-    if (!view)
-        return parentRect;
-
-    IntRect rect = view->frameView().convertToRenderer(this, parentRect);
-
+    IntRect rect = view().frameView().convertToRenderer(this, parentRect);
     int scrollbarLeft = width() - borderRight() - scrollbar->width();
     int scrollbarTop = borderTop();
     rect.move(-scrollbarLeft, -scrollbarTop);
@@ -772,27 +761,16 @@ IntRect RenderListBox::convertFromContainingViewToScrollbar(const Scrollbar* scr
 
 IntPoint RenderListBox::convertFromScrollbarToContainingView(const Scrollbar* scrollbar, const IntPoint& scrollbarPoint) const
 {
-    RenderView* view = this->view();
-    if (!view)
-        return scrollbarPoint;
-
     IntPoint point = scrollbarPoint;
-
     int scrollbarLeft = width() - borderRight() - scrollbar->width();
     int scrollbarTop = borderTop();
     point.move(scrollbarLeft, scrollbarTop);
-
-    return view->frameView().convertFromRenderer(this, point);
+    return view().frameView().convertFromRenderer(this, point);
 }
 
 IntPoint RenderListBox::convertFromContainingViewToScrollbar(const Scrollbar* scrollbar, const IntPoint& parentPoint) const
 {
-    RenderView* view = this->view();
-    if (!view)
-        return parentPoint;
-
-    IntPoint point = view->frameView().convertToRenderer(this, parentPoint);
-
+    IntPoint point = view().frameView().convertToRenderer(this, parentPoint);
     int scrollbarLeft = width() - borderRight() - scrollbar->width();
     int scrollbarTop = borderTop();
     point.move(-scrollbarLeft, -scrollbarTop);
@@ -816,42 +794,27 @@ int RenderListBox::visibleWidth() const
 
 IntPoint RenderListBox::lastKnownMousePosition() const
 {
-    RenderView* view = this->view();
-    if (!view)
-        return IntPoint();
-    return view->frameView().lastKnownMousePosition();
+    return view().frameView().lastKnownMousePosition();
 }
 
 bool RenderListBox::isHandlingWheelEvent() const
 {
-    RenderView* view = this->view();
-    if (!view)
-        return false;
-    return view->frameView().isHandlingWheelEvent();
+    return view().frameView().isHandlingWheelEvent();
 }
 
 bool RenderListBox::shouldSuspendScrollAnimations() const
 {
-    RenderView* view = this->view();
-    if (!view)
-        return true;
-    return view->frameView().shouldSuspendScrollAnimations();
+    return view().frameView().shouldSuspendScrollAnimations();
 }
 
 bool RenderListBox::scrollbarsCanBeActive() const
 {
-    RenderView* view = this->view();
-    if (!view)
-        return false;
-    return view->frameView().scrollbarsCanBeActive();
+    return view().frameView().scrollbarsCanBeActive();
 }
 
 bool RenderListBox::scrollbarAnimationsAreSuppressed() const
 {
-    RenderView* view = this->view();
-    if (!view)
-        return false;
-    return view->frameView().scrollbarAnimationsAreSuppressed();
+    return view().frameView().scrollbarAnimationsAreSuppressed();
 }
 
 ScrollableArea* RenderListBox::enclosingScrollableArea() const

@@ -67,7 +67,7 @@ RenderObject* RenderObjectChildList::removeChildNode(RenderObject* owner, Render
         oldChild->setNeedsLayoutAndPrefWidthsRecalc();
         // We only repaint |oldChild| if we have a RenderLayer as its visual overflow may not be tracked by its parent.
         if (oldChild->isBody())
-            owner->view()->repaintRootContents();
+            owner->view().repaintRootContents();
         else
             oldChild->repaint();
     }
@@ -81,7 +81,7 @@ RenderObject* RenderObjectChildList::removeChildNode(RenderObject* owner, Render
     // FIXME: The FrameSelection should be responsible for this when it
     // is notified of DOM mutations.
     if (!owner->documentBeingDestroyed() && oldChild->isSelectionBorder())
-        owner->view()->clearSelection();
+        owner->view().clearSelection();
 
     if (!owner->documentBeingDestroyed() && notifyRenderer)
         oldChild->willBeRemovedFromTree();

@@ -649,8 +649,8 @@ void AXObjectCache::notificationPostTimerFired(Timer<AXObjectCache>*)
         if (obj->isAccessibilityRenderObject()) {
             AccessibilityRenderObject* renderObj = static_cast<AccessibilityRenderObject*>(obj);
             RenderObject* renderer = renderObj->renderer();
-            if (renderer && renderer->view())
-                ASSERT(!renderer->view()->layoutState());
+            if (renderer)
+                ASSERT(!renderer->view().layoutState());
         }
 #endif
         

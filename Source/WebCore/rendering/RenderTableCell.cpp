@@ -363,11 +363,10 @@ LayoutRect RenderTableCell::clippedOverflowRectForRepaint(const RenderLayerModel
     LayoutPoint location(max<LayoutUnit>(left, -visualOverflowRect().x()), max<LayoutUnit>(top, -visualOverflowRect().y()));
     LayoutRect r(-location.x(), -location.y(), location.x() + max(width() + right, visualOverflowRect().maxX()), location.y() + max(height() + bottom, visualOverflowRect().maxY()));
 
-    if (RenderView* v = view()) {
-        // FIXME: layoutDelta needs to be applied in parts before/after transforms and
-        // repaint containers. https://bugs.webkit.org/show_bug.cgi?id=23308
-        r.move(v->layoutDelta());
-    }
+    // FIXME: layoutDelta needs to be applied in parts before/after transforms and
+    // repaint containers. https://bugs.webkit.org/show_bug.cgi?id=23308
+    r.move(view().layoutDelta());
+
     computeRectForRepaint(repaintContainer, r);
     return r;
 }
@@ -377,8 +376,7 @@ void RenderTableCell::computeRectForRepaint(const RenderLayerModelObject* repain
     if (repaintContainer == this)
         return;
     r.setY(r.y());
-    RenderView* v = view();
-    if ((!v || !v->layoutStateEnabled() || repaintContainer) && parent())
+    if ((!view().layoutStateEnabled() || repaintContainer) && parent())
         r.moveBy(-parentBox()->location()); // Rows are in the same coordinate space, so don't add their offset in.
     RenderBlock::computeRectForRepaint(repaintContainer, r, fixed);
 }

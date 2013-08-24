@@ -255,7 +255,7 @@ void RenderMarquee::updateMarqueeStyle()
 
 void RenderMarquee::timerFired(Timer<RenderMarquee>*)
 {
-    if (m_layer->renderer()->view()->needsLayout())
+    if (m_layer->renderer()->view().needsLayout())
         return;
     
     if (m_reset) {

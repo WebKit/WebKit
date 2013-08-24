@@ -248,7 +248,7 @@ void RenderTable::updateLogicalWidth()
     }
 
     RenderBlock* cb = containingBlock();
-    RenderView* renderView = view();
+    RenderView* renderView = &view();
 
     LayoutUnit availableLogicalWidth = containingBlockLogicalWidthForContent();
     bool hasPerpendicularContainingBlock = cb->style()->isHorizontalWritingMode() != style()->isHorizontalWritingMode();
@@ -324,7 +324,7 @@ LayoutUnit RenderTable::convertStyleLogicalWidthToComputedWidth(const Length& st
     if (isCSSTable && styleLogicalWidth.isSpecified() && styleLogicalWidth.isPositive() && style()->boxSizing() == CONTENT_BOX)
         borders = borderStart() + borderEnd() + (collapseBorders() ? LayoutUnit() : paddingStart() + paddingEnd());
 
-    return minimumValueForLength(styleLogicalWidth, availableWidth, view()) + borders;
+    return minimumValueForLength(styleLogicalWidth, availableWidth, &view()) + borders;
 }
 
 LayoutUnit RenderTable::convertStyleLogicalHeightToComputedHeight(const Length& styleLogicalHeight)
@@ -343,7 +343,7 @@ LayoutUnit RenderTable::convertStyleLogicalHeightToComputedHeight(const Length& 
     } else if (styleLogicalHeight.isPercent())
         computedLogicalHeight = computePercentageLogicalHeight(styleLogicalHeight);
     else if (styleLogicalHeight.isViewportPercentage())
-        computedLogicalHeight = minimumValueForLength(styleLogicalHeight, 0, view());
+        computedLogicalHeight = minimumValueForLength(styleLogicalHeight, 0, &view());
     else
         ASSERT_NOT_REACHED();
     return max<LayoutUnit>(0, computedLogicalHeight);
@@ -405,7 +405,7 @@ void RenderTable::layout()
     recalcBordersInRowDirection();
         
     LayoutRepainter repainter(*this, checkForRepaintDuringLayout());
-    LayoutStateMaintainer statePusher(view(), this, locationOffset(), hasTransform() || hasReflection() || style()->isFlippedBlocksWritingMode());
+    LayoutStateMaintainer statePusher(&view(), this, locationOffset(), hasTransform() || hasReflection() || style()->isFlippedBlocksWritingMode());
 
     setLogicalHeight(0);
 
@@ -545,8 +545,8 @@ void RenderTable::layout()
 
     statePusher.pop();
 
-    if (view()->layoutState()->pageLogicalHeight())
-        setPageLogicalOffset(view()->layoutState()->pageLogicalOffset(this, logicalTop()));
+    if (view().layoutState()->pageLogicalHeight())
+        setPageLogicalOffset(view().layoutState()->pageLogicalOffset(this, logicalTop()));
 
     bool didFullRepaint = repainter.repaintAfterLayout();
     // Repaint with our new bounds if they are different from our old bounds.

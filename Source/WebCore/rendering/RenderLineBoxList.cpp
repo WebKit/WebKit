@@ -216,8 +216,8 @@ void RenderLineBoxList::paint(RenderBoxModelObject* renderer, PaintInfo& paintIn
 
     // FIXME: Paint-time pagination is obsolete and is now only used by embedded WebViews inside AppKit
     // NSViews.  Do not add any more code for this.
-    RenderView* v = renderer->view();
-    bool usePrintRect = !v->printRect().isEmpty();
+    RenderView& v = renderer->view();
+    bool usePrintRect = !v.printRect().isEmpty();
     LayoutUnit outlineSize = renderer->maximalOutlineSize(paintInfo.phase);
     if (!anyLineIntersectsRect(renderer, paintInfo.rect, paintOffset, usePrintRect, outlineSize))
         return;
@@ -242,16 +242,16 @@ void RenderLineBoxList::paint(RenderBoxModelObject* renderer, PaintInfo& paintIn
                 topForPaginationCheck = min(topForPaginationCheck, root->lineTop());
                 bottomForPaginationCheck = max(bottomForPaginationCheck, root->lineBottom());
             }
-            if (bottomForPaginationCheck - topForPaginationCheck <= v->printRect().height()) {
-                if (paintOffset.y() + bottomForPaginationCheck > v->printRect().maxY()) {
+            if (bottomForPaginationCheck - topForPaginationCheck <= v.printRect().height()) {
+                if (paintOffset.y() + bottomForPaginationCheck > v.printRect().maxY()) {
                     if (RootInlineBox* nextRootBox = curr->root()->nextRootBox())
                         bottomForPaginationCheck = min(bottomForPaginationCheck, min<LayoutUnit>(nextRootBox->logicalTopVisualOverflow(), nextRootBox->lineTop()));
                 }
-                if (paintOffset.y() + bottomForPaginationCheck > v->printRect().maxY()) {
-                    if (paintOffset.y() + topForPaginationCheck < v->truncatedAt())
-                        v->setBestTruncatedAt(paintOffset.y() + topForPaginationCheck, renderer);
+                if (paintOffset.y() + bottomForPaginationCheck > v.printRect().maxY()) {
+                    if (paintOffset.y() + topForPaginationCheck < v.truncatedAt())
+                        v.setBestTruncatedAt(paintOffset.y() + topForPaginationCheck, renderer);
                     // If we were able to truncate, don't paint.
-                    if (paintOffset.y() + topForPaginationCheck >= v->truncatedAt())
+                    if (paintOffset.y() + topForPaginationCheck >= v.truncatedAt())
                         break;
                 }
             }

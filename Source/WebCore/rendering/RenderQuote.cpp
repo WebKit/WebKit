@@ -361,14 +361,13 @@ PassRefPtr<StringImpl> RenderQuote::originalText() const
 
 void RenderQuote::attachQuote()
 {
-    ASSERT(view());
     ASSERT(!m_isAttached);
     ASSERT(!m_next);
     ASSERT(!m_previous);
     ASSERT(isRooted());
 
     // Optimize case where this is the first quote in a RenderView by not searching for predecessors in that case.
-    if (view()->renderQuoteHead()) {
+    if (view().renderQuoteHead()) {
         for (RenderObject* predecessor = previousInPreOrder(); predecessor; predecessor = predecessor->previousInPreOrder()) {
             // Skip unattached predecessors to avoid having stale m_previous pointers
             // if the previous node is never attached and is then destroyed.
@@ -384,8 +383,8 @@ void RenderQuote::attachQuote()
     }
 
     if (!m_previous) {
-        m_next = view()->renderQuoteHead();
-        view()->setRenderQuoteHead(this);
+        m_next = view().renderQuoteHead();
+        view().setRenderQuoteHead(this);
         if (m_next)
             m_next->m_previous = this;
     }
@@ -409,8 +408,8 @@ void RenderQuote::detachQuote()
         return;
     if (m_previous)
         m_previous->m_next = m_next;
-    else if (view())
-        view()->setRenderQuoteHead(m_next);
+    else
+        view().setRenderQuoteHead(m_next);
     if (m_next)
         m_next->m_previous = m_previous;
     if (!documentBeingDestroyed()) {

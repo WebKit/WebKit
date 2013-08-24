@@ -552,17 +552,13 @@ LayoutRect RenderReplaced::clippedOverflowRectForRepaint(const RenderLayerModelO
     // for repainting to avoid selection painting glitches.
     LayoutRect r = unionRect(localSelectionRect(false), visualOverflowRect());
 
-    RenderView* v = view();
-    if (v) {
-        // FIXME: layoutDelta needs to be applied in parts before/after transforms and
-        // repaint containers. https://bugs.webkit.org/show_bug.cgi?id=23308
-        r.move(v->layoutDelta());
-    }
+    // FIXME: layoutDelta needs to be applied in parts before/after transforms and
+    // repaint containers. https://bugs.webkit.org/show_bug.cgi?id=23308
+    r.move(view().layoutDelta());
 
-    if (style()) {
-        if (v)
-            r.inflate(style()->outlineSize());
-    }
+    if (style())
+        r.inflate(style()->outlineSize());
+
     computeRectForRepaint(repaintContainer, r);
     return r;
 }

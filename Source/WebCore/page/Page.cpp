@@ -1406,11 +1406,7 @@ void Page::addRelevantRepaintedObject(RenderObject* object, const LayoutRect& ob
     if (object->document()->frame() != mainFrame())
         return;
 
-    RenderView* view = object->view();
-    if (!view)
-        return;
-
-    LayoutRect relevantRect = relevantViewRect(view);
+    LayoutRect relevantRect = relevantViewRect(&object->view());
 
     // The objects are only relevant if they are being painted within the viewRect().
     if (!objectPaintRect.intersects(pixelSnappedIntRect(relevantRect)))
@@ -1471,10 +1467,8 @@ void Page::addRelevantUnpaintedObject(RenderObject* object, const LayoutRect& ob
         return;
 
     // The objects are only relevant if they are being painted within the relevantViewRect().
-    if (RenderView* view = object->view()) {
-        if (!objectPaintRect.intersects(pixelSnappedIntRect(relevantViewRect(view))))
-            return;
-    }
+    if (!objectPaintRect.intersects(pixelSnappedIntRect(relevantViewRect(&object->view()))))
+        return;
 
     m_relevantUnpaintedRenderObjects.add(object);
     m_relevantUnpaintedRegion.unite(pixelSnappedIntRect(objectPaintRect));

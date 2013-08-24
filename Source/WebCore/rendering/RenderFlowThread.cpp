@@ -284,7 +284,7 @@ bool RenderFlowThread::updateLayerToRegionMappings()
 
     // We can't use currentFlowThread as it is possible to have interleaved flow threads and the wrong one could be used.
     // Let each region figure out the proper enclosing flow thread.
-    CurrentRenderFlowThreadDisabler disabler(view());
+    CurrentRenderFlowThreadDisabler disabler(&view());
 
     // If the RenderFlowThread had a z-index layer update, then we need to update the composited layers too.
     bool needsLayerUpdate = m_layersToRegionMappingsDirty || !m_layerToRegionMap.get();
@@ -465,7 +465,7 @@ bool RenderFlowThread::hitTestFlowThreadPortionInRegion(RenderRegion* region, co
 
 bool RenderFlowThread::shouldRepaint(const LayoutRect& r) const
 {
-    if (view()->printing() || r.isEmpty())
+    if (view().printing() || r.isEmpty())
         return false;
 
     return true;
@@ -476,11 +476,11 @@ void RenderFlowThread::repaintRectangleInRegions(const LayoutRect& repaintRect, 
     if (!shouldRepaint(repaintRect) || !hasValidRegionInfo())
         return;
 
-    LayoutStateDisabler layoutStateDisabler(view()); // We can't use layout state to repaint, since the regions are somewhere else.
+    LayoutStateDisabler layoutStateDisabler(&view()); // We can't use layout state to repaint, since the regions are somewhere else.
 
     // We can't use currentFlowThread as it is possible to have interleaved flow threads and the wrong one could be used.
     // Let each region figure out the proper enclosing flow thread.
-    CurrentRenderFlowThreadDisabler disabler(view());
+    CurrentRenderFlowThreadDisabler disabler(&view());
     
     for (RenderRegionList::const_iterator iter = m_regionList.begin(); iter != m_regionList.end(); ++iter) {
         RenderRegion* region = *iter;
@@ -1098,7 +1098,7 @@ bool RenderFlowThread::addForcedRegionBreak(const RenderBlock* block, LayoutUnit
 void RenderFlowThread::incrementAutoLogicalHeightRegions()
 {
     if (!m_autoLogicalHeightRegionsCount)
-        view()->flowThreadController()->incrementFlowThreadsWithAutoLogicalHeightRegions();
+        view().flowThreadController()->incrementFlowThreadsWithAutoLogicalHeightRegions();
     ++m_autoLogicalHeightRegionsCount;
 }
 
@@ -1107,7 +1107,7 @@ void RenderFlowThread::decrementAutoLogicalHeightRegions()
     ASSERT(m_autoLogicalHeightRegionsCount > 0);
     --m_autoLogicalHeightRegionsCount;
     if (!m_autoLogicalHeightRegionsCount)
-        view()->flowThreadController()->decrementFlowThreadsWithAutoLogicalHeightRegions();
+        view().flowThreadController()->decrementFlowThreadsWithAutoLogicalHeightRegions();
 }
 
 void RenderFlowThread::collectLayerFragments(LayerFragments& layerFragments, const LayoutRect& layerBoundingBox, const LayoutRect& dirtyRect)
@@ -1174,7 +1174,7 @@ const RenderBox* RenderFlowThread::currentActiveRenderBox() const
 void RenderFlowThread::pushFlowThreadLayoutState(const RenderObject* object)
 {
     if (const RenderBox* currentBoxDescendant = currentActiveRenderBox()) {
-        LayoutState* layoutState = currentBoxDescendant->view()->layoutState();
+        LayoutState* layoutState = currentBoxDescendant->view().layoutState();
         if (layoutState && layoutState->isPaginated()) {
             ASSERT(layoutState->m_renderer == currentBoxDescendant);
             LayoutSize offsetDelta = layoutState->m_layoutOffset - layoutState->m_pageOffset;
@@ -1190,7 +1190,7 @@ void RenderFlowThread::popFlowThreadLayoutState()
     m_activeObjectsStack.removeLast();
 
     if (const RenderBox* currentBoxDescendant = currentActiveRenderBox()) {
-        LayoutState* layoutState = currentBoxDescendant->view()->layoutState();
+        LayoutState* layoutState = currentBoxDescendant->view().layoutState();
         if (layoutState && layoutState->isPaginated())
             clearOffsetFromLogicalTopOfFirstRegion(currentBoxDescendant);
     }
@@ -1206,7 +1206,7 @@ LayoutUnit RenderFlowThread::offsetFromLogicalTopOfFirstRegion(const RenderBlock
     // If it's the current box being laid out, use the layout state.
     const RenderBox* currentBoxDescendant = currentActiveRenderBox();
     if (currentBlock == currentBoxDescendant) {
-        LayoutState* layoutState = view()->layoutState();
+        LayoutState* layoutState = view().layoutState();
         ASSERT(layoutState->m_renderer == currentBlock);
         ASSERT(layoutState && layoutState->isPaginated());
         LayoutSize offsetDelta = layoutState->m_layoutOffset - layoutState->m_pageOffset;
@@ -1264,19 +1264,19 @@ CurrentRenderFlowThreadMaintainer::CurrentRenderFlowThreadMaintainer(RenderFlowT
 {
     if (!m_renderFlowThread)
         return;
-    RenderView* view = m_renderFlowThread->view();
-    m_previousRenderFlowThread = view->flowThreadController()->currentRenderFlowThread();
+    FlowThreadController* controller = m_renderFlowThread->view().flowThreadController();
+    m_previousRenderFlowThread = controller->currentRenderFlowThread();
     ASSERT(!m_previousRenderFlowThread || !renderFlowThread->isRenderNamedFlowThread());
-    view->flowThreadController()->setCurrentRenderFlowThread(m_renderFlowThread);
+    controller->setCurrentRenderFlowThread(m_renderFlowThread);
 }
 
 CurrentRenderFlowThreadMaintainer::~CurrentRenderFlowThreadMaintainer()
 {
     if (!m_renderFlowThread)
         return;
-    RenderView* view = m_renderFlowThread->view();
-    ASSERT(view->flowThreadController()->currentRenderFlowThread() == m_renderFlowThread);
-    view->flowThreadController()->setCurrentRenderFlowThread(m_previousRenderFlowThread);
+    FlowThreadController* controller = m_renderFlowThread->view().flowThreadController();
+    ASSERT(controller->currentRenderFlowThread() == m_renderFlowThread);
+    controller->setCurrentRenderFlowThread(m_previousRenderFlowThread);
 }
 
 

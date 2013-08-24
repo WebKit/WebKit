@@ -355,7 +355,7 @@ RenderCounter::RenderCounter(Document* node, const CounterContent& counter)
     , m_counterNode(0)
     , m_nextForSameCounter(0)
 {
-    view()->addRenderCounter();
+    view().addRenderCounter();
 }
 
 RenderCounter::~RenderCounter()
@@ -368,8 +368,7 @@ RenderCounter::~RenderCounter()
 
 void RenderCounter::willBeDestroyed()
 {
-    if (view())
-        view()->removeRenderCounter();
+    view().removeRenderCounter();
     RenderText::willBeDestroyed();
 }
 
@@ -501,8 +500,7 @@ void RenderCounter::destroyCounterNode(RenderObject* owner, const AtomicString& 
 
 void RenderCounter::rendererRemovedFromTree(RenderObject* renderer)
 {
-    ASSERT(renderer->view());
-    if (!renderer->view()->hasRenderCounters())
+    if (!renderer->view().hasRenderCounters())
         return;
     RenderObject* currentRenderer = renderer->lastLeafChild();
     if (!currentRenderer)
@@ -553,8 +551,7 @@ static void updateCounters(RenderObject* renderer)
 
 void RenderCounter::rendererSubtreeAttached(RenderObject* renderer)
 {
-    ASSERT(renderer->view());
-    if (!renderer->view()->hasRenderCounters())
+    if (!renderer->view().hasRenderCounters())
         return;
     Node* node = renderer->node();
     if (node && !node->isPseudoElement())

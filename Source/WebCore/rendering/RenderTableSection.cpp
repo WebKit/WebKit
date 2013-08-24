@@ -266,9 +266,8 @@ int RenderTableSection::calcRowLogicalHeight()
     RenderTableCell* cell;
 
     int spacing = table()->vBorderSpacing();
-    
-    RenderView* viewRenderer = view();
-    LayoutStateMaintainer statePusher(viewRenderer);
+
+    LayoutStateMaintainer statePusher(&view());
 
     m_rowPos.resize(m_grid.size() + 1);
     m_rowPos[0] = spacing;
@@ -280,7 +279,7 @@ int RenderTableSection::calcRowLogicalHeight()
         LayoutUnit baselineDescent = 0;
 
         // Our base size is the biggest logical height from our cells' styles (excluding row spanning cells).
-        m_rowPos[r + 1] = max(m_rowPos[r] + minimumValueForLength(m_grid[r].logicalHeight, 0, viewRenderer).round(), 0);
+        m_rowPos[r + 1] = max(m_rowPos[r] + minimumValueForLength(m_grid[r].logicalHeight, 0, &view()).round(), 0);
 
         Row& row = m_grid[r].row;
         unsigned totalCols = row.size();
@@ -375,7 +374,7 @@ void RenderTableSection::layout()
     // can be called in a loop (e.g during parsing). Doing it now ensures we have a stable-enough structure.
     m_grid.shrinkToFit();
 
-    LayoutStateMaintainer statePusher(view(), this, locationOffset(), hasTransform() || hasReflection() || style()->isFlippedBlocksWritingMode());
+    LayoutStateMaintainer statePusher(&view(), this, locationOffset(), hasTransform() || hasReflection() || style()->isFlippedBlocksWritingMode());
 
     const Vector<int>& columnPos = table()->columnPositions();
 
@@ -520,7 +519,7 @@ void RenderTableSection::layoutRows()
     int vspacing = table()->vBorderSpacing();
     unsigned nEffCols = table()->numEffCols();
 
-    LayoutStateMaintainer statePusher(view(), this, locationOffset(), hasTransform() || style()->isFlippedBlocksWritingMode());
+    LayoutStateMaintainer statePusher(&view(), this, locationOffset(), hasTransform() || style()->isFlippedBlocksWritingMode());
 
     for (unsigned r = 0; r < totalRows; r++) {
         // Set the row's x/y position and width/height.
@@ -612,13 +611,13 @@ void RenderTableSection::layoutRows()
 
             setLogicalPositionForCell(cell, c);
 
-            if (!cell->needsLayout() && view()->layoutState()->pageLogicalHeight() && view()->layoutState()->pageLogicalOffset(cell, cell->logicalTop()) != cell->pageLogicalOffset())
+            if (!cell->needsLayout() && view().layoutState()->pageLogicalHeight() && view().layoutState()->pageLogicalOffset(cell, cell->logicalTop()) != cell->pageLogicalOffset())
                 cell->setChildNeedsLayout(true, MarkOnlyThis);
 
             cell->layoutIfNeeded();
 
             // FIXME: Make pagination work with vertical tables.
-            if (view()->layoutState()->pageLogicalHeight() && cell->logicalHeight() != rHeight) {
+            if (view().layoutState()->pageLogicalHeight() && cell->logicalHeight() != rHeight) {
                 // FIXME: Pagination might have made us change size. For now just shrink or grow the cell to fit without doing a relayout.
                 // We'll also do a basic increase of the row height to accommodate the cell if it's bigger, but this isn't quite right
                 // either. It's at least stable though and won't result in an infinite # of relayouts that may never stabilize.
@@ -629,7 +628,7 @@ void RenderTableSection::layoutRows()
 
             LayoutSize childOffset(cell->location() - oldCellRect.location());
             if (childOffset.width() || childOffset.height()) {
-                view()->addLayoutDelta(childOffset);
+                view().addLayoutDelta(childOffset);
 
                 // If the child moved, we have to repaint it as well as any floating/positioned
                 // descendants.  An exception is if we need a layout.  In this case, we know we're going to
@@ -1456,7 +1455,7 @@ void RenderTableSection::setLogicalPositionForCell(RenderTableCell* cell, unsign
         cellLocation.setX(table()->columnPositions()[effectiveColumn] + horizontalBorderSpacing);
 
     cell->setLogicalLocation(cellLocation);
-    view()->addLayoutDelta(oldCellLocation - cell->location());
+    view().addLayoutDelta(oldCellLocation - cell->location());
 }
 
 } // namespace WebCore

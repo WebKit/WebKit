@@ -177,7 +177,7 @@ RenderThemeMac::~RenderThemeMac()
 
 NSView* RenderThemeMac::documentViewFor(RenderObject* o) const
 {
-    return ThemeMac::ensuredView(&o->view()->frameView());
+    return ThemeMac::ensuredView(&o->view().frameView());
 }
 
 #if ENABLE(VIDEO)
@@ -1409,7 +1409,7 @@ void RenderThemeMac::paintMenuListButtonGradients(RenderObject* o, const PaintIn
 
     GraphicsContextStateSaver stateSaver(*paintInfo.context);
 
-    RoundedRect border = o->style()->getRoundedBorderFor(r, o->view());
+    RoundedRect border = o->style()->getRoundedBorderFor(r, &o->view());
     int radius = border.radii().topLeft().width();
 
     CGColorSpaceRef cspace = deviceRGBColorSpaceRef();

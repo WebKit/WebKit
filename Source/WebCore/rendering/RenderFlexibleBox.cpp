@@ -336,7 +336,7 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren, LayoutUnit)
     LayoutUnit previousHeight = logicalHeight();
     setLogicalHeight(borderAndPaddingLogicalHeight() + scrollbarLogicalHeight());
 
-    LayoutStateMaintainer statePusher(view(), this, locationOffset(), hasTransform() || hasReflection() || style()->isFlippedBlocksWritingMode());
+    LayoutStateMaintainer statePusher(&view(), this, locationOffset(), hasTransform() || hasReflection() || style()->isFlippedBlocksWritingMode());
 
     // Regions changing widths can force us to relayout our children.
     RenderFlowThread* flowThread = flowThreadContainingBlock();
@@ -914,7 +914,7 @@ LayoutUnit RenderFlexibleBox::computeChildMarginValue(Length margin, RenderView*
 
 void RenderFlexibleBox::computeMainAxisPreferredSizes(OrderHashSet& orderValues)
 {
-    RenderView* renderView = view();
+    RenderView* renderView = &view();
     for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
         orderValues.add(child->style()->order());
 

@@ -98,7 +98,7 @@ void RenderInline::willBeDestroyed()
             // FIXME: The FrameSelection should be responsible for this when it
             // is notified of DOM mutations.
             if (isSelectionBorder())
-                view()->clearSelection();
+                view().clearSelection();
 
             // If line boxes are contained inside a root, that means we're an inline.
             // In that case, we need to remove all the line boxes so that the parent
@@ -701,7 +701,7 @@ static LayoutUnit computeMargin(const RenderInline* renderer, const Length& marg
     if (margin.isPercent())
         return minimumValueForLength(margin, max<LayoutUnit>(0, renderer->containingBlock()->availableLogicalWidth()));
     if (margin.isViewportPercentage())
-        return valueForLength(margin, 0, renderer->view());
+        return valueForLength(margin, 0, &renderer->view());
     return 0;
 }
 
@@ -1006,7 +1006,7 @@ LayoutRect RenderInline::linesVisualOverflowBoundingBox() const
 LayoutRect RenderInline::clippedOverflowRectForRepaint(const RenderLayerModelObject* repaintContainer) const
 {
     // Only run-ins are allowed in here during layout.
-    ASSERT(!view() || !view()->layoutStateEnabled() || isRunIn());
+    ASSERT(!view().layoutStateEnabled() || isRunIn());
 
     if (!firstLineBoxIncludingCulling() && !continuation())
         return LayoutRect();
@@ -1066,17 +1066,15 @@ LayoutRect RenderInline::rectWithOutlineForRepaint(const RenderLayerModelObject*
 
 void RenderInline::computeRectForRepaint(const RenderLayerModelObject* repaintContainer, LayoutRect& rect, bool fixed) const
 {
-    if (RenderView* v = view()) {
-        // LayoutState is only valid for root-relative repainting
-        if (v->layoutStateEnabled() && !repaintContainer) {
-            LayoutState* layoutState = v->layoutState();
-            if (style()->hasInFlowPosition() && layer())
-                rect.move(layer()->offsetForInFlowPosition());
-            rect.move(layoutState->m_paintOffset);
-            if (layoutState->m_clipped)
-                rect.intersect(layoutState->m_clipRect);
-            return;
-        }
+    // LayoutState is only valid for root-relative repainting
+    if (view().layoutStateEnabled() && !repaintContainer) {
+        LayoutState* layoutState = view().layoutState();
+        if (style()->hasInFlowPosition() && layer())
+            rect.move(layer()->offsetForInFlowPosition());
+        rect.move(layoutState->m_paintOffset);
+        if (layoutState->m_clipped)
+            rect.intersect(layoutState->m_clipRect);
+        return;
     }
 
     if (repaintContainer == this)
@@ -1153,15 +1151,13 @@ void RenderInline::mapLocalToContainer(const RenderLayerModelObject* repaintCont
     if (repaintContainer == this)
         return;
 
-    if (RenderView *v = view()) {
-        if (v->layoutStateEnabled() && !repaintContainer) {
-            LayoutState* layoutState = v->layoutState();
-            LayoutSize offset = layoutState->m_paintOffset;
-            if (style()->hasInFlowPosition() && layer())
-                offset += layer()->offsetForInFlowPosition();
-            transformState.move(offset);
-            return;
-        }
+    if (view().layoutStateEnabled() && !repaintContainer) {
+        LayoutState* layoutState = view().layoutState();
+        LayoutSize offset = layoutState->m_paintOffset;
+        if (style()->hasInFlowPosition() && layer())
+            offset += layer()->offsetForInFlowPosition();
+        transformState.move(offset);
+        return;
     }
 
     bool containerSkipped;
@@ -1329,10 +1325,10 @@ LayoutUnit RenderInline::lineHeight(bool firstLine, LineDirectionMode /*directio
     if (firstLine && document()->styleSheetCollection()->usesFirstLineRules()) {
         RenderStyle* s = style(firstLine);
         if (s != style())
-            return s->computedLineHeight(view());
+            return s->computedLineHeight(&view());
     }
 
-    return style()->computedLineHeight(view());
+    return style()->computedLineHeight(&view());
 }
 
 int RenderInline::baselinePosition(FontBaseline baselineType, bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const

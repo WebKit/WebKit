@@ -99,7 +99,7 @@ void RenderScrollbarPart::computeScrollbarWidth()
 {
     if (!m_scrollbar->owningRenderer())
         return;
-    RenderView* renderView = view();
+    RenderView* renderView = &view();
     // FIXME: We are querying layout information but nothing guarantees that it's up-to-date, especially since we are called at style change.
     // FIXME: Querying the style's border information doesn't work on table cells with collapsing borders.
     int visibleSize = m_scrollbar->owningRenderer()->width() - m_scrollbar->owningRenderer()->style()->borderLeftWidth() - m_scrollbar->owningRenderer()->style()->borderRightWidth();
@@ -117,7 +117,7 @@ void RenderScrollbarPart::computeScrollbarHeight()
 {
     if (!m_scrollbar->owningRenderer())
         return;
-    RenderView* renderView = view();
+    RenderView* renderView = &view();
     // FIXME: We are querying layout information but nothing guarantees that it's up-to-date, especially since we are called at style change.
     // FIXME: Querying the style's border information doesn't work on table cells with collapsing borders.
     int visibleSize = m_scrollbar->owningRenderer()->height() -  m_scrollbar->owningRenderer()->style()->borderTopWidth() - m_scrollbar->owningRenderer()->style()->borderBottomWidth();
@@ -163,8 +163,8 @@ void RenderScrollbarPart::imageChanged(WrappedImagePtr image, const IntRect* rec
     if (m_scrollbar && m_part != NoPart)
         m_scrollbar->theme()->invalidatePart(m_scrollbar, m_part);
     else {
-        if (view()->frameView().isFrameViewScrollCorner(this)) {
-            view()->frameView().invalidateScrollCorner(view()->frameView().scrollCornerRect());
+        if (view().frameView().isFrameViewScrollCorner(this)) {
+            view().frameView().invalidateScrollCorner(view().frameView().scrollCornerRect());
             return;
         }
         

@@ -191,7 +191,7 @@ bool RenderView::initializeLayoutState(LayoutState& state)
     // Check the writing mode of the seamless ancestor. It has to match our document's writing mode, or we won't inherit any
     // pagination information.
     RenderBox* seamlessAncestor = enclosingSeamlessRenderer(document());
-    LayoutState* seamlessLayoutState = seamlessAncestor ? seamlessAncestor->view()->layoutState() : 0;
+    LayoutState* seamlessLayoutState = seamlessAncestor ? seamlessAncestor->view().layoutState() : 0;
     bool shouldInheritPagination = seamlessLayoutState && !m_pageLogicalHeight && seamlessAncestor->style()->writingMode() == style()->writingMode();
     
     state.m_pageLogicalHeight = shouldInheritPagination ? seamlessLayoutState->m_pageLogicalHeight : m_pageLogicalHeight;
@@ -214,7 +214,7 @@ bool RenderView::initializeLayoutState(LayoutState& state)
         // Set the current render flow thread to point to our ancestor. This will allow the seamless document to locate the correct
         // regions when doing a layout.
         if (seamlessAncestor->flowThreadContainingBlock()) {
-            flowThreadController()->setCurrentRenderFlowThread(seamlessAncestor->view()->flowThreadController()->currentRenderFlowThread());
+            flowThreadController()->setCurrentRenderFlowThread(seamlessAncestor->view().flowThreadController()->currentRenderFlowThread());
             isSeamlessAncestorInFlowThread = true;
         }
     }
@@ -472,7 +472,7 @@ void RenderView::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint&)
     // FIXME: This needs to be dynamic.  We should be able to go back to blitting if we ever stop being inside
     // a transform, transparency layer, etc.
     Element* elt;
-    for (elt = document()->ownerElement(); view() && elt && elt->renderer(); elt = elt->document()->ownerElement()) {
+    for (elt = document()->ownerElement(); elt && elt->renderer(); elt = elt->document()->ownerElement()) {
         RenderLayer* layer = elt->renderer()->enclosingLayer();
         if (layer->cannotBlitToWindow()) {
             frameView().setCannotBlitToWindow();
@@ -489,7 +489,7 @@ void RenderView::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint&)
 #endif
     }
 
-    if (document()->ownerElement() || !view())
+    if (document()->ownerElement())
         return;
 
     if (paintInfo.skipRootBackground())
@@ -745,8 +745,8 @@ void RenderView::setSelection(RenderObject* start, int startPos, RenderObject* e
     if ((start && !end) || (end && !start))
         return;
 
-    bool caretChanged = m_selectionWasCaret != view()->frame()->selection().isCaret();
-    m_selectionWasCaret = view()->frame()->selection().isCaret();
+    bool caretChanged = m_selectionWasCaret != view().frame()->selection().isCaret();
+    m_selectionWasCaret = view().frame()->selection().isCaret();
     // Just return if the selection hasn't changed.
     if (m_selectionStart == start && m_selectionStartPos == startPos &&
         m_selectionEnd == end && m_selectionEndPos == endPos && !caretChanged)
@@ -1219,10 +1219,7 @@ RenderBlock::IntervalArena* RenderView::intervalArena()
 
 FragmentationDisabler::FragmentationDisabler(RenderObject* root)
 {
-    RenderView* renderView = root->view();
-    ASSERT(renderView);
-
-    LayoutState* layoutState = renderView->layoutState();
+    LayoutState* layoutState = root->view().layoutState();
 
     m_root = root;
     m_fragmenting = layoutState && layoutState->isPaginated();
@@ -1240,10 +1237,7 @@ FragmentationDisabler::FragmentationDisabler(RenderObject* root)
 
 FragmentationDisabler::~FragmentationDisabler()
 {
-    RenderView* renderView = m_root->view();
-    ASSERT(renderView);
-
-    LayoutState* layoutState = renderView->layoutState();
+    LayoutState* layoutState = m_root->view().layoutState();
 #ifndef NDEBUG
     ASSERT(m_layoutState == layoutState);
 #endif

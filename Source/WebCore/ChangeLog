@@ -1,3 +1,14 @@
+2013-08-24  Andreas Kling  <akling@apple.com>
+
+        RenderObject::view() should return a reference.
+        <https://webkit.org/b/120247>
+
+        Reviewed by Antti Koivisto.
+
+        Now that the lifetime and accessibility characteristics of RenderView are well-defined,
+        we can make RenderObject::view() return a reference, exposing a plethora of unnecessary
+        null checks.
+
 2013-08-24  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Cleanup Inspector Agents a bit

@@ -176,15 +176,15 @@ void RenderLayerModelObject::styleDidChange(StyleDifference diff, const RenderSt
     bool oldStyleIsViewportConstrained = oldStyle && oldStyle->hasViewportConstrainedPosition();
     if (newStyleIsViewportConstained != oldStyleIsViewportConstrained) {
         if (newStyleIsViewportConstained && layer())
-            view()->frameView().addViewportConstrainedObject(this);
+            view().frameView().addViewportConstrainedObject(this);
         else
-            view()->frameView().removeViewportConstrainedObject(this);
+            view().frameView().removeViewportConstrainedObject(this);
     }
 }
 
 bool RenderLayerModelObject::updateLayerIfNeeded()
 {
-    LayoutStateDisabler layoutStateDisabler(view());
+    LayoutStateDisabler layoutStateDisabler(&view());
 
     bool hadLayer = hasLayer();
     if (requiresLayer()) {

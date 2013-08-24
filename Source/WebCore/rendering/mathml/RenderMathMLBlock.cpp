@@ -84,12 +84,12 @@ void RenderMathMLBlock::computeChildrenPreferredLogicalHeights()
     // Ensure a full repaint will happen after layout finishes.
     setNeedsLayout(true, MarkOnlyThis);
 
-    RenderView* renderView = view();
-    bool hadLayoutState = renderView->layoutState();
+    bool hadLayoutState = view().layoutState();
     if (!hadLayoutState)
-        renderView->pushLayoutState(this);
+        view().pushLayoutState(this);
+
     {
-        LayoutStateDisabler layoutStateDisabler(renderView);
+        LayoutStateDisabler layoutStateDisabler(&view());
         
         LayoutUnit oldAvailableLogicalWidth = availableLogicalWidth();
         setLogicalWidth(cLargeLogicalWidth);
@@ -112,7 +112,7 @@ void RenderMathMLBlock::computeChildrenPreferredLogicalHeights()
         }
     }
     if (!hadLayoutState)
-        renderView->popLayoutState(this);
+        view().popLayoutState(this);
 }
 
 LayoutUnit RenderMathMLBlock::preferredLogicalHeightAfterSizing(RenderObject* child)

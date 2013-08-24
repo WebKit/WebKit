@@ -95,13 +95,12 @@ RenderWidget::RenderWidget(Element* element)
     // able to handle that.
     , m_refCount(1)
 {
-    view()->addWidget(this);
+    view().addWidget(this);
 }
 
 void RenderWidget::willBeDestroyed()
 {
-    if (RenderView* v = view())
-        v->removeWidget(this);
+    view().removeWidget(this);
     
     if (AXObjectCache* cache = document()->existingAXObjectCache()) {
         cache->childrenChanged(this->parent());

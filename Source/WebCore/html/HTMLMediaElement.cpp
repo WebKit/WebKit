@@ -3795,10 +3795,8 @@ void HTMLMediaElement::mediaPlayerSizeChanged(MediaPlayer*)
 #if USE(ACCELERATED_COMPOSITING)
 bool HTMLMediaElement::mediaPlayerRenderingCanBeAccelerated(MediaPlayer*)
 {
-    if (renderer() && renderer()->isVideo()) {
-        ASSERT(renderer()->view());
-        return renderer()->view()->compositor().canAccelerateVideoRendering(toRenderVideo(renderer()));
-    }
+    if (renderer() && renderer()->isVideo())
+        return renderer()->view().compositor().canAccelerateVideoRendering(toRenderVideo(renderer()));
     return false;
 }
 

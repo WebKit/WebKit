@@ -430,14 +430,14 @@ void RenderLayerBacking::updateCompositedBounds()
     // If this or an ancestor is transformed, we can't currently compute the correct rect to intersect with.
     // We'd need RenderObject::convertContainerToLocalQuad(), which doesn't yet exist.
     if (shouldClipCompositedBounds()) {
-        RenderView* view = m_owningLayer->renderer()->view();
-        RenderLayer* rootLayer = view->layer();
+        RenderView& view = m_owningLayer->renderer()->view();
+        RenderLayer* rootLayer = view.layer();
 
         LayoutRect clippingBounds;
-        if (renderer()->style()->position() == FixedPosition && renderer()->container() == view)
-            clippingBounds = view->frameView().viewportConstrainedVisibleContentRect();
+        if (renderer()->style()->position() == FixedPosition && renderer()->container() == &view)
+            clippingBounds = view.frameView().viewportConstrainedVisibleContentRect();
         else
-            clippingBounds = view->unscaledDocumentRect();
+            clippingBounds = view.unscaledDocumentRect();
 
         if (m_owningLayer != rootLayer)
             clippingBounds.intersect(m_owningLayer->backgroundClipRect(RenderLayer::ClipRectsContext(rootLayer, 0, AbsoluteClipRects)).rect()); // FIXME: Incorrect for CSS regions.
@@ -665,7 +665,7 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
     } else if (compAncestor)
         graphicsLayerParentLocation = ancestorCompositingBounds.location();
     else
-        graphicsLayerParentLocation = renderer()->view()->documentRect().location();
+        graphicsLayerParentLocation = renderer()->view().documentRect().location();
 
     if (compAncestor && compAncestor->needsCompositedScrolling()) {
         RenderBox* renderBox = toRenderBox(compAncestor->renderer());
@@ -1205,8 +1205,7 @@ bool RenderLayerBacking::updateBackgroundLayer(bool needsBackgroundLayer)
     if (layerChanged) {
         m_graphicsLayer->setNeedsDisplay();
         // This assumes that the background layer is only used for fixed backgrounds, which is currently a correct assumption.
-        if (renderer()->view())
-            compositor()->fixedRootBackgroundLayerChanged();
+        compositor()->fixedRootBackgroundLayerChanged();
     }
     
     return layerChanged;
@@ -1273,8 +1272,7 @@ bool RenderLayerBacking::updateScrollingLayers(bool needsScrollingLayers)
         updateInternalHierarchy();
         m_graphicsLayer->setPaintingPhase(paintingPhaseForPrimaryLayer());
         m_graphicsLayer->setNeedsDisplay();
-        if (renderer()->view())
-            compositor()->scrollingLayerDidChange(m_owningLayer);
+        compositor()->scrollingLayerDidChange(m_owningLayer);
     }
 
     return layerChanged;

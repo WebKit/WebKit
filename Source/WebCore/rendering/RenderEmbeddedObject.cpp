@@ -109,7 +109,7 @@ RenderEmbeddedObject::RenderEmbeddedObject(Element* element)
     , m_mouseDownWasInUnavailablePluginIndicator(false)
 {
     // Actual size is not known yet, report the default intrinsic size.
-    view()->frameView().incrementVisuallyNonEmptyPixelCount(roundedIntSize(intrinsicSize()));
+    view().frameView().incrementVisuallyNonEmptyPixelCount(roundedIntSize(intrinsicSize()));
 }
 
 RenderEmbeddedObject::~RenderEmbeddedObject()
@@ -513,7 +513,7 @@ void RenderEmbeddedObject::layout()
     // When calling layout() on a child node, a parent must either push a LayoutStateMaintainter, or
     // instantiate LayoutStateDisabler. Since using a LayoutStateMaintainer is slightly more efficient,
     // and this method will be called many times per second during playback, use a LayoutStateMaintainer:
-    LayoutStateMaintainer statePusher(view(), this, locationOffset(), hasTransform() || hasReflection() || style()->isFlippedBlocksWritingMode());
+    LayoutStateMaintainer statePusher(&view(), this, locationOffset(), hasTransform() || hasReflection() || style()->isFlippedBlocksWritingMode());
     
     childBox->setLocation(LayoutPoint(borderLeft(), borderTop()) + LayoutSize(paddingLeft(), paddingTop()));
     childBox->style()->setHeight(Length(newSize.height(), Fixed));

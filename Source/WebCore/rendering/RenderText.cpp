@@ -159,7 +159,7 @@ RenderText::RenderText(Node* node, PassRefPtr<StringImpl> str)
     m_canUseSimpleFontCodePath = computeCanUseSimpleFontCodePath();
     setIsText();
 
-    view()->frameView().incrementVisuallyNonEmptyCharacterCount(m_text.length());
+    view().frameView().incrementVisuallyNonEmptyCharacterCount(m_text.length());
 }
 
 #ifndef NDEBUG

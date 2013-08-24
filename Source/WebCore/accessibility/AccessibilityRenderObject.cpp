@@ -1266,7 +1266,7 @@ bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
             
             // check whether rendered image was stretched from one-dimensional file image
             if (image->cachedImage()) {
-                LayoutSize imageSize = image->cachedImage()->imageSizeForRenderer(m_renderer, image->view()->zoomFactor());
+                LayoutSize imageSize = image->cachedImage()->imageSizeForRenderer(m_renderer, image->view().zoomFactor());
                 return imageSize.height() <= 1 || imageSize.width() <= 1;
             }
         }
@@ -1698,9 +1698,9 @@ Document* AccessibilityRenderObject::topDocument() const
 FrameView* AccessibilityRenderObject::topDocumentFrameView() const
 {
     RenderView* renderView = topRenderer();
-    if (!renderView || !renderView->view())
+    if (!renderView)
         return 0;
-    return &renderView->view()->frameView();
+    return &renderView->view().frameView();
 }
 
 Widget* AccessibilityRenderObject::widget() const
@@ -1770,7 +1770,7 @@ FrameView* AccessibilityRenderObject::frameViewIfRenderView() const
     if (!m_renderer->isRenderView())
         return 0;
     // this is the RenderObject's Document's renderer's FrameView
-    return &m_renderer->view()->frameView();
+    return &m_renderer->view().frameView();
 }
 
 // This function is like a cross-platform version of - (WebCoreTextMarkerRange*)textMarkerRange. It returns

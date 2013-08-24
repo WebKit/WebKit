@@ -105,8 +105,8 @@ public:
     virtual LayoutRect selectionRectForRepaint(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent = true) OVERRIDE;
     virtual LayoutRect localCaretRect(InlineBox*, int caretOffset, LayoutUnit* extraWidthToEndOfLine = 0);
 
-    LayoutUnit marginLeft() const { return minimumValueForLength(style()->marginLeft(), 0, view()); }
-    LayoutUnit marginRight() const { return minimumValueForLength(style()->marginRight(), 0, view()); }
+    LayoutUnit marginLeft() const { return minimumValueForLength(style()->marginLeft(), 0, &view()); }
+    LayoutUnit marginRight() const { return minimumValueForLength(style()->marginRight(), 0, &view()); }
 
     virtual LayoutRect clippedOverflowRectForRepaint(const RenderLayerModelObject* repaintContainer) const OVERRIDE FINAL;
 

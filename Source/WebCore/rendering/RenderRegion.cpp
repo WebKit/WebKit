@@ -232,7 +232,7 @@ void RenderRegion::checkRegionStyle()
     // FIXME: Region styling doesn't work for pseudo elements.
     if (node()) {
         Element* regionElement = toElement(node());
-        customRegionStyle = view()->document()->ensureStyleResolver().checkRegionStyle(regionElement);
+        customRegionStyle = view().document()->ensureStyleResolver().checkRegionStyle(regionElement);
     }
     setHasCustomRegionStyle(customRegionStyle);
     m_flowThread->checkRegionsWithStyling();
@@ -381,9 +381,7 @@ void RenderRegion::repaintFlowThreadContentRectangle(const LayoutRect& repaintRe
 
 void RenderRegion::installFlowThread()
 {
-    ASSERT(view());
-
-    m_flowThread = &view()->flowThreadController()->ensureRenderFlowThreadWithName(style()->regionThread());
+    m_flowThread = &view().flowThreadController()->ensureRenderFlowThreadWithName(style()->regionThread());
 
     // By now the flow thread should already be added to the rendering tree,
     // so we go up the rendering parents and check that this region is not part of the same
@@ -497,7 +495,7 @@ void RenderRegion::setRegionObjectsRegionStyle()
 
     // Start from content nodes and recursively compute the style in region for the render objects below.
     // If the style in region was already computed, used that style instead of computing a new one.
-    const RenderNamedFlowThread& namedFlow = view()->flowThreadController()->ensureRenderFlowThreadWithName(style()->regionThread());
+    const RenderNamedFlowThread& namedFlow = view().flowThreadController()->ensureRenderFlowThreadWithName(style()->regionThread());
     const NamedFlowContentNodes& contentNodes = namedFlow.contentNodes();
 
     for (NamedFlowContentNodes::const_iterator iter = contentNodes.begin(), end = contentNodes.end(); iter != end; ++iter) {
@@ -577,14 +575,13 @@ void RenderRegion::willBeRemovedFromTree()
 PassRefPtr<RenderStyle> RenderRegion::computeStyleInRegion(const RenderObject* object)
 {
     ASSERT(object);
-    ASSERT(object->view());
-    ASSERT(object->view()->document());
+    ASSERT(object->view().document());
     ASSERT(!object->isAnonymous());
     ASSERT(object->node() && object->node()->isElementNode());
 
     // FIXME: Region styling fails for pseudo-elements because the renderers don't have a node.
     Element* element = toElement(object->node());
-    RefPtr<RenderStyle> renderObjectRegionStyle = object->view()->document()->ensureStyleResolver().styleForElement(element, 0, DisallowStyleSharing, MatchAllRules, this);
+    RefPtr<RenderStyle> renderObjectRegionStyle = object->view().document()->ensureStyleResolver().styleForElement(element, 0, DisallowStyleSharing, MatchAllRules, this);
 
     return renderObjectRegionStyle.release();
 }
@@ -695,7 +692,7 @@ void RenderRegion::computePreferredLogicalWidths()
 
 void RenderRegion::getRanges(Vector<RefPtr<Range> >& rangeObjects) const
 {
-    const RenderNamedFlowThread& namedFlow = view()->flowThreadController()->ensureRenderFlowThreadWithName(style()->regionThread());
+    const RenderNamedFlowThread& namedFlow = view().flowThreadController()->ensureRenderFlowThreadWithName(style()->regionThread());
     namedFlow.getRanges(rangeObjects, this);
 }
 

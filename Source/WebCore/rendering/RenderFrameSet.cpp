@@ -454,8 +454,8 @@ void RenderFrameSet::layout()
     }
 
     if (!parent()->isFrameSet() && !document()->printing()) {
-        setWidth(view()->viewWidth());
-        setHeight(view()->viewHeight());
+        setWidth(view().viewWidth());
+        setHeight(view().viewHeight());
     }
 
     unsigned cols = frameSet()->totalCols();

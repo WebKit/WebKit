@@ -1283,11 +1283,10 @@ void FrameView::layout(bool allowSubtree)
         {
             bool disableLayoutState = false;
             if (subtree) {
-                RenderView* view = root->view();
-                disableLayoutState = view->shouldDisableLayoutStateForSubtree(root);
-                view->pushLayoutState(root);
+                disableLayoutState = root->view().shouldDisableLayoutStateForSubtree(root);
+                root->view().pushLayoutState(root);
             }
-            LayoutStateDisabler layoutStateDisabler(disableLayoutState ? root->view() : 0);
+            LayoutStateDisabler layoutStateDisabler(disableLayoutState ? &root->view() : 0);
 
             m_inLayout = true;
             beginDeferredRepaints();
@@ -1302,7 +1301,7 @@ void FrameView::layout(bool allowSubtree)
             m_inLayout = false;
 
             if (subtree)
-                root->view()->popLayoutState(root);
+                root->view().popLayoutState(root);
         }
         m_layoutRoot = 0;
     } // Reset m_layoutSchedulingEnabled to its previous value.
@@ -1317,7 +1316,7 @@ void FrameView::layout(bool allowSubtree)
     // Now update the positions of all layers.
     beginDeferredRepaints();
     if (m_needsFullRepaint)
-        root->view()->repaintRootContents();
+        root->view().repaintRootContents();
 
     layer->updateLayerPositionsAfterLayout(renderView()->layer(), updateLayerPositionFlags(layer, subtree, m_needsFullRepaint));
 

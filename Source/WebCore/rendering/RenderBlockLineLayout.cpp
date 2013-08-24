@@ -79,7 +79,7 @@ static LayoutUnit logicalHeightForLine(const RenderBlock* block, bool isFirstLin
 #if ENABLE(CSS_SHAPES)
 ShapeInsideInfo* RenderBlock::layoutShapeInsideInfo() const
 {
-    ShapeInsideInfo* shapeInsideInfo = view()->layoutState()->shapeInsideInfo();
+    ShapeInsideInfo* shapeInsideInfo = view().layoutState()->shapeInsideInfo();
 
     if (!shapeInsideInfo && flowThreadContainingBlock() && allowsShapeInsideInfoSharing()) {
         // regionAtBlockOffset returns regions like an array first={0,N-1}, second={N,M-1}, ...
@@ -1569,8 +1569,7 @@ void RenderBlock::layoutRunsAndFloats(LineLayoutState& layoutState, bool hasInli
     // determineStartPosition first will break fast/repaint/line-flow-with-floats-9.html.
     if (layoutState.isFullLayout() && hasInlineChild && !selfNeedsLayout()) {
         setNeedsLayout(true, MarkOnlyThis); // Mark as needing a full layout to force us to repaint.
-        RenderView* v = view();
-        if (v && !v->doingFullRepaint() && hasLayer()) {
+        if (!view().doingFullRepaint() && hasLayer()) {
             // Because we waited until we were already inside layout to discover
             // that the block really needed a full layout, we missed our chance to repaint the layer
             // before layout started.  Luckily the layer has cached the repaint rect for its original
@@ -1790,7 +1789,7 @@ bool RenderBlock::adjustLogicalLineTopAndLogicalHeightIfNeeded(ShapeInsideInfo* 
 void RenderBlock::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, InlineBidiResolver& resolver, const InlineIterator& cleanLineStart, const BidiStatus& cleanLineBidiStatus, unsigned consecutiveHyphenatedLines)
 {
     RenderStyle* styleToUse = style();
-    bool paginated = view()->layoutState() && view()->layoutState()->isPaginated();
+    bool paginated = view().layoutState() && view().layoutState()->isPaginated();
     LineMidpointState& lineMidpointState = resolver.midpointState();
     InlineIterator end = resolver.position();
     bool checkForEndLineMatch = layoutState.endLine();
@@ -2021,7 +2020,7 @@ void RenderBlock::linkToEndLineIfNeeded(LineLayoutState& layoutState)
 {
     if (layoutState.endLine()) {
         if (layoutState.endLineMatched()) {
-            bool paginated = view()->layoutState() && view()->layoutState()->isPaginated();
+            bool paginated = view().layoutState() && view().layoutState()->isPaginated();
             // Attach all the remaining lines, and then adjust their y-positions as needed.
             LayoutUnit delta = logicalHeight() - layoutState.endLineLogicalTop();
             for (RootInlineBox* line = layoutState.endLine(); line; line = line->nextRootBox()) {
@@ -2112,7 +2111,7 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, LayoutUnit& repain
     setLogicalHeight(borderAndPaddingBefore());
     
     // Lay out our hypothetical grid line as though it occurs at the top of the block.
-    if (view()->layoutState() && view()->layoutState()->lineGrid() == this)
+    if (view().layoutState() && view().layoutState()->lineGrid() == this)
         layoutLineGridBox();
 
     RenderFlowThread* flowThread = flowThreadContainingBlock();
@@ -2252,7 +2251,7 @@ RootInlineBox* RenderBlock::determineStartPosition(LineLayoutState& layoutState,
     bool dirtiedByFloat = false;
     if (!layoutState.isFullLayout()) {
         // Paginate all of the clean lines.
-        bool paginated = view()->layoutState() && view()->layoutState()->isPaginated();
+        bool paginated = view().layoutState() && view().layoutState()->isPaginated();
         LayoutUnit paginationDelta = 0;
         size_t floatIndex = 0;
         for (curr = firstRootBox(); curr && !curr->isDirty(); curr = curr->nextRootBox()) {
@@ -2401,7 +2400,7 @@ bool RenderBlock::checkPaginationAndFloatsAtEndLine(LineLayoutState& layoutState
 {
     LayoutUnit lineDelta = logicalHeight() - layoutState.endLineLogicalTop();
 
-    bool paginated = view()->layoutState() && view()->layoutState()->isPaginated();
+    bool paginated = view().layoutState() && view().layoutState()->isPaginated();
     if (paginated && layoutState.flowThread()) {
         // Check all lines from here to the end, and see if the hypothetical new position for the lines will result
         // in a different available line width.

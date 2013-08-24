@@ -629,7 +629,7 @@ RenderFlowThread* RenderObject::locateFlowThreadContainingBlock() const
     ASSERT(flowThreadState() != NotInsideFlowThread);
 
     // See if we have the thread cached because we're in the middle of layout.
-    RenderFlowThread* flowThread = view()->flowThreadController()->currentRenderFlowThread();
+    RenderFlowThread* flowThread = view().flowThreadController()->currentRenderFlowThread();
     if (flowThread)
         return flowThread;
     
@@ -1278,14 +1278,10 @@ void RenderObject::paint(PaintInfo&, const LayoutPoint&)
 
 RenderLayerModelObject* RenderObject::containerForRepaint() const
 {
-    RenderView* v = view();
-    if (!v)
-        return 0;
-    
     RenderLayerModelObject* repaintContainer = 0;
 
 #if USE(ACCELERATED_COMPOSITING)
-    if (v->usesCompositing()) {
+    if (view().usesCompositing()) {
         if (RenderLayer* parentLayer = enclosingLayer()) {
             RenderLayer* compLayer = parentLayer->enclosingCompositingLayerForRepaint();
             if (compLayer)
@@ -1325,7 +1321,7 @@ RenderLayerModelObject* RenderObject::containerForRepaint() const
 void RenderObject::repaintUsingContainer(const RenderLayerModelObject* repaintContainer, const IntRect& r, bool immediate) const
 {
     if (!repaintContainer) {
-        view()->repaintViewRectangle(r, immediate);
+        view().repaintViewRectangle(r, immediate);
         return;
     }
 
@@ -1342,17 +1338,17 @@ void RenderObject::repaintUsingContainer(const RenderLayerModelObject* repaintCo
 #endif
 
 #if USE(ACCELERATED_COMPOSITING)
-    RenderView* v = view();
+    RenderView& v = view();
     if (repaintContainer->isRenderView()) {
-        ASSERT(repaintContainer == v);
-        bool viewHasCompositedLayer = v->hasLayer() && v->layer()->isComposited();
-        if (!viewHasCompositedLayer || v->layer()->backing()->paintsIntoWindow()) {
-            v->repaintViewRectangle(viewHasCompositedLayer && v->layer()->transform() ? v->layer()->transform()->mapRect(r) : r, immediate);
+        ASSERT(repaintContainer == &v);
+        bool viewHasCompositedLayer = v.hasLayer() && v.layer()->isComposited();
+        if (!viewHasCompositedLayer || v.layer()->backing()->paintsIntoWindow()) {
+            v.repaintViewRectangle(viewHasCompositedLayer && v.layer()->transform() ? v.layer()->transform()->mapRect(r) : r, immediate);
             return;
         }
     }
     
-    if (v->usesCompositing()) {
+    if (v.usesCompositing()) {
         ASSERT(repaintContainer->hasLayer() && repaintContainer->layer()->isComposited());
         repaintContainer->layer()->setBackingNeedsRepaintInRect(r);
     }
@@ -1404,8 +1400,7 @@ IntRect RenderObject::pixelSnappedAbsoluteClippedOverflowRect() const
 
 bool RenderObject::repaintAfterLayoutIfNeeded(const RenderLayerModelObject* repaintContainer, const LayoutRect& oldBounds, const LayoutRect& oldOutlineBox, const LayoutRect* newBoundsPtr, const LayoutRect* newOutlineBoxRectPtr)
 {
-    RenderView* v = view();
-    if (v->printing())
+    if (view().printing())
         return false; // Don't repaint if we're printing.
 
     // This ASSERT fails due to animations.  See https://bugs.webkit.org/show_bug.cgi?id=37048
@@ -1426,7 +1421,7 @@ bool RenderObject::repaintAfterLayoutIfNeeded(const RenderLayerModelObject* repa
     }
 
     if (!repaintContainer)
-        repaintContainer = v;
+        repaintContainer = &view();
 
     if (fullRepaint) {
         repaintUsingContainer(repaintContainer, pixelSnappedIntRect(oldBounds));
@@ -1478,7 +1473,7 @@ bool RenderObject::repaintAfterLayoutIfNeeded(const RenderLayerModelObject* repa
         int borderRight = isBox() ? toRenderBox(this)->borderRight() : 0;
         LayoutUnit boxWidth = isBox() ? toRenderBox(this)->width() : LayoutUnit();
         LayoutUnit minInsetRightShadowExtent = min<LayoutUnit>(-insetShadowExtent.right(), min<LayoutUnit>(newBounds.width(), oldBounds.width()));
-        LayoutUnit borderWidth = max<LayoutUnit>(borderRight, max<LayoutUnit>(valueForLength(style()->borderTopRightRadius().width(), boxWidth, v), valueForLength(style()->borderBottomRightRadius().width(), boxWidth, v)));
+        LayoutUnit borderWidth = max<LayoutUnit>(borderRight, max<LayoutUnit>(valueForLength(style()->borderTopRightRadius().width(), boxWidth, &view()), valueForLength(style()->borderBottomRightRadius().width(), boxWidth, &view())));
         LayoutUnit decorationsWidth = max<LayoutUnit>(-outlineStyle->outlineOffset(), borderWidth + minInsetRightShadowExtent) + max<LayoutUnit>(outlineWidth, shadowRight);
         LayoutRect rightRect(newOutlineBox.x() + min(newOutlineBox.width(), oldOutlineBox.width()) - decorationsWidth,
             newOutlineBox.y(),
@@ -1498,7 +1493,7 @@ bool RenderObject::repaintAfterLayoutIfNeeded(const RenderLayerModelObject* repa
         int borderBottom = isBox() ? toRenderBox(this)->borderBottom() : 0;
         LayoutUnit boxHeight = isBox() ? toRenderBox(this)->height() : LayoutUnit();
         LayoutUnit minInsetBottomShadowExtent = min<LayoutUnit>(-insetShadowExtent.bottom(), min<LayoutUnit>(newBounds.height(), oldBounds.height()));
-        LayoutUnit borderHeight = max<LayoutUnit>(borderBottom, max<LayoutUnit>(valueForLength(style()->borderBottomLeftRadius().height(), boxHeight, v), valueForLength(style()->borderBottomRightRadius().height(), boxHeight, v)));
+        LayoutUnit borderHeight = max<LayoutUnit>(borderBottom, max<LayoutUnit>(valueForLength(style()->borderBottomLeftRadius().height(), boxHeight, &view()), valueForLength(style()->borderBottomRightRadius().height(), boxHeight, &view())));
         LayoutUnit decorationsHeight = max<LayoutUnit>(-outlineStyle->outlineOffset(), borderHeight + minInsetBottomShadowExtent) + max<LayoutUnit>(outlineWidth, shadowBottom);
         LayoutRect bottomRect(newOutlineBox.x(),
             min(newOutlineBox.maxY(), oldOutlineBox.maxY()) - decorationsHeight,
@@ -1679,7 +1674,7 @@ Color RenderObject::selectionEmphasisMarkColor() const
 
 void RenderObject::selectionStartEnd(int& spos, int& epos) const
 {
-    view()->selectionStartEnd(spos, epos);
+    view().selectionStartEnd(spos, epos);
 }
 
 void RenderObject::handleDynamicFloatPositionChange()
@@ -1964,7 +1959,7 @@ void RenderObject::styleWillChange(StyleDifference diff, const RenderStyle* newS
         s_noLongerAffectsParentBlock = false;
     }
 
-    bool repaintFixedBackgroundsOnScroll = shouldRepaintFixedBackgroundsOnScroll(&view()->frameView());
+    bool repaintFixedBackgroundsOnScroll = shouldRepaintFixedBackgroundsOnScroll(&view().frameView());
 
     bool newStyleSlowScroll = newStyle && repaintFixedBackgroundsOnScroll && newStyle->hasFixedBackgroundImage();
     bool oldStyleSlowScroll = m_style && repaintFixedBackgroundsOnScroll && m_style->hasFixedBackgroundImage();
@@ -1972,7 +1967,7 @@ void RenderObject::styleWillChange(StyleDifference diff, const RenderStyle* newS
 #if USE(ACCELERATED_COMPOSITING)
     bool drawsRootBackground = isRoot() || (isBody() && !rendererHasBackground(document()->documentElement()->renderer()));
     if (drawsRootBackground && repaintFixedBackgroundsOnScroll) {
-        if (view()->compositor().supportsFixedRootBackgroundCompositing()) {
+        if (view().compositor().supportsFixedRootBackgroundCompositing()) {
             if (newStyleSlowScroll && newStyle->hasEntirelyFixedBackground())
                 newStyleSlowScroll = false;
 
@@ -1983,10 +1978,10 @@ void RenderObject::styleWillChange(StyleDifference diff, const RenderStyle* newS
 #endif
     if (oldStyleSlowScroll != newStyleSlowScroll) {
         if (oldStyleSlowScroll)
-            view()->frameView().removeSlowRepaintObject(this);
+            view().frameView().removeSlowRepaintObject(this);
 
         if (newStyleSlowScroll)
-            view()->frameView().addSlowRepaintObject(this);
+            view().frameView().addSlowRepaintObject(this);
     }
 }
 
@@ -2115,7 +2110,7 @@ void RenderObject::updateShapeImage(const ShapeValue* oldShapeValue, const Shape
 
 LayoutRect RenderObject::viewRect() const
 {
-    return view()->viewRect();
+    return view().viewRect();
 }
 
 FloatPoint RenderObject::localToAbsolute(const FloatPoint& localPoint, MapCoordinatesFlags mode) const
@@ -2475,9 +2470,9 @@ void RenderObject::willBeDestroyed()
         cache->remove(this);
 
 #ifndef NDEBUG
-    if (!documentBeingDestroyed() && view() && view()->hasRenderNamedFlowThreads()) {
+    if (!documentBeingDestroyed() && view().hasRenderNamedFlowThreads()) {
         // After remove, the object and the associated information should not be in any flow thread.
-        const RenderNamedFlowThreadList* flowThreadList = view()->flowThreadController()->renderNamedFlowThreadList();
+        const RenderNamedFlowThreadList* flowThreadList = view().flowThreadController()->renderNamedFlowThreadList();
         for (RenderNamedFlowThreadList::const_iterator iter = flowThreadList->begin(); iter != flowThreadList->end(); ++iter) {
             const RenderNamedFlowThread* renderFlowThread = *iter;
             ASSERT(!renderFlowThread->hasChild(this));
@@ -2539,9 +2534,9 @@ void RenderObject::willBeRemovedFromTree()
     // FIXME: We should ASSERT(isRooted()) but we have some out-of-order removals which would need to be fixed first.
 
     if (!isText()) {
-        bool repaintFixedBackgroundsOnScroll = shouldRepaintFixedBackgroundsOnScroll(&view()->frameView());
+        bool repaintFixedBackgroundsOnScroll = shouldRepaintFixedBackgroundsOnScroll(&view().frameView());
         if (repaintFixedBackgroundsOnScroll && m_style && m_style->hasFixedBackgroundImage())
-            view()->frameView().removeSlowRepaintObject(this);
+            view().frameView().removeSlowRepaintObject(this);
     }
 
     // If we remove a visible child from an invisible parent, we don't know the layer visibility any more.
@@ -2751,10 +2746,8 @@ void RenderObject::scheduleRelayout()
     if (isRenderView())
         toRenderView(this)->frameView().scheduleRelayout();
     else {
-        if (isRooted()) {
-            if (RenderView* renderView = view())
-                renderView->frameView().scheduleRelayoutOfSubtree(this);
-        }
+        if (isRooted())
+            view().frameView().scheduleRelayoutOfSubtree(this);
     }
 }
 
@@ -3011,7 +3004,7 @@ int RenderObject::maximalOutlineSize(PaintPhase p) const
 {
     if (p != PaintPhaseOutline && p != PaintPhaseSelfOutline && p != PaintPhaseChildOutlines)
         return 0;
-    return view()->maximalOutlineSize();
+    return view().maximalOutlineSize();
 }
 
 int RenderObject::caretMinOffset() const
