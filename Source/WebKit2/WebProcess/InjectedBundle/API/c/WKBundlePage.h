@@ -112,6 +112,7 @@ typedef void (*WKBundlePageDidLayoutCallback)(WKBundlePageRef page, WKLayoutMile
 typedef void (*WKBundlePageFeaturesUsedInPageCallback)(WKBundlePageRef page, WKArrayRef featureStrings, const void *clientInfo);
 typedef void (*WKBundlePageWillLoadURLRequestCallback)(WKBundlePageRef page, WKURLRequestRef request, WKTypeRef userData, const void *clientInfo);
 typedef void (*WKBundlePageWillLoadDataRequestCallback)(WKBundlePageRef page, WKURLRequestRef request, WKDataRef data, WKStringRef MIMEType, WKStringRef encodingName, WKURLRef unreachableURL, WKTypeRef userData, const void *clientInfo);
+typedef void (*WKBundlePageWillDestroyFrame)(WKBundlePageRef page, WKBundleFrameRef frame, const void *clientInfo);
 
 struct WKBundlePageLoaderClient {
     int                                                                     version;
@@ -164,10 +165,13 @@ struct WKBundlePageLoaderClient {
     // Version 6
     WKBundlePageWillLoadURLRequestCallback                                  willLoadURLRequest;
     WKBundlePageWillLoadDataRequestCallback                                 willLoadDataRequest;
+
+    // Version 7
+    WKBundlePageWillDestroyFrame                                            willDestroyFrame;
 };
 typedef struct WKBundlePageLoaderClient WKBundlePageLoaderClient;
 
-enum { kWKBundlePageLoaderClientCurrentVersion = 6 };
+enum { kWKBundlePageLoaderClientCurrentVersion = 7 };
 
 enum {
     WKBundlePagePolicyActionPassThrough,

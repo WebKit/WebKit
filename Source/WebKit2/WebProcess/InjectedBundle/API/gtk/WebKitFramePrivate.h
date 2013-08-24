@@ -1,10 +1,10 @@
 /*
- * Copyright (C) 2012 Igalia S.L.
+ * Copyright (C) 2013 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
+ * modify it under the terms of the GNU Library General Public
  * License as published by the Free Software Foundation; either
- * version 2,1 of the License, or (at your option) any later version.
+ * version 2 of the License, or (at your option) any later version.
  *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -17,17 +17,12 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef __WebKitWebExtension_h
-#define __WebKitWebExtension_h
+#ifndef WebKitFramePrivate_h
+#define WebKitFramePrivate_h
 
-#define __WEBKIT_WEB_EXTENSION_H_INSIDE__
+#include "WebFrame.h"
+#include "WebKitFrame.h"
 
-#include <webkit2/WebKitFrame.h>
-#include <webkit2/WebKitURIRequest.h>
-#include <webkit2/WebKitURIResponse.h>
-#include <webkit2/WebKitWebExtension.h>
-#include <webkit2/WebKitWebPage.h>
+WebKitFrame* webkitFrameCreate(WebKit::WebFrame*);
 
-#undef __WEBKIT_WEB_EXTENSION_H_INSIDE__
-
-#endif
+#endif // WebKitFramePrivate_h

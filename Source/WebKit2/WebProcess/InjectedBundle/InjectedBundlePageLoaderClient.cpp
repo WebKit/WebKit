@@ -352,4 +352,12 @@ void InjectedBundlePageLoaderClient::featuresUsedInPage(WebPage* page, const Vec
     return m_client.featuresUsedInPage(toAPI(page), toAPI(featureStringObjectsArray.get()), m_client.clientInfo);
 }
 
+void InjectedBundlePageLoaderClient::willDestroyFrame(WebPage* page, WebFrame* frame)
+{
+    if (!m_client.willDestroyFrame)
+        return;
+
+    m_client.willDestroyFrame(toAPI(page), toAPI(frame), m_client.clientInfo);
+}
+
 } // namespace WebKit

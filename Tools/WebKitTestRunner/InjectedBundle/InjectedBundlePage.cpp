@@ -309,6 +309,7 @@ InjectedBundlePage::InjectedBundlePage(WKBundlePageRef page)
         0, // featuresUsedInPage
         0, // willLoadURLRequest
         0, // willLoadDataRequest
+        0, // willDestroyFrame
     };
     WKBundlePageSetPageLoaderClient(m_page, &loaderClient);
 

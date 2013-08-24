@@ -90,6 +90,8 @@ public:
     bool shouldForceUniversalAccessFromLocalURL(WebPage*, const String& url);
 
     void featuresUsedInPage(WebPage*, const Vector<String>&);
+
+    void willDestroyFrame(WebPage*, WebFrame*);
 };
 
 } // namespace WebKit

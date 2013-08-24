@@ -138,6 +138,7 @@ webkit2gtk_h_api += \
 
 webkit2_web_extension_h_api += \
 	$(WebKit2)/WebProcess/InjectedBundle/API/gtk/WebKitWebExtension.h \
+	$(WebKit2)/WebProcess/InjectedBundle/API/gtk/WebKitFrame.h \
 	$(WebKit2)/WebProcess/InjectedBundle/API/gtk/WebKitWebPage.h \
 	$(WebKit2)/WebProcess/InjectedBundle/API/gtk/webkit-web-extension.h
 
@@ -1059,6 +1060,9 @@ webkit2_sources += \
 	Source/WebKit2/WebProcess/InjectedBundle/API/c/WKBundleRangeHandlePrivate.h \
 	Source/WebKit2/WebProcess/InjectedBundle/API/c/WKBundleScriptWorld.cpp \
 	Source/WebKit2/WebProcess/InjectedBundle/API/c/WKBundleScriptWorld.h \
+	Source/WebKit2/WebProcess/InjectedBundle/API/gtk/WebKitFrame.cpp \
+	Source/WebKit2/WebProcess/InjectedBundle/API/gtk/WebKitFrame.h \
+	Source/WebKit2/WebProcess/InjectedBundle/API/gtk/WebKitFramePrivate.h \
 	Source/WebKit2/WebProcess/InjectedBundle/API/gtk/WebKitWebExtension.cpp \
 	Source/WebKit2/WebProcess/InjectedBundle/API/gtk/WebKitWebExtension.h \
 	Source/WebKit2/WebProcess/InjectedBundle/API/gtk/WebKitWebExtensionPrivate.h \

@@ -1,3 +1,70 @@
+2013-08-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Expose WebKitFrame in WebKit2GTK+ web extensions API
+        https://bugs.webkit.org/show_bug.cgi?id=119743
+
+        Reviewed by Anders Carlsson.
+
+        * GNUmakefile.list.am: Add new files to compilation.
+        * Shared/APIClientTraits.cpp: Update for new interface version.
+        * Shared/APIClientTraits.h: Ditto.
+        * UIProcess/API/gtk/docs/webkit2gtk-docs.sgml: Add WebKitFrame
+        section.
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt: Add new public
+        symbols.
+        * UIProcess/API/gtk/docs/webkit2gtk.types: Add
+        webkit_frame_get_type.
+        * UIProcess/API/gtk/tests/FrameTest.cpp: Added.
+        (WebKitFrameTest::create):
+        (WebKitFrameTest::webPageFromArgs):
+        (WebKitFrameTest::testMainFrame):
+        (WebKitFrameTest::testURI):
+        (WebKitFrameTest::testJavaScriptContext):
+        (WebKitFrameTest::runTest):
+        (registerTests):
+        * UIProcess/API/gtk/tests/GNUmakefile.am: Add new test files.
+        * UIProcess/API/gtk/tests/TestFrame.cpp: Added.
+        (webkitFrameTestRun):
+        (testWebKitFrameMainFrame):
+        (testWebKitFrameURI):
+        (testWebKitFrameJavaScriptContext):
+        (beforeAll):
+        (afterAll):
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h: Add
+        willDestroyFrame callback to the injected bundle loader client, to
+        notify the client when a frame is about to be destroyed.
+        * WebProcess/InjectedBundle/API/gtk/WebKitFrame.cpp: Added.
+        (webkit_frame_class_init):
+        (webkitFrameCreate):
+        (webkit_frame_is_main_frame):
+        (webkit_frame_get_uri):
+        (webkit_frame_get_javascript_global_context):
+        * WebProcess/InjectedBundle/API/gtk/WebKitFrame.h: Added.
+        * WebProcess/InjectedBundle/API/gtk/WebKitFramePrivate.h: Added.
+        * WebProcess/InjectedBundle/API/gtk/WebKitWebPage.cpp:
+        (webkitFrameGetOrCreate): Helper function to create a WebKitFrame
+        wrapping the given WebFrame or returning the wrapper if it already
+        exists.
+        (willDestroyFrame): Remove the WebKitFrame wrapping the given
+        WebFrame if it exists.
+        (webkitWebPageCreate): Add willDestroyFrame implementation to
+        injected bundle loader client.
+        (webkit_web_page_get_main_frame): Return the main frame of the
+        page.
+        * WebProcess/InjectedBundle/API/gtk/WebKitWebPage.h:
+        * WebProcess/InjectedBundle/API/gtk/webkit-web-extension.h:
+        Include WebKitFrame.h.
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.cpp:
+        (WebKit::InjectedBundlePageLoaderClient::willDestroyFrame): New
+        callback to be called when a frame is about to be destroyed.
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.h:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::frameLoaderDestroyed): Call
+        willDestroyFrame callback of injected bundle loader client.
+        * WebProcess/qt/QtBuiltinBundlePage.cpp:
+        (WebKit::QtBuiltinBundlePage::QtBuiltinBundlePage): Add
+        willDestroyFrame callback.
+
 2013-08-24  Antti Koivisto  <antti@apple.com>
 
         Revert accidental change.

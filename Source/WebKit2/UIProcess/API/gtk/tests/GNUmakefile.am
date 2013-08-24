@@ -7,6 +7,7 @@ TEST_PROGS += \
 	Programs/WebKit2APITests/TestCookieManager \
 	Programs/WebKit2APITests/TestDOMNode \
 	Programs/WebKit2APITests/TestDownloads \
+	Programs/WebKit2APITests/TestFrame \
 	Programs/WebKit2APITests/TestInspector \
 	Programs/WebKit2APITests/TestInspectorServer \
 	Programs/WebKit2APITests/TestLoaderClient \
@@ -126,6 +127,7 @@ Libraries_WebExtensions_libWebExtensionTest_la_CFLAGS = \
 noinst_LTLIBRARIES += Libraries/WebExtensions/libWebProcessTest.la
 Libraries_WebExtensions_libWebProcessTest_la_SOURCES = \
 	Source/WebKit2/UIProcess/API/gtk/tests/DOMNodeTest.cpp \
+	Source/WebKit2/UIProcess/API/gtk/tests/FrameTest.cpp \
 	Source/WebKit2/UIProcess/API/gtk/tests/WebProcessTest.cpp \
 	Source/WebKit2/UIProcess/API/gtk/tests/WebProcessTest.h
 
@@ -302,5 +304,11 @@ Programs_WebKit2APITests_TestDOMNode_SOURCES = \
 Programs_WebKit2APITests_TestDOMNode_CPPFLAGS = $(webkit2_tests_cppflags)
 Programs_WebKit2APITests_TestDOMNode_LDADD = $(webkit2_tests_ldadd)
 Programs_WebKit2APITests_TestDOMNode_LDFLAGS = $(webkit2_tests_ldflags)
+
+Programs_WebKit2APITests_TestFrame_SOURCES = \
+        Source/WebKit2/UIProcess/API/gtk/tests/TestFrame.cpp
+Programs_WebKit2APITests_TestFrame_CPPFLAGS = $(webkit2_tests_cppflags)
+Programs_WebKit2APITests_TestFrame_LDADD = $(webkit2_tests_ldadd)
+Programs_WebKit2APITests_TestFrame_LDFLAGS = $(webkit2_tests_ldflags)
 
 endif # ENABLE_WEBKIT2

@@ -49,6 +49,7 @@
     <title>Web Extensions</title>
     <xi:include href="xml/WebKitWebExtension.xml"/>
     <xi:include href="xml/WebKitWebPage.xml"/>
+    <xi:include href="xml/WebKitFrame.xml"/>
   </chapter>
 
   <index id="index-all">

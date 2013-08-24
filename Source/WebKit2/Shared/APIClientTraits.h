@@ -44,7 +44,7 @@ template<> struct APIClientTraits<WKBundleClient> {
 };
 
 template<> struct APIClientTraits<WKBundlePageLoaderClient> {
-    static const size_t interfaceSizesByVersion[7];
+    static const size_t interfaceSizesByVersion[8];
 };
 
 template<> struct APIClientTraits<WKBundlePageResourceLoadClient> {

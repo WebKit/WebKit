@@ -43,6 +43,7 @@ const size_t APIClientTraits<WKBundlePageLoaderClient>::interfaceSizesByVersion[
     offsetof(WKBundlePageLoaderClient, registerIntentServiceForFrame_unavailable),
     offsetof(WKBundlePageLoaderClient, didLayout),
     offsetof(WKBundlePageLoaderClient, featuresUsedInPage),
+    offsetof(WKBundlePageLoaderClient, willLoadDataRequest),
     sizeof(WKBundlePageLoaderClient)
 };
 

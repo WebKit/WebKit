@@ -1040,6 +1040,7 @@ WebKitWebPage
 webkit_web_page_get_dom_document
 webkit_web_page_get_id
 webkit_web_page_get_uri
+webkit_web_page_get_main_frame
 
 <SUBSECTION Standard>
 WebKitWebPageClass
@@ -1053,4 +1054,25 @@ WEBKIT_WEB_PAGE_GET_CLASS
 <SUBSECTION Private>
 WebKitWebPagePrivate
 webkit_web_page_get_type
+</SECTION>
+
+<SECTION>
+<FILE>WebKitFrame</FILE>
+WebKitFrame
+webkit_frame_is_main_frame
+webkit_frame_get_uri
+webkit_frame_get_javascript_global_context
+
+<SUBSECTION Standard>
+WebKitFrameClass
+WEBKIT_TYPE_FRAME
+WEBKIT_FRAME
+WEBKIT_IS_FRAME
+WEBKIT_FRAME_CLASS
+WEBKIT_IS_FRAME_CLASS
+WEBKIT_FRAME_GET_CLASS
+
+<SUBSECTION Private>
+WebKitFramePrivate
+webkit_frame_get_type
 </SECTION>
