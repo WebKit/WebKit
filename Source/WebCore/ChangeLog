@@ -1,3 +1,21 @@
+2013-08-23  Pratik Solanki  <psolanki@apple.com>
+
+        MediaQuery::expressions() should return a reference
+        <https://webkit.org/b/120215>
+
+        Reviewed by Anders Carlsson.
+
+        m_expressions is never NULL so we can just return a reference.
+
+        * css/MediaList.cpp:
+        (WebCore::reportMediaQueryWarningIfNeeded):
+        * css/MediaQuery.cpp:
+        (WebCore::MediaQuery::MediaQuery):
+        * css/MediaQuery.h:
+        (WebCore::MediaQuery::expressions):
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::MediaQueryEvaluator::eval):
+
 2013-08-23  Ryosuke Niwa  <rniwa@webkit.org>
 
         Build fix after r154515.

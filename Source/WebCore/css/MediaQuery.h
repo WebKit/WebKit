@@ -44,13 +44,13 @@ public:
         Only, Not, None
     };
 
-    typedef Vector<OwnPtr<MediaQueryExp> > ExpressionVector;
+    typedef Vector<OwnPtr<MediaQueryExp>> ExpressionVector;
 
-    MediaQuery(Restrictor, const String& mediaType, PassOwnPtr<ExpressionVector> exprs);
+    MediaQuery(Restrictor, const String& mediaType, PassOwnPtr<Vector<OwnPtr<MediaQueryExp>>> exprs);
     ~MediaQuery();
 
     Restrictor restrictor() const { return m_restrictor; }
-    const Vector<OwnPtr<MediaQueryExp> >* expressions() const { return m_expressions.get(); }
+    const Vector<OwnPtr<MediaQueryExp>>& expressions() const { return *m_expressions; }
     String mediaType() const { return m_mediaType; }
     bool operator==(const MediaQuery& other) const;
     String cssText() const;

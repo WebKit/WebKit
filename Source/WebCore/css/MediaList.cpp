@@ -328,9 +328,9 @@ void reportMediaQueryWarningIfNeeded(Document* document, const MediaQuerySet* me
         const MediaQuery* query = mediaQueries[i].get();
         String mediaType = query->mediaType();
         if (!query->ignored() && !equalIgnoringCase(mediaType, "print")) {
-            const Vector<OwnPtr<MediaQueryExp> >* exps = query->expressions();
-            for (size_t j = 0; j < exps->size(); ++j) {
-                const MediaQueryExp* exp = exps->at(j).get();
+            const Vector<OwnPtr<MediaQueryExp>>& expressions = query->expressions();
+            for (size_t j = 0; j < expressions.size(); ++j) {
+                const MediaQueryExp* exp = expressions.at(j).get();
                 if (exp->mediaFeature() == MediaFeatureNames::resolutionMediaFeature || exp->mediaFeature() == MediaFeatureNames::max_resolutionMediaFeature || exp->mediaFeature() == MediaFeatureNames::min_resolutionMediaFeature) {
                     CSSValue* cssValue =  exp->value();
                     if (cssValue && cssValue->isPrimitiveValue()) {

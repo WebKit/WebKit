@@ -142,21 +142,21 @@ bool MediaQueryEvaluator::eval(const MediaQuerySet* querySet, StyleResolver* sty
             continue;
 
         if (mediaTypeMatch(query->mediaType())) {
-            const Vector<OwnPtr<MediaQueryExp> >* exps = query->expressions();
+            const Vector<OwnPtr<MediaQueryExp>>& expressions = query->expressions();
             // iterate through expressions, stop if any of them eval to false
             // (AND semantics)
             size_t j = 0;
-            for (; j < exps->size(); ++j) {
-                bool exprResult = eval(exps->at(j).get());
-                if (styleResolver && exps->at(j)->isViewportDependent())
-                    styleResolver->addViewportDependentMediaQueryResult(exps->at(j).get(), exprResult);
+            for (; j < expressions.size(); ++j) {
+                bool exprResult = eval(expressions.at(j).get());
+                if (styleResolver && expressions.at(j)->isViewportDependent())
+                    styleResolver->addViewportDependentMediaQueryResult(expressions.at(j).get(), exprResult);
                 if (!exprResult)
                     break;
             }
 
             // assume true if we are at the end of the list,
             // otherwise assume false
-            result = applyRestrictor(query->restrictor(), exps->size() == j);
+            result = applyRestrictor(query->restrictor(), expressions.size() == j);
         } else
             result = applyRestrictor(query->restrictor(), false);
     }
