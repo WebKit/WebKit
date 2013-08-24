@@ -75,7 +75,6 @@ class ParsedStyleSheet {
 public:
     ParsedStyleSheet();
 
-    WebCore::CSSStyleSheet* cssStyleSheet() const { return m_parserOutput; }
     const String& text() const { ASSERT(m_hasText); return m_text; }
     void setText(const String& text);
     bool hasText() const { return m_hasText; }
@@ -86,16 +85,13 @@ public:
 
 private:
 
-    // StyleSheet constructed while parsing m_text.
-    WebCore::CSSStyleSheet* m_parserOutput;
     String m_text;
     bool m_hasText;
     OwnPtr<RuleSourceDataList> m_sourceData;
 };
 
 ParsedStyleSheet::ParsedStyleSheet()
-    : m_parserOutput(0)
-    , m_hasText(false)
+    : m_hasText(false)
 {
 }
 
@@ -369,9 +365,6 @@ bool InspectorStyle::setPropertyText(unsigned index, const String& propertyText,
         return false;
     }
 
-    Vector<InspectorStyleProperty> allProperties;
-    populateAllProperties(&allProperties);
-
     if (propertyText.stripWhiteSpace().length()) {
         RefPtr<MutableStylePropertySet> tempMutableStyle = MutableStylePropertySet::create();
         RefPtr<CSSRuleSourceData> sourceData = CSSRuleSourceData::create(CSSRuleSourceData::STYLE_RULE);
@@ -405,6 +398,9 @@ bool InspectorStyle::setPropertyText(unsigned index, const String& propertyText,
         ec = NOT_FOUND_ERR;
         return false;
     }
+
+    Vector<InspectorStyleProperty> allProperties;
+    populateAllProperties(&allProperties);
 
     InspectorStyleTextEditor editor(&allProperties, &m_disabledProperties, text, newLineAndWhitespaceDelimiters());
     if (overwrite) {
@@ -480,7 +476,6 @@ bool InspectorStyle::getText(String* result) const
 
 bool InspectorStyle::populateAllProperties(Vector<InspectorStyleProperty>* result) const
 {
-    HashSet<String> foundShorthands;
     HashSet<String> sourcePropertyNames;
     unsigned disabledIndex = 0;
     unsigned disabledLength = m_disabledProperties.size();
@@ -1397,7 +1392,7 @@ bool InspectorStyleSheet::inlineStyleSheetText(String* result) const
         return false;
 
     Node* ownerNode = m_pageStyleSheet->ownerNode();
-    if (!ownerNode || ownerNode->nodeType() != Node::ELEMENT_NODE)
+    if (!ownerNode || !ownerNode->isElementNode())
         return false;
     Element* ownerElement = toElement(ownerNode);
 

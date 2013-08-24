@@ -1146,7 +1146,7 @@ Element* InspectorCSSAgent::elementForId(ErrorString* errorString, int nodeId)
         *errorString = "No node with given id found";
         return 0;
     }
-    if (node->nodeType() != Node::ELEMENT_NODE) {
+    if (!node->isElementNode()) {
         *errorString = "Not an element node";
         return 0;
     }
