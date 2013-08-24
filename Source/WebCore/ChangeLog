@@ -1,3 +1,12 @@
+2013-08-24  Andreas Kling  <akling@apple.com>
+
+        RenderLayer::compositor() should return a reference.
+        <https://webkit.org/b/120250>
+
+        Reviewed by Anders Carlsson.
+
+        It was already converting from a reference to a pointer.
+
 2013-08-24  Yoav Weiss  <yoav@yoav.ws>
 
         Eliminate a useless comparison in srcset's candidate selection algorithm

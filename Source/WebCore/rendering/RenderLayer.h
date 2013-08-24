@@ -446,7 +446,7 @@ public:
     bool isRootLayer() const { return m_isRootLayer; }
 
 #if USE(ACCELERATED_COMPOSITING)
-    RenderLayerCompositor* compositor() const;
+    RenderLayerCompositor& compositor() const;
     
     // Notification from the renderer that its content changed (e.g. current frame of image changed).
     // Allows updates of layer content without repainting.

@@ -308,16 +308,16 @@ String RenderLayer::name() const
 }
 
 #if USE(ACCELERATED_COMPOSITING)
-RenderLayerCompositor* RenderLayer::compositor() const
+RenderLayerCompositor& RenderLayer::compositor() const
 {
-    return &renderer()->view().compositor();
+    return renderer()->view().compositor();
 }
 
 void RenderLayer::contentChanged(ContentChangeType changeType)
 {
     // This can get called when video becomes accelerated, so the layers may change.
-    if ((changeType == CanvasChanged || changeType == VideoChanged || changeType == FullScreenChanged) && compositor()->updateLayerCompositingState(this))
-        compositor()->setCompositingLayersNeedRebuild();
+    if ((changeType == CanvasChanged || changeType == VideoChanged || changeType == FullScreenChanged) && compositor().updateLayerCompositingState(this))
+        compositor().setCompositingLayersNeedRebuild();
 
     if (m_backing)
         m_backing->contentChanged(changeType);
@@ -327,7 +327,7 @@ void RenderLayer::contentChanged(ContentChangeType changeType)
 bool RenderLayer::canRender3DTransforms() const
 {
 #if USE(ACCELERATED_COMPOSITING)
-    return compositor()->canRender3DTransforms();
+    return compositor().canRender3DTransforms();
 #else
     return false;
 #endif
@@ -1797,7 +1797,7 @@ void RenderLayer::addChild(RenderLayer* child, RenderLayer* beforeChild)
         setAncestorChainHasOutOfFlowPositionedDescendant(child->renderer()->containingBlock());
 
 #if USE(ACCELERATED_COMPOSITING)
-    compositor()->layerWasAdded(this, child);
+    compositor().layerWasAdded(this, child);
 #endif
 }
 
@@ -1805,7 +1805,7 @@ RenderLayer* RenderLayer::removeChild(RenderLayer* oldChild)
 {
 #if USE(ACCELERATED_COMPOSITING)
     if (!renderer()->documentBeingDestroyed())
-        compositor()->layerWillBeRemoved(this, oldChild);
+        compositor().layerWillBeRemoved(this, oldChild);
 #endif
 
     // remove the child
@@ -1855,7 +1855,7 @@ void RenderLayer::removeOnlyThisLayer()
     m_renderer->setHasLayer(false);
 
 #if USE(ACCELERATED_COMPOSITING)
-    compositor()->layerWillBeRemoved(m_parent, this);
+    compositor().layerWillBeRemoved(m_parent, this);
 #endif
 
     // Dirty the clip rects.
@@ -2089,8 +2089,8 @@ void RenderLayer::updateNeedsCompositedScrolling()
 
         dirtyStackingContainerZOrderLists();
 
-        compositor()->setShouldReevaluateCompositingAfterLayout();
-        compositor()->setCompositingLayersNeedRebuild();
+        compositor().setShouldReevaluateCompositingAfterLayout();
+        compositor().setCompositingLayersNeedRebuild();
     }
 }
 #endif
@@ -2254,7 +2254,7 @@ void RenderLayer::scrollTo(int x, int y)
     bool requiresRepaint = true;
 
 #if USE(ACCELERATED_COMPOSITING)
-    if (compositor()->inCompositingMode() && usesCompositedScrolling())
+    if (compositor().inCompositingMode() && usesCompositedScrolling())
         requiresRepaint = false;
 #endif
 
@@ -2386,14 +2386,14 @@ void RenderLayer::scrollRectToVisible(const LayoutRect& rect, const ScrollAlignm
 void RenderLayer::updateCompositingLayersAfterScroll()
 {
 #if USE(ACCELERATED_COMPOSITING)
-    if (compositor()->inCompositingMode()) {
+    if (compositor().inCompositingMode()) {
         // Our stacking container is guaranteed to contain all of our descendants that may need
         // repositioning, so update compositing layers from there.
         if (RenderLayer* compositingAncestor = stackingContainer()->enclosingCompositingLayer()) {
             if (usesCompositedScrolling() && !hasOutOfFlowPositionedDescendant())
-                compositor()->updateCompositingLayers(CompositingUpdateOnCompositedScroll, compositingAncestor);
+                compositor().updateCompositingLayers(CompositingUpdateOnCompositedScroll, compositingAncestor);
             else
-                compositor()->updateCompositingLayers(CompositingUpdateOnScroll, compositingAncestor);
+                compositor().updateCompositingLayers(CompositingUpdateOnScroll, compositingAncestor);
         }
     }
 #endif
@@ -3214,8 +3214,8 @@ void RenderLayer::updateScrollInfoAfterLayout()
 
 #if USE(ACCELERATED_COMPOSITING)
     // Composited scrolling may need to be enabled or disabled if the amount of overflow changed.
-    if (compositor()->updateLayerCompositingState(this))
-        compositor()->setCompositingLayersNeedRebuild();
+    if (compositor().updateLayerCompositingState(this))
+        compositor().setCompositingLayersNeedRebuild();
 #endif
 }
 
@@ -5507,7 +5507,7 @@ RenderLayerBacking* RenderLayer::ensureBacking()
 {
     if (!m_backing) {
         m_backing = adoptPtr(new RenderLayerBacking(this));
-        compositor()->layerBecameComposited(this);
+        compositor().layerBecameComposited(this);
 
 #if ENABLE(CSS_FILTERS)
         updateOrRemoveFilterEffectRenderer();
@@ -5522,7 +5522,7 @@ RenderLayerBacking* RenderLayer::ensureBacking()
 void RenderLayer::clearBacking(bool layerBeingDestroyed)
 {
     if (m_backing && !renderer()->documentBeingDestroyed())
-        compositor()->layerBecameNonComposited(this);
+        compositor().layerBecameNonComposited(this);
     m_backing.clear();
 
 #if ENABLE(CSS_FILTERS)
@@ -5643,14 +5643,14 @@ void RenderLayer::setParent(RenderLayer* parent)
 
 #if USE(ACCELERATED_COMPOSITING)
     if (m_parent && !renderer()->documentBeingDestroyed())
-        compositor()->layerWillBeRemoved(m_parent, this);
+        compositor().layerWillBeRemoved(m_parent, this);
 #endif
     
     m_parent = parent;
     
 #if USE(ACCELERATED_COMPOSITING)
     if (m_parent && !renderer()->documentBeingDestroyed())
-        compositor()->layerWasAdded(m_parent, this);
+        compositor().layerWasAdded(m_parent, this);
 #endif
 }
 
@@ -5675,9 +5675,9 @@ void RenderLayer::dirtyZOrderLists()
     if (!renderer()->documentBeingDestroyed()) {
         if (renderer()->isOutOfFlowRenderFlowThread())
             toRenderFlowThread(renderer())->setNeedsLayerToRegionMappingsUpdate();
-        compositor()->setCompositingLayersNeedRebuild();
+        compositor().setCompositingLayersNeedRebuild();
         if (acceleratedCompositingForOverflowScrollEnabled())
-            compositor()->setShouldReevaluateCompositingAfterLayout();
+            compositor().setShouldReevaluateCompositingAfterLayout();
     }
 #endif
 }
@@ -5701,9 +5701,9 @@ void RenderLayer::dirtyNormalFlowList()
     if (!renderer()->documentBeingDestroyed()) {
         if (renderer()->isOutOfFlowRenderFlowThread())
             toRenderFlowThread(renderer())->setNeedsLayerToRegionMappingsUpdate();
-        compositor()->setCompositingLayersNeedRebuild();
+        compositor().setCompositingLayersNeedRebuild();
         if (acceleratedCompositingForOverflowScrollEnabled())
-            compositor()->setShouldReevaluateCompositingAfterLayout();
+            compositor().setShouldReevaluateCompositingAfterLayout();
     }
 #endif
 }
@@ -5719,7 +5719,7 @@ void RenderLayer::rebuildZOrderLists()
 void RenderLayer::rebuildZOrderLists(CollectLayersBehavior behavior, OwnPtr<Vector<RenderLayer*> >& posZOrderList, OwnPtr<Vector<RenderLayer*> >& negZOrderList)
 {
 #if USE(ACCELERATED_COMPOSITING)
-    bool includeHiddenLayers = compositor()->inCompositingMode();
+    bool includeHiddenLayers = compositor().inCompositingMode();
 #else
     bool includeHiddenLayers = false;
 #endif
@@ -5828,9 +5828,9 @@ void RenderLayer::updateLayerListsIfNeeded()
 void RenderLayer::updateCompositingAndLayerListsIfNeeded()
 {
 #if USE(ACCELERATED_COMPOSITING)
-    if (compositor()->inCompositingMode()) {
+    if (compositor().inCompositingMode()) {
         if (isDirtyStackingContainer() || m_normalFlowListDirty)
-            compositor()->updateCompositingLayers(CompositingUpdateOnHitTest, this);
+            compositor().updateCompositingLayers(CompositingUpdateOnHitTest, this);
         return;
     }
 #endif
@@ -6096,7 +6096,7 @@ void RenderLayer::updateOutOfFlowPositioned(const RenderStyle* oldStyle)
         parent()->dirtyAncestorChainHasOutOfFlowPositionedDescendantStatus();
 #if USE(ACCELERATED_COMPOSITING)
         if (!renderer()->documentBeingDestroyed() && acceleratedCompositingForOverflowScrollEnabled())
-            compositor()->setShouldReevaluateCompositingAfterLayout();
+            compositor().setShouldReevaluateCompositingAfterLayout();
 #endif
     }
 }
@@ -6174,10 +6174,10 @@ void RenderLayer::styleChanged(StyleDifference, const RenderStyle* oldStyle)
     updateNeedsCompositedScrolling();
 
     const RenderStyle* newStyle = renderer()->style();
-    if (compositor()->updateLayerCompositingState(this)
+    if (compositor().updateLayerCompositingState(this)
         || needsCompositingLayersRebuiltForClip(oldStyle, newStyle)
         || needsCompositingLayersRebuiltForOverflow(oldStyle, newStyle))
-        compositor()->setCompositingLayersNeedRebuild();
+        compositor().setCompositingLayersNeedRebuild();
     else if (isComposited())
         backing()->updateGraphicsLayerGeometry();
 #endif

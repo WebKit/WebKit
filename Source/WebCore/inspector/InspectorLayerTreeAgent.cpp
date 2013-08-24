@@ -245,7 +245,7 @@ void InspectorLayerTreeAgent::reasonsForCompositingLayer(ErrorString* errorStrin
         return;
     }
 
-    CompositingReasons reasonsBitmask = renderLayer->compositor()->reasonsForCompositing(renderLayer);
+    CompositingReasons reasonsBitmask = renderLayer->compositor().reasonsForCompositing(renderLayer);
     compositingReasons = TypeBuilder::LayerTree::CompositingReasons::create();
 
     if (reasonsBitmask & CompositingReason3DTransform)
