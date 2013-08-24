@@ -1,5 +1,11 @@
 2013-08-23  Brent Fulgham  <bfulgham@apple.com>
 
+        [Windows] Forgot to check in the header as well!
+
+        * win/include/WebKitSystemInterface/WebKitSystemInterface.h:
+
+2013-08-23  Brent Fulgham  <bfulgham@apple.com>
+
         [Windows] Unreviewed build correction.
 
         * win/lib32/WebKitSystemInterface.lib: Update with new API for r132545.
