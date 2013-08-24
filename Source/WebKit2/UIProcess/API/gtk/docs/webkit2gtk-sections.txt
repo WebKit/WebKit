@@ -1062,6 +1062,7 @@ WebKitFrame
 webkit_frame_is_main_frame
 webkit_frame_get_uri
 webkit_frame_get_javascript_global_context
+webkit_frame_get_javascript_context_for_script_world
 
 <SUBSECTION Standard>
 WebKitFrameClass
@@ -1075,4 +1076,24 @@ WEBKIT_FRAME_GET_CLASS
 <SUBSECTION Private>
 WebKitFramePrivate
 webkit_frame_get_type
+</SECTION>
+
+<SECTION>
+<FILE>WebKitScriptWorld</FILE>
+WebKitScriptWorld
+webkit_script_world_get_default
+webkit_script_world_new
+
+<SUBSECTION Standard>
+WebKitScriptWorldClass
+WEBKIT_TYPE_SCRIPT_WORLD
+WEBKIT_SCRIPT_WORLD
+WEBKIT_IS_SCRIPT_WORLD
+WEBKIT_SCRIPT_WORLD_CLASS
+WEBKIT_IS_SCRIPT_WORLD_CLASS
+WEBKIT_SCRIPT_WORLD_GET_CLASS
+
+<SUBSECTION Private>
+WebKitScriptWorldPrivate
+webkit_script_world_get_type
 </SECTION>

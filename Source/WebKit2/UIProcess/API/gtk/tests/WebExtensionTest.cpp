@@ -19,12 +19,14 @@
 
 #include "config.h"
 
+#include <JavaScriptCore/JSContextRef.h>
+#include <JavaScriptCore/JSRetainPtr.h>
 #include <gio/gio.h>
 #include <stdlib.h>
 #include <string.h>
-
 #include <webkit2/webkit-web-extension.h>
 #include <wtf/gobject/GOwnPtr.h>
+#include <wtf/gobject/GRefPtr.h>
 
 static const char introspectionXML[] =
     "<node>"
@@ -34,6 +36,10 @@ static const char introspectionXML[] =
     "   <arg type='s' name='title' direction='out'/>"
     "  </method>"
     "  <method name='AbortProcess'>"
+    "  </method>"
+    "  <method name='RunJavaScriptInIsolatedWorld'>"
+    "   <arg type='t' name='pageID' direction='in'/>"
+    "   <arg type='s' name='script' direction='in'/>"
     "  </method>"
     "  <signal name='DocumentLoaded'/>"
     "  <signal name='URIChanged'>"
@@ -93,6 +99,41 @@ static void pageCreatedCallback(WebKitWebExtension*, WebKitWebPage* webPage, gpo
     g_signal_connect(webPage, "send-request", G_CALLBACK(sendRequestCallback), 0);
 }
 
+static JSValueRef echoCallback(JSContextRef jsContext, JSObjectRef, JSObjectRef, size_t argumentCount, const JSValueRef arguments[], JSValueRef*)
+{
+    if (argumentCount <= 0)
+        return JSValueMakeUndefined(jsContext);
+
+    JSRetainPtr<JSStringRef> string(Adopt, JSValueToStringCopy(jsContext, arguments[0], 0));
+    return JSValueMakeString(jsContext, string.get());
+}
+
+static void windowObjectCleared(WebKitScriptWorld* world, WebKitWebPage* page, WebKitFrame* frame, gpointer)
+{
+    JSGlobalContextRef jsContext = webkit_frame_get_javascript_context_for_script_world(frame, world);
+    g_assert(jsContext);
+    JSObjectRef globalObject = JSContextGetGlobalObject(jsContext);
+    g_assert(globalObject);
+
+    JSRetainPtr<JSStringRef> functionName(Adopt, JSStringCreateWithUTF8CString("echo"));
+    JSObjectRef function = JSObjectMakeFunctionWithCallback(jsContext, functionName.get(), echoCallback);
+    JSObjectSetProperty(jsContext, globalObject, functionName.get(), function, kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly, 0);
+}
+
+static WebKitWebPage* getWebPage(WebKitWebExtension* extension, uint64_t pageID, GDBusMethodInvocation* invocation)
+{
+    WebKitWebPage* page = webkit_web_extension_get_page(extension, pageID);
+    if (!page) {
+        g_dbus_method_invocation_return_error(
+            invocation, G_DBUS_ERROR, G_DBUS_ERROR_INVALID_ARGS,
+            "Invalid page ID: %" G_GUINT64_FORMAT, pageID);
+        return 0;
+    }
+
+    g_assert_cmpuint(webkit_web_page_get_id(page), ==, pageID);
+    return page;
+}
+
 static void methodCallCallback(GDBusConnection* connection, const char* sender, const char* objectPath, const char* interfaceName, const char* methodName, GVariant* parameters, GDBusMethodInvocation* invocation, gpointer userData)
 {
     if (g_strcmp0(interfaceName, "org.webkit.gtk.WebExtensionTest"))
@@ -101,20 +142,28 @@ static void methodCallCallback(GDBusConnection* connection, const char* sender, 
     if (!g_strcmp0(methodName, "GetTitle")) {
         uint64_t pageID;
         g_variant_get(parameters, "(t)", &pageID);
-
-        WebKitWebExtension* extension = WEBKIT_WEB_EXTENSION(userData);
-        WebKitWebPage* page = webkit_web_extension_get_page(extension, pageID);
-        if (!page) {
-            g_dbus_method_invocation_return_error(
-                invocation, G_DBUS_ERROR, G_DBUS_ERROR_INVALID_ARGS,
-                "Invalid page ID: %" G_GUINT64_FORMAT, pageID);
+        WebKitWebPage* page = getWebPage(WEBKIT_WEB_EXTENSION(userData), pageID, invocation);
+        if (!page)
             return;
-        }
-        g_assert_cmpuint(webkit_web_page_get_id(page), ==, pageID);
 
         WebKitDOMDocument* document = webkit_web_page_get_dom_document(page);
         GOwnPtr<char> title(webkit_dom_document_get_title(document));
         g_dbus_method_invocation_return_value(invocation, g_variant_new("(s)", title.get()));
+    } else if (!g_strcmp0(methodName, "RunJavaScriptInIsolatedWorld")) {
+        uint64_t pageID;
+        const char* script;
+        g_variant_get(parameters, "(t&s)", &pageID, &script);
+        WebKitWebPage* page = getWebPage(WEBKIT_WEB_EXTENSION(userData), pageID, invocation);
+        if (!page)
+            return;
+
+        GRefPtr<WebKitScriptWorld> world = adoptGRef(webkit_script_world_new());
+        g_assert(webkit_script_world_get_default() != world.get());
+        WebKitFrame* frame = webkit_web_page_get_main_frame(page);
+        JSGlobalContextRef jsContext = webkit_frame_get_javascript_context_for_script_world(frame, world.get());
+        JSRetainPtr<JSStringRef> jsScript(Adopt, JSStringCreateWithUTF8CString(script));
+        JSEvaluateScript(jsContext, jsScript.get(), 0, 0, 0, 0);
+        g_dbus_method_invocation_return_value(invocation, 0);
     } else if (!g_strcmp0(methodName, "AbortProcess")) {
         abort();
     }
@@ -143,6 +192,7 @@ static void busAcquiredCallback(GDBusConnection* connection, const char* name, g
         g_warning("Failed to register object: %s\n", error->message);
 
     g_signal_connect(WEBKIT_WEB_EXTENSION(userData), "page-created", G_CALLBACK(pageCreatedCallback), connection);
+    g_signal_connect(webkit_script_world_get_default(), "window-object-cleared", G_CALLBACK(windowObjectCleared), 0);
 }
 
 extern "C" void webkit_web_extension_initialize(WebKitWebExtension* extension)
