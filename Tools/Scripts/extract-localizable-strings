@@ -212,7 +212,7 @@ handleString:
             
             $previousToken = $token;
 
-            if ($token =~ /^NSLocalized/ && $token !~ /NSLocalizedDescriptionKey/ && $token !~ /NSLocalizedStringFromTableInBundle/ && $token !~ /NSLocalizedFileSizeDescription/) {
+            if ($token =~ /^NSLocalized/ && $token !~ /NSLocalizedDescriptionKey/ && $token !~ /NSLocalizedStringFromTableInBundle/ && $token !~ /NSLocalizedFileSizeDescription/ && $token !~ /NSLocalizedDescriptionKey/ && $token !~ /NSLocalizedRecoverySuggestionErrorKey/) {
                 print "$file:$.: found a use of an NSLocalized macro ($token); not supported\n";
                 $nestingLevel = 0 if !defined $nestingLevel;
                 $sawError = 1;
