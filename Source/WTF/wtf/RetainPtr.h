@@ -51,28 +51,8 @@ namespace WTF {
 
     enum AdoptCFTag { AdoptCF };
     enum AdoptNSTag { AdoptNS };
-
-#if USE(CF)
-    inline void retain(CFTypeRef ptr) { CFRetain(ptr); }
-    inline void release(CFTypeRef ptr) { CFRelease(ptr); }
-#endif
-
+    
 #ifdef __OBJC__
-#if __has_feature(objc_arc)
-    inline void adoptNSReference(id) { }
-    inline void retain(id ptr) { }
-    inline void release(id ptr) { }
-#else
-    inline void retain(id ptr)
-    {
-        CFRetain(ptr);
-    }
-
-    inline void release(id ptr)
-    {
-        CFRelease(ptr);
-    }
-
 #ifdef OBJC_NO_GC
     inline void adoptNSReference(id)
     {
@@ -86,9 +66,7 @@ namespace WTF {
         }
     }
 #endif
-#endif // __has_feature(objc_arc)
-#endif // __OBJC__
-
+#endif
 
     template<typename T> class RetainPtr {
     public:
@@ -96,7 +74,7 @@ namespace WTF {
         typedef ValueType* PtrType;
 
         RetainPtr() : m_ptr(0) {}
-        RetainPtr(PtrType ptr) : m_ptr(ptr) { if (ptr) retain(ptr); }
+        RetainPtr(PtrType ptr) : m_ptr(ptr) { if (ptr) CFRetain(ptr); }
 
         RetainPtr(AdoptCFTag, PtrType ptr)
             : m_ptr(ptr)
@@ -112,7 +90,7 @@ namespace WTF {
             adoptNSReference(ptr);
         }
         
-        RetainPtr(const RetainPtr& o) : m_ptr(o.m_ptr) { if (PtrType ptr = m_ptr) retain(ptr); }
+        RetainPtr(const RetainPtr& o) : m_ptr(o.m_ptr) { if (PtrType ptr = m_ptr) CFRetain(ptr); }
 
 #if COMPILER_SUPPORTS(CXX_RVALUE_REFERENCES)
         RetainPtr(RetainPtr&& o) : m_ptr(o.leakRef()) { }
@@ -122,7 +100,7 @@ namespace WTF {
         RetainPtr(HashTableDeletedValueType) : m_ptr(hashTableDeletedValue()) { }
         bool isHashTableDeletedValue() const { return m_ptr == hashTableDeletedValue(); }
         
-        ~RetainPtr() { if (PtrType ptr = m_ptr) release(ptr); }
+        ~RetainPtr() { if (PtrType ptr = m_ptr) CFRelease(ptr); }
         
         template<typename U> RetainPtr(const RetainPtr<U>&);
 
@@ -138,9 +116,8 @@ namespace WTF {
         bool operator!() const { return !m_ptr; }
     
         // This conversion operator allows implicit conversion to bool but not to other integer types.
-        typedef void (RetainPtr::*UnspecifiedBoolType)() const;
-        void ImplicitConversionToBoolIsNotAllowed() const { }
-        operator UnspecifiedBoolType() const { return m_ptr ? &RetainPtr::ImplicitConversionToBoolIsNotAllowed : 0; }
+        typedef PtrType RetainPtr::*UnspecifiedBoolType;
+        operator UnspecifiedBoolType() const { return m_ptr ? &RetainPtr::m_ptr : 0; }
         
         RetainPtr& operator=(const RetainPtr&);
         template<typename U> RetainPtr& operator=(const RetainPtr<U>&);
@@ -168,14 +145,14 @@ namespace WTF {
         : m_ptr(o.get())
     {
         if (PtrType ptr = m_ptr)
-            retain(ptr);
+            CFRetain(ptr);
     }
 
     template<typename T> inline void RetainPtr<T>::clear()
     {
         if (PtrType ptr = m_ptr) {
             m_ptr = 0;
-            release(ptr);
+            CFRelease(ptr);
         }
     }
 

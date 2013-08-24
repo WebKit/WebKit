@@ -1,3 +1,21 @@
+2013-08-21  Mark Rowe  <mrowe@apple.com>
+
+        Revert r153637.
+
+        It didn't work with ARC like it said it would. We'll need to take a slightly different approach.
+
+        Rubber-stamped by Anders Carlsson.
+
+        * wtf/RetainPtr.h:
+        (WTF::RetainPtr::RetainPtr):
+        (WTF::RetainPtr::~RetainPtr):
+        (WTF::RetainPtr::operator UnspecifiedBoolType):
+        (WTF::::RetainPtr):
+        (WTF::::clear):
+        (WTF::=):
+        (WTF::adoptCF):
+        (WTF::adoptNS):
+
 2013-08-23  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Unreviewed build correction after r154513.
