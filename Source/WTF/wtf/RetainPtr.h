@@ -52,7 +52,7 @@ namespace WTF {
     enum AdoptCFTag { AdoptCF };
     enum AdoptNSTag { AdoptNS };
     
-#ifdef __OBJC__
+#if defined(__OBJC__) && !__has_feature(objc_arc)
 #ifdef OBJC_NO_GC
     inline void adoptNSReference(id)
     {
@@ -72,51 +72,56 @@ namespace WTF {
     public:
         typedef typename RemovePointer<T>::Type ValueType;
         typedef ValueType* PtrType;
+        typedef CFTypeRef StorageType;
 
         RetainPtr() : m_ptr(0) {}
-        RetainPtr(PtrType ptr) : m_ptr(ptr) { if (ptr) CFRetain(ptr); }
+        RetainPtr(PtrType ptr) : m_ptr(toStorageType(ptr)) { if (m_ptr) CFRetain(m_ptr); }
 
         RetainPtr(AdoptCFTag, PtrType ptr)
-            : m_ptr(ptr)
+            : m_ptr(toStorageType(ptr))
         {
 #ifdef __OBJC__
             static_assert((!std::is_convertible<T, id>::value), "Don't use adoptCF with Objective-C pointer types, use adoptNS.");
 #endif
         }
 
+#if __has_feature(objc_arc)
+        RetainPtr(AdoptNSTag, PtrType ptr) : m_ptr(toStorageType(ptr)) { if (m_ptr) CFRetain(m_ptr); }
+#else
         RetainPtr(AdoptNSTag, PtrType ptr)
-            : m_ptr(ptr)
+            : m_ptr(toStorageType(ptr))
         {
             adoptNSReference(ptr);
         }
+#endif
         
-        RetainPtr(const RetainPtr& o) : m_ptr(o.m_ptr) { if (PtrType ptr = m_ptr) CFRetain(ptr); }
+        RetainPtr(const RetainPtr& o) : m_ptr(o.m_ptr) { if (StorageType ptr = m_ptr) CFRetain(ptr); }
 
 #if COMPILER_SUPPORTS(CXX_RVALUE_REFERENCES)
-        RetainPtr(RetainPtr&& o) : m_ptr(o.leakRef()) { }
+        RetainPtr(RetainPtr&& o) : m_ptr(toStorageType(o.leakRef())) { }
 #endif
 
         // Hash table deleted values, which are only constructed and never copied or destroyed.
         RetainPtr(HashTableDeletedValueType) : m_ptr(hashTableDeletedValue()) { }
         bool isHashTableDeletedValue() const { return m_ptr == hashTableDeletedValue(); }
         
-        ~RetainPtr() { if (PtrType ptr = m_ptr) CFRelease(ptr); }
+        ~RetainPtr() { if (StorageType ptr = m_ptr) CFRelease(ptr); }
         
         template<typename U> RetainPtr(const RetainPtr<U>&);
 
         void clear();
         PtrType leakRef() WARN_UNUSED_RETURN;
 
-        PtrType get() const { return m_ptr; }
-        PtrType operator->() const { return m_ptr; }
+        PtrType get() const { return fromStorageType(m_ptr); }
+        PtrType operator->() const { return fromStorageType(m_ptr); }
 #if COMPILER_SUPPORTS(CXX_EXPLICIT_CONVERSIONS)
-        explicit operator PtrType() const { return m_ptr; }
+        explicit operator PtrType() const { return fromStorageType(m_ptr); }
 #endif
 
         bool operator!() const { return !m_ptr; }
     
         // This conversion operator allows implicit conversion to bool but not to other integer types.
-        typedef PtrType RetainPtr::*UnspecifiedBoolType;
+        typedef StorageType RetainPtr::*UnspecifiedBoolType;
         operator UnspecifiedBoolType() const { return m_ptr ? &RetainPtr::m_ptr : 0; }
         
         RetainPtr& operator=(const RetainPtr&);
@@ -138,19 +143,42 @@ namespace WTF {
     private:
         static PtrType hashTableDeletedValue() { return reinterpret_cast<PtrType>(-1); }
 
-        PtrType m_ptr;
+#if defined (__OBJC__) && __has_feature(objc_arc)
+        template<typename U>
+        typename std::enable_if<std::is_convertible<U, id>::value, PtrType>::type
+        fromStorageTypeHelper(StorageType ptr) const
+        {
+            return (__bridge PtrType)ptr;
+        }
+
+        template<typename U>
+        typename std::enable_if<!std::is_convertible<U, id>::value, PtrType>::type
+        fromStorageTypeHelper(StorageType ptr) const
+        {
+            return (PtrType)ptr;
+        }
+
+        PtrType fromStorageType(StorageType ptr) const { return fromStorageTypeHelper<PtrType>(ptr); }
+        StorageType toStorageType(id ptr) const { return (__bridge StorageType)ptr; }
+        StorageType toStorageType(CFTypeRef ptr) const { return (StorageType)ptr; }
+#else
+        PtrType fromStorageType(StorageType ptr) const { return (PtrType)ptr; }
+        StorageType toStorageType(PtrType ptr) const { return (StorageType)ptr; }
+#endif
+
+        StorageType m_ptr;
     };
 
     template<typename T> template<typename U> inline RetainPtr<T>::RetainPtr(const RetainPtr<U>& o)
-        : m_ptr(o.get())
+        : m_ptr(toStorageType(o.get()))
     {
-        if (PtrType ptr = m_ptr)
+        if (StorageType ptr = m_ptr)
             CFRetain(ptr);
     }
 
     template<typename T> inline void RetainPtr<T>::clear()
     {
-        if (PtrType ptr = m_ptr) {
+        if (StorageType ptr = m_ptr) {
             m_ptr = 0;
             CFRelease(ptr);
         }
@@ -158,7 +186,7 @@ namespace WTF {
 
     template<typename T> inline typename RetainPtr<T>::PtrType RetainPtr<T>::leakRef()
     {
-        PtrType ptr = m_ptr;
+        PtrType ptr = fromStorageType(m_ptr);
         m_ptr = 0;
         return ptr;
     }

@@ -1,5 +1,36 @@
 2013-08-21  Mark Rowe  <mrowe@apple.com>
 
+        <https://webkit.org/b/120141> Make RetainPtr work with ARC.
+
+        Have RetainPtr store the object its managing as a CFTypeRef and manage its lifetime with
+        CFRetain / CFRelease. This is necessary to have explicit control over the lifetime of
+        Objective-C objects when automatic reference counting is in use. Two helper methods are
+        introduced to convert between the pointer type that the RetainPtr manages and the CFTypeRef
+        that the pointer is stored as. For CF types and Objective-C types with ARC disabled,
+        these methods are simply casts. For Objective-C types under ARC they need to use the
+        special bridging casts to keep the compiler happy.
+
+        Reviewed by Anders Carlsson.
+
+        * wtf/RetainPtr.h:
+        (WTF::RetainPtr::RetainPtr): Use the helper methods to convert to and from the storage
+        types when necessary.
+        (WTF::RetainPtr::~RetainPtr): Ditto.
+        (WTF::RetainPtr::get): Ditto.
+        (WTF::RetainPtr::operator->): Ditto.
+        (WTF::RetainPtr::operator PtrType): Ditto.
+        (WTF::::RetainPtr): Ditto.
+        (WTF::::clear): Ditto.
+        (WTF::::leakRef): Ditto.
+        (WTF::=): Ditto.
+
+        (WTF::RetainPtr::fromStorageTypeHelper): Use crazy template magic to determine whether to use
+        a bridging cast or not depending on the desired return type.
+        (WTF::RetainPtr::fromStorageType):
+        (WTF::RetainPtr::toStorageType): Overloading is sufficient here.
+
+2013-08-21  Mark Rowe  <mrowe@apple.com>
+
         Revert r153637.
 
         It didn't work with ARC like it said it would. We'll need to take a slightly different approach.
