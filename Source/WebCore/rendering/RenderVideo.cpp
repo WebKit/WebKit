@@ -192,9 +192,7 @@ void RenderVideo::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
     MediaPlayer* mediaPlayer = mediaElement()->player();
     bool displayingPoster = videoElement()->shouldDisplayPosterImage();
 
-    Page* page = 0;
-    if (Frame* frame = this->frame())
-        page = frame->page();
+    Page* page = frame().page();
 
     if (!displayingPoster && !mediaPlayer) {
         if (page && paintInfo.phase == PaintPhaseForeground)

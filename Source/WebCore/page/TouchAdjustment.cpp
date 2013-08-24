@@ -116,7 +116,7 @@ bool providesContextMenuItems(Node* node)
         return true;
     if (node->renderer()->canBeSelectionLeaf()) {
         // If the context menu gesture will trigger a selection all selectable nodes are valid targets.
-        if (node->renderer()->frame()->editor().behavior().shouldSelectOnContextualMenuClick())
+        if (node->renderer()->frame().editor().behavior().shouldSelectOnContextualMenuClick())
             return true;
         // Only the selected part of the renderer is a valid target, but this will be corrected in
         // appendContextSubtargetsForNode.
@@ -157,7 +157,7 @@ static inline void appendContextSubtargetsForNode(Node* node, SubtargetGeometryL
     Text* textNode = static_cast<WebCore::Text*>(node);
     RenderText* textRenderer = static_cast<RenderText*>(textNode->renderer());
 
-    if (textRenderer->frame()->editor().behavior().shouldSelectOnContextualMenuClick()) {
+    if (textRenderer->frame().editor().behavior().shouldSelectOnContextualMenuClick()) {
         // Make subtargets out of every word.
         String textValue = textNode->data();
         TextBreakIterator* wordIterator = wordBreakIterator(textValue.characters(), textValue.length());

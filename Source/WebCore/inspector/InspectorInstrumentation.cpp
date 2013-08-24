@@ -67,6 +67,7 @@
 #include "PageDebuggerAgent.h"
 #include "PageRuntimeAgent.h"
 #include "RenderObject.h"
+#include "RenderView.h"
 #include "ScriptArguments.h"
 #include "ScriptCallStack.h"
 #include "ScriptController.h"
@@ -533,7 +534,7 @@ void InspectorInstrumentation::didDispatchXHRLoadEventImpl(const InspectorInstru
 void InspectorInstrumentation::willPaintImpl(InstrumentingAgents* instrumentingAgents, RenderObject* renderer)
 {
     if (InspectorTimelineAgent* timelineAgent = instrumentingAgents->inspectorTimelineAgent())
-        timelineAgent->willPaint(renderer->frame());
+        timelineAgent->willPaint(&renderer->frame());
 }
 
 void InspectorInstrumentation::didPaintImpl(InstrumentingAgents*  instrumentingAgents, RenderObject* renderer, GraphicsContext* context, const LayoutRect& rect)
@@ -1332,7 +1333,7 @@ InstrumentingAgents* InspectorInstrumentation::instrumentingAgentsForPage(Page* 
 
 InstrumentingAgents* InspectorInstrumentation::instrumentingAgentsForRenderer(RenderObject* renderer)
 {
-    return instrumentingAgentsForFrame(renderer->frame());
+    return instrumentingAgentsForFrame(&renderer->frame());
 }
 
 #if ENABLE(WORKERS)

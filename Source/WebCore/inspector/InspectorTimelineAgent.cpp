@@ -707,13 +707,12 @@ void InspectorTimelineAgent::clearRecordStack()
 
 void InspectorTimelineAgent::localToPageQuad(const RenderObject& renderer, const LayoutRect& rect, FloatQuad* quad)
 {
-    Frame* frame = renderer.frame();
-    FrameView* view = frame->view();
+    const FrameView& frameView = renderer.view().frameView();
     FloatQuad absolute = renderer.localToAbsoluteQuad(FloatQuad(rect));
-    quad->setP1(view->contentsToRootView(roundedIntPoint(absolute.p1())));
-    quad->setP2(view->contentsToRootView(roundedIntPoint(absolute.p2())));
-    quad->setP3(view->contentsToRootView(roundedIntPoint(absolute.p3())));
-    quad->setP4(view->contentsToRootView(roundedIntPoint(absolute.p4())));
+    quad->setP1(frameView.contentsToRootView(roundedIntPoint(absolute.p1())));
+    quad->setP2(frameView.contentsToRootView(roundedIntPoint(absolute.p2())));
+    quad->setP3(frameView.contentsToRootView(roundedIntPoint(absolute.p3())));
+    quad->setP4(frameView.contentsToRootView(roundedIntPoint(absolute.p4())));
 }
 
 double InspectorTimelineAgent::timestamp()

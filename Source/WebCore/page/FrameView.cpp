@@ -1081,7 +1081,7 @@ inline void FrameView::forceLayoutParentViewIfNeeded()
 {
 #if ENABLE(SVG)
     RenderPart* ownerRenderer = frame().ownerRenderer();
-    if (!ownerRenderer || !ownerRenderer->frame())
+    if (!ownerRenderer)
         return;
 
     RenderBox* contentBox = embeddedContentBox();
@@ -1099,13 +1099,12 @@ inline void FrameView::forceLayoutParentViewIfNeeded()
     // FrameView for a layout. After that the RenderEmbeddedObject (ownerRenderer) carries the
     // correct size, which RenderSVGRoot::computeReplacedLogicalWidth/Height rely on, when laying
     // out for the first time, or when the RenderSVGRoot size has changed dynamically (eg. via <script>).
-    RefPtr<FrameView> frameView = ownerRenderer->frame()->view();
+    RefPtr<FrameView> frameView = &ownerRenderer->view().frameView();
 
     // Mark the owner renderer as needing layout.
     ownerRenderer->setNeedsLayoutAndPrefWidthsRecalc();
 
     // Synchronously enter layout, to layout the view containing the host object/embed/iframe.
-    ASSERT(frameView);
     frameView->layout();
 #endif
 }

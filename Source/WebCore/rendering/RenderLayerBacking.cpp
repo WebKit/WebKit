@@ -97,7 +97,7 @@ static inline bool isAcceleratedCanvas(RenderObject* renderer)
 // Get the scrolling coordinator in a way that works inside RenderLayerBacking's destructor.
 static ScrollingCoordinator* scrollingCoordinatorFromLayer(RenderLayer* layer)
 {
-    Page* page = layer->renderer()->frame()->page();
+    Page* page = layer->renderer()->frame().page();
     if (!page)
         return 0;
 
@@ -137,14 +137,13 @@ RenderLayerBacking::RenderLayerBacking(RenderLayer* layer)
 
     if (m_usingTiledCacheLayer) {
         TiledBacking* tiledBacking = this->tiledBacking();
-        if (Page* page = renderer()->frame()->page()) {
-            Frame* frame = renderer()->frame();
+        if (Page* page = renderer()->frame().page()) {
             tiledBacking->setIsInWindow(page->isInWindow());
 
             if (m_isMainFrameRenderViewLayer)
                 tiledBacking->setUnparentsOffscreenTiles(true);
 
-            tiledBacking->setScrollingPerformanceLoggingEnabled(frame->settings().scrollingPerformanceLoggingEnabled());
+            tiledBacking->setScrollingPerformanceLoggingEnabled(page->settings().scrollingPerformanceLoggingEnabled());
             adjustTiledBackingCoverage();
         }
     }
@@ -171,7 +170,7 @@ void RenderLayerBacking::willDestroyLayer(const GraphicsLayer* layer)
 PassOwnPtr<GraphicsLayer> RenderLayerBacking::createGraphicsLayer(const String& name)
 {
     GraphicsLayerFactory* graphicsLayerFactory = 0;
-    if (Page* page = renderer()->frame()->page())
+    if (Page* page = renderer()->frame().page())
         graphicsLayerFactory = page->chrome().client().graphicsLayerFactory();
 
     OwnPtr<GraphicsLayer> graphicsLayer = GraphicsLayer::create(graphicsLayerFactory, this);
@@ -208,26 +207,23 @@ TiledBacking* RenderLayerBacking::tiledBacking() const
 static TiledBacking::TileCoverage computeTileCoverage(RenderLayerBacking* backing)
 {
     // FIXME: When we use TiledBacking for overflow, this should look at RenderView scrollability.
-    Frame* frame = backing->owningLayer()->renderer()->frame();
-    if (!frame)
-        return TiledBacking::CoverageForVisibleArea;
+    FrameView& frameView = backing->owningLayer()->renderer()->view().frameView();
 
     TiledBacking::TileCoverage tileCoverage = TiledBacking::CoverageForVisibleArea;
-    FrameView* frameView = frame->view();
-    bool useMinimalTilesDuringLiveResize = frameView->inLiveResize();
+    bool useMinimalTilesDuringLiveResize = frameView.inLiveResize();
     bool useMinimalTilesDuringLoading = false;
     // Avoid churn.
     if (!backing->didSwitchToFullTileCoverageDuringLoading()) {
-        useMinimalTilesDuringLoading = !frameView->isVisuallyNonEmpty() || (frame->page()->progress().isMainLoadProgressing() && !frameView->wasScrolledByUser());
+        useMinimalTilesDuringLoading = !frameView.isVisuallyNonEmpty() || (frameView.frame().page()->progress().isMainLoadProgressing() && !frameView.wasScrolledByUser());
         if (!useMinimalTilesDuringLoading)
             backing->setDidSwitchToFullTileCoverageDuringLoading();
     }
     if (!(useMinimalTilesDuringLoading || useMinimalTilesDuringLiveResize)) {
         bool clipsToExposedRect = backing->tiledBacking()->clipsToExposedRect();
-        if (frameView->horizontalScrollbarMode() != ScrollbarAlwaysOff || clipsToExposedRect)
+        if (frameView.horizontalScrollbarMode() != ScrollbarAlwaysOff || clipsToExposedRect)
             tileCoverage |= TiledBacking::CoverageForHorizontalScrolling;
 
-        if (frameView->verticalScrollbarMode() != ScrollbarAlwaysOff || clipsToExposedRect)
+        if (frameView.verticalScrollbarMode() != ScrollbarAlwaysOff || clipsToExposedRect)
             tileCoverage |= TiledBacking::CoverageForVerticalScrolling;
     }
     if (ScrollingCoordinator* scrollingCoordinator = scrollingCoordinatorFromLayer(backing->owningLayer())) {
@@ -1994,7 +1990,7 @@ static void paintScrollbar(Scrollbar* scrollbar, GraphicsContext& context, const
 void RenderLayerBacking::paintContents(const GraphicsLayer* graphicsLayer, GraphicsContext& context, GraphicsLayerPaintingPhase paintingPhase, const IntRect& clip)
 {
 #ifndef NDEBUG
-    if (Page* page = renderer()->frame()->page())
+    if (Page* page = renderer()->frame().page())
         page->setIsPainting(true);
 #endif
 
@@ -2029,7 +2025,7 @@ void RenderLayerBacking::paintContents(const GraphicsLayer* graphicsLayer, Graph
         context.restore();
     }
 #ifndef NDEBUG
-    if (Page* page = renderer()->frame()->page())
+    if (Page* page = renderer()->frame().page())
         page->setIsPainting(false);
 #endif
 }
@@ -2070,7 +2066,7 @@ bool RenderLayerBacking::isTrackingRepaints() const
 #ifndef NDEBUG
 void RenderLayerBacking::verifyNotPainting()
 {
-    ASSERT(!renderer()->frame()->page() || !renderer()->frame()->page()->isPainting());
+    ASSERT(!renderer()->frame().page() || !renderer()->frame().page()->isPainting());
 }
 #endif
 

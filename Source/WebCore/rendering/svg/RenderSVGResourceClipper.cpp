@@ -37,6 +37,7 @@
 #include "RenderObject.h"
 #include "RenderSVGResource.h"
 #include "RenderStyle.h"
+#include "RenderView.h"
 #include "SVGClipPathElement.h"
 #include "SVGElement.h"
 #include "SVGGraphicsElement.h"
@@ -206,7 +207,6 @@ bool RenderSVGResourceClipper::applyClippingToContext(RenderObject* object, cons
 
 bool RenderSVGResourceClipper::drawContentIntoMaskImage(ClipperData* clipperData, const FloatRect& objectBoundingBox)
 {
-    ASSERT(frame());
     ASSERT(clipperData);
     ASSERT(clipperData->clipMaskImage);
 
@@ -226,8 +226,8 @@ bool RenderSVGResourceClipper::drawContentIntoMaskImage(ClipperData* clipperData
     // - masker/filter not applied when rendering the children
     // - fill is set to the initial fill paint server (solid, black)
     // - stroke is set to the initial stroke paint server (none)
-    PaintBehavior oldBehavior = frame()->view()->paintBehavior();
-    frame()->view()->setPaintBehavior(oldBehavior | PaintBehaviorRenderingSVGMask);
+    PaintBehavior oldBehavior = view().frameView().paintBehavior();
+    view().frameView().setPaintBehavior(oldBehavior | PaintBehaviorRenderingSVGMask);
 
     // Draw all clipPath children into a global mask.
     for (Node* childNode = node()->firstChild(); childNode; childNode = childNode->nextSibling()) {
@@ -235,7 +235,7 @@ bool RenderSVGResourceClipper::drawContentIntoMaskImage(ClipperData* clipperData
         if (!childNode->isSVGElement() || !renderer)
             continue;
         if (renderer->needsLayout()) {
-            frame()->view()->setPaintBehavior(oldBehavior);
+            view().frameView().setPaintBehavior(oldBehavior);
             return false;
         }
         RenderStyle* style = renderer->style();
@@ -265,7 +265,7 @@ bool RenderSVGResourceClipper::drawContentIntoMaskImage(ClipperData* clipperData
         SVGRenderingContext::renderSubtreeToImageBuffer(clipperData->clipMaskImage.get(), isUseElement ? childNode->renderer() : renderer, maskContentTransformation);
     }
 
-    frame()->view()->setPaintBehavior(oldBehavior);
+    view().frameView().setPaintBehavior(oldBehavior);
     return true;
 }
 

@@ -639,7 +639,7 @@ public:
     Node* generatingNode() const { return isPseudoElement() ? generatingPseudoHostElement() : node(); }
 
     Document* document() const { return m_node->document(); }
-    Frame* frame() const { return document()->frame(); }
+    Frame& frame() const; // Defined in RenderView.h
 
     bool hasOutlineAnnotation() const;
     bool hasOutline() const { return style()->hasOutline() || hasOutlineAnnotation(); }

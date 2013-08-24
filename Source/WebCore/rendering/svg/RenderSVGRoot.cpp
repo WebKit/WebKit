@@ -271,9 +271,7 @@ void RenderSVGRoot::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paint
     if (svg->hasEmptyViewBox())
         return;
 
-    Page* page = 0;
-    if (Frame* frame = this->frame())
-        page = frame->page();
+    Page* page = frame().page();
 
     // Don't paint if we don't have kids, except if we have filters we should paint those.
     if (!firstChild()) {

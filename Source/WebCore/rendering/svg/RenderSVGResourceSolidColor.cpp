@@ -27,6 +27,7 @@
 #include "GraphicsContext.h"
 #include "RenderSVGShape.h"
 #include "RenderStyle.h"
+#include "RenderView.h"
 #include "SVGRenderSupport.h"
 
 namespace WebCore {
@@ -52,9 +53,7 @@ bool RenderSVGResourceSolidColor::applyResource(RenderObject* object, RenderStyl
     const SVGRenderStyle* svgStyle = style ? style->svgStyle() : 0;
     ColorSpace colorSpace = style ? style->colorSpace() : ColorSpaceDeviceRGB;
 
-    bool isRenderingMask = false;
-    if (object->frame() && object->frame()->view())
-        isRenderingMask = object->frame()->view()->paintBehavior() & PaintBehaviorRenderingSVGMask;
+    bool isRenderingMask = object->view().frameView().paintBehavior() & PaintBehaviorRenderingSVGMask;
 
     if (resourceMode & ApplyToFillMode) {
         if (!isRenderingMask && svgStyle)

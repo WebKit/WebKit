@@ -62,11 +62,9 @@ void RenderHTMLCanvas::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& pa
     LayoutRect rect = contentBoxRect();
     rect.moveBy(paintOffset);
 
-    if (Frame* frame = this->frame()) {
-        if (Page* page = frame->page()) {
-            if (paintInfo.phase == PaintPhaseForeground)
-                page->addRelevantRepaintedObject(this, rect);
-        }
+    if (Page* page = frame().page()) {
+        if (paintInfo.phase == PaintPhaseForeground)
+            page->addRelevantRepaintedObject(this, rect);
     }
 
     bool useLowQualityScale = style()->imageRendering() == ImageRenderingCrispEdges || style()->imageRendering() == ImageRenderingOptimizeSpeed;

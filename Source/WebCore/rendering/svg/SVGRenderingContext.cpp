@@ -36,6 +36,7 @@
 #include "RenderSVGResourceClipper.h"
 #include "RenderSVGResourceFilter.h"
 #include "RenderSVGResourceMasker.h"
+#include "RenderView.h"
 #include "SVGResources.h"
 #include "SVGResourcesCache.h"
 
@@ -43,11 +44,9 @@ static int kMaxImageBufferSize = 4096;
 
 namespace WebCore {
 
-static inline bool isRenderingMaskImage(RenderObject* object)
+static inline bool isRenderingMaskImage(const RenderObject& object)
 {
-    if (object->frame() && object->frame()->view())
-        return object->frame()->view()->paintBehavior() & PaintBehaviorRenderingSVGMask;
-    return false;
+    return object.view().frameView().paintBehavior() & PaintBehaviorRenderingSVGMask;
 }
 
 SVGRenderingContext::~SVGRenderingContext()
@@ -106,7 +105,7 @@ void SVGRenderingContext::prepareToRenderSVGContent(RenderObject* object, PaintI
     ASSERT(svgStyle);
 
     // Setup transparency layers before setting up SVG resources!
-    bool isRenderingMask = isRenderingMaskImage(m_object);
+    bool isRenderingMask = isRenderingMaskImage(*m_object);
     float opacity = isRenderingMask ? 1 : style->opacity();
     const ShadowData* shadow = svgStyle->shadow();
     if (opacity < 1 || shadow) {

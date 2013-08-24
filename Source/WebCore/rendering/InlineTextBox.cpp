@@ -571,8 +571,8 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
         context->concatCTM(rotation(boxRect, Clockwise));
 
     // Determine whether or not we have composition underlines to draw.
-    bool containsComposition = renderer()->node() && renderer()->frame()->editor().compositionNode() == renderer()->node();
-    bool useCustomUnderlines = containsComposition && renderer()->frame()->editor().compositionUsesCustomUnderlines();
+    bool containsComposition = renderer()->node() && renderer()->frame().editor().compositionNode() == renderer()->node();
+    bool useCustomUnderlines = containsComposition && renderer()->frame().editor().compositionUsesCustomUnderlines();
 
     // Determine the text colors and selection colors.
     Color textFillColor;
@@ -680,8 +680,8 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
 
         if (containsComposition && !useCustomUnderlines)
             paintCompositionBackground(context, boxOrigin, styleToUse, font,
-                renderer()->frame()->editor().compositionStart(),
-                renderer()->frame()->editor().compositionEnd());
+                renderer()->frame().editor().compositionStart(),
+                renderer()->frame().editor().compositionEnd());
 
         paintDocumentMarkers(context, boxOrigin, styleToUse, font, true);
 
@@ -689,15 +689,13 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
             paintSelection(context, boxOrigin, styleToUse, font, selectionFillColor);
     }
 
-    if (Frame* frame = renderer()->frame()) {
-        if (Page* page = frame->page()) {
-            // FIXME: Right now, InlineTextBoxes never call addRelevantUnpaintedObject() even though they might
-            // legitimately be unpainted if they are waiting on a slow-loading web font. We should fix that, and
-            // when we do, we will have to account for the fact the InlineTextBoxes do not always have unique
-            // renderers and Page currently relies on each unpainted object having a unique renderer.
-            if (paintInfo.phase == PaintPhaseForeground)
-                page->addRelevantRepaintedObject(renderer(), IntRect(boxOrigin.x(), boxOrigin.y(), logicalWidth(), logicalHeight()));
-        }
+    if (Page* page = renderer()->frame().page()) {
+        // FIXME: Right now, InlineTextBoxes never call addRelevantUnpaintedObject() even though they might
+        // legitimately be unpainted if they are waiting on a slow-loading web font. We should fix that, and
+        // when we do, we will have to account for the fact the InlineTextBoxes do not always have unique
+        // renderers and Page currently relies on each unpainted object having a unique renderer.
+        if (paintInfo.phase == PaintPhaseForeground)
+            page->addRelevantRepaintedObject(renderer(), IntRect(boxOrigin.x(), boxOrigin.y(), logicalWidth(), logicalHeight()));
     }
 
     // 2. Now paint the foreground, including text and decorations like underline/overline (in quirks mode only).
@@ -808,7 +806,7 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
         paintDocumentMarkers(context, boxOrigin, styleToUse, font, false);
 
         if (useCustomUnderlines) {
-            const Vector<CompositionUnderline>& underlines = renderer()->frame()->editor().customCompositionUnderlines();
+            const Vector<CompositionUnderline>& underlines = renderer()->frame().editor().customCompositionUnderlines();
             size_t numUnderlines = underlines.size();
 
             for (size_t index = 0; index < numUnderlines; ++index) {
@@ -941,10 +939,7 @@ void InlineTextBox::paintCompositionBackground(GraphicsContext* context, const F
 
 void InlineTextBox::paintCustomHighlight(const LayoutPoint& paintOffset, const AtomicString& type)
 {
-    Frame* frame = renderer()->frame();
-    if (!frame)
-        return;
-    Page* page = frame->page();
+    Page* page = renderer()->frame().page();
     if (!page)
         return;
 
@@ -1382,7 +1377,7 @@ void InlineTextBox::paintTextMatchMarker(GraphicsContext* pt, const FloatPoint& 
     toRenderedDocumentMarker(marker)->setRenderedRect(markerRect);
     
     // Optionally highlight the text
-    if (renderer()->frame()->editor().markedTextMatchesAreHighlighted()) {
+    if (renderer()->frame().editor().markedTextMatchesAreHighlighted()) {
         Color color = marker->activeMatch() ?
             renderer()->theme()->platformActiveTextSearchHighlightColor() :
             renderer()->theme()->platformInactiveTextSearchHighlightColor();

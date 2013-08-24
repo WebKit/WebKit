@@ -179,10 +179,7 @@ void RootInlineBox::paintEllipsisBox(PaintInfo& paintInfo, const LayoutPoint& pa
 
 void RootInlineBox::addHighlightOverflow()
 {
-    Frame* frame = renderer()->frame();
-    if (!frame)
-        return;
-    Page* page = frame->page();
+    Page* page = renderer()->frame().page();
     if (!page)
         return;
 
@@ -197,10 +194,7 @@ void RootInlineBox::paintCustomHighlight(PaintInfo& paintInfo, const LayoutPoint
     if (!paintInfo.shouldPaintWithinRoot(renderer()) || renderer()->style()->visibility() != VISIBLE || paintInfo.phase != PaintPhaseForeground)
         return;
 
-    Frame* frame = renderer()->frame();
-    if (!frame)
-        return;
-    Page* page = frame->page();
+    Page* page = renderer()->frame().page();
     if (!page)
         return;
 

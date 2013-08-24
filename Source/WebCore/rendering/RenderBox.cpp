@@ -373,9 +373,9 @@ void RenderBox::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle
             setNeedsLayoutAndPrefWidthsRecalc();
         }
 
-        frame()->view()->recalculateScrollbarOverlayStyle();
+        view().frameView().recalculateScrollbarOverlayStyle();
         
-        const Pagination& pagination = frame()->view()->pagination();
+        const Pagination& pagination = view().frameView().pagination();
         if (viewChangedWritingMode && pagination.mode != Pagination::Unpaginated) {
             viewStyle->setColumnStylesFromPaginationMode(pagination.mode);
             if (view().hasColumns())
@@ -827,26 +827,16 @@ bool RenderBox::canAutoscroll() const
     // The code for this is in RenderLayer::scrollRectToVisible.
     if (node() != document())
         return false;
-    Frame* frame = this->frame();
-    if (!frame)
-        return false;
-    Page* page = frame->page();
-    return page && page->mainFrame() == frame && frame->view()->isScrollable();
+    Page* page = frame().page();
+    return page && page->mainFrame() == &frame() && view().frameView().isScrollable();
 }
 
 // If specified point is in border belt, returned offset denotes direction of
 // scrolling.
 IntSize RenderBox::calculateAutoscrollDirection(const IntPoint& windowPoint) const
 {
-    if (!frame())
-        return IntSize();
-
-    FrameView* frameView = frame()->view();
-    if (!frameView)
-        return IntSize();
-
     IntSize offset;
-    IntPoint point = frameView->windowToContents(windowPoint);
+    IntPoint point = view().frameView().windowToContents(windowPoint);
     IntRect box(absoluteBoundingBoxRect());
 
     if (point.x() < box.x() + autoscrollBeltSize)
@@ -858,7 +848,7 @@ IntSize RenderBox::calculateAutoscrollDirection(const IntPoint& windowPoint) con
         point.move(0, -autoscrollBeltSize);
     else if (point.y() > box.maxY() - autoscrollBeltSize)
         point.move(0, autoscrollBeltSize);
-    return frameView->contentsToWindow(point) - windowPoint;
+    return view().frameView().contentsToWindow(point) - windowPoint;
 }
 
 RenderBox* RenderBox::findAutoscrollable(RenderObject* renderer)
@@ -1587,10 +1577,7 @@ bool RenderBox::repaintLayerRectsForImage(WrappedImagePtr image, const FillLayer
 
 void RenderBox::paintCustomHighlight(const LayoutPoint& paintOffset, const AtomicString& type, bool behindText)
 {
-    Frame* frame = this->frame();
-    if (!frame)
-        return;
-    Page* page = frame->page();
+    Page* page = frame().page();
     if (!page)
         return;
 

@@ -300,7 +300,7 @@ void SVGInlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint&, LayoutUni
             selectionStyle = style;
     }
 
-    if (textRenderer->frame() && textRenderer->frame()->view() && textRenderer->frame()->view()->paintBehavior() & PaintBehaviorRenderingSVGMask) {
+    if (textRenderer->view().frameView().paintBehavior() & PaintBehaviorRenderingSVGMask) {
         hasFill = true;
         hasVisibleStroke = false;
     }

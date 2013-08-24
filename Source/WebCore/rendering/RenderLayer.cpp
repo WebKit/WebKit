@@ -231,15 +231,10 @@ RenderLayer::RenderLayer(RenderLayerModelObject* renderer)
 
 RenderLayer::~RenderLayer()
 {
-    if (inResizeMode() && !renderer()->documentBeingDestroyed()) {
-        if (Frame* frame = renderer()->frame())
-            frame->eventHandler().resizeLayerDestroyed();
-    }
+    if (inResizeMode() && !renderer()->documentBeingDestroyed())
+        renderer()->frame().eventHandler().resizeLayerDestroyed();
 
-    if (Frame* frame = renderer()->frame()) {
-        if (FrameView* frameView = frame->view())
-            frameView->removeScrollableArea(this);
-    }
+    renderer()->view().frameView().removeScrollableArea(this);
 
     if (!m_renderer->documentBeingDestroyed()) {
         Node* node = m_renderer->node();
@@ -250,8 +245,8 @@ RenderLayer::~RenderLayer()
     destroyScrollbar(HorizontalScrollbar);
     destroyScrollbar(VerticalScrollbar);
 
-    if (renderer()->frame() && renderer()->frame()->page()) {
-        if (ScrollingCoordinator* scrollingCoordinator = renderer()->frame()->page()->scrollingCoordinator())
+    if (renderer()->frame().page()) {
+        if (ScrollingCoordinator* scrollingCoordinator = renderer()->frame().page()->scrollingCoordinator())
             scrollingCoordinator->willDestroyScrollableArea(this);
     }
 
@@ -557,9 +552,7 @@ void RenderLayer::dirtyAncestorChainHasSelfPaintingLayerDescendantStatus()
 
 bool RenderLayer::acceleratedCompositingForOverflowScrollEnabled() const
 {
-    return renderer()->frame()
-        && renderer()->frame()->page()
-        && renderer()->frame()->page()->settings().acceleratedCompositingForOverflowScrollEnabled();
+    return renderer()->frame().settings().acceleratedCompositingForOverflowScrollEnabled();
 }
 
 // If we are a stacking container, then this function will determine if our
@@ -2116,11 +2109,7 @@ static inline IntSize adjustedScrollDelta(const IntSize& delta)
 
 void RenderLayer::panScrollFromPoint(const IntPoint& sourcePoint)
 {
-    Frame* frame = renderer()->frame();
-    if (!frame)
-        return;
-    
-    IntPoint lastKnownMousePosition = frame->eventHandler().lastKnownMousePosition();
+    IntPoint lastKnownMousePosition = renderer()->frame().eventHandler().lastKnownMousePosition();
     
     // We need to check if the last known mouse position is out of the window. When the mouse is out of the window, the position is incoherent
     static IntPoint previousMousePosition;
@@ -2158,9 +2147,7 @@ void RenderLayer::scrollByRecursively(const IntSize& delta, ScrollOffsetClamping
             if (RenderLayer* scrollableLayer = enclosingScrollableLayer())
                 scrollableLayer->scrollByRecursively(remainingScrollOffset);
 
-            Frame* frame = renderer()->frame();
-            if (frame)
-                frame->eventHandler().updateAutoscrollRenderer();
+            renderer()->frame().eventHandler().updateAutoscrollRenderer();
         }
     } else {
         // If we are here, we were called on a renderer that can be programmatically scrolled, but doesn't
@@ -2214,8 +2201,7 @@ void RenderLayer::scrollTo(int x, int y)
         return;
     m_scrollOffset = newScrollOffset;
 
-    Frame* frame = renderer()->frame();
-    InspectorInstrumentation::willScrollLayer(frame);
+    InspectorInstrumentation::willScrollLayer(&renderer()->frame());
 
     RenderView& view = renderer()->view();
 
@@ -2240,16 +2226,15 @@ void RenderLayer::scrollTo(int x, int y)
         }
     }
 
+    Frame& frame = renderer()->frame();
     RenderLayerModelObject* repaintContainer = renderer()->containerForRepaint();
-    if (frame) {
-        // The caret rect needs to be invalidated after scrolling
-        frame->selection().setCaretRectNeedsUpdate();
+    // The caret rect needs to be invalidated after scrolling
+    frame.selection().setCaretRectNeedsUpdate();
 
-        FloatQuad quadForFakeMouseMoveEvent = FloatQuad(m_repaintRect);
-        if (repaintContainer)
-            quadForFakeMouseMoveEvent = repaintContainer->localToAbsoluteQuad(quadForFakeMouseMoveEvent);
-        frame->eventHandler().dispatchFakeMouseMoveEventSoonInQuad(quadForFakeMouseMoveEvent);
-    }
+    FloatQuad quadForFakeMouseMoveEvent = FloatQuad(m_repaintRect);
+    if (repaintContainer)
+        quadForFakeMouseMoveEvent = repaintContainer->localToAbsoluteQuad(quadForFakeMouseMoveEvent);
+    frame.eventHandler().dispatchFakeMouseMoveEventSoonInQuad(quadForFakeMouseMoveEvent);
 
     bool requiresRepaint = true;
 
@@ -2266,9 +2251,9 @@ void RenderLayer::scrollTo(int x, int y)
     if (renderer()->node())
         renderer()->node()->document()->eventQueue()->enqueueOrDispatchScrollEvent(renderer()->node(), DocumentEventQueue::ScrollEventElementTarget);
 
-    InspectorInstrumentation::didScrollLayer(frame);
+    InspectorInstrumentation::didScrollLayer(&frame);
     if (scrollsOverflow())
-        frame->loader().client().didChangeScrollOffset();
+        frame.loader().client().didChangeScrollOffset();
 }
 
 static inline bool frameElementAndViewPermitScroll(HTMLFrameElementBase* frameElementBase, FrameView* frameView) 
@@ -2373,7 +2358,7 @@ void RenderLayer::scrollRectToVisible(const LayoutRect& rect, const ScrollAlignm
         }
     }
     
-    if (renderer()->frame()->eventHandler().autoscrollInProgress())
+    if (renderer()->frame().eventHandler().autoscrollInProgress())
         parentLayer = enclosingScrollableLayer();
 
     if (parentLayer)
@@ -2474,15 +2459,7 @@ LayoutRect RenderLayer::getRectToExpose(const LayoutRect &visibleRect, const Lay
 
 void RenderLayer::autoscroll(const IntPoint& position)
 {
-    Frame* frame = renderer()->frame();
-    if (!frame)
-        return;
-
-    FrameView* frameView = frame->view();
-    if (!frameView)
-        return;
-
-    IntPoint currentDocumentPosition = frameView->windowToContents(position);
+    IntPoint currentDocumentPosition = renderer()->view().frameView().windowToContents(position);
     scrollRectToVisible(LayoutRect(currentDocumentPosition, LayoutSize(1, 1)), ScrollAlignment::alignToEdgeIfNeeded, ScrollAlignment::alignToEdgeIfNeeded);
 }
 
@@ -2617,7 +2594,7 @@ IntSize RenderLayer::overhangAmount() const
 
 bool RenderLayer::isActive() const
 {
-    Page* page = renderer()->frame()->page();
+    Page* page = renderer()->frame().page();
     return page && page->focusController().isActive();
 }
 
@@ -2747,12 +2724,12 @@ bool RenderLayer::scrollbarsCanBeActive() const
 
 IntPoint RenderLayer::lastKnownMousePosition() const
 {
-    return renderer()->frame() ? renderer()->frame()->eventHandler().lastKnownMousePosition() : IntPoint();
+    return renderer()->frame().eventHandler().lastKnownMousePosition();
 }
 
 bool RenderLayer::isHandlingWheelEvent() const
 {
-    return renderer()->frame() ? renderer()->frame()->eventHandler().isHandlingWheelEvent() : false;
+    return renderer()->frame().eventHandler().isHandlingWheelEvent();
 }
 
 IntRect RenderLayer::rectForHorizontalScrollbar(const IntRect& borderBoxRect) const
@@ -3341,7 +3318,7 @@ void RenderLayer::paintScrollCorner(GraphicsContext* context, const IntPoint& pa
 
 void RenderLayer::drawPlatformResizerImage(GraphicsContext* context, IntRect resizerCornerRect)
 {
-    float deviceScaleFactor = WebCore::deviceScaleFactor(renderer()->frame());
+    float deviceScaleFactor = WebCore::deviceScaleFactor(&renderer()->frame());
 
     RefPtr<Image> resizeCornerImage;
     IntSize cornerResizerSize;
@@ -3693,19 +3670,16 @@ bool RenderLayer::setupFontSubpixelQuantization(GraphicsContext* context, bool& 
         return false;
 
     bool scrollingOnMainThread = true;
-    Frame* frame = renderer()->frame();
 #if ENABLE(THREADED_SCROLLING)
-    if (frame) {
-        if (Page* page = frame->page()) {
-            if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator())
-                scrollingOnMainThread = scrollingCoordinator->shouldUpdateScrollLayerPositionOnMainThread();
-        }
+    if (Page* page = renderer()->frame().page()) {
+        if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator())
+            scrollingOnMainThread = scrollingCoordinator->shouldUpdateScrollLayerPositionOnMainThread();
     }
 #endif
 
     // FIXME: We shouldn't have to disable subpixel quantization for overflow clips or subframes once we scroll those
     // things on the scrolling thread.
-    bool contentsScrollByPainting = (renderer()->hasOverflowClip() && !usesCompositedScrolling()) || (frame && frame->ownerElement());
+    bool contentsScrollByPainting = (renderer()->hasOverflowClip() && !usesCompositedScrolling()) || (renderer()->frame().ownerElement());
     if (scrollingOnMainThread || contentsScrollByPainting) {
         didQuantizeFonts = context->shouldSubpixelQuantizeFonts();
         context->setShouldSubpixelQuantizeFonts(false);
@@ -6197,24 +6171,18 @@ void RenderLayer::styleChanged(StyleDifference, const RenderStyle* oldStyle)
 
 void RenderLayer::updateScrollableAreaSet(bool hasOverflow)
 {
-    Frame* frame = renderer()->frame();
-    if (!frame)
-        return;
-
-    FrameView* frameView = frame->view();
-    if (!frameView)
-        return;
+    FrameView& frameView = renderer()->view().frameView();
 
     bool isVisibleToHitTest = renderer()->visibleToHitTesting();
-    if (HTMLFrameOwnerElement* owner = frame->ownerElement())
+    if (HTMLFrameOwnerElement* owner = frameView.frame().ownerElement())
         isVisibleToHitTest &= owner->renderer() && owner->renderer()->visibleToHitTesting();
 
     bool isScrollable = hasOverflow && isVisibleToHitTest;
     bool addedOrRemoved = false;
     if (isScrollable)
-        addedOrRemoved = frameView->addScrollableArea(this);
+        addedOrRemoved = frameView.addScrollableArea(this);
     else
-        addedOrRemoved = frameView->removeScrollableArea(this);
+        addedOrRemoved = frameView.removeScrollableArea(this);
     
     if (addedOrRemoved) {
 #if USE(ACCELERATED_COMPOSITING)
@@ -6416,7 +6384,7 @@ void RenderLayer::updateOrRemoveFilterEffectRenderer()
     RenderLayerFilterInfo* filterInfo = ensureFilterInfo();
     if (!filterInfo->renderer()) {
         RefPtr<FilterEffectRenderer> filterRenderer = FilterEffectRenderer::create();
-        RenderingMode renderingMode = renderer()->frame()->page()->settings().acceleratedFiltersEnabled() ? Accelerated : Unaccelerated;
+        RenderingMode renderingMode = renderer()->frame().settings().acceleratedFiltersEnabled() ? Accelerated : Unaccelerated;
         filterRenderer->setRenderingMode(renderingMode);
         filterInfo->setRenderer(filterRenderer.release());
         
@@ -6445,10 +6413,8 @@ void showLayerTree(const WebCore::RenderLayer* layer)
     if (!layer)
         return;
 
-    if (WebCore::Frame* frame = layer->renderer()->frame()) {
-        WTF::String output = externalRepresentation(frame, WebCore::RenderAsTextShowAllLayers | WebCore::RenderAsTextShowLayerNesting | WebCore::RenderAsTextShowCompositedLayers | WebCore::RenderAsTextShowAddresses | WebCore::RenderAsTextShowIDAndClass | WebCore::RenderAsTextDontUpdateLayout | WebCore::RenderAsTextShowLayoutState);
-        fprintf(stderr, "%s\n", output.utf8().data());
-    }
+    WTF::String output = externalRepresentation(&layer->renderer()->frame(), WebCore::RenderAsTextShowAllLayers | WebCore::RenderAsTextShowLayerNesting | WebCore::RenderAsTextShowCompositedLayers | WebCore::RenderAsTextShowAddresses | WebCore::RenderAsTextShowIDAndClass | WebCore::RenderAsTextDontUpdateLayout | WebCore::RenderAsTextShowLayoutState);
+    fprintf(stderr, "%s\n", output.utf8().data());
 }
 
 void showLayerTree(const WebCore::RenderObject* renderer)

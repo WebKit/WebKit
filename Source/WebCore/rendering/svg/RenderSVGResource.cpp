@@ -32,6 +32,7 @@
 #include "RenderSVGResourceFilter.h"
 #include "RenderSVGResourceMasker.h"
 #include "RenderSVGResourceSolidColor.h"
+#include "RenderView.h"
 #include "SVGResources.h"
 #include "SVGResourcesCache.h"
 #include "SVGURIReference.h"
@@ -59,9 +60,7 @@ static inline RenderSVGResource* requestPaintingResource(RenderSVGResourceMode m
     if (!svgStyle)
         return 0;
 
-    bool isRenderingMask = false;
-    if (object->frame() && object->frame()->view())
-        isRenderingMask = object->frame()->view()->paintBehavior() & PaintBehaviorRenderingSVGMask;
+    bool isRenderingMask = object->view().frameView().paintBehavior() & PaintBehaviorRenderingSVGMask;
 
     // If we have no fill/stroke, return 0.
     if (mode == ApplyToFillMode) {

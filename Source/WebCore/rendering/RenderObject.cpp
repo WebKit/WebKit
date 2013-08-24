@@ -1627,14 +1627,14 @@ Color RenderObject::selectionBackgroundColor() const
 {
     Color color;
     if (style()->userSelect() != SELECT_NONE) {
-        if (frame()->selection().shouldShowBlockCursor() && frame()->selection().isCaret())
+        if (frame().selection().shouldShowBlockCursor() && frame().selection().isCaret())
             color = style()->visitedDependentColor(CSSPropertyColor).blendWithWhite();
         else {
             RefPtr<RenderStyle> pseudoStyle = getUncachedPseudoStyle(PseudoStyleRequest(SELECTION));
             if (pseudoStyle && pseudoStyle->visitedDependentColor(CSSPropertyBackgroundColor).isValid())
                 color = pseudoStyle->visitedDependentColor(CSSPropertyBackgroundColor).blendWithWhite();
             else
-                color = frame()->selection().isFocusedAndActive() ? theme()->activeSelectionBackgroundColor() : theme()->inactiveSelectionBackgroundColor();
+                color = frame().selection().isFocusedAndActive() ? theme()->activeSelectionBackgroundColor() : theme()->inactiveSelectionBackgroundColor();
         }
     }
 
@@ -1647,7 +1647,7 @@ Color RenderObject::selectionColor(int colorProperty) const
     // If the element is unselectable, or we are only painting the selection,
     // don't override the foreground color with the selection foreground color.
     if (style()->userSelect() == SELECT_NONE
-        || (frame()->view()->paintBehavior() & PaintBehaviorSelectionOnly))
+        || (view().frameView().paintBehavior() & PaintBehaviorSelectionOnly))
         return color;
 
     if (RefPtr<RenderStyle> pseudoStyle = getUncachedPseudoStyle(PseudoStyleRequest(SELECTION))) {
@@ -1655,7 +1655,7 @@ Color RenderObject::selectionColor(int colorProperty) const
         if (!color.isValid())
             color = pseudoStyle->visitedDependentColor(CSSPropertyColor);
     } else
-        color = frame()->selection().isFocusedAndActive() ?
+        color = frame().selection().isFocusedAndActive() ?
                 theme()->activeSelectionForegroundColor() :
                 theme()->inactiveSelectionForegroundColor();
 
@@ -2034,10 +2034,8 @@ void RenderObject::styleDidChange(StyleDifference diff, const RenderStyle* oldSt
     // Don't check for repaint here; we need to wait until the layer has been
     // updated by subclasses before we know if we have to repaint (in setStyle()).
 
-    if (oldStyle && !areCursorsEqual(oldStyle, style())) {
-        if (Frame* frame = this->frame())
-            frame->eventHandler().scheduleCursorUpdate();
-    }
+    if (oldStyle && !areCursorsEqual(oldStyle, style()))
+        frame().eventHandler().scheduleCursorUpdate();
 }
 
 void RenderObject::propagateStyleToAnonymousChildren(bool blockChildrenOnly)
@@ -2339,7 +2337,7 @@ RespectImageOrientationEnum RenderObject::shouldRespectImageOrientation() const
         // This can only be enabled for ports which honor the orientation flag in their drawing code.
         document()->isImageDocument() ||
 #endif
-        (document()->settings() && document()->settings()->shouldRespectImageOrientation() && node() && isHTMLImageElement(node())) ? RespectImageOrientation : DoNotRespectImageOrientation;
+        (frame().settings().shouldRespectImageOrientation() && node() && isHTMLImageElement(node())) ? RespectImageOrientation : DoNotRespectImageOrientation;
 }
 
 bool RenderObject::hasOutlineAnnotation() const
@@ -2424,16 +2422,15 @@ bool RenderObject::isSelectionBorder() const
 
 inline void RenderObject::clearLayoutRootIfNeeded() const
 {
-    if (!documentBeingDestroyed() && frame()) {
-        if (FrameView* view = frame()->view()) {
-            if (view->layoutRoot() == this) {
-                ASSERT_NOT_REACHED();
-                // This indicates a failure to layout the child, which is why
-                // the layout root is still set to |this|. Make sure to clear it
-                // since we are getting destroyed.
-                view->clearLayoutRoot();
-            }
-        }
+    if (documentBeingDestroyed())
+        return;
+
+    if (view().frameView().layoutRoot() == this) {
+        ASSERT_NOT_REACHED();
+        // This indicates a failure to layout the child, which is why
+        // the layout root is still set to |this|. Make sure to clear it
+        // since we are getting destroyed.
+        view().frameView().clearLayoutRoot();
     }
 }
 
@@ -2449,9 +2446,8 @@ void RenderObject::willBeDestroyed()
     // FIXME: RenderObject::destroy should not get called with a renderer whose document
     // has a null frame, so we assert this. However, we don't want release builds to crash which is why we
     // check that the frame is not null.
-    ASSERT(frame());
-    if (frame() && frame()->eventHandler().autoscrollRenderer() == this)
-        frame()->eventHandler().stopAutoscrollTimer(true);
+    if (frame().eventHandler().autoscrollRenderer() == this)
+        frame().eventHandler().stopAutoscrollTimer(true);
 
     animation().cancelAnimations(this);
 
@@ -2462,7 +2458,7 @@ void RenderObject::willBeDestroyed()
 
     remove();
 
-    ASSERT(documentBeingDestroyed() || !frame()->view()->hasSlowRepaintObject(this));
+    ASSERT(documentBeingDestroyed() || !view().frameView().hasSlowRepaintObject(this));
 
     // The remove() call above may invoke axObjectCache()->childrenChanged() on the parent, which may require the AX render
     // object for this renderer. So we remove the AX render object now, after the renderer is removed.
@@ -3049,7 +3045,7 @@ void RenderObject::adjustRectForOutlineAndShadow(LayoutRect& rect) const
 
 AnimationController& RenderObject::animation() const
 {
-    return frame()->animation();
+    return frame().animation();
 }
 
 void RenderObject::imageChanged(CachedImage* image, const IntRect* rect)

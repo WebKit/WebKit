@@ -3272,22 +3272,22 @@ bool RenderBlock::paintChild(RenderBox* child, PaintInfo& paintInfo, const Layou
 void RenderBlock::paintCaret(PaintInfo& paintInfo, const LayoutPoint& paintOffset, CaretType type)
 {
     // Paint the caret if the FrameSelection says so or if caret browsing is enabled
-    bool caretBrowsing = frame()->settings().caretBrowsingEnabled();
+    bool caretBrowsing = frame().settings().caretBrowsingEnabled();
     RenderObject* caretPainter;
     bool isContentEditable;
     if (type == CursorCaret) {
-        caretPainter = frame()->selection().caretRenderer();
-        isContentEditable = frame()->selection().rendererIsEditable();
+        caretPainter = frame().selection().caretRenderer();
+        isContentEditable = frame().selection().rendererIsEditable();
     } else {
-        caretPainter = frame()->page()->dragCaretController().caretRenderer();
-        isContentEditable = frame()->page()->dragCaretController().isContentEditable();
+        caretPainter = frame().page()->dragCaretController().caretRenderer();
+        isContentEditable = frame().page()->dragCaretController().isContentEditable();
     }
 
     if (caretPainter == this && (isContentEditable || caretBrowsing)) {
         if (type == CursorCaret)
-            frame()->selection().paintCaret(paintInfo.context, paintOffset, paintInfo.rect);
+            frame().selection().paintCaret(paintInfo.context, paintOffset, paintInfo.rect);
         else
-            frame()->page()->dragCaretController().paintDragCaret(frame(), paintInfo.context, paintOffset, paintInfo.rect);
+            frame().page()->dragCaretController().paintDragCaret(&frame(), paintInfo.context, paintOffset, paintInfo.rect);
     }
 }
 

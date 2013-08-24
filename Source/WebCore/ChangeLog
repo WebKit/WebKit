@@ -1,5 +1,18 @@
 2013-08-24  Andreas Kling  <akling@apple.com>
 
+        RenderObject::frame() should return a reference.
+        <https://webkit.org/b/120251>
+
+        Reviewed by Darin Adler.
+
+        There is now always a Frame, and we can get to it by walking this path:
+
+            RenderObject -> Document -> RenderView -> FrameView -> Frame
+
+        Removed the customary horde of null checks.
+
+2013-08-24  Andreas Kling  <akling@apple.com>
+
         RenderLayer::compositor() should return a reference.
         <https://webkit.org/b/120250>
 

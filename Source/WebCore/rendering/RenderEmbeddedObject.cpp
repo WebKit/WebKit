@@ -227,9 +227,7 @@ void RenderEmbeddedObject::paintContents(PaintInfo& paintInfo, const LayoutPoint
 
 void RenderEmbeddedObject::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    Page* page = 0;
-    if (Frame* frame = this->frame())
-        page = frame->page();
+    Page* page = frame().page();
 
     if (isPluginUnavailable()) {
         if (page && paintInfo.phase == PaintPhaseForeground)
