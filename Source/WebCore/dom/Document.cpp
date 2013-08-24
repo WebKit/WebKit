@@ -165,6 +165,7 @@
 #include <wtf/CurrentTime.h>
 #include <wtf/MainThread.h>
 #include <wtf/PassRefPtr.h>
+#include <wtf/TemporaryChange.h>
 #include <wtf/text/StringBuffer.h>
 
 #if USE(ACCELERATED_COMPOSITING)
@@ -480,6 +481,7 @@ Document::Document(Frame* frame, const KURL& url, unsigned documentClasses)
 #endif
     , m_didAssociateFormControlsTimer(this, &Document::didAssociateFormControlsTimerFired)
     , m_hasInjectedPlugInsScript(false)
+    , m_renderTreeBeingDestroyed(false)
 {
     if (m_frame)
         provideContextFeaturesToDocumentFrom(this, m_frame->page());
@@ -2010,8 +2012,6 @@ void Document::detach()
     clearScriptedAnimationController();
 #endif
 
-    RenderObject* render = renderer();
-
     documentWillBecomeInactive();
 
 #if ENABLE(SHARED_WORKERS)
@@ -2025,9 +2025,6 @@ void Document::detach()
 
     }
 
-    // indicate destruction mode,  i.e. attached() but renderer == 0
-    setRenderer(0);
-    
 #if ENABLE(FULLSCREEN_API)
     if (m_fullScreenRenderer)
         setFullScreenRenderer(0);
@@ -2037,6 +2034,8 @@ void Document::detach()
     m_focusedElement = 0;
     m_activeElement = 0;
 
+    TemporaryChange<bool> change(m_renderTreeBeingDestroyed, true);
+
     for (Element* child = ElementTraversal::firstWithin(this); child; child = ElementTraversal::nextSibling(child))
         Style::detachRenderTree(child);
 
@@ -2045,8 +2044,9 @@ void Document::detach()
 
     unscheduleStyleRecalc();
 
-    if (render)
-        render->destroy();
+    if (renderer())
+        renderer()->destroy();
+    setRenderer(0);
 
 #if ENABLE(TOUCH_EVENTS)
     if (m_touchEventTargets && m_touchEventTargets->size() && parentDocument())

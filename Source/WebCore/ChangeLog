@@ -1,3 +1,23 @@
+2013-08-24  Andreas Kling  <akling@apple.com>
+
+        Let Document keep its RenderView during render tree detach.
+        <https://webkit.org/b/120233>
+
+        Reviewed by Antti Koivisto.
+
+        Instead of having "Document::renderer() == NULL" signify that the render tree is being
+        torn down, give Document an explicit flag for this instead.
+
+        This way, we can keep Document's RenderView in place during tree detach.
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::detach):
+        * dom/Document.h:
+        (WebCore::Document::renderTreeBeingDestroyed):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::documentBeingDestroyed):
+
 2013-08-24  Antti Koivisto  <antti@apple.com>
 
         Tighten before/after pseudo element accessors

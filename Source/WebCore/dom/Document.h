@@ -547,6 +547,8 @@ public:
         Node::setRenderer(renderer);
     }
 
+    bool renderTreeBeingDestroyed() const { return m_renderTreeBeingDestroyed; }
+
     AXObjectCache* existingAXObjectCache() const;
     AXObjectCache* axObjectCache() const;
     void clearAXObjectCache();
@@ -1558,6 +1560,7 @@ private:
     HashSet<RefPtr<Element> > m_associatedFormControls;
 
     bool m_hasInjectedPlugInsScript;
+    bool m_renderTreeBeingDestroyed;
 };
 
 inline void Document::notifyRemovePendingSheetIfNeeded()
