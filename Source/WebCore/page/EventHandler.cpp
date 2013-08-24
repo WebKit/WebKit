@@ -75,6 +75,7 @@
 #include "RenderTextControlSingleLine.h"
 #include "RenderView.h"
 #include "RenderWidget.h"
+#include "RuntimeApplicationChecks.h"
 #include "ScrollAnimator.h"
 #include "Scrollbar.h"
 #include "Settings.h"
@@ -332,6 +333,7 @@ EventHandler::EventHandler(Frame* frame)
     , m_clickCount(0)
     , m_mousePositionIsUnknown(true)
     , m_mouseDownTimestamp(0)
+    , m_inTrackingScrollGesturePhase(false)
     , m_widgetIsLatched(false)
 #if PLATFORM(MAC)
     , m_mouseDownView(nil)
@@ -2435,6 +2437,41 @@ bool EventHandler::shouldTurnVerticalTicksIntoHorizontal(const HitTestResult&, c
 }
 #endif
 
+void EventHandler::recordWheelEventDelta(const PlatformWheelEvent& event)
+{
+    const size_t recentEventCount = 3;
+    
+    m_recentWheelEventDeltas.append(FloatSize(event.deltaX(), event.deltaY()));
+    if (m_recentWheelEventDeltas.size() > recentEventCount)
+        m_recentWheelEventDeltas.removeFirst();
+}
+
+static bool deltaIsPredominantlyVertical(const FloatSize& delta)
+{
+    return fabs(delta.height()) > fabs(delta.width());
+}
+
+EventHandler::DominantScrollGestureDirection EventHandler::dominantScrollGestureDirection() const
+{
+    bool allVertical = m_recentWheelEventDeltas.size();
+    bool allHorizontal = m_recentWheelEventDeltas.size();
+
+    Deque<FloatSize>::const_iterator end = m_recentWheelEventDeltas.end();
+    for (Deque<FloatSize>::const_iterator it = m_recentWheelEventDeltas.begin(); it != end; ++it) {
+        bool isVertical = deltaIsPredominantlyVertical(*it);
+        allVertical &= isVertical;
+        allHorizontal &= !isVertical;
+    }
+    
+    if (allVertical)
+        return DominantScrollDirectionVertical;
+
+    if (allHorizontal)
+        return DominantScrollDirectionHorizontal;
+    
+    return DominantScrollDirectionNone;
+}
+
 bool EventHandler::handleWheelEvent(const PlatformWheelEvent& e)
 {
     Document* doc = m_frame->document();
@@ -2490,6 +2527,22 @@ bool EventHandler::handleWheelEvent(const PlatformWheelEvent& e)
     if (m_baseEventType == PlatformEvent::NoType && shouldTurnVerticalTicksIntoHorizontal(result, e))
         event = event.copyTurningVerticalTicksIntoHorizontalTicks();
 
+#if PLATFORM(MAC)
+    switch (event.phase()) {
+    case PlatformWheelEventPhaseBegan:
+        m_recentWheelEventDeltas.clear();
+        m_inTrackingScrollGesturePhase = true;
+        break;
+    case PlatformWheelEventPhaseEnded:
+        m_inTrackingScrollGesturePhase = false;
+        break;
+    default:
+        break;
+    }
+#endif
+
+    recordWheelEventDelta(event);
+
     if (node) {
         // Figure out which view to send the event to.
         RenderObject* target = node->renderer();
@@ -2524,12 +2577,17 @@ void EventHandler::defaultWheelEventHandler(Node* startNode, WheelEvent* wheelEv
     Node* stopNode = m_previousWheelScrolledNode.get();
     ScrollGranularity granularity = wheelGranularityToScrollGranularity(wheelEvent->deltaMode());
     
+    DominantScrollGestureDirection dominantDirection = DominantScrollDirectionNone;
+    // Workaround for scrolling issues in iTunes (<rdar://problem/14758615>).
+    if (m_inTrackingScrollGesturePhase && applicationIsITunes())
+        dominantDirection = dominantScrollGestureDirection();
+    
     // Break up into two scrolls if we need to.  Diagonal movement on 
     // a MacBook pro is an example of a 2-dimensional mouse wheel event (where both deltaX and deltaY can be set).
-    if (scrollNode(wheelEvent->rawDeltaX(), granularity, ScrollLeft, ScrollRight, startNode, &stopNode))
+    if (dominantDirection != DominantScrollDirectionVertical && scrollNode(wheelEvent->rawDeltaX(), granularity, ScrollLeft, ScrollRight, startNode, &stopNode))
         wheelEvent->setDefaultHandled();
     
-    if (scrollNode(wheelEvent->rawDeltaY(), granularity, ScrollUp, ScrollDown, startNode, &stopNode))
+    if (dominantDirection != DominantScrollDirectionHorizontal && scrollNode(wheelEvent->rawDeltaY(), granularity, ScrollUp, ScrollDown, startNode, &stopNode))
         wheelEvent->setDefaultHandled();
     
     if (!m_latchedWheelEventNode)

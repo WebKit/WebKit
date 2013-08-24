@@ -66,6 +66,12 @@ bool applicationIsAppleMail()
     return isAppleMail;
 }
 
+bool applicationIsITunes()
+{
+    static bool isITunes = mainBundleIsEqualTo("com.apple.iTunes");
+    return isITunes;
+}
+
 bool applicationIsMicrosoftMessenger()
 {
     static bool isMicrosoftMessenger = mainBundleIsEqualTo("com.microsoft.Messenger");

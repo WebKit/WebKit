@@ -1,3 +1,34 @@
+2013-08-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Improve scrolling behavior in iTunes
+        https://bugs.webkit.org/show_bug.cgi?id=120241
+        <rdar://problem/14825344>
+
+        Reviewed by Sam Weinig.
+
+        When vertically scrolling a page with horizontally scrollable overflow areas,
+        vertical scroll gestures would be interrupted when wheel events with non-zero
+        X deltas were intercepted by the overflow areas.
+        
+        Fix by storing a small history of wheel events deltas and using
+        it to determine of the scroll gesture is primarily vertical or horizontal.
+        When this is detected, avoid dispatching scroll events on the on the
+        non-dominant axis.
+        
+        Currently this behavior is conditionalized to only apply in iTunes.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::EventHandler):
+        (WebCore::EventHandler::recordWheelEventDelta):
+        (WebCore::deltaIsPredominantlyVertical):
+        (WebCore::EventHandler::dominantScrollGestureDirection):
+        (WebCore::EventHandler::handleWheelEvent):
+        (WebCore::EventHandler::defaultWheelEventHandler):
+        * page/EventHandler.h:
+        * platform/RuntimeApplicationChecks.cpp:
+        (WebCore::applicationIsITunes):
+        * platform/RuntimeApplicationChecks.h:
+
 2013-08-23  Pratik Solanki  <psolanki@apple.com>
 
         MediaQuery::expressions() should return a reference
