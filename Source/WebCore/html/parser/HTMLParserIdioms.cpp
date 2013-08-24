@@ -362,7 +362,7 @@ String bestFitSourceForImageAttributes(float deviceScaleFactor, const String& sr
 
     std::stable_sort(imageCandidates.begin(), imageCandidates.end(), compareByScaleFactor);
 
-    for (size_t i = 0; i < imageCandidates.size(); ++i) {
+    for (size_t i = 0; i < imageCandidates.size() - 1; ++i) {
         if (imageCandidates[i].scaleFactor >= deviceScaleFactor)
             return imageCandidates[i].imageURL;
     }

@@ -1,3 +1,16 @@
+2013-08-24  Yoav Weiss  <yoav@yoav.ws>
+
+        Eliminate a useless comparison in srcset's candidate selection algorithm
+        https://bugs.webkit.org/show_bug.cgi?id=120235
+
+        There is no point in comparing the last item in the candidates vector to the DPR, since it will be returned anyway. Therefore, the
+        iteration on the candidates vector now skips the last candidate.
+
+        Reviewed by Andreas Kling.
+
+        * html/parser/HTMLParserIdioms.cpp:
+        (WebCore::bestFitSourceForImageAttributes):
+
 2013-08-24  Andreas Kling  <akling@apple.com>
 
         RenderObject::view() should return a reference.

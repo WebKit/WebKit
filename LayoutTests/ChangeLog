@@ -1,3 +1,15 @@
+2013-08-24  Yoav Weiss  <yoav@yoav.ws>
+
+        Eliminate a useless comparison in srcset's candidate selection algorithm
+        https://bugs.webkit.org/show_bug.cgi?id=120235
+
+        Removed MIME types from the test's output, since they're irrelevant for the test, and make it fragile.
+
+        Reviewed by Andreas Kling.
+
+        * fast/hidpi/image-srcset-fraction-expected.txt:
+        * fast/hidpi/image-srcset-fraction.html:
+
 2013-08-23  Ryosuke Niwa  <rniwa@webkit.org>
 
         Rebaseline after r154518.  Also fix the test to expect "0" instead of "-0".
