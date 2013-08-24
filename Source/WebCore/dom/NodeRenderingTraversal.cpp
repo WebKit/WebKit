@@ -54,7 +54,7 @@ Node* nextSiblingSlow(const Node* node)
 
     Node* parent = walker.traverseParent(node);
     if (parent && parent->isElementNode())
-        return toElement(parent)->pseudoElement(AFTER);
+        return toElement(parent)->afterPseudoElement();
 
     return 0;
 }
@@ -73,7 +73,7 @@ Node* previousSiblingSlow(const Node* node)
 
     Node* parent = walker.traverseParent(node);
     if (parent && parent->isElementNode())
-        return toElement(parent)->pseudoElement(BEFORE);
+        return toElement(parent)->beforePseudoElement();
 
     return 0;
 }

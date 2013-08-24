@@ -39,9 +39,11 @@ public:
 
     ~ElementRareData();
 
-    void setPseudoElement(PseudoId, PassRefPtr<PseudoElement>);
-    PseudoElement* pseudoElement(PseudoId) const;
-    bool hasPseudoElements() const { return m_generatedBefore || m_generatedAfter; }
+    void setBeforePseudoElement(PassRefPtr<PseudoElement>);
+    void setAfterPseudoElement(PassRefPtr<PseudoElement>);
+
+    PseudoElement* beforePseudoElement() const { return m_beforePseudoElement.get(); }
+    PseudoElement* afterPseudoElement() const { return m_afterPseudoElement.get(); }
 
     void resetComputedStyle();
     void resetDynamicRestyleObservations();
@@ -169,8 +171,8 @@ private:
     RefPtr<ShadowRoot> m_shadowRoot;
     OwnPtr<NamedNodeMap> m_attributeMap;
 
-    RefPtr<PseudoElement> m_generatedBefore;
-    RefPtr<PseudoElement> m_generatedAfter;
+    RefPtr<PseudoElement> m_beforePseudoElement;
+    RefPtr<PseudoElement> m_afterPseudoElement;
 
     ElementRareData(RenderObject*);
     void releasePseudoElement(PseudoElement*);
@@ -215,49 +217,20 @@ inline ElementRareData::ElementRareData(RenderObject* renderer)
 inline ElementRareData::~ElementRareData()
 {
     ASSERT(!m_shadowRoot);
-    ASSERT(!m_generatedBefore);
-    ASSERT(!m_generatedAfter);
+    ASSERT(!m_beforePseudoElement);
+    ASSERT(!m_afterPseudoElement);
 }
 
-inline void ElementRareData::setPseudoElement(PseudoId pseudoId, PassRefPtr<PseudoElement> element)
+inline void ElementRareData::setBeforePseudoElement(PassRefPtr<PseudoElement> pseudoElement)
 {
-    switch (pseudoId) {
-    case BEFORE:
-        releasePseudoElement(m_generatedBefore.get());
-        m_generatedBefore = element;
-        break;
-    case AFTER:
-        releasePseudoElement(m_generatedAfter.get());
-        m_generatedAfter = element;
-        break;
-    default:
-        ASSERT_NOT_REACHED();
-    }
+    ASSERT(!m_beforePseudoElement || !pseudoElement);
+    m_beforePseudoElement = pseudoElement;
 }
 
-inline PseudoElement* ElementRareData::pseudoElement(PseudoId pseudoId) const
+inline void ElementRareData::setAfterPseudoElement(PassRefPtr<PseudoElement> pseudoElement)
 {
-    switch (pseudoId) {
-    case BEFORE:
-        return m_generatedBefore.get();
-    case AFTER:
-        return m_generatedAfter.get();
-    default:
-        return 0;
-    }
-}
-
-inline void ElementRareData::releasePseudoElement(PseudoElement* element)
-{
-    if (!element)
-        return;
-    if (element->attached())
-        Style::detachRenderTree(element);
-    element->clearHostElement();
-
-    ASSERT(!element->nextSibling());
-    ASSERT(!element->previousSibling());
-    ASSERT(!element->parentNode());
+    ASSERT(!m_afterPseudoElement || !pseudoElement);
+    m_afterPseudoElement = pseudoElement;
 }
 
 inline void ElementRareData::resetComputedStyle()

@@ -170,12 +170,10 @@ Element::~Element()
     }
 #endif
 
-    if (hasRareData()) {
-        ElementRareData* data = elementRareData();
-        data->setPseudoElement(BEFORE, 0);
-        data->setPseudoElement(AFTER, 0);
-        removeShadowRoot();
-    }
+    ASSERT(!beforePseudoElement());
+    ASSERT(!afterPseudoElement());
+
+    removeShadowRoot();
 
     if (hasSyntheticAttrChildNodes())
         detachAllAttrNodesFromElement();
@@ -2064,10 +2062,22 @@ void Element::setMinimumSizeForResizing(const LayoutSize& size)
     ensureElementRareData().setMinimumSizeForResizing(size);
 }
 
+static PseudoElement* beforeOrAfterPseudoElement(Element* host, PseudoId pseudoElementSpecifier)
+{
+    switch (pseudoElementSpecifier) {
+    case BEFORE:
+        return host->beforePseudoElement();
+    case AFTER:
+        return host->afterPseudoElement();
+    default:
+        return 0;
+    }
+}
+
 RenderStyle* Element::computedStyle(PseudoId pseudoElementSpecifier)
 {
-    if (PseudoElement* element = pseudoElement(pseudoElementSpecifier))
-        return element->computedStyle();
+    if (PseudoElement* pseudoElement = beforeOrAfterPseudoElement(this, pseudoElementSpecifier))
+        return pseudoElement->computedStyle();
 
     // FIXME: Find and use the renderer from the pseudo element instead of the actual element so that the 'length'
     // properties, which are only known by the renderer because it did the layout, will be correct and so that the
@@ -2302,64 +2312,103 @@ void Element::normalizeAttributes()
     }
 }
 
-void Element::updatePseudoElement(PseudoId pseudoId, Style::Change change)
+bool Element::updateExistingPseudoElement(PseudoElement* existingPseudoElement, Style::Change change)
 {
-    PseudoElement* existing = pseudoElement(pseudoId);
-    if (existing) {
-        // PseudoElement styles hang off their parent element's style so if we needed
-        // a style recalc we should Force one on the pseudo.
-        Style::resolveTree(existing, needsStyleRecalc() ? Style::Force : change);
+    // PseudoElement styles hang off their parent element's style so if we needed
+    // a style recalc we should Force one on the pseudo.
+    Style::resolveTree(existingPseudoElement, needsStyleRecalc() ? Style::Force : change);
 
-        // Wait until our parent is not displayed or pseudoElementRendererIsNeeded
-        // is false, otherwise we could continously create and destroy PseudoElements
-        // when RenderObject::isChildAllowed on our parent returns false for the
-        // PseudoElement's renderer for each style recalc.
-        if (!renderer() || !pseudoElementRendererIsNeeded(renderer()->getCachedPseudoStyle(pseudoId)))
-            setPseudoElement(pseudoId, 0);
-    } else if (RefPtr<PseudoElement> element = createPseudoElementIfNeeded(pseudoId)) {
-        Style::attachRenderTree(element.get());
-        setPseudoElement(pseudoId, element.release());
-    }
+    // FIXME: This is silly.
+    // Wait until our parent is not displayed or pseudoElementRendererIsNeeded
+    // is false, otherwise we could continously create and destroy PseudoElements
+    // when RenderObject::isChildAllowed on our parent returns false for the
+    // PseudoElement's renderer for each style recalc.
+    return renderer() && pseudoElementRendererIsNeeded(existingPseudoElement->renderStyle());
 }
 
 PassRefPtr<PseudoElement> Element::createPseudoElementIfNeeded(PseudoId pseudoId)
 {
     if (!document()->styleSheetCollection()->usesBeforeAfterRules())
         return 0;
-
     if (!renderer() || !renderer()->canHaveGeneratedChildren())
         return 0;
-
     if (isPseudoElement())
         return 0;
-
     if (!pseudoElementRendererIsNeeded(renderer()->getCachedPseudoStyle(pseudoId)))
         return 0;
-
-    return PseudoElement::create(this, pseudoId);
+    RefPtr<PseudoElement> pseudoElement = PseudoElement::create(this, pseudoId);
+    Style::attachRenderTree(pseudoElement.get());
+    return pseudoElement.release();
 }
 
-bool Element::hasPseudoElements() const
+void Element::updateBeforePseudoElement(Style::Change change)
 {
-    return hasRareData() && elementRareData()->hasPseudoElements();
+    if (PseudoElement* existingPseudoElement = beforePseudoElement()) {
+        if (!updateExistingPseudoElement(existingPseudoElement, change))
+            clearBeforePseudoElement();
+        return;
+    }
+    if (RefPtr<PseudoElement> pseudo = createPseudoElementIfNeeded(BEFORE))
+        setBeforePseudoElement(pseudo.release());
 }
 
-PseudoElement* Element::pseudoElement(PseudoId pseudoId) const
+void Element::updateAfterPseudoElement(Style::Change change)
 {
-    return hasRareData() ? elementRareData()->pseudoElement(pseudoId) : 0;
+    if (PseudoElement* existingPseudoElement = afterPseudoElement()) {
+        if (!updateExistingPseudoElement(existingPseudoElement, change))
+            clearAfterPseudoElement();
+        return;
+    }
+    if (RefPtr<PseudoElement> pseudo = createPseudoElementIfNeeded(AFTER))
+        setAfterPseudoElement(pseudo.release());
 }
 
-void Element::setPseudoElement(PseudoId pseudoId, PassRefPtr<PseudoElement> element)
+PseudoElement* Element::beforePseudoElement() const
 {
-    ensureElementRareData().setPseudoElement(pseudoId, element);
+    return hasRareData() ? elementRareData()->beforePseudoElement() : 0;
+}
+
+PseudoElement* Element::afterPseudoElement() const
+{
+    return hasRareData() ? elementRareData()->afterPseudoElement() : 0;
+}
+
+void Element::setBeforePseudoElement(PassRefPtr<PseudoElement> element)
+{
+    ensureElementRareData().setBeforePseudoElement(element);
     resetNeedsShadowTreeWalker();
 }
 
-RenderObject* Element::pseudoElementRenderer(PseudoId pseudoId) const
+void Element::setAfterPseudoElement(PassRefPtr<PseudoElement> element)
 {
-    if (PseudoElement* element = pseudoElement(pseudoId))
-        return element->renderer();
-    return 0;
+    ensureElementRareData().setAfterPseudoElement(element);
+    resetNeedsShadowTreeWalker();
+}
+
+static void disconnectPseudoElement(PseudoElement* pseudoElement)
+{
+    if (!pseudoElement)
+        return;
+    if (pseudoElement->attached())
+        Style::detachRenderTree(pseudoElement);
+    ASSERT(pseudoElement->hostElement());
+    pseudoElement->clearHostElement();
+}
+
+void Element::clearBeforePseudoElement()
+{
+    if (!hasRareData())
+        return;
+    disconnectPseudoElement(elementRareData()->beforePseudoElement());
+    elementRareData()->setBeforePseudoElement(nullptr);
+}
+
+void Element::clearAfterPseudoElement()
+{
+    if (!hasRareData())
+        return;
+    disconnectPseudoElement(elementRareData()->afterPseudoElement());
+    elementRareData()->setAfterPseudoElement(nullptr);
 }
 
 // ElementTraversal API
@@ -2956,11 +3005,11 @@ void Element::clearStyleDerivedDataBeforeDetachingRenderer()
 {
     unregisterNamedFlowContentNode();
     cancelFocusAppearanceUpdate();
+    clearBeforePseudoElement();
+    clearAfterPseudoElement();
     if (!hasRareData())
         return;
     ElementRareData* data = elementRareData();
-    data->setPseudoElement(BEFORE, 0);
-    data->setPseudoElement(AFTER, 0);
     data->setIsInCanvasSubtree(false);
     data->resetComputedStyle();
     data->resetDynamicRestyleObservations();

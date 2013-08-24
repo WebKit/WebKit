@@ -35,6 +35,7 @@
 #include "HTMLNames.h"
 #include "InlineTextBox.h"
 #include "PrintContext.h"
+#include "PseudoElement.h"
 #include "RenderBR.h"
 #include "RenderDetailsMarker.h"
 #include "RenderFileUploadControl.h"
@@ -902,6 +903,8 @@ String externalRepresentation(Element* element, RenderAsTextBehavior behavior)
 
 static void writeCounterValuesFromChildren(TextStream& stream, RenderObject* parent, bool& isFirstCounter)
 {
+    if (!parent)
+        return;
     for (RenderObject* child = parent->firstChild(); child; child = child->nextSibling()) {
         if (child->isCounter()) {
             if (!isFirstCounter)
@@ -921,10 +924,10 @@ String counterValueForElement(Element* element)
     TextStream stream;
     bool isFirstCounter = true;
     // The counter renderers should be children of :before or :after pseudo-elements.
-    if (RenderObject* before = element->pseudoElementRenderer(BEFORE))
-        writeCounterValuesFromChildren(stream, before, isFirstCounter);
-    if (RenderObject* after = element->pseudoElementRenderer(AFTER))
-        writeCounterValuesFromChildren(stream, after, isFirstCounter);
+    if (PseudoElement* before = element->beforePseudoElement())
+        writeCounterValuesFromChildren(stream, before->renderer(), isFirstCounter);
+    if (PseudoElement* after = element->afterPseudoElement())
+        writeCounterValuesFromChildren(stream, after->renderer(), isFirstCounter);
     return stream.release();
 }
 

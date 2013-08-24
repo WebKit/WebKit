@@ -422,9 +422,8 @@ public:
     virtual void finishParsingChildren();
     virtual void beginParsingChildren() OVERRIDE FINAL;
 
-    bool hasPseudoElements() const;
-    PseudoElement* pseudoElement(PseudoId) const;
-    RenderObject* pseudoElementRenderer(PseudoId) const;
+    PseudoElement* beforePseudoElement() const;
+    PseudoElement* afterPseudoElement() const;
     bool childNeedsShadowWalker() const;
     void didShadowTreeAwareChildrenChange();
 
@@ -551,7 +550,8 @@ public:
     virtual void willDetachRenderers();
     virtual void didDetachRenderers();
 
-    void updatePseudoElement(PseudoId, Style::Change = Style::NoChange);
+    void updateBeforePseudoElement(Style::Change);
+    void updateAfterPseudoElement(Style::Change);
     void resetComputedStyle();
     void clearStyleDerivedDataBeforeDetachingRenderer();
     void clearHoverAndActiveStatusBeforeDetachingRenderer();
@@ -590,7 +590,12 @@ private:
     bool isUserActionElementHovered() const;
 
     PassRefPtr<PseudoElement> createPseudoElementIfNeeded(PseudoId);
-    void setPseudoElement(PseudoId, PassRefPtr<PseudoElement>);
+    bool updateExistingPseudoElement(PseudoElement* existing, Style::Change);
+
+    void setBeforePseudoElement(PassRefPtr<PseudoElement>);
+    void setAfterPseudoElement(PassRefPtr<PseudoElement>);
+    void clearBeforePseudoElement();
+    void clearAfterPseudoElement();
 
     virtual bool areAuthorShadowsAllowed() const { return true; }
     virtual void didAddUserAgentShadowRoot(ShadowRoot*) { }

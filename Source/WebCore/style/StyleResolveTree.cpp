@@ -176,7 +176,7 @@ void attachRenderTree(Element* current, const AttachContext& context)
     if (current->parentElement() && current->parentElement()->isInCanvasSubtree())
         current->setIsInCanvasSubtree(true);
 
-    current->updatePseudoElement(BEFORE);
+    current->updateBeforePseudoElement(NoChange);
 
     StyleResolverParentPusher parentPusher(current);
 
@@ -201,7 +201,7 @@ void attachRenderTree(Element* current, const AttachContext& context)
             cache->updateCacheAfterNodeIsAttached(current);
     }
 
-    current->updatePseudoElement(AFTER);
+    current->updateAfterPseudoElement(NoChange);
 
     current->updateFocusAppearanceAfterAttachIfNeeded();
     
@@ -429,7 +429,7 @@ void resolveTree(Element* current, Change change)
             }
         }
 
-        current->updatePseudoElement(BEFORE, change);
+        current->updateBeforePseudoElement(change);
 
         // FIXME: This check is good enough for :hover + foo, but it is not good enough for :hover + foo + bar.
         // For now we will just worry about the common case, since it's a lot trickier to get the second case right
@@ -455,7 +455,7 @@ void resolveTree(Element* current, Change change)
             forceCheckOfAnyElementSibling = forceCheckOfAnyElementSibling || (childRulesChanged && hasIndirectAdjacentRules);
         }
 
-        current->updatePseudoElement(AFTER, change);
+        current->updateAfterPseudoElement(change);
     }
 
     current->clearNeedsStyleRecalc();

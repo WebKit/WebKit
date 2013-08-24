@@ -1,3 +1,64 @@
+2013-08-24  Antti Koivisto  <antti@apple.com>
+
+        Tighten before/after pseudo element accessors
+        https://bugs.webkit.org/show_bug.cgi?id=120204
+
+        Reviewed by Andreas Kling.
+
+        We have generic looking Element::pseudoElement(PseudoID) which only returns before/after pseudo elements.
+        
+        Switch to Element::before/afterPseudoElement(), similarly for setters.
+
+        * WebCore.exp.in:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::styledNode):
+        * dom/Element.cpp:
+        (WebCore::Element::~Element):
+        (WebCore::beforeOrAfterPseudeoElement):
+        (WebCore::Element::computedStyle):
+        (WebCore::Element::updatePseudoElement):
+        (WebCore::Element::createPseudoElementIfNeeded):
+        (WebCore::Element::updateBeforePseudoElement):
+        (WebCore::Element::updateAfterPseudoElement):
+        (WebCore::Element::beforePseudoElement):
+        (WebCore::Element::afterPseudoElement):
+        (WebCore::Element::setBeforePseudoElement):
+        (WebCore::Element::setAfterPseudoElement):
+        (WebCore::disconnectPseudoElement):
+        (WebCore::Element::clearBeforePseudoElement):
+        (WebCore::Element::clearAfterPseudoElement):
+        (WebCore::Element::clearStyleDerivedDataBeforeDetachingRenderer):
+        * dom/Element.h:
+        * dom/ElementRareData.h:
+        (WebCore::ElementRareData::beforePseudoElement):
+        (WebCore::ElementRareData::afterPseudoElement):
+        (WebCore::ElementRareData::hasPseudoElements):
+        (WebCore::ElementRareData::~ElementRareData):
+        (WebCore::ElementRareData::clearBeforePseudoElement):
+        (WebCore::ElementRareData::clearAfterPseudoElement):
+        (WebCore::ElementRareData::setBeforePseudoElement):
+        (WebCore::ElementRareData::setAfterPseudoElement):
+        
+            Move detach logic to Element. ElementRareData should not implement semantics.
+
+        * dom/Node.cpp:
+        (WebCore::Node::pseudoAwarePreviousSibling):
+        (WebCore::Node::pseudoAwareNextSibling):
+        (WebCore::Node::pseudoAwareFirstChild):
+        (WebCore::Node::pseudoAwareLastChild):
+        * dom/NodeRenderingTraversal.cpp:
+        (WebCore::NodeRenderingTraversal::nextSiblingSlow):
+        (WebCore::NodeRenderingTraversal::previousSiblingSlow):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::writeCounterValuesFromChildren):
+        (WebCore::counterValueForElement):
+        * style/StyleResolveTree.cpp:
+        (WebCore::Style::attachRenderTree):
+        (WebCore::Style::resolveTree):
+        * testing/Internals.cpp:
+        (WebCore::Internals::pauseAnimationAtTimeOnPseudoElement):
+        (WebCore::Internals::pauseTransitionAtTimeOnPseudoElement):
+
 2013-08-23  Simon Fraser  <simon.fraser@apple.com>
 
         Improve scrolling behavior in iTunes

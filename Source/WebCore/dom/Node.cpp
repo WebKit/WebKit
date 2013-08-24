@@ -895,7 +895,7 @@ Node* Node::pseudoAwarePreviousSibling() const
         if (isAfterPseudoElement() && parentOrHost->lastChild())
             return parentOrHost->lastChild();
         if (!isBeforePseudoElement())
-            return parentOrHost->pseudoElement(BEFORE);
+            return parentOrHost->beforePseudoElement();
     }
     return previousSibling();
 }
@@ -907,7 +907,7 @@ Node* Node::pseudoAwareNextSibling() const
         if (isBeforePseudoElement() && parentOrHost->firstChild())
             return parentOrHost->firstChild();
         if (!isAfterPseudoElement())
-            return parentOrHost->pseudoElement(AFTER);
+            return parentOrHost->afterPseudoElement();
     }
     return nextSibling();
 }
@@ -916,12 +916,12 @@ Node* Node::pseudoAwareFirstChild() const
 {
     if (isElementNode()) {
         const Element* currentElement = toElement(this);
-        Node* first = currentElement->pseudoElement(BEFORE);
+        Node* first = currentElement->beforePseudoElement();
         if (first)
             return first;
         first = currentElement->firstChild();
         if (!first)
-            first = currentElement->pseudoElement(AFTER);
+            first = currentElement->afterPseudoElement();
         return first;
     }
     return firstChild();
@@ -931,12 +931,12 @@ Node* Node::pseudoAwareLastChild() const
 {
     if (isElementNode()) {
         const Element* currentElement = toElement(this);
-        Node* last = currentElement->pseudoElement(AFTER);
+        Node* last = currentElement->afterPseudoElement();
         if (last)
             return last;
         last = currentElement->lastChild();
         if (!last)
-            last = currentElement->pseudoElement(BEFORE);
+            last = currentElement->beforePseudoElement();
         return last;
     }
     return lastChild();
@@ -1063,7 +1063,14 @@ void Node::removedFrom(ContainerNode* insertionPoint)
 
 bool Node::needsShadowTreeWalkerSlow() const
 {
-    return (isShadowRoot() || (isElementNode() && (isInsertionPoint() || isPseudoElement() || toElement(this)->hasPseudoElements() || toElement(this)->shadowRoot())));
+    if (isShadowRoot())
+        return true;
+    if (!isElementNode())
+        return false;
+    const Element* asElement = toElement(this);
+    if (asElement->isPseudoElement() || asElement->beforePseudoElement() || asElement->afterPseudoElement())
+        return true;
+    return asElement->isInsertionPoint() || asElement->shadowRoot();
 }
 
 bool Node::isRootEditableElement() const
