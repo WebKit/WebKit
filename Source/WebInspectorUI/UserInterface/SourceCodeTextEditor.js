@@ -676,6 +676,88 @@ WebInspector.SourceCodeTextEditor.prototype = {
         return lineNumber in this._invalidLineNumbers;
     },
 
+    textEditorGutterContextMenu: function(textEditor, lineNumber, columnNumber, editorBreakpoints, event)
+    {
+        if (!this._supportsDebugging)
+            return;
+
+        event.preventDefault();
+
+        var breakpoints = [];
+        for (var i = 0; i < editorBreakpoints.length; ++i) {
+            var lineInfo = editorBreakpoints[i];
+            var breakpoint = this._breakpointForEditorLineInfo(lineInfo);
+            console.assert(breakpoint);
+            if (breakpoint)
+                breakpoints.push(breakpoint);
+        }
+
+        // No breakpoints.
+        if (!breakpoints.length) {
+            function addBreakpoint()
+            {
+                var data = this.textEditorBreakpointAdded(this, lineNumber, columnNumber);
+                this.setBreakpointInfoForLineAndColumn(data.lineNumber, data.columnNumber, data.breakpointInfo);
+            }
+
+            var contextMenu = new WebInspector.ContextMenu(event);
+            contextMenu.appendItem(WebInspector.UIString("Add Breakpoint"), addBreakpoint.bind(this));
+            contextMenu.show();
+            return;
+        }
+
+        // Single breakpoint.
+        if (breakpoints.length === 1) {
+            var breakpoint = breakpoints[0];
+            function revealInSidebar()
+            {
+                WebInspector.debuggerSidebarPanel.show();
+                var treeElement = WebInspector.debuggerSidebarPanel.treeElementForRepresentedObject(breakpoint);
+                if (treeElement)
+                    treeElement.revealAndSelect();
+            }
+
+            var contextMenu = new WebInspector.ContextMenu(event);
+            breakpoint.appendContextMenuItems(contextMenu, event.target);
+            contextMenu.appendSeparator();
+            contextMenu.appendItem(WebInspector.UIString("Reveal in Debugger Navigation Sidebar"), revealInSidebar);
+            contextMenu.show();
+            return;
+        }
+
+        // Multiple breakpoints.
+        var shouldDisable = false;
+        for (var i = 0; i < breakpoints.length; ++i) {
+            if (!breakpoints[i].disabled) {
+                shouldDisable = true;
+                break;
+            }
+        }
+
+        function removeBreakpoints()
+        {
+            for (var i = 0; i < breakpoints.length; ++i) {
+                var breakpoint = breakpoints[i];
+                if (WebInspector.debuggerManager.isBreakpointRemovable(breakpoint))
+                    WebInspector.debuggerManager.removeBreakpoint(breakpoint);
+            }
+        }
+
+        function toggleBreakpoints()
+        {
+            for (var i = 0; i < breakpoints.length; ++i)
+                breakpoints[i].disabled = shouldDisable;
+        }
+
+        var contextMenu = new WebInspector.ContextMenu(event);
+        if (shouldDisable)
+            contextMenu.appendItem(WebInspector.UIString("Disable Breakpoints"), toggleBreakpoints.bind(this));
+        else
+            contextMenu.appendItem(WebInspector.UIString("Enable Breakpoints"), toggleBreakpoints.bind(this));
+        contextMenu.appendItem(WebInspector.UIString("Delete Breakpoints"), removeBreakpoints.bind(this));
+        contextMenu.show();
+    },
+
     textEditorBreakpointAdded: function(textEditor, lineNumber, columnNumber)
     {
         if (!this._supportsDebugging)

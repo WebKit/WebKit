@@ -46,6 +46,7 @@ WebInspector.TextEditor = function(element, mimeType, delegate)
 
     this._codeMirror.on("change", this._contentChanged.bind(this));
     this._codeMirror.on("gutterClick", this._gutterMouseDown.bind(this));
+    this._codeMirror.on("gutterContextMenu", this._gutterContextMenu.bind(this));
     this._codeMirror.getScrollerElement().addEventListener("click", this._openClickedLinks.bind(this), true);
 
     this._completionController = new WebInspector.CodeMirrorCompletionController(this._codeMirror, this);
@@ -962,6 +963,17 @@ WebInspector.TextEditor.prototype = {
         // Register these listeners on the document so we can track the mouse if it leaves the gutter.
         document.addEventListener("mousemove", this._documentMouseMovedEventListener, true);
         document.addEventListener("mouseup", this._documentMouseUpEventListener, true);
+    },
+
+    _gutterContextMenu: function(codeMirror, lineNumber, gutterElement, event)
+    {
+        if (this._delegate && typeof this._delegate.textEditorGutterContextMenu === "function") {
+            var breakpoints = [];
+            for (var columnNumber in this._breakpoints[lineNumber])
+                breakpoints.push({lineNumber:lineNumber, columnNumber:columnNumber});
+
+            this._delegate.textEditorGutterContextMenu(this, lineNumber, 0, breakpoints, event);
+        }
     },
 
     _documentMouseMoved: function(event)
