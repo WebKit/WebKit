@@ -1,3 +1,14 @@
+2013-08-24  Oliver Hunt  <oliver@apple.com>
+
+        REGRESSION(r154498): Crashes on EFL, GTK, Qt on release configurations
+        https://bugs.webkit.org/show_bug.cgi?id=120246
+
+        Reviewed by Antti Koivisto.
+
+        Undestroy all the platforms that don't use the global new overload
+
+        * wtf/Compression.h:
+
 2013-08-21  Mark Rowe  <mrowe@apple.com>
 
         <https://webkit.org/b/120141> Make RetainPtr work with ARC.

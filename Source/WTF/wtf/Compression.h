@@ -33,6 +33,7 @@ namespace WTF {
 
 class GenericCompressedData {
     WTF_MAKE_NONCOPYABLE(GenericCompressedData)
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     WTF_EXPORT_PRIVATE static PassOwnPtr<GenericCompressedData> create(const uint8_t*, size_t);
     uint32_t compressedSize() const { return m_compressedSize; }
