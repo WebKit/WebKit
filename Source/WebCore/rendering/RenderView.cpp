@@ -1086,6 +1086,11 @@ bool RenderView::shouldDisableLayoutStateForSubtree(RenderObject* renderer) cons
     return false;
 }
 
+IntSize RenderView::viewportSize() const
+{
+    return frameView().visibleContentRect(ScrollableArea::IncludeScrollbars).size();
+}
+
 void RenderView::updateHitTestResult(HitTestResult& result, const LayoutPoint& point)
 {
     if (result.innerNode())

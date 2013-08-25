@@ -1121,8 +1121,6 @@ public:
     void suspendScheduledTasks(ActiveDOMObject::ReasonForSuspension);
     void resumeScheduledTasks(ActiveDOMObject::ReasonForSuspension);
 
-    IntSize viewportSize() const;
-
 #if ENABLE(CSS_DEVICE_ADAPTATION)
     IntSize initialViewportSize() const;
 #endif

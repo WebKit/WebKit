@@ -1,5 +1,20 @@
 2013-08-24  Andreas Kling  <akling@apple.com>
 
+        Merge Document::viewportSize() logic into RenderView::viewportSize().
+        <https://webkit.org/b/120254>
+
+        Reviewed by Darin Adler.
+
+        RenderView can just ask FrameView (the viewport) about its size directly, no need for
+        a weirdly-placed method on Document.
+
+        * dom/Document.cpp:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::viewportSize):
+        * rendering/RenderView.h:
+
+2013-08-24  Andreas Kling  <akling@apple.com>
+
         RenderObject::frame() should return a reference.
         <https://webkit.org/b/120251>
 

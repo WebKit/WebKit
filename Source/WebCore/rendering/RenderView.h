@@ -214,7 +214,7 @@ public:
 
     IntervalArena* intervalArena();
 
-    IntSize viewportSize() const { return document()->viewportSize(); }
+    IntSize viewportSize() const;
 
     void setRenderQuoteHead(RenderQuote* head) { m_renderQuoteHead = head; }
     RenderQuote* renderQuoteHead() const { return m_renderQuoteHead; }
