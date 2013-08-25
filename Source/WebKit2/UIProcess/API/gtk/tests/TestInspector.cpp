@@ -20,6 +20,7 @@
 #include "config.h"
 
 #include "WebViewTest.h"
+#include <wtf/Vector.h>
 #include <wtf/gobject/GRefPtr.h>
 
 class InspectorTest: public WebViewTest {

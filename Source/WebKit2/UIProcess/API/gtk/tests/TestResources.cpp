@@ -21,6 +21,7 @@
 
 #include "WebKitTestServer.h"
 #include "WebViewTest.h"
+#include <wtf/Vector.h>
 #include <wtf/gobject/GRefPtr.h>
 
 static WebKitTestServer* kServer;
