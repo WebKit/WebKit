@@ -260,7 +260,7 @@ static void addMimeTypesForFormat(ListHashSet<String>& results, const FORMATETC&
     }
 }
 
-ListHashSet<String> Pasteboard::types()
+Vector<String> Pasteboard::types()
 {
     ListHashSet<String> results;
 
@@ -289,7 +289,9 @@ ListHashSet<String> Pasteboard::types()
         }
     }
 
-    return results;
+    Vector<String> vector;
+    copyToVector(results, vector);
+    return vector;
 }
 
 String Pasteboard::readString(const String& type)

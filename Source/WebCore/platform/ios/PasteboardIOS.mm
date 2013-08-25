@@ -608,7 +608,7 @@ bool Pasteboard::writeString(const String& type, const String& data)
     return true;
 }
 
-ListHashSet<String> Pasteboard::types()
+Vector<String> Pasteboard::types()
 {
     NSArray* types = supportedPasteboardTypes();
 
@@ -624,7 +624,9 @@ ListHashSet<String> Pasteboard::types()
         addHTMLClipboardTypesForCocoaType(result, type);
     }
 
-    return result;
+    Vector<String> vector;
+    copyToVector(result, vector);
+    return vector;
 }
 
 Vector<String> Pasteboard::readFilenames()

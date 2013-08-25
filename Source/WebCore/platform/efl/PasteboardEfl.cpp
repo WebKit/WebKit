@@ -128,10 +128,10 @@ bool Pasteboard::writeString(const String&, const String&)
     return false;
 }
 
-ListHashSet<String> Pasteboard::types()
+Vector<String> Pasteboard::types()
 {
     notImplemented();
-    return ListHashSet<String>();
+    return Vector<String>();
 }
 
 Vector<String> Pasteboard::readFilenames()

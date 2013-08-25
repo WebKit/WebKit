@@ -29,7 +29,6 @@
 #include "DragActions.h"
 #include "DragImage.h"
 #include "IntPoint.h"
-#include <wtf/ListHashSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
@@ -55,7 +54,7 @@ namespace WebCore {
         String effectAllowed() const;
         void setEffectAllowed(const String&);
 
-        ListHashSet<String> types() const;
+        Vector<String> types() const;
 
         PassRefPtr<FileList> files() const;
 

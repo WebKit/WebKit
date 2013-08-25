@@ -155,11 +155,11 @@ bool Pasteboard::writeString(const String& type, const String& text)
     return false;
 }
 
-ListHashSet<String> Pasteboard::types()
+Vector<String> Pasteboard::types()
 {
     // We use hardcoded list here since there seems to be no API to get the list.
     // FIXME: Should omit types where we have no data, using the same functions used above in Pasteboard::hasData.
-    ListHashSet<String> types;
+    Vector<String> types;
     types.add("text/plain");
     types.add("text/html");
     types.add("text/url");

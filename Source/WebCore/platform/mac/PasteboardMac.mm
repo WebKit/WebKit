@@ -795,7 +795,7 @@ bool Pasteboard::writeString(const String& type, const String& data)
     return false;
 }
 
-ListHashSet<String> Pasteboard::types()
+Vector<String> Pasteboard::types()
 {
     Vector<String> types;
     platformStrategies()->pasteboardStrategy()->getTypes(types, m_pasteboardName);
@@ -803,7 +803,7 @@ ListHashSet<String> Pasteboard::types()
     // Enforce changeCount ourselves for security. We check after reading instead of before to be
     // sure it doesn't change between our testing the change count and accessing the data.
     if (m_changeCount != platformStrategies()->pasteboardStrategy()->changeCount(m_pasteboardName))
-        return ListHashSet<String>();
+        return Vector<String>();
 
     ListHashSet<String> result;
     // FIXME: This loop could be split into two stages. One which adds all the HTML5 specified types
@@ -815,7 +815,8 @@ ListHashSet<String> Pasteboard::types()
         addHTMLClipboardTypesForCocoaType(result, types[i], m_pasteboardName);
     }
 
-    return result;
+    copyToVector(result, types);
+    return types;
 }
 
 Vector<String> Pasteboard::readFilenames()

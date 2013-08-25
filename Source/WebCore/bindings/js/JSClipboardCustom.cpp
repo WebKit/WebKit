@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,36 +30,15 @@
 #include "JSClipboard.h"
 
 #include "Clipboard.h"
-#include "Element.h"
-#include "HTMLImageElement.h"
-#include "HTMLNames.h"
-#include "IntPoint.h"
-#include "JSNode.h"
-#include "Node.h"
-#include <runtime/ArrayPrototype.h>
-#include <runtime/Error.h>
-#include <wtf/text/StringHash.h>
-#include <wtf/text/WTFString.h>
 
 using namespace JSC;
 
 namespace WebCore {
 
-using namespace HTMLNames;
-
 JSValue JSClipboard::types(ExecState* exec) const
 {
-    Clipboard* clipboard = impl();
-
-    ListHashSet<String> types = clipboard->types();
-    if (types.isEmpty())
-        return jsNull();
-
-    MarkedArgumentBuffer list;
-    ListHashSet<String>::const_iterator end = types.end();
-    for (ListHashSet<String>::const_iterator it = types.begin(); it != end; ++it)
-        list.append(jsStringWithCache(exec, *it));
-    return constructArray(exec, 0, globalObject(), list);
+    Vector<String> types = impl()->types();
+    return types.isEmpty() ? jsNull() : jsArray(exec, globalObject(), types);
 }
 
 } // namespace WebCore

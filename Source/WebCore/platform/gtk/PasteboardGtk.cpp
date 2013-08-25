@@ -361,28 +361,28 @@ bool Pasteboard::hasData()
     return m_dataObject->hasText() || m_dataObject->hasMarkup() || m_dataObject->hasURIList() || m_dataObject->hasImage();
 }
 
-ListHashSet<String> Pasteboard::types()
+Vector<String> Pasteboard::types()
 {
     if (m_gtkClipboard)
         PasteboardHelper::defaultPasteboardHelper()->getClipboardContents(m_gtkClipboard);
 
-    ListHashSet<String> types;
+    Vector<String> types;
     if (m_dataObject->hasText()) {
-        types.add(ASCIILiteral("text/plain"));
-        types.add(ASCIILiteral("Text"));
-        types.add(ASCIILiteral("text"));
+        types.append(ASCIILiteral("text/plain"));
+        types.append(ASCIILiteral("Text"));
+        types.append(ASCIILiteral("text"));
     }
 
     if (m_dataObject->hasMarkup())
-        types.add(ASCIILiteral("text/html"));
+        types.append(ASCIILiteral("text/html"));
 
     if (m_dataObject->hasURIList()) {
-        types.add(ASCIILiteral("text/uri-list"));
-        types.add(ASCIILiteral("URL"));
+        types.append(ASCIILiteral("text/uri-list"));
+        types.append(ASCIILiteral("URL"));
     }
 
     if (m_dataObject->hasFilenames())
-        types.add(ASCIILiteral("Files"));
+        types.append(ASCIILiteral("Files"));
 
     return types;
 }

@@ -27,7 +27,6 @@
 #define Pasteboard_h
 
 #include "DragImage.h"
-#include <wtf/ListHashSet.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -123,7 +122,7 @@ public:
 #endif
 
     bool hasData();
-    ListHashSet<String> types();
+    Vector<String> types();
 
     String readString(const String& type);
     Vector<String> readFilenames();

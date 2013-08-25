@@ -1,3 +1,33 @@
+2013-08-25  Darin Adler  <darin@apple.com>
+
+        Make JavaScript binding for Clipboard::types more normal
+        https://bugs.webkit.org/show_bug.cgi?id=120271
+
+        Reviewed by Anders Carlsson.
+
+        * bindings/js/JSClipboardCustom.cpp:
+        (WebCore::JSClipboard::types): Make a simple custom binding. Only needed because
+        there is a special value, null, this can return.
+
+        * dom/Clipboard.cpp:
+        (WebCore::Clipboard::types): Return Vector<String> instead of ListHashSet<String>.
+        * dom/Clipboard.h: Ditto.
+        * platform/Pasteboard.h: Ditto.
+        * platform/blackberry/PasteboardBlackBerry.cpp:
+        (WebCore::Pasteboard::types): Ditto.
+        * platform/efl/PasteboardEfl.cpp:
+        (WebCore::Pasteboard::types): Ditto.
+        * platform/gtk/PasteboardGtk.cpp:
+        (WebCore::Pasteboard::types): Ditto.
+        * platform/ios/PasteboardIOS.mm:
+        (WebCore::Pasteboard::types): Ditto.
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::types): Ditto.
+        * platform/qt/PasteboardQt.cpp:
+        (WebCore::Pasteboard::types): Ditto.
+        * platform/win/PasteboardWin.cpp:
+        (WebCore::Pasteboard::types): Ditto.
+
 2013-08-25  David Kilzer  <ddkilzer@apple.com>
 
         Unreviewed rollout of r154571. Broke internal iOS build.
