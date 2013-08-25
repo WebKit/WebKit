@@ -149,6 +149,13 @@ void CachedFrameBase::restore()
     m_document->documentDidResumeFromPageCache();
 }
 
+static void clearTimers(FrameView& view, Document& document)
+{
+    view.unscheduleRelayout();
+    view.frame().animation().suspendAnimationsForDocument(&document);
+    view.frame().eventHandler().stopAutoscrollTimer();
+}
+
 CachedFrame::CachedFrame(Frame* frame)
     : CachedFrameBase(frame)
 {
@@ -191,7 +198,7 @@ CachedFrame::CachedFrame(Frame* frame)
 #endif
 
     // documentWillSuspendForPageCache() can set up a layout timer on the FrameView, so clear timers after that.
-    frame->clearTimers();
+    clearTimers(*m_view, *m_document);
 
     // Deconstruct the FrameTree, to restore it later.
     // We do this for two reasons:
@@ -271,7 +278,7 @@ void CachedFrame::destroy()
     if (m_cachedFramePlatformData)
         m_cachedFramePlatformData->clear();
 
-    Frame::clearTimers(m_view.get(), m_document.get());
+    clearTimers(*m_view, *m_document);
 
     // FIXME: Why do we need to call removeAllEventListeners here? When the document is in page cache, this method won't work
     // fully anyway, because the document won't be able to access its DOMWindow object (due to being frameless).

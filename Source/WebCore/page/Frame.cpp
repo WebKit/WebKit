@@ -614,20 +614,6 @@ Frame* Frame::frameForWidget(const Widget* widget)
     return &toFrameView(widget)->frame();
 }
 
-void Frame::clearTimers(FrameView *view, Document *document)
-{
-    if (view) {
-        view->unscheduleRelayout();
-        view->frame().animation().suspendAnimationsForDocument(document);
-        view->frame().eventHandler().stopAutoscrollTimer();
-    }
-}
-
-void Frame::clearTimers()
-{
-    clearTimers(m_view.get(), document());
-}
-
 #if ENABLE(PAGE_VISIBILITY_API)
 void Frame::dispatchVisibilityStateChangeEvent()
 {

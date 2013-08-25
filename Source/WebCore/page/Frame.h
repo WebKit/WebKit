@@ -169,9 +169,6 @@ namespace WebCore {
         int orientation() const { return m_orientation; }
 #endif
 
-        void clearTimers();
-        static void clearTimers(FrameView*, Document*);
-
         String documentTypeString() const;
 
         String displayStringModifiedByEncoding(const String&) const;
