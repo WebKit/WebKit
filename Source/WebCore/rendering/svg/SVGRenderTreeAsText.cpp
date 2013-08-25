@@ -653,7 +653,7 @@ void writeResources(TextStream& ts, const RenderObject& object, int indent)
     // For now leave the DRT output as is, but later on we should change this so cycles are properly ignored in the DRT output.
     RenderObject& renderer = const_cast<RenderObject&>(object);
     if (!svgStyle->maskerResource().isEmpty()) {
-        if (RenderSVGResourceMasker* masker = getRenderSVGResourceById<RenderSVGResourceMasker>(object.document(), svgStyle->maskerResource())) {
+        if (RenderSVGResourceMasker* masker = getRenderSVGResourceById<RenderSVGResourceMasker>(&object.document(), svgStyle->maskerResource())) {
             writeIndent(ts, indent);
             ts << " ";
             writeNameAndQuotedValue(ts, "masker", svgStyle->maskerResource());
@@ -663,7 +663,7 @@ void writeResources(TextStream& ts, const RenderObject& object, int indent)
         }
     }
     if (!svgStyle->clipperResource().isEmpty()) {
-        if (RenderSVGResourceClipper* clipper = getRenderSVGResourceById<RenderSVGResourceClipper>(object.document(), svgStyle->clipperResource())) {
+        if (RenderSVGResourceClipper* clipper = getRenderSVGResourceById<RenderSVGResourceClipper>(&object.document(), svgStyle->clipperResource())) {
             writeIndent(ts, indent);
             ts << " ";
             writeNameAndQuotedValue(ts, "clipPath", svgStyle->clipperResource());
@@ -674,7 +674,7 @@ void writeResources(TextStream& ts, const RenderObject& object, int indent)
     }
 #if ENABLE(FILTERS)
     if (!svgStyle->filterResource().isEmpty()) {
-        if (RenderSVGResourceFilter* filter = getRenderSVGResourceById<RenderSVGResourceFilter>(object.document(), svgStyle->filterResource())) {
+        if (RenderSVGResourceFilter* filter = getRenderSVGResourceById<RenderSVGResourceFilter>(&object.document(), svgStyle->filterResource())) {
             writeIndent(ts, indent);
             ts << " ";
             writeNameAndQuotedValue(ts, "filter", svgStyle->filterResource());

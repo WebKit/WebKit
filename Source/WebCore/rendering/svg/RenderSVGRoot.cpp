@@ -133,15 +133,11 @@ bool RenderSVGRoot::isEmbeddedThroughFrameContainingSVGDocument() const
     if (!node())
         return false;
 
-    Frame* frame = node()->document()->frame();
-    if (!frame)
-        return false;
-
     // If our frame has an owner renderer, we're embedded through eg. object/embed/iframe,
     // but we only negotiate if we're in an SVG document.
-    if (!frame->ownerRenderer())
+    if (!frame().ownerRenderer())
         return false;
-    return frame->document()->isSVGDocument();
+    return frame().document()->isSVGDocument();
 }
 
 static inline LayoutUnit resolveLengthAttributeForSVG(const Length& length, float scale, float maxSize, RenderView* renderView)
@@ -166,7 +162,7 @@ LayoutUnit RenderSVGRoot::computeReplacedLogicalWidth(ShouldComputePreferred sho
 
     // SVG embedded through object/embed/iframe.
     if (isEmbeddedThroughFrameContainingSVGDocument())
-        return document()->frame()->ownerRenderer()->availableLogicalWidth();
+        return frame().ownerRenderer()->availableLogicalWidth();
 
     // SVG embedded via SVGImage (background-image/border-image/etc) / Inline SVG.
     return RenderReplaced::computeReplacedLogicalWidth(shouldComputePreferred);
@@ -201,7 +197,7 @@ LayoutUnit RenderSVGRoot::computeReplacedLogicalHeight() const
 
     // SVG embedded through object/embed/iframe.
     if (isEmbeddedThroughFrameContainingSVGDocument())
-        return document()->frame()->ownerRenderer()->availableLogicalHeight(IncludeMarginBorderPadding);
+        return frame().ownerRenderer()->availableLogicalHeight(IncludeMarginBorderPadding);
 
     // SVG embedded via SVGImage (background-image/border-image/etc) / Inline SVG.
     return RenderReplaced::computeReplacedLogicalHeight();

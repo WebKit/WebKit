@@ -58,7 +58,7 @@ ImplicitAnimation::~ImplicitAnimation()
 
 bool ImplicitAnimation::shouldSendEventForListener(Document::ListenerType inListenerType) const
 {
-    return m_object->document()->hasListenerType(inListenerType);
+    return m_object->document().hasListenerType(inListenerType);
 }
 
 void ImplicitAnimation::animate(CompositeAnimation*, RenderObject*, const RenderStyle*, RenderStyle* targetStyle, RefPtr<RenderStyle>& animatedStyle)

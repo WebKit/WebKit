@@ -529,7 +529,7 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
     if (logicalStart >= paintEnd || logicalStart + logicalExtent <= paintStart)
         return;
 
-    bool isPrinting = textRenderer()->document()->printing();
+    bool isPrinting = textRenderer()->document().printing();
     
     // Determine whether or not we're selected.
     bool haveSelection = !isPrinting && paintInfo.phase != PaintPhaseTextClip && selectionState() != RenderObject::SelectionNone;
@@ -592,7 +592,7 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
         if (isPrinting) {
             if (styleToUse->printColorAdjust() == PrintColorAdjustEconomy)
                 forceBackgroundToWhite = true;
-            if (textRenderer()->document()->settings() && textRenderer()->document()->settings()->shouldPrintBackgrounds())
+            if (textRenderer()->document().settings() && textRenderer()->document().settings()->shouldPrintBackgrounds())
                 forceBackgroundToWhite = false;
         }
 
@@ -1153,7 +1153,7 @@ void InlineTextBox::paintDecoration(GraphicsContext* context, const FloatPoint& 
         renderer()->getTextDecorationColors(deco, underline, overline, linethrough, true, true);
     
     // Use a special function for underlines to get the positioning exactly right.
-    bool isPrinting = textRenderer()->document()->printing();
+    bool isPrinting = textRenderer()->document().printing();
     context->setStrokeThickness(textDecorationThickness);
 
     bool linesAreOpaque = !isPrinting && (!(deco & TextDecorationUnderline) || underline.alpha() == 255) && (!(deco & TextDecorationOverline) || overline.alpha() == 255) && (!(deco & TextDecorationLineThrough) || linethrough.alpha() == 255);
@@ -1294,7 +1294,7 @@ static GraphicsContext::DocumentMarkerLineStyle lineStyleForMarkerType(DocumentM
 void InlineTextBox::paintDocumentMarker(GraphicsContext* pt, const FloatPoint& boxOrigin, DocumentMarker* marker, RenderStyle* style, const Font& font, bool grammar)
 {
     // Never print spelling/grammar markers (5327887)
-    if (textRenderer()->document()->printing())
+    if (textRenderer()->document().printing())
         return;
 
     if (m_truncation == cFullTruncation)
@@ -1410,7 +1410,7 @@ void InlineTextBox::paintDocumentMarkers(GraphicsContext* pt, const FloatPoint& 
     if (!renderer()->node())
         return;
 
-    Vector<DocumentMarker*> markers = renderer()->document()->markers().markersFor(renderer()->node());
+    Vector<DocumentMarker*> markers = renderer()->document().markers().markersFor(renderer()->node());
     Vector<DocumentMarker*>::const_iterator markerIt = markers.begin();
 
     // Give any document markers that touch this run a chance to draw before the text has been drawn.
@@ -1510,7 +1510,7 @@ void InlineTextBox::paintCompositionUnderline(GraphicsContext* ctx, const FloatP
 
     ctx->setStrokeColor(underline.color, renderer()->style()->colorSpace());
     ctx->setStrokeThickness(lineThickness);
-    ctx->drawLineForText(FloatPoint(boxOrigin.x() + start, boxOrigin.y() + logicalHeight() - lineThickness), width, textRenderer()->document()->printing());
+    ctx->drawLineForText(FloatPoint(boxOrigin.x() + start, boxOrigin.y() + logicalHeight() - lineThickness), width, textRenderer()->document().printing());
 }
 
 int InlineTextBox::caretMinOffset() const

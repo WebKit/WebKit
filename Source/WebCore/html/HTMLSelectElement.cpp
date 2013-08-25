@@ -384,7 +384,7 @@ void HTMLSelectElement::optionElementChildrenChanged()
     setNeedsValidityCheck();
 
     if (renderer()) {
-        if (AXObjectCache* cache = renderer()->document()->existingAXObjectCache())
+        if (AXObjectCache* cache = renderer()->document().existingAXObjectCache())
             cache->childrenChanged(this);
     }
 }
@@ -730,7 +730,7 @@ void HTMLSelectElement::setRecalcListItems()
         invalidateSelectedItems();
     
     if (renderer()) {
-        if (AXObjectCache* cache = renderer()->document()->existingAXObjectCache())
+        if (AXObjectCache* cache = renderer()->document().existingAXObjectCache())
             cache->childrenChanged(this);
     }
 }

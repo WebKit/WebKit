@@ -128,7 +128,7 @@ void RenderListBox::updateFromElement()
                 FontDescription d = itemFont.fontDescription();
                 d.setWeight(d.bolderWeight());
                 itemFont = Font(d, itemFont.letterSpacing(), itemFont.wordSpacing());
-                itemFont.update(document()->ensureStyleResolver().fontSelector());
+                itemFont.update(document().ensureStyleResolver().fontSelector());
             }
 
             if (!text.isEmpty()) {
@@ -164,7 +164,7 @@ void RenderListBox::selectionChanged()
             scrollToRevealSelection();
     }
     
-    if (AXObjectCache* cache = document()->existingAXObjectCache())
+    if (AXObjectCache* cache = document().existingAXObjectCache())
         cache->selectedChildrenChanged(this);
 }
 
@@ -410,7 +410,7 @@ void RenderListBox::paintItemForeground(PaintInfo& paintInfo, const LayoutPoint&
 
     Color textColor = element->renderStyle() ? element->renderStyle()->visitedDependentColor(CSSPropertyColor) : style()->visitedDependentColor(CSSPropertyColor);
     if (isOptionElement && toHTMLOptionElement(element)->selected()) {
-        if (frame().selection().isFocusedAndActive() && document()->focusedElement() == node())
+        if (frame().selection().isFocusedAndActive() && document().focusedElement() == node())
             textColor = theme()->activeListBoxSelectionForegroundColor();
         // Honor the foreground color for disabled items
         else if (!element->isDisabledFormControl() && !select->isDisabledFormControl())
@@ -429,7 +429,7 @@ void RenderListBox::paintItemForeground(PaintInfo& paintInfo, const LayoutPoint&
         FontDescription d = itemFont.fontDescription();
         d.setWeight(d.bolderWeight());
         itemFont = Font(d, itemFont.letterSpacing(), itemFont.wordSpacing());
-        itemFont.update(document()->ensureStyleResolver().fontSelector());
+        itemFont.update(document().ensureStyleResolver().fontSelector());
     }
 
     // Draw the item text
@@ -443,7 +443,7 @@ void RenderListBox::paintItemBackground(PaintInfo& paintInfo, const LayoutPoint&
 
     Color backColor;
     if (isHTMLOptionElement(element) && toHTMLOptionElement(element)->selected()) {
-        if (frame().selection().isFocusedAndActive() && document()->focusedElement() == node())
+        if (frame().selection().isFocusedAndActive() && document().focusedElement() == node())
             backColor = theme()->activeListBoxSelectionBackgroundColor();
         else
             backColor = theme()->inactiveListBoxSelectionBackgroundColor();
@@ -835,7 +835,7 @@ PassRefPtr<Scrollbar> RenderListBox::createScrollbar()
         widget = Scrollbar::createNativeScrollbar(this, VerticalScrollbar, theme()->scrollbarControlSizeForPart(ListboxPart));
         didAddScrollbar(widget.get(), VerticalScrollbar);
     }
-    document()->view()->addChild(widget.get());        
+    view().frameView().addChild(widget.get());
     return widget.release();
 }
 
@@ -866,8 +866,8 @@ void RenderListBox::setHasVerticalScrollbar(bool hasScrollbar)
 
     // Force an update since we know the scrollbars have changed things.
 #if ENABLE(DASHBOARD_SUPPORT) || ENABLE(DRAGGABLE_REGION)
-    if (document()->hasAnnotatedRegions())
-        document()->setAnnotatedRegionsDirty(true);
+    if (document().hasAnnotatedRegions())
+        document().setAnnotatedRegionsDirty(true);
 #endif
 }
 

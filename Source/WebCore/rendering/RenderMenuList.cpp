@@ -116,13 +116,13 @@ void RenderMenuList::adjustInnerStyle()
     innerStyle->setPaddingTop(Length(theme()->popupInternalPaddingTop(style()), Fixed));
     innerStyle->setPaddingBottom(Length(theme()->popupInternalPaddingBottom(style()), Fixed));
 
-    if (document()->page()->chrome().selectItemWritingDirectionIsNatural()) {
+    if (document().page()->chrome().selectItemWritingDirectionIsNatural()) {
         // Items in the popup will not respect the CSS text-align and direction properties,
         // so we must adjust our own style to match.
         innerStyle->setTextAlign(LEFT);
         TextDirection direction = (m_buttonText && m_buttonText->text()->defaultWritingDirection() == WTF::Unicode::RightToLeft) ? RTL : LTR;
         innerStyle->setDirection(direction);
-    } else if (m_optionStyle && document()->page()->chrome().selectItemAlignmentFollowsMenuWritingDirection()) {
+    } else if (m_optionStyle && document().page()->chrome().selectItemAlignmentFollowsMenuWritingDirection()) {
         if ((m_optionStyle->direction() != innerStyle->direction() || m_optionStyle->unicodeBidi() != innerStyle->unicodeBidi()))
             m_innerBlock->setNeedsLayoutAndPrefWidthsRecalc();
         innerStyle->setTextAlign(style()->isLeftToRightDirection() ? LEFT : RIGHT);
@@ -142,7 +142,7 @@ void RenderMenuList::addChild(RenderObject* newChild, RenderObject* beforeChild)
     m_innerBlock->addChild(newChild, beforeChild);
     ASSERT(m_innerBlock == firstChild());
 
-    if (AXObjectCache* cache = document()->existingAXObjectCache())
+    if (AXObjectCache* cache = document().existingAXObjectCache())
         cache->childrenChanged(this);
 }
 
@@ -245,7 +245,7 @@ void RenderMenuList::setText(const String& s)
         if (!m_buttonText || !m_buttonText->isBR()) {
             if (m_buttonText)
                 m_buttonText->destroy();
-            m_buttonText = new (renderArena()) RenderBR(document());
+            m_buttonText = new (renderArena()) RenderBR(&document());
             m_buttonText->setStyle(style());
             addChild(m_buttonText);
         }
@@ -255,7 +255,7 @@ void RenderMenuList::setText(const String& s)
         else {
             if (m_buttonText)
                 m_buttonText->destroy();
-            m_buttonText = new (renderArena()) RenderText(document(), s.impl());
+            m_buttonText = new (renderArena()) RenderText(&document(), s.impl());
             m_buttonText->setStyle(style());
             addChild(m_buttonText);
         }
@@ -325,7 +325,7 @@ void RenderMenuList::showPopup()
     if (m_popupIsVisible)
         return;
 
-    if (document()->page()->chrome().hasOpenedPopup())
+    if (document().page()->chrome().hasOpenedPopup())
         return;
 
     // Create m_innerBlock here so it ends up as the first child.
@@ -333,7 +333,7 @@ void RenderMenuList::showPopup()
     // inside the showPopup call and it would fail.
     createInnerBlock();
     if (!m_popup)
-        m_popup = document()->page()->chrome().createPopupMenu(this);
+        m_popup = document().page()->chrome().createPopupMenu(this);
     m_popupIsVisible = true;
 
     // Compute the top left taking transforms into account, but use
@@ -342,7 +342,7 @@ void RenderMenuList::showPopup()
     IntRect absBounds = absoluteBoundingBoxRectIgnoringTransforms();
     absBounds.setLocation(roundedIntPoint(absTopLeft));
     HTMLSelectElement* select = selectElement();
-    m_popup->show(absBounds, document()->view(), select->optionToListIndex(select->selectedIndex()));
+    m_popup->show(absBounds, &view().frameView(), select->optionToListIndex(select->selectedIndex()));
 }
 
 void RenderMenuList::hidePopup()
@@ -380,7 +380,7 @@ void RenderMenuList::didSetSelectedIndex(int listIndex)
 
 void RenderMenuList::didUpdateActiveOption(int optionIndex)
 {
-    if (!AXObjectCache::accessibilityEnabled() || !document()->existingAXObjectCache())
+    if (!AXObjectCache::accessibilityEnabled() || !document().existingAXObjectCache())
         return;
 
     if (m_lastActiveIndex == optionIndex)
@@ -394,7 +394,7 @@ void RenderMenuList::didUpdateActiveOption(int optionIndex)
 
     ASSERT(select->listItems()[listIndex]);
 
-    if (AccessibilityMenuList* menuList = static_cast<AccessibilityMenuList*>(document()->axObjectCache()->get(this)))
+    if (AccessibilityMenuList* menuList = static_cast<AccessibilityMenuList*>(document().axObjectCache()->get(this)))
         menuList->didUpdateActiveOption(optionIndex);
 }
 
@@ -528,7 +528,7 @@ PopupMenuStyle RenderMenuList::menuStyle() const
 
 HostWindow* RenderMenuList::hostWindow() const
 {
-    return document()->view()->hostWindow();
+    return view().frameView().hostWindow();
 }
 
 PassRefPtr<Scrollbar> RenderMenuList::createScrollbar(ScrollableArea* scrollableArea, ScrollbarOrientation orientation, ScrollbarControlSize controlSize)
@@ -617,7 +617,7 @@ void RenderMenuList::setTextFromItem(unsigned listIndex)
 
 FontSelector* RenderMenuList::fontSelector() const
 {
-    return document()->ensureStyleResolver().fontSelector();
+    return document().ensureStyleResolver().fontSelector();
 }
 
 }

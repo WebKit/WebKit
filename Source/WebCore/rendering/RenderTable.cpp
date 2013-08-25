@@ -498,7 +498,7 @@ void RenderTable::layout()
     for (RenderTableSection* section = topSection(); section; section = sectionBelow(section))
         section->layoutRows();
 
-    if (!topSection() && computedLogicalHeight > totalSectionLogicalHeight && !document()->inQuirksMode()) {
+    if (!topSection() && computedLogicalHeight > totalSectionLogicalHeight && !document().inQuirksMode()) {
         // Completely empty tables (with no sections or anything) should at least honor specified height
         // in strict mode.
         setLogicalHeight(logicalHeight() + computedLogicalHeight);
@@ -1417,7 +1417,7 @@ RenderTable* RenderTable::createAnonymousWithParentRenderer(const RenderObject* 
 {
     RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyleWithDisplay(parent->style(), TABLE);
     RenderTable* newTable = new (parent->renderArena()) RenderTable(0);
-    newTable->setDocumentForAnonymous(parent->document());
+    newTable->setDocumentForAnonymous(&parent->document());
     newTable->setStyle(newStyle.release());
     return newTable;
 }

@@ -159,11 +159,9 @@ void RenderView::checkLayoutState(const LayoutState& state)
 }
 #endif
 
-static RenderBox* enclosingSeamlessRenderer(Document* doc)
+static RenderBox* enclosingSeamlessRenderer(Document& document)
 {
-    if (!doc)
-        return 0;
-    Element* ownerElement = doc->seamlessParentIFrame();
+    Element* ownerElement = document.seamlessParentIFrame();
     if (!ownerElement)
         return 0;
     return ownerElement->renderBox();
@@ -288,7 +286,7 @@ void RenderView::layoutContentToComputeOverflowInRegions(const LayoutState& stat
 void RenderView::layout()
 {
     StackStats::LayoutCheckPoint layoutCheckPoint;
-    if (!document()->paginated())
+    if (!document().paginated())
         setPageLogicalHeight(0);
 
     if (shouldUsePrintingLayout())
@@ -343,7 +341,7 @@ void RenderView::layout()
 
 LayoutUnit RenderView::pageOrViewLogicalHeight() const
 {
-    if (document()->printing())
+    if (document().printing())
         return pageLogicalHeight();
     
     if (hasColumns() && !style()->hasInlineColumnAxis()) {
@@ -472,7 +470,7 @@ void RenderView::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint&)
     // FIXME: This needs to be dynamic.  We should be able to go back to blitting if we ever stop being inside
     // a transform, transparency layer, etc.
     Element* elt;
-    for (elt = document()->ownerElement(); elt && elt->renderer(); elt = elt->document()->ownerElement()) {
+    for (elt = document().ownerElement(); elt && elt->renderer(); elt = elt->document()->ownerElement()) {
         RenderLayer* layer = elt->renderer()->enclosingLayer();
         if (layer->cannotBlitToWindow()) {
             frameView().setCannotBlitToWindow();
@@ -489,7 +487,7 @@ void RenderView::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint&)
 #endif
     }
 
-    if (document()->ownerElement())
+    if (document().ownerElement())
         return;
 
     if (paintInfo.skipRootBackground())
@@ -497,7 +495,7 @@ void RenderView::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint&)
 
     bool rootFillsViewport = false;
     bool rootObscuresBackground = false;
-    Node* documentElement = document()->documentElement();
+    Node* documentElement = document().documentElement();
     if (RenderObject* rootRenderer = documentElement ? documentElement->renderer() : 0) {
         // The document element's renderer is currently forced to be a block, but may not always be.
         RenderBox* rootBox = rootRenderer->isBox() ? toRenderBox(rootRenderer) : 0;
@@ -505,7 +503,7 @@ void RenderView::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint&)
         rootObscuresBackground = rendererObscuresBackground(rootRenderer);
     }
     
-    Page* page = document()->page();
+    Page* page = document().page();
     float pageScaleFactor = page ? page->pageScaleFactor() : 1;
 
     // If painting will entirely fill the view, no need to fill the background.
@@ -559,7 +557,7 @@ void RenderView::repaintViewRectangle(const LayoutRect& ur, bool immediate) cons
 
     // We always just invalidate the root view, since we could be an iframe that is clipped out
     // or even invisible.
-    Element* elt = document()->ownerElement();
+    Element* elt = document().ownerElement();
     if (!elt)
         frameView().repaintContentRectangle(pixelSnappedIntRect(ur), immediate);
     else if (RenderBox* obj = elt->renderBox()) {
@@ -659,7 +657,7 @@ static RenderObject* rendererAfterPosition(RenderObject* object, unsigned offset
 
 IntRect RenderView::selectionBounds(bool clipToVisibleContent) const
 {
-    document()->updateStyleIfNeeded();
+    document().updateStyleIfNeeded();
 
     typedef HashMap<RenderObject*, OwnPtr<RenderSelectionInfo> > SelectionMap;
     SelectionMap selectedObjects;
@@ -701,7 +699,7 @@ IntRect RenderView::selectionBounds(bool clipToVisibleContent) const
 
 void RenderView::repaintSelection() const
 {
-    document()->updateStyleIfNeeded();
+    document().updateStyleIfNeeded();
 
     HashSet<RenderBlock*> processedBlocks;
 
@@ -916,7 +914,7 @@ void RenderView::selectionStartEnd(int& startPos, int& endPos) const
 
 bool RenderView::printing() const
 {
-    return document()->printing();
+    return document().printing();
 }
 
 bool RenderView::shouldUsePrintingLayout() const
@@ -1005,7 +1003,7 @@ IntRect RenderView::unscaledDocumentRect() const
 
 bool RenderView::rootBackgroundIsEntirelyFixed() const
 {
-    RenderObject* rootObject = document()->documentElement() ? document()->documentElement()->renderer() : 0;
+    RenderObject* rootObject = document().documentElement() ? document().documentElement()->renderer() : 0;
     if (!rootObject)
         return false;
 
@@ -1096,7 +1094,7 @@ void RenderView::updateHitTestResult(HitTestResult& result, const LayoutPoint& p
     if (result.innerNode())
         return;
 
-    Node* node = document()->documentElement();
+    Node* node = document().documentElement();
     if (node) {
         result.setInnerNode(node);
         if (!result.innerNonSharedNode())

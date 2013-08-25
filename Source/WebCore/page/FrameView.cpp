@@ -1328,7 +1328,7 @@ void FrameView::layout(bool allowSubtree)
     m_layoutCount++;
 
 #if PLATFORM(MAC) || PLATFORM(WIN)
-    if (AXObjectCache* cache = root->document()->existingAXObjectCache())
+    if (AXObjectCache* cache = root->document().existingAXObjectCache())
         cache->postNotification(root, AXObjectCache::AXLayoutComplete, true);
 #endif
 #if ENABLE(DASHBOARD_SUPPORT) || ENABLE(DRAGGABLE_REGION)
@@ -3282,7 +3282,7 @@ void FrameView::updateScrollCorner()
 
     if (cornerStyle) {
         if (!m_scrollCorner)
-            m_scrollCorner = RenderScrollbarPart::createAnonymous(renderer->document());
+            m_scrollCorner = RenderScrollbarPart::createAnonymous(&renderer->document());
         m_scrollCorner->setStyle(cornerStyle.release());
         invalidateScrollCorner(cornerRect);
     } else if (m_scrollCorner) {

@@ -146,7 +146,7 @@ AccessibilityObject* AccessibilityListBox::listBoxOptionAccessibilityObject(HTML
     if (!element || element->hasTagName(hrTag))
         return 0;
     
-    AccessibilityObject* listBoxObject = m_renderer->document()->axObjectCache()->getOrCreate(ListBoxOptionRole);
+    AccessibilityObject* listBoxObject = m_renderer->document().axObjectCache()->getOrCreate(ListBoxOptionRole);
     static_cast<AccessibilityListBoxOption*>(listBoxObject)->setHTMLElement(element);
     
     return listBoxObject;

@@ -84,7 +84,7 @@ void AccessibilitySlider::addChildren()
     
     m_haveChildren = true;
 
-    AXObjectCache* cache = m_renderer->document()->axObjectCache();
+    AXObjectCache* cache = m_renderer->document().axObjectCache();
 
     AccessibilitySliderThumb* thumb = static_cast<AccessibilitySliderThumb*>(cache->getOrCreate(SliderThumbRole));
     thumb->setParent(this);

@@ -895,7 +895,7 @@ void HTMLInputElement::setChecked(bool nowChecked, TextFieldEventBehavior eventB
     // RenderTextView), but it's not possible to do it at the moment
     // because of the way the code is structured.
     if (renderer()) {
-        if (AXObjectCache* cache = renderer()->document()->existingAXObjectCache())
+        if (AXObjectCache* cache = renderer()->document().existingAXObjectCache())
             cache->checkedStateChanged(this);
     }
 

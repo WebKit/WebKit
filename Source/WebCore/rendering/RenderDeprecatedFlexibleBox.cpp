@@ -126,13 +126,13 @@ RenderDeprecatedFlexibleBox::RenderDeprecatedFlexibleBox(Element* element)
     setChildrenInline(false); // All of our children must be block-level
     m_stretchingChildren = false;
     if (!isAnonymous()) {
-        const KURL& url = document()->url();
+        const KURL& url = document().url();
         if (url.protocolIs("chrome"))
-            FeatureObserver::observe(document(), FeatureObserver::DeprecatedFlexboxChrome);
+            FeatureObserver::observe(&document(), FeatureObserver::DeprecatedFlexboxChrome);
         else if (url.protocolIs("chrome-extension"))
-            FeatureObserver::observe(document(), FeatureObserver::DeprecatedFlexboxChromeExtension);
+            FeatureObserver::observe(&document(), FeatureObserver::DeprecatedFlexboxChromeExtension);
         else
-            FeatureObserver::observe(document(), FeatureObserver::DeprecatedFlexboxWebContent);
+            FeatureObserver::observe(&document(), FeatureObserver::DeprecatedFlexboxWebContent);
     }
 }
 

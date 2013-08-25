@@ -232,7 +232,7 @@ void RenderRegion::checkRegionStyle()
     // FIXME: Region styling doesn't work for pseudo elements.
     if (node()) {
         Element* regionElement = toElement(node());
-        customRegionStyle = view().document()->ensureStyleResolver().checkRegionStyle(regionElement);
+        customRegionStyle = view().document().ensureStyleResolver().checkRegionStyle(regionElement);
     }
     setHasCustomRegionStyle(customRegionStyle);
     m_flowThread->checkRegionsWithStyling();
@@ -575,13 +575,12 @@ void RenderRegion::willBeRemovedFromTree()
 PassRefPtr<RenderStyle> RenderRegion::computeStyleInRegion(const RenderObject* object)
 {
     ASSERT(object);
-    ASSERT(object->view().document());
     ASSERT(!object->isAnonymous());
     ASSERT(object->node() && object->node()->isElementNode());
 
     // FIXME: Region styling fails for pseudo-elements because the renderers don't have a node.
     Element* element = toElement(object->node());
-    RefPtr<RenderStyle> renderObjectRegionStyle = object->view().document()->ensureStyleResolver().styleForElement(element, 0, DisallowStyleSharing, MatchAllRules, this);
+    RefPtr<RenderStyle> renderObjectRegionStyle = object->view().document().ensureStyleResolver().styleForElement(element, 0, DisallowStyleSharing, MatchAllRules, this);
 
     return renderObjectRegionStyle.release();
 }

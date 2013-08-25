@@ -44,7 +44,7 @@ void SVGRootInlineBox::paint(PaintInfo& paintInfo, const LayoutPoint&, LayoutUni
     RenderObject* boxRenderer = renderer();
     ASSERT(boxRenderer);
 
-    bool isPrinting = renderer()->document()->printing();
+    bool isPrinting = renderer()->document().printing();
     bool hasSelection = !isPrinting && selectionState() != RenderObject::SelectionNone;
 
     PaintInfo childPaintInfo(paintInfo);

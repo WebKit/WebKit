@@ -130,7 +130,7 @@ public:
         , m_hadHorizontalLayoutOverflow(false)
         , m_hadVerticalLayoutOverflow(false)
     {
-        m_shouldDispatchEvent = !m_block->isAnonymous() && m_block->hasOverflowClip() && m_block->document()->hasListenerType(Document::OVERFLOWCHANGED_LISTENER);
+        m_shouldDispatchEvent = !m_block->isAnonymous() && m_block->hasOverflowClip() && m_block->document().hasListenerType(Document::OVERFLOWCHANGED_LISTENER);
         if (m_shouldDispatchEvent) {
             m_hadHorizontalLayoutOverflow = m_block->hasHorizontalLayoutOverflow();
             m_hadVerticalLayoutOverflow = m_block->hasVerticalLayoutOverflow();
@@ -147,10 +147,8 @@ public:
 
         bool horizontalLayoutOverflowChanged = hasHorizontalLayoutOverflow != m_hadHorizontalLayoutOverflow;
         bool verticalLayoutOverflowChanged = hasVerticalLayoutOverflow != m_hadVerticalLayoutOverflow;
-        if (horizontalLayoutOverflowChanged || verticalLayoutOverflowChanged) {
-            if (FrameView* frameView = m_block->document()->view())
-                frameView->scheduleEvent(OverflowEvent::create(horizontalLayoutOverflowChanged, hasHorizontalLayoutOverflow, verticalLayoutOverflowChanged, hasVerticalLayoutOverflow), m_block->node());
-        }
+        if (horizontalLayoutOverflowChanged || verticalLayoutOverflowChanged)
+            m_block->view().frameView().scheduleEvent(OverflowEvent::create(horizontalLayoutOverflowChanged, hasHorizontalLayoutOverflow, verticalLayoutOverflowChanged, hasVerticalLayoutOverflow), m_block->node());
     }
 
 private:
@@ -1001,7 +999,7 @@ void RenderBlock::deleteLineBoxTree()
     }
     m_lineBoxes.deleteLineBoxTree(renderArena());
 
-    if (AXObjectCache* cache = document()->existingAXObjectCache())
+    if (AXObjectCache* cache = document().existingAXObjectCache())
         cache->recomputeIsIgnored(this);
 }
 
@@ -1016,7 +1014,7 @@ RootInlineBox* RenderBlock::createAndAppendRootInlineBox()
     m_lineBoxes.appendLineBox(rootBox);
 
     if (UNLIKELY(AXObjectCache::accessibilityEnabled()) && m_lineBoxes.firstLineBox() == rootBox) {
-        if (AXObjectCache* cache = document()->existingAXObjectCache())
+        if (AXObjectCache* cache = document().existingAXObjectCache())
             cache->recomputeIsIgnored(this);
     }
 
@@ -1337,7 +1335,7 @@ bool RenderBlock::isSelfCollapsingBlock() const
 
     Length logicalHeightLength = style()->logicalHeight();
     bool hasAutoHeight = logicalHeightLength.isAuto();
-    if (logicalHeightLength.isPercent() && !document()->inQuirksMode()) {
+    if (logicalHeightLength.isPercent() && !document().inQuirksMode()) {
         hasAutoHeight = true;
         for (RenderBlock* cb = containingBlock(); !cb->isRenderView(); cb = cb->containingBlock()) {
             if (cb->style()->logicalHeight().isFixed() || cb->isTableCell())
@@ -2119,7 +2117,7 @@ LayoutUnit RenderBlock::collapseMargins(RenderBox* child, MarginInfo& marginInfo
             // This child is collapsing with the top of the
             // block. If it has larger margin values, then we need to update
             // our own maximal values.
-            if (!document()->inQuirksMode() || !marginInfo.quirkContainer() || !topQuirk)
+            if (!document().inQuirksMode() || !marginInfo.quirkContainer() || !topQuirk)
                 setMaxMarginBeforeValues(max(posTop, maxPositiveMarginBefore()), max(negTop, maxNegativeMarginBefore()));
 
             // The minute any of the margins involved isn't a quirk, don't
@@ -2188,7 +2186,7 @@ LayoutUnit RenderBlock::collapseMargins(RenderBox* child, MarginInfo& marginInfo
             logicalTop = logicalHeight();
         } else if (!marginInfo.discardMargin() && (!marginInfo.atBeforeSideOfBlock()
             || (!marginInfo.canCollapseMarginBeforeWithChildren()
-            && (!document()->inQuirksMode() || !marginInfo.quirkContainer() || !marginInfo.hasMarginBeforeQuirk())))) {
+            && (!document().inQuirksMode() || !marginInfo.quirkContainer() || !marginInfo.hasMarginBeforeQuirk())))) {
             // We're collapsing with a previous sibling's margins and not
             // with the top of the block.
             setLogicalHeight(logicalHeight() + max(marginInfo.positiveMargin(), posTop) - max(marginInfo.negativeMargin(), negTop));
@@ -2304,7 +2302,7 @@ void RenderBlock::marginBeforeEstimateForChild(RenderBox* child, LayoutUnit& pos
     // Give up if in quirks mode and we're a body/table cell and the top margin of the child box is quirky.
     // Give up if the child specified -webkit-margin-collapse: separate that prevents collapsing.
     // FIXME: Use writing mode independent accessor for marginBeforeCollapse.
-    if ((document()->inQuirksMode() && hasMarginAfterQuirk(child) && (isTableCell() || isBody())) || child->style()->marginBeforeCollapse() == MSEPARATE)
+    if ((document().inQuirksMode() && hasMarginAfterQuirk(child) && (isTableCell() || isBody())) || child->style()->marginBeforeCollapse() == MSEPARATE)
         return;
 
     // The margins are discarded by a child that specified -webkit-margin-collapse: discard.
@@ -2480,7 +2478,7 @@ void RenderBlock::handleAfterSideOfBlock(LayoutUnit beforeSide, LayoutUnit after
 
     // If we can't collapse with children then go ahead and add in the bottom margin.
     if (!marginInfo.discardMargin() && (!marginInfo.canCollapseWithMarginAfter() && !marginInfo.canCollapseWithMarginBefore()
-        && (!document()->inQuirksMode() || !marginInfo.quirkContainer() || !marginInfo.hasMarginAfterQuirk())))
+        && (!document().inQuirksMode() || !marginInfo.quirkContainer() || !marginInfo.hasMarginAfterQuirk())))
         setLogicalHeight(logicalHeight() + marginInfo.margin());
         
     // Now add in our bottom border/padding.
@@ -3201,7 +3199,7 @@ void RenderBlock::paintContents(PaintInfo& paintInfo, const LayoutPoint& paintOf
     // Avoid painting descendants of the root element when stylesheets haven't loaded.  This eliminates FOUC.
     // It's ok not to draw, because later on, when all the stylesheets do load, styleResolverChanged() on the Document
     // will do a full repaint.
-    if (document()->didLayoutWithPendingStylesheets() && !isRenderView())
+    if (document().didLayoutWithPendingStylesheets() && !isRenderView())
         return;
 
     if (childrenInline())
@@ -3327,7 +3325,7 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
 
     // 3. paint selection
     // FIXME: Make this work with multi column layouts.  For now don't fill gaps.
-    bool isPrinting = document()->printing();
+    bool isPrinting = document().printing();
     if (!isPrinting && !hasColumns())
         paintSelection(paintInfo, scrolledOffset); // Fill in gaps in selection on lines and between blocks.
 
@@ -5478,7 +5476,7 @@ VisiblePosition RenderBlock::positionForPointWithInlineChildren(const LayoutPoin
         }
     }
 
-    bool moveCaretToBoundary = document()->frame()->editor().behavior().shouldMoveCaretToHorizontalBoundaryWhenPastTopOrBottom();
+    bool moveCaretToBoundary = frame().editor().behavior().shouldMoveCaretToHorizontalBoundaryWhenPastTopOrBottom();
 
     if (!moveCaretToBoundary && !closestBox && lastRootBoxWithChildren) {
         // y coordinate is below last root line box, pretend we hit it
@@ -5608,7 +5606,7 @@ int RenderBlock::columnGap() const
 
 void RenderBlock::calcColumnWidth()
 {   
-    if (document()->regionBasedColumnsEnabled())
+    if (document().regionBasedColumnsEnabled())
         return;
 
     // Calculate our column width and column count.
@@ -5617,7 +5615,7 @@ void RenderBlock::calcColumnWidth()
     LayoutUnit desiredColumnWidth = contentLogicalWidth();
     
     // For now, we don't support multi-column layouts when printing, since we have to do a lot of work for proper pagination.
-    if (document()->paginated() || (style()->hasAutoColumnCount() && style()->hasAutoColumnWidth()) || !style()->hasInlineColumnAxis()) {
+    if (document().paginated() || (style()->hasAutoColumnCount() && style()->hasAutoColumnWidth()) || !style()->hasInlineColumnAxis()) {
         setDesiredColumnCountAndWidth(desiredColumnCount, desiredColumnWidth);
         return;
     }
@@ -6233,7 +6231,7 @@ void RenderBlock::computeInlinePreferredLogicalWidths(LayoutUnit& minLogicalWidt
     // Firefox and Opera will allow a table cell to grow to fit an image inside it under
     // very specific cirucumstances (in order to match common WinIE renderings). 
     // Not supporting the quirk has caused us to mis-render some real sites. (See Bugzilla 10517.) 
-    bool allowImagesToBreak = !document()->inQuirksMode() || !isTableCell() || !styleToUse->logicalWidth().isIntrinsicOrAuto();
+    bool allowImagesToBreak = !document().inQuirksMode() || !isTableCell() || !styleToUse->logicalWidth().isIntrinsicOrAuto();
 
     bool autoWrap, oldAutoWrap;
     autoWrap = oldAutoWrap = styleToUse->autoWrap();
@@ -6639,7 +6637,7 @@ LayoutUnit RenderBlock::lineHeight(bool firstLine, LineDirectionMode direction, 
     if (isReplaced() && linePositionMode == PositionOnContainingLine)
         return RenderBox::lineHeight(firstLine, direction, linePositionMode);
 
-    if (firstLine && document()->styleSheetCollection()->usesFirstLineRules()) {
+    if (firstLine && document().styleSheetCollection()->usesFirstLineRules()) {
         RenderStyle* s = style(firstLine);
         if (s != style())
             return s->computedLineHeight(&view());
@@ -6853,13 +6851,13 @@ void RenderBlock::updateFirstLetterStyle(RenderObject* firstLetterBlock, RenderO
     RenderStyle* pseudoStyle = styleForFirstLetter(firstLetterBlock, firstLetterContainer);
     ASSERT(firstLetter->isFloating() || firstLetter->isInline());
 
-    if (Style::determineChange(firstLetter->style(), pseudoStyle, document()->settings()) == Style::Detach) {
+    if (Style::determineChange(firstLetter->style(), pseudoStyle, &frame().settings()) == Style::Detach) {
         // The first-letter renderer needs to be replaced. Create a new renderer of the right type.
         RenderBoxModelObject* newFirstLetter;
         if (pseudoStyle->display() == INLINE)
-            newFirstLetter = RenderInline::createAnonymous(document());
+            newFirstLetter = RenderInline::createAnonymous(&document());
         else
-            newFirstLetter = RenderBlock::createAnonymous(document());
+            newFirstLetter = RenderBlock::createAnonymous(&document());
         newFirstLetter->setStyle(pseudoStyle);
 
         // Move the first letter into the new renderer.
@@ -6899,9 +6897,9 @@ void RenderBlock::createFirstLetterRenderer(RenderObject* firstLetterBlock, Rend
     RenderStyle* pseudoStyle = styleForFirstLetter(firstLetterBlock, firstLetterContainer);
     RenderObject* firstLetter = 0;
     if (pseudoStyle->display() == INLINE)
-        firstLetter = RenderInline::createAnonymous(document());
+        firstLetter = RenderInline::createAnonymous(&document());
     else
-        firstLetter = RenderBlock::createAnonymous(document());
+        firstLetter = RenderBlock::createAnonymous(&document());
     firstLetter->setStyle(pseudoStyle);
     firstLetterContainer->addChild(firstLetter, currentChild);
 
@@ -6938,7 +6936,7 @@ void RenderBlock::createFirstLetterRenderer(RenderObject* firstLetterBlock, Rend
         // Construct a text fragment for the text after the first letter.
         // This text fragment might be empty.
         RenderTextFragment* remainingText = 
-            new (renderArena()) RenderTextFragment(textObj->node() ? textObj->node() : textObj->document(), oldText.get(), length, oldText->length() - length);
+            new (renderArena()) RenderTextFragment(textObj->node() ? textObj->node() : &textObj->document(), oldText.get(), length, oldText->length() - length);
         remainingText->setStyle(textObj->style());
         if (remainingText->node())
             remainingText->node()->setRenderer(remainingText);
@@ -6950,7 +6948,7 @@ void RenderBlock::createFirstLetterRenderer(RenderObject* firstLetterBlock, Rend
         
         // construct text fragment for the first letter
         RenderTextFragment* letter = 
-            new (renderArena()) RenderTextFragment(remainingText->node() ? remainingText->node() : remainingText->document(), oldText.get(), 0, length);
+            new (renderArena()) RenderTextFragment(remainingText->node() ? remainingText->node() : &remainingText->document(), oldText.get(), 0, length);
         letter->setStyle(pseudoStyle);
         firstLetter->addChild(letter);
 
@@ -6960,7 +6958,7 @@ void RenderBlock::createFirstLetterRenderer(RenderObject* firstLetterBlock, Rend
 
 void RenderBlock::updateFirstLetter()
 {
-    if (!document()->styleSheetCollection()->usesFirstLetterRules())
+    if (!document().styleSheetCollection()->usesFirstLetterRules())
         return;
     // Don't recur
     if (style()->styleType() == FIRST_LETTER)
@@ -8341,13 +8339,13 @@ RenderBlock* RenderBlock::createAnonymousWithParentRendererAndDisplay(const Rend
     RenderBlock* newBox = 0;
     if (display == BOX || display == INLINE_BOX) {
         // FIXME: Remove this case once we have eliminated all internal users of old flexbox
-        newBox = RenderDeprecatedFlexibleBox::createAnonymous(parent->document());
+        newBox = RenderDeprecatedFlexibleBox::createAnonymous(&parent->document());
         newDisplay = BOX;
     } else if (display == FLEX || display == INLINE_FLEX) {
-        newBox = RenderFlexibleBox::createAnonymous(parent->document());
+        newBox = RenderFlexibleBox::createAnonymous(&parent->document());
         newDisplay = FLEX;
     } else {
-        newBox = RenderBlock::createAnonymous(parent->document());
+        newBox = RenderBlock::createAnonymous(&parent->document());
         newDisplay = BLOCK;
     }
 
@@ -8361,7 +8359,7 @@ RenderBlock* RenderBlock::createAnonymousColumnsWithParentRenderer(const RenderO
     RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyleWithDisplay(parent->style(), BLOCK);
     newStyle->inheritColumnPropertiesFrom(parent->style());
 
-    RenderBlock* newBox = RenderBlock::createAnonymous(parent->document());
+    RenderBlock* newBox = RenderBlock::createAnonymous(&parent->document());
     newBox->setStyle(newStyle.release());
     return newBox;
 }
@@ -8371,7 +8369,7 @@ RenderBlock* RenderBlock::createAnonymousColumnSpanWithParentRenderer(const Rend
     RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyleWithDisplay(parent->style(), BLOCK);
     newStyle->setColumnSpan(ColumnSpanAll);
 
-    RenderBlock* newBox = RenderBlock::createAnonymous(parent->document());
+    RenderBlock* newBox = RenderBlock::createAnonymous(&parent->document());
     newBox->setStyle(newStyle.release());
     return newBox;
 }

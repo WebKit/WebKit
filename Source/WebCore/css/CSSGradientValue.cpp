@@ -647,7 +647,7 @@ PassRefPtr<Gradient> CSSLinearGradientValue::createGradient(RenderObject* render
 {
     ASSERT(!size.isEmpty());
 
-    RenderStyle* rootStyle = renderer->document()->documentElement()->renderStyle();
+    RenderStyle* rootStyle = renderer->document().documentElement()->renderStyle();
 
     FloatPoint firstPoint;
     FloatPoint secondPoint;
@@ -987,7 +987,7 @@ PassRefPtr<Gradient> CSSRadialGradientValue::createGradient(RenderObject* render
 {
     ASSERT(!size.isEmpty());
 
-    RenderStyle* rootStyle = renderer->document()->documentElement()->renderStyle();
+    RenderStyle* rootStyle = renderer->document().documentElement()->renderStyle();
 
     FloatPoint firstPoint = computeEndPoint(m_firstX.get(), m_firstY.get(), renderer->style(), rootStyle, size);
     if (!m_firstX)

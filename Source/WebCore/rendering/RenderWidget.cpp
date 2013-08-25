@@ -102,7 +102,7 @@ void RenderWidget::willBeDestroyed()
 {
     view().removeWidget(this);
     
-    if (AXObjectCache* cache = document()->existingAXObjectCache()) {
+    if (AXObjectCache* cache = document().existingAXObjectCache()) {
         cache->childrenChanged(this->parent());
         cache->remove(this);
     }
@@ -317,7 +317,7 @@ void RenderWidget::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         paintInfo.context->restore();
 
     // Paint a partially transparent wash over selected widgets.
-    if (isSelected() && !document()->printing()) {
+    if (isSelected() && !document().printing()) {
         // FIXME: selectionRect() is in absolute, not painting coordinates.
         paintInfo.context->fillRect(pixelSnappedIntRect(selectionRect()), selectionBackgroundColor(), style()->colorSpace());
     }

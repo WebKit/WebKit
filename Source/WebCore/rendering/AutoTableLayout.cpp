@@ -131,7 +131,7 @@ void AutoTableLayout::recalcColumn(unsigned effCol)
 
     // Nav/IE weirdness
     if (columnLayout.logicalWidth.isFixed()) {
-        if (m_table->document()->inQuirksMode() && columnLayout.maxLogicalWidth > columnLayout.logicalWidth.value() && fixedContributor != maxContributor) {
+        if (m_table->document().inQuirksMode() && columnLayout.maxLogicalWidth > columnLayout.logicalWidth.value() && fixedContributor != maxContributor) {
             columnLayout.logicalWidth = Length();
             fixedContributor = 0;
         }

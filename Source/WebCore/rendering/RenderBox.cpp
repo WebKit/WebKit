@@ -89,7 +89,7 @@ static bool skipBodyBackground(const RenderBox* bodyElementRenderer)
     ASSERT(bodyElementRenderer->isBody());
     // The <body> only paints its background if the root element has defined a background independent of the body,
     // or if the <body>'s parent is not the document element's renderer (e.g. inside SVG foreignObject).
-    RenderObject* documentElementRenderer = bodyElementRenderer->document()->documentElement()->renderer();
+    RenderObject* documentElementRenderer = bodyElementRenderer->document().documentElement()->renderer();
     return documentElementRenderer
         && !documentElementRenderer->hasBackground()
         && (documentElementRenderer == bodyElementRenderer->parent());
@@ -348,27 +348,27 @@ void RenderBox::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle
 
     // Set the text color if we're the body.
     if (isBodyRenderer)
-        document()->setTextColor(newStyle->visitedDependentColor(CSSPropertyColor));
+        document().setTextColor(newStyle->visitedDependentColor(CSSPropertyColor));
 
     if (isRootRenderer || isBodyRenderer) {
         // Propagate the new writing mode and direction up to the RenderView.
         RenderStyle* viewStyle = view().style();
         bool viewChangedWritingMode = false;
-        if (viewStyle->direction() != newStyle->direction() && (isRootRenderer || !document()->directionSetOnDocumentElement())) {
+        if (viewStyle->direction() != newStyle->direction() && (isRootRenderer || !document().directionSetOnDocumentElement())) {
             viewStyle->setDirection(newStyle->direction());
             if (isBodyRenderer)
-                document()->documentElement()->renderer()->style()->setDirection(newStyle->direction());
+                document().documentElement()->renderer()->style()->setDirection(newStyle->direction());
             setNeedsLayoutAndPrefWidthsRecalc();
         }
 
-        if (viewStyle->writingMode() != newStyle->writingMode() && (isRootRenderer || !document()->writingModeSetOnDocumentElement())) {
+        if (viewStyle->writingMode() != newStyle->writingMode() && (isRootRenderer || !document().writingModeSetOnDocumentElement())) {
             viewStyle->setWritingMode(newStyle->writingMode());
             viewChangedWritingMode = true;
             view().setHorizontalWritingMode(newStyle->isHorizontalWritingMode());
             view().markAllDescendantsWithFloatsForLayout();
             if (isBodyRenderer) {
-                document()->documentElement()->renderer()->style()->setWritingMode(newStyle->writingMode());
-                document()->documentElement()->renderer()->setHorizontalWritingMode(newStyle->isHorizontalWritingMode());
+                document().documentElement()->renderer()->style()->setWritingMode(newStyle->writingMode());
+                document().documentElement()->renderer()->setHorizontalWritingMode(newStyle->isHorizontalWritingMode());
             }
             setNeedsLayoutAndPrefWidthsRecalc();
         }
@@ -425,10 +425,11 @@ void RenderBox::updateFromStyle()
             // (1) The root element is <html>.
             // (2) We are the primary <body> (can be checked by looking at document.body).
             // (3) The root element has visible overflow.
-            if (document()->documentElement()->hasTagName(htmlTag) &&
-                document()->body() == node() &&
-                document()->documentElement()->renderer()->style()->overflowX() == OVISIBLE)
+            if (document().documentElement()->hasTagName(htmlTag)
+                && document().body() == node()
+                && document().documentElement()->renderer()->style()->overflowX() == OVISIBLE) {
                 boxHasOverflowClip = false;
+            }
         }
         
         // Check for overflow clip.
@@ -825,7 +826,7 @@ bool RenderBox::canAutoscroll() const
     // This only has an effect on the Mac platform in applications
     // that put web views into scrolling containers, such as Mac OS X Mail.
     // The code for this is in RenderLayer::scrollRectToVisible.
-    if (node() != document())
+    if (node() != &document())
         return false;
     Page* page = frame().page();
     return page && page->mainFrame() == &frame() && view().frameView().isScrollable();
@@ -854,8 +855,8 @@ IntSize RenderBox::calculateAutoscrollDirection(const IntPoint& windowPoint) con
 RenderBox* RenderBox::findAutoscrollable(RenderObject* renderer)
 {
     while (renderer && !(renderer->isBox() && toRenderBox(renderer)->canAutoscroll())) {
-        if (!renderer->parent() && renderer->node() == renderer->document() && renderer->document()->ownerElement())
-            renderer = renderer->document()->ownerElement()->renderer();
+        if (!renderer->parent() && renderer->node() == &renderer->document() && renderer->document().ownerElement())
+            renderer = renderer->document().ownerElement()->renderer();
         else
             renderer = renderer->parent();
     }
@@ -1539,7 +1540,7 @@ bool RenderBox::repaintLayerRectsForImage(WrappedImagePtr image, const FillLayer
         if (curLayer->image() && image == curLayer->image()->data() && curLayer->image()->canRender(this, style()->effectiveZoom())) {
             // Now that we know this image is being used, compute the renderer and the rect if we haven't already.
             if (!layerRenderer) {
-                bool drawingRootBackground = drawingBackground && (isRoot() || (isBody() && !document()->documentElement()->renderer()->hasBackground()));
+                bool drawingRootBackground = drawingBackground && (isRoot() || (isBody() && !document().documentElement()->renderer()->hasBackground()));
                 if (drawingRootBackground) {
                     layerRenderer = &view();
 
@@ -2611,8 +2612,8 @@ void RenderBox::computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logica
     // is specified. When we're printing, we also need this quirk if the body or root has a percentage 
     // height since we don't set a height in RenderView when we're printing. So without this quirk, the 
     // height has nothing to be a percentage of, and it ends up being 0. That is bad.
-    bool paginatedContentNeedsBaseHeight = document()->printing() && h.isPercent()
-        && (isRoot() || (isBody() && document()->documentElement()->renderer()->style()->logicalHeight().isPercent())) && !isInline();
+    bool paginatedContentNeedsBaseHeight = document().printing() && h.isPercent()
+        && (isRoot() || (isBody() && document().documentElement()->renderer()->style()->logicalHeight().isPercent())) && !isInline();
     if (stretchesToViewport() || paginatedContentNeedsBaseHeight) {
         LayoutUnit margins = collapsedMarginBefore() + collapsedMarginAfter();
         LayoutUnit visibleHeight = view().pageOrViewLogicalHeight();
@@ -2656,7 +2657,7 @@ bool RenderBox::skipContainingBlockForPercentHeightCalculation(const RenderBox* 
 {
     // For quirks mode and anonymous blocks, we skip auto-height containingBlocks when computing percentages.
     // For standards mode, we treat the percentage as auto if it has an auto-height containing block.
-    if (!document()->inQuirksMode() && !containingBlock->isAnonymousBlock())
+    if (!document().inQuirksMode() && !containingBlock->isAnonymousBlock())
         return false;
     return !containingBlock->isTableCell() && !containingBlock->isOutOfFlowPositioned() && containingBlock->style()->logicalHeight().isAuto() && isHorizontalWritingMode() == containingBlock->isHorizontalWritingMode();
 }
@@ -4294,7 +4295,7 @@ bool RenderBox::percentageLogicalHeightIsResolvableFromBlock(const RenderBlock* 
     // block has an auto height. We still skip anonymous containing blocks in both modes, though, and look
     // only at explicit containers.
     const RenderBlock* cb = containingBlock;
-    bool inQuirksMode = cb->document()->inQuirksMode();
+    bool inQuirksMode = cb->document().inQuirksMode();
     while (!cb->isRenderView() && !cb->isBody() && !cb->isTableCell() && !cb->isOutOfFlowPositioned() && cb->style()->logicalHeight().isAuto()) {
         if (!inQuirksMode && !cb->isAnonymousBlock())
             break;

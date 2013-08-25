@@ -84,7 +84,7 @@ private:
     void canvasResized(HTMLCanvasElement*);
     void canvasDestroyed(HTMLCanvasElement*);
 
-    HTMLCanvasElement* element(Document*);
+    HTMLCanvasElement* element(Document&);
 
     CanvasObserverProxy m_canvasObserver;
 

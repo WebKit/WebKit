@@ -225,7 +225,7 @@ static RenderObject* getParentOfFirstLineBox(RenderBlock* curr, RenderObject* ma
     if (!firstChild)
         return 0;
 
-    bool inQuirksMode = curr->document()->inQuirksMode();
+    bool inQuirksMode = curr->document().inQuirksMode();
     for (RenderObject* currChild = firstChild; currChild; currChild = currChild->nextSibling()) {
         if (currChild == marker)
             continue;

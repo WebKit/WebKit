@@ -140,7 +140,7 @@ void RenderButton::setText(const String& str)
         if (m_buttonText)
             m_buttonText->setText(str.impl());
         else {
-            m_buttonText = new (renderArena()) RenderTextFragment(document(), str.impl());
+            m_buttonText = new (renderArena()) RenderTextFragment(&document(), str.impl());
             m_buttonText->setStyle(style());
             addChild(m_buttonText);
         }
@@ -172,7 +172,7 @@ void RenderButton::timerFired(Timer<RenderButton>*)
     // enters the page cache. But we currently have no way of being notified
     // when that happens, so we'll just ignore the timer firing as long as
     // we're in the cache.
-    if (document()->inPageCache())
+    if (document().inPageCache())
         return;
 
     repaint();

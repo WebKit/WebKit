@@ -821,7 +821,7 @@ static bool replacedNodeNeedsCharacter(Node* replacedNode)
         return false;
 
     // create an AX object, but skip it if it is not supposed to be seen
-    AccessibilityObject* object = replacedNode->renderer()->document()->axObjectCache()->getOrCreate(replacedNode);
+    AccessibilityObject* object = replacedNode->renderer()->document().axObjectCache()->getOrCreate(replacedNode);
     if (object->accessibilityIsIgnored())
         return false;
 
@@ -1071,7 +1071,7 @@ AccessibilityObject* AccessibilityObject::accessibilityObjectForPosition(const V
     if (!obj)
         return 0;
 
-    return obj->document()->axObjectCache()->getOrCreate(obj);
+    return obj->document().axObjectCache()->getOrCreate(obj);
 }
 
 #if HAVE(ACCESSIBILITY)
@@ -1214,7 +1214,7 @@ AccessibilityObject* AccessibilityObject::anchorElementForNode(Node* node)
     if (!obj)
         return 0;
     
-    RefPtr<AccessibilityObject> axObj = obj->document()->axObjectCache()->getOrCreate(obj);
+    RefPtr<AccessibilityObject> axObj = obj->document().axObjectCache()->getOrCreate(obj);
     Element* anchor = axObj->anchorElement();
     if (!anchor)
         return 0;
@@ -1223,7 +1223,7 @@ AccessibilityObject* AccessibilityObject::anchorElementForNode(Node* node)
     if (!anchorRenderer)
         return 0;
     
-    return anchorRenderer->document()->axObjectCache()->getOrCreate(anchorRenderer);
+    return anchorRenderer->document().axObjectCache()->getOrCreate(anchorRenderer);
 }
 
 AccessibilityObject* AccessibilityObject::headingElementForNode(Node* node)
@@ -1235,7 +1235,7 @@ AccessibilityObject* AccessibilityObject::headingElementForNode(Node* node)
     if (!renderObject)
         return 0;
     
-    AccessibilityObject* axObject = renderObject->document()->axObjectCache()->getOrCreate(renderObject);
+    AccessibilityObject* axObject = renderObject->document().axObjectCache()->getOrCreate(renderObject);
     for (; axObject && axObject->roleValue() != HeadingRole; axObject = axObject->parentObject()) { }
     
     return axObject;

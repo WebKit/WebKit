@@ -139,7 +139,7 @@ bool RenderMultiColumnBlock::relayoutForPagination(bool, LayoutUnit, LayoutState
 void RenderMultiColumnBlock::addChild(RenderObject* newChild, RenderObject* beforeChild)
 {
     if (!m_flowThread) {
-        m_flowThread = RenderMultiColumnFlowThread::createAnonymous(document());
+        m_flowThread = RenderMultiColumnFlowThread::createAnonymous(&document());
         m_flowThread->setStyle(RenderStyle::createAnonymousStyleWithDisplay(style(), BLOCK));
         RenderBlock::addChild(m_flowThread);
     }

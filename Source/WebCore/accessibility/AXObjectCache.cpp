@@ -682,7 +682,7 @@ void AXObjectCache::postNotification(RenderObject* renderer, AXNotification noti
     if (!renderer)
         return;
     
-    postNotification(object.get(), renderer->document(), notification, postToElement, postType);
+    postNotification(object.get(), &renderer->document(), notification, postToElement, postType);
 }
 
 void AXObjectCache::postNotification(Node* node, AXNotification notification, bool postToElement, PostType postType)
@@ -878,7 +878,7 @@ VisiblePosition AXObjectCache::visiblePositionForTextMarkerData(TextMarkerData& 
     if (!renderer)
         return VisiblePosition();
     
-    AXObjectCache* cache = renderer->document()->axObjectCache();
+    AXObjectCache* cache = renderer->document().axObjectCache();
     if (!cache->isIDinUse(textMarkerData.axID))
         return VisiblePosition();
     

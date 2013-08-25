@@ -195,10 +195,9 @@ bool SVGResources::buildCachedResources(const RenderObject* object, const SVGRen
     if (!element)
         return false;
 
-    Document* document = object->document();
-    ASSERT(document);
+    Document& document = object->document();
 
-    SVGDocumentExtensions* extensions = document->accessSVGExtensions();
+    SVGDocumentExtensions* extensions = document.accessSVGExtensions();
     ASSERT(extensions);
 
     const AtomicString& tagName = element->localName();
@@ -209,7 +208,7 @@ bool SVGResources::buildCachedResources(const RenderObject* object, const SVGRen
     if (clipperFilterMaskerTags().contains(tagName)) {
         if (style->hasClipper()) {
             AtomicString id(style->clipperResource());
-            if (setClipper(getRenderSVGResourceById<RenderSVGResourceClipper>(document, id)))
+            if (setClipper(getRenderSVGResourceById<RenderSVGResourceClipper>(&document, id)))
                 foundResources = true;
             else
                 registerPendingResource(extensions, id, element);
@@ -218,7 +217,7 @@ bool SVGResources::buildCachedResources(const RenderObject* object, const SVGRen
 #if ENABLE(FILTERS)
         if (style->hasFilter()) {
             AtomicString id(style->filterResource());
-            if (setFilter(getRenderSVGResourceById<RenderSVGResourceFilter>(document, id)))
+            if (setFilter(getRenderSVGResourceById<RenderSVGResourceFilter>(&document, id)))
                 foundResources = true;
             else
                 registerPendingResource(extensions, id, element);
@@ -227,7 +226,7 @@ bool SVGResources::buildCachedResources(const RenderObject* object, const SVGRen
 
         if (style->hasMasker()) {
             AtomicString id(style->maskerResource());
-            if (setMasker(getRenderSVGResourceById<RenderSVGResourceMasker>(document, id)))
+            if (setMasker(getRenderSVGResourceById<RenderSVGResourceMasker>(&document, id)))
                 foundResources = true;
             else
                 registerPendingResource(extensions, id, element);
@@ -236,19 +235,19 @@ bool SVGResources::buildCachedResources(const RenderObject* object, const SVGRen
 
     if (markerTags().contains(tagName) && style->hasMarkers()) {
         AtomicString markerStartId(style->markerStartResource());
-        if (setMarkerStart(getRenderSVGResourceById<RenderSVGResourceMarker>(document, markerStartId)))
+        if (setMarkerStart(getRenderSVGResourceById<RenderSVGResourceMarker>(&document, markerStartId)))
             foundResources = true;
         else
             registerPendingResource(extensions, markerStartId, element);
 
         AtomicString markerMidId(style->markerMidResource());
-        if (setMarkerMid(getRenderSVGResourceById<RenderSVGResourceMarker>(document, markerMidId)))
+        if (setMarkerMid(getRenderSVGResourceById<RenderSVGResourceMarker>(&document, markerMidId)))
             foundResources = true;
         else
             registerPendingResource(extensions, markerMidId, element);
 
         AtomicString markerEndId(style->markerEndResource());
-        if (setMarkerEnd(getRenderSVGResourceById<RenderSVGResourceMarker>(document, markerEndId)))
+        if (setMarkerEnd(getRenderSVGResourceById<RenderSVGResourceMarker>(&document, markerEndId)))
             foundResources = true;
         else
             registerPendingResource(extensions, markerEndId, element);
@@ -258,7 +257,7 @@ bool SVGResources::buildCachedResources(const RenderObject* object, const SVGRen
         if (style->hasFill()) {
             bool hasPendingResource = false;
             AtomicString id;
-            if (setFill(paintingResourceFromSVGPaint(document, style->fillPaintType(), style->fillPaintUri(), id, hasPendingResource)))
+            if (setFill(paintingResourceFromSVGPaint(&document, style->fillPaintType(), style->fillPaintUri(), id, hasPendingResource)))
                 foundResources = true;
             else if (hasPendingResource)
                 registerPendingResource(extensions, id, element);
@@ -267,7 +266,7 @@ bool SVGResources::buildCachedResources(const RenderObject* object, const SVGRen
         if (style->hasStroke()) {
             bool hasPendingResource = false;
             AtomicString id;
-            if (setStroke(paintingResourceFromSVGPaint(document, style->strokePaintType(), style->strokePaintUri(), id, hasPendingResource)))
+            if (setStroke(paintingResourceFromSVGPaint(&document, style->strokePaintType(), style->strokePaintUri(), id, hasPendingResource)))
                 foundResources = true;
             else if (hasPendingResource)
                 registerPendingResource(extensions, id, element);
@@ -276,7 +275,7 @@ bool SVGResources::buildCachedResources(const RenderObject* object, const SVGRen
 
     if (chainableResourceTags().contains(tagName)) {
         AtomicString id(targetReferenceFromResource(element));
-        if (setLinkedResource(getRenderSVGResourceContainerById(document, id)))
+        if (setLinkedResource(getRenderSVGResourceContainerById(&document, id)))
             foundResources = true;
         else
             registerPendingResource(extensions, id, element);

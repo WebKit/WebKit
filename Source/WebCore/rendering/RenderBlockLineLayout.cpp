@@ -67,7 +67,7 @@ const unsigned cMaxLineDepth = 200;
 
 static LayoutUnit logicalHeightForLine(const RenderBlock* block, bool isFirstLine, LayoutUnit replacedHeight = 0)
 {
-    if (!block->document()->inNoQuirksMode() && replacedHeight)
+    if (!block->document().inNoQuirksMode() && replacedHeight)
         return replacedHeight;
 
     if (!(block->style(isFirstLine)->lineBoxContain() & LineBoxContainBlock))
@@ -524,7 +524,7 @@ static inline InlineBox* createInlineBoxForRenderer(RenderObject* obj, bool isRo
         // We only treat a box as text for a <br> if we are on a line by ourself or in strict mode
         // (Note the use of strict mode.  In "almost strict" mode, we don't treat the box for <br> as text.)
         if (obj->isBR())
-            textBox->setIsText(isOnlyRun || obj->document()->inNoQuirksMode());
+            textBox->setIsText(isOnlyRun || obj->document().inNoQuirksMode());
         return textBox;
     }
 
@@ -2507,7 +2507,7 @@ static inline bool shouldCollapseWhiteSpace(const RenderStyle* style, const Line
 static bool requiresLineBoxForContent(RenderInline* flow, const LineInfo& lineInfo)
 {
     RenderObject* parent = flow->parent();
-    if (flow->document()->inNoQuirksMode() 
+    if (flow->document().inNoQuirksMode()
         && (flow->style(lineInfo.isFirstLine())->lineHeight() != parent->style(lineInfo.isFirstLine())->lineHeight()
         || flow->style()->verticalAlign() != parent->style()->verticalAlign()
         || !parent->style()->font().fontMetrics().hasIdenticalAscentDescentAndLineGap(flow->style()->font().fontMetrics())))
@@ -2960,7 +2960,7 @@ InlineIterator RenderBlock::LineBreaker::nextSegmentBreak(InlineBidiResolver& re
     // very specific circumstances (in order to match common WinIE renderings).
     // Not supporting the quirk has caused us to mis-render some real sites. (See Bugzilla 10517.)
     RenderStyle* blockStyle = m_block->style();
-    bool allowImagesToBreak = !m_block->document()->inQuirksMode() || !m_block->isTableCell() || !blockStyle->logicalWidth().isIntrinsicOrAuto();
+    bool allowImagesToBreak = !m_block->document().inQuirksMode() || !m_block->isTableCell() || !blockStyle->logicalWidth().isIntrinsicOrAuto();
 
     EWhiteSpace currWS = blockStyle->whiteSpace();
     EWhiteSpace lastWS = currWS;

@@ -132,7 +132,7 @@ void RenderReplaced::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     if (!paintInfo.shouldPaintWithinRoot(this))
         return;
     
-    bool drawSelectionTint = selectionState() != SelectionNone && !document()->printing();
+    bool drawSelectionTint = selectionState() != SelectionNone && !document().printing();
     if (paintInfo.phase == PaintPhaseSelection) {
         if (selectionState() == SelectionNone)
             return;

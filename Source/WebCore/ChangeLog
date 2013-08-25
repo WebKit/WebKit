@@ -1,3 +1,13 @@
+2013-08-25  Andreas Kling  <akling@apple.com>
+
+        RenderObject::document() should return a reference.
+        <https://webkit.org/b/120272>
+
+        Reviewed by Antti Koivisto.
+
+        There's always a Document. We were allocated in someone's arena, after all.
+        Various null checks and assertions neutralized.
+
 2013-08-25  David Kilzer  <ddkilzer@apple.com>
 
         BUILD FIX (r154578): Return Vector<String>() from Pasteboard::types() for iOS

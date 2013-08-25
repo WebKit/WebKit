@@ -294,7 +294,7 @@ void RenderLayerCompositor::cacheAcceleratedCompositingFlags()
     showRepaintCounter = settings.showRepaintCounter();
     forceCompositingMode = settings.forceCompositingMode() && hasAcceleratedCompositing;
 
-    if (forceCompositingMode && m_renderView.document()->ownerElement())
+    if (forceCompositingMode && m_renderView.document().ownerElement())
         forceCompositingMode = requiresCompositingForScrollableFrame();
 
     acceleratedDrawingEnabled = settings.acceleratedDrawingEnabled();
@@ -493,7 +493,7 @@ void RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
     m_updateCompositingLayersTimer.stop();
     
     // Compositing layers will be updated in Document::implicitClose() if suppressed here.
-    if (!m_renderView.document()->visualUpdatesAllowed())
+    if (!m_renderView.document().visualUpdatesAllowed())
         return;
 
     // Avoid updating the layers with old values. Compositing layers will be updated after the layout is finished.
@@ -571,7 +571,7 @@ void RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
         m_secondaryBackingStoreBytes = 0;
 
         Frame& frame = m_renderView.frameView().frame();
-        bool isMainFrame = !m_renderView.document()->ownerElement();
+        bool isMainFrame = !m_renderView.document().ownerElement();
         LOG(Compositing, "\nUpdate %d of %s.\n", m_rootLayerUpdateCount, isMainFrame ? "main frame" : frame.tree().uniqueName().string().utf8().data());
     }
 #endif
@@ -685,7 +685,7 @@ bool RenderLayerCompositor::updateBacking(RenderLayer* layer, CompositingChangeR
             layer->ensureBacking();
 
             // At this time, the ScrollingCooridnator only supports the top-level frame.
-            if (layer->isRootLayer() && !m_renderView.document()->ownerElement()) {
+            if (layer->isRootLayer() && !m_renderView.document().ownerElement()) {
                 layer->backing()->attachToScrollingCoordinatorWithParent(0);
                 if (ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator())
                     scrollingCoordinator->frameViewRootLayerDidChange(&m_renderView.frameView());
@@ -1729,7 +1729,7 @@ bool RenderLayerCompositor::shouldPropagateCompositingToEnclosingFrame() const
     // Parent document content needs to be able to render on top of a composited frame, so correct behavior
     // is to have the parent document become composited too. However, this can cause problems on platforms that
     // use native views for frames (like Mac), so disable that behavior on those platforms for now.
-    HTMLFrameOwnerElement* ownerElement = m_renderView.document()->ownerElement();
+    HTMLFrameOwnerElement* ownerElement = m_renderView.document().ownerElement();
     RenderObject* renderer = ownerElement ? ownerElement->renderer() : 0;
 
     // If we are the top-level frame, don't propagate.
@@ -2045,7 +2045,7 @@ bool RenderLayerCompositor::requiresCompositingForScrollableFrame() const
 {
     // Need this done first to determine overflow.
     ASSERT(!m_renderView.needsLayout());
-    HTMLFrameOwnerElement* ownerElement = m_renderView.document()->ownerElement();
+    HTMLFrameOwnerElement* ownerElement = m_renderView.document().ownerElement();
     if (!ownerElement)
         return false;
 
@@ -2489,7 +2489,7 @@ bool RenderLayerCompositor::requiresScrollCornerLayer() const
 bool RenderLayerCompositor::requiresOverhangAreasLayer() const
 {
     // We don't want a layer if this is a subframe.
-    if (m_renderView.document()->ownerElement())
+    if (m_renderView.document().ownerElement())
         return false;
 
     // We do want a layer if we have a scrolling coordinator and can scroll.
@@ -2502,7 +2502,7 @@ bool RenderLayerCompositor::requiresOverhangAreasLayer() const
 bool RenderLayerCompositor::requiresContentShadowLayer() const
 {
     // We don't want a layer if this is a subframe.
-    if (m_renderView.document()->ownerElement())
+    if (m_renderView.document().ownerElement())
         return false;
 
 #if PLATFORM(MAC)
@@ -2519,7 +2519,7 @@ bool RenderLayerCompositor::requiresContentShadowLayer() const
 
 GraphicsLayer* RenderLayerCompositor::updateLayerForTopOverhangArea(bool wantsLayer)
 {
-    if (m_renderView.document()->ownerElement())
+    if (m_renderView.document().ownerElement())
         return 0;
 
     if (!wantsLayer) {
@@ -2543,7 +2543,7 @@ GraphicsLayer* RenderLayerCompositor::updateLayerForTopOverhangArea(bool wantsLa
 
 GraphicsLayer* RenderLayerCompositor::updateLayerForBottomOverhangArea(bool wantsLayer)
 {
-    if (m_renderView.document()->ownerElement())
+    if (m_renderView.document().ownerElement())
         return 0;
 
     if (!wantsLayer) {
@@ -2568,7 +2568,7 @@ GraphicsLayer* RenderLayerCompositor::updateLayerForBottomOverhangArea(bool want
 
 GraphicsLayer* RenderLayerCompositor::updateLayerForHeader(bool wantsLayer)
 {
-    if (m_renderView.document()->ownerElement())
+    if (m_renderView.document().ownerElement())
         return 0;
 
     if (!wantsLayer) {
@@ -2608,7 +2608,7 @@ GraphicsLayer* RenderLayerCompositor::updateLayerForHeader(bool wantsLayer)
 
 GraphicsLayer* RenderLayerCompositor::updateLayerForFooter(bool wantsLayer)
 {
-    if (m_renderView.document()->ownerElement())
+    if (m_renderView.document().ownerElement())
         return 0;
 
     if (!wantsLayer) {
@@ -2908,7 +2908,7 @@ void RenderLayerCompositor::attachRootLayer(RootLayerAttachment attachment)
         case RootLayerAttachedViaEnclosingFrame: {
             // The layer will get hooked up via RenderLayerBacking::updateGraphicsLayerConfiguration()
             // for the frame's renderer in the parent document.
-            m_renderView.document()->ownerElement()->scheduleSetNeedsStyleRecalc(SyntheticStyleChange);
+            m_renderView.document().ownerElement()->scheduleSetNeedsStyleRecalc(SyntheticStyleChange);
             break;
         }
     }
@@ -2936,7 +2936,7 @@ void RenderLayerCompositor::detachRootLayer()
         else
             m_rootContentLayer->removeFromParent();
 
-        if (HTMLFrameOwnerElement* ownerElement = m_renderView.document()->ownerElement())
+        if (HTMLFrameOwnerElement* ownerElement = m_renderView.document().ownerElement())
             ownerElement->scheduleSetNeedsStyleRecalc(SyntheticStyleChange);
         break;
     }
@@ -2985,7 +2985,7 @@ void RenderLayerCompositor::notifyIFramesOfCompositingChange()
     
     // Compositing also affects the answer to RenderIFrame::requiresAcceleratedCompositing(), so 
     // we need to schedule a style recalc in our parent document.
-    if (HTMLFrameOwnerElement* ownerElement = m_renderView.document()->ownerElement())
+    if (HTMLFrameOwnerElement* ownerElement = m_renderView.document().ownerElement())
         ownerElement->scheduleSetNeedsStyleRecalc(SyntheticStyleChange);
 }
 
@@ -3147,7 +3147,7 @@ void RenderLayerCompositor::registerOrUpdateViewportConstrainedLayer(RenderLayer
 {
     // FIXME: We should support sticky position here! And we should eventuall support fixed/sticky elements
     // that are inside non-main frames once we get non-main frames scrolling with the ScrollingCoordinator.
-    if (m_renderView.document()->ownerElement())
+    if (m_renderView.document().ownerElement())
         return;
 
     ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator();

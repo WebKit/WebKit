@@ -952,8 +952,8 @@ static bool checkContainingBlockChainForPagination(RenderLayerModelObject* rende
 
 bool RenderLayer::useRegionBasedColumns() const
 {
-    const Settings* settings = renderer()->document()->settings();
-    return settings && settings->regionBasedColumnsEnabled();
+    const Settings& settings = renderer()->frame().settings();
+    return settings.regionBasedColumnsEnabled();
 }
 
 void RenderLayer::updatePagination()
@@ -1373,11 +1373,8 @@ static RenderLayer* parentLayerCrossFrame(const RenderLayer* layer)
         return layer->parent();
 
     RenderObject* renderer = layer->renderer();
-    Document* document = renderer->document();
-    if (!document)
-        return 0;
 
-    HTMLFrameOwnerElement* ownerElement = document->ownerElement();
+    HTMLFrameOwnerElement* ownerElement = renderer->document().ownerElement();
     if (!ownerElement)
         return 0;
 
@@ -2278,9 +2275,8 @@ void RenderLayer::scrollRectToVisible(const LayoutRect& rect, const ScrollAlignm
 
     // We may end up propagating a scroll event. It is important that we suspend events until 
     // the end of the function since they could delete the layer or the layer's renderer().
-    FrameView* frameView = renderer()->document()->view();
-    if (frameView)
-        frameView->pauseScheduledEvents();
+    FrameView& frameView = renderer()->view().frameView();
+    frameView.pauseScheduledEvents();
 
     bool restrictedByLineClamp = false;
     if (renderer()->parent()) {
@@ -2306,55 +2302,51 @@ void RenderLayer::scrollRectToVisible(const LayoutRect& rect, const ScrollAlignm
             newRect = LayoutRect(box->localToAbsoluteQuad(FloatQuad(FloatRect(localExposeRect)), UseTransforms).boundingBox());
         }
     } else if (!parentLayer && renderer()->isBox() && renderBox()->canBeProgramaticallyScrolled()) {
-        if (frameView) {
-            Element* ownerElement = 0;
-            if (renderer()->document())
-                ownerElement = renderer()->document()->ownerElement();
+        Element* ownerElement = renderer()->document().ownerElement();
 
-            if (ownerElement && ownerElement->renderer()) {
-                HTMLFrameElementBase* frameElementBase = 0;
+        if (ownerElement && ownerElement->renderer()) {
+            HTMLFrameElementBase* frameElementBase = 0;
 
-                if (ownerElement->hasTagName(frameTag) || ownerElement->hasTagName(iframeTag))
-                    frameElementBase = toHTMLFrameElementBase(ownerElement);
+            if (ownerElement->hasTagName(frameTag) || ownerElement->hasTagName(iframeTag))
+                frameElementBase = toHTMLFrameElementBase(ownerElement);
 
-                if (frameElementAndViewPermitScroll(frameElementBase, frameView)) {
-                    LayoutRect viewRect = frameView->visibleContentRect();
-                    LayoutRect exposeRect = getRectToExpose(viewRect, viewRect, rect, alignX, alignY);
+            if (frameElementAndViewPermitScroll(frameElementBase, &frameView)) {
+                LayoutRect viewRect = frameView.visibleContentRect();
+                LayoutRect exposeRect = getRectToExpose(viewRect, viewRect, rect, alignX, alignY);
 
-                    int xOffset = roundToInt(exposeRect.x());
-                    int yOffset = roundToInt(exposeRect.y());
-                    // Adjust offsets if they're outside of the allowable range.
-                    xOffset = max(0, min(frameView->contentsWidth(), xOffset));
-                    yOffset = max(0, min(frameView->contentsHeight(), yOffset));
+                int xOffset = roundToInt(exposeRect.x());
+                int yOffset = roundToInt(exposeRect.y());
+                // Adjust offsets if they're outside of the allowable range.
+                xOffset = max(0, min(frameView.contentsWidth(), xOffset));
+                yOffset = max(0, min(frameView.contentsHeight(), yOffset));
 
-                    frameView->setScrollPosition(IntPoint(xOffset, yOffset));
-                    if (frameView->safeToPropagateScrollToParent()) {
-                        parentLayer = ownerElement->renderer()->enclosingLayer();
-                        // FIXME: This doesn't correctly convert the rect to
-                        // absolute coordinates in the parent.
-                        newRect.setX(rect.x() - frameView->scrollX() + frameView->x());
-                        newRect.setY(rect.y() - frameView->scrollY() + frameView->y());
-                    } else
-                        parentLayer = 0;
-                }
-            } else {
-                LayoutRect viewRect = frameView->visibleContentRect();
-                LayoutRect visibleRectRelativeToDocument = viewRect;
-                IntSize scrollOffsetRelativeToDocument = frameView->scrollOffsetRelativeToDocument();
-                visibleRectRelativeToDocument.setLocation(IntPoint(scrollOffsetRelativeToDocument.width(), scrollOffsetRelativeToDocument.height()));
-
-                LayoutRect r = getRectToExpose(viewRect, visibleRectRelativeToDocument, rect, alignX, alignY);
-                
-                frameView->setScrollPosition(roundedIntPoint(r.location()));
-
-                // This is the outermost view of a web page, so after scrolling this view we
-                // scroll its container by calling Page::scrollRectIntoView.
-                // This only has an effect on the Mac platform in applications
-                // that put web views into scrolling containers, such as Mac OS X Mail.
-                // The canAutoscroll function in EventHandler also knows about this.
-                if (Page* page = frameView->frame().page())
-                    page->chrome().scrollRectIntoView(pixelSnappedIntRect(rect));
+                frameView.setScrollPosition(IntPoint(xOffset, yOffset));
+                if (frameView.safeToPropagateScrollToParent()) {
+                    parentLayer = ownerElement->renderer()->enclosingLayer();
+                    // FIXME: This doesn't correctly convert the rect to
+                    // absolute coordinates in the parent.
+                    newRect.setX(rect.x() - frameView.scrollX() + frameView.x());
+                    newRect.setY(rect.y() - frameView.scrollY() + frameView.y());
+                } else
+                    parentLayer = 0;
             }
+        } else {
+            LayoutRect viewRect = frameView.visibleContentRect();
+            LayoutRect visibleRectRelativeToDocument = viewRect;
+            IntSize scrollOffsetRelativeToDocument = frameView.scrollOffsetRelativeToDocument();
+            visibleRectRelativeToDocument.setLocation(IntPoint(scrollOffsetRelativeToDocument.width(), scrollOffsetRelativeToDocument.height()));
+
+            LayoutRect r = getRectToExpose(viewRect, visibleRectRelativeToDocument, rect, alignX, alignY);
+                
+            frameView.setScrollPosition(roundedIntPoint(r.location()));
+
+            // This is the outermost view of a web page, so after scrolling this view we
+            // scroll its container by calling Page::scrollRectIntoView.
+            // This only has an effect on the Mac platform in applications
+            // that put web views into scrolling containers, such as Mac OS X Mail.
+            // The canAutoscroll function in EventHandler also knows about this.
+            if (Page* page = frameView.frame().page())
+                page->chrome().scrollRectIntoView(pixelSnappedIntRect(rect));
         }
     }
     
@@ -2364,8 +2356,7 @@ void RenderLayer::scrollRectToVisible(const LayoutRect& rect, const ScrollAlignm
     if (parentLayer)
         parentLayer->scrollRectToVisible(newRect, alignX, alignY);
 
-    if (frameView)
-        frameView->resumeScheduledEvents();
+    frameView.resumeScheduledEvents();
 }
 
 void RenderLayer::updateCompositingLayersAfterScroll()
@@ -2859,7 +2850,7 @@ PassRefPtr<Scrollbar> RenderLayer::createScrollbar(ScrollbarOrientation orientat
         widget = Scrollbar::createNativeScrollbar(this, orientation, RegularScrollbar);
         didAddScrollbar(widget.get(), orientation);
     }
-    renderer()->document()->view()->addChild(widget.get());        
+    renderer()->view().frameView().addChild(widget.get());
     return widget.release();
 }
 
@@ -2903,8 +2894,8 @@ void RenderLayer::setHasHorizontalScrollbar(bool hasScrollbar)
 
     // Force an update since we know the scrollbars have changed things.
 #if ENABLE(DASHBOARD_SUPPORT) || ENABLE(DRAGGABLE_REGION)
-    if (renderer()->document()->hasAnnotatedRegions())
-        renderer()->document()->setAnnotatedRegionsDirty(true);
+    if (renderer()->document().hasAnnotatedRegions())
+        renderer()->document().setAnnotatedRegionsDirty(true);
 #endif
 }
 
@@ -2926,8 +2917,8 @@ void RenderLayer::setHasVerticalScrollbar(bool hasScrollbar)
 
     // Force an update since we know the scrollbars have changed things.
 #if ENABLE(DASHBOARD_SUPPORT) || ENABLE(DRAGGABLE_REGION)
-    if (renderer()->document()->hasAnnotatedRegions())
-        renderer()->document()->setAnnotatedRegionsDirty(true);
+    if (renderer()->document().hasAnnotatedRegions())
+        renderer()->document().setAnnotatedRegionsDirty(true);
 #endif
 }
 
@@ -3126,8 +3117,8 @@ void RenderLayer::updateScrollbarsAfterLayout()
 
         // Force an update since we know the scrollbars have changed things.
 #if ENABLE(DASHBOARD_SUPPORT) || ENABLE(DRAGGABLE_REGION)
-        if (renderer()->document()->hasAnnotatedRegions())
-            renderer()->document()->setAnnotatedRegionsDirty(true);
+        if (renderer()->document().hasAnnotatedRegions())
+            renderer()->document().setAnnotatedRegionsDirty(true);
 #endif
 
         renderer()->repaint();
@@ -3546,12 +3537,12 @@ static inline bool shouldSuppressPaintingLayer(RenderLayer* layer)
     // Avoid painting descendants of the root layer when stylesheets haven't loaded. This eliminates FOUC.
     // It's ok not to draw, because later on, when all the stylesheets do load, updateStyleSelector on the Document
     // will do a full repaint().
-    if (layer->renderer()->document()->didLayoutWithPendingStylesheets() && !layer->isRootLayer() && !layer->renderer()->isRoot())
+    if (layer->renderer()->document().didLayoutWithPendingStylesheets() && !layer->isRootLayer() && !layer->renderer()->isRoot())
         return true;
 
     // Avoid painting all layers if the document is in a state where visual updates aren't allowed.
     // A full repaint will occur in Document::implicitClose() if painting is suppressed here.
-    if (!layer->renderer()->document()->visualUpdatesAllowed())
+    if (!layer->renderer()->document().visualUpdatesAllowed())
         return true;
 
     return false;
@@ -3712,8 +3703,7 @@ bool RenderLayer::setupClipPath(GraphicsContext* context, const LayerPaintingInf
 #if ENABLE(SVG)
     if (style->clipPath()->getOperationType() == ClipPathOperation::REFERENCE) {
         ReferenceClipPathOperation* referenceClipPathOperation = static_cast<ReferenceClipPathOperation*>(style->clipPath());
-        Document* document = renderer()->document();
-        Element* element = document ? document->getElementById(referenceClipPathOperation->fragment()) : 0;
+        Element* element = renderer()->document().getElementById(referenceClipPathOperation->fragment());
         if (element && element->hasTagName(SVGNames::clipPathTag) && element->renderer()) {
             if (!rootRelativeBoundsComputed) {
                 rootRelativeBounds = calculateLayerBounds(paintingInfo.rootLayer, &offsetFromRoot, 0);
@@ -4350,11 +4340,7 @@ void RenderLayer::paintChildLayerIntoColumns(RenderLayer* childLayer, GraphicsCo
 
 static inline LayoutRect frameVisibleRect(RenderObject* renderer)
 {
-    FrameView* frameView = renderer->document()->view();
-    if (!frameView)
-        return LayoutRect();
-
-    return frameView->visibleContentRect();
+    return renderer->view().frameView().visibleContentRect();
 }
 
 bool RenderLayer::hitTest(const HitTestRequest& request, HitTestResult& result)
@@ -4366,7 +4352,7 @@ bool RenderLayer::hitTest(const HitTestRequest& request, const HitTestLocation& 
 {
     ASSERT(isSelfPaintingLayer() || hasSelfPaintingLayerDescendant());
 
-    renderer()->document()->updateLayout();
+    renderer()->document().updateLayout();
     
     LayoutRect hitTestArea = isOutOfFlowRenderFlowThread() ? toRenderFlowThread(renderer())->borderBoxRect() : renderer()->view().documentRect();
     if (!request.ignoreClipping())
@@ -6103,7 +6089,7 @@ void RenderLayer::styleChanged(StyleDifference, const RenderStyle* oldStyle)
     if (renderer()->style()->overflowX() == OMARQUEE && renderer()->style()->marqueeBehavior() != MNONE && renderer()->isBox()) {
         if (!m_marquee)
             m_marquee = adoptPtr(new RenderMarquee(this));
-        FeatureObserver::observe(renderer()->document(), renderer()->isHTMLMarquee() ? FeatureObserver::HTMLMarqueeElement : FeatureObserver::CSSOverflowMarquee);
+        FeatureObserver::observe(&renderer()->document(), renderer()->isHTMLMarquee() ? FeatureObserver::HTMLMarqueeElement : FeatureObserver::CSSOverflowMarquee);
         m_marquee->updateMarqueeStyle();
     }
     else if (m_marquee) {
@@ -6122,7 +6108,7 @@ void RenderLayer::styleChanged(StyleDifference, const RenderStyle* oldStyle)
     else if (hasReflection()) {
         if (!m_reflection)
             createReflection();
-        FeatureObserver::observe(renderer()->document(), FeatureObserver::Reflection);
+        FeatureObserver::observe(&renderer()->document(), FeatureObserver::Reflection);
         updateReflectionStyle();
     }
     
@@ -6197,7 +6183,7 @@ void RenderLayer::updateScrollCornerStyle()
     RefPtr<RenderStyle> corner = renderer()->hasOverflowClip() ? actualRenderer->getUncachedPseudoStyle(PseudoStyleRequest(SCROLLBAR_CORNER), actualRenderer->style()) : PassRefPtr<RenderStyle>(0);
     if (corner) {
         if (!m_scrollCorner) {
-            m_scrollCorner = RenderScrollbarPart::createAnonymous(renderer()->document());
+            m_scrollCorner = RenderScrollbarPart::createAnonymous(&renderer()->document());
             m_scrollCorner->setParent(renderer());
         }
         m_scrollCorner->setStyle(corner.release());
@@ -6213,7 +6199,7 @@ void RenderLayer::updateResizerStyle()
     RefPtr<RenderStyle> resizer = renderer()->hasOverflowClip() ? actualRenderer->getUncachedPseudoStyle(PseudoStyleRequest(RESIZER), actualRenderer->style()) : PassRefPtr<RenderStyle>(0);
     if (resizer) {
         if (!m_resizer) {
-            m_resizer = RenderScrollbarPart::createAnonymous(renderer()->document());
+            m_resizer = RenderScrollbarPart::createAnonymous(&renderer()->document());
             m_resizer->setParent(renderer());
         }
         m_resizer->setStyle(resizer.release());
@@ -6231,7 +6217,7 @@ RenderLayer* RenderLayer::reflectionLayer() const
 void RenderLayer::createReflection()
 {
     ASSERT(!m_reflection);
-    m_reflection = RenderReplica::createAnonymous(renderer()->document());
+    m_reflection = RenderReplica::createAnonymous(&renderer()->document());
     m_reflection->setParent(renderer()); // We create a 1-way connection.
 }
 
@@ -6286,8 +6272,8 @@ void RenderLayer::updateReflectionStyle()
 bool RenderLayer::isCSSCustomFilterEnabled() const
 {
     // We only want to enable shaders if WebGL is also enabled on this platform.
-    const Settings* settings = renderer()->document()->settings();
-    return settings && settings->isCSSCustomFilterEnabled() && settings->webGLEnabled();
+    const Settings& settings = renderer()->frame().settings();
+    return settings.isCSSCustomFilterEnabled() && settings.webGLEnabled();
 }
 #endif
 
@@ -6389,7 +6375,7 @@ void RenderLayer::updateOrRemoveFilterEffectRenderer()
         filterInfo->setRenderer(filterRenderer.release());
         
         // We can optimize away code paths in other places if we know that there are no software filters.
-        renderer()->document()->view()->setHasSoftwareFilters(true);
+        renderer()->view().frameView().setHasSoftwareFilters(true);
     }
 
     // If the filter fails to build, remove it from the layer. It will still attempt to

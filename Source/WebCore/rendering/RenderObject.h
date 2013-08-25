@@ -315,7 +315,7 @@ private:
     void* operator new(size_t) throw();
 
 public:
-    RenderArena* renderArena() const { return document()->renderArena(); }
+    RenderArena* renderArena() const { return document().renderArena(); }
 
     bool isPseudoElement() const { return node() && node()->isPseudoElement(); }
 
@@ -398,7 +398,7 @@ public:
 
     virtual bool isRenderScrollbarPart() const { return false; }
 
-    bool isRoot() const { return document()->documentElement() == m_node; }
+    bool isRoot() const { return document().documentElement() == m_node; }
     bool isBody() const;
     bool isHR() const;
     bool isLegend() const;
@@ -622,7 +622,7 @@ public:
     
     virtual void updateDragState(bool dragOn);
 
-    RenderView& view() const { return *document()->renderView(); };
+    RenderView& view() const { return *document().renderView(); };
 
     // Returns true if this renderer is rooted, and optionally returns the hosting view (the root of the hierarchy).
     bool isRooted(RenderView** = 0) const;
@@ -638,7 +638,7 @@ public:
     // pseudo elements for which their parent node is returned.
     Node* generatingNode() const { return isPseudoElement() ? generatingPseudoHostElement() : node(); }
 
-    Document* document() const { return m_node->document(); }
+    Document& document() const { return *m_node->document(); }
     Frame& frame() const; // Defined in RenderView.h
 
     bool hasOutlineAnnotation() const;
@@ -797,7 +797,7 @@ public:
     virtual LayoutUnit maxPreferredLogicalWidth() const { return 0; }
 
     RenderStyle* style() const { return m_style.get(); }
-    RenderStyle* firstLineStyle() const { return document()->styleSheetCollection()->usesFirstLineRules() ? cachedFirstLineStyle() : style(); }
+    RenderStyle* firstLineStyle() const { return document().styleSheetCollection()->usesFirstLineRules() ? cachedFirstLineStyle() : style(); }
     RenderStyle* style(bool firstLine) const { return firstLine ? firstLineStyle() : style(); }
 
     // Used only by Element::pseudoStyleCacheIsInvalid to get a first line style based off of a
@@ -1177,7 +1177,7 @@ private:
 
 inline bool RenderObject::documentBeingDestroyed() const
 {
-    return document()->renderTreeBeingDestroyed();
+    return document().renderTreeBeingDestroyed();
 }
 
 inline bool RenderObject::isBeforeContent() const

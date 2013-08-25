@@ -343,7 +343,7 @@ void AccessibilityTable::addChildren()
         return;
     
     RenderTable* table = toRenderTable(m_renderer);
-    AXObjectCache* axCache = m_renderer->document()->axObjectCache();
+    AXObjectCache* axCache = m_renderer->document().axObjectCache();
 
     // Go through all the available sections to pull out the rows and add them as children.
     table->recalcSectionsIfNeeded();

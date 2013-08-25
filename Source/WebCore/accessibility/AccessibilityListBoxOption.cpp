@@ -112,7 +112,7 @@ LayoutRect AccessibilityListBoxOption::elementRect() const
     if (!listBoxRenderer)
         return rect;
     
-    LayoutRect parentRect = listBoxRenderer->document()->axObjectCache()->getOrCreate(listBoxRenderer)->boundingBoxRect();
+    LayoutRect parentRect = listBoxRenderer->document().axObjectCache()->getOrCreate(listBoxRenderer)->boundingBoxRect();
     int index = listBoxOptionIndex();
     if (index != -1)
         rect = toRenderListBox(listBoxRenderer)->itemBoundingBoxRect(parentRect.location(), index);

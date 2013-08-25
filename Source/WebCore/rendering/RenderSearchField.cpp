@@ -39,6 +39,7 @@
 #include "RenderLayer.h"
 #include "RenderScrollbar.h"
 #include "RenderTheme.h"
+#include "RenderView.h"
 #include "SearchPopupMenu.h"
 #include "Settings.h"
 #include "SimpleFontData.h"
@@ -91,8 +92,7 @@ void RenderSearchField::addSearchResult()
     if (value.isEmpty())
         return;
 
-    Settings* settings = document()->settings();
-    if (!settings || settings->privateBrowsingEnabled())
+    if (frame().settings().privateBrowsingEnabled())
         return;
 
     int size = static_cast<int>(m_recentSearches.size());
@@ -107,7 +107,7 @@ void RenderSearchField::addSearchResult()
 
     const AtomicString& name = autosaveName();
     if (!m_searchPopup)
-        m_searchPopup = document()->page()->chrome().createSearchPopupMenu(this);
+        m_searchPopup = document().page()->chrome().createSearchPopupMenu(this);
 
     m_searchPopup->saveRecentSearches(name, m_recentSearches);
 }
@@ -118,7 +118,7 @@ void RenderSearchField::showPopup()
         return;
 
     if (!m_searchPopup)
-        m_searchPopup = document()->page()->chrome().createSearchPopupMenu(this);
+        m_searchPopup = document().page()->chrome().createSearchPopupMenu(this);
 
     if (!m_searchPopup->enabled())
         return;
@@ -138,7 +138,7 @@ void RenderSearchField::showPopup()
         m_searchPopup->saveRecentSearches(name, m_recentSearches);
     }
 
-    m_searchPopup->popupMenu()->show(pixelSnappedIntRect(absoluteBoundingBoxRect()), document()->view(), -1);
+    m_searchPopup->popupMenu()->show(pixelSnappedIntRect(absoluteBoundingBoxRect()), &view().frameView(), -1);
 }
 
 void RenderSearchField::hidePopup()
@@ -213,7 +213,7 @@ void RenderSearchField::valueChanged(unsigned listIndex, bool fireEvents)
             const AtomicString& name = autosaveName();
             if (!name.isEmpty()) {
                 if (!m_searchPopup)
-                    m_searchPopup = document()->page()->chrome().createSearchPopupMenu(this);
+                    m_searchPopup = document().page()->chrome().createSearchPopupMenu(this);
                 m_searchPopup->saveRecentSearches(name, m_recentSearches);
             }
         }
@@ -344,12 +344,12 @@ void RenderSearchField::setTextFromItem(unsigned listIndex)
 
 FontSelector* RenderSearchField::fontSelector() const
 {
-    return document()->ensureStyleResolver().fontSelector();
+    return document().ensureStyleResolver().fontSelector();
 }
 
 HostWindow* RenderSearchField::hostWindow() const
 {
-    return document()->view()->hostWindow();
+    return view().frameView().hostWindow();
 }
 
 PassRefPtr<Scrollbar> RenderSearchField::createScrollbar(ScrollableArea* scrollableArea, ScrollbarOrientation orientation, ScrollbarControlSize controlSize)

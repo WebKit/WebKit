@@ -179,7 +179,7 @@ static inline void removeFromCacheAndInvalidateDependencies(RenderObject* object
 
     if (!object->node() || !object->node()->isSVGElement())
         return;
-    HashSet<SVGElement*>* dependencies = object->document()->accessSVGExtensions()->setOfElementsReferencingTarget(toSVGElement(object->node()));
+    HashSet<SVGElement*>* dependencies = object->document().accessSVGExtensions()->setOfElementsReferencingTarget(toSVGElement(object->node()));
     if (!dependencies)
         return;
     HashSet<SVGElement*>::iterator end = dependencies->end();
@@ -192,7 +192,6 @@ static inline void removeFromCacheAndInvalidateDependencies(RenderObject* object
 void RenderSVGResource::markForLayoutAndParentResourceInvalidation(RenderObject* object, bool needsLayout)
 {
     ASSERT(object);
-    ASSERT(object->document());
     ASSERT(object->node());
 
     if (needsLayout)

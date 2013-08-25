@@ -213,7 +213,7 @@ void RenderVideo::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
 
     if (displayingPoster)
         paintIntoRect(paintInfo.context, rect);
-    else if (document()->view() && document()->view()->paintBehavior() & PaintBehaviorFlattenCompositingLayers)
+    else if (view().frameView().paintBehavior() & PaintBehaviorFlattenCompositingLayers)
         mediaPlayer->paintCurrentFrameInContext(paintInfo.context, pixelSnappedIntRect(rect));
     else
         mediaPlayer->paint(paintInfo.context, pixelSnappedIntRect(rect));
@@ -255,7 +255,7 @@ void RenderVideo::updatePlayer()
 #endif
     
     IntRect videoBounds = videoBox(); 
-    mediaPlayer->setFrameView(document()->view());
+    mediaPlayer->setFrameView(&view().frameView());
     mediaPlayer->setSize(IntSize(videoBounds.width(), videoBounds.height()));
     mediaPlayer->setVisible(true);
 }

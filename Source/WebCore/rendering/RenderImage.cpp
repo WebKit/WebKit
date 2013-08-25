@@ -160,7 +160,7 @@ void RenderImage::imageChanged(WrappedImagePtr newImage, const IntRect* rect)
     // FIXME (86669): Instead of the RenderImage determining whether its document is in the page
     // cache, the RenderImage should remove itself as a client when its document is put into the
     // page cache.
-    if (documentBeingDestroyed() || document()->inPageCache())
+    if (documentBeingDestroyed() || document().inPageCache())
         return;
 
     if (hasBoxDecorations() || hasMask())
@@ -182,7 +182,7 @@ void RenderImage::imageChanged(WrappedImagePtr newImage, const IntRect* rect)
 
     // Set image dimensions, taking into account the size of the alt text.
     if (m_imageResource->errorOccurred()) {
-        if (!m_altText.isEmpty() && document()->hasPendingStyleRecalc()) {
+        if (!m_altText.isEmpty() && document().hasPendingStyleRecalc()) {
             ASSERT(node());
             if (node()) {
                 m_needsToSetSizeForAltText = true;
@@ -362,7 +362,7 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
             }
 
             if (!m_altText.isEmpty()) {
-                String text = document()->displayStringModifiedByEncoding(m_altText);
+                String text = document().displayStringModifiedByEncoding(m_altText);
                 context->setFillColor(style()->visitedDependentColor(CSSPropertyColor), style()->colorSpace());
                 const Font& font = style()->font();
                 const FontMetrics& fontMetrics = font.fontMetrics();
@@ -420,15 +420,13 @@ void RenderImage::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     
 void RenderImage::paintAreaElementFocusRing(PaintInfo& paintInfo)
 {
-    Document* document = this->document();
-    
-    if (document->printing() || !document->frame()->selection().isFocusedAndActive())
+    if (document().printing() || !frame().selection().isFocusedAndActive())
         return;
     
     if (paintInfo.context->paintingDisabled() && !paintInfo.context->updatingControlTints())
         return;
 
-    Element* focusedElement = document->focusedElement();
+    Element* focusedElement = document().focusedElement();
     if (!focusedElement || !isHTMLAreaElement(focusedElement))
         return;
 

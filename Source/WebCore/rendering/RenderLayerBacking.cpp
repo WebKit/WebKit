@@ -1558,7 +1558,7 @@ bool RenderLayerBacking::isSimpleContainerCompositingLayer() const
 
     if (renderObject->node() && renderObject->node()->isDocumentNode()) {
         // Look to see if the root object has a non-simple background
-        RenderObject* rootObject = renderObject->document()->documentElement() ? renderObject->document()->documentElement()->renderer() : 0;
+        RenderObject* rootObject = renderObject->document().documentElement() ? renderObject->document().documentElement()->renderer() : 0;
         if (!rootObject)
             return false;
         
@@ -1570,7 +1570,7 @@ bool RenderLayerBacking::isSimpleContainerCompositingLayer() const
             return false;
         
         // Now look at the body's renderer.
-        HTMLElement* body = renderObject->document()->body();
+        HTMLElement* body = renderObject->document().body();
         RenderObject* bodyObject = (body && body->hasLocalName(bodyTag)) ? body->renderer() : 0;
         if (!bodyObject)
             return false;

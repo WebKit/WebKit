@@ -273,7 +273,7 @@ RenderTableRow* RenderTableRow::createAnonymous(Document* document)
 
 RenderTableRow* RenderTableRow::createAnonymousWithParentRenderer(const RenderObject* parent)
 {
-    RenderTableRow* newRow = RenderTableRow::createAnonymous(parent->document());
+    RenderTableRow* newRow = RenderTableRow::createAnonymous(&parent->document());
     RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyleWithDisplay(parent->style(), TABLE_ROW);
     newRow->setStyle(newStyle.release());
     return newRow;

@@ -38,6 +38,7 @@
 #include "RenderLayer.h"
 #include "RenderScrollbar.h"
 #include "RenderTheme.h"
+#include "RenderView.h"
 #include "Settings.h"
 #include "SimpleFontData.h"
 #include "StyleResolver.h"
@@ -272,7 +273,7 @@ void RenderTextControlSingleLine::styleDidChange(StyleDifference diff, const Ren
 
 void RenderTextControlSingleLine::capsLockStateMayHaveChanged()
 {
-    if (!node() || !document())
+    if (!node())
         return;
 
     // Only draw the caps lock indicator if these things are true:
@@ -280,13 +281,11 @@ void RenderTextControlSingleLine::capsLockStateMayHaveChanged()
     // 2) The frame is active
     // 3) The element is focused
     // 4) The caps lock is on
-    bool shouldDrawCapsLockIndicator = false;
-
-    if (Frame* frame = document()->frame())
-        shouldDrawCapsLockIndicator = inputElement()->isPasswordField()
-            && frame->selection().isFocusedAndActive()
-            && document()->focusedElement() == node()
-            && PlatformKeyboardEvent::currentCapsLockState();
+    bool shouldDrawCapsLockIndicator =
+        inputElement()->isPasswordField()
+        && frame().selection().isFocusedAndActive()
+        && document().focusedElement() == node()
+        && PlatformKeyboardEvent::currentCapsLockState();
 
     if (shouldDrawCapsLockIndicator != m_shouldDrawCapsLockIndicator) {
         m_shouldDrawCapsLockIndicator = shouldDrawCapsLockIndicator;
@@ -405,7 +404,7 @@ PassRefPtr<RenderStyle> RenderTextControlSingleLine::createInnerBlockStyle(const
 
 bool RenderTextControlSingleLine::textShouldBeTruncated() const
 {
-    return document()->focusedElement() != node()
+    return document().focusedElement() != node()
         && style()->textOverflow() == TextOverflowEllipsis;
 }
 

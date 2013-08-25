@@ -137,7 +137,7 @@ void ImageQualityController::highQualityRepaintTimerFired(Timer<ImageQualityCont
     m_animatedResizeIsActive = false;
 
     for (ObjectLayerSizeMap::iterator it = m_objectLayerSizeMap.begin(); it != m_objectLayerSizeMap.end(); ++it) {
-        if (Frame* frame = it->key->document()->frame()) {
+        if (Frame* frame = it->key->document().frame()) {
             // If this renderer's containing FrameView is in live resize, punt the timer and hold back for now.
             if (frame->view() && frame->view()->inLiveResize()) {
                 restartTimer();
@@ -190,7 +190,7 @@ bool ImageQualityController::shouldPaintAtLowQuality(GraphicsContext* context, R
     }
 
     // If the containing FrameView is being resized, paint at low quality until resizing is finished.
-    if (Frame* frame = object->document()->frame()) {
+    if (Frame* frame = object->document().frame()) {
         bool frameViewIsCurrentlyInLiveResize = frame->view() && frame->view()->inLiveResize();
         if (frameViewIsCurrentlyInLiveResize) {
             set(object, innerMap, layer, size);
@@ -214,7 +214,7 @@ bool ImageQualityController::shouldPaintAtLowQuality(GraphicsContext* context, R
     }
 
     // There is no need to hash scaled images that always use low quality mode when the page demands it. This is the iChat case.
-    if (object->document()->page()->inLowQualityImageInterpolationMode()) {
+    if (object->document().page()->inLowQualityImageInterpolationMode()) {
         double totalPixels = static_cast<double>(image->width()) * static_cast<double>(image->height());
         if (totalPixels > cInterpolationCutoff)
             return true;
@@ -414,7 +414,7 @@ bool RenderBoxModelObject::hasAutoHeightOrContainingBlockWithAutoHeight() const
     // For percentage heights: The percentage is calculated with respect to the height of the generated box's
     // containing block. If the height of the containing block is not specified explicitly (i.e., it depends
     // on content height), and this element is not absolutely positioned, the value computes to 'auto'.
-    if (!logicalHeightLength.isPercent() || isOutOfFlowPositioned() || document()->inQuirksMode())
+    if (!logicalHeightLength.isPercent() || isOutOfFlowPositioned() || document().inQuirksMode())
         return false;
 
     // Anonymous block boxes are ignored when resolving percentage values that would refer to it:
@@ -783,10 +783,10 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
     bool shouldPaintBackgroundImage = bgImage && bgImage->canRender(this, style()->effectiveZoom());
     
     bool forceBackgroundToWhite = false;
-    if (document()->printing()) {
+    if (document().printing()) {
         if (style()->printColorAdjust() == PrintColorAdjustEconomy)
             forceBackgroundToWhite = true;
-        if (document()->settings() && document()->settings()->shouldPrintBackgrounds())
+        if (document().settings() && document().settings()->shouldPrintBackgrounds())
             forceBackgroundToWhite = false;
     }
 
@@ -922,14 +922,14 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
     if (isRoot) {
         isOpaqueRoot = true;
         if (!bgLayer->next() && !(bgColor.isValid() && bgColor.alpha() == 255)) {
-            Element* ownerElement = document()->ownerElement();
+            Element* ownerElement = document().ownerElement();
             if (ownerElement) {
                 if (!ownerElement->hasTagName(frameTag)) {
                     // Locate the <body> element using the DOM.  This is easier than trying
                     // to crawl around a render tree with potential :before/:after content and
                     // anonymous blocks created by inline <body> tags etc.  We can locate the <body>
                     // render object very easily via the DOM.
-                    HTMLElement* body = document()->body();
+                    HTMLElement* body = document().body();
                     if (body) {
                         // Can't scroll a frameset document anyway.
                         isOpaqueRoot = body->hasLocalName(framesetTag);
@@ -937,7 +937,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
 #if ENABLE(SVG)
                     else {
                         // SVG documents and XML documents with SVG root nodes are transparent.
-                        isOpaqueRoot = !document()->hasSVGRootNode();
+                        isOpaqueRoot = !document().hasSVGRootNode();
                     }
 #endif
                 }

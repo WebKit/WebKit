@@ -66,7 +66,7 @@ RenderMathMLBlock* RenderMathMLBlock::createAnonymousMathMLBlock(EDisplay displa
 {
     RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyleWithDisplay(style(), display);
     RenderMathMLBlock* newBlock = new (renderArena()) RenderMathMLBlock(0);
-    newBlock->setDocumentForAnonymous(document());
+    newBlock->setDocumentForAnonymous(&document());
     newBlock->setStyle(newStyle.release());
     return newBlock;
 }

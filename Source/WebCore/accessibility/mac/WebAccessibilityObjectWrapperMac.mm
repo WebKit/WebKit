@@ -713,7 +713,7 @@ static void AXAttributeStringSetBlockquoteLevel(NSMutableAttributedString* attrS
     if (!AXAttributedStringRangeIsValid(attrString, range))
         return;
     
-    AccessibilityObject* obj = renderer->document()->axObjectCache()->getOrCreate(renderer);
+    AccessibilityObject* obj = renderer->document().axObjectCache()->getOrCreate(renderer);
     int quoteLevel = obj->blockquoteLevel();
     
     if (quoteLevel)
@@ -776,7 +776,7 @@ static void AXAttributeStringSetHeadingLevel(NSMutableAttributedString* attrStri
     // Sometimes there are objects between the text and the heading.
     // In those cases the parent hierarchy should be queried to see if there is a heading level.
     int parentHeadingLevel = 0;
-    AccessibilityObject* parentObject = renderer->document()->axObjectCache()->getOrCreate(renderer->parent());
+    AccessibilityObject* parentObject = renderer->document().axObjectCache()->getOrCreate(renderer->parent());
     for (; parentObject; parentObject = parentObject->parentObject()) {
         parentHeadingLevel = parentObject->headingLevel();
         if (parentHeadingLevel)
@@ -801,11 +801,7 @@ static void AXAttributeStringSetElement(NSMutableAttributedString* attrString, N
         if (!renderer)
             return;
         
-        Document* doc = renderer->document();
-        if (!doc)
-            return;
-        
-        AXObjectCache* cache = doc->axObjectCache();
+        AXObjectCache* cache = renderer->document().axObjectCache();
         if (!cache)
             return;
         
@@ -862,7 +858,7 @@ static NSString* nsStringForReplacedNode(Node* replacedNode)
     }
     
     // create an AX object, but skip it if it is not supposed to be seen
-    RefPtr<AccessibilityObject> obj = replacedNode->renderer()->document()->axObjectCache()->getOrCreate(replacedNode->renderer());
+    RefPtr<AccessibilityObject> obj = replacedNode->renderer()->document().axObjectCache()->getOrCreate(replacedNode->renderer());
     if (obj->accessibilityIsIgnored())
         return nil;
     
@@ -917,7 +913,7 @@ static NSString* nsStringForReplacedNode(Node* replacedNode)
                 [attrString setAttributes:nil range:attrStringRange];
                 
                 // add the attachment attribute
-                AccessibilityObject* obj = replacedNode->renderer()->document()->axObjectCache()->getOrCreate(replacedNode->renderer());
+                AccessibilityObject* obj = replacedNode->renderer()->document().axObjectCache()->getOrCreate(replacedNode->renderer());
                 AXAttributeStringSetElement(attrString, NSAccessibilityAttachmentTextAttribute, obj, attrStringRange);
             }
         }
@@ -2577,9 +2573,9 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     
     if (m_object->renderer()) {
         if ([attributeName isEqualToString: @"AXStartTextMarker"])
-            return [self textMarkerForVisiblePosition:startOfDocument(m_object->renderer()->document())];
+            return [self textMarkerForVisiblePosition:startOfDocument(&m_object->renderer()->document())];
         if ([attributeName isEqualToString: @"AXEndTextMarker"])
-            return [self textMarkerForVisiblePosition:endOfDocument(m_object->renderer()->document())];
+            return [self textMarkerForVisiblePosition:endOfDocument(&m_object->renderer()->document())];
     }
     
     if ([attributeName isEqualToString:NSAccessibilityBlockQuoteLevelAttribute])
@@ -3157,7 +3153,7 @@ static RenderObject* rendererForView(NSView* view)
     if (!renderer)
         return nil;
     
-    AccessibilityObject* obj = renderer->document()->axObjectCache()->getOrCreate(renderer);
+    AccessibilityObject* obj = renderer->document().axObjectCache()->getOrCreate(renderer);
     if (obj)
         return obj->parentObjectUnignored()->wrapper();
     return nil;

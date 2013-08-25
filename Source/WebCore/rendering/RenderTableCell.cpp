@@ -1371,7 +1371,7 @@ RenderTableCell* RenderTableCell::createAnonymous(Document* document)
 
 RenderTableCell* RenderTableCell::createAnonymousWithParentRenderer(const RenderObject* parent)
 {
-    RenderTableCell* newCell = RenderTableCell::createAnonymous(parent->document());
+    RenderTableCell* newCell = RenderTableCell::createAnonymous(&parent->document());
     RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyleWithDisplay(parent->style(), TABLE_CELL);
     newCell->setStyle(newStyle.release());
     return newCell;

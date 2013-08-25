@@ -61,7 +61,7 @@ String CSSFilterImageValue::customCssText() const
 
 IntSize CSSFilterImageValue::fixedSize(const RenderObject* renderer)
 {
-    CachedResourceLoader* cachedResourceLoader = renderer->document()->cachedResourceLoader();
+    CachedResourceLoader* cachedResourceLoader = renderer->document().cachedResourceLoader();
     CachedImage* cachedImage = cachedImageForCSSValue(m_imageValue.get(), cachedResourceLoader);
 
     if (!cachedImage)
@@ -101,7 +101,7 @@ PassRefPtr<Image> CSSFilterImageValue::image(RenderObject* renderer, const IntSi
     if (size.isEmpty())
         return 0;
 
-    CachedResourceLoader* cachedResourceLoader = renderer->document()->cachedResourceLoader();
+    CachedResourceLoader* cachedResourceLoader = renderer->document().cachedResourceLoader();
     CachedImage* cachedImage = cachedImageForCSSValue(m_imageValue.get(), cachedResourceLoader);
 
     if (!cachedImage)

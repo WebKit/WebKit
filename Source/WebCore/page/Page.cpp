@@ -1408,7 +1408,7 @@ void Page::addRelevantRepaintedObject(RenderObject* object, const LayoutRect& ob
         return;
 
     // Objects inside sub-frames are not considered to be relevant.
-    if (object->document()->frame() != mainFrame())
+    if (&object->frame() != mainFrame())
         return;
 
     LayoutRect relevantRect = relevantViewRect(&object->view());
