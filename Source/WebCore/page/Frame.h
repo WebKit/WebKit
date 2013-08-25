@@ -124,10 +124,6 @@ namespace WebCore {
         RenderView* contentRenderer() const; // Root of the render tree for the document contained in this frame.
         RenderPart* ownerRenderer() const; // Renderer for the element that contains this frame.
 
-#if ENABLE(PAGE_VISIBILITY_API)
-        void dispatchVisibilityStateChangeEvent();
-#endif
-
     // ======== All public functions below this point are candidates to move out of Frame into another class. ========
 
         void injectUserScripts(UserScriptInjectionTime);

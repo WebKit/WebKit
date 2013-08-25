@@ -1275,15 +1275,23 @@ void Page::unthrottleTimers()
 #if ENABLE(PAGE_VISIBILITY_API) || ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING)
 void Page::setVisibilityState(PageVisibilityState visibilityState, bool isInitialState)
 {
-    // FIXME: the visibility state needs to be stored on the top-level document
+#if !ENABLE(PAGE_VISIBILITY_API)
+    UNUSED_PARAM(isInitialState);
+#else
+    // FIXME: The visibility state should be stored on the top-level document.
     // https://bugs.webkit.org/show_bug.cgi?id=116769
-#if ENABLE(PAGE_VISIBILITY_API)
+
     if (m_visibilityState == visibilityState)
         return;
     m_visibilityState = visibilityState;
 
-    if (!isInitialState && m_mainFrame)
-        m_mainFrame->dispatchVisibilityStateChangeEvent();
+    if (!isInitialState) {
+        Vector<RefPtr<Document>> documents;
+        for (Frame* frame = m_mainFrame.get(); frame; frame = frame->tree().traverseNext())
+            documents.append(frame->document());
+        for (size_t i = 0, size = documents.size(); i < size; ++i)
+            documents[i]->dispatchEvent(Event::create(eventNames().visibilitychangeEvent, false, false));
+    }
 #endif
 
     if (visibilityState == WebCore::PageVisibilityStateHidden) {
@@ -1296,9 +1304,6 @@ void Page::setVisibilityState(PageVisibilityState visibilityState, bool isInitia
         if (m_settings->hiddenPageCSSAnimationSuspensionEnabled())
             mainFrame()->animation().resumeAnimations();
     }
-#if !ENABLE(PAGE_VISIBILITY_API)
-    UNUSED_PARAM(isInitialState);
-#endif
 }
 #endif // ENABLE(PAGE_VISIBILITY_API) || ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING)
 

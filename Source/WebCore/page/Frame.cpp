@@ -614,21 +614,6 @@ Frame* Frame::frameForWidget(const Widget* widget)
     return &toFrameView(widget)->frame();
 }
 
-#if ENABLE(PAGE_VISIBILITY_API)
-void Frame::dispatchVisibilityStateChangeEvent()
-{
-    if (m_doc)
-        m_doc->dispatchVisibilityStateChangeEvent();
-
-    Vector<RefPtr<Frame> > childFrames;
-    for (Frame* child = tree().firstChild(); child; child = child->tree().nextSibling())
-        childFrames.append(child);
-
-    for (size_t i = 0; i < childFrames.size(); ++i)
-        childFrames[i]->dispatchVisibilityStateChangeEvent();
-}
-#endif
-
 void Frame::willDetachPage()
 {
     if (Frame* parent = tree().parent())

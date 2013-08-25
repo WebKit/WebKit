@@ -406,7 +406,6 @@ public:
 #if ENABLE(PAGE_VISIBILITY_API)
     String visibilityState() const;
     bool hidden() const;
-    void dispatchVisibilityStateChangeEvent();
 #endif
 
 #if ENABLE(CSP_NEXT)

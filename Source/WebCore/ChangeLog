@@ -1,5 +1,22 @@
 2013-08-25  Darin Adler  <darin@apple.com>
 
+        No need for dispatchVisibilityStateChangeEvent function
+        https://bugs.webkit.org/show_bug.cgi?id=120261
+
+        Reviewed by Andreas Kling.
+
+        * dom/Document.cpp: Removed dispatchVisibilityStateChangeEvent.
+        * dom/Document.h: Ditto.
+        * page/Frame.cpp: Ditto.
+        * page/Frame.h: Ditto.
+
+        * page/Page.cpp:
+        (WebCore::Page::setVisibilityState): Put all the logic for dispatching the
+        visibility state change event. Nothing here requires any special information
+        about the internals of Frame or Document.
+
+2013-08-25  Darin Adler  <darin@apple.com>
+
         No need for clearTimers function in Frame
         https://bugs.webkit.org/show_bug.cgi?id=120265
 

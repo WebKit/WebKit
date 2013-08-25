@@ -1591,11 +1591,6 @@ bool Document::hidden() const
 {
     return pageVisibilityState() != PageVisibilityStateVisible;
 }
-
-void Document::dispatchVisibilityStateChangeEvent()
-{
-    dispatchEvent(Event::create(eventNames().visibilitychangeEvent, false, false));
-}
 #endif
 
 #if ENABLE(CSP_NEXT)
