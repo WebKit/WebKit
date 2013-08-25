@@ -1,3 +1,14 @@
+2013-08-24  Dan Bernstein  <mitz@apple.com>
+
+        [mac] link against libz in a more civilized manner
+        https://bugs.webkit.org/show_bug.cgi?id=120258
+
+        Reviewed by Darin Adler.
+
+        * Configurations/JavaScriptCore.xcconfig: Removed “-lz” from OTHER_LDFLAGS_BASE.
+        * JavaScriptCore.xcodeproj/project.pbxproj: Added libz.dylib to the JavaScriptCore target’s
+        Link Binary With Libraries build phase.
+
 2013-08-23  Laszlo Papp  <lpapp@kde.org>
 
         Failure building with python3
