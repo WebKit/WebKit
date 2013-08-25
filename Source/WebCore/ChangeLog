@@ -1,5 +1,19 @@
 2013-08-24  Benjamin Poulain  <benjamin@webkit.org>
 
+        <https://webkit.org/b/120102> Inline SelectorQuery's execution traits
+
+        Reviewed by Sam Weinig.
+
+        For some reason, clang does not always inline the trait. The operations are so simple
+        that it shows up in profile.
+        Force the inlining to match the original speed.
+
+        * dom/SelectorQuery.cpp:
+        (WebCore::AllElementExtractorSelectorQueryTrait::appendOutputForElement):
+        (WebCore::SingleElementExtractorSelectorQueryTrait::appendOutputForElement):
+
+2013-08-24  Benjamin Poulain  <benjamin@webkit.org>
+
         Remove a useless #include from StyledElement
         https://bugs.webkit.org/show_bug.cgi?id=120245
 

@@ -83,7 +83,7 @@ bool SelectorDataList::matches(Element* targetElement) const
 struct AllElementExtractorSelectorQueryTrait {
     typedef Vector<RefPtr<Node>> OutputType;
     static const bool shouldOnlyMatchFirstElement = false;
-    static void appendOutputForElement(OutputType& output, Element* element) { output.append(element); }
+    ALWAYS_INLINE static void appendOutputForElement(OutputType& output, Element* element) { output.append(element); }
 };
 
 PassRefPtr<NodeList> SelectorDataList::queryAll(Node* rootNode) const
@@ -96,7 +96,7 @@ PassRefPtr<NodeList> SelectorDataList::queryAll(Node* rootNode) const
 struct SingleElementExtractorSelectorQueryTrait {
     typedef Element* OutputType;
     static const bool shouldOnlyMatchFirstElement = true;
-    static void appendOutputForElement(OutputType& output, Element* element)
+    ALWAYS_INLINE static void appendOutputForElement(OutputType& output, Element* element)
     {
         ASSERT(element);
         ASSERT(!output);
