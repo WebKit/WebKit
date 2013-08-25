@@ -1,3 +1,11 @@
+2013-08-24  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Another attempt to fix the Windows bots. Need to retain older
+        QuickTime player features for external builders.
+
+        * win/include/WebKitSystemInterface/WebKitSystemInterface.h:
+        * win/lib32/WebKitSystemInterface.lib:
+
 2013-08-23  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Forgot to check in the header as well!
