@@ -1,5 +1,28 @@
 2013-08-25  Darin Adler  <darin@apple.com>
 
+        No need for documentTypeString function in Frame
+        https://bugs.webkit.org/show_bug.cgi?id=120262
+
+        Reviewed by Andreas Kling.
+
+        * WebCore.exp.in: Removed export of Frame::documentTypeString.
+
+        * editing/markup.cpp:
+        (WebCore::documentTypeString): Added. Replaces the old Frame member function.
+        Makes more sense to have this here since it is both called by and calls code
+        in this file; somehow this function was left behind.
+        (WebCore::createFullMarkup): Changed to call the new function.
+        * editing/markup.h: Added documentTypeString function. Has to be exported
+        because LegacyWebArchive uses it; might be worth fixing that later.
+        * loader/archive/cf/LegacyWebArchive.cpp:
+        (WebCore::LegacyWebArchive::create): Changed to call the new function.
+        (WebCore::LegacyWebArchive::createFromSelection): Ditto.
+
+        * page/Frame.cpp: Removed Frame::documentTypeString.
+        * page/Frame.h: Ditto.
+
+2013-08-25  Darin Adler  <darin@apple.com>
+
         Clipboard is in DOM directory, but ClipboardMac is in platform directory
         https://bugs.webkit.org/show_bug.cgi?id=120267
 

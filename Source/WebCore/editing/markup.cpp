@@ -36,10 +36,8 @@
 #include "CSSValueKeywords.h"
 #include "ChildListMutationScope.h"
 #include "ContextFeatures.h"
-#if ENABLE(DELETION_UI)
-#include "DeleteButtonController.h"
-#endif
 #include "DocumentFragment.h"
+#include "DocumentType.h"
 #include "Editor.h"
 #include "ElementTraversal.h"
 #include "ExceptionCode.h"
@@ -63,6 +61,10 @@
 #include "htmlediting.h"
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringBuilder.h>
+
+#if ENABLE(DELETION_UI)
+#include "DeleteButtonController.h"
+#endif
 
 using namespace std;
 
@@ -922,24 +924,30 @@ PassRefPtr<DocumentFragment> createFragmentFromNodes(Document *document, const V
     return fragment.release();
 }
 
+String documentTypeString(const Document& document)
+{
+    DocumentType* documentType = document.doctype();
+    if (!documentType)
+        return String();
+
+    return createMarkup(documentType);
+}
+
 String createFullMarkup(const Node* node)
 {
     if (!node)
         return String();
-        
+
     Document* document = node->document();
     if (!document)
         return String();
-        
-    Frame* frame = document->frame();
-    if (!frame)
-        return String();
 
-    // FIXME: This is never "for interchange". Is that right?    
+    // FIXME: This is never "for interchange". Is that right?
     String markupString = createMarkup(node, IncludeNode, 0);
+
     Node::NodeType nodeType = node->nodeType();
     if (nodeType != Node::DOCUMENT_NODE && nodeType != Node::DOCUMENT_TYPE_NODE)
-        markupString = frame->documentTypeString() + markupString;
+        markupString = documentTypeString(*document) + markupString;
 
     return markupString;
 }
@@ -952,17 +960,13 @@ String createFullMarkup(const Range* range)
     Node* node = range->startContainer();
     if (!node)
         return String();
-        
+
     Document* document = node->document();
     if (!document)
         return String();
-        
-    Frame* frame = document->frame();
-    if (!frame)
-        return String();
 
-    // FIXME: This is always "for interchange". Is that right? See the previous method.
-    return frame->documentTypeString() + createMarkup(range, 0, AnnotateForInterchange);        
+    // FIXME: This is always "for interchange". Is that right?
+    return documentTypeString(*document) + createMarkup(range, 0, AnnotateForInterchange);
 }
 
 String urlToMarkup(const KURL& url, const String& title)

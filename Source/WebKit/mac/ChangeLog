@@ -1,3 +1,16 @@
+2013-08-25  Darin Adler  <darin@apple.com>
+
+        Frame should not have a documentTypeString member function
+        https://bugs.webkit.org/show_bug.cgi?id=120262
+
+        Reviewed by Andreas Kling.
+
+        * WebView/WebFrame.mm: Removed _stringWithDocumentTypeStringAndMarkupString:
+        internal method, which was not used anywhere in WebKit. Internal methods are
+        only for use within WebKit, as opposed to public and private methods that can
+        be used outside.
+        * WebView/WebFrameInternal.h: Ditto.
+
 2013-08-24  Darin Adler  <darin@apple.com>
 
         Frame::tree should return a reference instead of a pointer

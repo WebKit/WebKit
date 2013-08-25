@@ -165,8 +165,6 @@ namespace WebCore {
         int orientation() const { return m_orientation; }
 #endif
 
-        String documentTypeString() const;
-
         String displayStringModifiedByEncoding(const String&) const;
 
         DragImageRef nodeImage(Node*);

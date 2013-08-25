@@ -445,7 +445,7 @@ PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(Node* node, FrameFilter* f
     String markupString = createMarkup(node, IncludeNode, &nodeList, DoNotResolveURLs, tagNamesToFilter.get());
     Node::NodeType nodeType = node->nodeType();
     if (nodeType != Node::DOCUMENT_NODE && nodeType != Node::DOCUMENT_TYPE_NODE)
-        markupString = frame->documentTypeString() + markupString;
+        markupString = documentTypeString(*document) + markupString;
 
     return create(markupString, frame, nodeList, filter);
 }
@@ -494,7 +494,7 @@ PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(Range* range)
     Vector<Node*> nodeList;
     
     // FIXME: This is always "for interchange". Is that right? See the previous method.
-    String markupString = frame->documentTypeString() + createMarkup(range, &nodeList, AnnotateForInterchange);
+    String markupString = documentTypeString(*document) + createMarkup(range, &nodeList, AnnotateForInterchange);
 
     return create(markupString, frame, nodeList, 0);
 }
@@ -589,14 +589,18 @@ PassRefPtr<LegacyWebArchive> LegacyWebArchive::createFromSelection(Frame* frame)
 {
     if (!frame)
         return 0;
-    
+
+    Document* document = frame->document();
+    if (!document)
+        return 0;
+
     RefPtr<Range> selectionRange = frame->selection().toNormalizedRange();
     Vector<Node*> nodeList;
-    String markupString = frame->documentTypeString() + createMarkup(selectionRange.get(), &nodeList, AnnotateForInterchange);
-    
+    String markupString = documentTypeString(*document) + createMarkup(selectionRange.get(), &nodeList, AnnotateForInterchange);
+
     RefPtr<LegacyWebArchive> archive = create(markupString, frame, nodeList, 0);
     
-    if (!frame->document() || !frame->document()->isFrameSet())
+    if (!document->isFrameSet())
         return archive.release();
         
     // Wrap the frameset document in an iframe so it can be pasted into

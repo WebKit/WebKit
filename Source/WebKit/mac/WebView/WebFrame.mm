@@ -478,11 +478,6 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     return dataSource(_private->coreFrame->loader().documentLoader());
 }
 
-- (NSString *)_stringWithDocumentTypeStringAndMarkupString:(NSString *)markupString
-{
-    return String(_private->coreFrame->documentTypeString() + String(markupString));
-}
-
 - (NSArray *)_nodesFromList:(Vector<Node*> *)nodesVector
 {
     size_t size = nodesVector->size();
@@ -490,17 +485,6 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     for (size_t i = 0; i < size; ++i)
         [nodes addObject:kit((*nodesVector)[i])];
     return nodes;
-}
-
-- (NSString *)_markupStringFromRange:(DOMRange *)range nodes:(NSArray **)nodes
-{
-    // FIXME: This is always "for interchange". Is that right? See the previous method.
-    Vector<Node*> nodeList;
-    NSString *markupString = createMarkup(core(range), nodes ? &nodeList : 0, AnnotateForInterchange);
-    if (nodes)
-        *nodes = [self _nodesFromList:&nodeList];
-
-    return [self _stringWithDocumentTypeStringAndMarkupString:markupString];
 }
 
 - (NSString *)_selectedString

@@ -72,6 +72,8 @@ String createFullMarkup(const Range*);
 
 String urlToMarkup(const KURL&, const String& title);
 
+String documentTypeString(const Document&);
+
 }
 
 #endif // markup_h

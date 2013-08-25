@@ -630,14 +630,6 @@ void Frame::disconnectOwnerElement()
     m_ownerElement = 0;
 }
 
-String Frame::documentTypeString() const
-{
-    if (DocumentType* doctype = document()->doctype())
-        return createMarkup(doctype);
-
-    return String();
-}
-
 String Frame::displayStringModifiedByEncoding(const String& str) const
 {
     return document() ? document()->displayStringModifiedByEncoding(str) : str;
