@@ -168,6 +168,7 @@ if ($ENV{ENABLE_FTL_JIT}) {
         opendir (my $dirHandle, $librarySourceDirectory);
         while (my $filename = readdir($dirHandle)) {
             next if $filename !~ /\.a$/;
+            next if $filename =~ /libgtest/;
             print "   Symlink $filename\n";
             my $sourceLibrary = "$librarySourceDirectory/$filename";
             my $targetLibrary = "$libraryTargetDirectory/$filename";

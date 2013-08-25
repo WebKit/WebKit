@@ -1,3 +1,11 @@
+2013-08-24  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, fix build-webkit --ftl-jit in the case that you have your own llvm directory. We need to
+        prune 'libgtest' and friends from the llvm build, since WebKit builds its own and none of the llvm
+        libraries depend on libgtest anyway.
+
+        * Scripts/copy-webkitlibraries-to-product-directory:
+
 2013-08-24  Darin Adler  <darin@apple.com>
 
         RetainPtr lacks move constructor for case when argument is a RetainPtr of a different type
