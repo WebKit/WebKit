@@ -463,7 +463,7 @@ void RenderLayerCompositor::layerTiledBackingUsageChanged(const GraphicsLayer*, 
 
 RenderLayerCompositor* RenderLayerCompositor::enclosingCompositorFlushingLayers() const
 {
-    for (Frame* frame = &m_renderView.frameView().frame(); frame; frame = frame->tree()->parent()) {
+    for (Frame* frame = &m_renderView.frameView().frame(); frame; frame = frame->tree().parent()) {
         RenderLayerCompositor* compositor = frame->contentRenderer() ? &frame->contentRenderer()->compositor() : 0;
         if (compositor->isFlushingLayers())
             return compositor;
@@ -572,7 +572,7 @@ void RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
 
         Frame& frame = m_renderView.frameView().frame();
         bool isMainFrame = !m_renderView.document()->ownerElement();
-        LOG(Compositing, "\nUpdate %d of %s.\n", m_rootLayerUpdateCount, isMainFrame ? "main frame" : frame.tree()->uniqueName().string().utf8().data());
+        LOG(Compositing, "\nUpdate %d of %s.\n", m_rootLayerUpdateCount, isMainFrame ? "main frame" : frame.tree().uniqueName().string().utf8().data());
     }
 #endif
 
@@ -2978,7 +2978,7 @@ void RenderLayerCompositor::notifyIFramesOfCompositingChange()
 {
     Frame& frame = m_renderView.frameView().frame();
 
-    for (Frame* child = frame.tree()->firstChild(); child; child = child->tree()->traverseNext(&frame)) {
+    for (Frame* child = frame.tree().firstChild(); child; child = child->tree().traverseNext(&frame)) {
         if (child->document() && child->document()->ownerElement())
             child->document()->ownerElement()->scheduleSetNeedsStyleRecalc(SyntheticStyleChange);
     }

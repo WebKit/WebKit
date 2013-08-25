@@ -3682,7 +3682,7 @@ WTF::PassRefPtr<WebCore::Frame> ewk_view_frame_create(Evas_Object* ewkView, Evas
     }
 
     // The creation of the frame may have removed itself already.
-    if (!coreFrame->page() || !coreFrame->tree() || !coreFrame->tree()->parent())
+    if (!coreFrame->page() || !coreFrame->tree().parent())
         return 0;
 
     smartData->changed.frame_rect = true;

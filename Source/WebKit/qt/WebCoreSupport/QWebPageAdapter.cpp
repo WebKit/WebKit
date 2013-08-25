@@ -422,10 +422,10 @@ bool QWebPageAdapter::findText(const QString& subString, FindFlag options)
 
     if (subString.isEmpty()) {
         page->mainFrame()->selection().clear();
-        Frame* frame = page->mainFrame()->tree()->firstChild();
+        Frame* frame = page->mainFrame()->tree().firstChild();
         while (frame) {
             frame->selection().clear();
-            frame = frame->tree()->traverseNextWithWrap(false);
+            frame = frame->tree().traverseNextWithWrap(false);
         }
     }
 

@@ -266,7 +266,7 @@ void InspectorCanvasAgent::findFramesWithUninstrumentedCanvases()
 {
     m_framesWithUninstrumentedCanvases.clear();
 
-    for (Frame* frame = m_pageAgent->page()->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
+    for (Frame* frame = m_pageAgent->page()->mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (!frame->document())
             continue;
 
@@ -313,7 +313,7 @@ void InspectorCanvasAgent::frameNavigated(Frame* frame)
                 String frameId = m_pageAgent->frameId(frame);
                 m_frontend->traceLogsRemoved(&frameId, 0);
             }
-            frame = frame->tree()->traverseNext();
+            frame = frame->tree().traverseNext();
         }
     }
 }

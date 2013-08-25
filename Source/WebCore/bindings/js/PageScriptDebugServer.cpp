@@ -189,7 +189,7 @@ void PageScriptDebugServer::setJavaScriptPaused(Page* page, bool paused)
 
     page->setDefersLoading(paused);
 
-    for (Frame* frame = page->mainFrame(); frame; frame = frame->tree()->traverseNext())
+    for (Frame* frame = page->mainFrame(); frame; frame = frame->tree().traverseNext())
         setJavaScriptPaused(frame, paused);
 }
 

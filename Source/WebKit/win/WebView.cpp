@@ -2740,7 +2740,7 @@ HRESULT STDMETHODCALLTYPE WebView::initWithFrame(
     m_mainFrame = webFrame;
     webFrame->Release(); // The WebFrame is owned by the Frame, so release our reference to it.
 
-    coreFrame->tree()->setName(toString(frameName));
+    coreFrame->tree().setName(toString(frameName));
     coreFrame->init();
     setGroupName(groupName);
 
@@ -3442,8 +3442,8 @@ HRESULT STDMETHODCALLTYPE WebView::hostWindow(
 static Frame *incrementFrame(Frame *curr, bool forward, bool wrapFlag)
 {
     return forward
-        ? curr->tree()->traverseNextWithWrap(wrapFlag)
-        : curr->tree()->traversePreviousWithWrap(wrapFlag);
+        ? curr->tree().traverseNextWithWrap(wrapFlag)
+        : curr->tree().traversePreviousWithWrap(wrapFlag);
 }
 
 HRESULT STDMETHODCALLTYPE WebView::searchFor( 
@@ -3501,7 +3501,7 @@ HRESULT STDMETHODCALLTYPE WebView::executeCoreCommandByName(BSTR name, BSTR valu
 
 HRESULT STDMETHODCALLTYPE WebView::clearMainFrameName()
 {
-    m_page->mainFrame()->tree()->clearName();
+    m_page->mainFrame()->tree().clearName();
 
     return S_OK;
 }

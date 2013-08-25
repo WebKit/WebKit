@@ -153,7 +153,7 @@ bool HTMLDocument::hasFocus()
     if (!page->focusController().isActive())
         return false;
     if (Frame* focusedFrame = page->focusController().focusedFrame()) {
-        if (focusedFrame->tree()->isDescendantOf(frame()))
+        if (focusedFrame->tree().isDescendantOf(frame()))
             return true;
     }
     return false;

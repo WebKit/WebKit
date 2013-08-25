@@ -175,7 +175,7 @@ static unsigned logCanCacheFrameDecision(Frame* frame, int indentLevel)
     }
     HistogramSupport::histogramEnumeration("PageCache.FrameRejectReasonCount", reasonCount, 1 + NumberOfReasonsFramesCannotBeInPageCache);
 
-    for (Frame* child = frame->tree()->firstChild(); child; child = child->tree()->nextSibling())
+    for (Frame* child = frame->tree().firstChild(); child; child = child->tree().nextSibling())
         rejectReasons |= logCanCacheFrameDecision(child, indentLevel + 1);
     
     PCLOG(rejectReasons ? " Frame CANNOT be cached" : " Frame CAN be cached");
@@ -303,7 +303,7 @@ PageCache::PageCache()
     
 bool PageCache::canCachePageContainingThisFrame(Frame* frame)
 {
-    for (Frame* child = frame->tree()->firstChild(); child; child = child->tree()->nextSibling()) {
+    for (Frame* child = frame->tree().firstChild(); child; child = child->tree().nextSibling()) {
         if (!canCachePageContainingThisFrame(child))
             return false;
     }

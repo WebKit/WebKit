@@ -1276,7 +1276,7 @@ PassRefPtr<Frame> WebFrameLoaderClient::createFrame(const KURL& url, const Strin
     if (!subframe->coreFrame())
         return 0;
     ASSERT(subframe->coreFrame() == coreSubframe);
-    if (!coreSubframe->tree()->parent())
+    if (!coreSubframe->tree().parent())
         return 0;
 
     return coreSubframe;

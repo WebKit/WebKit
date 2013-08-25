@@ -687,7 +687,7 @@ void FocusController::setContainingWindowIsVisible(bool containingWindowIsVisibl
 
     contentAreaDidShowOrHide(view, containingWindowIsVisible);
 
-    for (Frame* frame = m_page->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
+    for (Frame* frame = m_page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
         FrameView* frameView = frame->view();
         if (!frameView)
             continue;

@@ -82,7 +82,7 @@ IconURL IconController::iconURL(IconType iconType) const
 IconURLs IconController::urlsForTypes(int iconTypesMask)
 {
     IconURLs iconURLs;
-    if (m_frame->tree() && m_frame->tree()->parent())
+    if (m_frame->tree().parent())
         return iconURLs;
         
     if (iconTypesMask & Favicon && !appendToIconURLs(Favicon, &iconURLs))
@@ -136,7 +136,7 @@ void IconController::startLoader()
     if (!iconDatabase().isEnabled())
         return;
 
-    ASSERT(!m_frame->tree()->parent());
+    ASSERT(!m_frame->tree().parent());
     if (!documentCanHaveIcon(m_frame->document()->url()))
         return;
 

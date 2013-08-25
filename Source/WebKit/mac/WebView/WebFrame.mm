@@ -268,10 +268,10 @@ WebView *getWebView(WebFrame *webFrame)
     [frame release];
     frame->_private->coreFrame = coreFrame.get();
 
-    coreFrame->tree()->setName(name);
+    coreFrame->tree().setName(name);
     if (ownerElement) {
         ASSERT(ownerElement->document()->frame());
-        ownerElement->document()->frame()->tree()->appendChild(coreFrame.get());
+        ownerElement->document()->frame()->tree().appendChild(coreFrame.get());
     }
 
     coreFrame->init();
@@ -362,7 +362,7 @@ WebView *getWebView(WebFrame *webFrame)
     NSColor *backgroundColor = [webView backgroundColor];
 
     Frame* coreFrame = _private->coreFrame;
-    for (Frame* frame = coreFrame; frame; frame = frame->tree()->traverseNext(coreFrame)) {
+    for (Frame* frame = coreFrame; frame; frame = frame->tree().traverseNext(coreFrame)) {
         // Don't call setDrawsBackground:YES here because it may be NO because of a load
         // in progress; WebFrameLoaderClient keeps it set to NO during the load process.
         WebFrame *webFrame = kit(frame);
@@ -391,7 +391,7 @@ WebView *getWebView(WebFrame *webFrame)
 - (void)_unmarkAllBadGrammar
 {
     Frame* coreFrame = _private->coreFrame;
-    for (Frame* frame = coreFrame; frame; frame = frame->tree()->traverseNext(coreFrame)) {
+    for (Frame* frame = coreFrame; frame; frame = frame->tree().traverseNext(coreFrame)) {
         if (Document* document = frame->document())
             document->markers().removeMarkers(DocumentMarker::Grammar);
     }
@@ -400,7 +400,7 @@ WebView *getWebView(WebFrame *webFrame)
 - (void)_unmarkAllMisspellings
 {
     Frame* coreFrame = _private->coreFrame;
-    for (Frame* frame = coreFrame; frame; frame = frame->tree()->traverseNext(coreFrame)) {
+    for (Frame* frame = coreFrame; frame; frame = frame->tree().traverseNext(coreFrame)) {
         if (Document* document = frame->document())
             document->markers().removeMarkers(DocumentMarker::Spelling);
     }
@@ -434,7 +434,7 @@ WebView *getWebView(WebFrame *webFrame)
     // FIXME: 4186050 is one known case that makes this debug check fail.
     BOOL found = NO;
     Frame* coreFrame = _private->coreFrame;
-    for (Frame* frame = coreFrame; frame; frame = frame->tree()->traverseNext(coreFrame))
+    for (Frame* frame = coreFrame; frame; frame = frame->tree().traverseNext(coreFrame))
         if ([kit(frame) _hasSelection]) {
             if (found)
                 return NO;
@@ -447,7 +447,7 @@ WebView *getWebView(WebFrame *webFrame)
 - (WebFrame *)_findFrameWithSelection
 {
     Frame* coreFrame = _private->coreFrame;
-    for (Frame* frame = coreFrame; frame; frame = frame->tree()->traverseNext(coreFrame)) {
+    for (Frame* frame = coreFrame; frame; frame = frame->tree().traverseNext(coreFrame)) {
         WebFrame *webFrame = kit(frame);
         if ([webFrame _hasSelection])
             return webFrame;
@@ -541,7 +541,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     FrameView* view = _private->coreFrame->view();
     
     bool shouldFlatten = false;
-    if (Frame* parentFrame = _private->coreFrame->tree()->parent()) {
+    if (Frame* parentFrame = _private->coreFrame->tree().parent()) {
         // For subframes, we need to inherit the paint behavior from our parent
         FrameView* parentView = parentFrame ? parentFrame->view() : 0;
         if (parentView)
@@ -844,7 +844,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 - (BOOL)_isDescendantOfFrame:(WebFrame *)ancestor
 {
     Frame* coreFrame = _private->coreFrame;
-    return coreFrame && coreFrame->tree()->isDescendantOf(core(ancestor));
+    return coreFrame && coreFrame->tree().isDescendantOf(core(ancestor));
 }
 
 - (void)_setShouldCreateRenderers:(BOOL)shouldCreateRenderers
@@ -919,7 +919,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 - (void)_recursive_resumeNullEventsForAllNetscapePlugins
 {
     Frame* coreFrame = core(self);
-    for (Frame* frame = coreFrame; frame; frame = frame->tree()->traverseNext(coreFrame)) {
+    for (Frame* frame = coreFrame; frame; frame = frame->tree().traverseNext(coreFrame)) {
         NSView <WebDocumentView> *documentView = [[kit(frame) frameView] documentView];
         if ([documentView isKindOfClass:[WebHTMLView class]])
             [(WebHTMLView *)documentView _resumeNullEventsForAllNetscapePlugins];
@@ -929,7 +929,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 - (void)_recursive_pauseNullEventsForAllNetscapePlugins
 {
     Frame* coreFrame = core(self);
-    for (Frame* frame = coreFrame; frame; frame = frame->tree()->traverseNext(coreFrame)) {
+    for (Frame* frame = coreFrame; frame; frame = frame->tree().traverseNext(coreFrame)) {
         NSView <WebDocumentView> *documentView = [[kit(frame) frameView] documentView];
         if ([documentView isKindOfClass:[WebHTMLView class]])
             [(WebHTMLView *)documentView _pauseNullEventsForAllNetscapePlugins];
@@ -1283,7 +1283,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     Frame* coreFrame = _private->coreFrame;
     if (!coreFrame)
         return nil;
-    return coreFrame->tree()->uniqueName();
+    return coreFrame->tree().uniqueName();
 }
 
 - (WebFrameView *)frameView
@@ -1459,7 +1459,7 @@ static NSURL *createUniqueWebDataURL()
     Frame* coreFrame = _private->coreFrame;
     if (!coreFrame)
         return nil;
-    return kit(coreFrame->tree()->find(name));
+    return kit(coreFrame->tree().find(name));
 }
 
 - (WebFrame *)parentFrame
@@ -1467,7 +1467,7 @@ static NSURL *createUniqueWebDataURL()
     Frame* coreFrame = _private->coreFrame;
     if (!coreFrame)
         return nil;
-    return [[kit(coreFrame->tree()->parent()) retain] autorelease];
+    return [[kit(coreFrame->tree().parent()) retain] autorelease];
 }
 
 - (NSArray *)childFrames
@@ -1475,8 +1475,8 @@ static NSURL *createUniqueWebDataURL()
     Frame* coreFrame = _private->coreFrame;
     if (!coreFrame)
         return [NSArray array];
-    NSMutableArray *children = [NSMutableArray arrayWithCapacity:coreFrame->tree()->childCount()];
-    for (Frame* child = coreFrame->tree()->firstChild(); child; child = child->tree()->nextSibling())
+    NSMutableArray *children = [NSMutableArray arrayWithCapacity:coreFrame->tree().childCount()];
+    for (Frame* child = coreFrame->tree().firstChild(); child; child = child->tree().nextSibling())
         [children addObject:kit(child)];
     return children;
 }

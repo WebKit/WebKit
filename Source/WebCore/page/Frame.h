@@ -119,7 +119,7 @@ namespace WebCore {
         FrameLoader& loader() const;
         NavigationScheduler& navigationScheduler() const;
         FrameSelection& selection() const;
-        FrameTree* tree() const;
+        FrameTree& tree() const;
         AnimationController& animation() const;
         ScriptController& script();
         
@@ -316,9 +316,9 @@ namespace WebCore {
         m_inViewSourceMode = mode;
     }
 
-    inline FrameTree* Frame::tree() const
+    inline FrameTree& Frame::tree() const
     {
-        return &m_treeNode;
+        return m_treeNode;
     }
 
     inline Page* Frame::page() const

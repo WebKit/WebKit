@@ -151,9 +151,8 @@ Region ScrollingCoordinator::computeNonFastScrollableRegion(const Frame* frame, 
         }
     }
 
-    FrameTree* tree = frame->tree();
-    for (Frame* subFrame = tree->firstChild(); subFrame; subFrame = subFrame->tree()->nextSibling())
-        nonFastScrollableRegion.unite(computeNonFastScrollableRegion(subFrame, offset));
+    for (Frame* subframe = frame->tree().firstChild(); subframe; subframe = subframe->tree().nextSibling())
+        nonFastScrollableRegion.unite(computeNonFastScrollableRegion(subframe, offset));
 
     return nonFastScrollableRegion;
 }
@@ -235,7 +234,7 @@ unsigned ScrollingCoordinator::computeCurrentWheelEventHandlerCount()
 {
     unsigned wheelEventHandlerCount = 0;
 
-    for (Frame* frame = m_page->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
+    for (Frame* frame = m_page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (frame->document())
             wheelEventHandlerCount += frame->document()->wheelEventHandlerCount();
     }

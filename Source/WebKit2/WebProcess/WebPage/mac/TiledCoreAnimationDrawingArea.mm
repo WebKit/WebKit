@@ -143,7 +143,7 @@ void TiledCoreAnimationDrawingArea::forceRepaint()
     if (m_layerTreeStateIsFrozen)
         return;
 
-    for (Frame* frame = m_webPage->corePage()->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
+    for (Frame* frame = m_webPage->corePage()->mainFrame(); frame; frame = frame->tree().traverseNext()) {
         FrameView* frameView = frame->view();
         if (!frameView || !frameView->tiledBacking())
             continue;

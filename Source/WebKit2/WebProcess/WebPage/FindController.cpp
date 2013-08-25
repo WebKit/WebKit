@@ -98,7 +98,7 @@ void FindController::countStringMatches(const String& string, FindOptions option
 
 static Frame* frameWithSelection(Page* page)
 {
-    for (Frame* frame = page->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
+    for (Frame* frame = page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (frame->selection().isRange())
             return frame;
     }
@@ -350,7 +350,7 @@ Vector<IntRect> FindController::rectsForTextMatches()
 {
     Vector<IntRect> rects;
 
-    for (Frame* frame = m_webPage->corePage()->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
+    for (Frame* frame = m_webPage->corePage()->mainFrame(); frame; frame = frame->tree().traverseNext()) {
         Document* document = frame->document();
         if (!document)
             continue;

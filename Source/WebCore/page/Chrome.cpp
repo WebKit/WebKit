@@ -212,7 +212,7 @@ bool Chrome::canRunModal() const
 
 static bool canRunModalIfDuringPageDismissal(Page* page, ChromeClient::DialogType dialog, const String& message)
 {
-    for (Frame* frame = page->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
+    for (Frame* frame = page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
         FrameLoader::PageDismissalType dismissal = frame->loader().pageDismissalEventBeingDispatched();
         if (dismissal != FrameLoader::NoDismissal)
             return page->chrome().client().shouldRunModalDialogDuringPageDismissal(dialog, message, dismissal);
@@ -542,7 +542,7 @@ void Chrome::windowScreenDidChange(PlatformDisplayID displayID)
 
     m_displayID = displayID;
 
-    for (Frame* frame = m_page->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
+    for (Frame* frame = m_page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (frame->document())
             frame->document()->windowScreenDidChange(displayID);
     }

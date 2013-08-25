@@ -1,3 +1,40 @@
+2013-08-24  Darin Adler  <darin@apple.com>
+
+        Frame::tree should return a reference instead of a pointer
+        https://bugs.webkit.org/show_bug.cgi?id=120259
+
+        Reviewed by Andreas Kling.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::performJavaScriptURLRequest):
+        * WebProcess/Storage/StorageAreaMap.cpp:
+        (WebKit::StorageAreaMap::dispatchSessionStorageEvent):
+        (WebKit::StorageAreaMap::dispatchLocalStorageEvent):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::createFrame):
+        * WebProcess/WebCoreSupport/mac/WebContextMenuClientMac.mm:
+        (WebKit::WebContextMenuClient::searchWithSpotlight):
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::frameWithSelection):
+        (WebKit::FindController::rectsForTextMatches):
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::init):
+        (WebKit::WebFrame::contentsAsString):
+        (WebKit::WebFrame::name):
+        (WebKit::WebFrame::childFrames):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::clearMainFrameName):
+        (WebKit::WebPage::setDrawsBackground):
+        (WebKit::WebPage::setDrawsTransparentBackground):
+        (WebKit::WebPage::setWindowResizerSize):
+        (WebKit::frameWithSelection):
+        (WebKit::WebPage::unmarkAllMisspellings):
+        (WebKit::WebPage::unmarkAllBadGrammar):
+        (WebKit::pageContainsAnyHorizontalScrollbars):
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::forceRepaint):
+        Use tree(). instead of tree()->.
+
 2013-08-24  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r154545.

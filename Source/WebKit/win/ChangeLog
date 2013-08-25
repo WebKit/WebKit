@@ -1,3 +1,29 @@
+2013-08-24  Darin Adler  <darin@apple.com>
+
+        Frame::tree should return a reference instead of a pointer
+        https://bugs.webkit.org/show_bug.cgi?id=120259
+
+        Reviewed by Andreas Kling.
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::createFrame):
+        * WebFrame.cpp:
+        (WebFrame::name):
+        (WebFrame::findFrameNamed):
+        (WebFrame::parentFrame):
+        (EnumChildFrames::EnumChildFrames):
+        (EnumChildFrames::Next):
+        (EnumChildFrames::Skip):
+        (EnumChildFrames::Reset):
+        (WebFrame::isDescendantOfFrame):
+        (WebFrame::unmarkAllMisspellings):
+        (WebFrame::unmarkAllBadGrammar):
+        * WebView.cpp:
+        (WebView::initWithFrame):
+        (incrementFrame):
+        (WebView::clearMainFrameName):
+        Use tree(). instead of tree()->.
+
 2013-08-23  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Refactor WebFrame to compose with WebFrameLoaderClient

@@ -109,7 +109,7 @@ void InspectorApplicationCacheAgent::getFramesWithManifests(ErrorString*, RefPtr
     result = TypeBuilder::Array<TypeBuilder::ApplicationCache::FrameWithManifest>::create();
 
     Frame* mainFrame = m_pageAgent->mainFrame();
-    for (Frame* frame = mainFrame; frame; frame = frame->tree()->traverseNext(mainFrame)) {
+    for (Frame* frame = mainFrame; frame; frame = frame->tree().traverseNext(mainFrame)) {
         DocumentLoader* documentLoader = frame->loader().documentLoader();
         if (!documentLoader)
             continue;

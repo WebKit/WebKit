@@ -426,7 +426,7 @@ HRESULT STDMETHODCALLTYPE WebFrame::name(
     if (!coreFrame)
         return E_FAIL;
 
-    *frameName = BString(coreFrame->tree()->uniqueName()).release();
+    *frameName = BString(coreFrame->tree().uniqueName()).release();
     return S_OK;
 }
 
@@ -742,7 +742,7 @@ HRESULT STDMETHODCALLTYPE WebFrame::findFrameNamed(
     if (!coreFrame)
         return E_FAIL;
 
-    Frame* foundFrame = coreFrame->tree()->find(AtomicString(name, SysStringLen(name)));
+    Frame* foundFrame = coreFrame->tree().find(AtomicString(name, SysStringLen(name)));
     if (!foundFrame)
         return S_OK;
 
@@ -759,7 +759,7 @@ HRESULT STDMETHODCALLTYPE WebFrame::parentFrame(
     HRESULT hr = S_OK;
     *frame = 0;
     if (Frame* coreFrame = core(this))
-        if (WebFrame* webFrame = kit(coreFrame->tree()->parent()))
+        if (WebFrame* webFrame = kit(coreFrame->tree().parent()))
             hr = webFrame->QueryInterface(IID_IWebFrame, (void**) frame);
 
     return hr;
@@ -768,7 +768,7 @@ HRESULT STDMETHODCALLTYPE WebFrame::parentFrame(
 class EnumChildFrames : public IEnumVARIANT
 {
 public:
-    EnumChildFrames(Frame* f) : m_refCount(1), m_frame(f), m_curChild(f ? f->tree()->firstChild() : 0) { }
+    EnumChildFrames(Frame* f) : m_refCount(1), m_frame(f), m_curChild(f ? f->tree().firstChild() : 0) { }
 
     virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject)
     {
@@ -816,7 +816,7 @@ public:
         V_VT(rgVar) = VT_UNKNOWN;
         V_UNKNOWN(rgVar) = unknown;
 
-        m_curChild = m_curChild->tree()->nextSibling();
+        m_curChild = m_curChild->tree().nextSibling();
         if (pCeltFetched)
             *pCeltFetched = 1;
         return S_OK;
@@ -827,7 +827,7 @@ public:
         if (!m_frame)
             return S_FALSE;
         for (unsigned i = 0; i < celt && m_curChild; i++)
-            m_curChild = m_curChild->tree()->nextSibling();
+            m_curChild = m_curChild->tree().nextSibling();
         return m_curChild ? S_OK : S_FALSE;
     }
 
@@ -835,7 +835,7 @@ public:
     {
         if (!m_frame)
             return S_FALSE;
-        m_curChild = m_frame->tree()->firstChild();
+        m_curChild = m_frame->tree().firstChild();
         return S_OK;
     }
 
@@ -2019,7 +2019,7 @@ HRESULT STDMETHODCALLTYPE WebFrame::isDescendantOfFrame(
     if (!ancestorWebFrame)
         return S_OK;
 
-    *result = (coreFrame && coreFrame->tree()->isDescendantOf(core(ancestorWebFrame.get()))) ? TRUE : FALSE;
+    *result = (coreFrame && coreFrame->tree().isDescendantOf(core(ancestorWebFrame.get()))) ? TRUE : FALSE;
     return S_OK;
 }
 
@@ -2072,7 +2072,7 @@ HRESULT WebFrame::stringByEvaluatingJavaScriptInScriptWorld(IWebScriptWorld* iWo
 void WebFrame::unmarkAllMisspellings()
 {
     Frame* coreFrame = core(this);
-    for (Frame* frame = coreFrame; frame; frame = frame->tree()->traverseNext(coreFrame)) {
+    for (Frame* frame = coreFrame; frame; frame = frame->tree().traverseNext(coreFrame)) {
         Document *doc = frame->document();
         if (!doc)
             return;
@@ -2084,7 +2084,7 @@ void WebFrame::unmarkAllMisspellings()
 void WebFrame::unmarkAllBadGrammar()
 {
     Frame* coreFrame = core(this);
-    for (Frame* frame = coreFrame; frame; frame = frame->tree()->traverseNext(coreFrame)) {
+    for (Frame* frame = coreFrame; frame; frame = frame->tree().traverseNext(coreFrame)) {
         Document *doc = frame->document();
         if (!doc)
             return;

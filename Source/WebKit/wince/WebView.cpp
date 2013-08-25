@@ -164,8 +164,8 @@ PassRefPtr<Frame> WebView::createFrame(const KURL& url, const String& name, HTML
     RefPtr<Frame> childFrame = Frame::create(m_page, ownerElement, loaderClient);
     loaderClient->setFrame(childFrame.get());
 
-    coreFrame->tree()->appendChild(childFrame);
-    childFrame->tree()->setName(name);
+    coreFrame->tree().appendChild(childFrame);
+    childFrame->tree().setName(name);
     childFrame->init();
 
     // The creation of the frame may have run arbitrary JavaScript that removed it from the page already.
@@ -175,7 +175,7 @@ PassRefPtr<Frame> WebView::createFrame(const KURL& url, const String& name, HTML
     coreFrame->loader().loadURLIntoChildFrame(url, referrer, childFrame.get());
 
     // The frame's onload handler may have removed it from the document.
-    if (!childFrame->tree()->parent())
+    if (!childFrame->tree().parent())
         return 0;
 
     return childFrame.release();

@@ -103,7 +103,7 @@ static void networkStateChanged(bool isOnLine)
     // Get all the frames of all the pages in all the page groups
     HashSet<Page*>::iterator end = allPages->end();
     for (HashSet<Page*>::iterator it = allPages->begin(); it != end; ++it) {
-        for (Frame* frame = (*it)->mainFrame(); frame; frame = frame->tree()->traverseNext())
+        for (Frame* frame = (*it)->mainFrame(); frame; frame = frame->tree().traverseNext())
             frames.append(frame);
         InspectorInstrumentation::networkStateChanged(*it);
     }
@@ -212,7 +212,7 @@ Page::~Page()
     setGroupName(String());
     allPages->remove(this);
     
-    for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext()) {
+    for (Frame* frame = mainFrame(); frame; frame = frame->tree().traverseNext()) {
         frame->willDetachPage();
         frame->detachFromPage();
     }
@@ -242,7 +242,7 @@ Page::~Page()
 ArenaSize Page::renderTreeSize() const
 {
     ArenaSize total(0, 0);
-    for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext()) {
+    for (Frame* frame = mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (!frame->document())
             continue;
         if (RenderArena* arena = frame->document()->renderArena()) {
@@ -473,7 +473,7 @@ void Page::updateStyleForAllPagesAfterGlobalChangeInEnvironment()
         return;
     HashSet<Page*>::iterator end = allPages->end();
     for (HashSet<Page*>::iterator it = allPages->begin(); it != end; ++it)
-        for (Frame* frame = (*it)->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
+        for (Frame* frame = (*it)->mainFrame(); frame; frame = frame->tree().traverseNext()) {
             // If a change in the global environment has occurred, we need to
             // make sure all the properties a recomputed, therefore we invalidate
             // the properties cache.
@@ -485,7 +485,7 @@ void Page::updateStyleForAllPagesAfterGlobalChangeInEnvironment()
 
 void Page::setNeedsRecalcStyleInAllFrames()
 {
-    for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext())
+    for (Frame* frame = mainFrame(); frame; frame = frame->tree().traverseNext())
         frame->document()->styleResolverChanged(DeferRecalcStyle);
 }
 
@@ -509,7 +509,7 @@ void Page::refreshPlugins(bool reload)
         if (!reload)
             continue;
         
-        for (Frame* frame = (*it)->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
+        for (Frame* frame = (*it)->mainFrame(); frame; frame = frame->tree().traverseNext()) {
             if (frame->loader().subframeLoader()->containsPlugins())
                 framesNeedingReload.append(frame);
         }
@@ -528,7 +528,7 @@ PluginData* Page::pluginData() const
 
 inline MediaCanStartListener* Page::takeAnyMediaCanStartListener()
 {
-    for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext()) {
+    for (Frame* frame = mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (MediaCanStartListener* listener = frame->document()->takeAnyMediaCanStartListener())
             return listener;
     }
@@ -553,8 +553,8 @@ void Page::setCanStartMedia(bool canStartMedia)
 static Frame* incrementFrame(Frame* curr, bool forward, bool wrapFlag)
 {
     return forward
-        ? curr->tree()->traverseNextWithWrap(wrapFlag)
-        : curr->tree()->traversePreviousWithWrap(wrapFlag);
+        ? curr->tree().traverseNextWithWrap(wrapFlag)
+        : curr->tree().traversePreviousWithWrap(wrapFlag);
 }
 
 bool Page::findString(const String& target, TextCaseSensitivity caseSensitivity, FindDirection direction, bool shouldWrap)
@@ -726,7 +726,7 @@ void Page::setDefersLoading(bool defers)
     }
 
     m_defersLoading = defers;
-    for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext())
+    for (Frame* frame = mainFrame(); frame; frame = frame->tree().traverseNext())
         frame->loader().setDefersLoading(defers);
 }
 
@@ -754,7 +754,7 @@ void Page::setMediaVolume(float volume)
         return;
 
     m_mediaVolume = volume;
-    for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext()) {
+    for (Frame* frame = mainFrame(); frame; frame = frame->tree().traverseNext()) {
         frame->document()->mediaVolumeDidChange();
     }
 }
@@ -815,7 +815,7 @@ void Page::setDeviceScaleFactor(float scaleFactor)
     pageCache()->markPagesForDeviceScaleChanged(this);
 #endif
 
-    for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext())
+    for (Frame* frame = mainFrame(); frame; frame = frame->tree().traverseNext())
         frame->editor().deviceScaleFactorChanged();
 
     pageCache()->markPagesForFullStyleRecalc(this);
@@ -841,7 +841,7 @@ void Page::setShouldSuppressScrollbarAnimations(bool suppressAnimations)
 
     view->finishCurrentScrollAnimations();
     
-    for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext()) {
+    for (Frame* frame = mainFrame(); frame; frame = frame->tree().traverseNext()) {
         FrameView* frameView = frame->view();
         if (!frameView)
             continue;
@@ -916,7 +916,7 @@ void Page::didMoveOnscreen()
 {
     m_isOnscreen = true;
 
-    for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext()) {
+    for (Frame* frame = mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (FrameView* frameView = frame->view())
             frameView->didMoveOnscreen();
     }
@@ -928,7 +928,7 @@ void Page::willMoveOffscreen()
 {
     m_isOnscreen = false;
 
-    for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext()) {
+    for (Frame* frame = mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (FrameView* frameView = frame->view())
             frameView->willMoveOffscreen();
     }
@@ -943,7 +943,7 @@ void Page::setIsInWindow(bool isInWindow)
 
     m_isInWindow = isInWindow;
 
-    for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext()) {
+    for (Frame* frame = mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (FrameView* frameView = frame->view())
             frameView->setIsInWindow(isInWindow);
     }
@@ -952,7 +952,7 @@ void Page::setIsInWindow(bool isInWindow)
 void Page::suspendScriptedAnimations()
 {
     m_scriptedAnimationsSuspended = true;
-    for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext()) {
+    for (Frame* frame = mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (frame->document())
             frame->document()->suspendScriptedAnimationControllerCallbacks();
     }
@@ -961,7 +961,7 @@ void Page::suspendScriptedAnimations()
 void Page::resumeScriptedAnimations()
 {
     m_scriptedAnimationsSuspended = false;
-    for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext()) {
+    for (Frame* frame = mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (frame->document())
             frame->document()->resumeScriptedAnimationControllerCallbacks();
     }
@@ -998,7 +998,7 @@ void Page::userStyleSheetLocationChanged()
             m_userStyleSheet = String::fromUTF8(styleSheetAsUTF8.data(), styleSheetAsUTF8.size());
     }
 
-    for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext()) {
+    for (Frame* frame = mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (frame->document())
             frame->document()->styleSheetCollection()->updatePageUserSheet();
     }
@@ -1071,7 +1071,7 @@ void Page::allVisitedStateChanged(PageGroup* group)
         Page* page = *it;
         if (page->m_group != group)
             continue;
-        for (Frame* frame = page->m_mainFrame.get(); frame; frame = frame->tree()->traverseNext())
+        for (Frame* frame = page->m_mainFrame.get(); frame; frame = frame->tree().traverseNext())
             frame->document()->visitedLinkState().invalidateStyleForAllLinks();
     }
 }
@@ -1087,7 +1087,7 @@ void Page::visitedStateChanged(PageGroup* group, LinkHash linkHash)
         Page* page = *it;
         if (page->m_group != group)
             continue;
-        for (Frame* frame = page->m_mainFrame.get(); frame; frame = frame->tree()->traverseNext())
+        for (Frame* frame = page->m_mainFrame.get(); frame; frame = frame->tree().traverseNext())
             frame->document()->visitedLinkState().invalidateStyleForLink(linkHash);
     }
 }
@@ -1108,7 +1108,7 @@ void Page::setDebugger(JSC::Debugger* debugger)
 
     m_debugger = debugger;
 
-    for (Frame* frame = m_mainFrame.get(); frame; frame = frame->tree()->traverseNext())
+    for (Frame* frame = m_mainFrame.get(); frame; frame = frame->tree().traverseNext())
         frame->script().attachDebugger(m_debugger);
 }
 
@@ -1152,7 +1152,7 @@ void Page::setMemoryCacheClientCallsEnabled(bool enabled)
     if (!enabled)
         return;
 
-    for (RefPtr<Frame> frame = mainFrame(); frame; frame = frame->tree()->traverseNext())
+    for (RefPtr<Frame> frame = mainFrame(); frame; frame = frame->tree().traverseNext())
         frame->loader().tellClientAboutPastMemoryCacheLoads();
 }
 
@@ -1160,7 +1160,7 @@ void Page::setMinimumTimerInterval(double minimumTimerInterval)
 {
     double oldTimerInterval = m_minimumTimerInterval;
     m_minimumTimerInterval = minimumTimerInterval;
-    for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNextWithWrap(false)) {
+    for (Frame* frame = mainFrame(); frame; frame = frame->tree().traverseNextWithWrap(false)) {
         if (frame->document())
             frame->document()->adjustMinimumTimerInterval(oldTimerInterval);
     }
@@ -1177,7 +1177,7 @@ void Page::setTimerAlignmentInterval(double interval)
         return;
 
     m_timerAlignmentInterval = interval;
-    for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNextWithWrap(false)) {
+    for (Frame* frame = mainFrame(); frame; frame = frame->tree().traverseNextWithWrap(false)) {
         if (frame->document())
             frame->document()->didChangeTimerAlignmentInterval();
     }
@@ -1190,13 +1190,13 @@ double Page::timerAlignmentInterval() const
 
 void Page::dnsPrefetchingStateChanged()
 {
-    for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext())
+    for (Frame* frame = mainFrame(); frame; frame = frame->tree().traverseNext())
         frame->document()->initDNSPrefetch();
 }
 
 void Page::collectPluginViews(Vector<RefPtr<PluginViewBase>, 32>& pluginViewBases)
 {
-    for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext()) {
+    for (Frame* frame = mainFrame(); frame; frame = frame->tree().traverseNext()) {
         FrameView* view = frame->view();
         if (!view)
             return;
@@ -1215,7 +1215,7 @@ void Page::collectPluginViews(Vector<RefPtr<PluginViewBase>, 32>& pluginViewBase
 
 void Page::storageBlockingStateChanged()
 {
-    for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext())
+    for (Frame* frame = mainFrame(); frame; frame = frame->tree().traverseNext())
         frame->document()->storageBlockingStateDidChange();
 
     // Collect the PluginViews in to a vector to ensure that action the plug-in takes
@@ -1231,7 +1231,7 @@ void Page::privateBrowsingStateChanged()
 {
     bool privateBrowsingEnabled = m_settings->privateBrowsingEnabled();
 
-    for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext())
+    for (Frame* frame = mainFrame(); frame; frame = frame->tree().traverseNext())
         frame->document()->privateBrowsingStateDidChange();
 
     // Collect the PluginViews in to a vector to ensure that action the plug-in takes
@@ -1249,7 +1249,7 @@ void Page::checkSubframeCountConsistency() const
     ASSERT(m_subframeCount >= 0);
 
     int subframeCount = 0;
-    for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext())
+    for (Frame* frame = mainFrame(); frame; frame = frame->tree().traverseNext())
         ++subframeCount;
 
     ASSERT(m_subframeCount + 1 == subframeCount);
@@ -1476,13 +1476,13 @@ void Page::addRelevantUnpaintedObject(RenderObject* object, const LayoutRect& ob
 
 void Page::suspendActiveDOMObjectsAndAnimations()
 {
-    for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext())
+    for (Frame* frame = mainFrame(); frame; frame = frame->tree().traverseNext())
         frame->suspendActiveDOMObjectsAndAnimations();
 }
 
 void Page::resumeActiveDOMObjectsAndAnimations()
 {
-    for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext())
+    for (Frame* frame = mainFrame(); frame; frame = frame->tree().traverseNext())
         frame->resumeActiveDOMObjectsAndAnimations();
 }
 
@@ -1559,7 +1559,7 @@ void Page::hiddenPageCSSAnimationSuspensionStateChanged()
 #if ENABLE(VIDEO_TRACK)
 void Page::captionPreferencesChanged()
 {
-    for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext())
+    for (Frame* frame = mainFrame(); frame; frame = frame->tree().traverseNext())
         frame->document()->captionPreferencesChanged();
 }
 #endif

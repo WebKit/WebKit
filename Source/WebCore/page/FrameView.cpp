@@ -449,7 +449,7 @@ void FrameView::setFrameRect(const IntRect& newRect)
     if (newRect.width() != oldRect.width()) {
         Page* page = frame().page();
         if (isMainFrameView() && page->settings().textAutosizingEnabled()) {
-            for (Frame* frame = page->mainFrame(); frame; frame = frame->tree()->traverseNext())
+            for (Frame* frame = page->mainFrame(); frame; frame = frame->tree().traverseNext())
                 frame().document()->textAutosizer()->recalculateMultipliers();
         }
     }
@@ -955,7 +955,7 @@ bool FrameView::hasCompositedContent() const
 bool FrameView::hasCompositedContentIncludingDescendants() const
 {
 #if USE(ACCELERATED_COMPOSITING)
-    for (Frame* frame = m_frame.get(); frame; frame = frame->tree()->traverseNext(m_frame.get())) {
+    for (Frame* frame = m_frame.get(); frame; frame = frame->tree().traverseNext(m_frame.get())) {
         RenderView* renderView = frame->contentRenderer();
         if (RenderLayerCompositor* compositor = renderView ? &renderView->compositor() : 0) {
             if (compositor->inCompositingMode())
@@ -972,7 +972,7 @@ bool FrameView::hasCompositedContentIncludingDescendants() const
 bool FrameView::hasCompositingAncestor() const
 {
 #if USE(ACCELERATED_COMPOSITING)
-    for (Frame* frame = this->frame().tree()->parent(); frame; frame = frame->tree()->parent()) {
+    for (Frame* frame = this->frame().tree().parent(); frame; frame = frame->tree().parent()) {
         if (FrameView* view = frame->view()) {
             if (view->hasCompositedContent())
                 return true;
@@ -1012,7 +1012,7 @@ bool FrameView::flushCompositingStateIncludingSubframes()
 #if USE(ACCELERATED_COMPOSITING)
     bool allFramesFlushed = flushCompositingStateForThisFrame(&frame());
     
-    for (Frame* child = frame().tree()->firstChild(); child; child = child->tree()->traverseNext(&frame())) {
+    for (Frame* child = frame().tree().firstChild(); child; child = child->tree().traverseNext(&frame())) {
         bool flushed = child->view()->flushCompositingStateForThisFrame(&frame());
         allFramesFlushed &= flushed;
     }
@@ -1481,7 +1481,7 @@ bool FrameView::useSlowRepaintsIfNotOverlapped() const
 
 void FrameView::updateCanBlitOnScrollRecursively()
 {
-    for (Frame* frame = m_frame.get(); frame; frame = frame->tree()->traverseNext(m_frame.get())) {
+    for (Frame* frame = m_frame.get(); frame; frame = frame->tree().traverseNext(m_frame.get())) {
         if (FrameView* view = frame->view())
             view->setCanBlitOnScroll(!view->useSlowRepaints());
     }
@@ -1778,7 +1778,7 @@ void FrameView::setIsOverlapped(bool isOverlapped)
     if (hasCompositedContentIncludingDescendants()) {
         // Overlap can affect compositing tests, so if it changes, we need to trigger
         // a layer update in the parent document.
-        if (Frame* parentFrame = frame().tree()->parent()) {
+        if (Frame* parentFrame = frame().tree().parent()) {
             if (RenderView* parentView = parentFrame->contentRenderer()) {
                 RenderLayerCompositor& compositor = parentView->compositor();
                 compositor.setCompositingLayersNeedRebuild();
@@ -1789,7 +1789,7 @@ void FrameView::setIsOverlapped(bool isOverlapped)
         if (RenderLayerCompositor::allowsIndependentlyCompositedFrames(this)) {
             // We also need to trigger reevaluation for this and all descendant frames,
             // since a frame uses compositing if any ancestor is compositing.
-            for (Frame* frame = m_frame.get(); frame; frame = frame->tree()->traverseNext(m_frame.get())) {
+            for (Frame* frame = m_frame.get(); frame; frame = frame->tree().traverseNext(m_frame.get())) {
                 if (RenderView* view = frame->contentRenderer()) {
                     RenderLayerCompositor& compositor = view->compositor();
                     compositor.setCompositingLayersNeedRebuild();
@@ -2280,7 +2280,7 @@ void FrameView::doDeferredRepaints()
 bool FrameView::shouldUseLoadTimeDeferredRepaintDelay() const
 {
     // Don't defer after the initial load of the page has been completed.
-    if (frame().tree()->top()->loader().isComplete())
+    if (frame().tree().top()->loader().isComplete())
         return false;
     Document* document = frame().document();
     if (!document)
@@ -2345,7 +2345,7 @@ void FrameView::updateLayerFlushThrottlingInAllFrames()
 {
 #if USE(ACCELERATED_COMPOSITING)
     bool isMainLoadProgressing = frame().page()->progress().isMainLoadProgressing();
-    for (Frame* frame = m_frame.get(); frame; frame = frame->tree()->traverseNext(m_frame.get())) {
+    for (Frame* frame = m_frame.get(); frame; frame = frame->tree().traverseNext(m_frame.get())) {
         if (RenderView* renderView = frame->contentRenderer())
             renderView->compositor().setLayerFlushThrottlingEnabled(isMainLoadProgressing);
     }
@@ -2504,13 +2504,13 @@ void FrameView::unscheduleRelayout()
 #if ENABLE(REQUEST_ANIMATION_FRAME)
 void FrameView::serviceScriptedAnimations(double monotonicAnimationStartTime)
 {
-    for (Frame* frame = m_frame.get(); frame; frame = frame->tree()->traverseNext()) {
+    for (Frame* frame = m_frame.get(); frame; frame = frame->tree().traverseNext()) {
         frame->view()->serviceScrollAnimations();
         frame->animation().serviceAnimations();
     }
 
     Vector<RefPtr<Document> > documents;
-    for (Frame* frame = m_frame.get(); frame; frame = frame->tree()->traverseNext())
+    for (Frame* frame = m_frame.get(); frame; frame = frame->tree().traverseNext())
         documents.append(frame->document());
 
     for (size_t i = 0; i < documents.size(); ++i)
@@ -2550,7 +2550,7 @@ void FrameView::setBaseBackgroundColor(const Color& backgroundColor)
 
 void FrameView::updateBackgroundRecursively(const Color& backgroundColor, bool transparent)
 {
-    for (Frame* frame = m_frame.get(); frame; frame = frame->tree()->traverseNext(m_frame.get())) {
+    for (Frame* frame = m_frame.get(); frame; frame = frame->tree().traverseNext(m_frame.get())) {
         if (FrameView* view = frame->view()) {
             view->setTransparent(transparent);
             view->setBaseBackgroundColor(backgroundColor);
@@ -3385,7 +3385,7 @@ FrameView* FrameView::parentFrameView() const
     if (!parent())
         return 0;
 
-    if (Frame* parentFrame = frame().tree()->parent())
+    if (Frame* parentFrame = frame().tree().parent())
         return parentFrame->view();
 
     return 0;
@@ -3623,7 +3623,7 @@ void FrameView::paintContentsForSnapshot(GraphicsContext* context, const IntRect
     // in the render tree only. This will allow us to restore the selection from the DOM
     // after we paint the snapshot.
     if (shouldPaintSelection == ExcludeSelection) {
-        for (Frame* frame = m_frame.get(); frame; frame = frame->tree()->traverseNext(m_frame.get())) {
+        for (Frame* frame = m_frame.get(); frame; frame = frame->tree().traverseNext(m_frame.get())) {
             if (RenderView* root = frame->contentRenderer())
                 root->clearSelection();
         }
@@ -3639,7 +3639,7 @@ void FrameView::paintContentsForSnapshot(GraphicsContext* context, const IntRect
 
     // Restore selection.
     if (shouldPaintSelection == ExcludeSelection) {
-        for (Frame* frame = m_frame.get(); frame; frame = frame->tree()->traverseNext(m_frame.get()))
+        for (Frame* frame = m_frame.get(); frame; frame = frame->tree().traverseNext(m_frame.get()))
             frame->selection().updateAppearance();
     }
 
@@ -4016,7 +4016,7 @@ void FrameView::setTracksRepaints(bool trackRepaints)
     }
 
 #if USE(ACCELERATED_COMPOSITING)
-    for (Frame* frame = m_frame->tree()->top(); frame; frame = frame->tree()->traverseNext()) {
+    for (Frame* frame = m_frame->tree().top(); frame; frame = frame->tree().traverseNext()) {
         if (RenderView* renderView = frame->contentRenderer())
             renderView->compositor().setTracksRepaints(trackRepaints);
     }
@@ -4145,7 +4145,7 @@ bool FrameView::isFlippedDocument() const
 
 void FrameView::notifyWidgetsInAllFrames(WidgetNotification notification)
 {
-    for (Frame* frame = m_frame.get(); frame; frame = frame->tree()->traverseNext(m_frame.get())) {
+    for (Frame* frame = m_frame.get(); frame; frame = frame->tree().traverseNext(m_frame.get())) {
         if (RenderView* root = frame->contentRenderer())
             root->notifyWidgets(notification);
     }

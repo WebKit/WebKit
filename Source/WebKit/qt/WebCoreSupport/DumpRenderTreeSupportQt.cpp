@@ -279,7 +279,7 @@ void DumpRenderTreeSupportQt::setValueForUser(const QWebElement& element, const 
 void DumpRenderTreeSupportQt::clearFrameName(QWebFrameAdapter *adapter)
 {
     Frame* coreFrame = adapter->frame;
-    coreFrame->tree()->clearName();
+    coreFrame->tree().clearName();
 }
 
 int DumpRenderTreeSupportQt::javaScriptObjectsCount()

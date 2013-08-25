@@ -47,7 +47,7 @@ void StorageEventDispatcher::dispatchSessionStorageEvents(const String& key, con
     Vector<RefPtr<Frame> > frames;
 
     // Send events only to our page.
-    for (Frame* frame = page->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
+    for (Frame* frame = page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (sourceFrame != frame && frame->document()->securityOrigin()->equal(securityOrigin))
             frames.append(frame);
     }
@@ -66,7 +66,7 @@ void StorageEventDispatcher::dispatchLocalStorageEvents(const String& key, const
     // Send events to every page.
     const HashSet<Page*>& pages = page->group().pages();
     for (HashSet<Page*>::const_iterator it = pages.begin(), end = pages.end(); it != end; ++it) {
-        for (Frame* frame = (*it)->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
+        for (Frame* frame = (*it)->mainFrame(); frame; frame = frame->tree().traverseNext()) {
             if (sourceFrame != frame && frame->document()->securityOrigin()->equal(securityOrigin))
                 frames.append(frame);
         }

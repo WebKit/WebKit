@@ -112,7 +112,7 @@ void DumpRenderTreeSupportEfl::clearFrameName(Evas_Object* ewkFrame)
 {
     DRT_SUPPORT_FRAME_GET_OR_RETURN(ewkFrame, frame);
 
-    frame->tree()->clearName();
+    frame->tree().clearName();
 }
 
 void DumpRenderTreeSupportEfl::clearOpener(Evas_Object* ewkFrame)
@@ -135,8 +135,8 @@ Eina_List* DumpRenderTreeSupportEfl::frameChildren(const Evas_Object* ewkFrame)
 
     Eina_List* childFrames = 0;
 
-    for (unsigned index = 0; index < frame->tree()->childCount(); index++) {
-        WebCore::Frame *childFrame = frame->tree()->child(index);
+    for (unsigned index = 0; index < frame->tree().childCount(); index++) {
+        WebCore::Frame *childFrame = frame->tree().child(index);
         WebCore::FrameLoaderClientEfl& client = static_cast<WebCore::FrameLoaderClientEfl&>(childFrame->loader().client());
 
         childFrames = eina_list_append(childFrames, client.webFrame());
@@ -149,7 +149,7 @@ WebCore::Frame* DumpRenderTreeSupportEfl::frameParent(const Evas_Object* ewkFram
 {
     DRT_SUPPORT_FRAME_GET_OR_RETURN(ewkFrame, frame, 0);
 
-    return frame->tree()->parent();
+    return frame->tree().parent();
 }
 
 void DumpRenderTreeSupportEfl::layoutFrame(Evas_Object* ewkFrame)

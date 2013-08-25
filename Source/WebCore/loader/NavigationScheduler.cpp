@@ -328,7 +328,7 @@ bool NavigationScheduler::mustLockBackForwardList(Frame* targetFrame)
     // Navigation of a subframe during loading of an ancestor frame does not create a new back/forward item.
     // The definition of "during load" is any time before all handlers for the load event have been run.
     // See https://bugs.webkit.org/show_bug.cgi?id=14957 for the original motivation for this.
-    for (Frame* ancestor = targetFrame->tree()->parent(); ancestor; ancestor = ancestor->tree()->parent()) {
+    for (Frame* ancestor = targetFrame->tree().parent(); ancestor; ancestor = ancestor->tree().parent()) {
         Document* document = ancestor->document();
         if (!ancestor->loader().isComplete() || (document && document->processingLoadEvent()))
             return true;
@@ -378,7 +378,7 @@ void NavigationScheduler::scheduleFormSubmission(PassRefPtr<FormSubmission> subm
     // See https://bugs.webkit.org/show_bug.cgi?id=32383 for the original motivation for this.
     bool lockBackForwardList = mustLockBackForwardList(m_frame)
         || (submission->state()->formSubmissionTrigger() == SubmittedByJavaScript
-            && m_frame->tree()->parent() && !ScriptController::processingUserGesture());
+            && m_frame->tree().parent() && !ScriptController::processingUserGesture());
 
     schedule(adoptPtr(new ScheduledFormSubmission(submission, lockBackForwardList, duringLoad)));
 }

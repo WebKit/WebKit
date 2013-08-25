@@ -461,9 +461,9 @@ PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(Frame* frame)
         
     Vector<PassRefPtr<LegacyWebArchive> > subframeArchives;
     
-    unsigned children = frame->tree()->childCount();
+    unsigned children = frame->tree().childCount();
     for (unsigned i = 0; i < children; ++i) {
-        RefPtr<LegacyWebArchive> childFrameArchive = create(frame->tree()->child(i));
+        RefPtr<LegacyWebArchive> childFrameArchive = create(frame->tree().child(i));
         if (childFrameArchive)
             subframeArchives.append(childFrameArchive.release());
     }
@@ -511,7 +511,7 @@ PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString
     if (responseURL.isNull())
         responseURL = KURL(ParsedURLString, emptyString());
         
-    PassRefPtr<ArchiveResource> mainResource = ArchiveResource::create(utf8Buffer(markupString), responseURL, response.mimeType(), "UTF-8", frame->tree()->uniqueName());
+    RefPtr<ArchiveResource> mainResource = ArchiveResource::create(utf8Buffer(markupString), responseURL, response.mimeType(), "UTF-8", frame->tree().uniqueName());
 
     Vector<PassRefPtr<LegacyWebArchive> > subframeArchives;
     Vector<PassRefPtr<ArchiveResource> > subresources;
@@ -531,7 +531,7 @@ PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString
             if (subframeArchive)
                 subframeArchives.append(subframeArchive);
             else
-                LOG_ERROR("Unabled to archive subframe %s", childFrame->tree()->uniqueName().string().utf8().data());
+                LOG_ERROR("Unabled to archive subframe %s", childFrame->tree().uniqueName().string().utf8().data());
         } else {
             ListHashSet<KURL> subresourceURLs;
             node->getSubresourceURLs(subresourceURLs);
@@ -582,7 +582,7 @@ PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString
         }
     }
 
-    return create(mainResource, subresources, subframeArchives);
+    return create(mainResource.release(), subresources, subframeArchives);
 }
 
 PassRefPtr<LegacyWebArchive> LegacyWebArchive::createFromSelection(Frame* frame)

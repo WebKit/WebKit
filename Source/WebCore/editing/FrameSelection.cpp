@@ -1591,7 +1591,7 @@ bool FrameSelection::contains(const LayoutPoint& point)
 void FrameSelection::selectFrameElementInParentIfFullySelected()
 {
     // Find the parent frame; if there is none, then we have nothing to do.
-    Frame* parent = m_frame->tree()->parent();
+    Frame* parent = m_frame->tree().parent();
     if (!parent)
         return;
     Page* page = m_frame->page();

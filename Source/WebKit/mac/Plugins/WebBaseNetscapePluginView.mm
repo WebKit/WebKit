@@ -840,7 +840,7 @@ using namespace WebCore;
     if (!frame)
         return CString();
 
-    Frame* targetFrame = frame->tree()->find(String::fromUTF8(target));
+    Frame* targetFrame = frame->tree().find(String::fromUTF8(target));
     if (!targetFrame)
         return CString();
     

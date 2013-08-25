@@ -164,11 +164,11 @@ void WebFrame::init(WebPage* page, const String& frameName, HTMLFrameOwnerElemen
     RefPtr<Frame> frame = Frame::create(page->corePage(), ownerElement, &m_frameLoaderClient);
     m_coreFrame = frame.get();
 
-    frame->tree()->setName(frameName);
+    frame->tree().setName(frameName);
 
     if (ownerElement) {
         ASSERT(ownerElement->document()->frame());
-        ownerElement->document()->frame()->tree()->appendChild(frame);
+        ownerElement->document()->frame()->tree().appendChild(frame);
     }
 
     frame->init();
@@ -311,7 +311,7 @@ String WebFrame::contentsAsString() const
 
     if (isFrameSet()) {
         StringBuilder builder;
-        for (Frame* child = m_coreFrame->tree()->firstChild(); child; child = child->tree()->nextSibling()) {
+        for (Frame* child = m_coreFrame->tree().firstChild(); child; child = child->tree().nextSibling()) {
             if (!builder.isEmpty())
                 builder.append(' ');
 
@@ -387,7 +387,7 @@ String WebFrame::name() const
     if (!m_coreFrame)
         return String();
 
-    return m_coreFrame->tree()->uniqueName();
+    return m_coreFrame->tree().uniqueName();
 }
 
 String WebFrame::url() const
@@ -427,14 +427,14 @@ PassRefPtr<ImmutableArray> WebFrame::childFrames()
     if (!m_coreFrame)
         return ImmutableArray::create();
 
-    size_t size = m_coreFrame->tree()->childCount();
+    size_t size = m_coreFrame->tree().childCount();
     if (!size)
         return ImmutableArray::create();
 
     Vector<RefPtr<APIObject>> vector;
     vector.reserveInitialCapacity(size);
 
-    for (Frame* child = m_coreFrame->tree()->firstChild(); child; child = child->tree()->nextSibling()) {
+    for (Frame* child = m_coreFrame->tree().firstChild(); child; child = child->tree().nextSibling()) {
         WebFrameLoaderClient* webFrameLoaderClient = toWebFrameLoaderClient(child->loader().client());
         WebFrame* webFrame = webFrameLoaderClient ? webFrameLoaderClient->webFrame() : 0;
         ASSERT(webFrame);

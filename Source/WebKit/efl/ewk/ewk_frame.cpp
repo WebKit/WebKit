@@ -161,11 +161,8 @@ static Eina_Bool _ewk_frame_children_iterator_next(Eina_Iterator_Ewk_Frame* iter
     EWK_FRAME_SD_GET_OR_RETURN(iterator->object, smartData, false);
     EINA_SAFETY_ON_NULL_RETURN_VAL(smartData->frame, false);
 
-    WebCore::FrameTree* tree = smartData->frame->tree(); // check if it's still valid
-    EINA_SAFETY_ON_NULL_RETURN_VAL(tree, false);
-
-    if (iterator->currentIndex < tree->childCount()) {
-        *data = EWKPrivate::kitFrame(tree->child(iterator->currentIndex++));
+    if (iterator->currentIndex < smartData->frame->tree().childCount()) {
+        *data = EWKPrivate::kitFrame(smartData->frame->tree().child(iterator->currentIndex++));
         return true;
     }
 
@@ -332,7 +329,7 @@ Evas_Object* ewk_frame_child_find(Evas_Object* ewkFrame, const char* name)
     EINA_SAFETY_ON_NULL_RETURN_VAL(name, 0);
     EINA_SAFETY_ON_NULL_RETURN_VAL(smartData->frame, 0);
     WTF::String frameName = WTF::String::fromUTF8(name);
-    return EWKPrivate::kitFrame(smartData->frame->tree()->find(WTF::AtomicString(frameName)));
+    return EWKPrivate::kitFrame(smartData->frame->tree().find(WTF::AtomicString(frameName)));
 }
 
 Eina_Bool ewk_frame_uri_set(Evas_Object* ewkFrame, const char* uri)
@@ -366,7 +363,7 @@ const char* ewk_frame_name_get(const Evas_Object* ewkFrame)
         return 0;
     }
 
-    const WTF::String frameName = smartData->frame->tree()->uniqueName();
+    const WTF::String frameName = smartData->frame->tree().uniqueName();
 
     if ((smartData->name) && (smartData->name == frameName))
         return smartData->name;
@@ -1141,11 +1138,8 @@ bool ewk_frame_child_add(Evas_Object* ewkFrame, WTF::PassRefPtr<WebCore::Frame> 
     }
 
     coreFrame = child.get();
-    if (coreFrame->tree())
-        coreFrame->tree()->setName(name);
-    else
-        ERR("no tree for child object");
-    smartData->frame->tree()->appendChild(child);
+    coreFrame->tree().setName(name);
+    smartData->frame->tree().appendChild(child);
 
     if (!ewk_frame_init(frame, smartData->view, coreFrame)) {
         evas_object_del(frame);
@@ -1167,7 +1161,7 @@ bool ewk_frame_child_add(Evas_Object* ewkFrame, WTF::PassRefPtr<WebCore::Frame> 
 
     // The frame's onload handler may have removed it from the document.
     // See fast/dom/null-page-show-modal-dialog-crash.html for an example.
-    if (!coreFrame->tree()->parent()) {
+    if (!coreFrame->tree().parent()) {
         evas_object_del(frame);
         return true;
     }

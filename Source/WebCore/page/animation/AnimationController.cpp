@@ -269,7 +269,7 @@ void AnimationControllerPrivate::suspendAnimations()
     suspendAnimationsForDocument(m_frame->document());
 
     // Traverse subframes
-    for (Frame* child = m_frame->tree()->firstChild(); child; child = child->tree()->nextSibling())
+    for (Frame* child = m_frame->tree().firstChild(); child; child = child->tree().nextSibling())
         child->animation().suspendAnimations();
 
     m_isSuspended = true;
@@ -283,7 +283,7 @@ void AnimationControllerPrivate::resumeAnimations()
     resumeAnimationsForDocument(m_frame->document());
 
     // Traverse subframes
-    for (Frame* child = m_frame->tree()->firstChild(); child; child = child->tree()->nextSibling())
+    for (Frame* child = m_frame->tree().firstChild(); child; child = child->tree().nextSibling())
         child->animation().resumeAnimations();
 
     m_isSuspended = false;

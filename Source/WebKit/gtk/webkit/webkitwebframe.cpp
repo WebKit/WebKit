@@ -630,7 +630,7 @@ const gchar* webkit_web_frame_get_name(WebKitWebFrame* frame)
         return "";
 
     WebKitWebFramePrivate* priv = frame->priv;
-    CString frameName = coreFrame->tree()->uniqueName().string().utf8();
+    CString frameName = coreFrame->tree().uniqueName().string().utf8();
     if (!g_strcmp0(frameName.data(), priv->name))
         return priv->name;
 
@@ -655,7 +655,7 @@ WebKitWebFrame* webkit_web_frame_get_parent(WebKitWebFrame* frame)
     if (!coreFrame)
         return 0;
 
-    return kit(coreFrame->tree()->parent());
+    return kit(coreFrame->tree().parent());
 }
 
 /**
@@ -828,7 +828,7 @@ WebKitWebFrame* webkit_web_frame_find_frame(WebKitWebFrame* frame, const gchar* 
         return 0;
 
     String nameString = String::fromUTF8(name);
-    return kit(coreFrame->tree()->find(AtomicString(nameString)));
+    return kit(coreFrame->tree().find(AtomicString(nameString)));
 }
 
 /**

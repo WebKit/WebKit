@@ -506,7 +506,7 @@ bool canScrollInDirection(const Frame* frame, FocusDirection direction)
 static LayoutRect rectToAbsoluteCoordinates(Frame* initialFrame, const LayoutRect& initialRect)
 {
     LayoutRect rect = initialRect;
-    for (Frame* frame = initialFrame; frame; frame = frame->tree()->parent()) {
+    for (Frame* frame = initialFrame; frame; frame = frame->tree().parent()) {
         if (Element* element = frame->ownerElement()) {
             do {
                 rect.move(element->offsetLeft(), element->offsetTop());

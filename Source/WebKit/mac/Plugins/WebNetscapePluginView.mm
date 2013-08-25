@@ -1679,7 +1679,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
             }
             
             frame = [newWebView mainFrame];
-            core(frame)->tree()->setName(frameName);
+            core(frame)->tree().setName(frameName);
             [[newWebView _UIDelegateForwarder] webViewShow:newWebView];
         }
     }

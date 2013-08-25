@@ -376,8 +376,8 @@ void TreeScope::adoptIfNeeded(Node* node)
 
 static Element* focusedFrameOwnerElement(Frame* focusedFrame, Frame* currentFrame)
 {
-    for (; focusedFrame; focusedFrame = focusedFrame->tree()->parent()) {
-        if (focusedFrame->tree()->parent() == currentFrame)
+    for (; focusedFrame; focusedFrame = focusedFrame->tree().parent()) {
+        if (focusedFrame->tree().parent() == currentFrame)
             return focusedFrame->ownerElement();
     }
     return 0;

@@ -1,3 +1,23 @@
+2013-08-24  Darin Adler  <darin@apple.com>
+
+        Frame::tree should return a reference instead of a pointer
+        https://bugs.webkit.org/show_bug.cgi?id=120259
+
+        Reviewed by Andreas Kling.
+
+        * WebCoreSupport/DumpRenderTreeSupportGtk.cpp:
+        (DumpRenderTreeSupportGtk::getFrameChildren):
+        (DumpRenderTreeSupportGtk::clearMainFrameName):
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::createFrame):
+        * webkit/webkitwebframe.cpp:
+        (webkit_web_frame_get_name):
+        (webkit_web_frame_get_parent):
+        (webkit_web_frame_find_frame):
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_set_highlight_text_matches):
+        Use tree(). instead of tree()->.
+
 2013-08-21  Zan Dobersek  <zdobersek@igalia.com>
 
         <https://webkit.org/b/119836> [GTK] ChromeClient::paint is susceptible to system time changes

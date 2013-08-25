@@ -4394,7 +4394,7 @@ void webkit_web_view_set_highlight_text_matches(WebKitWebView* webView, gboolean
     Frame *frame = core(webView)->mainFrame();
     do {
         frame->editor().setMarkedTextMatchesAreHighlighted(shouldHighlight);
-        frame = frame->tree()->traverseNextWithWrap(false);
+        frame = frame->tree().traverseNextWithWrap(false);
     } while (frame);
 }
 

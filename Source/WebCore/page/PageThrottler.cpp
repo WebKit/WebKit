@@ -61,7 +61,7 @@ void PageThrottler::throttlePage()
 
     m_page->chrome().client().decrementActivePageCount();
 
-    for (Frame* frame = m_page->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
+    for (Frame* frame = m_page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (frame->document())
             frame->document()->scriptedAnimationControllerSetThrottled(true);
     }
@@ -80,7 +80,7 @@ void PageThrottler::unthrottlePage()
     if (oldState == PageThrottledState)
         m_page->chrome().client().incrementActivePageCount();
     
-    for (Frame* frame = m_page->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
+    for (Frame* frame = m_page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (frame->document())
             frame->document()->scriptedAnimationControllerSetThrottled(false);
     }

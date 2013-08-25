@@ -1132,7 +1132,7 @@ bool EventHandler::scrollRecursively(ScrollDirection direction, ScrollGranularit
     FrameView* view = frame->view();
     if (view && view->scroll(direction, granularity))
         return true;
-    frame = frame->tree()->parent();
+    frame = frame->tree().parent();
     if (!frame)
         return false;
     return frame->eventHandler().scrollRecursively(direction, granularity, m_frame->ownerElement());
@@ -1160,7 +1160,7 @@ bool EventHandler::logicalScrollRecursively(ScrollLogicalDirection direction, Sc
     if (scrolled)
         return true;
     
-    frame = frame->tree()->parent();
+    frame = frame->tree().parent();
     if (!frame)
         return false;
 
@@ -1804,7 +1804,7 @@ bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& mouseEvent, Hi
     RefPtr<Frame> newSubframe = m_capturingMouseEventsNode.get() ? subframeForTargetNode(m_capturingMouseEventsNode.get()) : subframeForHitTestResult(mev);
  
     // We want mouseouts to happen first, from the inside out.  First send a move event to the last subframe so that it will fire mouseouts.
-    if (m_lastMouseMoveEventSubframe && m_lastMouseMoveEventSubframe->tree()->isDescendantOf(m_frame) && m_lastMouseMoveEventSubframe != newSubframe)
+    if (m_lastMouseMoveEventSubframe && m_lastMouseMoveEventSubframe->tree().isDescendantOf(m_frame) && m_lastMouseMoveEventSubframe != newSubframe)
         passMouseMoveEventToSubframe(mev, m_lastMouseMoveEventSubframe.get());
 
     if (newSubframe) {

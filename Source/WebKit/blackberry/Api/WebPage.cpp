@@ -943,7 +943,7 @@ static void closeURLRecursively(Frame* frame)
 
     Vector<RefPtr<Frame>, 10> childFrames;
 
-    for (RefPtr<Frame> childFrame = frame->tree()->firstChild(); childFrame; childFrame = childFrame->tree()->nextSibling())
+    for (RefPtr<Frame> childFrame = frame->tree().firstChild(); childFrame; childFrame = childFrame->tree().nextSibling())
         childFrames.append(childFrame);
 
     unsigned size = childFrames.size();
@@ -974,7 +974,7 @@ static void enableCrossSiteXHRRecursively(Frame* frame)
     frame->document()->securityOrigin()->grantUniversalAccess();
 
     Vector<RefPtr<Frame>, 10> childFrames;
-    for (RefPtr<Frame> childFrame = frame->tree()->firstChild(); childFrame; childFrame = childFrame->tree()->nextSibling())
+    for (RefPtr<Frame> childFrame = frame->tree().firstChild(); childFrame; childFrame = childFrame->tree().nextSibling())
         childFrames.append(childFrame);
 
     unsigned size = childFrames.size();
@@ -3521,7 +3521,7 @@ void WebPagePrivate::setScreenOrientation(int orientation)
 #if ENABLE(ORIENTATION_EVENTS)
     if (m_mainFrame->orientation() == orientation)
         return;
-    for (RefPtr<Frame> frame = m_mainFrame; frame; frame = frame->tree()->traverseNext())
+    for (RefPtr<Frame> frame = m_mainFrame; frame; frame = frame->tree().traverseNext())
         frame->sendOrientationChangeEvent(orientation);
 #endif
 }

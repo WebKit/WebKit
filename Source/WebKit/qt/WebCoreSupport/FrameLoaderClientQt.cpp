@@ -99,7 +99,7 @@ static QMap<unsigned long, QString> dumpAssignedUrls;
 static QString drtDescriptionSuitableForTestResult(WebCore::Frame* webCoreFrame)
 {
     QWebFrameAdapter* frame = QWebFrameAdapter::kit(webCoreFrame);
-    QString name = webCoreFrame->tree()->uniqueName();
+    QString name = webCoreFrame->tree().uniqueName();
 
     bool isMainFrame = frame == frame->pageAdapter->mainFrameAdapter();
     if (isMainFrame) {
@@ -481,7 +481,7 @@ void FrameLoaderClientQt::dispatchDidCommitLoad()
     if (dumpFrameLoaderCallbacks)
         printf("%s - didCommitLoadForFrame\n", qPrintable(drtDescriptionSuitableForTestResult(m_frame)));
 
-    if (m_frame->tree()->parent() || !m_webFrame)
+    if (m_frame->tree().parent() || !m_webFrame)
         return;
 
     m_webFrame->emitUrlChanged();
@@ -511,7 +511,7 @@ void FrameLoaderClientQt::dispatchDidFinishDocumentLoad()
             printf("%s - has %u onunload handler(s)\n", qPrintable(drtDescriptionSuitableForTestResult(m_frame)), unloadEventCount);
     }
 
-    if (m_frame->tree()->parent() || !m_webFrame)
+    if (m_frame->tree().parent() || !m_webFrame)
         return;
 
     m_webFrame->pageAdapter->updateNavigationActions();
@@ -563,7 +563,7 @@ void FrameLoaderClientQt::postProgressStartedNotification()
 {
     if (m_webFrame && m_frame->page())
         m_isOriginatingLoad = true;
-    if (m_frame->tree()->parent() || !m_webFrame)
+    if (m_frame->tree().parent() || !m_webFrame)
         return;
     m_webFrame->pageAdapter->updateNavigationActions();
 }
@@ -746,7 +746,7 @@ void FrameLoaderClientQt::documentElementAvailable()
 
 void FrameLoaderClientQt::didPerformFirstNavigation() const
 {
-    if (m_frame->tree()->parent() || !m_webFrame)
+    if (m_frame->tree().parent() || !m_webFrame)
         return;
     m_webFrame->pageAdapter->updateNavigationActions();
 }
@@ -1327,7 +1327,7 @@ PassRefPtr<Frame> FrameLoaderClientQt::createFrame(const KURL& url, const String
     m_frame->loader().loadURLIntoChildFrame(urlToLoad, frameData.referrer, frameData.frame.get());
 
     // The frame's onload handler may have removed it from the document.
-    if (!frameData.frame->tree()->parent())
+    if (!frameData.frame->tree().parent())
         return 0;
 
     return frameData.frame.release();

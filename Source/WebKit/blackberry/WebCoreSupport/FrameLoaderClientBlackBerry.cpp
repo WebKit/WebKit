@@ -800,16 +800,16 @@ PassRefPtr<Frame> FrameLoaderClientBlackBerry::createFrame(const KURL& url, cons
     if (marginHeight != -1)
         frameView->setMarginHeight(marginHeight);
 
-    childFrame->tree()->setName(name);
-    m_frame->tree()->appendChild(childFrame);
+    childFrame->tree().setName(name);
+    m_frame->tree().appendChild(childFrame);
     childFrame->init();
 
-    if (!childFrame->tree()->parent())
+    if (!childFrame->tree().parent())
         return 0;
 
     m_frame->loader().loadURLIntoChildFrame(url, referrer, childFrame.get());
 
-    if (!childFrame->tree()->parent())
+    if (!childFrame->tree().parent())
         return 0;
 
     return childFrame.release();

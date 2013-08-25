@@ -1,3 +1,28 @@
+2013-08-24  Darin Adler  <darin@apple.com>
+
+        Frame::tree should return a reference instead of a pointer
+        https://bugs.webkit.org/show_bug.cgi?id=120259
+
+        Reviewed by Andreas Kling.
+
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        (DumpRenderTreeSupportQt::clearFrameName):
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (drtDescriptionSuitableForTestResult):
+        (WebCore::FrameLoaderClientQt::dispatchDidCommitLoad):
+        (WebCore::FrameLoaderClientQt::dispatchDidFinishDocumentLoad):
+        (WebCore::FrameLoaderClientQt::postProgressStartedNotification):
+        (WebCore::FrameLoaderClientQt::didPerformFirstNavigation):
+        (WebCore::FrameLoaderClientQt::createFrame):
+        * WebCoreSupport/QWebFrameAdapter.cpp:
+        (QWebFrameData::QWebFrameData):
+        (QWebFrameAdapter::load):
+        (QWebFrameAdapter::uniqueName):
+        (QWebFrameAdapter::childFrames):
+        * WebCoreSupport/QWebPageAdapter.cpp:
+        (QWebPageAdapter::findText):
+        Use tree(). instead of tree()->.
+
 2013-08-23  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt] Update outdated source-paths in documentation

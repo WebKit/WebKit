@@ -451,7 +451,7 @@ void HTMLPlugInImageElement::restartSimilarPlugIns()
     if (!document()->page())
         return;
 
-    for (Frame* frame = document()->page()->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
+    for (Frame* frame = document()->page()->mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (!frame->loader().subframeLoader()->containsPlugins())
             continue;
         

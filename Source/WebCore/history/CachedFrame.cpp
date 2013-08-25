@@ -78,7 +78,7 @@ CachedFrameBase::CachedFrameBase(Frame* frame)
     , m_view(frame->view())
     , m_mousePressNode(frame->eventHandler().mousePressNode())
     , m_url(frame->document()->url())
-    , m_isMainFrame(!frame->tree()->parent())
+    , m_isMainFrame(!frame->tree().parent())
 #if USE(ACCELERATED_COMPOSITING)
     , m_isComposited(frame->view()->hasCompositedContent())
 #endif
@@ -127,7 +127,7 @@ void CachedFrameBase::restore()
 
     // Reconstruct the FrameTree
     for (unsigned i = 0; i < m_childFrames.size(); ++i)
-        frame.tree()->appendChild(&m_childFrames[i]->view()->frame());
+        frame.tree().appendChild(&m_childFrames[i]->view()->frame());
 
     // Open the child CachedFrames in their respective FrameLoaders.
     for (unsigned i = 0; i < m_childFrames.size(); ++i)
@@ -169,7 +169,7 @@ CachedFrame::CachedFrame(Frame* frame)
     frame->loader().stopLoading(UnloadEventPolicyUnloadAndPageHide);
 
     // Create the CachedFrames for all Frames in the FrameTree.
-    for (Frame* child = frame->tree()->firstChild(); child; child = child->tree()->nextSibling())
+    for (Frame* child = frame->tree().firstChild(); child; child = child->tree().nextSibling())
         m_childFrames.append(CachedFrame::create(child));
 
     // Active DOM objects must be suspended before we cache the frame script data,
@@ -198,7 +198,7 @@ CachedFrame::CachedFrame(Frame* frame)
     // 1 - We reuse the main frame, so when it navigates to a new page load it needs to start with a blank FrameTree.
     // 2 - It's much easier to destroy a CachedFrame while it resides in the PageCache if it is disconnected from its parent.
     for (unsigned i = 0; i < m_childFrames.size(); ++i)
-        frame->tree()->removeChild(&m_childFrames[i]->view()->frame());
+        frame->tree().removeChild(&m_childFrames[i]->view()->frame());
 
     if (!m_isMainFrame)
         frame->page()->decrementSubframeCount();

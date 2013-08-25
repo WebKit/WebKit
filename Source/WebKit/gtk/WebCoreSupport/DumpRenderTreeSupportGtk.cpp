@@ -127,7 +127,7 @@ GSList* DumpRenderTreeSupportGtk::getFrameChildren(WebKitWebFrame* frame)
         return 0;
 
     GSList* children = 0;
-    for (Frame* child = coreFrame->tree()->firstChild(); child; child = child->tree()->nextSibling()) {
+    for (Frame* child = coreFrame->tree().firstChild(); child; child = child->tree().nextSibling()) {
         WebKitWebFrame* kitFrame = kit(child);
         if (kitFrame)
           children = g_slist_append(children, kitFrame);
@@ -232,7 +232,7 @@ void DumpRenderTreeSupportGtk::clearMainFrameName(WebKitWebFrame* frame)
 {
     g_return_if_fail(WEBKIT_IS_WEB_FRAME(frame));
 
-    core(frame)->tree()->clearName();
+    core(frame)->tree().clearName();
 }
 
 AtkObject* DumpRenderTreeSupportGtk::getRootAccessibleElement(WebKitWebFrame* frame)

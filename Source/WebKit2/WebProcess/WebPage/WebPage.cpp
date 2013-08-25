@@ -790,7 +790,7 @@ bool WebPage::isEditingCommandEnabled(const String& commandName)
 void WebPage::clearMainFrameName()
 {
     if (Frame* frame = mainFrame())
-        frame->tree()->clearName();
+        frame->tree().clearName();
 }
 
 #if USE(ACCELERATED_COMPOSITING)
@@ -2018,7 +2018,7 @@ void WebPage::setDrawsBackground(bool drawsBackground)
 
     m_drawsBackground = drawsBackground;
 
-    for (Frame* coreFrame = m_mainFrame->coreFrame(); coreFrame; coreFrame = coreFrame->tree()->traverseNext()) {
+    for (Frame* coreFrame = m_mainFrame->coreFrame(); coreFrame; coreFrame = coreFrame->tree().traverseNext()) {
         if (FrameView* view = coreFrame->view())
             view->setTransparent(!drawsBackground);
     }
@@ -2035,7 +2035,7 @@ void WebPage::setDrawsTransparentBackground(bool drawsTransparentBackground)
     m_drawsTransparentBackground = drawsTransparentBackground;
 
     Color backgroundColor = drawsTransparentBackground ? Color::transparent : Color::white;
-    for (Frame* coreFrame = m_mainFrame->coreFrame(); coreFrame; coreFrame = coreFrame->tree()->traverseNext()) {
+    for (Frame* coreFrame = m_mainFrame->coreFrame(); coreFrame; coreFrame = coreFrame->tree().traverseNext()) {
         if (FrameView* view = coreFrame->view())
             view->setBaseBackgroundColor(backgroundColor);
     }
@@ -2098,7 +2098,7 @@ void WebPage::setWindowResizerSize(const IntSize& windowResizerSize)
 
     m_windowResizerSize = windowResizerSize;
 
-    for (Frame* coreFrame = m_mainFrame->coreFrame(); coreFrame; coreFrame = coreFrame->tree()->traverseNext()) {
+    for (Frame* coreFrame = m_mainFrame->coreFrame(); coreFrame; coreFrame = coreFrame->tree().traverseNext()) {
         FrameView* view = coreFrame->view();
         if (view)
             view->windowResizerRectChanged();
@@ -2286,7 +2286,7 @@ void WebPage::getRenderTreeExternalRepresentation(uint64_t callbackID)
 
 static Frame* frameWithSelection(Page* page)
 {
-    for (Frame* frame = page->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
+    for (Frame* frame = page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (frame->selection().isRange())
             return frame;
     }
@@ -2949,7 +2949,7 @@ void WebPage::changeSpellingToWord(const String& word)
 
 void WebPage::unmarkAllMisspellings()
 {
-    for (Frame* frame = m_page->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
+    for (Frame* frame = m_page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (Document* document = frame->document())
             document->markers().removeMarkers(DocumentMarker::Spelling);
     }
@@ -2957,7 +2957,7 @@ void WebPage::unmarkAllMisspellings()
 
 void WebPage::unmarkAllBadGrammar()
 {
-    for (Frame* frame = m_page->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
+    for (Frame* frame = m_page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (Document* document = frame->document())
             document->markers().removeMarkers(DocumentMarker::Grammar);
     }
@@ -3684,7 +3684,7 @@ static bool pageContainsAnyHorizontalScrollbars(Frame* mainFrame)
             return true;
     }
 
-    for (Frame* frame = mainFrame; frame; frame = frame->tree()->traverseNext()) {
+    for (Frame* frame = mainFrame; frame; frame = frame->tree().traverseNext()) {
         FrameView* frameView = frame->view();
         if (!frameView)
             continue;
