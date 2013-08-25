@@ -32,7 +32,6 @@
 #include "CSSValueKeywords.h"
 #include "CSSValuePool.h"
 #include "Color.h"
-#include "ClassList.h"
 #include "ContentSecurityPolicy.h"
 #include "DOMTokenList.h"
 #include "Document.h"

@@ -1,3 +1,12 @@
+2013-08-24  Benjamin Poulain  <benjamin@webkit.org>
+
+        Remove a useless #include from StyledElement
+        https://bugs.webkit.org/show_bug.cgi?id=120245
+
+        Reviewed by Andreas Kling.
+
+        * dom/StyledElement.cpp:
+
 2013-08-24  Darin Adler  <darin@apple.com>
 
         Move Frame::inScope into FrameTree
