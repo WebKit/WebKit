@@ -1,3 +1,55 @@
+2013-08-25  Yoav Weiss  <yoav@yoav.ws>
+
+        Improve srcset's layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=120274
+
+        Moved srcset's tests to use js-test-pre, and output text with clear PASS/FAILED statements.
+        Added expected.txt files to the test directory, since there shouldn't be any platform variance in the results.
+        For some of the tests, added an equivalent 1x/2x test, to make sure the feature behaves on both DPRs.
+        Added preload tests on the "change-dynamically" tests, to make sure the 'src' resource is not loaded when it shouldn't.
+
+        Reviewed by Andreas Kling.
+
+        * fast/hidpi/image-srcset-change-dynamically-from-js-1x-expected.txt: Added.
+        * fast/hidpi/image-srcset-change-dynamically-from-js-1x.html: Added.
+        * fast/hidpi/image-srcset-change-dynamically-from-js-2x-expected.txt: Added.
+        * fast/hidpi/image-srcset-change-dynamically-from-js-2x.html: Added.
+        * fast/hidpi/image-srcset-change-dynamically-from-js.html: Removed.
+        * fast/hidpi/image-srcset-data-src-expected.txt: Added.
+        * fast/hidpi/image-srcset-data-src.html:
+        * fast/hidpi/image-srcset-data-srcset-expected.txt: Added.
+        * fast/hidpi/image-srcset-data-srcset.html:
+        * fast/hidpi/image-srcset-invalid-inputs-correct-src-expected.txt: Added.
+        * fast/hidpi/image-srcset-invalid-inputs-correct-src.html:
+        * fast/hidpi/image-srcset-invalid-inputs-except-one-expected.txt: Added.
+        * fast/hidpi/image-srcset-invalid-inputs-except-one.html:
+        * fast/hidpi/image-srcset-remove-dynamically-from-js-expected.txt: Added.
+        * fast/hidpi/image-srcset-remove-dynamically-from-js.html:
+        * fast/hidpi/image-srcset-same-alternative-for-both-attributes-expected.txt: Added.
+        * fast/hidpi/image-srcset-same-alternative-for-both-attributes.html:
+        * fast/hidpi/image-srcset-simple-1x-expected.txt: Added.
+        * fast/hidpi/image-srcset-simple-1x.html: Added.
+        * fast/hidpi/image-srcset-simple-2x-expected.txt: Added.
+        * fast/hidpi/image-srcset-simple-2x.html: Added.
+        * fast/hidpi/image-srcset-simple.html: Removed.
+        * fast/hidpi/image-srcset-src-selection-1x-expected.txt: Added.
+        * fast/hidpi/image-srcset-src-selection-1x.html: Added.
+        * fast/hidpi/image-srcset-src-selection-2x-expected.txt: Added.
+        * fast/hidpi/image-srcset-src-selection-2x.html: Added.
+        * fast/hidpi/image-srcset-src-selection.html: Removed.
+        * fast/hidpi/image-srcset-viewport-modifiers-expected.txt: Added.
+        * fast/hidpi/image-srcset-viewport-modifiers.html:
+        * platform/mac/fast/hidpi/image-srcset-change-dynamically-from-js-expected.txt: Removed.
+        * platform/mac/fast/hidpi/image-srcset-data-src-expected.txt: Removed.
+        * platform/mac/fast/hidpi/image-srcset-data-srcset-expected.txt: Removed.
+        * platform/mac/fast/hidpi/image-srcset-invalid-inputs-correct-src-expected.txt: Removed.
+        * platform/mac/fast/hidpi/image-srcset-invalid-inputs-except-one-expected.txt: Removed.
+        * platform/mac/fast/hidpi/image-srcset-remove-dynamically-from-js-expected.txt: Removed.
+        * platform/mac/fast/hidpi/image-srcset-same-alternative-for-both-attributes-expected.txt: Removed.
+        * platform/mac/fast/hidpi/image-srcset-simple-expected.txt: Removed.
+        * platform/mac/fast/hidpi/image-srcset-src-selection-expected.txt: Removed.
+        * platform/mac/fast/hidpi/image-srcset-viewport-modifiers-expected.txt: Removed.
+
 2013-08-24  Filip Pizlo  <fpizlo@apple.com>
 
         FloatTypedArrayAdaptor::toJSValue should almost certainly not use jsNumber() since that attempts int conversions
