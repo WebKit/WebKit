@@ -1,5 +1,51 @@
 2013-08-25  Darin Adler  <darin@apple.com>
 
+        No need for notifyChromeClientWheelEventHandlerCountChanged in Frame
+        https://bugs.webkit.org/show_bug.cgi?id=120264
+
+        Reviewed by Andreas Kling.
+
+        * dom/Document.cpp:
+        (WebCore::Document::createRenderTree): Renamed attach to this.
+        This made it practical to remove a comment that says the same thing and
+        also helps make the purpose of the function considerably more clear,
+        although the relationship to the attached and detach functions is now
+        less clear; should fix that soon.
+        (WebCore::pageWheelEventHandlerCountChanged): Added. Contains the code
+        from Frame::notifyChromeClientWheelEventHandlerCountChanged, minus some
+        assertions that were only needed because the function was passed a frame
+        rather than a page.
+        (WebCore::Document::didBecomeCurrentDocumentInFrame): Added. Contains
+        most of the code from Frame::setDocument. Looking at before and after,
+        we can see that most of the work is within the document class and matches
+        up with other code already in this class. Added FIXMEs about many problems
+        spotted in the code.
+        (WebCore::Document::topDocument): Added FIXME and tweaked formatting.
+        (WebCore::wheelEventHandlerCountChanged): Moved the call to the
+        pageWheelEventHandlerCountChanged in here from the two call sites.
+        Also added a FIXME.
+        (WebCore::Document::didAddWheelEventHandler): Removed the call to
+        notifyChromeClientWheelEventHandlerCountChanged, since that's now handled
+        inside wheelEventHandlerCountChanged.
+        (WebCore::Document::didRemoveWheelEventHandler): Ditto.
+
+        * dom/Document.h: Renamed attach to createRenderTree, made it private,
+        and added a new didBecomeCurrentDocumentInFrame function.
+
+        * loader/PlaceholderDocument.cpp:
+        (WebCore::PlaceholderDocument::createRenderTree): Renamed from attach.
+        * loader/PlaceholderDocument.h: Did the rename and made the function a
+        private override.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::setDocument): Moved most of this function out of here
+        into the new Document::didBecomeCurrentDocumentInFrame function.
+        Also deleted notifyChromeClientWheelEventHandlerCountChanged.
+
+        * page/Frame.h: Deleted notifyChromeClientWheelEventHandlerCountChanged.
+
+2013-08-25  Darin Adler  <darin@apple.com>
+
         No need for dispatchVisibilityStateChangeEvent function
         https://bugs.webkit.org/show_bug.cgi?id=120261
 

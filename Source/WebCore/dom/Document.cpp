@@ -1960,7 +1960,7 @@ void Document::clearStyleResolver()
     m_styleResolver.clear();
 }
 
-void Document::attach()
+void Document::createRenderTree()
 {
     ASSERT(!attached());
     ASSERT(!m_inPageCache);
@@ -1969,7 +1969,6 @@ void Document::attach()
     if (!m_renderArena)
         m_renderArena = RenderArena::create();
     
-    // Create the rendering tree
     setRenderer(new (m_renderArena.get()) RenderView(this));
 #if USE(ACCELERATED_COMPOSITING)
     renderView()->setIsInWindow(true);
@@ -1981,6 +1980,52 @@ void Document::attach()
         Style::attachRenderTree(child);
 
     setAttached(true);
+}
+
+static void pageWheelEventHandlerCountChanged(Page& page)
+{
+    unsigned count = 0;
+    for (const Frame* frame = page.mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        if (Document* document = frame->document())
+            count += document->wheelEventHandlerCount();
+    }
+    page.chrome().client().numWheelEventHandlersChanged(count);
+}
+
+void Document::didBecomeCurrentDocumentInFrame()
+{
+    // FIXME: Are there cases where the document can be dislodged from the frame during the event handling below?
+    // If so, then m_frame could become 0, and we need to do something about that.
+
+    m_frame->script().updateDocument();
+
+    if (!attached())
+        createRenderTree();
+
+    updateViewportArguments();
+
+    // FIXME: Doing this only for the main frame is insufficient.
+    // Changing a subframe can also change the wheel event handler count.
+    // FIXME: Doing this only when a document goes into the frame is insufficient.
+    // Removing a document can also change the wheel event handler count.
+    // FIXME: Doing this every time is a waste. If the current document and its
+    // subframes' documents have no wheel event handlers, then the count did not change,
+    // unless the documents they are replacing had wheel event handlers.
+    if (page() && page()->mainFrame() == m_frame)
+        pageWheelEventHandlerCountChanged(*page());
+
+#if ENABLE(TOUCH_EVENTS)
+    // FIXME: Doing this only for the main frame is insufficient.
+    // A subframe could have touch event handlers.
+    if (hasTouchEventHandlers() && page() && page()->mainFrame() == m_frame)
+        page()->chrome().client().needTouchEvents(true);
+#endif
+
+    if (m_frame->activeDOMObjectsAndAnimationsSuspended()) {
+        suspendScriptedAnimationControllerCallbacks();
+        m_frame->animation().suspendAnimationsForDocument(this);
+        suspendActiveDOMObjects(ActiveDOMObject::PageWillBeSuspended);
+    }
 }
 
 void Document::detach()
@@ -4236,12 +4281,12 @@ Document* Document::parentDocument() const
 
 Document* Document::topDocument() const
 {
-    Document* doc = const_cast<Document *>(this);
-    Element* element;
-    while ((element = doc->ownerElement()))
-        doc = element->document();
-    
-    return doc;
+    // FIXME: Why does this walk up owner elements instead using the frame tree as parentDocument does?
+    // The frame tree even has a top() function.
+    Document* document = const_cast<Document*>(this);
+    while (Element* element = document->ownerElement())
+        document = element->document();
+    return document;
 }
 
 PassRefPtr<Attr> Document::createAttribute(const String& name, ExceptionCode& ec)
@@ -5487,6 +5532,8 @@ static void wheelEventHandlerCountChanged(Document* document)
     if (!page)
         return;
 
+    pageWheelEventHandlerCountChanged(*page);
+
     ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator();
     if (!scrollingCoordinator)
         return;
@@ -5495,16 +5542,13 @@ static void wheelEventHandlerCountChanged(Document* document)
     if (!frameView)
         return;
 
+    // FIXME: Why doesn't this need to be called in didBecomeCurrentDocumentInFrame?
     scrollingCoordinator->frameViewWheelEventHandlerCountChanged(frameView);
 }
 
 void Document::didAddWheelEventHandler()
 {
     ++m_wheelEventHandlerCount;
-    Frame* mainFrame = page() ? page()->mainFrame() : 0;
-    if (mainFrame)
-        mainFrame->notifyChromeClientWheelEventHandlerCountChanged();
-
     wheelEventHandlerCountChanged(this);
 }
 
@@ -5512,10 +5556,6 @@ void Document::didRemoveWheelEventHandler()
 {
     ASSERT(m_wheelEventHandlerCount > 0);
     --m_wheelEventHandlerCount;
-    Frame* mainFrame = page() ? page()->mainFrame() : 0;
-    if (mainFrame)
-        mainFrame->notifyChromeClientWheelEventHandlerCountChanged();
-
     wheelEventHandlerCountChanged(this);
 }
 

@@ -272,40 +272,23 @@ void Frame::setView(PassRefPtr<FrameView> view)
 #endif
 }
 
-void Frame::setDocument(PassRefPtr<Document> newDoc)
+void Frame::setDocument(PassRefPtr<Document> newDocument)
 {
-    ASSERT(!newDoc || newDoc->frame() == this);
+    ASSERT(!newDocument || newDocument->frame() == this);
+
     if (m_doc && m_doc->attached() && !m_doc->inPageCache()) {
         // FIXME: We don't call willRemove here. Why is that OK?
         m_doc->detach();
     }
 
-    m_doc = newDoc;
+    m_doc = newDocument.get();
     ASSERT(!m_doc || m_doc->domWindow());
     ASSERT(!m_doc || m_doc->domWindow()->frame() == this);
 
-    if (m_doc && !m_doc->attached())
-        m_doc->attach();
-
-    if (m_doc) {
-        m_script->updateDocument();
-        m_doc->updateViewportArguments();
-    }
-
-    if (m_page && m_page->mainFrame() == this) {
-        notifyChromeClientWheelEventHandlerCountChanged();
-#if ENABLE(TOUCH_EVENTS)
-        if (m_doc && m_doc->hasTouchEventHandlers())
-            m_page->chrome().client().needTouchEvents(true);
-#endif
-    }
-
-    // Suspend document if this frame was created in suspended state.
-    if (m_doc && activeDOMObjectsAndAnimationsSuspended()) {
-        m_doc->suspendScriptedAnimationControllerCallbacks();
-        m_animationController->suspendAnimationsForDocument(m_doc.get());
-        m_doc->suspendActiveDOMObjects(ActiveDOMObject::PageWillBeSuspended);
-    }
+    // Don't use m_doc because it can be overwritten and we want to guarantee
+    // that the document is not destroyed during this function call.
+    if (newDocument)
+        newDocument->didBecomeCurrentDocumentInFrame();
 }
 
 #if ENABLE(ORIENTATION_EVENTS)
@@ -954,19 +937,6 @@ void Frame::deviceOrPageScaleFactorChanged()
         root->compositor().deviceOrPageScaleFactorChanged();
 }
 #endif
-void Frame::notifyChromeClientWheelEventHandlerCountChanged() const
-{
-    // Ensure that this method is being called on the main frame of the page.
-    ASSERT(m_page && m_page->mainFrame() == this);
-
-    unsigned count = 0;
-    for (const Frame* frame = this; frame; frame = frame->tree().traverseNext()) {
-        if (frame->document())
-            count += frame->document()->wheelEventHandlerCount();
-    }
-
-    m_page->chrome().client().numWheelEventHandlersChanged(count);
-}
 
 bool Frame::isURLAllowed(const KURL& url) const
 {

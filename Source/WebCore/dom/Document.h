@@ -524,7 +524,7 @@ public:
 
     CachedResourceLoader* cachedResourceLoader() { return m_cachedResourceLoader.get(); }
 
-    virtual void attach();
+    void didBecomeCurrentDocumentInFrame();
     virtual void detach();
     void prepareForDestruction();
 
@@ -1196,6 +1196,7 @@ private:
     friend class Node;
     friend class IgnoreDestructiveWriteCountIncrementer;
 
+    virtual void createRenderTree();
     virtual void dispose() OVERRIDE;
 
     void detachParser();

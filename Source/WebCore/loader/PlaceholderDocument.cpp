@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-void PlaceholderDocument::attach()
+void PlaceholderDocument::createRenderTree()
 {
     ASSERT(!attached());
 
