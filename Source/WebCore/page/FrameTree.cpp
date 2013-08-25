@@ -205,7 +205,7 @@ inline Frame* FrameTree::scopedChild(const AtomicString& name, TreeScope* scope)
         return 0;
 
     for (Frame* child = firstChild(); child; child = child->tree().nextSibling()) {
-        if (child->tree()->uniqueName() == name && inScope(*child, *scope))
+        if (child->tree().uniqueName() == name && inScope(*child, *scope))
             return child;
     }
     return 0;

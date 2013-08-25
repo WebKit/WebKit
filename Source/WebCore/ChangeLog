@@ -1,3 +1,11 @@
+2013-08-24  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Unreviewed build fix after r154560
+
+        * page/FrameTree.cpp:
+        (WebCore::FrameTree::scopedChild): 
+        Use tree(). instead of tree()->.
+
 2013-08-24  Benjamin Poulain  <benjamin@webkit.org>
 
         <https://webkit.org/b/120102> Inline SelectorQuery's execution traits
