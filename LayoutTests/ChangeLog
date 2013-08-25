@@ -1,3 +1,10 @@
+2013-08-25  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Unreviewed EFL gardening.
+
+        * platform/efl/TestExpectations:
+        Unskipped some accessibility tests which are already passed. 
+
 2013-08-24  Yoav Weiss  <yoav@yoav.ws>
 
         Eliminate a useless comparison in srcset's candidate selection algorithm

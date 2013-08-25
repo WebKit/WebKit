@@ -1600,14 +1600,10 @@ webkit.org/b/114151 accessibility/svg-group-element-with-title.html [ Failure ]
 webkit.org/b/111850 accessibility/table-with-hidden-head-section.html [ Failure ]
 
 # Regression after r153432.
-webkit.org/b/119333 accessibility/image-link-inline-cont.html [ Failure Crash ]
 webkit.org/b/119333 accessibility/image-link.html [ Failure Crash ]
 webkit.org/b/119333 accessibility/image-map2.html [ Failure Crash ]
-webkit.org/b/119333 accessibility/removed-continuation-element-causes-crash.html [ Failure Crash ]
 webkit.org/b/119333 accessibility/table-cell-spans.html [ Failure Crash ]
 webkit.org/b/119333 accessibility/table-cells.html [ Failure Crash ]
-webkit.org/b/119333 accessibility/table-modification-crash.html [ Failure Crash ]
-webkit.org/b/119333 accessibility/table-remove-cell-crash.html [ Failure Crash ]
 
 # Newly added test at r139111 is failing.
 webkit.org/b/106439 editing/pasteboard/paste-noplugin.html [ Failure ]
