@@ -1,5 +1,18 @@
 2013-08-25  Darin Adler  <darin@apple.com>
 
+        Clipboard is in DOM directory, but ClipboardMac is in platform directory
+        https://bugs.webkit.org/show_bug.cgi?id=120267
+
+        Reviewed by Andreas Kling.
+
+        This file is almost gone; has just one function in it. Move it for now, and later
+        we can delete it entirely.
+
+        * WebCore.xcodeproj/project.pbxproj: Updated for new file location.
+        * dom/ClipboardMac.mm: Moved from Source/WebCore/platform/mac/ClipboardMac.mm.
+
+2013-08-25  Darin Adler  <darin@apple.com>
+
         No need for notifyChromeClientWheelEventHandlerCountChanged in Frame
         https://bugs.webkit.org/show_bug.cgi?id=120264
 

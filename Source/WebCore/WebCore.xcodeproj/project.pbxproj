@@ -14515,7 +14515,6 @@
 			children = (
 				65A640F00533BB1F0085E777 /* BlockExceptions.h */,
 				65F80697054D9F86008BF776 /* BlockExceptions.mm */,
-				2D90660C0665D937006B6F1A /* ClipboardMac.mm */,
 				2919A1EA16B3378900787213 /* ContentFilterMac.mm */,
 				06027CB20B1CC03D00884B2D /* ContextMenuItemMac.mm */,
 				93B6A0E90B0BCA8400F5027A /* ContextMenuMac.mm */,
@@ -20115,6 +20114,7 @@
 				4B8AF4A90B1CE02B00687690 /* ClipboardAccessPolicy.h */,
 				85031B290A44EFC700F992E0 /* ClipboardEvent.cpp */,
 				85031B2A0A44EFC700F992E0 /* ClipboardEvent.h */,
+				2D90660C0665D937006B6F1A /* ClipboardMac.mm */,
 				6550B697099DF0270090D781 /* Comment.cpp */,
 				6550B698099DF0270090D781 /* Comment.h */,
 				85089CC70A98C22600A275AA /* Comment.idl */,
