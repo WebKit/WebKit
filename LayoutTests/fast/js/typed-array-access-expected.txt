@@ -1,0 +1,133 @@
+Tests that accesses to typed arrays handle value conversions correctly.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Reading bit pattern 0 with Int8 resulted in 0
+PASS Writing the value 0 with type Int8 results in bit pattern 0
+PASS Reading bit pattern 42 with Int8 resulted in 42
+PASS Writing the value 42 with type Int8 results in bit pattern 42
+PASS Reading bit pattern 255 with Int8 resulted in -1
+PASS Writing the value -1 with type Int8 results in bit pattern 255
+PASS Reading bit pattern -400 with Int8 resulted in 112
+PASS Reading bit pattern 400 with Int8 resulted in -112
+PASS Writing the value 1000 with type Int8 results in bit pattern 232
+PASS Writing the value -1000 with type Int8 results in bit pattern 24
+PASS Writing the value 0.5 with type Int8 results in bit pattern 0
+PASS Writing the value -0.5 with type Int8 results in bit pattern 0
+PASS Writing the value -1.5 with type Int8 results in bit pattern 255
+PASS Writing the value 6326266464264213 with type Int8 results in bit pattern 21
+PASS Writing the value -6326266464264213 with type Int8 results in bit pattern 235
+PASS Reading bit pattern 0 with Uint8 resulted in 0
+PASS Writing the value 0 with type Uint8 results in bit pattern 0
+PASS Reading bit pattern 42 with Uint8 resulted in 42
+PASS Writing the value 42 with type Uint8 results in bit pattern 42
+PASS Reading bit pattern 255 with Uint8 resulted in 255
+PASS Writing the value 255 with type Uint8 results in bit pattern 255
+PASS Reading bit pattern 400 with Uint8 resulted in 144
+PASS Reading bit pattern -400 with Uint8 resulted in 112
+PASS Writing the value 1000 with type Uint8 results in bit pattern 232
+PASS Writing the value -1000 with type Uint8 results in bit pattern 24
+PASS Writing the value 0.5 with type Uint8 results in bit pattern 0
+PASS Writing the value -0.5 with type Uint8 results in bit pattern 0
+PASS Writing the value -1.5 with type Uint8 results in bit pattern 255
+PASS Writing the value 6326266464264213 with type Uint8 results in bit pattern 21
+PASS Writing the value -6326266464264213 with type Uint8 results in bit pattern 235
+PASS Reading bit pattern 0 with Uint8Clamped resulted in 0
+PASS Writing the value 0 with type Uint8Clamped results in bit pattern 0
+PASS Reading bit pattern 42 with Uint8Clamped resulted in 42
+PASS Writing the value 42 with type Uint8Clamped results in bit pattern 42
+PASS Reading bit pattern 255 with Uint8Clamped resulted in 255
+PASS Writing the value 255 with type Uint8Clamped results in bit pattern 255
+PASS Reading bit pattern 400 with Uint8Clamped resulted in 144
+PASS Reading bit pattern -400 with Uint8Clamped resulted in 112
+PASS Writing the value 1000 with type Uint8Clamped results in bit pattern 255
+PASS Writing the value -1000 with type Uint8Clamped results in bit pattern 0
+PASS Writing the value 0.5 with type Uint8Clamped results in bit pattern 0
+PASS Writing the value -0.5 with type Uint8Clamped results in bit pattern 0
+PASS Writing the value -1.5 with type Uint8Clamped results in bit pattern 0
+PASS Writing the value 6326266464264213 with type Uint8Clamped results in bit pattern 255
+PASS Writing the value -6326266464264213 with type Uint8Clamped results in bit pattern 0
+PASS Reading bit pattern 0 with Int16 resulted in 0
+PASS Writing the value 0 with type Int16 results in bit pattern 0
+PASS Reading bit pattern 42 with Int16 resulted in 42
+PASS Writing the value 42 with type Int16 results in bit pattern 42
+PASS Reading bit pattern 400 with Int16 resulted in 400
+PASS Writing the value 400 with type Int16 results in bit pattern 400
+PASS Reading bit pattern 65535 with Int16 resulted in -1
+PASS Writing the value -1 with type Int16 results in bit pattern 65535
+PASS Reading bit pattern 65136 with Int16 resulted in -400
+PASS Writing the value -400 with type Int16 results in bit pattern 65136
+PASS Reading bit pattern 30901 with Int16 resulted in 30901
+PASS Writing the value 30901 with type Int16 results in bit pattern 30901
+PASS Reading bit pattern 400000 with Int16 resulted in 6784
+PASS Reading bit pattern -400000 with Int16 resulted in -6784
+PASS Writing the value 100000 with type Int16 results in bit pattern 34464
+PASS Writing the value -100000 with type Int16 results in bit pattern 31072
+PASS Writing the value 0.5 with type Int16 results in bit pattern 0
+PASS Writing the value -0.5 with type Int16 results in bit pattern 0
+PASS Writing the value -1.5 with type Int16 results in bit pattern 65535
+PASS Writing the value 6326266464264213 with type Int16 results in bit pattern 24597
+PASS Writing the value -6326266464264213 with type Int16 results in bit pattern 40939
+PASS Reading bit pattern 0 with Uint16 resulted in 0
+PASS Writing the value 0 with type Uint16 results in bit pattern 0
+PASS Reading bit pattern 42 with Uint16 resulted in 42
+PASS Writing the value 42 with type Uint16 results in bit pattern 42
+PASS Reading bit pattern 400 with Uint16 resulted in 400
+PASS Writing the value 400 with type Uint16 results in bit pattern 400
+PASS Reading bit pattern 30901 with Uint16 resulted in 30901
+PASS Writing the value 30901 with type Uint16 results in bit pattern 30901
+PASS Reading bit pattern 400000 with Uint16 resulted in 6784
+PASS Reading bit pattern -400000 with Uint16 resulted in 58752
+PASS Writing the value 100000 with type Int16 results in bit pattern 34464
+PASS Writing the value -100000 with type Int16 results in bit pattern 31072
+PASS Writing the value -1 with type Uint16 results in bit pattern 65535
+PASS Writing the value -400 with type Uint16 results in bit pattern 65136
+PASS Writing the value 0.5 with type Uint16 results in bit pattern 0
+PASS Writing the value 6326266464264213 with type Uint16 results in bit pattern 24597
+PASS Writing the value -6326266464264213 with type Uint16 results in bit pattern 40939
+PASS Reading bit pattern 0 with Int32 resulted in 0
+PASS Writing the value 0 with type Int32 results in bit pattern 0
+PASS Reading bit pattern 42 with Int32 resulted in 42
+PASS Writing the value 42 with type Int32 results in bit pattern 42
+PASS Reading bit pattern 1000000000 with Int32 resulted in 1000000000
+PASS Writing the value 1000000000 with type Int32 results in bit pattern 1000000000
+PASS Reading bit pattern -42 with Int32 resulted in -42
+PASS Writing the value -42 with type Int32 results in bit pattern -42
+PASS Reading bit pattern -1000000000 with Int32 resulted in -1000000000
+PASS Writing the value -1000000000 with type Int32 results in bit pattern -1000000000
+PASS Writing the value 0.5 with type Int32 results in bit pattern 0
+PASS Writing the value -0.5 with type Int32 results in bit pattern 0
+PASS Writing the value -1.5 with type Int32 results in bit pattern -1
+PASS Writing the value 6326266464264213 with type Int32 results in bit pattern -1319411691
+PASS Writing the value -6326266464264213 with type Int32 results in bit pattern 1319411691
+PASS Reading bit pattern 0 with Uint32 resulted in 0
+PASS Writing the value 0 with type Uint32 results in bit pattern 0
+PASS Reading bit pattern 42 with Uint32 resulted in 42
+PASS Writing the value 42 with type Uint32 results in bit pattern 42
+PASS Reading bit pattern 1000000000 with Uint32 resulted in 1000000000
+PASS Writing the value 1000000000 with type Uint32 results in bit pattern 1000000000
+PASS Writing the value -42 with type Uint32 results in bit pattern -42
+PASS Reading bit pattern -42 with Uint32 resulted in 4294967254
+PASS Writing the value -1000000000 with type Uint32 results in bit pattern -1000000000
+PASS Reading bit pattern -1000000000 with Uint32 resulted in 3294967296
+PASS Writing the value 0.5 with type Uint32 results in bit pattern 0
+PASS Writing the value -0.5 with type Uint32 results in bit pattern 0
+PASS Writing the value -1.5 with type Uint32 results in bit pattern -1
+PASS Writing the value 6326266464264213 with type Uint32 results in bit pattern -1319411691
+PASS Writing the value -6326266464264213 with type Uint32 results in bit pattern 1319411691
+PASS Reading bit pattern 0 with Float32 resulted in 0
+PASS Writing the value 0 with type Float32 results in bit pattern 0
+PASS Reading bit pattern 1069547520 with Float32 resulted in 1.5
+PASS Writing the value 1.5 with type Float32 results in bit pattern 1069547520
+PASS Writing the value 1000000000 with type Float32 results in bit pattern 1315859240
+PASS Reading bit pattern 0:0 with Float64 resulted in 0
+PASS Writing the value 0 with type Float64 results in bit pattern 0:0
+PASS Reading bit pattern 0:1073217536 with Float64 resulted in 1.5
+PASS Writing the value 1.5 with type Float64 results in bit pattern 0:1073217536
+PASS Reading bit pattern 0:1104006501 with Float64 resulted in 1000000000
+PASS Writing the value 1000000000 with type Float64 results in bit pattern 0:1104006501
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

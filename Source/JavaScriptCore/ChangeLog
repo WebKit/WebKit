@@ -1,3 +1,76 @@
+2013-08-24  Filip Pizlo  <fpizlo@apple.com>
+
+        FloatTypedArrayAdaptor::toJSValue should almost certainly not use jsNumber() since that attempts int conversions
+        https://bugs.webkit.org/show_bug.cgi?id=120228
+
+        Reviewed by Oliver Hunt.
+        
+        It turns out that there were three problems:
+        
+        - Using jsNumber() meant that we were converting doubles to integers and then
+          possibly back again whenever doing a set() between floating point arrays.
+        
+        - Slow-path accesses to double typed arrays were slower than necessary because
+          of the to-int conversion attempt.
+        
+        - The use of JSValue as an intermediate for converting between differen types
+          in typedArray.set() resulted in worse code than I had previously expected.
+        
+        This patch solves the problem by using template double-dispatch to ensure that
+        that C++ compiler sees the simplest possible combination of casts between any
+        combination of typed array types, while still preserving JS and typed array
+        conversion semantics. Conversions are done as follows:
+        
+            SourceAdaptor::convertTo<TargetAdaptor>(value)
+        
+        Internally, convertTo() calls one of three possible methods on TargetAdaptor,
+        with one method for each of int32_t, uint32_t, and double. This means that the
+        C++ compiler will at worst see a widening cast to one of those types followed
+        by a narrowing conversion (not necessarily a cast - may have clamping or the
+        JS toInt32() function).
+        
+        This change doesn't just affect typedArray.set(); it also affects slow-path
+        accesses to typed arrays as well. This patch also adds a bunch of new test
+        coverage.
+        
+        This change is a ~50% speed-up on typedArray.set() involving floating point
+        types.
+
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * runtime/GenericTypedArrayView.h:
+        (JSC::GenericTypedArrayView::set):
+        * runtime/JSDataViewPrototype.cpp:
+        (JSC::setData):
+        * runtime/JSGenericTypedArrayView.h:
+        (JSC::JSGenericTypedArrayView::setIndexQuicklyToDouble):
+        (JSC::JSGenericTypedArrayView::setIndexQuickly):
+        * runtime/JSGenericTypedArrayViewInlines.h:
+        (JSC::::setWithSpecificType):
+        (JSC::::set):
+        * runtime/ToNativeFromValue.h: Added.
+        (JSC::toNativeFromValue):
+        * runtime/TypedArrayAdaptors.h:
+        (JSC::IntegralTypedArrayAdaptor::toJSValue):
+        (JSC::IntegralTypedArrayAdaptor::toDouble):
+        (JSC::IntegralTypedArrayAdaptor::toNativeFromInt32):
+        (JSC::IntegralTypedArrayAdaptor::toNativeFromUint32):
+        (JSC::IntegralTypedArrayAdaptor::toNativeFromDouble):
+        (JSC::IntegralTypedArrayAdaptor::convertTo):
+        (JSC::FloatTypedArrayAdaptor::toJSValue):
+        (JSC::FloatTypedArrayAdaptor::toDouble):
+        (JSC::FloatTypedArrayAdaptor::toNativeFromInt32):
+        (JSC::FloatTypedArrayAdaptor::toNativeFromUint32):
+        (JSC::FloatTypedArrayAdaptor::toNativeFromDouble):
+        (JSC::FloatTypedArrayAdaptor::convertTo):
+        (JSC::Uint8ClampedAdaptor::toJSValue):
+        (JSC::Uint8ClampedAdaptor::toDouble):
+        (JSC::Uint8ClampedAdaptor::toNativeFromInt32):
+        (JSC::Uint8ClampedAdaptor::toNativeFromUint32):
+        (JSC::Uint8ClampedAdaptor::toNativeFromDouble):
+        (JSC::Uint8ClampedAdaptor::convertTo):
+
 2013-08-24  Dan Bernstein  <mitz@apple.com>
 
         [mac] link against libz in a more civilized manner

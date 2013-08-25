@@ -954,6 +954,7 @@
     <ClInclude Include="..\runtime\StructureTransitionTable.h" />
     <ClInclude Include="..\runtime\SymbolTable.h" />
     <ClInclude Include="..\runtime\Tracing.h" />
+    <ClInclude Include="..\runtime\ToNativeFromValue.h" />
     <ClInclude Include="..\runtime\TypedArrayAdaptors.h" />
     <ClInclude Include="..\runtime\TypedArrayController.h" />
     <ClInclude Include="..\runtime\TypedArrayInlines.h" />

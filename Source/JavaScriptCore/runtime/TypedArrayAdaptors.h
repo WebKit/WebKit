@@ -41,25 +41,6 @@ struct IntegralTypedArrayAdaptor {
     typedef JSViewTypeArg JSViewType;
     static const TypedArrayType typeValue = typeValueArg;
 
-    static Type toNative(double value)
-    {
-        return static_cast<Type>(static_cast<int64_t>(value));
-    }
-    
-    static Type toNative(JSValue value)
-    {
-        if (value.isInt32())
-            return static_cast<Type>(value.asInt32());
-        return toNative(value.asNumber());
-    }
-    
-    static Type toNative(ExecState* exec, JSValue value)
-    {
-        if (value.isInt32())
-            return static_cast<Type>(value.asInt32());
-        return toNative(value.toNumber(exec));
-    }
-    
     static JSValue toJSValue(Type value)
     {
         return jsNumber(value);
@@ -68,6 +49,32 @@ struct IntegralTypedArrayAdaptor {
     static double toDouble(Type value)
     {
         return static_cast<double>(value);
+    }
+    
+    static Type toNativeFromInt32(int32_t value)
+    {
+        return static_cast<Type>(value);
+    }
+    
+    static Type toNativeFromUint32(uint32_t value)
+    {
+        return static_cast<Type>(value);
+    }
+    
+    static Type toNativeFromDouble(double value)
+    {
+        int32_t result = static_cast<int32_t>(value);
+        if (static_cast<double>(result) != value)
+            result = toInt32(value);
+        return static_cast<Type>(result);
+    }
+    
+    template<typename OtherAdaptor>
+    static typename OtherAdaptor::Type convertTo(Type value)
+    {
+        if (typeValue == TypeUint32)
+            return OtherAdaptor::toNativeFromUint32(value);
+        return OtherAdaptor::toNativeFromInt32(value);
     }
 };
 
@@ -80,31 +87,37 @@ struct FloatTypedArrayAdaptor {
     typedef JSViewTypeArg JSViewType;
     static const TypedArrayType typeValue = typeValueArg;
     
-    static Type toNative(double value)
-    {
-        return static_cast<Type>(value);
-    }
-    
-    static Type toNative(JSValue value)
-    {
-        return toNative(value.asNumber());
-    }
-    
-    static Type toNative(ExecState* exec, JSValue value)
-    {
-        return toNative(value.toNumber(exec));
-    }
-    
     static JSValue toJSValue(Type value)
     {
         if (value != value)
-            return jsNumber(QNaN);
-        return jsNumber(value);
+            return jsDoubleNumber(QNaN);
+        return jsDoubleNumber(value);
     }
     
     static double toDouble(Type value)
     {
         return static_cast<double>(value);
+    }
+
+    static Type toNativeFromInt32(int32_t value)
+    {
+        return static_cast<Type>(value);
+    }
+    
+    static Type toNativeFromUint32(uint32_t value)
+    {
+        return static_cast<Type>(value);
+    }
+    
+    static Type toNativeFromDouble(double value)
+    {
+        return value;
+    }
+    
+    template<typename OtherAdaptor>
+    static typename OtherAdaptor::Type convertTo(Type value)
+    {
+        return OtherAdaptor::toNativeFromDouble(value);
     }
 };
 
@@ -155,29 +168,6 @@ struct Uint8ClampedAdaptor {
     typedef JSUint8ClampedArray JSViewType;
     static const TypedArrayType typeValue = TypeUint8Clamped;
     
-    static uint8_t toNative(double value)
-    {
-        if (std::isnan(value) || value < 0)
-            return 0;
-        if (value > 255)
-            return 255;
-        return static_cast<uint8_t>(lrint(value));
-    }
-    
-    static uint8_t toNative(JSValue value)
-    {
-        if (value.isInt32())
-            return clamp(value.asInt32());
-        return toNative(value.asNumber());
-    }
-    
-    static uint8_t toNative(ExecState* exec, JSValue value)
-    {
-        if (value.isInt32())
-            return clamp(value.asInt32());
-        return toNative(value.toNumber(exec));
-    }
-    
     static JSValue toJSValue(uint8_t value)
     {
         return jsNumber(value);
@@ -186,6 +176,31 @@ struct Uint8ClampedAdaptor {
     static double toDouble(uint8_t value)
     {
         return static_cast<double>(value);
+    }
+    
+    static Type toNativeFromInt32(int32_t value)
+    {
+        return clamp(value);
+    }
+    
+    static Type toNativeFromUint32(uint32_t value)
+    {
+        return std::min(static_cast<uint32_t>(255), value);
+    }
+    
+    static Type toNativeFromDouble(double value)
+    {
+        if (std::isnan(value) || value < 0)
+            return 0;
+        if (value > 255)
+            return 255;
+        return static_cast<uint8_t>(lrint(value));
+    }
+    
+    template<typename OtherAdaptor>
+    static typename OtherAdaptor::Type convertTo(uint8_t value)
+    {
+        return OtherAdaptor::toNativeFromInt32(value);
     }
     
 private:

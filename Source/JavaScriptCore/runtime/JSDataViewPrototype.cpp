@@ -30,6 +30,7 @@
 #include "JSDataView.h"
 #include "Lookup.h"
 #include "Operations.h"
+#include "ToNativeFromValue.h"
 #include "TypedArrayAdaptors.h"
 #include <wtf/FlipBytes.h>
 
@@ -138,7 +139,7 @@ EncodedJSValue setData(ExecState* exec)
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
     
-    typename Adaptor::Type value = Adaptor::toNative(exec, exec->argument(1));
+    typename Adaptor::Type value = toNativeFromValue<Adaptor>(exec, exec->argument(1));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
     

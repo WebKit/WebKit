@@ -86,7 +86,7 @@ public:
     void set(unsigned index, double value) const
     {
         ASSERT_WITH_SECURITY_IMPLICATION(index < this->length());
-        data()[index] = Adaptor::toNative(value);
+        data()[index] = Adaptor::toNativeFromDouble(value);
     }
     
     bool checkInboundData(unsigned offset, unsigned pos) const

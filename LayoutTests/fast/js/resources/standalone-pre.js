@@ -30,15 +30,28 @@ function testFailed(msg)
     print("FAIL", escapeString(msg));
 }
 
+function areNumbersEqual(_actual, _expected)
+{
+    if (_expected === 0)
+        return _actual === _expected && (1/_actual) === (1/_expected);
+    if (_actual === _expected)
+        return true;
+    if (typeof(_expected) == "number" && isNaN(_expected))
+        return typeof(_actual) == "number" && isNaN(_actual);
+    return false;
+}
+
 function areArraysEqual(_a, _b)
 {
-    if (Object.prototype.toString.call(_a) != Object.prototype.toString.call([]))
-        return false;
-    if (_a.length !== _b.length)
-        return false;
-    for (var i = 0; i < _a.length; i++)
-        if (_a[i] !== _b[i])
+    try {
+        if (_a.length !== _b.length)
             return false;
+        for (var i = 0; i < _a.length; i++)
+            if (!areNumbersEqual(_a[i], _b[i]))
+                return false;
+    } catch (ex) {
+        return false;
+    }
     return true;
 }
 
@@ -49,15 +62,27 @@ function isMinusZero(n)
     return n === 0 && 1/n < 0;
 }
 
+function isTypedArray(array)
+{
+    return array instanceof Int8Array
+        || array instanceof Int16Array
+        || array instanceof Int32Array
+        || array instanceof Uint8Array
+        || array instanceof Uint8ClampedArray
+        || array instanceof Uint16Array
+        || array instanceof Uint32Array
+        || array instanceof Float32Array
+        || array instanceof Float64Array;
+}
+
 function isResultCorrect(_actual, _expected)
 {
-    if (_expected === 0)
-        return _actual === _expected && (1/_actual) === (1/_expected);
-    if (_actual === _expected)
+    if (areNumbersEqual(_actual, _expected))
         return true;
-    if (typeof(_expected) == "number" && isNaN(_expected))
-        return typeof(_actual) == "number" && isNaN(_actual);
-    if (Object.prototype.toString.call(_expected) == Object.prototype.toString.call([]))
+    if (_expected
+        && (Object.prototype.toString.call(_expected) ==
+            Object.prototype.toString.call([])
+            || isTypedArray(_expected)))
         return areArraysEqual(_actual, _expected);
     return false;
 }
@@ -66,7 +91,10 @@ function stringify(v)
 {
     if (v === 0 && 1/v < 0)
         return "-0";
-    else return "" + v;
+    else if (isTypedArray(v))
+        return v.__proto__.constructor.name + ":[" + Array.prototype.join.call(v, ",") + "]";
+    else
+        return "" + v;
 }
 
 function shouldBe(_a, _b)
@@ -83,13 +111,13 @@ function shouldBe(_a, _b)
   var _bv = eval(_b);
 
   if (exception)
-    testFailed(_a + " should be " + _bv + ". Threw exception " + exception);
+    testFailed(_a + " should be " + stringify(_bv) + ". Threw exception " + exception);
   else if (isResultCorrect(_av, _bv))
     testPassed(_a + " is " + _b);
   else if (typeof(_av) == typeof(_bv))
-    testFailed(_a + " should be " + _bv + ". Was " + stringify(_av) + ".");
+    testFailed(_a + " should be " + stringify(_bv) + ". Was " + stringify(_av) + ".");
   else
-    testFailed(_a + " should be " + _bv + " (of type " + typeof _bv + "). Was " + _av + " (of type " + typeof _av + ").");
+    testFailed(_a + " should be " + stringify(_bv) + " (of type " + typeof _bv + "). Was " + _av + " (of type " + typeof _av + ").");
 }
 
 function shouldBeTrue(_a) { shouldBe(_a, "true"); }

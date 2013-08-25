@@ -1,3 +1,55 @@
+2013-08-24  Filip Pizlo  <fpizlo@apple.com>
+
+        FloatTypedArrayAdaptor::toJSValue should almost certainly not use jsNumber() since that attempts int conversions
+        https://bugs.webkit.org/show_bug.cgi?id=120228
+
+        Reviewed by Oliver Hunt.
+        
+        Add coverage for three things:
+        
+        - Typed array accesses with corner-case values.
+        
+        - Typed array set() (i.e. copy) between arrays of different types.
+        
+        - Performance of typedArray.set() involving different types.
+        
+        This required some changes to our test harnesses, since they previously
+        couldn't consistently do numerical array comparisons in a reliable way.
+
+        * fast/js/regress/Float32Array-to-Float64Array-set-expected.txt: Added.
+        * fast/js/regress/Float32Array-to-Float64Array-set.html: Added.
+        * fast/js/regress/Float64Array-to-Int16Array-set-expected.txt: Added.
+        * fast/js/regress/Float64Array-to-Int16Array-set.html: Added.
+        * fast/js/regress/Int16Array-to-Int32Array-set-expected.txt: Added.
+        * fast/js/regress/Int16Array-to-Int32Array-set.html: Added.
+        * fast/js/regress/script-tests/Float32Array-to-Float64Array-set.js: Added.
+        * fast/js/regress/script-tests/Float64Array-to-Int16Array-set.js: Added.
+        * fast/js/regress/script-tests/Int16Array-to-Int32Array-set.js: Added.
+        * fast/js/resources/js-test-pre.js:
+        (areNumbersEqual):
+        (areArraysEqual):
+        (isResultCorrect):
+        * fast/js/resources/standalone-pre.js:
+        (areNumbersEqual):
+        (areArraysEqual):
+        (isTypedArray):
+        (isResultCorrect):
+        (stringify):
+        (shouldBe):
+        * fast/js/script-tests/typed-array-access.js: Added.
+        (bitsToString):
+        (bitsToValue):
+        (valueToBits):
+        (roundTrip):
+        * fast/js/script-tests/typed-array-set-different-types.js: Added.
+        (MyRandom):
+        (.reference):
+        (.usingConstruct):
+        * fast/js/typed-array-access-expected.txt: Added.
+        * fast/js/typed-array-access.html: Added.
+        * fast/js/typed-array-set-different-types-expected.txt: Added.
+        * fast/js/typed-array-set-different-types.html: Added.
+
 2013-08-25  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Unreviewed EFL gardening.

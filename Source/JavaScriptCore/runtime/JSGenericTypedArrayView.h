@@ -27,6 +27,7 @@
 #define JSGenericTypedArrayView_h
 
 #include "JSArrayBufferView.h"
+#include "ToNativeFromValue.h"
 
 namespace JSC {
 
@@ -74,11 +75,12 @@ JS_EXPORT_PRIVATE const ClassInfo* getFloat64ArrayClassInfo();
 //     typedef int8_t Type;
 //     typedef Int8Array ViewType;
 //     typedef JSInt8Array JSViewType;
-//     static int8_t toNative(double);
-//     static int8_t toNative(JSValue);
-//     static int8_t toNative(ExecState*, JSValue);
+//     static int8_t toNativeFromInt32(int32_t);
+//     static int8_t toNativeFromUint32(uint32_t);
+//     static int8_t toNativeFromDouble(double);
 //     static JSValue toJSValue(int8_t);
 //     static double toDouble(int8_t);
+//     template<T> static T::Type convertTo(uint8_t);
 // };
 
 template<typename Adaptor>
@@ -144,17 +146,17 @@ public:
     
     void setIndexQuicklyToDouble(unsigned i, double value)
     {
-        setIndexQuicklyToNativeValue(i, Adaptor::toNative(value));
+        setIndexQuicklyToNativeValue(i, toNativeFromValue<Adaptor>(value));
     }
     
     void setIndexQuickly(unsigned i, JSValue value)
     {
-        setIndexQuicklyToNativeValue(i, Adaptor::toNative(value));
+        setIndexQuicklyToNativeValue(i, toNativeFromValue<Adaptor>(value));
     }
     
     bool setIndexQuickly(ExecState* exec, unsigned i, JSValue jsValue)
     {
-        typename Adaptor::Type value = Adaptor::toNative(exec, jsValue);
+        typename Adaptor::Type value = toNativeFromValue<Adaptor>(exec, jsValue);
         if (exec->hadException())
             return false;
         setIndexQuicklyToNativeValue(i, value);
@@ -247,8 +249,10 @@ protected:
 
 private:
     // Returns true if successful, and false on error; it will throw on error.
-    template<typename OtherType>
-    bool setWithSpecificType(ExecState*, OtherType*, unsigned offset, unsigned length);
+    template<typename OtherAdaptor>
+    bool setWithSpecificType(
+        ExecState*, JSGenericTypedArrayView<OtherAdaptor>*,
+        unsigned offset, unsigned length);
 };
 
 template<typename Adaptor>

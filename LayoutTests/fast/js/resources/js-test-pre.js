@@ -112,13 +112,24 @@ function testFailed(msg)
     debug('<span><span class="fail">FAIL</span> ' + escapeHTML(msg) + '</span>');
 }
 
+function areNumbersEqual(_actual, _expected)
+{
+    if (_expected === 0)
+        return _actual === _expected && (1/_actual) === (1/_expected);
+    if (_actual === _expected)
+        return true;
+    if (typeof(_expected) == "number" && isNaN(_expected))
+        return typeof(_actual) == "number" && isNaN(_actual);
+    return false;
+}
+
 function areArraysEqual(_a, _b)
 {
     try {
         if (_a.length !== _b.length)
             return false;
         for (var i = 0; i < _a.length; i++)
-            if (_a[i] !== _b[i])
+            if (!areNumbersEqual(_a[i], _b[i]))
                 return false;
     } catch (ex) {
         return false;
@@ -148,12 +159,8 @@ function isTypedArray(array)
 
 function isResultCorrect(_actual, _expected)
 {
-    if (_expected === 0)
-        return _actual === _expected && (1/_actual) === (1/_expected);
-    if (_actual === _expected)
+    if (areNumbersEqual(_actual, _expected))
         return true;
-    if (typeof(_expected) == "number" && isNaN(_expected))
-        return typeof(_actual) == "number" && isNaN(_actual);
     if (_expected
         && (Object.prototype.toString.call(_expected) ==
             Object.prototype.toString.call([])
