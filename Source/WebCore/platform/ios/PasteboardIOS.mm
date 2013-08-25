@@ -615,7 +615,7 @@ Vector<String> Pasteboard::types()
     // Enforce changeCount ourselves for security. We check after reading instead of before to be
     // sure it doesn't change between our testing the change count and accessing the data.
     if (m_changeCount != m_frame->editor().client()->pasteboardChangeCount())
-        return ListHashSet<String>();
+        return Vector<String>();
 
     ListHashSet<String> result;
     NSUInteger count = [types count];

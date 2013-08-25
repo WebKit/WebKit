@@ -1,3 +1,11 @@
+2013-08-25  David Kilzer  <ddkilzer@apple.com>
+
+        BUILD FIX (r154578): Return Vector<String>() from Pasteboard::types() for iOS
+
+        * platform/ios/PasteboardIOS.mm:
+        (WebCore::Pasteboard::types): Return Vector<String>() instead of
+        ListHashSet<String>() after r154578.
+
 2013-08-25  Darin Adler  <darin@apple.com>
 
         Make JavaScript binding for Clipboard::types more normal
