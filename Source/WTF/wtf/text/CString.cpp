@@ -35,12 +35,10 @@ namespace WTF {
 
 PassRefPtr<CStringBuffer> CStringBuffer::createUninitialized(size_t length)
 {
-    if (length > (numeric_limits<size_t>::max() - sizeof(CStringBuffer)))
-        CRASH();
+    RELEASE_ASSERT(length < (numeric_limits<unsigned>::max() - sizeof(CStringBuffer)));
 
-    // CStringBuffer already has space for one character, we do not need to add +1 to the length
-    // to store the terminating zero.
-    size_t size = sizeof(CStringBuffer) + length;
+    // The +1 is for the terminating null character.
+    size_t size = sizeof(CStringBuffer) + length + 1;
     CStringBuffer* stringBuffer = static_cast<CStringBuffer*>(fastMalloc(size));
     return adoptRef(new (NotNull, stringBuffer) CStringBuffer(length));
 }
