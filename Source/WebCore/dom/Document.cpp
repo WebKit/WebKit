@@ -37,6 +37,7 @@
 #include "CSSStyleSheet.h"
 #include "CachedCSSStyleSheet.h"
 #include "CachedResourceLoader.h"
+#include "ChildIterator.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "Comment.h"
@@ -49,6 +50,7 @@
 #include "DOMNamedFlowCollection.h"
 #include "DOMWindow.h"
 #include "DateComponents.h"
+#include "DescendantIterator.h"
 #include "Dictionary.h"
 #include "DocumentEventQueue.h"
 #include "DocumentFragment.h"
@@ -59,7 +61,6 @@
 #include "DocumentType.h"
 #include "Editor.h"
 #include "Element.h"
-#include "ElementTraversal.h"
 #include "EntityReference.h"
 #include "Event.h"
 #include "EventFactory.h"
@@ -677,10 +678,10 @@ void Document::buildAccessKeyMap(TreeScope* scope)
 {
     ASSERT(scope);
     ContainerNode* rootNode = scope->rootNode();
-    for (Element* element = ElementTraversal::firstWithin(rootNode); element; element = ElementTraversal::next(element, rootNode)) {
+    for (auto element = elementDescendants(rootNode).begin(), end = elementDescendants(rootNode).end(); element != end; ++element) {
         const AtomicString& accessKey = element->fastGetAttribute(accesskeyAttr);
         if (!accessKey.isEmpty())
-            m_elementsByAccessKey.set(accessKey.impl(), element);
+            m_elementsByAccessKey.set(accessKey.impl(), &*element);
 
         if (ShadowRoot* root = element->shadowRoot())
             buildAccessKeyMap(root);
@@ -776,7 +777,7 @@ void Document::childrenChanged(bool changedByParser, Node* beforeChange, Node* a
 {
     ContainerNode::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
     
-    Element* newDocumentElement = ElementTraversal::firstWithin(this);
+    Element* newDocumentElement = &*elementChildren(this).begin();
     if (newDocumentElement == m_documentElement)
         return;
     m_documentElement = newDocumentElement;
@@ -1976,8 +1977,8 @@ void Document::createRenderTree()
 
     recalcStyle(Style::Force);
 
-    for (Element* child = ElementTraversal::firstWithin(this); child; child = ElementTraversal::nextSibling(child))
-        Style::attachRenderTree(child);
+    for (auto child = elementDescendants(this).begin(), end = elementDescendants(this).end(); child != end; ++child)
+        Style::attachRenderTree(&*child);
 
     setAttached(true);
 }
@@ -2076,8 +2077,8 @@ void Document::detach()
 
     TemporaryChange<bool> change(m_renderTreeBeingDestroyed, true);
 
-    for (Element* child = ElementTraversal::firstWithin(this); child; child = ElementTraversal::nextSibling(child))
-        Style::detachRenderTree(child);
+    for (auto child = elementDescendants(this).begin(), end = elementDescendants(this).end(); child != end; ++child)
+        Style::detachRenderTree(&*child);
 
     clearChildNeedsStyleRecalc();
     setAttached(false);

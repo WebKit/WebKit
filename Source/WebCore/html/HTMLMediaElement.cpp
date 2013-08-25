@@ -30,6 +30,7 @@
 #include "ApplicationCacheHost.h"
 #include "ApplicationCacheResource.h"
 #include "Attribute.h"
+#include "ChildIterator.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "ClientRect.h"
@@ -40,7 +41,6 @@
 #include "CSSValueKeywords.h"
 #include "DiagnosticLoggingKeys.h"
 #include "DocumentLoader.h"
-#include "ElementTraversal.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "ExceptionCode.h"
@@ -927,9 +927,10 @@ void HTMLMediaElement::selectMediaResource()
         // Otherwise, if the media element does not have a src attribute but has a source 
         // element child, then let mode be children and let candidate be the first such 
         // source element child in tree order.
-        if (auto sourceElement = Traversal<HTMLSourceElement>::firstChild(this)) {
+        auto source = childrenOfType<HTMLSourceElement>(this).begin();
+        if (source != childrenOfType<HTMLSourceElement>(this).end()) {
             mode = children;
-            m_nextChildNodeToConsider = sourceElement;
+            m_nextChildNodeToConsider = &*source;
             m_currentSourceNode = 0;
         } else {
             // Otherwise the media element has neither a src attribute nor a source element 
@@ -1417,7 +1418,8 @@ void HTMLMediaElement::textTrackModeChanged(TextTrack* track)
     bool trackIsLoaded = true;
     if (track->trackType() == TextTrack::TrackElement) {
         trackIsLoaded = false;
-        for (auto trackElement = Traversal<HTMLTrackElement>::firstChild(this); trackElement; trackElement = Traversal<HTMLTrackElement>::nextSibling(trackElement)) {
+        auto end = childrenOfType<HTMLTrackElement>(this).end();
+        for (auto trackElement = childrenOfType<HTMLTrackElement>(this).begin(); trackElement != end; ++trackElement) {
             if (trackElement->track() == track) {
                 if (trackElement->readyState() == HTMLTrackElement::LOADING || trackElement->readyState() == HTMLTrackElement::LOADED)
                     trackIsLoaded = true;

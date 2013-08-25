@@ -37,7 +37,7 @@
 #include "AccessibilityTable.h"
 #include "CachedImage.h"
 #include "Chrome.h"
-#include "ElementTraversal.h"
+#include "DescendantIterator.h"
 #include "EventNames.h"
 #include "FloatRect.h"
 #include "Frame.h"
@@ -2737,18 +2737,18 @@ void AccessibilityRenderObject::addImageMapChildren()
     if (!map)
         return;
 
-    for (HTMLAreaElement* current = Traversal<HTMLAreaElement>::firstWithin(map); current; current = Traversal<HTMLAreaElement>::next(current, map)) {
+    for (auto area = descendantsOfType<HTMLAreaElement>(map).begin(), end = descendantsOfType<HTMLAreaElement>(map).end() ; area != end; ++area) {
         // add an <area> element for this child if it has a link
-        if (current->isLink()) {
-            AccessibilityImageMapLink* areaObject = static_cast<AccessibilityImageMapLink*>(axObjectCache()->getOrCreate(ImageMapLinkRole));
-            areaObject->setHTMLAreaElement(toHTMLAreaElement(current));
-            areaObject->setHTMLMapElement(map);
-            areaObject->setParent(this);
-            if (!areaObject->accessibilityIsIgnored())
-                m_children.append(areaObject);
-            else
-                axObjectCache()->remove(areaObject->axObjectID());
-        }
+        if (!area->isLink())
+            continue;
+        AccessibilityImageMapLink* areaObject = static_cast<AccessibilityImageMapLink*>(axObjectCache()->getOrCreate(ImageMapLinkRole));
+        areaObject->setHTMLAreaElement(&*area);
+        areaObject->setHTMLMapElement(map);
+        areaObject->setParent(this);
+        if (!areaObject->accessibilityIsIgnored())
+            m_children.append(areaObject);
+        else
+            axObjectCache()->remove(areaObject->axObjectID());
     }
 }
 

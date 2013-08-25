@@ -31,10 +31,10 @@
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
 #include "CSSValuePool.h"
+#include "ChildIterator.h"
 #include "Document.h"
 #include "EditingStyle.h"
 #include "Editor.h"
-#include "ElementTraversal.h"
 #include "Frame.h"
 #include "HTMLFontElement.h"
 #include "HTMLInterchange.h"
@@ -442,12 +442,14 @@ void ApplyStyleCommand::cleanupUnstyledAppleStyleSpans(Node* dummySpanAncestor)
     // can be propagated, which can result in more splitting. If a dummy span gets
     // cloned/split, the new node is always a sibling of it. Therefore, we scan
     // all the children of the dummy's parent
-    Element* next;
-    for (Element* element = ElementTraversal::firstWithin(dummySpanAncestor); element; element = next) {
-        next = ElementTraversal::nextSibling(element);
-        if (isSpanWithoutAttributesOrUnstyledStyleSpan(element))
-            removeNodePreservingChildren(element);
+
+    Vector<Element*> toRemove;
+    for (auto child = elementChildren(dummySpanAncestor).begin(), end = elementChildren(dummySpanAncestor).end(); child != end; ++child) {
+        if (isSpanWithoutAttributesOrUnstyledStyleSpan(&*child))
+            toRemove.append(&*child);
     }
+    for (unsigned i = 0; i < toRemove.size(); ++i)
+        removeNodePreservingChildren(toRemove[i]);
 }
 
 HTMLElement* ApplyStyleCommand::splitAncestorsWithUnicodeBidi(Node* node, bool before, WritingDirection allowedDirection)

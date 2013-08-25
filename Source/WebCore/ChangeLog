@@ -1,3 +1,91 @@
+2013-08-25  Antti Koivisto  <antti@apple.com>
+
+        Element child and descendant iterators
+        https://bugs.webkit.org/show_bug.cgi?id=120248
+
+        Reviewed by Sam Weinig and Andreas Kling.
+
+        Add iterators for Element children and descendants.
+        
+        To iterate over element children:
+        
+        #include "ChildIterator.h"
+        
+        for (auto it = elementChildren(this).begin(), end = elementChildren(this).end(); it != end; ++it) {
+            Element& element = *it;
+            ...
+
+        for (auto it = childrenOfType<HTMLAreaElement>(this).begin(), end = childrenOfType<HTMLAreaElement>(this).end(); it != end; ++it) {
+            HTMLAreaElement& area = *it;
+            ...
+
+        To iteratate over element descendants in pre-order:
+        
+        #include "DescendantIterator.h"
+        
+        for (auto it = elementDescendants(this).begin(), end = elementDescendants(this).end(); it != end; ++it) {
+            Element& element = *it;
+            ...
+
+        for (auto it = descendantsOfType<HTMLAreaElement>(this).begin(), end = descendantsOfType<HTMLAreaElement>(this).end(); it != end; ++it) {
+            HTMLAreaElement& area = *it;
+            ...
+            
+        The iterators assert against DOM mutations and event dispatch while iterating in debug builds.
+            
+        They are compatible with C++11 range-based for loops. In the future we can use
+        
+        for (auto& element : elementChildren(this))
+            ...
+
+        etc.
+        
+        The patch all uses the new iterators in a few places.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::canvasHasFallbackContent):
+        (WebCore::siblingWithAriaRole):
+        * accessibility/AccessibilityRenderObject.cpp:
+        * accessibility/AccessibilityTable.cpp:
+        (WebCore::AccessibilityTable::isDataTable):
+        * dom/ChildIterator.h: Added.
+        (WebCore::ChildIterator::operator*):
+        (WebCore::ChildIterator::operator->):
+        (WebCore::::ChildIterator):
+        (WebCore::::operator):
+        (WebCore::=):
+        (WebCore::::ChildIteratorAdapter):
+        (WebCore::::begin):
+        (WebCore::::end):
+        (WebCore::elementChildren):
+        (WebCore::childrenOfType):
+        * dom/DescendantIterator.h: Added.
+        (WebCore::DescendantIterator::operator*):
+        (WebCore::DescendantIterator::operator->):
+        (WebCore::::DescendantIterator):
+        (WebCore::::operator):
+        (WebCore::=):
+        (WebCore::::DescendantIteratorAdapter):
+        (WebCore::::begin):
+        (WebCore::::end):
+        (WebCore::elementDescendants):
+        (WebCore::descendantsOfType):
+        * dom/Document.cpp:
+        (WebCore::Document::buildAccessKeyMap):
+        (WebCore::Document::childrenChanged):
+        (WebCore::Document::attach):
+        (WebCore::Document::detach):
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::cleanupUnstyledAppleStyleSpans):
+        * editing/markup.cpp:
+        (WebCore::completeURLs):
+        * html/HTMLMapElement.cpp:
+        (WebCore::HTMLMapElement::mapMouseEvent):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::selectMediaResource):
+        (WebCore::HTMLMediaElement::textTrackModeChanged):
+
 2013-08-25  Andreas Kling  <akling@apple.com>
 
         RenderObject::document() should return a reference.
