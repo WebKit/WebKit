@@ -83,8 +83,6 @@ namespace WebCore {
         static PassRefPtr<Clipboard> createForDragAndDrop();
         static PassRefPtr<Clipboard> createForDragAndDrop(ClipboardAccessPolicy, const DragData&);
 
-        bool hasData();
-
         bool dropEffectIsUninitialized() const { return m_dropEffect == "uninitialized"; }
 
         DragOperation sourceOperation() const;

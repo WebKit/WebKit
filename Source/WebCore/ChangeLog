@@ -1,5 +1,21 @@
 2013-08-25  Darin Adler  <darin@apple.com>
 
+        No need for hasData in Clipboard
+        https://bugs.webkit.org/show_bug.cgi?id=120269
+
+        Reviewed by Andreas Kling.
+
+        This simple forwarder does not belong in the Clipboard class.
+        The drag code that uses it already works directly with Pasteboard.
+
+        * dom/Clipboard.cpp: Removed hasData.
+        * dom/Clipboard.h: Ditto.
+
+        * page/DragController.cpp:
+        (WebCore::DragController::startDrag): Call through the pasteboard.
+
+2013-08-25  Darin Adler  <darin@apple.com>
+
         No need for documentTypeString function in Frame
         https://bugs.webkit.org/show_bug.cgi?id=120262
 

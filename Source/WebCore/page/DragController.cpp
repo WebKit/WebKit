@@ -786,7 +786,7 @@ bool DragController::startDrag(Frame* src, const DragState& state, DragOperation
 
     Image* image = getImage(element);
     if (state.type == DragSourceActionSelection) {
-        if (!clipboard->hasData()) {
+        if (!clipboard->pasteboard().hasData()) {
             RefPtr<Range> selectionRange = src->selection().toNormalizedRange();
             ASSERT(selectionRange);
 
@@ -812,7 +812,7 @@ bool DragController::startDrag(Frame* src, const DragState& state, DragOperation
         // We shouldn't be starting a drag for an image that can't provide an extension.
         // This is an early detection for problems encountered later upon drop.
         ASSERT(!image->filenameExtension().isEmpty());
-        if (!clipboard->hasData()) {
+        if (!clipboard->pasteboard().hasData()) {
             m_draggingImageURL = imageURL;
             if (element->isContentRichlyEditable())
                 selectElement(element);
@@ -830,7 +830,7 @@ bool DragController::startDrag(Frame* src, const DragState& state, DragOperation
             doSystemDrag(dragImage, dragLoc, dragOrigin, clipboard, src, false);
 
     } else if (!linkURL.isEmpty() && (m_dragSourceAction & DragSourceActionLink)) {
-        if (!clipboard->hasData())
+        if (!clipboard->pasteboard().hasData())
             // Simplify whitespace so the title put on the clipboard resembles what the user sees
             // on the web page. This includes replacing newlines with spaces.
             clipboard->pasteboard().writeURL(linkURL, hitTestResult.textContent().simplifyWhiteSpace(), src);
