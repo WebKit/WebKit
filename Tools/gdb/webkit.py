@@ -167,12 +167,6 @@ class JSCJSStringPrinter(StringPrinter):
         return WTFStringImplPrinter(self.val['m_value']).to_string()
 
 
-class WebCoreKURLGooglePrivatePrinter(StringPrinter):
-    "Print a WebCore::KURLGooglePrivate"
-    def to_string(self):
-        return WTFCStringPrinter(self.val['m_utf8']).to_string()
-
-
 class WebCoreQualifiedNamePrinter(StringPrinter):
     "Print a WebCore::QualifiedName"
 
@@ -278,7 +272,6 @@ def add_pretty_printers():
         (re.compile("^WTF::CString$"), WTFCStringPrinter),
         (re.compile("^WTF::String$"), WTFStringPrinter),
         (re.compile("^WTF::StringImpl$"), WTFStringImplPrinter),
-        (re.compile("^WebCore::KURLGooglePrivate$"), WebCoreKURLGooglePrivatePrinter),
         (re.compile("^WebCore::QualifiedName$"), WebCoreQualifiedNamePrinter),
         (re.compile("^JSC::Identifier$"), JSCIdentifierPrinter),
         (re.compile("^JSC::JSString$"), JSCJSStringPrinter),

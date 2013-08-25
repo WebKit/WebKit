@@ -1,3 +1,18 @@
+2013-08-25  Zan Dobersek  <zdobersek@igalia.com>
+
+        [gdb] Remove the pretty printer for KURLGooglePrivate
+        https://bugs.webkit.org/show_bug.cgi?id=120263
+
+        Reviewed by Benjamin Poulain.
+
+        Remove the pretty printer for the WebCore::KURLGooglePrivate structure that
+        was usable inside the gdb debugger. The structure was remove from the codebase
+        along with the GoogleURL backend for KURL.
+
+        * gdb/webkit.py:
+        (JSCJSStringPrinter.to_string):
+        (add_pretty_printers):
+
 2013-08-24  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, fix build-webkit --ftl-jit in the case that you have your own llvm directory. We need to
