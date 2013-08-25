@@ -1,3 +1,20 @@
+2013-08-24  David Kilzer  <ddkilzer@apple.com>
+
+        BUILD FIX: Include HTMLPlugInImageElement.h for ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+
+        Fixes the following build failure for iOS:
+
+            In file included from Source/WebCore/accessibility/AccessibilityAllInOne.cpp:28:
+            In file included from Source/WebCore/accessibility/AXObjectCache.cpp:42:
+            In file included from Source/WebCore/accessibility/AccessibilityMediaControls.h:36:
+            In file included from Source/WebCore/html/shadow/MediaControlElements.h:34:
+            In file included from Source/WebCore/html/shadow/MediaControlElementTypes.h:37:
+            Source/WebCore/html/HTMLMediaElement.h:324:23: error: unknown type name 'PluginCreationOption'
+                void updateWidget(PluginCreationOption);
+                                  ^
+
+        * html/HTMLMediaElement.h:
+
 2013-08-24  Darin Adler  <darin@apple.com>
 
         Frame::tree should return a reference instead of a pointer

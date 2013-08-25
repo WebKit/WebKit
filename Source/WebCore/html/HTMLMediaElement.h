@@ -35,6 +35,7 @@
 #include "MediaPlayer.h"
 
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+#include "HTMLPlugInImageElement.h"
 #include "MediaPlayerProxy.h"
 #endif
 
