@@ -228,18 +228,6 @@ Frame::~Frame()
         (*it)->frameDestroyed();
 }
 
-bool Frame::inScope(TreeScope* scope) const
-{
-    ASSERT(scope);
-    Document* doc = document();
-    if (!doc)
-        return false;
-    HTMLFrameOwnerElement* owner = doc->ownerElement();
-    if (!owner)
-        return false;
-    return owner->treeScope() == scope;
-}
-
 void Frame::addDestructionObserver(FrameDestructionObserver* observer)
 {
     m_destructionObservers.add(observer);

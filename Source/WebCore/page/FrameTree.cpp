@@ -1,6 +1,6 @@
 /*
+ * Copyright (C) 2006, 2013 Apple Inc. All rights reserved.
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
- * Copyright (C) 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,11 +21,12 @@
 #include "config.h"
 #include "FrameTree.h"
 
+#include "Document.h"
 #include "Frame.h"
 #include "FrameView.h"
+#include "HTMLFrameOwnerElement.h"
 #include "Page.h"
 #include "PageGroup.h"
-#include "Document.h"
 #include <stdarg.h>
 #include <wtf/StringExtras.h>
 #include <wtf/Vector.h>
@@ -170,6 +171,17 @@ AtomicString FrameTree::uniqueChildName(const AtomicString& requestedName) const
     return name.toAtomicString();
 }
 
+static bool inScope(Frame& frame, TreeScope& scope)
+{
+    Document* document = frame.document();
+    if (!document)
+        return false;
+    HTMLFrameOwnerElement* owner = document->ownerElement();
+    if (!owner)
+        return false;
+    return owner->treeScope() == &scope;
+}
+
 inline Frame* FrameTree::scopedChild(unsigned index, TreeScope* scope) const
 {
     if (!scope)
@@ -177,7 +189,7 @@ inline Frame* FrameTree::scopedChild(unsigned index, TreeScope* scope) const
 
     unsigned scopedIndex = 0;
     for (Frame* result = firstChild(); result; result = result->tree().nextSibling()) {
-        if (result->inScope(scope)) {
+        if (inScope(*result, *scope)) {
             if (scopedIndex == index)
                 return result;
             scopedIndex++;
@@ -192,9 +204,10 @@ inline Frame* FrameTree::scopedChild(const AtomicString& name, TreeScope* scope)
     if (!scope)
         return 0;
 
-    for (Frame* child = firstChild(); child; child = child->tree().nextSibling())
-        if (child->tree().uniqueName() == name && child->inScope(scope))
+    for (Frame* child = firstChild(); child; child = child->tree().nextSibling()) {
+        if (child->tree()->uniqueName() == name && inScope(*child, *scope))
             return child;
+    }
     return 0;
 }
 
@@ -205,7 +218,7 @@ inline unsigned FrameTree::scopedChildCount(TreeScope* scope) const
 
     unsigned scopedCount = 0;
     for (Frame* result = firstChild(); result; result = result->tree().nextSibling()) {
-        if (result->inScope(scope))
+        if (inScope(*result, *scope))
             scopedCount++;
     }
 

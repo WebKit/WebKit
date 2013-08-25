@@ -71,13 +71,11 @@ namespace WebCore {
     class ScriptController;
     class Settings;
     class TiledBackingStore;
-    class TreeScope;
     class VisiblePosition;
 
 #if !USE(TILED_BACKING_STORE)
     class TiledBackingStoreClient { };
 #endif
-
 
     enum {
         LayerTreeFlagsIncludeDebugInfo = 1 << 0,
@@ -131,8 +129,6 @@ namespace WebCore {
 #endif
 
     // ======== All public functions below this point are candidates to move out of Frame into another class. ========
-
-        bool inScope(TreeScope*) const;
 
         void injectUserScripts(UserScriptInjectionTime);
         
