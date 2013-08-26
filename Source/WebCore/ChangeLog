@@ -1,3 +1,44 @@
+2013-08-26  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        Optimize FloatIntervalSearchAdapter::collectIfNeeded
+        https://bugs.webkit.org/show_bug.cgi?id=120237
+
+        Reviewed by David Hyatt.
+
+        This is a port of 3 Blink patches:
+        https://codereview.chromium.org/22463002 (By shatch@chromium.org)
+        https://chromiumcodereview.appspot.com/22909005 (By me)
+        https://chromiumcodereview.appspot.com/23084002 (By me)
+
+        shatch optimized FloatIntervalSearchAdapter by having it store the
+        outermost float instead of making a bunch of calls to
+        logical(Left/Right/Bottom)ForFloat, and then only making that call
+        once when heightRemaining needs to be computed.
+
+        I noticed that now we were storing both the last float encountered and
+        the outermost float, and that the behavior for shape-outside wasn't
+        significantly changed by using the outermost float instead of the last
+        float encountered (and in most cases, using the outermost float gives
+        more reasonable behavior). Since this isn't covered in the spec yet, I
+        changed shape-outside to use the outermost float, making it so that we
+        only need to store one float pointer when walking the placed floats
+        tree, and keeping the performance win.
+
+        Also while changing updateOffsetIfNeeded, removed const, since that is
+        a lie. Nothing about that method is const.
+
+        Test: fast/shapes/shape-outside-floats/shape-outside-floats-outermost.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::::updateOffsetIfNeeded):
+        (WebCore::::collectIfNeeded):
+        (WebCore::::getHeightRemaining):
+        (WebCore::RenderBlock::logicalLeftFloatOffsetForLine):
+        (WebCore::RenderBlock::logicalRightFloatOffsetForLine):
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::FloatIntervalSearchAdapter::FloatIntervalSearchAdapter):
+        (WebCore::RenderBlock::FloatIntervalSearchAdapter::outermostFloat):
+
 2013-08-26  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac] can-read-in-dragstart-event.html and can-read-in-copy-and-cut-events.html fail
