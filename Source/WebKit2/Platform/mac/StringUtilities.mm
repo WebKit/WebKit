@@ -26,9 +26,9 @@
 #import "config.h"
 #import "StringUtilities.h"
 
-#import <WebCore/FoundationExtras.h>
 #import "WKSharedAPICast.h"
 #import "WKStringCF.h"
+#import <wtf/ObjcRuntimeExtras.h>
 #import <wtf/text/WTFString.h>
 
 namespace WebKit {

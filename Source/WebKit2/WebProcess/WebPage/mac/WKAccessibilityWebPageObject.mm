@@ -41,6 +41,7 @@
 #import <WebCore/ScrollView.h>
 #import <WebCore/Scrollbar.h>
 #import <WebKitSystemInterface.h>
+#import <wtf/ObjcRuntimeExtras.h>
 
 using namespace WebCore;
 using namespace WebKit;
@@ -207,7 +208,7 @@ using namespace WebKit;
         return nil;
     
     if (toImpl(result.get())->type() == WKStringGetTypeID())
-        return [(NSString *)WKStringCopyCFString(kCFAllocatorDefault, (WKStringRef)result.get()) autorelease];
+        return HardAutorelease(WKStringCopyCFString(kCFAllocatorDefault, (WKStringRef)result.get()));
     else if (toImpl(result.get())->type() == WKBooleanGetTypeID())
         return [NSNumber numberWithBool:WKBooleanGetValue(static_cast<WKBooleanRef>(result.get()))];
 

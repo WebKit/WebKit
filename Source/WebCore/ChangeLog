@@ -1,3 +1,36 @@
+2013-08-23  Andy Estes  <aestes@apple.com>
+
+        Fix issues found by the Clang Static Analyzer
+        https://bugs.webkit.org/show_bug.cgi?id=120230
+
+        Reviewed by Darin Adler.
+
+        * WebCore.xcodeproj/project.pbxproj: Removed FoundationExtras.h.
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm: Removed CFAutoreleaseHelper().
+        (AXTextMarkerRange): Used HardAutorelease() instead of
+        CFAutoreleaseHelper().
+        (AXTextMarkerRangeStart): Ditto.
+        (AXTextMarkerRangeEnd): Ditto.
+        (textMarkerForVisiblePosition): Ditto.
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (-[WebCoreAVFMovieObserver initWithCallback:]): Called [super init]
+        first so that we don't later use ivars from the wrong self.
+        (-[WebCoreAVFLoaderDelegate initWithCallback:]): Ditto.
+        * platform/mac/FoundationExtras.h: Removed.
+        * platform/mac/KURLMac.mm:
+        (WebCore::KURL::operator NSURL *): Used WTF's HardAutorelease().
+        * platform/mac/WebCoreNSURLExtras.mm:
+        (WebCore::mapHostNameWithRange): Used HardAutorelease() instead of
+        WebCoreCFAutorelease().
+        (WebCore::URLWithData): Ditto.
+        (WebCore::userVisibleString): Ditto.
+        (WebCore::URLByRemovingComponentAndSubsequentCharacter): Used Vector<>
+        with an inline capacity rather than heap-allocating a buffer.
+        * platform/mac/WebCoreObjCExtras.h: Used HardAutorelease() instead of
+        WebCoreCFAutorelease().
+        * platform/text/mac/StringImplMac.mm:
+        (WTF::StringImpl::operator NSString *): Used WTF's HardAutorelease().
+
 2013-08-26  Pratik Solanki  <psolanki@apple.com>
 
         Page::console() should return a reference

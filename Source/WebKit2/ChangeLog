@@ -1,3 +1,16 @@
+2013-08-23  Andy Estes  <aestes@apple.com>
+
+        Fix issues found by the Clang Static Analyzer
+        https://bugs.webkit.org/show_bug.cgi?id=120230
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/API/mac/WKBrowsingContextController.mm:
+        (autoreleased): Don't leak CFURLs when in Objective-C GC.
+        * WebProcess/WebPage/mac/WKAccessibilityWebPageObject.mm:
+        (-[WKAccessibilityWebPageObject accessibilityAttributeValue:forParameter:]):
+        Don't leak CFStrings when in Objective-C GC.
+
 2013-08-26  Csaba Osztrogonác  <ossy@webkit.org>
 
         [WK2] Buildfix for non Mac platforms

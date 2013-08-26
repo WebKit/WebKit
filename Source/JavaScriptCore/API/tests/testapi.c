@@ -1996,6 +1996,7 @@ static char* createStringWithContentsOfFile(const char* fileName)
     FILE* f = fopen(fileName, "r");
     if (!f) {
         fprintf(stderr, "Could not open file: %s\n", fileName);
+        free(buffer);
         return 0;
     }
     

@@ -91,6 +91,9 @@ static NSMutableDictionary *localPasteboards;
 
 - (id)initWithName:(NSString *)name
 {
+    self = [super init];
+    if (!self)
+        return nil;
     typesArray = [[NSMutableArray alloc] init];
     typesSet = [[NSMutableSet alloc] init];
     dataByType = [[NSMutableDictionary alloc] init];

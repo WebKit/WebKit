@@ -31,6 +31,7 @@
 #import "WebCoreNSStringExtras.h"
 #import "WebCoreNSURLExtras.h"
 #import "WebCoreSystemInterface.h"
+#import <wtf/ObjcRuntimeExtras.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
 #import <unicode/uchar.h>
@@ -247,7 +248,7 @@ static NSString *mapHostNameWithRange(NSString *string, NSRange range, BOOL enco
     
     if (encode && [string rangeOfString:@"%" options:NSLiteralSearch range:range].location != NSNotFound) {
         NSString *substring = [string substringWithRange:range];
-        substring = WebCoreCFAutorelease(CFURLCreateStringByReplacingPercentEscapes(NULL, (CFStringRef)substring, CFSTR("")));
+        substring = HardAutorelease(CFURLCreateStringByReplacingPercentEscapes(NULL, (CFStringRef)substring, CFSTR("")));
         if (substring) {
             string = substring;
             range = NSMakeRange(0, [string length]);
@@ -563,9 +564,9 @@ NSURL *URLWithData(NSData *data, NSURL *baseURL)
         // (e.g calls to NSURL -path). However, this function is not tolerant of illegal UTF-8 sequences, which
         // could either be a malformed string or bytes in a different encoding, like shift-jis, so we fall back
         // onto using ISO Latin 1 in those cases.
-        result = WebCoreCFAutorelease(CFURLCreateAbsoluteURLWithBytes(NULL, bytes, length, kCFStringEncodingUTF8, (CFURLRef)baseURL, YES));
+        result = HardAutorelease(CFURLCreateAbsoluteURLWithBytes(NULL, bytes, length, kCFStringEncodingUTF8, (CFURLRef)baseURL, YES));
         if (!result)
-            result = WebCoreCFAutorelease(CFURLCreateAbsoluteURLWithBytes(NULL, bytes, length, kCFStringEncodingISOLatin1, (CFURLRef)baseURL, YES));
+            result = HardAutorelease(CFURLCreateAbsoluteURLWithBytes(NULL, bytes, length, kCFStringEncodingISOLatin1, (CFURLRef)baseURL, YES));
     } else
             result = [NSURL URLWithString:@""];
                 
@@ -682,16 +683,15 @@ static NSURL *URLByRemovingComponentAndSubsequentCharacter(NSURL *URL, CFURLComp
     
     // Remove one subsequent character.
     range.length++;
-    
-    UInt8* urlBytes;
-    UInt8 buffer[2048];
-    CFIndex numBytes = CFURLGetBytes((CFURLRef)URL, buffer, 2048);
+
+    Vector<UInt8, 2048> buffer(2048);
+    CFIndex numBytes = CFURLGetBytes((CFURLRef)URL, buffer.data(), 2048);
     if (numBytes == -1) {
         numBytes = CFURLGetBytes((CFURLRef)URL, NULL, 0);
-        urlBytes = static_cast<UInt8*>(malloc(numBytes));
-        CFURLGetBytes((CFURLRef)URL, urlBytes, numBytes);
-    } else
-        urlBytes = buffer;
+        buffer.grow(numBytes);
+        CFURLGetBytes((CFURLRef)URL, buffer.data(), numBytes);
+    }
+    UInt8* urlBytes = buffer.data();
         
     if (numBytes < range.location)
         return URL;
@@ -703,9 +703,6 @@ static NSURL *URLByRemovingComponentAndSubsequentCharacter(NSURL *URL, CFURLComp
     NSURL *result = (NSURL *)CFMakeCollectable(CFURLCreateWithBytes(NULL, urlBytes, numBytes - range.length, kCFStringEncodingUTF8, NULL));
     if (!result)
         result = (NSURL *)CFMakeCollectable(CFURLCreateWithBytes(NULL, urlBytes, numBytes - range.length, kCFStringEncodingISOLatin1, NULL));
-            
-    if (urlBytes != buffer)
-        free(urlBytes);
                 
     return result ? [result autorelease] : URL;
 }
@@ -841,7 +838,7 @@ NSString *userVisibleString(NSURL *URL)
     
     result = mapHostNames(result, !needsHostNameDecoding);
     result = [result precomposedStringWithCanonicalMapping];
-    return WebCoreCFAutorelease(createStringWithEscapedUnsafeCharacters((CFStringRef)result));
+    return HardAutorelease(createStringWithEscapedUnsafeCharacters((CFStringRef)result));
 }
 
 BOOL isUserVisibleURL(NSString *string)

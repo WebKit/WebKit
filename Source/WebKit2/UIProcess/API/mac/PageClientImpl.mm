@@ -47,7 +47,6 @@
 #import <WebCore/BitmapImage.h>
 #import <WebCore/Cursor.h>
 #import <WebCore/FloatRect.h>
-#import <WebCore/FoundationExtras.h>
 #import <WebCore/GraphicsContext.h>
 #import <WebCore/Image.h>
 #import <WebCore/KeyboardEvent.h>

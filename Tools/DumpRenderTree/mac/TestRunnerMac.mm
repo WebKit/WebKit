@@ -855,7 +855,9 @@ void TestRunner::evaluateScriptInIsolatedWorld(unsigned worldID, JSObjectRef glo
 
 - (id)initWithCompletionCondition:(bool*)condition
 {
-    [super init];
+    self = [super init];
+    if (!self)
+        return nil;
     ASSERT(condition);
     m_condition = condition;
     *m_condition = false;

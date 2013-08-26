@@ -60,7 +60,6 @@
 #import <CoreFoundation/CoreFoundation.h>
 #import <JavaScriptCore/HeapStatistics.h>
 #import <JavaScriptCore/Options.h>
-#import <WebCore/FoundationExtras.h>
 #import <WebKit/DOMElement.h>
 #import <WebKit/DOMExtensions.h>
 #import <WebKit/DOMRange.h>

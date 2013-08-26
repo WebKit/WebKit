@@ -31,11 +31,11 @@
 #import "WebDataSourcePrivate.h"
 #import "WebFrame.h"
 #import "WebJSPDFDoc.h"
-#import "WebNSObjectExtras.h"
 #import "WebPDFDocumentExtras.h"
 #import "WebPDFView.h"
 #import "WebTypesInternal.h"
 #import <wtf/Assertions.h>
+#import <wtf/ObjcRuntimeExtras.h>
 #import <JavaScriptCore/JSContextRef.h>
 #import <JavaScriptCore/JSStringRef.h>
 #import <JavaScriptCore/JSStringRefCF.h>
@@ -107,7 +107,7 @@
     CFRelease(provider);
     CFRelease(consumer);
 
-    return WebCFAutorelease(result);
+    return HardAutorelease(result);
 }
 
 - (void)finishedLoadingWithDataSource:(WebDataSource *)dataSource

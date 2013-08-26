@@ -2812,7 +2812,6 @@
 		935C476809AC4D4300A6AAB4 /* PlatformKeyboardEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 935C476609AC4D4300A6AAB4 /* PlatformKeyboardEvent.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		935C476909AC4D4300A6AAB4 /* PlatformMouseEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 935C476709AC4D4300A6AAB4 /* PlatformMouseEvent.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		935C476B09AC4D4F00A6AAB4 /* PlatformWheelEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 935C476A09AC4D4F00A6AAB4 /* PlatformWheelEvent.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		935C476D09AC4D6300A6AAB4 /* FoundationExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 935C476C09AC4D6300A6AAB4 /* FoundationExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		935C477009AC4D7300A6AAB4 /* KeyEventMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 935C476E09AC4D7300A6AAB4 /* KeyEventMac.mm */; };
 		935C477509AC4D8E00A6AAB4 /* GapRects.h in Headers */ = {isa = PBXBuildFile; fileRef = 935C477409AC4D8D00A6AAB4 /* GapRects.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		935F45420F7C3B5F00D7C1FB /* JSLazyEventListener.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 935F45400F7C3B5F00D7C1FB /* JSLazyEventListener.cpp */; };
@@ -8104,7 +8103,7 @@
 		658436850AE01B7400E53753 /* FrameLoadRequest.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FrameLoadRequest.h; sourceTree = "<group>"; };
 		6593923509AE4346002C531F /* KURL.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = KURL.cpp; sourceTree = "<group>"; };
 		6593923609AE4346002C531F /* KURL.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = KURL.h; sourceTree = "<group>"; };
-		6593923909AE435C002C531F /* KURLMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = KURLMac.mm; sourceTree = "<group>"; };
+		6593923909AE435C002C531F /* KURLMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; lineEnding = 0; path = KURLMac.mm; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		659A7D120B6DB4D9001155B3 /* SubstituteData.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SubstituteData.h; sourceTree = "<group>"; };
 		659DDC8009E198BA001BF3C6 /* JSDocument.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSDocument.cpp; sourceTree = "<group>"; };
 		659DDC8109E198BA001BF3C6 /* JSDocument.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSDocument.h; sourceTree = "<group>"; };
@@ -9198,7 +9197,6 @@
 		935C476609AC4D4300A6AAB4 /* PlatformKeyboardEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformKeyboardEvent.h; sourceTree = "<group>"; };
 		935C476709AC4D4300A6AAB4 /* PlatformMouseEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformMouseEvent.h; sourceTree = "<group>"; };
 		935C476A09AC4D4F00A6AAB4 /* PlatformWheelEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformWheelEvent.h; sourceTree = "<group>"; };
-		935C476C09AC4D6300A6AAB4 /* FoundationExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FoundationExtras.h; sourceTree = "<group>"; };
 		935C476E09AC4D7300A6AAB4 /* KeyEventMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KeyEventMac.mm; sourceTree = "<group>"; };
 		935C477409AC4D8D00A6AAB4 /* GapRects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GapRects.h; sourceTree = "<group>"; };
 		935F45400F7C3B5F00D7C1FB /* JSLazyEventListener.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSLazyEventListener.cpp; sourceTree = "<group>"; };
@@ -10314,7 +10312,7 @@
 		AA4739CF1757AFEC00E76767 /* UIRequestEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UIRequestEvent.cpp; path = Modules/indieui/UIRequestEvent.cpp; sourceTree = "<group>"; };
 		AA4739D01757AFEC00E76767 /* UIRequestEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UIRequestEvent.h; path = Modules/indieui/UIRequestEvent.h; sourceTree = "<group>"; };
 		AA478A7D16CD70C3007D1BB4 /* WebAccessibilityObjectWrapperMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebAccessibilityObjectWrapperMac.h; sourceTree = "<group>"; };
-		AA478A7E16CD70C3007D1BB4 /* WebAccessibilityObjectWrapperMac.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = WebAccessibilityObjectWrapperMac.mm; sourceTree = "<group>"; };
+		AA478A7E16CD70C3007D1BB4 /* WebAccessibilityObjectWrapperMac.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; lineEnding = 0; path = WebAccessibilityObjectWrapperMac.mm; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		AA4C3A740B2B1679002334A2 /* InlineStyleSheetOwner.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = InlineStyleSheetOwner.cpp; sourceTree = "<group>"; };
 		AA4C3A750B2B1679002334A2 /* InlineStyleSheetOwner.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = InlineStyleSheetOwner.h; sourceTree = "<group>"; };
 		AA5F3B9016CC5BEB00455EB0 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = /System/Library/Frameworks/CoreFoundation.framework; sourceTree = "<absolute>"; };
@@ -10852,7 +10850,7 @@
 		B2AFFC850D00A5DF0030074D /* character-sets.txt */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = "character-sets.txt"; sourceTree = "<group>"; };
 		B2AFFC860D00A5DF0030074D /* mac-encodings.txt */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = "mac-encodings.txt"; sourceTree = "<group>"; };
 		B2AFFC870D00A5DF0030074D /* make-charset-table.pl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.script.perl; path = "make-charset-table.pl"; sourceTree = "<group>"; };
-		B2AFFC8A0D00A5DF0030074D /* StringImplMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = StringImplMac.mm; sourceTree = "<group>"; };
+		B2AFFC8A0D00A5DF0030074D /* StringImplMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; lineEnding = 0; path = StringImplMac.mm; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		B2AFFC8B0D00A5DF0030074D /* StringMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = StringMac.mm; sourceTree = "<group>"; };
 		B2AFFC8C0D00A5DF0030074D /* TextBoundaries.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = TextBoundaries.mm; sourceTree = "<group>"; };
 		B2AFFC8D0D00A5DF0030074D /* TextBreakIteratorInternalICUMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = TextBreakIteratorInternalICUMac.mm; sourceTree = "<group>"; };
@@ -14534,7 +14532,6 @@
 				E1BA66F01742BD8600C20251 /* DynamicLinkerInterposing.h */,
 				1CA19E030DC255950065A994 /* EventLoopMac.mm */,
 				514B3F750C722055000530DF /* FileSystemMac.mm */,
-				935C476C09AC4D6300A6AAB4 /* FoundationExtras.h */,
 				C5392D331326AD0100043D35 /* HTMLConverter.h */,
 				C5392D341326AD0100043D35 /* HTMLConverter.mm */,
 				935C476E09AC4D7300A6AAB4 /* KeyEventMac.mm */,
@@ -21817,7 +21814,6 @@
 				514C764E0CE9234E007EF3CD /* FormDataStreamMac.h in Headers */,
 				656D373A0ADBA5DE00A4554D /* FormState.h in Headers */,
 				41885B9311B6FDA6003383BB /* FormSubmission.h in Headers */,
-				935C476D09AC4D6300A6AAB4 /* FoundationExtras.h in Headers */,
 				A853123D11D0471B00D4D077 /* FragmentScriptingPermission.h in Headers */,
 				65BF022F0974816300C43196 /* Frame.h in Headers */,
 				A7B070D3130A409C00A3763C /* FrameActionScheduler.h in Headers */,

@@ -1,3 +1,34 @@
+2013-08-23  Andy Estes  <aestes@apple.com>
+
+        Fix issues found by the Clang Static Analyzer
+        https://bugs.webkit.org/show_bug.cgi?id=120230
+
+        Reviewed by Darin Adler.
+
+        * Misc/WebNSFileManagerExtras.mm:
+        (-[NSFileManager _webkit_startupVolumeName]): Used HardAutorelease()
+        instead of WebCFAutorelease().
+        * Misc/WebNSObjectExtras.h: Removed definition of WebCFAutorelease().
+        * Misc/WebNSURLExtras.mm:
+        (-[NSURL _web_URLWithLowercasedScheme]): Used HardAutorelease()
+        instead of WebCFAutorelease().
+        * Plugins/Hosted/WebHostedNetscapePluginView.mm:
+        (-[WebHostedNetscapePluginView createPluginLayer]): Stop leaking
+        CGColors (CALayer retains its backgroundColor property despite the
+        property attributes claiming otherwise).
+        * Plugins/WebBasePluginPackage.mm:
+        (+[WebBasePluginPackage preferredLocalizationName]): Used
+        HardAutorelease() instead of WebCFAutorelease().
+        * WebView/WebDeviceOrientationProviderMock.mm:
+        (-[WebDeviceOrientationProviderMockInternal lastOrientation]): Stop
+        leaking WebDeviceOrientations.
+        * WebView/WebPDFRepresentation.mm:
+        (-[WebPDFRepresentation convertPostScriptDataSourceToPDF:]): Used
+        HardAutorelease() instead of WebCFAutorelease().
+        * WebView/WebView.mm:
+        (+[WebView _setCacheModel:]): Ditto.
+        (-[WebView _removeObjectForIdentifier:]): Ditto.
+
 2013-08-26  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac] can-read-in-dragstart-event.html and can-read-in-copy-and-cut-events.html fail

@@ -1564,8 +1564,11 @@ NSArray* itemKVOProperties()
 
 - (id)initWithCallback:(MediaPlayerPrivateAVFoundationObjC*)callback
 {
+    self = [super init];
+    if (!self)
+        return nil;
     m_callback = callback;
-    return [super init];
+    return self;
 }
 
 - (void)disconnect
@@ -1688,8 +1691,11 @@ NSArray* itemKVOProperties()
 
 - (id)initWithCallback:(MediaPlayerPrivateAVFoundationObjC*)callback
 {
+    self = [super init];
+    if (!self)
+        return nil;
     m_callback = callback;
-    return [super init];
+    return self;
 }
 
 - (BOOL)resourceLoader:(AVAssetResourceLoader *)resourceLoader shouldWaitForLoadingOfRequestedResource:(AVAssetResourceLoadingRequest *)loadingRequest

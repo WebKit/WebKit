@@ -63,7 +63,7 @@ using namespace WebCore;
 
 - (WebDeviceOrientation*)lastOrientation
 {
-    return [[WebDeviceOrientation alloc] initWithCoreDeviceOrientation:m_core->lastOrientation()];
+    return [[[WebDeviceOrientation alloc] initWithCoreDeviceOrientation:m_core->lastOrientation()] autorelease];
 }
 
 @end

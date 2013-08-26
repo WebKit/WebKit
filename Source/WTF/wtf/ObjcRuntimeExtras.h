@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,16 +27,35 @@
 
 #include <objc/message.h>
 
+#ifdef __cplusplus
 template<typename RetType, typename... ArgTypes>
-RetType wtfObjcMsgSend(id target, SEL selector, ArgTypes... args)
+inline RetType wtfObjcMsgSend(id target, SEL selector, ArgTypes... args)
 {
     return reinterpret_cast<RetType (*)(id, SEL, ArgTypes...)>(objc_msgSend)(target, selector, args...);
 }
 
 template<typename RetType, typename... ArgTypes>
-RetType wtfCallIMP(IMP implementation, id target, SEL selector, ArgTypes... args)
+inline RetType wtfCallIMP(IMP implementation, id target, SEL selector, ArgTypes... args)
 {
     return reinterpret_cast<RetType (*)(id, SEL, ArgTypes...)>(implementation)(target, selector, args...);
 }
+#endif // __cplusplus
+
+#ifdef __OBJC__
+// Use HardAutorelease to return an object made by a Core Foundation
+// "create" or "copy" function as an autoreleased and garbage collected
+// object. CF objects need to be "made collectable" for autorelease to work
+// properly under GC.
+inline id HardAutorelease(CFTypeRef object)
+{
+#ifndef OBJC_NO_GC
+    if (object)
+        CFMakeCollectable(object);
+#elif !__has_feature(objc_arc)
+    [(id)object autorelease];
+#endif
+    return (id)object;
+}
+#endif // __OBJC__
 
 #endif // WTF_ObjcRuntimeExtras_h

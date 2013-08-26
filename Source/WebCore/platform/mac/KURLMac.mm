@@ -27,7 +27,7 @@
 #import "KURL.h"
 
 #import "CFURLExtras.h"
-#import "FoundationExtras.h"
+#import <wtf/ObjcRuntimeExtras.h>
 #import <wtf/text/CString.h>
 
 namespace WebCore {
