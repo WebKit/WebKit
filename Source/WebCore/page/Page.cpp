@@ -481,7 +481,7 @@ void Page::updateStyleForAllPagesAfterGlobalChangeInEnvironment()
 void Page::setNeedsRecalcStyleInAllFrames()
 {
     for (Frame* frame = mainFrame(); frame; frame = frame->tree().traverseNext()) {
-        if (Document* document = frame->document()) {
+        if (Document* document = frame->document())
             frame->document()->styleResolverChanged(DeferRecalcStyle);
     }
 }
