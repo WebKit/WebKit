@@ -275,6 +275,9 @@
     <ClCompile Include="..\..\cf\WebCoreSupport\WebInspectorClientCF.cpp">
       <Filter>WebCoreSupport</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\win\AccessibleTextImpl.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\win\WebCoreSupport\EmbeddedWidget.h">
@@ -536,6 +539,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\win\WebKitPrefix.h" />
+    <ClInclude Include="..\..\win\AccessibleTextImpl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="WebKitPostBuild.cmd" />

@@ -1,3 +1,52 @@
+2013-08-23  Roger Fong  <roger_fong@apple.com>
+
+        <https://bugs.webkit.org/show_bug.cgi?id=119829> Add IAccessibleText and IAccessibleEditableText implementation.
+
+        Reviewed by Chris Fleizach.
+
+        Add IAccessibleText and IAccessibleEditableText interfaces and implementation to AppleWin port.
+
+        * AccessibleBase.cpp:
+        (AccessibleBase::createInstance): Create an AccessibleText instance when necessary.
+        (AccessibleBase::QueryService):
+        * AccessibleBase.h:
+        * AccessibleTextImpl.cpp: Added.
+        (AccessibleText::AccessibleText):
+        (AccessibleText::addSelection):
+        (AccessibleText::get_attributes): Not Implemented
+        (AccessibleText::get_caretOffset):
+        (AccessibleText::get_characterExtents):
+        (AccessibleText::get_nSelections):
+        (AccessibleText::get_offsetAtPoint):
+        (AccessibleText::get_selection):
+        (AccessibleText::get_text):
+        (AccessibleText::get_textBeforeOffset): Not Implemented
+        (AccessibleText::get_textAfterOffset): Not Implemented
+        (AccessibleText::get_textAtOffset): Not Implemented
+        (AccessibleText::removeSelection):
+        (AccessibleText::setCaretOffset):
+        (AccessibleText::setSelection):
+        (AccessibleText::get_nCharacters):
+        (AccessibleText::scrollSubstringTo):
+        (AccessibleText::scrollSubstringToPoint):
+        (AccessibleText::get_newText): Not Implemented
+        (AccessibleText::get_oldText): Not Implemented
+        (AccessibleText::get_attributeRange): Not Implemented
+        (AccessibleText::copyText):
+        (AccessibleText::deleteText):
+        (AccessibleText::insertText):
+        (AccessibleText::cutText):
+        (AccessibleText::pasteText):
+        (AccessibleText::replaceText):
+        (AccessibleText::setAttributes): Not Implemented
+        (AccessibleText::QueryInterface):
+        (AccessibleText::Release):
+        (AccessibleText::convertSpecialOffset):
+        (AccessibleText::initialCheck):
+        * AccessibleTextImpl.h: Added.
+        (AccessibleText::~AccessibleText):
+        (AccessibleText::AddRef):
+
 2013-08-24  Darin Adler  <darin@apple.com>
 
         Frame::tree should return a reference instead of a pointer

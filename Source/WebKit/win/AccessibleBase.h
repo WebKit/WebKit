@@ -26,6 +26,9 @@
 #ifndef AccessibleBase_h
 #define AccessibleBase_h
 
+#include "AccessibleEditableText.h"
+#include "AccessibleText.h"
+#include "AccessibleText2.h"
 #include "WebKit.h"
 #include <WebCore/AccessibilityObject.h>
 #include <WebCore/AccessibilityObjectWrapperWin.h>
