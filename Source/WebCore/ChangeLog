@@ -1,3 +1,45 @@
+2013-08-26  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] can-read-in-dragstart-event.html and can-read-in-copy-and-cut-events.html fail
+        https://bugs.webkit.org/show_bug.cgi?id=113094
+
+        Reviewed by Darin Adler.
+
+        Mac platform implementation has checks for pasteboard change count, but it
+        didn't use to update the count when writing to pasteboad from JavaScript.
+
+        * platform/PasteboardStrategy.h: Changed changeCount function to return a long
+        instead of an int, as the underlying Mac type is NSInteger. Changed all methods
+        that modify the pasteboard to return a new change count.
+
+        * platform/PlatformPasteboard.h: Changed all methods that modify the pasteboard
+        to return a new change count.
+
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::clear): Update m_changeCount.
+        (WebCore::Pasteboard::writeSelectionForTypes): Ditto.
+        (WebCore::Pasteboard::writePlainText): Ditto.
+        (WebCore::writeURLForTypes): Ditto.
+        (WebCore::Pasteboard::writeURL): Ditto.
+        (WebCore::writeFileWrapperAsRTFDAttachment): Ditto.
+        (WebCore::Pasteboard::writeImage): Ditto.
+        (WebCore::Pasteboard::writePasteboard): Ditto.
+        (WebCore::addHTMLClipboardTypesForCocoaType): Ditto.
+        (WebCore::Pasteboard::writeString): Ditto.
+
+        * platform/mac/PlatformPasteboardMac.mm:
+        (WebCore::PlatformPasteboard::changeCount): Changed returned type to long to avoid
+        data loss.
+        (WebCore::PlatformPasteboard::copy): Return new change count.
+        (WebCore::PlatformPasteboard::addTypes): Ditto.
+        (WebCore::PlatformPasteboard::setTypes): Ditto.
+        (WebCore::PlatformPasteboard::setBufferForType): Ditto.
+        (WebCore::PlatformPasteboard::setPathnamesForType): Ditto.
+        (WebCore::PlatformPasteboard::setStringForType): Ditto. Replaced -[NSURL writeToPasteboard:]
+        with an equivalent implemnentation that tells use whether writing was successful.
+        There is difference with invalid URL string handling - we used to silently ignore
+        such requets, but set pasteboard content to empty URL now.
+
 2013-08-24  Sam Weinig  <sam@webkit.org>
 
         Add support for Promises

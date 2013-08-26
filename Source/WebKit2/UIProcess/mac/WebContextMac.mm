@@ -403,9 +403,9 @@ void WebContext::getPasteboardBufferForType(const String& pasteboardName, const 
     sharedMemoryBuffer->createHandle(handle, SharedMemory::ReadOnly);
 }
 
-void WebContext::pasteboardCopy(const String& fromPasteboard, const String& toPasteboard)
+void WebContext::pasteboardCopy(const String& fromPasteboard, const String& toPasteboard, uint64_t& newChangeCount)
 {
-    PlatformPasteboard(toPasteboard).copy(fromPasteboard);
+    newChangeCount = PlatformPasteboard(toPasteboard).copy(fromPasteboard);
 }
 
 void WebContext::getPasteboardChangeCount(const String& pasteboardName, uint64_t& changeCount)
@@ -428,35 +428,35 @@ void WebContext::getPasteboardURL(const String& pasteboardName, WTF::String& url
     urlString = PlatformPasteboard(pasteboardName).url().string();
 }
 
-void WebContext::addPasteboardTypes(const String& pasteboardName, const Vector<String>& pasteboardTypes)
+void WebContext::addPasteboardTypes(const String& pasteboardName, const Vector<String>& pasteboardTypes, uint64_t& newChangeCount)
 {
-    PlatformPasteboard(pasteboardName).addTypes(pasteboardTypes);
+    newChangeCount = PlatformPasteboard(pasteboardName).addTypes(pasteboardTypes);
 }
 
-void WebContext::setPasteboardTypes(const String& pasteboardName, const Vector<String>& pasteboardTypes)
+void WebContext::setPasteboardTypes(const String& pasteboardName, const Vector<String>& pasteboardTypes, uint64_t& newChangeCount)
 {
-    PlatformPasteboard(pasteboardName).setTypes(pasteboardTypes);
+    newChangeCount = PlatformPasteboard(pasteboardName).setTypes(pasteboardTypes);
 }
 
-void WebContext::setPasteboardPathnamesForType(const String& pasteboardName, const String& pasteboardType, const Vector<String>& pathnames)
+void WebContext::setPasteboardPathnamesForType(const String& pasteboardName, const String& pasteboardType, const Vector<String>& pathnames, uint64_t& newChangeCount)
 {
-    PlatformPasteboard(pasteboardName).setPathnamesForType(pathnames, pasteboardType);
+    newChangeCount = PlatformPasteboard(pasteboardName).setPathnamesForType(pathnames, pasteboardType);
 }
 
-void WebContext::setPasteboardStringForType(const String& pasteboardName, const String& pasteboardType, const String& string)
+void WebContext::setPasteboardStringForType(const String& pasteboardName, const String& pasteboardType, const String& string, uint64_t& newChangeCount)
 {
-    PlatformPasteboard(pasteboardName).setStringForType(string, pasteboardType);    
+    newChangeCount = PlatformPasteboard(pasteboardName).setStringForType(string, pasteboardType);
 }
 
-void WebContext::setPasteboardBufferForType(const String& pasteboardName, const String& pasteboardType, const SharedMemory::Handle& handle, uint64_t size)
+void WebContext::setPasteboardBufferForType(const String& pasteboardName, const String& pasteboardType, const SharedMemory::Handle& handle, uint64_t size, uint64_t& newChangeCount)
 {
     if (handle.isNull()) {
-        PlatformPasteboard(pasteboardName).setBufferForType(0, pasteboardType);
+        newChangeCount = PlatformPasteboard(pasteboardName).setBufferForType(0, pasteboardType);
         return;
     }
     RefPtr<SharedMemory> sharedMemoryBuffer = SharedMemory::create(handle, SharedMemory::ReadOnly);
     RefPtr<SharedBuffer> buffer = SharedBuffer::create(static_cast<unsigned char *>(sharedMemoryBuffer->data()), size);
-    PlatformPasteboard(pasteboardName).setBufferForType(buffer, pasteboardType);
+    newChangeCount = PlatformPasteboard(pasteboardName).setBufferForType(buffer, pasteboardType);
 }
 
 void WebContext::setProcessSuppressionEnabled(bool enabled)

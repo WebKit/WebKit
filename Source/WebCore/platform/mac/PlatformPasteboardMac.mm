@@ -71,7 +71,7 @@ String PlatformPasteboard::stringForType(const String& pasteboardType)
     return [m_pasteboard.get() stringForType:pasteboardType];
 }
 
-int PlatformPasteboard::changeCount() const
+long PlatformPasteboard::changeCount() const
 {
     return [m_pasteboard.get() changeCount];
 }
@@ -99,7 +99,7 @@ KURL PlatformPasteboard::url()
     return [NSURL URLFromPasteboard:m_pasteboard.get()];
 }
 
-void PlatformPasteboard::copy(const String& fromPasteboard)
+long PlatformPasteboard::copy(const String& fromPasteboard)
 {
     NSPasteboard* pasteboard = [NSPasteboard pasteboardWithName:fromPasteboard];
     NSArray* types = [pasteboard types];
@@ -107,52 +107,91 @@ void PlatformPasteboard::copy(const String& fromPasteboard)
     [m_pasteboard.get() addTypes:types owner:nil];
     for (NSUInteger i = 0; i < [types count]; i++) {
         NSString* type = [types objectAtIndex:i];
-        [m_pasteboard.get() setData:[pasteboard dataForType:type] forType:type];
+        if (![m_pasteboard.get() setData:[pasteboard dataForType:type] forType:type])
+            return 0;
     }    
+    return changeCount();
 }
 
-void PlatformPasteboard::addTypes(const Vector<String>& pasteboardTypes)
+long PlatformPasteboard::addTypes(const Vector<String>& pasteboardTypes)
 {
     RetainPtr<NSMutableArray> types = adoptNS([[NSMutableArray alloc] init]);
     for (size_t i = 0; i < pasteboardTypes.size(); ++i)
         [types.get() addObject:pasteboardTypes[i]];
 
-    [m_pasteboard.get() addTypes:types.get() owner:nil];
+    return [m_pasteboard.get() addTypes:types.get() owner:nil];
 }
 
-void PlatformPasteboard::setTypes(const Vector<String>& pasteboardTypes)
+long PlatformPasteboard::setTypes(const Vector<String>& pasteboardTypes)
 {
-    if (pasteboardTypes.isEmpty()) {
-        [m_pasteboard.get() declareTypes:nil owner:nil];
-        return;
-    }
+    if (pasteboardTypes.isEmpty())
+        return [m_pasteboard.get() declareTypes:nil owner:nil];
 
     RetainPtr<NSMutableArray> types = adoptNS([[NSMutableArray alloc] init]);
     for (size_t i = 0; i < pasteboardTypes.size(); ++i)
         [types.get() addObject:pasteboardTypes[i]];
 
-    [m_pasteboard.get() declareTypes:types.get() owner:nil];
+    return [m_pasteboard.get() declareTypes:types.get() owner:nil];
 }
 
-void PlatformPasteboard::setBufferForType(PassRefPtr<SharedBuffer> buffer, const String& pasteboardType)
+long PlatformPasteboard::setBufferForType(PassRefPtr<SharedBuffer> buffer, const String& pasteboardType)
 {
-    [m_pasteboard.get() setData:buffer ? [buffer->createNSData() autorelease] : nil forType:pasteboardType];
+    BOOL didWriteData = [m_pasteboard.get() setData:buffer ? [buffer->createNSData() autorelease] : nil forType:pasteboardType];
+    if (!didWriteData)
+        return 0;
+    return changeCount();
 }
 
-void PlatformPasteboard::setPathnamesForType(const Vector<String>& pathnames, const String& pasteboardType)
+long PlatformPasteboard::setPathnamesForType(const Vector<String>& pathnames, const String& pasteboardType)
 {
     RetainPtr<NSMutableArray> paths = adoptNS([[NSMutableArray alloc] init]);    
     for (size_t i = 0; i < pathnames.size(); ++i)
-        [paths.get() addObject: [NSArray arrayWithObject:pathnames[i]]];
-    [m_pasteboard.get() setPropertyList:paths.get() forType:pasteboardType];
+        [paths.get() addObject:[NSArray arrayWithObject:pathnames[i]]];
+    BOOL didWriteData = [m_pasteboard.get() setPropertyList:paths.get() forType:pasteboardType];
+    if (!didWriteData)
+        return 0;
+    return changeCount();
 }
 
-void PlatformPasteboard::setStringForType(const String& string, const String& pasteboardType)
+long PlatformPasteboard::setStringForType(const String& string, const String& pasteboardType)
 {
-    if (pasteboardType == String(NSURLPboardType))
-        [[NSURL URLWithString:string] writeToPasteboard:m_pasteboard.get()];
-    else
-        [m_pasteboard.get() setString:string forType:pasteboardType];
+    BOOL didWriteData;
+
+    if (pasteboardType == String(NSURLPboardType)) {
+        // We cannot just use -NSPasteboard writeObjects:], because -declareTypes has been already called, implicitly creating an item.
+        NSURL *url = [NSURL URLWithString:string];
+        if ([[m_pasteboard.get() types] containsObject:NSURLPboardType]) {
+            NSURL *base = [url baseURL];
+            if (base)
+                didWriteData = [m_pasteboard.get() setPropertyList:@[[url relativeString], [base absoluteString]] forType:NSURLPboardType];
+            else if (url)
+                didWriteData = [m_pasteboard.get() setPropertyList:@[[url absoluteString], @""] forType:NSURLPboardType];
+            else
+                didWriteData = [m_pasteboard.get() setPropertyList:@[@"", @""] forType:NSURLPboardType];
+
+            if (!didWriteData)
+                return 0;
+        }
+
+        if ([[m_pasteboard.get() types] containsObject:(NSString *)kUTTypeURL]) {
+            didWriteData = [m_pasteboard.get() setString:[url absoluteString] forType:(NSString *)kUTTypeURL];
+            if (!didWriteData)
+                return 0;
+        }
+
+        if ([[m_pasteboard.get() types] containsObject:(NSString *)kUTTypeFileURL] && [url isFileURL]) {
+            didWriteData = [m_pasteboard.get() setString:[url absoluteString] forType:(NSString *)kUTTypeFileURL];
+            if (!didWriteData)
+                return 0;
+        }
+
+    } else {
+        didWriteData = [m_pasteboard.get() setString:string forType:pasteboardType];
+        if (!didWriteData)
+            return 0;
+    }
+
+    return changeCount();
 }
 
 }

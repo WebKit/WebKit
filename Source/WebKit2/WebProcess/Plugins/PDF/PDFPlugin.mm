@@ -1641,7 +1641,9 @@ void PDFPlugin::writeItemsToPasteboard(NSArray *items, NSArray *types)
     for (NSString *type in types)
         pasteboardTypes.append(type);
 
-    WebProcess::shared().parentProcessConnection()->send(Messages::WebContext::SetPasteboardTypes(NSGeneralPboard, pasteboardTypes), 0);
+    uint64_t newChangeCount;
+    WebProcess::shared().parentProcessConnection()->sendSync(Messages::WebContext::SetPasteboardTypes(NSGeneralPboard, pasteboardTypes),
+        Messages::WebContext::SetPasteboardTypes::Reply(newChangeCount), 0);
 
     for (NSUInteger i = 0, count = items.count; i < count; ++i) {
         NSString *type = [types objectAtIndex:i];
@@ -1655,7 +1657,8 @@ void PDFPlugin::writeItemsToPasteboard(NSArray *items, NSArray *types)
 
         if ([type isEqualToString:NSStringPboardType] || [type isEqualToString:NSPasteboardTypeString]) {
             RetainPtr<NSString> plainTextString = adoptNS([[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
-            WebProcess::shared().parentProcessConnection()->send(Messages::WebContext::SetPasteboardStringForType(NSGeneralPboard, type, plainTextString.get()), 0);
+            WebProcess::shared().parentProcessConnection()->sendSync(Messages::WebContext::SetPasteboardStringForType(NSGeneralPboard, type, plainTextString.get()),
+                Messages::WebContext::SetPasteboardStringForType::Reply(newChangeCount), 0);
         } else {
             RefPtr<SharedBuffer> buffer = SharedBuffer::wrapNSData(data);
 
@@ -1666,7 +1669,8 @@ void PDFPlugin::writeItemsToPasteboard(NSArray *items, NSArray *types)
             RefPtr<SharedMemory> sharedMemory = SharedMemory::create(buffer->size());
             memcpy(sharedMemory->data(), buffer->data(), buffer->size());
             sharedMemory->createHandle(handle, SharedMemory::ReadOnly);
-            WebProcess::shared().parentProcessConnection()->send(Messages::WebContext::SetPasteboardBufferForType(NSGeneralPboard, type, handle, buffer->size()), 0);
+            WebProcess::shared().parentProcessConnection()->sendSync(Messages::WebContext::SetPasteboardBufferForType(NSGeneralPboard, type, handle, buffer->size()),
+                Messages::WebContext::SetPasteboardBufferForType::Reply(newChangeCount), 0);
         }
     }
 }

@@ -49,16 +49,19 @@ public:
     PassRefPtr<SharedBuffer> bufferForType(const String& pasteboardType);
     void getPathnamesForType(Vector<String>& pathnames, const String& pasteboardType);
     String stringForType(const String& pasteboardType);
-    int changeCount() const;
+    long changeCount() const;
     Color color();
     KURL url();
-    
-    void copy(const String& fromPasteboard);
-    void addTypes(const Vector<String>& pasteboardTypes);
-    void setTypes(const Vector<String>& pasteboardTypes);
-    void setBufferForType(PassRefPtr<SharedBuffer>, const String& pasteboardType);
-    void setPathnamesForType(const Vector<String>& pathnames, const String& pasteboardType);
-    void setStringForType(const String&, const String& pasteboardType);
+
+    // Take ownership of the pasteboard, and return new change count.
+    long addTypes(const Vector<String>& pasteboardTypes);
+    long setTypes(const Vector<String>& pasteboardTypes);
+
+    // These methods will return 0 if pasteboard ownership has been taken from us.
+    long copy(const String& fromPasteboard);
+    long setBufferForType(PassRefPtr<SharedBuffer>, const String& pasteboardType);
+    long setPathnamesForType(const Vector<String>& pathnames, const String& pasteboardType);
+    long setStringForType(const String&, const String& pasteboardType);
 
 private:
 #if PLATFORM(MAC)

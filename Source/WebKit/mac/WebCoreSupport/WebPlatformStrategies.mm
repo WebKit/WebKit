@@ -174,12 +174,12 @@ String WebPlatformStrategies::stringForType(const String& pasteboardType, const 
     return PlatformPasteboard(pasteboardName).stringForType(pasteboardType);
 }
 
-void WebPlatformStrategies::copy(const String& fromPasteboard, const String& toPasteboard)
+long WebPlatformStrategies::copy(const String& fromPasteboard, const String& toPasteboard)
 {
-    PlatformPasteboard(toPasteboard).copy(fromPasteboard);
+    return PlatformPasteboard(toPasteboard).copy(fromPasteboard);
 }
 
-int WebPlatformStrategies::changeCount(const String &pasteboardName)
+long WebPlatformStrategies::changeCount(const String &pasteboardName)
 {
     return PlatformPasteboard(pasteboardName).changeCount();
 }
@@ -199,27 +199,27 @@ KURL WebPlatformStrategies::url(const String& pasteboardName)
     return PlatformPasteboard(pasteboardName).url();
 }
 
-void WebPlatformStrategies::addTypes(const Vector<String>& pasteboardTypes, const String& pasteboardName)
+long WebPlatformStrategies::addTypes(const Vector<String>& pasteboardTypes, const String& pasteboardName)
 {
-    PlatformPasteboard(pasteboardName).addTypes(pasteboardTypes);
+    return PlatformPasteboard(pasteboardName).addTypes(pasteboardTypes);
 }
 
-void WebPlatformStrategies::setTypes(const Vector<String>& pasteboardTypes, const String& pasteboardName)
+long WebPlatformStrategies::setTypes(const Vector<String>& pasteboardTypes, const String& pasteboardName)
 {
-    PlatformPasteboard(pasteboardName).setTypes(pasteboardTypes);
+    return PlatformPasteboard(pasteboardName).setTypes(pasteboardTypes);
 }
 
-void WebPlatformStrategies::setBufferForType(PassRefPtr<SharedBuffer> buffer, const String& pasteboardType, const String& pasteboardName)
+long WebPlatformStrategies::setBufferForType(PassRefPtr<SharedBuffer> buffer, const String& pasteboardType, const String& pasteboardName)
 {
-    PlatformPasteboard(pasteboardName).setBufferForType(buffer, pasteboardType);
+    return PlatformPasteboard(pasteboardName).setBufferForType(buffer, pasteboardType);
 }
 
-void WebPlatformStrategies::setPathnamesForType(const Vector<String>& pathnames, const String& pasteboardType, const String& pasteboardName)
+long WebPlatformStrategies::setPathnamesForType(const Vector<String>& pathnames, const String& pasteboardType, const String& pasteboardName)
 {
-    PlatformPasteboard(pasteboardName).setPathnamesForType(pathnames, pasteboardType);
+    return PlatformPasteboard(pasteboardName).setPathnamesForType(pathnames, pasteboardType);
 }
 
-void WebPlatformStrategies::setStringForType(const String& string, const String& pasteboardType, const String& pasteboardName)
+long WebPlatformStrategies::setStringForType(const String& string, const String& pasteboardType, const String& pasteboardName)
 {
-    PlatformPasteboard(pasteboardName).setStringForType(string, pasteboardType);    
+    return PlatformPasteboard(pasteboardName).setStringForType(string, pasteboardType);
 }
