@@ -166,14 +166,12 @@ class TestRunner:
 
         return True
 
-    def _setup_testing_environment(self):
-        self._test_env = os.environ
+    def _run_xvfb(self):
+        self._xvfb = None
+        if not self._options.use_xvfb:
+            return True
+
         self._test_env["DISPLAY"] = self._options.display
-        self._test_env["WEBKIT_INSPECTOR_PATH"] = os.path.abspath(os.path.join(self._programs_path, 'resources', 'inspector'))
-        self._test_env['GSETTINGS_BACKEND'] = 'memory'
-        self._test_env["TEST_WEBKIT_API_WEBKIT2_RESOURCES_PATH"] = common.top_level_path("Tools", "TestWebKitAPI", "Tests", "WebKit2")
-        self._test_env["TEST_WEBKIT_API_WEBKIT2_INJECTED_BUNDLE_PATH"] = common.build_path_for_build_types((self._build_type,), "Libraries")
-        self._test_env["WEBKIT_EXEC_PATH"] = self._programs_path
 
         try:
             self._xvfb = subprocess.Popen(["Xvfb", self._options.display, "-screen", "0", "800x600x24", "-nolisten", "tcp"],
@@ -181,6 +179,19 @@ class TestRunner:
         except Exception as e:
             sys.stderr.write("Failed to run Xvfb: %s\n" % e)
             sys.stderr.flush()
+            return False
+
+        return True
+
+    def _setup_testing_environment(self):
+        self._test_env = os.environ
+        self._test_env["WEBKIT_INSPECTOR_PATH"] = os.path.abspath(os.path.join(self._programs_path, 'resources', 'inspector'))
+        self._test_env['GSETTINGS_BACKEND'] = 'memory'
+        self._test_env["TEST_WEBKIT_API_WEBKIT2_RESOURCES_PATH"] = common.top_level_path("Tools", "TestWebKitAPI", "Tests", "WebKit2")
+        self._test_env["TEST_WEBKIT_API_WEBKIT2_INJECTED_BUNDLE_PATH"] = common.build_path_for_build_types((self._build_type,), "Libraries")
+        self._test_env["WEBKIT_EXEC_PATH"] = self._programs_path
+
+        if not self._run_xvfb():
             return False
 
         # If we cannot start the accessibility daemons, we can just skip the accessibility tests.
@@ -194,7 +205,8 @@ class TestRunner:
             self._spi_registryd.terminate()
         if self._spi_bus_launcher:
             self._spi_bus_launcher.terminate()
-        self._xvfb.terminate()
+        if self._xvfb:
+            self._xvfb.terminate()
 
     def _test_cases_to_skip(self, test_program):
         if self._options.skipped_action != 'skip':
@@ -392,6 +404,8 @@ if __name__ == "__main__":
     option_parser.add_option('-t', '--timeout',
                              action='store', type='int', dest='timeout', default=10,
                              help='Time in seconds until a test times out')
+    option_parser.add_option('--no-xvfb', action='store_false', dest='use_xvfb', default=True,
+                             help='Do not run tests under Xvfb')
     options, args = option_parser.parse_args()
 
     sys.exit(TestRunner(options, args).run_tests())

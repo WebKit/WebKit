@@ -1,3 +1,21 @@
+2013-08-26  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Allow to run tests without Xvfb in run-gtk-tests
+        https://bugs.webkit.org/show_bug.cgi?id=120298
+
+        Reviewed by Philippe Normand.
+
+        Add --no-xvfb command line option to run tests in the current
+        display.
+
+        * Scripts/run-gtk-tests:
+        (TestRunner._run_xvfb): Return early if option --no-xvfb has been
+        passed.
+        (TestRunner._setup_testing_environment): Use helper function
+        _run_xvfb to start Xvfb if needed.
+        (TestRunner._tear_down_testing_environment): Check Xvfb is
+        actually running before trying to terminate it.
+
 2013-08-26  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
 
         Adding Gabor Abraham to contributors.json.
