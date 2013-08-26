@@ -899,7 +899,7 @@ Editor::Editor(Frame& frame)
     , m_shouldStyleWithCSS(false)
     , m_killRing(adoptPtr(new KillRing))
     , m_spellChecker(adoptPtr(new SpellChecker(frame)))
-    , m_alternativeTextController(adoptPtr(new AlternativeTextController(&frame)))
+    , m_alternativeTextController(adoptPtr(new AlternativeTextController(frame)))
     , m_areMarkedTextMatchesHighlighted(false)
     , m_defaultParagraphSeparator(EditorParagraphSeparatorIsDiv)
     , m_overwriteModeEnabled(false)
@@ -2557,13 +2557,13 @@ void Editor::transpose()
 void Editor::addToKillRing(Range* range, bool prepend)
 {
     if (m_shouldStartNewKillRingSequence)
-        killRing()->startNewSequence();
+        killRing().startNewSequence();
 
     String text = plainText(range);
     if (prepend)
-        killRing()->prepend(text);
+        killRing().prepend(text);
     else
-        killRing()->append(text);
+        killRing().append(text);
     m_shouldStartNewKillRingSequence = false;
 }
 

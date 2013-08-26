@@ -1,3 +1,45 @@
+2013-08-26  Sam Weinig  <sam@webkit.org>
+
+        AlternativeTextController should hold onto Frame as a reference
+        https://bugs.webkit.org/show_bug.cgi?id=120327
+
+        Reviewed by Andreas Kling.
+
+        While in the area I also:
+          - Reference-ified Editor::killRing().
+          - Const-ified Editor::m_killRing, Editor::m_spellChecker, and Editor::m_alternativeTextController.
+
+        * editing/AlternativeTextController.cpp:
+        (WebCore::AlternativeTextController::AlternativeTextController):
+        (WebCore::AlternativeTextController::stopPendingCorrection):
+        (WebCore::AlternativeTextController::isSpellingMarkerAllowed):
+        (WebCore::AlternativeTextController::applyAlternativeTextToRange):
+        (WebCore::AlternativeTextController::applyAutocorrectionBeforeTypingIfAppropriate):
+        (WebCore::AlternativeTextController::respondToUnappliedSpellCorrection):
+        (WebCore::AlternativeTextController::timerFired):
+        (WebCore::AlternativeTextController::handleAlternativeTextUIResult):
+        (WebCore::AlternativeTextController::rootViewRectForRange):
+        (WebCore::AlternativeTextController::respondToChangedSelection):
+        (WebCore::AlternativeTextController::respondToAppliedEditing):
+        (WebCore::AlternativeTextController::respondToUnappliedEditing):
+        (WebCore::AlternativeTextController::alternativeTextClient):
+        (WebCore::AlternativeTextController::editorClient):
+        (WebCore::AlternativeTextController::markPrecedingWhitespaceForDeletedAutocorrectionAfterCommand):
+        (WebCore::AlternativeTextController::processMarkersOnTextToBeReplacedByResult):
+        (WebCore::AlternativeTextController::respondToMarkerAtEndOfWord):
+        (WebCore::AlternativeTextController::insertDictatedText):
+        (WebCore::AlternativeTextController::applyDictationAlternative):
+        * editing/AlternativeTextController.h:
+        (WebCore::AlternativeTextController::UNLESS_ENABLED):
+        * editing/Editor.cpp:
+        (WebCore::Editor::Editor):
+        (WebCore::Editor::addToKillRing):
+        * editing/Editor.h:
+        (WebCore::Editor::killRing):
+        * editing/EditorCommand.cpp:
+        (WebCore::executeYank):
+        (WebCore::executeYankAndSelect):
+
 2013-08-23  Andy Estes  <aestes@apple.com>
 
         Fix issues found by the Clang Static Analyzer

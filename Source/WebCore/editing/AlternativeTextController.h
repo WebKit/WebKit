@@ -93,7 +93,7 @@ class AlternativeTextController {
     WTF_MAKE_NONCOPYABLE(AlternativeTextController);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit AlternativeTextController(Frame*) UNLESS_ENABLED({ })
+    explicit AlternativeTextController(Frame& frame) UNLESS_ENABLED( : m_frame(frame) { })
     ~AlternativeTextController() UNLESS_ENABLED({ })
 
     void startAlternativeTextUITimer(AlternativeTextType) UNLESS_ENABLED({ })
@@ -161,7 +161,7 @@ private:
     Position m_positionForLastDeletedAutocorrection;
 #endif
 
-    Frame* m_frame;
+    Frame& m_frame;
 };
 
 #undef UNLESS_ENABLED

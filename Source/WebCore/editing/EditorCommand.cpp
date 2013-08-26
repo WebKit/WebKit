@@ -1143,15 +1143,15 @@ static bool executeUnselect(Frame* frame, Event*, EditorCommandSource, const Str
 
 static bool executeYank(Frame* frame, Event*, EditorCommandSource, const String&)
 {
-    frame->editor().insertTextWithoutSendingTextEvent(frame->editor().killRing()->yank(), false, 0);
-    frame->editor().killRing()->setToYankedState();
+    frame->editor().insertTextWithoutSendingTextEvent(frame->editor().killRing().yank(), false, 0);
+    frame->editor().killRing().setToYankedState();
     return true;
 }
 
 static bool executeYankAndSelect(Frame* frame, Event*, EditorCommandSource, const String&)
 {
-    frame->editor().insertTextWithoutSendingTextEvent(frame->editor().killRing()->yank(), true, 0);
-    frame->editor().killRing()->setToYankedState();
+    frame->editor().insertTextWithoutSendingTextEvent(frame->editor().killRing().yank(), true, 0);
+    frame->editor().killRing().setToYankedState();
     return true;
 }
 
