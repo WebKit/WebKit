@@ -1,3 +1,11 @@
+2013-08-26  Filip Pizlo  <fpizlo@apple.com>
+
+        Fix indention of Executable.h.
+
+        Rubber stamped by Mark Hahnenberg.
+
+        * runtime/Executable.h:
+
 2013-08-26  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Object.defineProperty should be able to create a PropertyDescriptor where m_attributes == 0
