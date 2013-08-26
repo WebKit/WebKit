@@ -1,3 +1,9 @@
+2013-08-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Windows build fix attempt after r154629.
+
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+
 2013-08-25  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         JSObject::putDirectIndexBeyondVectorLengthWithArrayStorage does a check on the length of the ArrayStorage after possible reallocing it
