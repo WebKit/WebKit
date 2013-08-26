@@ -53,6 +53,7 @@ struct _BrowserWindow {
     WebKitWebView *webView;
     GtkWidget *downloadsBar;
     GdkPixbuf *favicon;
+    GtkWidget *reloadOrStopButton;
     GtkWidget *fullScreenMessageLabel;
     guint fullScreenMessageLabelId;
 };
@@ -67,7 +68,6 @@ static const gdouble minimumZoomLevel = 0.5;
 static const gdouble maximumZoomLevel = 3;
 static const gdouble zoomStep = 1.2;
 static gint windowCount = 0;
-static GtkToolButton* reloadOrStopButton = 0;
 
 G_DEFINE_TYPE(BrowserWindow, browser_window, GTK_TYPE_WINDOW)
 
@@ -107,7 +107,7 @@ static void activateUriEntryCallback(BrowserWindow *window)
 
 static void reloadOrStopCallback(BrowserWindow *window)
 {
-    if (!g_strcmp0(gtk_tool_button_get_stock_id(reloadOrStopButton), GTK_STOCK_STOP))
+    if (webkit_web_view_is_loading(window->webView))
         webkit_web_view_stop_loading(window->webView);
     else
         webkit_web_view_reload(window->webView);
@@ -159,14 +159,8 @@ static void webViewLoadProgressChanged(WebKitWebView *webView, GParamSpec *pspec
 {
     gdouble progress = webkit_web_view_get_estimated_load_progress(webView);
     gtk_entry_set_progress_fraction(GTK_ENTRY(window->uriEntry), progress);
-
-    if (progress > 0.0 && progress < 1.0)
-        gtk_tool_button_set_stock_id(reloadOrStopButton, GTK_STOCK_STOP);
-
-    if (progress == 1.0) {
-        gtk_tool_button_set_stock_id(reloadOrStopButton, GTK_STOCK_REFRESH);
+    if (progress == 1.0)
         g_timeout_add(500, (GSourceFunc)resetEntryProgress, window->uriEntry);
-    }
 }
 
 static void downloadStarted(WebKitWebContext *webContext, WebKitDownload *download, BrowserWindow *window)
@@ -466,6 +460,12 @@ static void faviconChanged(GObject *object, GParamSpec *paramSpec, BrowserWindow
     updateUriEntryIcon(window);
 }
 
+static void webViewIsLoadingChanged(GObject *object, GParamSpec *paramSpec, BrowserWindow *window)
+{
+    gboolean isLoading = webkit_web_view_is_loading(window->webView);
+    gtk_tool_button_set_stock_id(GTK_TOOL_BUTTON(window->reloadOrStopButton), isLoading ? GTK_STOCK_STOP : GTK_STOCK_REFRESH);
+}
+
 static void zoomInCallback(BrowserWindow *window)
 {
     gdouble zoomLevel = webkit_web_view_get_zoom_level(window->webView) * zoomStep;
@@ -581,11 +581,12 @@ static void browser_window_init(BrowserWindow *window)
     gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
     gtk_widget_show(GTK_WIDGET(item));
 
-    reloadOrStopButton = gtk_tool_button_new_from_stock(GTK_STOCK_REFRESH);
-    g_signal_connect_swapped(reloadOrStopButton, "clicked", G_CALLBACK(reloadOrStopCallback), window);
-    gtk_toolbar_insert(GTK_TOOLBAR(toolbar), reloadOrStopButton, -1);
-    gtk_widget_add_accelerator(GTK_WIDGET(reloadOrStopButton), "clicked", accelGroup, GDK_KEY_F5, 0, GTK_ACCEL_VISIBLE);
-    gtk_widget_show(GTK_WIDGET(reloadOrStopButton));
+    item = gtk_tool_button_new_from_stock(GTK_STOCK_REFRESH);
+    window->reloadOrStopButton = GTK_WIDGET(item);
+    g_signal_connect_swapped(item, "clicked", G_CALLBACK(reloadOrStopCallback), window);
+    gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
+    gtk_widget_add_accelerator(window->reloadOrStopButton, "clicked", accelGroup, GDK_KEY_F5, 0, GTK_ACCEL_VISIBLE);
+    gtk_widget_show(window->reloadOrStopButton);
 
     GtkWidget *vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
     window->mainBox = vbox;
@@ -614,6 +615,7 @@ static void browserWindowConstructed(GObject *gObject)
     g_signal_connect(window->webView, "notify::favicon", G_CALLBACK(faviconChanged), window);
     g_signal_connect(window->webView, "enter-fullscreen", G_CALLBACK(webViewEnterFullScreen), window);
     g_signal_connect(window->webView, "leave-fullscreen", G_CALLBACK(webViewLeaveFullScreen), window);
+    g_signal_connect(window->webView, "notify::is-loading", G_CALLBACK(webViewIsLoadingChanged), window);
 
     g_signal_connect(webkit_web_view_get_context(window->webView), "download-started", G_CALLBACK(downloadStarted), window);
 

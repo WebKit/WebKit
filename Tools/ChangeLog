@@ -1,3 +1,26 @@
+2013-08-26  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Improve the stop/reload button implementation in MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=120292
+
+        Reviewed by Philippe Normand.
+
+        - Use an instance member of BrowserWindow for the button widget
+          instead of a global variable.
+        - Use notify::is-loading to monitor the WebView load instead of
+          the estimated-load-progress property.
+        - Use webkit_web_view_is_loading() to check whether the view
+          is loading to change the button icon instead of a string
+          comparison of the gtk stock icon id.
+        - Use the right casts to fix compile warning.
+
+        * MiniBrowser/gtk/BrowserWindow.c:
+        (reloadOrStopCallback):
+        (webViewLoadProgressChanged):
+        (webViewIsLoadingChanged):
+        (browser_window_init):
+        (browserWindowConstructed):
+
 2013-08-26  Arunprasad Rajkumar  <arurajku@cisco.com>
 
         [Qt] Remove the fix in QWebPage::javaScriptConsoleMessage introduced by (r61433)
