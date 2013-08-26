@@ -112,7 +112,7 @@ public:
     // Message handlers.
     void didReceiveNetworkResourceLoaderMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&);
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     static void tryGetShareableHandleFromCFURLCachedResponse(ShareableResource::Handle&, CFCachedURLResponseRef);
 #endif
 
@@ -136,7 +136,7 @@ public:
 #endif
     void continueWillSendRequest(const WebCore::ResourceRequest& newRequest);
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     static void tryGetShareableHandleFromSharedBuffer(ShareableResource::Handle&, WebCore::SharedBuffer*);
 #endif
 
