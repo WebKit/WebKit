@@ -29,7 +29,7 @@
 
 #include "CheckedArithmetic.h"
 
-#if USE(ZLIB)
+#if USE(ZLIB) && !COMPILER(MSVC)
 
 #include <zlib.h>
 

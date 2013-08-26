@@ -1,3 +1,10 @@
+2013-08-26  Oliver Hunt  <oliver@apple.com>
+
+        Disable compression under MSVC for now as we're getting
+        weird release-only failures.
+
+        * wtf/Compression.cpp:
+
 2013-08-24  Benjamin Poulain  <benjamin@webkit.org>
 
         Save three bytes per CStringBuffer object
