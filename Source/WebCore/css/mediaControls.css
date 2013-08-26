@@ -45,6 +45,7 @@ audio {
 
 audio::-webkit-media-controls-panel, video::-webkit-media-controls-panel {
     display: -webkit-flex;
+    direction: ltr;
     -webkit-flex-direction: row;
     -webkit-align-items: center;
     -webkit-user-select: none;
