@@ -2,1595 +2,1615 @@
 # Copyright (C) 2009 Collabora Ltd.
 # Gustavo Noronha Silva <gustavo.noronha@collabora.co.uk>, 2009.
 # Henrique P. Machado <hpmachado@gnome.org>, 2011.
+# Enrico Nicoletto <liverig@gmail.com>, 2013.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: webkit 1.1.4\n"
-"Report-Msgid-Bugs-To: http://bugs.webkit.org/\n"
-"POT-Creation-Date: 2013-03-15 17:34-0300\n"
-"PO-Revision-Date: 2013-03-15 17:41-0300\n"
-"Last-Translator: Henrique P. Machado <hpmachado@gnome.org>\n"
+"Project-Id-Version: webkit HEAD\n"
+"Report-Msgid-Bugs-To: http://bugs.webkit.org\n"
+"POT-Creation-Date: 2013-08-19 02:25+0000\n"
+"PO-Revision-Date: 2013-08-22 22:34-0300\n"
+"Last-Translator: Enrico Nicoletto <liverig@gmail.com>\n"
 "Language-Team: Brazilian Portuguese\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: Poedit 1.5.4\n"
 
-#: ErrorsGtk.cpp:37
+#: ../ErrorsGtk.cpp:37
 msgid "Load request cancelled"
-msgstr ""
+msgstr "Solicitação de carregamento cancelada"
 
-#: ErrorsGtk.cpp:43
+#: ../ErrorsGtk.cpp:43
 msgid "Not allowed to use restricted network port"
-msgstr ""
+msgstr "Sem permissão para usar porta de rede restrita"
 
-#: ErrorsGtk.cpp:49
+#: ../ErrorsGtk.cpp:49
 msgid "URL cannot be shown"
-msgstr ""
+msgstr "A URL não pode ser mostrada"
 
-#: ErrorsGtk.cpp:55
+#: ../ErrorsGtk.cpp:55
 msgid "Frame load was interrupted"
-msgstr ""
+msgstr "Carga de frame foi interrompida"
 
-#: ErrorsGtk.cpp:61
+#: ../ErrorsGtk.cpp:61
 msgid "Content with the specified MIME type cannot be shown"
-msgstr ""
+msgstr "Não pode ser mostrado conteúdo com o tipo MIME especificado"
 
-#: ErrorsGtk.cpp:67
+#: ../ErrorsGtk.cpp:67
 msgid "File does not exist"
-msgstr ""
+msgstr "O arquivo não existe"
 
-#: ErrorsGtk.cpp:73
+#: ../ErrorsGtk.cpp:73
 msgid "Plugin will handle load"
-msgstr ""
+msgstr "Plugin vai tratar carregamento"
 
-#: ErrorsGtk.cpp:85
+#: ../ErrorsGtk.cpp:85
 msgid "User cancelled the download"
 msgstr "Usuário cancelou o download"
 
-#: ErrorsGtk.cpp:105
+#: ../ErrorsGtk.cpp:105
 msgid "Printer not found"
-msgstr ""
+msgstr "Impressora não encontrada"
 
-#: ErrorsGtk.cpp:112
-#, fuzzy
+#: ../ErrorsGtk.cpp:112
 msgid "Invalid page range"
-msgstr "Habilitar cache de páginas"
+msgstr "Intervalo de página inválido"
 
-#: GtkAuthenticationDialog.cpp:171
-#, c-format
-msgid "The site %s:%i requests a username and password"
-msgstr ""
-
-#: GtkAuthenticationDialog.cpp:175
-msgid "_Remember password"
-msgstr "_Lembrar senha"
-
-#: GtkAuthenticationDialog.cpp:201
-msgid "Server message:"
-msgstr "Mensagem do servidor:"
-
-#: GtkAuthenticationDialog.cpp:202 GtkAuthenticationDialog.cpp:210
-msgid "Username:"
-msgstr "Usuário:"
-
-#: GtkAuthenticationDialog.cpp:203 GtkAuthenticationDialog.cpp:211
-msgid "Password:"
-msgstr "Senha:"
-
-#: LocalizedStringsGtk.cpp:56 LocalizedStringsGtk.cpp:61
+#: ../LocalizedStringsGtk.cpp:56 ../LocalizedStringsGtk.cpp:61
 msgid "Submit"
 msgstr "Enviar"
 
-#: LocalizedStringsGtk.cpp:66
+#: ../LocalizedStringsGtk.cpp:66
 msgid "Reset"
 msgstr "Limpar"
 
-#: LocalizedStringsGtk.cpp:71
+#: ../LocalizedStringsGtk.cpp:71
 msgid "Details"
-msgstr ""
+msgstr "Detalhes"
 
-#: LocalizedStringsGtk.cpp:76
+#: ../LocalizedStringsGtk.cpp:76
 msgid "This is a searchable index. Enter search keywords: "
-msgstr "Este é um índice pesquisável. Digite as palavras-chave de pesquisa:"
+msgstr "Este é um índice pesquisável. Digite palavras-chave de pesquisa:"
 
-#: LocalizedStringsGtk.cpp:81
+#: ../LocalizedStringsGtk.cpp:81
 msgid "Choose File"
 msgstr "Escolher arquivo"
 
-#: LocalizedStringsGtk.cpp:86
+#: ../LocalizedStringsGtk.cpp:86
 msgid "Choose Files"
 msgstr "Escolher arquivos"
 
-#: LocalizedStringsGtk.cpp:91 LocalizedStringsGtk.cpp:96
+#: ../LocalizedStringsGtk.cpp:91 ../LocalizedStringsGtk.cpp:96
 msgid "(None)"
 msgstr "(Nenhum)"
 
-#: LocalizedStringsGtk.cpp:101
+#: ../LocalizedStringsGtk.cpp:101
 msgid "Open Link in New _Window"
 msgstr "Abrir link em nova _janela"
 
-#: LocalizedStringsGtk.cpp:106
+#: ../LocalizedStringsGtk.cpp:106
 msgid "_Download Linked File"
 msgstr "_Baixar arquivo"
 
-#: LocalizedStringsGtk.cpp:111
+#: ../LocalizedStringsGtk.cpp:111
 msgid "Copy Link Loc_ation"
 msgstr "Copiar _endereço do link"
 
-#: LocalizedStringsGtk.cpp:116
+#: ../LocalizedStringsGtk.cpp:116
 msgid "Open _Image in New Window"
 msgstr "Abrir _imagem em nova janela"
 
-#: LocalizedStringsGtk.cpp:121
+#: ../LocalizedStringsGtk.cpp:121
 msgid "Sa_ve Image As"
 msgstr "Sal_var imagem como"
 
-#: LocalizedStringsGtk.cpp:126
+#: ../LocalizedStringsGtk.cpp:126
 msgid "Cop_y Image"
 msgstr "Co_piar imagem"
 
-#: LocalizedStringsGtk.cpp:131
-#, fuzzy
+#: ../LocalizedStringsGtk.cpp:131
 msgid "Copy Image _Address"
-msgstr "Co_piar imagem"
+msgstr "Copiar endereço da i_magem"
 
-#: LocalizedStringsGtk.cpp:136
-#, fuzzy
+#: ../LocalizedStringsGtk.cpp:136
 msgid "Open _Video in New Window"
-msgstr "Abrir _imagem em nova janela"
+msgstr "Abrir _vídeo em nova janela"
 
-#: LocalizedStringsGtk.cpp:141
-#, fuzzy
+#: ../LocalizedStringsGtk.cpp:141
 msgid "Open _Audio in New Window"
-msgstr "Abrir link em nova _janela"
+msgstr "Abrir á_udio em nova janela"
 
-#: LocalizedStringsGtk.cpp:146
-#, fuzzy
+#: ../LocalizedStringsGtk.cpp:146
+msgid "Download _Video"
+msgstr "Baixar _vídeo"
+
+#: ../LocalizedStringsGtk.cpp:151
+msgid "Download _Audio"
+msgstr "Baixar á_udio"
+
+#: ../LocalizedStringsGtk.cpp:156
 msgid "Cop_y Video Link Location"
-msgstr "Copiar _endereço do link"
+msgstr "Copiar endereço do link de _vídeo"
 
-#: LocalizedStringsGtk.cpp:151
-#, fuzzy
+#: ../LocalizedStringsGtk.cpp:161
 msgid "Cop_y Audio Link Location"
-msgstr "Copiar _endereço do link"
+msgstr "Copiar endereço do link de áu_dio"
 
-#: LocalizedStringsGtk.cpp:156
+#: ../LocalizedStringsGtk.cpp:166
 msgid "_Toggle Media Controls"
-msgstr ""
+msgstr "_Alternar controles de mídia"
 
-#: LocalizedStringsGtk.cpp:161
+#: ../LocalizedStringsGtk.cpp:171
+msgid "_Show Media Controls"
+msgstr "_Mostrar controles de mídia"
+
+#: ../LocalizedStringsGtk.cpp:176
+msgid "_Hide Media Controls"
+msgstr "_Esconder controles de mídia"
+
+#: ../LocalizedStringsGtk.cpp:181
 msgid "Toggle Media _Loop Playback"
-msgstr ""
+msgstr "Alternar _loop de reprodução de mídia"
 
-#: LocalizedStringsGtk.cpp:166
+#: ../LocalizedStringsGtk.cpp:186
 msgid "Switch Video to _Fullscreen"
-msgstr ""
+msgstr "Alternar vídeo para _tela cheia"
 
-#: LocalizedStringsGtk.cpp:171
+#: ../LocalizedStringsGtk.cpp:191
 msgid "_Play"
-msgstr ""
+msgstr "Re_produzir"
 
-#: LocalizedStringsGtk.cpp:176
-#, fuzzy
+#: ../LocalizedStringsGtk.cpp:196
 msgid "_Pause"
-msgstr "Pausar"
+msgstr "_Pausar"
 
-#: LocalizedStringsGtk.cpp:181
+#: ../LocalizedStringsGtk.cpp:201
 msgid "_Mute"
-msgstr ""
+msgstr "Tornar _mudo"
 
-#: LocalizedStringsGtk.cpp:186
+#: ../LocalizedStringsGtk.cpp:206
 msgid "Open _Frame in New Window"
 msgstr "Abrir _quadro em nova janela"
 
-#: LocalizedStringsGtk.cpp:209
+#: ../LocalizedStringsGtk.cpp:229
 msgid "_Insert Unicode Control Character"
 msgstr "_Inserir caractere de controle Unicode"
 
-#: LocalizedStringsGtk.cpp:214
+#: ../LocalizedStringsGtk.cpp:234
 msgid "Input _Methods"
 msgstr "_Métodos de entrada"
 
-#: LocalizedStringsGtk.cpp:237
+#: ../LocalizedStringsGtk.cpp:257
 msgid "_Reload"
 msgstr "_Recarregar"
 
-#: LocalizedStringsGtk.cpp:254
+#: ../LocalizedStringsGtk.cpp:274
 msgid "No Guesses Found"
 msgstr "Nenhuma sugestão encontrada"
 
-#: LocalizedStringsGtk.cpp:259
+#: ../LocalizedStringsGtk.cpp:279
 msgid "_Ignore Spelling"
 msgstr "_Ignorar palavra"
 
-#: LocalizedStringsGtk.cpp:264
+#: ../LocalizedStringsGtk.cpp:284
 msgid "_Learn Spelling"
 msgstr "_Aprender palavra"
 
-#: LocalizedStringsGtk.cpp:269
+#: ../LocalizedStringsGtk.cpp:289
 msgid "_Search the Web"
 msgstr "_Procurar na web"
 
-#: LocalizedStringsGtk.cpp:274
+#: ../LocalizedStringsGtk.cpp:294
 msgid "_Look Up in Dictionary"
 msgstr "Procurar no _dicionário"
 
-#: LocalizedStringsGtk.cpp:279
+#: ../LocalizedStringsGtk.cpp:299
 msgid "_Open Link"
 msgstr "_Abrir link"
 
-#: LocalizedStringsGtk.cpp:284
+#: ../LocalizedStringsGtk.cpp:304
 msgid "Ignore _Grammar"
 msgstr "Ignorar _gramática"
 
-#: LocalizedStringsGtk.cpp:289
+#: ../LocalizedStringsGtk.cpp:309
 msgid "Spelling and _Grammar"
 msgstr "Ortografia e Gramática"
 
-#: LocalizedStringsGtk.cpp:294
+#: ../LocalizedStringsGtk.cpp:314
 msgid "_Show Spelling and Grammar"
 msgstr "E_xibir Ortografia e Gramática"
 
-#: LocalizedStringsGtk.cpp:294
+#: ../LocalizedStringsGtk.cpp:314
 msgid "_Hide Spelling and Grammar"
 msgstr "E_sconder Ortografia e Gramática"
 
-#: LocalizedStringsGtk.cpp:299
+#: ../LocalizedStringsGtk.cpp:319
 msgid "_Check Document Now"
 msgstr "_Verificar documento agora"
 
-#: LocalizedStringsGtk.cpp:304
+#: ../LocalizedStringsGtk.cpp:324
 msgid "Check Spelling While _Typing"
 msgstr "Verificação _ortográfica ao digitar"
 
-#: LocalizedStringsGtk.cpp:309
+#: ../LocalizedStringsGtk.cpp:329
 msgid "Check _Grammar With Spelling"
 msgstr "Verificação _gramatical ao digitar"
 
-#: LocalizedStringsGtk.cpp:314
+#: ../LocalizedStringsGtk.cpp:334
 msgid "_Font"
 msgstr "_Fonte"
 
-#: LocalizedStringsGtk.cpp:337
+#: ../LocalizedStringsGtk.cpp:357
 msgid "_Outline"
 msgstr "_Outline"
 
-#: LocalizedStringsGtk.cpp:342
+#: ../LocalizedStringsGtk.cpp:362
 msgid "Inspect _Element"
 msgstr "Inspecionar _elemento"
 
-#: LocalizedStringsGtk.cpp:347
+#: ../LocalizedStringsGtk.cpp:367
 msgid "LRM _Left-to-right mark"
 msgstr "LRM Marca da _esquerda para a direita"
 
-#: LocalizedStringsGtk.cpp:352
+#: ../LocalizedStringsGtk.cpp:372
 msgid "RLM _Right-to-left mark"
 msgstr "RLM Marca da _direita para a esquerda"
 
-#: LocalizedStringsGtk.cpp:357
+#: ../LocalizedStringsGtk.cpp:377
 msgid "LRE Left-to-right _embedding"
 msgstr "LRE _Embutido da esquerda para a direita"
 
-#: LocalizedStringsGtk.cpp:362
+#: ../LocalizedStringsGtk.cpp:382
 msgid "RLE Right-to-left e_mbedding"
 msgstr "RLE E_mbutido da direita para a esquerda"
 
-#: LocalizedStringsGtk.cpp:367
+#: ../LocalizedStringsGtk.cpp:387
 msgid "LRO Left-to-right _override"
 msgstr "LRO _Sobrepor da esquerda para a direita"
 
-#: LocalizedStringsGtk.cpp:372
+#: ../LocalizedStringsGtk.cpp:392
 msgid "RLO Right-to-left o_verride"
 msgstr "RLO S_obrepor da direita para a esquerda"
 
-#: LocalizedStringsGtk.cpp:377
+#: ../LocalizedStringsGtk.cpp:397
 msgid "PDF _Pop directional formatting"
 msgstr "_PDF Mostrar formatação direcional"
 
-#: LocalizedStringsGtk.cpp:382
+#: ../LocalizedStringsGtk.cpp:402
 msgid "ZWS _Zero width space"
 msgstr "_ZWS Espaço de largura zero"
 
-#: LocalizedStringsGtk.cpp:387
+#: ../LocalizedStringsGtk.cpp:407
 msgid "ZWJ Zero width _joiner"
 msgstr "ZWJ _União de largura zero"
 
-#: LocalizedStringsGtk.cpp:392
+#: ../LocalizedStringsGtk.cpp:412
 msgid "ZWNJ Zero width _non-joiner"
 msgstr "ZWNJ _não-união de largura zero"
 
-#: LocalizedStringsGtk.cpp:397
+#: ../LocalizedStringsGtk.cpp:417
 msgid "No recent searches"
 msgstr "Não há buscas recentes"
 
-#: LocalizedStringsGtk.cpp:402
+#: ../LocalizedStringsGtk.cpp:422
 msgid "Recent searches"
 msgstr "Buscas recentes"
 
-#: LocalizedStringsGtk.cpp:407
+#: ../LocalizedStringsGtk.cpp:427
 msgid "_Clear recent searches"
 msgstr "_Limpar buscas recentes"
 
-#: LocalizedStringsGtk.cpp:412
+#: ../LocalizedStringsGtk.cpp:432
 msgid "definition"
 msgstr "definição"
 
-#: LocalizedStringsGtk.cpp:417
+#: ../LocalizedStringsGtk.cpp:437
+msgid "description list"
+msgstr "lista de descrição"
+
+#: ../LocalizedStringsGtk.cpp:442
 msgid "term"
 msgstr "termo"
 
-#: LocalizedStringsGtk.cpp:422
-#, fuzzy
+#: ../LocalizedStringsGtk.cpp:447
 msgid "description"
-msgstr "definição"
+msgstr "descrição"
 
-#: LocalizedStringsGtk.cpp:427
+#: ../LocalizedStringsGtk.cpp:452
 msgid "footer"
-msgstr ""
+msgstr "rodapé"
 
-#: LocalizedStringsGtk.cpp:432
+#: ../LocalizedStringsGtk.cpp:457
 msgid "press"
 msgstr "pressionar"
 
-#: LocalizedStringsGtk.cpp:437
+#: ../LocalizedStringsGtk.cpp:462
 msgid "select"
 msgstr "selecionar"
 
-#: LocalizedStringsGtk.cpp:442
+#: ../LocalizedStringsGtk.cpp:467
 msgid "activate"
 msgstr "ativar"
 
-#: LocalizedStringsGtk.cpp:447
+#: ../LocalizedStringsGtk.cpp:472
 msgid "uncheck"
 msgstr "desmarcar"
 
-#: LocalizedStringsGtk.cpp:452
+#: ../LocalizedStringsGtk.cpp:477
 msgid "check"
 msgstr "marcar"
 
-#: LocalizedStringsGtk.cpp:457
+#: ../LocalizedStringsGtk.cpp:482
 msgid "jump"
 msgstr "pular"
 
-#: LocalizedStringsGtk.cpp:472
+#: ../LocalizedStringsGtk.cpp:502
 msgid "Missing Plug-in"
-msgstr ""
+msgstr "Plug-in em falta"
 
-#: LocalizedStringsGtk.cpp:478
+#: ../LocalizedStringsGtk.cpp:508
 msgid "Plug-in Failure"
-msgstr ""
+msgstr "Falha em plug-in"
 
-#: LocalizedStringsGtk.cpp:502
+#. FIXME: If this file gets localized, this should really be localized as one string with a wildcard for the number.
+#: ../LocalizedStringsGtk.cpp:532
 msgid " files"
 msgstr " arquivos"
 
-#: LocalizedStringsGtk.cpp:507
+#: ../LocalizedStringsGtk.cpp:537
 msgid "Unknown"
 msgstr "Desconhecido"
 
-#: LocalizedStringsGtk.cpp:524
+#: ../LocalizedStringsGtk.cpp:542
+#, c-format
+msgctxt "Title string for images"
+msgid "%s  (%dx%d pixels)"
+msgstr "%s  (%dx%d pixels)"
+
+#: ../LocalizedStringsGtk.cpp:554
 msgid "Loading..."
 msgstr "Carregando..."
 
-#: LocalizedStringsGtk.cpp:529
+#: ../LocalizedStringsGtk.cpp:559
 msgid "Live Broadcast"
 msgstr "Transmissão ao vivo"
 
-#: LocalizedStringsGtk.cpp:535
-msgid "audio element controller"
-msgstr "Elemento controlador de áudio"
+#: ../LocalizedStringsGtk.cpp:565
+msgid "audio playback"
+msgstr "Reprodução de áudio"
 
-#: LocalizedStringsGtk.cpp:537
-msgid "video element controller"
-msgstr "Elemento controlador de vídeo"
+#: ../LocalizedStringsGtk.cpp:567
+msgid "video playback"
+msgstr "Reprodução de vídeo"
 
-#: LocalizedStringsGtk.cpp:539
+#: ../LocalizedStringsGtk.cpp:569
 msgid "mute"
-msgstr "Totalmente mudo"
+msgstr "Mudo"
 
-#: LocalizedStringsGtk.cpp:541
+#: ../LocalizedStringsGtk.cpp:571
 msgid "unmute"
-msgstr "Retirar mudo"
+msgstr "Desligar mudo"
 
-#: LocalizedStringsGtk.cpp:543
+#: ../LocalizedStringsGtk.cpp:573
 msgid "play"
 msgstr "Reproduzir"
 
-#: LocalizedStringsGtk.cpp:545
+#: ../LocalizedStringsGtk.cpp:575
 msgid "pause"
 msgstr "Pausar"
 
-#: LocalizedStringsGtk.cpp:547
+#: ../LocalizedStringsGtk.cpp:577
 msgid "movie time"
 msgstr "Tempo do filme"
 
-#: LocalizedStringsGtk.cpp:549
+#: ../LocalizedStringsGtk.cpp:579
 msgid "timeline slider thumb"
-msgstr "Miniatura da Linha do tempo"
+msgstr "Puxador da linha do tempo"
 
-#: LocalizedStringsGtk.cpp:551
+#: ../LocalizedStringsGtk.cpp:581
 msgid "back 30 seconds"
 msgstr "Voltar 30 segundos"
 
-#: LocalizedStringsGtk.cpp:553
+#: ../LocalizedStringsGtk.cpp:583
 msgid "return to realtime"
 msgstr "Retornar ao tempo real"
 
-#: LocalizedStringsGtk.cpp:555
+#: ../LocalizedStringsGtk.cpp:585
 msgid "elapsed time"
 msgstr "Tempo decorrido"
 
-#: LocalizedStringsGtk.cpp:557
+#: ../LocalizedStringsGtk.cpp:587
 msgid "remaining time"
 msgstr "Tempo restante"
 
-#: LocalizedStringsGtk.cpp:559
+#: ../LocalizedStringsGtk.cpp:589
 msgid "status"
-msgstr "Status"
+msgstr "Estado"
 
-#: LocalizedStringsGtk.cpp:561
-#, fuzzy
+#: ../LocalizedStringsGtk.cpp:591
 msgid "enter fullscreen"
-msgstr "Tela cheia"
+msgstr "Entrar em tela cheia"
 
-#: LocalizedStringsGtk.cpp:563
-#, fuzzy
+#: ../LocalizedStringsGtk.cpp:593
 msgid "exit fullscreen"
-msgstr "Tela cheia"
+msgstr "Sair da tela cheia"
 
-#: LocalizedStringsGtk.cpp:565
+#: ../LocalizedStringsGtk.cpp:595
 msgid "fast forward"
 msgstr "Avanço rápido"
 
-#: LocalizedStringsGtk.cpp:567
+#: ../LocalizedStringsGtk.cpp:597
 msgid "fast reverse"
 msgstr "Retrocesso rápido"
 
-#: LocalizedStringsGtk.cpp:569
+#: ../LocalizedStringsGtk.cpp:599
 msgid "show closed captions"
-msgstr "Mostrar legendas"
+msgstr "Mostrar legendas codificadas"
 
-#: LocalizedStringsGtk.cpp:571
+#: ../LocalizedStringsGtk.cpp:601
 msgid "hide closed captions"
-msgstr "Ocultar legendas"
+msgstr "Ocultar legendas codificadas"
 
-#: LocalizedStringsGtk.cpp:573
+#: ../LocalizedStringsGtk.cpp:603
 msgid "media controls"
-msgstr ""
+msgstr "Controles de mídia"
 
-#: LocalizedStringsGtk.cpp:582
+#: ../LocalizedStringsGtk.cpp:612
 msgid "audio element playback controls and status display"
-msgstr "Mostrador dos elementos de reprodução de áudio e status"
+msgstr "Mostrador dos controles de reprodução de áudio e estado"
 
-#: LocalizedStringsGtk.cpp:584
+#: ../LocalizedStringsGtk.cpp:614
 msgid "video element playback controls and status display"
-msgstr "Mostrador dos elementos de reprodução de vídeo e status"
+msgstr "Mostrador dos controles de reprodução de vídeo e estado"
 
-#: LocalizedStringsGtk.cpp:586
+#: ../LocalizedStringsGtk.cpp:616
 msgid "mute audio tracks"
 msgstr "Emudecer trilhas de áudio"
 
-#: LocalizedStringsGtk.cpp:588
+#: ../LocalizedStringsGtk.cpp:618
 msgid "unmute audio tracks"
 msgstr "Retirar mudo de trilhas de áudio"
 
-#: LocalizedStringsGtk.cpp:590
+#: ../LocalizedStringsGtk.cpp:620
 msgid "begin playback"
 msgstr "Iniciar reprodução"
 
-#: LocalizedStringsGtk.cpp:592
+#: ../LocalizedStringsGtk.cpp:622
 msgid "pause playback"
 msgstr "Pausar reprodução"
 
-#: LocalizedStringsGtk.cpp:594
+#: ../LocalizedStringsGtk.cpp:624
 msgid "movie time scrubber"
 msgstr "Depurador de tempo de filme"
 
-#: LocalizedStringsGtk.cpp:596
+#: ../LocalizedStringsGtk.cpp:626
 msgid "movie time scrubber thumb"
 msgstr "Miniatura do depurador de tempo"
 
-#: LocalizedStringsGtk.cpp:598
+#: ../LocalizedStringsGtk.cpp:628
 msgid "seek movie back 30 seconds"
 msgstr "Voltar 30 segundos do filme"
 
-#: LocalizedStringsGtk.cpp:600
+#: ../LocalizedStringsGtk.cpp:630
 msgid "return streaming movie to real time"
 msgstr "Retornar o fluxo do filme ao tempo real"
 
-#: LocalizedStringsGtk.cpp:602
+#: ../LocalizedStringsGtk.cpp:632
 msgid "current movie time in seconds"
 msgstr "Tempo atual do filme em segundos"
 
-#: LocalizedStringsGtk.cpp:604
+#: ../LocalizedStringsGtk.cpp:634
 msgid "number of seconds of movie remaining"
 msgstr "Número de segundos do filme restantes"
 
-#: LocalizedStringsGtk.cpp:606
+#: ../LocalizedStringsGtk.cpp:636
 msgid "current movie status"
-msgstr "Status do filme atual"
+msgstr "Estado do filme atual"
 
-#: LocalizedStringsGtk.cpp:608
+#: ../LocalizedStringsGtk.cpp:638
 msgid "seek quickly back"
 msgstr "Pesquisar rapidamente para trás"
 
-#: LocalizedStringsGtk.cpp:610
+#: ../LocalizedStringsGtk.cpp:640
 msgid "seek quickly forward"
 msgstr "Pesquisar rapidamente para a frente"
 
-#: LocalizedStringsGtk.cpp:612
+#: ../LocalizedStringsGtk.cpp:642
 msgid "Play movie in fullscreen mode"
 msgstr "Reproduzir filme em modo de tela cheia"
 
-#: LocalizedStringsGtk.cpp:614
-#, fuzzy
+#: ../LocalizedStringsGtk.cpp:644
 msgid "Exit fullscreen mode"
-msgstr "Reproduzir filme em modo de tela cheia"
+msgstr "Sai do modo de tela cheia"
 
-#: LocalizedStringsGtk.cpp:616
+#: ../LocalizedStringsGtk.cpp:646
 msgid "start displaying closed captions"
-msgstr "Iniciar exibição de legendas"
+msgstr "Iniciar exibição de legendas codificadas"
 
-#: LocalizedStringsGtk.cpp:618
+#: ../LocalizedStringsGtk.cpp:648
 msgid "stop displaying closed captions"
-msgstr "Parar exibição de legendas"
+msgstr "Parar exibição de legendas codificadas"
 
-#: LocalizedStringsGtk.cpp:627
+#: ../LocalizedStringsGtk.cpp:657
 msgid "indefinite time"
 msgstr "Tempo indefinido"
 
-#: LocalizedStringsGtk.cpp:657
+#: ../LocalizedStringsGtk.cpp:687
 msgid "value missing"
 msgstr "Faltando valor"
 
-#: LocalizedStringsGtk.cpp:693
+#: ../LocalizedStringsGtk.cpp:723
 msgid "type mismatch"
 msgstr "Tipo desconhecido"
 
-#: LocalizedStringsGtk.cpp:716
+#: ../LocalizedStringsGtk.cpp:746
 msgid "pattern mismatch"
 msgstr "Padrão desconhecido"
 
-#: LocalizedStringsGtk.cpp:721
+#: ../LocalizedStringsGtk.cpp:751
 msgid "too long"
 msgstr "Muito longo"
 
-#: LocalizedStringsGtk.cpp:726
+#: ../LocalizedStringsGtk.cpp:756
 msgid "range underflow"
 msgstr "Fora da faixa"
 
-#: LocalizedStringsGtk.cpp:731
+#: ../LocalizedStringsGtk.cpp:761
 msgid "range overflow"
 msgstr "Estouro de faixa"
 
-#: LocalizedStringsGtk.cpp:736
+#: ../LocalizedStringsGtk.cpp:766
 msgid "step mismatch"
 msgstr "Passo desconhecido"
 
-#: LocalizedStringsGtk.cpp:741
+#: ../LocalizedStringsGtk.cpp:771
 msgid "Unacceptable TLS certificate"
-msgstr ""
+msgstr "Certificado TLS inaceitável"
 
-#: ../graphics/gtk/FullscreenVideoControllerGtk.cpp:328
+#: ../LocalizedStringsGtk.cpp:788
+msgctxt "Closed Captions"
+msgid "Menu section heading for closed captions"
+msgstr "Seção de menu de cabeçalho para legendas codificadas"
+
+#: ../LocalizedStringsGtk.cpp:793
+msgctxt "Subtitles"
+msgid "Menu section heading for subtitles"
+msgstr "Seção de menu de cabeçalho para legendas"
+
+#: ../LocalizedStringsGtk.cpp:798
+msgctxt "Off"
+msgid "Menu item label for the track that represents disabling closed captions"
+msgstr ""
+"Rótulo de item de menu para a faixa que representa desabilitar legendas "
+"codificadas"
+
+#: ../LocalizedStringsGtk.cpp:803
+msgctxt "No label"
+msgid "Menu item label for a closed captions track that has no other name"
+msgstr ""
+"Rótulo de item de menu para uma faixa de legenda codificada que não possua "
+"outro nome"
+
+#: ../LocalizedStringsGtk.cpp:809
+msgctxt "Snapshotted Plug-In"
+msgid "Title of the label to show on a snapshotted plug-in"
+msgstr "Título do rótulo a mostrar em um plug-in capturado pela tela"
+
+#: ../LocalizedStringsGtk.cpp:814
+msgctxt "Click to restart"
+msgid "Subtitle of the label to show on a snapshotted plug-in"
+msgstr "Legenda do rótulo a mostrar em um plug-in capturado pela tela"
+
+#: ../WebKitAuthenticationWidget.cpp:155
+#, c-format
+msgid "The site %s:%i requests a username and password"
+msgstr "O site %s:%i solicita um nome de usuário e senha"
+
+#: ../WebKitAuthenticationWidget.cpp:159
+msgid "_Remember password"
+msgstr "_Lembrar senha"
+
+#: ../WebKitAuthenticationWidget.cpp:167
+msgid "Server message:"
+msgstr "Mensagem do servidor:"
+
+#: ../WebKitAuthenticationWidget.cpp:168 ../WebKitAuthenticationWidget.cpp:177
+msgid "Username:"
+msgstr "Usuário:"
+
+#: ../WebKitAuthenticationWidget.cpp:169 ../WebKitAuthenticationWidget.cpp:178
+msgid "Password:"
+msgstr "Senha:"
+
+#: ../../graphics/gtk/FullscreenVideoControllerGtk.cpp:328
 msgid "Play"
-msgstr ""
+msgstr "Reproduzir"
 
-#: ../graphics/gtk/FullscreenVideoControllerGtk.cpp:330
-#, fuzzy
+#: ../../graphics/gtk/FullscreenVideoControllerGtk.cpp:330
 msgid "Pause"
 msgstr "Pausar"
 
-#: ../graphics/gtk/FullscreenVideoControllerGtk.cpp:410
+#: ../../graphics/gtk/FullscreenVideoControllerGtk.cpp:410
 msgid "Play / Pause"
-msgstr ""
+msgstr "Reproduzir / Pausar"
 
-#: ../graphics/gtk/FullscreenVideoControllerGtk.cpp:410
+#: ../../graphics/gtk/FullscreenVideoControllerGtk.cpp:410
 msgid "Play or pause the media"
-msgstr ""
+msgstr "Reproduz ou pausa a mídia"
 
-#: ../graphics/gtk/FullscreenVideoControllerGtk.cpp:416
+#: ../../graphics/gtk/FullscreenVideoControllerGtk.cpp:416
 msgid "Time:"
-msgstr ""
+msgstr "Tempo:"
 
-#: ../graphics/gtk/FullscreenVideoControllerGtk.cpp:442
-#, fuzzy
+#: ../../graphics/gtk/FullscreenVideoControllerGtk.cpp:442
 msgid "Exit Fullscreen"
-msgstr "Tela cheia"
+msgstr "Sair da tela cheia"
 
-#: ../graphics/gtk/FullscreenVideoControllerGtk.cpp:442
-#, fuzzy
+#: ../../graphics/gtk/FullscreenVideoControllerGtk.cpp:442
 msgid "Exit from fullscreen mode"
-msgstr "Reproduzir filme em modo de tela cheia"
+msgstr "Sai do modo de tela cheia"
 
-#: ../../../WebKit/gtk/webkit/webkitdownload.cpp:276
+#: ../../../../WebKit/gtk/webkit/webkitdownload.cpp:276
 msgid "Network Request"
-msgstr "Requisição de rede"
+msgstr "Solicitação de rede"
 
-#: ../../../WebKit/gtk/webkit/webkitdownload.cpp:277
+#: ../../../../WebKit/gtk/webkit/webkitdownload.cpp:277
 msgid "The network request for the URI that should be downloaded"
-msgstr "A requisição de rede para a URI que deve ser baixada"
+msgstr "A solicitação de rede para a URI que deve ser baixada"
 
-#: ../../../WebKit/gtk/webkit/webkitdownload.cpp:291
+#: ../../../../WebKit/gtk/webkit/webkitdownload.cpp:291
 msgid "Network Response"
 msgstr "Resposta de rede"
 
-#: ../../../WebKit/gtk/webkit/webkitdownload.cpp:292
+#: ../../../../WebKit/gtk/webkit/webkitdownload.cpp:292
 msgid "The network response for the URI that should be downloaded"
 msgstr "A resposta de rede para a URI que deve ser baixada"
 
-#: ../../../WebKit/gtk/webkit/webkitdownload.cpp:306
+#: ../../../../WebKit/gtk/webkit/webkitdownload.cpp:306
 msgid "Destination URI"
 msgstr "URI de destino"
 
-#: ../../../WebKit/gtk/webkit/webkitdownload.cpp:307
+#: ../../../../WebKit/gtk/webkit/webkitdownload.cpp:307
 msgid "The destination URI where to save the file"
-msgstr "A URI de destino, onde deve ser salvo o arquivo"
+msgstr "O URI de destino, onde deve ser salvo o arquivo"
 
-#: ../../../WebKit/gtk/webkit/webkitdownload.cpp:321
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:150
+#: ../../../../WebKit/gtk/webkit/webkitdownload.cpp:321
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:150
 msgid "Suggested Filename"
 msgstr "Nome de arquivo sugerido"
 
-#: ../../../WebKit/gtk/webkit/webkitdownload.cpp:322
+#: ../../../../WebKit/gtk/webkit/webkitdownload.cpp:322
 msgid "The filename suggested as default when saving"
 msgstr "O nome de arquivo que deve ser usado como padrão ao salvar"
 
-#: ../../../WebKit/gtk/webkit/webkitdownload.cpp:339
+#: ../../../../WebKit/gtk/webkit/webkitdownload.cpp:339
 msgid "Progress"
 msgstr "Progresso"
 
-#: ../../../WebKit/gtk/webkit/webkitdownload.cpp:340
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:171
+#: ../../../../WebKit/gtk/webkit/webkitdownload.cpp:340
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:176
 msgid "Determines the current progress of the download"
 msgstr "Determina o progresso atual do download"
 
-#: ../../../WebKit/gtk/webkit/webkitdownload.cpp:353
+#: ../../../../WebKit/gtk/webkit/webkitdownload.cpp:353
 msgid "Status"
-msgstr "Status"
+msgstr "Estado"
 
-#: ../../../WebKit/gtk/webkit/webkitdownload.cpp:354
+#: ../../../../WebKit/gtk/webkit/webkitdownload.cpp:354
 msgid "Determines the current status of the download"
-msgstr "Determina o status atual do download"
+msgstr "Determina o estado atual do download"
 
-#: ../../../WebKit/gtk/webkit/webkitdownload.cpp:369
+#: ../../../../WebKit/gtk/webkit/webkitdownload.cpp:369
 msgid "Current Size"
 msgstr "Tamanho atual"
 
-#: ../../../WebKit/gtk/webkit/webkitdownload.cpp:370
+#: ../../../../WebKit/gtk/webkit/webkitdownload.cpp:370
 msgid "The length of the data already downloaded"
 msgstr "A quantidade de dados já baixados"
 
-#: ../../../WebKit/gtk/webkit/webkitdownload.cpp:384
+#: ../../../../WebKit/gtk/webkit/webkitdownload.cpp:384
 msgid "Total Size"
 msgstr "Tamanho total"
 
-#: ../../../WebKit/gtk/webkit/webkitdownload.cpp:385
+#: ../../../../WebKit/gtk/webkit/webkitdownload.cpp:385
 msgid "The total size of the file"
 msgstr "O tamanho total do arquivo"
 
-#: ../../../WebKit/gtk/webkit/webkitfavicondatabase.cpp:144
-#: ../../../WebKit/gtk/webkit/webkitfavicondatabase.cpp:579
+#: ../../../../WebKit/gtk/webkit/webkitfavicondatabase.cpp:144
+#: ../../../../WebKit/gtk/webkit/webkitfavicondatabase.cpp:579
 msgid "Operation was cancelled"
-msgstr ""
+msgstr "Operação foi cancelada"
 
-#: ../../../WebKit/gtk/webkit/webkitfavicondatabase.cpp:253
-#: ../../../WebKit/gtk/webkit/webkiticondatabase.cpp:148
+#: ../../../../WebKit/gtk/webkit/webkitfavicondatabase.cpp:253
+#: ../../../../WebKit/gtk/webkit/webkiticondatabase.cpp:148
 msgid "Path"
-msgstr ""
+msgstr "Caminho"
 
-#: ../../../WebKit/gtk/webkit/webkitfavicondatabase.cpp:254
-#: ../../../WebKit/gtk/webkit/webkiticondatabase.cpp:149
-#, fuzzy
+#: ../../../../WebKit/gtk/webkit/webkitfavicondatabase.cpp:254
+#: ../../../../WebKit/gtk/webkit/webkiticondatabase.cpp:149
 msgid "The absolute path of the icon database folder"
-msgstr "A quantidade de dados já baixados"
+msgstr "O caminho absoluto para a pasta de banco de dados de ícones"
 
-#: ../../../WebKit/gtk/webkit/webkitfilechooserrequest.cpp:129
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.cpp:128
+#: ../../../../WebKit/gtk/webkit/webkitfilechooserrequest.cpp:129
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.cpp:128
 msgid "MIME types filter"
-msgstr ""
+msgstr "Filtro de tipos MIME"
 
-#: ../../../WebKit/gtk/webkit/webkitfilechooserrequest.cpp:130
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.cpp:129
+#: ../../../../WebKit/gtk/webkit/webkitfilechooserrequest.cpp:130
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.cpp:129
 msgid "The filter currently associated with the request"
-msgstr ""
+msgstr "O filtro atualmente associado à solicitação"
 
-#: ../../../WebKit/gtk/webkit/webkitfilechooserrequest.cpp:145
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.cpp:142
+#: ../../../../WebKit/gtk/webkit/webkitfilechooserrequest.cpp:145
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.cpp:142
 msgid "MIME types"
-msgstr ""
+msgstr "Tipos MIME"
 
-#: ../../../WebKit/gtk/webkit/webkitfilechooserrequest.cpp:146
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.cpp:143
+#: ../../../../WebKit/gtk/webkit/webkitfilechooserrequest.cpp:146
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.cpp:143
 msgid "The list of MIME types associated with the request"
-msgstr ""
+msgstr "A lista de tipos MIME associados à solicitação"
 
-#: ../../../WebKit/gtk/webkit/webkitfilechooserrequest.cpp:161
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.cpp:157
+#: ../../../../WebKit/gtk/webkit/webkitfilechooserrequest.cpp:161
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.cpp:157
 msgid "Select multiple files"
-msgstr ""
+msgstr "Selecionar vários arquivos"
 
-#: ../../../WebKit/gtk/webkit/webkitfilechooserrequest.cpp:162
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.cpp:158
+#: ../../../../WebKit/gtk/webkit/webkitfilechooserrequest.cpp:162
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.cpp:158
 msgid "Whether the file chooser should allow selecting multiple files"
 msgstr ""
+"Se o seletor de arquivos deve ou não permitir múltipla seleção de arquivos"
 
-#: ../../../WebKit/gtk/webkit/webkitfilechooserrequest.cpp:177
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.cpp:171
-#, fuzzy
+#: ../../../../WebKit/gtk/webkit/webkitfilechooserrequest.cpp:177
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.cpp:171
 msgid "Selected files"
-msgstr "Selecionar _Tudo"
+msgstr "Arquivos selecionados"
 
-#: ../../../WebKit/gtk/webkit/webkitfilechooserrequest.cpp:178
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.cpp:172
+#: ../../../../WebKit/gtk/webkit/webkitfilechooserrequest.cpp:178
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.cpp:172
 msgid "The list of selected files associated with the request"
-msgstr ""
+msgstr "A lista de arquivos selecionados associados à solicitação"
 
-#: ../../../WebKit/gtk/webkit/webkithittestresult.cpp:175
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:152
+#: ../../../../WebKit/gtk/webkit/webkithittestresult.cpp:174
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:152
 msgid "Context"
-msgstr ""
+msgstr "Contexto"
 
-#: ../../../WebKit/gtk/webkit/webkithittestresult.cpp:176
+#: ../../../../WebKit/gtk/webkit/webkithittestresult.cpp:175
 msgid "Flags indicating the kind of target that received the event."
-msgstr ""
+msgstr "Sinalizadores indicando o tipo de alvo que o evento recebeu."
 
-#: ../../../WebKit/gtk/webkit/webkithittestresult.cpp:190
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:166
-#, fuzzy
+#: ../../../../WebKit/gtk/webkit/webkithittestresult.cpp:189
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:166
 msgid "Link URI"
-msgstr "URI do ícone"
+msgstr "URI do link"
 
-#: ../../../WebKit/gtk/webkit/webkithittestresult.cpp:191
+#: ../../../../WebKit/gtk/webkit/webkithittestresult.cpp:190
 msgid "The URI to which the target that received the event points, if any."
-msgstr ""
+msgstr "O URI apontado pelo alvo que recebeu o evento, caso algum."
 
-#: ../../../WebKit/gtk/webkit/webkithittestresult.cpp:204
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:205
+#: ../../../../WebKit/gtk/webkit/webkithittestresult.cpp:203
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:205
 msgid "Image URI"
-msgstr ""
+msgstr "URI da imagem"
 
-#: ../../../WebKit/gtk/webkit/webkithittestresult.cpp:205
+#: ../../../../WebKit/gtk/webkit/webkithittestresult.cpp:204
 msgid ""
 "The URI of the image that is part of the target that received the event, if "
 "any."
 msgstr ""
+"O URI da imagem que faz parte do alvo que recebeu o evento, caso algum."
 
-#: ../../../WebKit/gtk/webkit/webkithittestresult.cpp:218
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:218
+#: ../../../../WebKit/gtk/webkit/webkithittestresult.cpp:217
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:218
 msgid "Media URI"
-msgstr ""
+msgstr "URI da mídia"
 
-#: ../../../WebKit/gtk/webkit/webkithittestresult.cpp:219
+#: ../../../../WebKit/gtk/webkit/webkithittestresult.cpp:218
 msgid ""
 "The URI of the media that is part of the target that received the event, if "
 "any."
-msgstr ""
+msgstr "O URI da mídia que faz parte do alvo que recebeu o evento, caso algum."
 
-#: ../../../WebKit/gtk/webkit/webkithittestresult.cpp:240
+#: ../../../../WebKit/gtk/webkit/webkithittestresult.cpp:239
 msgid "Inner node"
-msgstr ""
+msgstr "Nó interior"
 
-#: ../../../WebKit/gtk/webkit/webkithittestresult.cpp:241
+# Hit test como teste de clique
+#: ../../../../WebKit/gtk/webkit/webkithittestresult.cpp:240
 msgid "The inner DOM node associated with the hit test result."
-msgstr ""
+msgstr "O nó interior do DOM associado ao resultado do teste de clique. "
 
-#: ../../../WebKit/gtk/webkit/webkithittestresult.cpp:254
+#: ../../../../WebKit/gtk/webkit/webkithittestresult.cpp:253
 msgid "X coordinate"
-msgstr ""
+msgstr "Coordenada X"
 
-#: ../../../WebKit/gtk/webkit/webkithittestresult.cpp:255
+#: ../../../../WebKit/gtk/webkit/webkithittestresult.cpp:254
 msgid "The x coordinate of the event relative to the view's window."
-msgstr ""
+msgstr "A coordenada X do evento relacionado à janela da visão."
 
-#: ../../../WebKit/gtk/webkit/webkithittestresult.cpp:268
+#: ../../../../WebKit/gtk/webkit/webkithittestresult.cpp:267
 msgid "Y coordinate"
-msgstr ""
+msgstr "Coordenada Y"
 
-#: ../../../WebKit/gtk/webkit/webkithittestresult.cpp:269
+#: ../../../../WebKit/gtk/webkit/webkithittestresult.cpp:268
 msgid "The y coordinate of the event relative to the view's window."
-msgstr ""
+msgstr "A coordenadaY do evento relacionado à janela da visão."
 
-#: ../../../WebKit/gtk/webkit/webkitnetworkrequest.cpp:134
-#: ../../../WebKit/gtk/webkit/webkitnetworkresponse.cpp:143
-#: ../../../WebKit/gtk/webkit/webkitwebframe.cpp:466
-#: ../../../WebKit/gtk/webkit/webkitwebhistoryitem.cpp:176
-#: ../../../WebKit/gtk/webkit/webkitwebresource.cpp:209
-#: ../../../WebKit/gtk/webkit/webkitwebview.cpp:3238
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitURIRequest.cpp:93
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:99
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitWebResource.cpp:109
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:635
+#: ../../../../WebKit/gtk/webkit/webkitnetworkrequest.cpp:134
+#: ../../../../WebKit/gtk/webkit/webkitnetworkresponse.cpp:143
+#: ../../../../WebKit/gtk/webkit/webkitwebframe.cpp:467
+#: ../../../../WebKit/gtk/webkit/webkitwebhistoryitem.cpp:176
+#: ../../../../WebKit/gtk/webkit/webkitwebresource.cpp:209
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3242
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIRequest.cpp:95
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:99
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebResource.cpp:109
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:701
 msgid "URI"
 msgstr "URI"
 
-#: ../../../WebKit/gtk/webkit/webkitnetworkrequest.cpp:135
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitURIRequest.cpp:94
+#: ../../../../WebKit/gtk/webkit/webkitnetworkrequest.cpp:135
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIRequest.cpp:96
 msgid "The URI to which the request will be made."
-msgstr ""
+msgstr "O URI pelo qual a solicitação será feita."
 
-#: ../../../WebKit/gtk/webkit/webkitnetworkrequest.cpp:148
-#: ../../../WebKit/gtk/webkit/webkitnetworkresponse.cpp:157
+#: ../../../../WebKit/gtk/webkit/webkitnetworkrequest.cpp:148
+#: ../../../../WebKit/gtk/webkit/webkitnetworkresponse.cpp:157
 msgid "Message"
-msgstr ""
+msgstr "Mensagem"
 
-#: ../../../WebKit/gtk/webkit/webkitnetworkrequest.cpp:149
+# SoupMessage é uma mensagem HTTP que está sendo solicitada e repsondida, mais infos em <https://developer.gnome.org/libsoup/stable/SoupMessage.html>--Enrico
+#: ../../../../WebKit/gtk/webkit/webkitnetworkrequest.cpp:149
 msgid "The SoupMessage that backs the request."
-msgstr ""
+msgstr "A mensagem \"SoupMessage\" que retorna a solicitação."
 
-#: ../../../WebKit/gtk/webkit/webkitnetworkresponse.cpp:144
+#: ../../../../WebKit/gtk/webkit/webkitnetworkresponse.cpp:144
 msgid "The URI to which the response will be made."
-msgstr ""
+msgstr "O URI pelo qual a resposta será feita."
 
-#: ../../../WebKit/gtk/webkit/webkitnetworkresponse.cpp:158
+#: ../../../../WebKit/gtk/webkit/webkitnetworkresponse.cpp:158
 msgid "The SoupMessage that backs the response."
-msgstr ""
+msgstr "A mensagem \"SoupMessage\" que retorna a resposta."
 
-#: ../../../WebKit/gtk/webkit/webkitnetworkresponse.cpp:171
-#, fuzzy
+#: ../../../../WebKit/gtk/webkit/webkitnetworkresponse.cpp:171
 msgid "Suggested filename"
 msgstr "Nome de arquivo sugerido"
 
-#: ../../../WebKit/gtk/webkit/webkitnetworkresponse.cpp:172
-#, fuzzy
+#: ../../../../WebKit/gtk/webkit/webkitnetworkresponse.cpp:172
 msgid "The suggested filename for the response."
-msgstr "O quadro alvo para a navegação"
+msgstr "O nome de arquivo sugerido para a resposta."
 
-#: ../../../WebKit/gtk/webkit/webkitsecurityorigin.cpp:150
+#: ../../../../WebKit/gtk/webkit/webkitsecurityorigin.cpp:150
 msgid "Protocol"
-msgstr ""
+msgstr "Protocolo"
 
-#: ../../../WebKit/gtk/webkit/webkitsecurityorigin.cpp:151
+#: ../../../../WebKit/gtk/webkit/webkitsecurityorigin.cpp:151
 msgid "The protocol of the security origin"
-msgstr ""
+msgstr "O protocolo usado pela origem de segurança"
 
-#: ../../../WebKit/gtk/webkit/webkitsecurityorigin.cpp:164
+#: ../../../../WebKit/gtk/webkit/webkitsecurityorigin.cpp:164
 msgid "Host"
-msgstr ""
+msgstr "Servidor"
 
-#: ../../../WebKit/gtk/webkit/webkitsecurityorigin.cpp:165
-#, fuzzy
+#: ../../../../WebKit/gtk/webkit/webkitsecurityorigin.cpp:165
 msgid "The host of the security origin"
-msgstr "O título do item do histórico"
+msgstr "O servidor da origem de segurança"
 
-#: ../../../WebKit/gtk/webkit/webkitsecurityorigin.cpp:178
+#: ../../../../WebKit/gtk/webkit/webkitsecurityorigin.cpp:178
 msgid "Port"
-msgstr ""
+msgstr "Porta"
 
-#: ../../../WebKit/gtk/webkit/webkitsecurityorigin.cpp:179
-#, fuzzy
+#: ../../../../WebKit/gtk/webkit/webkitsecurityorigin.cpp:179
 msgid "The port of the security origin"
-msgstr "O título do item do histórico"
+msgstr "A porta da origem de segurança"
 
-#: ../../../WebKit/gtk/webkit/webkitsecurityorigin.cpp:192
+#: ../../../../WebKit/gtk/webkit/webkitsecurityorigin.cpp:192
 msgid "Web Database Usage"
-msgstr ""
+msgstr "Utilização do banco de dados web"
 
-#: ../../../WebKit/gtk/webkit/webkitsecurityorigin.cpp:193
+#: ../../../../WebKit/gtk/webkit/webkitsecurityorigin.cpp:193
 msgid "The cumulative size of all web databases in the security origin"
 msgstr ""
+"O tamanho acumulado de todos os bancos de dados web na origem de segurança"
 
-#: ../../../WebKit/gtk/webkit/webkitsecurityorigin.cpp:205
+#: ../../../../WebKit/gtk/webkit/webkitsecurityorigin.cpp:205
 msgid "Web Database Quota"
-msgstr ""
+msgstr "Cota do banco de dados web"
 
-#: ../../../WebKit/gtk/webkit/webkitsecurityorigin.cpp:206
+#: ../../../../WebKit/gtk/webkit/webkitsecurityorigin.cpp:206
 msgid "The web database quota of the security origin in bytes"
-msgstr ""
+msgstr "A cota, em bytes, do banco de dados web da origem de segurança"
 
-#: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:138
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:139
 msgid "Device Width"
-msgstr ""
+msgstr "Largura do dispositivo"
 
-#: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:139
-#, fuzzy
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:140
 msgid "The width of the screen."
-msgstr "O título do item do histórico"
+msgstr "A largura da tela."
 
-#: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:160
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:161
 msgid "Device Height"
-msgstr ""
+msgstr "Altura do dispositivo"
 
-#: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:161
-#, fuzzy
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:162
 msgid "The height of the screen."
-msgstr "O nome do quadro"
+msgstr "A altura da tela."
 
-#: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:184
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:185
 msgid "Available Width"
-msgstr ""
+msgstr "Largura disponível"
 
-#: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:185
-#, fuzzy
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:186
 msgid "The width of the visible area."
-msgstr "O título do item do histórico"
+msgstr "A largura da área visível."
 
-#: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:208
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:209
 msgid "Available Height"
-msgstr ""
+msgstr "Altura disponível"
 
-#: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:209
-#, fuzzy
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:210
 msgid "The height of the visible area."
-msgstr "O título do item do histórico"
+msgstr "A altura da área visível."
 
-#: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:230
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:231
 msgid "Desktop Width"
-msgstr ""
+msgstr "Largura da área de trabalho"
 
-#: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:231
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:232
 msgid ""
 "The width of viewport that works well for most web pages designed for "
 "desktop."
 msgstr ""
+"A largura da porta de visualização que funciona bem para a maioria das "
+"páginas web projetadas para computadores de mesa."
 
-#: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:253
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:254
 msgid "Device DPI"
-msgstr ""
+msgstr "DPI do dispositivo"
 
-#: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:254
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:255
 msgid "The number of dots per inch of the screen."
-msgstr ""
+msgstr "O número de pontos por polegada da tela."
 
-#: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:272
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:273
 msgid "Width"
-msgstr ""
+msgstr "Largura"
 
-#: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:273
-#, fuzzy
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:274
 msgid "The width of the viewport."
-msgstr "O título do item do histórico"
+msgstr "A largura da porta de visualização."
 
-#: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:291
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:292
 msgid "Height"
-msgstr ""
+msgstr "Altura"
 
-#: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:292
-#, fuzzy
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:293
 msgid "The height of the viewport."
-msgstr "O título do item do histórico"
+msgstr "A altura da porta de visualização."
 
-#: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:310
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:311
 msgid "Initial Scale Factor"
-msgstr ""
+msgstr "Fator inicial de escala"
 
-#: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:311
-#, fuzzy
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:312
 msgid "The initial scale of the viewport."
-msgstr "O tamanho total do arquivo"
+msgstr "A escala inicial da porta de visualização."
 
-#: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:329
-#, fuzzy
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:330
 msgid "Minimum Scale Factor"
-msgstr "Tamanho de fonte mínimo lógico"
+msgstr "Fator mínimo de escala"
 
-#: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:330
-#, fuzzy
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:331
 msgid "The minimum scale of the viewport."
-msgstr "O título do item do histórico"
+msgstr "A escala mínima da porta de visualização."
 
-#: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:348
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:349
 msgid "Maximum Scale Factor"
-msgstr ""
+msgstr "Fator máximo de escala"
 
-#: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:349
-#, fuzzy
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:350
 msgid "The maximum scale of the viewport."
-msgstr "O título do item do histórico"
+msgstr "A escala máxima da porta de visualização."
 
-#: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:367
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:368
 msgid "Device Pixel Ratio"
-msgstr ""
+msgstr "Proporção de pixel do dispositivo"
 
-#: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:368
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:369
 msgid "The device pixel ratio of the viewport."
-msgstr ""
+msgstr "Proporção de pixels de dispositivo da porta de visualização"
 
-#: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:386
-msgid "user-scalable"
-msgstr ""
-
-#: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:387
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:388
 msgid "User Scalable"
-msgstr ""
+msgstr "Escalável ao usuário"
 
-#: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:388
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:389
 msgid "Determines whether or not the user can zoom in and out."
-msgstr ""
+msgstr "Determina se o usuário pode, ou não, ampliar ou reduzir."
 
-#: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:405
-msgid "valid"
-msgstr ""
-
-#: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:406
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:407
 msgid "Valid"
-msgstr ""
+msgstr "Validade"
 
-#: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:407
+#: ../../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:408
 msgid "Determines whether or not the attributes are valid, and can be used."
-msgstr ""
+msgstr "Determina se os atributos são, ou não, válidos e podem ser usados."
 
-#: ../../../WebKit/gtk/webkit/webkitwebdatabase.cpp:176
+#: ../../../../WebKit/gtk/webkit/webkitwebdatabase.cpp:176
 msgid "Security Origin"
-msgstr ""
+msgstr "Origem da segurança"
 
-#: ../../../WebKit/gtk/webkit/webkitwebdatabase.cpp:177
-#, fuzzy
+#: ../../../../WebKit/gtk/webkit/webkitwebdatabase.cpp:177
 msgid "The security origin of the database"
-msgstr "A codificação personalizada da visão web"
+msgstr "A origem de segurança do banco de dados"
 
-#: ../../../WebKit/gtk/webkit/webkitwebdatabase.cpp:190
-#: ../../../WebKit/gtk/webkit/webkitwebframe.cpp:452
+#: ../../../../WebKit/gtk/webkit/webkitwebdatabase.cpp:190
+#: ../../../../WebKit/gtk/webkit/webkitwebframe.cpp:453
 msgid "Name"
 msgstr "Nome"
 
-#: ../../../WebKit/gtk/webkit/webkitwebdatabase.cpp:191
-#, fuzzy
+#: ../../../../WebKit/gtk/webkit/webkitwebdatabase.cpp:191
 msgid "The name of the Web Database database"
-msgstr "O nome do quadro"
+msgstr "O nome do banco de dados Web"
 
-#: ../../../WebKit/gtk/webkit/webkitwebdatabase.cpp:204
+#: ../../../../WebKit/gtk/webkit/webkitwebdatabase.cpp:204
 msgid "Display Name"
-msgstr ""
+msgstr "Nome de exibição"
 
-#: ../../../WebKit/gtk/webkit/webkitwebdatabase.cpp:205
+#: ../../../../WebKit/gtk/webkit/webkitwebdatabase.cpp:205
 msgid "The display name of the Web Storage database"
-msgstr ""
+msgstr "O nome de exibição do banco de dados de armazenamento web"
 
-#: ../../../WebKit/gtk/webkit/webkitwebdatabase.cpp:218
+#: ../../../../WebKit/gtk/webkit/webkitwebdatabase.cpp:218
 msgid "Expected Size"
-msgstr ""
+msgstr "Tamanho esperado"
 
-#: ../../../WebKit/gtk/webkit/webkitwebdatabase.cpp:219
+#: ../../../../WebKit/gtk/webkit/webkitwebdatabase.cpp:219
 msgid "The expected size of the Web Database database"
-msgstr ""
+msgstr "O tamanho esperado do banco de dados web"
 
-#: ../../../WebKit/gtk/webkit/webkitwebdatabase.cpp:231
+#: ../../../../WebKit/gtk/webkit/webkitwebdatabase.cpp:231
 msgid "Size"
-msgstr ""
+msgstr "Tamanho"
 
-#: ../../../WebKit/gtk/webkit/webkitwebdatabase.cpp:232
+#: ../../../../WebKit/gtk/webkit/webkitwebdatabase.cpp:232
 msgid "The current size of the Web Database database"
-msgstr ""
+msgstr "O tamanho atual do banco de dados web"
 
-#: ../../../WebKit/gtk/webkit/webkitwebdatabase.cpp:244
-#, fuzzy
+#: ../../../../WebKit/gtk/webkit/webkitwebdatabase.cpp:244
 msgid "Filename"
-msgstr "Nome de arquivo sugerido"
+msgstr "Nome de arquivo"
 
-#: ../../../WebKit/gtk/webkit/webkitwebdatabase.cpp:245
+#: ../../../../WebKit/gtk/webkit/webkitwebdatabase.cpp:245
 msgid "The absolute filename of the Web Storage database"
-msgstr ""
+msgstr "O nome de arquivo absoluto do banco de dados web"
 
-#: ../../../WebKit/gtk/webkit/webkitwebframe.cpp:453
+#: ../../../../WebKit/gtk/webkit/webkitwebframe.cpp:454
 msgid "The name of the frame"
 msgstr "O nome do quadro"
 
-#: ../../../WebKit/gtk/webkit/webkitwebframe.cpp:459
-#: ../../../WebKit/gtk/webkit/webkitwebhistoryitem.cpp:144
-#: ../../../WebKit/gtk/webkit/webkitwebview.cpp:3224
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:591
+#: ../../../../WebKit/gtk/webkit/webkitwebframe.cpp:460
+#: ../../../../WebKit/gtk/webkit/webkitwebhistoryitem.cpp:144
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3228
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:657
 msgid "Title"
 msgstr "Título"
 
-#: ../../../WebKit/gtk/webkit/webkitwebframe.cpp:460
+#: ../../../../WebKit/gtk/webkit/webkitwebframe.cpp:461
 msgid "The document title of the frame"
 msgstr "O título do documento do quadro"
 
-#: ../../../WebKit/gtk/webkit/webkitwebframe.cpp:467
+#: ../../../../WebKit/gtk/webkit/webkitwebframe.cpp:468
 msgid "The current URI of the contents displayed by the frame"
-msgstr "A URI atual do conteúdo que está sendo exibido pelo quadro"
+msgstr "O atual URI do conteúdo que está sendo exibido pelo quadro"
 
-#: ../../../WebKit/gtk/webkit/webkitwebframe.cpp:498
+#: ../../../../WebKit/gtk/webkit/webkitwebframe.cpp:499
 msgid "Horizontal Scrollbar Policy"
 msgstr "Política da barra de rolagem horizontal"
 
-#: ../../../WebKit/gtk/webkit/webkitwebframe.cpp:499
+#: ../../../../WebKit/gtk/webkit/webkitwebframe.cpp:500
 msgid ""
 "Determines the current policy for the horizontal scrollbar of the frame."
 msgstr ""
 "Determina a política atual para a barra de rolagem horizontal do quadro."
 
-#: ../../../WebKit/gtk/webkit/webkitwebframe.cpp:516
+#: ../../../../WebKit/gtk/webkit/webkitwebframe.cpp:517
 msgid "Vertical Scrollbar Policy"
 msgstr "Política da barra de rolagem vertical"
 
-#: ../../../WebKit/gtk/webkit/webkitwebframe.cpp:517
+#: ../../../../WebKit/gtk/webkit/webkitwebframe.cpp:518
 msgid "Determines the current policy for the vertical scrollbar of the frame."
 msgstr "Determina a política atual para a barra de rolagem vertical do quadro."
 
-#: ../../../WebKit/gtk/webkit/webkitwebhistoryitem.cpp:145
+#: ../../../../WebKit/gtk/webkit/webkitwebhistoryitem.cpp:145
 msgid "The title of the history item"
 msgstr "O título do item do histórico"
 
-#: ../../../WebKit/gtk/webkit/webkitwebhistoryitem.cpp:160
+#: ../../../../WebKit/gtk/webkit/webkitwebhistoryitem.cpp:160
 msgid "Alternate Title"
 msgstr "Título alternativo"
 
-#: ../../../WebKit/gtk/webkit/webkitwebhistoryitem.cpp:161
+#: ../../../../WebKit/gtk/webkit/webkitwebhistoryitem.cpp:161
 msgid "The alternate title of the history item"
 msgstr "O título alternativo do item do histórico"
 
-#: ../../../WebKit/gtk/webkit/webkitwebhistoryitem.cpp:177
+#: ../../../../WebKit/gtk/webkit/webkitwebhistoryitem.cpp:177
 msgid "The URI of the history item"
-msgstr "A URI do item do histórico"
+msgstr "O URI do item do histórico"
 
-#: ../../../WebKit/gtk/webkit/webkitwebhistoryitem.cpp:192
-#: ../../../WebKit/gtk/webkit/webkitwebnavigationaction.cpp:163
+#: ../../../../WebKit/gtk/webkit/webkitwebhistoryitem.cpp:192
+#: ../../../../WebKit/gtk/webkit/webkitwebnavigationaction.cpp:163
 msgid "Original URI"
 msgstr "URI original"
 
-#: ../../../WebKit/gtk/webkit/webkitwebhistoryitem.cpp:193
+#: ../../../../WebKit/gtk/webkit/webkitwebhistoryitem.cpp:193
 msgid "The original URI of the history item"
-msgstr "A URI original do item do histórico"
+msgstr "O URI original do item do histórico"
 
-#: ../../../WebKit/gtk/webkit/webkitwebhistoryitem.cpp:208
+#: ../../../../WebKit/gtk/webkit/webkitwebhistoryitem.cpp:208
 msgid "Last visited Time"
 msgstr "Hora da última visita"
 
-#: ../../../WebKit/gtk/webkit/webkitwebhistoryitem.cpp:209
+#: ../../../../WebKit/gtk/webkit/webkitwebhistoryitem.cpp:209
 msgid "The time at which the history item was last visited"
 msgstr "Quando o item do histórico foi visitado pela última vez"
 
-#: ../../../WebKit/gtk/webkit/webkitwebinspector.cpp:273
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitPrintOperation.cpp:154
+#: ../../../../WebKit/gtk/webkit/webkitwebinspector.cpp:273
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitPrintOperation.cpp:154
 msgid "Web View"
 msgstr "Visão web"
 
-#: ../../../WebKit/gtk/webkit/webkitwebinspector.cpp:274
+#: ../../../../WebKit/gtk/webkit/webkitwebinspector.cpp:274
 msgid "The Web View that renders the Web Inspector itself"
 msgstr "A visão web que exibe o inspetor web"
 
-#: ../../../WebKit/gtk/webkit/webkitwebinspector.cpp:287
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:122
+#: ../../../../WebKit/gtk/webkit/webkitwebinspector.cpp:287
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:122
 msgid "Inspected URI"
-msgstr "URI inspecionada"
+msgstr "URI inspecionado"
 
-#: ../../../WebKit/gtk/webkit/webkitwebinspector.cpp:288
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:123
+#: ../../../../WebKit/gtk/webkit/webkitwebinspector.cpp:288
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:123
 msgid "The URI that is currently being inspected"
-msgstr "A URI que está sendo atualmente inspecionada"
+msgstr "O URI que está sendo atualmente inspecionado"
 
-#: ../../../WebKit/gtk/webkit/webkitwebinspector.cpp:304
+#: ../../../../WebKit/gtk/webkit/webkitwebinspector.cpp:304
 msgid "Enable JavaScript profiling"
 msgstr "Habilitar análise de desempenho de JavaScript"
 
-#: ../../../WebKit/gtk/webkit/webkitwebinspector.cpp:305
+#: ../../../../WebKit/gtk/webkit/webkitwebinspector.cpp:305
 msgid "Profile the executed JavaScript."
 msgstr "Analisar desempenho de JavaScript em execução."
 
-#: ../../../WebKit/gtk/webkit/webkitwebinspector.cpp:320
+#: ../../../../WebKit/gtk/webkit/webkitwebinspector.cpp:320
 msgid "Enable Timeline profiling"
 msgstr "Habilitar análise de desempenho da Linha do tempo"
 
-#: ../../../WebKit/gtk/webkit/webkitwebinspector.cpp:321
+#: ../../../../WebKit/gtk/webkit/webkitwebinspector.cpp:321
 msgid "Profile the WebCore instrumentation."
 msgstr "Analisar a instrumentação WebCore."
 
-#: ../../../WebKit/gtk/webkit/webkitwebnavigationaction.cpp:148
+#: ../../../../WebKit/gtk/webkit/webkitwebnavigationaction.cpp:148
 msgid "Reason"
 msgstr "Razão"
 
-#: ../../../WebKit/gtk/webkit/webkitwebnavigationaction.cpp:149
+#: ../../../../WebKit/gtk/webkit/webkitwebnavigationaction.cpp:149
 msgid "The reason why this navigation is occurring"
 msgstr "A razão pela qual essa navegação ocorre"
 
-#: ../../../WebKit/gtk/webkit/webkitwebnavigationaction.cpp:164
+#: ../../../../WebKit/gtk/webkit/webkitwebnavigationaction.cpp:164
 msgid "The URI that was requested as the target for the navigation"
-msgstr "A URI que foi requisitada como alvo para a navegação"
+msgstr "O URI que foi solicitado como alvo para a navegação"
 
-#: ../../../WebKit/gtk/webkit/webkitwebnavigationaction.cpp:178
+#: ../../../../WebKit/gtk/webkit/webkitwebnavigationaction.cpp:178
 msgid "Button"
 msgstr "Botão"
 
-#: ../../../WebKit/gtk/webkit/webkitwebnavigationaction.cpp:179
+#: ../../../../WebKit/gtk/webkit/webkitwebnavigationaction.cpp:179
 msgid "The button used to click"
 msgstr "O botão usado no clique"
 
-#: ../../../WebKit/gtk/webkit/webkitwebnavigationaction.cpp:194
+#: ../../../../WebKit/gtk/webkit/webkitwebnavigationaction.cpp:194
 msgid "Modifier state"
 msgstr "Estado do modificador"
 
-#: ../../../WebKit/gtk/webkit/webkitwebnavigationaction.cpp:195
+#: ../../../../WebKit/gtk/webkit/webkitwebnavigationaction.cpp:195
 msgid "A bitmask representing the state of the modifier keys"
 msgstr "Uma máscara de bits representando o estado das teclas modificadoras"
 
-#: ../../../WebKit/gtk/webkit/webkitwebnavigationaction.cpp:210
+#: ../../../../WebKit/gtk/webkit/webkitwebnavigationaction.cpp:210
 msgid "Target frame"
 msgstr "Quadro alvo"
 
-#: ../../../WebKit/gtk/webkit/webkitwebnavigationaction.cpp:211
+#: ../../../../WebKit/gtk/webkit/webkitwebnavigationaction.cpp:211
 msgid "The target frame for the navigation"
 msgstr "O quadro alvo para a navegação"
 
-#: ../../../WebKit/gtk/webkit/webkitwebplugin.cpp:115
-#, fuzzy
+#: ../../../../WebKit/gtk/webkit/webkitwebplugin.cpp:113
 msgid "Enabled"
-msgstr "Editável"
+msgstr "Habilitado"
 
-#: ../../../WebKit/gtk/webkit/webkitwebplugin.cpp:116
-#, fuzzy
+#: ../../../../WebKit/gtk/webkit/webkitwebplugin.cpp:114
 msgid "Whether the plugin is enabled"
-msgstr "Se o cache de páginas deve ser usado"
+msgstr "Se o plug-in deve ou não ser habilitado"
 
-#: ../../../WebKit/gtk/webkit/webkitwebresource.cpp:210
-#, fuzzy
+#: ../../../../WebKit/gtk/webkit/webkitwebresource.cpp:210
 msgid "The URI of the resource"
-msgstr "A URI do item do histórico"
+msgstr "O URI do recurso"
 
-#: ../../../WebKit/gtk/webkit/webkitwebresource.cpp:224
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:137
+#: ../../../../WebKit/gtk/webkit/webkitwebresource.cpp:224
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:137
 msgid "MIME Type"
-msgstr ""
+msgstr "Tipo MIME"
 
-#: ../../../WebKit/gtk/webkit/webkitwebresource.cpp:225
-#, fuzzy
+#: ../../../../WebKit/gtk/webkit/webkitwebresource.cpp:225
 msgid "The MIME type of the resource"
-msgstr "O título do item do histórico"
+msgstr "O título MIME do recurso"
 
-#: ../../../WebKit/gtk/webkit/webkitwebresource.cpp:239
-#: ../../../WebKit/gtk/webkit/webkitwebview.cpp:3373
+#: ../../../../WebKit/gtk/webkit/webkitwebresource.cpp:239
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3377
 msgid "Encoding"
 msgstr "Codificação"
 
-#: ../../../WebKit/gtk/webkit/webkitwebresource.cpp:240
-#, fuzzy
+#: ../../../../WebKit/gtk/webkit/webkitwebresource.cpp:240
 msgid "The text encoding name of the resource"
-msgstr "A codificação padrão da visão web"
+msgstr "O nome da codificação de texto do recurso"
 
-#: ../../../WebKit/gtk/webkit/webkitwebresource.cpp:255
+#: ../../../../WebKit/gtk/webkit/webkitwebresource.cpp:255
 msgid "Frame Name"
-msgstr ""
+msgstr "Nome do quadro"
 
-#: ../../../WebKit/gtk/webkit/webkitwebresource.cpp:256
-#, fuzzy
+#: ../../../../WebKit/gtk/webkit/webkitwebresource.cpp:256
 msgid "The frame name of the resource"
-msgstr "O nome do quadro"
+msgstr "O nome do quadro do recurso"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:150
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:150
 msgid "Default Encoding"
 msgstr "Codificação padrão"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:151
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:151
 msgid "The default encoding used to display text."
 msgstr "A codificação padrão usada para exibir texto."
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:159
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:159
 msgid "Cursive Font Family"
 msgstr "Família de fontes cursivas"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:160
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:160
 msgid "The default Cursive font family used to display text."
 msgstr "A família de fontes cursivas padrão para exibir texto."
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:168
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:168
 msgid "Default Font Family"
 msgstr "Família de fontes padrão"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:169
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:169
 msgid "The default font family used to display text."
 msgstr "A família de fontes padrão para exibir texto."
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:177
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:177
 msgid "Fantasy Font Family"
 msgstr "Família de fontes fantasia"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:178
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:178
 msgid "The default Fantasy font family used to display text."
 msgstr "A família de fontes fantasia padrão para exibir texto."
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:186
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:186
 msgid "Monospace Font Family"
 msgstr "Família de fontes mono-espaçadas"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:187
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:187
 msgid "The default font family used to display monospace text."
 msgstr "A família de fontes mono-espaçadas padrão para exibir texto."
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:195
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:195
 msgid "Sans Serif Font Family"
 msgstr "Família de fontes sem serifa"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:196
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:196
 msgid "The default Sans Serif font family used to display text."
 msgstr "A família de fontes sem serifa padrão para exibir texto."
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:204
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:204
 msgid "Serif Font Family"
 msgstr "Família de fontes com serifa"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:205
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:205
 msgid "The default Serif font family used to display text."
 msgstr "A família de fontes com serifa padrão para exibir texto."
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:213
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:213
 msgid "Default Font Size"
 msgstr "Tamanho de fonte padrão"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:214
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:717
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:214
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:742
 msgid "The default font size used to display text."
 msgstr "O tamanho de fonte padrão para exibir texto."
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:222
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:222
 msgid "Default Monospace Font Size"
 msgstr "Tamanho de fonte mono-espaçada padrão"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:223
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:731
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:223
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:756
 msgid "The default font size used to display monospace text."
 msgstr "O tamanho de fonte padrão para exibir texto com fonte mono-espaçada."
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:231
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:231
 msgid "Minimum Font Size"
 msgstr "Tamanho mínimo de fonte"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:232
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:746
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:232
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:771
 msgid "The minimum font size used to display text."
 msgstr "O tamanho mínimo de fontes usadas para exibir texto."
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:240
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:240
 msgid "Minimum Logical Font Size"
 msgstr "Tamanho de fonte mínimo lógico"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:241
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:241
 msgid "The minimum logical font size used to display text."
 msgstr "O tamanho lógico mínimo de fontes usadas para exibir texto."
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:260
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:260
 msgid "Enforce 96 DPI"
 msgstr "Forçar 96 DPI"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:261
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:261
 msgid "Enforce a resolution of 96 DPI"
 msgstr "Força uma resolução de 96 DPI"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:269
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:269
 msgid "Auto Load Images"
-msgstr "Auto-carregamento de imagens"
+msgstr "Carregar imagens automaticamente"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:270
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:458
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:270
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:483
 msgid "Load images automatically."
 msgstr "Carregar imagens automaticamente."
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:278
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:278
 msgid "Auto Shrink Images"
 msgstr "Auto-diminuição de imagens"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:279
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:279
 msgid "Automatically shrink standalone images to fit."
 msgstr "Automaticamente diminuir imagens sozinhas para caber na tela."
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:287
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:287
 msgid "Respect Image Orientation"
-msgstr ""
+msgstr "Respeitar orientação da imagem"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:288
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:288
 msgid "Whether WebKit should respect image orientation."
-msgstr ""
+msgstr "Se o WebKit deve ou não respeitar a orientação da imagem"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:296
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:870
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:296
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:895
 msgid "Print Backgrounds"
 msgstr "Imprimir fundos"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:297
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:297
 msgid "Whether background images should be printed."
 msgstr "Se as imagens de fundo devem ser impressas."
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:305
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:305
 msgid "Enable Scripts"
 msgstr "Habilitar scripts"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:306
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:306
 msgid "Enable embedded scripting languages."
 msgstr "Habilitar linguagens de script embutidas."
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:314
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:314
 msgid "Enable Plugins"
 msgstr "Habilitar plugins"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:315
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:568
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:315
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:593
 msgid "Enable embedded plugin objects."
 msgstr "Habilitar objetos de plugins embutidos."
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:323
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:323
 msgid "Resizable Text Areas"
 msgstr "Áreas de texto redimensionáveis"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:324
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:324
 msgid "Whether text areas are resizable."
 msgstr "Se as áreas de texto devem ser redimensionáveis."
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:331
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:331
 msgid "User Stylesheet URI"
-msgstr "URI da Folha de estilo do usuário"
+msgstr "URI da folha de estilo do usuário"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:332
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:332
 msgid "The URI of a stylesheet that is applied to every page."
-msgstr "A URI de uma folha de estilo que é aplicada a todas as páginas."
+msgstr "O URI de uma folha de estilo que se aplica a todas as páginas."
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:347
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:347
 msgid "Zoom Stepping Value"
 msgstr "Valor de passo do zoom"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:348
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:348
 msgid "The value by which the zoom level is changed when zooming in or out."
 msgstr "O valor da variação do zoom ao aproximar ou distanciar."
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:366
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:366
 msgid "Enable Developer Extras"
 msgstr "Habilitar extras de desenvolvimento"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:367
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:367
 msgid "Enables special extensions that help developers"
 msgstr "Habilita extensões especiais que auxiliam desenvolvedores"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:387
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:387
 msgid "Enable Private Browsing"
 msgstr "Habilitar navegação privativa"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:388
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:388
 msgid "Enables private browsing mode"
 msgstr "Habilita o modo de navegação privativa"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:403
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:403
 msgid "Enable Spell Checking"
 msgstr "Habilitar verificação ortográfica"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:404
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:404
 msgid "Enables spell checking while typing"
 msgstr "Habilita verificação ortográfica ao digitar"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:427
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:427
 msgid "Languages to use for spell checking"
 msgstr "Idiomas a usar pela verificação ortográfica"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:428
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:428
 msgid "Comma separated list of languages to use for spell checking"
 msgstr ""
 "Lista de idiomas separada por vírgulas para usar pelo verificador ortográfico"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:442
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:841
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:442
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:866
 msgid "Enable Caret Browsing"
 msgstr "Habilitar navegação com cursor"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:443
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:842
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:443
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:867
 msgid "Whether to enable accessibility enhanced keyboard navigation"
-msgstr "Quando habilitar navegação pelo teclado melhorada pelo suporte de acessibilidade"
+msgstr ""
+"Quando habilitar navegação pelo teclado melhorada pelo suporte de "
+"acessibilidade"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:458
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:458
 msgid "Enable HTML5 Database"
 msgstr "Habilitar banco de dados HTML5"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:459
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:459
 msgid "Whether to enable HTML5 database support"
 msgstr "Quando habilitar suporte a banco de dados HTML5"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:474
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:474
 msgid "Enable HTML5 Local Storage"
 msgstr "Habilitar armazenagem local pelo HTML5"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:475
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:475
 msgid "Whether to enable HTML5 Local Storage support"
 msgstr "Quando habilitar suporte a armazenagem local pelo HTML5"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:490
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:490
 msgid "Local Storage Database Path"
-msgstr ""
+msgstr "Caminho do banco de dados de armazenamento local"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:491
-#, fuzzy
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:491
 msgid "The path to where HTML5 Local Storage databases are stored."
-msgstr "Quando habilitar suporte a armazenagem local pelo HTML5"
+msgstr ""
+"O caminho para onde estão armazenados os bancos de dados de armazenamento "
+"local de HTML5."
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:505
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:505
 msgid "Enable XSS Auditor"
 msgstr "Habilitar Auditor XSS"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:506
-#, fuzzy
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:506
 msgid "Whether to enable the XSS auditor"
-msgstr "Quando habilitar o Auditor XSS"
+msgstr "Se deve habilitar, ou não, o Auditor XSS."
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:524
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:524
 msgid "Enable Spatial Navigation"
-msgstr ""
+msgstr "Habilitar navegação espacial"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:525
-#, fuzzy
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:525
 msgid "Whether to enable Spatial Navigation"
-msgstr "Quando habilitar o Auditor XSS"
+msgstr "Se deve habilitar, ou não, a navegação espacial"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:543
-#, fuzzy
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:543
 msgid "Enable Frame Flattening"
-msgstr "Habilitar navegação privativa"
+msgstr "Habilitar mesclagem de quadros"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:544
-#, fuzzy
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:544
 msgid "Whether to enable Frame Flattening"
-msgstr "Quando habilitar colagem DOM"
+msgstr "Se deve, ou não, habilitar a mesclagem de quadros"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:561
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:561
 msgid "User Agent"
 msgstr "Agente de usuário"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:562
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:562
 msgid "The User-Agent string used by WebKitGtk"
 msgstr "A string User-Agent usada pelo WebKitGtk"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:577
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:594
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:577
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:619
 msgid "JavaScript can open windows automatically"
 msgstr "JavaScript pode abrir janelas automaticamente"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:578
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:578
 msgid "Whether JavaScript can open windows automatically"
 msgstr "Se JavaScript pode abrir janelas automaticamente"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:592
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:592
 msgid "JavaScript can access Clipboard"
-msgstr ""
+msgstr "JavaScript pode acessar a área de transferência"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:593
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:954
-#, fuzzy
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:593
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:979
 msgid "Whether JavaScript can access Clipboard"
-msgstr "Se JavaScript pode abrir janelas automaticamente"
+msgstr ""
+"Se deve, ou não, permitir que o JavaScript acesse a área de transferência"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:609
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:489
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:609
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:514
 msgid "Enable offline web application cache"
 msgstr "Habilitar cache de aplicativos web offline"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:610
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:610
 msgid "Whether to enable offline web application cache"
 msgstr "Se habilita cache de aplicativos web offline"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:635
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:635
 msgid "Editing behavior"
 msgstr "Comportamento em modo de edição"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:636
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:636
 msgid "The behavior mode to use in editing mode"
 msgstr "O modo de comportamento para usar no modo de edição"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:652
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:652
 msgid "Enable universal access from file URIs"
 msgstr "Habilitar acesso universal a partir de URIs de arquivo"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:653
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:653
 msgid "Whether to allow universal access from file URIs"
 msgstr "Se habilita acesso universal a partir de URIs de arquivo"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:668
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:668
 msgid "Enable DOM paste"
 msgstr "Habilitar colagem DOM"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:669
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:669
 msgid "Whether to enable DOM paste"
 msgstr "Quando habilitar colagem DOM"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:687
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:687
 msgid "Tab key cycles through elements"
 msgstr "Tecla Tab circula entre os elementos"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:688
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:688
 msgid "Whether the tab key cycles through elements on the page."
 msgstr "Quando a tecla Tab deve circular entre os elementos na página."
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:710
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:710
 msgid "Enable Default Context Menu"
 msgstr "Habilitar menu de contexto padrão"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:711
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:711
 msgid ""
 "Enables the handling of right-clicks for the creation of the default context "
 "menu"
@@ -1598,955 +1618,927 @@ msgstr ""
 "Habilita o controle de cliques-direitos para a criação do menu de contexto "
 "padrão"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:731
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1018
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:731
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1043
 msgid "Enable Site Specific Quirks"
 msgstr "Habilitar compatibilidade a sites específicos"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:732
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1019
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:732
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1044
 msgid "Enables the site-specific compatibility workarounds"
 msgstr "Habilita compatibilidade a recursos específicos de alguns sites"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:754
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1039
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:754
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1064
 msgid "Enable page cache"
 msgstr "Habilitar cache de páginas"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:755
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1040
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:755
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1065
 msgid "Whether the page cache should be used"
 msgstr "Se o cache de páginas deve ser usado"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:775
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:775
 msgid "Auto Resize Window"
-msgstr "Autorredimensionar janela"
+msgstr "Redimensionar janela automaticamente"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:776
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:776
 msgid "Automatically resize the toplevel window when a page requests it"
 msgstr ""
 "Redimensiona automaticamente a janela de nível superior quando uma página "
 "requisita"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:808
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:808
 msgid "Enable Java Applet"
 msgstr "Habilitar miniaplicativos Java"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:809
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:809
 msgid "Whether Java Applet support through <applet> should be enabled"
 msgstr ""
 "Se o suporte a miniaplicativos Java através da etiqueta <applet> deve ser "
 "habilitado"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:823
-#, fuzzy
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:823
 msgid "Enable Hyperlink Auditing"
-msgstr "Habilitar análise de desempenho da Linha do tempo"
+msgstr "Habilitar auditoria de Hyperlink"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:824
-#, fuzzy
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:824
 msgid "Whether <a ping> should be able to send pings"
-msgstr "Se o cache de páginas deve ser usado"
+msgstr "Se <a ping> deve ser capaz, ou não, de enviar pings"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:832
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:857
-#, fuzzy
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:832
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:882
 msgid "Enable Fullscreen"
-msgstr "Tela cheia"
+msgstr "Habilitar tela cheia"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:833
-#, fuzzy
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:833
 msgid "Whether the Mozilla style API should be enabled."
-msgstr "Se o cache de páginas deve ser usado"
+msgstr "Indica se a API de estilo Mozilla deve ser ou não habilitada."
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:848
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:904
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:848
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:929
 msgid "Enable WebGL"
-msgstr ""
+msgstr "Habilitar WebGL"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:849
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:905
-#, fuzzy
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:849
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:930
 msgid "Whether WebGL content should be rendered"
-msgstr "Se as imagens de fundo devem ser impressas."
+msgstr "Se conteúdo WebGL deve ser renderizado ou não"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:865
-#, fuzzy
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:865
 msgid "Enable accelerated compositing"
-msgstr "Habilitar navegação privativa"
+msgstr "Habilitar composição acelerada"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:866
-#, fuzzy
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:866
 msgid "Whether accelerated compositing should be enabled"
-msgstr ""
-"Se o suporte a miniaplicativos Java através da etiqueta <applet> deve ser "
-"habilitado"
+msgstr "Se deve, ou não, habilitar a composição acelerada"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:884
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:889
-#, fuzzy
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:884
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:914
 msgid "Enable WebAudio"
-msgstr "Habilitar Auditor XSS"
+msgstr "Habilitar WebAudio"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:885
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:890
-#, fuzzy
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:885
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:915
 msgid "Whether WebAudio content should be handled"
-msgstr "Se o cache de páginas deve ser usado"
+msgstr "Se conteúdo WebAudio deve ser tratado ou não"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:901
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:901
 msgid "WebKit prefetches domain names"
-msgstr ""
+msgstr "Permitir ao WebKit buscar previamente nomes de domínios"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:902
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:902
 msgid "Whether WebKit prefetches domain names"
-msgstr ""
+msgstr "Se o WebKit deve, ou não, buscar antecipadamente nomes de domínios"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:920
-#, fuzzy
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:920
 msgid "Enable Media Stream"
-msgstr "Habilitar colagem DOM"
+msgstr "Habilitar fluxo de mídia"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:921
-#, fuzzy
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:921
 msgid "Whether Media Stream should be enabled"
-msgstr "Se o cache de páginas deve ser usado"
+msgstr "Se o fluxo de mídia deve ou não ser habilitado"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:936
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1072
-#, fuzzy
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:936
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1097
 msgid "Enable smooth scrolling"
-msgstr "Habilitar navegação exclusiva"
+msgstr "Habilitar rolagem suave"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:937
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1073
-#, fuzzy
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:937
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1098
 msgid "Whether to enable smooth scrolling"
-msgstr "Quando habilitar o Auditor XSS"
+msgstr "Se deve habilitar ou não a rolagem suave"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:955
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:970
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:955
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:995
 msgid "Media playback requires user gesture"
-msgstr ""
+msgstr "Reprodução de mídia requer ação do usuário"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:956
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:971
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:956
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:996
 msgid "Whether media playback requires user gesture"
 msgstr ""
+"Se a mídia deve, ou não, requerer intervenção do usuário para reprodução de "
+"mídia"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:972
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:985
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:972
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1010
 msgid "Media playback allows inline"
-msgstr ""
+msgstr "Permitir reprodução de mídia ser embutida"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:973
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:986
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:973
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1011
 msgid "Whether media playback allows inline"
-msgstr ""
+msgstr "Se a reprodução de mídia deve permitir, ou não, ser embutida"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:991
-#, fuzzy
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:991
 msgid "Enable CSS shaders"
-msgstr "Habilitar Auditor XSS"
+msgstr "Habilitar sombreadores CSS"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:992
-#, fuzzy
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:992
 msgid "Whether to enable css shaders"
-msgstr "Quando habilitar colagem DOM"
+msgstr "Se sombreamento CSS deve ou não ser habilitado"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:1007
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:1007
 msgid "Enable display of insecure content"
-msgstr ""
+msgstr "Habilitar exibição de conteúdo inseguro"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:1008
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:1008
 msgid "Whether non-HTTPS resources can display on HTTPS pages."
 msgstr ""
+"Se recursos que não são HTTPS podem ser exibidos, ou não, em páginas HTTPS."
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:1023
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:1023
 msgid "Enable running of insecure content"
-msgstr ""
+msgstr "Habilitar execução de conteúdo inseguro"
 
-#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:1024
+#: ../../../../WebKit/gtk/webkit/webkitwebsettings.cpp:1024
 msgid "Whether non-HTTPS resources can run on HTTPS pages."
 msgstr ""
+"Se recursos que não são HTTPS podem ser executados, ou não, em páginas HTTPS."
 
-#: ../../../WebKit/gtk/webkit/webkitwebview.cpp:1314
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:425
-#, fuzzy
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:1306
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:466
 msgid "Select Files"
-msgstr "Selecionar _Tudo"
+msgstr "Selecionar arquivos"
 
-#: ../../../WebKit/gtk/webkit/webkitwebview.cpp:1314
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:425
-#, fuzzy
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:1306
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:466
 msgid "Select File"
-msgstr "Selecionar _Tudo"
+msgstr "Selecionar arquivo"
 
-#: ../../../WebKit/gtk/webkit/webkitwebview.cpp:3225
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3229
 msgid "Returns the @web_view's document title"
 msgstr "Retorna o título da visão web"
 
-#: ../../../WebKit/gtk/webkit/webkitwebview.cpp:3239
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3243
 msgid "Returns the current URI of the contents displayed by the @web_view"
-msgstr "Retorna a URI do conteúdo atualmente exibido pela visão web"
+msgstr "Retorna o URI atual dos conteúdos exibidos pela visão web (@web_view)"
 
-#: ../../../WebKit/gtk/webkit/webkitwebview.cpp:3252
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3256
 msgid "Copy target list"
 msgstr "Lista de alvos de cópia"
 
-#: ../../../WebKit/gtk/webkit/webkitwebview.cpp:3253
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3257
 msgid "The list of targets this web view supports for clipboard copying"
 msgstr ""
 "A lista de alvos que essa visão web suporta para cópia para área de "
 "transferência"
 
-#: ../../../WebKit/gtk/webkit/webkitwebview.cpp:3266
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3270
 msgid "Paste target list"
 msgstr "Lista de alvos de cola"
 
-#: ../../../WebKit/gtk/webkit/webkitwebview.cpp:3267
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3271
 msgid "The list of targets this web view supports for clipboard pasting"
 msgstr ""
 "A lista de alvos que essa visão web suporta para cola da área de "
 "transferência"
 
-#: ../../../WebKit/gtk/webkit/webkitwebview.cpp:3273
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3277
 msgid "Settings"
 msgstr "Configurações"
 
-#: ../../../WebKit/gtk/webkit/webkitwebview.cpp:3274
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3278
 msgid "An associated WebKitWebSettings instance"
 msgstr "Uma instância de WebKitWebSettings associada"
 
-#: ../../../WebKit/gtk/webkit/webkitwebview.cpp:3287
-#: ../../../WebKit2/UIProcess/gtk/WebInspectorProxyGtk.cpp:93
-#: ../../../WebKit2/UIProcess/gtk/WebInspectorProxyGtk.cpp:153
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3291
+#: ../../../../WebKit2/UIProcess/gtk/WebInspectorProxyGtk.cpp:92
+#: ../../../../WebKit2/UIProcess/gtk/WebInspectorProxyGtk.cpp:157
 msgid "Web Inspector"
 msgstr "Inspetor Web"
 
-#: ../../../WebKit/gtk/webkit/webkitwebview.cpp:3288
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3292
 msgid "The associated WebKitWebInspector instance"
 msgstr "A instância de WebKitWebInspector que está associada a essa visão"
 
-#: ../../../WebKit/gtk/webkit/webkitwebview.cpp:3301
+# Viewport traduzido como Porta de visualização.
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3305
 msgid "Viewport Attributes"
-msgstr ""
+msgstr "Atributos da porta de visualização"
 
-#: ../../../WebKit/gtk/webkit/webkitwebview.cpp:3302
-#, fuzzy
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3306
 msgid "The associated WebKitViewportAttributes instance"
-msgstr "A instância de WebKitWebInspector que está associada a essa visão"
+msgstr "A instância de WebKitViewportAttributes associada"
 
-#: ../../../WebKit/gtk/webkit/webkitwebview.cpp:3322
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3326
 msgid "Editable"
 msgstr "Editável"
 
-#: ../../../WebKit/gtk/webkit/webkitwebview.cpp:3323
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3327
 msgid "Whether content can be modified by the user"
 msgstr "Se o conteúdo pode ser modificado pelo usuário"
 
-#: ../../../WebKit/gtk/webkit/webkitwebview.cpp:3329
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3333
 msgid "Transparent"
 msgstr "Transparente"
 
-#: ../../../WebKit/gtk/webkit/webkitwebview.cpp:3330
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3334
 msgid "Whether content has a transparent background"
 msgstr "Se o conteúdo tem um fundo transparente"
 
-#: ../../../WebKit/gtk/webkit/webkitwebview.cpp:3343
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3347
 msgid "Zoom level"
 msgstr "Nível de zoom"
 
-#: ../../../WebKit/gtk/webkit/webkitwebview.cpp:3344
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3348
 msgid "The level of zoom of the content"
 msgstr "O nível de zoom do conteúdo"
 
-#: ../../../WebKit/gtk/webkit/webkitwebview.cpp:3359
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3363
 msgid "Full content zoom"
 msgstr "Zoom completo do conteúdo"
 
-#: ../../../WebKit/gtk/webkit/webkitwebview.cpp:3360
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3364
 msgid "Whether the full content is scaled when zooming"
 msgstr "Se todo o conteúdo é redimensionado no zoom"
 
-#: ../../../WebKit/gtk/webkit/webkitwebview.cpp:3374
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3378
 msgid "The default encoding of the web view"
 msgstr "A codificação padrão da visão web"
 
-#: ../../../WebKit/gtk/webkit/webkitwebview.cpp:3387
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3391
 msgid "Custom Encoding"
 msgstr "Codificação personalizada"
 
-#: ../../../WebKit/gtk/webkit/webkitwebview.cpp:3388
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3392
 msgid "The custom encoding of the web view"
 msgstr "A codificação personalizada da visão web"
 
-#: ../../../WebKit/gtk/webkit/webkitwebview.cpp:3440
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3444
 msgid "Icon URI"
 msgstr "URI do ícone"
 
-#: ../../../WebKit/gtk/webkit/webkitwebview.cpp:3441
+#: ../../../../WebKit/gtk/webkit/webkitwebview.cpp:3445
 msgid "The URI for the favicon for the #WebKitWebView."
-msgstr "A URI para o favicon do #WebKitWebView."
+msgstr "O URI para o favicon do #WebKitWebView."
 
-#: ../../../WebKit2/Shared/Downloads/soup/DownloadSoup.cpp:89
+#: ../../../../WebKit2/Shared/Downloads/soup/DownloadSoup.cpp:89
 #, c-format
 msgid ""
 "Cannot determine destination URI for download with suggested filename %s"
 msgstr ""
+"Não foi possível determinar o URI de destino para baixar com o nome de "
+"arquivo sugerido %s"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:139
-#, fuzzy
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:144
 msgid "Destination"
-msgstr "URI de destino"
+msgstr "Destino"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:140
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:145
 msgid "The local URI to where the download will be saved"
-msgstr ""
+msgstr "O URI local onde o download será salvo"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:152
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitWebResource.cpp:122
-#, fuzzy
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:157
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebResource.cpp:122
 msgid "Response"
-msgstr "Resposta de rede"
+msgstr "Resposta"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:153
-#, fuzzy
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:158
 msgid "The response of the download"
-msgstr "Determina o progresso atual do download"
+msgstr "A resposta do download"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:170
-#, fuzzy
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:175
 msgid "Estimated Progress"
-msgstr "Progresso"
+msgstr "Progresso estimado"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitFaviconDatabase.cpp:141
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitFaviconDatabase.cpp:255
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFaviconDatabase.cpp:141
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFaviconDatabase.cpp:319
 #, c-format
 msgid "Unknown favicon for page %s"
-msgstr ""
+msgstr "Favicon desconhecido para a página %s"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitFaviconDatabase.cpp:147
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitFaviconDatabase.cpp:251
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFaviconDatabase.cpp:147
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFaviconDatabase.cpp:275
 #, c-format
 msgid "Page %s does not have a favicon"
-msgstr ""
+msgstr "A página %s não possui um favicon"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitFaviconDatabase.cpp:247
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFaviconDatabase.cpp:269
 msgid "Favicons database not initialized yet"
-msgstr ""
+msgstr "Base de dados de favicons ainda não foi inicializada"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:174
-#, fuzzy
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:175
 msgid "Search text"
-msgstr "_Procurar na web"
+msgstr "Pesquisar texto"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:175
-#, fuzzy
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:176
 msgid "Text to search for in the view"
-msgstr "A codificação personalizada da visão web"
+msgstr "O texto a ser pesquisado na visão"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:187
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:188
 msgid "Search Options"
-msgstr ""
+msgstr "Opções de pesquisa"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:188
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:189
 msgid "Search options to be used in the search operation"
-msgstr ""
+msgstr "Opções de busca a serem usadas na operação de pesquisa"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:201
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:202
 msgid "Maximum matches count"
-msgstr ""
+msgstr "Contagem máxima de coincidências"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:202
-#, fuzzy
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:203
 msgid "The maximum number of matches in a given text to report"
-msgstr "O título do item do histórico"
+msgstr "O número máximo de coincidências a informar em dado texto"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:214
-#, fuzzy
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:215
 msgid "WebView"
 msgstr "Visão web"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:215
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:216
 msgid "The WebView associated with this find controller"
-msgstr ""
+msgstr "A visão web associada com este controlador de pesquisa"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:153
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:153
 msgid "Flags with the context of the WebKitHitTestResult"
-msgstr ""
+msgstr "Sinalizadores com o contexto do 'WebKitHitTestResult'"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:167
-#, fuzzy
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:167
 msgid "The link URI"
-msgstr "URI do ícone"
+msgstr "URI do link"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:179
-#, fuzzy
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:179
 msgid "Link Title"
-msgstr "Título"
+msgstr "Título do link"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:180
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:180
 msgid "The link title"
-msgstr ""
+msgstr "O título do link"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:192
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:192
 msgid "Link Label"
-msgstr ""
+msgstr "Rótulo do link"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:193
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:193
 msgid "The link label"
-msgstr ""
+msgstr "O rótulo do link"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:206
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:206
 msgid "The image URI"
-msgstr ""
+msgstr "O URI da imagem"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:219
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:219
 msgid "The media URI"
-msgstr ""
+msgstr "O URI da mídia"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:105
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:105
 msgid "Navigation type"
-msgstr ""
+msgstr "Tipo da navegação"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:106
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:106
 msgid "The type of navigation triggering this decision"
-msgstr ""
+msgstr "O tipo de navegação que dispara esta decisão"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:123
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:123
 msgid "Mouse button"
-msgstr ""
+msgstr "Botão do mouse"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:124
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:124
 msgid "The mouse button used if this decision was triggered by a mouse event"
 msgstr ""
+"O botão do mouse a ser usado se esta decisão foi disparada por um evento de "
+"mouse"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:140
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:140
 msgid "Mouse event modifiers"
-msgstr ""
+msgstr "Modificadores de evento do mouse"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:141
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:141
 msgid "The modifiers active if this decision was triggered by a mouse event"
 msgstr ""
+"Os modificadores ativos se esta decisão foi disparada por um evento de mouse"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:154
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:154
 msgid "Navigation URI request"
-msgstr ""
+msgstr "Solicitação URI de nevagação"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:155
-#, fuzzy
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:155
 msgid "The URI request that is associated with this navigation"
-msgstr "A URI que foi requisitada como alvo para a navegação"
+msgstr "A solicitação de URI associada a esta navegação"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:170
-#, fuzzy
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:170
 msgid "Frame name"
-msgstr "Nome de arquivo sugerido"
+msgstr "Nome do quadro"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:171
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:171
 msgid "The name of the new frame this navigation action targets"
-msgstr ""
+msgstr "O nome do novo quadro que é alvo desta ação de navegação"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitPrintOperation.cpp:155
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitPrintOperation.cpp:155
 msgid "The web view that will be printed"
-msgstr ""
+msgstr "A visão web que será impressa"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitPrintOperation.cpp:167
-#, fuzzy
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitPrintOperation.cpp:167
 msgid "Print Settings"
-msgstr "Configurações"
+msgstr "Configurações de impressão"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitPrintOperation.cpp:168
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitPrintOperation.cpp:168
 msgid "The initial print settings for the print operation"
-msgstr ""
+msgstr "As configurações iniciais de impressão para a operação de impressão"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitPrintOperation.cpp:179
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitPrintOperation.cpp:179
 msgid "Page Setup"
-msgstr ""
+msgstr "Configuração da página"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitPrintOperation.cpp:180
-#, fuzzy
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitPrintOperation.cpp:180
 msgid "The initial page setup for the print operation"
-msgstr "O tamanho total do arquivo"
+msgstr "A configuração da página inicial para a operação de impressão"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitResponsePolicyDecision.cpp:91
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitResponsePolicyDecision.cpp:91
 msgid "Response URI request"
-msgstr ""
+msgstr "Resposta de URI de solicitação"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitResponsePolicyDecision.cpp:92
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitResponsePolicyDecision.cpp:92
 msgid "The URI request that is associated with this policy decision"
-msgstr ""
+msgstr "A solicitação URI que é associada a esta política de decisão"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitResponsePolicyDecision.cpp:105
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitResponsePolicyDecision.cpp:105
 msgid "URI response"
-msgstr ""
+msgstr "URI de resposta"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitResponsePolicyDecision.cpp:106
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitResponsePolicyDecision.cpp:106
 msgid "The URI response that is associated with this policy decision"
-msgstr ""
+msgstr "A resposta URI que é associada a esta política de decisão"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:442
-#, fuzzy
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:467
 msgid "Enable JavaScript"
-msgstr "Habilitar scripts"
+msgstr "Habilitar JavaScript"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:443
-#, fuzzy
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:468
 msgid "Enable JavaScript."
-msgstr "Habilitar scripts"
+msgstr "Habilita JavaScript."
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:457
-#, fuzzy
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:482
 msgid "Auto load images"
-msgstr "Auto-carregamento de imagens"
+msgstr "Carregar imagens automaticamente"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:471
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:496
 msgid "Load icons ignoring image load setting"
-msgstr ""
+msgstr "Carregar ícones ignorando configurações de carregamento de imagens"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:472
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:497
 msgid "Whether to load site icons ignoring image load setting."
 msgstr ""
+"Se deve ser carregado, ou não, ícones de sites ignorando assim configurações "
+"de carregamento de imagens."
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:490
-#, fuzzy
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:515
 msgid "Whether to enable offline web application cache."
-msgstr "Se habilita cache de aplicativos web offline"
+msgstr ""
+"Se deve ser habilitado, ou não, o cache de aplicativos web desconectados."
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:506
-#, fuzzy
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:531
 msgid "Enable HTML5 local storage"
-msgstr "Habilitar armazenagem local pelo HTML5"
+msgstr "Habilitar armazenamento local HTML5"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:507
-#, fuzzy
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:532
 msgid "Whether to enable HTML5 Local Storage support."
-msgstr "Quando habilitar suporte a armazenagem local pelo HTML5"
+msgstr ""
+"Se deve ser habilitado, ou não, o suporte a armazenamento local de HTML5."
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:524
-#, fuzzy
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:549
 msgid "Enable HTML5 database"
 msgstr "Habilitar banco de dados HTML5"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:525
-#, fuzzy
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:550
 msgid "Whether to enable HTML5 database support."
-msgstr "Quando habilitar suporte a banco de dados HTML5"
+msgstr "Se deve ser habilitado, ou não, o suporte a banco de dados de HTML5."
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:538
-#, fuzzy
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:563
 msgid "Enable XSS auditor"
-msgstr "Habilitar Auditor XSS"
+msgstr "Habilitar auditor XSS"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:539
-#, fuzzy
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:564
 msgid "Whether to enable the XSS auditor."
-msgstr "Quando habilitar o Auditor XSS"
+msgstr "Se deve ser habilitado, ou não, o auditor XSS."
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:554
-#, fuzzy
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:579
 msgid "Enable frame flattening"
-msgstr "Habilitar navegação privativa"
+msgstr "Habilitar mesclagem de quadros"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:555
-#, fuzzy
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:580
 msgid "Whether to enable frame flattening."
-msgstr "Quando habilitar colagem DOM"
+msgstr "Se deve ser habilitado, ou não, a mesclagem de quadros."
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:567
-#, fuzzy
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:592
 msgid "Enable plugins"
 msgstr "Habilitar plugins"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:580
-#, fuzzy
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:605
 msgid "Enable Java"
-msgstr "Habilitar miniaplicativos Java"
+msgstr "Habilitar Java"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:581
-#, fuzzy
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:606
 msgid "Whether Java support should be enabled."
-msgstr "Se o cache de páginas deve ser usado"
+msgstr "Indica se o suporte a Java deve ou não ser habilitado."
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:595
-#, fuzzy
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:620
 msgid "Whether JavaScript can open windows automatically."
-msgstr "Se JavaScript pode abrir janelas automaticamente"
+msgstr "Se o JavaScript pode ou não abrir janelas automaticamente."
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:610
-#, fuzzy
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:635
 msgid "Enable hyperlink auditing"
-msgstr "Habilitar análise de desempenho da Linha do tempo"
+msgstr "Habilitar auditoria de Hyperlink"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:611
-#, fuzzy
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:636
 msgid "Whether <a ping> should be able to send pings."
-msgstr "Se o cache de páginas deve ser usado"
+msgstr "Se <a ping> deve ser capaz, ou não, de enviar pings."
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:623
-#, fuzzy
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:648
 msgid "Default font family"
 msgstr "Família de fontes padrão"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:624
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:649
 msgid ""
 "The font family to use as the default for content that does not specify a "
 "font."
 msgstr ""
+"A família de fonte padrão a ser usada em conteúdos que não especificam uma "
+"fonte."
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:637
-#, fuzzy
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:662
 msgid "Monospace font family"
 msgstr "Família de fontes mono-espaçadas"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:638
-#, fuzzy
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:663
 msgid "The font family used as the default for content using monospace font."
-msgstr "A família de fontes mono-espaçadas padrão para exibir texto."
+msgstr "A família de fontes padrão para conteúdos usando fonte mono-espaçada."
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:650
-#, fuzzy
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:675
 msgid "Serif font family"
 msgstr "Família de fontes com serifa"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:651
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:676
 msgid "The font family used as the default for content using serif font."
-msgstr ""
+msgstr "A família de fonte padrão a ser usada em conteúdos usando fonte serif."
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:663
-#, fuzzy
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:688
 msgid "Sans-serif font family"
 msgstr "Família de fontes sem serifa"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:664
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:689
 msgid "The font family used as the default for content using sans-serif font."
 msgstr ""
+"A família de fonte padrão a ser usada em conteúdos usando fonte sans-serif."
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:676
-#, fuzzy
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:701
 msgid "Cursive font family"
-msgstr "Família de fontes cursivas"
+msgstr "Família de fontes cursiva"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:677
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:702
 msgid "The font family used as the default for content using cursive font."
 msgstr ""
+"A família de fonte padrão a ser usada em conteúdos usando fonte cursiva "
+"(cursive)."
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:689
-#, fuzzy
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:714
 msgid "Fantasy font family"
 msgstr "Família de fontes fantasia"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:690
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:715
 msgid "The font family used as the default for content using fantasy font."
 msgstr ""
+"A família de fonte padrão a ser usada em conteúdos usando fonte fantasia "
+"(fantasy)."
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:702
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:727
 msgid "Pictograph font family"
-msgstr ""
+msgstr "Família de fonte pictográfica"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:703
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:728
 msgid "The font family used as the default for content using pictograph font."
 msgstr ""
+"A família de fonte padrão a ser usada em conteúdos usando fonte pictográfica "
+"(pictograph)."
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:716
-#, fuzzy
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:741
 msgid "Default font size"
-msgstr "Tamanho de fonte padrão"
+msgstr "Tamanho padrão de fonte"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:730
-#, fuzzy
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:755
 msgid "Default monospace font size"
-msgstr "Tamanho de fonte mono-espaçada padrão"
+msgstr "Tamanho padrão de fonte mono-espaçada"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:745
-#, fuzzy
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:770
 msgid "Minimum font size"
 msgstr "Tamanho mínimo de fonte"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:758
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:783
 msgid "Default charset"
-msgstr ""
+msgstr "Conjunto de caracteres padrão"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:759
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:784
 msgid ""
 "The default text charset used when interpreting content with unspecified "
 "charset."
 msgstr ""
+"O conjunto de caracteres padrão a ser usado ao interpretar conteúdos sem "
+"conjuntos de caracteres especificados."
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:772
-#, fuzzy
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:797
 msgid "Enable private browsing"
 msgstr "Habilitar navegação privativa"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:773
-#, fuzzy
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:798
 msgid "Whether to enable private browsing"
-msgstr "Quando habilitar colagem DOM"
+msgstr "Se deve ou não habilitar navegação privativa"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:785
-#, fuzzy
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:810
 msgid "Enable developer extras"
 msgstr "Habilitar extras de desenvolvimento"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:786
-#, fuzzy
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:811
 msgid "Whether to enable developer extras"
-msgstr "Habilitar extras de desenvolvimento"
+msgstr "Se deve ou não habilitar extras de desenvolvimento"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:798
-#, fuzzy
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:823
 msgid "Enable resizable text areas"
-msgstr "Áreas de texto redimensionáveis"
+msgstr "Habilitar redimensionamento de áreas de texto"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:799
-#, fuzzy
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:824
 msgid "Whether to enable resizable text areas"
-msgstr "Quando habilitar colagem DOM"
+msgstr "Se deve ou não habilitar área de texto redimensionáveis"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:814
-#, fuzzy
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:839
 msgid "Enable tabs to links"
-msgstr "Habilitar plugins"
+msgstr "Habilitar abas nos links"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:815
-#, fuzzy
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:840
 msgid "Whether to enable tabs to links"
-msgstr "Quando habilitar o Auditor XSS"
+msgstr "Se deve ser habilitado, ou não, abas nos links"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:828
-#, fuzzy
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:853
 msgid "Enable DNS prefetching"
-msgstr "Habilitar verificação ortográfica"
+msgstr "Habilitar busca antecipada de DNS"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:829
-#, fuzzy
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:854
 msgid "Whether to enable DNS prefetching"
-msgstr "Quando habilitar colagem DOM"
+msgstr "Se deve ser habilitado, ou não, a busca antecipada de DNS"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:858
-#, fuzzy
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:883
 msgid "Whether to enable the Javascriipt Fullscreen API"
-msgstr "Quando habilitar o Auditor XSS"
+msgstr "Se deve ser habilitado, ou não, a API Javascript em tela cheia"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:871
-#, fuzzy
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:896
 msgid "Whether background images should be drawn during printing"
-msgstr "Se as imagens de fundo devem ser impressas."
+msgstr ""
+"Se as imagens de fundo devem ser, ou não, desenhadas durante a impressão."
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:922
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:947
 msgid "Allow modal dialogs"
-msgstr ""
+msgstr "Permitir diálogos restritos"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:923
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:948
 msgid "Whether it is possible to create modal dialogs"
-msgstr ""
+msgstr "Se é possível ou não a criação de janelas de diálogo restritas"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:938
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:963
 msgid "Zoom Text Only"
-msgstr ""
+msgstr "Ampliar apenas o texto"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:939
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:964
 msgid "Whether zoom level of web view changes only the text size"
 msgstr ""
+"Se o nível de ampliação da visão web afeta, ou não, somente o tamanho do "
+"texto"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:953
-#, fuzzy
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:978
 msgid "JavaScript can access clipboard"
-msgstr "Se JavaScript pode abrir janelas automaticamente"
+msgstr "O JavaScript pode acessar a área de transferência"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1000
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1025
 msgid "Draw compositing indicators"
-msgstr ""
+msgstr "Desenhar indicadores de composição"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1001
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1026
 msgid "Whether to draw compositing borders and repaint counters"
 msgstr ""
+"Se deve, ou não, desenhar bordas de composição e pintar novamente os "
+"contadores"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1059
-#, fuzzy
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1084
 msgid "User agent string"
-msgstr "Agente de usuário"
+msgstr "String do agente de usuário"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1060
-#, fuzzy
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1085
 msgid "The user agent string"
-msgstr "A string User-Agent usada pelo WebKitGtk"
+msgstr "A string do agente do usuário"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:100
-#, fuzzy
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1115
+msgid "Enable accelerated 2D canvas"
+msgstr "Habilitar canvas (tela) 2D acelerada"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1116
+msgid "Whether to enable accelerated 2D canvas"
+msgstr ""
+"Se deve ser habilitado, ou não, a tela 2D acelerada. Em inglês: 2D canvas"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1131
+msgid "Write console messages on stdout"
+msgstr "Escrever mensagens de console na saída padrão"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1132
+msgid "Whether to write console messages on stdout"
+msgstr ""
+"Se deve-se ou não escrever mensagens de console na saída padrão (stdout)"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:100
 msgid "The URI for which the response was made."
-msgstr "A URI do item do histórico"
+msgstr "O URI pelo qual a resposta foi feita."
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:111
-#, fuzzy
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:111
 msgid "Status Code"
-msgstr "Status"
+msgstr "Código do estado"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:112
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:112
 msgid "The status code of the response as returned by the server."
-msgstr ""
+msgstr "O código do estado da resposta conforme retornado pelo servidor."
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:124
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:124
 msgid "Content Length"
-msgstr ""
+msgstr "Comprimento do conteúdo"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:125
-#, fuzzy
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:125
 msgid "The expected content length of the response."
-msgstr "O quadro alvo para a navegação"
+msgstr "O comprimento de conteúdo esperado pela resposta."
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:138
-#, fuzzy
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:138
 msgid "The MIME type of the response"
-msgstr "O título do item do histórico"
+msgstr "O tipo MIME da resposta"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:151
-#, fuzzy
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:151
 msgid "The suggested filename for the URI response"
-msgstr "O quadro alvo para a navegação"
+msgstr "O nome de arquivo sugerido para o URI de resposta"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:134
+# Altura do anexo me parece irrisório portanto, neste contexto, traduzo Height como Cota para traduzir a idéia de 'maior tamanho físico de um arquivo' --Enrico
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:134
 msgid "Attached Height"
-msgstr ""
+msgstr "Cota do anexo"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:135
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:135
 msgid "The height that the inspector view should have when it is attached"
-msgstr ""
+msgstr "A cota que a visão de inspeção deve possuir quando é anexada"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitWebResource.cpp:110
-#, fuzzy
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebResource.cpp:110
 msgid "The current active URI of the resource"
-msgstr "A URI do item do histórico"
+msgstr "A URI atualmente ativa do recurso"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitWebResource.cpp:123
-#, fuzzy
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebResource.cpp:123
 msgid "The response of the resource"
-msgstr "O nome do quadro"
+msgstr "A resposta do recurso"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:577
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:629
 msgid "Web Context"
-msgstr ""
+msgstr "Contexto Web"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:578
-#, fuzzy
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:630
 msgid "The web context for the view"
-msgstr "O título do item do histórico"
+msgstr "O contexto web para a visão"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:592
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:643
+msgid "WebView Group"
+msgstr "Grupo da visão web"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:644
+msgid "The WebKitWebViewGroup of the view"
+msgstr "O 'WebKitWebViewGroup' da visão"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:658
 msgid "Main frame document title"
-msgstr ""
+msgstr "Título do documento do quadro principal"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:610
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:676
 msgid "Estimated Load Progress"
-msgstr ""
+msgstr "Estimativa de progresso de carregamento"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:611
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:677
 msgid "An estimate of the percent completion for a document load"
 msgstr ""
+"Uma estimativa do percentual de conclusão para o carregamento de um documento"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:623
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:689
 msgid "Favicon"
-msgstr ""
+msgstr "Favicon"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:624
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:690
 msgid "The favicon associated to the view, if any"
-msgstr ""
+msgstr "O favicon associado à visão, caso exista"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:636
-#, fuzzy
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:702
 msgid "The current active URI of the view"
-msgstr "O título do documento do quadro"
+msgstr "A visão atualmente ativa do URI"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:650
-#, fuzzy
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:716
 msgid "The zoom level of the view content"
-msgstr "O nível de zoom do conteúdo"
+msgstr "O nível de ampliação da visão do conteúdo"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:668
-#, fuzzy
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:734
 msgid "Whether the view is loading a page"
-msgstr "Se o cache de páginas deve ser usado"
+msgstr "Se a visão está ou não carregarando uma página"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:682
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:748
 msgid "The view mode to display the web view contents"
-msgstr ""
+msgstr "O modo de visão para exibir os conteúdos da visão web"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:2416
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:2514
 msgid "An exception was raised in JavaScript"
-msgstr ""
+msgstr "Uma exceção foi levantada no JavaScript"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:209
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:2992
+msgid "There was an error creating the snapshot"
+msgstr "Ocorreu um erro ao criar a captura instantânea"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:209
 msgid "Geometry"
-msgstr ""
+msgstr "Geometria"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:210
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:210
 msgid "The size and position of the window on the screen."
-msgstr ""
+msgstr "O tamanho e a posição da janela sobre a tela."
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:222
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:222
 msgid "Toolbar Visible"
-msgstr ""
+msgstr "Barra de ferramentas visível"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:223
-#, fuzzy
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:223
 msgid "Whether the toolbar should be visible for the window."
-msgstr "Se o cache de páginas deve ser usado"
+msgstr "Se a barra de tarefas deve ou não ser visível na janela."
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:235
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:235
 msgid "Statusbar Visible"
-msgstr ""
+msgstr "Barra de estado visível"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:236
-#, fuzzy
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:236
 msgid "Whether the statusbar should be visible for the window."
-msgstr "Se o cache de páginas deve ser usado"
+msgstr "Se a barra de estado deve ou não ser visível na janela."
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:248
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:248
 msgid "Scrollbars Visible"
-msgstr ""
+msgstr "Barras de rolagem visíveis"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:249
-#, fuzzy
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:249
 msgid "Whether the scrollbars should be visible for the window."
-msgstr "Se o cache de páginas deve ser usado"
+msgstr "Se as barras de rolagem devem ou não ser visíveis na janela."
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:261
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:261
 msgid "Menubar Visible"
-msgstr ""
+msgstr "Barra de menu visível"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:262
-#, fuzzy
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:262
 msgid "Whether the menubar should be visible for the window."
-msgstr "Se o cache de páginas deve ser usado"
+msgstr "Se a barra de menu deve ou não ser visível na janela."
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:274
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:274
 msgid "Locationbar Visible"
-msgstr ""
+msgstr "Barra de locais visível"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:275
-#, fuzzy
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:275
 msgid "Whether the locationbar should be visible for the window."
-msgstr "Se o cache de páginas deve ser usado"
+msgstr "Se a barra de locais deve ou não ser visível na janela."
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:286
-#, fuzzy
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:286
 msgid "Resizable"
-msgstr "Áreas de texto redimensionáveis"
+msgstr "Redimensionável"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:287
-#, fuzzy
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:287
 msgid "Whether the window can be resized."
-msgstr "Se as áreas de texto devem ser redimensionáveis."
+msgstr "Se a janela pode ou não ser redimensionada."
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:299
-#, fuzzy
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:299
 msgid "Fullscreen"
 msgstr "Tela cheia"
 
-#: ../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:300
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:300
 msgid "Whether window will be displayed fullscreen."
-msgstr ""
+msgstr "Se a janela será ou não exibida em tela cheia."
+
+#~ msgid "audio element controller"
+#~ msgstr "Elemento controlador de áudio"
+
+#~ msgid "video element controller"
+#~ msgstr "Elemento controlador de vídeo"
 
 #~ msgid "Upload File"
 #~ msgstr "Enviar Arquivo"
