@@ -1,3 +1,14 @@
+2013-08-26  Dan Bernstein  <mitz@apple.com>
+
+        Automatic bug reports case pain
+        https://bugs.webkit.org/show_bug.cgi?id=120330
+
+        Reviewed by Anders Carlsson.
+
+        * Scripts/webkitpy/tool/commands/download.py: Made the following changes to the Description
+        of bugs filed by the bot: changed “the sheriff-bot” to “webkitbot”, changed “case pain” to
+        “fail”, and removed “"Only you can prevent forest fires." -- Smokey the Bear”.
+
 2013-08-23  Andy Estes  <aestes@apple.com>
 
         Fix issues found by the Clang Static Analyzer
