@@ -1,3 +1,20 @@
+2013-08-26  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (r154581): Some plugin tests failing in debug bots
+        https://bugs.webkit.org/show_bug.cgi?id=120315
+
+        Reviewed by Darin Adler.
+        
+        We are hitting the new no-event-dispatch-while-iterating assertion.
+
+        Detaching deletes a plugin which modifies DOM while it dies.
+
+        * dom/Document.cpp:
+        (WebCore::Document::createRenderTree):
+        (WebCore::Document::detach):
+        
+            Don't iterate at all. Document never has more than one Element child anyway.
+
 2013-08-26  David Kilzer  <ddkilzer@apple.com>
 
         BUILD FIX (r154580): RenderObject::document() returns a reference
