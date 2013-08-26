@@ -1209,11 +1209,6 @@ webkit.org/b/91611 media/media-higher-prio-audio-stream.html [ Skip ]
 # Snapshotted plugins not enabled on WK1
 plugins/snapshotting [ Skip ]
 
-# Fails in WebKit1, but passes in WebKit2 (re-enabled in mac-wk2 TestExpectations).
-webkit.org/b/113094 editing/pasteboard/can-read-in-copy-and-cut-events.html [ Failure ] 
-
-webkit.org/b/113094 editing/pasteboard/can-read-in-dragstart-event.html [ Failure ]
-
 webkit.org/b/113227 transitions/cross-fade-background-image.html [ Pass Failure ]
 webkit.org/b/113227 transitions/cross-fade-border-image.html [ Pass Failure ]
 webkit.org/b/113227 transitions/default-timing-function.html [ Pass Failure ]

@@ -424,9 +424,6 @@ compositing/geometry/fixed-position-flipped-writing-mode.html [ Pass ]
 # Plug-in blocking callback doesn't exist in WebKit1, so reenabling.
 plugins/unavailable-plugin-indicator-obscurity.html [ Pass ]
 
-# Fails in WebKit1 only, so re-enabling.
-editing/pasteboard/can-read-in-copy-and-cut-events.html [ Pass ] 
-
 # Color input is enabled on Mac WK2 but not on WK1.
 fast/forms/color/input-color-onchange-event.html [ Pass ]
 
