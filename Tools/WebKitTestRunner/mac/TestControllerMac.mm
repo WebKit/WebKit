@@ -27,8 +27,6 @@
 #import "TestController.h"
 
 #import "PlatformWebView.h"
-#import "PoseAsClass.h"
-#import "WebKitTestRunnerPasteboard.h"
 #import <WebKit2/WKStringCF.h>
 #import <mach-o/dyld.h> 
 
@@ -40,12 +38,10 @@ void TestController::notifyDone()
 
 void TestController::platformInitialize()
 {
-    poseAsClass("WebKitTestRunnerPasteboard", "NSPasteboard");
 }
 
 void TestController::platformDestroy()
 {
-    [WebKitTestRunnerPasteboard releaseLocalPasteboards];
 }
 
 void TestController::initializeInjectedBundlePath()
