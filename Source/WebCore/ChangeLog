@@ -1,3 +1,14 @@
+2013-08-26  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Unreviewed build fix.
+
+        * rendering/RenderMediaControls.cpp: Remove references to QuickTime controls
+        that are no longer part of WKSI.
+        (wkHitTestMediaUIPart): 
+        (wkMeasureMediaUIPart):
+        (wkDrawMediaUIPart):
+        (wkDrawMediaSliderTrack):
+
 2013-08-26  Gurpreet Kaur  <gur.trio@gmail.com>
 
         <https://webkit.org/b/106133> document.body.scrollTop & document.documentElement.scrollTop differ cross-browser

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2009, 2013 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,38 +45,22 @@
 // FIXME: Is this necessary anymore?
 inline bool wkHitTestMediaUIPart(int part, const CGRect& bounds, const CGPoint& point)
 {
-#if HAVE(AVCF_LEGIBLE_OUTPUT)
     WKHitTestMediaUIPart(part, bounds, point);
-#else
-    WKHitTestMediaUIPart(part, WKMediaControllerThemeQuickTime, bounds, point);
-#endif
 }
 
 inline void wkMeasureMediaUIPart(int part, CGRect* bounds, CGSize* naturalSize)
 {
-#if HAVE(AVCF_LEGIBLE_OUTPUT)
     WKMeasureMediaUIPart(part, bounds, naturalSize);
-#else
-    WKMeasureMediaUIPart(part, WKMediaControllerThemeQuickTime, bounds, naturalSize);
-#endif
 }
 
 inline void wkDrawMediaUIPart(int part, CGContextRef context, const CGRect& rect, unsigned state)
 {
-#if HAVE(AVCF_LEGIBLE_OUTPUT)
     WKDrawMediaUIPart(part, context, rect, state);
-#else
-    WKDrawMediaUIPart(part, WKMediaControllerThemeQuickTime, context, rect, state);
-#endif
 }
 
 inline void wkDrawMediaSliderTrack(CGContextRef context, const CGRect& rect, float timeLoaded, float currentTime, float duration, unsigned state)
 {
-#if HAVE(AVCF_LEGIBLE_OUTPUT)
     WKDrawMediaSliderTrack(context, rect, timeLoaded, currentTime, duration, state);
-#else
-    WKDrawMediaSliderTrack(WKMediaControllerThemeQuickTime, context, rect, timeLoaded, currentTime, duration, state);
-#endif
 }
 
 #endif
