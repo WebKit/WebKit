@@ -97,7 +97,7 @@ static inline bool isAcceleratedCanvas(RenderObject* renderer)
 // Get the scrolling coordinator in a way that works inside RenderLayerBacking's destructor.
 static ScrollingCoordinator* scrollingCoordinatorFromLayer(RenderLayer* layer)
 {
-    Page* page = layer->renderer()->frame().page();
+    Page* page = layer->renderer().frame().page();
     if (!page)
         return 0;
 
@@ -207,7 +207,7 @@ TiledBacking* RenderLayerBacking::tiledBacking() const
 static TiledBacking::TileCoverage computeTileCoverage(RenderLayerBacking* backing)
 {
     // FIXME: When we use TiledBacking for overflow, this should look at RenderView scrollability.
-    FrameView& frameView = backing->owningLayer()->renderer()->view().frameView();
+    FrameView& frameView = backing->owningLayer()->renderer().view().frameView();
 
     TiledBacking::TileCoverage tileCoverage = TiledBacking::CoverageForVisibleArea;
     bool useMinimalTilesDuringLiveResize = frameView.inLiveResize();
@@ -424,7 +424,7 @@ void RenderLayerBacking::updateCompositedBounds()
     // If this or an ancestor is transformed, we can't currently compute the correct rect to intersect with.
     // We'd need RenderObject::convertContainerToLocalQuad(), which doesn't yet exist.
     if (shouldClipCompositedBounds()) {
-        RenderView& view = m_owningLayer->renderer()->view();
+        RenderView& view = m_owningLayer->renderer().view();
         RenderLayer* rootLayer = view.layer();
 
         LayoutRect clippingBounds;
@@ -652,7 +652,7 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
     if (compAncestor && compAncestor->backing()->hasClippingLayer()) {
         // If the compositing ancestor has a layer to clip children, we parent in that, and therefore
         // position relative to it.
-        IntRect clippingBox = clipBox(toRenderBox(compAncestor->renderer()));
+        IntRect clippingBox = clipBox(toRenderBox(&compAncestor->renderer()));
         graphicsLayerParentLocation = clippingBox.location();
     } else if (compAncestor)
         graphicsLayerParentLocation = ancestorCompositingBounds.location();
@@ -660,7 +660,7 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
         graphicsLayerParentLocation = renderer()->view().documentRect().location();
 
     if (compAncestor && compAncestor->needsCompositedScrolling()) {
-        RenderBox* renderBox = toRenderBox(compAncestor->renderer());
+        RenderBox* renderBox = toRenderBox(&compAncestor->renderer());
         IntSize scrollOffset = compAncestor->scrolledContentOffset();
         IntPoint scrollOrigin(renderBox->borderLeft(), renderBox->borderTop());
         graphicsLayerParentLocation = scrollOrigin - scrollOffset;
@@ -1337,7 +1337,7 @@ float RenderLayerBacking::compositingOpacity(float rendererOpacity) const
         if (curr->isComposited())
             break;
         
-        finalOpacity *= curr->renderer()->opacity();
+        finalOpacity *= curr->renderer().opacity();
     }
 
     return finalOpacity;
@@ -1442,7 +1442,7 @@ void RenderLayerBacking::updateDirectlyCompositedBackgroundImage(bool isSimpleCo
     IntSize tileSize;
 
     RefPtr<Image> image = style->backgroundLayers()->image()->cachedImage()->image();
-    toRenderBox(renderer())->getGeometryForBackgroundImage(m_owningLayer->renderer(), destRect, phase, tileSize);
+    toRenderBox(renderer())->getGeometryForBackgroundImage(&m_owningLayer->renderer(), destRect, phase, tileSize);
     m_graphicsLayer->setContentsTileSize(tileSize);
     m_graphicsLayer->setContentsTilePhase(phase);
     m_graphicsLayer->setContentsRect(destRect);

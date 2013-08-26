@@ -1285,7 +1285,7 @@ RenderLayerModelObject* RenderObject::containerForRepaint() const
         if (RenderLayer* parentLayer = enclosingLayer()) {
             RenderLayer* compLayer = parentLayer->enclosingCompositingLayerForRepaint();
             if (compLayer)
-                repaintContainer = compLayer->renderer();
+                repaintContainer = &compLayer->renderer();
         }
     }
 #endif
@@ -1295,7 +1295,7 @@ RenderLayerModelObject* RenderObject::containerForRepaint() const
         if (RenderLayer* parentLayer = enclosingLayer()) {
             RenderLayer* enclosingFilterLayer = parentLayer->enclosingFilterLayer();
             if (enclosingFilterLayer)
-                return enclosingFilterLayer->renderer();
+                return &enclosingFilterLayer->renderer();
         }
     }
 #endif
@@ -1917,7 +1917,7 @@ void RenderObject::styleWillChange(StyleDifference diff, const RenderStyle* newS
                 if (RenderLayer* l = enclosingLayer()) {
                     if (newStyle->visibility() == VISIBLE)
                         l->setHasVisibleContent();
-                    else if (l->hasVisibleContent() && (this == l->renderer() || l->renderer()->style()->visibility() != VISIBLE)) {
+                    else if (l->hasVisibleContent() && (this == &l->renderer() || l->renderer().style()->visibility() != VISIBLE)) {
                         l->dirtyVisibleContentStatus();
                         if (diff > StyleDifferenceRepaintLayer)
                             repaint();

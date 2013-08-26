@@ -388,9 +388,7 @@ bool RenderEmbeddedObject::isReplacementObscured() const
     // Check the opacity of each layer containing the element or its ancestors.
     float opacity = 1.0;
     for (RenderLayer* layer = enclosingLayer(); layer; layer = layer->parent()) {
-        RenderLayerModelObject* renderer = layer->renderer();
-        RenderStyle* style = renderer->style();
-        opacity *= style->opacity();
+        opacity *= layer->renderer().style()->opacity();
         if (opacity < 0.1)
             return true;
     }

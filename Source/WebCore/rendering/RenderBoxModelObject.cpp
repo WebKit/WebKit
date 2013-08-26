@@ -530,7 +530,7 @@ void RenderBoxModelObject::computeStickyPositionConstraints(StickyPositionViewpo
 
     RenderBlock* containingBlock = this->containingBlock();
     RenderLayer* enclosingClippingLayer = layer()->enclosingOverflowClipLayer(ExcludeSelf);
-    RenderBox* enclosingClippingBox = enclosingClippingLayer ? toRenderBox(enclosingClippingLayer->renderer()) : &view();
+    RenderBox* enclosingClippingBox = enclosingClippingLayer ? toRenderBox(&enclosingClippingLayer->renderer()) : &view();
 
     LayoutRect containerContentRect;
     if (!enclosingClippingLayer || (containingBlock != enclosingClippingBox))
@@ -613,7 +613,7 @@ LayoutSize RenderBoxModelObject::stickyPositionOffset() const
     ASSERT(hasLayer());
     RenderLayer* enclosingClippingLayer = layer()->enclosingOverflowClipLayer(ExcludeSelf);
     if (enclosingClippingLayer) {
-        RenderBox* enclosingClippingBox = toRenderBox(enclosingClippingLayer->renderer());
+        RenderBox* enclosingClippingBox = toRenderBox(&enclosingClippingLayer->renderer());
         LayoutRect clipRect = enclosingClippingBox->overflowClipRect(LayoutPoint(), 0); // FIXME: make this work in regions.
         constrainingRect = enclosingClippingBox->localToContainerQuad(FloatRect(clipRect), &view()).boundingBox();
 

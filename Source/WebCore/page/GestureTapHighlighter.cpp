@@ -210,7 +210,7 @@ Path absolutePathForRenderer(RenderObject* const o)
 
         // Check ancestor layers for overflow clip and intersect them.
         for (; layer; layer = layer->parent()) {
-            RenderLayerModelObject* layerRenderer = layer->renderer();
+            RenderLayerModelObject* layerRenderer = &layer->renderer();
 
             if (layerRenderer->hasOverflowClip() && layerRenderer != currentRenderer) {
                 bool containerSkipped = false;

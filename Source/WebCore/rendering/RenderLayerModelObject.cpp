@@ -63,7 +63,7 @@ void RenderLayerModelObject::ensureLayer()
     if (m_layer)
         return;
 
-    m_layer = new (renderArena()) RenderLayer(this);
+    m_layer = new (renderArena()) RenderLayer(*this);
     setHasLayer(true);
     m_layer->insertOnlyThisLayer();
 }

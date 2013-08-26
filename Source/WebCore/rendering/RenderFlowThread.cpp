@@ -252,7 +252,7 @@ void RenderFlowThread::layout()
 RenderRegion* RenderFlowThread::regionForCompositedLayer(RenderLayer* childLayer)
 {
     LayoutPoint leftTopLocation = childLayer->renderBox() ? childLayer->renderBox()->flipForWritingMode(LayoutPoint()) : LayoutPoint();
-    LayoutPoint flowThreadOffset = flooredLayoutPoint(childLayer->renderer()->localToContainerPoint(leftTopLocation, this, ApplyContainerFlip));
+    LayoutPoint flowThreadOffset = flooredLayoutPoint(childLayer->renderer().localToContainerPoint(leftTopLocation, this, ApplyContainerFlip));
     return regionAtBlockOffset(0, flipForWritingMode(isHorizontalWritingMode() ? flowThreadOffset.y() : flowThreadOffset.x()), true, DisallowRegionAutoGeneration);
 }
 

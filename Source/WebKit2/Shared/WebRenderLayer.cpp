@@ -76,7 +76,7 @@ PassRefPtr<MutableArray> WebRenderLayer::createArrayFromLayerList(Vector<RenderL
 
 WebRenderLayer::WebRenderLayer(RenderLayer* layer)
 {
-    m_renderer = WebRenderObject::create(layer->renderer());
+    m_renderer = WebRenderObject::create(&layer->renderer());
     m_isReflection = layer->isReflection();
 
 #if USE(ACCELERATED_COMPOSITING)

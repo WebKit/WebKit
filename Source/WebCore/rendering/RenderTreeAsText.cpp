@@ -632,7 +632,7 @@ static void write(TextStream& ts, RenderLayer& l,
             ts << " outlineClip " << adjustedOutlineClipRect;
     }
 
-    if (l.renderer()->hasOverflowClip()) {
+    if (l.renderer().hasOverflowClip()) {
         if (l.scrollXOffset())
             ts << " scrollX " << l.scrollXOffset();
         if (l.scrollYOffset())
@@ -660,7 +660,7 @@ static void write(TextStream& ts, RenderLayer& l,
     ts << "\n";
 
     if (paintPhase != LayerPaintPhaseBackground)
-        write(ts, *l.renderer(), indent + 1, behavior);
+        write(ts, l.renderer(), indent + 1, behavior);
 }
 
 static void writeRenderRegionList(const RenderRegionList& flowThreadRegionList, TextStream& ts, int indent)
@@ -799,8 +799,8 @@ static void writeLayers(TextStream& ts, const RenderLayer* rootLayer, RenderLaye
     
     // Altough the RenderFlowThread requires a layer, it is not collected by its parent,
     // so we have to treat it as a special case.
-    if (l->renderer()->isRenderView()) {
-        RenderView* renderView = toRenderView(l->renderer());
+    if (l->renderer().isRenderView()) {
+        RenderView* renderView = toRenderView(&l->renderer());
         writeRenderNamedFlowThreads(ts, renderView, rootLayer, paintDirtyRect, indent, behavior);
     }
 }

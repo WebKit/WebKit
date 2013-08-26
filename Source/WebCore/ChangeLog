@@ -1,3 +1,13 @@
+2013-08-25  Andreas Kling  <akling@apple.com>
+
+        RenderLayer::renderer() should return a reference.
+        <https://webkit.org/b/120276>
+
+        Reviewed by Anders Carlsson.
+
+        RenderLayer is always created with a renderer, so make renderer() (and m_renderer) references.
+        Nuked an assortment of useless null checks.
+
 2013-08-25  Antti Koivisto  <antti@apple.com>
 
         Element child and descendant iterators
