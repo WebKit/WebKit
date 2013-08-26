@@ -1,3 +1,22 @@
+2013-08-26  Robert Hogan  <robert@webkit.org>
+
+        Avoid painting every non-edge collapsed border twice over
+        https://bugs.webkit.org/show_bug.cgi?id=119759
+
+        Reviewed by David Hyatt.
+
+        * fast/table/border-collapsing/collapsed-borders-adjoining-sections-expected.html: Added.
+        * fast/table/border-collapsing/collapsed-borders-adjoining-sections-vertical-rl-expected.png: Added.
+        * fast/table/border-collapsing/collapsed-borders-adjoining-sections-vertical-rl-expected.txt: Added.
+            The painting here, though still wrong, is a progression on the behaviour prior to bug 11759 where
+            the left border was painted twice. The painting can be resolved completely when we no longer paint
+            twice at the border joins.
+        * fast/table/border-collapsing/collapsed-borders-adjoining-sections-vertical-rl.html: Added.
+        * fast/table/border-collapsing/collapsed-borders-adjoining-sections.html: Added.
+        * fast/table/border-collapsing/collapsed-borders-painted-once-on-inner-cells-expected.png: Added.
+        * fast/table/border-collapsing/collapsed-borders-painted-once-on-inner-cells-expected.txt: Added.
+        * fast/table/border-collapsing/collapsed-borders-painted-once-on-inner-cells.html: Added.
+
 2013-08-26  Gurpreet Kaur  <gur.trio@gmail.com>
 
         <https://webkit.org/b/106133> document.body.scrollTop & document.documentElement.scrollTop differ cross-browser

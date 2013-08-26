@@ -1,3 +1,24 @@
+2013-08-26  Robert Hogan  <robert@webkit.org>
+
+        Avoid painting every non-edge collapsed border twice over
+        https://bugs.webkit.org/show_bug.cgi?id=119759
+
+        Reviewed by David Hyatt.
+
+        Every collapsed border that isn't on the edge of a table gets painted at least twice, once by each 
+        adjacent cell. The joins are painted four times. This is unnecessary and results in tables with semi-transparent
+        borders getting rendered incorrectly - each border adjoing two cells is painted twice and ends up darker than it should be. 
+
+        Fixing the overpainting at joins is another day's work. This patch ensures each collapsed border inside a table is only
+        painted once. It does this by only allowing cells at the top and left edge of the table to paint their top and left collapsed borders.
+        All the others can only paint their right and bottom collapsed border. This works because the borders are painted from bottom right to top left.
+
+        Tests: fast/table/border-collapsing/collapsed-borders-adjoining-sections-vertical-rl.html
+               fast/table/border-collapsing/collapsed-borders-adjoining-sections.html
+
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::paintCollapsedBorders):
+
 2013-08-26  Andreas Kling  <akling@apple.com>
 
         Unreviewed build fix.

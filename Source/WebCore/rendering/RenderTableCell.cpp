@@ -1194,12 +1194,14 @@ void RenderTableCell::paintCollapsedBorders(PaintInfo& paintInfo, const LayoutPo
     int bottomYOffsetLeft = bottomWidth;
     int bottomYOffsetRight = bottomWidth;
 
-    bool shouldDrawTopBorder = true;
-    bool shouldDrawLeftBorder = true;
+    // We use the direction/writing-mode given by the section here because we want to know if we're
+    // at the section's edge.
+    bool shouldDrawTopBorder = !cellAtTop(section()->style());
+    bool shouldDrawLeftBorder = !cellAtLeft(section()->style());
     bool shouldDrawRightBorder = true;
 
     if (RenderTableCell* top = cellAtTop(styleForCellFlow)) {
-        shouldDrawTopBorder = top->alignLeftRightBorderPaintRect(leftXOffsetTop, rightXOffsetTop);
+        shouldDrawTopBorder = shouldDrawTopBorder && top->alignLeftRightBorderPaintRect(leftXOffsetTop, rightXOffsetTop);
         if (this->colSpan() > 1)
             shouldDrawTopBorder = false;
     }
@@ -1208,7 +1210,7 @@ void RenderTableCell::paintCollapsedBorders(PaintInfo& paintInfo, const LayoutPo
         bottom->alignLeftRightBorderPaintRect(leftXOffsetBottom, rightXOffsetBottom);
 
     if (RenderTableCell* left = cellAtLeft(styleForCellFlow))
-        shouldDrawLeftBorder = left->alignTopBottomBorderPaintRect(topYOffsetLeft, bottomYOffsetLeft);
+        shouldDrawLeftBorder = shouldDrawLeftBorder && left->alignTopBottomBorderPaintRect(topYOffsetLeft, bottomYOffsetLeft);
 
     if (RenderTableCell* right = cellAtRight(styleForCellFlow))
         shouldDrawRightBorder = right->alignTopBottomBorderPaintRect(topYOffsetRight, bottomYOffsetRight);
