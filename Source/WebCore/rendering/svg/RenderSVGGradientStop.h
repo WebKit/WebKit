@@ -47,6 +47,7 @@ public:
     virtual FloatRect objectBoundingBox() const { return FloatRect(); }
     virtual FloatRect strokeBoundingBox() const { return FloatRect(); }
     virtual FloatRect repaintRectInLocalCoordinates() const { return FloatRect(); }
+    virtual bool nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const FloatPoint&, HitTestAction) OVERRIDE { return false; }
 
 protected:
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
