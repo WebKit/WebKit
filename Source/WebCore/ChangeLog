@@ -1,3 +1,19 @@
+2013-08-25  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Add toSVGMissingGlyphElement(), and use it.
+        https://bugs.webkit.org/show_bug.cgi?id=120197
+
+        Reviewed by Andreas Kling.
+
+        As a step to clean-up static_cast<SVGXXX>, toSVGMissingGlyphElement() is added to clean-up
+        static_cast<SVGMissingGlyphElement*>.
+
+        * svg/SVGFontElement.cpp:
+        (WebCore::SVGFontElement::firstMissingGlyphElement):
+        (WebCore::SVGFontElement::ensureGlyphCache):
+        * svg/SVGMissingGlyphElement.h:
+        (WebCore::toSVGMissingGlyphElement):
+
 2013-08-25  Andreas Kling  <akling@apple.com>
 
         RenderLayer::renderer() should return a reference.
