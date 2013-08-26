@@ -1,3 +1,10 @@
+2013-08-26  Roger Fong  <roger_fong@apple.com>
+
+        AppleWin build fix following r154627.
+
+        * WebKit.vcxproj/WebKitGUID/WebKitGUID.vcxproj:
+        * WebKit.vcxproj/WebKitGUID/WebKitGUID.vcxproj.filters:
+
 2013-08-21  Roger Fong  <roger_fong@apple.com>
 
         <https://bugs.webkit.org/show_bug.cgi?id=119829> IAccessibleText and IAccessibleEditableText implementation for AppleWindows port.

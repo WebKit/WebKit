@@ -10,8 +10,8 @@
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebKit\Interfaces\Accessible2_2_i.c" />
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebKit\Interfaces\AccessibleApplication_i.c" />
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebKit\Interfaces\AccessibleRelation_i.c" />
-    <ClCompile Include="..\..\..\..\WebKitBuild\Release\obj32\WebKit\Interfaces\AccessibleEditableText_i.c" />
-    <ClCompile Include="..\..\..\..\WebKitBuild\Release\obj32\WebKit\Interfaces\AccessibleText_i.c" />
-    <ClCompile Include="..\..\..\..\WebKitBuild\Release\obj32\WebKit\Interfaces\AccessibleText2_i.c" />
+    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebKit\Interfaces\AccessibleEditableText_i.c" />
+    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebKit\Interfaces\AccessibleText_i.c" />
+    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebKit\Interfaces\AccessibleText2_i.c" />
   </ItemGroup>
 </Project>
