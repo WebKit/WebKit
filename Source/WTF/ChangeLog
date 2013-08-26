@@ -1,3 +1,13 @@
+2013-08-26  Zan Dobersek  <zdobersek@igalia.com>
+
+        Undefine __STDC_LIMIT_MACROS and __STDC_CONSTANT_MACROS before redefining them
+        https://bugs.webkit.org/show_bug.cgi?id=120313
+
+        Reviewed by Darin Adler.
+
+        * wtf/LLVMHeaders.h: Undefine the two macros before they are defined again.
+        This way we avoid the compilation-time warnings about the macros being invalidly redefined.
+
 2013-08-26  Oliver Hunt  <oliver@apple.com>
 
         Building is so overrated.
