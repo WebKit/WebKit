@@ -86,6 +86,8 @@
 		BCDA2B9A1191051F00C3BC47 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BCDA2B991191051F00C3BC47 /* JavaScriptCore.framework */; };
 		C0CE720B1247C93300BC0EC4 /* TestRunnerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = C0CE720A1247C93300BC0EC4 /* TestRunnerMac.mm */; };
 		E1BA671E1742DA6A00C20251 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E1BA671D1742DA5A00C20251 /* Carbon.framework */; };
+		E1C642C317CBCC7300D66A3C /* PoseAsClass.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1C642C117CBCC7300D66A3C /* PoseAsClass.mm */; };
+		E1C642C617CBCD4C00D66A3C /* WebKitTestRunnerPasteboard.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1C642C417CBCD4C00D66A3C /* WebKitTestRunnerPasteboard.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -220,6 +222,10 @@
 		BCDA2B991191051F00C3BC47 /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JavaScriptCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C0CE720A1247C93300BC0EC4 /* TestRunnerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TestRunnerMac.mm; path = mac/TestRunnerMac.mm; sourceTree = "<group>"; };
 		E1BA671D1742DA5A00C20251 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
+		E1C642C117CBCC7300D66A3C /* PoseAsClass.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PoseAsClass.mm; sourceTree = "<group>"; };
+		E1C642C217CBCC7300D66A3C /* PoseAsClass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PoseAsClass.h; sourceTree = "<group>"; };
+		E1C642C417CBCD4C00D66A3C /* WebKitTestRunnerPasteboard.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebKitTestRunnerPasteboard.mm; sourceTree = "<group>"; };
+		E1C642C517CBCD4C00D66A3C /* WebKitTestRunnerPasteboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitTestRunnerPasteboard.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -416,7 +422,11 @@
 				5670B8271386FCA5002EB355 /* EventSenderProxy.mm */,
 				BC7933FF118F7C84005EA8E2 /* main.mm */,
 				BC7934E711906846005EA8E2 /* PlatformWebViewMac.mm */,
+				E1C642C117CBCC7300D66A3C /* PoseAsClass.mm */,
+				E1C642C217CBCC7300D66A3C /* PoseAsClass.h */,
 				BC8C795B11D2785D004535A1 /* TestControllerMac.mm */,
+				E1C642C417CBCD4C00D66A3C /* WebKitTestRunnerPasteboard.mm */,
+				E1C642C517CBCD4C00D66A3C /* WebKitTestRunnerPasteboard.h */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -602,10 +612,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				5322FB4313FDA0CD0041ABCC /* CyclicRedundancyCheck.cpp in Sources */,
+				E1C642C317CBCC7300D66A3C /* PoseAsClass.mm in Sources */,
 				5670B8281386FCA5002EB355 /* EventSenderProxy.mm in Sources */,
 				26D758E7160BECDD00268472 /* GeolocationProviderMock.cpp in Sources */,
 				BC793400118F7C84005EA8E2 /* main.mm in Sources */,
 				5322FB4613FDA0EA0041ABCC /* PixelDumpSupport.cpp in Sources */,
+				E1C642C617CBCD4C00D66A3C /* WebKitTestRunnerPasteboard.mm in Sources */,
 				BC7934E811906846005EA8E2 /* PlatformWebViewMac.mm in Sources */,
 				BC793431118F7F19005EA8E2 /* TestController.cpp in Sources */,
 				BC8C795C11D2785D004535A1 /* TestControllerMac.mm in Sources */,
