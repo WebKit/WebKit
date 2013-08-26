@@ -173,7 +173,7 @@ GroupSettings* SharedWorkerProxy::groupSettings() const
     // Just pick the first active document, and use the groupsettings of that page.
     Document* document = *(m_workerDocuments.begin());
     if (document->page())
-        return document->page()->group().groupSettings();
+        return &document->page()->group().groupSettings();
 
     return 0;
 }

@@ -1,3 +1,15 @@
+2013-08-26  Pratik Solanki  <psolanki@apple.com>
+
+        PageGroup::groupSettings() should return a reference
+        https://bugs.webkit.org/show_bug.cgi?id=120319
+
+        Reviewed by Andreas Kling.
+
+        PageGroup::m_groupSettings is never NULL so we can just return a reference from groupSettings().
+
+        * webkit/webkitwebdatabase.cpp:
+        (webkit_set_web_database_directory_path):
+
 2013-08-26  Andreas Kling  <akling@apple.com>
 
         WebCore: Let Page create the main Frame.

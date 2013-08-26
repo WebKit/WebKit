@@ -5851,14 +5851,14 @@ void WebPagePrivate::didChangeSettings(WebSettings* webSettings)
     coreSettings->setLocalStorageEnabled(webSettings->isLocalStorageEnabled());
     coreSettings->setOfflineWebApplicationCacheEnabled(webSettings->isAppCacheEnabled());
 
-    m_page->group().groupSettings()->setLocalStorageQuotaBytes(webSettings->localStorageQuota());
+    m_page->group().groupSettings().setLocalStorageQuotaBytes(webSettings->localStorageQuota());
     coreSettings->setSessionStorageQuota(webSettings->sessionStorageQuota());
     coreSettings->setUsesPageCache(webSettings->maximumPagesInCache());
     coreSettings->setFrameFlatteningEnabled(webSettings->isFrameFlatteningEnabled());
 #endif
 
 #if ENABLE(INDEXED_DATABASE)
-    m_page->group().groupSettings()->setIndexedDBDatabasePath(webSettings->indexedDataBasePath());
+    m_page->group().groupSettings().setIndexedDBDatabasePath(webSettings->indexedDataBasePath());
 #endif
 
 

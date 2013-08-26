@@ -56,7 +56,7 @@ PassRefPtr<StorageNamespaceImpl> StorageNamespaceImpl::createLocalStorageNamespa
     if (!result.isNewEntry)
         return result.iterator->value;
 
-    unsigned quota = pageGroup->groupSettings()->localStorageQuotaBytes();
+    unsigned quota = pageGroup->groupSettings().localStorageQuotaBytes();
     RefPtr<StorageNamespaceImpl> localStorageNamespace = adoptRef(new StorageNamespaceImpl(LocalStorage, pageGroupID, quota));
 
     result.iterator->value = localStorageNamespace.get();

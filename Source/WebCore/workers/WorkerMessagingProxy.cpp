@@ -303,7 +303,7 @@ void WorkerMessagingProxy::startWorkerGlobalScope(const KURL& scriptURL, const S
     Document* document = static_cast<Document*>(m_scriptExecutionContext.get());
     GroupSettings* settings = 0;
     if (document->page())
-        settings = document->page()->group().groupSettings();
+        settings = &document->page()->group().groupSettings();
     RefPtr<DedicatedWorkerThread> thread = DedicatedWorkerThread::create(scriptURL, userAgent, settings, sourceCode, *this, *this, startMode, document->contentSecurityPolicy()->deprecatedHeader(), document->contentSecurityPolicy()->deprecatedHeaderType(), document->topOrigin());
     workerThreadCreated(thread);
     thread->start();

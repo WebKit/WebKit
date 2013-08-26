@@ -86,7 +86,7 @@ static String getIndexedDBDatabasePath(ScriptExecutionContext* context)
     ASSERT(isContextValid(context));
     if (context->isDocument()) {
         Document* document = toDocument(context);
-        return document->page()->group().groupSettings()->indexedDBDatabasePath();
+        return document->page()->group().groupSettings().indexedDBDatabasePath();
     }
 #if ENABLE(WORKERS)
     WorkerGlobalScope* workerGlobalScope = static_cast<WorkerGlobalScope*>(context);

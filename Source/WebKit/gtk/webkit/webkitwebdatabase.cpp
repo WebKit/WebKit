@@ -491,7 +491,7 @@ void webkit_set_web_database_directory_path(const gchar* path)
 #endif
 
 #if ENABLE(INDEXED_DATABASE)
-    WebCore::PageGroup::pageGroup(webkitPageGroupName())->groupSettings()->setIndexedDBDatabasePath(pathString);
+    WebCore::PageGroup::pageGroup(webkitPageGroupName())->groupSettings().setIndexedDBDatabasePath(pathString);
 #endif
 
 }
