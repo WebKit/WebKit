@@ -760,7 +760,16 @@ int Element::clientHeight()
 
 int Element::scrollLeft()
 {
+    if (document()->documentElement() == this && document()->inQuirksMode())
+        return 0;
+
     document()->updateLayoutIgnorePendingStylesheets();
+    if (document()->documentElement() == this) {
+        if (RenderView* renderView = document()->renderView()) {
+            if (FrameView* view = &renderView->frameView())
+                return adjustForAbsoluteZoom(view->scrollX(), renderView);
+        }
+    }
     if (RenderBox* rend = renderBox())
         return adjustForAbsoluteZoom(rend->scrollLeft(), rend);
     return 0;
@@ -768,7 +777,16 @@ int Element::scrollLeft()
 
 int Element::scrollTop()
 {
+    if (document()->documentElement() == this && document()->inQuirksMode())
+        return 0;
+
     document()->updateLayoutIgnorePendingStylesheets();
+    if (document()->documentElement() == this) {
+        if (RenderView* renderView = document()->renderView()) {
+            if (FrameView* view = &renderView->frameView())
+                return adjustForAbsoluteZoom(view->scrollY(), renderView);
+        }
+    }
     if (RenderBox* rend = renderBox())
         return adjustForAbsoluteZoom(rend->scrollTop(), rend);
     return 0;

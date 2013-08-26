@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html>
 <head>
   <script src="../../../js-test-resources/js-test-pre.js"></script>
@@ -11,20 +10,20 @@
       setTimeout(function() {
           // Make sure that the body is taller than the viewport (i.e. scrolling is
           // required).
-          shouldBeTrue('document.body.offsetHeight > document.documentElement.clientHeight');
-          
+          shouldBeTrue('document.body.offsetHeight > window.innerHeight');
+
           // We should be scrolled at least a little bit
           shouldBeTrue('document.body.scrollTop > 0');
-          
+
           // And the bottom of the viewable area should be at least 2000 pixels from the top, due to the spacer element above.
           shouldBeTrue('document.body.scrollTop + document.documentElement.clientHeight > 2000');
-          
-          finishJSTest();          
+
+          finishJSTest();
       }, 0);
     }
-    
+
     var jsTestIsAsync = true;
-  </script>  
+  </script>
 </head>
 <body onload="runTest()">
 <p id="description"></p>

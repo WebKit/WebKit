@@ -261,8 +261,9 @@ static int adjustForZoom(int value, Document* document)
 
 int HTMLBodyElement::scrollLeft()
 {
-    // Update the document's layout.
     Document* document = this->document();
+    if (!document->inQuirksMode())
+        return 0;
     document->updateLayoutIgnorePendingStylesheets();
     FrameView* view = document->view();
     return view ? adjustForZoom(view->scrollX(), document) : 0;
@@ -283,8 +284,9 @@ void HTMLBodyElement::setScrollLeft(int scrollLeft)
 
 int HTMLBodyElement::scrollTop()
 {
-    // Update the document's layout.
     Document* document = this->document();
+    if (!document->inQuirksMode())
+        return 0;
     document->updateLayoutIgnorePendingStylesheets();
     FrameView* view = document->view();
     return view ? adjustForZoom(view->scrollY(), document) : 0;

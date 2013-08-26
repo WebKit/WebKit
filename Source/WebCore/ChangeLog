@@ -1,3 +1,33 @@
+2013-08-26  Gurpreet Kaur  <gur.trio@gmail.com>
+
+        <https://webkit.org/b/106133> document.body.scrollTop & document.documentElement.scrollTop differ cross-browser
+
+        Reviewed by Darin Adler.
+
+        Webkit always uses document.body.scrollTop whether quirks or
+        standard mode. Similiar behaviour is for document.body.scrollLeft.
+        As per the specification webkit should return document.body.scrollTop
+        for quirks mode and document.documentElement.scrollTop for standard mode.
+        Same for document.body.scrollLeft and document.documentElement.scrollLeft.
+
+        Tests: fast/dom/Element/scrollLeft-Quirks.html
+               fast/dom/Element/scrollLeft.html
+               fast/dom/Element/scrollTop-Quirks.html
+               fast/dom/Element/scrollTop.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::scrollLeft):
+        (WebCore::Element::scrollTop): 
+        If the element does not have any associated CSS layout box or the element
+        is the root element and the Document is in quirks mode return zero.
+        Else If the element is the root element return the value of scrollY
+        for scrollTop and scrollX for scrollLeft.
+        * html/HTMLBodyElement.cpp:
+        (WebCore::HTMLBodyElement::scrollLeft):
+        (WebCore::HTMLBodyElement::scrollTop):
+        If the element is the HTML body element, the Document is in quirks mode,
+        return the value of scrollY for scrollTop and scrollX for scrollLeft.
+
 2013-08-26  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (r154581): Some plugin tests failing in debug bots

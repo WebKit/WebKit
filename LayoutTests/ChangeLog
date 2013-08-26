@@ -1,3 +1,36 @@
+2013-08-26  Gurpreet Kaur  <gur.trio@gmail.com>
+
+        <https://webkit.org/b/106133> document.body.scrollTop & document.documentElement.scrollTop differ cross-browser
+
+        Reviewed by Darin Adler.
+
+        * fast/dom/Element/scrollLeft-Quirks-expected.txt: Added.
+        * fast/dom/Element/scrollLeft-Quirks.html: Added.
+        * fast/dom/Element/scrollLeft-expected.txt: Added.
+        * fast/dom/Element/scrollLeft.html: Added.
+        * fast/dom/Element/scrollTop-Quirks-expected.txt: Added.
+        * fast/dom/Element/scrollTop-Quirks.html: Added.
+        * fast/dom/Element/scrollTop-expected.txt: Added.
+        * fast/dom/Element/scrollTop.html: Added.
+        Added new tests for verifying our behavior for document.body.scrollTop/scrollLeft and
+        document.documentElement.scrollTop/scrollLeft for both Quirks as well as Standard mode.
+
+        * fast/css/zoom-body-scroll-expected.txt:
+        * fast/css/zoom-body-scroll.html:
+        * fast/events/mouse-cursor.html:
+        * http/tests/navigation/anchor-frames-expected.txt:
+        * http/tests/navigation/anchor-frames-gbk-expected.txt:
+        * http/tests/navigation/resources/frame-with-anchor-gbk.html:
+        * http/tests/navigation/resources/frame-with-anchor-same-origin.html:
+        * http/tests/navigation/resources/frame-with-anchor.html:
+        * platform/mac-wk2/tiled-drawing/resources/scroll-and-load-page.html:
+        * platform/mac-wk2/tiled-drawing/tiled-drawing-scroll-position-page-cache-restoration.html:
+        * platform/win/fast/css/zoom-body-scroll-expected.txt: 
+        Rebaselining existing tests as per the new behavior. The test cases are changed to use
+        quirks mode because it uses document.body.scrollTop/scrollLeft and as per the new code 
+        document.body.scrollTop/scrollLeft will return correct value if document is in quirk mode
+        Also test cases have been modified so that it tests what it used to.
+
 2013-08-26  Gavin Barraclough  <barraclough@apple.com>
 
         RegExpMatchesArray should not call [[put]]
