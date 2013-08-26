@@ -1,3 +1,10 @@
+2013-08-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        GTK+ build fix. Like r154620.
+
+        * webkit/webkitwebframe.cpp:
+        (webkit_web_frame_new):
+
 2013-08-26  Pratik Solanki  <psolanki@apple.com>
 
         PageGroup::groupSettings() should return a reference
