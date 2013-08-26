@@ -1,3 +1,13 @@
+2013-08-26  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Build fix after r154554.
+
+        * page/AutoscrollController.cpp: Correct various places where pointers are now
+        references.
+        (WebCore::AutoscrollController::stopAutoscrollTimer):
+        (WebCore::AutoscrollController::startPanScrolling):
+        (WebCore::AutoscrollController::autoscrollTimerFired):
+
 2013-08-26  Andreas Kling  <akling@apple.com>
 
         Move DocumentTiming inside ENABLE(WEB_TIMING) guards.
