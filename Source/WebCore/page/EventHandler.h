@@ -38,6 +38,7 @@
 #include "TextGranularity.h"
 #include "Timer.h"
 #include "UserGestureIndicator.h"
+#include <wtf/Deque.h>
 #include <wtf/Forward.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/RefPtr.h>
@@ -293,6 +294,14 @@ private:
     bool logicalScrollOverflow(ScrollLogicalDirection, ScrollGranularity, Node* startingNode = 0);
     
     bool shouldTurnVerticalTicksIntoHorizontal(const HitTestResult&, const PlatformWheelEvent&) const;
+    void recordWheelEventDelta(const PlatformWheelEvent&);
+    enum DominantScrollGestureDirection {
+        DominantScrollDirectionNone,
+        DominantScrollDirectionVertical,
+        DominantScrollDirectionHorizontal
+    };
+    DominantScrollGestureDirection dominantScrollGestureDirection() const;
+    
     bool mouseDownMayStartSelect() const { return m_mouseDownMayStartSelect; }
 
     static bool isKeyboardOptionTab(KeyboardEvent*);
@@ -468,7 +477,9 @@ private:
     PlatformMouseEvent m_mouseDown;
     RefPtr<UserGestureToken> m_lastMouseDownUserGestureToken;
 
+    Deque<FloatSize> m_recentWheelEventDeltas;
     RefPtr<Node> m_latchedWheelEventNode;
+    bool m_inTrackingScrollGesturePhase;
     bool m_widgetIsLatched;
 
     RefPtr<Node> m_previousWheelScrolledNode;

@@ -32,6 +32,7 @@ bool applicationIsAOLInstantMessenger();
 bool applicationIsAdobeInstaller();
 bool applicationIsAperture();
 bool applicationIsAppleMail();
+bool applicationIsITunes();
 bool applicationIsMicrosoftMessenger();
 bool applicationIsMicrosoftMyDay();
 bool applicationIsMicrosoftOutlook();
