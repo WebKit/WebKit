@@ -1,3 +1,13 @@
+2013-08-26  David Kilzer  <ddkilzer@apple.com>
+
+        BUILD FIX (r154580): RenderObject::document() returns a reference
+
+        See: <https://webkit.org/b/120272>
+
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper _accessibilityParentForSubview:]):
+        (AXAttributeStringSetHeadingLevel):
+
 2013-08-26  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Build fix after r154578.  Return Vector<String>() instead

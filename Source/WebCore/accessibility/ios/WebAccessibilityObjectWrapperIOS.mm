@@ -1273,7 +1273,7 @@ static RenderObject* rendererForView(WAKView* view)
     if (!renderer)
         return nil;
     
-    AccessibilityObject* obj = renderer->document()->axObjectCache()->getOrCreate(renderer);
+    AccessibilityObject* obj = renderer->document().axObjectCache()->getOrCreate(renderer);
     if (obj)
         return obj->parentObjectUnignored()->wrapper();
     return nil;
@@ -1466,7 +1466,7 @@ static void AXAttributeStringSetHeadingLevel(NSMutableAttributedString* attrStri
     if (!renderer)
         return;
     
-    AccessibilityObject* parentObject = renderer->document()->axObjectCache()->getOrCreate(renderer->parent());
+    AccessibilityObject* parentObject = renderer->document().axObjectCache()->getOrCreate(renderer->parent());
     int parentHeadingLevel = parentObject->headingLevel();
     
     if (parentHeadingLevel)
