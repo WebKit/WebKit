@@ -150,7 +150,7 @@ typedef struct _User_Arguments {
     char *engine;
     Eina_Bool quitOption;
     char *backingStore;
-    float device_pixel_ratio;
+    double device_pixel_ratio;
     Eina_Bool enableEncodingDetector;
     Eina_Bool enableTiledBackingStore;
     Eina_Bool isFlattening;

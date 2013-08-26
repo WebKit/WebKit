@@ -1,3 +1,13 @@
+2013-08-25  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] EWebLauncher is executed as full screen with device pixel ratio
+        https://bugs.webkit.org/show_bug.cgi?id=120282
+
+        Reviewed by Gyuyoung Kim.
+
+        * EWebLauncher/main.c:
+        Use double instead of float for device_pixel_ratio which is passed to ECORE_GETOPT_VALUE_DOUBLE.
+
 2013-08-25  Zan Dobersek  <zdobersek@igalia.com>
 
         [gdb] Remove the pretty printer for KURLGooglePrivate
