@@ -1,3 +1,14 @@
+2013-08-26  Arunprasad Rajkumar  <arurajku@cisco.com>
+
+        [Qt] Remove the fix in QWebPage::javaScriptConsoleMessage introduced by (r61433)
+        https://bugs.webkit.org/show_bug.cgi?id=119791
+
+        Reviewed by Jocelyn Turcotte.
+
+        * WidgetApi/qwebpage.cpp:
+        (QWebPage::javaScriptConsoleMessage): Removed hack specific to DRT, introduced by
+        (r61433).
+
 2013-08-24  Darin Adler  <darin@apple.com>
 
         Frame::tree should return a reference instead of a pointer
