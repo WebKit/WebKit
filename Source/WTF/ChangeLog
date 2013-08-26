@@ -1,5 +1,12 @@
 2013-08-26  Oliver Hunt  <oliver@apple.com>
 
+        Building is so overrated.
+
+        * wtf/Compression.cpp:
+        (WTF::GenericCompressedData::decompress):
+
+2013-08-26  Oliver Hunt  <oliver@apple.com>
+
         Disable compression under MSVC for now as we're getting
         weird release-only failures.
 
