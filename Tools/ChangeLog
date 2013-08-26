@@ -1,3 +1,15 @@
+2013-08-26  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Add WillLoad test files to the TestWebKitAPI/TestWebKit2 program
+        https://bugs.webkit.org/show_bug.cgi?id=120288
+
+        Reviewed by Carlos Garcia Campos.
+
+        * TestWebKitAPI/GNUmakefile.am: Add the WillLoad.cpp build target that should be compiled
+        into the TestWebKit2 program. The InjectedBundle counterpart file is added to the build as well.
+        These unit tests are at the moment failing in debug configurations, so it would be nice to
+        have the GTK builds report these failures as well.
+
 2013-08-25  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] EWebLauncher is executed as full screen with device pixel ratio

@@ -283,6 +283,7 @@ Programs_TestWebKitAPI_TestWebKit2_SOURCES = \
 	Tools/TestWebKitAPI/Tests/WebKit2/SpacebarScrolling.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/TerminateTwice.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/UserMessage.cpp \
+	Tools/TestWebKitAPI/Tests/WebKit2/WillLoad.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/WillSendSubmitEvent.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/WKConnection.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/WKPageGetScaleFactorNotZero.cpp \
@@ -320,6 +321,7 @@ Libraries_libTestWebKitAPIInjectedBundle_la_SOURCES = \
 	Tools/TestWebKitAPI/Tests/WebKit2/ResponsivenessTimerDoesntFireEarly_Bundle.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/ShouldGoToBackForwardListItem_Bundle.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/UserMessage_Bundle.cpp \
+	Tools/TestWebKitAPI/Tests/WebKit2/WillLoad_Bundle.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/WillSendSubmitEvent_Bundle.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/WKConnection_Bundle.cpp \
 	Tools/TestWebKitAPI/gtk/InjectedBundleControllerGtk.cpp \
