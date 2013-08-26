@@ -210,6 +210,7 @@ OSStatus WKThemeDrawTrack(const HIThemeTrackDrawInfo* inDrawInfo, CGContextRef i
 
 
 BOOL WKCGContextIsBitmapContext(CGContextRef context);
+bool WKCGContextIsPDFContext(CGContextRef context);
 
 void WKGetWheelEventDeltas(NSEvent *, float *deltaX, float *deltaY, BOOL *continuous);
 

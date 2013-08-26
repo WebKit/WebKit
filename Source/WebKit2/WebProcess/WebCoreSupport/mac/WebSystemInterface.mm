@@ -72,6 +72,7 @@ void InitWebCoreSystemInterface(void)
         INIT(SignedPublicKeyAndChallengeString);
         INIT(GetPreferredExtensionForMIMEType);
         INIT(GetUserToBaseCTM);
+        INIT(CGContextIsPDFContext);
         INIT(GetWheelEventDeltas);
         INIT(GetNSEventKeyChar);
         INIT(HitTestMediaUIPart);
