@@ -258,16 +258,16 @@ print("""
 
 
 #define COMPARE_2CHARS(address, char1, char2) \\
-    (((uint16_t*)(address))[0] == CHARPAIR_TOUINT16(char1, char2))
+    ((reinterpret_cast<const uint16_t*>(address))[0] == CHARPAIR_TOUINT16(char1, char2))
 #define COMPARE_2UCHARS(address, char1, char2) \\
-    (((uint32_t*)(address))[0] == UCHARPAIR_TOUINT32(char1, char2))
+    ((reinterpret_cast<const uint32_t*>(address))[0] == UCHARPAIR_TOUINT32(char1, char2))
 
 #if CPU(X86_64)
 
 #define COMPARE_4CHARS(address, char1, char2, char3, char4) \\
-    (((uint32_t*)(address))[0] == CHARQUAD_TOUINT32(char1, char2, char3, char4))
+    ((reinterpret_cast<const uint32_t*>(address))[0] == CHARQUAD_TOUINT32(char1, char2, char3, char4))
 #define COMPARE_4UCHARS(address, char1, char2, char3, char4) \\
-    (((uint64_t*)(address))[0] == UCHARQUAD_TOUINT64(char1, char2, char3, char4))
+    ((reinterpret_cast<const uint64_t*>(address))[0] == UCHARQUAD_TOUINT64(char1, char2, char3, char4))
 
 #else // CPU(X86_64)
 

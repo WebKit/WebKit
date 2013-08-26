@@ -1,3 +1,14 @@
+2013-08-26  Zan Dobersek  <zdobersek@igalia.com>
+
+        Plenty of -Wcast-align warnings in KeywordLookup.h
+        https://bugs.webkit.org/show_bug.cgi?id=120316
+
+        Reviewed by Darin Adler.
+
+        * KeywordLookupGenerator.py: Use reinterpret_cast instead of a C-style cast when casting
+        the character pointers to types of larger size. This avoids spewing lots of warnings
+        in the KeywordLookup.h header when compiling with the -Wcast-align option.
+
 2013-08-26  Gavin Barraclough  <barraclough@apple.com>
 
         RegExpMatchesArray should not call [[put]]
