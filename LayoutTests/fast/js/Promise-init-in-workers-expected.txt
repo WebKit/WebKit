@@ -1,0 +1,20 @@
+[Worker] Test Promise.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+Starting worker: resources/Promise-init-in-workers.js
+PASS [Worker] promise instanceof Promise is true
+PASS [Worker] promise.constructor is Promise
+PASS [Worker] thisInInit is promise
+PASS [Worker] resolver instanceof PromiseResolver is true
+PASS [Worker] resolver.constructor is PromiseResolver
+PASS [Worker] new Promise() threw exception TypeError: Expected at least one argument.
+PASS [Worker] new Promise(37) threw exception TypeError: Expected function as as first argument.
+PASS [Worker] promise = new Promise(function() { throw Error("foo"); }) did not throw exception.
+PASS [Worker] result.message is "foo"
+PASS [Worker] fulfilled
+PASS [Worker] result is "hello"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

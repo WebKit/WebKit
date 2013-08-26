@@ -1,3 +1,85 @@
+2013-08-24  Sam Weinig  <sam@webkit.org>
+
+        Add support for Promises
+        https://bugs.webkit.org/show_bug.cgi?id=120260
+
+        Reviewed by Darin Adler.
+
+        Add tests adapted from the Mozilla and Blink projects.
+
+        * fast/js/Promise-already-fulfilled-expected.txt: Added.
+        * fast/js/Promise-already-fulfilled.html: Added.
+        * fast/js/Promise-already-rejected-expected.txt: Added.
+        * fast/js/Promise-already-rejected.html: Added.
+        * fast/js/Promise-already-resolved-expected.txt: Added.
+        * fast/js/Promise-already-resolved.html: Added.
+        * fast/js/Promise-catch-expected.txt: Added.
+        * fast/js/Promise-catch-in-workers-expected.txt: Added.
+        * fast/js/Promise-catch-in-workers.html: Added.
+        * fast/js/Promise-catch.html: Added.
+        * fast/js/Promise-chain-expected.txt: Added.
+        * fast/js/Promise-chain.html: Added.
+        * fast/js/Promise-exception-expected.txt: Added.
+        * fast/js/Promise-exception.html: Added.
+        * fast/js/Promise-expected.txt: Added.
+        * fast/js/Promise-fulfill-expected.txt: Added.
+        * fast/js/Promise-fulfill-in-workers-expected.txt: Added.
+        * fast/js/Promise-fulfill-in-workers.html: Added.
+        * fast/js/Promise-fulfill.html: Added.
+        * fast/js/Promise-init-expected.txt: Added.
+        * fast/js/Promise-init-in-workers-expected.txt: Added.
+        * fast/js/Promise-init-in-workers.html: Added.
+        * fast/js/Promise-init.html: Added.
+        * fast/js/Promise-reject-expected.txt: Added.
+        * fast/js/Promise-reject-in-workers-expected.txt: Added.
+        * fast/js/Promise-reject-in-workers.html: Added.
+        * fast/js/Promise-reject.html: Added.
+        * fast/js/Promise-resolve-chain-expected.txt: Added.
+        * fast/js/Promise-resolve-chain.html: Added.
+        * fast/js/Promise-resolve-expected.txt: Added.
+        * fast/js/Promise-resolve-in-workers-expected.txt: Added.
+        * fast/js/Promise-resolve-in-workers.html: Added.
+        * fast/js/Promise-resolve-with-then-exception-expected.txt: Added.
+        * fast/js/Promise-resolve-with-then-exception.html: Added.
+        * fast/js/Promise-resolve-with-then-fulfill-expected.txt: Added.
+        * fast/js/Promise-resolve-with-then-fulfill.html: Added.
+        * fast/js/Promise-resolve-with-then-reject-expected.txt: Added.
+        * fast/js/Promise-resolve-with-then-reject.html: Added.
+        * fast/js/Promise-resolve.html: Added.
+        * fast/js/Promise-simple-expected.txt: Added.
+        * fast/js/Promise-simple-fulfill-expected.txt: Added.
+        * fast/js/Promise-simple-fulfill-inside-callback-expected.txt: Added.
+        * fast/js/Promise-simple-fulfill-inside-callback.html: Added.
+        * fast/js/Promise-simple-fulfill.html: Added.
+        * fast/js/Promise-simple-in-workers-expected.txt: Added.
+        * fast/js/Promise-simple-in-workers.html: Added.
+        * fast/js/Promise-simple.html: Added.
+        * fast/js/Promise-static-fulfill-expected.txt: Added.
+        * fast/js/Promise-static-fulfill.html: Added.
+        * fast/js/Promise-static-reject-expected.txt: Added.
+        * fast/js/Promise-static-reject.html: Added.
+        * fast/js/Promise-static-resolve-expected.txt: Added.
+        * fast/js/Promise-static-resolve.html: Added.
+        * fast/js/Promise-then-expected.txt: Added.
+        * fast/js/Promise-then-in-workers-expected.txt: Added.
+        * fast/js/Promise-then-in-workers.html: Added.
+        * fast/js/Promise-then-without-callbacks-expected.txt: Added.
+        * fast/js/Promise-then-without-callbacks-in-workers-expected.txt: Added.
+        * fast/js/Promise-then-without-callbacks-in-workers.html: Added.
+        * fast/js/Promise-then-without-callbacks.html: Added.
+        * fast/js/Promise-then.html: Added.
+        * fast/js/Promise-types-expected.txt: Added.
+        * fast/js/Promise-types.html: Added.
+        * fast/js/Promise.html: Added.
+        * fast/js/resources/Promise-catch-in-workers.js: Added.
+        * fast/js/resources/Promise-fulfill-in-workers.js: Added.
+        * fast/js/resources/Promise-init-in-workers.js: Added.
+        * fast/js/resources/Promise-reject-in-workers.js: Added.
+        * fast/js/resources/Promise-resolve-in-workers.js: Added.
+        * fast/js/resources/Promise-simple-in-workers.js: Added.
+        * fast/js/resources/Promise-then-in-workers.js: Added.
+        * fast/js/resources/Promise-then-without-callbacks-in-workers.js: Added.
+
 2013-08-26  Rob Buis  <rwlbuis@webkit.org>
 
         Computed style of fill/stroke properties incorrect on references

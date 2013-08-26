@@ -32,6 +32,7 @@
 #include "JSWorkerGlobalScopeBase.h"
 
 #include "DOMWrapperWorld.h"
+#include "JSDOMGlobalObjectTask.h"
 #include "JSDedicatedWorkerGlobalScope.h"
 #include "JSWorkerGlobalScope.h"
 #include "WorkerGlobalScope.h"
@@ -46,8 +47,10 @@ namespace WebCore {
 
 const ClassInfo JSWorkerGlobalScopeBase::s_info = { "WorkerGlobalScope", &JSDOMGlobalObject::s_info, 0, 0, CREATE_METHOD_TABLE(JSWorkerGlobalScopeBase) };
 
+const GlobalObjectMethodTable JSWorkerGlobalScopeBase::s_globalObjectMethodTable = { &allowsAccessFrom, &supportsProfiling, &supportsRichSourceInfo, &shouldInterruptScript, &javaScriptExperimentsEnabled, &queueTaskToEventLoop };
+
 JSWorkerGlobalScopeBase::JSWorkerGlobalScopeBase(JSC::VM& vm, JSC::Structure* structure, PassRefPtr<WorkerGlobalScope> impl)
-    : JSDOMGlobalObject(vm, structure, normalWorld(vm))
+    : JSDOMGlobalObject(vm, structure, normalWorld(vm), &s_globalObjectMethodTable)
     , m_impl(impl)
 {
 }
@@ -66,6 +69,37 @@ void JSWorkerGlobalScopeBase::destroy(JSCell* cell)
 ScriptExecutionContext* JSWorkerGlobalScopeBase::scriptExecutionContext() const
 {
     return m_impl.get();
+}
+
+bool JSWorkerGlobalScopeBase::allowsAccessFrom(const JSGlobalObject* object, ExecState* exec)
+{
+    return JSGlobalObject::allowsAccessFrom(object, exec);
+}
+
+bool JSWorkerGlobalScopeBase::supportsProfiling(const JSGlobalObject* object)
+{
+    return JSGlobalObject::supportsProfiling(object);
+}
+
+bool JSWorkerGlobalScopeBase::supportsRichSourceInfo(const JSGlobalObject* object)
+{
+    return JSGlobalObject::supportsRichSourceInfo(object);
+}
+
+bool JSWorkerGlobalScopeBase::shouldInterruptScript(const JSGlobalObject* object)
+{
+    return JSGlobalObject::shouldInterruptScript(object);
+}
+
+bool JSWorkerGlobalScopeBase::javaScriptExperimentsEnabled(const JSGlobalObject* object)
+{
+    return JSGlobalObject::javaScriptExperimentsEnabled(object);
+}
+
+void JSWorkerGlobalScopeBase::queueTaskToEventLoop(const JSGlobalObject* object, GlobalObjectMethodTable::QueueTaskToEventLoopCallbackFunctionPtr functionPtr, PassRefPtr<TaskContext> taskContext)
+{
+    const JSWorkerGlobalScopeBase* thisObject = static_cast<const JSWorkerGlobalScopeBase*>(object);
+    thisObject->scriptExecutionContext()->postTask(JSGlobalObjectTask::create((JSDOMGlobalObject*)thisObject, functionPtr, taskContext));
 }
 
 JSValue toJS(ExecState* exec, JSDOMGlobalObject*, WorkerGlobalScope* workerGlobalScope)

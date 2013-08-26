@@ -64,6 +64,9 @@ namespace WebCore {
         static bool supportsRichSourceInfo(const JSC::JSGlobalObject*);
         static bool shouldInterruptScript(const JSC::JSGlobalObject*);
         static bool javaScriptExperimentsEnabled(const JSC::JSGlobalObject*);
+
+        static void queueTaskToEventLoop(const JSC::JSGlobalObject*, JSC::GlobalObjectMethodTable::QueueTaskToEventLoopCallbackFunctionPtr, PassRefPtr<JSC::TaskContext>);
+        
         void printErrorMessage(const String&) const;
 
         JSDOMWindowShell* shell() const;

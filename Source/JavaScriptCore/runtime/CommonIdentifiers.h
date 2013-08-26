@@ -41,6 +41,8 @@
     macro(NaN) \
     macro(Number) \
     macro(Object) \
+    macro(Promise) \
+    macro(PromiseResolver) \
     macro(RangeError) \
     macro(ReferenceError) \
     macro(RegExp) \
@@ -123,6 +125,7 @@
     macro(stack) \
     macro(subarray) \
     macro(test) \
+    macro(then) \
     macro(toExponential) \
     macro(toFixed) \
     macro(toISOString) \

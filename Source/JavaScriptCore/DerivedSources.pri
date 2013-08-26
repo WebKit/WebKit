@@ -16,6 +16,9 @@ LUT_FILES += \
     runtime/JSDataViewPrototype.cpp \
     runtime/JSGlobalObject.cpp \
     runtime/JSONObject.cpp \
+    runtime/JSPromiseConstructor.cpp \
+    runtime/JSPromisePrototype.cpp \
+    runtime/JSPromiseResolverPrototype.cpp \
     runtime/MathObject.cpp \
     runtime/NamePrototype.cpp \
     runtime/NumberConstructor.cpp \

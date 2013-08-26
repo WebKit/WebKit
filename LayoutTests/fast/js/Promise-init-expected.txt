@@ -1,0 +1,19 @@
+Test Promise.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS promise instanceof Promise is true
+PASS promise.constructor is Promise
+PASS thisInInit is promise
+PASS resolver instanceof PromiseResolver is true
+PASS resolver.constructor is PromiseResolver
+PASS new Promise() threw exception TypeError: Expected at least one argument.
+PASS new Promise(37) threw exception TypeError: Expected function as as first argument.
+PASS promise = new Promise(function() { throw Error("foo"); }) did not throw exception.
+PASS result.message is "foo"
+PASS fulfilled
+PASS result is "hello"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

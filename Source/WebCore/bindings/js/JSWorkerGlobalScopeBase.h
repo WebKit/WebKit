@@ -53,6 +53,15 @@ namespace WebCore {
             return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::GlobalObjectType, StructureFlags), info());
         }
 
+        static const JSC::GlobalObjectMethodTable s_globalObjectMethodTable;
+
+        static bool allowsAccessFrom(const JSC::JSGlobalObject*, JSC::ExecState*);
+        static bool supportsProfiling(const JSC::JSGlobalObject*);
+        static bool supportsRichSourceInfo(const JSC::JSGlobalObject*);
+        static bool shouldInterruptScript(const JSC::JSGlobalObject*);
+        static bool javaScriptExperimentsEnabled(const JSC::JSGlobalObject*);
+        static void queueTaskToEventLoop(const JSC::JSGlobalObject*, JSC::GlobalObjectMethodTable::QueueTaskToEventLoopCallbackFunctionPtr, PassRefPtr<JSC::TaskContext>);
+
     protected:
         JSWorkerGlobalScopeBase(JSC::VM&, JSC::Structure*, PassRefPtr<WorkerGlobalScope>);
         void finishCreation(JSC::VM&);

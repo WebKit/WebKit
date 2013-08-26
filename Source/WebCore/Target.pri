@@ -102,6 +102,7 @@ SOURCES += \
      bindings/js/JSDOMBinding.cpp \
      bindings/js/JSDOMFormDataCustom.cpp \
      bindings/js/JSDOMGlobalObject.cpp \
+     bindings/js/JSDOMGlobalObjectTask.cpp \
      bindings/js/JSDOMImplementationCustom.cpp \
      bindings/js/JSDOMMimeTypeArrayCustom.cpp \
      bindings/js/JSDOMPluginArrayCustom.cpp \
@@ -1353,6 +1354,7 @@ HEADERS += \
     bindings/js/JSDictionary.h \
     bindings/js/JSDOMBinding.h \
     bindings/js/JSDOMGlobalObject.h \
+    bindings/js/JSDOMGlobalObjectTask.h \
     bindings/js/JSDOMWindowBase.h \
     bindings/js/JSDOMWindowCustom.h \
     bindings/js/JSDOMWindowShell.h \

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+description('Test Promise.');
+
+window.jsTestIsAsync = true;
+result = undefined;
+
+Promise.reject('hello').then(function(result) {
+  testFailed('fulfilled');
+  finishJSTest();
+}, function(result) {
+  window.result = result;
+  shouldBeEqualToString('result', 'hello');
+  finishJSTest();
+});
+shouldBe('result', 'undefined');
+</script>
+<script src="resources/js-test-post.js"></script>
+</body>
+</html>

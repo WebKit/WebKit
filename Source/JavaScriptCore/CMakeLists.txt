@@ -334,6 +334,13 @@ set(JavaScriptCore_SOURCES
     runtime/JSNotAnObject.cpp
     runtime/JSONObject.cpp
     runtime/JSObject.cpp
+    runtime/JSPromise.cpp
+    runtime/JSPromiseCallback.cpp
+    runtime/JSPromiseConstructor.cpp
+    runtime/JSPromisePrototype.cpp
+    runtime/JSPromiseResolver.cpp
+    runtime/JSPromiseResolverConstructor.cpp
+    runtime/JSPromiseResolverPrototype.cpp
     runtime/JSPropertyNameIterator.cpp
     runtime/JSProxy.cpp
     runtime/JSScope.cpp
@@ -415,6 +422,9 @@ set(JavaScriptCore_LUT_FILES
     runtime/JSDataViewPrototype.cpp
     runtime/JSGlobalObject.cpp
     runtime/JSONObject.cpp
+    runtime/JSPromiseConstructor.cpp
+    runtime/JSPromisePrototype.cpp
+    runtime/JSPromiseResolverPrototype.cpp
     runtime/NamePrototype.cpp
     runtime/NumberConstructor.cpp
     runtime/NumberPrototype.cpp

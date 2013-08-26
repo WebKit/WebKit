@@ -1,3 +1,73 @@
+2013-08-24  Sam Weinig  <sam@webkit.org>
+
+        Add support for Promises
+        https://bugs.webkit.org/show_bug.cgi?id=120260
+
+        Reviewed by Darin Adler.
+
+        Add an initial implementation of Promises - http://dom.spec.whatwg.org/#promises.
+        - Despite Promises being defined in the DOM, the implementation is being put in JSC
+          in preparation for the Promises eventually being defined in ECMAScript.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * DerivedSources.pri:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        Add new files.
+
+        * jsc.cpp:
+        Update jsc's GlobalObjectMethodTable to stub out the new QueueTaskToEventLoop callback. This mean's
+        you can't quite use Promises with with the command line tool yet.
+    
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::promisePrototypeTable):
+        (JSC::ExecState::promiseConstructorTable):
+        (JSC::ExecState::promiseResolverPrototypeTable):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        (JSC::VM::~VM):
+        * runtime/VM.h:
+        Add supporting code for the new static lookup tables.
+
+        * runtime/CommonIdentifiers.h:
+        Add 3 new identifiers, "Promise", "PromiseResolver", and "then".
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::reset):
+        (JSC::JSGlobalObject::visitChildren):
+        Add supporting code Promise and PromiseResolver's constructors and structures.
+
+        * runtime/JSGlobalObject.h:
+        (JSC::TaskContext::~TaskContext):
+        Add a new callback to the GlobalObjectMethodTable to post a task on the embedder's runloop.
+
+        (JSC::JSGlobalObject::promisePrototype):
+        (JSC::JSGlobalObject::promiseResolverPrototype):
+        (JSC::JSGlobalObject::promiseStructure):
+        (JSC::JSGlobalObject::promiseResolverStructure):
+        (JSC::JSGlobalObject::promiseCallbackStructure):
+        (JSC::JSGlobalObject::promiseWrapperCallbackStructure):
+        Add supporting code Promise and PromiseResolver's constructors and structures.
+
+        * runtime/JSPromise.cpp: Added.
+        * runtime/JSPromise.h: Added.
+        * runtime/JSPromiseCallback.cpp: Added.
+        * runtime/JSPromiseCallback.h: Added.
+        * runtime/JSPromiseConstructor.cpp: Added.
+        * runtime/JSPromiseConstructor.h: Added.
+        * runtime/JSPromisePrototype.cpp: Added.
+        * runtime/JSPromisePrototype.h: Added.
+        * runtime/JSPromiseResolver.cpp: Added.
+        * runtime/JSPromiseResolver.h: Added.
+        * runtime/JSPromiseResolverConstructor.cpp: Added.
+        * runtime/JSPromiseResolverConstructor.h: Added.
+        * runtime/JSPromiseResolverPrototype.cpp: Added.
+        * runtime/JSPromiseResolverPrototype.h: Added.
+        Add Promise implementation.
+
 2013-08-26  Zan Dobersek  <zdobersek@igalia.com>
 
         Plenty of -Wcast-align warnings in KeywordLookup.h

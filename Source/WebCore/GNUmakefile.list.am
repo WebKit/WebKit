@@ -2332,6 +2332,8 @@ webcore_sources += \
 	Source/WebCore/bindings/js/JSDOMFormDataCustom.cpp \
 	Source/WebCore/bindings/js/JSDOMGlobalObject.cpp \
 	Source/WebCore/bindings/js/JSDOMGlobalObject.h \
+	Source/WebCore/bindings/js/JSDOMGlobalObjectTask.cpp \
+	Source/WebCore/bindings/js/JSDOMGlobalObjectTask.h \
 	Source/WebCore/bindings/js/JSDOMImplementationCustom.cpp \
 	Source/WebCore/bindings/js/JSDOMMimeTypeArrayCustom.cpp \
 	Source/WebCore/bindings/js/JSDOMPluginArrayCustom.cpp \

@@ -20,6 +20,9 @@ javascriptcore_built_nosources += \
 	DerivedSources/JavaScriptCore/JSDataViewPrototype.lut.h \
 	DerivedSources/JavaScriptCore/JSGlobalObject.lut.h \
 	DerivedSources/JavaScriptCore/JSONObject.lut.h \
+	DerivedSources/JavaScriptCore/JSPromiseConstructor.lut.h \
+	DerivedSources/JavaScriptCore/JSPromisePrototype.lut.h \
+	DerivedSources/JavaScriptCore/JSPromiseResolverPrototype.lut.h \
 	DerivedSources/JavaScriptCore/MathObject.lut.h \
 	DerivedSources/JavaScriptCore/NamePrototype.lut.h \
 	DerivedSources/JavaScriptCore/NumberConstructor.lut.h \
@@ -811,6 +814,20 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/JSObject.h \
 	Source/JavaScriptCore/runtime/JSONObject.cpp \
 	Source/JavaScriptCore/runtime/JSONObject.h \
+	Source/JavaScriptCore/runtime/JSPromise.cpp \
+	Source/JavaScriptCore/runtime/JSPromise.h \
+	Source/JavaScriptCore/runtime/JSPromiseCallback.cpp \
+	Source/JavaScriptCore/runtime/JSPromiseCallback.h \
+	Source/JavaScriptCore/runtime/JSPromiseConstructor.cpp \
+	Source/JavaScriptCore/runtime/JSPromiseConstructor.h \
+	Source/JavaScriptCore/runtime/JSPromisePrototype.cpp \
+	Source/JavaScriptCore/runtime/JSPromisePrototype.h \
+	Source/JavaScriptCore/runtime/JSPromiseResolver.cpp \
+	Source/JavaScriptCore/runtime/JSPromiseResolver.h \
+	Source/JavaScriptCore/runtime/JSPromiseResolverConstructor.cpp \
+	Source/JavaScriptCore/runtime/JSPromiseResolverConstructor.h \
+	Source/JavaScriptCore/runtime/JSPromiseResolverPrototype.cpp \
+	Source/JavaScriptCore/runtime/JSPromiseResolverPrototype.h \
 	Source/JavaScriptCore/runtime/JSPropertyNameIterator.cpp \
 	Source/JavaScriptCore/runtime/JSPropertyNameIterator.h \
 	Source/JavaScriptCore/runtime/JSSegmentedVariableObject.cpp \

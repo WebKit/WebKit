@@ -468,6 +468,13 @@
     <ClCompile Include="..\runtime\JSNotAnObject.cpp" />
     <ClCompile Include="..\runtime\JSONObject.cpp" />
     <ClCompile Include="..\runtime\JSObject.cpp" />
+    <ClInclude Include="..\runtime\JSPromise.cpp" />
+    <ClInclude Include="..\runtime\JSPromiseCallback.cpp" />
+    <ClInclude Include="..\runtime\JSPromiseConstructor.cpp" />
+    <ClInclude Include="..\runtime\JSPromisePrototype.cpp" />
+    <ClInclude Include="..\runtime\JSPromiseResolver.cpp" />
+    <ClInclude Include="..\runtime\JSPromiseResolverConstructor.cpp" />
+    <ClInclude Include="..\runtime\JSPromiseResolverPrototype.cpp" />
     <ClCompile Include="..\runtime\JSPropertyNameIterator.cpp" />
     <ClCompile Include="..\runtime\JSProxy.cpp" />
     <ClCompile Include="..\runtime\JSScope.cpp" />
@@ -543,6 +550,9 @@
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSDataViewPrototype.lut.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSGlobalObject.lut.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSONObject.lut.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSPromiseConstructor.lut.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSPromisePrototype.lut.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSPromiseResolverPrototype.lut.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\Lexer.lut.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\LLIntAssembly.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\NumberConstructor.lut.h" />
@@ -880,6 +890,13 @@
     <ClInclude Include="..\runtime\JSNotAnObject.h" />
     <ClInclude Include="..\runtime\JSONObject.h" />
     <ClInclude Include="..\runtime\JSObject.h" />
+    <ClInclude Include="..\runtime\JSPromise.h" />
+    <ClInclude Include="..\runtime\JSPromiseCallback.h" />
+    <ClInclude Include="..\runtime\JSPromiseConstructor.h" />
+    <ClInclude Include="..\runtime\JSPromisePrototype.h" />
+    <ClInclude Include="..\runtime\JSPromiseResolver.h" />
+    <ClInclude Include="..\runtime\JSPromiseResolverConstructor.h" />
+    <ClInclude Include="..\runtime\JSPromiseResolverPrototype.h" />
     <ClInclude Include="..\runtime\JSPropertyNameIterator.h" />
     <ClInclude Include="..\runtime\JSProxy.h" />
     <ClInclude Include="..\runtime\JSScope.h" />

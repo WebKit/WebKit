@@ -235,6 +235,9 @@ namespace JSC {
         const HashTable* regExpConstructorTable;
         const HashTable* regExpPrototypeTable;
         const HashTable* stringConstructorTable;
+        const HashTable* promisePrototypeTable;
+        const HashTable* promiseConstructorTable;
+        const HashTable* promiseResolverPrototypeTable;
         
         Strong<Structure> structureStructure;
         Strong<Structure> structureRareDataStructure;

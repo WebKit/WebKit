@@ -1,0 +1,117 @@
+Promises - Adapted from http://dxr.mozilla.org/mozilla-central/source/dom/promise/tests/test_promise.html.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Test Promise resolve.
+PASS Then.resolve has been called
+PASS 42 is 42
+
+Test Promise reject.
+PASS Then.reject has been called
+PASS 42 is 42
+
+Test Promise reject.
+PASS Then.reject has been called
+PASS 42 is 42
+
+Test Promise gc.
+PASS Then - promise is still alive
+
+Test Promise async.
+Global should be foo
+PASS foo is foo
+Global should still be foo
+PASS foo is foo
+Global should still be foo (2)
+PASS foo is foo
+Global should be bar
+PASS bar is bar
+
+Test Promise double then.
+PASS Then.resolve has been called
+PASS 42 is 42
+PASS Then.resolve has been called
+PASS 1 is 1
+PASS 42 is 42
+
+Test Promise - then / exception.
+PASS Then.resolve has been called
+PASS Catch handler (e.g. the reject handler) called.
+
+Test Promise - then / catch / then.
+PASS Then.resolve has been called
+PASS 42 is 42
+PASS Then.resolve has been called
+PASS 43 is 43
+PASS Then.resolve has been called
+PASS 44 is 44
+
+Test Promise - reject / then / catch / then.
+PASS Then.reject has been called
+PASS 42 is 42
+PASS Then.resolve has been called
+PASS 43 is 43
+PASS Then.resolve has been called
+PASS 44 is 44
+
+Test Promise - reject / then / catch / then (2).
+PASS Catch has been called
+PASS 42 is 42
+PASS Then.resolve has been called
+PASS 43 is 43
+
+Test Promise - reject / then / catch exception / then.
+PASS Then.reject has been called
+PASS 42 is 42
+PASS Catch has been called
+PASS 43 is 43
+PASS Then.resolve has been called
+PASS 44 is 44
+
+Test Promise - then / catch ordering (resolve).
+Many steps... should return 2
+PASS 2 is 2
+
+Test Promise - then / catch ordering (reject).
+Many steps... should return 2
+PASS 2 is 2
+
+Test Promise - nested promise
+PASS Nested promise is executed
+PASS Then.resolve has been called
+PASS 42 is 42
+
+Test Promise - nested-nested promise.
+PASS Nested promise is executed
+PASS Then.resolve has been called
+PASS 43 is 43
+
+Test Promise - wrong nested promise.
+PASS Nested promise is executed
+PASS Then.resolve has been called
+PASS 42 is 42
+
+Test Promise - promise loop.
+PASS Nested promise is executed
+PASS Nested-nested promise is executed
+PASS Then.resolve has been called
+PASS 42 is 42
+
+Test Promise - Promise.reject().
+PASS Then.reject has been called
+PASS 42 is 42
+
+Test Promise - Promise.resolve().
+PASS Then.resolve has been called
+PASS 42 is 42
+
+Test Promise - Promise.resolve() with  nested promise.
+PASS Nested promise is executed
+PASS Then.resolve has been called
+PASS 42 is 42
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

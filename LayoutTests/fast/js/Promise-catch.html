@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+description('Test Promise.');
+
+window.jsTestIsAsync = true;
+var resolver;
+
+var firstPromise = new Promise(function(newResolver) {
+  window.thisInInit = this;
+  resolver = newResolver;
+});
+
+var secondPromise = firstPromise.catch(function(result) {
+  window.thisInFulfillCallback = this;
+  shouldBeFalse('thisInFulfillCallback === firstPromise');
+  shouldBeTrue('thisInFulfillCallback === secondPromise');
+  window.result = result;
+  shouldBeEqualToString('result', 'hello');
+  return 'bye';
+});
+
+secondPromise.then(function(result) {
+  window.result = result;
+  shouldBeEqualToString('result', 'bye');
+  testPassed('fulfilled');
+  finishJSTest();
+}, function() {
+  testFailed('rejected');
+  finishJSTest();
+}, function() {
+});
+
+shouldBeTrue('thisInInit === firstPromise');
+shouldBeTrue('firstPromise instanceof Promise');
+shouldBeTrue('secondPromise instanceof Promise');
+
+shouldThrow('firstPromise.catch(null)', '"TypeError: Expected function or undefined as as first argument"');
+shouldThrow('firstPromise.catch(37)', '"TypeError: Expected function or undefined as as first argument"');
+
+resolver.reject('hello');
+</script>
+<script src="resources/js-test-post.js"></script>
+</body>
+</html>

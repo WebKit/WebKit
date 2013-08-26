@@ -101,6 +101,9 @@ namespace JSC  {
         static const HashTable* regExpConstructorTable(CallFrame* callFrame) { return callFrame->vm().regExpConstructorTable; }
         static const HashTable* regExpPrototypeTable(CallFrame* callFrame) { return callFrame->vm().regExpPrototypeTable; }
         static const HashTable* stringConstructorTable(CallFrame* callFrame) { return callFrame->vm().stringConstructorTable; }
+        static const HashTable* promisePrototypeTable(CallFrame* callFrame) { return callFrame->vm().promisePrototypeTable; }
+        static const HashTable* promiseConstructorTable(CallFrame* callFrame) { return callFrame->vm().promiseConstructorTable; }
+        static const HashTable* promiseResolverPrototypeTable(CallFrame* callFrame) { return callFrame->vm().promiseResolverPrototypeTable; }
 
         static CallFrame* create(Register* callFrameBase) { return static_cast<CallFrame*>(callFrameBase); }
         Register* registers() { return this; }

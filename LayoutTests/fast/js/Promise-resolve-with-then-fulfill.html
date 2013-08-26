@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+description('Test Promise.');
+
+window.jsTestIsAsync = true;
+var callback;
+var value = {
+  then: function(fulfillCallback, rejectCallback) {
+    testPassed('value.then is called.');
+    window.thisValue = this;
+    shouldBe('thisValue', 'value');
+    callback = fulfillCallback;
+  }
+};
+finishJSTest();
+var promise = new Promise(function(r) { r.resolve(value); });
+
+promise.then(function(result) {
+  testPassed('fulfilled');
+  window.result = result;
+  shouldBeEqualToString('result', 'hello');
+  finishJSTest();
+}, function() {
+  testFailed('rejected');
+  finishJSTest();
+});
+
+debug('The promise is not fulfilled now.');
+
+callback('hello');
+</script>
+<script src="resources/js-test-post.js"></script>
+</body>
+</html>

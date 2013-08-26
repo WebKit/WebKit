@@ -1,0 +1,11 @@
+[Worker] Test Promise.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+Starting worker: resources/Promise-resolve-in-workers.js
+PASS [Worker] thisInFulfillCallback === secondPromise is true
+PASS [Worker] result is "hello"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

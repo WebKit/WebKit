@@ -44,6 +44,9 @@ all : \
     JSDataViewPrototype.lut.h \
     JSONObject.lut.h \
     JSGlobalObject.lut.h \
+    JSPromisePrototype.lut.h \
+    JSPromiseConstructor.lut.h \
+    JSPromiseResolverPrototype.lut.h \
     KeywordLookup.h \
     Lexer.lut.h \
     NamePrototype.lut.h \

@@ -1,3 +1,88 @@
+2013-08-24  Sam Weinig  <sam@webkit.org>
+
+        Add support for Promises
+        https://bugs.webkit.org/show_bug.cgi?id=120260
+
+        Reviewed by Darin Adler.
+
+        Add an initial implementation of Promises - http://dom.spec.whatwg.org/#promises.
+        - Despite Promises being defined in the DOM, the implementation is being put in JSC
+          in preparation for the Promises eventually being defined in ECMAScript.
+
+        Tests: fast/js/Promise-already-fulfilled.html
+               fast/js/Promise-already-rejected.html
+               fast/js/Promise-already-resolved.html
+               fast/js/Promise-catch-in-workers.html
+               fast/js/Promise-catch.html
+               fast/js/Promise-chain.html
+               fast/js/Promise-exception.html
+               fast/js/Promise-fulfill-in-workers.html
+               fast/js/Promise-fulfill.html
+               fast/js/Promise-init-in-workers.html
+               fast/js/Promise-init.html
+               fast/js/Promise-reject-in-workers.html
+               fast/js/Promise-reject.html
+               fast/js/Promise-resolve-chain.html
+               fast/js/Promise-resolve-in-workers.html
+               fast/js/Promise-resolve-with-then-exception.html
+               fast/js/Promise-resolve-with-then-fulfill.html
+               fast/js/Promise-resolve-with-then-reject.html
+               fast/js/Promise-resolve.html
+               fast/js/Promise-simple-fulfill-inside-callback.html
+               fast/js/Promise-simple-fulfill.html
+               fast/js/Promise-simple-in-workers.html
+               fast/js/Promise-simple.html
+               fast/js/Promise-static-fulfill.html
+               fast/js/Promise-static-reject.html
+               fast/js/Promise-static-resolve.html
+               fast/js/Promise-then-in-workers.html
+               fast/js/Promise-then-without-callbacks-in-workers.html
+               fast/js/Promise-then-without-callbacks.html
+               fast/js/Promise-then.html
+               fast/js/Promise-types.html
+               fast/js/Promise.html
+
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * UseJSC.cmake:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSBindingsAllInOne.cpp:
+        Add new files.
+
+        * bindings/js/JSDOMGlobalObjectTask.cpp: Added.
+        (WebCore::JSGlobalObjectCallback::create):
+        (WebCore::JSGlobalObjectCallback::~JSGlobalObjectCallback):
+        (WebCore::JSGlobalObjectCallback::call):
+        (WebCore::JSGlobalObjectCallback::JSGlobalObjectCallback):
+        (WebCore::JSGlobalObjectTask::JSGlobalObjectTask):
+        (WebCore::JSGlobalObjectTask::~JSGlobalObjectTask):
+        (WebCore::JSGlobalObjectTask::performTask):
+        * bindings/js/JSDOMGlobalObjectTask.h: Added.
+        (WebCore::JSGlobalObjectTask::create):
+        Add a new task type to be used with the GlobalObjectMethodTable's new QueueTaskToEventLoop callback.
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::queueTaskToEventLoop):
+        * bindings/js/JSDOMWindowBase.h:
+        Implement the GlobalObjectMethodTable callback, QueueTaskToEventLoop. 
+
+        * bindings/js/JSMainThreadExecState.h:
+        All using JSMainThreadExecState as a simple RAII object.
+
+        * bindings/js/JSWorkerGlobalScopeBase.cpp:
+        (WebCore::JSWorkerGlobalScopeBase::JSWorkerGlobalScopeBase):
+        (WebCore::JSWorkerGlobalScopeBase::allowsAccessFrom):
+        (WebCore::JSWorkerGlobalScopeBase::supportsProfiling):
+        (WebCore::JSWorkerGlobalScopeBase::supportsRichSourceInfo):
+        (WebCore::JSWorkerGlobalScopeBase::shouldInterruptScript):
+        (WebCore::JSWorkerGlobalScopeBase::javaScriptExperimentsEnabled):
+        (WebCore::JSWorkerGlobalScopeBase::queueTaskToEventLoop):
+        * bindings/js/JSWorkerGlobalScopeBase.h:
+        Add a GlobalObjectMethodTable and implement QueueTaskToEventLoop. Forward the other callbacks
+        to JSGlobalObject so they retain their existing behavior.
+
 2013-08-26  Rob Buis  <rwlbuis@webkit.org>
 
         Computed style of fill/stroke properties incorrect on references

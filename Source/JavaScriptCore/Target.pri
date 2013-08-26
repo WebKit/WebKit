@@ -323,6 +323,13 @@ SOURCES += \
     runtime/JSNotAnObject.cpp \
     runtime/JSONObject.cpp \
     runtime/JSObject.cpp \
+    runtime/JSPromise.cpp \
+    runtime/JSPromiseCallback.cpp \
+    runtime/JSPromiseConstructor.cpp \
+    runtime/JSPromisePrototype.cpp \
+    runtime/JSPromiseResolver.cpp \
+    runtime/JSPromiseResolverConstructor.cpp \
+    runtime/JSPromiseResolverPrototype.cpp \
     runtime/JSPropertyNameIterator.cpp \
     runtime/JSProxy.cpp \
     runtime/JSScope.cpp \

@@ -1,0 +1,72 @@
+Promises - Test basic types / exceptions.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Promises
+
+aPromise = new Promise(...)
+PASS aPromise is an instance of Promise
+PASS String(aPromise) is '[object Promise]'
+PASS aPromise.then is defined.
+PASS aPromise.then is an instance of Function
+PASS aPromise.then.length is 0
+PASS aPromise.catch is defined.
+PASS aPromise.catch is an instance of Function
+PASS aPromise.catch.length is 0
+
+Promise constructor
+
+PASS Promise.length is 1
+PASS new Promise() threw exception TypeError: Expected at least one argument.
+PASS new Promise(1) threw exception TypeError: Expected function as as first argument.
+PASS new Promise('hello') threw exception TypeError: Expected function as as first argument.
+PASS new Promise([]) threw exception TypeError: Expected function as as first argument.
+PASS new Promise({}) threw exception TypeError: Expected function as as first argument.
+PASS new Promise(null) threw exception TypeError: Expected function as as first argument.
+PASS new Promise(undefined) threw exception TypeError: Expected function as as first argument.
+PASS new Promise(function(resolver) { resolver.resolve(1); }) did not throw exception.
+PASS Promise() threw exception TypeError: Function is not a function (evaluating 'Promise()').
+
+Promise statics
+
+PASS Promise.fulfill is an instance of Function
+PASS Promise.fulfill.length is 1
+PASS Promise.fulfill() threw exception TypeError: Expected at least one argument.
+PASS Promise.fulfill(1) did not throw exception.
+PASS Promise.resolve is an instance of Function
+PASS Promise.resolve.length is 1
+PASS Promise.resolve() threw exception TypeError: Expected at least one argument.
+PASS Promise.resolve(1) did not throw exception.
+PASS Promise.reject is an instance of Function
+PASS Promise.reject.length is 1
+PASS Promise.reject() threw exception TypeError: Expected at least one argument.
+PASS Promise.reject(1) did not throw exception.
+PASS Promise.fulfill(1) is an instance of Promise
+PASS Promise.resolve(1) is an instance of Promise
+PASS Promise.reject(1) is an instance of Promise
+
+PromiseResolver
+
+aResolver is from new Promise(function(aResolver) { ... })
+PASS aResolver is an instance of PromiseResolver
+PASS String(aResolver) is '[object PromiseResolver]'
+PASS aResolver.fulfill is an instance of Function
+PASS aResolver.fulfill.length is 1
+PASS aResolver.resolve is an instance of Function
+PASS aResolver.resolve.length is 1
+PASS aResolver.reject is an instance of Function
+PASS aResolver.reject.length is 1
+PASS resolverFulfill() threw exception TypeError: Receiver of fulfill must be a PromiseResolver.
+PASS resolverResolve() threw exception TypeError: Receiver of resolve must be a PromiseResolver.
+PASS resolverReject() threw exception TypeError: Receiver of reject must be a PromiseResolver.
+
+PromiseResolver constructor
+
+PASS new PromiseResolver() threw exception TypeError: Function is not a constructor (evaluating 'new PromiseResolver()').
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
