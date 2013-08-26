@@ -348,8 +348,6 @@ bool SVGImage::dataChanged(bool allDataReceived)
         return true;
 
     if (allDataReceived) {
-        static FrameLoaderClient* dummyFrameLoaderClient =  new EmptyFrameLoaderClient;
-
         Page::PageClients pageClients;
         fillWithEmptyClients(pageClients);
         m_chromeClient = adoptPtr(new SVGImageChromeClient(this));
@@ -366,7 +364,7 @@ bool SVGImage::dataChanged(bool allDataReceived)
         m_page->settings().setScriptEnabled(false);
         m_page->settings().setPluginsEnabled(false);
 
-        RefPtr<Frame> frame = Frame::create(m_page.get(), 0, dummyFrameLoaderClient);
+        RefPtr<Frame> frame = m_page->mainFrame();
         frame->setView(FrameView::create(frame.get()));
         frame->init();
         FrameLoader& loader = frame->loader();

@@ -35,9 +35,10 @@ class WebFrame;
     
 class WebFrameLoaderClient : public WebCore::FrameLoaderClient {
 public:
-    WebFrameLoaderClient(WebFrame*);
+    WebFrameLoaderClient();
     ~WebFrameLoaderClient();
 
+    void setWebFrame(WebFrame* webFrame) { m_frame = webFrame; }
     WebFrame* webFrame() const { return m_frame; }
 
 private:

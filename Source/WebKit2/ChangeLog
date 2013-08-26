@@ -1,3 +1,52 @@
+2013-08-26  Andreas Kling  <akling@apple.com>
+
+        WebCore: Let Page create the main Frame.
+        <https://webkit.org/b/119964>
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::WebFrameLoaderClient):
+
+            This starts out with a null WebFrame* pointer now.
+
+        (WebKit::WebFrameLoaderClient::setWebFrame):
+
+            WebFrame hooks itself up through this as soon as it's constructed.
+
+        (WebKit::WebFrameLoaderClient::frameLoaderDestroyed):
+
+            Tweak an out-of-date comment. The ref() we're balancing out comes from
+            WebFrame::create().
+
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::createWithCoreMainFrame):
+
+            Rewrote createMainFrame() as createWithCoreMainFrame(). The new method wraps
+            an existing WebCore::Frame instead of creating a new one.
+
+        (WebKit::WebFrame::createSubframe):
+
+            Merged WebFrame::init() into here since the logic isn't shared with main
+            Frame creation anymore.
+
+        (WebKit::WebFrame::create):
+        (WebKit::WebFrame::WebFrame):
+
+            Call WebFrameLoaderClient::setWebFrame(this).
+
+        * WebProcess/WebPage/WebFrame.h:
+
+            WebFrame::m_frameLoaderClient is now an OwnPtr rather than an inline member.
+            This way it can be created before the WebFrame.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+
+            Set up a WebFrameLoaderClient and pass it to the Page constructor along with
+            the other PageClients.
+
 2013-08-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add WebKit2 API for isolated worlds

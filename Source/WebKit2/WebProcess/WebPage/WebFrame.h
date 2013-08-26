@@ -57,7 +57,7 @@ class WebPage;
 
 class WebFrame : public TypedAPIObject<APIObject::TypeBundleFrame> {
 public:
-    static PassRefPtr<WebFrame> createMainFrame(WebPage*);
+    static PassRefPtr<WebFrame> createWithCoreMainFrame(WebPage*, WebCore::Frame*);
     static PassRefPtr<WebFrame> createSubframe(WebPage*, const String& frameName, WebCore::HTMLFrameOwnerElement*);
     ~WebFrame();
 
@@ -141,10 +141,8 @@ public:
 #endif
 
 private:
-    static PassRefPtr<WebFrame> create();
-    WebFrame();
-
-    void init(WebPage*, const String& frameName, WebCore::HTMLFrameOwnerElement*);
+    static PassRefPtr<WebFrame> create(PassOwnPtr<WebFrameLoaderClient>);
+    WebFrame(PassOwnPtr<WebFrameLoaderClient>);
 
     WebCore::Frame* m_coreFrame;
 
@@ -152,7 +150,7 @@ private:
     WebCore::FramePolicyFunction m_policyFunction;
     uint64_t m_policyDownloadID;
 
-    WebFrameLoaderClient m_frameLoaderClient;
+    OwnPtr<WebFrameLoaderClient> m_frameLoaderClient;
     LoadListener* m_loadListener;
     
     uint64_t m_frameID;

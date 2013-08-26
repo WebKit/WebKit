@@ -81,8 +81,8 @@ using namespace WebCore;
 
 namespace WebKit {
 
-WebFrameLoaderClient::WebFrameLoaderClient(WebFrame* frame)
-    : m_frame(frame)
+WebFrameLoaderClient::WebFrameLoaderClient()
+    : m_frame(0)
     , m_hasSentResponseToPluginView(false)
     , m_didCompletePageTransitionAlready(false)
     , m_frameCameFromPageCache(false)
@@ -100,7 +100,7 @@ void WebFrameLoaderClient::frameLoaderDestroyed()
 
     m_frame->invalidate();
 
-    // Balances explicit ref() in WebFrame::createMainFrame and WebFrame::createSubframe.
+    // Balances explicit ref() in WebFrame::create().
     m_frame->deref();
 }
 

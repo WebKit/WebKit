@@ -63,6 +63,7 @@
 #include "WebEvent.h"
 #include "WebEventConversion.h"
 #include "WebFrame.h"
+#include "WebFrameLoaderClient.h"
 #include "WebFullScreenManager.h"
 #include "WebFullScreenManagerMessages.h"
 #include "WebGeolocationClient.h"
@@ -315,8 +316,14 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     pageClients.alternativeTextClient = new WebAlternativeTextClient(this);
 #endif
     pageClients.plugInClient = new WebPlugInClient(this);
+    pageClients.loaderClientForMainFrame = new WebFrameLoaderClient;
 
     m_page = adoptPtr(new Page(pageClients));
+
+    m_drawingArea = DrawingArea::create(this, parameters);
+    m_drawingArea->setPaintingEnabled(false);
+
+    m_mainFrame = WebFrame::createWithCoreMainFrame(this, m_page->mainFrame());
 
 #if ENABLE(BATTERY_STATUS)
     WebCore::provideBatteryTo(m_page.get(), new WebBatteryClient(this));
@@ -348,13 +355,8 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     m_page->setGroupName(m_pageGroup->identifier());
     m_page->setDeviceScaleFactor(parameters.deviceScaleFactor);
 
-    m_drawingArea = DrawingArea::create(this, parameters);
-    m_drawingArea->setPaintingEnabled(false);
-
     updatePreferences(parameters.store);
     platformInitialize();
-
-    m_mainFrame = WebFrame::createMainFrame(this);
 
     setUseFixedLayout(parameters.useFixedLayout);
 

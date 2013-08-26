@@ -62,6 +62,9 @@ void fillWithEmptyClients(Page::PageClients& pageClients)
 
     static InspectorClient* dummyInspectorClient = adoptPtr(new EmptyInspectorClient).leakPtr();
     pageClients.inspectorClient = dummyInspectorClient;
+
+    static FrameLoaderClient* dummyFrameLoaderClient = new EmptyFrameLoaderClient;
+    pageClients.loaderClientForMainFrame = dummyFrameLoaderClient;
 }
 
 class EmptyPopupMenu : public PopupMenu {

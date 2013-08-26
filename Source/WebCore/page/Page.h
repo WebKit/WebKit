@@ -68,6 +68,7 @@ class DragController;
 class EditorClient;
 class FocusController;
 class Frame;
+class FrameLoaderClient;
 class FrameSelection;
 class HaltablePlugin;
 class HistoryItem;
@@ -136,6 +137,7 @@ public:
         PlugInClient* plugInClient;
         RefPtr<BackForwardList> backForwardClient;
         ValidationMessageClient* validationMessageClient;
+        FrameLoaderClient* loaderClientForMainFrame;
     };
 
     explicit Page(PageClients&);
@@ -158,7 +160,6 @@ public:
     EditorClient* editorClient() const { return m_editorClient; }
     PlugInClient* plugInClient() const { return m_plugInClient; }
 
-    void setMainFrame(PassRefPtr<Frame>);
     Frame* mainFrame() const { return m_mainFrame.get(); }
 
     bool openedByDOM() const;

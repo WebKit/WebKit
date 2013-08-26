@@ -431,7 +431,6 @@ Page* InspectorOverlay::overlayPage()
     if (m_overlayPage)
         return m_overlayPage.get();
 
-    static FrameLoaderClient* dummyFrameLoaderClient =  new EmptyFrameLoaderClient;
     Page::PageClients pageClients;
     fillWithEmptyClients(pageClients);
     m_overlayPage = adoptPtr(new Page(pageClients));
@@ -451,7 +450,7 @@ Page* InspectorOverlay::overlayPage()
     overlaySettings.setScriptEnabled(true);
     overlaySettings.setPluginsEnabled(false);
 
-    RefPtr<Frame> frame = Frame::create(m_overlayPage.get(), 0, dummyFrameLoaderClient);
+    RefPtr<Frame> frame = m_overlayPage->mainFrame();
     frame->setView(FrameView::create(frame.get()));
     frame->init();
     FrameLoader& loader = frame->loader();

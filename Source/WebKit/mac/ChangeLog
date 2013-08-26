@@ -1,3 +1,27 @@
+2013-08-26  Andreas Kling  <akling@apple.com>
+
+        WebCore: Let Page create the main Frame.
+        <https://webkit.org/b/119964>
+
+        Reviewed by Anders Carlsson.
+
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        (WebFrameLoaderClient::setWebFrame):
+
+            Make it possible to construct a WebFrameLoaderClient with a null WebFrame*.
+            A WebFrame* is later hooked up with a call to setWebFrame().
+
+        * WebView/WebFrame.mm:
+        (+[WebFrame _createMainFrameWithPage:frameName:frameView:]):
+
+            Customized this method to wrap the Page::mainFrame() instead of creating a
+            new Frame.
+
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+
+            Add a WebFrameLoaderClient to the PageClients passed to Page().
+
 2013-08-25  Darin Adler  <darin@apple.com>
 
         Frame should not have a documentTypeString member function

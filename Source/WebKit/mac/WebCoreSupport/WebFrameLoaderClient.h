@@ -51,8 +51,9 @@ typedef HashMap<RefPtr<WebCore::ResourceLoader>, RetainPtr<WebResource> > Resour
 
 class WebFrameLoaderClient : public WebCore::FrameLoaderClient {
 public:
-    WebFrameLoaderClient(WebFrame*);
+    WebFrameLoaderClient(WebFrame* = 0);
 
+    void setWebFrame(WebFrame* webFrame) { m_webFrame = webFrame; }
     WebFrame* webFrame() const { return m_webFrame.get(); }
 
 private:

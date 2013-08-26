@@ -283,7 +283,17 @@ WebView *getWebView(WebFrame *webFrame)
 
 + (void)_createMainFrameWithPage:(Page*)page frameName:(const String&)name frameView:(WebFrameView *)frameView
 {
-    [self _createFrameWithPage:page frameName:name frameView:frameView ownerElement:0];
+    WebView *webView = kit(page);
+
+    WebFrame *frame = [[self alloc] _initWithWebFrameView:frameView webView:webView];
+    frame->_private->coreFrame = page->mainFrame();
+    static_cast<WebFrameLoaderClient*>(page->mainFrame()->loader().client())->setWebFrame(frame);
+    [frame release];
+
+    page->mainFrame()->tree()->setName(name);
+    page->mainFrame()->init();
+
+    [webView _setZoomMultiplier:[webView _realZoomMultiplier] isTextOnly:[webView _realZoomMultiplierIsTextOnly]];
 }
 
 + (PassRefPtr<WebCore::Frame>)_createSubframeWithOwnerElement:(HTMLFrameOwnerElement*)ownerElement frameName:(const String&)name frameView:(WebFrameView *)frameView

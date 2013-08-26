@@ -142,6 +142,7 @@ Page::Page(PageClients& pageClients)
     , m_settings(Settings::create(this))
     , m_progress(ProgressTracker::create())
     , m_backForwardController(BackForwardController::create(this, pageClients.backForwardClient))
+    , m_mainFrame(Frame::create(this, 0, pageClients.loaderClientForMainFrame))
     , m_theme(RenderTheme::themeForPage(this))
     , m_editorClient(pageClients.editorClient)
     , m_plugInClient(pageClients.plugInClient)
@@ -344,12 +345,6 @@ void Page::setViewMode(ViewMode viewMode)
 }
 #endif // ENABLE(VIEW_MODE_CSS_MEDIA)
 
-void Page::setMainFrame(PassRefPtr<Frame> mainFrame)
-{
-    ASSERT(!m_mainFrame); // Should only be called during initialization
-    m_mainFrame = mainFrame;
-}
-
 bool Page::openedByDOM() const
 {
     return m_openedByDOM;
@@ -485,8 +480,10 @@ void Page::updateStyleForAllPagesAfterGlobalChangeInEnvironment()
 
 void Page::setNeedsRecalcStyleInAllFrames()
 {
-    for (Frame* frame = mainFrame(); frame; frame = frame->tree().traverseNext())
-        frame->document()->styleResolverChanged(DeferRecalcStyle);
+    for (Frame* frame = mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        if (Document* document = frame->document()) {
+            frame->document()->styleResolverChanged(DeferRecalcStyle);
+    }
 }
 
 void Page::refreshPlugins(bool reload)
@@ -1596,6 +1593,7 @@ Page::PageClients::PageClients()
     , inspectorClient(0)
     , plugInClient(0)
     , validationMessageClient(0)
+    , loaderClientForMainFrame(0)
 {
 }
 

@@ -1,3 +1,20 @@
+2013-08-26  Andreas Kling  <akling@apple.com>
+
+        WebCore: Let Page create the main Frame.
+        <https://webkit.org/b/119964>
+
+        Tweak WebKit1/GTK for changes in WebCore.
+
+        Patch by Zan Dobersek <zdobersek@igalia.com>
+        Reviewed by Gustavo Noronha Silva.
+
+        * WebCoreSupport/FrameLoaderClientGtk.h:
+        (WebKit::FrameLoaderClient::setWebFrame):
+        * webkit/webkitwebframe.cpp:
+        (webkit_web_frame_new):
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_init):
+
 2013-08-24  Darin Adler  <darin@apple.com>
 
         Frame::tree should return a reference instead of a pointer

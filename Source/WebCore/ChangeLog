@@ -1,3 +1,57 @@
+2013-08-26  Andreas Kling  <akling@apple.com>
+
+        WebCore: Let Page create the main Frame.
+        <https://webkit.org/b/119964>
+
+        Reviewed by Anders Carlsson.
+
+        Previously, Frame::create() would call Page::setMainFrame() when constructing the
+        main Frame for a Page. Up until that point, Page had a null mainFrame().
+
+        To guarantee that Page::mainFrame() is never null, we re-order things so that
+        Page is responsible for creating its own main Frame. We do this at the earliest
+        possible point; in the Page constructor initializer list.
+
+        Constructing a Frame requires a FrameLoaderClient*, so I've added such a field to
+        the PageClients struct.
+
+        When creating a WebKit-layer frame, we now wrap the already-instantiated
+        Page::mainFrame() instead of creating a new Frame.
+
+        * loader/EmptyClients.cpp:
+        (WebCore::fillWithEmptyClients):
+
+            Add an EmptyFrameLoaderClient to the PageClients constructed here.
+
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::InspectorOverlay::overlayPage):
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::dataChanged):
+
+            Updated to wrap Page::mainFrame() in a FrameView instead of creating their
+            own Frame manually.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::create):
+        * page/Page.h:
+
+            Remove Page::setMainFrame() and the only call site.
+
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+
+            Construct Page::m_mainFrame in the initializer list.
+
+        (WebCore::Page::PageClients::PageClients):
+
+            Add "FrameLoaderClient* loaderClientForMainFrame" to PageClients.
+
+        (WebCore::Page::setNeedsRecalcStyleInAllFrames):
+
+            Null-check the Frame::document() before calling through on it. This would
+            otherwise crash when changing font-related Settings before calling init() on
+            the Frame (like InspectorOverlay does.)
+
 2013-08-26  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Unreviewed build fix.

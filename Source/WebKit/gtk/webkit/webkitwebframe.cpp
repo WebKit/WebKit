@@ -552,8 +552,8 @@ WebKitWebFrame* webkit_web_frame_new(WebKitWebView* webView)
     WebKitWebViewPrivate* viewPriv = webView->priv;
 
     priv->webView = webView;
-    WebKit::FrameLoaderClient* client = new WebKit::FrameLoaderClient(frame);
-    priv->coreFrame = Frame::create(viewPriv->corePage, 0, client).get();
+    priv->coreFrame = viewPriv->corePage->mainFrame();
+    static_cast<WebKit::FrameLoaderClient*>(viewPriv->corePage->mainFrame()->loader().client())->setWebFrame(frame);
     priv->coreFrame->init();
 
     priv->origin = 0;

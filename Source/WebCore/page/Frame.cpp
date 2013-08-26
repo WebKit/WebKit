@@ -204,10 +204,7 @@ inline Frame::Frame(Page* page, HTMLFrameOwnerElement* ownerElement, FrameLoader
 
 PassRefPtr<Frame> Frame::create(Page* page, HTMLFrameOwnerElement* ownerElement, FrameLoaderClient* client)
 {
-    RefPtr<Frame> frame = adoptRef(new Frame(page, ownerElement, client));
-    if (!ownerElement)
-        page->setMainFrame(frame);
-    return frame.release();
+    return adoptRef(new Frame(page, ownerElement, client));
 }
 
 Frame::~Frame()

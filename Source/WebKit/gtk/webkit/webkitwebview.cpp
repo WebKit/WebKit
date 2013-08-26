@@ -57,7 +57,7 @@
 #include "FloatQuad.h"
 #include "FocusController.h"
 #include "FrameLoader.h"
-#include "FrameLoaderClient.h"
+#include "FrameLoaderClientGtk.h"
 #include "FrameLoaderTypes.h"
 #include "FrameView.h"
 #include "GOwnPtrGtk.h"
@@ -3763,6 +3763,7 @@ static void webkit_web_view_init(WebKitWebView* webView)
     pageClients.dragClient = new WebKit::DragClient(webView);
 #endif
     pageClients.inspectorClient = new WebKit::InspectorClient(webView);
+    pageClients.loaderClientForMainFrame = new WebKit::FrameLoaderClient;
 
     priv->corePage = new Page(pageClients);
 

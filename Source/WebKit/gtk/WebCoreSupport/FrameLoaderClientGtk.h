@@ -32,19 +32,23 @@
 
 #include "FrameLoaderClient.h"
 #include "ResourceResponse.h"
-#include "PluginView.h"
 #include "webkitwebpolicydecision.h"
 
 typedef struct _WebKitWebFrame WebKitWebFrame;
+
+namespace WebCore {
+class PluginView;
+}
 
 namespace WebKit {
 
     class FrameLoaderClient : public WebCore::FrameLoaderClient {
     public:
-        FrameLoaderClient(WebKitWebFrame*);
+        FrameLoaderClient(WebKitWebFrame* = 0);
         virtual ~FrameLoaderClient();
         virtual void frameLoaderDestroyed();
 
+        void setWebFrame(WebKitWebFrame* frame) { m_frame = frame; }
         WebKitWebFrame*  webFrame() const { return m_frame; }
 
         virtual bool hasWebView() const;
