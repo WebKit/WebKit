@@ -352,6 +352,7 @@ webkit.org/b/98523 fast/images/repaint-subrect-grid.html [ Failure ]
 
 # DRT needs a setting for setShouldRespectImageOrientation
 webkit.org/b/101210 fast/images/exif-orientation.html [ Failure ]
+webkit.org/b/101210 fast/images/exif-orientation-composited.html [ Failure ]
 
 # ESC key does not cancel context menu in EFL port
 Bug(EFL) editing/selection/5354455-1.html [ Failure ]

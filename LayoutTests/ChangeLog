@@ -1,3 +1,9 @@
+2013-08-26  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed, EFL gardening. EFL WK1 DRT doesn't support exif-orientation tests
+
+        * platform/efl-wk1/TestExpectations: Add fast/images/exif-orientation-composited.html as failure.
+
 2013-08-25  Yoav Weiss  <yoav@yoav.ws>
 
         Improve srcset's layout tests
