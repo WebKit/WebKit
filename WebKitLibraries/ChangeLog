@@ -1,3 +1,10 @@
+2013-08-26  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Updates to WKSI to get external builders working.
+
+        * win/include/WebKitSystemInterface/WebKitSystemInterface.h:
+        * win/lib32/WebKitSystemInterface.lib:
+
 2013-08-24  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Another attempt to fix the Windows bots. Need to retain older

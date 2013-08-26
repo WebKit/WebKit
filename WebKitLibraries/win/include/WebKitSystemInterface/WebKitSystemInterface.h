@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2009 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2008, 2009, 2013 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -235,11 +235,6 @@ typedef enum {
 } WKMediaUIPart;
 
 typedef enum {
-    WKMediaControllerThemeClassic   = 1,
-    WKMediaControllerThemeQuickTime = 2
-} WKMediaControllerThemeStyle;
-
-typedef enum {
     WKMediaControllerFlagDisabled = 1 << 0,
     WKMediaControllerFlagPressed = 1 << 1,
     WKMediaControllerFlagDrawEndCaps = 1 << 3,
@@ -250,11 +245,10 @@ typedef enum {
 extern "C" {
 #endif
 
-bool WKMediaControllerThemeAvailable(int themeStyle);
-bool WKHitTestMediaUIPart(int part, int themeStyle, CGRect bounds, CGPoint point);
-void WKMeasureMediaUIPart(int part, int themeStyle, CGRect *bounds, CGSize *naturalSize);
-void WKDrawMediaUIPart(int part, int themeStyle, CGContextRef context, CGRect rect, unsigned state);
-void WKDrawMediaSliderTrack(int themeStyle, CGContextRef context, CGRect rect, float timeLoaded, float currentTime, float duration, unsigned state);
+bool WKHitTestMediaUIPart(int part, CGRect bounds, CGPoint point);
+void WKMeasureMediaUIPart(int part, CGRect *bounds, CGSize *naturalSize);
+void WKDrawMediaUIPart(int part, CGContextRef context, CGRect rect, unsigned state);
+void WKDrawMediaSliderTrack(CGContextRef context, CGRect rect, float timeLoaded, float currentTime, float duration, unsigned state);
 
 #ifdef __cplusplus
 }
