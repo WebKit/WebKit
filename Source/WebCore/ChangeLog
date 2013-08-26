@@ -1,3 +1,26 @@
+2013-08-26  Pratik Solanki  <psolanki@apple.com>
+
+        Page::console() should return a reference
+        https://bugs.webkit.org/show_bug.cgi?id=120320
+
+        Reviewed by Darin Adler.
+
+        Page::m_console is never NULL so console() can just return a reference.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::logError):
+        * dom/Document.cpp:
+        (WebCore::Document::addConsoleMessage):
+        (WebCore::Document::addMessage):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::pageConsole):
+        * page/Page.h:
+        (WebCore::Page::console):
+        * xml/XSLStyleSheetLibxslt.cpp:
+        (WebCore::XSLStyleSheet::parseString):
+        * xml/XSLTProcessorLibxslt.cpp:
+        (WebCore::docLoaderFunc):
+
 2013-08-26  Rob Buis  <rwlbuis@webkit.org>
 
         Lonely stop crashes

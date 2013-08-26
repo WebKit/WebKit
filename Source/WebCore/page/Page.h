@@ -394,7 +394,7 @@ public:
     PageThrottler* pageThrottler() { return m_pageThrottler.get(); }
     PassOwnPtr<PageActivityAssertionToken> createActivityToken();
 
-    PageConsole* console() { return m_console.get(); }
+    PageConsole& console() { return *m_console; }
 
 #if ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING)
     void hiddenPageDOMTimerThrottlingStateChanged();
@@ -545,7 +545,7 @@ private:
     bool m_scriptedAnimationsSuspended;
     OwnPtr<PageThrottler> m_pageThrottler;
 
-    OwnPtr<PageConsole> m_console;
+    const OwnPtr<PageConsole> m_console;
 
     HashSet<String> m_seenPlugins;
     HashSet<String> m_seenMediaEngines;
