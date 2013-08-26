@@ -1,3 +1,14 @@
+2013-08-26  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        JSObject::putDirectIndexBeyondVectorLengthWithArrayStorage does a check on the length of the ArrayStorage after possible reallocing it
+        https://bugs.webkit.org/show_bug.cgi?id=120278
+
+        Reviewed by Geoffrey Garen.
+
+        * fast/js/put-direct-index-beyond-vector-length-resize-expected.txt: Added.
+        * fast/js/put-direct-index-beyond-vector-length-resize.html: Added.
+        * fast/js/script-tests/put-direct-index-beyond-vector-length-resize.js: Added.
+
 2013-08-24  Sam Weinig  <sam@webkit.org>
 
         Add support for Promises

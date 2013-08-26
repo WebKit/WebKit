@@ -2057,8 +2057,8 @@ bool JSObject::putDirectIndexBeyondVectorLengthWithArrayStorage(ExecState* exec,
         if (LIKELY(
                 !attributes
                 && (isDenseEnoughForVector(i, storage->m_numValuesInVector))
-                && increaseVectorLength(vm, i + 1)
-                && !indexIsSufficientlyBeyondLengthForSparseMap(i, storage->vectorLength()))) {
+                && !indexIsSufficientlyBeyondLengthForSparseMap(i, storage->vectorLength()))
+                && increaseVectorLength(vm, i + 1)) {
             // success! - reread m_storage since it has likely been reallocated, and store to the vector.
             storage = arrayStorage();
             storage->m_vector[i].set(vm, this, value);
