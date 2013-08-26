@@ -39,9 +39,7 @@ namespace WebCore {
 
 bool JSHTMLFormElement::canGetItemsForName(ExecState*, HTMLFormElement* form, PropertyName propertyName)
 {
-    Vector<RefPtr<Node> > namedItems;
-    form->getNamedElements(propertyNameToAtomicString(propertyName), namedItems);
-    return namedItems.size();
+    return form->hasNamedElement(propertyNameToAtomicString(propertyName));
 }
 
 JSValue JSHTMLFormElement::nameGetter(ExecState* exec, JSValue slotBase, PropertyName propertyName)

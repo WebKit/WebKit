@@ -611,36 +611,38 @@ bool HTMLFormElement::checkInvalidControlsAndCollectUnhandled(Vector<RefPtr<Form
     return hasInvalidControls;
 }
 
-HTMLFormControlElement* HTMLFormElement::elementForAlias(const AtomicString& alias)
+HTMLFormControlElement* HTMLFormElement::elementFromPastNamesMap(const AtomicString& pastName) const
 {
-    if (alias.isEmpty() || !m_elementAliases)
+    if (pastName.isEmpty() || !m_pastNamesMap)
         return 0;
-    return m_elementAliases->get(alias.impl());
+    return m_pastNamesMap->get(pastName.impl());
 }
 
-void HTMLFormElement::addElementAlias(HTMLFormControlElement* element, const AtomicString& alias)
+void HTMLFormElement::addElementToPastNamesMap(HTMLFormControlElement* element, const AtomicString& pastName)
 {
-    if (alias.isEmpty())
+    if (pastName.isEmpty())
         return;
-    if (!m_elementAliases)
-        m_elementAliases = adoptPtr(new AliasMap);
-    m_elementAliases->set(alias.impl(), element);
+    if (!m_pastNamesMap)
+        m_pastNamesMap = adoptPtr(new PastNamesMap);
+    m_pastNamesMap->set(pastName.impl(), element);
+}
+
+bool HTMLFormElement::hasNamedElement(const AtomicString& name)
+{
+    return elements()->hasNamedItem(name) || elementFromPastNamesMap(name);
 }
 
 void HTMLFormElement::getNamedElements(const AtomicString& name, Vector<RefPtr<Node> >& namedItems)
 {
+    // http://www.whatwg.org/specs/web-apps/current-work/multipage/forms.html#dom-form-nameditem
     elements()->namedItems(name, namedItems);
 
-    HTMLFormControlElement* aliasElement = elementForAlias(name);
-    if (aliasElement) {
-        if (namedItems.find(aliasElement) == notFound) {
-            // We have seen it before but it is gone now. Still, we need to return it.
-            // FIXME: The above comment is not clear enough; it does not say why we need to do this.
-            namedItems.append(aliasElement);
-        }
-    }
-    if (namedItems.size() && namedItems.first() != aliasElement)
-        addElementAlias(static_cast<HTMLFormControlElement*>(namedItems.first().get()), name);
+    // FIXME: The specification says we should not add the element from the past when names map when namedItems is not empty.
+    HTMLFormControlElement* elementFromPast = elementFromPastNamesMap(name);
+    if (namedItems.size() && namedItems.first() != elementFromPast)
+        addElementToPastNamesMap(static_cast<HTMLFormControlElement*>(namedItems.first().get()), name);
+    else if (elementFromPast && namedItems.find(elementFromPast) == notFound)
+        namedItems.append(elementFromPast);
 }
 
 void HTMLFormElement::documentDidResumeFromPageCache()

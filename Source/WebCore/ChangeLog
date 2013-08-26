@@ -1,3 +1,31 @@
+2013-08-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        JSHTMLFormElement::canGetItemsForName needlessly allocates a Vector
+        https://bugs.webkit.org/show_bug.cgi?id=120277
+
+        Reviewed by Sam Weinig.
+
+        Added HTMLFormElement::hasNamedElement and used it in JSHTMLFormElement::canGetItemsForName.
+
+        This required fixing a bug in HTMLFormElement::getNamedElements that the first call to getNamedElements
+        after replacing an element A with another element B of the same name caused it to erroneously append A
+        to namedItems via the aliases mapping. Because getNamedElements used to be always called in pairs, this
+        wrong behavior was never visible to the Web. Fixed the bug by not adding the old element to namedItem
+        when namedItem's size is 1.
+
+        Also renamed m_elementAliases to m_pastNamesMap along with related member functions.
+
+        No new tests are added since there should be no Web exposed behavioral change.
+
+        * bindings/js/JSHTMLFormElementCustom.cpp:
+        (WebCore::JSHTMLFormElement::canGetItemsForName):
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::elementFromPastNamesMap):
+        (WebCore::HTMLFormElement::addElementToPastNamesMap):
+        (WebCore::HTMLFormElement::hasNamedElement):
+        (WebCore::HTMLFormElement::getNamedElements):
+        * html/HTMLFormElement.h:
+
 2013-08-25  Andreas Kling  <akling@apple.com>
 
         RenderLayerBacking::renderer() should return a reference.
