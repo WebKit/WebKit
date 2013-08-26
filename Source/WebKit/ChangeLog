@@ -1,3 +1,11 @@
+2013-08-26  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Build fix after r154541.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in: Remove reference
+        to deleted Element::pseudoElement(PseudoID), and add exports for new
+        beforePseudoElement() and afterPseudoElement().
+
 2013-08-23  Alex Christensen  <achristensen@apple.com>
 
         Re-separating Win32 and Win64 builds.
