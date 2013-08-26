@@ -1,3 +1,13 @@
+2013-08-26  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Silence MiniBrowser compile warnings due to recent GTK+ deprecations
+        https://bugs.webkit.org/show_bug.cgi?id=120290
+
+        Reviewed by Philippe Normand.
+
+        * MiniBrowser/gtk/GNUmakefile.am: Add
+        -DGDK_VERSION_MIN_REQUIRED=GDK_VERSION_3_6 compile option.
+
 2013-08-26  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Add WillLoad test files to the TestWebKitAPI/TestWebKit2 program
