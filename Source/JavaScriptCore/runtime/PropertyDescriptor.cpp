@@ -33,7 +33,7 @@
 #include "Operations.h"
 
 namespace JSC {
-unsigned PropertyDescriptor::defaultAttributes = (DontDelete << 1) - 1;
+unsigned PropertyDescriptor::defaultAttributes = DontDelete | DontEnum | ReadOnly;
 
 bool PropertyDescriptor::writable() const
 {

@@ -1,3 +1,27 @@
+2013-08-26  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Object.defineProperty should be able to create a PropertyDescriptor where m_attributes == 0
+        https://bugs.webkit.org/show_bug.cgi?id=120314
+
+        Reviewed by Darin Adler.
+
+        Currently with the way that defineProperty works, we leave a stray low bit set in 
+        PropertyDescriptor::m_attributes in the following code:
+
+        var o = {};
+        Object.defineProperty(o, 100, {writable:true, enumerable:true, configurable:true, value:"foo"});
+        
+        This is due to the fact that the lowest non-zero attribute (ReadOnly) is represented as 1 << 1 
+        instead of 1 << 0. We then calculate the default attributes as (DontDelete << 1) - 1, which is 0xF, 
+        but only the top three bits mean anything. Even in the case above, the top three bits are set 
+        to 0 but the bottom bit remains set, which causes us to think m_attributes is non-zero.
+
+        Since some of these attributes and their corresponding values are exposed in the JavaScriptCore 
+        framework's public C API, it's safer to just change how we calculate the default value, which is
+        where the weirdness was originating from in the first place.
+
+        * runtime/PropertyDescriptor.cpp:
+
 2013-08-24  Sam Weinig  <sam@webkit.org>
 
         Add support for Promises
