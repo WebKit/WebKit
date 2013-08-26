@@ -246,8 +246,12 @@ Programs_TestWebKitAPI_TestWebKit2_SOURCES = \
 	Tools/TestWebKitAPI/PlatformUtilities.cpp \
 	Tools/TestWebKitAPI/PlatformUtilities.h \
 	Tools/TestWebKitAPI/PlatformWebView.h \
+	Tools/TestWebKitAPI/Tests/WebKit2/AboutBlankLoad.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/CanHandleRequest.cpp \
+	Tools/TestWebKitAPI/Tests/WebKit2/CloseThenTerminate.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/CookieManager.cpp \
+	Tools/TestWebKitAPI/Tests/WebKit2/DidAssociateFormControls.cpp \
+	Tools/TestWebKitAPI/Tests/WebKit2/DidNotHandleKeyDown.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/DocumentStartUserScriptAlertCrash.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/DOMWindowExtensionBasic.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/DOMWindowExtensionNoCache.cpp \
@@ -261,24 +265,29 @@ Programs_TestWebKitAPI_TestWebKit2_SOURCES = \
 	Tools/TestWebKitAPI/Tests/WebKit2/GetInjectedBundleInitializationUserDataCallback.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/HitTestResultNodeHandle.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/InjectedBundleBasic.cpp \
+	Tools/TestWebKitAPI/Tests/WebKit2/InjectedBundleFrameHitTest.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/InjectedBundleInitializationUserDataCallbackWins.cpp \
+	Tools/TestWebKitAPI/Tests/WebKit2/LayoutMilestonesWithAllContentInFrame.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/LoadAlternateHTMLStringWithNonDirectoryURL.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/LoadCanceledNoServerRedirectCallback.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/LoadPageOnCrash.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/MouseMoveAfterCrash.cpp \
-	Tools/TestWebKitAPI/Tests/WebKit2/ReloadPageAfterCrash.cpp \
-	Tools/TestWebKitAPI/Tests/WebKit2/ResizeWindowAfterCrash.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/NewFirstVisuallyNonEmptyLayout.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/NewFirstVisuallyNonEmptyLayoutFails.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/NewFirstVisuallyNonEmptyLayoutForImages.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/NewFirstVisuallyNonEmptyLayoutFrames.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/PageLoadBasic.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/PageLoadDidChangeLocationWithinPageForFrame.cpp \
+	Tools/TestWebKitAPI/Tests/WebKit2/PageVisibilityState.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/ParentFrame.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/PreventEmptyUserAgent.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/PrivateBrowsingPushStateNoHistoryCallback.cpp \
+	Tools/TestWebKitAPI/Tests/WebKit2/ReloadPageAfterCrash.cpp \
+	Tools/TestWebKitAPI/Tests/WebKit2/ResizeReversePaginatedWebView.cpp \
+	Tools/TestWebKitAPI/Tests/WebKit2/ResizeWindowAfterCrash.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/ResponsivenessTimerDoesntFireEarly.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/RestoreSessionStateContainingFormData.cpp \
+	Tools/TestWebKitAPI/Tests/WebKit2/ScrollPinningBehaviors.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/ShouldGoToBackForwardListItem.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/SpacebarScrolling.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/TerminateTwice.cpp \
@@ -289,7 +298,8 @@ Programs_TestWebKitAPI_TestWebKit2_SOURCES = \
 	Tools/TestWebKitAPI/Tests/WebKit2/WKPageGetScaleFactorNotZero.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/WKPreferences.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/WKString.cpp \
-	Tools/TestWebKitAPI/Tests/WebKit2/WKStringJSString.cpp
+	Tools/TestWebKitAPI/Tests/WebKit2/WKStringJSString.cpp \
+	Tools/TestWebKitAPI/Tests/WebKit2/WKURL.cpp
 
 if ENABLE_WEBKIT2
 noinst_LTLIBRARIES += \
@@ -304,12 +314,14 @@ Libraries_libTestWebKitAPIInjectedBundle_la_SOURCES = \
 	Tools/TestWebKitAPI/PlatformUtilities.cpp \
 	Tools/TestWebKitAPI/PlatformUtilities.h \
 	Tools/TestWebKitAPI/Tests/WebKit2/CanHandleRequest_Bundle.cpp \
+	Tools/TestWebKitAPI/Tests/WebKit2/DidAssociateFormControls_Bundle.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/DocumentStartUserScriptAlertCrash_Bundle.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/DOMWindowExtensionBasic_Bundle.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/DOMWindowExtensionNoCache_Bundle.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/GetInjectedBundleInitializationUserDataCallback_Bundle.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/HitTestResultNodeHandle_Bundle.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/InjectedBundleBasic_Bundle.cpp \
+	Tools/TestWebKitAPI/Tests/WebKit2/InjectedBundleFrameHitTest_Bundle.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/InjectedBundleInitializationUserDataCallbackWins_Bundle.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/LoadCanceledNoServerRedirectCallback_Bundle.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/MouseMoveAfterCrash_Bundle.cpp \
@@ -318,6 +330,7 @@ Libraries_libTestWebKitAPIInjectedBundle_la_SOURCES = \
 	Tools/TestWebKitAPI/Tests/WebKit2/NewFirstVisuallyNonEmptyLayoutForImages_Bundle.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/NewFirstVisuallyNonEmptyLayoutFrames_Bundle.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/ParentFrame_Bundle.cpp \
+	Tools/TestWebKitAPI/Tests/WebKit2/PasteboardNotifications_Bundle.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/ResponsivenessTimerDoesntFireEarly_Bundle.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/ShouldGoToBackForwardListItem_Bundle.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/UserMessage_Bundle.cpp \

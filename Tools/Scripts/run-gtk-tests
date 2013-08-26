@@ -81,6 +81,10 @@ class TestRunner:
         SkippedTest("TestWebKitAPI/TestWebKit2", "WebKit2.WKPageGetScaleFactorNotZero", "Test fails and times out", 88455),
         SkippedTest("TestWebKitAPI/TestWebKit2", "WebKit2.ForceRepaint", "Test times out", 105532),
         SkippedTest("TestWebKitAPI/TestWebKit2", "WebKit2.ReloadPageAfterCrash", "Test flakily times out", 110129),
+        SkippedTest("TestWebKitAPI/TestWebKit2", "WebKit2.DidAssociateFormControls", "Test times out", 120302),
+        SkippedTest("TestWebKitAPI/TestWebKit2", "WebKit2.InjectedBundleFrameHitTest", "Test times out", 120303),
+        SkippedTest("TestWebKitAPI/TestWebKit2", "WebKit2.ResizeReversePaginatedWebView", "Test fails", 120305),
+        SkippedTest("TestWebKitAPI/TestWebKit2", "WebKit2.ScrollPinningBehaviors", "Test fails", 120306),
     ]
 
     def __init__(self, options, tests=[]):
