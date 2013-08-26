@@ -424,7 +424,7 @@ END
     print F "    return ${interfaceName}::create($constructorTagName, document";
     print F ", formElement" if $enabledTags{$tagName}{constructorNeedsFormElement};
     print F ", createdByParser" if $enabledTags{$tagName}{constructorNeedsCreatedByParser};
-    print F ");\n}\n\n";
+    print F ");\n}\n";
 }
 
 sub printConstructors
@@ -450,7 +450,7 @@ sub printConstructors
         my $conditional = $enabledTags{$tagName}{conditional};
         if ($conditional) {
             my $conditionalString = "ENABLE(" . join(") && ENABLE(", split(/&/, $conditional)) . ")";
-            print F "#if ${conditionalString}\n\n";
+            print F "#if ${conditionalString}\n";
         }
 
         printConstructorSignature($F, $tagName, $tagConstructorMap{$tagName}, "tagName");
@@ -459,6 +459,8 @@ sub printConstructors
         if ($conditional) {
             print F "#endif\n";
         }
+
+        print F "\n";
     }
 
     # Mapped tag name uses a special wrapper to keep their prefix and namespaceURI while using the mapped localname.
@@ -492,7 +494,7 @@ sub printFunctionInits
         }
 
         if ($conditional) {
-            print F "#endif\n\n";
+            print F "#endif\n";
         }
     }
 }

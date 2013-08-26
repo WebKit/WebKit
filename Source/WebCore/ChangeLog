@@ -1,3 +1,19 @@
+2013-08-26  Zan Dobersek  <zdobersek@igalia.com>
+
+        Prettify generated build guards in HTMLElementFactory.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=120310
+
+        Reviewed by Darin Adler.
+
+        Build guards should wrap the constructor definitions without empty lines between
+        the guards and the constructor code. Similarly, build guards for addTag calls
+        shouldn't put an empty line after the build guard closure.
+
+        * dom/make_names.pl:
+        (printConstructorInterior):
+        (printConstructors):
+        (printFunctionInits):
+
 2013-08-26  Robert Hogan  <robert@webkit.org>
 
         Avoid painting every non-edge collapsed border twice over
