@@ -1,3 +1,11 @@
+2013-08-26  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Add missing interface files that were left out in r154627.
+
+        * Interfaces/Accessible2/AccessibleEditableText.idl: Added.
+        * Interfaces/Accessible2/AccessibleText.idl: Added.
+        * Interfaces/Accessible2/AccessibleText2.idl: Added.
+
 2013-08-26  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Let Page create the main Frame.
