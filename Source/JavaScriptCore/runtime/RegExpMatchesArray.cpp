@@ -92,9 +92,8 @@ void RegExpMatchesArray::reifyAllProperties(ExecState* exec)
         }
     }
 
-    PutPropertySlot slot;
-    JSArray::put(this, exec, exec->propertyNames().index, jsNumber(m_result.start), slot);
-    JSArray::put(this, exec, exec->propertyNames().input, m_input.get(), slot);
+    putDirect(exec->vm(), exec->propertyNames().index, jsNumber(m_result.start));
+    putDirect(exec->vm(), exec->propertyNames().input, m_input.get());
 
     m_state = ReifiedAll;
 }

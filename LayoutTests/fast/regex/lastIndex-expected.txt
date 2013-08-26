@@ -24,6 +24,8 @@ PASS Object.defineProperty(/x/, 'lastIndex', {writable:false}).exec('x') is ["x"
 PASS Object.defineProperty(/x/g, 'lastIndex', {writable:false}).exec('') threw exception TypeError: Attempted to assign to readonly property..
 PASS Object.defineProperty(/x/g, 'lastIndex', {writable:false}).exec('x') threw exception TypeError: Attempted to assign to readonly property..
 PASS var re = /x/; Object.freeze(re); Object.isFrozen(re); is true
+PASS /x/.exec("x").input is "x"
+PASS /x/.exec("x").input is "x"
 PASS successfullyParsed is true
 
 TEST COMPLETE

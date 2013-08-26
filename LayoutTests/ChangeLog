@@ -1,3 +1,17 @@
+2013-08-26  Gavin Barraclough  <barraclough@apple.com>
+
+        RegExpMatchesArray should not call [[put]]
+        https://bugs.webkit.org/show_bug.cgi?id=120317
+
+        Reviewed by Oliver Hunt.
+
+        This will call accessors on the JSObject/JSArray prototypes - so adding an accessor or read-only
+        property called index or input to either of these prototypes will result in broken behavior.
+
+        * fast/regex/lastIndex-expected.txt:
+        * fast/regex/script-tests/lastIndex.js:
+            - Added test
+
 2013-08-26  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed, EFL gardening. EFL WK1 DRT doesn't support exif-orientation tests

@@ -46,3 +46,8 @@ shouldThrow("Object.defineProperty(/x/g, 'lastIndex', {writable:false}).exec('x'
 
 // Should be able to freeze a regular expression object.
 shouldBeTrue("var re = /x/; Object.freeze(re); Object.isFrozen(re);");
+
+// Presence of setter on prototype chain should not affect RegexpMatchesArray
+shouldBe('/x/.exec("x").input', '"x"');
+Object.defineProperty(Object.prototype, "input", { set: function(){} });
+shouldBe('/x/.exec("x").input', '"x"');
