@@ -482,7 +482,7 @@ void Page::setNeedsRecalcStyleInAllFrames()
 {
     for (Frame* frame = mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (Document* document = frame->document())
-            frame->document()->styleResolverChanged(DeferRecalcStyle);
+            document->styleResolverChanged(DeferRecalcStyle);
     }
 }
 

@@ -1,3 +1,11 @@
+2013-08-26  Andreas Kling  <akling@apple.com>
+
+        Unreviewed build fix.
+
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::createWithCoreMainFrame):
+        (WebKit::WebFrame::createSubframe):
+
 2013-08-26  Pratik Solanki  <psolanki@apple.com>
 
         PageGroup::groupSettings() should return a reference

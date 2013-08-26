@@ -104,11 +104,11 @@ static uint64_t generateListenerID()
 
 PassRefPtr<WebFrame> WebFrame::createWithCoreMainFrame(WebPage* page, WebCore::Frame* coreFrame)
 {
-    RefPtr<WebFrame> frame = create(adoptPtr(static_cast<WebFrameLoaderClient*>(coreFrame->loader().client())));
+    RefPtr<WebFrame> frame = create(adoptPtr(static_cast<WebFrameLoaderClient*>(&coreFrame->loader().client())));
     page->send(Messages::WebPageProxy::DidCreateMainFrame(frame->frameID()));
 
     frame->m_coreFrame = coreFrame;
-    frame->m_coreFrame->tree()->setName(String());
+    frame->m_coreFrame->tree().setName(String());
     frame->m_coreFrame->init();
     return frame.release();
 }
@@ -120,10 +120,10 @@ PassRefPtr<WebFrame> WebFrame::createSubframe(WebPage* page, const String& frame
 
     RefPtr<Frame> coreFrame = Frame::create(page->corePage(), ownerElement, frame->m_frameLoaderClient.get());
     frame->m_coreFrame = coreFrame.get();
-    frame->m_coreFrame->tree()->setName(frameName);
+    frame->m_coreFrame->tree().setName(frameName);
     if (ownerElement) {
         ASSERT(ownerElement->document()->frame());
-        ownerElement->document()->frame()->tree()->appendChild(coreFrame.release());
+        ownerElement->document()->frame()->tree().appendChild(coreFrame.release());
     }
     frame->m_coreFrame->init();
     return frame.release();

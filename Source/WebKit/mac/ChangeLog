@@ -1,5 +1,12 @@
 2013-08-26  Andreas Kling  <akling@apple.com>
 
+        Unreviewed build fix.
+
+        * WebView/WebFrame.mm:
+        (+[WebFrame _createMainFrameWithPage:frameName:frameView:]):
+
+2013-08-26  Andreas Kling  <akling@apple.com>
+
         WebCore: Let Page create the main Frame.
         <https://webkit.org/b/119964>
 

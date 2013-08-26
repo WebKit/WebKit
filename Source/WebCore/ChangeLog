@@ -1,3 +1,10 @@
+2013-08-26  Andreas Kling  <akling@apple.com>
+
+        Unreviewed build fix.
+
+        * page/Page.cpp:
+        (WebCore::Page::setNeedsRecalcStyleInAllFrames):
+
 2013-08-26  Brent Fulgham  <bfulgham@apple.com>
 
         Unreviewed buid fix.
