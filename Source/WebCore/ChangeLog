@@ -1,5 +1,15 @@
 2013-08-26  Brent Fulgham  <bfulgham@apple.com>
 
+        [Windows] Build fix after r154580.
+
+        * rendering/RenderThemeWin.cpp: Mirror changes made for other ports now that
+        Frame is known to always be valid when in a render tree. This allows us to
+        get rid of some unneeded null checks.
+        (WebCore::RenderThemeWin::getThemeData):
+        (WebCore::RenderThemeWin::paintMenuList):
+
+2013-08-26  Brent Fulgham  <bfulgham@apple.com>
+
         [Windows] Build fix after r154554.
 
         * page/AutoscrollController.cpp: Correct various places where pointers are now
