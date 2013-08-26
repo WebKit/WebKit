@@ -265,16 +265,16 @@ Vector<String> Pasteboard::types()
     ListHashSet<String> results;
 
     if (!m_dataObject && m_dragDataMap.isEmpty())
-        return results;
+        return Vector<String>();
 
     if (m_dataObject) {
         COMPtr<IEnumFORMATETC> itr;
 
         if (FAILED(m_dataObject->EnumFormatEtc(DATADIR_GET, &itr)))
-            return results;
+            return Vector<String>();
 
         if (!itr)
-            return results;
+            return Vector<String>();
 
         FORMATETC data;
 

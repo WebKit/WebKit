@@ -1,5 +1,13 @@
 2013-08-26  Brent Fulgham  <bfulgham@apple.com>
 
+        [Windows] Build fix after r154578.  Return Vector<String>() instead
+        of ListHashSet<String>().
+
+        * platform/win/PasteboardWin.cpp:
+        (WebCore::Pasteboard::types):
+
+2013-08-26  Brent Fulgham  <bfulgham@apple.com>
+
         [Windows] Build fix after r154580.
 
         * rendering/RenderThemeWin.cpp: Mirror changes made for other ports now that
