@@ -27,6 +27,7 @@
 #include <JavaScriptCore/JSBase.h>
 #include <glib-object.h>
 #include <webkit2/WebKitDefines.h>
+#include <webkit2/WebKitScriptWorld.h>
 
 G_BEGIN_DECLS
 
@@ -52,16 +53,20 @@ struct _WebKitFrameClass {
 };
 
 WEBKIT_API GType
-webkit_frame_get_type                      (void);
+webkit_frame_get_type                                (void);
 
 WEBKIT_API gboolean
-webkit_frame_is_main_frame                 (WebKitFrame *frame);
+webkit_frame_is_main_frame                           (WebKitFrame       *frame);
 
 WEBKIT_API const gchar *
-webkit_frame_get_uri                       (WebKitFrame *frame);
+webkit_frame_get_uri                                 (WebKitFrame       *frame);
 
 WEBKIT_API JSGlobalContextRef
-webkit_frame_get_javascript_global_context (WebKitFrame *frame);
+webkit_frame_get_javascript_global_context           (WebKitFrame       *frame);
+
+WEBKIT_API JSGlobalContextRef
+webkit_frame_get_javascript_context_for_script_world (WebKitFrame       *frame,
+                                                      WebKitScriptWorld *world);
 
 G_END_DECLS
 

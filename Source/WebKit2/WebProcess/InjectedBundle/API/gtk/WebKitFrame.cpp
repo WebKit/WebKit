@@ -22,6 +22,7 @@
 
 #include "WebKitFramePrivate.h"
 #include "WebKitPrivate.h"
+#include "WebKitScriptWorldPrivate.h"
 #include <wtf/text/CString.h>
 
 using namespace WebKit;
@@ -100,4 +101,23 @@ JSGlobalContextRef webkit_frame_get_javascript_global_context(WebKitFrame* frame
     g_return_val_if_fail(WEBKIT_IS_FRAME(frame), 0);
 
     return frame->priv->webFrame->jsContext();
+}
+
+/**
+ * webkit_frame_get_javascript_context_for_script_world:
+ * @frame: a #WebKitFrame
+ * @world: a #WebKitScriptWorld
+ *
+ * Gets the JavaScript execution context of @frame for the given #WebKitScriptWorld.
+ *
+ * Returns: (transfer none): the JavaScript context of @frame for @world
+ *
+ * Since: 2.2
+ */
+JSGlobalContextRef webkit_frame_get_javascript_context_for_script_world(WebKitFrame* frame, WebKitScriptWorld* world)
+{
+    g_return_val_if_fail(WEBKIT_IS_FRAME(frame), 0);
+    g_return_val_if_fail(WEBKIT_IS_SCRIPT_WORLD(world), 0);
+
+    return frame->priv->webFrame->jsContextForWorld(webkitScriptWorldGetInjectedBundleScriptWorld(world));
 }

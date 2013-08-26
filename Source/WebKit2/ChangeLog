@@ -1,3 +1,52 @@
+2013-08-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add WebKit2 API for isolated worlds
+        https://bugs.webkit.org/show_bug.cgi?id=103377
+
+        Reviewed by Anders Carlsson.
+
+        * GNUmakefile.list.am: Add new files to compilation.
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt: Add new symbols.
+        * UIProcess/API/gtk/tests/TestWebExtensions.cpp:
+        (testWebExtensionWindowObjectCleared):
+        (scriptDialogCallback):
+        (runJavaScriptInIsolatedWorldFinishedCallback):
+        (testWebExtensionIsolatedWorld):
+        (beforeAll):
+        * UIProcess/API/gtk/tests/WebExtensionTest.cpp:
+        (echoCallback):
+        (windowObjectCleared):
+        (getWebPage):
+        (methodCallCallback):
+        * WebProcess/InjectedBundle/API/gtk/WebKitFrame.cpp:
+        (webkit_frame_get_javascript_context_for_script_world): New public
+        method to tget the JavaScript execution context for a given script
+        world.
+        * WebProcess/InjectedBundle/API/gtk/WebKitFrame.h:
+        * WebProcess/InjectedBundle/API/gtk/WebKitScriptWorld.cpp: Added.
+        (scriptWorlds): Global WebKitScriptWorld map.
+        (_WebKitScriptWorldPrivate::~_WebKitScriptWorldPrivate):
+        (webkitScriptWorldGet): Get the WebKitScriptWorld wrapping the
+        given injected bundle script world.
+        (webkitScriptWorldGetInjectedBundleScriptWorld): Get the injected
+        bundle script world wrapped by the given WebKitScriptWorld.
+        (webkitScriptWorldWindowObjectCleared): Emit
+        WebKitScriptWorld::window-object-cleared signal.
+        (webkitScriptWorldCreate): Create a new WebKitScriptWorld wrapping
+        the given injected bundle script world.
+        (createDefaultScriptWorld): Create the default WebKitScriptWorld
+        wrapping the normal world.
+        (webkit_script_world_get_default): Return the default WebKitScriptWorld.
+        (webkit_script_world_new): Create a new isolated WebKitScriptWorld.
+        * WebProcess/InjectedBundle/API/gtk/WebKitScriptWorld.h: Added.
+        * WebProcess/InjectedBundle/API/gtk/WebKitScriptWorldPrivate.h: Added.
+        * WebProcess/InjectedBundle/API/gtk/WebKitWebPage.cpp:
+        (didClearWindowObjectForFrame): Call webkitScriptWorldWindowObjectCleared().
+        (webkitWebPageCreate): Add implementation for callback
+        didClearWindowObjectForFrame in injected bundle loader client.
+        * WebProcess/InjectedBundle/API/gtk/webkit-web-extension.h:
+        Include WebKitScriptWorld.h.
+
 2013-08-26  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [WebKit2] Offsets for WKBundlePageLoaderClient in APIClientTraits are wrong

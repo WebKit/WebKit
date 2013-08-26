@@ -30,6 +30,7 @@
 #include "WebKitFramePrivate.h"
 #include "WebKitMarshal.h"
 #include "WebKitPrivate.h"
+#include "WebKitScriptWorldPrivate.h"
 #include "WebKitURIRequestPrivate.h"
 #include "WebKitURIResponsePrivate.h"
 #include "WebKitWebPagePrivate.h"
@@ -141,6 +142,12 @@ static void didFinishDocumentLoadForFrame(WKBundlePageRef, WKBundleFrameRef fram
 static void willDestroyFrame(WKBundlePageRef, WKBundleFrameRef frame, const void *clientInfo)
 {
     webFrameMap().remove(toImpl(frame));
+}
+
+static void didClearWindowObjectForFrame(WKBundlePageRef, WKBundleFrameRef frame, WKBundleScriptWorldRef wkWorld, const void* clientInfo)
+{
+    if (WebKitScriptWorld* world = webkitScriptWorldGet(toImpl(wkWorld)))
+        webkitScriptWorldWindowObjectCleared(world, WEBKIT_WEB_PAGE(clientInfo), webkitFrameGetOrCreate(toImpl(frame)));
 }
 
 static void didInitiateLoadForResource(WKBundlePageRef page, WKBundleFrameRef frame, uint64_t identifier, WKURLRequestRef request, bool pageLoadIsProvisional, const void*)
@@ -319,7 +326,7 @@ WebKitWebPage* webkitWebPageCreate(WebPage* webPage)
         0, // didRemoveFrameFromHierarchy
         0, // didDisplayInsecureContentForFrame
         0, // didRunInsecureContentForFrame
-        0, // didClearWindowObjectForFrame
+        didClearWindowObjectForFrame,
         0, // didCancelClientRedirectForFrame
         0, // willPerformClientRedirectForFrame
         0, // didHandleOnloadEventsForFrame

@@ -100,6 +100,81 @@ static void testWebKitWebViewProcessCrashed(WebViewTest* test, gconstpointer)
     g_main_loop_run(test->m_mainLoop);
 }
 
+static void testWebExtensionWindowObjectCleared(WebViewTest* test, gconstpointer)
+{
+    test->loadHtml("<html><header></header><body></body></html>", 0);
+    test->waitUntilLoadFinished();
+
+    GOwnPtr<GError> error;
+    WebKitJavascriptResult* javascriptResult = test->runJavaScriptAndWaitUntilFinished("window.echo('Foo');", &error.outPtr());
+    g_assert(javascriptResult);
+    g_assert(!error.get());
+    GOwnPtr<char> valueString(WebViewTest::javascriptResultToCString(javascriptResult));
+    g_assert_cmpstr(valueString.get(), ==, "Foo");
+}
+
+static gboolean scriptDialogCallback(WebKitWebView*, WebKitScriptDialog* dialog, char** result)
+{
+    g_assert_cmpuint(webkit_script_dialog_get_dialog_type(dialog), ==, WEBKIT_SCRIPT_DIALOG_ALERT);
+    g_assert(!*result);
+    *result = g_strdup(webkit_script_dialog_get_message(dialog));
+    return TRUE;
+}
+
+static void runJavaScriptInIsolatedWorldFinishedCallback(GDBusProxy* proxy, GAsyncResult* result, WebViewTest* test)
+{
+    g_dbus_proxy_call_finish(proxy, result, 0);
+    g_main_loop_quit(test->m_mainLoop);
+}
+
+static void testWebExtensionIsolatedWorld(WebViewTest* test, gconstpointer)
+{
+    test->loadHtml("<html><header></header><body><div id='console'></div></body></html>", 0);
+    test->waitUntilLoadFinished();
+
+    GOwnPtr<char> result;
+    gulong scriptDialogID = g_signal_connect(test->m_webView, "script-dialog", G_CALLBACK(scriptDialogCallback), &result.outPtr());
+
+    static const char *mainWorldScript =
+        "top.foo = 'Foo';\n"
+        "document.getElementById('console').innerHTML = top.foo;\n"
+        "window.open = function () { alert('Main World'); }\n"
+        "document.open(1, 2, 3);";
+    test->runJavaScriptAndWaitUntilFinished(mainWorldScript, 0);
+    g_assert_cmpstr(result.get(), ==, "Main World");
+    result.clear();
+
+    WebKitJavascriptResult* javascriptResult = test->runJavaScriptAndWaitUntilFinished("document.getElementById('console').innerHTML", 0);
+    g_assert(javascriptResult);
+    GOwnPtr<char> valueString(WebViewTest::javascriptResultToCString(javascriptResult));
+    g_assert_cmpstr(valueString.get(), ==, "Foo");
+
+    static const char *isolatedWorldScript =
+        "document.getElementById('console').innerHTML = top.foo;\n"
+        "window.open = function () { alert('Isolated World'); }\n"
+        "document.open(1, 2, 3);";
+    GRefPtr<GDBusProxy> proxy = adoptGRef(bus->createProxy("org.webkit.gtk.WebExtensionTest",
+        "/org/webkit/gtk/WebExtensionTest" , "org.webkit.gtk.WebExtensionTest", test->m_mainLoop));
+    g_dbus_proxy_call(proxy.get(),
+        "RunJavaScriptInIsolatedWorld",
+        g_variant_new("(t&s)", webkit_web_view_get_page_id(test->m_webView), isolatedWorldScript),
+        G_DBUS_CALL_FLAGS_NONE,
+        -1, 0,
+        reinterpret_cast<GAsyncReadyCallback>(runJavaScriptInIsolatedWorldFinishedCallback),
+        test);
+    g_main_loop_run(test->m_mainLoop);
+    g_assert_cmpstr(result.get(), ==, "Isolated World");
+    result.clear();
+
+    // Check that 'top.foo' defined in main world is not visible in isolated world.
+    javascriptResult = test->runJavaScriptAndWaitUntilFinished("document.getElementById('console').innerHTML", 0);
+    g_assert(javascriptResult);
+    valueString.set(WebViewTest::javascriptResultToCString(javascriptResult));
+    g_assert_cmpstr(valueString.get(), ==, "undefined");
+
+    g_signal_handler_disconnect(test->m_webView, scriptDialogID);
+}
+
 void beforeAll()
 {
     webkit_web_context_set_web_extensions_directory(webkit_web_context_get_default(), WEBKIT_TEST_WEB_EXTENSIONS_DIR);
@@ -110,6 +185,8 @@ void beforeAll()
     WebViewTest::add("WebKitWebExtension", "dom-document-title", testWebExtensionGetTitle);
     WebViewTest::add("WebKitWebExtension", "document-loaded-signal", testDocumentLoadedSignal);
     WebViewTest::add("WebKitWebView", "web-process-crashed", testWebKitWebViewProcessCrashed);
+    WebViewTest::add("WebKitWebExtension", "window-object-cleared", testWebExtensionWindowObjectCleared);
+    WebViewTest::add("WebKitWebExtension", "isolated-world", testWebExtensionIsolatedWorld);
 }
 
 void afterAll()
