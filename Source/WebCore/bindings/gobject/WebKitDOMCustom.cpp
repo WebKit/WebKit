@@ -232,6 +232,7 @@ gboolean webkit_dom_html_element_get_item_scope(WebKitDOMHTMLElement*)
 void* webkit_dom_html_element_get_item_type(WebKitDOMHTMLElement*)
 {
     g_warning("%s: this functionality has been removed from WebKit, this function does nothing.", __func__);
+    return 0;
 }
 
 // WebKitDOMHTMLPropertiesCollection

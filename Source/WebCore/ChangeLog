@@ -1,3 +1,13 @@
+2013-08-26  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Fix compile warning in WebKitDOMCustom
+        https://bugs.webkit.org/show_bug.cgi?id=120286
+
+        Reviewed by Philippe Normand.
+
+        * bindings/gobject/WebKitDOMCustom.cpp:
+        (webkit_dom_html_element_get_item_type): Add return 0.
+
 2013-08-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         JSHTMLFormElement::canGetItemsForName needlessly allocates a Vector
