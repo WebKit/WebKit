@@ -898,7 +898,7 @@ Editor::Editor(Frame& frame)
     // This is off by default, since most editors want this behavior (this matches IE but not FF).
     , m_shouldStyleWithCSS(false)
     , m_killRing(adoptPtr(new KillRing))
-    , m_spellChecker(adoptPtr(new SpellChecker(&frame)))
+    , m_spellChecker(adoptPtr(new SpellChecker(frame)))
     , m_alternativeTextController(adoptPtr(new AlternativeTextController(&frame)))
     , m_areMarkedTextMatchesHighlighted(false)
     , m_defaultParagraphSeparator(EditorParagraphSeparatorIsDiv)

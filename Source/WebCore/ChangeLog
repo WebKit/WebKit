@@ -1,3 +1,26 @@
+2013-08-26  Sam Weinig  <sam@webkit.org>
+
+        Editor::spellChecker() should return a reference
+        https://bugs.webkit.org/show_bug.cgi?id=120325
+
+        Reviewed by Anders Carlsson.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::Editor):
+        * editing/Editor.h:
+        (WebCore::Editor::spellChecker):
+        * editing/SpellChecker.cpp:
+        (WebCore::SpellChecker::SpellChecker):
+        (WebCore::SpellChecker::client):
+        (WebCore::SpellChecker::isAsynchronousEnabled):
+        (WebCore::SpellChecker::didCheck):
+        (WebCore::SpellChecker::didCheckSucceed):
+        * editing/SpellChecker.h:
+        * page/EditorClient.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::lastSpellCheckRequestSequence):
+        (WebCore::Internals::lastSpellCheckProcessedSequence):
+
 2013-08-26  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         Optimize FloatIntervalSearchAdapter::collectIfNeeded

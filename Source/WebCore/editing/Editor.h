@@ -329,7 +329,7 @@ public:
     VisibleSelection selectionForCommand(Event*);
 
     KillRing* killRing() const { return m_killRing.get(); }
-    SpellChecker* spellChecker() const { return m_spellChecker.get(); }
+    SpellChecker& spellChecker() const { return *m_spellChecker.get(); }
 
     EditingBehavior behavior() const;
 

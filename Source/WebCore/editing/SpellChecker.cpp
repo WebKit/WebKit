@@ -106,7 +106,7 @@ void SpellCheckRequest::requesterDestroyed()
     m_checker = 0;
 }
 
-SpellChecker::SpellChecker(Frame* frame)
+SpellChecker::SpellChecker(Frame& frame)
     : m_frame(frame)
     , m_lastRequestSequence(0)
     , m_lastProcessedSequence(0)
@@ -124,7 +124,7 @@ SpellChecker::~SpellChecker()
 
 TextCheckerClient* SpellChecker::client() const
 {
-    Page* page = m_frame->page();
+    Page* page = m_frame.page();
     if (!page)
         return 0;
     return page->editorClient()->textChecker();
@@ -141,7 +141,7 @@ void SpellChecker::timerFiredToProcessQueuedRequest(Timer<SpellChecker>*)
 
 bool SpellChecker::isAsynchronousEnabled() const
 {
-    return m_frame->settings().asynchronousSpellCheckingEnabled();
+    return m_frame.settings().asynchronousSpellCheckingEnabled();
 }
 
 bool SpellChecker::canCheckAsynchronously(Range* range) const
@@ -212,7 +212,7 @@ void SpellChecker::didCheck(int sequence, const Vector<TextCheckingResult>& resu
         return;
     }
 
-    m_frame->editor().markAndReplaceFor(m_processingRequest, results);
+    m_frame.editor().markAndReplaceFor(m_processingRequest, results);
 
     if (m_lastProcessedSequence < sequence)
         m_lastProcessedSequence = sequence;
@@ -232,7 +232,7 @@ void SpellChecker::didCheckSucceed(int sequence, const Vector<TextCheckingResult
         if (requestData.mask() & TextCheckingTypeGrammar)
             markers |= DocumentMarker::Grammar;
         if (markers)
-            m_frame->document()->markers().removeMarkers(m_processingRequest->checkingRange().get(), markers);
+            m_frame.document()->markers().removeMarkers(m_processingRequest->checkingRange().get(), markers);
     }
     didCheck(sequence, results);
 }

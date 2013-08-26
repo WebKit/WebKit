@@ -229,14 +229,6 @@ static bool markerTypesFrom(const String& markerType, DocumentMarker::MarkerType
     return true;
 }
 
-static SpellChecker* spellchecker(Document* document)
-{
-    if (!document || !document->frame())
-        return 0;
-
-    return document->frame()->editor().spellChecker();
-}
-
 const char* Internals::internalsId = "internals";
 
 PassRefPtr<Internals> Internals::create(Document* document)
@@ -1172,26 +1164,22 @@ PassRefPtr<ClientRect> Internals::bestZoomableAreaForTouchPoint(long x, long y, 
 
 int Internals::lastSpellCheckRequestSequence(Document* document, ExceptionCode& ec)
 {
-    SpellChecker* checker = spellchecker(document);
-
-    if (!checker) {
+    if (!document || !document->frame()) {
         ec = INVALID_ACCESS_ERR;
         return -1;
     }
 
-    return checker->lastRequestSequence();
+    return document->frame()->editor().spellChecker().lastRequestSequence();
 }
 
 int Internals::lastSpellCheckProcessedSequence(Document* document, ExceptionCode& ec)
 {
-    SpellChecker* checker = spellchecker(document);
-
-    if (!checker) {
+    if (!document || !document->frame()) {
         ec = INVALID_ACCESS_ERR;
         return -1;
     }
 
-    return checker->lastProcessedSequence();
+    return document->frame()->editor().spellChecker().lastProcessedSequence();
 }
 
 Vector<String> Internals::userPreferredLanguages() const
