@@ -1,3 +1,14 @@
+2013-08-26  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] webkitCredentialGetCredential returns a temporary in g_return_val_if_fail
+        https://bugs.webkit.org/show_bug.cgi?id=120287
+
+        Reviewed by Philippe Normand.
+
+        * UIProcess/API/gtk/WebKitCredential.cpp:
+        (webkitCredentialGetCredential): Use ASSERT() instead of
+        g_return_val_if_fail() since this is a private function.
+
 2013-08-25  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed GTK build fix after r154565.

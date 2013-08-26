@@ -52,8 +52,7 @@ WebKitCredential* webkitCredentialCreate(const WebCore::Credential& coreCredenti
 
 const WebCore::Credential& webkitCredentialGetCredential(WebKitCredential* credential)
 {
-    g_return_val_if_fail(credential, WebCore::Credential());
-
+    ASSERT(credential);
     return credential->credential;
 }
 
