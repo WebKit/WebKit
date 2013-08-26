@@ -13,7 +13,7 @@ PASS - "stroke-width" property for "rect5" element at 1s saw something close to:
 PASS - "stroke-dasharray" property for "rect5" element at 1s saw something close to: 20
 PASS - "stroke-width" property for "rect6" element at 1s saw something close to: 15
 PASS - "stroke-dasharray" property for "rect6" element at 1s saw something close to: 15,15,20,12.5,17.5,17.5
-FAIL - "fill" property for "rect7" element at 1s expected: 0,0,127 but saw: #invalid #0000ff
+FAIL - "fill" property for "rect7" element at 1s expected: 0,0,127 but saw: url(#invalid) #0000ff
 PASS - "stroke-dasharray" property for "rect7" element at 1s saw something close to: none
 PASS - "stop-color" property for "stop1" element at 1s saw something close to: 127,127,0
 PASS - "stop-opacity" property for "stop1" element at 1s saw something close to: 0.75

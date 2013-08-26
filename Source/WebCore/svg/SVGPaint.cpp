@@ -89,10 +89,10 @@ String SVGPaint::customCssText() const
         String color = SVGColor::customCssText();
         if (color.isEmpty())
             return m_uri;
-        return m_uri + ' ' + color;
+        return "url(" + m_uri + ") " + color;
     }
     case SVG_PAINTTYPE_URI:
-        return m_uri;
+        return "url(" + m_uri + ')';
     };
 
     ASSERT_NOT_REACHED();

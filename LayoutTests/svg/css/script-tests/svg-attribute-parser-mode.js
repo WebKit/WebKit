@@ -50,6 +50,17 @@ shouldBeEqualToString("document.defaultView.getComputedStyle(rect, null).fill", 
 rect.setAttribute("fill", "green");
 shouldBeEqualToString("document.defaultView.getComputedStyle(rect, null).fill", "#008000");
 
+rect.setAttribute("fill", "url(#reference)");
+shouldBeEqualToString("document.defaultView.getComputedStyle(rect, null).fill", "url(#reference)");
+// Reset to green.
+rect.setAttribute("fill", "green");
+shouldBeEqualToString("document.defaultView.getComputedStyle(rect, null).fill", "#008000");
+
+rect.setAttribute("fill", "url(#reference) green");
+shouldBeEqualToString("document.defaultView.getComputedStyle(rect, null).fill", "url(#reference) #008000");
+// Reset to green.
+rect.setAttribute("fill", "green");
+shouldBeEqualToString("document.defaultView.getComputedStyle(rect, null).fill", "#008000");
 
 
 // Testing 'stroke'
@@ -87,6 +98,18 @@ shouldBeEqualToString("document.defaultView.getComputedStyle(rect, null).stroke"
 
 rect.setAttribute("stroke", "");
 shouldBeEqualToString("document.defaultView.getComputedStyle(rect, null).stroke", "none");
+// Reset to green.
+rect.setAttribute("stroke", "green");
+shouldBeEqualToString("document.defaultView.getComputedStyle(rect, null).stroke", "#008000");
+
+rect.setAttribute("stroke", "url(#reference)");
+shouldBeEqualToString("document.defaultView.getComputedStyle(rect, null).stroke", "url(#reference)");
+// Reset to green.
+rect.setAttribute("stroke", "green");
+shouldBeEqualToString("document.defaultView.getComputedStyle(rect, null).stroke", "#008000");
+
+rect.setAttribute("stroke", "url(#reference) green");
+shouldBeEqualToString("document.defaultView.getComputedStyle(rect, null).stroke", "url(#reference) #008000");
 // Reset to green.
 rect.setAttribute("stroke", "green");
 shouldBeEqualToString("document.defaultView.getComputedStyle(rect, null).stroke", "#008000");

@@ -1000,7 +1000,7 @@ String CSSPrimitiveValue::customCssText() const
             text = quoteCSSStringIfNeeded(m_value.string);
             break;
         case CSS_URI:
-            text = "url(" + quoteCSSURLIfNeeded(m_value.string) + ")";
+            text = "url(" + quoteCSSURLIfNeeded(m_value.string) + ')';
             break;
         case CSS_VALUE_ID:
             text = valueName(m_value.valueID);
