@@ -1071,7 +1071,7 @@ HRESULT STDMETHODCALLTYPE WebFrame::deselectAll()
 
 // WebFrame ---------------------------------------------------------------
 
-PassRefPtr<Frame> WebFrame::init(IWebView* webView, Page* page, HTMLFrameOwnerElement* ownerElement)
+PassRefPtr<Frame> WebFrame::createSubframeWithOwnerElement(IWebView* webView, Page* page, HTMLFrameOwnerElement* ownerElement)
 {
     webView->QueryInterface(&d->webView);
     d->webView->Release(); // don't hold the extra ref
@@ -1083,6 +1083,18 @@ PassRefPtr<Frame> WebFrame::init(IWebView* webView, Page* page, HTMLFrameOwnerEl
     RefPtr<Frame> frame = Frame::create(page, ownerElement, new WebFrameLoaderClient(this));
     d->frame = frame.get();
     return frame.release();
+}
+
+void WebFrame::initWithWebView(IWebView* webView, Page* page)
+{
+    webView->QueryInterface(&d->webView);
+    d->webView->Release(); // don't hold the extra ref
+
+    HWND viewWindow;
+    d->webView->viewWindow((OLE_HANDLE*)&viewWindow);
+
+    this->AddRef(); // We release this ref in frameLoaderDestroyed()
+    d->frame = page->mainFrame();
 }
 
 Frame* WebFrame::impl()

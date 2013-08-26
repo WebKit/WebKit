@@ -108,7 +108,6 @@ WebFrameLoaderClient::WebFrameLoaderClient(WebFrame* webFrame)
     , m_policyListenerPrivate(adoptPtr(new WebFramePolicyListenerPrivate))
     , m_hasSentResponseToPlugin(false) 
 {
-    ASSERT_ARG(webFrame, webFrame);
 }
 
 WebFrameLoaderClient::~WebFrameLoaderClient()
@@ -1089,7 +1088,7 @@ PassRefPtr<Frame> WebFrameLoaderClient::createFrame(const KURL& URL, const Strin
 
     COMPtr<WebFrame> webFrame(AdoptCOM, WebFrame::createInstance());
 
-    RefPtr<Frame> childFrame = webFrame->init(m_webFrame->webView(), coreFrame->page(), ownerElement);
+    RefPtr<Frame> childFrame = webFrame->createSubframeWithOwnerElement(m_webFrame->webView(), coreFrame->page(), ownerElement);
 
     childFrame->tree().setName(name);
     coreFrame->tree().appendChild(childFrame);

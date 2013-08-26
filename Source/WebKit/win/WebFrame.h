@@ -298,7 +298,8 @@ public:
     virtual void frameLoaderDestroyed();
 
     // WebFrame
-    PassRefPtr<WebCore::Frame> init(IWebView*, WebCore::Page*, WebCore::HTMLFrameOwnerElement*);
+    PassRefPtr<WebCore::Frame> createSubframeWithOwnerElement(IWebView*, WebCore::Page*, WebCore::HTMLFrameOwnerElement*);
+    void initWithWebView(IWebView*, WebCore::Page*);
     WebCore::Frame* impl();
     void invalidate();
     void unmarkAllMisspellings();

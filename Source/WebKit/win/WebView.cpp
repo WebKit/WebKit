@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011, 2012 Apple, Inc.  All rights reserved.
+ * Copyright (C) 2006-2013 Apple, Inc.  All rights reserved.
  * Copyright (C) 2009, 2010, 2011 Appcelerator, Inc. All rights reserved.
  * Copyright (C) 2011 Brent Fulgham. All rights reserved.
  *
@@ -45,6 +45,7 @@
 #include "WebEditorClient.h"
 #include "WebElementPropertyBag.h"
 #include "WebFrame.h"
+#include "WebFrameLoaderClient.h"
 #include "WebFrameNetworkingContext.h"
 #include "WebGeolocationClient.h"
 #include "WebGeolocationPosition.h"
@@ -2718,6 +2719,7 @@ HRESULT STDMETHODCALLTYPE WebView::initWithFrame(
 #if ENABLE(INSPECTOR)
     pageClients.inspectorClient = m_inspectorClient;
 #endif // ENABLE(INSPECTOR)
+    pageClients.loaderClientForMainFrame = new WebFrameLoaderClient;
 
     m_page = new Page(pageClients);
     provideGeolocationTo(m_page, new WebGeolocationClient(this));
@@ -2736,12 +2738,13 @@ HRESULT STDMETHODCALLTYPE WebView::initWithFrame(
     }
 
     WebFrame* webFrame = WebFrame::createInstance();
-    RefPtr<Frame> coreFrame = webFrame->init(this, m_page, 0);
+    webFrame->initWithWebView(this, m_page);
+    static_cast<WebFrameLoaderClient&>(m_page->mainFrame()->loader().client()).setWebFrame(webFrame);
     m_mainFrame = webFrame;
     webFrame->Release(); // The WebFrame is owned by the Frame, so release our reference to it.
 
-    coreFrame->tree().setName(toString(frameName));
-    coreFrame->init();
+    m_page->mainFrame()->tree().setName(toString(frameName));
+    m_page->mainFrame()->init();
     setGroupName(groupName);
 
     addToAllWebViewsSet();

@@ -43,9 +43,10 @@ class WebHistory;
 
 class WebFrameLoaderClient : public WebCore::FrameLoaderClient {
 public:
-    WebFrameLoaderClient(WebFrame*);
+    WebFrameLoaderClient(WebFrame* = 0);
     ~WebFrameLoaderClient();
 
+    void setWebFrame(WebFrame* webFrame) { m_webFrame = webFrame; }
     WebFrame* webFrame() const { return m_webFrame; }
 
     virtual bool hasWebView() const;
