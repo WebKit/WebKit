@@ -1,5 +1,11 @@
 2013-08-26  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Another GTK+ build fix.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+
+2013-08-26  Ryosuke Niwa  <rniwa@webkit.org>
+
         GTK+ build fix. Like r154620.
 
         * webkit/webkitwebframe.cpp:

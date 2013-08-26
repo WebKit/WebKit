@@ -56,6 +56,7 @@
 #include "NotImplemented.h"
 #include "Page.h"
 #include "PluginDatabase.h"
+#include "PluginView.h"
 #include "ProgressTracker.h"
 #include "RenderPart.h"
 #include "RenderView.h"
