@@ -1074,7 +1074,9 @@ public:
     PassRefPtr<Touch> createTouch(DOMWindow*, EventTarget*, int identifier, int pageX, int pageY, int screenX, int screenY, int radiusX, int radiusY, float rotationAngle, float force, ExceptionCode&) const;
 #endif
 
+#if ENABLE(WEB_TIMING)
     const DocumentTiming* timing() const { return &m_documentTiming; }
+#endif
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)
     int requestAnimationFrame(PassRefPtr<RequestAnimationFrameCallback>);
@@ -1494,7 +1496,10 @@ private:
     bool m_directionSetOnDocumentElement;
     bool m_writingModeSetOnDocumentElement;
 
+#if ENABLE(WEB_TIMING)
     DocumentTiming m_documentTiming;
+#endif
+
     RefPtr<MediaQueryMatcher> m_mediaQueryMatcher;
     bool m_writeRecursionIsTooDeep;
     unsigned m_writeRecursionDepth;

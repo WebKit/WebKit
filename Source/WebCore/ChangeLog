@@ -1,3 +1,19 @@
+2013-08-26  Andreas Kling  <akling@apple.com>
+
+        Move DocumentTiming inside ENABLE(WEB_TIMING) guards.
+        <https://webkit.org/b/120281>
+
+        Reviewed by Anders Carlsson.
+
+        Looks like this struct is only used by other ENABLE(WEB_TIMING) code, so don't bother
+        filling it in if we're not building like that.
+
+        * dom/Document.cpp:
+        (WebCore::Document::setReadyState):
+        (WebCore::Document::finishedParsing):
+        * dom/Document.h:
+        * dom/DocumentTiming.h:
+
 2013-08-26  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Fix compile warning in WebKitDOMCustom

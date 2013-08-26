@@ -26,6 +26,8 @@
 #ifndef DocumentTiming_h
 #define DocumentTiming_h
 
+#if ENABLE(WEB_TIMING)
+
 namespace WebCore {
 
 struct DocumentTiming {
@@ -46,5 +48,7 @@ struct DocumentTiming {
 };
 
 }
+
+#endif
 
 #endif
