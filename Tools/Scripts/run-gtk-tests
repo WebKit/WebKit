@@ -97,21 +97,33 @@ class TestRunner:
         self._spi_registryd = None
         self._spi_bus_launcher = None
 
-    def _get_tests(self, tests):
+    def _get_tests_from_dir(self, test_dir):
+        if not os.path.isdir(test_dir):
+            return []
+
+        tests = []
+        for test_file in os.listdir(test_dir):
+            if not test_file.lower().startswith("test"):
+                continue
+            test_path = os.path.join(test_dir, test_file)
+            if os.path.isfile(test_path) and os.access(test_path, os.X_OK):
+                tests.append(test_path)
+        return tests
+
+    def _get_tests(self, initial_tests):
+        tests = []
+        for test in initial_tests:
+            if os.path.isdir(test):
+                tests.extend(self._get_tests_from_dir(test))
+            else:
+                tests.append(test)
         if tests:
             return tests
 
         tests = []
         for test_dir in self.TEST_DIRS:
             absolute_test_dir = os.path.join(self._programs_path, test_dir)
-            if not os.path.isdir(absolute_test_dir):
-                continue
-            for test_file in os.listdir(absolute_test_dir):
-                if not test_file.lower().startswith("test"):
-                    continue
-                test_path = os.path.join(self._programs_path, test_dir, test_file)
-                if os.path.isfile(test_path) and os.access(test_path, os.X_OK):
-                    tests.append(test_path)
+            tests.extend(self._get_tests_from_dir(absolute_test_dir))
         return tests
 
     def _lookup_atspi2_binary(self, filename):

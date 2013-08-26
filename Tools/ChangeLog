@@ -1,5 +1,19 @@
 2013-08-26  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Add support for passing test directories to run-gtk-tests
+        https://bugs.webkit.org/show_bug.cgi?id=120296
+
+        Reviewed by Philippe Normand.
+
+        * Scripts/run-gtk-tests:
+        (TestRunner._get_tests_from_dir): Helper function to return all
+        unit tests found in a given directory.
+        (TestRunner._get_tests): Check the given tests passed in the
+        command line, so that if a directory is found the tests contained
+        in the directory are added to the list of tests to run.
+
+2013-08-26  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Improve the stop/reload button implementation in MiniBrowser
         https://bugs.webkit.org/show_bug.cgi?id=120292
 
