@@ -1,3 +1,22 @@
+2013-08-26  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: We should regenerate InspectorBackendCommands.js for Legacy Inspector.json versions
+        https://bugs.webkit.org/show_bug.cgi?id=120242
+
+        Reviewed by Timothy Hatcher.
+
+        - Update the Inspector.json CodeGenerator to include an output_js_dir.
+        - Cleanup multiple trailing newlines in some of the generated files.
+        - Provide a way to not verify runtime casts, needed for Legacy inputs.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * DerivedSources.pri:
+        * GNUmakefile.am:
+        * inspector/CodeGeneratorInspector.py:
+        (resolve_all_types):
+        (SmartOutput.close):
+
 2013-08-26  Sam Weinig  <sam@webkit.org>
 
         AlternativeTextController should hold onto Frame as a reference

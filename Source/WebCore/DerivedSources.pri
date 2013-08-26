@@ -812,7 +812,7 @@ GENERATORS += inspectorValidate
 inspectorJSON.output = InspectorFrontend.cpp InspectorBackendDispatcher.cpp InspectorTypeBuilder.cpp
 inspectorJSON.input = INSPECTOR_JSON
 inspectorJSON.script = $$PWD/inspector/CodeGeneratorInspector.py
-inspectorJSON.commands = python $$inspectorJSON.script $$PWD/inspector/Inspector.json --output_h_dir ${QMAKE_FUNC_FILE_OUT_PATH} --output_cpp_dir ${QMAKE_FUNC_FILE_OUT_PATH}
+inspectorJSON.commands = python $$inspectorJSON.script $$PWD/inspector/Inspector.json --output_h_dir ${QMAKE_FUNC_FILE_OUT_PATH} --output_cpp_dir ${QMAKE_FUNC_FILE_OUT_PATH} --output_js_dir ${QMAKE_FUNC_FILE_OUT_PATH}
 inspectorJSON.depends = $$inspectorJSON.script
 GENERATORS += inspectorJSON
 

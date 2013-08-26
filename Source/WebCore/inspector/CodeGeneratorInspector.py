@@ -76,7 +76,9 @@ EXACTLY_INT_SUPPORTED = False
 cmdline_parser = optparse.OptionParser()
 cmdline_parser.add_option("--output_h_dir")
 cmdline_parser.add_option("--output_cpp_dir")
+cmdline_parser.add_option("--output_js_dir")
 cmdline_parser.add_option("--write_always", action="store_true")
+cmdline_parser.add_option("--no_verification", action="store_true")
 
 try:
     arg_options, arg_values = cmdline_parser.parse_args()
@@ -85,16 +87,20 @@ try:
     input_json_filename = arg_values[0]
     output_header_dirname = arg_options.output_h_dir
     output_cpp_dirname = arg_options.output_cpp_dir
+    output_js_dirname = arg_options.output_js_dir
     write_always = arg_options.write_always
+    verification = not arg_options.no_verification
     if not output_header_dirname:
         raise Exception("Output .h directory must be specified")
     if not output_cpp_dirname:
         raise Exception("Output .cpp directory must be specified")
+    if not output_js_dirname:
+        raise Exception("Output .js directory must be specified")
 except Exception:
     # Work with python 2 and 3 http://docs.python.org/py3k/howto/pyporting.html
     exc = sys.exc_info()[1]
     sys.stderr.write("Failed to parse command-line arguments: %s\n\n" % exc)
-    sys.stderr.write("Usage: <script> Inspector.json --output_h_dir <output_header_dir> --output_cpp_dir <output_cpp_dir> [--write_always]\n")
+    sys.stderr.write("Usage: <script> Inspector.json --output_h_dir <output_header_dir> --output_cpp_dir <output_cpp_dir> --output_js_dir <output_js_dir> [--write_always] [--no_verification]\n")
     exit(1)
 
 
@@ -1786,8 +1792,9 @@ def resolve_all_types():
             if request and not request.is_acknowledged():
                 raise Exception("Failed to generate runtimeCast in " + full_type_name)
 
-    for full_type_name in runtime_cast_generate_requests:
-        raise Exception("Failed to generate runtimeCast. Type " + full_type_name + " not found")
+    if verification:
+        for full_type_name in runtime_cast_generate_requests:
+            raise Exception("Failed to generate runtimeCast. Type " + full_type_name + " not found")
 
     return ForwardListener
 
@@ -2335,6 +2342,7 @@ class SmartOutput:
 
     def close(self):
         text_changed = True
+        self.output_ = self.output_.rstrip() + "\n"
 
         try:
             read_file = open(self.file_name_, "r")
@@ -2362,7 +2370,7 @@ frontend_cpp_file = SmartOutput(output_cpp_dirname + "/InspectorFrontend.cpp")
 typebuilder_h_file = SmartOutput(output_header_dirname + "/InspectorTypeBuilder.h")
 typebuilder_cpp_file = SmartOutput(output_cpp_dirname + "/InspectorTypeBuilder.cpp")
 
-backend_js_file = SmartOutput(output_cpp_dirname + "/InspectorBackendCommands.js")
+backend_js_file = SmartOutput(output_js_dirname + "/InspectorBackendCommands.js")
 
 
 backend_h_file.write(Templates.backend_h.substitute(None,

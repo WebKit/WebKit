@@ -1,3 +1,19 @@
+2013-08-26  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: We should regenerate InspectorBackendCommands.js for Legacy Inspector.json versions
+        https://bugs.webkit.org/show_bug.cgi?id=120242
+
+        Reviewed by Timothy Hatcher.
+
+        - Include the iOS 6.0 Inspector.json which maps to Legacy/6.0/InspectorBackendCommands.js.
+        - Provide a helper script to regenerate the backend commands file for trunk and Versions.
+        - Regenerated file now includes enums and other minor changes.
+
+        * Scripts/update-InspectorBackendCommands.rb: Added.
+        * UserInterface/InspectorBackendCommands.js:
+        * UserInterface/Legacy/6.0/InspectorBackendCommands.js:
+        * Versions/Inspector-iOS-6.0.json: Added.
+
 2013-08-24  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Breakpoints in the editors gutter should have a contextmenu
