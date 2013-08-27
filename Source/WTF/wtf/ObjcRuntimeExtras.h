@@ -51,7 +51,8 @@ inline id HardAutorelease(CFTypeRef object)
 #ifndef OBJC_NO_GC
     if (object)
         CFMakeCollectable(object);
-#elif !__has_feature(objc_arc)
+#endif
+#if !__has_feature(objc_arc)
     [(id)object autorelease];
 #endif
     return (id)object;
