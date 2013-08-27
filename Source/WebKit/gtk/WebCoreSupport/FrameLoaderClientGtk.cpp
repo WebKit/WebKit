@@ -111,7 +111,6 @@ FrameLoaderClient::FrameLoaderClient(WebKitWebFrame* frame)
     , m_pluginView(0)
     , m_hasSentResponseToPlugin(false)
 {
-    ASSERT(m_frame);
 }
 
 FrameLoaderClient::~FrameLoaderClient()
