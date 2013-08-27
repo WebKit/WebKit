@@ -82,7 +82,8 @@ public:
     float m_expansionPerOpportunity;
     bool m_isAfterExpansion;
     float m_finalRoundingWidth;
-    Vector<int> m_characterIndex;
+    // An inline capacity of 10 catches around 2/3 of the cases. To catch 90% we would need 32.
+    Vector<int, 10> m_characterIndexOfGlyph;
 
 #if ENABLE(SVG_FONTS)
     String m_lastGlyphName;

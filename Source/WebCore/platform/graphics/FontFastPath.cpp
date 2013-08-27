@@ -139,13 +139,13 @@ float Font::getGlyphsAndAdvancesForSimpleText(const TextRun& run, int from, int 
     float totalWidth = it.m_runWidthSoFar;
     float beforeWidth = 0;
     int glyphPos = 0;
-    for (; glyphPos < localGlyphBuffer.size() && it.m_characterIndex[glyphPos] < from; ++glyphPos)
+    for (; glyphPos < localGlyphBuffer.size() && it.m_characterIndexOfGlyph[glyphPos] < from; ++glyphPos)
         beforeWidth += localGlyphBuffer.advanceAt(glyphPos).width();
     int glyphFrom = glyphPos;
 
     float afterWidth = totalWidth;
     glyphPos = localGlyphBuffer.size() - 1;
-    for (; glyphPos >= glyphFrom && it.m_characterIndex[glyphPos] >= to; --glyphPos)
+    for (; glyphPos >= glyphFrom && it.m_characterIndexOfGlyph[glyphPos] >= to; --glyphPos)
         afterWidth -= localGlyphBuffer.advanceAt(glyphPos).width();
     int glyphTo = glyphPos + 1;
 
@@ -303,13 +303,13 @@ FloatRect Font::selectionRectForSimpleText(const TextRun& run, const FloatPoint&
     float totalWidth = it.m_runWidthSoFar;
     float beforeWidth = 0;
     int glyphPos = 0;
-    for (; glyphPos < glyphBuffer.size() && it.m_characterIndex[glyphPos] < from; ++glyphPos)
+    for (; glyphPos < glyphBuffer.size() && it.m_characterIndexOfGlyph[glyphPos] < from; ++glyphPos)
         beforeWidth += glyphBuffer.advanceAt(glyphPos).width();
     int glyphFrom = glyphPos;
 
     float afterWidth = totalWidth;
     glyphPos = glyphBuffer.size() - 1;
-    for (; glyphPos >= glyphFrom && it.m_characterIndex[glyphPos] >= to; --glyphPos)
+    for (; glyphPos >= glyphFrom && it.m_characterIndexOfGlyph[glyphPos] >= to; --glyphPos)
         afterWidth -= glyphBuffer.advanceAt(glyphPos).width();
 
     // Using roundf() rather than ceilf() for the right edge as a compromise to ensure correct caret positioning.
@@ -334,7 +334,7 @@ int Font::offsetForPositionForSimpleText(const TextRun& run, float x, bool inclu
                 characterOffset = run.length();
                 break;
             }
-            characterOffset = it.m_characterIndex[glyphPosition];
+            characterOffset = it.m_characterIndexOfGlyph[glyphPosition];
             float glyphWidth = glyphBuffer.advanceAt(glyphPosition).width();
             if (includePartialGlyphs) {
                 if (currentX - glyphWidth / 2.0f <= x)
@@ -352,7 +352,7 @@ int Font::offsetForPositionForSimpleText(const TextRun& run, float x, bool inclu
                 characterOffset = run.length();
                 break;
             }
-            characterOffset = it.m_characterIndex[glyphPosition];
+            characterOffset = it.m_characterIndexOfGlyph[glyphPosition];
             float glyphWidth = glyphBuffer.advanceAt(glyphPosition).width();
             if (includePartialGlyphs) {
                 if (currentX + glyphWidth / 2.0f >= x)

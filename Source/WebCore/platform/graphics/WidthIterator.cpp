@@ -67,6 +67,8 @@ WidthIterator::WidthIterator(const Font* font, const TextRun& run, HashSet<const
         else
             m_expansionPerOpportunity = m_expansion / expansionOpportunityCount;
     }
+    // Character-index will end up the same or slightly shorter than m_run, so if we reserve that much it will never need to resize.
+    m_characterIndexOfGlyph.reserveInitialCapacity(m_run.length());
 }
 
 GlyphData WidthIterator::glyphDataForCharacter(UChar32 character, bool mirror, int currentCharacter, unsigned& advanceLength)
@@ -231,7 +233,7 @@ inline unsigned WidthIterator::advanceInternal(TextIterator& textIterator, Glyph
                                     glyphBuffer->add(fontData->zeroWidthSpaceGlyph(), fontData, m_expansionPerOpportunity);
                                 else
                                     glyphBuffer->add(fontData->spaceGlyph(), fontData, expansionAtThisOpportunity);
-                                m_characterIndex.append(currentCharacterIndex);
+                                m_characterIndexOfGlyph.append(currentCharacterIndex);
                             } else
                                 glyphBuffer->expandLastAdvance(expansionAtThisOpportunity);
                         }
@@ -300,7 +302,7 @@ inline unsigned WidthIterator::advanceInternal(TextIterator& textIterator, Glyph
 
         if (glyphBuffer) {
             glyphBuffer->add(glyph, fontData, (rtl ? oldWidth + lastRoundingWidth : width));
-            m_characterIndex.append(currentCharacterIndex);
+            m_characterIndexOfGlyph.append(currentCharacterIndex);
         }
 
         lastRoundingWidth = width - oldWidth;
