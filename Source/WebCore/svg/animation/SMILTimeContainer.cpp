@@ -27,8 +27,8 @@
 #include "SMILTimeContainer.h"
 
 #if ENABLE(SVG)
+#include "DescendantIterator.h"
 #include "Document.h"
-#include "ElementTraversal.h"
 #include "SVGNames.h"
 #include "SVGSMILElement.h"
 #include "SVGSVGElement.h"
@@ -222,9 +222,11 @@ void SMILTimeContainer::timerFired(Timer<SMILTimeContainer>*)
 void SMILTimeContainer::updateDocumentOrderIndexes()
 {
     unsigned timingElementCount = 0;
-    SVGSMILElement* smilElement = Traversal<SVGSMILElement>::firstWithin(m_ownerSVGElement);
-    for (; smilElement; smilElement = Traversal<SVGSMILElement>::next(smilElement, m_ownerSVGElement))
+
+    auto smilDescendants = descendantsOfType<SVGSMILElement>(m_ownerSVGElement);
+    for (auto smilElement = smilDescendants.begin(), end = smilDescendants.end(); smilElement != end; ++smilElement)
         smilElement->setDocumentOrderIndex(timingElementCount++);
+
     m_documentOrderIndexesDirty = false;
 }
 

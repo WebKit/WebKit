@@ -31,8 +31,8 @@
 #include "SVGImage.h"
 
 #include "Chrome.h"
+#include "DescendantIterator.h"
 #include "DocumentLoader.h"
-#include "ElementTraversal.h"
 #include "FrameView.h"
 #include "ImageBuffer.h"
 #include "ImageObserver.h"
@@ -74,7 +74,8 @@ bool SVGImage::hasSingleSecurityOrigin() const
         return true;
 
     // Don't allow foreignObject elements since they can leak information with arbitrary HTML (like spellcheck or control theme).
-    if (Traversal<SVGForeignObjectElement>::firstWithin(rootElement))
+    auto foreignObjectDescendants = descendantsOfType<SVGForeignObjectElement>(rootElement);
+    if (foreignObjectDescendants.begin() != foreignObjectDescendants.end())
         return false;
 
     // Because SVG image rendering disallows external resources and links,

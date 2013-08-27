@@ -83,6 +83,14 @@ private:
 
 void invalidateFilterPrimitiveParent(SVGElement*);
 
+inline bool isSVGFilterPrimitiveStandardAttributes(const Node* node)
+{
+    return node->isSVGElement() && toSVGElement(node)->isFilterEffect();
+}
+
+template <> inline bool isElementOfType<SVGFilterPrimitiveStandardAttributes>(const Element* element) { return isSVGFilterPrimitiveStandardAttributes(element); }
+
+
 } // namespace WebCore
 
 #endif // ENABLE(SVG)

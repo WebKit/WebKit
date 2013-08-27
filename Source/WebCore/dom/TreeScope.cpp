@@ -30,9 +30,9 @@
 #include "ContainerNode.h"
 #include "DOMSelection.h"
 #include "DOMWindow.h"
+#include "DescendantIterator.h"
 #include "Document.h"
 #include "Element.h"
-#include "ElementTraversal.h"
 #include "FocusController.h"
 #include "Frame.h"
 #include "FrameView.h"
@@ -298,10 +298,12 @@ HTMLLabelElement* TreeScope::labelElementForId(const AtomicString& forAttributeV
     if (!m_labelsByForAttribute) {
         // Populate the map on first access.
         m_labelsByForAttribute = adoptPtr(new DocumentOrderedMap);
-        for (HTMLLabelElement* label = Traversal<HTMLLabelElement>::firstWithin(rootNode()); label; label = Traversal<HTMLLabelElement>::next(label)) {
+
+        auto labelDescendants = descendantsOfType<HTMLLabelElement>(rootNode());
+        for (auto label = labelDescendants.begin(), end = labelDescendants.end(); label != end; ++label) {
             const AtomicString& forValue = label->fastGetAttribute(forAttr);
             if (!forValue.isEmpty())
-                addLabel(forValue, label);
+                addLabel(forValue, &*label);
         }
     }
 
@@ -339,15 +341,16 @@ Element* TreeScope::findAnchor(const String& name)
         return 0;
     if (Element* element = getElementById(name))
         return element;
-    for (HTMLAnchorElement* anchor = Traversal<HTMLAnchorElement>::firstWithin(rootNode()); anchor; anchor = Traversal<HTMLAnchorElement>::next(anchor)) {
+    auto anchorDescendants = descendantsOfType<HTMLAnchorElement>(rootNode());
+    for (auto anchor = anchorDescendants.begin(), end = anchorDescendants.end(); anchor != end; ++anchor) {
         if (rootNode()->document()->inQuirksMode()) {
             // Quirks mode, case insensitive comparison of names.
             if (equalIgnoringCase(anchor->name(), name))
-                return anchor;
+                return &*anchor;
         } else {
             // Strict mode, names need to match exactly.
             if (anchor->name() == name)
-                return anchor;
+                return &*anchor;
         }
     }
     return 0;

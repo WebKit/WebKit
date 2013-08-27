@@ -25,8 +25,8 @@
 #include "config.h"
 #include "HTMLLabelElement.h"
 
+#include "DescendantIterator.h"
 #include "Document.h"
-#include "ElementTraversal.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "FormAssociatedElement.h"
@@ -69,11 +69,10 @@ LabelableElement* HTMLLabelElement::control()
         // Search the children and descendants of the label element for a form element.
         // per http://dev.w3.org/html5/spec/Overview.html#the-label-element
         // the form element must be "labelable form-associated element".
-
-        LabelableElement* labelableElement = Traversal<LabelableElement>::firstWithin(this);
-        for (; labelableElement; labelableElement = Traversal<LabelableElement>::next(labelableElement, this)) {
+        auto labelableDescendants = descendantsOfType<LabelableElement>(this);
+        for (auto labelableElement = labelableDescendants.begin(), end = labelableDescendants.end(); labelableElement != end; ++labelableElement) {
             if (labelableElement->supportLabels())
-                return labelableElement;
+                return &*labelableElement;
         }
         return 0;
     }

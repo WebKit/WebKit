@@ -25,7 +25,8 @@
 #include "config.h"
 #include "HTMLFieldSetElement.h"
 
-#include "ElementTraversal.h"
+#include "ChildIterator.h"
+#include "DescendantIterator.h"
 #include "HTMLCollection.h"
 #include "HTMLLegendElement.h"
 #include "HTMLNames.h"
@@ -51,7 +52,8 @@ PassRefPtr<HTMLFieldSetElement> HTMLFieldSetElement::create(const QualifiedName&
 
 void HTMLFieldSetElement::invalidateDisabledStateUnder(Element* base)
 {
-    for (HTMLFormControlElement* control = Traversal<HTMLFormControlElement>::firstWithin(base); control; control = Traversal<HTMLFormControlElement>::next(control, base))
+    auto formControlDescendants = descendantsOfType<HTMLFormControlElement>(base);
+    for (auto control = formControlDescendants.begin(), end = formControlDescendants.end(); control != end; ++control)
         control->ancestorDisabledStateWasChanged();
 }
 
@@ -65,8 +67,10 @@ void HTMLFieldSetElement::disabledAttributeChanged()
 void HTMLFieldSetElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
 {
     HTMLFormControlElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
-    for (HTMLLegendElement* legend = Traversal<HTMLLegendElement>::firstChild(this); legend; legend = Traversal<HTMLLegendElement>::nextSibling(legend))
-        invalidateDisabledStateUnder(legend);
+
+    auto legendChildren = childrenOfType<HTMLLegendElement>(this);
+    for (auto legend = legendChildren.begin(), end = legendChildren.end(); legend != end; ++legend)
+        invalidateDisabledStateUnder(&*legend);
 }
 
 bool HTMLFieldSetElement::supportsFocus() const

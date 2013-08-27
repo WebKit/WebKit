@@ -1,3 +1,40 @@
+2013-08-27  Antti Koivisto  <antti@apple.com>
+
+        Switch some more code to element child/descendant iterators
+        https://bugs.webkit.org/show_bug.cgi?id=120355
+
+        Reviewed by Andreas Kling.
+
+        Move from Traversal<ElementType>::next() and Traversal<ElementType>::nextSibling() to iterators.
+
+        * css/CSSFontFaceSource.cpp:
+        (WebCore::CSSFontFaceSource::getFontData):
+        * dom/Document.cpp:
+        (WebCore::Document::removeTitle):
+        (WebCore::Document::updateBaseURL):
+        (WebCore::Document::processBaseElement):
+        * dom/TreeScope.cpp:
+        (WebCore::TreeScope::labelElementForId):
+        (WebCore::TreeScope::findAnchor):
+        * html/HTMLFieldSetElement.cpp:
+        (WebCore::HTMLFieldSetElement::invalidateDisabledStateUnder):
+        (WebCore::HTMLFieldSetElement::childrenChanged):
+        * html/HTMLLabelElement.cpp:
+        (WebCore::HTMLLabelElement::control):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::cancelPendingEventsAndCallbacks):
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::parametersForPlugin):
+        * rendering/FilterEffectRenderer.cpp:
+        (WebCore::FilterEffectRenderer::buildReferenceFilter):
+        * svg/SVGFilterPrimitiveStandardAttributes.h:
+        (WebCore::isSVGFilterPrimitiveStandardAttributes):
+        (WebCore::SVGFilterPrimitiveStandardAttributes):
+        * svg/animation/SMILTimeContainer.cpp:
+        (WebCore::SMILTimeContainer::updateDocumentOrderIndexes):
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::hasSingleSecurityOrigin):
+
 2013-08-26  Andreas Kling  <akling@apple.com>
 
         FocusController::focusedOrMainFrame() should return a reference.

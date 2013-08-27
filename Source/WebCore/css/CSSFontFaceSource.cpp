@@ -26,12 +26,12 @@
 #include "config.h"
 #include "CSSFontFaceSource.h"
 
-#include "CachedFont.h"
 #include "CSSFontFace.h"
 #include "CSSFontSelector.h"
+#include "CachedFont.h"
 #include "CachedResourceLoader.h"
+#include "ChildIterator.h"
 #include "Document.h"
-#include "ElementTraversal.h"
 #include "FontCache.h"
 #include "FontDescription.h"
 #include "SimpleFontData.h"
@@ -139,14 +139,16 @@ PassRefPtr<SimpleFontData> CSSFontFaceSource::getFontData(const FontDescription&
                 if (!m_externalSVGFontElement)
                     return 0;
 
-                if (auto fontFaceElement = Traversal<SVGFontFaceElement>::firstChild(m_externalSVGFontElement.get())) {
+                auto fontFaceChildren = childrenOfType<SVGFontFaceElement>(m_externalSVGFontElement.get());
+                auto firstFontFace = fontFaceChildren.begin();
+                if (firstFontFace != fontFaceChildren.end()) {
                     if (!m_svgFontFaceElement) {
                         // We're created using a CSS @font-face rule, that means we're not associated with a SVGFontFaceElement.
                         // Use the imported <font-face> tag as referencing font-face element for these cases.
-                        m_svgFontFaceElement = fontFaceElement;
+                        m_svgFontFaceElement = &*firstFontFace;
                     }
 
-                    fontData = SimpleFontData::create(SVGFontData::create(fontFaceElement), fontDescription.computedPixelSize(), syntheticBold, syntheticItalic);
+                    fontData = SimpleFontData::create(SVGFontData::create(&*firstFontFace), fontDescription.computedPixelSize(), syntheticBold, syntheticItalic);
                 }
             } else
 #endif

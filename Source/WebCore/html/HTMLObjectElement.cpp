@@ -27,9 +27,9 @@
 #include "Attribute.h"
 #include "CSSValueKeywords.h"
 #include "CachedImage.h"
+#include "ChildIterator.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
-#include "ElementTraversal.h"
 #include "EventNames.h"
 #include "ExceptionCode.h"
 #include "FormDataList.h"
@@ -153,7 +153,8 @@ void HTMLObjectElement::parametersForPlugin(Vector<String>& paramNames, Vector<S
     
     // Scan the PARAM children and store their name/value pairs.
     // Get the URL and type from the params if we don't already have them.
-    for (auto param = Traversal<HTMLParamElement>::firstChild(this); param; param = Traversal<HTMLParamElement>::nextSibling(param)) {
+    auto paramChildren = childrenOfType<HTMLParamElement>(this);
+    for (auto param = paramChildren.begin(), end = paramChildren.end(); param != end; ++param) {
         String name = param->name();
         if (name.isEmpty())
             continue;
