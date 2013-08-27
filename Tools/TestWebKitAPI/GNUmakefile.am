@@ -330,7 +330,6 @@ Libraries_libTestWebKitAPIInjectedBundle_la_SOURCES = \
 	Tools/TestWebKitAPI/Tests/WebKit2/NewFirstVisuallyNonEmptyLayoutForImages_Bundle.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/NewFirstVisuallyNonEmptyLayoutFrames_Bundle.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/ParentFrame_Bundle.cpp \
-	Tools/TestWebKitAPI/Tests/WebKit2/PasteboardNotifications_Bundle.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/ResponsivenessTimerDoesntFireEarly_Bundle.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/ShouldGoToBackForwardListItem_Bundle.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/UserMessage_Bundle.cpp \
