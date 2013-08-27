@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,28 +38,19 @@ typedef int ExceptionCode;
 class DOMSettableTokenList : public DOMTokenList, public RefCounted<DOMSettableTokenList> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassRefPtr<DOMSettableTokenList> create()
-    {
-        return adoptRef(new DOMSettableTokenList());
-    }
-    virtual ~DOMSettableTokenList();
+    static PassRefPtr<DOMSettableTokenList> create();
 
-    virtual void ref() OVERRIDE { RefCounted<DOMSettableTokenList>::ref(); }
-    virtual void deref() OVERRIDE { RefCounted<DOMSettableTokenList>::deref(); }
+    virtual void ref() OVERRIDE FINAL;
+    virtual void deref() OVERRIDE FINAL;
 
-    virtual unsigned length() const OVERRIDE { return m_tokens.size(); }
-    virtual const AtomicString item(unsigned index) const OVERRIDE;
+    virtual unsigned length() const OVERRIDE FINAL;
+    virtual const AtomicString item(unsigned index) const OVERRIDE FINAL;
 
-    virtual AtomicString value() const OVERRIDE { return m_value; }
-    virtual void setValue(const AtomicString&) OVERRIDE;
-
-    const SpaceSplitString& tokens() const { return m_tokens; }
-
-protected:
-    DOMSettableTokenList();
+    virtual AtomicString value() const OVERRIDE FINAL;
+    virtual void setValue(const AtomicString&) OVERRIDE FINAL;
 
 private:
-    virtual bool containsInternal(const AtomicString&) const OVERRIDE;
+    virtual bool containsInternal(const AtomicString&) const OVERRIDE FINAL;
 
     AtomicString m_value;
     SpaceSplitString m_tokens;

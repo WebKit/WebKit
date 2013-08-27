@@ -56,7 +56,7 @@ public:
 
     AtomicString toString() const { return value(); }
 
-    virtual Element* element() { return 0; }
+    virtual Element* element() const { return 0; }
 
 protected:
     virtual AtomicString value() const = 0;
