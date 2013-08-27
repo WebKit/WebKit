@@ -390,7 +390,7 @@ void ScriptDebugServer::dispatchFunctionToListeners(JavaScriptExecutionCallback 
 
 void ScriptDebugServer::createCallFrame(const DebuggerCallFrame& debuggerCallFrame, intptr_t sourceID, int lineNumber, int columnNumber)
 {
-    TextPosition textPosition(OrdinalNumber::fromOneBasedInt(lineNumber), OrdinalNumber::fromZeroBasedInt(columnNumber));
+    TextPosition textPosition(OrdinalNumber::fromOneBasedInt(lineNumber), OrdinalNumber::fromOneBasedInt(columnNumber));
     m_currentCallFrame = JavaScriptCallFrame::create(debuggerCallFrame, m_currentCallFrame, sourceID, textPosition);
     if (m_lastExecutedSourceId != sourceID) {
         m_lastExecutedLine = -1;
@@ -404,7 +404,7 @@ void ScriptDebugServer::updateCallFrameAndPauseIfNeeded(const DebuggerCallFrame&
     if (!m_currentCallFrame)
         return;
 
-    TextPosition textPosition(OrdinalNumber::fromOneBasedInt(lineNumber), OrdinalNumber::fromZeroBasedInt(columnNumber));
+    TextPosition textPosition(OrdinalNumber::fromOneBasedInt(lineNumber), OrdinalNumber::fromOneBasedInt(columnNumber));
     m_currentCallFrame->update(debuggerCallFrame, sourceID, textPosition);
     pauseIfNeeded(debuggerCallFrame.dynamicGlobalObject());
 }

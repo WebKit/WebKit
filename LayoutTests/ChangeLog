@@ -1,3 +1,15 @@
+2013-08-27  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Column Breakpoint not working, may be off by 1
+        https://bugs.webkit.org/show_bug.cgi?id=120334
+
+        Reviewed by David Kilzer.
+
+        Write a protocol test for setting a breakpoint at a line:column.
+
+        * inspector-protocol/debugger/column-breakpoint-expected.txt: Added.
+        * inspector-protocol/debugger/column-breakpoint.html: Added.
+
 2013-08-27  Krzysztof Czech  <k.czech@samsung.com>
 
         [EFL] Added new accessibility expectations after r153798.
