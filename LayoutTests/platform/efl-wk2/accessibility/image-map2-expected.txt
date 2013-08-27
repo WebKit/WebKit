@@ -1,0 +1,60 @@
+Image map - test 2 - 2 Links (alt tags)
+----------------------
+AXRole: AXDiv
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition: { 0.000000, 0.000000 }
+AXSize: { 784.000000, 36.000000 }
+AXTitle: 
+AXDescription: 
+AXValue: Image map - test 2 - 2 Links (alt tags)<\n>----------------------<\n>
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: html-id:result, toolkit:WebKitEfl
+------------
+AXRole: AXLink
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition: { 0.000000, 0.000000 }
+AXSize: { 123.000000, 62.000000 }
+AXTitle: 
+AXDescription: Link1
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: toolkit:WebKitEfl
+------------
+AXRole: AXLink
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition: { 0.000000, 0.000000 }
+AXSize: { 122.000000, 14.000000 }
+AXTitle: 
+AXDescription: Link2
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: toolkit:WebKitEfl
+------------
+
+
+ 

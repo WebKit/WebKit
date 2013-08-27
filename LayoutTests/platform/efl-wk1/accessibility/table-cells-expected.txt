@@ -1,21 +1,23 @@
-Cell A
-COLSPAN="2"
-ROWSPAN="2"	Cell B
-COLSPAN="2"
-2,3	2,4
-Cell C
-ROWSPAN="2"	3,2	3,3	3,4
-4,2	4,3	4,4
-----------------------
-{ 0, 0 }
+Example #1: Nested Stubs
+Ruritanian
+Population 
+Survey	All
+Genders	By Gender
+Males	Females
+All Regions	North	3333	1111	2222
+South	3333	1111	2222
+South	3333	1111	2222
+South	3333	1111	2222
+------------------------
+[0,0]
 AXRole: AXCell
 AXParent: AXTable
 AXChildren: 0
-AXPosition: { 0.000000, 0.000000 }
-AXSize: { 246.000000, 78.000000 }
+AXPosition: { 233.000000, 27.000000 }
+AXSize: { 144.000000, 66.000000 }
 AXTitle: 
 AXDescription: 
-AXValue: Cell A<\n>COLSPAN="2"<\n>ROWSPAN="2"
+AXValue: Ruritanian<\n>Population <\n>Survey
 AXFocusable: 0
 AXFocused: 0
 AXSelectable: 1
@@ -26,18 +28,16 @@ AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
 AXPlatformAttributes: toolkit:WebKitEfl
-{0, 2}, {0, 2}
-
-----------------------
-{ 1, 1 }
+------------------------
+[3,1]
 AXRole: AXCell
 AXParent: AXTable
 AXChildren: 0
-AXPosition: { 0.000000, 0.000000 }
-AXSize: { 246.000000, 78.000000 }
+AXPosition: { 437.000000, 57.000000 }
+AXSize: { 52.000000, 36.000000 }
 AXTitle: 
 AXDescription: 
-AXValue: Cell A<\n>COLSPAN="2"<\n>ROWSPAN="2"
+AXValue: Males
 AXFocusable: 0
 AXFocused: 0
 AXSelectable: 1
@@ -48,18 +48,16 @@ AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
 AXPlatformAttributes: toolkit:WebKitEfl
-{0, 2}, {0, 2}
-
-----------------------
-{ 3, 0 }
+------------------------
+[1,1]
 AXRole: AXCell
 AXParent: AXTable
 AXChildren: 0
-AXPosition: { 0.000000, 0.000000 }
-AXSize: { 124.000000, 60.000000 }
+AXPosition: { 225.000000, 27.000000 }
+AXSize: { 143.000000, 66.000000 }
 AXTitle: 
 AXDescription: 
-AXValue: Cell C<\n>ROWSPAN="2"
+AXValue: Ruritanian<\n>Population <\n>Survey
 AXFocusable: 0
 AXFocused: 0
 AXSelectable: 1
@@ -70,18 +68,16 @@ AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
 AXPlatformAttributes: toolkit:WebKitEfl
-{2, 2}, {0, 1}
-
-----------------------
-{ 2, 0 }
+------------------------
+[2,2]
 AXRole: AXCell
 AXParent: AXTable
 AXChildren: 0
-AXPosition: { 0.000000, 0.000000 }
-AXSize: { 124.000000, 60.000000 }
+AXPosition: { 368.000000, 93.000000 }
+AXSize: { 69.000000, 30.000000 }
 AXTitle: 
 AXDescription: 
-AXValue: Cell C<\n>ROWSPAN="2"
+AXValue: 3333
 AXFocusable: 0
 AXFocused: 0
 AXSelectable: 1
@@ -92,18 +88,16 @@ AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
 AXPlatformAttributes: toolkit:WebKitEfl
-{2, 2}, {0, 1}
-
-----------------------
-{ 2, 3 }
+------------------------
+[3,5]
 AXRole: AXCell
 AXParent: AXTable
 AXChildren: 0
-AXPosition: { 0.000000, 0.000000 }
-AXSize: { 124.000000, 30.000000 }
+AXPosition: { 437.000000, 183.000000 }
+AXSize: { 52.000000, 30.000000 }
 AXTitle: 
 AXDescription: 
-AXValue: 3,4
+AXValue: 1111
 AXFocusable: 0
 AXFocused: 0
 AXSelectable: 1
@@ -114,11 +108,10 @@ AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
 AXPlatformAttributes: toolkit:WebKitEfl
-{2, 1}, {3, 1}
+------------------------
+[100,0]
 
-----------------------
-{ 10, 10 }
-
-{0, 0}, {0, 0}
+------------------------
+[0,100]
 
 

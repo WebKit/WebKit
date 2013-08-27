@@ -10,19 +10,104 @@ South	3333	1111	2222
 South	3333	1111	2222
 ------------------------
 [0,0]
-toolkit:WebKitEfl
+AXRole: AXCell
+AXParent: AXTable
+AXChildren: 0
+AXPosition: { 0.000000, 0.000000 }
+AXSize: { 144.000000, 66.000000 }
+AXTitle: 
+AXDescription: 
+AXValue: Ruritanian<\n>Population <\n>Survey
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 1
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: toolkit:WebKitEfl
 ------------------------
 [3,1]
-toolkit:WebKitEfl
+AXRole: AXCell
+AXParent: AXTable
+AXChildren: 0
+AXPosition: { 0.000000, 0.000000 }
+AXSize: { 53.000000, 36.000000 }
+AXTitle: 
+AXDescription: 
+AXValue: Males
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 1
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: toolkit:WebKitEfl
 ------------------------
 [1,1]
-toolkit:WebKitEfl
+AXRole: AXCell
+AXParent: AXTable
+AXChildren: 0
+AXPosition: { 0.000000, 0.000000 }
+AXSize: { 143.000000, 66.000000 }
+AXTitle: 
+AXDescription: 
+AXValue: Ruritanian<\n>Population <\n>Survey
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 1
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: toolkit:WebKitEfl
 ------------------------
 [2,2]
-toolkit:WebKitEfl
+AXRole: AXCell
+AXParent: AXTable
+AXChildren: 0
+AXPosition: { 0.000000, 0.000000 }
+AXSize: { 69.000000, 30.000000 }
+AXTitle: 
+AXDescription: 
+AXValue: 3333
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 1
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: toolkit:WebKitEfl
 ------------------------
 [3,5]
-toolkit:WebKitEfl
+AXRole: AXCell
+AXParent: AXTable
+AXChildren: 0
+AXPosition: { 0.000000, 0.000000 }
+AXSize: { 52.000000, 30.000000 }
+AXTitle: 
+AXDescription: 
+AXValue: 1111
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 1
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: toolkit:WebKitEfl
 ------------------------
 [100,0]
 

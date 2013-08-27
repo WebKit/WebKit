@@ -11,7 +11,7 @@ ROWSPAN="2"	3,2	3,3	3,4
 AXRole: AXCell
 AXParent: AXTable
 AXChildren: 0
-AXPosition: { 0.000000, 0.000000 }
+AXPosition: { 152.000000, 9.000000 }
 AXSize: { 246.000000, 78.000000 }
 AXTitle: 
 AXDescription: 
@@ -33,8 +33,8 @@ AXPlatformAttributes: toolkit:WebKitEfl
 AXRole: AXCell
 AXParent: AXTable
 AXChildren: 0
-AXPosition: { 0.000000, 0.000000 }
-AXSize: { 246.000000, 78.000000 }
+AXPosition: { 145.000000, 9.000000 }
+AXSize: { 247.000000, 78.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: Cell A<\n>COLSPAN="2"<\n>ROWSPAN="2"
@@ -55,7 +55,7 @@ AXPlatformAttributes: toolkit:WebKitEfl
 AXRole: AXCell
 AXParent: AXTable
 AXChildren: 0
-AXPosition: { 0.000000, 0.000000 }
+AXPosition: { 145.000000, 87.000000 }
 AXSize: { 124.000000, 60.000000 }
 AXTitle: 
 AXDescription: 
@@ -77,7 +77,7 @@ AXPlatformAttributes: toolkit:WebKitEfl
 AXRole: AXCell
 AXParent: AXTable
 AXChildren: 0
-AXPosition: { 0.000000, 0.000000 }
+AXPosition: { 145.000000, 87.000000 }
 AXSize: { 124.000000, 60.000000 }
 AXTitle: 
 AXDescription: 
@@ -99,7 +99,7 @@ AXPlatformAttributes: toolkit:WebKitEfl
 AXRole: AXCell
 AXParent: AXTable
 AXChildren: 0
-AXPosition: { 0.000000, 0.000000 }
+AXPosition: { 514.000000, 87.000000 }
 AXSize: { 124.000000, 30.000000 }
 AXTitle: 
 AXDescription: 
