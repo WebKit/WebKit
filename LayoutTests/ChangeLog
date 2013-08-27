@@ -1,3 +1,13 @@
+2013-08-27  Krzysztof Czech  <k.czech@samsung.com>
+
+        [EFL] Added new accessibility expectations after r154332
+        https://bugs.webkit.org/show_bug.cgi?id=120359
+
+        Unreviewed EFL gardening.
+
+        * platform/efl-wk1/accessibility/file-upload-button-stringvalue-expected.txt: Added.
+        * platform/efl-wk2/accessibility/file-upload-button-stringvalue-expected.txt: Added.
+
 2013-08-27  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Column Breakpoint not working, may be off by 1
