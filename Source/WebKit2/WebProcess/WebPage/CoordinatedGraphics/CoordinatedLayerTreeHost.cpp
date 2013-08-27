@@ -396,8 +396,8 @@ void CoordinatedLayerTreeHost::scheduleAnimation()
     if (m_layerFlushTimer.isActive())
         return;
 
-    m_layerFlushTimer.startOneShot(m_coordinator->nextAnimationServiceTime());
     scheduleLayerFlush();
+    m_layerFlushTimer.startOneShot(m_coordinator->nextAnimationServiceTime());
 }
 #endif
 

@@ -1,3 +1,16 @@
+2013-08-27  Luciano Wolf  <luciano.wolf@openbossa.org>
+
+        100% cpu usage for "transition: opacity" animation
+        https://bugs.webkit.org/show_bug.cgi?id=120012
+
+        Reviewed by Noam Rosenthal.
+
+        Schedule animation timer after scheduling a layer flush. This way it
+        won't overwrite animation timer with "0", thus avoiding 100% cpu usage.
+
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp:
+        (WebKit::CoordinatedLayerTreeHost::scheduleAnimation):
+
 2013-08-27  Csaba Osztrogonác  <ossy@webkit.org>
 
         [WK2][Soup] Add WebFrameNetworkingContext::webFrameLoaderClient() after r154490
