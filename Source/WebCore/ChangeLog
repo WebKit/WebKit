@@ -1,3 +1,22 @@
+2013-08-27  Darin Adler  <darin@apple.com>
+
+        No need for generalPasteboard (aside from "global selection mode")
+        https://bugs.webkit.org/show_bug.cgi?id=120367
+
+        Reviewed by Alexey Proskuryakov.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::pasteAsPlainTextBypassingDHTML):
+        (WebCore::Editor::dispatchCPPEvent):
+        (WebCore::Editor::cut):
+        (WebCore::Editor::copy):
+        (WebCore::Editor::paste):
+        (WebCore::Editor::pasteAsPlainText):
+        (WebCore::Editor::copyURL):
+        (WebCore::Editor::copyImage):
+        Use Pasteboard::createForCopyAndPaste rather than the single general pasteboard
+        for editing operations.
+
 2013-08-27  Chris Fleizach  <cfleizach@apple.com>
 
         <https://webkit.org/b/120117> AX: <noscript> contents are exposed as static text
