@@ -1,3 +1,28 @@
+2013-08-27  Morten Stenshorne  <mstensho@opera.com>
+
+        Improve multicol intrinsic width calculation
+        https://bugs.webkit.org/show_bug.cgi?id=116677
+
+        Reviewed by David Hyatt.
+
+        * css3/unicode-bidi-isolate-basic.html: The expectation seems to
+        be that the columns should be as many as necessary and narrow as
+        possible, and that the multicol container's width should be that
+        of one column. The previous CSS didn't really ask for this,
+        although that's how it happened to be rendered without this fix.
+        * fast/css-intrinsic-dimensions/multicol-expected.txt: Added.
+        * fast/css-intrinsic-dimensions/multicol.html: Added.
+        * fast/multicol/positioned-with-constrained-height-expected.html: Copied from LayoutTests/fast/multicol/positioned-with-constrained-height.html.
+        * fast/multicol/positioned-with-constrained-height.html: Turn into a reftest.
+        * platform/efl/fast/multicol/positioned-with-constrained-height-expected.png: Removed.
+        * platform/efl/fast/multicol/positioned-with-constrained-height-expected.txt: Removed.
+        * platform/gtk/fast/multicol/positioned-with-constrained-height-expected.png: Removed.
+        * platform/gtk/fast/multicol/positioned-with-constrained-height-expected.txt: Removed.
+        * platform/mac/fast/multicol/positioned-with-constrained-height-expected.png: Removed.
+        * platform/mac/fast/multicol/positioned-with-constrained-height-expected.txt: Removed.
+        * platform/qt/fast/multicol/positioned-with-constrained-height-expected.png: Removed.
+        * platform/qt/fast/multicol/positioned-with-constrained-height-expected.txt: Removed.
+
 2013-08-27  Rob Buis  <rwlbuis@webkit.org>
 
         feImage fails if referenced node contains radialGradient declaration

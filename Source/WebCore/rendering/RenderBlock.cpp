@@ -6039,6 +6039,8 @@ void RenderBlock::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, Lay
 
     maxLogicalWidth = max(minLogicalWidth, maxLogicalWidth);
 
+    adjustIntrinsicLogicalWidthsForColumns(minLogicalWidth, maxLogicalWidth);
+
     if (!style()->autoWrap() && childrenInline()) {
         // A horizontal marquee with inline children has no minimum width.
         if (layer() && layer()->marquee() && layer()->marquee()->isHorizontal())
@@ -6093,6 +6095,33 @@ void RenderBlock::computePreferredLogicalWidths()
     m_maxPreferredLogicalWidth += borderAndPadding;
 
     setPreferredLogicalWidthsDirty(false);
+}
+
+void RenderBlock::adjustIntrinsicLogicalWidthsForColumns(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
+{
+    // FIXME: make this method virtual and move the code to RenderMultiColumnBlock once the old
+    // multicol code is gone.
+
+    if (!style()->hasAutoColumnCount() || !style()->hasAutoColumnWidth()) {
+        // The min/max intrinsic widths calculated really tell how much space elements need when
+        // laid out inside the columns. In order to eventually end up with the desired column width,
+        // we need to convert them to values pertaining to the multicol container.
+        int columnCount = style()->hasAutoColumnCount() ? 1 : style()->columnCount();
+        LayoutUnit columnWidth;
+        LayoutUnit gapExtra = (columnCount - 1) * columnGap();
+        if (style()->hasAutoColumnWidth())
+            minLogicalWidth = minLogicalWidth * columnCount + gapExtra;
+        else {
+            columnWidth = style()->columnWidth();
+            minLogicalWidth = min(minLogicalWidth, columnWidth);
+        }
+        // FIXME: If column-count is auto here, we should resolve it to calculate the maximum
+        // intrinsic width, instead of pretending that it's 1. The only way to do that is by
+        // performing a layout pass, but this is not an appropriate time or place for layout. The
+        // good news is that if height is unconstrained and there are no explicit breaks, the
+        // resolved column-count really should be 1.
+        maxLogicalWidth = max(maxLogicalWidth, columnWidth) * columnCount + gapExtra;
+    }
 }
 
 struct InlineMinMaxIterator {

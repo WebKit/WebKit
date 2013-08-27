@@ -544,6 +544,7 @@ protected:
 
     virtual void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const OVERRIDE;
     virtual void computePreferredLogicalWidths() OVERRIDE;
+    void adjustIntrinsicLogicalWidthsForColumns(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const;
 
     virtual int firstLineBoxBaseline() const;
     virtual int inlineBlockBaseline(LineDirectionMode) const OVERRIDE;

@@ -8,9 +8,13 @@
     top: 0px;
     left: 0px;
     -moz-column-width: 13em;
-    -webkit-column-width: 13em;
     -moz-column-gap: 5em;
+    -webkit-columns:1 1px; /* Make as many (overflowing) columns as necessary, but keep them as narrow as possible */
     -webkit-column-gap: 5em;
+    -webkit-column-fill: auto;
+    columns:1 1px;
+    column-gap: 5em;
+    column-fill: auto;
     height: 400px;
 }
 </style>
