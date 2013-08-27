@@ -24,7 +24,7 @@
 #include "config.h"
 #include "HTMLAppletElement.h"
 
-#include "Attribute.h"
+#include "ChildIterator.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "HTMLDocument.h"
@@ -147,11 +147,8 @@ void HTMLAppletElement::updateWidget(PluginCreationOption pluginCreationOption)
         paramValues.append(mayScript.string());
     }
 
-    for (Node* child = firstChild(); child; child = child->nextSibling()) {
-        if (!child->hasTagName(paramTag))
-            continue;
-
-        HTMLParamElement* param = static_cast<HTMLParamElement*>(child);
+    auto paramChildren = childrenOfType<HTMLParamElement>(this);
+    for (auto param = paramChildren.begin(), end = paramChildren.end(); param != end; ++param) {
         if (param->name().isEmpty())
             continue;
 
