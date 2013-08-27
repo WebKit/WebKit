@@ -1,3 +1,15 @@
+2013-08-27  Renata Hodovan  <reni@webkit.org>
+
+        Missing null-check of parent renderer in WebCore::HTMLEmbedElement::rendererIsNeeded()
+        https://bugs.webkit.org/show_bug.cgi?id=120343
+
+        Reviewed by Darin Adler.
+
+        Test for the handling of null parent renderer.
+
+        * fast/html/HTMLEmbedElement_without_parent_renderer_assert_crash-expected.txt: Added.
+        * fast/html/HTMLEmbedElement_without_parent_renderer_assert_crash.html: Added.
+
 2013-08-27  Denis Nomiyama  <d.nomiyama@samsung.com>
 
         [GTK] Missing DRT AccessibilityUIElement::addNotificationListener implementation
