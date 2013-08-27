@@ -1,3 +1,10 @@
+2013-08-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK+ build after r154601.
+
+        * TestWebKitAPI/GNUmakefile.am: Remove mac specific file from
+        compilation added by mistake in r154601.
+
 2013-08-26  Alexey Proskuryakov  <ap@apple.com>
 
         WebKitTestRunner needs to protect the user's pasteboard contents while running
