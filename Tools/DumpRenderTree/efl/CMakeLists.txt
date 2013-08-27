@@ -10,6 +10,7 @@ set(DumpRenderTree_SOURCES
     ${TOOLS_DIR}/DumpRenderTree/WorkQueue.cpp
     ${TOOLS_DIR}/DumpRenderTree/atk/AccessibilityCallbacksAtk.cpp
     ${TOOLS_DIR}/DumpRenderTree/atk/AccessibilityControllerAtk.cpp
+    ${TOOLS_DIR}/DumpRenderTree/atk/AccessibilityNotificationHandlerAtk.cpp
     ${TOOLS_DIR}/DumpRenderTree/atk/AccessibilityUIElementAtk.cpp
     ${TOOLS_DIR}/DumpRenderTree/cairo/PixelDumpSupportCairo.cpp
     ${TOOLS_DIR}/DumpRenderTree/efl/AccessibilityControllerEfl.cpp

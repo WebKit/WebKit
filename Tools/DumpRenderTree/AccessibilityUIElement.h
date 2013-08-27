@@ -46,6 +46,7 @@ typedef struct objc_object* PlatformUIElement;
 
 typedef COMPtr<IAccessible> PlatformUIElement;
 #elif HAVE(ACCESSIBILITY) && (PLATFORM(GTK) || PLATFORM(EFL))
+#include "AccessibilityNotificationHandlerAtk.h"
 #include <atk/atk.h>
 typedef AtkObject* PlatformUIElement;
 #else
@@ -272,6 +273,10 @@ private:
     // A retained, platform specific object used to help manage notifications for this object.
 #if PLATFORM(MAC)
     NotificationHandler m_notificationHandler;
+#endif
+
+#if PLATFORM(GTK) || PLATFORM(EFL)
+    RefPtr<AccessibilityNotificationHandler> m_notificationHandler;
 #endif
 };
 

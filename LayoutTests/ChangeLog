@@ -1,3 +1,15 @@
+2013-08-27  Denis Nomiyama  <d.nomiyama@samsung.com>
+
+        [GTK] Missing DRT AccessibilityUIElement::addNotificationListener implementation
+        https://bugs.webkit.org/show_bug.cgi?id=119883
+
+        Unskipped the checkbox notification test in a11y and added the expected results.
+
+        Reviewed by Chris Fleizach.
+
+        * platform/gtk/TestExpectations: Unskipped the checkbox notification test in a11y.
+        * platform/gtk/accessibility/aria-checkbox-sends-notification-expected.txt: Added.
+
 2013-08-27  Ádám Kallai  <kadam@inf.u-szeged.hu>
 
         [Qt] Delete unnecessary empty directory.

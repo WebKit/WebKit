@@ -1,3 +1,44 @@
+2013-08-27  Denis Nomiyama  <d.nomiyama@samsung.com>
+
+        [GTK] Missing DRT AccessibilityUIElement::addNotificationListener implementation
+        https://bugs.webkit.org/show_bug.cgi?id=119883
+
+        Implemented the notification listener for AccessibilityUIElement. The signal is generated
+        by AXObjectCache::postPlatformNotification() and received by axObjectEventListener().
+        axObjectEventListener will then invoke JSObjectCallAsFunction() with the respective
+        callback function. The global callback function and callbacks for specific elements are
+        stored in a HashMap in AccessibilityCallbacksAtk.cpp.
+
+        Reviewed by Chris Fleizach.
+
+        * DumpRenderTree/AccessibilityUIElement.h: Added a notification handler for GTK+
+        * DumpRenderTree/atk/AccessibilityCallbacks.h: Added addAccessibilityNotificationListener()
+        and removeAccessibilityNotificationListener()
+        * DumpRenderTree/atk/AccessibilityCallbacksAtk.cpp:
+        (axObjectEventListener): Call JS callback for global notification or for a specific element
+        (disconnectAccessibilityCallbacks): Only disconnect if logging is off and there is no
+        notification handler
+        (addAccessibilityNotificationHandler): Add notification listener to the list
+        (removeAccessibilityNotificationHandler): Remove notification listener from the list
+        * DumpRenderTree/atk/AccessibilityControllerAtk.cpp:
+        (AccessibilityController::setLogAccessibilityEvents): Set logging off before disconnecting
+        * DumpRenderTree/atk/AccessibilityNotificationHandlerAtk.cpp: Added.
+        (AccessibilityNotificationHandler::AccessibilityNotificationHandler): Create handler
+        (AccessibilityNotificationHandler::~AccessibilityNotificationHandler): Destroy handler.
+        Remove handler from the list and disconnect callbacks
+        (AccessibilityNotificationHandler::setNotificationFunctionCallback): Set the notification
+        callback and connect callbacks to signals
+        * DumpRenderTree/atk/AccessibilityNotificationHandlerAtk.h: Added.
+        (AccessibilityNotificationHandler::setPlatformElement): Set platform element
+        (AccessibilityNotificationHandler::platformElement): Get platform element
+        (AccessibilityNotificationHandler::notificationFunctionCallback): Get notification callback
+        * DumpRenderTree/atk/AccessibilityUIElementAtk.cpp:
+        (AccessibilityUIElement::addNotificationListener): Create notification handler, set the
+        platform element and the notification callback
+        (AccessibilityUIElement::removeNotificationListener):
+        * DumpRenderTree/efl/CMakeLists.txt: Added AccessibilityNotificationHandlerAtk.cpp/h
+        * GNUmakefile.am: Added AccessibilityNotificationHandlerAtk.cpp/h
+
 2013-08-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK+ build after r154601.

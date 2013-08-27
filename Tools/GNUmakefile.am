@@ -155,6 +155,8 @@ Programs_DumpRenderTree_SOURCES = \
 	Tools/DumpRenderTree/atk/AccessibilityCallbacks.h \
 	Tools/DumpRenderTree/atk/AccessibilityCallbacksAtk.cpp \
 	Tools/DumpRenderTree/atk/AccessibilityControllerAtk.cpp \
+	Tools/DumpRenderTree/atk/AccessibilityNotificationHandlerAtk.cpp \
+	Tools/DumpRenderTree/atk/AccessibilityNotificationHandlerAtk.h \
 	Tools/DumpRenderTree/atk/AccessibilityUIElementAtk.cpp \
 	Tools/DumpRenderTree/cairo/PixelDumpSupportCairo.cpp \
 	Tools/DumpRenderTree/cairo/PixelDumpSupportCairo.h \

@@ -35,7 +35,7 @@
 
 #include <atk/atk.h>
 
-static bool loggingAccessibilityEvents = false;
+bool loggingAccessibilityEvents = false;
 
 AccessibilityController::AccessibilityController()
 {
@@ -70,8 +70,8 @@ void AccessibilityController::setLogAccessibilityEvents(bool logAccessibilityEve
         return;
 
     if (!logAccessibilityEvents) {
-        disconnectAccessibilityCallbacks();
         loggingAccessibilityEvents = false;
+        disconnectAccessibilityCallbacks();
         return;
     }
 
