@@ -1,3 +1,18 @@
+2013-08-27  Anders Carlsson  <andersca@apple.com>
+
+        Stop using deleteAllValues in CClass
+        https://bugs.webkit.org/show_bug.cgi?id=120376
+
+        Reviewed by Andreas Kling.
+
+        * bridge/c/c_class.cpp:
+        (JSC::Bindings::CClass::CClass):
+        (JSC::Bindings::CClass::~CClass):
+        (JSC::Bindings::CClass::methodNamed):
+        (JSC::Bindings::CClass::fieldNamed):
+        * bridge/c/c_class.h:
+        * bridge/jsc/BridgeJSC.h:
+
 2013-08-27  Benjamin Poulain  <benjamin@webkit.org>
 
         Clean ClassList and DOMSettableTokenList

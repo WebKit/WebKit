@@ -134,9 +134,6 @@ protected:
 
 const char* signatureForParameters(const ArgList&);
 
-typedef HashMap<RefPtr<StringImpl>, Method*> MethodMap;
-typedef HashMap<RefPtr<StringImpl>, Field*> FieldMap;
-
 } // namespace Bindings
 
 } // namespace JSC

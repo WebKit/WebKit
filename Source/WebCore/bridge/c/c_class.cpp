@@ -41,16 +41,13 @@ namespace JSC { namespace Bindings {
 
 CClass::CClass(NPClass* aClass)
 {
-    _isa = aClass;
+    m_isa = aClass;
 }
 
 CClass::~CClass()
 {
-    deleteAllValues(_methods);
-    _methods.clear();
-
-    deleteAllValues(_fields);
-    _fields.clear();
+    m_methods.clear();
+    m_fields.clear();
 }
 
 typedef HashMap<NPClass*, CClass*> ClassesByIsAMap;
@@ -74,16 +71,16 @@ Method* CClass::methodNamed(PropertyName propertyName, Instance* instance) const
 {
     String name(propertyName.publicName());
     
-    if (Method* method = _methods.get(name.impl()))
+    if (Method* method = m_methods.get(name.impl()))
         return method;
 
     NPIdentifier ident = _NPN_GetStringIdentifier(name.ascii().data());
     const CInstance* inst = static_cast<const CInstance*>(instance);
     NPObject* obj = inst->getObject();
-    if (_isa->hasMethod && _isa->hasMethod(obj, ident)){
-        Method* method = new CMethod(ident); // deleted in the CClass destructor
-        _methods.set(name.impl(), method);
-        return method;
+    if (m_isa->hasMethod && m_isa->hasMethod(obj, ident)) {
+        OwnPtr<Method> method = adoptPtr(new CMethod(ident));
+        m_methods.set(name.impl(), method.release());
+        return method.get();
     }
     
     return 0;
@@ -93,18 +90,18 @@ Field* CClass::fieldNamed(PropertyName propertyName, Instance* instance) const
 {
     String name(propertyName.publicName());
     
-    Field* aField = _fields.get(name.impl());
-    if (aField)
-        return aField;
-    
+    if (Field* field = m_fields.get(name.impl()))
+        return field;
+
     NPIdentifier ident = _NPN_GetStringIdentifier(name.ascii().data());
     const CInstance* inst = static_cast<const CInstance*>(instance);
     NPObject* obj = inst->getObject();
-    if (_isa->hasProperty && _isa->hasProperty(obj, ident)){
-        aField = new CField(ident); // deleted in the CClass destructor
-        _fields.set(name.impl(), aField);
+    if (m_isa->hasProperty && m_isa->hasProperty(obj, ident)) {
+        OwnPtr<Field> field = adoptPtr(new CField(ident));
+        m_fields.set(name.impl(), field.release());
     }
-    return aField;
+
+    return 0;
 }
 
 } } // namespace JSC::Bindings
