@@ -696,7 +696,7 @@ static void writeRenderNamedFlowThreads(TextStream& ts, RenderView* renderView, 
     if (!renderView->hasRenderNamedFlowThreads())
         return;
 
-    const RenderNamedFlowThreadList* list = renderView->flowThreadController()->renderNamedFlowThreadList();
+    const RenderNamedFlowThreadList* list = renderView->flowThreadController().renderNamedFlowThreadList();
 
     writeIndent(ts, indent);
     ts << "Flow Threads\n";

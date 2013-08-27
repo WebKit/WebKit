@@ -137,14 +137,14 @@ public:
         : m_view(view)
         , m_renderFlowThread(0)
     {
-        m_renderFlowThread = m_view->flowThreadController()->currentRenderFlowThread();
+        m_renderFlowThread = m_view->flowThreadController().currentRenderFlowThread();
         if (m_renderFlowThread)
-            view->flowThreadController()->setCurrentRenderFlowThread(0);
+            view->flowThreadController().setCurrentRenderFlowThread(0);
     }
     ~CurrentRenderFlowThreadDisabler()
     {
         if (m_renderFlowThread)
-            m_view->flowThreadController()->setCurrentRenderFlowThread(m_renderFlowThread);
+            m_view->flowThreadController().setCurrentRenderFlowThread(m_renderFlowThread);
     }
 private:
     RenderView* m_view;
@@ -1098,7 +1098,7 @@ bool RenderFlowThread::addForcedRegionBreak(const RenderBlock* block, LayoutUnit
 void RenderFlowThread::incrementAutoLogicalHeightRegions()
 {
     if (!m_autoLogicalHeightRegionsCount)
-        view().flowThreadController()->incrementFlowThreadsWithAutoLogicalHeightRegions();
+        view().flowThreadController().incrementFlowThreadsWithAutoLogicalHeightRegions();
     ++m_autoLogicalHeightRegionsCount;
 }
 
@@ -1107,7 +1107,7 @@ void RenderFlowThread::decrementAutoLogicalHeightRegions()
     ASSERT(m_autoLogicalHeightRegionsCount > 0);
     --m_autoLogicalHeightRegionsCount;
     if (!m_autoLogicalHeightRegionsCount)
-        view().flowThreadController()->decrementFlowThreadsWithAutoLogicalHeightRegions();
+        view().flowThreadController().decrementFlowThreadsWithAutoLogicalHeightRegions();
 }
 
 void RenderFlowThread::collectLayerFragments(LayerFragments& layerFragments, const LayoutRect& layerBoundingBox, const LayoutRect& dirtyRect)
@@ -1264,19 +1264,19 @@ CurrentRenderFlowThreadMaintainer::CurrentRenderFlowThreadMaintainer(RenderFlowT
 {
     if (!m_renderFlowThread)
         return;
-    FlowThreadController* controller = m_renderFlowThread->view().flowThreadController();
-    m_previousRenderFlowThread = controller->currentRenderFlowThread();
+    FlowThreadController& controller = m_renderFlowThread->view().flowThreadController();
+    m_previousRenderFlowThread = controller.currentRenderFlowThread();
     ASSERT(!m_previousRenderFlowThread || !renderFlowThread->isRenderNamedFlowThread());
-    controller->setCurrentRenderFlowThread(m_renderFlowThread);
+    controller.setCurrentRenderFlowThread(m_renderFlowThread);
 }
 
 CurrentRenderFlowThreadMaintainer::~CurrentRenderFlowThreadMaintainer()
 {
     if (!m_renderFlowThread)
         return;
-    FlowThreadController* controller = m_renderFlowThread->view().flowThreadController();
-    ASSERT(controller->currentRenderFlowThread() == m_renderFlowThread);
-    controller->setCurrentRenderFlowThread(m_previousRenderFlowThread);
+    FlowThreadController& controller = m_renderFlowThread->view().flowThreadController();
+    ASSERT(controller.currentRenderFlowThread() == m_renderFlowThread);
+    controller.setCurrentRenderFlowThread(m_previousRenderFlowThread);
 }
 
 

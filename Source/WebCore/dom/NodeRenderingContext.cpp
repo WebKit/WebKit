@@ -229,9 +229,9 @@ void NodeRenderingContext::moveToFlowThreadIfNeeded()
         return;
 
     ASSERT(m_node->document()->renderView());
-    FlowThreadController* flowThreadController = m_node->document()->renderView()->flowThreadController();
-    m_parentFlowRenderer = &flowThreadController->ensureRenderFlowThreadWithName(m_style->flowThread());
-    flowThreadController->registerNamedFlowContentNode(m_node, m_parentFlowRenderer);
+    FlowThreadController& flowThreadController = m_node->document()->renderView()->flowThreadController();
+    m_parentFlowRenderer = &flowThreadController.ensureRenderFlowThreadWithName(m_style->flowThread());
+    flowThreadController.registerNamedFlowContentNode(m_node, m_parentFlowRenderer);
 #endif
 }
 

@@ -412,7 +412,7 @@ void RenderNamedFlowThread::addDependencyOnFlowThread(RenderNamedFlowThread* oth
     RenderNamedFlowThreadCountedSet::AddResult result = m_layoutBeforeThreadsSet.add(otherFlowThread);
     if (result.isNewEntry) {
         // This is the first time we see this dependency. Make sure we recalculate all the dependencies.
-        view().flowThreadController()->setIsRenderNamedFlowThreadOrderDirty(true);
+        view().flowThreadController().setIsRenderNamedFlowThreadOrderDirty(true);
     }
 }
 
@@ -421,7 +421,7 @@ void RenderNamedFlowThread::removeDependencyOnFlowThread(RenderNamedFlowThread* 
     bool removed = m_layoutBeforeThreadsSet.remove(otherFlowThread);
     if (removed) {
         checkInvalidRegions();
-        view().flowThreadController()->setIsRenderNamedFlowThreadOrderDirty(true);
+        view().flowThreadController().setIsRenderNamedFlowThreadOrderDirty(true);
     }
 }
 

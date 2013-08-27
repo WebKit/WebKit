@@ -381,7 +381,7 @@ void RenderRegion::repaintFlowThreadContentRectangle(const LayoutRect& repaintRe
 
 void RenderRegion::installFlowThread()
 {
-    m_flowThread = &view().flowThreadController()->ensureRenderFlowThreadWithName(style()->regionThread());
+    m_flowThread = &view().flowThreadController().ensureRenderFlowThreadWithName(style()->regionThread());
 
     // By now the flow thread should already be added to the rendering tree,
     // so we go up the rendering parents and check that this region is not part of the same
@@ -495,7 +495,7 @@ void RenderRegion::setRegionObjectsRegionStyle()
 
     // Start from content nodes and recursively compute the style in region for the render objects below.
     // If the style in region was already computed, used that style instead of computing a new one.
-    const RenderNamedFlowThread& namedFlow = view().flowThreadController()->ensureRenderFlowThreadWithName(style()->regionThread());
+    const RenderNamedFlowThread& namedFlow = view().flowThreadController().ensureRenderFlowThreadWithName(style()->regionThread());
     const NamedFlowContentNodes& contentNodes = namedFlow.contentNodes();
 
     for (NamedFlowContentNodes::const_iterator iter = contentNodes.begin(), end = contentNodes.end(); iter != end; ++iter) {
@@ -691,7 +691,7 @@ void RenderRegion::computePreferredLogicalWidths()
 
 void RenderRegion::getRanges(Vector<RefPtr<Range> >& rangeObjects) const
 {
-    const RenderNamedFlowThread& namedFlow = view().flowThreadController()->ensureRenderFlowThreadWithName(style()->regionThread());
+    const RenderNamedFlowThread& namedFlow = view().flowThreadController().ensureRenderFlowThreadWithName(style()->regionThread());
     namedFlow.getRanges(rangeObjects, this);
 }
 

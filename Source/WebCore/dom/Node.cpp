@@ -977,7 +977,7 @@ bool Node::canStartSelection() const
 
 bool Node::isRegisteredWithNamedFlow() const
 {
-    return document()->renderView()->flowThreadController()->isContentNodeRegisteredWithAnyNamedFlow(this);
+    return document()->renderView()->flowThreadController().isContentNodeRegisteredWithAnyNamedFlow(this);
 }
 
 Element* Node::shadowHost() const

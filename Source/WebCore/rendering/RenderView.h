@@ -208,7 +208,7 @@ public:
     
     bool hasRenderNamedFlowThreads() const;
     bool checkTwoPassLayoutForAutoHeightRegions() const;
-    FlowThreadController* flowThreadController();
+    FlowThreadController& flowThreadController();
 
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 

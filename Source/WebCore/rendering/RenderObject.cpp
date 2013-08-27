@@ -629,7 +629,7 @@ RenderFlowThread* RenderObject::locateFlowThreadContainingBlock() const
     ASSERT(flowThreadState() != NotInsideFlowThread);
 
     // See if we have the thread cached because we're in the middle of layout.
-    RenderFlowThread* flowThread = view().flowThreadController()->currentRenderFlowThread();
+    RenderFlowThread* flowThread = view().flowThreadController().currentRenderFlowThread();
     if (flowThread)
         return flowThread;
     
@@ -2468,7 +2468,7 @@ void RenderObject::willBeDestroyed()
 #ifndef NDEBUG
     if (!documentBeingDestroyed() && view().hasRenderNamedFlowThreads()) {
         // After remove, the object and the associated information should not be in any flow thread.
-        const RenderNamedFlowThreadList* flowThreadList = view().flowThreadController()->renderNamedFlowThreadList();
+        const RenderNamedFlowThreadList* flowThreadList = view().flowThreadController().renderNamedFlowThreadList();
         for (RenderNamedFlowThreadList::const_iterator iter = flowThreadList->begin(); iter != flowThreadList->end(); ++iter) {
             const RenderNamedFlowThread* renderFlowThread = *iter;
             ASSERT(!renderFlowThread->hasChild(this));

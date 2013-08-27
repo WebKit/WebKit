@@ -1392,7 +1392,7 @@ void Element::removedFrom(ContainerNode* insertionPoint)
 void Element::unregisterNamedFlowContentNode()
 {
     if (document()->cssRegionsEnabled() && inNamedFlow() && document()->renderView())
-        document()->renderView()->flowThreadController()->unregisterNamedFlowContentNode(this);
+        document()->renderView()->flowThreadController().unregisterNamedFlowContentNode(this);
 }
 
 void Element::lazyReattach(ShouldSetAttached shouldSetAttached)

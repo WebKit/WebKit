@@ -144,7 +144,7 @@ void RenderView::layoutContent(const LayoutState& state)
 
     RenderBlock::layout();
     if (hasRenderNamedFlowThreads())
-        flowThreadController()->layoutRenderNamedFlowThreads();
+        flowThreadController().layoutRenderNamedFlowThreads();
 #ifndef NDEBUG
     checkLayoutState(state);
 #endif
@@ -212,7 +212,7 @@ bool RenderView::initializeLayoutState(LayoutState& state)
         // Set the current render flow thread to point to our ancestor. This will allow the seamless document to locate the correct
         // regions when doing a layout.
         if (seamlessAncestor->flowThreadContainingBlock()) {
-            flowThreadController()->setCurrentRenderFlowThread(seamlessAncestor->view().flowThreadController()->currentRenderFlowThread());
+            flowThreadController().setCurrentRenderFlowThread(seamlessAncestor->view().flowThreadController().currentRenderFlowThread());
             isSeamlessAncestorInFlowThread = true;
         }
     }
@@ -237,13 +237,13 @@ void RenderView::layoutContentInAutoLogicalHeightRegions(const LayoutState& stat
 {
     // We need to invalidate all the flows with auto-height regions if one such flow needs layout.
     // If none is found we do a layout a check back again afterwards.
-    if (!flowThreadController()->updateFlowThreadsNeedingLayout()) {
+    if (!flowThreadController().updateFlowThreadsNeedingLayout()) {
         // Do a first layout of the content. In some cases more layouts are not needed (e.g. only flows with non-auto-height regions have changed).
         layoutContent(state);
 
         // If we find no named flow needing a two step layout after the first layout, exit early.
         // Otherwise, initiate the two step layout algorithm and recompute all the flows.
-        if (!flowThreadController()->updateFlowThreadsNeedingTwoStepLayout())
+        if (!flowThreadController().updateFlowThreadsNeedingTwoStepLayout())
             return;
     }
 
@@ -252,7 +252,7 @@ void RenderView::layoutContentInAutoLogicalHeightRegions(const LayoutState& stat
 
     // Propagate the computed auto-height values upwards.
     // Non-auto-height regions may invalidate the flow thread because they depended on auto-height regions, but that's ok.
-    flowThreadController()->updateFlowThreadsIntoConstrainedPhase();
+    flowThreadController().updateFlowThreadsIntoConstrainedPhase();
 
     // Do one last layout that should update the auto-height regions found in the main flow
     // and solve pathological dependencies between regions (e.g. a non-auto-height region depending
@@ -269,18 +269,18 @@ void RenderView::layoutContentToComputeOverflowInRegions(const LayoutState& stat
     // First pass through the flow threads and mark the regions as needing a simple layout.
     // The regions extract the overflow from the flow thread and pass it to their containg
     // block chain.
-    flowThreadController()->updateFlowThreadsIntoOverflowPhase();
+    flowThreadController().updateFlowThreadsIntoOverflowPhase();
     if (needsLayout())
         layoutContent(state);
 
     // In case scrollbars resized the regions a new pass is necessary to update the flow threads
     // and recompute the overflow on regions. This is the final state of the flow threads.
-    flowThreadController()->updateFlowThreadsIntoFinalPhase();
+    flowThreadController().updateFlowThreadsIntoFinalPhase();
     if (needsLayout())
         layoutContent(state);
 
     // Finally reset the layout state of the flow threads.
-    flowThreadController()->updateFlowThreadsIntoMeasureContentPhase();
+    flowThreadController().updateFlowThreadsIntoMeasureContentPhase();
 }
 
 void RenderView::layout()
@@ -336,7 +336,7 @@ void RenderView::layout()
     setNeedsLayout(false);
     
     if (isSeamlessAncestorInFlowThread)
-        flowThreadController()->setCurrentRenderFlowThread(0);
+        flowThreadController().setCurrentRenderFlowThread(0);
 }
 
 LayoutUnit RenderView::pageOrViewLogicalHeight() const
@@ -1168,7 +1168,7 @@ void RenderView::styleDidChange(StyleDifference diff, const RenderStyle* oldStyl
 {
     RenderBlock::styleDidChange(diff, oldStyle);
     if (hasRenderNamedFlowThreads())
-        flowThreadController()->styleDidChange();
+        flowThreadController().styleDidChange();
 }
 
 bool RenderView::hasRenderNamedFlowThreads() const
@@ -1181,12 +1181,12 @@ bool RenderView::checkTwoPassLayoutForAutoHeightRegions() const
     return hasRenderNamedFlowThreads() && m_flowThreadController->hasFlowThreadsWithAutoLogicalHeightRegions();
 }
 
-FlowThreadController* RenderView::flowThreadController()
+FlowThreadController& RenderView::flowThreadController()
 {
     if (!m_flowThreadController)
         m_flowThreadController = FlowThreadController::create(this);
 
-    return m_flowThreadController.get();
+    return *m_flowThreadController;
 }
 
 void RenderView::pushLayoutStateForCurrentFlowThread(const RenderObject* object)

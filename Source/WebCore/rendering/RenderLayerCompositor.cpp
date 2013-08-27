@@ -618,7 +618,7 @@ void RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
 void RenderLayerCompositor::updateRenderFlowThreadLayersIfNeeded()
 {
     if (m_renderView.hasRenderNamedFlowThreads())
-        m_renderView.flowThreadController()->updateRenderFlowThreadLayersIfNeeded();
+        m_renderView.flowThreadController().updateRenderFlowThreadLayersIfNeeded();
 }
 
 void RenderLayerCompositor::layerBecameNonComposited(const RenderLayer* renderLayer)
