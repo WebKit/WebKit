@@ -135,7 +135,7 @@ void PageRuntimeAgent::didCreateIsolatedContext(Frame* frame, ScriptState* scrip
 InjectedScript PageRuntimeAgent::injectedScriptForEval(ErrorString* errorString, const int* executionContextId)
 {
     if (!executionContextId) {
-        ScriptState* scriptState = mainWorldScriptState(m_inspectedPage->mainFrame());
+        ScriptState* scriptState = mainWorldScriptState(&m_inspectedPage->mainFrame());
         InjectedScript result = injectedScriptManager()->injectedScriptFor(scriptState);
         if (result.hasNoValue())
             *errorString = "Internal error: main world execution context not found.";
@@ -160,7 +160,7 @@ void PageRuntimeAgent::unmuteConsole()
 void PageRuntimeAgent::reportExecutionContextCreation()
 {
     Vector<std::pair<ScriptState*, SecurityOrigin*> > isolatedContexts;
-    for (Frame* frame = m_inspectedPage->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (Frame* frame = &m_inspectedPage->mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (!frame->script().canExecuteScripts(NotAboutToExecuteScript))
             continue;
         String frameId = m_pageAgent->frameId(frame);

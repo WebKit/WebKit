@@ -1226,7 +1226,7 @@ void FrameLoaderClient::transitionToCommittedFromCachedFrame(CachedFrame* cached
     ASSERT(cachedFrame->view());
 
     Frame* frame = core(m_frame);
-    if (frame != frame->page()->mainFrame())
+    if (frame != &frame->page()->mainFrame())
         return;
 
     postCommitFrameViewSetup(m_frame);
@@ -1246,7 +1246,7 @@ void FrameLoaderClient::transitionToCommittedForNewPage()
     frame->createView(size, backgroundColor, transparent);
 
     // We need to do further manipulation on the FrameView if it was the mainFrame
-    if (frame != frame->page()->mainFrame())
+    if (frame != &frame->page()->mainFrame())
         return;
 
     postCommitFrameViewSetup(m_frame);

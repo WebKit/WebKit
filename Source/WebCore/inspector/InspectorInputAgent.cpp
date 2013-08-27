@@ -90,7 +90,7 @@ void InspectorInputAgent::dispatchKeyEvent(ErrorString* error, const String& typ
         isSystemKey ? *isSystemKey : false,
         static_cast<PlatformEvent::Modifiers>(modifiers ? *modifiers : 0),
         timestamp ? *timestamp : currentTime());
-    m_page->mainFrame()->eventHandler().keyEvent(event);
+    m_page->mainFrame().eventHandler().keyEvent(event);
 }
 
 void InspectorInputAgent::dispatchMouseEvent(ErrorString* error, const String& type, int x, int y, const int* modifiers, const double* timestamp, const String* button, const int* clickCount)
@@ -125,7 +125,7 @@ void InspectorInputAgent::dispatchMouseEvent(ErrorString* error, const String& t
 
     // Some platforms may have flipped coordinate systems, but the given coordinates
     // assume the origin is in the top-left of the window. Convert.
-    IntPoint convertedPoint = m_page->mainFrame()->view()->convertToContainingWindow(IntPoint(x, y));
+    IntPoint convertedPoint = m_page->mainFrame().view()->convertToContainingWindow(IntPoint(x, y));
     IntPoint globalPoint = m_page->chrome().rootViewToScreen(IntRect(IntPoint(x, y), IntSize(0, 0))).location();
 
     PlatformMouseEvent event(
@@ -140,7 +140,7 @@ void InspectorInputAgent::dispatchMouseEvent(ErrorString* error, const String& t
         convertedModifiers & PlatformEvent::MetaKey,
         timestamp ? *timestamp : currentTime());
 
-    EventHandler& eventHandler = m_page->mainFrame()->eventHandler();
+    EventHandler& eventHandler = m_page->mainFrame().eventHandler();
     switch (convertedType) {
     case PlatformEvent::MousePressed:
         eventHandler.handleMousePressEvent(event);

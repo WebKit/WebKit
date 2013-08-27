@@ -139,7 +139,7 @@ void ScrollingCoordinatorMac::frameViewLayoutUpdated(FrameView* frameView)
     // Compute the region of the page that we can't do fast scrolling for. This currently includes
     // all scrollable areas, such as subframes, overflow divs and list boxes. We need to do this even if the
     // frame view whose layout was updated is not the main frame.
-    Region nonFastScrollableRegion = computeNonFastScrollableRegion(m_page->mainFrame(), IntPoint());
+    Region nonFastScrollableRegion = computeNonFastScrollableRegion(&m_page->mainFrame(), IntPoint());
 
     // In the future, we may want to have the ability to set non-fast scrolling regions for more than
     // just the root node. But right now, this concept only applies to the root.
@@ -204,7 +204,7 @@ void ScrollingCoordinatorMac::scrollableAreaScrollbarLayerDidChange(ScrollableAr
     ASSERT(isMainThread());
     ASSERT(m_page);
 
-    if (scrollableArea != static_cast<ScrollableArea*>(m_page->mainFrame()->view()))
+    if (scrollableArea != static_cast<ScrollableArea*>(m_page->mainFrame().view()))
         return;
 
     // FIXME: Implement.
@@ -351,7 +351,7 @@ void ScrollingCoordinatorMac::updateMainFrameScrollLayerPosition()
     if (!m_page)
         return;
 
-    FrameView* frameView = m_page->mainFrame()->view();
+    FrameView* frameView = m_page->mainFrame().view();
     if (!frameView)
         return;
 
@@ -436,7 +436,7 @@ void ScrollingCoordinatorMac::commitTreeState()
     OwnPtr<ScrollingStateTree> treeState = m_scrollingStateTree->commit();
     ScrollingThread::dispatch(bind(&ScrollingTree::commitNewTreeState, m_scrollingTree.get(), treeState.release()));
 
-    FrameView* frameView = m_page->mainFrame()->view();
+    FrameView* frameView = m_page->mainFrame().view();
     if (!frameView)
         return;
     

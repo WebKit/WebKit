@@ -380,7 +380,7 @@ bool LayerTreeHostMac::flushPendingLayerChanges()
     for (PageOverlayLayerMap::iterator it = m_pageOverlayLayers.begin(); it != end; ++it)
         it->value->flushCompositingStateForThisLayerOnly();
 
-    return m_webPage->corePage()->mainFrame()->view()->flushCompositingStateIncludingSubframes();
+    return m_webPage->corePage()->mainFrame().view()->flushCompositingStateIncludingSubframes();
 }
 
 void LayerTreeHostMac::createPageOverlayLayer(PageOverlay* pageOverlay)

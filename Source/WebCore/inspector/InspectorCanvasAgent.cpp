@@ -266,7 +266,7 @@ void InspectorCanvasAgent::findFramesWithUninstrumentedCanvases()
 {
     m_framesWithUninstrumentedCanvases.clear();
 
-    for (Frame* frame = m_pageAgent->page()->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (Frame* frame = &m_pageAgent->page()->mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (!frame->document())
             continue;
 

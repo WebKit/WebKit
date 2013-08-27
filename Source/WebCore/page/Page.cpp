@@ -103,7 +103,7 @@ static void networkStateChanged(bool isOnLine)
     // Get all the frames of all the pages in all the page groups
     HashSet<Page*>::iterator end = allPages->end();
     for (HashSet<Page*>::iterator it = allPages->begin(); it != end; ++it) {
-        for (Frame* frame = (*it)->mainFrame(); frame; frame = frame->tree().traverseNext())
+        for (Frame* frame = &(*it)->mainFrame(); frame; frame = frame->tree().traverseNext())
             frames.append(frame);
         InspectorInstrumentation::networkStateChanged(*it);
     }
@@ -213,7 +213,7 @@ Page::~Page()
     setGroupName(String());
     allPages->remove(this);
     
-    for (Frame* frame = mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
         frame->willDetachPage();
         frame->detachFromPage();
     }
@@ -243,7 +243,7 @@ Page::~Page()
 ArenaSize Page::renderTreeSize() const
 {
     ArenaSize total(0, 0);
-    for (Frame* frame = mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (!frame->document())
             continue;
         if (RenderArena* arena = frame->document()->renderArena()) {
@@ -256,7 +256,7 @@ ArenaSize Page::renderTreeSize() const
 
 ViewportArguments Page::viewportArguments() const
 {
-    return mainFrame() && mainFrame()->document() ? mainFrame()->document()->viewportArguments() : ViewportArguments();
+    return mainFrame().document() ? mainFrame().document()->viewportArguments() : ViewportArguments();
 }
 
 ScrollingCoordinator* Page::scrollingCoordinator()
@@ -468,7 +468,7 @@ void Page::updateStyleForAllPagesAfterGlobalChangeInEnvironment()
         return;
     HashSet<Page*>::iterator end = allPages->end();
     for (HashSet<Page*>::iterator it = allPages->begin(); it != end; ++it)
-        for (Frame* frame = (*it)->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        for (Frame* frame = &(*it)->mainFrame(); frame; frame = frame->tree().traverseNext()) {
             // If a change in the global environment has occurred, we need to
             // make sure all the properties a recomputed, therefore we invalidate
             // the properties cache.
@@ -480,7 +480,7 @@ void Page::updateStyleForAllPagesAfterGlobalChangeInEnvironment()
 
 void Page::setNeedsRecalcStyleInAllFrames()
 {
-    for (Frame* frame = mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (Document* document = frame->document())
             document->styleResolverChanged(DeferRecalcStyle);
     }
@@ -506,7 +506,7 @@ void Page::refreshPlugins(bool reload)
         if (!reload)
             continue;
         
-        for (Frame* frame = (*it)->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        for (Frame* frame = &(*it)->mainFrame(); frame; frame = frame->tree().traverseNext()) {
             if (frame->loader().subframeLoader()->containsPlugins())
                 framesNeedingReload.append(frame);
         }
@@ -525,7 +525,7 @@ PluginData* Page::pluginData() const
 
 inline MediaCanStartListener* Page::takeAnyMediaCanStartListener()
 {
-    for (Frame* frame = mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (MediaCanStartListener* listener = frame->document()->takeAnyMediaCanStartListener())
             return listener;
     }
@@ -561,7 +561,7 @@ bool Page::findString(const String& target, TextCaseSensitivity caseSensitivity,
 
 bool Page::findString(const String& target, FindOptions options)
 {
-    if (target.isEmpty() || !mainFrame())
+    if (target.isEmpty())
         return false;
 
     bool shouldWrap = options & WrapAround;
@@ -591,10 +591,8 @@ bool Page::findString(const String& target, FindOptions options)
 void Page::findStringMatchingRanges(const String& target, FindOptions options, int limit, Vector<RefPtr<Range> >* matchRanges, int& indexForSelection)
 {
     indexForSelection = 0;
-    if (!mainFrame())
-        return;
 
-    Frame* frame = mainFrame();
+    Frame* frame = &mainFrame();
     Frame* frameWithSelection = 0;
     do {
         frame->editor().countMatchesForText(target, 0, options, limit ? (limit - matchRanges->size()) : 0, true, matchRanges);
@@ -634,14 +632,14 @@ void Page::findStringMatchingRanges(const String& target, FindOptions options, i
 
 PassRefPtr<Range> Page::rangeOfString(const String& target, Range* referenceRange, FindOptions options)
 {
-    if (target.isEmpty() || !mainFrame())
+    if (target.isEmpty())
         return 0;
 
     if (referenceRange && referenceRange->ownerDocument()->page() != this)
         return 0;
 
     bool shouldWrap = options & WrapAround;
-    Frame* frame = referenceRange ? referenceRange->ownerDocument()->frame() : mainFrame();
+    Frame* frame = referenceRange ? referenceRange->ownerDocument()->frame() : &mainFrame();
     Frame* startFrame = frame;
     do {
         if (RefPtr<Range> resultRange = frame->editor().rangeOfString(target, frame == startFrame ? referenceRange : 0, options & ~WrapAround))
@@ -662,12 +660,12 @@ PassRefPtr<Range> Page::rangeOfString(const String& target, Range* referenceRang
 
 unsigned Page::findMatchesForText(const String& target, FindOptions options, unsigned maxMatchCount, ShouldHighlightMatches shouldHighlightMatches, ShouldMarkMatches shouldMarkMatches)
 {
-    if (target.isEmpty() || !mainFrame())
+    if (target.isEmpty())
         return 0;
 
     unsigned matchCount = 0;
 
-    Frame* frame = mainFrame();
+    Frame* frame = &mainFrame();
     do {
         if (shouldMarkMatches == MarkMatches)
             frame->editor().setMarkedTextMatchesAreHighlighted(shouldHighlightMatches == HighlightMatches);
@@ -690,10 +688,7 @@ unsigned Page::countFindMatches(const String& target, FindOptions options, unsig
 
 void Page::unmarkAllTextMatches()
 {
-    if (!mainFrame())
-        return;
-
-    Frame* frame = mainFrame();
+    Frame* frame = &mainFrame();
     do {
         frame->document()->markers().removeMarkers(DocumentMarker::TextMatch);
         frame = incrementFrame(frame, true, false);
@@ -723,7 +718,7 @@ void Page::setDefersLoading(bool defers)
     }
 
     m_defersLoading = defers;
-    for (Frame* frame = mainFrame(); frame; frame = frame->tree().traverseNext())
+    for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext())
         frame->loader().setDefersLoading(defers);
 }
 
@@ -751,14 +746,14 @@ void Page::setMediaVolume(float volume)
         return;
 
     m_mediaVolume = volume;
-    for (Frame* frame = mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
         frame->document()->mediaVolumeDidChange();
     }
 }
 
 void Page::setPageScaleFactor(float scale, const IntPoint& origin)
 {
-    Document* document = mainFrame()->document();
+    Document* document = mainFrame().document();
     FrameView* view = document->view();
 
     if (scale == m_pageScaleFactor) {
@@ -779,11 +774,11 @@ void Page::setPageScaleFactor(float scale, const IntPoint& origin)
         document->recalcStyle(Style::Force);
 
         // Transform change on RenderView doesn't trigger repaint on non-composited contents.
-        mainFrame()->view()->invalidateRect(IntRect(LayoutRect::infiniteRect()));
+        mainFrame().view()->invalidateRect(IntRect(LayoutRect::infiniteRect()));
     }
 
 #if USE(ACCELERATED_COMPOSITING)
-    mainFrame()->deviceOrPageScaleFactorChanged();
+    mainFrame().deviceOrPageScaleFactorChanged();
 #endif
 
     if (view && view->fixedElementsLayoutRelativeToFrame())
@@ -806,13 +801,11 @@ void Page::setDeviceScaleFactor(float scaleFactor)
     setNeedsRecalcStyleInAllFrames();
 
 #if USE(ACCELERATED_COMPOSITING)
-    if (mainFrame())
-        mainFrame()->deviceOrPageScaleFactorChanged();
-
+    mainFrame().deviceOrPageScaleFactorChanged();
     pageCache()->markPagesForDeviceScaleChanged(this);
 #endif
 
-    for (Frame* frame = mainFrame(); frame; frame = frame->tree().traverseNext())
+    for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext())
         frame->editor().deviceScaleFactorChanged();
 
     pageCache()->markPagesForFullStyleRecalc(this);
@@ -832,13 +825,13 @@ void Page::setShouldSuppressScrollbarAnimations(bool suppressAnimations)
 
     // On the other hand, if we are going to start suppressing animations, then we need to make sure we
     // finish any current scroll animations first.
-    FrameView* view = mainFrame()->view();
+    FrameView* view = mainFrame().view();
     if (!view)
         return;
 
     view->finishCurrentScrollAnimations();
     
-    for (Frame* frame = mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
         FrameView* frameView = frame->view();
         if (!frameView)
             continue;
@@ -902,10 +895,10 @@ unsigned Page::pageCount() const
     if (m_pagination.mode == Pagination::Unpaginated)
         return 0;
 
-    if (Document* document = mainFrame()->document())
+    if (Document* document = mainFrame().document())
         document->updateLayoutIgnorePendingStylesheets();
 
-    RenderView* contentRenderer = mainFrame()->contentRenderer();
+    RenderView* contentRenderer = mainFrame().contentRenderer();
     return contentRenderer ? contentRenderer->columnCount(contentRenderer->columnInfo()) : 0;
 }
 
@@ -913,7 +906,7 @@ void Page::didMoveOnscreen()
 {
     m_isOnscreen = true;
 
-    for (Frame* frame = mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (FrameView* frameView = frame->view())
             frameView->didMoveOnscreen();
     }
@@ -925,7 +918,7 @@ void Page::willMoveOffscreen()
 {
     m_isOnscreen = false;
 
-    for (Frame* frame = mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (FrameView* frameView = frame->view())
             frameView->willMoveOffscreen();
     }
@@ -940,7 +933,7 @@ void Page::setIsInWindow(bool isInWindow)
 
     m_isInWindow = isInWindow;
 
-    for (Frame* frame = mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (FrameView* frameView = frame->view())
             frameView->setIsInWindow(isInWindow);
     }
@@ -949,7 +942,7 @@ void Page::setIsInWindow(bool isInWindow)
 void Page::suspendScriptedAnimations()
 {
     m_scriptedAnimationsSuspended = true;
-    for (Frame* frame = mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (frame->document())
             frame->document()->suspendScriptedAnimationControllerCallbacks();
     }
@@ -958,7 +951,7 @@ void Page::suspendScriptedAnimations()
 void Page::resumeScriptedAnimations()
 {
     m_scriptedAnimationsSuspended = false;
-    for (Frame* frame = mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (frame->document())
             frame->document()->resumeScriptedAnimationControllerCallbacks();
     }
@@ -995,7 +988,7 @@ void Page::userStyleSheetLocationChanged()
             m_userStyleSheet = String::fromUTF8(styleSheetAsUTF8.data(), styleSheetAsUTF8.size());
     }
 
-    for (Frame* frame = mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (frame->document())
             frame->document()->styleSheetCollection()->updatePageUserSheet();
     }
@@ -1149,7 +1142,7 @@ void Page::setMemoryCacheClientCallsEnabled(bool enabled)
     if (!enabled)
         return;
 
-    for (RefPtr<Frame> frame = mainFrame(); frame; frame = frame->tree().traverseNext())
+    for (RefPtr<Frame> frame = &mainFrame(); frame; frame = frame->tree().traverseNext())
         frame->loader().tellClientAboutPastMemoryCacheLoads();
 }
 
@@ -1157,7 +1150,7 @@ void Page::setMinimumTimerInterval(double minimumTimerInterval)
 {
     double oldTimerInterval = m_minimumTimerInterval;
     m_minimumTimerInterval = minimumTimerInterval;
-    for (Frame* frame = mainFrame(); frame; frame = frame->tree().traverseNextWithWrap(false)) {
+    for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNextWithWrap(false)) {
         if (frame->document())
             frame->document()->adjustMinimumTimerInterval(oldTimerInterval);
     }
@@ -1174,7 +1167,7 @@ void Page::setTimerAlignmentInterval(double interval)
         return;
 
     m_timerAlignmentInterval = interval;
-    for (Frame* frame = mainFrame(); frame; frame = frame->tree().traverseNextWithWrap(false)) {
+    for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNextWithWrap(false)) {
         if (frame->document())
             frame->document()->didChangeTimerAlignmentInterval();
     }
@@ -1187,13 +1180,13 @@ double Page::timerAlignmentInterval() const
 
 void Page::dnsPrefetchingStateChanged()
 {
-    for (Frame* frame = mainFrame(); frame; frame = frame->tree().traverseNext())
+    for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext())
         frame->document()->initDNSPrefetch();
 }
 
 void Page::collectPluginViews(Vector<RefPtr<PluginViewBase>, 32>& pluginViewBases)
 {
-    for (Frame* frame = mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
         FrameView* view = frame->view();
         if (!view)
             return;
@@ -1212,7 +1205,7 @@ void Page::collectPluginViews(Vector<RefPtr<PluginViewBase>, 32>& pluginViewBase
 
 void Page::storageBlockingStateChanged()
 {
-    for (Frame* frame = mainFrame(); frame; frame = frame->tree().traverseNext())
+    for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext())
         frame->document()->storageBlockingStateDidChange();
 
     // Collect the PluginViews in to a vector to ensure that action the plug-in takes
@@ -1228,7 +1221,7 @@ void Page::privateBrowsingStateChanged()
 {
     bool privateBrowsingEnabled = m_settings->privateBrowsingEnabled();
 
-    for (Frame* frame = mainFrame(); frame; frame = frame->tree().traverseNext())
+    for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext())
         frame->document()->privateBrowsingStateDidChange();
 
     // Collect the PluginViews in to a vector to ensure that action the plug-in takes
@@ -1246,7 +1239,7 @@ void Page::checkSubframeCountConsistency() const
     ASSERT(m_subframeCount >= 0);
 
     int subframeCount = 0;
-    for (Frame* frame = mainFrame(); frame; frame = frame->tree().traverseNext())
+    for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext())
         ++subframeCount;
 
     ASSERT(m_subframeCount + 1 == subframeCount);
@@ -1295,11 +1288,11 @@ void Page::setVisibilityState(PageVisibilityState visibilityState, bool isInitia
         if (m_pageThrottler->shouldThrottleTimers())
             throttleTimers();
         if (m_settings->hiddenPageCSSAnimationSuspensionEnabled())
-            mainFrame()->animation().suspendAnimations();
+            mainFrame().animation().suspendAnimations();
     } else {
         unthrottleTimers();
         if (m_settings->hiddenPageCSSAnimationSuspensionEnabled())
-            mainFrame()->animation().resumeAnimations();
+            mainFrame().animation().resumeAnimations();
     }
 }
 #endif // ENABLE(PAGE_VISIBILITY_API) || ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING)
@@ -1316,7 +1309,7 @@ void Page::addHeaderWithHeight(int headerHeight)
 {
     m_headerHeight = headerHeight;
 
-    FrameView* frameView = mainFrame() ? mainFrame()->view() : 0;
+    FrameView* frameView = mainFrame().view();
     if (!frameView)
         return;
 
@@ -1332,7 +1325,7 @@ void Page::addFooterWithHeight(int footerHeight)
 {
     m_footerHeight = footerHeight;
 
-    FrameView* frameView = mainFrame() ? mainFrame()->view() : 0;
+    FrameView* frameView = mainFrame().view();
     if (!frameView)
         return;
 
@@ -1405,7 +1398,7 @@ void Page::addRelevantRepaintedObject(RenderObject* object, const LayoutRect& ob
         return;
 
     // Objects inside sub-frames are not considered to be relevant.
-    if (&object->frame() != mainFrame())
+    if (&object->frame() != &mainFrame())
         return;
 
     LayoutRect relevantRect = relevantViewRect(&object->view());
@@ -1458,7 +1451,7 @@ void Page::addRelevantRepaintedObject(RenderObject* object, const LayoutRect& ob
         && ratioOfViewThatIsUnpainted < gMaximumUnpaintedAreaRatio) {
         m_isCountingRelevantRepaintedObjects = false;
         resetRelevantPaintedObjectCounter();
-        if (Frame* frame = mainFrame())
+        if (Frame* frame = &mainFrame())
             frame->loader().didLayout(DidHitRelevantRepaintedObjectsAreaThreshold);
     }
 }
@@ -1478,13 +1471,13 @@ void Page::addRelevantUnpaintedObject(RenderObject* object, const LayoutRect& ob
 
 void Page::suspendActiveDOMObjectsAndAnimations()
 {
-    for (Frame* frame = mainFrame(); frame; frame = frame->tree().traverseNext())
+    for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext())
         frame->suspendActiveDOMObjectsAndAnimations();
 }
 
 void Page::resumeActiveDOMObjectsAndAnimations()
 {
-    for (Frame* frame = mainFrame(); frame; frame = frame->tree().traverseNext())
+    for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext())
         frame->resumeActiveDOMObjectsAndAnimations();
 }
 
@@ -1551,9 +1544,9 @@ void Page::hiddenPageCSSAnimationSuspensionStateChanged()
 {
     if (m_visibilityState == WebCore::PageVisibilityStateHidden) {
         if (m_settings->hiddenPageCSSAnimationSuspensionEnabled())
-            mainFrame()->animation().suspendAnimations();
+            mainFrame().animation().suspendAnimations();
         else
-            mainFrame()->animation().resumeAnimations();
+            mainFrame().animation().resumeAnimations();
     }
 }
 #endif
@@ -1561,7 +1554,7 @@ void Page::hiddenPageCSSAnimationSuspensionStateChanged()
 #if ENABLE(VIDEO_TRACK)
 void Page::captionPreferencesChanged()
 {
-    for (Frame* frame = mainFrame(); frame; frame = frame->tree().traverseNext())
+    for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext())
         frame->document()->captionPreferencesChanged();
 }
 #endif

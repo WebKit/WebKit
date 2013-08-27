@@ -1036,13 +1036,13 @@ HitTestResult EventHandler::hitTestResultAtPoint(const LayoutPoint& point, HitTe
     // We always send hitTestResultAtPoint to the main frame if we have one,
     // otherwise we might hit areas that are obscured by higher frames.
     if (Page* page = m_frame->page()) {
-        Frame* mainFrame = page->mainFrame();
-        if (m_frame != mainFrame) {
+        Frame& mainFrame = page->mainFrame();
+        if (m_frame != &mainFrame) {
             FrameView* frameView = m_frame->view();
-            FrameView* mainView = mainFrame->view();
+            FrameView* mainView = mainFrame.view();
             if (frameView && mainView) {
                 IntPoint mainFramePoint = mainView->rootViewToContents(frameView->contentsToRootView(roundedIntPoint(point)));
-                return mainFrame->eventHandler().hitTestResultAtPoint(mainFramePoint, hitType, padding);
+                return mainFrame.eventHandler().hitTestResultAtPoint(mainFramePoint, hitType, padding);
             }
         }
     }
@@ -1292,7 +1292,7 @@ OptionalCursor EventHandler::selectCursor(const HitTestResult& result, bool shif
     if (!page)
         return NoCursorChange;
 #if ENABLE(PAN_SCROLLING)
-    if (page->mainFrame()->eventHandler().panScrollInProgress())
+    if (page->mainFrame().eventHandler().panScrollInProgress())
         return NoCursorChange;
 #endif
 
@@ -1567,7 +1567,7 @@ bool EventHandler::handleMousePressEvent(const PlatformMouseEvent& mouseEvent)
 #if ENABLE(PAN_SCROLLING)
     // We store whether pan scrolling is in progress before calling stopAutoscrollTimer()
     // because it will set m_autoscrollType to NoAutoscroll on return.
-    bool isPanScrollInProgress = m_frame->page() && m_frame->page()->mainFrame()->eventHandler().panScrollInProgress();
+    bool isPanScrollInProgress = m_frame->page() && m_frame->page()->mainFrame().eventHandler().panScrollInProgress();
     stopAutoscrollTimer();
     if (isPanScrollInProgress) {
         // We invalidate the click when exiting pan scrolling so that we don't inadvertently navigate
@@ -3284,7 +3284,7 @@ bool EventHandler::keyEvent(const PlatformKeyboardEvent& initialKeyEvent)
 
 #if ENABLE(PAN_SCROLLING)
     if (Page* page = m_frame->page()) {
-        if (page->mainFrame()->eventHandler().panScrollInProgress()) {
+        if (page->mainFrame().eventHandler().panScrollInProgress()) {
             // If a key is pressed while the panScroll is in progress then we want to stop
             if (initialKeyEvent.type() == PlatformEvent::KeyDown || initialKeyEvent.type() == PlatformEvent::RawKeyDown) 
                 stopAutoscrollTimer();

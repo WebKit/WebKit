@@ -192,13 +192,12 @@ DragSession DragController::dragEntered(DragData* dragData)
 void DragController::dragExited(DragData* dragData)
 {
     ASSERT(dragData);
-    Frame* mainFrame = m_page->mainFrame();
 
-    if (RefPtr<FrameView> v = mainFrame->view()) {
+    if (RefPtr<FrameView> v = m_page->mainFrame().view()) {
         ClipboardAccessPolicy policy = (!m_documentUnderMouse || m_documentUnderMouse->securityOrigin()->isLocal()) ? ClipboardReadable : ClipboardTypesReadable;
         RefPtr<Clipboard> clipboard = Clipboard::createForDragAndDrop(policy, *dragData);
         clipboard->setSourceOperation(dragData->draggingSourceOperationMask());
-        mainFrame->eventHandler().cancelDragAndDrop(createMouseEvent(dragData), clipboard.get());
+        m_page->mainFrame().eventHandler().cancelDragAndDrop(createMouseEvent(dragData), clipboard.get());
         clipboard->setAccessPolicy(ClipboardNumb);    // invalidate clipboard here for security
     }
     mouseMovedIntoDocument(0);
@@ -215,10 +214,10 @@ DragSession DragController::dragUpdated(DragData* dragData)
 bool DragController::performDrag(DragData* dragData)
 {
     ASSERT(dragData);
-    m_documentUnderMouse = m_page->mainFrame()->documentAtPoint(dragData->clientPosition());
+    m_documentUnderMouse = m_page->mainFrame().documentAtPoint(dragData->clientPosition());
     if ((m_dragDestinationAction & DragDestinationActionDHTML) && m_documentIsHandlingDrag) {
         m_client->willPerformDragDestinationAction(DragDestinationActionDHTML, dragData);
-        RefPtr<Frame> mainFrame = m_page->mainFrame();
+        RefPtr<Frame> mainFrame = &m_page->mainFrame();
         bool preventedDefault = false;
         if (mainFrame->view()) {
             // Sending an event can result in the destruction of the view and part.
@@ -244,7 +243,7 @@ bool DragController::performDrag(DragData* dragData)
         return false;
 
     m_client->willPerformDragDestinationAction(DragDestinationActionLoad, dragData);
-    m_page->mainFrame()->loader().load(FrameLoadRequest(m_page->mainFrame(), ResourceRequest(dragData->asURL(m_page->mainFrame()))));
+    m_page->mainFrame().loader().load(FrameLoadRequest(&m_page->mainFrame(), ResourceRequest(dragData->asURL(&m_page->mainFrame()))));
     return true;
 }
 
@@ -262,8 +261,7 @@ void DragController::mouseMovedIntoDocument(Document* newDocument)
 DragSession DragController::dragEnteredOrUpdated(DragData* dragData)
 {
     ASSERT(dragData);
-    ASSERT(m_page->mainFrame());
-    mouseMovedIntoDocument(m_page->mainFrame()->documentAtPoint(dragData->clientPosition()));
+    mouseMovedIntoDocument(m_page->mainFrame().documentAtPoint(dragData->clientPosition()));
 
     m_dragDestinationAction = m_client->actionMaskForDrag(dragData);
     if (m_dragDestinationAction == DragDestinationActionNone) {
@@ -410,7 +408,7 @@ DragSourceAction DragController::delegateDragSourceAction(const IntPoint& rootVi
 DragOperation DragController::operationForLoad(DragData* dragData)
 {
     ASSERT(dragData);
-    Document* doc = m_page->mainFrame()->documentAtPoint(dragData->clientPosition());
+    Document* doc = m_page->mainFrame().documentAtPoint(dragData->clientPosition());
 
     bool pluginDocumentAcceptsDrags = false;
 
@@ -559,12 +557,12 @@ bool DragController::canProcessDrag(DragData* dragData)
     if (!dragData->containsCompatibleContent())
         return false;
 
-    IntPoint point = m_page->mainFrame()->view()->windowToContents(dragData->clientPosition());
+    IntPoint point = m_page->mainFrame().view()->windowToContents(dragData->clientPosition());
     HitTestResult result = HitTestResult(point);
-    if (!m_page->mainFrame()->contentRenderer())
+    if (!m_page->mainFrame().contentRenderer())
         return false;
 
-    result = m_page->mainFrame()->eventHandler().hitTestResultAtPoint(point, HitTestRequest::ReadOnly | HitTestRequest::Active);
+    result = m_page->mainFrame().eventHandler().hitTestResultAtPoint(point, HitTestRequest::ReadOnly | HitTestRequest::Active);
 
     if (!result.innerNonSharedNode())
         return false;
@@ -608,7 +606,7 @@ bool DragController::tryDHTMLDrag(DragData* dragData, DragOperation& operation)
 {
     ASSERT(dragData);
     ASSERT(m_documentUnderMouse);
-    RefPtr<Frame> mainFrame = m_page->mainFrame();
+    RefPtr<Frame> mainFrame = &m_page->mainFrame();
     RefPtr<FrameView> viewProtector = mainFrame->view();
     if (!viewProtector)
         return false;
@@ -823,7 +821,7 @@ bool DragController::startDrag(Frame* src, const DragState& state, DragOperation
 
         if (!dragImage) {
             IntRect imageRect = hitTestResult.imageRect();
-            imageRect.setLocation(m_page->mainFrame()->view()->rootViewToContents(src->view()->contentsToRootView(imageRect.location())));
+            imageRect.setLocation(m_page->mainFrame().view()->rootViewToContents(src->view()->contentsToRootView(imageRect.location())));
             doImageDrag(element, dragOrigin, hitTestResult.imageRect(), clipboard, src, m_dragOffset);
         } else
             // DHTML defined drag image
@@ -918,7 +916,7 @@ void DragController::doSystemDrag(DragImageRef image, const IntPoint& dragLoc, c
     m_didInitiateDrag = true;
     m_dragInitiator = frame->document();
     // Protect this frame and view, as a load may occur mid drag and attempt to unload this frame
-    RefPtr<Frame> frameProtector = m_page->mainFrame();
+    RefPtr<Frame> frameProtector = &m_page->mainFrame();
     RefPtr<FrameView> viewProtector = frameProtector->view();
     m_client->startDrag(image, viewProtector->rootViewToContents(frame->view()->contentsToRootView(dragLoc)),
         viewProtector->rootViewToContents(frame->view()->contentsToRootView(eventPos)), clipboard, frameProtector.get(), forLink);
@@ -932,7 +930,7 @@ void DragController::doSystemDrag(DragImageRef image, const IntPoint& dragLoc, c
 // Manual drag caret manipulation
 void DragController::placeDragCaret(const IntPoint& windowPoint)
 {
-    mouseMovedIntoDocument(m_page->mainFrame()->documentAtPoint(windowPoint));
+    mouseMovedIntoDocument(m_page->mainFrame().documentAtPoint(windowPoint));
     if (!m_documentUnderMouse)
         return;
     Frame* frame = m_documentUnderMouse->frame();

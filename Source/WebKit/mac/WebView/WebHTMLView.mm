@@ -3590,7 +3590,7 @@ static void setMenuTargets(NSMenu* menu)
     if (!_private->ignoringMouseDraggedEvents) {
         if (Frame* frame = core([self _frame])) {
             if (Page* page = frame->page())
-                page->mainFrame()->eventHandler().mouseDragged(event);
+                page->mainFrame().eventHandler().mouseDragged(event);
         }
     }
 
@@ -3717,7 +3717,7 @@ static bool matchesExtensionOrEquivalent(NSString *filename, NSString *extension
     [self _stopAutoscrollTimer];
     if (Frame* frame = core([self _frame])) {
         if (Page* page = frame->page())
-            page->mainFrame()->eventHandler().mouseUp(event);
+            page->mainFrame().eventHandler().mouseUp(event);
     }
     [self _updateMouseoverWithFakeEvent];
 

@@ -143,7 +143,7 @@ void TiledCoreAnimationDrawingArea::forceRepaint()
     if (m_layerTreeStateIsFrozen)
         return;
 
-    for (Frame* frame = m_webPage->corePage()->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (Frame* frame = &m_webPage->corePage()->mainFrame(); frame; frame = frame->tree().traverseNext()) {
         FrameView* frameView = frame->view();
         if (!frameView || !frameView->tiledBacking())
             continue;
@@ -278,11 +278,7 @@ void TiledCoreAnimationDrawingArea::mainFrameContentSizeChanged(const IntSize&)
 
 void TiledCoreAnimationDrawingArea::updateIntrinsicContentSizeTimerFired(Timer<TiledCoreAnimationDrawingArea>*)
 {
-    Frame* frame = m_webPage->corePage()->mainFrame();
-    if (!frame)
-        return;
-
-    FrameView* frameView = frame->view();
+    FrameView* frameView = m_webPage->corePage()->mainFrame().view();
     if (!frameView)
         return;
 
@@ -370,7 +366,7 @@ bool TiledCoreAnimationDrawingArea::flushLayers()
         layer->flushCompositingState(visibleRect);
     }
 
-    bool returnValue = m_webPage->corePage()->mainFrame()->view()->flushCompositingStateIncludingSubframes();
+    bool returnValue = m_webPage->corePage()->mainFrame().view()->flushCompositingStateIncludingSubframes();
 
     [pool drain];
     return returnValue;
@@ -402,11 +398,7 @@ void TiledCoreAnimationDrawingArea::resumePainting()
     if (m_webPage->windowIsVisible()) {
         m_webPage->corePage()->resumeScriptedAnimations();
 
-        Frame* frame = m_webPage->corePage()->mainFrame();
-        if (!frame)
-            return;
-
-        FrameView* frameView = frame->view();
+        FrameView* frameView = m_webPage->corePage()->mainFrame().view();
         if (!frameView)
             return;
 
@@ -432,11 +424,7 @@ void TiledCoreAnimationDrawingArea::updateScrolledExposedRect()
     if (!m_clipsToExposedRect)
         return;
 
-    Frame* frame = m_webPage->corePage()->mainFrame();
-    if (!frame)
-        return;
-
-    FrameView* frameView = frame->view();
+    FrameView* frameView = m_webPage->corePage()->mainFrame().view();
     if (!frameView)
         return;
 
@@ -572,11 +560,7 @@ void TiledCoreAnimationDrawingArea::updateMainFrameClipsToExposedRect()
         if (TiledBacking* tiledBacking = it->value->tiledBacking())
             tiledBacking->setClipsToExposedRect(m_clipsToExposedRect);
 
-    Frame* frame = m_webPage->corePage()->mainFrame();
-    if (!frame)
-        return;
-
-    FrameView* frameView = frame->view();
+    FrameView* frameView = m_webPage->corePage()->mainFrame().view();
     if (!frameView)
         return;
 
@@ -684,11 +668,7 @@ void TiledCoreAnimationDrawingArea::didCommitChangesForLayer(const GraphicsLayer
 
 TiledBacking* TiledCoreAnimationDrawingArea::mainFrameTiledBacking() const
 {
-    Frame* frame = m_webPage->corePage()->mainFrame();
-    if (!frame)
-        return 0;
-    
-    FrameView* frameView = frame->view();
+    FrameView* frameView = m_webPage->corePage()->mainFrame().view();
     return frameView ? frameView->tiledBacking() : 0;
 }
 

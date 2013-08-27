@@ -312,7 +312,7 @@ void StorageAreaMap::dispatchSessionStorageEvent(uint64_t sourceStorageAreaID, c
     Vector<RefPtr<Frame>> frames;
 
     Page* page = webPage->corePage();
-    for (Frame* frame = page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (Frame* frame = &page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
         Document* document = frame->document();
         if (!document->securityOrigin()->equal(m_securityOrigin.get()))
             continue;
@@ -342,7 +342,7 @@ void StorageAreaMap::dispatchLocalStorageEvent(uint64_t sourceStorageAreaID, con
     PageGroup& pageGroup = *WebProcess::shared().webPageGroup(m_storageNamespaceID)->corePageGroup();
     const HashSet<Page*>& pages = pageGroup.pages();
     for (HashSet<Page*>::const_iterator it = pages.begin(), end = pages.end(); it != end; ++it) {
-        for (Frame* frame = (*it)->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        for (Frame* frame = &(*it)->mainFrame(); frame; frame = frame->tree().traverseNext()) {
             Document* document = frame->document();
             if (!document->securityOrigin()->equal(m_securityOrigin.get()))
                 continue;

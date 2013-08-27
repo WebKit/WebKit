@@ -412,7 +412,7 @@ void FrameView::clear()
 
 bool FrameView::isMainFrameView() const
 {
-    return frame().page() && frame().page()->mainFrame() == &frame();
+    return frame().page() && &frame().page()->mainFrame() == &frame();
 }
 
 bool FrameView::didFirstLayout() const
@@ -449,7 +449,7 @@ void FrameView::setFrameRect(const IntRect& newRect)
     if (newRect.width() != oldRect.width()) {
         Page* page = frame().page();
         if (isMainFrameView() && page->settings().textAutosizingEnabled()) {
-            for (Frame* frame = page->mainFrame(); frame; frame = frame->tree().traverseNext())
+            for (Frame* frame = &page->mainFrame(); frame; frame = frame->tree().traverseNext())
                 frame().document()->textAutosizer()->recalculateMultipliers();
         }
     }
@@ -2010,7 +2010,7 @@ bool FrameView::shouldUpdateFixedElementsAfterScrolling()
         return true;
 
     // If the scrolling thread is updating the fixed elements, then the FrameView should not update them as well.
-    if (page->mainFrame() != &frame())
+    if (&page->mainFrame() != &frame())
         return true;
 
     ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator();
@@ -2188,8 +2188,8 @@ void FrameView::visibleContentsResized()
 void FrameView::beginDeferredRepaints()
 {
     Page* page = frame().page();
-    if (page->mainFrame() != &frame()) {
-        page->mainFrame()->view()->beginDeferredRepaints();
+    if (&page->mainFrame() != &frame()) {
+        page->mainFrame().view()->beginDeferredRepaints();
         return;
     }
 
@@ -2199,8 +2199,8 @@ void FrameView::beginDeferredRepaints()
 void FrameView::endDeferredRepaints()
 {
     Page* page = frame().page();
-    if (page->mainFrame() != &frame()) {
-        page->mainFrame()->view()->endDeferredRepaints();
+    if (&page->mainFrame() != &frame()) {
+        page->mainFrame().view()->endDeferredRepaints();
         return;
     }
 
@@ -2742,7 +2742,7 @@ void FrameView::performPostLayoutTasks()
         }
     }
 
-    if (milestonesAchieved && page && page->mainFrame() == &frame())
+    if (milestonesAchieved && page && &page->mainFrame() == &frame())
         frame().loader().didLayout(milestonesAchieved);
 #if ENABLE(FONT_LOAD_EVENTS)
     if (RuntimeEnabledFeatures::fontLoadEventsEnabled())
@@ -4210,10 +4210,8 @@ void FrameView::firePaintRelatedMilestones()
 
     m_milestonesPendingPaint = 0;
 
-    if (milestonesAchieved) {
-        if (Frame* frame = page->mainFrame())
-            frame->loader().didLayout(milestonesAchieved);
-    }
+    if (milestonesAchieved)
+        page->mainFrame().loader().didLayout(milestonesAchieved);
 }
 
 void FrameView::setVisualUpdatesAllowedByClient(bool visualUpdatesAllowed)

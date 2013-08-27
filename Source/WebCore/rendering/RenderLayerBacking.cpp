@@ -121,7 +121,7 @@ RenderLayerBacking::RenderLayerBacking(RenderLayer* layer)
 {
     if (layer->isRootLayer()) {
         Page* page = renderer().frame().page();
-        if (page && page->mainFrame() == &renderer().frame()) {
+        if (page && &page->mainFrame() == &renderer().frame()) {
             m_isMainFrameRenderViewLayer = true;
 
 #if PLATFORM(MAC)

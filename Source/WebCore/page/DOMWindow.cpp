@@ -231,7 +231,7 @@ static bool allowsBeforeUnloadListeners(DOMWindow* window)
     Page* page = frame->page();
     if (!page)
         return false;
-    return frame == page->mainFrame();
+    return frame == &page->mainFrame();
 }
 
 bool DOMWindow::dispatchAllPendingBeforeUnloadEvents()
@@ -316,7 +316,7 @@ FloatRect DOMWindow::adjustWindowRect(Page* page, const FloatRect& pendingChange
 {
     ASSERT(page);
 
-    FloatRect screen = screenAvailableRect(page->mainFrame()->view());
+    FloatRect screen = screenAvailableRect(page->mainFrame().view());
     FloatRect window = page->chrome().windowRect();
 
     // Make sure we're in a valid state before adjusting dimensions.
@@ -931,7 +931,7 @@ void DOMWindow::focus(ScriptExecutionContext* context)
     }
 
     // If we're a top level window, bring the window to the front.
-    if (m_frame == page->mainFrame() && allowFocus)
+    if (m_frame == &page->mainFrame() && allowFocus)
         page->chrome().focus();
 
     if (!m_frame)
@@ -957,7 +957,7 @@ void DOMWindow::blur()
     if (m_frame->settings().windowFocusRestricted())
         return;
 
-    if (m_frame != page->mainFrame())
+    if (m_frame != &page->mainFrame())
         return;
 
     page->chrome().unfocus();
@@ -972,7 +972,7 @@ void DOMWindow::close(ScriptExecutionContext* context)
     if (!page)
         return;
 
-    if (m_frame != page->mainFrame())
+    if (m_frame != &page->mainFrame())
         return;
 
     if (context) {
@@ -1478,7 +1478,7 @@ bool DOMWindow::allowedToChangeWindowGeometry() const
     const Page* page = m_frame->page();
     if (!page)
         return false;
-    if (m_frame != page->mainFrame())
+    if (m_frame != &page->mainFrame())
         return false;
     // Prevent web content from tricking the user into initiating a drag.
     if (m_frame->eventHandler().mousePressed())
@@ -1506,7 +1506,7 @@ void DOMWindow::moveTo(float x, float y) const
 
     Page* page = m_frame->page();
     FloatRect fr = page->chrome().windowRect();
-    FloatRect sr = screenAvailableRect(page->mainFrame()->view());
+    FloatRect sr = screenAvailableRect(page->mainFrame().view());
     fr.setLocation(sr.location());
     FloatRect update = fr;
     update.move(x, y);

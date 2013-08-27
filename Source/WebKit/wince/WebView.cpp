@@ -112,7 +112,7 @@ WebView::WebView(HWND hwnd, unsigned features)
     m_frame = frame.get();
     loaderClient->setFrame(m_frame);
 
-    m_page->mainFrame()->init();
+    m_page->mainFrame().init();
 
     if (view()) {
         RECT windowRect;
@@ -304,7 +304,7 @@ bool WebView::handleMouseEvent(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
 
         PlatformMouseEvent moveEvent(hWnd, WM_MOUSEMOVE, 0, lParam, false);
         moveEvent.setClickCount(0);
-        m_page->mainFrame()->eventHandler().handleMouseMoveEvent(moveEvent);
+        m_page->mainFrame().eventHandler().handleMouseMoveEvent(moveEvent);
 
         // Always start capturing events when the mouse goes down in our HWND.
         SetCapture(m_windowHandle);
@@ -319,23 +319,23 @@ bool WebView::handleMouseEvent(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
         globalPrevPoint = mouseEvent.position();
 
         mouseEvent.setClickCount(globalClickCount);
-        handled = m_page->mainFrame()->eventHandler().handleMousePressEvent(mouseEvent);
+        handled = m_page->mainFrame().eventHandler().handleMousePressEvent(mouseEvent);
     } else if (message == WM_LBUTTONDBLCLK || message == WM_MBUTTONDBLCLK || message == WM_RBUTTONDBLCLK) {
         globalClickCount++;
         mouseEvent.setClickCount(globalClickCount);
-        handled = m_page->mainFrame()->eventHandler().handleMousePressEvent(mouseEvent);
+        handled = m_page->mainFrame().eventHandler().handleMousePressEvent(mouseEvent);
     } else if (message == WM_LBUTTONUP || message == WM_MBUTTONUP || message == WM_RBUTTONUP) {
         // Record the global position and the button of the up.
         globalPrevButton = mouseEvent.button();
         globalPrevPoint = mouseEvent.position();
         mouseEvent.setClickCount(globalClickCount);
-        m_page->mainFrame()->eventHandler().handleMouseReleaseEvent(mouseEvent);
+        m_page->mainFrame().eventHandler().handleMouseReleaseEvent(mouseEvent);
         ReleaseCapture();
     } else if (message == WM_MOUSEMOVE) {
         if (!insideThreshold)
             globalClickCount = 0;
         mouseEvent.setClickCount(globalClickCount);
-        handled = m_page->mainFrame()->eventHandler().mouseMoved(mouseEvent);
+        handled = m_page->mainFrame().eventHandler().mouseMoved(mouseEvent);
     }
 
     return handled;

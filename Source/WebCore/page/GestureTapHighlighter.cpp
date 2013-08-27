@@ -52,9 +52,9 @@ inline LayoutPoint ownerFrameToMainFrameOffset(const RenderObject* o)
     ASSERT(o->node());
     Frame& containingFrame = o->frame();
 
-    Frame* mainFrame = containingFrame.page()->mainFrame();
+    Frame& mainFrame = containingFrame.page()->mainFrame();
 
-    LayoutPoint mainFramePoint = mainFrame->view()->windowToContents(containingFrame.view()->contentsToWindow(IntPoint()));
+    LayoutPoint mainFramePoint = mainFrame.view()->windowToContents(containingFrame.view()->contentsToWindow(IntPoint()));
     return mainFramePoint;
 }
 

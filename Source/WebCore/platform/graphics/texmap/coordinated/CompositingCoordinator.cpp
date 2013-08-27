@@ -99,7 +99,7 @@ bool CompositingCoordinator::flushPendingLayerChanges()
     m_rootLayer->flushCompositingStateForThisLayerOnly();
     m_client->didFlushRootLayer();
 
-    bool didSync = m_page->mainFrame()->view()->flushCompositingStateIncludingSubframes();
+    bool didSync = m_page->mainFrame().view()->flushCompositingStateIncludingSubframes();
 
     toCoordinatedGraphicsLayer(m_rootLayer.get())->updateContentBuffersIncludingSubLayers();
     toCoordinatedGraphicsLayer(m_rootLayer.get())->syncPendingStateChangesIncludingSubLayers();
@@ -134,9 +134,9 @@ void CompositingCoordinator::syncDisplayState()
 #if ENABLE(REQUEST_ANIMATION_FRAME) && !USE(REQUEST_ANIMATION_FRAME_TIMER) && !USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
     // Make sure that any previously registered animation callbacks are being executed before we flush the layers.
     m_lastAnimationServiceTime = WTF::monotonicallyIncreasingTime();
-    m_page->mainFrame()->view()->serviceScriptedAnimations(m_lastAnimationServiceTime);
+    m_page->mainFrame().view()->serviceScriptedAnimations(m_lastAnimationServiceTime);
 #endif
-    m_page->mainFrame()->view()->updateLayoutAndStyleIfNeededRecursive();
+    m_page->mainFrame().view()->updateLayoutAndStyleIfNeededRecursive();
 }
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)
@@ -322,7 +322,7 @@ void CompositingCoordinator::setVisibleContentsRect(const FloatRect& rect, const
             it->value->setNeedsVisibleRectAdjustment();
     }
 
-    FrameView* view = m_page->mainFrame()->view();
+    FrameView* view = m_page->mainFrame().view();
     if (view->useFixedLayout()) {
         // Round the rect instead of enclosing it to make sure that its size stays
         // the same while panning. This can have nasty effects on layout.

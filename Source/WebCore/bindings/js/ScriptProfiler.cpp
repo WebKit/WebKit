@@ -64,7 +64,7 @@ void ScriptProfiler::start(ScriptState* state, const String& title)
 
 void ScriptProfiler::startForPage(Page* inspectedPage, const String& title)
 {
-    JSC::ExecState* scriptState = toJSDOMWindow(inspectedPage->mainFrame(), debuggerWorld())->globalExec();
+    JSC::ExecState* scriptState = toJSDOMWindow(&inspectedPage->mainFrame(), debuggerWorld())->globalExec();
     start(scriptState, title);
 }
 
@@ -83,7 +83,7 @@ PassRefPtr<ScriptProfile> ScriptProfiler::stop(ScriptState* state, const String&
 
 PassRefPtr<ScriptProfile> ScriptProfiler::stopForPage(Page* inspectedPage, const String& title)
 {
-    JSC::ExecState* scriptState = toJSDOMWindow(inspectedPage->mainFrame(), debuggerWorld())->globalExec();
+    JSC::ExecState* scriptState = toJSDOMWindow(&inspectedPage->mainFrame(), debuggerWorld())->globalExec();
     return stop(scriptState, title);
 }
 

@@ -53,7 +53,7 @@ PassRefPtr<CachedPage> CachedPage::create(Page* page)
 CachedPage::CachedPage(Page* page)
     : m_timeStamp(currentTime())
     , m_expirationTime(m_timeStamp + page->settings().backForwardCacheExpirationInterval())
-    , m_cachedMainFrame(CachedFrame::create(page->mainFrame()))
+    , m_cachedMainFrame(CachedFrame::create(&page->mainFrame()))
     , m_needStyleRecalcForVisitedLinks(false)
     , m_needsFullStyleRecalc(false)
     , m_needsCaptionPreferencesChanged(false)
@@ -77,7 +77,7 @@ CachedPage::~CachedPage()
 void CachedPage::restore(Page* page)
 {
     ASSERT(m_cachedMainFrame);
-    ASSERT(page && page->mainFrame() && page->mainFrame() == &m_cachedMainFrame->view()->frame());
+    ASSERT(page && &page->mainFrame() == &m_cachedMainFrame->view()->frame());
     ASSERT(!page->subframeCount());
 
     m_cachedMainFrame->open();
@@ -89,14 +89,13 @@ void CachedPage::restore(Page* page)
         element->updateFocusAppearance(true);
 
     if (m_needStyleRecalcForVisitedLinks) {
-        for (Frame* frame = page->mainFrame(); frame; frame = frame->tree().traverseNext())
+        for (Frame* frame = &page->mainFrame(); frame; frame = frame->tree().traverseNext())
             frame->document()->visitedLinkState().invalidateStyleForAllLinks();
     }
 
 #if USE(ACCELERATED_COMPOSITING)
     if (m_needsDeviceScaleChanged) {
-        if (Frame* frame = page->mainFrame())
-            frame->deviceOrPageScaleFactorChanged();
+        page->mainFrame().deviceOrPageScaleFactorChanged();
     }
 #endif
 

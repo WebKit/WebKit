@@ -583,7 +583,7 @@ void PluginView::didFailToInitializePlugin()
     m_plugin = 0;
 
     String frameURLString = frame()->loader().documentLoader()->responseURL().string();
-    String pageURLString = m_webPage->corePage()->mainFrame()->loader().documentLoader()->responseURL().string();
+    String pageURLString = m_webPage->corePage()->mainFrame().loader().documentLoader()->responseURL().string();
     m_webPage->send(Messages::WebPageProxy::DidFailToInitializePlugin(m_parameters.mimeType, frameURLString, pageURLString));
 }
 
@@ -1720,7 +1720,7 @@ void PluginView::pluginDidReceiveUserInteraction()
     m_didReceiveUserInteraction = true;
 
     WebCore::HTMLPlugInImageElement* plugInImageElement = toHTMLPlugInImageElement(m_pluginElement.get());
-    String pageOrigin = plugInImageElement->document()->page()->mainFrame()->document()->baseURL().host();
+    String pageOrigin = plugInImageElement->document()->page()->mainFrame().document()->baseURL().host();
     String pluginOrigin = plugInImageElement->loadedUrl().host();
     String mimeType = plugInImageElement->loadedMimeType();
 

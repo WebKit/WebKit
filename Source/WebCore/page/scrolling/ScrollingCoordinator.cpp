@@ -102,12 +102,12 @@ bool ScrollingCoordinator::coordinatesScrollingForFrameView(FrameView* frameView
     ASSERT(m_page);
 
     // We currently only handle the main frame.
-    if (&frameView->frame() != m_page->mainFrame())
+    if (&frameView->frame() != &m_page->mainFrame())
         return false;
 
     // We currently only support composited mode.
 #if USE(ACCELERATED_COMPOSITING)
-    RenderView* renderView = m_page->mainFrame()->contentRenderer();
+    RenderView* renderView = m_page->mainFrame().contentRenderer();
     if (!renderView)
         return false;
     return renderView->usesCompositing();
@@ -234,7 +234,7 @@ unsigned ScrollingCoordinator::computeCurrentWheelEventHandlerCount()
 {
     unsigned wheelEventHandlerCount = 0;
 
-    for (Frame* frame = m_page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (Frame* frame = &m_page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (frame->document())
             wheelEventHandlerCount += frame->document()->wheelEventHandlerCount();
     }
@@ -384,7 +384,7 @@ void ScrollingCoordinator::updateMainFrameScrollPosition(const IntPoint& scrollP
     if (!m_page)
         return;
 
-    FrameView* frameView = m_page->mainFrame()->view();
+    FrameView* frameView = m_page->mainFrame().view();
     if (!frameView)
         return;
 
@@ -438,7 +438,7 @@ void ScrollingCoordinator::handleWheelEventPhase(PlatformWheelEventPhase phase)
     if (!m_page)
         return;
 
-    FrameView* frameView = m_page->mainFrame()->view();
+    FrameView* frameView = m_page->mainFrame().view();
     if (!frameView)
         return;
 
@@ -470,7 +470,7 @@ bool ScrollingCoordinator::hasVisibleSlowRepaintViewportConstrainedObjects(Frame
 
 MainThreadScrollingReasons ScrollingCoordinator::mainThreadScrollingReasons() const
 {
-    FrameView* frameView = m_page->mainFrame()->view();
+    FrameView* frameView = m_page->mainFrame().view();
     if (!frameView)
         return static_cast<MainThreadScrollingReasons>(0);
 
@@ -484,7 +484,7 @@ MainThreadScrollingReasons ScrollingCoordinator::mainThreadScrollingReasons() co
         mainThreadScrollingReasons |= HasViewportConstrainedObjectsWithoutSupportingFixedLayers;
     if (supportsFixedPositionLayers() && hasVisibleSlowRepaintViewportConstrainedObjects(frameView))
         mainThreadScrollingReasons |= HasNonLayerViewportConstrainedObjects;
-    if (m_page->mainFrame()->document() && m_page->mainFrame()->document()->isImageDocument())
+    if (m_page->mainFrame().document() && m_page->mainFrame().document()->isImageDocument())
         mainThreadScrollingReasons |= IsImageDocument;
 
     return mainThreadScrollingReasons;

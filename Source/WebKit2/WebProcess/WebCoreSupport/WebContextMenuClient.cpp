@@ -86,7 +86,7 @@ void WebContextMenuClient::searchWithGoogle(const Frame* frame)
 
     if (Page* page = frame->page()) {
         UserGestureIndicator indicator(DefinitelyProcessingUserGesture);
-        page->mainFrame()->loader().urlSelected(KURL(ParsedURLString, url), String(), 0, false, false, MaybeSendReferrer);
+        page->mainFrame().loader().urlSelected(KURL(ParsedURLString, url), String(), 0, false, false, MaybeSendReferrer);
     }
 }
 #endif

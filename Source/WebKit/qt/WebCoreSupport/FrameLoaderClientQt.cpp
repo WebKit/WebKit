@@ -288,7 +288,7 @@ void FrameLoaderClientQt::transitionToCommittedForNewPage()
         hScrollbar, hLock,
         vScrollbar, vLock);
 
-    bool isMainFrame = m_frame == m_frame->page()->mainFrame();
+    bool isMainFrame = m_frame == &m_frame->page()->mainFrame();
     if (isMainFrame &&m_webFrame->pageAdapter->client) {
         bool resizesToContents = m_webFrame->pageAdapter->client->viewResizesToContentsEnabled();
 
@@ -492,7 +492,7 @@ void FrameLoaderClientQt::dispatchDidCommitLoad()
     // This properly resets the title when we navigate to a URI without a title.
     emit titleChanged(QString());
 
-    bool isMainFrame = (m_frame == m_frame->page()->mainFrame());
+    bool isMainFrame = (m_frame == &m_frame->page()->mainFrame());
     if (!isMainFrame)
         return;
 

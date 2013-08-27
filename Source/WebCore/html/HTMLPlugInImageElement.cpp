@@ -370,7 +370,7 @@ void HTMLPlugInImageElement::didAddUserAgentShadowRoot(ShadowRoot* root)
     static DOMWrapperWorld* isolatedWorld = DOMWrapperWorld::create(JSDOMWindow::commonVM()).leakRef();
     document()->ensurePlugInsInjectedScript(isolatedWorld);
 
-    ScriptController& scriptController = page->mainFrame()->script();
+    ScriptController& scriptController = page->mainFrame().script();
     JSDOMGlobalObject* globalObject = JSC::jsCast<JSDOMGlobalObject*>(scriptController.globalObject(isolatedWorld));
     JSC::ExecState* exec = globalObject->globalExec();
 
@@ -451,7 +451,7 @@ void HTMLPlugInImageElement::restartSimilarPlugIns()
     if (!document()->page())
         return;
 
-    for (Frame* frame = document()->page()->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (Frame* frame = &document()->page()->mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (!frame->loader().subframeLoader()->containsPlugins())
             continue;
         
@@ -483,8 +483,8 @@ void HTMLPlugInImageElement::userDidClickSnapshot(PassRefPtr<MouseEvent> event, 
         m_pendingClickEventFromSnapshot = event;
 
     String plugInOrigin = m_loadedUrl.host();
-    if (document()->page() && !SchemeRegistry::shouldTreatURLSchemeAsLocal(document()->page()->mainFrame()->document()->baseURL().protocol()) && document()->page()->settings().autostartOriginPlugInSnapshottingEnabled())
-        document()->page()->plugInClient()->didStartFromOrigin(document()->page()->mainFrame()->document()->baseURL().host(), plugInOrigin, loadedMimeType());
+    if (document()->page() && !SchemeRegistry::shouldTreatURLSchemeAsLocal(document()->page()->mainFrame().document()->baseURL().protocol()) && document()->page()->settings().autostartOriginPlugInSnapshottingEnabled())
+        document()->page()->plugInClient()->didStartFromOrigin(document()->page()->mainFrame().document()->baseURL().host(), plugInOrigin, loadedMimeType());
 
     LOG(Plugins, "%p User clicked on snapshotted plug-in. Restart.", this);
     restartSnapshottedPlugIn();
@@ -540,8 +540,8 @@ static bool documentHadRecentUserGesture(Document* document)
 {
     double lastKnownUserGestureTimestamp = document->lastHandledUserGestureTimestamp();
 
-    if (document->frame() != document->page()->mainFrame() && document->page()->mainFrame() && document->page()->mainFrame()->document())
-        lastKnownUserGestureTimestamp = std::max(lastKnownUserGestureTimestamp, document->page()->mainFrame()->document()->lastHandledUserGestureTimestamp());
+    if (document->frame() != &document->page()->mainFrame() && document->page()->mainFrame().document())
+        lastKnownUserGestureTimestamp = std::max(lastKnownUserGestureTimestamp, document->page()->mainFrame().document()->lastHandledUserGestureTimestamp());
 
     if (monotonicallyIncreasingTime() - lastKnownUserGestureTimestamp < autostartSoonAfterUserGestureThreshold)
         return true;
@@ -603,7 +603,7 @@ void HTMLPlugInImageElement::subframeLoaderWillCreatePlugIn(const KURL& url)
         return;
     }
 
-    bool inMainFrame = document()->frame() == document()->page()->mainFrame();
+    bool inMainFrame = document()->frame() == &document()->page()->mainFrame();
 
     if (document()->isPluginDocument() && inMainFrame) {
         LOG(Plugins, "%p Plug-in document in main frame", this);
@@ -636,8 +636,8 @@ void HTMLPlugInImageElement::subframeLoaderWillCreatePlugIn(const KURL& url)
         return;
     }
 
-    if (document()->page()->settings().autostartOriginPlugInSnapshottingEnabled() && document()->page()->plugInClient() && document()->page()->plugInClient()->shouldAutoStartFromOrigin(document()->page()->mainFrame()->document()->baseURL().host(), url.host(), loadedMimeType())) {
-        LOG(Plugins, "%p Plug-in from (%s, %s) is marked to auto-start, set to play", this, document()->page()->mainFrame()->document()->baseURL().host().utf8().data(), url.host().utf8().data());
+    if (document()->page()->settings().autostartOriginPlugInSnapshottingEnabled() && document()->page()->plugInClient() && document()->page()->plugInClient()->shouldAutoStartFromOrigin(document()->page()->mainFrame().document()->baseURL().host(), url.host(), loadedMimeType())) {
+        LOG(Plugins, "%p Plug-in from (%s, %s) is marked to auto-start, set to play", this, document()->page()->mainFrame().document()->baseURL().host().utf8().data(), url.host().utf8().data());
         m_snapshotDecision = NeverSnapshot;
         return;
     }
@@ -648,7 +648,7 @@ void HTMLPlugInImageElement::subframeLoaderWillCreatePlugIn(const KURL& url)
         return;
     }
 
-    if (!SchemeRegistry::shouldTreatURLSchemeAsLocal(m_loadedUrl.protocol()) && !m_loadedUrl.host().isEmpty() && m_loadedUrl.host() == document()->page()->mainFrame()->document()->baseURL().host()) {
+    if (!SchemeRegistry::shouldTreatURLSchemeAsLocal(m_loadedUrl.protocol()) && !m_loadedUrl.host().isEmpty() && m_loadedUrl.host() == document()->page()->mainFrame().document()->baseURL().host()) {
         LOG(Plugins, "%p Plug-in is served from page's domain, set to play", this);
         m_snapshotDecision = NeverSnapshot;
         return;
@@ -686,7 +686,7 @@ void HTMLPlugInImageElement::subframeLoaderWillCreatePlugIn(const KURL& url)
         return;
     }
 
-    LOG(Plugins, "%p Plug-in from (%s, %s) is not auto-start, sized at %dx%d, set to wait for snapshot", this, document()->page()->mainFrame()->document()->baseURL().host().utf8().data(), url.host().utf8().data(), contentWidth, contentHeight);
+    LOG(Plugins, "%p Plug-in from (%s, %s) is not auto-start, sized at %dx%d, set to wait for snapshot", this, document()->page()->mainFrame().document()->baseURL().host().utf8().data(), url.host().utf8().data(), contentWidth, contentHeight);
     m_snapshotDecision = Snapshotted;
     setDisplayState(WaitingForSnapshot);
 }

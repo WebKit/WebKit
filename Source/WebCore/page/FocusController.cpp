@@ -208,7 +208,7 @@ Frame* FocusController::focusedOrMainFrame() const
 {
     if (Frame* frame = focusedFrame())
         return frame;
-    return m_page->mainFrame();
+    return &m_page->mainFrame();
 }
 
 void FocusController::setFocused(bool focused)
@@ -222,7 +222,7 @@ void FocusController::setFocused(bool focused)
         focusedOrMainFrame()->eventHandler().stopAutoscrollTimer();
 
     if (!m_focusedFrame)
-        setFocusedFrame(m_page->mainFrame());
+        setFocusedFrame(&m_page->mainFrame());
 
     if (m_focusedFrame->view()) {
         m_focusedFrame->selection().setFocused(focused);
@@ -306,7 +306,7 @@ bool FocusController::advanceFocusInDocumentOrder(FocusDirection direction, Keyb
         }
 
         // Chrome doesn't want focus, so we should wrap focus.
-        element = findFocusableElementRecursively(direction, FocusNavigationScope::focusNavigationScopeOf(m_page->mainFrame()->document()), 0, event);
+        element = findFocusableElementRecursively(direction, FocusNavigationScope::focusNavigationScopeOf(m_page->mainFrame().document()), 0, event);
         element = findFocusableElementDescendingDownIntoFrameDocument(direction, element.get(), event);
 
         if (!element)
@@ -653,7 +653,7 @@ void FocusController::setActive(bool active)
 
     m_isActive = active;
 
-    if (FrameView* view = m_page->mainFrame()->view()) {
+    if (FrameView* view = m_page->mainFrame().view()) {
         if (!view->platformWidget()) {
             view->updateLayoutAndStyleIfNeededRecursive();
             view->updateControlTints();
@@ -681,13 +681,13 @@ void FocusController::setContainingWindowIsVisible(bool containingWindowIsVisibl
 
     m_containingWindowIsVisible = containingWindowIsVisible;
 
-    FrameView* view = m_page->mainFrame()->view();
+    FrameView* view = m_page->mainFrame().view();
     if (!view)
         return;
 
     contentAreaDidShowOrHide(view, containingWindowIsVisible);
 
-    for (Frame* frame = m_page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (Frame* frame = &m_page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
         FrameView* frameView = frame->view();
         if (!frameView)
             continue;
@@ -735,7 +735,7 @@ static void updateFocusCandidateIfNeeded(FocusDirection direction, const FocusCa
         // If 2 nodes are intersecting, do hit test to find which node in on top.
         LayoutUnit x = intersectionRect.x() + intersectionRect.width() / 2;
         LayoutUnit y = intersectionRect.y() + intersectionRect.height() / 2;
-        HitTestResult result = candidate.visibleNode->document()->page()->mainFrame()->eventHandler().hitTestResultAtPoint(IntPoint(x, y), HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::IgnoreClipping | HitTestRequest::DisallowShadowContent);
+        HitTestResult result = candidate.visibleNode->document()->page()->mainFrame().eventHandler().hitTestResultAtPoint(IntPoint(x, y), HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::IgnoreClipping | HitTestRequest::DisallowShadowContent);
         if (candidate.visibleNode->contains(result.innerNode())) {
             closest = candidate;
             return;

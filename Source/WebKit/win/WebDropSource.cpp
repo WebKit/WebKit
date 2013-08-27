@@ -145,7 +145,7 @@ STDMETHODIMP WebDropSource::GiveFeedback(DWORD dwEffect)
         return DRAGDROP_S_USEDEFAULTCURSORS;
     }
 
-    FrameView* view = m_webView->page()->mainFrame()->view();
+    FrameView* view = m_webView->page()->mainFrame().view();
     if (!view)
         return DRAGDROP_S_USEDEFAULTCURSORS;
 

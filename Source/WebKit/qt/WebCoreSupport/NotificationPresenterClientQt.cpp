@@ -126,7 +126,7 @@ const QUrl NotificationWrapper::openerPageUrl() const
     Notification* notification = NotificationPresenterClientQt::notificationPresenter()->notificationForWrapper(this);
     if (notification) {
         if (notification->scriptExecutionContext()) 
-            url = static_cast<Document*>(notification->scriptExecutionContext())->page()->mainFrame()->document()->url();
+            url = static_cast<Document*>(notification->scriptExecutionContext())->page()->mainFrame().document()->url();
     }
 #endif
     return url;
@@ -483,7 +483,7 @@ QWebPageAdapter* NotificationPresenterClientQt::toPage(ScriptExecutionContext* c
     Document* document = static_cast<Document*>(context);
 
     Page* page = document->page();
-    if (!page || !page->mainFrame())
+    if (!page)
         return 0;
 
     return QWebPageAdapter::kit(page);

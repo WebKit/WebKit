@@ -327,7 +327,7 @@ void WebInspectorFrontendClient::save(const String& suggestedURL, const String& 
         
         m_suggestedToActualURLMap.set(suggestedURLCopy, actualURL);
         [contentCopy writeToURL:actualURL atomically:YES encoding:NSUTF8StringEncoding error:NULL];
-        core([m_windowController webView])->mainFrame()->script().executeScript([NSString stringWithFormat:@"InspectorFrontendAPI.savedURL(\"%@\")", actualURL.absoluteString]);
+        core([m_windowController webView])->mainFrame().script().executeScript([NSString stringWithFormat:@"InspectorFrontendAPI.savedURL(\"%@\")", actualURL.absoluteString]);
     };
 
     if (!forceSaveDialog) {
@@ -361,7 +361,7 @@ void WebInspectorFrontendClient::append(const String& suggestedURL, const String
     [handle writeData:[content dataUsingEncoding:NSUTF8StringEncoding]];
     [handle closeFile];
 
-    core([m_windowController webView])->mainFrame()->script().executeScript([NSString stringWithFormat:@"InspectorFrontendAPI.appendedToURL(\"%@\")", [actualURL absoluteString]]);
+    core([m_windowController webView])->mainFrame().script().executeScript([NSString stringWithFormat:@"InspectorFrontendAPI.appendedToURL(\"%@\")", [actualURL absoluteString]]);
 }
 
 // MARK: -

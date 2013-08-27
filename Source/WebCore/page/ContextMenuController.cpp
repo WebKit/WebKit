@@ -189,7 +189,7 @@ static void openNewWindow(const KURL& urlToLoad, Frame* frame)
                 return;
             newPage->chrome().show();
         }
-        newPage->mainFrame()->loader().loadFrameRequest(request, false, false, 0, 0, MaybeSendReferrer);
+        newPage->mainFrame().loader().loadFrameRequest(request, false, false, 0, 0, MaybeSendReferrer);
     }
 }
 
@@ -928,7 +928,7 @@ void ContextMenuController::populate()
                 }
 #endif
 
-                if (frame->page() && frame != frame->page()->mainFrame())
+                if (frame->page() && frame != &frame->page()->mainFrame())
                     appendItem(OpenFrameItem, m_contextMenu.get());
             }
         }

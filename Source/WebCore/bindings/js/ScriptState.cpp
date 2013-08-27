@@ -89,7 +89,7 @@ ScriptState* scriptStateFromNode(DOMWrapperWorld* world, Node* node)
 
 ScriptState* scriptStateFromPage(DOMWrapperWorld* world, Page* page)
 {
-    return page->mainFrame()->script().globalObject(world)->globalExec();
+    return page->mainFrame().script().globalObject(world)->globalExec();
 }
 
 #if ENABLE(WORKERS)

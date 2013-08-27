@@ -248,7 +248,7 @@ void Internals::resetToConsistentState(Page* page)
     page->setPagination(Pagination());
 
 #if USE(ACCELERATED_COMPOSITING)
-    FrameView* mainFrameView = page->mainFrame()->view();
+    FrameView* mainFrameView = page->mainFrame().view();
     if (mainFrameView) {
         mainFrameView->setHeaderHeight(0);
         mainFrameView->setFooterHeight(0);
@@ -265,10 +265,10 @@ void Internals::resetToConsistentState(Page* page)
     page->group().captionPreferences()->setCaptionsStyleSheetOverride(emptyString());
     page->group().captionPreferences()->setTestingMode(false);
 #endif
-    if (!page->mainFrame()->editor().isContinuousSpellCheckingEnabled())
-        page->mainFrame()->editor().toggleContinuousSpellChecking();
-    if (page->mainFrame()->editor().isOverwriteModeEnabled())
-        page->mainFrame()->editor().toggleOverwriteModeEnabled();
+    if (!page->mainFrame().editor().isContinuousSpellCheckingEnabled())
+        page->mainFrame().editor().toggleContinuousSpellChecking();
+    if (page->mainFrame().editor().isOverwriteModeEnabled())
+        page->mainFrame().editor().toggleOverwriteModeEnabled();
 }
 
 Internals::Internals(Document* document)
@@ -1060,7 +1060,7 @@ String Internals::rangeAsText(const Range* range, ExceptionCode& ec)
 void Internals::setDelegatesScrolling(bool enabled, Document* document, ExceptionCode& ec)
 {
     // Delegate scrolling is valid only on mainframe's view.
-    if (!document || !document->view() || !document->page() || document->page()->mainFrame() != document->frame()) {
+    if (!document || !document->view() || !document->page() || &document->page()->mainFrame() != document->frame()) {
         ec = INVALID_ACCESS_ERR;
         return;
     }
@@ -1495,7 +1495,7 @@ PassRefPtr<DOMWindow> Internals::openDummyInspectorFrontend(const String& url)
     Page* page = contextDocument()->frame()->page();
     ASSERT(page);
 
-    DOMWindow* window = page->mainFrame()->document()->domWindow();
+    DOMWindow* window = page->mainFrame().document()->domWindow();
     ASSERT(window);
 
     m_frontendWindow = window->open(url, "", "", window, window);

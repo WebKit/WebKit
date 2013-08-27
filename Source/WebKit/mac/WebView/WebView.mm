@@ -1299,7 +1299,7 @@ static bool fastDocumentTeardownEnabled()
             // If this item is showing , save away its current scroll and form state,
             // since that might have changed since loading and it is normally not saved
             // until we leave that page.
-            otherView->_private->page->mainFrame()->loader().history().saveDocumentAndScrollState();
+            otherView->_private->page->mainFrame().loader().history().saveDocumentAndScrollState();
         }
         RefPtr<HistoryItem> newItem = otherBackForwardList->itemAtIndex(i)->copy();
         if (i == 0) 
@@ -2005,7 +2005,7 @@ static inline IMP getMethod(id o, SEL s)
     if (!_private->page)
         return nil;
 
-    if (CFURLStorageSessionRef storageSession = _private->page->mainFrame()->loader().networkingContext()->storageSession().platformSession())
+    if (CFURLStorageSessionRef storageSession = _private->page->mainFrame().loader().networkingContext()->storageSession().platformSession())
         cachedResponse = WKCachedResponseForRequest(storageSession, request.get());
     else
         cachedResponse = [[NSURLCache sharedURLCache] cachedResponseForRequest:request.get()];
@@ -2457,7 +2457,7 @@ static inline IMP getMethod(id o, SEL s)
 
 - (void)_clearMainFrameName
 {
-    _private->page->mainFrame()->tree().clearName();
+    _private->page->mainFrame().tree().clearName();
 }
 
 - (void)setSelectTrailingWhitespaceEnabled:(BOOL)flag
@@ -3918,7 +3918,7 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
     // This can be called in initialization, before _private has been set up (3465613)
     if (!_private || !_private->page)
         return nil;
-    return kit(_private->page->mainFrame());
+    return kit(&_private->page->mainFrame());
 }
 
 - (WebFrame *)selectedFrame
@@ -5418,7 +5418,7 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSC::JSValue j
     Page* page = core(self);
     if (!page)
         return nil;
-    return kit(page->mainFrame()->editor().rangeForPoint(IntPoint([self convertPoint:point toView:nil])).get());
+    return kit(page->mainFrame().editor().rangeForPoint(IntPoint([self convertPoint:point toView:nil])).get());
 }
 
 - (BOOL)_shouldChangeSelectedDOMRange:(DOMRange *)currentRange toDOMRange:(DOMRange *)proposedRange affinity:(NSSelectionAffinity)selectionAffinity stillSelecting:(BOOL)flag
@@ -6385,7 +6385,7 @@ static inline uint64_t roundUpToPowerOf2(uint64_t num)
 
 - (Frame*)_mainCoreFrame
 {
-    return (_private && _private->page) ? _private->page->mainFrame() : 0;
+    return (_private && _private->page) ? &_private->page->mainFrame() : 0;
 }
 
 - (WebFrame *)_selectedOrMainFrame

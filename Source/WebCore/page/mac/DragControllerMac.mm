@@ -56,7 +56,7 @@ DragOperation DragController::dragOperation(DragData* dragData)
 {
     ASSERT(dragData);
 
-    if ((dragData->flags() & DragApplicationIsModal) || !dragData->containsURL(m_page->mainFrame()))
+    if ((dragData->flags() & DragApplicationIsModal) || !dragData->containsURL(&m_page->mainFrame()))
         return DragOperationNone;
 
     if (!m_documentUnderMouse || (!(dragData->flags() & (DragApplicationHasAttachedSheet | DragApplicationIsSource))))
@@ -80,7 +80,7 @@ void DragController::cleanupAfterSystemDrag()
     // call it anyway to be on the safe side.
     // We don't want to do this for WebKit2, since the client call to start the drag
     // is asynchronous.
-    if (m_page->mainFrame()->view()->platformWidget())
+    if (m_page->mainFrame().view()->platformWidget())
         dragEnded();
 }
 

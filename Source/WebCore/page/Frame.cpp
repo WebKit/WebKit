@@ -706,7 +706,7 @@ void Frame::createView(const IntSize& viewportSize, const Color& backgroundColor
     ASSERT(this);
     ASSERT(m_page);
 
-    bool isMainFrame = this == m_page->mainFrame();
+    bool isMainFrame = this == &m_page->mainFrame();
 
     if (isMainFrame && view())
         view()->setParentVisible(false);
@@ -879,7 +879,7 @@ void Frame::setPageAndTextZoomFactors(float pageZoomFactor, float textZoomFactor
             view->layout();
     }
 
-    if (page->mainFrame() == this)
+    if (&page->mainFrame() == this)
         pageCache()->markPagesForFullStyleRecalc(page);
 }
 
@@ -888,7 +888,7 @@ float Frame::frameScaleFactor() const
     Page* page = this->page();
 
     // Main frame is scaled with respect to he container but inner frames are not scaled with respect to the main frame.
-    if (!page || page->mainFrame() != this || settings().applyPageScaleFactorInCompositor())
+    if (!page || &page->mainFrame() != this || settings().applyPageScaleFactorInCompositor())
         return 1;
 
     return page->pageScaleFactor();

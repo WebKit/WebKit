@@ -251,12 +251,10 @@ void InspectorClientQt::highlight()
 
 void InspectorClientQt::hideHighlight()
 {
-    WebCore::Frame* frame = m_inspectedWebPage->page->mainFrame();
-    if (frame) {
-        QRect rect = m_inspectedWebPage->mainFrameAdapter()->frameRect();
-        if (!rect.isEmpty())
-            frame->view()->invalidateRect(rect);
-    }
+    WebCore::Frame& frame = m_inspectedWebPage->page->mainFrame();
+    QRect rect = m_inspectedWebPage->mainFrameAdapter()->frameRect();
+    if (!rect.isEmpty())
+        frame.view()->invalidateRect(rect);
 }
 
 bool InspectorClientQt::sendMessageToFrontend(const String& message)

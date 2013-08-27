@@ -156,12 +156,12 @@ void WebFullScreenManager::close()
 
 void WebFullScreenManager::saveScrollPosition()
 {
-    m_scrollPosition = m_page->corePage()->mainFrame()->view()->scrollPosition();
+    m_scrollPosition = m_page->corePage()->mainFrame().view()->scrollPosition();
 }
 
 void WebFullScreenManager::restoreScrollPosition()
 {
-    m_page->corePage()->mainFrame()->view()->setScrollPosition(m_scrollPosition);
+    m_page->corePage()->mainFrame().view()->setScrollPosition(m_scrollPosition);
 }
 
 } // namespace WebKit

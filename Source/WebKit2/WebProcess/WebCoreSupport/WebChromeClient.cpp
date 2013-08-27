@@ -412,7 +412,7 @@ void WebChromeClient::invalidateRootView(const IntRect&, bool)
 
 void WebChromeClient::invalidateContentsAndRootView(const IntRect& rect, bool)
 {
-    if (Document* document = m_page->corePage()->mainFrame()->document()) {
+    if (Document* document = m_page->corePage()->mainFrame().document()) {
         if (document->printing())
             return;
     }
@@ -422,7 +422,7 @@ void WebChromeClient::invalidateContentsAndRootView(const IntRect& rect, bool)
 
 void WebChromeClient::invalidateContentsForSlowScroll(const IntRect& rect, bool)
 {
-    if (Document* document = m_page->corePage()->mainFrame()->document()) {
+    if (Document* document = m_page->corePage()->mainFrame().document()) {
         if (document->printing())
             return;
     }
@@ -474,7 +474,7 @@ void WebChromeClient::contentsSizeChanged(Frame* frame, const IntSize& size) con
         }
     }
 
-    if (frame->page()->mainFrame() != frame)
+    if (&frame->page()->mainFrame() != frame)
         return;
 
 #if USE(COORDINATED_GRAPHICS)

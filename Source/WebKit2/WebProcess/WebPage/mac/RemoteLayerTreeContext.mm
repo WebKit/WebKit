@@ -107,7 +107,7 @@ void RemoteLayerTreeContext::flushLayers()
     TemporaryChange<RemoteLayerTreeTransaction*> transactionChange(m_currentTransaction, &transaction);
 
     m_webPage->layoutIfNeeded();
-    m_webPage->corePage()->mainFrame()->view()->flushCompositingStateIncludingSubframes();
+    m_webPage->corePage()->mainFrame().view()->flushCompositingStateIncludingSubframes();
 
     m_webPage->send(Messages::RemoteLayerTreeHost::Commit(transaction));
 }

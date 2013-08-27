@@ -1094,7 +1094,7 @@ void WebFrame::initWithWebView(IWebView* webView, Page* page)
     d->webView->viewWindow((OLE_HANDLE*)&viewWindow);
 
     this->AddRef(); // We release this ref in frameLoaderDestroyed()
-    d->frame = page->mainFrame();
+    d->frame = &page->mainFrame();
 }
 
 Frame* WebFrame::impl()

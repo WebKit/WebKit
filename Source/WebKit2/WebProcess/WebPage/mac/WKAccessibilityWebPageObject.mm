@@ -61,11 +61,11 @@ using namespace WebKit;
     if (!page)
         return nil;
     
-    WebCore::Frame* core = page->mainFrame();
-    if (!core || !core->document())
+    WebCore::Frame& core = page->mainFrame();
+    if (!core.document())
         return nil;
     
-    AccessibilityObject* root = core->document()->axObjectCache()->rootObject();
+    AccessibilityObject* root = core.document()->axObjectCache()->rootObject();
     if (!root)
         return nil;
     

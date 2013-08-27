@@ -1959,7 +1959,7 @@ void FrameLoader::prepareForCachedPageRestore()
 {
     ASSERT(!m_frame.tree().parent());
     ASSERT(m_frame.page());
-    ASSERT(m_frame.page()->mainFrame() == &m_frame);
+    ASSERT(&m_frame.page()->mainFrame() == &m_frame);
 
     m_frame.navigationScheduler().cancel();
 
@@ -2028,7 +2028,7 @@ bool FrameLoader::isHostedByObjectElement() const
 
 bool FrameLoader::isLoadingMainFrame() const
 {
-    return m_frame.page() && m_frame.page()->mainFrame() == &m_frame;
+    return m_frame.page() && &m_frame.page()->mainFrame() == &m_frame;
 }
 
 bool FrameLoader::isReplacing() const
@@ -2121,7 +2121,7 @@ void FrameLoader::checkLoadCompleteForThisFrame()
             if (Page* page = m_frame.page())
                 if (isBackForwardLoadType(loadType()))
                     // Reset the back forward list to the last committed history item at the top level.
-                    item = page->mainFrame()->loader().history().currentItem();
+                    item = page->mainFrame().loader().history().currentItem();
                 
             // Only reset if we aren't already going to a new provisional item.
             bool shouldReset = !history().provisionalItem();
@@ -2178,7 +2178,7 @@ void FrameLoader::checkLoadCompleteForThisFrame()
 
             m_progressTracker->progressCompleted();
             if (Page* page = m_frame.page()) {
-                if (&m_frame == page->mainFrame())
+                if (&m_frame == &page->mainFrame())
                     page->resetRelevantPaintedObjectCounter();
             }
 
@@ -2287,7 +2287,7 @@ void FrameLoader::didLayout(LayoutMilestones milestones)
 {
 #if !ASSERT_DISABLED
     if (Page* page = m_frame.page())
-        ASSERT(page->mainFrame() == &m_frame);
+        ASSERT(&page->mainFrame() == &m_frame);
 #endif
 
     m_client.dispatchDidLayout(milestones);
@@ -2352,7 +2352,7 @@ void FrameLoader::checkLoadComplete()
     // is currently needed in order to null out the previous history item for all frames.
     if (Page* page = m_frame.page()) {
         Vector<RefPtr<Frame>, 10> frames;
-        for (RefPtr<Frame> frame = page->mainFrame(); frame; frame = frame->tree().traverseNext())
+        for (RefPtr<Frame> frame = &page->mainFrame(); frame; frame = frame->tree().traverseNext())
             frames.append(frame);
         // To process children before their parents, iterate the vector backwards.
         for (size_t i = frames.size(); i; --i)
@@ -2586,7 +2586,7 @@ unsigned long FrameLoader::loadResourceSynchronously(const ResourceRequest& requ
     addHTTPOriginIfNeeded(initialRequest, outgoingOrigin());
 
     if (Page* page = m_frame.page())
-        initialRequest.setFirstPartyForCookies(page->mainFrame()->loader().documentLoader()->request().url());
+        initialRequest.setFirstPartyForCookies(page->mainFrame().loader().documentLoader()->request().url());
     
     addExtraFieldsToSubresourceRequest(initialRequest);
 
@@ -2841,8 +2841,7 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest&, Pass
         // we only do this when punting a navigation for the target frame or top-level frame.  
         if ((isTargetItem || isLoadingMainFrame()) && isBackForwardLoadType(policyChecker()->loadType())) {
             if (Page* page = m_frame.page()) {
-                Frame* mainFrame = page->mainFrame();
-                if (HistoryItem* resetItem = mainFrame->loader().history().currentItem()) {
+                if (HistoryItem* resetItem = page->mainFrame().loader().history().currentItem()) {
                     page->backForward()->setCurrentItem(resetItem);
                     m_frame.loader().client().updateGlobalHistoryItemForPage();
                 }
@@ -2862,7 +2861,7 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest&, Pass
 
 #if ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(INSPECTOR)
     if (Page* page = m_frame.page()) {
-        if (page->mainFrame() == &m_frame)
+        if (&page->mainFrame() == &m_frame)
             page->inspectorController()->resume();
     }
 #endif
@@ -3329,7 +3328,7 @@ void FrameLoader::dispatchDidCommitLoad()
 
     InspectorInstrumentation::didCommitLoad(&m_frame, m_documentLoader.get());
 
-    if (m_frame.page()->mainFrame() == &m_frame)
+    if (&m_frame.page()->mainFrame() == &m_frame)
         m_frame.page()->featureObserver()->didCommitLoad();
 
 }
@@ -3368,7 +3367,7 @@ NetworkingContext* FrameLoader::networkingContext() const
 
 void FrameLoader::loadProgressingStatusChanged()
 {
-    FrameView* view = m_frame.page()->mainFrame()->view();
+    FrameView* view = m_frame.page()->mainFrame().view();
     view->updateLayerFlushThrottlingInAllFrames();
     view->adjustTiledBackingCoverage();
 }
@@ -3426,12 +3425,10 @@ PassRefPtr<Frame> createWindow(Frame* openerFrame, Frame* lookupFrame, const Fra
     if (!page)
         return 0;
 
-    Frame* frame = page->mainFrame();
-
-    frame->loader().forceSandboxFlags(openerFrame->document()->sandboxFlags());
+    page->mainFrame().loader().forceSandboxFlags(openerFrame->document()->sandboxFlags());
 
     if (request.frameName() != "_blank")
-        frame->tree().setName(request.frameName());
+        page->mainFrame().tree().setName(request.frameName());
 
     page->chrome().setToolbarsVisible(features.toolBarVisible || features.locationBarVisible);
     page->chrome().setStatusbarVisible(features.statusBarVisible);
@@ -3463,7 +3460,7 @@ PassRefPtr<Frame> createWindow(Frame* openerFrame, Frame* lookupFrame, const Fra
     page->chrome().show();
 
     created = true;
-    return frame;
+    return &page->mainFrame();
 }
 
 } // namespace WebCore

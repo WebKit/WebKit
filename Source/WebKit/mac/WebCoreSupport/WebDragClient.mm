@@ -63,7 +63,7 @@ static WebHTMLView *getTopHTMLView(Frame* frame)
 {
     ASSERT(frame);
     ASSERT(frame->page());
-    return (WebHTMLView*)[[kit(frame->page()->mainFrame()) frameView] documentView];
+    return (WebHTMLView*)[[kit(&frame->page()->mainFrame()) frameView] documentView];
 }
 
 WebCore::DragDestinationAction WebDragClient::actionMaskForDrag(WebCore::DragData* dragData)

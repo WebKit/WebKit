@@ -141,7 +141,7 @@ void InspectorAgent::domContentLoadedEventFired()
 
 bool InspectorAgent::isMainResourceLoader(DocumentLoader* loader, const KURL& requestUrl)
 {
-    return loader->frame() == m_inspectedPage->mainFrame() && requestUrl == loader->requestURL();
+    return loader->frame() == &m_inspectedPage->mainFrame() && requestUrl == loader->requestURL();
 }
 
 void InspectorAgent::evaluateForTestInFrontend(long callId, const String& script)
@@ -171,7 +171,7 @@ void InspectorAgent::inspect(PassRefPtr<TypeBuilder::Runtime::RemoteObject> obje
 
 KURL InspectorAgent::inspectedURL() const
 {
-    return m_inspectedPage->mainFrame()->document()->url();
+    return m_inspectedPage->mainFrame().document()->url();
 }
 
 KURL InspectorAgent::inspectedURLWithoutFragment() const

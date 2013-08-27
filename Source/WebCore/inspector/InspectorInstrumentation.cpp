@@ -860,7 +860,7 @@ void InspectorInstrumentation::domContentLoadedEventFiredImpl(InstrumentingAgent
     if (InspectorTimelineAgent* timelineAgent = instrumentingAgents->inspectorTimelineAgent())
         timelineAgent->didMarkDOMContentEvent(frame);
 
-    if (frame->page()->mainFrame() != frame)
+    if (&frame->page()->mainFrame() != frame)
         return;
 
     if (InspectorAgent* inspectorAgent = instrumentingAgents->inspectorAgent())
@@ -881,7 +881,7 @@ void InspectorInstrumentation::loadEventFiredImpl(InstrumentingAgents* instrumen
     if (InspectorTimelineAgent* timelineAgent = instrumentingAgents->inspectorTimelineAgent())
         timelineAgent->didMarkLoadEvent(frame);
 
-    if (frame->page()->mainFrame() != frame)
+    if (&frame->page()->mainFrame() != frame)
         return;
 
     if (InspectorPageAgent* pageAgent = instrumentingAgents->inspectorPageAgent())
@@ -902,8 +902,7 @@ void InspectorInstrumentation::didCommitLoadImpl(InstrumentingAgents* instrument
     if (!inspectorAgent || !inspectorAgent->developerExtrasEnabled())
         return;
 
-    Frame* mainFrame = page->mainFrame();
-    if (loader->frame() == mainFrame) {
+    if (loader->frame() == &page->mainFrame()) {
         if (InspectorConsoleAgent* consoleAgent = instrumentingAgents->inspectorConsoleAgent())
             consoleAgent->reset();
 
@@ -922,7 +921,7 @@ void InspectorInstrumentation::didCommitLoadImpl(InstrumentingAgents* instrument
             databaseAgent->clearResources();
 #endif
         if (InspectorDOMAgent* domAgent = instrumentingAgents->inspectorDOMAgent())
-            domAgent->setDocument(mainFrame->document());
+            domAgent->setDocument(page->mainFrame().document());
 #if USE(ACCELERATED_COMPOSITING)
         if (InspectorLayerTreeAgent* layerTreeAgent = instrumentingAgents->inspectorLayerTreeAgent())
             layerTreeAgent->reset();

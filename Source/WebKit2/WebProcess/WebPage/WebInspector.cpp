@@ -175,13 +175,13 @@ void WebInspector::close()
 void WebInspector::didSave(const String& url)
 {
     ASSERT(m_inspectorPage);
-    m_inspectorPage->corePage()->mainFrame()->script().executeScript(makeString("InspectorFrontendAPI.savedURL(\"", url, "\")"));
+    m_inspectorPage->corePage()->mainFrame().script().executeScript(makeString("InspectorFrontendAPI.savedURL(\"", url, "\")"));
 }
 
 void WebInspector::didAppend(const String& url)
 {
     ASSERT(m_inspectorPage);
-    m_inspectorPage->corePage()->mainFrame()->script().executeScript(makeString("InspectorFrontendAPI.appendedToURL(\"", url, "\")"));
+    m_inspectorPage->corePage()->mainFrame().script().executeScript(makeString("InspectorFrontendAPI.appendedToURL(\"", url, "\")"));
 }
 
 void WebInspector::attachedBottom()

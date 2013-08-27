@@ -705,10 +705,8 @@ HRESULT STDMETHODCALLTYPE WebView::close()
 
     removeFromAllWebViewsSet();
 
-    if (m_page) {
-        if (Frame* frame = m_page->mainFrame())
-            frame->loader().detachFromParent();
-    }
+    if (m_page)
+        m_page->mainFrame().loader().detachFromParent();
 
     if (m_mouseOutTracker) {
         m_mouseOutTracker->dwFlags = TME_CANCEL;
@@ -1348,8 +1346,8 @@ bool WebView::handleContextMenuEvent(WPARAM wParam, LPARAM lParam)
 
     m_page->contextMenuController().clearContextMenu();
 
-    IntPoint documentPoint(m_page->mainFrame()->view()->windowToContents(coords));
-    HitTestResult result = m_page->mainFrame()->eventHandler().hitTestResultAtPoint(documentPoint);
+    IntPoint documentPoint(m_page->mainFrame().view()->windowToContents(coords));
+    HitTestResult result = m_page->mainFrame().eventHandler().hitTestResultAtPoint(documentPoint);
     Frame* targetFrame = result.innerNonSharedNode() ? result.innerNonSharedNode()->document()->frame() : m_page->focusController().focusedOrMainFrame();
 
     targetFrame->view()->setCursor(pointerCursor());
@@ -1478,7 +1476,7 @@ bool WebView::handleMouseEvent(UINT message, WPARAM wParam, LPARAM lParam)
     static LONG globalPrevMouseDownTime;
 
     if (message == WM_CANCELMODE) {
-        m_page->mainFrame()->eventHandler().lostMouseCapture();
+        m_page->mainFrame().eventHandler().lostMouseCapture();
         return true;
     }
 
@@ -1517,29 +1515,29 @@ bool WebView::handleMouseEvent(UINT message, WPARAM wParam, LPARAM lParam)
         globalPrevPoint = mouseEvent.position();
         
         mouseEvent.setClickCount(globalClickCount);
-        handled = m_page->mainFrame()->eventHandler().handleMousePressEvent(mouseEvent);
+        handled = m_page->mainFrame().eventHandler().handleMousePressEvent(mouseEvent);
     } else if (message == WM_LBUTTONDBLCLK || message == WM_MBUTTONDBLCLK || message == WM_RBUTTONDBLCLK) {
         globalClickCount++;
         mouseEvent.setClickCount(globalClickCount);
-        handled = m_page->mainFrame()->eventHandler().handleMousePressEvent(mouseEvent);
+        handled = m_page->mainFrame().eventHandler().handleMousePressEvent(mouseEvent);
     } else if (message == WM_LBUTTONUP || message == WM_MBUTTONUP || message == WM_RBUTTONUP) {
         // Record the global position and the button of the up.
         globalPrevButton = mouseEvent.button();
         globalPrevPoint = mouseEvent.position();
         mouseEvent.setClickCount(globalClickCount);
-        m_page->mainFrame()->eventHandler().handleMouseReleaseEvent(mouseEvent);
+        m_page->mainFrame().eventHandler().handleMouseReleaseEvent(mouseEvent);
         ::ReleaseCapture();
     } else if (message == WM_MOUSELEAVE && m_mouseOutTracker) {
         // Once WM_MOUSELEAVE is fired windows clears this tracker
         // so there is no need to disable it ourselves.
         m_mouseOutTracker.clear();
-        m_page->mainFrame()->eventHandler().mouseMoved(mouseEvent);
+        m_page->mainFrame().eventHandler().mouseMoved(mouseEvent);
         handled = true;
     } else if (message == WM_MOUSEMOVE) {
         if (!insideThreshold)
             globalClickCount = 0;
         mouseEvent.setClickCount(globalClickCount);
-        handled = m_page->mainFrame()->eventHandler().mouseMoved(mouseEvent);
+        handled = m_page->mainFrame().eventHandler().mouseMoved(mouseEvent);
         if (!m_mouseOutTracker) {
             m_mouseOutTracker = adoptPtr(new TRACKMOUSEEVENT);
             m_mouseOutTracker->cbSize = sizeof(TRACKMOUSEEVENT);
@@ -1569,7 +1567,7 @@ bool WebView::gestureNotify(WPARAM wParam, LPARAM lParam)
     bool hitScrollbar = false;
     POINT gestureBeginPoint = {gn->ptsLocation.x, gn->ptsLocation.y};
     HitTestRequest request(HitTestRequest::ReadOnly | HitTestRequest::DisallowShadowContent);
-    for (Frame* childFrame = m_page->mainFrame(); childFrame; childFrame = EventHandler::subframeForTargetNode(m_gestureTargetNode.get())) {
+    for (Frame* childFrame = &m_page->mainFrame(); childFrame; childFrame = EventHandler::subframeForTargetNode(m_gestureTargetNode.get())) {
         FrameView* frameView = childFrame->view();
         if (!frameView)
             break;
@@ -2739,12 +2737,12 @@ HRESULT STDMETHODCALLTYPE WebView::initWithFrame(
 
     WebFrame* webFrame = WebFrame::createInstance();
     webFrame->initWithWebView(this, m_page);
-    static_cast<WebFrameLoaderClient&>(m_page->mainFrame()->loader().client()).setWebFrame(webFrame);
+    static_cast<WebFrameLoaderClient&>(m_page->mainFrame().loader().client()).setWebFrame(webFrame);
     m_mainFrame = webFrame;
     webFrame->Release(); // The WebFrame is owned by the Frame, so release our reference to it.
 
-    m_page->mainFrame()->tree().setName(toString(frameName));
-    m_page->mainFrame()->init();
+    m_page->mainFrame().tree().setName(toString(frameName));
+    m_page->mainFrame().init();
     setGroupName(groupName);
 
     addToAllWebViewsSet();
@@ -3459,7 +3457,7 @@ HRESULT STDMETHODCALLTYPE WebView::searchFor(
     if (!found)
         return E_INVALIDARG;
     
-    if (!m_page || !m_page->mainFrame())
+    if (!m_page)
         return E_UNEXPECTED;
 
     if (!str || !SysStringLen(str))
@@ -3488,9 +3486,9 @@ HRESULT STDMETHODCALLTYPE WebView::updateFocusedAndActiveState()
     updateActiveState();
 
     bool active = m_page->focusController().isActive();
-    Frame* mainFrame = m_page->mainFrame();
+    Frame& mainFrame = m_page->mainFrame();
     Frame* focusedFrame = m_page->focusController().focusedOrMainFrame();
-    mainFrame->selection().setFocused(active && mainFrame == focusedFrame);
+    mainFrame.selection().setFocused(active && &mainFrame == focusedFrame);
 
     return S_OK;
 }
@@ -3504,7 +3502,7 @@ HRESULT STDMETHODCALLTYPE WebView::executeCoreCommandByName(BSTR name, BSTR valu
 
 HRESULT STDMETHODCALLTYPE WebView::clearMainFrameName()
 {
-    m_page->mainFrame()->tree().clearName();
+    m_page->mainFrame().tree().clearName();
 
     return S_OK;
 }
@@ -3515,7 +3513,7 @@ HRESULT STDMETHODCALLTYPE WebView::markAllMatchesForText(
     if (!matches)
         return E_INVALIDARG;
 
-    if (!m_page || !m_page->mainFrame())
+    if (!m_page)
         return E_UNEXPECTED;
 
     if (!str || !SysStringLen(str))
@@ -3527,7 +3525,7 @@ HRESULT STDMETHODCALLTYPE WebView::markAllMatchesForText(
 
 HRESULT STDMETHODCALLTYPE WebView::unmarkAllTextMatches()
 {
-    if (!m_page || !m_page->mainFrame())
+    if (!m_page)
         return E_UNEXPECTED;
 
     m_page->unmarkAllTextMatches();
@@ -3538,7 +3536,7 @@ HRESULT STDMETHODCALLTYPE WebView::rectsForTextMatches(
     IEnumTextMatches** pmatches)
 {
     Vector<IntRect> allRects;
-    WebCore::Frame* frame = m_page->mainFrame();
+    WebCore::Frame* frame = &m_page->mainFrame();
     do {
         if (Document* document = frame->document()) {
             IntRect visibleRect = frame->view()->visibleContentRect();
@@ -4302,7 +4300,7 @@ HRESULT STDMETHODCALLTYPE WebView::styleDeclarationWithText(
 HRESULT STDMETHODCALLTYPE WebView::hasSelectedRange( 
         /* [retval][out] */ BOOL* hasSelectedRange)
 {
-    *hasSelectedRange = m_page->mainFrame()->selection().isRange();
+    *hasSelectedRange = m_page->mainFrame().selection().isRange();
     return S_OK;
 }
     
@@ -4391,9 +4389,9 @@ HRESULT STDMETHODCALLTYPE WebView::replaceSelectionWithNode(
 HRESULT STDMETHODCALLTYPE WebView::replaceSelectionWithText( 
         /* [in] */ BSTR text)
 {
-    Position start = m_page->mainFrame()->selection().selection().start();
+    Position start = m_page->mainFrame().selection().selection().start();
     m_page->focusController().focusedOrMainFrame()->editor().insertText(toString(text), 0);
-    m_page->mainFrame()->selection().setBase(start);
+    m_page->mainFrame().selection().setBase(start);
     return S_OK;
 }
     
@@ -5139,7 +5137,7 @@ HRESULT STDMETHODCALLTYPE WebView::scrollOffset(
 {
     if (!offset)
         return E_POINTER;
-    IntSize offsetIntSize = m_page->mainFrame()->view()->scrollOffset();
+    IntSize offsetIntSize = m_page->mainFrame().view()->scrollOffset();
     offset->x = offsetIntSize.width();
     offset->y = offsetIntSize.height();
     return S_OK;
@@ -5150,7 +5148,7 @@ HRESULT STDMETHODCALLTYPE WebView::scrollBy(
 {
     if (!offset)
         return E_POINTER;
-    m_page->mainFrame()->view()->scrollBy(IntSize(offset->x, offset->y));
+    m_page->mainFrame().view()->scrollBy(IntSize(offset->x, offset->y));
     return S_OK;
 }
 
@@ -5159,7 +5157,7 @@ HRESULT STDMETHODCALLTYPE WebView::visibleContentRect(
 {
     if (!rect)
         return E_POINTER;
-    FloatRect visibleContent = m_page->mainFrame()->view()->visibleContentRect();
+    FloatRect visibleContent = m_page->mainFrame().view()->visibleContentRect();
     rect->left = (LONG) visibleContent.x();
     rect->top = (LONG) visibleContent.y();
     rect->right = (LONG) visibleContent.maxX();
@@ -5386,7 +5384,7 @@ HRESULT STDMETHODCALLTYPE WebView::loadBackForwardListFromOtherView(
             // If this item is showing , save away its current scroll and form state,
             // since that might have changed since loading and it is normally not saved
             // until we leave that page.
-            otherWebView->m_page->mainFrame()->loader().history().saveDocumentAndScrollState();
+            otherWebView->m_page->mainFrame().loader().history().saveDocumentAndScrollState();
         }
         RefPtr<HistoryItem> newItem = otherBackForwardList->itemAtIndex(i)->copy();
         if (!i) 
@@ -5439,7 +5437,7 @@ HRESULT WebView::setProhibitsMainFrameScrolling(BOOL b)
     if (!m_page)
         return E_FAIL;
 
-    m_page->mainFrame()->view()->setProhibitsScrolling(b);
+    m_page->mainFrame().view()->setProhibitsScrolling(b);
     return S_OK;
 }
 

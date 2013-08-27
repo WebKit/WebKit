@@ -47,14 +47,10 @@ bool InspectorClient::doDispatchMessageOnFrontendPage(Page* frontendPage, const 
     if (!frontendPage)
         return false;
 
-    Frame* frame = frontendPage->mainFrame();
-    if (!frame)
-        return false;
-
     String dispatchToFrontend = "InspectorFrontendAPI.dispatchMessageAsync(" + message + ");";
 
     // FIXME: This should execute the script in the appropriate world.
-    frame->script().evaluate(ScriptSourceCode(dispatchToFrontend));
+    frontendPage->mainFrame().script().evaluate(ScriptSourceCode(dispatchToFrontend));
     return true;
 }
 

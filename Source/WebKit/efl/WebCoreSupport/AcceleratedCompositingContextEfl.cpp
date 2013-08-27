@@ -71,7 +71,7 @@ void AcceleratedCompositingContext::syncLayersNow()
     if (m_rootGraphicsLayer)
         m_rootGraphicsLayer->flushCompositingStateForThisLayerOnly();
 
-    EWKPrivate::corePage(m_view)->mainFrame()->view()->flushCompositingStateIncludingSubframes();
+    EWKPrivate::corePage(m_view)->mainFrame().view()->flushCompositingStateIncludingSubframes();
 }
 
 void AcceleratedCompositingContext::renderLayers()

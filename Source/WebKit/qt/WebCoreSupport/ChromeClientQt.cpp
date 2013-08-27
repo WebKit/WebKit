@@ -334,7 +334,7 @@ bool ChromeClientQt::runBeforeUnloadConfirmPanel(const String& message, Frame* f
 void ChromeClientQt::closeWindowSoon()
 {
     m_webPage->page->setGroupName(String());
-    m_webPage->page->mainFrame()->loader().stopAllLoaders();
+    m_webPage->page->mainFrame().loader().stopAllLoaders();
     QMetaObject::invokeMethod(m_webPage->handle(), "windowCloseRequested");
 }
 

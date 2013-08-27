@@ -1,3 +1,14 @@
+2013-08-26  Andreas Kling  <akling@apple.com>
+
+        Page::mainFrame() should return a reference.
+        <http://webkit.org/b/119677>
+
+        Reviewed by Antti Koivisto.
+
+        Page always creates the main Frame by itself now, so it will never be null during the Page's lifetime.
+
+        Let Page::mainFrame() return Frame& and remove a sea of null checks.
+
 2013-08-26  Sam Weinig  <sam@webkit.org>
 
         Remove two unnecessary .get()s.

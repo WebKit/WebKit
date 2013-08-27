@@ -88,12 +88,12 @@ void WebDragClient::willPerformDragDestinationAction(DragDestinationAction actio
 
 DragSourceAction WebDragClient::dragSourceActionMaskForPoint(const IntPoint& windowPoint)
 {
-   COMPtr<IWebUIDelegate> delegateRef = 0;
-   WebDragSourceAction action = WebDragSourceActionAny;
-   POINT localpt = core(m_webView)->mainFrame()->view()->windowToContents(windowPoint);
-   if (SUCCEEDED(m_webView->uiDelegate(&delegateRef)))
-       delegateRef->dragSourceActionMaskForPoint(m_webView, &localpt, &action);
-   return (DragSourceAction)action;
+    COMPtr<IWebUIDelegate> delegateRef = 0;
+    WebDragSourceAction action = WebDragSourceActionAny;
+    POINT localpt = core(m_webView)->mainFrame().view()->windowToContents(windowPoint);
+    if (SUCCEEDED(m_webView->uiDelegate(&delegateRef)))
+        delegateRef->dragSourceActionMaskForPoint(m_webView, &localpt, &action);
+    return (DragSourceAction)action;
 }
 
 void WebDragClient::willPerformDragSourceAction(DragSourceAction action, const IntPoint& intPoint, Clipboard* clipboard)

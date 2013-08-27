@@ -213,7 +213,7 @@ static bool urlIsWhitelistedForSetShadowDOMEnabled(const String& url)
 
 void InternalSettings::setShadowDOMEnabled(bool enabled, ExceptionCode& ec)
 {
-    if (!urlIsWhitelistedForSetShadowDOMEnabled(page()->mainFrame()->document()->url().string())) {
+    if (!urlIsWhitelistedForSetShadowDOMEnabled(page()->mainFrame().document()->url().string())) {
         ec = INVALID_ACCESS_ERR;
         return;
     }

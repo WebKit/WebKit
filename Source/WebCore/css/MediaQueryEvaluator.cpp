@@ -200,7 +200,7 @@ static bool numberValue(CSSValue* value, float& result)
 
 static bool colorMediaFeatureEval(CSSValue* value, RenderStyle*, Frame* frame, MediaFeaturePrefix op)
 {
-    int bitsPerComponent = screenDepthPerComponent(frame->page()->mainFrame()->view());
+    int bitsPerComponent = screenDepthPerComponent(frame->page()->mainFrame().view());
     float number;
     if (value)
         return numberValue(value, number) && compareValue(bitsPerComponent, static_cast<int>(number), op);
@@ -221,7 +221,7 @@ static bool color_indexMediaFeatureEval(CSSValue* value, RenderStyle*, Frame*, M
 
 static bool monochromeMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame, MediaFeaturePrefix op)
 {
-    if (!screenIsMonochrome(frame->page()->mainFrame()->view())) {
+    if (!screenIsMonochrome(frame->page()->mainFrame().view())) {
         if (value) {
             float number;
             return numberValue(value, number) && compareValue(0, static_cast<int>(number), op);
@@ -268,7 +268,7 @@ static bool aspect_ratioMediaFeatureEval(CSSValue* value, RenderStyle*, Frame* f
 static bool device_aspect_ratioMediaFeatureEval(CSSValue* value, RenderStyle*, Frame* frame, MediaFeaturePrefix op)
 {
     if (value) {
-        FloatRect sg = screenRect(frame->page()->mainFrame()->view());
+        FloatRect sg = screenRect(frame->page()->mainFrame().view());
         return compareAspectRatioValue(value, static_cast<int>(sg.width()), static_cast<int>(sg.height()), op);
     }
 
@@ -359,7 +359,7 @@ static bool computeLength(CSSValue* value, bool strict, RenderStyle* style, Rend
 static bool device_heightMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame, MediaFeaturePrefix op)
 {
     if (value) {
-        FloatRect sg = screenRect(frame->page()->mainFrame()->view());
+        FloatRect sg = screenRect(frame->page()->mainFrame().view());
         RenderStyle* rootStyle = frame->document()->documentElement()->renderStyle();
         int length;
         long height = sg.height();
@@ -374,7 +374,7 @@ static bool device_heightMediaFeatureEval(CSSValue* value, RenderStyle* style, F
 static bool device_widthMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* frame, MediaFeaturePrefix op)
 {
     if (value) {
-        FloatRect sg = screenRect(frame->page()->mainFrame()->view());
+        FloatRect sg = screenRect(frame->page()->mainFrame().view());
         RenderStyle* rootStyle = frame->document()->documentElement()->renderStyle();
         int length;
         long width = sg.width();

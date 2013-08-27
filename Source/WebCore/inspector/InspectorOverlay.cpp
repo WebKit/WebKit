@@ -111,7 +111,7 @@ static void buildNodeHighlight(Node* node, const HighlightConfig& highlightConfi
 
     highlight->setDataFromConfig(highlightConfig);
     FrameView* containingView = containingFrame->view();
-    FrameView* mainView = containingFrame->page()->mainFrame()->view();
+    FrameView* mainView = containingFrame->page()->mainFrame().view();
     IntRect boundingBox = pixelSnappedIntRect(containingView->contentsToRootView(renderer->absoluteBoundingBoxRect()));
     boundingBox.move(mainView->scrollOffset());
     IntRect titleAnchorBox = boundingBox;
@@ -208,7 +208,7 @@ void InspectorOverlay::paint(GraphicsContext& context)
     if (m_pausedInDebuggerMessage.isNull() && !m_highlightNode && !m_highlightQuad && m_size.isEmpty())
         return;
     GraphicsContextStateSaver stateSaver(context);
-    FrameView* view = overlayPage()->mainFrame()->view();
+    FrameView* view = overlayPage()->mainFrame().view();
     view->updateLayoutAndStyleIfNeededRecursive();
     view->paint(&context, IntRect(0, 0, view->width(), view->height()));
 }
@@ -260,7 +260,7 @@ void InspectorOverlay::highlightNode(Node* node, const HighlightConfig& highligh
 void InspectorOverlay::highlightQuad(PassOwnPtr<FloatQuad> quad, const HighlightConfig& highlightConfig)
 {
     if (m_quadHighlightConfig.usePageCoordinates)
-        *quad -= m_page->mainFrame()->view()->scrollOffset();
+        *quad -= m_page->mainFrame().view()->scrollOffset();
 
     m_quadHighlightConfig = highlightConfig;
     m_highlightQuad = quad;
@@ -279,11 +279,11 @@ void InspectorOverlay::update()
         return;
     }
 
-    FrameView* view = m_page->mainFrame()->view();
+    FrameView* view = m_page->mainFrame().view();
     if (!view)
         return;
 
-    FrameView* overlayView = overlayPage()->mainFrame()->view();
+    FrameView* overlayView = overlayPage()->mainFrame().view();
     IntSize viewportSize = view->visibleContentRect().size();
     IntSize frameViewFullSize = view->visibleContentRect(ScrollableArea::IncludeScrollbars).size();
     IntSize size = m_size.isEmpty() ? frameViewFullSize : m_size;
@@ -301,7 +301,7 @@ void InspectorOverlay::update()
     drawPausedInDebuggerMessage();
 
     // Position DOM elements.
-    overlayPage()->mainFrame()->document()->recalcStyle(Style::Force);
+    overlayPage()->mainFrame().document()->recalcStyle(Style::Force);
     if (overlayView->needsLayout())
         overlayView->layout();
 
@@ -373,7 +373,7 @@ void InspectorOverlay::drawNodeHighlight()
 
     Highlight highlight;
     buildNodeHighlight(m_highlightNode.get(), m_nodeHighlightConfig, &highlight);
-    RefPtr<InspectorObject> highlightObject = buildObjectForHighlight(m_page->mainFrame()->view(), highlight);
+    RefPtr<InspectorObject> highlightObject = buildObjectForHighlight(m_page->mainFrame().view(), highlight);
 
     Node* node = m_highlightNode.get();
     if (node->isElementNode() && m_nodeHighlightConfig.showInfo && node->renderer() && node->document()->frame()) {
@@ -417,7 +417,7 @@ void InspectorOverlay::drawQuadHighlight()
 
     Highlight highlight;
     buildQuadHighlight(m_page, *m_highlightQuad, m_quadHighlightConfig, &highlight);
-    evaluateInOverlay("drawQuadHighlight", buildObjectForHighlight(m_page->mainFrame()->view(), highlight));
+    evaluateInOverlay("drawQuadHighlight", buildObjectForHighlight(m_page->mainFrame().view(), highlight));
 }
 
 void InspectorOverlay::drawPausedInDebuggerMessage()
@@ -450,12 +450,12 @@ Page* InspectorOverlay::overlayPage()
     overlaySettings.setScriptEnabled(true);
     overlaySettings.setPluginsEnabled(false);
 
-    RefPtr<Frame> frame = m_overlayPage->mainFrame();
-    frame->setView(FrameView::create(frame.get()));
-    frame->init();
-    FrameLoader& loader = frame->loader();
-    frame->view()->setCanHaveScrollbars(false);
-    frame->view()->setTransparent(true);
+    Frame& frame = m_overlayPage->mainFrame();
+    frame.setView(FrameView::create(&frame));
+    frame.init();
+    FrameLoader& loader = frame.loader();
+    frame.view()->setCanHaveScrollbars(false);
+    frame.view()->setTransparent(true);
     ASSERT(loader.activeDocumentLoader());
     loader.activeDocumentLoader()->writer()->setMIMEType("text/html");
     loader.activeDocumentLoader()->writer()->begin();
@@ -487,7 +487,7 @@ void InspectorOverlay::evaluateInOverlay(const String& method, const String& arg
     RefPtr<InspectorArray> command = InspectorArray::create();
     command->pushString(method);
     command->pushString(argument);
-    overlayPage()->mainFrame()->script().evaluate(ScriptSourceCode(makeString("dispatch(", command->toJSONString(), ")")));
+    overlayPage()->mainFrame().script().evaluate(ScriptSourceCode(makeString("dispatch(", command->toJSONString(), ")")));
 }
 
 void InspectorOverlay::evaluateInOverlay(const String& method, PassRefPtr<InspectorValue> argument)
@@ -495,7 +495,7 @@ void InspectorOverlay::evaluateInOverlay(const String& method, PassRefPtr<Inspec
     RefPtr<InspectorArray> command = InspectorArray::create();
     command->pushString(method);
     command->pushValue(argument);
-    overlayPage()->mainFrame()->script().evaluate(ScriptSourceCode(makeString("dispatch(", command->toJSONString(), ")")));
+    overlayPage()->mainFrame().script().evaluate(ScriptSourceCode(makeString("dispatch(", command->toJSONString(), ")")));
 }
 
 void InspectorOverlay::freePage()

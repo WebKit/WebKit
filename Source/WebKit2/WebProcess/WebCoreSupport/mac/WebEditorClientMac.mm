@@ -113,7 +113,7 @@ DocumentFragment* WebEditorClient::documentFragmentFromAttributedString(NSAttrib
     NSDictionary *dictionary = [NSDictionary dictionaryWithObject:excludedElements forKey:NSExcludedElementsDocumentAttribute];
     
     NSArray *subResources;
-    Document* document = m_page->mainFrame() ? m_page->mainFrame()->document() : 0;
+    Document* document = m_page->mainFrame()->document();
     DOMDocumentFragment* fragment = [string _documentFromRange:NSMakeRange(0, [string length])
                                                       document:kit(document)
                                             documentAttributes:dictionary

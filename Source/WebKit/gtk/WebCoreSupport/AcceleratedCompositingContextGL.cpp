@@ -333,7 +333,7 @@ bool AcceleratedCompositingContext::flushPendingLayerChanges()
 {
     m_rootLayer->flushCompositingStateForThisLayerOnly();
     m_nonCompositedContentLayer->flushCompositingStateForThisLayerOnly();
-    return core(m_webView)->mainFrame()->view()->flushCompositingStateIncludingSubframes();
+    return core(m_webView)->mainFrame().view()->flushCompositingStateIncludingSubframes();
 }
 
 void AcceleratedCompositingContext::flushAndRenderLayers()
@@ -341,10 +341,10 @@ void AcceleratedCompositingContext::flushAndRenderLayers()
     if (!enabled())
         return;
 
-    Frame* frame = core(m_webView)->mainFrame();
-    if (!frame || !frame->contentRenderer() || !frame->view())
+    Frame& frame = core(m_webView)->mainFrame();
+    if (!frame.contentRenderer() || !frame.view())
         return;
-    frame->view()->updateLayoutAndStyleIfNeededRecursive();
+    frame.view()->updateLayoutAndStyleIfNeededRecursive();
 
     if (!enabled())
         return;
@@ -388,7 +388,7 @@ void AcceleratedCompositingContext::paintContents(const GraphicsLayer*, Graphics
 {
     context.save();
     context.clip(rectToPaint);
-    core(m_webView)->mainFrame()->view()->paint(&context, rectToPaint);
+    core(m_webView)->mainFrame().view()->paint(&context, rectToPaint);
     context.restore();
 }
 

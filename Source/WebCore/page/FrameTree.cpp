@@ -293,7 +293,7 @@ Frame* FrameTree::find(const AtomicString& name) const
     if (!page)
         return 0;
 
-    for (Frame* frame = page->mainFrame(); frame; frame = frame->tree().traverseNext())
+    for (Frame* frame = &page->mainFrame(); frame; frame = frame->tree().traverseNext())
         if (frame->tree().uniqueName() == name)
             return frame;
 
@@ -304,7 +304,7 @@ Frame* FrameTree::find(const AtomicString& name) const
     for (HashSet<Page*>::const_iterator it = pages.begin(); it != end; ++it) {
         Page* otherPage = *it;
         if (otherPage != page) {
-            for (Frame* frame = otherPage->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+            for (Frame* frame = &otherPage->mainFrame(); frame; frame = frame->tree().traverseNext()) {
                 if (frame->tree().uniqueName() == name)
                     return frame;
             }
@@ -367,7 +367,7 @@ Frame* FrameTree::traverseNextWithWrap(bool wrap) const
         return result;
 
     if (wrap)
-        return m_thisFrame->page()->mainFrame();
+        return &m_thisFrame->page()->mainFrame();
 
     return 0;
 }

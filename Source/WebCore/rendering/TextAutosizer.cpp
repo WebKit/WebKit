@@ -103,25 +103,25 @@ void TextAutosizer::recalculateMultipliers()
 
 bool TextAutosizer::processSubtree(RenderObject* layoutRoot)
 {
-    // FIXME: Text Autosizing should only be enabled when m_document->page()->mainFrame()->view()->useFixedLayout()
+    // FIXME: Text Autosizing should only be enabled when m_document->page()->mainFrame().view()->useFixedLayout()
     // is true, but for now it's useful to ignore this so that it can be tested on desktop.
     if (!m_document->settings() || !m_document->settings()->textAutosizingEnabled() || layoutRoot->view()->printing() || !m_document->page())
         return false;
 
-    Frame* mainFrame = m_document->page()->mainFrame();
+    Frame& mainFrame = m_document->page()->mainFrame();
 
     TextAutosizingWindowInfo windowInfo;
 
     // Window area, in logical (density-independent) pixels.
     windowInfo.windowSize = m_document->settings()->textAutosizingWindowSizeOverride();
     if (windowInfo.windowSize.isEmpty()) {
-        bool includeScrollbars = !InspectorInstrumentation::shouldApplyScreenWidthOverride(mainFrame);
-        windowInfo.windowSize = mainFrame->view()->unscaledVisibleContentSize(includeScrollbars ? ScrollableArea::IncludeScrollbars : ScrollableArea::ExcludeScrollbars);
+        bool includeScrollbars = !InspectorInstrumentation::shouldApplyScreenWidthOverride(&mainFrame);
+        windowInfo.windowSize = mainFrame.view()->unscaledVisibleContentSize(includeScrollbars ? ScrollableArea::IncludeScrollbars : ScrollableArea::ExcludeScrollbars);
     }
 
     // Largest area of block that can be visible at once (assuming the main
     // frame doesn't get scaled to less than overview scale), in CSS pixels.
-    windowInfo.minLayoutSize = mainFrame->view()->layoutSize();
+    windowInfo.minLayoutSize = mainFrame.view()->layoutSize();
     for (Frame* frame = m_document->frame(); frame; frame = frame->tree().parent()) {
         if (!frame->view()->isInChildFrameWithFrameFlattening())
             windowInfo.minLayoutSize = windowInfo.minLayoutSize.shrunkTo(frame->view()->layoutSize());

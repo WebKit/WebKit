@@ -160,7 +160,7 @@ public:
     EditorClient* editorClient() const { return m_editorClient; }
     PlugInClient* plugInClient() const { return m_plugInClient; }
 
-    Frame* mainFrame() const { return m_mainFrame.get(); }
+    Frame& mainFrame() const { return *m_mainFrame; }
 
     bool openedByDOM() const;
     void setOpenedByDOM();
@@ -462,7 +462,7 @@ private:
     const OwnPtr<ProgressTracker> m_progress;
 
     OwnPtr<BackForwardController> m_backForwardController;
-    RefPtr<Frame> m_mainFrame;
+    const RefPtr<Frame> m_mainFrame;
 
     mutable RefPtr<PluginData> m_pluginData;
 

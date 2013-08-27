@@ -196,7 +196,7 @@ static void openNewWindow(const QUrl& url, Frame* frame)
         NavigationAction action;
         FrameLoadRequest request = frameLoadRequest(url, frame);
         if (Page* newPage = oldPage->chrome().createWindow(frame, request, features, action)) {
-            newPage->mainFrame()->loader().loadFrameRequest(request, false, false, 0, 0, MaybeSendReferrer);
+            newPage->mainFrame().loader().loadFrameRequest(request, false, false, 0, 0, MaybeSendReferrer);
             newPage->chrome().show();
         }
     }
@@ -421,8 +421,8 @@ bool QWebPageAdapter::findText(const QString& subString, FindFlag options)
     }
 
     if (subString.isEmpty()) {
-        page->mainFrame()->selection().clear();
-        Frame* frame = page->mainFrame()->tree().firstChild();
+        page->mainFrame().selection().clear();
+        Frame* frame = page->mainFrame().tree().firstChild();
         while (frame) {
             frame->selection().clear();
             frame = frame->tree().traverseNextWithWrap(false);
@@ -453,7 +453,7 @@ void QWebPageAdapter::adjustPointForClicking(QMouseEvent* ev)
     IntRect touchRect(ev->pos().x() - leftPadding, ev->pos().y() - topPadding, leftPadding + rightPadding, topPadding + bottomPadding);
     IntPoint adjustedPoint;
     Node* adjustedNode;
-    bool foundClickableNode = page->mainFrame()->eventHandler().bestClickableNodeForTouchPoint(touchRect.center(), touchRect.size(), adjustedPoint, adjustedNode);
+    bool foundClickableNode = page->mainFrame().eventHandler().bestClickableNodeForTouchPoint(touchRect.center(), touchRect.size(), adjustedPoint, adjustedNode);
     if (!foundClickableNode)
         return;
 

@@ -202,9 +202,9 @@ COMPILE_ASSERT(NumberOfReasonsPagesCannotBeInPageCache <= sizeof(unsigned)*8, Re
 static void logCanCachePageDecision(Page* page)
 {
     // Only bother logging for main frames that have actually loaded and have content.
-    if (page->mainFrame()->loader().stateMachine()->creatingInitialEmptyDocument())
+    if (page->mainFrame().loader().stateMachine()->creatingInitialEmptyDocument())
         return;
-    KURL currentURL = page->mainFrame()->loader().documentLoader() ? page->mainFrame()->loader().documentLoader()->url() : KURL();
+    KURL currentURL = page->mainFrame().loader().documentLoader() ? page->mainFrame().loader().documentLoader()->url() : KURL();
     if (currentURL.isEmpty())
         return;
     
@@ -212,7 +212,7 @@ static void logCanCachePageDecision(Page* page)
     PCLOG("--------\n Determining if page can be cached:");
     
     unsigned rejectReasons = 0;
-    unsigned frameRejectReasons = logCanCacheFrameDecision(page->mainFrame(), indentLevel+1);
+    unsigned frameRejectReasons = logCanCacheFrameDecision(&page->mainFrame(), indentLevel+1);
     if (frameRejectReasons)
         rejectReasons |= 1 << FrameCannotBeInPageCache;
     
@@ -240,7 +240,7 @@ static void logCanCachePageDecision(Page* page)
         rejectReasons |= 1 << UsesDeviceMotion;
     }
 #endif
-    FrameLoadType loadType = page->mainFrame()->loader().loadType();
+    FrameLoadType loadType = page->mainFrame().loader().loadType();
     if (loadType == FrameLoadTypeReload) {
         PCLOG("   -Load type is: Reload");
         rejectReasons |= 1 << IsReload;
@@ -350,10 +350,10 @@ bool PageCache::canCache(Page* page) const
     // store the final page we end up on.
     // No point writing to the cache on a reload or loadSame, since we will just write
     // over it again when we leave that page.
-    FrameLoadType loadType = page->mainFrame()->loader().loadType();
+    FrameLoadType loadType = page->mainFrame().loader().loadType();
     
     return m_capacity > 0
-        && canCachePageContainingThisFrame(page->mainFrame())
+        && canCachePageContainingThisFrame(&page->mainFrame())
         && page->backForward()->isActive()
         && page->settings().usesPageCache()
 #if ENABLE(DEVICE_ORIENTATION)
@@ -397,11 +397,9 @@ void PageCache::markPagesForVistedLinkStyleRecalc()
 
 void PageCache::markPagesForFullStyleRecalc(Page* page)
 {
-    Frame* mainFrame = page->mainFrame();
-
     for (HistoryItem* current = m_head; current; current = current->m_next) {
         CachedPage* cachedPage = current->m_cachedPage.get();
-        if (&cachedPage->cachedMainFrame()->view()->frame() == mainFrame)
+        if (&cachedPage->cachedMainFrame()->view()->frame() == &page->mainFrame())
             cachedPage->markForFullStyleRecalc();
     }
 }
@@ -410,11 +408,9 @@ void PageCache::markPagesForFullStyleRecalc(Page* page)
 #if USE(ACCELERATED_COMPOSITING)
 void PageCache::markPagesForDeviceScaleChanged(Page* page)
 {
-    Frame* mainFrame = page->mainFrame();
-
     for (HistoryItem* current = m_head; current; current = current->m_next) {
         CachedPage* cachedPage = current->m_cachedPage.get();
-        if (&cachedPage->cachedMainFrame()->view()->frame() == mainFrame)
+        if (&cachedPage->cachedMainFrame()->view()->frame() == &page->mainFrame())
             cachedPage->markForDeviceScaleChanged();
     }
 }

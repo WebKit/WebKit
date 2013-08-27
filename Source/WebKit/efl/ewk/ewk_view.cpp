@@ -1602,18 +1602,18 @@ Eina_Bool ewk_view_context_menu_forward_event(Evas_Object* ewkView, const Evas_E
     if (priv->contextMenu)
         ewk_context_menu_free(priv->contextMenu);
 
-    WebCore::Frame* mainFrame = priv->page->mainFrame();
+    WebCore::Frame& mainFrame = priv->page->mainFrame();
     Evas_Coord x, y;
     evas_object_geometry_get(smartData->self, &x, &y, 0, 0);
 
     WebCore::PlatformMouseEvent event(downEvent, WebCore::IntPoint(x, y));
 
-    if (mainFrame->view()) {
+    if (mainFrame.view()) {
         mouse_press_handled =
-            mainFrame->eventHandler().handleMousePressEvent(event);
+            mainFrame.eventHandler().handleMousePressEvent(event);
     }
 
-    if (!mainFrame->eventHandler().sendContextMenuEvent(event))
+    if (!mainFrame.eventHandler().sendContextMenuEvent(event))
         return false;
 
     WebCore::ContextMenu* coreMenu =
@@ -4151,8 +4151,8 @@ WebCore::FloatRect ewk_view_page_rect_get(const Evas_Object* ewkView)
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, WebCore::FloatRect(-1.0, -1.0, -1.0, -1.0));
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, WebCore::FloatRect(-1.0, -1.0, -1.0, -1.0));
 
-    WebCore::Frame* main_frame = priv->page->mainFrame();
-    return main_frame->view()->frameRect();
+    WebCore::Frame& main_frame = priv->page->mainFrame();
+    return main_frame.view()->frameRect();
 }
 
 #if ENABLE(TOUCH_EVENTS)

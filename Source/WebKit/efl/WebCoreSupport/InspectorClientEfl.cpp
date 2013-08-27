@@ -45,7 +45,7 @@ static void invalidateView(Evas_Object* webView)
     if (mainFrame && ewk_frame_contents_size_get(mainFrame, &width, &height)) {
         WebCore::Page* page = EWKPrivate::corePage(webView);
         if (page)
-            page->mainFrame()->view()->invalidateRect(WebCore::IntRect(0, 0, width, height));
+            page->mainFrame().view()->invalidateRect(WebCore::IntRect(0, 0, width, height));
     }
 }
 

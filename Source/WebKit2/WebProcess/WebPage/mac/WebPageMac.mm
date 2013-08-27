@@ -102,11 +102,7 @@ NSObject *WebPage::accessibilityObjectForMainFramePlugin()
     if (!m_page)
         return 0;
     
-    Frame* frame = m_page->mainFrame();
-    if (!frame)
-        return 0;
-
-    if (PluginView* pluginView = pluginViewForFrame(frame))
+    if (PluginView* pluginView = pluginViewForFrame(&m_page->mainFrame()))
         return pluginView->accessibilityObject();
 
     return 0;
@@ -394,12 +390,9 @@ void WebPage::getAttributedSubstringFromRange(uint64_t location, uint64_t length
 void WebPage::characterIndexForPoint(IntPoint point, uint64_t& index)
 {
     index = NSNotFound;
-    Frame* frame = m_page->mainFrame();
-    if (!frame)
-        return;
 
-    HitTestResult result = frame->eventHandler().hitTestResultAtPoint(point);
-    frame = result.innerNonSharedNode() ? result.innerNodeFrame() : m_page->focusController().focusedOrMainFrame();
+    HitTestResult result = m_page->mainFrame().eventHandler().hitTestResultAtPoint(point);
+    Frame* frame = result.innerNonSharedNode() ? result.innerNodeFrame() : m_page->focusController().focusedOrMainFrame();
     
     RefPtr<Range> range = frame->rangeForPoint(result.roundedPointInInnerNodeFrame());
     if (!range)
@@ -481,19 +474,15 @@ static bool shouldUseSelection(const VisiblePosition& position, const VisibleSel
 
 void WebPage::performDictionaryLookupAtLocation(const FloatPoint& floatPoint)
 {
-    Frame* frame = m_page->mainFrame();
-    if (!frame)
-        return;
-
-    if (PluginView* pluginView = pluginViewForFrame(frame)) {
+    if (PluginView* pluginView = pluginViewForFrame(&m_page->mainFrame())) {
         if (pluginView->performDictionaryLookupAtLocation(floatPoint))
             return;
     }
 
     // Find the frame the point is over.
     IntPoint point = roundedIntPoint(floatPoint);
-    HitTestResult result = frame->eventHandler().hitTestResultAtPoint(frame->view()->windowToContents(point));
-    frame = result.innerNonSharedNode() ? result.innerNonSharedNode()->document()->frame() : m_page->focusController().focusedOrMainFrame();
+    HitTestResult result = m_page->mainFrame().eventHandler().hitTestResultAtPoint(m_page->mainFrame().view()->windowToContents(point));
+    Frame* frame = result.innerNonSharedNode() ? result.innerNonSharedNode()->document()->frame() : m_page->focusController().focusedOrMainFrame();
 
     IntPoint translatedPoint = frame->view()->windowToContents(point);
 
@@ -741,7 +730,7 @@ bool WebPage::platformHasLocalDataForURL(const WebCore::KURL& url)
     NSMutableURLRequest* request = [[NSMutableURLRequest alloc] initWithURL:url];
     [request setValue:(NSString*)userAgent() forHTTPHeaderField:@"User-Agent"];
     NSCachedURLResponse *cachedResponse;
-    if (CFURLStorageSessionRef storageSession = corePage()->mainFrame()->loader().networkingContext()->storageSession().platformSession())
+    if (CFURLStorageSessionRef storageSession = corePage()->mainFrame().loader().networkingContext()->storageSession().platformSession())
         cachedResponse = WKCachedResponseForRequest(storageSession, request);
     else
         cachedResponse = [[NSURLCache sharedURLCache] cachedResponseForRequest:request];
@@ -755,7 +744,7 @@ static NSCachedURLResponse *cachedResponseForURL(WebPage* webPage, const KURL& u
     RetainPtr<NSMutableURLRequest> request = adoptNS([[NSMutableURLRequest alloc] initWithURL:url]);
     [request.get() setValue:(NSString *)webPage->userAgent() forHTTPHeaderField:@"User-Agent"];
 
-    if (CFURLStorageSessionRef storageSession = webPage->corePage()->mainFrame()->loader().networkingContext()->storageSession().platformSession())
+    if (CFURLStorageSessionRef storageSession = webPage->corePage()->mainFrame().loader().networkingContext()->storageSession().platformSession())
         return WKCachedResponseForRequest(storageSession, request.get());
 
     return [[NSURLCache sharedURLCache] cachedResponseForRequest:request.get()];

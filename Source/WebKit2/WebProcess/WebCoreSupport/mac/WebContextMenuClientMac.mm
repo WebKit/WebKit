@@ -75,15 +75,15 @@ void WebContextMenuClient::searchWithSpotlight()
     // Isn't there any function in WebCore that can do this?
     // If not, can we find a place in WebCore to put this?
 
-    Frame* mainFrame = m_page->corePage()->mainFrame();
+    Frame& mainFrame = m_page->corePage()->mainFrame();
     
-    Frame* selectionFrame = mainFrame;
-    for (; selectionFrame; selectionFrame = selectionFrame->tree().traverseNext(mainFrame)) {
+    Frame* selectionFrame = &mainFrame;
+    for (; selectionFrame; selectionFrame = selectionFrame->tree().traverseNext(&mainFrame)) {
         if (selectionFrame->selection().isRange())
             break;
     }
     if (!selectionFrame)
-        selectionFrame = mainFrame;
+        selectionFrame = &mainFrame;
 
     String selectedString = selectionFrame->displayStringModifiedByEncoding(selectionFrame->editor().selectedText());
     

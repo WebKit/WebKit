@@ -64,7 +64,7 @@ PageOverlay::~PageOverlay()
 
 IntRect PageOverlay::bounds() const
 {
-    FrameView* frameView = m_webPage->corePage()->mainFrame()->view();
+    FrameView* frameView = m_webPage->corePage()->mainFrame().view();
 
     int width = frameView->width();
     int height = frameView->height();

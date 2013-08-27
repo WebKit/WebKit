@@ -692,7 +692,7 @@ QStringList DumpRenderTreeSupportQt::contextMenu(QWebPageAdapter* page)
 bool DumpRenderTreeSupportQt::thirdPartyCookiePolicyAllows(QWebPageAdapter *adapter, const QUrl& url, const QUrl& firstPartyUrl)
 {
     Page* corePage = adapter->page;
-    return thirdPartyCookiePolicyPermits(corePage->mainFrame()->loader().networkingContext(), url, firstPartyUrl);
+    return thirdPartyCookiePolicyPermits(corePage->mainFrame().loader().networkingContext(), url, firstPartyUrl);
 }
 
 void DumpRenderTreeSupportQt::enableMockScrollbars()
