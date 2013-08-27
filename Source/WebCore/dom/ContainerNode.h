@@ -147,6 +147,8 @@ private:
     bool getUpperLeftCorner(FloatPoint&) const;
     bool getLowerRightCorner(FloatPoint&) const;
 
+    bool isContainerNode() const WTF_DELETED_FUNCTION;
+
     Node* m_firstChild;
     Node* m_lastChild;
 };

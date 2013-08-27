@@ -37,15 +37,15 @@ namespace WebCore {
 template <typename ElementType>
 class DescendantIterator {
 public:
-    DescendantIterator(const ContainerNode* root);
-    DescendantIterator(const ContainerNode* root, ElementType* current);
+    DescendantIterator(const Node* root);
+    DescendantIterator(const Node* root, ElementType* current);
     DescendantIterator& operator++();
     ElementType& operator*() { return *m_current; }
     ElementType* operator->() { return m_current; }
     bool operator!=(const DescendantIterator& other) const;
 
 private:
-    const ContainerNode* m_root;
+    const Node* m_root;
     ElementType* m_current;
 #ifndef NDEBUG
     OwnPtr<NoEventDispatchAssertion> m_noEventDispatchAssertion;
@@ -70,7 +70,7 @@ template <typename ElementType> DescendantIteratorAdapter<ElementType, Container
 template <typename ElementType> DescendantIteratorAdapter<ElementType, Node> descendantsOfType(Node* root);
 
 template <typename ElementType>
-inline DescendantIterator<ElementType>::DescendantIterator(const ContainerNode* root)
+inline DescendantIterator<ElementType>::DescendantIterator(const Node* root)
     : m_root(root)
     , m_current(nullptr)
 #ifndef NDEBUG
@@ -80,7 +80,7 @@ inline DescendantIterator<ElementType>::DescendantIterator(const ContainerNode* 
 }
 
 template <typename ElementType>
-inline DescendantIterator<ElementType>::DescendantIterator(const ContainerNode* root, ElementType* current)
+inline DescendantIterator<ElementType>::DescendantIterator(const Node* root, ElementType* current)
     : m_root(root)
     , m_current(current)
 #ifndef NDEBUG
@@ -115,9 +115,7 @@ inline DescendantIteratorAdapter<ElementType, ContainerType>::DescendantIterator
 template <typename ElementType, typename ContainerType>
 inline DescendantIterator<ElementType> DescendantIteratorAdapter<ElementType, ContainerType>::begin()
 {
-    if (!m_root->isContainerNode())
-        return DescendantIterator<ElementType>(m_root);
-    return DescendantIterator<ElementType>(m_root, Traversal<ElementType>::firstWithin(static_cast<ContainerNode*>(m_root)));
+    return DescendantIterator<ElementType>(m_root, Traversal<ElementType>::firstWithin(m_root));
 }
 
 template <typename ElementType, typename ContainerType>

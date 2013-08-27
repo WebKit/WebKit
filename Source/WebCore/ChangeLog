@@ -1,3 +1,23 @@
+2013-08-27  Antti Koivisto  <antti@apple.com>
+
+        Remove branch from DescendantIteratorAdapter::begin() when invoking for ContainerNode
+        https://bugs.webkit.org/show_bug.cgi?id=120358
+
+        Reviewed by Andreas Kling.
+
+        * dom/ContainerNode.h:
+        
+            Delete isContainerNode() so it can't be called if there is static knowledge that the object is a ContainerNode.
+
+        * dom/DescendantIterator.h:
+        (WebCore::::DescendantIterator):
+
+            Make DescendantIterator use Node* as root instead of ContainerNode*. It is only used for equality comparison.
+
+        (WebCore::::begin):
+        
+            Remove branch. Rely on ElementTraversal specialization for ContainerNodes.
+
 2013-08-27  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Column Breakpoint not working, may be off by 1
