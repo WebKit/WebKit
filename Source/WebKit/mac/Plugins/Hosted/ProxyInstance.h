@@ -99,8 +99,8 @@ private:
 
     NetscapePluginInstanceProxy* m_instanceProxy;
     uint32_t m_objectID;
-    JSC::Bindings::FieldMap m_fields;
-    JSC::Bindings::MethodMap m_methods;
+    HashMap<RefPtr<StringImpl>, JSC::Bindings::Field*> m_fields;
+    HashMap<RefPtr<StringImpl>, JSC::Bindings::Method*> m_methods;
 };
     
 }

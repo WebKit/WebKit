@@ -1,3 +1,12 @@
+2013-08-27  Anders Carlsson  <andersca@apple.com>
+
+        Fix build.
+
+        * Plugins/Hosted/ProxyInstance.h:
+        * Plugins/Hosted/ProxyInstance.mm:
+        (WebKit::ProxyInstance::methodNamed):
+        (WebKit::ProxyInstance::fieldNamed):
+
 2013-08-23  Andy Estes  <aestes@apple.com>
 
         Fix issues found by the Clang Static Analyzer
