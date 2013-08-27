@@ -35,6 +35,8 @@
 #include "WebCookieManager.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebErrors.h"
+#include "WebFrame.h"
+#include "WebFrameLoaderClient.h"
 #include "WebFrameNetworkingContext.h"
 #include "WebPage.h"
 #include "WebProcess.h"

@@ -76,5 +76,13 @@ uint64_t WebFrameNetworkingContext::initiatingPageID() const
     return m_initiatingPageID;
 }
 
+WebFrameLoaderClient* WebFrameNetworkingContext::webFrameLoaderClient() const
+{
+    if (!frame())
+        return 0;
+
+    return toWebFrameLoaderClient(frame()->loader().client());
+}
+
 }
 

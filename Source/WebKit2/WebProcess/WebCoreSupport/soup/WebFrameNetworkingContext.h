@@ -33,6 +33,7 @@
 namespace WebKit {
 
 class WebFrame;
+class WebFrameLoaderClient;
 
 class WebFrameNetworkingContext : public WebCore::FrameNetworkingContext {
 public:
@@ -43,6 +44,8 @@ public:
 
     static void ensurePrivateBrowsingSession();
     static void destroyPrivateBrowsingSession();
+
+    WebFrameLoaderClient* webFrameLoaderClient() const;
 
 private:
     WebFrameNetworkingContext(WebFrame*);
