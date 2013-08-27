@@ -434,7 +434,7 @@ Document::Document(Frame* frame, const KURL& url, unsigned documentClasses)
     , m_xmlVersion(ASCIILiteral("1.0"))
     , m_xmlStandalone(StandaloneUnspecified)
     , m_hasXMLDeclaration(0)
-    , m_savedRenderer(0)
+    , m_savedRenderView(0)
     , m_designMode(inherit)
 #if ENABLE(DASHBOARD_SUPPORT) || ENABLE(DRAGGABLE_REGION)
     , m_hasAnnotatedRegions(false)
@@ -447,7 +447,7 @@ Document::Document(Frame* frame, const KURL& url, unsigned documentClasses)
     , m_isViewSource(false)
     , m_sawElementsInKnownNamespaces(false)
     , m_isSrcdocDocument(false)
-    , m_renderer(0)
+    , m_renderView(0)
     , m_eventQueue(DocumentEventQueue::create(this))
     , m_weakFactory(this)
     , m_idAttributeName(idAttr)
@@ -545,7 +545,7 @@ Document::~Document()
 {
     ASSERT(!renderer());
     ASSERT(!m_inPageCache);
-    ASSERT(!m_savedRenderer);
+    ASSERT(!m_savedRenderView);
     ASSERT(m_ranges.isEmpty());
     ASSERT(!m_styleRecalcTimer.isActive());
     ASSERT(!m_parentTreeScope);
@@ -1963,6 +1963,12 @@ void Document::clearStyleResolver()
     m_styleResolver.clear();
 }
 
+void Document::setRenderView(RenderView* renderView)
+{
+    m_renderView = renderView;
+    Node::setRenderer(renderView);
+}
+
 void Document::createRenderTree()
 {
     ASSERT(!attached());
@@ -1972,7 +1978,7 @@ void Document::createRenderTree()
     if (!m_renderArena)
         m_renderArena = RenderArena::create();
     
-    setRenderer(new (m_renderArena.get()) RenderView(this));
+    setRenderView(new (m_renderArena.get()) RenderView(this));
 #if USE(ACCELERATED_COMPOSITING)
     renderView()->setIsInWindow(true);
 #endif
@@ -2087,9 +2093,9 @@ void Document::detach()
 
     unscheduleStyleRecalc();
 
-    if (renderer())
-        renderer()->destroy();
-    setRenderer(0);
+    if (renderView())
+        renderView()->destroy();
+    setRenderView(0);
 
 #if ENABLE(TOUCH_EVENTS)
     if (m_touchEventTargets && m_touchEventTargets->size() && parentDocument())
@@ -3985,8 +3991,8 @@ void Document::setInPageCache(bool flag)
     Page* page = this->page();
 
     if (flag) {
-        ASSERT(!m_savedRenderer);
-        m_savedRenderer = renderer();
+        ASSERT(!m_savedRenderView);
+        m_savedRenderView = renderView();
         if (v) {
             // FIXME: There is some scrolling related work that needs to happen whenever a page goes into the
             // page cache and similar work that needs to occur when it comes out. This is where we do the work
@@ -4005,10 +4011,10 @@ void Document::setInPageCache(bool flag)
         }
         m_styleRecalcTimer.stop();
     } else {
-        ASSERT(!renderer() || renderer() == m_savedRenderer);
+        ASSERT(!renderView() || renderView() == m_savedRenderView);
         ASSERT(m_renderArena);
-        setRenderer(m_savedRenderer);
-        m_savedRenderer = 0;
+        setRenderView(m_savedRenderView);
+        m_savedRenderView = 0;
 
         if (childNeedsStyleRecalc())
             scheduleStyleRecalc();

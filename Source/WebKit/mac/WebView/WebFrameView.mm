@@ -62,6 +62,7 @@
 #import <WebCore/HistoryItem.h>
 #import <WebCore/Page.h>
 #import <WebCore/RenderPart.h>
+#import <WebCore/RenderView.h>
 #import <WebCore/ThreadCheck.h>
 #import <WebCore/WebCoreFrameView.h>
 #import <WebCore/WebCoreView.h>
@@ -571,7 +572,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
     Document* document = coreFrame->document();
     if (!document)
         return YES;
-    RenderObject* renderView = document->renderer();
+    RenderView* renderView = document->renderView();
     if (!renderView)
         return YES;
     return renderView->style()->isHorizontalWritingMode();
@@ -585,7 +586,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
     Document* document = coreFrame->document();
     if (!document)
         return NO;
-    RenderObject* renderView = document->renderer();
+    RenderView* renderView = document->renderView();
     if (!renderView)
         return NO;
     return renderView->style()->isFlippedBlocksWritingMode();

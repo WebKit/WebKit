@@ -44,6 +44,7 @@
 #include "RenderSVGModelObject.h"
 #include "RenderSVGRoot.h"
 #include "RenderSVGViewportContainer.h"
+#include "RenderView.h"
 #include "SMILTimeContainer.h"
 #include "SVGAngle.h"
 #include "SVGElementInstance.h"
@@ -223,8 +224,8 @@ void SVGSVGElement::updateCurrentTranslate()
     if (RenderObject* object = renderer())
         object->setNeedsLayout(true);
 
-    if (parentNode() == document() && document()->renderer())
-        document()->renderer()->repaint();
+    if (parentNode() == document() && document()->renderView())
+        document()->renderView()->repaint();
 }
 
 void SVGSVGElement::parseAttribute(const QualifiedName& name, const AtomicString& value)

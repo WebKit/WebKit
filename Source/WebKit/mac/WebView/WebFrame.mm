@@ -1194,7 +1194,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     if (!_private->coreFrame->view()->documentView())
         return [NSArray array];
 
-    RenderView* root = toRenderView(_private->coreFrame->document()->renderer());
+    RenderView* root = _private->coreFrame->document()->renderView();
     if (!root)
         return [NSArray array];
 

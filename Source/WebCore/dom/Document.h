@@ -3,7 +3,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
  *           (C) 2006 Alexey Proskuryakov (ap@webkit.org)
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2013 Apple Inc. All rights reserved.
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) 2011 Google Inc. All rights reserved.
@@ -537,15 +537,11 @@ public:
 
     // Implemented in RenderView.h to avoid a cyclic header dependency this just
     // returns renderer so callers can avoid verbose casts.
-    RenderView* renderView() const;
+    RenderView* renderView() const { return m_renderView; }
 
+    // FIXME: Remove this, callers that have a Document* should call renderView().
     // Shadow the implementations on Node to provide faster access for documents.
-    RenderObject* renderer() const { return m_renderer; }
-    void setRenderer(RenderObject* renderer)
-    {
-        m_renderer = renderer;
-        Node::setRenderer(renderer);
-    }
+    RenderView* renderer() const { return m_renderView; }
 
     bool renderTreeBeingDestroyed() const { return m_renderTreeBeingDestroyed; }
 
@@ -1199,6 +1195,9 @@ private:
     friend class Node;
     friend class IgnoreDestructiveWriteCountIncrementer;
 
+    void setRenderer(RenderObject*) WTF_DELETED_FUNCTION;
+    void setRenderView(RenderView*);
+
     virtual void createRenderTree();
     virtual void dispose() OVERRIDE;
 
@@ -1416,7 +1415,7 @@ private:
 
     String m_contentLanguage;
 
-    RenderObject* m_savedRenderer;
+    RenderView* m_savedRenderView;
     
     RefPtr<TextResourceDecoder> m_decoder;
 
@@ -1461,7 +1460,7 @@ private:
     bool m_sawElementsInKnownNamespaces;
     bool m_isSrcdocDocument;
 
-    RenderObject* m_renderer;
+    RenderView* m_renderView;
     RefPtr<DocumentEventQueue> m_eventQueue;
 
     WeakPtrFactory<Document> m_weakFactory;

@@ -32,6 +32,7 @@
 #include "MediaList.h"
 #include "MediaQueryEvaluator.h"
 #include "RenderObject.h"
+#include "RenderView.h"
 
 namespace WebCore {
 

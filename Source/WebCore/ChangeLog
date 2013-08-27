@@ -1,3 +1,31 @@
+2013-08-26  Andreas Kling  <akling@apple.com>
+
+        Document's renderer is always a RenderView.
+        <https://webkit.org/b/120304>
+
+        Reviewed by Darin Adler.
+
+        Let's enforce this better by storing a RenderView* instead of a plain RenderObject*.
+        We should switch callers that grab at Document::renderer() to calling renderView()
+        instead, but that's better done separately.
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::~Document):
+        (WebCore::Document::setRenderView):
+        (WebCore::Document::createRenderTree):
+        (WebCore::Document::detach):
+        (WebCore::Document::setInPageCache):
+        * dom/Document.h:
+        (WebCore::Document::renderView):
+        (WebCore::Document::renderer):
+        * html/parser/HTMLResourcePreloader.cpp:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::setStyle):
+        * rendering/RenderView.h:
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::updateCurrentTranslate):
+
 2013-08-27  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         Font's fast code path doesn't handle partial runs correctly when kerning or ligatures are enabled
