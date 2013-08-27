@@ -1,5 +1,11 @@
 2013-08-27  Andreas Kling  <akling@apple.com>
 
+        Clumsily fix Gtk+ build. Not my proudest moment.
+
+        * rendering/svg/RenderSVGResourceFilter.cpp:
+
+2013-08-27  Andreas Kling  <akling@apple.com>
+
         Fix Qt build.
 
         * rendering/svg/RenderSVGResourceFilter.cpp:

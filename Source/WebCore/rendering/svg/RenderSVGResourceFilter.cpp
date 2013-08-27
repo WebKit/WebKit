@@ -39,6 +39,7 @@
 #include "Page.h"
 #include "RenderSVGResource.h"
 #include "RenderSVGResourceFilterPrimitive.h"
+#include "RenderView.h"
 #include "SVGElement.h"
 #include "SVGFilter.h"
 #include "SVGFilterElement.h"
