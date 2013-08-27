@@ -1,4 +1,19 @@
 =================
+WebKitGTK+ 2.1.90
+=================
+
+What's new in WebKitGTK+ 2.1.90?
+
+  - Add API to inject custom JavaScript to WebKit2 Web Extensions API.
+  - Add support for running JavaScript code in isolated worlds to
+    WebKit2 Web Extensions API.
+  - Expose WebKitFrame in WebKit2GTK+ Web Extensions API.
+  - Fix the volume slider track shown when muted.
+  - Cancel authentication dialog when the load fails.
+  - Fix a crash in WebKit1 when inspector window is closed.
+  - Translation updates: Brazilian Portuguese.
+
+=================
 WebKitGTK+  2.1.4
 =================
 

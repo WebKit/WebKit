@@ -1,3 +1,9 @@
+2013-08-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update NEWS and Versions.m4 for 2.1.90 release.
+
+        * NEWS: Add release notes.
+
 2013-08-26  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed GTK build fix.
