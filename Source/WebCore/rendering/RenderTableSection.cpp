@@ -524,6 +524,8 @@ void RenderTableSection::layoutRows()
     for (unsigned r = 0; r < totalRows; r++) {
         // Set the row's x/y position and width/height.
         if (RenderTableRow* rowRenderer = m_grid[r].rowRenderer) {
+            // FIXME: the x() position of the row should be table()->hBorderSpacing() so that it can 
+            // report the correct offsetLeft. However, that will require a lot of rebaselining of test results.
             rowRenderer->setLocation(LayoutPoint(0, m_rowPos[r]));
             rowRenderer->setLogicalWidth(logicalWidth());
             rowRenderer->setLogicalHeight(m_rowPos[r + 1] - m_rowPos[r] - vspacing);

@@ -2,10 +2,10 @@ This is a regression test for https://bugs.webkit.org/show_bug.cgi?id=8085 Main 
 
 Table 1 row 2 top offset:50
 Table 1 cell 2 top offset:50
-Table 2 row 1 top offset:0
-Table 2 cell 1 top offset:0
-Table 2 cell 2 top offset:0
-Table 2 cell 3 top offset:0
+Table 2 row 1 top offset:1
+Table 2 cell 1 top offset:1
+Table 2 cell 2 top offset:1
+Table 2 cell 3 top offset:1
 Table 3 cell 1 top offset:0
 Table 4 div 1 top offset:50
 Test result: PASS

@@ -1,3 +1,19 @@
+2013-08-27  Robert Hogan  <robert@webkit.org>
+
+        cell width / offsetTop incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=11582
+
+        Reviewed by David Hyatt.
+
+        * fast/dom/Element/offsetTop-table-cell-expected.txt:
+        * fast/dom/Element/offsetTop-table-cell.html:
+        * fast/table/offset-top-includes-border-expected.txt: Added.
+        * fast/table/offset-top-includes-border.html: Added.
+        * platform/mac/editing/selection/5057506-2-expected.txt:
+        * platform/mac/editing/selection/5057506-expected.txt:
+        * platform/qt/editing/selection/5057506-2-expected.txt:
+        * platform/qt/editing/selection/5057506-expected.txt:
+
 2013-08-27  Renata Hodovan  <reni@webkit.org>
 
         Missing null-check of parent renderer in WebCore::HTMLEmbedElement::rendererIsNeeded()

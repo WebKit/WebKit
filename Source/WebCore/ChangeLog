@@ -1,3 +1,22 @@
+2013-08-27  Robert Hogan  <robert@webkit.org>
+
+        cell width / offsetTop incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=11582
+
+        Reviewed by David Hyatt.
+
+        The offsetTop and offsetLeft of sections, rows and cells should include the table's border. There are separate
+        problems with the offset[Top|Left] of table sections and the offsetLeft of rows which are covered under bugs 119020
+        and 119021 respectively - here we stick to just fixing the inclusion of the border as it doesn't require rebaselining
+        a lot of tests.
+
+        Test: fast/table/offset-top-includes-border.html
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::adjustedPositionRelativeToOffsetParent):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::layoutRows):
+
 2013-08-27  Jacky Jiang  <zhajiang@blackberry.com>
 
         [BlackBerry] Rotate device from landscape to portrait during youtube streaming will cause device screen flash with video list page
