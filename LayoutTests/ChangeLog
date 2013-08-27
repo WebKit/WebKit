@@ -1,3 +1,12 @@
+2013-08-27  Chris Fleizach  <cfleizach@apple.com>
+
+        <https://webkit.org/b/120117> AX: <noscript> contents are exposed as static text
+
+        Reviewed by Tim Horton.
+
+        * accessibility/noscript-ignored-expected.txt: Added.
+        * accessibility/noscript-ignored.html: Added.
+
 2013-08-27  Robert Hogan  <robert@webkit.org>
 
         cell width / offsetTop incorrect

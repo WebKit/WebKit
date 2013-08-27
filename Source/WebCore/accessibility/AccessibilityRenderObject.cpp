@@ -2852,7 +2852,9 @@ void AccessibilityRenderObject::addRemoteSVGChildren()
 
 void AccessibilityRenderObject::addCanvasChildren()
 {
-    if (!node() || !node()->hasTagName(canvasTag))
+    // Add the unrendered canvas children as AX nodes, unless we're not using a canvas renderer
+    // because JS is disabled for example.
+    if (!node() || !node()->hasTagName(canvasTag) || (renderer() && !renderer()->isCanvas()))
         return;
 
     // If it's a canvas, it won't have rendered children, but it might have accessible fallback content.

@@ -1,3 +1,18 @@
+2013-08-27  Chris Fleizach  <cfleizach@apple.com>
+
+        <https://webkit.org/b/120117> AX: <noscript> contents are exposed as static text
+
+        Reviewed by Tim Horton.
+
+        If <noscript> is not being used (because there is script) then we need to ignore its contents for AX.
+
+        Test: accessibility/noscript-ignored.html
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::addCanvasChildren):
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::canHaveChildren):
+
 2013-08-27  Anders Carlsson  <andersca@apple.com>
 
         Stop using deleteAllValues in CClass

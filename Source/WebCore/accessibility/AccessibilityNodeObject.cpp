@@ -374,6 +374,10 @@ bool AccessibilityNodeObject::canHaveChildren() const
     if (!node() && !isAccessibilityRenderObject())
         return false;
 
+    // When <noscript> is not being used (its renderer() == 0), ignore its children.
+    if (node() && !renderer() && node()->hasTagName(noscriptTag))
+        return false;
+    
     // Elements that should not have children
     switch (roleValue()) {
     case ImageRole:
