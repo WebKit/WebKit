@@ -24,8 +24,8 @@
 
 #include "ArrayAllocationProfile.h"
 #include "JSArray.h"
-#include "JSArrayBufferPrototype.h"
 #include "JSClassRef.h"
+#include "JSArrayBufferPrototype.h"
 #include "JSSegmentedVariableObject.h"
 #include "JSWeakObjectMapRefInternal.h"
 #include "NumberPrototype.h"
@@ -38,7 +38,6 @@
 #include <JavaScriptCore/JSBase.h>
 #include <wtf/HashSet.h>
 #include <wtf/OwnPtr.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/RandomNumber.h>
 
 struct OpaqueJSClass;
@@ -59,8 +58,6 @@ class FunctionExecutable;
 class FunctionPrototype;
 class GetterSetter;
 class GlobalCodeBlock;
-class JSPromisePrototype;
-class JSPromiseResolverPrototype;
 class JSStack;
 class LLIntOffsetsExtractor;
 class NativeErrorConstructor;
@@ -73,14 +70,7 @@ struct ActivationStackNode;
 struct HashTable;
 
 typedef Vector<ExecState*, 16> ExecStateStack;
-
-class TaskContext : public RefCounted<TaskContext> {
-public:
-    virtual ~TaskContext()
-    {
-    }
-};
-
+    
 struct GlobalObjectMethodTable {
     typedef bool (*AllowsAccessFromFunctionPtr)(const JSGlobalObject*, ExecState*);
     AllowsAccessFromFunctionPtr allowsAccessFrom;
@@ -96,10 +86,6 @@ struct GlobalObjectMethodTable {
 
     typedef bool (*JavaScriptExperimentsEnabledFunctionPtr)(const JSGlobalObject*);
     JavaScriptExperimentsEnabledFunctionPtr javaScriptExperimentsEnabled;
-
-    typedef void (*QueueTaskToEventLoopCallbackFunctionPtr)(ExecState*, TaskContext*);
-    typedef void (*QueueTaskToEventLoopFunctionPtr)(const JSGlobalObject*, QueueTaskToEventLoopCallbackFunctionPtr, PassRefPtr<TaskContext>);
-    QueueTaskToEventLoopFunctionPtr queueTaskToEventLoop;
 };
 
 class JSGlobalObject : public JSSegmentedVariableObject {
@@ -148,8 +134,6 @@ protected:
     WriteBarrier<DatePrototype> m_datePrototype;
     WriteBarrier<RegExpPrototype> m_regExpPrototype;
     WriteBarrier<ErrorPrototype> m_errorPrototype;
-    WriteBarrier<JSPromisePrototype> m_promisePrototype;
-    WriteBarrier<JSPromiseResolverPrototype> m_promiseResolverPrototype;
 
     WriteBarrier<Structure> m_withScopeStructure;
     WriteBarrier<Structure> m_strictEvalActivationStructure;
@@ -183,11 +167,7 @@ protected:
     WriteBarrier<Structure> m_regExpStructure;
     WriteBarrier<Structure> m_stringObjectStructure;
     WriteBarrier<Structure> m_internalFunctionStructure;
-    WriteBarrier<Structure> m_promiseStructure;
-    WriteBarrier<Structure> m_promiseResolverStructure;
-    WriteBarrier<Structure> m_promiseCallbackStructure;
-    WriteBarrier<Structure> m_promiseWrapperCallbackStructure;
-
+    
     WriteBarrier<JSArrayBufferPrototype> m_arrayBufferPrototype;
     WriteBarrier<Structure> m_arrayBufferStructure;
     
@@ -332,8 +312,6 @@ public:
     DatePrototype* datePrototype() const { return m_datePrototype.get(); }
     RegExpPrototype* regExpPrototype() const { return m_regExpPrototype.get(); }
     ErrorPrototype* errorPrototype() const { return m_errorPrototype.get(); }
-    JSPromisePrototype* promisePrototype() const { return m_promisePrototype.get(); }
-    JSPromiseResolverPrototype* promiseResolverPrototype() const { return m_promiseResolverPrototype.get(); }
 
     Structure* withScopeStructure() const { return m_withScopeStructure.get(); }
     Structure* strictEvalActivationStructure() const { return m_strictEvalActivationStructure.get(); }
@@ -381,11 +359,7 @@ public:
     Structure* regExpMatchesArrayStructure() const { return m_regExpMatchesArrayStructure.get(); }
     Structure* regExpStructure() const { return m_regExpStructure.get(); }
     Structure* stringObjectStructure() const { return m_stringObjectStructure.get(); }
-    Structure* promiseStructure() const { return m_promiseStructure.get(); }
-    Structure* promiseResolverStructure() const { return m_promiseResolverStructure.get(); }
-    Structure* promiseCallbackStructure() const { return m_promiseCallbackStructure.get(); }
-    Structure* promiseWrapperCallbackStructure() const { return m_promiseWrapperCallbackStructure.get(); }
-
+    
     JSArrayBufferPrototype* arrayBufferPrototype() const { return m_arrayBufferPrototype.get(); }
     Structure* arrayBufferStructure() const { return m_arrayBufferStructure.get(); }
     

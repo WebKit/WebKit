@@ -53,7 +53,6 @@ list(APPEND WebCore_SOURCES
     bindings/js/JSDOMBinding.cpp
     bindings/js/JSDOMFormDataCustom.cpp
     bindings/js/JSDOMGlobalObject.cpp
-    bindings/js/JSDOMGlobalObjectTask.cpp
     bindings/js/JSDOMImplementationCustom.cpp
     bindings/js/JSDOMMimeTypeArrayCustom.cpp
     bindings/js/JSDOMPluginArrayCustom.cpp

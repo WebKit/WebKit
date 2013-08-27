@@ -4482,9 +4482,6 @@
     <ClCompile Include="..\bindings\js\JSDOMGlobalObject.cpp">
       <Filter>bindings\js</Filter>
     </ClCompile>
-    <ClCompile Include="..\bindings\js\JSDOMGlobalObjectTask.cpp">
-      <Filter>bindings\js</Filter>
-    </ClCompile>
     <ClCompile Include="..\bindings\js\JSDOMImplementationCustom.cpp">
       <Filter>bindings\js</Filter>
     </ClCompile>
@@ -11579,9 +11576,6 @@
       <Filter>bindings\js</Filter>
     </ClInclude>
     <ClInclude Include="..\bindings\js\JSDOMGlobalObject.h">
-      <Filter>bindings\js</Filter>
-    </ClInclude>
-    <ClInclude Include="..\bindings\js\JSDOMGlobalObjectTask.h">
       <Filter>bindings\js</Filter>
     </ClInclude>
     <ClInclude Include="..\bindings\js\JSErrorHandler.h">

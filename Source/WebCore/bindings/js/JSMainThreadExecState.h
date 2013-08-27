@@ -74,6 +74,7 @@ public:
         return JSC::evaluate(exec, source, thisValue, exception);
     };
 
+protected:
     explicit JSMainThreadExecState(JSC::ExecState* exec)
         : m_previousState(s_mainThreadState)
     {
