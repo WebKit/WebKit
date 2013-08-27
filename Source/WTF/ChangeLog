@@ -1,3 +1,20 @@
+2013-08-27  Andre Moreira Magalhaes   <andre.magalhaes@collabora.co.uk>
+
+        [gstreamer] Make sure gstreamer source element is thread-safe
+        https://bugs.webkit.org/show_bug.cgi?id=115352
+
+        Reviewed by Philippe Normand.
+
+        Add convenience class that simplifies locking and unlocking a GMutex.
+
+        * GNUmakefile.list.am:
+        * wtf/gobject/GMutexLocker.h: Added.
+        (WebCore::GMutexLocker::GMutexLocker):
+        (WebCore::GMutexLocker::~GMutexLocker):
+        (WebCore::GMutexLocker::lock):
+        (WebCore::GMutexLocker::unlock):
+        (WebCore::GMutexLocker::mutex):
+
 2013-08-26  Andy Estes  <aestes@apple.com>
 
         Don't leak objects in HardAutorelease when OBJC_NO_GC is undefined but
