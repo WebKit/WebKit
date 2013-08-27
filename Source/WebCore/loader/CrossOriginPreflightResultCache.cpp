@@ -108,7 +108,7 @@ bool CrossOriginPreflightResultCacheItem::parse(const ResourceResponse& response
     } else
         expiryDelta = defaultPreflightCacheTimeoutSeconds;
 
-    m_absoluteExpiryTime = currentTime() + expiryDelta;
+    m_absoluteExpiryTime = monotonicallyIncreasingTime() + expiryDelta;
     return true;
 }
 
@@ -136,7 +136,7 @@ bool CrossOriginPreflightResultCacheItem::allowsCrossOriginHeaders(const HTTPHea
 bool CrossOriginPreflightResultCacheItem::allowsRequest(StoredCredentials includeCredentials, const String& method, const HTTPHeaderMap& requestHeaders) const
 {
     String ignoredExplanation;
-    if (m_absoluteExpiryTime < currentTime())
+    if (m_absoluteExpiryTime < monotonicallyIncreasingTime())
         return false;
     if (includeCredentials == AllowStoredCredentials && m_credentials == DoNotAllowStoredCredentials)
         return false;

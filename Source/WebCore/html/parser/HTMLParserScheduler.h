@@ -70,8 +70,8 @@ public:
     void checkForYieldBeforeToken(PumpSession& session)
     {
         if (session.processedTokens > m_parserChunkSize || session.didSeeScript) {
-            // currentTime() can be expensive.  By delaying, we avoided calling
-            // currentTime() when constructing non-yielding PumpSessions.
+            // monotonicallyIncreasingTime() can be expensive. By delaying, we avoided calling
+            // monotonicallyIncreasingTime() when constructing non-yielding PumpSessions.
             if (!session.startTime)
                 session.startTime = monotonicallyIncreasingTime();
 

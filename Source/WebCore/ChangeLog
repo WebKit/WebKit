@@ -1,3 +1,89 @@
+2013-08-27  Arunprasad Rajkumar  <arurajku@cisco.com>
+
+        Replace currentTime() with monotonicallyIncreasingTime() in WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=119958
+
+        Reviewed by Alexey Proskuryakov.
+
+        WTF::currentTime() is prone to NTP and manual adjustments, so use
+        WTF::monotonicallyIncreasingTime() to measure elapsed time.
+
+        It is a continuation of r154201.
+
+        * history/CachedPage.cpp:
+        (WebCore::CachedPage::CachedPage):
+        (WebCore::CachedPage::hasExpired):
+        * html/parser/HTMLParserScheduler.h:
+        (WebCore::HTMLParserScheduler::checkForYieldBeforeToken):
+        * loader/CrossOriginPreflightResultCache.cpp:
+        (WebCore::CrossOriginPreflightResultCacheItem::parse):
+        (WebCore::CrossOriginPreflightResultCacheItem::allowsRequest):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::setState):
+        * loader/ProgressTracker.cpp:
+        (WebCore::ProgressTracker::incrementProgress):
+        * loader/cache/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::restoreParsedStyleSheet):
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::didDraw):
+        * loader/cache/MemoryCache.cpp:
+        (WebCore::MemoryCache::pruneLiveResourcesToSize):
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::iconDatabaseSyncThread):
+        (WebCore::IconDatabase::syncThreadMainLoop):
+        (WebCore::IconDatabase::readFromDatabase):
+        (WebCore::IconDatabase::writeToDatabase):
+        (WebCore::IconDatabase::cleanupSyncThread):
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::freezeAtTime):
+        * page/animation/AnimationController.cpp:
+        (WebCore::AnimationControllerPrivate::beginAnimationUpdateTime):
+        * platform/graphics/GraphicsLayerAnimation.cpp:
+        (WebCore::GraphicsLayerAnimation::computeTotalRunningTime):
+        (WebCore::GraphicsLayerAnimation::resume):
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+        (WebCore::AVFWrapper::createImageForTimeInRect):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createImageForTimeInRect):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createPixelBuffer):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::suspendAnimations):
+        * platform/graphics/ca/PlatformCALayer.h:
+        (WebCore::PlatformCALayer::currentTimeToMediaTime):
+        * platform/graphics/ca/mac/LayerPool.mm:
+        (WebCore::LayerPool::addLayer):
+        (WebCore::LayerPool::decayedCapacity):
+        (WebCore::LayerPool::pruneTimerFired):
+        * platform/graphics/ca/mac/PlatformCALayerMac.mm:
+        (mediaTimeToCurrentTime):
+        * platform/graphics/ca/win/CACFLayerTreeHost.cpp:
+        (WebCore::CACFLayerTreeHost::notifyAnimationsStarted):
+        * platform/graphics/ca/win/PlatformCALayerWin.cpp:
+        (PlatformCALayer::printTree):
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.cpp:
+        (WebCore::GraphicsLayerTextureMapper::addAnimation):
+        * platform/graphics/texmap/TextureMapperFPSCounter.cpp:
+        (WebCore::TextureMapperFPSCounter::TextureMapperFPSCounter):
+        (WebCore::TextureMapperFPSCounter::updateFPSAndDisplay):
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::addAnimation):
+        * platform/network/DNSResolveQueue.cpp:
+        (WebCore::DNSResolveQueue::isUsingProxy):
+        * plugins/win/PluginMessageThrottlerWin.cpp:
+        (WebCore::PluginMessageThrottlerWin::appendMessage):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::didPaintBacking):
+        (WebCore::RenderLayerCompositor::updateCompositingLayers):
+        * rendering/RenderProgress.cpp:
+        (WebCore::RenderProgress::animationProgress):
+        (WebCore::RenderProgress::updateAnimationState):
+        * svg/animation/SMILTimeContainer.cpp:
+        (WebCore::SMILTimeContainer::elapsed):
+        (WebCore::SMILTimeContainer::begin):
+        (WebCore::SMILTimeContainer::pause):
+        (WebCore::SMILTimeContainer::resume):
+        (WebCore::SMILTimeContainer::setElapsed):
+
 2013-08-27  Robert Hogan  <robert@webkit.org>
 
         cell width / offsetTop incorrect

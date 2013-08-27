@@ -1,3 +1,17 @@
+2013-08-27  Arunprasad Rajkumar  <arurajku@cisco.com>
+
+        Replace currentTime() with monotonicallyIncreasingTime() in WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=119958
+
+        Reviewed by Alexey Proskuryakov.
+
+        WTF::currentTime() is prone to NTP and manual adjustments, so use
+        WTF::monotonicallyIncreasingTime() to measure elapsed time.
+
+        It is a continuation of r154201.
+
+        * wtf/CurrentTime.h: Edited comment.
+
 2013-08-27  Andre Moreira Magalhaes   <andre.magalhaes@collabora.co.uk>
 
         [gstreamer] Make sure gstreamer source element is thread-safe

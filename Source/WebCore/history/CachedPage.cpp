@@ -51,7 +51,7 @@ PassRefPtr<CachedPage> CachedPage::create(Page* page)
 }
 
 CachedPage::CachedPage(Page* page)
-    : m_timeStamp(currentTime())
+    : m_timeStamp(monotonicallyIncreasingTime())
     , m_expirationTime(m_timeStamp + page->settings().backForwardCacheExpirationInterval())
     , m_cachedMainFrame(CachedFrame::create(&page->mainFrame()))
     , m_needStyleRecalcForVisitedLinks(false)
@@ -129,7 +129,7 @@ void CachedPage::destroy()
 
 bool CachedPage::hasExpired() const
 {
-    return currentTime() > m_expirationTime;
+    return monotonicallyIncreasingTime() > m_expirationTime;
 }
 
 } // namespace WebCore

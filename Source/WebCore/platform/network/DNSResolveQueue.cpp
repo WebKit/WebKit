@@ -58,7 +58,7 @@ DNSResolveQueue::DNSResolveQueue()
 
 bool DNSResolveQueue::isUsingProxy()
 {
-    double time = currentTime();
+    double time = monotonicallyIncreasingTime();
     static const double minimumProxyCheckDelay = 5;
     if (time - m_lastProxyEnabledStatusCheckTime > minimumProxyCheckDelay) {
         m_lastProxyEnabledStatusCheckTime = time;

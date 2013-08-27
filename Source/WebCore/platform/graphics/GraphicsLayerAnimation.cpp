@@ -323,7 +323,7 @@ double GraphicsLayerAnimation::computeTotalRunningTime()
         return m_pauseTime;
 
     double oldLastRefreshedTime = m_lastRefreshedTime;
-    m_lastRefreshedTime = WTF::currentTime();
+    m_lastRefreshedTime = monotonicallyIncreasingTime();
     m_totalRunningTime += m_lastRefreshedTime - oldLastRefreshedTime;
     return m_totalRunningTime;
 }
@@ -338,7 +338,7 @@ void GraphicsLayerAnimation::resume()
 {
     setState(PlayingState);
     m_totalRunningTime = m_pauseTime;
-    m_lastRefreshedTime = WTF::currentTime();
+    m_lastRefreshedTime = monotonicallyIncreasingTime();
 }
 
 void GraphicsLayerAnimations::add(const GraphicsLayerAnimation& animation)

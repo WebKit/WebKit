@@ -365,7 +365,7 @@ bool AnimationControllerPrivate::pauseTransitionAtTime(RenderObject* renderer, c
 double AnimationControllerPrivate::beginAnimationUpdateTime()
 {
     if (m_beginAnimationUpdateTime == cBeginAnimationUpdateTimeNotSet)
-        m_beginAnimationUpdateTime = currentTime();
+        m_beginAnimationUpdateTime = monotonicallyIncreasingTime();
     return m_beginAnimationUpdateTime;
 }
 

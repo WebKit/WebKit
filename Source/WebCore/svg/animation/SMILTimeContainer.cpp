@@ -110,7 +110,7 @@ SMILTime SMILTimeContainer::elapsed() const
 {
     if (!m_beginTime)
         return 0;
-    return currentTime() - m_beginTime - m_accumulatedPauseTime;
+    return monotonicallyIncreasingTime() - m_beginTime - m_accumulatedPauseTime;
 }
 
 bool SMILTimeContainer::isActive() const
@@ -131,7 +131,7 @@ bool SMILTimeContainer::isStarted() const
 void SMILTimeContainer::begin()
 {
     ASSERT(!m_beginTime);
-    double now = currentTime();
+    double now = monotonicallyIncreasingTime();
 
     // If 'm_presetStartTime' is set, the timeline was modified via setElapsed() before the document began.
     // In this case pass on 'seekToTime=true' to updateAnimations().
@@ -148,7 +148,7 @@ void SMILTimeContainer::begin()
 void SMILTimeContainer::pause()
 {
     ASSERT(!isPaused());
-    m_pauseTime = currentTime();
+    m_pauseTime = monotonicallyIncreasingTime();
 
     if (m_beginTime)
         m_timer.stop();
@@ -159,7 +159,7 @@ void SMILTimeContainer::resume()
     ASSERT(isPaused());
 
     if (m_beginTime)
-        m_accumulatedPauseTime += currentTime() - m_pauseTime;
+        m_accumulatedPauseTime += monotonicallyIncreasingTime() - m_pauseTime;
 
     m_pauseTime = 0;
     startTimer(0);
@@ -176,7 +176,7 @@ void SMILTimeContainer::setElapsed(SMILTime time)
     if (m_beginTime)
         m_timer.stop();
 
-    double now = currentTime();
+    double now = monotonicallyIncreasingTime();
     m_beginTime = now - time.value();
 
     m_accumulatedPauseTime = 0;

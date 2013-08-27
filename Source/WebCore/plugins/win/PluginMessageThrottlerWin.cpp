@@ -86,7 +86,7 @@ void PluginMessageThrottlerWin::appendMessage(HWND hWnd, UINT msg, WPARAM wParam
 
     // If it has been more than MessageDirectProcessingInterval between throttled messages,
     // go ahead and process a message directly.
-    double currentTime = WTF::currentTime();
+    double currentTime = monotonicallyIncreasingTime();
     if (currentTime - m_lastMessageTime > MessageDirectProcessingInterval) {
         processQueuedMessage();
         m_lastMessageTime = currentTime;

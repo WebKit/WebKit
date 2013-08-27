@@ -52,7 +52,7 @@ inline double currentTimeMS()
 // Provides a monotonically increasing time in seconds since an arbitrary point in the past.
 // On unsupported platforms, this function only guarantees the result will be non-decreasing.
 // Result of this function increases monotonically even when clock time goes back due to
-// DST changes or NTP adjustments, so it better suits for elapsed time measurement.
+// NTP or manual adjustments, so it is better suited for elapsed time measurement.
 WTF_EXPORT_PRIVATE double monotonicallyIncreasingTime();
 
 inline double monotonicallyIncreasingTimeMS()

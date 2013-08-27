@@ -243,7 +243,7 @@ void MemoryCache::pruneLiveResourcesToSize(unsigned targetSize)
 
     double currentTime = FrameView::currentPaintTimeStamp();
     if (!currentTime) // In case prune is called directly, outside of a Frame paint.
-        currentTime = WTF::currentTime();
+        currentTime = monotonicallyIncreasingTime();
     
     // Destroy any decoded data in live objects that we can.
     // Start from the tail, since this is the least recently accessed of the objects.

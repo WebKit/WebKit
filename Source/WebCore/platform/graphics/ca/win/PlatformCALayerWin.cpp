@@ -771,7 +771,7 @@ void PlatformCALayer::printTree() const
     // Print heading info
     CGRect rootBounds = bounds();
     fprintf(stderr, "\n\n** Render tree at time %g (bounds %g, %g %gx%g) **\n\n", 
-        currentTime(), rootBounds.origin.x, rootBounds.origin.y, rootBounds.size.width, rootBounds.size.height);
+        monotonicallyIncreasingTime(), rootBounds.origin.x, rootBounds.origin.y, rootBounds.size.width, rootBounds.size.height);
 
     // Print layer tree from the root
     printLayer(this, 0);

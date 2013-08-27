@@ -415,7 +415,7 @@ void RenderLayerCompositor::didFlushChangesForLayer(RenderLayer* layer, const Gr
 void RenderLayerCompositor::didPaintBacking(RenderLayerBacking*)
 {
     FrameView& frameView = m_renderView.frameView();
-    frameView.setLastPaintTime(currentTime());
+    frameView.setLastPaintTime(monotonicallyIncreasingTime());
     if (frameView.milestonesPendingPaint() && !m_paintRelatedMilestonesTimer.isActive())
         m_paintRelatedMilestonesTimer.startOneShot(0);
 }
@@ -546,7 +546,7 @@ void RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
     double startTime = 0;
     if (compositingLogEnabled()) {
         ++m_rootLayerUpdateCount;
-        startTime = currentTime();
+        startTime = monotonicallyIncreasingTime();
     }
 #endif
 
@@ -598,7 +598,7 @@ void RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
     
 #if !LOG_DISABLED
     if (compositingLogEnabled() && isFullUpdate && (needHierarchyUpdate || needGeometryUpdate)) {
-        double endTime = currentTime();
+        double endTime = monotonicallyIncreasingTime();
         LOG(Compositing, "Total layers   primary   secondary   obligatory backing (KB)   secondary backing(KB)   total backing (KB)  update time (ms)\n");
 
         LOG(Compositing, "%8d %11d %9d %20.2f %22.2f %22.2f %18.2f\n",

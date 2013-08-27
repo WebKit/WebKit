@@ -2531,7 +2531,7 @@ bool GraphicsLayerCA::setFilterAnimationKeyframes(const KeyframeValueList& value
 
 void GraphicsLayerCA::suspendAnimations(double time)
 {
-    double t = PlatformCALayer::currentTimeToMediaTime(time ? time : currentTime());
+    double t = PlatformCALayer::currentTimeToMediaTime(time ? time : monotonicallyIncreasingTime());
     primaryLayer()->setSpeed(0);
     primaryLayer()->setTimeOffset(t);
 

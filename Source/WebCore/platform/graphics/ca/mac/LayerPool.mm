@@ -75,7 +75,7 @@ void LayerPool::addLayer(const RetainPtr<WebTileLayer>& layer)
     listOfLayersWithSize(layerSize).prepend(layer);
     m_totalBytes += backingStoreBytesForSize(layerSize);
     
-    m_lastAddTime = currentTime();
+    m_lastAddTime = monotonicallyIncreasingTime();
     schedulePrune();
 }
 
@@ -93,7 +93,7 @@ RetainPtr<WebTileLayer> LayerPool::takeLayerWithSize(const IntSize& size)
 unsigned LayerPool::decayedCapacity() const
 {
     // Decay to one quarter over capacityDecayTime
-    double timeSinceLastAdd = currentTime() - m_lastAddTime;
+    double timeSinceLastAdd = monotonicallyIncreasingTime() - m_lastAddTime;
     if (timeSinceLastAdd > capacityDecayTime)
         return m_maxBytesForPool / 4;
     float decayProgess = float(timeSinceLastAdd / capacityDecayTime);
@@ -125,7 +125,7 @@ void LayerPool::pruneTimerFired(Timer<LayerPool>*)
         // still have a backing store.
         oldestReuseList.remove(--oldestReuseList.end());
     }
-    if (currentTime() - m_lastAddTime <= capacityDecayTime)
+    if (monotonicallyIncreasingTime() - m_lastAddTime <= capacityDecayTime)
         schedulePrune();
 }
 

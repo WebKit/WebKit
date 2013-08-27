@@ -650,7 +650,7 @@ void AnimationBase::freezeAtTime(double t)
         // If we haven't started yet, make it as if we started.
         LOG(Animations, "%p AnimationState %s -> StartWaitResponse", this, nameForState(m_animState));
         m_animState = AnimationStateStartWaitResponse;
-        onAnimationStartResponse(currentTime());
+        onAnimationStartResponse(monotonicallyIncreasingTime());
     }
 
     ASSERT(m_startTime);        // if m_startTime is zero, we haven't started yet, so we'll get a bad pause time.

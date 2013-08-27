@@ -61,7 +61,7 @@ static NSString * const WKNonZeroBeginTimeFlag = @"WKPlatformCAAnimationNonZeroB
 
 static double mediaTimeToCurrentTime(CFTimeInterval t)
 {
-    return WTF::currentTime() + t - CACurrentMediaTime();
+    return monotonicallyIncreasingTime() + t - CACurrentMediaTime();
 }
 
 // Delegate for animationDidStart callback

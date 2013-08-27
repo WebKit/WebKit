@@ -468,7 +468,7 @@ void CachedImage::didDraw(const Image* image)
     
     double timeStamp = FrameView::currentPaintTimeStamp();
     if (!timeStamp) // If didDraw is called outside of a Frame paint.
-        timeStamp = currentTime();
+        timeStamp = monotonicallyIncreasingTime();
     
     CachedResource::didAccessDecodedData(timeStamp);
 }

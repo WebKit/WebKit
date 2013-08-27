@@ -241,7 +241,7 @@ void ProgressTracker::incrementProgress(unsigned long identifier, const char*, i
     
     m_totalBytesReceived += bytesReceived;
     
-    double now = currentTime();
+    double now = monotonicallyIncreasingTime();
     double notifiedProgressTimeDelta = now - m_lastNotifiedProgressTime;
     
     LOG(Progress, "Progress incremented (%p) - value %f, tracked frames %d", this, m_progressValue, m_numProgressTrackedFrames);

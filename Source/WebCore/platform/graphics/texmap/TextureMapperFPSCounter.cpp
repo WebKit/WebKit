@@ -42,7 +42,7 @@ TextureMapperFPSCounter::TextureMapperFPSCounter()
     m_fpsInterval = showFPSEnvironment.toDouble(&ok);
     if (ok && m_fpsInterval) {
         m_isShowingFPS = true;
-        m_fpsTimestamp = WTF::currentTime();
+        m_fpsTimestamp = monotonicallyIncreasingTime();
     }
 }
 
@@ -52,7 +52,7 @@ void TextureMapperFPSCounter::updateFPSAndDisplay(TextureMapper* textureMapper, 
         return;
 
     m_frameCount++;
-    double delta = WTF::currentTime() - m_fpsTimestamp;
+    double delta = monotonicallyIncreasingTime() - m_fpsTimestamp;
     if (delta >= m_fpsInterval) {
         m_lastFPS = int(m_frameCount / delta);
         m_frameCount = 0;

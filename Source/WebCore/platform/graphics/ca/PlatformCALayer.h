@@ -51,7 +51,7 @@ typedef Vector<RefPtr<PlatformCALayer> > PlatformCALayerList;
 
 class PlatformCALayer : public RefCounted<PlatformCALayer> {
 public:
-    static CFTimeInterval currentTimeToMediaTime(double t) { return CACurrentMediaTime() + t - WTF::currentTime(); }
+    static CFTimeInterval currentTimeToMediaTime(double t) { return CACurrentMediaTime() + t - monotonicallyIncreasingTime(); }
 
     // LayerTypeRootLayer is used on some platforms. It has no backing store, so setNeedsDisplay
     // should not call CACFLayerSetNeedsDisplay, but rather just notify the renderer that it

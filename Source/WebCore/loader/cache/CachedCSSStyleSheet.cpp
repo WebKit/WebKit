@@ -173,7 +173,7 @@ PassRefPtr<StyleSheetContents> CachedCSSStyleSheet::restoreParsedStyleSheet(cons
     if (m_parsedStyleSheetCache->parserContext() != context)
         return 0;
 
-    didAccessDecodedData(currentTime());
+    didAccessDecodedData(monotonicallyIncreasingTime());
 
     return m_parsedStyleSheetCache;
 }

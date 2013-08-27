@@ -67,7 +67,7 @@ bool RenderProgress::canBeReplacedWithInlineRunIn() const
 
 double RenderProgress::animationProgress() const
 {
-    return m_animating ? (fmod((currentTime() - m_animationStartTime), m_animationDuration) / m_animationDuration) : 0;
+    return m_animating ? (fmod((monotonicallyIncreasingTime() - m_animationStartTime), m_animationDuration) / m_animationDuration) : 0;
 }
 
 bool RenderProgress::isDeterminate() const
@@ -94,7 +94,7 @@ void RenderProgress::updateAnimationState()
 
     m_animating = animating;
     if (m_animating) {
-        m_animationStartTime = currentTime();
+        m_animationStartTime = monotonicallyIncreasingTime();
         m_animationTimer.startOneShot(m_animationRepeatInterval);
     } else
         m_animationTimer.stop();
