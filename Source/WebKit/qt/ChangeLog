@@ -1,3 +1,17 @@
+2013-08-27  Arunprasad Rajkumar  <arurajku@cisco.com>
+
+        [Qt] Let Page create the main Frame.
+        https://bugs.webkit.org/show_bug.cgi?id=120349
+
+        Adjust to latest changes in WebCore::Page to create the main frame.
+
+        Reviewed by Simon Hausmann.
+
+        * WebCoreSupport/QWebFrameAdapter.cpp:
+        (QWebFrameData::QWebFrameData):
+        * WebCoreSupport/QWebPageAdapter.cpp:
+        (QWebPageAdapter::initializeWebCorePage):
+
 2013-08-26  Arunprasad Rajkumar  <arurajku@cisco.com>
 
         [Qt] Remove the fix in QWebPage::javaScriptConsoleMessage introduced by (r61433)

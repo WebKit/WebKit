@@ -228,6 +228,7 @@ void QWebPageAdapter::initializeWebCorePage()
     pageClients.editorClient = new EditorClientQt(this);
     pageClients.dragClient = new DragClientQt(pageClients.chromeClient);
     pageClients.inspectorClient = new InspectorClientQt(this);
+    pageClients.loaderClientForMainFrame = new FrameLoaderClientQt();
     page = new Page(pageClients);
 
 #if ENABLE(GEOLOCATION)

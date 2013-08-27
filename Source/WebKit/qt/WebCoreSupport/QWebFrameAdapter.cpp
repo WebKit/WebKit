@@ -90,8 +90,14 @@ QWebFrameData::QWebFrameData(WebCore::Page* parentPage, WebCore::Frame* parentFr
     , marginWidth(0)
     , marginHeight(0)
 {
-    frameLoaderClient = new FrameLoaderClientQt();
-    frame = Frame::create(page, ownerElement, frameLoaderClient);
+    // mainframe is already created in WebCore::Page, just use it.
+    if (!parentFrame || !ownerElement) {
+        frame = &parentPage->mainFrame();
+        frameLoaderClient = static_cast<FrameLoaderClientQt*>(&frame->loader().client());
+    } else {
+        frameLoaderClient = new FrameLoaderClientQt();
+        frame = Frame::create(page, ownerElement, frameLoaderClient);
+    }
 
     // FIXME: All of the below should probably be moved over into WebCore
     frame->tree().setName(name);
