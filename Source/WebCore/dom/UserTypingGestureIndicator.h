@@ -40,7 +40,7 @@ public:
     static bool processingUserTypingGesture();
     static Node* focusedElementAtGestureStart();
 
-    explicit UserTypingGestureIndicator(Frame*);
+    explicit UserTypingGestureIndicator(Frame&);
     ~UserTypingGestureIndicator();
 
 private:

@@ -3302,7 +3302,7 @@ bool EventHandler::keyEvent(const PlatformKeyboardEvent& initialKeyEvent)
         return false;
 
     UserGestureIndicator gestureIndicator(DefinitelyProcessingUserGesture);
-    UserTypingGestureIndicator typingGestureIndicator(m_frame);
+    UserTypingGestureIndicator typingGestureIndicator(*m_frame);
 
     if (FrameView* view = m_frame->view())
         view->resetDeferredRepaintDelay();

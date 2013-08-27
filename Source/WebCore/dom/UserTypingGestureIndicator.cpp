@@ -50,12 +50,12 @@ Node* UserTypingGestureIndicator::focusedElementAtGestureStart()
     return focusedNode().get();
 }
 
-UserTypingGestureIndicator::UserTypingGestureIndicator(Frame* frame)
+UserTypingGestureIndicator::UserTypingGestureIndicator(Frame& frame)
     : m_previousProcessingUserTypingGesture(s_processingUserTypingGesture)
     , m_previousFocusedNode(focusedNode())
 {
     s_processingUserTypingGesture = true;
-    focusedNode() = frame->document() ? frame->document()->focusedElement() : 0;
+    focusedNode() = frame.document() ? frame.document()->focusedElement() : 0;
 }
 
 UserTypingGestureIndicator::~UserTypingGestureIndicator()
