@@ -1121,6 +1121,9 @@ void SVGElement::updateRelativeLengthsInformation(bool hasRelativeLengths, SVGEl
         m_elementsWithRelativeLengths.remove(element);
     }
 
+    if (!element->isSVGGraphicsElement())
+        return;
+
     // Find first styled parent node, and notify it that we've changed our relative length state.
     ContainerNode* node = parentNode();
     while (node) {

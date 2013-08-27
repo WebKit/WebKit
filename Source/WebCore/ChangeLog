@@ -1,3 +1,18 @@
+2013-08-27  Rob Buis  <rwlbuis@webkit.org>
+
+        feImage fails if referenced node contains radialGradient declaration
+        https://bugs.webkit.org/show_bug.cgi?id=118735
+
+        Reviewed by Darin Adler.
+
+        Only call parent's updateRelativeLengthsInformation for graphics elements.
+
+        Tests: svg/custom/feImage-pserver-with-percentage-expected.svg
+               svg/custom/feImage-pserver-with-percentage.svg
+
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::updateRelativeLengthsInformation):
+
 2013-08-27  Darin Adler  <darin@apple.com>
 
         No need for generalPasteboard (aside from "global selection mode")

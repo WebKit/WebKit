@@ -1,3 +1,15 @@
+2013-08-27  Rob Buis  <rwlbuis@webkit.org>
+
+        feImage fails if referenced node contains radialGradient declaration
+        https://bugs.webkit.org/show_bug.cgi?id=118735
+
+        Reviewed by Darin Adler.
+
+        Add testcase from bug with small adjustments.
+
+        * svg/custom/feImage-pserver-with-percentage-expected.svg: Added.
+        * svg/custom/feImage-pserver-with-percentage.svg: Added.
+
 2013-08-27  Chris Fleizach  <cfleizach@apple.com>
 
         <https://webkit.org/b/120117> AX: <noscript> contents are exposed as static text
