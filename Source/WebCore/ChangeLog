@@ -1,3 +1,18 @@
+2013-08-27  Benjamin Poulain  <benjamin@webkit.org>
+
+        Remove DOMSettableTokenList's overload of add() and remove()
+        https://bugs.webkit.org/show_bug.cgi?id=120341
+
+        Reviewed by Ryosuke Niwa.
+
+        Little refactoring to make other cleanups easier. Instead of modifying
+        SpaceSplitString directly, rely on DOMTokenList ultimately changing
+        the value, which in turn updates the tokens.
+
+        * html/DOMSettableTokenList.cpp:
+        * html/DOMSettableTokenList.h:
+        * html/DOMTokenList.h:
+
 2013-08-27  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [GTK] Volume slider shows incorrect track when muted

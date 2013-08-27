@@ -49,9 +49,6 @@ public:
     virtual unsigned length() const OVERRIDE { return m_tokens.size(); }
     virtual const AtomicString item(unsigned index) const OVERRIDE;
 
-    virtual void add(const Vector<String>&, ExceptionCode&) OVERRIDE;
-    virtual void remove(const Vector<String>&, ExceptionCode&) OVERRIDE;
-
     virtual AtomicString value() const OVERRIDE { return m_value; }
     virtual void setValue(const AtomicString&) OVERRIDE;
 
@@ -61,9 +58,7 @@ protected:
     DOMSettableTokenList();
 
 private:
-    virtual void addInternal(const AtomicString&) OVERRIDE;
     virtual bool containsInternal(const AtomicString&) const OVERRIDE;
-    virtual void removeInternal(const AtomicString&) OVERRIDE;
 
     AtomicString m_value;
     SpaceSplitString m_tokens;

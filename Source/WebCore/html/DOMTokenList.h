@@ -47,9 +47,9 @@ public:
     virtual const AtomicString item(unsigned index) const = 0;
 
     bool contains(const AtomicString&, ExceptionCode&) const;
-    virtual void add(const Vector<String>&, ExceptionCode&);
+    void add(const Vector<String>&, ExceptionCode&);
     void add(const AtomicString&, ExceptionCode&);
-    virtual void remove(const Vector<String>&, ExceptionCode&);
+    void remove(const Vector<String>&, ExceptionCode&);
     void remove(const AtomicString&, ExceptionCode&);
     bool toggle(const AtomicString&, ExceptionCode&);
     bool toggle(const AtomicString&, bool force, ExceptionCode&);
@@ -62,9 +62,9 @@ protected:
     virtual AtomicString value() const = 0;
     virtual void setValue(const AtomicString&) = 0;
 
-    virtual void addInternal(const AtomicString&);
+    void addInternal(const AtomicString&);
     virtual bool containsInternal(const AtomicString&) const = 0;
-    virtual void removeInternal(const AtomicString&);
+    void removeInternal(const AtomicString&);
 
     static bool validateToken(const AtomicString&, ExceptionCode&);
     static bool validateTokens(const Vector<String>&, ExceptionCode&);

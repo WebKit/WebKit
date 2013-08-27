@@ -49,40 +49,6 @@ bool DOMSettableTokenList::containsInternal(const AtomicString& token) const
     return m_tokens.contains(token);
 }
 
-void DOMSettableTokenList::add(const Vector<String>& tokens, ExceptionCode& ec)
-{
-    DOMTokenList::add(tokens, ec);
-
-    for (size_t i = 0; i < tokens.size(); ++i) {
-        if (m_tokens.isNull())
-            m_tokens.set(tokens[i], false);
-        else
-            m_tokens.add(tokens[i]);
-    }
-}
-
-void DOMSettableTokenList::addInternal(const AtomicString& token)
-{
-    DOMTokenList::addInternal(token);
-    if (m_tokens.isNull())
-        m_tokens.set(token, false);
-    else
-        m_tokens.add(token);
-}
-
-void DOMSettableTokenList::remove(const Vector<String>& tokens, ExceptionCode& ec)
-{
-    DOMTokenList::remove(tokens, ec);
-    for (size_t i = 0; i < tokens.size(); ++i)
-        m_tokens.remove(tokens[i]);
-}
-
-void DOMSettableTokenList::removeInternal(const AtomicString& token)
-{
-    DOMTokenList::removeInternal(token);
-    m_tokens.remove(token);
-}
-
 void DOMSettableTokenList::setValue(const AtomicString& value)
 {
     m_value = value;
