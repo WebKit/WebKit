@@ -296,6 +296,12 @@ void WebPageCompositorPrivate::findFixedElementRect(LayerCompositingThread* laye
         findFixedElementRect(sublayers[i].get(), fixedElementRect);
 }
 
+void WebPageCompositorPrivate::discardFrontVisibility()
+{
+    if (m_layerRenderer)
+        m_layerRenderer->discardFrontVisibility();
+}
+
 WebPageCompositor::WebPageCompositor(WebPage* page, WebPageCompositorClient* client)
 {
     using namespace BlackBerry::Platform;

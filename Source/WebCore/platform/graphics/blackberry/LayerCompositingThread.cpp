@@ -567,6 +567,12 @@ void LayerCompositingThread::clearOverride()
     m_override.clear();
 }
 
+void LayerCompositingThread::discardFrontVisibility()
+{
+    if (m_client)
+        m_client->discardFrontVisibility();
+}
+
 }
 
 #endif // USE(ACCELERATED_COMPOSITING)

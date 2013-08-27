@@ -348,6 +348,12 @@ void LayerTiler::commitPendingTextureUploads(LayerCompositingThread*)
     m_pendingTextureJobs.clear();
 }
 
+void LayerTiler::discardFrontVisibility()
+{
+    delete m_frontVisibility;
+    m_frontVisibility = 0;
+}
+
 LayerVisibility* LayerTiler::swapFrontVisibility(LayerVisibility* visibility)
 {
     return reinterpret_cast<LayerVisibility*>(_smp_xchg(reinterpret_cast<unsigned*>(&m_frontVisibility), reinterpret_cast<unsigned>(visibility)));
@@ -406,7 +412,7 @@ void LayerTiler::processTextureJob(const TextureJob& job, TileJobsMap& tileJobsM
     if (job.m_type == TextureJob::ResizeContents) {
         IntSize pendingTextureSize = job.m_dirtyRect.size();
         if (pendingTextureSize.width() < m_requiredTextureSize.width() || pendingTextureSize.height() < m_requiredTextureSize.height())
-            pruneTextures();
+            pruneTextures(pendingTextureSize);
 
         m_requiredTextureSize = pendingTextureSize;
         return;
@@ -633,7 +639,7 @@ void LayerTiler::deleteTextures(LayerCompositingThread*)
     m_requiredTextureSize = IntSize();
 }
 
-void LayerTiler::pruneTextures()
+void LayerTiler::pruneTextures(const IntSize& pendingTextureSize)
 {
     // Prune tiles that are no longer needed.
     Vector<TileIndex> tilesToDelete;
@@ -641,7 +647,7 @@ void LayerTiler::pruneTextures()
         TileIndex index = (*it).key;
 
         IntPoint origin = originOfTile(index);
-        if (origin.x() >= m_requiredTextureSize.width() || origin.y() >= m_requiredTextureSize.height())
+        if (origin.x() >= pendingTextureSize.width() || origin.y() >= pendingTextureSize.height())
             tilesToDelete.append(index);
     }
 
@@ -672,6 +678,12 @@ void LayerTiler::setNeedsBacking(bool needsBacking)
 
     m_needsBacking = needsBacking;
     updateTileSize();
+}
+
+void LayerTiler::discardBackVisibility()
+{
+    delete m_backVisibility;
+    m_backVisibility = 0;
 }
 
 void LayerTiler::scheduleCommit()

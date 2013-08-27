@@ -1,3 +1,23 @@
+2013-08-27  Jacky Jiang  <zhajiang@blackberry.com>
+
+        [BlackBerry] Rotate device from landscape to portrait during youtube streaming will cause device screen flash with video list page
+        https://bugs.webkit.org/show_bug.cgi?id=120364
+
+        Reviewed by Rob Buis.
+        Internally reviewed by Arvid Nilsson.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::setViewportSize):
+        (BlackBerry::WebKit::WebPagePrivate::discardLayerVisibilities):
+        (BlackBerry::WebKit::WebPagePrivate::discardFrontVisibilityCompositingThread):
+        * Api/WebPageCompositor.cpp:
+        (BlackBerry::WebKit::WebPageCompositorPrivate::discardFrontVisibility):
+        * Api/WebPageCompositor_p.h:
+        * Api/WebPage_p.h:
+        * WebKitSupport/FrameLayers.cpp:
+        (BlackBerry::WebKit::FrameLayers::discardBackVisibility):
+        * WebKitSupport/FrameLayers.h:
+
 2013-08-26  Pratik Solanki  <psolanki@apple.com>
 
         PageGroup::groupSettings() should return a reference

@@ -61,6 +61,7 @@ public:
     void setNeedsDisplay();
     void updateTextureContentsIfNeeded(double scale);
     void setNeedsBacking(bool);
+    void discardBackVisibility();
     virtual void scheduleCommit();
 
     // Compositing thread
@@ -72,6 +73,7 @@ public:
     virtual void deleteTextures(LayerCompositingThread*);
     static void willCommit();
     virtual void commitPendingTextureUploads(LayerCompositingThread*);
+    virtual void discardFrontVisibility();
 
 private:
     struct TextureJob {
@@ -144,7 +146,7 @@ private:
     void addTileJob(const TileIndex&, const TextureJob&, TileJobsMap&);
     void performTileJob(LayerCompositingThread*, LayerTile*, const TextureJob&);
     void processTextureJob(const TextureJob&, TileJobsMap&);
-    void pruneTextures();
+    void pruneTextures(const IntSize& pendingTextureSize);
     void visibilityChanged(bool needsDisplay);
     bool drawTile(LayerCompositingThread*, LayerTile*, const TileIndex&, double scale, const FloatRect& dst, const FloatRect& dstClip);
     void setFrontVisibility(const FloatRect& visibleRect, HashSet<TileIndex>& tilesNeedingRender);

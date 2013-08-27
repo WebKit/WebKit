@@ -54,6 +54,8 @@ public:
 
     // Unlike the other methods here, this one will be called on the WebKit thread
     virtual void scheduleCommit() { }
+
+    virtual void discardFrontVisibility() { }
 };
 
 } // namespace WebCore

@@ -529,6 +529,26 @@ void LayerWebKitThread::releaseLayerResources()
         replicaLayer()->releaseLayerResources();
 }
 
+void LayerWebKitThread::discardBackVisibility()
+{
+    if (m_tiler)
+        m_tiler->discardBackVisibility();
+
+    size_t listSize = m_sublayers.size();
+    for (size_t i = 0; i < listSize; ++i)
+        m_sublayers[i]->discardBackVisibility();
+
+    listSize = m_overlays.size();
+    for (size_t i = 0; i < listSize; ++i)
+        m_overlays[i]->discardBackVisibility();
+
+    if (maskLayer())
+        maskLayer()->discardBackVisibility();
+
+    if (replicaLayer())
+        replicaLayer()->discardBackVisibility();
+}
+
 IntRect LayerWebKitThread::mapFromTransformed(const IntRect& contentsRect, double scale)
 {
     IntRect untransformedContentsRect = contentsRect;

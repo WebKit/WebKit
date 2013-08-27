@@ -1,3 +1,49 @@
+2013-08-27  Jacky Jiang  <zhajiang@blackberry.com>
+
+        [BlackBerry] Rotate device from landscape to portrait during youtube streaming will cause device screen flash with video list page
+        https://bugs.webkit.org/show_bug.cgi?id=120364
+
+        Reviewed by Rob Buis.
+        Internally reviewed by Arvid Nilsson.
+
+        JIRA 461232
+        When rotating device from landscape mode to portrait mode, we updated
+        texture contents based on landscape mode front visibility and back
+        visibility on WebKit thread at the very beginning and the landscape mode
+        tiles wouldn't be able to cover the portrait mode screen which resulted
+        in the screen flash.
+        It's hard to compute front visibility information on WebKit thread because
+        it doesn't know where the layers will be on the screen. Therefore, the
+        front visibility won't be updated until the first time we draw textures
+        on compositing thread.
+        The patch traverses through LayerWebKitThread and LayerCompositingThread
+        and discards back visibility and front visibility respectively if there
+        is a pending orientation. In this way, we can pick up layerTilerPrefillRect
+        as visibleRect instead of the visibleRect from the stale visibilities
+        and add more tiles for uncovered screen when updating texture contents
+        on WebKit thread.
+        The patch also fixes a bug that we prune tiles based on the stale
+        m_requiredTextureSize in pruneTextures(). We should prune tiles based
+        on the updated pendingTextureSize instead.
+
+        * platform/graphics/blackberry/LayerCompositingThread.cpp:
+        (WebCore::LayerCompositingThread::discardFrontVisibility):
+        * platform/graphics/blackberry/LayerCompositingThread.h:
+        * platform/graphics/blackberry/LayerCompositingThreadClient.h:
+        (WebCore::LayerCompositingThreadClient::discardFrontVisibility):
+        * platform/graphics/blackberry/LayerRenderer.cpp:
+        (WebCore::LayerRenderer::discardFrontVisibility):
+        * platform/graphics/blackberry/LayerRenderer.h:
+        * platform/graphics/blackberry/LayerTiler.cpp:
+        (WebCore::LayerTiler::discardFrontVisibility):
+        (WebCore::LayerTiler::processTextureJob):
+        (WebCore::LayerTiler::pruneTextures):
+        (WebCore::LayerTiler::discardBackVisibility):
+        * platform/graphics/blackberry/LayerTiler.h:
+        * platform/graphics/blackberry/LayerWebKitThread.cpp:
+        (WebCore::LayerWebKitThread::discardBackVisibility):
+        * platform/graphics/blackberry/LayerWebKitThread.h:
+
 2013-08-27  Antti Koivisto  <antti@apple.com>
 
         Better mutation and event assertions for descendant iterators

@@ -60,6 +60,8 @@ public:
 
     void releaseLayerResources();
 
+    void discardBackVisibility();
+
 private:
     WebPagePrivate* m_pagePrivate;
     OwnPtr<WebCore::GraphicsLayer> m_rootGraphicsLayer;

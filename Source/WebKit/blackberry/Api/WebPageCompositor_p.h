@@ -102,6 +102,8 @@ public:
 
     void findFixedElementRect(WebCore::LayerCompositingThread*, WebCore::IntRect&);
 
+    void discardFrontVisibility();
+
 protected:
     WebPageCompositorPrivate(WebPagePrivate*, WebPageCompositorClient*);
 

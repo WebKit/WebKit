@@ -593,6 +593,15 @@ void LayerRenderer::drawDebugBorder(const Vector<FloatPoint>& transformedBounds,
     glDrawArrays(GL_LINE_LOOP, 0, transformedBounds.size());
 }
 
+void LayerRenderer::discardFrontVisibility()
+{
+    if (m_hardwareCompositing) {
+        makeContextCurrent();
+        for (LayerSet::iterator iter = m_layers.begin(); iter != m_layers.end(); ++iter)
+            (*iter)->discardFrontVisibility();
+    }
+}
+
 // Draws a debug border around the layer's bounds.
 void LayerRenderer::drawDebugBorder(LayerCompositingThread* layer)
 {

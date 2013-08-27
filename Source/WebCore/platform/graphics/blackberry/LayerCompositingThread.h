@@ -230,6 +230,8 @@ public:
     LayerOverride* override();
     void clearOverride();
 
+    void discardFrontVisibility();
+
 #if ENABLE(CSS_FILTERS)
     bool filterOperationsChanged() const { return m_filterOperationsChanged; }
     void setFilterOperationsChanged(bool changed) { m_filterOperationsChanged = changed; }

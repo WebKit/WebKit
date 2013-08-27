@@ -136,6 +136,8 @@ public:
 
     void drawDebugBorder(const Vector<FloatPoint>&, const Color&, float borderWidth);
 
+    void discardFrontVisibility();
+
     static GLuint loadShader(GLenum type, const char* shaderSource);
     static GLuint loadShaderProgram(const char* vertexShaderSource, const char* fragmentShaderSource);
 

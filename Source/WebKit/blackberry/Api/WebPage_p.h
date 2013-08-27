@@ -394,6 +394,7 @@ public:
     void setRootLayerWebKitThread(WebCore::Frame*, WebCore::LayerWebKitThread*);
     void setNeedsOneShotDrawingSynchronization();
     void scheduleRootLayerCommit();
+    void discardLayerVisibilities();
 
     // Compositing thread.
     void setRootLayerCompositingThread(WebCore::LayerCompositingThread*);
@@ -411,6 +412,7 @@ public:
     void updateRootLayerCommitEnabled();
 
     void scheduleCompositingRun();
+    void discardFrontVisibilityCompositingThread();
 #endif
 
     bool dispatchTouchEventToFullScreenPlugin(WebCore::PluginView*, const Platform::TouchEvent&);

@@ -130,6 +130,12 @@ void FrameLayers::releaseLayerResources()
         m_rootLayer->releaseLayerResources();
 }
 
+void FrameLayers::discardBackVisibility()
+{
+    if (m_rootLayer)
+        m_rootLayer->discardBackVisibility();
+}
+
 } // namespace BlackBerry
 } // namespace WebKit
 

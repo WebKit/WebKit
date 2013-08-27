@@ -213,6 +213,8 @@ public:
 
     void releaseLayerResources();
 
+    void discardBackVisibility();
+
     static IntRect mapFromTransformed(const IntRect&, double scale);
 
 protected:
