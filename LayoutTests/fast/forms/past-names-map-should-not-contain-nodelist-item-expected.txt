@@ -1,0 +1,15 @@
+This test ensures that none of elements in a node list returned by the named getter of a form element are added to the past names map of the element.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS form['foo'].length is 2
+PASS form['foo'][0] is form.firstChild
+PASS form['foo'][1] is form.lastChild
+PASS form.lastChild.name = 'bar'; form['bar'] is form.lastChild
+PASS form.firstChild.name = 'bar'; form['bar'].length is 2
+PASS form['foo'] is undefined.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

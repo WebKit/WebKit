@@ -1,3 +1,15 @@
+2013-08-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Elements in a node list of the form element's name getter should not be added to the past names map
+        https://bugs.webkit.org/show_bug.cgi?id=120279
+
+        Reviewed by Darin Adler.
+
+        Add a regression test.
+
+        * fast/forms/past-names-map-should-not-contain-nodelist-item-expected.txt: Added.
+        * fast/forms/past-names-map-should-not-contain-nodelist-item.html: Added.
+
 2013-08-26  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac] can-read-in-dragstart-event.html and can-read-in-copy-and-cut-events.html fail

@@ -639,7 +639,7 @@ void HTMLFormElement::getNamedElements(const AtomicString& name, Vector<RefPtr<N
 
     // FIXME: The specification says we should not add the element from the past when names map when namedItems is not empty.
     HTMLFormControlElement* elementFromPast = elementFromPastNamesMap(name);
-    if (namedItems.size() && namedItems.first() != elementFromPast)
+    if (namedItems.size() == 1 && namedItems.first() != elementFromPast)
         addElementToPastNamesMap(static_cast<HTMLFormControlElement*>(namedItems.first().get()), name);
     else if (elementFromPast && namedItems.find(elementFromPast) == notFound)
         namedItems.append(elementFromPast);
