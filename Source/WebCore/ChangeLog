@@ -1,3 +1,13 @@
+2013-08-26  Sam Weinig  <sam@webkit.org>
+
+        Remove two unnecessary .get()s.
+
+        Reviewed by Anders Carlsson.
+
+        * editing/Editor.h:
+        (WebCore::Editor::killRing):
+        (WebCore::Editor::spellChecker):
+
 2013-08-26  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: We should regenerate InspectorBackendCommands.js for Legacy Inspector.json versions
