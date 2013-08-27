@@ -1,5 +1,21 @@
 2013-08-27  Andreas Kling  <akling@apple.com>
 
+        RenderView::availableLogicalHeight() should be self-contained.
+        <https://webkit.org/b/120356>
+
+        Reviewed by Antti Koivisto.
+
+        Instead of checking isRenderView() in RenderBox::availableLogicalHeightUsing()
+        and doing an early return, do everything needed without leaving RenderView instead.
+        Document style never has min-/max-height so there's no need to apply constraints.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::availableLogicalHeightUsing):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::availableLogicalHeight):
+
+2013-08-27  Andreas Kling  <akling@apple.com>
+
         Simplify some more Settings access where we have a Frame in reach.
         <https://webkit.org/b/120256>
 
