@@ -1,3 +1,22 @@
+2013-08-27  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Debugger should have Continue to Here Context Menu
+        https://bugs.webkit.org/show_bug.cgi?id=120189
+
+        Reviewed by Timothy Hatcher.
+
+        When paused in the debugger and presenting a Context Menu in the
+        gutter, include a "Continue to Here" option. This requires a
+        script/line/column location combination.
+
+        * UserInterface/DebuggerManager.js:
+        (WebInspector.DebuggerManager.prototype.continueToLocation):
+        * UserInterface/Resource.js:
+        (WebInspector.Resource.prototype.scriptForLocation):
+        * UserInterface/SourceCodeTextEditor.js:
+        (WebInspector.SourceCodeTextEditor.prototype.continueToLocation):
+        (WebInspector.SourceCodeTextEditor.prototype.textEditorGutterContextMenu):
+
 2013-08-26  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: We should regenerate InspectorBackendCommands.js for Legacy Inspector.json versions

@@ -417,6 +417,29 @@ WebInspector.Resource.prototype = {
         return this._scripts || [];
     },
 
+    scriptForLocation: function(sourceCodeLocation)
+    {
+        console.assert(!(this instanceof WebInspector.SourceMapResource));
+        console.assert(sourceCodeLocation.sourceCode === this, "SourceCodeLocation must be in this Resource");
+        if (sourceCodeLocation.sourceCode !== this)
+            return null;
+
+        var lineNumber = sourceCodeLocation.lineNumber;
+        var columnNumber = sourceCodeLocation.columnNumber;
+        for (var i = 0; i < this._scripts.length; ++i) {
+            var script = this._scripts[i];
+            if (script.range.startLine <= lineNumber && script.range.endLine >= lineNumber) {
+                if (script.range.startLine === lineNumber && columnNumber < script.range.startColumn)
+                    continue;
+                if (script.range.endLine === lineNumber && columnNumber > script.range.endColumn)
+                    continue;
+                return script;
+            }
+        }
+
+        return null;
+    },
+
     updateForRedirectResponse: function(url, requestHeaders, timestamp)
     {
         console.assert(!this._finished);

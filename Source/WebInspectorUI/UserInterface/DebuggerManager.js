@@ -210,6 +210,11 @@ WebInspector.DebuggerManager.prototype = {
         return this._scriptURLMap[url] || [];
     },
 
+    continueToLocation: function(scriptIdentifier, lineNumber, columnNumber)
+    {
+        DebuggerAgent.continueToLocation({scriptId: scriptIdentifier, lineNumber: lineNumber, columnNumber: columnNumber});
+    },
+
     addBreakpoint: function(breakpoint, skipEventDispatch)
     {
         console.assert(breakpoint);
