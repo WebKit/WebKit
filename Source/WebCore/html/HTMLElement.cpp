@@ -228,6 +228,7 @@ AtomicString HTMLElement::eventNameForAttributeName(const QualifiedName& attrNam
         attributeNameToEventNameMap.set(onmouseoverAttr.localName(), eventNames().mouseoverEvent);
         attributeNameToEventNameMap.set(onmouseupAttr.localName(), eventNames().mouseupEvent);
         attributeNameToEventNameMap.set(onmousewheelAttr.localName(), eventNames().mousewheelEvent);
+        attributeNameToEventNameMap.set(onwheelAttr.localName(), eventNames().wheelEvent);
         attributeNameToEventNameMap.set(onfocusAttr.localName(), eventNames().focusEvent);
         attributeNameToEventNameMap.set(onfocusinAttr.localName(), eventNames().focusinEvent);
         attributeNameToEventNameMap.set(onfocusoutAttr.localName(), eventNames().focusoutEvent);

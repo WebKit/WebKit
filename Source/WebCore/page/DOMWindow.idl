@@ -259,6 +259,7 @@
     attribute EventListener onunload;
     attribute EventListener onvolumechange;
     attribute EventListener onwaiting;
+    attribute EventListener onwheel;
 
     // Not implemented yet.
     // attribute EventListener onafterprint;

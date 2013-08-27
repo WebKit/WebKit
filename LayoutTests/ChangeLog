@@ -1,3 +1,20 @@
+2013-08-27  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Implement DOM3 wheel event
+        https://bugs.webkit.org/show_bug.cgi?id=94081
+
+        Reviewed by Darin Adler.
+
+        Add several layout tests to check support for DOM3 wheel event.
+
+        * fast/events/wheelevent-basic-expected.txt: Added.
+        * fast/events/wheelevent-basic.html: Added.
+        * fast/events/wheelevent-constructor-expected.txt: Added.
+        * fast/events/wheelevent-constructor.html: Added.
+        * fast/events/wheelevent-mousewheel-interaction-expected.txt: Added.
+        * fast/events/wheelevent-mousewheel-interaction.html: Added.
+        * platform/efl/fast/events/wheelevent-basic-expected.txt: Added.
+
 2013-08-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         Elements in a node list of the form element's name getter should not be added to the past names map

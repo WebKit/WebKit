@@ -1,3 +1,72 @@
+2013-08-27  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Implement DOM3 wheel event
+        https://bugs.webkit.org/show_bug.cgi?id=94081
+
+        Reviewed by Darin Adler.
+
+        Add support for DOM Level 3 WheelEvent:
+        http://www.w3.org/TR/DOM-Level-3-Events/#events-WheelEvent
+
+        Firefox, IE10 and since recently Blink already support it so
+        it increases our cross-browser compatibility.
+
+        The non-standard 'mousewheel' event is still supported for backward
+        compatibility. Note that the deltas returned by the mousewheel and
+        the wheel events are not identical:
+        - They have opposite signs.
+        - The wheel event reports the actual amount of pixels that should be
+        scrolled while the legacy mousewheel event reports a factor of the
+        number of mouse wheel ticks (using a constant multiplier).
+
+        Tests: fast/events/wheelevent-basic.html
+               fast/events/wheelevent-constructor.html
+               fast/events/wheelevent-mousewheel-interaction.html
+
+        * dom/Document.h:
+        * dom/Document.idl:
+        * dom/Element.h:
+        * dom/Element.idl:
+        * dom/EventNames.h:
+        * dom/EventTarget.cpp:
+        (WebCore::legacyType):
+        (WebCore::EventTarget::shouldObserveLegacyType):
+        (WebCore::EventTarget::setupLegacyTypeObserverIfNeeded):
+        (WebCore::EventTarget::fireEventListeners):
+        * dom/EventTarget.h:
+        * dom/Node.cpp:
+        (WebCore::Node::didMoveToNewDocument):
+        (WebCore::tryAddEventListener):
+        (WebCore::tryRemoveEventListener):
+        (WebCore::Node::defaultEventHandler):
+        * dom/WheelEvent.cpp:
+        (WebCore::WheelEventInit::WheelEventInit):
+        (WebCore::WheelEvent::WheelEvent):
+        (WebCore::WheelEvent::initWheelEvent):
+        * dom/WheelEvent.h:
+        (WebCore::WheelEvent::deltaX):
+        (WebCore::WheelEvent::deltaY):
+        (WebCore::WheelEvent::deltaZ):
+        (WebCore::WheelEvent::wheelDelta):
+        (WebCore::WheelEvent::wheelDeltaX):
+        (WebCore::WheelEvent::wheelDeltaY):
+        * dom/WheelEvent.idl:
+        * html/HTMLAttributeNames.in:
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::eventNameForAttributeName):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::addEventListener):
+        (WebCore::DOMWindow::removeEventListener):
+        * page/DOMWindow.h:
+        * page/DOMWindow.idl:
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::defaultWheelEventHandler):
+        * plugins/blackberry/PluginViewBlackBerry.cpp:
+        (WebCore::PluginView::handleWheelEvent):
+        * svg/SVGElementInstance.cpp:
+        * svg/SVGElementInstance.h:
+        * svg/SVGElementInstance.idl:
+
 2013-08-27  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         Assertion while scrolling news.google.com

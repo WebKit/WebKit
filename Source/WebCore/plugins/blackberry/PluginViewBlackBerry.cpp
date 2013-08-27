@@ -328,8 +328,8 @@ void PluginView::handleWheelEvent(WheelEvent* event)
 
     wheelEvent.flags = 0;
 
-    wheelEvent.xDelta = event->rawDeltaX();
-    wheelEvent.yDelta = event->rawDeltaY();
+    wheelEvent.xDelta = -event->deltaX();
+    wheelEvent.yDelta = -event->deltaY();
 
     npEvent.type = NP_WheelEvent;
     npEvent.data = &wheelEvent;

@@ -69,6 +69,7 @@
     [NotEnumerable] attribute EventListener onmouseover;
     [NotEnumerable] attribute EventListener onmouseup;
     [NotEnumerable] attribute EventListener onmousewheel;
+    [NotEnumerable] attribute EventListener onwheel;
     [NotEnumerable] attribute EventListener onbeforecut;
     [NotEnumerable] attribute EventListener oncut;
     [NotEnumerable] attribute EventListener onbeforecopy;
