@@ -40,13 +40,15 @@ public:
     ChildIterator();
     ChildIterator(ElementType* current);
     ChildIterator& operator++();
-    ElementType& operator*() { return *m_current; }
-    ElementType* operator->() { return m_current; }
+    ElementType& operator*();
+    ElementType* operator->();
     bool operator!=(const ChildIterator& other) const;
 
 private:
     ElementType* m_current;
+
 #ifndef NDEBUG
+    bool domTreeHasMutated() const;
     OwnPtr<NoEventDispatchAssertion> m_noEventDispatchAssertion;
     uint64_t m_initialDOMTreeVersion;
 #endif
@@ -87,18 +89,48 @@ inline ChildIterator<ElementType>::ChildIterator(ElementType* current)
 {
 }
 
+#ifndef NDEBUG
+template <typename ElementType>
+inline bool ChildIterator<ElementType>::domTreeHasMutated() const
+{
+    return m_initialDOMTreeVersion && m_current && m_current->document()->domTreeVersion() != m_initialDOMTreeVersion;
+}
+#endif
+
 template <typename ElementType>
 inline ChildIterator<ElementType>& ChildIterator<ElementType>::operator++()
 {
     ASSERT(m_current);
-    ASSERT(m_current->document()->domTreeVersion() == m_initialDOMTreeVersion);
+    ASSERT(!domTreeHasMutated());
     m_current = Traversal<ElementType>::nextSibling(m_current);
+#ifndef NDEBUG
+    // Drop the assertion when the iterator reaches the end.
+    if (!m_current)
+        m_noEventDispatchAssertion = nullptr;
+#endif
     return *this;
+}
+
+template <typename ElementType>
+inline ElementType& ChildIterator<ElementType>::operator*()
+{
+    ASSERT(m_current);
+    ASSERT(!domTreeHasMutated());
+    return *m_current;
+}
+
+template <typename ElementType>
+inline ElementType* ChildIterator<ElementType>::operator->()
+{
+    ASSERT(m_current);
+    ASSERT(!domTreeHasMutated());
+    return m_current;
 }
 
 template <typename ElementType>
 inline bool ChildIterator<ElementType>::operator!=(const ChildIterator& other) const
 {
+    ASSERT(!domTreeHasMutated());
     return m_current != other.m_current;
 }
 

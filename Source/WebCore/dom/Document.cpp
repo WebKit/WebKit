@@ -776,8 +776,12 @@ bool Document::hasManifest() const
 void Document::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
 {
     ContainerNode::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
-    
-    Element* newDocumentElement = &*elementChildren(this).begin();
+
+    Element* newDocumentElement = 0;
+    auto firstElementChild = elementChildren(this).begin();
+    if (firstElementChild != elementChildren(this).end())
+        newDocumentElement = &*firstElementChild;
+
     if (newDocumentElement == m_documentElement)
         return;
     m_documentElement = newDocumentElement;

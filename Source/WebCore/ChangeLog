@@ -1,3 +1,27 @@
+2013-08-27  Antti Koivisto  <antti@apple.com>
+
+        Better mutation and event assertions for descendant iterators
+        https://bugs.webkit.org/show_bug.cgi?id=120368
+
+        Reviewed by Andreas Kling.
+
+        Add mutation assertions to all functions.
+        Drop the no-event-dispatch assertion when the iterator reaches the end. This reduces need for iterator scoping
+        just to avoid assertions.
+
+        * dom/ChildIterator.h:
+        (WebCore::::domTreeHasMutated):
+        (WebCore::::operator):
+        (WebCore::=):
+        * dom/DescendantIterator.h:
+        (WebCore::::domTreeHasMutated):
+        (WebCore::::operator):
+        (WebCore::=):
+        * dom/Document.cpp:
+        (WebCore::Document::childrenChanged):
+        
+            Make idiomatic.
+
 2013-08-27  Renata Hodovan  <reni@webkit.org>
 
         Missing null-check of parent renderer in WebCore::HTMLEmbedElement::rendererIsNeeded()

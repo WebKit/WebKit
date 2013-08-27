@@ -40,14 +40,16 @@ public:
     DescendantIterator(const Node* root);
     DescendantIterator(const Node* root, ElementType* current);
     DescendantIterator& operator++();
-    ElementType& operator*() { return *m_current; }
-    ElementType* operator->() { return m_current; }
+    ElementType& operator*();
+    ElementType* operator->();
     bool operator!=(const DescendantIterator& other) const;
 
 private:
     const Node* m_root;
     ElementType* m_current;
+
 #ifndef NDEBUG
+    bool domTreeHasMutated() const;
     OwnPtr<NoEventDispatchAssertion> m_noEventDispatchAssertion;
     uint64_t m_initialDOMTreeVersion;
 #endif
@@ -85,24 +87,54 @@ inline DescendantIterator<ElementType>::DescendantIterator(const Node* root, Ele
     , m_current(current)
 #ifndef NDEBUG
     , m_noEventDispatchAssertion(adoptPtr(new NoEventDispatchAssertion))
-    , m_initialDOMTreeVersion(m_current ? m_current->document()->domTreeVersion() : 0)
+    , m_initialDOMTreeVersion(root->document()->domTreeVersion())
 #endif
 {
 }
+
+#ifndef NDEBUG
+template <typename ElementType>
+inline bool DescendantIterator<ElementType>::domTreeHasMutated() const
+{
+    return m_root->document()->domTreeVersion() != m_initialDOMTreeVersion;
+}
+#endif
 
 template <typename ElementType>
 inline DescendantIterator<ElementType>& DescendantIterator<ElementType>::operator++()
 {
     ASSERT(m_current);
-    ASSERT(m_current->document()->domTreeVersion() == m_initialDOMTreeVersion);
+    ASSERT(!domTreeHasMutated());
     m_current = Traversal<ElementType>::next(m_current, m_root);
+#ifndef NDEBUG
+    // Drop the assertion when the iterator reaches the end.
+    if (!m_current)
+        m_noEventDispatchAssertion = nullptr;
+#endif
     return *this;
+}
+
+template <typename ElementType>
+inline ElementType& DescendantIterator<ElementType>::operator*()
+{
+    ASSERT(m_current);
+    ASSERT(!domTreeHasMutated());
+    return *m_current;
+}
+
+template <typename ElementType>
+inline ElementType* DescendantIterator<ElementType>::operator->()
+{
+    ASSERT(m_current);
+    ASSERT(!domTreeHasMutated());
+    return m_current;
 }
 
 template <typename ElementType>
 inline bool DescendantIterator<ElementType>::operator!=(const DescendantIterator& other) const
 {
     ASSERT(m_root == other.m_root);
+    ASSERT(!domTreeHasMutated());
     return m_current != other.m_current;
 }
 
