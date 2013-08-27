@@ -52,7 +52,7 @@ static const double autoscrollInterval = 0.05;
 static Frame* getMainFrame(Frame* frame)
 {
     Page* page = frame->page();
-    return page ? page->mainFrame() : 0;
+    return page ? &page->mainFrame() : 0;
 }
 #endif
 
