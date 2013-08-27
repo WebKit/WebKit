@@ -30,6 +30,7 @@
 #include "FilterEffect.h"
 #include "FloatPoint.h"
 #include "FloatRect.h"
+#include "Frame.h"
 #include "GraphicsContext.h"
 #include "Image.h"
 #include "ImageBuffer.h"

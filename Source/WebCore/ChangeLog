@@ -1,5 +1,11 @@
 2013-08-27  Andreas Kling  <akling@apple.com>
 
+        Fix Qt build.
+
+        * rendering/svg/RenderSVGResourceFilter.cpp:
+
+2013-08-27  Andreas Kling  <akling@apple.com>
+
         RenderView::availableLogicalHeight() should be self-contained.
         <https://webkit.org/b/120356>
 
