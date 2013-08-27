@@ -1,3 +1,25 @@
+2013-08-27  Ádám Kallai  <kadam@inf.u-szeged.hu>
+
+        [Qt] Delete unnecessary empty directory.
+        Unreviewed gardening.
+
+        * platform/qt-5.0-wk2/tables: Removed.
+        * platform/qt-5.0-wk2/tables/layering: Removed.
+        * platform/qt-5.0-wk2/tables/mozilla: Removed.
+        * platform/qt-5.0-wk2/tables/mozilla/bugs: Removed.
+        * platform/qt-5.0-wk2/tables/mozilla/collapsing_borders: Removed.
+        * platform/qt-5.0-wk2/tables/mozilla/core: Removed.
+        * platform/qt-5.0-wk2/tables/mozilla/dom: Removed.
+        * platform/qt-5.0-wk2/tables/mozilla/marvin: Removed.
+        * platform/qt-5.0-wk2/tables/mozilla/other: Removed.
+        * platform/qt-5.0-wk2/tables/mozilla_expected_failures: Removed.
+        * platform/qt-5.0-wk2/tables/mozilla_expected_failures/bugs: Removed.
+        * platform/qt-5.0-wk2/tables/mozilla_expected_failures/collapsing_borders: Removed.
+        * platform/qt-5.0-wk2/tables/mozilla_expected_failures/core: Removed.
+        * platform/qt-5.0-wk2/tables/mozilla_expected_failures/dom: Removed.
+        * platform/qt-5.0-wk2/tables/mozilla_expected_failures/marvin: Removed.
+        * platform/qt-5.0-wk2/tables/mozilla_expected_failures/other: Removed.
+
 2013-08-27  Krzysztof Czech  <k.czech@samsung.com>
 
         [EFL] Added new accessibility expectations after r154332
