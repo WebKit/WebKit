@@ -208,9 +208,13 @@ class WinPort(ApplePort):
         for key in self.previous_debugger_values:
             self.write_registry_string(key, self.previous_debugger_values[key])
 
+    def delete_sem_locks(self):
+        os.system("rm -rf /dev/shm/sem.*")
+
     def setup_test_run(self):
         atexit.register(self.restore_crash_log_saving)
         self.setup_crash_log_saving()
+        self.delete_sem_locks()
         super(WinPort, self).setup_test_run()
 
     def clean_up_test_run(self):
