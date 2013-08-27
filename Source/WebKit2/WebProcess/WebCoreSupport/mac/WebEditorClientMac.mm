@@ -133,14 +133,14 @@ void WebEditorClient::setInsertionPasteboard(const String&)
 
 static void changeWordCase(WebPage* page, SEL selector)
 {
-    Frame* frame = page->corePage()->focusController().focusedOrMainFrame();
-    if (!frame->editor().canEdit())
+    Frame& frame = page->corePage()->focusController().focusedOrMainFrame();
+    if (!frame.editor().canEdit())
         return;
 
-    frame->editor().command("selectWord").execute();
+    frame.editor().command("selectWord").execute();
 
-    NSString *selectedString = frame->displayStringModifiedByEncoding(frame->editor().selectedText());
-    page->replaceSelectionWithText(frame, [selectedString performSelector:selector]);
+    NSString *selectedString = frame.displayStringModifiedByEncoding(frame.editor().selectedText());
+    page->replaceSelectionWithText(&frame, [selectedString performSelector:selector]);
 }
 
 #if USE(APPKIT)

@@ -587,8 +587,7 @@ PassRefPtr<Plugin> WebPage::createPlugin(WebFrame* frame, HTMLPlugInElement* plu
 
 EditorState WebPage::editorState() const
 {
-    Frame* frame = m_page->focusController().focusedOrMainFrame();
-    ASSERT(frame);
+    Frame& frame = m_page->focusController().focusedOrMainFrame();
 
     EditorState result;
 
@@ -601,20 +600,20 @@ EditorState WebPage::editorState() const
         }
     }
 
-    result.selectionIsNone = frame->selection().isNone();
-    result.selectionIsRange = frame->selection().isRange();
-    result.isContentEditable = frame->selection().isContentEditable();
-    result.isContentRichlyEditable = frame->selection().isContentRichlyEditable();
-    result.isInPasswordField = frame->selection().isInPasswordField();
-    result.hasComposition = frame->editor().hasComposition();
-    result.shouldIgnoreCompositionSelectionChange = frame->editor().ignoreCompositionSelectionChange();
+    result.selectionIsNone = frame.selection().isNone();
+    result.selectionIsRange = frame.selection().isRange();
+    result.isContentEditable = frame.selection().isContentEditable();
+    result.isContentRichlyEditable = frame.selection().isContentRichlyEditable();
+    result.isInPasswordField = frame.selection().isInPasswordField();
+    result.hasComposition = frame.editor().hasComposition();
+    result.shouldIgnoreCompositionSelectionChange = frame.editor().ignoreCompositionSelectionChange();
 
 #if PLATFORM(QT)
     size_t location = 0;
     size_t length = 0;
 
-    Element* selectionRoot = frame->selection().rootEditableElementRespectingShadowTree();
-    Element* scope = selectionRoot ? selectionRoot : frame->document()->documentElement();
+    Element* selectionRoot = frame.selection().rootEditableElementRespectingShadowTree();
+    Element* scope = selectionRoot ? selectionRoot : frame.document()->documentElement();
 
     if (!scope)
         return result;
@@ -643,18 +642,18 @@ EditorState WebPage::editorState() const
     }
 
     if (selectionRoot)
-        result.editorRect = frame->view()->contentsToWindow(selectionRoot->pixelSnappedBoundingBox());
+        result.editorRect = frame.view()->contentsToWindow(selectionRoot->pixelSnappedBoundingBox());
 
     RefPtr<Range> range;
-    if (result.hasComposition && (range = frame->editor().compositionRange())) {
-        frame->editor().getCompositionSelection(result.anchorPosition, result.cursorPosition);
+    if (result.hasComposition && (range = frame.editor().compositionRange())) {
+        frame.editor().getCompositionSelection(result.anchorPosition, result.cursorPosition);
 
-        result.compositionRect = frame->view()->contentsToWindow(range->boundingBox());
+        result.compositionRect = frame.view()->contentsToWindow(range->boundingBox());
     }
 
-    if (!result.hasComposition && !result.selectionIsNone && (range = frame->selection().selection().firstRange())) {
+    if (!result.hasComposition && !result.selectionIsNone && (range = frame.selection().selection().firstRange())) {
         TextIterator::getLocationAndLengthFromRange(scope, range.get(), location, length);
-        bool baseIsFirst = frame->selection().selection().isBaseFirst();
+        bool baseIsFirst = frame.selection().selection().isBaseFirst();
 
         result.cursorPosition = (baseIsFirst) ? location + length : location;
         result.anchorPosition = (baseIsFirst) ? location : location + length;
@@ -662,7 +661,7 @@ EditorState WebPage::editorState() const
     }
 
     if (range)
-        result.cursorRect = frame->view()->contentsToWindow(frame->editor().firstRectForRange(range.get()));
+        result.cursorRect = frame.view()->contentsToWindow(frame.editor().firstRectForRange(range.get()));
 
     // FIXME: We should only transfer innerText when it changes and do this on the UI side.
     if (result.isContentEditable && !result.isInPasswordField) {
@@ -675,7 +674,7 @@ EditorState WebPage::editorState() const
 #endif
 
 #if PLATFORM(GTK)
-    result.cursorRect = frame->selection().absoluteCaretBounds();
+    result.cursorRect = frame.selection().absoluteCaretBounds();
 #endif
 
     return result;
@@ -738,12 +737,12 @@ PassRefPtr<ImmutableArray> WebPage::trackedRepaintRects()
     return ImmutableArray::adopt(vector);
 }
 
-PluginView* WebPage::focusedPluginViewForFrame(Frame* frame)
+PluginView* WebPage::focusedPluginViewForFrame(Frame& frame)
 {
-    if (!frame->document()->isPluginDocument())
+    if (!frame.document()->isPluginDocument())
         return 0;
 
-    PluginDocument* pluginDocument = static_cast<PluginDocument*>(frame->document());
+    PluginDocument* pluginDocument = static_cast<PluginDocument*>(frame.document());
 
     if (pluginDocument->focusedElement() != pluginDocument->pluginElement())
         return 0;
@@ -764,28 +763,24 @@ PluginView* WebPage::pluginViewForFrame(Frame* frame)
 
 void WebPage::executeEditingCommand(const String& commandName, const String& argument)
 {
-    Frame* frame = m_page->focusController().focusedOrMainFrame();
-    if (!frame)
-        return;
+    Frame& frame = m_page->focusController().focusedOrMainFrame();
 
     if (PluginView* pluginView = focusedPluginViewForFrame(frame)) {
         pluginView->handleEditingCommand(commandName, argument);
         return;
     }
     
-    frame->editor().command(commandName).execute(argument);
+    frame.editor().command(commandName).execute(argument);
 }
 
 bool WebPage::isEditingCommandEnabled(const String& commandName)
 {
-    Frame* frame = m_page->focusController().focusedOrMainFrame();
-    if (!frame)
-        return false;
+    Frame& frame = m_page->focusController().focusedOrMainFrame();
 
     if (PluginView* pluginView = focusedPluginViewForFrame(frame))
         return pluginView->isEditingCommandEnabled(commandName);
     
-    Editor::Command command = frame->editor().command(commandName);
+    Editor::Command command = frame.editor().command(commandName);
     return command.isSupported() && command.isEnabled();
 }
     
@@ -1766,8 +1761,8 @@ static bool handleKeyEvent(const WebKeyboardEvent& keyboardEvent, Page* page)
         return false;
 
     if (keyboardEvent.type() == WebEvent::Char && keyboardEvent.isSystemKey())
-        return page->focusController().focusedOrMainFrame()->eventHandler().handleAccessKey(platform(keyboardEvent));
-    return page->focusController().focusedOrMainFrame()->eventHandler().keyEvent(platform(keyboardEvent));
+        return page->focusController().focusedOrMainFrame().eventHandler().handleAccessKey(platform(keyboardEvent));
+    return page->focusController().focusedOrMainFrame().eventHandler().keyEvent(platform(keyboardEvent));
 }
 
 void WebPage::keyEvent(const WebKeyboardEvent& keyboardEvent)
@@ -1848,15 +1843,13 @@ void WebPage::validateCommand(const String& commandName, uint64_t callbackID)
 {
     bool isEnabled = false;
     int32_t state = 0;
-    Frame* frame = m_page->focusController().focusedOrMainFrame();
-    if (frame) {
-        if (PluginView* pluginView = focusedPluginViewForFrame(frame))
-            isEnabled = pluginView->isEditingCommandEnabled(commandName);
-        else {
-            Editor::Command command = frame->editor().command(commandName);
-            state = command.state();
-            isEnabled = command.isSupported() && command.isEnabled();
-        }
+    Frame& frame = m_page->focusController().focusedOrMainFrame();
+    if (PluginView* pluginView = focusedPluginViewForFrame(frame))
+        isEnabled = pluginView->isEditingCommandEnabled(commandName);
+    else {
+        Editor::Command command = frame.editor().command(commandName);
+        state = command.state();
+        isEnabled = command.isSupported() && command.isEnabled();
     }
 
     send(Messages::WebPageProxy::ValidateCommandCallback(commandName, isEnabled, state, callbackID));
@@ -1973,12 +1966,12 @@ void WebPage::touchEventSyncForTesting(const WebTouchEvent& touchEvent, bool& ha
 
 bool WebPage::scroll(Page* page, ScrollDirection direction, ScrollGranularity granularity)
 {
-    return page->focusController().focusedOrMainFrame()->eventHandler().scrollRecursively(direction, granularity);
+    return page->focusController().focusedOrMainFrame().eventHandler().scrollRecursively(direction, granularity);
 }
 
 bool WebPage::logicalScroll(Page* page, ScrollLogicalDirection direction, ScrollGranularity granularity)
 {
-    return page->focusController().focusedOrMainFrame()->eventHandler().logicalScrollRecursively(direction, granularity);
+    return page->focusController().focusedOrMainFrame().eventHandler().logicalScrollRecursively(direction, granularity);
 }
 
 bool WebPage::scrollBy(uint32_t scrollDirection, uint32_t scrollGranularity)
@@ -1988,11 +1981,8 @@ bool WebPage::scrollBy(uint32_t scrollDirection, uint32_t scrollGranularity)
 
 void WebPage::centerSelectionInVisibleArea()
 {
-    Frame* frame = m_page->focusController().focusedOrMainFrame();
-    if (!frame)
-        return;
-    
-    frame->selection().revealSelection(ScrollAlignment::alignCenterAlways);
+    Frame& frame = m_page->focusController().focusedOrMainFrame();
+    frame.selection().revealSelection(ScrollAlignment::alignCenterAlways);
     m_findController.showFindIndicatorInSelection();
 }
 
@@ -2046,10 +2036,9 @@ void WebPage::viewWillStartLiveResize()
         return;
 
     // FIXME: This should propagate to all ScrollableAreas.
-    if (Frame* frame = m_page->focusController().focusedOrMainFrame()) {
-        if (FrameView* view = frame->view())
-            view->willStartLiveResize();
-    }
+    Frame& frame = m_page->focusController().focusedOrMainFrame();
+    if (FrameView* view = frame.view())
+        view->willStartLiveResize();
 }
 
 void WebPage::viewWillEndLiveResize()
@@ -2058,10 +2047,9 @@ void WebPage::viewWillEndLiveResize()
         return;
 
     // FIXME: This should propagate to all ScrollableAreas.
-    if (Frame* frame = m_page->focusController().focusedOrMainFrame()) {
-        if (FrameView* view = frame->view())
-            view->willEndLiveResize();
-    }
+    Frame& frame = m_page->focusController().focusedOrMainFrame();
+    if (FrameView* view = frame.view())
+        view->willEndLiveResize();
 }
 
 void WebPage::setFocused(bool isFocused)
@@ -2074,13 +2062,13 @@ void WebPage::setInitialFocus(bool forward, bool isKeyboardEventValid, const Web
     if (!m_page)
         return;
 
-    Frame* frame = m_page->focusController().focusedOrMainFrame();
-    frame->document()->setFocusedElement(0);
+    Frame& frame = m_page->focusController().focusedOrMainFrame();
+    frame.document()->setFocusedElement(0);
 
     if (isKeyboardEventValid && event.type() == WebEvent::KeyDown) {
         PlatformKeyboardEvent platformEvent(platform(event));
         platformEvent.disambiguateKeyDownEvent(PlatformEvent::RawKeyDown);
-        m_page->focusController().setInitialFocus(forward ? FocusDirectionForward : FocusDirectionBackward, KeyboardEvent::create(platformEvent, frame->document()->defaultView()).get());
+        m_page->focusController().setInitialFocus(forward ? FocusDirectionForward : FocusDirectionBackward, KeyboardEvent::create(platformEvent, frame.document()->defaultView()).get());
         return;
     }
 
@@ -2934,13 +2922,13 @@ void WebPage::didReceiveNotificationPermissionDecision(uint64_t notificationID, 
 
 void WebPage::advanceToNextMisspelling(bool startBeforeSelection)
 {
-    Frame* frame = m_page->focusController().focusedOrMainFrame();
-    frame->editor().advanceToNextMisspelling(startBeforeSelection);
+    Frame& frame = m_page->focusController().focusedOrMainFrame();
+    frame.editor().advanceToNextMisspelling(startBeforeSelection);
 }
 
 void WebPage::changeSpellingToWord(const String& word)
 {
-    replaceSelectionWithText(m_page->focusController().focusedOrMainFrame(), word);
+    replaceSelectionWithText(&m_page->focusController().focusedOrMainFrame(), word);
 }
 
 void WebPage::unmarkAllMisspellings()
@@ -2962,17 +2950,17 @@ void WebPage::unmarkAllBadGrammar()
 #if USE(APPKIT)
 void WebPage::uppercaseWord()
 {
-    m_page->focusController().focusedOrMainFrame()->editor().uppercaseWord();
+    m_page->focusController().focusedOrMainFrame().editor().uppercaseWord();
 }
 
 void WebPage::lowercaseWord()
 {
-    m_page->focusController().focusedOrMainFrame()->editor().lowercaseWord();
+    m_page->focusController().focusedOrMainFrame().editor().lowercaseWord();
 }
 
 void WebPage::capitalizeWord()
 {
-    m_page->focusController().focusedOrMainFrame()->editor().capitalizeWord();
+    m_page->focusController().focusedOrMainFrame().editor().capitalizeWord();
 }
 #endif
     
@@ -3014,7 +3002,7 @@ void WebPage::replaceSelectionWithText(Frame* frame, const String& text)
 
 void WebPage::clearSelection()
 {
-    m_page->focusController().focusedOrMainFrame()->selection().clear();
+    m_page->focusController().focusedOrMainFrame().selection().clear();
 }
 
 void WebPage::didChangeScrollOffsetForMainFrame()
@@ -3606,10 +3594,8 @@ void WebPage::commitPageTransitionViewport()
 #if PLATFORM(MAC)
 void WebPage::handleAlternativeTextUIResult(const String& result)
 {
-    Frame* frame = m_page->focusController().focusedOrMainFrame();
-    if (!frame)
-        return;
-    frame->editor().handleAlternativeTextUIResult(result);
+    Frame& frame = m_page->focusController().focusedOrMainFrame();
+    frame.editor().handleAlternativeTextUIResult(result);
 }
 #endif
 
@@ -3630,30 +3616,30 @@ void WebPage::simulateMouseMotion(WebCore::IntPoint position, double time)
 
 void WebPage::setCompositionForTesting(const String& compositionString, uint64_t from, uint64_t length)
 {
-    Frame* frame = m_page->focusController().focusedOrMainFrame();
-    if (!frame || !frame->editor().canEdit())
+    Frame& frame = m_page->focusController().focusedOrMainFrame();
+    if (!frame.editor().canEdit())
         return;
 
     Vector<CompositionUnderline> underlines;
     underlines.append(CompositionUnderline(0, compositionString.length(), Color(Color::black), false));
-    frame->editor().setComposition(compositionString, underlines, from, from + length);
+    frame.editor().setComposition(compositionString, underlines, from, from + length);
 }
 
 bool WebPage::hasCompositionForTesting()
 {
-    Frame* frame = m_page->focusController().focusedOrMainFrame();
-    return frame && frame->editor().hasComposition();
+    Frame& frame = m_page->focusController().focusedOrMainFrame();
+    return frame.editor().hasComposition();
 }
 
 void WebPage::confirmCompositionForTesting(const String& compositionString)
 {
-    Frame* frame = m_page->focusController().focusedOrMainFrame();
-    if (!frame || !frame->editor().canEdit())
+    Frame& frame = m_page->focusController().focusedOrMainFrame();
+    if (!frame.editor().canEdit())
         return;
 
     if (compositionString.isNull())
-        frame->editor().confirmComposition();
-    frame->editor().confirmComposition(compositionString);
+        frame.editor().confirmComposition();
+    frame.editor().confirmComposition(compositionString);
 }
 
 void WebPage::numWheelEventHandlersChanged(unsigned numWheelEventHandlers)
@@ -3806,12 +3792,9 @@ bool WebPage::canPluginHandleResponse(const ResourceResponse& response)
 #if PLATFORM(QT) || PLATFORM(GTK)
 static Frame* targetFrameForEditing(WebPage* page)
 {
-    Frame* targetFrame = page->corePage()->focusController().focusedOrMainFrame();
+    Frame& targetFrame = page->corePage()->focusController().focusedOrMainFrame();
 
-    if (!targetFrame)
-        return 0;
-
-    Editor& editor = targetFrame->editor();
+    Editor& editor = targetFrame.editor();
     if (!editor.canEdit())
         return 0;
 
@@ -3826,7 +3809,7 @@ static Frame* targetFrameForEditing(WebPage* page)
                 return 0;
         }
     }
-    return targetFrame;
+    return &targetFrame;
 }
 
 void WebPage::confirmComposition(const String& compositionString, int64_t selectionStart, int64_t selectionLength)

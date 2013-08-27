@@ -328,11 +328,8 @@ void FindController::hideFindIndicator()
 
 void FindController::showFindIndicatorInSelection()
 {
-    Frame* selectedFrame = m_webPage->corePage()->focusController().focusedOrMainFrame();
-    if (!selectedFrame)
-        return;
-    
-    updateFindIndicator(selectedFrame, false);
+    Frame& selectedFrame = m_webPage->corePage()->focusController().focusedOrMainFrame();
+    updateFindIndicator(&selectedFrame, false);
 }
 
 void FindController::deviceScaleFactorDidChange()

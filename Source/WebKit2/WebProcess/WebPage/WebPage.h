@@ -843,7 +843,7 @@ private:
 
     static bool platformCanHandleRequest(const WebCore::ResourceRequest&);
 
-    static PluginView* focusedPluginViewForFrame(WebCore::Frame*);
+    static PluginView* focusedPluginViewForFrame(WebCore::Frame&);
     static PluginView* pluginViewForFrame(WebCore::Frame*);
 
     void reportUsedFeatures();

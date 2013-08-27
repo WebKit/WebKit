@@ -39,7 +39,7 @@ Frame* WebViewInputMethodFilter::focusedOrMainFrame()
     if (!page)
         return 0;
 
-    return page->focusController().focusedOrMainFrame();
+    return &page->focusController().focusedOrMainFrame();
 }
 
 void WebViewInputMethodFilter::setWebView(WebKitWebView* webView)

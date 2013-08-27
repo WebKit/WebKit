@@ -77,7 +77,7 @@ void WebPage::platformPreferencesDidChange(const WebPreferencesStore&)
 
 static inline void scroll(Page* page, ScrollDirection direction, ScrollGranularity granularity)
 {
-    page->focusController().focusedOrMainFrame()->eventHandler().scrollRecursively(direction, granularity);
+    page->focusController().focusedOrMainFrame().eventHandler().scrollRecursively(direction, granularity);
 }
 
 bool WebPage::performDefaultBehaviorForKeyEvent(const WebKeyboardEvent& keyboardEvent)

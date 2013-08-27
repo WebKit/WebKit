@@ -276,7 +276,7 @@ void DumpRenderTreeSupportGtk::executeCoreCommandByName(WebKitWebView* webView, 
     g_return_if_fail(name);
     g_return_if_fail(value);
 
-    core(webView)->focusController().focusedOrMainFrame()->editor().command(name).execute(value);
+    core(webView)->focusController().focusedOrMainFrame().editor().command(name).execute(value);
 }
 
 bool DumpRenderTreeSupportGtk::isCommandEnabled(WebKitWebView* webView, const gchar* name)
@@ -284,7 +284,7 @@ bool DumpRenderTreeSupportGtk::isCommandEnabled(WebKitWebView* webView, const gc
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), FALSE);
     g_return_val_if_fail(name, FALSE);
 
-    return core(webView)->focusController().focusedOrMainFrame()->editor().command(name).isEnabled();
+    return core(webView)->focusController().focusedOrMainFrame().editor().command(name).isEnabled();
 }
 
 void DumpRenderTreeSupportGtk::setComposition(WebKitWebView* webView, const char* text, int start, int length)
@@ -292,11 +292,8 @@ void DumpRenderTreeSupportGtk::setComposition(WebKitWebView* webView, const char
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
     g_return_if_fail(text);
 
-    Frame* frame = core(webView)->focusController().focusedOrMainFrame();
-    if (!frame)
-        return;
-
-    Editor& editor = frame->editor();
+    Frame& frame = core(webView)->focusController().focusedOrMainFrame();
+    Editor& editor = frame.editor();
     if (!editor.canEdit() && !editor.hasComposition())
         return;
 
@@ -309,11 +306,8 @@ void DumpRenderTreeSupportGtk::setComposition(WebKitWebView* webView, const char
 bool DumpRenderTreeSupportGtk::hasComposition(WebKitWebView* webView)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), false);
-    Frame* frame = core(webView)->focusController().focusedOrMainFrame();
-    if (!frame)
-        return false;
-
-    return frame->editor().hasComposition();
+    Frame& frame = core(webView)->focusController().focusedOrMainFrame();
+    return frame.editor().hasComposition();
 }
 
 bool DumpRenderTreeSupportGtk::compositionRange(WebKitWebView* webView, int* start, int* length)
@@ -322,11 +316,8 @@ bool DumpRenderTreeSupportGtk::compositionRange(WebKitWebView* webView, int* sta
     *start = *length = 0;
 
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), false);
-    Frame* frame = core(webView)->focusController().focusedOrMainFrame();
-    if (!frame)
-        return false;
-
-    Editor& editor = frame->editor();
+    Frame& frame = core(webView)->focusController().focusedOrMainFrame();
+    Editor& editor = frame.editor();
     if (!editor.hasComposition())
         return false;
 
@@ -339,11 +330,8 @@ void DumpRenderTreeSupportGtk::confirmComposition(WebKitWebView* webView, const 
 {
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
 
-    Frame* frame = core(webView)->focusController().focusedOrMainFrame();
-    if (!frame)
-        return;
-
-    Editor& editor = frame->editor();
+    Frame& frame = core(webView)->focusController().focusedOrMainFrame();
+    Editor& editor = frame.editor();
 
     if (!editor.hasComposition()) {
         editor.insertText(String::fromUTF8(text), 0);
@@ -359,11 +347,8 @@ void DumpRenderTreeSupportGtk::confirmComposition(WebKitWebView* webView, const 
 void DumpRenderTreeSupportGtk::doCommand(WebKitWebView* webView, const char* command)
 {
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
-    Frame* frame = core(webView)->focusController().focusedOrMainFrame();
-    if (!frame)
-        return;
-
-    Editor& editor = frame->editor();
+    Frame& frame = core(webView)->focusController().focusedOrMainFrame();
+    Editor& editor = frame.editor();
 
     String commandString(command);
     // Remove ending : here.
@@ -387,13 +372,10 @@ bool DumpRenderTreeSupportGtk::firstRectForCharacterRange(WebKitWebView* webView
     if ((location + length < location) && (location + length))
         length = 0;
 
-    Frame* frame = core(webView)->focusController().focusedOrMainFrame();
-    if (!frame)
-        return false;
+    Frame& frame = core(webView)->focusController().focusedOrMainFrame();
+    Editor& editor = frame.editor();
 
-    Editor& editor = frame->editor();
-
-    RefPtr<Range> range = TextIterator::rangeFromLocationAndLength(frame->selection().rootEditableElementOrDocumentElement(), location, length);
+    RefPtr<Range> range = TextIterator::rangeFromLocationAndLength(frame.selection().rootEditableElementOrDocumentElement(), location, length);
     if (!range)
         return false;
 
@@ -406,16 +388,14 @@ bool DumpRenderTreeSupportGtk::selectedRange(WebKitWebView* webView, int* start,
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), false);
     g_return_val_if_fail(start && length, false);
 
-    Frame* frame = core(webView)->focusController().focusedOrMainFrame();
-    if (!frame)
-        return false;
+    Frame& frame = core(webView)->focusController().focusedOrMainFrame();
 
-    RefPtr<Range> range = frame->selection().toNormalizedRange().get();
+    RefPtr<Range> range = frame.selection().toNormalizedRange().get();
     if (!range)
         return false;
 
-    Element* selectionRoot = frame->selection().rootEditableElement();
-    Element* scope = selectionRoot ? selectionRoot : frame->document()->documentElement();
+    Element* selectionRoot = frame.selection().rootEditableElement();
+    Element* scope = selectionRoot ? selectionRoot : frame.document()->documentElement();
 
     RefPtr<Range> testRange = Range::create(scope->document(), scope, 0, range->startContainer(), range->startOffset());
     ASSERT(testRange->startContainer() == scope);

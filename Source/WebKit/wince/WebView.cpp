@@ -349,10 +349,10 @@ bool WebView::handleMouseWheel(HWND hWnd, WPARAM wParam, LPARAM lParam, bool isH
 
 bool WebView::handleKeyDown(WPARAM virtualKeyCode, LPARAM keyData, bool systemKeyDown)
 {
-    Frame* frame = m_page->focusController().focusedOrMainFrame();
+    Frame& frame = m_page->focusController().focusedOrMainFrame();
 
     PlatformKeyboardEvent keyEvent(m_windowHandle, virtualKeyCode, keyData, PlatformEvent::RawKeyDown, systemKeyDown);
-    bool handled = frame->eventHandler().keyEvent(keyEvent);
+    bool handled = frame.eventHandler().keyEvent(keyEvent);
 
     // These events cannot be canceled, and we have no default handling for them.
     // FIXME: match IE list more closely, see <http://msdn2.microsoft.com/en-us/library/ms536938.aspx>.
@@ -371,13 +371,13 @@ bool WebView::handleKeyDown(WPARAM virtualKeyCode, LPARAM keyData, bool systemKe
 
 bool WebView::handleKeyPress(WPARAM charCode, LPARAM keyData, bool systemKeyDown)
 {
-    Frame* frame = m_page->focusController().focusedOrMainFrame();
+    Frame& frame = m_page->focusController().focusedOrMainFrame();
 
     PlatformKeyboardEvent keyEvent(m_windowHandle, charCode, keyData, PlatformEvent::Char, systemKeyDown);
     // IE does not dispatch keypress event for WM_SYSCHAR.
     if (systemKeyDown)
-        return frame->eventHandler().handleAccessKey(keyEvent);
-    if (frame->eventHandler().keyEvent(keyEvent))
+        return frame.eventHandler().handleAccessKey(keyEvent);
+    if (frame.eventHandler().keyEvent(keyEvent))
         return true;
 
     return false;
@@ -387,8 +387,8 @@ bool WebView::handleKeyUp(WPARAM virtualKeyCode, LPARAM keyData, bool systemKeyD
 {
     PlatformKeyboardEvent keyEvent(m_windowHandle, virtualKeyCode, keyData, PlatformEvent::KeyUp, systemKeyDown);
 
-    Frame* frame = m_page->focusController().focusedOrMainFrame();
-    return frame->eventHandler().keyEvent(keyEvent);
+    Frame& frame = m_page->focusController().focusedOrMainFrame();
+    return frame.eventHandler().keyEvent(keyEvent);
 }
 
 LRESULT WebView::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)

@@ -1,5 +1,17 @@
 2013-08-26  Andreas Kling  <akling@apple.com>
 
+        FocusController::focusedOrMainFrame() should return a reference.
+        <https://webkit.org/b/120339>
+
+        Reviewed by Antti Koivisto.
+
+        Now that Page::mainFrame() returns a reference, we can make this return a reference
+        too, since there's always either a focused or a main frame.
+
+        One hectogram of null checks removed as a result.
+
+2013-08-26  Andreas Kling  <akling@apple.com>
+
         Document's renderer is always a RenderView.
         <https://webkit.org/b/120304>
 

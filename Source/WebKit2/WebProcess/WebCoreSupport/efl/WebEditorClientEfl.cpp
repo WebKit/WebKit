@@ -49,8 +49,8 @@ void WebEditorClient::handleKeyboardEvent(KeyboardEvent* event)
 
 void WebEditorClient::handleInputMethodKeydown(KeyboardEvent* event)
 {
-    Frame* frame = m_page->corePage()->focusController().focusedOrMainFrame();
-    if (!frame || !frame->editor().canEdit())
+    Frame& frame = m_page->corePage()->focusController().focusedOrMainFrame();
+    if (!frame.editor().canEdit())
         return;
 
     // FIXME: sending sync message might make input lagging.

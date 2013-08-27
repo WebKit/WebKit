@@ -623,8 +623,8 @@ void ChromeClient::paint(WebCore::Timer<ChromeClient>*)
     // We update the IM context window location here, because we want it to be
     // synced with cursor movement. For instance, a text field can move without
     // the selection changing.
-    Frame* focusedFrame = core(m_webView)->focusController().focusedOrMainFrame();
-    if (focusedFrame && focusedFrame->editor().canEdit())
+    Frame& focusedFrame = core(m_webView)->focusController().focusedOrMainFrame();
+    if (focusedFrame.editor().canEdit())
         m_webView->priv->imFilter.setCursorRect(frame.selection().absoluteCaretBounds());
 }
 

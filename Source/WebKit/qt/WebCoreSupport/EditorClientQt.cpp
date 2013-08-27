@@ -247,8 +247,8 @@ bool EditorClientQt::selectWordBeforeMenuEvent()
 void EditorClientQt::registerUndoStep(WTF::PassRefPtr<WebCore::UndoStep> step)
 {
 #ifndef QT_NO_UNDOSTACK
-    Frame* frame = m_page->page->focusController().focusedOrMainFrame();
-    if (m_inUndoRedo || (frame && !frame->editor().lastEditCommand() /* HACK!! Don't recreate undos */))
+    Frame& frame = m_page->page->focusController().focusedOrMainFrame();
+    if (m_inUndoRedo || !frame.editor().lastEditCommand() /* HACK!! Don't recreate undos */)
         return;
     m_page->registerUndoStep(step);
 #endif // QT_NO_UNDOSTACK
@@ -422,22 +422,20 @@ const char* editorCommandForKeyDownEvent(const KeyboardEvent* event)
 
 void EditorClientQt::handleKeyboardEvent(KeyboardEvent* event)
 {
-    Frame* frame = m_page->page->focusController().focusedOrMainFrame();
-    if (!frame)
-        return;
+    Frame& frame = m_page->page->focusController().focusedOrMainFrame();
 
     const PlatformKeyboardEvent* kevent = event->keyEvent();
     if (!kevent || kevent->type() == PlatformEvent::KeyUp)
         return;
 
-    Node* start = frame->selection().start().containerNode();
+    Node* start = frame.selection().start().containerNode();
     if (!start)
         return;
 
     // FIXME: refactor all of this to use Actions or something like them
     if (start->isContentEditable()) {
         bool doSpatialNavigation = false;
-        if (isSpatialNavigationEnabled(frame)) {
+        if (isSpatialNavigationEnabled(&frame)) {
             if (!kevent->modifiers()) {
                 switch (kevent->windowsVirtualKeyCode()) {
                 case VK_LEFT:
@@ -455,7 +453,7 @@ void EditorClientQt::handleKeyboardEvent(KeyboardEvent* event)
             // WebKit doesn't have enough information about mode to decide how commands that just insert text if executed via Editor should be treated,
             // so we leave it upon WebCore to either handle them immediately (e.g. Tab that changes focus) or let a keypress event be generated
             // (e.g. Tab that inserts a Tab character, or Enter).
-            if (frame->editor().command(cmd).isTextInsertion()
+            if (frame.editor().command(cmd).isTextInsertion()
                 && kevent->type() == PlatformEvent::RawKeyDown)
                 return;
 
@@ -467,7 +465,7 @@ void EditorClientQt::handleKeyboardEvent(KeyboardEvent* event)
         {
             String commandName = editorCommandForKeyDownEvent(event);
             if (!commandName.isEmpty()) {
-                if (frame->editor().command(commandName).execute()) // Event handled.
+                if (frame.editor().command(commandName).execute()) // Event handled.
                     event->setDefaultHandled();
                 return;
             }
@@ -495,7 +493,7 @@ void EditorClientQt::handleKeyboardEvent(KeyboardEvent* event)
             }
 
             if (shouldInsertText) {
-                frame->editor().insertText(kevent->text(), event);
+                frame.editor().insertText(kevent->text(), event);
                 event->setDefaultHandled();
                 return;
             }
@@ -526,7 +524,7 @@ void EditorClientQt::handleKeyboardEvent(KeyboardEvent* event)
             {
                 String commandName = editorCommandForKeyDownEvent(event);
                 ASSERT(!commandName.isEmpty());
-                frame->editor().command(commandName).execute();
+                frame.editor().command(commandName).execute();
                 event->setDefaultHandled();
                 return;
             }
@@ -617,10 +615,10 @@ void EditorClientQt::setInputMethodState(bool active)
         Qt::InputMethodHints hints;
 
         HTMLInputElement* inputElement = 0;
-        Frame* frame = m_page->page->focusController().focusedOrMainFrame();
-        if (frame && frame->document() && frame->document()->focusedElement())
-            if (isHTMLInputElement(frame->document()->focusedElement()))
-                inputElement = toHTMLInputElement(frame->document()->focusedElement());
+        Frame& frame = m_page->page->focusController().focusedOrMainFrame();
+        if (frame.document() && frame.document()->focusedElement())
+            if (isHTMLInputElement(frame.document()->focusedElement()))
+                inputElement = toHTMLInputElement(frame.document()->focusedElement());
 
         if (inputElement) {
             // Set input method hints for "number", "tel", "email", "url" and "password" input elements.

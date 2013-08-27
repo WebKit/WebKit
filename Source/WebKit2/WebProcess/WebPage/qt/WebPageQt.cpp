@@ -223,12 +223,12 @@ const char* WebPage::interpretKeyEvent(const KeyboardEvent* evt)
 
 static inline void scroll(Page* page, ScrollDirection direction, ScrollGranularity granularity)
 {
-    page->focusController().focusedOrMainFrame()->eventHandler().scrollRecursively(direction, granularity);
+    page->focusController().focusedOrMainFrame().eventHandler().scrollRecursively(direction, granularity);
 }
 
 static inline void logicalScroll(Page* page, ScrollLogicalDirection direction, ScrollGranularity granularity)
 {
-    page->focusController().focusedOrMainFrame()->eventHandler().logicalScrollRecursively(direction, granularity);
+    page->focusController().focusedOrMainFrame().eventHandler().logicalScrollRecursively(direction, granularity);
 }
 
 bool WebPage::performDefaultBehaviorForKeyEvent(const WebKeyboardEvent& keyboardEvent)

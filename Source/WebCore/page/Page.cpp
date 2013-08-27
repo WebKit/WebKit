@@ -565,7 +565,7 @@ bool Page::findString(const String& target, FindOptions options)
         return false;
 
     bool shouldWrap = options & WrapAround;
-    Frame* frame = focusController().focusedOrMainFrame();
+    Frame* frame = &focusController().focusedOrMainFrame();
     Frame* startFrame = frame;
     do {
         if (frame->editor().findString(target, (options & ~WrapAround) | StartInSelection)) {
@@ -697,7 +697,7 @@ void Page::unmarkAllTextMatches()
 
 const VisibleSelection& Page::selection() const
 {
-    return focusController().focusedOrMainFrame()->selection().selection();
+    return focusController().focusedOrMainFrame().selection().selection();
 }
 
 void Page::setDefersLoading(bool defers)

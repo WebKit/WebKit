@@ -485,8 +485,8 @@ void webkit_web_inspector_show(WebKitWebInspector* webInspector)
 
     WebKitWebInspectorPrivate* priv = webInspector->priv;
 
-    Frame* frame = priv->page->focusController().focusedOrMainFrame();
-    FrameView* view = frame->view();
+    Frame& frame = priv->page->focusController().focusedOrMainFrame();
+    FrameView* view = frame.view();
 
     if (!view)
         return;
@@ -535,8 +535,8 @@ void webkit_web_inspector_inspect_coordinates(WebKitWebInspector* webInspector, 
 
     WebKitWebInspectorPrivate* priv = webInspector->priv;
 
-    Frame* frame = priv->page->focusController().focusedOrMainFrame();
-    FrameView* view = frame->view();
+    Frame& frame = priv->page->focusController().focusedOrMainFrame();
+    FrameView* view = frame.view();
 
     if (!view)
         return;
@@ -545,7 +545,7 @@ void webkit_web_inspector_inspect_coordinates(WebKitWebInspector* webInspector, 
     IntPoint documentPoint = view->windowToContents(IntPoint(static_cast<int>(x), static_cast<int>(y)));
     HitTestResult result(documentPoint);
 
-    frame->contentRenderer()->layer()->hitTest(request, result);
+    frame.contentRenderer()->layer()->hitTest(request, result);
     priv->page->inspectorController()->inspect(result.innerNonSharedNode());
 }
 
