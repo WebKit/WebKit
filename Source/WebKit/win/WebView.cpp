@@ -5412,9 +5412,7 @@ HRESULT STDMETHODCALLTYPE WebView::shouldClose(
         return E_POINTER;
     }
 
-    *result = TRUE;
-    if (Frame* frame = m_page->mainFrame())
-        *result = frame->loader().shouldClose();
+    *result = m_page->mainFrame().loader().shouldClose();
     return S_OK;
 }
 
