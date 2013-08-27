@@ -925,7 +925,7 @@ void MediaPlayerPrivateAVFoundationCF::tracksChanged()
     sizeChanged();
 
     if (primaryAudioTrackLanguage != languageOfPrimaryAudioTrack())
-        player()->characteristicChanged();
+        characteristicsChanged();
 
     setDelayCharacteristicsChangedNotification(false);
 }

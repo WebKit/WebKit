@@ -1,3 +1,14 @@
+2013-08-27  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Correct method call for characteristic update.
+
+        Reviewed by Eric Carlson.
+
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundationCF::tracksChanged):
+        [Windows] Correct method call (should have been "characteristicsChanged", not
+        "player()->characteristicChanged()"
+
 2013-08-26  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] some track language tags are not recognized
