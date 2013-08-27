@@ -604,7 +604,7 @@ bool RenderThemeGtk::paintMediaVolumeSliderTrack(RenderObject* renderObject, con
     if (!mediaElement)
         return true;
 
-    float volume = mediaElement->volume();
+    float volume = mediaElement->muted() ? 0.0f : mediaElement->volume();
     if (!volume)
         return true;
 
