@@ -1,3 +1,34 @@
+2013-08-27  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        grammar-markers.html and grammar-markers-hidpi.html pass even if element does not have grammar marker
+        https://bugs.webkit.org/show_bug.cgi?id=119797
+
+        Reviewed by Ryosuke Niwa.
+
+        After tenth attempts of verifying the grammar marker, the tests call'notifyDone'
+        even if grammar marker was not be found.
+
+        Both grammar-marker.html and grammar-marker-hidpi.html call the text checker
+        asynchronously. Therefore, we need to wait until either the grammar marker
+        is found or number of attempts is reached.
+
+        Dump more information whether the grammar marker was found to be sure that
+        the tests do not pass when the element does not have the marker.
+
+        * editing/spelling/grammar-markers-expected.txt:
+        * editing/spelling/grammar-markers-hidpi-expected.txt:
+        Update the expectations.
+
+        * editing/spelling/grammar-markers-hidpi.html:
+        * editing/spelling/grammar-markers.html:
+        Dump more information.
+        Additionally, pass 'document' to hasGrammarMarker instead of
+        'target' as the method does not work for target/source elements.
+
+        * platform/mac/editing/spelling/grammar-markers-expected.png:
+        * platform/mac/editing/spelling/grammar-markers-hidpi-expected.png: Added.
+        Update the expectations for Mac.
+
 2013-08-27  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Implement DOM3 wheel event
