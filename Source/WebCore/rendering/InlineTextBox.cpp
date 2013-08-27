@@ -592,7 +592,7 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
         if (isPrinting) {
             if (styleToUse->printColorAdjust() == PrintColorAdjustEconomy)
                 forceBackgroundToWhite = true;
-            if (textRenderer()->document().settings() && textRenderer()->document().settings()->shouldPrintBackgrounds())
+            if (textRenderer()->frame().settings().shouldPrintBackgrounds())
                 forceBackgroundToWhite = false;
         }
 

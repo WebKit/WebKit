@@ -1,5 +1,21 @@
 2013-08-27  Andreas Kling  <akling@apple.com>
 
+        Simplify some more Settings access where we have a Frame in reach.
+        <https://webkit.org/b/120256>
+
+        Reviewed by Darin Adler.
+
+        RenderObjects can always find Settings through the Frame.
+
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paint):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        * rendering/svg/RenderSVGResourceFilter.cpp:
+        (WebCore::RenderSVGResourceFilter::applyResource):
+
+2013-08-27  Andreas Kling  <akling@apple.com>
+
         RenderView::flowThreadController() should return a reference.
         <https://webkit.org/b/120363>
 

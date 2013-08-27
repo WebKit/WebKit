@@ -786,7 +786,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
     if (document().printing()) {
         if (style()->printColorAdjust() == PrintColorAdjustEconomy)
             forceBackgroundToWhite = true;
-        if (document().settings() && document().settings()->shouldPrintBackgrounds())
+        if (frame().settings().shouldPrintBackgrounds())
             forceBackgroundToWhite = false;
     }
 
