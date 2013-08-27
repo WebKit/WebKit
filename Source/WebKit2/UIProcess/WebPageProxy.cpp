@@ -1443,6 +1443,7 @@ void WebPageProxy::findPlugin(const String& mimeType, uint32_t processType, cons
 #else
     UNUSED_PARAM(frameURLString);
     UNUSED_PARAM(pageURLString);
+    UNUSED_PARAM(unavailabilityDescription);
 #endif
 
     PluginProcessSandboxPolicy pluginProcessSandboxPolicy = PluginProcessSandboxPolicyNormal;
@@ -4159,7 +4160,11 @@ void WebPageProxy::didBlockInsecurePluginVersion(const String& mimeType, const S
     PluginModuleInfo plugin = m_process->context()->pluginInfoStore().findPlugin(newMimeType, KURL(KURL(), pluginURLString));
     pluginInformation = createPluginInformationDictionary(plugin, frameURLString, mimeType, pageURLString, String(), String(), replacementObscured);
 #else
+    UNUSED_PARAM(mimeType);
     UNUSED_PARAM(pluginURLString);
+    UNUSED_PARAM(frameURLString);
+    UNUSED_PARAM(pageURLString);
+    UNUSED_PARAM(replacementObscured);
 #endif
 
     m_loaderClient.didBlockInsecurePluginVersion(this, pluginInformation.get());

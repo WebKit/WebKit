@@ -1,3 +1,15 @@
+2013-08-26  Santosh Mahto  <santosh.ma@samsung.com>
+
+        Fixing compilation warning "unused parameter" in WebPageProxy.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=120205
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::findPlugin):
+        (WebKit::WebPageProxy::didBlockInsecurePluginVersion):
+        Added UNUSED_PARAM to avoid warning.
+
 2013-08-23  Andy Estes  <aestes@apple.com>
 
         Fix issues found by the Clang Static Analyzer
