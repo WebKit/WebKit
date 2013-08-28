@@ -287,49 +287,25 @@ void updateTextRendererAfterContentChange(Text& textNode, unsigned offsetOfRepla
     textRenderer->setTextWithOffset(textNode.dataImpl(), offsetOfReplacedData, lengthOfReplacedData);
 }
 
-
-static void attachShadowRoot(ShadowRoot* shadowRoot, const AttachContext& context)
-{
-    if (shadowRoot->attached())
-        return;
-    StyleResolver& styleResolver = shadowRoot->document()->ensureStyleResolver();
-    styleResolver.pushParentShadowRoot(shadowRoot);
-
-    Style::AttachContext childrenContext(context);
-    childrenContext.resolvedStyle = 0;
-    for (Node* child = shadowRoot->firstChild(); child; child = child->nextSibling()) {
-        if (child->isTextNode()) {
-            attachTextRenderer(*toText(child));
-            continue;
-        }
-        if (child->isElementNode())
-            attachRenderTree(toElement(child), childrenContext);
-    }
-    styleResolver.popParentShadowRoot(shadowRoot);
-
-    shadowRoot->clearNeedsStyleRecalc();
-    shadowRoot->setAttached(true);
-}
-
 #ifndef NDEBUG
-static bool childAttachedAllowedWhenAttachingChildren(ContainerNode* node)
+static bool childAttachedAllowedWhenAttachingChildren(ContainerNode& node)
 {
-    if (node->isShadowRoot())
+    if (node.isShadowRoot())
         return true;
-    if (node->isInsertionPoint())
+    if (node.isInsertionPoint())
         return true;
-    if (node->isElementNode() && toElement(node)->shadowRoot())
+    if (node.isElementNode() && toElement(&node)->shadowRoot())
         return true;
     return false;
 }
 #endif
 
-static void attachChildren(Element* current, const AttachContext& context)
+static void attachChildren(ContainerNode& current, const AttachContext& context)
 {
     AttachContext childrenContext(context);
     childrenContext.resolvedStyle = 0;
 
-    for (Node* child = current->firstChild(); child; child = child->nextSibling()) {
+    for (Node* child = current.firstChild(); child; child = child->nextSibling()) {
         ASSERT(!child->attached() || childAttachedAllowedWhenAttachingChildren(current));
         if (child->attached())
             continue;
@@ -340,6 +316,21 @@ static void attachChildren(Element* current, const AttachContext& context)
         if (child->isElementNode())
             attachRenderTree(toElement(child), childrenContext);
     }
+}
+
+static void attachShadowRoot(ShadowRoot& shadowRoot, const AttachContext& context)
+{
+    if (shadowRoot.attached())
+        return;
+    StyleResolver& styleResolver = shadowRoot.document()->ensureStyleResolver();
+    styleResolver.pushParentShadowRoot(&shadowRoot);
+
+    attachChildren(shadowRoot, context);
+
+    styleResolver.popParentShadowRoot(&shadowRoot);
+
+    shadowRoot.clearNeedsStyleRecalc();
+    shadowRoot.setAttached(true);
 }
 
 void attachRenderTree(Element* current, const AttachContext& context)
@@ -362,11 +353,11 @@ void attachRenderTree(Element* current, const AttachContext& context)
     // When a shadow root exists, it does the work of attaching the children.
     if (ShadowRoot* shadowRoot = current->shadowRoot()) {
         parentPusher.push();
-        attachShadowRoot(shadowRoot, context);
+        attachShadowRoot(*shadowRoot, context);
     } else if (current->firstChild())
         parentPusher.push();
 
-    attachChildren(current, context);
+    attachChildren(*current, context);
 
     Node* sibling = current->nextSibling();
     if (current->renderer() && sibling && !sibling->renderer() && sibling->attached())
@@ -388,30 +379,12 @@ void attachRenderTree(Element* current, const AttachContext& context)
         current->didAttachRenderers();
 }
 
-static void detachShadowRoot(ShadowRoot* shadowRoot, const AttachContext& context)
-{
-    if (!shadowRoot->attached())
-        return;
-    Style::AttachContext childrenContext(context);
-    childrenContext.resolvedStyle = 0;
-    for (Node* child = shadowRoot->firstChild(); child; child = child->nextSibling()) {
-        if (child->isTextNode()) {
-            Style::detachTextRenderer(*toText(child));
-            continue;
-        }
-        if (child->isElementNode())
-            detachRenderTree(toElement(child), context);
-    }
-    shadowRoot->clearChildNeedsStyleRecalc();
-    shadowRoot->setAttached(false);
-}
-
-static void detachChildren(Element* current, const AttachContext& context)
+static void detachChildren(ContainerNode& current, const AttachContext& context)
 {
     AttachContext childrenContext(context);
     childrenContext.resolvedStyle = 0;
 
-    for (Node* child = current->firstChild(); child; child = child->nextSibling()) {
+    for (Node* child = current.firstChild(); child; child = child->nextSibling()) {
         if (child->isTextNode()) {
             Style::detachTextRenderer(*toText(child));
             continue;
@@ -419,7 +392,16 @@ static void detachChildren(Element* current, const AttachContext& context)
         if (child->isElementNode())
             detachRenderTree(toElement(child), childrenContext);
     }
-    current->clearChildNeedsStyleRecalc();
+    current.clearChildNeedsStyleRecalc();
+}
+
+static void detachShadowRoot(ShadowRoot& shadowRoot, const AttachContext& context)
+{
+    if (!shadowRoot.attached())
+        return;
+    detachChildren(shadowRoot, context);
+
+    shadowRoot.setAttached(false);
 }
 
 void detachRenderTree(Element* current, const AttachContext& context)
@@ -437,9 +419,9 @@ void detachRenderTree(Element* current, const AttachContext& context)
         current->clearHoverAndActiveStatusBeforeDetachingRenderer();
 
     if (ShadowRoot* shadowRoot = current->shadowRoot())
-        detachShadowRoot(shadowRoot, context);
+        detachShadowRoot(*shadowRoot, context);
 
-    detachChildren(current, context);
+    detachChildren(*current, context);
 
     if (current->renderer())
         current->renderer()->destroyAndCleanupAnonymousWrappers();
