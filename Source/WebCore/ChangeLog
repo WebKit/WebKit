@@ -1,3 +1,16 @@
+2013-08-28  Zan Dobersek  <zdobersek@igalia.com>
+
+        REGRESSION(r154708): It broke all plugin tests on GTK and Qt WK1
+        https://bugs.webkit.org/show_bug.cgi?id=120398
+
+        Reviewed by Anders Carlsson.
+
+        * bridge/c/c_class.cpp:
+        (JSC::Bindings::CClass::methodNamed): Keep the pointer of the new CMethod object
+        to return it after it's adopted by the new HashMap entry.
+        (JSC::Bindings::CClass::fieldNamed): The pointer to the newly created CField object
+        should be returned in this branch, matching the behavior before r154708.
+
 2013-08-28  Antti Koivisto  <antti@apple.com>
 
         Fix Qt no-libxml2 build.

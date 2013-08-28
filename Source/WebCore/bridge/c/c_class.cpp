@@ -78,9 +78,9 @@ Method* CClass::methodNamed(PropertyName propertyName, Instance* instance) const
     const CInstance* inst = static_cast<const CInstance*>(instance);
     NPObject* obj = inst->getObject();
     if (m_isa->hasMethod && m_isa->hasMethod(obj, ident)) {
-        OwnPtr<Method> method = adoptPtr(new CMethod(ident));
-        m_methods.set(name.impl(), method.release());
-        return method.get();
+        Method* method = new CMethod(ident);
+        m_methods.set(name.impl(), adoptPtr(method));
+        return method;
     }
     
     return 0;
@@ -97,8 +97,9 @@ Field* CClass::fieldNamed(PropertyName propertyName, Instance* instance) const
     const CInstance* inst = static_cast<const CInstance*>(instance);
     NPObject* obj = inst->getObject();
     if (m_isa->hasProperty && m_isa->hasProperty(obj, ident)) {
-        OwnPtr<Field> field = adoptPtr(new CField(ident));
-        m_fields.set(name.impl(), field.release());
+        Field* field = new CField(ident);
+        m_fields.set(name.impl(), adoptPtr(field));
+        return field;
     }
 
     return 0;
