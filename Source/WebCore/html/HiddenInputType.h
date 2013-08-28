@@ -40,7 +40,7 @@ public:
     static PassOwnPtr<InputType> create(HTMLInputElement*);
 
 private:
-    HiddenInputType(HTMLInputElement* element) : InputType(element) { }
+    explicit HiddenInputType(HTMLInputElement* element) : InputType(element) { }
     virtual const AtomicString& formControlType() const OVERRIDE;
     virtual FormControlState saveFormControlState() const OVERRIDE;
     virtual void restoreFormControlState(const FormControlState&) OVERRIDE;

@@ -51,7 +51,7 @@ public:
     virtual Vector<Color> suggestions() const OVERRIDE;
 
 private:
-    ColorInputType(HTMLInputElement* element) : BaseClickableWithKeyInputType(element) { }
+    explicit ColorInputType(HTMLInputElement* element) : BaseClickableWithKeyInputType(element) { }
     virtual void attach() OVERRIDE;
     virtual bool isColorControl() const OVERRIDE;
     virtual const AtomicString& formControlType() const OVERRIDE;

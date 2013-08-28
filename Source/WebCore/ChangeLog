@@ -1,3 +1,61 @@
+2013-08-27  Santosh Mahto  <santosh.ma@samsung.com>
+
+        Adding  "explicit" keyword in  forms related classes constructor
+        https://bugs.webkit.org/show_bug.cgi?id=120366
+
+        Reviewed by Darin Adler.
+
+        Adding "explicit" keyword in constructors.
+
+        * html/BaseButtonInputType.h:
+        (WebCore::BaseButtonInputType::BaseButtonInputType):
+        * html/BaseCheckableInputType.h:
+        (WebCore::BaseCheckableInputType::BaseCheckableInputType):
+        * html/BaseChooserOnlyDateAndTimeInputType.h:
+        (WebCore::BaseChooserOnlyDateAndTimeInputType::BaseChooserOnlyDateAndTimeInputType):
+        * html/BaseClickableWithKeyInputType.h:
+        (WebCore::BaseClickableWithKeyInputType::BaseClickableWithKeyInputType):
+        * html/BaseTextInputType.h:
+        (WebCore::BaseTextInputType::BaseTextInputType):
+        * html/ColorInputType.h:
+        (WebCore::ColorInputType::ColorInputType):
+        * html/DateInputType.h:
+        * html/DateTimeInputType.h:
+        (WebCore::DateTimeInputType::DateTimeInputType):
+        * html/DateTimeLocalInputType.h:
+        (WebCore::DateTimeLocalInputType::DateTimeLocalInputType):
+        * html/EmailInputType.h:
+        (WebCore::EmailInputType::EmailInputType):
+        * html/FileInputType.h:
+        * html/HiddenInputType.h:
+        (WebCore::HiddenInputType::HiddenInputType):
+        * html/ImageData.h:
+        * html/ImageInputType.h:
+        * html/InputType.h:
+        (WebCore::InputType::InputType):
+        * html/MediaController.h:
+        * html/MonthInputType.h:
+        (WebCore::MonthInputType::MonthInputType):
+        * html/RadioInputType.h:
+        (WebCore::RadioInputType::RadioInputType):
+        * html/RangeInputType.h:
+        * html/ResetInputType.h:
+        (WebCore::ResetInputType::ResetInputType):
+        * html/SearchInputType.h:
+        * html/SubmitInputType.h:
+        (WebCore::SubmitInputType::SubmitInputType):
+        * html/TelephoneInputType.h:
+        (WebCore::TelephoneInputType::TelephoneInputType):
+        * html/TextFieldInputType.h:
+        * html/TextInputType.h:
+        (WebCore::TextInputType::TextInputType):
+        * html/TimeInputType.h:
+        * html/URLInputType.h:
+        (WebCore::URLInputType::URLInputType):
+        * html/ValidationMessage.h:
+        * html/WeekInputType.h:
+        (WebCore::WeekInputType::WeekInputType):
+
 2013-08-27  Benjamin Poulain  <benjamin@webkit.org>
 
         Fix the indentation of SpaceSplitString

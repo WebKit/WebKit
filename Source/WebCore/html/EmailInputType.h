@@ -40,7 +40,7 @@ public:
     static PassOwnPtr<InputType> create(HTMLInputElement*);
 
 private:
-    EmailInputType(HTMLInputElement* element) : BaseTextInputType(element) { }
+    explicit EmailInputType(HTMLInputElement* element) : BaseTextInputType(element) { }
     virtual void attach() OVERRIDE;
     virtual const AtomicString& formControlType() const OVERRIDE;
     virtual bool typeMismatchFor(const String&) const OVERRIDE;

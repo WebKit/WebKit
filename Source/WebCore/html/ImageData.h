@@ -47,7 +47,7 @@ public:
     Uint8ClampedArray* data() const { return m_data.get(); }
 
 private:
-    ImageData(const IntSize&);
+    explicit ImageData(const IntSize&);
     ImageData(const IntSize&, PassRefPtr<Uint8ClampedArray>);
 
     IntSize m_size;

@@ -36,7 +36,7 @@ namespace WebCore {
 
 class BaseChooserOnlyDateAndTimeInputType : public BaseDateAndTimeInputType, public DateTimeChooserClient {
 protected:
-    BaseChooserOnlyDateAndTimeInputType(HTMLInputElement* element) : BaseDateAndTimeInputType(element) { }
+    explicit BaseChooserOnlyDateAndTimeInputType(HTMLInputElement* element) : BaseDateAndTimeInputType(element) { }
     virtual ~BaseChooserOnlyDateAndTimeInputType();
 
 private:

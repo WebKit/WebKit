@@ -40,7 +40,7 @@ public:
     static PassOwnPtr<InputType> create(HTMLInputElement*);
 
 private:
-    SubmitInputType(HTMLInputElement* element) : BaseButtonInputType(element) { }
+    explicit SubmitInputType(HTMLInputElement* element) : BaseButtonInputType(element) { }
     virtual const AtomicString& formControlType() const OVERRIDE;
     virtual bool appendFormData(FormDataList&, bool) const OVERRIDE;
     virtual bool supportsRequired() const OVERRIDE;

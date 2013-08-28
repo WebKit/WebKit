@@ -50,7 +50,7 @@ public:
     static Vector<FileChooserFileInfo> filesFromFormControlState(const FormControlState&);
 
 private:
-    FileInputType(HTMLInputElement*);
+    explicit FileInputType(HTMLInputElement*);
 
     virtual const AtomicString& formControlType() const OVERRIDE;
     virtual FormControlState saveFormControlState() const OVERRIDE;

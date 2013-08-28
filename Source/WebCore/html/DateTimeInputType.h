@@ -42,7 +42,7 @@ public:
     static PassOwnPtr<InputType> create(HTMLInputElement*);
 
 private:
-    DateTimeInputType(HTMLInputElement* element) : BaseDateTimeInputType(element) { }
+    explicit DateTimeInputType(HTMLInputElement* element) : BaseDateTimeInputType(element) { }
     virtual void attach() OVERRIDE;
     virtual const AtomicString& formControlType() const OVERRIDE;
     virtual DateComponents::Type dateType() const OVERRIDE;

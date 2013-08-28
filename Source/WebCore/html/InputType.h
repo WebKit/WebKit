@@ -312,7 +312,7 @@ public:
     void dispatchSimulatedClickIfActive(KeyboardEvent*) const;
 
 protected:
-    InputType(HTMLInputElement* element) : m_element(element) { }
+    explicit InputType(HTMLInputElement* element) : m_element(element) { }
     HTMLInputElement* element() const { return m_element; }
     Chrome* chrome() const;
     Decimal parseToNumberOrNaN(const String&) const;

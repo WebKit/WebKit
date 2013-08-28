@@ -114,7 +114,7 @@ public:
     using RefCounted<MediaController>::deref;
 
 private:
-    MediaController(ScriptExecutionContext*);
+    explicit MediaController(ScriptExecutionContext*);
     void reportControllerState();
     void updateReadyState();
     void updatePlaybackState();

@@ -40,7 +40,7 @@ public:
     static PassOwnPtr<InputType> create(HTMLInputElement*);
 
 private:
-    ResetInputType(HTMLInputElement* element) : BaseButtonInputType(element) { }
+    explicit ResetInputType(HTMLInputElement* element) : BaseButtonInputType(element) { }
     virtual const AtomicString& formControlType() const OVERRIDE;
     virtual bool supportsValidation() const OVERRIDE;
     virtual void handleDOMActivateEvent(Event*) OVERRIDE;

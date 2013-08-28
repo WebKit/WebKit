@@ -46,7 +46,7 @@ public:
     void stopSearchEventTimer();
 
 private:
-    SearchInputType(HTMLInputElement*);
+    explicit SearchInputType(HTMLInputElement*);
     virtual void attach() OVERRIDE;
     virtual void addSearchResult() OVERRIDE;
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*) const OVERRIDE;

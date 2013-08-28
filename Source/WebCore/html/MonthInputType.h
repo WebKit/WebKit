@@ -41,7 +41,7 @@ public:
     static PassOwnPtr<InputType> create(HTMLInputElement*);
 
 private:
-    MonthInputType(HTMLInputElement* element) : BaseMonthInputType(element) { }
+    explicit MonthInputType(HTMLInputElement* element) : BaseMonthInputType(element) { }
     virtual void attach() OVERRIDE;
     virtual const AtomicString& formControlType() const OVERRIDE;
     virtual DateComponents::Type dateType() const OVERRIDE;

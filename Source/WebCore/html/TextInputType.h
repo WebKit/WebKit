@@ -40,7 +40,7 @@ public:
     static PassOwnPtr<InputType> create(HTMLInputElement*);
 
 private:
-    TextInputType(HTMLInputElement* element) : BaseTextInputType(element) { }
+    explicit TextInputType(HTMLInputElement* element) : BaseTextInputType(element) { }
     virtual void attach() OVERRIDE;
     virtual const AtomicString& formControlType() const OVERRIDE;
     virtual bool shouldRespectSpeechAttribute() OVERRIDE;

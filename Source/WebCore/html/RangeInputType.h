@@ -42,7 +42,7 @@ public:
     static PassOwnPtr<InputType> create(HTMLInputElement*);
 
 private:
-    RangeInputType(HTMLInputElement*);
+    explicit RangeInputType(HTMLInputElement*);
     virtual void attach() OVERRIDE;
     virtual bool isRangeControl() const OVERRIDE;
     virtual const AtomicString& formControlType() const OVERRIDE;

@@ -44,7 +44,7 @@ public:
     static void accessKeyAction(HTMLInputElement*, bool sendMouseEvents);
     
 protected:
-    BaseClickableWithKeyInputType(HTMLInputElement* element) : InputType(element) { }
+    explicit BaseClickableWithKeyInputType(HTMLInputElement* element) : InputType(element) { }
 
 private:
     virtual void handleKeydownEvent(KeyboardEvent*) OVERRIDE;

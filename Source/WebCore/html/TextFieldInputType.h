@@ -42,7 +42,7 @@ class FormDataList;
 // It supports not only the types for BaseTextInputType but also type=number.
 class TextFieldInputType : public InputType, protected SpinButtonElement::SpinButtonOwner {
 protected:
-    TextFieldInputType(HTMLInputElement*);
+    explicit TextFieldInputType(HTMLInputElement*);
     virtual ~TextFieldInputType();
     virtual bool canSetSuggestedValue() OVERRIDE;
     virtual void handleKeydownEvent(KeyboardEvent*) OVERRIDE;
