@@ -1296,3 +1296,5 @@ webkit.org/b/120085 [ Lion ] http/tests/inspector/resource-tree/resource-tree-do
 webkit.org/b/120087 [ Lion ] fast/forms/submit-to-url-fragment.html [ Pass Crash ]
 
 webkit.org/b/117962 [ Lion ] media/video-played-collapse.html [ Failure Pass ]
+
+webkit.org/b/120387 svg/animations/svglengthlist-animation-3.html [ Pass Failure ]
