@@ -1,0 +1,8 @@
+PASS form['foo'] is form.childNodes[0]
+PASS form['bar'][0] is form.childNodes[1]
+PASS form['bar'][1] is form.childNodes[2]
+PASS form.childNodes[0].name = 'bar'; form.childNodes[1].name = form.childNodes[2].name = 'foo'; form['foo'].length is 2
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

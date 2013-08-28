@@ -1,5 +1,17 @@
 2013-08-28  Ryosuke Niwa  <rniwa@webkit.org>
 
+        REGRESSION(r154586): Past names map should only be used when named item is empty
+        https://bugs.webkit.org/show_bug.cgi?id=120432
+
+        Reviewed by Anders Carlsson.
+
+        Add a regression test so that we never regress again.
+
+        * fast/forms/past-names-map-should-be-used-only-when-named-item-is-empty-expected.txt: Added.
+        * fast/forms/past-names-map-should-be-used-only-when-named-item-is-empty.html: Added.
+
+2013-08-28  Ryosuke Niwa  <rniwa@webkit.org>
+
         Fix a typo in the test name.
 
         * fast/forms/past-names-map-should-not-contain-disassociated-elements-expected.txt: Copied from LayoutTests/fast/forms/past-names-map-should-not-contained-disassociated-elements-expected.txt.

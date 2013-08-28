@@ -1,3 +1,17 @@
+2013-08-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r154586): Past names map should only be used when named item is empty
+        https://bugs.webkit.org/show_bug.cgi?id=120432
+
+        Reviewed by Anders Carlsson.
+
+        Don't add the element from the past names map if we've found elements of the given name.
+
+        Test: fast/forms/past-names-map-should-be-used-only-when-named-item-is-empty.html
+
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::getNamedElements):
+
 2013-08-27  Ryosuke Niwa  <rniwa@webkit.org>
 
         Don't keep unassociated elements in the past names map
