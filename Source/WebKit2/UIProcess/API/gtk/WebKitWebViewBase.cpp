@@ -57,6 +57,9 @@
 #include <WebCore/Region.h>
 #include <gdk/gdk.h>
 #include <gdk/gdkkeysyms.h>
+#ifdef GDK_WINDOWING_X11
+#include <gdk/gdkx.h>
+#endif
 #include <wtf/HashMap.h>
 #include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GRefPtr.h>
@@ -80,13 +83,6 @@ void redirectedWindowDamagedCallback(void* data);
 #endif
 
 struct _WebKitWebViewBasePrivate {
-    _WebKitWebViewBasePrivate()
-#if USE(TEXTURE_MAPPER_GL)
-        : redirectedWindow(RedirectedXCompositeWindow::create(IntSize(1, 1), RedirectedXCompositeWindow::DoNotCreateGLContext))
-#endif
-    {
-    }
-
     ~_WebKitWebViewBasePrivate()
     {
         pageProxy->close();
@@ -382,9 +378,13 @@ static void webkitWebViewBaseConstructed(GObject* object)
     priv->pageClient = PageClientImpl::create(viewWidget);
     priv->dragAndDropHelper.setWidget(viewWidget);
 
-#if USE(TEXTURE_MAPPER_GL)
-    if (priv->redirectedWindow)
-        priv->redirectedWindow->setDamageNotifyCallback(redirectedWindowDamagedCallback, object);
+#if USE(TEXTURE_MAPPER_GL) && defined(GDK_WINDOWING_X11)
+    GdkDisplay* display = gdk_display_manager_get_default_display(gdk_display_manager_get());
+    if (GDK_IS_X11_DISPLAY(display)) {
+        priv->redirectedWindow = RedirectedXCompositeWindow::create(IntSize(1, 1), RedirectedXCompositeWindow::DoNotCreateGLContext);
+        if (priv->redirectedWindow)
+            priv->redirectedWindow->setDamageNotifyCallback(redirectedWindowDamagedCallback, object);
+    }
 #endif
 
     priv->authenticationDialog = 0;

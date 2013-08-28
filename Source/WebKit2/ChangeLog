@@ -1,5 +1,24 @@
 2013-08-28  Zan Dobersek  <zdobersek@igalia.com>
 
+        [GTK][WK2] Only set up a RedirectedXCompositeWindow if running under an X11 display
+        https://bugs.webkit.org/show_bug.cgi?id=120321
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Only set up the RedirectedXCompositeWindow member of the WebKitWebViewBasePrivate struct
+        if we're running under an X11 display. This is now done in the webkitWebViewBaseConstructed
+        function rather than the constructor, which is removed.
+
+        This allows for the UIProcess to run in a Wayland environment even when built with accelerated
+        compositing enabled. Of course, at the moment there's no support yet for accelerated compositing
+        under Wayland, so we fall back to rendering the backing store. No changes are introduced to
+        the behavior under X11 - accelerated compositing will be used where possible, if supported.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseConstructed):
+
+2013-08-28  Zan Dobersek  <zdobersek@igalia.com>
+
         [GTK][WK2] Disable accelerated compositing under Wayland
         https://bugs.webkit.org/show_bug.cgi?id=120347
 
