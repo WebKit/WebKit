@@ -1,5 +1,13 @@
 2013-08-28  Ádám Kallai  <kadam@inf.u-szeged.hu>
 
+        [Qt] Moving expectations from Qt 5.0 WK2 to Qt WK2 - Part 10.
+        Unreviewed gardening.
+
+        * platform/qt-5.0-wk2: Removed.
+        * platform/qt-wk2/fast: Copied from LayoutTests/platform/qt-5.0-wk2/fast.
+
+2013-08-28  Ádám Kallai  <kadam@inf.u-szeged.hu>
+
         [Qt] Moving expectations from Qt 5.0 WK2 to Qt WK2 - Part 9.
         Unreviewed gardening.
 
