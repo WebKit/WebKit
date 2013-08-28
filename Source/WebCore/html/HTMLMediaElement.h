@@ -731,7 +731,7 @@ private:
     bool m_haveVisibleTextTrack : 1;
     bool m_processingPreferenceChange : 1;
 
-    String m_forcedOrAutomaticSubtitleTrackLanguage;
+    String m_subtitleTrackLanguage;
     float m_lastTextTrackUpdateTime;
 
     CaptionUserPreferences::CaptionDisplayMode m_captionDisplayMode;

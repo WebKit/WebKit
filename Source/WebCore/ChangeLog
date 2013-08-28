@@ -1,3 +1,46 @@
+2013-08-28  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r154527
+
+    2013-08-23  Eric Carlson  <eric.carlson@apple.com>
+
+            [Mac] some track language tags are not recognized
+            https://bugs.webkit.org/show_bug.cgi?id=119643
+
+            Reviewed by Jere Noble.
+
+            No new tests, existing tests updated.
+
+            * html/HTMLMediaElement.cpp:
+            (WebCore::HTMLMediaElement::HTMLMediaElement): Initialize m_captionDisplayMode from settings
+                if possible.
+            (WebCore::HTMLMediaElement::configureTextTrackGroup): Don't enable a default track when preferences
+                say captions should be disabled. Don't disable an already visible track if we don't find
+                a match unless preferences say captions should be disabled. m_forcedOrAutomaticSubtitleTrackLanguage ->
+                m_subtitleTrackLanguage.
+            (WebCore::HTMLMediaElement::mediaPlayerCharacteristicChanged): If the language of the primary
+                audio track changes, only kick off a text track recalc if caption preference are set to "automatic".
+            * html/HTMLMediaElement.h:
+
+            * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+            (WebCore::MediaPlayerPrivateAVFoundation::MediaPlayerPrivateAVFoundation): Initialize m_characteristicsChanged
+                and m_delayCharacteristicsChangedNotification.
+            (WebCore::MediaPlayerPrivateAVFoundation::setHasVideo): Call characteristicsChanged.
+            (WebCore::MediaPlayerPrivateAVFoundation::setHasAudio): Ditto.
+            (WebCore::MediaPlayerPrivateAVFoundation::setHasClosedCaptions): Ditto.
+            (WebCore::MediaPlayerPrivateAVFoundation::characteristicsChanged): New, allows us to coalesce 
+                calls to the media player when we know several characteristics may change.
+            (WebCore::MediaPlayerPrivateAVFoundation::setDelayCharacteristicsChangedNotification): Enable or
+                disable notification delay.
+            * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h:
+
+            * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+            (WebCore::MediaPlayerPrivateAVFoundationObjC::tracksChanged): Always call languageOfPrimaryAudioTrack(),
+                a track may have changed so we may have a new language.
+            (WebCore::MediaPlayerPrivateAVFoundationObjC::languageOfPrimaryAudioTrack): Call [AVAssetTrack languageCode]
+                if [AVAssetTrack extendedLanguageTag] returns NULL in case the media file has an old
+                QuickTime language code.
+
 2013-08-23  Lucas Forschler  <lforschler@apple.com>
 
         Merge r153909

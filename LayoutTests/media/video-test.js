@@ -357,3 +357,12 @@ function waitForEventsAndCall(eventList, func)
         eventList[i][0].addEventListener(requiredEvents[i], _eventCallback, true);
     }
 }
+
+function setCaptionDisplayMode(mode)
+{
+    if (window.internals)
+        internals.setCaptionDisplayMode(mode);
+    else
+        consoleWrite("<br><b>** This test only works in DRT! **<" + "/b><br>");
+
+}
