@@ -2545,9 +2545,9 @@ HRESULT STDMETHODCALLTYPE WebView::canShowMIMEType(
     *canShow = MIMETypeRegistry::isSupportedImageMIMEType(mimeTypeStr)
         || MIMETypeRegistry::isSupportedNonImageMIMEType(mimeTypeStr);
 
-    if (!*canShow && m_page && m_page->pluginData()) {
-        *canShow = (m_page->pluginData()->supportsMimeType(mimeTypeStr, PluginData::AllPlugins) && allowPlugins)
-            || m_page->pluginData()->supportsMimeType(mimeTypeStr, PluginData::OnlyApplicationPlugins);
+    if (!*canShow && m_page) {
+        *canShow = (m_page->pluginData().supportsMimeType(mimeTypeStr, PluginData::AllPlugins) && allowPlugins)
+            || m_page->pluginData().supportsMimeType(mimeTypeStr, PluginData::OnlyApplicationPlugins);
     }
 
     if (!*canShow)

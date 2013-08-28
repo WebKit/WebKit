@@ -354,7 +354,7 @@ PassRefPtr<Document> DOMImplementation::createDocument(const String& type, Frame
         if (frame->loader().subframeLoader()->allowPlugins(NotAboutToInstantiatePlugin))
             allowedPluginTypes = PluginData::AllPlugins;
 
-        pluginData = frame->page()->pluginData();
+        pluginData = &frame->page()->pluginData();
     }
 
     // PDF is one image type for which a plugin can override built-in support.

@@ -516,11 +516,11 @@ void Page::refreshPlugins(bool reload)
         framesNeedingReload[i]->loader().reload();
 }
 
-PluginData* Page::pluginData() const
+PluginData& Page::pluginData() const
 {
     if (!m_pluginData)
         m_pluginData = PluginData::create(this);
-    return m_pluginData.get();
+    return *m_pluginData;
 }
 
 inline MediaCanStartListener* Page::takeAnyMediaCanStartListener()

@@ -152,7 +152,7 @@ public:
     ViewportArguments viewportArguments() const;
 
     static void refreshPlugins(bool reload);
-    PluginData* pluginData() const;
+    PluginData& pluginData() const;
 
     void setCanStartMedia(bool);
     bool canStartMedia() const { return m_canStartMedia; }

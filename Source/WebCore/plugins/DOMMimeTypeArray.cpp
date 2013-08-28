@@ -86,10 +86,10 @@ PluginData* DOMMimeTypeArray::getPluginData() const
 {
     if (!m_frame)
         return 0;
-    Page* p = m_frame->page();
-    if (!p)
+    Page* page = m_frame->page();
+    if (!page)
         return 0;
-    return p->pluginData();
+    return &page->pluginData();
 }
 
 } // namespace WebCore

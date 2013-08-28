@@ -803,7 +803,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 {
     Frame* frame = _private->coreFrame;
     String mimeType = frame->document()->loader()->writer()->mimeType();
-    PluginData* pluginData = frame->page() ? frame->page()->pluginData() : 0;
+    PluginData* pluginData = frame->page() ? &frame->page()->pluginData() : 0;
 
     if (WebCore::DOMImplementation::isTextMIMEType(mimeType)
         || Image::supportsType(mimeType)

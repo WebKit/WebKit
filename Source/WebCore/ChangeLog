@@ -1,3 +1,13 @@
+2013-08-28  Andreas Kling  <akling@apple.com>
+
+        Page::pluginData() should return a reference.
+        <https://webkit.org/b/120386>
+
+        Reviewed by Darin Adler.
+
+        The PluginData is lazily constructed by pluginData(); it never returns null.
+        A small number of null checks were harmed in the making of this patch.
+
 2013-08-28  Andrei Parvu  <parvu@adobe.com>
 
         <https://webkit.org/b/120002> [CSS Masking] Add -webkit-mask-source-type shorthand property

@@ -94,7 +94,7 @@ PluginData* DOMPluginArray::pluginData() const
     Page* page = m_frame->page();
     if (!page)
         return 0;
-    return page->pluginData();
+    return &page->pluginData();
 }
 
 } // namespace WebCore

@@ -1376,12 +1376,12 @@ void WebFrameLoaderClient::showMediaPlayerProxyPlugin(Widget*)
 }
 #endif
 
-static bool pluginSupportsExtension(PluginData* pluginData, const String& extension)
+static bool pluginSupportsExtension(const PluginData& pluginData, const String& extension)
 {
     ASSERT(extension.lower() == extension);
 
-    for (size_t i = 0; i < pluginData->mimes().size(); ++i) {
-        const MimeClassInfo& mimeClassInfo = pluginData->mimes()[i];
+    for (size_t i = 0; i < pluginData.mimes().size(); ++i) {
+        const MimeClassInfo& mimeClassInfo = pluginData.mimes()[i];
 
         if (mimeClassInfo.extensions.contains(extension))
             return true;
@@ -1404,10 +1404,8 @@ ObjectContentType WebFrameLoaderClient::objectContentType(const KURL& url, const
         if (mimeType.isEmpty()) {
             // Check if there's a plug-in around that can handle the extension.
             if (WebPage* webPage = m_frame->page()) {
-                if (PluginData* pluginData = webPage->corePage()->pluginData()) {
-                    if (pluginSupportsExtension(pluginData, extension))
-                        return ObjectContentNetscapePlugin;
-                }
+                if (pluginSupportsExtension(webPage->corePage()->pluginData(), extension))
+                    return ObjectContentNetscapePlugin;
             }
         }
     }
@@ -1417,12 +1415,11 @@ ObjectContentType WebFrameLoaderClient::objectContentType(const KURL& url, const
 
     bool plugInSupportsMIMEType = false;
     if (WebPage* webPage = m_frame->page()) {
-        if (PluginData* pluginData = webPage->corePage()->pluginData()) {
-            if (pluginData->supportsMimeType(mimeType, PluginData::AllPlugins) && webFrame()->coreFrame()->loader().subframeLoader()->allowPlugins(NotAboutToInstantiatePlugin))
-                plugInSupportsMIMEType = true;
-            else if (pluginData->supportsMimeType(mimeType, PluginData::OnlyApplicationPlugins))
-                plugInSupportsMIMEType = true;
-        }
+        const PluginData& pluginData = webPage->corePage()->pluginData();
+        if (pluginData.supportsMimeType(mimeType, PluginData::AllPlugins) && webFrame()->coreFrame()->loader().subframeLoader()->allowPlugins(NotAboutToInstantiatePlugin))
+            plugInSupportsMIMEType = true;
+        else if (pluginData.supportsMimeType(mimeType, PluginData::OnlyApplicationPlugins))
+            plugInSupportsMIMEType = true;
     }
     
     if (MIMETypeRegistry::isSupportedImageMIMEType(mimeType))
