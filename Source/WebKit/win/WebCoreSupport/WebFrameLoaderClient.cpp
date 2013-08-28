@@ -923,16 +923,14 @@ bool WebFrameLoaderClient::canHandleRequest(const ResourceRequest& request) cons
     return WebView::canHandleRequest(request);
 }
 
-bool WebFrameLoaderClient::canShowMIMEType(const String& /*MIMEType*/) const
+bool WebFrameLoaderClient::canShowMIMEType(const String& mimeType) const
 {
-    notImplemented();
-    return true;
+    return m_webFrame->webView()->canShowMIMEType(mimeType);
 }
 
-bool WebFrameLoaderClient::canShowMIMETypeAsHTML(const String& /*MIMEType*/) const
+bool WebFrameLoaderClient::canShowMIMETypeAsHTML(const String& mimeType) const
 {
-    notImplemented();
-    return true;
+    return m_webFrame->webView()->canShowMIMETypeAsHTML(mimeType);
 }
 
 bool WebFrameLoaderClient::representationExistsForURLScheme(const String& /*URLScheme*/) const

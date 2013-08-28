@@ -111,6 +111,7 @@
 #include <WebCore/Logging.h>
 #include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/MemoryCache.h>
+#include <WebCore/NotImplemented.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageCache.h>
 #include <WebCore/PageGroup.h>
@@ -2530,39 +2531,51 @@ ULONG STDMETHODCALLTYPE WebView::Release(void)
 
 // IWebView --------------------------------------------------------------------
 
-HRESULT STDMETHODCALLTYPE WebView::canShowMIMEType( 
-    /* [in] */ BSTR mimeType,
-    /* [retval][out] */ BOOL* canShow)
+HRESULT WebView::canShowMIMEType(/* [in] */ BSTR mimeType, /* [retval][out] */ BOOL* canShow)
 {
-    String mimeTypeStr = toString(mimeType);
-
     if (!canShow)
         return E_POINTER;
 
-    Frame* coreFrame = core(m_mainFrame);
-    bool allowPlugins = coreFrame && coreFrame->loader().subframeLoader()->allowPlugins(NotAboutToInstantiatePlugin);
-
-    *canShow = MIMETypeRegistry::isSupportedImageMIMEType(mimeTypeStr)
-        || MIMETypeRegistry::isSupportedNonImageMIMEType(mimeTypeStr);
-
-    if (!*canShow && m_page) {
-        *canShow = (m_page->pluginData().supportsMimeType(mimeTypeStr, PluginData::AllPlugins) && allowPlugins)
-            || m_page->pluginData().supportsMimeType(mimeTypeStr, PluginData::OnlyApplicationPlugins);
-    }
-
-    if (!*canShow)
-        *canShow = shouldUseEmbeddedView(mimeTypeStr);
+    *canShow = canShowMIMEType(toString(mimeType));
 
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebView::canShowMIMETypeAsHTML( 
-    /* [in] */ BSTR /*mimeType*/,
-    /* [retval][out] */ BOOL* canShow)
+bool WebView::canShowMIMEType(const String& mimeType)
+{
+    Frame* coreFrame = core(m_mainFrame);
+    bool allowPlugins = coreFrame && coreFrame->loader().subframeLoader()->allowPlugins(NotAboutToInstantiatePlugin);
+
+    bool canShow = MIMETypeRegistry::isSupportedImageMIMEType(mimeType)
+        || MIMETypeRegistry::isSupportedNonImageMIMEType(mimeType)
+        || MIMETypeRegistry::isSupportedMediaMIMEType(mimeType);
+
+    if (!canShow && m_page) {
+        canShow = (m_page->pluginData().supportsMimeType(mimeType, PluginData::AllPlugins) && allowPlugins)
+            || m_page->pluginData().supportsMimeType(mimeType, PluginData::OnlyApplicationPlugins);
+    }
+
+    if (!canShow)
+        canShow = shouldUseEmbeddedView(mimeType);
+
+    return canShow;
+}
+
+HRESULT WebView::canShowMIMETypeAsHTML(/* [in] */ BSTR mimeType, /* [retval][out] */ BOOL* canShow)
+{
+    if (!canShow)
+        return E_POINTER;
+
+    *canShow = canShowMIMETypeAsHTML(toString(mimeType));
+
+    return S_OK;
+}
+
+bool WebView::canShowMIMETypeAsHTML(const String& /*mimeType*/)
 {
     // FIXME
-    *canShow = TRUE;
-    return S_OK;
+    notImplemented();
+    return true;
 }
 
 HRESULT STDMETHODCALLTYPE WebView::MIMETypesShownAsHTML( 
