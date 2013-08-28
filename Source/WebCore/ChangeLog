@@ -1,3 +1,18 @@
+2013-08-28  Eric Carlson  <eric.carlson@apple.com>
+
+        MediaPlayerPrivateAVFoundationObjC is painting video frames under the video layer
+        https://bugs.webkit.org/show_bug.cgi?id=120170
+
+        Reviewed by Simon Fraser.
+
+        No new tests, it is only possible to test in the debugger.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::hasAvailableVideoFrame): Drive by optimization.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::paintCurrentFrameInContext): Move logic from paint here.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::paint): Do nothing if we already have a video layer,
+            otherwise call paint().
+
 2013-08-28  Antti Koivisto  <antti@apple.com>
 
         Add child and descendant const iterators

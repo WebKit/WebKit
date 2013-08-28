@@ -390,7 +390,10 @@ void MediaPlayerPrivateAVFoundationObjC::destroyVideoLayer()
 
 bool MediaPlayerPrivateAVFoundationObjC::hasAvailableVideoFrame() const
 {
-    return (m_videoFrameHasDrawn || (m_videoLayer && [m_videoLayer.get() isReadyForDisplay]));
+    if (currentRenderingMode() == MediaRenderingToLayer)
+        return m_videoLayer && [m_videoLayer.get() isReadyForDisplay];
+
+    return m_videoFrameHasDrawn;
 }
 
 void MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(const String& url)
@@ -787,14 +790,6 @@ void MediaPlayerPrivateAVFoundationObjC::paintCurrentFrameInContext(GraphicsCont
     if (!metaDataAvailable() || context->paintingDisabled())
         return;
 
-    paint(context, rect);
-}
-
-void MediaPlayerPrivateAVFoundationObjC::paint(GraphicsContext* context, const IntRect& rect)
-{
-    if (!metaDataAvailable() || context->paintingDisabled())
-        return;
-
     setDelayCallbacks(true);
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
@@ -808,6 +803,18 @@ void MediaPlayerPrivateAVFoundationObjC::paint(GraphicsContext* context, const I
     setDelayCallbacks(false);
 
     m_videoFrameHasDrawn = true;
+}
+
+void MediaPlayerPrivateAVFoundationObjC::paint(GraphicsContext* context, const IntRect& rect)
+{
+    if (!metaDataAvailable() || context->paintingDisabled())
+        return;
+
+    // We can ignore the request if we are already rendering to a layer.
+    if (currentRenderingMode() == MediaRenderingToLayer)
+        return;
+
+    paintCurrentFrameInContext(context, rect);
 }
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED < 1080
