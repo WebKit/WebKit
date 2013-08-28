@@ -35,9 +35,6 @@ fast/dom/URL-attribute-reflection.html
 fast/dom/Window/custom-constructors.html
 fast/events/media-element-focus-tab.html
 fast/forms/form-associated-element-crash3.html
-fast/js/constructor-length.html
-fast/js/global-constructors-attributes.html
-fast/js/instanceof-XMLHttpRequest.html
 fast/replaced/outline-replaced-elements.html
 http/tests/misc/delete-frame-during-readystatechange-with-gc-after-video-removal.html
 http/tests/misc/delete-frame-during-readystatechange.html
@@ -63,7 +60,6 @@ http/tests/cache/preload-cleared-after-parsing-canceled-by-js.html
 compositing/self-painting-layers.html
 compositing/tiling/huge-layer-img.html
 fast/dom/beforeload/clear-video-poster-in-beforeload-listener.html
-fast/js/reentrant-caching.html
 http/tests/cache/subresource-expiration-1.html
 http/tests/cache/subresource-expiration-2.html
 
@@ -84,8 +80,3 @@ http/tests/cache/subresource-multiple-instances.html
 # crashing tests
 fast/multicol/huge-column-gap-crash.html
 fast/js/create-lots-of-workers.html
-
-# Fix the ARM traditional DFG JIT related bugs
-# https://bugs.webkit.org/show_bug.cgi?id=105304
-fast/js/integer-division-neg2tothe32-by-neg1.html
-fast/js/regress/negative-zero-modulo.html

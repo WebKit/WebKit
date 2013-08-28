@@ -1,3 +1,10 @@
+2013-08-28  Gabor Rapcsanyi  <rgabor@webkit.org>
+
+        Unreviewed ARM Qt gardening.
+
+        * platform/qt-arm/TestExpectations:
+        Unskipped some tests which are already passed.
+
 2013-08-28  Ádám Kallai  <kadam@inf.u-szeged.hu>
 
         [Qt] Moving expectations from Qt 5.0 WK2 to Qt WK2 - Part 8.
