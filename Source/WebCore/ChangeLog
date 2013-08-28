@@ -1,3 +1,18 @@
+2013-08-27  Andreas Kling  <akling@apple.com>
+
+        Make it less awkward to check if a Frame is the main Frame.
+        <https://webkit.org/b/120382>
+
+        Reviewed by Anders Carlsson.
+
+        Added Page::frameIsMainFrame(const Frame*) so code that wants to find out if a given
+        Frame is a Page's main frame doesn't have to do a manual pointer compare.
+
+        * page/Page.h:
+        (WebCore::Page::frameIsMainFrame):
+
+            Added. Replaces (frame == &page->mainFrame()) idiom.
+
 2013-08-27  Morten Stenshorne  <mstensho@opera.com>
 
         Improve multicol intrinsic width calculation

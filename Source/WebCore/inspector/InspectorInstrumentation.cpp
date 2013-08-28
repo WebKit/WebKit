@@ -902,7 +902,7 @@ void InspectorInstrumentation::didCommitLoadImpl(InstrumentingAgents* instrument
     if (!inspectorAgent || !inspectorAgent->developerExtrasEnabled())
         return;
 
-    if (loader->frame() == &page->mainFrame()) {
+    if (page->frameIsMainFrame(loader->frame())) {
         if (InspectorConsoleAgent* consoleAgent = instrumentingAgents->inspectorConsoleAgent())
             consoleAgent->reset();
 

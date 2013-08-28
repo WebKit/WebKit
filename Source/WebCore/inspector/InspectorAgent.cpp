@@ -141,7 +141,7 @@ void InspectorAgent::domContentLoadedEventFired()
 
 bool InspectorAgent::isMainResourceLoader(DocumentLoader* loader, const KURL& requestUrl)
 {
-    return loader->frame() == &m_inspectedPage->mainFrame() && requestUrl == loader->requestURL();
+    return m_inspectedPage->frameIsMainFrame(loader->frame()) && requestUrl == loader->requestURL();
 }
 
 void InspectorAgent::evaluateForTestInFrontend(long callId, const String& script)

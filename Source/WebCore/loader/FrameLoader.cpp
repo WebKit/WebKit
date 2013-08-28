@@ -1959,7 +1959,7 @@ void FrameLoader::prepareForCachedPageRestore()
 {
     ASSERT(!m_frame.tree().parent());
     ASSERT(m_frame.page());
-    ASSERT(&m_frame.page()->mainFrame() == &m_frame);
+    ASSERT(m_frame.page()->frameIsMainFrame(&m_frame));
 
     m_frame.navigationScheduler().cancel();
 
@@ -2028,7 +2028,7 @@ bool FrameLoader::isHostedByObjectElement() const
 
 bool FrameLoader::isLoadingMainFrame() const
 {
-    return m_frame.page() && &m_frame.page()->mainFrame() == &m_frame;
+    return m_frame.page() && m_frame.page()->frameIsMainFrame(&m_frame);
 }
 
 bool FrameLoader::isReplacing() const
@@ -2178,7 +2178,7 @@ void FrameLoader::checkLoadCompleteForThisFrame()
 
             m_progressTracker->progressCompleted();
             if (Page* page = m_frame.page()) {
-                if (&m_frame == &page->mainFrame())
+                if (page->frameIsMainFrame(&m_frame))
                     page->resetRelevantPaintedObjectCounter();
             }
 
@@ -2287,7 +2287,7 @@ void FrameLoader::didLayout(LayoutMilestones milestones)
 {
 #if !ASSERT_DISABLED
     if (Page* page = m_frame.page())
-        ASSERT(&page->mainFrame() == &m_frame);
+        ASSERT(page->frameIsMainFrame(&m_frame));
 #endif
 
     m_client.dispatchDidLayout(milestones);
@@ -2861,7 +2861,7 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest&, Pass
 
 #if ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(INSPECTOR)
     if (Page* page = m_frame.page()) {
-        if (&page->mainFrame() == &m_frame)
+        if (page->frameIsMainFrame(&m_frame))
             page->inspectorController()->resume();
     }
 #endif
@@ -3328,7 +3328,7 @@ void FrameLoader::dispatchDidCommitLoad()
 
     InspectorInstrumentation::didCommitLoad(&m_frame, m_documentLoader.get());
 
-    if (&m_frame.page()->mainFrame() == &m_frame)
+    if (m_frame.page()->frameIsMainFrame(&m_frame))
         m_frame.page()->featureObserver()->didCommitLoad();
 
 }

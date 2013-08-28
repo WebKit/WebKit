@@ -1065,7 +1065,7 @@ bool WebFrameLoaderClient::canHandleRequest(const ResourceRequest& request) cons
 {
     Frame* frame = core(m_webFrame.get());
     Page* page = frame->page();
-    BOOL forMainFrame = page && &page->mainFrame() == frame;
+    BOOL forMainFrame = page && page->frameIsMainFrame(frame);
     return [WebView _canHandleRequest:request.nsURLRequest(UpdateHTTPBody) forMainFrame:forMainFrame];
 }
 
@@ -1265,7 +1265,7 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
     // If we own the view, delete the old one - otherwise the render m_frame will take care of deleting the view.
     Frame* coreFrame = core(m_webFrame.get());
     Page* page = coreFrame->page();
-    bool isMainFrame = coreFrame == &page->mainFrame();
+    bool isMainFrame = page->frameIsMainFrame(coreFrame);
     if (isMainFrame && coreFrame->view())
         coreFrame->view()->setParentVisible(false);
     coreFrame->setView(0);

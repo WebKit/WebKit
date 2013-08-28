@@ -706,7 +706,7 @@ void Frame::createView(const IntSize& viewportSize, const Color& backgroundColor
     ASSERT(this);
     ASSERT(m_page);
 
-    bool isMainFrame = this == &m_page->mainFrame();
+    bool isMainFrame = m_page->frameIsMainFrame(this);
 
     if (isMainFrame && view())
         view()->setParentVisible(false);
@@ -879,7 +879,7 @@ void Frame::setPageAndTextZoomFactors(float pageZoomFactor, float textZoomFactor
             view->layout();
     }
 
-    if (&page->mainFrame() == this)
+    if (page->frameIsMainFrame(this))
         pageCache()->markPagesForFullStyleRecalc(page);
 }
 

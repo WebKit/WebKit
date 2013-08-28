@@ -231,7 +231,7 @@ static bool allowsBeforeUnloadListeners(DOMWindow* window)
     Page* page = frame->page();
     if (!page)
         return false;
-    return frame == &page->mainFrame();
+    return page->frameIsMainFrame(frame);
 }
 
 bool DOMWindow::dispatchAllPendingBeforeUnloadEvents()
@@ -931,7 +931,7 @@ void DOMWindow::focus(ScriptExecutionContext* context)
     }
 
     // If we're a top level window, bring the window to the front.
-    if (m_frame == &page->mainFrame() && allowFocus)
+    if (page->frameIsMainFrame(m_frame) && allowFocus)
         page->chrome().focus();
 
     if (!m_frame)

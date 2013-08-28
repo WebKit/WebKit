@@ -81,7 +81,7 @@ void HistoryController::saveScrollPositionAndViewStateToItem(HistoryItem* item)
         item->setScrollPoint(m_frame.view()->scrollPosition());
 
     Page* page = m_frame.page();
-    if (page && &page->mainFrame() == &m_frame)
+    if (page && page->frameIsMainFrame(&m_frame))
         item->setPageScaleFactor(page->pageScaleFactor());
 
     // FIXME: It would be great to work out a way to put this code in WebCore instead of calling through to the client.
@@ -134,13 +134,13 @@ void HistoryController::restoreScrollPositionAndViewState()
     // https://bugs.webkit.org/show_bug.cgi?id=98698
     if (FrameView* view = m_frame.view()) {
         Page* page = m_frame.page();
-        if (page && &page->mainFrame() == &m_frame) {
+        if (page && page->frameIsMainFrame(&m_frame)) {
             if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator())
                 scrollingCoordinator->frameViewRootLayerDidChange(view);
         }
 
         if (!view->wasScrolledByUser()) {
-            if (page && &page->mainFrame() == &m_frame && m_currentItem->pageScaleFactor())
+            if (page && page->frameIsMainFrame(&m_frame) && m_currentItem->pageScaleFactor())
                 page->setPageScaleFactor(m_currentItem->pageScaleFactor(), m_currentItem->scrollPoint());
             else
                 view->setScrollPosition(m_currentItem->scrollPoint());

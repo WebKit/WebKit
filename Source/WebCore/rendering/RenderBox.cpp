@@ -829,7 +829,7 @@ bool RenderBox::canAutoscroll() const
     if (node() != &document())
         return false;
     Page* page = frame().page();
-    return page && &page->mainFrame() == &frame() && view().frameView().isScrollable();
+    return page && page->frameIsMainFrame(&frame()) && view().frameView().isScrollable();
 }
 
 // If specified point is in border belt, returned offset denotes direction of

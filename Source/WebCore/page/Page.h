@@ -161,6 +161,7 @@ public:
     PlugInClient* plugInClient() const { return m_plugInClient; }
 
     Frame& mainFrame() const { return *m_mainFrame; }
+    bool frameIsMainFrame(const Frame* frame) { return frame == m_mainFrame.get(); }
 
     bool openedByDOM() const;
     void setOpenedByDOM();

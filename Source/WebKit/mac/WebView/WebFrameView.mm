@@ -282,7 +282,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
     // If this isn't the main frame, it must have an owner element set, or it
     // won't ever get installed in the view hierarchy.
-    ASSERT(frame == &frame->page()->mainFrame() || frame->ownerElement());
+    ASSERT(frame->page()->frameIsMainFrame(frame) || frame->ownerElement());
 
     FrameView* view = frame->view();
 

@@ -412,7 +412,7 @@ void FrameView::clear()
 
 bool FrameView::isMainFrameView() const
 {
-    return frame().page() && &frame().page()->mainFrame() == &frame();
+    return frame().page() && frame().page()->frameIsMainFrame(&frame());
 }
 
 bool FrameView::didFirstLayout() const
@@ -2742,8 +2742,9 @@ void FrameView::performPostLayoutTasks()
         }
     }
 
-    if (milestonesAchieved && page && &page->mainFrame() == &frame())
+    if (milestonesAchieved && page && page->frameIsMainFrame(&frame()))
         frame().loader().didLayout(milestonesAchieved);
+
 #if ENABLE(FONT_LOAD_EVENTS)
     if (RuntimeEnabledFeatures::fontLoadEventsEnabled())
         frame().document()->fontloader()->didLayout();
