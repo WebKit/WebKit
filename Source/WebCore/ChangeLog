@@ -1,5 +1,19 @@
 2013-08-28  Sergio Villar Senin  <svillar@igalia.com>
 
+        WorkerGlobalScopeWebDatabase requires ENABLE(WORKERS)
+        https://bugs.webkit.org/show_bug.cgi?id=120395
+
+        Reviewed by Christophe Dumez.
+
+        WorkerGlobalScopeDatabase uses the WorkerGlobalScope object which is
+        defined only when WORKERS are enabled. We should guard that code.
+
+        * Modules/webdatabase/WorkerGlobalScopeWebDatabase.cpp:
+        * Modules/webdatabase/WorkerGlobalScopeWebDatabase.h:
+        * Modules/webdatabase/WorkerGlobalScopeWebDatabase.idl:
+
+2013-08-28  Sergio Villar Senin  <svillar@igalia.com>
+
         [CSS Grid Layout] Fix grid position resolution
         https://bugs.webkit.org/show_bug.cgi?id=119801
 

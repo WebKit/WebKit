@@ -25,7 +25,7 @@
  */
 
 [
-    Conditional=SQL_DATABASE,
+    Conditional=SQL_DATABASE&WORKERS,
 ] partial interface WorkerGlobalScope {
     [RaisesException] Database openDatabase(DOMString name, DOMString version, DOMString displayName, unsigned long estimatedSize, optional DatabaseCallback creationCallback);
 

@@ -27,7 +27,7 @@
 
 #include "config.h"
 
-#if ENABLE(SQL_DATABASE)
+#if ENABLE(SQL_DATABASE) && ENABLE(WORKERS)
 
 #include "WorkerGlobalScopeWebDatabase.h"
 
@@ -73,4 +73,4 @@ PassRefPtr<DatabaseSync> WorkerGlobalScopeWebDatabase::openDatabaseSync(WorkerGl
 
 } // namespace WebCore
 
-#endif // ENABLE(SQL_DATABASE)
+#endif // ENABLE(SQL_DATABASE) && ENABLE(WORKERS)
