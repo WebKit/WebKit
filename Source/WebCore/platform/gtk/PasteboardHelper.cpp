@@ -74,7 +74,6 @@ PasteboardHelper* PasteboardHelper::defaultPasteboardHelper()
 
 PasteboardHelper::PasteboardHelper()
     : m_targetList(gtk_target_list_new(0, 0))
-    , m_usePrimarySelectionClipboard(false)
 {
     initGdkAtoms();
 
@@ -97,18 +96,6 @@ static inline GdkDisplay* displayFromFrame(Frame* frame)
     ASSERT(page);
     PlatformPageClient client = page->chrome().platformPageClient();
     return client ? gtk_widget_get_display(client) : gdk_display_get_default();
-}
-
-GtkClipboard* PasteboardHelper::getCurrentClipboard(Frame* frame)
-{
-    if (m_usePrimarySelectionClipboard)
-        return getPrimarySelectionClipboard(frame);
-    return getClipboard(frame);
-}
-
-GtkClipboard* PasteboardHelper::getClipboard(Frame* frame) const
-{
-    return gtk_clipboard_get_for_display(displayFromFrame(frame), GDK_SELECTION_CLIPBOARD);
 }
 
 GtkClipboard* PasteboardHelper::getPrimarySelectionClipboard(Frame* frame) const

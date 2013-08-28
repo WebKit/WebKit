@@ -38,13 +38,8 @@ public:
     virtual ~PasteboardHelper();
     static PasteboardHelper* defaultPasteboardHelper();
 
-    void setUsePrimarySelectionClipboard(bool usePrimary) { m_usePrimarySelectionClipboard = usePrimary; }
-    bool usePrimarySelectionClipboard() { return m_usePrimarySelectionClipboard; }
-
     enum SmartPasteInclusion { IncludeSmartPaste, DoNotIncludeSmartPaste };
 
-    GtkClipboard* getCurrentClipboard(Frame*);
-    GtkClipboard* getClipboard(Frame*) const;
     GtkClipboard* getPrimarySelectionClipboard(Frame*) const;
     GtkTargetList* targetList() const;
     GtkTargetList* targetListForDataObject(DataObjectGtk*, SmartPasteInclusion = DoNotIncludeSmartPaste);
@@ -59,7 +54,6 @@ public:
 
 private:
     GtkTargetList* m_targetList;
-    bool m_usePrimarySelectionClipboard;
 };
 
 }

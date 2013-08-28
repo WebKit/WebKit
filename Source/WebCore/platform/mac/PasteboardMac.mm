@@ -115,12 +115,6 @@ static Vector<String> writableTypesForImage()
     return types;
 }
 
-Pasteboard* Pasteboard::generalPasteboard() 
-{
-    static Pasteboard* pasteboard = new Pasteboard(NSGeneralPboard);
-    return pasteboard;
-}
-
 Pasteboard::Pasteboard(const String& pasteboardName)
     : m_pasteboardName(pasteboardName)
     , m_changeCount(platformStrategies()->pasteboardStrategy()->changeCount(m_pasteboardName))

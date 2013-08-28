@@ -1074,16 +1074,12 @@ void QWebPageAdapter::triggerAction(QWebPageAdapter::MenuAction action, QWebHitT
         openNewWindow(url, &frame);
         break;
         }
-    case CopyLinkToClipboard: {
+    case CopyLinkToClipboard:
 #if defined(Q_WS_X11)
-        bool oldSelectionMode = Pasteboard::generalPasteboard()->isSelectionMode();
-        Pasteboard::generalPasteboard()->setSelectionMode(true);
-        editor.copyURL(hitTestResult->linkUrl, hitTestResult->linkText);
-        Pasteboard::generalPasteboard()->setSelectionMode(oldSelectionMode);
+        editor.copyURL(hitTestResult->linkUrl, hitTestResult->linkText, *Pasteboard::createForGlobalSelection());
 #endif
         editor.copyURL(hitTestResult->linkUrl, hitTestResult->linkText);
         break;
-    }
     case OpenImageInNewWindow:
         openNewWindow(hitTestResult->imageUrl, &frame);
         break;

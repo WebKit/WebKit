@@ -918,19 +918,21 @@ static bool executePaste(Frame& frame, Event*, EditorCommandSource source, const
     return true;
 }
 
+#if PLATFORM(GTK) || PLATFORM(QT)
+
 static bool executePasteGlobalSelection(Frame& frame, Event*, EditorCommandSource source, const String&)
 {
+    // FIXME: This check should be in an enable function, not here.
     if (!frame.editor().client()->supportsGlobalSelection())
         return false;
+
     ASSERT_UNUSED(source, source == CommandFromMenuOrKeyBinding);
     UserTypingGestureIndicator typingGestureIndicator(frame);
-
-    bool oldSelectionMode = Pasteboard::generalPasteboard()->isSelectionMode();
-    Pasteboard::generalPasteboard()->setSelectionMode(true);
-    frame.editor().paste();
-    Pasteboard::generalPasteboard()->setSelectionMode(oldSelectionMode);
+    frame.editor().paste(*Pasteboard::createForGlobalSelection());
     return true;
 }
+
+#endif
 
 static bool executePasteAndMatchStyle(Frame& frame, Event*, EditorCommandSource source, const String&)
 {
@@ -1559,7 +1561,6 @@ static const CommandMap& createCommandMap()
         { "Paste", { executePaste, supportedPaste, enabledPaste, stateNone, valueNull, notTextInsertion, allowExecutionWhenDisabled } },
         { "PasteAndMatchStyle", { executePasteAndMatchStyle, supportedPaste, enabledPaste, stateNone, valueNull, notTextInsertion, allowExecutionWhenDisabled } },
         { "PasteAsPlainText", { executePasteAsPlainText, supportedPaste, enabledPaste, stateNone, valueNull, notTextInsertion, allowExecutionWhenDisabled } },
-        { "PasteGlobalSelection", { executePasteGlobalSelection, supportedFromMenuOrKeyBinding, enabledPaste, stateNone, valueNull, notTextInsertion, allowExecutionWhenDisabled } },
         { "Print", { executePrint, supported, enabled, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "Redo", { executeRedo, supported, enabledRedo, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "RemoveFormat", { executeRemoveFormat, supported, enabledRangeInEditableText, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
@@ -1593,6 +1594,10 @@ static const CommandMap& createCommandMap()
         { "UseCSS", { executeUseCSS, supported, enabled, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "Yank", { executeYank, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "YankAndSelect", { executeYankAndSelect, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
+
+#if PLATFORM(GTK) || PLATFORM(QT)
+        { "PasteGlobalSelection", { executePasteGlobalSelection, supportedFromMenuOrKeyBinding, enabledPaste, stateNone, valueNull, notTextInsertion, allowExecutionWhenDisabled } },
+#endif
 
 #if PLATFORM(MAC)
         { "TakeFindStringFromSelection", { executeTakeFindStringFromSelection, supportedFromMenuOrKeyBinding, enabledTakeFindStringFromSelection, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },

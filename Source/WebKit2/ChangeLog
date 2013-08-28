@@ -1,3 +1,14 @@
+2013-08-28  Darin Adler  <darin@apple.com>
+
+        Eliminate Pasteboard::generalPasteboard
+        https://bugs.webkit.org/show_bug.cgi?id=120392
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::updateGlobalSelection):
+        Use createForGlobalSelection instead of generalPasteboard and setSelectionMode.
+
 2013-08-28  Ábrahám Gábor  <abrhm@inf.u-szeged.hu>
 
         Fix unused variable warning.

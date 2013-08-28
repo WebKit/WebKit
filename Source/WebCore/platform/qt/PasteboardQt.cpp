@@ -73,6 +73,13 @@ PassOwnPtr<Pasteboard> Pasteboard::createForCopyAndPaste()
 #endif
 }
 
+PassOwnPtr<Pasteboard> Pasteboard::createForGlobalSelection()
+{
+    OwnPtr<Pasteboard> pasteboard = createForCopyAndPaste();
+    pasteboard->m_selectionMode = true;
+    return pasteboard.release();
+}
+
 PassOwnPtr<Pasteboard> Pasteboard::createPrivate()
 {
     return create();
@@ -103,14 +110,6 @@ Pasteboard::~Pasteboard()
     else
         delete m_writableData;
     m_readableData = 0;
-}
-
-Pasteboard* Pasteboard::generalPasteboard()
-{
-    static Pasteboard* pasteboard = 0;
-    if (!pasteboard)
-        pasteboard = new Pasteboard(0, false);
-    return pasteboard;
 }
 
 void Pasteboard::writeSelection(Range* selectedRange, bool canSmartCopyOrDelete, Frame* frame, ShouldSerializeSelectedTextForClipboard shouldSerializeSelectedTextForClipboard)
@@ -228,16 +227,6 @@ void Pasteboard::writeImage(Node* node, const KURL&, const String&)
         return;
     QGuiApplication::clipboard()->setPixmap(*pixmap, QClipboard::Clipboard);
 #endif
-}
-
-bool Pasteboard::isSelectionMode() const
-{
-    return m_selectionMode;
-}
-
-void Pasteboard::setSelectionMode(bool selectionMode)
-{
-    m_selectionMode = selectionMode;
 }
 
 const QMimeData* Pasteboard::readData() const

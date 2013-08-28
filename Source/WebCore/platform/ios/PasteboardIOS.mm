@@ -100,12 +100,6 @@ namespace WebCore {
 
 NSString *WebArchivePboardType = @"Apple Web Archive pasteboard type";
 
-Pasteboard* Pasteboard::generalPasteboard()
-{
-    static Pasteboard* pasteboard = new Pasteboard;
-    return pasteboard;
-}
-
 Pasteboard::Pasteboard()
     : m_frame(0)
 {

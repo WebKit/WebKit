@@ -224,7 +224,7 @@ String InspectorFrontendHost::localizedStringsURL()
 
 void InspectorFrontendHost::copyText(const String& text)
 {
-    Pasteboard::generalPasteboard()->writePlainText(text, Pasteboard::CannotSmartReplace);
+    Pasteboard::createForCopyAndPaste()->writePlainText(text, Pasteboard::CannotSmartReplace);
 }
 
 void InspectorFrontendHost::openInNewTab(const String& url)

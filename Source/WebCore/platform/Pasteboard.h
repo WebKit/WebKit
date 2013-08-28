@@ -110,9 +110,6 @@ public:
     bool isForCopyAndPaste() const { return !m_isForDragAndDrop; }
 #endif
 
-    // Deprecated. Use createForCopyAndPaste instead.
-    static Pasteboard* generalPasteboard();
-
     static PassOwnPtr<Pasteboard> createForCopyAndPaste();
     static PassOwnPtr<Pasteboard> createPrivate(); // Corresponds to the "unique pasteboard" concept on Mac. Used in editing, not sure exactly for what purpose.
 
@@ -160,12 +157,8 @@ public:
     void setFrame(Frame*);
 #endif
 
-#if PLATFORM(QT) || PLATFORM(GTK)
-    bool isSelectionMode() const;
-    void setSelectionMode(bool);
-#else
-    bool isSelectionMode() const { return false; }
-    void setSelectionMode(bool) { }
+#if PLATFORM(GTK) || PLATFORM(QT)
+    static PassOwnPtr<Pasteboard> createForGlobalSelection();
 #endif
 
 #if PLATFORM(WIN)

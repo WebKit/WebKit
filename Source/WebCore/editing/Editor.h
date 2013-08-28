@@ -129,10 +129,12 @@ public:
     void cut();
     void copy();
     void paste();
+    void paste(Pasteboard&);
     void pasteAsPlainText();
     void performDelete();
 
-    void copyURL(const KURL&, const String&);
+    void copyURL(const KURL&, const String& title);
+    void copyURL(const KURL&, const String& title, Pasteboard&);
     void copyImage(const HitTestResult&);
 
     void indent();

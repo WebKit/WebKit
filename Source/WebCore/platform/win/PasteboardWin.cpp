@@ -90,12 +90,6 @@ static LRESULT CALLBACK PasteboardOwnerWndProc(HWND hWnd, UINT message, WPARAM w
     return lresult;
 }
 
-Pasteboard* Pasteboard::generalPasteboard() 
-{
-    static Pasteboard* pasteboard = new Pasteboard;
-    return pasteboard;
-}
-
 PassOwnPtr<Pasteboard> Pasteboard::createForCopyAndPaste()
 {
     OwnPtr<Pasteboard> pasteboard = adoptPtr(new Pasteboard);

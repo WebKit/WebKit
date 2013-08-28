@@ -1,3 +1,54 @@
+2013-08-28  Darin Adler  <darin@apple.com>
+
+        Eliminate Pasteboard::generalPasteboard
+        https://bugs.webkit.org/show_bug.cgi?id=120392
+
+        Reviewed by Anders Carlsson.
+
+        * WebCore.exp.in: Removed the generalPasteboard function.
+        It didn't need to be exported, because no one was using it.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::paste): Added an overload that takes a Pasteboard.
+        (WebCore::Editor::copyURL): Ditto.
+        * editing/Editor.h: Added overloads.
+
+        * editing/EditorCommand.cpp:
+        (WebCore::executePasteGlobalSelection): Put this function inside the same
+        platform #if that the global selection code in the Pasteboard class was in.
+        Changed to use Pasteboard::createForGlobalSelection instead of using the
+        Pasteboard::setSelectionMode approach.
+        (WebCore::createCommandMap): Put PasteGlobalSelection inside the platform #if.
+
+        * inspector/InjectedScriptHost.cpp:
+        (WebCore::InjectedScriptHost::copyText): Use Pasteboard::createForCopyAndPaste()
+        instead of Pasteboard::generalPasteboard().
+        * inspector/InspectorFrontendHost.cpp:
+        (WebCore::InspectorFrontendHost::copyText): Ditto.
+
+        * platform/Pasteboard.h: Removed generalPasteboard. Replaced isSelectionMode
+        and setSelectionMode with createForGlobalSelection.
+
+        * platform/blackberry/PasteboardBlackBerry.cpp: Deleted generalPasteboard.
+        * platform/efl/PasteboardEfl.cpp: Deleted generalPasteboard.
+
+        * platform/gtk/PasteboardGtk.cpp: Deleted selectionClipboard, primaryClipboard,
+        generalPasteboard, isSelectionMode, and setSelectionMode.
+        (WebCore::Pasteboard::createForGlobalSelection): Added.
+        * platform/gtk/PasteboardHelper.cpp: Deleted m_usePrimarySelectionClipboard,
+        getCurrentClipboard, and getClipboard.
+        * platform/gtk/PasteboardHelper.h: Deleted the above, plus
+        setUsePrimarySelectionClipboard and usePrimarySelectionClipboard.
+
+        * platform/ios/PasteboardIOS.mm: Deleted generalPasteboard.
+        * platform/mac/PasteboardMac.mm: Deleted generalPasteboard.
+
+        * platform/qt/PasteboardQt.cpp: Deleted generalPasteboard, isSelectionMode,
+        and setSelectionMode.
+        (WebCore::Pasteboard::createForGlobalSelection): Added.
+
+        * platform/win/PasteboardWin.cpp: Deleted generalPasteboard.
+
 2013-08-28  Antti Koivisto  <antti@apple.com>
 
         Share attach loops between Elements and ShadowRoots

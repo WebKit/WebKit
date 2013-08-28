@@ -37,9 +37,6 @@
 #include "ClipboardEvent.h"
 #include "CompositionEvent.h"
 #include "CreateLinkCommand.h"
-#if ENABLE(DELETION_UI)
-#include "DeleteButtonController.h"
-#endif
 #include "DeleteSelectionCommand.h"
 #include "DictationAlternative.h"
 #include "DictationCommand.h"
@@ -94,6 +91,10 @@
 #include "markup.h"
 #include <wtf/unicode/CharacterNames.h>
 #include <wtf/unicode/Unicode.h>
+
+#if ENABLE(DELETION_UI)
+#include "DeleteButtonController.h"
+#endif
 
 namespace WebCore {
 
@@ -1076,6 +1077,11 @@ void Editor::copy()
 
 void Editor::paste()
 {
+    paste(*Pasteboard::createForCopyAndPaste());
+}
+
+void Editor::paste(Pasteboard& pasteboard)
+{
     ASSERT(m_frame.document());
     if (tryDHTMLPaste())
         return; // DHTML did the whole operation
@@ -1085,9 +1091,9 @@ void Editor::paste()
     CachedResourceLoader* loader = m_frame.document()->cachedResourceLoader();
     ResourceCacheValidationSuppressor validationSuppressor(loader);
     if (m_frame.selection().isContentRichlyEditable())
-        pasteWithPasteboard(Pasteboard::createForCopyAndPaste().get(), true);
+        pasteWithPasteboard(&pasteboard, true);
     else
-        pasteAsPlainTextWithPasteboard(Pasteboard::createForCopyAndPaste().get());
+        pasteAsPlainTextWithPasteboard(&pasteboard);
 }
 
 void Editor::pasteAsPlainText()
@@ -1135,7 +1141,12 @@ void Editor::simplifyMarkup(Node* startNode, Node* endNode)
 
 void Editor::copyURL(const KURL& url, const String& title)
 {
-    Pasteboard::createForCopyAndPaste()->writeURL(url, title, &m_frame);
+    copyURL(url, title, *Pasteboard::createForCopyAndPaste());
+}
+
+void Editor::copyURL(const KURL& url, const String& title, Pasteboard& pasteboard)
+{
+    pasteboard.writeURL(url, title, &m_frame);
 }
 
 void Editor::copyImage(const HitTestResult& result)

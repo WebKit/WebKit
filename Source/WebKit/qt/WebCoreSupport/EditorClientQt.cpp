@@ -203,12 +203,8 @@ void EditorClientQt::respondToChangedSelection(Frame* frame)
 //     selection.formatForDebugger(buffer, sizeof(buffer));
 //     printf("%s\n", buffer);
 
-    if (supportsGlobalSelection() && frame->selection().isRange()) {
-        bool oldSelectionMode = Pasteboard::generalPasteboard()->isSelectionMode();
-        Pasteboard::generalPasteboard()->setSelectionMode(true);
-        Pasteboard::generalPasteboard()->writeSelection(frame->selection().toNormalizedRange().get(), frame->editor().canSmartCopyOrDelete(), frame);
-        Pasteboard::generalPasteboard()->setSelectionMode(oldSelectionMode);
-    }
+    if (supportsGlobalSelection() && frame->selection().isRange())
+        Pasteboard::createForGlobalSelection()->writeSelection(frame->selection().toNormalizedRange().get(), frame->editor().canSmartCopyOrDelete(), frame);
 
     m_page->respondToChangedSelection();
     if (!frame->editor().ignoreCompositionSelectionChange())
