@@ -159,15 +159,6 @@ WebPage::WebPage(QObject* parent, DumpRenderTree* drt)
 
 WebPage::~WebPage()
 {
-    // Load an empty url to send the onunload event to the running page before
-    // deleting this instance.
-    // Prior to this fix the onunload event would be triggered from '~QWebPage', but
-    // it may call virtual functions (e.g. calling a window.alert from window.onunload)
-    // of 'QWebPage' as the 'WebPage' part of the vtable has already been unwinded.
-    // When in '~WebPage' the vtable of 'QWebPage' points to the derived
-    // class 'WebPage' and it's possible to receive 'QWebPage' virtual calls
-    // like javaScriptAlert, javaScriptConsoleMessage, ...etc.
-    mainFrame()->load(QUrl());
     delete m_webInspector;
 }
 
