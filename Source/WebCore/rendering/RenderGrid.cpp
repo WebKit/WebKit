@@ -720,6 +720,9 @@ PassOwnPtr<RenderGrid::GridSpan> RenderGrid::resolveGridPositionsFromStyle(const
     const GridPosition& finalPosition = (direction == ForColumns) ? gridItem->style()->gridItemColumnEnd() : gridItem->style()->gridItemRowEnd();
     const GridPositionSide finalPositionSide = (direction == ForColumns) ? ColumnEndSide : RowEndSide;
 
+    // We should NEVER see both spans as they should have been handled during style resolve.
+    ASSERT(!initialPosition.isSpan() || !finalPosition.isSpan());
+
     if (initialPosition.isAuto() && finalPosition.isAuto()) {
         if (style()->gridAutoFlow() == AutoFlowNone)
             return adoptPtr(new GridSpan(0, 0));
@@ -728,16 +731,16 @@ PassOwnPtr<RenderGrid::GridSpan> RenderGrid::resolveGridPositionsFromStyle(const
         return nullptr;
     }
 
-    if (initialPosition.isAuto()) {
-        // Infer the position from the final position ('auto / 1' case).
+    if (initialPosition.shouldBeResolvedAgainstOppositePosition()) {
+        // Infer the position from the final position ('auto / 1' or 'span 2 / 3' case).
         const size_t finalResolvedPosition = resolveGridPositionFromStyle(finalPosition, finalPositionSide);
-        return adoptPtr(new GridSpan(finalResolvedPosition, finalResolvedPosition));
+        return resolveGridPositionAgainstOppositePosition(finalResolvedPosition, initialPosition, initialPositionSide);
     }
 
-    if (finalPosition.isAuto()) {
-        // Infer our position from the initial position ('1 / auto' case).
+    if (finalPosition.shouldBeResolvedAgainstOppositePosition()) {
+        // Infer our position from the initial position ('1 / auto' or '3 / span 2' case).
         const size_t initialResolvedPosition = resolveGridPositionFromStyle(initialPosition, initialPositionSide);
-        return adoptPtr(new GridSpan(initialResolvedPosition, initialResolvedPosition));
+        return resolveGridPositionAgainstOppositePosition(initialResolvedPosition, finalPosition, finalPositionSide);
     }
 
     size_t resolvedInitialPosition = resolveGridPositionFromStyle(initialPosition, initialPositionSide);
@@ -788,6 +791,25 @@ size_t RenderGrid::resolveGridPositionFromStyle(const GridPosition& position, Gr
     }
     ASSERT_NOT_REACHED();
     return 0;
+}
+
+PassOwnPtr<RenderGrid::GridSpan> RenderGrid::resolveGridPositionAgainstOppositePosition(size_t resolvedOppositePosition, const GridPosition& position, GridPositionSide side) const
+{
+    if (position.isAuto())
+        return GridSpan::create(resolvedOppositePosition, resolvedOppositePosition);
+
+    ASSERT(position.isSpan());
+    ASSERT(position.spanPosition() > 0);
+
+    // 'span 1' is contained inside a single grid track regardless of the direction.
+    // That's why the CSS span value is one more than the offset we apply.
+    size_t positionOffset = position.spanPosition() - 1;
+    if (side == ColumnStartSide || side == RowStartSide) {
+        size_t initialResolvedPosition = std::max<int>(0, resolvedOppositePosition - positionOffset);
+        return GridSpan::create(initialResolvedPosition, resolvedOppositePosition);
+    }
+
+    return GridSpan::create(resolvedOppositePosition, resolvedOppositePosition + positionOffset);
 }
 
 LayoutUnit RenderGrid::gridAreaBreadthForChild(const RenderBox* child, TrackSizingDirection direction, const Vector<GridTrack>& tracks) const

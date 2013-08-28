@@ -27,6 +27,26 @@ if (window.testRunner)
     -webkit-grid-row: -1 / auto;
 }
 
+.endSpanGrowGridInColumnDirection {
+    -webkit-grid-column: -2 / span 3;
+    -webkit-grid-row: 1;
+}
+
+.endSpanGrowGridInRowDirection {
+    -webkit-grid-column: 1;
+    -webkit-grid-row: -2 / span 3;
+}
+
+.negativeEndPositionStartSpanInColumnDirection {
+    -webkit-grid-column: span / -1;
+    -webkit-grid-row: 1;
+}
+
+.negativeEndPositionStartSpanInRowDirection {
+    -webkit-grid-column: 1;
+    -webkit-grid-row: span 5 / -1;
+}
+
 .negativeEndPositionStartNegativeInColumnDirection {
     -webkit-grid-column: -3 / -1;
     -webkit-grid-row: 1;
@@ -51,6 +71,30 @@ if (window.testRunner)
 <div style="position: relative">
 <div class="grid" data-expected-width="150" data-expected-height="350">
     <div class="sizedToGridArea negativeStartPositionGrowGridInRowDirection" data-offset-x="0" data-offset-y="150" data-expected-width="50" data-expected-height="200"></div>
+</div>
+</div>
+
+<div style="position: relative">
+<div class="grid" data-expected-width="550" data-expected-height="150">
+    <div class="sizedToGridArea endSpanGrowGridInColumnDirection" data-offset-x="50" data-offset-y="0" data-expected-width="500" data-expected-height="50"></div>
+</div>
+</div>
+
+<div style="position: relative">
+<div class="grid" data-expected-width="150" data-expected-height="550">
+    <div class="sizedToGridArea endSpanGrowGridInRowDirection" data-offset-x="0" data-offset-y="50" data-expected-width="50" data-expected-height="500"></div>
+</div>
+</div>
+
+<div style="position: relative">
+<div class="grid" data-expected-width="150" data-expected-height="150">
+    <div class="sizedToGridArea negativeEndPositionStartSpanInColumnDirection" data-offset-x="50" data-offset-y="0" data-expected-width="100" data-expected-height="50"></div>
+</div>
+</div>
+
+<div style="position: relative">
+<div class="grid" data-expected-width="150" data-expected-height="150">
+    <div class="sizedToGridArea negativeEndPositionStartSpanInRowDirection" data-offset-x="0" data-offset-y="0" data-expected-width="50" data-expected-height="150"></div>
 </div>
 </div>
 

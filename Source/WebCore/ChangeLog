@@ -1,3 +1,23 @@
+2013-08-28  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] Handle 'span' positions during layout
+        https://bugs.webkit.org/show_bug.cgi?id=119756
+
+        Reviewed by Andreas Kling.
+
+        From Blink r149133 by <jchaffraix@chromium.org>
+
+        Properly handle the 'span' keyword during layout. We only had
+        parsing support so far but with this change we are able to
+        recognize these positions and act accordingly.
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::resolveGridPositionsFromStyle):
+        (WebCore::RenderGrid::resolveGridPositionAgainstOppositePosition):
+        * rendering/RenderGrid.h:
+        * rendering/style/GridPosition.h:
+        (WebCore::GridPosition::shouldBeResolvedAgainstOppositePosition):
+
 2013-08-28  Antti Koivisto  <antti@apple.com>
 
         Factor descendant iterator assertions into a class.

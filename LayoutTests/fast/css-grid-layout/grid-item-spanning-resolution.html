@@ -49,6 +49,31 @@ if (window.testRunner)
     -webkit-grid-column: 3 / 4;
     -webkit-grid-row: 3 / 4;
 }
+
+.firstRowSpanning3SecondColumn {
+    -webkit-grid-column: 2;
+    -webkit-grid-row: 1 / span 3;
+}
+
+.thirdRowSecondColumnSpanning2 {
+    -webkit-grid-column: 2 / span 2;
+    -webkit-grid-row: 3;
+}
+
+.spanning3Row5SecondColumn {
+    -webkit-grid-column: 2;
+    -webkit-grid-row: span 3 / 5;
+}
+
+.thirdRowSpanning2Column3 {
+    -webkit-grid-column: span 2 / 3;
+    -webkit-grid-row: 3;
+}
+
+.underflowSpanning {
+    -webkit-grid-column: span 3 / 3;
+    -webkit-grid-row: span 8 / 4;
+}
 </style>
 <script src="../../resources/check-layout.js"></script>
 <body onload="checkLayout('.grid');">
@@ -126,5 +151,33 @@ if (window.testRunner)
     <div class="sizedToGridArea secondRowSecondColumnNoSpan" data-offset-x="50" data-offset-y="25" data-expected-width="50" data-expected-height="25"></div>
     <div class="sizedToGridArea thirdRowThirdColumnNoSpan" data-offset-x="100" data-offset-y="50" data-expected-width="50" data-expected-height="25"></div>
 </div>
+
+<div style="position: relative">
+<div class="grid" id="bigGrid" data-expected-width="200" data-expected-height="100">
+    <div class="sizedToGridArea firstRowSpanning3SecondColumn" data-offset-x="50" data-offset-y="0" data-expected-width="50" data-expected-height="75"></div>
+</div>
+</div>
+
+<div style="position: relative">
+<div class="grid" id="bigGrid" data-expected-width="200" data-expected-height="100">
+    <div class="sizedToGridArea thirdRowSecondColumnSpanning2" data-offset-x="50" data-offset-y="50" data-expected-width="100" data-expected-height="25"></div>
+</div>
+
+<div style="position: relative">
+<div class="grid" id="bigGrid" data-expected-width="200" data-expected-height="100">
+    <div class="sizedToGridArea spanning3Row5SecondColumn" data-offset-x="50" data-offset-y="25" data-expected-width="50" data-expected-height="75"></div>
+</div>
+</div>
+
+<div style="position: relative">
+<div class="grid" id="bigGrid" data-expected-width="200" data-expected-height="100">
+    <div class="sizedToGridArea thirdRowSpanning2Column3" data-offset-x="0" data-offset-y="50" data-expected-width="100" data-expected-height="25"></div>
+</div>
+
+<div style="position: relative">
+<div class="grid" id="bigGrid" data-expected-width="200" data-expected-height="100">
+    <div class="sizedToGridArea underflowSpanning" data-offset-x="0" data-offset-y="0" data-expected-width="100" data-expected-height="75"></div>
+</div>
+
 </body>
 </html>

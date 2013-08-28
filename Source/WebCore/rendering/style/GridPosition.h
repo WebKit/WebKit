@@ -86,6 +86,10 @@ public:
         return m_type == other.m_type && m_integerPosition == other.m_integerPosition;
     }
 
+    bool shouldBeResolvedAgainstOppositePosition() const
+    {
+        return isAuto() || isSpan();
+    }
 private:
     GridPositionType m_type;
     int m_integerPosition;
