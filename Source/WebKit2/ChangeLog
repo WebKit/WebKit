@@ -1,5 +1,16 @@
 2013-08-28  Tamas Czene  <tczene@inf.u-szeged.hu>
 
+        [wk2] Resolve unused parameters in WebPlatformStrategies.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=120410
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::getPluginInfo):
+        (WebKit::WebPlatformStrategies::transientLocalStorageNamespace):
+
+2013-08-28  Tamas Czene  <tczene@inf.u-szeged.hu>
+
         [wk2] Resolve unused parameter warnings in the WebProcess.cpp
         https://bugs.webkit.org/show_bug.cgi?id=120412
 

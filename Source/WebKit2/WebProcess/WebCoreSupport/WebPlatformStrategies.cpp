@@ -302,6 +302,9 @@ void WebPlatformStrategies::getPluginInfo(const WebCore::Page* page, Vector<WebC
     }
 
     plugins = m_cachedApplicationPlugins;
+#else
+    UNUSED_PARAM(page);
+    UNUSED_PARAM(plugins);
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
 }
 
@@ -348,6 +351,7 @@ PassRefPtr<StorageNamespace> WebPlatformStrategies::localStorageNamespace(PageGr
 PassRefPtr<StorageNamespace> WebPlatformStrategies::transientLocalStorageNamespace(PageGroup* pageGroup, SecurityOrigin*securityOrigin)
 {
 #if ENABLE(UI_PROCESS_STORAGE)
+    UNUSED_PARAM(securityOrigin);
     // FIXME: This could be more clever and made to work across processes.
     return StorageStrategy::sessionStorageNamespace(*pageGroup->pages().begin());
 #else
