@@ -479,7 +479,7 @@ void EditorClientQt::handleKeyboardEvent(KeyboardEvent* event)
                     if (kevent->altKey())
                         shouldInsertText = true;
                 } else {
-#ifndef Q_WS_MAC
+#ifndef Q_OS_MAC
                 // We need to exclude checking for Alt because it is just a different Shift
                 if (!kevent->altKey())
 #endif

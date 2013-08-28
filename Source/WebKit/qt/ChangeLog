@@ -1,3 +1,16 @@
+2013-08-28  Zeno Albisser  <zeno@webkit.org>
+
+        [Qt] Option key combinations do not work in Input Elements.
+        https://bugs.webkit.org/show_bug.cgi?id=120423
+
+        Q_WS_MAC is obsolete. We should use Q_OS_MAC instead.
+        This caused QTBUG-32388.
+
+        Reviewed by Darin Adler.
+
+        * WebCoreSupport/EditorClientQt.cpp:
+        (WebCore::EditorClientQt::handleKeyboardEvent):
+
 2013-08-28  Darin Adler  <darin@apple.com>
 
         Eliminate Pasteboard::generalPasteboard
