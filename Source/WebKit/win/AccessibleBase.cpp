@@ -29,6 +29,7 @@
 #include "AccessibleBase.h"
 
 #include "AccessibleImage.h"
+#include "AccessibleTextImpl.h"
 #include "WebView.h"
 #include <WebCore/AccessibilityListBox.h>
 #include <WebCore/AccessibilityMenuListPopup.h>
@@ -78,6 +79,8 @@ AccessibleBase* AccessibleBase::createInstance(AccessibilityObject* obj, HWND wi
 
     if (obj->isImage())
         return new AccessibleImage(obj, window);
+    else if (obj->isStaticText() || obj->isTextControl() || (obj->node() && obj->node()->isTextNode()))
+        return new AccessibleText(obj, window);
 
     return new AccessibleBase(obj, window);
 }
@@ -88,7 +91,10 @@ HRESULT AccessibleBase::QueryService(REFGUID guidService, REFIID riid, void **pp
         && !IsEqualGUID(guidService, IID_IAccessible2_2)
         && !IsEqualGUID(guidService, IID_IAccessible2)
         && !IsEqualGUID(guidService, IID_IAccessibleApplication)
-        && !IsEqualGUID(guidService, IID_IAccessible)) {
+        && !IsEqualGUID(guidService, IID_IAccessible)
+        && !IsEqualGUID(guidService, IID_IAccessibleText)
+        && !IsEqualGUID(guidService, IID_IAccessibleText2)
+        && !IsEqualGUID(guidService, IID_IAccessibleEditableText)) {
         *ppvObject = 0;
         return E_INVALIDARG;
     }
