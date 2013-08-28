@@ -44,6 +44,13 @@ public:
     virtual bool avoidsFloats() const OVERRIDE { return true; }
     virtual bool canCollapseAnonymousBlockChild() const OVERRIDE { return false; }
 
+    enum GridPositionSide {
+        ColumnStartSide,
+        ColumnEndSide,
+        RowStartSide,
+        RowEndSide
+    };
+
 private:
     virtual bool isRenderGrid() const OVERRIDE { return true; }
     virtual void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const OVERRIDE;
@@ -122,12 +129,6 @@ private:
 
     GridSpan resolveGridPositionsFromAutoPlacementPosition(const RenderBox*, TrackSizingDirection, size_t) const;
     PassOwnPtr<GridSpan> resolveGridPositionsFromStyle(const RenderBox*, TrackSizingDirection) const;
-    enum GridPositionSide {
-        ColumnStartSide,
-        ColumnEndSide,
-        RowStartSide,
-        RowEndSide
-    };
     size_t resolveGridPositionFromStyle(const GridPosition&, GridPositionSide) const;
 
     LayoutUnit gridAreaBreadthForChild(const RenderBox* child, TrackSizingDirection, const Vector<GridTrack>&) const;

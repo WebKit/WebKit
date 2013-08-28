@@ -1,5 +1,23 @@
 2013-08-28  Sergio Villar Senin  <svillar@igalia.com>
 
+        [CSS Grid Layout] Fix grid position resolution
+        https://bugs.webkit.org/show_bug.cgi?id=119801
+
+        Reviewed by Andreas Kling.
+
+        From Blink r148833, r148878, r150403 by <jchaffraix@chromium.org>
+
+        Added a new test to check negative position resolution. Also added
+        several new test cases to check that we properly resolve grid
+        positions in the grid edges.
+
+        * fast/css-grid-layout/grid-item-negative-position-resolution-expected.txt: Added.
+        * fast/css-grid-layout/grid-item-negative-position-resolution.html: Added.
+        * fast/css-grid-layout/grid-item-spanning-resolution-expected.txt:
+        * fast/css-grid-layout/grid-item-spanning-resolution.html:
+
+2013-08-28  Sergio Villar Senin  <svillar@igalia.com>
+
         [CSS Grid Layout] infinity should be defined as a negative value
         https://bugs.webkit.org/show_bug.cgi?id=107053
 

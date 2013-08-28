@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<script>
+if (window.testRunner)
+    testRunner.overridePreference("WebKitCSSGridLayoutEnabled", 1);
+</script>
+<link href="resources/grid.css" rel="stylesheet">
+<style>
+.grid {
+    -webkit-grid-definition-columns: 50px 100px;
+    -webkit-grid-definition-rows: 50px 100px;
+    /* To detect how much we extend the grid. */
+    -webkit-grid-auto-columns: 200px;
+    -webkit-grid-auto-rows: 200px;
+
+    /* Make the grid shrink-to-fit. */
+    position: absolute;
+}
+
+.negativeStartPositionGrowGridInColumnDirection {
+    -webkit-grid-column: -1 / auto;
+    -webkit-grid-row: 1;
+}
+
+.negativeStartPositionGrowGridInRowDirection {
+    -webkit-grid-column: 1;
+    -webkit-grid-row: -1 / auto;
+}
+
+.negativeEndPositionStartNegativeInColumnDirection {
+    -webkit-grid-column: -3 / -1;
+    -webkit-grid-row: 1;
+}
+
+.negativeEndPositionStartNegativeInRowDirection {
+    -webkit-grid-column: -5 / -2;
+    -webkit-grid-row: 1;
+}
+</style>
+<script src="../../resources/check-layout.js"></script>
+<body onload="checkLayout('.grid');">
+
+<p>Test that negative grid positions are correctly resolved.</p>
+
+<div style="position: relative">
+<div class="grid" data-expected-width="350" data-expected-height="150">
+    <div class="sizedToGridArea negativeStartPositionGrowGridInColumnDirection" data-offset-x="150" data-offset-y="0" data-expected-width="200" data-expected-height="50"></div>
+</div>
+</div>
+
+<div style="position: relative">
+<div class="grid" data-expected-width="150" data-expected-height="350">
+    <div class="sizedToGridArea negativeStartPositionGrowGridInRowDirection" data-offset-x="0" data-offset-y="150" data-expected-width="50" data-expected-height="200"></div>
+</div>
+</div>
+
+<div style="position: relative">
+<div class="grid" data-expected-width="150" data-expected-height="150">
+    <div class="sizedToGridArea negativeEndPositionStartNegativeInColumnDirection" data-offset-x="0" data-offset-y="0" data-expected-width="150" data-expected-height="50"></div>
+</div>
+</div>
+
+<div style="position: relative">
+<div class="grid" data-expected-width="150" data-expected-height="150">
+    <div class="sizedToGridArea negativeEndPositionStartNegativeInRowDirection" data-offset-x="0" data-offset-y="0" data-expected-width="50" data-expected-height="50"></div>
+</div>
+</div>
+
+
+</body>
+</html>

@@ -13,6 +13,13 @@ if (window.testRunner)
     height: 300px;
 }
 
+#bigGrid {
+    -webkit-grid-definition-columns: 25% 25% 25% 25%;
+    -webkit-grid-definition-rows: 25% 25% 25% 25%;
+    height: 100px;
+    width: 200px;
+}
+
 .negativeOverflowRowFirstColumn {
     -webkit-grid-row: 1 / -5;
     -webkit-grid-column: 1;
@@ -31,6 +38,16 @@ if (window.testRunner)
 .firstRowOverflowColumn {
     -webkit-grid-row: 1;
     -webkit-grid-column: 1 / 5;
+}
+
+.secondRowSecondColumnNoSpan {
+    -webkit-grid-column: 2 / 3;
+    -webkit-grid-row: 2 / 3;
+}
+
+.thirdRowThirdColumnNoSpan {
+    -webkit-grid-column: 3 / 4;
+    -webkit-grid-row: 3 / 4;
 }
 </style>
 <script src="../../resources/check-layout.js"></script>
@@ -100,9 +117,14 @@ if (window.testRunner)
 
 <div style="position: relative">
 <div class="grid" data-expected-width="400" data-expected-height="300">
-    <div class="sizedToGridArea autoSecondRowAutoFirstColumn" data-offset-x="0" data-offset-y="90" data-expected-width="160" data-expected-height="210"></div>
+    <div class="sizedToGridArea autoSecondRowAutoFirstColumn" data-offset-x="0" data-offset-y="0" data-expected-width="160" data-expected-height="90"></div>
 </div>
 </div>
 
+<div style="position: relative">
+<div class="grid" id="bigGrid" data-expected-width="200" data-expected-height="100">
+    <div class="sizedToGridArea secondRowSecondColumnNoSpan" data-offset-x="50" data-offset-y="25" data-expected-width="50" data-expected-height="25"></div>
+    <div class="sizedToGridArea thirdRowThirdColumnNoSpan" data-offset-x="100" data-offset-y="50" data-expected-width="50" data-expected-height="25"></div>
+</div>
 </body>
 </html>
