@@ -27,79 +27,79 @@
 
 namespace WebCore {
 
-    class SpaceSplitStringData : public RefCounted<SpaceSplitStringData> {
-    public:
-        static PassRefPtr<SpaceSplitStringData> create(const AtomicString&);
-        static PassRefPtr<SpaceSplitStringData> createUnique(const SpaceSplitStringData&);
+class SpaceSplitStringData : public RefCounted<SpaceSplitStringData> {
+public:
+    static PassRefPtr<SpaceSplitStringData> create(const AtomicString&);
+    static PassRefPtr<SpaceSplitStringData> createUnique(const SpaceSplitStringData&);
 
-        ~SpaceSplitStringData();
+    ~SpaceSplitStringData();
 
-        bool contains(const AtomicString& string)
-        {
-            size_t size = m_vector.size();
-            for (size_t i = 0; i < size; ++i) {
-                if (m_vector[i] == string)
-                    return true;
-            }
-            return false;
+    bool contains(const AtomicString& string)
+    {
+        size_t size = m_vector.size();
+        for (size_t i = 0; i < size; ++i) {
+            if (m_vector[i] == string)
+                return true;
         }
+        return false;
+    }
 
-        bool containsAll(SpaceSplitStringData&);
+    bool containsAll(SpaceSplitStringData&);
 
-        void add(const AtomicString&);
-        void remove(unsigned index);
+    void add(const AtomicString&);
+    void remove(unsigned index);
 
-        bool isUnique() const { return m_keyString.isNull(); } 
-        size_t size() const { return m_vector.size(); }
-        const AtomicString& operator[](size_t i) { ASSERT_WITH_SECURITY_IMPLICATION(i < size()); return m_vector[i]; }
+    bool isUnique() const { return m_keyString.isNull(); } 
+    size_t size() const { return m_vector.size(); }
+    const AtomicString& operator[](size_t i) { ASSERT_WITH_SECURITY_IMPLICATION(i < size()); return m_vector[i]; }
 
-    private:
-        explicit SpaceSplitStringData(const AtomicString&);
-        explicit SpaceSplitStringData(const SpaceSplitStringData&);
+private:
+    explicit SpaceSplitStringData(const AtomicString&);
+    explicit SpaceSplitStringData(const SpaceSplitStringData&);
 
-        void createVector(const String&);
-        template <typename CharacterType>
-        inline void createVector(const CharacterType*, unsigned);
+    void createVector(const String&);
+    template <typename CharacterType>
+    inline void createVector(const CharacterType*, unsigned);
 
-        AtomicString m_keyString;
-        Vector<AtomicString, 4> m_vector;
-    };
+    AtomicString m_keyString;
+    Vector<AtomicString, 4> m_vector;
+};
 
-    class SpaceSplitString {
-    public:
-        SpaceSplitString() { }
-        SpaceSplitString(const AtomicString& string, bool shouldFoldCase) { set(string, shouldFoldCase); }
+class SpaceSplitString {
+public:
+    SpaceSplitString() { }
+    SpaceSplitString(const AtomicString& string, bool shouldFoldCase) { set(string, shouldFoldCase); }
 
-        bool operator!=(const SpaceSplitString& other) const { return m_data != other.m_data; }
+    bool operator!=(const SpaceSplitString& other) const { return m_data != other.m_data; }
 
-        void set(const AtomicString&, bool shouldFoldCase);
-        void clear() { m_data.clear(); }
+    void set(const AtomicString&, bool shouldFoldCase);
+    void clear() { m_data.clear(); }
 
-        bool contains(const AtomicString& string) const { return m_data && m_data->contains(string); }
-        bool containsAll(const SpaceSplitString& names) const { return !names.m_data || (m_data && m_data->containsAll(*names.m_data)); }
-        void add(const AtomicString&);
-        bool remove(const AtomicString&);
+    bool contains(const AtomicString& string) const { return m_data && m_data->contains(string); }
+    bool containsAll(const SpaceSplitString& names) const { return !names.m_data || (m_data && m_data->containsAll(*names.m_data)); }
+    void add(const AtomicString&);
+    bool remove(const AtomicString&);
 
-        size_t size() const { return m_data ? m_data->size() : 0; }
-        bool isNull() const { return !m_data; }
-        const AtomicString& operator[](size_t i) const { ASSERT_WITH_SECURITY_IMPLICATION(i < size()); return (*m_data)[i]; }
+    size_t size() const { return m_data ? m_data->size() : 0; }
+    bool isNull() const { return !m_data; }
+    const AtomicString& operator[](size_t i) const { ASSERT_WITH_SECURITY_IMPLICATION(i < size()); return (*m_data)[i]; }
 
-        static bool spaceSplitStringContainsValue(const String& spaceSplitString, const char* value, unsigned length, bool shouldFoldCase);
-        template<size_t length>
-        static bool spaceSplitStringContainsValue(const String& spaceSplitString, const char (&value)[length], bool shouldFoldCase)
-        {
-            return spaceSplitStringContainsValue(spaceSplitString, value, length - 1, shouldFoldCase);
-        }
+    static bool spaceSplitStringContainsValue(const String& spaceSplitString, const char* value, unsigned length, bool shouldFoldCase);
+    template<size_t length>
+    static bool spaceSplitStringContainsValue(const String& spaceSplitString, const char (&value)[length], bool shouldFoldCase)
+    {
+        return spaceSplitStringContainsValue(spaceSplitString, value, length - 1, shouldFoldCase);
+    }
 
-    private:
-        void ensureUnique()
-        {
-            if (m_data && !m_data->isUnique())
-                m_data = SpaceSplitStringData::createUnique(*m_data);
-        }
+private:
+    void ensureUnique()
+    {
+        if (m_data && !m_data->isUnique())
+            m_data = SpaceSplitStringData::createUnique(*m_data);
+    }
 
-        RefPtr<SpaceSplitStringData> m_data;
-    };
+    RefPtr<SpaceSplitStringData> m_data;
+};
 
 } // namespace WebCore
 

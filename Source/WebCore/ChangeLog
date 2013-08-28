@@ -1,3 +1,26 @@
+2013-08-27  Benjamin Poulain  <benjamin@webkit.org>
+
+        Fix the indentation of SpaceSplitString
+        https://bugs.webkit.org/show_bug.cgi?id=120390
+
+        Reviewed by Ryosuke Niwa.
+
+        * dom/SpaceSplitString.h:
+        (WebCore::SpaceSplitStringData::contains):
+        (WebCore::SpaceSplitStringData::isUnique):
+        (WebCore::SpaceSplitStringData::size):
+        (WebCore::SpaceSplitStringData::operator[]):
+        (WebCore::SpaceSplitString::SpaceSplitString):
+        (WebCore::SpaceSplitString::operator!=):
+        (WebCore::SpaceSplitString::clear):
+        (WebCore::SpaceSplitString::contains):
+        (WebCore::SpaceSplitString::containsAll):
+        (WebCore::SpaceSplitString::size):
+        (WebCore::SpaceSplitString::isNull):
+        (WebCore::SpaceSplitString::operator[]):
+        (WebCore::SpaceSplitString::spaceSplitStringContainsValue):
+        (WebCore::SpaceSplitString::ensureUnique):
+
 2013-08-27  Andreas Kling  <akling@apple.com>
 
         Make it less awkward to check if a Frame is the main Frame.
