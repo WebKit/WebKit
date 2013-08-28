@@ -1,3 +1,11 @@
+2013-08-28  Simon Hausmann  <simon.hausmann@digia.com>
+
+        [Qt] Unreviewed trivial build adjustment
+
+        * Source/sync.profile: Don't depend on qtjsbackend anymore. It's not needed in Qt 5.2
+        anymore (but this section of sync.profile is only used by the CI system, so no impact
+        anywhere else)
+
 2013-08-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK+ build after r154541.
