@@ -1,3 +1,9 @@
+2013-08-28  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Unreviewed build fix - copy/paste failure, copied too much.
+
+        * bindings/gobject/WebKitDOMCustom.h:
+
 2013-08-28  Dean Jackson  <dino@apple.com>
 
         [WebGL] CoreGraphics can provide greyscale image data
