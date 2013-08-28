@@ -109,6 +109,185 @@ static void createRendererIfNeeded(Element* element, const AttachContext& contex
     NodeRenderingContext(element, context).createRendererForElementIfNeeded();
 }
 
+static bool isRendererReparented(const RenderObject* renderer)
+{
+    if (!renderer->node()->isElementNode())
+        return false;
+    if (renderer->style() && !renderer->style()->flowThread().isEmpty())
+        return true;
+    return false;
+}
+
+static RenderObject* previousSiblingRenderer(const Text& textNode)
+{
+    if (textNode.renderer())
+        return textNode.renderer()->previousSibling();
+    for (Node* sibling = NodeRenderingTraversal::previousSibling(&textNode); sibling; sibling = NodeRenderingTraversal::previousSibling(sibling)) {
+        RenderObject* renderer = sibling->renderer();
+        if (renderer && !isRendererReparented(renderer))
+            return renderer;
+    }
+    return 0;
+}
+
+static RenderObject* nextSiblingRenderer(const Text& textNode)
+{
+    if (textNode.renderer())
+        return textNode.renderer()->nextSibling();
+    for (Node* sibling = NodeRenderingTraversal::nextSibling(&textNode); sibling; sibling = NodeRenderingTraversal::nextSibling(sibling)) {
+        RenderObject* renderer = sibling->renderer();
+        if (renderer && !isRendererReparented(renderer))
+            return renderer;
+    }
+    return 0;
+}
+
+static void createTextRenderersForSiblingsAfterAttachIfNeeded(Node* sibling)
+{
+    ASSERT(sibling->previousSibling());
+    ASSERT(sibling->previousSibling()->renderer());
+    ASSERT(!sibling->renderer());
+    ASSERT(sibling->attached());
+    // If this node got a renderer it may be the previousRenderer() of sibling text nodes and thus affect the
+    // result of Text::textRendererIsNeeded() for those nodes.
+    for (; sibling; sibling = sibling->nextSibling()) {
+        if (sibling->renderer())
+            break;
+        if (!sibling->attached())
+            break; // Assume this means none of the following siblings are attached.
+        if (!sibling->isTextNode())
+            continue;
+        ASSERT(!sibling->renderer());
+        attachTextRenderer(*toText(sibling));
+        // If we again decided not to create a renderer for next, we can bail out the loop,
+        // because it won't affect the result of Text::textRendererIsNeeded() for the rest
+        // of sibling nodes.
+        if (!sibling->renderer())
+            break;
+    }
+}
+
+static bool textRendererIsNeeded(const Text& textNode, const RenderObject& parentRenderer, const RenderStyle& style)
+{
+    if (textNode.isEditingText())
+        return true;
+    if (!textNode.length())
+        return false;
+    if (style.display() == NONE)
+        return false;
+    if (!textNode.containsOnlyWhitespace())
+        return true;
+    // This text node has nothing but white space. We may still need a renderer in some cases.
+    if (parentRenderer.isTable() || parentRenderer.isTableRow() || parentRenderer.isTableSection() || parentRenderer.isRenderTableCol() || parentRenderer.isFrameSet())
+        return false;
+    if (style.preserveNewline()) // pre/pre-wrap/pre-line always make renderers.
+        return true;
+
+    RenderObject* previousRenderer = previousSiblingRenderer(textNode);
+    if (previousRenderer && previousRenderer->isBR()) // <span><br/> <br/></span>
+        return false;
+        
+    if (parentRenderer.isRenderInline()) {
+        // <span><div/> <div/></span>
+        if (previousRenderer && !previousRenderer->isInline())
+            return false;
+    } else {
+        if (parentRenderer.isRenderBlock() && !parentRenderer.childrenInline() && (!previousRenderer || !previousRenderer->isInline()))
+            return false;
+        
+        RenderObject* first = parentRenderer.firstChild();
+        while (first && first->isFloatingOrOutOfFlowPositioned())
+            first = first->nextSibling();
+        RenderObject* nextRenderer = nextSiblingRenderer(textNode);
+        if (!first || nextRenderer == first) {
+            // Whitespace at the start of a block just goes away. Don't even make a render object for this text.
+            return false;
+        }
+    }
+    return true;
+}
+
+static void createTextRendererIfNeeded(Text& textNode)
+{
+    ASSERT(!textNode.renderer());
+
+    ContainerNode* renderingParentNode = NodeRenderingTraversal::parent(&textNode);
+    if (!renderingParentNode)
+        return;
+    RenderObject* parentRenderer = renderingParentNode->renderer();
+    if (!parentRenderer || !parentRenderer->canHaveChildren())
+        return;
+    if (!renderingParentNode->childShouldCreateRenderer(&textNode))
+        return;
+
+    Document* document = textNode.document();
+    RefPtr<RenderStyle> style;
+    bool resetStyleInheritance = renderingParentNode->isShadowRoot() && toShadowRoot(renderingParentNode)->resetStyleInheritance();
+    if (resetStyleInheritance)
+        style = document->ensureStyleResolver().defaultStyleForElement();
+    else
+        style = parentRenderer->style();
+
+    if (!textRendererIsNeeded(textNode, *parentRenderer, *style))
+        return;
+    RenderText* newRenderer = textNode.createTextRenderer(document->renderArena(), style.get());
+    if (!newRenderer)
+        return;
+    if (!parentRenderer->isChildAllowed(newRenderer, style.get())) {
+        newRenderer->destroy();
+        return;
+    }
+
+    // Make sure the RenderObject already knows it is going to be added to a RenderFlowThread before we set the style
+    // for the first time. Otherwise code using inRenderFlowThread() in the styleWillChange and styleDidChange will fail.
+    newRenderer->setFlowThreadState(parentRenderer->flowThreadState());
+
+    RenderObject* nextRenderer = nextSiblingRenderer(textNode);
+    textNode.setRenderer(newRenderer);
+    // Parent takes care of the animations, no need to call setAnimatableStyle.
+    newRenderer->setStyle(style.release());
+    parentRenderer->addChild(newRenderer, nextRenderer);
+
+    Node* sibling = textNode.nextSibling();
+    if (sibling && !sibling->renderer() && sibling->attached())
+        createTextRenderersForSiblingsAfterAttachIfNeeded(sibling);
+}
+
+void attachTextRenderer(Text& textNode)
+{
+    createTextRendererIfNeeded(textNode);
+
+    textNode.setAttached(true);
+    textNode.clearNeedsStyleRecalc();
+}
+
+void detachTextRenderer(Text& textNode)
+{
+    if (textNode.renderer())
+        textNode.renderer()->destroyAndCleanupAnonymousWrappers();
+    textNode.setRenderer(0);
+    textNode.setAttached(false);
+}
+
+void updateTextRendererAfterContentChange(Text& textNode, unsigned offsetOfReplacedData, unsigned lengthOfReplacedData)
+{
+    if (!textNode.attached())
+        return;
+    RenderText* textRenderer = toRenderText(textNode.renderer());
+    if (!textRenderer) {
+        attachTextRenderer(textNode);
+        return;
+    }
+    RenderObject* parentRenderer = NodeRenderingTraversal::parent(&textNode)->renderer();
+    if (!textRendererIsNeeded(textNode, *parentRenderer, *textRenderer->style())) {
+        detachTextRenderer(textNode);
+        attachTextRenderer(textNode);
+        return;
+    }
+    textRenderer->setTextWithOffset(textNode.dataImpl(), offsetOfReplacedData, lengthOfReplacedData);
+}
+
+
 static void attachShadowRoot(ShadowRoot* shadowRoot, const AttachContext& context)
 {
     if (shadowRoot->attached())
@@ -120,7 +299,7 @@ static void attachShadowRoot(ShadowRoot* shadowRoot, const AttachContext& contex
     childrenContext.resolvedStyle = 0;
     for (Node* child = shadowRoot->firstChild(); child; child = child->nextSibling()) {
         if (child->isTextNode()) {
-            toText(child)->attachText();
+            attachTextRenderer(*toText(child));
             continue;
         }
         if (child->isElementNode())
@@ -155,7 +334,7 @@ static void attachChildren(Element* current, const AttachContext& context)
         if (child->attached())
             continue;
         if (child->isTextNode()) {
-            toText(child)->attachText();
+            attachTextRenderer(*toText(child));
             continue;
         }
         if (child->isElementNode())
@@ -191,7 +370,7 @@ void attachRenderTree(Element* current, const AttachContext& context)
 
     Node* sibling = current->nextSibling();
     if (current->renderer() && sibling && !sibling->renderer() && sibling->attached())
-        Text::createTextRenderersForSiblingsAfterAttachIfNeeded(sibling);
+        createTextRenderersForSiblingsAfterAttachIfNeeded(sibling);
 
     current->setAttached(true);
     current->clearNeedsStyleRecalc();
@@ -217,7 +396,7 @@ static void detachShadowRoot(ShadowRoot* shadowRoot, const AttachContext& contex
     childrenContext.resolvedStyle = 0;
     for (Node* child = shadowRoot->firstChild(); child; child = child->nextSibling()) {
         if (child->isTextNode()) {
-            toText(child)->detachText();
+            Style::detachTextRenderer(*toText(child));
             continue;
         }
         if (child->isElementNode())
@@ -234,7 +413,7 @@ static void detachChildren(Element* current, const AttachContext& context)
 
     for (Node* child = current->firstChild(); child; child = child->nextSibling()) {
         if (child->isTextNode()) {
-            toText(child)->detachText();
+            Style::detachTextRenderer(*toText(child));
             continue;
         }
         if (child->isElementNode())
@@ -373,7 +552,7 @@ static void updateTextStyle(Text* text, RenderStyle* parentElementStyle, Style::
     if (renderer)
         renderer->setText(text->dataImpl());
     else
-        text->attachText();
+        attachTextRenderer(*text);
     text->clearNeedsStyleRecalc();
 }
 

@@ -58,8 +58,7 @@ PassRefPtr<Text> Text::createEditingText(Document* document, const String& data)
 
 Text::~Text()
 {
-    if (renderer())
-        detachText();
+    ASSERT(!renderer());
 }
 
 PassRefPtr<Text> Text::splitText(unsigned offset, ExceptionCode& ec)
@@ -178,52 +177,6 @@ PassRefPtr<Node> Text::cloneNode(bool /*deep*/)
     return create(document(), data());
 }
 
-bool Text::textRendererIsNeeded(const NodeRenderingContext& context)
-{
-    if (isEditingText())
-        return true;
-
-    if (!length())
-        return false;
-
-    if (context.style()->display() == NONE)
-        return false;
-
-    bool onlyWS = containsOnlyWhitespace();
-    if (!onlyWS)
-        return true;
-
-    RenderObject* parent = context.parentRenderer();
-    if (parent->isTable() || parent->isTableRow() || parent->isTableSection() || parent->isRenderTableCol() || parent->isFrameSet())
-        return false;
-    
-    if (context.style()->preserveNewline()) // pre/pre-wrap/pre-line always make renderers.
-        return true;
-    
-    RenderObject* prev = context.previousRenderer();
-    if (prev && prev->isBR()) // <span><br/> <br/></span>
-        return false;
-        
-    if (parent->isRenderInline()) {
-        // <span><div/> <div/></span>
-        if (prev && !prev->isInline())
-            return false;
-    } else {
-        if (parent->isRenderBlock() && !parent->childrenInline() && (!prev || !prev->isInline()))
-            return false;
-        
-        RenderObject* first = parent->firstChild();
-        while (first && first->isFloatingOrOutOfFlowPositioned())
-            first = first->nextSibling();
-        if (!first || context.nextRenderer() == first) {
-            // Whitespace at the start of a block just goes away.  Don't even
-            // make a render object for this text.
-            return false;
-        }
-    }
-    
-    return true;
-}
 
 #if ENABLE(SVG)
 static bool isSVGShadowText(Text* text)
@@ -239,11 +192,6 @@ static bool isSVGText(Text* text)
 }
 #endif
 
-void Text::createTextRendererIfNeeded()
-{
-    NodeRenderingContext(this).createRendererForTextIfNeeded();
-}
-
 RenderText* Text::createTextRenderer(RenderArena* arena, RenderStyle* style)
 {
 #if ENABLE(SVG)
@@ -254,70 +202,6 @@ RenderText* Text::createTextRenderer(RenderArena* arena, RenderStyle* style)
         return new (arena) RenderCombineText(this, dataImpl());
 
     return new (arena) RenderText(this, dataImpl());
-}
-
-void Text::createTextRenderersForSiblingsAfterAttachIfNeeded(Node* sibling)
-{
-    ASSERT(sibling->previousSibling());
-    ASSERT(sibling->previousSibling()->renderer());
-    ASSERT(!sibling->renderer());
-    ASSERT(sibling->attached());
-    // If this node got a renderer it may be the previousRenderer() of sibling text nodes and thus affect the
-    // result of Text::textRendererIsNeeded() for those nodes.
-    for (; sibling; sibling = sibling->nextSibling()) {
-        if (sibling->renderer())
-            break;
-        if (!sibling->attached())
-            break; // Assume this means none of the following siblings are attached.
-        if (!sibling->isTextNode())
-            continue;
-        ASSERT(!sibling->renderer());
-        toText(sibling)->createTextRendererIfNeeded();
-        // If we again decided not to create a renderer for next, we can bail out the loop,
-        // because it won't affect the result of Text::textRendererIsNeeded() for the rest
-        // of sibling nodes.
-        if (!sibling->renderer())
-            break;
-    }
-}
-
-void Text::attachText()
-{
-    createTextRendererIfNeeded();
-
-    Node* sibling = nextSibling();
-    if (renderer() && sibling && !sibling->renderer() && sibling->attached())
-        createTextRenderersForSiblingsAfterAttachIfNeeded(sibling);
-
-    setAttached(true);
-    clearNeedsStyleRecalc();
-}
-
-void Text::detachText()
-{
-    if (renderer())
-        renderer()->destroyAndCleanupAnonymousWrappers();
-    setRenderer(0);
-    setAttached(false);
-}
-
-void Text::updateTextRenderer(unsigned offsetOfReplacedData, unsigned lengthOfReplacedData)
-{
-    if (!attached())
-        return;
-    RenderText* textRenderer = toRenderText(renderer());
-    if (!textRenderer) {
-        attachText();
-        return;
-    }
-    NodeRenderingContext renderingContext(this, textRenderer->style());
-    if (!textRendererIsNeeded(renderingContext)) {
-        if (attached())
-            detachText();
-        attachText();
-        return;
-    }
-    textRenderer->setTextWithOffset(dataImpl(), offsetOfReplacedData, lengthOfReplacedData);
 }
 
 bool Text::childTypeAllowed(NodeType) const

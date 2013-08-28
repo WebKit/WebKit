@@ -50,7 +50,6 @@ public:
     NodeRenderingContext(Node*, const Style::AttachContext&);
     ~NodeRenderingContext();
 
-    void createRendererForTextIfNeeded();
     void createRendererForElementIfNeeded();
 
     Node* node() const;

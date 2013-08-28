@@ -110,7 +110,7 @@ static inline void attachChild(Node* child)
     if (child->isElementNode())
         Style::attachRenderTree(toElement(child));
     else if (child->isTextNode())
-        toText(child)->attachText();
+        Style::attachTextRenderer(*toText(child));
 }
 
 static inline void detachChild(Node* child)
@@ -118,7 +118,7 @@ static inline void detachChild(Node* child)
     if (child->isElementNode())
         Style::detachRenderTree(toElement(child));
     else if (child->isTextNode())
-        toText(child)->detachText();
+        Style::detachTextRenderer(*toText(child));
 }
 
 void ContainerNode::takeAllChildrenFrom(ContainerNode* oldParent)

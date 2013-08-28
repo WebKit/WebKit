@@ -103,7 +103,7 @@ static inline void executeTask(HTMLConstructionSiteTask& task)
         if (task.child->isElementNode())
             Style::attachRenderTree(toElement(task.child.get()));
         else if (task.child->isTextNode())
-            toText(task.child.get())->attachText();
+            Style::attachTextRenderer(*toText(task.child.get()));
     }
 
     task.child->beginParsingChildren();

@@ -91,7 +91,7 @@ unsigned CharacterData::parserAppendData(const String& string, unsigned offset, 
 
     ASSERT(!renderer() || isTextNode());
     if (isTextNode())
-        toText(this)->updateTextRenderer(oldLength, 0);
+        Style::updateTextRendererAfterContentChange(*toText(this), oldLength, 0);
 
     document()->incDOMTreeVersion();
     // We don't call dispatchModifiedEvent here because we don't want the
@@ -191,7 +191,7 @@ void CharacterData::setDataAndUpdate(const String& newData, unsigned offsetOfRep
 
     ASSERT(!renderer() || isTextNode());
     if (isTextNode())
-        toText(this)->updateTextRenderer(offsetOfReplacedData, oldLength);
+        Style::updateTextRendererAfterContentChange(*toText(this), offsetOfReplacedData, oldLength);
 
     if (document()->frame())
         document()->frame()->selection().textWasReplaced(this, offsetOfReplacedData, oldLength, newLength);

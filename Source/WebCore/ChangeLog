@@ -1,5 +1,74 @@
 2013-08-28  Antti Koivisto  <antti@apple.com>
 
+        Don't use NodeRenderingContext when attaching text renderers
+        https://bugs.webkit.org/show_bug.cgi?id=120402
+
+        Reviewed by Andreas Kling.
+
+        This patch moves various functions for creating text renderers from NodeRenderingContext and Text to StyleResolveTree.
+        It also tightens the logic and combines some functions.
+
+        * dom/CharacterData.cpp:
+        (WebCore::CharacterData::parserAppendData):
+        (WebCore::CharacterData::setDataAndUpdate):
+        * dom/ContainerNode.cpp:
+        (WebCore::attachChild):
+        (WebCore::detachChild):
+        * dom/NodeRenderingContext.cpp:
+        * dom/NodeRenderingContext.h:
+        * dom/Text.cpp:
+        (WebCore::Text::~Text):
+        * dom/Text.h:
+        * html/HTMLViewSourceDocument.cpp:
+        (WebCore::HTMLViewSourceDocument::addText):
+        * html/parser/HTMLConstructionSite.cpp:
+        (WebCore::executeTask):
+        * html/shadow/InsertionPoint.cpp:
+        (WebCore::InsertionPoint::willAttachRenderers):
+        (WebCore::InsertionPoint::willDetachRenderers):
+        * style/StyleResolveTree.cpp:
+        (WebCore::Style::isRendererReparented):
+        (WebCore::Style::previousSiblingRenderer):
+        (WebCore::Style::nextSiblingRenderer):
+        
+            From NodeRenderingContext::next/previousRenderer
+
+        (WebCore::Style::createTextRenderersForSiblingsAfterAttachIfNeeded):
+        
+            From Text::createTextRenderersForSiblingsAfterAttachIfNeeded()
+
+        (WebCore::Style::textRendererIsNeeded):
+        
+            From Text::textRendererIsNeeded
+
+        (WebCore::Style::createTextRendererIfNeeded):
+        
+            Combines code from Text::createTextRendererIfNeeded, NodeRenderingContext::createRendererForTextIfNeeded,
+            NodeRenderingContext constructor and text node relevant code NodeRenderingContext::shouldCreateRenderer.
+
+        (WebCore::Style::attachTextRenderer):
+        (WebCore::Style::detachTextRenderer):
+        
+            New functions of attaching text renderers. From Text::attach/detachText()
+
+        (WebCore::Style::updateTextRendererAfterContentChange):
+        
+            From Text::updateTextRenderer.
+
+        (WebCore::Style::attachShadowRoot):
+        (WebCore::Style::attachChildren):
+        (WebCore::Style::attachRenderTree):
+        (WebCore::Style::detachShadowRoot):
+        (WebCore::Style::detachChildren):
+        (WebCore::Style::updateTextStyle):
+        * style/StyleResolveTree.h:
+        * xml/parser/XMLDocumentParser.cpp:
+        (WebCore::XMLDocumentParser::exitText):
+        * xml/parser/XMLDocumentParserLibxml2.cpp:
+        (WebCore::XMLDocumentParser::cdataBlock):
+
+2013-08-28  Antti Koivisto  <antti@apple.com>
+
         Make descendant iterators always require ContainerNode root
         https://bugs.webkit.org/show_bug.cgi?id=120393
 

@@ -32,6 +32,7 @@ class Document;
 class Element;
 class RenderStyle;
 class Settings;
+class Text;
 
 namespace Style {
 
@@ -49,6 +50,10 @@ struct AttachContext {
 void attachRenderTree(Element*, const AttachContext& = AttachContext());
 void detachRenderTree(Element*, const AttachContext& = AttachContext());
 void reattachRenderTree(Element*, const AttachContext& = AttachContext());
+
+void attachTextRenderer(Text&);
+void detachTextRenderer(Text&);
+void updateTextRendererAfterContentChange(Text&, unsigned offsetOfReplacedData, unsigned lengthOfReplacedData);
 
 Change determineChange(const RenderStyle*, const RenderStyle*, Settings*);
 

@@ -60,7 +60,7 @@ void InsertionPoint::willAttachRenderers()
         if (current->attached())
             continue;
         if (current->isTextNode()) {
-            toText(current)->attachText();
+            Style::attachTextRenderer(*toText(current));
             continue;
         }
         if (current->isElementNode())
@@ -75,7 +75,7 @@ void InsertionPoint::willDetachRenderers()
 
     for (Node* current = firstDistributed(); current; current = nextDistributedTo(current)) {
         if (current->isTextNode()) {
-            toText(current)->detachText();
+            Style::detachTextRenderer(*toText(current));
             continue;
         }
         if (current->isElementNode())
