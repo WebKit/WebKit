@@ -817,19 +817,14 @@ void RenderBox::autoscroll(const IntPoint& position)
 // There are two kinds of renderer that can autoscroll.
 bool RenderBox::canAutoscroll() const
 {
+    if (node() && node()->isDocumentNode())
+        return view().frameView().isScrollable();
+
     // Check for a box that can be scrolled in its own right.
     if (canBeScrolledAndHasScrollableArea())
         return true;
 
-    // Check for a box that represents the top level of a web page.
-    // This can be scrolled by calling Chrome::scrollRectIntoView.
-    // This only has an effect on the Mac platform in applications
-    // that put web views into scrolling containers, such as Mac OS X Mail.
-    // The code for this is in RenderLayer::scrollRectToVisible.
-    if (node() != &document())
-        return false;
-    Page* page = frame().page();
-    return page && page->frameIsMainFrame(&frame()) && view().frameView().isScrollable();
+    return false;
 }
 
 // If specified point is in border belt, returned offset denotes direction of

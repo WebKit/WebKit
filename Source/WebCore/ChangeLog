@@ -1,3 +1,32 @@
+2013-08-26  Antonio Gomes  <a1.gomes@sisa.samsung.com>
+
+        Scrolling allowed when overflow:hidden (seen on Acid2)
+        https://bugs.webkit.org/show_bug.cgi?id=22769
+
+        Reviewed by Darin Adler.
+
+        Autoscroll, as well as other user-driven scroll actions,
+        has to respect the scrollability styled into the web page.
+        More specifically, if a html or body tags are styled with
+        overflow:hidden, autoscroll should not scroll the containing document.
+
+        In order to fix this, patch hardens RenderBox::canAutoscroll as
+        following: previously, ::canAutoscroll was relying solemnly in
+        ::canBeScrolledAndHasScrollableArea to determine the scrollability
+        of #document node, which was unconditionally returned as 'true'.
+        Patch extends ::canAutoscroll to handle the #document case for
+        main and inner frames, and now it asks through ::isScrollable if
+        the corresponding document's FrameView is actually user-scrollable.
+
+        Note, that the patch change ::canAutoscroll to cover the non-mainFrame
+        #document case, so the comment specific to Apple's Mail app can be omited
+        now.
+
+        Test: fast/events/autoscroll-in-overflow-hidden-html.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::canAutoscroll):
+
 2013-08-27  Santosh Mahto  <santosh.ma@samsung.com>
 
         Adding  "explicit" keyword in  forms related classes constructor
