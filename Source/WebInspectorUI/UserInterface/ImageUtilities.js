@@ -669,3 +669,62 @@ function generateEmbossedImages(src, width, height, states, canvasIdentifierCall
         context.putImageData(imageData, 0, 0);
     }
 }
+
+
+var svgImageCache = {};
+
+function loadSVGImageDocumentElement(url, callback)
+{
+    function invokeCallbackWithDocument(svgText) {
+        var parser = new DOMParser;
+        var doc = parser.parseFromString(svgText, "image/svg+xml");
+        callback(doc.documentElement);
+    }
+
+    function imageLoad(event) {
+        if (xhr.status === 0 || xhr.status === 200) {
+            var svgText = xhr.responseText;
+            svgImageCache[url] = svgText;
+            invokeCallbackWithDocument(svgText);
+        } else {
+            console.error("Unexpected XHR status (" + xhr.status + ") loading SVG image: " + url);
+            callback(null);
+        }
+    }
+
+    function imageError(event) {
+        console.error("Unexpected failure loading SVG image: " + url);
+        callback(null);
+    }
+
+    var cachedSVGText = svgImageCache[url];
+    if (cachedSVGText) {
+        invokeCallbackWithDocument(cachedSVGText);
+        return;
+    }
+
+    var xhr = new XMLHttpRequest;
+    xhr.open("GET", url, true);
+    xhr.addEventListener("load", imageLoad);
+    xhr.addEventListener("error", imageError);
+    xhr.send();
+}
+
+function wrappedSVGDocument(url, className, title, callback)
+{
+    loadSVGImageDocumentElement(url, function(svgDocument) {
+        if (!svgDocument) {
+            callback(null);
+            return;
+        }
+
+        var wrapper = document.createElement("div");
+        if (className)
+            wrapper.className = className;
+        if (title)
+            wrapper.title = title;
+        wrapper.appendChild(svgDocument);
+
+        callback(wrapper);
+    });
+}

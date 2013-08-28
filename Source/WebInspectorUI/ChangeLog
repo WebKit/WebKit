@@ -1,3 +1,39 @@
+2013-08-28  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Give reload icon an :active state and allow CSS to style some SVG images
+        https://bugs.webkit.org/show_bug.cgi?id=120384
+
+        Reviewed by Timothy Hatcher.
+
+        The Reload icon is duplicated just to provide different fill colors.
+        Convert from using <img> to an <svg> document for this image, and style
+        it with CSS. This also makes it trivial to add an :active state.
+
+        * UserInterface/ImageUtilities.js:
+        (.invokeCallbackWithDocument):
+        (.imageLoad):
+        (.imageError):
+        (wrappedSVGDocument):
+        Helpers for downloading and in memory caching SVG images.
+
+        * UserInterface/Images/Reload.svg:
+        * UserInterface/Images/ReloadSelected.svg: Removed.
+        Updated Reload image better matches the original design (slightly
+        larger). And the duplicate image can be removed.
+
+        * UserInterface/ResourceTreeElement.css:
+        (.item.resource > .status > .reload-button):
+        (.item.resource > .status > .reload-button > svg *):
+        (.item.resource.selected > .status > .reload-button > svg *):
+        (.item.resource.selected > .status > .reload-button:active > svg *):
+        Different styles, including a new :active style.
+
+        * UserInterface/ResourceTreeElement.js:
+        (WebInspector.ResourceTreeElement.prototype._updateStatusWithMainFrameButtons):
+        (WebInspector.ResourceTreeElement.prototype._updateStatus):
+        Handle updating the main frame's state asynchronously since loading the SVG
+        image document is asynchronous.
+
 2013-08-27  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Debugger should have Continue to Here Context Menu
