@@ -219,7 +219,7 @@ PassRefPtr<SpaceSplitStringData> SpaceSplitStringData::create(const AtomicString
     AtomicString* tokenArrayStart = spaceSplitStringData->tokenArrayStart();
     TokenAtomicStringInitializer tokenInitializer(tokenArrayStart);
     tokenizeSpaceSplitString(tokenInitializer, keyString);
-    ASSERT(tokenInitializer.nextMemoryBucket() - tokenArrayStart == tokenCount);
+    ASSERT(static_cast<unsigned>(tokenInitializer.nextMemoryBucket() - tokenArrayStart) == tokenCount);
     ASSERT(reinterpret_cast<const char*>(tokenInitializer.nextMemoryBucket()) == reinterpret_cast<const char*>(spaceSplitStringData) + sizeToAllocate);
 
     return adoptRef(spaceSplitStringData);

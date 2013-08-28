@@ -1,3 +1,10 @@
+2013-08-28  Benjamin Poulain  <benjamin@webkit.org>
+
+        Fix the build after r154780
+
+        * dom/SpaceSplitString.cpp:
+        (WebCore::SpaceSplitStringData::create):
+
 2013-08-27  Benjamin Poulain  <bpoulain@apple.com>
 
         Simplify and clean SpaceSplitString
