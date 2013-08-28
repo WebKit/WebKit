@@ -1,3 +1,18 @@
+2013-08-28  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK][WK2] Disable accelerated compositing under Wayland
+        https://bugs.webkit.org/show_bug.cgi?id=120347
+
+        Reviewed by Martin Robinson.
+
+        Accelerated compositing is not yet supported under the Wayland display protocol,
+        so it should be disabled. Since it is enabled by default and the GTK WK2 API does
+        not provide any way to change that, it's enough to disable it when attaching the
+        WebKitSettings object to the WebPageGroup if running under Wayland.
+
+        * UIProcess/API/gtk/WebKitWebViewGroup.cpp:
+        (webkitWebViewGroupAttachSettingsToPageGroup):
+
 2013-08-28  Alexandre Abreu  <alexandre.abreu@canonical.com>
 
         Add a 'isMainFrame' parameter to QWebNavigationRequest.
