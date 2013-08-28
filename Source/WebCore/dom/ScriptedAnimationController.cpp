@@ -95,6 +95,8 @@ void ScriptedAnimationController::setThrottled(bool isThrottled)
         m_animationTimer.stop();
         scheduleAnimation();
     }
+#else
+    UNUSED_PARAM(isThrottled);
 #endif
 }
 
