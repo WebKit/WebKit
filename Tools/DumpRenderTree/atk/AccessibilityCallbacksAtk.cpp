@@ -104,6 +104,7 @@ static gboolean axObjectEventListener(GSignalInvocationHint *signalHint, guint n
     } else if (!g_strcmp0(signalQuery.signal_name, "focus-event")) {
         signalName.set(g_strdup("focus-event"));
         signalValue.set(g_strdup_printf("%d", g_value_get_boolean(&paramValues[1])));
+        notificationName = "AXFocusedUIElementChanged";
     } else if (!g_strcmp0(signalQuery.signal_name, "children-changed")) {
         signalName.set(g_strdup("children-changed"));
         signalValue.set(g_strdup_printf("%d", g_value_get_uint(&paramValues[1])));
