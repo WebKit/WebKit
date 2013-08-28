@@ -737,12 +737,12 @@ private:
         bool isPlaced() const { return m_isPlaced; }
         void setIsPlaced(bool placed = true) { m_isPlaced = placed; }
 
-        inline LayoutUnit x() const { ASSERT(isPlaced()); return m_frameRect.x(); }
-        inline LayoutUnit maxX() const { ASSERT(isPlaced()); return m_frameRect.maxX(); }
-        inline LayoutUnit y() const { ASSERT(isPlaced()); return m_frameRect.y(); }
-        inline LayoutUnit maxY() const { ASSERT(isPlaced()); return m_frameRect.maxY(); }
-        inline LayoutUnit width() const { return m_frameRect.width(); }
-        inline LayoutUnit height() const { return m_frameRect.height(); }
+        LayoutUnit x() const { ASSERT(isPlaced()); return m_frameRect.x(); }
+        LayoutUnit maxX() const { ASSERT(isPlaced()); return m_frameRect.maxX(); }
+        LayoutUnit y() const { ASSERT(isPlaced()); return m_frameRect.y(); }
+        LayoutUnit maxY() const { ASSERT(isPlaced()); return m_frameRect.maxY(); }
+        LayoutUnit width() const { return m_frameRect.width(); }
+        LayoutUnit height() const { return m_frameRect.height(); }
 
         void setX(LayoutUnit x) { ASSERT(!isInPlacedTree()); m_frameRect.setX(x); }
         void setY(LayoutUnit y) { ASSERT(!isInPlacedTree()); m_frameRect.setY(y); }
@@ -1205,21 +1205,21 @@ protected:
     typedef PODFreeListArena<PODRedBlackTree<FloatingObjectInterval>::Node> IntervalArena;
     
     template <FloatingObject::Type FloatTypeValue>
-    class FloatIntervalSearchAdapter {
+    class ComputeFloatOffsetAdapter {
     public:
         typedef FloatingObjectInterval IntervalType;
         
-        FloatIntervalSearchAdapter(const RenderBlock* renderer, int lowValue, int highValue, LayoutUnit& offset)
+        ComputeFloatOffsetAdapter(const RenderBlock* renderer, int lineTop, int lineBottom, LayoutUnit& offset)
             : m_renderer(renderer)
-            , m_lowValue(lowValue)
-            , m_highValue(highValue)
+            , m_lineTop(lineTop)
+            , m_lineBottom(lineBottom)
             , m_offset(offset)
             , m_outermostFloat(0)
         {
         }
         
-        inline int lowValue() const { return m_lowValue; }
-        inline int highValue() const { return m_highValue; }
+        int lowValue() const { return m_lineTop; }
+        int highValue() const { return m_lineBottom; }
         void collectIfNeeded(const IntervalType&);
 
 #if ENABLE(CSS_SHAPES)
@@ -1236,8 +1236,8 @@ protected:
         bool updateOffsetIfNeeded(const FloatingObject*);
 
         const RenderBlock* m_renderer;
-        int m_lowValue;
-        int m_highValue;
+        int m_lineTop;
+        int m_lineBottom;
         LayoutUnit& m_offset;
         const FloatingObject* m_outermostFloat;
     };

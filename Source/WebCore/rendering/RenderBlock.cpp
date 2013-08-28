@@ -4439,7 +4439,7 @@ inline static bool rangesIntersect(int floatTop, int floatBottom, int objectTop,
 }
 
 template<>
-inline bool RenderBlock::FloatIntervalSearchAdapter<RenderBlock::FloatingObject::FloatLeft>::updateOffsetIfNeeded(const FloatingObject* floatingObject)
+inline bool RenderBlock::ComputeFloatOffsetAdapter<RenderBlock::FloatingObject::FloatLeft>::updateOffsetIfNeeded(const FloatingObject* floatingObject)
 {
     LayoutUnit logicalRight = m_renderer->logicalRightForFloat(floatingObject);
     if (logicalRight > m_offset) {
@@ -4450,7 +4450,7 @@ inline bool RenderBlock::FloatIntervalSearchAdapter<RenderBlock::FloatingObject:
 }
 
 template<>
-inline bool RenderBlock::FloatIntervalSearchAdapter<RenderBlock::FloatingObject::FloatRight>::updateOffsetIfNeeded(const FloatingObject* floatingObject)
+inline bool RenderBlock::ComputeFloatOffsetAdapter<RenderBlock::FloatingObject::FloatRight>::updateOffsetIfNeeded(const FloatingObject* floatingObject)
 {
     LayoutUnit logicalLeft = m_renderer->logicalLeftForFloat(floatingObject);
     if (logicalLeft < m_offset) {
@@ -4461,15 +4461,15 @@ inline bool RenderBlock::FloatIntervalSearchAdapter<RenderBlock::FloatingObject:
 }
 
 template <RenderBlock::FloatingObject::Type FloatTypeValue>
-inline void RenderBlock::FloatIntervalSearchAdapter<FloatTypeValue>::collectIfNeeded(const IntervalType& interval)
+inline void RenderBlock::ComputeFloatOffsetAdapter<FloatTypeValue>::collectIfNeeded(const IntervalType& interval)
 {
     const FloatingObject* floatingObject = interval.data();
-    if (floatingObject->type() != FloatTypeValue || !rangesIntersect(interval.low(), interval.high(), m_lowValue, m_highValue))
+    if (floatingObject->type() != FloatTypeValue || !rangesIntersect(interval.low(), interval.high(), m_lineTop, m_lineBottom))
         return;
 
     // All the objects returned from the tree should be already placed.
     ASSERT(floatingObject->isPlaced());
-    ASSERT(rangesIntersect(m_renderer->pixelSnappedLogicalTopForFloat(floatingObject), m_renderer->pixelSnappedLogicalBottomForFloat(floatingObject), m_lowValue, m_highValue));
+    ASSERT(rangesIntersect(m_renderer->pixelSnappedLogicalTopForFloat(floatingObject), m_renderer->pixelSnappedLogicalBottomForFloat(floatingObject), m_lineTop, m_lineBottom));
 
     bool floatIsNewExtreme = updateOffsetIfNeeded(floatingObject);
     if (floatIsNewExtreme)
@@ -4477,9 +4477,9 @@ inline void RenderBlock::FloatIntervalSearchAdapter<FloatTypeValue>::collectIfNe
 }
 
 template <RenderBlock::FloatingObject::Type FloatTypeValue>
-LayoutUnit RenderBlock::FloatIntervalSearchAdapter<FloatTypeValue>::getHeightRemaining() const
+LayoutUnit RenderBlock::ComputeFloatOffsetAdapter<FloatTypeValue>::getHeightRemaining() const
 {
-    return m_outermostFloat ? m_renderer->logicalBottomForFloat(m_outermostFloat) - m_lowValue : LayoutUnit(1);
+    return m_outermostFloat ? m_renderer->logicalBottomForFloat(m_outermostFloat) - m_lineTop : LayoutUnit(1);
 }
 
 LayoutUnit RenderBlock::textIndentOffset() const
@@ -4519,7 +4519,7 @@ LayoutUnit RenderBlock::logicalLeftFloatOffsetForLine(LayoutUnit logicalTop, Lay
 #endif
     LayoutUnit left = fixedOffset;
     if (m_floatingObjects && m_floatingObjects->hasLeftObjects()) {
-        FloatIntervalSearchAdapter<FloatingObject::FloatLeft> adapter(this, roundToInt(logicalTop), roundToInt(logicalTop + logicalHeight), left);
+        ComputeFloatOffsetAdapter<FloatingObject::FloatLeft> adapter(this, roundToInt(logicalTop), roundToInt(logicalTop + logicalHeight), left);
         m_floatingObjects->placedFloatsTree().allOverlapsWithAdapter(adapter);
 
         if (heightRemaining)
@@ -4587,7 +4587,7 @@ LayoutUnit RenderBlock::logicalRightFloatOffsetForLine(LayoutUnit logicalTop, La
     LayoutUnit right = fixedOffset;
     if (m_floatingObjects && m_floatingObjects->hasRightObjects()) {
         LayoutUnit rightFloatOffset = fixedOffset;
-        FloatIntervalSearchAdapter<FloatingObject::FloatRight> adapter(this, roundToInt(logicalTop), roundToInt(logicalTop + logicalHeight), rightFloatOffset);
+        ComputeFloatOffsetAdapter<FloatingObject::FloatRight> adapter(this, roundToInt(logicalTop), roundToInt(logicalTop + logicalHeight), rightFloatOffset);
         m_floatingObjects->placedFloatsTree().allOverlapsWithAdapter(adapter);
 
         if (heightRemaining)

@@ -1,3 +1,40 @@
+2013-08-28  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        Code cleanup: rename FloatIntervalSearchAdapter and remove unnecessary inlines
+        https://bugs.webkit.org/show_bug.cgi?id=120378
+
+        Reviewed by Darin Adler.
+
+        Rename FloatIntervalSearchAdapter to ComputeFloatOffsetAdapter. The
+        naming of this adapter has caused much confusion in reading the code,
+        as it wasn't apparent that calls to it were actually doing anything
+        other than searching the interval tree. The new name is a much better
+        description of what it actually does.
+
+        Also, rename m_lowValue and m_highValue member variables to make it
+        easier to read the code that uses them.
+
+        Removed the inlines based on a change by eseidel in Blink.
+
+        No new tests, no behavior change.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::::updateOffsetIfNeeded): Update for renames.
+        (WebCore::::collectIfNeeded): Ditto.
+        (WebCore::::getHeightRemaining): Ditto.
+        (WebCore::RenderBlock::logicalLeftFloatOffsetForLine): Ditto.
+        (WebCore::RenderBlock::logicalRightFloatOffsetForLine): Ditto.
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::FloatingObject::x): Remove unnecessary inline.
+        (WebCore::RenderBlock::FloatingObject::maxX): Ditto.
+        (WebCore::RenderBlock::FloatingObject::y): Ditto.
+        (WebCore::RenderBlock::FloatingObject::maxY): Ditto.
+        (WebCore::RenderBlock::FloatingObject::width): Ditto.
+        (WebCore::RenderBlock::FloatingObject::height): Ditto.
+        (WebCore::RenderBlock::ComputeFloatOffsetAdapter::ComputeFloatOffsetAdapter): Rename.
+        (WebCore::RenderBlock::ComputeFloatOffsetAdapter::lowValue): Rename m_lowValue.
+        (WebCore::RenderBlock::ComputeFloatOffsetAdapter::highValue): Rename m_highValue.
+
 2013-08-28  Tamas Czene  <tczene@inf.u-szeged.hu>
 
         Resolve unused parameter warning in ScriptedAnimationController.cpp.
