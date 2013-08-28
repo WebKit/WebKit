@@ -2254,6 +2254,8 @@ webcore_sources += \
 	Source/WebCore/accessibility/AccessibilityScrollbar.h \
 	Source/WebCore/accessibility/AccessibilityScrollView.cpp \
 	Source/WebCore/accessibility/AccessibilityScrollView.h \
+	Source/WebCore/accessibility/AccessibilitySearchFieldButtons.cpp \
+	Source/WebCore/accessibility/AccessibilitySearchFieldButtons.h \
 	Source/WebCore/accessibility/AccessibilitySlider.cpp \
 	Source/WebCore/accessibility/AccessibilitySlider.h \
 	Source/WebCore/accessibility/AccessibilitySpinButton.cpp \

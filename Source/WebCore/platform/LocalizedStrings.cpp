@@ -604,7 +604,12 @@ String AXFileUploadButtonText()
 {
     return WEB_UI_STRING("file upload button", "accessibility role description for a file upload button");
 }
-    
+
+String AXSearchFieldCancelButtonText()
+{
+    return WEB_UI_STRING("cancel", "accessibility description for a search field cancel button");
+}
+
 String AXButtonActionVerb()
 {
     return WEB_UI_STRING("press", "Verb stating the action that will occur when a button is pressed, as used by accessibility");

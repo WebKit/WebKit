@@ -1,3 +1,16 @@
+2013-08-28  Sam White  <samuel_white@apple.com>
+
+        AX: Cancel button in search field not accessible.
+        <https://webkit.org/b/120322>
+
+        Make sure the cancel button that shows in an input element of
+        type search is accessible and actionable.
+
+        Reviewed by Chris Fleizach.
+
+        * platform/mac/accessibility/search-field-cancel-button-expected.txt: Added.
+        * platform/mac/accessibility/search-field-cancel-button.html: Added.
+
 2013-08-28  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r154586): Past names map should only be used when named item is empty

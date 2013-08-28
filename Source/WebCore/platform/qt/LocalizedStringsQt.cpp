@@ -423,6 +423,12 @@ String AXDescriptionListDetailText()
     return String();
 }
 
+String AXSearchFieldCancelButtonText()
+{
+    notImplemented();
+    return String();
+}
+
 String AXButtonActionVerb()
 {
     notImplemented();

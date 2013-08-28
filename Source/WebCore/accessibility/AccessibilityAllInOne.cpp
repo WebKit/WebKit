@@ -41,6 +41,7 @@
 #include "AccessibilitySVGRoot.cpp"
 #include "AccessibilityScrollView.cpp"
 #include "AccessibilityScrollbar.cpp"
+#include "AccessibilitySearchFieldButtons.cpp"
 #include "AccessibilitySlider.cpp"
 #include "AccessibilityTable.cpp"
 #include "AccessibilityTableCell.cpp"

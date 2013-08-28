@@ -980,6 +980,7 @@ set(WebCore_SOURCES
     accessibility/AccessibilityRenderObject.cpp
     accessibility/AccessibilityScrollbar.cpp
     accessibility/AccessibilityScrollView.cpp
+    accessibility/AccessibilitySearchFieldButtons.cpp
     accessibility/AccessibilitySpinButton.cpp
     accessibility/AccessibilitySlider.cpp
     accessibility/AccessibilitySVGRoot.cpp

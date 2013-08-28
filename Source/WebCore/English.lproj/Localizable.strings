@@ -619,6 +619,9 @@
 /* accessibility help text for play button */
 "begin playback" = "begin playback";
 
+/* accessibility description for a search field cancel button */
+"cancel" = "cancel";
+
 /* Verb stating the action that will occur when an unchecked checkbox is clicked, as used by accessibility */
 "check" = "check";
 

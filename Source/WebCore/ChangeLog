@@ -1,3 +1,45 @@
+2013-08-28  Sam White  <samuel_white@apple.com>
+
+        AX: Cancel button in search field not accessible.
+        <https://webkit.org/b/120322>
+
+        Expose the cancel button that shows in an input element of
+        type search to accessibility.
+
+        Reviewed by Chris Fleizach.
+
+        Test: platform/mac/accessibility/search-field-cancel-button.html
+
+        * CMakeLists.txt:
+        * English.lproj/Localizable.strings:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::createFromRenderer):
+        * accessibility/AccessibilityAllInOne.cpp:
+        * accessibility/AccessibilitySearchFieldButtons.cpp: Added.
+        (WebCore::AccessibilitySearchFieldCancelButton::create):
+        (WebCore::AccessibilitySearchFieldCancelButton::AccessibilitySearchFieldCancelButton):
+        (WebCore::AccessibilitySearchFieldCancelButton::accessibilityDescription):
+        (WebCore::AccessibilitySearchFieldCancelButton::accessibilityText):
+        (WebCore::AccessibilitySearchFieldCancelButton::press):
+        (WebCore::AccessibilitySearchFieldCancelButton::computeAccessibilityIsIgnored):
+        * accessibility/AccessibilitySearchFieldButtons.h: Added.
+        * dom/Element.h:
+        (WebCore::Element::isSearchFieldCancelButtonElement):
+        * html/shadow/TextControlInnerElements.h:
+        * platform/LocalizedStrings.cpp:
+        (WebCore::AXSearchFieldCancelButtonText):
+        * platform/LocalizedStrings.h:
+        * platform/efl/LocalizedStringsEfl.cpp:
+        (WebCore::AXSearchFieldCancelButtonText):
+        * platform/gtk/LocalizedStringsGtk.cpp:
+        (WebCore::AXSearchFieldCancelButtonText):
+        * platform/qt/LocalizedStringsQt.cpp:
+        (WebCore::AXSearchFieldCancelButtonText):
+
 2013-08-28  Eric Carlson  <eric.carlson@apple.com>
 
         MediaPlayerPrivateAVFoundationObjC is painting video frames under the video layer

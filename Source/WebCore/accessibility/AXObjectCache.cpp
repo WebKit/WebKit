@@ -48,6 +48,7 @@
 #include "AccessibilitySVGRoot.h"
 #include "AccessibilityScrollView.h"
 #include "AccessibilityScrollbar.h"
+#include "AccessibilitySearchFieldButtons.h"
 #include "AccessibilitySlider.h"
 #include "AccessibilitySpinButton.h"
 #include "AccessibilityTable.h"
@@ -275,6 +276,10 @@ static PassRefPtr<AccessibilityObject> createFromRenderer(RenderObject* renderer
     if (renderer->isSVGRoot())
         return AccessibilitySVGRoot::create(renderer);
 #endif
+    
+    // Search field buttons
+    if (node && node->isElementNode() && toElement(node)->isSearchFieldCancelButtonElement())
+        return AccessibilitySearchFieldCancelButton::create(renderer);
     
     if (renderer->isBoxModelObject()) {
         RenderBoxModelObject* cssBox = toRenderBoxModelObject(renderer);

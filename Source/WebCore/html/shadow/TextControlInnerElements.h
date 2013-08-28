@@ -86,6 +86,7 @@ public:
     static PassRefPtr<SearchFieldCancelButtonElement> create(Document*);
 
     virtual void defaultEventHandler(Event*);
+    virtual bool isSearchFieldCancelButtonElement() const OVERRIDE { return true; }
     virtual bool willRespondToMouseClickEvents() OVERRIDE;
 
 private:

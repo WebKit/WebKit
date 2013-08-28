@@ -452,6 +452,11 @@ String AXFooterRoleDescriptionText()
     return String::fromUTF8(_("footer"));
 }
 
+String AXSearchFieldCancelButtonText()
+{
+    return String::fromUTF8(_("cancel"));
+}
+
 String AXButtonActionVerb()
 {
     return String::fromUTF8(_("press"));
