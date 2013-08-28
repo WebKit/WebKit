@@ -606,7 +606,7 @@ void XMLDocumentParser::parseCdata()
 
     m_currentNode->parserAppendChild(newNode.get());
     if (m_view && !newNode->attached())
-        newNode->attachText();
+        Style::attachTextRenderer(*newNode);
 }
 
 void XMLDocumentParser::parseComment()
