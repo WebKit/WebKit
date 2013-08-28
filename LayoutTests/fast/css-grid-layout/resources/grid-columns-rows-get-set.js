@@ -180,6 +180,17 @@ element.style.webkitGridDefinitionRows = "minmax(10vw, auto)";
 shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns')", "'none'");
 shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows')", "'none'");
 
+// Negative values are not allowed.
+element.style.webkitGridDefinitionColumns = "-1px";
+element.style.webkitGridDefinitionRows = "-6em";
+shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns')", "'none'");
+shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows')", "'none'");
+
+element.style.webkitGridDefinitionColumns = "minmax(-1%, 32%)";
+element.style.webkitGridDefinitionRows = "minmax(2vw, -6em)";
+shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns')", "'none'");
+shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows')", "'none'");
+
 debug("");
 debug("Test setting grid-definition-columns and grid-definition-rows back to 'none' through JS");
 element.style.webkitGridDefinitionColumns = "18px";

@@ -1,5 +1,22 @@
 2013-08-28  Sergio Villar Senin  <svillar@igalia.com>
 
+        [CSS Grid Layout] infinity should be defined as a negative value
+        https://bugs.webkit.org/show_bug.cgi?id=107053
+
+        Reviewed by Andreas Kling.
+
+        From Blink r154805 by <jchaffraix@chromium.org>
+
+        Added some new test cases to check that track-breadth cannot be a
+        negative value, either it's a length, a percentage...
+
+        * fast/css-grid-layout/grid-columns-rows-get-set-expected.txt:
+        * fast/css-grid-layout/grid-columns-rows-get-set-multiple-expected.txt:
+        * fast/css-grid-layout/resources/grid-columns-rows-get-set-multiple.js:
+        * fast/css-grid-layout/resources/grid-columns-rows-get-set.js:
+
+2013-08-28  Sergio Villar Senin  <svillar@igalia.com>
+
         [Soup] WebTiming information not shown in the inspector
         https://bugs.webkit.org/show_bug.cgi?id=118395
 

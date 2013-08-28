@@ -70,6 +70,10 @@ PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-col
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is 'none'
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is 'none'
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is 'none'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is 'none'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is 'none'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is 'none'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is 'none'
 
 Test setting grid-definition-columns and grid-definition-rows back to 'none' through JS
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is '18px'

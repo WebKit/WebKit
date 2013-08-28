@@ -152,3 +152,18 @@ element.style.webkitGridDefinitionColumns = "auto minmax(16px, auto)";
 element.style.webkitGridDefinitionRows = "minmax(auto, 15%) 10vw";
 shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns')", "'none'");
 shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows')", "'none'");
+
+// Negative values are not allowed.
+element = document.createElement("div");
+document.body.appendChild(element);
+element.style.webkitGridDefinitionColumns = "-10px minmax(16px, 32px)";
+element.style.webkitGridDefinitionRows = "minmax(10%, 15%) -10vw";
+shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns')", "'none'");
+shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows')", "'none'");
+
+element = document.createElement("div");
+document.body.appendChild(element);
+element.style.webkitGridDefinitionColumns = "10px minmax(16px, -1vw)";
+element.style.webkitGridDefinitionRows = "minmax(-1%, 15%) 10vw";
+shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns')", "'none'");
+shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows')", "'none'");

@@ -64,6 +64,10 @@ PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-col
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is 'none'
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is 'none'
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is 'none'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is 'none'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is 'none'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-columns') is 'none'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-definition-rows') is 'none'
 PASS successfullyParsed is true
 
 TEST COMPLETE

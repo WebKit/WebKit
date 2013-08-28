@@ -1,5 +1,24 @@
 2013-08-28  Sergio Villar Senin  <svillar@igalia.com>
 
+        [CSS Grid Layout] infinity should be defined as a negative value
+        https://bugs.webkit.org/show_bug.cgi?id=107053
+
+        Reviewed by Andreas Kling.
+
+        From Blink r154805 by <jchaffraix@chromium.org>
+
+        Reject negative values for track-breadth at parse time as
+        mentioned in the latest versions of the spec.
+
+        Added some extra checks to the existing tests.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseGridBreadth):
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::computeUsedBreadthOfMaxLength):
+
+2013-08-28  Sergio Villar Senin  <svillar@igalia.com>
+
         [Soup] WebTiming information not shown in the inspector
         https://bugs.webkit.org/show_bug.cgi?id=118395
 
