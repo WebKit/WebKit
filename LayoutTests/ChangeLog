@@ -1,3 +1,12 @@
+2013-08-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Fix a typo in the test name.
+
+        * fast/forms/past-names-map-should-not-contain-disassociated-elements-expected.txt: Copied from LayoutTests/fast/forms/past-names-map-should-not-contained-disassociated-elements-expected.txt.
+        * fast/forms/past-names-map-should-not-contain-disassociated-elements.html: Copied from LayoutTests/fast/forms/past-names-map-should-not-contained-disassociated-elements.html.
+        * fast/forms/past-names-map-should-not-contained-disassociated-elements-expected.txt: Removed.
+        * fast/forms/past-names-map-should-not-contained-disassociated-elements.html: Removed.
+
 2013-08-27  Ryosuke Niwa  <rniwa@webkit.org>
 
         Don't keep unassociated elements in the past names map
