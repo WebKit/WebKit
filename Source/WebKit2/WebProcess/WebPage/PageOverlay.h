@@ -55,8 +55,8 @@ public:
         virtual void drawRect(PageOverlay*, WebCore::GraphicsContext&, const WebCore::IntRect& dirtyRect) = 0;
         virtual bool mouseEvent(PageOverlay*, const WebMouseEvent&) = 0;
 
-        virtual WKTypeRef copyAccessibilityAttributeValue(PageOverlay*, WKStringRef attribute, WKTypeRef parameter) { return 0; }
-        virtual WKArrayRef copyAccessibilityAttributeNames(PageOverlay*, bool parameterizedNames) { return 0; }
+        virtual WKTypeRef copyAccessibilityAttributeValue(PageOverlay*, WKStringRef /* attribute */, WKTypeRef /* parameter */) { return 0; }
+        virtual WKArrayRef copyAccessibilityAttributeNames(PageOverlay*, bool /* parameterizedNames */) { return 0; }
     };
 
     static PassRefPtr<PageOverlay> create(Client*);
