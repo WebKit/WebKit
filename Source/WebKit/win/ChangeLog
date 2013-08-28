@@ -1,3 +1,22 @@
+2013-08-28  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Provide useful error messages for WebKitErrorDomain errors
+        https://bugs.webkit.org/show_bug.cgi?id=120428
+
+        Reviewed by Anders Carlsson.
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::cancelledError): Provide text for this error.
+        (WebFrameLoaderClient::blockedError): Hook up WEB_UI_STRING for this error.
+        (WebFrameLoaderClient::cannotShowURLError): Ditto
+        (WebFrameLoaderClient::interruptedForPolicyChangeError): Ditto
+        (WebFrameLoaderClient::cannotShowMIMETypeError): Ditto
+        (WebFrameLoaderClient::fileDoesNotExistError): Provide text for this error.
+        (WebFrameLoaderClient::pluginWillHandleLoadError): Hook up WEB_UI_STRING for this error.
+        (WebFrameLoaderClient::dispatchDidFailToStartPlugin): Ditto.
+        (WebFrameLoaderClient::createJavaAppletWidget): Ditto.
+        (WebFrameLoaderClient::webHistory): Remove blank line above method.
+
 2013-08-27  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Loader is not properly determining supported MIME types
