@@ -1,3 +1,27 @@
+2013-08-28  Dean Jackson  <dino@apple.com>
+
+        [WebGL] CoreGraphics can provide greyscale image data
+        https://webkit.org/b/120443
+
+        Reviewed by Simon Fraser.
+
+        CoreGraphics can decode greyscale or greyscale+alpha images
+        while preserving the format. Our WebGL texture unpacker
+        was seeing this and assuming it meant the data did not come
+        from an <img> element. Since that method already special cased
+        CoreGraphics, the fix was to simply return true for these
+        extra types.
+
+        I also renamed srcFormatComeFromDOMElementOrImageData
+        to srcFormatComesFromDOMElementOrImageData.
+
+        Test: fast/canvas/webgl/tex-image-with-greyscale-image.html
+
+        * platform/graphics/GraphicsContext3D.cpp: Call new name.
+        * platform/graphics/GraphicsContext3D.h:
+        (WebCore::GraphicsContext3D::srcFormatComesFromDOMElementOrImageData):
+        Add support for R8, AR8, A8, and RA8 data formats.
+
 2013-08-28  Gustavo Noronha Silva  <gns@gnome.org>
 
         [GTK] HTMLElement lost setID and getID - need to add compatibility symbols

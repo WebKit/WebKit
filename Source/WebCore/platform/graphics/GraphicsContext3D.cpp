@@ -1301,7 +1301,7 @@ ALWAYS_INLINE void FormatConverter::convert()
     }
 
     // Only textures uploaded from DOM elements or ImageData can allow DstFormat != SrcFormat.
-    const bool srcFormatComesFromDOMElementOrImageData = GraphicsContext3D::srcFormatComeFromDOMElementOrImageData(SrcFormat);
+    const bool srcFormatComesFromDOMElementOrImageData = GraphicsContext3D::srcFormatComesFromDOMElementOrImageData(SrcFormat);
     if (!srcFormatComesFromDOMElementOrImageData && SrcFormat != DstFormat) {
         ASSERT_NOT_REACHED();
         return;
