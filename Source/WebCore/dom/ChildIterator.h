@@ -28,8 +28,8 @@
 
 #include "ElementTraversal.h"
 
-#ifndef NDEBUG
-#include "Document.h"
+#if !ASSERT_DISABLED
+#include "DescendantIteratorAssertions.h"
 #endif
 
 namespace WebCore {
@@ -47,10 +47,8 @@ public:
 private:
     ElementType* m_current;
 
-#ifndef NDEBUG
-    bool domTreeHasMutated() const;
-    OwnPtr<NoEventDispatchAssertion> m_noEventDispatchAssertion;
-    uint64_t m_initialDOMTreeVersion;
+#if !ASSERT_DISABLED
+    DescendantIteratorAssertions m_assertions;
 #endif
 };
 
@@ -71,40 +69,28 @@ template <typename ElementType> ChildIteratorAdapter<ElementType> childrenOfType
 template <typename ElementType>
 inline ChildIterator<ElementType>::ChildIterator()
     : m_current(nullptr)
-#ifndef NDEBUG
-    , m_initialDOMTreeVersion(0)
-#endif
 {
 }
 
 template <typename ElementType>
 inline ChildIterator<ElementType>::ChildIterator(ElementType* current)
     : m_current(current)
-#ifndef NDEBUG
-    , m_noEventDispatchAssertion(adoptPtr(new NoEventDispatchAssertion))
-    , m_initialDOMTreeVersion(m_current ? m_current->document()->domTreeVersion() : 0)
+#if !ASSERT_DISABLED
+    , m_assertions(current)
 #endif
 {
 }
-
-#ifndef NDEBUG
-template <typename ElementType>
-inline bool ChildIterator<ElementType>::domTreeHasMutated() const
-{
-    return m_initialDOMTreeVersion && m_current && m_current->document()->domTreeVersion() != m_initialDOMTreeVersion;
-}
-#endif
 
 template <typename ElementType>
 inline ChildIterator<ElementType>& ChildIterator<ElementType>::operator++()
 {
     ASSERT(m_current);
-    ASSERT(!domTreeHasMutated());
+    ASSERT(!m_assertions.domTreeHasMutated());
     m_current = Traversal<ElementType>::nextSibling(m_current);
-#ifndef NDEBUG
+#if !ASSERT_DISABLED
     // Drop the assertion when the iterator reaches the end.
     if (!m_current)
-        m_noEventDispatchAssertion = nullptr;
+        m_assertions.dropEventDispatchAssertion();
 #endif
     return *this;
 }
@@ -113,7 +99,7 @@ template <typename ElementType>
 inline ElementType& ChildIterator<ElementType>::operator*()
 {
     ASSERT(m_current);
-    ASSERT(!domTreeHasMutated());
+    ASSERT(!m_assertions.domTreeHasMutated());
     return *m_current;
 }
 
@@ -121,14 +107,14 @@ template <typename ElementType>
 inline ElementType* ChildIterator<ElementType>::operator->()
 {
     ASSERT(m_current);
-    ASSERT(!domTreeHasMutated());
+    ASSERT(!m_assertions.domTreeHasMutated());
     return m_current;
 }
 
 template <typename ElementType>
 inline bool ChildIterator<ElementType>::operator!=(const ChildIterator& other) const
 {
-    ASSERT(!domTreeHasMutated());
+    ASSERT(!m_assertions.domTreeHasMutated());
     return m_current != other.m_current;
 }
 

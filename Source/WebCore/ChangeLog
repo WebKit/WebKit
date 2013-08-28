@@ -1,3 +1,29 @@
+2013-08-28  Antti Koivisto  <antti@apple.com>
+
+        Factor descendant iterator assertions into a class.
+        https://bugs.webkit.org/show_bug.cgi?id=120422
+
+        Reviewed by Darin Adler.
+
+        Share the assertions between ChildIterator and DescendantIterator. We can use it for future const iterators too.
+
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/ChildIterator.h:
+        (WebCore::::ChildIterator):
+        (WebCore::::operator):
+        (WebCore::=):
+        * dom/DescendantIterator.h:
+        (WebCore::::DescendantIterator):
+        (WebCore::::operator):
+        (WebCore::=):
+        * dom/DescendantIteratorAssertions.h: Added.
+        (WebCore::DescendantIteratorAssertions::DescendantIteratorAssertions):
+        (WebCore::DescendantIteratorAssertions::domTreeHasMutated):
+        (WebCore::DescendantIteratorAssertions::dropEventDispatchAssertion):
+
 2013-08-28  Darin Adler  <darin@apple.com>
 
         Eliminate Pasteboard::generalPasteboard

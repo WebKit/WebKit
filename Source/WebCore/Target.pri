@@ -1592,6 +1592,7 @@ HEADERS += \
     dom/CustomEvent.h \
     dom/default/PlatformMessagePortChannel.h \
     dom/DescendantIterator.h \
+    dom/DescendantIteratorAssertions.h \
     dom/DeviceMotionClient.h \
     dom/DeviceMotionController.h \
     dom/DeviceMotionData.h \

@@ -20238,6 +20238,7 @@
     <ClInclude Include="..\dom\DataTransferItemList.h" />
     <ClInclude Include="..\dom\DecodedDataDocumentParser.h" />
     <ClInclude Include="..\dom\DescendantIterator.h" />
+    <ClInclude Include="..\dom\DescendantIteratorAssertions.h" />
     <ClInclude Include="..\dom\DeviceMotionClient.h" />
     <ClInclude Include="..\dom\DeviceMotionController.h" />
     <ClInclude Include="..\dom\DeviceMotionData.h" />
