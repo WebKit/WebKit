@@ -1548,7 +1548,7 @@ bool InspectorStyleSheetForInlineStyle::getStyleAttributeRanges(CSSRuleSourceDat
     }
 
     RefPtr<MutableStylePropertySet> tempDeclaration = MutableStylePropertySet::create();
-    createCSSParser(m_element->document())->parseDeclaration(tempDeclaration.get(), m_styleText, result, m_element->document()->elementSheet()->contents());
+    createCSSParser(m_element->document())->parseDeclaration(tempDeclaration.get(), m_styleText, result, m_element->document()->elementSheet().contents());
     return true;
 }
 

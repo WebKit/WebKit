@@ -597,7 +597,7 @@ public:
     bool canNavigate(Frame* targetFrame);
     Frame* findUnsafeParentScrollPropagationBoundary();
 
-    CSSStyleSheet* elementSheet();
+    CSSStyleSheet& elementSheet();
     
     virtual PassRefPtr<DocumentParser> createParser();
     DocumentParser* parser() const { return m_parser.get(); }
@@ -1316,7 +1316,7 @@ private:
     RefPtr<DocumentType> m_docType;
     OwnPtr<DOMImplementation> m_implementation;
 
-    RefPtr<CSSStyleSheet> m_elemSheet;
+    RefPtr<CSSStyleSheet> m_elementSheet;
 
     bool m_printing;
     bool m_paginatedForScreen;

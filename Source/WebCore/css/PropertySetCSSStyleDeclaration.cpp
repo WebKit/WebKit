@@ -366,7 +366,7 @@ void InlineCSSStyleDeclaration::didMutate(MutationType type)
 
 CSSStyleSheet* InlineCSSStyleDeclaration::parentStyleSheet() const
 {
-    return m_parentElement ? m_parentElement->document()->elementSheet() : 0;
+    return m_parentElement ? &m_parentElement->document()->elementSheet() : 0;
 }
 
 } // namespace WebCore

@@ -593,8 +593,8 @@ Document::~Document()
 
     m_styleSheetCollection.clear();
 
-    if (m_elemSheet)
-        m_elemSheet->clearOwnerNode();
+    if (m_elementSheet)
+        m_elementSheet->clearOwnerNode();
 
     clearStyleResolver(); // We need to destroy CSSFontSelector before destroying m_cachedResourceLoader.
 
@@ -1753,7 +1753,7 @@ void Document::recalcStyle(Style::Change change)
 
     InspectorInstrumentationCookie cookie = InspectorInstrumentation::willRecalculateStyle(this);
 
-    if (m_elemSheet && m_elemSheet->contents()->usesRemUnits())
+    if (m_elementSheet && m_elementSheet->contents()->usesRemUnits())
         m_styleSheetCollection->setUsesRemUnit(true);
 
     m_inStyleRecalc = true;
@@ -2647,13 +2647,13 @@ void Document::updateBaseURL()
     if (!m_baseURL.isValid())
         m_baseURL = KURL();
 
-    if (m_elemSheet) {
+    if (m_elementSheet) {
         // Element sheet is silly. It never contains anything.
-        ASSERT(!m_elemSheet->contents()->ruleCount());
-        bool usesRemUnits = m_elemSheet->contents()->usesRemUnits();
-        m_elemSheet = CSSStyleSheet::createInline(this, m_baseURL);
+        ASSERT(!m_elementSheet->contents()->ruleCount());
+        bool usesRemUnits = m_elementSheet->contents()->usesRemUnits();
+        m_elementSheet = CSSStyleSheet::createInline(this, m_baseURL);
         // FIXME: So we are not really the parser. The right fix is to eliminate the element sheet completely.
-        m_elemSheet->contents()->parserSetUsesRemUnits(usesRemUnits);
+        m_elementSheet->contents()->parserSetUsesRemUnits(usesRemUnits);
     }
 
     if (!equalIgnoringFragmentIdentifier(oldBaseURL, m_baseURL)) {
@@ -2814,11 +2814,11 @@ void Document::didRemoveAllPendingStylesheet()
         view()->scrollToFragment(m_url);
 }
 
-CSSStyleSheet* Document::elementSheet()
+CSSStyleSheet& Document::elementSheet()
 {
-    if (!m_elemSheet)
-        m_elemSheet = CSSStyleSheet::createInline(this, m_baseURL);
-    return m_elemSheet.get();
+    if (!m_elementSheet)
+        m_elementSheet = CSSStyleSheet::createInline(this, m_baseURL);
+    return *m_elementSheet;
 }
 
 void Document::processHttpEquiv(const String& equiv, const String& content)

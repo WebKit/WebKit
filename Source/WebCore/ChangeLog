@@ -1,3 +1,31 @@
+2013-08-28  Pratik Solanki  <psolanki@apple.com>
+
+        Document::elementSheet() should return a reference
+        https://bugs.webkit.org/show_bug.cgi?id=120433
+
+        Reviewed by Andreas Kling.
+
+        Since elementSheet() always retruns a valid pointer, we can simply return a reference
+        instead. Also rename m_elemSheet to m_elementSheet.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseInlineStyleDeclaration):
+        * css/PropertySetCSSStyleDeclaration.cpp:
+        (WebCore::InlineCSSStyleDeclaration::parentStyleSheet):
+        * dom/Document.cpp:
+        (WebCore::Document::~Document):
+        (WebCore::Document::recalcStyle):
+        (WebCore::Document::updateBaseURL):
+        (WebCore::Document::elementSheet):
+        * dom/Document.h:
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::setInlineStyleFromString):
+        (WebCore::StyledElement::setInlineStyleProperty):
+        (WebCore::StyledElement::addSubresourceAttributeURLs):
+        (WebCore::StyledElement::addPropertyToPresentationAttributeStyle):
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::InspectorStyleSheetForInlineStyle::getStyleAttributeRanges):
+
 2013-08-28  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r154586): Past names map should only be used when named item is empty
