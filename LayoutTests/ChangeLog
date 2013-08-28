@@ -1,3 +1,16 @@
+2013-08-28  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        Http tests fails on Debian with Apache 2.4
+        https://bugs.webkit.org/show_bug.cgi?id=120352
+
+        Reviewed by Andreas Kling.
+
+        Added an apache 2.4 configuration file adapted from Fedora's,
+        and renamed the 2.2 file to have consistent naming.
+
+        * http/conf/debian-httpd-2.2.conf: Renamed from LayoutTests/http/conf/apache2-debian-httpd.conf.
+        * http/conf/debian-httpd-2.4.conf: Added.
+
 2013-08-28  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] Fix grid position resolution
