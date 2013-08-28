@@ -1,3 +1,18 @@
+2013-08-28  Gustavo Noronha Silva  <gns@gnome.org>
+
+        [GTK] Enable maintainer mode configure switch
+        https://bugs.webkit.org/show_bug.cgi?id=120424
+
+        Reviewed by Martin Robinson.
+
+        The maintainer mode feature is used by ostree and other automated builders to ensure no autotools
+        regeneration will happen for a regular tarball build; ostree builders, for instance, are very
+        conservative with toolchain upgrades, and are still using aclocal 1.12. WebKit's latest tarball
+        (2.1.90) for some reason tries to regenerate build files, and the build fails because it can't find
+        the version of aclocal that was used for generating the tarball (1.13).
+
+        * configure.ac: enable maintainer mode feature.
+
 2013-08-28  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Add support for building JSC with FTL JIT enabled

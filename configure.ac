@@ -32,6 +32,7 @@ m4_include([Source/autotools/SetupWebKitFeatures.m4])
 
 # We would put AM_INIT_AUTOMAKE into SetupAutomake.m4, but seems to cause autoconf errors.
 AM_INIT_AUTOMAKE([foreign subdir-objects dist-xz no-dist-gzip tar-ustar])
+AM_MAINTAINER_MODE([enable])
 m4_include([Source/autotools/SetupAutomake.m4])
 
 ######################################################################################
