@@ -569,7 +569,8 @@ MOCK output of child process
 
         port = TestWebKitPort()
         port._is_debian_based = lambda: True
-        self._assert_config_file_for_platform(port, 'linux2', 'apache2-debian-httpd.conf')
+        port._apache_version = lambda: '2.2'
+        self._assert_config_file_for_platform(port, 'linux2', 'debian-httpd-2.2.conf')
 
         self._assert_config_file_for_platform(port, 'mac', 'apache2-httpd.conf')
         self._assert_config_file_for_platform(port, 'win32', 'apache2-httpd.conf')  # win32 isn't a supported sys.platform.  AppleWin/WinCairo/WinCE ports all use cygwin.

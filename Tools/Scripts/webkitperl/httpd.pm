@@ -156,7 +156,7 @@ sub getHTTPDConfigPathForTestDirectory
         }
         $httpdConfig = "cygwin-httpd.conf";  # This is an apache 1.3 config.
     } elsif (isDebianBased()) {
-        $httpdConfig = "apache2-debian-httpd.conf";
+        $httpdConfig = "debian-httpd-$apacheVersion.conf";
     } elsif (isFedoraBased()) {
         $httpdConfig = "fedora-httpd-$apacheVersion.conf";
     } else {

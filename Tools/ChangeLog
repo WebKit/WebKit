@@ -3,6 +3,20 @@
         Http tests fails on Debian with Apache 2.4
         https://bugs.webkit.org/show_bug.cgi?id=120352
 
+        Unreviewed fix-up.
+
+        Remember to update unit-test expectations and old-run-webkit-tests as well.
+
+        * Scripts/webkitperl/httpd.pm:
+        (getHTTPDConfigPathForTestDirectory):
+        * Scripts/webkitpy/port/port_testcase.py:
+        (test_apache_config_file_name_for_platform):
+
+2013-08-28  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        Http tests fails on Debian with Apache 2.4
+        https://bugs.webkit.org/show_bug.cgi?id=120352
+
         Reviewed by Andreas Kling.
 
         Select httpd.conf file for debian based on version, matching Fedora behavior.
