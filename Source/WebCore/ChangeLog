@@ -1,3 +1,43 @@
+2013-08-28  Rob Buis  <rwlbuis@webkit.org>
+
+        Namespace prefix is blindly followed when serializing
+        https://bugs.webkit.org/show_bug.cgi?id=19121
+        Serializer doesn't handling inconsistent prefixes properly
+        https://bugs.webkit.org/show_bug.cgi?id=117764
+        Attribute namespaces are serialized as if they were element ones
+        https://bugs.webkit.org/show_bug.cgi?id=22958
+
+        Reviewed by Ryosuke Niwa.
+
+        Add code to make sure unique prefixes and namespace declarations are generated.
+        Unique prefix generation happens when:
+        - the same prefix is used to map to different namespaces or
+        - no prefix is given but the attribute is in a namespace.
+
+        This is done in order to not violate constraints listed in http://www.w3.org/TR/xml-names11/. In general
+        the pseudo code listed in http://www.w3.org/TR/DOM-Level-3-Core/namespaces-algorithms.html#normalizeDocumentAlgo
+        is used, doing the following for attributes:
+        if the attribute has a namespace then
+          if the attribute has no prefix OR prefix is not declared OR conflicts with existing prefix mapping to different NS then
+            try to find the matching in-scope declaration by looking up the prefix in the namespace -> prefix mapping, if found use that prefix
+            else if the attribute prefix is not null AND not mapped in-scope, declare the prefix
+            else generate a unique prefix for the namespace
+
+        To keep track of in-scope namespaces a prefix to namespace mapping is used. 
+
+        Tests: fast/dom/XMLSerializer-attribute-namespace-prefix-conflicts.html
+               fast/dom/XMLSerializer-same-prefix-different-namespaces-conflict.html
+               fast/dom/XMLSerializer-setAttributeNS-namespace-no-prefix.html
+               svg/custom/xlink-prefix-generation-in-attributes.html
+
+        * editing/MarkupAccumulator.cpp:
+        (WebCore::MarkupAccumulator::MarkupAccumulator):
+        (WebCore::MarkupAccumulator::shouldAddNamespaceAttribute):
+        (WebCore::MarkupAccumulator::appendNamespace):
+        (WebCore::MarkupAccumulator::generateUniquePrefix):
+        (WebCore::MarkupAccumulator::appendAttribute):
+        * editing/MarkupAccumulator.h:
+
 2013-08-28  Sam White  <samuel_white@apple.com>
 
         AX: Cancel button in search field not accessible.

@@ -112,10 +112,12 @@ private:
     void appendQuotedURLAttributeValue(StringBuilder&, const Element*, const Attribute&);
     void serializeNodesWithNamespaces(Node* targetNode, Node* nodeToSkip, EChildrenOnly, const Namespaces*, Vector<QualifiedName>* tagNamesToSkip);
     bool inXMLFragmentSerialization() const { return m_fragmentSerialization == XMLFragmentSerialization; }
+    void generateUniquePrefix(QualifiedName&, const Namespaces&);
 
     StringBuilder m_markup;
     const EAbsoluteURLs m_resolveURLsMethod;
     EFragmentSerialization m_fragmentSerialization;
+    unsigned m_prefixLevel;
 };
 
 }

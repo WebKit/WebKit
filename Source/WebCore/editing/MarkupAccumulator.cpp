@@ -105,6 +105,7 @@ MarkupAccumulator::MarkupAccumulator(Vector<Node*>* nodes, EAbsoluteURLs resolve
     , m_range(range)
     , m_resolveURLsMethod(resolveUrlsMethod)
     , m_fragmentSerialization(fragmentSerialization)
+    , m_prefixLevel(0)
 {
 }
 
@@ -287,6 +288,7 @@ bool MarkupAccumulator::shouldAddNamespaceAttribute(const Attribute& attribute, 
     QualifiedName xmlnsPrefixAttr(xmlnsAtom, attribute.localName(), XMLNSNames::xmlnsNamespaceURI);
     if (attribute.name() == xmlnsPrefixAttr) {
         namespaces.set(attribute.localName().impl(), attribute.value().impl());
+        namespaces.set(attribute.value().impl(), attribute.localName().impl());
         return false;
     }
 
@@ -309,8 +311,14 @@ void MarkupAccumulator::appendNamespace(StringBuilder& result, const AtomicStrin
     // Use emptyAtoms's impl() for both null and empty strings since the HashMap can't handle 0 as a key
     AtomicStringImpl* pre = prefix.isEmpty() ? emptyAtom.impl() : prefix.impl();
     AtomicStringImpl* foundNS = namespaces.get(pre);
-    if (foundNS != namespaceURI.impl() && !namespaces.get(namespaceURI.impl())) {
+    if (foundNS != namespaceURI.impl()) {
         namespaces.set(pre, namespaceURI.impl());
+        // Add namespace to prefix pair so we can do constraint checking later.
+        if (inXMLFragmentSerialization() && !prefix.isEmpty())
+            namespaces.set(namespaceURI.impl(), pre);
+        // Make sure xml prefix and namespace are always known to uphold the constraints listed at http://www.w3.org/TR/xml-names11/#xmlReserved.
+        if (namespaceURI.impl() == XMLNames::xmlNamespaceURI.impl())
+            return;
         result.append(' ');
         result.append(xmlnsAtom.string());
         if (!prefix.isEmpty()) {
@@ -466,6 +474,24 @@ static inline bool attributeIsInSerializedNamespace(const Attribute& attribute)
         || attribute.namespaceURI() == XMLNSNames::xmlnsNamespaceURI;
 }
 
+void MarkupAccumulator::generateUniquePrefix(QualifiedName& prefixedName, const Namespaces& namespaces)
+{
+    // http://www.w3.org/TR/DOM-Level-3-Core/namespaces-algorithms.html#normalizeDocumentAlgo
+    // Find a prefix following the pattern "NS" + index (starting at 1) and make sure this
+    // prefix is not declared in the current scope.
+    StringBuilder builder;
+    do {
+        builder.clear();
+        builder.append("NS");
+        builder.appendNumber(++m_prefixLevel);
+        const AtomicString& name = builder.toAtomicString();
+        if (!namespaces.get(name.impl())) {
+            prefixedName.setPrefix(name);
+            return;
+        }
+    } while (true);
+}
+
 void MarkupAccumulator::appendAttribute(StringBuilder& result, Element* element, const Attribute& attribute, Namespaces* namespaces)
 {
     bool documentIsHTML = element->document()->isHTMLDocument();
@@ -476,15 +502,18 @@ void MarkupAccumulator::appendAttribute(StringBuilder& result, Element* element,
     if (documentIsHTML && !attributeIsInSerializedNamespace(attribute))
         result.append(attribute.name().localName());
     else {
-        if (attribute.namespaceURI() == XLinkNames::xlinkNamespaceURI) {
-            if (!attribute.prefix())
-                prefixedName.setPrefix(xlinkAtom);
-        } else if (attribute.namespaceURI() == XMLNames::xmlNamespaceURI) {
-            if (!attribute.prefix())
-                prefixedName.setPrefix(xmlAtom);
-        } else if (attribute.namespaceURI() == XMLNSNames::xmlnsNamespaceURI) {
-            if (attribute.name() != XMLNSNames::xmlnsAttr && !attribute.prefix())
-                prefixedName.setPrefix(xmlnsAtom);
+        if (!attribute.namespaceURI().isEmpty()) {
+            AtomicStringImpl* foundNS = namespaces && attribute.prefix().impl() ? namespaces->get(attribute.prefix().impl()) : 0;
+            bool prefixIsAlreadyMappedToOtherNS = foundNS && foundNS != attribute.namespaceURI().impl();
+            if (attribute.prefix().isEmpty() || !foundNS || prefixIsAlreadyMappedToOtherNS) {
+                if (AtomicStringImpl* prefix = namespaces ? namespaces->get(attribute.namespaceURI().impl()) : 0)
+                    prefixedName.setPrefix(AtomicString(prefix));
+                else {
+                    bool shouldBeDeclaredUsingAppendNamespace = !attribute.prefix().isEmpty() && !foundNS;
+                    if (!shouldBeDeclaredUsingAppendNamespace && attribute.localName() != xmlnsAtom && namespaces)
+                        generateUniquePrefix(prefixedName, *namespaces);
+                }
+            }
         }
         result.append(prefixedName.toString());
     }

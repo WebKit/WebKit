@@ -1,3 +1,27 @@
+2013-08-28  Rob Buis  <rwlbuis@webkit.org>
+
+        Namespace prefix is blindly followed when serializing
+        https://bugs.webkit.org/show_bug.cgi?id=19121
+        Serializer doesn't handling inconsistent prefixes properly
+        https://bugs.webkit.org/show_bug.cgi?id=117764
+        Attribute namespaces are serialized as if they were element ones
+        https://bugs.webkit.org/show_bug.cgi?id=22958
+
+        Reviewed by Ryosuke Niwa.
+
+        Add tests to make sure unique prefixes and namespace declarations are generated for the
+        case when the same prefix is used to map to different namespaces. All testcases are based
+        on the testcases attached to the bugs.
+
+        * fast/dom/XMLSerializer-attribute-namespace-prefix-conflicts-expected.txt: Added.
+        * fast/dom/XMLSerializer-attribute-namespace-prefix-conflicts.html: Added.
+        * fast/dom/XMLSerializer-same-prefix-different-namespaces-conflict-expected.txt: Added.
+        * fast/dom/XMLSerializer-same-prefix-different-namespaces-conflict.html: Added.
+        * fast/dom/XMLSerializer-setAttributeNS-namespace-no-prefix-expected.txt: Added.
+        * fast/dom/XMLSerializer-setAttributeNS-namespace-no-prefix.html: Added.
+        * svg/custom/xlink-prefix-generation-in-attributes-expected.txt: Added.
+        * svg/custom/xlink-prefix-generation-in-attributes.html: Added.
+
 2013-08-28  Sam White  <samuel_white@apple.com>
 
         AX: Cancel button in search field not accessible.
