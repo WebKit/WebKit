@@ -43,6 +43,9 @@ messages -> PluginProcessProxy {
 
     # Returns true if the UI process did open the URL.
     OpenURL(WTF::String urlString) -> (bool result, int32_t status, WTF::String launchedURLString)
+    
+    # Returns true if the UI process did open the file.
+    OpenFile(WTF::String fullPath) -> (bool result)
 #endif
 }
 

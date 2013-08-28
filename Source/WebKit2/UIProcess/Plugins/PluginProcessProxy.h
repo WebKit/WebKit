@@ -138,6 +138,7 @@ private:
     void launchProcess(const String& launchPath, const Vector<String>& arguments, bool& result);
     void launchApplicationAtURL(const String& urlString, const Vector<String>& arguments, bool& result);
     void openURL(const String& url, bool& result, int32_t& status, String& launchedURLString);
+    void openFile(const String& fullPath, bool& result);
 #endif
 
     void platformInitializePluginProcess(PluginProcessCreationParameters& parameters);
