@@ -1,3 +1,13 @@
+2013-08-28  Tamas Czene  <tczene@inf.u-szeged.hu>
+
+        [wk2] Resolve unused parameter warnings in the WebProcess.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=120412
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::startMemorySampler):
+
 2013-08-28  Darin Adler  <darin@apple.com>
 
         Eliminate Pasteboard::generalPasteboard

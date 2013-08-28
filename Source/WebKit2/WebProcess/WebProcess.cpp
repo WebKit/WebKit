@@ -1112,6 +1112,10 @@ void WebProcess::startMemorySampler(const SandboxExtension::Handle& sampleLogFil
 {
 #if ENABLE(MEMORY_SAMPLER)    
     WebMemorySampler::shared()->start(sampleLogFileHandle, sampleLogFilePath, interval);
+#else
+    UNUSED_PARAM(sampleLogFileHandle);
+    UNUSED_PARAM(sampleLogFilePath);
+    UNUSED_PARAM(interval);
 #endif
 }
     
