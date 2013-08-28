@@ -4793,6 +4793,9 @@ void HTMLMediaElement::createMediaPlayer()
         m_mediaSource->setReadyState(MediaSource::closedKeyword());
 #endif
 
+#if ENABLE(VIDEO_TRACK)
+    removeAllInbandTracks();
+#endif
     m_player = MediaPlayer::create(this);
 
 #if ENABLE(WEB_AUDIO)
