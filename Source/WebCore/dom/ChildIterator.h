@@ -53,6 +53,24 @@ private:
 };
 
 template <typename ElementType>
+class ChildConstIterator {
+public:
+    ChildConstIterator();
+    ChildConstIterator(const ElementType* current);
+    ChildConstIterator& operator++();
+    const ElementType& operator*() const;
+    const ElementType* operator->() const;
+    bool operator!=(const ChildConstIterator& other) const;
+
+private:
+    const ElementType* m_current;
+
+#if !ASSERT_DISABLED
+    DescendantIteratorAssertions m_assertions;
+#endif
+};
+
+template <typename ElementType>
 class ChildIteratorAdapter {
 public:
     ChildIteratorAdapter(ContainerNode* root);
@@ -63,8 +81,23 @@ private:
     const ContainerNode* m_root;
 };
 
+template <typename ElementType>
+class ChildConstIteratorAdapter {
+public:
+    ChildConstIteratorAdapter(const ContainerNode* root);
+    ChildConstIterator<ElementType> begin() const;
+    ChildConstIterator<ElementType> end() const;
+
+private:
+    const ContainerNode* m_root;
+};
+
 ChildIteratorAdapter<Element> elementChildren(ContainerNode* root);
+ChildConstIteratorAdapter<Element> elementChildren(const ContainerNode* root);
 template <typename ElementType> ChildIteratorAdapter<ElementType> childrenOfType(ContainerNode* root);
+template <typename ElementType> ChildConstIteratorAdapter<ElementType> childrenOfType(const ContainerNode* root);
+
+// ChildIterator
 
 template <typename ElementType>
 inline ChildIterator<ElementType>::ChildIterator()
@@ -118,6 +151,62 @@ inline bool ChildIterator<ElementType>::operator!=(const ChildIterator& other) c
     return m_current != other.m_current;
 }
 
+// ChildConstIterator
+
+template <typename ElementType>
+inline ChildConstIterator<ElementType>::ChildConstIterator()
+    : m_current(nullptr)
+{
+}
+
+template <typename ElementType>
+inline ChildConstIterator<ElementType>::ChildConstIterator(const ElementType* current)
+    : m_current(current)
+#if !ASSERT_DISABLED
+    , m_assertions(current)
+#endif
+{
+}
+
+template <typename ElementType>
+inline ChildConstIterator<ElementType>& ChildConstIterator<ElementType>::operator++()
+{
+    ASSERT(m_current);
+    ASSERT(!m_assertions.domTreeHasMutated());
+    m_current = Traversal<ElementType>::nextSibling(m_current);
+#if !ASSERT_DISABLED
+    // Drop the assertion when the iterator reaches the end.
+    if (!m_current)
+        m_assertions.dropEventDispatchAssertion();
+#endif
+    return *this;
+}
+
+template <typename ElementType>
+inline const ElementType& ChildConstIterator<ElementType>::operator*() const
+{
+    ASSERT(m_current);
+    ASSERT(!m_assertions.domTreeHasMutated());
+    return *m_current;
+}
+
+template <typename ElementType>
+inline const ElementType* ChildConstIterator<ElementType>::operator->() const
+{
+    ASSERT(m_current);
+    ASSERT(!m_assertions.domTreeHasMutated());
+    return m_current;
+}
+
+template <typename ElementType>
+inline bool ChildConstIterator<ElementType>::operator!=(const ChildConstIterator& other) const
+{
+    ASSERT(!m_assertions.domTreeHasMutated());
+    return m_current != other.m_current;
+}
+
+// ChildIteratorAdapter
+
 template <typename ElementType>
 inline ChildIteratorAdapter<ElementType>::ChildIteratorAdapter(ContainerNode* root)
     : m_root(root)
@@ -136,6 +225,28 @@ inline ChildIterator<ElementType> ChildIteratorAdapter<ElementType>::end()
     return ChildIterator<ElementType>();
 }
 
+// ChildConstIteratorAdapter
+
+template <typename ElementType>
+inline ChildConstIteratorAdapter<ElementType>::ChildConstIteratorAdapter(const ContainerNode* root)
+    : m_root(root)
+{
+}
+
+template <typename ElementType>
+inline ChildConstIterator<ElementType> ChildConstIteratorAdapter<ElementType>::begin() const
+{
+    return ChildConstIterator<ElementType>(Traversal<ElementType>::firstChild(m_root));
+}
+
+template <typename ElementType>
+inline ChildConstIterator<ElementType> ChildConstIteratorAdapter<ElementType>::end() const
+{
+    return ChildConstIterator<ElementType>();
+}
+
+// Standalone functions
+
 inline ChildIteratorAdapter<Element> elementChildren(ContainerNode* root)
 {
     return ChildIteratorAdapter<Element>(root);
@@ -145,6 +256,17 @@ template <typename ElementType>
 inline ChildIteratorAdapter<ElementType> childrenOfType(ContainerNode* root)
 {
     return ChildIteratorAdapter<ElementType>(root);
+}
+
+inline ChildConstIteratorAdapter<Element> elementChildren(const ContainerNode* root)
+{
+    return ChildConstIteratorAdapter<Element>(root);
+}
+
+template <typename ElementType>
+inline ChildConstIteratorAdapter<ElementType> childrenOfType(const ContainerNode* root)
+{
+    return ChildConstIteratorAdapter<ElementType>(root);
 }
 
 }

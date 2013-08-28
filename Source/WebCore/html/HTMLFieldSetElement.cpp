@@ -89,9 +89,13 @@ RenderObject* HTMLFieldSetElement::createRenderer(RenderArena* arena, RenderStyl
     return new (arena) RenderFieldset(this);
 }
 
-HTMLLegendElement* HTMLFieldSetElement::legend() const
+const HTMLLegendElement* HTMLFieldSetElement::legend() const
 {
-    return Traversal<HTMLLegendElement>::firstWithin(this);
+    auto legendDescendants = descendantsOfType<HTMLLegendElement>(this);
+    auto firstLegend = legendDescendants.begin();
+    if (firstLegend != legendDescendants.end())
+        return &*firstLegend;
+    return nullptr;
 }
 
 PassRefPtr<HTMLCollection> HTMLFieldSetElement::elements()

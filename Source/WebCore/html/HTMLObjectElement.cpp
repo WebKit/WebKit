@@ -461,14 +461,12 @@ bool HTMLObjectElement::containsJavaApplet() const
 {
     if (MIMETypeRegistry::isJavaAppletMIMEType(getAttribute(typeAttr)))
         return true;
-        
-    for (auto child = ElementTraversal::firstChild(this); child; child = ElementTraversal::nextSibling(child)) {
-        if (child->hasTagName(paramTag)
-                && equalIgnoringCase(child->getNameAttribute(), "type")
-                && MIMETypeRegistry::isJavaAppletMIMEType(child->getAttribute(valueAttr).string()))
+
+    for (auto child = elementChildren(this).begin(), end = elementChildren(this).end(); child != end; ++child) {
+        if (child->hasTagName(paramTag) && equalIgnoringCase(child->getNameAttribute(), "type")
+            && MIMETypeRegistry::isJavaAppletMIMEType(child->getAttribute(valueAttr).string()))
             return true;
-        if (child->hasTagName(objectTag)
-                && static_cast<HTMLObjectElement*>(child)->containsJavaApplet())
+        if (child->hasTagName(objectTag) && static_cast<const HTMLObjectElement&>(*child).containsJavaApplet())
             return true;
         if (child->hasTagName(appletTag))
             return true;

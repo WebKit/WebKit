@@ -106,8 +106,8 @@ public:
 
     PassRefPtr<NodeList> getIntersectionList(const FloatRect&, SVGElement* referenceElement) const;
     PassRefPtr<NodeList> getEnclosureList(const FloatRect&, SVGElement* referenceElement) const;
-    bool checkIntersection(SVGElement*, const FloatRect&) const;
-    bool checkEnclosure(SVGElement*, const FloatRect&) const;
+    bool checkIntersection(const SVGElement*, const FloatRect&) const;
+    bool checkEnclosure(const SVGElement*, const FloatRect&) const;
     void deselectAll();
 
     static float createSVGNumber();
@@ -123,7 +123,7 @@ public:
 
     void setupInitialView(const String& fragmentIdentifier, Element* anchorNode);
 
-    Element* getElementById(const AtomicString&) const;
+    Element* getElementById(const AtomicString&);
 
     bool widthAttributeEstablishesViewport() const;
     bool heightAttributeEstablishesViewport() const;
