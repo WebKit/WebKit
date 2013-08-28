@@ -1,5 +1,22 @@
 2013-08-28  Brent Fulgham  <bfulgham@apple.com>
 
+        [Windows] LayoutTests on Windows debug fails and exits early
+        https://bugs.webkit.org/show_bug.cgi?id=120438
+
+        Reviewed by Tim Horton.
+
+        Visual Studio mishandles char* containing utf8-content. Must manually
+        escape non-ASCII characters so the byte stream is correct for localized
+        string lookup.
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::cannotShowURLError): Replace unicode apostrophe
+        character with utf8-byte equivalent.
+        (WebFrameLoaderClient::cannotShowMIMETypeError): Ditto.
+        (WebFrameLoaderClient::dispatchDidFailToStartPlugin): Ditto.
+
+2013-08-28  Brent Fulgham  <bfulgham@apple.com>
+
         [Windows] Provide useful error messages for WebKitErrorDomain errors
         https://bugs.webkit.org/show_bug.cgi?id=120428
 

@@ -880,7 +880,7 @@ ResourceError WebFrameLoaderClient::blockedError(const ResourceRequest& request)
 
 ResourceError WebFrameLoaderClient::cannotShowURLError(const ResourceRequest& request)
 {
-    return ResourceError(String(WebKitErrorDomain), WebKitErrorCannotShowURL, request.url().string(), WEB_UI_STRING("The URL can’t be shown", "WebKitErrorCannotShowURL description"));
+    return ResourceError(String(WebKitErrorDomain), WebKitErrorCannotShowURL, request.url().string(), WEB_UI_STRING("The URL can\xE2\x80\x99t be shown", "WebKitErrorCannotShowURL description"));
 }
 
 ResourceError WebFrameLoaderClient::interruptedForPolicyChangeError(const ResourceRequest& request)
@@ -890,7 +890,7 @@ ResourceError WebFrameLoaderClient::interruptedForPolicyChangeError(const Resour
 
 ResourceError WebFrameLoaderClient::cannotShowMIMETypeError(const ResourceResponse& response)
 {
-    return ResourceError(String(), WebKitErrorCannotShowMIMEType, response.url().string(), WEB_UI_STRING("Content with specified MIME type can’t be shown", "WebKitErrorCannotShowMIMEType description"));
+    return ResourceError(String(), WebKitErrorCannotShowMIMEType, response.url().string(), WEB_UI_STRING("Content with specified MIME type can\xE2\x80\x99t be shown", "WebKitErrorCannotShowMIMEType description"));
 }
 
 ResourceError WebFrameLoaderClient::fileDoesNotExistError(const ResourceResponse& response)
@@ -1144,11 +1144,11 @@ void WebFrameLoaderClient::dispatchDidFailToStartPlugin(const PluginView* plugin
     switch (pluginView->status()) {
         case PluginStatusCanNotFindPlugin:
             errorCode = WebKitErrorCannotFindPlugIn;
-            description = WEB_UI_STRING("The plug-in can’t be found", "WebKitErrorCannotFindPlugin description");
+            description = WEB_UI_STRING("The plug-in can\xE2\x80\x99t be found", "WebKitErrorCannotFindPlugin description");
             break;
         case PluginStatusCanNotLoadPlugin:
             errorCode = WebKitErrorCannotLoadPlugIn;
-            description = WEB_UI_STRING("The plug-in can’t be loaded", "WebKitErrorCannotLoadPlugin description");
+            description = WEB_UI_STRING("The plug-in can\xE2\x80\x99t be loaded", "WebKitErrorCannotLoadPlugin description");
             break;
         default:
             ASSERT_NOT_REACHED();
