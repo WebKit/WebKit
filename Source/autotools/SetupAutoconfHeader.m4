@@ -99,3 +99,13 @@ if test "$enable_jit" = "yes"; then
 elif test "$enable_jit" = "no"; then
     AC_DEFINE([ENABLE_JIT], [0], [ ])
 fi
+
+if test "$enable_ftl_jit" = "yes"; then
+    AC_DEFINE([ENABLE_FTL_JIT], [1], [ ])
+elif test "$enable_ftl_jit" = "no"; then
+    AC_DEFINE([ENABLE_FTL_JIT], [0], [ ])
+fi
+
+if test "$have_llvm" = "yes"; then
+    AC_DEFINE([HAVE_LLVM], [1], [ ])
+fi

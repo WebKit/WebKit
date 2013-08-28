@@ -22,6 +22,7 @@ Features:
  Geolocation support                                      : $enable_geolocation
  HTML5 video element support                              : $enable_video
  JIT compilation                                          : $enable_jit
+ FTL JIT compilation                                      : $enable_ftl_jit
  Opcode stats                                             : $enable_opcode_stats
  SVG fonts support                                        : $enable_svg_fonts
  SVG support                                              : $enable_svg

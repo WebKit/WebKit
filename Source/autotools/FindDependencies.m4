@@ -501,6 +501,48 @@ if test "$enable_webkit2" = "yes"; then
    AC_SUBST([ATSPI2_LIBS])
 fi
 
+if test "$enable_jit" = "no"; then
+    AC_MSG_NOTICE([JIT compilation is disabled, also disabling FTL JIT support.])
+    enable_ftl_jit=no
+fi
+
+if test "$enable_ftl_jit" != no && test "$cxx_compiler" != "clang++"; then
+    if test "$enable_ftl_jit" = "yes"; then
+        AC_MSG_ERROR([Clang C++ compiler is required for FTL JIT support.])
+    else
+        AC_MSG_WARN([Clang C++ compiler is not used, disabling FTL JIT support.])
+        enable_ftl_jit=no
+    fi
+fi
+
+if test "$enable_ftl_jit" != "no"; then
+    AC_PATH_PROG(llvm_config, llvm-config, no)
+    if test "$llvm_config" = "no"; then
+        if test "$enable_ftl_jit" = "yes"; then
+            AC_MSG_ERROR([Cannot find llvm-config. LLVM >= 3.4 is needed for FTL JIT support.])
+        else
+            AC_MSG_WARN([Cannot find llvm-config. LLVM >= 3.4 is not present, disabling FTL JIT support.])
+            enable_ftl_jit=no
+        fi
+    else
+        LLVM_VERSION=`$llvm_config --version`
+        AX_COMPARE_VERSION([$LLVM_VERSION], [ge], [3.4], [have_llvm=yes], [have_llvm=no])
+        if test "$have_llvm" = "no"; then
+            if test "$enable_ftl_jit" = "yes"; then
+                AC_MSG_ERROR([LLVM >= 3.4 is needed for FTL JIT support.])
+            else
+                AC_MSG_WARN([LLVM >= 3.4 is not present, disabling FTL JIT support.])
+                enable_ftl_jit=no
+            fi
+        else
+            LLVM_CFLAGS=`$llvm_config --cppflags`
+            LLVM_LIBS="`$llvm_config --ldflags` `$llvm_config --libs`"
+            AC_SUBST([LLVM_CFLAGS])
+            AC_SUBST([LLVM_LIBS])
+        fi
+    fi
+fi
+
 m4_ifdef([GTK_DOC_CHECK], [
 GTK_DOC_CHECK([1.10])
 ],[

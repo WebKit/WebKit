@@ -185,6 +185,10 @@ AC_MSG_CHECKING([whether to enable JIT compilation])
 AC_ARG_ENABLE(jit, AS_HELP_STRING([--enable-jit], [Enable JIT compilation (default: auto)]), [], [enable_jit=auto])
 AC_MSG_RESULT([$enable_jit])
 
+AC_MSG_CHECKING([whether to enable FTL JIT])
+AC_ARG_ENABLE(ftl-jit, AS_HELP_STRING([--enable-ftl-jit], [Enable FTL JIT (experimental) (default: no)]), [], [enable_ftl_jit=no])
+AC_MSG_RESULT([$enable_ftl_jit])
+
 AC_MSG_CHECKING([whether to enable opcode stats])
 AC_ARG_ENABLE([opcode-stats], 
     AS_HELP_STRING([--enable-opcode-stats], [Enable Opcode statistics (default: disabled)]),

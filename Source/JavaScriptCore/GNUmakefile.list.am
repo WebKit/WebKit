@@ -377,6 +377,65 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/dfg/DFGWorklist.h \
 	Source/JavaScriptCore/disassembler/Disassembler.cpp \
 	Source/JavaScriptCore/disassembler/Disassembler.h \
+	Source/JavaScriptCore/disassembler/LLVMDisassembler.cpp \
+	Source/JavaScriptCore/disassembler/LLVMDisassembler.h \
+	Source/JavaScriptCore/disassembler/X86Disassembler.cpp \
+	Source/JavaScriptCore/ftl/FTLAbbreviatedTypes.h \
+	Source/JavaScriptCore/ftl/FTLAbbreviations.h \
+	Source/JavaScriptCore/ftl/FTLAbstractHeap.cpp \
+	Source/JavaScriptCore/ftl/FTLAbstractHeap.h \
+	Source/JavaScriptCore/ftl/FTLAbstractHeapRepository.cpp \
+	Source/JavaScriptCore/ftl/FTLAbstractHeapRepository.h \
+	Source/JavaScriptCore/ftl/FTLCapabilities.cpp \
+	Source/JavaScriptCore/ftl/FTLCapabilities.h \
+	Source/JavaScriptCore/ftl/FTLCArgumentGetter.cpp \
+	Source/JavaScriptCore/ftl/FTLCArgumentGetter.h \
+	Source/JavaScriptCore/ftl/FTLCommonValues.cpp \
+	Source/JavaScriptCore/ftl/FTLCommonValues.h \
+	Source/JavaScriptCore/ftl/FTLCompile.cpp \
+	Source/JavaScriptCore/ftl/FTLCompile.h \
+	Source/JavaScriptCore/ftl/FTLExitArgument.cpp \
+	Source/JavaScriptCore/ftl/FTLExitArgumentForOperand.cpp \
+	Source/JavaScriptCore/ftl/FTLExitArgumentForOperand.h \
+	Source/JavaScriptCore/ftl/FTLExitArgument.h \
+	Source/JavaScriptCore/ftl/FTLExitArgumentList.h \
+	Source/JavaScriptCore/ftl/FTLExitThunkGenerator.cpp \
+	Source/JavaScriptCore/ftl/FTLExitThunkGenerator.h \
+	Source/JavaScriptCore/ftl/FTLExitValue.cpp \
+	Source/JavaScriptCore/ftl/FTLExitValue.h \
+	Source/JavaScriptCore/ftl/FTLFail.cpp \
+	Source/JavaScriptCore/ftl/FTLFail.h \
+	Source/JavaScriptCore/ftl/FTLFormattedValue.h \
+	Source/JavaScriptCore/ftl/FTLGeneratedFunction.h \
+	Source/JavaScriptCore/ftl/FTLIntrinsicRepository.cpp \
+	Source/JavaScriptCore/ftl/FTLIntrinsicRepository.h \
+	Source/JavaScriptCore/ftl/FTLJITCode.cpp \
+	Source/JavaScriptCore/ftl/FTLJITCode.h \
+	Source/JavaScriptCore/ftl/FTLJITFinalizer.cpp \
+	Source/JavaScriptCore/ftl/FTLJITFinalizer.h \
+	Source/JavaScriptCore/ftl/FTLLink.cpp \
+	Source/JavaScriptCore/ftl/FTLLink.h \
+	Source/JavaScriptCore/ftl/FTLLowerDFGToLLVM.cpp \
+	Source/JavaScriptCore/ftl/FTLLowerDFGToLLVM.h \
+	Source/JavaScriptCore/ftl/FTLLoweredNodeValue.h \
+	Source/JavaScriptCore/ftl/FTLOSRExitCompilationInfo.h \
+	Source/JavaScriptCore/ftl/FTLOSRExitCompiler.cpp \
+	Source/JavaScriptCore/ftl/FTLOSRExitCompiler.h \
+	Source/JavaScriptCore/ftl/FTLOSRExit.cpp \
+	Source/JavaScriptCore/ftl/FTLOSRExit.h \
+	Source/JavaScriptCore/ftl/FTLOutput.cpp \
+	Source/JavaScriptCore/ftl/FTLOutput.h \
+	Source/JavaScriptCore/ftl/FTLState.cpp \
+	Source/JavaScriptCore/ftl/FTLState.h \
+	Source/JavaScriptCore/ftl/FTLSwitchCase.h \
+	Source/JavaScriptCore/ftl/FTLThunks.cpp \
+	Source/JavaScriptCore/ftl/FTLThunks.h \
+	Source/JavaScriptCore/ftl/FTLTypedPointer.h \
+	Source/JavaScriptCore/ftl/FTLValueFormat.cpp \
+	Source/JavaScriptCore/ftl/FTLValueFormat.h \
+	Source/JavaScriptCore/ftl/FTLValueFromBlock.h \
+	Source/JavaScriptCore/ftl/FTLValueSource.cpp \
+	Source/JavaScriptCore/ftl/FTLValueSource.h \
 	Source/JavaScriptCore/heap/CopiedAllocator.h \
 	Source/JavaScriptCore/heap/CopiedBlock.h \
 	Source/JavaScriptCore/heap/CopiedBlockInlines.h \

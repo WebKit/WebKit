@@ -718,6 +718,10 @@
 #define HAVE_LLVM 1
 #endif
 
+#if PLATFORM(GTK) && HAVE(LLVM) && ENABLE(JIT) && !defined(ENABLE_FTL_JIT) && CPU(X86_64)
+#define ENABLE_FTL_JIT 1
+#endif
+
 /* If possible, try to enable the LLVM disassembler. This is optional and we can
    fall back on UDis86 if necessary. */
 #if !defined(WTF_USE_LLVM_DISASSEMBLER) && HAVE(LLVM) && (CPU(X86_64) || CPU(X86))

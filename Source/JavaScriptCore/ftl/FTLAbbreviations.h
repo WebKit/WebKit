@@ -33,6 +33,7 @@
 #include "FTLAbbreviatedTypes.h"
 #include "FTLSwitchCase.h"
 #include "FTLValueFromBlock.h"
+#include <cstring>
 
 namespace JSC { namespace FTL {
 
@@ -111,9 +112,9 @@ static inline LType functionType(LType returnType, LType param1, LType param2, L
 
 static inline LType typeOf(LValue value) { return LLVMTypeOf(value); }
 
-static inline unsigned mdKindID(LContext context, const char* string) { return LLVMGetMDKindIDInContext(context, string, strlen(string)); }
+static inline unsigned mdKindID(LContext context, const char* string) { return LLVMGetMDKindIDInContext(context, string, std::strlen(string)); }
 static inline LValue mdString(LContext context, const char* string, unsigned length) { return LLVMMDStringInContext(context, string, length); }
-static inline LValue mdString(LContext context, const char* string) { return mdString(context, string, strlen(string)); }
+static inline LValue mdString(LContext context, const char* string) { return mdString(context, string, std::strlen(string)); }
 static inline LValue mdNode(LContext context, LValue* args, unsigned numArgs) { return LLVMMDNodeInContext(context, args, numArgs); }
 static inline LValue mdNode(LContext context) { return mdNode(context, 0, 0); }
 static inline LValue mdNode(LContext context, LValue arg1) { return mdNode(context, &arg1, 1); }
