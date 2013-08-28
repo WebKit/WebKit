@@ -108,7 +108,7 @@ private:
     bool isValidCaretPositionInTextNode(const Position& position);
     bool mergeStartWithPreviousIfIdentical(const Position& start, const Position& end);
     bool mergeEndWithNextIfIdentical(const Position& start, const Position& end);
-    void cleanupUnstyledAppleStyleSpans(Node* dummySpanAncestor);
+    void cleanupUnstyledAppleStyleSpans(ContainerNode* dummySpanAncestor);
 
     void surroundNodeRangeWithElement(PassRefPtr<Node> start, PassRefPtr<Node> end, PassRefPtr<Element>);
     float computedFontSize(Node*);

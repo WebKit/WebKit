@@ -54,21 +54,19 @@ private:
 #endif
 };
 
-template <typename ElementType, typename ContainerType>
+template <typename ElementType>
 class ChildIteratorAdapter {
 public:
-    ChildIteratorAdapter(ContainerType* root);
+    ChildIteratorAdapter(ContainerNode* root);
     ChildIterator<ElementType> begin();
     ChildIterator<ElementType> end();
 
 private:
-    const ContainerType* m_root;
+    const ContainerNode* m_root;
 };
 
-ChildIteratorAdapter<Element, ContainerNode> elementChildren(ContainerNode* root);
-ChildIteratorAdapter<Element, Node> elementChildren(Node* root);
-template <typename ElementType> ChildIteratorAdapter<ElementType, ContainerNode> childrenOfType(ContainerNode* root);
-template <typename ElementType> ChildIteratorAdapter<ElementType, Node> childrenOfType(Node* root);
+ChildIteratorAdapter<Element> elementChildren(ContainerNode* root);
+template <typename ElementType> ChildIteratorAdapter<ElementType> childrenOfType(ContainerNode* root);
 
 template <typename ElementType>
 inline ChildIterator<ElementType>::ChildIterator()
@@ -134,44 +132,33 @@ inline bool ChildIterator<ElementType>::operator!=(const ChildIterator& other) c
     return m_current != other.m_current;
 }
 
-template <typename ElementType, typename ContainerType>
-inline ChildIteratorAdapter<ElementType, ContainerType>::ChildIteratorAdapter(ContainerType* root)
+template <typename ElementType>
+inline ChildIteratorAdapter<ElementType>::ChildIteratorAdapter(ContainerNode* root)
     : m_root(root)
 {
 }
 
-template <typename ElementType, typename ContainerType>
-inline ChildIterator<ElementType> ChildIteratorAdapter<ElementType, ContainerType>::begin()
+template <typename ElementType>
+inline ChildIterator<ElementType> ChildIteratorAdapter<ElementType>::begin()
 {
     return ChildIterator<ElementType>(Traversal<ElementType>::firstChild(m_root));
 }
 
-template <typename ElementType, typename ContainerType>
-inline ChildIterator<ElementType> ChildIteratorAdapter<ElementType, ContainerType>::end()
+template <typename ElementType>
+inline ChildIterator<ElementType> ChildIteratorAdapter<ElementType>::end()
 {
     return ChildIterator<ElementType>();
 }
 
-inline ChildIteratorAdapter<Element, ContainerNode> elementChildren(ContainerNode* root)
+inline ChildIteratorAdapter<Element> elementChildren(ContainerNode* root)
 {
-    return ChildIteratorAdapter<Element, ContainerNode>(root);
-}
-
-inline ChildIteratorAdapter<Element, Node> elementChildren(Node* root)
-{
-    return ChildIteratorAdapter<Element, Node>(root);
+    return ChildIteratorAdapter<Element>(root);
 }
 
 template <typename ElementType>
-inline ChildIteratorAdapter<ElementType, ContainerNode> childrenOfType(ContainerNode* root)
+inline ChildIteratorAdapter<ElementType> childrenOfType(ContainerNode* root)
 {
-    return ChildIteratorAdapter<ElementType, ContainerNode>(root);
-}
-
-template <typename ElementType>
-inline ChildIteratorAdapter<ElementType, Node> childrenOfType(Node* root)
-{
-    return ChildIteratorAdapter<ElementType, Node>(root);
+    return ChildIteratorAdapter<ElementType>(root);
 }
 
 }

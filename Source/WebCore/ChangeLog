@@ -1,3 +1,35 @@
+2013-08-28  Antti Koivisto  <antti@apple.com>
+
+        Make descendant iterators always require ContainerNode root
+        https://bugs.webkit.org/show_bug.cgi?id=120393
+
+        Reviewed by Andreas Kling.
+
+        Remove Node* root versions of the iterators. 
+        Fix the few call sites that required them to have tighter typing.
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::canvasHasFallbackContent):
+        (WebCore::siblingWithAriaRole):
+        * dom/ChildIterator.h:
+        (WebCore::::ChildIteratorAdapter):
+        (WebCore::::begin):
+        (WebCore::::end):
+        (WebCore::elementChildren):
+        (WebCore::childrenOfType):
+        * dom/DescendantIterator.h:
+        (WebCore::::DescendantIterator):
+        (WebCore::::DescendantIteratorAdapter):
+        (WebCore::::begin):
+        (WebCore::::end):
+        (WebCore::elementDescendants):
+        (WebCore::descendantsOfType):
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::dummySpanAncestorForNode):
+        (WebCore::ApplyStyleCommand::cleanupUnstyledAppleStyleSpans):
+        (WebCore::ApplyStyleCommand::applyInlineStyle):
+        * editing/ApplyStyleCommand.h:
+
 2013-08-28  Sergio Villar Senin  <svillar@igalia.com>
 
         WorkerGlobalScopeWebDatabase requires ENABLE(WORKERS)

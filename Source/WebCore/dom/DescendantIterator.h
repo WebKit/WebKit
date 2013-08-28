@@ -37,15 +37,15 @@ namespace WebCore {
 template <typename ElementType>
 class DescendantIterator {
 public:
-    DescendantIterator(const Node* root);
-    DescendantIterator(const Node* root, ElementType* current);
+    DescendantIterator(const ContainerNode* root);
+    DescendantIterator(const ContainerNode* root, ElementType* current);
     DescendantIterator& operator++();
     ElementType& operator*();
     ElementType* operator->();
     bool operator!=(const DescendantIterator& other) const;
 
 private:
-    const Node* m_root;
+    const ContainerNode* m_root;
     ElementType* m_current;
 
 #ifndef NDEBUG
@@ -55,24 +55,22 @@ private:
 #endif
 };
 
-template <typename ElementType, typename ContainerType>
+template <typename ElementType>
 class DescendantIteratorAdapter {
 public:
-    DescendantIteratorAdapter(ContainerType* root);
+    DescendantIteratorAdapter(ContainerNode* root);
     DescendantIterator<ElementType> begin();
     DescendantIterator<ElementType> end();
 
 private:
-    ContainerType* m_root;
+    ContainerNode* m_root;
 };
 
-DescendantIteratorAdapter<Element, ContainerNode> elementDescendants(ContainerNode* root);
-DescendantIteratorAdapter<Element, Node> elementDescendants(Node* root);
-template <typename ElementType> DescendantIteratorAdapter<ElementType, ContainerNode> descendantsOfType(ContainerNode* root);
-template <typename ElementType> DescendantIteratorAdapter<ElementType, Node> descendantsOfType(Node* root);
+DescendantIteratorAdapter<Element> elementDescendants(ContainerNode* root);
+template <typename ElementType> DescendantIteratorAdapter<ElementType> descendantsOfType(ContainerNode* root);
 
 template <typename ElementType>
-inline DescendantIterator<ElementType>::DescendantIterator(const Node* root)
+inline DescendantIterator<ElementType>::DescendantIterator(const ContainerNode* root)
     : m_root(root)
     , m_current(nullptr)
 #ifndef NDEBUG
@@ -82,7 +80,7 @@ inline DescendantIterator<ElementType>::DescendantIterator(const Node* root)
 }
 
 template <typename ElementType>
-inline DescendantIterator<ElementType>::DescendantIterator(const Node* root, ElementType* current)
+inline DescendantIterator<ElementType>::DescendantIterator(const ContainerNode* root, ElementType* current)
     : m_root(root)
     , m_current(current)
 #ifndef NDEBUG
@@ -138,44 +136,33 @@ inline bool DescendantIterator<ElementType>::operator!=(const DescendantIterator
     return m_current != other.m_current;
 }
 
-template <typename ElementType, typename ContainerType>
-inline DescendantIteratorAdapter<ElementType, ContainerType>::DescendantIteratorAdapter(ContainerType* root)
+template <typename ElementType>
+inline DescendantIteratorAdapter<ElementType>::DescendantIteratorAdapter(ContainerNode* root)
     : m_root(root)
 {
 }
 
-template <typename ElementType, typename ContainerType>
-inline DescendantIterator<ElementType> DescendantIteratorAdapter<ElementType, ContainerType>::begin()
+template <typename ElementType>
+inline DescendantIterator<ElementType> DescendantIteratorAdapter<ElementType>::begin()
 {
     return DescendantIterator<ElementType>(m_root, Traversal<ElementType>::firstWithin(m_root));
 }
 
-template <typename ElementType, typename ContainerType>
-inline DescendantIterator<ElementType> DescendantIteratorAdapter<ElementType, ContainerType>::end()
+template <typename ElementType>
+inline DescendantIterator<ElementType> DescendantIteratorAdapter<ElementType>::end()
 {
     return DescendantIterator<ElementType>(m_root);
 }
 
-inline DescendantIteratorAdapter<Element, ContainerNode> elementDescendants(ContainerNode* root)
+inline DescendantIteratorAdapter<Element> elementDescendants(ContainerNode* root)
 {
-    return DescendantIteratorAdapter<Element, ContainerNode>(root);
-}
-
-inline DescendantIteratorAdapter<Element, Node> elementDescendants(Node* root)
-{
-    return DescendantIteratorAdapter<Element, Node>(root);
+    return DescendantIteratorAdapter<Element>(root);
 }
 
 template <typename ElementType>
-inline DescendantIteratorAdapter<ElementType, ContainerNode> descendantsOfType(ContainerNode* root)
+inline DescendantIteratorAdapter<ElementType> descendantsOfType(ContainerNode* root)
 {
-    return DescendantIteratorAdapter<ElementType, ContainerNode>(root);
-}
-
-template <typename ElementType>
-inline DescendantIteratorAdapter<ElementType, Node> descendantsOfType(Node* root)
-{
-    return DescendantIteratorAdapter<ElementType, Node>(root);
+    return DescendantIteratorAdapter<ElementType>(root);
 }
 
 }
