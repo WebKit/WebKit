@@ -1,3 +1,19 @@
+2013-08-28  Andrei Parvu  <parvu@adobe.com>
+
+        <https://webkit.org/b/120002> [CSS Masking] Add -webkit-mask-source-type shorthand property
+
+        Added the -webkit-mask-source-type property to the -webkit-mask shorthand property.
+
+        Reviewed by Dirk Schulze.
+
+        Test cases added in LayoutTests/fast/masking/parsing-mask.html
+
+        * css/CSSParser.cpp: Added the CSSPropertyWebkitMaskSourceType property to the array of shorthand properties.
+        (WebCore::CSSParser::parseValue):
+        * css/StylePropertyShorthand.cpp: Added the CSSPropertyWebkitMaskSourceType to the list of shorthands.
+        (WebCore::webkitMaskShorthand):
+        (WebCore::matchingShorthandsForLonghand):
+
 2013-08-28  Zan Dobersek  <zdobersek@igalia.com>
 
         REGRESSION(r154708): It broke all plugin tests on GTK and Qt WK1

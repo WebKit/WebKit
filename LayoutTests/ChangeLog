@@ -1,3 +1,14 @@
+2013-08-28  Andrei Parvu  <parvu@adobe.com>
+
+        <https://webkit.org/b/120002> [CSS Masking] Add -webkit-mask-source-type shorthand property
+
+        Added test cases for using the source type with the -webkit-mask shorthand property.
+
+        Reviewed by Dirk Schulze.
+
+        * fast/masking/parsing-mask-expected.txt:
+        * fast/masking/parsing-mask.html:
+
 2013-08-28  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         Http tests fails on Debian with Apache 2.4

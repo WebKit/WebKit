@@ -431,6 +431,7 @@ const StylePropertyShorthand& webkitMaskShorthand()
 {
     static const CSSPropertyID maskProperties[] = {
         CSSPropertyWebkitMaskImage,
+        CSSPropertyWebkitMaskSourceType,
         CSSPropertyWebkitMaskPositionX,
         CSSPropertyWebkitMaskPositionY,
         CSSPropertyWebkitMaskSize,
@@ -898,6 +899,7 @@ const Vector<const StylePropertyShorthand*> matchingShorthandsForLonghand(CSSPro
         Vector<const StylePropertyShorthand*, 1> mask;
         mask.uncheckedAppend(&webkitMaskShorthand());
         map.set(CSSPropertyWebkitMaskImage, mask);
+        map.set(CSSPropertyWebkitMaskSourceType, mask);
         map.set(CSSPropertyWebkitMaskSize, mask);
         map.set(CSSPropertyWebkitMaskOrigin, mask);
         map.set(CSSPropertyWebkitMaskClip, mask);

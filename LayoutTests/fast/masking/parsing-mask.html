@@ -84,6 +84,9 @@ testInner("-webkit-mask-position", "center left 30px", "left 30px top 50%");
 testInner("-webkit-mask-position", "left 20% top", "left 20% top 0%");
 
 // test mask-source-type
+testInner("-webkit-mask", "none alpha", "none alpha");
+testInner("-webkit-mask", "none luminance, none alpha", "none luminance, none alpha");
+testInner("-webkit-mask", "none auto, none, none luminance", "none auto, none, none luminance");
 testInner("-webkit-mask-source-type", "alpha", "alpha");
 testInner("-webkit-mask-source-type", "luminance", "luminance");
 testInner("-webkit-mask-source-type", "auto", "auto");
@@ -175,6 +178,8 @@ negativeTest("-webkit-mask", "none center center 20px / auto repeat-x scroll bor
 negativeTest("-webkit-mask", "none top 20px right 30px center / auto repeat-x scroll border-box border-box");
 negativeTest("-webkit-mask", "none top 20px top 30px / auto repeat-x scroll border-box border-box");
 negativeTest("-webkit-mask", "none top 20px bottom / auto repeat-x scroll border-box border-box");
+negativeTest("-webkit-mask", "none alpha, none auto alpha");
+negativeTest("-webkit-mask", "none alpha luminance");
 negativeTest("-webkit-mask-source-type", "rubbish");
 negativeTest("-webkit-mask-source-type", "");
 negativeTest("-webkit-mask-source-type", "center");

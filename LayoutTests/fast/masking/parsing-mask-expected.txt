@@ -39,6 +39,9 @@ PASS innerStyle("-webkit-mask-position", "left 10px center") is "left 10px top 5
 PASS innerStyle("-webkit-mask-position", "center top 20px") is "left 50% top 20px"
 PASS innerStyle("-webkit-mask-position", "center left 30px") is "left 30px top 50%"
 PASS innerStyle("-webkit-mask-position", "left 20% top") is "left 20% top 0%"
+PASS innerStyle("-webkit-mask", "none alpha") is "none alpha"
+PASS innerStyle("-webkit-mask", "none luminance, none alpha") is "none luminance, none alpha"
+PASS innerStyle("-webkit-mask", "none auto, none, none luminance") is "none auto, none, none luminance"
 PASS innerStyle("-webkit-mask-source-type", "alpha") is "alpha"
 PASS innerStyle("-webkit-mask-source-type", "luminance") is "luminance"
 PASS innerStyle("-webkit-mask-source-type", "auto") is "auto"
@@ -116,6 +119,8 @@ PASS innerStyle("-webkit-mask", "none center center 20px / auto repeat-x scroll 
 PASS innerStyle("-webkit-mask", "none top 20px right 30px center / auto repeat-x scroll border-box border-box") is null
 PASS innerStyle("-webkit-mask", "none top 20px top 30px / auto repeat-x scroll border-box border-box") is null
 PASS innerStyle("-webkit-mask", "none top 20px bottom / auto repeat-x scroll border-box border-box") is null
+PASS innerStyle("-webkit-mask", "none alpha, none auto alpha") is null
+PASS innerStyle("-webkit-mask", "none alpha luminance") is null
 PASS innerStyle("-webkit-mask-source-type", "rubbish") is null
 PASS innerStyle("-webkit-mask-source-type", "") is null
 PASS innerStyle("-webkit-mask-source-type", "center") is null
