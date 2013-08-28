@@ -1,3 +1,12 @@
+2013-08-28  Christian Kirbach  <Christian.Kirbach@googlemail.com>
+
+        [GTK] Please incorporate German translation update
+        https://bugs.webkit.org/show_bug.cgi?id=120016
+
+        Reviewed by Gustavo Noronha.
+
+        * de.po: updated.
+
 2013-08-27  Piotr Drąg  <piotrdrag@gmail.com>
 
         [l10n] Updated Polish translation of WebKitGTK+
