@@ -24,6 +24,7 @@
 #ifndef FormAssociatedElement_h
 #define FormAssociatedElement_h
 
+#include "FormNamedItem.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -39,7 +40,7 @@ class ValidationMessage;
 class ValidityState;
 class VisibleSelection;
 
-class FormAssociatedElement {
+class FormAssociatedElement : public FormNamedItem {
 public:
     virtual ~FormAssociatedElement();
 
@@ -112,14 +113,23 @@ private:
 
     void resetFormAttributeTargetObserver();
 
+    virtual bool isFormAssociatedElement() OVERRIDE FINAL { return true; }
+
     OwnPtr<FormAttributeTargetObserver> m_formAttributeTargetObserver;
     HTMLFormElement* m_form;
     OwnPtr<ValidityState> m_validityState;
     String m_customValidationMessage;
 };
 
-HTMLElement* toHTMLElement(FormAssociatedElement*);
-const HTMLElement* toHTMLElement(const FormAssociatedElement*);
+inline const HTMLElement* toHTMLElement(const FormAssociatedElement* associatedElement)
+{
+    return const_cast<FormAssociatedElement*>(associatedElement)->asHTMLElement();
+}
+
+inline HTMLElement* toHTMLElement(FormAssociatedElement* associatedElement)
+{
+    return associatedElement->asHTMLElement();
+}
 
 } // namespace
 

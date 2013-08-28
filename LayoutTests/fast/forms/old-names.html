@@ -130,10 +130,10 @@ function runTest()
     form.removeChild(a);
 
     shouldBe('form.length', '1');
-    shouldBe('form.original', 'a');
+    shouldBeUndefined('form.original');
     shouldBe('form.originalB', 'b');
     shouldBe('form.second', 'b');
-    shouldBe('form.third', 'a');
+    shouldBeUndefined('form.third');
     shouldBe('form.fourth', 'b');
     shouldBe('form.elements.original', 'undefined');
     shouldBe('form.elements.originalB', 'undefined');
@@ -142,13 +142,13 @@ function runTest()
     shouldBe('form.elements.fourth', 'b');
  
     debug('');
-    debug("check we still remember names we should");
+    debug("check that we no longer remember the past names of a");
     debug('');
 
     shouldBe('form.thisWillBeForgotten', 'undefined');
     shouldBe('form.thisWillBeForgottenToo', 'undefined');
-    shouldBe('form.thisWillBeRemembered', 'a');
-    shouldBe('form.thisWillBeRememberedToo', 'a');
+    shouldBeUndefined('form.thisWillBeRemembered');
+    shouldBeUndefined('form.thisWillBeRememberedToo');
     debug('');
 }
 </script>

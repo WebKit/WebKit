@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<body>
+<form id="form1"><input type="text" name="foo"></form>
+<form id="form2"></form>
+<script src="../js/resources/js-test-pre.js"></script>
+<script>
+
+description('This test ensures elements are removed from the past names map of a form element once they are no longer associated with the form element.');
+
+var form1 = document.querySelector('#form1');
+var form2 = document.querySelector('#form2');
+var input = document.querySelector('input');
+
+shouldBe("form1['foo']", "input");
+shouldBeUndefined("form2.appendChild(form1.firstChild); form1['foo']");
+
+shouldBe("form2['foo']", "input");
+shouldBeUndefined("form2.removeChild(input);form2['foo']");
+
+shouldBe("form1.appendChild(input); form1['foo']", "input");
+shouldBeUndefined("input.setAttribute('form', 'form1'); form1.removeChild(input); input.appendChild(form1); form1['foo']");
+shouldNotBe("form1['foo']", "input");
+
+var successfullyParsed = true;
+
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>

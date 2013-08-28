@@ -499,6 +499,7 @@ void HTMLFormElement::removeFormElement(FormAssociatedElement* e)
         --m_associatedElementsBeforeIndex;
     if (index < m_associatedElementsAfterIndex)
         --m_associatedElementsAfterIndex;
+    removeFromPastNamesMap(e);
     removeFromVector(m_associatedElements, e);
 }
 
@@ -516,6 +517,7 @@ void HTMLFormElement::registerImgElement(HTMLImageElement* e)
 void HTMLFormElement::removeImgElement(HTMLImageElement* e)
 {
     ASSERT(m_imageElements.find(e) != notFound);
+    removeFromPastNamesMap(e);
     removeFromVector(m_imageElements, e);
 }
 
@@ -611,20 +613,58 @@ bool HTMLFormElement::checkInvalidControlsAndCollectUnhandled(Vector<RefPtr<Form
     return hasInvalidControls;
 }
 
-HTMLFormControlElement* HTMLFormElement::elementFromPastNamesMap(const AtomicString& pastName) const
+#ifndef NDEBUG
+void HTMLFormElement::assertItemCanBeInPastNamesMap(FormNamedItem* item) const
+{
+    HTMLElement* element = item->asHTMLElement();
+    ASSERT_WITH_SECURITY_IMPLICATION(element);
+    ASSERT_WITH_SECURITY_IMPLICATION(element->form() == this);
+    if (item->isFormAssociatedElement()) {
+        ASSERT_WITH_SECURITY_IMPLICATION(m_associatedElements.find(static_cast<FormAssociatedElement*>(item)) != notFound);
+        return;
+    }
+
+    ASSERT_WITH_SECURITY_IMPLICATION(element->hasTagName(imgTag));
+    ASSERT_WITH_SECURITY_IMPLICATION(m_imageElements.find(toHTMLImageElement(element)) != notFound);
+}
+#else
+inline void HTMLFormElement::assertItemCanBeInPastNamesMap(FormNamedItem*) const
+{
+}
+#endif
+
+HTMLElement* HTMLFormElement::elementFromPastNamesMap(const AtomicString& pastName) const
 {
     if (pastName.isEmpty() || !m_pastNamesMap)
         return 0;
-    return m_pastNamesMap->get(pastName.impl());
+    FormNamedItem* item = m_pastNamesMap->get(pastName.impl());
+    if (!item)
+        return 0;
+    assertItemCanBeInPastNamesMap(item);
+    return item->asHTMLElement();
 }
 
-void HTMLFormElement::addElementToPastNamesMap(HTMLFormControlElement* element, const AtomicString& pastName)
+void HTMLFormElement::addToPastNamesMap(FormNamedItem* item, const AtomicString& pastName)
 {
+    assertItemCanBeInPastNamesMap(item);
     if (pastName.isEmpty())
         return;
     if (!m_pastNamesMap)
         m_pastNamesMap = adoptPtr(new PastNamesMap);
-    m_pastNamesMap->set(pastName.impl(), element);
+    m_pastNamesMap->set(pastName.impl(), item);
+}
+
+void HTMLFormElement::removeFromPastNamesMap(FormNamedItem* item)
+{
+    ASSERT(item);
+    if (!m_pastNamesMap)
+        return;
+
+    PastNamesMap::iterator end = m_pastNamesMap->end();
+    for (PastNamesMap::iterator it = m_pastNamesMap->begin(); it != end; ++it) {
+        if (it->value == item)
+            it->value = 0; // Keep looping. Single element can have multiple names.
+    }
 }
 
 bool HTMLFormElement::hasNamedElement(const AtomicString& name)
@@ -632,15 +672,16 @@ bool HTMLFormElement::hasNamedElement(const AtomicString& name)
     return elements()->hasNamedItem(name) || elementFromPastNamesMap(name);
 }
 
+// FIXME: Use RefPtr<HTMLElement> for namedItems. elements()->namedItems never return non-HTMLElement nodes.
 void HTMLFormElement::getNamedElements(const AtomicString& name, Vector<RefPtr<Node> >& namedItems)
 {
     // http://www.whatwg.org/specs/web-apps/current-work/multipage/forms.html#dom-form-nameditem
     elements()->namedItems(name, namedItems);
 
     // FIXME: The specification says we should not add the element from the past when names map when namedItems is not empty.
-    HTMLFormControlElement* elementFromPast = elementFromPastNamesMap(name);
+    HTMLElement* elementFromPast = elementFromPastNamesMap(name);
     if (namedItems.size() == 1 && namedItems.first() != elementFromPast)
-        addElementToPastNamesMap(static_cast<HTMLFormControlElement*>(namedItems.first().get()), name);
+        addToPastNamesMap(toHTMLElement(namedItems.first().get())->asFormNamedItem(), name);
     else if (elementFromPast && namedItems.find(elementFromPast) == notFound)
         namedItems.append(elementFromPast);
 }

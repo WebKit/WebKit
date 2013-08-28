@@ -273,21 +273,6 @@ bool FormAssociatedElement::isFormControlElementWithState() const
     return false;
 }
 
-const HTMLElement* toHTMLElement(const FormAssociatedElement* associatedElement)
-{
-    if (associatedElement->isFormControlElement())
-        return static_cast<const HTMLFormControlElement*>(associatedElement);
-    // Assumes the element is an HTMLObjectElement
-    const HTMLElement* element = static_cast<const HTMLObjectElement*>(associatedElement);
-    ASSERT(element->hasTagName(objectTag));
-    return element;
-}
-
-HTMLElement* toHTMLElement(FormAssociatedElement* associatedElement)
-{
-    return const_cast<HTMLElement*>(toHTMLElement(static_cast<const FormAssociatedElement*>(associatedElement)));
-}
-
 PassOwnPtr<FormAttributeTargetObserver> FormAttributeTargetObserver::create(const AtomicString& id, FormAssociatedElement* element)
 {
     return adoptPtr(new FormAttributeTargetObserver(id, element));

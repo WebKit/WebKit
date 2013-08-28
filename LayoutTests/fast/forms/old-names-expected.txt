@@ -90,10 +90,10 @@ PASS form.elements.third.length is undefined
 now remove element a
 
 PASS form.length is 1
-PASS form.original is a
+PASS form.original is undefined.
 PASS form.originalB is b
 PASS form.second is b
-PASS form.third is a
+PASS form.third is undefined.
 PASS form.fourth is b
 PASS form.elements.original is undefined
 PASS form.elements.originalB is undefined
@@ -101,12 +101,12 @@ PASS form.elements.second is undefined
 PASS form.elements.third is undefined
 PASS form.elements.fourth is b
 
-check we still remember names we should
+check that we no longer remember the past names of a
 
 PASS form.thisWillBeForgotten is undefined
 PASS form.thisWillBeForgottenToo is undefined
-PASS form.thisWillBeRemembered is a
-PASS form.thisWillBeRememberedToo is a
+PASS form.thisWillBeRemembered is undefined.
+PASS form.thisWillBeRememberedToo is undefined.
 
 PASS successfullyParsed is true
 

@@ -26,12 +26,11 @@ shouldBe("form.imageElement.id", "'1'");
 
 span.innerHTML = "<img id='2' name='imageElement'>";
 shouldBe("form.imageElement.id", "'2'");
+shouldBe("form.imageElement.name = 'foo'; form.foo.id", "'2'");
+shouldBe("form.imageElement", "form.foo");
 
 span.innerHTML = "<img id='2' name='newImage'>";
-
-// imageElement has been removed from the DOM, but,
-// IE 6 has a quirk where once accessed, form images are always accessible by name
-shouldBeTrue("!!form.imageElement");
+shouldBeFalse("!!form.imageElement");
 
 // This quirk has no bearing on document. access
 shouldBeUndefined("document.imageElement");

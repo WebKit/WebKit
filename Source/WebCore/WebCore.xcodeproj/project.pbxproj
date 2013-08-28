@@ -3255,6 +3255,7 @@
 		9B3A8872145632F9003AE8F5 /* DOMDOMSettableTokenList.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B3A8871145632F9003AE8F5 /* DOMDOMSettableTokenList.h */; };
 		9B417064125662B3006B28FC /* ApplyBlockElementCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B417062125662B3006B28FC /* ApplyBlockElementCommand.h */; };
 		9B417065125662B3006B28FC /* ApplyBlockElementCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9B417063125662B3006B28FC /* ApplyBlockElementCommand.cpp */; };
+		9B50B1DE17CD4C0F0087F63C /* FormNamedItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B50B1DC17CD4C0F0087F63C /* FormNamedItem.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9B6C41531344949000085B62 /* StringWithDirection.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B6C41521344949000085B62 /* StringWithDirection.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9B7E78BD16F16CC600126914 /* HTMLTreeBuilderSimulator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9B7E78BA16F16CAE00126914 /* HTMLTreeBuilderSimulator.cpp */; };
 		9B7E78BE16F16CC800126914 /* HTMLTreeBuilderSimulator.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B7E78BB16F16CAE00126914 /* HTMLTreeBuilderSimulator.h */; };
@@ -9681,6 +9682,7 @@
 		9B3A8871145632F9003AE8F5 /* DOMDOMSettableTokenList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMDOMSettableTokenList.h; sourceTree = "<group>"; };
 		9B417062125662B3006B28FC /* ApplyBlockElementCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApplyBlockElementCommand.h; sourceTree = "<group>"; };
 		9B417063125662B3006B28FC /* ApplyBlockElementCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ApplyBlockElementCommand.cpp; sourceTree = "<group>"; };
+		9B50B1DC17CD4C0F0087F63C /* FormNamedItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FormNamedItem.h; sourceTree = "<group>"; };
 		9B6C41521344949000085B62 /* StringWithDirection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringWithDirection.h; sourceTree = "<group>"; };
 		9B7E78BA16F16CAE00126914 /* HTMLTreeBuilderSimulator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HTMLTreeBuilderSimulator.cpp; path = parser/HTMLTreeBuilderSimulator.cpp; sourceTree = "<group>"; };
 		9B7E78BB16F16CAE00126914 /* HTMLTreeBuilderSimulator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HTMLTreeBuilderSimulator.h; path = parser/HTMLTreeBuilderSimulator.h; sourceTree = "<group>"; };
@@ -15691,6 +15693,7 @@
 				F50664F6157F52DC00AC226F /* FormController.h */,
 				A8136D370973A8E700D74463 /* FormDataList.cpp */,
 				A8136D360973A8E700D74463 /* FormDataList.h */,
+				9B50B1DC17CD4C0F0087F63C /* FormNamedItem.h */,
 				97205AAD123928CA00B17380 /* FTPDirectoryDocument.cpp */,
 				97205AAE123928CA00B17380 /* FTPDirectoryDocument.h */,
 				F55B3D8B1251F12D003EF269 /* HiddenInputType.cpp */,
@@ -22881,6 +22884,7 @@
 				1A0D57370A5C77FE007EDD4C /* OverflowEvent.h in Headers */,
 				3774ABA50FA21EB400AD7DE9 /* OverlapTestRequestClient.h in Headers */,
 				65A21468097A329100B9050A /* Page.h in Headers */,
+				9B50B1DE17CD4C0F0087F63C /* FormNamedItem.h in Headers */,
 				1477E7770BF4134A00152872 /* PageCache.h in Headers */,
 				DAED203116F244480070EC0F /* PageConsole.h in Headers */,
 				F3820893147D35F90010BC06 /* PageConsoleAgent.h in Headers */,

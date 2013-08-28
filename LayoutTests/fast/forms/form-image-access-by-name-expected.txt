@@ -1,7 +1,9 @@
 
 PASS form.imageElement.id is '1'
 PASS form.imageElement.id is '2'
-PASS !!form.imageElement is true
+PASS form.imageElement.name = 'foo'; form.foo.id is '2'
+PASS form.imageElement is form.foo
+PASS !!form.imageElement is false
 PASS document.imageElement is undefined.
 PASS !!document.newImage is true
 PASS !!form.newImage is true

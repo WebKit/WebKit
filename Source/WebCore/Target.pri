@@ -1799,6 +1799,7 @@ HEADERS += \
     html/FormAssociatedElement.h \
     html/FormController.h \
     html/FormDataList.h \
+    html/FormNamedItem.h \
     html/FTPDirectoryDocument.h \
     html/HTMLAllCollection.h \
     html/HTMLAnchorElement.h \

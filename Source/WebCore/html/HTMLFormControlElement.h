@@ -144,6 +144,9 @@ private:
     virtual bool isValidFormControlElement();
     void updateAncestorDisabledState() const;
 
+    virtual HTMLElement* asHTMLElement() OVERRIDE FINAL { return this; }
+    virtual FormNamedItem* asFormNamedItem() OVERRIDE FINAL { return this; }
+
     OwnPtr<ValidationMessage> m_validationMessage;
     bool m_disabled : 1;
     bool m_isReadOnly : 1;

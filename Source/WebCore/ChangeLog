@@ -1,3 +1,61 @@
+2013-08-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Don't keep unassociated elements in the past names map
+        https://bugs.webkit.org/show_bug.cgi?id=120328
+
+        Reviewed by Darin Adler.
+
+        Remove elements from the past names map of a form element when they are disassociated with the form to match
+        the behaviors of Firefox 24 and Internet Explorer 10. The specification feedback has been submitted to WHATWG
+        in http://lists.whatwg.org/pipermail/whatwg-whatwg.org/2013-August/040586.html
+
+        Also fix a memory leak via the past names map when the elements in the map becomes an ancestor of the form
+        element by storing a raw pointer in the map. This is safe because the form associated elements are kept alive
+        by another mechanism.
+
+        Because ~FormAssociatedElement removes entries from the past names map, we could no longer store HTMLElement*
+        in HTMLFormElement::m_pastNamesMap as that requires casting FormAssociatedElement* to HTMLElement*, which is
+        not possible in ~FormAssociatedElement. We instead store pointers to FormNamedItem, new base class of
+        FormAssociatedElement and HTMLImageElement.
+
+        Test: fast/forms/past-names-map-should-not-contained-disassociated-elements.html
+
+        * Target.pri:
+        * WebCore.exp.in:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/FormAssociatedElement.cpp:
+        * html/FormAssociatedElement.h:
+        (WebCore::toHTMLElement):
+
+        * html/FormNamedItem.h: Added.
+        (WebCore::FormNamedItem::~FormNamedItem):
+
+        * html/HTMLElement.h:
+        (WebCore::HTMLElement::asFormNamedItem): Added. This allows the conversion from a HTMLFormControlElement,
+        HTMLObjectElement, HTMLImageElement to FormNamedItem in getNamedElements to update the past names map.
+
+        * html/HTMLFormControlElement.h:
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::removeFormElement):
+        (WebCore::HTMLFormElement::removeImgElement):
+        (WebCore::HTMLFormElement::assertItemCanBeInPastNamesMap): Asserts that FormNamedItem added to or obtained
+        from the past names map is either a form associated element or an image element; the condition guarantees
+        that the item will be removed from the map before its element gets destructed.
+
+        (WebCore::HTMLFormElement::elementFromPastNamesMap):
+        (WebCore::HTMLFormElement::addToPastNamesMap):
+        (WebCore::HTMLFormElement::removeFromPastNamesMap): Finds and removes the obsolete item from the map in O(n).
+        Note that removeFromVector, which is called on m_associatedElements or m_imageElements before this function is called,
+        is already O(n).
+
+        (WebCore::HTMLFormElement::getNamedElements):
+
+        * html/HTMLFormElement.h:
+        * html/HTMLImageElement.h:
+        * html/HTMLObjectElement.h:
+
 2013-08-28  Brendan Long  <b.long@cablelabs.com>
 
         Duplicate in-band tracks when switching <source> elements

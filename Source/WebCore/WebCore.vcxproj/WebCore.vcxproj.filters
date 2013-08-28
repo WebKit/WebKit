@@ -10972,6 +10972,9 @@
     <ClInclude Include="..\html\FormDataList.h">
       <Filter>html</Filter>
     </ClInclude>
+    <ClInclude Include="..\html\FormNamedItem.h">
+      <Filter>html</Filter>
+    </ClInclude>
     <ClInclude Include="..\html\FTPDirectoryDocument.h">
       <Filter>html</Filter>
     </ClInclude>

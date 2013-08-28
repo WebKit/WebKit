@@ -138,11 +138,12 @@ private:
     // are any invalid controls in this form.
     bool checkInvalidControlsAndCollectUnhandled(Vector<RefPtr<FormAssociatedElement> >&);
 
-    HTMLFormControlElement* elementFromPastNamesMap(const AtomicString&) const;
-    void addElementToPastNamesMap(HTMLFormControlElement*, const AtomicString& pastName);
+    HTMLElement* elementFromPastNamesMap(const AtomicString&) const;
+    void addToPastNamesMap(FormNamedItem*, const AtomicString& pastName);
+    void assertItemCanBeInPastNamesMap(FormNamedItem*) const;
+    void removeFromPastNamesMap(FormNamedItem*);
 
-    // FIXME: This can leak HTMLFormControlElements.
-    typedef HashMap<RefPtr<AtomicStringImpl>, RefPtr<HTMLFormControlElement> > PastNamesMap;
+    typedef HashMap<RefPtr<AtomicStringImpl>, FormNamedItem*> PastNamesMap;
 
     FormSubmission::Attributes m_attributes;
     OwnPtr<PastNamesMap> m_pastNamesMap;

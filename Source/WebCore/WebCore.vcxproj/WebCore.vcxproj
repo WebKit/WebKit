@@ -20490,6 +20490,7 @@
     <ClInclude Include="..\html\FormAssociatedElement.h" />
     <ClInclude Include="..\html\FormController.h" />
     <ClInclude Include="..\html\FormDataList.h" />
+    <ClInclude Include="..\html\FormNamedItem.h" />
     <ClInclude Include="..\html\FTPDirectoryDocument.h" />
     <ClInclude Include="..\html\HiddenInputType.h" />
     <ClInclude Include="..\html\HTMLAllCollection.h" />
