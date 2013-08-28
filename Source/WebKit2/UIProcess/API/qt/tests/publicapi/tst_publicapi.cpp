@@ -90,6 +90,7 @@ static QStringList expectedAPI = QStringList()
     << "QWebNavigationRequest.keyboardModifiers --> int"
     << "QWebNavigationRequest.action --> QQuickWebView::NavigationRequestAction"
     << "QWebNavigationRequest.navigationType --> QQuickWebView::NavigationType"
+    << "QWebNavigationRequest.isMainFrame --> bool"
     << "QWebNavigationRequest.actionChanged() --> void"
     ;
 

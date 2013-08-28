@@ -36,7 +36,7 @@ public:
     QtWebPagePolicyClient(WKPageRef, QQuickWebView*);
 
 private:
-    void decidePolicyForNavigationAction(const QUrl&, Qt::MouseButton, Qt::KeyboardModifiers, QQuickWebView::NavigationType, WKFramePolicyListenerRef);
+    void decidePolicyForNavigationAction(const QUrl&, Qt::MouseButton, Qt::KeyboardModifiers, QQuickWebView::NavigationType, bool isMainFrame, WKFramePolicyListenerRef);
 
     // WKPagePolicyClient callbacks.
     static void decidePolicyForNavigationAction(WKPageRef, WKFrameRef, WKFrameNavigationType, WKEventModifiers, WKEventMouseButton, WKURLRequestRef, WKFramePolicyListenerRef, WKTypeRef userData, const void* clientInfo);

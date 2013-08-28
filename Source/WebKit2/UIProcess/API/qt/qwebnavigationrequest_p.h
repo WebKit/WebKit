@@ -35,9 +35,10 @@ class QWEBKIT_EXPORT QWebNavigationRequest : public QObject {
     Q_PROPERTY(int keyboardModifiers READ keyboardModifiers CONSTANT FINAL)
     Q_PROPERTY(QQuickWebView::NavigationRequestAction action READ action WRITE setAction NOTIFY actionChanged FINAL)
     Q_PROPERTY(QQuickWebView::NavigationType navigationType READ navigationType CONSTANT FINAL)
+    Q_PROPERTY(bool isMainFrame READ isMainFrame CONSTANT FINAL REVISION 1)
 
 public:
-    QWebNavigationRequest(const QUrl& url, Qt::MouseButton mouseButton, Qt::KeyboardModifiers keyboardModifiers, QQuickWebView::NavigationType navigationType, QObject* parent = 0);
+    QWebNavigationRequest(const QUrl& url, Qt::MouseButton mouseButton, Qt::KeyboardModifiers keyboardModifiers, QQuickWebView::NavigationType navigationType, bool isMainFrame, QObject* parent = 0);
     ~QWebNavigationRequest();
 
     QUrl url() const;
@@ -47,6 +48,8 @@ public:
 
     void setAction(QQuickWebView::NavigationRequestAction action);
     QQuickWebView::NavigationType navigationType() const;
+
+    bool isMainFrame() const;
 
 Q_SIGNALS:
     void actionChanged();

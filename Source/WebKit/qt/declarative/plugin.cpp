@@ -57,7 +57,7 @@ public:
         qmlRegisterType<QQuickWebView>(uri, 3, 0, "WebView");
         qmlRegisterUncreatableType<QQuickWebPage>(uri, 3, 0, "WebPage", QObject::tr("Cannot create separate instance of WebPage, use WebView"));
         qmlRegisterUncreatableType<QNetworkReply>(uri, 3, 0, "NetworkReply", QObject::tr("Cannot create separate instance of NetworkReply"));
-        qmlRegisterUncreatableType<QWebNavigationRequest>(uri, 3, 0, "NavigationRequest", QObject::tr("Cannot create separate instance of NavigationRequest"));
+        qmlRegisterUncreatableType<QWebNavigationRequest, 1>(uri, 3, 1, "NavigationRequest", QObject::tr("Cannot create separate instance of NavigationRequest"));
         qmlRegisterUncreatableType<QWebLoadRequest>(uri, 3, 0, "WebLoadRequest", QObject::tr("Cannot create separate instance of WebLoadRequest"));
 #endif
     }
