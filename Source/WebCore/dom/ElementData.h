@@ -66,7 +66,7 @@ public:
     unsigned findAttributeIndexByNameForAttributeNode(const Attr*, bool shouldIgnoreAttributeCase = false) const;
 
     bool hasID() const { return !m_idForStyleResolution.isNull(); }
-    bool hasClass() const { return !m_classNames.isNull(); }
+    bool hasClass() const { return !m_classNames.isEmpty(); }
     bool hasName() const { return m_hasNameAttribute; }
 
     bool isEquivalent(const ElementData* other) const;

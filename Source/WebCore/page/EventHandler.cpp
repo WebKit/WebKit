@@ -2074,7 +2074,7 @@ static bool findDropZone(Node* target, Clipboard* clipboard)
         dropZoneStr.makeLower();
         
         SpaceSplitString keywords(dropZoneStr, false);
-        if (keywords.isNull())
+        if (keywords.isEmpty())
             continue;
         
         DragOperation dragOperation = DragOperationNone;

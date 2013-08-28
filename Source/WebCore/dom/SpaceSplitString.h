@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2010, 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2010, 2011, 2012, 2013 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,48 +21,78 @@
 #ifndef SpaceSplitString_h
 #define SpaceSplitString_h
 
-#include <wtf/RefCounted.h>
-#include <wtf/Vector.h>
+#include <wtf/Assertions.h>
+#include <wtf/MainThread.h>
+#include <wtf/Noncopyable.h>
 #include <wtf/text/AtomicString.h>
 
 namespace WebCore {
 
-class SpaceSplitStringData : public RefCounted<SpaceSplitStringData> {
+class SpaceSplitStringData {
+    WTF_MAKE_NONCOPYABLE(SpaceSplitStringData);
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static PassRefPtr<SpaceSplitStringData> create(const AtomicString&);
-    static PassRefPtr<SpaceSplitStringData> createUnique(const SpaceSplitStringData&);
-
-    ~SpaceSplitStringData();
 
     bool contains(const AtomicString& string)
     {
-        size_t size = m_vector.size();
-        for (size_t i = 0; i < size; ++i) {
-            if (m_vector[i] == string)
+        const AtomicString* data = tokenArrayStart();
+        unsigned i = 0;
+        do {
+            if (data[i] == string)
                 return true;
-        }
+            ++i;
+        } while (i < m_size);
         return false;
     }
 
     bool containsAll(SpaceSplitStringData&);
 
-    void add(const AtomicString&);
-    void remove(unsigned index);
+    unsigned size() const { return m_size; }
+    const AtomicString& operator[](size_t i)
+    {
+        RELEASE_ASSERT(i < m_size);
+        return tokenArrayStart()[i];
+    }
 
-    bool isUnique() const { return m_keyString.isNull(); } 
-    size_t size() const { return m_vector.size(); }
-    const AtomicString& operator[](size_t i) { ASSERT_WITH_SECURITY_IMPLICATION(i < size()); return m_vector[i]; }
+    inline void ref()
+    {
+        ASSERT(isMainThread());
+        ASSERT(m_refCount);
+        ++m_refCount;
+    }
+
+    inline void deref()
+    {
+        ASSERT(isMainThread());
+        ASSERT(m_refCount);
+        unsigned tempRefCount = m_refCount - 1;
+        if (!tempRefCount) {
+            SpaceSplitStringData::destroy(this);
+            return;
+        }
+        m_refCount = tempRefCount;
+    }
 
 private:
-    explicit SpaceSplitStringData(const AtomicString&);
-    explicit SpaceSplitStringData(const SpaceSplitStringData&);
+    static PassRefPtr<SpaceSplitStringData> create(const AtomicString&, unsigned tokenCount);
+    SpaceSplitStringData(const AtomicString& string, unsigned size)
+        : m_keyString(string)
+        , m_refCount(1)
+        , m_size(size)
+    {
+        ASSERT(!string.isEmpty());
+        ASSERT_WITH_MESSAGE(m_size, "SpaceSplitStringData should never be empty by definition. There is no difference between empty and null.");
+    }
 
-    void createVector(const String&);
-    template <typename CharacterType>
-    inline void createVector(const CharacterType*, unsigned);
+    inline ~SpaceSplitStringData() { }
+    static void destroy(SpaceSplitStringData*);
+
+    AtomicString* tokenArrayStart() { return reinterpret_cast<AtomicString*>(this + 1); }
 
     AtomicString m_keyString;
-    Vector<AtomicString, 4> m_vector;
+    unsigned m_refCount;
+    unsigned m_size;
 };
 
 class SpaceSplitString {
@@ -77,12 +107,14 @@ public:
 
     bool contains(const AtomicString& string) const { return m_data && m_data->contains(string); }
     bool containsAll(const SpaceSplitString& names) const { return !names.m_data || (m_data && m_data->containsAll(*names.m_data)); }
-    void add(const AtomicString&);
-    bool remove(const AtomicString&);
 
     size_t size() const { return m_data ? m_data->size() : 0; }
-    bool isNull() const { return !m_data; }
-    const AtomicString& operator[](size_t i) const { ASSERT_WITH_SECURITY_IMPLICATION(i < size()); return (*m_data)[i]; }
+    bool isEmpty() const { return !m_data; }
+    const AtomicString& operator[](size_t i) const
+    {
+        ASSERT_WITH_SECURITY_IMPLICATION(m_data);
+        return (*m_data)[i];
+    }
 
     static bool spaceSplitStringContainsValue(const String& spaceSplitString, const char* value, unsigned length, bool shouldFoldCase);
     template<size_t length>
@@ -92,11 +124,6 @@ public:
     }
 
 private:
-    void ensureUnique()
-    {
-        if (m_data && !m_data->isUnique())
-            m_data = SpaceSplitStringData::createUnique(*m_data);
-    }
 
     RefPtr<SpaceSplitStringData> m_data;
 };

@@ -1,3 +1,103 @@
+2013-08-27  Benjamin Poulain  <bpoulain@apple.com>
+
+        Simplify and clean SpaceSplitString
+        https://bugs.webkit.org/show_bug.cgi?id=120385
+
+        Reviewed by Ryosuke Niwa.
+
+        Clean up of SpaceSplitString following the cleaning of the DOMTokenList hierarchy.
+        This brings the following:
+        - Fix the coding style of the header.
+        - Remove the concepts of empty and null. The list can now be empty or have something.
+          There is no null state.
+        - Put the tokens directly following SpaceSplitStringData instead of using a Vector in between.
+
+        * WebCore.exp.in:
+        * dom/ElementData.h:
+        (WebCore::ElementData::hasClass):
+        * dom/SpaceSplitString.cpp:
+        (WebCore::tokenizeSpaceSplitString):
+        (WebCore::SpaceSplitStringData::containsAll):
+        (WebCore::SpaceSplitString::set):
+        (WebCore::SpaceSplitString::spaceSplitStringContainsValue):
+        (WebCore::TokenCounterProcessor::TokenCounterProcessor):
+        (WebCore::TokenCounterProcessor::processToken):
+        (WebCore::TokenCounterProcessor::tokenCount):
+        (WebCore::TokenInitializerProcessor::TokenInitializerProcessor):
+        (WebCore::TokenInitializerProcessor::processToken):
+        (WebCore::TokenInitializerProcessor::nextMemoryBucket):
+        (WebCore::SpaceSplitStringData::create):
+        (WebCore::SpaceSplitStringData::destroy):
+        * dom/SpaceSplitString.h:
+        (WebCore::SpaceSplitStringData::contains):
+        (WebCore::SpaceSplitStringData::size):
+        (WebCore::SpaceSplitStringData::operator[]):
+        (WebCore::SpaceSplitStringData::ref):
+        (WebCore::SpaceSplitStringData::deref):
+        (WebCore::SpaceSplitStringData::SpaceSplitStringData):
+        (WebCore::SpaceSplitStringData::~SpaceSplitStringData):
+        (WebCore::SpaceSplitStringData::tokenArrayStart):
+        (WebCore::SpaceSplitString::SpaceSplitString):
+        (WebCore::SpaceSplitString::operator!=):
+        (WebCore::SpaceSplitString::clear):
+        (WebCore::SpaceSplitString::contains):
+        (WebCore::SpaceSplitString::containsAll):
+        (WebCore::SpaceSplitString::size):
+        (WebCore::SpaceSplitString::isEmpty):
+        (WebCore::SpaceSplitString::operator[]):
+        (WebCore::SpaceSplitString::spaceSplitStringContainsValue):
+        * html/ClassList.cpp:
+        (WebCore::ClassList::classNames):
+        * page/EventHandler.cpp:
+        (WebCore::findDropZone):
+
+<<<<<<< .mine
+2013-08-28  Benjamin Poulain  <benjamin@webkit.org>
+
+        Simplify and clean SpaceSplitString
+        https://bugs.webkit.org/show_bug.cgi?id=120385
+
+        Reviewed by Ryosuke Niwa.
+
+        Clean up of SpaceSplitString following the cleaning of the DOMTokenList hierarchy.
+        - Remove the concepts of empty and null. The list can now be empty or have something.
+          There is no null state.
+        - Put the tokens directly following SpaceSplitStringData instead of using a Vector in between.
+
+        * WebCore.exp.in:
+        * dom/ElementData.h:
+        (WebCore::ElementData::hasClass):
+        * dom/SpaceSplitString.cpp:
+        (WebCore::tokenizeSpaceSplitString):
+        (WebCore::SpaceSplitStringData::containsAll):
+        (WebCore::SpaceSplitString::set):
+        (WebCore::SpaceSplitString::spaceSplitStringContainsValue):
+        (WebCore::TokenCounter::TokenCounter):
+        (WebCore::TokenCounter::processToken):
+        (WebCore::TokenCounter::tokenCount):
+        (WebCore::TokenAtomicStringInitializer::TokenAtomicStringInitializer):
+        (WebCore::TokenAtomicStringInitializer::processToken):
+        (WebCore::TokenAtomicStringInitializer::nextMemoryBucket):
+        (WebCore::SpaceSplitStringData::create):
+        (WebCore::SpaceSplitStringData::destroy):
+        * dom/SpaceSplitString.h:
+        (WebCore::SpaceSplitStringData::contains):
+        (WebCore::SpaceSplitStringData::size):
+        (WebCore::SpaceSplitStringData::operator[]):
+        (WebCore::SpaceSplitStringData::ref):
+        (WebCore::SpaceSplitStringData::deref):
+        (WebCore::SpaceSplitStringData::SpaceSplitStringData):
+        (WebCore::SpaceSplitStringData::~SpaceSplitStringData):
+        (WebCore::SpaceSplitStringData::tokenArrayStart):
+        (WebCore::SpaceSplitString::containsAll):
+        (WebCore::SpaceSplitString::isEmpty):
+        (WebCore::SpaceSplitString::operator[]):
+        * html/ClassList.cpp:
+        (WebCore::ClassList::classNames):
+        * page/EventHandler.cpp:
+        (WebCore::findDropZone):
+
+=======
 2013-08-28  Rob Buis  <rwlbuis@webkit.org>
 
         Namespace prefix is blindly followed when serializing
@@ -80,6 +180,7 @@
         * platform/qt/LocalizedStringsQt.cpp:
         (WebCore::AXSearchFieldCancelButtonText):
 
+>>>>>>> .r154779
 2013-08-28  Eric Carlson  <eric.carlson@apple.com>
 
         MediaPlayerPrivateAVFoundationObjC is painting video frames under the video layer
