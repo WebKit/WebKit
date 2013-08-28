@@ -89,6 +89,9 @@ class WinPort(ApplePort):
     def operating_system(self):
         return 'win'
 
+    def default_child_processes(self):
+        return self._executive.cpu_count() / 2
+
     def show_results_html_file(self, results_filename):
         self._run_script('run-safari', [abspath_to_uri(SystemHost().platform, results_filename)])
 
