@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        .spacer {
+            height: 350px;
+            width: 100%;
+            margin: 10px;
+            background-color: silver;
+        }
+        .box {
+            height: 100px;
+            width: 100px;
+            margin: 10px;
+            border: 1px solid black;
+            background-color: blue;
+        }
+        .composited {
+            -webkit-transform: translateZ(0);
+            box-shadow: 0 0 10px black;
+        }
+        .inner {
+            height: 75px;
+            width: 50px;
+            margin: 10px 12px;
+            background-color: green;
+        }
+        
+        .inner.changed {
+            background-color: orange;
+        }
+    </style>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        if (window.internals)
+            internals.setPagination(document, "LeftToRightPaginated", 0);
+            
+        function dumpLayers()
+        {
+            window.setTimeout(function() {
+                if (window.internals)
+                    internals.startTrackingRepaints(document);
+                document.getElementById('inner').classList.add('changed');
+                if (window.testRunner) {
+                    document.getElementById('layers').innerText = window.internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_REPAINT_RECTS);
+                    testRunner.notifyDone();
+                }
+            }, 10);
+        }
+        window.addEventListener('load', dumpLayers, false);
+    </script>
+</head>
+<body>
+
+    <div class="spacer"></div>
+    <div class="spacer"></div>
+    <div class="composited box">
+        <div id="inner" class="inner box"></div>
+    </div>
+
+<pre id="layers">Layer tree goes here in DRT</pre>
+
+</body>
+</html>

@@ -1,3 +1,38 @@
+2013-08-28  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix compositing layers in columns
+        https://bugs.webkit.org/show_bug.cgi?id=120436
+
+        Reviewed by Dave Hyatt.
+        
+        Various testcases for compositing in columns.
+
+        * compositing/columns/ancestor-clipped-in-paginated-expected.txt: Added.
+        * compositing/columns/ancestor-clipped-in-paginated.html: Copied from LayoutTests/compositing/columns/composited-in-paginated.html.
+        * compositing/columns/clipped-in-paginated-expected.txt: Added.
+        * compositing/columns/clipped-in-paginated.html: Copied from LayoutTests/compositing/columns/composited-in-paginated.html.
+        * compositing/columns/composited-columns-expected.txt: Added.
+        * compositing/columns/composited-columns-vertical-rl-expected.txt: Added.
+        * compositing/columns/composited-columns-vertical-rl.html: Added.
+        * compositing/columns/composited-columns.html: Added.
+        * compositing/columns/composited-in-paginated-rl-expected.txt: Added.
+        * compositing/columns/composited-in-paginated-rl.html: Copied from LayoutTests/compositing/columns/composited-in-paginated.html.
+        * compositing/columns/composited-in-paginated-writing-mode-rl-expected.txt: Added.
+        * compositing/columns/composited-in-paginated-writing-mode-rl.html: Copied from LayoutTests/compositing/columns/composited-in-paginated.html.
+        * compositing/columns/composited-in-paginated.html:
+        * compositing/columns/composited-lr-paginated-repaint-expected.txt: Added.
+        * compositing/columns/composited-lr-paginated-repaint.html: Added.
+        * compositing/columns/composited-nested-columns-expected.txt: Added.
+        * compositing/columns/composited-nested-columns.html: Added.
+        * compositing/columns/composited-rl-paginated-repaint-expected.txt: Added.
+        * compositing/columns/composited-rl-paginated-repaint.html: Added.
+        * compositing/columns/hittest-composited-in-paginated-expected.txt: Added.
+        * compositing/columns/hittest-composited-in-paginated.html: Copied from LayoutTests/compositing/columns/composited-in-paginated.html.
+        * compositing/columns/rotated-in-paginated-expected.txt: Added.
+        * compositing/columns/rotated-in-paginated.html: Copied from LayoutTests/compositing/columns/composited-in-paginated.html.
+        * compositing/columns/untransformed-composited-in-paginated-expected.txt: Added.
+        * compositing/columns/untransformed-composited-in-paginated.html: Copied from LayoutTests/compositing/columns/composited-in-paginated.html.
+
 2013-08-28  Denis Nomiyama  <d.nomiyama@samsung.com>
 
         [GTK] accessibility/menu-list-sends-change-notification.html has incorrect expected results

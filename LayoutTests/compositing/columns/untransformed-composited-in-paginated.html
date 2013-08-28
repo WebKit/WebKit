@@ -2,7 +2,7 @@
 <head>
     <script>
         if (window.testRunner)
-          testRunner.dumpAsText();
+            testRunner.dumpAsText();
 
         if (window.internals)
             internals.setPagination(document, "LeftToRightPaginated", 0);
@@ -16,23 +16,33 @@
     </script>
     <style>
     .spacer {
-      height: 350px;
-      width: 100%;
-      margin: 10px;
-      background-color: silver;
+        height: 350px;
+        width: 100%;
+        margin: 10px;
+        background-color: silver;
     }
     
     .box {
-      height: 100px;
-      width: 100px;
-      margin: 10px;
-      background-color: blue;
+        height: 100px;
+        width: 100px;
+        margin: 10px;
+        background-color: blue;
     }
-    .box:hover {
+
+    .wrapper {
+        position: relative;
+        border: 1px solid black;
+        padding: 10px;
+    }
+
+    .second {
+        position: relative;
+        top: -10px;
         background-color: orange;
     }
+
     .composited {
-      -webkit-transform: translateZ(0);
+        -webkit-transform: rotate3d(0, 0, 1, 45deg);
     }
     </style>
 </head>
@@ -40,7 +50,12 @@
 
   <div class="spacer"></div>
   <div class="spacer"></div>
-  <div class="composited box"></div>
+
+  <div class="wrapper">
+      <div class="composited box"></div>
+      <div class="second box"></div>
+  </div>
+
 <pre id="layers">Layer tree goes here in DRT</pre>
 
 </body>

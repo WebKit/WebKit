@@ -436,7 +436,7 @@ void RenderLayerBacking::updateCompositedBounds()
             clippingBounds.intersect(m_owningLayer->backgroundClipRect(RenderLayer::ClipRectsContext(rootLayer, 0, AbsoluteClipRects)).rect()); // FIXME: Incorrect for CSS regions.
 
         LayoutPoint delta;
-        m_owningLayer->convertToLayerCoords(rootLayer, delta);
+        m_owningLayer->convertToLayerCoords(rootLayer, delta, RenderLayer::AdjustForColumns);
         clippingBounds.move(-delta.x(), -delta.y());
 
         layerBounds.intersect(clippingBounds);
@@ -635,7 +635,7 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
 
     LayoutRect localRawCompositingBounds = compositedBounds();
     LayoutPoint rawDelta;
-    m_owningLayer->convertToLayerCoords(compAncestor, rawDelta);
+    m_owningLayer->convertToLayerCoords(compAncestor, rawDelta, RenderLayer::AdjustForColumns);
     IntPoint delta = flooredIntPoint(rawDelta);
     m_subpixelAccumulation = toLayoutSize(rawDelta.fraction());
     // Move the bounds by the subpixel accumulation so that it pixel-snaps relative to absolute pixels instead of local coordinates.

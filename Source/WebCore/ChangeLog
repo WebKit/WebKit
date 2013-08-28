@@ -1,3 +1,41 @@
+2013-08-28  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix compositing layers in columns
+        https://bugs.webkit.org/show_bug.cgi?id=120436
+
+        Reviewed by Dave Hyatt.
+        
+        Remove the old hack in RenderLayer::updateLayerPosition() for placing
+        layers in columns, which changed the layer position for composited
+        layers; this broke hit-testing.
+        
+        Fix a better way by moving compositing layers to the correct
+        positions that take column offsets into account, by fixing
+        RenderLayer::convertToLayerCoords() to optionally apply column
+        adjustment, and using this in the code which positions compositing layers.
+
+        Tests: compositing/columns/ancestor-clipped-in-paginated.html
+               compositing/columns/clipped-in-paginated.html
+               compositing/columns/composited-columns-vertical-rl.html
+               compositing/columns/composited-columns.html
+               compositing/columns/composited-in-paginated-rl.html
+               compositing/columns/composited-in-paginated-writing-mode-rl.html
+               compositing/columns/composited-lr-paginated-repaint.html
+               compositing/columns/composited-rl-paginated-repaint.html
+               compositing/columns/hittest-composited-in-paginated.html
+               compositing/columns/rotated-in-paginated.html
+               compositing/columns/untransformed-composited-in-paginated.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateLayerPosition):
+        (WebCore::RenderLayer::convertToPixelSnappedLayerCoords):
+        (WebCore::accumulateOffsetTowardsAncestor):
+        (WebCore::RenderLayer::convertToLayerCoords):
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateCompositedBounds):
+        (WebCore::RenderLayerBacking::updateGraphicsLayerGeometry):
+
 2013-08-28  Brent Fulgham  <bfulgham@webkit.org>
 
         [WinCairo] Unreviewed build fix.

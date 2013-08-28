@@ -1,0 +1,18 @@
+Element at 500, 200: composited box
+(GraphicsLayer
+  (bounds 810.00 585.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 810.00 585.00)
+      (contentsOpaque 1)
+      (children 1
+        (GraphicsLayer
+          (position 428.00 145.00)
+          (bounds 100.00 100.00)
+          (contentsOpaque 1)
+        )
+      )
+    )
+  )
+)
+
