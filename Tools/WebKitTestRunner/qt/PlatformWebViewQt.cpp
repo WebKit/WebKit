@@ -70,6 +70,8 @@ private Q_SLOTS:
             create();
 #if QT_VERSION < QT_VERSION_CHECK(5, 1, 0)
             QQuickWindowPrivate::get(this)->setRenderWithoutShowing(true);
+#else
+            m_view->experimental()->setRenderToOffscreenBuffer(true);
 #endif
         } else
             m_view->experimental()->setRenderToOffscreenBuffer(true);
