@@ -64,6 +64,18 @@ void webkit_dom_html_element_set_class_name(WebKitDOMHTMLElement* element, const
     webkit_dom_element_set_class_name(WEBKIT_DOM_ELEMENT(element), value);
 }
 
+gchar* webkit_dom_html_element_get_id(WebKitDOMHTMLElement* element)
+{
+    g_warning("The get_id method on WebKitDOMHTMLElement is deprecated. Use the one in WebKitDOMElement instead.");
+    return webkit_dom_element_get_id(WEBKIT_DOM_ELEMENT(element));
+}
+
+void webkit_dom_html_element_set_id(WebKitDOMHTMLElement* element, const gchar* value)
+{
+    g_warning("The set_id method on WebKitDOMHTMLElement is deprecated. Use the one in WebKitDOMElement instead.");
+    webkit_dom_element_set_id(WEBKIT_DOM_ELEMENT(element), value);
+}
+
 gboolean webkit_dom_webkit_named_flow_get_overflow(WebKitDOMWebKitNamedFlow* flow)
 {
     g_warning("The WebKitDOMWebKitNamedFlow::overflow property has been renamed to WebKitDOMWebKitNamedFlow::overset. Please update your code to use the new name.");
