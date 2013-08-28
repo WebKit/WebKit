@@ -21,9 +21,9 @@
 <script>
     window.onload = function () {
         var content = 'XXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXX\n<div class="spacer" style="float:right"></div>\n<div class="spacer" style="float:left"></div>\nXXXXX\nXXXXX\nXXXXX\nXXXXX\nXXXXX\nXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXX';
-        createRectangleTest('base', 'stylesheet', { height: 200, width: 200 }, { x: 25, y: 0, width: 150, height: 150 }, 'px', content);
-        createRectangleTest('rl', 'stylesheet', { height: 200, width: 200 }, { x: 0, y: 25, width: 150, height: 150 }, 'px', content);
-        createRectangleTest('lr', 'stylesheet', { height: 200, width: 200 }, { x: 0, y: 25, width: 150, height: 150 }, 'px', content);
+        drawTextRectangle('base', 'stylesheet', { height: 200, width: 200 }, { x: 25, y: 0, width: 150, height: 150 }, 'px', content);
+        drawTextRectangle('rl', 'stylesheet', { height: 200, width: 200 }, { x: 0, y: 25, width: 150, height: 150 }, 'px', content);
+        drawTextRectangle('lr', 'stylesheet', { height: 200, width: 200 }, { x: 0, y: 25, width: 150, height: 150 }, 'px', content);
     };
 </script>
 </head>

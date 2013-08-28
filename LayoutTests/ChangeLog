@@ -1,3 +1,26 @@
+2013-08-28  Niklas Nielsen  <nnielsen@adobe.com>
+
+        [CSS Exclusions] Differentiate names in the simple rectangle test script
+        https://bugs.webkit.org/show_bug.cgi?id=105208
+
+        Reviewed by Alexandru Chiculita.
+
+        Rename createRectangleTest and createRectangleTestResult to drawTestRectangle and drawExpectedRectangle respectively.
+
+        * fast/shapes/resources/simple-rectangle.js:
+        (drawTextRectangle):
+        (drawExpectedRectangle):
+        * fast/shapes/shape-inside/shape-inside-floats-simple-expected.html:
+        * fast/shapes/shape-inside/shape-inside-floats-simple.html:
+        * fast/shapes/shape-inside/shape-inside-multiple-blocks-dynamic-expected.html:
+        * fast/shapes/shape-inside/shape-inside-multiple-blocks-dynamic.html:
+        * fast/shapes/shape-inside/shape-inside-outside-shape-expected.html:
+        * fast/shapes/shape-inside/shape-inside-outside-shape.html:
+        * fast/shapes/shape-inside/shape-inside-recursive-layout-expected.html:
+        * fast/shapes/shape-inside/shape-inside-recursive-layout.html:
+        * fast/shapes/shape-inside/shape-inside-subsequent-blocks-expected.html:
+        * fast/shapes/shape-inside/shape-inside-subsequent-blocks.html:
+
 2013-08-28  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] Handle 'span' positions during layout

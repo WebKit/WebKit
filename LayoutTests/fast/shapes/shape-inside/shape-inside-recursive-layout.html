@@ -43,12 +43,12 @@
 window.onload = function() {
     var elementBounds = { width: 200, height: 200 };
     var shapeBounds = { x: 50, y: 50, width: 100, height: 100 };
-    createRectangleTest('inline-block', 'stylesheet', elementBounds, shapeBounds, 'px');
-    createRectangleTest('float', 'stylesheet', elementBounds, shapeBounds, 'px');
-    createRectangleTest('list', 'stylesheet', elementBounds, shapeBounds, 'px');
-    createRectangleTest('table', 'stylesheet', elementBounds, shapeBounds, 'px');
-    createRectangleTest('old-flexbox', 'stylesheet', elementBounds, shapeBounds, 'px');
-    createRectangleTest('new-flexbox', 'stylesheet', elementBounds, shapeBounds, 'px');
+    drawTextRectangle('inline-block', 'stylesheet', elementBounds, shapeBounds, 'px');
+    drawTextRectangle('float', 'stylesheet', elementBounds, shapeBounds, 'px');
+    drawTextRectangle('list', 'stylesheet', elementBounds, shapeBounds, 'px');
+    drawTextRectangle('table', 'stylesheet', elementBounds, shapeBounds, 'px');
+    drawTextRectangle('old-flexbox', 'stylesheet', elementBounds, shapeBounds, 'px');
+    drawTextRectangle('new-flexbox', 'stylesheet', elementBounds, shapeBounds, 'px');
 }
 </script>
 </head>

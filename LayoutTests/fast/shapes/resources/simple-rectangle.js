@@ -1,4 +1,4 @@
-function createRectangleTest(elementId, stylesheetId, bounds, shapeBounds, units, content) {
+function drawTextRectangle(elementId, stylesheetId, bounds, shapeBounds, units, content) {
     var elem;
     if (elementId)
         elem = document.getElementById(elementId);
@@ -27,7 +27,7 @@ function createRectangleTest(elementId, stylesheetId, bounds, shapeBounds, units
         elem.innerHTML = content;
 }
 
-function createRectangleTestResult(elementId, stylesheetId, bounds, shapeBounds, units, content) {
+function drawExpectedRectangle(elementId, stylesheetId, bounds, shapeBounds, units, content) {
     var elem;
     if (elementId)
         elem = document.getElementById(elementId);
