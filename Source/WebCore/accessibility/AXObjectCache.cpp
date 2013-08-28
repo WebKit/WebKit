@@ -330,7 +330,12 @@ AccessibilityObject* AXObjectCache::getOrCreate(Widget* widget)
 
     // Will crash later if we have two objects for the same widget.
     ASSERT(!get(widget));
-        
+
+    // Catch the case if an (unsupported) widget type is used. Only FrameView and ScrollBar are supported now.
+    ASSERT(newObj);
+    if (!newObj)
+        return 0;
+
     getAXID(newObj.get());
     
     m_widgetObjectMapping.set(widget, newObj->axObjectID());

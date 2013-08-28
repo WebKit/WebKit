@@ -1,3 +1,15 @@
+2013-08-28  Lukasz Gajowy  <l.gajowy@samsung.com>
+
+        AX:Null pointer may be dereferenced.
+        https://bugs.webkit.org/show_bug.cgi?id=120300
+
+        Reviewed by Chris Fleizach.
+
+        Added a check if newObj is not null and an assert in order to avoid dereferecing null pointer.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::getOrCreate):
+
 2013-08-28  Pratik Solanki  <psolanki@apple.com>
 
         Document::elementSheet() should return a reference
