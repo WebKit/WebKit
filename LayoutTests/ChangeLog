@@ -1,5 +1,23 @@
 2013-08-28  Ádám Kallai  <kadam@inf.u-szeged.hu>
 
+        [Qt] Delete unnecessary empty directories.
+        Unreviewed gardening.
+
+        * platform/qt-5.0: Removed.
+        * platform/qt-5.0/TestExpectations: Removed.
+        * platform/qt-5.0/compositing: Removed.
+        * platform/qt-5.0/compositing/visibility: Removed.
+        * platform/qt-5.0/css1: Removed.
+        * platform/qt-5.0/css2.1: Removed.
+        * platform/qt-5.0/tables: Removed.
+        * platform/qt-5.0/tables/mozilla: Removed.
+        * platform/qt-5.0/tables/mozilla/bugs: Removed.
+        * platform/qt.5-0: Removed.
+        * platform/qt.5-0/fast: Removed.
+        * platform/qt.5-0/fast/text: Removed.
+
+2013-08-28  Ádám Kallai  <kadam@inf.u-szeged.hu>
+
         [Qt] Moving expectations from Qt 5.0 WK2 to Qt WK2 - Part 10.
         Unreviewed gardening.
 
