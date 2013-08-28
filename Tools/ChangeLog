@@ -1,3 +1,26 @@
+2013-08-27  Alexey Proskuryakov  <ap@apple.com>
+
+        [WK2] Remove USE_WEBPROCESS_EVENT_SIMULATION
+        https://bugs.webkit.org/show_bug.cgi?id=120379
+
+        Reviewed by Darin Adler.
+
+        All major platforms have implemented UI process eventSender support, keeping old
+        web process side code only adds confusion.
+
+        * WebKitTestRunner/InjectedBundle/EventSendingController.cpp:
+        (WTR::EventSendingController::EventSendingController):
+        (WTR::EventSendingController::mouseDown):
+        (WTR::EventSendingController::mouseUp):
+        (WTR::EventSendingController::mouseMoveTo):
+        (WTR::EventSendingController::leapForward):
+        * WebKitTestRunner/InjectedBundle/EventSendingController.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetStateToConsistentValues):
+        (WTR::TestController::didReceiveMessageFromInjectedBundle):
+        (WTR::TestController::didReceiveSynchronousMessageFromInjectedBundle):
+        * WebKitTestRunner/TestController.h:
+
 2013-08-27  Roger Fong  <roger_fong@apple.com>
 
         NRWT on AppleWin port should delete semaphore lock files during cleanup tasks.

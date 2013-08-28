@@ -31,10 +31,6 @@
 #include <WebKit2/WKGeometry.h>
 #include <wtf/PassRefPtr.h>
 
-#if !PLATFORM(MAC) && !PLATFORM(QT) && !PLATFORM(GTK) && !PLATFORM(EFL)
-#define USE_WEBPROCESS_EVENT_SIMULATION
-#endif
-
 namespace WTR {
 
 class EventSendingController : public JSWrappable {
@@ -83,18 +79,6 @@ public:
 
 private:
     EventSendingController();
-
-#ifdef USE_WEBPROCESS_EVENT_SIMULATION
-    void updateClickCount(WKEventMouseButton);
-
-    double m_time;
-    WKPoint m_position;
-
-    int m_clickCount;
-    double m_clickTime;
-    WKPoint m_clickPosition;
-    WKEventMouseButton m_clickButton;
-#endif
 };
 
 } // namespace WTR

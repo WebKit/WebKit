@@ -215,9 +215,7 @@ private:
 
     bool m_shouldBlockAllPlugins;
 
-#if PLATFORM(MAC) || PLATFORM(QT) || PLATFORM(GTK) || PLATFORM(EFL)
     OwnPtr<EventSenderProxy> m_eventSenderProxy;
-#endif
 
 #if PLATFORM(QT)
     class RunLoop;

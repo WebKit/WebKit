@@ -105,14 +105,6 @@ PassRefPtr<EventSendingController> EventSendingController::create()
 }
 
 EventSendingController::EventSendingController()
-#ifdef USE_WEBPROCESS_EVENT_SIMULATION
-    : m_time(0)
-    , m_position()
-    , m_clickCount(0)
-    , m_clickTime(0)
-    , m_clickPosition()
-    , m_clickButton(kWKEventMouseButtonNoButton)
-#endif
 {
 }
 
@@ -156,15 +148,10 @@ void EventSendingController::mouseDown(int button, JSValueRef modifierArray)
     JSContextRef context = WKBundleFrameGetJavaScriptContext(frame);
     WKEventModifiers modifiers = parseModifierArray(context, modifierArray);
 
-#ifdef USE_WEBPROCESS_EVENT_SIMULATION
-    updateClickCount(button);
-    WKBundlePageSimulateMouseDown(page, button, m_position, m_clickCount, modifiers, m_time);
-#else
     WKRetainPtr<WKStringRef> EventSenderMessageName(AdoptWK, WKStringCreateWithUTF8CString("EventSender"));
     WKRetainPtr<WKMutableDictionaryRef> EventSenderMessageBody(AdoptWK, createMouseMessageBody(MouseDown, button, modifiers));
 
     WKBundlePostSynchronousMessage(InjectedBundle::shared().bundle(), EventSenderMessageName.get(), EventSenderMessageBody.get(), 0);
-#endif
 }
 
 void EventSendingController::mouseUp(int button, JSValueRef modifierArray)
@@ -174,24 +161,14 @@ void EventSendingController::mouseUp(int button, JSValueRef modifierArray)
     JSContextRef context = WKBundleFrameGetJavaScriptContext(frame);
     WKEventModifiers modifiers = parseModifierArray(context, modifierArray);
 
-#ifdef USE_WEBPROCESS_EVENT_SIMULATION
-    updateClickCount(button);
-    WKBundlePageSimulateMouseUp(page, button, m_position, m_clickCount, modifiers, m_time);
-#else
     WKRetainPtr<WKStringRef> EventSenderMessageName(AdoptWK, WKStringCreateWithUTF8CString("EventSender"));
     WKRetainPtr<WKMutableDictionaryRef> EventSenderMessageBody(AdoptWK, createMouseMessageBody(MouseUp, button, modifiers));
 
     WKBundlePostSynchronousMessage(InjectedBundle::shared().bundle(), EventSenderMessageName.get(), EventSenderMessageBody.get(), 0);
-#endif
 }
 
 void EventSendingController::mouseMoveTo(int x, int y)
 {
-#ifdef USE_WEBPROCESS_EVENT_SIMULATION
-    m_position.x = x;
-    m_position.y = y;
-    WKBundlePageSimulateMouseMotion(InjectedBundle::shared().page()->page(), m_position, m_time);
-#else
     WKRetainPtr<WKStringRef> EventSenderMessageName(AdoptWK, WKStringCreateWithUTF8CString("EventSender"));
     WKRetainPtr<WKMutableDictionaryRef> EventSenderMessageBody(AdoptWK, WKMutableDictionaryCreate());
 
@@ -208,14 +185,10 @@ void EventSendingController::mouseMoveTo(int x, int y)
     WKDictionaryAddItem(EventSenderMessageBody.get(), yKey.get(), yRef.get());
 
     WKBundlePostSynchronousMessage(InjectedBundle::shared().bundle(), EventSenderMessageName.get(), EventSenderMessageBody.get(), 0);
-#endif
 }
 
 void EventSendingController::leapForward(int milliseconds)
 {
-#ifdef USE_WEBPROCESS_EVENT_SIMULATION
-    m_time += milliseconds / 1000.0;
-#else
     WKRetainPtr<WKStringRef> EventSenderMessageName(AdoptWK, WKStringCreateWithUTF8CString("EventSender"));
     WKRetainPtr<WKMutableDictionaryRef> EventSenderMessageBody(AdoptWK, WKMutableDictionaryCreate());
 
@@ -228,7 +201,6 @@ void EventSendingController::leapForward(int milliseconds)
     WKDictionaryAddItem(EventSenderMessageBody.get(), timeKey.get(), timeRef.get());
 
     WKBundlePostSynchronousMessage(InjectedBundle::shared().bundle(), EventSenderMessageName.get(), EventSenderMessageBody.get(), 0);
-#endif
 }
 
 void EventSendingController::scheduleAsynchronousClick()
@@ -364,22 +336,6 @@ JSValueRef EventSendingController::contextClick()
     return JSValueMakeUndefined(context);
 #endif
 }
-
-#ifdef USE_WEBPROCESS_EVENT_SIMULATION
-void EventSendingController::updateClickCount(WKEventMouseButton button)
-{
-    if (m_time - m_clickTime < 1 && m_position == m_clickPosition && button == m_clickButton) {
-        ++m_clickCount;
-        m_clickTime = m_time;
-        return;
-    }
-
-    m_clickCount = 1;
-    m_clickTime = m_time;
-    m_clickPosition = m_position;
-    m_clickButton = button;
-}
-#endif
 
 void EventSendingController::textZoomIn()
 {
