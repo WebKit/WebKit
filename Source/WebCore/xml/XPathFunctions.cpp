@@ -292,7 +292,7 @@ inline bool Interval::contains(int value) const
 
 void Function::setArguments(const Vector<Expression*>& args)
 {
-    ASSERT(!subExprCount());
+    ASSERT(!subExpressionCount());
 
     // Some functions use context node as implicit argument, so when explicit arguments are added, they may no longer be context node sensitive.
     if (m_name != "lang" && !args.isEmpty())
@@ -315,7 +315,7 @@ Value FunPosition::evaluate() const
 
 Value FunId::evaluate() const
 {
-    Value a = arg(0)->evaluate();
+    Value a = argument(0).evaluate();
     StringBuilder idList; // A whitespace-separated list of IDs
 
     if (a.isNodeSet()) {
@@ -378,8 +378,8 @@ static inline String expandedName(Node* node)
 
 Value FunLocalName::evaluate() const
 {
-    if (argCount() > 0) {
-        Value a = arg(0)->evaluate();
+    if (argumentCount() > 0) {
+        Value a = argument(0).evaluate();
         if (!a.isNodeSet())
             return "";
 
@@ -392,8 +392,8 @@ Value FunLocalName::evaluate() const
 
 Value FunNamespaceURI::evaluate() const
 {
-    if (argCount() > 0) {
-        Value a = arg(0)->evaluate();
+    if (argumentCount() > 0) {
+        Value a = argument(0).evaluate();
         if (!a.isNodeSet())
             return "";
 
@@ -406,8 +406,8 @@ Value FunNamespaceURI::evaluate() const
 
 Value FunName::evaluate() const
 {
-    if (argCount() > 0) {
-        Value a = arg(0)->evaluate();
+    if (argumentCount() > 0) {
+        Value a = argument(0).evaluate();
         if (!a.isNodeSet())
             return "";
 
@@ -420,16 +420,16 @@ Value FunName::evaluate() const
 
 Value FunCount::evaluate() const
 {
-    Value a = arg(0)->evaluate();
+    Value a = argument(0).evaluate();
     
     return double(a.toNodeSet().size());
 }
 
 Value FunString::evaluate() const
 {
-    if (!argCount())
+    if (!argumentCount())
         return Value(Expression::evaluationContext().node.get()).toString();
-    return arg(0)->evaluate().toString();
+    return argument(0).evaluate().toString();
 }
 
 Value FunConcat::evaluate() const
@@ -437,9 +437,8 @@ Value FunConcat::evaluate() const
     StringBuilder result;
     result.reserveCapacity(1024);
 
-    unsigned count = argCount();
-    for (unsigned i = 0; i < count; ++i) {
-        String str(arg(i)->evaluate().toString());
+    for (unsigned i = 0, count = argumentCount(); i < count; ++i) {
+        String str(argument(i).evaluate().toString());
         result.append(str);
     }
 
@@ -448,8 +447,8 @@ Value FunConcat::evaluate() const
 
 Value FunStartsWith::evaluate() const
 {
-    String s1 = arg(0)->evaluate().toString();
-    String s2 = arg(1)->evaluate().toString();
+    String s1 = argument(0).evaluate().toString();
+    String s2 = argument(1).evaluate().toString();
 
     if (s2.isEmpty())
         return true;
@@ -459,8 +458,8 @@ Value FunStartsWith::evaluate() const
 
 Value FunContains::evaluate() const
 {
-    String s1 = arg(0)->evaluate().toString();
-    String s2 = arg(1)->evaluate().toString();
+    String s1 = argument(0).evaluate().toString();
+    String s2 = argument(1).evaluate().toString();
 
     if (s2.isEmpty()) 
         return true;
@@ -470,8 +469,8 @@ Value FunContains::evaluate() const
 
 Value FunSubstringBefore::evaluate() const
 {
-    String s1 = arg(0)->evaluate().toString();
-    String s2 = arg(1)->evaluate().toString();
+    String s1 = argument(0).evaluate().toString();
+    String s2 = argument(1).evaluate().toString();
 
     if (s2.isEmpty())
         return "";
@@ -486,8 +485,8 @@ Value FunSubstringBefore::evaluate() const
 
 Value FunSubstringAfter::evaluate() const
 {
-    String s1 = arg(0)->evaluate().toString();
-    String s2 = arg(1)->evaluate().toString();
+    String s1 = argument(0).evaluate().toString();
+    String s2 = argument(1).evaluate().toString();
 
     size_t i = s1.find(s2);
     if (i == notFound)
@@ -498,15 +497,15 @@ Value FunSubstringAfter::evaluate() const
 
 Value FunSubstring::evaluate() const
 {
-    String s = arg(0)->evaluate().toString();
-    double doublePos = arg(1)->evaluate().toNumber();
+    String s = argument(0).evaluate().toString();
+    double doublePos = argument(1).evaluate().toNumber();
     if (std::isnan(doublePos))
         return "";
     long pos = static_cast<long>(FunRound::round(doublePos));
-    bool haveLength = argCount() == 3;
+    bool haveLength = argumentCount() == 3;
     long len = -1;
     if (haveLength) {
-        double doubleLen = arg(2)->evaluate().toNumber();
+        double doubleLen = argument(2).evaluate().toNumber();
         if (std::isnan(doubleLen))
             return "";
         len = static_cast<long>(FunRound::round(doubleLen));
@@ -529,27 +528,27 @@ Value FunSubstring::evaluate() const
 
 Value FunStringLength::evaluate() const
 {
-    if (!argCount())
+    if (!argumentCount())
         return Value(Expression::evaluationContext().node.get()).toString().length();
-    return arg(0)->evaluate().toString().length();
+    return argument(0).evaluate().toString().length();
 }
 
 Value FunNormalizeSpace::evaluate() const
 {
-    if (!argCount()) {
+    if (!argumentCount()) {
         String s = Value(Expression::evaluationContext().node.get()).toString();
         return s.simplifyWhiteSpace();
     }
 
-    String s = arg(0)->evaluate().toString();
+    String s = argument(0).evaluate().toString();
     return s.simplifyWhiteSpace();
 }
 
 Value FunTranslate::evaluate() const
 {
-    String s1 = arg(0)->evaluate().toString();
-    String s2 = arg(1)->evaluate().toString();
-    String s3 = arg(2)->evaluate().toString();
+    String s1 = argument(0).evaluate().toString();
+    String s2 = argument(1).evaluate().toString();
+    String s3 = argument(2).evaluate().toString();
     StringBuilder result;
 
     for (unsigned i1 = 0; i1 < s1.length(); ++i1) {
@@ -567,12 +566,12 @@ Value FunTranslate::evaluate() const
 
 Value FunBoolean::evaluate() const
 {
-    return arg(0)->evaluate().toBoolean();
+    return argument(0).evaluate().toBoolean();
 }
 
 Value FunNot::evaluate() const
 {
-    return !arg(0)->evaluate().toBoolean();
+    return !argument(0).evaluate().toBoolean();
 }
 
 Value FunTrue::evaluate() const
@@ -582,7 +581,7 @@ Value FunTrue::evaluate() const
 
 Value FunLang::evaluate() const
 {
-    String lang = arg(0)->evaluate().toString();
+    String lang = argument(0).evaluate().toString();
 
     const Attribute* languageAttribute = 0;
     Node* node = evaluationContext().node.get();
@@ -622,14 +621,14 @@ Value FunFalse::evaluate() const
 
 Value FunNumber::evaluate() const
 {
-    if (!argCount())
+    if (!argumentCount())
         return Value(Expression::evaluationContext().node.get()).toNumber();
-    return arg(0)->evaluate().toNumber();
+    return argument(0).evaluate().toNumber();
 }
 
 Value FunSum::evaluate() const
 {
-    Value a = arg(0)->evaluate();
+    Value a = argument(0).evaluate();
     if (!a.isNodeSet())
         return 0.0;
 
@@ -646,12 +645,12 @@ Value FunSum::evaluate() const
 
 Value FunFloor::evaluate() const
 {
-    return floor(arg(0)->evaluate().toNumber());
+    return floor(argument(0).evaluate().toNumber());
 }
 
 Value FunCeiling::evaluate() const
 {
-    return ceil(arg(0)->evaluate().toNumber());
+    return ceil(argument(0).evaluate().toNumber());
 }
 
 double FunRound::round(double val)
@@ -667,7 +666,7 @@ double FunRound::round(double val)
 
 Value FunRound::evaluate() const
 {
-    return round(arg(0)->evaluate().toNumber());
+    return round(argument(0).evaluate().toNumber());
 }
 
 struct FunctionMapping {

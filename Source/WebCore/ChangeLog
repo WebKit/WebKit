@@ -1,3 +1,63 @@
+2013-08-28  Anders Carlsson  <andersca@apple.com>
+
+        Clean up XPathExpressionNode and XPath::Function
+        https://bugs.webkit.org/show_bug.cgi?id=120411
+
+        Reviewed by Antti Koivisto.
+
+        Rename the subexpression and function argument getters to be more descriptive,
+        remove the non-const overloads (they were never used) and change the getters to return
+        references since they can never be null.
+
+        * xml/XPathExpressionNode.cpp:
+        * xml/XPathExpressionNode.h:
+        (WebCore::XPath::ParseNode::~ParseNode):
+        (WebCore::XPath::Expression::addSubExpression):
+        (WebCore::XPath::Expression::isContextNodeSensitive):
+        (WebCore::XPath::Expression::setIsContextNodeSensitive):
+        (WebCore::XPath::Expression::isContextPositionSensitive):
+        (WebCore::XPath::Expression::setIsContextPositionSensitive):
+        (WebCore::XPath::Expression::isContextSizeSensitive):
+        (WebCore::XPath::Expression::setIsContextSizeSensitive):
+        (WebCore::XPath::Expression::subExpressionCount):
+        (WebCore::XPath::Expression::subExpression):
+        * xml/XPathFunctions.cpp:
+        (WebCore::XPath::Function::setArguments):
+        (WebCore::XPath::FunId::evaluate):
+        (WebCore::XPath::FunLocalName::evaluate):
+        (WebCore::XPath::FunNamespaceURI::evaluate):
+        (WebCore::XPath::FunName::evaluate):
+        (WebCore::XPath::FunCount::evaluate):
+        (WebCore::XPath::FunString::evaluate):
+        (WebCore::XPath::FunConcat::evaluate):
+        (WebCore::XPath::FunStartsWith::evaluate):
+        (WebCore::XPath::FunContains::evaluate):
+        (WebCore::XPath::FunSubstringBefore::evaluate):
+        (WebCore::XPath::FunSubstringAfter::evaluate):
+        (WebCore::XPath::FunSubstring::evaluate):
+        (WebCore::XPath::FunStringLength::evaluate):
+        (WebCore::XPath::FunNormalizeSpace::evaluate):
+        (WebCore::XPath::FunTranslate::evaluate):
+        (WebCore::XPath::FunBoolean::evaluate):
+        (WebCore::XPath::FunNot::evaluate):
+        (WebCore::XPath::FunLang::evaluate):
+        (WebCore::XPath::FunNumber::evaluate):
+        (WebCore::XPath::FunSum::evaluate):
+        (WebCore::XPath::FunFloor::evaluate):
+        (WebCore::XPath::FunCeiling::evaluate):
+        (WebCore::XPath::FunRound::evaluate):
+        * xml/XPathFunctions.h:
+        (WebCore::XPath::Function::setName):
+        (WebCore::XPath::Function::argumentCount):
+        (WebCore::XPath::Function::argument):
+        (WebCore::XPath::Function::name):
+        * xml/XPathPredicate.cpp:
+        (WebCore::XPath::Negative::evaluate):
+        (WebCore::XPath::NumericOp::evaluate):
+        (WebCore::XPath::EqTestOp::evaluate):
+        (WebCore::XPath::LogicalOp::evaluate):
+        (WebCore::XPath::Union::evaluate):
+
 2013-08-28  Andreas Kling  <akling@apple.com>
 
         Page::pluginData() should return a reference.

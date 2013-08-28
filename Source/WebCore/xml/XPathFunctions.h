@@ -30,27 +30,26 @@
 #include "XPathExpressionNode.h"
 
 namespace WebCore {
+namespace XPath {
 
-    namespace XPath {
+class Function : public Expression {
+public:
+    void setArguments(const Vector<Expression*>&);
+    void setName(const String& name) { m_name = name; }
 
-        class Function : public Expression {
-        public:
-            void setArguments(const Vector<Expression*>&);
-            void setName(const String& name) { m_name = name; }
-        protected:
-            Expression* arg(int pos) { return subExpr(pos); }
-            const Expression* arg(int pos) const { return subExpr(pos); }
-            unsigned int argCount() const { return subExprCount(); }
-            String name() const { return m_name; }
+protected:
+    unsigned argumentCount() const { return subExpressionCount(); }
+    const Expression& argument(int pos) const { return subExpression(pos); }
 
-        private:
-            String m_name;
-        };
+    String name() const { return m_name; }
 
-        Function* createFunction(const String& name, const Vector<Expression*>& args = Vector<Expression*>());
+private:
+    String m_name;
+};
 
-    } // namespace XPath
+Function* createFunction(const String& name, const Vector<Expression*>& args = Vector<Expression*>());
 
+} // namespace XPath
 } // namespace WebCore
 
 #endif // XPathFunctions_h

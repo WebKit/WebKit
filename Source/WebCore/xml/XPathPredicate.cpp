@@ -60,7 +60,7 @@ Value StringExpression::evaluate() const
 
 Value Negative::evaluate() const
 {
-    Value p(subExpr(0)->evaluate());
+    Value p(subExpression(0).evaluate());
     return -p.toNumber();
 }
 
@@ -73,8 +73,8 @@ NumericOp::NumericOp(Opcode opcode, Expression* lhs, Expression* rhs)
 
 Value NumericOp::evaluate() const
 {
-    Value lhs(subExpr(0)->evaluate());
-    Value rhs(subExpr(1)->evaluate());
+    Value lhs(subExpression(0).evaluate());
+    Value rhs(subExpression(1).evaluate());
     
     double leftVal = lhs.toNumber();
     double rightVal = rhs.toNumber();
@@ -192,8 +192,8 @@ bool EqTestOp::compare(const Value& lhs, const Value& rhs) const
 
 Value EqTestOp::evaluate() const
 {
-    Value lhs(subExpr(0)->evaluate());
-    Value rhs(subExpr(1)->evaluate());
+    Value lhs(subExpression(0).evaluate());
+    Value rhs(subExpression(1).evaluate());
 
     return compare(lhs, rhs);
 }
@@ -215,7 +215,7 @@ bool LogicalOp::shortCircuitOn() const
 
 Value LogicalOp::evaluate() const
 {
-    Value lhs(subExpr(0)->evaluate());
+    Value lhs(subExpression(0).evaluate());
 
     // This is not only an optimization, http://www.w3.org/TR/xpath
     // dictates that we must do short-circuit evaluation
@@ -223,13 +223,13 @@ Value LogicalOp::evaluate() const
     if (lhsBool == shortCircuitOn())
         return lhsBool;
 
-    return subExpr(1)->evaluate().toBoolean();
+    return subExpression(1).evaluate().toBoolean();
 }
 
 Value Union::evaluate() const
 {
-    Value lhsResult = subExpr(0)->evaluate();
-    Value rhs = subExpr(1)->evaluate();
+    Value lhsResult = subExpression(0).evaluate();
+    Value rhs = subExpression(1).evaluate();
     
     NodeSet& resultSet = lhsResult.modifiableNodeSet();
     const NodeSet& rhsNodes = rhs.toNodeSet();

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Frerich Raabe <raabe@kde.org>
- * Copyright (C) 2006, 2009 Apple Inc.
+ * Copyright (C) 2006, 2009, 2013 Apple Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,68 +34,67 @@
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
+namespace XPath {
 
-    namespace XPath {
-        
-        struct EvaluationContext {
-            WTF_MAKE_FAST_ALLOCATED;
-        public:
-            RefPtr<Node> node;
-            unsigned long size;
-            unsigned long position;
-            HashMap<String, String> variableBindings;
+struct EvaluationContext {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    RefPtr<Node> node;
+    unsigned long size;
+    unsigned long position;
+    HashMap<String, String> variableBindings;
 
-            bool hadTypeConversionError;
-        };
+    bool hadTypeConversionError;
+};
 
-        class ParseNode {
-        public:
-            virtual ~ParseNode() { }
-        };
+class ParseNode {
+public:
+    virtual ~ParseNode() { }
+};
 
-        class Expression : public ParseNode {
-            WTF_MAKE_NONCOPYABLE(Expression); WTF_MAKE_FAST_ALLOCATED;
-        public:
-            static EvaluationContext& evaluationContext();
+class Expression : public ParseNode {
+    WTF_MAKE_NONCOPYABLE(Expression); WTF_MAKE_FAST_ALLOCATED;
+public:
+    static EvaluationContext& evaluationContext();
 
-            Expression();
-            virtual ~Expression();
+    virtual ~Expression();
 
-            virtual Value evaluate() const = 0;
-
-            void addSubExpression(Expression* expr)
-            {
-                m_subExpressions.append(expr);
-                m_isContextNodeSensitive |= expr->m_isContextNodeSensitive;
-                m_isContextPositionSensitive |= expr->m_isContextPositionSensitive;
-                m_isContextSizeSensitive |= expr->m_isContextSizeSensitive;
-            }
-
-            bool isContextNodeSensitive() const { return m_isContextNodeSensitive; }
-            bool isContextPositionSensitive() const { return m_isContextPositionSensitive; }
-            bool isContextSizeSensitive() const { return m_isContextSizeSensitive; }
-            void setIsContextNodeSensitive(bool value) { m_isContextNodeSensitive = value; }
-            void setIsContextPositionSensitive(bool value) { m_isContextPositionSensitive = value; }
-            void setIsContextSizeSensitive(bool value) { m_isContextSizeSensitive = value; }
-
-            virtual Value::Type resultType() const = 0;
-
-        protected:
-            unsigned subExprCount() const { return m_subExpressions.size(); }
-            Expression* subExpr(unsigned i) { return m_subExpressions[i]; }
-            const Expression* subExpr(unsigned i) const { return m_subExpressions[i]; }
-
-        private:
-            Vector<Expression*> m_subExpressions;
-
-            // Evaluation details that can be used for optimization.
-            bool m_isContextNodeSensitive;
-            bool m_isContextPositionSensitive;
-            bool m_isContextSizeSensitive;
-        };
-
+    void addSubExpression(Expression* expr)
+    {
+        m_subExpressions.append(expr);
+        m_isContextNodeSensitive |= expr->m_isContextNodeSensitive;
+        m_isContextPositionSensitive |= expr->m_isContextPositionSensitive;
+        m_isContextSizeSensitive |= expr->m_isContextSizeSensitive;
     }
 
-}
+    bool isContextNodeSensitive() const { return m_isContextNodeSensitive; }
+    void setIsContextNodeSensitive(bool value) { m_isContextNodeSensitive = value; }
 
-#endif // EXPRESSION_H
+    bool isContextPositionSensitive() const { return m_isContextPositionSensitive; }
+    void setIsContextPositionSensitive(bool value) { m_isContextPositionSensitive = value; }
+
+    bool isContextSizeSensitive() const { return m_isContextSizeSensitive; }
+    void setIsContextSizeSensitive(bool value) { m_isContextSizeSensitive = value; }
+
+    virtual Value evaluate() const = 0;
+    virtual Value::Type resultType() const = 0;
+
+protected:
+    Expression();
+
+    unsigned subExpressionCount() const { return m_subExpressions.size(); }
+    const Expression& subExpression(unsigned i) const { return *m_subExpressions[i]; }
+
+private:
+    Vector<Expression*> m_subExpressions;
+
+    // Evaluation details that can be used for optimization.
+    bool m_isContextNodeSensitive;
+    bool m_isContextPositionSensitive;
+    bool m_isContextSizeSensitive;
+};
+
+} // namespace XPath
+} // namespace WebCore
+
+#endif // XPathExpressionNode_h
