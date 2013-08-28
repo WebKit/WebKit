@@ -1,3 +1,11 @@
+2013-08-28  Brent Fulgham  <bfulgham@webkit.org>
+
+        [WinCairo] Unreviewed build fix.
+
+        * WebCore.vcxproj/WebCore.vcxproj: Don't exclude the full screen
+        window from the build.
+        * WebCore.vcxproj/WebCore.vcxproj.filters: Ditto.
+
 2013-08-28  Benjamin Poulain  <benjamin@webkit.org>
 
         Fix the build after r154780
