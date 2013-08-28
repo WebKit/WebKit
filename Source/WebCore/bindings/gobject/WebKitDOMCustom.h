@@ -91,6 +91,38 @@ WEBKIT_API void webkit_dom_html_form_element_dispatch_form_change(WebKitDOMHTMLF
 WEBKIT_API void webkit_dom_html_form_element_dispatch_form_input(WebKitDOMHTMLFormElement* self);
 
 /**
+ * webkit_dom_html_element_get_id:
+ * @self: A #WebKitDOMHTMLElement
+ *
+ * This method is deprecated. Use webkit_dom_element_set_id() instead.
+ *
+ * Returns:
+ *
+**/
+WEBKIT_API gchar* webkit_dom_html_element_get_id(WebKitDOMHTMLElement* self);
+
+/**
+ * webkit_dom_html_element_set_id:
+ * @self: A #WebKitDOMHTMLElement
+ * @value: A #gchar
+ *
+ * This method is deprecated. Use webkit_dom_element_set_id() instead.
+ *
+ * Returns:
+ *
+**/
+WEBKIT_API void webkit_dom_html_element_set_id(WebKitDOMHTMLElement* self, const gchar* value);
+
+/**
+ * webkit_dom_html_element_get_title:
+ * @self: A #WebKitDOMHTMLElement
+ *
+ * Returns:
+ *
+**/
+WEBKIT_API gchar* webkit_dom_html_element_get_title(WebKitDOMHTMLElement* self);
+
+/**
  * webkit_dom_webkit_named_flow_get_overflow:
  * @flow: A #WebKitDOMWebKitNamedFlow
  *

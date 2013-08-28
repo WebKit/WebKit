@@ -1,3 +1,20 @@
+2013-08-28  Gustavo Noronha Silva  <gns@gnome.org>
+
+        [GTK] HTMLElement lost setID and getID - need to add compatibility symbols
+        https://bugs.webkit.org/show_bug.cgi?id=120440
+
+        Reviewed by Martin Robinson.
+
+        No tests, just adding compatibility symbols.
+
+        setID and getID were removed, and the parent class (Element) ones should be used instead.
+        We need to keep our ABI compatible, though, so add compatibility symbols.
+
+        * bindings/gobject/WebKitDOMCustom.cpp:
+        (webkit_dom_html_element_get_id):
+        (webkit_dom_html_element_set_id):
+        * bindings/gobject/WebKitDOMCustom.h:
+
 2013-08-28  Simon Fraser  <simon.fraser@apple.com>
 
         Fix compositing layers in columns
