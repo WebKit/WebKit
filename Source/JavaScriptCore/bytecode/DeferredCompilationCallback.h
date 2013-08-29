@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,34 +23,28 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef LLIntEntrypoints_h
-#define LLIntEntrypoints_h
+#ifndef DeferredCompilationCallback_h
+#define DeferredCompilationCallback_h
 
-#include <wtf/Platform.h>
-
-#if ENABLE(LLINT)
-
-#include "CodeSpecializationKind.h"
-#include "JITCode.h"
-#include <wtf/RefPtr.h>
+#include "CompilationResult.h"
+#include <wtf/RefCounted.h>
 
 namespace JSC {
 
-class EvalCodeBlock;
-class FunctionCodeBlock;
-class VM;
-class MacroAssemblerCodePtr;
-class MacroAssemblerCodeRef;
-class ProgramCodeBlock;
+class CodeBlock;
 
-namespace LLInt {
+class DeferredCompilationCallback : public RefCounted<DeferredCompilationCallback> {
+protected:
+    DeferredCompilationCallback();
 
-void setFunctionEntrypoint(VM&, FunctionCodeBlock*);
-void setEvalEntrypoint(VM&, EvalCodeBlock*);
-void setProgramEntrypoint(VM&, ProgramCodeBlock*);
+public:
+    virtual ~DeferredCompilationCallback();
 
-} } // namespace JSC::LLInt
+    virtual void compilationDidBecomeReadyAsynchronously(CodeBlock*) = 0;
+    virtual void compilationDidComplete(CodeBlock*, CompilationResult) = 0;
+};
 
-#endif // ENABLE(LLINT)
+} // namespace JSC
 
-#endif // LLIntEntrypoints_h
+#endif // DeferredCompilationCallback_h
+

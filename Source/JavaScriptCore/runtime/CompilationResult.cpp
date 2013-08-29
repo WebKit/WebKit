@@ -42,9 +42,6 @@ void printInternal(PrintStream& out, CompilationResult result)
     case CompilationSuccessful:
         out.print("CompilationSuccessful");
         return;
-    case CompilationNotNeeded:
-        out.print("CompilationNotNeeded");
-        return;
     case CompilationDeferred:
         out.print("CompilationDeferred");
         return;

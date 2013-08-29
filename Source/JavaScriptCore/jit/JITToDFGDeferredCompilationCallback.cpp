@@ -23,39 +23,49 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGFinalizer_h
-#define DFGFinalizer_h
-
-#include <wtf/Platform.h>
+#include "config.h"
+#include "JITToDFGDeferredCompilationCallback.h"
 
 #if ENABLE(DFG_JIT)
 
-#include "JITCode.h"
-#include "MacroAssemblerCodeRef.h"
-#include <wtf/FastAllocBase.h>
-#include <wtf/Noncopyable.h>
-#include <wtf/RefPtr.h>
+#include "CodeBlock.h"
+#include "Executable.h"
 
-namespace JSC { namespace DFG {
+namespace JSC {
 
-struct Plan;
+JITToDFGDeferredCompilationCallback::JITToDFGDeferredCompilationCallback() { }
+JITToDFGDeferredCompilationCallback::~JITToDFGDeferredCompilationCallback() { }
 
-class Finalizer {
-    WTF_MAKE_NONCOPYABLE(Finalizer); WTF_MAKE_FAST_ALLOCATED;
-public:
-    Finalizer(Plan&);
-    virtual ~Finalizer();
+PassRefPtr<JITToDFGDeferredCompilationCallback> JITToDFGDeferredCompilationCallback::create()
+{
+    return adoptRef(new JITToDFGDeferredCompilationCallback());
+}
+
+void JITToDFGDeferredCompilationCallback::compilationDidBecomeReadyAsynchronously(
+    CodeBlock* codeBlock)
+{
+    ASSERT(codeBlock->alternative()->jitType() == JITCode::BaselineJIT);
     
-    virtual bool finalize() = 0;
-    virtual bool finalizeFunction() = 0;
+    if (Options::verboseOSR())
+        dataLog("Optimizing compilation of ", *codeBlock, " did become ready.\n");
+    
+    codeBlock->alternative()->forceOptimizationSlowPathConcurrently();
+}
 
-protected:
-    Plan& m_plan;
-};
+void JITToDFGDeferredCompilationCallback::compilationDidComplete(
+    CodeBlock* codeBlock, CompilationResult result)
+{
+    ASSERT(codeBlock->alternative()->jitType() == JITCode::BaselineJIT);
+    
+    if (Options::verboseOSR())
+        dataLog("Optimizing compilation of ", *codeBlock, " result: ", result, "\n");
+    
+    if (result == CompilationSuccessful)
+        codeBlock->install();
+    
+    codeBlock->alternative()->setOptimizationThresholdBasedOnCompilationResult(result);
+}
 
-} } // namespace JSC::DFG
+} // JSC
 
 #endif // ENABLE(DFG_JIT)
-
-#endif // DFGFinalizer_h
-

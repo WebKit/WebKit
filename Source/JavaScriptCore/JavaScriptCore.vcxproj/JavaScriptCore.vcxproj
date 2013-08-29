@@ -302,6 +302,7 @@
     <ClCompile Include="..\bytecode\CodeBlockHash.cpp" />
     <ClCompile Include="..\bytecode\CodeOrigin.cpp" />
     <ClCompile Include="..\bytecode\CodeType.cpp" />
+    <ClCompile Include="..\bytecode\DeferredCompilationCallback.cpp" />
     <ClCompile Include="..\bytecode\ExecutionCounter.cpp" />
     <ClCompile Include="..\bytecode\ExitKind.cpp" />
     <ClCompile Include="..\bytecode\GetByIdStatus.cpp" />
@@ -377,6 +378,7 @@
     <ClCompile Include="..\jit\JITStubRoutine.cpp" />
     <ClCompile Include="..\jit\JITStubs.cpp" />
     <ClCompile Include="..\jit\JITThunks.cpp" />
+    <ClCompile Include="..\jit\JITToDFGDeferredCompilationCallback.cpp" />
     <ClCompile Include="..\jit\JumpReplacementWatchpoint.cpp" />
     <ClCompile Include="..\jit\ThunkGenerators.cpp" />
     <ClCompile Include="..\llint\LLIntCLoop.cpp" />
@@ -623,6 +625,7 @@
     <ClInclude Include="..\bytecode\CodeType.h" />
     <ClInclude Include="..\bytecode\Comment.h" />
     <ClInclude Include="..\bytecode\DataFormat.h" />
+    <ClInclude Include="..\bytecode\DeferredCompilationCallback.h" />
     <ClInclude Include="..\bytecode\EvalCodeCache.h" />
     <ClInclude Include="..\bytecode\ExecutionCounter.h" />
     <ClInclude Include="..\bytecode\ExitKind.h" />
@@ -739,7 +742,6 @@
     <ClInclude Include="..\jit\JITCode.h" />
     <ClInclude Include="..\jit\JITCompilationEffort.h" />
     <ClInclude Include="..\jit\JITDisassembler.h" />
-    <ClInclude Include="..\jit\JITDriver.h" />
     <ClInclude Include="..\jit\JITExceptions.h" />
     <ClInclude Include="..\jit\JITInlines.h" />
     <ClInclude Include="..\jit\JITStubCall.h" />
@@ -749,6 +751,7 @@
     <ClInclude Include="..\jit\JITStubsX86Common.h" />
     <ClInclude Include="..\jit\JITStubsX86_64.h" />
     <ClInclude Include="..\jit\JITThunks.h" />
+    <ClInclude Include="..\jit\JITToDFGDeferredCompilationCallback.h" />
     <ClInclude Include="..\jit\JITWriteBarrier.h" />
     <ClInclude Include="..\jit\JSInterfaceJIT.h" />
     <ClInclude Include="..\jit\JumpReplacementWatchpoint.h" />
@@ -836,7 +839,6 @@
     <ClInclude Include="..\runtime\ErrorPrototype.h" />
     <ClInclude Include="..\runtime\ExceptionHelpers.h" />
     <ClInclude Include="..\runtime\Executable.h" />
-    <ClInclude Include="..\runtime\ExecutionHarness.h" />
     <ClInclude Include="..\runtime\Float32Array.h" />
     <ClInclude Include="..\runtime\Float64Array.h" />
     <ClInclude Include="..\runtime\FunctionConstructor.h" />

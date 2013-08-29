@@ -55,7 +55,7 @@ unsigned getNumCompilations()
     return numCompilations;
 }
 
-static CompilationResult compile(CompileMode compileMode, ExecState* exec, CodeBlock* codeBlock, RefPtr<JSC::JITCode>& jitCode, MacroAssemblerCodePtr* jitCodeWithArityCheck, unsigned osrEntryBytecodeIndex)
+CompilationResult tryCompile(ExecState* exec, CodeBlock* codeBlock, unsigned osrEntryBytecodeIndex, PassRefPtr<DeferredCompilationCallback> callback)
 {
     SamplingRegion samplingRegion("DFG Compilation (Driver)");
     
@@ -99,12 +99,12 @@ static CompilationResult compile(CompileMode compileMode, ExecState* exec, CodeB
     else
         numVarsWithValues = 0;
     RefPtr<Plan> plan = adoptRef(
-        new Plan(compileMode, codeBlock, osrEntryBytecodeIndex, numVarsWithValues));
+        new Plan(codeBlock, osrEntryBytecodeIndex, numVarsWithValues));
     for (size_t i = 0; i < plan->mustHandleValues.size(); ++i) {
         int operand = plan->mustHandleValues.operandForIndex(i);
         if (operandIsArgument(operand)
             && !operandToArgument(operand)
-            && compileMode == CompileFunction
+            && codeBlock->codeType() == FunctionCode
             && codeBlock->specializationKind() == CodeForConstruct) {
             // Ugh. If we're in a constructor, the 'this' argument may hold garbage. It will
             // also never be used. It doesn't matter what we put into the value for this,
@@ -115,7 +115,8 @@ static CompilationResult compile(CompileMode compileMode, ExecState* exec, CodeB
             plan->mustHandleValues[i] = exec->uncheckedR(operand).jsValue();
     }
     
-    if (enableConcurrentJIT()) {
+    if (enableConcurrentJIT() && callback) {
+        plan->callback = callback;
         if (!vm.worklist)
             vm.worklist = globalWorklist();
         if (logCompilationChanges())
@@ -125,22 +126,7 @@ static CompilationResult compile(CompileMode compileMode, ExecState* exec, CodeB
     }
     
     plan->compileInThread(*vm.dfgState);
-    return plan->finalize(jitCode, jitCodeWithArityCheck);
-}
-
-CompilationResult tryCompile(ExecState* exec, CodeBlock* codeBlock, RefPtr<JSC::JITCode>& jitCode, unsigned bytecodeIndex)
-{
-    return compile(CompileOther, exec, codeBlock, jitCode, 0, bytecodeIndex);
-}
-
-CompilationResult tryCompileFunction(ExecState* exec, CodeBlock* codeBlock, RefPtr<JSC::JITCode>& jitCode, MacroAssemblerCodePtr& jitCodeWithArityCheck, unsigned bytecodeIndex)
-{
-    return compile(CompileFunction, exec, codeBlock, jitCode, &jitCodeWithArityCheck, bytecodeIndex);
-}
-
-CompilationResult tryFinalizePlan(PassRefPtr<Plan> plan, RefPtr<JSC::JITCode>& jitCode, MacroAssemblerCodePtr* jitCodeWithArityCheck)
-{
-    return plan->finalize(jitCode, jitCodeWithArityCheck);
+    return plan->finalizeWithoutNotifyingCallback();
 }
 
 } } // namespace JSC::DFG

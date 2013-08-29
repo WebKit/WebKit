@@ -61,6 +61,7 @@ SOURCES += \
     bytecode/CodeOrigin.cpp \
     bytecode/CodeType.cpp \
     bytecode/DFGExitProfile.cpp \
+    bytecode/DeferredCompilationCallback.cpp \
     bytecode/ExecutionCounter.cpp \
     bytecode/ExitKind.cpp \
     bytecode/GetByIdStatus.cpp \
@@ -221,6 +222,7 @@ SOURCES += \
     jit/JITStubRoutine.cpp \
     jit/JITStubs.cpp \
     jit/JITThunks.cpp \
+    jit/JITToDFGDeferredCompilationCallback.cpp \
     jit/JumpReplacementWatchpoint.cpp \
     jit/ThunkGenerators.cpp \
     llint/LLIntCLoop.cpp \
