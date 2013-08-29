@@ -292,9 +292,6 @@
     <Filter Include="platform\graphics\egl">
       <UniqueIdentifier>{e27b348d-0b87-4e5f-b5b9-b99e283ea22b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="css\markup">
-      <UniqueIdentifier>{da6334d5-8a96-4391-8c91-40c58b74ba56}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\DerivedSources.cpp">
@@ -15671,52 +15668,22 @@
     <None Include="WebCorePreBuild.cmd" />
     <None Include="..\Resources\plugIns.js" />
     <None Include="..\css\mathml.css">
-      <Filter>css\markup</Filter>
-    </None>
-    <None Include="..\css\mediaControlsBlackBerry.css">
-      <Filter>css\markup</Filter>
-    </None>
-    <None Include="..\css\mediaControlsBlackBerryFullscreen.css">
-      <Filter>css\markup</Filter>
-    </None>
-    <None Include="..\css\mediaControlsEfl.css">
-      <Filter>css\markup</Filter>
-    </None>
-    <None Include="..\css\mediaControlsEflFullscreen.css">
-      <Filter>css\markup</Filter>
-    </None>
-    <None Include="..\css\mediaControlsGtk.css">
-      <Filter>css\markup</Filter>
-    </None>
-    <None Include="..\css\mediaControlsQt.css">
-      <Filter>css\markup</Filter>
-    </None>
-    <None Include="..\css\mediaControlsQtFullscreen.css">
-      <Filter>css\markup</Filter>
-    </None>
-    <None Include="..\css\mediaControlsQuickTime.css">
-      <Filter>css\markup</Filter>
-    </None>
-    <None Include="..\css\mobileThemeQt.css">
-      <Filter>css\markup</Filter>
-    </None>
-    <None Include="..\css\svg.css">
-      <Filter>css\markup</Filter>
-    </None>
-    <None Include="..\css\themeBlackBerry.css">
-      <Filter>css\markup</Filter>
-    </None>
-    <None Include="..\css\themeQtNoListboxes.css">
-      <Filter>css\markup</Filter>
-    </None>
-    <None Include="..\css\themeWin.css">
-      <Filter>css\markup</Filter>
-    </None>
-    <None Include="..\css\themeWinQuirks.css">
-      <Filter>css\markup</Filter>
+      <Filter>css</Filter>
     </None>
     <None Include="..\css\view-source.css">
-      <Filter>css\markup</Filter>
+      <Filter>css</Filter>
+    </None>
+    <None Include="..\css\mediaControlsQuickTime.css">
+      <Filter>css</Filter>
+    </None>
+    <None Include="..\css\svg.css">
+      <Filter>css</Filter>
+    </None>
+    <None Include="..\css\themeWin.css">
+      <Filter>css</Filter>
+    </None>
+    <None Include="..\css\themeWinQuirks.css">
+      <Filter>css</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
