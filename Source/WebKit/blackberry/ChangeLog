@@ -1,3 +1,25 @@
+2013-08-29  Jacky Jiang  <zhajiang@blackberry.com>
+
+        [BlackBerry] Scrolling text with FCC does not work while composing an email
+        https://bugs.webkit.org/show_bug.cgi?id=120493
+
+        Reviewed by Rob Buis.
+        Internally reviewed by Gen Mak and Konrad Piascik.
+
+        JIRA 468007
+        m_cannotScrollIfHasFloatLayoutSizeRoundingError was true which prevented
+        FCC scrolling.
+        TransformedActualVisibleSize is quite different in email compose card
+        than browser. In this case, the issue was caused by transformedActualVisibleSize(768, 750)
+        which was not the actual visible size of the webkit part of the Cascades
+        view when keyboard popped up. We usually don't do keyboard adaptation for
+        windowless page clients; therefore, there will be no viewport change of
+        WebKit.
+        To fix the bug, we can ignore the windowless page clients.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::hasFloatLayoutSizeRoundingError):
+
 2013-08-27  Jacky Jiang  <zhajiang@blackberry.com>
 
         [BlackBerry] Rotate device from landscape to portrait during youtube streaming will cause device screen flash with video list page

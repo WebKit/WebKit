@@ -1702,6 +1702,9 @@ double WebPagePrivate::zoomToFitScale() const
 
 bool WebPagePrivate::hasFloatLayoutSizeRoundingError() const
 {
+    if (!m_client->hasView())
+        return false;
+
     int contentsWidth = contentsSize().width();
     int contentsHeight = contentsSize().height();
     float devicePixelRatio = m_webSettings->devicePixelRatio();
