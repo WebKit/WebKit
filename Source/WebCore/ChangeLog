@@ -1,3 +1,15 @@
+2013-08-29  Andreas Kling  <akling@apple.com>
+
+        Inspector: Use a bit of RefPtr::release() in generated code.
+        <https://webkit.org/b/120485>
+
+        Reviewed by Darin Adler.
+
+        Just something I spotted while reading InspectorBackendDispatcher.cpp.
+        Avoid 3 cases of reference count churnery.
+
+        * inspector/CodeGeneratorInspectorStrings.py:
+
 2013-08-29  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         According to DOM4, all DocType nodes should have a document

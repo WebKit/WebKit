@@ -59,7 +59,7 @@ $methodInCode
 
 ${responseCook}
     }
-    sendResponse(callId, result, commandNames[$commandNameIndex], protocolErrors, error);
+    sendResponse(callId, result.release(), commandNames[$commandNameIndex], protocolErrors.release(), error);
 }
 """)
 
@@ -377,7 +377,7 @@ void InspectorBackendDispatcherImpl::reportProtocolError(const long* const callI
     if (data)
         error->setArray("data", data);
     RefPtr<InspectorObject> message = InspectorObject::create();
-    message->setObject("error", error);
+    message->setObject("error", error.release());
     if (callId)
         message->setNumber("id", *callId);
     else
