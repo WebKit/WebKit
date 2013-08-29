@@ -103,7 +103,7 @@ void DragIcon::setImage(cairo_surface_t* image)
     }
 
 #ifdef GTK_API_VERSION_2
-    m_pixbuf = adoptGRef(cairoImageSurfaceToGdkPixbuf(image));
+    m_pixbuf = adoptGRef(cairoSurfaceToGdkPixbuf(image));
 #endif
 }
 

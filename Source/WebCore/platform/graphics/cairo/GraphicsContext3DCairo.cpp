@@ -30,6 +30,7 @@
 
 #if USE(3D_GRAPHICS)
 
+#include "CairoUtilities.h"
 #include "GraphicsContext3DPrivate.h"
 #include "Image.h"
 #include "ImageSource.h"
@@ -201,13 +202,23 @@ bool GraphicsContext3D::ImageExtractor::extractImage(bool premultiplyAlpha, bool
         // do AlphaDoUnmultiply if UNPACK_PREMULTIPLY_ALPHA_WEBGL is set to false.
         if (!premultiplyAlpha && m_imageHtmlDomSource != HtmlDomVideo)
             m_alphaOp = AlphaDoUnmultiply;
+
+        // if m_imageSurface is not an image, extract a copy of the surface
+        if (m_imageSurface && cairo_surface_get_type(m_imageSurface.get()) != CAIRO_SURFACE_TYPE_IMAGE) {
+            RefPtr<cairo_surface_t> tmpSurface = adoptRef(cairo_image_surface_create(CAIRO_FORMAT_ARGB32, m_imageWidth, m_imageHeight));
+            copyRectFromOneSurfaceToAnother(m_imageSurface.get(), tmpSurface.get(), IntSize(), IntRect(0, 0, m_imageWidth, m_imageHeight), IntSize(), CAIRO_OPERATOR_SOURCE);
+            m_imageSurface = tmpSurface.release();
+        }
     }
 
     if (!m_imageSurface)
         return false;
 
-    m_imageWidth = cairo_image_surface_get_width(m_imageSurface.get());
-    m_imageHeight = cairo_image_surface_get_height(m_imageSurface.get());
+    ASSERT(cairo_surface_get_type(m_imageSurface.get()) == CAIRO_SURFACE_TYPE_IMAGE);
+
+    IntSize imageSize = cairoSurfaceSize(m_imageSurface.get());
+    m_imageWidth = imageSize.width();
+    m_imageHeight = imageSize.height();
     if (!m_imageWidth || !m_imageHeight)
         return false;
 

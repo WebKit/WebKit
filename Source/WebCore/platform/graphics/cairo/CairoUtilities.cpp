@@ -38,6 +38,10 @@
 #include "RefPtrCairo.h"
 #include <wtf/Vector.h>
 
+#if ENABLE(ACCELERATED_2D_CANVAS)
+#include <cairo-gl.h>
+#endif
+
 namespace WebCore {
 
 void copyContextProperties(cairo_t* srcCr, cairo_t* dstCr)
@@ -214,9 +218,9 @@ PassRefPtr<cairo_surface_t> copyCairoImageSurface(cairo_surface_t* originalSurfa
     // Cairo doesn't provide a way to copy a cairo_surface_t.
     // See http://lists.cairographics.org/archives/cairo/2007-June/010877.html
     // Once cairo provides the way, use the function instead of this.
-    RefPtr<cairo_surface_t> newSurface = adoptRef(cairo_image_surface_create(cairo_image_surface_get_format(originalSurface), 
-                                                                             cairo_image_surface_get_width(originalSurface),
-                                                                             cairo_image_surface_get_height(originalSurface)));
+    IntSize size = cairoSurfaceSize(originalSurface);
+    RefPtr<cairo_surface_t> newSurface = adoptRef(cairo_surface_create_similar(originalSurface,
+        cairo_surface_get_content(originalSurface), size.width(), size.height()));
 
     RefPtr<cairo_t> cr = adoptRef(cairo_create(newSurface.get()));
     cairo_set_source_surface(cr.get(), originalSurface, 0, 0);
@@ -238,6 +242,21 @@ void copyRectFromOneSurfaceToAnother(cairo_surface_t* from, cairo_surface_t* to,
     cairo_translate(context.get(), destOffset.width(), destOffset.height());
     cairo_set_operator(context.get(), cairoOperator);
     copyRectFromCairoSurfaceToContext(from, context.get(), sourceOffset, rect);
+}
+
+IntSize cairoSurfaceSize(cairo_surface_t* surface)
+{
+    switch (cairo_surface_get_type(surface)) {
+    case CAIRO_SURFACE_TYPE_IMAGE:
+        return IntSize(cairo_image_surface_get_width(surface), cairo_image_surface_get_height(surface));
+#if ENABLE(ACCELERATED_2D_CANVAS)
+    case CAIRO_SURFACE_TYPE_GL:
+        return IntSize(cairo_gl_surface_get_width(surface), cairo_gl_surface_get_height(surface));
+#endif
+    default:
+        ASSERT_NOT_REACHED();
+        return IntSize();
+    }
 }
 
 } // namespace WebCore

@@ -24,16 +24,19 @@
  */
 
 #include "config.h"
+#include "CairoUtilities.h"
+
 #include "GdkCairoUtilities.h"
 #include "GtkVersioning.h"
-
+#include "IntSize.h"
 #include <cairo.h>
 #include <gtk/gtk.h>
 
-GdkPixbuf* cairoImageSurfaceToGdkPixbuf(cairo_surface_t* surface)
+using namespace WebCore;
+
+GdkPixbuf* cairoSurfaceToGdkPixbuf(cairo_surface_t* surface)
 {
-    return gdk_pixbuf_get_from_surface(surface, 0, 0,
-                                       cairo_image_surface_get_width(surface),
-                                       cairo_image_surface_get_height(surface));
+    IntSize size = cairoSurfaceSize(surface);
+    return gdk_pixbuf_get_from_surface(surface, 0, 0, size.width(), size.height());
 }
 

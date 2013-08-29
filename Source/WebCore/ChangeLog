@@ -1,3 +1,49 @@
+2013-08-29  Arnaud Renevier  <a.renevier@samsung.com>
+
+        [cairo] canvas drawing on itself doesn't work with accelerated canvas
+        https://bugs.webkit.org/show_bug.cgi?id=118808
+
+        Reviewed by Martin Robinson.
+
+        When copying an accelerated image, we try to get its dimensions with
+        cairo_image_surface_get_width/cairo_image_surface_get_height. As
+        surface is not an image, this returns width and height of 0.
+
+        Many other places use cairo_image_surface_get although the surface may
+        be a gl surface. 
+        
+        This patch fixes those issues by implementing a cairoSurfaceSize
+        helper that returns the surface size whatever type it is.
+
+        It use cairo_surface_create_similar instead of
+        cairo_image_surface_create in copyCairoImageSurface. It also calls
+        cairo_paint in encodeImage when a drawing over a black background is
+        needed.
+
+        It copies the surface to an image surface if needed in extractImage.
+
+        No new tests. Covered by existing tests.
+
+        * platform/graphics/cairo/BitmapImageCairo.cpp:
+        (WebCore::BitmapImage::BitmapImage):
+        (WebCore::BitmapImage::draw):
+        (WebCore::BitmapImage::checkForSolidColor):
+        * platform/graphics/cairo/CairoUtilities.cpp:
+        (WebCore::copyCairoImageSurface):
+        (WebCore::cairoSurfaceSize):
+        * platform/graphics/cairo/CairoUtilities.h:
+        * platform/graphics/cairo/GraphicsContext3DCairo.cpp:
+        (WebCore::GraphicsContext3D::ImageExtractor::extractImage):
+        * platform/graphics/gtk/GdkCairoUtilities.cpp:
+        (cairoSurfaceToGdkPixbuf):
+        * platform/graphics/gtk/GdkCairoUtilities.h:
+        * platform/graphics/gtk/ImageBufferGtk.cpp:
+        (WebCore::encodeImage):
+        * platform/graphics/gtk/ImageGtk.cpp:
+        (WebCore::BitmapImage::getGdkPixbuf):
+        * platform/gtk/DragIcon.cpp:
+        (WebCore::DragIcon::setImage):
+
 2013-08-29  Tamas Czene  <tczene@inf.u-szeged.hu>
 
         Buildfix after r154806 for !ENABLE(CSS_REGIONS) platforms.

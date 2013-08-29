@@ -109,7 +109,7 @@ PassRefPtr<Image> Image::loadPlatformThemeIcon(const char* name, int size)
 GdkPixbuf* BitmapImage::getGdkPixbuf()
 {
     RefPtr<cairo_surface_t> surface = nativeImageForCurrentFrame();
-    return surface ? cairoImageSurfaceToGdkPixbuf(surface.get()) : 0;
+    return surface ? cairoSurfaceToGdkPixbuf(surface.get()) : 0;
 }
 
 }

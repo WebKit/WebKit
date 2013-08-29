@@ -1,3 +1,15 @@
+2013-08-29  Arnaud Renevier  <a.renevier@samsung.com>
+
+        [cairo] canvas drawing on itself doesn't work with accelerated canvas
+        https://bugs.webkit.org/show_bug.cgi?id=118808
+
+        Reviewed by Martin Robinson.
+
+        Change cairoImageSurfaceToGdkPixbuf to cairoSurfaceToGdkPixbuf.
+
+        * webkit/webkitfavicondatabase.cpp:
+        (getIconPixbufSynchronously):
+
 2013-08-26  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed GTK build fix.

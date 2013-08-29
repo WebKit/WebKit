@@ -26,6 +26,6 @@
 #ifndef GdkCairoUtilities_h
 #define GdkCairoUtilities_h
 
-GdkPixbuf* cairoImageSurfaceToGdkPixbuf(cairo_surface_t* surface);
+GdkPixbuf* cairoSurfaceToGdkPixbuf(cairo_surface_t*);
 
 #endif // GdkCairoUtilities_h
