@@ -1,3 +1,41 @@
+2013-08-29  Darin Adler  <darin@apple.com>
+
+        Pasteboard::writeSelection violates layering (first step, fixes it for Mac platform only)
+        https://bugs.webkit.org/show_bug.cgi?id=120483
+
+        Reviewed by Anders Carlsson.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::cut): Added some comments. Use the new writeSelectionToPasteboard
+        function on Mac instead of Pasteboard::writeSelection.
+        (WebCore::Editor::copy): Ditto.
+
+        * editing/Editor.h: Removed an old unused Mac-only writeSelectionToPasteboard function
+        that was a cover that called through to Pasteboard::writeSelectionForTypes. Added a new
+        Mac-only writeSelectionToPasteboard function that is destined to become cross-platform soon.
+
+        * editing/mac/EditorMac.mm:
+        (WebCore::Editor::writeSelectionToPasteboard): Added. Uses a new pattern where the Editor
+        puts all the data into a structure called PasteboardWebContent then calls the Pasteboard to
+        do the work. The platform-specific aspect of PasteboardWebContent is what formats are needed
+        for each platform.
+
+        * page/DragController.cpp:
+        (WebCore::DragController::startDrag): Added some comments. Use the new writeSelectionToPasteboard
+        function on Mac instead of Pasteboard::writeSelection.
+
+        * platform/Pasteboard.h: Remove some unneeded forward declarations. Added comments for all functions
+        that don't belong in this class because they are layering violations; this becomes the to do list for
+        the project we are beginning here. Added the new PasteboardWebContent structure, empty on all platforms
+        except for Mac for now. Removed writeSelectionForTypes, a Mac-only function that is no longer used.
+        Added setTypes and writeAfterSettingTypes, the two halves of the future function named writeWebContent.
+        Put the writeSelection function inside a "not Mac" if statement. Later to be deleted entirely.
+
+        * platform/mac/PasteboardMac.mm: Removed now-unneeded selectionPasteboardTypes,
+        Pasteboard::writeSelectionForTypes, and writeSelection functions.
+        (WebCore::Pasteboard::setTypes): Added. First half of writing web content to the pasteboard.
+        (WebCore::Pasteboard::writeAfterSettingTypes): Added. Second half of writing web content to the pasteboard.
+
 2013-08-29  Antti Koivisto  <antti@apple.com>
 
         Remove code behind ENABLE(DIALOG_ELEMENT)

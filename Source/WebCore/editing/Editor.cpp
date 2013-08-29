@@ -1037,15 +1037,22 @@ void Editor::cut()
         systemBeep();
         return;
     }
+
+    // FIXME: This should share more code with the copy function; there is a lot of overlap.
     RefPtr<Range> selection = selectedRange();
     willWriteSelectionToPasteboard(selection);
     if (shouldDeleteRange(selection.get())) {
         updateMarkersForWordsAffectedByEditing(true);
-        if (enclosingTextFormControl(m_frame.selection().start())) {
-            Pasteboard::createForCopyAndPaste()->writePlainText(selectedTextForClipboard(),
-                canSmartCopyOrDelete() ? Pasteboard::CanSmartReplace : Pasteboard::CannotSmartReplace);
-        } else
+        if (enclosingTextFormControl(m_frame.selection().start()))
+            Pasteboard::createForCopyAndPaste()->writePlainText(selectedTextForClipboard(), canSmartCopyOrDelete() ? Pasteboard::CanSmartReplace : Pasteboard::CannotSmartReplace);
+        else {
+#if PLATFORM(MAC) && !PLATFORM(IOS)
+            writeSelectionToPasteboard(*Pasteboard::createForCopyAndPaste());
+#else
+            // FIXME: Convert all other platforms to match Mac and delete this.
             Pasteboard::createForCopyAndPaste()->writeSelection(selection.get(), canSmartCopyOrDelete(), &m_frame, IncludeImageAltTextForClipboard);
+#endif
+        }
         didWriteSelectionToPasteboard();
         deleteSelectionWithSmartDelete(canSmartCopyOrDelete());
     }
@@ -1068,8 +1075,14 @@ void Editor::copy()
         Document* document = m_frame.document();
         if (HTMLImageElement* imageElement = imageElementFromImageDocument(document))
             Pasteboard::createForCopyAndPaste()->writeImage(imageElement, document->url(), document->title());
-        else
+        else {
+#if PLATFORM(MAC) && !PLATFORM(IOS)
+            writeSelectionToPasteboard(*Pasteboard::createForCopyAndPaste());
+#else
+            // FIXME: Convert all other platforms to match Mac and delete this.
             Pasteboard::createForCopyAndPaste()->writeSelection(selectedRange().get(), canSmartCopyOrDelete(), &m_frame, IncludeImageAltTextForClipboard);
+#endif
+        }
     }
 
     didWriteSelectionToPasteboard();
@@ -3127,6 +3140,6 @@ void Editor::toggleOverwriteModeEnabled()
 {
     m_overwriteModeEnabled = !m_overwriteModeEnabled;
     m_frame.selection().setShouldShowBlockCursor(m_overwriteModeEnabled);
-};
+}
 
 } // namespace WebCore

@@ -785,6 +785,8 @@ bool DragController::startDrag(Frame* src, const DragState& state, DragOperation
     Image* image = getImage(element);
     if (state.type == DragSourceActionSelection) {
         if (!clipboard->pasteboard().hasData()) {
+            // FIXME: This entire block is almost identical to the code in Editor::copy, and the code should be shared.
+
             RefPtr<Range> selectionRange = src->selection().toNormalizedRange();
             ASSERT(selectionRange);
 
@@ -793,8 +795,12 @@ bool DragController::startDrag(Frame* src, const DragState& state, DragOperation
             if (enclosingTextFormControl(src->selection().start()))
                 clipboard->pasteboard().writePlainText(src->editor().selectedTextForClipboard(), Pasteboard::CannotSmartReplace);
             else {
-                // FIXME: Could this instead be a helper function in Editor?
-                clipboard->pasteboard().writeSelection(selectionRange.get(), src->editor().smartInsertDeleteEnabled() && src->selection().granularity() == WordGranularity, src, IncludeImageAltTextForClipboard);
+#if PLATFORM(MAC)
+                src->editor().writeSelectionToPasteboard(clipboard->pasteboard());
+#else
+                // FIXME: Convert all other platforms to match Mac and delete this.
+                clipboard->pasteboard().writeSelection(selectionRange.get(), src->editor().canSmartCopyOrDelete(), src, IncludeImageAltTextForClipboard);
+#endif
             }
 
             src->editor().didWriteSelectionToPasteboard();

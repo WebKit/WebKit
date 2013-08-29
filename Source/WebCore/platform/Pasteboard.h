@@ -66,19 +66,30 @@ extern const char* WebURLPboardType;
 extern const char* WebURLsWithTitlesPboardType;
 #endif
 
-class Clipboard;
 class DocumentFragment;
 class DragData;
 class Element;
 class Frame;
-class HitTestResult;
 class KURL;
 class Node;
 class Range;
 class SharedBuffer;
 
 enum ShouldSerializeSelectedTextForClipboard { DefaultSelectedTextType, IncludeImageAltTextForClipboard };
-    
+
+// For writing web content to the pasteboard. Generally sorted with the richest formats on top.
+struct PasteboardWebContent {
+#if PLATFORM(MAC) && !PLATFORM(IOS)
+    bool canSmartCopyOrDelete;
+    RefPtr<SharedBuffer> dataInWebArchiveFormat;
+    RefPtr<SharedBuffer> dataInRTFDFormat;
+    RefPtr<SharedBuffer> dataInRTFFormat;
+    String dataInStringFormat;
+    Vector<String> clientTypes;
+    Vector<RefPtr<SharedBuffer>> clientData;
+#endif
+};
+
 class Pasteboard {
     WTF_MAKE_NONCOPYABLE(Pasteboard); WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -91,9 +102,8 @@ public:
     static PassOwnPtr<Pasteboard> create(const String& pasteboardName);
     String name() const { return m_pasteboardName; }
 
-    void writeSelectionForTypes(const Vector<String>& pasteboardTypes, bool canSmartCopyOrDelete, Frame*, ShouldSerializeSelectedTextForClipboard);
     explicit Pasteboard(const String& pasteboardName);
-    static PassRefPtr<SharedBuffer> getDataSelection(Frame*, const String& pasteboardType);
+    static PassRefPtr<SharedBuffer> getDataSelection(Frame*, const String& pasteboardType); // FIXME: Layering violation.
 #endif
 
 #if PLATFORM(GTK)
@@ -124,16 +134,23 @@ public:
     String readString(const String& type);
     Vector<String> readFilenames();
 
+    // FIXME: It would be nicer if the two functions below were just parts of a single writeWebContent function,
+    // but for now Mac supports an editor client call that happens after setting the types but before writing to the pasteboard.
+    void setTypes(const PasteboardWebContent&);
+    void writeAfterSettingTypes(const PasteboardWebContent&);
+
     bool writeString(const String& type, const String& data);
-    void writeSelection(Range*, bool canSmartCopyOrDelete, Frame*, ShouldSerializeSelectedTextForClipboard = DefaultSelectedTextType);
+#if !(PLATFORM(MAC) && !PLATFORM(IOS))
+    void writeSelection(Range*, bool canSmartCopyOrDelete, Frame*, ShouldSerializeSelectedTextForClipboard = DefaultSelectedTextType); // FIXME: Layering violation.
+#endif
     void writeMarkup(const String& markup);
     void writePlainText(const String&, SmartReplaceOption);
 #if !PLATFORM(IOS)
-    void writeURL(const KURL&, const String&, Frame* = 0);
-    void writeImage(Node*, const KURL&, const String& title);
+    void writeURL(const KURL&, const String&, Frame* = 0); // FIXME: Layering violation.
+    void writeImage(Node*, const KURL&, const String& title); // FIXME: Layering violation.
 #else
-    void writeImage(Node*, Frame*);
-    void writePlainText(const String&, Frame*);
+    void writeImage(Node*, Frame*); // FIXME: Layering violation.
+    void writePlainText(const String&, Frame*); // FIXME: Layering violation.
     static NSArray* supportedPasteboardTypes();
 #endif
     void writePasteboard(const Pasteboard& sourcePasteboard);
@@ -147,14 +164,11 @@ public:
     void setDragImage(DragImageRef, const IntPoint& hotSpot);
 #endif
 
-    // FIXME: Having these functions here is a layering violation.
-    // These functions need to move to the editing directory even if they have platform-specific aspects.
-    PassRefPtr<DocumentFragment> documentFragment(Frame*, PassRefPtr<Range>, bool allowPlainText, bool& chosePlainText);
-    String plainText(Frame* = 0);
+    PassRefPtr<DocumentFragment> documentFragment(Frame*, PassRefPtr<Range>, bool allowPlainText, bool& chosePlainText); // FIXME: Layering violation.
+    String plainText(Frame* = 0); // FIXME: Layering violation.
 
 #if PLATFORM(IOS)
-    // FIXME: Remove this once we switch to platform strategies instead of the editor client.
-    void setFrame(Frame*);
+    void setFrame(Frame*); // FIXME: Layering violation.
 #endif
 
 #if PLATFORM(GTK) || PLATFORM(QT)
@@ -166,7 +180,7 @@ public:
     void setExternalDataObject(IDataObject*);
     void writeURLToWritableDataObject(const KURL&, const String&);
     COMPtr<WCDataObject> writableDataObject() const { return m_writableDataObject; }
-    void writeImageToDataObject(Element*, const KURL&);
+    void writeImageToDataObject(Element*, const KURL&); // FIXME: Layering violation.
 #endif
 
 #if PLATFORM(GTK) || PLATFORM(QT)
@@ -197,16 +211,16 @@ private:
 #endif
 
 #if PLATFORM(IOS)
-    PassRefPtr<DocumentFragment> documentFragmentForPasteboardItemAtIndex(Frame*, int index, bool allowPlainText, bool& chosePlainText);
+    PassRefPtr<DocumentFragment> documentFragmentForPasteboardItemAtIndex(Frame*, int index, bool allowPlainText, bool& chosePlainText); // FIXME: Layering violation.
 
-    Frame* m_frame;
+    Frame* m_frame; // FIXME: Layering violation.
     long m_changeCount;
 #endif
 
 #if PLATFORM(WIN)
     void finishCreatingPasteboard();
-    void writeRangeToDataObject(Range*, Frame*);
-    void writeURLToDataObject(const KURL&, const String&, Frame*);
+    void writeRangeToDataObject(Range*, Frame*); // FIXME: Layering violation.
+    void writeURLToDataObject(const KURL&, const String&, Frame*); // FIXME: Layering violation.
     void writePlainTextToDataObject(const String&, SmartReplaceOption);
 
     HWND m_owner;

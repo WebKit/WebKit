@@ -72,20 +72,6 @@ const char* WebURLNamePboardType = "public.url-name";
 const char* WebURLPboardType = "public.url";
 const char* WebURLsWithTitlesPboardType = "WebURLsWithTitlesPboardType";
 
-static Vector<String> selectionPasteboardTypes(bool canSmartCopyOrDelete, bool selectionContainsAttachments)
-{
-    Vector<String> types;
-    if (canSmartCopyOrDelete)
-        types.append(WebSmartPastePboardType);
-    types.append(WebArchivePboardType);
-    if (selectionContainsAttachments)
-        types.append(String(NSRTFDPboardType));
-    types.append(String(NSRTFPboardType));
-    types.append(String(NSStringPboardType));
-
-    return types;
-}
-
 static const Vector<String> writableTypesForURL()
 {
     Vector<String> types;
@@ -185,47 +171,40 @@ PassRefPtr<SharedBuffer> Pasteboard::getDataSelection(Frame* frame, const String
     return 0;
 }
 
-void Pasteboard::writeSelectionForTypes(const Vector<String>& pasteboardTypes, bool canSmartCopyOrDelete, Frame* frame, ShouldSerializeSelectedTextForClipboard shouldSerializeSelectedTextForClipboard)
+void Pasteboard::setTypes(const PasteboardWebContent& content)
 {
-    NSAttributedString* attributedString = nil;
-    RetainPtr<WebHTMLConverter> converter = adoptNS([[WebHTMLConverter alloc] initWithDOMRange:kit(frame->editor().selectedRange().get())]);
-    if (converter)
-        attributedString = [converter.get() attributedString];
-    
-    Vector<String> types = !pasteboardTypes.isEmpty() ? pasteboardTypes : selectionPasteboardTypes(canSmartCopyOrDelete, [attributedString containsAttachments]);
+    Vector<String> types;
 
-    Vector<String> clientTypes;
-    Vector<RefPtr<SharedBuffer> > clientData;
-    frame->editor().client()->getClientPasteboardDataForRange(frame->editor().selectedRange().get(), clientTypes, clientData);
-    types.appendVector(clientTypes);
+    if (content.canSmartCopyOrDelete)
+        types.append(WebSmartPastePboardType);
+    if (content.dataInWebArchiveFormat)
+        types.append(WebArchivePboardType);
+    if (content.dataInRTFDFormat)
+        types.append(String(NSRTFDPboardType));
+    if (content.dataInRTFFormat)
+        types.append(String(NSRTFPboardType));
+    if (!content.dataInStringFormat.isNull())
+        types.append(String(NSStringPboardType));
+    types.appendVector(content.clientTypes);
 
     m_changeCount = platformStrategies()->pasteboardStrategy()->setTypes(types, m_pasteboardName);
-    frame->editor().client()->didSetSelectionTypesForPasteboard();
+}
 
-    for (size_t i = 0; i < clientTypes.size(); ++i)
-        m_changeCount = platformStrategies()->pasteboardStrategy()->setBufferForType(clientData[i], clientTypes[i], m_pasteboardName);
-
-    // Put HTML on the pasteboard.
-    if (types.contains(WebArchivePboardType))
-        m_changeCount = platformStrategies()->pasteboardStrategy()->setBufferForType(getDataSelection(frame, WebArchivePboardType), WebArchivePboardType, m_pasteboardName);
-    
-    // Put the attributed string on the pasteboard (RTF/RTFD format).
-    if (types.contains(String(NSRTFDPboardType)))
-        m_changeCount = platformStrategies()->pasteboardStrategy()->setBufferForType(getDataSelection(frame, NSRTFDPboardType), NSRTFDPboardType, m_pasteboardName);
-
-    if (types.contains(String(NSRTFPboardType)))
-        m_changeCount = platformStrategies()->pasteboardStrategy()->setBufferForType(getDataSelection(frame, NSRTFPboardType), NSRTFPboardType, m_pasteboardName);
-    
-    // Put plain string on the pasteboard.
-    if (types.contains(String(NSStringPboardType))) {
-        String text = shouldSerializeSelectedTextForClipboard == IncludeImageAltTextForClipboard
-            ? frame->editor().stringSelectionForPasteboardWithImageAltText()
-            : frame->editor().stringSelectionForPasteboard();
-        m_changeCount = platformStrategies()->pasteboardStrategy()->setStringForType(text, NSStringPboardType, m_pasteboardName);
-    }
-    
-    if (types.contains(WebSmartPastePboardType))
+void Pasteboard::writeAfterSettingTypes(const PasteboardWebContent& content)
+{
+    ASSERT(content.clientTypes.size() == content.clientData.size());
+    for (size_t i = 0, size = content.clientTypes.size(); i < size; ++i)
+        m_changeCount = platformStrategies()->pasteboardStrategy()->setBufferForType(content.clientData[i], content.clientTypes[i], m_pasteboardName);
+    if (content.canSmartCopyOrDelete)
         m_changeCount = platformStrategies()->pasteboardStrategy()->setBufferForType(0, WebSmartPastePboardType, m_pasteboardName);
+    if (content.dataInWebArchiveFormat)
+        m_changeCount = platformStrategies()->pasteboardStrategy()->setBufferForType(content.dataInWebArchiveFormat, WebArchivePboardType, m_pasteboardName);
+    if (content.dataInRTFDFormat)
+        m_changeCount = platformStrategies()->pasteboardStrategy()->setBufferForType(content.dataInRTFDFormat, NSRTFDPboardType, m_pasteboardName);
+    if (content.dataInRTFFormat)
+        m_changeCount = platformStrategies()->pasteboardStrategy()->setBufferForType(content.dataInRTFFormat, NSRTFPboardType, m_pasteboardName);
+    if (!content.dataInStringFormat.isNull())
+        m_changeCount = platformStrategies()->pasteboardStrategy()->setStringForType(content.dataInStringFormat, NSStringPboardType, m_pasteboardName);
 }
 
 void Pasteboard::writePlainText(const String& text, SmartReplaceOption smartReplaceOption)
@@ -239,11 +218,6 @@ void Pasteboard::writePlainText(const String& text, SmartReplaceOption smartRepl
     m_changeCount = platformStrategies()->pasteboardStrategy()->setStringForType(text, NSStringPboardType, m_pasteboardName);
     if (smartReplaceOption == CanSmartReplace)
         m_changeCount = platformStrategies()->pasteboardStrategy()->setBufferForType(0, WebSmartPastePboardType, m_pasteboardName);
-}
-    
-void Pasteboard::writeSelection(Range*, bool canSmartCopyOrDelete, Frame* frame, ShouldSerializeSelectedTextForClipboard shouldSerializeSelectedTextForClipboard)
-{
-    writeSelectionForTypes(Vector<String>(), canSmartCopyOrDelete, frame, shouldSerializeSelectedTextForClipboard);
 }
 
 static long writeURLForTypes(const Vector<String>& types, const String& pasteboardName, const KURL& url, const String& titleStr, Frame* frame)

@@ -243,12 +243,6 @@ void Editor::takeFindStringFromSelection()
     platformStrategies()->pasteboardStrategy()->setStringForType(m_frame.displayStringModifiedByEncoding(selectedTextForClipboard()), NSStringPboardType, NSFindPboard);
 }
 
-void Editor::writeSelectionToPasteboard(const String& pasteboardName, const Vector<String>& pasteboardTypes)
-{
-    Pasteboard pasteboard(pasteboardName);
-    pasteboard.writeSelectionForTypes(pasteboardTypes, true, &m_frame, DefaultSelectedTextType);
-}
-    
 void Editor::readSelectionFromPasteboard(const String& pasteboardName)
 {
     Pasteboard pasteboard(pasteboardName);
@@ -277,6 +271,25 @@ String Editor::stringSelectionForPasteboardWithImageAltText()
 PassRefPtr<SharedBuffer> Editor::dataSelectionForPasteboard(const String& pasteboardType)
 {
     return Pasteboard::getDataSelection(&m_frame, pasteboardType);
+}
+
+void Editor::writeSelectionToPasteboard(Pasteboard& pasteboard)
+{
+    PasteboardWebContent content;
+    content.canSmartCopyOrDelete = canSmartCopyOrDelete();
+    if (RefPtr<LegacyWebArchive> webArchive = LegacyWebArchive::createFromSelection(&m_frame))
+        content.dataInWebArchiveFormat = SharedBuffer::wrapCFData(webArchive->rawDataRepresentation().get());
+    if (NSAttributedString *attributedString = [adoptNS([[WebHTMLConverter alloc] initWithDOMRange:kit(selectedRange().get())]) attributedString]) {
+        if ([attributedString containsAttachments])
+            content.dataInRTFDFormat = SharedBuffer::wrapNSData([attributedString RTFDFromRange:NSMakeRange(0, [attributedString length]) documentAttributes:nil]);
+        content.dataInRTFFormat = SharedBuffer::wrapNSData([attributedString RTFFromRange:NSMakeRange(0, [attributedString length]) documentAttributes:nil]);
+    }
+    content.dataInStringFormat = stringSelectionForPasteboardWithImageAltText();
+    client()->getClientPasteboardDataForRange(selectedRange().get(), content.clientTypes, content.clientData);
+
+    pasteboard.setTypes(content);
+    client()->didSetSelectionTypesForPasteboard();
+    pasteboard.writeAfterSettingTypes(content);
 }
 
 } // namespace WebCore
