@@ -352,7 +352,6 @@ IDL_BINDINGS += \
     $$PWD/html/HTMLCollection.idl \
     $$PWD/html/HTMLDataListElement.idl \
     $$PWD/html/HTMLDetailsElement.idl \
-    $$PWD/html/HTMLDialogElement.idl \
     $$PWD/html/HTMLDirectoryElement.idl \
     $$PWD/html/HTMLDivElement.idl \
     $$PWD/html/HTMLDListElement.idl \

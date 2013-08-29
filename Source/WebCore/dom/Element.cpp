@@ -1267,25 +1267,6 @@ RenderObject* Element::createRenderer(RenderArena*, RenderStyle* style)
     return RenderObject::createObject(this, style);
 }
 
-bool Element::isDisabledFormControl() const
-{
-#if ENABLE(DIALOG_ELEMENT)
-    // FIXME: disabled and inert are separate concepts in the spec, but now we treat them as the same.
-    // For example, an inert, non-disabled form control should not be grayed out.
-    if (isInert())
-        return true;
-#endif
-    return false;
-}
-
-#if ENABLE(DIALOG_ELEMENT)
-bool Element::isInert() const
-{
-    Element* dialog = document()->activeModalDialog();
-    return dialog && !containsIncludingShadowDOM(dialog) && !dialog->containsIncludingShadowDOM(this);
-}
-#endif
-
 Node::InsertionNotificationRequest Element::insertedInto(ContainerNode* insertionPoint)
 {
     bool wasInDocument = inDocument();
@@ -1340,9 +1321,6 @@ void Element::removedFrom(ContainerNode* insertionPoint)
     bool wasInDocument = insertionPoint->document();
 #endif
 
-#if ENABLE(DIALOG_ELEMENT)
-    document()->removeFromTopLayer(this);
-#endif
 #if ENABLE(FULLSCREEN_API)
     if (containsFullScreenElement())
         setContainsFullScreenElementOnAncestorsCrossingFrameBoundaries(false);
@@ -2609,24 +2587,6 @@ void Element::setContainsFullScreenElementOnAncestorsCrossingFrameBoundaries(boo
     Element* element = this;
     while ((element = parentCrossingFrameBoundaries(element)))
         element->setContainsFullScreenElement(flag);
-}
-#endif    
-
-#if ENABLE(DIALOG_ELEMENT)
-bool Element::isInTopLayer() const
-{
-    return hasRareData() && elementRareData()->isInTopLayer();
-}
-
-void Element::setIsInTopLayer(bool inTopLayer)
-{
-    if (isInTopLayer() == inTopLayer)
-        return;
-    ensureElementRareData().setIsInTopLayer(inTopLayer);
-
-    // We must ensure a reattach occurs so the renderer is inserted in the correct sibling order under RenderView according to its
-    // top layer position, or in its usual place if not in the top layer.
-    reattachIfAttached();
 }
 #endif
 

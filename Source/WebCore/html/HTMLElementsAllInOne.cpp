@@ -48,7 +48,6 @@
 #include "HTMLDataListElement.cpp"
 #include "HTMLDetailsElement.cpp"
 #include "HTMLDListElement.cpp"
-#include "HTMLDialogElement.cpp"
 #include "HTMLDirectoryElement.cpp"
 #include "HTMLDivElement.cpp"
 #include "HTMLElement.cpp"

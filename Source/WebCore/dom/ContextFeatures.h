@@ -39,7 +39,6 @@ class Page;
 class ContextFeatures : public RefCountedSupplement<Page, ContextFeatures> {
 public:
     enum FeatureType {
-        DialogElement = 0,
         StyleScoped,
         HTMLNotifications,
         MutationEvents,
@@ -51,7 +50,6 @@ public:
     static ContextFeatures* defaultSwitch();
     static PassRefPtr<ContextFeatures> create(ContextFeaturesClient*);
 
-    static bool dialogElementEnabled(Document*);
     static bool styleScopedEnabled(Document*);
     static bool htmlNotificationsEnabled(Document*);
     static bool mutationEventsEnabled(Document*);

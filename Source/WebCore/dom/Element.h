@@ -475,11 +475,8 @@ public:
 
     // Used for disabled form elements; if true, prevents mouse events from being dispatched
     // to event listeners, and prevents DOMActivate events from being sent at all.
-    virtual bool isDisabledFormControl() const;
+    virtual bool isDisabledFormControl() const { return false; }
 
-#if ENABLE(DIALOG_ELEMENT)
-    bool isInert() const;
-#endif
 
 #if ENABLE(SVG)
     virtual bool childShouldCreateRenderer(const Node*) const;
@@ -502,11 +499,6 @@ public:
 
     // W3C API
     void webkitRequestFullscreen();
-#endif
-
-#if ENABLE(DIALOG_ELEMENT)
-    bool isInTopLayer() const;
-    void setIsInTopLayer(bool);
 #endif
 
 #if ENABLE(POINTER_LOCK)

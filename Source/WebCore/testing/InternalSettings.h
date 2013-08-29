@@ -67,9 +67,6 @@ public:
         float m_originalTextAutosizingFontScaleFactor;
 #endif
         String m_originalMediaTypeOverride;
-#if ENABLE(DIALOG_ELEMENT)
-        bool m_originalDialogElementEnabled;
-#endif
         bool m_originalCanvasUsesAcceleratedDrawing;
         bool m_originalMockScrollbarsEnabled;
         bool m_originalUsesOverlayScrollbars;
@@ -119,7 +116,6 @@ public:
     bool cssVariablesEnabled(ExceptionCode&);
     void setCanStartMedia(bool, ExceptionCode&);
     void setEditingBehavior(const String&, ExceptionCode&);
-    void setDialogElementEnabled(bool, ExceptionCode&);
     void setShouldDisplayTrackKind(const String& kind, bool enabled, ExceptionCode&);
     bool shouldDisplayTrackKind(const String& kind, ExceptionCode&);
     void setStorageBlockingPolicy(const String&, ExceptionCode&);

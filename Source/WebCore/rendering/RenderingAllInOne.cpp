@@ -53,7 +53,6 @@
 #include "RenderCounter.cpp"
 #include "RenderDeprecatedFlexibleBox.cpp"
 #include "RenderDetailsMarker.cpp"
-#include "RenderDialog.cpp"
 #include "RenderEmbeddedObject.cpp"
 #include "RenderFieldset.cpp"
 #include "RenderFileUploadControl.cpp"

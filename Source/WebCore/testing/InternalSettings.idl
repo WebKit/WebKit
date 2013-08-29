@@ -49,7 +49,6 @@
     [RaisesException] boolean cssVariablesEnabled();
     [RaisesException] void setCanStartMedia(boolean enabled);
     [RaisesException] void setEditingBehavior(DOMString behavior);
-    [RaisesException] void setDialogElementEnabled(boolean enabled);
     void setLangAttributeAwareFormControlUIEnabled(boolean enabled);
 
     [Conditional=VIDEO_TRACK, RaisesException] void setShouldDisplayTrackKind(DOMString kind, boolean enabled);

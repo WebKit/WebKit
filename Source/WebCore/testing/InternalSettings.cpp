@@ -83,9 +83,6 @@ InternalSettings::Backup::Backup(Settings& settings)
     , m_originalTextAutosizingFontScaleFactor(settings.textAutosizingFontScaleFactor())
 #endif
     , m_originalMediaTypeOverride(settings.mediaTypeOverride())
-#if ENABLE(DIALOG_ELEMENT)
-    , m_originalDialogElementEnabled(RuntimeEnabledFeatures::dialogElementEnabled())
-#endif
     , m_originalCanvasUsesAcceleratedDrawing(settings.canvasUsesAcceleratedDrawing())
     , m_originalMockScrollbarsEnabled(settings.mockScrollbarsEnabled())
     , m_langAttributeAwareFormControlUIEnabled(RuntimeEnabledFeatures::langAttributeAwareFormControlUIEnabled())
@@ -121,9 +118,6 @@ void InternalSettings::Backup::restoreTo(Settings& settings)
     settings.setTextAutosizingFontScaleFactor(m_originalTextAutosizingFontScaleFactor);
 #endif
     settings.setMediaTypeOverride(m_originalMediaTypeOverride);
-#if ENABLE(DIALOG_ELEMENT)
-    RuntimeEnabledFeatures::setDialogElementEnabled(m_originalDialogElementEnabled);
-#endif
     settings.setCanvasUsesAcceleratedDrawing(m_originalCanvasUsesAcceleratedDrawing);
     settings.setMockScrollbarsEnabled(m_originalMockScrollbarsEnabled);
     RuntimeEnabledFeatures::setLangAttributeAwareFormControlUIEnabled(m_langAttributeAwareFormControlUIEnabled);
@@ -388,16 +382,6 @@ void InternalSettings::setEditingBehavior(const String& editingBehavior, Excepti
         settings()->setEditingBehaviorType(EditingUnixBehavior);
     else
         ec = SYNTAX_ERR;
-}
-
-void InternalSettings::setDialogElementEnabled(bool enabled, ExceptionCode& ec)
-{
-    UNUSED_PARAM(ec);
-#if ENABLE(DIALOG_ELEMENT)
-    RuntimeEnabledFeatures::setDialogElementEnabled(enabled);
-#else
-    UNUSED_PARAM(enabled);
-#endif
 }
 
 void InternalSettings::setShouldDisplayTrackKind(const String& kind, bool enabled, ExceptionCode& ec)

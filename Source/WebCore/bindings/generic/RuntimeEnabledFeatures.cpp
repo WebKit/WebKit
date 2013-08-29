@@ -227,10 +227,6 @@ bool RuntimeEnabledFeatures::isInputTypeTimeEnabled = true;
 bool RuntimeEnabledFeatures::isInputTypeWeekEnabled = true;
 #endif
 
-#if ENABLE(DIALOG_ELEMENT)
-bool RuntimeEnabledFeatures::isDialogElementEnabled = false;
-#endif
-
 #if ENABLE(CSP_NEXT)
 bool RuntimeEnabledFeatures::areExperimentalContentSecurityPolicyFeaturesEnabled = false;
 #endif

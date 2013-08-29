@@ -276,11 +276,6 @@ public:
     static void setInputTypeWeekEnabled(bool isEnabled) { isInputTypeWeekEnabled = isEnabled; }
 #endif
 
-#if ENABLE(DIALOG_ELEMENT)
-    static bool dialogElementEnabled() { return isDialogElementEnabled; }
-    static void setDialogElementEnabled(bool isEnabled) { isDialogElementEnabled = isEnabled; }
-#endif
-
 #if ENABLE(CSP_NEXT)
     static bool experimentalContentSecurityPolicyFeaturesEnabled() { return areExperimentalContentSecurityPolicyFeaturesEnabled; }
     static void setExperimentalContentSecurityPolicyFeaturesEnabled(bool isEnabled) { areExperimentalContentSecurityPolicyFeaturesEnabled = isEnabled; }
@@ -396,10 +391,6 @@ private:
 
 #if ENABLE(INPUT_TYPE_WEEK)
     static bool isInputTypeWeekEnabled;
-#endif
-
-#if ENABLE(DIALOG_ELEMENT)
-    static bool isDialogElementEnabled;
 #endif
 
 #if ENABLE(CSP_NEXT)
