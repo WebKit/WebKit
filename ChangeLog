@@ -1,3 +1,10 @@
+2013-08-29  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Unreviewed. Update NEWS and Versions.m4 for 2.1.90.1 release.
+
+        * Source/autotools/Versions.m4: bump to 2.1.90.1.
+        * configure.ac: Add webkit_patch_version to AC_INIT call.
+
 2013-08-28  Gustavo Noronha Silva  <gns@gnome.org>
 
         [GTK] Enable maintainer mode configure switch

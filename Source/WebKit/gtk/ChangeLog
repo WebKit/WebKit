@@ -1,3 +1,9 @@
+2013-08-29  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Unreviewed. Update NEWS and Versions.m4 for 2.1.90.1 release.
+
+        * NEWS: Add release notes.
+
 2013-08-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update NEWS and Versions.m4 for 2.1.90 release.

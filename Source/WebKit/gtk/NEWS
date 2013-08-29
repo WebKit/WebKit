@@ -1,3 +1,14 @@
+===================
+WebKitGTK+ 2.1.90.1
+===================
+
+What's new in WebKitGTK+ 2.1.90.1?
+
+  - Adds support for maintainer mode, so that the GNOME continuous
+    integration will be able to forbid autotools regeneration
+  - Added DOM bindings symbols that got removed from the IDL back for
+    ABI compatibility
+
 =================
 WebKitGTK+ 2.1.90
 =================
