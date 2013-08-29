@@ -1,3 +1,16 @@
+2013-08-29  Michael Saboff  <msaboff@apple.com>
+
+        REGRESSION (r153222, 32-bit): NULL JSValue() seen when running peacekeeper benchmark
+        https://bugs.webkit.org/show_bug.cgi?id=120080
+
+        Rubber stamped by Oliver Hunt.
+
+        Added layout test that crashes without the fix in bug 120080.
+
+        * fast/js/lazy-create-arguments-from-get-by-val-expected.txt: Added.
+        * fast/js/lazy-create-arguments-from-get-by-val.html: Added.
+        * fast/js/script-tests/lazy-create-arguments-from-get-by-val.js: Added.
+
 2013-08-29  Dean Jackson  <dino@apple.com>
 
         XMLSerializer-attribute-namespace-prefix-conflicts can't produce reliable results
