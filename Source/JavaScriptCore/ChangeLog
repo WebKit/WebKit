@@ -1,3 +1,180 @@
+2013-08-28  Filip Pizlo  <fpizlo@apple.com>
+
+        CodeBlock compilation and installation should be simplified and rationalized
+        https://bugs.webkit.org/show_bug.cgi?id=120326
+
+        Reviewed by Oliver Hunt.
+        
+        Previously Executable owned the code for generating JIT code; you always had
+        to go through Executable. But often you also had to go through CodeBlock,
+        because ScriptExecutable couldn't have virtual methods, but CodeBlock could.
+        So you'd ask CodeBlock to do something, which would dispatch through a
+        virtual method that would select the appropriate Executable subtype's method.
+        This all meant that the same code would often be duplicated, because most of
+        the work needed to compile something was identical regardless of code type.
+        But then we tried to fix this, by having templatized helpers in
+        ExecutionHarness.h and JITDriver.h. The result was that if you wanted to find
+        out what happened when you asked for something to be compiled, you'd go on a
+        wild ride that started with CodeBlock, touched upon Executable, and then
+        ricocheted into either ExecutionHarness or JITDriver (likely both).
+        
+        Another awkwardness was that for concurrent compiles, the DFG::Worklist had
+        super-special inside knowledge of what JITStubs.cpp's cti_optimize would have
+        done once the compilation finished.
+        
+        Also, most of the DFG JIT drivers assumed that they couldn't install the
+        JITCode into the CodeBlock directly - instead they would return it via a
+        reference, which happened to be a reference to the JITCode pointer in
+        Executable. This was super weird.
+        
+        Finally, there was no notion of compiling code into a special CodeBlock that
+        wasn't used for handling calls into an Executable. I'd like this for FTL OSR
+        entry.
+        
+        This patch solves these problems by reducing all of that complexity into just
+        three primitives:
+        
+        - Executable::newCodeBlock(). This gives you a new code block, either for call
+          or for construct, and either to serve as the baseline code or the optimized
+          code. The new code block is then owned by the caller; Executable doesn't
+          register it anywhere. The new code block has no JITCode and isn't callable,
+          but it has all of the bytecode.
+        
+        - CodeBlock::prepareForExecution(). This takes the CodeBlock's bytecode and
+          produces a JITCode, and then installs the JITCode into the CodeBlock. This
+          method takes a JITType, and always compiles with that JIT. If you ask for
+          JITCode::InterpreterThunk then you'll get JITCode that just points to the
+          LLInt entrypoints. Once this returns, it is possible to call into the
+          CodeBlock if you do so manually - but the Executable still won't know about
+          it so JS calls to that Executable will still be routed to whatever CodeBlock
+          is associated with the Executable.
+        
+        - Executable::installCode(). This takes a CodeBlock and makes it the code-for-
+          entry for that Executable. This involves unlinking the Executable's last
+          CodeBlock, if there was one. This also tells the GC about any effect on
+          memory usage and does a bunch of weird data structure rewiring, since
+          Executable caches some of CodeBlock's fields for the benefit of virtual call
+          fast paths.
+        
+        This functionality is then wrapped around three convenience methods:
+        
+        - Executable::prepareForExecution(). If there is no code block for that
+          Executable, then one is created (newCodeBlock()), compiled
+          (CodeBlock::prepareForExecution()) and installed (installCode()).
+        
+        - CodeBlock::newReplacement(). Asks the Executable for a new CodeBlock that
+          can serve as an optimized replacement of the current one.
+        
+        - CodeBlock::install(). Asks the Executable to install this code block.
+        
+        This patch allows me to kill *a lot* of code and to remove a lot of
+        specializations for functions vs. not-functions, and a lot of places where we
+        pass around JITCode references and such. ExecutionHarness and JITDriver are
+        both gone. Overall this patch has more red than green.
+        
+        It also allows me to work on FTL OSR entry and tier-up:
+        
+        - FTL tier-up: this will involve DFGOperations.cpp asking the DFG::Worklist
+          to do some compilation, but it will require the DFG::Worklist to do
+          something different than what JITStubs.cpp would want, once the compilation
+          finishes. This patch introduces a callback mechanism for that purpose.
+        
+        - FTL OSR entry: this will involve creating a special auto-jettisoned
+          CodeBlock that is used only for FTL OSR entry. The new set of primitives
+          allows for this: Executable can vend you a fresh new CodeBlock, and you can
+          ask that CodeBlock to compile itself with any JIT of your choosing. Or you
+          can take that CodeBlock and compile it yourself. Previously the act of
+          producing a CodeBlock-for-optimization and the act of compiling code for it
+          were tightly coupled; now you can separate them and you can create such
+          auto-jettisoned CodeBlocks that are used for a one-shot OSR entry.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::prepareForExecution):
+        (JSC::CodeBlock::install):
+        (JSC::CodeBlock::newReplacement):
+        (JSC::FunctionCodeBlock::jettisonImpl):
+        (JSC::CodeBlock::setOptimizationThresholdBasedOnCompilationResult):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::hasBaselineJITProfiling):
+        * bytecode/DeferredCompilationCallback.cpp: Added.
+        (JSC::DeferredCompilationCallback::DeferredCompilationCallback):
+        (JSC::DeferredCompilationCallback::~DeferredCompilationCallback):
+        * bytecode/DeferredCompilationCallback.h: Added.
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::tryCompile):
+        * dfg/DFGDriver.h:
+        (JSC::DFG::tryCompile):
+        * dfg/DFGFailedFinalizer.cpp:
+        (JSC::DFG::FailedFinalizer::finalize):
+        (JSC::DFG::FailedFinalizer::finalizeFunction):
+        * dfg/DFGFailedFinalizer.h:
+        * dfg/DFGFinalizer.h:
+        * dfg/DFGJITFinalizer.cpp:
+        (JSC::DFG::JITFinalizer::finalize):
+        (JSC::DFG::JITFinalizer::finalizeFunction):
+        * dfg/DFGJITFinalizer.h:
+        * dfg/DFGOSRExitPreparation.cpp:
+        (JSC::DFG::prepareCodeOriginForOSRExit):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::Plan):
+        (JSC::DFG::Plan::compileInThreadImpl):
+        (JSC::DFG::Plan::finalizeWithoutNotifyingCallback):
+        (JSC::DFG::Plan::finalizeAndNotifyCallback):
+        * dfg/DFGPlan.h:
+        * dfg/DFGWorklist.cpp:
+        (JSC::DFG::Worklist::completeAllReadyPlansForVM):
+        * ftl/FTLJITFinalizer.cpp:
+        (JSC::FTL::JITFinalizer::finalize):
+        (JSC::FTL::JITFinalizer::finalizeFunction):
+        * ftl/FTLJITFinalizer.h:
+        * heap/Heap.h:
+        (JSC::Heap::isDeferred):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::executeCall):
+        (JSC::Interpreter::executeConstruct):
+        (JSC::Interpreter::prepareForRepeatCall):
+        * jit/JITDriver.h: Removed.
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        (JSC::jitCompileFor):
+        (JSC::lazyLinkFor):
+        * jit/JITToDFGDeferredCompilationCallback.cpp: Added.
+        (JSC::JITToDFGDeferredCompilationCallback::JITToDFGDeferredCompilationCallback):
+        (JSC::JITToDFGDeferredCompilationCallback::~JITToDFGDeferredCompilationCallback):
+        (JSC::JITToDFGDeferredCompilationCallback::create):
+        (JSC::JITToDFGDeferredCompilationCallback::compilationDidComplete):
+        * jit/JITToDFGDeferredCompilationCallback.h: Added.
+        * llint/LLIntEntrypoints.cpp:
+        (JSC::LLInt::setFunctionEntrypoint):
+        (JSC::LLInt::setEvalEntrypoint):
+        (JSC::LLInt::setProgramEntrypoint):
+        * llint/LLIntEntrypoints.h:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::jitCompileAndSetHeuristics):
+        (JSC::LLInt::setUpCall):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::isNumericCompareFunction):
+        * runtime/CommonSlowPaths.cpp:
+        * runtime/CompilationResult.cpp:
+        (WTF::printInternal):
+        * runtime/CompilationResult.h:
+        * runtime/Executable.cpp:
+        (JSC::ScriptExecutable::installCode):
+        (JSC::ScriptExecutable::newCodeBlockFor):
+        (JSC::ScriptExecutable::newReplacementCodeBlockFor):
+        (JSC::ScriptExecutable::prepareForExecutionImpl):
+        * runtime/Executable.h:
+        (JSC::ScriptExecutable::prepareForExecution):
+        (JSC::FunctionExecutable::jettisonOptimizedCodeFor):
+        * runtime/ExecutionHarness.h: Removed.
+
 2013-08-28  Chris Curtis  <chris_curtis@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=119548

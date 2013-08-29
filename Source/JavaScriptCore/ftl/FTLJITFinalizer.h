@@ -65,8 +65,8 @@ public:
         m_jitCode = jitCode;
     }
     
-    bool finalize(RefPtr<JSC::JITCode>& entry);
-    bool finalizeFunction(RefPtr<JSC::JITCode>& entry, MacroAssemblerCodePtr& withArityCheck);
+    bool finalize();
+    bool finalizeFunction();
 
 private:
     OwnPtr<LinkBuffer> m_exitThunksLinkBuffer;

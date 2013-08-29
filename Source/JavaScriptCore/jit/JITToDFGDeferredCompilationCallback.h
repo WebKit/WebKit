@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,34 +23,36 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef LLIntEntrypoints_h
-#define LLIntEntrypoints_h
+#ifndef JITToDFGDeferredCompilationCallback_h
+#define JITToDFGDeferredCompilationCallback_h
 
 #include <wtf/Platform.h>
 
-#if ENABLE(LLINT)
+#if ENABLE(DFG_JIT)
 
-#include "CodeSpecializationKind.h"
-#include "JITCode.h"
-#include <wtf/RefPtr.h>
+#include "DeferredCompilationCallback.h"
+#include <wtf/PassRefPtr.h>
 
 namespace JSC {
 
-class EvalCodeBlock;
-class FunctionCodeBlock;
-class VM;
-class MacroAssemblerCodePtr;
-class MacroAssemblerCodeRef;
-class ProgramCodeBlock;
+class ScriptExecutable;
 
-namespace LLInt {
+class JITToDFGDeferredCompilationCallback : public DeferredCompilationCallback {
+protected:
+    JITToDFGDeferredCompilationCallback();
 
-void setFunctionEntrypoint(VM&, FunctionCodeBlock*);
-void setEvalEntrypoint(VM&, EvalCodeBlock*);
-void setProgramEntrypoint(VM&, ProgramCodeBlock*);
+public:
+    virtual ~JITToDFGDeferredCompilationCallback();
 
-} } // namespace JSC::LLInt
+    static PassRefPtr<JITToDFGDeferredCompilationCallback> create();
+    
+    virtual void compilationDidBecomeReadyAsynchronously(CodeBlock*);
+    virtual void compilationDidComplete(CodeBlock*, CompilationResult);
+};
 
-#endif // ENABLE(LLINT)
+} // namespace JSC
 
-#endif // LLIntEntrypoints_h
+#endif // ENABLE(DFG_JIT)
+
+#endif // JITToDFGDeferredCompilationCallback_h
+

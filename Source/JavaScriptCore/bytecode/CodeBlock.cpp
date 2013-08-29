@@ -34,6 +34,7 @@
 #include "CallLinkStatus.h"
 #include "DFGCapabilities.h"
 #include "DFGCommon.h"
+#include "DFGDriver.h"
 #include "DFGNode.h"
 #include "DFGRepatch.h"
 #include "DFGWorklist.h"
@@ -45,6 +46,7 @@
 #include "JSCJSValue.h"
 #include "JSFunction.h"
 #include "JSNameScope.h"
+#include "LLIntEntrypoints.h"
 #include "LowLevelInterpreter.h"
 #include "Operations.h"
 #include "PolymorphicPutByIdList.h"
@@ -2536,20 +2538,22 @@ void CodeBlock::linkIncomingCall(ExecState* callerFrame, CallLinkInfo* incoming)
     noticeIncomingCall(callerFrame);
     m_incomingCalls.push(incoming);
 }
+#endif // ENABLE(JIT)
 
 void CodeBlock::unlinkIncomingCalls()
 {
 #if ENABLE(LLINT)
     while (m_incomingLLIntCalls.begin() != m_incomingLLIntCalls.end())
         m_incomingLLIntCalls.begin()->unlink();
-#endif
+#endif // ENABLE(LLINT)
+#if ENABLE(JIT)
     if (m_incomingCalls.isEmpty())
         return;
     RepatchBuffer repatchBuffer(this);
     while (m_incomingCalls.begin() != m_incomingCalls.end())
         m_incomingCalls.begin()->unlink(*m_vm, repatchBuffer);
-}
 #endif // ENABLE(JIT)
+}
 
 #if ENABLE(LLINT)
 void CodeBlock::linkIncomingCall(ExecState* callerFrame, LLIntCallLinkInfo* incoming)
@@ -2689,6 +2693,83 @@ void CodeBlock::copyPostParseDataFromAlternative()
     copyPostParseDataFrom(m_alternative.get());
 }
 
+CompilationResult CodeBlock::prepareForExecutionImpl(
+    ExecState* exec, JITCode::JITType jitType, JITCompilationEffort effort,
+    unsigned bytecodeIndex, PassRefPtr<DeferredCompilationCallback> callback)
+{
+    VM& vm = exec->vm();
+    
+    if (jitType == JITCode::InterpreterThunk) {
+        switch (codeType()) {
+        case GlobalCode:
+            LLInt::setProgramEntrypoint(vm, static_cast<ProgramCodeBlock*>(this));
+            break;
+        case EvalCode:
+            LLInt::setEvalEntrypoint(vm, static_cast<EvalCodeBlock*>(this));
+            break;
+        case FunctionCode:
+            LLInt::setFunctionEntrypoint(vm, static_cast<FunctionCodeBlock*>(this));
+            break;
+        }
+        return CompilationSuccessful;
+    }
+    
+#if ENABLE(JIT)
+    if (JITCode::isOptimizingJIT(jitType)) {
+        ASSERT(effort == JITCompilationCanFail);
+        bool hadCallback = !!callback;
+        CompilationResult result = DFG::tryCompile(exec, this, bytecodeIndex, callback);
+        ASSERT_UNUSED(hadCallback, result != CompilationDeferred || hadCallback);
+        return result;
+    }
+    
+    MacroAssemblerCodePtr jitCodeWithArityCheck;
+    RefPtr<JITCode> jitCode = JIT::compile(&vm, this, effort, &jitCodeWithArityCheck);
+    if (!jitCode)
+        return CompilationFailed;
+    setJITCode(jitCode, jitCodeWithArityCheck);
+    return CompilationSuccessful;
+#else
+    UNUSED_PARAM(effort);
+    UNUSED_PARAM(bytecodeIndex);
+    UNUSED_PARAM(callback);
+    return CompilationFailed;
+#endif // ENABLE(JIT)
+}
+
+CompilationResult CodeBlock::prepareForExecution(
+    ExecState* exec, JITCode::JITType jitType,
+    JITCompilationEffort effort, unsigned bytecodeIndex)
+{
+    CompilationResult result =
+        prepareForExecutionImpl(exec, jitType, effort, bytecodeIndex, 0);
+    ASSERT(result != CompilationDeferred);
+    return result;
+}
+
+CompilationResult CodeBlock::prepareForExecutionAsynchronously(
+    ExecState* exec, JITCode::JITType jitType,
+    PassRefPtr<DeferredCompilationCallback> passedCallback,
+    JITCompilationEffort effort, unsigned bytecodeIndex)
+{
+    RefPtr<DeferredCompilationCallback> callback = passedCallback;
+    CompilationResult result =
+        prepareForExecutionImpl(exec, jitType, effort, bytecodeIndex, callback);
+    if (result != CompilationDeferred)
+        callback->compilationDidComplete(this, result);
+    return result;
+}
+
+void CodeBlock::install()
+{
+    ownerExecutable()->installCode(this);
+}
+
+PassRefPtr<CodeBlock> CodeBlock::newReplacement()
+{
+    return ownerExecutable()->newReplacementCodeBlockFor(specializationKind());
+}
+
 #if ENABLE(JIT)
 void CodeBlock::reoptimize()
 {
@@ -2714,53 +2795,6 @@ CodeBlock* FunctionCodeBlock::replacement()
 {
     return &static_cast<FunctionExecutable*>(ownerExecutable())->generatedBytecodeFor(m_isConstructor ? CodeForConstruct : CodeForCall);
 }
-
-#if ENABLE(DFG_JIT)
-JSObject* ProgramCodeBlock::compileOptimized(ExecState* exec, JSScope* scope, CompilationResult& result, unsigned bytecodeIndex)
-{
-    if (JITCode::isHigherTier(replacement()->jitType(), jitType())) {
-        result = CompilationNotNeeded;
-        return 0;
-    }
-    JSObject* error = static_cast<ProgramExecutable*>(ownerExecutable())->compileOptimized(exec, scope, result, bytecodeIndex);
-    return error;
-}
-
-CompilationResult ProgramCodeBlock::replaceWithDeferredOptimizedCode(PassRefPtr<DFG::Plan> plan)
-{
-    return static_cast<ProgramExecutable*>(ownerExecutable())->replaceWithDeferredOptimizedCode(plan);
-}
-
-JSObject* EvalCodeBlock::compileOptimized(ExecState* exec, JSScope* scope, CompilationResult& result, unsigned bytecodeIndex)
-{
-    if (JITCode::isHigherTier(replacement()->jitType(), jitType())) {
-        result = CompilationNotNeeded;
-        return 0;
-    }
-    JSObject* error = static_cast<EvalExecutable*>(ownerExecutable())->compileOptimized(exec, scope, result, bytecodeIndex);
-    return error;
-}
-
-CompilationResult EvalCodeBlock::replaceWithDeferredOptimizedCode(PassRefPtr<DFG::Plan> plan)
-{
-    return static_cast<EvalExecutable*>(ownerExecutable())->replaceWithDeferredOptimizedCode(plan);
-}
-
-JSObject* FunctionCodeBlock::compileOptimized(ExecState* exec, JSScope* scope, CompilationResult& result, unsigned bytecodeIndex)
-{
-    if (JITCode::isHigherTier(replacement()->jitType(), jitType())) {
-        result = CompilationNotNeeded;
-        return 0;
-    }
-    JSObject* error = static_cast<FunctionExecutable*>(ownerExecutable())->compileOptimizedFor(exec, scope, result, bytecodeIndex, m_isConstructor ? CodeForConstruct : CodeForCall);
-    return error;
-}
-
-CompilationResult FunctionCodeBlock::replaceWithDeferredOptimizedCode(PassRefPtr<DFG::Plan> plan)
-{
-    return static_cast<FunctionExecutable*>(ownerExecutable())->replaceWithDeferredOptimizedCodeFor(plan, m_isConstructor ? CodeForConstruct : CodeForCall);
-}
-#endif // ENABLE(DFG_JIT)
 
 DFG::CapabilityLevel ProgramCodeBlock::capabilityLevelInternal()
 {
@@ -2803,27 +2837,6 @@ void EvalCodeBlock::jettisonImpl()
 void FunctionCodeBlock::jettisonImpl()
 {
     static_cast<FunctionExecutable*>(ownerExecutable())->jettisonOptimizedCodeFor(*vm(), m_isConstructor ? CodeForConstruct : CodeForCall);
-}
-
-CompilationResult ProgramCodeBlock::jitCompileImpl(ExecState* exec)
-{
-    ASSERT(jitType() == JITCode::InterpreterThunk);
-    ASSERT(this == replacement());
-    return static_cast<ProgramExecutable*>(ownerExecutable())->jitCompile(exec);
-}
-
-CompilationResult EvalCodeBlock::jitCompileImpl(ExecState* exec)
-{
-    ASSERT(jitType() == JITCode::InterpreterThunk);
-    ASSERT(this == replacement());
-    return static_cast<EvalExecutable*>(ownerExecutable())->jitCompile(exec);
-}
-
-CompilationResult FunctionCodeBlock::jitCompileImpl(ExecState* exec)
-{
-    ASSERT(jitType() == JITCode::InterpreterThunk);
-    ASSERT(this == replacement());
-    return static_cast<FunctionExecutable*>(ownerExecutable())->jitCompileFor(exec, m_isConstructor ? CodeForConstruct : CodeForCall);
 }
 #endif
 

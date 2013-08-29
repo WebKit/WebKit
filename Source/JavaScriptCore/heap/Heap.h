@@ -184,6 +184,8 @@ namespace JSC {
         const JITStubRoutineSet& jitStubRoutines() { return m_jitStubRoutines; }
         
         void addReference(JSCell*, ArrayBuffer*);
+        
+        bool isDeferred() const { return !!m_deferralDepth; }
 
     private:
         friend class CodeBlock;

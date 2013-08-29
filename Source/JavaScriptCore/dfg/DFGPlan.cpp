@@ -80,10 +80,9 @@ static void dumpAndVerifyGraph(Graph& graph, const char* text)
 }
 
 Plan::Plan(
-    CompileMode compileMode, PassRefPtr<CodeBlock> passedCodeBlock, unsigned osrEntryBytecodeIndex,
+    PassRefPtr<CodeBlock> passedCodeBlock, unsigned osrEntryBytecodeIndex,
     unsigned numVarsWithValues)
-    : compileMode(compileMode)
-    , vm(*passedCodeBlock->vm())
+    : vm(*passedCodeBlock->vm())
     , codeBlock(passedCodeBlock)
     , osrEntryBytecodeIndex(osrEntryBytecodeIndex)
     , numVarsWithValues(numVarsWithValues)
@@ -208,7 +207,7 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
 
 #if ENABLE(FTL_JIT)
     if (Options::useExperimentalFTL()
-        && compileMode == CompileFunction
+        && codeBlock->codeType() == FunctionCode
         && FTL::canCompile(dfg)) {
         
         performCriticalEdgeBreaking(dfg);
@@ -255,12 +254,10 @@ Plan::CompilationPath Plan::compileInThreadImpl(LongLivedState& longLivedState)
     dumpAndVerifyGraph(dfg, "Graph after optimization:");
 
     JITCompiler dataFlowJIT(dfg);
-    if (compileMode == CompileFunction) {
+    if (codeBlock->codeType() == FunctionCode) {
         dataFlowJIT.compileFunction();
         dataFlowJIT.linkFunction();
     } else {
-        ASSERT(compileMode == CompileOther);
-        
         dataFlowJIT.compile();
         dataFlowJIT.link();
     }
@@ -283,23 +280,34 @@ void Plan::reallyAdd(CommonData* commonData)
     writeBarriers.trigger(vm);
 }
 
-CompilationResult Plan::finalize(RefPtr<JSC::JITCode>& jitCode, MacroAssemblerCodePtr* jitCodeWithArityCheck)
+void Plan::notifyReady()
+{
+    callback->compilationDidBecomeReadyAsynchronously(codeBlock.get());
+    isCompiled = true;
+}
+
+CompilationResult Plan::finalizeWithoutNotifyingCallback()
 {
     if (!isStillValid())
         return CompilationInvalidated;
     
     bool result;
-    if (compileMode == CompileFunction)
-        result = finalizer->finalizeFunction(jitCode, *jitCodeWithArityCheck);
+    if (codeBlock->codeType() == FunctionCode)
+        result = finalizer->finalizeFunction();
     else
-        result = finalizer->finalize(jitCode);
+        result = finalizer->finalize();
     
     if (!result)
         return CompilationFailed;
     
-    reallyAdd(jitCode->dfgCommon());
+    reallyAdd(codeBlock->jitCode()->dfgCommon());
     
     return CompilationSuccessful;
+}
+
+void Plan::finalizeAndNotifyCallback()
+{
+    callback->compilationDidComplete(codeBlock.get(), finalizeWithoutNotifyingCallback());
 }
 
 CodeBlock* Plan::key()
