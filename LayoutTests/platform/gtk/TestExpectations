@@ -1080,8 +1080,11 @@ webkit.org/b/49964 fast/canvas/canvas-fillPath-shadow.html [ Failure ]
 webkit.org/b/53707 http/tests/security/xss-DENIED-xsl-document-redirect.xml [ Failure ]
 webkit.org/b/53707 http/tests/security/xss-DENIED-xsl-external-entity-redirect.xml [ Failure ]
 
-# textInputController.hasGrammarMarker() is not implemented.
-Bug(GTK) editing/spelling/grammar.html [ Failure ]
+# Needs grammar checking implementation.
+Bug(GTK) editing/spelling/grammar.html [ Skip ]
+Bug(GTK) editing/spelling/grammar-edit-word.html [ Skip ]
+Bug(GTK) editing/spelling/grammar-markers.html [ Skip ]
+Bug(GTK) editing/spelling/grammar-markers-hidpi.html [ Skip ]
 Bug(GTK) editing/spelling/grammar-paste.html [ Skip ]
 Bug(GTK) editing/spelling/markers.html [ Skip ]
 
@@ -1176,8 +1179,6 @@ webkit.org/b/86971 svg/hittest/svg-shapes-non-scale-stroke.html [ Failure ]
 Bug(GTK) http/tests/misc/favicon-loads-with-icon-loading-override.html [ Failure ]
 
 webkit.org/b/88138 http/tests/media/video-buffered.html [ Failure ]
-
-webkit.org/b/89205 editing/spelling/grammar-edit-word.html [ Failure ]
 
 webkit.org/b/51027 [ Release ] plugins/refcount-leaks.html [ Failure ]
 

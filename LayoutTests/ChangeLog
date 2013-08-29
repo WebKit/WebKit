@@ -1,3 +1,12 @@
+2013-08-29  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        [GTK] Skip grammar checking tests.
+        Unreviewed gardening after r154675.
+
+        * platform/gtk/TestExpectations:
+        Skip failing tests after r154675 until GTK+ implements
+        grammar checking feature.
+
 2013-08-16  Ryosuke Niwa  <rniwa@webkit.org>
 
         <https://webkit.org/b/119806> [Mac] Add a way to easily test attributed string generation
