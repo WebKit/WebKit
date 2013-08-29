@@ -498,12 +498,12 @@ nodist_libwebkitdominclude_HEADERS = \
 	$(webkitgtk_gdom_built_h_api)
 
 noinst_LTLIBRARIES += \
-	libWebCoreDOM.la
+	libGObjectDOMBindings.la
 
-nodist_libWebCoreDOM_la_SOURCES = \
+nodist_libGObjectDOMBindings_la_SOURCES = \
 	$(webkitgtk_gdom_built_sources)
 
-libWebCoreDOM_la_SOURCES = \
+libGObjectDOMBindings_la_SOURCES = \
 	Source/WebCore/bindings/gobject/ConvertToUTF8String.cpp \
 	Source/WebCore/bindings/gobject/ConvertToUTF8String.h \
 	Source/WebCore/bindings/gobject/DOMObjectCache.cpp \
@@ -522,15 +522,15 @@ libWebCoreDOM_la_SOURCES = \
 	Source/WebCore/bindings/gobject/WebKitDOMPrivate.cpp \
 	Source/WebCore/bindings/gobject/WebKitDOMPrivate.h
 
-libWebCoreDOM_la_CXXFLAGS = \
+libGObjectDOMBindings_la_CXXFLAGS = \
 	-fvisibility-inlines-hidden \
 	$(global_cxxflags)
 
-libWebCoreDOM_la_CFLAGS = \
+libGObjectDOMBindings_la_CFLAGS = \
 	-fvisibility=hidden \
 	$(global_cflags)
 
-libWebCoreDOM_la_CPPFLAGS = \
+libGObjectDOMBindings_la_CPPFLAGS = \
 	-DBUILDING_WebCore \
 	-DBUILDING_WEBKIT \
 	-I$(WebCore)/bindings \

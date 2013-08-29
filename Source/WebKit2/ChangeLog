@@ -1,3 +1,12 @@
+2013-08-29  Zan Dobersek  <zdobersek@igalia.com>
+
+        [Automake] libWebCoreDOM.la could use a better name
+        https://bugs.webkit.org/show_bug.cgi?id=120232
+
+        Reviewed by Martin Robinson.
+
+        * GNUmakefile.am: libWebCoreDOM has a new name - libGObjectDOMBindings.
+
 2013-08-29  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Download Web Archive of Inspected Page

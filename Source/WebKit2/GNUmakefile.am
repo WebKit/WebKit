@@ -222,7 +222,7 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_LIB
 	libjavascriptcoregtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
 	libPlatform.la \
 	libPlatformGtk.la \
-	libWebCoreDOM.la \
+	libGObjectDOMBindings.la \
 	libWebCoreGtk.la \
 	libWebKit2Platform.la \
 	$(CAIRO_LIBS) \
