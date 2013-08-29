@@ -136,20 +136,6 @@ static bool isFormattingTag(const AtomicString& tagName)
     return tagName == aTag || isNonAnchorFormattingTag(tagName);
 }
 
-static HTMLFormElement* closestFormAncestor(Element* element)
-{
-    ASSERT(isMainThread());
-    while (element) {
-        if (isHTMLFormElement(element))
-            return toHTMLFormElement(element);
-        ContainerNode* parent = element->parentNode();
-        if (!parent || !parent->isElementNode())
-            return 0;
-        element = toElement(parent);
-    }
-    return 0;
-}
-
 class HTMLTreeBuilder::ExternalCharacterTokenBuffer {
     WTF_MAKE_NONCOPYABLE(ExternalCharacterTokenBuffer);
 public:
@@ -313,7 +299,7 @@ HTMLTreeBuilder::HTMLTreeBuilder(HTMLDocumentParser* parser, DocumentFragment* f
 #endif
 
         resetInsertionModeAppropriately();
-        m_tree.setForm(closestFormAncestor(contextElement));
+        m_tree.setForm(!contextElement || isHTMLFormElement(contextElement) ? toHTMLFormElement(contextElement) : HTMLFormElement::findClosestFormAncestor(*contextElement));
     }
 }
 

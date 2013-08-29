@@ -771,18 +771,9 @@ RenderObject* HTMLElement::createRenderer(RenderArena* arena, RenderStyle* style
     return RenderObject::createObject(this, style);
 }
 
-HTMLFormElement* HTMLElement::findFormAncestor() const
-{
-    for (ContainerNode* ancestor = parentNode(); ancestor; ancestor = ancestor->parentNode()) {
-        if (isHTMLFormElement(ancestor))
-            return toHTMLFormElement(ancestor);
-    }
-    return 0;
-}
-
 HTMLFormElement* HTMLElement::virtualForm() const
 {
-    return findFormAncestor();
+    return HTMLFormElement::findClosestFormAncestor(*this);
 }
 
 static inline bool elementAffectsDirectionality(const Node* node)

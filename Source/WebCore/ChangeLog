@@ -1,5 +1,33 @@
 2013-08-28  Ryosuke Niwa  <rniwa@webkit.org>
 
+        The code to look for an ancestor form element is duplicated in three different places
+        https://bugs.webkit.org/show_bug.cgi?id=120391
+
+        Reviewed by Darin Adler.
+
+        Unduplicated the code by putting a single implementation in HTMLFormElement.cpp.
+
+        * WebCore.order:
+        * html/FormAssociatedElement.cpp:
+        (WebCore::FormAssociatedElement::findAssociatedForm):
+        (WebCore::FormAssociatedElement::formAttributeChanged):
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::virtualForm):
+        * html/HTMLElement.h:
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::HTMLFormControlElement):
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::findClosestFormAncestor):
+        * html/HTMLFormElement.h:
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::insertedInto):
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::HTMLObjectElement):
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::HTMLTreeBuilder):
+
+2013-08-28  Ryosuke Niwa  <rniwa@webkit.org>
+
         Stop throwing DOM exceptions in internal 'XMLHttpRequest' response getters
         https://bugs.webkit.org/show_bug.cgi?id=120446
 

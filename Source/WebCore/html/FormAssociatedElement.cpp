@@ -114,7 +114,7 @@ HTMLFormElement* FormAssociatedElement::findAssociatedForm(const HTMLElement* el
     }
 
     if (!currentAssociatedForm)
-        return element->findFormAncestor();
+        return HTMLFormElement::findClosestFormAncestor(*element);
 
     return currentAssociatedForm;
 }
@@ -172,7 +172,7 @@ void FormAssociatedElement::formAttributeChanged()
     if (!element->fastHasAttribute(formAttr)) {
         // The form attribute removed. We need to reset form owner here.
         HTMLFormElement* originalForm = m_form;
-        setForm(element->findFormAncestor());
+        setForm(HTMLFormElement::findClosestFormAncestor(*element));
         HTMLElement* element = toHTMLElement(this);
         if (m_form && m_form != originalForm && m_form->inDocument())
             element->document()->didAssociateFormControl(element);

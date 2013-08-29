@@ -106,6 +106,8 @@ public:
 
     void getTextFieldValues(StringPairVector& fieldNamesAndValues) const;
 
+    static HTMLFormElement* findClosestFormAncestor(const Element&);
+
 private:
     HTMLFormElement(const QualifiedName&, Document*);
 

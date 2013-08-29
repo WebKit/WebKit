@@ -723,4 +723,13 @@ void HTMLFormElement::copyNonAttributePropertiesFromElement(const Element& sourc
     HTMLElement::copyNonAttributePropertiesFromElement(source);
 }
 
+HTMLFormElement* HTMLFormElement::findClosestFormAncestor(const Element& startElement)
+{
+    for (Element* element = startElement.parentElement(); element; element = element->parentElement()) {
+        if (isHTMLFormElement(element))
+            return toHTMLFormElement(element);
+    }
+    return 0;
+}
+
 } // namespace
