@@ -581,7 +581,6 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/interpreter/Register.h \
 	Source/JavaScriptCore/interpreter/StackIterator.cpp \
 	Source/JavaScriptCore/interpreter/StackIterator.h \
-	Source/JavaScriptCore/interpreter/StackIteratorPrivate.h \
 	Source/JavaScriptCore/interpreter/VMInspector.cpp \
 	Source/JavaScriptCore/interpreter/VMInspector.h \
 	Source/JavaScriptCore/JavaScriptCorePrefix.h \

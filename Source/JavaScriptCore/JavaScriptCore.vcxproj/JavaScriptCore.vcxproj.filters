@@ -1313,9 +1313,6 @@
     <ClInclude Include="..\interpreter\StackIterator.h">
       <Filter>interpreter</Filter>
     </ClInclude>
-    <ClInclude Include="..\interpreter\StackIteratorPrivate.h">
-      <Filter>interpreter</Filter>
-    </ClInclude>
     <ClInclude Include="..\interpreter\VMInspector.h">
       <Filter>interpreter</Filter>
     </ClInclude>

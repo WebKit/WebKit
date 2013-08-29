@@ -729,7 +729,6 @@
     <ClInclude Include="..\interpreter\JSStackInlines.h" />
     <ClInclude Include="..\interpreter\Register.h" />
     <ClInclude Include="..\interpreter\StackIterator.h" />
-    <ClInclude Include="..\interpreter\StackIteratorPrivate.h" />
     <ClInclude Include="..\interpreter\VMInspector.h" />
     <ClInclude Include="..\jit\ClosureCallStubRoutine.h" />
     <ClInclude Include="..\jit\CompactJITCodeMap.h" />

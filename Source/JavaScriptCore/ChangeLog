@@ -1,3 +1,70 @@
+2013-08-29  Mark Lam  <mark.lam@apple.com>
+
+        Change StackIterator to not require writes to the JS stack.
+        https://bugs.webkit.org/show_bug.cgi?id=119657.
+
+        Reviewed by Geoffrey Garen.
+
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * interpreter/CallFrame.h:
+        - Removed references to StackIteratorPrivate.h.
+        * interpreter/StackIterator.cpp:
+        (JSC::StackIterator::numberOfFrames):
+        (JSC::StackIterator::gotoFrameAtIndex):
+        (JSC::StackIterator::gotoNextFrame):
+        (JSC::StackIterator::resetIterator):
+        (JSC::StackIterator::find):
+        (JSC::StackIterator::readFrame):
+        (JSC::StackIterator::readNonInlinedFrame):
+        - Reads in the current CallFrame's data for non-inlined frames.
+        (JSC::inlinedFrameOffset):
+        - Convenience function to compute the inlined frame offset based on the
+          CodeOrigin. If the offset is 0, then we're looking at the physical frame.
+          Otherwise, it's an inlined frame.
+        (JSC::StackIterator::readInlinedFrame):
+        - Determines the inlined frame's caller frame. Will read in the caller
+          frame if it is also an inlined frame i.e. we haven't reached the
+          outer most frame yet. Otherwise, will call readNonInlinedFrame() to
+          read on the outer most frame.
+          This is based on the old StackIterator::Frame::logicalFrame().
+        (JSC::StackIterator::updateFrame):
+        - Reads the data of the caller frame of the current one. This function
+          is renamed and moved from the old StackIterator::Frame::logicalCallerFrame(),
+          but is now simplified because it delegates to the readInlinedFrame()
+          to get the caller for inlined frames.
+        (JSC::StackIterator::Frame::arguments):
+        - Fixed to use the inlined frame versions of Arguments::create() and
+          Arguments::tearOff() when the frame is an inlined frame.
+        (JSC::StackIterator::Frame::print):
+        (debugPrintCallFrame):
+        (debugPrintStack):
+        - Because sometimes, we want to see the whole stack while debugging.
+        * interpreter/StackIterator.h:
+        (JSC::StackIterator::Frame::argumentCount):
+        (JSC::StackIterator::Frame::callerFrame):
+        (JSC::StackIterator::Frame::callee):
+        (JSC::StackIterator::Frame::scope):
+        (JSC::StackIterator::Frame::codeBlock):
+        (JSC::StackIterator::Frame::bytecodeOffset):
+        (JSC::StackIterator::Frame::inlinedFrameInfo):
+        (JSC::StackIterator::Frame::isJSFrame):
+        (JSC::StackIterator::Frame::isInlinedFrame):
+        (JSC::StackIterator::Frame::callFrame):
+        (JSC::StackIterator::Frame::Frame):
+        (JSC::StackIterator::Frame::~Frame):
+        - StackIterator::Frame now caches commonly used accessed values from
+          the CallFrame. It still delegates argument queries to the CallFrame.
+        (JSC::StackIterator::operator*):
+        (JSC::StackIterator::operator->):
+        (JSC::StackIterator::operator!=):
+        (JSC::StackIterator::operator++):
+        (JSC::StackIterator::end):
+        (JSC::StackIterator::operator==):
+        * interpreter/StackIteratorPrivate.h: Removed.
+
 2013-08-29  Chris Curtis  <chris_curtis@apple.com>
 
         VM::throwException() crashes reproducibly in testapi with !ENABLE(JIT)

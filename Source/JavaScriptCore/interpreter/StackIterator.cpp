@@ -29,6 +29,7 @@
 #include "Arguments.h"
 #include "CallFrameInlines.h"
 #include "Executable.h"
+#include "Interpreter.h"
 #include "Operations.h"
 #include <wtf/DataLog.h>
 
@@ -38,7 +39,6 @@ StackIterator::StackIterator(CallFrame* startFrame, StackIterator::FrameFilter f
     : m_startFrame(startFrame)
     , m_filter(filter)
 {
-    ASSERT(startFrame);
     resetIterator();
 }
 
@@ -46,8 +46,8 @@ size_t StackIterator::numberOfFrames()
 {
     int savedFrameIndex = m_frameIndex;
     resetIterator();
-    while (m_frame)
-        gotoNextFrame();
+    while (m_frame.callFrame())
+        gotoNextFrameWithFilter();
     size_t numberOfFrames = m_frameIndex;
 
     resetIterator();
@@ -58,39 +58,165 @@ size_t StackIterator::numberOfFrames()
 
 void StackIterator::gotoFrameAtIndex(size_t index)
 {
-    while (m_frame && (m_frameIndex != index))
-        gotoNextFrame();
+    while (m_frame.callFrame() && (m_frameIndex != index))
+        gotoNextFrameWithFilter();
 }
 
 void StackIterator::gotoNextFrame()
 {
-    Frame* frame = m_frame;
-    while (frame) {
-        frame = frame->logicalCallerFrame();
-        if (!frame || !m_filter || !m_filter(frame))
+#if ENABLE(DFG_JIT)
+    if (m_frame.isInlinedFrame()) {
+        InlineCallFrame* inlineCallFrame = m_frame.inlineCallFrame();
+        CodeOrigin* callerCodeOrigin = &inlineCallFrame->caller;
+        readInlinedFrame(m_frame.callFrame(), callerCodeOrigin);
+
+    } else
+#endif // ENABLE(DFG_JIT)
+        readFrame(m_frame.callerFrame());
+}
+
+void StackIterator::gotoNextFrameWithFilter()
+{
+    ASSERT(m_frame.callFrame());
+    while (m_frame.callFrame()) {
+        gotoNextFrame();
+        if (!m_frame.callFrame() || !m_filter || !m_filter(&m_frame))
             break;
     }
-    m_frame = frame;
     m_frameIndex++;
 }
 
 void StackIterator::resetIterator()
 {
     m_frameIndex = 0;
-    m_frame = Frame::create(m_startFrame);
-    m_frame = m_frame->logicalFrame();
+    readFrame(m_startFrame);
+}
+
+StackIterator StackIterator::end()
+{
+    return StackIterator(0, 0);
 }
 
 void StackIterator::find(JSFunction* functionObj)
 {
     ASSERT(functionObj);
     JSObject* targetCallee = jsDynamicCast<JSObject*>(functionObj);
-    while (m_frame) {
-        if (m_frame->callee() == targetCallee)
+    while (m_frame.callFrame()) {
+        if (m_frame.callee() == targetCallee)
             break;
-        gotoNextFrame();
+        gotoNextFrameWithFilter();
     }
 }
+
+void StackIterator::readFrame(CallFrame* callFrame)
+{
+    ASSERT(!callFrame->hasHostCallFrameFlag());
+    if (!callFrame) {
+        m_frame.setToEnd();
+        return;
+    }
+
+#if !ENABLE(DFG_JIT)
+    readNonInlinedFrame(callFrame);
+
+#else // !ENABLE(DFG_JIT)
+    // If the frame doesn't have a code block, then it's not a DFG frame.
+    // Hence, we're not at an inlined frame.
+    CodeBlock* codeBlock = callFrame->codeBlock();
+    if (!codeBlock) {
+        readNonInlinedFrame(callFrame);
+        return;
+    }
+
+    // If the code block does not have any code origins, then there's no
+    // inlining. Hence, we're not at an inlined frame.
+    if (!codeBlock->hasCodeOrigins()) {
+        readNonInlinedFrame(callFrame);
+        return;
+    }
+
+    unsigned index = callFrame->locationAsCodeOriginIndex();
+    ASSERT(codeBlock->canGetCodeOrigin(index));
+    if (!codeBlock->canGetCodeOrigin(index)) {
+        // See assertion above. In release builds, we try to protect ourselves
+        // from crashing even though stack walking will be goofed up.
+        m_frame.setToEnd();
+        return;
+    }
+
+    CodeOrigin codeOrigin = codeBlock->codeOrigin(index);
+    if (!codeOrigin.inlineCallFrame) {
+        readNonInlinedFrame(callFrame, &codeOrigin);
+        return;
+    }
+
+    readInlinedFrame(callFrame, &codeOrigin);
+#endif // !ENABLE(DFG_JIT)
+}
+
+void StackIterator::readNonInlinedFrame(CallFrame* callFrame, CodeOrigin* codeOrigin)
+{
+    m_frame.m_callFrame = callFrame;
+    m_frame.m_argumentCountIncludingThis = callFrame->argumentCountIncludingThis();
+    m_frame.m_callerFrame = callFrame->callerFrame()->removeHostCallFrameFlag();
+    m_frame.m_callee = callFrame->callee();
+    m_frame.m_scope = callFrame->scope();
+    m_frame.m_codeBlock = callFrame->codeBlock();
+    m_frame.m_bytecodeOffset = !m_frame.codeBlock() ? 0
+        : codeOrigin ? codeOrigin->bytecodeIndex
+        : callFrame->locationAsBytecodeOffset();
+#if ENABLE(DFG_JIT)
+    m_frame.m_inlineCallFrame = 0;
+#endif
+}
+
+#if ENABLE(DFG_JIT)
+static unsigned inlinedFrameOffset(CodeOrigin* codeOrigin)
+{
+    InlineCallFrame* inlineCallFrame = codeOrigin->inlineCallFrame;
+    unsigned frameOffset = inlineCallFrame ? inlineCallFrame->stackOffset : 0;
+    return frameOffset;
+}
+
+void StackIterator::readInlinedFrame(CallFrame* callFrame, CodeOrigin* codeOrigin)
+{
+    ASSERT(codeOrigin);
+    ASSERT(!callFrame->hasHostCallFrameFlag());
+
+    unsigned frameOffset = inlinedFrameOffset(codeOrigin);
+    bool isInlined = !!frameOffset;
+    if (isInlined) {
+        InlineCallFrame* inlineCallFrame = codeOrigin->inlineCallFrame;
+
+        m_frame.m_callFrame = callFrame;
+        m_frame.m_inlineCallFrame = inlineCallFrame;
+        m_frame.m_argumentCountIncludingThis = inlineCallFrame->arguments.size();
+        m_frame.m_codeBlock = inlineCallFrame->baselineCodeBlock();
+        m_frame.m_bytecodeOffset = codeOrigin->bytecodeIndex;
+
+        JSFunction* callee = inlineCallFrame->callee.get();
+        if (callee) {
+            m_frame.m_scope = callee->scope();
+            m_frame.m_callee = callee;
+        } else {
+            CallFrame* inlinedFrame = callFrame + frameOffset;
+            m_frame.m_scope = inlinedFrame->scope();
+            m_frame.m_callee = inlinedFrame->callee();
+        }
+        ASSERT(m_frame.scope());
+        ASSERT(m_frame.callee());
+
+        // The callerFrame just needs to be non-null to indicate that we
+        // haven't reached the last frame yet. Setting it to the root
+        // frame (i.e. the callFrame that this inlined frame is called from)
+        // would work just fine.
+        m_frame.m_callerFrame = callFrame;
+        return;
+    }
+
+    readNonInlinedFrame(callFrame, codeOrigin);
+}
+#endif // ENABLE(DFG_JIT)
 
 StackIterator::Frame::CodeType StackIterator::Frame::codeType() const
 {
@@ -175,22 +301,23 @@ String StackIterator::Frame::toString()
     return traceBuild.toString().impl();
 }
 
-unsigned StackIterator::Frame::bytecodeOffset()
-{
-    if (!isJSFrame())
-        return 0;
-#if ENABLE(DFG_JIT)
-    if (hasLocationAsCodeOriginIndex())
-        return bytecodeOffsetFromCodeOriginIndex();
-#endif
-    return locationAsBytecodeOffset();
-}
-
 Arguments* StackIterator::Frame::arguments()
 {
-    CallFrame* callFrame = this->callFrame();
-    Arguments* arguments = Arguments::create(vm(), callFrame);
-    arguments->tearOff(callFrame);
+    ASSERT(m_callFrame);
+    CallFrame* physicalFrame = m_callFrame;
+    VM& vm = physicalFrame->vm();
+    Arguments* arguments;
+#if ENABLE(DFG_JIT)
+    if (isInlinedFrame()) {
+        ASSERT(m_inlineCallFrame);
+        arguments = Arguments::create(vm, physicalFrame, m_inlineCallFrame);
+        arguments->tearOff(physicalFrame, m_inlineCallFrame);
+    } else 
+#endif
+    {
+        arguments = Arguments::create(vm, physicalFrame);
+        arguments->tearOff(physicalFrame);
+    }
     return arguments;
 }
 
@@ -221,101 +348,12 @@ void StackIterator::Frame::retrieveExpressionInfo(int& divot, int& startOffset, 
     divot += codeBlock->sourceOffset();
 }
 
-
-StackIterator::Frame* StackIterator::Frame::logicalFrame()
+void StackIterator::Frame::setToEnd()
 {
-#if !ENABLE(DFG_JIT)
-    return this;
-
-#else // !ENABLE(DFG_JIT)
-    if (isInlinedFrame())
-        return this;
-
-    // If I don't have a code block, then I'm not DFG code, so I'm the true call frame.
-    CodeBlock* codeBlock = this->codeBlock();
-    if (!codeBlock)
-        return this;
-
-    // If the code block does not have any code origins, then there was no inlining, so
-    // I'm done.
-    if (!codeBlock->hasCodeOrigins())
-        return this;
-    
-    CodeBlock* outerMostCodeBlock = codeBlock;
-    unsigned index = locationAsCodeOriginIndex();
-    ASSERT(outerMostCodeBlock->canGetCodeOrigin(index));
-    if (!outerMostCodeBlock->canGetCodeOrigin(index)) {
-        // See above. In release builds, we try to protect ourselves from crashing even
-        // though stack walking will be goofed up.
-        return 0;
-    }
-
-    CodeOrigin codeOrigin = outerMostCodeBlock->codeOrigin(index);
-    if (!codeOrigin.inlineCallFrame)
-        return this; // Not currently in inlined code.
-
-    // We've got inlined frames. So, reify them so that the iterator can walk through them.
-    CallFrame* currFrame = this->callFrame();
-    CallFrame* innerMostLogicalFrame = currFrame + codeOrigin.inlineCallFrame->stackOffset;
-
-    CallFrame* logicalFrame = innerMostLogicalFrame;
-    while (logicalFrame != currFrame) {
-        InlineCallFrame* inlinedFrameInfo = codeOrigin.inlineCallFrame;
-        
-        // Fill in the logical (i.e. inlined) frame
-        logicalFrame->setCodeBlock(inlinedFrameInfo->baselineCodeBlock());
-        logicalFrame->setInlineCallFrame(inlinedFrameInfo);
-        logicalFrame->setArgumentCountIncludingThis(inlinedFrameInfo->arguments.size());
-        logicalFrame->setLocationAsBytecodeOffset(codeOrigin.bytecodeIndex);
-        logicalFrame->setIsInlinedFrame();
-
-        JSFunction* callee = inlinedFrameInfo->callee.get();
-        if (callee) {
-            logicalFrame->setScope(callee->scope());
-            logicalFrame->setCallee(callee);
-        }
-        
-        CodeOrigin* callerCodeOrigin = &inlinedFrameInfo->caller;
-        InlineCallFrame* callerInlinedFrameInfo = callerCodeOrigin->inlineCallFrame;
-        unsigned callerFrameOffset = callerInlinedFrameInfo ? callerInlinedFrameInfo->stackOffset : 0;
-        CallFrame* callerFrame = currFrame + callerFrameOffset;
-        logicalFrame->setCallerFrame(callerFrame);
-
-        codeOrigin = *callerCodeOrigin;
-        logicalFrame = callerFrame;
-    }
-    
-    ASSERT(!innerMostLogicalFrame->hasHostCallFrameFlag());
-    return Frame::create(innerMostLogicalFrame);
-#endif // !ENABLE(DFG_JIT)
-}
-
-StackIterator::Frame* StackIterator::Frame::logicalCallerFrame()
-{
-    Frame* callerFrame = create(this->callerFrame()->removeHostCallFrameFlag());
-#if !ENABLE(DFG_JIT)
-    return callerFrame;
-
-#else // !ENABLE(DFG_JIT)
-    if (!isJSFrame() || !callerFrame)
-        return callerFrame;
-
-    // If I am known to be an inlined frame, then I've been reified already and
-    // have my caller.
-    if (isInlinedFrame())
-        return callerFrame;
-    
-    // I am not an inlined frame. So the question is: is my caller a CallFrame
-    // that has inlines or a CallFrame that doesn't?
-
-    // If my caller is not a JS frame, it cannot have inlines, and we're done.
-    if (!callerFrame->isJSFrame())
-        return callerFrame;
-
-    ASSERT(!callerFrame->isInlinedFrame());
-    return callerFrame->logicalFrame();
-
-#endif // !ENABLE(DFG_JIT)
+    m_callFrame = 0;
+#if ENABLE(DFG_JIT)
+    m_inlineCallFrame = 0;
+#endif
 }
 
 #ifndef NDEBUG
@@ -369,31 +407,34 @@ void StackIterator::Frame::print(int indentLevel)
     CodeBlock* codeBlock = this->codeBlock();
     printif(i, "frame %p {\n", this);
 
+    CallFrame* callFrame = m_callFrame;
     CallFrame* callerFrame = this->callerFrame();
-    void* returnPC = hasReturnPC() ? this->returnPC().value() : 0;
+    void* returnPC = callFrame->hasReturnPC() ? callFrame->returnPC().value() : 0;
 
     printif(i, "   name '%s'\n", functionName().utf8().data());
     printif(i, "   sourceURL '%s'\n", sourceURL().utf8().data());
     printif(i, "   hostFlag %d\n", callerFrame->hasHostCallFrameFlag());
-    printif(i, "   isInlinedFrame %d\n", isInlinedFrame());
 
+#if ENABLE(DFG_JIT)
+    printif(i, "   isInlinedFrame %d\n", isInlinedFrame());
     if (isInlinedFrame())
-        printif(i, "   InlineCallFrame %p\n", this->inlineCallFrame());
+        printif(i, "   InlineCallFrame %p\n", m_inlineCallFrame);
+#endif
 
     printif(i, "   callee %p\n", callee());
     printif(i, "   returnPC %p\n", returnPC);
     printif(i, "   callerFrame %p\n", callerFrame->removeHostCallFrameFlag());
-    printif(i, "   logicalCallerFrame %p\n", logicalCallerFrame());
-    printif(i, "   rawLocationBits %u 0x%x\n", locationAsRawBits(), locationAsRawBits());
+    unsigned locationRawBits = callFrame->locationAsRawBits();
+    printif(i, "   rawLocationBits %u 0x%x\n", locationRawBits, locationRawBits);
     printif(i, "   codeBlock %p\n", codeBlock);
     if (codeBlock) {
         JITCode::JITType jitType = codeBlock->jitType();
-        if (hasLocationAsBytecodeOffset()) {
-            unsigned bytecodeOffset = locationAsBytecodeOffset();
+        if (callFrame->hasLocationAsBytecodeOffset()) {
+            unsigned bytecodeOffset = callFrame->locationAsBytecodeOffset();
             printif(i, "      bytecodeOffset %u %p / %zu\n", bytecodeOffset, reinterpret_cast<void*>(bytecodeOffset), codeBlock->instructions().size());
 #if ENABLE(DFG_JIT)
         } else {
-            unsigned codeOriginIndex = locationAsCodeOriginIndex();
+            unsigned codeOriginIndex = callFrame->locationAsCodeOriginIndex();
             printif(i, "      codeOriginIdex %u %p / %zu\n", codeOriginIndex, reinterpret_cast<void*>(codeOriginIndex), codeBlock->codeOrigins().size());
 #endif
         }
@@ -419,14 +460,24 @@ void StackIterator::Frame::print(int indentLevel)
 } // namespace JSC
 
 #ifndef NDEBUG
-// For use in the debugger
+// For debugging use
 void debugPrintCallFrame(JSC::CallFrame*);
+void debugPrintStack(JSC::CallFrame* topCallFrame);
 
 void debugPrintCallFrame(JSC::CallFrame* callFrame)
 {
     if (!callFrame)
         return;
-    JSC::StackIterator::Frame* frame = JSC::StackIterator::Frame::create(callFrame);
-    frame->print(2);
+    JSC::StackIterator iter = callFrame->begin();
+    iter->print(2);
+}
+
+void debugPrintStack(JSC::CallFrame* topCallFrame)
+{
+    if (!topCallFrame)
+        return;
+    JSC::StackIterator iter = topCallFrame->begin();
+    for (; iter != topCallFrame->end(); ++iter)
+        iter->print(2);
 }
 #endif // !NDEBUG

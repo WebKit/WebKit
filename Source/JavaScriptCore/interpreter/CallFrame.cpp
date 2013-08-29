@@ -111,9 +111,4 @@ StackIterator CallFrame::find(JSFunction* calleeFunctionObj, StackIterator::Fram
     return iter;
 }
 
-StackIterator::Frame* CallFrame::end()
-{
-    return StackIterator::end();
-}
-
-}
+} // namespace JSC

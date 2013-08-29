@@ -28,7 +28,7 @@
 #include "JSStack.h"
 #include "MacroAssemblerCodeRef.h"
 #include "Register.h"
-#include "StackIteratorPrivate.h"
+#include "StackIterator.h"
 
 namespace JSC  {
 
@@ -283,7 +283,7 @@ namespace JSC  {
 
         JS_EXPORT_PRIVATE StackIterator begin(StackIterator::FrameFilter = 0);
         JS_EXPORT_PRIVATE StackIterator find(JSFunction* calleeFunctionObj, StackIterator::FrameFilter = 0);
-        JS_EXPORT_PRIVATE StackIterator::Frame* end();
+        StackIterator end() { return StackIterator::end(); }
 
     private:
         static const intptr_t HostCallFrameFlag = 1;
