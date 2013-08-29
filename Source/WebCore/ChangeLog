@@ -1,3 +1,30 @@
+2013-08-29  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Crash when VoiceOver reference a TextMarker from an iframe that has been removed
+        https://bugs.webkit.org/show_bug.cgi?id=120318
+
+        Reviewed by Darin Adler.
+
+        These crashes occur because an AXTextMarker is retrieved that reference a Node in an iframe.
+        The iframe goes away, but when it tries to clean up and remove that Node from the InUse cache,
+        the document() tree has already been detached, so it never clears the actual InUse cache.
+
+        The fix here is to pre-emptively clean up any nodes in the document going away when the frame is about to disconnect.
+
+        I'm removing the clearAXObjectCache() at the disconnectOwnerElement because it 
+           1) Cleared the AXObjectCache for the iframe document (which is always empty -- only the top level doc maintains the cache), because
+                the document() tree had already been detached... so it essentially did nothing.
+           2) And if it did work, we wouldn't want this behavior -- that is to say, when an iframe goes away, we don't want to clear the entire cache for all
+               the other documents (there's even an existing layout test to verify this behavior).
+
+        Test: platform/mac/accessibility/stale-textmarker-crash.html
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::clearTextMarkerNodesInUse):
+        * accessibility/AXObjectCache.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::disconnectOwnerElement):
+
 2013-08-29  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] More unreviewed gardening of project file.

@@ -947,6 +947,24 @@ const Element* AXObjectCache::rootAXEditableElement(const Node* node)
     return result;
 }
 
+void AXObjectCache::clearTextMarkerNodesInUse(Document* document)
+{
+    HashSet<Node*>::iterator it = m_textMarkerNodes.begin();
+    HashSet<Node*>::iterator end = m_textMarkerNodes.end();
+
+    // Check each node to see if it's inside the document being deleted.
+    HashSet<Node*> nodesToDelete;
+    for (; it != end; ++it) {
+        if ((*it)->document() == document)
+            nodesToDelete.add(*it);
+    }
+    
+    it = nodesToDelete.begin();
+    end = nodesToDelete.end();
+    for (; it != end; ++it)
+        m_textMarkerNodes.remove(*it);
+}
+    
 bool AXObjectCache::nodeIsTextControl(const Node* node)
 {
     if (!node)

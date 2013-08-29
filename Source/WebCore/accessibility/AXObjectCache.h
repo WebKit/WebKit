@@ -200,6 +200,7 @@ public:
     void frameLoadingEventNotification(Frame*, AXLoadingEvent);
 
     bool nodeHasRole(Node*, const AtomicString& role);
+    void clearTextMarkerNodesInUse(Document*);
 
     void startCachingComputedObjectAttributesUntilTreeMutates();
     void stopCachingComputedObjectAttributes();
