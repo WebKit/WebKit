@@ -87,9 +87,7 @@ public:
         ~Frame() { }
 
         void retrieveExpressionInfo(int& divot, int& startOffset, int& endOffset, unsigned& line, unsigned& column);
-#if ENABLE(DFG_JIT)
         void setToEnd();
-#endif
 
         size_t m_argumentCountIncludingThis;
         CallFrame* m_callerFrame;
