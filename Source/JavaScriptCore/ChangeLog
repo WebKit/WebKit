@@ -1,3 +1,17 @@
+2013-08-29  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Unreviewed build fix after r154847.
+        If you are going to exclude promises, actually exclude the build components.
+
+        * interpreter/CallFrame.h: Exclude promise declarations
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::reset): Exclude promise code.
+        (JSC::JSGlobalObject::visitChildren): Ditto.
+        * runtime/VM.cpp: Ditto.
+        (JSC::VM::VM):
+        (JSC::VM::~VM):
+        * runtime/VM.h:
+
 2013-08-29  Sam Weinig  <sam@webkit.org>
 
         Add ENABLE guards for Promises

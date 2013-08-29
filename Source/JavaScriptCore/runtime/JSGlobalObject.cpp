@@ -354,8 +354,10 @@ void JSGlobalObject::reset(JSValue prototype)
     m_datePrototype->putDirectWithoutTransition(exec->vm(), exec->propertyNames().constructor, dateConstructor, DontEnum);
     m_regExpPrototype->putDirectWithoutTransition(exec->vm(), exec->propertyNames().constructor, m_regExpConstructor.get(), DontEnum);
     m_errorPrototype->putDirectWithoutTransition(exec->vm(), exec->propertyNames().constructor, m_errorConstructor.get(), DontEnum);
+#if ENABLE(PROMISES)
     m_promisePrototype->putDirectWithoutTransition(exec->vm(), exec->propertyNames().constructor, promiseConstructor, DontEnum);
     m_promiseResolverPrototype->putDirectWithoutTransition(exec->vm(), exec->propertyNames().constructor, promiseResolverConstructor, DontEnum);
+#endif
 
     putDirectWithoutTransition(exec->vm(), exec->propertyNames().Object, objectConstructor, DontEnum);
     putDirectWithoutTransition(exec->vm(), exec->propertyNames().Function, functionConstructor, DontEnum);
@@ -372,8 +374,10 @@ void JSGlobalObject::reset(JSValue prototype)
     putDirectWithoutTransition(exec->vm(), exec->propertyNames().SyntaxError, m_syntaxErrorConstructor.get(), DontEnum);
     putDirectWithoutTransition(exec->vm(), exec->propertyNames().TypeError, m_typeErrorConstructor.get(), DontEnum);
     putDirectWithoutTransition(exec->vm(), exec->propertyNames().URIError, m_URIErrorConstructor.get(), DontEnum);
+#if ENABLE(PROMISES)
     putDirectWithoutTransition(exec->vm(), exec->propertyNames().Promise, promiseConstructor, DontEnum);
     putDirectWithoutTransition(exec->vm(), exec->propertyNames().PromiseResolver, promiseResolverConstructor, DontEnum);
+#endif
 
     m_evalFunction.set(exec->vm(), this, JSFunction::create(exec, this, 1, exec->propertyNames().eval.string(), globalFuncEval));
     putDirectWithoutTransition(exec->vm(), exec->propertyNames().eval, m_evalFunction.get(), DontEnum);
@@ -593,8 +597,10 @@ void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(&thisObject->m_datePrototype);
     visitor.append(&thisObject->m_regExpPrototype);
     visitor.append(&thisObject->m_errorPrototype);
+#if ENABLE(PROMISES)
     visitor.append(&thisObject->m_promisePrototype);
     visitor.append(&thisObject->m_promiseResolverPrototype);
+#endif
 
     visitor.append(&thisObject->m_withScopeStructure);
     visitor.append(&thisObject->m_strictEvalActivationStructure);

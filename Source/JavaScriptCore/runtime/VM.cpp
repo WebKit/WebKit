@@ -106,9 +106,11 @@ extern const HashTable regExpTable;
 extern const HashTable regExpConstructorTable;
 extern const HashTable regExpPrototypeTable;
 extern const HashTable stringConstructorTable;
+#if ENABLE(PROMISES)
 extern const HashTable promisePrototypeTable;
 extern const HashTable promiseConstructorTable;
 extern const HashTable promiseResolverPrototypeTable;
+#endif
 
 // Note: Platform.h will enforce that ENABLE(ASSEMBLER) is true if either
 // ENABLE(JIT) or ENABLE(YARR_JIT) or both are enabled. The code below
@@ -169,9 +171,11 @@ VM::VM(VMType vmType, HeapType heapType)
     , regExpConstructorTable(fastNew<HashTable>(JSC::regExpConstructorTable))
     , regExpPrototypeTable(fastNew<HashTable>(JSC::regExpPrototypeTable))
     , stringConstructorTable(fastNew<HashTable>(JSC::stringConstructorTable))
+#if ENABLE(PROMISES)
     , promisePrototypeTable(fastNew<HashTable>(JSC::promisePrototypeTable))
     , promiseConstructorTable(fastNew<HashTable>(JSC::promiseConstructorTable))
     , promiseResolverPrototypeTable(fastNew<HashTable>(JSC::promiseResolverPrototypeTable))
+#endif
     , identifierTable(vmType == Default ? wtfThreadData().currentIdentifierTable() : createIdentifierTable())
     , propertyNames(new CommonIdentifiers(this))
     , emptyList(new MarkedArgumentBuffer)
@@ -321,9 +325,11 @@ VM::~VM()
     regExpConstructorTable->deleteTable();
     regExpPrototypeTable->deleteTable();
     stringConstructorTable->deleteTable();
+#if ENABLE(PROMISES)
     promisePrototypeTable->deleteTable();
     promiseConstructorTable->deleteTable();
     promiseResolverPrototypeTable->deleteTable();
+#endif
 
     fastDelete(const_cast<HashTable*>(arrayConstructorTable));
     fastDelete(const_cast<HashTable*>(arrayPrototypeTable));
@@ -342,9 +348,11 @@ VM::~VM()
     fastDelete(const_cast<HashTable*>(regExpConstructorTable));
     fastDelete(const_cast<HashTable*>(regExpPrototypeTable));
     fastDelete(const_cast<HashTable*>(stringConstructorTable));
+#if ENABLE(PROMISES)
     fastDelete(const_cast<HashTable*>(promisePrototypeTable));
     fastDelete(const_cast<HashTable*>(promiseConstructorTable));
     fastDelete(const_cast<HashTable*>(promiseResolverPrototypeTable));
+#endif
 
     delete emptyList;
 

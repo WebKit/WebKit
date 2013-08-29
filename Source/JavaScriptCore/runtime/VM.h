@@ -235,10 +235,12 @@ namespace JSC {
         const HashTable* regExpConstructorTable;
         const HashTable* regExpPrototypeTable;
         const HashTable* stringConstructorTable;
+#if ENABLE(PROMISES)
         const HashTable* promisePrototypeTable;
         const HashTable* promiseConstructorTable;
         const HashTable* promiseResolverPrototypeTable;
-        
+#endif
+
         Strong<Structure> structureStructure;
         Strong<Structure> structureRareDataStructure;
         Strong<Structure> debuggerActivationStructure;
