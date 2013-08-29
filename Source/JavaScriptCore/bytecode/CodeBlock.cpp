@@ -2962,26 +2962,10 @@ static int32_t clipThreshold(double threshold)
     return static_cast<int32_t>(threshold);
 }
 
-int32_t CodeBlock::counterValueForOptimizeAfterWarmUp()
+int32_t CodeBlock::adjustedCounterValue(int32_t desiredThreshold)
 {
     return clipThreshold(
-        Options::thresholdForOptimizeAfterWarmUp() *
-        optimizationThresholdScalingFactor() *
-        (1 << reoptimizationRetryCounter()));
-}
-
-int32_t CodeBlock::counterValueForOptimizeAfterLongWarmUp()
-{
-    return clipThreshold(
-        Options::thresholdForOptimizeAfterLongWarmUp() *
-        optimizationThresholdScalingFactor() *
-        (1 << reoptimizationRetryCounter()));
-}
-
-int32_t CodeBlock::counterValueForOptimizeSoon()
-{
-    return clipThreshold(
-        Options::thresholdForOptimizeSoon() *
+        static_cast<double>(desiredThreshold) *
         optimizationThresholdScalingFactor() *
         (1 << reoptimizationRetryCounter()));
 }
@@ -3018,7 +3002,8 @@ void CodeBlock::optimizeAfterWarmUp()
     if (Options::verboseOSR())
         dataLog(*this, ": Optimizing after warm-up.\n");
 #if ENABLE(DFG_JIT)
-    m_jitExecuteCounter.setNewThreshold(counterValueForOptimizeAfterWarmUp(), this);
+    m_jitExecuteCounter.setNewThreshold(
+        adjustedCounterValue(Options::thresholdForOptimizeAfterWarmUp()), this);
 #endif
 }
 
@@ -3027,7 +3012,8 @@ void CodeBlock::optimizeAfterLongWarmUp()
     if (Options::verboseOSR())
         dataLog(*this, ": Optimizing after long warm-up.\n");
 #if ENABLE(DFG_JIT)
-    m_jitExecuteCounter.setNewThreshold(counterValueForOptimizeAfterLongWarmUp(), this);
+    m_jitExecuteCounter.setNewThreshold(
+        adjustedCounterValue(Options::thresholdForOptimizeAfterLongWarmUp()), this);
 #endif
 }
 
@@ -3036,7 +3022,8 @@ void CodeBlock::optimizeSoon()
     if (Options::verboseOSR())
         dataLog(*this, ": Optimizing soon.\n");
 #if ENABLE(DFG_JIT)
-    m_jitExecuteCounter.setNewThreshold(counterValueForOptimizeSoon(), this);
+    m_jitExecuteCounter.setNewThreshold(
+        adjustedCounterValue(Options::thresholdForOptimizeSoon()), this);
 #endif
 }
 

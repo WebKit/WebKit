@@ -71,7 +71,8 @@ void handleExitCounts(CCallHelpers& jit, const OSRExitBase& exit)
     
     // Adjust the execution counter such that the target is to only optimize after a while.
     int32_t activeThreshold =
-        jit.baselineCodeBlock()->counterValueForOptimizeAfterLongWarmUp();
+        jit.baselineCodeBlock()->adjustedCounterValue(
+            Options::thresholdForOptimizeAfterLongWarmUp());
     int32_t targetValue = ExecutionCounter::applyMemoryUsageHeuristicsAndConvertToInt(
         activeThreshold, jit.baselineCodeBlock());
     int32_t clippedValue =

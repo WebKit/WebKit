@@ -1,5 +1,24 @@
 2013-08-29  Filip Pizlo  <fpizlo@apple.com>
 
+        CodeBlock's magic for scaling tier-up thresholds should be more reusable
+        https://bugs.webkit.org/show_bug.cgi?id=120486
+
+        Reviewed by Oliver Hunt.
+        
+        Removed the counterValueForBlah() methods and exposed the reusable scaling logic
+        as a adjustedCounterValue() method.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::adjustedCounterValue):
+        (JSC::CodeBlock::optimizeAfterWarmUp):
+        (JSC::CodeBlock::optimizeAfterLongWarmUp):
+        (JSC::CodeBlock::optimizeSoon):
+        * bytecode/CodeBlock.h:
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+        (JSC::DFG::handleExitCounts):
+
+2013-08-29  Filip Pizlo  <fpizlo@apple.com>
+
         CodeBlock::prepareForExecution() is silly
         https://bugs.webkit.org/show_bug.cgi?id=120453
 

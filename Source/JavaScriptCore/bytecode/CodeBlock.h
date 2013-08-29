@@ -827,9 +827,7 @@ public:
 
     int32_t codeTypeThresholdMultiplier() const;
 
-    int32_t counterValueForOptimizeAfterWarmUp();
-    int32_t counterValueForOptimizeAfterLongWarmUp();
-    int32_t counterValueForOptimizeSoon();
+    int32_t adjustedCounterValue(int32_t desiredThreshold);
 
     int32_t* addressOfJITExecuteCounter()
     {
