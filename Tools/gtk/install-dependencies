@@ -41,7 +41,6 @@ function installDependenciesWithApt {
         autotools-dev \
         bison \
         flex \
-        gail-3.0 \
         gawk \
         gnome-common \
         gperf \
@@ -59,7 +58,7 @@ function installDependenciesWithApt {
         libgnutls-dev \
         libgudev-1.0-dev \
         libicu-dev \
-        libjpeg62-dev \
+        libjpeg8-dev \
         libmpg123-dev \
         libopus-dev \
         libpango1.0-dev \
@@ -75,7 +74,8 @@ function installDependenciesWithApt {
         libxslt1-dev \
         libxt-dev \
         libxtst-dev \
-        ruby
+        ruby \
+        xfonts-utils
 
     # These are dependencies necessary for running tests.
     apt-get install \
@@ -96,7 +96,7 @@ function installDependenciesWithApt {
         libgcrypt11-dev \
         libgpg-error-dev \
         libp11-kit-dev \
-        libtiff4-dev \
+        libtiff5-dev \
         libcroco3-dev \
         ragel \
         xutils-dev \

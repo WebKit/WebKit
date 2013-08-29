@@ -1,3 +1,16 @@
+2013-08-29  Alberto Garcia  <berto@igalia.com>
+
+        [GTK] Update apt dependency list
+        https://bugs.webkit.org/show_bug.cgi?id=120399
+
+        Reviewed by Philippe Normand.
+
+        Remove bogus package gail-3.0, add xfonts-utils (needed by
+        xorg-xserver) and switch to the latest versions of libtiff and
+        libjpeg.
+
+        * gtk/install-dependencies:
+
 2013-08-28  Alexey Proskuryakov  <ap@apple.com>
 
         [WK2][Mac] WebKitTestRunner doesn't force system appearance
