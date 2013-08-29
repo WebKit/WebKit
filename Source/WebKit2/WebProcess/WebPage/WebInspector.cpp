@@ -121,9 +121,9 @@ void WebInspector::inspectedURLChanged(const String& urlString)
     WebProcess::shared().parentProcessConnection()->send(Messages::WebInspectorProxy::InspectedURLChanged(urlString), m_page->pageID());
 }
 
-void WebInspector::save(const String& filename, const String& content, bool forceSaveAs)
+void WebInspector::save(const String& filename, const String& content, bool base64Encoded, bool forceSaveAs)
 {
-    WebProcess::shared().parentProcessConnection()->send(Messages::WebInspectorProxy::Save(filename, content, forceSaveAs), m_page->pageID());
+    WebProcess::shared().parentProcessConnection()->send(Messages::WebInspectorProxy::Save(filename, content, base64Encoded, forceSaveAs), m_page->pageID());
 }
 
 void WebInspector::append(const String& filename, const String& content)

@@ -30,20 +30,3 @@
 .item.resource.failed .subtitle {
     color: rgba(224, 16, 16, 0.7) !important;
 }
-
-.item.resource > .status > .reload-button {
-    width: 16px;
-    height: 16px;
-}
-
-.item.resource > .status > .reload-button > svg * {
-    fill: rgb(112, 126, 139);
-}
-
-.item.resource.selected > .status > .reload-button > svg * {
-    fill: white;
-}
-
-.item.resource.selected > .status > .reload-button:active > svg * {
-    fill: rgba(255, 255, 255, 0.75);
-}

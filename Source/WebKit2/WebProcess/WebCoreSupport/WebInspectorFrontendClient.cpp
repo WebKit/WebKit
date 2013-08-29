@@ -66,9 +66,9 @@ bool WebInspectorFrontendClient::canSave()
     return m_page->inspector()->canSave();
 }
 
-void WebInspectorFrontendClient::save(const String& filename, const String& content, bool forceSaveAs)
+void WebInspectorFrontendClient::save(const String& filename, const String& content, bool base64Encoded, bool forceSaveAs)
 {
-    m_page->inspector()->save(filename, content, forceSaveAs);
+    m_page->inspector()->save(filename, content, base64Encoded, forceSaveAs);
 }
 
 void WebInspectorFrontendClient::append(const String& filename, const String& content)

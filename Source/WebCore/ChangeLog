@@ -1,3 +1,35 @@
+2013-08-29  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Download Web Archive of Inspected Page
+        https://bugs.webkit.org/show_bug.cgi?id=119774
+
+        Reviewed by Timothy Hatcher.
+
+        Add PageAgent.archive which will return a Base-64 encoded web archive
+        when successful. In order to then allow saving non-string files, extend
+        InspectorFrontendHost.save to allow for Base-64 encoded data.
+
+        * inspector/Inspector.json:
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::archive):
+        * inspector/InspectorPageAgent.h:
+        Introduce and implement PageAgent.archive. Create a Web Archive of the
+        page's main frame.
+
+        * inspector/InspectorFrontendClient.h:
+        * inspector/InspectorFrontendClientLocal.h:
+        (WebCore::InspectorFrontendClientLocal::save):
+        * inspector/InspectorFrontendHost.cpp:
+        (WebCore::InspectorFrontendHost::save):
+        * inspector/InspectorFrontendHost.h:
+        * inspector/InspectorFrontendHost.idl:
+        Extend InspectorFrontendHost.save to include a base64Encoded param.
+
+        * inspector/front-end/FileManager.js:
+        * inspector/front-end/InspectorFrontendHostStub.js:
+        (.WebInspector.InspectorFrontendHostStub.prototype.save):
+        Misc. updates to the old inspector for function changes.
+
 2013-08-29  Robert Hogan  <robert@webkit.org>
 
         Positioned Replaced Elements That Aren't RenderReplaced get Incorrect Width

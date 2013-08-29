@@ -98,7 +98,7 @@ private:
     void inspectedURLChanged(const String&);
 
     bool canSave() const;
-    void save(const String& filename, const String& content, bool forceSaveAs);
+    void save(const String& filename, const String& content, bool base64Encoded, bool forceSaveAs);
     void append(const String& filename, const String& content);
 
     void attachBottom();

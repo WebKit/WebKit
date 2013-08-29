@@ -48,6 +48,7 @@
 #import <WebCore/InspectorFrontendClientLocal.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/SoftLinking.h>
+#import <wtf/text/Base64.h>
 #import <wtf/text/WTFString.h>
 
 SOFT_LINK_STAGED_FRAMEWORK(WebInspectorUI, PrivateFrameworks, A)
@@ -542,7 +543,7 @@ void WebInspectorProxy::platformInspectedURLChanged(const String& urlString)
     updateInspectorWindowTitle();
 }
 
-void WebInspectorProxy::platformSave(const String& suggestedURL, const String& content, bool forceSaveDialog)
+void WebInspectorProxy::platformSave(const String& suggestedURL, const String& content, bool base64Encoded, bool forceSaveDialog)
 {
     ASSERT(!suggestedURL.isEmpty());
     
@@ -563,9 +564,18 @@ void WebInspectorProxy::platformSave(const String& suggestedURL, const String& c
 
     auto saveToURL = ^(NSURL *actualURL) {
         ASSERT(actualURL);
-        
+
         m_suggestedToActualURLMap.set(suggestedURLCopy, actualURL);
-        [contentCopy writeToURL:actualURL atomically:YES encoding:NSUTF8StringEncoding error:NULL];
+
+        if (base64Encoded) {
+            Vector<char> out;
+            if (!base64Decode(contentCopy, out, Base64FailOnInvalidCharacterOrExcessPadding))
+                return;
+            RetainPtr<NSData> dataContent = adoptNS([[NSData alloc] initWithBytes:out.data() length:out.size()]);
+            [dataContent writeToURL:actualURL atomically:YES];
+        } else
+            [contentCopy writeToURL:actualURL atomically:YES encoding:NSUTF8StringEncoding error:NULL];
+
         m_page->process()->send(Messages::WebInspector::DidSave([actualURL absoluteString]), m_page->pageID());
     };
 

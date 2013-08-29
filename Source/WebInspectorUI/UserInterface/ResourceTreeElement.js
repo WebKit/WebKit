@@ -185,7 +185,7 @@ WebInspector.ResourceTreeElement.prototype = {
             // Remove the spinner and replace with a reload button in case it's the main frame's main resource.
             var frame = this._resource.parentFrame;
             if (this._resource.isMainResource() && frame && frame.isMainFrame())
-                this._updateStatusWithMainFrameButtons();
+                this.updateStatusForMainFrame();
             else
                 this.status = null;
         } else {
@@ -197,14 +197,6 @@ WebInspector.ResourceTreeElement.prototype = {
     _updateToolTip: function()
     {
         this.tooltip = this._resource.url;
-    },
-
-    _reloadPageClicked: function(event)
-    {
-        event.stopPropagation();
-
-        // Ignore cache when the shift key is pressed.
-        PageAgent.reload(event.shiftKey);
     },
 
     _urlDidChange: function(event)

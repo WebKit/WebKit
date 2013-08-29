@@ -28,7 +28,7 @@ messages -> WebInspectorProxy {
     BringToFront()
     InspectedURLChanged(WTF::String urlString)
 
-    Save(WTF::String filename, WTF::String content, bool forceSaveAs)
+    Save(WTF::String filename, WTF::String content, bool base64Encoded, bool forceSaveAs)
     Append(WTF::String filename, WTF::String content)
 
     AttachBottom()

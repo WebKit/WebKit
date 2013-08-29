@@ -16,7 +16,6 @@ InspectorBackend.registerCommand("Inspector.disable", [], []);
 
 // Memory.
 InspectorBackend.registerMemoryDispatcher = InspectorBackend.registerDomainDispatcher.bind(InspectorBackend, "Memory");
-InspectorBackend.registerEvent("Memory.addNativeSnapshotChunk", ["chunk"]);
 InspectorBackend.registerCommand("Memory.getDOMCounters", [], ["documents", "nodes", "jsEventListeners"]);
 
 // Page.
@@ -69,6 +68,7 @@ InspectorBackend.registerCommand("Page.getCompositingBordersVisible", [], ["resu
 InspectorBackend.registerCommand("Page.setCompositingBordersVisible", [{"name": "visible", "type": "boolean", "optional": false}], []);
 InspectorBackend.registerCommand("Page.captureScreenshot", [], ["data"]);
 InspectorBackend.registerCommand("Page.handleJavaScriptDialog", [{"name": "accept", "type": "boolean", "optional": false}, {"name": "promptText", "type": "string", "optional": true}], []);
+InspectorBackend.registerCommand("Page.archive", [], ["data"]);
 
 // Runtime.
 InspectorBackend.registerRuntimeDispatcher = InspectorBackend.registerDomainDispatcher.bind(InspectorBackend, "Runtime");
@@ -241,6 +241,7 @@ InspectorBackend.registerEvent("CSS.styleSheetChanged", ["styleSheetId"]);
 InspectorBackend.registerEvent("CSS.namedFlowCreated", ["namedFlow"]);
 InspectorBackend.registerEvent("CSS.namedFlowRemoved", ["documentNodeId", "flowName"]);
 InspectorBackend.registerEvent("CSS.regionLayoutUpdated", ["namedFlow"]);
+InspectorBackend.registerEvent("CSS.regionOversetChanged", ["namedFlow"]);
 InspectorBackend.registerCommand("CSS.enable", [], []);
 InspectorBackend.registerCommand("CSS.disable", [], []);
 InspectorBackend.registerCommand("CSS.getMatchedStylesForNode", [{"name": "nodeId", "type": "number", "optional": false}, {"name": "includePseudo", "type": "boolean", "optional": true}, {"name": "includeInherited", "type": "boolean", "optional": true}], ["matchedCSSRules", "pseudoElements", "inherited"]);

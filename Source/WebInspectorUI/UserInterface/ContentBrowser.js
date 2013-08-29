@@ -276,12 +276,17 @@ WebInspector.ContentBrowser.prototype = {
         if (!saveData)
             return;
 
+        if (typeof saveData.customSaveHandler === "function") {
+            saveData.customSaveHandler(forceSaveAs);
+            return;
+        }
+
         console.assert(saveData.url);
         console.assert(typeof saveData.content === "string");
         if (!saveData.url || typeof saveData.content !== "string")
             return;
 
-        InspectorFrontendHost.save(saveData.url, saveData.content, forceSaveAs || saveData.forceSaveAs);
+        InspectorFrontendHost.save(saveData.url, saveData.content, false, forceSaveAs || saveData.forceSaveAs);
     },
 
     _save: function(event)

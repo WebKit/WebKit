@@ -83,6 +83,10 @@
 #include <wtf/text/Base64.h>
 #include <wtf/text/StringBuilder.h>
 
+#if ENABLE(WEB_ARCHIVE) && USE(CF)
+#include "LegacyWebArchive.h"
+#endif
+
 namespace WebCore {
 
 namespace PageAgentState {
@@ -1326,6 +1330,29 @@ void InspectorPageAgent::handleJavaScriptDialog(ErrorString* errorString, bool a
 {
     if (!m_client->handleJavaScriptDialog(accept, promptText))
         *errorString = "Could not handle JavaScript dialog";
+}
+
+void InspectorPageAgent::archive(ErrorString* errorString, String* data)
+{
+    Frame* frame = mainFrame();
+    if (!frame) {
+        *errorString = "No main frame";
+        return;
+    }
+
+#if ENABLE(WEB_ARCHIVE) && USE(CF)
+    RefPtr<LegacyWebArchive> archive = LegacyWebArchive::create(frame);
+    if (!archive) {
+        *errorString = "Could not create web archive for main frame";
+        return;
+    }
+
+    RetainPtr<CFDataRef> buffer = archive->rawDataRepresentation();
+    *data = base64Encode(reinterpret_cast<const char*>(CFDataGetBytePtr(buffer.get())), CFDataGetLength(buffer.get()));
+#else
+    UNUSED_PARAM(data);
+    *errorString = "No support for creating archives";
+#endif
 }
 
 } // namespace WebCore

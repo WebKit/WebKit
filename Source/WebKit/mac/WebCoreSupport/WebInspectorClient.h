@@ -118,7 +118,7 @@ private:
     void updateWindowTitle() const;
 
     virtual bool canSave() OVERRIDE { return true; }
-    virtual void save(const String& url, const String& content, bool forceSaveAs) OVERRIDE;
+    virtual void save(const String& url, const String& content, bool forceSaveAs, bool base64Encoded) OVERRIDE;
     virtual void append(const String& url, const String& content) OVERRIDE;
 
     WebView* m_inspectedWebView;

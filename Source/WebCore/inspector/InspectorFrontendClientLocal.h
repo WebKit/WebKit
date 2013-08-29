@@ -68,7 +68,7 @@ public:
     virtual void changeAttachedWindowWidth(unsigned);
     virtual void openInNewTab(const String& url);
     virtual bool canSave() { return false; }
-    virtual void save(const String&, const String&, bool) { }
+    virtual void save(const String&, const String&, bool, bool) { }
     virtual void append(const String&, const String&) { }
 
     virtual void attachWindow(DockSide) = 0;
@@ -118,7 +118,7 @@ private:
 
     friend class FrontendMenuProvider;
     InspectorController* m_inspectorController;
-    Page* m_frontendPage;    
+    Page* m_frontendPage;
     // TODO(yurys): this ref shouldn't be needed.
     RefPtr<InspectorFrontendHost> m_frontendHost;
     OwnPtr<InspectorFrontendClientLocal::Settings> m_settings;

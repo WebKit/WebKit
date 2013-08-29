@@ -474,9 +474,9 @@ void WebInspectorProxy::inspectedURLChanged(const String& urlString)
     platformInspectedURLChanged(urlString);
 }
 
-void WebInspectorProxy::save(const String& filename, const String& content, bool forceSaveAs)
+void WebInspectorProxy::save(const String& filename, const String& content, bool base64Encoded, bool forceSaveAs)
 {
-    platformSave(filename, content, forceSaveAs);
+    platformSave(filename, content, base64Encoded, forceSaveAs);
 }
 
 void WebInspectorProxy::append(const String& filename, const String& content)

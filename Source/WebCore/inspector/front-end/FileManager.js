@@ -61,7 +61,7 @@ WebInspector.FileManager.prototype = {
         var savedURLs = WebInspector.settings.savedURLs.get();
         delete savedURLs[url];
         WebInspector.settings.savedURLs.set(savedURLs);
-        InspectorFrontendHost.save(url, content, forceSaveAs);
+        InspectorFrontendHost.save(url, content, false, forceSaveAs);
     },
 
     /**

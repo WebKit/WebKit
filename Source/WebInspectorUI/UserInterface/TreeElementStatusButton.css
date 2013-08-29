@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,45 +23,28 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebInspectorFrontendClient_h
-#define WebInspectorFrontendClient_h
+.item > .status > .status-button {
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+}
 
-#if ENABLE(INSPECTOR)
+.item > .status > .status-button > svg * {
+    fill: rgb(112, 126, 139);
+}
 
-#include <WebCore/InspectorFrontendClientLocal.h>
+.item.selected > .status > .status-button > svg * {
+    fill: white;
+}
 
-namespace WebKit {
+.item.selected > .status > .status-button:active > svg * {
+    fill: rgba(255, 255, 255, 0.75);
+}
 
-class WebPage;
+.item > .status > .status-button.disabled > svg * {
+    fill: rgb(112, 126, 139, 0.5) !important;
+}
 
-class WebInspectorFrontendClient : public WebCore::InspectorFrontendClientLocal {
-public:
-    WebInspectorFrontendClient(WebPage* page, WebPage* inspectorPage);
-
-private:
-    virtual String localizedStringsURL() OVERRIDE;
-
-    virtual void bringToFront() OVERRIDE;
-    virtual void closeWindow() OVERRIDE;
-
-    virtual bool canSave() OVERRIDE;
-    virtual void save(const String&, const String&, bool base64Encoded, bool forceSaveAs) OVERRIDE;
-    virtual void append(const String&, const String&) OVERRIDE;
-
-    virtual void attachWindow(DockSide) OVERRIDE;
-    virtual void detachWindow() OVERRIDE;
-
-    virtual void setAttachedWindowHeight(unsigned) OVERRIDE;
-    virtual void setAttachedWindowWidth(unsigned) OVERRIDE;
-    virtual void setToolbarHeight(unsigned) OVERRIDE;
-
-    virtual void inspectedURLChanged(const String&) OVERRIDE;
-
-    WebPage* m_page;
-};
-
-} // namespace WebKit
-
-#endif // ENABLE(INSPECTOR)
-
-#endif // WebInspectorFrontendClient_h
+.item.selected > .status > .status-button.disabled > svg * {
+    fill: rgba(255, 255, 255, 0.5) !important;
+}

@@ -1,3 +1,17 @@
+2013-08-29  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Download Web Archive of Inspected Page
+        https://bugs.webkit.org/show_bug.cgi?id=119774
+
+        Reviewed by Timothy Hatcher.
+
+        Update to support InspectorFrontendHost.save's new base64Encoded
+        parameter. It means the incoming content is binary data, not a string.
+
+        * WebCoreSupport/WebInspectorClient.h:
+        * WebCoreSupport/WebInspectorClient.mm:
+        (WebInspectorFrontendClient::save):
+
 2013-08-28  Chris Curtis  <chris_curtis@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=119548

@@ -1,3 +1,13 @@
+2013-08-29  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Download Web Archive of Inspected Page
+        https://bugs.webkit.org/show_bug.cgi?id=119774
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector-protocol/page/archive-expected.txt: Added.
+        * inspector-protocol/page/archive.html: Added.
+
 2013-08-29  Robert Hogan  <robert@webkit.org>
 
         Positioned Replaced Elements That Aren't RenderReplaced get Incorrect Width

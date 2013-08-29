@@ -132,7 +132,7 @@ WebInspector.InspectorFrontendHostStub.prototype = {
         return true;
     },
 
-    save: function(url, content, forceSaveAs)
+    save: function(url, content, base64Encoded, forceSaveAs)
     {
         if (this._fileBuffers[url])
             throw new Error("Concurrent file modification denied.");

@@ -1,3 +1,69 @@
+2013-08-29  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Download Web Archive of Inspected Page
+        https://bugs.webkit.org/show_bug.cgi?id=119774
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/ContentBrowser.js:
+        (WebInspector.ContentBrowser.prototype._saveDataToFile):
+        Allow a custom save handler which will do all the work.
+
+        * UserInterface/DOMTreeContentView.js:
+        (WebInspector.DOMTreeContentView):
+        (WebInspector.DOMTreeContentView.prototype.get supportsSave):
+        (WebInspector.DOMTreeContentView.prototype.get saveData.saveHandler):
+        (WebInspector.DOMTreeContentView.prototype.get saveData):
+        Allow Save keyboard shortcut to download an archive viewing the DOM Tree.
+
+        * UserInterface/ResourceTreeElement.js:
+        (WebInspector.ResourceTreeElement.prototype._updateStatus):
+        * UserInterface/FrameTreeElement.js:
+        (WebInspector.FrameTreeElement):
+        (WebInspector.FrameTreeElement.prototype.updateStatusForMainFrame):
+        (WebInspector.FrameTreeElement.prototype._mainResourceDidChange):
+        (WebInspector.FrameTreeElement.prototype._shouldGroupIntoFolders):
+        (WebInspector.FrameTreeElement.prototype._reloadPageClicked):
+        (WebInspector.FrameTreeElement.prototype._downloadButtonClicked):
+        (WebInspector.FrameTreeElement.prototype._updateDownloadButton):
+        (WebInspector.FrameTreeElement.prototype._pageArchiveStarted):
+        (WebInspector.FrameTreeElement.prototype._pageArchiveEnded):
+        Move handling of main frame TreeElement buttons to FrameTreeElement.
+        Add a Download button, and enable/disable it appropriately.
+
+        * UserInterface/ResourceTreeElement.css:
+        * UserInterface/TreeElementStatusButton.css: Copied from Source/WebInspectorUI/UserInterface/ResourceTreeElement.css.
+        (.item > .status > .status-button):
+        (.item > .status > .status-button > svg *):
+        (.item.selected > .status > .status-button > svg *):
+        (.item.selected > .status > .status-button:active > svg *):
+        (.item > .status > .status-button.disabled > svg *):
+        (.item.selected > .status > .status-button.disabled > svg *):
+        * UserInterface/TreeElementStatusButton.js: Added.
+        (WebInspector.TreeElementStatusButton):
+        (WebInspector.TreeElementStatusButton.prototype.get element):
+        (WebInspector.TreeElementStatusButton.prototype.get hidden):
+        (WebInspector.TreeElementStatusButton.prototype.set hidden):
+        (WebInspector.TreeElementStatusButton.prototype.get enabled):
+        (WebInspector.TreeElementStatusButton.prototype.set enabled):
+        (WebInspector.TreeElementStatusButton.prototype._clicked):
+        Make buttons in the TreeElement status a generic class to share styling
+        and handling of the buttons. New "disabled" state with even more
+        transparent is used when the page is downloading.
+
+        * UserInterface/Main.html:
+        * UserInterface/Main.js:
+        (WebInspector.archiveMainFrame):
+        (WebInspector.canArchiveMainFrame):
+        Generic API for archiving the page and determining if you can archive it.
+
+        * UserInterface/InspectorBackendCommands.js:
+        * UserInterface/InspectorFrontendHostStub.js:
+        (.WebInspector.InspectorFrontendHostStub.prototype.save):
+        * UserInterface/Images/DownloadArrow.svg: Added.
+        * Localizations/en.lproj/localizedStrings.js:
+        Misc. updates and new files.
+
 2013-08-28  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Give reload icon an :active state and allow CSS to style some SVG images

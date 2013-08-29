@@ -40,6 +40,12 @@ WebInspector.FrameTreeElement = function(frame, representedObject)
     frame.addEventListener(WebInspector.Frame.Event.ChildFrameWasAdded, this._childFrameWasAdded, this);
     frame.addEventListener(WebInspector.Frame.Event.ChildFrameWasRemoved, this._childFrameWasRemoved, this);
 
+    if (this._frame.isMainFrame()) {
+        this._downloadingPage = false;
+        WebInspector.notifications.addEventListener(WebInspector.Notification.PageArchiveStarted, this._pageArchiveStarted, this);
+        WebInspector.notifications.addEventListener(WebInspector.Notification.PageArchiveEnded, this._pageArchiveEnded, this);
+    }
+
     this._updateParentStatus();
     this.shouldRefreshChildren = true;
 };
@@ -100,6 +106,47 @@ WebInspector.FrameTreeElement.prototype = {
         // Frames handle their own SourceMapResources.
 
         WebInspector.GeneralTreeElement.prototype.onattach.call(this);
+    },
+
+    // Called from ResourceTreeElement.
+
+    updateStatusForMainFrame: function()
+    {
+        function loadedImages()
+        {
+            if (!this._reloadButton || !this._downloadButton)
+                return;
+
+            var fragment = document.createDocumentFragment("div");
+            fragment.appendChild(this._downloadButton.element);
+            fragment.appendChild(this._reloadButton.element);
+            this.status = fragment;
+
+            delete this._loadingMainFrameButtons;
+        }
+
+        if (this._reloadButton && this._downloadButton) {
+            loadedImages.call(this);
+            return;
+        }
+
+        if (!this._loadingMainFrameButtons) {
+            this._loadingMainFrameButtons = true;
+
+            var tooltip = WebInspector.UIString("Reload page (%s)\nReload ignoring cache (%s)").format(WebInspector._reloadPageKeyboardShortcut.displayName, WebInspector._reloadPageIgnoringCacheKeyboardShortcut.displayName);
+            wrappedSVGDocument("Images/Reload.svg", null, tooltip, function(element) {
+                this._reloadButton = new WebInspector.TreeElementStatusButton(element);
+                this._reloadButton.addEventListener(WebInspector.TreeElementStatusButton.Event.Clicked, this._reloadPageClicked, this);
+                loadedImages.call(this);
+            }.bind(this));
+
+            wrappedSVGDocument("Images/DownloadArrow.svg", null, WebInspector.UIString("Download Web Archive"), function(element) {
+                this._downloadButton = new WebInspector.TreeElementStatusButton(element);
+                this._downloadButton.addEventListener(WebInspector.TreeElementStatusButton.Event.Clicked, this._downloadButtonClicked, this);
+                this._updateDownloadButton();
+                loadedImages.call(this);
+            }.bind(this));
+        }
     },
 
     // Overrides from TreeElement (Private).
@@ -190,6 +237,9 @@ WebInspector.FrameTreeElement.prototype = {
         // Change the expanded setting since the frame URL has changed. Do this before setting shouldRefreshChildren, since
         // shouldRefreshChildren will call onpopulate if expanded is true.
         this._updateExpandedSetting();
+
+        if (this._frame.isMainFrame())
+            this._updateDownloadButton();
 
         this.shouldRefreshChildren = true;
     },
@@ -486,6 +536,48 @@ WebInspector.FrameTreeElement.prototype = {
         }
 
         return false;
+    },
+
+    _reloadPageClicked: function(event)
+    {
+        // Ignore cache when the shift key is pressed.
+        PageAgent.reload(event.data.shiftKey);
+    },
+
+    _downloadButtonClicked: function(event)
+    {
+        WebInspector.archiveMainFrame();
+    },
+
+    _updateDownloadButton: function()
+    {
+        console.assert(this._frame.isMainFrame());
+        if (!this._downloadButton)
+            return;
+
+        if (!PageAgent.archive) {
+            this._downloadButton.hidden = true;
+            return;
+        }
+
+        if (this._downloadingPage) {
+            this._downloadButton.enabled = false;
+            return;
+        }
+
+        this._downloadButton.enabled = WebInspector.canArchiveMainFrame();
+    },
+
+    _pageArchiveStarted: function(event)
+    {
+        this._downloadingPage = true;
+        this._updateDownloadButton();
+    },
+
+    _pageArchiveEnded: function(event)
+    {
+        this._downloadingPage = false;
+        this._updateDownloadButton();
     }
 };
 

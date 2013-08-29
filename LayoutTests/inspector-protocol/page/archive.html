@@ -1,0 +1,24 @@
+<html>
+<head>
+<script type="text/javascript" src="../../http/tests/inspector-protocol/resources/protocol-test.js"></script>
+<script>
+function test()
+{
+    InspectorTest.sendCommand("Page.enable", {});
+    InspectorTest.sendCommand("Page.archive", {}, function(event) {
+        var data = event.result.data;
+        if (!data)
+            InspectorTest.log("FAIL: no data");
+        else if (data.length < 1000)
+            InspectorTest.log("FAIL: unexpectedly short data. A serialized archive should be pretty large.");
+        else
+            InspectorTest.log("PASS: Received archive data.");
+
+        InspectorTest.completeTest();
+    });
+}
+</script>
+</head>
+<body onload="runTest()">
+</body>
+</html>

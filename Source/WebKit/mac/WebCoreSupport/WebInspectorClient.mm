@@ -53,6 +53,7 @@
 #import <WebKit/DOMExtensions.h>
 #import <WebKitSystemInterface.h>
 #import <wtf/PassOwnPtr.h>
+#import <wtf/text/Base64.h>
 
 SOFT_LINK_STAGED_FRAMEWORK(WebInspectorUI, PrivateFrameworks, A)
 
@@ -303,7 +304,7 @@ void WebInspectorFrontendClient::updateWindowTitle() const
     [[m_windowController.get() window] setTitle:title];
 }
 
-void WebInspectorFrontendClient::save(const String& suggestedURL, const String& content, bool forceSaveDialog)
+void WebInspectorFrontendClient::save(const String& suggestedURL, const String& content, bool base64Encoded, bool forceSaveDialog)
 {
     ASSERT(!suggestedURL.isEmpty());
     
@@ -326,7 +327,16 @@ void WebInspectorFrontendClient::save(const String& suggestedURL, const String& 
         ASSERT(actualURL);
         
         m_suggestedToActualURLMap.set(suggestedURLCopy, actualURL);
-        [contentCopy writeToURL:actualURL atomically:YES encoding:NSUTF8StringEncoding error:NULL];
+
+        if (base64Encoded) {
+            Vector<char> out;
+            if (!base64Decode(contentCopy, out, Base64FailOnInvalidCharacterOrExcessPadding))
+                return;
+            RetainPtr<NSData> dataContent = adoptNS([[NSData alloc] initWithBytes:out.data() length:out.size()]);
+            [dataContent writeToURL:actualURL atomically:YES];
+        } else
+            [contentCopy writeToURL:actualURL atomically:YES encoding:NSUTF8StringEncoding error:NULL];
+
         core([m_windowController webView])->mainFrame().script().executeScript([NSString stringWithFormat:@"InspectorFrontendAPI.savedURL(\"%@\")", actualURL.absoluteString]);
     };
 

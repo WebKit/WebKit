@@ -74,7 +74,7 @@ public:
     void copyText(const String& text);
     void openInNewTab(const String& url);
     bool canSave();
-    void save(const String& url, const String& content, bool forceSaveAs);
+    void save(const String& url, const String& content, bool base64Encoded, bool forceSaveAs);
     void append(const String& url, const String& content);
     void close(const String& url);
 
