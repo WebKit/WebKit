@@ -213,8 +213,6 @@ static inline ExceptionCode checkAcceptChild(ContainerNode* newParent, Node* new
 
     if (newParent->isReadOnlyNode())
         return NO_MODIFICATION_ALLOWED_ERR;
-    if (newChild->inDocument() && newChild->isDocumentTypeNode())
-        return HIERARCHY_REQUEST_ERR;
     if (containsConsideringHostElements(newChild, newParent))
         return HIERARCHY_REQUEST_ERR;
 

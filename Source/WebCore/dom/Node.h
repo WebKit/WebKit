@@ -395,18 +395,16 @@ public:
 
     unsigned nodeIndex() const;
 
-    // Returns the DOM ownerDocument attribute. This method never returns NULL, except in the case 
-    // of (1) a Document node or (2) a DocumentType node that is not used with any Document yet. 
+    // Returns the DOM ownerDocument attribute. This method never returns 0, except in the case
+    // of a Document node.
     Document* ownerDocument() const;
 
-    // Returns the document associated with this node. This method never returns NULL, except in the case 
-    // of a DocumentType node that is not used with any Document yet. A Document node returns itself.
+    // Returns the document associated with this node. This method never returns 0.
+    // A Document node returns itself.
     Document* document() const
     {
         ASSERT(this);
-        // FIXME: below ASSERT is useful, but prevents the use of document() in the constructor or destructor
-        // due to the virtual function call to nodeType().
-        ASSERT(documentInternal() || (nodeType() == DOCUMENT_TYPE_NODE && !inDocument()));
+        ASSERT(documentInternal());
         return documentInternal();
     }
 

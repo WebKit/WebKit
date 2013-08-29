@@ -1,18 +1,7 @@
 <body>
+<script src="../../js/resources/js-test-pre.js"></script>
 <script>
-if (window.testRunner) {
-    testRunner.dumpAsText();
-    testRunner.waitUntilDone();
-}
-
-function gc()
-{
-    if (window.GCController)
-        return GCController.collect();
-
-    for (var i = 0; i < 10000; i++)
-        var s = new String("");
-}
+window.jsTestIsAsync = true;
 
 // Reload multiple times, to make crashing more likely.
 var iterationsLeft = 50;
@@ -22,12 +11,11 @@ function test()
         frames[0].history.go(0);
     } else {
         gc();
-        document.getElementById("result").innerText = frames[0].document.body.textContent;
-        if (window.testRunner)
-            testRunner.notifyDone();
+        debug(frames[0].document.body.outerHTML);
+        finishJSTest();
     }
 }
 </script>
-<div id="result">FAIL</div>
 <iframe src="resources/createDocument-with-used-doctype-frame.html" onload="test()"></iframe>
+<script src="../../js/resources/js-test-post.js"></script>
 </body>

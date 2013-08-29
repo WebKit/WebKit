@@ -1,17 +1,18 @@
 <!doctype html>
-<title>document.implementation.createDocument with current document's DOCTYPE</title>
+<html>
+<head>
+<script src="../../../js/resources/js-test-pre.js"></script>
+</head>
 <body>
-FAIL (Script did not run);
 <script>
-document.body.textContent = "FAIL";
-try {
-    document.implementation.createDocument(null, null, document.doctype);
-    document.body.textContent = "FAIL (no exception)";
-}
-catch(e) {
-    if (e.code === DOMException.WRONG_DOCUMENT_ERR || e.code === DOMException.NOT_SUPPORTED_ERR)
-        document.body.textContent = "PASS";
-    else
-        document.body.textContent = "FAIL (wrong exception: " + e.code + ")";
-}
+description("document.implementation.createDocument with current document's DOCTYPE.");
+
+var doctype = document.doctype;
+var doc;
+shouldNotThrow("doc = document.implementation.createDocument(null, null, document.doctype)");
+shouldBe('doc.doctype', 'doctype');
+shouldBe('doc.firstChild', 'doctype');
+shouldBe('document.doctype', 'null');
 </script>
+</body>
+</html>

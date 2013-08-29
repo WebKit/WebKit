@@ -168,7 +168,7 @@ function run()
     });
     runTest(function() {
         iframeDoc.implementation.createDocument('', 'html', document.doctype); 
-    }, 'WrongDocumentError');
+    });
     runTest(function() {
         rangeInIframe().compareBoundaryPoints(Range.END_TO_END, rangeInCurrentDocument());
     }, 'WrongDocumentError');
@@ -179,7 +179,7 @@ function run()
     runTest(function() {
         iframeDoc.appendChild(document.doctype);
         console.log(document.doctype);
-    }, 'HierarchyRequestError');
+    }, 'NotFoundError');
 
     // When setting a boundary of the range in a different
     // document, the call should succeed and the range should be collapsed.

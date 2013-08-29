@@ -7,7 +7,7 @@
 var dt = document.implementation.createDocumentType("foo", "", "");
 var iter = document.createNodeIterator(dt, NodeFilter.SHOW_ALL, null, true);
 debug("NodeIterator rooted at a DocumentType node not yet associated with a document:");
-shouldBe('iter.referenceNode.ownerDocument', 'null');
+shouldBe('iter.referenceNode.ownerDocument', 'document');
 shouldBe('iter.nextNode()', 'dt');
 shouldBe('iter.nextNode()', 'null');
 shouldBe('iter.previousNode()', 'dt');

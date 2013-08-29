@@ -1,3 +1,26 @@
+2013-08-29  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        According to DOM4, all DocType nodes should have a document
+        https://bugs.webkit.org/show_bug.cgi?id=99244
+
+        Reviewed by Darin Adler.
+
+        Add layout test to check that DocumentType Nodes have a document after being
+        created. Also update a few existing test cases to reflect this change.
+
+        * fast/dom/DOMImplementation/createDocument-with-used-doctype-expected.txt:
+        * fast/dom/DOMImplementation/createDocument-with-used-doctype.html:
+        * fast/dom/DOMImplementation/resources/createDocument-with-used-doctype-frame.html:
+        * fast/dom/XMLSerializer-doctype2-expected.txt:
+        * fast/dom/XMLSerializer-doctype2.html:
+        * fast/dom/createDocumentType-ownerDocument-expected.txt: Added.
+        * fast/dom/createDocumentType-ownerDocument.html: Added.
+        * fast/dom/move-nodes-across-documents.html:
+        * fast/dom/node-iterator-with-doctype-root-expected.txt:
+        * fast/dom/node-iterator-with-doctype-root.html:
+        * fast/events/dispatch-event-no-document-expected.txt:
+        * fast/events/dispatch-event-no-document.html:
+
 2013-08-29  Dean Jackson  <dino@apple.com>
 
         Reverting a change that was made in https://bugs.webkit.org/show_bug.cgi?id=120472.

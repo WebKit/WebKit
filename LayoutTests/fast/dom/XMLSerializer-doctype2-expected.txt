@@ -1,2 +1,8 @@
-This tests XMLSerializer.serializeToString() on a DocumentType node that does not have a document associated with it. It should throw an INVALID_ACCESS_ERR DOMException.
-PASS: an Error: InvalidAccessError: DOM Exception 15 was thrown as expected.
+This tests XMLSerializer.serializeToString() on a newly created DocumentType node does not throw since the node has an associated document.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS text = serializer.serializeToString(docType) did not throw exception.
+PASS text is "<!DOCTYPE aDocTypeName PUBLIC \"aPublicID\" \"aSystemID\">"
+

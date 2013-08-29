@@ -1,3 +1,36 @@
+2013-08-29  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        According to DOM4, all DocType nodes should have a document
+        https://bugs.webkit.org/show_bug.cgi?id=99244
+
+        Reviewed by Darin Adler.
+
+        Doctypes now always have a node document and can be moved across document boundaries as per
+        the latest DOM4 specification:
+        http://dom.spec.whatwg.org/#dom-domimplementation-createdocumenttype
+        http://dom.spec.whatwg.org/#dom-node-ownerdocument
+
+        This means that DOMImplementation.createDocumentType() now sets the ownerDocument of the
+        new DocumentType Node to the associated document of the current "context" object. In
+        DOM4, all nodes have a document at all times. DocumentType nodes can now be moved across
+        document boundaries so that the node can be added to a Document after being created.
+
+        This means we will no longer need to special case DocumentType nodes in the code and
+        Node::document() can no longer return NULL, which means that we'll be able to remove
+        NULL checks in call sites.
+
+        Firefox stable and since recently Blink already follow DOM4 here while IE10 does not (yet).
+
+        Test: fast/dom/createDocumentType-ownerDocument.html
+
+        * dom/ContainerNode.cpp:
+        (WebCore::checkAcceptChild):
+        * dom/DOMImplementation.cpp:
+        (WebCore::DOMImplementation::createDocumentType):
+        (WebCore::DOMImplementation::createDocument):
+        * dom/Node.h:
+        (WebCore::Node::document):
+
 2013-08-29  Darin Adler  <darin@apple.com>
 
         Pasteboard::writeSelection violates layering (first step, fixes it for Mac platform only)
