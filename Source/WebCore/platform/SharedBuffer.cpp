@@ -171,7 +171,8 @@ void SharedBuffer::append(const char* data, unsigned length)
         return;
 
     maybeTransferPlatformData();
-    
+
+#if !USE(NETWORK_CFDATA_ARRAY_CALLBACK)
     unsigned positionInSegment = offsetInSegment(m_size - m_buffer.size());
     m_size += length;
 
@@ -204,6 +205,12 @@ void SharedBuffer::append(const char* data, unsigned length)
         m_segments.append(segment);
         bytesToCopy = min(length, segmentSize);
     }
+#else
+    m_size += length;
+    if (m_buffer.isEmpty())
+        m_buffer.reserveInitialCapacity(length);
+    m_buffer.append(data, length);
+#endif
 }
 
 void SharedBuffer::append(const Vector<char>& data)
@@ -215,17 +222,18 @@ void SharedBuffer::clear()
 {
     clearPlatformData();
     
+#if !USE(NETWORK_CFDATA_ARRAY_CALLBACK)
     for (unsigned i = 0; i < m_segments.size(); ++i)
         freeSegment(m_segments[i]);
 
     m_segments.clear();
-    m_size = 0;
-
-    m_buffer.clear();
-    m_purgeableBuffer.clear();
-#if USE(NETWORK_CFDATA_ARRAY_CALLBACK)
+#else
     m_dataArray.clear();
 #endif
+
+    m_size = 0;
+    m_buffer.clear();
+    m_purgeableBuffer.clear();
 }
 
 PassRefPtr<SharedBuffer> SharedBuffer::copy() const
@@ -239,8 +247,13 @@ PassRefPtr<SharedBuffer> SharedBuffer::copy() const
     clone->m_size = m_size;
     clone->m_buffer.reserveCapacity(m_size);
     clone->m_buffer.append(m_buffer.data(), m_buffer.size());
+#if !USE(NETWORK_CFDATA_ARRAY_CALLBACK)
     for (unsigned i = 0; i < m_segments.size(); ++i)
         clone->m_buffer.append(m_segments[i], segmentSize);
+#else
+    for (unsigned i = 0; i < m_dataArray.size(); ++i)
+        clone->append(m_dataArray[i].get());
+#endif
     return clone;
 }
 
@@ -257,6 +270,7 @@ const Vector<char>& SharedBuffer::buffer() const
         m_buffer.resize(m_size);
         char* destination = m_buffer.data() + bufferSize;
         unsigned bytesLeft = m_size - bufferSize;
+#if !USE(NETWORK_CFDATA_ARRAY_CALLBACK)
         for (unsigned i = 0; i < m_segments.size(); ++i) {
             unsigned bytesToCopy = min(bytesLeft, segmentSize);
             memcpy(destination, m_segments[i], bytesToCopy);
@@ -265,7 +279,7 @@ const Vector<char>& SharedBuffer::buffer() const
             freeSegment(m_segments[i]);
         }
         m_segments.clear();
-#if USE(NETWORK_CFDATA_ARRAY_CALLBACK)
+#else
         copyDataArrayAndClear(destination, bytesLeft);
 #endif
     }
@@ -294,6 +308,7 @@ unsigned SharedBuffer::getSomeData(const char*& someData, unsigned position) con
     }
  
     position -= consecutiveSize;
+#if !USE(NETWORK_CFDATA_ARRAY_CALLBACK)
     unsigned segments = m_segments.size();
     unsigned maxSegmentedSize = segments * segmentSize;
     unsigned segment = segmentIndex(position);
@@ -305,13 +320,10 @@ unsigned SharedBuffer::getSomeData(const char*& someData, unsigned position) con
         someData = m_segments[segment] + positionInSegment;
         return segment == segments - 1 ? segmentedSize - position : segmentSize - positionInSegment;
     }
-#if USE(NETWORK_CFDATA_ARRAY_CALLBACK)
-    ASSERT(maxSegmentedSize <= position);
-    position -= maxSegmentedSize;
-    return copySomeDataFromDataArray(someData, position);
-#else
     ASSERT_NOT_REACHED();
     return 0;
+#else
+    return copySomeDataFromDataArray(someData, position);
 #endif
 }
 

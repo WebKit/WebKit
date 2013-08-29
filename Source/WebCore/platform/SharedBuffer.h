@@ -137,13 +137,14 @@ private:
     
     unsigned m_size;
     mutable Vector<char> m_buffer;
-    mutable Vector<char*> m_segments;
     mutable OwnPtr<PurgeableBuffer> m_purgeableBuffer;
 #if USE(NETWORK_CFDATA_ARRAY_CALLBACK)
     mutable Vector<RetainPtr<CFDataRef> > m_dataArray;
     void copyDataArrayAndClear(char *destination, unsigned bytesToCopy) const;
     unsigned copySomeDataFromDataArray(const char*& someData, unsigned position) const;
     const char *singleDataArrayBuffer() const;
+#else
+    mutable Vector<char*> m_segments;
 #endif
 #if USE(CF)
     explicit SharedBuffer(CFDataRef);
