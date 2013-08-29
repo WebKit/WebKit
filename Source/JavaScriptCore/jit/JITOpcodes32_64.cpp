@@ -1262,8 +1262,9 @@ void JIT::emitSlow_op_get_argument_by_val(Instruction* currentInstruction, Vecto
     linkSlowCase(iter);
     linkSlowCase(iter);
 
-    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_create_arguments);
-    slowPathCall.call();
+    JITStubCall(this, cti_op_create_arguments).call();
+    emitStore(arguments, regT1, regT0);
+    emitStore(unmodifiedArgumentsRegister(arguments), regT1, regT0);
     
     skipArgumentsCreation.link(this);
     JITStubCall stubCall(this, cti_op_get_by_val_generic);
