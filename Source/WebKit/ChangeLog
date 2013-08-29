@@ -1,3 +1,10 @@
+2013-08-29  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Unreviewed build fix after r154809
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in: Remove two no-longer-existing
+        export symbols.
+
 2013-08-28  Brent Fulgham  <bfulgham@webkit.org>
 
         [WinCairo] Unreviewed build fix.
