@@ -569,7 +569,7 @@ static bool hasLoadListener(Element* element)
 }
 
 #if ENABLE(CSS_REGIONS)
-bool SVGElement::shouldMoveToFlowThread(RenderStyle* styleToUse) const
+bool SVGElement::shouldMoveToFlowThread(const RenderStyle& styleToUse) const
 {
     // Allow only svg root elements to be directly collected by a render flow thread.
     return parentNode() && !parentNode()->isSVGElement() && hasTagName(SVGNames::svgTag) && Element::shouldMoveToFlowThread(styleToUse);

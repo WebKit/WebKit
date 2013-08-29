@@ -525,7 +525,7 @@ public:
     RenderRegion* renderRegion() const;
 
 #if ENABLE(CSS_REGIONS)
-    virtual bool shouldMoveToFlowThread(RenderStyle*) const;
+    virtual bool shouldMoveToFlowThread(const RenderStyle&) const;
     
     const AtomicString& webkitRegionOverset() const;
     Vector<RefPtr<Range> > webkitGetRegionFlowRanges() const;

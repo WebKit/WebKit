@@ -2677,10 +2677,8 @@ RenderRegion* Element::renderRegion() const
 
 #if ENABLE(CSS_REGIONS)
 
-bool Element::shouldMoveToFlowThread(RenderStyle* styleToUse) const
+bool Element::shouldMoveToFlowThread(const RenderStyle& styleToUse) const
 {
-    ASSERT(styleToUse);
-
 #if ENABLE(FULLSCREEN_API)
     if (document()->webkitIsFullScreen() && document()->webkitCurrentFullScreenElement() == this)
         return false;
@@ -2689,7 +2687,7 @@ bool Element::shouldMoveToFlowThread(RenderStyle* styleToUse) const
     if (isInShadowTree())
         return false;
 
-    if (styleToUse->flowThread().isEmpty())
+    if (styleToUse.flowThread().isEmpty())
         return false;
 
     return !isRegisteredWithNamedFlow();

@@ -27,7 +27,6 @@
 #define NodeRenderingContext_h
 
 #include "NodeRenderingTraversal.h"
-#include "StyleResolveTree.h"
 
 #include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
@@ -36,21 +35,13 @@
 namespace WebCore {
 
 class ContainerNode;
-class Document;
-class InsertionPoint;
 class Node;
-class RenderNamedFlowThread;
 class RenderObject;
-class RenderStyle;
 
 class NodeRenderingContext {
 public:
     explicit NodeRenderingContext(Node*);
-    NodeRenderingContext(Node*, RenderStyle*);
-    NodeRenderingContext(Node*, const Style::AttachContext&);
     ~NodeRenderingContext();
-
-    void createRendererForElementIfNeeded();
 
     Node* node() const;
     ContainerNode* parentNodeForRenderingAndStyle() const;
@@ -59,17 +50,9 @@ public:
     RenderObject* nextRenderer() const;
     RenderObject* previousRenderer() const;
 
-    const RenderStyle* style() const;
-
 private:
-    bool shouldCreateRenderer() const;
-    void moveToFlowThreadIfNeeded();
-    bool elementInsideRegionNeedsRenderer();
-
     Node* m_node;
     ContainerNode* m_renderingParent;
-    RefPtr<RenderStyle> m_style;
-    RenderNamedFlowThread* m_parentFlowRenderer;
 };
 
 inline Node* NodeRenderingContext::node() const
@@ -80,11 +63,6 @@ inline Node* NodeRenderingContext::node() const
 inline ContainerNode* NodeRenderingContext::parentNodeForRenderingAndStyle() const
 {
     return m_renderingParent;
-}
-
-inline const RenderStyle* NodeRenderingContext::style() const
-{
-    return m_style.get();
 }
 
 } // namespace WebCore

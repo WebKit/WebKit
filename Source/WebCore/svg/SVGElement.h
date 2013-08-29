@@ -135,7 +135,7 @@ public:
     virtual bool removeEventListener(const AtomicString& eventType, EventListener*, bool useCapture) OVERRIDE;
 
 #if ENABLE(CSS_REGIONS)
-    virtual bool shouldMoveToFlowThread(RenderStyle*) const OVERRIDE;
+    virtual bool shouldMoveToFlowThread(const RenderStyle&) const OVERRIDE;
 #endif
 
 protected:

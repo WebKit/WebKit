@@ -54,23 +54,6 @@ using namespace HTMLNames;
 
 NodeRenderingContext::NodeRenderingContext(Node* node)
     : m_node(node)
-    , m_parentFlowRenderer(0)
-{
-    m_renderingParent = NodeRenderingTraversal::parent(node);
-}
-
-NodeRenderingContext::NodeRenderingContext(Node* node, RenderStyle* style)
-    : m_node(node)
-    , m_renderingParent(0)
-    , m_style(style)
-    , m_parentFlowRenderer(0)
-{
-}
-
-NodeRenderingContext::NodeRenderingContext(Node* node, const Style::AttachContext& context)
-    : m_node(node)
-    , m_style(context.resolvedStyle)
-    , m_parentFlowRenderer(0)
 {
     m_renderingParent = NodeRenderingTraversal::parent(node);
 }
@@ -111,9 +94,6 @@ RenderObject* NodeRenderingContext::nextRenderer() const
     }
 #endif
 
-    if (m_parentFlowRenderer)
-        return m_parentFlowRenderer->nextRendererForNode(m_node);
-
     // Avoid an O(N^2) problem with this function by not checking for
     // nextRenderer() when the parent element hasn't attached yet.
     if (m_renderingParent && !m_renderingParent->attached())
@@ -139,9 +119,6 @@ RenderObject* NodeRenderingContext::previousRenderer() const
     // nothing needs that yet just assert.
     ASSERT(!m_node->isElementNode() || !toElement(m_node)->isInTopLayer());
 #endif
-
-    if (m_parentFlowRenderer)
-        return m_parentFlowRenderer->previousRendererForNode(m_node);
 
     // FIXME: We should have the same O(N^2) avoidance as nextRenderer does
     // however, when I tried adding it, several tests failed.
@@ -173,116 +150,7 @@ RenderObject* NodeRenderingContext::parentRenderer() const
     }
 #endif
 
-    if (m_parentFlowRenderer)
-        return m_parentFlowRenderer;
-
     return m_renderingParent ? m_renderingParent->renderer() : 0;
-}
-
-bool NodeRenderingContext::shouldCreateRenderer() const
-{
-    if (!m_node->document()->shouldCreateRenderers())
-        return false;
-    if (!m_renderingParent)
-        return false;
-    RenderObject* parentRenderer = this->parentRenderer();
-    if (!parentRenderer)
-        return false;
-    if (!parentRenderer->canHaveChildren() && !(m_node->isPseudoElement() && parentRenderer->canHaveGeneratedChildren()))
-        return false;
-    if (!m_renderingParent->childShouldCreateRenderer(m_node))
-        return false;
-    return true;
-}
-
-// Check the specific case of elements that are children of regions but are flowed into a flow thread themselves.
-bool NodeRenderingContext::elementInsideRegionNeedsRenderer()
-{
-    bool elementInsideRegionNeedsRenderer = false;
-
-#if ENABLE(CSS_REGIONS)
-    Element* element = toElement(m_node);
-    RenderObject* parentRenderer = this->parentRenderer();
-    if ((parentRenderer && !parentRenderer->canHaveChildren() && parentRenderer->isRenderRegion())
-        || (!parentRenderer && element->parentElement() && element->parentElement()->isInsideRegion())) {
-
-        if (!m_style)
-            m_style = element->styleForRenderer();
-
-        elementInsideRegionNeedsRenderer = element->shouldMoveToFlowThread(m_style.get());
-
-        // Children of this element will only be allowed to be flowed into other flow-threads if display is NOT none.
-        if (element->rendererIsNeeded(*m_style))
-            element->setIsInsideRegion(true);
-    }
-#endif
-
-    return elementInsideRegionNeedsRenderer;
-}
-
-void NodeRenderingContext::moveToFlowThreadIfNeeded()
-{
-#if ENABLE(CSS_REGIONS)
-    Element* element = toElement(m_node);
-
-    if (!element->shouldMoveToFlowThread(m_style.get()))
-        return;
-
-    ASSERT(m_node->document()->renderView());
-    FlowThreadController& flowThreadController = m_node->document()->renderView()->flowThreadController();
-    m_parentFlowRenderer = &flowThreadController.ensureRenderFlowThreadWithName(m_style->flowThread());
-    flowThreadController.registerNamedFlowContentNode(m_node, m_parentFlowRenderer);
-#endif
-}
-
-void NodeRenderingContext::createRendererForElementIfNeeded()
-{
-    ASSERT(!m_node->renderer());
-
-    Element* element = toElement(m_node);
-
-    element->setIsInsideRegion(false);
-
-    if (!shouldCreateRenderer() && !elementInsideRegionNeedsRenderer())
-        return;
-
-    if (!m_style)
-        m_style = element->styleForRenderer();
-    ASSERT(m_style);
-
-    moveToFlowThreadIfNeeded();
-
-    if (!element->rendererIsNeeded(*m_style))
-        return;
-
-    RenderObject* parentRenderer = this->parentRenderer();
-    RenderObject* nextRenderer = this->nextRenderer();
-
-    Document* document = element->document();
-    RenderObject* newRenderer = element->createRenderer(document->renderArena(), m_style.get());
-    if (!newRenderer)
-        return;
-    if (!parentRenderer->isChildAllowed(newRenderer, m_style.get())) {
-        newRenderer->destroy();
-        return;
-    }
-
-    // Make sure the RenderObject already knows it is going to be added to a RenderFlowThread before we set the style
-    // for the first time. Otherwise code using inRenderFlowThread() in the styleWillChange and styleDidChange will fail.
-    newRenderer->setFlowThreadState(parentRenderer->flowThreadState());
-
-    element->setRenderer(newRenderer);
-    newRenderer->setAnimatableStyle(m_style.release()); // setAnimatableStyle() can depend on renderer() already being set.
-
-#if ENABLE(FULLSCREEN_API)
-    if (document->webkitIsFullScreen() && document->webkitCurrentFullScreenElement() == element) {
-        newRenderer = RenderFullScreen::wrapRenderer(newRenderer, parentRenderer, document);
-        if (!newRenderer)
-            return;
-    }
-#endif
-    // Note: Adding newRenderer instead of renderer(). renderer() may be a child of newRenderer.
-    parentRenderer->addChild(newRenderer, nextRenderer);
 }
 
 bool NodeRenderingContext::resetStyleInheritance() const

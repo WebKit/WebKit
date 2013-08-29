@@ -52,7 +52,7 @@ public:
     // As per http://dev.w3.org/csswg/css3-regions/#flow-into, pseudo-elements such as ::first-line, ::first-letter, ::before or ::after
     // cannot be directly collected into a named flow.
 #if ENABLE(CSS_REGIONS)
-    virtual bool shouldMoveToFlowThread(RenderStyle*) const OVERRIDE { return false; }
+    virtual bool shouldMoveToFlowThread(const RenderStyle&) const OVERRIDE { return false; }
 #endif
 
     virtual bool canStartSelection() const OVERRIDE { return false; }

@@ -1,3 +1,35 @@
+2013-08-29  Antti Koivisto  <antti@apple.com>
+
+        Move element renderer creation out of NodeRenderingContext
+        https://bugs.webkit.org/show_bug.cgi?id=120461
+
+        Reviewed by Andreas Kling.
+
+        Move NodeRenderingContext::createRendererIfNeeded() and the related utility functions to StyleResolveTree.
+        
+        Tighten typing and constness. Refactor sligthly to be more understandable.
+
+        * dom/Element.cpp:
+        (WebCore::Element::shouldMoveToFlowThread):
+        * dom/Element.h:
+        * dom/NodeRenderingContext.cpp:
+        (WebCore::NodeRenderingContext::NodeRenderingContext):
+        (WebCore::NodeRenderingContext::nextRenderer):
+        (WebCore::NodeRenderingContext::previousRenderer):
+        (WebCore::NodeRenderingContext::parentRenderer):
+        * dom/NodeRenderingContext.h:
+        * dom/PseudoElement.h:
+        * style/StyleResolveTree.cpp:
+        (WebCore::Style::nextSiblingRenderer):
+        (WebCore::Style::shouldCreateRenderer):
+        (WebCore::Style::elementInsideRegionNeedsRenderer):
+        (WebCore::Style::moveToFlowThreadIfNeeded):
+        (WebCore::Style::createRendererIfNeeded):
+        (WebCore::Style::attachRenderTree):
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::shouldMoveToFlowThread):
+        * svg/SVGElement.h:
+
 2013-08-28  Chris Fleizach  <cfleizach@apple.com>
 
         AX: WebProcess at com.apple.WebCore: WebCore::AXObjectCache::rootObject + 27
