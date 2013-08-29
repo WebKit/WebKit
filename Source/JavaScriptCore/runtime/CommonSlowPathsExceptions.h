@@ -37,7 +37,7 @@ class ExecState;
 namespace CommonSlowPaths {
 
 // Throw the currently active exception in the context of the caller's call frame.
-void interpreterThrowInCaller(ExecState* callerFrame, ReturnAddressPtr);
+void interpreterThrowInCaller(ExecState* callerFrame, ReturnAddressPtr, JSObject*);
 
 } } // namespace JSC::CommonSlowPaths
 

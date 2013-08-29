@@ -1,3 +1,12 @@
+2013-08-29  Chris Curtis  <chris_curtis@apple.com>
+
+        VM::throwException() crashes reproducibly in testapi with !ENABLE(JIT)
+        https://bugs.webkit.org/show_bug.cgi?id=120472
+        
+        Reviewed by Filip Pizlo.
+        An error that was not being reported before is now caught and being reported.
+        * media/track/track-cue-rendering-on-resize-expected.txt:
+
 2013-08-29  Simon Pena  <simon.pena@samsung.com>
 
         Follow-up to r154810 and r154810: Missing tests and fix one misplaced call to setCaptionDisplayMode

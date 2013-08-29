@@ -48,7 +48,7 @@ static void doThrow(ExecState* exec, Instruction* pc)
 {
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
-    genericThrow(vm, exec, vm->exception(), pc - exec->codeBlock()->instructions().begin());
+    genericUnwind(vm, exec, vm->exception(), pc - exec->codeBlock()->instructions().begin());
 }
 
 Instruction* returnToThrow(ExecState* exec, Instruction* pc)

@@ -1,3 +1,32 @@
+2013-08-29  Chris Curtis  <chris_curtis@apple.com>
+
+        VM::throwException() crashes reproducibly in testapi with !ENABLE(JIT)
+        https://bugs.webkit.org/show_bug.cgi?id=120472
+
+        Reviewed by Filip Pizlo.
+        
+        With the JIT disabled, interpreterThrowInCaller was attempting to throw an error, 
+        but the topCallFrame was not set yet. By passing the error object into interpreterThrowInCaller
+        throwException can be called when topCallFrame is set.
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/CommonSlowPathsExceptions.cpp:
+        (JSC::CommonSlowPaths::interpreterThrowInCaller):
+        * runtime/CommonSlowPathsExceptions.h:
+
+        Renamed genericThrow -> genericUnwind, because this function no longer has the ability
+        to throw errors. It unwinds the stack in order to report them. 
+        * dfg/DFGOperations.cpp:
+        * jit/JITExceptions.cpp:
+        (JSC::genericUnwind):
+        (JSC::jitThrowNew):
+        (JSC::jitThrow):
+        * jit/JITExceptions.h:
+        * llint/LLIntExceptions.cpp:
+        (JSC::LLInt::doThrow):
+    
 2013-08-29  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r154804.

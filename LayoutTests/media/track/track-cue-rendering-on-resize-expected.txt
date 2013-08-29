@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: line 47: ReferenceError: Can't find variable: setCaptionDisplayMode
 Line height isn't overriden by other CSS values in the file.
 EVENT(canplaythrough)
 EVENT(seeked)

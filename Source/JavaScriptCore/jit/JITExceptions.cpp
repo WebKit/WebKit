@@ -67,7 +67,7 @@ ExceptionHandler uncaughtExceptionHandler()
     return exceptionHandler;
 }
 
-ExceptionHandler genericThrow(VM* vm, ExecState* callFrame, JSValue exceptionValue, unsigned vPCIndex)
+ExceptionHandler genericUnwind(VM* vm, ExecState* callFrame, JSValue exceptionValue, unsigned vPCIndex)
 {
     RELEASE_ASSERT(exceptionValue);
     HandlerInfo* handler = vm->interpreter->unwind(callFrame, exceptionValue, vPCIndex); // This may update callFrame.
@@ -93,12 +93,12 @@ ExceptionHandler jitThrowNew(VM* vm, ExecState* callFrame, JSValue exceptionValu
 {
     unsigned bytecodeOffset = getExceptionLocation(vm, callFrame);
     
-    return genericThrow(vm, callFrame, exceptionValue, bytecodeOffset);
+    return genericUnwind(vm, callFrame, exceptionValue, bytecodeOffset);
 }
 
 ExceptionHandler jitThrow(VM* vm, ExecState* callFrame, JSValue exceptionValue, ReturnAddressPtr faultLocation)
 {
-    return genericThrow(vm, callFrame, exceptionValue, callFrame->codeBlock()->bytecodeOffset(callFrame, faultLocation));
+    return genericUnwind(vm, callFrame, exceptionValue, callFrame->codeBlock()->bytecodeOffset(callFrame, faultLocation));
 }
 
 }

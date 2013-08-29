@@ -1899,7 +1899,7 @@ DFGHandlerEncoded DFG_OPERATION lookupExceptionHandler(ExecState* exec, uint32_t
     ASSERT(exceptionValue);
     
     unsigned vPCIndex = exec->codeBlock()->bytecodeOffsetForCallAtIndex(callIndex);
-    ExceptionHandler handler = genericThrow(vm, exec, exceptionValue, vPCIndex);
+    ExceptionHandler handler = genericUnwind(vm, exec, exceptionValue, vPCIndex);
     ASSERT(handler.catchRoutine);
     return dfgHandlerEncoded(handler.callFrame, handler.catchRoutine);
 }
@@ -1916,7 +1916,7 @@ DFGHandlerEncoded DFG_OPERATION lookupExceptionHandlerInStub(ExecState* exec, St
     while (codeOrigin.inlineCallFrame)
         codeOrigin = codeOrigin.inlineCallFrame->caller;
     
-    ExceptionHandler handler = genericThrow(vm, exec, exceptionValue, codeOrigin.bytecodeIndex);
+    ExceptionHandler handler = genericUnwind(vm, exec, exceptionValue, codeOrigin.bytecodeIndex);
     ASSERT(handler.catchRoutine);
     return dfgHandlerEncoded(handler.callFrame, handler.catchRoutine);
 }

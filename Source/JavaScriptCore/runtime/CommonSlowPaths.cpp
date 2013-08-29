@@ -177,8 +177,7 @@ SLOW_PATH_DECL(slow_path_call_arityCheck)
     if (SlotsToAdd < 0) {
         ReturnAddressPtr returnPC = exec->returnPC();
         exec = exec->callerFrame();
-        vm.throwException(exec, createStackOverflowError(exec));
-        CommonSlowPaths::interpreterThrowInCaller(exec, returnPC);
+        CommonSlowPaths::interpreterThrowInCaller(exec, returnPC, createStackOverflowError(exec));
         RETURN_TWO(bitwise_cast<void*>(static_cast<uintptr_t>(1)), exec);
     }
     RETURN_TWO(0, reinterpret_cast<ExecState*>(SlotsToAdd));
@@ -191,8 +190,7 @@ SLOW_PATH_DECL(slow_path_construct_arityCheck)
     if (SlotsToAdd < 0) {
         ReturnAddressPtr returnPC = exec->returnPC();
         exec = exec->callerFrame();
-        vm.throwException(exec, createStackOverflowError(exec));
-        CommonSlowPaths::interpreterThrowInCaller(exec, returnPC);
+        CommonSlowPaths::interpreterThrowInCaller(exec, returnPC, createStackOverflowError(exec));
         RETURN_TWO(bitwise_cast<void*>(static_cast<uintptr_t>(1)), exec);
     }
     RETURN_TWO(0, reinterpret_cast<ExecState*>(SlotsToAdd));

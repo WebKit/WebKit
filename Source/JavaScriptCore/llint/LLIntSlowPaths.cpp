@@ -422,8 +422,7 @@ LLINT_SLOW_PATH_DECL(stack_check)
     if (UNLIKELY(!vm.interpreter->stack().grow(&exec->registers()[exec->codeBlock()->m_numCalleeRegisters]))) {
         ReturnAddressPtr returnPC = exec->returnPC();
         exec = exec->callerFrame();
-        vm.throwException(exec, createStackOverflowError(exec));
-        CommonSlowPaths::interpreterThrowInCaller(exec, returnPC);
+        CommonSlowPaths::interpreterThrowInCaller(exec, returnPC, createStackOverflowError(exec));
         pc = returnToThrowForThrownException(exec);
     }
     LLINT_END_IMPL();
