@@ -1,3 +1,10 @@
+2013-08-29  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Unreviewed build fix after r154847.
+
+        * win/tools/vsprops/FeatureDefines.props: Add missing definition for ENABLE_PROMISES
+        * win/tools/vsprops/FeatureDefinesCairo.props: Ditto
+
 2013-08-26  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Updates to WKSI to get external builders working.
