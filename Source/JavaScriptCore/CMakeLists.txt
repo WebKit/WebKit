@@ -96,6 +96,8 @@ set(JavaScriptCore_SOURCES
     dfg/DFGClobberize.cpp
     dfg/DFGCommon.cpp
     dfg/DFGCommonData.cpp
+    dfg/DFGCompilationKey.cpp
+    dfg/DFGCompilationMode.cpp
     dfg/DFGConstantFoldingPhase.cpp
     dfg/DFGCriticalEdgeBreakingPhase.cpp
     dfg/DFGDCEPhase.cpp

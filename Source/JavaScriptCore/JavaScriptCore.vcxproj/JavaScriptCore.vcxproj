@@ -325,6 +325,9 @@
     <ClCompile Include="..\debugger\Debugger.cpp" />
     <ClCompile Include="..\debugger\DebuggerActivation.cpp" />
     <ClCompile Include="..\debugger\DebuggerCallFrame.cpp" />
+    <ClCompile Include="..\dfg\DFGCompilationKey.cpp" />
+    <ClCompile Include="..\dfg\DFGCompilationMode.cpp" />
+    <ClCompile Include="..\dfg\DFGDriver.cpp" />
     <ClCompile Include="..\disassembler\Disassembler.cpp" />
     <ClCompile Include="..\heap\BlockAllocator.cpp" />
     <ClCompile Include="..\heap\ConservativeRoots.cpp" />
@@ -663,6 +666,8 @@
     <ClInclude Include="..\debugger\Debugger.h" />
     <ClInclude Include="..\debugger\DebuggerActivation.h" />
     <ClInclude Include="..\debugger\DebuggerCallFrame.h" />
+    <ClInclude Include="..\dfg\DFGCompilationKey.h" />
+    <ClInclude Include="..\dfg\DFGCompilationMode.h" />
     <ClInclude Include="..\dfg\DFGDriver.h" />
     <ClInclude Include="..\dfg\DFGOSREntry.h" />
     <ClInclude Include="..\disassembler\Disassembler.h" />

@@ -226,6 +226,10 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/dfg/DFGCommon.h \
 	Source/JavaScriptCore/dfg/DFGCommonData.cpp \
 	Source/JavaScriptCore/dfg/DFGCommonData.h \
+	Source/JavaScriptCore/dfg/DFGCompilationKey.cpp \
+	Source/JavaScriptCore/dfg/DFGCompilationKey.h \
+	Source/JavaScriptCore/dfg/DFGCompilationMode.cpp \
+	Source/JavaScriptCore/dfg/DFGCompilationMode.h \
 	Source/JavaScriptCore/dfg/DFGConstantFoldingPhase.cpp \
 	Source/JavaScriptCore/dfg/DFGConstantFoldingPhase.h \
 	Source/JavaScriptCore/dfg/DFGCriticalEdgeBreakingPhase.cpp \

@@ -2973,10 +2973,12 @@ int32_t CodeBlock::adjustedCounterValue(int32_t desiredThreshold)
 bool CodeBlock::checkIfOptimizationThresholdReached()
 {
 #if ENABLE(DFG_JIT)
-    if (m_vm->worklist
-        && m_vm->worklist->compilationState(this) == DFG::Worklist::Compiled) {
-        optimizeNextInvocation();
-        return true;
+    if (DFG::Worklist* worklist = m_vm->worklist.get()) {
+        if (worklist->compilationState(DFG::CompilationKey(this, DFG::DFGMode))
+            == DFG::Worklist::Compiled) {
+            optimizeNextInvocation();
+            return true;
+        }
     }
 #endif
     

@@ -80,10 +80,11 @@ static void dumpAndVerifyGraph(Graph& graph, const char* text)
 }
 
 Plan::Plan(
-    PassRefPtr<CodeBlock> passedCodeBlock, unsigned osrEntryBytecodeIndex,
-    unsigned numVarsWithValues)
+    PassRefPtr<CodeBlock> passedCodeBlock, CompilationMode mode,
+    unsigned osrEntryBytecodeIndex, unsigned numVarsWithValues)
     : vm(*passedCodeBlock->vm())
     , codeBlock(passedCodeBlock)
+    , mode(mode)
     , osrEntryBytecodeIndex(osrEntryBytecodeIndex)
     , numVarsWithValues(numVarsWithValues)
     , mustHandleValues(codeBlock->numParameters(), numVarsWithValues)
@@ -310,9 +311,9 @@ void Plan::finalizeAndNotifyCallback()
     callback->compilationDidComplete(codeBlock.get(), finalizeWithoutNotifyingCallback());
 }
 
-CodeBlock* Plan::key()
+CompilationKey Plan::key()
 {
-    return codeBlock->alternative();
+    return CompilationKey(codeBlock->alternative(), mode);
 }
 
 } } // namespace JSC::DFG

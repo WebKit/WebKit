@@ -1,3 +1,81 @@
+2013-08-29  Filip Pizlo  <fpizlo@apple.com>
+
+        Teach DFG::Worklist and its clients that it may be reused for different kinds of compilations
+        https://bugs.webkit.org/show_bug.cgi?id=120489
+
+        Reviewed by Geoffrey Garen.
+        
+        If the baseline JIT hits an OSR entry trigger into the DFG and we already have a
+        DFG compilation but we've also started one or more FTL compilations, then we
+        shouldn't get confused. Previously we would have gotten confused because we would
+        see an in-process deferred compile (the FTL compile) and also an optimized
+        replacement (the DFG code).
+        
+        If the baseline JIT hits an OSR entry trigger into the DFG and we previously
+        did two things in this order: triggered a tier-up compilation from the DFG into
+        the FTL, and then jettisoned the DFG code because it exited a bunch, then we
+        shouldn't be confused by the presence of an in-process deferred compile (the FTL
+        compile). Previously we would have waited for that compile to finish; but the more
+        sensible thing to do is to let it complete and then invalidate it, while at the
+        same time enqueueing a DFG compile to create a new, more valid, DFG code block.
+        
+        If the DFG JIT hits a loop OSR entry trigger (into the FTL) and it has already
+        triggered an FTL compile for replacement, then it should fire off a second compile
+        instead of thinking that it can wait for that one to finish. Or vice-versa. We
+        need to allow for two FTL compiles to be enqueued at the same time (one for
+        replacement and one for OSR entry in a loop).
+        
+        Then there's also the problem that DFG::compile() is almost certainly going to be
+        the hook for triggering both DFG compiles and the two kinds of FTL compiles, but
+        right now there is no way to tell it which one you want.
+        
+        This fixes these problems and removes a bunch of potential confusion by making the
+        key for a compile in the DFG::Worklist be a CompilationMode (one of DFGMode,
+        FTLMode, or FTLForOSREntryMode). That mode is also passed to DFG::compile().
+        
+        Awkwardly, this still leaves us in a no DFG->FTL tier-up situation - so
+        DFG::compile() is always passed DFGMode and then it might do an FTL compile if
+        possible. Fixing that is a bigger issue for a later changeset.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::checkIfOptimizationThresholdReached):
+        * dfg/DFGCompilationKey.cpp: Added.
+        (JSC::DFG::CompilationKey::dump):
+        * dfg/DFGCompilationKey.h: Added.
+        (JSC::DFG::CompilationKey::CompilationKey):
+        (JSC::DFG::CompilationKey::operator!):
+        (JSC::DFG::CompilationKey::isHashTableDeletedValue):
+        (JSC::DFG::CompilationKey::profiledBlock):
+        (JSC::DFG::CompilationKey::mode):
+        (JSC::DFG::CompilationKey::operator==):
+        (JSC::DFG::CompilationKey::hash):
+        (JSC::DFG::CompilationKeyHash::hash):
+        (JSC::DFG::CompilationKeyHash::equal):
+        * dfg/DFGCompilationMode.cpp: Added.
+        (WTF::printInternal):
+        * dfg/DFGCompilationMode.h: Added.
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compileImpl):
+        (JSC::DFG::compile):
+        * dfg/DFGDriver.h:
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::Plan):
+        (JSC::DFG::Plan::key):
+        * dfg/DFGPlan.h:
+        * dfg/DFGWorklist.cpp:
+        (JSC::DFG::Worklist::enqueue):
+        (JSC::DFG::Worklist::compilationState):
+        (JSC::DFG::Worklist::completeAllReadyPlansForVM):
+        (JSC::DFG::Worklist::runThread):
+        * dfg/DFGWorklist.h:
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+
 2013-08-29  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Unreviewed build fix after r154847.

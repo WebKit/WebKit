@@ -55,10 +55,10 @@ public:
     void completeAllPlansForVM(VM&);
     
     void waitUntilAllPlansForVMAreReady(VM&);
-    State completeAllReadyPlansForVM(VM&, CodeBlock* profiledBlock = 0);
+    State completeAllReadyPlansForVM(VM&, CompilationKey = CompilationKey());
     void removeAllReadyPlansForVM(VM&);
     
-    State compilationState(CodeBlock* profiledBlock);
+    State compilationState(CompilationKey);
     
     size_t queueLength();
     void dump(PrintStream&) const;
@@ -81,7 +81,7 @@ private:
     // is particularly great for the cti_optimize OSR slow path, which wants
     // to know: did I get here because a better version of me just got
     // compiled?
-    typedef HashMap<RefPtr<CodeBlock>, RefPtr<Plan> > PlanMap;
+    typedef HashMap<CompilationKey, RefPtr<Plan> > PlanMap;
     PlanMap m_plans;
     
     // Used to quickly find which plans have been compiled and are ready to

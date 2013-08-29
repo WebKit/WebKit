@@ -72,7 +72,7 @@ void Worklist::enqueue(PassRefPtr<Plan> passedPlan)
     MutexLocker locker(m_lock);
     if (Options::verboseCompilationQueue()) {
         dump(locker, WTF::dataFile());
-        dataLog(": Enqueueing plan to optimize ", *plan->key(), "\n");
+        dataLog(": Enqueueing plan to optimize ", plan->key(), "\n");
     }
     ASSERT(m_plans.find(plan->key()) == m_plans.end());
     m_plans.add(plan->key(), plan);
@@ -80,10 +80,10 @@ void Worklist::enqueue(PassRefPtr<Plan> passedPlan)
     m_planEnqueued.signal();
 }
 
-Worklist::State Worklist::compilationState(CodeBlock* profiledBlock)
+Worklist::State Worklist::compilationState(CompilationKey key)
 {
     MutexLocker locker(m_lock);
-    PlanMap::iterator iter = m_plans.find(profiledBlock);
+    PlanMap::iterator iter = m_plans.find(key);
     if (iter == m_plans.end())
         return NotKnown;
     return iter->value->isCompiled ? Compiled : Compiling;
@@ -147,7 +147,7 @@ void Worklist::removeAllReadyPlansForVM(VM& vm)
     removeAllReadyPlansForVM(vm, myReadyPlans);
 }
 
-Worklist::State Worklist::completeAllReadyPlansForVM(VM& vm, CodeBlock* requestedProfiledBlock)
+Worklist::State Worklist::completeAllReadyPlansForVM(VM& vm, CompilationKey requestedKey)
 {
     DeferGC deferGC(vm.heap);
     Vector<RefPtr<Plan>, 8> myReadyPlans;
@@ -158,22 +158,22 @@ Worklist::State Worklist::completeAllReadyPlansForVM(VM& vm, CodeBlock* requeste
 
     while (!myReadyPlans.isEmpty()) {
         RefPtr<Plan> plan = myReadyPlans.takeLast();
-        CodeBlock* profiledBlock = plan->key();
+        CompilationKey currentKey = plan->key();
         
         if (Options::verboseCompilationQueue())
-            dataLog(*this, ": Completing ", *profiledBlock, "\n");
+            dataLog(*this, ": Completing ", currentKey, "\n");
         
         RELEASE_ASSERT(plan->isCompiled);
         
         plan->finalizeAndNotifyCallback();
         
-        if (profiledBlock == requestedProfiledBlock)
+        if (currentKey == requestedKey)
             resultingState = Compiled;
     }
     
-    if (requestedProfiledBlock && resultingState == NotKnown) {
+    if (!!requestedKey && resultingState == NotKnown) {
         MutexLocker locker(m_lock);
-        if (m_plans.contains(requestedProfiledBlock))
+        if (m_plans.contains(requestedKey))
             resultingState = Compiling;
     }
     
@@ -234,7 +234,7 @@ void Worklist::runThread()
         }
         
         if (Options::verboseCompilationQueue())
-            dataLog(*this, ": Compiling ", *plan->key(), " asynchronously\n");
+            dataLog(*this, ": Compiling ", plan->key(), " asynchronously\n");
         
         plan->compileInThread(longLivedState);
         
@@ -244,7 +244,7 @@ void Worklist::runThread()
             
             if (Options::verboseCompilationQueue()) {
                 dump(locker, WTF::dataFile());
-                dataLog(": Compiled ", *plan->key(), " asynchronously\n");
+                dataLog(": Compiled ", plan->key(), " asynchronously\n");
             }
             
             m_readyPlans.append(plan);

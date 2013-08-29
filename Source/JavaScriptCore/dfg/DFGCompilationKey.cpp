@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,32 +23,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGDriver_h
-#define DFGDriver_h
+#include "config.h"
+#include "DFGCompilationKey.h"
 
-#include "CallFrame.h"
-#include "DFGCompilationMode.h"
-#include "DFGPlan.h"
-#include <wtf/Platform.h>
+#include "CodeBlock.h"
 
-namespace JSC {
+namespace JSC { namespace DFG {
 
-class CodeBlock;
-class JITCode;
-class MacroAssemblerCodePtr;
-class VM;
-
-namespace DFG {
-
-class Worklist;
-
-JS_EXPORT_PRIVATE unsigned getNumCompilations();
-
-// If the worklist is non-null, we do a concurrent compile. Otherwise we do a synchronous
-// compile. Even if we do a synchronous compile, we call the callback with the result.
-CompilationResult compile(ExecState*, CodeBlock*, CompilationMode, unsigned osrEntryBytecodeIndex, PassRefPtr<DeferredCompilationCallback>, Worklist*);
+void CompilationKey::dump(PrintStream& out) const
+{
+    if (!*this) {
+        out.print("<empty>");
+        return;
+    }
+    out.print("(Compile of ", *m_profiledBlock, " with ", m_mode, ")");
+}
 
 } } // namespace JSC::DFG
 
-#endif
 

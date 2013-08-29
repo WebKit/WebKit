@@ -54,7 +54,10 @@ unsigned getNumCompilations()
 }
 
 #if ENABLE(DFG_JIT)
-static CompilationResult compileImpl(ExecState* exec, CodeBlock* codeBlock, unsigned osrEntryBytecodeIndex, PassRefPtr<DeferredCompilationCallback> callback, Worklist* worklist)
+static CompilationResult compileImpl(
+    ExecState* exec, CodeBlock* codeBlock, CompilationMode mode,
+    unsigned osrEntryBytecodeIndex, PassRefPtr<DeferredCompilationCallback> callback,
+    Worklist* worklist)
 {
     SamplingRegion samplingRegion("DFG Compilation (Driver)");
     
@@ -98,7 +101,7 @@ static CompilationResult compileImpl(ExecState* exec, CodeBlock* codeBlock, unsi
     else
         numVarsWithValues = 0;
     RefPtr<Plan> plan = adoptRef(
-        new Plan(codeBlock, osrEntryBytecodeIndex, numVarsWithValues));
+        new Plan(codeBlock, mode, osrEntryBytecodeIndex, numVarsWithValues));
     for (size_t i = 0; i < plan->mustHandleValues.size(); ++i) {
         int operand = plan->mustHandleValues.operandForIndex(i);
         if (operandIsArgument(operand)
@@ -126,16 +129,22 @@ static CompilationResult compileImpl(ExecState* exec, CodeBlock* codeBlock, unsi
     return plan->finalizeWithoutNotifyingCallback();
 }
 #else // ENABLE(DFG_JIT)
-static CompilationResult compileImpl(ExecState*, CodeBlock*, unsigned, PassRefPtr<DeferredCompilationCallback>, Worklist*)
+static CompilationResult compileImpl(
+    ExecState*, CodeBlock*, CompilationMode, unsigned,
+    PassRefPtr<DeferredCompilationCallback>, Worklist*)
 {
     return CompilationFailed;
 }
 #endif // ENABLE(DFG_JIT)
 
-CompilationResult compile(ExecState* exec, CodeBlock* codeBlock, unsigned osrEntryBytecodeIndex, PassRefPtr<DeferredCompilationCallback> passedCallback, Worklist* worklist)
+CompilationResult compile(
+    ExecState* exec, CodeBlock* codeBlock, CompilationMode mode,
+    unsigned osrEntryBytecodeIndex, PassRefPtr<DeferredCompilationCallback> passedCallback,
+    Worklist* worklist)
 {
     RefPtr<DeferredCompilationCallback> callback = passedCallback;
-    CompilationResult result = compileImpl(exec, codeBlock, osrEntryBytecodeIndex, callback, worklist);
+    CompilationResult result = compileImpl(
+        exec, codeBlock, mode, osrEntryBytecodeIndex, callback, worklist);
     if (result != CompilationDeferred)
         callback->compilationDidComplete(codeBlock, result);
     return result;

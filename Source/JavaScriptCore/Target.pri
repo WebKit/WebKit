@@ -129,6 +129,8 @@ SOURCES += \
     dfg/DFGClobberSet.cpp \
     dfg/DFGCommon.cpp \
     dfg/DFGCommonData.cpp \
+    dfg/DFGCompilationKey.cpp \
+    dfg/DFGCompilationMode.cpp \
     dfg/DFGCFAPhase.cpp \
     dfg/DFGCFGSimplificationPhase.cpp \
     dfg/DFGCPSRethreadingPhase.cpp \
