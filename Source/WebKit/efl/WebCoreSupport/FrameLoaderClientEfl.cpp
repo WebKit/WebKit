@@ -371,7 +371,32 @@ PassRefPtr<Frame> FrameLoaderClientEfl::createFrame(const KURL& url, const Strin
     ASSERT(m_frame);
     ASSERT(m_view);
 
-    return ewk_view_frame_create(m_view, m_frame, name, ownerElement, url, referrer);
+    Evas_Object* subFrame = ewk_frame_child_add(m_frame, name, ownerElement);
+    if (!subFrame)
+        return 0;
+
+    WebCore::Frame* coreSubFrame = EWKPrivate::coreFrame(subFrame);
+    ASSERT(coreSubFrame);
+
+    // The creation of the frame may have run arbitrary JavaScript that removed it from the page already.
+    if (!coreSubFrame->page()) {
+        evas_object_del(subFrame);
+        return 0;
+    }
+
+    evas_object_smart_callback_call(m_view, "frame,created", subFrame);
+    EWKPrivate::coreFrame(m_frame)->loader().loadURLIntoChildFrame(url, referrer, coreSubFrame);
+
+    // The frame's onload handler may have removed it from the document.
+    // See fast/dom/null-page-show-modal-dialog-crash.html for an example.
+    if (!coreSubFrame->tree().parent()) {
+        evas_object_del(subFrame);
+        return 0;
+    }
+
+    ewk_view_frame_rect_changed(m_view);
+
+    return coreSubFrame;
 }
 
 void FrameLoaderClientEfl::redirectDataToPlugin(Widget* pluginWidget)

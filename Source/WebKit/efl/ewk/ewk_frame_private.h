@@ -28,8 +28,10 @@
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+class FrameLoaderClientEfl;
 class HistoryItem;
 class HTMLPlugInElement;
+class HTMLFrameOwnerElement;
 class KURL;
 class Frame;
 class IntSize;
@@ -37,8 +39,8 @@ class Widget;
 }
 
 Evas_Object* ewk_frame_add(Evas* canvas);
-bool ewk_frame_init(Evas_Object* ewkFrame, Evas_Object* view, WebCore::Frame* frame);
-bool ewk_frame_child_add(Evas_Object* ewkFrame, WTF::PassRefPtr<WebCore::Frame> child, const WTF::String& name, const WebCore::KURL& url, const WTF::String& referrer);
+bool ewk_frame_init(Evas_Object* ewkFrame, Evas_Object* view, PassOwnPtr<WebCore::FrameLoaderClientEfl> frameLoaderClient);
+Evas_Object* ewk_frame_child_add(Evas_Object* ewkFrame, const WTF::String& name, WebCore::HTMLFrameOwnerElement* ownerElement);
 void ewk_frame_view_set(Evas_Object* ewkFrame, Evas_Object* newParent);
 
 void ewk_frame_core_gone(Evas_Object* ewkFrame);
@@ -85,6 +87,7 @@ void ewk_frame_mixed_content_run_set(Evas_Object* ewkFrame, bool hasRun);
 void ewk_frame_xss_detected(Evas_Object* ewkFrame, const Ewk_Frame_Xss_Notification* xssInfo);
 
 namespace EWKPrivate {
+void setCoreFrame(Evas_Object* ewkFrame, WebCore::Frame* coreFrame);
 WebCore::Frame *coreFrame(const Evas_Object *ewkFrame);
 Evas_Object* kitFrame(const WebCore::Frame* coreFrame);
 } // namespace EWKPrivate

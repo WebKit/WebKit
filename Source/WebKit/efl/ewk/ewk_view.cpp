@@ -662,14 +662,6 @@ static void _ewk_view_on_key_up(void* data, Evas*, Evas_Object*, void* eventInfo
     smartData->api->key_up(smartData, upEvent);
 }
 
-static WTF::PassRefPtr<WebCore::Frame> _ewk_view_core_frame_new(Ewk_View_Smart_Data* smartData, Ewk_View_Private_Data* priv, WebCore::HTMLFrameOwnerElement* owner)
-{
-    WebCore::FrameLoaderClientEfl* frameLoaderClient = new WebCore::FrameLoaderClientEfl(smartData->self);
-    frameLoaderClient->setCustomUserAgent(String::fromUTF8(priv->settings.userAgent));
-
-    return WebCore::Frame::create(priv->page.get(), owner, frameLoaderClient);
-}
-
 static Evas_Smart_Class _parent_sc = EVAS_SMART_CLASS_INIT_NULL;
 
 static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* smartData)
@@ -689,6 +681,7 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* smartData)
 #if ENABLE(INSPECTOR)
     pageClients.inspectorClient = new WebCore::InspectorClientEfl(smartData->self);
 #endif
+    pageClients.loaderClientForMainFrame = new WebCore::FrameLoaderClientEfl(smartData->self);
     priv->page = adoptPtr(new WebCore::Page(pageClients));
 
 #if ENABLE(DEVICE_ORIENTATION)
@@ -843,7 +836,7 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* smartData)
     priv->settings.allowUniversalAccessFromFileURLs = priv->pageSettings->allowUniversalAccessFromFileURLs();
     priv->settings.allowFileAccessFromFileURLs = priv->pageSettings->allowFileAccessFromFileURLs();
 
-    priv->mainFrame = _ewk_view_core_frame_new(smartData, priv, 0).get();
+    priv->mainFrame = &priv->page->mainFrame();
 
     priv->history = ewk_history_new(static_cast<WebCore::BackForwardListImpl*>(priv->page->backForwardList()));
 
@@ -961,15 +954,16 @@ static void _ewk_view_smart_add(Evas_Object* ewkView)
         return;
     }
 
-    if (!ewk_frame_init(smartData->main_frame, ewkView, priv->mainFrame)) {
+    if (!ewk_frame_init(smartData->main_frame, ewkView, adoptPtr(static_cast<WebCore::FrameLoaderClientEfl*>(&priv->mainFrame->loader().client())))) {
         ERR("Could not initialize main frme object.");
         evas_object_del(smartData->main_frame);
         smartData->main_frame = 0;
 
-        delete priv->mainFrame;
-        priv->mainFrame = 0;
         return;
     }
+    EWKPrivate::setCoreFrame(smartData->main_frame, priv->mainFrame);
+    priv->page->mainFrame().tree().setName(String());
+    priv->page->mainFrame().init();
 
     evas_object_name_set(smartData->main_frame, "EWK_Frame:main");
     evas_object_smart_member_add(smartData->main_frame, ewkView);
@@ -3655,39 +3649,16 @@ void ewk_view_scroll(Evas_Object* ewkView, const WebCore::IntSize& delta, const 
 }
 
 /**
- * Creates a new frame for given url and owner element.
+ * @internal
  *
- * Emits "frame,created" with the new frame object on success.
+ * Marked the change to call frameRectsChanged.
  */
-WTF::PassRefPtr<WebCore::Frame> ewk_view_frame_create(Evas_Object* ewkView, Evas_Object* frame, const WTF::String& name, WebCore::HTMLFrameOwnerElement* ownerElement, const WebCore::KURL& url, const WTF::String& referrer)
+void ewk_view_frame_rect_changed(Evas_Object* ewkView)
 {
-    DBG("ewkView=%p, frame=%p, name=%s, ownerElement=%p, url=%s, referrer=%s",
-        ewkView, frame, name.utf8().data(), ownerElement,
-        url.string().utf8().data(), referrer.utf8().data());
-
-    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, 0);
-    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, 0);
-
-    WTF::RefPtr<WebCore::Frame> coreFrame = _ewk_view_core_frame_new
-                                         (smartData, priv, ownerElement);
-    if (!coreFrame) {
-        ERR("Could not create child core frame '%s'", name.utf8().data());
-        return 0;
-    }
-
-    if (!ewk_frame_child_add(frame, coreFrame, name, url, referrer)) {
-        ERR("Could not create child frame object '%s'", name.utf8().data());
-        return 0;
-    }
-
-    // The creation of the frame may have removed itself already.
-    if (!coreFrame->page() || !coreFrame->tree().parent())
-        return 0;
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
 
     smartData->changed.frame_rect = true;
     _ewk_view_smart_changed(smartData);
-
-    return coreFrame.release();
 }
 
 WTF::PassRefPtr<WebCore::Widget> ewk_view_plugin_create(Evas_Object* ewkView, Evas_Object* frame, const WebCore::IntSize& pluginSize, WebCore::HTMLPlugInElement* element, const WebCore::KURL& url, const WTF::Vector<WTF::String>& paramNames, const WTF::Vector<WTF::String>& paramValues, const WTF::String& mimeType, bool loadManually)
