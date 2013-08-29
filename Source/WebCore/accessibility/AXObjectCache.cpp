@@ -421,6 +421,9 @@ AccessibilityObject* AXObjectCache::rootObject()
 {
     if (!gAccessibilityEnabled)
         return 0;
+
+    if (!m_document)
+        return 0;
     
     return getOrCreate(m_document->view());
 }

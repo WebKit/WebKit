@@ -1,3 +1,18 @@
+2013-08-28  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: WebProcess at com.apple.WebCore: WebCore::AXObjectCache::rootObject + 27
+        https://bugs.webkit.org/show_bug.cgi?id=120434
+
+        Reviewed by Darin Adler.
+
+        Crash logs indicate that there's a null pointer access in rootObject. That seems like it could only
+        happen in Document was null. 
+
+        Unfortunately, there are no reproducible steps and no other information to construct a test case.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::rootObject):
+
 2013-08-28  Ryosuke Niwa  <rniwa@webkit.org>
 
         The code to look for an ancestor form element is duplicated in three different places
