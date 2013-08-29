@@ -2386,7 +2386,7 @@ private:
         LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("Exception check continuation"));
         
         m_out.branch(
-            m_out.notZero64(m_out.load64(m_out.absolute(&vm().exception()))),
+            m_out.notZero64(m_out.load64(m_out.absolute(vm().addressOfException()))),
             didHaveException, continuation);
         
         LBasicBlock lastNext = m_out.appendTo(didHaveException, continuation);

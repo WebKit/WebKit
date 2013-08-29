@@ -1,3 +1,10 @@
+2013-08-29  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, fix FTL build.
+
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::callCheck):
+
 2013-08-29  Julien Brianceau  <jbriance@cisco.com>
 
         REGRESSION(r153222, 32-bit): NULL JSValue() seen when running peacekeeper benchmark.
