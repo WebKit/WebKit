@@ -7,6 +7,7 @@
     <body>
         <div id=video_container></div>
         <script>
+            setCaptionDisplayMode('Automatic');
             var mediaFile = findMediaFile("video", "../content/test");
             document.getElementById('video_container').innerHTML = "<video src='" + mediaFile + "' controls ><track kind='captions' src='captions-webvtt/simple-captions.vtt' default ></video>";
         </script>

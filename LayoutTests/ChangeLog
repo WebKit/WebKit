@@ -1,5 +1,36 @@
 2013-08-29  Simon Pena  <simon.pena@samsung.com>
 
+        Follow-up to r154810 and r154810: Missing tests and fix one misplaced call to setCaptionDisplayMode
+        https://bugs.webkit.org/show_bug.cgi?id=120474
+
+        Reviewed by Eric Carlson.
+
+        I previously used a regular expression that didn't catch all the tests needing this
+        update. Additionally, in one of them I put the setCaptionDisplayMode in the wrong place,
+        before the function was defined by video-test.js. This new patch addresses all of that.
+
+        * media/track/media-element-enqueue-event-crash.html:
+        * media/track/regions-webvtt/text-track-cue-region-attribute.html:
+        * media/track/regions-webvtt/text-track-region-parser.html:
+        * media/track/track-add-remove-cue.html:
+        * media/track/track-cue-mutable-fragment.html:
+        * media/track/track-cue-mutable-text.html:
+        * media/track/track-cue-mutable.html:
+        * media/track/track-cue-negative-timestamp.html:
+        * media/track/track-cue-rendering-on-resize.html:
+        * media/track/track-cues-cuechange.html:
+        * media/track/track-cues-enter-exit.html:
+        * media/track/track-cues-missed.html:
+        * media/track/track-cues-pause-on-exit.html:
+        * media/track/track-cues-seeking.html:
+        * media/track/track-cues-sorted-before-dispatch.html:
+        * media/track/track-default-attribute.html:
+        * media/track/track-load-from-element-readyState.html:
+        * media/track/track-mode-disabled-crash.html:
+        * media/track/track-remove-quickly.html:
+
+2013-08-29  Simon Pena  <simon.pena@samsung.com>
+
         [GTK] Unreviewed gardening. Rebaselining after r154479 and r154702
 
         * platform/gtk/editing/deleting/delete-br-004-expected.txt: Rebaseline after r154479.
