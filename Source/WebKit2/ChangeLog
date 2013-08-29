@@ -1,3 +1,15 @@
+2013-08-29  Brian Holt  <brian.holt@samsung.com>
+
+        [GTK] [WK2] TestWebKitWebView page-visibility fails
+        https://bugs.webkit.org/show_bug.cgi?id=120406
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Removed the webkit prefix for document visibility properties.
+
+        * UIProcess/API/gtk/tests/TestWebKitWebView.cpp:
+        (testWebViewPageVisibility):
+
 2013-08-28  Chris Curtis  <chris_curtis@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=119548
