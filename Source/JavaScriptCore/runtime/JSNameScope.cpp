@@ -65,7 +65,7 @@ void JSNameScope::put(JSCell* cell, ExecState* exec, PropertyName propertyName, 
         bool isWritable = true;
         symbolTableGet(thisObject, propertyName, slot, isWritable);
         if (!isWritable) {
-            throwError(exec, createTypeError(exec, StrictModeReadonlyPropertyWriteError));
+            exec->vm().throwException(exec, createTypeError(exec, StrictModeReadonlyPropertyWriteError));
             return;
         }
     }

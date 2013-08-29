@@ -84,13 +84,13 @@ namespace JSC { namespace LLInt {
 #define LLINT_END_IMPL() LLINT_RETURN_TWO(pc, exec)
 
 #define LLINT_THROW(exceptionToThrow) do {                        \
-        vm.exception = (exceptionToThrow);                \
+        vm.throwException(exec, exceptionToThrow);             \
         pc = returnToThrow(exec, pc);                             \
         LLINT_END_IMPL();                                         \
     } while (false)
 
 #define LLINT_CHECK_EXCEPTION() do {                    \
-        if (UNLIKELY(vm.exception)) {           \
+        if (UNLIKELY(vm.exception())) {           \
             pc = returnToThrow(exec, pc);               \
             LLINT_END_IMPL();                           \
         }                                               \
@@ -144,14 +144,14 @@ namespace JSC { namespace LLInt {
 #define LLINT_CALL_THROW(exec, pc, exceptionToThrow) do {               \
         ExecState* __ct_exec = (exec);                                  \
         Instruction* __ct_pc = (pc);                                    \
-        vm.exception = (exceptionToThrow);                      \
+        vm.throwException(__ct_exec, exceptionToThrow);                     \
         LLINT_CALL_END_IMPL(__ct_exec, callToThrow(__ct_exec, __ct_pc)); \
     } while (false)
 
 #define LLINT_CALL_CHECK_EXCEPTION(exec, pc) do {                       \
         ExecState* __cce_exec = (exec);                                 \
         Instruction* __cce_pc = (pc);                                   \
-        if (UNLIKELY(vm.exception))                              \
+        if (UNLIKELY(vm.exception()))                                     \
             LLINT_CALL_END_IMPL(__cce_exec, callToThrow(__cce_exec, __cce_pc)); \
     } while (false)
 
@@ -422,7 +422,7 @@ LLINT_SLOW_PATH_DECL(stack_check)
     if (UNLIKELY(!vm.interpreter->stack().grow(&exec->registers()[exec->codeBlock()->m_numCalleeRegisters]))) {
         ReturnAddressPtr returnPC = exec->returnPC();
         exec = exec->callerFrame();
-        vm.exception = createStackOverflowError(exec);
+        vm.throwException(exec, createStackOverflowError(exec));
         CommonSlowPaths::interpreterThrowInCaller(exec, returnPC);
         pc = returnToThrowForThrownException(exec);
     }
@@ -1261,7 +1261,7 @@ LLINT_SLOW_PATH_DECL(slow_path_profile_did_call)
 LLINT_SLOW_PATH_DECL(throw_from_native_call)
 {
     LLINT_BEGIN();
-    ASSERT(vm.exception);
+    ASSERT(vm.exception());
     LLINT_END();
 }
 
@@ -1282,7 +1282,7 @@ LLINT_SLOW_PATH_DECL(slow_path_get_from_scope)
     PropertySlot slot(scope);
     if (!scope->getPropertySlot(exec, ident, slot)) {
         if (modeAndType.mode() == ThrowIfNotFound)
-            LLINT_RETURN(throwError(exec, createUndefinedVariableError(exec, ident)));
+            LLINT_RETURN(exec->vm().throwException(exec, createUndefinedVariableError(exec, ident)));
         LLINT_RETURN(jsUndefined());
     }
 

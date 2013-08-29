@@ -86,7 +86,7 @@ static EncodedJSValue JSC_HOST_CALL constructJSCallback(ExecState* exec)
             result = callback(ctx, constructorRef, argumentCount, arguments.data(), &exception);
         }
         if (exception)
-            throwError(exec, toJS(exec, exception));
+            exec->vm().throwException(exec, toJS(exec, exception));
         // result must be a valid JSValue.
         if (!result)
             return throwVMTypeError(exec);

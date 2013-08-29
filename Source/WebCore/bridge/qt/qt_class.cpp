@@ -80,7 +80,7 @@ JSValue QtClass::fallbackObject(ExecState* exec, Instance* inst, PropertyName id
     if (QtRuntimeMethod* method = qtinst->m_methods.value(name)) {
         JSValue obj = toJS(method->jsObjectRef(context, &exception));
         if (exception)
-            return throwError(exec, toJS(exec, exception));
+            return exec->vm().throwException(exec, toJS(exec, exception));
         return obj;
     }
 
@@ -117,7 +117,7 @@ JSValue QtClass::fallbackObject(ExecState* exec, Instance* inst, PropertyName id
     qtinst->m_methods.insert(name, method);
     JSValue obj = toJS(method->jsObjectRef(context, &exception));
     if (exception)
-        return throwError(exec, toJS(exec, exception));
+        return exec->vm().throwException(exec, toJS(exec, exception));
     return obj;
 }
 

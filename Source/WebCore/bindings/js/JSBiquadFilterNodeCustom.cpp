@@ -44,7 +44,7 @@ void JSBiquadFilterNode::setType(ExecState* exec, JSValue value)
     if (value.isNumber()) {
         uint32_t type = value.toUInt32(exec);
         if (!imp->setType(type))
-            throwError(exec, createTypeError(exec, "Illegal BiquadFilterNode type"));
+            exec->vm().throwException(exec, createTypeError(exec, "Illegal BiquadFilterNode type"));
         return;
     }
 #endif
@@ -57,7 +57,7 @@ void JSBiquadFilterNode::setType(ExecState* exec, JSValue value)
         }
     }
     
-    throwError(exec, createTypeError(exec, "Illegal BiquadFilterNode type"));
+    exec->vm().throwException(exec, createTypeError(exec, "Illegal BiquadFilterNode type"));
 }
 
 } // namespace WebCore

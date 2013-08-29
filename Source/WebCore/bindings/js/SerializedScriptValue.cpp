@@ -261,7 +261,7 @@ protected:
 
     void throwStackOverflow()
     {
-        throwError(m_exec, createStackOverflowError(m_exec));
+        m_exec->vm().throwException(m_exec, createStackOverflowError(m_exec));
     }
 
     NO_RETURN_DUE_TO_ASSERT
@@ -1066,7 +1066,7 @@ private:
 
     void throwValidationError()
     {
-        throwError(m_exec, createTypeError(m_exec, "Unable to deserialize data."));
+        m_exec->vm().throwException(m_exec, createTypeError(m_exec, "Unable to deserialize data."));
     }
 
     bool isValid() const { return m_version <= CurrentVersion; }
@@ -1894,10 +1894,10 @@ void SerializedScriptValue::maybeThrowExceptionIfSerializationFailed(ExecState* 
     
     switch (code) {
     case StackOverflowError:
-        throwError(exec, createStackOverflowError(exec));
+        exec->vm().throwException(exec, createStackOverflowError(exec));
         break;
     case ValidationError:
-        throwError(exec, createTypeError(exec, "Unable to deserialize data."));
+        exec->vm().throwException(exec, createTypeError(exec, "Unable to deserialize data."));
         break;
     case DataCloneError:
         setDOMException(exec, DATA_CLONE_ERR);

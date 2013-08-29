@@ -80,7 +80,7 @@ function log(s)
 // onreadystatechange() frame on the return path.
 
 lastReadyStateObserved = 0;
-hasCompensatedAlready = false;
+isCompensating = false;
 
 function test()
 {
@@ -91,15 +91,13 @@ function test()
     xhr.onreadystatechange = function() {
         lastReadyStateObserved = xhr.readyState;
         if (xhr.readyState == 4) {
-            xhr.open("GET", "recurse.html", false);
-            xhr.send(null);
-
-            // Compensate for test flakiness if needed:
-            if (!hasCompensatedAlready && lastReadyStateObserved == 1) {
-                xhr.open("GET", "recurse.html", false);
-                xhr.send(null);
-                hasCompensatedAlready = true;
-            }
+            do {
+                xhr.open("GET", "recurse.html", false), xhr.send(null);
+                if (isCompensating)
+                    break;
+                if (lastReadyStateObserved == 1)
+                    isCompensating = true;             
+            } while (isCompensating && lastReadyStateObserved == 1);
         }
     };
     xhr.open("GET", "recurse.html", false);

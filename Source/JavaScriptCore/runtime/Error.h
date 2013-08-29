@@ -62,15 +62,13 @@ namespace JSC {
     JSObject* addErrorInfo(ExecState*, JSObject* error, int line, const SourceCode&);
 
     // Methods to throw Errors.
-    JS_EXPORT_PRIVATE JSValue throwError(ExecState*, JSValue);
-    JS_EXPORT_PRIVATE JSObject* throwError(ExecState*, JSObject*);
 
     // Convenience wrappers, create an throw an exception with a default message.
     JS_EXPORT_PRIVATE JSObject* throwTypeError(ExecState*);
     JS_EXPORT_PRIVATE JSObject* throwSyntaxError(ExecState*);
 
     // Convenience wrappers, wrap result as an EncodedJSValue.
-    inline EncodedJSValue throwVMError(ExecState* exec, JSValue error) { return JSValue::encode(throwError(exec, error)); }
+    inline EncodedJSValue throwVMError(ExecState* exec, JSValue error) { return JSValue::encode(exec->vm().throwException(exec, error)); }
     inline EncodedJSValue throwVMTypeError(ExecState* exec) { return JSValue::encode(throwTypeError(exec)); }
 
     class StrictModeTypeErrorFunction : public InternalFunction {

@@ -411,7 +411,7 @@ Stringifier::StringifyResult Stringifier::appendStringifiedValue(StringBuilder& 
     // Handle cycle detection, and put the holder on the stack.
     for (unsigned i = 0; i < m_holderStack.size(); i++) {
         if (m_holderStack[i].object() == object) {
-            throwError(m_exec, createTypeError(m_exec, ASCIILiteral("JSON.stringify cannot serialize cyclic structures.")));
+            m_exec->vm().throwException(m_exec, createTypeError(m_exec, ASCIILiteral("JSON.stringify cannot serialize cyclic structures.")));
             return StringifyFailed;
         }
     }
@@ -646,7 +646,7 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
                 ASSERT(inValue.isObject());
                 ASSERT(isJSArray(asObject(inValue)) || asObject(inValue)->inherits(JSArray::info()));
                 if (objectStack.size() + arrayStack.size() > maximumFilterRecursion)
-                    return throwError(m_exec, createStackOverflowError(m_exec));
+                    return m_exec->vm().throwException(m_exec, createStackOverflowError(m_exec));
 
                 JSArray* array = asArray(inValue);
                 arrayStack.push(array);
@@ -697,7 +697,7 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
                 ASSERT(inValue.isObject());
                 ASSERT(!isJSArray(asObject(inValue)) && !asObject(inValue)->inherits(JSArray::info()));
                 if (objectStack.size() + arrayStack.size() > maximumFilterRecursion)
-                    return throwError(m_exec, createStackOverflowError(m_exec));
+                    return m_exec->vm().throwException(m_exec, createStackOverflowError(m_exec));
 
                 JSObject* object = asObject(inValue);
                 objectStack.push(object);

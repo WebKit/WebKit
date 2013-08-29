@@ -1,3 +1,83 @@
+2013-08-28  Chris Curtis  <chris_curtis@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=119548
+        Refactoring Exception throws.
+        
+        Reviewed by Geoffrey Garen.
+        
+        Gets column information from the error object for reporting exceptions.
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::reportException): 
+        * bindings/js/ScriptCallStackFactory.cpp: 
+        (WebCore::createScriptCallStackFromException):
+ 
+        Moved setting an exception into the vm, These functions changed to use the new functionality.
+ 
+        * bindings/js/JSAudioBufferSourceNodeCustom.cpp:
+        (WebCore::JSAudioBufferSourceNode::setBuffer):
+        * bindings/js/JSBiquadFilterNodeCustom.cpp:
+        (WebCore::JSBiquadFilterNode::setType):
+        * bindings/js/JSCryptoCustom.cpp:
+        (WebCore::JSCrypto::getRandomValues):
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::setDOMException):
+        * bindings/js/JSInjectedScriptHostCustom.cpp:
+        (WebCore::JSInjectedScriptHost::setFunctionVariableValue):
+        * bindings/js/JSJavaScriptCallFrameCustom.cpp:
+        (WebCore::JSJavaScriptCallFrame::evaluate):
+        (WebCore::JSJavaScriptCallFrame::setVariableValue):
+        * bindings/js/JSNodeFilterCondition.cpp:
+        (WebCore::JSNodeFilterCondition::acceptNode):
+        * bindings/js/JSOscillatorNodeCustom.cpp:
+        (WebCore::JSOscillatorNode::setType):
+        * bindings/js/JSPannerNodeCustom.cpp:
+        (WebCore::JSPannerNode::setPanningModel):
+        (WebCore::JSPannerNode::setDistanceModel):
+        * bindings/js/JSSVGLengthCustom.cpp:
+        (WebCore::JSSVGLength::convertToSpecifiedUnits):
+        * bindings/js/JSWebGLRenderingContextCustom.cpp:
+        (WebCore::getObjectParameter):
+        (WebCore::JSWebGLRenderingContext::getAttachedShaders):
+        (WebCore::JSWebGLRenderingContext::getExtension):
+        (WebCore::JSWebGLRenderingContext::getFramebufferAttachmentParameter):
+        (WebCore::JSWebGLRenderingContext::getParameter):
+        (WebCore::JSWebGLRenderingContext::getProgramParameter):
+        (WebCore::JSWebGLRenderingContext::getShaderParameter):
+        (WebCore::JSWebGLRenderingContext::getUniform):
+        (WebCore::dataFunctionf):
+        (WebCore::dataFunctioni):
+        (WebCore::dataFunctionMatrix):
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        (WebCore::JSXMLHttpRequest::open):
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneBase::throwStackOverflow):
+        (WebCore::CloneDeserializer::throwValidationError):
+        (WebCore::SerializedScriptValue::maybeThrowExceptionIfSerializationFailed):
+        * bindings/js/WorkerScriptController.cpp:
+        (WebCore::WorkerScriptController::evaluate):
+        (WebCore::WorkerScriptController::setException):
+        * bridge/c/c_instance.cpp:
+        (JSC::Bindings::CInstance::moveGlobalExceptionToExecState):
+        (JSC::Bindings::CInstance::invokeMethod):
+        (JSC::Bindings::CInstance::invokeDefaultMethod):
+        (JSC::Bindings::CInstance::invokeConstruct):
+        (JSC::Bindings::CInstance::toJSPrimitive):
+        * bridge/objc/objc_instance.mm:
+        (ObjcInstance::invokeMethod):
+        * bridge/objc/objc_runtime.mm:
+        (JSC::Bindings::ObjcArray::setValueAt):
+        (JSC::Bindings::ObjcArray::valueAt):
+        * bridge/objc/objc_utility.mm:
+        (JSC::Bindings::throwError):
+        * bridge/qt/qt_instance.cpp:
+        (JSC::Bindings::QtField::valueFromInstance):
+        (JSC::Bindings::QtField::setValueToInstance):
+        * bridge/runtime_array.cpp:
+        (JSC::RuntimeArray::put):
+        (JSC::RuntimeArray::putByIndex):
+        * bridge/runtime_object.cpp:
+        (JSC::Bindings::RuntimeObject::throwInvalidAccessError):
+
 2013-08-28  Alexey Proskuryakov  <ap@apple.com>
 
         Remove an unused data member from Page.

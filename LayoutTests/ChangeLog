@@ -1,3 +1,33 @@
+2013-08-28  Chris Curtis  <chris_curtis@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=119548
+        Refactoring Exception throws.
+        
+        Reviewed by Geoffrey Garen.
+
+        Column/line information was added into these results.
+        * fast/events/window-onerror4-expected.txt:
+        * fast/js/global-recursion-on-full-stack-expected.txt:
+        
+        fixed a variable name in a case when shouldThrowType failed.
+        * fast/js/mozilla/resources/js-test-pre.js:
+        (shouldThrowType):
+        
+        Sorted the properties to allow the results always show in the same order.
+        * fast/js/script-tests/exception-properties.js:
+        * fast/js/exception-properties-expected.txt:
+        
+        This test needed to be modified to have the line numbers match on the output across
+        wk and wk2. This test is inherently flaky because is relies on size of the available
+        native stack. To account for the flakiness an additional call was made to force the 
+        results to match. 
+        This patch now records and outputs the line number where the errors were occurring. 
+        This was causing the test results to no longer match because of the line numbers.
+        By changing how to account for the flakiness, the results match again. 
+        * fast/xmlhttprequest/xmlhttprequest-recursive-sync-event-expected.txt:
+        * fast/xmlhttprequest/xmlhttprequest-recursive-sync-event.html:
+
+
 2013-08-28  Dean Jackson  <dino@apple.com>
 
         [WebGL] CoreGraphics can provide greyscale image data

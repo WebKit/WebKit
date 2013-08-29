@@ -1683,7 +1683,7 @@ void NetscapePluginInstanceProxy::moveGlobalExceptionToExecState(ExecState* exec
 
     {
         JSLockHolder lock(exec);
-        throwError(exec, createError(exec, globalExceptionString()));
+        exec->vm().throwException(exec, createError(exec, globalExceptionString()));
     }
 
     globalExceptionString() = String();

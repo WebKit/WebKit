@@ -313,7 +313,7 @@ ObjcValueType objcValueTypeForType(const char *type)
 JSObject *throwError(ExecState *exec, NSString *message)
 {
     ASSERT(message);
-    JSObject *error = JSC::throwError(exec, JSC::createError(exec, String(message)));
+    JSObject *error = exec->vm().throwException(exec, JSC::createError(exec, String(message)));
     return error;
 }
 

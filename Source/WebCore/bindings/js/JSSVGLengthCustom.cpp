@@ -81,7 +81,7 @@ JSValue JSSVGLength::convertToSpecifiedUnits(ExecState* exec)
     SVGLength& podImp = impl()->propertyReference();
 
     if (exec->argumentCount() < 1)
-        return throwError(exec, createNotEnoughArgumentsError(exec));
+        return exec->vm().throwException(exec, createNotEnoughArgumentsError(exec));
 
     unsigned short unitType = exec->argument(0).toUInt32(exec);
     if (exec->hadException())

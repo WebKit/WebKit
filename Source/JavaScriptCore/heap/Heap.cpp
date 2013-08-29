@@ -534,10 +534,10 @@ void Heap::markRoots()
                 visitor.donateAndDrain();
             }
         }
-        if (m_vm->exception) {
+        if (m_vm->exception()) {
             GCPHASE(MarkingException);
             MARK_LOG_ROOT(visitor, "Exceptions");
-            heapRootVisitor.visit(&m_vm->exception);
+            heapRootVisitor.visit(m_vm->addressOfException());
             visitor.donateAndDrain();
         }
     

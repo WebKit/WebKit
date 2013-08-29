@@ -408,27 +408,27 @@ bool JSFunction::defineOwnProperty(JSObject* object, ExecState* exec, PropertyNa
      
     if (descriptor.configurablePresent() && descriptor.configurable()) {
         if (throwException)
-            throwError(exec, createTypeError(exec, ASCIILiteral("Attempting to configurable attribute of unconfigurable property.")));
+            exec->vm().throwException(exec, createTypeError(exec, ASCIILiteral("Attempting to configurable attribute of unconfigurable property.")));
         return false;
     }
     if (descriptor.enumerablePresent() && descriptor.enumerable()) {
         if (throwException)
-            throwError(exec, createTypeError(exec, ASCIILiteral("Attempting to change enumerable attribute of unconfigurable property.")));
+            exec->vm().throwException(exec, createTypeError(exec, ASCIILiteral("Attempting to change enumerable attribute of unconfigurable property.")));
         return false;
     }
     if (descriptor.isAccessorDescriptor()) {
         if (throwException)
-            throwError(exec, createTypeError(exec, ASCIILiteral("Attempting to change access mechanism for an unconfigurable property.")));
+            exec->vm().throwException(exec, createTypeError(exec, ASCIILiteral("Attempting to change access mechanism for an unconfigurable property.")));
         return false;
     }
     if (descriptor.writablePresent() && descriptor.writable()) {
         if (throwException)
-            throwError(exec, createTypeError(exec, ASCIILiteral("Attempting to change writable attribute of unconfigurable property.")));
+            exec->vm().throwException(exec, createTypeError(exec, ASCIILiteral("Attempting to change writable attribute of unconfigurable property.")));
         return false;
     }
     if (!valueCheck) {
         if (throwException)
-            throwError(exec, createTypeError(exec, ASCIILiteral("Attempting to change value of a readonly property.")));
+            exec->vm().throwException(exec, createTypeError(exec, ASCIILiteral("Attempting to change value of a readonly property.")));
         return false;
     }
     return true;

@@ -172,6 +172,8 @@ void reportException(ExecState* exec, JSValue exception, CachedScript* cachedScr
         JSObject* exceptionObject = exception.toObject(exec);
         JSValue lineValue = exceptionObject->getDirect(exec->vm(), Identifier(exec, "line"));
         lineNumber = lineValue && lineValue.isNumber() ? int(lineValue.toNumber(exec)) : 0;
+        JSValue columnValue = exceptionObject->getDirect(exec->vm(), Identifier(exec, "column"));
+        columnNumber = columnValue && columnValue.isNumber() ? int(columnValue.toNumber(exec)) : 0;
         JSValue sourceURLValue = exceptionObject->getDirect(exec->vm(), Identifier(exec, "sourceURL"));
         exceptionSourceURL = sourceURLValue && sourceURLValue.isString() ? sourceURLValue.toString(exec)->value(exec) : ASCIILiteral("undefined");
     }
@@ -227,7 +229,7 @@ void setDOMException(ExecState* exec, ExceptionCode ec)
     }
 
     ASSERT(errorObject);
-    throwError(exec, errorObject);
+    exec->vm().throwException(exec, errorObject);
 }
 
 #undef TRY_TO_CREATE_EXCEPTION

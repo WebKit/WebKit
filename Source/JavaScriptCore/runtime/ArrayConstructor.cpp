@@ -80,7 +80,7 @@ JSObject* constructArrayWithSizeQuirk(ExecState* exec, ArrayAllocationProfile* p
     
     uint32_t n = length.toUInt32(exec);
     if (n != length.toNumber(exec))
-        return throwError(exec, createRangeError(exec, ASCIILiteral("Array size is not a small enough positive integer.")));
+        return exec->vm().throwException(exec, createRangeError(exec, ASCIILiteral("Array size is not a small enough positive integer.")));
     return constructEmptyArray(exec, profile, globalObject, n);
 }
 

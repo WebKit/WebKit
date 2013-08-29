@@ -44,7 +44,7 @@ JITCode::~JITCode()
 JSValue JITCode::execute(JSStack* stack, CallFrame* callFrame, VM* vm)
 {
     JSValue result = JSValue::decode(ctiTrampoline(executableAddress(), stack, callFrame, 0, 0, vm));
-    return vm->exception ? jsNull() : result;
+    return vm->exception() ? jsNull() : result;
 }
 #endif
 

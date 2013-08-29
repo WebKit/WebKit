@@ -38,10 +38,10 @@ void interpreterThrowInCaller(ExecState* exec, ReturnAddressPtr pc)
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
 #if LLINT_SLOW_PATH_TRACING
-    dataLog("Throwing exception ", vm->exception, ".\n");
+    dataLog("Throwing exception ", vm->exception(), ".\n");
 #endif
     genericThrow(
-        vm, exec, vm->exception,
+        vm, exec, vm->exception(),
         exec->codeBlock()->bytecodeOffset(exec, pc));
 }
 

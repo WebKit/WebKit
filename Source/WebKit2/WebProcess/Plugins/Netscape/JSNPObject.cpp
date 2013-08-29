@@ -137,7 +137,7 @@ JSValue JSNPObject::callMethod(ExecState* exec, NPIdentifier methodName)
         releaseNPVariantValue(&arguments[i]);
 
     if (!returnValue)
-        throwError(exec, createError(exec, "Error calling method on NPObject."));
+        exec->vm().throwException(exec, createError(exec, "Error calling method on NPObject."));
 
     JSValue propertyValue = m_objectMap->convertNPVariantToJSValue(exec, globalObject(), result);
     releaseNPVariantValue(&result);
@@ -177,7 +177,7 @@ JSC::JSValue JSNPObject::callObject(JSC::ExecState* exec)
         releaseNPVariantValue(&arguments[i]);
 
     if (!returnValue)
-        throwError(exec, createError(exec, "Error calling method on NPObject."));
+        exec->vm().throwException(exec, createError(exec, "Error calling method on NPObject."));
 
     JSValue propertyValue = m_objectMap->convertNPVariantToJSValue(exec, globalObject(), result);
     releaseNPVariantValue(&result);
@@ -213,7 +213,7 @@ JSValue JSNPObject::callConstructor(ExecState* exec)
     }
 
     if (!returnValue)
-        throwError(exec, createError(exec, "Error calling method on NPObject."));
+        exec->vm().throwException(exec, createError(exec, "Error calling method on NPObject."));
     
     JSValue value = m_objectMap->convertNPVariantToJSValue(exec, globalObject(), result);
     releaseNPVariantValue(&result);
@@ -467,7 +467,7 @@ JSValue JSNPObject::methodGetter(ExecState* exec, JSValue slotBase, PropertyName
 
 JSObject* JSNPObject::throwInvalidAccessError(ExecState* exec)
 {
-    return throwError(exec, createReferenceError(exec, "Trying to access object from destroyed plug-in."));
+    return exec->vm().throwException(exec, createReferenceError(exec, "Trying to access object from destroyed plug-in."));
 }
 
 } // namespace WebKit

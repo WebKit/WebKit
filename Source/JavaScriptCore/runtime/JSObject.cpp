@@ -379,7 +379,7 @@ void JSObject::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSV
             if (attributes & ReadOnly) {
                 ASSERT(thisObject->structure()->prototypeChainMayInterceptStoreTo(exec->vm(), propertyName) || obj == thisObject);
                 if (slot.isStrictMode())
-                    throwError(exec, createTypeError(exec, ASCIILiteral(StrictModeReadonlyPropertyWriteError)));
+                    exec->vm().throwException(exec, createTypeError(exec, ASCIILiteral(StrictModeReadonlyPropertyWriteError)));
                 return;
             }
 
@@ -1367,7 +1367,7 @@ JSValue JSObject::defaultValue(const JSObject* object, ExecState* exec, Preferre
 
     ASSERT(!exec->hadException());
 
-    return throwError(exec, createTypeError(exec, ASCIILiteral("No default value")));
+    return exec->vm().throwException(exec, createTypeError(exec, ASCIILiteral("No default value")));
 }
 
 const HashEntry* JSObject::findPropertyHashEntry(ExecState* exec, PropertyName propertyName) const
@@ -1388,7 +1388,7 @@ bool JSObject::hasInstance(ExecState* exec, JSValue value)
         return defaultHasInstance(exec, value, get(exec, exec->propertyNames().prototype));
     if (info.implementsHasInstance())
         return methodTable()->customHasInstance(this, exec, value);
-    throwError(exec, createInvalidParameterError(exec, "instanceof" , this));
+    exec->vm().throwException(exec, createInvalidParameterError(exec, "instanceof" , this));
     return false;
 }
 
@@ -1398,7 +1398,7 @@ bool JSObject::defaultHasInstance(ExecState* exec, JSValue value, JSValue proto)
         return false;
 
     if (!proto.isObject()) {
-        throwError(exec, createTypeError(exec, ASCIILiteral("instanceof called on an object with an invalid prototype property.")));
+        exec->vm().throwException(exec, createTypeError(exec, ASCIILiteral("instanceof called on an object with an invalid prototype property.")));
         return false;
     }
 
@@ -2472,7 +2472,7 @@ bool JSObject::defineOwnNonIndexProperty(ExecState* exec, PropertyName propertyN
         // unless extensions are prevented!
         if (!isExtensible()) {
             if (throwException)
-                throwError(exec, createTypeError(exec, ASCIILiteral("Attempting to define property on object that is not extensible.")));
+                exec->vm().throwException(exec, createTypeError(exec, ASCIILiteral("Attempting to define property on object that is not extensible.")));
             return false;
         }
         PropertyDescriptor oldDescriptor;
@@ -2490,12 +2490,12 @@ bool JSObject::defineOwnNonIndexProperty(ExecState* exec, PropertyName propertyN
     if (!current.configurable()) {
         if (descriptor.configurable()) {
             if (throwException)
-                throwError(exec, createTypeError(exec, ASCIILiteral("Attempting to configurable attribute of unconfigurable property.")));
+                exec->vm().throwException(exec, createTypeError(exec, ASCIILiteral("Attempting to configurable attribute of unconfigurable property.")));
             return false;
         }
         if (descriptor.enumerablePresent() && descriptor.enumerable() != current.enumerable()) {
             if (throwException)
-                throwError(exec, createTypeError(exec, ASCIILiteral("Attempting to change enumerable attribute of unconfigurable property.")));
+                exec->vm().throwException(exec, createTypeError(exec, ASCIILiteral("Attempting to change enumerable attribute of unconfigurable property.")));
             return false;
         }
     }
@@ -2513,7 +2513,7 @@ bool JSObject::defineOwnNonIndexProperty(ExecState* exec, PropertyName propertyN
     if (descriptor.isDataDescriptor() != current.isDataDescriptor()) {
         if (!current.configurable()) {
             if (throwException)
-                throwError(exec, createTypeError(exec, ASCIILiteral("Attempting to change access mechanism for an unconfigurable property.")));
+                exec->vm().throwException(exec, createTypeError(exec, ASCIILiteral("Attempting to change access mechanism for an unconfigurable property.")));
             return false;
         }
         methodTable()->deleteProperty(this, exec, propertyName);
@@ -2525,13 +2525,13 @@ bool JSObject::defineOwnNonIndexProperty(ExecState* exec, PropertyName propertyN
         if (!current.configurable()) {
             if (!current.writable() && descriptor.writable()) {
                 if (throwException)
-                    throwError(exec, createTypeError(exec, ASCIILiteral("Attempting to change writable attribute of unconfigurable property.")));
+                    exec->vm().throwException(exec, createTypeError(exec, ASCIILiteral("Attempting to change writable attribute of unconfigurable property.")));
                 return false;
             }
             if (!current.writable()) {
                 if (descriptor.value() && !sameValue(exec, current.value(), descriptor.value())) {
                     if (throwException)
-                        throwError(exec, createTypeError(exec, ASCIILiteral("Attempting to change value of a readonly property.")));
+                        exec->vm().throwException(exec, createTypeError(exec, ASCIILiteral("Attempting to change value of a readonly property.")));
                     return false;
                 }
             }
@@ -2547,12 +2547,12 @@ bool JSObject::defineOwnNonIndexProperty(ExecState* exec, PropertyName propertyN
     if (!current.configurable()) {
         if (descriptor.setterPresent() && !(current.setterPresent() && JSValue::strictEqual(exec, current.setter(), descriptor.setter()))) {
             if (throwException)
-                throwError(exec, createTypeError(exec, ASCIILiteral("Attempting to change the setter of an unconfigurable property.")));
+                exec->vm().throwException(exec, createTypeError(exec, ASCIILiteral("Attempting to change the setter of an unconfigurable property.")));
             return false;
         }
         if (descriptor.getterPresent() && !(current.getterPresent() && JSValue::strictEqual(exec, current.getter(), descriptor.getter()))) {
             if (throwException)
-                throwError(exec, createTypeError(exec, ASCIILiteral("Attempting to change the getter of an unconfigurable property.")));
+                exec->vm().throwException(exec, createTypeError(exec, ASCIILiteral("Attempting to change the getter of an unconfigurable property.")));
             return false;
         }
     }
@@ -2599,7 +2599,7 @@ bool JSObject::getOwnPropertySlotSlow(ExecState* exec, PropertyName propertyName
 
 JSObject* throwTypeError(ExecState* exec, const String& message)
 {
-    return throwError(exec, createTypeError(exec, message));
+    return exec->vm().throwException(exec, createTypeError(exec, message));
 }
 
 } // namespace JSC

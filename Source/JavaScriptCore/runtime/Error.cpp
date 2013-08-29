@@ -140,9 +140,6 @@ JSObject* addErrorInfo(CallFrame* callFrame, JSObject* error, int line, const So
         error->putDirect(*vm, Identifier(vm, linePropertyName), jsNumber(line), ReadOnly | DontDelete);
     if (!sourceURL.isNull())
         error->putDirect(*vm, Identifier(vm, sourceURLPropertyName), jsString(vm, sourceURL), ReadOnly | DontDelete);
-
-    vm->interpreter->addStackTraceIfNecessary(callFrame, error);
-
     return error;
 }
 
@@ -153,28 +150,14 @@ bool hasErrorInfo(ExecState* exec, JSObject* error)
         || error->hasProperty(exec, Identifier(exec, sourceURLPropertyName));
 }
 
-JSValue throwError(ExecState* exec, JSValue error)
-{
-    Interpreter::addStackTraceIfNecessary(exec, error);
-    exec->vm().exception = error;
-    return error;
-}
-
-JSObject* throwError(ExecState* exec, JSObject* error)
-{
-    Interpreter::addStackTraceIfNecessary(exec, error);
-    exec->vm().exception = error;
-    return error;
-}
-
 JSObject* throwTypeError(ExecState* exec)
 {
-    return throwError(exec, createTypeError(exec, ASCIILiteral("Type error")));
+    return exec->vm().throwException(exec, createTypeError(exec, ASCIILiteral("Type error")));
 }
 
 JSObject* throwSyntaxError(ExecState* exec)
 {
-    return throwError(exec, createSyntaxError(exec, ASCIILiteral("Syntax error")));
+    return exec->vm().throwException(exec, createSyntaxError(exec, ASCIILiteral("Syntax error")));
 }
 
 const ClassInfo StrictModeTypeErrorFunction::s_info = { "Function", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(StrictModeTypeErrorFunction) };

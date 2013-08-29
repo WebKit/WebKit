@@ -46,10 +46,10 @@ JSValue JSIDBObjectStore::createIndex(ExecState* exec)
 {
     ScriptExecutionContext* context = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
     if (!context)
-        return throwError(exec, createReferenceError(exec, "IDBObjectStore script execution context is unavailable"));
+        return exec->vm().throwException(exec, createReferenceError(exec, "IDBObjectStore script execution context is unavailable"));
 
     if (exec->argumentCount() < 2)
-        return throwError(exec, createNotEnoughArgumentsError(exec));
+        return exec->vm().throwException(exec, createNotEnoughArgumentsError(exec));
 
     String name = exec->argument(0).toString(exec)->value(exec);
     if (exec->hadException())

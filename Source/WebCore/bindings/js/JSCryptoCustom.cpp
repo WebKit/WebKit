@@ -38,7 +38,7 @@ namespace WebCore {
 JSValue JSCrypto::getRandomValues(ExecState* exec)
 {
     if (exec->argumentCount() < 1)
-        return throwError(exec, createNotEnoughArgumentsError(exec));
+        return exec->vm().throwException(exec, createNotEnoughArgumentsError(exec));
 
     JSValue buffer = exec->argument(0);
     RefPtr<ArrayBufferView> arrayBufferView = toArrayBufferView(buffer);

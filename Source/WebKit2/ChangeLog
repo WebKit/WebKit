@@ -1,3 +1,20 @@
+2013-08-28  Chris Curtis  <chris_curtis@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=119548
+        Refactoring Exception throws.
+
+        Reviewed by Geoffrey Garen.
+        
+        Moved setting an exception into the vm, These functions changed to use the new functionality.
+
+        * WebProcess/Plugins/Netscape/JSNPObject.cpp:
+        (WebKit::JSNPObject::callMethod):
+        (WebKit::JSNPObject::callObject):
+        (WebKit::JSNPObject::callConstructor):
+        (WebKit::JSNPObject::throwInvalidAccessError):
+        * WebProcess/Plugins/Netscape/NPRuntimeObjectMap.cpp:
+        (WebKit::NPRuntimeObjectMap::moveGlobalExceptionToExecState):
+
 2013-08-28  Anders Carlsson  <andersca@apple.com>
 
         Allow the Flash plug-in to open its preference pane

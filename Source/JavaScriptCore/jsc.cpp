@@ -366,7 +366,7 @@ EncodedJSValue JSC_HOST_CALL functionRun(ExecState* exec)
     String fileName = exec->argument(0).toString(exec)->value(exec);
     Vector<char> script;
     if (!fillBufferWithContentsOfFile(fileName, script))
-        return JSValue::encode(throwError(exec, createError(exec, "Could not open file.")));
+        return JSValue::encode(exec->vm().throwException(exec, createError(exec, "Could not open file.")));
 
     GlobalObject* globalObject = GlobalObject::create(exec->vm(), GlobalObject::createStructure(exec->vm(), jsNull()), Vector<String>());
 
@@ -377,7 +377,7 @@ EncodedJSValue JSC_HOST_CALL functionRun(ExecState* exec)
     stopWatch.stop();
 
     if (!!exception) {
-        throwError(globalObject->globalExec(), exception);
+        exec->vm().throwException(globalObject->globalExec(), exception);
         return JSValue::encode(jsUndefined());
     }
     
@@ -389,14 +389,14 @@ EncodedJSValue JSC_HOST_CALL functionLoad(ExecState* exec)
     String fileName = exec->argument(0).toString(exec)->value(exec);
     Vector<char> script;
     if (!fillBufferWithContentsOfFile(fileName, script))
-        return JSValue::encode(throwError(exec, createError(exec, "Could not open file.")));
+        return JSValue::encode(exec->vm().throwException(exec, createError(exec, "Could not open file.")));
 
     JSGlobalObject* globalObject = exec->lexicalGlobalObject();
     
     JSValue evaluationException;
     JSValue result = evaluate(globalObject->globalExec(), jscSource(script.data(), fileName), JSValue(), &evaluationException);
     if (evaluationException)
-        throwError(exec, evaluationException);
+        exec->vm().throwException(exec, evaluationException);
     return JSValue::encode(result);
 }
 
@@ -405,7 +405,7 @@ EncodedJSValue JSC_HOST_CALL functionCheckSyntax(ExecState* exec)
     String fileName = exec->argument(0).toString(exec)->value(exec);
     Vector<char> script;
     if (!fillBufferWithContentsOfFile(fileName, script))
-        return JSValue::encode(throwError(exec, createError(exec, "Could not open file.")));
+        return JSValue::encode(exec->vm().throwException(exec, createError(exec, "Could not open file.")));
 
     JSGlobalObject* globalObject = exec->lexicalGlobalObject();
 
@@ -417,7 +417,7 @@ EncodedJSValue JSC_HOST_CALL functionCheckSyntax(ExecState* exec)
     stopWatch.stop();
 
     if (!validSyntax)
-        throwError(exec, syntaxException);
+        exec->vm().throwException(exec, syntaxException);
     return JSValue::encode(jsNumber(stopWatch.getElapsedMS()));
 }
 

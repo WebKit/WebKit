@@ -337,11 +337,11 @@ JSValue QtField::valueFromInstance(ExecState* exec, const Instance* inst) const
         JSValueRef exception = 0;
         JSValueRef jsValue = convertQVariantToValue(toRef(exec), inst->rootObject(), val, &exception);
         if (exception)
-            return throwError(exec, toJS(exec, exception));
+            return exec->vm().throwException(exec, toJS(exec, exception));
         return toJS(exec, jsValue);
     }
     QString msg = QString(QLatin1String("cannot access member `%1' of deleted QObject")).arg(QLatin1String(name()));
-    return throwError(exec, createError(exec, msg.toLatin1().constData()));
+    return exec->vm().throwException(exec, createError(exec, msg.toLatin1().constData()));
 }
 
 void QtField::setValueToInstance(ExecState* exec, const Instance* inst, JSValue aValue) const
@@ -360,7 +360,7 @@ void QtField::setValueToInstance(ExecState* exec, const Instance* inst, JSValue 
         JSValueRef exception = 0;
         QVariant val = convertValueToQVariant(toRef(exec), toRef(exec, aValue), argtype, 0, &exception);
         if (exception) {
-            throwError(exec, toJS(exec, exception));
+            exec->vm().throwException(exec, toJS(exec, exception));
             return;
         }
         if (m_type == MetaProperty) {
@@ -373,7 +373,7 @@ void QtField::setValueToInstance(ExecState* exec, const Instance* inst, JSValue 
 #endif
     } else {
         QString msg = QString(QLatin1String("cannot access member `%1' of deleted QObject")).arg(QLatin1String(name()));
-        throwError(exec, createError(exec, msg.toLatin1().constData()));
+        exec->vm().throwException(exec, createError(exec, msg.toLatin1().constData()));
     }
 }
 

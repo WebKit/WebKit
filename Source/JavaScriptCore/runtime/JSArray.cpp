@@ -109,7 +109,7 @@ bool JSArray::defineOwnProperty(JSObject* object, ExecState* exec, PropertyName 
         unsigned newLen = descriptor.value().toUInt32(exec);
         // d. If newLen is not equal to ToNumber( Desc.[[Value]]), throw a RangeError exception.
         if (newLen != descriptor.value().toNumber(exec)) {
-            throwError(exec, createRangeError(exec, "Invalid array length"));
+            exec->vm().throwException(exec, createRangeError(exec, "Invalid array length"));
             return false;
         }
 
@@ -197,7 +197,7 @@ void JSArray::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSVa
     if (propertyName == exec->propertyNames().length) {
         unsigned newLength = value.toUInt32(exec);
         if (value.toNumber(exec) != static_cast<double>(newLength)) {
-            throwError(exec, createRangeError(exec, ASCIILiteral("Invalid array length")));
+            exec->vm().throwException(exec, createRangeError(exec, ASCIILiteral("Invalid array length")));
             return;
         }
         thisObject->setLength(exec, newLength, slot.isStrictMode());
@@ -569,7 +569,7 @@ void JSArray::push(ExecState* exec, JSValue value)
         if (length > MAX_ARRAY_INDEX) {
             methodTable()->putByIndex(this, exec, length, value, true);
             if (!exec->hadException())
-                throwError(exec, createRangeError(exec, "Invalid array length"));
+                exec->vm().throwException(exec, createRangeError(exec, "Invalid array length"));
             return;
         }
         
@@ -589,7 +589,7 @@ void JSArray::push(ExecState* exec, JSValue value)
         if (length > MAX_ARRAY_INDEX) {
             methodTable()->putByIndex(this, exec, length, value, true);
             if (!exec->hadException())
-                throwError(exec, createRangeError(exec, "Invalid array length"));
+                exec->vm().throwException(exec, createRangeError(exec, "Invalid array length"));
             return;
         }
         
@@ -621,7 +621,7 @@ void JSArray::push(ExecState* exec, JSValue value)
         if (length > MAX_ARRAY_INDEX) {
             methodTable()->putByIndex(this, exec, length, value, true);
             if (!exec->hadException())
-                throwError(exec, createRangeError(exec, "Invalid array length"));
+                exec->vm().throwException(exec, createRangeError(exec, "Invalid array length"));
             return;
         }
         
@@ -656,7 +656,7 @@ void JSArray::push(ExecState* exec, JSValue value)
             methodTable()->putByIndex(this, exec, storage->length(), value, true);
             // Per ES5.1 15.4.4.7 step 6 & 15.4.5.1 step 3.d.
             if (!exec->hadException())
-                throwError(exec, createRangeError(exec, "Invalid array length"));
+                exec->vm().throwException(exec, createRangeError(exec, "Invalid array length"));
             return;
         }
 

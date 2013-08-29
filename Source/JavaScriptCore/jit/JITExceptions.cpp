@@ -70,10 +70,7 @@ ExceptionHandler uncaughtExceptionHandler()
 ExceptionHandler genericThrow(VM* vm, ExecState* callFrame, JSValue exceptionValue, unsigned vPCIndex)
 {
     RELEASE_ASSERT(exceptionValue);
-    
-    vm->exception = JSValue();
-    HandlerInfo* handler = vm->interpreter->throwException(callFrame, exceptionValue, vPCIndex); // This may update callFrame & exceptionValue!
-    vm->exception = exceptionValue;
+    HandlerInfo* handler = vm->interpreter->unwind(callFrame, exceptionValue, vPCIndex); // This may update callFrame.
 
     void* catchRoutine;
     Instruction* catchPCForInterpreter = 0;

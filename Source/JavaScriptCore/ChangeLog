@@ -1,3 +1,199 @@
+2013-08-28  Chris Curtis  <chris_curtis@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=119548
+        Refactoring Exception throws.
+        
+        Reviewed by Geoffrey Garen.
+        
+        Gardening of exception throws. The act of throwing an exception was being handled in 
+        different ways depending on whether the code was running in the LLint, Baseline JIT, 
+        or the DFG Jit. This made development in the vm exception and error objects difficult.
+        
+         * runtime/VM.cpp:
+        (JSC::appendSourceToError): 
+        This function moved from the interpreter into the VM. It views the developers code
+        (if there is a codeBlock) to extract what was trying to be evaluated when the error
+        occurred.
+        
+        (JSC::VM::throwException):
+        This function takes in the error object and sets the following:
+            1: The VM's exception stack
+            2: The VM's exception 
+            3: Appends extra information on the error message(via appendSourceToError)
+            4: The error object's line number
+            5: The error object's column number
+            6: The error object's sourceURL
+            7: The error object's stack trace (unless it already exists because the developer 
+                created the error object). 
+
+        (JSC::VM::getExceptionInfo):
+        (JSC::VM::setExceptionInfo):
+        (JSC::VM::clearException):
+        (JSC::clearExceptionStack):
+        * runtime/VM.h:
+        (JSC::VM::exceptionOffset):
+        (JSC::VM::exception):
+        (JSC::VM::addressOfException):
+        (JSC::VM::exceptionStack):
+        VM exception and exceptionStack are now private data members.
+
+        * interpreter/Interpreter.h:
+        (JSC::ClearExceptionScope::ClearExceptionScope):
+        Created this structure to temporarily clear the exception within the VM. This 
+        needed to see if addition errors occur when setting the debugger as we are 
+        unwinding the stack.
+
+         * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::unwind): 
+        Removed the code that would try to add error information if it did not exist. 
+        All of this functionality has moved into the VM and all error information is set 
+        at the time the error occurs. 
+
+        The rest of these functions reference the new calling convention to throw an error.
+
+        * API/APICallbackFunction.h:
+        (JSC::APICallbackFunction::call):
+        * API/JSCallbackConstructor.cpp:
+        (JSC::constructJSCallback):
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::::getOwnPropertySlot):
+        (JSC::::defaultValue):
+        (JSC::::put):
+        (JSC::::putByIndex):
+        (JSC::::deleteProperty):
+        (JSC::::construct):
+        (JSC::::customHasInstance):
+        (JSC::::call):
+        (JSC::::getStaticValue):
+        (JSC::::staticFunctionGetter):
+        (JSC::::callbackGetter):
+        * debugger/Debugger.cpp:
+        (JSC::evaluateInGlobalCallFrame):
+        * debugger/DebuggerCallFrame.cpp:
+        (JSC::DebuggerCallFrame::evaluate):
+        * dfg/DFGAssemblyHelpers.h:
+        (JSC::DFG::AssemblyHelpers::emitExceptionCheck):
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::operationPutByValInternal):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::callCheck):
+        * heap/Heap.cpp:
+        (JSC::Heap::markRoots):
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::clearException):
+        (JSC::ExecState::exception):
+        (JSC::ExecState::hadException):
+        * interpreter/Interpreter.cpp:
+        (JSC::eval):
+        (JSC::loadVarargs):
+        (JSC::stackTraceAsString):
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::executeCall):
+        (JSC::Interpreter::executeConstruct):
+        (JSC::Interpreter::prepareForRepeatCall):
+        * interpreter/Interpreter.h:
+        (JSC::ClearExceptionScope::ClearExceptionScope):
+        * jit/JITCode.cpp:
+        (JSC::JITCode::execute):
+        * jit/JITExceptions.cpp:
+        (JSC::genericThrow):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_catch):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::privateCompileCTINativeCall):
+        (JSC::JIT::emit_op_catch):
+        * jit/JITStubs.cpp:
+        (JSC::returnToThrowTrampoline):
+        (JSC::throwExceptionFromOpCall):
+        (JSC::DEFINE_STUB_FUNCTION):
+        (JSC::jitCompileFor):
+        (JSC::lazyLinkFor):
+        (JSC::putByVal):
+        (JSC::cti_vm_handle_exception):
+        * jit/SlowPathCall.h:
+        (JSC::JITSlowPathCall::call):
+        * jit/ThunkGenerators.cpp:
+        (JSC::nativeForGenerator):
+        * jsc.cpp:
+        (functionRun):
+        (functionLoad):
+        (functionCheckSyntax):
+        * llint/LLIntExceptions.cpp:
+        (JSC::LLInt::doThrow):
+        (JSC::LLInt::returnToThrow):
+        (JSC::LLInt::callToThrow):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LowLevelInterpreter.cpp:
+        (JSC::CLoop::execute):
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/ArrayConstructor.cpp:
+        (JSC::constructArrayWithSizeQuirk):
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/CommonSlowPaths.h:
+        (JSC::CommonSlowPaths::opIn):
+        * runtime/CommonSlowPathsExceptions.cpp:
+        (JSC::CommonSlowPaths::interpreterThrowInCaller):
+        * runtime/Completion.cpp:
+        (JSC::evaluate):
+        * runtime/Error.cpp:
+        (JSC::addErrorInfo):
+        (JSC::throwTypeError):
+        (JSC::throwSyntaxError):
+        * runtime/Error.h:
+        (JSC::throwVMError):
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::throwOutOfMemoryError):
+        (JSC::throwStackOverflowError):
+        (JSC::throwTerminatedExecutionException):
+        * runtime/Executable.cpp:
+        (JSC::EvalExecutable::create):
+        (JSC::FunctionExecutable::produceCodeBlockFor):
+        * runtime/FunctionConstructor.cpp:
+        (JSC::constructFunction):
+        (JSC::constructFunctionSkippingEvalEnabledCheck):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::defineOwnProperty):
+        (JSC::JSArray::put):
+        (JSC::JSArray::push):
+        * runtime/JSCJSValue.cpp:
+        (JSC::JSValue::toObjectSlowCase):
+        (JSC::JSValue::synthesizePrototype):
+        (JSC::JSValue::putToPrimitive):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::defineOwnProperty):
+        * runtime/JSGenericTypedArrayViewInlines.h:
+        (JSC::::create):
+        (JSC::::createUninitialized):
+        (JSC::::validateRange):
+        (JSC::::setWithSpecificType):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::encode):
+        (JSC::decode):
+        (JSC::globalFuncProtoSetter):
+        * runtime/JSNameScope.cpp:
+        (JSC::JSNameScope::put):
+        * runtime/JSONObject.cpp:
+        (JSC::Stringifier::appendStringifiedValue):
+        (JSC::Walker::walk):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::put):
+        (JSC::JSObject::defaultValue):
+        (JSC::JSObject::hasInstance):
+        (JSC::JSObject::defaultHasInstance):
+        (JSC::JSObject::defineOwnNonIndexProperty):
+        (JSC::throwTypeError):
+        * runtime/ObjectConstructor.cpp:
+        (JSC::toPropertyDescriptor):
+        * runtime/RegExpConstructor.cpp:
+        (JSC::constructRegExp):
+        * runtime/StringObject.cpp:
+        (JSC::StringObject::defineOwnProperty):
+        * runtime/StringRecursionChecker.cpp:
+        (JSC::StringRecursionChecker::throwStackOverflowError):
+
 2013-08-28  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Add support for building JSC with FTL JIT enabled

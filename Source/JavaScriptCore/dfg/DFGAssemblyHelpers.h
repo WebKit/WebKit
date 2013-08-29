@@ -310,9 +310,9 @@ public:
     Jump emitExceptionCheck(ExceptionCheckKind kind = NormalExceptionCheck)
     {
 #if USE(JSVALUE64)
-        return branchTest64(kind == NormalExceptionCheck ? NonZero : Zero, AbsoluteAddress(&vm()->exception));
+    return branchTest64(kind == NormalExceptionCheck ? NonZero : Zero, AbsoluteAddress(vm()->addressOfException()));
 #elif USE(JSVALUE32_64)
-        return branch32(kind == NormalExceptionCheck ? NotEqual : Equal, AbsoluteAddress(reinterpret_cast<char*>(&vm()->exception) + OBJECT_OFFSETOF(JSValue, u.asBits.tag)), TrustedImm32(JSValue::EmptyValueTag));
+    return branch32(kind == NormalExceptionCheck ? NotEqual : Equal, AbsoluteAddress(reinterpret_cast<char*>(vm()->addressOfException()) + OBJECT_OFFSETOF(JSValue, u.asBits.tag)), TrustedImm32(JSValue::EmptyValueTag));
 #endif
     }
 
