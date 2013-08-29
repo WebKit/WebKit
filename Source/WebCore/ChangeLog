@@ -1,3 +1,16 @@
+2013-08-29  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Upstream changes to WebCore/style
+        https://bugs.webkit.org/show_bug.cgi?id=120173
+
+        Reviewed by Darin Adler.
+
+        * style/StyleResolveTree.cpp:
+        (WebCore::Style::elementImplicitVisibility): Added; specific to iOS.
+        (WebCore::Style::CheckForVisibilityChangeOnRecalcStyle::CheckForVisibilityChangeOnRecalcStyle): Added; specific to iOS.
+        (WebCore::Style::CheckForVisibilityChangeOnRecalcStyle::~CheckForVisibilityChangeOnRecalcStyle): Added; specific to iOS.
+        (WebCore::Style::resolveTree): Modified to instantiate CheckForVisibilityChangeOnRecalcStyle when building on iOS.
+
 2013-08-29  Arnaud Renevier  <a.renevier@samsung.com>
 
         [cairo] canvas drawing on itself doesn't work with accelerated canvas

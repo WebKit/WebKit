@@ -45,6 +45,11 @@
 #include "StyleResolver.h"
 #include "Text.h"
 
+#if PLATFORM(IOS)
+#include "CSSFontSelector.h"
+#include "WKContentObservation.h"
+#endif
+
 namespace WebCore {
 
 namespace Style {
@@ -685,6 +690,60 @@ static void resolveShadowTree(ShadowRoot* shadowRoot, RenderStyle* parentElement
     shadowRoot->clearChildNeedsStyleRecalc();
 }
 
+#if PLATFORM(IOS)
+static EVisibility elementImplicitVisibility(const Element* element)
+{
+    RenderObject* renderer = element->renderer();
+    if (!renderer)
+        return VISIBLE;
+
+    RenderStyle* style = renderer->style();
+    if (!style)
+        return VISIBLE;
+
+    Length width(style->width());
+    Length height(style->height());
+    if ((width.isFixed() && width.value() <= 0) || (height.isFixed() && height.value() <= 0))
+        return HIDDEN;
+
+    Length top(style->top());
+    Length left(style->left());
+    if (left.isFixed() && width.isFixed() && -left.value() >= width.value())
+        return HIDDEN;
+
+    if (top.isFixed() && height.isFixed() && -top.value() >= height.value())
+        return HIDDEN;
+    return VISIBLE;
+}
+
+class CheckForVisibilityChangeOnRecalcStyle {
+public:
+    CheckForVisibilityChangeOnRecalcStyle(Element* element, RenderStyle* currentStyle)
+        : m_element(element)
+        , m_previousDisplay(currentStyle ? currentStyle->display() : NONE)
+        , m_previousVisibility(currentStyle ? currentStyle->visibility() : HIDDEN)
+        , m_previousImplicitVisibility(WKObservingContentChanges() && WKContentChange() != WKContentVisibilityChange ? elementImplicitVisibility(element) : VISIBLE)
+    {
+    }
+    ~CheckForVisibilityChangeOnRecalcStyle()
+    {
+        if (!WKObservingContentChanges())
+            return;
+        RenderStyle* style = m_element->renderStyle();
+        if (!style)
+            return;
+        if ((m_previousDisplay == NONE && style->display() != NONE) || (m_previousVisibility == HIDDEN && style->visibility() != HIDDEN)
+            || (m_previousImplicitVisibility == HIDDEN && elementImplicitVisibility(m_element.get()) == VISIBLE))
+            WKSetObservedContentChange(WKContentVisibilityChange);
+    }
+private:
+    RefPtr<Element> m_element;
+    EDisplay m_previousDisplay;
+    EVisibility m_previousVisibility;
+    EVisibility m_previousImplicitVisibility;
+};
+#endif // PLATFORM(IOS)
+
 void resolveTree(Element* current, Change change)
 {
     ASSERT(change != Detach);
@@ -698,6 +757,10 @@ void resolveTree(Element* current, Change change)
     bool hasParentStyle = renderingParentNode && renderingParentNode->renderStyle();
     bool hasDirectAdjacentRules = current->childrenAffectedByDirectAdjacentRules();
     bool hasIndirectAdjacentRules = current->childrenAffectedByForwardPositionalRules();
+
+#if PLATFORM(IOS)
+    CheckForVisibilityChangeOnRecalcStyle checkForVisibilityChange(current, current->renderStyle());
+#endif
 
     if (change > NoChange || current->needsStyleRecalc())
         current->resetComputedStyle();
@@ -758,6 +821,16 @@ void resolveTree(Document* document, Change change)
     bool resolveRootStyle = change == Force || (document->shouldDisplaySeamlesslyWithParent() && change >= Inherit);
     if (resolveRootStyle) {
         RefPtr<RenderStyle> documentStyle = resolveForDocument(document);
+
+#if PLATFORM(IOS)
+        // Inserting the pictograph font at the end of the font fallback list is done by the
+        // font selector, so set a font selector if needed.
+        if (Settings* settings = document->settings()) {
+            StyleResolver* styleResolver = document->styleResolverIfExists();
+            if (settings->fontFallbackPrefersPictographs() && styleResolver)
+                documentStyle->font().update(styleResolver->fontSelector());
+        }
+#endif
 
         Style::Change documentChange = determineChange(documentStyle.get(), document->renderer()->style(), document->settings());
         if (documentChange != NoChange)
