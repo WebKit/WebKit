@@ -1,3 +1,14 @@
+2013-08-29  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Windows build fix.
+        <rdar://problem/14871160>
+
+        * AccessibleTextImpl.cpp:
+        (AccessibleText::get_caretOffset):
+        (AccessibleText::get_nSelections):
+        (AccessibleText::removeSelection):
+        (AccessibleText::setCaretOffset):
+
 2013-08-28  Lucas Forschler  <lforschler@apple.com>
 
         Merge r154634

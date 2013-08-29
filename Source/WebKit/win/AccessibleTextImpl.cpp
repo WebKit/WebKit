@@ -79,7 +79,7 @@ HRESULT AccessibleText::get_caretOffset(long* offset)
     if (initialCheck() == E_POINTER)
         return E_POINTER;
 
-    VisiblePosition caretPosition = m_object->visiblePositionForPoint(m_object->document()->frame()->selection().absoluteCaretBounds().center());
+    VisiblePosition caretPosition = m_object->visiblePositionForPoint(m_object->document()->frame()->selection()->absoluteCaretBounds().center());
 
     int caretOffset = caretPosition.deepEquivalent().offsetInContainerNode();
     if (caretOffset < 0)
@@ -127,7 +127,7 @@ HRESULT AccessibleText::get_nSelections(long* nSelections)
     if (initialCheck() == E_POINTER)
         return E_POINTER;
 
-    if (m_object->document()->frame()->selection().isNone())
+    if (m_object->document()->frame()->selection()->isNone())
         *nSelections = 0;
     else
         *nSelections = 1;
@@ -232,7 +232,7 @@ HRESULT AccessibleText::removeSelection(long selectionIndex)
     if (selectionIndex < 0 || selectionIndex >= selections)
         return E_INVALIDARG;
 
-    m_object->document()->frame()->selection().clear();
+    m_object->document()->frame()->selection()->clear();
     return S_OK;
 }
 
@@ -247,7 +247,7 @@ HRESULT AccessibleText::setCaretOffset(long offset)
     if (!node)
         return E_POINTER;
 
-    m_object->document()->frame()->selection().setSelection(VisibleSelection(VisiblePosition(Position(node, offset, Position::PositionIsOffsetInAnchor))));
+    m_object->document()->frame()->selection()->setSelection(VisibleSelection(VisiblePosition(Position(node, offset, Position::PositionIsOffsetInAnchor))));
     return S_OK;
 }
 
