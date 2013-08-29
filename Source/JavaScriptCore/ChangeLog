@@ -1,3 +1,60 @@
+2013-08-29  Filip Pizlo  <fpizlo@apple.com>
+
+        CodeBlock::prepareForExecution() is silly
+        https://bugs.webkit.org/show_bug.cgi?id=120453
+
+        Reviewed by Oliver Hunt.
+        
+        Instead of saying:
+        
+            codeBlock->prepareForExecution(stuff, BaselineJIT, more stuff)
+        
+        we should just say:
+        
+            JIT::compile(stuff, codeBlock, more stuff);
+        
+        And similarly for the LLInt and DFG.
+        
+        This kills a bunch of code, since CodeBlock::prepareForExecution() is just a
+        wrapper that uses the JITType argument to call into the appropriate execution
+        engine, which is what the user wanted to do in the first place.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * bytecode/CodeBlock.cpp:
+        * bytecode/CodeBlock.h:
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compileImpl):
+        (JSC::DFG::compile):
+        * dfg/DFGDriver.h:
+        (JSC::DFG::tryCompile):
+        * dfg/DFGOSRExitPreparation.cpp:
+        (JSC::DFG::prepareCodeOriginForOSRExit):
+        * dfg/DFGWorklist.cpp:
+        (JSC::DFG::globalWorklist):
+        * dfg/DFGWorklist.h:
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompile):
+        * jit/JIT.h:
+        (JSC::JIT::compile):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * llint/LLIntEntrypoint.cpp: Copied from Source/JavaScriptCore/llint/LLIntEntrypoints.cpp.
+        (JSC::LLInt::setFunctionEntrypoint):
+        (JSC::LLInt::setEvalEntrypoint):
+        (JSC::LLInt::setProgramEntrypoint):
+        (JSC::LLInt::setEntrypoint):
+        * llint/LLIntEntrypoint.h: Copied from Source/JavaScriptCore/llint/LLIntEntrypoints.h.
+        * llint/LLIntEntrypoints.cpp: Removed.
+        * llint/LLIntEntrypoints.h: Removed.
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::jitCompileAndSetHeuristics):
+        * runtime/Executable.cpp:
+        (JSC::ScriptExecutable::prepareForExecutionImpl):
+
 2013-08-29  Mark Lam  <mark.lam@apple.com>
 
         Gardening: fixed broken non-DFG build.

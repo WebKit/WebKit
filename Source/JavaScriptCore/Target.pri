@@ -227,7 +227,7 @@ SOURCES += \
     jit/ThunkGenerators.cpp \
     llint/LLIntCLoop.cpp \
     llint/LLIntData.cpp \
-    llint/LLIntEntrypoints.cpp \
+    llint/LLIntEntrypoint.cpp \
     llint/LLIntExceptions.cpp \
     llint/LLIntSlowPaths.cpp \
     llint/LLIntThunks.cpp \

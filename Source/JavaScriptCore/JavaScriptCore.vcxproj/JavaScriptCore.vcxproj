@@ -383,7 +383,7 @@
     <ClCompile Include="..\jit\ThunkGenerators.cpp" />
     <ClCompile Include="..\llint\LLIntCLoop.cpp" />
     <ClCompile Include="..\llint\LLIntData.cpp" />
-    <ClCompile Include="..\llint\LLIntEntrypoints.cpp" />
+    <ClCompile Include="..\llint\LLIntEntrypoint.cpp" />
     <ClCompile Include="..\llint\LLIntExceptions.cpp" />
     <ClCompile Include="..\llint\LLIntOffsetsExtractor.cpp" />
     <ClCompile Include="..\llint\LLIntSlowPaths.cpp" />
@@ -762,7 +762,7 @@
     <ClInclude Include="..\llint\LLIntCLoop.h" />
     <ClInclude Include="..\llint\LLIntCommon.h" />
     <ClInclude Include="..\llint\LLIntData.h" />
-    <ClInclude Include="..\llint\LLIntEntrypoints.h" />
+    <ClInclude Include="..\llint\LLIntEntrypoint.h" />
     <ClInclude Include="..\llint\LLIntExceptions.h" />
     <ClInclude Include="..\llint\LLIntOfflineAsmConfig.h" />
     <ClInclude Include="..\llint\LLIntOpcode.h" />

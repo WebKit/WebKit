@@ -30,6 +30,7 @@
 
 #include "CodeBlock.h"
 #include "Executable.h"
+#include "JIT.h"
 #include "JITCode.h"
 #include "Operations.h"
 
@@ -37,7 +38,8 @@ namespace JSC { namespace DFG {
 
 void prepareCodeOriginForOSRExit(ExecState* exec, CodeOrigin codeOrigin)
 {
-    DeferGC deferGC(exec->vm().heap);
+    VM& vm = exec->vm();
+    DeferGC deferGC(vm.heap);
     
     for (; codeOrigin.inlineCallFrame; codeOrigin = codeOrigin.inlineCallFrame->caller) {
         FunctionExecutable* executable =
@@ -48,9 +50,7 @@ void prepareCodeOriginForOSRExit(ExecState* exec, CodeOrigin codeOrigin)
         if (codeBlock->jitType() == JSC::JITCode::BaselineJIT)
             continue;
         ASSERT(codeBlock->jitType() == JSC::JITCode::InterpreterThunk);
-        CompilationResult result = codeBlock->prepareForExecution(
-            exec, JSC::JITCode::BaselineJIT, JITCompilationMustSucceed);
-        ASSERT_UNUSED(result, result == CompilationSuccessful);
+        JIT::compile(&vm, codeBlock, JITCompilationMustSucceed);
         codeBlock->install();
     }
 }

@@ -34,18 +34,24 @@ namespace JSC {
 
 class CodeBlock;
 class JITCode;
-class VM;
 class MacroAssemblerCodePtr;
+class VM;
 
 namespace DFG {
+
+class Worklist;
 
 JS_EXPORT_PRIVATE unsigned getNumCompilations();
 
 #if ENABLE(DFG_JIT)
-CompilationResult tryCompile(ExecState*, CodeBlock*, unsigned osrEntryBytecodeIndex, PassRefPtr<DeferredCompilationCallback>);
+CompilationResult tryCompile(ExecState*, CodeBlock*, unsigned osrEntryBytecodeIndex, PassRefPtr<DeferredCompilationCallback>, Worklist*);
 #else
-inline CompilationResult tryCompile(ExecState*, CodeBlock*, unsigned, PassRefPtr<DeferredCompilationCallback>) { return CompilationFailed; }
+inline CompilationResult tryCompile(ExecState*, CodeBlock*, unsigned, PassRefPtr<DeferredCompilationCallback>, Worklist*) { return CompilationFailed; }
 #endif
+
+// If the worklist is non-null, we do a concurrent compile. Otherwise we do a synchronous
+// compile. Even if we do a synchronous compile, we call the callback with the result.
+CompilationResult compile(ExecState*, CodeBlock*, unsigned osrEntryBytecodeIndex, PassRefPtr<DeferredCompilationCallback>, Worklist*);
 
 } } // namespace JSC::DFG
 

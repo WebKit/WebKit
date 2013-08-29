@@ -279,7 +279,8 @@ inline bool shouldJIT(ExecState* exec)
 // Returns true if we should try to OSR.
 inline bool jitCompileAndSetHeuristics(CodeBlock* codeBlock, ExecState* exec)
 {
-    DeferGC deferGC(exec->vm().heap);
+    VM& vm = exec->vm();
+    DeferGC deferGC(vm.heap);
     
     codeBlock->updateAllValueProfilePredictions();
     
@@ -297,8 +298,7 @@ inline bool jitCompileAndSetHeuristics(CodeBlock* codeBlock, ExecState* exec)
         return true;
     }
     case JITCode::InterpreterThunk: {
-        CompilationResult result = codeBlock->prepareForExecution(
-            exec, JITCode::BaselineJIT, JITCompilationCanFail);
+        CompilationResult result = JIT::compile(&vm, codeBlock, JITCompilationCanFail);
         switch (result) {
         case CompilationFailed:
             if (Options::verboseOSR())

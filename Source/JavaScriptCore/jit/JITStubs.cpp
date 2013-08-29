@@ -40,6 +40,7 @@
 #include "CodeBlock.h"
 #include "CodeProfiling.h"
 #include "CommonSlowPaths.h"
+#include "DFGDriver.h"
 #include "DFGOSREntry.h"
 #include "DFGWorklist.h"
 #include "Debugger.h"
@@ -906,6 +907,7 @@ DEFINE_STUB_FUNCTION(void, optimize)
     
     CallFrame* callFrame = stackFrame.callFrame;
     CodeBlock* codeBlock = callFrame->codeBlock();
+    VM& vm = callFrame->vm();
     unsigned bytecodeIndex = stackFrame.args[0].int32();
 
     if (bytecodeIndex) {
@@ -945,12 +947,12 @@ DEFINE_STUB_FUNCTION(void, optimize)
     // We cannot be in the process of asynchronous compilation and also have an optimized
     // replacement.
     ASSERT(
-        !stackFrame.vm->worklist
-        || !(stackFrame.vm->worklist->compilationState(codeBlock) != DFG::Worklist::NotKnown
+        !vm.worklist
+        || !(vm.worklist->compilationState(codeBlock) != DFG::Worklist::NotKnown
              && codeBlock->hasOptimizedReplacement()));
     
     DFG::Worklist::State worklistState;
-    if (stackFrame.vm->worklist) {
+    if (vm.worklist) {
         // The call to DFG::Worklist::completeAllReadyPlansForVM() will complete all ready
         // (i.e. compiled) code blocks. But if it completes ours, we also need to know
         // what the result was so that we don't plow ahead and attempt OSR or immediate
@@ -971,7 +973,7 @@ DEFINE_STUB_FUNCTION(void, optimize)
         // optimized code is already available.
         
         worklistState =
-            stackFrame.vm->worklist->completeAllReadyPlansForVM(*stackFrame.vm, codeBlock);
+            vm.worklist->completeAllReadyPlansForVM(vm, codeBlock);
     } else
         worklistState = DFG::Worklist::NotKnown;
     
@@ -1036,8 +1038,12 @@ DEFINE_STUB_FUNCTION(void, optimize)
         RefPtr<DeferredCompilationCallback> callback =
             JITToDFGDeferredCompilationCallback::create();
         RefPtr<CodeBlock> newCodeBlock = codeBlock->newReplacement();
-        CompilationResult result = newCodeBlock->prepareForExecutionAsynchronously(
-            callFrame, JITCode::DFGJIT, callback, JITCompilationCanFail, bytecodeIndex);
+        
+        if (!vm.worklist)
+            vm.worklist = DFG::globalWorklist();
+        
+        CompilationResult result = DFG::compile(
+            callFrame, newCodeBlock.get(), bytecodeIndex, callback, vm.worklist.get());
         
         if (result != CompilationSuccessful)
             return;

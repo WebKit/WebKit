@@ -528,7 +528,7 @@ if (ENABLE_LLINT)
     list(APPEND JavaScriptCore_SOURCES
         llint/LLIntCLoop.cpp
         llint/LLIntData.cpp
-        llint/LLIntEntrypoints.cpp
+        llint/LLIntEntrypoint.cpp
         llint/LLIntExceptions.cpp
         llint/LLIntSlowPaths.cpp
         llint/LLIntThunks.cpp

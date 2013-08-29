@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "LLIntEntrypoints.h"
+#include "LLIntEntrypoint.h"
 
 #if ENABLE(LLINT)
 
@@ -38,7 +38,7 @@
 
 namespace JSC { namespace LLInt {
 
-void setFunctionEntrypoint(VM& vm, FunctionCodeBlock* codeBlock)
+static void setFunctionEntrypoint(VM& vm, CodeBlock* codeBlock)
 {
     CodeSpecializationKind kind = codeBlock->specializationKind();
     
@@ -72,7 +72,7 @@ void setFunctionEntrypoint(VM& vm, FunctionCodeBlock* codeBlock)
 #endif // ENABLE(JIT)
 }
 
-void setEvalEntrypoint(VM& vm, EvalCodeBlock* codeBlock)
+static void setEvalEntrypoint(VM& vm, CodeBlock* codeBlock)
 {
     if (!vm.canUseJIT()) {
         codeBlock->setJITCode(
@@ -87,7 +87,7 @@ void setEvalEntrypoint(VM& vm, EvalCodeBlock* codeBlock)
 #endif
 }
 
-void setProgramEntrypoint(VM& vm, ProgramCodeBlock* codeBlock)
+static void setProgramEntrypoint(VM& vm, CodeBlock* codeBlock)
 {
     if (!vm.canUseJIT()) {
         codeBlock->setJITCode(
@@ -100,6 +100,23 @@ void setProgramEntrypoint(VM& vm, ProgramCodeBlock* codeBlock)
         adoptRef(new DirectJITCode(vm.getCTIStub(programEntryThunkGenerator), JITCode::InterpreterThunk)),
         MacroAssemblerCodePtr());
 #endif
+}
+
+void setEntrypoint(VM& vm, CodeBlock* codeBlock)
+{
+    switch (codeBlock->codeType()) {
+    case GlobalCode:
+        setProgramEntrypoint(vm, codeBlock);
+        return;
+    case EvalCode:
+        setEvalEntrypoint(vm, codeBlock);
+        return;
+    case FunctionCode:
+        setFunctionEntrypoint(vm, codeBlock);
+        return;
+    }
+    
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 } } // namespace JSC::LLInt

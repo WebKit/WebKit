@@ -46,7 +46,6 @@
 #include "JSCJSValue.h"
 #include "JSFunction.h"
 #include "JSNameScope.h"
-#include "LLIntEntrypoints.h"
 #include "LowLevelInterpreter.h"
 #include "Operations.h"
 #include "PolymorphicPutByIdList.h"
@@ -2691,77 +2690,6 @@ void CodeBlock::copyPostParseDataFrom(CodeBlock* alternative)
 void CodeBlock::copyPostParseDataFromAlternative()
 {
     copyPostParseDataFrom(m_alternative.get());
-}
-
-CompilationResult CodeBlock::prepareForExecutionImpl(
-    ExecState* exec, JITCode::JITType jitType, JITCompilationEffort effort,
-    unsigned bytecodeIndex, PassRefPtr<DeferredCompilationCallback> callback)
-{
-    VM& vm = exec->vm();
-    
-    if (jitType == JITCode::InterpreterThunk) {
-#if ENABLE(LLINT)
-        switch (codeType()) {
-        case GlobalCode:
-            LLInt::setProgramEntrypoint(vm, static_cast<ProgramCodeBlock*>(this));
-            break;
-        case EvalCode:
-            LLInt::setEvalEntrypoint(vm, static_cast<EvalCodeBlock*>(this));
-            break;
-        case FunctionCode:
-            LLInt::setFunctionEntrypoint(vm, static_cast<FunctionCodeBlock*>(this));
-            break;
-        }
-        return CompilationSuccessful;
-#else // ENABLE(LLINT)
-        return CompilationFailed;
-#endif // ENABLE(LLINT)
-    }
-    
-#if ENABLE(JIT)
-    if (JITCode::isOptimizingJIT(jitType)) {
-        ASSERT(effort == JITCompilationCanFail);
-        bool hadCallback = !!callback;
-        CompilationResult result = DFG::tryCompile(exec, this, bytecodeIndex, callback);
-        ASSERT_UNUSED(hadCallback, result != CompilationDeferred || hadCallback);
-        return result;
-    }
-    
-    MacroAssemblerCodePtr jitCodeWithArityCheck;
-    RefPtr<JITCode> jitCode = JIT::compile(&vm, this, effort, &jitCodeWithArityCheck);
-    if (!jitCode)
-        return CompilationFailed;
-    setJITCode(jitCode, jitCodeWithArityCheck);
-    return CompilationSuccessful;
-#else
-    UNUSED_PARAM(effort);
-    UNUSED_PARAM(bytecodeIndex);
-    UNUSED_PARAM(callback);
-    return CompilationFailed;
-#endif // ENABLE(JIT)
-}
-
-CompilationResult CodeBlock::prepareForExecution(
-    ExecState* exec, JITCode::JITType jitType,
-    JITCompilationEffort effort, unsigned bytecodeIndex)
-{
-    CompilationResult result =
-        prepareForExecutionImpl(exec, jitType, effort, bytecodeIndex, 0);
-    ASSERT(result != CompilationDeferred);
-    return result;
-}
-
-CompilationResult CodeBlock::prepareForExecutionAsynchronously(
-    ExecState* exec, JITCode::JITType jitType,
-    PassRefPtr<DeferredCompilationCallback> passedCallback,
-    JITCompilationEffort effort, unsigned bytecodeIndex)
-{
-    RefPtr<DeferredCompilationCallback> callback = passedCallback;
-    CompilationResult result =
-        prepareForExecutionImpl(exec, jitType, effort, bytecodeIndex, callback);
-    if (result != CompilationDeferred)
-        callback->compilationDidComplete(this, result);
-    return result;
 }
 
 void CodeBlock::install()

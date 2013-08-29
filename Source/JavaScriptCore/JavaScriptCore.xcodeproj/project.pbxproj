@@ -60,8 +60,6 @@
 /* Begin PBXBuildFile section */
 		0F05C3B41683CF9200BAF45B /* DFGArrayifySlowPathGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F05C3B21683CF8F00BAF45B /* DFGArrayifySlowPathGenerator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F0776BF14FF002B00102332 /* JITCompilationEffort.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F0776BD14FF002800102332 /* JITCompilationEffort.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		0F0B839A14BCF45D00885B4F /* LLIntEntrypoints.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F0B839514BCF45A00885B4F /* LLIntEntrypoints.cpp */; };
-		0F0B839B14BCF46000885B4F /* LLIntEntrypoints.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F0B839614BCF45A00885B4F /* LLIntEntrypoints.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F0B839C14BCF46300885B4F /* LLIntThunks.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F0B839714BCF45A00885B4F /* LLIntThunks.cpp */; };
 		0F0B839D14BCF46600885B4F /* LLIntThunks.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F0B839814BCF45A00885B4F /* LLIntThunks.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F0B83A714BCF50700885B4F /* CodeType.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F0B83A514BCF50400885B4F /* CodeType.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -189,6 +187,8 @@
 		0F34B14916D42010001CDA5A /* DFGUseKind.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F34B14716D4200E001CDA5A /* DFGUseKind.cpp */; };
 		0F34B14A16D42013001CDA5A /* DFGUseKind.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F34B14816D4200E001CDA5A /* DFGUseKind.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F34B14C16D43E0D001CDA5A /* PolymorphicAccessStructureList.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F34B14B16D43E0C001CDA5A /* PolymorphicAccessStructureList.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F38B01117CF078000B144D3 /* LLIntEntrypoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F38B00F17CF077F00B144D3 /* LLIntEntrypoint.cpp */; };
+		0F38B01217CF078300B144D3 /* LLIntEntrypoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F38B01017CF077F00B144D3 /* LLIntEntrypoint.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F3B3A1A153E68F2003ED0FF /* DFGConstantFoldingPhase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F3B3A17153E68EF003ED0FF /* DFGConstantFoldingPhase.cpp */; };
 		0F3B3A1B153E68F4003ED0FF /* DFGConstantFoldingPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F3B3A18153E68EF003ED0FF /* DFGConstantFoldingPhase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F3B3A271544C995003ED0FF /* DFGCFGSimplificationPhase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F3B3A241544C991003ED0FF /* DFGCFGSimplificationPhase.cpp */; };
@@ -1217,8 +1217,6 @@
 /* Begin PBXFileReference section */
 		0F05C3B21683CF8F00BAF45B /* DFGArrayifySlowPathGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGArrayifySlowPathGenerator.h; path = dfg/DFGArrayifySlowPathGenerator.h; sourceTree = "<group>"; };
 		0F0776BD14FF002800102332 /* JITCompilationEffort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITCompilationEffort.h; sourceTree = "<group>"; };
-		0F0B839514BCF45A00885B4F /* LLIntEntrypoints.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LLIntEntrypoints.cpp; path = llint/LLIntEntrypoints.cpp; sourceTree = "<group>"; };
-		0F0B839614BCF45A00885B4F /* LLIntEntrypoints.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LLIntEntrypoints.h; path = llint/LLIntEntrypoints.h; sourceTree = "<group>"; };
 		0F0B839714BCF45A00885B4F /* LLIntThunks.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LLIntThunks.cpp; path = llint/LLIntThunks.cpp; sourceTree = "<group>"; };
 		0F0B839814BCF45A00885B4F /* LLIntThunks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LLIntThunks.h; path = llint/LLIntThunks.h; sourceTree = "<group>"; };
 		0F0B83A514BCF50400885B4F /* CodeType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeType.h; sourceTree = "<group>"; };
@@ -1345,6 +1343,8 @@
 		0F34B14716D4200E001CDA5A /* DFGUseKind.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGUseKind.cpp; path = dfg/DFGUseKind.cpp; sourceTree = "<group>"; };
 		0F34B14816D4200E001CDA5A /* DFGUseKind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGUseKind.h; path = dfg/DFGUseKind.h; sourceTree = "<group>"; };
 		0F34B14B16D43E0C001CDA5A /* PolymorphicAccessStructureList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PolymorphicAccessStructureList.h; sourceTree = "<group>"; };
+		0F38B00F17CF077F00B144D3 /* LLIntEntrypoint.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = LLIntEntrypoint.cpp; path = llint/LLIntEntrypoint.cpp; sourceTree = "<group>"; };
+		0F38B01017CF077F00B144D3 /* LLIntEntrypoint.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = LLIntEntrypoint.h; path = llint/LLIntEntrypoint.h; sourceTree = "<group>"; };
 		0F3B3A17153E68EF003ED0FF /* DFGConstantFoldingPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGConstantFoldingPhase.cpp; path = dfg/DFGConstantFoldingPhase.cpp; sourceTree = "<group>"; };
 		0F3B3A18153E68EF003ED0FF /* DFGConstantFoldingPhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGConstantFoldingPhase.h; path = dfg/DFGConstantFoldingPhase.h; sourceTree = "<group>"; };
 		0F3B3A241544C991003ED0FF /* DFGCFGSimplificationPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGCFGSimplificationPhase.cpp; path = dfg/DFGCFGSimplificationPhase.cpp; sourceTree = "<group>"; };
@@ -2454,8 +2454,8 @@
 				0F4680CE14BBB3D100BFE272 /* LLIntData.cpp */,
 				0F4680CF14BBB3D100BFE272 /* LLIntData.h */,
 				5DDDF44614FEE72200B4FB4D /* LLIntDesiredOffsets.h */,
-				0F0B839514BCF45A00885B4F /* LLIntEntrypoints.cpp */,
-				0F0B839614BCF45A00885B4F /* LLIntEntrypoints.h */,
+				0F38B00F17CF077F00B144D3 /* LLIntEntrypoint.cpp */,
+				0F38B01017CF077F00B144D3 /* LLIntEntrypoint.h */,
 				0F46809D14BA7F8200BFE272 /* LLIntExceptions.cpp */,
 				0F46809E14BA7F8200BFE272 /* LLIntExceptions.h */,
 				0F4680C614BBB16900BFE272 /* LLIntOfflineAsmConfig.h */,
@@ -3941,6 +3941,7 @@
 				86CAFEE31035DDE60028A609 /* Executable.h in Headers */,
 				A766B44F0EE8DCD1009518CA /* ExecutableAllocator.h in Headers */,
 				0F56A1D315000F35002992B1 /* ExecutionCounter.h in Headers */,
+				0F38B01217CF078300B144D3 /* LLIntEntrypoint.h in Headers */,
 				0FB105861675481200F8AB6E /* ExitKind.h in Headers */,
 				0F0B83AB14BCF5BB00885B4F /* ExpressionRangeInfo.h in Headers */,
 				A7A8AF3817ADB5F3005AB174 /* Float32Array.h in Headers */,
@@ -4153,7 +4154,6 @@
 				FE20CE9E15F04A9500DF3430 /* LLIntCLoop.h in Headers */,
 				0F4680CA14BBB16C00BFE272 /* LLIntCommon.h in Headers */,
 				0F4680D314BBD16700BFE272 /* LLIntData.h in Headers */,
-				0F0B839B14BCF46000885B4F /* LLIntEntrypoints.h in Headers */,
 				0F4680A314BA7F8D00BFE272 /* LLIntExceptions.h in Headers */,
 				0F4680CB14BBB17200BFE272 /* LLIntOfflineAsmConfig.h in Headers */,
 				FED287B215EC9A5700DA8161 /* LLIntOpcode.h in Headers */,
@@ -4972,7 +4972,6 @@
 				A7E2EA6C0FB460CF00601F06 /* LiteralParser.cpp in Sources */,
 				FE20CE9D15F04A9500DF3430 /* LLIntCLoop.cpp in Sources */,
 				0F4680D214BBD16500BFE272 /* LLIntData.cpp in Sources */,
-				0F0B839A14BCF45D00885B4F /* LLIntEntrypoints.cpp in Sources */,
 				0F4680A814BA7FAB00BFE272 /* LLIntExceptions.cpp in Sources */,
 				0F4680A414BA7F8D00BFE272 /* LLIntSlowPaths.cpp in Sources */,
 				0F0B839C14BCF46300885B4F /* LLIntThunks.cpp in Sources */,
@@ -5031,6 +5030,7 @@
 				0F13912B16771C3A009CCB07 /* ProfilerProfiledBytecodes.cpp in Sources */,
 				A7FB60A4103F7DC20017A286 /* PropertyDescriptor.cpp in Sources */,
 				14469DE7107EC7E700650446 /* PropertyNameArray.cpp in Sources */,
+				0F38B01117CF078000B144D3 /* LLIntEntrypoint.cpp in Sources */,
 				14469DE8107EC7E700650446 /* PropertySlot.cpp in Sources */,
 				ADE39FFF16DD144B0003CD4A /* PropertyTable.cpp in Sources */,
 				1474C33C16AA2D9B0062F01D /* PrototypeMap.cpp in Sources */,

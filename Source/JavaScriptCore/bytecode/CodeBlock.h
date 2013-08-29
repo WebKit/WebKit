@@ -265,32 +265,6 @@ public:
 
     int argumentIndexAfterCapture(size_t argument);
 
-    // Prepares this code block for execution. This is synchronous. This compile
-    // may fail, if you passed JITCompilationCanFail.
-    CompilationResult prepareForExecution(
-        ExecState*, JITCode::JITType,
-        JITCompilationEffort = JITCompilationMustSucceed,
-        unsigned bytecodeIndex = UINT_MAX);
-    
-    // Use this method for asynchronous compiles. This will do a compile at some
-    // point in time between when you called into this method and some point in the
-    // future. If you're lucky then it might complete before this method returns.
-    // Once it completes, the callback is called with the result. If the compile
-    // did happen to complete before the method returns, the result of the compile
-    // may be returned. If the compile didn't happen to complete yet, or if we
-    // didn't happen to notice that the compile already completed, we return
-    // CompilationDeferred.
-    //
-    // Note that asynchronous compiles don't actually complete unless you call into
-    // DFG::Worklist::completeAllReadyPlansForVM(). You usually force a call to
-    // this on the main thread by listening to the callback's
-    // compilationDidBecomeReadyAsynchronously() notification. Note that this call
-    // happens on another thread.
-    CompilationResult prepareForExecutionAsynchronously(
-        ExecState*, JITCode::JITType, PassRefPtr<DeferredCompilationCallback>,
-        JITCompilationEffort = JITCompilationMustSucceed,
-        unsigned bytecodeIndex = UINT_MAX);
-    
     // Exactly equivalent to codeBlock->ownerExecutable()->installCode(codeBlock);
     void install();
     
@@ -1003,10 +977,6 @@ protected:
 
 private:
     friend class DFGCodeBlocks;
-    
-    CompilationResult prepareForExecutionImpl(
-        ExecState*, JITCode::JITType, JITCompilationEffort, unsigned bytecodeIndex,
-        PassRefPtr<DeferredCompilationCallback>);
     
     void noticeIncomingCall(ExecState* callerFrame);
     

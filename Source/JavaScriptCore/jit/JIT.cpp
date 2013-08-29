@@ -520,7 +520,7 @@ ALWAYS_INLINE void PropertyStubCompilationInfo::copyToStubInfo(StructureStubInfo
     }
 }
 
-PassRefPtr<JITCode> JIT::privateCompile(CodePtr* functionEntryArityCheck, JITCompilationEffort effort)
+CompilationResult JIT::privateCompile(JITCompilationEffort effort)
 {
 #if ENABLE(VALUE_PROFILER)
     DFG::CapabilityLevel level = m_codeBlock->capabilityLevel();
@@ -668,7 +668,7 @@ PassRefPtr<JITCode> JIT::privateCompile(CodePtr* functionEntryArityCheck, JITCom
 
     LinkBuffer patchBuffer(*m_vm, this, m_codeBlock, effort);
     if (patchBuffer.didFailToAllocate())
-        return PassRefPtr<JITCode>();
+        return CompilationFailed;
 
     // Translate vPC offsets into addresses in JIT generated code, for switch tables.
     for (unsigned i = 0; i < m_switches.size(); ++i) {
@@ -755,8 +755,9 @@ PassRefPtr<JITCode> JIT::privateCompile(CodePtr* functionEntryArityCheck, JITCom
     }
 #endif
 
-    if (m_codeBlock->codeType() == FunctionCode && functionEntryArityCheck)
-        *functionEntryArityCheck = patchBuffer.locationOf(arityCheck);
+    MacroAssemblerCodePtr withArityCheck;
+    if (m_codeBlock->codeType() == FunctionCode)
+        withArityCheck = patchBuffer.locationOf(arityCheck);
 
     if (Options::showDisassembly())
         m_disassembler->dump(patchBuffer);
@@ -772,12 +773,15 @@ PassRefPtr<JITCode> JIT::privateCompile(CodePtr* functionEntryArityCheck, JITCom
         static_cast<double>(m_codeBlock->instructions().size()));
     
     m_codeBlock->shrinkToFit(CodeBlock::LateShrink);
+    m_codeBlock->setJITCode(
+        adoptRef(new DirectJITCode(result, JITCode::BaselineJIT)),
+        withArityCheck);
     
 #if ENABLE(JIT_VERBOSE)
     dataLogF("JIT generated code for %p at [%p, %p).\n", m_codeBlock, result.executableMemory()->start(), result.executableMemory()->end());
 #endif
     
-    return adoptRef(new DirectJITCode(result, JITCode::BaselineJIT));
+    return CompilationSuccessful;
 }
 
 void JIT::linkFor(ExecState* exec, JSFunction* callee, CodeBlock* callerCodeBlock, CodeBlock* calleeCodeBlock, JIT::CodePtr code, CallLinkInfo* callLinkInfo, VM* vm, CodeSpecializationKind kind)

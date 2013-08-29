@@ -645,8 +645,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/llint/LLIntCLoop.h \
 	Source/JavaScriptCore/llint/LLIntData.cpp \
 	Source/JavaScriptCore/llint/LLIntData.h \
-	Source/JavaScriptCore/llint/LLIntEntrypoints.cpp \
-	Source/JavaScriptCore/llint/LLIntEntrypoints.h \
+	Source/JavaScriptCore/llint/LLIntEntrypoint.cpp \
+	Source/JavaScriptCore/llint/LLIntEntrypoint.h \
 	Source/JavaScriptCore/llint/LLIntExceptions.cpp \
 	Source/JavaScriptCore/llint/LLIntExceptions.h \
 	Source/JavaScriptCore/llint/LLIntOfflineAsmConfig.h \

@@ -298,9 +298,9 @@ namespace JSC {
         static const int patchPutByIdDefaultOffset = 256;
 
     public:
-        static PassRefPtr<JITCode> compile(VM* vm, CodeBlock* codeBlock, JITCompilationEffort effort, CodePtr* functionEntryArityCheck = 0)
+        static CompilationResult compile(VM* vm, CodeBlock* codeBlock, JITCompilationEffort effort)
         {
-            return JIT(vm, codeBlock).privateCompile(functionEntryArityCheck, effort);
+            return JIT(vm, codeBlock).privateCompile(effort);
         }
         
         static void compileClosureCall(VM* vm, CallLinkInfo* callLinkInfo, CodeBlock* callerCodeBlock, CodeBlock* calleeCodeBlock, Structure* expectedStructure, ExecutableBase* expectedExecutable, MacroAssemblerCodePtr codePtr)
@@ -403,7 +403,7 @@ namespace JSC {
         void privateCompileMainPass();
         void privateCompileLinkPass();
         void privateCompileSlowCases();
-        PassRefPtr<JITCode> privateCompile(CodePtr* functionEntryArityCheck, JITCompilationEffort);
+        CompilationResult privateCompile(JITCompilationEffort);
         
         void privateCompileClosureCall(CallLinkInfo*, CodeBlock* calleeCodeBlock, Structure*, ExecutableBase*, MacroAssemblerCodePtr);
         

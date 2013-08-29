@@ -23,34 +23,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef LLIntEntrypoints_h
-#define LLIntEntrypoints_h
+#ifndef LLIntEntrypoint_h
+#define LLIntEntrypoint_h
 
 #include <wtf/Platform.h>
 
 #if ENABLE(LLINT)
 
 #include "CodeSpecializationKind.h"
-#include "JITCode.h"
-#include <wtf/RefPtr.h>
 
 namespace JSC {
 
-class EvalCodeBlock;
-class FunctionCodeBlock;
+class CodeBlock;
 class VM;
-class MacroAssemblerCodePtr;
-class MacroAssemblerCodeRef;
-class ProgramCodeBlock;
 
 namespace LLInt {
 
-void setFunctionEntrypoint(VM&, FunctionCodeBlock*);
-void setEvalEntrypoint(VM&, EvalCodeBlock*);
-void setProgramEntrypoint(VM&, ProgramCodeBlock*);
+void setEntrypoint(VM&, CodeBlock*);
 
 } } // namespace JSC::LLInt
 
 #endif // ENABLE(LLINT)
 
-#endif // LLIntEntrypoints_h
+#endif // LLIntEntrypoint_h

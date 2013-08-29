@@ -31,6 +31,7 @@
 #include "CodeBlock.h"
 #include "DFGDriver.h"
 #include "JIT.h"
+#include "LLIntEntrypoint.h"
 #include "Operations.h"
 #include "Parser.h"
 #include <wtf/Vector.h>
@@ -284,14 +285,12 @@ JSObject* ScriptExecutable::prepareForExecutionImpl(
         return exception;
     }
     
-    JITCode::JITType jitType;
 #if ENABLE(LLINT)
-    jitType = JITCode::InterpreterThunk;
+    LLInt::setEntrypoint(vm, codeBlock.get());
 #else
-    jitType = JITCode::BaselineJIT;
-#endif
-    CompilationResult result = codeBlock->prepareForExecution(exec, jitType);
+    CompilationResult result = JIT::compile(&vm, codeBlock.get(), JITCompilationMustSucceed);
     RELEASE_ASSERT(result == CompilationSuccessful);
+#endif
 
     installCode(codeBlock.get());
     return 0;

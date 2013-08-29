@@ -29,8 +29,6 @@
 #include "JSObject.h"
 #include "JSString.h"
 
-#if ENABLE(DFG_JIT)
-
 #include "CodeBlock.h"
 #include "DFGJITCode.h"
 #include "DFGPlan.h"
@@ -55,7 +53,8 @@ unsigned getNumCompilations()
     return numCompilations;
 }
 
-CompilationResult tryCompile(ExecState* exec, CodeBlock* codeBlock, unsigned osrEntryBytecodeIndex, PassRefPtr<DeferredCompilationCallback> callback)
+#if ENABLE(DFG_JIT)
+static CompilationResult compileImpl(ExecState* exec, CodeBlock* codeBlock, unsigned osrEntryBytecodeIndex, PassRefPtr<DeferredCompilationCallback> callback, Worklist* worklist)
 {
     SamplingRegion samplingRegion("DFG Compilation (Driver)");
     
@@ -115,21 +114,31 @@ CompilationResult tryCompile(ExecState* exec, CodeBlock* codeBlock, unsigned osr
             plan->mustHandleValues[i] = exec->uncheckedR(operand).jsValue();
     }
     
-    if (enableConcurrentJIT() && callback) {
+    if (worklist) {
         plan->callback = callback;
-        if (!vm.worklist)
-            vm.worklist = globalWorklist();
         if (logCompilationChanges())
-            dataLog("Deferring DFG compilation of ", *codeBlock, " with queue length ", vm.worklist->queueLength(), ".\n");
-        vm.worklist->enqueue(plan);
+            dataLog("Deferring DFG compilation of ", *codeBlock, " with queue length ", worklist->queueLength(), ".\n");
+        worklist->enqueue(plan);
         return CompilationDeferred;
     }
     
     plan->compileInThread(*vm.dfgState);
     return plan->finalizeWithoutNotifyingCallback();
 }
-
-} } // namespace JSC::DFG
-
+#else // ENABLE(DFG_JIT)
+static CompilationResult compileImpl(ExecState*, CodeBlock*, unsigned, PassRefPtr<DeferredCompilationCallback>, Worklist*)
+{
+    return CompilationFailed;
+}
 #endif // ENABLE(DFG_JIT)
 
+CompilationResult compile(ExecState* exec, CodeBlock* codeBlock, unsigned osrEntryBytecodeIndex, PassRefPtr<DeferredCompilationCallback> passedCallback, Worklist* worklist)
+{
+    RefPtr<DeferredCompilationCallback> callback = passedCallback;
+    CompilationResult result = compileImpl(exec, codeBlock, osrEntryBytecodeIndex, callback, worklist);
+    if (result != CompilationDeferred)
+        callback->compilationDidComplete(codeBlock, result);
+    return result;
+}
+
+} } // namespace JSC::DFG
