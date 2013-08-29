@@ -43,7 +43,11 @@ AccessibilitySearchFieldCancelButton::AccessibilitySearchFieldCancelButton(Rende
 
 String AccessibilitySearchFieldCancelButton::accessibilityDescription() const
 {
+#if PLATFORM(IOS)
+    return String();
+#else
     return AXSearchFieldCancelButtonText();
+#endif
 }
 
 void AccessibilitySearchFieldCancelButton::accessibilityText(Vector<AccessibilityText>& textOrder)

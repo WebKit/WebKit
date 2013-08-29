@@ -1,3 +1,22 @@
+2013-08-29  David Kilzer  <ddkilzer@apple.com>
+
+        BUILD FIX (r154778): AXSearchFieldCancelButtonText() is not defined on iOS
+
+        See: AX: Cancel button in search field not accessible.
+        <https://webkit.org/b/120322>
+
+        Fixes the following build error:
+
+            In file included from Source/WebCore/accessibility/AccessibilityAllInOne.cpp:44:
+            Source/WebCore/accessibility/AccessibilitySearchFieldButtons.cpp:46:12: error: use of undeclared identifier 'AXSearchFieldCancelButtonText'
+                return AXSearchFieldCancelButtonText();
+                       ^
+            1 error generated.
+
+        * accessibility/AccessibilitySearchFieldButtons.cpp:
+        (WebCore::AccessibilitySearchFieldCancelButton::accessibilityDescription):
+        Return String() instead of calling AXSearchFieldCancelButtonText() on iOS.
+
 2013-08-29  Antti Koivisto  <antti@apple.com>
 
         Remove NodeRenderingContext
