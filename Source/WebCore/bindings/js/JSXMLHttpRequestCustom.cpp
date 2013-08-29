@@ -180,26 +180,10 @@ JSValue JSXMLHttpRequest::response(ExecState* exec) const
         }
 
     case XMLHttpRequest::ResponseTypeBlob:
-        {
-            ExceptionCode ec = 0;
-            Blob* blob = impl()->responseBlob(ec);
-            if (ec) {
-                setDOMException(exec, ec);
-                return jsUndefined();
-            }
-            return toJS(exec, globalObject(), blob);
-        }
+        return toJS(exec, globalObject(), impl()->responseBlob());
 
     case XMLHttpRequest::ResponseTypeArrayBuffer:
-        {
-            ExceptionCode ec = 0;
-            ArrayBuffer* arrayBuffer = impl()->responseArrayBuffer(ec);
-            if (ec) {
-                setDOMException(exec, ec);
-                return jsUndefined();
-            }
-            return toJS(exec, globalObject(), arrayBuffer);
-        }
+        return toJS(exec, globalObject(), impl()->responseArrayBuffer());
     }
 
     return jsUndefined();

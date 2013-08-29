@@ -1,3 +1,26 @@
+2013-08-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Stop throwing DOM exceptions in internal 'XMLHttpRequest' response getters
+        https://bugs.webkit.org/show_bug.cgi?id=120446
+
+        Reviewed by Alexey Proskuryakov.
+
+        Merge https://chromium.googlesource.com/chromium/blink/+/c8188c21452501b68950a9fcc1f5cbc7b4de4df5
+
+        Unlike 'responseText' and 'responseXML', 'responseBlob' and
+        'responseArrayBuffer' are not exposed to JavaScript (they don't
+        appear in the IDL or in the specification). As they are only called from
+        custom bindings in response to a JavaScript call to the 'response' getter,
+        we can safely replace the exception-throwing code in the implementation
+        with an ASSERT that the request type is correct.
+
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        (WebCore::JSXMLHttpRequest::response):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::responseBlob):
+        (WebCore::XMLHttpRequest::responseArrayBuffer):
+        * xml/XMLHttpRequest.h:
+
 2013-08-28  Chris Curtis  <chris_curtis@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=119548

@@ -106,7 +106,7 @@ public:
     String responseText(ExceptionCode&);
     Document* responseXML(ExceptionCode&);
     Document* optionalResponseXML() const { return m_responseDocument.get(); }
-    Blob* responseBlob(ExceptionCode&);
+    Blob* responseBlob();
     Blob* optionalResponseBlob() const { return m_responseBlob.get(); }
 #if ENABLE(XHR_TIMEOUT)
     unsigned long timeout() const { return m_timeoutMilliseconds; }
@@ -123,9 +123,9 @@ public:
     void setResponseType(const String&, ExceptionCode&);
     String responseType();
     ResponseTypeCode responseTypeCode() const { return m_responseTypeCode; }
-    
+
     // response attribute has custom getter.
-    JSC::ArrayBuffer* responseArrayBuffer(ExceptionCode&);
+    JSC::ArrayBuffer* responseArrayBuffer();
     JSC::ArrayBuffer* optionalResponseArrayBuffer() const { return m_responseArrayBuffer.get(); }
 
     void setLastSendLineNumber(unsigned lineNumber) { m_lastSendLineNumber = lineNumber; }
