@@ -338,10 +338,6 @@
             return false;
 
         var number = parseFloat(line.substring(start, end));
-        if (number < 1 && number >= -1 && amount === 1)
-            amount = 0.1;
-        else if (number <= 1 && number > -1 && amount === -1)
-            amount = -0.1;
 
         // Make the new number and constrain it to a precision of 6, this matches numbers the engine returns.
         // Use the Number constructor to forget the fixed precision, so 1.100000 will print as 1.1.
@@ -386,10 +382,12 @@
 
     CodeMirror.keyMap["default"] = {
         "Alt-Up": alterNumber.bind(null, 1),
+        "Ctrl-Alt-Up": alterNumber.bind(null, 0.1),
         "Shift-Alt-Up": alterNumber.bind(null, 10),
         "Alt-PageUp": alterNumber.bind(null, 10),
         "Shift-Alt-PageUp": alterNumber.bind(null, 100),
         "Alt-Down": alterNumber.bind(null, -1),
+        "Ctrl-Alt-Down": alterNumber.bind(null, -0.1),
         "Shift-Alt-Down": alterNumber.bind(null, -10),
         "Alt-PageDown": alterNumber.bind(null, -10),
         "Shift-Alt-PageDown": alterNumber.bind(null, -100),

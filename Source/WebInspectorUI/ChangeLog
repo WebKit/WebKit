@@ -1,3 +1,15 @@
+2013-08-29  Timothy Hatcher  <timothy@apple.com>
+
+        Make incrementing and decrementing numbers by 0.1 require the control key, and not near zero numbers.
+
+        https://bugs.webkit.org/show_bug.cgi?id=120492
+        <rdar://problem/13738935> Incrementing and decrementing numbers near zero is annoying compared to earlier releases
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/CodeMirrorAdditions.js:
+        (alterNumber): Remove near zero check.
+
 2013-08-29  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Download Web Archive of Inspected Page
