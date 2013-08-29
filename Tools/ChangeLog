@@ -1,3 +1,29 @@
+2013-08-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        <https://webkit.org/b/119806> [Mac] Add a way to easily test attributed string generation
+
+        Reviewed by Darin Adler.
+
+        Add textInputController.legacyAttributedString to retrieve the attributed string for copy & paste.
+
+        We can't use textInputController.attributedSubstringFromRange as it uses WebHTMLConverter's static
+        editingAttributedStringFromRange function, which doesn't implement the full converter at the moment.
+
+        Also NSMutableAttributedString.ranges and WebNSRange so that JavaScript can get a list of all
+        ranges in a given attributed string.
+
+        * DumpRenderTree/mac/TextInputController.m:
+        (-[WebNSRange initWithNSRange:]):
+        (-[WebNSRange location]):
+        (-[WebNSRange length]):
+        (+[WebNSRange isSelectorExcludedFromWebScript:]):
+        (+[NSMutableAttributedString isSelectorExcludedFromWebScript:]):
+        (+[NSMutableAttributedString webScriptNameForSelector:]):
+        (-[NSMutableAttributedString ranges]): Added.
+        (+[TextInputController isSelectorExcludedFromWebScript:]):
+        (+[TextInputController webScriptNameForSelector:]):
+        (-[TextInputController legacyAttributedString:]):
+
 2013-08-28  Denis Nomiyama  <d.nomiyama@samsung.com>
 
         [GTK] accessibility/menu-list-sends-change-notification.html has incorrect expected results

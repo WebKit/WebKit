@@ -1,3 +1,33 @@
+2013-08-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        <https://webkit.org/b/119806> [Mac] Add a way to easily test attributed string generation
+
+        Reviewed by Darin Adler.
+
+        Add basic tests for textInputController.legacyAttributedString.
+
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/editing/attributed-string: Added.
+        * platform/mac/editing/attributed-string/anchor-element-expected.txt: Added.
+        * platform/mac/editing/attributed-string/anchor-element.html: Added.
+        * platform/mac/editing/attributed-string/basic-expected.txt: Added.
+        * platform/mac/editing/attributed-string/basic.html: Added.
+        * platform/mac/editing/attributed-string/font-size-expected.txt: Added.
+        * platform/mac/editing/attributed-string/font-size.html: Added.
+        * platform/mac/editing/attributed-string/font-style-variant-effect-expected.txt: Added.
+        * platform/mac/editing/attributed-string/font-style-variant-effect.html: Added.
+        * platform/mac/editing/attributed-string/font-weight-expected.txt: Added.
+        * platform/mac/editing/attributed-string/font-weight.html: Added.
+        * platform/mac/editing/attributed-string/letter-spacing-expected.txt: Added.
+        * platform/mac/editing/attributed-string/letter-spacing.html: Added.
+        * platform/mac/editing/attributed-string/resources: Added.
+        * platform/mac/editing/attributed-string/resources/dump-attributed-string.js: Added.
+        (.):
+        * platform/mac/editing/attributed-string/text-decorations-expected.txt: Added.
+        * platform/mac/editing/attributed-string/text-decorations.html: Added.
+        * platform/mac/editing/attributed-string/vertical-align-expected.txt: Added.
+        * platform/mac/editing/attributed-string/vertical-align.html: Added.
+
 2013-08-28  Ryosuke Niwa  <rniwa@webkit.org>
 
         Expand classList test to cover exception in toString

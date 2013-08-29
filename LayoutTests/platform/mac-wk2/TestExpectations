@@ -195,6 +195,7 @@ storage/websql/transaction-error-callback-isolated-world.html
 # https://bugs.webkit.org/show_bug.cgi?id=89401
 platform/mac/editing/input/insert-dictated-text.html
 platform/mac/editing/input/edit-dictated-text-with-alternative.html
+platform/mac/editing/attributed-string/
 
 # https://bugs.webkit.org/show_bug.cgi?id=89199
 editing/spelling/grammar-edit-word.html

@@ -1,0 +1,69 @@
+Input:
+<small>small element</small>
+<span style="font-size: xx-small">xx-small</span>
+<span style="font-size: x-small">x-small</span>
+<span style="font-size: small">small</span>
+<span style="font-size: normal">normal</span>
+<span style="font-size: large">large</span>
+<span style="font-size: x-large">x-large</span>
+<span style="font-size: xx-large">xx-large</span>
+<span style="font-size: 5pt">5pt</span>
+<span style="font-size: 15pt">15pt</span>
+
+Output:
+NSParagraphStyle:
+Alignment 4
+    LineSpacing: 0
+    ParagraphSpacing: 0
+    ParagraphSpacingBefore: 0
+    HeadIndent: 0
+    TailIndent: 0
+    FirstLineHeadIndent: 0
+    LineHeight: 0/0
+    LineHeightMultiple: 0
+    LineBreakMode: 0
+    Tabs: ()
+    DefaultTabInterval: 36
+    Blocks: (null)
+    Lists: (null)
+    BaseWritingDirection: 0
+    HyphenationFactor: 0
+    TighteningFactor: 0.05
+    HeaderLevel: 0
+[small element]
+    NSFont: Times-Roman 13.00 pt.
+[ ]
+    NSFont: Times-Roman 16.00 pt.
+[xx-small]
+    NSFont: Times-Roman 9.00 pt.
+[ ]
+    NSFont: Times-Roman 16.00 pt.
+[x-small]
+    NSFont: Times-Roman 10.00 pt.
+[ ]
+    NSFont: Times-Roman 16.00 pt.
+[small]
+    NSFont: Times-Roman 13.00 pt.
+[ normal ]
+    NSFont: Times-Roman 16.00 pt.
+[large]
+    NSFont: Times-Roman 18.00 pt.
+[ ]
+    NSFont: Times-Roman 16.00 pt.
+[x-large]
+    NSFont: Times-Roman 24.00 pt.
+[ ]
+    NSFont: Times-Roman 16.00 pt.
+[xx-large]
+    NSFont: Times-Roman 32.00 pt.
+[ ]
+    NSFont: Times-Roman 16.00 pt.
+[5pt]
+    NSFont: Times-Roman 7.00 pt.
+[ ]
+    NSFont: Times-Roman 16.00 pt.
+[15pt]
+    NSFont: Times-Roman 20.00 pt.
+[ ]
+    NSFont: Times-Roman 16.00 pt.
+
