@@ -26,6 +26,8 @@
 #include "config.h"
 #include "JSPromiseCallback.h"
 
+#if ENABLE(PROMISES)
+
 #include "JSCJSValueInlines.h"
 #include "JSCellInlines.h"
 #include "JSPromise.h"
@@ -190,3 +192,5 @@ CallType JSPromiseWrapperCallback::getCallData(JSCell*, CallData& callData)
 }
 
 } // namespace JSC
+
+#endif // ENABLE(PROMISES)

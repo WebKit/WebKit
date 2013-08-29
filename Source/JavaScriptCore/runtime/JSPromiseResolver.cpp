@@ -26,6 +26,8 @@
 #include "config.h"
 #include "JSPromiseResolver.h"
 
+#if ENABLE(PROMISES)
+
 #include "JSCJSValueInlines.h"
 #include "JSCellInlines.h"
 #include "JSGlobalObject.h"
@@ -196,3 +198,5 @@ void JSPromiseResolver::reject(ExecState* exec, JSValue value, ResolverMode mode
 }
 
 } // namespace JSC
+
+#endif // ENABLE(PROMISES)

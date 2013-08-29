@@ -183,10 +183,13 @@ protected:
     WriteBarrier<Structure> m_regExpStructure;
     WriteBarrier<Structure> m_stringObjectStructure;
     WriteBarrier<Structure> m_internalFunctionStructure;
+
+#if ENABLE(PROMISES)
     WriteBarrier<Structure> m_promiseStructure;
     WriteBarrier<Structure> m_promiseResolverStructure;
     WriteBarrier<Structure> m_promiseCallbackStructure;
     WriteBarrier<Structure> m_promiseWrapperCallbackStructure;
+#endif // ENABLE(PROMISES)
 
     WriteBarrier<JSArrayBufferPrototype> m_arrayBufferPrototype;
     WriteBarrier<Structure> m_arrayBufferStructure;
@@ -381,10 +384,13 @@ public:
     Structure* regExpMatchesArrayStructure() const { return m_regExpMatchesArrayStructure.get(); }
     Structure* regExpStructure() const { return m_regExpStructure.get(); }
     Structure* stringObjectStructure() const { return m_stringObjectStructure.get(); }
+
+#if ENABLE(PROMISES)
     Structure* promiseStructure() const { return m_promiseStructure.get(); }
     Structure* promiseResolverStructure() const { return m_promiseResolverStructure.get(); }
     Structure* promiseCallbackStructure() const { return m_promiseCallbackStructure.get(); }
     Structure* promiseWrapperCallbackStructure() const { return m_promiseWrapperCallbackStructure.get(); }
+#endif // ENABLE(PROMISES)
 
     JSArrayBufferPrototype* arrayBufferPrototype() const { return m_arrayBufferPrototype.get(); }
     Structure* arrayBufferStructure() const { return m_arrayBufferStructure.get(); }

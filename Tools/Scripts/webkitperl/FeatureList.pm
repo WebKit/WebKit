@@ -119,6 +119,7 @@ my (
     $pageVisibilityAPISupport,
     $performanceTimelineSupport,
     $progressElementSupport,
+    $promiseSupport,
     $proximityEventsSupport,
     $quotaSupport,
     $resolutionMediaQuerySupport,
@@ -385,6 +386,9 @@ my @features = (
 
     { option => "progress-element", desc => "Toggle Progress Element support",
       define => "ENABLE_PROGRESS_ELEMENT", default => 1, value => \$progressElementSupport },
+
+    { option => "promises", desc => "Toggle Promise support",
+      define => "ENABLE_PROMISE", default => 1, value => \$promiseSupport },
 
     { option => "proximity-events", desc => "Toggle Proximity Events support",
       define => "ENABLE_PROXIMITY_EVENTS", default => 0, value => \$proximityEventsSupport },

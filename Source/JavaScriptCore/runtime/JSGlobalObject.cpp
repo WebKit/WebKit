@@ -66,13 +66,6 @@
 #include "JSLock.h"
 #include "JSNameScope.h"
 #include "JSONObject.h"
-#include "JSPromise.h"
-#include "JSPromiseCallback.h"
-#include "JSPromiseConstructor.h"
-#include "JSPromisePrototype.h"
-#include "JSPromiseResolver.h"
-#include "JSPromiseResolverConstructor.h"
-#include "JSPromiseResolverPrototype.h"
 #include "JSTypedArrayConstructors.h"
 #include "JSTypedArrayPrototypes.h"
 #include "JSTypedArrays.h"
@@ -99,6 +92,16 @@
 #include "StrictEvalActivation.h"
 #include "StringConstructor.h"
 #include "StringPrototype.h"
+
+#if ENABLE(PROMISES)
+#include "JSPromise.h"
+#include "JSPromiseCallback.h"
+#include "JSPromiseConstructor.h"
+#include "JSPromisePrototype.h"
+#include "JSPromiseResolver.h"
+#include "JSPromiseResolverConstructor.h"
+#include "JSPromiseResolverPrototype.h"
+#endif // ENABLE(PROMISES)
 
 #include "JSGlobalObject.lut.h"
 
@@ -304,6 +307,7 @@ void JSGlobalObject::reset(JSValue prototype)
     m_errorPrototype.set(exec->vm(), this, ErrorPrototype::create(exec, this, ErrorPrototype::createStructure(exec->vm(), this, m_objectPrototype.get())));
     m_errorStructure.set(exec->vm(), this, ErrorInstance::createStructure(exec->vm(), this, m_errorPrototype.get()));
 
+#if ENABLE(PROMISES)
     m_promisePrototype.set(exec->vm(), this, JSPromisePrototype::create(exec, this, JSPromisePrototype::createStructure(exec->vm(), this, m_objectPrototype.get())));
     m_promiseStructure.set(exec->vm(), this, JSPromise::createStructure(exec->vm(), this, m_promisePrototype.get()));
 
@@ -311,7 +315,8 @@ void JSGlobalObject::reset(JSValue prototype)
     m_promiseResolverStructure.set(exec->vm(), this, JSPromiseResolver::createStructure(exec->vm(), this, m_promiseResolverPrototype.get()));
     m_promiseCallbackStructure.set(exec->vm(), this, JSPromiseCallback::createStructure(exec->vm(), this, m_functionPrototype.get()));
     m_promiseWrapperCallbackStructure.set(exec->vm(), this, JSPromiseWrapperCallback::createStructure(exec->vm(), this, m_functionPrototype.get()));
-    
+#endif // ENABLE(PROMISES)
+
     // Constructors
 
     JSCell* objectConstructor = ObjectConstructor::create(exec, this, ObjectConstructor::createStructure(exec->vm(), this, m_functionPrototype.get()), m_objectPrototype.get());
@@ -321,8 +326,11 @@ void JSGlobalObject::reset(JSValue prototype)
     JSCell* booleanConstructor = BooleanConstructor::create(exec, this, BooleanConstructor::createStructure(exec->vm(), this, m_functionPrototype.get()), m_booleanPrototype.get());
     JSCell* numberConstructor = NumberConstructor::create(exec, this, NumberConstructor::createStructure(exec->vm(), this, m_functionPrototype.get()), m_numberPrototype.get());
     JSCell* dateConstructor = DateConstructor::create(exec, this, DateConstructor::createStructure(exec->vm(), this, m_functionPrototype.get()), m_datePrototype.get());
+
+#if ENABLE(PROMISES)
     JSCell* promiseConstructor = JSPromiseConstructor::create(exec, this, JSPromiseConstructor::createStructure(exec->vm(), this, m_functionPrototype.get()), m_promisePrototype.get());
     JSCell* promiseResolverConstructor = JSPromiseResolverConstructor::create(exec, this, JSPromiseResolverConstructor::createStructure(exec->vm(), this, m_functionPrototype.get()), m_promiseResolverPrototype.get());
+#endif // ENABLE(PROMISES)
 
     m_regExpConstructor.set(exec->vm(), this, RegExpConstructor::create(exec, this, RegExpConstructor::createStructure(exec->vm(), this, m_functionPrototype.get()), m_regExpPrototype.get()));
 
@@ -617,10 +625,13 @@ void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(&thisObject->m_regExpStructure);
     visitor.append(&thisObject->m_stringObjectStructure);
     visitor.append(&thisObject->m_internalFunctionStructure);
+
+#if ENABLE(PROMISES)
     visitor.append(&thisObject->m_promiseStructure);
     visitor.append(&thisObject->m_promiseResolverStructure);
     visitor.append(&thisObject->m_promiseCallbackStructure);
     visitor.append(&thisObject->m_promiseWrapperCallbackStructure);
+#endif // ENABLE(PROMISES)
 
     visitor.append(&thisObject->m_arrayBufferPrototype);
     visitor.append(&thisObject->m_arrayBufferStructure);

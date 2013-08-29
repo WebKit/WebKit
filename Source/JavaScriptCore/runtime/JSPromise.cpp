@@ -26,6 +26,8 @@
 #include "config.h"
 #include "JSPromise.h"
 
+#if ENABLE(PROMISES)
+
 #include "Error.h"
 #include "JSCJSValueInlines.h"
 #include "JSCellInlines.h"
@@ -239,3 +241,5 @@ void JSPromise::processRejectCallbacksWithValue(ExecState* exec, JSValue value)
 }
 
 } // namespace JSC
+
+#endif // ENABLE(PROMISES)

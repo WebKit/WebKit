@@ -26,6 +26,8 @@
 #include "config.h"
 #include "JSPromiseResolverConstructor.h"
 
+#if ENABLE(PROMISES)
+
 #include "JSCJSValueInlines.h"
 #include "JSCellInlines.h"
 #include "JSPromiseResolverPrototype.h"
@@ -72,3 +74,5 @@ CallType JSPromiseResolverConstructor::getCallData(JSCell*, CallData&)
 }
 
 } // namespace JSC
+
+#endif // ENABLE(PROMISES)

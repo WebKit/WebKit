@@ -26,6 +26,8 @@
 #ifndef JSPromiseResolver_h
 #define JSPromiseResolver_h
 
+#if ENABLE(PROMISES)
+
 #include "JSObject.h"
 
 namespace JSC {
@@ -70,5 +72,7 @@ private:
 };
 
 } // namespace JSC
+
+#endif // ENABLE(PROMISES)
 
 #endif // JSPromiseResolver_h

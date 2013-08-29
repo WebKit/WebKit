@@ -26,6 +26,8 @@
 #ifndef JSPromiseCallback_h
 #define JSPromiseCallback_h
 
+#if ENABLE(PROMISES)
+
 #include "InternalFunction.h"
 
 namespace JSC {
@@ -85,5 +87,7 @@ private:
 };
 
 } // namespace JSC
+
+#endif // ENABLE(PROMISES)
 
 #endif // JSPromiseCallback_h

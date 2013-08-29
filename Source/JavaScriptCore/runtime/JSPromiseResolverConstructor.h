@@ -26,6 +26,8 @@
 #ifndef JSPromiseResolverConstructor_h
 #define JSPromiseResolverConstructor_h
 
+#if ENABLE(PROMISES)
+
 #include "InternalFunction.h"
 
 namespace JSC {
@@ -52,5 +54,7 @@ private:
 };
 
 } // namespace JSC
+
+#endif // ENABLE(PROMISES)
 
 #endif // JSPromiseResolverConstructor_h

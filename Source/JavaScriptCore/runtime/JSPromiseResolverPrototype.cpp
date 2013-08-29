@@ -26,6 +26,8 @@
 #include "config.h"
 #include "JSPromiseResolverPrototype.h"
 
+#if ENABLE(PROMISES)
+
 #include "Error.h"
 #include "JSCJSValueInlines.h"
 #include "JSCellInlines.h"
@@ -117,3 +119,5 @@ EncodedJSValue JSC_HOST_CALL JSPromiseResolverPrototypeFuncReject(ExecState* exe
 }
 
 } // namespace JSC
+
+#endif // ENABLE(PROMISES)

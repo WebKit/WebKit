@@ -26,6 +26,8 @@
 #ifndef JSPromisePrototype_h
 #define JSPromisePrototype_h
 
+#if ENABLE(PROMISES)
+
 #include "JSObject.h"
 
 namespace JSC {
@@ -49,5 +51,7 @@ private:
 };
 
 } // namespace JSC
+
+#endif // ENABLE(PROMISES)
 
 #endif // JSPromisePrototype_h

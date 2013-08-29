@@ -1,3 +1,28 @@
+2013-08-29  Sam Weinig  <sam@webkit.org>
+
+        Add ENABLE guards for Promises
+        https://bugs.webkit.org/show_bug.cgi?id=120488
+
+        Reviewed by Andreas Kling.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * runtime/JSGlobalObject.cpp:
+        * runtime/JSGlobalObject.h:
+        * runtime/JSPromise.cpp:
+        * runtime/JSPromise.h:
+        * runtime/JSPromiseCallback.cpp:
+        * runtime/JSPromiseCallback.h:
+        * runtime/JSPromiseConstructor.cpp:
+        * runtime/JSPromiseConstructor.h:
+        * runtime/JSPromisePrototype.cpp:
+        * runtime/JSPromisePrototype.h:
+        * runtime/JSPromiseResolver.cpp:
+        * runtime/JSPromiseResolver.h:
+        * runtime/JSPromiseResolverConstructor.cpp:
+        * runtime/JSPromiseResolverConstructor.h:
+        * runtime/JSPromiseResolverPrototype.cpp:
+        * runtime/JSPromiseResolverPrototype.h:
+
 2013-08-29  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, fix FTL build.

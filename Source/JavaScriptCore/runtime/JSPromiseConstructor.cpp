@@ -26,6 +26,8 @@
 #include "config.h"
 #include "JSPromiseConstructor.h"
 
+#if ENABLE(PROMISES)
+
 #include "Error.h"
 #include "JSCJSValueInlines.h"
 #include "JSCellInlines.h"
@@ -181,3 +183,5 @@ EncodedJSValue JSC_HOST_CALL JSPromiseConstructorFuncReject(ExecState* exec)
 }
 
 } // namespace JSC
+
+#endif // ENABLE(PROMISES)

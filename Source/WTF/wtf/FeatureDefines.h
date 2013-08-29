@@ -702,6 +702,10 @@
 #define ENABLE_PROGRESS_ELEMENT 0
 #endif
 
+#if !defined(ENABLE_PROMISES)
+#define ENABLE_PROMISES 0
+#endif
+
 #if !defined(ENABLE_PROXIMITY_EVENTS)
 #define ENABLE_PROXIMITY_EVENTS 0
 #endif
