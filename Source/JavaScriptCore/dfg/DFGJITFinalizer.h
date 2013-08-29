@@ -42,8 +42,8 @@ public:
     JITFinalizer(Plan&, PassRefPtr<JITCode>, PassOwnPtr<LinkBuffer>, MacroAssembler::Label arityCheck = MacroAssembler::Label());
     virtual ~JITFinalizer();
     
-    bool finalize();
-    bool finalizeFunction();
+    bool finalize(RefPtr<JSC::JITCode>& entry);
+    bool finalizeFunction(RefPtr<JSC::JITCode>& entry, MacroAssemblerCodePtr& withArityCheck);
 
 private:
     void finalizeCommon();

@@ -37,6 +37,7 @@
 #include "HostCallReturnValue.h"
 #include "Interpreter.h"
 #include "JIT.h"
+#include "JITDriver.h"
 #include "JSActivation.h"
 #include "JSCJSValue.h"
 #include "JSGlobalObjectFunctions.h"
@@ -279,8 +280,6 @@ inline bool shouldJIT(ExecState* exec)
 // Returns true if we should try to OSR.
 inline bool jitCompileAndSetHeuristics(CodeBlock* codeBlock, ExecState* exec)
 {
-    DeferGC deferGC(exec->vm().heap);
-    
     codeBlock->updateAllValueProfilePredictions();
     
     if (!codeBlock->checkIfJITThresholdReached()) {
@@ -289,33 +288,23 @@ inline bool jitCompileAndSetHeuristics(CodeBlock* codeBlock, ExecState* exec)
         return false;
     }
     
-    switch (codeBlock->jitType()) {
-    case JITCode::BaselineJIT: {
+    CompilationResult result = codeBlock->jitCompile(exec);
+    switch (result) {
+    case CompilationNotNeeded:
         if (Options::verboseOSR())
             dataLogF("    Code was already compiled.\n");
         codeBlock->jitSoon();
         return true;
-    }
-    case JITCode::InterpreterThunk: {
-        CompilationResult result = codeBlock->prepareForExecution(
-            exec, JITCode::BaselineJIT, JITCompilationCanFail);
-        switch (result) {
-        case CompilationFailed:
-            if (Options::verboseOSR())
-                dataLogF("    JIT compilation failed.\n");
-            codeBlock->dontJITAnytimeSoon();
-            return false;
-        case CompilationSuccessful:
-            if (Options::verboseOSR())
-                dataLogF("    JIT compilation successful.\n");
-            codeBlock->install();
-            codeBlock->jitSoon();
-            return true;
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
-            return false;
-        }
-    }
+    case CompilationFailed:
+        if (Options::verboseOSR())
+            dataLogF("    JIT compilation failed.\n");
+        codeBlock->dontJITAnytimeSoon();
+        return false;
+    case CompilationSuccessful:
+        if (Options::verboseOSR())
+            dataLogF("    JIT compilation successful.\n");
+        codeBlock->jitSoon();
+        return true;
     default:
         RELEASE_ASSERT_NOT_REACHED();
         return false;
@@ -1015,7 +1004,7 @@ inline SlowPathReturnType setUpCall(ExecState* execCallee, Instruction* pc, Code
         codePtr = executable->hostCodeEntryFor(kind);
     else {
         FunctionExecutable* functionExecutable = static_cast<FunctionExecutable*>(executable);
-        JSObject* error = functionExecutable->prepareForExecution(execCallee, callee->scope(), kind);
+        JSObject* error = functionExecutable->compileFor(execCallee, callee->scope(), kind);
         if (error)
             LLINT_CALL_THROW(execCallee->callerFrame(), pc, error);
         codeBlock = &functionExecutable->generatedBytecodeFor(kind);

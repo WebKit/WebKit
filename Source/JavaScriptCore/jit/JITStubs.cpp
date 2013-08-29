@@ -51,7 +51,6 @@
 #include <wtf/InlineASM.h>
 #include "JIT.h"
 #include "JITExceptions.h"
-#include "JITToDFGDeferredCompilationCallback.h"
 #include "JSActivation.h"
 #include "JSArray.h"
 #include "JSFunction.h"
@@ -999,7 +998,7 @@ DEFINE_STUB_FUNCTION(void, optimize)
         if (Options::verboseOSR())
             dataLog("Considering OSR ", *codeBlock, " -> ", *codeBlock->replacement(), ".\n");
         // If we have an optimized replacement, then it must be the case that we entered
-        // cti_optimize from a loop. That's because if there's an optimized replacement,
+        // cti_optimize from a loop. That's because is there's an optimized replacement,
         // then all calls to this function will be relinked to the replacement and so
         // the prologue OSR will never fire.
         
@@ -1033,12 +1032,16 @@ DEFINE_STUB_FUNCTION(void, optimize)
         if (Options::verboseOSR())
             dataLog("Triggering optimized compilation of ", *codeBlock, "\n");
         
-        RefPtr<DeferredCompilationCallback> callback =
-            JITToDFGDeferredCompilationCallback::create();
-        RefPtr<CodeBlock> newCodeBlock = codeBlock->newReplacement();
-        CompilationResult result = newCodeBlock->prepareForExecutionAsynchronously(
-            callFrame, JITCode::DFGJIT, callback, JITCompilationCanFail, bytecodeIndex);
+        JSScope* scope = callFrame->scope();
+        CompilationResult result;
+        JSObject* error = codeBlock->compileOptimized(callFrame, scope, result, bytecodeIndex);
+        if (Options::verboseOSR()) {
+            dataLog("Optimizing compilation of ", *codeBlock, " result: ", result, "\n");
+            if (error)
+                dataLog("WARNING: optimized compilation failed with a JS error.\n");
+        }
         
+        codeBlock->setOptimizationThresholdBasedOnCompilationResult(result);
         if (result != CompilationSuccessful)
             return;
     }
@@ -1165,7 +1168,7 @@ inline void* jitCompileFor(CallFrame* callFrame, CodeSpecializationKind kind)
     ASSERT(!function->isHostFunction());
     FunctionExecutable* executable = function->jsExecutable();
     JSScope* callDataScopeChain = function->scope();
-    JSObject* error = executable->prepareForExecution(callFrame, callDataScopeChain, kind);
+    JSObject* error = executable->compileFor(callFrame, callDataScopeChain, kind);
     if (!error)
         return function;
     callFrame->vm().throwException(callFrame, error);
@@ -1264,7 +1267,7 @@ inline void* lazyLinkFor(CallFrame* callFrame, CodeSpecializationKind kind)
         codePtr = executable->generatedJITCodeFor(kind)->addressForCall();
     else {
         FunctionExecutable* functionExecutable = static_cast<FunctionExecutable*>(executable);
-        if (JSObject* error = functionExecutable->prepareForExecution(callFrame, callee->scope(), kind)) {
+        if (JSObject* error = functionExecutable->compileFor(callFrame, callee->scope(), kind)) {
             callFrame->vm().throwException(callFrame, error);
             return 0;
         }
@@ -1341,7 +1344,7 @@ DEFINE_STUB_FUNCTION(void*, vm_lazyLinkClosureCall)
         
         FunctionExecutable* functionExecutable = jsCast<FunctionExecutable*>(executable);
         JSScope* scopeChain = callee->scope();
-        JSObject* error = functionExecutable->prepareForExecution(callFrame, scopeChain, CodeForCall);
+        JSObject* error = functionExecutable->compileFor(callFrame, scopeChain, CodeForCall);
         if (error) {
             callFrame->vm().throwException(callFrame, error);
             return 0;

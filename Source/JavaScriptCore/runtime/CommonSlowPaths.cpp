@@ -37,6 +37,7 @@
 #include "HostCallReturnValue.h"
 #include "Interpreter.h"
 #include "JIT.h"
+#include "JITDriver.h"
 #include "JITStubs.h"
 #include "JSActivation.h"
 #include "JSCJSValue.h"

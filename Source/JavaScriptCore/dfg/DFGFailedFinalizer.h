@@ -39,8 +39,8 @@ public:
     FailedFinalizer(Plan&);
     virtual ~FailedFinalizer();
     
-    bool finalize();
-    bool finalizeFunction();
+    bool finalize(RefPtr<JSC::JITCode>& entry);
+    bool finalizeFunction(RefPtr<JSC::JITCode>& entry, MacroAssemblerCodePtr& withArityCheck);
 };
 
 } } // namespace JSC::DFG

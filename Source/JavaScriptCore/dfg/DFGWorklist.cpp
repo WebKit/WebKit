@@ -165,7 +165,10 @@ Worklist::State Worklist::completeAllReadyPlansForVM(VM& vm, CodeBlock* requeste
         
         RELEASE_ASSERT(plan->isCompiled);
         
-        plan->finalizeAndNotifyCallback();
+        CompilationResult compilationResult =
+            profiledBlock->replaceWithDeferredOptimizedCode(plan);
+        RELEASE_ASSERT(compilationResult != CompilationDeferred);
+        profiledBlock->setOptimizationThresholdBasedOnCompilationResult(compilationResult);
         
         if (profiledBlock == requestedProfiledBlock)
             resultingState = Compiled;
@@ -240,7 +243,8 @@ void Worklist::runThread()
         
         {
             MutexLocker locker(m_lock);
-            plan->notifyReady();
+            plan->key()->forceOptimizationSlowPathConcurrently();
+            plan->isCompiled = true;
             
             if (Options::verboseCompilationQueue()) {
                 dump(locker, WTF::dataFile());

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,77 +28,62 @@
 
 #if ENABLE(LLINT)
 
-#include "CodeBlock.h"
 #include "JITCode.h"
+#include "VM.h"
 #include "JSObject.h"
 #include "LLIntThunks.h"
 #include "LowLevelInterpreter.h"
-#include "VM.h"
 
 
 namespace JSC { namespace LLInt {
 
-void setFunctionEntrypoint(VM& vm, FunctionCodeBlock* codeBlock)
+void getFunctionEntrypoint(VM& vm, CodeSpecializationKind kind, RefPtr<JITCode>& jitCode, MacroAssemblerCodePtr& arityCheck)
 {
-    CodeSpecializationKind kind = codeBlock->specializationKind();
-    
     if (!vm.canUseJIT()) {
         if (kind == CodeForCall) {
-            codeBlock->setJITCode(
-                adoptRef(new DirectJITCode(MacroAssemblerCodeRef::createLLIntCodeRef(llint_function_for_call_prologue), JITCode::InterpreterThunk)),
-                MacroAssemblerCodePtr::createLLIntCodePtr(llint_function_for_call_arity_check));
+            jitCode = adoptRef(new DirectJITCode(MacroAssemblerCodeRef::createLLIntCodeRef(llint_function_for_call_prologue), JITCode::InterpreterThunk));
+            arityCheck = MacroAssemblerCodePtr::createLLIntCodePtr(llint_function_for_call_arity_check);
             return;
         }
 
         ASSERT(kind == CodeForConstruct);
-        codeBlock->setJITCode(
-            adoptRef(new DirectJITCode(MacroAssemblerCodeRef::createLLIntCodeRef(llint_function_for_construct_prologue), JITCode::InterpreterThunk)),
-            MacroAssemblerCodePtr::createLLIntCodePtr(llint_function_for_construct_arity_check));
+        jitCode = adoptRef(new DirectJITCode(MacroAssemblerCodeRef::createLLIntCodeRef(llint_function_for_construct_prologue), JITCode::InterpreterThunk));
+        arityCheck = MacroAssemblerCodePtr::createLLIntCodePtr(llint_function_for_construct_arity_check);
         return;
     }
     
 #if ENABLE(JIT)
     if (kind == CodeForCall) {
-        codeBlock->setJITCode(
-            adoptRef(new DirectJITCode(vm.getCTIStub(functionForCallEntryThunkGenerator), JITCode::InterpreterThunk)),
-            vm.getCTIStub(functionForCallArityCheckThunkGenerator).code());
+        jitCode = adoptRef(new DirectJITCode(vm.getCTIStub(functionForCallEntryThunkGenerator), JITCode::InterpreterThunk));
+        arityCheck = vm.getCTIStub(functionForCallArityCheckThunkGenerator).code();
         return;
     }
 
     ASSERT(kind == CodeForConstruct);
-    codeBlock->setJITCode(
-        adoptRef(new DirectJITCode(vm.getCTIStub(functionForConstructEntryThunkGenerator), JITCode::InterpreterThunk)),
-        vm.getCTIStub(functionForConstructArityCheckThunkGenerator).code());
+    jitCode = adoptRef(new DirectJITCode(vm.getCTIStub(functionForConstructEntryThunkGenerator), JITCode::InterpreterThunk));
+    arityCheck = vm.getCTIStub(functionForConstructArityCheckThunkGenerator).code();
 #endif // ENABLE(JIT)
 }
 
-void setEvalEntrypoint(VM& vm, EvalCodeBlock* codeBlock)
+void getEvalEntrypoint(VM& vm, RefPtr<JITCode>& jitCode)
 {
     if (!vm.canUseJIT()) {
-        codeBlock->setJITCode(
-            adoptRef(new DirectJITCode(MacroAssemblerCodeRef::createLLIntCodeRef(llint_eval_prologue), JITCode::InterpreterThunk)),
-            MacroAssemblerCodePtr());
+        jitCode = adoptRef(new DirectJITCode(MacroAssemblerCodeRef::createLLIntCodeRef(llint_eval_prologue), JITCode::InterpreterThunk));
         return;
     }
-#if ENABLE(JIT)
-    codeBlock->setJITCode(
-        adoptRef(new DirectJITCode(vm.getCTIStub(evalEntryThunkGenerator), JITCode::InterpreterThunk)),
-        MacroAssemblerCodePtr());
+#if ENABLE(JIT)    
+    jitCode = adoptRef(new DirectJITCode(vm.getCTIStub(evalEntryThunkGenerator), JITCode::InterpreterThunk));
 #endif
 }
 
-void setProgramEntrypoint(VM& vm, ProgramCodeBlock* codeBlock)
+void getProgramEntrypoint(VM& vm, RefPtr<JITCode>& jitCode)
 {
     if (!vm.canUseJIT()) {
-        codeBlock->setJITCode(
-            adoptRef(new DirectJITCode(MacroAssemblerCodeRef::createLLIntCodeRef(llint_program_prologue), JITCode::InterpreterThunk)),
-            MacroAssemblerCodePtr());
+        jitCode = adoptRef(new DirectJITCode(MacroAssemblerCodeRef::createLLIntCodeRef(llint_program_prologue), JITCode::InterpreterThunk));
         return;
     }
 #if ENABLE(JIT)
-    codeBlock->setJITCode(
-        adoptRef(new DirectJITCode(vm.getCTIStub(programEntryThunkGenerator), JITCode::InterpreterThunk)),
-        MacroAssemblerCodePtr());
+    jitCode = adoptRef(new DirectJITCode(vm.getCTIStub(programEntryThunkGenerator), JITCode::InterpreterThunk));
 #endif
 }
 

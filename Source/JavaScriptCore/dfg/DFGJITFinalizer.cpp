@@ -28,7 +28,6 @@
 
 #if ENABLE(DFG_JIT)
 
-#include "CodeBlock.h"
 #include "DFGCommon.h"
 #include "DFGPlan.h"
 
@@ -46,23 +45,23 @@ JITFinalizer::~JITFinalizer()
 {
 }
 
-bool JITFinalizer::finalize()
+bool JITFinalizer::finalize(RefPtr<JSC::JITCode>& entry)
 {
     finalizeCommon();
     
     m_jitCode->initializeCodeRef(m_linkBuffer->finalizeCodeWithoutDisassembly());
-    m_plan.codeBlock->setJITCode(m_jitCode, MacroAssemblerCodePtr());
+    entry = m_jitCode;
     
     return true;
 }
 
-bool JITFinalizer::finalizeFunction()
+bool JITFinalizer::finalizeFunction(RefPtr<JSC::JITCode>& entry, MacroAssemblerCodePtr& withArityCheck)
 {
     finalizeCommon();
     
-    MacroAssemblerCodePtr withArityCheck = m_linkBuffer->locationOf(m_arityCheck);
+    withArityCheck = m_linkBuffer->locationOf(m_arityCheck);
     m_jitCode->initializeCodeRef(m_linkBuffer->finalizeCodeWithoutDisassembly());
-    m_plan.codeBlock->setJITCode(m_jitCode, withArityCheck);
+    entry = m_jitCode;
     
     return true;
 }

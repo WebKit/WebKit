@@ -1,3 +1,143 @@
+2013-08-29  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r154804.
+        http://trac.webkit.org/changeset/154804
+        https://bugs.webkit.org/show_bug.cgi?id=120477
+
+        Broke Windows build (assumes LLInt features not enabled on
+        this build) (Requested by bfulgham on #webkit).
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::linkIncomingCall):
+        (JSC::CodeBlock::unlinkIncomingCalls):
+        (JSC::CodeBlock::reoptimize):
+        (JSC::ProgramCodeBlock::replacement):
+        (JSC::EvalCodeBlock::replacement):
+        (JSC::FunctionCodeBlock::replacement):
+        (JSC::ProgramCodeBlock::compileOptimized):
+        (JSC::ProgramCodeBlock::replaceWithDeferredOptimizedCode):
+        (JSC::EvalCodeBlock::compileOptimized):
+        (JSC::EvalCodeBlock::replaceWithDeferredOptimizedCode):
+        (JSC::FunctionCodeBlock::compileOptimized):
+        (JSC::FunctionCodeBlock::replaceWithDeferredOptimizedCode):
+        (JSC::ProgramCodeBlock::jitCompileImpl):
+        (JSC::EvalCodeBlock::jitCompileImpl):
+        (JSC::FunctionCodeBlock::jitCompileImpl):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::jitType):
+        (JSC::CodeBlock::jitCompile):
+        * bytecode/DeferredCompilationCallback.cpp: Removed.
+        * bytecode/DeferredCompilationCallback.h: Removed.
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compile):
+        (JSC::DFG::tryCompile):
+        (JSC::DFG::tryCompileFunction):
+        (JSC::DFG::tryFinalizePlan):
+        * dfg/DFGDriver.h:
+        (JSC::DFG::tryCompile):
+        (JSC::DFG::tryCompileFunction):
+        (JSC::DFG::tryFinalizePlan):
+        * dfg/DFGFailedFinalizer.cpp:
+        (JSC::DFG::FailedFinalizer::finalize):
+        (JSC::DFG::FailedFinalizer::finalizeFunction):
+        * dfg/DFGFailedFinalizer.h:
+        * dfg/DFGFinalizer.h:
+        * dfg/DFGJITFinalizer.cpp:
+        (JSC::DFG::JITFinalizer::finalize):
+        (JSC::DFG::JITFinalizer::finalizeFunction):
+        * dfg/DFGJITFinalizer.h:
+        * dfg/DFGOSRExitPreparation.cpp:
+        (JSC::DFG::prepareCodeOriginForOSRExit):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::Plan):
+        (JSC::DFG::Plan::compileInThreadImpl):
+        (JSC::DFG::Plan::finalize):
+        * dfg/DFGPlan.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGWorklist.cpp:
+        (JSC::DFG::Worklist::completeAllReadyPlansForVM):
+        (JSC::DFG::Worklist::runThread):
+        * ftl/FTLJITFinalizer.cpp:
+        (JSC::FTL::JITFinalizer::finalize):
+        (JSC::FTL::JITFinalizer::finalizeFunction):
+        * ftl/FTLJITFinalizer.h:
+        * heap/Heap.h:
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::executeCall):
+        (JSC::Interpreter::executeConstruct):
+        (JSC::Interpreter::prepareForRepeatCall):
+        * jit/JITDriver.h: Added.
+        (JSC::jitCompileIfAppropriateImpl):
+        (JSC::jitCompileFunctionIfAppropriateImpl):
+        (JSC::jitCompileIfAppropriate):
+        (JSC::jitCompileFunctionIfAppropriate):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        (JSC::jitCompileFor):
+        (JSC::lazyLinkFor):
+        * jit/JITToDFGDeferredCompilationCallback.cpp: Removed.
+        * jit/JITToDFGDeferredCompilationCallback.h: Removed.
+        * llint/LLIntEntrypoints.cpp:
+        (JSC::LLInt::getFunctionEntrypoint):
+        (JSC::LLInt::getEvalEntrypoint):
+        (JSC::LLInt::getProgramEntrypoint):
+        * llint/LLIntEntrypoints.h:
+        (JSC::LLInt::getEntrypoint):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::jitCompileAndSetHeuristics):
+        (JSC::LLInt::setUpCall):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::isNumericCompareFunction):
+        * runtime/CommonSlowPaths.cpp:
+        * runtime/CompilationResult.cpp:
+        (WTF::printInternal):
+        * runtime/CompilationResult.h:
+        * runtime/Executable.cpp:
+        (JSC::EvalExecutable::compileOptimized):
+        (JSC::EvalExecutable::jitCompile):
+        (JSC::EvalExecutable::compileInternal):
+        (JSC::EvalExecutable::replaceWithDeferredOptimizedCode):
+        (JSC::ProgramExecutable::compileOptimized):
+        (JSC::ProgramExecutable::jitCompile):
+        (JSC::ProgramExecutable::compileInternal):
+        (JSC::ProgramExecutable::replaceWithDeferredOptimizedCode):
+        (JSC::FunctionExecutable::compileOptimizedForCall):
+        (JSC::FunctionExecutable::compileOptimizedForConstruct):
+        (JSC::FunctionExecutable::jitCompileForCall):
+        (JSC::FunctionExecutable::jitCompileForConstruct):
+        (JSC::FunctionExecutable::produceCodeBlockFor):
+        (JSC::FunctionExecutable::compileForCallInternal):
+        (JSC::FunctionExecutable::replaceWithDeferredOptimizedCodeForCall):
+        (JSC::FunctionExecutable::compileForConstructInternal):
+        (JSC::FunctionExecutable::replaceWithDeferredOptimizedCodeForConstruct):
+        * runtime/Executable.h:
+        (JSC::ExecutableBase::offsetOfJITCodeWithArityCheckFor):
+        (JSC::ExecutableBase::offsetOfNumParametersFor):
+        (JSC::ExecutableBase::catchRoutineFor):
+        (JSC::EvalExecutable::compile):
+        (JSC::ProgramExecutable::compile):
+        (JSC::FunctionExecutable::compileForCall):
+        (JSC::FunctionExecutable::compileForConstruct):
+        (JSC::FunctionExecutable::compileFor):
+        (JSC::FunctionExecutable::compileOptimizedFor):
+        (JSC::FunctionExecutable::replaceWithDeferredOptimizedCodeFor):
+        (JSC::FunctionExecutable::jitCompileFor):
+        * runtime/ExecutionHarness.h: Added.
+        (JSC::prepareForExecutionImpl):
+        (JSC::prepareFunctionForExecutionImpl):
+        (JSC::installOptimizedCode):
+        (JSC::prepareForExecution):
+        (JSC::prepareFunctionForExecution):
+        (JSC::replaceWithDeferredOptimizedCode):
+
 2013-08-28  Filip Pizlo  <fpizlo@apple.com>
 
         CodeBlock compilation and installation should be simplified and rationalized

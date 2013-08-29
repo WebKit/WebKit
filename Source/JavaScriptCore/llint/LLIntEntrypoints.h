@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,7 +37,6 @@
 namespace JSC {
 
 class EvalCodeBlock;
-class FunctionCodeBlock;
 class VM;
 class MacroAssemblerCodePtr;
 class MacroAssemblerCodeRef;
@@ -45,9 +44,19 @@ class ProgramCodeBlock;
 
 namespace LLInt {
 
-void setFunctionEntrypoint(VM&, FunctionCodeBlock*);
-void setEvalEntrypoint(VM&, EvalCodeBlock*);
-void setProgramEntrypoint(VM&, ProgramCodeBlock*);
+void getFunctionEntrypoint(VM&, CodeSpecializationKind, RefPtr<JITCode>&, MacroAssemblerCodePtr& arityCheck);
+void getEvalEntrypoint(VM&, RefPtr<JITCode>&);
+void getProgramEntrypoint(VM&, RefPtr<JITCode>&);
+
+inline void getEntrypoint(VM& vm, EvalCodeBlock*, RefPtr<JITCode>& jitCode)
+{
+    getEvalEntrypoint(vm, jitCode);
+}
+
+inline void getEntrypoint(VM& vm, ProgramCodeBlock*, RefPtr<JITCode>& jitCode)
+{
+    getProgramEntrypoint(vm, jitCode);
+}
 
 } } // namespace JSC::LLInt
 

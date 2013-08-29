@@ -39,12 +39,12 @@ FailedFinalizer::~FailedFinalizer()
 {
 }
 
-bool FailedFinalizer::finalize()
+bool FailedFinalizer::finalize(RefPtr<JSC::JITCode>&)
 {
     return false;
 }
 
-bool FailedFinalizer::finalizeFunction()
+bool FailedFinalizer::finalizeFunction(RefPtr<JSC::JITCode>&, MacroAssemblerCodePtr&)
 {
     return false;
 }
