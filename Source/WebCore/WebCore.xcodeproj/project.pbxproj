@@ -3449,8 +3449,6 @@
 		A7D6B34A0F61104500B79FD1 /* WorkerScriptLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7D6B3480F61104500B79FD1 /* WorkerScriptLoader.cpp */; };
 		A7DBF8DD1276919C006B6008 /* TextCheckingHelper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7DBF8DB1276919C006B6008 /* TextCheckingHelper.cpp */; };
 		A7DBF8DE1276919C006B6008 /* TextCheckingHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = A7DBF8DC1276919C006B6008 /* TextCheckingHelper.h */; };
-		A7F5D94F1384F02D00A29A87 /* NodeRenderingContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7F5D94D1384F02D00A29A87 /* NodeRenderingContext.cpp */; };
-		A7F5D9501384F02D00A29A87 /* NodeRenderingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = A7F5D94E1384F02D00A29A87 /* NodeRenderingContext.h */; };
 		A80A38FE0E50CC8200A25EBC /* PatternCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80A38FD0E50CC8200A25EBC /* PatternCG.cpp */; };
 		A80D67080E9E9DEB00E420F0 /* GraphicsContextPlatformPrivateCG.h in Headers */ = {isa = PBXBuildFile; fileRef = A80D67070E9E9DEB00E420F0 /* GraphicsContextPlatformPrivateCG.h */; };
 		A80E6CE40A1989CA007FB8C5 /* CSSValueList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80E6CBA0A1989CA007FB8C5 /* CSSValueList.cpp */; };
@@ -9904,8 +9902,6 @@
 		A7F1F4BF17148BDB00CD4852 /* StorageQuotaCallback.idl */ = {isa = PBXFileReference; lastKnownFileType = text; name = StorageQuotaCallback.idl; path = Modules/quota/StorageQuotaCallback.idl; sourceTree = SOURCE_ROOT; };
 		A7F1F4C017148BDB00CD4852 /* StorageUsageCallback.idl */ = {isa = PBXFileReference; lastKnownFileType = text; name = StorageUsageCallback.idl; path = Modules/quota/StorageUsageCallback.idl; sourceTree = SOURCE_ROOT; };
 		A7F1F4C117148BDB00CD4852 /* WorkerNavigatorStorageQuota.idl */ = {isa = PBXFileReference; lastKnownFileType = text; name = WorkerNavigatorStorageQuota.idl; path = Modules/quota/WorkerNavigatorStorageQuota.idl; sourceTree = SOURCE_ROOT; };
-		A7F5D94D1384F02D00A29A87 /* NodeRenderingContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NodeRenderingContext.cpp; sourceTree = "<group>"; };
-		A7F5D94E1384F02D00A29A87 /* NodeRenderingContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NodeRenderingContext.h; sourceTree = "<group>"; };
 		A7F73ED9169AD7AA00CBAA4B /* DOMShadowRoot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMShadowRoot.h; sourceTree = "<group>"; };
 		A7F73EDA169AD7AA00CBAA4B /* DOMShadowRoot.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMShadowRoot.mm; sourceTree = "<group>"; };
 		A80A38FD0E50CC8200A25EBC /* PatternCG.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PatternCG.cpp; sourceTree = "<group>"; };
@@ -20350,8 +20346,6 @@
 				85ACA9FA0A9B631000671E90 /* NodeList.idl */,
 				4FAB48661643A67E00F70C07 /* NodeRareData.cpp */,
 				63189AE20E83A33300012E41 /* NodeRareData.h */,
-				A7F5D94D1384F02D00A29A87 /* NodeRenderingContext.cpp */,
-				A7F5D94E1384F02D00A29A87 /* NodeRenderingContext.h */,
 				A7211F231678A54200957444 /* NodeRenderingTraversal.cpp */,
 				A7211F241678A54200957444 /* NodeRenderingTraversal.h */,
 				63D7B32C0E78CD3F00F7617C /* NodeRenderStyle.h */,
@@ -22843,7 +22837,6 @@
 				854FE7350A2297BE0058D7AD /* NodeIterator.h in Headers */,
 				A818721B0977D3C0005826D9 /* NodeList.h in Headers */,
 				63189AE30E83A33300012E41 /* NodeRareData.h in Headers */,
-				A7F5D9501384F02D00A29A87 /* NodeRenderingContext.h in Headers */,
 				A74F3EF51678B24F00B05A6E /* NodeRenderingTraversal.h in Headers */,
 				63D7B32D0E78CD3F00F7617C /* NodeRenderStyle.h in Headers */,
 				E43105BB16750F1600DB2FB8 /* NodeTraversal.h in Headers */,
@@ -26038,7 +26031,6 @@
 				854FE7320A2297BE0058D7AD /* NodeFilterCondition.cpp in Sources */,
 				854FE7340A2297BE0058D7AD /* NodeIterator.cpp in Sources */,
 				4FFC022B1643B710004E1638 /* NodeRareData.cpp in Sources */,
-				A7F5D94F1384F02D00A29A87 /* NodeRenderingContext.cpp in Sources */,
 				A74F3EF31678B24A00B05A6E /* NodeRenderingTraversal.cpp in Sources */,
 				E43105B816750F0C00DB2FB8 /* NodeTraversal.cpp in Sources */,
 				A8EA7EBF0A1945D000A8EF5F /* Notation.cpp in Sources */,

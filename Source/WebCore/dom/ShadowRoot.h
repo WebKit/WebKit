@@ -58,7 +58,7 @@ public:
 
     virtual bool applyAuthorStyles() const OVERRIDE { return m_applyAuthorStyles; }
     void setApplyAuthorStyles(bool);
-    virtual bool resetStyleInheritance() const OVERRIDE { return m_resetStyleInheritance; }
+    bool resetStyleInheritance() const { return m_resetStyleInheritance; }
     void setResetStyleInheritance(bool);
 
     Element* hostElement() const { return m_hostElement; }

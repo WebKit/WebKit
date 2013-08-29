@@ -447,7 +447,6 @@ SOURCES += \
     dom/NodeFilter.cpp \
     dom/NodeIterator.cpp \
     dom/NodeRareData.cpp \
-    dom/NodeRenderingContext.cpp \
     dom/NodeRenderingTraversal.cpp \
     dom/NodeTraversal.cpp \
     dom/Notation.cpp \
@@ -1658,7 +1657,6 @@ HEADERS += \
     dom/Node.h \
     dom/NodeIterator.h \
     dom/NodeRareData.h \
-    dom/NodeRenderingContext.h \
     dom/NodeRenderingTraversal.h \
     dom/NodeTraversal.h \
     dom/Notation.h \

@@ -1,5 +1,48 @@
 2013-08-29  Antti Koivisto  <antti@apple.com>
 
+        Remove NodeRenderingContext
+        https://bugs.webkit.org/show_bug.cgi?id=120466
+
+        Reviewed by Andreas Kling.
+
+        Switch the few remaining clients of this class to call the underlying code directly.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.exp.in:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::State::initForStyleResolve):
+        * dom/DOMAllInOne.cpp:
+        * dom/Node.cpp:
+        * dom/Node.h:
+        
+            Remove Node::parentNodeForRenderingAndStyle(). Make clients invoke NodeRenderingTraversal::parent() directly.
+
+        * dom/NodeRenderingContext.cpp: Removed.
+        * dom/NodeRenderingContext.h: Removed.
+        * dom/ShadowRoot.h:
+        * dom/Text.cpp:
+        * dom/Text.h:
+        * dom/TreeScope.cpp:
+        * dom/TreeScope.h:
+            
+            Remove virtual TreeScope::resetStyleInheritance. Make clients cast to ShadowRoot when needed.
+
+        * html/HTMLSummaryElement.cpp:
+        (WebCore::HTMLSummaryElement::detailsElement):
+        * style/StyleResolveTree.cpp:
+        (WebCore::Style::createTextRendererIfNeeded):
+        
+            For consistency switch resetStyleInheritance check to use parentNode() instead of renderingParentNode. This matches the NodeRenderingTraversal implementation.
+            This difference is probably not testable in current trunk.
+
+        (WebCore::Style::resolveTree):
+
+2013-08-29  Antti Koivisto  <antti@apple.com>
+
         Move element renderer creation out of NodeRenderingContext
         https://bugs.webkit.org/show_bug.cgi?id=120461
 

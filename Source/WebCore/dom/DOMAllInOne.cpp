@@ -106,7 +106,6 @@
 #include "NodeFilter.cpp"
 #include "NodeFilterCondition.cpp"
 #include "NodeIterator.cpp"
-#include "NodeRenderingContext.cpp"
 #include "NodeRenderingTraversal.cpp"
 #include "Notation.cpp"
 #include "OverflowEvent.cpp"

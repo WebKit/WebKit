@@ -361,11 +361,6 @@ bool TreeScope::applyAuthorStyles() const
     return true;
 }
 
-bool TreeScope::resetStyleInheritance() const
-{
-    return false;
-}
-
 void TreeScope::adoptIfNeeded(Node* node)
 {
     ASSERT(this);

@@ -32,7 +32,7 @@
 #include "ElementTraversal.h"
 #include "FlowThreadController.h"
 #include "NodeRenderStyle.h"
-#include "NodeRenderingContext.h"
+#include "NodeRenderingTraversal.h"
 #include "NodeTraversal.h"
 #include "RenderFullScreen.h"
 #include "RenderNamedFlowThread.h"
@@ -346,7 +346,7 @@ static void createTextRendererIfNeeded(Text& textNode)
 
     Document* document = textNode.document();
     RefPtr<RenderStyle> style;
-    bool resetStyleInheritance = renderingParentNode->isShadowRoot() && toShadowRoot(renderingParentNode)->resetStyleInheritance();
+    bool resetStyleInheritance = textNode.parentNode()->isShadowRoot() && toShadowRoot(textNode.parentNode())->resetStyleInheritance();
     if (resetStyleInheritance)
         style = document->ensureStyleResolver().defaultStyleForElement();
     else
@@ -692,7 +692,8 @@ void resolveTree(Element* current, Change change)
             return;
     }
 
-    bool hasParentStyle = current->parentNodeForRenderingAndStyle() && current->parentNodeForRenderingAndStyle()->renderStyle();
+    ContainerNode* renderingParentNode = NodeRenderingTraversal::parent(current);
+    bool hasParentStyle = renderingParentNode && renderingParentNode->renderStyle();
     bool hasDirectAdjacentRules = current->childrenAffectedByDirectAdjacentRules();
     bool hasIndirectAdjacentRules = current->childrenAffectedByForwardPositionalRules();
 

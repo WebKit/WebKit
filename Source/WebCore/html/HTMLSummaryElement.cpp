@@ -28,6 +28,7 @@
 #include "HTMLNames.h"
 #include "KeyboardEvent.h"
 #include "MouseEvent.h"
+#include "NodeRenderingTraversal.h"
 #include "PlatformMouseEvent.h"
 #include "RenderBlock.h"
 #include "ShadowRoot.h"
@@ -86,7 +87,7 @@ void HTMLSummaryElement::didAddUserAgentShadowRoot(ShadowRoot* root)
 
 HTMLDetailsElement* HTMLSummaryElement::detailsElement() const
 {
-    Node* mayDetails = const_cast<HTMLSummaryElement*>(this)->parentNodeForRenderingAndStyle();
+    Node* mayDetails = NodeRenderingTraversal::parent(this);
     if (!mayDetails || !mayDetails->hasTagName(detailsTag))
         return 0;
     return static_cast<HTMLDetailsElement*>(mayDetails);

@@ -79,7 +79,6 @@
 #include "NameNodeList.h"
 #include "NamedNodeMap.h"
 #include "NodeRareData.h"
-#include "NodeRenderingContext.h"
 #include "NodeTraversal.h"
 #include "Page.h"
 #include "PlatformMouseEvent.h"
@@ -940,11 +939,6 @@ Node* Node::pseudoAwareLastChild() const
         return last;
     }
     return lastChild();
-}
-
-ContainerNode* Node::parentNodeForRenderingAndStyle()
-{
-    return NodeRenderingContext(this).parentNodeForRenderingAndStyle();
 }
 
 RenderStyle* Node::virtualComputedStyle(PseudoId pseudoElementSpecifier)

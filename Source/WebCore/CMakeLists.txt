@@ -1198,7 +1198,6 @@ set(WebCore_SOURCES
     dom/NodeFilter.cpp
     dom/NodeIterator.cpp
     dom/NodeRareData.cpp
-    dom/NodeRenderingContext.cpp
     dom/NodeRenderingTraversal.cpp
     dom/NodeTraversal.cpp
     dom/Notation.cpp

@@ -463,8 +463,6 @@ public:
     // Use these two methods with caution.
     RenderBox* renderBox() const;
     RenderBoxModelObject* renderBoxModelObject() const;
-
-    ContainerNode* parentNodeForRenderingAndStyle();
     
     // Wrapper for nodes that don't have a renderer, but still cache the style (like HTMLOptionElement).
     RenderStyle* renderStyle() const;

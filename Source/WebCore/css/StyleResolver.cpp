@@ -83,7 +83,7 @@
 #include "MediaList.h"
 #include "MediaQueryEvaluator.h"
 #include "NodeRenderStyle.h"
-#include "NodeRenderingContext.h"
+#include "NodeRenderingTraversal.h"
 #include "Page.h"
 #include "PageRuleCollector.h"
 #include "Pair.h"
@@ -428,9 +428,9 @@ inline void StyleResolver::State::initForStyleResolve(Document* document, Elemen
     m_regionForStyling = regionForStyling;
 
     if (e) {
-        NodeRenderingContext context(e);
-        m_parentNode = context.parentNodeForRenderingAndStyle();
-        m_parentStyle = context.resetStyleInheritance() ? 0 :
+        m_parentNode = NodeRenderingTraversal::parent(e);
+        bool resetStyleInheritance = hasShadowRootParent(e) && toShadowRoot(e->parentNode())->resetStyleInheritance();
+        m_parentStyle = resetStyleInheritance ? 0 :
             parentStyle ? parentStyle :
             m_parentNode ? m_parentNode->renderStyle() : 0;
     } else {
