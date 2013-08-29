@@ -1,3 +1,12 @@
+2013-08-29  Dean Jackson  <dino@apple.com>
+
+        XMLSerializer-attribute-namespace-prefix-conflicts can't produce reliable results
+        https://bugs.webkit.org/show_bug.cgi?id=120490
+
+        Marking as [ Pass Failure ] for the moment.
+
+        * TestExpectations:
+
 2013-08-29  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         According to DOM4, all DocType nodes should have a document
