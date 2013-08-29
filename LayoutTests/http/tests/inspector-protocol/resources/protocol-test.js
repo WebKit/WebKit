@@ -87,7 +87,7 @@ function runTest()
         // FIXME: rename this 'test' global field across all tests.
         var testFunction = window.test;
         if (typeof testFunction === "function") {
-	        inspectorFrontend.postMessage("(" + testFunction.toString() +")();", "*");
+            inspectorFrontend.postMessage("(" + testFunction.toString() +")();", "*");
             return;
         }
         // Kill waiting process if failed to send.

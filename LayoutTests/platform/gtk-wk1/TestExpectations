@@ -89,8 +89,6 @@ Bug(GTK) plugins/clicking-missing-plugin-fires-delegate.html [ Failure ]
 
 # Support for Web Audio tests is missing in DumpRenderTree
 webkit.org/b/67187 webaudio [ Skip ]
-webkit.org/b/67187 webkit.org/b/102258 inspector-protocol/nmi-webaudio.html [ Skip ]
-webkit.org/b/67187 inspector-protocol/nmi-webaudio-leak-test.html [ Skip ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures

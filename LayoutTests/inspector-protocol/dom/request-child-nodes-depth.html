@@ -1,8 +1,7 @@
 <html>
 <head>
-<script type="text/javascript" src="../http/tests/inspector-protocol/resources/protocol-test.js"></script>
-<script type="text/javascript">
-
+<script type="text/javascript" src="../../http/tests/inspector-protocol/resources/protocol-test.js"></script>
+<script>
 function test()
 {
     var firstDiv;
@@ -23,7 +22,7 @@ function test()
         else
             InspectorTest.log(JSON.stringify(messageObject, null, "    "));
     };
-    
+
     function getDocument()
     {
         // We must first get the document so that later on we may get sensible nodeIds.
@@ -100,11 +99,11 @@ function test()
             callback: finishTest
         });
     };
-    
+
     function finishTest()
     {
         assert("Expected number of setChildNodes events", eventsCount, 3);
-        
+
         InspectorTest.completeTest();
     };
 
@@ -129,13 +128,11 @@ function test()
             InspectorTest.completeTest();
         }
     };
-
 };
 
-window.addEventListener("DOMContentLoaded", function () {
+window.addEventListener("DOMContentLoaded", function() {
     runTest();
 }, false);
-
 </script>
 </head>
 <body>

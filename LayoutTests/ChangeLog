@@ -1,5 +1,44 @@
 2013-08-29  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Consolidate inspector-protocol tests into domains
+        https://bugs.webkit.org/show_bug.cgi?id=120450
+
+        Reviewed by Timothy Hatcher.
+
+        Move around tests and clean them up in the process.
+
+        * http/tests/inspector-protocol/resources/protocol-test.js:
+        * inspector-protocol/css/getSupportedCSSProperties-expected.txt: Renamed from LayoutTests/inspector-protocol/css-getSupportedCSSProperties-expected.txt.
+        * inspector-protocol/css/getSupportedCSSProperties.html: Renamed from LayoutTests/inspector-protocol/css-getSupportedCSSProperties.html.
+        * inspector-protocol/dom/focus-expected.txt: Renamed from LayoutTests/inspector-protocol/dom-focus-expected.txt.
+        * inspector-protocol/dom/focus.html: Renamed from LayoutTests/inspector-protocol/dom-focus.html.
+        * inspector-protocol/dom/request-child-nodes-depth-expected.txt: Renamed from LayoutTests/inspector-protocol/dom-request-child-nodes-depth-expected.txt.
+        * inspector-protocol/dom/request-child-nodes-depth.html: Renamed from LayoutTests/inspector-protocol/dom-request-child-nodes-depth.html.
+        * inspector-protocol/heap-profiler/heap-snapshot-with-detached-dom-tree.html:
+        * inspector-protocol/heap-profiler/heap-snapshot-with-event-listener.html:
+        * inspector-protocol/heap-profiler/take-heap-snapshot.html:
+        * inspector-protocol/nmi-webaudio-expected.txt: Removed.
+        * inspector-protocol/nmi-webaudio-leak-test-expected.txt: Removed.
+        * inspector-protocol/nmi-webaudio-leak-test.html: Removed.
+        * inspector-protocol/nmi-webaudio.html: Removed.
+        * inspector-protocol/page/frameScheduledNavigation.html:
+        * inspector-protocol/page/frameStartedLoading.html:
+        * inspector-protocol/page/resources/blank.html: Renamed from LayoutTests/inspector-protocol/resources/blank.html.
+        * inspector-protocol/page/setEmulatedMedia-expected.txt: Renamed from LayoutTests/inspector-protocol/media-query-listener-exception-expected.txt.
+        * inspector-protocol/page/setEmulatedMedia.html: Renamed from LayoutTests/inspector-protocol/media-query-listener-exception.html.
+        * inspector-protocol/resources/audio-context.html: Removed.
+        * inspector-protocol/runtime/getProperties-expected.txt: Renamed from LayoutTests/inspector-protocol/runtime-getProperties-expected.txt.
+        * inspector-protocol/runtime/getProperties.html: Renamed from LayoutTests/inspector-protocol/runtime-getProperties.html.
+        * platform/efl/TestExpectations:
+        * platform/gtk-wk1/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/qt/TestExpectations:
+        * platform/win/TestExpectations:
+        * platform/wincairo/TestExpectations:
+
+2013-08-29  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Download Web Archive of Inspected Page
         https://bugs.webkit.org/show_bug.cgi?id=119774
 

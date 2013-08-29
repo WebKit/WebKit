@@ -1,14 +1,11 @@
 <html>
 <head>
-<script type="text/javascript" src="../http/tests/inspector-protocol/resources/protocol-test.js"></script>
+<script type="text/javascript" src="../../http/tests/inspector-protocol/resources/protocol-test.js"></script>
 <script>
-
 window.addEventListener("load", function() {
-    document.querySelector("#second").addEventListener("focus", onFocus);
-
-    function onFocus() {
+    document.querySelector("#second").addEventListener("focus", function() {
         log("focused");
-    }
+    });
 });
 
 function test()
@@ -41,7 +38,6 @@ function test()
         InspectorTest.completeTest();
     }
 }
-
 </script>
 </head>
 <body onload="runTest()">

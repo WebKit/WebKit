@@ -1,11 +1,10 @@
 <html>
 <head>
-<script type="text/javascript" src="../http/tests/inspector-protocol/resources/protocol-test.js"></script>
+<script type="text/javascript" src="../../http/tests/inspector-protocol/resources/protocol-test.js"></script>
 <script>
 function test()
 {
-    function handleSupportedCSSProperties(messageObject)
-    {
+    InspectorTest.sendCommand("CSS.getSupportedCSSProperties", {}, function(messageObject) {
         if ("error" in messageObject)
             InspectorTest.log(messageObject.error.message);
         else {
@@ -24,12 +23,10 @@ function test()
         }
 
         InspectorTest.completeTest();
-    }
-
-    InspectorTest.sendCommand("CSS.getSupportedCSSProperties", {}, handleSupportedCSSProperties);
+    });
 }
 </script>
 </head>
-<body onLoad="runTest();">
+<body onLoad="runTest()">
 </body>
 </html>

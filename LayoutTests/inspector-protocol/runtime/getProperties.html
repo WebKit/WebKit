@@ -1,14 +1,13 @@
 <html>
 <head>
-<script type="text/javascript" src="../http/tests/inspector-protocol/resources/protocol-test.js"></script>
+<script type="text/javascript" src="../../http/tests/inspector-protocol/resources/protocol-test.js"></script>
 <script>
-
 function test()
 {
     // A general-purpose engine for sending a sequence of protocol commands.
     // The clients provide requests and response handlers, while the engine catches
     // errors and makes sure that once there's nothing to do completeTest() is called.
-    // @param step is an object with command, params and callback fields 
+    // @param step is an object with command, params and callback fields
     function runRequestSeries(step) {
         processStep(step);
 
@@ -20,7 +19,7 @@ function test()
                 InspectorTest.completeTest();
             }
         }
-        
+
         function processStepOrFail(s) {
             if (!s) {
                 InspectorTest.completeTest();
@@ -52,7 +51,7 @@ function test()
             InspectorTest.sendCommand(s.command, s.params, innerCallback);
         }
     }
-    
+
     var firstStep = { callback: callbackStart5 };
 
     runRequestSeries(firstStep);
@@ -62,7 +61,7 @@ function test()
     function callbackStart5() {
         // Create an wrapper object with additional property.
         var expression = "(function(){var r = Object(5); r.foo = 'cat';return r;})()";
-        
+
         return { command: "Runtime.evaluate", params: {expression: expression}, callback: callbackEval5 };
     }
     function callbackEval5(result) {
@@ -78,9 +77,9 @@ function test()
         return { callback: callbackStartArray };
     }
 
-    
+
     // 'Array' section -- check properties of an array.
-    
+
     function callbackStartArray() {
         var expression = "['red', 'green', 'blue']";
         return { command: "Runtime.evaluate", params: {expression: expression}, callback: callbackEvalArray };
@@ -98,9 +97,9 @@ function test()
         return { callback: callbackStartBound };
     }
 
-    
+
     // 'Bound' section -- check properties of a bound function (has a bunch of internal properties).
-    
+
     function callbackStartBound() {
         var expression = "Number.bind({}, 5)";
         return { command: "Runtime.evaluate", params: {expression: expression}, callback: callbackEvalBound };
@@ -117,9 +116,9 @@ function test()
         logGetPropertiesResult("Bound function", result);
         return; // End of test
     }
-    
 
-    // A helper function that dumps object properties and internal properties in sorted order.    
+
+    // A helper function that dumps object properties and internal properties in sorted order.
     function logGetPropertiesResult(title, protocolResult) {
         InspectorTest.log("Properties of " + title);
         var propertyArray = protocolResult.result;
@@ -142,7 +141,7 @@ function test()
                 InspectorTest.log("  " + p.name + " " + v.type + " " + v.value);
             }
         }
-    
+
         function NamedThingComparator(o1, o2) {
             return o1.name.localeCompare(o2.name);
         }
@@ -150,6 +149,6 @@ function test()
 }
 </script>
 </head>
-<body onLoad="runTest();">
+<body onLoad="runTest()">
 </body>
 </html>

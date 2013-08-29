@@ -1,32 +1,21 @@
 <html>
 <head>
-<script type="text/javascript" src="../http/tests/inspector-protocol/resources/protocol-test.js"></script>
+<script type="text/javascript" src="../../http/tests/inspector-protocol/resources/protocol-test.js"></script>
 <script>
-if (window.testRunner) {
-    testRunner.dumpAsText();
-    testRunner.waitUntilDone();
-}
-
 var theMediaQueryList = window.matchMedia("print");
-
 theMediaQueryList.addListener(function(aMediaQueryList) {
     objectThatDoesNotExist.produceError();
 });
 
 function test()
 {
-    function didSetEmulatedMedia(messageObject)
-    {
+    InspectorTest.sendCommand("Page.enable", {});
+    InspectorTest.sendCommand("Page.setEmulatedMedia", {"media": "print"}, function(messageObject) {
         if (messageObject.error)
             InspectorTest.log("FAILED: " + messageObject.error.message);
         InspectorTest.sendCommand("Page.disable", {});
         InspectorTest.completeTest();
-    }
-
-    InspectorTest.sendCommand("Page.enable", {});
-    InspectorTest.sendCommand("Page.setEmulatedMedia", {
-        "media": "print"
-    }, didSetEmulatedMedia);
+    });
 }
 </script>
 </head>
