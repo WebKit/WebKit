@@ -1,5 +1,11 @@
 2013-08-28  Gustavo Noronha Silva  <gns@gnome.org>
 
+        Unreviewed build fix - copy/paste failure, copied too much.
+
+        * bindings/gobject/WebKitDOMCustom.h:
+
+2013-08-28  Gustavo Noronha Silva  <gns@gnome.org>
+
         [GTK] HTMLElement lost setID and getID - need to add compatibility symbols
         https://bugs.webkit.org/show_bug.cgi?id=120440
 

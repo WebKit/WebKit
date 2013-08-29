@@ -114,15 +114,6 @@ WEBKIT_API gchar* webkit_dom_html_element_get_id(WebKitDOMHTMLElement* self);
 WEBKIT_API void webkit_dom_html_element_set_id(WebKitDOMHTMLElement* self, const gchar* value);
 
 /**
- * webkit_dom_html_element_get_title:
- * @self: A #WebKitDOMHTMLElement
- *
- * Returns:
- *
-**/
-WEBKIT_API gchar* webkit_dom_html_element_get_title(WebKitDOMHTMLElement* self);
-
-/**
  * webkit_dom_webkit_named_flow_get_overflow:
  * @flow: A #WebKitDOMWebKitNamedFlow
  *
