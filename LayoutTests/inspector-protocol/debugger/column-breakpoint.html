@@ -2,18 +2,19 @@
 <head>
 <script type="text/javascript" src="../../http/tests/inspector-protocol/resources/protocol-test.js"></script>
 <script>
+// Put this here instead of on <body onload> to prevent an extra Debugger.scriptParsed event.
 window.onload = runTest;
+
 function test()
 {
     // This test setting a breakpoint on line:column in the <script> below.
     // We set a breakpoint before evaluating `var b = ...`, and verify that
     // by running some expressions at that call frame.
 
-    // Debugger.enable -> Debugger.setBreakpointsActive
-    InspectorTest.sendCommand("Debugger.enable", {}, function() {
-        InspectorTest.sendCommand("Debugger.setBreakpointsActive", {active: true}, function() {
-            InspectorTest.log("Breakpoints Enabled");
-        });
+    // Debugger.enable, Debugger.setBreakpointsActive
+    InspectorTest.sendCommand("Debugger.enable", {});
+    InspectorTest.sendCommand("Debugger.setBreakpointsActive", {active: true}, function() {
+        InspectorTest.log("Breakpoints Enabled");
     });
 
     // Debugger.scriptParsed -> Debugger.setBreakpoint -> Runtime.evaluate

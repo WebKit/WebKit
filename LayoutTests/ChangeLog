@@ -1,3 +1,28 @@
+2013-08-29  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Consolidate inspector-protocol Debugger tests
+        https://bugs.webkit.org/show_bug.cgi?id=120449
+
+        Reviewed by Timothy Hatcher.
+
+        Move the tests, and clean-up their syntax a bit to be more
+        consistent, readable, and compact.
+
+        * inspector-protocol/debugger/column-breakpoint.html:
+        * inspector-protocol/debugger/pause-dedicated-worker-expected.txt: Renamed from LayoutTests/inspector-protocol/debugger-pause-dedicated-worker-expected.txt.
+        * inspector-protocol/debugger/pause-dedicated-worker.html: Renamed from LayoutTests/inspector-protocol/debugger-pause-dedicated-worker.html.
+        * inspector-protocol/debugger/resources/dedicated-worker.js: Renamed from LayoutTests/inspector-protocol/resources/dedicated-worker.js.
+        * inspector-protocol/debugger/setVariableValue-expected.txt: Renamed from LayoutTests/inspector-protocol/debugger-setVariableValue-expected.txt.
+        * inspector-protocol/debugger/setVariableValue.html: Renamed from LayoutTests/inspector-protocol/debugger-setVariableValue.html.
+        * inspector-protocol/debugger/terminate-dedicated-worker-while-paused-expected.txt: Renamed from LayoutTests/inspector-protocol/debugger-terminate-dedicated-worker-while-paused-expected.txt.
+        * inspector-protocol/debugger/terminate-dedicated-worker-while-paused.html: Renamed from LayoutTests/inspector-protocol/debugger-terminate-dedicated-worker-while-paused.html.
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/qt/TestExpectations:
+        * platform/win/TestExpectations:
+        * platform/wincairo/TestExpectations:
+
 2013-08-29  Chris Curtis  <chris_curtis@apple.com>
 
         VM::throwException() crashes reproducibly in testapi with !ENABLE(JIT)
