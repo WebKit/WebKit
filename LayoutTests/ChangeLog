@@ -1,5 +1,15 @@
 2013-08-29  Simon Pena  <simon.pena@samsung.com>
 
+        [GTK] Unreviewed gardening. Rebaselining after r154479 and r154702
+
+        * platform/gtk/editing/deleting/delete-br-004-expected.txt: Rebaseline after r154479.
+        * platform/gtk/editing/deleting/delete-br-005-expected.txt: Ditto.
+        * platform/gtk/editing/deleting/delete-br-006-expected.txt: Ditto.
+        * platform/gtk/editing/selection/5057506-2-expected.txt: Rebaseline after r154702.
+        * platform/gtk/editing/selection/5057506-expected.txt: Ditto.
+
+2013-08-29  Simon Pena  <simon.pena@samsung.com>
+
         Add setCaptionDisplayMode('Automatic') to remaining tests with track 'default' attribute after r154527
         https://bugs.webkit.org/show_bug.cgi?id=120471
 
