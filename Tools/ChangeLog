@@ -1,3 +1,15 @@
+2013-08-28  Alexey Proskuryakov  <ap@apple.com>
+
+        [WK2][Mac] WebKitTestRunner doesn't force system appearance
+        https://bugs.webkit.org/show_bug.cgi?id=120437
+
+        Reviewed by Darin Adler.
+
+        * WebKitTestRunner/InjectedBundle/mac/InjectedBundleMac.mm:
+        (WTR::InjectedBundle::platformInitialize): Set AppleAquaColorVariant,
+        AppleHighlightColor and AppleOtherHighlightColor to the same values that DRT uses.
+        Fixed formatting.
+
 2013-08-16  Ryosuke Niwa  <rniwa@webkit.org>
 
         <https://webkit.org/b/119806> [Mac] Add a way to easily test attributed string generation
