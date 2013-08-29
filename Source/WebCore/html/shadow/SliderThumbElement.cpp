@@ -256,7 +256,7 @@ void SliderThumbElement::dragFrom(const LayoutPoint& point)
     startDragging();
 }
 
-void SliderThumbElement::setPositionFromPoint(const LayoutPoint& point)
+void SliderThumbElement::setPositionFromPoint(const LayoutPoint& absolutePoint)
 {
     RefPtr<HTMLInputElement> input(hostInput());
     HTMLElement* trackElement = sliderTrackElementOf(input.get());
@@ -265,32 +265,30 @@ void SliderThumbElement::setPositionFromPoint(const LayoutPoint& point)
         return;
 
     input->setTextAsOfLastFormControlChangeEvent(input->value());
-    LayoutPoint offset = roundedLayoutPoint(input->renderer()->absoluteToLocal(point, UseTransforms));
+
+    // Do all the tracking math relative to the input's renderer's box.
+    RenderBox& inputRenderer = *toRenderBox(input->renderer());
+    RenderBox& trackRenderer = *trackElement->renderBox();
+
     bool isVertical = hasVerticalAppearance(input.get());
     bool isLeftToRightDirection = renderBox()->style()->isLeftToRightDirection();
-    LayoutUnit trackSize;
+    
+    LayoutPoint offset = roundedLayoutPoint(inputRenderer.absoluteToLocal(absolutePoint, UseTransforms));
+    FloatRect trackBoundingBox = trackRenderer.localToContainerQuad(FloatRect(0, 0, trackRenderer.width(), trackRenderer.height()), &inputRenderer).enclosingBoundingBox();
+
+    LayoutUnit trackLength;
     LayoutUnit position;
-    LayoutUnit currentPosition;
-    // We need to calculate currentPosition from absolute points becaue the
-    // renderer for this node is usually on a layer and renderBox()->x() and
-    // y() are unusable.
-    // FIXME: This should probably respect transforms.
-    LayoutPoint absoluteThumbOrigin = renderBox()->absoluteBoundingBoxRectIgnoringTransforms().location();
-    LayoutPoint absoluteSliderContentOrigin = roundedLayoutPoint(input->renderer()->localToAbsolute());
-    IntRect trackBoundingBox = trackElement->renderer()->absoluteBoundingBoxRectIgnoringTransforms();
-    IntRect inputBoundingBox = input->renderer()->absoluteBoundingBoxRectIgnoringTransforms();
     if (isVertical) {
-        trackSize = trackElement->renderBox()->contentHeight() - renderBox()->height();
-        position = offset.y() - renderBox()->height() / 2 - trackBoundingBox.y() + inputBoundingBox.y() - renderBox()->marginBottom();
-        currentPosition = absoluteThumbOrigin.y() - absoluteSliderContentOrigin.y();
+        trackLength = trackRenderer.contentHeight() - renderBox()->height();
+        position = offset.y() - renderBox()->height() / 2 - trackBoundingBox.y() - renderBox()->marginBottom();
     } else {
-        trackSize = trackElement->renderBox()->contentWidth() - renderBox()->width();
-        position = offset.x() - renderBox()->width() / 2 - trackBoundingBox.x() + inputBoundingBox.x();
+        trackLength = trackRenderer.contentWidth() - renderBox()->width();
+        position = offset.x() - renderBox()->width() / 2 - trackBoundingBox.x();
         position -= isLeftToRightDirection ? renderBox()->marginLeft() : renderBox()->marginRight();
-        currentPosition = absoluteThumbOrigin.x() - absoluteSliderContentOrigin.x();
     }
-    position = max<LayoutUnit>(0, min(position, trackSize));
-    const Decimal ratio = Decimal::fromDouble(static_cast<double>(position) / trackSize);
+
+    position = max<LayoutUnit>(0, min(position, trackLength));
+    const Decimal ratio = Decimal::fromDouble(static_cast<double>(position) / trackLength);
     const Decimal fraction = isVertical || !isLeftToRightDirection ? Decimal(1) - ratio : ratio;
     StepRange stepRange(input->createStepRange(RejectAny));
     Decimal value = stepRange.clampValue(stepRange.valueFromProportion(fraction));
@@ -302,7 +300,7 @@ void SliderThumbElement::setPositionFromPoint(const LayoutPoint& point)
         if (closest.isFinite()) {
             double closestFraction = stepRange.proportionFromValue(closest).toDouble();
             double closestRatio = isVertical || !isLeftToRightDirection ? 1.0 - closestFraction : closestFraction;
-            LayoutUnit closestPosition = trackSize * closestRatio;
+            LayoutUnit closestPosition = trackLength * closestRatio;
             if ((closestPosition - position).abs() <= snappingThreshold)
                 value = closest;
         }

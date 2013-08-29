@@ -1,3 +1,23 @@
+2013-08-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix slider thumb event handling to use local, not absolute coordinates
+        https://bugs.webkit.org/show_bug.cgi?id=120480
+
+        Reviewed by Darin Adler.
+        
+        SliderThumbElement::setPositionFromPoint() did all of its coordinate
+        math by mapping renderer rects into absolute coordinates, which was
+        unnecessary and expensive.
+        
+        Fix by doing all the math in the coordinate space of the input's
+        renderer. This simplified the code. Also, currentPosition
+        was computed but unused, so was removed.
+
+        No behavior change. Tested by fast/forms/range/slider-transformed.html
+
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::SliderThumbElement::setPositionFromPoint):
+
 2013-08-29  Zan Dobersek  <zdobersek@igalia.com>
 
         [Automake] libWebCoreDOM.la could use a better name
