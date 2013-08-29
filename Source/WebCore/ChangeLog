@@ -1,3 +1,50 @@
+2013-08-29  Robert Hogan  <robert@webkit.org>
+
+        Positioned Replaced Elements That Aren't RenderReplaced get Incorrect Width
+        https://bugs.webkit.org/show_bug.cgi?id=93735
+
+        Reviewed by David Hyatt.
+
+        Replaced elements that aren't RenderReplaced aren't |isReplaced| and don't have an 
+        intrinsic height or width. This causes them to go down the wrong height and width computation
+        path in RenderBox when they are absolute positioned. 
+        
+        The notion of |isReplaced| is entwined with the notion of being |isInline| so it isn't really 
+        possible to make them isReplaced without re-wiring a lot of code. So instead use an ad-hoc definition
+        of isReplacedElement in RenderBox to bring all replaced elements into the height and width calculation.
+        To make sure we get the right height and width in there, give non-RenderReplaced replaced renderers
+        the helpers for returning their approximation of intrinsic height and width.
+
+        The initial attempt at landing this patch had to be rolled out because it used LayoutUnit() for default
+        intrinsic height of some replaced elements and this made the layout of the elements unstable in some sites.
+        The fix for this issue is captured in intrinsic-button-and-input-height.html.
+
+        Tests: fast/replaced/intrinsic-button-and-input-height.html
+               fast/replaced/width-and-height-of-positioned-replaced-elements.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::isReplacedElement):
+        (WebCore::RenderBox::computePositionedLogicalWidth):
+        (WebCore::RenderBox::computePositionedLogicalHeight):
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::intrinsicSize):
+        * rendering/RenderButton.h:
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::computePreferredLogicalWidths):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::RenderListBox):
+        (WebCore::RenderListBox::computePreferredLogicalWidths):
+        (WebCore::RenderListBox::computeLogicalHeight):
+        * rendering/RenderListBox.h:
+        * rendering/RenderMenuList.h:
+        * rendering/RenderReplaced.h:
+        * rendering/RenderSlider.cpp:
+        (WebCore::RenderSlider::computePreferredLogicalWidths):
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::RenderTextControl):
+        (WebCore::RenderTextControl::computeLogicalHeight):
+        * rendering/RenderTextControl.h:
+
 2013-08-29  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Unreviewed gardening. Add missing *.css files from project.

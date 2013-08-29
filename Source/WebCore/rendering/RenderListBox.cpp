@@ -89,6 +89,7 @@ RenderListBox::RenderListBox(Element* element)
     , m_inAutoscroll(false)
     , m_optionsWidth(0)
     , m_indexOffset(0)
+    , m_intrinsicLogicalHeight(0)
 {
     ASSERT(element);
     ASSERT(element->isHTMLElement());
@@ -232,7 +233,7 @@ void RenderListBox::computePreferredLogicalWidths()
         m_minPreferredLogicalWidth = min(m_minPreferredLogicalWidth, adjustContentBoxLogicalWidthForBoxSizing(style()->maxWidth().value()));
     }
 
-    LayoutUnit toAdd = borderAndPaddingWidth();
+    LayoutUnit toAdd = borderAndPaddingLogicalWidth();
     m_minPreferredLogicalWidth += toAdd;
     m_maxPreferredLogicalWidth += toAdd;
                                 
@@ -266,8 +267,8 @@ LayoutUnit RenderListBox::listHeight() const
 
 void RenderListBox::computeLogicalHeight(LayoutUnit, LayoutUnit logicalTop, LogicalExtentComputedValues& computedValues) const
 {
-    LayoutUnit height = itemHeight() * size() - rowSpacing + borderAndPaddingHeight();
-    RenderBox::computeLogicalHeight(height, logicalTop, computedValues);
+    m_intrinsicLogicalHeight = itemHeight() * size() - rowSpacing + borderAndPaddingLogicalHeight();
+    RenderBox::computeLogicalHeight(m_intrinsicLogicalHeight, logicalTop, computedValues);
 }
 
 int RenderListBox::baselinePosition(FontBaseline baselineType, bool firstLine, LineDirectionMode lineDirection, LinePositionMode linePositionMode) const

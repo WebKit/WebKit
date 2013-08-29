@@ -1,3 +1,16 @@
+2013-08-29  Robert Hogan  <robert@webkit.org>
+
+        Positioned Replaced Elements That Aren't RenderReplaced get Incorrect Width
+        https://bugs.webkit.org/show_bug.cgi?id=93735
+
+        Reviewed by David Hyatt.
+
+        * fast/replaced/intrinsic-button-and-input-height-expected.txt: Added.
+        * fast/replaced/intrinsic-button-and-input-height.html: Added.
+        * fast/replaced/width-and-height-of-positioned-replaced-elements.html: Added.
+        * platform/qt/fast/replaced/width-and-height-of-positioned-replaced-elements-expected.png: Added.
+        * platform/qt/fast/replaced/width-and-height-of-positioned-replaced-elements-expected.txt: Added.
+
 2013-08-29  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Consolidate inspector-protocol Debugger tests

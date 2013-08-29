@@ -211,7 +211,7 @@ void RenderFileUploadControl::computePreferredLogicalWidths()
         m_minPreferredLogicalWidth = min(m_minPreferredLogicalWidth, adjustContentBoxLogicalWidthForBoxSizing(style()->maxWidth().value()));
     }
 
-    int toAdd = borderAndPaddingWidth();
+    int toAdd = borderAndPaddingLogicalWidth();
     m_minPreferredLogicalWidth += toAdd;
     m_maxPreferredLogicalWidth += toAdd;
 

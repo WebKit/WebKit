@@ -81,6 +81,10 @@ private:
     virtual bool canBeProgramaticallyScrolled() const { return true; }
 
     virtual bool requiresForcedStyleRecalcPropagation() const { return true; }
+
+    virtual LayoutSize intrinsicSize() const OVERRIDE FINAL { return LayoutSize(maxPreferredLogicalWidth() - borderAndPaddingLogicalWidth(), m_intrinsicLogicalHeight - borderAndPaddingLogicalHeight()); }
+
+    mutable LayoutUnit m_intrinsicLogicalHeight;
 };
 
 inline RenderTextControl* toRenderTextControl(RenderObject* object)

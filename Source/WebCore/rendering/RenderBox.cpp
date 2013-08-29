@@ -3095,9 +3095,15 @@ static void computeInlineStaticDistance(Length& logicalLeft, Length& logicalRigh
     }
 }
 
+static bool isReplacedElement(const RenderBox* child)
+{
+    // FIXME: Bug 117267, we should make form control elements isReplaced too so that we can just check for that.
+    return child->isReplaced() || (child->node() && child->node()->isElementNode() && toElement(child->node())->isFormControlElement() && !child->isFieldset());
+}
+
 void RenderBox::computePositionedLogicalWidth(LogicalExtentComputedValues& computedValues, RenderRegion* region) const
 {
-    if (isReplaced()) {
+    if (isReplacedElement(this)) {
         // FIXME: Positioned replaced elements inside a flow thread are not working properly
         // with variable width regions (see https://bugs.webkit.org/show_bug.cgi?id=69896 ).
         computePositionedLogicalWidthReplaced(computedValues);
@@ -3438,7 +3444,7 @@ static void computeBlockStaticDistance(Length& logicalTop, Length& logicalBottom
 
 void RenderBox::computePositionedLogicalHeight(LogicalExtentComputedValues& computedValues) const
 {
-    if (isReplaced()) {
+    if (isReplacedElement(this)) {
         computePositionedLogicalHeightReplaced(computedValues);
         return;
     }

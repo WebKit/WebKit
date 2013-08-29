@@ -38,6 +38,7 @@ namespace WebCore {
 
 RenderTextControl::RenderTextControl(Element* element)
     : RenderBlock(element)
+    , m_intrinsicLogicalHeight(0)
 {
     ASSERT(isHTMLTextFormControlElement(element));
 }
@@ -142,21 +143,20 @@ int RenderTextControl::scrollbarThickness() const
     return ScrollbarTheme::theme()->scrollbarThickness();
 }
 
-void RenderTextControl::computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues& computedValues) const
+void RenderTextControl::computeLogicalHeight(LayoutUnit, LayoutUnit logicalTop, LogicalExtentComputedValues& computedValues) const
 {
     HTMLElement* innerText = innerTextElement();
     ASSERT(innerText);
     if (RenderBox* innerTextBox = innerText->renderBox()) {
         LayoutUnit nonContentHeight = innerTextBox->borderAndPaddingHeight() + innerTextBox->marginHeight();
-        logicalHeight = computeControlLogicalHeight(innerTextBox->lineHeight(true, HorizontalLine, PositionOfInteriorLineBoxes), nonContentHeight) + borderAndPaddingHeight();
+        m_intrinsicLogicalHeight = computeControlLogicalHeight(innerTextBox->lineHeight(true, HorizontalLine, PositionOfInteriorLineBoxes), nonContentHeight) + borderAndPaddingLogicalHeight();
 
         // We are able to have a horizontal scrollbar if the overflow style is scroll, or if its auto and there's no word wrap.
         if ((isHorizontalWritingMode() && (style()->overflowX() == OSCROLL ||  (style()->overflowX() == OAUTO && innerText->renderer()->style()->overflowWrap() == NormalOverflowWrap)))
             || (!isHorizontalWritingMode() && (style()->overflowY() == OSCROLL ||  (style()->overflowY() == OAUTO && innerText->renderer()->style()->overflowWrap() == NormalOverflowWrap))))
-            logicalHeight += scrollbarThickness();
+            m_intrinsicLogicalHeight += scrollbarThickness();
     }
-
-    RenderBox::computeLogicalHeight(logicalHeight, logicalTop, computedValues);
+    RenderBox::computeLogicalHeight(m_intrinsicLogicalHeight, logicalTop, computedValues);
 }
 
 void RenderTextControl::hitInnerTextElement(HitTestResult& result, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset)

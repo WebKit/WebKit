@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+input, select, textarea {
+    left: 5px;
+    right: 5px;
+    position: absolute;
+}
+</style>
+</head>
+<body>
+    <!-- webkit.org/b/93735: Use the replaced height and width computation for positioned form controls -->
+    <input id="input" style="top: 30px">
+    <input type="button" id="button" value="text" style="top: 80px">
+    <select id="select" style="top: 130px"><option>test</select>
+    <textarea id="textarea" style="top: 180px"></textarea>
+</body>
+</html>
