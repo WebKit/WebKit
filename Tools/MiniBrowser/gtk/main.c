@@ -247,6 +247,7 @@ int main(int argc, char *argv[])
 
     WebKitSettings *webkitSettings = webkit_settings_new();
     webkit_settings_set_enable_developer_extras(webkitSettings, TRUE);
+    webkit_settings_set_enable_webgl(webkitSettings, TRUE);
     if (!addSettingsGroupToContext(context, webkitSettings)) {
         g_object_unref(webkitSettings);
         webkitSettings = 0;

@@ -1,3 +1,15 @@
+2013-08-29  Andre Moreira Magalhaes   <andre.magalhaes@collabora.co.uk>
+
+        [GTK] Should enable WebGL by default on MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=120420
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Enable WebGL by default on MiniBrowser.
+
+        * MiniBrowser/gtk/main.c:
+        (main):
+
 2013-08-28  Simon Fraser  <simon.fraser@apple.com>
 
         Add a Command-R shortcut in MiniBrowser
