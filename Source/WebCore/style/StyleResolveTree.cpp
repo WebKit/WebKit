@@ -171,6 +171,7 @@ static bool elementInsideRegionNeedsRenderer(Element& element, const ContainerNo
     return false;
 }
 
+#if ENABLE(CSS_REGIONS)
 static RenderNamedFlowThread* moveToFlowThreadIfNeeded(Element& element, const RenderStyle& style)
 {
     if (!element.shouldMoveToFlowThread(style))
@@ -180,6 +181,7 @@ static RenderNamedFlowThread* moveToFlowThreadIfNeeded(Element& element, const R
     flowThreadController.registerNamedFlowContentNode(&element, &parentFlowRenderer);
     return &parentFlowRenderer;
 }
+#endif
 
 static void createRendererIfNeeded(Element& element, const AttachContext& context)
 {

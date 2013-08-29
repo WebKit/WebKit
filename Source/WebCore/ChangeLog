@@ -1,3 +1,15 @@
+2013-08-29  Tamas Czene  <tczene@inf.u-szeged.hu>
+
+        Buildfix after r154806 for !ENABLE(CSS_REGIONS) platforms.
+        https://bugs.webkit.org/show_bug.cgi?id=120461
+
+        Reviewed by Csaba Osztrogonác.
+
+        moveToFlowThreadIfNeeded() is used only inside of ENABLE(CSS_REGIONS)
+        block (and only once), so it should be guarded too.
+
+        * style/StyleResolveTree.cpp:
+
 2013-08-29  David Kilzer  <ddkilzer@apple.com>
 
         BUILD FIX (r154778): AXSearchFieldCancelButtonText() is not defined on iOS
