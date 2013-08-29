@@ -1,3 +1,21 @@
+2013-08-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Expand classList test to cover exception in toString
+        https://bugs.webkit.org/show_bug.cgi?id=120444
+
+        Reviewed by Benjamin Poulain.
+
+        Merge https://chromium.googlesource.com/chromium/blink/+/825fefb837133d5545964c17f6aa4b62bfe3df0c
+
+        When add and remove is called and there is an exception being thrown
+        in one of the arguments we need to ensure that we are not calling the
+        implementation of add and remove.
+
+        * fast/dom/HTMLElement/class-list-expected.txt:
+        * fast/dom/HTMLElement/class-list-quirks-expected.txt:
+        * fast/dom/HTMLElement/script-tests/class-list.js:
+        (shouldBeEqualToString):
+
 2013-08-28  Chris Curtis  <chris_curtis@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=119548

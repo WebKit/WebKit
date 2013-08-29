@@ -94,12 +94,16 @@ PASS element.classList.add('a', 'b', '') threw expected DOMException with code 1
 PASS element.className is ""
 PASS element.classList.add('a', 'b', 'c d') threw expected DOMException with code 5
 PASS element.className is ""
+PASS element.classList.add("a", {toString: function() { throw new Error("user error"); }}, "b") threw exception Error: user error.
+PASS element.className is ""
 PASS element.classList.add() did not throw exception.
 PASS observer.takeRecords().length is 1
 PASS element.className is "b d  "
 PASS element.className is "d  "
 PASS element.className is "a b c"
 PASS element.classList.remove('a', 'b', '') threw expected DOMException with code 12
+PASS element.className is "a b"
+PASS element.classList.remove("a", {toString: function() { throw new Error("user error"); }}, "b") threw exception Error: user error.
 PASS element.className is "a b"
 PASS element.classList.remove('a', 'b', 'c d') threw expected DOMException with code 5
 PASS element.className is "a b"
