@@ -1,3 +1,29 @@
+2013-08-29  Simon Pena  <simon.pena@samsung.com>
+
+        Add setCaptionDisplayMode('Automatic') to remaining tests with track 'default' attribute after r154527
+        https://bugs.webkit.org/show_bug.cgi?id=120471
+
+        Reviewed by Eric Carlson.
+
+        As done in r154527, some LayoutTests with track 'default' attribute
+        need the caption mode set to automatic.
+
+        * media/track/track-css-all-cues.html:
+        * media/track/track-css-cue-lifetime.html:
+        * media/track/track-css-matching-default.html:
+        * media/track/track-css-matching-lang.html:
+        * media/track/track-css-matching-timestamps.html:
+        * media/track/track-css-matching.html:
+        * media/track/track-css-property-whitelist.html:
+        * media/track/track-css-user-override.html:
+        * media/track/track-cue-container-rendering-position.html:
+        * media/track/track-cue-nothing-to-render.html:
+        * media/track/track-cue-rendering-on-resize.html:
+        * media/track/track-cue-rendering-rtl.html:
+        * media/track/track-cue-rendering-snap-to-lines-not-set.html:
+        * media/track/track-cue-rendering-with-padding.html:
+        * media/track/track-cue-rendering.html:
+
 2013-08-29  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         [GTK] Skip grammar checking tests.

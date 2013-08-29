@@ -67,6 +67,8 @@
             waitForEvent('seeked', seeked);
             waitForEvent('canplaythrough', function() { video.currentTime = .25; });
         }
+
+        setCaptionDisplayMode('Automatic');
         </script>
     </head>
     <body onload="loaded()">
