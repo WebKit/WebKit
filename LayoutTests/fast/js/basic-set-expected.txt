@@ -11,10 +11,10 @@ PASS Set(null) instanceof Set is true
 PASS Set(undefined) instanceof Set is true
 PASS Set(undefined, undefined) instanceof Set is true
 PASS Set(null, undefined) instanceof Set is true
-PASS Set(1) threw exception TypeError: Set constructor does not accept arguments.
-PASS Set(true) threw exception TypeError: Set constructor does not accept arguments.
-PASS Set([]) threw exception TypeError: Set constructor does not accept arguments.
-PASS Set({}) threw exception TypeError: Set constructor does not accept arguments.
+PASS Set(1) threw exception TypeError: Set does not accept arguments when called as a function.
+PASS Set(true) threw exception TypeError: Set does not accept arguments when called as a function.
+PASS Set([]) threw exception TypeError: Set does not accept arguments when called as a function.
+PASS Set({}) threw exception TypeError: Set does not accept arguments when called as a function.
 PASS Set(undefined, null) threw exception RangeError: Invalid comparator function.
 PASS Set(undefined, {}) threw exception RangeError: Invalid comparator function.
 1

@@ -1,3 +1,9 @@
+2013-08-30  Oliver Hunt  <oliver@apple.com>
+
+        Fix expected output
+
+        * fast/js/basic-set-expected.txt:
+
 2013-08-30  Dean Jackson  <dino@apple.com>
 
         http://webkit.org/b/120490
