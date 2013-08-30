@@ -1,3 +1,16 @@
+2013-08-30  Chris Curtis  <chris_curtis@apple.com>
+
+        Cleaning errorDescriptionForValue after r154839
+        https://bugs.webkit.org/show_bug.cgi?id=120531
+        
+        Reviewed by Darin Adler.
+        
+        Changed the assert to ASSERT_NOT_REACHED, now that r154839 has landed. errorDescriptionForValue 
+        can assert again that the parameterized JSValue is !isEmpty().
+        
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::errorDescriptionForValue):
+
 2013-08-30  Antti Koivisto  <antti@apple.com>
 
         Remove code behind ENABLE(DIALOG_ELEMENT)

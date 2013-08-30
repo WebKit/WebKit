@@ -109,8 +109,8 @@ JSString* errorDescriptionForValue(ExecState* exec, JSValue v)
         return jsString(exec, object->methodTable()->className(object));
     }
     
-    ASSERT(v.isEmpty());
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=120080 The JSValue should never be empty in this function.
+    // The JSValue should never be empty, so this point in the code should never be reached.
+    ASSERT_NOT_REACHED();
     return vm.smallStrings.emptyString();
 }
     
