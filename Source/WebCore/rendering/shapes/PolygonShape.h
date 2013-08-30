@@ -32,7 +32,6 @@
 
 #include "FloatPolygon.h"
 #include "Shape.h"
-#include "ShapeInterval.h"
 
 namespace WebCore {
 

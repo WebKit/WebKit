@@ -1,3 +1,64 @@
+2013-08-30  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Shapes] Redefine the ShapeIntervals class as a template
+        https://bugs.webkit.org/show_bug.cgi?id=120381
+
+        Reviewed by Alexandru Chiculita.
+
+        No new tests, this was just an internal refactoring.
+
+        The existing ShapeIntervals class has been converted into a template whose
+        type specifies the type of the interval's x1 and x2 horizontal endpoints
+        (formerly float). There were several other minor changes, all in the realm
+        of refactoring:
+
+        - The original type was a struct with public x1 and x2 fields. It's now a class
+        with x1 and x2 accessors. ASSERTS are now used to maintain the x2 >= x1 invariant.
+        In the original code the invariant was not checked.
+
+        - The logical comparison operators have been overloaded for ShapeInterval.
+        This obviates the IntervalX1Comparator class which has been removed.
+
+        - The names of the global ShapeInterval Vector set operation methods have been
+        changed to reflect the fact that they're now members of the template class,
+        rather than globals.
+
+        PolygonShape.cpp depended on the ShapeInterval class. In the one or two places
+        where an interval's x1 or x1 fields had been set explicitly, ShapeInterval::set()
+        is now used to set both fields. This also enables the invariant check mentioned
+        earlier. The other changes to this class are syntatic, to account for the ShapeInterval
+        class's changes.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/shapes/PolygonShape.cpp:
+        (WebCore::appendIntervalX):
+        (WebCore::computeXIntersections):
+        (WebCore::computeOverlappingEdgeXProjections):
+        (WebCore::PolygonShape::getExcludedIntervals):
+        (WebCore::PolygonShape::getIncludedIntervals):
+        * rendering/shapes/PolygonShape.h:
+        * rendering/shapes/ShapeInterval.cpp: Removed.
+        * rendering/shapes/ShapeInterval.h: The entire implementation is now here. 
+        (WebCore::ShapeInterval::ShapeInterval):
+        (WebCore::ShapeInterval::x1):
+        (WebCore::ShapeInterval::x2):
+        (WebCore::ShapeInterval::set):
+        (WebCore::ShapeInterval::overlaps):
+        (WebCore::ShapeInterval::intersect):
+        (WebCore::ShapeInterval::sortVector):
+        (WebCore::ShapeInterval::uniteVectors):
+        (WebCore::ShapeInterval::intersectVectors):
+        (WebCore::ShapeInterval::subtractVectors):
+        (WebCore::operator==):
+        (WebCore::operator!=):
+        (WebCore::operator< ):
+        (WebCore::operator> ):
+        (WebCore::operator<=):
+        (WebCore::operator>=):
+
 2013-08-30  Antti Koivisto  <antti@apple.com>
 
         Use Element& in StyleResolveTree

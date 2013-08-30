@@ -30,6 +30,7 @@
 #include "config.h"
 #include "PolygonShape.h"
 
+#include "ShapeInterval.h"
 #include <wtf/MathExtras.h>
 
 namespace WebCore {
@@ -224,12 +225,12 @@ static inline bool getVertexIntersectionVertices(const EdgeIntersection& interse
     return true;
 }
 
-static inline bool appendIntervalX(float x, bool inside, Vector<ShapeInterval>& result)
+static inline bool appendIntervalX(float x, bool inside, FloatShapeIntervals& result)
 {
     if (!inside)
-        result.append(ShapeInterval(x));
+        result.append(FloatShapeInterval(x, x));
     else
-        result[result.size() - 1].x2 = x;
+        result.last().setX2(x);
 
     return !inside;
 }
@@ -241,7 +242,7 @@ static bool compareEdgeIntersectionX(const EdgeIntersection& intersection1, cons
     return (x1 == x2) ? intersection1.type < intersection2.type : x1 < x2;
 }
 
-static void computeXIntersections(const FloatPolygon& polygon, float y, bool isMinY, Vector<ShapeInterval>& result)
+static void computeXIntersections(const FloatPolygon& polygon, float y, bool isMinY, FloatShapeIntervals& result)
 {
     Vector<const FloatPolygonEdge*> edges;
     if (!polygon.overlappingEdges(y, y, edges))
@@ -311,7 +312,7 @@ static void computeXIntersections(const FloatPolygon& polygon, float y, bool isM
     }
 }
 
-static void computeOverlappingEdgeXProjections(const FloatPolygon& polygon, float y1, float y2, Vector<ShapeInterval>& result)
+static void computeOverlappingEdgeXProjections(const FloatPolygon& polygon, float y1, float y2, FloatShapeIntervals& result)
 {
     Vector<const FloatPolygonEdge*> edges;
     if (!polygon.overlappingEdges(y1, y2, edges))
@@ -339,10 +340,10 @@ static void computeOverlappingEdgeXProjections(const FloatPolygon& polygon, floa
             std::swap(x1, x2);
 
         if (x2 > x1)
-            result.append(ShapeInterval(x1, x2));
+            result.append(FloatShapeInterval(x1, x2));
     }
 
-    sortShapeIntervals(result);
+    FloatShapeInterval::sortVector(result);
 }
 
 void PolygonShape::getExcludedIntervals(LayoutUnit logicalTop, LayoutUnit logicalHeight, SegmentList& result) const
@@ -354,22 +355,22 @@ void PolygonShape::getExcludedIntervals(LayoutUnit logicalTop, LayoutUnit logica
     float y1 = logicalTop;
     float y2 = logicalTop + logicalHeight;
 
-    Vector<ShapeInterval> y1XIntervals, y2XIntervals;
+    FloatShapeIntervals y1XIntervals, y2XIntervals;
     computeXIntersections(polygon, y1, true, y1XIntervals);
     computeXIntersections(polygon, y2, false, y2XIntervals);
 
-    Vector<ShapeInterval> mergedIntervals;
-    mergeShapeIntervals(y1XIntervals, y2XIntervals, mergedIntervals);
+    FloatShapeIntervals mergedIntervals;
+    FloatShapeInterval::uniteVectors(y1XIntervals, y2XIntervals, mergedIntervals);
 
-    Vector<ShapeInterval> edgeIntervals;
+    FloatShapeIntervals edgeIntervals;
     computeOverlappingEdgeXProjections(polygon, y1, y2, edgeIntervals);
 
-    Vector<ShapeInterval> excludedIntervals;
-    mergeShapeIntervals(mergedIntervals, edgeIntervals, excludedIntervals);
+    FloatShapeIntervals excludedIntervals;
+    FloatShapeInterval::uniteVectors(mergedIntervals, edgeIntervals, excludedIntervals);
 
     for (unsigned i = 0; i < excludedIntervals.size(); ++i) {
-        ShapeInterval interval = excludedIntervals[i];
-        result.append(LineSegment(interval.x1, interval.x2));
+        FloatShapeInterval interval = excludedIntervals[i];
+        result.append(LineSegment(interval.x1(), interval.x2()));
     }
 }
 
@@ -382,22 +383,22 @@ void PolygonShape::getIncludedIntervals(LayoutUnit logicalTop, LayoutUnit logica
     float y1 = logicalTop;
     float y2 = logicalTop + logicalHeight;
 
-    Vector<ShapeInterval> y1XIntervals, y2XIntervals;
+    FloatShapeIntervals y1XIntervals, y2XIntervals;
     computeXIntersections(polygon, y1, true, y1XIntervals);
     computeXIntersections(polygon, y2, false, y2XIntervals);
 
-    Vector<ShapeInterval> commonIntervals;
-    intersectShapeIntervals(y1XIntervals, y2XIntervals, commonIntervals);
+    FloatShapeIntervals commonIntervals;
+    FloatShapeInterval::intersectVectors(y1XIntervals, y2XIntervals, commonIntervals);
 
-    Vector<ShapeInterval> edgeIntervals;
+    FloatShapeIntervals edgeIntervals;
     computeOverlappingEdgeXProjections(polygon, y1, y2, edgeIntervals);
 
-    Vector<ShapeInterval> includedIntervals;
-    subtractShapeIntervals(commonIntervals, edgeIntervals, includedIntervals);
+    FloatShapeIntervals includedIntervals;
+    FloatShapeInterval::subtractVectors(commonIntervals, edgeIntervals, includedIntervals);
 
     for (unsigned i = 0; i < includedIntervals.size(); ++i) {
-        ShapeInterval interval = includedIntervals[i];
-        result.append(LineSegment(interval.x1, interval.x2));
+        const FloatShapeInterval& interval = includedIntervals[i];
+        result.append(LineSegment(interval.x1(), interval.x2()));
     }
 }
 

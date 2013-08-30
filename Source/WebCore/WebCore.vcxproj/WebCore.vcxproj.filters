@@ -2451,9 +2451,6 @@
     <ClCompile Include="..\rendering\shapes\ShapeInsideInfo.cpp">
       <Filter>rendering</Filter>
     </ClCompile>
-    <ClCompile Include="..\rendering\shapes\ShapeInterval.cpp">
-      <Filter>rendering</Filter>
-    </ClCompile>
     <ClCompile Include="..\rendering\shapes\ShapeOutsideInfo.cpp">
       <Filter>rendering</Filter>
     </ClCompile>

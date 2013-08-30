@@ -1238,7 +1238,6 @@ SOURCES += \
     rendering/shapes/Shape.cpp \
     rendering/shapes/ShapeInfo.cpp \
     rendering/shapes/ShapeInsideInfo.cpp \
-    rendering/shapes/ShapeInterval.cpp \
     rendering/shapes/ShapeOutsideInfo.cpp \
     rendering/style/BasicShapes.cpp \
     rendering/style/ContentData.cpp \

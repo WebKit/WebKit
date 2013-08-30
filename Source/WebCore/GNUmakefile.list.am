@@ -4574,7 +4574,6 @@ webcore_sources += \
 	Source/WebCore/rendering/shapes/ShapeInfo.h \
 	Source/WebCore/rendering/shapes/ShapeInsideInfo.cpp \
 	Source/WebCore/rendering/shapes/ShapeInsideInfo.h \
-	Source/WebCore/rendering/shapes/ShapeInterval.cpp \
 	Source/WebCore/rendering/shapes/ShapeInterval.h \
 	Source/WebCore/rendering/shapes/ShapeOutsideInfo.cpp \
 	Source/WebCore/rendering/shapes/ShapeOutsideInfo.h \

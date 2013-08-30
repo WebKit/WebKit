@@ -11011,7 +11011,6 @@
     <ClCompile Include="..\rendering\shapes\RectangleShape.cpp" />
     <ClCompile Include="..\rendering\shapes\Shape.cpp" />
     <ClCompile Include="..\rendering\shapes\ShapeInsideInfo.cpp" />
-    <ClCompile Include="..\rendering\shapes\ShapeInterval.cpp" />
     <ClCompile Include="..\rendering\shapes\ShapeOutsideInfo.cpp" />
     <ClCompile Include="..\rendering\svg\SVGPathData.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
