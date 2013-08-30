@@ -1375,11 +1375,8 @@ void Element::unregisterNamedFlowContentNode()
 
 void Element::lazyReattach(ShouldSetAttached shouldSetAttached)
 {
-    Style::AttachContext context;
-    context.performingReattach = true;
-
     if (attached())
-        Style::detachRenderTree(this, context);
+        Style::detachRenderTreeInReattachMode(this);
     lazyAttach(shouldSetAttached);
 }
 

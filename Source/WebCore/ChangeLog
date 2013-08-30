@@ -1,3 +1,24 @@
+2013-08-30  Antti Koivisto  <antti@apple.com>
+
+        Remove AttachContext
+        https://bugs.webkit.org/show_bug.cgi?id=120518
+
+        Reviewed by Andreas Kling.
+
+        This type is not useful anymore. Just pass the precomputed style to attachRenderTree and reattach-or-not flag to detachRenderTree.
+
+        * style/StyleResolveTree.cpp:
+        (WebCore::Style::createRendererIfNeeded):
+        (WebCore::Style::attachChildren):
+        (WebCore::Style::attachShadowRoot):
+        (WebCore::Style::attachRenderTree):
+        (WebCore::Style::detachChildren):
+        (WebCore::Style::detachShadowRoot):
+        (WebCore::Style::detachRenderTree):
+        (WebCore::Style::reattachRenderTree):
+        (WebCore::Style::resolveLocal):
+        * style/StyleResolveTree.h:
+
 2013-08-30  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r154826.

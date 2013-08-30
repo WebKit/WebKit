@@ -54,6 +54,11 @@ namespace WebCore {
 
 namespace Style {
 
+enum DetachType { NormalDetach, ReattachDetach };
+
+static void attachRenderTree(Element*, RenderStyle* resolvedStyle);
+static void detachRenderTree(Element*, DetachType);
+
 Change determineChange(const RenderStyle* s1, const RenderStyle* s2, Settings* settings)
 {
     if (!s1 || !s2)
@@ -188,14 +193,14 @@ static RenderNamedFlowThread* moveToFlowThreadIfNeeded(Element& element, const R
 }
 #endif
 
-static void createRendererIfNeeded(Element& element, const AttachContext& context)
+static void createRendererIfNeeded(Element& element, RenderStyle* resolvedStyle)
 {
     ASSERT(!element.renderer());
 
     Document& document = *element.document();
     ContainerNode* renderingParentNode = NodeRenderingTraversal::parent(&element);
 
-    RefPtr<RenderStyle> style = context.resolvedStyle;
+    RefPtr<RenderStyle> style = resolvedStyle;
 
     element.setIsInsideRegion(false);
 
@@ -431,11 +436,8 @@ static bool childAttachedAllowedWhenAttachingChildren(ContainerNode& node)
 }
 #endif
 
-static void attachChildren(ContainerNode& current, const AttachContext& context)
+static void attachChildren(ContainerNode& current)
 {
-    AttachContext childrenContext(context);
-    childrenContext.resolvedStyle = 0;
-
     for (Node* child = current.firstChild(); child; child = child->nextSibling()) {
         ASSERT(!child->attached() || childAttachedAllowedWhenAttachingChildren(current));
         if (child->attached())
@@ -445,18 +447,18 @@ static void attachChildren(ContainerNode& current, const AttachContext& context)
             continue;
         }
         if (child->isElementNode())
-            attachRenderTree(toElement(child), childrenContext);
+            attachRenderTree(toElement(child), nullptr);
     }
 }
 
-static void attachShadowRoot(ShadowRoot& shadowRoot, const AttachContext& context)
+static void attachShadowRoot(ShadowRoot& shadowRoot)
 {
     if (shadowRoot.attached())
         return;
     StyleResolver& styleResolver = shadowRoot.document()->ensureStyleResolver();
     styleResolver.pushParentShadowRoot(&shadowRoot);
 
-    attachChildren(shadowRoot, context);
+    attachChildren(shadowRoot);
 
     styleResolver.popParentShadowRoot(&shadowRoot);
 
@@ -464,7 +466,7 @@ static void attachShadowRoot(ShadowRoot& shadowRoot, const AttachContext& contex
     shadowRoot.setAttached(true);
 }
 
-void attachRenderTree(Element* current, const AttachContext& context)
+static void attachRenderTree(Element* current, RenderStyle* resolvedStyle)
 {
     PostAttachCallbackDisabler callbackDisabler(current);
     WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
@@ -472,7 +474,7 @@ void attachRenderTree(Element* current, const AttachContext& context)
     if (current->hasCustomStyleResolveCallbacks())
         current->willAttachRenderers();
 
-    createRendererIfNeeded(*current, context);
+    createRendererIfNeeded(*current, resolvedStyle);
 
     if (current->parentElement() && current->parentElement()->isInCanvasSubtree())
         current->setIsInCanvasSubtree(true);
@@ -484,11 +486,11 @@ void attachRenderTree(Element* current, const AttachContext& context)
     // When a shadow root exists, it does the work of attaching the children.
     if (ShadowRoot* shadowRoot = current->shadowRoot()) {
         parentPusher.push();
-        attachShadowRoot(*shadowRoot, context);
+        attachShadowRoot(*shadowRoot);
     } else if (current->firstChild())
         parentPusher.push();
 
-    attachChildren(*current, context);
+    attachChildren(*current);
 
     Node* sibling = current->nextSibling();
     if (current->renderer() && sibling && !sibling->renderer() && sibling->attached())
@@ -510,32 +512,29 @@ void attachRenderTree(Element* current, const AttachContext& context)
         current->didAttachRenderers();
 }
 
-static void detachChildren(ContainerNode& current, const AttachContext& context)
+static void detachChildren(ContainerNode& current, DetachType detachType)
 {
-    AttachContext childrenContext(context);
-    childrenContext.resolvedStyle = 0;
-
     for (Node* child = current.firstChild(); child; child = child->nextSibling()) {
         if (child->isTextNode()) {
             Style::detachTextRenderer(*toText(child));
             continue;
         }
         if (child->isElementNode())
-            detachRenderTree(toElement(child), childrenContext);
+            detachRenderTree(toElement(child), detachType);
     }
     current.clearChildNeedsStyleRecalc();
 }
 
-static void detachShadowRoot(ShadowRoot& shadowRoot, const AttachContext& context)
+static void detachShadowRoot(ShadowRoot& shadowRoot, DetachType detachType)
 {
     if (!shadowRoot.attached())
         return;
-    detachChildren(shadowRoot, context);
+    detachChildren(shadowRoot, detachType);
 
     shadowRoot.setAttached(false);
 }
 
-void detachRenderTree(Element* current, const AttachContext& context)
+static void detachRenderTree(Element* current, DetachType detachType)
 {
     WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
 
@@ -546,13 +545,13 @@ void detachRenderTree(Element* current, const AttachContext& context)
 
     // Do not remove the element's hovered and active status
     // if performing a reattach.
-    if (!context.performingReattach)
+    if (detachType != ReattachDetach)
         current->clearHoverAndActiveStatusBeforeDetachingRenderer();
 
     if (ShadowRoot* shadowRoot = current->shadowRoot())
-        detachShadowRoot(*shadowRoot, context);
+        detachShadowRoot(*shadowRoot, detachType);
 
-    detachChildren(*current, context);
+    detachChildren(*current, detachType);
 
     if (current->renderer())
         current->renderer()->destroyAndCleanupAnonymousWrappers();
@@ -562,17 +561,6 @@ void detachRenderTree(Element* current, const AttachContext& context)
 
     if (current->hasCustomStyleResolveCallbacks())
         current->didDetachRenderers();
-}
-
-void reattachRenderTree(Element* current, const AttachContext& context)
-{
-    AttachContext reattachContext(context);
-    reattachContext.performingReattach = true;
-
-    if (current->attached())
-        detachRenderTree(current, reattachContext);
-
-    attachRenderTree(current, reattachContext);
 }
 
 static bool pseudoStyleCacheIsInvalid(RenderObject* renderer, RenderStyle* newStyle)
@@ -621,9 +609,9 @@ static Change resolveLocal(Element* current, Change inheritedChange)
         localChange = determineChange(currentStyle.get(), newStyle.get(), document->settings());
     }
     if (localChange == Detach) {
-        AttachContext reattachContext;
-        reattachContext.resolvedStyle = newStyle.get();
-        reattachRenderTree(current, reattachContext);
+        if (current->attached())
+            detachRenderTree(current, ReattachDetach);
+        attachRenderTree(current, newStyle.get());
         return Detach;
     }
 
@@ -842,6 +830,28 @@ void resolveTree(Document* document, Change change)
             continue;
         resolveTree(child, change);
     }
+}
+
+void attachRenderTree(Element* element)
+{
+    attachRenderTree(element, nullptr);
+}
+
+void detachRenderTree(Element* element)
+{
+    detachRenderTree(element, NormalDetach);
+}
+
+void detachRenderTreeInReattachMode(Element* element)
+{
+    detachRenderTree(element, ReattachDetach);
+}
+
+void reattachRenderTree(Element* current)
+{
+    if (current->attached())
+        detachRenderTree(current, ReattachDetach);
+    attachRenderTree(current, nullptr);
 }
 
 }
