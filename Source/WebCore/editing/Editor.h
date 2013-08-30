@@ -415,6 +415,11 @@ public:
 private:
     explicit Editor(Frame&);
 
+#if PLATFORM(MAC)
+    PassRefPtr<SharedBuffer> selectionInWebArchiveFormat();
+    PassRefPtr<Range> adjustedSelectionRange();
+#endif
+
     Frame& m_frame;
 #if ENABLE(DELETION_UI)
     OwnPtr<DeleteButtonController> m_deleteButtonController;

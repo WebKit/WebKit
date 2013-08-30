@@ -55,7 +55,6 @@ namespace WebCore {
 
 #if PLATFORM(MAC)
 #if PLATFORM(IOS)
-// FIXME: This is only temporary until Pasteboard is refactored for iOS.
 extern NSString *WebArchivePboardType;
 #else
 extern const char* WebArchivePboardType;
@@ -103,7 +102,6 @@ public:
     String name() const { return m_pasteboardName; }
 
     explicit Pasteboard(const String& pasteboardName);
-    static PassRefPtr<SharedBuffer> getDataSelection(Frame*, const String& pasteboardType); // FIXME: Layering violation.
 #endif
 
 #if PLATFORM(GTK)

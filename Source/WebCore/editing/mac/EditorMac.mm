@@ -268,22 +268,76 @@ String Editor::stringSelectionForPasteboardWithImageAltText()
     return text;
 }
 
+PassRefPtr<SharedBuffer> Editor::selectionInWebArchiveFormat()
+{
+    RefPtr<LegacyWebArchive> archive = LegacyWebArchive::createFromSelection(&m_frame);
+    return archive ? SharedBuffer::wrapCFData(archive->rawDataRepresentation().get()) : 0;
+}
+
+PassRefPtr<Range> Editor::adjustedSelectionRange()
+{
+    // FIXME: Why do we need to adjust the selection to include the anchor tag it's in?
+    // Whoever wrote this code originally forgot to leave us a comment explaining the rationale.
+    RefPtr<Range> range = selectedRange();
+    Node* commonAncestor = range->commonAncestorContainer(IGNORE_EXCEPTION);
+    ASSERT(commonAncestor);
+    Node* enclosingAnchor = enclosingNodeWithTag(firstPositionInNode(commonAncestor), HTMLNames::aTag);
+    if (enclosingAnchor && comparePositions(firstPositionInOrBeforeNode(range->startPosition().anchorNode()), range->startPosition()) >= 0)
+        range->setStart(enclosingAnchor, 0, IGNORE_EXCEPTION);
+    return range;
+}
+
+static NSAttributedString *attributedStringForRange(Range& range)
+{
+    return [adoptNS([[WebHTMLConverter alloc] initWithDOMRange:kit(&range)]) attributedString];
+}
+
+static PassRefPtr<SharedBuffer> dataInRTFDFormat(NSAttributedString *string)
+{
+    NSUInteger length = [string length];
+    return length ? SharedBuffer::wrapNSData([string RTFDFromRange:NSMakeRange(0, length) documentAttributes:nil]) : 0;
+}
+
+static PassRefPtr<SharedBuffer> dataInRTFFormat(NSAttributedString *string)
+{
+    NSUInteger length = [string length];
+    return length ? SharedBuffer::wrapNSData([string RTFFromRange:NSMakeRange(0, length) documentAttributes:nil]) : 0;
+}
+
 PassRefPtr<SharedBuffer> Editor::dataSelectionForPasteboard(const String& pasteboardType)
 {
-    return Pasteboard::getDataSelection(&m_frame, pasteboardType);
+    // FIXME: The interface to this function is awkward. We'd probably be better off with three separate functions.
+    // As of this writing, this is only used in WebKit2 to implement the method -[WKView writeSelectionToPasteboard:types:],
+    // which is only used to support OS X services.
+
+    // FIXME: Does this function really need to use adjustedSelectionRange()? Because writeSelectionToPasteboard() just uses selectedRange().
+
+    if (pasteboardType == WebArchivePboardType)
+        return selectionInWebArchiveFormat();
+
+    if (pasteboardType == String(NSRTFDPboardType))
+       return dataInRTFDFormat(attributedStringForRange(*adjustedSelectionRange()));
+
+    if (pasteboardType == String(NSRTFPboardType)) {
+        NSAttributedString* attributedString = attributedStringForRange(*adjustedSelectionRange());
+        // FIXME: Why is this attachment character stripping needed here, but not needed in writeSelectionToPasteboard?
+        if ([attributedString containsAttachments])
+            attributedString = attributedStringByStrippingAttachmentCharacters(attributedString);
+        return dataInRTFFormat(attributedString);
+    }
+
+    return 0;
 }
 
 void Editor::writeSelectionToPasteboard(Pasteboard& pasteboard)
 {
+    NSAttributedString *attributedString = attributedStringForRange(*selectedRange());
+
     PasteboardWebContent content;
     content.canSmartCopyOrDelete = canSmartCopyOrDelete();
-    if (RefPtr<LegacyWebArchive> webArchive = LegacyWebArchive::createFromSelection(&m_frame))
-        content.dataInWebArchiveFormat = SharedBuffer::wrapCFData(webArchive->rawDataRepresentation().get());
-    if (NSAttributedString *attributedString = [adoptNS([[WebHTMLConverter alloc] initWithDOMRange:kit(selectedRange().get())]) attributedString]) {
-        if ([attributedString containsAttachments])
-            content.dataInRTFDFormat = SharedBuffer::wrapNSData([attributedString RTFDFromRange:NSMakeRange(0, [attributedString length]) documentAttributes:nil]);
-        content.dataInRTFFormat = SharedBuffer::wrapNSData([attributedString RTFFromRange:NSMakeRange(0, [attributedString length]) documentAttributes:nil]);
-    }
+    content.dataInWebArchiveFormat = selectionInWebArchiveFormat();
+    content.dataInRTFDFormat = [attributedString containsAttachments] ? dataInRTFDFormat(attributedString) : 0;
+    content.dataInRTFFormat = dataInRTFFormat(attributedString);
     content.dataInStringFormat = stringSelectionForPasteboardWithImageAltText();
     client()->getClientPasteboardDataForRange(selectedRange().get(), content.clientTypes, content.clientData);
 

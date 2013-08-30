@@ -138,39 +138,6 @@ void Pasteboard::clear()
     m_changeCount = platformStrategies()->pasteboardStrategy()->setTypes(Vector<String>(), m_pasteboardName);
 }
 
-PassRefPtr<SharedBuffer> Pasteboard::getDataSelection(Frame* frame, const String& pasteboardType)
-{
-    if (pasteboardType == WebArchivePboardType) {
-        RefPtr<LegacyWebArchive> archive = LegacyWebArchive::createFromSelection(frame);
-        RetainPtr<CFDataRef> data = archive ? archive->rawDataRepresentation() : 0;
-        return SharedBuffer::wrapNSData((NSData *)data.get());
-    }
-
-    RefPtr<Range> range = frame->editor().selectedRange();
-    Node* commonAncestor = range->commonAncestorContainer(IGNORE_EXCEPTION);
-    ASSERT(commonAncestor);
-    Node* enclosingAnchor = enclosingNodeWithTag(firstPositionInNode(commonAncestor), HTMLNames::aTag);
-    if (enclosingAnchor && comparePositions(firstPositionInOrBeforeNode(range->startPosition().anchorNode()), range->startPosition()) >= 0)
-        range->setStart(enclosingAnchor, 0, IGNORE_EXCEPTION);
-    
-    NSAttributedString* attributedString = nil;
-    RetainPtr<WebHTMLConverter> converter = adoptNS([[WebHTMLConverter alloc] initWithDOMRange:kit(range.get())]);
-    if (converter)
-        attributedString = [converter.get() attributedString];
-    
-    if (pasteboardType == String(NSRTFDPboardType)) {
-        NSData *RTFDData = [attributedString RTFDFromRange:NSMakeRange(0, [attributedString length]) documentAttributes:nil];
-        return SharedBuffer::wrapNSData((NSData *)RTFDData);
-    }
-    if (pasteboardType == String(NSRTFPboardType)) {
-        if ([attributedString containsAttachments])
-            attributedString = attributedStringByStrippingAttachmentCharacters(attributedString);
-        NSData *RTFData = [attributedString RTFFromRange:NSMakeRange(0, [attributedString length]) documentAttributes:nil];
-        return SharedBuffer::wrapNSData((NSData *)RTFData);
-    }
-    return 0;
-}
-
 void Pasteboard::setTypes(const PasteboardWebContent& content)
 {
     Vector<String> types;
