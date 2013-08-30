@@ -1,3 +1,14 @@
+2013-08-30  Dean Jackson  <dino@apple.com>
+
+        http://webkit.org/b/120490
+        Skip some XML namespace serialization tests temporarily.
+
+        * TestExpectations: Skip these on debug builds:
+        fast/dom/XMLSerializer-attribute-namespace-prefix-conflicts.html
+        fast/dom/XMLSerializer-same-prefix-different-namespaces-conflict.html
+        fast/dom/XMLSerializer-setAttributeNS-namespace-no-prefix.html
+        svg/custom/xlink-prefix-generation-in-attributes.html
+
 2013-08-30  Oliver Hunt  <oliver@apple.com>
 
         Implement ES6 Set class
