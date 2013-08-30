@@ -52,6 +52,9 @@ plugins/reloadplugins-and-pages.html
 # This test requires ogg codecs
 media/media-can-play-ogg.html
 
+webkit.org/b/52103 media/video-object-fit-change.html
+webkit.org/b/52103 media/video-object-fit.html
+
 # This test requires flac codec
 media/media-can-play-flac-audio.html
 
@@ -378,6 +381,9 @@ webkit.org/b/61487 http/tests/media/video-cross-site.html [ Failure ]
 
 # Styled scope element is not yet enabled.
 webkit.org/b/49142 fast/css/style-scoped
+
+# fails because of antialiasing differences.
+fast/css/object-fit/object-fit-canvas.html [ Pass ImageOnlyFailure ]
 
 # CSS Regions tests for region styling and scoped styles
 fast/regions/style-scoped-in-flow-override-container-style.html

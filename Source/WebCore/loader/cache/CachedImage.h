@@ -67,8 +67,12 @@ public:
     virtual void addDataBuffer(ResourceBuffer*) OVERRIDE;
     virtual void finishLoading(ResourceBuffer*) OVERRIDE;
 
+    enum SizeType {
+        UsedSize,
+        IntrinsicSize
+    };
     // This method takes a zoom multiplier that can be used to increase the natural size of the image by the zoom.
-    LayoutSize imageSizeForRenderer(const RenderObject*, float multiplier); // returns the size of the complete image.
+    LayoutSize imageSizeForRenderer(const RenderObject*, float multiplier, SizeType = UsedSize); // returns the size of the complete image.
     void computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio);
 
     static void resumeAnimatingImagesForLoader(CachedResourceLoader*);

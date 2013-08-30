@@ -35,10 +35,14 @@ public:
     virtual LayoutUnit computeReplacedLogicalWidth(ShouldComputePreferred  = ComputeActual) const OVERRIDE;
     virtual LayoutUnit computeReplacedLogicalHeight() const;
 
+    LayoutRect replacedContentRect(const LayoutSize& intrinsicSize) const;
+
     bool hasReplacedLogicalWidth() const;
     bool hasReplacedLogicalHeight() const;
 
 protected:
+    virtual bool isRenderReplaced() const OVERRIDE FINAL { return true; }
+
     virtual void willBeDestroyed();
 
     virtual void layout();
@@ -84,6 +88,21 @@ private:
 
     mutable LayoutSize m_intrinsicSize;
 };
+
+inline RenderReplaced* toRenderReplaced(RenderObject* object)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isRenderReplaced());
+    return static_cast<RenderReplaced*>(object);
+}
+
+inline const RenderReplaced* toRenderReplaced(const RenderObject* object)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isRenderReplaced());
+    return static_cast<const RenderReplaced*>(object);
+}
+
+// This will catch anyone doing an unnecessary cast.
+void toRenderReplaced(const RenderReplaced*);
 
 }
 

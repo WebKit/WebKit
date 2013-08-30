@@ -131,4 +131,9 @@ LayoutSize RenderImageResource::imageSize(float multiplier) const
     return m_cachedImage ? m_cachedImage->imageSizeForRenderer(m_renderer, multiplier) : LayoutSize();
 }
 
+LayoutSize RenderImageResource::intrinsicSize(float multiplier) const
+{
+    return m_cachedImage ? m_cachedImage->imageSizeForRenderer(m_renderer, multiplier, CachedImage::IntrinsicSize) : LayoutSize();
+}
+
 } // namespace WebCore

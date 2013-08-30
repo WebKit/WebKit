@@ -87,6 +87,7 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
 #if ENABLE(CSS_COMPOSITING)
     , m_effectiveBlendMode(RenderStyle::initialBlendMode())
 #endif
+    , m_objectFit(RenderStyle::initialObjectFit())
 {
     m_maskBoxImage.setMaskDefaults();
 }
@@ -172,6 +173,7 @@ StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonInherited
 #if ENABLE(CSS_COMPOSITING)
     , m_effectiveBlendMode(o.m_effectiveBlendMode)
 #endif
+    , m_objectFit(o.m_objectFit)
 {
 }
 
@@ -262,7 +264,8 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
 #if ENABLE(CSS_COMPOSITING)
         && m_effectiveBlendMode == o.m_effectiveBlendMode
 #endif
-        && m_hasAspectRatio == o.m_hasAspectRatio;
+        && m_hasAspectRatio == o.m_hasAspectRatio
+        && m_objectFit == o.m_objectFit;
 }
 
 bool StyleRareNonInheritedData::contentDataEquivalent(const StyleRareNonInheritedData& o) const

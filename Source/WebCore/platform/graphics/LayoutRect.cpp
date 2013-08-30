@@ -113,6 +113,12 @@ void LayoutRect::scale(float s)
     m_size.scale(s);
 }
 
+void LayoutRect::scale(float xScale, float yScale)
+{
+    m_location.scale(xScale, yScale);
+    m_size.scale(xScale, yScale);
+}
+
 LayoutRect unionRect(const Vector<LayoutRect>& rects)
 {
     LayoutRect result;

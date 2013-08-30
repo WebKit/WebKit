@@ -2812,6 +2812,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     case CSSPropertyMaxWidth:
     case CSSPropertyMinHeight:
     case CSSPropertyMinWidth:
+    case CSSPropertyObjectFit:
     case CSSPropertyOpacity:
     case CSSPropertyOrphans:
     case CSSPropertyOutlineColor:

@@ -1,3 +1,50 @@
+2013-08-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Implement object-fit CSS property
+        https://bugs.webkit.org/show_bug.cgi?id=52040
+
+        Reviewed by Antti Koivisto, Sam Weinig.
+
+        Tests for object-fit.
+
+        * fast/css/object-fit/object-fit-canvas-expected.html: Added.
+        * fast/css/object-fit/object-fit-canvas.html: Added.
+        * fast/css/object-fit/object-fit-embed-expected.html: Added.
+        * fast/css/object-fit/object-fit-embed.html: Added.
+        * fast/css/object-fit/object-fit-grow-landscape-expected.html: Added.
+        * fast/css/object-fit/object-fit-grow-landscape.html: Added.
+        * fast/css/object-fit/object-fit-grow-portrait-expected.html: Added.
+        * fast/css/object-fit/object-fit-grow-portrait.html: Added.
+        * fast/css/object-fit/object-fit-img-expected.html: Added.
+        * fast/css/object-fit/object-fit-img-svg-expected.html: Added.
+        * fast/css/object-fit/object-fit-img-svg.html: Added.
+        * fast/css/object-fit/object-fit-img-svg2-expected.html: Added.
+        * fast/css/object-fit/object-fit-img-svg2.html: Added.
+        * fast/css/object-fit/object-fit-img.html: Added.
+        * fast/css/object-fit/object-fit-input-image-expected.html: Added.
+        * fast/css/object-fit/object-fit-input-image.html: Added.
+        * fast/css/object-fit/object-fit-object-expected.html: Added.
+        * fast/css/object-fit/object-fit-object.html: Added.
+        * fast/css/object-fit/object-fit-shrink-expected.html: Added.
+        * fast/css/object-fit/object-fit-shrink.html: Added.
+        * fast/css/object-fit/object-fit-video-poster-expected.html: Added.
+        * fast/css/object-fit/object-fit-video-poster.html: Added.
+        * fast/css/parsing-object-fit-expected.txt: Added.
+        * fast/css/parsing-object-fit.html: Added.
+        * fast/css/resources/circle.svg: Added.
+        * fast/css/resources/circle2.svg: Added.
+        * fast/css/resources/circles-landscape-small.png: Added.
+        * fast/css/resources/circles-landscape.png: Added.
+        * fast/css/resources/circles-portrait-small.png: Added.
+        * fast/css/resources/circles-portrait.png: Added.
+        * http/tests/css/object-fit-delayed-img-svg-expected.html: Added.
+        * http/tests/css/object-fit-delayed-img-svg.html: Added.
+        * media/video-object-fit-change-expected.html: Added.
+        * media/video-object-fit-change.html: Added.
+        * media/video-object-fit-expected.html: Added.
+        * media/video-object-fit.html: Added.
+        * platform/mac/TestExpectations:
+
 2013-08-29  Tim Horton  <timothy_horton@apple.com>
 
         SVG clipping, masking, and gradients-on-text do not respect the device scale factor

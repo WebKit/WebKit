@@ -160,6 +160,7 @@ public:
     }
     void inflate(LayoutUnit d) { inflateX(d); inflateY(d); }
     void scale(float s);
+    void scale(float xScale, float yScale);
 
     LayoutRect transposedRect() const { return LayoutRect(m_location.transposedPoint(), m_size.transposedSize()); }
 

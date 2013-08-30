@@ -201,6 +201,8 @@ public:
     unsigned m_effectiveBlendMode: 5; // EBlendMode
 #endif
 
+    unsigned m_objectFit : 3; // ObjectFit
+
 private:
     StyleRareNonInheritedData();
     StyleRareNonInheritedData(const StyleRareNonInheritedData&);

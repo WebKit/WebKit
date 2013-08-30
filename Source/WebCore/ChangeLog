@@ -1,3 +1,106 @@
+2013-08-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Implement object-fit CSS property
+        https://bugs.webkit.org/show_bug.cgi?id=52040
+
+        Reviewed by Antti Koivisto, Sam Weinig.
+        
+        Merge object-fit patch from Blink r156535, which started as a patch
+        by me.
+
+        Since then, the spec has gone to CR. This patch is an
+        implementation of object-fit as described in
+        http://www.w3.org/TR/2012/CR-css3-images-20120417/#object-fit
+
+        Object-fit is used to maintain the aspect ratio of replaced content
+        within its content box. All object-fit values but the initial one
+        ('fill') will always ensure that the aspect ratio is retained, in
+        different ways (fit inside the content box, cover the content box, or
+        use intrinsic size). Painting is always clipped against the content
+        box, regardless of the 'overflow' property.
+
+        Tests: fast/css/object-fit/object-fit-canvas.html
+               fast/css/object-fit/object-fit-embed.html
+               fast/css/object-fit/object-fit-grow-landscape.html
+               fast/css/object-fit/object-fit-grow-portrait.html
+               fast/css/object-fit/object-fit-img-svg.html
+               fast/css/object-fit/object-fit-img-svg2.html
+               fast/css/object-fit/object-fit-img.html
+               fast/css/object-fit/object-fit-input-image.html
+               fast/css/object-fit/object-fit-object.html
+               fast/css/object-fit/object-fit-shrink.html
+               fast/css/object-fit/object-fit-video-poster.html
+               fast/css/parsing-object-fit.html
+               http/tests/css/object-fit-delayed-img-svg.html
+               media/video-object-fit-change.html
+               media/video-object-fit.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * css/CSSParser.cpp:
+        (WebCore::isValidKeywordPropertyAndValue):
+        (WebCore::isKeywordPropertyID):
+        (WebCore::CSSParser::parseValue):
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator EObjectFit):
+        * css/CSSProperty.cpp:
+        (WebCore::CSSProperty::isInheritedProperty):
+        * css/CSSPropertyNames.in:
+        * css/CSSValueKeywords.in:
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::DeprecatedStyleBuilder::DeprecatedStyleBuilder):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::applyProperty):
+        * css/html.css:
+        (video): Set object-fit to 'contain'. This is how VIDEO elements
+        work, apparently.
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::imageSizeForRenderer):
+        * loader/cache/CachedImage.h:
+        * platform/graphics/LayoutSize.h:
+        (WebCore::fitLayoutSizeToAspectRatio): New function to grow or shrink
+        in one dimension to fit to the aspect ratio.
+        * rendering/RenderHTMLCanvas.cpp:
+        (WebCore::RenderHTMLCanvas::paintReplaced): Apply object-fit and
+        clip if necessary.
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::updateInnerContentRect):
+        (WebCore::RenderImage::imageDimensionsChanged): Update intrinsic
+        size properly, and recalculate the inner content rectangle (the
+        exact area occupied by the replaced content) again if appropriate.
+        (WebCore::RenderImage::paintReplaced): Apply object-fit and clip
+        if necessary.
+        (WebCore::RenderImage::foregroundIsKnownToBeOpaqueInRect):
+        object-fit may leave parts of the content box empty, in which case
+        it won't be fully obscured.
+        (WebCore::RenderImage::layout):
+        * rendering/RenderImage.h:
+        * rendering/RenderImageResource.cpp:
+        (WebCore::RenderImageResource::intrinsicSize): Need this to
+        differentiate between intrinsic and extrinsic size for SVG images.
+        * rendering/RenderImageResource.h:
+        * rendering/RenderImageResourceStyleImage.h:
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::replacedContentRect): Return the
+        rectangle occupied by the replaced content. This will be identical
+        to the content box if object-fit is 'fill', but will typically be
+        something else for other values.
+        * rendering/RenderReplaced.h:
+        * rendering/RenderVideo.cpp:
+        (WebCore::RenderVideo::videoBox): Not much left to do here, with
+        the new RenderReplaced::replacedContentRect() method in place.
+        (WebCore::RenderVideo::paintReplaced): Apply object-fit and clip
+        if necessary.
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::changeRequiresRepaint):
+        * rendering/style/RenderStyle.h:
+        * rendering/style/RenderStyleConstants.h:
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator==):
+        * rendering/style/StyleRareNonInheritedData.h:
+
 2013-08-29  Tim Horton  <timothy_horton@apple.com>
 
         SVG clipping, masking, and gradients-on-text do not respect the device scale factor

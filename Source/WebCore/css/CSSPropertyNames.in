@@ -136,6 +136,7 @@ min-width
 mix
 parameters
 #endif
+object-fit
 opacity
 // Honor -webkit-opacity as a synonym for opacity. This was the only syntax that worked in Safari 1.1,
 // and may be in use on some websites and widgets.

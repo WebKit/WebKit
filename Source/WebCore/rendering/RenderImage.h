@@ -101,6 +101,8 @@ private:
     IntSize imageSizeForError(CachedImage*) const;
     void imageDimensionsChanged(bool imageSizeChanged, const IntRect* = 0);
     bool updateIntrinsicSizeIfNeeded(const LayoutSize&, bool imageSizeChanged);
+    // Update the size of the image to be rendered. Object-fit may cause this to be different from the CSS box's content rect.
+    void updateInnerContentRect();
 
     void paintAreaElementFocusRing(PaintInfo&);
 

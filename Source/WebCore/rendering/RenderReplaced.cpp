@@ -298,6 +298,41 @@ void RenderReplaced::computeAspectRatioInformationForRenderBox(RenderBox* conten
     }
 }
 
+LayoutRect RenderReplaced::replacedContentRect(const LayoutSize& intrinsicSize) const
+{
+    LayoutRect contentRect = contentBoxRect();
+    ObjectFit objectFit = style()->objectFit();
+    if (objectFit == ObjectFitFill)
+        return contentRect;
+
+    if (!intrinsicSize.width() || !intrinsicSize.height())
+        return contentRect;
+
+    LayoutRect finalRect = contentRect;
+    switch (objectFit) {
+    case ObjectFitContain:
+    case ObjectFitScaleDown:
+    case ObjectFitCover:
+        finalRect.setSize(finalRect.size().fitToAspectRatio(intrinsicSize, objectFit == ObjectFitCover ? AspectRatioFitGrow : AspectRatioFitShrink));
+        if (objectFit != ObjectFitScaleDown || finalRect.width() <= intrinsicSize.width())
+            break;
+        // fall through
+    case ObjectFitNone:
+        finalRect.setSize(intrinsicSize);
+        break;
+    case ObjectFitFill:
+        ASSERT_NOT_REACHED();
+    }
+
+    // FIXME: This is where object-position should be taken into account, but since it's not
+    // implemented yet, assume the initial value of "50% 50%".
+    LayoutUnit xOffset = (contentRect.width() - finalRect.width()) / 2;
+    LayoutUnit yOffset = (contentRect.height() - finalRect.height()) / 2;
+    finalRect.move(xOffset, yOffset);
+
+    return finalRect;
+}
+
 void RenderReplaced::computeIntrinsicRatioInformation(FloatSize& intrinsicSize, double& intrinsicRatio, bool& isPercentageIntrinsicSize) const
 {
     // If there's an embeddedContentBox() of a remote, referenced document available, this code-path should never be used.

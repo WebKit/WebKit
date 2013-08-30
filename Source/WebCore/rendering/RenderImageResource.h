@@ -63,6 +63,7 @@ public:
     virtual bool imageHasRelativeHeight() const;
 
     virtual LayoutSize imageSize(float multiplier) const;
+    virtual LayoutSize intrinsicSize(float multiplier) const;
 
     virtual WrappedImagePtr imagePtr() const { return m_cachedImage.get(); }
 

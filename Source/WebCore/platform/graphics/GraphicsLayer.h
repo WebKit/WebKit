@@ -360,7 +360,10 @@ public:
     // Set that the position/size of the contents (image or video).
     IntRect contentsRect() const { return m_contentsRect; }
     virtual void setContentsRect(const IntRect& r) { m_contentsRect = r; }
-    
+
+    IntRect contentsClippingRect() const { return m_contentsClippingRect; }
+    virtual void setContentsClippingRect(const IntRect& r) { m_contentsClippingRect = r; }
+
     // Transitions are identified by a special animation name that cannot clash with a keyframe identifier.
     static String animationNameForTransition(AnimatedPropertyID);
     
@@ -568,6 +571,7 @@ protected:
     FloatPoint m_replicatedLayerPosition; // For a replica layer, the position of the replica.
 
     IntRect m_contentsRect;
+    IntRect m_contentsClippingRect;
     IntPoint m_contentsTilePhase;
     IntSize m_contentsTileSize;
 

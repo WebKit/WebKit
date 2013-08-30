@@ -39,6 +39,11 @@ namespace WebCore {
 
 class LayoutPoint;
 
+enum AspectRatioFit {
+    AspectRatioFitShrink,
+    AspectRatioFitGrow
+};
+
 class LayoutSize {
 public:
     LayoutSize() : m_width(0), m_height(0) { }
@@ -113,6 +118,17 @@ public:
     }
 
     operator FloatSize() const { return FloatSize(m_width, m_height); }
+
+    LayoutSize fitToAspectRatio(const LayoutSize& aspectRatio, AspectRatioFit fit) const
+    {
+        float heightScale = height().toFloat() / aspectRatio.height().toFloat();
+        float widthScale = width().toFloat() / aspectRatio.width().toFloat();
+
+        if ((widthScale > heightScale) != (fit == AspectRatioFitGrow))
+            return LayoutSize(height() * aspectRatio.width() / aspectRatio.height(), height());
+
+        return LayoutSize(width(), width() * aspectRatio.height() / aspectRatio.width());
+    }
 
 private:
     LayoutUnit m_width, m_height;
