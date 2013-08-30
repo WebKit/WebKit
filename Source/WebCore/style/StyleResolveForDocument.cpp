@@ -120,10 +120,10 @@ PassRefPtr<RenderStyle> resolveForDocument(const Document* document)
             fontDescription.setOneFamily(standardFont);
         }
         fontDescription.setKeywordSize(CSSValueMedium - CSSValueXxSmall + 1);
-        int size = fontSizeForKeyword(CSSValueMedium, false, document);
+        int size = fontSizeForKeyword(CSSValueMedium, false, *document);
         fontDescription.setSpecifiedSize(size);
         bool useSVGZoomRules = document->isSVGDocument();
-        fontDescription.setComputedSize(computedFontSizeFromSpecifiedSize(size, fontDescription.isAbsoluteSize(), useSVGZoomRules, documentStyle.get(), document));
+        fontDescription.setComputedSize(computedFontSizeFromSpecifiedSize(size, fontDescription.isAbsoluteSize(), useSVGZoomRules, documentStyle.get(), *document));
     } else
         fontDescription.setUsePrinterFont(document->printing());
 

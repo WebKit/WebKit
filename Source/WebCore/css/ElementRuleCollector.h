@@ -71,7 +71,7 @@ public:
     const Vector<RefPtr<StyleRuleBase> >& matchedRuleList() const;
 
 private:
-    Document* document() { return m_state.document(); }
+    Document& document() { return m_state.document(); }
     void addElementStyleProperties(const StylePropertySet*, bool isCacheable = true);
 
     void matchUARules(RuleSet*);

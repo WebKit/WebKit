@@ -1,3 +1,12 @@
+2013-08-30  Andreas Kling  <akling@apple.com>
+
+        StyleResolver & friends should use Document&.
+        <https://webkit.org/b/120527>
+
+        Reviewed by Antti Koivisto.
+
+        Document&-ify StyleResolver, ElementRuleCollector and SelectorChecker.
+
 2013-08-30  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Unreviewed build correction after r154835. Only seen when doing a

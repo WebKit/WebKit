@@ -38,15 +38,15 @@ class Settings;
 
 namespace Style {
 
-float computedFontSizeFromSpecifiedSize(float specifiedSize, bool isAbsoluteSize, bool useSVGZoomRules, const RenderStyle*, const Document*);
-float computedFontSizeFromSpecifiedSizeForSVGInlineText(float specifiedSize, bool isAbsoluteSize, float zoomFactor, const Document*);
+float computedFontSizeFromSpecifiedSize(float specifiedSize, bool isAbsoluteSize, bool useSVGZoomRules, const RenderStyle*, const Document&);
+float computedFontSizeFromSpecifiedSizeForSVGInlineText(float specifiedSize, bool isAbsoluteSize, float zoomFactor, const Document&);
 
 // Given a CSS keyword id in the range (CSSValueXxSmall to CSSValueWebkitXxxLarge), this function will return
 // the correct font size scaled relative to the user's default (medium).
-float fontSizeForKeyword(unsigned keywordID, bool shouldUseFixedDefaultSize, const Document*);
+float fontSizeForKeyword(unsigned keywordID, bool shouldUseFixedDefaultSize, const Document&);
 
 // Given a font size in pixel, this function will return legacy font size between 1 and 7.
-int legacyFontSizeForPixelSize(int pixelFontSize, bool shouldUseFixedDefaultSize, const Document*);
+int legacyFontSizeForPixelSize(int pixelFontSize, bool shouldUseFixedDefaultSize, const Document&);
 
 }
 }

@@ -1112,7 +1112,7 @@ void InspectorCSSAgent::didMatchRule(bool matched)
 void InspectorCSSAgent::willProcessRule(StyleRule* rule, StyleResolver& styleResolver)
 {
     if (m_currentSelectorProfile)
-        m_currentSelectorProfile->startSelector(styleResolver.inspectorCSSOMWrappers().getWrapperForRuleInSheets(rule, styleResolver.document()->styleSheetCollection()));
+        m_currentSelectorProfile->startSelector(styleResolver.inspectorCSSOMWrappers().getWrapperForRuleInSheets(rule, styleResolver.document().styleSheetCollection()));
 }
 
 void InspectorCSSAgent::didProcessRule()
@@ -1274,7 +1274,7 @@ PassRefPtr<TypeBuilder::CSS::CSSRule> InspectorCSSAgent::buildObjectForRule(Styl
 
     // StyleRules returned by StyleResolver::styleRulesForElement lack parent pointers since that infomation is not cheaply available.
     // Since the inspector wants to walk the parent chain, we construct the full wrappers here.
-    CSSStyleRule* cssomWrapper = styleResolver.inspectorCSSOMWrappers().getWrapperForRuleInSheets(styleRule, styleResolver.document()->styleSheetCollection());
+    CSSStyleRule* cssomWrapper = styleResolver.inspectorCSSOMWrappers().getWrapperForRuleInSheets(styleRule, styleResolver.document().styleSheetCollection());
     if (!cssomWrapper)
         return 0;
     InspectorStyleSheet* inspectorStyleSheet = bindStyleSheet(cssomWrapper->parentStyleSheet());

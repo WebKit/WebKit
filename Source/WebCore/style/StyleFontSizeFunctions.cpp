@@ -83,20 +83,20 @@ static float computedFontSizeFromSpecifiedSize(float specifiedSize, bool isAbsol
     return std::min(maximumAllowedFontSize, zoomedSize);
 }
 
-float computedFontSizeFromSpecifiedSize(float specifiedSize, bool isAbsoluteSize, bool useSVGZoomRules, const RenderStyle* style, const Document* document)
+float computedFontSizeFromSpecifiedSize(float specifiedSize, bool isAbsoluteSize, bool useSVGZoomRules, const RenderStyle* style, const Document& document)
 {
     float zoomFactor = 1.0f;
     if (!useSVGZoomRules) {
         zoomFactor = style->effectiveZoom();
-        if (Frame* frame = document->frame())
+        if (Frame* frame = document.frame())
             zoomFactor *= frame->textZoomFactor();
     }
-    return computedFontSizeFromSpecifiedSize(specifiedSize, isAbsoluteSize, zoomFactor, UseSmartMinimumForFontFize, document->settings());
+    return computedFontSizeFromSpecifiedSize(specifiedSize, isAbsoluteSize, zoomFactor, UseSmartMinimumForFontFize, document.settings());
 }
 
-float computedFontSizeFromSpecifiedSizeForSVGInlineText(float specifiedSize, bool isAbsoluteSize, float zoomFactor, const Document* document)
+float computedFontSizeFromSpecifiedSizeForSVGInlineText(float specifiedSize, bool isAbsoluteSize, float zoomFactor, const Document& document)
 {
-    return computedFontSizeFromSpecifiedSize(specifiedSize, isAbsoluteSize, zoomFactor, DoNotUseSmartMinimumForFontSize, document->settings());
+    return computedFontSizeFromSpecifiedSize(specifiedSize, isAbsoluteSize, zoomFactor, DoNotUseSmartMinimumForFontSize, document.settings());
 }
 
 const int fontSizeTableMax = 16;
@@ -141,13 +141,13 @@ static const int strictFontSizeTable[fontSizeTableMax - fontSizeTableMin + 1][to
 // factors for each keyword value.
 static const float fontSizeFactors[totalKeywords] = { 0.60f, 0.75f, 0.89f, 1.0f, 1.2f, 1.5f, 2.0f, 3.0f };
 
-float fontSizeForKeyword(unsigned keywordID, bool shouldUseFixedDefaultSize, const Document* document)
+float fontSizeForKeyword(unsigned keywordID, bool shouldUseFixedDefaultSize, const Document& document)
 {
-    Settings* settings = document->settings();
+    Settings* settings = document.settings();
     if (!settings)
         return 1.0f;
 
-    bool quirksMode = document->inQuirksMode();
+    bool quirksMode = document.inQuirksMode();
     int mediumSize = shouldUseFixedDefaultSize ? settings->defaultFixedFontSize() : settings->defaultFontSize();
     if (mediumSize >= fontSizeTableMin && mediumSize <= fontSizeTableMax) {
         // Look up the entry in the table.
@@ -172,13 +172,13 @@ static int findNearestLegacyFontSize(int pixelFontSize, const T* table, int mult
     return totalKeywords - 1;
 }
 
-int legacyFontSizeForPixelSize(int pixelFontSize, bool shouldUseFixedDefaultSize, const Document* document)
+int legacyFontSizeForPixelSize(int pixelFontSize, bool shouldUseFixedDefaultSize, const Document& document)
 {
-    Settings* settings = document->settings();
+    Settings* settings = document.settings();
     if (!settings)
         return 1;
 
-    bool quirksMode = document->inQuirksMode();
+    bool quirksMode = document.inQuirksMode();
     int mediumSize = shouldUseFixedDefaultSize ? settings->defaultFixedFontSize() : settings->defaultFontSize();
     if (mediumSize >= fontSizeTableMin && mediumSize <= fontSizeTableMax) {
         int row = mediumSize - fontSizeTableMin;

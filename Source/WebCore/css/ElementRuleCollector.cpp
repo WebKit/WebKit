@@ -323,11 +323,11 @@ void ElementRuleCollector::matchUARules()
     matchUARules(userAgentStyleSheet);
 
     // In quirks mode, we match rules from the quirks user agent sheet.
-    if (document()->inQuirksMode())
+    if (document().inQuirksMode())
         matchUARules(CSSDefaultStyleSheets::defaultQuirksStyle);
 
     // If document uses view source styles (in view source mode or in xml viewer mode), then we match rules from the view source style sheet.
-    if (document()->isViewSource())
+    if (document().isViewSource())
         matchUARules(CSSDefaultStyleSheets::viewSourceStyle());
 }
 
@@ -406,7 +406,7 @@ void ElementRuleCollector::doCollectMatchingRulesForList(const Vector<RuleData>*
         StyleRule* rule = ruleData.rule();
         InspectorInstrumentationCookie cookie;
         if (hasInspectorFrontends)
-            cookie = InspectorInstrumentation::willMatchRule(document(), rule, m_inspectorCSSOMWrappers, document()->styleSheetCollection());
+            cookie = InspectorInstrumentation::willMatchRule(&document(), rule, m_inspectorCSSOMWrappers, document().styleSheetCollection());
         PseudoId dynamicPseudo = NOPSEUDO;
         if (ruleMatches(ruleData, matchRequest.scope, dynamicPseudo)) {
             // If the rule has no properties to apply, then ignore it in the non-debug mode.

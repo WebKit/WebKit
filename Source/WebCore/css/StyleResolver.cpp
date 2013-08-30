@@ -244,19 +244,19 @@ void StyleResolver::MatchResult::addMatchedProperties(const StylePropertySet& pr
     matchedRules.append(rule);
 }
 
-StyleResolver::StyleResolver(Document* document, bool matchAuthorAndUserStyles)
+StyleResolver::StyleResolver(Document& document, bool matchAuthorAndUserStyles)
     : m_matchedPropertiesCacheAdditionsSinceLastSweep(0)
     , m_matchedPropertiesCacheSweepTimer(this, &StyleResolver::sweepMatchedPropertiesCache)
     , m_document(document)
     , m_matchAuthorAndUserStyles(matchAuthorAndUserStyles)
-    , m_fontSelector(CSSFontSelector::create(document))
+    , m_fontSelector(CSSFontSelector::create(&m_document))
 #if ENABLE(CSS_DEVICE_ADAPTATION)
     , m_viewportStyleResolver(ViewportStyleResolver::create(document))
 #endif
     , m_deprecatedStyleBuilder(DeprecatedStyleBuilder::sharedStyleBuilder())
     , m_styleMap(this)
 {
-    Element* root = document->documentElement();
+    Element* root = m_document.documentElement();
 
     CSSDefaultStyleSheets::initDefaultStyle(root);
 
@@ -266,7 +266,7 @@ StyleResolver::StyleResolver(Document* document, bool matchAuthorAndUserStyles)
     // document doesn't have documentElement
     // NOTE: this assumes that element that gets passed to styleForElement -call
     // is always from the document that owns the style selector
-    FrameView* view = document->view();
+    FrameView* view = m_document.view();
     if (view)
         m_medium = adoptPtr(new MediaQueryEvaluator(view->mediaType()));
     else
@@ -280,12 +280,12 @@ StyleResolver::StyleResolver(Document* document, bool matchAuthorAndUserStyles)
 
     m_ruleSets.resetAuthorStyle();
 
-    DocumentStyleSheetCollection* styleSheetCollection = document->styleSheetCollection();
+    DocumentStyleSheetCollection* styleSheetCollection = m_document.styleSheetCollection();
     m_ruleSets.initUserStyle(styleSheetCollection, *m_medium, *this);
 
 #if ENABLE(SVG_FONTS)
-    if (document->svgExtensions()) {
-        const HashSet<SVGFontFaceElement*>& svgFontFaceElements = document->svgExtensions()->svgFontFaceElements();
+    if (m_document.svgExtensions()) {
+        const HashSet<SVGFontFaceElement*>& svgFontFaceElements = m_document.svgExtensions()->svgFontFaceElements();
         HashSet<SVGFontFaceElement*>::const_iterator end = svgFontFaceElements.end();
         for (HashSet<SVGFontFaceElement*>::const_iterator it = svgFontFaceElements.begin(); it != end; ++it)
             fontSelector()->addFontFaceRule((*it)->fontFaceRule());
@@ -297,9 +297,9 @@ StyleResolver::StyleResolver(Document* document, bool matchAuthorAndUserStyles)
 
 void StyleResolver::appendAuthorStyleSheets(unsigned firstNew, const Vector<RefPtr<CSSStyleSheet> >& styleSheets)
 {
-    m_ruleSets.appendAuthorStyleSheets(firstNew, styleSheets, m_medium.get(), m_inspectorCSSOMWrappers, document()->isViewSource(), this);
-    if (document()->renderer() && document()->renderer()->style())
-        document()->renderer()->style()->font().update(fontSelector());
+    m_ruleSets.appendAuthorStyleSheets(firstNew, styleSheets, m_medium.get(), m_inspectorCSSOMWrappers, document().isViewSource(), this);
+    if (document().renderer() && document().renderer()->style())
+        document().renderer()->style()->font().update(fontSelector());
 
 #if ENABLE(CSS_DEVICE_ADAPTATION)
     viewportStyleResolver()->resolve();
@@ -423,7 +423,7 @@ inline void StyleResolver::initElement(Element* e)
     }
 }
 
-inline void StyleResolver::State::initForStyleResolve(Document* document, Element* e, RenderStyle* parentStyle, RenderRegion* regionForStyling)
+inline void StyleResolver::State::initForStyleResolve(Document& document, Element* e, RenderStyle* parentStyle, RenderRegion* regionForStyling)
 {
     m_regionForStyling = regionForStyling;
 
@@ -439,7 +439,7 @@ inline void StyleResolver::State::initForStyleResolve(Document* document, Elemen
     }
 
     Node* docElement = e ? e->document().documentElement() : 0;
-    RenderStyle* docStyle = document->renderStyle();
+    RenderStyle* docStyle = document.renderStyle();
     m_rootElementStyle = docElement && e != docElement ? docElement->renderStyle() : docStyle;
 
     m_style = 0;
@@ -547,7 +547,7 @@ bool StyleResolver::canShareStyleWithControl(StyledElement* element) const
     if (element->isDefaultButtonForForm() != state.element()->isDefaultButtonForForm())
         return false;
 
-    if (state.document()->containsValidityStyleRules()) {
+    if (state.document().containsValidityStyleRules()) {
         bool willValidate = element->willValidate();
 
         if (willValidate != state.element()->willValidate())
@@ -702,7 +702,7 @@ bool StyleResolver::canShareStyleWithElement(StyledElement* element) const
 #endif
 
 #if ENABLE(FULLSCREEN_API)
-    if (element == element->document().webkitCurrentFullScreenElement() || state.element() == state.document()->webkitCurrentFullScreenElement())
+    if (element == element->document().webkitCurrentFullScreenElement() || state.element() == state.document().webkitCurrentFullScreenElement())
         return false;
 #endif
     return true;
@@ -741,7 +741,7 @@ RenderStyle* StyleResolver::locateSharedStyle()
         return 0;
     if (state.styledElement()->hasScopedHTMLStyleChild())
         return 0;
-    if (state.element() == state.document()->cssTarget())
+    if (state.element() == state.document().cssTarget())
         return 0;
     if (elementHasDirectionAuto(state.element()))
         return 0;
@@ -837,7 +837,7 @@ PassRefPtr<RenderStyle> StyleResolver::styleForElement(Element* element, RenderS
     bool needsCollection = false;
     CSSDefaultStyleSheets::ensureDefaultStyleSheetsForElement(element, needsCollection);
     if (needsCollection)
-        m_ruleSets.collectFeatures(document()->isViewSource(), m_scopeResolver.get());
+        m_ruleSets.collectFeatures(document().isViewSource(), m_scopeResolver.get());
 
     ElementRuleCollector collector(this, state);
     collector.setRegionForStyling(regionForStyling);
@@ -855,7 +855,7 @@ PassRefPtr<RenderStyle> StyleResolver::styleForElement(Element* element, RenderS
 
     state.clear(); // Clear out for the next resolve.
 
-    document()->didAccessStyleResolver();
+    document().didAccessStyleResolver();
 
     // Now return the style.
     return state.takeStyle();
@@ -906,7 +906,7 @@ PassRefPtr<RenderStyle> StyleResolver::styleForKeyframe(const RenderStyle* eleme
             keyframeValue.addProperty(property);
     }
 
-    document()->didAccessStyleResolver();
+    document().didAccessStyleResolver();
 
     return state.takeStyle();
 }
@@ -1021,7 +1021,7 @@ PassRefPtr<RenderStyle> StyleResolver::pseudoStyleForElement(Element* e, const P
     // Start loading resources referenced by this style.
     loadPendingResources();
 
-    document()->didAccessStyleResolver();
+    document().didAccessStyleResolver();
 
     // Now return the style.
     return state.takeStyle();
@@ -1029,7 +1029,7 @@ PassRefPtr<RenderStyle> StyleResolver::pseudoStyleForElement(Element* e, const P
 
 PassRefPtr<RenderStyle> StyleResolver::styleForPage(int pageIndex)
 {
-    m_state.initForStyleResolve(document(), document()->documentElement()); // m_rootElementStyle will be set to the document style.
+    m_state.initForStyleResolve(document(), document().documentElement()); // m_rootElementStyle will be set to the document style.
 
     m_state.setStyle(RenderStyle::create());
     m_state.style()->inheritFrom(m_state.rootElementStyle());
@@ -1057,7 +1057,7 @@ PassRefPtr<RenderStyle> StyleResolver::styleForPage(int pageIndex)
     // Start loading resources referenced by this style.
     loadPendingResources();
 
-    document()->didAccessStyleResolver();
+    document().didAccessStyleResolver();
 
     // Now return the style.
     return m_state.takeStyle();
@@ -1177,7 +1177,7 @@ void StyleResolver::adjustRenderStyle(RenderStyle* style, RenderStyle* parentSty
         // property.
         // Sites also commonly use display:inline/block on <td>s and <table>s. In quirks mode we force
         // these tags to retain their display types.
-        if (document()->inQuirksMode() && e) {
+        if (document().inQuirksMode() && e) {
             if (e->hasTagName(tdTag)) {
                 style->setDisplay(TABLE_CELL);
                 style->setFloating(NoFloat);
@@ -1224,7 +1224,7 @@ void StyleResolver::adjustRenderStyle(RenderStyle* style, RenderStyle* parentSty
 
         // Absolute/fixed positioned elements, floating elements and the document element need block-like outside display.
         if (style->hasOutOfFlowPosition() || style->isFloating() || (e && e->document().documentElement() == e))
-            style->setDisplay(equivalentBlockDisplay(style->display(), style->isFloating(), !document()->inQuirksMode()));
+            style->setDisplay(equivalentBlockDisplay(style->display(), style->isFloating(), !document().inQuirksMode()));
 
         // FIXME: Don't support this mutation for pseudo styles like first-letter or first-line, since it's not completely
         // clear how that should work.
@@ -1254,7 +1254,7 @@ void StyleResolver::adjustRenderStyle(RenderStyle* style, RenderStyle* parentSty
 
         if (isDisplayFlexibleBox(parentStyle->display())) {
             style->setFloating(NoFloat);
-            style->setDisplay(equivalentBlockDisplay(style->display(), style->isFloating(), !document()->inQuirksMode()));
+            style->setDisplay(equivalentBlockDisplay(style->display(), style->isFloating(), !document().inQuirksMode()));
         }
     }
 
@@ -1513,7 +1513,7 @@ template <StyleResolver::StyleApplicationPass pass>
 void StyleResolver::applyProperties(const StylePropertySet* properties, StyleRule* rule, bool isImportant, bool inheritedOnly, PropertyWhitelistType propertyWhitelistType)
 {
     ASSERT((propertyWhitelistType != PropertyWhitelistRegion) || m_state.regionForStyling());
-    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willProcessRule(document(), rule, *this);
+    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willProcessRule(&document(), rule, *this);
 
     unsigned propertyCount = properties->propertyCount();
     for (unsigned i = 0; i < propertyCount; ++i) {
@@ -2263,7 +2263,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
                 if (!settings)
                     return;
                 fontDescription.setRenderingMode(settings->fontRenderingMode());
-                fontDescription.setUsePrinterFont(document()->printing() || !settings->screenFontSubstitutionEnabled());
+                fontDescription.setUsePrinterFont(document().printing() || !settings->screenFontSubstitutionEnabled());
 
                 // Handle the zoom factor.
                 fontDescription.setComputedSize(Style::computedFontSizeFromSpecifiedSize(fontDescription.specifiedSize(), fontDescription.isAbsoluteSize(), useSVGZoomRules(), state.style(), document()));
@@ -2453,7 +2453,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
             region = region->m_next.get();
         }
 
-        state.document()->setHasAnnotatedRegions(true);
+        state.document().setHasAnnotatedRegions(true);
 
         return;
     }
@@ -2463,7 +2463,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
         if (!primitiveValue || !primitiveValue->getValueID())
             return;
         state.style()->setDraggableRegionMode(primitiveValue->getValueID() == CSSValueDrag ? DraggableRegionDrag : DraggableRegionNoDrag);
-        state.document()->setHasAnnotatedRegions(true);
+        state.document().setHasAnnotatedRegions(true);
         return;
     }
 #endif
@@ -2607,8 +2607,8 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
             setWritingMode(*primitiveValue);
 
         // FIXME: It is not ok to modify document state while applying style.
-        if (state.element() && state.element() == state.document()->documentElement())
-            state.document()->setWritingModeSetOnDocumentElement(true);
+        if (state.element() && state.element() == state.document().documentElement())
+            state.document().setWritingModeSetOnDocumentElement(true);
         return;
     }
 
@@ -3072,7 +3072,7 @@ PassRefPtr<StyleImage> StyleResolver::generatedOrPendingFromValue(CSSPropertyID 
 #if ENABLE(CSS_IMAGE_SET)
 PassRefPtr<StyleImage> StyleResolver::setOrPendingFromValue(CSSPropertyID property, CSSImageSetValue* value)
 {
-    RefPtr<StyleImage> image = value->cachedOrPendingImageSet(document());
+    RefPtr<StyleImage> image = value->cachedOrPendingImageSet(&document());
     if (image && image->isPendingImage())
         m_state.pendingImageProperties().set(property, value);
     return image.release();
@@ -3081,7 +3081,7 @@ PassRefPtr<StyleImage> StyleResolver::setOrPendingFromValue(CSSPropertyID proper
 
 PassRefPtr<StyleImage> StyleResolver::cursorOrPendingFromValue(CSSPropertyID property, CSSCursorImageValue* value)
 {
-    RefPtr<StyleImage> image = value->cachedOrPendingImage(document());
+    RefPtr<StyleImage> image = value->cachedOrPendingImage(&document());
     if (image && image->isPendingImage())
         m_state.pendingImageProperties().set(property, value);
     return image.release();
@@ -3141,7 +3141,7 @@ void StyleResolver::initializeFontStyle(Settings* settings)
     FontDescription fontDescription;
     fontDescription.setGenericFamily(FontDescription::StandardFamily);
     fontDescription.setRenderingMode(settings->fontRenderingMode());
-    fontDescription.setUsePrinterFont(document()->printing() || !settings->screenFontSubstitutionEnabled());
+    fontDescription.setUsePrinterFont(document().printing() || !settings->screenFontSubstitutionEnabled());
     const AtomicString& standardFontFamily = documentSettings()->standardFontFamily();
     if (!standardFontFamily.isEmpty())
         fontDescription.setOneFamily(standardFontFamily);
@@ -3220,11 +3220,11 @@ Color StyleResolver::colorFromPrimitiveValue(CSSPrimitiveValue* value, bool forV
     case 0:
         return Color();
     case CSSValueWebkitText:
-        return state.document()->textColor();
+        return state.document().textColor();
     case CSSValueWebkitLink:
-        return (state.element()->isLink() && forVisitedLink) ? state.document()->visitedLinkColor() : state.document()->linkColor();
+        return (state.element()->isLink() && forVisitedLink) ? state.document().visitedLinkColor() : state.document().linkColor();
     case CSSValueWebkitActivelink:
-        return state.document()->activeLinkColor();
+        return state.document().activeLinkColor();
     case CSSValueWebkitFocusRingColor:
         return RenderTheme::focusRingColor();
     case CSSValueCurrentcolor:
@@ -3297,7 +3297,7 @@ void StyleResolver::loadPendingSVGDocuments()
     if (!state.style() || !state.style()->hasFilter() || state.pendingSVGDocuments().isEmpty())
         return;
 
-    CachedResourceLoader* cachedResourceLoader = state.document()->cachedResourceLoader();
+    CachedResourceLoader* cachedResourceLoader = state.document().cachedResourceLoader();
     Vector<RefPtr<FilterOperation> >& filterOperations = state.style()->mutableFilter().operations();
     for (unsigned i = 0; i < filterOperations.size(); ++i) {
         RefPtr<FilterOperation> filterOperation = filterOperations.at(i);
@@ -3338,7 +3338,7 @@ StyleShader* StyleResolver::cachedOrPendingStyleShaderFromValue(WebKitCSSShaderV
 PassRefPtr<CustomFilterProgram> StyleResolver::lookupCustomFilterProgram(WebKitCSSShaderValue* vertexShader, WebKitCSSShaderValue* fragmentShader, 
     CustomFilterProgramType programType, const CustomFilterProgramMixSettings& mixSettings, CustomFilterMeshType meshType)
 {
-    CachedResourceLoader* cachedResourceLoader = m_state.document()->cachedResourceLoader();
+    CachedResourceLoader* cachedResourceLoader = m_state.document().cachedResourceLoader();
     KURL vertexShaderURL = vertexShader ? vertexShader->completeURL(cachedResourceLoader) : KURL();
     KURL fragmentShaderURL = fragmentShader ? fragmentShader->completeURL(cachedResourceLoader) : KURL();
     RefPtr<StyleCustomFilterProgram> program;
@@ -3359,7 +3359,7 @@ void StyleResolver::loadPendingShaders()
     if (!m_state.hasPendingShaders() || !m_state.style() || !m_state.style()->hasFilter())
         return;
 
-    CachedResourceLoader* cachedResourceLoader = m_state.document()->cachedResourceLoader();
+    CachedResourceLoader* cachedResourceLoader = m_state.document().cachedResourceLoader();
 
     Vector<RefPtr<FilterOperation> >& filterOperations = m_state.style()->mutableFilter().operations();
     for (unsigned i = 0; i < filterOperations.size(); ++i) {
@@ -3699,10 +3699,10 @@ bool StyleResolver::createFilterOperations(CSSValue* inValue, FilterOperations& 
                 continue;
 
             WebKitCSSSVGDocumentValue* svgDocumentValue = static_cast<WebKitCSSSVGDocumentValue*>(argument);
-            KURL url = m_state.document()->completeURL(svgDocumentValue->url());
+            KURL url = m_state.document().completeURL(svgDocumentValue->url());
 
             RefPtr<ReferenceFilterOperation> operation = ReferenceFilterOperation::create(svgDocumentValue->url(), url.fragmentIdentifier(), operationType);
-            if (SVGURIReference::isExternalURIReference(svgDocumentValue->url(), m_state.document())) {
+            if (SVGURIReference::isExternalURIReference(svgDocumentValue->url(), &m_state.document())) {
                 if (!svgDocumentValue->loadRequested())
                     m_state.pendingSVGDocuments().set(operation.get(), svgDocumentValue);
                 else if (svgDocumentValue->cachedSVGDocument())
@@ -3808,7 +3808,7 @@ bool StyleResolver::createFilterOperations(CSSValue* inValue, FilterOperations& 
 
 PassRefPtr<StyleImage> StyleResolver::loadPendingImage(StylePendingImage* pendingImage)
 {
-    CachedResourceLoader* cachedResourceLoader = m_state.document()->cachedResourceLoader();
+    CachedResourceLoader* cachedResourceLoader = m_state.document().cachedResourceLoader();
 
     if (pendingImage->cssImageValue()) {
         CSSImageValue* imageValue = pendingImage->cssImageValue();
@@ -3849,7 +3849,7 @@ void StyleResolver::loadPendingShapeImage(ShapeValue* shapeValue)
 
     StylePendingImage* pendingImage = static_cast<StylePendingImage*>(image);
     CSSImageValue* cssImageValue =  pendingImage->cssImageValue();
-    CachedResourceLoader* cachedResourceLoader = m_state.document()->cachedResourceLoader();
+    CachedResourceLoader* cachedResourceLoader = m_state.document().cachedResourceLoader();
 
     ResourceLoaderOptions options = CachedResourceLoader::defaultCachedResourceOptions();
     options.requestOriginPolicy = RestrictToSameOrigin;

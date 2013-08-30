@@ -47,8 +47,9 @@ public:
     enum Match { SelectorMatches, SelectorFailsLocally, SelectorFailsAllSiblings, SelectorFailsCompletely };
     enum VisitedMatchType { VisitedMatchDisabled, VisitedMatchEnabled };
     enum Mode { ResolvingStyle = 0, CollectingRules, QueryingRules, SharingRules };
-    explicit SelectorChecker(Document*, Mode);
     enum BehaviorAtBoundary { DoesNotCrossBoundary, CrossesBoundary, StaysWithinTreeScope };
+
+    SelectorChecker(Document&, Mode);
 
     struct SelectorCheckingContext {
         // Initial selector constructor
