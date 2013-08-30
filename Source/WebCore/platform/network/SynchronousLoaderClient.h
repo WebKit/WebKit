@@ -58,9 +58,7 @@ private:
 
     virtual void willSendRequest(ResourceHandle*, ResourceRequest&, const ResourceResponse& /*redirectResponse*/) OVERRIDE;
     virtual bool shouldUseCredentialStorage(ResourceHandle*) OVERRIDE;
-#if USE(CFNETWORK)
     virtual void didReceiveAuthenticationChallenge(ResourceHandle*, const AuthenticationChallenge&) OVERRIDE;
-#endif
     virtual void didReceiveResponse(ResourceHandle*, const ResourceResponse&) OVERRIDE;
     virtual void didReceiveData(ResourceHandle*, const char*, int, int /*encodedDataLength*/) OVERRIDE;
     virtual void didFinishLoading(ResourceHandle*, double /*finishTime*/) OVERRIDE;
