@@ -1,3 +1,13 @@
+2013-08-30  Tamas Czene  <tczene@inf.u-szeged.hu>
+
+        Resolve unused parameter warning in FindController.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=120407
+
+        Reviewed by Darin Adler.
+
+        * accessibility/atk/WebKitAccessibleInterfaceText.cpp:
+        (wordAtPositionForAtkBoundary):
+
 2013-08-30  Arpita Bahuguna  <a.bah@samsung.com>
 
         setAttributeNode() does not set the new value to an existing attribute if specified attribute is in a different case.

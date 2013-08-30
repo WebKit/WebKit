@@ -712,7 +712,7 @@ static VisiblePosition previousWordEndPosition(const VisiblePosition &position)
     return positionAtStartOfCurrentWord;
 }
 
-static VisibleSelection wordAtPositionForAtkBoundary(const AccessibilityObject* coreObject, const VisiblePosition& position, AtkTextBoundary boundaryType)
+static VisibleSelection wordAtPositionForAtkBoundary(const AccessibilityObject* /*coreObject*/, const VisiblePosition& position, AtkTextBoundary boundaryType)
 {
     VisiblePosition startPosition;
     VisiblePosition endPosition;
