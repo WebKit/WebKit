@@ -32,6 +32,7 @@
 
 #include <wtf/HashFunctions.h>
 #include <wtf/HashMap.h>
+#include <wtf/MathExtras.h>
 
 namespace JSC {
 
@@ -148,7 +149,7 @@ ALWAYS_INLINE MapData::KeyType::KeyType(JSValue v)
         return;
     }
     double d = v.asDouble();
-    if (std::isnan(d) || (signbit(d) && d == 0.0)) {
+    if (std::isnan(d) || (std::signbit(d) && d == 0.0)) {
         value = v;
         return;
     }

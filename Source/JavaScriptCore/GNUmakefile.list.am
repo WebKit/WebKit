@@ -873,8 +873,6 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/JSLock.cpp \
 	Source/JavaScriptCore/runtime/JSLock.h \
 	Source/JavaScriptCore/runtime/JSMap.cpp \
-	Source/JavaScriptCore/runtime/JSMapConstructor.cpp \
-	Source/JavaScriptCore/runtime/JSMapPrototype.cpp \
 	Source/JavaScriptCore/runtime/JSNotAnObject.cpp \
 	Source/JavaScriptCore/runtime/JSNotAnObject.h \
 	Source/JavaScriptCore/runtime/JSObject.cpp \
@@ -935,6 +933,12 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/LiteralParser.h \
 	Source/JavaScriptCore/runtime/Lookup.cpp \
 	Source/JavaScriptCore/runtime/Lookup.h \
+	Source/JavaScriptCore/runtime/MapConstructor.cpp \
+	Source/JavaScriptCore/runtime/MapConstructor.h\
+	Source/JavaScriptCore/runtime/MapData.cpp \
+	Source/JavaScriptCore/runtime/MapData.h \
+	Source/JavaScriptCore/runtime/MapPrototype.cpp \
+	Source/JavaScriptCore/runtime/MapPrototype.h \
 	Source/JavaScriptCore/runtime/MatchResult.h \
 	Source/JavaScriptCore/runtime/MathObject.cpp \
 	Source/JavaScriptCore/runtime/MathObject.h \

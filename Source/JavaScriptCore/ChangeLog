@@ -1,3 +1,19 @@
+2013-08-29  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Fix build break after r154861
+        https://bugs.webkit.org/show_bug.cgi?id=120503
+
+        Reviewed by Geoffrey Garen.
+
+        Unreviewed build fix attempt for GTK, Qt Windows and CMake based ports.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * Target.pri:
+        * runtime/MapData.h:
+        (JSC::MapData::KeyType::KeyType):
+
 2013-08-29  Andreas Kling  <akling@apple.com>
 
         CodeBlock: LLIntCallLinkInfo vector can be sized-to-fit at creation.
