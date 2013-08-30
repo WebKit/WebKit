@@ -1,7 +1,7 @@
 
 description('For Bug 40092: Spell checking for pasted text.');
 
-testRunner.waitUntilDone();
+jsTestIsAsync = true;
 
 var testRoot = document.createElement("div");
 document.body.insertBefore(testRoot, document.body.firstChild);
@@ -39,7 +39,7 @@ function done()
     if (next)
         return window.setTimeout(next, 0);
     testRoot.style.display = "none";
-    testRunner.notifyDone();
+    finishJSTest();
 }
 
 function verifyMarker(node, expectedMarked)

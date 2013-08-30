@@ -1,3 +1,33 @@
+2013-08-29  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        TEST COMPLETE does not appear at the end of spellchecking tests
+        https://bugs.webkit.org/show_bug.cgi?id=120405
+
+        Reviewed by Alexey Proskuryakov.
+
+        Fix this by setting 'jsTestIsAsync = true' and calling finishJSTest()
+        when the asynchronous spellchecking tests end.
+
+        * editing/spelling/grammar-markers-hidpi.html:
+        * editing/spelling/grammar-markers.html:
+        Those have a correct output. However, remove unnecessary notifyDone due to
+        finishJSTest() already calls it.
+
+        * editing/spelling/grammar-paste-expected.txt:
+        * editing/spelling/grammar-paste.html:
+        * editing/spelling/script-tests/spellcheck-paste.js:
+        * editing/spelling/spellcheck-async-expected.txt:
+        * editing/spelling/spellcheck-async.html:
+        * editing/spelling/spellcheck-paste-expected.txt:
+        * editing/spelling/spellcheck-queue-expected.txt:
+        * editing/spelling/spellcheck-queue.html:
+        Change waitUntilDone() to 'jsTestIsAsync = true'
+        and notifyDone() to finishJSTest().
+
+        * editing/spelling/spellcheck-input-search-crash-expected.txt:
+        * editing/spelling/spellcheck-input-search-crash.html:
+        Call 'test()' before js-test-post.js to ensure right order of messages.
+
 2013-08-29  Oliver Hunt  <oliver@apple.com>
 
         Implement ES6 Map object

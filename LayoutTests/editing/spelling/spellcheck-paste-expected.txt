@@ -3,9 +3,6 @@ For Bug 40092: Spell checking for pasted text.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS successfullyParsed is true
-
-TEST COMPLETE
 PASS INPUT has a marker on 'zz apple'
 PASS INPUT has a marker on 'z<b>z appl</b>e'
 PASS INPUT has a marker on 'zz zz zz'
@@ -15,4 +12,7 @@ PASS TEXTAREA has a marker on 'zz zz zz'
 PASS DIV has a marker on 'zz apple'
 PASS DIV has a marker on 'z<b>z appl</b>e'
 PASS DIV has a marker on 'zz zz zz'
+PASS successfullyParsed is true
+
+TEST COMPLETE
 

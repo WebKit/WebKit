@@ -10,8 +10,8 @@
 <script>
 description('For Bug 72939: Asynchronous SpellChecker should consider multiple requests.');
 
-if (window.testRunner)
-    testRunner.waitUntilDone();
+jsTestIsAsync = true;
+
 if (window.internals)
     internals.settings.setAsynchronousSpellCheckingEnabled(true);
 
@@ -80,8 +80,7 @@ function verifyIfAny()
     }
 
     testRoot.style.display = "none";
-    if (window.testRunner)
-        testRunner.notifyDone();
+    finishJSTest();
 }
 
 function findFirstTextNode(node)
