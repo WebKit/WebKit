@@ -210,10 +210,10 @@ inline JSValue::JSValue(const JSCell* ptr)
     u.asBits.payload = reinterpret_cast<int32_t>(const_cast<JSCell*>(ptr));
 }
 
-inline JSValue::operator bool() const
+inline JSValue::operator UnspecifiedBoolType*() const
 {
     ASSERT(tag() != DeletedValueTag);
-    return tag() != EmptyValueTag;
+    return tag() != EmptyValueTag ? reinterpret_cast<UnspecifiedBoolType*>(1) : 0;
 }
 
 inline bool JSValue::operator==(const JSValue& other) const
@@ -358,9 +358,9 @@ inline JSValue::JSValue(const JSCell* ptr)
     u.asInt64 = reinterpret_cast<uintptr_t>(const_cast<JSCell*>(ptr));
 }
 
-inline JSValue::operator bool() const
+inline JSValue::operator UnspecifiedBoolType*() const
 {
-    return u.asInt64;
+    return u.asInt64 ? reinterpret_cast<UnspecifiedBoolType*>(1) : 0;
 }
 
 inline bool JSValue::operator==(const JSValue& other) const

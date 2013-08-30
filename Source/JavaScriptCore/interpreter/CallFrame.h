@@ -75,7 +75,7 @@ namespace JSC  {
         }
 
         JSValue exception() const { return vm().exception(); }
-        bool hadException() const { return vm().exception(); }
+        bool hadException() const { return !vm().exception().isEmpty(); }
 
         const CommonIdentifiers& propertyNames() const { return *vm().propertyNames; }
         const MarkedArgumentBuffer& emptyList() const { return *vm().emptyList; }

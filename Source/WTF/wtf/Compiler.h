@@ -223,7 +223,7 @@
 
 #ifndef UNLIKELY
 #if COMPILER(GCC) || (COMPILER(RVCT) && defined(__GNUC__))
-#define UNLIKELY(x) __builtin_expect((x), 0)
+#define UNLIKELY(x) __builtin_expect(!!(x), 0)
 #else
 #define UNLIKELY(x) (x)
 #endif
@@ -234,7 +234,7 @@
 
 #ifndef LIKELY
 #if COMPILER(GCC) || (COMPILER(RVCT) && defined(__GNUC__))
-#define LIKELY(x) __builtin_expect((x), 1)
+#define LIKELY(x) __builtin_expect(!!(x), 1)
 #else
 #define LIKELY(x) (x)
 #endif

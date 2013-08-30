@@ -1,3 +1,27 @@
+2013-08-30  Oliver Hunt  <oliver@apple.com>
+
+        Make JSValue bool conversion less dangerous
+        https://bugs.webkit.org/show_bug.cgi?id=120505
+
+        Reviewed by Darin Adler.
+
+        Replaces JSValue::operator bool() with a operator UnspecifiedBoolType* as
+        we do elsewhere.  Then fix the places where terrible type coercion was
+        happening.  All of the changes made had no fundamental behavioural impact
+        as they were coercion results that were ignored (returning undefined 
+        after an exception).  
+
+        * dfg/DFGOperations.cpp:
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::hadException):
+        * runtime/JSCJSValue.h:
+        * runtime/JSCJSValueInlines.h:
+        (JSC::JSValue::operator UnspecifiedBoolType*):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncEval):
+        * runtime/PropertyDescriptor.cpp:
+        (JSC::PropertyDescriptor::equalTo)
+
 2013-08-30  Chris Curtis  <chris_curtis@apple.com>
 
         Cleaning errorDescriptionForValue after r154839

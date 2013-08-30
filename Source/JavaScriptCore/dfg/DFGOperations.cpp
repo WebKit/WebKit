@@ -677,7 +677,7 @@ EncodedJSValue DFG_OPERATION operationInOptimizeWithReturnAddress(ExecState* exe
     
     if (!base->isObject()) {
         vm->throwException(exec, createInvalidParameterError(exec, "in", base));
-        return jsUndefined();
+        return JSValue::encode(jsUndefined());
     }
     
     StructureStubInfo& stubInfo = exec->codeBlock()->getStubInfo(returnAddress);
@@ -704,7 +704,7 @@ EncodedJSValue DFG_OPERATION operationIn(ExecState* exec, JSCell* base, StringIm
 
     if (!base->isObject()) {
         vm->throwException(exec, createInvalidParameterError(exec, "in", base));
-        return jsUndefined();
+        return JSValue::encode(jsUndefined());
     }
 
     Identifier ident(vm, key);

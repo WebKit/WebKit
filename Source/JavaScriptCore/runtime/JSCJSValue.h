@@ -173,7 +173,8 @@ public:
     explicit JSValue(long long);
     explicit JSValue(unsigned long long);
 
-    operator bool() const;
+    typedef void* (JSValue::*UnspecifiedBoolType);
+    operator UnspecifiedBoolType*() const;
     bool operator==(const JSValue& other) const;
     bool operator!=(const JSValue& other) const;
 
