@@ -42,9 +42,9 @@ class QtPortTest(port_testcase.PortTestCase):
     port_name = 'qt-mac'
     port_maker = QtPort
     search_paths_cases = [
-        {'search_paths':['qt-mac-wk2', 'qt-wk2', 'qt-5.0-wk2', 'qt-5.0', 'qt-mac', 'qt'], 'os_name':'mac', 'use_webkit2':True, 'qt_version':'5.0'},
-        {'search_paths':['qt-wk2', 'qt-5.0-wk2', 'qt-5.0', 'qt-win', 'qt'], 'os_name':'win', 'use_webkit2':True, 'qt_version':'5.0'},
-        {'search_paths':['qt-wk2', 'qt-5.0-wk2', 'qt-5.0', 'qt-linux', 'qt'], 'os_name':'linux', 'use_webkit2':True, 'qt_version':'5.0'},
+        {'search_paths':['qt-mac-wk2', 'qt-wk2', 'qt-5.0', 'qt-mac', 'qt'], 'os_name':'mac', 'use_webkit2':True, 'qt_version':'5.0'},
+        {'search_paths':['qt-wk2', 'qt-5.0', 'qt-win', 'qt'], 'os_name':'win', 'use_webkit2':True, 'qt_version':'5.0'},
+        {'search_paths':['qt-wk2', 'qt-5.0', 'qt-linux', 'qt'], 'os_name':'linux', 'use_webkit2':True, 'qt_version':'5.0'},
 
         {'search_paths':['qt-wk1', 'qt-5.0', 'qt-mac', 'qt'], 'os_name':'mac', 'use_webkit2':False, 'qt_version':'5.0'},
         {'search_paths':['qt-wk1', 'qt-5.0', 'qt-win', 'qt'], 'os_name':'win', 'use_webkit2':False, 'qt_version':'5.0'},

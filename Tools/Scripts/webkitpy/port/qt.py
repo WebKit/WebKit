@@ -131,8 +131,6 @@ class QtPort(Port):
             if self.operating_system() == 'mac':
                 search_paths.append('qt-mac-wk2')
             search_paths.append('qt-wk2')
-            # FIXME: Remove qt-5.0-wk2 when migration of expectations to qt-wk2 is done.
-            search_paths.append('qt-5.0-wk2')
         else:
             search_paths.append('qt-wk1')
 
