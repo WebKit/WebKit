@@ -1,3 +1,26 @@
+2013-08-30  Ádám Kallai  <kadam@inf.u-szeged.hu>
+
+        [Qt] Added platform specific expected files after r15470 and r154780.
+        Unreviewed gardening.
+
+        * platform/qt-wk1/compositing/columns/composited-lr-paginated-repaint-expected.txt: Added.
+        * platform/qt-wk1/compositing/columns/composited-rl-paginated-repaint-expected.txt: Added.
+        * platform/qt-wk1/compositing/repaint/repaint-on-layer-grouping-change-expected.png: Added.
+        * platform/qt-wk1/compositing/repaint/repaint-on-layer-grouping-change-expected.txt: Added.
+        * platform/qt-wk2/compositing/columns/ancestor-clipped-in-paginated-expected.txt: Added.
+        * platform/qt-wk2/compositing/columns/clipped-in-paginated-expected.txt: Added.
+        * platform/qt-wk2/compositing/columns/composited-columns-expected.txt: Added.
+        * platform/qt-wk2/compositing/columns/composited-columns-vertical-rl-expected.txt: Added.
+        * platform/qt-wk2/compositing/columns/composited-in-paginated-rl-expected.txt: Added.
+        * platform/qt-wk2/compositing/columns/composited-in-paginated-writing-mode-rl-expected.txt: Added.
+        * platform/qt-wk2/compositing/columns/composited-lr-paginated-repaint-expected.txt: Added.
+        * platform/qt-wk2/compositing/columns/composited-nested-columns-expected.txt: Added.
+        * platform/qt-wk2/compositing/columns/composited-rl-paginated-repaint-expected.txt: Added.
+        * platform/qt-wk2/compositing/columns/hittest-composited-in-paginated-expected.txt: Added.
+        * platform/qt-wk2/compositing/columns/rotated-in-paginated-expected.txt: Added.
+        * platform/qt-wk2/compositing/columns/untransformed-composited-in-paginated-expected.txt: Added.
+        * platform/qt-wk2/compositing/repaint/repaint-on-layer-grouping-change-expected.txt: Added.
+
 2013-08-30  Andrei Parvu  <parvu@adobe.com>
 
         [CSS Masking] -webkit-mask-repeat: space does not work
