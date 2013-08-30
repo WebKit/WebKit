@@ -100,6 +100,8 @@ void XSLImportRule::loadSheet()
     }
     
     CachedResourceRequest request(ResourceRequest(cachedResourceLoader->document()->completeURL(absHref)));
+    if (m_cachedSheet)
+        m_cachedSheet->removeClient(this);
     m_cachedSheet = cachedResourceLoader->requestXSLStyleSheet(request);
     
     if (m_cachedSheet) {

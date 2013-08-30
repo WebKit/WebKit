@@ -1,3 +1,23 @@
+2013-08-30  Leo Yang  <leoyang@blackberry.com>
+
+        Possible dangling CachedResourceClient of StyleRuleImport and XSLImportRule
+        https://bugs.webkit.org/show_bug.cgi?id=120479
+
+        Reviewed by Darin Adler.
+
+        In StyleRuleImport::requestStyleSheet() and XSLImportRule::loadSheet() we
+        didn't call removeClient() for m_cachedSheet before assigning m_cachedSheet
+        a new value. This could leave the client as a client of the old cached
+        sheet and dangling after the client is deleted. Fix them by calling removeClient()
+        before assigning m_cacheSheet a new value.
+
+        Found by code inspection. Seems no way to test it automatically.
+
+        * css/StyleRuleImport.cpp:
+        (WebCore::StyleRuleImport::requestStyleSheet):
+        * xml/XSLImportRule.cpp:
+        (WebCore::XSLImportRule::loadSheet):
+
 2013-08-30  Gabor Abraham  <abrhm@inf.u-szeged.hu>
 
         Fix unused parameter warning in graphics/cairo/GraphicsContextCairo.cpp file.
