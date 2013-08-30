@@ -1,3 +1,9 @@
+2013-08-29  Andreas Kling  <akling@apple.com>
+
+        De-bork Qt build.
+
+        * Target.pri:
+
 2013-08-29  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Unreviewed build fix attempt for Windows.

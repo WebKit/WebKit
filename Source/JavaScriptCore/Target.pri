@@ -353,7 +353,7 @@ SOURCES += \
     runtime/Lookup.cpp \
     runtime/MapConstructor.cpp \
     runtime/MapData.cpp \
-    runtime/Prototype.cpp \
+    runtime/MapPrototype.cpp \
     runtime/MathObject.cpp \
     runtime/MemoryStatistics.cpp \
     runtime/NameConstructor.cpp \
