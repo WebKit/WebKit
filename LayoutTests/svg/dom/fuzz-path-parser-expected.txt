@@ -198,7 +198,6 @@ CONSOLE MESSAGE: Error: Problem parsing d="M1,1A8 5 5,8 4 4 1 s6 9 4 2,v0,l2 L7,
 CONSOLE MESSAGE: Error: Problem parsing d="M1,1A3,6,9,7,2,7 7,c1 1 1,0 7,7,l1 6 zH0,Zs0 5 0 0 zL8 4 7,zA8,8 5,9 2,6 4,l2 2,L9 4,V"
 CONSOLE MESSAGE: Error: Problem parsing d="M1,1Q2 9,4 1,s6,3 6,9,s6 0,0,6,1 zc2,1 7 0,1 4,Z2 A3,4 5,4,6,8,2 ZV5 t2 6,v8,t9,1 V5 l9,5 s6,9,2 9,T1 9 "
 CONSOLE MESSAGE: Error: Problem parsing d="M1,1a9,2 6 1 2 2 2,za9 0 2 8,2,3,3 s5,8,8 1,HC5 8 5,8,4 2 c8 4 5 2 5 9,l3 9,H7 s6 2,0 0 a4 9,1 6,3,7,0,M6,"
-CONSOLE MESSAGE: Error: Problem parsing d=""
 CONSOLE MESSAGE: Error: Problem parsing d="M"
 CONSOLE MESSAGE: Error: Problem parsing d="M
 CONSOLE MESSAGE: Error: Problem parsing d="M1,1Z0"
@@ -458,6 +457,7 @@ Parsed as 1 command(s) [M]: M1,1A3,6,9,7,2,7 7,c1 1 1,0 7,7,l1 6 zH0,Zs0 5 0 0 z
 Parsed as 4 command(s) [MQss]: M1,1Q2 9,4 1,s6,3 6,9,s6 0,0,6,1 zc2,1 7 0,1 4,Z2 A3,4 5,4,6,8,2 ZV5 t2 6,v8,t9,1 V5 l9,5 s6,9,2 9,T1 9 
 Parsed as 1 command(s) [M]: M1,1a9,2 6 1 2 2 2,za9 0 2 8,2,3,3 s5,8,8 1,HC5 8 5,8,4 2 c8 4 5 2 5 9,l3 9,H7 s6 2,0 0 a4 9,1 6,3,7,0,M6,
 Could not parse: 
+Could not parse:  
 Could not parse: M
 Could not parse: M
 Parsed as 2 command(s) [MZ]: M1,1Z0

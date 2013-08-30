@@ -1,3 +1,25 @@
+2013-08-30  Rob Buis  <rwlbuis@webkit.org>
+
+        SVG error parsing empty path
+        https://bugs.webkit.org/show_bug.cgi?id=78980
+
+        Reviewed by Darin Adler.
+
+        Adapt fuzz-path-parser.html and dynamic-empty-path.svg to also test empty paths.
+        Adjust expectations to not expect an error message for empty paths.
+
+        * platform/gtk/svg/W3C-SVG-1.1-SE/paths-dom-02-f-expected.txt:
+        * platform/gtk/svg/custom/dynamic-empty-path-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/paths-dom-02-f-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1-SE/paths-dom-02-f-expected.txt:
+        * platform/qt/svg/custom/dynamic-empty-path-expected.txt:
+        * svg/W3C-SVG-1.1-SE/paths-dom-02-f-expected.txt:
+        * svg/custom/dynamic-empty-path-expected.txt:
+        * svg/dom/fuzz-path-parser-expected.txt:
+        * svg/dom/fuzz-path-parser.html: also test empty path
+        * svg/dom/path-parser-expected.txt:
+        * svg/dom/script-tests/path-parser.js: also test empty path
+
 2013-08-30  Arpita Bahuguna  <a.bah@samsung.com>
 
         setAttributeNode() does not set the new value to an existing attribute if specified attribute is in a different case.

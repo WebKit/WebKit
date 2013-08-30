@@ -126,6 +126,7 @@ shouldBe("parsePath('M1,2x')", "'M1,2'");
 shouldBe("parsePath('M1,2 L40,0#90')", "'M1,2 L40,0'");
 
 shouldBe("parsePath('')", "''");
+shouldBe("parsePath(' ')", "''");
 shouldBe("parsePath('x')", "''");
 shouldBe("parsePath('L1,2')", "''");
 shouldBe("parsePath('M.1 .2 L.3 .4 .5 .6')", "'M0.1,0.2 L0.3,0.4 L0.5,0.6'");

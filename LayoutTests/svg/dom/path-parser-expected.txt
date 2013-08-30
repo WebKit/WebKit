@@ -5,7 +5,6 @@ CONSOLE MESSAGE: Error: Problem parsing d="xM1,2"
 CONSOLE MESSAGE: Error: Problem parsing d="M1,2"
 CONSOLE MESSAGE: Error: Problem parsing d="M1,2x"
 CONSOLE MESSAGE: Error: Problem parsing d="M1,2 L40,0#90"
-CONSOLE MESSAGE: Error: Problem parsing d=""
 CONSOLE MESSAGE: Error: Problem parsing d="x"
 CONSOLE MESSAGE: Error: Problem parsing d="L1,2"
 This tests the SVG path parser by parsing and then re-serializing various paths.
@@ -66,6 +65,7 @@ PASS parsePath('M1,2\v') is 'M1,2'
 PASS parsePath('M1,2x') is 'M1,2'
 PASS parsePath('M1,2 L40,0#90') is 'M1,2 L40,0'
 PASS parsePath('') is ''
+PASS parsePath(' ') is ''
 PASS parsePath('x') is ''
 PASS parsePath('L1,2') is ''
 PASS parsePath('M.1 .2 L.3 .4 .5 .6') is 'M0.1,0.2 L0.3,0.4 L0.5,0.6'

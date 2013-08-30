@@ -113,7 +113,7 @@ static SVGPathBlender* globalSVGPathBlender()
 bool buildPathFromString(const String& d, Path& result)
 {
     if (d.isEmpty())
-        return false;
+        return true;
 
     SVGPathBuilder* builder = globalSVGPathBuilder(result);
 
@@ -129,7 +129,7 @@ bool buildSVGPathByteStreamFromSVGPathSegList(const SVGPathSegList& list, SVGPat
     ASSERT(result);
     result->clear();
     if (list.isEmpty())
-        return false;
+        return true;
 
     SVGPathByteStreamBuilder* builder = globalSVGPathByteStreamBuilder(result);
 
@@ -166,7 +166,7 @@ bool buildPathFromByteStream(SVGPathByteStream* stream, Path& result)
 {
     ASSERT(stream);
     if (stream->isEmpty())
-        return false;
+        return true;
 
     SVGPathBuilder* builder = globalSVGPathBuilder(result);
 
@@ -181,7 +181,7 @@ bool buildSVGPathSegListFromByteStream(SVGPathByteStream* stream, SVGPathElement
 {
     ASSERT(stream);
     if (stream->isEmpty())
-        return false; 
+        return true; 
 
     SVGPathSegListBuilder* builder = globalSVGPathSegListBuilder(element, parsingMode == NormalizedParsing ? PathSegNormalizedRole : PathSegUnalteredRole, result);
 
@@ -196,7 +196,7 @@ bool buildStringFromByteStream(SVGPathByteStream* stream, String& result, PathPa
 {
     ASSERT(stream);
     if (stream->isEmpty())
-        return false; 
+        return true; 
 
     SVGPathStringBuilder* builder = globalSVGPathStringBuilder();
 
@@ -212,7 +212,7 @@ bool buildStringFromSVGPathSegList(const SVGPathSegList& list, String& result, P
 {
     result = String();
     if (list.isEmpty())
-        return false;
+        return true;
 
     SVGPathStringBuilder* builder = globalSVGPathStringBuilder();
 
@@ -229,7 +229,7 @@ bool buildSVGPathByteStreamFromString(const String& d, SVGPathByteStream* result
     ASSERT(result);
     result->clear();
     if (d.isEmpty())
-        return false;
+        return true;
 
     SVGPathByteStreamBuilder* builder = globalSVGPathByteStreamBuilder(result);
 
@@ -249,7 +249,7 @@ bool buildAnimatedSVGPathByteStream(SVGPathByteStream* fromStream, SVGPathByteSt
 
     result->clear();
     if (toStream->isEmpty())
-        return false;
+        return true;
 
     SVGPathByteStreamBuilder* builder = globalSVGPathByteStreamBuilder(result);
 
@@ -266,7 +266,7 @@ bool addToSVGPathByteStream(SVGPathByteStream* fromStream, SVGPathByteStream* by
     ASSERT(fromStream);
     ASSERT(byStream);
     if (fromStream->isEmpty() || byStream->isEmpty())
-        return false;
+        return true;
 
     SVGPathByteStreamBuilder* builder = globalSVGPathByteStreamBuilder(fromStream);
 

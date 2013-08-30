@@ -1,3 +1,26 @@
+2013-08-30  Rob Buis  <rwlbuis@webkit.org>
+
+        SVG error parsing empty path
+        https://bugs.webkit.org/show_bug.cgi?id=78980
+
+        Reviewed by Darin Adler.
+
+        According to the spec (http://www.w3.org/TR/SVG/paths.html#PathData), path 'd' attribute can be empty.
+        No error should be reported in this case.
+
+        * svg/SVGPathParser.cpp:
+        (WebCore::SVGPathParser::parsePathDataFromSource):
+        * svg/SVGPathUtilities.cpp:
+        (WebCore::buildPathFromString):
+        (WebCore::buildSVGPathByteStreamFromSVGPathSegList):
+        (WebCore::buildPathFromByteStream):
+        (WebCore::buildSVGPathSegListFromByteStream):
+        (WebCore::buildStringFromByteStream):
+        (WebCore::buildStringFromSVGPathSegList):
+        (WebCore::buildSVGPathByteStreamFromString):
+        (WebCore::buildAnimatedSVGPathByteStream):
+        (WebCore::addToSVGPathByteStream):
+
 2013-08-30  Andreas Kling  <akling@apple.com>
 
         Try to fix CSS_VARIABLES and CSS_DEVICE_ADAPTATION builds.
