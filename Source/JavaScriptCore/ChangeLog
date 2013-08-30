@@ -1,5 +1,12 @@
 2013-08-29  Oliver Hunt  <oliver@apple.com>
 
+        Fix issues found by MSVC (which also happily fixes an unintentional pessimisation)
+
+        * runtime/MapData.h:
+        (JSC::MapData::KeyType::KeyType):
+
+2013-08-29  Oliver Hunt  <oliver@apple.com>
+
 
         Implement ES6 Map object
         https://bugs.webkit.org/show_bug.cgi?id=120333
