@@ -1268,8 +1268,6 @@ editing/secure-input/reset-state-on-navigation.html [ Failure ]
 
 webkit.org/b/116238 css3/filters/custom/filter-fallback-to-software.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/116241 inspector/storage-panel-dom-storage-update.html [ Failure ]
-
 webkit.org/b/116244 fast/events/mouse-cursor-image-set.html [ Failure Pass ]
 
 webkit.org/b/116245 canvas/philip/tests/2d.text.draw.fontface.notinpage.html [ Pass Failure ]
