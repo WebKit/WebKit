@@ -1,6 +1,0 @@
-webkit.org/b/93735 : Ensure positioned, replaced buttons and input elements get the correct intrinsic height when none is specified.
-
-Text
-PASS
-
-PASS

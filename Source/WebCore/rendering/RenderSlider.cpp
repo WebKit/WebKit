@@ -98,7 +98,7 @@ void RenderSlider::computePreferredLogicalWidths()
         m_minPreferredLogicalWidth = min(m_minPreferredLogicalWidth, adjustContentBoxLogicalWidthForBoxSizing(style()->maxWidth().value()));
     }
 
-    LayoutUnit toAdd = borderAndPaddingLogicalWidth();
+    LayoutUnit toAdd = borderAndPaddingWidth();
     m_minPreferredLogicalWidth += toAdd;
     m_maxPreferredLogicalWidth += toAdd;
 

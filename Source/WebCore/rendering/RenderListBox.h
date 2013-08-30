@@ -88,8 +88,6 @@ private:
     virtual void autoscroll(const IntPoint&);
     virtual void stopAutoscroll();
 
-    virtual LayoutSize intrinsicSize() const OVERRIDE FINAL { return LayoutSize(maxPreferredLogicalWidth() - borderAndPaddingLogicalWidth(), m_intrinsicLogicalHeight - borderAndPaddingLogicalHeight()); }
-
     virtual bool shouldPanScroll() const { return true; }
     virtual void panScroll(const IntPoint&);
 
@@ -151,7 +149,6 @@ private:
     bool m_inAutoscroll;
     int m_optionsWidth;
     int m_indexOffset;
-    mutable LayoutUnit m_intrinsicLogicalHeight;
 
     RefPtr<Scrollbar> m_vBar;
 };

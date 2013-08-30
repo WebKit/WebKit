@@ -75,7 +75,6 @@ private:
 
     virtual const char* renderName() const { return "RenderMenuList"; }
 
-    virtual LayoutSize intrinsicSize() const OVERRIDE FINAL { return LayoutSize(maxPreferredLogicalWidth() - borderAndPaddingLogicalWidth(), logicalHeight() - borderAndPaddingLogicalHeight()); }
     virtual void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const OVERRIDE;
     virtual void computePreferredLogicalWidths() OVERRIDE;
 

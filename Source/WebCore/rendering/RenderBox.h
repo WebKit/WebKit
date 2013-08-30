@@ -408,6 +408,7 @@ public:
         return document().inQuirksMode() && style()->logicalHeight().isAuto() && !isFloatingOrOutOfFlowPositioned() && (isRoot() || isBody()) && !document().shouldDisplaySeamlesslyWithParent() && !isInline();
     }
 
+    virtual LayoutSize intrinsicSize() const { return LayoutSize(); }
     LayoutUnit intrinsicLogicalWidth() const { return style()->isHorizontalWritingMode() ? intrinsicSize().width() : intrinsicSize().height(); }
     LayoutUnit intrinsicLogicalHeight() const { return style()->isHorizontalWritingMode() ? intrinsicSize().height() : intrinsicSize().width(); }
 
@@ -656,7 +657,6 @@ private:
 
     LayoutUnit viewLogicalHeightForPercentages() const;
 
-    virtual LayoutSize intrinsicSize() const { return LayoutSize(); }
     void computePositionedLogicalHeight(LogicalExtentComputedValues&) const;
     void computePositionedLogicalWidthUsing(Length logicalWidth, const RenderBoxModelObject* containerBlock, TextDirection containerDirection,
                                             LayoutUnit containerLogicalWidth, LayoutUnit bordersPlusPadding,
