@@ -1,5 +1,18 @@
 2013-08-30  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: inspector/storage-panel-dom-storage-update.html is flakey on the bots
+        https://bugs.webkit.org/show_bug.cgi?id=120544
+
+        Take 2, remove some more runAfterPendingDispatches which were somehow
+        causing WebKit 2 tests to fail. This requires us to be a bit more
+        careful when running the pending handlers as well.
+
+        Unreviewed test fix.
+
+        * inspector/storage-panel-dom-storage-update.html:
+
+2013-08-30  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Breakpoints should have Automatically Continue Option
         https://bugs.webkit.org/show_bug.cgi?id=120187
 

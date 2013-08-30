@@ -42,8 +42,9 @@ function test()
     var nextDOMStorageClearHandler = null;
     InspectorTest.addSniffer(WebInspector.DOMStorageDispatcher.prototype, "domStorageItemsCleared", function() {
         if (nextDOMStorageClearHandler) {
-            nextDOMStorageClearHandler();
+            var handler = nextDOMStorageClearHandler;
             nextDOMStorageClearHandler = null;
+            handler();
         } else
             InspectorTest.addResult("ERROR: domStorageItemsCleared event without handler");
     }, true);
@@ -51,8 +52,9 @@ function test()
     var nextDOMStorageAddHandler = null;
     InspectorTest.addSniffer(WebInspector.DOMStorageDispatcher.prototype, "domStorageItemAdded", function() {
         if (nextDOMStorageAddHandler) {
-            nextDOMStorageAddHandler();
+            var handler = nextDOMStorageAddHandler;
             nextDOMStorageAddHandler = null;
+            handler();
         } else
             InspectorTest.addResult("ERROR: domStorageItemAdded event without handler");
     }, true);
@@ -60,12 +62,12 @@ function test()
     var nextDOMStorageRemoveHandler = null;
     InspectorTest.addSniffer(WebInspector.DOMStorageDispatcher.prototype, "domStorageItemRemoved", function() {
         if (nextDOMStorageRemoveHandler) {
-            nextDOMStorageRemoveHandler();
+            var handler = nextDOMStorageRemoveHandler;
             nextDOMStorageRemoveHandler = null;
+            handler();
         } else
             InspectorTest.addResult("ERROR: domStorageItemRemoved event without handler");
     }, true);
-
 
     InspectorTest.runTestSuite([
         function initialize(next)
@@ -90,29 +92,33 @@ function test()
                 next();
             }
 
+            var didFindStorage = false;
+
             var storages = WebInspector.domStorageModel.storages();
             for (var i = 0; i < storages.length; ++i) {
                 storage = storages[i];
                 if (storage.isLocalStorage) {
                     WebInspector.panels.resources._showDOMStorage(storage);
                     InspectorTest.runAfterPendingDispatches(localStorageViewUpdated);
+                    didFindStorage = true;
                     break;
                 }
             }
+
+            if (!didFindStorage)
+                InspectorTest.addResult("did not find local storage");
         },
 
         function addItemTest(next)
         {
             function viewUpdatedAfterAddition()
             {
-                InspectorTest.runAfterPendingDispatches(function() {
-                    rootNode = WebInspector.panels.resources._domStorageViews.get(storage)._dataGrid.rootNode();
-                    dumpDataGrid();
-                    if (count < 6)
-                        addItemTest(next);
-                    else
-                        next();
-                });
+                rootNode = WebInspector.panels.resources._domStorageViews.get(storage)._dataGrid.rootNode();
+                dumpDataGrid();
+                if (count < 6)
+                    addItemTest(next);
+                else
+                    next();
             }
 
             nextDOMStorageAddHandler = viewUpdatedAfterAddition;
@@ -126,14 +132,12 @@ function test()
         {
             function viewUpdatedAfterRemoval()
             {
-                InspectorTest.runAfterPendingDispatches(function() {
-                    rootNode = WebInspector.panels.resources._domStorageViews.get(storage)._dataGrid.rootNode();
-                    dumpDataGrid();
-                    if (count > 4)
-                        removeItemTest(next);
-                    else
-                        next();
-                });
+                rootNode = WebInspector.panels.resources._domStorageViews.get(storage)._dataGrid.rootNode();
+                dumpDataGrid();
+                if (count > 4)
+                    removeItemTest(next);
+                else
+                    next();
             }
 
             nextDOMStorageRemoveHandler = viewUpdatedAfterRemoval;
@@ -147,11 +151,9 @@ function test()
         {
             function viewUpdatedAfterClear()
             {
-                InspectorTest.runAfterPendingDispatches(function() {
-                    rootNode = WebInspector.panels.resources._domStorageViews.get(storage)._dataGrid.rootNode();
-                    dumpDataGrid();
-                    next();
-                });
+                rootNode = WebInspector.panels.resources._domStorageViews.get(storage)._dataGrid.rootNode();
+                dumpDataGrid();
+                next();
             }
 
             nextDOMStorageClearHandler = viewUpdatedAfterClear;
