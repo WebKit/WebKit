@@ -1,3 +1,17 @@
+2013-08-30  Brian Holt  <brian.holt@samsung.com>
+
+        [GTK] [WK2] TestWebKitWebView snapshot fails
+        https://bugs.webkit.org/show_bug.cgi?id=120404
+
+        Reviewed by Darin Adler.
+
+        Fixed the snapshot test failure caused by GTK no longer allowing
+        widgets to resize.  Instead, resize the WebView by resizing the
+        window and waiting for the event to complete asynchronously.
+
+        * UIProcess/API/gtk/tests/WebViewTest.cpp:
+        (WebViewTest::resizeView):
+
 2013-08-30  Csaba Osztrogonác  <ossy@webkit.org>
 
         Add USE(PROTECTION_SPACE_AUTH_CALLBACK) guards to canAuthenticateAgainstProtectionSpace()
