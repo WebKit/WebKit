@@ -1165,6 +1165,7 @@ editing/spelling/spelling-hasspellingmarker.html
 
 # textInputController.hasGrammarMarkers() is not implemented.
 editing/spelling/grammar.html
+editing/spelling/grammar-markers.html
 editing/spelling/grammar-paste.html
 
 # textInputController.setComposition() is not implemented

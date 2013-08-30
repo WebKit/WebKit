@@ -1,5 +1,12 @@
 2013-08-30  Ádám Kallai  <kadam@inf.u-szeged.hu>
 
+        [Qt] Skip failing grammar checking test.
+        Unreviewed gardening.
+
+        * platform/qt/TestExpectations:
+
+2013-08-30  Ádám Kallai  <kadam@inf.u-szeged.hu>
+
         [Qt] Added platform specific expected files after r15470 and r154780.
         Unreviewed gardening.
 
