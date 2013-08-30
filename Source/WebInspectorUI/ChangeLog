@@ -1,3 +1,11 @@
+2013-08-30  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Unreviewed build gardening.
+
+        * WebInspectorUI.vcxproj/WebInspectorUI.vcxproj: Adjust build dependencies so
+        that WebInspectorUI 'builds' after WebKit so that the expected resource directory
+        structure is always in place.
+
 2013-08-30  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Breakpoints should have Automatically Continue Option
