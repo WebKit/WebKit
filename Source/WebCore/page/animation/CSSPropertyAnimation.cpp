@@ -31,7 +31,9 @@
 #include "CSSPropertyAnimation.h"
 
 #include "AnimationBase.h"
+#include "CSSComputedStyleDeclaration.h"
 #include "CSSCrossfadeValue.h"
+#include "CSSFilterImageValue.h"
 #include "CSSImageGeneratorValue.h"
 #include "CSSImageValue.h"
 #include "CSSPrimitiveValue.h"
@@ -172,36 +174,62 @@ static inline PassRefPtr<FilterOperation> blendFunc(const AnimationBase* anim, F
     return toOp->blend(fromOp, progress, blendToPassthrough);
 }
 
+static inline void blendFilterOperations(const AnimationBase* anim, FilterOperations& result, const FilterOperations& from, const FilterOperations& to, double progress)
+{
+    size_t fromSize = from.operations().size();
+    size_t toSize = to.operations().size();
+    size_t size = max(fromSize, toSize);
+    for (size_t i = 0; i < size; i++) {
+        RefPtr<FilterOperation> fromOp = (i < fromSize) ? from.operations()[i].get() : 0;
+        RefPtr<FilterOperation> toOp = (i < toSize) ? to.operations()[i].get() : 0;
+        RefPtr<FilterOperation> blendedOp = toOp ? blendFunc(anim, fromOp.get(), toOp.get(), progress) : (fromOp ? blendFunc(anim, 0, fromOp.get(), progress, true) : 0);
+        if (blendedOp)
+            result.operations().append(blendedOp);
+        else {
+            RefPtr<FilterOperation> identityOp = PassthroughFilterOperation::create();
+            if (progress > 0.5)
+                result.operations().append(toOp ? toOp : identityOp);
+            else
+                result.operations().append(fromOp ? fromOp : identityOp);
+        }
+    }
+}
+
 static inline FilterOperations blendFunc(const AnimationBase* anim, const FilterOperations& from, const FilterOperations& to, double progress)
 {
     FilterOperations result;
 
     // If we have a filter function list, use that to do a per-function animation.
-    if (anim->filterFunctionListsMatch()) {
-        size_t fromSize = from.operations().size();
-        size_t toSize = to.operations().size();
-        size_t size = max(fromSize, toSize);
-        for (size_t i = 0; i < size; i++) {
-            RefPtr<FilterOperation> fromOp = (i < fromSize) ? from.operations()[i].get() : 0;
-            RefPtr<FilterOperation> toOp = (i < toSize) ? to.operations()[i].get() : 0;
-            RefPtr<FilterOperation> blendedOp = toOp ? blendFunc(anim, fromOp.get(), toOp.get(), progress) : (fromOp ? blendFunc(anim, 0, fromOp.get(), progress, true) : 0);
-            if (blendedOp)
-                result.operations().append(blendedOp);
-            else {
-                RefPtr<FilterOperation> identityOp = PassthroughFilterOperation::create();
-                if (progress > 0.5)
-                    result.operations().append(toOp ? toOp : identityOp);
-                else
-                    result.operations().append(fromOp ? fromOp : identityOp);
-            }
-        }
-    } else {
+    if (anim->filterFunctionListsMatch())
+        blendFilterOperations(anim, result, from, to, progress);
+    else {
         // If the filter function lists don't match, we could try to cross-fade, but don't yet have a way to represent that in CSS.
         // For now we'll just fail to animate.
         result = to;
     }
 
     return result;
+}
+
+static inline PassRefPtr<StyleImage> filterBlend(const AnimationBase* anim, StyleImage* from, StyleImage* to, double progress)
+{
+    CSSFilterImageValue* fromValue = static_cast<CSSFilterImageValue*>(from->data());
+    CSSFilterImageValue* toValue = static_cast<CSSFilterImageValue*>(to->data());
+
+    FilterOperations filterOperationsResult;
+    blendFilterOperations(anim, filterOperationsResult, fromValue->filterOperations(), toValue->filterOperations(), progress);
+    if (!toValue->cachedImage())
+        return to;
+
+    RefPtr<StyleCachedImage> styledImage = StyleCachedImage::create(toValue->cachedImage());
+
+    RefPtr<CSSImageValue> imageValue = CSSImageValue::create(toValue->cachedImage()->url(), styledImage.get());
+    RefPtr<CSSValue> filterValue = ComputedStyleExtractor::valueForFilter(anim->renderer(), anim->renderer()->style(),
+        filterOperationsResult, DoNotAdjustPixelValues);
+    RefPtr<CSSFilterImageValue> result = CSSFilterImageValue::create(imageValue, filterValue);
+    result->setFilterOperations(filterOperationsResult);
+
+    return StyleGeneratedImage::create(result.get());
 }
 #endif // ENABLE(CSS_FILTERS)
 
@@ -279,10 +307,35 @@ static inline PassRefPtr<StyleImage> blendFunc(const AnimationBase* anim, StyleI
     if (!from || !to)
         return to;
 
+    // Animation between two generated images. Cross fade for all other cases.
+    if (from->isGeneratedImage() && to->isGeneratedImage()) {
+        CSSImageGeneratorValue* fromGenerated = toStyleGeneratedImage(from)->imageValue();
+        CSSImageGeneratorValue* toGenerated = toStyleGeneratedImage(to)->imageValue();
+
+#if ENABLE(CSS_FILTERS)
+        if (fromGenerated->isFilterImageValue() && toGenerated->isFilterImageValue()) {
+            // Animation of generated images just possible if input images are equal.
+            // Otherwise fall back to cross fade animation.
+            CSSFilterImageValue* fromFitler = toCSSFilterImageValue(fromGenerated);
+            CSSFilterImageValue* toFitler = toCSSFilterImageValue(toGenerated);
+            if (fromFitler->equalInputImages(*toFitler))
+                return filterBlend(anim, from, to, progress);
+        }
+#else
+        UNUSED_PARAM(fromGenerated);
+        UNUSED_PARAM(toGenerated);
+#endif
+        // FIXME: Add support for animation between two cross-fade() functions.
+        // https://bugs.webkit.org/show_bug.cgi?id=119955
+
+        // FIXME: Add support for animation between two *gradient() functions.
+        // https://bugs.webkit.org/show_bug.cgi?id=119956
+}
+
+    // FIXME: Add support cross fade between cached and generated images.
+    // https://bugs.webkit.org/show_bug.cgi?id=78293
     if (from->isCachedImage() && to->isCachedImage())
         return crossfadeBlend(anim, static_cast<StyleCachedImage*>(from), static_cast<StyleCachedImage*>(to), progress);
-
-    // FIXME: Support transitioning generated images as well. (gradients, etc.)
 
     return to;
 }

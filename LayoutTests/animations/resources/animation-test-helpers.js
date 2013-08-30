@@ -34,9 +34,11 @@ Function parameters:
 
 */
 
-function isCloseEnough(actual, desired, tolerance)
+function isCloseEnough(actual, expected, tolerance)
 {
-    var diff = Math.abs(actual - desired);
+    if (isNaN(actual) || isNaN(expected))
+        return false;
+    var diff = Math.abs(actual - expected);
     return diff <= tolerance;
 }
 
@@ -49,14 +51,157 @@ function matrixStringToArray(s)
     return m[0].split(",");
 }
 
+function parseCSSImage(s)
+{
+    // Special case none.
+    if (s == "none")
+        return ["none"];
+
+    // Separate function name from function value.
+    var matches = s.match("([\\w\\-]+)\\((.*)\\)");
+    if (!matches){
+        console.error("Parsing error. Value not a CSS Image function ", s);
+        return false;
+    }
+
+    var functionName = matches[1];
+    var functionValue = matches[2];
+
+    // Generator functions can have CSS images as values themself.
+    // These functions will call parseCSSImage for each CSS Image.
+    switch (functionName) {
+    case "-webkit-filter":
+        return parseFilterImage(functionValue);
+    case "-webkit-cross-fade":
+        return parseCrossFade(functionValue);
+    case "url":
+        return ["url", functionValue];
+    // FIXME: Add support for linear and redial gradient.
+    default:
+        // All supported filter functions must be listed above.
+        return false;
+    }
+}
+
+// This should just be called by parseCSSImage.
 function parseCrossFade(s)
 {
-    var matches = s.match("-webkit-cross-fade\\((.*)\\s*,\\s*(.*)\\s*,\\s*(.*)\\)");
+    var matches = s.match("(.*)\\s*,\\s*(.*)\\s*,\\s*(.*)\\s*");
+    if (!matches) {
+        console.error("Parsing error on '-webkit-cross-fade()'.");
+        return null;
+    }
 
-    if (!matches)
+    var from = parseCSSImage(matches[1]);
+    var to = parseCSSImage(matches[2]);
+    if (!from || !to) {
+        console.error("Parsing error on images passed to '-webkit-cross-fade()' ", s);
+        return null;
+    }
+
+    var fadeValue = matches[3];
+    var percent;
+    if (isNaN(fadeValue)) {
+        // Check if last char is '%' and rip it off.
+        // Normalize it to number.
+        if (fadeValue.search('%') != fadeValue.length - 1) {
+            console.error("Passed value to '-webkit-cross-fade()' is not a number or percentage ", fadeValue);
+            return null;
+        }
+        fadeValue = fadeValue.slice(0, fadeValue.length - 1);
+        if (isNaN(fadeValue)) {
+            console.error("Passed value to '-webkit-cross-fade()' is not a number or percentage ", fadeValue);
+            return null;
+        }
+        percent = parseFloat(fadeValue) / 100;
+    } else
+        percent = parseFloat(fadeValue);
+
+    return ["-webkit-cross-fade", from, to, percent];
+}
+
+// This should just be called by parseCSSImage.
+function parseFilterImage(s)
+{
+    // Separate image value from filter function list.
+    var matches = s.match("([\\-\\w]+\\(.*\\))\\s*,\\s*(.*)\\s*");
+    if (!matches) {
+        console.error("Parsing error on 'fitler()' ", s);
+        return false;
+    }
+
+    var image = parseCSSImage(matches[1]);
+    if (!image) {
+        console.error("Parsing error on image passed to 'fitler()' ", s);
+        return false;
+    }
+
+    var filterFunctionList = parseFilterFunctionList(matches[2]);
+    if (!filterFunctionList) {
+        console.error("Parsing error on filter function list passed to 'fitler()' ", s);
+        return false;
+    }
+
+    return ["-webkit-filter", image, filterFunctionList];
+}
+
+function parseFilterFunctionList(s)
+{
+    var reg = /\)*\s*(blur|brightness|contrast|custom|drop\-shadow|grayscale|hue\-rotate|invert|opacity|saturate|sepia|url)\(/
+    var matches = s.split(reg);
+
+    // First item must be empty. All other items are of functionName, functionValue.
+    if (!matches || matches.shift() != "")
         return null;
 
-    return {"from": matches[1], "to": matches[2], "percent": parseFloat(matches[3])}
+    // RegEx above can not handle deprecated custom() function
+    var customPos = matches.indexOf("custom");
+    if (customPos >= 0 && matches[customPos+1] === "")
+        return parseDeprecatedCustomFilterFunction(s);
+
+    // Odd items are the function name, even items the function value.
+    if (!matches.length || matches.length % 2)
+        return null;
+
+    var functionList = [];
+    for (var i = 0; i < matches.length; i += 2) {
+        var functionName = matches[i];
+        var functionValue = matches[i+1];
+        functionList.push(functionName);
+        if (functionName == "drop-shadow" || functionName == "url") {
+            // FIXME: Support parsing of drop-shadow.
+            functionList.push(functionValue);
+            continue;
+        } else if (functionName == "custom") {
+            var filterParams;
+            if (!window.getCustomFilterParameters)
+                throw new Error("getCustomFilterParameters not found. Did you include custom-filter-parser.js?");
+            var filterParams = getCustomFilterParameters(functionValue);
+            if (!filterParams) {
+                console.error("Error on parsing custom filter parameters ", functionValue);
+                return null;
+            }
+            functionList.push(filterParams);
+            continue;
+        }
+        functionList.push(parseFloat(functionValue));
+    }
+    return functionList;
+}
+
+// FIXME: Remove function and caller when we removed the deprecated syntax of
+// the custom filter function.
+function parseDeprecatedCustomFilterFunction(s)
+{
+    var filterResult = s.match(/(\w+)\((.+)\)/);
+    var filterParams = filterResult[2];
+
+    if (filterResult[1] != "custom")
+        return null;
+
+    if (!window.getCustomFilterParameters)
+        throw new Error("getCustomFilterParameters not found. Did you include custom-filter-parser.js?");
+    return ["custom", getCustomFilterParameters(filterParams)];
 }
 
 function parseBasicShape(s)
@@ -99,6 +244,66 @@ function parseBasicShape(s)
     return {"shape": shapeFunction[1], "params": matches};
 }
 
+function compareCSSImages(computedValue, expectedValue, tolerance)
+{
+    var actual = typeof computedValue === "string" ? parseCSSImage(computedValue) : computedValue;
+    var expected = typeof expectedValue === "string" ? parseCSSImage(expectedValue) : expectedValue;
+    if (!actual || !Array.isArray(actual)         // Check that: actual is an array,
+        || !expected || !Array.isArray(expected)  // expected is an array,
+        || actual[0] != expected[0]) {            // and image function names are the same.
+        console.error("Unexpected mismatch between CSS Image functions.");
+        return false;
+    }
+    switch (actual[0]) {
+    case "none":
+        return true;
+    case "-webkit-filter":
+        return compareCSSImages(actual[1], expected[1], tolerance)
+            && compareFilterFunctions(actual[2], expected[2], tolerance);
+    case "-webkit-cross-fade":
+        return compareCSSImages(actual[1], expected[1], tolerance)
+            && compareCSSImages(actual[2], expected[2], tolerance)
+            && isCloseEnough(actual[3], expected[3], tolerance);
+    case "url":
+        return actual[1].search(expected[1]) >= 0;
+    default:
+        console.error("Unknown CSS Image function ", actual[0]);
+        return false;
+    }
+}
+
+// Called by CSS Image function filter() as well as filter property.
+function compareFilterFunctions(computedValue, expectedValue, tolerance)
+{
+    var actual = typeof computedValue === "string" ? parseFilterFunctionList(computedValue) : computedValue;
+    var expected = typeof expectedValue === "string" ? parseFilterFunctionList(expectedValue) : expectedValue;
+    if (!actual || !Array.isArray(actual)         // Check that: actual is an array,
+        || !expected || !Array.isArray(expected)  // expected is an array,
+        || !actual.length                         // actual array has entries,
+        || actual.length != expected.length       // actual and expected have same length
+        || actual.length % 2 == 1)                // and image function names are the same.
+        return false;
+
+    for (var i = 0; i < actual.length; i += 2) {
+        if (actual[i] != expected[i]) {
+            console.error("Filter functions do not match.");
+            return false;
+        }
+        if (actual[i] == "custom") {
+            if (!customFilterParameterMatch(actual[i+1], expected[i+1], tolerance)) {
+                console.error("Custom filter parameters do not match.");
+                return false;
+            }
+            continue;
+        }
+        if (!isCloseEnough(actual[i+1], expected[i+1], tolerance)) {
+            console.error("Filter function values do not match.");
+            return false;
+        }
+    }
+    return true;
+}
+
 function basicShapeParametersMatch(paramList1, paramList2, tolerance)
 {
     if (paramList1.shape != paramList2.shape
@@ -112,31 +317,6 @@ function basicShapeParametersMatch(paramList1, paramList2, tolerance)
             return false;
     }
     return true;
-}
-
-// Return an array of numeric filter params in 0-1.
-function getFilterParameters(s)
-{
-    var filterResult = s.match(/(\w+)\((.+)\)/);
-    if (!filterResult)
-        throw new Error("There's no filter in \"" + s + "\"");
-    var filterParams = filterResult[2];
-    if (filterResult[1] == "custom") {
-        if (!window.getCustomFilterParameters)
-            throw new Error("getCustomFilterParameters not found. Did you include custom-filter-parser.js?");
-        return getCustomFilterParameters(filterParams);
-    }
-    var paramList = filterParams.split(' '); // FIXME: the spec may allow comma separation at some point.
-    
-    // Normalize percentage values.
-    for (var i = 0; i < paramList.length; ++i) {
-        var param = paramList[i];
-        paramList[i] = parseFloat(paramList[i]);
-        if (param.indexOf('%') != -1)
-            paramList[i] = paramList[i] / 100;
-    }
-
-    return paramList;
 }
 
 function customFilterParameterMatch(param1, param2, tolerance)
@@ -179,26 +359,6 @@ function customFilterParameterMatch(param1, param2, tolerance)
         }
     }
 
-    return true;
-}
-
-function filterParametersMatch(paramList1, paramList2, tolerance)
-{
-    if (paramList1.length != paramList2.length)
-        return false;
-    for (var i = 0; i < paramList1.length; ++i) {
-        var param1 = paramList1[i], 
-            param2 = paramList2[i];
-        if (typeof param1 == "object") {
-            // This is a custom filter parameter.
-            if (!customFilterParameterMatch(param1, param2, tolerance))
-                return false;
-            continue;
-        }
-        var match = isCloseEnough(param1, param2, tolerance);
-        if (!match)
-            return false;
-    }
     return true;
 }
 
@@ -329,9 +489,9 @@ function comparePropertyValue(property, computedValue, expectedValue, tolerance)
             }
         }
     } else if (property == "webkitFilter") {
-        var filterParameters = getFilterParameters(computedValue);
-        var filter2Parameters = getFilterParameters(expectedValue);
-        result = filterParametersMatch(filterParameters, filter2Parameters, tolerance);
+        var filterParameters = parseFilterFunctionList(computedValue);
+        var filter2Parameters = parseFilterFunctionList(expectedValue);
+        result = compareFilterFunctions(filterParameters, filter2Parameters, tolerance);
     } else if (property == "webkitClipPath" || property == "webkitShapeInside") {
         var clipPathParameters = parseBasicShape(computedValue);
         var clipPathParameters2 = parseBasicShape(expectedValue);
@@ -342,20 +502,9 @@ function comparePropertyValue(property, computedValue, expectedValue, tolerance)
                || property == "borderImageSource"
                || property == "listStyleImage"
                || property == "webkitMaskImage"
-               || property == "webkitMaskBoxImage") {
-        var computedCrossFade = parseCrossFade(computedValue);
-
-        if (!computedCrossFade) {
-            result = false;
-        } else {
-            if (typeof expectedValue == "string") {
-                var computedCrossFade2 = parseCrossFade(expectedValue);
-                result = isCloseEnough(computedCrossFade.percent, computedCrossFade2.percent, tolerance) && computedCrossFade.from == computedCrossFade2.from && computedCrossFade.to == computedCrossFade2.to;
-            } else {
-                result = isCloseEnough(computedCrossFade.percent, expectedValue, tolerance)
-            }
-        }
-    } else {
+               || property == "webkitMaskBoxImage")
+        result = compareCSSImages(computedValue, expectedValue, tolerance);
+    else {
         result = isCloseEnough(computedValue, expectedValue, tolerance);
     }
     return result;

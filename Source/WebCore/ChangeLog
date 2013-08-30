@@ -1,3 +1,47 @@
+2013-08-30  Dirk Schulze  <krit@webkit.org>
+
+        Animate CSS Image filter() function
+        https://bugs.webkit.org/show_bug.cgi?id=119938
+
+        Reviewed by Simon Fraser.
+
+        With this patch, the new introduced CSS Image function filter() can be
+        animated. According to the spec, just filter functions can be
+        interpolated.
+
+        The patch also prepares StyleImage blending for interpolation of other
+        generated images like gradients or cross-fade().
+
+        http://dev.w3.org/fxtf/filters/#interpolating-filter-image
+
+        Test: fast/filter-image/filter-image-animation.html
+
+        * css/CSSComputedStyleDeclaration.cpp: Reuse the code that creates a
+            CSSValueList from ComputeStyle logic.
+        (WebCore::valueForPixel):
+            For StyleRules we want to have not-adjusted length values.
+        (WebCore::ComputedStyleExtractor::valueForShadow):
+            Add argument to switch between adjusted and not-adjusted length.
+        (WebCore::ComputedStyleExtractor::valueForFilter):
+            Ditto.
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * css/CSSComputedStyleDeclaration.h:
+        * css/CSSFilterImageValue.h: Add helper functions
+            for animating filters. We need to pass the FilterOperations for
+            the image generation and the CSSValueList for StyleRule.
+        (WebCore::CSSFilterImageValue::filterOperations):
+        (WebCore::CSSFilterImageValue::setFilterOperations):
+        (WebCore::CSSFilterImageValue::cachedImage):
+        * page/animation/CSSPropertyAnimation.cpp:
+            Add animation code to support animations between two filter()
+            function values.
+        (WebCore::blendFilterOperations):
+        (WebCore::blendFunc):
+        (WebCore::filterBlend):
+        * rendering/style/StyleGeneratedImage.h: Add helper functions.
+        (WebCore::CSSFilterImageValue::imageValue):
+
+
 2013-08-30  Leo Yang  <leoyang@blackberry.com>
 
         Make sure remove CachedResourceClient when destructing IconLoader

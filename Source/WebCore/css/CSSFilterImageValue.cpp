@@ -162,8 +162,12 @@ bool CSSFilterImageValue::hasFailedOrCanceledSubresources() const
 
 bool CSSFilterImageValue::equals(const CSSFilterImageValue& other) const
 {
-    return compareCSSValuePtr(m_imageValue, other.m_imageValue)
-        && compareCSSValuePtr(m_filterValue, other.m_filterValue);
+    return equalInputImages(other) && compareCSSValuePtr(m_filterValue, other.m_filterValue);
+}
+
+bool CSSFilterImageValue::equalInputImages(const CSSFilterImageValue& other) const
+{
+    return compareCSSValuePtr(m_imageValue, other.m_imageValue);
 }
 
 } // namespace WebCore

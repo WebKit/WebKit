@@ -28,8 +28,8 @@
   <script type="text/javascript" charset="utf-8">
     const expectedValues = [
       // [animation-name, time, element-id, property, expected-value, tolerance]
-      ["anim", 2.25, "box", "webkitMaskBoxImage", 0.25, 0.05],
-      ["anim", 2.25, ["box", "static:boxStatic"], "webkitMaskBoxImage", 0.25, 0.05]
+      ["anim", 2.25, "box", "webkitMaskBoxImage", "-webkit-cross-fade(url(stripes-100.png), url(green-100.png), 25%)", 0.05],
+      ["anim", 2.25, ["box", "static:boxStatic"], "webkitMaskBoxImage", "-webkit-cross-fade(url(stripes-100.png), url(green-100.png), 25%)", 0.05]
     ];
 
     var doPixelTest = true;

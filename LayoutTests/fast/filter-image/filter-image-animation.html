@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <style>
+    .box {
+        height: 100px;
+        width: 100px;
+        margin: 10px;
+        background-color: blue;
+        display: inline-block;
+    }
+
+    #brightness {
+      -webkit-animation: brightness-anim 2s linear;
+    }
+
+    #blur {
+      -webkit-animation: blur-anim 2s linear;
+    }
+
+    #grayscale {
+      -webkit-animation: grayscale-anim 2s linear;
+    }
+
+    #sepia {
+      -webkit-animation: sepia-anim 2s linear;
+    }
+
+    #no {
+      -webkit-animation: no-anim 2s linear;
+    }
+
+    #multiple1 {
+      -webkit-animation: multiple-anim1 2s linear;
+    }
+
+    #multiple2 {
+      -webkit-animation: multiple-anim2 2s linear;
+    }
+
+    #generated1 {
+      -webkit-animation: generated-anim1 2s linear;
+    }
+
+    #generated2 {
+      -webkit-animation: generated-anim2 2s linear;
+    }
+
+    #urlfilter {
+      -webkit-animation: url-to-filter-anim 2s linear;
+    }
+
+
+    @-webkit-keyframes brightness-anim {
+        from { background-image: -webkit-filter(url(resources/image.svg), brightness(1)); }
+        to   { background-image: -webkit-filter(url(resources/image.svg), brightness(0)); }
+    }
+
+    @-webkit-keyframes blur-anim {
+        from { background-image: -webkit-filter(url(resources/image.svg), blur(0)); }
+        to   { background-image: -webkit-filter(url(resources/image.svg), blur(10px)); }
+    }
+
+    @-webkit-keyframes grayscale-anim {
+        from { background-image: -webkit-filter(url(resources/image.svg), grayscale(1)); }
+        to   { background-image: -webkit-filter(url(resources/image.svg), grayscale(0)); }
+    }
+
+    @-webkit-keyframes sepia-anim {
+        from { background-image: -webkit-filter(url(resources/image.svg), sepia(1)); }
+        to   { background-image: -webkit-filter(url(resources/image.svg), sepia(0)); }
+    }
+
+    @-webkit-keyframes no-anim {
+        from { background-image: -webkit-filter(url(resources/image.svg), sepia(1)); }
+        to   { background-image: -webkit-filter(url(resources/blue.svg), sepia(0)); }
+    }
+
+    @-webkit-keyframes multiple-anim1 {
+        from { background-image: -webkit-filter(url(resources/image.svg), sepia(0.25) blur(3px) hue-rotate(45deg)); }
+        to   { background-image: -webkit-filter(url(resources/image.svg), sepia(0.75)); }
+    }
+
+    @-webkit-keyframes multiple-anim2 {
+        from { background-image: -webkit-filter(url(resources/image.svg), contrast(0.25)); }
+        to   { background-image: -webkit-filter(url(resources/image.svg), contrast(0.75) blur(3px) hue-rotate(45deg)); }
+    }
+
+    @-webkit-keyframes generated-anim1 {
+        from { background-image: -webkit-filter(-webkit-filter(url(resources/image.svg), blur(3px)), sepia(1)); }
+        to   { background-image: -webkit-filter(-webkit-filter(url(resources/image.svg), blur(3px)), sepia(0)); }
+    }
+
+    @-webkit-keyframes generated-anim2 {
+        from { background-image: -webkit-filter(-webkit-cross-fade(url(resources/image.svg), url(resources/image.svg), 50%), sepia(1)); }
+        to   { background-image: -webkit-filter(-webkit-cross-fade(url(resources/image.svg), url(resources/image.svg), 50%), sepia(0)); }
+    }
+
+    @-webkit-keyframes url-to-filter-anim {
+        from { background-image: url(resources/image.svg); }
+        to   { background-image: -webkit-filter(url(resources/image.svg), sepia(0.5)); }
+    }
+  </style>
+  <script src="../../animations/resources/animation-test-helpers.js"></script>
+  <script type="text/javascript">
+    const expectedValues = [
+      // [animation-name, time, element-id, property, expected-value, tolerance]
+      ["brightness-anim",  1, "brightness", "backgroundImage", "-webkit-filter(url(image.svg), brightness(0.5))", 0.05],
+      ["blur-anim",  1, "blur", "backgroundImage", "-webkit-filter(url(image.svg), blur(5px))", 0.05],
+      ["grayscale-anim",  1, "grayscale", "backgroundImage", "-webkit-filter(url(image.svg), grayscale(0.5))", 0.05],
+      ["sepia-anim",  1, "sepia", "backgroundImage", "-webkit-filter(url(image.svg), sepia(0.5))", 0.05],
+      ["no-anim",  1, "no", "backgroundImage", "-webkit-filter(url(blue.svg), sepia(0))", 0],
+      ["multiple-anim1",  1, "multiple1", "backgroundImage", "-webkit-filter(url(image.svg), sepia(0.5) blur(1.5px) hue-rotate(22.5deg))", 0.05],
+      ["multiple-anim2",  1, "multiple2", "backgroundImage", "-webkit-filter(url(image.svg), contrast(0.5) blur(1.5px) hue-rotate(22.5deg))", 0.05],
+      // FIXME: We need to support generated images as input to other generated images for animations first.
+      ["generated-anim1",  1, "generated1", "backgroundImage", "-webkit-filter(-webkit-filter(url(image.svg), blur(3px)), sepia(0))", 0],
+      ["generated-anim2",  1, "generated2", "backgroundImage", "-webkit-filter(-webkit-cross-fade(url(image.svg), url(image.svg), 50%), sepia(0))", 0],
+      ["url-to-filter-anim",  1, "urlfilter", "backgroundImage", " -webkit-filter(url(image.svg), sepia(0.5))", 0],
+    ];
+    
+    runAnimationTest(expectedValues);
+  </script>
+</head>
+<body>
+
+<div class="box" id="brightness"></div>
+<div class="box" id="blur"></div>
+<div class="box" id="grayscale"></div>
+<div class="box" id="sepia"></div>
+<div class="box" id="no"></div>
+<div class="box" id="multiple1"></div>
+<div class="box" id="multiple2"></div>
+<div class="box" id="generated1"></div>
+<div class="box" id="generated2"></div>
+<div class="box" id="urlfilter"></div>
+
+<div id="result">
+</div>
+</body>
+</html>

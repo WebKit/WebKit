@@ -1,3 +1,41 @@
+2013-08-30  Dirk Schulze  <krit@webkit.org>
+
+        Animate CSS Image filter() function
+        https://bugs.webkit.org/show_bug.cgi?id=119938
+
+        Reviewed by Simon Fraser.
+
+        Add tests to test animation between two filter() function values.
+        Furthermore, extended animation-test-helpers.js to parse all kind of CSS
+        image function where we support animations. CSS Image function can be
+        deeply nested as well now:
+
+            -wekit-filter(-webkit-cross-fade(url(a.png), url(b.png), 50%), sepia(0.5))
+
+        Even the 50% can now be checked with a tolerance. If we should ever support
+        animations on nested CSS Images, the new code in animation-test-helpers.js
+        is prepared for it.
+
+        Fixed a bunch of tests that passed by accident or needed an update to the new
+        infrastructure.
+
+        * animations/resources/animation-test-helpers.js:
+        (parseCSSImage): For parsing of all kind of supported CSS Image functions.
+            Currently supported: -webkit-cross-fade, -webkit-filter, url, none
+            Still missing: linear and radial gradients (can not be animated yet).
+            CSS Image functions are allowed to be nested as deep JS allows.
+        (parseCrossFade): Add parsing of input CSS images.
+        (parseFilterImage): Parse -webkit-filter image function as well as input images.
+        (parseFilterFunctionList): Parse filter function list. We now parse the
+            function name as well. Added rudimentary support for drop-shadow and url.
+        (parseDeprecatedCustomFilterFunction): Special case old syntax of custom
+            filter function. Shall be removed in the future.
+        (compareCSSImages): Compares all kind (even deep nested) CSS images.
+        (compareFilterFunctions): Now compare filter function names as well.
+        (comparePropertyValue): Use new compareCSSImages function.
+        * fast/filter-image/filter-image-animation-expected.txt: Added.
+        * fast/filter-image/filter-image-animation.html: Added.
+
 2013-08-30  Rob Buis  <rwlbuis@webkit.org>
 
         SVG error parsing empty path

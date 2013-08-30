@@ -31,6 +31,7 @@ namespace WebCore {
 class CSSPrimitiveValue;
 class CSSValueList;
 class Color;
+class FilterOperations;
 class MutableStylePropertySet;
 class Node;
 class RenderObject;
@@ -47,6 +48,8 @@ class CustomFilterParameter;
 
 enum EUpdateLayout { DoNotUpdateLayout = false, UpdateLayout = true };
 
+enum AdjustPixelValuesForComputedStyle { AdjustPixelValues, DoNotAdjustPixelValues };
+
 class ComputedStyleExtractor {
 public:
     ComputedStyleExtractor(PassRefPtr<Node>, bool allowVisitedStyle = false, PseudoId = NOPSEUDO);
@@ -60,6 +63,10 @@ public:
     bool useFixedFontDefaultSize() const;
     bool propertyMatches(CSSPropertyID, const CSSValue*) const;
 
+#if ENABLE(CSS_FILTERS)
+    static PassRefPtr<CSSValue> valueForFilter(const RenderObject*, const RenderStyle*, const FilterOperations&, AdjustPixelValuesForComputedStyle = AdjustPixelValues);
+#endif
+
 private:
     // The styled node is either the node passed into computedPropertyValue, or the
     // PseudoElement for :before and :after if they exist.
@@ -72,12 +79,8 @@ private:
     PassRefPtr<SVGPaint> adjustSVGPaintForCurrentColor(PassRefPtr<SVGPaint>, RenderStyle*) const;
 #endif
 
-    PassRefPtr<CSSValue> valueForShadow(const ShadowData*, CSSPropertyID, const RenderStyle*) const;
+    static PassRefPtr<CSSValue> valueForShadow(const ShadowData*, CSSPropertyID, const RenderStyle*, AdjustPixelValuesForComputedStyle = AdjustPixelValues);
     PassRefPtr<CSSPrimitiveValue> currentColorOrValidColor(RenderStyle*, const Color&) const;
-
-#if ENABLE(CSS_FILTERS)
-    PassRefPtr<CSSValue> valueForFilter(const RenderObject*, const RenderStyle*) const;
-#endif
 
     PassRefPtr<CSSValueList> getCSSPropertyValuesForShorthandProperties(const StylePropertyShorthand&) const;
     PassRefPtr<CSSValueList> getCSSPropertyValuesForSidesShorthand(const StylePropertyShorthand&) const;

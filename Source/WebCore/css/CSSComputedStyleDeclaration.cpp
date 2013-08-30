@@ -900,21 +900,49 @@ static PassRefPtr<CSSValue> valueForCustomFilterParameter(const RenderObject* re
 }
 #endif // ENABLE(CSS_SHADERS)
 
+static inline PassRefPtr<CSSPrimitiveValue> adjustLengthForZoom(double length, const RenderStyle* style, AdjustPixelValuesForComputedStyle adjust)
+{
+    return adjust == AdjustPixelValues ? zoomAdjustedPixelValue(length, style) : cssValuePool().createValue(length, CSSPrimitiveValue::CSS_PX);
+}
+
+static inline PassRefPtr<CSSPrimitiveValue> adjustLengthForZoom(const Length& length, const RenderStyle* style, AdjustPixelValuesForComputedStyle adjust)
+{
+    return adjust == AdjustPixelValues ? zoomAdjustedPixelValue(length.value(), style) : cssValuePool().createValue(length);
+}
+
+PassRefPtr<CSSValue> ComputedStyleExtractor::valueForShadow(const ShadowData* shadow, CSSPropertyID propertyID, const RenderStyle* style, AdjustPixelValuesForComputedStyle adjust)
+{
+    if (!shadow)
+        return cssValuePool().createIdentifierValue(CSSValueNone);
+
+    RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
+    for (const ShadowData* currShadowData = shadow; currShadowData; currShadowData = currShadowData->next()) {
+        RefPtr<CSSPrimitiveValue> x = adjustLengthForZoom(currShadowData->x(), style, adjust);
+        RefPtr<CSSPrimitiveValue> y = adjustLengthForZoom(currShadowData->y(), style, adjust);
+        RefPtr<CSSPrimitiveValue> blur = adjustLengthForZoom(currShadowData->radius(), style, adjust);
+        RefPtr<CSSPrimitiveValue> spread = propertyID == CSSPropertyTextShadow ? PassRefPtr<CSSPrimitiveValue>() : adjustLengthForZoom(currShadowData->spread(), style, adjust);
+        RefPtr<CSSPrimitiveValue> style = propertyID == CSSPropertyTextShadow || currShadowData->style() == Normal ? PassRefPtr<CSSPrimitiveValue>() : cssValuePool().createIdentifierValue(CSSValueInset);
+        RefPtr<CSSPrimitiveValue> color = cssValuePool().createColorValue(currShadowData->color().rgb());
+        list->prepend(ShadowValue::create(x.release(), y.release(), blur.release(), spread.release(), style.release(), color.release()));
+    }
+    return list.release();
+}
+
 #if ENABLE(CSS_FILTERS)
-PassRefPtr<CSSValue> ComputedStyleExtractor::valueForFilter(const RenderObject* renderer, const RenderStyle* style) const
+PassRefPtr<CSSValue> ComputedStyleExtractor::valueForFilter(const RenderObject* renderer, const RenderStyle* style, const FilterOperations& filterOperations, AdjustPixelValuesForComputedStyle adjust)
 {
 #if !ENABLE(CSS_SHADERS)
     UNUSED_PARAM(renderer);
 #endif
-    if (style->filter().operations().isEmpty())
+    if (filterOperations.operations().isEmpty())
         return cssValuePool().createIdentifierValue(CSSValueNone);
 
     RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
 
     RefPtr<WebKitCSSFilterValue> filterValue;
 
-    Vector<RefPtr<FilterOperation> >::const_iterator end = style->filter().operations().end();
-    for (Vector<RefPtr<FilterOperation> >::const_iterator it = style->filter().operations().begin(); it != end; ++it) {
+    Vector<RefPtr<FilterOperation> >::const_iterator end = filterOperations.operations().end();
+    for (Vector<RefPtr<FilterOperation> >::const_iterator it = filterOperations.operations().begin(); it != end; ++it) {
         FilterOperation* filterOperation = (*it).get();
         switch (filterOperation->getOperationType()) {
         case FilterOperation::REFERENCE: {
@@ -974,7 +1002,7 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::valueForFilter(const RenderObject* 
         case FilterOperation::BLUR: {
             BlurFilterOperation* blurOperation = static_cast<BlurFilterOperation*>(filterOperation);
             filterValue = WebKitCSSFilterValue::create(WebKitCSSFilterValue::BlurFilterOperation);
-            filterValue->append(zoomAdjustedPixelValue(blurOperation->stdDeviation().value(), style));
+            filterValue->append(adjustLengthForZoom(blurOperation->stdDeviation(), style, adjust));
             break;
         }
         case FilterOperation::DROP_SHADOW: {
@@ -982,7 +1010,7 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::valueForFilter(const RenderObject* 
             filterValue = WebKitCSSFilterValue::create(WebKitCSSFilterValue::DropShadowFilterOperation);
             // We want our computed style to look like that of a text shadow (has neither spread nor inset style).
             ShadowData shadowData = ShadowData(dropShadowOperation->location(), dropShadowOperation->stdDeviation(), 0, Normal, false, dropShadowOperation->color());
-            filterValue->append(valueForShadow(&shadowData, CSSPropertyTextShadow, style));
+            filterValue->append(valueForShadow(&shadowData, CSSPropertyTextShadow, style, adjust));
             break;
         }
 #if ENABLE(CSS_SHADERS)
@@ -1328,23 +1356,6 @@ bool ComputedStyleExtractor::useFixedFontDefaultSize() const
     return style->fontDescription().useFixedDefaultSize();
 }
 
-PassRefPtr<CSSValue> ComputedStyleExtractor::valueForShadow(const ShadowData* shadow, CSSPropertyID propertyID, const RenderStyle* style) const
-{
-    if (!shadow)
-        return cssValuePool().createIdentifierValue(CSSValueNone);
-
-    RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
-    for (const ShadowData* s = shadow; s; s = s->next()) {
-        RefPtr<CSSPrimitiveValue> x = zoomAdjustedPixelValue(s->x(), style);
-        RefPtr<CSSPrimitiveValue> y = zoomAdjustedPixelValue(s->y(), style);
-        RefPtr<CSSPrimitiveValue> blur = zoomAdjustedPixelValue(s->radius(), style);
-        RefPtr<CSSPrimitiveValue> spread = propertyID == CSSPropertyTextShadow ? PassRefPtr<CSSPrimitiveValue>() : zoomAdjustedPixelValue(s->spread(), style);
-        RefPtr<CSSPrimitiveValue> style = propertyID == CSSPropertyTextShadow || s->style() == Normal ? PassRefPtr<CSSPrimitiveValue>() : cssValuePool().createIdentifierValue(CSSValueInset);
-        RefPtr<CSSPrimitiveValue> color = cssValuePool().createColorValue(s->color().rgb());
-        list->prepend(ShadowValue::create(x.release(), y.release(), blur.release(), spread.release(), style.release(), color.release()));
-    }
-    return list.release();
-}
 
 static CSSValueID identifierForFamily(const AtomicString& family)
 {
@@ -2832,7 +2843,7 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
 #endif
 #if ENABLE(CSS_FILTERS)
         case CSSPropertyWebkitFilter:
-            return valueForFilter(renderer, style.get());
+            return valueForFilter(renderer, style.get(), style->filter());
 #endif
 #if ENABLE(CSS_COMPOSITING)
         case CSSPropertyWebkitBlendMode:

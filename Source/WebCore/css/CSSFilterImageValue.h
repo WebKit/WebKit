@@ -70,7 +70,16 @@ public:
 
     bool equals(const CSSFilterImageValue&) const;
 
+    bool equalInputImages(const CSSFilterImageValue&) const;
+
     void createFilterOperations(StyleResolver*);
+
+    const FilterOperations& filterOperations() const { return m_filterOperations; }
+    void setFilterOperations(const FilterOperations& filterOperations)
+    {
+        m_filterOperations = filterOperations;
+    }
+    CachedImage* cachedImage() const { return m_cachedImage.get(); }
 
 private:
     CSSFilterImageValue(PassRefPtr<CSSValue> imageValue, PassRefPtr<CSSValue> filterValue)
@@ -109,6 +118,12 @@ private:
 
     FilterSubimageObserverProxy m_filterSubimageObserver;
 };
+
+inline CSSFilterImageValue* toCSSFilterImageValue(CSSImageGeneratorValue* value)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(!value || value->isFilterImageValue());
+    return static_cast<CSSFilterImageValue*>(value);
+}
 
 } // namespace WebCore
 
