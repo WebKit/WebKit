@@ -1,5 +1,12 @@
 2013-08-29  Ryuan Choi  <ryuan.choi@samsung.com>
 
+        Unreviewed build fix attempt for Windows.
+
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        Renamed JSMapConstructor and JSMapPrototype.
+
+2013-08-29  Ryuan Choi  <ryuan.choi@samsung.com>
+
         Fix build break after r154861
         https://bugs.webkit.org/show_bug.cgi?id=120503
 
