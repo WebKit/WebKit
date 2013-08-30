@@ -56,7 +56,9 @@ private:
     SynchronousNetworkLoaderClient(const WebCore::ResourceRequest& originalRequest, PassRefPtr<Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::DelayedReply>);
 
     virtual void willSendRequest(NetworkResourceLoader*, WebCore::ResourceRequest& proposedRequest, const WebCore::ResourceResponse& redirectResponse) OVERRIDE;
+#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
     virtual void canAuthenticateAgainstProtectionSpace(NetworkResourceLoader*, const WebCore::ProtectionSpace&) OVERRIDE;
+#endif
     virtual void didReceiveResponse(NetworkResourceLoader*, const WebCore::ResourceResponse&) OVERRIDE;
     virtual void didReceiveBuffer(NetworkResourceLoader*, WebCore::SharedBuffer*, int encodedDataLength) OVERRIDE;
     virtual void didSendData(NetworkResourceLoader*, unsigned long long bytesSent, unsigned long long totalBytesToBeSent) OVERRIDE { }

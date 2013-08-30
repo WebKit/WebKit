@@ -66,6 +66,7 @@ void SynchronousNetworkLoaderClient::willSendRequest(NetworkResourceLoader* load
     loader->continueWillSendRequest(m_currentRequest);
 }
 
+#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
 void SynchronousNetworkLoaderClient::canAuthenticateAgainstProtectionSpace(NetworkResourceLoader* loader, const ProtectionSpace&)
 {
     // FIXME: We should ask the WebProcess like the asynchronous case below does.
@@ -73,6 +74,7 @@ void SynchronousNetworkLoaderClient::canAuthenticateAgainstProtectionSpace(Netwo
     // It's possible that we can jump straight to the UI process to resolve this.
     loader->continueCanAuthenticateAgainstProtectionSpace(true);
 }
+#endif
 
 void SynchronousNetworkLoaderClient::didReceiveResponse(NetworkResourceLoader*, const ResourceResponse& response)
 {

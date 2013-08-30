@@ -47,7 +47,9 @@ public:
     virtual ~NetworkLoaderClient() { }
 
     virtual void willSendRequest(NetworkResourceLoader*, WebCore::ResourceRequest& newRequest, const WebCore::ResourceResponse& redirectResponse) = 0;
+#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
     virtual void canAuthenticateAgainstProtectionSpace(NetworkResourceLoader*, const WebCore::ProtectionSpace&) = 0;
+#endif
     virtual void didReceiveResponse(NetworkResourceLoader*, const WebCore::ResourceResponse&) = 0;
     virtual void didReceiveBuffer(NetworkResourceLoader*, WebCore::SharedBuffer*, int encodedDataLength) = 0;
     virtual void didSendData(NetworkResourceLoader*, unsigned long long bytesSent, unsigned long long totalBytesToBeSent) = 0;
