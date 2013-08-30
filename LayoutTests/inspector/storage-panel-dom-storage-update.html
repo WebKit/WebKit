@@ -2,7 +2,6 @@
 <head>
 <script src="../http/tests/inspector/inspector-test.js"></script>
 <script>
-
 function addItem(key,value)
 {
     localStorage.setItem(key,value);
@@ -40,15 +39,46 @@ function test()
         InspectorTest.addResult("KeyValue pairs: [" + rows.join() + "]");
     }
 
+    var nextDOMStorageClearHandler = null;
+    InspectorTest.addSniffer(WebInspector.DOMStorageDispatcher.prototype, "domStorageItemsCleared", function() {
+        if (nextDOMStorageClearHandler) {
+            nextDOMStorageClearHandler();
+            nextDOMStorageClearHandler = null;
+        } else
+            InspectorTest.addResult("ERROR: domStorageItemsCleared event without handler");
+    }, true);
+
+    var nextDOMStorageAddHandler = null;
+    InspectorTest.addSniffer(WebInspector.DOMStorageDispatcher.prototype, "domStorageItemAdded", function() {
+        if (nextDOMStorageAddHandler) {
+            nextDOMStorageAddHandler();
+            nextDOMStorageAddHandler = null;
+        } else
+            InspectorTest.addResult("ERROR: domStorageItemAdded event without handler");
+    }, true);
+
+    var nextDOMStorageRemoveHandler = null;
+    InspectorTest.addSniffer(WebInspector.DOMStorageDispatcher.prototype, "domStorageItemRemoved", function() {
+        if (nextDOMStorageRemoveHandler) {
+            nextDOMStorageRemoveHandler();
+            nextDOMStorageRemoveHandler = null;
+        } else
+            InspectorTest.addResult("ERROR: domStorageItemRemoved event without handler");
+    }, true);
+
+
     InspectorTest.runTestSuite([
         function initialize(next)
         {
-            function initialized(result)
+            function didClear(result)
             {
                 InspectorTest.addResult("Initialized localStorage by clearing entries");
                 next();
             }
-            InspectorTest.evaluateInPage("clear()", initialized );
+
+            nextDOMStorageClearHandler = didClear;
+
+            InspectorTest.evaluateInPage("clear()");
         },
 
         function updateLocalStorageView(next)
@@ -59,6 +89,7 @@ function test()
                 InspectorTest.addResult("Resource Panel with localStorage view updated");
                 next();
             }
+
             var storages = WebInspector.domStorageModel.storages();
             for (var i = 0; i < storages.length; ++i) {
                 storage = storages[i];
@@ -74,8 +105,7 @@ function test()
         {
             function viewUpdatedAfterAddition()
             {
-                InspectorTest.runAfterPendingDispatches(function()
-                {
+                InspectorTest.runAfterPendingDispatches(function() {
                     rootNode = WebInspector.panels.resources._domStorageViews.get(storage)._dataGrid.rootNode();
                     dumpDataGrid();
                     if (count < 6)
@@ -85,13 +115,10 @@ function test()
                 });
             }
 
-            function itemAdded(result)
-            {
-                viewUpdatedAfterAddition();
-            }
+            nextDOMStorageAddHandler = viewUpdatedAfterAddition;
 
             InspectorTest.addResult("addItem('a"+count+"','=value"+count+"')");
-            InspectorTest.evaluateInPage("addItem('a"+count+"','=value"+count+"')", itemAdded );
+            InspectorTest.evaluateInPage("addItem('a"+count+"','=value"+count+"')");
             count++;
         },
 
@@ -109,14 +136,11 @@ function test()
                 });
             }
 
-            function itemRemoved(result)
-            {
-                setTimeout(viewUpdatedAfterRemoval, 0 );
-            }
+            nextDOMStorageRemoveHandler = viewUpdatedAfterRemoval;
 
             --count;
             InspectorTest.addResult("removeItem('a"+count+"')");
-            InspectorTest.evaluateInPage("removeItem('a"+count+"')", itemRemoved );
+            InspectorTest.evaluateInPage("removeItem('a"+count+"')");
         },
 
         function clearTest(next)
@@ -130,21 +154,16 @@ function test()
                 });
             }
 
-            function cleared(result)
-            {
-                setTimeout(viewUpdatedAfterClear, 0 );
-            }
+            nextDOMStorageClearHandler = viewUpdatedAfterClear;
 
             InspectorTest.addResult("clear()");
-            InspectorTest.evaluateInPage("clear()", cleared );
+            InspectorTest.evaluateInPage("clear()");
         }
     ]);
 }
 </script>
 </head>
-
 <body onload="runTest()">
 <p>Test that storage panel is present and that it contains correct data whenever localStorage is updated.</p>
 </body>
 </html>
-

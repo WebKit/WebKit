@@ -1,3 +1,14 @@
+2013-08-30  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: inspector/storage-panel-dom-storage-update.html is flakey on the bots
+        https://bugs.webkit.org/show_bug.cgi?id=120544
+
+        Reviewed by Dean Jackson.
+
+        Explicitly listen for events instead of running callbacks after a delay.
+
+        * inspector/storage-panel-dom-storage-update.html:
+
 2013-08-30  Dirk Schulze  <krit@webkit.org>
 
         Animate CSS Image filter() function
