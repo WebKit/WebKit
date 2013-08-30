@@ -1,3 +1,20 @@
+2013-08-30  Leo Yang  <leoyang@blackberry.com>
+
+        Make sure remove CachedResourceClient when destructing IconLoader
+        https://bugs.webkit.org/show_bug.cgi?id=120541
+
+        Reviewed by Darin Adler.
+
+        It's a good practice to call CachedResource::removeClient(client)
+        when the client is being destructed. We need to do this for InconLoader
+        to prevent m_resource from keeping dangling client in case m_resource
+        is referenced by someone else in the future.
+
+        Found by code inspection. Just a defensive enhancement no new tests.
+
+        * loader/icon/IconLoader.cpp:
+        (WebCore::IconLoader::~IconLoader):
+
 2013-08-30  Hans Muller  <hmuller@adobe.com>
 
         [CSS Shapes] Redefine the ShapeIntervals class as a template

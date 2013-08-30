@@ -55,6 +55,7 @@ PassOwnPtr<IconLoader> IconLoader::create(Frame* frame)
 
 IconLoader::~IconLoader()
 {
+    stopLoading();
 }
 
 void IconLoader::startLoading()
