@@ -1,3 +1,19 @@
+2013-08-29  Andreas Kling  <akling@apple.com>
+
+        CodeBlock: LLIntCallLinkInfo vector can be sized-to-fit at creation.
+        <https://webkit.org/b/120487>
+
+        Reviewed by Oliver Hunt.
+
+        CodeBlock::m_llintCallLinkInfos never changes size after creation, so make it a Vector
+        instead of a SegmentedVector. Use resizeToFit() instead of grow() since we know the
+        exact amount of space needed.
+
+        * bytecode/CodeBlock.h:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::CodeBlock::shrinkToFit):
+
 2013-08-29  Oliver Hunt  <oliver@apple.com>
 
         Fix issues found by MSVC (which also happily fixes an unintentional pessimisation)

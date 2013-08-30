@@ -1074,7 +1074,7 @@ private:
     unsigned m_codeType;
 
 #if ENABLE(LLINT)
-    SegmentedVector<LLIntCallLinkInfo, 8> m_llintCallLinkInfos;
+    Vector<LLIntCallLinkInfo> m_llintCallLinkInfos;
     SentinelLinkedList<LLIntCallLinkInfo, BasicRawSentinelNode<LLIntCallLinkInfo> > m_incomingLLIntCalls;
 #endif
     RefPtr<JITCode> m_jitCode;
