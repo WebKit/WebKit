@@ -212,7 +212,8 @@ class ServerProcess(object):
 
     def _handle_timeout(self):
         self.timed_out = True
-        self._port.sample_process(self._name, self._proc.pid)
+        if self._port.get_option("sample_on_timeout"):
+            self._port.sample_process(self._name, self._proc.pid)
 
     def _split_string_after_index(self, string, index):
         return string[:index], string[index:]

@@ -1,3 +1,13 @@
+2013-08-29  Joseph Pecoraro  <pecoraro@apple.com>
+
+        new-run-webkit-tests does not respect --no-sample-on-timeout switch
+        https://bugs.webkit.org/show_bug.cgi?id=120491
+
+        Reviewed by Darin Adler.
+
+        * Scripts/webkitpy/port/server_process.py:
+        (ServerProcess._handle_timeout):
+
 2013-08-29  Sam Weinig  <sam@webkit.org>
 
         Add ENABLE guards for Promises
