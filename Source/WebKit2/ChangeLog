@@ -1,3 +1,13 @@
+2013-08-30  Gabor Abraham  <abrhm@inf.u-szeged.hu>
+
+        Fix, remove unused parameter in UIProcess/WebColorPicker.cpp.
+        https://bugs.webkit.org/show_bug.cgi?id=120525
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/WebColorPicker.cpp:
+        (WebKit::WebColorPicker::showColorPicker):
+
 2013-08-30  Tamas Czene  <tczene@inf.u-szeged.hu>
 
         Resolve unused parameter warning in WebPlatformStrategies.cpp

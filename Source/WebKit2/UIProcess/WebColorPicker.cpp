@@ -61,7 +61,7 @@ void WebColorPicker::setSelectedColor(const WebCore::Color& color)
     m_client->didChooseColor(color);
 }
 
-void WebColorPicker::showColorPicker(const WebCore::Color& color)
+void WebColorPicker::showColorPicker(const WebCore::Color&)
 {
     ASSERT_NOT_REACHED();
     return;
