@@ -409,15 +409,7 @@ void MediaPlayerPrivateAVFoundationCF::createAVPlayer()
     ASSERT(m_avfWrapper);
     
     setDelayCallbacks(true);
-
-    IDirect3DDevice9* device = reinterpret_cast<IDirect3DDevice9*>(player()->graphicsDeviceAdapter());
-    if (!device) {
-        player()->frameView()->enterCompositingMode();
-        player()->mediaPlayerClient()->mediaPlayerRenderingModeChanged(player());
-        device = reinterpret_cast<IDirect3DDevice9*>(player()->graphicsDeviceAdapter());
-    }
-
-    m_avfWrapper->createPlayer(device);
+    m_avfWrapper->createPlayer(reinterpret_cast<IDirect3DDevice9*>(player()->graphicsDeviceAdapter()));
     setDelayCallbacks(false);
 }
 

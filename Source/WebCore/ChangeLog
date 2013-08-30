@@ -1,3 +1,34 @@
+2013-08-30  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Vide element in page always uses non-hw accelerated mode.
+        https://bugs.webkit.org/show_bug.cgi?id=120448
+
+        Reviewed by Darin Adler
+
+        This patch is unfortunately larger than my original idea, but seems to make the
+        layout system happier. Instead of switching into composited mode when building
+        the media player, we now build the original layout tree with compositing active
+        if the underlying media element requires it. The AVFoundationCF player needs to
+        have the compositor available at construction time so it can attach to the
+        rendering device. Otherwise it falls back to CPU-only mode.
+
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::requiresImmediateCompositing): Added
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::requiresImmediateCompositing): Added
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundationCF::createAVPlayer): Added
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.h:
+        (WebCore::MediaPlayerPrivateAVFoundationCF::requiresImmediateCompositing):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::requiresCompositingForVideo): Uses new
+        'requiresImmediateCompositing' to short-circuit check for whether a
+        compositor is required.
+        * rendering/RenderVideo.cpp:
+        (WebCore::RenderVideo::requiresImmediateCompositing):
+        * rendering/RenderVideo.h:
+
 2013-08-30  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Breakpoints should have Automatically Continue Option
