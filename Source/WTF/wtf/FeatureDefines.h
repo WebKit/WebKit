@@ -442,10 +442,6 @@
 #define ENABLE_DEVICE_ORIENTATION 0
 #endif
 
-#if !defined(ENABLE_DIALOG_ELEMENT)
-#define ENABLE_DIALOG_ELEMENT 0
-#endif
-
 #if !defined(ENABLE_DIRECTORY_UPLOAD)
 #define ENABLE_DIRECTORY_UPLOAD 0
 #endif

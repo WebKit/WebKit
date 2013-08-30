@@ -1,3 +1,12 @@
+2013-08-30  Antti Koivisto  <antti@apple.com>
+
+        Remove code behind ENABLE(DIALOG_ELEMENT)
+        https://bugs.webkit.org/show_bug.cgi?id=120467
+
+        Reviewed by Darin Adler.
+
+        * WebCoreSupport/AboutDataEnableFeatures.in:
+
 2013-08-29  Jacky Jiang  <zhajiang@blackberry.com>
 
         [BlackBerry] Scrolling text with FCC does not work while composing an email
