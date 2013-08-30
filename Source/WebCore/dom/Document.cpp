@@ -1991,7 +1991,7 @@ void Document::createRenderTree()
     recalcStyle(Style::Force);
 
     if (m_documentElement)
-        Style::attachRenderTree(m_documentElement.get());
+        Style::attachRenderTree(*m_documentElement);
 
     setAttached(true);
 }
@@ -2091,7 +2091,7 @@ void Document::detach()
     TemporaryChange<bool> change(m_renderTreeBeingDestroyed, true);
 
     if (m_documentElement)
-        Style::detachRenderTree(m_documentElement.get());
+        Style::detachRenderTree(*m_documentElement);
 
     clearChildNeedsStyleRecalc();
     setAttached(false);

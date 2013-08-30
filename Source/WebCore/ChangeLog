@@ -1,3 +1,77 @@
+2013-08-30  Antti Koivisto  <antti@apple.com>
+
+        Use Element& in StyleResolveTree
+        https://bugs.webkit.org/show_bug.cgi?id=120540
+
+        Reviewed by Andreas Kling.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::attachChild):
+        (WebCore::detachChild):
+        * dom/Document.cpp:
+        (WebCore::Document::recalcStyle):
+        (WebCore::Document::createRenderTree):
+        (WebCore::Document::detach):
+        * dom/Element.cpp:
+        (WebCore::Element::lazyReattach):
+        (WebCore::Element::updateExistingPseudoElement):
+        (WebCore::Element::createPseudoElementIfNeeded):
+        (WebCore::disconnectPseudoElement):
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::setResetStyleInheritance):
+        * html/HTMLDetailsElement.cpp:
+        (WebCore::HTMLDetailsElement::parseAttribute):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::updateType):
+        (WebCore::HTMLInputElement::parseAttribute):
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::renderFallbackContent):
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::willRecalcStyle):
+        (WebCore::HTMLPlugInImageElement::documentWillSuspendForPageCache):
+        (WebCore::HTMLPlugInImageElement::documentDidResumeFromPageCache):
+        (WebCore::HTMLPlugInImageElement::restartSnapshottedPlugIn):
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::parseAttribute):
+        (WebCore::HTMLSelectElement::parseMultipleAttribute):
+        * html/HTMLViewSourceDocument.cpp:
+        (WebCore::HTMLViewSourceDocument::createContainingTable):
+        (WebCore::HTMLViewSourceDocument::addSpanWithClassName):
+        (WebCore::HTMLViewSourceDocument::addLine):
+        (WebCore::HTMLViewSourceDocument::finishLine):
+        (WebCore::HTMLViewSourceDocument::addBase):
+        (WebCore::HTMLViewSourceDocument::addLink):
+        * html/parser/HTMLConstructionSite.cpp:
+        (WebCore::executeTask):
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::callTheAdoptionAgency):
+        * html/shadow/InsertionPoint.cpp:
+        (WebCore::InsertionPoint::willAttachRenderers):
+        (WebCore::InsertionPoint::willDetachRenderers):
+        * loader/PlaceholderDocument.cpp:
+        (WebCore::PlaceholderDocument::createRenderTree):
+        * style/StyleResolveTree.cpp:
+        (WebCore::Style::attachChildren):
+        (WebCore::Style::attachRenderTree):
+        (WebCore::Style::detachChildren):
+        (WebCore::Style::detachRenderTree):
+        (WebCore::Style::resolveLocal):
+        (WebCore::Style::updateTextStyle):
+        (WebCore::Style::resolveShadowTree):
+        (WebCore::Style::resolveTree):
+        
+            Documents only ever have one child element. Remove the loop.
+
+        (WebCore::Style::detachRenderTreeInReattachMode):
+        (WebCore::Style::reattachRenderTree):
+        * style/StyleResolveTree.h:
+        * svg/SVGTests.cpp:
+        (WebCore::SVGTests::handleAttributeChange):
+        * xml/XMLErrors.cpp:
+        (WebCore::XMLErrors::insertErrorMessageBlock):
+        * xml/parser/XMLDocumentParserLibxml2.cpp:
+        (WebCore::XMLDocumentParser::startElementNs):
+
 2013-08-30  Andreas Kling  <akling@apple.com>
 
         Document style resolve should take Document&.

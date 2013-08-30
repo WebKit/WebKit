@@ -159,9 +159,9 @@ bool SVGTests::handleAttributeChange(SVGElement* targetElement, const QualifiedN
     bool valid = targetElement->isValid();
     bool attached = targetElement->attached();
     if (valid && !attached && targetElement->parentNode()->attached())
-        Style::attachRenderTree(targetElement);
+        Style::attachRenderTree(*targetElement);
     else if (!valid && attached)
-        Style::detachRenderTree(targetElement);
+        Style::detachRenderTree(*targetElement);
 
     return true;
 }

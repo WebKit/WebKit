@@ -144,7 +144,7 @@ void ShadowRoot::setResetStyleInheritance(bool value)
     if (value != m_resetStyleInheritance) {
         m_resetStyleInheritance = value;
         if (attached() && hostElement())
-            Style::resolveTree(hostElement(), Style::Force);
+            Style::resolveTree(*hostElement(), Style::Force);
     }
 }
 

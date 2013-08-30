@@ -108,7 +108,7 @@ void ContainerNode::removeDetachedChildren()
 static inline void attachChild(Node* child)
 {
     if (child->isElementNode())
-        Style::attachRenderTree(toElement(child));
+        Style::attachRenderTree(*toElement(child));
     else if (child->isTextNode())
         Style::attachTextRenderer(*toText(child));
 }
@@ -116,7 +116,7 @@ static inline void attachChild(Node* child)
 static inline void detachChild(Node* child)
 {
     if (child->isElementNode())
-        Style::detachRenderTree(toElement(child));
+        Style::detachRenderTree(*toElement(child));
     else if (child->isTextNode())
         Style::detachTextRenderer(*toText(child));
 }

@@ -1625,7 +1625,7 @@ void HTMLTreeBuilder::callTheAdoptionAgency(AtomicHTMLToken* token)
         if (furthestBlockElement->attached() && !newItem->element()->attached()) {
             // Notice that newItem->element() might already be attached if, for example, one of the reparented
             // children is a style element, which attaches itself automatically.
-            Style::attachRenderTree(newItem->element());
+            Style::attachRenderTree(*newItem->element());
         }
         // 14.
         m_tree.activeFormattingElements()->swapTo(formattingElement, newItem, bookmark);

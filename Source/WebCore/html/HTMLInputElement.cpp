@@ -479,7 +479,7 @@ void HTMLInputElement::updateType()
 
     bool wasAttached = attached();
     if (wasAttached)
-        Style::detachRenderTree(this);
+        Style::detachRenderTree(*this);
 
     m_inputType = newType.release();
     m_inputType->createShadowSubtree();
@@ -530,7 +530,7 @@ void HTMLInputElement::updateType()
     }
 
     if (wasAttached) {
-        Style::attachRenderTree(this);
+        Style::attachRenderTree(*this);
         if (document().focusedElement() == this)
             updateFocusAppearance(true);
     }
@@ -695,7 +695,7 @@ void HTMLInputElement::parseAttribute(const QualifiedName& name, const AtomicStr
         // FIXME: Detaching just for maxResults change is not ideal.  We should figure out the right
         // time to relayout for this change.
         if (m_maxResults != oldResults && (m_maxResults <= 0 || oldResults <= 0) && attached())
-            Style::reattachRenderTree(this);
+            Style::reattachRenderTree(*this);
         setNeedsStyleRecalc();
         FeatureObserver::observe(&document(), FeatureObserver::ResultsAttribute);
     } else if (name == autosaveAttr) {

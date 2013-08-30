@@ -306,7 +306,7 @@ void HTMLSelectElement::parseAttribute(const QualifiedName& name, const AtomicSt
         m_size = size;
         setNeedsValidityCheck();
         if (m_size != oldSize && attached()) {
-            Style::reattachRenderTree(this);
+            Style::reattachRenderTree(*this);
             setRecalcListItems();
         }
     } else if (name == multipleAttr)
@@ -1011,7 +1011,7 @@ void HTMLSelectElement::parseMultipleAttribute(const AtomicString& value)
     m_multiple = !value.isNull();
     setNeedsValidityCheck();
     if (oldUsesMenuList != usesMenuList() && attached())
-        Style::reattachRenderTree(this);
+        Style::reattachRenderTree(*this);
 }
 
 bool HTMLSelectElement::appendFormData(FormDataList& list, bool)

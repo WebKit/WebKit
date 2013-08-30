@@ -86,7 +86,7 @@ void HTMLViewSourceDocument::createContainingTable()
     table->parserAppendChild(m_tbody);
     m_current = m_tbody;
 
-    Style::attachRenderTree(html.get());
+    Style::attachRenderTree(*html);
 }
 
 void HTMLViewSourceDocument::addSource(const String& source, HTMLToken& token)
@@ -184,7 +184,7 @@ PassRefPtr<Element> HTMLViewSourceDocument::addSpanWithClassName(const AtomicStr
     RefPtr<HTMLElement> span = HTMLElement::create(spanTag, this);
     span->setAttribute(classAttr, className);
     m_current->parserAppendChild(span);
-    Style::attachRenderTree(span.get());
+    Style::attachRenderTree(*span);
     return span.release();
 }
 
@@ -193,19 +193,19 @@ void HTMLViewSourceDocument::addLine(const AtomicString& className)
     // Create a table row.
     RefPtr<HTMLTableRowElement> trow = HTMLTableRowElement::create(this);
     m_tbody->parserAppendChild(trow);
-    Style::reattachRenderTree(trow.get());
+    Style::reattachRenderTree(*trow);
 
     // Create a cell that will hold the line number (it is generated in the stylesheet using counters).
     RefPtr<HTMLTableCellElement> td = HTMLTableCellElement::create(tdTag, this);
     td->setAttribute(classAttr, "webkit-line-number");
     trow->parserAppendChild(td);
-    Style::attachRenderTree(td.get());
+    Style::attachRenderTree(*td);
 
     // Create a second cell for the line contents
     td = HTMLTableCellElement::create(tdTag, this);
     td->setAttribute(classAttr, "webkit-line-content");
     trow->parserAppendChild(td);
-    Style::attachRenderTree(td.get());
+    Style::attachRenderTree(*td);
     m_current = m_td = td;
 
 #ifdef DEBUG_LINE_NUMBERS
@@ -227,7 +227,7 @@ void HTMLViewSourceDocument::finishLine()
     if (!m_current->hasChildNodes()) {
         RefPtr<HTMLBRElement> br = HTMLBRElement::create(this);
         m_current->parserAppendChild(br);
-        Style::attachRenderTree(br.get());
+        Style::attachRenderTree(*br);
     }
     m_current = m_tbody;
 }
@@ -283,7 +283,7 @@ PassRefPtr<Element> HTMLViewSourceDocument::addBase(const AtomicString& href)
     RefPtr<HTMLBaseElement> base = HTMLBaseElement::create(baseTag, this);
     base->setAttribute(hrefAttr, href);
     m_current->parserAppendChild(base);
-    Style::attachRenderTree(base.get());
+    Style::attachRenderTree(*base);
     return base.release();
 }
 
@@ -303,7 +303,7 @@ PassRefPtr<Element> HTMLViewSourceDocument::addLink(const AtomicString& url, boo
     anchor->setAttribute(targetAttr, "_blank");
     anchor->setAttribute(hrefAttr, url);
     m_current->parserAppendChild(anchor);
-    Style::attachRenderTree(anchor.get());
+    Style::attachRenderTree(*anchor);
     return anchor.release();
 }
 

@@ -138,7 +138,7 @@ void HTMLDetailsElement::parseAttribute(const QualifiedName& name, const AtomicS
         bool oldValue = m_isOpen;
         m_isOpen = !value.isNull();
         if (oldValue != m_isOpen && attached())
-            Style::reattachRenderTree(this);
+            Style::reattachRenderTree(*this);
     } else
         HTMLElement::parseAttribute(name, value);
 }

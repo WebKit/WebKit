@@ -38,14 +38,14 @@ namespace Style {
 
 enum Change { NoChange, NoInherit, Inherit, Detach, Force };
 
-void resolveTree(Element*, Change);
+void resolveTree(Element&, Change);
 void resolveTree(Document&, Change);
 
-void attachRenderTree(Element*);
-void detachRenderTree(Element*);
-void reattachRenderTree(Element*);
+void attachRenderTree(Element&);
+void detachRenderTree(Element&);
+void reattachRenderTree(Element&);
 // FIXME: This is only used for "lazy reattach" for shadow trees.
-void detachRenderTreeInReattachMode(Element*);
+void detachRenderTreeInReattachMode(Element&);
 
 void attachTextRenderer(Text&);
 void detachTextRenderer(Text&);
