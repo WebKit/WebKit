@@ -1,3 +1,13 @@
+2013-08-30  Gabor Abraham  <abrhm@inf.u-szeged.hu>
+
+        Fix unused parameter warning in graphics/cairo/GraphicsContextCairo.cpp file.
+        https://bugs.webkit.org/show_bug.cgi?id=120524
+
+        Reviewed by Darin Adler.
+
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::fillRectWithRoundedHole):
+
 2013-08-30  Andreas Kling  <akling@apple.com>
 
         StyleResolver & friends should use Document&.
