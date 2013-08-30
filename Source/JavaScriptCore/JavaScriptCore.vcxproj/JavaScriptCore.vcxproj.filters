@@ -597,6 +597,9 @@
     <ClCompile Include="..\runtime\JSScope.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
+    <ClCompile Include="..\runtime\JSSet.cpp">
+      <Filter>runtime</Filter>
+    </ClCompile>
     <ClCompile Include="..\runtime\JSSegmentedVariableObject.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
@@ -706,6 +709,12 @@
       <Filter>runtime</Filter>
     </ClCompile>
     <ClCompile Include="..\runtime\SmallStrings.cpp">
+      <Filter>runtime</Filter>
+    </ClCompile>
+    <ClCompile Include="..\runtime\SetPrototype.cpp">
+      <Filter>runtime</Filter>
+    </ClCompile>
+    <ClCompile Include="..\runtime\SetConstructor.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
     <ClCompile Include="..\runtime\SparseArrayValueMap.cpp">

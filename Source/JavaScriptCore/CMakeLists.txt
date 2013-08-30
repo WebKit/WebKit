@@ -350,6 +350,7 @@ set(JavaScriptCore_SOURCES
     runtime/JSProxy.cpp
     runtime/JSScope.cpp
     runtime/JSSegmentedVariableObject.cpp
+    runtime/JSSet.cpp
     runtime/JSStaticScopeObject.cpp
     runtime/JSString.cpp
     runtime/JSStringJoiner.cpp
@@ -392,6 +393,8 @@ set(JavaScriptCore_SOURCES
     runtime/RegExpObject.cpp
     runtime/RegExpPrototype.cpp
     runtime/SamplingCounter.cpp
+    runtime/SetConstructor.cpp
+    runtime/SetPrototype.cpp
     runtime/SimpleTypedArrayController.cpp
     runtime/SmallStrings.cpp
     runtime/SparseArrayValueMap.cpp

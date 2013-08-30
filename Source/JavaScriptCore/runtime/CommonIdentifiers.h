@@ -141,7 +141,9 @@
     macro(forEach) \
     macro(clear) \
     macro(size) \
-    macro(Map)
+    macro(Map)\
+    macro(Set)\
+    macro(add)
 
 #define JSC_COMMON_IDENTIFIERS_EACH_KEYWORD(macro) \
     macro(null) \

@@ -67,6 +67,7 @@
 #include "JSMap.h"
 #include "JSNameScope.h"
 #include "JSONObject.h"
+#include "JSSet.h"
 #include "JSTypedArrayConstructors.h"
 #include "JSTypedArrayPrototypes.h"
 #include "JSTypedArrays.h"
@@ -93,6 +94,8 @@
 #include "RegExpMatchesArray.h"
 #include "RegExpObject.h"
 #include "RegExpPrototype.h"
+#include "SetConstructor.h"
+#include "SetPrototype.h"
 #include "StrictEvalActivation.h"
 #include "StringConstructor.h"
 #include "StringPrototype.h"
@@ -326,6 +329,9 @@ void JSGlobalObject::reset(JSValue prototype)
     m_mapPrototype.set(exec->vm(), this, MapPrototype::create(exec, this, MapPrototype::createStructure(exec->vm(), this, m_objectPrototype.get())));
     m_mapStructure.set(exec->vm(), this, JSMap::createStructure(exec->vm(), this, m_mapPrototype.get()));
 
+    m_setPrototype.set(exec->vm(), this, SetPrototype::create(exec, this, SetPrototype::createStructure(exec->vm(), this, m_objectPrototype.get())));
+    m_setStructure.set(exec->vm(), this, JSSet::createStructure(exec->vm(), this, m_setPrototype.get()));
+
     // Constructors
 
     JSCell* objectConstructor = ObjectConstructor::create(exec, this, ObjectConstructor::createStructure(exec->vm(), this, m_functionPrototype.get()), m_objectPrototype.get());
@@ -341,6 +347,7 @@ void JSGlobalObject::reset(JSValue prototype)
     JSCell* promiseResolverConstructor = JSPromiseResolverConstructor::create(exec, this, JSPromiseResolverConstructor::createStructure(exec->vm(), this, m_functionPrototype.get()), m_promiseResolverPrototype.get());
 #endif // ENABLE(PROMISES)
     JSCell* mapConstructor = MapConstructor::create(exec, this, MapConstructor::createStructure(exec->vm(), this, m_functionPrototype.get()), m_mapPrototype.get());
+    JSCell* setConstructor = SetConstructor::create(exec, this, SetConstructor::createStructure(exec->vm(), this, m_functionPrototype.get()), m_setPrototype.get());
 
     m_regExpConstructor.set(exec->vm(), this, RegExpConstructor::create(exec, this, RegExpConstructor::createStructure(exec->vm(), this, m_functionPrototype.get()), m_regExpPrototype.get()));
 
@@ -369,6 +376,7 @@ void JSGlobalObject::reset(JSValue prototype)
     m_promiseResolverPrototype->putDirectWithoutTransition(exec->vm(), exec->propertyNames().constructor, promiseResolverConstructor, DontEnum);
 #endif
     m_mapPrototype->putDirectWithoutTransition(exec->vm(), exec->propertyNames().constructor, mapConstructor, DontEnum);
+    m_setPrototype->putDirectWithoutTransition(exec->vm(), exec->propertyNames().constructor, setConstructor, DontEnum);
 
     putDirectWithoutTransition(exec->vm(), exec->propertyNames().Object, objectConstructor, DontEnum);
     putDirectWithoutTransition(exec->vm(), exec->propertyNames().Function, functionConstructor, DontEnum);
@@ -390,6 +398,7 @@ void JSGlobalObject::reset(JSValue prototype)
     putDirectWithoutTransition(exec->vm(), exec->propertyNames().PromiseResolver, promiseResolverConstructor, DontEnum);
 #endif
     putDirectWithoutTransition(exec->vm(), exec->propertyNames().Map, mapConstructor, DontEnum);
+    putDirectWithoutTransition(exec->vm(), exec->propertyNames().Set, setConstructor, DontEnum);
 
     m_evalFunction.set(exec->vm(), this, JSFunction::create(exec, this, 1, exec->propertyNames().eval.string(), globalFuncEval));
     putDirectWithoutTransition(exec->vm(), exec->propertyNames().eval, m_evalFunction.get(), DontEnum);
@@ -653,6 +662,8 @@ void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(&thisObject->m_mapPrototype);
     visitor.append(&thisObject->m_mapDataStructure);
     visitor.append(&thisObject->m_mapStructure);
+    visitor.append(&thisObject->m_setPrototype);
+    visitor.append(&thisObject->m_setStructure);
 
     visitor.append(&thisObject->m_arrayBufferPrototype);
     visitor.append(&thisObject->m_arrayBufferStructure);

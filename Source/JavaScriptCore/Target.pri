@@ -338,6 +338,7 @@ SOURCES += \
     runtime/JSPromiseResolverPrototype.cpp \
     runtime/JSPropertyNameIterator.cpp \
     runtime/JSProxy.cpp \
+    runtime/JSSet.cpp \
     runtime/JSScope.cpp \
     runtime/JSSegmentedVariableObject.cpp \
     runtime/JSString.cpp \
@@ -381,6 +382,8 @@ SOURCES += \
     runtime/RegExpObject.cpp \
     runtime/RegExpPrototype.cpp \
     runtime/SamplingCounter.cpp \
+    runtime/SetConstructor.cpp \
+    runtime/SetPrototype.cpp \
     runtime/SimpleTypedArrayController.cpp \
     runtime/SmallStrings.cpp \
     runtime/SparseArrayValueMap.cpp \

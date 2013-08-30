@@ -1,5 +1,54 @@
 2013-08-30  Oliver Hunt  <oliver@apple.com>
 
+        Implement ES6 Set class
+        https://bugs.webkit.org/show_bug.cgi?id=120549
+
+        Reviewed by Filip Pizlo.
+
+        We simply reuse the MapData type from JSMap making the
+        it much simpler.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * runtime/CommonIdentifiers.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::reset):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::setStructure):
+        * runtime/JSSet.cpp: Added.
+        (JSC::JSSet::visitChildren):
+        (JSC::JSSet::finishCreation):
+        * runtime/JSSet.h: Added.
+        (JSC::JSSet::createStructure):
+        (JSC::JSSet::create):
+        (JSC::JSSet::mapData):
+        (JSC::JSSet::JSSet):
+        * runtime/SetConstructor.cpp: Added.
+        (JSC::SetConstructor::finishCreation):
+        (JSC::callSet):
+        (JSC::constructSet):
+        (JSC::SetConstructor::getConstructData):
+        (JSC::SetConstructor::getCallData):
+        * runtime/SetConstructor.h: Added.
+        (JSC::SetConstructor::create):
+        (JSC::SetConstructor::createStructure):
+        (JSC::SetConstructor::SetConstructor):
+        * runtime/SetPrototype.cpp: Added.
+        (JSC::SetPrototype::finishCreation):
+        (JSC::getMapData):
+        (JSC::setProtoFuncAdd):
+        (JSC::setProtoFuncClear):
+        (JSC::setProtoFuncDelete):
+        (JSC::setProtoFuncForEach):
+        (JSC::setProtoFuncHas):
+        (JSC::setProtoFuncSize):
+        * runtime/SetPrototype.h: Added.
+        (JSC::SetPrototype::create):
+        (JSC::SetPrototype::createStructure):
+        (JSC::SetPrototype::SetPrototype):
+
+2013-08-30  Oliver Hunt  <oliver@apple.com>
+
         Make JSValue bool conversion less dangerous
         https://bugs.webkit.org/show_bug.cgi?id=120505
 

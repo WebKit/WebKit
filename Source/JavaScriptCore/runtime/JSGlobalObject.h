@@ -69,6 +69,7 @@ class ProgramCodeBlock;
 class ProgramExecutable;
 class RegExpConstructor;
 class RegExpPrototype;
+class SetPrototype;
 class SourceCode;
 struct ActivationStackNode;
 struct HashTable;
@@ -152,6 +153,7 @@ protected:
     WriteBarrier<JSPromisePrototype> m_promisePrototype;
     WriteBarrier<JSPromiseResolverPrototype> m_promiseResolverPrototype;
     WriteBarrier<MapPrototype> m_mapPrototype;
+    WriteBarrier<SetPrototype> m_setPrototype;
 
     WriteBarrier<Structure> m_withScopeStructure;
     WriteBarrier<Structure> m_strictEvalActivationStructure;
@@ -195,6 +197,7 @@ protected:
 
     WriteBarrier<Structure> m_mapDataStructure;
     WriteBarrier<Structure> m_mapStructure;
+    WriteBarrier<Structure> m_setStructure;
     
     WriteBarrier<JSArrayBufferPrototype> m_arrayBufferPrototype;
     WriteBarrier<Structure> m_arrayBufferStructure;
@@ -390,6 +393,7 @@ public:
     Structure* mapDataStructure() const { return m_mapDataStructure.get(); }
     Structure* regExpMatchesArrayStructure() const { return m_regExpMatchesArrayStructure.get(); }
     Structure* regExpStructure() const { return m_regExpStructure.get(); }
+    Structure* setStructure() const { return m_setStructure.get(); }
     Structure* stringObjectStructure() const { return m_stringObjectStructure.get(); }
 
 #if ENABLE(PROMISES)

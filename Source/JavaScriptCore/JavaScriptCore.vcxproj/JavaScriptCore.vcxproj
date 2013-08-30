@@ -485,6 +485,7 @@
     <ClCompile Include="..\runtime\JSProxy.cpp" />
     <ClCompile Include="..\runtime\JSScope.cpp" />
     <ClCompile Include="..\runtime\JSSegmentedVariableObject.cpp" />
+    <ClCompile Include="..\runtime\JSSet.cpp" />
     <ClCompile Include="..\runtime\JSString.cpp" />
     <ClCompile Include="..\runtime\JSStringJoiner.cpp" />
     <ClCompile Include="..\runtime\JSSymbolTableObject.cpp" />
@@ -525,6 +526,8 @@
     <ClCompile Include="..\runtime\RegExpObject.cpp" />
     <ClCompile Include="..\runtime\RegExpPrototype.cpp" />
     <ClCompile Include="..\runtime\SamplingCounter.cpp" />
+    <ClCompile Include="..\runtime\SetConstructor.cpp" />
+    <ClCompile Include="..\runtime\SetPrototype.cpp" />
     <ClCompile Include="..\runtime\SimpleTypedArrayController.cpp" />
     <ClCompile Include="..\runtime\SmallStrings.cpp" />
     <ClCompile Include="..\runtime\SparseArrayValueMap.cpp" />
@@ -915,6 +918,7 @@
     <ClInclude Include="..\runtime\JSProxy.h" />
     <ClInclude Include="..\runtime\JSScope.h" />
     <ClInclude Include="..\runtime\JSSegmentedVariableObject.h" />
+    <ClInclude Include="..\runtime\JSSet.h" />
     <ClInclude Include="..\runtime\JSString.h" />
     <ClInclude Include="..\runtime\JSStringBuilder.h" />
     <ClInclude Include="..\runtime\JSStringJoiner.h" />
@@ -973,6 +977,8 @@
     <ClInclude Include="..\runtime\RegExpPrototype.h" />
     <ClInclude Include="..\runtime\Reject.h" />
     <ClInclude Include="..\runtime\SamplingCounter.h" />
+    <ClInclude Include="..\runtime\SetConstructor.h" />
+    <ClInclude Include="..\runtime\SetPrototype.h" />
     <ClInclude Include="..\runtime\SimpleTypedArrayController.h" />
     <ClInclude Include="..\runtime\SmallStrings.h" />
     <ClInclude Include="..\runtime\SparseArrayValueMap.h" />
