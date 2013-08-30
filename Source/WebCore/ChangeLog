@@ -1,3 +1,37 @@
+2013-08-30  Arpita Bahuguna  <a.bah@samsung.com>
+
+        setAttributeNode() does not set the new value to an existing attribute if specified attribute is in a different case.
+        https://bugs.webkit.org/show_bug.cgi?id=120293
+
+        Reviewed by Darin Adler.
+
+        setAttributeNode() performs a case-insensitive search for an existing
+        attribute. If an existing attribute is found, it retrieves the index of
+        such an attribute. For setting the attribute's new value, we call upon
+        setAttributeInternal() to which both the index as well as the name of
+        the attribute is passed.
+        The name passed to this method is the same as the one passed to the
+        setAttributeNode() API from the webpage and thus can be in any case.
+
+        However, setAttributeInternal() uses this name to get the corresponding
+        existing attribute node. Since this retrieval is not case-insensitive,
+        the existing node is not returned and thus the new value is not set on
+        the existing node.
+        We should instead use the passed index and use that to retrieve the
+        existing node.
+
+        Note that obtaining the attribute's value using getAttributeNode() would
+        still return the correct value, i.e. the new one.
+
+        Also, this change shall make our behavior similar to that of FF and IE.
+
+        Test: fast/dom/Element/setAttributeNode-for-existing-attribute.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::setAttributeInternal):
+        If the passed index is not equal to attributeNotFound, we use that index
+        to retrieve the existing attribute.
+
 2013-08-30  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         SimpleClassVectorTraits shall be used for RuleData
