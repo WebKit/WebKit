@@ -1,5 +1,17 @@
 2013-08-30  Brent Fulgham  <bfulgham@apple.com>
 
+        [Windows] Update to incorporate additional suggestions
+        https://bugs.webkit.org/show_bug.cgi?id=120448
+
+        Reviewed by Darin Adler
+
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp: Add
+        notes as to why AVFoundationCF needs this extra method call.
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.h: Use OVERRIDE
+        * rendering/RenderVideo.cpp: Replace ternary operator with logical &&.
+
+2013-08-30  Brent Fulgham  <bfulgham@apple.com>
+
         [Windows] Vide element in page always uses non-hw accelerated mode.
         https://bugs.webkit.org/show_bug.cgi?id=120448
 

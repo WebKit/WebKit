@@ -283,8 +283,8 @@ void RenderVideo::acceleratedRenderingStateChanged()
 
 bool RenderVideo::requiresImmediateCompositing() const
 {
-    MediaPlayer* p = mediaElement()->player();
-    return p ? p->requiresImmediateCompositing() : false;
+    MediaPlayer* player = mediaElement()->player();
+    return player && player->requiresImmediateCompositing();
 }
 
 #if ENABLE(FULLSCREEN_API)
