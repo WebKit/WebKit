@@ -237,7 +237,10 @@ PassRefPtr<Image> ImageBuffer::copyImage(BackingStoreCopy copyBehavior, ScaleBeh
     if (!image)
         return 0;
 
-    return BitmapImage::create(image.get());
+    RefPtr<BitmapImage> bitmapImage = BitmapImage::create(image.get());
+    bitmapImage->setSpaceSize(spaceSize());
+
+    return bitmapImage.release();
 }
 
 BackingStoreCopy ImageBuffer::fastCopyImageMode()

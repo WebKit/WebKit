@@ -1,3 +1,46 @@
+2013-08-30  Andrei Parvu  <parvu@adobe.com>
+
+        [CSS Masking] -webkit-mask-repeat: space does not work
+        Added the space option to background-repeat and -webkit-mask-repeat.
+        With the property value 'space', the background or mask image gets repeated as often as it fits within the background positioning
+        area. The repeated images are spaced equally to fill the unused area.
+        https://bugs.webkit.org/show_bug.cgi?id=119324
+
+        Reviewed by Dirk Schulze.
+
+        Tests: css3/background/background-repeat-space-border.html
+               css3/background/background-repeat-space-content.html
+               css3/background/background-repeat-space-padding.html
+               css3/masking/mask-repeat-space-border.html
+               css3/masking/mask-repeat-space-content.html
+               css3/masking/mask-repeat-space-padding.html
+
+        * platform/graphics/GeneratorGeneratedImage.cpp:
+        (WebCore::GeneratorGeneratedImage::drawPattern): Passed the space values to the image buffer.
+        * platform/graphics/Image.cpp:
+        (WebCore::Image::drawTiled): Added the space values when computing the location of the tile.
+        * platform/graphics/Image.h: Added the space property.
+        (WebCore::Image::spaceSize):
+        (WebCore::Image::setSpaceSize):
+        * platform/graphics/ImageBuffer.h: Added the space property.
+        (WebCore::ImageBuffer::spaceSize):
+        (WebCore::ImageBuffer::setSpaceSize):
+        * platform/graphics/cg/ImageBufferCG.cpp: Passed the space values when copying an image.
+        (WebCore::ImageBuffer::copyImage):
+        * platform/graphics/cg/ImageCG.cpp: Added the space values when creating a platform pattern.
+        (WebCore::Image::drawPattern):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended): Computed the space values on x and y axis.
+        (WebCore::getSpace):
+        (WebCore::RenderBoxModelObject::calculateBackgroundImageGeometry): Pass the space values to the Image class.
+        * rendering/RenderBoxModelObject.h: Added the space property.
+        (WebCore::RenderBoxModelObject::BackgroundImageGeometry::spaceSize):
+        (WebCore::RenderBoxModelObject::BackgroundImageGeometry::setSpaceSize):
+        * svg/graphics/SVGImage.cpp: Passed the space property to the created image.
+        (WebCore::SVGImage::drawPatternForContainer):
+        * svg/graphics/SVGImageForContainer.cpp: Passed the space property to the image property.
+        (WebCore::SVGImageForContainer::drawPattern):
+
 2013-08-30  Antti Koivisto  <antti@apple.com>
 
         Remove AttachContext

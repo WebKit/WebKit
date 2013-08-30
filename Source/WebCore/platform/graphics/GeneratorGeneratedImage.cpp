@@ -74,6 +74,7 @@ void GeneratorGeneratedImage::drawPattern(GraphicsContext* destContext, const Fl
         m_cachedAdjustedSize = adjustedSize;
     }
 
+    m_cachedImageBuffer->setSpaceSize(spaceSize());
     // Tile the image buffer into the context.
     m_cachedImageBuffer->drawPattern(destContext, adjustedSrcRect, adjustedPatternCTM, phase, styleColorSpace, compositeOp, destRect);
 }

@@ -29,6 +29,7 @@
 
 #include "Color.h"
 #include "ColorSpace.h"
+#include "FloatSize.h"
 #include "GraphicsTypes.h"
 #include "ImageOrientation.h"
 #include "IntRect.h"
@@ -187,6 +188,11 @@ public:
     virtual bool notSolidColor() { return true; }
 #endif
 
+    FloatSize spaceSize() const { return m_space; }
+    void setSpaceSize(const FloatSize& space)
+    {
+        m_space = space;
+    }
 protected:
     Image(ImageObserver* = 0);
 
@@ -209,6 +215,7 @@ protected:
 private:
     RefPtr<SharedBuffer> m_encodedImageData;
     ImageObserver* m_imageObserver;
+    FloatSize m_space;
 };
 
 }
