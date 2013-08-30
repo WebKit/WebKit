@@ -1,3 +1,39 @@
+2013-08-30  Dean Jackson  <dino@apple.com>
+
+        Animations should use double for key values, not floats
+        https://bugs.webkit.org/show_bug.cgi?id=120547
+
+        Reviewed by Simon Fraser.
+
+        Merge https://chromium.googlesource.com/chromium/blink/+/71de046541c77120874b9bff82958ee9e0e20c7c
+
+        Some files have been renamed in the Blink port, and they have made some
+        improvements, but I took what applied to us.
+
+        All our existing tests passed.
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::keyframeStylesForAnimation):
+        * css/WebKitCSSKeyframeRule.cpp:
+        (WebCore::StyleKeyframe::parseKeyString):
+        * css/WebKitCSSKeyframeRule.h:
+        (WebCore::StyleKeyframe::getKeys):
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::AnimationValue::keyTime):
+        (WebCore::AnimationValue::AnimationValue):
+        (WebCore::FloatAnimationValue::create):
+        (WebCore::FloatAnimationValue::FloatAnimationValue):
+        (WebCore::TransformAnimationValue::create):
+        (WebCore::TransformAnimationValue::TransformAnimationValue):
+        (WebCore::FilterAnimationValue::create):
+        (WebCore::FilterAnimationValue::FilterAnimationValue):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::startAnimation):
+        * rendering/style/KeyframeList.h:
+        (WebCore::KeyframeValue::KeyframeValue):
+        (WebCore::KeyframeValue::key):
+        (WebCore::KeyframeValue::setKey):
+
 2013-08-30  Brendan Long  <b.long@cablelabs.com>
 
         [GStreamer] support in-band text tracks

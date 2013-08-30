@@ -74,19 +74,19 @@ class AnimationValue {
 public:
     virtual ~AnimationValue() { }
 
-    float keyTime() const { return m_keyTime; }
+    double keyTime() const { return m_keyTime; }
     const TimingFunction* timingFunction() const { return m_timingFunction.get(); }
     virtual PassOwnPtr<AnimationValue> clone() const = 0;
 
 protected:
-    AnimationValue(float keyTime, PassRefPtr<TimingFunction> timingFunction = 0)
+    AnimationValue(double keyTime, PassRefPtr<TimingFunction> timingFunction = 0)
         : m_keyTime(keyTime)
         , m_timingFunction(timingFunction)
     {
     }
 
 private:
-    float m_keyTime;
+    double m_keyTime;
     RefPtr<TimingFunction> m_timingFunction;
 };
 
@@ -94,7 +94,7 @@ private:
 // FIXME: Should be moved to its own header file.
 class FloatAnimationValue : public AnimationValue {
 public:
-    static PassOwnPtr<FloatAnimationValue> create(float keyTime, float value, PassRefPtr<TimingFunction> timingFunction = 0)
+    static PassOwnPtr<FloatAnimationValue> create(double keyTime, float value, PassRefPtr<TimingFunction> timingFunction = 0)
     {
         return adoptPtr(new FloatAnimationValue(keyTime, value, timingFunction));
     }
@@ -107,7 +107,7 @@ public:
     float value() const { return m_value; }
 
 private:
-    FloatAnimationValue(float keyTime, float value, PassRefPtr<TimingFunction> timingFunction)
+    FloatAnimationValue(double keyTime, float value, PassRefPtr<TimingFunction> timingFunction)
         : AnimationValue(keyTime, timingFunction)
         , m_value(value)
     {
@@ -120,7 +120,7 @@ private:
 // FIXME: Should be moved to its own header file.
 class TransformAnimationValue : public AnimationValue {
 public:
-    static PassOwnPtr<TransformAnimationValue> create(float keyTime, const TransformOperations& value, PassRefPtr<TimingFunction> timingFunction = 0)
+    static PassOwnPtr<TransformAnimationValue> create(double keyTime, const TransformOperations& value, PassRefPtr<TimingFunction> timingFunction = 0)
     {
         return adoptPtr(new TransformAnimationValue(keyTime, value, timingFunction));
     }
@@ -133,7 +133,7 @@ public:
     const TransformOperations& value() const { return m_value; }
 
 private:
-    TransformAnimationValue(float keyTime, const TransformOperations& value, PassRefPtr<TimingFunction> timingFunction)
+    TransformAnimationValue(double keyTime, const TransformOperations& value, PassRefPtr<TimingFunction> timingFunction)
         : AnimationValue(keyTime, timingFunction)
         , m_value(value)
     {
@@ -147,7 +147,7 @@ private:
 // FIXME: Should be moved to its own header file.
 class FilterAnimationValue : public AnimationValue {
 public:
-    static PassOwnPtr<FilterAnimationValue> create(float keyTime, const FilterOperations& value, PassRefPtr<TimingFunction> timingFunction = 0)
+    static PassOwnPtr<FilterAnimationValue> create(double keyTime, const FilterOperations& value, PassRefPtr<TimingFunction> timingFunction = 0)
     {
         return adoptPtr(new FilterAnimationValue(keyTime, value, timingFunction));
     }
@@ -160,7 +160,7 @@ public:
     const FilterOperations& value() const { return m_value; }
 
 private:
-    FilterAnimationValue(float keyTime, const FilterOperations& value, PassRefPtr<TimingFunction> timingFunction)
+    FilterAnimationValue(double keyTime, const FilterOperations& value, PassRefPtr<TimingFunction> timingFunction)
         : AnimationValue(keyTime, timingFunction)
         , m_value(value)
     {

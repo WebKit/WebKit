@@ -2087,7 +2087,7 @@ bool RenderLayerBacking::startAnimation(double timeOffset, const Animation* anim
     for (size_t i = 0; i < numKeyframes; ++i) {
         const KeyframeValue& currentKeyframe = keyframes[i];
         const RenderStyle* keyframeStyle = currentKeyframe.style();
-        float key = currentKeyframe.key();
+        double key = currentKeyframe.key();
 
         if (!keyframeStyle)
             continue;

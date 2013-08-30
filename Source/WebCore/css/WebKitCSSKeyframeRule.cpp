@@ -50,14 +50,14 @@ MutableStylePropertySet* StyleKeyframe::mutableProperties()
 }
 
 /* static */
-void StyleKeyframe::parseKeyString(const String& s, Vector<float>& keys)
+void StyleKeyframe::parseKeyString(const String& s, Vector<double>& keys)
 {
     keys.clear();
     Vector<String> strings;
     s.split(',', strings);
 
     for (size_t i = 0; i < strings.size(); ++i) {
-        float key = -1;
+        double key = -1;
         String cur = strings[i].stripWhiteSpace();
         
         // For now the syntax MUST be 'xxx%' or 'from' or 'to', where xxx is a legal floating point number
@@ -66,7 +66,7 @@ void StyleKeyframe::parseKeyString(const String& s, Vector<float>& keys)
         else if (cur == "to")
             key = 1;
         else if (cur.endsWith('%')) {
-            float k = cur.substring(0, cur.length() - 1).toFloat();
+            double k = cur.substring(0, cur.length() - 1).toDouble();
             if (k >= 0 && k <= 100)
                 key = k/100;
         }
