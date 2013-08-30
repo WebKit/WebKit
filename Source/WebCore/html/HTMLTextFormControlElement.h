@@ -57,6 +57,7 @@ public:
     static void fixPlaceholderRenderer(HTMLElement* placeholder, HTMLElement* siblingElement);
 
     int indexForVisiblePosition(const VisiblePosition&) const;
+    VisiblePosition visiblePositionForIndex(int index) const;
     int selectionStart() const;
     int selectionEnd() const;
     const AtomicString& selectionDirection() const;

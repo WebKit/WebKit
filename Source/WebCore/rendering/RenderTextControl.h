@@ -36,8 +36,6 @@ public:
     HTMLTextFormControlElement* textFormControlElement() const;
     virtual PassRefPtr<RenderStyle> createInnerTextStyle(const RenderStyle* startStyle) const = 0;
 
-    VisiblePosition visiblePositionForIndex(int index) const;
-
 protected:
     RenderTextControl(Element*);
 

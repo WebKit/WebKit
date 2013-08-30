@@ -39,13 +39,12 @@
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "NodeTraversal.h"
-#include "RenderBox.h"
-#include "RenderTextControl.h"
+#include "RenderBlock.h"
 #include "RenderTheme.h"
 #include "ScriptEventListener.h"
 #include "ShadowRoot.h"
 #include "Text.h"
-#include "TextIterator.h"
+#include "htmlediting.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -223,12 +222,11 @@ void HTMLTextFormControlElement::dispatchFormControlChangeEvent()
     setChangedSinceLastFormControlChangeEvent(false);
 }
 
-static inline bool hasVisibleTextArea(RenderTextControl* textControl, HTMLElement* innerText)
+static inline bool hasVisibleTextArea(RenderObject* textControl, HTMLElement* innerText)
 {
     ASSERT(textControl);
     return textControl->style()->visibility() != HIDDEN && innerText && innerText->renderer() && innerText->renderBox()->height();
 }
-
 
 void HTMLTextFormControlElement::setRangeText(const String& replacement, ExceptionCode& ec)
 {
@@ -310,17 +308,16 @@ void HTMLTextFormControlElement::setSelectionRange(int start, int end, TextField
     end = max(end, 0);
     start = min(max(start, 0), end);
 
-    RenderTextControl* control = toRenderTextControl(renderer());
-    if (!hasVisibleTextArea(control, innerTextElement())) {
+    if (!hasVisibleTextArea(renderer(), innerTextElement())) {
         cacheSelection(start, end, direction);
         return;
     }
-    VisiblePosition startPosition = control->visiblePositionForIndex(start);
+    VisiblePosition startPosition = visiblePositionForIndex(start);
     VisiblePosition endPosition;
     if (start == end)
         endPosition = startPosition;
     else
-        endPosition = control->visiblePositionForIndex(end);
+        endPosition = visiblePositionForIndex(end);
 
     // startPosition and endPosition can be null position for example when
     // "-webkit-user-select: none" style attribute is specified.
@@ -341,13 +338,15 @@ void HTMLTextFormControlElement::setSelectionRange(int start, int end, TextField
 
 int HTMLTextFormControlElement::indexForVisiblePosition(const VisiblePosition& pos) const
 {
-    Position indexPosition = pos.deepEquivalent().parentAnchoredEquivalent();
-    if (enclosingTextFormControl(indexPosition) != this)
+    if (enclosingTextFormControl(pos.deepEquivalent()) != this)
         return 0;
-    RefPtr<Range> range = Range::create(indexPosition.document());
-    range->setStart(innerTextElement(), 0, ASSERT_NO_EXCEPTION);
-    range->setEnd(indexPosition.containerNode(), indexPosition.offsetInContainerNode(), ASSERT_NO_EXCEPTION);
-    return TextIterator::rangeLength(range.get());
+    bool forSelectionPreservation = false;
+    return WebCore::indexForVisiblePosition(innerTextElement(), pos, forSelectionPreservation);
+}
+
+VisiblePosition HTMLTextFormControlElement::visiblePositionForIndex(int index) const
+{
+    return visiblePositionForIndexUsingCharacterIterator(innerTextElement(), index);
 }
 
 int HTMLTextFormControlElement::selectionStart() const

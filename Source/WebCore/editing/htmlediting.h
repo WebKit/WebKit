@@ -189,7 +189,9 @@ bool lineBreakExistsAtVisiblePosition(const VisiblePosition&);
 int comparePositions(const VisiblePosition&, const VisiblePosition&);
 
 int indexForVisiblePosition(const VisiblePosition&, RefPtr<ContainerNode>& scope);
+int indexForVisiblePosition(Node*, const VisiblePosition&, bool forSelectionPreservation);
 VisiblePosition visiblePositionForIndex(int index, ContainerNode* scope);
+VisiblePosition visiblePositionForIndexUsingCharacterIterator(Node*, int index); // FIXME: Why do we need this version?
 
 // -------------------------------------------------------------------------
 // Range

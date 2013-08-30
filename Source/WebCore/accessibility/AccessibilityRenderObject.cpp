@@ -1816,9 +1816,9 @@ VisiblePosition AccessibilityRenderObject::visiblePositionForIndex(int index) co
 {
     if (!m_renderer)
         return VisiblePosition();
-    
+
     if (isNativeTextControl())
-        return toRenderTextControl(m_renderer)->visiblePositionForIndex(index);
+        return toRenderTextControl(m_renderer)->textFormControlElement()->visiblePositionForIndex(index);
 
     if (!allowsTextRanges() && !m_renderer->isText())
         return VisiblePosition();
@@ -1826,23 +1826,14 @@ VisiblePosition AccessibilityRenderObject::visiblePositionForIndex(int index) co
     Node* node = m_renderer->node();
     if (!node)
         return VisiblePosition();
-    
-    if (index <= 0)
-        return VisiblePosition(firstPositionInOrBeforeNode(node), DOWNSTREAM);
-    
-    RefPtr<Range> range = Range::create(&m_renderer->document());
-    range->selectNodeContents(node, IGNORE_EXCEPTION);
-    CharacterIterator it(range.get());
-    it.advance(index - 1);
-    return VisiblePosition(Position(it.range()->endContainer(), it.range()->endOffset(), Position::PositionIsOffsetInAnchor), UPSTREAM);
+
+    return visiblePositionForIndexUsingCharacterIterator(node, index);
 }
     
 int AccessibilityRenderObject::indexForVisiblePosition(const VisiblePosition& pos) const
 {
-    if (isNativeTextControl()) {
-        HTMLTextFormControlElement* textControl = toRenderTextControl(m_renderer)->textFormControlElement();
-        return textControl->indexForVisiblePosition(pos);
-    }
+    if (isNativeTextControl())
+        return toRenderTextControl(m_renderer)->textFormControlElement()->indexForVisiblePosition(pos);
 
     if (!isTextControl())
         return 0;
@@ -1850,22 +1841,20 @@ int AccessibilityRenderObject::indexForVisiblePosition(const VisiblePosition& po
     Node* node = m_renderer->node();
     if (!node)
         return 0;
-    
+
     Position indexPosition = pos.deepEquivalent();
     if (indexPosition.isNull() || highestEditableRoot(indexPosition, HasEditableAXRole) != node)
         return 0;
-    
-    RefPtr<Range> range = Range::create(&m_renderer->document());
-    range->setStart(node, 0, IGNORE_EXCEPTION);
-    range->setEnd(indexPosition, IGNORE_EXCEPTION);
 
 #if PLATFORM(GTK)
     // We need to consider replaced elements for GTK, as they will be
     // presented with the 'object replacement character' (0xFFFC).
-    return TextIterator::rangeLength(range.get(), true);
+    bool forSelectionPreservation = true;
 #else
-    return TextIterator::rangeLength(range.get());
+    bool forSelectionPreservation = false;
 #endif
+
+    return WebCore::indexForVisiblePosition(node, pos, forSelectionPreservation);
 }
 
 Element* AccessibilityRenderObject::rootEditableElementForPosition(const Position& position) const
