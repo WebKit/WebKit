@@ -1,3 +1,14 @@
+2013-08-30  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Video inside page always uses non-hardware accelerated playback
+        https://bugs.webkit.org/show_bug.cgi?id=120448
+
+        Reviewed by Eric Carlson.
+
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundationCF::createAVPlayer): Check for
+        D3D device. If it doesn't exist, switch to compositing mode and try again.
+
 2013-08-30  Leo Yang  <leoyang@blackberry.com>
 
         Possible dangling CachedResourceClient of StyleRuleImport and XSLImportRule
