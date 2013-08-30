@@ -1,3 +1,15 @@
+2013-08-29  Filip Pizlo  <fpizlo@apple.com>
+
+        Just linking LLVM into JSC causes all plugin tests to fail
+        https://bugs.webkit.org/show_bug.cgi?id=113915
+
+        Reviewed by Oliver Hunt.
+        
+        Hide all LLVM symbols. This should prevent us from exporting LLVM's overrides for
+        raise/abort/__assert_rtn.
+
+        * Scripts/configure-llvm:
+
 2013-08-29  Joseph Pecoraro  <pecoraro@apple.com>
 
         new-run-webkit-tests does not respect --no-sample-on-timeout switch

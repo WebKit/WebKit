@@ -37,4 +37,8 @@ fi
 # only want to build a backend for our current target) and to add more flags to remove
 # dependencies and features.
 
-./configure --enable-optimized=yes --enable-backtraces=no --enable-targets=x86_64 --enable-libcpp=yes --enable-zlib=no --enable-terminfo=no
+# FIXME: We need LLVM to have its own sensible story for hiding symbols. But while we
+# don't have a sensible story, we use a hilarious one: CPPFLAGS=-fvisibility=hidden
+
+./configure --enable-optimized=yes --enable-backtraces=no --enable-targets=x86_64 --enable-libcpp=yes --enable-zlib=no --enable-terminfo=no CPPFLAGS=-fvisibility=hidden
+
