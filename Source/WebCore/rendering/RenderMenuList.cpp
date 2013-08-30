@@ -392,10 +392,12 @@ void RenderMenuList::didUpdateActiveOption(int optionIndex)
     if (listIndex < 0 || listIndex >= static_cast<int>(select->listItems().size()))
         return;
 
-    ASSERT(select->listItems()[listIndex]);
-
-    if (AccessibilityMenuList* menuList = static_cast<AccessibilityMenuList*>(document().axObjectCache()->get(this)))
-        menuList->didUpdateActiveOption(optionIndex);
+    HTMLElement* listItem = select->listItems()[listIndex];
+    ASSERT(listItem);
+    if (listItem->attached()) {
+        if (AccessibilityMenuList* menuList = static_cast<AccessibilityMenuList*>(document().axObjectCache()->get(this)))
+            menuList->didUpdateActiveOption(optionIndex);
+    }
 }
 
 String RenderMenuList::itemText(unsigned listIndex) const

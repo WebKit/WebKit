@@ -1,3 +1,24 @@
+2013-08-29  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Avoid Node references from AXObjectCache from leaking
+        https://bugs.webkit.org/show_bug.cgi?id=120501
+
+        Reviewed by Darin Adler.
+
+        Merge https://chromium.googlesource.com/chromium/blink/+/454f31497613b6d0fbcfb0df757254b64a177c06
+        without any tests since we don't have the same infrastructure to detect leaks in WebKit.
+
+        A real world example of this would be selecting an <option> item inside frame by keyboard. The node will not be deref()-ed until the topDocument() is detached. 
+
+        The issue was that AccessibilityMenuListOption is created in childrenChanged()
+        hook called when its RenderObject is being destroyed. This patch modifies AccessibilityMenuListPopup so it won't create AccessibilityMenuListOption if its
+        element is already detached.
+
+        * accessibility/AccessibilityMenuListPopup.cpp:
+        (WebCore::AccessibilityMenuListPopup::menuListOptionAccessibilityObject):
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::didUpdateActiveOption):
+
 2013-08-26  Simon Fraser  <simon.fraser@apple.com>
 
         Implement object-fit CSS property

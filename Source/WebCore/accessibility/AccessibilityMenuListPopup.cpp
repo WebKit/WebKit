@@ -70,7 +70,7 @@ bool AccessibilityMenuListPopup::computeAccessibilityIsIgnored() const
 
 AccessibilityMenuListOption* AccessibilityMenuListPopup::menuListOptionAccessibilityObject(HTMLElement* element) const
 {
-    if (!element || !isHTMLOptionElement(element))
+    if (!element || !isHTMLOptionElement(element) || !element->attached())
         return 0;
 
     AccessibilityObject* object = document()->axObjectCache()->getOrCreate(MenuListOptionRole);
