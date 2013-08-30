@@ -54,7 +54,6 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WebKit", "WebKit\WebKit.vcxproj", "{0662A8A9-82A3-4638-97D8-EC425D8D87C9}"
 	ProjectSection(ProjectDependencies) = postProject
 		{0F837117-8C0B-4596-A373-A37E14A01223} = {0F837117-8C0B-4596-A373-A37E14A01223}
-		{0473724F-0AB3-4F12-892E-9FAB0186C804} = {0473724F-0AB3-4F12-892E-9FAB0186C804}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testRegExp", "..\..\JavaScriptCore\JavaScriptCore.vcxproj\testRegExp\testRegExp.vcxproj", "{BB16286B-AADC-46C1-BC0D-6C06F323E04B}"
@@ -191,6 +190,9 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "translator_hlsl", "..\..\ThirdParty\ANGLE\ANGLE.vcxproj\translator_hlsl.vcxproj", "{8C6B55FF-783C-4AA4-BAC2-24A1CDBEDC8A}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WebInspectorUI", "..\..\WebInspectorUI\WebInspectorUI.vcxproj\WebInspectorUI.vcxproj", "{0473724F-0AB3-4F12-892E-9FAB0186C804}"
+	ProjectSection(ProjectDependencies) = postProject
+		{0662A8A9-82A3-4638-97D8-EC425D8D87C9} = {0662A8A9-82A3-4638-97D8-EC425D8D87C9}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

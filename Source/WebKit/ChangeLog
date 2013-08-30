@@ -1,3 +1,10 @@
+2013-08-30  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Unreviewed build fix after r154917
+
+        * WebKit.vcxproj/WebKit.sln: Establish build dependency from WebInspectorUI against
+        WebKit. Remove reverse dependency.
+
 2013-08-29  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Unreviewed build fix after r154809

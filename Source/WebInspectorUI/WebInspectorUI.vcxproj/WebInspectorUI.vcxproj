@@ -703,11 +703,6 @@
     <None Include="WebInspectorUIPostBuild.cmd" />
     <None Include="WebInspectorUIPreBuild.cmd" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\WebKit\WebKit.vcxproj\WebKit\WebKit.vcxproj">
-      <Project>{0662a8a9-82a3-4638-97d8-ec425d8d87c9}</Project>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
