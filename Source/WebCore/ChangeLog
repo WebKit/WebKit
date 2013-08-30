@@ -1,3 +1,10 @@
+2013-08-30  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Unreviewed build correction after r154835. Only seen when doing a
+        full (clean) rebuild.
+
+        * DerivedSources.cpp: Remove reference to deleted JSHTMLDialogElement.cpp
+
 2013-08-30  Tamas Czene  <tczene@inf.u-szeged.hu>
 
         Resolve unused parameter warning in FindController.cpp
