@@ -1,3 +1,12 @@
+2013-08-30  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Add USE(CFNETWORK) guard to SynchronousLoaderClient::didReceiveAuthenticationChallengedidReceiveAuthenticationChallenge()
+        https://bugs.webkit.org/show_bug.cgi?id=120532
+
+        Reviewed by Darin Adler.
+
+        * platform/network/SynchronousLoaderClient.h:
+
 2013-08-30  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Video inside page always uses non-hardware accelerated playback
