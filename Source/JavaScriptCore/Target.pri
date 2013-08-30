@@ -323,6 +323,10 @@ SOURCES += \
     runtime/JSGlobalObject.cpp \
     runtime/JSGlobalObjectFunctions.cpp \
     runtime/JSLock.cpp \
+    runtime/JSMap.cpp \
+    runtime/JSMapConstructor.cpp \
+    runtime/JSPrototype.cpp \
+    runtime/JSNameScope.cpp \
     runtime/JSNameScope.cpp \
     runtime/JSNotAnObject.cpp \
     runtime/JSONObject.cpp \
@@ -349,6 +353,7 @@ SOURCES += \
     runtime/JSWrapperObject.cpp \
     runtime/LiteralParser.cpp \
     runtime/Lookup.cpp \
+    runtime/MapData.cpp \
     runtime/MathObject.cpp \
     runtime/MemoryStatistics.cpp \
     runtime/NameConstructor.cpp \

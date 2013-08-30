@@ -58,6 +58,7 @@
 #include "JSWithScope.h"
 #include "Lexer.h"
 #include "Lookup.h"
+#include "MapData.h"
 #include "Nodes.h"
 #include "ParserArena.h"
 #include "RegExpCache.h"

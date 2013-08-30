@@ -872,6 +872,9 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/JSInt8Array.h \
 	Source/JavaScriptCore/runtime/JSLock.cpp \
 	Source/JavaScriptCore/runtime/JSLock.h \
+	Source/JavaScriptCore/runtime/JSMap.cpp \
+	Source/JavaScriptCore/runtime/JSMapConstructor.cpp \
+	Source/JavaScriptCore/runtime/JSMapPrototype.cpp \
 	Source/JavaScriptCore/runtime/JSNotAnObject.cpp \
 	Source/JavaScriptCore/runtime/JSNotAnObject.h \
 	Source/JavaScriptCore/runtime/JSObject.cpp \

@@ -1,3 +1,51 @@
+2013-08-29  Oliver Hunt  <oliver@apple.com>
+
+
+        Implement ES6 Map object
+        https://bugs.webkit.org/show_bug.cgi?id=120333
+
+        Reviewed by Geoffrey Garen.
+
+        Implement support for the ES6 Map type and related classes.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * heap/CopyToken.h: Add a new token to track copying the backing store
+        * runtime/CommonIdentifiers.h: Add new identifiers
+        * runtime/JSGlobalObject.cpp:
+        * runtime/JSGlobalObject.h:
+            Add new structures and prototypes
+
+        * runtime/JSMap.cpp: Added.
+        * runtime/JSMap.h: Added.
+            New JSMap class to represent a Map instance
+
+        * runtime/MapConstructor.cpp: Added.
+        * runtime/MapConstructor.h: Added.
+            The Map constructor
+
+        * runtime/MapData.cpp: Added.
+        * runtime/MapData.h: Added.
+            The most interesting data structure.  The roughly corresponds
+            to the ES6 notion of MapData.  It provides the core JSValue->JSValue
+            map implementation.  We implement it using 2 hashtables and a flat
+            table.  Due to the different semantics of string comparisons vs.
+            all others we need have one map keyed by String and the other by
+            generic JSValue.  The actual table is represented more or less
+            exactly as described in the ES6 draft - a single contiguous list of
+            key/value pairs.  The entire map could be achieved with just this
+            table, however we need the HashMaps in order to maintain O(1) lookup.
+
+            Deleted values are simply cleared as the draft says, however the
+            implementation compacts the storage on copy as long as the are no
+            active iterators.
+
+        * runtime/MapPrototype.cpp: Added.
+        * runtime/MapPrototype.h: Added.
+            Implement Map prototype functions
+
+        * runtime/VM.cpp:
+            Add new structures.
+
 2013-08-29  Filip Pizlo  <fpizlo@apple.com>
 
         Teach DFG::Worklist and its clients that it may be reused for different kinds of compilations
