@@ -1,3 +1,17 @@
+2013-08-29  Tim Horton  <timothy_horton@apple.com>
+
+        SVG clipping, masking, and gradients-on-text do not respect the device scale factor
+        https://bugs.webkit.org/show_bug.cgi?id=120377
+        <rdar://problem/14777944>
+
+        Reviewed by Simon Fraser.
+
+        Add a test that ensures that when deviceScaleFactor=2, masks, clipping,
+        gradients, and patterns are rendered @2x.
+
+        * svg/custom/masking-clipping-hidpi-expected.svg: Added.
+        * svg/custom/masking-clipping-hidpi.svg: Added.
+
 2013-08-29  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Crash when VoiceOver reference a TextMarker from an iframe that has been removed
