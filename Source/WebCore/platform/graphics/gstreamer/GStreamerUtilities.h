@@ -28,6 +28,10 @@
     GST_INFO(__VA_ARGS__); \
     LOG_VERBOSE(Media, __VA_ARGS__); } while (0)
 
+#define WARN_MEDIA_MESSAGE(...) do { \
+    GST_WARNING(__VA_ARGS__); \
+    LOG_VERBOSE(Media, __VA_ARGS__); } while (0)
+
 namespace WebCore {
 bool initializeGStreamer();
 }

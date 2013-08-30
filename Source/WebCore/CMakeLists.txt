@@ -2710,7 +2710,9 @@ if (ENABLE_VIDEO_TRACK)
     list(APPEND WebCore_SOURCES
         html/track/AudioTrack.cpp
         html/track/AudioTrackList.cpp
+        html/track/InbandGenericTextTrack.cpp
         html/track/InbandTextTrack.cpp
+        html/track/InbandWebVTTTextTrack.cpp
         html/track/LoadableTextTrack.cpp
         html/track/TextTrack.cpp
         html/track/TextTrackCue.cpp

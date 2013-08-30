@@ -1,3 +1,38 @@
+2013-08-30  Brendan Long  <b.long@cablelabs.com>
+
+        <https://webkit.org/b/103771> [GStreamer] support in-band text tracks
+
+        Reviewed by Eric Carlson.
+
+        * media/content/counting-subtitled-kate.ogv: Added.
+        * media/content/counting-subtitled-srt.mkv: Added.
+        * media/in-band-cues.js: Added.
+        * media/track/in-band/track-in-band-kate-ogg-cues-added-once-expected.txt: Added.
+        * media/track/in-band/track-in-band-kate-ogg-cues-added-once.html: Added.
+        * media/track/in-band/track-in-band-kate-ogg-kind-expected.txt: Added.
+        * media/track/in-band/track-in-band-kate-ogg-kind.html: Added.
+        * media/track/in-band/track-in-band-kate-ogg-language-expected.txt: Added.
+        * media/track/in-band/track-in-band-kate-ogg-language.html: Added.
+        * media/track/in-band/track-in-band-kate-ogg-mode-expected.txt: Added.
+        * media/track/in-band/track-in-band-kate-ogg-mode.html: Added.
+        * media/track/in-band/track-in-band-kate-ogg-style-expected.txt: Added.
+        * media/track/in-band/track-in-band-kate-ogg-style.html: Added.
+        * media/track/in-band/track-in-band-kate-ogg-track-order-expected.txt: Added.
+        * media/track/in-band/track-in-band-kate-ogg-track-order.html: Added.
+        * media/track/in-band/track-in-band-srt-mkv-cues-added-once-expected.txt: Added.
+        * media/track/in-band/track-in-band-srt-mkv-cues-added-once.html: Added.
+        * media/track/in-band/track-in-band-srt-mkv-kind-expected.txt: Added.
+        * media/track/in-band/track-in-band-srt-mkv-kind.html: Added.
+        * media/track/in-band/track-in-band-srt-mkv-language-expected.txt: Added.
+        * media/track/in-band/track-in-band-srt-mkv-language.html: Added.
+        * media/track/in-band/track-in-band-srt-mkv-mode-expected.txt: Added.
+        * media/track/in-band/track-in-band-srt-mkv-mode.html: Added.
+        * media/track/in-band/track-in-band-srt-mkv-style-expected.txt: Added.
+        * media/track/in-band/track-in-band-srt-mkv-style.html: Added.
+        * media/track/in-band/track-in-band-srt-mkv-track-order-expected.txt: Added.
+        * media/track/in-band/track-in-band-srt-mkv-track-order.html: Added.
+        * platform/mac/TestExpectations: Skip MKV and OGG tests.
+
 2013-08-30  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: inspector/storage-panel-dom-storage-update.html is flakey on the bots

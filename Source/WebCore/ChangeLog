@@ -1,3 +1,122 @@
+2013-08-30  Brendan Long  <b.long@cablelabs.com>
+
+        [GStreamer] support in-band text tracks
+        https://bugs.webkit.org/show_bug.cgi?id=103771
+
+        Reviewed by Eric Carlson.
+
+        Tests: New tests added because existing tests were too specific.
+           media/track/in-band/track-in-band-kate-ogg-cues-added-once.html
+           media/track/in-band/track-in-band-kate-ogg-kind.html
+           media/track/in-band/track-in-band-kate-ogg-language.html
+           media/track/in-band/track-in-band-kate-ogg-mode.html
+           media/track/in-band/track-in-band-kate-ogg-style.html
+           media/track/in-band/track-in-band-kate-ogg-track-order.html
+           media/track/in-band/track-in-band-srt-mkv-cues-added-once.html
+           media/track/in-band/track-in-band-srt-mkv-kind.html
+           media/track/in-band/track-in-band-srt-mkv-language.html
+           media/track/in-band/track-in-band-srt-mkv-mode.html
+           media/track/in-band/track-in-band-srt-mkv-style.html
+           media/track/in-band/track-in-band-srt-mkv-track-order.html
+
+        * CMakeLists.txt: Add InbandTextTrackPrivateGStreamer, InbandGenericTextTrack, InbandWebVTTTextTrack, and TextCombinerGStreamer files.
+        * GNUmakefile.list.am: Same.
+        * PlatformEfl.cmake: Same.
+        * Target.pri: Same.
+        * WebCore.vcxproj/WebCore.vcxproj: Same.
+        * WebCore.vcxproj/WebCore.vcxproj.filters: Same.
+        * WebCore.xcodeproj/project.pbxproj: Same.
+        * html/track/InbandGenericTextTrack.cpp: Split out code for handling generic cues.
+        (WebCore::GenericTextTrackCueMap::GenericTextTrackCueMap): Move from InbandTextTrack.
+        (WebCore::GenericTextTrackCueMap::~GenericTextTrackCueMap): Same.
+        (WebCore::GenericTextTrackCueMap::add): Same.
+        (WebCore::GenericTextTrackCueMap::find): Same.
+        (WebCore::GenericTextTrackCueMap::remove): Same.
+        (WebCore::InbandGenericTextTrack::create): Same.
+        (WebCore::InbandGenericTextTrack::updateCueFromCueData): Same.
+        (WebCore::InbandGenericTextTrack::addGenericCue): Same.
+        (WebCore::InbandGenericTextTrack::updateGenericCue): Same.
+        (WebCore::InbandGenericTextTrack::removeGenericCue): Same.
+        (WebCore::InbandGenericTextTrack::removeCue): Same.
+        (WebCore::InbandGenericTextTrack::InbandGenericTextTrack): Empty.
+        (WebCore::InbandGenericTextTrack::~InbandGenericTextTrack): Empty.
+        * html/track/InbandGenericTextTrack.h: Copied from Source/WebCore/html/track/InbandTextTrack.h.
+        The only addition is the ASSERT_NOT_REACHED() for WebVTT cues.
+        * html/track/InbandTextTrack.cpp: Add label and language changed callbacks.
+        (WebCore::InbandTextTrack::create): Return a generic or WebVTT text track based on the private CueFormat.
+        (WebCore::InbandTextTrack::labelChanged): Added.
+        (WebCore::InbandTextTrack::languageChanged): Added.
+        * html/track/InbandTextTrack.h: Add label and language changed callbacks.
+        * html/track/InbandWebVTTTextTrack.cpp: Added, based on InbandTextTrack.
+        (WebCore::InbandWebVTTTextTrack::create): Same.
+        (WebCore::InbandWebVTTTextTrack::InbandWebVTTTextTrack): Empty.
+        (WebCore::InbandWebVTTTextTrack::~InbandWebVTTTextTrack): Empty.
+        (WebCore::InbandWebVTTTextTrack::parseWebVTTCueData): Sends data to a WebVTTParser.
+        (WebCore::InbandWebVTTTextTrack::newCuesParsed): Adds cues when WebVTTParser parses them.
+        (WebCore::InbandWebVTTTextTrack::fileFailedToParse): Prints a warning when WebVTTParser has a problem.
+        * html/track/InbandWebVTTTextTrack.h: Added.
+        * platform/graphics/InbandTextTrackPrivate.h:
+        (WebCore::InbandTextTrackPrivate::cueFormat): For determining if the track will have generic or WebVTT cues.
+        (WebCore::InbandTextTrackPrivate::InbandTextTrackPrivate): Pass CueFormat in the constructor.
+        * platform/graphics/InbandTextTrackPrivateClient.h: Same.
+        * platform/graphics/avfoundation/InbandTextTrackPrivateAVF.cpp:
+        (WebCore::InbandTextTrackPrivateAVF::InbandTextTrackPrivateAVF): Pass CueFormat (Generic) to InbandTextTrackPrivate.
+        * platform/graphics/gstreamer/GRefPtrGStreamer.cpp: Add GRefPtr specializations for GstSample and GstEvent.
+        * platform/graphics/gstreamer/GRefPtrGStreamer.h: Same.
+        * platform/graphics/gstreamer/GStreamerUtilities.h: Add WARN_MEDIA_MESSAGE.
+        * platform/graphics/gstreamer/GStreamerVersioning.h: Add a function to check GStreamer version at runtime.
+        * platform/graphics/gstreamer/InbandTextTrackPrivateGStreamer.cpp: Added.
+        (WebCore::textTrackPrivateEventCallback): Watches for tag and stream start events.
+        (WebCore::textTrackPrivateSampleTimeoutCallback): See notifyTrackOfSample();
+        (WebCore::textTrackPrivateStreamTimeoutCallback): See notifyTrackOfStreamChanged();
+        (WebCore::textTrackPrivateTagsChangeTimeoutCallback): See notifyTrackOfTagsChanged();
+        (WebCore::InbandTextTrackPrivateGStreamer::InbandTextTrackPrivateGStreamer): Initializes tags and stream and sets up event callback.
+        (WebCore::InbandTextTrackPrivateGStreamer::~InbandTextTrackPrivateGStreamer): Calls disconnect:
+        (WebCore::InbandTextTrackPrivateGStreamer::disconnect): Removes signal handlers and frees some memory.
+        (WebCore::InbandTextTrackPrivateGStreamer::handleSample): Adds samples to a list and sets up callback.
+        (WebCore::InbandTextTrackPrivateGStreamer::streamChanged): Sets up callback.
+        (WebCore::InbandTextTrackPrivateGStreamer::tagsChanged): Same.
+        (WebCore::InbandTextTrackPrivateGStreamer::notifyTrackOfSample): Parses all queued samples with WebVTTParser.
+        (WebCore::InbandTextTrackPrivateGStreamer::notifyTrackOfStreamChanged): Keeps track of current stream.
+        (WebCore::InbandTextTrackPrivateGStreamer::notifyTrackOfTagsChanged): Sets label and language from tags.
+        * platform/graphics/gstreamer/InbandTextTrackPrivateGStreamer.h: Added.
+        (WebCore::InbandTextTrackPrivateGStreamer::create): Basic RefPtr create function.
+        (WebCore::InbandTextTrackPrivateGStreamer::pad): Returns the pad this track is associated with (used
+        to determine if a playbin text stream has already been associated with a text track).
+        (WebCore::InbandTextTrackPrivateGStreamer::setIndex): Sets the track index (used for sorting).
+        (WebCore::InbandTextTrackPrivateGStreamer::streamId): Returns the stream ID (used to handle new samples).
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::mediaPlayerPrivateTextChangedCallback): Called for playbin "text-changed" event. See textChanged().
+        (WebCore::mediaPlayerPrivateTextChangeTimeoutCallback): See notifyPlayerOfText().
+        (WebCore::mediaPlayerPrivateNewTextSampleCallback): See newTextSample().
+        (WebCore::MediaPlayerPrivateGStreamer::MediaPlayerPrivateGStreamer): Initialize m_textTimerHandler.
+        (WebCore::MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer): Disconnect text tracks (they don't necessarily
+        get freed here, since a script could hold a reference).
+        (WebCore::MediaPlayerPrivateGStreamer::textChanged): Setup callback for notifyPlayerOfText.
+        (WebCore::MediaPlayerPrivateGStreamer::notifyPlayerOfText): Create text tracks.
+        (WebCore::MediaPlayerPrivateGStreamer::newTextSample): Handle new samples by giving them to a text track
+        with a matching stream. This method is syncryonous because we need to get the stream start sticky event
+        immediately.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+        * platform/graphics/gstreamer/TextCombinerGStreamer.cpp: Added. This element forwards buffers from all
+        of its input pads, but also converts plain text to WebVTT as needed.
+        (webkit_text_combiner_init): Setup internal funnel.
+        (webkitTextCombinerPadEvent): If the caps are plain text make sure we have a webvttenv, otherwise connect
+        directly to the funnel.
+        (webkitTextCombinerRequestNewPad): Setup ghostpad and event callback.
+        (webkitTextCombinerReleasePad): Release pad and optional associated webvttenc.
+        (webkit_text_combiner_class_init): Setup pad templates and request/release pad functions.
+        (webkitTextCombinerNew): Returns a new WebKitTextCombiner.
+        * platform/graphics/gstreamer/TextCombinerGStreamer.h: Added.
+        * platform/graphics/gstreamer/TextSinkGStreamer.cpp: Added.
+        (webkit_text_sink_init): Set sync=false.
+        (webkitTextSinkGetProperty): Ignore sync property.
+        (webkitTextSinkSetProperty): Same.
+        (webkitTextSinkQuery): Ignore position and duration queries, forward everything else to appsink.
+        (webkit_text_sink_class_init): Setup property and query functions.
+        (webkitTextSinkNew): Return a new WebKitTextSink.
+        * platform/graphics/gstreamer/TextSinkGStreamer.h: Added.
+
 2013-08-30  Dirk Schulze  <krit@webkit.org>
 
         Animate CSS Image filter() function

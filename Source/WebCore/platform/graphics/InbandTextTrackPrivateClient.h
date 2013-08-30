@@ -139,8 +139,10 @@ public:
     virtual void updateGenericCue(InbandTextTrackPrivate*, GenericCueData*) = 0;
     virtual void removeGenericCue(InbandTextTrackPrivate*, GenericCueData*) = 0;
 
-    virtual void addWebVTTCue(InbandTextTrackPrivate*, PassRefPtr<WebVTTCueData>) = 0;
-    virtual void removeWebVTTCue(InbandTextTrackPrivate*, WebVTTCueData*) = 0;
+    virtual void parseWebVTTCueData(InbandTextTrackPrivate*, const char* data, unsigned length) = 0;
+
+    virtual void labelChanged(InbandTextTrackPrivate*, const String&) = 0;
+    virtual void languageChanged(InbandTextTrackPrivate*, const String&) = 0;
 
     virtual void willRemoveTextTrackPrivate(InbandTextTrackPrivate*) = 0;
 };

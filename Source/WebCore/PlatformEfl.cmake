@@ -123,9 +123,12 @@ list(APPEND WebCore_SOURCES
     platform/graphics/gstreamer/GStreamerUtilities.cpp
     platform/graphics/gstreamer/GStreamerVersioning.cpp
     platform/graphics/gstreamer/ImageGStreamerCairo.cpp
+    platform/graphics/gstreamer/InbandTextTrackPrivateGStreamer.cpp
     platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp
     platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp
     platform/graphics/gstreamer/PlatformVideoWindowEfl.cpp
+    platform/graphics/gstreamer/TextCombinerGStreamer.cpp
+    platform/graphics/gstreamer/TextSinkGStreamer.cpp
     platform/graphics/gstreamer/VideoSinkGStreamer.cpp
     platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp
 

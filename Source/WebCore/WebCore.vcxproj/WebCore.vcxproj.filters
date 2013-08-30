@@ -4326,7 +4326,13 @@
     <ClCompile Include="..\html\shadow\TextControlInnerElements.cpp">
       <Filter>html\shadow</Filter>
     </ClCompile>
+    <ClCompile Include="..\html\track\InbandGenericTextTrack.cpp">
+      <Filter>html\track</Filter>
+    </ClCompile>
     <ClCompile Include="..\html\track\InbandTextTrack.cpp">
+      <Filter>html\track</Filter>
+    </ClCompile>
+    <ClCompile Include="..\html\track\InbandWebVTTTextTrack.cpp">
       <Filter>html\track</Filter>
     </ClCompile>
     <ClCompile Include="..\html\track\LoadableTextTrack.cpp">
@@ -11480,7 +11486,13 @@
     <ClInclude Include="..\html\shadow\TextControlInnerElements.h">
       <Filter>html\shadow</Filter>
     </ClInclude>
+    <ClInclude Include="..\html\track\InbandGenericTextTrack.h">
+      <Filter>html\track</Filter>
+    </ClInclude>
     <ClInclude Include="..\html\track\InbandTextTrack.h">
+      <Filter>html\track</Filter>
+    </ClInclude>
+    <ClInclude Include="..\html\track\InbandWebVTTTextTrack.h">
       <Filter>html\track</Filter>
     </ClInclude>
     <ClInclude Include="..\html\track\LoadableTextTrack.h">

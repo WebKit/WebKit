@@ -31,6 +31,10 @@ typedef struct _GstTask GstTask;
 typedef struct _GstBus GstBus;
 typedef struct _GstElementFactory GstElementFactory;
 typedef struct _GstBuffer GstBuffer;
+#ifdef GST_API_VERSION_1
+typedef struct _GstSample GstSample;
+#endif
+typedef struct _GstEvent GstEvent;
 
 namespace WTF {
 
@@ -65,6 +69,16 @@ template<> void derefGPtr<GstElementFactory>(GstElementFactory* ptr);
 template<> GRefPtr<GstBuffer> adoptGRef(GstBuffer* ptr);
 template<> GstBuffer* refGPtr<GstBuffer>(GstBuffer* ptr);
 template<> void derefGPtr<GstBuffer>(GstBuffer* ptr);
+
+#ifdef GST_API_VERSION_1
+template<> GRefPtr<GstSample> adoptGRef(GstSample* ptr);
+template<> GstSample* refGPtr<GstSample>(GstSample* ptr);
+template<> void derefGPtr<GstSample>(GstSample* ptr);
+#endif
+
+template<> GRefPtr<GstEvent> adoptGRef(GstEvent* ptr);
+template<> GstEvent* refGPtr<GstEvent>(GstEvent* ptr);
+template<> void derefGPtr<GstEvent>(GstEvent* ptr);
 }
 
 #endif // USE(GSTREAMER)

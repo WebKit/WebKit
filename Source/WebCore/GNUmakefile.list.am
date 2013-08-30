@@ -3725,8 +3725,12 @@ webcore_sources += \
 	Source/WebCore/html/track/AudioTrack.h \
 	Source/WebCore/html/track/AudioTrackList.cpp \
 	Source/WebCore/html/track/AudioTrackList.h \
+	Source/WebCore/html/track/InbandGenericTextTrack.cpp \
+	Source/WebCore/html/track/InbandGenericTextTrack.h \
 	Source/WebCore/html/track/InbandTextTrack.cpp \
 	Source/WebCore/html/track/InbandTextTrack.h \
+	Source/WebCore/html/track/InbandWebVTTTextTrack.cpp \
+	Source/WebCore/html/track/InbandWebVTTTextTrack.h \
 	Source/WebCore/html/track/LoadableTextTrack.cpp \
 	Source/WebCore/html/track/LoadableTextTrack.h \
 	Source/WebCore/html/track/TextTrack.cpp \
@@ -6327,7 +6331,14 @@ platform_sources += \
 	Source/WebCore/platform/graphics/gstreamer/GStreamerUtilities.cpp \
 	Source/WebCore/platform/graphics/gstreamer/GStreamerUtilities.h \
 	Source/WebCore/platform/graphics/gstreamer/GStreamerVersioning.cpp \
-	Source/WebCore/platform/graphics/gstreamer/GStreamerVersioning.h
+	Source/WebCore/platform/graphics/gstreamer/GStreamerVersioning.h \
+	Source/WebCore/platform/graphics/gstreamer/TextCombinerGStreamer.cpp \
+	Source/WebCore/platform/graphics/gstreamer/TextCombinerGStreamer.h \
+	Source/WebCore/platform/graphics/gstreamer/TextSinkGStreamer.cpp \
+	Source/WebCore/platform/graphics/gstreamer/TextSinkGStreamer.h
+webcore_platform_sources += \
+	Source/WebCore/platform/graphics/gstreamer/InbandTextTrackPrivateGStreamer.cpp \
+	Source/WebCore/platform/graphics/gstreamer/InbandTextTrackPrivateGStreamer.h
 endif
 
 # ---

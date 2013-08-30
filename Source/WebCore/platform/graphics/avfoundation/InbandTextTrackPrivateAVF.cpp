@@ -97,7 +97,8 @@ AVFInbandTrackParent::~AVFInbandTrackParent()
 }
 
 InbandTextTrackPrivateAVF::InbandTextTrackPrivateAVF(AVFInbandTrackParent* owner)
-    : m_owner(owner)
+    : InbandTextTrackPrivate(Generic)
+    , m_owner(owner)
     , m_pendingCueStatus(None)
     , m_index(0)
     , m_hasBeenReported(false)

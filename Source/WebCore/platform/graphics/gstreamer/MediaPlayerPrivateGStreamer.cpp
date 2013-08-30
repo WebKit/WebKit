@@ -42,6 +42,12 @@
 #include <wtf/gobject/GOwnPtr.h>
 #include <wtf/text/CString.h>
 
+#if ENABLE(VIDEO_TRACK) && defined(GST_API_VERSION_1)
+#include "InbandTextTrackPrivateGStreamer.h"
+#include "TextCombinerGStreamer.h"
+#include "TextSinkGStreamer.h"
+#endif
+
 #ifdef GST_API_VERSION_1
 #include <gst/audio/streamvolume.h>
 #else
@@ -131,6 +137,26 @@ static gboolean mediaPlayerPrivateVideoChangeTimeoutCallback(MediaPlayerPrivateG
     player->notifyPlayerOfVideo();
     return FALSE;
 }
+
+#if ENABLE(VIDEO_TRACK) && defined(GST_API_VERSION_1)
+static void mediaPlayerPrivateTextChangedCallback(GObject*, MediaPlayerPrivateGStreamer* player)
+{
+    player->textChanged();
+}
+
+static gboolean mediaPlayerPrivateTextChangeTimeoutCallback(MediaPlayerPrivateGStreamer* player)
+{
+    // This is the callback of the timeout source created in ::textChanged.
+    player->notifyPlayerOfText();
+    return FALSE;
+}
+
+static GstFlowReturn mediaPlayerPrivateNewTextSampleCallback(GObject*, MediaPlayerPrivateGStreamer* player)
+{
+    player->newTextSample();
+    return GST_FLOW_OK;
+}
+#endif
 
 static void mediaPlayerPrivatePluginInstallerResultFunction(GstInstallPluginsReturn result, gpointer userData)
 {
@@ -229,6 +255,7 @@ MediaPlayerPrivateGStreamer::MediaPlayerPrivateGStreamer(MediaPlayer* player)
     , m_hasVideo(false)
     , m_hasAudio(false)
     , m_audioTimerHandler(0)
+    , m_textTimerHandler(0)
     , m_videoTimerHandler(0)
     , m_webkitAudioSink(0)
     , m_totalBytes(-1)
@@ -240,6 +267,10 @@ MediaPlayerPrivateGStreamer::MediaPlayerPrivateGStreamer(MediaPlayer* player)
 
 MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer()
 {
+#if ENABLE(VIDEO_TRACK) && defined(GST_API_VERSION_1)
+    for (size_t i = 0; i < m_textTracks.size(); ++i)
+        m_textTracks[i]->disconnect();
+#endif
     if (m_fillTimer.isActive())
         m_fillTimer.stop();
 
@@ -261,6 +292,10 @@ MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer()
         g_signal_handlers_disconnect_by_func(m_playBin.get(), reinterpret_cast<gpointer>(mediaPlayerPrivateSourceChangedCallback), this);
         g_signal_handlers_disconnect_by_func(m_playBin.get(), reinterpret_cast<gpointer>(mediaPlayerPrivateVideoChangedCallback), this);
         g_signal_handlers_disconnect_by_func(m_playBin.get(), reinterpret_cast<gpointer>(mediaPlayerPrivateAudioChangedCallback), this);
+#if ENABLE(VIDEO_TRACK) && defined(GST_API_VERSION_1)
+        g_signal_handlers_disconnect_by_func(m_playBin.get(), reinterpret_cast<gpointer>(mediaPlayerPrivateNewTextSampleCallback), this);
+        g_signal_handlers_disconnect_by_func(m_playBin.get(), reinterpret_cast<gpointer>(mediaPlayerPrivateTextChangedCallback), this);
+#endif
 
         gst_element_set_state(m_playBin.get(), GST_STATE_NULL);
         m_playBin.clear();
@@ -274,6 +309,9 @@ MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer()
 
     if (m_audioTimerHandler)
         g_source_remove(m_audioTimerHandler);
+
+    if (m_textTimerHandler)
+        g_source_remove(m_textTimerHandler);
 }
 
 void MediaPlayerPrivateGStreamer::load(const String& url)
@@ -593,6 +631,81 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfAudio()
     m_hasAudio = audioTracks > 0;
     m_player->mediaPlayerClient()->mediaPlayerEngineUpdated(m_player);
 }
+
+#if ENABLE(VIDEO_TRACK) && defined(GST_API_VERSION_1)
+void MediaPlayerPrivateGStreamer::textChanged()
+{
+    if (m_textTimerHandler)
+        g_source_remove(m_textTimerHandler);
+    m_textTimerHandler = g_timeout_add(0, reinterpret_cast<GSourceFunc>(mediaPlayerPrivateTextChangeTimeoutCallback), this);
+}
+
+void MediaPlayerPrivateGStreamer::notifyPlayerOfText()
+{
+    m_textTimerHandler = 0;
+
+    gint numTracks = 0;
+    if (m_playBin)
+        g_object_get(m_playBin.get(), "n-text", &numTracks, NULL);
+
+    for (gint i = 0; i < numTracks; ++i) {
+        GstPad* pad;
+        g_signal_emit_by_name(m_playBin.get(), "get-text-pad", i, &pad, NULL);
+        ASSERT(pad);
+
+        if (i < static_cast<gint>(m_textTracks.size())) {
+            RefPtr<InbandTextTrackPrivateGStreamer> existingTrack = m_textTracks[i];
+            existingTrack->setIndex(i);
+            if (existingTrack->pad() == pad) {
+                gst_object_unref(pad);
+                continue;
+            }
+        }
+
+        RefPtr<InbandTextTrackPrivateGStreamer> track = InbandTextTrackPrivateGStreamer::create(i, adoptGRef(pad));
+        m_textTracks.insert(i, track);
+        m_player->addTextTrack(track.release());
+    }
+
+    while (static_cast<gint>(m_textTracks.size()) > numTracks) {
+        RefPtr<InbandTextTrackPrivateGStreamer> track = m_textTracks.last();
+        track->disconnect();
+        m_textTracks.removeLast();
+        m_player->removeTextTrack(track.release());
+    }
+}
+
+void MediaPlayerPrivateGStreamer::newTextSample()
+{
+    if (!m_textAppSink)
+        return;
+
+    GRefPtr<GstEvent> streamStartEvent = adoptGRef(
+        gst_pad_get_sticky_event(m_textAppSinkPad.get(), GST_EVENT_STREAM_START, 0));
+
+    GstSample* sample;
+    g_signal_emit_by_name(m_textAppSink.get(), "pull-sample", &sample, NULL);
+    ASSERT(sample);
+
+    if (streamStartEvent) {
+        bool found = FALSE;
+        const gchar* id;
+        gst_event_parse_stream_start(streamStartEvent.get(), &id);
+        for (size_t i = 0; i < m_textTracks.size(); ++i) {
+            RefPtr<InbandTextTrackPrivateGStreamer> track = m_textTracks[i];
+            if (track->streamId() == id) {
+                track->handleSample(sample);
+                found = true;
+                break;
+            }
+        }
+        if (!found)
+            WARN_MEDIA_MESSAGE("Got sample with unknown stream ID.");
+    } else
+        WARN_MEDIA_MESSAGE("Unable to handle sample with no stream start event.");
+    gst_sample_unref(sample);
+}
+#endif
 
 void MediaPlayerPrivateGStreamer::setRate(float rate)
 {
@@ -1609,6 +1722,26 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin()
     g_signal_connect(m_playBin.get(), "notify::source", G_CALLBACK(mediaPlayerPrivateSourceChangedCallback), this);
     g_signal_connect(m_playBin.get(), "video-changed", G_CALLBACK(mediaPlayerPrivateVideoChangedCallback), this);
     g_signal_connect(m_playBin.get(), "audio-changed", G_CALLBACK(mediaPlayerPrivateAudioChangedCallback), this);
+#if ENABLE(VIDEO_TRACK) && defined(GST_API_VERSION_1)
+    if (webkitGstCheckVersion(1, 1, 2)) {
+        g_signal_connect(m_playBin.get(), "text-changed", G_CALLBACK(mediaPlayerPrivateTextChangedCallback), this);
+
+        GstElement* textCombiner = webkitTextCombinerNew();
+        ASSERT(textCombiner);
+        g_object_set(m_playBin.get(), "text-stream-combiner", textCombiner, NULL);
+
+        m_textAppSink = webkitTextSinkNew();
+        ASSERT(m_textAppSink);
+
+        m_textAppSinkPad = adoptGRef(gst_element_get_static_pad(m_textAppSink.get(), "sink"));
+        ASSERT(m_textAppSinkPad);
+
+        g_object_set(m_textAppSink.get(), "emit-signals", true, "enable-last-sample", false, "caps", gst_caps_new_empty_simple("text/vtt"), NULL);
+        g_signal_connect(m_textAppSink.get(), "new-sample", G_CALLBACK(mediaPlayerPrivateNewTextSampleCallback), this);
+
+        g_object_set(m_playBin.get(), "text-sink", m_textAppSink.get(), NULL);
+    }
+#endif
 
     GstElement* videoElement = createVideoSink(m_playBin.get());
 

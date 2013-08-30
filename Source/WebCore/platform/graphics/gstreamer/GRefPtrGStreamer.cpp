@@ -183,5 +183,45 @@ template<> void derefGPtr<GstBuffer>(GstBuffer* ptr)
     if (ptr)
         gst_buffer_unref(ptr);
 }
+
+#ifdef GST_API_VERSION_1
+template<> GRefPtr<GstSample> adoptGRef(GstSample* ptr)
+{
+    return GRefPtr<GstSample>(ptr, GRefPtrAdopt);
+}
+
+template<> GstSample* refGPtr<GstSample>(GstSample* ptr)
+{
+    if (ptr)
+        gst_sample_ref(ptr);
+
+    return ptr;
+}
+
+template<> void derefGPtr<GstSample>(GstSample* ptr)
+{
+    if (ptr)
+        gst_sample_unref(ptr);
+}
+#endif
+
+template<> GRefPtr<GstEvent> adoptGRef(GstEvent* ptr)
+{
+    return GRefPtr<GstEvent>(ptr, GRefPtrAdopt);
+}
+
+template<> GstEvent* refGPtr<GstEvent>(GstEvent* ptr)
+{
+    if (ptr)
+        gst_event_ref(ptr);
+
+    return ptr;
+}
+
+template<> void derefGPtr<GstEvent>(GstEvent* ptr)
+{
+    if (ptr)
+        gst_event_unref(ptr);
+}
 }
 #endif // USE(GSTREAMER)

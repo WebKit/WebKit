@@ -29,6 +29,27 @@ namespace WebCore {
 class IntSize;
 };
 
+inline bool webkitGstCheckVersion(guint major, guint minor, guint micro)
+{
+    guint currentMajor, currentMinor, currentMicro, currentNano;
+    gst_version(&currentMajor, &currentMinor, &currentMicro, &currentNano);
+
+    if (currentMajor < major)
+        return false;
+    if (currentMajor > major)
+        return true;
+
+    if (currentMinor < minor)
+        return false;
+    if (currentMinor > minor)
+        return true;
+
+    if (currentMicro < micro)
+        return false;
+
+    return true;
+}
+
 void webkitGstObjectRefSink(GstObject*);
 GstPad* webkitGstGhostPadFromStaticTemplate(GstStaticPadTemplate*, const gchar* name, GstPad* target);
 GRefPtr<GstCaps> webkitGstGetPadCaps(GstPad*);

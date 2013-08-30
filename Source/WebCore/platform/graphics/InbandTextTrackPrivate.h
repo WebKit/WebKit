@@ -39,10 +39,6 @@ namespace WebCore {
 class InbandTextTrackPrivate : public RefCounted<InbandTextTrackPrivate> {
     WTF_MAKE_NONCOPYABLE(InbandTextTrackPrivate); WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassRefPtr<InbandTextTrackPrivate> create()
-    {
-        return adoptRef(new InbandTextTrackPrivate());
-    }
     virtual ~InbandTextTrackPrivate() { }
 
     void setClient(InbandTextTrackPrivateClient* client) { m_client = client; }
@@ -78,6 +74,12 @@ public:
 
     virtual int textTrackIndex() const { return 0; }
 
+    enum CueFormat {
+        Generic,
+        WebVTT
+    };
+    CueFormat cueFormat() const { return m_format; }
+
     void willBeRemoved()
     {
         if (m_client)
@@ -85,13 +87,15 @@ public:
     }
 
 protected:
-    InbandTextTrackPrivate()
-        : m_client(0)
+    InbandTextTrackPrivate(CueFormat format)
+        : m_format(format)
+        , m_client(0)
         , m_mode(Disabled)
     {
     }
 
 private:
+    CueFormat m_format;
     InbandTextTrackPrivateClient* m_client;
     Mode m_mode;
 };

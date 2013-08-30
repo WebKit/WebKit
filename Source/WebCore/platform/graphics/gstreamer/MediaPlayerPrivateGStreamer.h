@@ -39,6 +39,8 @@ typedef struct _GstElement GstElement;
 
 namespace WebCore {
 
+class InbandTextTrackPrivateGStreamer;
+
 class MediaPlayerPrivateGStreamer : public MediaPlayerPrivateGStreamerBase {
 public:
     ~MediaPlayerPrivateGStreamer();
@@ -90,6 +92,14 @@ public:
     void notifyPlayerOfVideo();
     void notifyPlayerOfAudio();
 
+#if ENABLE(VIDEO_TRACK) && defined(GST_API_VERSION_1)
+    void textChanged();
+    void notifyPlayerOfText();
+
+    void newTextSample();
+    void notifyPlayerOfNewTextSample();
+#endif
+
     void sourceChanged();
     GstElement* audioSink() const;
 
@@ -131,6 +141,10 @@ private:
 private:
     GRefPtr<GstElement> m_playBin;
     GRefPtr<GstElement> m_source;
+#if ENABLE(VIDEO_TRACK) && defined(GST_API_VERSION_1)
+    GRefPtr<GstElement> m_textAppSink;
+    GRefPtr<GstPad> m_textAppSinkPad;
+#endif
     float m_seekTime;
     bool m_changingRate;
     float m_endTime;
@@ -160,6 +174,7 @@ private:
     bool m_hasVideo;
     bool m_hasAudio;
     guint m_audioTimerHandler;
+    guint m_textTimerHandler;
     guint m_videoTimerHandler;
     GRefPtr<GstElement> m_webkitAudioSink;
     mutable long m_totalBytes;
@@ -168,6 +183,9 @@ private:
     GstState m_requestedState;
     GRefPtr<GstElement> m_autoAudioSink;
     bool m_missingPlugins;
+#if ENABLE(VIDEO_TRACK) && defined(GST_API_VERSION_1)
+    Vector<RefPtr<InbandTextTrackPrivateGStreamer> > m_textTracks;
+#endif
 };
 }
 
