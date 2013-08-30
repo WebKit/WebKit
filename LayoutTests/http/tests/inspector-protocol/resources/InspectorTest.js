@@ -76,7 +76,7 @@ InspectorTest.log = function(message)
 
 /**
 * Logs message directly to process stdout via alert function (hopefully followed by flush call).
-* This message should survive process crash or kill by timeout. 
+* This message should survive process crash or kill by timeout.
 * @param {string} message
 */
 InspectorTest.debugLog = function(message)
@@ -89,6 +89,14 @@ InspectorTest.completeTest = function()
     this.sendCommand("Runtime.evaluate", { "expression": "closeTest();"} );
 }
 
+InspectorTest.checkForError = function(responseObject)
+{
+    if (responseObject.error) {
+        InspectorTest.log("PROTOCOL ERROR: " + responseObject.error.message);
+        InspectorTest.completeTest();
+        throw "PROTOCOL ERROR";
+    }
+}
 
 /**
  * @param {string} scriptName

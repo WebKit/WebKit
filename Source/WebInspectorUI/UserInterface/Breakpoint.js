@@ -37,6 +37,7 @@ WebInspector.Breakpoint = function(sourceCodeLocationOrInfo, disabled, condition
         var lineNumber = sourceCodeLocationOrInfo.lineNumber || 0;
         var columnNumber = sourceCodeLocationOrInfo.columnNumber || 0;
         var location = new WebInspector.SourceCodeLocation(null, lineNumber, columnNumber);
+        var autoContinue = sourceCodeLocationOrInfo.autoContinue || false;
         disabled = sourceCodeLocationOrInfo.disabled;
         condition = sourceCodeLocationOrInfo.condition;
     } else
@@ -47,6 +48,7 @@ WebInspector.Breakpoint = function(sourceCodeLocationOrInfo, disabled, condition
     this._scriptIdentifier = scriptIdentifier || null;
     this._disabled = disabled || false;
     this._condition = condition || "";
+    this._autoContinue = autoContinue || false;
     this._resolved = false;
 
     this._sourceCodeLocation = location;
@@ -58,11 +60,13 @@ WebInspector.Object.addConstructorFunctions(WebInspector.Breakpoint);
 
 WebInspector.Breakpoint.PopoverClassName = "edit-breakpoint-popover-content";
 WebInspector.Breakpoint.PopoverConditionInputId = "edit-breakpoint-popover-condition";
+WebInspector.Breakpoint.PopoverOptionsAutoContinueInputId = "edit-breakpoint-popoover-auto-continue";
 
 WebInspector.Breakpoint.Event = {
     DisabledStateDidChange: "breakpoint-disabled-state-did-change",
     ResolvedStateDidChange: "breakpoint-resolved-state-did-change",
     ConditionDidChange: "breakpoint-condition-did-change",
+    AutoContinueDidChange: "breakpoint-auto-continue-did-change",
     LocationDidChange: "breakpoint-location-did-change",
     DisplayLocationDidChange: "breakpoint-display-location-did-change",
 };
@@ -142,6 +146,30 @@ WebInspector.Breakpoint.prototype = {
         this.dispatchEventToListeners(WebInspector.Breakpoint.Event.ConditionDidChange);
     },
 
+    get autoContinue()
+    {
+        return this._autoContinue;
+    },
+
+    set autoContinue(cont)
+    {
+        if (this._autoContinue === cont)
+            return;
+
+        this._autoContinue = cont;
+
+        this.dispatchEventToListeners(WebInspector.Breakpoint.Event.AutoContinueDidChange);
+    },
+
+    get options()
+    {
+        return {
+            condition: this._condition,
+            actions: [], // FIXME: Implement Breakpoint Actions.
+            autoContinue: this._autoContinue
+        };
+    },
+
     get info()
     {
         // The id, scriptIdentifier and resolved state are tied to the current session, so don't include them for serialization.
@@ -150,7 +178,8 @@ WebInspector.Breakpoint.prototype = {
             lineNumber: this._sourceCodeLocation.lineNumber,
             columnNumber: this._sourceCodeLocation.columnNumber,
             disabled: this._disabled,
-            condition: this._condition
+            condition: this._condition,
+            autoContinue: this._autoContinue
         };
     },
 
@@ -197,7 +226,7 @@ WebInspector.Breakpoint.prototype = {
 
     // Private
 
-    _popoverToggleCheckboxChanged: function(event)
+    _popoverToggleEnabledCheckboxChanged: function(event)
     {
         this.disabled = !event.target.checked;
     },
@@ -205,6 +234,11 @@ WebInspector.Breakpoint.prototype = {
     _popoverConditionInputChanged: function(event)
     {
         this.condition = event.target.value;
+    },
+
+    _popoverToggleAutoContinueCheckboxChanged: function(event)
+    {
+        this.autoContinue = event.target.checked;
     },
 
     _popoverConditionInputKeyDown: function(event)
@@ -224,7 +258,7 @@ WebInspector.Breakpoint.prototype = {
         var checkboxElement = document.createElement("input");
         checkboxElement.type = "checkbox";
         checkboxElement.checked = !this._disabled;
-        checkboxElement.addEventListener("change", this._popoverToggleCheckboxChanged.bind(this));
+        checkboxElement.addEventListener("change", this._popoverToggleEnabledCheckboxChanged.bind(this));
 
         var checkboxLabel = document.createElement("label");
         checkboxLabel.className = "toggle";
@@ -246,6 +280,22 @@ WebInspector.Breakpoint.prototype = {
         conditionInput.placeholder = WebInspector.UIString("Conditional expression");
         conditionLabel.setAttribute("for", conditionInput.id);
         conditionLabel.textContent = WebInspector.UIString("Condition");
+
+        if (DebuggerAgent.setBreakpoint.supports("options")) {
+            var optionsRow = table.appendChild(document.createElement("tr"));
+            var optionsHeader = optionsRow.appendChild(document.createElement("th"));
+            var optionsData = optionsRow.appendChild(document.createElement("td"));
+            var optionsLabel = optionsHeader.appendChild(document.createElement("label"));
+            var optionsCheckbox = optionsData.appendChild(document.createElement("input"));
+            var optionsCheckboxLabel = optionsData.appendChild(document.createElement("label"));
+            optionsCheckbox.id = WebInspector.Breakpoint.PopoverOptionsAutoContinueInputId;
+            optionsCheckbox.type = "checkbox";
+            optionsCheckbox.checked = this._autoContinue;
+            optionsCheckbox.addEventListener("change", this._popoverToggleAutoContinueCheckboxChanged.bind(this));
+            optionsLabel.textContent = WebInspector.UIString("Options");
+            optionsCheckboxLabel.setAttribute("for", optionsCheckbox.id);
+            optionsCheckboxLabel.textContent = WebInspector.UIString("Automatically continue after evaluating");
+        }
 
         content.appendChild(checkboxLabel);
         content.appendChild(table);

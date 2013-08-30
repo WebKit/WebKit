@@ -1,3 +1,39 @@
+2013-08-30  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Breakpoints should have Automatically Continue Option
+        https://bugs.webkit.org/show_bug.cgi?id=120187
+
+        Reviewed by Timothy Hatcher.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Breakpoint.css:
+        (#edit-breakpoint-popoover-auto-continue):
+        Misc. changes for UI.
+
+        * UserInterface/Breakpoint.js:
+        (WebInspector.Breakpoint):
+        (WebInspector.Breakpoint.prototype.get autoContinue):
+        (WebInspector.Breakpoint.prototype.set autoContinue):
+        (WebInspector.Breakpoint.prototype.get options):
+        (WebInspector.Breakpoint.prototype.get info):
+        General maintenance of the autoContinue state.
+
+        (WebInspector.Breakpoint.prototype._popoverToggleEnabledCheckboxChanged):
+        (WebInspector.Breakpoint.prototype._popoverToggleAutoContinueCheckboxChanged):
+        (WebInspector.Breakpoint.prototype._editBreakpointPopoverContentElement):
+        Edit Breakpoint UI for setting autoContinue state.
+
+        * UserInterface/InspectorBackend.js:
+        (InspectorBackendClass.prototype.registerCommand):
+        (InspectorBackendClass.prototype._supports):
+        Extension to check if a BackendCommands method supports a particular param.
+
+        * UserInterface/DebuggerManager.js:
+        (WebInspector.DebuggerManager):
+        (WebInspector.DebuggerManager.prototype._setBreakpoint):
+        * UserInterface/InspectorBackendCommands.js:
+        Change to backend agent calls for the new protocol API.
+
 2013-08-29  Timothy Hatcher  <timothy@apple.com>
 
         Make incrementing and decrementing numbers by 0.1 require the control key, and not near zero numbers.

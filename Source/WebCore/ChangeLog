@@ -1,3 +1,44 @@
+2013-08-30  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Breakpoints should have Automatically Continue Option
+        https://bugs.webkit.org/show_bug.cgi?id=120187
+
+        Reviewed by Timothy Hatcher.
+
+        Tests: inspector-protocol/debugger/removeBreakpoint.html
+               inspector-protocol/debugger/setBreakpoint-autoContinue.html
+               inspector-protocol/debugger/setBreakpoint-column.html
+               inspector-protocol/debugger/setBreakpoint-condition.html
+               inspector-protocol/debugger/setBreakpoint.html
+
+        * inspector/Inspector.json:
+        Convert the "condition" argument of setBreakpoint and setBreakpointByUrl
+        to a BreakpointOptions object with optional properties. One of which
+        is "condition" and a new option "autoContinue".
+
+        * bindings/js/ScriptDebugServer.h:
+        * bindings/js/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::hasBreakpoint):
+        (WebCore::ScriptDebugServer::pauseIfNeeded):
+        Automatically continue if the breakpoint was hit and has autoContinue.
+
+        * inspector/InspectorDebuggerAgent.h:
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::buildObjectForBreakpointCookie):
+        (WebCore::InspectorDebuggerAgent::setBreakpointByUrl):
+        (WebCore::InspectorDebuggerAgent::setBreakpoint):
+        (WebCore::InspectorDebuggerAgent::continueToLocation):
+        (WebCore::InspectorDebuggerAgent::didParseSource):
+        * inspector/ScriptBreakpoint.h:
+        (WebCore::ScriptBreakpoint::ScriptBreakpoint):
+        Handle the new incoming BreakpointOptions type, and set the
+        autoContinue state on ScriptBreakpoints.
+
+        * inspector/front-end/DebuggerModel.js:
+        (WebInspector.DebuggerModel.prototype.setBreakpointByURL):
+        (WebInspector.DebuggerModel.prototype.setBreakpointBySourceId):
+        Update old front-end to be compatible with the new API.
+
 2013-08-30  Dean Jackson  <dino@apple.com>
 
         Animations should use double for key values, not floats

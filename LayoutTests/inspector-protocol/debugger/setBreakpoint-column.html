@@ -11,16 +11,14 @@ function test()
     // We set a breakpoint before evaluating `var b = ...`, and verify that
     // by running some expressions at that call frame.
 
-    // Debugger.enable, Debugger.setBreakpointsActive
     InspectorTest.sendCommand("Debugger.enable", {});
     InspectorTest.sendCommand("Debugger.setBreakpointsActive", {active: true}, function() {
         InspectorTest.log("Breakpoints Enabled");
     });
 
-    // Debugger.scriptParsed -> Debugger.setBreakpoint -> Runtime.evaluate
     InspectorTest.eventHandler["Debugger.scriptParsed"] = function(messageObject)
     {
-        if (/column-breakpoint\.html$/.test(messageObject.params.url) && messageObject.params.startLine > 10) {
+        if (/setBreakpoint-column\.html$/.test(messageObject.params.url) && messageObject.params.startLine > 10) {
             InspectorTest.log("Found <script>");
             var scriptIdentifier = messageObject.params.scriptId;
             var lineNumber = messageObject.params.startLine + 2;
@@ -33,7 +31,6 @@ function test()
         }
     }
 
-    // Debugger.paused -> Debugger.evaluateOnCallFrame -> Debugger.evaluateOnCallFrame -> END
     InspectorTest.eventHandler["Debugger.paused"] = function(messageObject)
     {
         InspectorTest.log("Hit Breakpoint!");

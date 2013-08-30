@@ -1,0 +1,8 @@
+Breakpoints Enabled
+Found breakpoint.js
+PASS: Received error setting duplicate breakpoint: Breakpoint at specified location already exists.
+Running breakpointBasic
+inside breakpointBasic
+Hit Breakpoint!
+PASS
+

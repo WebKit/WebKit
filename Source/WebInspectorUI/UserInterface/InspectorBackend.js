@@ -76,6 +76,7 @@ InspectorBackendClass.prototype = {
 
         agent[domainAndMethod[1]] = this._sendMessageToBackend.bind(this, method, signature);
         agent[domainAndMethod[1]]["invoke"] = this._invoke.bind(this, method, signature);
+        agent[domainAndMethod[1]]["supports"] = this._supports.bind(this, method, signature);
         this._replyArgs[method] = replyArgs;
 
         this._initialized = true;
@@ -101,6 +102,16 @@ InspectorBackendClass.prototype = {
     _invoke: function(method, signature, args, callback)
     {
         this._wrapCallbackAndSendMessageObject(method, args, callback);
+    },
+
+    _supports: function(method, signature, paramName)
+    {
+        for (var i = 0; i < signature.length; ++i) {
+            if (signature[i]["name"] === paramName)
+                return true;
+        }
+
+        return false;
     },
 
     _sendMessageToBackend: function(method, signature, vararg)

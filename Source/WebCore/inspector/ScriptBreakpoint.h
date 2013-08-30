@@ -39,16 +39,18 @@ struct ScriptBreakpoint {
     {
     }
 
-    ScriptBreakpoint(int lineNumber, int columnNumber, const String& condition)
+    ScriptBreakpoint(int lineNumber, int columnNumber, const String& condition, bool autoContinue)
         : lineNumber(lineNumber)
         , columnNumber(columnNumber)
         , condition(condition)
+        , autoContinue(autoContinue)
     {
     }
 
     int lineNumber;
     int columnNumber;
     String condition;
+    bool autoContinue;
 };
 
 } // namespace WebCore

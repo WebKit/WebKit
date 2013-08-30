@@ -99,13 +99,13 @@ var test = function()
 
         function testSetBreakpointOnTheSameLine(next)
         {
-            DebuggerAgent.setBreakpointByUrl(1, "foo.js", undefined, 2, "", didSetBreakpoint);
+            DebuggerAgent.setBreakpointByUrl(1, "foo.js", undefined, 2, {}, didSetBreakpoint);
 
             function didSetBreakpoint(error, breakpointId)
             {
                 InspectorTest.assertTrue(!error);
                 InspectorTest.assertTrue(!!breakpointId);
-                DebuggerAgent.setBreakpointByUrl(1, "foo.js", undefined, 2, "", didSetBreakpointAgain);
+                DebuggerAgent.setBreakpointByUrl(1, "foo.js", undefined, 2, {}, didSetBreakpointAgain);
             }
 
             function didSetBreakpointAgain(error, breakpointId)

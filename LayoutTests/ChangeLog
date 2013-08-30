@@ -1,3 +1,31 @@
+2013-08-30  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Breakpoints should have Automatically Continue Option
+        https://bugs.webkit.org/show_bug.cgi?id=120187
+
+        Reviewed by Timothy Hatcher.
+
+        * http/tests/inspector-protocol/resources/InspectorTest.js:
+        (InspectorTest.checkForError):
+        Helper for checking for, and logging, protocol error responses.
+
+        * inspector/debugger/set-breakpoint.html:
+        Update this test for the protocol change.
+
+        * inspector-protocol/debugger/removeBreakpoint-expected.txt: Added.
+        * inspector-protocol/debugger/removeBreakpoint.html: Added.
+        * inspector-protocol/debugger/resources/breakpoint.js: Added.
+        * inspector-protocol/debugger/setBreakpoint-autoContinue-expected.txt: Added.
+        * inspector-protocol/debugger/setBreakpoint-autoContinue.html: Added.
+        * inspector-protocol/debugger/setBreakpoint-column.html: Renamed from LayoutTests/inspector-protocol/debugger/column-breakpoint.html.
+        * inspector-protocol/debugger/setBreakpoint-column.txt: Renamed from LayoutTests/inspector-protocol/debugger/column-breakpoint-expected.txt.
+        * inspector-protocol/debugger/setBreakpoint-condition-expected.txt: Added.
+        * inspector-protocol/debugger/setBreakpoint-condition.html: Added.
+        * inspector-protocol/debugger/setBreakpoint-expected.txt: Added.
+        * inspector-protocol/debugger/setBreakpoint.html: Added.
+        Protocol tests for setting breakpoints. These test different aspects of
+        the Debugger domain (setBreakpoint variants and removeBreakpoint).
+
 2013-08-30  Brendan Long  <b.long@cablelabs.com>
 
         <https://webkit.org/b/103771> [GStreamer] support in-band text tracks

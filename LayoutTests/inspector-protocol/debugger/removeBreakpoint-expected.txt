@@ -1,0 +1,9 @@
+Breakpoints Enabled
+Found breakpoint.js
+Set Breakpoint, Triggering it
+inside breakpointBasic
+Hit Breakpoint!
+Resumed, Removing Breakpoint and trying to trigger it again
+inside breakpointBasic
+PASS: did not hit breakpoint after removing it.
+

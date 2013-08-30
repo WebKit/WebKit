@@ -31,7 +31,8 @@ WebInspector.DebuggerManager = function()
 
     WebInspector.Breakpoint.addEventListener(WebInspector.Breakpoint.Event.DisplayLocationDidChange, this._breakpointDisplayLocationDidChange, this);
     WebInspector.Breakpoint.addEventListener(WebInspector.Breakpoint.Event.DisabledStateDidChange, this._breakpointDisabledStateDidChange, this);
-    WebInspector.Breakpoint.addEventListener(WebInspector.Breakpoint.Event.ConditionDidChange, this._breakpointConditionDidChange, this);
+    WebInspector.Breakpoint.addEventListener(WebInspector.Breakpoint.Event.ConditionDidChange, this._breakpointEditablePropertyDidChange, this);
+    WebInspector.Breakpoint.addEventListener(WebInspector.Breakpoint.Event.AutoContinueDidChange, this._breakpointEditablePropertyDidChange, this);
 
     window.addEventListener("pagehide", this._inspectorClosing.bind(this));
 
@@ -489,10 +490,24 @@ WebInspector.DebuggerManager.prototype = {
         // If something goes wrong it will stay unresolved and show up as such in the user interface.
         breakpoint.resolved = false;
 
-        if (breakpoint.url)
-            DebuggerAgent.setBreakpointByUrl(breakpoint.sourceCodeLocation.lineNumber, breakpoint.url, undefined, breakpoint.sourceCodeLocation.columnNumber, breakpoint.condition, didSetBreakpoint.bind(this));
-        else if (breakpoint.scriptIdentifier)
-            DebuggerAgent.setBreakpoint({scriptId: breakpoint.scriptIdentifier, lineNumber: breakpoint.sourceCodeLocation.lineNumber, columnNumber: breakpoint.sourceCodeLocation.columnNumber}, breakpoint.condition, didSetBreakpoint.bind(this));
+        // COMPATIBILITY (iOS 7): iOS 7 and earlier, DebuggerAgent.setBreakpoint* took a "condition" string argument.
+        // This has been replaced with an "options" BreakpointOptions object.
+        if (breakpoint.url) {
+            DebuggerAgent.setBreakpointByUrl.invoke({
+                lineNumber: breakpoint.sourceCodeLocation.lineNumber,
+                url: breakpoint.url,
+                urlRegex: undefined,
+                columnNumber: breakpoint.sourceCodeLocation.columnNumber,
+                condition: breakpoint.condition,
+                options: breakpoint.options
+            }, didSetBreakpoint.bind(this));
+        } else if (breakpoint.scriptIdentifier) {
+            DebuggerAgent.setBreakpoint.invoke({
+                location: {scriptId: breakpoint.scriptIdentifier, lineNumber: breakpoint.sourceCodeLocation.lineNumber, columnNumber: breakpoint.sourceCodeLocation.columnNumber},
+                condition: breakpoint.condition,
+                options: breakpoint.options
+            }, didSetBreakpoint.bind(this));
+        }
     },
 
     _removeBreakpoint: function(breakpoint, callback)
@@ -561,7 +576,7 @@ WebInspector.DebuggerManager.prototype = {
             this._setBreakpoint(breakpoint);
     },
 
-    _breakpointConditionDidChange: function(event)
+    _breakpointEditablePropertyDidChange: function(event)
     {
         var breakpoint = event.target;
         if (breakpoint.disabled)

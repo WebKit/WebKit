@@ -128,7 +128,7 @@ void ScriptDebugServer::removeBreakpoint(const String& breakpointId)
     }
 }
 
-bool ScriptDebugServer::hasBreakpoint(intptr_t sourceID, const TextPosition& position) const
+bool ScriptDebugServer::hasBreakpoint(intptr_t sourceID, const TextPosition& position, ScriptBreakpoint *hitBreakpoint) const
 {
     if (!m_breakpointsActivated)
         return false;
@@ -162,6 +162,9 @@ bool ScriptDebugServer::hasBreakpoint(intptr_t sourceID, const TextPosition& pos
     }
     if (!hit)
         return false;
+
+    if (hitBreakpoint)
+        *hitBreakpoint = breaksVector.at(i);
 
     // An empty condition counts as no condition which is equivalent to "true".
     if (breaksVector.at(i).condition.isEmpty())
@@ -417,12 +420,20 @@ void ScriptDebugServer::pauseIfNeeded(JSGlobalObject* dynamicGlobalObject)
     if (!getListenersForGlobalObject(dynamicGlobalObject))
         return;
 
+    ScriptBreakpoint breakpoint;
+    bool didHitBreakpoint = false;
     bool pauseNow = m_pauseOnNextStatement;
     pauseNow |= (m_pauseOnCallFrame == m_currentCallFrame);
-    pauseNow |= hasBreakpoint(m_currentCallFrame->sourceID(), m_currentCallFrame->position());
+    pauseNow |= didHitBreakpoint = hasBreakpoint(m_currentCallFrame->sourceID(), m_currentCallFrame->position(), &breakpoint);
     m_lastExecutedLine = m_currentCallFrame->position().m_line.zeroBasedInt();
     if (!pauseNow)
         return;
+
+    if (didHitBreakpoint) {
+        // FIXME: Evaluate breakpoint actions here.
+        if (breakpoint.autoContinue)
+            return;
+    }
 
     m_pauseOnCallFrame = 0;
     m_pauseOnNextStatement = false;

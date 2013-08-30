@@ -2661,6 +2661,15 @@
                 "description": "Location in the source code."
             },
             {
+                "id": "BreakpointOptions",
+                "type": "object",
+                "properties": [
+                    { "name": "condition", "type": "string", "optional": true, "description": "Expression to use as a breakpoint condition. When specified, debugger will only stop on the breakpoint if this expression evaluates to true." },
+                    { "name": "autoContinue", "type": "boolean", "optional": true, "description": "Automatically continue after hitting this breakpoint and running actions." }
+                ],
+                "description": "Extra options that modify breakpoint behavior."
+            },
+            {
                 "id": "FunctionDetails",
                 "type": "object",
                 "properties": [
@@ -2731,7 +2740,7 @@
                     { "name": "url", "type": "string", "optional": true, "description": "URL of the resources to set breakpoint on." },
                     { "name": "urlRegex", "type": "string", "optional": true, "description": "Regex pattern for the URLs of the resources to set breakpoints on. Either <code>url</code> or <code>urlRegex</code> must be specified." },
                     { "name": "columnNumber", "type": "integer", "optional": true, "description": "Offset in the line to set breakpoint at." },
-                    { "name": "condition", "type": "string", "optional": true, "description": "Expression to use as a breakpoint condition. When specified, debugger will only stop on the breakpoint if this expression evaluates to true." }
+                    { "name": "options", "$ref": "BreakpointOptions", "optional": true, "description": "Options to apply to this breakpoint to modify its behavior." }
                 ],
                 "returns": [
                     { "name": "breakpointId", "$ref": "BreakpointId", "description": "Id of the created breakpoint for further reference." },
@@ -2743,7 +2752,7 @@
                 "name": "setBreakpoint",
                 "parameters": [
                     { "name": "location", "$ref": "Location", "description": "Location to set breakpoint in." },
-                    { "name": "condition", "type": "string", "optional": true, "description": "Expression to use as a breakpoint condition. When specified, debugger will only stop on the breakpoint if this expression evaluates to true." }
+                    { "name": "options", "$ref": "BreakpointOptions", "optional": true, "description": "Options to apply to this breakpoint to modify its behavior." }
                 ],
                 "returns": [
                     { "name": "breakpointId", "$ref": "BreakpointId", "description": "Id of the created breakpoint for further reference." },

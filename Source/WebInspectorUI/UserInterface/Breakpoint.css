@@ -56,3 +56,8 @@
 #edit-breakpoint-popover-condition {
     width: 100%;
 }
+
+#edit-breakpoint-popoover-auto-continue {
+    margin-left: 0;
+    margin-right: 4px;
+}
