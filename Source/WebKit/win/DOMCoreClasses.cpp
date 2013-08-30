@@ -484,7 +484,7 @@ IDOMNode* DOMNode::createInstance(WebCore::Node* n)
         break;
         case WebCore::Node::DOCUMENT_NODE:
         {
-            IDOMDocument* newDocument = DOMDocument::createInstance(n->document());
+            IDOMDocument* newDocument = DOMDocument::createInstance(&n->document());
             if (newDocument) {
                 hr = newDocument->QueryInterface(IID_IDOMNode, (void**)&domNode);
                 newDocument->Release();

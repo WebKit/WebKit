@@ -1,3 +1,10 @@
+2013-08-30  Andreas Kling  <akling@apple.com>
+
+        Windows build fix for Document& Node::document().
+
+        * DOMCoreClasses.cpp:
+        (DOMNode::createInstance):
+
 2013-08-28  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] LayoutTests on Windows debug fails and exits early
