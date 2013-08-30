@@ -1779,7 +1779,7 @@ void Document::recalcStyle(Style::Change change)
             m_hasNodesWithPlaceholderStyle = false;
         }
 
-        resolveTree(this, change);
+        Style::resolveTree(*this, change);
 
 #if USE(ACCELERATED_COMPOSITING)
         if (view())

@@ -30,13 +30,12 @@
 
 namespace WebCore {
 
-class CSSFontSelector;
 class Document;
 class RenderStyle;
 
 namespace Style {
 
-PassRefPtr<RenderStyle> resolveForDocument(const Document*);
+PassRefPtr<RenderStyle> resolveForDocument(const Document&);
 
 }
 }

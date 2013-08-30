@@ -802,28 +802,28 @@ void resolveTree(Element* current, Change change)
         current->didRecalcStyle(change);
 }
 
-void resolveTree(Document* document, Change change)
+void resolveTree(Document& document, Change change)
 {
-    bool resolveRootStyle = change == Force || (document->shouldDisplaySeamlesslyWithParent() && change >= Inherit);
+    bool resolveRootStyle = change == Force || (document.shouldDisplaySeamlesslyWithParent() && change >= Inherit);
     if (resolveRootStyle) {
         RefPtr<RenderStyle> documentStyle = resolveForDocument(document);
 
 #if PLATFORM(IOS)
         // Inserting the pictograph font at the end of the font fallback list is done by the
         // font selector, so set a font selector if needed.
-        if (Settings* settings = document->settings()) {
-            StyleResolver* styleResolver = document->styleResolverIfExists();
+        if (Settings* settings = document.settings()) {
+            StyleResolver* styleResolver = document.styleResolverIfExists();
             if (settings->fontFallbackPrefersPictographs() && styleResolver)
                 documentStyle->font().update(styleResolver->fontSelector());
         }
 #endif
 
-        Style::Change documentChange = determineChange(documentStyle.get(), document->renderer()->style(), document->settings());
+        Style::Change documentChange = determineChange(documentStyle.get(), document.renderer()->style(), document.settings());
         if (documentChange != NoChange)
-            document->renderer()->setStyle(documentStyle.release());
+            document.renderer()->setStyle(documentStyle.release());
     }
 
-    for (Element* child = ElementTraversal::firstWithin(document); child; child = ElementTraversal::nextSibling(child)) {
+    for (Element* child = ElementTraversal::firstWithin(&document); child; child = ElementTraversal::nextSibling(child)) {
         if (change < Inherit && !child->childNeedsStyleRecalc() && !child->needsStyleRecalc())
             continue;
         resolveTree(child, change);

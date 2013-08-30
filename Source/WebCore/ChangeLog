@@ -1,3 +1,23 @@
+2013-08-30  Andreas Kling  <akling@apple.com>
+
+        Document style resolve should take Document&.
+        <https://webkit.org/b/120534>
+
+        Reviewed by Darin Adler.
+
+        Tweak Style::resolveTree(Document*) and Style::resolveForDocument(Document*) to take Document& instead.
+
+        * dom/Document.cpp:
+        (WebCore::Document::recalcStyle):
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::process):
+        * style/StyleResolveForDocument.cpp:
+        (WebCore::Style::resolveForDocument):
+        * style/StyleResolveForDocument.h:
+        * style/StyleResolveTree.cpp:
+        (WebCore::Style::resolveTree):
+        * style/StyleResolveTree.h:
+
 2013-08-30  Darin Adler  <darin@apple.com>
 
         [Mac] No need for Pasteboard::getDataSelection

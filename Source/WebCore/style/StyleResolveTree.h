@@ -39,7 +39,7 @@ namespace Style {
 enum Change { NoChange, NoInherit, Inherit, Detach, Force };
 
 void resolveTree(Element*, Change);
-void resolveTree(Document*, Change);
+void resolveTree(Document&, Change);
 
 void attachRenderTree(Element*);
 void detachRenderTree(Element*);
