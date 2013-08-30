@@ -158,7 +158,7 @@ static Frame* frameForEvent(KeyboardEvent* event)
 {
     Node* node = event->target()->toNode();
     ASSERT(node);
-    Frame* frame = node->document()->frame();
+    Frame* frame = node->document().frame();
     ASSERT(frame);
     return frame;
 }
@@ -477,7 +477,7 @@ void WebPage::performDictionaryLookupAtLocation(const FloatPoint& floatPoint)
     // Find the frame the point is over.
     IntPoint point = roundedIntPoint(floatPoint);
     HitTestResult result = m_page->mainFrame().eventHandler().hitTestResultAtPoint(m_page->mainFrame().view()->windowToContents(point));
-    Frame* frame = result.innerNonSharedNode() ? result.innerNonSharedNode()->document()->frame() : &m_page->focusController().focusedOrMainFrame();
+    Frame* frame = result.innerNonSharedNode() ? result.innerNonSharedNode()->document().frame() : &m_page->focusController().focusedOrMainFrame();
 
     IntPoint translatedPoint = frame->view()->windowToContents(point);
 

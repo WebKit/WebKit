@@ -236,13 +236,13 @@ int PrintContext::pageNumberForElement(Element* element, const FloatSize& pageSi
 {
     // Make sure the element is not freed during the layout.
     RefPtr<Element> elementRef(element);
-    element->document()->updateLayout();
+    element->document().updateLayout();
 
     RenderBoxModelObject* box = enclosingBoxModelObject(element->renderer());
     if (!box)
         return -1;
 
-    Frame* frame = element->document()->frame();
+    Frame* frame = element->document().frame();
     FloatRect pageRect(FloatPoint(0, 0), pageSizeInPixels);
     PrintContext printContext(frame);
     printContext.begin(pageRect.width(), pageRect.height());

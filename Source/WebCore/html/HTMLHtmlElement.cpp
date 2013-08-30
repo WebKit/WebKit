@@ -60,13 +60,13 @@ bool HTMLHtmlElement::isURLAttribute(const Attribute& attribute) const
 void HTMLHtmlElement::insertedByParser()
 {
     // When parsing a fragment, its dummy document has a null parser.
-    if (!document()->parser() || !document()->parser()->documentWasLoadedAsPartOfNavigation())
+    if (!document().parser() || !document().parser()->documentWasLoadedAsPartOfNavigation())
         return;
 
-    if (!document()->frame())
+    if (!document().frame())
         return;
 
-    DocumentLoader* documentLoader = document()->frame()->loader().documentLoader();
+    DocumentLoader* documentLoader = document().frame()->loader().documentLoader();
     if (!documentLoader)
         return;
 
@@ -74,7 +74,7 @@ void HTMLHtmlElement::insertedByParser()
     if (manifest.isEmpty())
         documentLoader->applicationCacheHost()->selectCacheWithoutManifest();
     else
-        documentLoader->applicationCacheHost()->selectCacheWithManifest(document()->completeURL(manifest));
+        documentLoader->applicationCacheHost()->selectCacheWithManifest(document().completeURL(manifest));
 }
 
 }

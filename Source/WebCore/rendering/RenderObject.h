@@ -636,7 +636,7 @@ public:
     // pseudo elements for which their parent node is returned.
     Node* generatingNode() const { return isPseudoElement() ? generatingPseudoHostElement() : node(); }
 
-    Document& document() const { return *m_node->document(); }
+    Document& document() const { return m_node->document(); }
     Frame& frame() const; // Defined in RenderView.h
 
     bool hasOutlineAnnotation() const;

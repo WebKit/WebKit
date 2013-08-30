@@ -83,9 +83,9 @@ static ImageEventSender& errorEventSender()
     return sender;
 }
 
-static inline bool pageIsBeingDismissed(Document* document)
+static inline bool pageIsBeingDismissed(Document& document)
 {
-    Frame* frame = document->frame();
+    Frame* frame = document.frame();
     return frame && frame->loader().pageDismissalEventBeingDispatched() != FrameLoader::NoDismissal;
 }
 
@@ -167,8 +167,8 @@ void ImageLoader::updateFromElement()
 {
     // If we're not making renderers for the page, then don't load images.  We don't want to slow
     // down the raw HTML parsing case by loading images we don't intend to display.
-    Document* document = m_element->document();
-    if (!document->renderer())
+    Document& document = m_element->document();
+    if (!document.renderer())
         return;
 
     AtomicString attr = m_element->imageSourceURL();
@@ -180,25 +180,25 @@ void ImageLoader::updateFromElement()
     // an empty string.
     CachedResourceHandle<CachedImage> newImage = 0;
     if (!attr.isNull() && !stripLeadingAndTrailingHTMLSpaces(attr).isEmpty()) {
-        CachedResourceRequest request(ResourceRequest(document->completeURL(sourceURI(attr))));
+        CachedResourceRequest request(ResourceRequest(document.completeURL(sourceURI(attr))));
         request.setInitiator(element());
 
         String crossOriginMode = m_element->fastGetAttribute(HTMLNames::crossoriginAttr);
         if (!crossOriginMode.isNull()) {
             StoredCredentials allowCredentials = equalIgnoringCase(crossOriginMode, "use-credentials") ? AllowStoredCredentials : DoNotAllowStoredCredentials;
-            updateRequestForAccessControl(request.mutableResourceRequest(), document->securityOrigin(), allowCredentials);
+            updateRequestForAccessControl(request.mutableResourceRequest(), document.securityOrigin(), allowCredentials);
         }
 
         if (m_loadManually) {
-            bool autoLoadOtherImages = document->cachedResourceLoader()->autoLoadImages();
-            document->cachedResourceLoader()->setAutoLoadImages(false);
+            bool autoLoadOtherImages = document.cachedResourceLoader()->autoLoadImages();
+            document.cachedResourceLoader()->setAutoLoadImages(false);
             newImage = new CachedImage(request.resourceRequest());
             newImage->setLoading(true);
-            newImage->setOwningCachedResourceLoader(document->cachedResourceLoader());
-            document->cachedResourceLoader()->m_documentResources.set(newImage->url(), newImage.get());
-            document->cachedResourceLoader()->setAutoLoadImages(autoLoadOtherImages);
+            newImage->setOwningCachedResourceLoader(document.cachedResourceLoader());
+            document.cachedResourceLoader()->m_documentResources.set(newImage->url(), newImage.get());
+            document.cachedResourceLoader()->setAutoLoadImages(autoLoadOtherImages);
         } else
-            newImage = document->cachedResourceLoader()->requestImage(request);
+            newImage = document.cachedResourceLoader()->requestImage(request);
 
         // If we do not have an image here, it means that a cross-site
         // violation occurred, or that the image was blocked via Content
@@ -237,13 +237,13 @@ void ImageLoader::updateFromElement()
         }
 
         m_image = newImage;
-        m_hasPendingBeforeLoadEvent = !m_element->document()->isImageDocument() && newImage;
+        m_hasPendingBeforeLoadEvent = !document.isImageDocument() && newImage;
         m_hasPendingLoadEvent = newImage;
         m_imageComplete = !newImage;
 
         if (newImage) {
-            if (!m_element->document()->isImageDocument()) {
-                if (!m_element->document()->hasListenerType(Document::BEFORELOAD_LISTENER))
+            if (!document.isImageDocument()) {
+                if (!document.hasListenerType(Document::BEFORELOAD_LISTENER))
                     dispatchPendingBeforeLoadEvent();
                 else
                     beforeLoadEventSender().dispatchEventSoon(this);
@@ -286,8 +286,8 @@ void ImageLoader::notifyFinished(CachedResource* resource)
         return;
 
     if (m_element->fastHasAttribute(HTMLNames::crossoriginAttr)
-        && !m_element->document()->securityOrigin()->canRequest(image()->response().url())
-        && !resource->passesAccessControlCheck(m_element->document()->securityOrigin())) {
+        && !m_element->document().securityOrigin()->canRequest(image()->response().url())
+        && !resource->passesAccessControlCheck(m_element->document().securityOrigin())) {
 
         setImageWithoutConsideringPendingLoadEvent(0);
 
@@ -295,7 +295,7 @@ void ImageLoader::notifyFinished(CachedResource* resource)
         errorEventSender().dispatchEventSoon(this);
 
         DEFINE_STATIC_LOCAL(String, consoleMessage, (ASCIILiteral("Cross-origin image load denied by Cross-Origin Resource Sharing policy.")));
-        m_element->document()->addConsoleMessage(SecurityMessageSource, ErrorMessageLevel, consoleMessage);
+        m_element->document().addConsoleMessage(SecurityMessageSource, ErrorMessageLevel, consoleMessage);
 
         ASSERT(!m_hasPendingLoadEvent);
 
@@ -401,7 +401,7 @@ void ImageLoader::dispatchPendingBeforeLoadEvent()
         return;
     if (!m_image)
         return;
-    if (!m_element->document()->attached())
+    if (!m_element->document().attached())
         return;
     m_hasPendingBeforeLoadEvent = false;
     if (m_element->dispatchBeforeLoadEvent(m_image->url())) {
@@ -431,7 +431,7 @@ void ImageLoader::dispatchPendingLoadEvent()
     if (!m_image)
         return;
     m_hasPendingLoadEvent = false;
-    if (element()->document()->attached())
+    if (element()->document().attached())
         dispatchLoadEvent();
 
     // Only consider updating the protection ref-count of the Element immediately before returning
@@ -444,7 +444,7 @@ void ImageLoader::dispatchPendingErrorEvent()
     if (!m_hasPendingErrorEvent)
         return;
     m_hasPendingErrorEvent = false;
-    if (element()->document()->attached())
+    if (element()->document().attached())
         element()->dispatchEvent(Event::create(eventNames().errorEvent, false, false));
 
     // Only consider updating the protection ref-count of the Element immediately before returning

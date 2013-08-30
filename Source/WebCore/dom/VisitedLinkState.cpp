@@ -109,12 +109,12 @@ EInsideLink VisitedLinkState::determineLinkStateSlowCase(Element* element)
     if (isHTMLAnchorElement(element))
         hash = toHTMLAnchorElement(element)->visitedLinkHash();
     else
-        hash = WebCore::visitedLinkHash(element->document()->baseURL(), *attribute);
+        hash = WebCore::visitedLinkHash(element->document().baseURL(), *attribute);
 
     if (!hash)
         return InsideUnvisitedLink;
 
-    Frame* frame = element->document()->frame();
+    Frame* frame = element->document().frame();
     if (!frame)
         return InsideUnvisitedLink;
 
@@ -124,7 +124,7 @@ EInsideLink VisitedLinkState::determineLinkStateSlowCase(Element* element)
 
     m_linksCheckedForVisitedState.add(hash);
 
-    return platformStrategies()->visitedLinkStrategy()->isLinkVisited(page, hash, element->document()->baseURL(), *attribute) ? InsideVisitedLink : InsideUnvisitedLink;
+    return platformStrategies()->visitedLinkStrategy()->isLinkVisited(page, hash, element->document().baseURL(), *attribute) ? InsideVisitedLink : InsideUnvisitedLink;
 }
 
 

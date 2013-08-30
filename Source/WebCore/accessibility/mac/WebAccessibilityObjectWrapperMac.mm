@@ -717,9 +717,9 @@ static void AXAttributeStringSetBlockquoteLevel(NSMutableAttributedString* attrS
 
 static void AXAttributeStringSetSpelling(NSMutableAttributedString* attrString, Node* node, const UChar* chars, int charLength, NSRange range)
 {
-    if (unifiedTextCheckerEnabled(node->document()->frame())) {
+    if (unifiedTextCheckerEnabled(node->document().frame())) {
         // Check the spelling directly since document->markersForNode() does not store the misspelled marking when the cursor is in a word.
-        TextCheckerClient* checker = node->document()->frame()->editor().textChecker();
+        TextCheckerClient* checker = node->document().frame()->editor().textChecker();
         
         // checkTextOfParagraph is the only spelling/grammar checker implemented in WK1 and WK2
         Vector<TextCheckingResult> results;
@@ -740,7 +740,7 @@ static void AXAttributeStringSetSpelling(NSMutableAttributedString* attrString, 
     int currentPosition = 0;
     while (charLength > 0) {
         const UChar* charData = chars + currentPosition;
-        TextCheckerClient* checker = node->document()->frame()->editor().textChecker();
+        TextCheckerClient* checker = node->document().frame()->editor().textChecker();
         
         int misspellingLocation = -1;
         int misspellingLength = 0;

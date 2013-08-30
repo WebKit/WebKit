@@ -176,10 +176,10 @@ void SVGAElement::defaultEventHandler(Event* event)
                 target = "_blank";
             event->setDefaultHandled();
 
-            Frame* frame = document()->frame();
+            Frame* frame = document().frame();
             if (!frame)
                 return;
-            frame->loader().urlSelected(document()->completeURL(url), target, event, false, false, MaybeSendReferrer);
+            frame->loader().urlSelected(document().completeURL(url), target, event, false, false, MaybeSendReferrer);
             return;
         }
     }
@@ -217,10 +217,10 @@ bool SVGAElement::isKeyboardFocusable(KeyboardEvent* event) const
     if (!isFocusable())
         return false;
     
-    if (!document()->frame())
+    if (!document().frame())
         return false;
     
-    return document()->frame()->eventHandler().tabsToLinks(event);
+    return document().frame()->eventHandler().tabsToLinks(event);
 }
 
 bool SVGAElement::childShouldCreateRenderer(const Node* child) const

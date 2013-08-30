@@ -82,7 +82,7 @@ void ClassList::setValue(const AtomicString& value)
 const SpaceSplitString& ClassList::classNames() const
 {
     ASSERT(m_element->hasClass());
-    if (m_element->document()->inQuirksMode()) {
+    if (m_element->document().inQuirksMode()) {
         if (m_classNamesForQuirksMode.isEmpty())
             m_classNamesForQuirksMode.set(value(), false);
         return m_classNamesForQuirksMode;

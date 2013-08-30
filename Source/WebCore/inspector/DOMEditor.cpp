@@ -220,7 +220,7 @@ public:
     virtual bool perform(ExceptionCode& ec)
     {
         m_oldHTML = createMarkup(m_node.get());
-        DOMPatchSupport domPatchSupport(m_domEditor.get(), m_node->document());
+        DOMPatchSupport domPatchSupport(m_domEditor.get(), &m_node->document());
         m_newNode = domPatchSupport.patchNode(m_node.get(), m_html, ec);
         return !ec;
     }

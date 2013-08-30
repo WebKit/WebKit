@@ -1,3 +1,16 @@
+2013-08-30  Andreas Kling  <akling@apple.com>
+
+        Node::document() should return a reference.
+        <https://webkit.org/b/120496>
+
+        Reviewed by Antti Koivisto.
+
+        Now that orphan DocumentType nodes also have document pointers, it's no longer
+        possible to have a null Node::document().
+
+        Cement this by making document() return a reference, and remove the various
+        null checks exposed by this.
+
 2013-08-30  Andrei Parvu  <parvu@adobe.com>
 
         [CSS Masking] -webkit-mask-repeat: space does not work

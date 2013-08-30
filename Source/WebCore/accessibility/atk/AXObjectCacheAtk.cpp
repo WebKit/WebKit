@@ -185,8 +185,8 @@ void AXObjectCache::nodeTextChangePlatformNotification(AccessibilityObject* obje
         return;
 
     // Ensure document's layout is up-to-date before using TextIterator.
-    Document* document = node->document();
-    document->updateLayout();
+    Document& document = node->document();
+    document.updateLayout();
 
     // Select the right signal to be emitted
     CString detail;
@@ -211,7 +211,7 @@ void AXObjectCache::nodeTextChangePlatformNotification(AccessibilityObject* obje
         // Consider previous text objects that might be present for
         // the current accessibility object to ensure we emit the
         // right offset (e.g. multiline text areas).
-        RefPtr<Range> range = Range::create(document, node->parentNode(), 0, node, 0);
+        RefPtr<Range> range = Range::create(&document, node->parentNode(), 0, node, 0);
         offsetToEmit = offset + TextIterator::rangeLength(range.get());
     }
 

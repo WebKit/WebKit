@@ -122,8 +122,8 @@ PassRefPtr<WebFrame> WebFrame::createSubframe(WebPage* page, const String& frame
     frame->m_coreFrame = coreFrame.get();
     frame->m_coreFrame->tree().setName(frameName);
     if (ownerElement) {
-        ASSERT(ownerElement->document()->frame());
-        ownerElement->document()->frame()->tree().appendChild(coreFrame.release());
+        ASSERT(ownerElement->document().frame());
+        ownerElement->document().frame()->tree().appendChild(coreFrame.release());
     }
     frame->m_coreFrame->init();
     return frame.release();
@@ -406,10 +406,10 @@ String WebFrame::innerText() const
 
 WebFrame* WebFrame::parentFrame() const
 {
-    if (!m_coreFrame || !m_coreFrame->ownerElement() || !m_coreFrame->ownerElement()->document())
+    if (!m_coreFrame || !m_coreFrame->ownerElement())
         return 0;
 
-    WebFrameLoaderClient* webFrameLoaderClient = toWebFrameLoaderClient(m_coreFrame->ownerElement()->document()->frame()->loader().client());
+    WebFrameLoaderClient* webFrameLoaderClient = toWebFrameLoaderClient(m_coreFrame->ownerElement()->document().frame()->loader().client());
     return webFrameLoaderClient ? webFrameLoaderClient->webFrame() : 0;
 }
 

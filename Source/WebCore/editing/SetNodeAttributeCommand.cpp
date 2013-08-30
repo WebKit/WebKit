@@ -33,7 +33,7 @@ namespace WebCore {
 
 SetNodeAttributeCommand::SetNodeAttributeCommand(PassRefPtr<Element> element, 
         const QualifiedName& attribute, const AtomicString& value)
-    : SimpleEditCommand(element->document())
+    : SimpleEditCommand(&element->document())
     , m_element(element)
     , m_attribute(attribute)
     , m_value(value)

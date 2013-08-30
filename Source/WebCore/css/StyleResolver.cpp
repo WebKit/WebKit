@@ -409,16 +409,16 @@ inline void StyleResolver::State::initElement(Element* e)
 {
     m_element = e;
     m_styledElement = e && e->isStyledElement() ? static_cast<StyledElement*>(e) : 0;
-    m_elementLinkState = e ? e->document()->visitedLinkState().determineLinkState(e) : NotInsideLink;
+    m_elementLinkState = e ? e->document().visitedLinkState().determineLinkState(e) : NotInsideLink;
 }
 
 inline void StyleResolver::initElement(Element* e)
 {
     if (m_state.element() != e) {
         m_state.initElement(e);
-        if (e && e == e->document()->documentElement()) {
-            e->document()->setDirectionSetOnDocumentElement(false);
-            e->document()->setWritingModeSetOnDocumentElement(false);
+        if (e && e == e->document().documentElement()) {
+            e->document().setDirectionSetOnDocumentElement(false);
+            e->document().setWritingModeSetOnDocumentElement(false);
         }
     }
 }
@@ -438,7 +438,7 @@ inline void StyleResolver::State::initForStyleResolve(Document* document, Elemen
         m_parentStyle = parentStyle;
     }
 
-    Node* docElement = e ? e->document()->documentElement() : 0;
+    Node* docElement = e ? e->document().documentElement() : 0;
     RenderStyle* docStyle = document->renderStyle();
     m_rootElementStyle = docElement && e != docElement ? docElement->renderStyle() : docStyle;
 
@@ -645,7 +645,7 @@ bool StyleResolver::canShareStyleWithElement(StyledElement* element) const
         return false;
     if (element->shadowPseudoId() != state.element()->shadowPseudoId())
         return false;
-    if (element == element->document()->cssTarget())
+    if (element == element->document().cssTarget())
         return false;
     if (!sharingCandidateHasIdenticalStyleAffectingAttributes(element))
         return false;
@@ -702,7 +702,7 @@ bool StyleResolver::canShareStyleWithElement(StyledElement* element) const
 #endif
 
 #if ENABLE(FULLSCREEN_API)
-    if (element == element->document()->webkitCurrentFullScreenElement() || state.element() == state.document()->webkitCurrentFullScreenElement())
+    if (element == element->document().webkitCurrentFullScreenElement() || state.element() == state.document()->webkitCurrentFullScreenElement())
         return false;
 #endif
     return true;
@@ -794,13 +794,13 @@ PassRefPtr<RenderStyle> StyleResolver::styleForElement(Element* element, RenderS
 {
     // Once an element has a renderer, we don't try to destroy it, since otherwise the renderer
     // will vanish if a style recalc happens during loading.
-    if (sharingBehavior == AllowStyleSharing && !element->document()->haveStylesheetsLoaded() && !element->renderer()) {
+    if (sharingBehavior == AllowStyleSharing && !element->document().haveStylesheetsLoaded() && !element->renderer()) {
         if (!s_styleNotYetAvailable) {
             s_styleNotYetAvailable = RenderStyle::create().leakRef();
             s_styleNotYetAvailable->setDisplay(NONE);
             s_styleNotYetAvailable->font().update(m_fontSelector);
         }
-        element->document()->setHasNodesWithPlaceholderStyle();
+        element->document().setHasNodesWithPlaceholderStyle();
         return s_styleNotYetAvailable;
     }
 
@@ -1223,7 +1223,7 @@ void StyleResolver::adjustRenderStyle(RenderStyle* style, RenderStyle* parentSty
             style->setDisplay(BLOCK);
 
         // Absolute/fixed positioned elements, floating elements and the document element need block-like outside display.
-        if (style->hasOutOfFlowPosition() || style->isFloating() || (e && e->document()->documentElement() == e))
+        if (style->hasOutOfFlowPosition() || style->isFloating() || (e && e->document().documentElement() == e))
             style->setDisplay(equivalentBlockDisplay(style->display(), style->isFloating(), !document()->inQuirksMode()));
 
         // FIXME: Don't support this mutation for pseudo styles like first-letter or first-line, since it's not completely
@@ -1265,7 +1265,7 @@ void StyleResolver::adjustRenderStyle(RenderStyle* style, RenderStyle* parentSty
     // Auto z-index becomes 0 for the root element and transparent objects. This prevents
     // cases where objects that should be blended as a single unit end up with a non-transparent
     // object wedged in between them. Auto z-index also becomes 0 for objects that specify transforms/masks/reflections.
-    if (style->hasAutoZIndex() && ((e && e->document()->documentElement() == e)
+    if (style->hasAutoZIndex() && ((e && e->document().documentElement() == e)
         || style->opacity() < 1.0f
         || style->hasTransformRelatedProperty()
         || style->hasMask()
@@ -1274,7 +1274,7 @@ void StyleResolver::adjustRenderStyle(RenderStyle* style, RenderStyle* parentSty
         || style->hasFilter()
         || style->hasBlendMode()
         || style->position() == StickyPosition
-        || (style->position() == FixedPosition && e && e->document()->page() && e->document()->page()->settings().fixedPositionCreatesStackingContext())
+        || (style->position() == FixedPosition && e && e->document().page() && e->document().page()->settings().fixedPositionCreatesStackingContext())
         ))
         style->setZIndex(0);
 
@@ -1466,7 +1466,7 @@ Vector<RefPtr<StyleRuleBase> > StyleResolver::styleRulesForElement(Element* e, u
 
 Vector<RefPtr<StyleRuleBase> > StyleResolver::pseudoStyleRulesForElement(Element* e, PseudoId pseudoId, unsigned rulesToInclude)
 {
-    if (!e || !e->document()->haveStylesheetsLoaded())
+    if (!e || !e->document().haveStylesheetsLoaded())
         return Vector<RefPtr<StyleRuleBase> >();
 
     initElement(e);
@@ -1673,7 +1673,7 @@ void StyleResolver::invalidateMatchedPropertiesCache()
 static bool isCacheableInMatchedPropertiesCache(const Element* element, const RenderStyle* style, const RenderStyle* parentStyle)
 {
     // FIXME: CSSPropertyWebkitWritingMode modifies state when applying to document element. We can't skip the applying by caching.
-    if (element == element->document()->documentElement() && element->document()->writingModeSetOnDocumentElement())
+    if (element == element->document().documentElement() && element->document().writingModeSetOnDocumentElement())
         return false;
     if (style->unique() || (style->styleType() != NOPSEUDO && parentStyle->unique()))
         return false;

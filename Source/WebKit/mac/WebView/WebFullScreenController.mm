@@ -290,7 +290,7 @@ static NSRect convertRectToScreen(NSWindow *window, NSRect rect)
 {
     if (!_element)
         return;
-    _element->document()->webkitCancelFullScreen();
+    _element->document().webkitCancelFullScreen();
 }
 
 - (void)exitFullScreen
@@ -435,7 +435,7 @@ static NSRect convertRectToScreen(NSWindow *window, NSRect rect)
 
 - (Document*)_document 
 {
-    return _element->document();
+    return &_element->document();
 }
 
 - (void)_swapView:(NSView*)view with:(NSView*)otherView

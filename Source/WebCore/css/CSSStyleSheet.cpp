@@ -86,7 +86,7 @@ PassRefPtr<CSSStyleSheet> CSSStyleSheet::create(PassRefPtr<StyleSheetContents> s
 
 PassRefPtr<CSSStyleSheet> CSSStyleSheet::createInline(Node* ownerNode, const KURL& baseURL, const String& encoding)
 {
-    CSSParserContext parserContext(ownerNode->document(), baseURL, encoding);
+    CSSParserContext parserContext(&ownerNode->document(), baseURL, encoding);
     RefPtr<StyleSheetContents> sheet = StyleSheetContents::create(baseURL.string(), parserContext);
     return adoptRef(new CSSStyleSheet(sheet.release(), ownerNode, true));
 }
@@ -393,7 +393,7 @@ Document* CSSStyleSheet::ownerDocument() const
     const CSSStyleSheet* root = this;
     while (root->parentStyleSheet())
         root = root->parentStyleSheet();
-    return root->ownerNode() ? root->ownerNode()->document() : 0;
+    return root->ownerNode() ? &root->ownerNode()->document() : 0;
 }
 
 void CSSStyleSheet::clearChildRuleCSSOMWrappers()

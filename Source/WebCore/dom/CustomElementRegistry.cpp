@@ -171,7 +171,7 @@ PassRefPtr<CustomElementConstructor> CustomElementRegistry::registerElement(Scri
 
 PassRefPtr<CustomElementConstructor> CustomElementRegistry::findFor(Element* element) const
 {
-    ASSERT(element->document()->registry() == this);
+    ASSERT(element->document().registry() == this);
 
     // Most elements can be rejected this quick screening.
     if (!nameIncludesHyphen(element->tagName()) && !element->hasAttribute(HTMLNames::isAttr))

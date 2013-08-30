@@ -79,7 +79,7 @@ RenderObject* HTMLAppletElement::createRenderer(RenderArena*, RenderStyle* style
     if (!canEmbedJava())
         return RenderObject::createObject(this, style);
 
-    return new (document()->renderArena()) RenderApplet(this);
+    return new (document().renderArena()) RenderApplet(this);
 }
 
 RenderWidget* HTMLAppletElement::renderWidgetForJSBindings() const
@@ -87,7 +87,7 @@ RenderWidget* HTMLAppletElement::renderWidgetForJSBindings() const
     if (!canEmbedJava())
         return 0;
 
-    document()->updateLayoutIgnorePendingStylesheets();
+    document().updateLayoutIgnorePendingStylesheets();
     return renderPart();
 }
 
@@ -126,7 +126,7 @@ void HTMLAppletElement::updateWidget(PluginCreationOption pluginCreationOption)
         paramValues.append(codeBase.string());
     }
 
-    const AtomicString& name = document()->isHTMLDocument() ? getNameAttribute() : getIdAttribute();
+    const AtomicString& name = document().isHTMLDocument() ? getNameAttribute() : getIdAttribute();
     if (!name.isNull()) {
         paramNames.append("name");
         paramValues.append(name.string());
@@ -139,7 +139,7 @@ void HTMLAppletElement::updateWidget(PluginCreationOption pluginCreationOption)
     }
 
     paramNames.append("baseURL");
-    paramValues.append(document()->baseURL().string());
+    paramValues.append(document().baseURL().string());
 
     const AtomicString& mayScript = getAttribute(mayscriptAttr);
     if (!mayScript.isNull()) {
@@ -156,7 +156,7 @@ void HTMLAppletElement::updateWidget(PluginCreationOption pluginCreationOption)
         paramValues.append(param->value());
     }
 
-    Frame* frame = document()->frame();
+    Frame* frame = document().frame();
     ASSERT(frame);
 
     renderer->setWidget(frame->loader().subframeLoader()->createJavaAppletWidget(roundedIntSize(LayoutSize(contentWidth, contentHeight)), this, paramNames, paramValues));
@@ -164,17 +164,17 @@ void HTMLAppletElement::updateWidget(PluginCreationOption pluginCreationOption)
 
 bool HTMLAppletElement::canEmbedJava() const
 {
-    if (document()->isSandboxed(SandboxPlugins))
+    if (document().isSandboxed(SandboxPlugins))
         return false;
 
-    Settings* settings = document()->settings();
+    Settings* settings = document().settings();
     if (!settings)
         return false;
 
     if (!settings->isJavaEnabled())
         return false;
 
-    if (document()->securityOrigin()->isLocal() && !settings->isJavaEnabledForLocalFiles())
+    if (document().securityOrigin()->isLocal() && !settings->isJavaEnabledForLocalFiles())
         return false;
 
     return true;

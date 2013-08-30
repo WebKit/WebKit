@@ -2238,8 +2238,8 @@ void RenderLayer::scrollTo(int x, int y)
         renderer().repaintUsingContainer(repaintContainer, pixelSnappedIntRect(m_repaintRect));
 
     // Schedule the scroll DOM event.
-    if (renderer().node())
-        renderer().node()->document()->eventQueue()->enqueueOrDispatchScrollEvent(renderer().node(), DocumentEventQueue::ScrollEventElementTarget);
+    if (Node* node = renderer().node())
+        node->document().eventQueue()->enqueueOrDispatchScrollEvent(renderer().node(), DocumentEventQueue::ScrollEventElementTarget);
 
     InspectorInstrumentation::didScrollLayer(&frame);
     if (scrollsOverflow())
@@ -2465,13 +2465,13 @@ void RenderLayer::resize(const PlatformMouseEvent& evt, const LayoutSize& oldOff
     Element* element = toElement(renderer().node());
     RenderBox* renderer = toRenderBox(element->renderer());
 
-    Document* document = element->document();
-    if (!document->frame()->eventHandler().mousePressed())
+    Document& document = element->document();
+    if (!document.frame()->eventHandler().mousePressed())
         return;
 
     float zoomFactor = renderer->style()->effectiveZoom();
 
-    LayoutSize newOffset = offsetFromResizeCorner(document->view()->windowToContents(evt.position()));
+    LayoutSize newOffset = offsetFromResizeCorner(document.view()->windowToContents(evt.position()));
     newOffset.setWidth(newOffset.width() / zoomFactor);
     newOffset.setHeight(newOffset.height() / zoomFactor);
     
@@ -2514,7 +2514,7 @@ void RenderLayer::resize(const PlatformMouseEvent& evt, const LayoutSize& oldOff
         styledElement->setInlineStyleProperty(CSSPropertyHeight, roundToInt(baseHeight + difference.height()), CSSPrimitiveValue::CSS_PX);
     }
 
-    document->updateLayout();
+    document.updateLayout();
 
     // FIXME (Radar 4118564): We should also autoscroll the window as necessary to keep the point under the cursor in view.
 }

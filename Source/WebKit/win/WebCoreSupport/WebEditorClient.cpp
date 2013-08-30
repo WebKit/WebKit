@@ -330,7 +330,7 @@ void WebEditorClient::textFieldDidBeginEditing(Element* e)
         if (domElement) {
             IDOMHTMLInputElement* domInputElement;
             if (SUCCEEDED(domElement->QueryInterface(IID_IDOMHTMLInputElement, (void**)&domInputElement))) {
-                formDelegate->textFieldDidBeginEditing(domInputElement, kit(e->document()->frame()));
+                formDelegate->textFieldDidBeginEditing(domInputElement, kit(e->document().frame()));
                 domInputElement->Release();
             }
             domElement->Release();
@@ -347,7 +347,7 @@ void WebEditorClient::textFieldDidEndEditing(Element* e)
         if (domElement) {
             IDOMHTMLInputElement* domInputElement;
             if (SUCCEEDED(domElement->QueryInterface(IID_IDOMHTMLInputElement, (void**)&domInputElement))) {
-                formDelegate->textFieldDidEndEditing(domInputElement, kit(e->document()->frame()));
+                formDelegate->textFieldDidEndEditing(domInputElement, kit(e->document().frame()));
                 domInputElement->Release();
             }
             domElement->Release();
@@ -367,7 +367,7 @@ void WebEditorClient::textDidChangeInTextField(Element* e)
         if (domElement) {
             IDOMHTMLInputElement* domInputElement;
             if (SUCCEEDED(domElement->QueryInterface(IID_IDOMHTMLInputElement, (void**)&domInputElement))) {
-                formDelegate->textDidChangeInTextField(domInputElement, kit(e->document()->frame()));
+                formDelegate->textDidChangeInTextField(domInputElement, kit(e->document().frame()));
                 domInputElement->Release();
             }
             domElement->Release();
@@ -388,7 +388,7 @@ bool WebEditorClient::doTextFieldCommandFromEvent(Element* e, KeyboardEvent* ke)
                 String command = m_webView->interpretKeyEvent(ke);
                 // We allow empty commands here because the app code actually depends on this being called for all key presses.
                 // We may want to revisit this later because it doesn't really make sense to send an empty command.
-                formDelegate->doPlatformCommand(domInputElement, BString(command), kit(e->document()->frame()), &result);
+                formDelegate->doPlatformCommand(domInputElement, BString(command), kit(e->document().frame()), &result);
                 domInputElement->Release();
             }
             domElement->Release();
@@ -408,7 +408,7 @@ void WebEditorClient::textWillBeDeletedInTextField(Element* e)
             IDOMHTMLInputElement* domInputElement;
             if (SUCCEEDED(domElement->QueryInterface(IID_IDOMHTMLInputElement, (void**)&domInputElement))) {
                 BOOL result;
-                formDelegate->doPlatformCommand(domInputElement, BString(L"DeleteBackward"), kit(e->document()->frame()), &result);
+                formDelegate->doPlatformCommand(domInputElement, BString(L"DeleteBackward"), kit(e->document().frame()), &result);
                 domInputElement->Release();
             }
             domElement->Release();
@@ -425,7 +425,7 @@ void WebEditorClient::textDidChangeInTextArea(Element* e)
         if (domElement) {
             IDOMHTMLTextAreaElement* domTextAreaElement;
             if (SUCCEEDED(domElement->QueryInterface(IID_IDOMHTMLTextAreaElement, (void**)&domTextAreaElement))) {
-                formDelegate->textDidChangeInTextArea(domTextAreaElement, kit(e->document()->frame()));
+                formDelegate->textDidChangeInTextArea(domTextAreaElement, kit(e->document().frame()));
                 domTextAreaElement->Release();
             }
             domElement->Release();

@@ -148,7 +148,7 @@ void MarkupAccumulator::serializeNodesWithNamespaces(Node* targetNode, Node* nod
     if (!childrenOnly)
         appendStartTag(targetNode, &namespaceHash);
 
-    if (!(targetNode->document()->isHTMLDocument() && elementCannotHaveEndTag(targetNode))) {
+    if (!(targetNode->document().isHTMLDocument() && elementCannotHaveEndTag(targetNode))) {
 #if ENABLE(TEMPLATE_ELEMENT)
         Node* current = targetNode->hasTagName(templateTag) ? toHTMLTemplateElement(targetNode)->content()->firstChild() : targetNode->firstChild();
 #else
@@ -166,11 +166,11 @@ String MarkupAccumulator::resolveURLIfNeeded(const Element* element, const Strin
 {
     switch (m_resolveURLsMethod) {
     case ResolveAllURLs:
-        return element->document()->completeURL(urlString).string();
+        return element->document().completeURL(urlString).string();
 
     case ResolveNonLocalURLs:
-        if (!element->document()->url().isLocalFile())
-            return element->document()->completeURL(urlString).string();
+        if (!element->document().url().isLocalFile())
+            return element->document().completeURL(urlString).string();
         break;
 
     case DoNotResolveURLs:
@@ -342,7 +342,7 @@ EntityMask MarkupAccumulator::entityMaskForText(Text* text) const
     if (parentName && (*parentName == scriptTag || *parentName == styleTag || *parentName == xmpTag))
         return EntityMaskInCDATA;
 
-    return text->document()->isHTMLDocument() ? EntityMaskInHTMLPCDATA : EntityMaskInPCDATA;
+    return text->document().isHTMLDocument() ? EntityMaskInHTMLPCDATA : EntityMaskInPCDATA;
 }
 
 void MarkupAccumulator::appendText(StringBuilder& result, Text* text)
@@ -453,7 +453,7 @@ void MarkupAccumulator::appendOpenTag(StringBuilder& result, Element* element, N
         }
     }
     result.append(element->nodeNamePreservingCase());
-    if ((inXMLFragmentSerialization() || !element->document()->isHTMLDocument()) && namespaces && shouldAddNamespaceElement(element))
+    if ((inXMLFragmentSerialization() || !element->document().isHTMLDocument()) && namespaces && shouldAddNamespaceElement(element))
         appendNamespace(result, element->prefix(), element->namespaceURI(), *namespaces, inXMLFragmentSerialization());
 }
 
@@ -494,7 +494,7 @@ void MarkupAccumulator::generateUniquePrefix(QualifiedName& prefixedName, const 
 
 void MarkupAccumulator::appendAttribute(StringBuilder& result, Element* element, const Attribute& attribute, Namespaces* namespaces)
 {
-    bool documentIsHTML = element->document()->isHTMLDocument();
+    bool documentIsHTML = element->document().isHTMLDocument();
 
     result.append(' ');
 
@@ -586,7 +586,7 @@ void MarkupAccumulator::appendStartMarkup(StringBuilder& result, const Node* nod
 // 4. Other elements self-close.
 bool MarkupAccumulator::shouldSelfClose(const Node* node)
 {
-    if (!inXMLFragmentSerialization() && node->document()->isHTMLDocument())
+    if (!inXMLFragmentSerialization() && node->document().isHTMLDocument())
         return false;
     if (node->hasChildNodes())
         return false;

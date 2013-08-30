@@ -229,7 +229,7 @@ void StyledMarkupAccumulator::appendText(StringBuilder& out, Text* text)
         // FIXME: Should this be included in forceInline?
         wrappingStyle->style()->setProperty(CSSPropertyFloat, CSSValueNone);
 
-        appendStyleNodeOpenTag(out, wrappingStyle->style(), text->document());
+        appendStyleNodeOpenTag(out, wrappingStyle->style(), &text->document());
     }
 
     if (!shouldAnnotate() || parentIsTextarea)
@@ -262,7 +262,7 @@ String StyledMarkupAccumulator::renderedText(const Node* node, const Range* rang
 
     Position start = createLegacyEditingPosition(const_cast<Node*>(node), startOffset);
     Position end = createLegacyEditingPosition(const_cast<Node*>(node), endOffset);
-    return plainText(Range::create(node->document(), start, end).get());
+    return plainText(Range::create(&node->document(), start, end).get());
 }
 
 String StyledMarkupAccumulator::stringValueForRange(const Node* node, const Range* range)
@@ -280,7 +280,7 @@ String StyledMarkupAccumulator::stringValueForRange(const Node* node, const Rang
 
 void StyledMarkupAccumulator::appendElement(StringBuilder& out, Element* element, bool addDisplayInline, RangeFullySelectsNode rangeFullySelectsNode)
 {
-    const bool documentIsHTML = element->document()->isHTMLDocument();
+    const bool documentIsHTML = element->document().isHTMLDocument();
     appendOpenTag(out, element, 0);
 
     const unsigned length = element->hasAttributes() ? element->attributeCount() : 0;
@@ -764,7 +764,7 @@ String createMarkup(const Node* node, EChildrenOnly childrenOnly, Vector<Node*>*
 
     HTMLElement* deleteButtonContainerElement = 0;
 #if ENABLE(DELETION_UI)
-    if (Frame* frame = node->document()->frame()) {
+    if (Frame* frame = node->document().frame()) {
         deleteButtonContainerElement = frame->editor().deleteButtonController()->containerElement();
         if (node->isDescendantOf(deleteButtonContainerElement))
             return "";
@@ -776,7 +776,7 @@ String createMarkup(const Node* node, EChildrenOnly childrenOnly, Vector<Node*>*
 
 static void fillContainerFromString(ContainerNode* paragraph, const String& string)
 {
-    Document* document = paragraph->document();
+    Document* document = &paragraph->document();
 
     if (string.isEmpty()) {
         paragraph->appendChild(createBlockPlaceholderElement(document), ASSERT_NO_EXCEPTION);
@@ -938,16 +938,12 @@ String createFullMarkup(const Node* node)
     if (!node)
         return String();
 
-    Document* document = node->document();
-    if (!document)
-        return String();
-
     // FIXME: This is never "for interchange". Is that right?
     String markupString = createMarkup(node, IncludeNode, 0);
 
     Node::NodeType nodeType = node->nodeType();
     if (nodeType != Node::DOCUMENT_NODE && nodeType != Node::DOCUMENT_TYPE_NODE)
-        markupString = documentTypeString(*document) + markupString;
+        markupString = documentTypeString(node->document()) + markupString;
 
     return markupString;
 }
@@ -961,12 +957,8 @@ String createFullMarkup(const Range* range)
     if (!node)
         return String();
 
-    Document* document = node->document();
-    if (!document)
-        return String();
-
     // FIXME: This is always "for interchange". Is that right?
-    return documentTypeString(*document) + createMarkup(range, 0, AnnotateForInterchange);
+    return documentTypeString(node->document()) + createMarkup(range, 0, AnnotateForInterchange);
 }
 
 String urlToMarkup(const KURL& url, const String& title)
@@ -982,7 +974,7 @@ String urlToMarkup(const KURL& url, const String& title)
 
 PassRefPtr<DocumentFragment> createFragmentForInnerOuterHTML(const String& markup, Element* contextElement, ParserContentPolicy parserContentPolicy, ExceptionCode& ec)
 {
-    Document* document = contextElement->document();
+    Document* document = &contextElement->document();
 #if ENABLE(TEMPLATE_ELEMENT)
     if (contextElement->hasTagName(templateTag))
         document = document->ensureTemplateDocument();
@@ -1118,7 +1110,7 @@ void replaceChildrenWithText(ContainerNode* container, const String& text, Excep
         return;
     }
 
-    RefPtr<Text> textNode = Text::create(containerNode->document(), text);
+    RefPtr<Text> textNode = Text::create(&containerNode->document(), text);
 
     if (hasOneChild(containerNode.get())) {
         containerNode->replaceChild(textNode.release(), containerNode->firstChild(), ec);

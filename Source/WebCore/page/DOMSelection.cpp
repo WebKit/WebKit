@@ -57,7 +57,7 @@ static Node* selectionShadowAncestor(Frame* frame)
 }
 
 DOMSelection::DOMSelection(const TreeScope* treeScope)
-    : DOMWindowProperty(treeScope->rootNode()->document()->frame())
+    : DOMWindowProperty(treeScope->rootNode()->document().frame())
     , m_treeScope(treeScope)
 {
 }
@@ -368,7 +368,7 @@ PassRefPtr<Range> DOMSelection::getRangeAt(int index, ExceptionCode& ec)
     if (Node* shadowAncestor = selectionShadowAncestor(m_frame)) {
         ContainerNode* container = shadowAncestor->parentNodeGuaranteedHostFree();
         int offset = shadowAncestor->nodeIndex();
-        return Range::create(shadowAncestor->document(), container, offset, container, offset);
+        return Range::create(&shadowAncestor->document(), container, offset, container, offset);
     }
 
     const VisibleSelection& selection = m_frame->selection().selection();
@@ -450,7 +450,7 @@ bool DOMSelection::containsNode(Node* n, bool allowPartial) const
 
     FrameSelection& selection = m_frame->selection();
 
-    if (!n || m_frame->document() != n->document() || selection.isNone())
+    if (!n || m_frame->document() != &n->document() || selection.isNone())
         return false;
 
     RefPtr<Node> node = n;
@@ -533,7 +533,7 @@ bool DOMSelection::isValidForPosition(Node* node) const
     ASSERT(m_frame);
     if (!node)
         return true;
-    return node->document() == m_frame->document();
+    return &node->document() == m_frame->document();
 }
 
 } // namespace WebCore

@@ -812,7 +812,7 @@ void ChromeClient::mouseDidMoveOverElement(const HitTestResult& hit, unsigned mo
     }
 
     if (Node* node = hit.innerNonSharedNode()) {
-        Frame* frame = node->document()->frame();
+        Frame* frame = node->document().frame();
         FrameView* view = frame ? frame->view() : 0;
         m_webView->priv->tooltipArea = view ? view->contentsToWindow(node->pixelSnappedBoundingBox()) : IntRect();
     } else
@@ -981,7 +981,7 @@ static gboolean onFullscreenGtkKeyPressEvent(GtkWidget* widget, GdkEventKey* eve
 void ChromeClient::cancelFullScreen()
 {
     ASSERT(m_fullScreenElement);
-    m_fullScreenElement->document()->webkitCancelFullScreen();
+    m_fullScreenElement->document().webkitCancelFullScreen();
 }
 
 void ChromeClient::enterFullScreenForElement(WebCore::Element* element)
@@ -996,10 +996,10 @@ void ChromeClient::enterFullScreenForElement(WebCore::Element* element)
     if (element && element->isMediaElement()) {
         HTMLMediaElement* mediaElement = toHTMLMediaElement(element);
         if (mediaElement->player() && mediaElement->player()->canEnterFullscreen()) {
-            element->document()->webkitWillEnterFullScreenForElement(element);
+            element->document().webkitWillEnterFullScreenForElement(element);
             mediaElement->player()->enterFullscreen();
             m_fullScreenElement = element;
-            element->document()->webkitDidEnterFullScreenForElement(element);
+            element->document().webkitDidEnterFullScreenForElement(element);
         }
         return;
     }
@@ -1013,10 +1013,10 @@ void ChromeClient::enterFullScreenForElement(WebCore::Element* element)
 
     m_fullScreenElement = element;
 
-    element->document()->webkitWillEnterFullScreenForElement(element);
+    element->document().webkitWillEnterFullScreenForElement(element);
     m_adjustmentWatcher.disableAllScrollbars();
     gtk_window_fullscreen(GTK_WINDOW(window));
-    element->document()->webkitDidEnterFullScreenForElement(element);
+    element->document().webkitDidEnterFullScreenForElement(element);
 }
 
 void ChromeClient::exitFullScreenForElement(WebCore::Element*)
@@ -1034,11 +1034,11 @@ void ChromeClient::exitFullScreenForElement(WebCore::Element*)
 
 #if ENABLE(VIDEO) && USE(NATIVE_FULLSCREEN_VIDEO)
     if (m_fullScreenElement && m_fullScreenElement->isMediaElement()) {
-        m_fullScreenElement->document()->webkitWillExitFullScreenForElement(m_fullScreenElement.get());
+        m_fullScreenElement->document().webkitWillExitFullScreenForElement(m_fullScreenElement.get());
         HTMLMediaElement* mediaElement = toHTMLMediaElement(m_fullScreenElement.get());
         if (mediaElement->player()) {
             mediaElement->player()->exitFullscreen();
-            m_fullScreenElement->document()->webkitDidExitFullScreenForElement(m_fullScreenElement.get());
+            m_fullScreenElement->document().webkitDidExitFullScreenForElement(m_fullScreenElement.get());
             m_fullScreenElement.clear();
         }
         return;
@@ -1049,10 +1049,10 @@ void ChromeClient::exitFullScreenForElement(WebCore::Element*)
     ASSERT(widgetIsOnscreenToplevelWindow(window));
     g_signal_handlers_disconnect_by_func(window, reinterpret_cast<void*>(onFullscreenGtkKeyPressEvent), this);
 
-    m_fullScreenElement->document()->webkitWillExitFullScreenForElement(m_fullScreenElement.get());
+    m_fullScreenElement->document().webkitWillExitFullScreenForElement(m_fullScreenElement.get());
     gtk_window_unfullscreen(GTK_WINDOW(window));
     m_adjustmentWatcher.enableAllScrollbars();
-    m_fullScreenElement->document()->webkitDidExitFullScreenForElement(m_fullScreenElement.get());
+    m_fullScreenElement->document().webkitDidExitFullScreenForElement(m_fullScreenElement.get());
     m_fullScreenElement.clear();
 }
 #endif

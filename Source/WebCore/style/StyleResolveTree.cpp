@@ -143,7 +143,7 @@ static RenderObject* nextSiblingRenderer(const Element& element, const Container
 
 static bool shouldCreateRenderer(const Element& element, const ContainerNode* renderingParent)
 {
-    if (!element.document()->shouldCreateRenderers())
+    if (!element.document().shouldCreateRenderers())
         return false;
     if (!renderingParent)
         return false;
@@ -186,7 +186,7 @@ static RenderNamedFlowThread* moveToFlowThreadIfNeeded(Element& element, const R
 {
     if (!element.shouldMoveToFlowThread(style))
         return 0;
-    FlowThreadController& flowThreadController = element.document()->renderView()->flowThreadController();
+    FlowThreadController& flowThreadController = element.document().renderView()->flowThreadController();
     RenderNamedFlowThread& parentFlowRenderer = flowThreadController.ensureRenderFlowThreadWithName(style.flowThread());
     flowThreadController.registerNamedFlowContentNode(&element, &parentFlowRenderer);
     return &parentFlowRenderer;
@@ -197,7 +197,7 @@ static void createRendererIfNeeded(Element& element, RenderStyle* resolvedStyle)
 {
     ASSERT(!element.renderer());
 
-    Document& document = *element.document();
+    Document& document = element.document();
     ContainerNode* renderingParentNode = NodeRenderingTraversal::parent(&element);
 
     RefPtr<RenderStyle> style = resolvedStyle;
@@ -356,17 +356,17 @@ static void createTextRendererIfNeeded(Text& textNode)
     if (!renderingParentNode->childShouldCreateRenderer(&textNode))
         return;
 
-    Document* document = textNode.document();
+    Document& document = textNode.document();
     RefPtr<RenderStyle> style;
     bool resetStyleInheritance = textNode.parentNode()->isShadowRoot() && toShadowRoot(textNode.parentNode())->resetStyleInheritance();
     if (resetStyleInheritance)
-        style = document->ensureStyleResolver().defaultStyleForElement();
+        style = document.ensureStyleResolver().defaultStyleForElement();
     else
         style = parentRenderer->style();
 
     if (!textRendererIsNeeded(textNode, *parentRenderer, *style))
         return;
-    RenderText* newRenderer = textNode.createTextRenderer(document->renderArena(), style.get());
+    RenderText* newRenderer = textNode.createTextRenderer(document.renderArena(), style.get());
     if (!newRenderer)
         return;
     if (!parentRenderer->isChildAllowed(newRenderer, style.get())) {
@@ -455,7 +455,7 @@ static void attachShadowRoot(ShadowRoot& shadowRoot)
 {
     if (shadowRoot.attached())
         return;
-    StyleResolver& styleResolver = shadowRoot.document()->ensureStyleResolver();
+    StyleResolver& styleResolver = shadowRoot.document().ensureStyleResolver();
     styleResolver.pushParentShadowRoot(&shadowRoot);
 
     attachChildren(shadowRoot);
@@ -499,10 +499,8 @@ static void attachRenderTree(Element* current, RenderStyle* resolvedStyle)
     current->setAttached(true);
     current->clearNeedsStyleRecalc();
 
-    if (Document* document = current->document()) {
-        if (AXObjectCache* cache = document->axObjectCache())
-            cache->updateCacheAfterNodeIsAttached(current);
-    }
+    if (AXObjectCache* cache = current->document().axObjectCache())
+        cache->updateCacheAfterNodeIsAttached(current);
 
     current->updateAfterPseudoElement(NoChange);
 
@@ -603,10 +601,10 @@ static Change resolveLocal(Element* current, Change inheritedChange)
     RefPtr<RenderStyle> newStyle;
     RefPtr<RenderStyle> currentStyle = current->renderStyle();
 
-    Document* document = current->document();
+    Document& document = current->document();
     if (currentStyle) {
         newStyle = current->styleForRenderer();
-        localChange = determineChange(currentStyle.get(), newStyle.get(), document->settings());
+        localChange = determineChange(currentStyle.get(), newStyle.get(), document.settings());
     }
     if (localChange == Detach) {
         if (current->attached())
@@ -627,9 +625,9 @@ static Change resolveLocal(Element* current, Change inheritedChange)
 
     // If "rem" units are used anywhere in the document, and if the document element's font size changes, then go ahead and force font updating
     // all the way down the tree. This is simpler than having to maintain a cache of objects (and such font size changes should be rare anyway).
-    if (document->styleSheetCollection()->usesRemUnits() && document->documentElement() == current && localChange != NoChange && currentStyle && newStyle && currentStyle->fontSize() != newStyle->fontSize()) {
+    if (document.styleSheetCollection()->usesRemUnits() && document.documentElement() == current && localChange != NoChange && currentStyle && newStyle && currentStyle->fontSize() != newStyle->fontSize()) {
         // Cached RenderStyles may depend on the re units.
-        if (StyleResolver* styleResolver = document->styleResolverIfExists())
+        if (StyleResolver* styleResolver = document.styleResolverIfExists())
             styleResolver->invalidateMatchedPropertiesCache();
         return Force;
     }
@@ -661,7 +659,7 @@ static void resolveShadowTree(ShadowRoot* shadowRoot, RenderStyle* parentElement
 {
     if (!shadowRoot)
         return;
-    StyleResolver& styleResolver = shadowRoot->document()->ensureStyleResolver();
+    StyleResolver& styleResolver = shadowRoot->document().ensureStyleResolver();
     styleResolver.pushParentShadowRoot(shadowRoot);
 
     for (Node* child = shadowRoot->firstChild(); child; child = child->nextSibling()) {

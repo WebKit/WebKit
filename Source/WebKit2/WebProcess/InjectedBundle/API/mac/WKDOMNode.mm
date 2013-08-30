@@ -78,7 +78,7 @@
 
 - (WKDOMDocument *)document
 {
-    return WebKit::toWKDOMDocument(_impl->document());
+    return WebKit::toWKDOMDocument(&_impl->document());
 }
 
 - (WKDOMNode *)parentNode
@@ -108,7 +108,7 @@
 
 - (NSArray *)textRects
 {
-    _impl->document()->updateLayoutIgnorePendingStylesheets();
+    _impl->document().updateLayoutIgnorePendingStylesheets();
     if (!_impl->renderer())
         return nil;
     Vector<WebCore::IntRect> rects;

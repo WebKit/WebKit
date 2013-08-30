@@ -86,7 +86,7 @@ void SVGPolyElement::parseAttribute(const QualifiedName& name, const AtomicStrin
     if (name == SVGNames::pointsAttr) {
         SVGPointList newList;
         if (!pointsListFromSVGData(newList, value))
-            document()->accessSVGExtensions()->reportError("Problem parsing points=\"" + value + "\"");
+            document().accessSVGExtensions()->reportError("Problem parsing points=\"" + value + "\"");
 
         if (SVGAnimatedProperty* wrapper = SVGAnimatedProperty::lookupWrapper<SVGPolyElement, SVGAnimatedPointList>(this, pointsPropertyInfo()))
             static_cast<SVGAnimatedPointList*>(wrapper)->detachListWrappers(newList.size());

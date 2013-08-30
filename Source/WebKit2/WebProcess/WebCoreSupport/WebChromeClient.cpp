@@ -171,7 +171,7 @@ void WebChromeClient::focusedElementChanged(Element* element)
     if (!inputElement->isText())
         return;
 
-    WebFrameLoaderClient* webFrameLoaderClient = toWebFrameLoaderClient(element->document()->frame()->loader().client());
+    WebFrameLoaderClient* webFrameLoaderClient = toWebFrameLoaderClient(element->document().frame()->loader().client());
     WebFrame* webFrame = webFrameLoaderClient ? webFrameLoaderClient->webFrame() : 0;
     ASSERT(webFrame);
     m_page->injectedBundleFormClient().didFocusTextField(m_page, inputElement, webFrame);
@@ -531,10 +531,10 @@ void WebChromeClient::unavailablePluginButtonClicked(Element* element, RenderEmb
 
     HTMLPlugInImageElement* pluginElement = static_cast<HTMLPlugInImageElement*>(element);
 
-    String frameURLString = pluginElement->document()->frame()->loader().documentLoader()->responseURL().string();
+    String frameURLString = pluginElement->document().frame()->loader().documentLoader()->responseURL().string();
     String pageURLString = m_page->mainFrame()->loader().documentLoader()->responseURL().string();
-    String pluginURLString = pluginElement->document()->completeURL(pluginElement->url()).string();
-    KURL pluginspageAttributeURL = element->document()->completeURL(stripLeadingAndTrailingHTMLSpaces(pluginElement->getAttribute(pluginspageAttr)));
+    String pluginURLString = pluginElement->document().completeURL(pluginElement->url()).string();
+    KURL pluginspageAttributeURL = element->document().completeURL(stripLeadingAndTrailingHTMLSpaces(pluginElement->getAttribute(pluginspageAttr)));
     if (!pluginspageAttributeURL.protocolIsInHTTPFamily())
         pluginspageAttributeURL = KURL();
     m_page->send(Messages::WebPageProxy::UnavailablePluginButtonClicked(pluginUnavailabilityReason, pluginElement->serviceType(), pluginURLString, pluginspageAttributeURL.string(), frameURLString, pageURLString));

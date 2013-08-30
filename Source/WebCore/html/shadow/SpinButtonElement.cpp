@@ -118,10 +118,10 @@ void SpinButtonElement::defaultEventHandler(Event* event)
     else if (event->type() == eventNames().mousemoveEvent) {
         if (box->pixelSnappedBorderBoxRect().contains(local)) {
             if (!m_capturing) {
-                if (Frame* frame = document()->frame()) {
+                if (Frame* frame = document().frame()) {
                     frame->eventHandler().setCapturingMouseEventsNode(this);
                     m_capturing = true;
-                    if (Page* page = document()->page())
+                    if (Page* page = document().page())
                         page->chrome().registerPopupOpeningObserver(this);
                 }
             }
@@ -194,10 +194,10 @@ void SpinButtonElement::releaseCapture()
 {
     stopRepeatingTimer();
     if (m_capturing) {
-        if (Frame* frame = document()->frame()) {
+        if (Frame* frame = document().frame()) {
             frame->eventHandler().setCapturingMouseEventsNode(0);
             m_capturing = false;
-            if (Page* page = document()->page())
+            if (Page* page = document().page())
                 page->chrome().unregisterPopupOpeningObserver(this);
         }
     }

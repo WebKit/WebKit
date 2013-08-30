@@ -229,7 +229,7 @@ bool SVGViewSpec::parseViewSpec(const String& viewSpec)
                     return false;
                 currViewSpec++;
                 FloatRect viewBox;
-                if (!SVGFitToViewBox::parseViewBox(m_contextElement->document(), currViewSpec, end, viewBox, false))
+                if (!SVGFitToViewBox::parseViewBox(&m_contextElement->document(), currViewSpec, end, viewBox, false))
                     return false;
                 setViewBoxBaseValue(viewBox);
                 if (currViewSpec >= end || *currViewSpec != ')')

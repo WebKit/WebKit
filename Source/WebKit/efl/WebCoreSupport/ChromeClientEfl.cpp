@@ -634,9 +634,9 @@ bool ChromeClientEfl::supportsFullScreenForElement(const WebCore::Element* eleme
 {
     UNUSED_PARAM(withKeyboard);
 
-    if (!element->document()->page())
+    if (!element->document().page())
         return false;
-    return element->document()->page()->settings().fullScreenEnabled();
+    return element->document().page()->settings().fullScreenEnabled();
 }
 
 void ChromeClientEfl::enterFullScreenForElement(WebCore::Element* element)
@@ -645,9 +645,9 @@ void ChromeClientEfl::enterFullScreenForElement(WebCore::Element* element)
     // exitFullScreenForElement().
     m_fullScreenElement = element;
 
-    element->document()->webkitWillEnterFullScreenForElement(element);
+    element->document().webkitWillEnterFullScreenForElement(element);
     ewk_view_fullscreen_enter(m_view);
-    element->document()->webkitDidEnterFullScreenForElement(element);
+    element->document().webkitDidEnterFullScreenForElement(element);
 }
 
 void ChromeClientEfl::exitFullScreenForElement(WebCore::Element*)
@@ -657,9 +657,9 @@ void ChromeClientEfl::exitFullScreenForElement(WebCore::Element*)
     // So we use the reference to the element we saved above.
     ASSERT(m_fullScreenElement);
 
-    m_fullScreenElement->document()->webkitWillExitFullScreenForElement(m_fullScreenElement.get());
+    m_fullScreenElement->document().webkitWillExitFullScreenForElement(m_fullScreenElement.get());
     ewk_view_fullscreen_exit(m_view);
-    m_fullScreenElement->document()->webkitDidExitFullScreenForElement(m_fullScreenElement.get());
+    m_fullScreenElement->document().webkitDidExitFullScreenForElement(m_fullScreenElement.get());
 
     m_fullScreenElement.clear();
 }

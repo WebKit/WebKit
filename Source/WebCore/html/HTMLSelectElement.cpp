@@ -185,7 +185,7 @@ void HTMLSelectElement::listBoxSelectItem(int listIndex, bool allowMultiplySelec
 
 bool HTMLSelectElement::usesMenuList() const
 {
-    const Page* page = document()->page();
+    const Page* page = document().page();
     RefPtr<RenderTheme> renderTheme = page ? page->theme() : RenderTheme::defaultTheme();
     if (renderTheme->delegatesMenuListRendering())
         return true;
@@ -454,7 +454,7 @@ void HTMLSelectElement::setLength(unsigned newLen, ExceptionCode& ec)
 
     if (diff < 0) { // Add dummy elements.
         do {
-            RefPtr<Element> option = document()->createElement(optionTag, false);
+            RefPtr<Element> option = document().createElement(optionTag, false);
             ASSERT(option);
             add(toHTMLElement(option.get()), 0, ec);
             if (ec)
@@ -1071,13 +1071,13 @@ void HTMLSelectElement::reset()
 #if !PLATFORM(WIN)
 bool HTMLSelectElement::platformHandleKeydownEvent(KeyboardEvent* event)
 {
-    const Page* page = document()->page();
+    const Page* page = document().page();
     RefPtr<RenderTheme> renderTheme = page ? page->theme() : RenderTheme::defaultTheme();
 
     if (!renderTheme->popsMenuByArrowKeys())
         return false;
 
-    if (!isSpatialNavigationEnabled(document()->frame())) {
+    if (!isSpatialNavigationEnabled(document().frame())) {
         if (event->keyIdentifier() == "Down" || event->keyIdentifier() == "Up") {
             focus();
             // Calling focus() may cause us to lose our renderer. Return true so
@@ -1104,7 +1104,7 @@ bool HTMLSelectElement::platformHandleKeydownEvent(KeyboardEvent* event)
 
 void HTMLSelectElement::menuListDefaultEventHandler(Event* event)
 {
-    const Page* page = document()->page();
+    const Page* page = document().page();
     RefPtr<RenderTheme> renderTheme = page ? page->theme() : RenderTheme::defaultTheme();
 
     if (event->type() == eventNames().keydownEvent) {
@@ -1117,7 +1117,7 @@ void HTMLSelectElement::menuListDefaultEventHandler(Event* event)
         // When using spatial navigation, we want to be able to navigate away
         // from the select element when the user hits any of the arrow keys,
         // instead of changing the selection.
-        if (isSpatialNavigationEnabled(document()->frame())) {
+        if (isSpatialNavigationEnabled(document().frame())) {
             if (!m_activeSelectionState)
                 return;
         }
@@ -1129,7 +1129,7 @@ void HTMLSelectElement::menuListDefaultEventHandler(Event* event)
 
         // When using caret browsing, we want to be able to move the focus
         // out of the select element when user hits a left or right arrow key.
-        const Frame* frame = document()->frame();
+        const Frame* frame = document().frame();
         if (frame && frame->settings().caretBrowsingEnabled()) {
             if (keyIdentifier == "Left" || keyIdentifier == "Right")
                 return;
@@ -1166,7 +1166,7 @@ void HTMLSelectElement::menuListDefaultEventHandler(Event* event)
         int keyCode = static_cast<KeyboardEvent*>(event)->keyCode();
         bool handled = false;
 
-        if (keyCode == ' ' && isSpatialNavigationEnabled(document()->frame())) {
+        if (keyCode == ' ' && isSpatialNavigationEnabled(document().frame())) {
             // Use space to toggle arrow key handling for selection change or spatial navigation.
             m_activeSelectionState = !m_activeSelectionState;
             event->setDefaultHandled();
@@ -1319,7 +1319,7 @@ void HTMLSelectElement::listBoxDefaultEventHandler(Event* event)
                 updateSelectedState(listIndex, mouseEvent->ctrlKey(), mouseEvent->shiftKey());
 #endif
             }
-            if (Frame* frame = document()->frame())
+            if (Frame* frame = document().frame())
                 frame->eventHandler().setMouseDownMayStartAutoscroll();
 
             event->setDefaultHandled();
@@ -1348,7 +1348,7 @@ void HTMLSelectElement::listBoxDefaultEventHandler(Event* event)
             }
             event->setDefaultHandled();
         }
-    } else if (event->type() == eventNames().mouseupEvent && event->isMouseEvent() && static_cast<MouseEvent*>(event)->button() == LeftButton && document()->frame()->eventHandler().autoscrollRenderer() != renderer()) {
+    } else if (event->type() == eventNames().mouseupEvent && event->isMouseEvent() && static_cast<MouseEvent*>(event)->button() == LeftButton && document().frame()->eventHandler().autoscrollRenderer() != renderer()) {
         // This click or drag event was not over any of the options.
         if (m_lastOnChangeSelection.isEmpty())
             return;
@@ -1404,7 +1404,7 @@ void HTMLSelectElement::listBoxDefaultEventHandler(Event* event)
             handled = true;
         }
 
-        if (isSpatialNavigationEnabled(document()->frame()))
+        if (isSpatialNavigationEnabled(document().frame()))
             // Check if the selection moves to the boundary.
             if (keyIdentifier == "Left" || keyIdentifier == "Right" || ((keyIdentifier == "Down" || keyIdentifier == "Up") && endIndex == m_activeSelectionEndIndex))
                 return;
@@ -1418,7 +1418,7 @@ void HTMLSelectElement::listBoxDefaultEventHandler(Event* event)
             ASSERT_UNUSED(listItems, !listItems.size() || static_cast<size_t>(endIndex) < listItems.size());
             setActiveSelectionEndIndex(endIndex);
 
-            bool selectNewItem = !m_multiple || static_cast<KeyboardEvent*>(event)->shiftKey() || !isSpatialNavigationEnabled(document()->frame());
+            bool selectNewItem = !m_multiple || static_cast<KeyboardEvent*>(event)->shiftKey() || !isSpatialNavigationEnabled(document().frame());
             if (selectNewItem)
                 m_activeSelectionState = true;
             // If the anchor is unitialized, or if we're going to deselect all
@@ -1448,7 +1448,7 @@ void HTMLSelectElement::listBoxDefaultEventHandler(Event* event)
             if (form())
                 form()->submitImplicitly(event, false);
             event->setDefaultHandled();
-        } else if (m_multiple && keyCode == ' ' && isSpatialNavigationEnabled(document()->frame())) {
+        } else if (m_multiple && keyCode == ' ' && isSpatialNavigationEnabled(document().frame())) {
             // Use space to toggle selection change.
             m_activeSelectionState = !m_activeSelectionState;
             ASSERT(m_activeSelectionEndIndex >= 0

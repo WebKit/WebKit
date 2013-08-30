@@ -665,7 +665,7 @@ inline void InspectorInstrumentation::didPushShadowRoot(Element* host, ShadowRoo
 {
 #if ENABLE(INSPECTOR)
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(host->document()))
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(&host->document()))
         didPushShadowRootImpl(instrumentingAgents, host, root);
 #else
     UNUSED_PARAM(host);
@@ -677,7 +677,7 @@ inline void InspectorInstrumentation::willPopShadowRoot(Element* host, ShadowRoo
 {
 #if ENABLE(INSPECTOR)
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(host->document()))
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(&host->document()))
         willPopShadowRootImpl(instrumentingAgents, host, root);
 #else
     UNUSED_PARAM(host);
@@ -775,7 +775,7 @@ inline bool InspectorInstrumentation::forcePseudoState(Element* element, CSSSele
 {
 #if ENABLE(INSPECTOR)
     FAST_RETURN_IF_NO_FRONTENDS(false);
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(element->document()))
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(&element->document()))
         return forcePseudoStateImpl(instrumentingAgents, element, pseudoState);
 #else
     UNUSED_PARAM(element);

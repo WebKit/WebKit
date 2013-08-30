@@ -32,7 +32,7 @@ namespace WebCore {
 Node* LiveNodeListBase::rootNode() const
 {
     if (isRootedAtDocument() && m_ownerNode->inDocument())
-        return m_ownerNode->document();
+        return &m_ownerNode->document();
 
     return m_ownerNode.get();
 }

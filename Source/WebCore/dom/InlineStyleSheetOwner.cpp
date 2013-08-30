@@ -125,16 +125,16 @@ void InlineStyleSheetOwner::createSheet(Element* element, const String& text)
 {
     ASSERT(element);
     ASSERT(element->inDocument());
-    Document* document = element->document();
+    Document& document = element->document();
     if (m_sheet) {
         if (m_sheet->isLoading())
-            document->styleSheetCollection()->removePendingSheet();
+            document.styleSheetCollection()->removePendingSheet();
         clearSheet();
     }
 
     if (!isValidCSSContentType(element, m_contentType))
         return;
-    if (!document->contentSecurityPolicy()->allowInlineStyle(document->url(), m_startLineNumber))
+    if (!document.contentSecurityPolicy()->allowInlineStyle(document.url(), m_startLineNumber))
         return;
 
     RefPtr<MediaQuerySet> mediaQueries;
@@ -148,11 +148,11 @@ void InlineStyleSheetOwner::createSheet(Element* element, const String& text)
     if (!screenEval.eval(mediaQueries.get()) && !printEval.eval(mediaQueries.get()))
         return;
 
-    document->styleSheetCollection()->addPendingSheet();
+    document.styleSheetCollection()->addPendingSheet();
 
     m_loading = true;
 
-    m_sheet = CSSStyleSheet::createInline(element, KURL(), document->inputEncoding());
+    m_sheet = CSSStyleSheet::createInline(element, KURL(), document.inputEncoding());
     m_sheet->setMediaQueries(mediaQueries.release());
     m_sheet->setTitle(element->title());
     m_sheet->contents()->parseStringAtLine(text, m_startLineNumber.zeroBasedInt(), m_isParsingChildren);

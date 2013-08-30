@@ -89,7 +89,7 @@ static void moveWidgetToParentSoon(Widget* child, FrameView* parent)
 RenderWidget::RenderWidget(Element* element)
     : RenderReplaced(element)
     , m_widget(0)
-    , m_frameView(element->document()->view())
+    , m_frameView(element->document().view())
     // Reference counting is used to prevent the widget from being
     // destroyed while inside the Widget code, which might not be
     // able to handle that.
@@ -116,7 +116,7 @@ void RenderWidget::destroy()
 {
     willBeDestroyed();
 
-    // Grab the arena from node()->document()->renderArena() before clearing the node pointer.
+    // Grab the arena from node()->document().renderArena() before clearing the node pointer.
     // Clear the node before deref-ing, as this may be deleted when deref is called.
     RenderArena* arena = renderArena();
     clearNode();

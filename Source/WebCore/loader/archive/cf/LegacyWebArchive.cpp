@@ -426,9 +426,8 @@ PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(Node* node, FrameFilter* f
     ASSERT(node);
     if (!node)
         return create();
-        
-    Document* document = node->document();
-    Frame* frame = document ? document->frame() : 0;
+
+    Frame* frame = node->document().frame();
     if (!frame)
         return create();
 
@@ -445,7 +444,7 @@ PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(Node* node, FrameFilter* f
     String markupString = createMarkup(node, IncludeNode, &nodeList, DoNotResolveURLs, tagNamesToFilter.get());
     Node::NodeType nodeType = node->nodeType();
     if (nodeType != Node::DOCUMENT_NODE && nodeType != Node::DOCUMENT_TYPE_NODE)
-        markupString = documentTypeString(*document) + markupString;
+        markupString = documentTypeString(node->document()) + markupString;
 
     return create(markupString, frame, nodeList, filter);
 }
@@ -483,18 +482,16 @@ PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(Range* range)
     if (!startContainer)
         return 0;
         
-    Document* document = startContainer->document();
-    if (!document)
-        return 0;
-        
-    Frame* frame = document->frame();
+    Document& document = startContainer->document();
+
+    Frame* frame = document.frame();
     if (!frame)
         return 0;
     
     Vector<Node*> nodeList;
     
     // FIXME: This is always "for interchange". Is that right? See the previous method.
-    String markupString = documentTypeString(*document) + createMarkup(range, &nodeList, AnnotateForInterchange);
+    String markupString = documentTypeString(document) + createMarkup(range, &nodeList, AnnotateForInterchange);
 
     return create(markupString, frame, nodeList, 0);
 }

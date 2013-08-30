@@ -298,7 +298,7 @@ void Pasteboard::writeImage(Node* node, const KURL& url, const String& title)
     if (!cachedImage || cachedImage->errorOccurred())
         return;
 
-    m_changeCount = writeURLForTypes(writableTypesForImage(), m_pasteboardName, cocoaURL, nsStringNilIfEmpty(title), node->document()->frame());
+    m_changeCount = writeURLForTypes(writableTypesForImage(), m_pasteboardName, cocoaURL, nsStringNilIfEmpty(title), node->document().frame());
     
     Image* image = cachedImage->imageForRenderer(renderer);
     if (!image)

@@ -86,7 +86,7 @@ void DragController::cleanupAfterSystemDrag()
 
 void DragController::declareAndWriteDragImage(Clipboard* clipboard, Element* element, const KURL& url, const String& label)
 {
-    client()->declareAndWriteDragImage(clipboard->pasteboard().name(), kit(element), url, label, element->document()->frame());
+    client()->declareAndWriteDragImage(clipboard->pasteboard().name(), kit(element), url, label, element->document().frame());
 }
 
 } // namespace WebCore

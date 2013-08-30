@@ -718,9 +718,9 @@ Ewk_Hit_Test* ewk_frame_hit_test_new(const Evas_Object* ewkFrame, int x, int y)
     hitTest->title.string = eina_stringshare_add(result.title(direction).utf8().data());
     hitTest->title.direction = (direction == WebCore::LTR) ? EWK_TEXT_DIRECTION_LEFT_TO_RIGHT : EWK_TEXT_DIRECTION_RIGHT_TO_LEFT;
     hitTest->alternate_text = eina_stringshare_add(result.altDisplayString().utf8().data());
-    if (result.innerNonSharedNode() && result.innerNonSharedNode()->document()
-        && result.innerNonSharedNode()->document()->frame())
-        hitTest->frame = EWKPrivate::kitFrame(result.innerNonSharedNode()->document()->frame());
+    if (result.innerNonSharedNode()
+        && result.innerNonSharedNode()->document().frame())
+        hitTest->frame = EWKPrivate::kitFrame(result.innerNonSharedNode()->document().frame());
 
     hitTest->link.text = eina_stringshare_add(result.textContent().utf8().data());
     hitTest->link.url = eina_stringshare_add(result.absoluteLinkURL().string().utf8().data());
@@ -1147,8 +1147,8 @@ Evas_Object* ewk_frame_child_add(Evas_Object* ewkFrame, const WTF::String& name,
     coreFrame->tree().setName(name);
 
     if (ownerElement) {
-        ASSERT(ownerElement->document()->frame());
-        ownerElement->document()->frame()->tree().appendChild(coreFrame.release());
+        ASSERT(ownerElement->document().frame());
+        ownerElement->document().frame()->tree().appendChild(coreFrame.release());
     }
     childFrameSmartData->frame->init();
 

@@ -913,7 +913,7 @@ void RenderThemeWin::adjustSearchFieldStyle(StyleResolver* styleResolver, Render
     style->setPaddingRight(Length(padding, Fixed));
     style->setPaddingTop(Length(padding, Fixed));
     style->setPaddingBottom(Length(padding, Fixed));
-    if (e && e->focused() && e->document()->frame()->selection().isFocusedAndActive())
+    if (e && e->focused() && e->document().frame()->selection().isFocusedAndActive())
         style->setOutlineOffset(-2);
 }
 

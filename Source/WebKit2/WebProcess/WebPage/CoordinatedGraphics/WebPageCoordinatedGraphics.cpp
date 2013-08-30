@@ -54,8 +54,8 @@ void WebPage::findZoomableAreaForPoint(const IntPoint& point, const IntSize& are
 
     ASSERT(node);
 
-    if (node->document() && node->document()->view())
-        zoomableArea = node->document()->view()->contentsToWindow(zoomableArea);
+    if (node->document().view())
+        zoomableArea = node->document().view()->contentsToWindow(zoomableArea);
 
     send(Messages::WebPageProxy::DidFindZoomableArea(point, zoomableArea));
 }
@@ -91,8 +91,8 @@ void WebPage::findZoomableAreaForPoint(const IntPoint& point, const IntSize& are
         zoomableArea.unite(node->pixelSnappedBoundingBox());
     }
 
-    if (node->document() && node->document()->frame() && node->document()->frame()->view()) {
-        const ScrollView* view = node->document()->frame()->view();
+    if (node->document().frame() && node->document().frame()->view()) {
+        const ScrollView* view = node->document().frame()->view();
         zoomableArea = view->contentsToWindow(zoomableArea);
     }
 

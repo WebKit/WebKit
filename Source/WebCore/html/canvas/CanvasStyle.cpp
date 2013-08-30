@@ -76,7 +76,7 @@ RGBA32 currentColor(HTMLCanvasElement* canvas)
 
 bool parseColorOrCurrentColor(RGBA32& parsedColor, const String& colorString, HTMLCanvasElement* canvas)
 {
-    ColorParseResult parseResult = parseColor(parsedColor, colorString, canvas ? canvas->document() : 0);
+    ColorParseResult parseResult = parseColor(parsedColor, colorString, canvas ? &canvas->document() : 0);
     switch (parseResult) {
     case ParsedRGBA:
     case ParsedSystemColor:

@@ -103,7 +103,7 @@ bool RenderIFrame::flattenFrame() const
         return false;
 
     HTMLIFrameElement* element = toHTMLIFrameElement(node());
-    Frame* frame = element->document()->frame();
+    Frame* frame = element->document().frame();
 
     if (isSeamless())
         return false; // Seamless iframes are already "flat", don't try to flatten them.

@@ -31,7 +31,7 @@
 namespace WebCore {
 
 MergeIdenticalElementsCommand::MergeIdenticalElementsCommand(PassRefPtr<Element> first, PassRefPtr<Element> second)
-    : SimpleEditCommand(first->document())
+    : SimpleEditCommand(&first->document())
     , m_element1(first)
     , m_element2(second)
 {

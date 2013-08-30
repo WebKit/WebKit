@@ -73,7 +73,7 @@ bool BindingSecurity::shouldAllowAccessToFrame(BindingState* state, Frame* targe
 
 bool BindingSecurity::shouldAllowAccessToNode(BindingState* state, Node* target)
 {
-    return target && canAccessDocument(state, target->document());
+    return target && canAccessDocument(state, &target->document());
 }
 
 bool BindingSecurity::allowSettingFrameSrcToJavascriptUrl(BindingState* state, HTMLFrameElementBase* frame, const String& value)

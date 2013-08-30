@@ -112,9 +112,7 @@ void removeDOMWrapper(DOMObjectInternal* impl)
     WebCore::Node *nodeImpl = core(n);
 
     // Dig up Interpreter and ExecState.
-    WebCore::Frame *frame = 0;
-    if (WebCore::Document* document = nodeImpl->document())
-        frame = document->frame();
+    WebCore::Frame *frame = nodeImpl->document().frame();
     if (!frame)
         return;
 

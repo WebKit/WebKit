@@ -1479,7 +1479,7 @@ bool InspectorStyleSheetForInlineStyle::setStyleText(CSSStyleDeclaration* style,
     ASSERT_UNUSED(style, style == inlineStyle());
 
     {
-        InspectorCSSAgent::InlineStyleOverrideScope overrideScope(m_element->document());
+        InspectorCSSAgent::InlineStyleOverrideScope overrideScope(&m_element->document());
         m_element->setAttribute("style", text, ec);
     }
 
@@ -1496,7 +1496,7 @@ PassOwnPtr<Vector<size_t> > InspectorStyleSheetForInlineStyle::lineEndings() con
 
 Document* InspectorStyleSheetForInlineStyle::ownerDocument() const
 {
-    return m_element->document();
+    return &m_element->document();
 }
 
 bool InspectorStyleSheetForInlineStyle::ensureParsedDataReady()
@@ -1548,7 +1548,7 @@ bool InspectorStyleSheetForInlineStyle::getStyleAttributeRanges(CSSRuleSourceDat
     }
 
     RefPtr<MutableStylePropertySet> tempDeclaration = MutableStylePropertySet::create();
-    createCSSParser(m_element->document())->parseDeclaration(tempDeclaration.get(), m_styleText, result, m_element->document()->elementSheet().contents());
+    createCSSParser(&m_element->document())->parseDeclaration(tempDeclaration.get(), m_styleText, result, m_element->document().elementSheet().contents());
     return true;
 }
 

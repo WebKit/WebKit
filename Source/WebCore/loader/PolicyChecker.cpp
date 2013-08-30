@@ -85,7 +85,7 @@ void PolicyChecker::checkNavigationPolicy(const ResourceRequest& request, Docume
 
     // If we're loading content into a subframe, check against the parent's Content Security Policy
     // and kill the load if that check fails.
-    if (m_frame->ownerElement() && !m_frame->ownerElement()->document()->contentSecurityPolicy()->allowChildFrameFromSource(request.url())) {
+    if (m_frame->ownerElement() && !m_frame->ownerElement()->document().contentSecurityPolicy()->allowChildFrameFromSource(request.url())) {
         function(argument, request, 0, false);
         return;
     }

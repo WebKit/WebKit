@@ -270,8 +270,8 @@ WebView *getWebView(WebFrame *webFrame)
 
     coreFrame->tree().setName(name);
     if (ownerElement) {
-        ASSERT(ownerElement->document()->frame());
-        ownerElement->document()->frame()->tree().appendChild(coreFrame.get());
+        ASSERT(ownerElement->document().frame());
+        ownerElement->document().frame()->tree().appendChild(coreFrame.get());
     }
 
     coreFrame->init();
@@ -298,7 +298,7 @@ WebView *getWebView(WebFrame *webFrame)
 
 + (PassRefPtr<WebCore::Frame>)_createSubframeWithOwnerElement:(HTMLFrameOwnerElement*)ownerElement frameName:(const String&)name frameView:(WebFrameView *)frameView
 {
-    return [self _createFrameWithPage:ownerElement->document()->frame()->page() frameName:name frameView:frameView ownerElement:ownerElement];
+    return [self _createFrameWithPage:ownerElement->document().frame()->page() frameName:name frameView:frameView ownerElement:ownerElement];
 }
 
 - (BOOL)_isIncludedInWebKitStatistics
@@ -695,7 +695,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     if (startContainer == nil || endContainer == nil)
         return nil;
 
-    ASSERT(startContainer->document() == endContainer->document());
+    ASSERT(&startContainer->document() == &endContainer->document());
     
     _private->coreFrame->document()->updateLayoutIgnorePendingStylesheets();
 

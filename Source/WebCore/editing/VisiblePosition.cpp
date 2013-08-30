@@ -536,7 +536,7 @@ Position VisiblePosition::canonicalPosition(const Position& passedPosition)
 
     // The new position must be in the same editable element. Enforce that first.
     // Unless the descent is from a non-editable html element to an editable body.
-    if (node && node->hasTagName(htmlTag) && !node->rendererIsEditable() && node->document()->body() && node->document()->body()->rendererIsEditable())
+    if (node && node->hasTagName(htmlTag) && !node->rendererIsEditable() && node->document().body() && node->document().body()->rendererIsEditable())
         return next.isNotNull() ? next : prev;
 
     Node* editingRoot = editableRootForPosition(position);
@@ -678,7 +678,7 @@ PassRefPtr<Range> makeRange(const VisiblePosition &start, const VisiblePosition 
     if (s.isNull() || e.isNull())
         return 0;
 
-    return Range::create(s.containerNode()->document(), s.containerNode(), s.offsetInContainerNode(), e.containerNode(), e.offsetInContainerNode());
+    return Range::create(&s.containerNode()->document(), s.containerNode(), s.offsetInContainerNode(), e.containerNode(), e.offsetInContainerNode());
 }
 
 VisiblePosition startVisiblePosition(const Range *r, EAffinity affinity)

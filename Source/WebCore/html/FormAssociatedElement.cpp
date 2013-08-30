@@ -163,7 +163,7 @@ void FormAssociatedElement::resetFormOwner()
     setForm(findAssociatedForm(toHTMLElement(this), m_form));
     HTMLElement* element = toHTMLElement(this);     
     if (m_form && m_form != originalForm && m_form->inDocument())
-        element->document()->didAssociateFormControl(element);
+        element->document().didAssociateFormControl(element);
 }
 
 void FormAssociatedElement::formAttributeChanged()
@@ -175,7 +175,7 @@ void FormAssociatedElement::formAttributeChanged()
         setForm(HTMLFormElement::findClosestFormAncestor(*element));
         HTMLElement* element = toHTMLElement(this);
         if (m_form && m_form != originalForm && m_form->inDocument())
-            element->document()->didAssociateFormControl(element);
+            element->document().didAssociateFormControl(element);
         m_formAttributeTargetObserver = nullptr;
     } else {
         resetFormOwner();

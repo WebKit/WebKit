@@ -34,7 +34,7 @@
 namespace WebCore {
 
 SplitTextNodeCommand::SplitTextNodeCommand(PassRefPtr<Text> text, int offset)
-    : SimpleEditCommand(text->document())
+    : SimpleEditCommand(&text->document())
     , m_text2(text)
     , m_offset(offset)
 {
@@ -70,7 +70,7 @@ void SplitTextNodeCommand::doUnapply()
     if (!m_text1 || !m_text1->rendererIsEditable())
         return;
 
-    ASSERT(m_text1->document() == document());
+    ASSERT(&m_text1->document() == document());
 
     String prefixText = m_text1->data();
 

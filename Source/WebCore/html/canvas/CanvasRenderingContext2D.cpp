@@ -756,7 +756,7 @@ void CanvasRenderingContext2D::setStrokeColor(const String& color)
     if (color == state().m_unparsedStrokeColor)
         return;
     realizeSaves();
-    setStrokeStyle(CanvasStyle::createFromString(color, canvas()->document()));
+    setStrokeStyle(CanvasStyle::createFromString(color, &canvas()->document()));
     modifiableState().m_unparsedStrokeColor = color;
 }
 
@@ -798,7 +798,7 @@ void CanvasRenderingContext2D::setFillColor(const String& color)
     if (color == state().m_unparsedFillColor)
         return;
     realizeSaves();
-    setFillStyle(CanvasStyle::createFromString(color, canvas()->document()));
+    setFillStyle(CanvasStyle::createFromString(color, &canvas()->document()));
     modifiableState().m_unparsedFillColor = color;
 }
 
@@ -1839,7 +1839,7 @@ PassRefPtr<ImageData> CanvasRenderingContext2D::getImageData(ImageBuffer::Coordi
 {
     if (!canvas()->originClean()) {
         DEFINE_STATIC_LOCAL(String, consoleMessage, (ASCIILiteral("Unable to get image data from canvas because the canvas has been tainted by cross-origin data.")));
-        canvas()->document()->addConsoleMessage(SecurityMessageSource, ErrorMessageLevel, consoleMessage);
+        canvas()->document().addConsoleMessage(SecurityMessageSource, ErrorMessageLevel, consoleMessage);
         ec = SECURITY_ERR;
         return 0;
     }
@@ -2030,7 +2030,7 @@ void CanvasRenderingContext2D::setFont(const String& newFont)
     newStyle->font().update(newStyle->font().fontSelector());
 
     // Now map the font property longhands into the style.
-    StyleResolver& styleResolver = canvas()->document()->ensureStyleResolver();
+    StyleResolver& styleResolver = canvas()->document().ensureStyleResolver();
     styleResolver.applyPropertyToStyle(CSSPropertyFontFamily, parsedStyle->getPropertyCSSValue(CSSPropertyFontFamily).get(), newStyle.get());
     styleResolver.applyPropertyToCurrentStyle(CSSPropertyFontStyle, parsedStyle->getPropertyCSSValue(CSSPropertyFontStyle).get());
     styleResolver.applyPropertyToCurrentStyle(CSSPropertyFontVariant, parsedStyle->getPropertyCSSValue(CSSPropertyFontVariant).get());
@@ -2295,7 +2295,7 @@ void CanvasRenderingContext2D::inflateStrokeRect(FloatRect& rect) const
 
 const Font& CanvasRenderingContext2D::accessFont()
 {
-    canvas()->document()->updateStyleIfNeeded();
+    canvas()->document().updateStyleIfNeeded();
 
     if (!state().m_realizedFont)
         setFont(state().m_unparsedFont);

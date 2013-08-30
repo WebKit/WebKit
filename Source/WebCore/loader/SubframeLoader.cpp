@@ -293,14 +293,14 @@ PassRefPtr<Widget> SubframeLoader::createJavaAppletWidget(const IntSize& size, H
 
     if (!codeBaseURLString.isEmpty()) {
         KURL codeBaseURL = completeURL(codeBaseURLString);
-        if (!element->document()->securityOrigin()->canDisplay(codeBaseURL)) {
+        if (!element->document().securityOrigin()->canDisplay(codeBaseURL)) {
             FrameLoader::reportLocalLoadFailed(m_frame, codeBaseURL.string());
             return 0;
         }
 
         const char javaAppletMimeType[] = "application/x-java-applet";
-        if (!element->document()->contentSecurityPolicy()->allowObjectFromSource(codeBaseURL)
-            || !element->document()->contentSecurityPolicy()->allowPluginType(javaAppletMimeType, javaAppletMimeType, codeBaseURL))
+        if (!element->document().contentSecurityPolicy()->allowObjectFromSource(codeBaseURL)
+            || !element->document().contentSecurityPolicy()->allowPluginType(javaAppletMimeType, javaAppletMimeType, codeBaseURL))
             return 0;
     }
 
@@ -352,12 +352,12 @@ Frame* SubframeLoader::loadSubframe(HTMLFrameOwnerElement* ownerElement, const K
         marginHeight = frameElementBase->marginHeight();
     }
 
-    if (!ownerElement->document()->securityOrigin()->canDisplay(url)) {
+    if (!ownerElement->document().securityOrigin()->canDisplay(url)) {
         FrameLoader::reportLocalLoadFailed(m_frame, url.string());
         return 0;
     }
 
-    String referrerToUse = SecurityPolicy::generateReferrerHeader(ownerElement->document()->referrerPolicy(), url, referrer);
+    String referrerToUse = SecurityPolicy::generateReferrerHeader(ownerElement->document().referrerPolicy(), url, referrer);
     RefPtr<Frame> frame = m_frame->loader().client().createFrame(url, name, ownerElement, referrerToUse, allowsScrolling, marginWidth, marginHeight);
 
     if (!frame)  {

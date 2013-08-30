@@ -47,7 +47,7 @@ Node::InsertionNotificationRequest MathMLMathElement::insertedInto(ContainerNode
 {
     // There are sibling rules in the MathML default style.
     if (insertionPoint->inDocument())
-        document()->styleSheetCollection()->setUsesSiblingRulesOverride(true);
+        document().styleSheetCollection()->setUsesSiblingRulesOverride(true);
     return MathMLInlineContainerElement::insertedInto(insertionPoint);
 }
 

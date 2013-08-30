@@ -77,16 +77,12 @@ NodeIterator::NodeIterator(PassRefPtr<Node> rootNode, unsigned whatToShow, PassR
     , m_referenceNode(root(), true)
     , m_detached(false)
 {
-    // Document type nodes may have a null document. But since they can't have children, there is no need to listen for modifications to these.
-    ASSERT(root()->document() || root()->nodeType() == Node::DOCUMENT_TYPE_NODE);
-    if (Document* ownerDocument = root()->document())
-        ownerDocument->attachNodeIterator(this);
+    root()->document().attachNodeIterator(this);
 }
 
 NodeIterator::~NodeIterator()
 {
-    if (Document* ownerDocument = root()->document())
-        ownerDocument->detachNodeIterator(this);
+    root()->document().detachNodeIterator(this);
 }
 
 PassRefPtr<Node> NodeIterator::nextNode(ScriptState* state, ExceptionCode& ec)
@@ -149,8 +145,7 @@ PassRefPtr<Node> NodeIterator::previousNode(ScriptState* state, ExceptionCode& e
 
 void NodeIterator::detach()
 {
-    if (Document* ownerDocument = root()->document())
-        ownerDocument->detachNodeIterator(this);
+    root()->document().detachNodeIterator(this);
     m_detached = true;
     m_referenceNode.node.clear();
 }
@@ -165,8 +160,7 @@ void NodeIterator::updateForNodeRemoval(Node* removedNode, NodePointer& referenc
 {
     ASSERT(!m_detached);
     ASSERT(removedNode);
-    ASSERT(root()->document());
-    ASSERT(root()->document() == removedNode->document());
+    ASSERT(&root()->document() == &removedNode->document());
 
     // Iterator is not affected if the removed node is the reference node and is the root.
     // or if removed node is not the reference node, or the ancestor of the reference node.

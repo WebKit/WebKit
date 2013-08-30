@@ -80,7 +80,7 @@ bool HTMLMapElement::mapMouseEvent(LayoutPoint location, const LayoutSize& size,
 
 HTMLImageElement* HTMLMapElement::imageElement()
 {
-    RefPtr<HTMLCollection> images = document()->images();
+    RefPtr<HTMLCollection> images = document().images();
     for (unsigned i = 0; Node* curr = images->item(i); i++) {
         if (!isHTMLImageElement(curr))
             continue;
@@ -105,7 +105,7 @@ void HTMLMapElement::parseAttribute(const QualifiedName& name, const AtomicStrin
         if (isIdAttributeName(name)) {
             // Call base class so that hasID bit gets set.
             HTMLElement::parseAttribute(name, value);
-            if (document()->isHTMLDocument())
+            if (document().isHTMLDocument())
                 return;
         }
         if (inDocument())
@@ -113,7 +113,7 @@ void HTMLMapElement::parseAttribute(const QualifiedName& name, const AtomicStrin
         String mapName = value;
         if (mapName[0] == '#')
             mapName = mapName.substring(1);
-        m_name = document()->isHTMLDocument() ? mapName.lower() : mapName;
+        m_name = document().isHTMLDocument() ? mapName.lower() : mapName;
         if (inDocument())
             treeScope()->addImageMap(this);
 

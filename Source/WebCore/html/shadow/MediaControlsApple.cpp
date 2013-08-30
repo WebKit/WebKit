@@ -314,7 +314,7 @@ void MediaControlsApple::changedClosedCaptionsVisibility()
 
 void MediaControlsApple::reset()
 {
-    Page* page = document()->page();
+    Page* page = document().page();
     if (!page)
         return;
 
@@ -386,7 +386,7 @@ void MediaControlsApple::updateCurrentTimeDisplay()
     double now = m_mediaController->currentTime();
     double duration = m_mediaController->duration();
 
-    Page* page = document()->page();
+    Page* page = document().page();
     if (!page)
         return;
 
@@ -399,7 +399,7 @@ void MediaControlsApple::updateCurrentTimeDisplay()
 
 void MediaControlsApple::reportedError()
 {
-    Page* page = document()->page();
+    Page* page = document().page();
     if (!page)
         return;
 
@@ -529,7 +529,7 @@ void MediaControlsApple::showClosedCaptionTrackList()
     // media controls level such that a click anywhere outside of the track list hides the
     // track list. These two levels are necessary since it would not be possible to get a
     // reference to the track list when handling the event outside of the shadow tree.
-    document()->addEventListener(eventNames().clickEvent, listener, true);
+    document().addEventListener(eventNames().clickEvent, listener, true);
     addEventListener(eventNames().clickEvent, listener, true);
 }
 
@@ -545,7 +545,7 @@ void MediaControlsApple::hideClosedCaptionTrackList()
 
     EventListener* listener = eventListener().get();
     m_closedCaptionsContainer->removeEventListener(eventNames().mousewheelEvent, listener, true);
-    document()->removeEventListener(eventNames().clickEvent, listener, true);
+    document().removeEventListener(eventNames().clickEvent, listener, true);
     removeEventListener(eventNames().clickEvent, listener, true);
 }
 
@@ -566,7 +566,7 @@ void MediaControlsApple::handleClickEvent(Event* event)
     Node* currentTarget = event->currentTarget()->toNode();
     Node* target = event->target()->toNode();
 
-    if ((currentTarget == document() && !shadowHost()->contains(target)) || (currentTarget == this && !m_closedCaptionsContainer->contains(target))) {
+    if ((currentTarget == &document() && !shadowHost()->contains(target)) || (currentTarget == this && !m_closedCaptionsContainer->contains(target))) {
         hideClosedCaptionTrackList();
         event->stopImmediatePropagation();
         event->setDefaultHandled();

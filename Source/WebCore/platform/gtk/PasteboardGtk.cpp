@@ -198,7 +198,7 @@ static KURL getURLForImageNode(Node* node)
         Element* element = toElement(node);
         urlString = element->imageSourceURL();
     }
-    return urlString.isEmpty() ? KURL() : node->document()->completeURL(stripLeadingAndTrailingHTMLSpaces(urlString));
+    return urlString.isEmpty() ? KURL() : node->document().completeURL(stripLeadingAndTrailingHTMLSpaces(urlString));
 }
 
 void Pasteboard::writeImage(Node* node, const KURL&, const String& title)

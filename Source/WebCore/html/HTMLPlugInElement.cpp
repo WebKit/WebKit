@@ -99,7 +99,7 @@ void HTMLPlugInElement::willDetachRenderers()
     m_instance.clear();
 
     if (m_isCapturingMouseEvents) {
-        if (Frame* frame = document()->frame())
+        if (Frame* frame = document().frame())
             frame->eventHandler().setCapturingMouseEventsNode(0);
         m_isCapturingMouseEvents = false;
     }
@@ -119,7 +119,7 @@ void HTMLPlugInElement::resetInstance()
 
 PassRefPtr<JSC::Bindings::Instance> HTMLPlugInElement::getInstance()
 {
-    Frame* frame = document()->frame();
+    Frame* frame = document().frame();
     if (!frame)
         return 0;
 
@@ -228,7 +228,7 @@ void HTMLPlugInElement::defaultEventHandler(Event* event)
 bool HTMLPlugInElement::isKeyboardFocusable(KeyboardEvent* event) const
 {
     UNUSED_PARAM(event);
-    if (!document()->page())
+    if (!document().page())
         return false;
 
     const PluginViewBase* plugin = pluginWidget() && pluginWidget()->isPluginViewBase() ? static_cast<const PluginViewBase*>(pluginWidget()) : 0;
@@ -257,9 +257,9 @@ bool HTMLPlugInElement::supportsFocus() const
 
 NPObject* HTMLPlugInElement::getNPObject()
 {
-    ASSERT(document()->frame());
+    ASSERT(document().frame());
     if (!m_NPObject)
-        m_NPObject = document()->frame()->script().createScriptObjectForPluginElement(this);
+        m_NPObject = document().frame()->script().createScriptObjectForPluginElement(this);
     return m_NPObject;
 }
 

@@ -105,7 +105,7 @@ PassRefPtr<HTMLCollection> HTMLFieldSetElement::elements()
 
 void HTMLFieldSetElement::refreshElementsIfNeeded() const
 {
-    uint64_t docVersion = document()->domTreeVersion();
+    uint64_t docVersion = document().domTreeVersion();
     if (m_documentVersion == docVersion)
         return;
 

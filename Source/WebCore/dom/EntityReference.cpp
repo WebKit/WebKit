@@ -48,7 +48,7 @@ Node::NodeType EntityReference::nodeType() const
 
 PassRefPtr<Node> EntityReference::cloneNode(bool)
 {
-    return create(document(), m_entityName);
+    return create(&document(), m_entityName);
 }
 
 } // namespace

@@ -104,7 +104,7 @@ static void contentsQuadToPage(const FrameView* mainView, const FrameView* view,
 static void buildNodeHighlight(Node* node, const HighlightConfig& highlightConfig, Highlight* highlight)
 {
     RenderObject* renderer = node->renderer();
-    Frame* containingFrame = node->document()->frame();
+    Frame* containingFrame = node->document().frame();
 
     if (!renderer || !containingFrame)
         return;
@@ -376,10 +376,10 @@ void InspectorOverlay::drawNodeHighlight()
     RefPtr<InspectorObject> highlightObject = buildObjectForHighlight(m_page->mainFrame().view(), highlight);
 
     Node* node = m_highlightNode.get();
-    if (node->isElementNode() && m_nodeHighlightConfig.showInfo && node->renderer() && node->document()->frame()) {
+    if (node->isElementNode() && m_nodeHighlightConfig.showInfo && node->renderer() && node->document().frame()) {
         RefPtr<InspectorObject> elementInfo = InspectorObject::create();
         Element* element = toElement(node);
-        bool isXHTML = element->document()->isXHTMLDocument();
+        bool isXHTML = element->document().isXHTMLDocument();
         elementInfo->setString("tagName", isXHTML ? element->nodeName() : element->nodeName().lower());
         elementInfo->setString("idValue", element->getIdAttribute());
         HashSet<AtomicString> usedClassNames;
@@ -399,7 +399,7 @@ void InspectorOverlay::drawNodeHighlight()
         }
 
         RenderObject* renderer = node->renderer();
-        Frame* containingFrame = node->document()->frame();
+        Frame* containingFrame = node->document().frame();
         FrameView* containingView = containingFrame->view();
         IntRect boundingBox = pixelSnappedIntRect(containingView->contentsToRootView(renderer->absoluteBoundingBoxRect()));
         RenderBoxModelObject* modelObject = renderer->isBoxModelObject() ? toRenderBoxModelObject(renderer) : 0;

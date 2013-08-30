@@ -47,7 +47,7 @@ PassRefPtr<HTMLBaseElement> HTMLBaseElement::create(const QualifiedName& tagName
 void HTMLBaseElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     if (name == hrefAttr || name == targetAttr)
-        document()->processBaseElement();
+        document().processBaseElement();
     else
         HTMLElement::parseAttribute(name, value);
 }
@@ -56,7 +56,7 @@ Node::InsertionNotificationRequest HTMLBaseElement::insertedInto(ContainerNode* 
 {
     HTMLElement::insertedInto(insertionPoint);
     if (insertionPoint->inDocument())
-        document()->processBaseElement();
+        document().processBaseElement();
     return InsertionDone;
 }
 
@@ -64,7 +64,7 @@ void HTMLBaseElement::removedFrom(ContainerNode* insertionPoint)
 {
     HTMLElement::removedFrom(insertionPoint);
     if (insertionPoint->inDocument())
-        document()->processBaseElement();
+        document().processBaseElement();
 }
 
 bool HTMLBaseElement::isURLAttribute(const Attribute& attribute) const
@@ -85,11 +85,11 @@ KURL HTMLBaseElement::href() const
 
     const AtomicString& attributeValue = fastGetAttribute(hrefAttr);
     if (attributeValue.isNull())
-        return document()->url();
+        return document().url();
 
-    KURL url = !document()->decoder() ?
-        KURL(document()->url(), stripLeadingAndTrailingHTMLSpaces(attributeValue)) :
-        KURL(document()->url(), stripLeadingAndTrailingHTMLSpaces(attributeValue), document()->decoder()->encoding());
+    KURL url = !document().decoder() ?
+        KURL(document().url(), stripLeadingAndTrailingHTMLSpaces(attributeValue)) :
+        KURL(document().url(), stripLeadingAndTrailingHTMLSpaces(attributeValue), document().decoder()->encoding());
 
     if (!url.isValid())
         return KURL();

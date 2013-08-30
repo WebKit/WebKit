@@ -156,8 +156,8 @@ InputType::~InputType()
 
 bool InputType::themeSupportsDataListUI(InputType* type)
 {
-    Document* document = type->element()->document();
-    RefPtr<RenderTheme> theme = document->page() ? document->page()->theme() : RenderTheme::defaultTheme();
+    Document& document = type->element()->document();
+    RefPtr<RenderTheme> theme = document.page() ? document.page()->theme() : RenderTheme::defaultTheme();
     return theme->supportsDataListUI(type->formControlType());
 }
 
@@ -519,7 +519,7 @@ void InputType::dispatchSimulatedClickIfActive(KeyboardEvent* event) const
 
 Chrome* InputType::chrome() const
 {
-    if (Page* page = element()->document()->page())
+    if (Page* page = element()->document().page())
         return &page->chrome();
     return 0;
 }
@@ -999,7 +999,7 @@ void InputType::applyStep(int count, AnyStepHandling anyStepHandling, TextFieldE
 
     setValueAsDecimal(newValue, eventBehavior, ec);
 
-    if (AXObjectCache* cache = element()->document()->existingAXObjectCache())
+    if (AXObjectCache* cache = element()->document().existingAXObjectCache())
         cache->postNotification(element(), AXObjectCache::AXValueChanged, true);
 }
 
@@ -1130,7 +1130,7 @@ void InputType::observeFeatureIfVisible(FeatureObserver::Feature feature) const
 {
     if (RenderStyle* style = element()->renderStyle()) {
         if (style->visibility() != HIDDEN)
-            FeatureObserver::observe(element()->document(), feature);
+            FeatureObserver::observe(&element()->document(), feature);
     }
 }
 

@@ -809,7 +809,7 @@ void InspectorCSSAgent::getMatchedStylesForNode(ErrorString* errorString, int no
         return;
 
     // Matched rules.
-    StyleResolver& styleResolver = element->document()->ensureStyleResolver();
+    StyleResolver& styleResolver = element->document().ensureStyleResolver();
     Vector<RefPtr<StyleRuleBase> > matchedRules = styleResolver.styleRulesForElement(element, StyleResolver::AllCSSRules);
     matchedCSSRules = buildArrayForMatchedRuleList(matchedRules, styleResolver, element);
 
@@ -834,7 +834,7 @@ void InspectorCSSAgent::getMatchedStylesForNode(ErrorString* errorString, int no
         RefPtr<TypeBuilder::Array<TypeBuilder::CSS::InheritedStyleEntry> > entries = TypeBuilder::Array<TypeBuilder::CSS::InheritedStyleEntry>::create();
         Element* parentElement = element->parentElement();
         while (parentElement) {
-            StyleResolver& parentStyleResolver = parentElement->document()->ensureStyleResolver();
+            StyleResolver& parentStyleResolver = parentElement->document().ensureStyleResolver();
             Vector<RefPtr<StyleRuleBase> > parentMatchedRules = parentStyleResolver.styleRulesForElement(parentElement, StyleResolver::AllCSSRules);
             RefPtr<TypeBuilder::CSS::InheritedStyleEntry> entry = TypeBuilder::CSS::InheritedStyleEntry::create()
                 .setMatchedCSSRules(buildArrayForMatchedRuleList(parentMatchedRules, styleResolver, parentElement));
@@ -992,7 +992,7 @@ void InspectorCSSAgent::addRule(ErrorString* errorString, const int contextNodeI
     if (!node)
         return;
 
-    InspectorStyleSheet* inspectorStyleSheet = viaInspectorStyleSheet(node->document(), true);
+    InspectorStyleSheet* inspectorStyleSheet = viaInspectorStyleSheet(&node->document(), true);
     if (!inspectorStyleSheet) {
         *errorString = "No target stylesheet found";
         return;
@@ -1053,7 +1053,7 @@ void InspectorCSSAgent::forcePseudoState(ErrorString* errorString, int nodeId, c
         m_nodeIdToForcedPseudoState.set(nodeId, forcedPseudoState);
     else
         m_nodeIdToForcedPseudoState.remove(nodeId);
-    element->document()->styleResolverChanged(RecalcStyleImmediately);
+    element->document().styleResolverChanged(RecalcStyleImmediately);
 }
 
 void InspectorCSSAgent::getNamedFlowCollection(ErrorString* errorString, int documentNodeId, RefPtr<TypeBuilder::Array<TypeBuilder::CSS::NamedFlow> >& result)
@@ -1453,9 +1453,8 @@ void InspectorCSSAgent::resetPseudoStates()
 {
     HashSet<Document*> documentsToChange;
     for (NodeIdToForcedPseudoState::iterator it = m_nodeIdToForcedPseudoState.begin(), end = m_nodeIdToForcedPseudoState.end(); it != end; ++it) {
-        Element* element = toElement(m_domAgent->nodeForId(it->key));
-        if (element && element->document())
-            documentsToChange.add(element->document());
+        if (Element* element = toElement(m_domAgent->nodeForId(it->key)))
+            documentsToChange.add(&element->document());
     }
 
     m_nodeIdToForcedPseudoState.clear();

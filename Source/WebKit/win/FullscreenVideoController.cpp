@@ -278,7 +278,7 @@ void FullscreenVideoController::enterFullscreen()
     if (!m_mediaElement)
         return;
 
-    WebView* webView = kit(m_mediaElement->document()->page());
+    WebView* webView = kit(m_mediaElement->document().page());
     HWND parentHwnd = webView ? webView->viewWindow() : 0;
 
     m_fullscreenWindow->createWindow(parentHwnd);

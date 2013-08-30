@@ -218,10 +218,10 @@ inline void ChildNodeInsertionNotifier::notify(Node* node)
     ASSERT(!NoEventDispatchAssertion::isEventDispatchForbidden());
 
 #if ENABLE(INSPECTOR)
-    InspectorInstrumentation::didInsertDOMNode(node->document(), node);
+    InspectorInstrumentation::didInsertDOMNode(&node->document(), node);
 #endif
 
-    RefPtr<Document> protectDocument(node->document());
+    RefPtr<Document> protectDocument(&node->document());
     RefPtr<Node> protectNode(node);
 
     if (m_insertionPoint->inDocument())
@@ -256,7 +256,7 @@ inline void ChildNodeRemovalNotifier::notify(Node* node)
 {
     if (node->inDocument()) {
         notifyNodeRemovedFromDocument(node);
-        node->document()->notifyRemovePendingSheetIfNeeded();
+        node->document().notifyRemovePendingSheetIfNeeded();
     } else if (node->isContainerNode())
         notifyNodeRemovedFromTree(toContainerNode(node));
 }

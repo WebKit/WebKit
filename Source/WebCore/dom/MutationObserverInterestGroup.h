@@ -44,7 +44,7 @@ class MutationObserverInterestGroup {
 public:
     static PassOwnPtr<MutationObserverInterestGroup> createForChildListMutation(Node* target)
     {
-        if (!target->document()->hasMutationObserversOfType(MutationObserver::ChildList))
+        if (!target->document().hasMutationObserversOfType(MutationObserver::ChildList))
             return nullptr;
 
         MutationRecordDeliveryOptions oldValueFlag = 0;
@@ -53,7 +53,7 @@ public:
 
     static PassOwnPtr<MutationObserverInterestGroup> createForCharacterDataMutation(Node* target)
     {
-        if (!target->document()->hasMutationObserversOfType(MutationObserver::CharacterData))
+        if (!target->document().hasMutationObserversOfType(MutationObserver::CharacterData))
             return nullptr;
 
         return createIfNeeded(target, MutationObserver::CharacterData, MutationObserver::CharacterDataOldValue);
@@ -61,7 +61,7 @@ public:
 
     static PassOwnPtr<MutationObserverInterestGroup> createForAttributesMutation(Node* target, const QualifiedName& attributeName)
     {
-        if (!target->document()->hasMutationObserversOfType(MutationObserver::Attributes))
+        if (!target->document().hasMutationObserversOfType(MutationObserver::Attributes))
             return nullptr;
 
         return createIfNeeded(target, MutationObserver::Attributes, MutationObserver::AttributeOldValue, &attributeName);

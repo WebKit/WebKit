@@ -154,7 +154,7 @@ static inline String targetReferenceFromResource(SVGElement* element)
     else
         ASSERT_NOT_REACHED();
 
-    return SVGURIReference::fragmentIdentifierFromIRIString(target, element->document());
+    return SVGURIReference::fragmentIdentifierFromIRIString(target, &element->document());
 }
 
 static inline RenderSVGResourceContainer* paintingResourceFromSVGPaint(Document* document, const SVGPaint::SVGPaintType& paintType, const String& paintUri, AtomicString& id, bool& hasPendingResource)

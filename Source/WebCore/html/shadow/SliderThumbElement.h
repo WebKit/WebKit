@@ -80,7 +80,7 @@ inline PassRefPtr<SliderThumbElement> SliderThumbElement::create(Document* docum
 
 inline PassRefPtr<Element> SliderThumbElement::cloneElementWithoutAttributesAndChildren()
 {
-    return create(document());
+    return create(&document());
 }
 
 inline SliderThumbElement* toSliderThumbElement(Node* node)

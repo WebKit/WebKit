@@ -94,10 +94,10 @@
 {
     // Returns bounding rect of text field, in screen coordinates.
     NSRect result = [self boundingBox];
-    if (!core(self)->document()->view())
+    if (!core(self)->document().view())
         return result;
 
-    NSView* view = core(self)->document()->view()->documentView();
+    NSView* view = core(self)->document().view()->documentView();
     result = [view convertRect:result toView:nil];
     result.origin = [[view window] convertBaseToScreen:result.origin];
     return result;

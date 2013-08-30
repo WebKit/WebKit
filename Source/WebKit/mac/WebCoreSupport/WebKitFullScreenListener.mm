@@ -45,25 +45,25 @@ using namespace WebCore;
 - (void)webkitWillEnterFullScreen
 {
     if (_element)
-        _element->document()->webkitWillEnterFullScreenForElement(_element.get());
+        _element->document().webkitWillEnterFullScreenForElement(_element.get());
 }
 
 - (void)webkitDidEnterFullScreen
 {
     if (_element)
-        _element->document()->webkitDidEnterFullScreenForElement(_element.get());
+        _element->document().webkitDidEnterFullScreenForElement(_element.get());
 }
 
 - (void)webkitWillExitFullScreen
 {
     if (_element)
-        _element->document()->webkitWillExitFullScreenForElement(_element.get());
+        _element->document().webkitWillExitFullScreenForElement(_element.get());
 }
 
 - (void)webkitDidExitFullScreen
 {
     if (_element)
-        _element->document()->webkitDidExitFullScreenForElement(_element.get());
+        _element->document().webkitDidExitFullScreenForElement(_element.get());
 }
 
 @end

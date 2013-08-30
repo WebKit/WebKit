@@ -1063,12 +1063,12 @@ PassRefPtr<Range> TextIterator::range() const
             m_positionEndOffset += index;
             m_positionOffsetBaseNode = 0;
         }
-        return Range::create(m_positionNode->document(), m_positionNode, m_positionStartOffset, m_positionNode, m_positionEndOffset);
+        return Range::create(&m_positionNode->document(), m_positionNode, m_positionStartOffset, m_positionNode, m_positionEndOffset);
     }
 
     // otherwise, return the end of the overall range we were given
     if (m_endContainer)
-        return Range::create(m_endContainer->document(), m_endContainer, m_endOffset, m_endContainer, m_endOffset);
+        return Range::create(&m_endContainer->document(), m_endContainer, m_endOffset, m_endContainer, m_endOffset);
         
     return 0;
 }
@@ -1363,9 +1363,9 @@ bool SimplifiedBackwardsTextIterator::advanceRespectingRange(Node* next)
 PassRefPtr<Range> SimplifiedBackwardsTextIterator::range() const
 {
     if (m_positionNode)
-        return Range::create(m_positionNode->document(), m_positionNode, m_positionStartOffset, m_positionNode, m_positionEndOffset);
+        return Range::create(&m_positionNode->document(), m_positionNode, m_positionStartOffset, m_positionNode, m_positionEndOffset);
     
-    return Range::create(m_startNode->document(), m_startNode, m_startOffset, m_startNode, m_startOffset);
+    return Range::create(&m_startNode->document(), m_startNode, m_startOffset, m_startNode, m_startOffset);
 }
 
 // --------
@@ -1464,7 +1464,7 @@ static PassRefPtr<Range> characterSubrange(CharacterIterator& it, int offset, in
         it.advance(length - 1);
     RefPtr<Range> end = it.range();
 
-    return Range::create(start->startContainer()->document(), 
+    return Range::create(&start->startContainer()->document(),
         start->startContainer(), start->startOffset(), 
         end->endContainer(), end->endOffset());
 }
@@ -2394,7 +2394,7 @@ PassRefPtr<Range> TextIterator::subrange(Range* entireRange, int characterOffset
 
 PassRefPtr<Range> TextIterator::rangeFromLocationAndLength(ContainerNode* scope, int rangeLocation, int rangeLength, bool forSelectionPreservation)
 {
-    RefPtr<Range> resultRange = scope->document()->createRange();
+    RefPtr<Range> resultRange = scope->document().createRange();
 
     int docTextPosition = 0;
     int rangeEnd = rangeLocation + rangeLength;
@@ -2427,7 +2427,7 @@ PassRefPtr<Range> TextIterator::rangeFromLocationAndLength(ContainerNode* scope,
             // FIXME: This is a workaround for the fact that the end of a run is often at the wrong
             // position for emitted '\n's.
             if (len == 1 && it.characterAt(0) == '\n') {
-                scope->document()->updateLayoutIgnorePendingStylesheets();
+                scope->document().updateLayoutIgnorePendingStylesheets();
                 it.advance();
                 if (!it.atEnd()) {
                     RefPtr<Range> range = it.range();
@@ -2501,7 +2501,7 @@ bool TextIterator::getLocationAndLengthFromRange(Node* scope, const Range* range
     if (range->endContainer() != scope && !range->endContainer()->isDescendantOf(scope))
         return false;
 
-    RefPtr<Range> testRange = Range::create(scope->document(), scope, 0, range->startContainer(), range->startOffset());
+    RefPtr<Range> testRange = Range::create(&scope->document(), scope, 0, range->startContainer(), range->startOffset());
     ASSERT(testRange->startContainer() == scope);
     location = TextIterator::rangeLength(testRange.get());
 

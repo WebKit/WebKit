@@ -171,7 +171,7 @@ void AXObjectCache::handleFocusedUIElementChanged(Node*, Node* newFocusedNode)
     if (!newFocusedNode)
         return;
 
-    Page* page = newFocusedNode->document()->page();
+    Page* page = newFocusedNode->document().page();
     if (!page || !page->chrome().platformPageClient())
         return;
 

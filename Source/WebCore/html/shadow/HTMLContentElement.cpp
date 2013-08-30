@@ -93,7 +93,7 @@ void HTMLContentElement::ensureSelectParsed()
     if (!m_shouldParseSelectorList)
         return;
 
-    CSSParser parser(document());
+    CSSParser parser(&document());
     parser.parseSelector(select(), m_selectorList);
     m_shouldParseSelectorList = false;
     m_isValidSelector = validateSelect();

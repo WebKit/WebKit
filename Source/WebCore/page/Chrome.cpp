@@ -387,11 +387,8 @@ IntRect Chrome::windowResizerRect() const
 
 void Chrome::mouseDidMoveOverElement(const HitTestResult& result, unsigned modifierFlags)
 {
-    if (result.innerNode()) {
-        Document* document = result.innerNode()->document();
-        if (document && document->isDNSPrefetchEnabled())
-            prefetchDNS(result.absoluteLinkURL().host());
-    }
+    if (result.innerNode() && result.innerNode()->document().isDNSPrefetchEnabled())
+        prefetchDNS(result.absoluteLinkURL().host());
     m_client.mouseDidMoveOverElement(result, modifierFlags);
 
     InspectorInstrumentation::mouseDidMoveOverElement(m_page, result, modifierFlags);

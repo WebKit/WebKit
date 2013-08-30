@@ -67,14 +67,14 @@ ProcessingInstruction::~ProcessingInstruction()
         m_cachedSheet->removeClient(this);
 
     if (inDocument())
-        document()->styleSheetCollection()->removeStyleSheetCandidateNode(this);
+        document().styleSheetCollection()->removeStyleSheetCandidateNode(this);
 }
 
 void ProcessingInstruction::setData(const String& data, ExceptionCode&)
 {
     int oldLength = m_data.length();
     m_data = data;
-    document()->textRemoved(this, 0, oldLength);
+    document().textRemoved(this, 0, oldLength);
     checkStyleSheet();
 }
 
@@ -103,12 +103,12 @@ PassRefPtr<Node> ProcessingInstruction::cloneNode(bool /*deep*/)
 {
     // FIXME: Is it a problem that this does not copy m_localHref?
     // What about other data members?
-    return create(document(), m_target, m_data);
+    return create(&document(), m_target, m_data);
 }
 
 void ProcessingInstruction::checkStyleSheet()
 {
-    if (m_target == "xml-stylesheet" && document()->frame() && parentNode() == document()) {
+    if (m_target == "xml-stylesheet" && document().frame() && parentNode() == &document()) {
         // see http://www.w3.org/TR/xml-stylesheet/
         // ### support stylesheet included in a fragment of this (or another) document
         // ### make sure this gets called when adding from javascript
@@ -157,33 +157,33 @@ void ProcessingInstruction::checkStyleSheet()
                 m_cachedSheet = 0;
             }
             
-            String url = document()->completeURL(href).string();
+            String url = document().completeURL(href).string();
             if (!dispatchBeforeLoadEvent(url))
                 return;
             
             m_loading = true;
-            document()->styleSheetCollection()->addPendingSheet();
+            document().styleSheetCollection()->addPendingSheet();
             
-            CachedResourceRequest request(ResourceRequest(document()->completeURL(href)));
+            CachedResourceRequest request(ResourceRequest(document().completeURL(href)));
 #if ENABLE(XSLT)
             if (m_isXSL)
-                m_cachedSheet = document()->cachedResourceLoader()->requestXSLStyleSheet(request);
+                m_cachedSheet = document().cachedResourceLoader()->requestXSLStyleSheet(request);
             else
 #endif
             {
                 String charset = attrs.get("charset");
                 if (charset.isEmpty())
-                    charset = document()->charset();
+                    charset = document().charset();
                 request.setCharset(charset);
 
-                m_cachedSheet = document()->cachedResourceLoader()->requestCSSStyleSheet(request);
+                m_cachedSheet = document().cachedResourceLoader()->requestCSSStyleSheet(request);
             }
             if (m_cachedSheet)
                 m_cachedSheet->addClient(this);
             else {
                 // The request may have been denied if (for example) the stylesheet is local and the document is remote.
                 m_loading = false;
-                document()->styleSheetCollection()->removePendingSheet();
+                document().styleSheetCollection()->removePendingSheet();
             }
         }
     }
@@ -201,7 +201,7 @@ bool ProcessingInstruction::isLoading() const
 bool ProcessingInstruction::sheetLoaded()
 {
     if (!isLoading()) {
-        document()->styleSheetCollection()->removePendingSheet();
+        document().styleSheetCollection()->removePendingSheet();
         return true;
     }
     return false;
@@ -215,7 +215,7 @@ void ProcessingInstruction::setCSSStyleSheet(const String& href, const KURL& bas
     }
 
     ASSERT(m_isCSS);
-    CSSParserContext parserContext(document(), baseURL, charset);
+    CSSParserContext parserContext(&document(), baseURL, charset);
 
     RefPtr<StyleSheetContents> newSheet = StyleSheetContents::create(href, parserContext);
 
@@ -296,7 +296,7 @@ Node::InsertionNotificationRequest ProcessingInstruction::insertedInto(Container
     Node::insertedInto(insertionPoint);
     if (!insertionPoint->inDocument())
         return InsertionDone;
-    document()->styleSheetCollection()->addStyleSheetCandidateNode(this, m_createdByParser);
+    document().styleSheetCollection()->addStyleSheetCandidateNode(this, m_createdByParser);
     checkStyleSheet();
     return InsertionDone;
 }
@@ -307,7 +307,7 @@ void ProcessingInstruction::removedFrom(ContainerNode* insertionPoint)
     if (!insertionPoint->inDocument())
         return;
     
-    document()->styleSheetCollection()->removeStyleSheetCandidateNode(this);
+    document().styleSheetCollection()->removeStyleSheetCandidateNode(this);
 
     if (m_sheet) {
         ASSERT(m_sheet->ownerNode() == this);
@@ -316,8 +316,8 @@ void ProcessingInstruction::removedFrom(ContainerNode* insertionPoint)
     }
 
     // If we're in document teardown, then we don't need to do any notification of our sheet's removal.
-    if (document()->renderer())
-        document()->styleResolverChanged(DeferRecalcStyle);
+    if (document().renderer())
+        document().styleResolverChanged(DeferRecalcStyle);
 }
 
 void ProcessingInstruction::finishParsingChildren()

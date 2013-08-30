@@ -151,7 +151,7 @@ void MediaControlsGtk::setMediaController(MediaControllerInterface* controller)
 
 void MediaControlsGtk::reset()
 {
-    Page* page = document()->page();
+    Page* page = document().page();
     if (!page)
         return;
 
@@ -175,7 +175,7 @@ void MediaControlsGtk::updateCurrentTimeDisplay()
     double now = m_mediaController->currentTime();
     double duration = m_mediaController->duration();
 
-    Page* page = document()->page();
+    Page* page = document().page();
     if (!page)
         return;
 
@@ -225,7 +225,7 @@ void MediaControlsGtk::createTextTrackDisplay()
     if (m_textDisplayContainer)
         return;
 
-    RefPtr<MediaControlTextTrackContainerElement> textDisplayContainer = MediaControlTextTrackContainerElement::create(document());
+    RefPtr<MediaControlTextTrackContainerElement> textDisplayContainer = MediaControlTextTrackContainerElement::create(&document());
     m_textDisplayContainer = textDisplayContainer.get();
 
     if (m_mediaController)

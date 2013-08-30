@@ -59,7 +59,6 @@ public:
     static bool parseAttribute(SVGElementTarget* target, const QualifiedName& name, const AtomicString& value)
     {
         ASSERT(target);
-        ASSERT(target->document());
         if (name == SVGNames::zoomAndPanAttr) {
             const UChar* start = value.characters();
             const UChar* end = start + value.length();

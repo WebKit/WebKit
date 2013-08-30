@@ -328,8 +328,8 @@ public:
     {
         ApplyPropertyDefault<TextDirection, getterFunction, TextDirection, setterFunction, TextDirection, initialFunction>::applyValue(propertyID, styleResolver, value);
         Element* element = styleResolver->element();
-        if (element && styleResolver->element() == element->document()->documentElement())
-            element->document()->setDirectionSetOnDocumentElement(true);
+        if (element && styleResolver->element() == element->document().documentElement())
+            element->document().setDirectionSetOnDocumentElement(true);
     }
 
     static PropertyHandler createHandler()

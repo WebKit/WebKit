@@ -126,10 +126,9 @@ HRESULT WebElementPropertyBag::Read(LPCOLESTR pszPropName, VARIANT *pVar, IError
         V_UNKNOWN(pVar) = node;
         return S_OK;
     } else if (isEqual(WebElementFrameKey, key)) {
-        if (!(m_result->innerNonSharedNode() && m_result->innerNonSharedNode()->document()
-           && m_result->innerNonSharedNode()->document()->frame()))
+        if (!(m_result->innerNonSharedNode() && m_result->innerNonSharedNode()->document().frame()))
             return E_FAIL;
-        Frame* coreFrame = m_result->innerNonSharedNode()->document()->frame();
+        Frame* coreFrame = m_result->innerNonSharedNode()->document().frame();
         WebFrame* webFrame = static_cast<WebFrameLoaderClient&>(coreFrame->loader().client()).webFrame();
         IWebFrame* iWebFrame;
         if (FAILED(webFrame->QueryInterface(IID_IWebFrame, (void**)&iWebFrame)))

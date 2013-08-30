@@ -163,7 +163,6 @@ SVGElement::~SVGElement()
     if (!hasSVGRareData())
         ASSERT(!SVGElementRareData::rareDataMap().contains(this));
     else {
-        ASSERT(document());
         SVGElementRareData::SVGElementRareDataMap& rareDataMap = SVGElementRareData::rareDataMap();
         SVGElementRareData::SVGElementRareDataMap::iterator it = rareDataMap.find(this);
         ASSERT(it != rareDataMap.end());
@@ -186,9 +185,8 @@ SVGElement::~SVGElement()
         // removeAllElementReferencesForTarget() below.
         clearHasSVGRareData();
     }
-    ASSERT(document());
-    document()->accessSVGExtensions()->rebuildAllElementReferencesForTarget(this);
-    document()->accessSVGExtensions()->removeAllElementReferencesForTarget(this);
+    document().accessSVGExtensions()->rebuildAllElementReferencesForTarget(this);
+    document().accessSVGExtensions()->removeAllElementReferencesForTarget(this);
 }
 
 bool SVGElement::willRecalcStyle(Style::Change change)
@@ -249,7 +247,7 @@ void SVGElement::reportAttributeParsingError(SVGParsingError error, const Qualif
         return;
 
     String errorString = "<" + tagName() + "> attribute " + name.toString() + "=\"" + value + "\"";
-    SVGDocumentExtensions* extensions = document()->accessSVGExtensions();
+    SVGDocumentExtensions* extensions = document().accessSVGExtensions();
 
     if (error == NegativeValueForbiddenError) {
         extensions->reportError("Invalid negative value for " + errorString);
@@ -289,8 +287,8 @@ void SVGElement::removedFrom(ContainerNode* rootParent)
     StyledElement::removedFrom(rootParent);
 
     if (wasInDocument) {
-        document()->accessSVGExtensions()->rebuildAllElementReferencesForTarget(this);
-        document()->accessSVGExtensions()->removeAllElementReferencesForTarget(this);
+        document().accessSVGExtensions()->rebuildAllElementReferencesForTarget(this);
+        document().accessSVGExtensions()->removeAllElementReferencesForTarget(this);
     }
     SVGElementInstance::invalidateAllInstancesOfElement(this);
 }
@@ -327,7 +325,7 @@ SVGDocumentExtensions* SVGElement::accessDocumentSVGExtensions()
 {
     // This function is provided for use by SVGAnimatedProperty to avoid
     // global inclusion of Document.h in SVG code.
-    return document() ? document()->accessSVGExtensions() : 0;
+    return document().accessSVGExtensions();
 }
  
 void SVGElement::mapInstanceToElement(SVGElementInstance* instance)
@@ -598,7 +596,7 @@ void SVGElement::sendSVGLoadEventIfPossible(bool sendParentLoadEvents)
         // If the load event was not sent yet by Document::implicitClose(), but the <image> from the example
         // above, just appeared, don't send the SVGLoad event to the outermost <svg>, but wait for the document
         // to be "ready to render", first.
-        if (!document()->loadEventFinished())
+        if (!document().loadEventFinished())
             break;
     }
 }
@@ -659,7 +657,7 @@ void SVGElement::attributeChanged(const QualifiedName& name, const AtomicString&
     StyledElement::attributeChanged(name, newValue);
 
     if (isIdAttributeName(name))
-        document()->accessSVGExtensions()->rebuildAllElementReferencesForTarget(this);
+        document().accessSVGExtensions()->rebuildAllElementReferencesForTarget(this);
 
     // Changes to the style attribute are processed lazily (see Element::getAttribute() and related methods),
     // so we don't want changes to the style attribute to result in extra work here.
@@ -701,7 +699,7 @@ void SVGElement::synchronizeSystemLanguage(SVGElement* contextElement)
 PassRefPtr<RenderStyle> SVGElement::customStyleForRenderer()
 {
     if (!correspondingElement())
-        return document()->ensureStyleResolver().styleForElement(this);
+        return document().ensureStyleResolver().styleForElement(this);
 
     RenderStyle* style = 0;
     if (Element* parent = parentOrShadowHostElement()) {
@@ -709,7 +707,7 @@ PassRefPtr<RenderStyle> SVGElement::customStyleForRenderer()
             style = renderer->style();
     }
 
-    return document()->ensureStyleResolver().styleForElement(correspondingElement(), style, DisallowStyleSharing);
+    return document().ensureStyleResolver().styleForElement(correspondingElement(), style, DisallowStyleSharing);
 }
 
 MutableStylePropertySet* SVGElement::animatedSMILStyleProperties() const
@@ -1037,11 +1035,10 @@ Node::InsertionNotificationRequest SVGElement::insertedInto(ContainerNode* rootP
 
 void SVGElement::buildPendingResourcesIfNeeded()
 {
-    Document* document = this->document();
-    if (!needsPendingResourceHandling() || !document || !inDocument() || isInShadowTree())
+    if (!needsPendingResourceHandling() || !inDocument() || isInShadowTree())
         return;
 
-    SVGDocumentExtensions* extensions = document->accessSVGExtensions();
+    SVGDocumentExtensions* extensions = document().accessSVGExtensions();
     String resourceId = getIdAttribute();
     if (!extensions->hasPendingResource(resourceId))
         return;

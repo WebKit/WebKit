@@ -63,13 +63,13 @@ PassRefPtr<JSLazyEventListener> createAttributeEventListener(Node* node, const Q
     String sourceURL;
     
     // FIXME: We should be able to provide accurate source information for frameless documents, too (e.g. for importing nodes from XMLHttpRequest.responseXML).
-    if (Frame* frame = node->document()->frame()) {
+    if (Frame* frame = node->document().frame()) {
         ScriptController& scriptController = frame->script();
         if (!scriptController.canExecuteScripts(AboutToExecuteScript))
             return 0;
 
         position = scriptController.eventHandlerPosition();
-        sourceURL = node->document()->url().string();
+        sourceURL = node->document().url().string();
     }
 
     return JSLazyEventListener::create(name.localName().string(), eventParameterName(node->isSVGElement()), value, node, sourceURL, position, 0, mainThreadNormalWorld());

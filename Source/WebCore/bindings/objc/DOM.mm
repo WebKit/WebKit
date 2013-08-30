@@ -195,7 +195,7 @@ static NSArray *kit(const Vector<IntRect>& rects)
 
 - (JSC::Bindings::RootObject*)_rootObject
 {
-    WebCore::Frame* frame = core(self)->document()->frame();
+    WebCore::Frame* frame = core(self)->document().frame();
     if (!frame)
         return 0;
     return frame->script().bindingRootObject();
@@ -261,7 +261,7 @@ id <DOMEventTarget> kit(WebCore::EventTarget* eventTarget)
 - (NSRect)boundingBox
 {
     // FIXME: Could we move this function to WebCore::Node and autogenerate?
-    core(self)->document()->updateLayoutIgnorePendingStylesheets();
+    core(self)->document().updateLayoutIgnorePendingStylesheets();
     WebCore::RenderObject* renderer = core(self)->renderer();
     if (!renderer)
         return NSZeroRect;
@@ -281,7 +281,7 @@ id <DOMEventTarget> kit(WebCore::EventTarget* eventTarget)
 {
     // FIXME: Could we move this function to WebCore::Node and autogenerate?
     WebCore::Node* node = core(self);
-    WebCore::Frame* frame = node->document()->frame();
+    WebCore::Frame* frame = node->document().frame();
     if (!frame)
         return nil;
     return frame->nodeImage(node).get();
@@ -289,7 +289,7 @@ id <DOMEventTarget> kit(WebCore::EventTarget* eventTarget)
 
 - (NSArray *)textRects
 {
-    core(self)->document()->updateLayoutIgnorePendingStylesheets();
+    core(self)->document().updateLayoutIgnorePendingStylesheets();
     if (!core(self)->renderer())
         return nil;
     Vector<WebCore::IntRect> rects;
@@ -398,14 +398,14 @@ id <DOMEventTarget> kit(WebCore::EventTarget* eventTarget)
     ASSERT(name);
     WebCore::Element* element = core(self);
     ASSERT(element);
-    return element->document()->completeURL(stripLeadingAndTrailingHTMLSpaces(element->getAttribute(name)));
+    return element->document().completeURL(stripLeadingAndTrailingHTMLSpaces(element->getAttribute(name)));
 }
 
 - (BOOL)isFocused
 {
     // FIXME: Could we move this function to WebCore::Element and autogenerate?
     WebCore::Element* element = core(self);
-    return element->document()->focusedElement() == element;
+    return element->document().focusedElement() == element;
 }
 
 @end

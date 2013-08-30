@@ -130,7 +130,7 @@ void HTMLVideoElement::parseAttribute(const QualifiedName& name, const AtomicStr
 
 bool HTMLVideoElement::supportsFullscreen() const
 {
-    Page* page = document() ? document()->page() : 0;
+    Page* page = document().page();
     if (!page) 
         return false;
 
@@ -213,7 +213,7 @@ void HTMLVideoElement::setDisplayMode(DisplayMode mode)
     if (player() && player()->canLoadPoster()) {
         bool canLoad = true;
         if (!poster.isEmpty()) {
-            if (Frame* frame = document()->frame())
+            if (Frame* frame = document().frame())
                 canLoad = frame->loader().willLoadMediaElementURL(poster);
         }
         if (canLoad)
@@ -320,7 +320,7 @@ KURL HTMLVideoElement::posterImageURL() const
     String url = stripLeadingAndTrailingHTMLSpaces(imageSourceURL());
     if (url.isEmpty())
         return KURL();
-    return document()->completeURL(url);
+    return document().completeURL(url);
 }
 
 }

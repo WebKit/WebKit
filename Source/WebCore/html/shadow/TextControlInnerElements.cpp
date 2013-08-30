@@ -199,7 +199,7 @@ const AtomicString& SearchFieldCancelButtonElement::shadowPseudoId() const
 void SearchFieldCancelButtonElement::willDetachRenderers()
 {
     if (m_capturing) {
-        if (Frame* frame = document()->frame())
+        if (Frame* frame = document().frame())
             frame->eventHandler().setCapturingMouseEventsNode(0);
     }
 }
@@ -216,7 +216,7 @@ void SearchFieldCancelButtonElement::defaultEventHandler(Event* event)
 
     if (event->type() == eventNames().mousedownEvent && event->isMouseEvent() && static_cast<MouseEvent*>(event)->button() == LeftButton) {
         if (renderer() && renderer()->visibleToHitTesting()) {
-            if (Frame* frame = document()->frame()) {
+            if (Frame* frame = document().frame()) {
                 frame->eventHandler().setCapturingMouseEventsNode(this);
                 m_capturing = true;
             }
@@ -227,7 +227,7 @@ void SearchFieldCancelButtonElement::defaultEventHandler(Event* event)
     }
     if (event->type() == eventNames().mouseupEvent && event->isMouseEvent() && static_cast<MouseEvent*>(event)->button() == LeftButton) {
         if (m_capturing) {
-            if (Frame* frame = document()->frame()) {
+            if (Frame* frame = document().frame()) {
                 frame->eventHandler().setCapturingMouseEventsNode(0);
                 m_capturing = false;
             }
@@ -303,7 +303,7 @@ void InputFieldSpeechButtonElement::defaultEventHandler(Event* event)
     // On mouse down, select the text and set focus.
     if (event->type() == eventNames().mousedownEvent && event->isMouseEvent() && static_cast<MouseEvent*>(event)->button() == LeftButton) {
         if (renderer() && renderer()->visibleToHitTesting()) {
-            if (Frame* frame = document()->frame()) {
+            if (Frame* frame = document().frame()) {
                 frame->eventHandler().setCapturingMouseEventsNode(this);
                 m_capturing = true;
             }
@@ -316,7 +316,7 @@ void InputFieldSpeechButtonElement::defaultEventHandler(Event* event)
     // On mouse up, release capture cleanly.
     if (event->type() == eventNames().mouseupEvent && event->isMouseEvent() && static_cast<MouseEvent*>(event)->button() == LeftButton) {
         if (m_capturing && renderer() && renderer()->visibleToHitTesting()) {
-            if (Frame* frame = document()->frame()) {
+            if (Frame* frame = document().frame()) {
                 frame->eventHandler().setCapturingMouseEventsNode(0);
                 m_capturing = false;
             }
@@ -361,7 +361,7 @@ void InputFieldSpeechButtonElement::setState(SpeechInputState state)
 
 SpeechInput* InputFieldSpeechButtonElement::speechInput()
 {
-    return SpeechInput::from(document()->page());
+    return SpeechInput::from(document().page());
 }
 
 void InputFieldSpeechButtonElement::didCompleteRecording(int)
@@ -386,12 +386,12 @@ void InputFieldSpeechButtonElement::setRecognitionResult(int, const SpeechInputR
         return;
 
     RefPtr<InputFieldSpeechButtonElement> holdRefButton(this);
-    if (document() && document()->domWindow()) {
+    if (document().domWindow()) {
         // Call selectionChanged, causing the element to cache the selection,
         // so that the text event inserts the text in this element even if
         // focus has moved away from it.
         input->selectionChanged(false);
-        input->dispatchEvent(TextEvent::create(document()->domWindow(), results.isEmpty() ? "" : results[0]->utterance(), TextEventInputOther));
+        input->dispatchEvent(TextEvent::create(document().domWindow(), results.isEmpty() ? "" : results[0]->utterance(), TextEventInputOther));
     }
 
     // This event is sent after the text event so the website can perform actions using the input field content immediately.
@@ -407,14 +407,14 @@ void InputFieldSpeechButtonElement::setRecognitionResult(int, const SpeechInputR
 void InputFieldSpeechButtonElement::willAttachRenderers()
 {
     ASSERT(!m_listenerId);
-    if (SpeechInput* input = SpeechInput::from(document()->page()))
+    if (SpeechInput* input = SpeechInput::from(document().page()))
         m_listenerId = input->registerListener(this);
 }
 
 void InputFieldSpeechButtonElement::willDetachRenderers()
 {
     if (m_capturing) {
-        if (Frame* frame = document()->frame())
+        if (Frame* frame = document().frame())
             frame->eventHandler().setCapturingMouseEventsNode(0);
     }
 
@@ -434,8 +434,8 @@ void InputFieldSpeechButtonElement::startSpeechInput()
     RefPtr<HTMLInputElement> input = toHTMLInputElement(shadowHost());
     AtomicString language = input->computeInheritedLanguage();
     String grammar = input->getAttribute(webkitgrammarAttr);
-    IntRect rect = document()->view()->contentsToRootView(pixelSnappedBoundingBox());
-    if (speechInput()->startRecognition(m_listenerId, rect, language, grammar, document()->securityOrigin()))
+    IntRect rect = document().view()->contentsToRootView(pixelSnappedBoundingBox());
+    if (speechInput()->startRecognition(m_listenerId, rect, language, grammar, document().securityOrigin()))
         setState(Recording);
 }
 

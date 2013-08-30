@@ -567,8 +567,8 @@ bool EventHandler::handleMousePressEventTripleClick(const MouseEventWithHitTestR
 
 static int textDistance(const Position& start, const Position& end)
 {
-     RefPtr<Range> range = Range::create(start.anchorNode()->document(), start, end);
-     return TextIterator::rangeLength(range.get(), true);
+    RefPtr<Range> range = Range::create(&start.anchorNode()->document(), start, end);
+    return TextIterator::rangeLength(range.get(), true);
 }
 
 bool EventHandler::handleMousePressEventSingleClick(const MouseEventWithHitTestResults& event)
@@ -2293,15 +2293,15 @@ void EventHandler::updateMouseEventTargetNode(Node* targetNode, const PlatformMo
         RenderLayer* layerForNodeUnderMouse = layerForNode(m_nodeUnderMouse.get());
         Page* page = m_frame->page();
 
-        if (m_lastNodeUnderMouse && (!m_nodeUnderMouse || m_nodeUnderMouse->document() != m_frame->document())) {
+        if (m_lastNodeUnderMouse && (!m_nodeUnderMouse || &m_nodeUnderMouse->document() != m_frame->document())) {
             // The mouse has moved between frames.
-            if (Frame* frame = m_lastNodeUnderMouse->document()->frame()) {
+            if (Frame* frame = m_lastNodeUnderMouse->document().frame()) {
                 if (FrameView* frameView = frame->view())
                     frameView->mouseExitedContentArea();
             }
         } else if (page && (layerForLastNode && (!layerForNodeUnderMouse || layerForNodeUnderMouse != layerForLastNode))) {
             // The mouse has moved between layers.
-            if (Frame* frame = m_lastNodeUnderMouse->document()->frame()) {
+            if (Frame* frame = m_lastNodeUnderMouse->document().frame()) {
                 if (FrameView* frameView = frame->view()) {
                     if (frameView->containsScrollableArea(layerForLastNode))
                         layerForLastNode->mouseExitedContentArea();
@@ -2309,15 +2309,15 @@ void EventHandler::updateMouseEventTargetNode(Node* targetNode, const PlatformMo
             }
         }
 
-        if (m_nodeUnderMouse && (!m_lastNodeUnderMouse || m_lastNodeUnderMouse->document() != m_frame->document())) {
+        if (m_nodeUnderMouse && (!m_lastNodeUnderMouse || &m_lastNodeUnderMouse->document() != m_frame->document())) {
             // The mouse has moved between frames.
-            if (Frame* frame = m_nodeUnderMouse->document()->frame()) {
+            if (Frame* frame = m_nodeUnderMouse->document().frame()) {
                 if (FrameView* frameView = frame->view())
                     frameView->mouseEnteredContentArea();
             }
         } else if (page && (layerForNodeUnderMouse && (!layerForLastNode || layerForNodeUnderMouse != layerForLastNode))) {
             // The mouse has moved between layers.
-            if (Frame* frame = m_nodeUnderMouse->document()->frame()) {
+            if (Frame* frame = m_nodeUnderMouse->document().frame()) {
                 if (FrameView* frameView = frame->view()) {
                     if (frameView->containsScrollableArea(layerForNodeUnderMouse))
                         layerForNodeUnderMouse->mouseEnteredContentArea();
@@ -2325,7 +2325,7 @@ void EventHandler::updateMouseEventTargetNode(Node* targetNode, const PlatformMo
             }
         }
 
-        if (m_lastNodeUnderMouse && m_lastNodeUnderMouse->document() != m_frame->document()) {
+        if (m_lastNodeUnderMouse && &m_lastNodeUnderMouse->document() != m_frame->document()) {
             m_lastNodeUnderMouse = 0;
             m_lastScrollbarUnderMouse = 0;
 #if ENABLE(SVG)
@@ -4055,15 +4055,13 @@ bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
             if (InspectorInstrumentation::handleTouchEvent(m_frame->page(), node))
                 return true;
 
-            Document* doc = node->document();
+            Document& doc = node->document();
             // Record the originating touch document even if it does not have a touch listener.
             if (freshTouchEvents) {
-                m_originatingTouchPointDocument = doc;
+                m_originatingTouchPointDocument = &doc;
                 freshTouchEvents = false;
             }
-            if (!doc)
-                continue;
-            if (!doc->hasTouchEventHandlers())
+            if (!doc.hasTouchEventHandlers())
                 continue;
             m_originatingTouchPointTargets.set(touchPointTargetKey, node);
             touchTarget = node;
@@ -4083,12 +4081,10 @@ bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
 
         if (!touchTarget.get())
             continue;
-        Document* doc = touchTarget->toNode()->document();
-        if (!doc)
+        Document& doc = touchTarget->toNode()->document();
+        if (!doc.hasTouchEventHandlers())
             continue;
-        if (!doc->hasTouchEventHandlers())
-            continue;
-        Frame* targetFrame = doc->frame();
+        Frame* targetFrame = doc.frame();
         if (!targetFrame)
             continue;
 
@@ -4157,8 +4153,8 @@ bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
 
             RefPtr<TouchEvent> touchEvent =
                 TouchEvent::create(effectiveTouches.get(), targetTouches.get(), changedTouches[state].m_touches.get(),
-                                   stateName, touchEventTarget->toNode()->document()->defaultView(),
-                                   0, 0, 0, 0, event.ctrlKey(), event.altKey(), event.shiftKey(), event.metaKey());
+                    stateName, touchEventTarget->toNode()->document().defaultView(),
+                    0, 0, 0, 0, event.ctrlKey(), event.altKey(), event.shiftKey(), event.metaKey());
             touchEventTarget->toNode()->dispatchTouchEvent(touchEvent.get());
             swallowedEvent = swallowedEvent || touchEvent->defaultPrevented() || touchEvent->defaultHandled();
         }

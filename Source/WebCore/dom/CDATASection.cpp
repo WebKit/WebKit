@@ -48,7 +48,7 @@ Node::NodeType CDATASection::nodeType() const
 
 PassRefPtr<Node> CDATASection::cloneNode(bool /*deep*/)
 {
-    return create(document(), data());
+    return create(&document(), data());
 }
 
 bool CDATASection::childTypeAllowed(NodeType) const
@@ -58,7 +58,7 @@ bool CDATASection::childTypeAllowed(NodeType) const
 
 PassRefPtr<Text> CDATASection::virtualCreate(const String& data)
 {
-    return create(document(), data);
+    return create(&document(), data);
 }
 
 } // namespace WebCore

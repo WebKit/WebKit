@@ -381,7 +381,7 @@ PassRefPtr<HTMLElement> InsertListCommand::listifyParagraph(const VisiblePositio
         // Layout is necessary since start's node's inline renderers may have been destroyed by the insertion
         // The end of the content may have changed after the insertion and layout so update it as well.
         if (insertionPos == start.deepEquivalent()) {
-            listElement->document()->updateLayoutIgnorePendingStylesheets();
+            listElement->document().updateLayoutIgnorePendingStylesheets();
             start = startOfParagraph(originalStart, CanSkipOverEditingBoundary);
             end = endOfParagraph(start, CanSkipOverEditingBoundary);
         }

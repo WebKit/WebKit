@@ -222,7 +222,7 @@ int InspectorLayerTreeAgent::idForNode(ErrorString* errorString, Node* node)
     
     int nodeId = domAgent->boundNodeId(node);
     if (!nodeId)
-        nodeId = domAgent->pushNodeToFrontend(errorString, domAgent->boundNodeId(node->document()), node);
+        nodeId = domAgent->pushNodeToFrontend(errorString, domAgent->boundNodeId(&node->document()), node);
 
     return nodeId;
 }

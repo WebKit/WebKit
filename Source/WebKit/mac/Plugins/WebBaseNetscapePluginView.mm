@@ -695,7 +695,7 @@ using namespace WebCore;
 
 - (WebFrame *)webFrame
 {
-    return kit(_element->document()->frame());
+    return kit(_element->document().frame());
 }
 
 - (WebView *)webView

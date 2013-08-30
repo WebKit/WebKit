@@ -431,7 +431,8 @@ public:
         void initForStyleResolve(Document*, Element*, RenderStyle* parentStyle = 0, RenderRegion* regionForStyling = 0);
         void clear();
 
-        Document* document() const { return m_element->document(); }
+        // FIXME: Return Document&
+        Document* document() const { return &m_element->document(); }
         Element* element() const { return m_element; }
         StyledElement* styledElement() const { return m_styledElement; }
         void setStyle(PassRefPtr<RenderStyle> style) { m_style = style; }
@@ -646,7 +647,7 @@ inline bool checkRegionSelector(const CSSSelector* regionSelector, Element* regi
     if (!regionSelector || !regionElement)
         return false;
 
-    SelectorChecker selectorChecker(regionElement->document(), SelectorChecker::QueryingRules);
+    SelectorChecker selectorChecker(&regionElement->document(), SelectorChecker::QueryingRules);
     for (const CSSSelector* s = regionSelector; s; s = CSSSelectorList::next(s)) {
         SelectorChecker::SelectorCheckingContext selectorCheckingContext(s, regionElement, SelectorChecker::VisitedMatchDisabled);
         PseudoId ignoreDynamicPseudo = NOPSEUDO;
@@ -666,7 +667,7 @@ public:
     {
         if (m_pushedStyleResolver)
             return;
-        m_pushedStyleResolver = &m_parent->document()->ensureStyleResolver();
+        m_pushedStyleResolver = &m_parent->document().ensureStyleResolver();
         m_pushedStyleResolver->pushParentElement(m_parent);
     }
     ~StyleResolverParentPusher()
@@ -675,8 +676,8 @@ public:
             return;
         // This tells us that our pushed style selector is in a bad state,
         // so we should just bail out in that scenario.
-        ASSERT(m_pushedStyleResolver == &m_parent->document()->ensureStyleResolver());
-        if (m_pushedStyleResolver != &m_parent->document()->ensureStyleResolver())
+        ASSERT(m_pushedStyleResolver == &m_parent->document().ensureStyleResolver());
+        if (m_pushedStyleResolver != &m_parent->document().ensureStyleResolver())
             return;
         m_pushedStyleResolver->popParentElement(m_parent);
     }

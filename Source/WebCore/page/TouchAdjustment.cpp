@@ -327,7 +327,7 @@ float zoomableIntersectionQuotient(const IntPoint& touchHotspot, const IntRect& 
     IntRect rect = subtarget.boundingBox();
 
     // Convert from frame coordinates to window coordinates.
-    rect = subtarget.node()->document()->view()->contentsToWindow(rect);
+    rect = subtarget.node()->document().view()->contentsToWindow(rect);
 
     // Check the rectangle is meaningful zoom target. It should at least contain the hotspot.
     if (!rect.contains(touchHotspot))
@@ -350,7 +350,7 @@ float hybridDistanceFunction(const IntPoint& touchHotspot, const IntRect& touchR
     IntRect rect = subtarget.boundingBox();
 
     // Convert from frame coordinates to window coordinates.
-    rect = subtarget.node()->document()->view()->contentsToWindow(rect);
+    rect = subtarget.node()->document().view()->contentsToWindow(rect);
    
     float radiusSquared = 0.25f * (touchRect.size().diagonalLengthSquared());
     float distanceToAdjustScore = rect.distanceSquaredToPoint(touchHotspot) / radiusSquared;
@@ -391,7 +391,7 @@ void adjustPointToRect(FloatPoint& point, const FloatRect& rect)
 
 bool snapTo(const SubtargetGeometry& geom, const IntPoint& touchPoint, const IntRect& touchArea, IntPoint& adjustedPoint)
 {
-    FrameView* view = geom.node()->document()->view();
+    FrameView* view = geom.node()->document().view();
     FloatQuad quad = geom.quad();
 
     if (quad.isRectilinear()) {
@@ -469,7 +469,7 @@ bool findNodeWithLowestDistanceMetric(Node*& targetNode, IntPoint& targetPoint, 
         }
     }
     if (targetNode) {
-        targetArea = targetNode->document()->view()->contentsToWindow(targetArea);
+        targetArea = targetNode->document().view()->contentsToWindow(targetArea);
     }
     return (targetNode);
 }

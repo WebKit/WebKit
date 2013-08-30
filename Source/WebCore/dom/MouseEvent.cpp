@@ -236,17 +236,17 @@ PassRefPtr<Event> MouseEvent::cloneFor(HTMLIFrameElement* iframe) const
 {
     ASSERT(iframe);
     RefPtr<MouseEvent> clonedMouseEvent = MouseEvent::create();
-    Frame* frame = iframe->document()->frame();
+    Frame* frame = iframe->document().frame();
     FrameView* frameView = frame ? frame->view() : 0;
     clonedMouseEvent->initMouseEvent(type(), bubbles(), cancelable(),
-            iframe->document()->defaultView(),
-            detail(), screenX(), screenY(),
-            frameView ? adjustedClientX(clientX(), iframe, frameView) : 0,
-            frameView ? adjustedClientY(clientY(), iframe, frameView) : 0,
-            ctrlKey(), altKey(), shiftKey(), metaKey(),
-            button(),
-            // Nullifies relatedTarget.
-            0);
+        iframe->document().defaultView(),
+        detail(), screenX(), screenY(),
+        frameView ? adjustedClientX(clientX(), iframe, frameView) : 0,
+        frameView ? adjustedClientY(clientY(), iframe, frameView) : 0,
+        ctrlKey(), altKey(), shiftKey(), metaKey(),
+        button(),
+        // Nullifies relatedTarget.
+        0);
     return clonedMouseEvent.release();
 }
 

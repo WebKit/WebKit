@@ -126,7 +126,7 @@ void ContainerNode::takeAllChildrenFrom(ContainerNode* oldParent)
     NodeVector children;
     getChildNodes(oldParent, children);
 
-    if (oldParent->document()->hasMutationObserversOfType(MutationObserver::ChildList)) {
+    if (oldParent->document().hasMutationObserversOfType(MutationObserver::ChildList)) {
         ChildListMutationScope mutation(oldParent);
         for (unsigned i = 0; i < children.size(); ++i)
             mutation.willRemoveChild(children[i].get());
@@ -142,7 +142,7 @@ void ContainerNode::takeAllChildrenFrom(ContainerNode* oldParent)
         if (child->attached())
             detachChild(child);
         // FIXME: We need a no mutation event version of adoptNode.
-        RefPtr<Node> adoptedChild = document()->adoptNode(children[i].release(), ASSERT_NO_EXCEPTION);
+        RefPtr<Node> adoptedChild = document().adoptNode(children[i].release(), ASSERT_NO_EXCEPTION);
         parserAppendChild(adoptedChild.get());
         // FIXME: Together with adoptNode above, the tree scope might get updated recursively twice
         // (if the document changed or oldParent was in a shadow tree, AND *this is in a shadow tree).
@@ -175,8 +175,8 @@ static inline bool isChildTypeAllowed(ContainerNode* newParent, Node* child)
 static inline bool isInTemplateContent(const Node* node)
 {
 #if ENABLE(TEMPLATE_ELEMENT)
-    Document* document = node->document();
-    return document && document == document->templateDocument();
+    Document& document = node->document();
+    return &document == document.templateDocument();
 #else
     UNUSED_PARAM(node);
     return false;
@@ -296,7 +296,7 @@ bool ContainerNode::insertBefore(PassRefPtr<Node> newChild, Node* refChild, Exce
     if (!checkAcceptChildGuaranteedNodeTypes(this, newChild.get(), ec))
         return false;
 
-    InspectorInstrumentation::willInsertDOMNode(document(), this);
+    InspectorInstrumentation::willInsertDOMNode(&document(), this);
 
     ChildListMutationScope mutation(this);
     for (NodeVector::const_iterator it = targets.begin(); it != targets.end(); ++it) {
@@ -361,8 +361,8 @@ void ContainerNode::parserInsertBefore(PassRefPtr<Node> newChild, Node* nextChil
     if (nextChild->previousSibling() == newChild || nextChild == newChild) // nothing to do
         return;
 
-    if (document() != newChild->document())
-        document()->adoptNode(newChild.get(), ASSERT_NO_EXCEPTION);
+    if (&document() != &newChild->document())
+        document().adoptNode(newChild.get(), ASSERT_NO_EXCEPTION);
 
     insertBeforeCommon(nextChild, newChild.get());
 
@@ -428,7 +428,7 @@ bool ContainerNode::replaceChild(PassRefPtr<Node> newChild, Node* oldChild, Exce
     if (!checkReplaceChild(this, newChild.get(), oldChild, ec))
         return false;
 
-    InspectorInstrumentation::willInsertDOMNode(document(), this);
+    InspectorInstrumentation::willInsertDOMNode(&document(), this);
 
     // Add the new child(ren)
     for (NodeVector::const_iterator it = targets.begin(); it != targets.end(); ++it) {
@@ -467,7 +467,7 @@ static void willRemoveChild(Node* child)
     ChildListMutationScope(child->parentNode()).willRemoveChild(child);
     child->notifyMutationObserversNodeWillDetach();
     dispatchChildRemovalEvents(child);
-    child->document()->nodeWillBeRemoved(child); // e.g. mutation event listener can create a new range.
+    child->document().nodeWillBeRemoved(child); // e.g. mutation event listener can create a new range.
     if (child->isContainerNode())
         ChildFrameDisconnector(toContainerNode(child)).disconnect();
 }
@@ -477,7 +477,7 @@ static void willRemoveChildren(ContainerNode* container)
     NodeVector children;
     getChildNodes(container, children);
 
-    container->document()->nodeChildrenWillBeRemoved(container);
+    container->document().nodeChildrenWillBeRemoved(container);
 
     ChildListMutationScope mutation(container);
     for (NodeVector::const_iterator it = children.begin(); it != children.end(); ++it) {
@@ -521,10 +521,10 @@ bool ContainerNode::removeChild(Node* oldChild, ExceptionCode& ec)
 
     RefPtr<Node> child = oldChild;
 
-    document()->removeFocusedNodeOfSubtree(child.get());
+    document().removeFocusedNodeOfSubtree(child.get());
 
 #if ENABLE(FULLSCREEN_API)
-    document()->removeFullScreenElementOfSubtree(child.get());
+    document().removeFullScreenElementOfSubtree(child.get());
 #endif
 
     // Events fired when blurring currently focused node might have moved this
@@ -580,7 +580,7 @@ void ContainerNode::removeBetween(Node* previousChild, Node* nextChild, Node* ol
     oldChild->setNextSibling(0);
     oldChild->setParentNode(0);
 
-    document()->adoptIfNeeded(oldChild);
+    document().adoptIfNeeded(oldChild);
 }
 
 void ContainerNode::parserRemoveChild(Node* oldChild)
@@ -614,10 +614,10 @@ void ContainerNode::removeChildren()
     RefPtr<ContainerNode> protect(this);
 
     // exclude this node when looking for removed focusedNode since only children will be removed
-    document()->removeFocusedNodeOfSubtree(this, true);
+    document().removeFocusedNodeOfSubtree(this, true);
 
 #if ENABLE(FULLSCREEN_API)
-    document()->removeFullScreenElementOfSubtree(this, true);
+    document().removeFullScreenElementOfSubtree(this, true);
 #endif
 
     // Do any prep work needed before actually starting to detach
@@ -674,7 +674,7 @@ bool ContainerNode::appendChild(PassRefPtr<Node> newChild, ExceptionCode& ec, At
     if (!checkAcceptChildGuaranteedNodeTypes(this, newChild.get(), ec))
         return false;
 
-    InspectorInstrumentation::willInsertDOMNode(document(), this);
+    InspectorInstrumentation::willInsertDOMNode(&document(), this);
 
     // Now actually add the child(ren)
     ChildListMutationScope mutation(this);
@@ -711,8 +711,8 @@ void ContainerNode::parserAppendChild(PassRefPtr<Node> newChild)
     ASSERT(!hasTagName(HTMLNames::templateTag));
 #endif
 
-    if (document() != newChild->document())
-        document()->adoptNode(newChild.get(), ASSERT_NO_EXCEPTION);
+    if (&document() != &newChild->document())
+        document().adoptNode(newChild.get(), ASSERT_NO_EXCEPTION);
 
     Node* last = m_lastChild;
     {
@@ -734,7 +734,7 @@ void ContainerNode::suspendPostAttachCallbacks()
 {
     if (!s_attachDepth) {
         ASSERT(!s_shouldReEnableMemoryCacheCallsAfterAttach);
-        if (Page* page = document()->page()) {
+        if (Page* page = document().page()) {
             // FIXME: How can this call be specific to one Page, while the
             // s_attachDepth is a global? Doesn't make sense.
             if (page->areMemoryCacheClientCallsEnabled()) {
@@ -756,7 +756,7 @@ void ContainerNode::resumePostAttachCallbacks()
             dispatchPostAttachCallbacks();
         if (s_shouldReEnableMemoryCacheCallsAfterAttach) {
             s_shouldReEnableMemoryCacheCallsAfterAttach = false;
-            if (Page* page = document()->page())
+            if (Page* page = document().page())
                 page->setMemoryCacheClientCallsEnabled(true);
         }
         platformStrategies()->loaderStrategy()->resourceLoadScheduler()->resumePendingRequests();
@@ -806,9 +806,9 @@ void ContainerNode::scheduleSetNeedsStyleRecalc(StyleChangeType changeType)
 
 void ContainerNode::childrenChanged(bool changedByParser, Node*, Node*, int childCountDelta)
 {
-    document()->incDOMTreeVersion();
+    document().incDOMTreeVersion();
     if (!changedByParser && childCountDelta)
-        document()->updateRangesAfterChildrenChanged(this);
+        document().updateRangesAfterChildrenChanged(this);
     invalidateNodeListCachesInAncestors();
 }
 
@@ -836,7 +836,7 @@ void ContainerNode::cloneChildNodes(ContainerNode *clone)
 {
 #if ENABLE(DELETION_UI)
     HTMLElement* deleteButtonContainerElement = 0;
-    if (Frame* frame = document()->frame())
+    if (Frame* frame = document().frame())
         deleteButtonContainerElement = frame->editor().deleteButtonController()->containerElement();
     cloneChildNodesAvoidingDeleteButton(this, clone, deleteButtonContainerElement);
 #else
@@ -899,8 +899,8 @@ bool ContainerNode::getUpperLeftCorner(FloatPoint& point) const
     
     // If the target doesn't have any children or siblings that could be used to calculate the scroll position, we must be
     // at the end of the document. Scroll to the bottom. FIXME: who said anything about scrolling?
-    if (!o && document()->view()) {
-        point = FloatPoint(0, document()->view()->contentsHeight());
+    if (!o && document().view()) {
+        point = FloatPoint(0, document().view()->contentsHeight());
         return true;
     }
     return false;
@@ -998,7 +998,7 @@ static void dispatchChildInsertionEvents(Node* child)
     ASSERT(!NoEventDispatchAssertion::isEventDispatchForbidden());
 
     RefPtr<Node> c = child;
-    RefPtr<Document> document = child->document();
+    RefPtr<Document> document = &child->document();
 
     if (c->parentNode() && document->hasListenerType(Document::DOMNODEINSERTED_LISTENER))
         c->dispatchScopedEvent(MutationEvent::create(eventNames().DOMNodeInsertedEvent, true, c->parentNode()));
@@ -1013,17 +1013,17 @@ static void dispatchChildInsertionEvents(Node* child)
 static void dispatchChildRemovalEvents(Node* child)
 {
     if (child->isInShadowTree()) {
-        InspectorInstrumentation::willRemoveDOMNode(child->document(), child);
+        InspectorInstrumentation::willRemoveDOMNode(&child->document(), child);
         return;
     }
 
     ASSERT(!NoEventDispatchAssertion::isEventDispatchForbidden());
 
     willCreatePossiblyOrphanedTreeByRemoval(child);
-    InspectorInstrumentation::willRemoveDOMNode(child->document(), child);
+    InspectorInstrumentation::willRemoveDOMNode(&child->document(), child);
 
     RefPtr<Node> c = child;
-    RefPtr<Document> document = child->document();
+    RefPtr<Document> document = &child->document();
 
     // dispatch pre-removal mutation events
     if (c->parentNode() && document->hasListenerType(Document::DOMNODEREMOVED_LISTENER))

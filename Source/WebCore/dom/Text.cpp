@@ -84,7 +84,7 @@ PassRefPtr<Text> Text::splitText(unsigned offset, ExceptionCode& ec)
         return 0;
 
     if (parentNode())
-        document()->textNodeSplit(this);
+        document().textNodeSplit(this);
 
     if (renderer())
         toRenderText(renderer())->setTextWithOffset(dataImpl(), 0, oldStr.length());
@@ -173,7 +173,7 @@ Node::NodeType Text::nodeType() const
 
 PassRefPtr<Node> Text::cloneNode(bool /*deep*/)
 {
-    return create(document(), data());
+    return create(&document(), data());
 }
 
 
@@ -210,7 +210,7 @@ bool Text::childTypeAllowed(NodeType) const
 
 PassRefPtr<Text> Text::virtualCreate(const String& data)
 {
-    return create(document(), data);
+    return create(&document(), data);
 }
 
 PassRefPtr<Text> Text::createWithLengthLimit(Document* document, const String& data, unsigned start, unsigned lengthLimit)

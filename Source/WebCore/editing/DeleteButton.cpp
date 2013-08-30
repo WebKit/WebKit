@@ -53,7 +53,7 @@ PassRefPtr<DeleteButton> DeleteButton::create(Document* document)
 void DeleteButton::defaultEventHandler(Event* event)
 {
     if (event->type() == eventNames().clickEvent) {
-        document()->frame()->editor().deleteButtonController()->deleteTarget();
+        document().frame()->editor().deleteButtonController()->deleteTarget();
         event->setDefaultHandled();
         return;
     }

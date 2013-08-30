@@ -36,7 +36,7 @@
 namespace WebCore {
 
 InsertIntoTextNodeCommand::InsertIntoTextNodeCommand(PassRefPtr<Text> node, unsigned offset, const String& text)
-    : SimpleEditCommand(node->document())
+    : SimpleEditCommand(&node->document())
     , m_node(node)
     , m_offset(offset)
     , m_text(text)

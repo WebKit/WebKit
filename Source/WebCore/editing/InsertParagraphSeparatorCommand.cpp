@@ -83,7 +83,7 @@ void InsertParagraphSeparatorCommand::calculateStyleBeforeInsertion(const Positi
 
     ASSERT(pos.isNotNull());
     m_style = EditingStyle::create(pos, EditingStyle::EditingPropertiesInEffect);
-    m_style->mergeTypingStyle(pos.anchorNode()->document());
+    m_style->mergeTypingStyle(&pos.anchorNode()->document());
 }
 
 void InsertParagraphSeparatorCommand::applyStyleAfterInsertion(Node* originalEnclosingBlock)

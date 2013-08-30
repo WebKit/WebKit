@@ -59,7 +59,7 @@ inline bool SelectorDataList::selectorMatches(const SelectorData& selectorData, 
         return selectorCheckerFastPath.matches();
     }
 
-    SelectorChecker selectorChecker(element->document(), SelectorChecker::QueryingRules);
+    SelectorChecker selectorChecker(&element->document(), SelectorChecker::QueryingRules);
     SelectorChecker::SelectorCheckingContext selectorCheckingContext(selectorData.selector, element, SelectorChecker::VisitedMatchDisabled);
     selectorCheckingContext.behaviorAtBoundary = SelectorChecker::StaysWithinTreeScope;
     selectorCheckingContext.scope = !rootNode->isDocumentNode() && rootNode->isContainerNode() ? toContainerNode(rootNode) : 0;
@@ -115,7 +115,7 @@ static const CSSSelector* selectorForIdLookup(const Node* rootNode, const CSSSel
 {
     if (!rootNode->inDocument())
         return 0;
-    if (rootNode->document()->inQuirksMode())
+    if (rootNode->document().inQuirksMode())
         return 0;
 
     do {

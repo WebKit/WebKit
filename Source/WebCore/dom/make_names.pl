@@ -1052,7 +1052,7 @@ sub printWrapperFunctions
             print F <<END
 static JSDOMWrapper* create${JSInterfaceName}Wrapper(ExecState* exec, JSDOMGlobalObject* globalObject, PassRefPtr<$parameters{namespace}Element> element)
 {
-    Settings* settings = element->document()->settings();
+    Settings* settings = element->document().settings();
     if (!MediaPlayer::isAvailable() || (settings && !settings->mediaEnabled()))
         return CREATE_DOM_WRAPPER(exec, globalObject, $parameters{namespace}Element, element.get());
     return CREATE_DOM_WRAPPER(exec, globalObject, ${JSInterfaceName}, element.get());
@@ -1065,7 +1065,7 @@ END
             print F <<END
 static JSDOMWrapper* create${JSInterfaceName}Wrapper(ExecState* exec, JSDOMGlobalObject* globalObject, PassRefPtr<$parameters{namespace}Element> element)
 {
-    if (!ContextFeatures::${contextConditional}Enabled(element->document())) {
+    if (!ContextFeatures::${contextConditional}Enabled(&element->document())) {
         ASSERT(!element || element->is$parameters{fallbackInterfaceName}());
         return CREATE_DOM_WRAPPER(exec, globalObject, $parameters{fallbackJSInterfaceName}, element.get());
     }

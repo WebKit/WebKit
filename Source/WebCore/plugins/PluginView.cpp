@@ -124,7 +124,7 @@ IntRect PluginView::windowClipRect() const
     IntRect clipRect(m_windowRect);
     
     // Take our element and get the clip rect from the enclosing layer and frame view.
-    FrameView* parentView = m_element->document()->view();
+    FrameView* parentView = m_element->document().view();
     clipRect.intersect(parentView->windowClipRectForFrameOwner(m_element, true));
 
     return clipRect;
@@ -132,7 +132,7 @@ IntRect PluginView::windowClipRect() const
 
 void PluginView::setFrameRect(const IntRect& rect)
 {
-    if (m_element->document()->printing())
+    if (m_element->document().printing())
         return;
 
     if (rect != frameRect())
@@ -1368,11 +1368,7 @@ static Frame* getFrame(Frame* parentFrame, Element* element)
     if (parentFrame)
         return parentFrame;
     
-    Document* document = element->document();
-    if (document)
-        return document->frame();
-    
-    return 0;
+    return element->document().frame();
 }
 
 NPError PluginView::getValueForURL(NPNURLVariable variable, const char* url, char** value, uint32_t* len)

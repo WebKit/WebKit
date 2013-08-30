@@ -60,7 +60,7 @@ HTMLStyleElement::~HTMLStyleElement()
 {
     // During tear-down, willRemove isn't called, so m_scopedStyleRegistrationState may still be RegisteredAsScoped or RegisteredInShadowRoot here.
     // Therefore we can't ASSERT(m_scopedStyleRegistrationState == NotRegistered).
-    m_styleSheetOwner.clearDocumentData(document(), this);
+    m_styleSheetOwner.clearDocumentData(&document(), this);
 
     styleLoadEventSender().cancelEvent(this);
 }
@@ -74,14 +74,14 @@ void HTMLStyleElement::parseAttribute(const QualifiedName& name, const AtomicStr
 {
     if (name == titleAttr && sheet())
         sheet()->setTitle(value);
-    else if (name == scopedAttr && ContextFeatures::styleScopedEnabled(document()))
+    else if (name == scopedAttr && ContextFeatures::styleScopedEnabled(&document()))
         scopedAttributeChanged(!value.isNull());
     else if (name == mediaAttr) {
         m_styleSheetOwner.setMedia(value);
         if (sheet()) {
             sheet()->setMediaQueries(MediaQuerySet::createAllowingDescriptionSyntax(value));
-            if (inDocument() && document()->renderer())
-                document()->styleResolverChanged(RecalcStyleImmediately);
+            if (inDocument() && document().renderer())
+                document().styleResolverChanged(RecalcStyleImmediately);
         }
     } else if (name == typeAttr)
         m_styleSheetOwner.setContentType(value);
@@ -91,7 +91,7 @@ void HTMLStyleElement::parseAttribute(const QualifiedName& name, const AtomicStr
 
 void HTMLStyleElement::scopedAttributeChanged(bool scoped)
 {
-    ASSERT(ContextFeatures::styleScopedEnabled(document()));
+    ASSERT(ContextFeatures::styleScopedEnabled(&document()));
 
     if (!inDocument())
         return;
@@ -147,15 +147,15 @@ void HTMLStyleElement::registerWithScopingNode(bool scoped)
         scope->shadowHost()->setNeedsStyleRecalc();
     else
         scope->setNeedsStyleRecalc();
-    if (inDocument() && !document()->parsing() && document()->renderer())
-        document()->styleResolverChanged(DeferRecalcStyle);
+    if (inDocument() && !document().parsing() && document().renderer())
+        document().styleResolverChanged(DeferRecalcStyle);
 
     m_scopedStyleRegistrationState = scoped ? RegisteredAsScoped : RegisteredInShadowRoot;
 }
 
 void HTMLStyleElement::unregisterWithScopingNode(ContainerNode* scope)
 {
-    ASSERT(m_scopedStyleRegistrationState != NotRegistered || !ContextFeatures::styleScopedEnabled(document()));
+    ASSERT(m_scopedStyleRegistrationState != NotRegistered || !ContextFeatures::styleScopedEnabled(&document()));
     if (!isRegisteredAsScoped())
         return;
 
@@ -165,8 +165,8 @@ void HTMLStyleElement::unregisterWithScopingNode(ContainerNode* scope)
         scope->unregisterScopedHTMLStyleChild();
         scope->setNeedsStyleRecalc();
     }
-    if (inDocument() && !document()->parsing() && document()->renderer())
-        document()->styleResolverChanged(DeferRecalcStyle);
+    if (inDocument() && !document().parsing() && document().renderer())
+        document().styleResolverChanged(DeferRecalcStyle);
 
     m_scopedStyleRegistrationState = NotRegistered;
 }
@@ -175,7 +175,7 @@ Node::InsertionNotificationRequest HTMLStyleElement::insertedInto(ContainerNode*
 {
     HTMLElement::insertedInto(insertionPoint);
     if (insertionPoint->inDocument()) {
-        m_styleSheetOwner.insertedIntoDocument(document(), this);
+        m_styleSheetOwner.insertedIntoDocument(&document(), this);
         if (m_scopedStyleRegistrationState == NotRegistered && (scoped() || isInShadowTree()))
             registerWithScopingNode(scoped());
     }
@@ -203,7 +203,7 @@ void HTMLStyleElement::removedFrom(ContainerNode* insertionPoint)
     }
 
     if (insertionPoint->inDocument())
-        m_styleSheetOwner.removedFromDocument(document(), this);
+        m_styleSheetOwner.removedFromDocument(&document(), this);
 }
 
 void HTMLStyleElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
@@ -214,7 +214,7 @@ void HTMLStyleElement::childrenChanged(bool changedByParser, Node* beforeChange,
 
 bool HTMLStyleElement::scoped() const
 {
-    return fastHasAttribute(scopedAttr) && ContextFeatures::styleScopedEnabled(document());
+    return fastHasAttribute(scopedAttr) && ContextFeatures::styleScopedEnabled(&document());
 }
 
 void HTMLStyleElement::setScoped(bool scopedValue)

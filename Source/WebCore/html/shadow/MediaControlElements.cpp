@@ -104,7 +104,7 @@ void MediaControlPanelElement::startDrag(const LayoutPoint& eventLocation)
     if (!renderer || !renderer->isBox())
         return;
 
-    Frame* frame = document()->frame();
+    Frame* frame = document().frame();
     if (!frame)
         return;
 
@@ -133,7 +133,7 @@ void MediaControlPanelElement::endDrag()
 
     m_isBeingDragged = false;
 
-    Frame* frame = document()->frame();
+    Frame* frame = document().frame();
     if (!frame)
         return;
 
@@ -147,7 +147,7 @@ void MediaControlPanelElement::startTimer()
     // The timer is required to set the property display:'none' on the panel,
     // such that captions are correctly displayed at the bottom of the video
     // at the end of the fadeout transition.
-    double duration = document()->page() ? document()->page()->theme()->mediaControlsFadeOutDuration() : 0;
+    double duration = document().page() ? document().page()->theme()->mediaControlsFadeOutDuration() : 0;
     m_transitionTimer.startOneShot(duration);
 }
 
@@ -198,7 +198,7 @@ void MediaControlPanelElement::makeOpaque()
     if (m_opaque)
         return;
 
-    double duration = document()->page() ? document()->page()->theme()->mediaControlsFadeInDuration() : 0;
+    double duration = document().page() ? document().page()->theme()->mediaControlsFadeInDuration() : 0;
 
     setInlineStyleProperty(CSSPropertyWebkitTransitionProperty, CSSPropertyOpacity);
     setInlineStyleProperty(CSSPropertyWebkitTransitionDuration, duration, CSSPrimitiveValue::CSS_S);
@@ -215,7 +215,7 @@ void MediaControlPanelElement::makeTransparent()
     if (!m_opaque)
         return;
 
-    double duration = document()->page() ? document()->page()->theme()->mediaControlsFadeOutDuration() : 0;
+    double duration = document().page() ? document().page()->theme()->mediaControlsFadeOutDuration() : 0;
 
     setInlineStyleProperty(CSSPropertyWebkitTransitionProperty, CSSPropertyOpacity);
     setInlineStyleProperty(CSSPropertyWebkitTransitionDuration, duration, CSSPrimitiveValue::CSS_S);
@@ -815,9 +815,9 @@ void MediaControlClosedCaptionsTrackListElement::updateDisplay()
     if (!mediaController()->hasClosedCaptions())
         return;
 
-    if (!document()->page())
+    if (!document().page())
         return;
-    CaptionUserPreferences::CaptionDisplayMode displayMode = document()->page()->group().captionPreferences()->captionDisplayMode();
+    CaptionUserPreferences::CaptionDisplayMode displayMode = document().page()->group().captionPreferences()->captionDisplayMode();
 
     HTMLMediaElement* mediaElement = toParentMediaElement(this);
     if (!mediaElement)
@@ -891,21 +891,20 @@ void MediaControlClosedCaptionsTrackListElement::rebuildTrackListMenu()
     if (!trackList || !trackList->length())
         return;
 
-    Document* doc = document();
-    if (!document()->page())
+    if (!document().page())
         return;
-    CaptionUserPreferences* captionPreferences = document()->page()->group().captionPreferences();
+    CaptionUserPreferences* captionPreferences = document().page()->group().captionPreferences();
     Vector<RefPtr<TextTrack> > tracksForMenu = captionPreferences->sortedTrackListForMenu(trackList);
 
-    RefPtr<Element> captionsHeader = doc->createElement(h3Tag, ASSERT_NO_EXCEPTION);
-    captionsHeader->appendChild(doc->createTextNode(textTrackSubtitlesText()));
+    RefPtr<Element> captionsHeader = document().createElement(h3Tag, ASSERT_NO_EXCEPTION);
+    captionsHeader->appendChild(document().createTextNode(textTrackSubtitlesText()));
     appendChild(captionsHeader);
-    RefPtr<Element> captionsMenuList = doc->createElement(ulTag, ASSERT_NO_EXCEPTION);
+    RefPtr<Element> captionsMenuList = document().createElement(ulTag, ASSERT_NO_EXCEPTION);
 
     for (unsigned i = 0, length = tracksForMenu.size(); i < length; ++i) {
         RefPtr<TextTrack> textTrack = tracksForMenu[i];
-        RefPtr<Element> menuItem = doc->createElement(liTag, ASSERT_NO_EXCEPTION);
-        menuItem->appendChild(doc->createTextNode(captionPreferences->displayNameForTrack(textTrack.get())));
+        RefPtr<Element> menuItem = document().createElement(liTag, ASSERT_NO_EXCEPTION);
+        menuItem->appendChild(document().createTextNode(captionPreferences->displayNameForTrack(textTrack.get())));
         captionsMenuList->appendChild(menuItem);
         m_menuItems.append(menuItem);
         m_menuToTrackMap.add(menuItem, textTrack);
@@ -1059,11 +1058,11 @@ void MediaControlFullscreenButtonElement::defaultEventHandler(Event* event)
         // allows apps which embed a WebView to retain the existing full screen
         // video implementation without requiring them to implement their own full
         // screen behavior.
-        if (document()->settings() && document()->settings()->fullScreenEnabled()) {
-            if (document()->webkitIsFullScreen() && document()->webkitCurrentFullScreenElement() == toParentMediaElement(this))
-                document()->webkitCancelFullScreen();
+        if (document().settings() && document().settings()->fullScreenEnabled()) {
+            if (document().webkitIsFullScreen() && document().webkitCurrentFullScreenElement() == toParentMediaElement(this))
+                document().webkitCancelFullScreen();
             else
-                document()->requestFullScreenForElement(toParentMediaElement(this), 0, Document::ExemptIFrameAllowFullScreenRequirement);
+                document().requestFullScreenForElement(toParentMediaElement(this), 0, Document::ExemptIFrameAllowFullScreenRequirement);
         } else
 #endif
             mediaController()->enterFullscreen();
@@ -1299,7 +1298,7 @@ void MediaControlTextTrackContainerElement::updateDisplay()
                 m_textTrackRepresentation = TextTrackRepresentation::create(this);
             mediaElement->setTextTrackRepresentation(m_textTrackRepresentation.get());
 
-            if (Page* page = document()->page())
+            if (Page* page = document().page())
                 m_textTrackRepresentation->setContentScale(page->deviceScaleFactor());
 
             m_textTrackRepresentation->update();
@@ -1314,7 +1313,7 @@ void MediaControlTextTrackContainerElement::updateDisplay()
 
 void MediaControlTextTrackContainerElement::updateTimerFired(Timer<MediaControlTextTrackContainerElement>*)
 {
-    if (!document()->page())
+    if (!document().page())
         return;
 
     if (m_textTrackRepresentation) {
@@ -1327,7 +1326,7 @@ void MediaControlTextTrackContainerElement::updateTimerFired(Timer<MediaControlT
         return;
 
     float smallestDimension = std::min(m_videoDisplaySize.size().height(), m_videoDisplaySize.size().width());
-    float fontScale = document()->page()->group().captionPreferences()->captionFontSizeScaleAndImportance(m_fontSizeIsImportant);
+    float fontScale = document().page()->group().captionPreferences()->captionFontSizeScaleAndImportance(m_fontSizeIsImportant);
     m_fontSize = lroundf(smallestDimension * fontScale);
     
     CueList activeCues = mediaElement->currentlyActiveCues();
@@ -1367,7 +1366,7 @@ void MediaControlTextTrackContainerElement::updateSizes(bool forceUpdate)
     if (!mediaElement)
         return;
 
-    if (!document()->page())
+    if (!document().page())
         return;
 
     IntRect videoBox;
@@ -1398,11 +1397,11 @@ PassRefPtr<Image> MediaControlTextTrackContainerElement::createTextTrackRepresen
     if (!hasChildNodes())
         return 0;
 
-    Frame* frame = document()->frame();
+    Frame* frame = document().frame();
     if (!frame)
         return 0;
 
-    document()->updateLayout();
+    document().updateLayout();
 
     RenderObject* renderer = this->renderer();
     if (!renderer)
@@ -1414,7 +1413,7 @@ PassRefPtr<Image> MediaControlTextTrackContainerElement::createTextTrackRepresen
     RenderLayer* layer = toRenderLayerModelObject(renderer)->layer();
 
     float deviceScaleFactor = 1;
-    if (Page* page = document()->page())
+    if (Page* page = document().page())
         deviceScaleFactor = page->deviceScaleFactor();
 
     IntRect paintingRect = IntRect(IntPoint(), layer->size());

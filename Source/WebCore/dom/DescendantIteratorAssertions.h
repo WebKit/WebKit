@@ -51,7 +51,7 @@ inline DescendantIteratorAssertions::DescendantIteratorAssertions()
 }
 
 inline DescendantIteratorAssertions::DescendantIteratorAssertions(const Element* first)
-    : m_document(first ? first->document() : nullptr)
+    : m_document(first ? &first->document() : nullptr)
     , m_initialDOMTreeVersion(m_document ? m_document->domTreeVersion() : 0)
     , m_noEventDispatchAssertion(m_document ? adoptPtr(new NoEventDispatchAssertion) : nullptr)
 {

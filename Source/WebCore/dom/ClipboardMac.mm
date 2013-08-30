@@ -39,8 +39,7 @@ DragImageRef Clipboard::createDragImage(IntPoint& location) const
 {
     NSImage *result = nil;
     if (m_dragImageElement) {
-        Document* document = m_dragImageElement->document();
-        if (Frame* frame = document->frame()) {
+        if (Frame* frame = m_dragImageElement->document().frame()) {
             NSRect imageRect;
             NSRect elementRect;
             result = snapshotDragImage(frame, m_dragImageElement.get(), &imageRect, &elementRect);

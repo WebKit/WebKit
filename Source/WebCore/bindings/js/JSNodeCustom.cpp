@@ -276,7 +276,7 @@ JSValue toJSNewlyCreated(ExecState* exec, JSDOMGlobalObject* globalObject, Node*
 
 void willCreatePossiblyOrphanedTreeByRemovalSlowCase(Node* root)
 {
-    ScriptState* scriptState = mainWorldScriptState(root->document()->frame());
+    ScriptState* scriptState = mainWorldScriptState(root->document().frame());
     if (!scriptState)
         return;
 

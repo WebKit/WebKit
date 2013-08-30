@@ -35,8 +35,7 @@ namespace WebCore {
 static inline SVGDocumentExtensions* svgExtensionsFromNode(Node* node)
 {
     ASSERT(node);
-    ASSERT(node->document());
-    return node->document()->accessSVGExtensions();
+    return node->document().accessSVGExtensions();
 }
 
 RenderSVGResourceContainer::RenderSVGResourceContainer(SVGElement* node)

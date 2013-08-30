@@ -238,7 +238,7 @@ void FindController::getImageForFindMatch(uint32_t matchIndex)
 {
     if (matchIndex >= m_findMatches.size())
         return;
-    Frame* frame = m_findMatches[matchIndex]->startContainer()->document()->frame();
+    Frame* frame = m_findMatches[matchIndex]->startContainer()->document().frame();
     if (!frame)
         return;
 
@@ -261,7 +261,7 @@ void FindController::selectFindMatch(uint32_t matchIndex)
 {
     if (matchIndex >= m_findMatches.size())
         return;
-    Frame* frame = m_findMatches[matchIndex]->startContainer()->document()->frame();
+    Frame* frame = m_findMatches[matchIndex]->startContainer()->document().frame();
     if (!frame)
         return;
     frame->selection().setSelection(VisibleSelection(m_findMatches[matchIndex].get()));

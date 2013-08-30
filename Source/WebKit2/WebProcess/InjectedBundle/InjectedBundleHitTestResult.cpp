@@ -57,11 +57,7 @@ WebFrame* InjectedBundleHitTestResult::frame() const
     if (!node)
         return 0;
 
-    Document* document = node->document();
-    if (!document)
-        return 0;
-
-    Frame* frame = document->frame();
+    Frame* frame = node->document().frame();
     if (!frame)
         return 0;
 

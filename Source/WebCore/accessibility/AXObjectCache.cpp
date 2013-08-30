@@ -138,7 +138,7 @@ AccessibilityObject* AXObjectCache::focusedImageMapUIElement(HTMLAreaElement* ar
     if (!imageElement)
         return 0;
     
-    AccessibilityObject* axRenderImage = areaElement->document()->axObjectCache()->getOrCreate(imageElement);
+    AccessibilityObject* axRenderImage = areaElement->document().axObjectCache()->getOrCreate(imageElement);
     if (!axRenderImage)
         return 0;
     
@@ -716,7 +716,7 @@ void AXObjectCache::postNotification(Node* node, AXNotification notification, bo
     if (!node)
         return;
     
-    postNotification(object.get(), node->document(), notification, postToElement, postType);
+    postNotification(object.get(), &node->document(), notification, postToElement, postType);
 }
 
 void AXObjectCache::postNotification(AccessibilityObject* object, Document* document, AXNotification notification, bool postToElement, PostType postType)
@@ -923,7 +923,7 @@ void AXObjectCache::textMarkerDataForVisiblePosition(TextMarkerData& textMarkerD
     }
     
     // find or create an accessibility object for this node
-    AXObjectCache* cache = domNode->document()->axObjectCache();
+    AXObjectCache* cache = domNode->document().axObjectCache();
     RefPtr<AccessibilityObject> obj = cache->getOrCreate(domNode);
     
     textMarkerData.axID = obj.get()->axObjectID();
@@ -955,7 +955,7 @@ void AXObjectCache::clearTextMarkerNodesInUse(Document* document)
     // Check each node to see if it's inside the document being deleted.
     HashSet<Node*> nodesToDelete;
     for (; it != end; ++it) {
-        if ((*it)->document() == document)
+        if (&(*it)->document() == document)
             nodesToDelete.add(*it);
     }
     

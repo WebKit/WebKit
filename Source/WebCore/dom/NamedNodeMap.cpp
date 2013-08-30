@@ -37,7 +37,7 @@ using namespace HTMLNames;
 
 static inline bool shouldIgnoreAttributeCase(const Element* e)
 {
-    return e && e->document()->isHTMLDocument() && e->isHTMLElement();
+    return e && e->document().isHTMLDocument() && e->isHTMLElement();
 }
 
 void NamedNodeMap::ref()

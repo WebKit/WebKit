@@ -395,7 +395,7 @@ Node* StyleSheetContents::singleOwnerNode() const
 Document* StyleSheetContents::singleOwnerDocument() const
 {
     Node* ownerNode = singleOwnerNode();
-    return ownerNode ? ownerNode->document() : 0;
+    return ownerNode ? &ownerNode->document() : 0;
 }
 
 KURL StyleSheetContents::completeURL(const String& url) const

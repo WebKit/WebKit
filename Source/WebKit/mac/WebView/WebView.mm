@@ -5446,7 +5446,7 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSC::JSValue j
         // Derive the frame to use from the range passed in.
         // Using _selectedOrMainFrame could give us a different document than
         // the one the range uses.
-        coreFrame = core([range startContainer])->document()->frame();
+        coreFrame = core([range startContainer])->document().frame();
         if (!coreFrame)
             return;
 
@@ -5866,7 +5866,7 @@ FOR_EACH_RESPONDER_SELECTOR(FORWARD)
     if (!coreFrame || !startNode)
         return;
     Node* coreStartNode= core(startNode);
-    if (coreStartNode->document() != coreFrame->document())
+    if (&coreStartNode->document() != coreFrame->document())
         return;
     return coreFrame->editor().simplifyMarkup(coreStartNode, core(endNode));    
 }

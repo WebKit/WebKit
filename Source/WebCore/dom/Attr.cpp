@@ -39,7 +39,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 Attr::Attr(Element* element, const QualifiedName& name)
-    : ContainerNode(element->document())
+    : ContainerNode(&element->document())
     , m_element(element)
     , m_name(name)
     , m_ignoreChildrenChanged(0)
@@ -79,7 +79,7 @@ void Attr::createTextChild()
 {
     ASSERT(refCount());
     if (!value().isEmpty()) {
-        RefPtr<Text> textNode = document()->createTextNode(value().string());
+        RefPtr<Text> textNode = document().createTextNode(value().string());
 
         // This does everything appendChild() would do in this situation (assuming m_ignoreChildrenChanged was set),
         // but much more efficiently.
@@ -142,7 +142,7 @@ void Attr::setNodeValue(const String& v, ExceptionCode& ec)
 
 PassRefPtr<Node> Attr::cloneNode(bool /*deep*/)
 {
-    RefPtr<Attr> clone = adoptRef(new Attr(document(), qualifiedName(), value()));
+    RefPtr<Attr> clone = adoptRef(new Attr(&document(), qualifiedName(), value()));
     cloneChildNodes(clone.get());
     return clone.release();
 }
@@ -184,7 +184,7 @@ void Attr::childrenChanged(bool, Node*, Node*, int)
 
 bool Attr::isId() const
 {
-    return qualifiedName().matches(document()->idAttributeName());
+    return qualifiedName().matches(document().idAttributeName());
 }
 
 CSSStyleDeclaration* Attr::style()

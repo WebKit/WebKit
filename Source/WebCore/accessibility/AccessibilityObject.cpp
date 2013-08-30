@@ -315,11 +315,7 @@ bool AccessibilityObject::hasMisspelling() const
     if (!node())
         return false;
     
-    Document* document = node()->document();
-    if (!document)
-        return false;
-    
-    Frame* frame = document->frame();
+    Frame* frame = node()->document().frame();
     if (!frame)
         return false;
     
@@ -375,11 +371,7 @@ AccessibilityObject* AccessibilityObject::firstAccessibleObjectFromNode(const No
     if (!node)
         return 0;
 
-    Document* document = node->document();
-    if (!document)
-        return 0;
-
-    AXObjectCache* cache = document->axObjectCache();
+    AXObjectCache* cache = node->document().axObjectCache();
 
     AccessibilityObject* accessibleObject = cache->getOrCreate(node->renderer());
     while (accessibleObject && accessibleObject->accessibilityIsIgnored()) {
@@ -577,7 +569,7 @@ bool AccessibilityObject::press() const
     Element* actionElem = actionElement();
     if (!actionElem)
         return false;
-    if (Frame* f = actionElem->document()->frame())
+    if (Frame* f = actionElem->document().frame())
         f->loader().resetMultipleFormSubmissionProtection();
     
     UserGestureIndicator gestureIndicator(DefinitelyProcessingUserGesture);

@@ -76,7 +76,7 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::svgPropertyValue(CSSPropertyID prop
 
     // Make sure our layout is up to date before we allow a query on these attributes.
     if (updateLayout)
-        node->document()->updateLayout();
+        node->document().updateLayout();
 
     RenderStyle* style = node->computedStyle();
     if (!style)

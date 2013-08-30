@@ -78,7 +78,7 @@ String HTMLElement::nodeName() const
     // FIXME: Would be nice to have an atomicstring lookup based off uppercase
     // chars that does not have to copy the string on a hit in the hash.
     // FIXME: We should have a way to detect XHTML elements and replace the hasPrefix() check with it.
-    if (document()->isHTMLDocument() && !tagQName().hasPrefix())
+    if (document().isHTMLDocument() && !tagQName().hasPrefix())
         return tagQName().localNameUpper();
     return Element::nodeName();
 }
@@ -114,7 +114,7 @@ bool HTMLElement::ieForbidsInsertHTML() const
     // serialization of <canvas>, that seems like a bad idea.
 #if ENABLE(DASHBOARD_SUPPORT)
     if (hasLocalName(canvasTag)) {
-        Settings* settings = document()->settings();
+        Settings* settings = document().settings();
         if (settings && settings->usesDashboardBackwardCompatibilityMode())
             return true;
     }
@@ -384,7 +384,7 @@ void HTMLElement::setOuterHTML(const String& html, ExceptionCode& ec)
 
 PassRefPtr<DocumentFragment> HTMLElement::textToFragment(const String& text, ExceptionCode& ec)
 {
-    RefPtr<DocumentFragment> fragment = DocumentFragment::create(document());
+    RefPtr<DocumentFragment> fragment = DocumentFragment::create(&document());
     unsigned int i, length = text.length();
     UChar c = 0;
     for (unsigned int start = 0; start < length; ) {
@@ -396,12 +396,12 @@ PassRefPtr<DocumentFragment> HTMLElement::textToFragment(const String& text, Exc
               break;
         }
 
-        fragment->appendChild(Text::create(document(), text.substring(start, i - start)), ec);
+        fragment->appendChild(Text::create(&document(), text.substring(start, i - start)), ec);
         if (ec)
             return 0;
 
         if (c == '\r' || c == '\n') {
-            fragment->appendChild(HTMLBRElement::create(document()), ec);
+            fragment->appendChild(HTMLBRElement::create(&document()), ec);
             if (ec)
                 return 0;
             // Make sure \r\n doesn't result in two line breaks.
@@ -492,7 +492,7 @@ void HTMLElement::setOuterText(const String &text, ExceptionCode& ec)
     if (text.contains('\r') || text.contains('\n'))
         newChild = textToFragment(text, ec);
     else
-        newChild = Text::create(document(), text);
+        newChild = Text::create(&document(), text);
 
     if (!this || !parentNode())
         ec = HIERARCHY_REQUEST_ERR;
@@ -582,7 +582,7 @@ void HTMLElement::insertAdjacentHTML(const String& where, const String& markup, 
 
 void HTMLElement::insertAdjacentText(const String& where, const String& text, ExceptionCode& ec)
 {
-    RefPtr<Text> textNode = document()->createTextNode(text);
+    RefPtr<Text> textNode = document().createTextNode(text);
     insertAdjacent(where, textNode.get(), ec);
 }
 
@@ -753,11 +753,11 @@ PassRefPtr<HTMLCollection> HTMLElement::children()
 bool HTMLElement::rendererIsNeeded(const RenderStyle& style)
 {
     if (hasLocalName(noscriptTag)) {
-        Frame* frame = document()->frame();
+        Frame* frame = document().frame();
         if (frame && frame->script().canExecuteScripts(NotAboutToExecuteScript))
             return false;
     } else if (hasLocalName(noembedTag)) {
-        Frame* frame = document()->frame();
+        Frame* frame = document().frame();
         if (frame && frame->loader().subframeLoader()->allowPlugins(NotAboutToInstantiatePlugin))
             return false;
     }
@@ -911,7 +911,7 @@ void HTMLElement::calculateAndAdjustDirectionality()
 
 void HTMLElement::adjustDirectionalityIfNeededAfterChildrenChanged(Node* beforeChange, int childCountDelta)
 {
-    if ((!document() || document()->renderer()) && childCountDelta < 0) {
+    if (document().renderer() && childCountDelta < 0) {
         Node* node = beforeChange ? NodeTraversal::nextSkippingChildren(beforeChange) : 0;
         for (int counter = 0; node && counter < childCountDelta; counter++, node = NodeTraversal::nextSkippingChildren(node)) {
             if (elementAffectsDirectionality(node))

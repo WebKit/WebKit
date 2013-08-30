@@ -363,7 +363,7 @@ bool DragController::tryDocumentDrag(DragData* dragData, DragDestinationAction a
         if (!m_fileInputElementUnderMouse)
             m_page->dragCaretController().setCaretPosition(m_documentUnderMouse->frame()->visiblePositionForPoint(point));
 
-        Frame* innerFrame = element->document()->frame();
+        Frame* innerFrame = element->document().frame();
         dragSession.operation = dragIsMove(innerFrame->selection(), dragData) ? DragOperationMove : DragOperationCopy;
         dragSession.mouseIsOverFileInput = m_fileInputElementUnderMouse;
         dragSession.numberOfItemsToBeAccepted = 0;
@@ -461,7 +461,7 @@ bool DragController::concludeEditDrag(DragData* dragData)
     Element* element = elementUnderMouse(m_documentUnderMouse.get(), point);
     if (!element)
         return false;
-    RefPtr<Frame> innerFrame = element->document()->frame();
+    RefPtr<Frame> innerFrame = element->document().frame();
     ASSERT(innerFrame);
 
     if (m_page->dragCaretController().hasCaret() && !dispatchTextInputEventFor(innerFrame.get(), dragData))
@@ -543,7 +543,7 @@ bool DragController::concludeEditDrag(DragData* dragData)
     }
 
     if (rootEditableElement) {
-        if (Frame* frame = rootEditableElement->document()->frame())
+        if (Frame* frame = rootEditableElement->document().frame())
             frame->eventHandler().updateDragStateAfterEditDragIfNeeded(rootEditableElement.get());
     }
 
@@ -701,9 +701,9 @@ static Image* getImage(Element* element)
 
 static void selectElement(Element* element)
 {
-    RefPtr<Range> range = element->document()->createRange();
+    RefPtr<Range> range = element->document().createRange();
     range->selectNode(element);
-    element->document()->frame()->selection().setSelection(VisibleSelection(range.get(), DOWNSTREAM));
+    element->document().frame()->selection().setSelection(VisibleSelection(range.get(), DOWNSTREAM));
 }
 
 static IntPoint dragLocForDHTMLDrag(const IntPoint& mouseDraggedPoint, const IntPoint& dragOrigin, const IntPoint& dragImageOffset, bool isLinkImage)

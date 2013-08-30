@@ -124,7 +124,7 @@ void HTMLImageElement::parseAttribute(const QualifiedName& name, const AtomicStr
             toRenderImage(renderer())->updateAltText();
     } else if (name == srcAttr || name == srcsetAttr) {
         float deviceScaleFactor = 1.0;
-        if (Page* page = document()->page())
+        if (Page* page = document().page())
             deviceScaleFactor = page->deviceScaleFactor();
         m_bestFitImageURL = bestFitSourceForImageAttributes(deviceScaleFactor, fastGetAttribute(srcAttr), fastGetAttribute(srcsetAttr));
         m_imageLoader.updateFromElementIgnoringPreviousError();
@@ -140,8 +140,8 @@ void HTMLImageElement::parseAttribute(const QualifiedName& name, const AtomicStr
     } else {
         if (name == nameAttr) {
             bool willHaveName = !value.isNull();
-            if (hasName() != willHaveName && inDocument() && document()->isHTMLDocument()) {
-                HTMLDocument* document = toHTMLDocument(this->document());
+            if (hasName() != willHaveName && inDocument() && document().isHTMLDocument()) {
+                HTMLDocument* document = toHTMLDocument(&this->document());
                 const AtomicString& id = getIdAttribute();
                 if (!id.isEmpty() && id != getNameAttribute()) {
                     if (willHaveName)
@@ -242,9 +242,9 @@ int HTMLImageElement::width(bool ignorePendingStylesheets)
     }
 
     if (ignorePendingStylesheets)
-        document()->updateLayoutIgnorePendingStylesheets();
+        document().updateLayoutIgnorePendingStylesheets();
     else
-        document()->updateLayout();
+        document().updateLayout();
 
     RenderBox* box = renderBox();
     return box ? adjustForAbsoluteZoom(box->contentBoxRect().pixelSnappedWidth(), box) : 0;
@@ -265,9 +265,9 @@ int HTMLImageElement::height(bool ignorePendingStylesheets)
     }
 
     if (ignorePendingStylesheets)
-        document()->updateLayoutIgnorePendingStylesheets();
+        document().updateLayoutIgnorePendingStylesheets();
     else
-        document()->updateLayout();
+        document().updateLayout();
 
     RenderBox* box = renderBox();
     return box ? adjustForAbsoluteZoom(box->contentBoxRect().pixelSnappedHeight(), box) : 0;
@@ -316,7 +316,7 @@ void HTMLImageElement::setHeight(int value)
 
 KURL HTMLImageElement::src() const
 {
-    return document()->completeURL(getAttribute(srcAttr));
+    return document().completeURL(getAttribute(srcAttr));
 }
 
 void HTMLImageElement::setSrc(const String& value)
@@ -362,7 +362,7 @@ void HTMLImageElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) cons
 
     addSubresourceURL(urls, src());
     // FIXME: What about when the usemap attribute begins with "#"?
-    addSubresourceURL(urls, document()->completeURL(getAttribute(usemapAttr)));
+    addSubresourceURL(urls, document().completeURL(getAttribute(usemapAttr)));
 }
 
 void HTMLImageElement::didMoveToNewDocument(Document* oldDocument)
@@ -382,7 +382,7 @@ bool HTMLImageElement::isServerMap() const
     if (usemap.string()[0] == '#')
         return false;
 
-    return document()->completeURL(stripLeadingAndTrailingHTMLSpaces(usemap)).isEmpty();
+    return document().completeURL(stripLeadingAndTrailingHTMLSpaces(usemap)).isEmpty();
 }
 
 }

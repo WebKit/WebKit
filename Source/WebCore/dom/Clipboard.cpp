@@ -276,7 +276,7 @@ DragImageRef Clipboard::createDragImage(IntPoint& location) const
         return createDragImageFromImage(m_dragImage->image(), ImageOrientationDescription());
 
     if (m_dragImageElement) {
-        if (Frame* frame = m_dragImageElement->document()->frame())
+        if (Frame* frame = m_dragImageElement->document().frame())
             return frame->nodeImage(m_dragImageElement.get());
     }
 

@@ -76,8 +76,8 @@ void ChildNodeRemovalNotifier::notifyDescendantRemovedFromDocument(ContainerNode
     if (!node->isElementNode())
         return;
 
-    if (node->document()->cssTarget() == node)
-        node->document()->setCSSTarget(0);
+    if (node->document().cssTarget() == node)
+        node->document().setCSSTarget(0);
 
     if (RefPtr<ShadowRoot> root = toElement(node)->shadowRoot()) {
         if (!node->inDocument() && root->hostElement() == node)

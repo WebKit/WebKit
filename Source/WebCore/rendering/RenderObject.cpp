@@ -163,8 +163,8 @@ void RenderObject::operator delete(void* ptr, size_t sz)
 
 RenderObject* RenderObject::createObject(Element* element, RenderStyle* style)
 {
-    Document* doc = element->document();
-    RenderArena* arena = doc->renderArena();
+    Document& document = element->document();
+    RenderArena* arena = document.renderArena();
 
     // Minimal support for content properties replacing an entire element.
     // Works only if we have exactly one piece of content and it's a URL.
@@ -194,7 +194,7 @@ RenderObject* RenderObject::createObject(Element* element, RenderStyle* style)
     // treat <rt> as ruby text ONLY if it still has its default treatment of block
     if (element->hasTagName(rtTag) && style->display() == BLOCK)
         return new (arena) RenderRubyText(element);
-    if (doc->cssRegionsEnabled() && style->isDisplayRegionType() && !style->regionThread().isEmpty() && doc->renderView())
+    if (document.cssRegionsEnabled() && style->isDisplayRegionType() && !style->regionThread().isEmpty())
         return new (arena) RenderRegion(element, 0);
     switch (style->display()) {
     case NONE:
@@ -205,7 +205,7 @@ RenderObject* RenderObject::createObject(Element* element, RenderStyle* style)
     case INLINE_BLOCK:
     case RUN_IN:
     case COMPACT:
-        if ((!style->hasAutoColumnCount() || !style->hasAutoColumnWidth()) && doc->regionBasedColumnsEnabled())
+        if ((!style->hasAutoColumnCount() || !style->hasAutoColumnWidth()) && document.regionBasedColumnsEnabled())
             return new (arena) RenderMultiColumnBlock(element);
         return new (arena) RenderBlock(element);
     case LIST_ITEM:
@@ -1116,7 +1116,7 @@ void RenderObject::addPDFURLRect(GraphicsContext* context, const LayoutRect& rec
     const AtomicString& href = toElement(n)->getAttribute(hrefAttr);
     if (href.isNull())
         return;
-    context->setURLForRect(n->document()->completeURL(href), pixelSnappedIntRect(rect));
+    context->setURLForRect(n->document().completeURL(href), pixelSnappedIntRect(rect));
 }
 
 void RenderObject::paintOutline(PaintInfo& paintInfo, const LayoutRect& paintRect)

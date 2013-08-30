@@ -55,7 +55,7 @@ String PseudoElement::pseudoElementNameForEvents(PseudoId pseudoId)
 }
 
 PseudoElement::PseudoElement(Element* host, PseudoId pseudoId)
-    : Element(pseudoElementTagName(), host->document(), CreatePseudoElement)
+    : Element(pseudoElementTagName(), &host->document(), CreatePseudoElement)
     , m_hostElement(host)
     , m_pseudoId(pseudoId)
 {
@@ -67,7 +67,7 @@ PseudoElement::~PseudoElement()
 {
     ASSERT(!m_hostElement);
 #if USE(ACCELERATED_COMPOSITING)
-    InspectorInstrumentation::pseudoElementDestroyed(document()->page(), this);
+    InspectorInstrumentation::pseudoElementDestroyed(document().page(), this);
 #endif
 }
 
@@ -86,7 +86,7 @@ void PseudoElement::didAttachRenderers()
     ASSERT(style->contentData());
 
     for (const ContentData* content = style->contentData(); content; content = content->next()) {
-        RenderObject* child = content->createRenderer(document(), style);
+        RenderObject* child = content->createRenderer(&document(), style);
         if (renderer->isChildAllowed(child, style)) {
             renderer->addChild(child);
             if (child->isQuote())

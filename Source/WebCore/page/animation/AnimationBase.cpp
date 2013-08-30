@@ -92,7 +92,7 @@ AnimationBase::AnimationBase(const Animation* transition, RenderObject* renderer
 
 void AnimationBase::setNeedsStyleRecalc(Node* node)
 {
-    ASSERT(!node || (node->document() && !node->document()->inPageCache()));
+    ASSERT(!node || !node->document().inPageCache());
     if (node)
         node->setNeedsStyleRecalc(SyntheticStyleChange);
 }

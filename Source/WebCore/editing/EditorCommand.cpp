@@ -97,7 +97,7 @@ static Frame* targetFrame(Frame& frame, Event* event)
     Node* node = event->target()->toNode();
     if (!node)
         return &frame;
-    return node->document()->frame();
+    return node->document().frame();
 }
 
 static bool applyCommandToFrame(Frame& frame, EditorCommandSource source, EditAction action, StylePropertySet* style)

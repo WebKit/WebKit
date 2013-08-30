@@ -511,7 +511,7 @@ void DOMPatchSupport::markNodeAsUsed(Digest* digest)
 #ifdef DEBUG_DOM_PATCH_SUPPORT
 static String nodeName(Node* node)
 {
-    if (node->document()->isXHTMLDocument())
+    if (node->document().isXHTMLDocument())
          return node->nodeName();
     return node->nodeName().lower();
 }

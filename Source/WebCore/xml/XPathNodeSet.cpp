@@ -182,7 +182,7 @@ static Node* findRootNode(Node* node)
     if (node->isAttributeNode())
         node = static_cast<Attr*>(node)->ownerElement();
     if (node->inDocument())
-        node = node->document();
+        node = &node->document();
     else {
         while (Node* parent = node->parentNode())
             node = parent;

@@ -646,7 +646,7 @@ bool DumpRenderTreeSupportEfl::selectedRange(Evas_Object* ewkView, int* start, i
     WebCore::Element* selectionRoot = frame.selection().rootEditableElement();
     WebCore::Element* scope = selectionRoot ? selectionRoot : frame.document()->documentElement();
 
-    RefPtr<WebCore::Range> testRange = WebCore::Range::create(scope->document(), scope, 0, range->startContainer(), range->startOffset());
+    RefPtr<WebCore::Range> testRange = WebCore::Range::create(&scope->document(), scope, 0, range->startContainer(), range->startOffset());
     *start = WebCore::TextIterator::rangeLength(testRange.get());
 
     WebCore::ExceptionCode ec;

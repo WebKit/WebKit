@@ -355,8 +355,8 @@ void RenderMenuList::valueChanged(unsigned listIndex, bool fireOnChange)
 {
     // Check to ensure a page navigation has not occurred while
     // the popup was up.
-    Document* doc = toElement(node())->document();
-    if (!doc || doc != doc->frame()->document())
+    Document& document = toElement(node())->document();
+    if (&document != document.frame()->document())
         return;
     
     HTMLSelectElement* select = selectElement();

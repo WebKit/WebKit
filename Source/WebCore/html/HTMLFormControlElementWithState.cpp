@@ -46,14 +46,14 @@ HTMLFormControlElementWithState::~HTMLFormControlElementWithState()
 Node::InsertionNotificationRequest HTMLFormControlElementWithState::insertedInto(ContainerNode* insertionPoint)
 {
     if (insertionPoint->inDocument() && !containingShadowRoot())
-        document()->formController().registerFormElementWithState(this);
+        document().formController().registerFormElementWithState(this);
     return HTMLFormControlElement::insertedInto(insertionPoint);
 }
 
 void HTMLFormControlElementWithState::removedFrom(ContainerNode* insertionPoint)
 {
     if (insertionPoint->inDocument() && !containingShadowRoot() && !insertionPoint->containingShadowRoot())
-        document()->formController().unregisterFormElementWithState(this);
+        document().formController().unregisterFormElementWithState(this);
     HTMLFormControlElement::removedFrom(insertionPoint);
 }
 
@@ -66,7 +66,7 @@ bool HTMLFormControlElementWithState::shouldAutocomplete() const
 
 void HTMLFormControlElementWithState::notifyFormStateChanged()
 {
-    Frame* frame = document()->frame();
+    Frame* frame = document().frame();
     if (!frame)
         return;
 
@@ -88,7 +88,7 @@ FormControlState HTMLFormControlElementWithState::saveFormControlState() const
 void HTMLFormControlElementWithState::finishParsingChildren()
 {
     HTMLFormControlElement::finishParsingChildren();
-    document()->formController().restoreControlStateFor(*this);
+    document().formController().restoreControlStateFor(*this);
 }
 
 bool HTMLFormControlElementWithState::isFormControlElementWithState() const

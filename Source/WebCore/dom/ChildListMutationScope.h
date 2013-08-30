@@ -78,7 +78,7 @@ class ChildListMutationScope {
 public:
     explicit ChildListMutationScope(Node* target)
     {
-        if (target->document()->hasMutationObserversOfType(MutationObserver::ChildList))
+        if (target->document().hasMutationObserversOfType(MutationObserver::ChildList))
             m_accumulator = ChildListMutationAccumulator::getOrCreate(target);
     }
 

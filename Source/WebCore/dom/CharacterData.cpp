@@ -50,7 +50,7 @@ void CharacterData::setData(const String& data, ExceptionCode&)
     unsigned oldLength = length();
 
     setDataAndUpdate(nonNullData, 0, oldLength, nonNullData.length());
-    document()->textRemoved(this, 0, oldLength);
+    document().textRemoved(this, 0, oldLength);
 }
 
 String CharacterData::substringData(unsigned offset, unsigned count, ExceptionCode& ec)
@@ -93,7 +93,7 @@ unsigned CharacterData::parserAppendData(const String& string, unsigned offset, 
     if (isTextNode())
         Style::updateTextRendererAfterContentChange(*toText(this), oldLength, 0);
 
-    document()->incDOMTreeVersion();
+    document().incDOMTreeVersion();
     // We don't call dispatchModifiedEvent here because we don't want the
     // parser to dispatch DOM mutation events.
     if (parentNode())
@@ -123,7 +123,7 @@ void CharacterData::insertData(unsigned offset, const String& data, ExceptionCod
 
     setDataAndUpdate(newStr, offset, 0, data.length());
 
-    document()->textInserted(this, offset, data.length());
+    document().textInserted(this, offset, data.length());
 }
 
 void CharacterData::deleteData(unsigned offset, unsigned count, ExceptionCode& ec)
@@ -143,7 +143,7 @@ void CharacterData::deleteData(unsigned offset, unsigned count, ExceptionCode& e
 
     setDataAndUpdate(newStr, offset, count, 0);
 
-    document()->textRemoved(this, offset, realCount);
+    document().textRemoved(this, offset, realCount);
 }
 
 void CharacterData::replaceData(unsigned offset, unsigned count, const String& data, ExceptionCode& ec)
@@ -165,8 +165,8 @@ void CharacterData::replaceData(unsigned offset, unsigned count, const String& d
     setDataAndUpdate(newStr, offset, count, data.length());
 
     // update the markers for spell checking and grammar checking
-    document()->textRemoved(this, offset, realCount);
-    document()->textInserted(this, offset, data.length());
+    document().textRemoved(this, offset, realCount);
+    document().textInserted(this, offset, data.length());
 }
 
 String CharacterData::nodeValue() const
@@ -193,10 +193,10 @@ void CharacterData::setDataAndUpdate(const String& newData, unsigned offsetOfRep
     if (isTextNode())
         Style::updateTextRendererAfterContentChange(*toText(this), offsetOfReplacedData, oldLength);
 
-    if (document()->frame())
-        document()->frame()->selection().textWasReplaced(this, offsetOfReplacedData, oldLength, newLength);
+    if (document().frame())
+        document().frame()->selection().textWasReplaced(this, offsetOfReplacedData, oldLength, newLength);
 
-    document()->incDOMTreeVersion();
+    document().incDOMTreeVersion();
     dispatchModifiedEvent(oldData);
 }
 
@@ -207,12 +207,12 @@ void CharacterData::dispatchModifiedEvent(const String& oldData)
     if (!isInShadowTree()) {
         if (parentNode())
             parentNode()->childrenChanged();
-        if (document()->hasListenerType(Document::DOMCHARACTERDATAMODIFIED_LISTENER))
+        if (document().hasListenerType(Document::DOMCHARACTERDATAMODIFIED_LISTENER))
             dispatchScopedEvent(MutationEvent::create(eventNames().DOMCharacterDataModifiedEvent, true, 0, oldData, m_data));
         dispatchSubtreeModifiedEvent();
     }
 #if ENABLE(INSPECTOR)
-    InspectorInstrumentation::characterDataModified(document(), this);
+    InspectorInstrumentation::characterDataModified(&document(), this);
 #endif
 }
 

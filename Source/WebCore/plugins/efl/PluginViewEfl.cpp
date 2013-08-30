@@ -125,7 +125,7 @@ void PluginView::updatePluginWidget()
 void PluginView::setFocus(bool focused)
 {
     if (focused)
-        m_element->document()->setFocusedElement(m_element);
+        m_element->document().setFocusedElement(m_element);
 
     Widget::setFocus(focused);
 }

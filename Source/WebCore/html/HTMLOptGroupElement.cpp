@@ -106,7 +106,7 @@ void HTMLOptGroupElement::willDetachRenderers()
 
 void HTMLOptGroupElement::updateNonRenderStyle()
 {
-    m_style = document()->ensureStyleResolver().styleForElement(this);
+    m_style = document().ensureStyleResolver().styleForElement(this);
 }
 
 RenderStyle* HTMLOptGroupElement::nonRendererStyle() const
@@ -124,7 +124,7 @@ PassRefPtr<RenderStyle> HTMLOptGroupElement::customStyleForRenderer()
 
 String HTMLOptGroupElement::groupLabelText() const
 {
-    String itemText = document()->displayStringModifiedByEncoding(getAttribute(labelAttr));
+    String itemText = document().displayStringModifiedByEncoding(getAttribute(labelAttr));
     
     // In WinIE, leading and trailing whitespace is ignored in options and optgroups. We match this behavior.
     itemText = itemText.stripWhiteSpace();

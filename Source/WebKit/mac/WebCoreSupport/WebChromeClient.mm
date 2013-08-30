@@ -208,7 +208,7 @@ void WebChromeClient::focusedElementChanged(Element* element)
     if (!inputElement->isText())
         return;
 
-    CallFormDelegate(m_webView, @selector(didFocusTextField:inFrame:), kit(inputElement), kit(inputElement->document()->frame()));
+    CallFormDelegate(m_webView, @selector(didFocusTextField:inFrame:), kit(inputElement), kit(inputElement->document().frame()));
 }
 
 void WebChromeClient::focusedFrameChanged(Frame*)
@@ -693,7 +693,7 @@ FloatRect WebChromeClient::customHighlightRect(Node* node, const AtomicString& t
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
-    NSView *documentView = [[kit(node->document()->frame()) frameView] documentView];
+    NSView *documentView = [[kit(node->document().frame()) frameView] documentView];
     if (![documentView isKindOfClass:[WebHTMLView class]])
         return NSZeroRect;
 
@@ -711,7 +711,7 @@ void WebChromeClient::paintCustomHighlight(Node* node, const AtomicString& type,
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
-    NSView *documentView = [[kit(node->document()->frame()) frameView] documentView];
+    NSView *documentView = [[kit(node->document().frame()) frameView] documentView];
     if (![documentView isKindOfClass:[WebHTMLView class]])
         return;
 

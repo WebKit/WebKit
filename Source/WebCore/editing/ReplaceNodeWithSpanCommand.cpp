@@ -42,7 +42,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 ReplaceNodeWithSpanCommand::ReplaceNodeWithSpanCommand(PassRefPtr<HTMLElement> element)
-    : SimpleEditCommand(element->document())
+    : SimpleEditCommand(&element->document())
     , m_elementToReplace(element)
 {
     ASSERT(m_elementToReplace);
@@ -69,7 +69,7 @@ void ReplaceNodeWithSpanCommand::doApply()
     if (!m_elementToReplace->inDocument())
         return;
     if (!m_spanElement)
-        m_spanElement = createHTMLElement(m_elementToReplace->document(), spanTag);
+        m_spanElement = createHTMLElement(&m_elementToReplace->document(), spanTag);
     swapInNodePreservingAttributesAndChildren(m_spanElement.get(), m_elementToReplace.get());
 }
 

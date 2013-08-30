@@ -1627,4 +1627,8 @@ Node* eventTargetNodeForDocument(Document*);
 
 } // namespace WebCore
 
+namespace WTF {
+inline WebCore::Document* getPtr(WebCore::Document& p) { return &p; }
+}
+
 #endif // Document_h

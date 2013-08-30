@@ -131,7 +131,7 @@ static inline Frame* parentFromOwnerElement(HTMLFrameOwnerElement* ownerElement)
 {
     if (!ownerElement)
         return 0;
-    return ownerElement->document()->frame();
+    return ownerElement->document().frame();
 }
 
 static inline float parentPageZoomFactor(Frame* frame)
@@ -586,7 +586,7 @@ Frame* Frame::frameForWidget(const Widget* widget)
 
     if (RenderWidget* renderer = RenderWidget::find(widget))
         if (Node* node = renderer->node())
-            return node->document()->frame();
+            return node->document().frame();
 
     // Assume all widgets are either a FrameView or owned by a RenderWidget.
     // FIXME: That assumption is not right for scroll bars!
@@ -640,7 +640,7 @@ void Frame::disconnectOwnerElement()
         // We don't clear the AXObjectCache here because we don't want to clear the top level cache
         // when a sub-frame is removed.
 #if HAVE(ACCESSIBILITY)
-        if (AXObjectCache* cache = m_ownerElement->document()->existingAXObjectCache())
+        if (AXObjectCache* cache = m_ownerElement->document().existingAXObjectCache())
             cache->clearTextMarkerNodesInUse(document());
 #endif
         
@@ -681,7 +681,7 @@ Document* Frame::documentAtPoint(const IntPoint& point)
 
     if (contentRenderer())
         result = eventHandler().hitTestResultAtPoint(pt);
-    return result.innerNode() ? result.innerNode()->document() : 0;
+    return result.innerNode() ? &result.innerNode()->document() : 0;
 }
 
 PassRefPtr<Range> Frame::rangeForPoint(const IntPoint& framePoint)

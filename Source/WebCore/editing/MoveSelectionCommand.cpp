@@ -32,7 +32,7 @@
 namespace WebCore {
 
 MoveSelectionCommand::MoveSelectionCommand(PassRefPtr<DocumentFragment> fragment, const Position& position, bool smartInsert, bool smartDelete) 
-    : CompositeEditCommand(position.anchorNode()->document()), m_fragment(fragment), m_position(position), m_smartInsert(smartInsert), m_smartDelete(smartDelete)
+    : CompositeEditCommand(&position.anchorNode()->document()), m_fragment(fragment), m_position(position), m_smartInsert(smartInsert), m_smartDelete(smartDelete)
 {
     ASSERT(m_fragment);
 }

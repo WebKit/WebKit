@@ -79,7 +79,7 @@ void EmbeddedWidget::invalidateRect(const IntRect& rect)
 
 void EmbeddedWidget::setFrameRect(const IntRect& rect)
 {
-    if (m_element->document()->printing())
+    if (m_element->document().printing())
         return;
 
     if (rect != frameRect())
@@ -167,7 +167,7 @@ IntRect EmbeddedWidget::windowClipRect() const
     IntRect clipRect(m_windowRect);
     
     // Take our element and get the clip rect from the enclosing layer and frame view.
-    FrameView* parentView = m_element->document()->view();
+    FrameView* parentView = m_element->document().view();
     clipRect.intersect(parentView->windowClipRectForFrameOwner(m_element, true));
 
     return clipRect;

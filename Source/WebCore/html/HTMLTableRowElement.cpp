@@ -127,7 +127,7 @@ PassRefPtr<HTMLElement> HTMLTableRowElement::insertCell(int index, ExceptionCode
         return 0;
     }
 
-    RefPtr<HTMLTableCellElement> cell = HTMLTableCellElement::create(tdTag, document());
+    RefPtr<HTMLTableCellElement> cell = HTMLTableCellElement::create(tdTag, &document());
     if (index < 0 || index >= numCells)
         appendChild(cell, ec);
     else {

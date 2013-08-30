@@ -94,7 +94,7 @@ IntRect WebHitTestResult::Data::elementBoundingBoxInWindowCoordinates(const HitT
     if (!node)
         return IntRect();
 
-    Frame* frame = node->document()->frame();
+    Frame* frame = node->document().frame();
     if (!frame)
         return IntRect();
 

@@ -1304,7 +1304,7 @@ HRESULT STDMETHODCALLTYPE DOMHTMLInputElement::rectOnScreen(
     ASSERT(isHTMLInputElement(m_element));
     rect->left = rect->top = rect->right = rect->bottom = 0;
     RenderObject* renderer = m_element->renderer();
-    FrameView* view = m_element->document()->view();
+    FrameView* view = m_element->document().view();
     if (!renderer || !view)
         return E_FAIL;
 

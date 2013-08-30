@@ -557,7 +557,7 @@ void Node::normalize()
             // Both non-empty text nodes. Merge them.
             unsigned offset = text->length();
             text->appendData(nextText->data(), IGNORE_EXCEPTION);
-            document()->textNodesMerged(nextText.get(), offset);
+            document().textNodesMerged(nextText.get(), offset);
             nextText->remove(IGNORE_EXCEPTION);
         }
 
@@ -591,27 +591,27 @@ const AtomicString& Node::namespaceURI() const
 
 bool Node::isContentEditable(UserSelectAllTreatment treatment)
 {
-    document()->updateStyleIfNeeded();
+    document().updateStyleIfNeeded();
     return rendererIsEditable(Editable, treatment);
 }
 
 bool Node::isContentRichlyEditable()
 {
-    document()->updateStyleIfNeeded();
+    document().updateStyleIfNeeded();
     return rendererIsEditable(RichlyEditable, UserSelectAllIsAlwaysNonEditable);
 }
 
 void Node::inspect()
 {
 #if ENABLE(INSPECTOR)
-    if (document() && document()->page())
-        document()->page()->inspectorController()->inspect(this);
+    if (document().page())
+        document().page()->inspectorController()->inspect(this);
 #endif
 }
 
 bool Node::rendererIsEditable(EditableLevel editableLevel, UserSelectAllTreatment treatment) const
 {
-    if (document()->frame() && document()->frame()->page() && document()->frame()->page()->isEditable() && !containingShadowRoot())
+    if (document().frame() && document().frame()->page() && document().frame()->page()->isEditable() && !containingShadowRoot())
         return true;
 
     if (isPseudoElement())
@@ -656,14 +656,11 @@ bool Node::isEditableToAccessibility(EditableLevel editableLevel) const
     if (editableLevel == RichlyEditable)
         return false;
 
-    ASSERT(document());
     ASSERT(AXObjectCache::accessibilityEnabled());
-    ASSERT(document()->existingAXObjectCache());
+    ASSERT(document().existingAXObjectCache());
 
-    if (document()) {
-        if (AXObjectCache* cache = document()->existingAXObjectCache())
-            return cache->rootAXEditableElement(this);
-    }
+    if (AXObjectCache* cache = document().existingAXObjectCache())
+        return cache->rootAXEditableElement(this);
 
     return false;
 }
@@ -708,8 +705,8 @@ void Node::markAncestorsWithChildNeedsStyleRecalc()
     for (; ancestor && !ancestor->childNeedsStyleRecalc(); ancestor = ancestor->parentOrShadowHostNode())
         ancestor->setChildNeedsStyleRecalc();
 
-    if (document()->childNeedsStyleRecalc())
-        document()->scheduleStyleRecalc();
+    if (document().childNeedsStyleRecalc())
+        document().scheduleStyleRecalc();
 }
 
 void Node::refEventTarget()
@@ -790,10 +787,10 @@ void Node::invalidateNodeListCachesInAncestors(const QualifiedName* attrName, El
     if (attrName && !attributeOwnerElement)
         return;
 
-    if (!document()->shouldInvalidateNodeListCaches(attrName))
+    if (!document().shouldInvalidateNodeListCaches(attrName))
         return;
 
-    document()->invalidateNodeListCaches(attrName);
+    document().invalidateNodeListCaches(attrName);
 
     for (Node* node = this; node; node = node->parentNode()) {
         if (!node->hasRareData())
@@ -846,7 +843,7 @@ bool Node::isDescendantOf(const Node *other) const
     if (!other || !other->hasChildNodes() || inDocument() != other->inDocument())
         return false;
     if (other->isDocumentNode())
-        return document() == other && !isDocumentNode() && inDocument();
+        return &document() == other && !isDocumentNode() && inDocument();
     for (const ContainerNode* n = parentNode(); n; n = n->parentNode()) {
         if (n == other)
             return true;
@@ -971,7 +968,7 @@ bool Node::canStartSelection() const
 
 bool Node::isRegisteredWithNamedFlow() const
 {
-    return document()->renderView()->flowThreadController().isContentNodeRegisteredWithAnyNamedFlow(this);
+    return document().renderView()->flowThreadController().isContentNodeRegisteredWithAnyNamedFlow(this);
 }
 
 Element* Node::shadowHost() const
@@ -1076,7 +1073,7 @@ bool Node::isRootEditableElement() const
 Element* Node::rootEditableElement(EditableType editableType) const
 {
     if (editableType == HasEditableAXRole) {
-        if (AXObjectCache* cache = document()->existingAXObjectCache())
+        if (AXObjectCache* cache = document().existingAXObjectCache())
             return const_cast<Element*>(cache->rootAXEditableElement(this));
     }
     
@@ -1102,7 +1099,7 @@ PassRefPtr<NodeList> Node::getElementsByTagName(const AtomicString& localName)
     if (localName.isNull())
         return 0;
 
-    if (document()->isHTMLDocument())
+    if (document().isHTMLDocument())
         return ensureRareData().ensureNodeLists().addCacheWithAtomicName<HTMLTagNodeList>(this, HTMLTagNodeListType, localName);
     return ensureRareData().ensureNodeLists().addCacheWithAtomicName<TagNodeList>(this, TagNodeListType, localName);
 }
@@ -1141,7 +1138,7 @@ PassRefPtr<Element> Node::querySelector(const AtomicString& selectors, Exception
         return 0;
     }
 
-    SelectorQuery* selectorQuery = document()->selectorQueryCache().add(selectors, document(), ec);
+    SelectorQuery* selectorQuery = document().selectorQueryCache().add(selectors, &document(), ec);
     if (!selectorQuery)
         return 0;
     return selectorQuery->queryFirst(this);
@@ -1154,7 +1151,7 @@ PassRefPtr<NodeList> Node::querySelectorAll(const AtomicString& selectors, Excep
         return 0;
     }
 
-    SelectorQuery* selectorQuery = document()->selectorQueryCache().add(selectors, document(), ec);
+    SelectorQuery* selectorQuery = document().selectorQueryCache().add(selectors, &document(), ec);
     if (!selectorQuery)
         return 0;
     return selectorQuery->queryAll(this);
@@ -1162,7 +1159,7 @@ PassRefPtr<NodeList> Node::querySelectorAll(const AtomicString& selectors, Excep
 
 Document *Node::ownerDocument() const
 {
-    Document *doc = document();
+    Document* doc = &document();
     return doc == this ? 0 : doc;
 }
 
@@ -1465,7 +1462,7 @@ void Node::setTextContent(const String& text, ExceptionCode& ec)
             ChildListMutationScope mutation(this);
             container->removeChildren();
             if (!text.isEmpty())
-                container->appendChild(document()->createTextNode(text), ec);
+                container->appendChild(document().createTextNode(text), ec);
             return;
         }
         case DOCUMENT_NODE:
@@ -1776,8 +1773,8 @@ void Node::formatForDebugger(char* buffer, unsigned length) const
 static ContainerNode* parentOrShadowHostOrFrameOwner(const Node* node)
 {
     ContainerNode* parent = node->parentOrShadowHostNode();
-    if (!parent && node->document() && node->document()->frame())
-        parent = node->document()->frame()->ownerElement();
+    if (!parent && node->document().frame())
+        parent = node->document().frame()->ownerElement();
     return parent;
 }
 
@@ -1852,7 +1849,7 @@ const AtomicString& Node::interfaceName() const
 
 ScriptExecutionContext* Node::scriptExecutionContext() const
 {
-    return document();
+    return &document();
 }
 
 void Node::didMoveToNewDocument(Document* oldDocument)
@@ -1864,7 +1861,7 @@ void Node::didMoveToNewDocument(Document* oldDocument)
         if (!listenerMap.isEmpty()) {
             Vector<AtomicString> types = listenerMap.eventTypes();
             for (unsigned i = 0; i < types.size(); ++i)
-                document()->addListenerTypeIfNeeded(types[i]);
+                document().addListenerTypeIfNeeded(types[i]);
         }
     }
 
@@ -1875,13 +1872,13 @@ void Node::didMoveToNewDocument(Document* oldDocument)
     const EventListenerVector& mousewheelListeners = getEventListeners(eventNames().mousewheelEvent);
     for (size_t i = 0; i < mousewheelListeners.size(); ++i) {
         oldDocument->didRemoveWheelEventHandler();
-        document()->didAddWheelEventHandler();
+        document().didAddWheelEventHandler();
     }
 
     const EventListenerVector& wheelListeners = getEventListeners(eventNames().wheelEvent);
     for (size_t i = 0; i < wheelListeners.size(); ++i) {
         oldDocument->didRemoveWheelEventHandler();
-        document()->didAddWheelEventHandler();
+        document().didAddWheelEventHandler();
     }
 
     Vector<AtomicString> touchEventNames = eventNames().touchEventNames();
@@ -1889,19 +1886,19 @@ void Node::didMoveToNewDocument(Document* oldDocument)
         const EventListenerVector& listeners = getEventListeners(touchEventNames[i]);
         for (size_t j = 0; j < listeners.size(); ++j) {
             oldDocument->didRemoveTouchEventHandler(this);
-            document()->didAddTouchEventHandler(this);
+            document().didAddTouchEventHandler(this);
         }
     }
 
     if (Vector<OwnPtr<MutationObserverRegistration> >* registry = mutationObserverRegistry()) {
         for (size_t i = 0; i < registry->size(); ++i) {
-            document()->addMutationObserverTypes(registry->at(i)->mutationTypes());
+            document().addMutationObserverTypes(registry->at(i)->mutationTypes());
         }
     }
 
     if (HashSet<MutationObserverRegistration*>* transientRegistry = transientMutationObserverRegistry()) {
         for (HashSet<MutationObserverRegistration*>::iterator iter = transientRegistry->begin(); iter != transientRegistry->end(); ++iter) {
-            document()->addMutationObserverTypes((*iter)->mutationTypes());
+            document().addMutationObserverTypes((*iter)->mutationTypes());
         }
     }
 }
@@ -1911,13 +1908,11 @@ static inline bool tryAddEventListener(Node* targetNode, const AtomicString& eve
     if (!targetNode->EventTarget::addEventListener(eventType, listener, useCapture))
         return false;
 
-    if (Document* document = targetNode->document()) {
-        document->addListenerTypeIfNeeded(eventType);
-        if (eventType == eventNames().wheelEvent || eventType == eventNames().mousewheelEvent)
-            document->didAddWheelEventHandler();
-        else if (eventNames().isTouchEventType(eventType))
-            document->didAddTouchEventHandler(targetNode);
-    }
+    targetNode->document().addListenerTypeIfNeeded(eventType);
+    if (eventType == eventNames().wheelEvent || eventType == eventNames().mousewheelEvent)
+        targetNode->document().didAddWheelEventHandler();
+    else if (eventNames().isTouchEventType(eventType))
+        targetNode->document().didAddTouchEventHandler(targetNode);
 
     return true;
 }
@@ -1934,12 +1929,10 @@ static inline bool tryRemoveEventListener(Node* targetNode, const AtomicString& 
 
     // FIXME: Notify Document that the listener has vanished. We need to keep track of a number of
     // listeners for each type, not just a bool - see https://bugs.webkit.org/show_bug.cgi?id=33861
-    if (Document* document = targetNode->document()) {
-        if (eventType == eventNames().wheelEvent || eventType == eventNames().mousewheelEvent)
-            document->didRemoveWheelEventHandler();
-        else if (eventNames().isTouchEventType(eventType))
-            document->didRemoveTouchEventHandler(targetNode);
-    }
+    if (eventType == eventNames().wheelEvent || eventType == eventNames().mousewheelEvent)
+        targetNode->document().didRemoveWheelEventHandler();
+    else if (eventNames().isTouchEventType(eventType))
+        targetNode->document().didRemoveTouchEventHandler(targetNode);
 
     return true;
 }
@@ -2040,7 +2033,7 @@ void Node::registerMutationObserver(MutationObserver* observer, MutationObserver
         registration = registry.last().get();
     }
 
-    document()->addMutationObserverTypes(registration->mutationTypes());
+    document().addMutationObserverTypes(registration->mutationTypes());
 }
 
 void Node::unregisterMutationObserver(MutationObserverRegistration* registration)
@@ -2076,7 +2069,7 @@ void Node::unregisterTransientMutationObserver(MutationObserverRegistration* reg
 
 void Node::notifyMutationObserversNodeWillDetach()
 {
-    if (!document()->hasMutationObservers())
+    if (!document().hasMutationObservers())
         return;
 
     for (Node* node = parentNode(); node; node = node->parentNode()) {
@@ -2132,7 +2125,7 @@ void Node::dispatchSubtreeModifiedEvent()
 
     ASSERT(!NoEventDispatchAssertion::isEventDispatchForbidden());
 
-    if (!document()->hasListenerType(Document::DOMSUBTREEMODIFIED_LISTENER))
+    if (!document().hasListenerType(Document::DOMSUBTREEMODIFIED_LISTENER))
         return;
 
     dispatchScopedEvent(MutationEvent::create(eventNames().DOMSubtreeModifiedEvent, true));
@@ -2141,7 +2134,7 @@ void Node::dispatchSubtreeModifiedEvent()
 bool Node::dispatchDOMActivateEvent(int detail, PassRefPtr<Event> underlyingEvent)
 {
     ASSERT(!NoEventDispatchAssertion::isEventDispatchForbidden());
-    RefPtr<UIEvent> event = UIEvent::create(eventNames().DOMActivateEvent, true, true, document()->defaultView(), detail);
+    RefPtr<UIEvent> event = UIEvent::create(eventNames().DOMActivateEvent, true, true, document().defaultView(), detail);
     event->setUnderlyingEvent(underlyingEvent);
     dispatchScopedEvent(event);
     return event->defaultHandled();
@@ -2149,19 +2142,19 @@ bool Node::dispatchDOMActivateEvent(int detail, PassRefPtr<Event> underlyingEven
 
 bool Node::dispatchKeyEvent(const PlatformKeyboardEvent& event)
 {
-    return EventDispatcher::dispatchEvent(this, KeyboardEventDispatchMediator::create(KeyboardEvent::create(event, document()->defaultView())));
+    return EventDispatcher::dispatchEvent(this, KeyboardEventDispatchMediator::create(KeyboardEvent::create(event, document().defaultView())));
 }
 
 bool Node::dispatchMouseEvent(const PlatformMouseEvent& event, const AtomicString& eventType,
     int detail, Node* relatedTarget)
 {
-    return EventDispatcher::dispatchEvent(this, MouseEventDispatchMediator::create(MouseEvent::create(eventType, document()->defaultView(), event, detail, relatedTarget)));
+    return EventDispatcher::dispatchEvent(this, MouseEventDispatchMediator::create(MouseEvent::create(eventType, document().defaultView(), event, detail, relatedTarget)));
 }
 
 #if ENABLE(GESTURE_EVENTS)
 bool Node::dispatchGestureEvent(const PlatformGestureEvent& event)
 {
-    RefPtr<GestureEvent> gestureEvent = GestureEvent::create(document()->defaultView(), event);
+    RefPtr<GestureEvent> gestureEvent = GestureEvent::create(document().defaultView(), event);
     if (!gestureEvent.get())
         return false;
     return EventDispatcher::dispatchEvent(this, GestureEventDispatchMediator::create(gestureEvent));
@@ -2184,7 +2177,7 @@ bool Node::dispatchUIRequestEvent(PassRefPtr<UIRequestEvent> event)
     
 bool Node::dispatchBeforeLoadEvent(const String& sourceURL)
 {
-    if (!document()->hasListenerType(Document::BEFORELOAD_LISTENER))
+    if (!document().hasListenerType(Document::BEFORELOAD_LISTENER))
         return true;
 
     RefPtr<Node> protector(this);
@@ -2195,7 +2188,7 @@ bool Node::dispatchBeforeLoadEvent(const String& sourceURL)
 
 bool Node::dispatchWheelEvent(const PlatformWheelEvent& event)
 {
-    return EventDispatcher::dispatchEvent(this, WheelEventDispatchMediator::create(event, document()->defaultView()));
+    return EventDispatcher::dispatchEvent(this, WheelEventDispatchMediator::create(event, document().defaultView()));
 }
 
 void Node::dispatchInputEvent()
@@ -2210,7 +2203,7 @@ void Node::defaultEventHandler(Event* event)
     const AtomicString& eventType = event->type();
     if (eventType == eventNames().keydownEvent || eventType == eventNames().keypressEvent) {
         if (event->isKeyboardEvent())
-            if (Frame* frame = document()->frame())
+            if (Frame* frame = document().frame())
                 frame->eventHandler().defaultKeyboardEventHandler(static_cast<KeyboardEvent*>(event));
     } else if (eventType == eventNames().clickEvent) {
         int detail = event->isUIEvent() ? static_cast<UIEvent*>(event)->detail() : 0;
@@ -2218,13 +2211,13 @@ void Node::defaultEventHandler(Event* event)
             event->setDefaultHandled();
 #if ENABLE(CONTEXT_MENUS)
     } else if (eventType == eventNames().contextmenuEvent) {
-        if (Frame* frame = document()->frame())
+        if (Frame* frame = document().frame())
             if (Page* page = frame->page())
                 page->contextMenuController().handleContextMenuEvent(event);
 #endif
     } else if (eventType == eventNames().textInputEvent) {
         if (event->hasInterface(eventNames().interfaceForTextEvent))
-            if (Frame* frame = document()->frame())
+            if (Frame* frame = document().frame())
                 frame->eventHandler().defaultTextInputEventHandler(static_cast<TextEvent*>(event));
 #if ENABLE(PAN_SCROLLING)
     } else if (eventType == eventNames().mousedownEvent && event->isMouseEvent()) {
@@ -2238,7 +2231,7 @@ void Node::defaultEventHandler(Event* event)
                 renderer = renderer->parent();
 
             if (renderer) {
-                if (Frame* frame = document()->frame())
+                if (Frame* frame = document().frame())
                     frame->eventHandler().startPanScrolling(renderer);
             }
         }
@@ -2253,7 +2246,7 @@ void Node::defaultEventHandler(Event* event)
             startNode = startNode->parentOrShadowHostNode();
         
         if (startNode && startNode->renderer())
-            if (Frame* frame = document()->frame())
+            if (Frame* frame = document().frame())
                 frame->eventHandler().defaultWheelEventHandler(startNode, wheelEvent);
     } else if (event->type() == eventNames().webkitEditableContentChangedEvent) {
         dispatchInputEvent();
@@ -2330,7 +2323,7 @@ void Node::removedLastRef()
 
 void Node::textRects(Vector<IntRect>& rects) const
 {
-    RefPtr<Range> range = Range::create(document());
+    RefPtr<Range> range = Range::create(&document());
     range->selectNodeContents(const_cast<Node*>(this), IGNORE_EXCEPTION);
     range->textRects(rects);
 }

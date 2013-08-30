@@ -144,7 +144,7 @@ void TextFieldInputType::handleKeydownEvent(KeyboardEvent* event)
 {
     if (!element()->focused())
         return;
-    Frame* frame = element()->document()->frame();
+    Frame* frame = element()->document().frame();
     if (!frame || !frame->editor().doTextFieldCommandFromEvent(element(), event))
         return;
     event->setDefaultHandled();
@@ -217,8 +217,8 @@ bool TextFieldInputType::needsContainer() const
 
 bool TextFieldInputType::shouldHaveSpinButton() const
 {
-    Document* document = element()->document();
-    RefPtr<RenderTheme> theme = document->page() ? document->page()->theme() : RenderTheme::defaultTheme();
+    Document& document = element()->document();
+    RefPtr<RenderTheme> theme = document.page() ? document.page()->theme() : RenderTheme::defaultTheme();
     return theme->shouldHaveSpinButton(element());
 }
 
@@ -230,35 +230,35 @@ void TextFieldInputType::createShadowSubtree()
     ASSERT(!m_innerBlock);
     ASSERT(!m_innerSpinButton);
 
-    Document* document = element()->document();
+    Document& document = element()->document();
     bool shouldHaveSpinButton = this->shouldHaveSpinButton();
     bool createsContainer = shouldHaveSpinButton || needsContainer();
 
-    m_innerText = TextControlInnerTextElement::create(document);
+    m_innerText = TextControlInnerTextElement::create(&document);
     if (!createsContainer) {
         element()->userAgentShadowRoot()->appendChild(m_innerText, IGNORE_EXCEPTION);
         return;
     }
 
     ShadowRoot* shadowRoot = element()->userAgentShadowRoot();
-    m_container = TextControlInnerContainer::create(document);
+    m_container = TextControlInnerContainer::create(&document);
     m_container->setPseudo(AtomicString("-webkit-textfield-decoration-container", AtomicString::ConstructFromLiteral));
     shadowRoot->appendChild(m_container, IGNORE_EXCEPTION);
 
-    m_innerBlock = TextControlInnerElement::create(document);
+    m_innerBlock = TextControlInnerElement::create(&document);
     m_innerBlock->appendChild(m_innerText, IGNORE_EXCEPTION);
     m_container->appendChild(m_innerBlock, IGNORE_EXCEPTION);
 
 #if ENABLE(INPUT_SPEECH)
     ASSERT(!m_speechButton);
     if (element()->isSpeechEnabled()) {
-        m_speechButton = InputFieldSpeechButtonElement::create(document);
+        m_speechButton = InputFieldSpeechButtonElement::create(&document);
         m_container->appendChild(m_speechButton, IGNORE_EXCEPTION);
     }
 #endif
 
     if (shouldHaveSpinButton) {
-        m_innerSpinButton = SpinButtonElement::create(document, *this);
+        m_innerSpinButton = SpinButtonElement::create(&document, *this);
         m_container->appendChild(m_innerSpinButton, IGNORE_EXCEPTION);
     }
 }
@@ -377,7 +377,7 @@ void TextFieldInputType::handleBeforeTextInsertedEvent(BeforeTextInsertedEvent* 
     // If the text field has no focus, we don't need to take account of the
     // selection length. The selection is the source of text drag-and-drop in
     // that case, and nothing in the text field will be removed.
-    unsigned selectionLength = element()->focused() ? numGraphemeClusters(plainText(element()->document()->frame()->selection().selection().toNormalizedRange().get())) : 0;
+    unsigned selectionLength = element()->focused() ? numGraphemeClusters(plainText(element()->document().frame()->selection().selection().toNormalizedRange().get())) : 0;
     ASSERT(oldLength >= selectionLength);
 
     // Selected characters will be removed by the next text event.
@@ -416,7 +416,7 @@ void TextFieldInputType::updatePlaceholderText()
         return;
     }
     if (!m_placeholder) {
-        m_placeholder = HTMLDivElement::create(element()->document());
+        m_placeholder = HTMLDivElement::create(&element()->document());
         m_placeholder->setPseudo(AtomicString("-webkit-input-placeholder", AtomicString::ConstructFromLiteral));
         element()->userAgentShadowRoot()->insertBefore(m_placeholder, m_container ? m_container->nextSibling() : innerTextElement()->nextSibling(), ASSERT_NO_EXCEPTION);
     }
@@ -470,7 +470,7 @@ void TextFieldInputType::didSetValueByUserEdit(ValueChangeState state)
 {
     if (!element()->focused())
         return;
-    if (Frame* frame = element()->document()->frame()) {
+    if (Frame* frame = element()->document().frame()) {
         if (state == ValueChangeStateNone)
             frame->editor().textFieldDidBeginEditing(element());
         frame->editor().textDidChangeInTextField(element());
