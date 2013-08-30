@@ -394,7 +394,7 @@ static const float overlayBackgroundGreen = 0.1;
 static const float overlayBackgroundBlue = 0.1;
 static const float overlayBackgroundAlpha = 0.25;
 
-void FindController::drawRect(PageOverlay* pageOverlay, GraphicsContext& graphicsContext, const IntRect& dirtyRect)
+void FindController::drawRect(PageOverlay* /*pageOverlay*/, GraphicsContext& graphicsContext, const IntRect& dirtyRect)
 {
     Color overlayBackgroundColor(overlayBackgroundRed, overlayBackgroundGreen, overlayBackgroundBlue, overlayBackgroundAlpha);
 
