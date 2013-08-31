@@ -27,8 +27,8 @@
 #include "SMILTimeContainer.h"
 
 #if ENABLE(SVG)
-#include "DescendantIterator.h"
 #include "Document.h"
+#include "ElementIterator.h"
 #include "SVGNames.h"
 #include "SVGSMILElement.h"
 #include "SVGSVGElement.h"

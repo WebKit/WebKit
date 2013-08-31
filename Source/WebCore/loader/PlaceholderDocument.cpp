@@ -26,7 +26,7 @@
 #include "config.h"
 #include "PlaceholderDocument.h"
 
-#include "ChildIterator.h"
+#include "ElementIterator.h"
 
 namespace WebCore {
 

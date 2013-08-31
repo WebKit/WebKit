@@ -29,9 +29,9 @@
 
 #include "FilterEffectRenderer.h"
 
-#include "ChildIterator.h"
 #include "ColorSpace.h"
 #include "Document.h"
+#include "ElementIterator.h"
 #include "FEColorMatrix.h"
 #include "FEComponentTransfer.h"
 #include "FEDropShadow.h"

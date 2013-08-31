@@ -24,7 +24,7 @@
 #include "config.h"
 #include "HTMLAppletElement.h"
 
-#include "ChildIterator.h"
+#include "ElementIterator.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "HTMLDocument.h"

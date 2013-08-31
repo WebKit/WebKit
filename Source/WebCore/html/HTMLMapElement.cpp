@@ -23,8 +23,8 @@
 #include "HTMLMapElement.h"
 
 #include "Attribute.h"
-#include "DescendantIterator.h"
 #include "Document.h"
+#include "ElementIterator.h"
 #include "HTMLAreaElement.h"
 #include "HTMLCollection.h"
 #include "HTMLImageElement.h"

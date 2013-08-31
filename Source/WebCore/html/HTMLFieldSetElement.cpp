@@ -25,8 +25,7 @@
 #include "config.h"
 #include "HTMLFieldSetElement.h"
 
-#include "ChildIterator.h"
-#include "DescendantIterator.h"
+#include "ElementIterator.h"
 #include "HTMLCollection.h"
 #include "HTMLLegendElement.h"
 #include "HTMLNames.h"

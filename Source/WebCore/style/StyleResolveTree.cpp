@@ -27,8 +27,8 @@
 #include "StyleResolveTree.h"
 
 #include "AXObjectCache.h"
-#include "ChildIterator.h"
 #include "Element.h"
+#include "ElementIterator.h"
 #include "ElementRareData.h"
 #include "ElementTraversal.h"
 #include "FlowThreadController.h"

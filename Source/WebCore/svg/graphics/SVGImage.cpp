@@ -31,8 +31,8 @@
 #include "SVGImage.h"
 
 #include "Chrome.h"
-#include "DescendantIterator.h"
 #include "DocumentLoader.h"
+#include "ElementIterator.h"
 #include "FrameView.h"
 #include "ImageBuffer.h"
 #include "ImageObserver.h"

@@ -25,8 +25,8 @@
 #include "config.h"
 #include "HTMLLabelElement.h"
 
-#include "DescendantIterator.h"
 #include "Document.h"
+#include "ElementIterator.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "FormAssociatedElement.h"

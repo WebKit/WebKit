@@ -1574,7 +1574,6 @@ HEADERS += \
     dom/CDATASection.h \
     dom/CharacterData.h \
     dom/CheckedRadioButtons.h \
-    dom/ChildIterator.h \
     dom/ChildNodeList.h \
     dom/ClassNodeList.h \
     dom/ClientRect.h \
@@ -1588,7 +1587,6 @@ HEADERS += \
     dom/ContextFeatures.h \
     dom/CustomEvent.h \
     dom/default/PlatformMessagePortChannel.h \
-    dom/DescendantIterator.h \
     dom/DeviceMotionClient.h \
     dom/DeviceMotionController.h \
     dom/DeviceMotionData.h \
@@ -1612,7 +1610,9 @@ HEADERS += \
     dom/DOMTimeStamp.h \
     dom/DatasetDOMStringMap.h \
     dom/Element.h \
+    dom/ElementChildIterator.h \
     dom/ElementData.h \
+    dom/ElementDescendantIterator.h \
     dom/ElementIterator.h \
     dom/ElementIteratorAssertions.h \
     dom/ElementTraversal.h \

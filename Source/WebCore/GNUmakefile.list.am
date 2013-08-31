@@ -2775,7 +2775,6 @@ webcore_sources += \
 	Source/WebCore/dom/CharacterData.h \
 	Source/WebCore/dom/CheckedRadioButtons.cpp \
 	Source/WebCore/dom/CheckedRadioButtons.h \
-	Source/WebCore/dom/ChildIterator.h \
 	Source/WebCore/dom/ChildListMutationScope.cpp \
 	Source/WebCore/dom/ChildListMutationScope.h \
 	Source/WebCore/dom/ChildNodeList.cpp \
@@ -2820,7 +2819,6 @@ webcore_sources += \
 	Source/WebCore/dom/DecodedDataDocumentParser.h \
 	Source/WebCore/dom/default/PlatformMessagePortChannel.cpp \
 	Source/WebCore/dom/default/PlatformMessagePortChannel.h \
-	Source/WebCore/dom/DescendantIterator.h \
 	Source/WebCore/dom/DeviceMotionClient.h \
 	Source/WebCore/dom/DeviceMotionController.cpp \
 	Source/WebCore/dom/DeviceMotionController.h \
@@ -2871,8 +2869,10 @@ webcore_sources += \
 	Source/WebCore/dom/DOMTimeStamp.h \
 	Source/WebCore/dom/Element.cpp \
 	Source/WebCore/dom/Element.h \
+	Source/WebCore/dom/ElementChildIterator.h \
 	Source/WebCore/dom/ElementData.cpp \
 	Source/WebCore/dom/ElementData.h \
+	Source/WebCore/dom/ElementDescendantIterator.h \
 	Source/WebCore/dom/ElementIterator.h \
 	Source/WebCore/dom/ElementIteratorAssertions.h \
 	Source/WebCore/dom/ElementRareData.cpp \

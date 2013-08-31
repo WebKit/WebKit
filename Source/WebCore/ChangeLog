@@ -1,3 +1,66 @@
+2013-08-31  Antti Koivisto  <antti@apple.com>
+
+        Rename ChildIterator -> ElementChildIterator, DescendantIterator -> ElementDescendantIterator
+        https://bugs.webkit.org/show_bug.cgi?id=120561
+
+        Reviewed by Andreas Kling.
+
+        New names are more descriptive and consistent. They also put related iterator files close by in file lists.
+        The types are always used with auto so longer names don't make them any clumsier to use.
+
+        For simplicity included all Element iterator types from ElementIterator.h so it is the only file that has
+        to be included by the clients.
+
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * accessibility/AccessibilityNodeObject.cpp:
+        * accessibility/AccessibilityRenderObject.cpp:
+        * accessibility/AccessibilityTable.cpp:
+        * css/CSSFontFaceSource.cpp:
+        * dom/ChildIterator.h: Removed.
+        * dom/DescendantIterator.h: Removed.
+        * dom/Document.cpp:
+        * dom/ElementChildIterator.h: Copied from Source/WebCore/dom/ChildIterator.h.
+        (WebCore::::ElementChildIterator):
+        (WebCore::::operator):
+        (WebCore::::ElementChildConstIterator):
+        (WebCore::::ElementChildIteratorAdapter):
+        (WebCore::::begin):
+        (WebCore::::end):
+        (WebCore::::ElementChildConstIteratorAdapter):
+        (WebCore::elementChildren):
+        (WebCore::childrenOfType):
+        * dom/ElementDescendantIterator.h: Copied from Source/WebCore/dom/DescendantIterator.h.
+        (WebCore::::ElementDescendantIterator):
+        (WebCore::::operator):
+        (WebCore::::ElementDescendantConstIterator):
+        (WebCore::::ElementDescendantIteratorAdapter):
+        (WebCore::::begin):
+        (WebCore::::end):
+        (WebCore::::ElementDescendantConstIteratorAdapter):
+        (WebCore::elementDescendants):
+        (WebCore::descendantsOfType):
+        * dom/ElementIterator.h:
+        * dom/Node.cpp:
+        * dom/TreeScope.cpp:
+        * editing/ApplyStyleCommand.cpp:
+        * editing/markup.cpp:
+        * html/HTMLAppletElement.cpp:
+        * html/HTMLFieldSetElement.cpp:
+        * html/HTMLLabelElement.cpp:
+        * html/HTMLMapElement.cpp:
+        * html/HTMLMediaElement.cpp:
+        * html/HTMLObjectElement.cpp:
+        * loader/PlaceholderDocument.cpp:
+        * rendering/FilterEffectRenderer.cpp:
+        * style/StyleResolveTree.cpp:
+        * svg/SVGElement.cpp:
+        * svg/SVGSVGElement.cpp:
+        * svg/animation/SMILTimeContainer.cpp:
+        * svg/graphics/SVGImage.cpp:
+
 2013-08-31  Andreas Kling  <akling@apple.com>
 
         Don't do document style recalc unless there's a RenderView.
