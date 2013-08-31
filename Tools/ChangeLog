@@ -1,3 +1,10 @@
+2013-08-30  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Unreviewed build fix.
+
+        * win/AssembleBuildLogs/AssembleLogs.cmd: Make sure WebInspectorUI build output is reported
+        from the build machines.
+
 2013-08-30  Gabor Abraham  <abrhm@inf.u-szeged.hu>
 
         [Qt] Remove qt-5.0-wk2 from the baseline search paths because the migration of expectations to qt-wk2 is done.
