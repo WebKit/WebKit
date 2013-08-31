@@ -20238,7 +20238,6 @@
     <ClInclude Include="..\dom\DataTransferItemList.h" />
     <ClInclude Include="..\dom\DecodedDataDocumentParser.h" />
     <ClInclude Include="..\dom\DescendantIterator.h" />
-    <ClInclude Include="..\dom\DescendantIteratorAssertions.h" />
     <ClInclude Include="..\dom\DeviceMotionClient.h" />
     <ClInclude Include="..\dom\DeviceMotionController.h" />
     <ClInclude Include="..\dom\DeviceMotionData.h" />
@@ -20266,6 +20265,8 @@
     <ClInclude Include="..\dom\DOMTimeStamp.h" />
     <ClInclude Include="..\dom\Element.h" />
     <ClInclude Include="..\dom\ElementData.h" />
+    <ClInclude Include="..\dom\ElementIterator.h" />
+    <ClInclude Include="..\dom\ElementIteratorAssertions.h" />
     <ClInclude Include="..\dom\ElementTraversal.h" />
     <ClInclude Include="..\dom\Entity.h" />
     <ClInclude Include="..\dom\EntityReference.h" />

@@ -1589,7 +1589,6 @@ HEADERS += \
     dom/CustomEvent.h \
     dom/default/PlatformMessagePortChannel.h \
     dom/DescendantIterator.h \
-    dom/DescendantIteratorAssertions.h \
     dom/DeviceMotionClient.h \
     dom/DeviceMotionController.h \
     dom/DeviceMotionData.h \
@@ -1614,6 +1613,8 @@ HEADERS += \
     dom/DatasetDOMStringMap.h \
     dom/Element.h \
     dom/ElementData.h \
+    dom/ElementIterator.h \
+    dom/ElementIteratorAssertions.h \
     dom/ElementTraversal.h \
     dom/Entity.h \
     dom/EntityReference.h \

@@ -26,50 +26,24 @@
 #ifndef DescendantIterator_h
 #define DescendantIterator_h
 
-#include "ElementTraversal.h"
-
-#if !ASSERT_DISABLED
-#include "DescendantIteratorAssertions.h"
-#endif
+#include "ElementIterator.h"
 
 namespace WebCore {
 
 template <typename ElementType>
-class DescendantIterator {
+class DescendantIterator : public ElementIterator<ElementType> {
 public:
     DescendantIterator(const ContainerNode* root);
     DescendantIterator(const ContainerNode* root, ElementType* current);
     DescendantIterator& operator++();
-    ElementType& operator*();
-    ElementType* operator->();
-    bool operator!=(const DescendantIterator& other) const;
-
-private:
-    const ContainerNode* m_root;
-    ElementType* m_current;
-
-#if !ASSERT_DISABLED
-    DescendantIteratorAssertions m_assertions;
-#endif
 };
 
 template <typename ElementType>
-class DescendantConstIterator {
+class DescendantConstIterator : public ElementConstIterator<ElementType>  {
 public:
     DescendantConstIterator(const ContainerNode* root);
     DescendantConstIterator(const ContainerNode* root, const ElementType* current);
     DescendantConstIterator& operator++();
-    const ElementType& operator*() const;
-    const ElementType* operator->() const;
-    bool operator!=(const DescendantConstIterator& other) const;
-
-private:
-    const ContainerNode* m_root;
-    const ElementType* m_current;
-
-#if !ASSERT_DISABLED
-    DescendantIteratorAssertions m_assertions;
-#endif
 };
 
 template <typename ElementType>
@@ -103,114 +77,41 @@ template <typename ElementType> DescendantConstIteratorAdapter<ElementType> desc
 
 template <typename ElementType>
 inline DescendantIterator<ElementType>::DescendantIterator(const ContainerNode* root)
-    : m_root(root)
-    , m_current(nullptr)
+    : ElementIterator<ElementType>(root)
 {
 }
 
 template <typename ElementType>
 inline DescendantIterator<ElementType>::DescendantIterator(const ContainerNode* root, ElementType* current)
-    : m_root(root)
-    , m_current(current)
-#if !ASSERT_DISABLED
-    , m_assertions(current)
-#endif
+    : ElementIterator<ElementType>(root, current)
 {
 }
 
 template <typename ElementType>
 inline DescendantIterator<ElementType>& DescendantIterator<ElementType>::operator++()
 {
-    ASSERT(m_current);
-    ASSERT(!m_assertions.domTreeHasMutated());
-    m_current = Traversal<ElementType>::next(m_current, m_root);
-#if !ASSERT_DISABLED
-    // Drop the assertion when the iterator reaches the end.
-    if (!m_current)
-        m_assertions.dropEventDispatchAssertion();
-#endif
-    return *this;
-}
-
-template <typename ElementType>
-inline ElementType& DescendantIterator<ElementType>::operator*()
-{
-    ASSERT(m_current);
-    ASSERT(!m_assertions.domTreeHasMutated());
-    return *m_current;
-}
-
-template <typename ElementType>
-inline ElementType* DescendantIterator<ElementType>::operator->()
-{
-    ASSERT(m_current);
-    ASSERT(!m_assertions.domTreeHasMutated());
-    return m_current;
-}
-
-template <typename ElementType>
-inline bool DescendantIterator<ElementType>::operator!=(const DescendantIterator& other) const
-{
-    ASSERT(m_root == other.m_root);
-    ASSERT(!m_assertions.domTreeHasMutated());
-    return m_current != other.m_current;
+    return static_cast<DescendantIterator<ElementType>&>(ElementIterator<ElementType>::traverseNext());
 }
 
 // DescendantConstIterator
 
 template <typename ElementType>
 inline DescendantConstIterator<ElementType>::DescendantConstIterator(const ContainerNode* root)
-    : m_root(root)
-    , m_current(nullptr)
+    : ElementConstIterator<ElementType>(root)
+
 {
 }
 
 template <typename ElementType>
 inline DescendantConstIterator<ElementType>::DescendantConstIterator(const ContainerNode* root, const ElementType* current)
-    : m_root(root)
-    , m_current(current)
-#if !ASSERT_DISABLED
-    , m_assertions(current)
-#endif
+    : ElementConstIterator<ElementType>(root, current)
 {
 }
 
 template <typename ElementType>
 inline DescendantConstIterator<ElementType>& DescendantConstIterator<ElementType>::operator++()
 {
-    ASSERT(m_current);
-    ASSERT(!m_assertions.domTreeHasMutated());
-    m_current = Traversal<ElementType>::next(m_current, m_root);
-#if !ASSERT_DISABLED
-    // Drop the assertion when the iterator reaches the end.
-    if (!m_current)
-        m_assertions.dropEventDispatchAssertion();
-#endif
-    return *this;
-}
-
-template <typename ElementType>
-inline const ElementType& DescendantConstIterator<ElementType>::operator*() const
-{
-    ASSERT(m_current);
-    ASSERT(!m_assertions.domTreeHasMutated());
-    return *m_current;
-}
-
-template <typename ElementType>
-inline const ElementType* DescendantConstIterator<ElementType>::operator->() const
-{
-    ASSERT(m_current);
-    ASSERT(!m_assertions.domTreeHasMutated());
-    return m_current;
-}
-
-template <typename ElementType>
-inline bool DescendantConstIterator<ElementType>::operator!=(const DescendantConstIterator& other) const
-{
-    ASSERT(m_root == other.m_root);
-    ASSERT(!m_assertions.domTreeHasMutated());
-    return m_current != other.m_current;
+    return static_cast<DescendantConstIterator<ElementType>&>(ElementConstIterator<ElementType>::traverseNext());
 }
 
 // DescendantIteratorAdapter

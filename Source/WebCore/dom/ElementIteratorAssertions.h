@@ -23,18 +23,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DescendantIteratorAssertions_h
-#define DescendantIteratorAssertions_h
+#ifndef ElementIteratorAssertions_h
+#define ElementIteratorAssertions_h
 
 #include "Document.h"
 #include "Element.h"
 
 namespace WebCore {
 
-class DescendantIteratorAssertions {
+class ElementIteratorAssertions {
 public:
-    DescendantIteratorAssertions();
-    DescendantIteratorAssertions(const Element* first);
+    ElementIteratorAssertions();
+    ElementIteratorAssertions(const Element* first);
     bool domTreeHasMutated() const;
     void dropEventDispatchAssertion();
 
@@ -44,25 +44,25 @@ private:
     OwnPtr<NoEventDispatchAssertion> m_noEventDispatchAssertion;
 };
 
-inline DescendantIteratorAssertions::DescendantIteratorAssertions()
+inline ElementIteratorAssertions::ElementIteratorAssertions()
     : m_document(nullptr)
     , m_initialDOMTreeVersion(0)
 {
 }
 
-inline DescendantIteratorAssertions::DescendantIteratorAssertions(const Element* first)
+inline ElementIteratorAssertions::ElementIteratorAssertions(const Element* first)
     : m_document(first ? &first->document() : nullptr)
     , m_initialDOMTreeVersion(m_document ? m_document->domTreeVersion() : 0)
     , m_noEventDispatchAssertion(m_document ? adoptPtr(new NoEventDispatchAssertion) : nullptr)
 {
 }
 
-inline bool DescendantIteratorAssertions::domTreeHasMutated() const
+inline bool ElementIteratorAssertions::domTreeHasMutated() const
 {
     return m_initialDOMTreeVersion && m_document && m_document->domTreeVersion() != m_initialDOMTreeVersion;
 }
 
-inline void DescendantIteratorAssertions::dropEventDispatchAssertion()
+inline void ElementIteratorAssertions::dropEventDispatchAssertion()
 {
     m_noEventDispatchAssertion = nullptr;
 }

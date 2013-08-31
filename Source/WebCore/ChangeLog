@@ -1,3 +1,43 @@
+2013-08-31  Antti Koivisto  <antti@apple.com>
+
+        Add common base for element iterators
+        https://bugs.webkit.org/show_bug.cgi?id=120557
+
+        Reviewed by Andreas Kling.
+
+        Add ElementIterator and use it as the base for child and descendant iterators. The only difference is the definition of operator++.
+        
+        Also renamed DescendantIteratorAssertions to ElementIteratorAssertions.
+
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/ChildIterator.h:
+        (WebCore::::ChildIterator):
+        (WebCore::::operator):
+        (WebCore::::ChildConstIterator):
+        (WebCore::::begin):
+        (WebCore::::end):
+        * dom/DescendantIterator.h:
+        (WebCore::::DescendantIterator):
+        (WebCore::::operator):
+        (WebCore::::DescendantConstIterator):
+        * dom/DescendantIteratorAssertions.h: Removed.
+        * dom/ElementIterator.h: Added.
+        (WebCore::::ElementIterator):
+        (WebCore::::traverseNext):
+        (WebCore::::traversePrevious):
+        (WebCore::::traverseNextSibling):
+        (WebCore::::traversePreviousSibling):
+        (WebCore::::operator):
+        (WebCore::=):
+        (WebCore::::ElementConstIterator):
+        * dom/ElementIteratorAssertions.h: Copied from Source/WebCore/dom/DescendantIteratorAssertions.h.
+        (WebCore::ElementIteratorAssertions::ElementIteratorAssertions):
+        (WebCore::ElementIteratorAssertions::domTreeHasMutated):
+        (WebCore::ElementIteratorAssertions::dropEventDispatchAssertion):
+
 2013-08-30  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Build fix after r154921.
