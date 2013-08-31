@@ -101,10 +101,6 @@ protected:
     explicit LayerTreeHost(WebPage*);
 
     WebPage* m_webPage;
-
-#if USE(COORDINATED_GRAPHICS)
-    bool m_waitingForUIProcess;
-#endif
 };
 
 inline bool LayerTreeHost::supportsAcceleratedCompositing()
