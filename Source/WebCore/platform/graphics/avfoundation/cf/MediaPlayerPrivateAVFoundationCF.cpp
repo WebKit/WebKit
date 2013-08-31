@@ -104,6 +104,7 @@ public:
     void beginLoadingMetadata();
     
     void seekToTime(float);
+    void updateVideoLayerGravity();
 
     void setCurrentTrack(InbandTextTrackPrivateAVF*);
     InbandTextTrackPrivateAVF* currentTrack() const { return m_currentTrack; }
@@ -334,7 +335,10 @@ void MediaPlayerPrivateAVFoundationCF::cancelLoad()
 
 void MediaPlayerPrivateAVFoundationCF::updateVideoLayerGravity()
 {
-    // We should call AVCFPlayerLayerSetVideoGravity() here, but it is not yet implemented.
+    ASSERT(supportsAcceleratedRendering());
+
+    if (m_avfWrapper)
+        m_avfWrapper->updateVideoLayerGravity();
 }
 
 bool MediaPlayerPrivateAVFoundationCF::hasLayerRenderer() const
@@ -1675,6 +1679,12 @@ AVCFMediaSelectionGroupRef AVFWrapper::safeMediaSelectionGroupForLegibleMedia() 
     return AVCFAssetGetSelectionGroupForMediaCharacteristic(avAsset(), AVCFMediaCharacteristicLegible);
 }
 #endif
+
+void AVFWrapper::updateVideoLayerGravity()
+{
+    // We should call AVCFPlayerLayerSetVideoGravity() here, but it is not yet implemented.
+    // FIXME: <rdar://problem/14884340>
+}
 
 void LayerClient::platformCALayerLayoutSublayersOfLayer(PlatformCALayer* wrapperLayer)
 {

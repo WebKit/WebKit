@@ -1,3 +1,15 @@
+2013-08-30  Brent Fulgham  <bfulgham@apple.com>
+
+        [Windows] Build fix after r154921.
+
+        AVFoundationCF uses an internal wrapper object around the C-API. The call point
+        in the original patch was inside the wrapper, which did not (yet) provide
+        a method implementation.
+
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundationCF::updateVideoLayerGravity):
+        (WebCore::AVFWrapper::updateVideoLayerGravity):
+
 2013-08-30  Simon Fraser  <simon.fraser@apple.com>
 
         Video with object-fit: cover can spill outside the box
