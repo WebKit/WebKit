@@ -1,3 +1,19 @@
+2013-08-31  Andreas Kling  <akling@apple.com>
+
+        Don't do document style recalc unless there's a RenderView.
+        <https://webkit.org/b/120558>
+
+        Reviewed by Antti Koivisto.
+
+        There's no sense in computing style for a Document that has no RenderView.
+        Checking this before continuing also lets us know that there's a Frame & FrameView
+        present, simplifying some things later on.
+
+        * dom/Document.cpp:
+        (WebCore::Document::recalcStyle):
+        * style/StyleResolveForDocument.cpp:
+        (WebCore::Style::resolveForDocument):
+
 2013-08-31  Antti Koivisto  <antti@apple.com>
 
         Add common base for element iterators

@@ -49,7 +49,10 @@ namespace Style {
 
 PassRefPtr<RenderStyle> resolveForDocument(const Document& document)
 {
-    Frame* frame = document.frame();
+    if (!document.renderView())
+        return 0;
+
+    RenderView& renderView = *document.renderView();
 
     // HTML5 states that seamless iframes should replace default CSS values
     // with values inherited from the containing iframe element. However,
@@ -67,8 +70,8 @@ PassRefPtr<RenderStyle> resolveForDocument(const Document& document)
     documentStyle->setDisplay(BLOCK);
     if (!seamlessWithParent) {
         documentStyle->setRTLOrdering(document.visuallyOrdered() ? VisualOrder : LogicalOrder);
-        documentStyle->setZoom(frame && !document.printing() ? frame->pageZoomFactor() : 1);
-        documentStyle->setPageScaleTransform(frame ? frame->frameScaleFactor() : 1);
+        documentStyle->setZoom(!document.printing() ? renderView.frame().pageZoomFactor() : 1);
+        documentStyle->setPageScaleTransform(renderView.frame().frameScaleFactor());
         documentStyle->setLocale(document.contentLanguage());
     }
     // This overrides any -webkit-user-modify inherited from the parent iframe.
@@ -91,41 +94,34 @@ PassRefPtr<RenderStyle> resolveForDocument(const Document& document)
             documentStyle->setDirection(docElementRenderer->style()->direction());
     }
 
-    if (frame) {
-        if (FrameView* frameView = frame->view()) {
-            const Pagination& pagination = frameView->pagination();
-            if (pagination.mode != Pagination::Unpaginated) {
-                documentStyle->setColumnStylesFromPaginationMode(pagination.mode);
-                documentStyle->setColumnGap(pagination.gap);
-                if (RenderView* view = document.renderView()) {
-                    if (view->hasColumns())
-                        view->updateColumnInfoFromStyle(documentStyle.get());
-                }
-            }
-        }
+    const Pagination& pagination = renderView.frameView().pagination();
+    if (pagination.mode != Pagination::Unpaginated) {
+        documentStyle->setColumnStylesFromPaginationMode(pagination.mode);
+        documentStyle->setColumnGap(pagination.gap);
+        if (renderView.hasColumns())
+            renderView.updateColumnInfoFromStyle(documentStyle.get());
     }
 
     // Seamless iframes want to inherit their font from their parent iframe, so early return before setting the font.
     if (seamlessWithParent)
         return documentStyle.release();
 
+    const Settings& settings = renderView.frame().settings();
+
     FontDescription fontDescription;
     fontDescription.setScript(localeToScriptCodeForFontSelection(documentStyle->locale()));
-    if (Settings* settings = document.settings()) {
-        fontDescription.setUsePrinterFont(document.printing() || !settings->screenFontSubstitutionEnabled());
-        fontDescription.setRenderingMode(settings->fontRenderingMode());
-        const AtomicString& standardFont = settings->standardFontFamily(fontDescription.script());
-        if (!standardFont.isEmpty()) {
-            fontDescription.setGenericFamily(FontDescription::StandardFamily);
-            fontDescription.setOneFamily(standardFont);
-        }
-        fontDescription.setKeywordSize(CSSValueMedium - CSSValueXxSmall + 1);
-        int size = fontSizeForKeyword(CSSValueMedium, false, document);
-        fontDescription.setSpecifiedSize(size);
-        bool useSVGZoomRules = document.isSVGDocument();
-        fontDescription.setComputedSize(computedFontSizeFromSpecifiedSize(size, fontDescription.isAbsoluteSize(), useSVGZoomRules, documentStyle.get(), document));
-    } else
-        fontDescription.setUsePrinterFont(document.printing());
+    fontDescription.setUsePrinterFont(document.printing() || !settings.screenFontSubstitutionEnabled());
+    fontDescription.setRenderingMode(settings.fontRenderingMode());
+    const AtomicString& standardFont = settings.standardFontFamily(fontDescription.script());
+    if (!standardFont.isEmpty()) {
+        fontDescription.setGenericFamily(FontDescription::StandardFamily);
+        fontDescription.setOneFamily(standardFont);
+    }
+    fontDescription.setKeywordSize(CSSValueMedium - CSSValueXxSmall + 1);
+    int size = fontSizeForKeyword(CSSValueMedium, false, document);
+    fontDescription.setSpecifiedSize(size);
+    bool useSVGZoomRules = document.isSVGDocument();
+    fontDescription.setComputedSize(computedFontSizeFromSpecifiedSize(size, fontDescription.isAbsoluteSize(), useSVGZoomRules, documentStyle.get(), document));
 
     FontOrientation fontOrientation;
     NonCJKGlyphOrientation glyphOrientation;

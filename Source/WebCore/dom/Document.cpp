@@ -1734,9 +1734,14 @@ void Document::styleRecalcTimerFired(Timer<Document>*)
 
 void Document::recalcStyle(Style::Change change)
 {
-    // we should not enter style recalc while painting
     ASSERT(!view() || !view()->isPainting());
-    if (view() && view()->isPainting())
+
+    // NOTE: XSL code seems to be the only client stumbling in here without a RenderView.
+    if (!m_renderView)
+        return;
+
+    FrameView& frameView = m_renderView->frameView();
+    if (frameView.isPainting())
         return;
     
     if (m_inStyleRecalc)
@@ -1761,15 +1766,8 @@ void Document::recalcStyle(Style::Change change)
         PostAttachCallbackDisabler disabler(this);
         WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
 
-        RefPtr<FrameView> frameView = view();
-        if (frameView) {
-            frameView->pauseScheduledEvents();
-            frameView->beginDeferredRepaints();
-        }
-
-        ASSERT(!renderer() || renderArena());
-        if (!renderer() || !renderArena())
-            goto bailOut;
+        frameView.pauseScheduledEvents();
+        frameView.beginDeferredRepaints();
 
         if (m_pendingStyleRecalcShouldForce)
             change = Style::Force;
@@ -1782,11 +1780,9 @@ void Document::recalcStyle(Style::Change change)
         Style::resolveTree(*this, change);
 
 #if USE(ACCELERATED_COMPOSITING)
-        if (view())
-            view()->updateCompositingLayersAfterStyleChange();
+        frameView.updateCompositingLayersAfterStyleChange();
 #endif
 
-    bailOut:
         clearNeedsStyleRecalc();
         clearChildNeedsStyleRecalc();
         unscheduleStyleRecalc();
@@ -1797,10 +1793,8 @@ void Document::recalcStyle(Style::Change change)
         if (m_styleResolver)
             m_styleSheetCollection->resetCSSFeatureFlags();
 
-        if (frameView) {
-            frameView->resumeScheduledEvents();
-            frameView->endDeferredRepaints();
-        }
+        frameView.resumeScheduledEvents();
+        frameView.endDeferredRepaints();
     }
 
     // If we wanted to call implicitClose() during recalcStyle, do so now that we're finished.
@@ -1814,8 +1808,8 @@ void Document::recalcStyle(Style::Change change)
     // As a result of the style recalculation, the currently hovered element might have been
     // detached (for example, by setting display:none in the :hover style), schedule another mouseMove event
     // to check if any other elements ended up under the mouse pointer due to re-layout.
-    if (m_hoveredElement && !m_hoveredElement->renderer() && frame())
-        frame()->eventHandler().dispatchFakeMouseMoveEventSoon();
+    if (m_hoveredElement && !m_hoveredElement->renderer())
+        frameView.frame().eventHandler().dispatchFakeMouseMoveEventSoon();
 }
 
 void Document::updateStyleIfNeeded()
