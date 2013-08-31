@@ -332,6 +332,11 @@ void MediaPlayerPrivateAVFoundationCF::cancelLoad()
     setDelayCallbacks(false);
 }
 
+void MediaPlayerPrivateAVFoundationCF::updateVideoLayerGravity()
+{
+    // We should call AVCFPlayerLayerSetVideoGravity() here, but it is not yet implemented.
+}
+
 bool MediaPlayerPrivateAVFoundationCF::hasLayerRenderer() const
 {
     return videoLayer(m_avfWrapper);
@@ -1577,6 +1582,7 @@ PlatformLayer* AVFWrapper::platformLayer()
     CACFLayerInsertSublayer(m_videoLayerWrapper->platformLayer(), m_caVideoLayer.get(), 0);
     m_videoLayerWrapper->setAnchorPoint(FloatPoint3D());
     m_videoLayerWrapper->setNeedsLayout();
+    updateVideoLayerGravity();
 
     return m_videoLayerWrapper->platformLayer();
 }

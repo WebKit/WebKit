@@ -1,3 +1,27 @@
+2013-08-30  Simon Fraser  <simon.fraser@apple.com>
+
+        Video with object-fit: cover can spill outside the box
+        https://bugs.webkit.org/show_bug.cgi?id=52103
+
+        Reviewed by Dean Jackson.
+        
+        Test cases for directly composited image with object-fit, the same with
+        reflections, and one with video.
+        
+        Tests dump content GraphicsLayers, so have platform-specific results.
+
+        * compositing/images/direct-image-object-fit-expected.txt: Added.
+        * compositing/images/direct-image-object-fit.html: Added.
+        * compositing/reflections/direct-image-object-fit-reflected-expected.txt: Added.
+        * compositing/reflections/direct-image-object-fit-reflected.html: Added.
+        * compositing/video/video-object-fit-expected.txt: Added.
+        * compositing/video/video-object-fit.html: Added.
+        * media/video-object-fit-change.html: Fixed
+        * platform/mac/TestExpectations: Unskip two tests.
+        * platform/mac/compositing/images/direct-image-object-fit-expected.txt: Added.
+        * platform/mac/compositing/reflections/direct-image-object-fit-reflected-expected.txt: Added.
+        * platform/mac/compositing/video/video-object-fit-expected.txt: Added.
+
 2013-08-30  Oliver Hunt  <oliver@apple.com>
 
         Fix expected output

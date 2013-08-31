@@ -246,6 +246,7 @@ void RenderVideo::updatePlayer()
     mediaPlayer->setFrameView(&view().frameView());
     mediaPlayer->setSize(IntSize(videoBounds.width(), videoBounds.height()));
     mediaPlayer->setVisible(true);
+    mediaPlayer->setShouldMaintainAspectRatio(style()->objectFit() != ObjectFitFill);
 }
 
 LayoutUnit RenderVideo::computeReplacedLogicalWidth(ShouldComputePreferred shouldComputePreferred) const

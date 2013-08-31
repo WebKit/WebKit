@@ -18,13 +18,13 @@
 
         function init()
         {
-            setSrcByTagName("video", findMediaFile("video", "../../media/content/test"));
+            setSrcByTagName("video", findMediaFile("video", "content/test"));
 
             var totalCount = document.getElementsByTagName('video').length;
             var count = totalCount;
             document.addEventListener("canplaythrough", function () {
                 if (!--count)
-                    setTimeout(function() { changeStyle(); }, 500);
+                    setTimeout(function() { changeStyle(); }, 250);
             }, true);
 
             if (window.testRunner) {
@@ -43,9 +43,8 @@
 	    video3.style.objectFit = 'fill';
 	    video4.style.objectFit = 'scale-down';
 
-            if (window.testRunner) {
-                setTimeout(function() { testRunner.notifyDone(); }, 500);
-            }
+        if (window.testRunner)
+            setTimeout(function() { testRunner.notifyDone(); }, 250);
 	}
     </script>
 

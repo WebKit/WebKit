@@ -82,7 +82,8 @@ namespace WebCore {
         LayerTreeFlagsIncludeVisibleRects = 1 << 1,
         LayerTreeFlagsIncludeTileCaches = 1 << 2,
         LayerTreeFlagsIncludeRepaintRects = 1 << 3,
-        LayerTreeFlagsIncludePaintingPhases = 1 << 4
+        LayerTreeFlagsIncludePaintingPhases = 1 << 4,
+        LayerTreeFlagsIncludeContentLayers = 1 << 5
     };
     typedef unsigned LayerTreeFlags;
 

@@ -52,9 +52,6 @@ plugins/reloadplugins-and-pages.html
 # This test requires ogg codecs
 media/media-can-play-ogg.html
 
-webkit.org/b/52103 media/video-object-fit-change.html
-webkit.org/b/52103 media/video-object-fit.html
-
 # This test requires flac codec
 media/media-can-play-flac-audio.html
 

@@ -148,6 +148,8 @@ private:
     virtual bool hasContextRenderer() const;
     virtual bool hasLayerRenderer() const;
 
+    virtual void updateVideoLayerGravity() OVERRIDE;
+
     virtual bool hasSingleSecurityOrigin() const;
     
 #if __MAC_OS_X_VERSION_MIN_REQUIRED < 1080

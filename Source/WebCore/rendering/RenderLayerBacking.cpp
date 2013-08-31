@@ -925,8 +925,15 @@ void RenderLayerBacking::updateInternalHierarchy()
 
 void RenderLayerBacking::resetContentsRect()
 {
-    IntRect rect = pixelSnappedIntRect(contentsBox());
-    m_graphicsLayer->setContentsRect(rect);
+    m_graphicsLayer->setContentsRect(pixelSnappedIntRect(contentsBox()));
+    
+    LayoutRect contentsClippingRect;
+    if (renderer().isBox())
+        contentsClippingRect = toRenderBox(&renderer())->contentBoxRect();
+
+    contentsClippingRect.move(contentOffsetInCompostingLayer());
+    m_graphicsLayer->setContentsClippingRect(pixelSnappedIntRect(contentsClippingRect));
+
     m_graphicsLayer->setContentsTileSize(IntSize());
     m_graphicsLayer->setContentsTilePhase(IntPoint());
 }
@@ -1078,8 +1085,11 @@ void RenderLayerBacking::positionOverflowControlsLayers(const IntSize& offsetFro
         if (hBar) {
             layer->setPosition(hBar->frameRect().location() - offsetFromRoot - offsetFromRenderer);
             layer->setSize(hBar->frameRect().size());
-            if (layer->hasContentsLayer())
-                layer->setContentsRect(IntRect(IntPoint(), hBar->frameRect().size()));
+            if (layer->hasContentsLayer()) {
+                IntRect barRect = IntRect(IntPoint(), hBar->frameRect().size());
+                layer->setContentsRect(barRect);
+                layer->setContentsClippingRect(barRect);
+            }
         }
         layer->setDrawsContent(hBar && !layer->hasContentsLayer());
     }
@@ -1089,8 +1099,11 @@ void RenderLayerBacking::positionOverflowControlsLayers(const IntSize& offsetFro
         if (vBar) {
             layer->setPosition(vBar->frameRect().location() - offsetFromRoot - offsetFromRenderer);
             layer->setSize(vBar->frameRect().size());
-            if (layer->hasContentsLayer())
-                layer->setContentsRect(IntRect(IntPoint(), vBar->frameRect().size()));
+            if (layer->hasContentsLayer()) {
+                IntRect barRect = IntRect(IntPoint(), vBar->frameRect().size());
+                layer->setContentsRect(barRect);
+                layer->setContentsClippingRect(barRect);
+            }
         }
         layer->setDrawsContent(vBar && !layer->hasContentsLayer());
     }
@@ -1383,7 +1396,9 @@ void RenderLayerBacking::updateDirectlyCompositedBackgroundColor(bool isSimpleCo
 
     // An unset (invalid) color will remove the solid color.
     m_graphicsLayer->setContentsToSolidColor(backgroundColor);
-    m_graphicsLayer->setContentsRect(backgroundBox());
+    IntRect contentsRect = backgroundBox();
+    m_graphicsLayer->setContentsRect(contentsRect);
+    m_graphicsLayer->setContentsClippingRect(contentsRect);
     didUpdateContentsRect = true;
 }
 
@@ -1443,6 +1458,7 @@ void RenderLayerBacking::updateDirectlyCompositedBackgroundImage(bool isSimpleCo
     m_graphicsLayer->setContentsTileSize(tileSize);
     m_graphicsLayer->setContentsTilePhase(phase);
     m_graphicsLayer->setContentsRect(destRect);
+    m_graphicsLayer->setContentsClippingRect(destRect);
     m_graphicsLayer->setContentsToImage(image.get());
     didUpdateContentsRect = true;
 }
@@ -1725,6 +1741,11 @@ void RenderLayerBacking::updateImageContents()
 
     // This is a no-op if the layer doesn't have an inner layer for the image.
     m_graphicsLayer->setContentsRect(pixelSnappedIntRect(contentsBox()));
+
+    LayoutRect contentsClippingRect = imageRenderer->contentBoxRect();
+    contentsClippingRect.move(contentOffsetInCompostingLayer());
+    m_graphicsLayer->setContentsClippingRect(pixelSnappedIntRect(contentsClippingRect));
+
     m_graphicsLayer->setContentsToImage(image);
     bool isSimpleContainer = false;
     updateDrawsContent(isSimpleContainer);
@@ -1772,14 +1793,19 @@ LayoutRect RenderLayerBacking::contentsBox() const
     if (!renderer().isBox())
         return LayoutRect();
 
+    RenderBox& renderBox = *toRenderBox(&renderer());
     LayoutRect contentsRect;
 #if ENABLE(VIDEO)
-    if (renderer().isVideo()) {
-        RenderVideo* videoRenderer = toRenderVideo(&renderer());
+    if (renderBox.isVideo()) {
+        RenderVideo* videoRenderer = toRenderVideo(&renderBox);
         contentsRect = videoRenderer->videoBox();
     } else
 #endif
-        contentsRect = toRenderBox(&renderer())->contentBoxRect();
+    if (renderBox.isRenderReplaced()) {
+        RenderReplaced& renderReplaced = *toRenderReplaced(&renderBox);
+        contentsRect = renderReplaced.replacedContentRect(renderBox.intrinsicSize());
+    } else
+        contentsRect = renderBox.contentBoxRect();
 
     contentsRect.move(contentOffsetInCompostingLayer());
     return contentsRect;

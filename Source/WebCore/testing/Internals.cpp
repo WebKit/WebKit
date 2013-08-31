@@ -1605,6 +1605,8 @@ String Internals::layerTreeAsText(Document* document, unsigned flags, ExceptionC
         layerTreeFlags |= LayerTreeFlagsIncludeRepaintRects;
     if (flags & LAYER_TREE_INCLUDES_PAINTING_PHASES)
         layerTreeFlags |= LayerTreeFlagsIncludePaintingPhases;
+    if (flags & LAYER_TREE_INCLUDES_CONTENT_LAYERS)
+        layerTreeFlags |= LayerTreeFlagsIncludeContentLayers;
 
     return document->frame()->layerTreeAsText(layerTreeFlags);
 }

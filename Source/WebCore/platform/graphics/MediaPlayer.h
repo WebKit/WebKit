@@ -415,6 +415,9 @@ public:
     void acceleratedRenderingStateChanged();
 #endif
 
+    bool shouldMaintainAspectRatio() const;
+    void setShouldMaintainAspectRatio(bool);
+
 #if PLATFORM(WIN) && USE(AVFOUNDATION)
     GraphicsDeviceAdapter* graphicsDeviceAdapter() const;
 #endif

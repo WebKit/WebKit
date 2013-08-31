@@ -175,6 +175,7 @@
     const unsigned short LAYER_TREE_INCLUDES_TILE_CACHES = 2;
     const unsigned short LAYER_TREE_INCLUDES_REPAINT_RECTS = 4;
     const unsigned short LAYER_TREE_INCLUDES_PAINTING_PHASES = 8;
+    const unsigned short LAYER_TREE_INCLUDES_CONTENT_LAYERS = 16;
     [RaisesException] DOMString layerTreeAsText(Document document, optional unsigned short flags);
 
     [RaisesException] DOMString scrollingStateTreeAsText(Document document);

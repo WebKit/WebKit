@@ -150,6 +150,9 @@ public:
     virtual void acceleratedRenderingStateChanged() { }
 #endif
 
+    virtual bool shouldMaintainAspectRatio() const { return true; }
+    virtual void setShouldMaintainAspectRatio(bool) { }
+
     virtual bool hasSingleSecurityOrigin() const { return false; }
 
     virtual bool didPassCORSAccessCheck() const { return false; }

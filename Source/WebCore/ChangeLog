@@ -1,3 +1,85 @@
+2013-08-30  Simon Fraser  <simon.fraser@apple.com>
+
+        Video with object-fit: cover can spill outside the box
+        https://bugs.webkit.org/show_bug.cgi?id=52103
+
+        Reviewed by Dean Jackson.
+        
+        object-fit on renderers which use accelerated compositing needs special
+        treatment.
+        
+        For directly composited images, and video, GraphicsLayer needs to know
+        both the size of the content layer, and also a rectangle at which this
+        should be clipped (because, for the first time, that content layer can be
+        larger than the renderer's content box).
+        
+        AVFoundation would always aspect-ratio fit video by default, so plumb
+        through MediaPlayer a way to override that when object-fit requires it.
+        
+        Added a LAYER_TREE_INCLUDES_CONTENT_LAYERS enum to the layerTreeAsText()
+        flags so we can dump content layers for testing.
+
+        Tests: compositing/images/direct-image-object-fit.html
+               compositing/reflections/direct-image-object-fit-reflected.html
+               compositing/video/video-object-fit.html
+
+        * page/Frame.h: New LayerTreeFlagsIncludeContentLayers flag.
+        * platform/graphics/GraphicsLayer.h: New flag.
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::shouldMaintainAspectRatio):
+        (WebCore::MediaPlayer::setShouldMaintainAspectRatio):
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::shouldMaintainAspectRatio):
+        (WebCore::MediaPlayerPrivateInterface::setShouldMaintainAspectRatio):
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::MediaPlayerPrivateAVFoundation):
+        (WebCore::MediaPlayerPrivateAVFoundation::setShouldMaintainAspectRatio):
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h:
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundationCF::updateVideoLayerGravity):
+        (WebCore::AVFWrapper::platformLayer):
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createVideoLayer):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::updateVideoLayerGravity):
+        * platform/graphics/ca/GraphicsLayerCA.cpp: We need a new m_contentsClippingLayer to
+        clip the contents layer, which only gets created when necessary. It has to be cloned
+        for reflections.
+        (WebCore::GraphicsLayerCA::willBeDestroyed):
+        (WebCore::GraphicsLayerCA::setContentsRect):
+        (WebCore::GraphicsLayerCA::setContentsClippingRect):
+        (WebCore::GraphicsLayerCA::commitLayerChangesBeforeSublayers):
+        (WebCore::GraphicsLayerCA::updateSublayerList):
+        (WebCore::GraphicsLayerCA::updateContentsImage):
+        (WebCore::GraphicsLayerCA::updateContentsMediaLayer):
+        (WebCore::GraphicsLayerCA::updateContentsCanvasLayer):
+        (WebCore::GraphicsLayerCA::updateContentsColorLayer):
+        (WebCore::GraphicsLayerCA::updateContentsRects):
+        (WebCore::GraphicsLayerCA::dumpAdditionalProperties):
+        (WebCore::GraphicsLayerCA::ensureCloneLayers):
+        (WebCore::GraphicsLayerCA::removeCloneLayers):
+        (WebCore::GraphicsLayerCA::fetchCloneLayers):
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        * rendering/RenderLayerBacking.cpp: Need to push both the contentsRect and
+        the contentsClippingRect down to the GraphicsLayers. Most of the time they
+        are the same, unless object-fit makes them different.
+        (WebCore::RenderLayerBacking::resetContentsRect):
+        (WebCore::RenderLayerBacking::positionOverflowControlsLayers):
+        (WebCore::RenderLayerBacking::updateDirectlyCompositedBackgroundColor):
+        (WebCore::RenderLayerBacking::updateDirectlyCompositedBackgroundImage):
+        (WebCore::RenderLayerBacking::updateImageContents):
+        (WebCore::RenderLayerBacking::contentsBox):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::layerTreeAsText):
+        * rendering/RenderVideo.cpp:
+        (WebCore::RenderVideo::updatePlayer):
+        * testing/Internals.cpp:
+        (WebCore::Internals::layerTreeAsText):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2013-08-30  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Update to incorporate additional suggestions

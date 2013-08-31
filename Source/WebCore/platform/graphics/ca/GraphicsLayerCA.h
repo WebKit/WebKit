@@ -105,6 +105,7 @@ public:
     virtual void setContentsNeedsDisplay();
     
     virtual void setContentsRect(const IntRect&);
+    virtual void setContentsClippingRect(const IntRect&) OVERRIDE;
     
     virtual void suspendAnimations(double time);
     virtual void resumeAnimations();
@@ -314,7 +315,8 @@ private:
     PassRefPtr<PlatformCALayer> cloneLayer(PlatformCALayer *, CloneLevel);
     PassRefPtr<PlatformCALayer> findOrMakeClone(CloneID, PlatformCALayer *, LayerMap*, CloneLevel);
 
-    void ensureCloneLayers(CloneID cloneID, RefPtr<PlatformCALayer>& primaryLayer, RefPtr<PlatformCALayer>& structuralLayer, RefPtr<PlatformCALayer>& contentsLayer, CloneLevel cloneLevel);
+    void ensureCloneLayers(CloneID, RefPtr<PlatformCALayer>& primaryLayer, RefPtr<PlatformCALayer>& structuralLayer,
+        RefPtr<PlatformCALayer>& contentsLayer, RefPtr<PlatformCALayer>& contentsClippingLayer, CloneLevel);
 
     bool hasCloneLayers() const { return m_layerClones; }
     void removeCloneLayers();
@@ -340,7 +342,7 @@ private:
     void updateContentsMediaLayer();
     void updateContentsCanvasLayer();
     void updateContentsColorLayer();
-    void updateContentsRect();
+    void updateContentsRects();
     void updateMaskLayer();
     void updateReplicatedLayers();
 
@@ -392,7 +394,7 @@ private:
         ContentsMediaLayerChanged = 1 << 16,
         ContentsCanvasLayerChanged = 1 << 17,
         ContentsColorLayerChanged = 1 << 18,
-        ContentsRectChanged = 1 << 19,
+        ContentsRectsChanged = 1 << 19,
         MaskLayerChanged = 1 << 20,
         ReplicatedLayerChanged = 1 << 21,
         ContentsNeedsDisplay = 1 << 22,
@@ -413,12 +415,14 @@ private:
 
     RefPtr<PlatformCALayer> m_layer; // The main layer
     RefPtr<PlatformCALayer> m_structuralLayer; // A layer used for structural reasons, like preserves-3d or replica-flattening. Is the parent of m_layer.
+    RefPtr<PlatformCALayer> m_contentsClippingLayer; // A layer used to clip inner content
     RefPtr<PlatformCALayer> m_contentsLayer; // A layer used for inner content, like image and video
 
     // References to clones of our layers, for replicated layers.
     OwnPtr<LayerMap> m_layerClones;
     OwnPtr<LayerMap> m_structuralLayerClones;
     OwnPtr<LayerMap> m_contentsLayerClones;
+    OwnPtr<LayerMap> m_contentsClippingLayerClones;
 
 #ifdef VISIBLE_TILE_WASH
     RefPtr<PlatformCALayer> m_visibleTileWashLayer;

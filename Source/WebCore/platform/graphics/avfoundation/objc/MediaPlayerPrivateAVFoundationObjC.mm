@@ -98,6 +98,8 @@ SOFT_LINK_POINTER(AVFoundation, AVMediaTypeAudio, NSString *)
 SOFT_LINK_POINTER(AVFoundation, AVPlayerItemDidPlayToEndTimeNotification, NSString *)
 SOFT_LINK_POINTER(AVFoundation, AVAssetImageGeneratorApertureModeCleanAperture, NSString *)
 SOFT_LINK_POINTER(AVFoundation, AVURLAssetReferenceRestrictionsKey, NSString *)
+SOFT_LINK_POINTER(AVFoundation, AVLayerVideoGravityResizeAspect, NSString *)
+SOFT_LINK_POINTER(AVFoundation, AVLayerVideoGravityResize, NSString *)
 
 SOFT_LINK_CONSTANT(CoreMedia, kCMTimeZero, CMTime)
 
@@ -116,6 +118,8 @@ SOFT_LINK_CONSTANT(CoreMedia, kCMTimeZero, CMTime)
 #define AVPlayerItemDidPlayToEndTimeNotification getAVPlayerItemDidPlayToEndTimeNotification()
 #define AVAssetImageGeneratorApertureModeCleanAperture getAVAssetImageGeneratorApertureModeCleanAperture()
 #define AVURLAssetReferenceRestrictionsKey getAVURLAssetReferenceRestrictionsKey()
+#define AVLayerVideoGravityResizeAspect getAVLayerVideoGravityResizeAspect()
+#define AVLayerVideoGravityResize getAVLayerVideoGravityResize()
 
 #if HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP)
 typedef AVMediaSelectionGroup AVMediaSelectionGroupType;
@@ -372,6 +376,7 @@ void MediaPlayerPrivateAVFoundationObjC::createVideoLayer()
 #ifndef NDEBUG
         [m_videoLayer.get() setName:@"Video layer"];
 #endif
+        updateVideoLayerGravity();
         LOG(Media, "MediaPlayerPrivateAVFoundationObjC::createVideoLayer(%p) - returning %p", this, m_videoLayer.get());
     }
 }
@@ -985,6 +990,18 @@ float MediaPlayerPrivateAVFoundationObjC::mediaTimeForTimeValue(float timeValue)
 
     // FIXME - impossible to implement until rdar://8721510 is fixed.
     return timeValue;
+}
+
+void MediaPlayerPrivateAVFoundationObjC::updateVideoLayerGravity()
+{
+    if (!m_videoLayer)
+        return;
+
+    [CATransaction begin];
+    [CATransaction setDisableActions:YES];    
+    NSString* gravity = shouldMaintainAspectRatio() ? AVLayerVideoGravityResizeAspect : AVLayerVideoGravityResize;
+    [m_videoLayer.get() setVideoGravity:gravity];
+    [CATransaction commit];
 }
 
 void MediaPlayerPrivateAVFoundationObjC::tracksChanged()

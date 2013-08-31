@@ -77,6 +77,7 @@ MediaPlayerPrivateAVFoundation::MediaPlayerPrivateAVFoundation(MediaPlayer* play
     , m_playWhenFramesAvailable(false)
     , m_inbandTrackConfigurationPending(false)
     , m_characteristicsChanged(false)
+    , m_shouldMaintainAspectRatio(true)
     , m_seekCount(0)
 {
     LOG(Media, "MediaPlayerPrivateAVFoundation::MediaPlayerPrivateAVFoundation(%p)", this);
@@ -580,6 +581,15 @@ void MediaPlayerPrivateAVFoundation::acceleratedRenderingStateChanged()
 {
     // Set up or change the rendering path if necessary.
     setUpVideoRendering();
+}
+
+void MediaPlayerPrivateAVFoundation::setShouldMaintainAspectRatio(bool maintainAspectRatio)
+{
+    if (maintainAspectRatio == m_shouldMaintainAspectRatio)
+        return;
+
+    m_shouldMaintainAspectRatio = maintainAspectRatio;
+    updateVideoLayerGravity();
 }
 
 void MediaPlayerPrivateAVFoundation::metadataLoaded()

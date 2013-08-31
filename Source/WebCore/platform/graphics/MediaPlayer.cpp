@@ -847,6 +847,16 @@ bool MediaPlayer::supportsAcceleratedRendering() const
 }
 #endif // USE(ACCELERATED_COMPOSITING)
 
+bool MediaPlayer::shouldMaintainAspectRatio() const
+{
+    return m_private->shouldMaintainAspectRatio();
+}
+
+void MediaPlayer::setShouldMaintainAspectRatio(bool maintainAspectRatio)
+{
+    m_private->setShouldMaintainAspectRatio(maintainAspectRatio);
+}
+
 bool MediaPlayer::hasSingleSecurityOrigin() const
 {
     return m_private->hasSingleSecurityOrigin();

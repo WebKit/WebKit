@@ -98,6 +98,8 @@ private:
     virtual bool hasContextRenderer() const;
     virtual bool hasLayerRenderer() const;
 
+    virtual void updateVideoLayerGravity() OVERRIDE;
+
     virtual void contentsNeedsDisplay();
 
     virtual String languageOfPrimaryAudioTrack() const OVERRIDE;
