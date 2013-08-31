@@ -533,13 +533,12 @@ static VisiblePosition createVisiblePositionForBox(const InlineBox* box, int off
         affinity = offset > box->caretMinOffset() ? VP_UPSTREAM_IF_POSSIBLE : DOWNSTREAM;
         break;
     }
-    return box->renderer()->createVisiblePosition(offset, affinity);
+    return box->renderer().createVisiblePosition(offset, affinity);
 }
 
 static VisiblePosition createVisiblePositionAfterAdjustingOffsetForBiDi(const InlineTextBox* box, int offset, ShouldAffinityBeDownstream shouldAffinityBeDownstream)
 {
     ASSERT(box);
-    ASSERT(box->renderer());
     ASSERT(offset >= 0);
 
     if (offset && static_cast<unsigned>(offset) < box->len())
@@ -551,7 +550,7 @@ static VisiblePosition createVisiblePositionAfterAdjustingOffsetForBiDi(const In
 
         const InlineBox* prevBox = box->prevLeafChildIgnoringLineBreak();
         if ((prevBox && prevBox->bidiLevel() == box->bidiLevel())
-            || box->renderer()->containingBlock()->style()->direction() == box->direction()) // FIXME: left on 12CBA
+            || box->renderer().containingBlock()->style()->direction() == box->direction()) // FIXME: left on 12CBA
             return createVisiblePositionForBox(box, box->caretLeftmostOffset(), shouldAffinityBeDownstream);
 
         if (prevBox && prevBox->bidiLevel() > box->bidiLevel()) {
@@ -581,7 +580,7 @@ static VisiblePosition createVisiblePositionAfterAdjustingOffsetForBiDi(const In
 
     const InlineBox* nextBox = box->nextLeafChildIgnoringLineBreak();
     if ((nextBox && nextBox->bidiLevel() == box->bidiLevel())
-        || box->renderer()->containingBlock()->style()->direction() == box->direction())
+        || box->renderer().containingBlock()->style()->direction() == box->direction())
         return createVisiblePositionForBox(box, box->caretRightmostOffset(), shouldAffinityBeDownstream);
 
     // offset is on the right edge
@@ -1494,7 +1493,7 @@ void RenderText::dirtyLineBoxes(bool fullLayout)
 
 InlineTextBox* RenderText::createTextBox()
 {
-    return new (renderArena()) InlineTextBox(this);
+    return new (renderArena()) InlineTextBox(*this);
 }
 
 InlineTextBox* RenderText::createInlineTextBox()

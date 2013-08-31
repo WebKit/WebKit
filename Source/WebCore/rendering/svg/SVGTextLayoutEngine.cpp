@@ -235,18 +235,17 @@ void SVGTextLayoutEngine::layoutInlineTextBox(SVGInlineTextBox* textBox)
 {
     ASSERT(textBox);
 
-    RenderSVGInlineText* text = toRenderSVGInlineText(textBox->textRenderer());
-    ASSERT(text);
-    ASSERT(text->parent());
-    ASSERT(text->parent()->node());
-    ASSERT(text->parent()->node()->isSVGElement());
+    RenderSVGInlineText& text = toRenderSVGInlineText(textBox->textRenderer());
+    ASSERT(text.parent());
+    ASSERT(text.parent()->node());
+    ASSERT(text.parent()->node()->isSVGElement());
 
-    const RenderStyle* style = text->style();
+    const RenderStyle* style = text.style();
     ASSERT(style);
 
     textBox->clearTextFragments();
     m_isVerticalText = style->svgStyle()->isVerticalWritingMode();
-    layoutTextOnLineOrPath(textBox, text, style);
+    layoutTextOnLineOrPath(textBox, &text, style);
 
     if (m_inPathLayout) {
         m_pathLayoutBoxes.append(textBox);

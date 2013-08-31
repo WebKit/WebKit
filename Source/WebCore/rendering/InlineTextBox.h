@@ -47,8 +47,8 @@ Color correctedTextColor(Color textColor, Color backgroundColor);
 
 class InlineTextBox : public InlineBox {
 public:
-    InlineTextBox(RenderObject* obj)
-        : InlineBox(obj)
+    InlineTextBox(RenderObject& renderer)
+        : InlineBox(renderer)
         , m_prevTextBox(0)
         , m_nextTextBox(0)
         , m_start(0)
@@ -122,7 +122,7 @@ protected:
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom) OVERRIDE;
 
 public:
-    RenderText* textRenderer() const;
+    RenderText& textRenderer() const;
 
 private:
     virtual void deleteLine(RenderArena*) OVERRIDE FINAL;
@@ -212,9 +212,9 @@ inline const InlineTextBox* toInlineTextBox(const InlineBox* inlineBox)
 // This will catch anyone doing an unnecessary cast.
 void toInlineTextBox(const InlineTextBox*);
 
-inline RenderText* InlineTextBox::textRenderer() const
+inline RenderText& InlineTextBox::textRenderer() const
 {
-    return toRenderText(renderer());
+    return *toRenderText(&renderer());
 }
 
 void alignSelectionRectToDevicePixels(FloatRect&);

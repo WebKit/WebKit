@@ -1115,8 +1115,8 @@ LayoutRect RenderListMarker::localSelectionRect()
     if (!box)
         return LayoutRect(LayoutPoint(), size());
     RootInlineBox* root = m_inlineBoxWrapper->root();
-    LayoutUnit newLogicalTop = root->block()->style()->isFlippedBlocksWritingMode() ? m_inlineBoxWrapper->logicalBottom() - root->selectionBottom() : root->selectionTop() - m_inlineBoxWrapper->logicalTop();
-    if (root->block()->style()->isHorizontalWritingMode())
+    LayoutUnit newLogicalTop = root->block().style()->isFlippedBlocksWritingMode() ? m_inlineBoxWrapper->logicalBottom() - root->selectionBottom() : root->selectionTop() - m_inlineBoxWrapper->logicalTop();
+    if (root->block().style()->isHorizontalWritingMode())
         return LayoutRect(0, newLogicalTop, width(), root->selectionHeight());
     return LayoutRect(newLogicalTop, 0, root->selectionHeight(), height());
 }

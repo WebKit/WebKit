@@ -40,8 +40,8 @@ typedef HashMap<const InlineTextBox*, pair<Vector<const SimpleFontData*>, GlyphO
 
 class InlineFlowBox : public InlineBox {
 public:
-    InlineFlowBox(RenderObject* obj)
-        : InlineBox(obj)
+    InlineFlowBox(RenderObject& renderer)
+        : InlineBox(renderer)
         , m_firstChild(0)
         , m_lastChild(0)
         , m_prevLineBox(0)
@@ -61,7 +61,7 @@ public:
         // an invisible marker exists.  The side effect of having an invisible marker is that the quirks mode behavior of shrinking lines with no
         // text children must not apply.  This change also means that gaps will exist between image bullet list items.  Even when the list bullet
         // is an image, the line is still considered to be immune from the quirk.
-        m_hasTextChildren = obj->style()->display() == LIST_ITEM;
+        m_hasTextChildren = renderer.style()->display() == LIST_ITEM;
         m_hasTextDescendants = m_hasTextChildren;
     }
 
@@ -140,13 +140,13 @@ public:
     {
         if (!includeLogicalLeftEdge())
             return 0;
-        return isHorizontal() ? renderer()->style(isFirstLineStyle())->borderLeftWidth() : renderer()->style(isFirstLineStyle())->borderTopWidth();
+        return isHorizontal() ? renderer().style(isFirstLineStyle())->borderLeftWidth() : renderer().style(isFirstLineStyle())->borderTopWidth();
     }
     int borderLogicalRight() const
     {
         if (!includeLogicalRightEdge())
             return 0;
-        return isHorizontal() ? renderer()->style(isFirstLineStyle())->borderRightWidth() : renderer()->style(isFirstLineStyle())->borderBottomWidth();
+        return isHorizontal() ? renderer().style(isFirstLineStyle())->borderRightWidth() : renderer().style(isFirstLineStyle())->borderBottomWidth();
     }
     int paddingLogicalLeft() const
     {
@@ -234,7 +234,7 @@ public:
     LayoutRect logicalLayoutOverflowRect(LayoutUnit lineTop, LayoutUnit lineBottom) const
     {
         LayoutRect result = layoutOverflowRect(lineTop, lineBottom);
-        if (!renderer()->isHorizontalWritingMode())
+        if (!renderer().isHorizontalWritingMode())
             result = result.transposedRect();
         return result;
     }
@@ -260,7 +260,7 @@ public:
     LayoutRect logicalVisualOverflowRect(LayoutUnit lineTop, LayoutUnit lineBottom) const
     {
         LayoutRect result = visualOverflowRect(lineTop, lineBottom);
-        if (!renderer()->isHorizontalWritingMode())
+        if (!renderer().isHorizontalWritingMode())
             result = result.transposedRect();
         return result;
     }

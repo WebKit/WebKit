@@ -1047,7 +1047,7 @@ void RenderDeprecatedFlexibleBox::applyLineClamp(FlexBoxIterator& iterator, bool
         // Get ellipsis width, and if the last child is an anchor, it will go after the ellipsis, so add in a space and the anchor width too
         LayoutUnit totalWidth;
         InlineBox* anchorBox = lastLine->lastChild();
-        if (anchorBox && anchorBox->renderer()->style()->isLink())
+        if (anchorBox && anchorBox->renderer().style()->isLink())
             totalWidth = anchorBox->logicalWidth() + font.width(constructTextRun(this, font, ellipsisAndSpace, 2, style()));
         else {
             anchorBox = 0;
@@ -1055,26 +1055,26 @@ void RenderDeprecatedFlexibleBox::applyLineClamp(FlexBoxIterator& iterator, bool
         }
 
         // See if this width can be accommodated on the last visible line
-        RenderBlock* destBlock = toRenderBlock(lastVisibleLine->renderer());
-        RenderBlock* srcBlock = toRenderBlock(lastLine->renderer());
+        RenderBlock& destBlock = toRenderBlock(lastVisibleLine->renderer());
+        RenderBlock& srcBlock = toRenderBlock(lastLine->renderer());
 
         // FIXME: Directions of src/destBlock could be different from our direction and from one another.
-        if (!srcBlock->style()->isLeftToRightDirection())
+        if (!srcBlock.style()->isLeftToRightDirection())
             continue;
 
-        bool leftToRight = destBlock->style()->isLeftToRightDirection();
+        bool leftToRight = destBlock.style()->isLeftToRightDirection();
         if (!leftToRight)
             continue;
 
-        LayoutUnit blockRightEdge = destBlock->logicalRightOffsetForLine(lastVisibleLine->y(), false);
+        LayoutUnit blockRightEdge = destBlock.logicalRightOffsetForLine(lastVisibleLine->y(), false);
         if (!lastVisibleLine->lineCanAccommodateEllipsis(leftToRight, blockRightEdge, lastVisibleLine->x() + lastVisibleLine->logicalWidth(), totalWidth))
             continue;
 
         // Let the truncation code kick in.
         // FIXME: the text alignment should be recomputed after the width changes due to truncation.
-        LayoutUnit blockLeftEdge = destBlock->logicalLeftOffsetForLine(lastVisibleLine->y(), false);
+        LayoutUnit blockLeftEdge = destBlock.logicalLeftOffsetForLine(lastVisibleLine->y(), false);
         lastVisibleLine->placeEllipsis(anchorBox ? ellipsisAndSpaceStr : ellipsisStr, leftToRight, blockLeftEdge, blockRightEdge, totalWidth, anchorBox);
-        destBlock->setHasMarkupTruncation(true);
+        destBlock.setHasMarkupTruncation(true);
     }
 }
 

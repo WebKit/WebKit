@@ -436,7 +436,7 @@ void RenderSVGText::layout()
 
 RootInlineBox* RenderSVGText::createRootInlineBox() 
 {
-    RootInlineBox* box = new (renderArena()) SVGRootInlineBox(this);
+    RootInlineBox* box = new (renderArena()) SVGRootInlineBox(*this);
     box->setHasVirtualLogicalHeight();
     return box;
 }
@@ -481,7 +481,7 @@ VisiblePosition RenderSVGText::positionForPoint(const LayoutPoint& pointInConten
     if (!closestBox)
         return createVisiblePosition(0, DOWNSTREAM);
 
-    return closestBox->renderer()->positionForPoint(LayoutPoint(pointInContents.x(), closestBox->y()));
+    return closestBox->renderer().positionForPoint(LayoutPoint(pointInContents.x(), closestBox->y()));
 }
 
 void RenderSVGText::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) const

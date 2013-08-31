@@ -67,6 +67,12 @@ private:
     SVGTextLayoutAttributes m_layoutAttributes;
 };
 
+inline RenderSVGInlineText& toRenderSVGInlineText(RenderObject& object)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(object.isSVGInlineText());
+    return static_cast<RenderSVGInlineText&>(object);
+}
+
 inline RenderSVGInlineText* toRenderSVGInlineText(RenderObject* object)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isSVGInlineText());

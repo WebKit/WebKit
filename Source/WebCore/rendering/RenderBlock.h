@@ -1359,6 +1359,12 @@ private:
     static bool s_canPropagateFloatIntoSibling;
 };
 
+inline RenderBlock& toRenderBlock(RenderObject& object)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(object.isRenderBlock());
+    return static_cast<RenderBlock&>(object);
+}
+
 inline RenderBlock* toRenderBlock(RenderObject* object)
 { 
     ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isRenderBlock());

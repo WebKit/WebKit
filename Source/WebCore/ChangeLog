@@ -1,5 +1,27 @@
 2013-08-31  Andreas Kling  <akling@apple.com>
 
+        InlineBox::renderer() and pals should return references.
+        <https://webkit.org/b/120562>
+
+        Reviewed by Antti Koivisto.
+
+        Make InlineBox::renderer() and its friends return references instead of pointers.
+        Every box always has a renderer, so this clears up any ambiguity, and a number of
+        weird assertions in SVG code.
+
+        Made InlineBox::m_renderer private so subclasses have to go through renderer().
+        The next step will be to replace renderer() with tightly-typed accessors where
+        applicable (e.g InlineTextBox's renderer is always a RenderText.)
+
+        Also added reference versions of these RenderObject casts:
+
+            - toRenderBox()
+            - toRenderBlock()
+            - toRenderInline()
+            - toRenderSVGInlineText()
+
+2013-08-31  Andreas Kling  <akling@apple.com>
+
         PostAttachCallbackDisabler should take a ContainerNode&.
         <https://webkit.org/b/120560>
 

@@ -30,8 +30,8 @@ class RenderSVGInlineText;
 
 class SVGInlineFlowBox FINAL : public InlineFlowBox {
 public:
-    SVGInlineFlowBox(RenderObject* obj)
-        : InlineFlowBox(obj)
+    SVGInlineFlowBox(RenderObject& renderer)
+        : InlineFlowBox(renderer)
         , m_logicalHeight(0)
     {
     }

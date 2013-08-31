@@ -34,11 +34,11 @@ class RootInlineBox;
 // some RenderObject (i.e., it represents a portion of that RenderObject).
 class InlineBox {
 public:
-    InlineBox(RenderObject* obj)
+    InlineBox(RenderObject& renderer)
         : m_next(0)
         , m_prev(0)
         , m_parent(0)
-        , m_renderer(obj)
+        , m_renderer(renderer)
         , m_logicalWidth(0)
 #if !ASSERT_DISABLED
         , m_hasBadParent(false)
@@ -46,12 +46,12 @@ public:
     {
     }
 
-    InlineBox(RenderObject* obj, FloatPoint topLeft, float logicalWidth, bool firstLine, bool constructed,
+    InlineBox(RenderObject& renderer, FloatPoint topLeft, float logicalWidth, bool firstLine, bool constructed,
               bool dirty, bool extracted, bool isHorizontal, InlineBox* next, InlineBox* prev, InlineFlowBox* parent)
         : m_next(next)
         , m_prev(prev)
         , m_parent(parent)
-        , m_renderer(obj)
+        , m_renderer(renderer)
         , m_topLeft(topLeft)
         , m_logicalWidth(logicalWidth)
         , m_bitfields(firstLine, constructed, dirty, extracted, isHorizontal)
@@ -181,7 +181,7 @@ public:
     InlineBox* nextLeafChildIgnoringLineBreak() const;
     InlineBox* prevLeafChildIgnoringLineBreak() const;
 
-    RenderObject* renderer() const { return m_renderer; }
+    RenderObject& renderer() const { return m_renderer; }
 
     InlineFlowBox* parent() const
     {
@@ -278,15 +278,15 @@ public:
 
     int expansion() const { return m_bitfields.expansion(); }
 
-    bool visibleToHitTesting() const { return renderer()->style()->visibility() == VISIBLE && renderer()->style()->pointerEvents() != PE_NONE; }
+    bool visibleToHitTesting() const { return renderer().style()->visibility() == VISIBLE && renderer().style()->pointerEvents() != PE_NONE; }
     
-    EVerticalAlign verticalAlign() const { return renderer()->style(m_bitfields.firstLine())->verticalAlign(); }
+    EVerticalAlign verticalAlign() const { return renderer().style(m_bitfields.firstLine())->verticalAlign(); }
 
     // Use with caution! The type is not checked!
     RenderBoxModelObject* boxModelObject() const
     { 
-        if (!m_renderer->isText())
-            return toRenderBoxModelObject(m_renderer);
+        if (!m_renderer.isText())
+            return toRenderBoxModelObject(&m_renderer);
         return 0;
     }
 
@@ -308,9 +308,9 @@ private:
 
     InlineFlowBox* m_parent; // The box that contains us.
 
-public:
-    RenderObject* m_renderer;
+    RenderObject& m_renderer;
 
+public:
     FloatPoint m_topLeft;
     float m_logicalWidth;
 

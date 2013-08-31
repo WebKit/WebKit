@@ -588,7 +588,7 @@ void TextIterator::handleTextBox()
                 nextTextBox = m_sortedTextBoxes[m_sortedTextBoxesPosition + 1];
         } else 
             nextTextBox = m_textBox->nextTextBox();
-        ASSERT(!nextTextBox || nextTextBox->renderer() == renderer);
+        ASSERT(!nextTextBox || &nextTextBox->renderer() == renderer);
 
         if (runStart < runEnd) {
             // Handle either a single newline character (which becomes a space),

@@ -36,7 +36,7 @@ struct GapRects;
 
 class RootInlineBox : public InlineFlowBox {
 public:
-    explicit RootInlineBox(RenderBlock*);
+    explicit RootInlineBox(RenderBlock&);
 
     virtual void destroy(RenderArena*) OVERRIDE FINAL;
 
@@ -135,7 +135,7 @@ public:
     GapRects lineSelectionGap(RenderBlock* rootBlock, const LayoutPoint& rootBlockPhysicalPosition, const LayoutSize& offsetFromRootBlock,
         LayoutUnit selTop, LayoutUnit selHeight, const LogicalSelectionOffsetCaches&, const PaintInfo*);
 
-    RenderBlock* block() const;
+    RenderBlock& block() const;
 
     InlineBox* closestLeafChildForPoint(const IntPoint&, bool onlyEditableLeaves);
     InlineBox* closestLeafChildForLogicalLeftPosition(int, bool onlyEditableLeaves = false);

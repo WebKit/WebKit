@@ -706,6 +706,12 @@ private:
     static bool s_hadOverflowClip;
 };
 
+inline RenderBox& toRenderBox(RenderObject& object)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(object.isBox());
+    return static_cast<RenderBox&>(object);
+}
+
 inline RenderBox* toRenderBox(RenderObject* object)
 { 
     ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isBox());

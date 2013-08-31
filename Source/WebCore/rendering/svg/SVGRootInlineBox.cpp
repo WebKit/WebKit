@@ -41,10 +41,7 @@ void SVGRootInlineBox::paint(PaintInfo& paintInfo, const LayoutPoint&, LayoutUni
     ASSERT(paintInfo.phase == PaintPhaseForeground || paintInfo.phase == PaintPhaseSelection);
     ASSERT(!paintInfo.context->paintingDisabled());
 
-    RenderObject* boxRenderer = renderer();
-    ASSERT(boxRenderer);
-
-    bool isPrinting = renderer()->document().printing();
+    bool isPrinting = renderer().document().printing();
     bool hasSelection = !isPrinting && selectionState() != RenderObject::SelectionNone;
 
     PaintInfo childPaintInfo(paintInfo);
@@ -57,11 +54,11 @@ void SVGRootInlineBox::paint(PaintInfo& paintInfo, const LayoutPoint&, LayoutUni
         }
     }
 
-    SVGRenderingContext renderingContext(boxRenderer, paintInfo, SVGRenderingContext::SaveGraphicsContext);
+    SVGRenderingContext renderingContext(&renderer(), paintInfo, SVGRenderingContext::SaveGraphicsContext);
     if (renderingContext.isRenderingPrepared()) {
         for (InlineBox* child = firstChild(); child; child = child->nextOnLine()) {
             if (child->isSVGInlineTextBox())
-                SVGInlineFlowBox::computeTextMatchMarkerRectForRenderer(toRenderSVGInlineText(toSVGInlineTextBox(child)->textRenderer()));
+                SVGInlineFlowBox::computeTextMatchMarkerRectForRenderer(toRenderSVGInlineText(&toSVGInlineTextBox(child)->textRenderer()));
 
             child->paint(paintInfo, LayoutPoint(), 0, 0);
         }
@@ -70,7 +67,7 @@ void SVGRootInlineBox::paint(PaintInfo& paintInfo, const LayoutPoint&, LayoutUni
 
 void SVGRootInlineBox::computePerCharacterLayoutInformation()
 {
-    RenderSVGText* textRoot = toRenderSVGText(block());
+    RenderSVGText* textRoot = toRenderSVGText(&block());
     ASSERT(textRoot);
 
     Vector<SVGTextLayoutAttributes*>& layoutAttributes = textRoot->layoutAttributes();
@@ -98,14 +95,13 @@ void SVGRootInlineBox::layoutCharactersInTextBoxes(InlineFlowBox* start, SVGText
 {
     for (InlineBox* child = start->firstChild(); child; child = child->nextOnLine()) {
         if (child->isSVGInlineTextBox()) {
-            ASSERT(child->renderer());
-            ASSERT(child->renderer()->isSVGInlineText());
+            ASSERT(child->renderer().isSVGInlineText());
 
             SVGInlineTextBox* textBox = toSVGInlineTextBox(child);
             characterLayout.layoutInlineTextBox(textBox);
         } else {
             // Skip generated content.
-            Node* node = child->renderer()->node();
+            Node* node = child->renderer().node();
             if (!node)
                 continue;
 
@@ -119,7 +115,7 @@ void SVGRootInlineBox::layoutCharactersInTextBoxes(InlineFlowBox* start, SVGText
                 SVGTextLayoutEngine lineLayout(characterLayout.layoutAttributes());
                 layoutCharactersInTextBoxes(flowBox, lineLayout);
 
-                characterLayout.beginTextPathLayout(child->renderer(), lineLayout);
+                characterLayout.beginTextPathLayout(&child->renderer(), lineLayout);
             }
 
             layoutCharactersInTextBoxes(flowBox, characterLayout);
@@ -135,8 +131,7 @@ void SVGRootInlineBox::layoutChildBoxes(InlineFlowBox* start, FloatRect* childRe
     for (InlineBox* child = start->firstChild(); child; child = child->nextOnLine()) {
         FloatRect boxRect;
         if (child->isSVGInlineTextBox()) {
-            ASSERT(child->renderer());
-            ASSERT(child->renderer()->isSVGInlineText());
+            ASSERT(child->renderer().isSVGInlineText());
 
             SVGInlineTextBox* textBox = toSVGInlineTextBox(child);
             boxRect = textBox->calculateBoundaries();
@@ -146,7 +141,7 @@ void SVGRootInlineBox::layoutChildBoxes(InlineFlowBox* start, FloatRect* childRe
             textBox->setLogicalHeight(boxRect.height());
         } else {
             // Skip generated content.
-            if (!child->renderer()->node())
+            if (!child->renderer().node())
                 continue;
 
             ASSERT_WITH_SECURITY_IMPLICATION(child->isInlineFlowBox());
@@ -167,18 +162,17 @@ void SVGRootInlineBox::layoutChildBoxes(InlineFlowBox* start, FloatRect* childRe
 
 void SVGRootInlineBox::layoutRootBox(const FloatRect& childRect)
 {
-    RenderBlock* parentBlock = block();
-    ASSERT(parentBlock);
+    RenderBlock& parentBlock = block();
 
     // Finally, assign the root block position, now that all content is laid out.
     LayoutRect boundingRect = enclosingLayoutRect(childRect);
-    parentBlock->setLocation(boundingRect.location());
-    parentBlock->setSize(boundingRect.size());
+    parentBlock.setLocation(boundingRect.location());
+    parentBlock.setSize(boundingRect.size());
 
     // Position all children relative to the parent block.
     for (InlineBox* child = firstChild(); child; child = child->nextOnLine()) {
         // Skip generated content.
-        if (!child->renderer()->node())
+        if (!child->renderer().node())
             continue;
         child->adjustPosition(-childRect.x(), -childRect.y());
     }
@@ -283,12 +277,12 @@ static inline void reverseInlineBoxRangeAndValueListsIfNeeded(void* userData, Ve
 
         // Reordering is only necessary for BiDi text that is _absolutely_ positioned.
         if (firstTextBox->len() == 1 && firstTextBox->len() == lastTextBox->len()) {
-            RenderSVGInlineText* firstContext = toRenderSVGInlineText(firstTextBox->textRenderer());
-            RenderSVGInlineText* lastContext = toRenderSVGInlineText(lastTextBox->textRenderer());
+            RenderSVGInlineText& firstContext = toRenderSVGInlineText(firstTextBox->textRenderer());
+            RenderSVGInlineText& lastContext = toRenderSVGInlineText(lastTextBox->textRenderer());
 
             SVGTextLayoutAttributes* firstAttributes = 0;
             SVGTextLayoutAttributes* lastAttributes = 0;
-            findFirstAndLastAttributesInVector(attributes, firstContext, lastContext, firstAttributes, lastAttributes);
+            findFirstAndLastAttributesInVector(attributes, &firstContext, &lastContext, firstAttributes, lastAttributes);
             swapItemsInLayoutAttributes(firstAttributes, lastAttributes, firstTextBox->start(), lastTextBox->start());
         }
 

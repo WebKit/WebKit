@@ -35,7 +35,7 @@ namespace WebCore {
 void EllipsisBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, LayoutUnit lineTop, LayoutUnit lineBottom)
 {
     GraphicsContext* context = paintInfo.context;
-    RenderStyle* style = m_renderer->style(isFirstLineStyle());
+    RenderStyle* style = renderer().style(isFirstLineStyle());
     Color textColor = style->visitedDependentColor(CSSPropertyWebkitTextFillColor);
     if (textColor != context->fillColor())
         context->setFillColor(textColor, style->colorSpace());
@@ -51,13 +51,13 @@ void EllipsisBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, La
         paintSelection(context, paintOffset, style, font);
 
         // Select the correct color for painting the text.
-        Color foreground = paintInfo.forceBlackText() ? Color::black : renderer()->selectionForegroundColor();
+        Color foreground = paintInfo.forceBlackText() ? Color::black : renderer().selectionForegroundColor();
         if (foreground.isValid() && foreground != textColor)
             context->setFillColor(foreground, style->colorSpace());
     }
 
     // FIXME: Why is this always LTR? Fix by passing correct text run flags below.
-    context->drawText(font, RenderBlock::constructTextRun(renderer(), font, m_str, style, TextRun::AllowTrailingExpansion), LayoutPoint(x() + paintOffset.x(), y() + paintOffset.y() + style->fontMetrics().ascent()));
+    context->drawText(font, RenderBlock::constructTextRun(&renderer(), font, m_str, style, TextRun::AllowTrailingExpansion), LayoutPoint(x() + paintOffset.x(), y() + paintOffset.y() + style->fontMetrics().ascent()));
 
     // Restore the regular fill color.
     if (textColor != context->fillColor())
@@ -71,18 +71,18 @@ void EllipsisBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, La
 
 InlineBox* EllipsisBox::markupBox() const
 {
-    if (!m_shouldPaintMarkupBox || !m_renderer->isRenderBlock())
+    if (!m_shouldPaintMarkupBox || !renderer().isRenderBlock())
         return 0;
 
-    RenderBlock* block = toRenderBlock(m_renderer);
-    RootInlineBox* lastLine = block->lineAtIndex(block->lineCount() - 1);
+    RenderBlock& block = toRenderBlock(renderer());
+    RootInlineBox* lastLine = block.lineAtIndex(block.lineCount() - 1);
     if (!lastLine)
         return 0;
 
     // If the last line-box on the last line of a block is a link, -webkit-line-clamp paints that box after the ellipsis.
     // It does not actually move the link.
     InlineBox* anchorBox = lastLine->lastChild();
-    if (!anchorBox || !anchorBox->renderer()->style()->isLink())
+    if (!anchorBox || !anchorBox->renderer().style()->isLink())
         return 0;
 
     return anchorBox;
@@ -96,22 +96,22 @@ void EllipsisBox::paintMarkupBox(PaintInfo& paintInfo, const LayoutPoint& paintO
 
     LayoutPoint adjustedPaintOffset = paintOffset;
     adjustedPaintOffset.move(x() + m_logicalWidth - markupBox->x(),
-        y() + style->fontMetrics().ascent() - (markupBox->y() + markupBox->renderer()->style(isFirstLineStyle())->fontMetrics().ascent()));
+        y() + style->fontMetrics().ascent() - (markupBox->y() + markupBox->renderer().style(isFirstLineStyle())->fontMetrics().ascent()));
     markupBox->paint(paintInfo, adjustedPaintOffset, lineTop, lineBottom);
 }
 
 IntRect EllipsisBox::selectionRect()
 {
-    RenderStyle* style = m_renderer->style(isFirstLineStyle());
+    RenderStyle* style = renderer().style(isFirstLineStyle());
     const Font& font = style->font();
     // FIXME: Why is this always LTR? Fix by passing correct text run flags below.
-    return enclosingIntRect(font.selectionRectForText(RenderBlock::constructTextRun(renderer(), font, m_str, style, TextRun::AllowTrailingExpansion), IntPoint(x(), y() + root()->selectionTopAdjustedForPrecedingBlock()), root()->selectionHeightAdjustedForPrecedingBlock()));
+    return enclosingIntRect(font.selectionRectForText(RenderBlock::constructTextRun(&renderer(), font, m_str, style, TextRun::AllowTrailingExpansion), IntPoint(x(), y() + root()->selectionTopAdjustedForPrecedingBlock()), root()->selectionHeightAdjustedForPrecedingBlock()));
 }
 
 void EllipsisBox::paintSelection(GraphicsContext* context, const LayoutPoint& paintOffset, RenderStyle* style, const Font& font)
 {
     Color textColor = style->visitedDependentColor(CSSPropertyColor);
-    Color c = m_renderer->selectionBackgroundColor();
+    Color c = renderer().selectionBackgroundColor();
     if (!c.isValid() || !c.alpha())
         return;
 
@@ -127,7 +127,7 @@ void EllipsisBox::paintSelection(GraphicsContext* context, const LayoutPoint& pa
     alignSelectionRectToDevicePixels(clipRect);
     context->clip(clipRect);
     // FIXME: Why is this always LTR? Fix by passing correct text run flags below.
-    context->drawHighlightForText(font, RenderBlock::constructTextRun(renderer(), font, m_str, style, TextRun::AllowTrailingExpansion), roundedIntPoint(LayoutPoint(x() + paintOffset.x(), y() + paintOffset.y() + top)), h, c, style->colorSpace());
+    context->drawHighlightForText(font, RenderBlock::constructTextRun(&renderer(), font, m_str, style, TextRun::AllowTrailingExpansion), roundedIntPoint(LayoutPoint(x() + paintOffset.x(), y() + paintOffset.y() + top)), h, c, style->colorSpace());
 }
 
 bool EllipsisBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom)
@@ -136,19 +136,19 @@ bool EllipsisBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
 
     // Hit test the markup box.
     if (InlineBox* markupBox = this->markupBox()) {
-        RenderStyle* style = m_renderer->style(isFirstLineStyle());
+        RenderStyle* style = renderer().style(isFirstLineStyle());
         LayoutUnit mtx = adjustedLocation.x() + m_logicalWidth - markupBox->x();
-        LayoutUnit mty = adjustedLocation.y() + style->fontMetrics().ascent() - (markupBox->y() + markupBox->renderer()->style(isFirstLineStyle())->fontMetrics().ascent());
+        LayoutUnit mty = adjustedLocation.y() + style->fontMetrics().ascent() - (markupBox->y() + markupBox->renderer().style(isFirstLineStyle())->fontMetrics().ascent());
         if (markupBox->nodeAtPoint(request, result, locationInContainer, LayoutPoint(mtx, mty), lineTop, lineBottom)) {
-            renderer()->updateHitTestResult(result, locationInContainer.point() - LayoutSize(mtx, mty));
+            renderer().updateHitTestResult(result, locationInContainer.point() - LayoutSize(mtx, mty));
             return true;
         }
     }
 
     LayoutRect boundsRect(adjustedLocation, LayoutSize(m_logicalWidth, m_height));
     if (visibleToHitTesting() && boundsRect.intersects(HitTestLocation::rectForPoint(locationInContainer.point(), 0, 0, 0, 0))) {
-        renderer()->updateHitTestResult(result, locationInContainer.point() - toLayoutSize(adjustedLocation));
-        if (!result.addNodeToRectBasedTestResult(renderer()->node(), request, locationInContainer, boundsRect))
+        renderer().updateHitTestResult(result, locationInContainer.point() - toLayoutSize(adjustedLocation));
+        if (!result.addNodeToRectBasedTestResult(renderer().node(), request, locationInContainer, boundsRect))
             return true;
     }
 

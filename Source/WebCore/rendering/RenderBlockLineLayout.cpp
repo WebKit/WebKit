@@ -679,7 +679,7 @@ RootInlineBox* RenderBlock::constructLine(BidiRunList<BidiRun>& bidiRuns, const 
         if (!box)
             continue;
 
-        if (!rootHasSelectedChildren && box->renderer()->selectionState() != RenderObject::SelectionNone)
+        if (!rootHasSelectedChildren && box->renderer().selectionState() != RenderObject::SelectionNone)
             rootHasSelectedChildren = true;
 
         // If we have no parent box yet, or if the run is not simply a sibling,
@@ -691,7 +691,7 @@ RootInlineBox* RenderBlock::constructLine(BidiRunList<BidiRun>& bidiRuns, const 
 #else
         bool runStartsSegment = false;
 #endif
-        if (!parentBox || parentBox->renderer() != r->m_object->parent() || runStartsSegment)
+        if (!parentBox || &parentBox->renderer() != r->m_object->parent() || runStartsSegment)
             // Create new inline boxes all the way back to the appropriate insertion point.
             parentBox = createLineBoxes(r->m_object->parent(), lineInfo, box, runStartsSegment);
         else {
@@ -1599,9 +1599,9 @@ void RenderBlock::layoutRunsAndFloats(LineLayoutState& layoutState, bool hasInli
         // adjust the height accordingly.
         // A line break can be either the first or the last object on a line, depending on its direction.
         if (InlineBox* lastLeafChild = lastRootBox()->lastLeafChild()) {
-            RenderObject* lastObject = lastLeafChild->renderer();
+            RenderObject* lastObject = &lastLeafChild->renderer();
             if (!lastObject->isBR())
-                lastObject = lastRootBox()->firstLeafChild()->renderer();
+                lastObject = &lastRootBox()->firstLeafChild()->renderer();
             if (lastObject->isBR()) {
                 EClear clear = lastObject->style()->clear();
                 if (clear != CNONE)
@@ -2060,7 +2060,7 @@ void RenderBlock::linkToEndLineIfNeeded(LineLayoutState& layoutState)
         if (layoutState.checkForFloatsFromLastLine()) {
             LayoutUnit bottomVisualOverflow = lastRootBox()->logicalBottomVisualOverflow();
             LayoutUnit bottomLayoutOverflow = lastRootBox()->logicalBottomLayoutOverflow();
-            TrailingFloatsRootInlineBox* trailingFloatsLineBox = new (renderArena()) TrailingFloatsRootInlineBox(this);
+            TrailingFloatsRootInlineBox* trailingFloatsLineBox = new (renderArena()) TrailingFloatsRootInlineBox(*this);
             m_lineBoxes.appendLineBox(trailingFloatsLineBox);
             trailingFloatsLineBox->setConstructed();
             GlyphOverflowAndFallbackFontsMap textBoxDataMap;
@@ -3706,7 +3706,7 @@ void RenderBlock::layoutLineGridBox()
     
     setLineGridBox(0);
 
-    RootInlineBox* lineGridBox = new (renderArena()) RootInlineBox(this);
+    RootInlineBox* lineGridBox = new (renderArena()) RootInlineBox(*this);
     lineGridBox->setHasTextChildren(); // Needed to make the line ascent/descent actually be honored in quirks mode.
     lineGridBox->setConstructed();
     GlyphOverflowAndFallbackFontsMap textBoxDataMap;

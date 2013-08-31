@@ -993,7 +993,7 @@ void RenderBlock::deleteLineBoxTree()
         const FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
         FloatingObjectSetIterator end = floatingObjectSet.end();
         for (FloatingObjectSetIterator it = floatingObjectSet.begin(); it != end; ++it) {
-            ASSERT(!((*it)->originatingLine()) || (*it)->originatingLine()->renderer() == this);
+            ASSERT(!((*it)->originatingLine()) || &(*it)->originatingLine()->renderer() == this);
             (*it)->setOriginatingLine(0);
         }
     }
@@ -1005,7 +1005,7 @@ void RenderBlock::deleteLineBoxTree()
 
 RootInlineBox* RenderBlock::createRootInlineBox()
 {
-    return new (renderArena()) RootInlineBox(this);
+    return new (renderArena()) RootInlineBox(*this);
 }
 
 RootInlineBox* RenderBlock::createAndAppendRootInlineBox()
@@ -4124,7 +4124,7 @@ void RenderBlock::removeFloatingObject(RenderBox* o)
                 }
                 if (r->originatingLine()) {
                     if (!selfNeedsLayout()) {
-                        ASSERT(r->originatingLine()->renderer() == this);
+                        ASSERT(&r->originatingLine()->renderer() == this);
                         r->originatingLine()->markDirty();
                     }
 #if !ASSERT_DISABLED
@@ -4811,7 +4811,7 @@ void RenderBlock::clearFloats()
 
                     floatMap.remove(f->renderer());
                     if (oldFloatingObject->originatingLine() && !selfNeedsLayout()) {
-                        ASSERT(oldFloatingObject->originatingLine()->renderer() == this);
+                        ASSERT(&oldFloatingObject->originatingLine()->renderer() == this);
                         oldFloatingObject->originatingLine()->markDirty();
                     }
                     delete oldFloatingObject;
@@ -5384,14 +5384,14 @@ Position RenderBlock::positionForBox(InlineBox *box, bool start) const
     if (!box)
         return Position();
 
-    if (!box->renderer()->nonPseudoNode())
+    if (!box->renderer().nonPseudoNode())
         return createLegacyEditingPosition(nonPseudoNode(), start ? caretMinOffset() : caretMaxOffset());
 
     if (!box->isInlineTextBox())
-        return createLegacyEditingPosition(box->renderer()->nonPseudoNode(), start ? box->renderer()->caretMinOffset() : box->renderer()->caretMaxOffset());
+        return createLegacyEditingPosition(box->renderer().nonPseudoNode(), start ? box->renderer().caretMinOffset() : box->renderer().caretMaxOffset());
 
     InlineTextBox* textBox = toInlineTextBox(box);
-    return createLegacyEditingPosition(box->renderer()->nonPseudoNode(), start ? textBox->start() : textBox->start() + textBox->len());
+    return createLegacyEditingPosition(box->renderer().nonPseudoNode(), start ? textBox->start() : textBox->start() + textBox->len());
 }
 
 static inline bool isEditingBoundary(RenderObject* ancestor, RenderObject* child)
@@ -5506,9 +5506,9 @@ VisiblePosition RenderBlock::positionForPointWithInlineChildren(const LayoutPoin
         LayoutPoint point(pointInLogicalContents.x(), closestBox->root()->blockDirectionPointInLine());
         if (!isHorizontalWritingMode())
             point = point.transposedPoint();
-        if (closestBox->renderer()->isReplaced())
-            return positionForPointRespectingEditingBoundaries(this, toRenderBox(closestBox->renderer()), point);
-        return closestBox->renderer()->positionForPoint(point);
+        if (closestBox->renderer().isReplaced())
+            return positionForPointRespectingEditingBoundaries(this, &toRenderBox(closestBox->renderer()), point);
+        return closestBox->renderer().positionForPoint(point);
     }
 
     if (lastRootBoxWithChildren) {
@@ -7482,7 +7482,7 @@ void RenderBlock::addFocusRingRects(Vector<IntRect>& rects, const LayoutPoint& a
         // FIXME: This is wrong. The principal renderer may not be the continuation preceding this block.
         // FIXME: This is wrong for block-flows that are horizontal.
         // https://bugs.webkit.org/show_bug.cgi?id=46781
-        bool prevInlineHasLineBox = toRenderInline(inlineElementContinuation()->node()->renderer())->firstLineBox(); 
+        bool prevInlineHasLineBox = toRenderInline(inlineElementContinuation()->node()->renderer())->firstLineBox();
         float topMargin = prevInlineHasLineBox ? collapsedMarginBefore() : LayoutUnit();
         float bottomMargin = nextInlineHasLineBox ? collapsedMarginAfter() : LayoutUnit();
         LayoutRect rect(additionalOffset.x(), additionalOffset.y() - topMargin, width(), height() + topMargin + bottomMargin);
