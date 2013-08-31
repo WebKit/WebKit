@@ -701,7 +701,6 @@
     <None Include="..\UserInterface\Utilities.js" />
     <None Include="..\UserInterface\WebInspector.js" />
     <None Include="WebInspectorUIPostBuild.cmd" />
-    <None Include="WebInspectorUIPreBuild.cmd" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

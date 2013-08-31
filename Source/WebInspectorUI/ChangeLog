@@ -1,5 +1,15 @@
 2013-08-30  Brent Fulgham  <bfulgham@apple.com>
 
+        [Windows] Correct windows build. Get rid of unnecessary pre-build step. We don't build anything
+        in this project, just copy some files into the WebKit resource folder. This was fooling the
+        build system into thinking something failed, resulting in a build error.
+
+        * WebInspectorUI.vcxproj/WebInspectorUI.vcxproj: Remove reference to WebInspectorUIPreBuild.cmd
+        * WebInspectorUI.vcxproj/WebInspectorUI.vcxproj.filters:
+        * WebInspectorUI.vcxproj/WebInspectorUIPreBuild.cmd: Removed.
+
+2013-08-30  Brent Fulgham  <bfulgham@apple.com>
+
         [Windows] Build correction after dependency change.
 
         * WebInspectorUI.vcxproj/WebInspectorUI.vcxproj: Remove circular dependency on

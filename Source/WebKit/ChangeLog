@@ -1,5 +1,13 @@
 2013-08-30  Brent Fulgham  <bfulgham@apple.com>
 
+        [Windows] Unreviewed build correction.
+        Update project dependencies so that build logs on machines will include output from the
+        WebInspectorUI project.
+
+        * WebKit.vcxproj/WebKit.sln:
+
+2013-08-30  Brent Fulgham  <bfulgham@apple.com>
+
         [Windows] Unreviewed build fix after r154917
 
         * WebKit.vcxproj/WebKit.sln: Establish build dependency from WebInspectorUI against

@@ -1735,6 +1735,5 @@
       <Filter>Scripts</Filter>
     </None>
     <None Include="WebInspectorUIPostBuild.cmd" />
-    <None Include="WebInspectorUIPreBuild.cmd" />
   </ItemGroup>
 </Project>
