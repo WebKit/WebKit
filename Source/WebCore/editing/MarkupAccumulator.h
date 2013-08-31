@@ -39,7 +39,7 @@ class Element;
 class Node;
 class Range;
 
-typedef HashMap<AtomicStringImpl*, AtomicStringImpl*> Namespaces;
+typedef HashMap<AtomicString, AtomicStringImpl*> Namespaces;
 
 enum EntityMask {
     EntityAmp = 0x0001,

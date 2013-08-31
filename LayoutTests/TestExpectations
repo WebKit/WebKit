@@ -38,8 +38,3 @@ webkit.org/b/119094 fast/forms/color/input-color-onchange-event.html [ Crash Pas
 # This test will run slowly in debug mode, but is plenty fast in release.
 [ Debug ] fast/js/regress/emscripten-memops.html [ Skip ]
 
-[ Debug ] webkit.org/b/120490 fast/dom/XMLSerializer-attribute-namespace-prefix-conflicts.html [ Skip ]
-[ Debug ] webkit.org/b/120490 fast/dom/XMLSerializer-same-prefix-different-namespaces-conflict.html [ Skip ]
-[ Debug ] webkit.org/b/120490 fast/dom/XMLSerializer-setAttributeNS-namespace-no-prefix.html [ Skip ]
-[ Debug ] webkit.org/b/120490 svg/custom/xlink-prefix-generation-in-attributes.html [ Skip ]
-
