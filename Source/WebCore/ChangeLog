@@ -1,3 +1,10 @@
+2013-08-31  Andreas Kling  <akling@apple.com>
+
+        Fix typo in r154931 that caused assertions in continuation tests.
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::paint):
+
 2013-08-31  Rob Buis  <rwlbuis@webkit.org>
 
         XMLSerializer-attribute-namespace-prefix-conflicts can't produce reliable results

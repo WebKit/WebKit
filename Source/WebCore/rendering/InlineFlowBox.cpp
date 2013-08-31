@@ -1141,7 +1141,7 @@ void InlineFlowBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
                 if (containingBlockPaintsContinuationOutline) {
                     // Add ourselves to the containing block of the entire continuation so that it can
                     // paint us atomically.
-                    cb->addContinuationWithOutline(&toRenderInline(renderer()));
+                    cb->addContinuationWithOutline(toRenderInline(renderer().node()->renderer()));
                 } else if (!inlineFlow.isInlineElementContinuation())
                     paintInfo.outlineObjects->add(&inlineFlow);
             }
