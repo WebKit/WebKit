@@ -305,20 +305,19 @@ private:
 
 class PostAttachCallbackDisabler {
 public:
-    PostAttachCallbackDisabler(ContainerNode* node)
+    PostAttachCallbackDisabler(ContainerNode& node)
         : m_node(node)
     {
-        ASSERT(m_node);
-        m_node->suspendPostAttachCallbacks();
+        m_node.suspendPostAttachCallbacks();
     }
 
     ~PostAttachCallbackDisabler()
     {
-        m_node->resumePostAttachCallbacks();
+        m_node.resumePostAttachCallbacks();
     }
 
 private:
-    ContainerNode* m_node;
+    ContainerNode& m_node;
 };
 
 } // namespace WebCore

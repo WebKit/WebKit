@@ -1762,7 +1762,7 @@ void Document::recalcStyle(Style::Change change)
 
     m_inStyleRecalc = true;
     {
-        PostAttachCallbackDisabler disabler(this);
+        PostAttachCallbackDisabler disabler(*this);
         WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
 
         frameView.pauseScheduledEvents();

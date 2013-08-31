@@ -469,7 +469,7 @@ static void attachShadowRoot(ShadowRoot& shadowRoot)
 
 static void attachRenderTree(Element& current, RenderStyle* resolvedStyle)
 {
-    PostAttachCallbackDisabler callbackDisabler(&current);
+    PostAttachCallbackDisabler callbackDisabler(current);
     WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
 
     if (current.hasCustomStyleResolveCallbacks())
