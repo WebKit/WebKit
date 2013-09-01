@@ -63,7 +63,7 @@ private:
     virtual void doUnapply() OVERRIDE
     {
         if (!m_hasBeenUndone) {
-            document().frame()->editor().unappliedSpellCorrection(startingSelection(), m_corrected, m_correction);
+            frame().editor().unappliedSpellCorrection(startingSelection(), m_corrected, m_correction);
             m_hasBeenUndone = true;
         }
         
@@ -95,7 +95,7 @@ void SpellingCorrectionCommand::doApply()
     if (!m_corrected.length())
         return;
 
-    if (!document().frame()->selection().shouldChangeSelection(m_selectionToBeCorrected))
+    if (!frame().selection().shouldChangeSelection(m_selectionToBeCorrected))
         return;
 
     RefPtr<DocumentFragment> fragment = createFragmentFromText(m_rangeToBeCorrected.get(), m_correction);

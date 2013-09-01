@@ -61,6 +61,12 @@ EditCommand::~EditCommand()
 {
 }
 
+Frame& EditCommand::frame() const
+{
+    ASSERT(document().frame());
+    return *document().frame();
+}
+
 EditAction EditCommand::editingAction() const
 {
     return EditActionUnspecified;

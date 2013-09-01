@@ -205,12 +205,10 @@ void CompositeEditCommand::apply()
     // if one is necessary (like for the creation of VisiblePositions).
     document().updateLayoutIgnorePendingStylesheets();
 
-    Frame* frame = document().frame();
-    ASSERT(frame);
     {
         EventQueueScope scope;
 #if ENABLE(DELETION_UI)
-        DeleteButtonControllerDisableScope deleteButtonControllerDisableScope(frame);
+        DeleteButtonControllerDisableScope deleteButtonControllerDisableScope(&frame());
 #endif
         doApply();
     }
@@ -218,7 +216,7 @@ void CompositeEditCommand::apply()
     // Only need to call appliedEditing for top-level commands,
     // and TypingCommands do it on their own (see TypingCommand::typingAddedToOpenCommand).
     if (!isTypingCommand())
-        frame->editor().appliedEditing(this);
+        frame().editor().appliedEditing(this);
     setShouldRetainAutocorrectionIndicator(false);
 }
 
@@ -1216,7 +1214,7 @@ void CompositeEditCommand::moveParagraphs(const VisiblePosition& startOfParagrap
     // FIXME (5098931): We should add a new insert action "WebViewInsertActionMoved" and call shouldInsertFragment here.
     
     setEndingSelection(VisibleSelection(start, end, DOWNSTREAM));
-    document().frame()->editor().clearMisspellingsAndBadGrammar(endingSelection());
+    frame().editor().clearMisspellingsAndBadGrammar(endingSelection());
     deleteSelection(false, false, false, false);
 
     ASSERT(destination.deepEquivalent().anchorNode()->inDocument());
@@ -1249,7 +1247,7 @@ void CompositeEditCommand::moveParagraphs(const VisiblePosition& startOfParagrap
         options |= ReplaceSelectionCommand::MatchStyle;
     applyCommandToComposite(ReplaceSelectionCommand::create(document(), fragment, options));
 
-    document().frame()->editor().markMisspellingsAndBadGrammar(endingSelection());
+    frame().editor().markMisspellingsAndBadGrammar(endingSelection());
 
     // If the selection is in an empty paragraph, restore styles from the old empty paragraph to the new empty paragraph.
     bool selectionIsEmptyParagraph = endingSelection().isCaret() && isStartOfParagraph(endingSelection().visibleStart()) && isEndOfParagraph(endingSelection().visibleStart());

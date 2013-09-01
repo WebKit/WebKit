@@ -1,3 +1,16 @@
+2013-09-01  Andreas Kling  <akling@apple.com>
+
+        Give EditCommand a protected Frame& getter.
+        <https://webkit.org/b/120574>
+
+        Reviewed by Darin Adler.
+
+        EditCommand is only created for documents that are attached to a Frame,
+        we already ASSERTed as much in the EditCommand constructor.
+
+        This patch adds a "Frame& EditCommand::frame()" helper, so EditCommand
+        and its subclasses don't have to fumble around with pointers.
+
 2013-08-31  Antti Koivisto  <antti@apple.com>
 
         Add element ancestor iterator

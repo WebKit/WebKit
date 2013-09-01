@@ -38,6 +38,7 @@ namespace WebCore {
 class CompositeEditCommand;
 class Document;
 class Element;
+class Frame;
 
 class EditCommand : public RefCounted<EditCommand> {
 public:
@@ -61,6 +62,7 @@ protected:
     explicit EditCommand(Document&);
     EditCommand(Document&, const VisibleSelection&, const VisibleSelection&);
 
+    Frame& frame() const;
     Document& document() const { return *m_document; }
     CompositeEditCommand* parent() const { return m_parent; }
     void setStartingSelection(const VisibleSelection&);
