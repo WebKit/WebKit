@@ -89,8 +89,8 @@ JSFunction* InlineCallFrame::calleeForCallFrame(ExecState* exec) const
 
 CodeBlockHash InlineCallFrame::hash() const
 {
-    return jsCast<FunctionExecutable*>(executable.get())->generatedBytecodeFor(
-        specializationKind()).hash();
+    return jsCast<FunctionExecutable*>(executable.get())->codeBlockFor(
+        specializationKind())->hash();
 }
 
 CString InlineCallFrame::inferredName() const

@@ -737,7 +737,7 @@ failedJSONP:
     if (JSObject* error = program->prepareForExecution(callFrame, scope, CodeForCall))
         return checkedReturn(callFrame->vm().throwException(callFrame, error));
 
-    ProgramCodeBlock* codeBlock = &program->generatedBytecode();
+    ProgramCodeBlock* codeBlock = program->codeBlock();
 
     if (UNLIKELY(vm.watchdog.didFire(callFrame)))
         return throwTerminatedExecutionException(callFrame);
@@ -807,7 +807,7 @@ JSValue Interpreter::executeCall(CallFrame* callFrame, JSObject* function, CallT
         if (UNLIKELY(!!compileError)) {
             return checkedReturn(callFrame->vm().throwException(callFrame, compileError));
         }
-        newCodeBlock = &callData.js.functionExecutable->generatedBytecodeForCall();
+        newCodeBlock = callData.js.functionExecutable->codeBlockForCall();
         ASSERT(!!newCodeBlock);
         newCodeBlock->m_shouldAlwaysBeInlined = false;
     } else
@@ -886,7 +886,7 @@ JSObject* Interpreter::executeConstruct(CallFrame* callFrame, JSObject* construc
         if (UNLIKELY(!!compileError)) {
             return checkedReturn(callFrame->vm().throwException(callFrame, compileError));
         }
-        newCodeBlock = &constructData.js.functionExecutable->generatedBytecodeForConstruct();
+        newCodeBlock = constructData.js.functionExecutable->codeBlockForConstruct();
         ASSERT(!!newCodeBlock);
         newCodeBlock->m_shouldAlwaysBeInlined = false;
     } else
@@ -961,7 +961,7 @@ CallFrameClosure Interpreter::prepareForRepeatCall(FunctionExecutable* functionE
         callFrame->vm().throwException(callFrame, error);
         return CallFrameClosure();
     }
-    CodeBlock* newCodeBlock = &functionExecutable->generatedBytecodeForCall();
+    CodeBlock* newCodeBlock = functionExecutable->codeBlockForCall();
     newCodeBlock->m_shouldAlwaysBeInlined = false;
 
     size_t argsCount = argumentCountIncludingThis;
@@ -1075,7 +1075,7 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
     JSObject* compileError = eval->prepareForExecution(callFrame, scope, CodeForCall);
     if (UNLIKELY(!!compileError))
         return checkedReturn(callFrame->vm().throwException(callFrame, compileError));
-    EvalCodeBlock* codeBlock = &eval->generatedBytecode();
+    EvalCodeBlock* codeBlock = eval->codeBlock();
 
     if (numVariables || numFunctions) {
         BatchedTransitionOptimizer optimizer(vm, variableObject);

@@ -80,6 +80,17 @@ public:
         }
     }
     
+    static bool isExecutableScript(JITType jitType)
+    {
+        switch (jitType) {
+        case None:
+        case HostCallThunk:
+            return false;
+        default:
+            return true;
+        }
+    }
+    
     static bool couldBeInterpreted(JITType jitType)
     {
         switch (jitType) {
@@ -105,8 +116,8 @@ public:
     
     static bool isLowerTier(JITType expectedLower, JITType expectedHigher)
     {
-        RELEASE_ASSERT(isJIT(expectedLower));
-        RELEASE_ASSERT(isJIT(expectedHigher));
+        RELEASE_ASSERT(isExecutableScript(expectedLower));
+        RELEASE_ASSERT(isExecutableScript(expectedHigher));
         return expectedLower < expectedHigher;
     }
     

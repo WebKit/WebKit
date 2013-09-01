@@ -1,3 +1,60 @@
+2013-08-30  Filip Pizlo  <fpizlo@apple.com>
+
+        CodeBlock refactoring broke profile dumping
+        https://bugs.webkit.org/show_bug.cgi?id=120551
+
+        Reviewed by Michael Saboff.
+        
+        Fix the bug, and did a big clean-up of how Executable returns CodeBlocks. A lot
+        of the problems we have with code like CodeBlock::baselineVersion() is that we
+        were trying *way too hard* to side-step the fact that Executable can't return a
+        CodeBlock*. Previously it could only return CodeBlock&, so if it didn't have a
+        CodeBlock yet, you were screwed. And if you didn't know, or weren't sure, if it
+        did have a CodeBlock, you were really going to have a bad time. Also it really
+        bugs me that the methods were called generatedBytecode(). In all other contexts
+        if you ask for a CodeBlock, then method to call is codeBlock(). So I made all
+        of those changes.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::baselineVersion):
+        (JSC::ProgramCodeBlock::replacement):
+        (JSC::EvalCodeBlock::replacement):
+        (JSC::FunctionCodeBlock::replacement):
+        (JSC::CodeBlock::globalObjectFor):
+        * bytecode/CodeOrigin.cpp:
+        (JSC::InlineCallFrame::hash):
+        * dfg/DFGOperations.cpp:
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::executeCall):
+        (JSC::Interpreter::executeConstruct):
+        (JSC::Interpreter::prepareForRepeatCall):
+        * jit/JITCode.h:
+        (JSC::JITCode::isExecutableScript):
+        (JSC::JITCode::isLowerTier):
+        * jit/JITStubs.cpp:
+        (JSC::lazyLinkFor):
+        (JSC::DEFINE_STUB_FUNCTION):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::traceFunctionPrologue):
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        (JSC::LLInt::setUpCall):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::isNumericCompareFunction):
+        * runtime/CommonSlowPaths.h:
+        (JSC::CommonSlowPaths::arityCheckFor):
+        * runtime/Executable.cpp:
+        (JSC::ScriptExecutable::installCode):
+        * runtime/Executable.h:
+        (JSC::EvalExecutable::codeBlock):
+        (JSC::ProgramExecutable::codeBlock):
+        (JSC::FunctionExecutable::eitherCodeBlock):
+        (JSC::FunctionExecutable::codeBlockForCall):
+        (JSC::FunctionExecutable::codeBlockForConstruct):
+        (JSC::FunctionExecutable::codeBlockFor):
+        * runtime/FunctionExecutableDump.cpp:
+        (JSC::FunctionExecutableDump::dump):
+
 2013-08-30  Oliver Hunt  <oliver@apple.com>
 
         Implement ES6 Set class

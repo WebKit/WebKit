@@ -2363,22 +2363,18 @@ void CodeBlock::stronglyVisitWeakReferences(SlotVisitor& visitor)
 
 CodeBlock* CodeBlock::baselineVersion()
 {
-#if ENABLE(JIT)
-    // When we're initializing the original baseline code block, we won't be able
-    // to get its replacement. But we'll know that it's the original baseline code
-    // block because it won't have JIT code yet and it won't have an alternative.
-    if (jitType() == JITCode::None && !alternative())
+    if (JITCode::isBaselineCode(jitType()))
         return this;
-    
+#if ENABLE(JIT)
     CodeBlock* result = replacement();
-    ASSERT(result);
     while (result->alternative())
         result = result->alternative();
-    ASSERT(result);
-    ASSERT(JITCode::isBaselineCode(result->jitType()));
+    RELEASE_ASSERT(result);
+    RELEASE_ASSERT(JITCode::isBaselineCode(result->jitType()));
     return result;
 #else
-    return this;
+    RELEASE_ASSERT_NOT_REACHED();
+    return 0;
 #endif
 }
 
@@ -2712,17 +2708,17 @@ void CodeBlock::reoptimize()
 
 CodeBlock* ProgramCodeBlock::replacement()
 {
-    return &static_cast<ProgramExecutable*>(ownerExecutable())->generatedBytecode();
+    return jsCast<ProgramExecutable*>(ownerExecutable())->codeBlock();
 }
 
 CodeBlock* EvalCodeBlock::replacement()
 {
-    return &static_cast<EvalExecutable*>(ownerExecutable())->generatedBytecode();
+    return jsCast<EvalExecutable*>(ownerExecutable())->codeBlock();
 }
 
 CodeBlock* FunctionCodeBlock::replacement()
 {
-    return &static_cast<FunctionExecutable*>(ownerExecutable())->generatedBytecodeFor(m_isConstructor ? CodeForConstruct : CodeForCall);
+    return jsCast<FunctionExecutable*>(ownerExecutable())->codeBlockFor(m_isConstructor ? CodeForConstruct : CodeForCall);
 }
 
 DFG::CapabilityLevel ProgramCodeBlock::capabilityLevelInternal()
@@ -2773,7 +2769,7 @@ JSGlobalObject* CodeBlock::globalObjectFor(CodeOrigin codeOrigin)
 {
     if (!codeOrigin.inlineCallFrame)
         return globalObject();
-    return jsCast<FunctionExecutable*>(codeOrigin.inlineCallFrame->executable.get())->generatedBytecode().globalObject();
+    return jsCast<FunctionExecutable*>(codeOrigin.inlineCallFrame->executable.get())->eitherCodeBlock()->globalObject();
 }
 
 void CodeBlock::noticeIncomingCall(ExecState* callerFrame)

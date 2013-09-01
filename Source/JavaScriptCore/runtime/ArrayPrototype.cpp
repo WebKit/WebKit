@@ -82,7 +82,7 @@ static inline bool isNumericCompareFunction(ExecState* exec, CallType callType, 
     if (error)
         return false;
 
-    return executable->generatedBytecodeForCall().isNumericCompareFunction();
+    return executable->codeBlockForCall()->isNumericCompareFunction();
 }
 
 // ------------------------------ ArrayPrototype ----------------------------

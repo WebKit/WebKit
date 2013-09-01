@@ -116,6 +116,7 @@ void ScriptExecutable::destroy(JSCell* cell)
 void ScriptExecutable::installCode(CodeBlock* genericCodeBlock)
 {
     RELEASE_ASSERT(genericCodeBlock->ownerExecutable() == this);
+    RELEASE_ASSERT(JITCode::isExecutableScript(genericCodeBlock->jitType()));
     
     VM& vm = *genericCodeBlock->vm();
     

@@ -1276,7 +1276,7 @@ inline void* lazyLinkFor(CallFrame* callFrame, CodeSpecializationKind kind)
             callFrame->vm().throwException(callFrame, error);
             return 0;
         }
-        codeBlock = &functionExecutable->generatedBytecodeFor(kind);
+        codeBlock = functionExecutable->codeBlockFor(kind);
         if (callFrame->argumentCountIncludingThis() < static_cast<size_t>(codeBlock->numParameters())
             || callLinkInfo->callType == CallLinkInfo::CallVarargs)
             codePtr = functionExecutable->generatedJITCodeWithArityCheckFor(kind);
@@ -1335,7 +1335,7 @@ DEFINE_STUB_FUNCTION(void*, vm_lazyLinkClosureCall)
         ASSERT(executable->hasJITCodeForCall());
         codePtr = executable->generatedJITCodeForCall()->addressForCall();
         if (!callee->executable()->isHostFunction()) {
-            calleeCodeBlock = &jsCast<FunctionExecutable*>(executable)->generatedBytecodeForCall();
+            calleeCodeBlock = jsCast<FunctionExecutable*>(executable)->codeBlockForCall();
             if (callFrame->argumentCountIncludingThis() < static_cast<size_t>(calleeCodeBlock->numParameters())) {
                 shouldLink = false;
                 codePtr = executable->generatedJITCodeWithArityCheckFor(CodeForCall);
