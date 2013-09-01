@@ -1,3 +1,33 @@
+2013-09-01  Darin Adler  <darin@apple.com>
+
+        HitTestResult should have innerNonSharedElement
+        https://bugs.webkit.org/show_bug.cgi?id=120579
+
+        Reviewed by Andreas Kling.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::copyImage): Call HitTestResult member function version of
+        innerNonSharedElement instead of a local function that does it.
+
+        * page/Chrome.cpp:
+        (WebCore::Chrome::setToolTip): Use innerNonSharedElement instead of getting
+        the node and checking if it's an input element. Also added some missing braces.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::selectClosestWordFromHitTestResult): Use targetNode for
+        local variables instead of innerNode to match the HitTestResult function name.
+        (WebCore::EventHandler::selectClosestWordOrLinkFromMouseEvent): Ditto.
+        (WebCore::EventHandler::handleMousePressEventTripleClick): Ditto.
+        (WebCore::EventHandler::handleMousePressEventSingleClick): Ditto.
+        (WebCore::EventHandler::handleMousePressEvent): Ditto.
+
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::innerElement): Rewrote so there there is no loop.
+        (WebCore::HitTestResult::innerNonSharedElement): Ditto.
+
+        * rendering/HitTestResult.h: Added innerNonSharedElement. Generally speaking,
+        we'd like to avoid using Node unless there is some real need.
+
 2013-09-01  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         Volume slider value should be 0 when audio is muted

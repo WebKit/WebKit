@@ -1171,20 +1171,9 @@ void Editor::copyURL(const KURL& url, const String& title, Pasteboard& pasteboar
 #endif
 }
 
-// FIXME: Should this be a member function of HitTestResult?
-static Element* innerNonSharedElement(const HitTestResult& result)
-{
-    Node* node = result.innerNonSharedNode();
-    if (!node)
-        return 0;
-    if (node->isElementNode())
-        return toElement(node);
-    return node->parentElement();
-}
-
 void Editor::copyImage(const HitTestResult& result)
 {
-    Element* element = innerNonSharedElement(result);
+    Element* element = result.innerNonSharedElement();
     if (!element)
         return;
 

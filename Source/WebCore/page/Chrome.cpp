@@ -402,11 +402,11 @@ void Chrome::setToolTip(const HitTestResult& result)
 
     // Next priority is a toolTip from a URL beneath the mouse (if preference is set to show those).
     if (toolTip.isEmpty() && m_page->settings().showsURLsInToolTips()) {
-        if (Node* node = result.innerNonSharedNode()) {
+        if (Element* element = result.innerNonSharedElement()) {
             // Get tooltip representing form action, if relevant
-            if (isHTMLInputElement(node)) {
-                HTMLInputElement* input = toHTMLInputElement(node);
-                if (input->isSubmitButton())
+            if (isHTMLInputElement(element)) {
+                HTMLInputElement* input = toHTMLInputElement(element);
+                if (input->isSubmitButton()) {
                     if (HTMLFormElement* form = input->form()) {
                         toolTip = form->action();
                         if (form->renderer())
@@ -414,6 +414,7 @@ void Chrome::setToolTip(const HitTestResult& result)
                         else
                             toolTipDirection = LTR;
                     }
+                }
             }
         }
 
@@ -435,10 +436,9 @@ void Chrome::setToolTip(const HitTestResult& result)
 
     // Lastly, for <input type="file"> that allow multiple files, we'll consider a tooltip for the selected filenames
     if (toolTip.isEmpty()) {
-        if (Node* node = result.innerNonSharedNode()) {
-            if (isHTMLInputElement(node)) {
-                HTMLInputElement* input = toHTMLInputElement(node);
-                toolTip = input->defaultToolTip();
+        if (Element* element = result.innerNonSharedElement()) {
+            if (isHTMLInputElement(element)) {
+                toolTip = toHTMLInputElement(element)->defaultToolTip();
 
                 // FIXME: We should obtain text direction of tooltip from
                 // ChromeClient or platform. As of October 2011, all client

@@ -485,11 +485,11 @@ bool EventHandler::updateSelectionForMouseDownDispatchingSelectStart(Node* targe
 
 void EventHandler::selectClosestWordFromHitTestResult(const HitTestResult& result, AppendTrailingWhitespace appendTrailingWhitespace)
 {
-    Node* innerNode = result.targetNode();
+    Node* targetNode = result.targetNode();
     VisibleSelection newSelection;
 
-    if (innerNode && innerNode->renderer()) {
-        VisiblePosition pos(innerNode->renderer()->positionForPoint(result.localPoint()));
+    if (targetNode && targetNode->renderer()) {
+        VisiblePosition pos(targetNode->renderer()->positionForPoint(result.localPoint()));
         if (pos.isNotNull()) {
             newSelection = VisibleSelection(pos);
             newSelection.expandUsingGranularity(WordGranularity);
@@ -498,7 +498,7 @@ void EventHandler::selectClosestWordFromHitTestResult(const HitTestResult& resul
         if (appendTrailingWhitespace == ShouldAppendTrailingWhitespace && newSelection.isRange())
             newSelection.appendTrailingWhitespace();
 
-        updateSelectionForMouseDownDispatchingSelectStart(innerNode, expandSelectionToRespectUserSelectAll(innerNode, newSelection), WordGranularity);
+        updateSelectionForMouseDownDispatchingSelectStart(targetNode, expandSelectionToRespectUserSelectAll(targetNode, newSelection), WordGranularity);
     }
 }
 
@@ -515,16 +515,16 @@ void EventHandler::selectClosestWordOrLinkFromMouseEvent(const MouseEventWithHit
     if (!result.hitTestResult().isLiveLink())
         return selectClosestWordFromMouseEvent(result);
 
-    Node* innerNode = result.targetNode();
+    Node* targetNode = result.targetNode();
 
-    if (innerNode && innerNode->renderer() && m_mouseDownMayStartSelect) {
+    if (targetNode && targetNode->renderer() && m_mouseDownMayStartSelect) {
         VisibleSelection newSelection;
         Element* URLElement = result.hitTestResult().URLElement();
-        VisiblePosition pos(innerNode->renderer()->positionForPoint(result.localPoint()));
+        VisiblePosition pos(targetNode->renderer()->positionForPoint(result.localPoint()));
         if (pos.isNotNull() && pos.deepEquivalent().deprecatedNode()->isDescendantOf(URLElement))
             newSelection = VisibleSelection::selectionFromContentsOfNode(URLElement);
 
-        updateSelectionForMouseDownDispatchingSelectStart(innerNode, expandSelectionToRespectUserSelectAll(innerNode, newSelection), WordGranularity);
+        updateSelectionForMouseDownDispatchingSelectStart(targetNode, expandSelectionToRespectUserSelectAll(targetNode, newSelection), WordGranularity);
     }
 }
 
@@ -551,18 +551,18 @@ bool EventHandler::handleMousePressEventTripleClick(const MouseEventWithHitTestR
     if (event.event().button() != LeftButton)
         return false;
     
-    Node* innerNode = event.targetNode();
-    if (!(innerNode && innerNode->renderer() && m_mouseDownMayStartSelect))
+    Node* targetNode = event.targetNode();
+    if (!(targetNode && targetNode->renderer() && m_mouseDownMayStartSelect))
         return false;
 
     VisibleSelection newSelection;
-    VisiblePosition pos(innerNode->renderer()->positionForPoint(event.localPoint()));
+    VisiblePosition pos(targetNode->renderer()->positionForPoint(event.localPoint()));
     if (pos.isNotNull()) {
         newSelection = VisibleSelection(pos);
         newSelection.expandUsingGranularity(ParagraphGranularity);
     }
 
-    return updateSelectionForMouseDownDispatchingSelectStart(innerNode, expandSelectionToRespectUserSelectAll(innerNode, newSelection), ParagraphGranularity);
+    return updateSelectionForMouseDownDispatchingSelectStart(targetNode, expandSelectionToRespectUserSelectAll(targetNode, newSelection), ParagraphGranularity);
 }
 
 static int textDistance(const Position& start, const Position& end)
@@ -574,8 +574,8 @@ static int textDistance(const Position& start, const Position& end)
 bool EventHandler::handleMousePressEventSingleClick(const MouseEventWithHitTestResults& event)
 {
     m_frame->document()->updateLayoutIgnorePendingStylesheets();
-    Node* innerNode = event.targetNode();
-    if (!(innerNode && innerNode->renderer() && m_mouseDownMayStartSelect))
+    Node* targetNode = event.targetNode();
+    if (!(targetNode && targetNode->renderer() && m_mouseDownMayStartSelect))
         return false;
 
     // Extend the selection if the Shift key is down, unless the click is in a link.
@@ -591,16 +591,16 @@ bool EventHandler::handleMousePressEventSingleClick(const MouseEventWithHitTestR
         }
     }
 
-    VisiblePosition visiblePos(innerNode->renderer()->positionForPoint(event.localPoint()));
+    VisiblePosition visiblePos(targetNode->renderer()->positionForPoint(event.localPoint()));
     if (visiblePos.isNull())
-        visiblePos = VisiblePosition(firstPositionInOrBeforeNode(innerNode), DOWNSTREAM);
+        visiblePos = VisiblePosition(firstPositionInOrBeforeNode(targetNode), DOWNSTREAM);
     Position pos = visiblePos.deepEquivalent();
 
     VisibleSelection newSelection = m_frame->selection().selection();
     TextGranularity granularity = CharacterGranularity;
 
     if (extendSelection && newSelection.isCaretOrRange()) {
-        VisibleSelection selectionInUserSelectAll = expandSelectionToRespectUserSelectAll(innerNode, VisibleSelection(pos));
+        VisibleSelection selectionInUserSelectAll = expandSelectionToRespectUserSelectAll(targetNode, VisibleSelection(pos));
         if (selectionInUserSelectAll.isRange()) {
             if (comparePositions(selectionInUserSelectAll.start(), newSelection.start()) < 0)
                 pos = selectionInUserSelectAll.start();
@@ -627,9 +627,9 @@ bool EventHandler::handleMousePressEventSingleClick(const MouseEventWithHitTestR
             newSelection.expandUsingGranularity(m_frame->selection().granularity());
         }
     } else
-        newSelection = expandSelectionToRespectUserSelectAll(innerNode, visiblePos);
+        newSelection = expandSelectionToRespectUserSelectAll(targetNode, visiblePos);
 
-    bool handled = updateSelectionForMouseDownDispatchingSelectStart(innerNode, newSelection, granularity);
+    bool handled = updateSelectionForMouseDownDispatchingSelectStart(targetNode, newSelection, granularity);
 
     if (event.event().button() == MiddleButton) {
         // Ignore handled, since we want to paste to where the caret was placed anyway.
@@ -696,9 +696,7 @@ bool EventHandler::handleMousePressEvent(const MouseEventWithHitTestResults& eve
     if (singleClick)
         focusDocumentView();
 
-    Node* innerNode = event.targetNode();
-
-    m_mousePressNode = innerNode;
+    m_mousePressNode = event.targetNode();
 #if ENABLE(DRAG_SUPPORT)
     m_dragStartPos = event.event().position();
 #endif

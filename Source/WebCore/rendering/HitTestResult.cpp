@@ -690,12 +690,22 @@ Node* HitTestResult::targetNode() const
 
 Element* HitTestResult::innerElement() const
 {
-    for (Node* node = m_innerNode.get(); node; node = node->parentNode()) {
-        if (node->isElementNode())
-            return toElement(node);
-    }
+    Node* node = m_innerNode.get();
+    if (!node)
+        return 0;
+    if (node->isElementNode())
+        return toElement(node);
+    return node->parentElement();
+}
 
-    return 0;
+Element* HitTestResult::innerNonSharedElement() const
+{
+    Node* node = m_innerNonSharedNode.get();
+    if (!node)
+        return 0;
+    if (node->isElementNode())
+        return toElement(node);
+    return node->parentElement();
 }
 
 } // namespace WebCore

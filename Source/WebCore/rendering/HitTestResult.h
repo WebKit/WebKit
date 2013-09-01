@@ -62,6 +62,7 @@ public:
     Node* innerNode() const { return m_innerNode.get(); }
     Element* innerElement() const;
     Node* innerNonSharedNode() const { return m_innerNonSharedNode.get(); }
+    Element* innerNonSharedElement() const;
     Element* URLElement() const { return m_innerURLElement.get(); }
     Scrollbar* scrollbar() const { return m_scrollbar.get(); }
     bool isOverWidget() const { return m_isOverWidget; }
