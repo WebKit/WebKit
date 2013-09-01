@@ -340,7 +340,7 @@ void MediaControlsApple::reset()
         m_panelMuteButton->hide();
 
     if (m_volumeSlider)
-        m_volumeSlider->setVolume(m_mediaController->volume());
+        setSliderVolume();
 
     if (m_toggleClosedCaptionsButton) {
         if (m_mediaController->hasClosedCaptions())
@@ -354,7 +354,7 @@ void MediaControlsApple::reset()
 
 #if ENABLE(FULLSCREEN_API)
     if (m_fullScreenVolumeSlider)
-        m_fullScreenVolumeSlider->setVolume(m_mediaController->volume());
+        setFullscreenSliderVolume();
 
     if (m_isFullscreen) {
         if (m_mediaController->isLiveStream()) {
@@ -446,7 +446,7 @@ void MediaControlsApple::changedVolume()
     MediaControls::changedVolume();
 
     if (m_fullScreenVolumeSlider)
-        m_fullScreenVolumeSlider->setVolume(m_mediaController->volume());
+        setFullscreenSliderVolume();
 }
 
 void MediaControlsApple::enteredFullscreen()
@@ -547,6 +547,11 @@ void MediaControlsApple::hideClosedCaptionTrackList()
     m_closedCaptionsContainer->removeEventListener(eventNames().mousewheelEvent, listener, true);
     document().removeEventListener(eventNames().clickEvent, listener, true);
     removeEventListener(eventNames().clickEvent, listener, true);
+}
+
+void MediaControlsApple::setFullscreenSliderVolume()
+{
+    m_fullScreenVolumeSlider->setVolume(m_mediaController->muted() ? 0.0 : m_mediaController->volume());
 }
 
 bool MediaControlsApple::shouldClosedCaptionsContainerPreventPageScrolling(int wheelDeltaY)

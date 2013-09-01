@@ -108,7 +108,7 @@ void MediaControls::reset()
             m_volumeSlider->hide();
         else {
             m_volumeSlider->show();
-            m_volumeSlider->setVolume(m_mediaController->volume());
+            setSliderVolume();
         }
     }
 
@@ -240,7 +240,7 @@ void MediaControls::changedMute()
 void MediaControls::changedVolume()
 {
     if (m_volumeSlider)
-        m_volumeSlider->setVolume(m_mediaController->volume());
+        setSliderVolume();
     if (m_panelMuteButton && m_panelMuteButton->renderer())
         m_panelMuteButton->renderer()->repaint();
 }
@@ -424,6 +424,11 @@ void MediaControls::textTrackPreferencesChanged()
         m_textDisplayContainer->updateSizes(true);
 }
 #endif
+
+void MediaControls::setSliderVolume()
+{
+    m_volumeSlider->setVolume(m_mediaController->muted() ? 0.0 : m_mediaController->volume());
+}
 
 }
 

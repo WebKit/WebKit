@@ -1,3 +1,32 @@
+2013-09-01  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        Volume slider value should be 0 when audio is muted
+        https://bugs.webkit.org/show_bug.cgi?id=120553
+
+        Reviewed by Eric Carlson.
+
+        Fixed the problem of showing a non empty slider when audio is
+        muted.
+
+        Test: media/volume-bar-empty-when-muted.html.
+
+        * html/shadow/MediaControls.cpp:
+        (WebCore::MediaControls::reset): Use setSliderVolume.
+        (WebCore::MediaControls::changedVolume): Use setSliderVolume.
+        (WebCore::MediaControls::setSliderVolume): Added to set the volume
+        to 0 when muted and to its value otherwise.
+        * html/shadow/MediaControls.h: Added setSliderVolume.
+        * html/shadow/MediaControlsApple.cpp:
+        (WebCore::MediaControlsApple::reset): Used setSliderVolume and
+        setFullscreenSliderVolume.
+        (WebCore::MediaControlsApple::changedVolume): Used
+        setFullscreenSliderVolume.
+        (WebCore::MediaControlsApple::setFullscreenSliderVolume): Added to
+        set the volume to 0 when muted and to its value otherwise.
+        * html/shadow/MediaControlsApple.h: Added setFullscreenSliderVolume
+        * html/shadow/MediaControlsBlackBerry.cpp:
+        (WebCore::MediaControlsBlackBerry::reset): Used setSliderVolume.
+
 2013-09-01  Andreas Kling  <akling@apple.com>
 
         Give EditCommand a protected Frame& getter.

@@ -931,7 +931,7 @@ void MediaControlsBlackBerry::reset()
         m_muteButton->hide();
 
     if (m_volumeSlider)
-        m_volumeSlider->setVolume(m_mediaController->volume());
+        setSliderVolume();
 
     if (m_toggleClosedCaptionsButton) {
         if (m_mediaController->hasClosedCaptions())
