@@ -187,25 +187,25 @@ void Pasteboard::writePlainText(const String& text, SmartReplaceOption smartRepl
         m_changeCount = platformStrategies()->pasteboardStrategy()->setBufferForType(0, WebSmartPastePboardType, m_pasteboardName);
 }
 
-static long writeURLForTypes(const Vector<String>& types, const String& pasteboardName, const KURL& url, const String& titleStr, Frame* frame)
+static long writeURLForTypes(const Vector<String>& types, const String& pasteboardName, const PasteboardURL& pasteboardURL)
 {
     long newChangeCount = platformStrategies()->pasteboardStrategy()->setTypes(types, pasteboardName);
     
-    ASSERT(!url.isEmpty());
+    ASSERT(!pasteboardURL.url.isEmpty());
     
-    NSURL *cocoaURL = url;
-    NSString *userVisibleString = frame->editor().client()->userVisibleString(cocoaURL);
-    
-    NSString *title = (NSString*)titleStr;
-    if ([title length] == 0) {
+    NSURL *cocoaURL = pasteboardURL.url;
+    NSString *userVisibleString = pasteboardURL.userVisibleForm;
+    NSString *title = (NSString *)pasteboardURL.title;
+    if (![title length]) {
         title = [[cocoaURL path] lastPathComponent];
-        if ([title length] == 0)
+        if (![title length])
             title = userVisibleString;
     }
+
     if (types.contains(WebURLsWithTitlesPboardType)) {
         Vector<String> paths;
         paths.append([cocoaURL absoluteString]);
-        paths.append(titleStr.stripWhiteSpace());
+        paths.append(pasteboardURL.title.stripWhiteSpace());
         newChangeCount = platformStrategies()->pasteboardStrategy()->setPathnamesForType(paths, WebURLsWithTitlesPboardType, pasteboardName);
     }
     if (types.contains(String(NSURLPboardType)))
@@ -220,65 +220,45 @@ static long writeURLForTypes(const Vector<String>& types, const String& pasteboa
     return newChangeCount;
 }
     
-void Pasteboard::writeURL(const KURL& url, const String& titleStr, Frame* frame)
+void Pasteboard::write(const PasteboardURL& pasteboardURL)
 {
-    m_changeCount = writeURLForTypes(writableTypesForURL(), m_pasteboardName, url, titleStr, frame);
+    m_changeCount = writeURLForTypes(writableTypesForURL(), m_pasteboardName, pasteboardURL);
 }
 
-static NSFileWrapper* fileWrapperForImage(CachedResource* resource, NSURL *url)
+static NSFileWrapper* fileWrapper(const PasteboardImage& pasteboardImage)
 {
-    ResourceBuffer* coreData = resource->resourceBuffer();
-    NSData *data = [[[NSData alloc] initWithBytes:coreData->data() length:coreData->size()] autorelease];
+    NSData *data = pasteboardImage.resourceData->createNSData();
     NSFileWrapper *wrapper = [[[NSFileWrapper alloc] initRegularFileWithContents:data] autorelease];
-    String coreMIMEType = resource->response().mimeType();
-    NSString *MIMEType = nil;
-    if (!coreMIMEType.isNull())
-        MIMEType = coreMIMEType;
-    [wrapper setPreferredFilename:suggestedFilenameWithMIMEType(url, MIMEType)];
+    [data release];
+    [wrapper setPreferredFilename:suggestedFilenameWithMIMEType(pasteboardImage.url.url, pasteboardImage.resourceMIMEType)];
     return wrapper;
 }
 
-static void writeFileWrapperAsRTFDAttachment(NSFileWrapper* wrapper, const String& pasteboardName, long& newChangeCount)
+static void writeFileWrapperAsRTFDAttachment(NSFileWrapper *wrapper, const String& pasteboardName, long& newChangeCount)
 {
     NSTextAttachment *attachment = [[NSTextAttachment alloc] initWithFileWrapper:wrapper];
-    
     NSAttributedString *string = [NSAttributedString attributedStringWithAttachment:attachment];
     [attachment release];
-    
+
     NSData *RTFDData = [string RTFDFromRange:NSMakeRange(0, [string length]) documentAttributes:nil];
-    if (RTFDData)
-        newChangeCount = platformStrategies()->pasteboardStrategy()->setBufferForType(SharedBuffer::wrapNSData(RTFDData).get(), NSRTFDPboardType, pasteboardName);
+    if (!RTFDData)
+        return;
+
+    newChangeCount = platformStrategies()->pasteboardStrategy()->setBufferForType(SharedBuffer::wrapNSData(RTFDData).get(), NSRTFDPboardType, pasteboardName);
 }
 
-void Pasteboard::writeImage(Node* node, const KURL& url, const String& title)
+void Pasteboard::write(const PasteboardImage& pasteboardImage)
 {
-    ASSERT(node);
-
-    if (!(node->renderer() && node->renderer()->isImage()))
-        return;
-
-    NSURL *cocoaURL = url;
-    ASSERT(cocoaURL);
-
-    RenderImage* renderer = toRenderImage(node->renderer());
-    CachedImage* cachedImage = renderer->cachedImage();
-    if (!cachedImage || cachedImage->errorOccurred())
-        return;
-
-    m_changeCount = writeURLForTypes(writableTypesForImage(), m_pasteboardName, cocoaURL, nsStringNilIfEmpty(title), node->document().frame());
-    
-    Image* image = cachedImage->imageForRenderer(renderer);
-    if (!image)
-        return;
-    NSData *imageData = (NSData *)[image->getNSImage() TIFFRepresentation];
+    NSData *imageData = [pasteboardImage.image->getNSImage() TIFFRepresentation];
     if (!imageData)
         return;
+
+    // FIXME: Why can we assert this? It doesn't seem like it's guaranteed.
+    ASSERT(MIMETypeRegistry::isSupportedImageResourceMIMEType(pasteboardImage.resourceMIMEType));
+
+    m_changeCount = writeURLForTypes(writableTypesForImage(), m_pasteboardName, pasteboardImage.url);
     m_changeCount = platformStrategies()->pasteboardStrategy()->setBufferForType(SharedBuffer::wrapNSData(imageData), NSTIFFPboardType, m_pasteboardName);
-
-    String MIMEType = cachedImage->response().mimeType();
-    ASSERT(MIMETypeRegistry::isSupportedImageResourceMIMEType(MIMEType));
-
-    writeFileWrapperAsRTFDAttachment(fileWrapperForImage(cachedImage, cocoaURL), m_pasteboardName, m_changeCount);
+    writeFileWrapperAsRTFDAttachment(fileWrapper(pasteboardImage), m_pasteboardName, m_changeCount);
 }
 
 void Pasteboard::writePasteboard(const Pasteboard& pasteboard)

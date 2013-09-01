@@ -27,6 +27,7 @@
 #define Pasteboard_h
 
 #include "DragImage.h"
+#include "KURL.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -89,6 +90,23 @@ struct PasteboardWebContent {
 #endif
 };
 
+struct PasteboardURL {
+#if PLATFORM(MAC) && !PLATFORM(IOS)
+    KURL url;
+    String title;
+    String userVisibleForm;
+#endif
+};
+
+struct PasteboardImage {
+#if PLATFORM(MAC) && !PLATFORM(IOS)
+    PasteboardURL url;
+    RefPtr<Image> image;
+    RefPtr<SharedBuffer> resourceData;
+    String resourceMIMEType;
+#endif
+};
+
 class Pasteboard {
     WTF_MAKE_NONCOPYABLE(Pasteboard); WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -137,16 +155,21 @@ public:
     void setTypes(const PasteboardWebContent&);
     void writeAfterSettingTypes(const PasteboardWebContent&);
 
+    void write(const PasteboardWebContent&);
+    void write(const PasteboardURL&);
+    void write(const PasteboardImage&);
+
     bool writeString(const String& type, const String& data);
 #if !(PLATFORM(MAC) && !PLATFORM(IOS))
     void writeSelection(Range*, bool canSmartCopyOrDelete, Frame*, ShouldSerializeSelectedTextForClipboard = DefaultSelectedTextType); // FIXME: Layering violation.
 #endif
     void writeMarkup(const String& markup);
     void writePlainText(const String&, SmartReplaceOption);
-#if !PLATFORM(IOS)
+#if !PLATFORM(MAC)
     void writeURL(const KURL&, const String&, Frame* = 0); // FIXME: Layering violation.
     void writeImage(Node*, const KURL&, const String& title); // FIXME: Layering violation.
-#else
+#endif
+#if PLATFORM(IOS)
     void writeImage(Node*, Frame*); // FIXME: Layering violation.
     void writePlainText(const String&, Frame*); // FIXME: Layering violation.
     static NSArray* supportedPasteboardTypes();

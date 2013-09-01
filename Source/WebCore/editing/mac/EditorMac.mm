@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,6 +45,8 @@
 #import "PlatformStrategies.h"
 #import "Range.h"
 #import "RenderBlock.h"
+#import "RenderImage.h"
+#import "ResourceBuffer.h"
 #import "RuntimeApplicationChecks.h"
 #import "Sound.h"
 #import "StylePropertySet.h"
@@ -77,11 +79,11 @@ void Editor::pasteWithPasteboard(Pasteboard* pasteboard, bool allowPlainText)
     RefPtr<Range> range = selectedRange();
     bool choosePlainText;
     
-    m_frame.editor().client()->setInsertionPasteboard(NSGeneralPboard);
+    client()->setInsertionPasteboard(NSGeneralPboard);
     RefPtr<DocumentFragment> fragment = pasteboard->documentFragment(&m_frame, range, allowPlainText, choosePlainText);
     if (fragment && shouldInsertFragment(fragment, range, EditorInsertActionPasted))
         pasteAsFragment(fragment, canSmartReplaceWithPasteboard(pasteboard), false);
-    m_frame.editor().client()->setInsertionPasteboard(String());
+    client()->setInsertionPasteboard(String());
 }
 
 bool Editor::insertParagraphSeparatorInQuotedContent()
@@ -344,6 +346,54 @@ void Editor::writeSelectionToPasteboard(Pasteboard& pasteboard)
     pasteboard.setTypes(content);
     client()->didSetSelectionTypesForPasteboard();
     pasteboard.writeAfterSettingTypes(content);
+}
+
+static void getImage(Element& imageElement, RefPtr<Image>& image, CachedImage*& cachedImage)
+{
+    RenderObject* renderer = imageElement.renderer();
+    if (!renderer || !renderer->isImage())
+        return;
+
+    CachedImage* tentativeCachedImage = toRenderImage(renderer)->cachedImage();
+    if (!tentativeCachedImage || tentativeCachedImage->errorOccurred()) {
+        tentativeCachedImage = 0;
+        return;
+    }
+
+    image = cachedImage->imageForRenderer(renderer);
+    if (!image)
+        return;
+
+    cachedImage = tentativeCachedImage;
+}
+
+void Editor::writeURLToPasteboard(Pasteboard& pasteboard, const KURL& url, const String& title)
+{
+    PasteboardURL pasteboardURL;
+    pasteboardURL.url = url;
+    pasteboardURL.title = title;
+    pasteboardURL.userVisibleForm = client()->userVisibleString(pasteboardURL.url);
+
+    pasteboard.write(pasteboardURL);
+}
+
+void Editor::writeImageToPasteboard(Pasteboard& pasteboard, Element& imageElement, const KURL& url, const String& title)
+{
+    PasteboardImage pasteboardImage;
+
+    CachedImage* cachedImage;
+    getImage(imageElement, pasteboardImage.image, cachedImage);
+    if (!pasteboardImage.image)
+        return;
+    ASSERT(cachedImage);
+
+    pasteboardImage.url.url = url;
+    pasteboardImage.url.title = title;
+    pasteboardImage.url.userVisibleForm = client()->userVisibleString(pasteboardImage.url.url);
+    pasteboardImage.resourceData = cachedImage->resourceBuffer()->sharedBuffer();
+    pasteboardImage.resourceMIMEType = cachedImage->response().mimeType();
+
+    pasteboard.write(pasteboardImage);
 }
 
 } // namespace WebCore

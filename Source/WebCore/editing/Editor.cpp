@@ -1074,9 +1074,13 @@ void Editor::copy()
             canSmartCopyOrDelete() ? Pasteboard::CanSmartReplace : Pasteboard::CannotSmartReplace);
     } else {
         Document* document = m_frame.document();
-        if (HTMLImageElement* imageElement = imageElementFromImageDocument(document))
+        if (HTMLImageElement* imageElement = imageElementFromImageDocument(document)) {
+#if PLATFORM(MAC) && !PLATFORM(IOS)
+            writeImageToPasteboard(*Pasteboard::createForCopyAndPaste(), *imageElement, document->url(), document->title());
+#else
             Pasteboard::createForCopyAndPaste()->writeImage(imageElement, document->url(), document->title());
-        else {
+#endif
+        } else {
 #if PLATFORM(MAC) && !PLATFORM(IOS)
             writeSelectionToPasteboard(*Pasteboard::createForCopyAndPaste());
 #else
@@ -1160,16 +1164,39 @@ void Editor::copyURL(const KURL& url, const String& title)
 
 void Editor::copyURL(const KURL& url, const String& title, Pasteboard& pasteboard)
 {
+#if PLATFORM(MAC) && !PLATFORM(IOS)
+    writeURLToPasteboard(pasteboard, url, title);
+#else
     pasteboard.writeURL(url, title, &m_frame);
+#endif
+}
+
+// FIXME: Should this be a member function of HitTestResult?
+static Element* innerNonSharedElement(const HitTestResult& result)
+{
+    Node* node = result.innerNonSharedNode();
+    if (!node)
+        return 0;
+    if (node->isElementNode())
+        return toElement(node);
+    return node->parentElement();
 }
 
 void Editor::copyImage(const HitTestResult& result)
 {
+    Element* element = innerNonSharedElement(result);
+    if (!element)
+        return;
+
     KURL url = result.absoluteLinkURL();
     if (url.isEmpty())
         url = result.absoluteImageURL();
 
-    Pasteboard::createForCopyAndPaste()->writeImage(result.innerNonSharedNode(), url, result.altDisplayString());
+#if PLATFORM(MAC) && !PLATFORM(IOS)
+    writeImageToPasteboard(*Pasteboard::createForCopyAndPaste(), *element, url, result.altDisplayString());
+#else
+    Pasteboard::createForCopyAndPaste()->writeImage(element, url, result.altDisplayString());
+#endif
 }
 
 bool Editor::isContinuousSpellCheckingEnabled() const

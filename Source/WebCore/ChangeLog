@@ -1,3 +1,44 @@
+2013-08-31  Darin Adler  <darin@apple.com>
+
+        Refactor URL and image writing so layer-violating parts are in Editor, not Pasteboard (Mac-only at first)
+        https://bugs.webkit.org/show_bug.cgi?id=120573
+
+        Reviewed by Andreas Kling.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::copy): Use writeImageToPasteboard instead of Pasteboard::writeImage on Mac.
+        (WebCore::Editor::copyURL): Use writeURLToPasteboard instead of Pasteboard::writeURL on Mac.
+        (WebCore::innerNonSharedElement): Added. Used in copyImage.
+        (WebCore::Editor::copyImage): Use innerNonSharedElement instead of innerNonSharedNode.
+        Use writeImageToPasteboard instead of Pasteboard::writeImage on Mac.
+
+        * editing/Editor.h: Add new functions, writeURLToPasteboard and writeImageToPasteboard,
+        both Mac-only for now.
+
+        * editing/mac/EditorMac.mm:
+        (WebCore::Editor::pasteWithPasteboard): Removed unneeded "m_frame.editor()" round trip that
+        was left behind in this function.
+        (WebCore::getImage): Added. Helper used by writeImageToPasteboard.
+        (WebCore::Editor::writeURLToPasteboard): Added. Sets up PasteboardURL and then calls
+        Pasteboard::write with it.
+        (WebCore::Editor::writeImageToPasteboard): Added. Sets up PasteboardImage and then calls
+        Pasteboard::write with it.
+        * page/DragController.cpp:
+        (WebCore::DragController::startDrag): Use Editor::writeURLToPasteboard instead of
+        Pasteboard::writeURL on Mac.
+
+        * platform/Pasteboard.h: Added PasteboardURL and PasteboardImage structures.
+        Declare write functions for PasteboardWebContent, PasteboardURL, and PasteboardImage.
+        Guard writeURL and writeImage with !PLATFORM(MAC).
+
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::writeURLForTypes): Changed this to take a PasteboardURL.
+        (WebCore::Pasteboard::write): Renamed writeURL and writeImage to this. Refactor both
+        to take PasteboardURL and PasteboardImage arguments.
+        (WebCore::fileWrapper): Renamed from fileWrapperForImage since the fact that this is
+        for an image is now clear from its argument, a PasteboardImage.
+        (WebCore::writeFileWrapperAsRTFDAttachment): Changed this function to use early return.
+
 2013-08-31  Andreas Kling  <akling@apple.com>
 
         EditCommand constructors should take Document&.
