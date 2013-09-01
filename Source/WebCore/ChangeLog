@@ -1,5 +1,12 @@
 2013-09-01  Darin Adler  <darin@apple.com>
 
+        Fix a mistake in my recent pasteboard/editor refactoring that was causing tests to fail.
+
+        * editing/mac/EditorMac.mm:
+        (WebCore::getImage): One place this said cachedImage but it should have said tentativeCachedImage.
+
+2013-09-01  Darin Adler  <darin@apple.com>
+
         HitTestResult should have innerNonSharedElement
         https://bugs.webkit.org/show_bug.cgi?id=120579
 

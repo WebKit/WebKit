@@ -360,7 +360,7 @@ static void getImage(Element& imageElement, RefPtr<Image>& image, CachedImage*& 
         return;
     }
 
-    image = cachedImage->imageForRenderer(renderer);
+    image = tentativeCachedImage->imageForRenderer(renderer);
     if (!image)
         return;
 
