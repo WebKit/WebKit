@@ -1214,8 +1214,8 @@ bool RenderLayer::updateLayerPosition()
     LayoutPoint localPoint;
     LayoutSize inlineBoundingBoxOffset; // We don't put this into the RenderLayer x/y for inlines, so we need to subtract it out when done.
     if (renderer().isInline() && renderer().isRenderInline()) {
-        RenderInline* inlineFlow = toRenderInline(&renderer());
-        IntRect lineBox = inlineFlow->linesBoundingBox();
+        RenderInline& inlineFlow = toRenderInline(renderer());
+        IntRect lineBox = inlineFlow.linesBoundingBox();
         setSize(lineBox.size());
         inlineBoundingBoxOffset = toSize(lineBox.location());
         localPoint += inlineBoundingBoxOffset;
@@ -1254,7 +1254,7 @@ bool RenderLayer::updateLayerPosition()
         }
         
         if (renderer().isOutOfFlowPositioned() && positionedParent->renderer().isInFlowPositioned() && positionedParent->renderer().isRenderInline()) {
-            LayoutSize offset = toRenderInline(&positionedParent->renderer())->offsetForInFlowPositionedInline(toRenderBox(&renderer()));
+            LayoutSize offset = toRenderInline(positionedParent->renderer()).offsetForInFlowPositionedInline(&toRenderBox(renderer()));
             localPoint += offset;
         }
     } else if (parent()) {
@@ -1266,7 +1266,7 @@ bool RenderLayer::updateLayerPosition()
     
     bool positionOrOffsetChanged = false;
     if (renderer().isInFlowPositioned()) {
-        LayoutSize newOffset = toRenderBoxModelObject(&renderer())->offsetForInFlowPosition();
+        LayoutSize newOffset = toRenderBoxModelObject(renderer()).offsetForInFlowPosition();
         positionOrOffsetChanged = newOffset != m_offsetForInFlowPosition;
         m_offsetForInFlowPosition = newOffset;
         localPoint.move(m_offsetForInFlowPosition);
@@ -1292,7 +1292,7 @@ TransformationMatrix RenderLayer::perspectiveTransform() const
         return TransformationMatrix();
 
     // Maybe fetch the perspective from the backing?
-    const IntRect borderBox = toRenderBox(&renderer())->pixelSnappedBorderBoxRect();
+    const IntRect borderBox = toRenderBox(renderer()).pixelSnappedBorderBoxRect();
     const float boxWidth = borderBox.width();
     const float boxHeight = borderBox.height();
 
@@ -1317,7 +1317,7 @@ FloatPoint RenderLayer::perspectiveOrigin() const
     if (!renderer().hasTransform())
         return FloatPoint();
 
-    const LayoutRect borderBox = toRenderBox(&renderer())->borderBoxRect();
+    const LayoutRect borderBox = toRenderBox(renderer()).borderBoxRect();
     RenderStyle* style = renderer().style();
 
     return FloatPoint(floatValueForLength(style->perspectiveOriginX(), borderBox.width()),
@@ -1373,7 +1373,7 @@ static RenderLayer* parentLayerCrossFrame(const RenderLayer* layer)
 RenderLayer* RenderLayer::enclosingScrollableLayer() const
 {
     for (RenderLayer* nextLayer = parentLayerCrossFrame(this); nextLayer; nextLayer = parentLayerCrossFrame(nextLayer)) {
-        if (nextLayer->renderer().isBox() && toRenderBox(&nextLayer->renderer())->canBeScrolledAndHasScrollableArea())
+        if (nextLayer->renderer().isBox() && toRenderBox(nextLayer->renderer()).canBeScrolledAndHasScrollableArea())
             return nextLayer;
     }
 
@@ -1513,8 +1513,7 @@ void RenderLayer::setFilterBackendNeedsRepaintingInRect(const LayoutRect& rect, 
     }
     
     if (parentLayer->isRootLayer()) {
-        RenderView* view = toRenderView(&parentLayer->renderer());
-        view->repaintViewRectangle(parentLayerRect, immediate);
+        toRenderView(parentLayer->renderer()).repaintViewRectangle(parentLayerRect, immediate);
         return;
     }
     
@@ -1668,8 +1667,8 @@ static LayoutRect transparencyClipBox(const RenderLayer* layer, const RenderLaye
         // We have to break up the transformed extent across our columns.
         // Split our box up into the actual fragment boxes that render in the columns/pages and unite those together to
         // get our true bounding box.
-        RenderFlowThread* enclosingFlowThread = toRenderFlowThread(&paginationLayer->renderer());
-        result = enclosingFlowThread->fragmentsBoundingBox(result);
+        RenderFlowThread& enclosingFlowThread = toRenderFlowThread(paginationLayer->renderer());
+        result = enclosingFlowThread.fragmentsBoundingBox(result);
         
         LayoutPoint rootLayerDelta;
         paginationLayer->convertToLayerCoords(rootLayer, rootLayerDelta);
@@ -2864,7 +2863,7 @@ bool RenderLayer::scrollsOverflow() const
     if (!renderer().isBox())
         return false;
 
-    return toRenderBox(&renderer())->scrollsOverflow();
+    return toRenderBox(renderer()).scrollsOverflow();
 }
 
 void RenderLayer::setHasHorizontalScrollbar(bool hasScrollbar)
@@ -3120,7 +3119,7 @@ void RenderLayer::updateScrollbarsAfterLayout()
                 m_inOverflowRelayout = true;
                 renderer().setNeedsLayout(true, MarkOnlyThis);
                 if (renderer().isRenderBlock()) {
-                    RenderBlock& block = *toRenderBlock(&renderer());
+                    RenderBlock& block = toRenderBlock(renderer());
                     block.scrollbarsChanged(autoHorizontalScrollBarChanged, autoVerticalScrollBarChanged);
                     block.layoutBlock(true);
                 } else
@@ -4010,8 +4009,8 @@ void RenderLayer::collectFragments(LayerFragments& fragments, const RenderLayer*
 
     // Tell the flow thread to collect the fragments. We pass enough information to create a minimal number of fragments based off the pages/columns
     // that intersect the actual dirtyRect as well as the pages/columns that intersect our layer's bounding box.
-    RenderFlowThread* enclosingFlowThread = toRenderFlowThread(&enclosingPaginationLayer()->renderer());
-    enclosingFlowThread->collectLayerFragments(fragments, layerBoundingBoxInFlowThread, dirtyRectInFlowThread);
+    RenderFlowThread& enclosingFlowThread = toRenderFlowThread(enclosingPaginationLayer()->renderer());
+    enclosingFlowThread.collectLayerFragments(fragments, layerBoundingBoxInFlowThread, dirtyRectInFlowThread);
     
     if (fragments.isEmpty())
         return;
@@ -4251,29 +4250,29 @@ void RenderLayer::paintPaginatedChildLayer(RenderLayer* childLayer, GraphicsCont
 void RenderLayer::paintChildLayerIntoColumns(RenderLayer* childLayer, GraphicsContext* context, const LayerPaintingInfo& paintingInfo,
     PaintLayerFlags paintFlags, const Vector<RenderLayer*>& columnLayers, size_t colIndex)
 {
-    RenderBlock* columnBlock = toRenderBlock(&columnLayers[colIndex]->renderer());
+    RenderBlock& columnBlock = toRenderBlock(columnLayers[colIndex]->renderer());
 
-    ASSERT(columnBlock && columnBlock->hasColumns());
-    if (!columnBlock || !columnBlock->hasColumns())
+    ASSERT(columnBlock.hasColumns());
+    if (!columnBlock.hasColumns())
         return;
     
     LayoutPoint layerOffset;
     // FIXME: It looks suspicious to call convertToLayerCoords here
     // as canUseConvertToLayerCoords is true for this layer.
-    columnBlock->layer()->convertToLayerCoords(paintingInfo.rootLayer, layerOffset);
+    columnBlock.layer()->convertToLayerCoords(paintingInfo.rootLayer, layerOffset);
     
-    bool isHorizontal = columnBlock->style()->isHorizontalWritingMode();
+    bool isHorizontal = columnBlock.style()->isHorizontalWritingMode();
 
-    ColumnInfo* colInfo = columnBlock->columnInfo();
-    unsigned colCount = columnBlock->columnCount(colInfo);
-    LayoutUnit currLogicalTopOffset = columnBlock->initialBlockOffsetForPainting();
-    LayoutUnit blockDelta = columnBlock->blockDeltaForPaintingNextColumn();
+    ColumnInfo* colInfo = columnBlock.columnInfo();
+    unsigned colCount = columnBlock.columnCount(colInfo);
+    LayoutUnit currLogicalTopOffset = columnBlock.initialBlockOffsetForPainting();
+    LayoutUnit blockDelta = columnBlock.blockDeltaForPaintingNextColumn();
     for (unsigned i = 0; i < colCount; i++) {
         // For each rect, we clip to the rect, and then we adjust our coords.
-        LayoutRect colRect = columnBlock->columnRectAt(colInfo, i);
-        columnBlock->flipForWritingMode(colRect);
+        LayoutRect colRect = columnBlock.columnRectAt(colInfo, i);
+        columnBlock.flipForWritingMode(colRect);
 
-        LayoutUnit logicalLeftOffset = (isHorizontal ? colRect.x() : colRect.y()) - columnBlock->logicalLeftOffsetForContent();
+        LayoutUnit logicalLeftOffset = (isHorizontal ? colRect.x() : colRect.y()) - columnBlock.logicalLeftOffsetForContent();
         LayoutSize offset = isHorizontal ? LayoutSize(logicalLeftOffset, currLogicalTopOffset) : LayoutSize(currLogicalTopOffset, logicalLeftOffset);
         colRect.moveBy(layerOffset);
         
@@ -4345,7 +4344,7 @@ bool RenderLayer::hitTest(const HitTestRequest& request, const HitTestLocation& 
 
     renderer().document().updateLayout();
     
-    LayoutRect hitTestArea = isOutOfFlowRenderFlowThread() ? toRenderFlowThread(&renderer())->borderBoxRect() : renderer().view().documentRect();
+    LayoutRect hitTestArea = isOutOfFlowRenderFlowThread() ? toRenderFlowThread(renderer()).borderBoxRect() : renderer().view().documentRect();
     if (!request.ignoreClipping())
         hitTestArea.intersect(frameVisibleRect(renderer()));
 
@@ -4355,7 +4354,7 @@ bool RenderLayer::hitTest(const HitTestRequest& request, const HitTestLocation& 
         // return ourselves. We do this so mouse events continue getting delivered after a drag has 
         // exited the WebView, and so hit testing over a scrollbar hits the content document.
         if (!request.isChildFrameHitTest() && (request.active() || request.release()) && isRootLayer()) {
-            renderer().updateHitTestResult(result, toRenderView(&renderer())->flipForWritingMode(hitTestLocation.point()));
+            renderer().updateHitTestResult(result, toRenderView(renderer()).flipForWritingMode(hitTestLocation.point()));
             insideLayer = this;
         }
     }
@@ -4812,28 +4811,28 @@ RenderLayer* RenderLayer::hitTestChildLayerColumns(RenderLayer* childLayer, Rend
                                                    const LayoutRect& hitTestRect, const HitTestLocation& hitTestLocation, const HitTestingTransformState* transformState, double* zOffset,
                                                    const Vector<RenderLayer*>& columnLayers, size_t columnIndex)
 {
-    RenderBlock* columnBlock = toRenderBlock(&columnLayers[columnIndex]->renderer());
+    RenderBlock& columnBlock = toRenderBlock(columnLayers[columnIndex]->renderer());
 
-    ASSERT(columnBlock && columnBlock->hasColumns());
-    if (!columnBlock || !columnBlock->hasColumns())
+    ASSERT(columnBlock.hasColumns());
+    if (!columnBlock.hasColumns())
         return 0;
 
     LayoutPoint layerOffset;
-    columnBlock->layer()->convertToLayerCoords(rootLayer, layerOffset);
+    columnBlock.layer()->convertToLayerCoords(rootLayer, layerOffset);
 
-    ColumnInfo* colInfo = columnBlock->columnInfo();
-    int colCount = columnBlock->columnCount(colInfo);
+    ColumnInfo* colInfo = columnBlock.columnInfo();
+    int colCount = columnBlock.columnCount(colInfo);
 
     // We have to go backwards from the last column to the first.
-    bool isHorizontal = columnBlock->style()->isHorizontalWritingMode();
-    LayoutUnit logicalLeft = columnBlock->logicalLeftOffsetForContent();
-    LayoutUnit currLogicalTopOffset = columnBlock->initialBlockOffsetForPainting();
-    LayoutUnit blockDelta = columnBlock->blockDeltaForPaintingNextColumn();
+    bool isHorizontal = columnBlock.style()->isHorizontalWritingMode();
+    LayoutUnit logicalLeft = columnBlock.logicalLeftOffsetForContent();
+    LayoutUnit currLogicalTopOffset = columnBlock.initialBlockOffsetForPainting();
+    LayoutUnit blockDelta = columnBlock.blockDeltaForPaintingNextColumn();
     currLogicalTopOffset += colCount * blockDelta;
     for (int i = colCount - 1; i >= 0; i--) {
         // For each rect, we clip to the rect, and then we adjust our coords.
-        LayoutRect colRect = columnBlock->columnRectAt(colInfo, i);
-        columnBlock->flipForWritingMode(colRect);
+        LayoutRect colRect = columnBlock.columnRectAt(colInfo, i);
+        columnBlock.flipForWritingMode(colRect);
         LayoutUnit currLogicalLeftOffset = (isHorizontal ? colRect.x() : colRect.y()) - logicalLeft;
         currLogicalTopOffset -= blockDelta;
 
@@ -4982,7 +4981,7 @@ void RenderLayer::calculateClipRects(const ClipRectsContext& clipRectsContext, C
             offset -= renderer().view().frameView().scrollOffsetForFixedPosition();
         
         if (renderer().hasOverflowClip()) {
-            ClipRect newOverflowClip = toRenderBox(&renderer())->overflowClipRectForChildLayers(offset, clipRectsContext.region, clipRectsContext.overlayScrollbarSizeRelevancy);
+            ClipRect newOverflowClip = toRenderBox(renderer()).overflowClipRectForChildLayers(offset, clipRectsContext.region, clipRectsContext.overlayScrollbarSizeRelevancy);
             if (renderer().style()->hasBorderRadius())
                 newOverflowClip.setHasRadius(true);
             clipRects.setOverflowClipRect(intersection(newOverflowClip, clipRects.overflowClipRect()));
@@ -4990,7 +4989,7 @@ void RenderLayer::calculateClipRects(const ClipRectsContext& clipRectsContext, C
                 clipRects.setPosClipRect(intersection(newOverflowClip, clipRects.posClipRect()));
         }
         if (renderer().hasClip()) {
-            LayoutRect newPosClip = toRenderBox(&renderer())->clipRect(offset, clipRectsContext.region);
+            LayoutRect newPosClip = toRenderBox(renderer()).clipRect(offset, clipRectsContext.region);
             clipRects.setPosClipRect(intersection(newPosClip, clipRects.posClipRect()));
             clipRects.setOverflowClipRect(intersection(newPosClip, clipRects.overflowClipRect()));
             clipRects.setFixedClipRect(intersection(newPosClip, clipRects.fixedClipRect()));
@@ -5069,14 +5068,14 @@ void RenderLayer::calculateRects(const ClipRectsContext& clipRectsContext, const
     if (renderer().hasClipOrOverflowClip()) {
         // This layer establishes a clip of some kind.
         if (renderer().hasOverflowClip() && (this != clipRectsContext.rootLayer || clipRectsContext.respectOverflowClip == RespectOverflowClip)) {
-            foregroundRect.intersect(toRenderBox(&renderer())->overflowClipRect(offset, clipRectsContext.region, clipRectsContext.overlayScrollbarSizeRelevancy));
+            foregroundRect.intersect(toRenderBox(renderer()).overflowClipRect(offset, clipRectsContext.region, clipRectsContext.overlayScrollbarSizeRelevancy));
             if (renderer().style()->hasBorderRadius())
                 foregroundRect.setHasRadius(true);
         }
 
         if (renderer().hasClip()) {
             // Clip applies to *us* as well, so go ahead and update the damageRect.
-            LayoutRect newPosClip = toRenderBox(&renderer())->clipRect(offset, clipRectsContext.region);
+            LayoutRect newPosClip = toRenderBox(renderer()).clipRect(offset, clipRectsContext.region);
             backgroundRect.intersect(newPosClip);
             foregroundRect.intersect(newPosClip);
             outlineRect.intersect(newPosClip);
@@ -5172,9 +5171,9 @@ void RenderLayer::repaintBlockSelectionGaps()
     LayoutRect rect = m_blockSelectionGapsBounds;
     rect.move(-scrolledContentOffset());
     if (renderer().hasOverflowClip() && !usesCompositedScrolling())
-        rect.intersect(toRenderBox(&renderer())->overflowClipRect(LayoutPoint(), 0)); // FIXME: Regions not accounted for.
+        rect.intersect(toRenderBox(renderer()).overflowClipRect(LayoutPoint(), 0)); // FIXME: Regions not accounted for.
     if (renderer().hasClip())
-        rect.intersect(toRenderBox(&renderer())->clipRect(LayoutPoint(), 0)); // FIXME: Regions not accounted for.
+        rect.intersect(toRenderBox(renderer()).clipRect(LayoutPoint(), 0)); // FIXME: Regions not accounted for.
     if (!rect.isEmpty())
         renderer().repaintRectangle(rect);
 }
@@ -5214,7 +5213,7 @@ LayoutRect RenderLayer::localBoundingBox(CalculateLayerBoundsFlags flags) const
     // floats.
     LayoutRect result;
     if (renderer().isInline() && renderer().isRenderInline())
-        result = toRenderInline(&renderer())->linesVisualOverflowBoundingBox();
+        result = toRenderInline(renderer()).linesVisualOverflowBoundingBox();
     else if (renderer().isTableRow()) {
         // Our bounding box is just the union of all of our cells' border/overflow rects.
         for (RenderObject* child = renderer().firstChild(); child; child = child->nextSibling()) {
@@ -5260,8 +5259,8 @@ LayoutRect RenderLayer::boundingBox(const RenderLayer* ancestorLayer, CalculateL
         convertToLayerCoords(enclosingPaginationLayer(), offsetWithinPaginationLayer);        
         result.moveBy(offsetWithinPaginationLayer);
 
-        RenderFlowThread* enclosingFlowThread = toRenderFlowThread(&enclosingPaginationLayer()->renderer());
-        result = enclosingFlowThread->fragmentsBoundingBox(result);
+        RenderFlowThread& enclosingFlowThread = toRenderFlowThread(enclosingPaginationLayer()->renderer());
+        result = enclosingFlowThread.fragmentsBoundingBox(result);
         
         LayoutPoint delta;
         if (offsetFromRoot)
@@ -5304,7 +5303,7 @@ LayoutRect RenderLayer::calculateLayerBounds(const RenderLayer* ancestorLayer, c
     LayoutRect boundingBoxRect = localBoundingBox(flags);
 
     if (renderer().isBox())
-        toRenderBox(&renderer())->flipForWritingMode(boundingBoxRect);
+        toRenderBox(renderer()).flipForWritingMode(boundingBoxRect);
     else
         renderer().containingBlock()->flipForWritingMode(boundingBoxRect);
 
@@ -5606,7 +5605,7 @@ void RenderLayer::dirtyZOrderLists()
 #if USE(ACCELERATED_COMPOSITING)
     if (!renderer().documentBeingDestroyed()) {
         if (renderer().isOutOfFlowRenderFlowThread())
-            toRenderFlowThread(&renderer())->setNeedsLayerToRegionMappingsUpdate();
+            toRenderFlowThread(renderer()).setNeedsLayerToRegionMappingsUpdate();
         compositor().setCompositingLayersNeedRebuild();
         if (acceleratedCompositingForOverflowScrollEnabled())
             compositor().setShouldReevaluateCompositingAfterLayout();
@@ -5632,7 +5631,7 @@ void RenderLayer::dirtyNormalFlowList()
 #if USE(ACCELERATED_COMPOSITING)
     if (!renderer().documentBeingDestroyed()) {
         if (renderer().isOutOfFlowRenderFlowThread())
-            toRenderFlowThread(&renderer())->setNeedsLayerToRegionMappingsUpdate();
+            toRenderFlowThread(renderer()).setNeedsLayerToRegionMappingsUpdate();
         compositor().setCompositingLayersNeedRebuild();
         if (acceleratedCompositingForOverflowScrollEnabled())
             compositor().setShouldReevaluateCompositingAfterLayout();

@@ -78,6 +78,18 @@ private:
     virtual void removeLeftoverAnonymousBlock(RenderBlock*) { }
 };
 
+inline RenderRubyRun& toRenderRubyRun(RenderObject& object)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(object.isRubyRun());
+    return static_cast<RenderRubyRun&>(object);
+}
+
+inline const RenderRubyRun& toRenderRubyRun(const RenderObject& object)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(object.isRubyRun());
+    return static_cast<const RenderRubyRun&>(object);
+}
+
 inline RenderRubyRun* toRenderRubyRun(RenderObject* object)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isRubyRun());
@@ -91,6 +103,7 @@ inline const RenderRubyRun* toRenderRubyRun(const RenderObject* object)
 }
 
 void toRenderRubyRun(const RenderRubyRun*);
+void toRenderRubyRun(const RenderRubyRun&);
 
 } // namespace WebCore
 

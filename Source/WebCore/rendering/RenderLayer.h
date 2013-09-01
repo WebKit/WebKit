@@ -324,7 +324,7 @@ public:
     String name() const;
 
     RenderLayerModelObject& renderer() const { return m_renderer; }
-    RenderBox* renderBox() const { return renderer().isBox() ? toRenderBox(&renderer()) : 0; }
+    RenderBox* renderBox() const { return renderer().isBox() ? &toRenderBox(renderer()) : 0; }
     RenderLayer* parent() const { return m_parent; }
     RenderLayer* previousSibling() const { return m_previous; }
     RenderLayer* nextSibling() const { return m_next; }
@@ -909,7 +909,7 @@ private:
     void setFirstChild(RenderLayer* first) { m_first = first; }
     void setLastChild(RenderLayer* last) { m_last = last; }
 
-    LayoutPoint renderBoxLocation() const { return renderer().isBox() ? toRenderBox(&renderer())->location() : LayoutPoint(); }
+    LayoutPoint renderBoxLocation() const { return renderer().isBox() ? toRenderBox(renderer()).location() : LayoutPoint(); }
 
     void collectLayers(bool includeHiddenLayers, CollectLayersBehavior, OwnPtr<Vector<RenderLayer*> >&, OwnPtr<Vector<RenderLayer*> >&);
 

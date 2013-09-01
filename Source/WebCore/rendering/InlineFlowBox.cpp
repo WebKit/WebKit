@@ -167,7 +167,7 @@ void InlineFlowBox::addToLine(InlineBox* child)
             if (box.hasRenderOverflow() || box.hasSelfPaintingLayer())
                 child->clearKnownToHaveNoOverflow();
         } else if (!child->renderer().isBR() && (child->renderer().style(isFirstLineStyle())->boxShadow() || child->boxModelObject()->hasSelfPaintingLayer()
-                   || (child->renderer().isListMarker() && !toRenderListMarker(&child->renderer())->isInside())
+                   || (child->renderer().isListMarker() && !toRenderListMarker(child->renderer()).isInside())
                    || child->renderer().style(isFirstLineStyle())->hasBorderImageOutsets()))
             child->clearKnownToHaveNoOverflow();
         
@@ -420,7 +420,7 @@ float InlineFlowBox::placeBoxRangeInInlineDirection(InlineBox* firstChild, Inlin
                 if (knownToHaveNoOverflow())
                     maxLogicalRight = max(logicalLeft, maxLogicalRight);
                 logicalLeft += flow->marginLogicalRight();
-            } else if (!curr->renderer().isListMarker() || toRenderListMarker(&curr->renderer())->isInside()) {
+            } else if (!curr->renderer().isListMarker() || toRenderListMarker(curr->renderer()).isInside()) {
                 // The box can have a different writing-mode than the overall line, so this is a bit complicated.
                 // Just get all the physical margin and overflow values by hand based off |isVertical|.
                 LayoutUnit logicalLeftMargin = isHorizontal() ? curr->boxModelObject()->marginLeft() : curr->boxModelObject()->marginTop();
@@ -663,9 +663,10 @@ void InlineFlowBox::placeBoxesInBlockDirection(LayoutUnit top, LayoutUnit maxHei
             const FontMetrics& fontMetrics = curr->renderer().style(isFirstLineStyle())->fontMetrics();
             newLogicalTop += curr->baselinePosition(baselineType) - fontMetrics.ascent(baselineType);
             if (curr->isInlineFlowBox()) {
-                RenderBoxModelObject* boxObject = toRenderBoxModelObject(&curr->renderer());
-                newLogicalTop -= boxObject->style(isFirstLineStyle())->isHorizontalWritingMode() ? boxObject->borderTop() + boxObject->paddingTop() : 
-                                 boxObject->borderRight() + boxObject->paddingRight();
+                RenderBoxModelObject& boxObject = toRenderBoxModelObject(curr->renderer());
+                newLogicalTop -= boxObject.style(isFirstLineStyle())->isHorizontalWritingMode()
+                    ? boxObject.borderTop() + boxObject.paddingTop()
+                    : boxObject.borderRight() + boxObject.paddingRight();
             }
             newLogicalTopIncludingMargins = newLogicalTop;
         } else if (!curr->renderer().isBR()) {
@@ -689,8 +690,8 @@ void InlineFlowBox::placeBoxesInBlockDirection(LayoutUnit top, LayoutUnit maxHei
                 else
                     hasAnnotationsAfter = true;
 
-                RenderRubyRun* rubyRun = toRenderRubyRun(&curr->renderer());
-                if (RenderRubyBase* rubyBase = rubyRun->rubyBase()) {
+                RenderRubyRun& rubyRun = toRenderRubyRun(curr->renderer());
+                if (RenderRubyBase* rubyBase = rubyRun.rubyBase()) {
                     LayoutUnit bottomRubyBaseLeading = (curr->logicalHeight() - rubyBase->logicalBottom()) + rubyBase->logicalHeight() - (rubyBase->lastRootBox() ? rubyBase->lastRootBox()->lineBottom() : LayoutUnit());
                     LayoutUnit topRubyBaseLeading = rubyBase->logicalTop() + (rubyBase->firstRootBox() ? rubyBase->firstRootBox()->lineTop() : LayoutUnit());
                     newLogicalTop += !renderer().style()->isFlippedLinesWritingMode() ? topRubyBaseLeading : bottomRubyBaseLeading;
@@ -1514,12 +1515,12 @@ LayoutUnit InlineFlowBox::computeOverAnnotationAdjustment(LayoutUnit allowedPosi
             result = max(result, toInlineFlowBox(curr)->computeOverAnnotationAdjustment(allowedPosition));
         
         if (curr->renderer().isReplaced() && curr->renderer().isRubyRun() && curr->renderer().style()->rubyPosition() == RubyPositionBefore) {
-            RenderRubyRun* rubyRun = toRenderRubyRun(&curr->renderer());
-            RenderRubyText* rubyText = rubyRun->rubyText();
+            RenderRubyRun& rubyRun = toRenderRubyRun(curr->renderer());
+            RenderRubyText* rubyText = rubyRun.rubyText();
             if (!rubyText)
                 continue;
             
-            if (!rubyRun->style()->isFlippedLinesWritingMode()) {
+            if (!rubyRun.style()->isFlippedLinesWritingMode()) {
                 LayoutUnit topOfFirstRubyTextLine = rubyText->logicalTop() + (rubyText->firstRootBox() ? rubyText->firstRootBox()->lineTop() : LayoutUnit());
                 if (topOfFirstRubyTextLine >= 0)
                     continue;
@@ -1562,12 +1563,12 @@ LayoutUnit InlineFlowBox::computeUnderAnnotationAdjustment(LayoutUnit allowedPos
             result = max(result, toInlineFlowBox(curr)->computeUnderAnnotationAdjustment(allowedPosition));
 
         if (curr->renderer().isReplaced() && curr->renderer().isRubyRun() && curr->renderer().style()->rubyPosition() == RubyPositionAfter) {
-            RenderRubyRun* rubyRun = toRenderRubyRun(&curr->renderer());
-            RenderRubyText* rubyText = rubyRun->rubyText();
+            RenderRubyRun& rubyRun = toRenderRubyRun(curr->renderer());
+            RenderRubyText* rubyText = rubyRun.rubyText();
             if (!rubyText)
                 continue;
 
-            if (rubyRun->style()->isFlippedLinesWritingMode()) {
+            if (rubyRun.style()->isFlippedLinesWritingMode()) {
                 LayoutUnit topOfFirstRubyTextLine = rubyText->logicalTop() + (rubyText->firstRootBox() ? rubyText->firstRootBox()->lineTop() : LayoutUnit());
                 if (topOfFirstRubyTextLine >= 0)
                     continue;

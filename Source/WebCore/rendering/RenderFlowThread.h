@@ -327,6 +327,18 @@ protected:
     bool m_layersToRegionMappingsDirty : 1;
 };
 
+inline RenderFlowThread& toRenderFlowThread(RenderObject& object)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(object.isRenderFlowThread());
+    return static_cast<RenderFlowThread&>(object);
+}
+
+inline const RenderFlowThread& toRenderFlowThread(const RenderObject& object)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(object.isRenderFlowThread());
+    return static_cast<const RenderFlowThread&>(object);
+}
+
 inline RenderFlowThread* toRenderFlowThread(RenderObject* object)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isRenderFlowThread());
@@ -341,6 +353,7 @@ inline const RenderFlowThread* toRenderFlowThread(const RenderObject* object)
 
 // This will catch anyone doing an unnecessary cast.
 void toRenderFlowThread(const RenderFlowThread*);
+void toRenderFlowThread(const RenderFlowThread&);
 
 class CurrentRenderFlowThreadMaintainer {
     WTF_MAKE_NONCOPYABLE(CurrentRenderFlowThreadMaintainer);

@@ -1354,7 +1354,7 @@ void RenderObject::repaintUsingContainer(const RenderLayerModelObject* repaintCo
     }
 #else
     if (repaintContainer->isRenderView())
-        toRenderView(repaintContainer)->repaintViewRectangle(r, immediate);
+        toRenderView(*repaintContainer).repaintViewRectangle(r, immediate);
 #endif
 }
 
@@ -2306,7 +2306,7 @@ bool RenderObject::isRooted(RenderView** view) const
         return false;
 
     if (view)
-        *view = const_cast<RenderView*>(toRenderView(o));
+        *view = &const_cast<RenderView&>(toRenderView(*o));
 
     return true;
 }
@@ -2740,7 +2740,7 @@ bool RenderObject::nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitT
 void RenderObject::scheduleRelayout()
 {
     if (isRenderView())
-        toRenderView(this)->frameView().scheduleRelayout();
+        toRenderView(*this).frameView().scheduleRelayout();
     else {
         if (isRooted())
             view().frameView().scheduleRelayoutOfSubtree(this);

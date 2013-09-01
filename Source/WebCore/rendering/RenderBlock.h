@@ -1365,6 +1365,12 @@ inline RenderBlock& toRenderBlock(RenderObject& object)
     return static_cast<RenderBlock&>(object);
 }
 
+inline const RenderBlock& toRenderBlock(const RenderObject& object)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(object.isRenderBlock());
+    return static_cast<const RenderBlock&>(object);
+}
+
 inline RenderBlock* toRenderBlock(RenderObject* object)
 { 
     ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isRenderBlock());
@@ -1379,6 +1385,7 @@ inline const RenderBlock* toRenderBlock(const RenderObject* object)
 
 // This will catch anyone doing an unnecessary cast.
 void toRenderBlock(const RenderBlock*);
+void toRenderBlock(const RenderBlock&);
 
 #ifndef NDEBUG
 // These structures are used by PODIntervalTree for debugging purposes.

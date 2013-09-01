@@ -1381,7 +1381,7 @@ void MediaControlTextTrackContainerElement::updateSizes(bool forceUpdate)
 #else
         if (!mediaElement->renderer() || !mediaElement->renderer()->isVideo())
             return;
-        videoBox = toRenderVideo(mediaElement->renderer())->videoBox();
+        videoBox = toRenderVideo(*mediaElement->renderer()).videoBox();
 #endif
     }
 

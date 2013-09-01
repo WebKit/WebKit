@@ -1226,7 +1226,7 @@ void FrameView::layout(bool allowSubtree)
         ScrollbarMode vMode;    
         calculateScrollbarModesForLayout(hMode, vMode);
 
-        m_needsFullRepaint = !subtree && (m_firstLayout || toRenderView(root)->printing());
+        m_needsFullRepaint = !subtree && (m_firstLayout || toRenderView(*root).printing());
 
         if (!subtree) {
             // Now set our scrollbar state for the layout.
@@ -1307,7 +1307,7 @@ void FrameView::layout(bool allowSubtree)
 
     bool neededFullRepaint = m_needsFullRepaint;
 
-    if (!subtree && !toRenderView(root)->printing())
+    if (!subtree && !toRenderView(*root).printing())
         adjustViewSize();
 
     m_needsFullRepaint = neededFullRepaint;

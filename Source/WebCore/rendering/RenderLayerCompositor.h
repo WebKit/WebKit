@@ -214,7 +214,7 @@ public:
     
 #if ENABLE(VIDEO)
     // Use by RenderVideo to ask if it should try to use accelerated compositing.
-    bool canAccelerateVideoRendering(RenderVideo*) const;
+    bool canAccelerateVideoRendering(RenderVideo&) const;
 #endif
 
     // Walk the tree looking for layers with 3d transforms. Useful in case you need

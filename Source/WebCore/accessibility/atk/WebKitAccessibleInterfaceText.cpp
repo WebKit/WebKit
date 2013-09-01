@@ -388,8 +388,8 @@ static guint accessibilityObjectLength(const AccessibilityObject* object)
     // separately (as in getAccessibilityObjectForOffset)
     RenderObject* renderer = object->renderer();
     if (renderer && renderer->isListMarker()) {
-        RenderListMarker* marker = toRenderListMarker(renderer);
-        return marker->text().length() + marker->suffix().length();
+        RenderListMarker& marker = toRenderListMarker(*renderer);
+        return marker.text().length() + marker.suffix().length();
     }
 
     return 0;

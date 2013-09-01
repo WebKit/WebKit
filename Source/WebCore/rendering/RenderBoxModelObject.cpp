@@ -531,10 +531,10 @@ void RenderBoxModelObject::computeStickyPositionConstraints(StickyPositionViewpo
 
     RenderBlock* containingBlock = this->containingBlock();
     RenderLayer* enclosingClippingLayer = layer()->enclosingOverflowClipLayer(ExcludeSelf);
-    RenderBox* enclosingClippingBox = enclosingClippingLayer ? toRenderBox(&enclosingClippingLayer->renderer()) : &view();
+    RenderBox& enclosingClippingBox = enclosingClippingLayer ? toRenderBox(enclosingClippingLayer->renderer()) : view();
 
     LayoutRect containerContentRect;
-    if (!enclosingClippingLayer || (containingBlock != enclosingClippingBox))
+    if (!enclosingClippingLayer || (containingBlock != &enclosingClippingBox))
         containerContentRect = containingBlock->contentBoxRect();
     else {
         containerContentRect = containingBlock->layoutOverflowRect();
@@ -556,12 +556,12 @@ void RenderBoxModelObject::computeStickyPositionConstraints(StickyPositionViewpo
     containerContentRect.contract(minMargin);
 
     // Finally compute container rect relative to the scrolling ancestor.
-    FloatRect containerRectRelativeToScrollingAncestor = containingBlock->localToContainerQuad(FloatRect(containerContentRect), enclosingClippingBox).boundingBox();
+    FloatRect containerRectRelativeToScrollingAncestor = containingBlock->localToContainerQuad(FloatRect(containerContentRect), &enclosingClippingBox).boundingBox();
     if (enclosingClippingLayer) {
         FloatPoint containerLocationRelativeToScrollingAncestor = containerRectRelativeToScrollingAncestor.location() -
-            FloatSize(enclosingClippingBox->borderLeft() + enclosingClippingBox->paddingLeft(),
-            enclosingClippingBox->borderTop() + enclosingClippingBox->paddingTop());
-        if (enclosingClippingBox != containingBlock)
+            FloatSize(enclosingClippingBox.borderLeft() + enclosingClippingBox.paddingLeft(),
+            enclosingClippingBox.borderTop() + enclosingClippingBox.paddingTop());
+        if (&enclosingClippingBox != containingBlock)
             containerLocationRelativeToScrollingAncestor += enclosingClippingLayer->scrollOffset();
         containerRectRelativeToScrollingAncestor.setLocation(containerLocationRelativeToScrollingAncestor);
     }
@@ -575,11 +575,11 @@ void RenderBoxModelObject::computeStickyPositionConstraints(StickyPositionViewpo
 
     // FIXME: sucks to call localToContainerQuad again, but we can't just offset from the previously computed rect if there are transforms.
     // Map to the view to avoid including page scale factor.
-    FloatPoint stickyLocationRelativeToScrollingAncestor = flippedStickyBoxRect.location() + containingBlock->localToContainerQuad(FloatRect(FloatPoint(), containingBlock->size()), enclosingClippingBox).boundingBox().location();
+    FloatPoint stickyLocationRelativeToScrollingAncestor = flippedStickyBoxRect.location() + containingBlock->localToContainerQuad(FloatRect(FloatPoint(), containingBlock->size()), &enclosingClippingBox).boundingBox().location();
     if (enclosingClippingLayer) {
-        stickyLocationRelativeToScrollingAncestor -= FloatSize(enclosingClippingBox->borderLeft() + enclosingClippingBox->paddingLeft(),
-            enclosingClippingBox->borderTop() + enclosingClippingBox->paddingTop());
-        if (enclosingClippingBox != containingBlock)
+        stickyLocationRelativeToScrollingAncestor -= FloatSize(enclosingClippingBox.borderLeft() + enclosingClippingBox.paddingLeft(),
+            enclosingClippingBox.borderTop() + enclosingClippingBox.paddingTop());
+        if (&enclosingClippingBox != containingBlock)
             stickyLocationRelativeToScrollingAncestor += enclosingClippingLayer->scrollOffset();
     }
     // FIXME: For now, assume that |this| is not transformed.
@@ -614,9 +614,9 @@ LayoutSize RenderBoxModelObject::stickyPositionOffset() const
     ASSERT(hasLayer());
     RenderLayer* enclosingClippingLayer = layer()->enclosingOverflowClipLayer(ExcludeSelf);
     if (enclosingClippingLayer) {
-        RenderBox* enclosingClippingBox = toRenderBox(&enclosingClippingLayer->renderer());
-        LayoutRect clipRect = enclosingClippingBox->overflowClipRect(LayoutPoint(), 0); // FIXME: make this work in regions.
-        constrainingRect = enclosingClippingBox->localToContainerQuad(FloatRect(clipRect), &view()).boundingBox();
+        RenderBox& enclosingClippingBox = toRenderBox(enclosingClippingLayer->renderer());
+        LayoutRect clipRect = enclosingClippingBox.overflowClipRect(LayoutPoint(), 0); // FIXME: make this work in regions.
+        constrainingRect = enclosingClippingBox.localToContainerQuad(FloatRect(clipRect), &view()).boundingBox();
 
         FloatPoint scrollOffset = FloatPoint() + enclosingClippingLayer->scrollOffset();
         constrainingRect.setLocation(scrollOffset);

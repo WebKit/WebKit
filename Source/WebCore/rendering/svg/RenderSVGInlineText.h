@@ -73,6 +73,12 @@ inline RenderSVGInlineText& toRenderSVGInlineText(RenderObject& object)
     return static_cast<RenderSVGInlineText&>(object);
 }
 
+inline const RenderSVGInlineText& toRenderSVGInlineText(const RenderObject& object)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(object.isSVGInlineText());
+    return static_cast<const RenderSVGInlineText&>(object);
+}
+
 inline RenderSVGInlineText* toRenderSVGInlineText(RenderObject* object)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isSVGInlineText());

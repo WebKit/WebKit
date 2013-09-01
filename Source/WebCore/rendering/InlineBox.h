@@ -286,7 +286,7 @@ public:
     RenderBoxModelObject* boxModelObject() const
     { 
         if (!m_renderer.isText())
-            return toRenderBoxModelObject(&m_renderer);
+            return &toRenderBoxModelObject(m_renderer);
         return 0;
     }
 

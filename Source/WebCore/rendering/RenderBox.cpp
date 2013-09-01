@@ -1539,8 +1539,8 @@ bool RenderBox::repaintLayerRectsForImage(WrappedImagePtr image, const FillLayer
                 if (drawingRootBackground) {
                     layerRenderer = &view();
 
-                    LayoutUnit rw = toRenderView(layerRenderer)->frameView().contentsWidth();
-                    LayoutUnit rh = toRenderView(layerRenderer)->frameView().contentsHeight();
+                    LayoutUnit rw = toRenderView(*layerRenderer).frameView().contentsWidth();
+                    LayoutUnit rh = toRenderView(*layerRenderer).frameView().contentsHeight();
 
                     rendererRect = LayoutRect(-layerRenderer->marginLeft(),
                         -layerRenderer->marginTop(),

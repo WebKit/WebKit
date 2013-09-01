@@ -247,14 +247,14 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
     if (o.isText()) {
         // FIXME: Would be better to dump the bounding box x and y rather than the first run's x and y, but that would involve updating
         // many test results.
-        const RenderText& text = *toRenderText(&o);
+        const RenderText& text = toRenderText(o);
         IntRect linesBox = text.linesBoundingBox();
         r = IntRect(text.firstRunX(), text.firstRunY(), linesBox.width(), linesBox.height());
         if (adjustForTableCells && !text.firstTextBox())
             adjustForTableCells = false;
     } else if (o.isRenderInline()) {
         // FIXME: Would be better not to just dump 0, 0 as the x and y here.
-        const RenderInline& inlineFlow = *toRenderInline(&o);
+        const RenderInline& inlineFlow = toRenderInline(o);
         r = IntRect(0, 0, inlineFlow.linesBoundingBox().width(), inlineFlow.linesBoundingBox().height());
         adjustForTableCells = false;
     } else if (o.isTableCell()) {
@@ -264,7 +264,7 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
         const RenderTableCell& cell = *toRenderTableCell(&o);
         r = LayoutRect(cell.x(), cell.y() + cell.intrinsicPaddingBefore(), cell.width(), cell.height() - cell.intrinsicPaddingBefore() - cell.intrinsicPaddingAfter());
     } else if (o.isBox())
-        r = toRenderBox(&o)->frameRect();
+        r = toRenderBox(o).frameRect();
 
     // FIXME: Temporary in order to ensure compatibility with existing layout test results.
     if (adjustForTableCells)
@@ -306,7 +306,7 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
         if (!o.isBoxModelObject())
             return;
 
-        const RenderBoxModelObject& box = *toRenderBoxModelObject(&o);
+        const RenderBoxModelObject& box = toRenderBoxModelObject(o);
         if (box.borderTop() || box.borderRight() || box.borderBottom() || box.borderLeft()) {
             ts << " [border:";
 
@@ -411,7 +411,7 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
 #endif
 
     if (o.isListMarker()) {
-        String text = toRenderListMarker(&o)->text();
+        String text = toRenderListMarker(o).text();
         if (!text.isEmpty()) {
             if (text.length() != 1)
                 text = quoteAndEscapeNonPrintables(text);
@@ -557,7 +557,7 @@ void write(TextStream& ts, const RenderObject& o, int indent, RenderAsTextBehavi
         return;
     }
     if (o.isSVGInlineText()) {
-        writeSVGInlineText(ts, *toRenderSVGInlineText(&o), indent);
+        writeSVGInlineText(ts, toRenderSVGInlineText(o), indent);
         return;
     }
     if (o.isSVGImage()) {
@@ -572,7 +572,7 @@ void write(TextStream& ts, const RenderObject& o, int indent, RenderAsTextBehavi
     ts << "\n";
 
     if (o.isText() && !o.isBR()) {
-        const RenderText& text = *toRenderText(&o);
+        const RenderText& text = toRenderText(o);
         for (InlineTextBox* box = text.firstTextBox(); box; box = box->nextTextBox()) {
             writeIndent(ts, indent + 1);
             writeTextRun(ts, text, *box);
@@ -690,13 +690,13 @@ static void writeRenderRegionList(const RenderRegionList& flowThreadRegionList, 
     }
 }
 
-static void writeRenderNamedFlowThreads(TextStream& ts, RenderView* renderView, const RenderLayer* rootLayer,
+static void writeRenderNamedFlowThreads(TextStream& ts, RenderView& renderView, const RenderLayer* rootLayer,
                         const LayoutRect& paintRect, int indent, RenderAsTextBehavior behavior)
 {
-    if (!renderView->hasRenderNamedFlowThreads())
+    if (!renderView.hasRenderNamedFlowThreads())
         return;
 
-    const RenderNamedFlowThreadList* list = renderView->flowThreadController().renderNamedFlowThreadList();
+    const RenderNamedFlowThreadList* list = renderView.flowThreadController().renderNamedFlowThreadList();
 
     writeIndent(ts, indent);
     ts << "Flow Threads\n";
@@ -799,10 +799,8 @@ static void writeLayers(TextStream& ts, const RenderLayer* rootLayer, RenderLaye
     
     // Altough the RenderFlowThread requires a layer, it is not collected by its parent,
     // so we have to treat it as a special case.
-    if (l->renderer().isRenderView()) {
-        RenderView* renderView = toRenderView(&l->renderer());
-        writeRenderNamedFlowThreads(ts, renderView, rootLayer, paintDirtyRect, indent, behavior);
-    }
+    if (l->renderer().isRenderView())
+        writeRenderNamedFlowThreads(ts, toRenderView(l->renderer()), rootLayer, paintDirtyRect, indent, behavior);
 }
 
 static String nodePosition(Node* node)

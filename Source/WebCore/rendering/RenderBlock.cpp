@@ -5243,9 +5243,8 @@ bool RenderBlock::hitTestFloats(const HitTestRequest& request, HitTestResult& re
         return false;
 
     LayoutPoint adjustedLocation = accumulatedOffset;
-    if (isRenderView()) {
-        adjustedLocation += toLayoutSize(toRenderView(this)->frameView().scrollPosition());
-    }
+    if (isRenderView())
+        adjustedLocation += toLayoutSize(toRenderView(*this).frameView().scrollPosition());
 
     const FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
     FloatingObjectSetIterator begin = floatingObjectSet.begin();
@@ -6429,7 +6428,7 @@ void RenderBlock::computeInlinePreferredLogicalWidths(LayoutUnit& minLogicalWidt
                 }
 
                 if (t->style()->hasTextCombine() && t->isCombineText())
-                    toRenderCombineText(t)->combineText();
+                    toRenderCombineText(*t).combineText();
 
                 // Determine if we have a breakable character.  Pass in
                 // whether or not we should ignore any spaces at the front

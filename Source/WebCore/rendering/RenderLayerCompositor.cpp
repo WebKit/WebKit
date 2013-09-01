@@ -735,8 +735,7 @@ bool RenderLayerCompositor::updateBacking(RenderLayer* layer, CompositingChangeR
 #if ENABLE(VIDEO)
     if (layerChanged && layer->renderer().isVideo()) {
         // If it's a video, give the media player a chance to hook up to the layer.
-        RenderVideo* video = toRenderVideo(&layer->renderer());
-        video->acceleratedRenderingStateChanged();
+        toRenderVideo(layer->renderer()).acceleratedRenderingStateChanged();
     }
 #endif
 
@@ -1168,12 +1167,12 @@ void RenderLayerCompositor::removeCompositedChildren(RenderLayer* layer)
 }
 
 #if ENABLE(VIDEO)
-bool RenderLayerCompositor::canAccelerateVideoRendering(RenderVideo* o) const
+bool RenderLayerCompositor::canAccelerateVideoRendering(RenderVideo& video) const
 {
     if (!m_hasAcceleratedCompositing)
         return false;
 
-    return o->supportsAcceleratedRendering();
+    return video.supportsAcceleratedRendering();
 }
 #endif
 
@@ -2074,8 +2073,8 @@ bool RenderLayerCompositor::requiresCompositingForVideo(RenderObject* renderer) 
         return false;
 #if ENABLE(VIDEO)
     if (renderer->isVideo()) {
-        RenderVideo* video = toRenderVideo(renderer);
-        return (video->requiresImmediateCompositing() || video->shouldDisplayVideo()) && canAccelerateVideoRendering(video);
+        RenderVideo& video = toRenderVideo(*renderer);
+        return (video.requiresImmediateCompositing() || video.shouldDisplayVideo()) && canAccelerateVideoRendering(video);
     }
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
     else if (renderer->isRenderPart()) {
@@ -3118,15 +3117,15 @@ StickyPositionViewportConstraints RenderLayerCompositor::computeStickyViewportCo
 
     LayoutRect viewportRect = m_renderView.frameView().viewportConstrainedVisibleContentRect();
 
-    RenderBoxModelObject* renderer = toRenderBoxModelObject(&layer->renderer());
+    RenderBoxModelObject& renderer = toRenderBoxModelObject(layer->renderer());
 
     StickyPositionViewportConstraints constraints;
-    renderer->computeStickyPositionConstraints(constraints, viewportRect);
+    renderer.computeStickyPositionConstraints(constraints, viewportRect);
 
     GraphicsLayer* graphicsLayer = layer->backing()->graphicsLayer();
 
     constraints.setLayerPositionAtLastLayout(graphicsLayer->position());
-    constraints.setStickyOffsetAtLastLayout(renderer->stickyPositionOffset());
+    constraints.setStickyOffsetAtLastLayout(renderer.stickyPositionOffset());
 
     return constraints;
 }

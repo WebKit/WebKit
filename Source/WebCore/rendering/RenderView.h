@@ -348,20 +348,19 @@ private:
     bool m_selectionWasCaret;
 };
 
-inline RenderView* toRenderView(RenderObject* object)
+inline RenderView& toRenderView(RenderObject& object)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isRenderView());
-    return static_cast<RenderView*>(object);
+    ASSERT_WITH_SECURITY_IMPLICATION(object.isRenderView());
+    return static_cast<RenderView&>(object);
 }
 
-inline const RenderView* toRenderView(const RenderObject* object)
+inline const RenderView& toRenderView(const RenderObject& object)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isRenderView());
-    return static_cast<const RenderView*>(object);
+    ASSERT_WITH_SECURITY_IMPLICATION(object.isRenderView());
+    return static_cast<const RenderView&>(object);
 }
 
-// This will catch anyone doing an unnecessary cast.
-void toRenderView(const RenderView*);
+void toRenderView(const RenderView&);
 
 // Stack-based class to assist with LayoutState push/pop
 class LayoutStateMaintainer {

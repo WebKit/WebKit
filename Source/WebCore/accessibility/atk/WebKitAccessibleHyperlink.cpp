@@ -223,8 +223,8 @@ static gint getRangeLengthForObject(AccessibilityObject* obj, Range* range)
     if (!renderer || !renderer->isListMarker())
         return baseLength;
 
-    RenderListMarker* marker = toRenderListMarker(renderer);
-    return baseLength + marker->text().length() + marker->suffix().length();
+    RenderListMarker& marker = toRenderListMarker(*renderer);
+    return baseLength + marker.text().length() + marker.suffix().length();
 }
 
 static gint webkitAccessibleHyperlinkGetStartIndex(AtkHyperlink* link)

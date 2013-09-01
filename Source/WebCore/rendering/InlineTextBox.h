@@ -214,7 +214,7 @@ void toInlineTextBox(const InlineTextBox*);
 
 inline RenderText& InlineTextBox::textRenderer() const
 {
-    return *toRenderText(&renderer());
+    return toRenderText(renderer());
 }
 
 void alignSelectionRectToDevicePixels(FloatRect&);

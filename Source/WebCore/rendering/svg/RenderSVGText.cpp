@@ -339,10 +339,10 @@ static inline void updateFontInAllDescendants(RenderObject* start, SVGTextLayout
     for (RenderObject* descendant = start; descendant; descendant = descendant->nextInPreOrder(start)) {
         if (!descendant->isSVGInlineText())
             continue;
-        RenderSVGInlineText* text = toRenderSVGInlineText(descendant);
-        text->updateScaledFont();
+        RenderSVGInlineText& text = toRenderSVGInlineText(*descendant);
+        text.updateScaledFont();
         if (builder)
-            builder->rebuildMetricsForTextRenderer(text);
+            builder->rebuildMetricsForTextRenderer(&text);
     }
 }
 

@@ -78,7 +78,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 static bool hasBoxDecorationsOrBackgroundImage(const RenderStyle*);
-static IntRect clipBox(RenderBox* renderer);
+static IntRect clipBox(RenderBox& renderer);
 
 static inline bool isAcceleratedCanvas(RenderObject* renderer)
 {
@@ -359,7 +359,7 @@ void RenderLayerBacking::updateTransform(const RenderStyle* style)
     // baked into it, and we don't want that.
     TransformationMatrix t;
     if (m_owningLayer->hasTransform()) {
-        style->applyTransform(t, toRenderBox(&renderer())->pixelSnappedBorderBoxRect().size(), RenderStyle::ExcludeTransformOrigin);
+        style->applyTransform(t, toRenderBox(renderer()).pixelSnappedBorderBoxRect().size(), RenderStyle::ExcludeTransformOrigin);
         makeMatrixRenderable(t, compositor().canRender3DTransforms());
     }
     
@@ -574,14 +574,14 @@ bool RenderLayerBacking::updateGraphicsLayerConfiguration()
     return layerConfigChanged;
 }
 
-static IntRect clipBox(RenderBox* renderer)
+static IntRect clipBox(RenderBox& renderer)
 {
     LayoutRect result = PaintInfo::infiniteRect();
-    if (renderer->hasOverflowClip())
-        result = renderer->overflowClipRect(LayoutPoint(), 0); // FIXME: Incorrect for CSS regions.
+    if (renderer.hasOverflowClip())
+        result = renderer.overflowClipRect(LayoutPoint(), 0); // FIXME: Incorrect for CSS regions.
 
-    if (renderer->hasClip())
-        result.intersect(renderer->clipRect(LayoutPoint(), 0)); // FIXME: Incorrect for CSS regions.
+    if (renderer.hasClip())
+        result.intersect(renderer.clipRect(LayoutPoint(), 0)); // FIXME: Incorrect for CSS regions.
 
     return pixelSnappedIntRect(result);
 }
@@ -649,7 +649,7 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
     if (compAncestor && compAncestor->backing()->hasClippingLayer()) {
         // If the compositing ancestor has a layer to clip children, we parent in that, and therefore
         // position relative to it.
-        IntRect clippingBox = clipBox(toRenderBox(&compAncestor->renderer()));
+        IntRect clippingBox = clipBox(toRenderBox(compAncestor->renderer()));
         graphicsLayerParentLocation = clippingBox.location();
     } else if (compAncestor)
         graphicsLayerParentLocation = ancestorCompositingBounds.location();
@@ -657,9 +657,9 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
         graphicsLayerParentLocation = renderer().view().documentRect().location();
 
     if (compAncestor && compAncestor->needsCompositedScrolling()) {
-        RenderBox* renderBox = toRenderBox(&compAncestor->renderer());
+        RenderBox& renderBox = toRenderBox(compAncestor->renderer());
         IntSize scrollOffset = compAncestor->scrolledContentOffset();
-        IntPoint scrollOrigin(renderBox->borderLeft(), renderBox->borderTop());
+        IntPoint scrollOrigin(renderBox.borderLeft(), renderBox.borderTop());
         graphicsLayerParentLocation = scrollOrigin - scrollOffset;
     }
     
@@ -703,7 +703,7 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
     // If we have a layer that clips children, position it.
     IntRect clippingBox;
     if (GraphicsLayer* clipLayer = clippingLayer()) {
-        clippingBox = clipBox(toRenderBox(&renderer()));
+        clippingBox = clipBox(toRenderBox(renderer()));
         clipLayer->setPosition(FloatPoint(clippingBox.location() - localCompositingBounds.location()));
         clipLayer->setSize(clippingBox.size());
         clipLayer->setOffsetFromRenderer(toIntSize(clippingBox.location()));
@@ -716,7 +716,7 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
     }
     
     if (m_owningLayer->hasTransform()) {
-        const IntRect borderBox = toRenderBox(&renderer())->pixelSnappedBorderBoxRect();
+        const IntRect borderBox = toRenderBox(renderer()).pixelSnappedBorderBoxRect();
 
         // Get layout bounds in the coords of compAncestor to match relativeCompositingBounds.
         IntRect layerBounds(delta, borderBox.size());
@@ -797,8 +797,8 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
 
     if (m_scrollingLayer) {
         ASSERT(m_scrollingContentsLayer);
-        RenderBox* renderBox = toRenderBox(&renderer());
-        IntRect paddingBox(renderBox->borderLeft(), renderBox->borderTop(), renderBox->width() - renderBox->borderLeft() - renderBox->borderRight(), renderBox->height() - renderBox->borderTop() - renderBox->borderBottom());
+        RenderBox& renderBox = toRenderBox(renderer());
+        IntRect paddingBox(renderBox.borderLeft(), renderBox.borderTop(), renderBox.width() - renderBox.borderLeft() - renderBox.borderRight(), renderBox.height() - renderBox.borderTop() - renderBox.borderBottom());
         IntSize scrollOffset = m_owningLayer->scrollOffset();
 
         m_scrollingLayer->setPosition(FloatPoint(paddingBox.location() - localCompositingBounds.location()));
@@ -929,7 +929,7 @@ void RenderLayerBacking::resetContentsRect()
     
     LayoutRect contentsClippingRect;
     if (renderer().isBox())
-        contentsClippingRect = toRenderBox(&renderer())->contentBoxRect();
+        contentsClippingRect = toRenderBox(renderer()).contentBoxRect();
 
     contentsClippingRect.move(contentOffsetInCompostingLayer());
     m_graphicsLayer->setContentsClippingRect(pixelSnappedIntRect(contentsClippingRect));
@@ -1454,7 +1454,7 @@ void RenderLayerBacking::updateDirectlyCompositedBackgroundImage(bool isSimpleCo
     IntSize tileSize;
 
     RefPtr<Image> image = style->backgroundLayers()->image()->cachedImage()->image();
-    toRenderBox(&renderer())->getGeometryForBackgroundImage(&m_owningLayer->renderer(), destRect, phase, tileSize);
+    toRenderBox(renderer()).getGeometryForBackgroundImage(&m_owningLayer->renderer(), destRect, phase, tileSize);
     m_graphicsLayer->setContentsTileSize(tileSize);
     m_graphicsLayer->setContentsTilePhase(phase);
     m_graphicsLayer->setContentsRect(destRect);
@@ -1661,7 +1661,7 @@ bool RenderLayerBacking::containsPaintedContent(bool isSimpleContainer) const
     // FIXME: we could optimize cases where the image, video or canvas is known to fill the border box entirely,
     // and set background color on the layer in that case, instead of allocating backing store and painting.
 #if ENABLE(VIDEO)
-    if (renderer().isVideo() && toRenderVideo(&renderer())->shouldDisplayVideo())
+    if (renderer().isVideo() && toRenderVideo(renderer()).shouldDisplayVideo())
         return m_owningLayer->hasBoxDecorationsOrBackground();
 #endif
 #if PLATFORM(MAC) && USE(CA)
@@ -1680,12 +1680,12 @@ bool RenderLayerBacking::isDirectlyCompositedImage() const
     if (!renderer().isImage() || m_owningLayer->hasBoxDecorationsOrBackground() || renderer().hasClip())
         return false;
 
-    RenderImage* imageRenderer = toRenderImage(&renderer());
-    if (CachedImage* cachedImage = imageRenderer->cachedImage()) {
+    RenderImage& imageRenderer = toRenderImage(renderer());
+    if (CachedImage* cachedImage = imageRenderer.cachedImage()) {
         if (!cachedImage->hasImage())
             return false;
 
-        Image* image = cachedImage->imageForRenderer(imageRenderer);
+        Image* image = cachedImage->imageForRenderer(&imageRenderer);
         if (!image->isBitmapImage())
             return false;
 
@@ -1725,13 +1725,13 @@ void RenderLayerBacking::contentChanged(ContentChangeType changeType)
 void RenderLayerBacking::updateImageContents()
 {
     ASSERT(renderer().isImage());
-    RenderImage* imageRenderer = toRenderImage(&renderer());
+    RenderImage& imageRenderer = toRenderImage(renderer());
 
-    CachedImage* cachedImage = imageRenderer->cachedImage();
+    CachedImage* cachedImage = imageRenderer.cachedImage();
     if (!cachedImage)
         return;
 
-    Image* image = cachedImage->imageForRenderer(imageRenderer);
+    Image* image = cachedImage->imageForRenderer(&imageRenderer);
     if (!image)
         return;
 
@@ -1742,7 +1742,7 @@ void RenderLayerBacking::updateImageContents()
     // This is a no-op if the layer doesn't have an inner layer for the image.
     m_graphicsLayer->setContentsRect(pixelSnappedIntRect(contentsBox()));
 
-    LayoutRect contentsClippingRect = imageRenderer->contentBoxRect();
+    LayoutRect contentsClippingRect = imageRenderer.contentBoxRect();
     contentsClippingRect.move(contentOffsetInCompostingLayer());
     m_graphicsLayer->setContentsClippingRect(pixelSnappedIntRect(contentsClippingRect));
 
@@ -1793,13 +1793,12 @@ LayoutRect RenderLayerBacking::contentsBox() const
     if (!renderer().isBox())
         return LayoutRect();
 
-    RenderBox& renderBox = *toRenderBox(&renderer());
+    RenderBox& renderBox = toRenderBox(renderer());
     LayoutRect contentsRect;
 #if ENABLE(VIDEO)
-    if (renderBox.isVideo()) {
-        RenderVideo* videoRenderer = toRenderVideo(&renderBox);
-        contentsRect = videoRenderer->videoBox();
-    } else
+    if (renderBox.isVideo())
+        contentsRect = toRenderVideo(renderBox).videoBox();
+    else
 #endif
     if (renderBox.isRenderReplaced()) {
         RenderReplaced& renderReplaced = *toRenderReplaced(&renderBox);
@@ -1811,15 +1810,15 @@ LayoutRect RenderLayerBacking::contentsBox() const
     return contentsRect;
 }
 
-static LayoutRect backgroundRectForBox(const RenderBox* box)
+static LayoutRect backgroundRectForBox(const RenderBox& box)
 {
-    switch (box->style()->backgroundClip()) {
+    switch (box.style()->backgroundClip()) {
     case BorderFillBox:
-        return box->borderBoxRect();
+        return box.borderBoxRect();
     case PaddingFillBox:
-        return box->paddingBoxRect();
+        return box.paddingBoxRect();
     case ContentFillBox:
-        return box->contentBoxRect();
+        return box.contentBoxRect();
     case TextFillBox:
         break;
     }
@@ -1833,7 +1832,7 @@ IntRect RenderLayerBacking::backgroundBox() const
     if (!renderer().isBox())
         return IntRect();
 
-    LayoutRect backgroundBox = backgroundRectForBox(toRenderBox(&renderer()));
+    LayoutRect backgroundBox = backgroundRectForBox(toRenderBox(renderer()));
     backgroundBox.move(contentOffsetInCompostingLayer());
     return pixelSnappedIntRect(backgroundBox);
 }
@@ -2136,7 +2135,7 @@ bool RenderLayerBacking::startAnimation(double timeOffset, const Animation* anim
 
     bool didAnimate = false;
     
-    if (hasTransform && m_graphicsLayer->addAnimation(transformVector, toRenderBox(&renderer())->pixelSnappedBorderBoxRect().size(), anim, keyframes.animationName(), timeOffset))
+    if (hasTransform && m_graphicsLayer->addAnimation(transformVector, toRenderBox(renderer()).pixelSnappedBorderBoxRect().size(), anim, keyframes.animationName(), timeOffset))
         didAnimate = true;
 
     if (hasOpacity && m_graphicsLayer->addAnimation(opacityVector, IntSize(), anim, keyframes.animationName(), timeOffset))
@@ -2187,7 +2186,7 @@ bool RenderLayerBacking::startTransition(double timeOffset, CSSPropertyID proper
             KeyframeValueList transformVector(AnimatedPropertyWebkitTransform);
             transformVector.insert(TransformAnimationValue::create(0, fromStyle->transform()));
             transformVector.insert(TransformAnimationValue::create(1, toStyle->transform()));
-            if (m_graphicsLayer->addAnimation(transformVector, toRenderBox(&renderer())->pixelSnappedBorderBoxRect().size(), transformAnim, GraphicsLayer::animationNameForTransition(AnimatedPropertyWebkitTransform), timeOffset)) {
+            if (m_graphicsLayer->addAnimation(transformVector, toRenderBox(renderer()).pixelSnappedBorderBoxRect().size(), transformAnim, GraphicsLayer::animationNameForTransition(AnimatedPropertyWebkitTransform), timeOffset)) {
                 // To ensure that the correct transform is visible when the animation ends, also set the final transform.
                 updateTransform(toStyle);
                 didAnimate = true;

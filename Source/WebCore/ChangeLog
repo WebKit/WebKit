@@ -1,3 +1,21 @@
+2013-08-31  Andreas Kling  <akling@apple.com>
+
+        Make more use of toRenderFoo(RenderObject&) cast helpers.
+        <https://webkit.org/b/120565>
+
+        Reviewed by Darin Adler.
+
+        To make amends for putting ugly toRenderFoo(&renderer) casts everywhere,
+        here's a patch that switches a bunch of code over to using reference-based casts.
+
+        I removed pointer-based casts altogether for these renderers:
+
+            - RenderBR
+            - RenderCombineText
+            - RenderListMarker
+            - RenderVideo
+            - RenderView
+
 2013-08-31  Santosh Mahto  <santosh.ma@samsung.com>
 
         warning: unused parameter ‘renderingMode'  in ImageBufferCairo.cpp:94

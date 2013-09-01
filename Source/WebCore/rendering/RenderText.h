@@ -198,6 +198,18 @@ private:
     InlineTextBox* m_lastTextBox;
 };
 
+inline RenderText& toRenderText(RenderObject& object)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(object.isText());
+    return static_cast<RenderText&>(object);
+}
+
+inline const RenderText& toRenderText(const RenderObject& object)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(object.isText());
+    return static_cast<const RenderText&>(object);
+}
+
 inline RenderText* toRenderText(RenderObject* object)
 { 
     ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isText());
@@ -212,6 +224,7 @@ inline const RenderText* toRenderText(const RenderObject* object)
 
 // This will catch anyone doing an unnecessary cast.
 void toRenderText(const RenderText*);
+void toRenderText(const RenderText&);
 
 #ifdef NDEBUG
 inline void RenderText::checkConsistency() const

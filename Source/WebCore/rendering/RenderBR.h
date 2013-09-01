@@ -60,21 +60,20 @@ private:
     mutable int m_lineHeight;
 };
 
-
-inline RenderBR* toRenderBR(RenderObject* object)
+inline RenderBR& toRenderBR(RenderObject& object)
 { 
-    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isBR());
-    return static_cast<RenderBR*>(object);
+    ASSERT_WITH_SECURITY_IMPLICATION(object.isBR());
+    return static_cast<RenderBR&>(object);
 }
 
-inline const RenderBR* toRenderBR(const RenderObject* object)
-{ 
-    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isBR());
-    return static_cast<const RenderBR*>(object);
+inline const RenderBR& toRenderBR(const RenderObject& object)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(object.isBR());
+    return static_cast<const RenderBR&>(object);
 }
 
 // This will catch anyone doing an unnecessary cast.
-void toRenderBR(const RenderBR*);
+void toRenderBR(const RenderBR&);
 
 } // namespace WebCore
 

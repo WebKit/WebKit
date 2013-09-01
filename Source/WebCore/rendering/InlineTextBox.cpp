@@ -109,7 +109,7 @@ LayoutUnit InlineTextBox::lineHeight() const
     if (!isText() || !renderer().parent())
         return 0;
     if (renderer().isBR())
-        return toRenderBR(&renderer())->lineHeight(isFirstLineStyle());
+        return toRenderBR(renderer()).lineHeight(isFirstLineStyle());
     if (&parent()->renderer() == renderer().parent())
         return parent()->lineHeight();
     return toRenderBoxModelObject(renderer().parent())->lineHeight(isFirstLineStyle(), isHorizontal() ? HorizontalLine : VerticalLine, PositionOnContainingLine);
@@ -563,7 +563,7 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
     boxOrigin.move(adjustedPaintOffset.x(), adjustedPaintOffset.y());
     FloatRect boxRect(boxOrigin, LayoutSize(logicalWidth(), logicalHeight()));
 
-    RenderCombineText* combinedText = styleToUse->hasTextCombine() && textRenderer().isCombineText() && toRenderCombineText(&textRenderer())->isCombined() ? toRenderCombineText(&textRenderer()) : 0;
+    RenderCombineText* combinedText = styleToUse->hasTextCombine() && textRenderer().isCombineText() && toRenderCombineText(textRenderer()).isCombined() ? &toRenderCombineText(textRenderer()) : 0;
 
     bool shouldRotate = !isHorizontal() && !combinedText;
     if (shouldRotate)

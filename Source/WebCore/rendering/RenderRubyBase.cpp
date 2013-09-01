@@ -136,7 +136,7 @@ RenderRubyRun* RenderRubyBase::rubyRun() const
     ASSERT(parent());
     ASSERT(parent()->isRubyRun());
 
-    return toRenderRubyRun(parent());
+    return &toRenderRubyRun(*parent());
 }
 
 ETextAlign RenderRubyBase::textAlignmentForLine(bool /* endsWithSoftBreak */) const

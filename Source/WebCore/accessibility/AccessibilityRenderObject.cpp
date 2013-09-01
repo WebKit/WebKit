@@ -710,7 +710,7 @@ String AccessibilityRenderObject::stringValue() const
     }
     
     if (m_renderer->isListMarker())
-        return toRenderListMarker(m_renderer)->text();
+        return toRenderListMarker(*m_renderer).text();
     
     if (isWebArea())
         return String();
@@ -1336,7 +1336,7 @@ int AccessibilityRenderObject::layoutCount() const
 {
     if (!m_renderer->isRenderView())
         return 0;
-    return toRenderView(m_renderer)->frameView().layoutCount();
+    return toRenderView(*m_renderer).frameView().layoutCount();
 }
 
 String AccessibilityRenderObject::text() const

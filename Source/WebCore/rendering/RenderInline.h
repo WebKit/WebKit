@@ -194,6 +194,12 @@ inline RenderInline& toRenderInline(RenderObject& object)
     return static_cast<RenderInline&>(object);
 }
 
+inline const RenderInline& toRenderInline(const RenderObject& object)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(object.isRenderInline());
+    return static_cast<const RenderInline&>(object);
+}
+
 inline RenderInline* toRenderInline(RenderObject* object)
 { 
     ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isRenderInline());
@@ -208,6 +214,7 @@ inline const RenderInline* toRenderInline(const RenderObject* object)
 
 // This will catch anyone doing an unnecessary cast.
 void toRenderInline(const RenderInline*);
+void toRenderInline(const RenderInline&);
 
 } // namespace WebCore
 
