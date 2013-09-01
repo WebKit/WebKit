@@ -6,9 +6,9 @@ layer at (0,0) size 800x600
       RenderText {#text} at (0,0) size 433x17
         text run at (0,0) width 433: "Tests if the volume slider is rendererd properly. This test assumes the"
       RenderBR {BR} at (433,14) size 0x0
-      RenderText {#text} at (0,17) size 446x17
-        text run at (0,17) width 446: "volume slider is implmented and mouse over the right bottom corner of"
-      RenderBR {BR} at (446,31) size 0x0
+      RenderText {#text} at (0,17) size 453x17
+        text run at (0,17) width 453: "volume slider is implemented and mouse over the right bottom corner of"
+      RenderBR {BR} at (453,31) size 0x0
       RenderText {#text} at (0,34) size 270x17
         text run at (0,34) width 270: "video element will show the volume slider."
       RenderBR {BR} at (270,48) size 0x0

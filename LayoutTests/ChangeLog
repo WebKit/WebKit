@@ -1,3 +1,17 @@
+2013-09-01  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        Fixed typo in media/video-volume-slider.html
+        https://bugs.webkit.org/show_bug.cgi?id=120578
+
+        Unreviewed.
+
+        * media/video-volume-slider.html: Fixed typo.
+        * platform/gtk/media/video-volume-slider-expected.png:
+        * platform/gtk/media/video-volume-slider-expected.txt:
+        * platform/mac/media/video-volume-slider-expected.png:
+        * platform/mac/media/video-volume-slider-expected.txt: New
+        baselines.
+
 2013-08-31  Rob Buis  <rwlbuis@webkit.org>
 
         XMLSerializer-attribute-namespace-prefix-conflicts can't produce reliable results
