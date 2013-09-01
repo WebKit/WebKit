@@ -1,6 +1,6 @@
 <html>
 <head>
-<script type="text/javascript" src="../../http/tests/inspector-protocol/resources/protocol-test.js"></script>
+<script src="../../http/tests/inspector-protocol/resources/protocol-test.js"></script>
 <script>
 // Put this here instead of on <body onload> to prevent an extra Debugger.scriptParsed event.
 window.onload = runTest;
@@ -47,6 +47,7 @@ function test()
 </script>
 </head>
 <body>
+<p>Debugger.setBreakpoint on line:column in &lt;script&gt;</p>
 <script>// Line 0
 function testFunction() {// Line 1
 var a = 1;var b = a + 1;// Line 2

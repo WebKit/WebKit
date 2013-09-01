@@ -1,3 +1,23 @@
+2013-09-01  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: A little more test cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=120575
+
+        Reviewed by Timothy Hatcher.
+
+        Give tests names and remove unnecessary script type attributes.
+
+        * inspector-protocol/debugger/removeBreakpoint-expected.txt:
+        * inspector-protocol/debugger/removeBreakpoint.html:
+        * inspector-protocol/debugger/setBreakpoint-autoContinue-expected.txt:
+        * inspector-protocol/debugger/setBreakpoint-autoContinue.html:
+        * inspector-protocol/debugger/setBreakpoint-column-expected.txt:
+        * inspector-protocol/debugger/setBreakpoint-column.html:
+        * inspector-protocol/debugger/setBreakpoint-condition-expected.txt:
+        * inspector-protocol/debugger/setBreakpoint-condition.html:
+        * inspector-protocol/debugger/setBreakpoint-expected.txt:
+        * inspector-protocol/debugger/setBreakpoint.html:
+
 2013-09-01  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         Fixed typo in media/video-volume-slider.html
