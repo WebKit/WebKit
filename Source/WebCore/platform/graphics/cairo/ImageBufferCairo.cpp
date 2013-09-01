@@ -102,6 +102,8 @@ ImageBuffer::ImageBuffer(const IntSize& size, float /* resolutionScale */, Color
     if (renderingMode == Accelerated)
         m_data.m_surface = createCairoGLSurface(size, m_data.m_texture);
     else
+#else
+    ASSERT_UNUSED(renderingMode, renderingMode != Accelerated);
 #endif
         m_data.m_surface = adoptRef(cairo_image_surface_create(CAIRO_FORMAT_ARGB32, size.width(), size.height()));
 
