@@ -1610,6 +1610,7 @@ HEADERS += \
     dom/DOMTimeStamp.h \
     dom/DatasetDOMStringMap.h \
     dom/Element.h \
+    dom/ElementAncestorIterator.h \
     dom/ElementChildIterator.h \
     dom/ElementData.h \
     dom/ElementDescendantIterator.h \

@@ -25,7 +25,7 @@
 #include "config.h"
 #include "HTMLLegendElement.h"
 
-#include "ElementTraversal.h"
+#include "ElementIterator.h"
 #include "HTMLFieldSetElement.h"
 #include "HTMLFormControlElement.h"
 #include "HTMLNames.h"
@@ -49,21 +49,16 @@ PassRefPtr<HTMLLegendElement> HTMLLegendElement::create(const QualifiedName& tag
 HTMLFormControlElement* HTMLLegendElement::associatedControl()
 {
     // Check if there's a fieldset belonging to this legend.
-    Element* fieldset = parentElement();
-    while (fieldset && !fieldset->hasTagName(fieldsetTag))
-        fieldset = fieldset->parentElement();
-    if (!fieldset)
+    auto fieldsetAncestors = ancestorsOfType<HTMLFieldSetElement>(this);
+    auto enclosingFieldset = fieldsetAncestors.begin();
+    if (enclosingFieldset == fieldsetAncestors.end())
         return 0;
 
     // Find first form element inside the fieldset that is not a legend element.
     // FIXME: Should we consider tabindex?
-    Element* element = fieldset;
-    while ((element = ElementTraversal::next(element, fieldset))) {
-        if (element->isFormControlElement())
-            return static_cast<HTMLFormControlElement*>(element);
-    }
-
-    return 0;
+    auto fieldsetFormControlDescendants = descendantsOfType<HTMLFormControlElement>(&*enclosingFieldset);
+    auto firstFormControl = fieldsetFormControlDescendants.begin();
+    return firstFormControl != fieldsetFormControlDescendants.end() ? &*firstFormControl : nullptr;
 }
 
 void HTMLLegendElement::focus(bool, FocusDirection direction)

@@ -1,3 +1,76 @@
+2013-08-31  Antti Koivisto  <antti@apple.com>
+
+        Add element ancestor iterator
+        https://bugs.webkit.org/show_bug.cgi?id=120563
+
+        Reviewed by Andreas Kling.
+
+        This patch adds ancestor iterators. They iterate over elements parent chain up to the root.
+        
+        To iterate over Element ancestors:
+        
+        auto ancestors = elementAncestors(this);
+        for (auto it = ancestors.begin(), end = ancestors.end(); it != end; ++it) {
+            Element& element = *it;
+            ...
+
+        To iterate over Element ancestors including the current element:
+        
+        auto lineage = elementLineage(this);
+        for (auto it = lineage.begin(), end = lineage.end(); it != end; ++it) {
+            Element& element = *it;
+            ...
+            
+        To iterate over ancestors of a specific Element subclass:
+
+        auto htmlAncestors = ancestorsOfType<HTMLElement>(this);
+        for (auto it = htmlAncestors.begin(), end = htmlAncestors.end(); it != end; ++it) {
+            HTMLElement& htmlElement = *it;
+            ...
+            
+        To iterate over ancestors of a specific Element subclass including the current element:
+
+        auto htmlLineage = lineageOfType<HTMLElement>(this);
+        for (auto it = htmlLineage.begin(), end = htmlLineage.end(); it != end; ++it) {
+            HTMLElement& htmlElement = *it;
+            ...
+            
+        The patch also uses the new types in a few places.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::mouseButtonListener):
+        (WebCore::AccessibilityNodeObject::labelForElement):
+        * dom/ElementAncestorIterator.h: Added.
+        (WebCore::::ElementAncestorIterator):
+        (WebCore::::operator):
+        (WebCore::::ElementAncestorConstIterator):
+        (WebCore::::ElementAncestorIteratorAdapter):
+        (WebCore::::begin):
+        (WebCore::::end):
+        (WebCore::::ElementAncestorConstIteratorAdapter):
+        (WebCore::elementLineage):
+        (WebCore::elementAncestors):
+        (WebCore::ancestorsOfType):
+        * dom/ElementIterator.h:
+        (WebCore::findElementAncestorOfType):
+        (WebCore::::traverseAncestor):
+        (WebCore::=):
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::adjustDirectionalityIfNeededAfterChildAttributeChanged):
+        * html/HTMLFieldSetElement.h:
+        (WebCore::isHTMLFieldSetElement):
+        (WebCore::HTMLFieldSetElement):
+        * html/HTMLFrameSetElement.cpp:
+        (WebCore::HTMLFrameSetElement::findContaining):
+        * html/HTMLFrameSetElement.h:
+        (WebCore::HTMLFrameSetElement):
+        * html/HTMLInputElement.h:
+        (WebCore::isHTMLInputElement):
+        (WebCore::toHTMLInputElement):
+        * html/HTMLLegendElement.cpp:
+        (WebCore::HTMLLegendElement::associatedControl):
+
 2013-08-31  Darin Adler  <darin@apple.com>
 
         Refactor URL and image writing so layer-violating parts are in Editor, not Pasteboard (Mac-only at first)

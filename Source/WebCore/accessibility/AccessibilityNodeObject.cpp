@@ -977,21 +977,16 @@ Element* AccessibilityNodeObject::mouseButtonListener() const
         return 0;
 
     // check if our parent is a mouse button listener
-    while (node && !node->isElementNode())
-        node = node->parentNode();
-
-    if (!node)
-        return 0;
-
     // FIXME: Do the continuation search like anchorElement does
-    for (Element* element = toElement(node); element; element = element->parentElement()) {
+    auto lineage = elementLineage(node->isElementNode() ? toElement(node) : node->parentElement());
+    for (auto element = lineage.begin(), end = lineage.end(); element != end; ++element) {
         // If we've reached the body and this is not a control element, do not expose press action for this element.
         // It can cause false positives, where every piece of text is labeled as accepting press actions. 
         if (element->hasTagName(bodyTag) && isStaticText())
             break;
         
         if (element->hasEventListeners(eventNames().clickEvent) || element->hasEventListeners(eventNames().mousedownEvent) || element->hasEventListeners(eventNames().mouseupEvent))
-            return element;
+            return &*element;
     }
 
     return 0;
@@ -1099,12 +1094,9 @@ HTMLLabelElement* AccessibilityNodeObject::labelForElement(Element* element) con
             return label;
     }
 
-    for (Element* parent = element->parentElement(); parent; parent = parent->parentElement()) {
-        if (isHTMLLabelElement(parent))
-            return toHTMLLabelElement(parent);
-    }
-
-    return 0;
+    auto labelAncestors = ancestorsOfType<HTMLLabelElement>(element);
+    auto enclosingLabel = labelAncestors.begin();
+    return enclosingLabel != labelAncestors.end() ? &*enclosingLabel : nullptr;
 }
 
 String AccessibilityNodeObject::ariaAccessibilityDescription() const

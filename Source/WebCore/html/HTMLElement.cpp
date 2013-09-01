@@ -32,6 +32,7 @@
 #include "CSSValuePool.h"
 #include "DOMSettableTokenList.h"
 #include "DocumentFragment.h"
+#include "ElementIterator.h"
 #include "Event.h"
 #include "EventListener.h"
 #include "EventNames.h"
@@ -889,13 +890,13 @@ void HTMLElement::adjustDirectionalityIfNeededAfterChildAttributeChanged(Element
     Node* strongDirectionalityTextNode;
     TextDirection textDirection = directionality(&strongDirectionalityTextNode);
     setHasDirAutoFlagRecursively(child, false);
-    if (renderer() && renderer()->style() && renderer()->style()->direction() != textDirection) {
-        Element* elementToAdjust = this;
-        for (; elementToAdjust; elementToAdjust = elementToAdjust->parentElement()) {
-            if (elementAffectsDirectionality(elementToAdjust)) {
-                elementToAdjust->setNeedsStyleRecalc();
-                return;
-            }
+    if (!renderer() || !renderer()->style() || renderer()->style()->direction() == textDirection)
+        return;
+    auto lineage = elementLineage(this);
+    for (auto elementToAdjust = lineage.begin(), end = lineage.end(); elementToAdjust != end; ++elementToAdjust) {
+        if (elementAffectsDirectionality(&*elementToAdjust)) {
+            elementToAdjust->setNeedsStyleRecalc();
+            return;
         }
     }
 }
@@ -930,9 +931,10 @@ void HTMLElement::adjustDirectionalityIfNeededAfterChildrenChanged(Node* beforeC
     if (oldMarkedNode)
         setHasDirAutoFlagRecursively(oldMarkedNode, false);
 
-    for (Element* elementToAdjust = this; elementToAdjust; elementToAdjust = elementToAdjust->parentElement()) {
-        if (elementAffectsDirectionality(elementToAdjust)) {
-            toHTMLElement(elementToAdjust)->calculateAndAdjustDirectionality();
+    auto lineage = lineageOfType<HTMLElement>(this);
+    for (auto elementToAdjust = lineage.begin(), end = lineage.end(); elementToAdjust != end; ++elementToAdjust) {
+        if (elementAffectsDirectionality(&*elementToAdjust)) {
+            elementToAdjust->calculateAndAdjustDirectionality();
             return;
         }
     }

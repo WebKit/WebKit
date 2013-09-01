@@ -2869,6 +2869,7 @@ webcore_sources += \
 	Source/WebCore/dom/DOMTimeStamp.h \
 	Source/WebCore/dom/Element.cpp \
 	Source/WebCore/dom/Element.h \
+	Source/WebCore/dom/ElementAncestorIterator.h \
 	Source/WebCore/dom/ElementChildIterator.h \
 	Source/WebCore/dom/ElementData.cpp \
 	Source/WebCore/dom/ElementData.h \

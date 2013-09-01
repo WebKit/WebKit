@@ -43,12 +43,14 @@ public:
     ElementType& operator*();
     ElementType* operator->();
 
+    bool operator==(const ElementIterator& other) const;
     bool operator!=(const ElementIterator& other) const;
 
     ElementIterator& traverseNext();
     ElementIterator& traversePrevious();
     ElementIterator& traverseNextSibling();
     ElementIterator& traversePreviousSibling();
+    ElementIterator& traverseAncestor();
 
 private:
     const ContainerNode* m_root;
@@ -68,12 +70,14 @@ public:
     const ElementType& operator*() const;
     const ElementType* operator->() const;
 
+    bool operator==(const ElementConstIterator& other) const;
     bool operator!=(const ElementConstIterator& other) const;
 
     ElementConstIterator& traverseNext();
     ElementConstIterator& traversePrevious();
     ElementConstIterator& traverseNextSibling();
     ElementConstIterator& traversePreviousSibling();
+    ElementConstIterator& traverseAncestor();
 
 private:
     const ContainerNode* m_root;
@@ -159,6 +163,37 @@ inline ElementIterator<ElementType>& ElementIterator<ElementType>::traversePrevi
     return *this;
 }
 
+template <typename ElementTypeWithConst>
+inline ElementTypeWithConst* findElementAncestorOfType(const Element& current)
+{
+    ContainerNode* ancestor = current.parentNode();
+    while (ancestor && ancestor->isElementNode()) {
+        // Non-root containers are always Elements.
+        Element* element = toElement(ancestor);
+        if (isElementOfType<ElementTypeWithConst>(element))
+            return static_cast<ElementTypeWithConst*>(element);
+        ancestor = ancestor->parentNode();
+    }
+    return nullptr;
+}
+
+template <typename ElementType>
+inline ElementIterator<ElementType>& ElementIterator<ElementType>::traverseAncestor()
+{
+    ASSERT(m_current);
+    ASSERT(m_current != m_root);
+    ASSERT(!m_assertions.domTreeHasMutated());
+
+    m_current = findElementAncestorOfType<ElementType>(*m_current);
+
+#if !ASSERT_DISABLED
+    // Drop the assertion when the iterator reaches the end.
+    if (!m_current)
+        m_assertions.dropEventDispatchAssertion();
+#endif
+    return *this;
+}
+
 template <typename ElementType>
 inline ElementType& ElementIterator<ElementType>::operator*()
 {
@@ -176,11 +211,17 @@ inline ElementType* ElementIterator<ElementType>::operator->()
 }
 
 template <typename ElementType>
-inline bool ElementIterator<ElementType>::operator!=(const ElementIterator& other) const
+inline bool ElementIterator<ElementType>::operator==(const ElementIterator& other) const
 {
     ASSERT(m_root == other.m_root);
     ASSERT(!m_assertions.domTreeHasMutated());
-    return m_current != other.m_current;
+    return m_current == other.m_current;
+}
+
+template <typename ElementType>
+inline bool ElementIterator<ElementType>::operator!=(const ElementIterator& other) const
+{
+    return !(*this == other);
 }
 
 // ElementConstIterator
@@ -259,6 +300,23 @@ inline ElementConstIterator<ElementType>& ElementConstIterator<ElementType>::tra
 }
 
 template <typename ElementType>
+inline ElementConstIterator<ElementType>& ElementConstIterator<ElementType>::traverseAncestor()
+{
+    ASSERT(m_current);
+    ASSERT(m_current != m_root);
+    ASSERT(!m_assertions.domTreeHasMutated());
+
+    m_current = findElementAncestorOfType<const ElementType>(*m_current);
+
+#if !ASSERT_DISABLED
+    // Drop the assertion when the iterator reaches the end.
+    if (!m_current)
+        m_assertions.dropEventDispatchAssertion();
+#endif
+    return *this;
+}
+
+template <typename ElementType>
 inline const ElementType& ElementConstIterator<ElementType>::operator*() const
 {
     ASSERT(m_current);
@@ -275,15 +333,22 @@ inline const ElementType* ElementConstIterator<ElementType>::operator->() const
 }
 
 template <typename ElementType>
-inline bool ElementConstIterator<ElementType>::operator!=(const ElementConstIterator& other) const
+inline bool ElementConstIterator<ElementType>::operator==(const ElementConstIterator& other) const
 {
     ASSERT(m_root == other.m_root);
     ASSERT(!m_assertions.domTreeHasMutated());
-    return m_current != other.m_current;
+    return m_current == other.m_current;
+}
+
+template <typename ElementType>
+inline bool ElementConstIterator<ElementType>::operator!=(const ElementConstIterator& other) const
+{
+    return !(*this == other);
 }
 
 }
 
+#include "ElementAncestorIterator.h"
 #include "ElementChildIterator.h"
 #include "ElementDescendantIterator.h"
 

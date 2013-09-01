@@ -27,6 +27,7 @@
 #include "Attribute.h"
 #include "CSSPropertyNames.h"
 #include "Document.h"
+#include "ElementIterator.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "Frame.h"
@@ -163,13 +164,11 @@ RenderObject *HTMLFrameSetElement::createRenderer(RenderArena *arena, RenderStyl
     return new (arena) RenderFrameSet(this);
 }
 
-HTMLFrameSetElement* HTMLFrameSetElement::findContaining(Node* node)
+HTMLFrameSetElement* HTMLFrameSetElement::findContaining(Element* descendant)
 {
-    for (Element* parent = node->parentElement(); parent; parent = parent->parentElement()) {
-        if (isHTMLFrameSetElement(parent))
-            return toHTMLFrameSetElement(parent);
-    }
-    return 0;
+    auto ancestorFrameSets = ancestorsOfType<HTMLFrameSetElement>(descendant);
+    auto enclosingFrameSet = ancestorFrameSets.begin();
+    return enclosingFrameSet != ancestorFrameSets.end() ? &*enclosingFrameSet : nullptr;
 }
 
 void HTMLFrameSetElement::willAttachRenderers()

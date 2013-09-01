@@ -45,7 +45,7 @@ public:
     const Length* rowLengths() const { return m_rowLengths.get(); }
     const Length* colLengths() const { return m_colLengths.get(); }
 
-    static HTMLFrameSetElement* findContaining(Node* descendant);
+    static HTMLFrameSetElement* findContaining(Element* descendant);
 
     // Declared virtual in Element
     DEFINE_WINDOW_ATTRIBUTE_EVENT_LISTENER(blur);
@@ -121,6 +121,8 @@ inline const HTMLFrameSetElement* toHTMLFrameSetElement(const Node* node)
     ASSERT_WITH_SECURITY_IMPLICATION(!node || isHTMLFrameSetElement(node));
     return static_cast<const HTMLFrameSetElement*>(node);
 }
+
+template <> inline bool isElementOfType<HTMLFrameSetElement>(const Element* element) { return isHTMLFrameSetElement(element); }
 
 } // namespace WebCore
 
