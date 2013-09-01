@@ -99,7 +99,7 @@ inline CurrentEventScope::~CurrentEventScope()
 
 bool EventHandler::wheelEvent(NSEvent *event)
 {
-    Page* page = m_frame->page();
+    Page* page = m_frame.page();
     if (!page)
         return false;
 
@@ -123,16 +123,16 @@ bool EventHandler::keyEvent(NSEvent *event)
 
 void EventHandler::focusDocumentView()
 {
-    Page* page = m_frame->page();
+    Page* page = m_frame.page();
     if (!page)
         return;
 
-    if (FrameView* frameView = m_frame->view()) {
+    if (FrameView* frameView = m_frame.view()) {
         if (NSView *documentView = frameView->documentView())
             page->chrome().focusNSView(documentView);
     }
 
-    page->focusController().setFocusedFrame(m_frame);
+    page->focusController().setFocusedFrame(&m_frame);
 }
 
 bool EventHandler::passWidgetMouseDownEventToWidget(const MouseEventWithHitTestResults& event)
@@ -199,7 +199,7 @@ bool EventHandler::passMouseDownEventToWidget(Widget* pWidget)
         return true;
     }
     
-    Page* page = m_frame->page();
+    Page* page = m_frame.page();
     if (!page)
         return true;
 
@@ -278,7 +278,7 @@ NSView *EventHandler::mouseDownViewIfStillGood()
     if (!mouseDownView) {
         return nil;
     }
-    FrameView* topFrameView = m_frame->view();
+    FrameView* topFrameView = m_frame.view();
     NSView *topView = topFrameView ? topFrameView->platformWidget() : nil;
     if (!topView || !findViewInSubviews(topView, mouseDownView)) {
         m_mouseDownView = nil;
@@ -461,7 +461,7 @@ bool EventHandler::passWheelEventToWidget(const PlatformWheelEvent& wheelEvent, 
 
 void EventHandler::mouseDown(NSEvent *event)
 {
-    FrameView* v = m_frame->view();
+    FrameView* v = m_frame.view();
     if (!v || m_sendingEventToSubview)
         return;
 
@@ -478,7 +478,7 @@ void EventHandler::mouseDown(NSEvent *event)
 
 void EventHandler::mouseDragged(NSEvent *event)
 {
-    FrameView* v = m_frame->view();
+    FrameView* v = m_frame.view();
     if (!v || m_sendingEventToSubview)
         return;
 
@@ -492,7 +492,7 @@ void EventHandler::mouseDragged(NSEvent *event)
 
 void EventHandler::mouseUp(NSEvent *event)
 {
-    FrameView* v = m_frame->view();
+    FrameView* v = m_frame.view();
     if (!v || m_sendingEventToSubview)
         return;
 
@@ -529,7 +529,7 @@ void EventHandler::mouseUp(NSEvent *event)
  */
 void EventHandler::sendFakeEventsAfterWidgetTracking(NSEvent *initiatingEvent)
 {
-    FrameView* view = m_frame->view();
+    FrameView* view = m_frame.view();
     if (!view)
         return;
 
@@ -586,7 +586,7 @@ void EventHandler::mouseMoved(NSEvent *event)
 {
     // Reject a mouse moved if the button is down - screws up tracking during autoscroll
     // These happen because WebKit sometimes has to fake up moved events.
-    if (!m_frame->view() || m_mousePressed || m_sendingEventToSubview)
+    if (!m_frame.view() || m_mousePressed || m_sendingEventToSubview)
         return;
     
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
@@ -599,7 +599,7 @@ void EventHandler::passMouseMovedEventToScrollbars(NSEvent *event)
 {
     // Reject a mouse moved if the button is down - screws up tracking during autoscroll
     // These happen because WebKit sometimes has to fake up moved events.
-    if (!m_frame->view() || m_mousePressed || m_sendingEventToSubview)
+    if (!m_frame.view() || m_mousePressed || m_sendingEventToSubview)
         return;
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
@@ -608,9 +608,9 @@ void EventHandler::passMouseMovedEventToScrollbars(NSEvent *event)
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-static bool frameHasPlatformWidget(Frame* frame)
+static bool frameHasPlatformWidget(const Frame& frame)
 {
-    if (FrameView* frameView = frame->view()) {
+    if (FrameView* frameView = frame.view()) {
         if (frameView->platformWidget())
             return true;
     }
@@ -659,7 +659,7 @@ bool EventHandler::passMouseReleaseEventToSubframe(MouseEventWithHitTestResults&
 PlatformMouseEvent EventHandler::currentPlatformMouseEvent() const
 {
     NSView *windowView = nil;
-    if (Page* page = m_frame->page())
+    if (Page* page = m_frame.page())
         windowView = page->chrome().platformPageClient();
     return PlatformEventFactory::createPlatformMouseEvent(currentNSEvent(), windowView);
 }
@@ -684,7 +684,7 @@ PassRefPtr<Clipboard> EventHandler::createDraggingClipboard() const
 
 bool EventHandler::tabsToAllFormControls(KeyboardEvent* event) const
 {
-    Page* page = m_frame->page();
+    Page* page = m_frame.page();
     if (!page)
         return false;
 
@@ -709,11 +709,11 @@ bool EventHandler::tabsToAllFormControls(KeyboardEvent* event) const
 bool EventHandler::needsKeyboardEventDisambiguationQuirks() const
 {
 #if ENABLE(DASHBOARD_SUPPORT)
-    if (m_frame->settings().usesDashboardBackwardCompatibilityMode())
+    if (m_frame.settings().usesDashboardBackwardCompatibilityMode())
         return true;
 #endif
         
-    if (m_frame->settings().needsKeyboardEventDisambiguationQuirks())
+    if (m_frame.settings().needsKeyboardEventDisambiguationQuirks())
         return true;
 
     return false;

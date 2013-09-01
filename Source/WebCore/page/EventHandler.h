@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2009, 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2009, 2010, 2011, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -101,7 +101,7 @@ enum CheckDragHysteresis { ShouldCheckDragHysteresis, DontCheckDragHysteresis };
 class EventHandler {
     WTF_MAKE_NONCOPYABLE(EventHandler);
 public:
-    explicit EventHandler(Frame*);
+    explicit EventHandler(Frame&);
     ~EventHandler();
 
     void clear();
@@ -409,7 +409,7 @@ private:
     void autoHideCursorTimerFired(Timer<EventHandler>*);
 #endif
 
-    Frame* m_frame;
+    Frame& m_frame;
 
     bool m_mousePressed;
     bool m_capturesDragging;

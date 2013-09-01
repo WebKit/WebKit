@@ -56,8 +56,8 @@ bool EventHandler::tabsToAllFormControls(KeyboardEvent*) const
 
 void EventHandler::focusDocumentView()
 {
-    if (Page* page = m_frame->page())
-        page->focusController().setFocusedFrame(m_frame);
+    if (Page* page = m_frame.page())
+        page->focusController().setFocusedFrame(&m_frame);
 }
 
 bool EventHandler::passWidgetMouseDownEventToWidget(const MouseEventWithHitTestResults& event)

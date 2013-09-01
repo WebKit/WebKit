@@ -104,10 +104,10 @@ PassRefPtr<Clipboard> EventHandler::createDraggingClipboard() const
 
 void EventHandler::focusDocumentView()
 {
-    Page* page = m_frame->page();
+    Page* page = m_frame.page();
     if (!page)
         return;
-    page->focusController().setFocusedFrame(m_frame);
+    page->focusController().setFocusedFrame(&m_frame);
 }
 
 bool EventHandler::passWidgetMouseDownEventToWidget(const MouseEventWithHitTestResults&)

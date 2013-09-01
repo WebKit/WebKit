@@ -1,3 +1,13 @@
+2013-09-01  Andreas Kling  <akling@apple.com>
+
+        EventHandler::m_frame should be a Frame&.
+        <https://webkit.org/b/120580>
+
+        Reviewed by Darin Adler.
+
+        EventHandler is tied to the lifetime of its frame, so let m_frame be a Frame&.
+        A handful of null checks and assertions removed.
+
 2013-09-01  Darin Adler  <darin@apple.com>
 
         Fix a mistake in my recent pasteboard/editor refactoring that was causing tests to fail.
