@@ -1390,6 +1390,8 @@ PassRefPtr<cairo_surface_t> EwkView::takeSnapshot()
 void EwkView::didFindZoomableArea(const WKPoint& point, const WKRect& area)
 {
     notImplemented();
+    UNUSED_PARAM(point);
+    UNUSED_PARAM(area);
 }
 
 Evas_Smart_Class EwkView::parentSmartClass = EVAS_SMART_CLASS_INIT_NULL;
