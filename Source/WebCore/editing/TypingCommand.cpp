@@ -74,7 +74,7 @@ private:
     const String& m_text;
 };
 
-TypingCommand::TypingCommand(Document *document, ETypingCommand commandType, const String &textToInsert, Options options, TextGranularity granularity, TextCompositionType compositionType)
+TypingCommand::TypingCommand(Document& document, ETypingCommand commandType, const String &textToInsert, Options options, TextGranularity granularity, TextCompositionType compositionType)
     : TextInsertionBaseCommand(document)
     , m_commandType(commandType)
     , m_textToInsert(textToInsert)
@@ -107,7 +107,7 @@ void TypingCommand::deleteSelection(Document* document, Options options)
         return;
     }
 
-    TypingCommand::create(document, DeleteSelection, "", options)->apply();
+    TypingCommand::create(*document, DeleteSelection, "", options)->apply();
 }
 
 void TypingCommand::deleteKeyPressed(Document *document, Options options, TextGranularity granularity)
@@ -122,7 +122,7 @@ void TypingCommand::deleteKeyPressed(Document *document, Options options, TextGr
         }
     }
 
-    TypingCommand::create(document, DeleteKey, "", options, granularity)->apply();
+    TypingCommand::create(*document, DeleteKey, "", options, granularity)->apply();
 }
 
 void TypingCommand::forwardDeleteKeyPressed(Document *document, Options options, TextGranularity granularity)
@@ -139,7 +139,7 @@ void TypingCommand::forwardDeleteKeyPressed(Document *document, Options options,
         }
     }
 
-    TypingCommand::create(document, ForwardDeleteKey, "", options, granularity)->apply();
+    TypingCommand::create(*document, ForwardDeleteKey, "", options, granularity)->apply();
 }
 
 void TypingCommand::updateSelectionIfDifferentFromCurrentSelection(TypingCommand* typingCommand, Frame* frame)
@@ -194,7 +194,7 @@ void TypingCommand::insertText(Document* document, const String& text, const Vis
         return;
     }
 
-    RefPtr<TypingCommand> cmd = TypingCommand::create(document, InsertText, newText, options, compositionType);
+    RefPtr<TypingCommand> cmd = TypingCommand::create(*document, InsertText, newText, options, compositionType);
     applyTextInsertionCommand(frame.get(), cmd, selectionForInsertion, currentSelection);
 }
 
@@ -207,7 +207,7 @@ void TypingCommand::insertLineBreak(Document *document, Options options)
         return;
     }
 
-    applyCommand(TypingCommand::create(document, InsertLineBreak, "", options));
+    applyCommand(TypingCommand::create(*document, InsertLineBreak, "", options));
 }
 
 void TypingCommand::insertParagraphSeparatorInQuotedContent(Document *document)
@@ -218,7 +218,7 @@ void TypingCommand::insertParagraphSeparatorInQuotedContent(Document *document)
         return;
     }
 
-    applyCommand(TypingCommand::create(document, InsertParagraphSeparatorInQuotedContent));
+    applyCommand(TypingCommand::create(*document, InsertParagraphSeparatorInQuotedContent));
 }
 
 void TypingCommand::insertParagraphSeparator(Document *document, Options options)
@@ -230,7 +230,7 @@ void TypingCommand::insertParagraphSeparator(Document *document, Options options
         return;
     }
 
-    applyCommand(TypingCommand::create(document, InsertParagraphSeparator, "", options));
+    applyCommand(TypingCommand::create(*document, InsertParagraphSeparator, "", options));
 }
 
 PassRefPtr<TypingCommand> TypingCommand::lastTypingCommandIfStillOpenForTyping(Frame* frame)
@@ -293,7 +293,7 @@ EditAction TypingCommand::editingAction() const
 
 void TypingCommand::markMisspellingsAfterTyping(ETypingCommand commandType)
 {
-    Frame* frame = document()->frame();
+    Frame* frame = document().frame();
     if (!frame)
         return;
 
@@ -330,7 +330,7 @@ void TypingCommand::markMisspellingsAfterTyping(ETypingCommand commandType)
 
 void TypingCommand::typingAddedToOpenCommand(ETypingCommand commandTypeForAddedTyping)
 {
-    Frame* frame = document()->frame();
+    Frame* frame = document().frame();
     if (!frame)
         return;
 
@@ -423,7 +423,7 @@ bool TypingCommand::makeEditableRootEmpty()
 
 void TypingCommand::deleteKeyPressed(TextGranularity granularity, bool killRing)
 {
-    Frame* frame = document()->frame();
+    Frame* frame = document().frame();
     if (!frame)
         return;
 
@@ -527,7 +527,7 @@ void TypingCommand::deleteKeyPressed(TextGranularity granularity, bool killRing)
 
 void TypingCommand::forwardDeleteKeyPressed(TextGranularity granularity, bool killRing)
 {
-    Frame* frame = document()->frame();
+    Frame* frame = document().frame();
     if (!frame)
         return;
 

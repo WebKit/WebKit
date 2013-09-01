@@ -80,7 +80,7 @@ private:
     Vector<DictationAlternative> m_alternatives;
 };
 
-DictationCommand::DictationCommand(Document* document, const String& text, const Vector<DictationAlternative>& alternatives)
+DictationCommand::DictationCommand(Document& document, const String& text, const Vector<DictationAlternative>& alternatives)
     : TextInsertionBaseCommand(document)
     , m_textToInsert(text)
     , m_alternatives(alternatives)
@@ -98,11 +98,11 @@ void DictationCommand::insertText(Document* document, const String& text, const 
 
     RefPtr<DictationCommand> cmd;
     if (newText == text)
-        cmd = DictationCommand::create(document, newText, alternatives);
+        cmd = DictationCommand::create(*document, newText, alternatives);
     else
         // If the text was modified before insertion, the location of dictation alternatives
         // will not be valid anymore. We will just drop the alternatives.
-        cmd = DictationCommand::create(document, newText, Vector<DictationAlternative>());
+        cmd = DictationCommand::create(*document, newText, Vector<DictationAlternative>());
     applyTextInsertionCommand(frame.get(), cmd, selectionForInsertion, currentSelection);
 }
 

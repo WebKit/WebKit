@@ -40,7 +40,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-RemoveFormatCommand::RemoveFormatCommand(Document* document)
+RemoveFormatCommand::RemoveFormatCommand(Document& document)
     : CompositeEditCommand(document)
 {
 }
@@ -79,7 +79,7 @@ static bool isElementForRemoveFormatCommand(const Element* element)
 
 void RemoveFormatCommand::doApply()
 {
-    Frame* frame = document()->frame();
+    Frame* frame = document().frame();
 
     if (!frame->selection().selection().isNonOrphanedCaretOrRange())
         return;

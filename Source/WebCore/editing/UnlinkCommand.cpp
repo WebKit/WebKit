@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-UnlinkCommand::UnlinkCommand(Document* document)
+UnlinkCommand::UnlinkCommand(Document& document)
     : CompositeEditCommand(document)
 {
 }
@@ -41,7 +41,7 @@ void UnlinkCommand::doApply()
     if (!endingSelection().isNonOrphanedRange())
         return;
 
-    removeStyledElement(HTMLAnchorElement::create(document()));
+    removeStyledElement(HTMLAnchorElement::create(&document()));
 }
 
 }

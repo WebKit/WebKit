@@ -193,7 +193,8 @@ static bool executeApplyParagraphStyle(Frame& frame, EditorCommandSource source,
 
 static bool executeInsertFragment(Frame& frame, PassRefPtr<DocumentFragment> fragment)
 {
-    applyCommand(ReplaceSelectionCommand::create(frame.document(), fragment, ReplaceSelectionCommand::PreventNesting, EditActionUnspecified));
+    ASSERT(frame.document());
+    applyCommand(ReplaceSelectionCommand::create(*frame.document(), fragment, ReplaceSelectionCommand::PreventNesting, EditActionUnspecified));
     return true;
 }
 
@@ -290,7 +291,8 @@ static bool executeCreateLink(Frame& frame, Event*, EditorCommandSource, const S
     // FIXME: If userInterface is true, we should display a dialog box to let the user enter a URL.
     if (value.isEmpty())
         return false;
-    applyCommand(CreateLinkCommand::create(frame.document(), value));
+    ASSERT(frame.document());
+    applyCommand(CreateLinkCommand::create(*frame.document(), value));
     return true;
 }
 
@@ -447,7 +449,8 @@ static bool executeFormatBlock(Frame& frame, Event*, EditorCommandSource, const 
         return false;
     QualifiedName qualifiedTagName(prefix, localName, xhtmlNamespaceURI);
 
-    RefPtr<FormatBlockCommand> command = FormatBlockCommand::create(frame.document(), qualifiedTagName);
+    ASSERT(frame.document());
+    RefPtr<FormatBlockCommand> command = FormatBlockCommand::create(*frame.document(), qualifiedTagName);
     applyCommand(command);
     return command->didApply();
 }
@@ -478,7 +481,8 @@ static bool executeIgnoreSpelling(Frame& frame, Event*, EditorCommandSource, con
 
 static bool executeIndent(Frame& frame, Event*, EditorCommandSource, const String&)
 {
-    applyCommand(IndentOutdentCommand::create(frame.document(), IndentOutdentCommand::Indent));
+    ASSERT(frame.document());
+    applyCommand(IndentOutdentCommand::create(*frame.document(), IndentOutdentCommand::Indent));
     return true;
 }
 
@@ -539,7 +543,8 @@ static bool executeInsertNewlineInQuotedContent(Frame& frame, Event*, EditorComm
 
 static bool executeInsertOrderedList(Frame& frame, Event*, EditorCommandSource, const String&)
 {
-    applyCommand(InsertListCommand::create(frame.document(), InsertListCommand::OrderedList));
+    ASSERT(frame.document());
+    applyCommand(InsertListCommand::create(*frame.document(), InsertListCommand::OrderedList));
     return true;
 }
 
@@ -562,7 +567,8 @@ static bool executeInsertText(Frame& frame, Event*, EditorCommandSource, const S
 
 static bool executeInsertUnorderedList(Frame& frame, Event*, EditorCommandSource, const String&)
 {
-    applyCommand(InsertListCommand::create(frame.document(), InsertListCommand::UnorderedList));
+    ASSERT(frame.document());
+    applyCommand(InsertListCommand::create(*frame.document(), InsertListCommand::UnorderedList));
     return true;
 }
 
@@ -898,7 +904,8 @@ static bool executeMoveToRightEndOfLineAndModifySelection(Frame& frame, Event*, 
 
 static bool executeOutdent(Frame& frame, Event*, EditorCommandSource, const String&)
 {
-    applyCommand(IndentOutdentCommand::create(frame.document(), IndentOutdentCommand::Outdent));
+    ASSERT(frame.document());
+    applyCommand(IndentOutdentCommand::create(*frame.document(), IndentOutdentCommand::Outdent));
     return true;
 }
 
@@ -1128,7 +1135,8 @@ static bool executeUndo(Frame& frame, Event*, EditorCommandSource, const String&
 
 static bool executeUnlink(Frame& frame, Event*, EditorCommandSource, const String&)
 {
-    applyCommand(UnlinkCommand::create(frame.document()));
+    ASSERT(frame.document());
+    applyCommand(UnlinkCommand::create(*frame.document()));
     return true;
 }
 

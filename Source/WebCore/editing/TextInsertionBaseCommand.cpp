@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-TextInsertionBaseCommand::TextInsertionBaseCommand(Document* document)
+TextInsertionBaseCommand::TextInsertionBaseCommand(Document& document)
     : CompositeEditCommand(document)
 {
 }

@@ -39,12 +39,12 @@ public:
     static void insertText(Document*, const String&, const Vector<DictationAlternative>& alternatives, const VisibleSelection&);
     virtual bool isDictationCommand() const { return true; }
 private:
-    static PassRefPtr<DictationCommand> create(Document* document, const String& text, const Vector<DictationAlternative>& alternatives)
+    static PassRefPtr<DictationCommand> create(Document& document, const String& text, const Vector<DictationAlternative>& alternatives)
     {
         return adoptRef(new DictationCommand(document, text, alternatives));
     }
 
-    DictationCommand(Document*, const String& text, const Vector<DictationAlternative>& alternatives);
+    DictationCommand(Document&, const String& text, const Vector<DictationAlternative>& alternatives);
     
     virtual void doApply();
 

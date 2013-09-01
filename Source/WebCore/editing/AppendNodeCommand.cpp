@@ -34,7 +34,7 @@
 namespace WebCore {
 
 AppendNodeCommand::AppendNodeCommand(PassRefPtr<ContainerNode> parent, PassRefPtr<Node> node)
-    : SimpleEditCommand(&parent->document())
+    : SimpleEditCommand(parent->document())
     , m_parent(parent)
     , m_node(node)
 {

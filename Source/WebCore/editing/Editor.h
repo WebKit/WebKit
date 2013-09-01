@@ -415,6 +415,8 @@ public:
 private:
     explicit Editor(Frame&);
 
+    Document& document() const;
+
 #if PLATFORM(MAC)
     PassRefPtr<SharedBuffer> selectionInWebArchiveFormat();
     PassRefPtr<Range> adjustedSelectionRange();

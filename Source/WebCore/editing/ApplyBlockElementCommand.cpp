@@ -41,14 +41,14 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-ApplyBlockElementCommand::ApplyBlockElementCommand(Document* document, const QualifiedName& tagName, const AtomicString& inlineStyle)
+ApplyBlockElementCommand::ApplyBlockElementCommand(Document& document, const QualifiedName& tagName, const AtomicString& inlineStyle)
     : CompositeEditCommand(document)
     , m_tagName(tagName)
     , m_inlineStyle(inlineStyle)
 {
 }
 
-ApplyBlockElementCommand::ApplyBlockElementCommand(Document* document, const QualifiedName& tagName)
+ApplyBlockElementCommand::ApplyBlockElementCommand(Document& document, const QualifiedName& tagName)
     : CompositeEditCommand(document)
     , m_tagName(tagName)
 {
@@ -87,7 +87,7 @@ void ApplyBlockElementCommand::doApply()
 
     formatSelection(startOfSelection, endOfSelection);
 
-    document()->updateLayoutIgnorePendingStylesheets();
+    document().updateLayoutIgnorePendingStylesheets();
 
     ASSERT(startScope == endScope);
     ASSERT(startIndex >= 0);
@@ -108,7 +108,7 @@ void ApplyBlockElementCommand::formatSelection(const VisiblePosition& startOfSel
     if (isAtUnsplittableElement(start)) {
         RefPtr<Element> blockquote = createBlockElement();
         insertNodeAt(blockquote, start);
-        RefPtr<Element> placeholder = createBreakElement(document());
+        RefPtr<Element> placeholder = createBreakElement(&document());
         appendNode(placeholder, blockquote);
         setEndingSelection(VisibleSelection(positionBeforeNode(placeholder.get()), DOWNSTREAM, endingSelection().isDirectional()));
         return;
@@ -278,7 +278,7 @@ VisiblePosition ApplyBlockElementCommand::endOfNextParagrahSplittingTextNodesIfN
 
 PassRefPtr<Element> ApplyBlockElementCommand::createBlockElement() const
 {
-    RefPtr<Element> element = createHTMLElement(document(), m_tagName);
+    RefPtr<Element> element = createHTMLElement(&document(), m_tagName);
     if (m_inlineStyle.length())
         element->setAttribute(styleAttr, m_inlineStyle);
     return element.release();

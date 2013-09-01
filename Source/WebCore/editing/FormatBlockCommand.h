@@ -40,7 +40,7 @@ class VisiblePosition;
 
 class FormatBlockCommand : public ApplyBlockElementCommand {
 public:
-    static PassRefPtr<FormatBlockCommand> create(Document* document, const QualifiedName& tagName)
+    static PassRefPtr<FormatBlockCommand> create(Document& document, const QualifiedName& tagName)
     {
         return adoptRef(new FormatBlockCommand(document, tagName));
     }
@@ -51,7 +51,7 @@ public:
     bool didApply() const { return m_didApply; }
 
 private:
-    FormatBlockCommand(Document*, const QualifiedName& tagName);
+    FormatBlockCommand(Document&, const QualifiedName& tagName);
 
     void formatSelection(const VisiblePosition& startOfSelection, const VisiblePosition& endOfSelection);
     void formatRange(const Position& start, const Position& end, const Position& endOfSelection, RefPtr<Element>&);

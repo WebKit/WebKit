@@ -36,7 +36,7 @@
 namespace WebCore {
 
 InsertIntoTextNodeCommand::InsertIntoTextNodeCommand(PassRefPtr<Text> node, unsigned offset, const String& text)
-    : SimpleEditCommand(&node->document())
+    : SimpleEditCommand(node->document())
     , m_node(node)
     , m_offset(offset)
     , m_text(text)
@@ -48,9 +48,10 @@ InsertIntoTextNodeCommand::InsertIntoTextNodeCommand(PassRefPtr<Text> node, unsi
 
 void InsertIntoTextNodeCommand::doApply()
 {
-    bool passwordEchoEnabled = document()->settings() && document()->settings()->passwordEchoEnabled();
+    // FIXME: EditCommand should always have a Frame, so going through Document for Settings shouldn't be necessary.
+    bool passwordEchoEnabled = document().settings() && document().settings()->passwordEchoEnabled();
     if (passwordEchoEnabled)
-        document()->updateLayoutIgnorePendingStylesheets();
+        document().updateLayoutIgnorePendingStylesheets();
 
     if (!m_node->rendererIsEditable())
         return;
@@ -63,7 +64,7 @@ void InsertIntoTextNodeCommand::doApply()
 
     m_node->insertData(m_offset, m_text, IGNORE_EXCEPTION);
 
-    if (AXObjectCache* cache = document()->existingAXObjectCache())
+    if (AXObjectCache* cache = document().existingAXObjectCache())
         cache->nodeTextChangeNotification(m_node.get(), AXObjectCache::AXTextInserted, m_offset, m_text);
 }
 
@@ -73,7 +74,7 @@ void InsertIntoTextNodeCommand::doUnapply()
         return;
         
     // Need to notify this before actually deleting the text
-    if (AXObjectCache* cache = document()->existingAXObjectCache())
+    if (AXObjectCache* cache = document().existingAXObjectCache())
         cache->nodeTextChangeNotification(m_node.get(), AXObjectCache::AXTextDeleted, m_offset, m_text);
 
     m_node->deleteData(m_offset, m_text.length(), IGNORE_EXCEPTION);

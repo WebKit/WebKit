@@ -126,7 +126,7 @@ public:
     static bool elementIsStyledSpanOrHTMLEquivalent(const HTMLElement*);
 
     void prepareToApplyAt(const Position&, ShouldPreserveWritingDirection = DoNotPreserveWritingDirection);
-    void mergeTypingStyle(Document*);
+    void mergeTypingStyle(Document&);
     enum CSSPropertyOverrideMode { OverrideValues, DoNotOverrideValues };
     void mergeInlineStyleOfElement(StyledElement*, CSSPropertyOverrideMode, PropertiesToInclude = AllProperties);
     static PassRefPtr<EditingStyle> wrappingStyleForSerialization(Node* context, bool shouldAnnotate);

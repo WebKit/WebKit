@@ -528,7 +528,7 @@ bool DragController::concludeEditDrag(DragData* dragData)
                     options |= ReplaceSelectionCommand::SmartReplace;
                 if (chosePlainText)
                     options |= ReplaceSelectionCommand::MatchStyle;
-                applyCommand(ReplaceSelectionCommand::create(m_documentUnderMouse.get(), fragment, options));
+                applyCommand(ReplaceSelectionCommand::create(*m_documentUnderMouse, fragment, options));
             }
         }
     } else {
@@ -539,7 +539,7 @@ bool DragController::concludeEditDrag(DragData* dragData)
 
         m_client->willPerformDragDestinationAction(DragDestinationActionEdit, dragData);
         if (setSelectionToDragCaret(innerFrame.get(), dragCaret, range, point))
-            applyCommand(ReplaceSelectionCommand::create(m_documentUnderMouse.get(), createFragmentFromText(range.get(), text),  ReplaceSelectionCommand::SelectReplacement | ReplaceSelectionCommand::MatchStyle | ReplaceSelectionCommand::PreventNesting));
+            applyCommand(ReplaceSelectionCommand::create(*m_documentUnderMouse, createFragmentFromText(range.get(), text),  ReplaceSelectionCommand::SelectReplacement | ReplaceSelectionCommand::MatchStyle | ReplaceSelectionCommand::PreventNesting));
     }
 
     if (rootEditableElement) {

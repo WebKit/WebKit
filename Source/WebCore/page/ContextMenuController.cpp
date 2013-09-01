@@ -353,7 +353,6 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
     case ContextMenuItemTagSpellingGuess: {
         FrameSelection& frameSelection = frame->selection();
         if (frame->editor().shouldInsertText(item->title(), frameSelection.toNormalizedRange().get(), EditorInsertActionPasted)) {
-            Document* document = frame->document();
             ReplaceSelectionCommand::CommandOptions replaceOptions = ReplaceSelectionCommand::MatchStyle | ReplaceSelectionCommand::PreventNesting;
 
             if (frame->editor().behavior().shouldAllowSpellingSuggestionsWithoutSelection()) {
@@ -366,7 +365,9 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
                 replaceOptions |= ReplaceSelectionCommand::SelectReplacement;
             }
 
-            RefPtr<ReplaceSelectionCommand> command = ReplaceSelectionCommand::create(document, createFragmentFromMarkup(document, item->title(), ""), replaceOptions);
+            Document* document = frame->document();
+            ASSERT(document);
+            RefPtr<ReplaceSelectionCommand> command = ReplaceSelectionCommand::create(*document, createFragmentFromMarkup(document, item->title(), ""), replaceOptions);
             applyCommand(command);
             frameSelection.revealSelection(ScrollAlignment::alignToEdgeIfNeeded);
         }

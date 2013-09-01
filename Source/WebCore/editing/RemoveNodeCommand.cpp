@@ -33,7 +33,7 @@
 namespace WebCore {
 
 RemoveNodeCommand::RemoveNodeCommand(PassRefPtr<Node> node, ShouldAssumeContentIsAlwaysEditable shouldAssumeContentIsAlwaysEditable)
-    : SimpleEditCommand(&node->document())
+    : SimpleEditCommand(node->document())
     , m_node(node)
     , m_shouldAssumeContentIsAlwaysEditable(shouldAssumeContentIsAlwaysEditable)
 {

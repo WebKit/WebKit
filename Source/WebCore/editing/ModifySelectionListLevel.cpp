@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-ModifySelectionListLevelCommand::ModifySelectionListLevelCommand(Document* document) 
+ModifySelectionListLevelCommand::ModifySelectionListLevelCommand(Document& document)
     : CompositeEditCommand(document)
 {
 }
@@ -134,7 +134,7 @@ void ModifySelectionListLevelCommand::appendSiblingNodeRange(Node* startNode, No
     }
 }
 
-IncreaseSelectionListLevelCommand::IncreaseSelectionListLevelCommand(Document* document, Type listType)
+IncreaseSelectionListLevelCommand::IncreaseSelectionListLevelCommand(Document& document, Type listType)
     : ModifySelectionListLevelCommand(document)
     , m_listType(listType)
 {
@@ -190,10 +190,10 @@ void IncreaseSelectionListLevelCommand::doApply()
                     newParent = newParent->cloneElementWithoutChildren();
                 break;
             case OrderedList:
-                newParent = createOrderedListElement(document());
+                newParent = createOrderedListElement(&document());
                 break;
             case UnorderedList:
-                newParent = createUnorderedListElement(document());
+                newParent = createUnorderedListElement(&document());
                 break;
         }
         insertNodeBefore(newParent, startListChild);
@@ -213,7 +213,7 @@ PassRefPtr<Node> IncreaseSelectionListLevelCommand::increaseSelectionListLevel(D
 {
     ASSERT(document);
     ASSERT(document->frame());
-    RefPtr<IncreaseSelectionListLevelCommand> command = create(document, type);
+    RefPtr<IncreaseSelectionListLevelCommand> command = create(*document, type);
     command->apply();
     return command->m_listElement.release();
 }
@@ -233,7 +233,7 @@ PassRefPtr<Node> IncreaseSelectionListLevelCommand::increaseSelectionListLevelUn
     return increaseSelectionListLevel(document, UnorderedList);
 }
 
-DecreaseSelectionListLevelCommand::DecreaseSelectionListLevelCommand(Document* document) 
+DecreaseSelectionListLevelCommand::DecreaseSelectionListLevelCommand(Document& document)
     : ModifySelectionListLevelCommand(document)
 {
 }
@@ -289,7 +289,7 @@ void DecreaseSelectionListLevelCommand::decreaseSelectionListLevel(Document* doc
 {
     ASSERT(document);
     ASSERT(document->frame());
-    applyCommand(create(document));
+    applyCommand(create(*document));
 }
 
 }

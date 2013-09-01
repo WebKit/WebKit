@@ -89,7 +89,7 @@ public:
     virtual bool shouldStopCaretBlinking() const { return false; }
 
 protected:
-    explicit CompositeEditCommand(Document*);
+    explicit CompositeEditCommand(Document&);
 
     //
     // sugary-sweet convenience functions to help create and apply edit commands in composite commands

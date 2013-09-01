@@ -34,7 +34,7 @@
 namespace WebCore {
 
 DeleteFromTextNodeCommand::DeleteFromTextNodeCommand(PassRefPtr<Text> node, unsigned offset, unsigned count)
-    : SimpleEditCommand(&node->document())
+    : SimpleEditCommand(node->document())
     , m_node(node)
     , m_offset(offset)
     , m_count(count)
@@ -57,7 +57,7 @@ void DeleteFromTextNodeCommand::doApply()
         return;
     
     // Need to notify this before actually deleting the text
-    if (AXObjectCache* cache = document()->existingAXObjectCache())
+    if (AXObjectCache* cache = document().existingAXObjectCache())
         cache->nodeTextChangeNotification(m_node.get(), AXObjectCache::AXTextDeleted, m_offset, m_text);
 
     m_node->deleteData(m_offset, m_count, ec);
@@ -72,7 +72,7 @@ void DeleteFromTextNodeCommand::doUnapply()
 
     m_node->insertData(m_offset, m_text, IGNORE_EXCEPTION);
 
-    if (AXObjectCache* cache = document()->existingAXObjectCache())
+    if (AXObjectCache* cache = document().existingAXObjectCache())
         cache->nodeTextChangeNotification(m_node.get(), AXObjectCache::AXTextInserted, m_offset, m_text);
 }
 

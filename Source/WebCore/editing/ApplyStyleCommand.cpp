@@ -128,7 +128,7 @@ PassRefPtr<HTMLElement> createStyleSpanElement(Document* document)
     return styleElement.release();
 }
 
-ApplyStyleCommand::ApplyStyleCommand(Document* document, const EditingStyle* style, EditAction editingAction, EPropertyLevel propertyLevel)
+ApplyStyleCommand::ApplyStyleCommand(Document& document, const EditingStyle* style, EditAction editingAction, EPropertyLevel propertyLevel)
     : CompositeEditCommand(document)
     , m_style(style->copy())
     , m_editingAction(editingAction)
@@ -142,7 +142,7 @@ ApplyStyleCommand::ApplyStyleCommand(Document* document, const EditingStyle* sty
 {
 }
 
-ApplyStyleCommand::ApplyStyleCommand(Document* document, const EditingStyle* style, const Position& start, const Position& end, EditAction editingAction, EPropertyLevel propertyLevel)
+ApplyStyleCommand::ApplyStyleCommand(Document& document, const EditingStyle* style, const Position& start, const Position& end, EditAction editingAction, EPropertyLevel propertyLevel)
     : CompositeEditCommand(document)
     , m_style(style->copy())
     , m_editingAction(editingAction)
@@ -157,7 +157,7 @@ ApplyStyleCommand::ApplyStyleCommand(Document* document, const EditingStyle* sty
 }
 
 ApplyStyleCommand::ApplyStyleCommand(PassRefPtr<Element> element, bool removeOnly, EditAction editingAction)
-    : CompositeEditCommand(&element->document())
+    : CompositeEditCommand(element->document())
     , m_style(EditingStyle::create())
     , m_editingAction(editingAction)
     , m_propertyLevel(PropertyDefault)
@@ -170,7 +170,7 @@ ApplyStyleCommand::ApplyStyleCommand(PassRefPtr<Element> element, bool removeOnl
 {
 }
 
-ApplyStyleCommand::ApplyStyleCommand(Document* document, const EditingStyle* style, IsInlineElementToRemoveFunction isInlineElementToRemoveFunction, EditAction editingAction)
+ApplyStyleCommand::ApplyStyleCommand(Document& document, const EditingStyle* style, IsInlineElementToRemoveFunction isInlineElementToRemoveFunction, EditAction editingAction)
     : CompositeEditCommand(document)
     , m_style(style->copy())
     , m_editingAction(editingAction)
@@ -245,7 +245,7 @@ void ApplyStyleCommand::applyBlockStyle(EditingStyle *style)
     // update document layout once before removing styles
     // so that we avoid the expense of updating before each and every call
     // to check a computed style
-    document()->updateLayoutIgnorePendingStylesheets();
+    document().updateLayoutIgnorePendingStylesheets();
 
     // get positions we want to use for applying style
     Position start = startPosition();
@@ -266,8 +266,8 @@ void ApplyStyleCommand::applyBlockStyle(EditingStyle *style)
     // addBlockStyleIfNeeded may moveParagraphs, which can remove these endpoints.
     // Calculate start and end indices from the start of the tree that they're in.
     Node* scope = highestAncestor(visibleStart.deepEquivalent().deprecatedNode());
-    RefPtr<Range> startRange = Range::create(document(), firstPositionInNode(scope), visibleStart.deepEquivalent().parentAnchoredEquivalent());
-    RefPtr<Range> endRange = Range::create(document(), firstPositionInNode(scope), visibleEnd.deepEquivalent().parentAnchoredEquivalent());
+    RefPtr<Range> startRange = Range::create(&document(), firstPositionInNode(scope), visibleStart.deepEquivalent().parentAnchoredEquivalent());
+    RefPtr<Range> endRange = Range::create(&document(), firstPositionInNode(scope), visibleEnd.deepEquivalent().parentAnchoredEquivalent());
     int startIndex = TextIterator::rangeLength(startRange.get(), true);
     int endIndex = TextIterator::rangeLength(endRange.get(), true);
 
@@ -392,7 +392,7 @@ void ApplyStyleCommand::applyRelativeFontStyleChange(EditingStyle* style)
         } else if (node->isTextNode() && node->renderer() && node->parentNode() != lastStyledNode) {
             // Last styled node was not parent node of this text node, but we wish to style this
             // text node. To make this possible, add a style span to surround this text node.
-            RefPtr<HTMLElement> span = createStyleSpanElement(document());
+            RefPtr<HTMLElement> span = createStyleSpanElement(&document());
             surroundNodeRangeWithElement(node, node, span.get());
             element = span.release();
         }  else {
@@ -557,7 +557,7 @@ void ApplyStyleCommand::applyInlineStyle(EditingStyle* style)
     // update document layout once before removing styles
     // so that we avoid the expense of updating before each and every call
     // to check a computed style
-    document()->updateLayoutIgnorePendingStylesheets();
+    document().updateLayoutIgnorePendingStylesheets();
 
     // adjust to the positions we want to use for applying style
     Position start = startPosition();
@@ -651,7 +651,7 @@ void ApplyStyleCommand::applyInlineStyle(EditingStyle* style)
     // update document layout once before running the rest of the function
     // so that we avoid the expense of updating before each and every call
     // to check a computed style
-    document()->updateLayoutIgnorePendingStylesheets();
+    document().updateLayoutIgnorePendingStylesheets();
 
     RefPtr<EditingStyle> styleToApply = style;
     if (hasTextDirection) {
@@ -755,7 +755,7 @@ void ApplyStyleCommand::applyInlineStyleToNodeRange(EditingStyle* style, PassRef
     if (m_removeOnly)
         return;
 
-    document()->updateLayoutIgnorePendingStylesheets();
+    document().updateLayoutIgnorePendingStylesheets();
 
     Vector<InlineRunToApplyStyle> runs;
     RefPtr<Node> node = startNode;
@@ -816,7 +816,7 @@ void ApplyStyleCommand::applyInlineStyleToNodeRange(EditingStyle* style, PassRef
         runs[i].positionForStyleComputation = positionToComputeInlineStyleChange(runs[i].start, runs[i].dummyElement);
     }
 
-    document()->updateLayoutIgnorePendingStylesheets();
+    document().updateLayoutIgnorePendingStylesheets();
 
     for (size_t i = 0; i < runs.size(); i++)
         runs[i].change = StyleChange(style, runs[i].positionForStyleComputation);
@@ -1415,7 +1415,7 @@ Position ApplyStyleCommand::positionToComputeInlineStyleChange(PassRefPtr<Node> 
 {
     // It's okay to obtain the style at the startNode because we've removed all relevant styles from the current run.
     if (!startNode->isElementNode()) {
-        dummyElement = createStyleSpanElement(document());
+        dummyElement = createStyleSpanElement(&document());
         insertNodeAt(dummyElement, positionBeforeNode(startNode.get()));
         return firstPositionInOrBeforeNode(dummyElement.get());
     }
@@ -1455,7 +1455,7 @@ void ApplyStyleCommand::applyInlineStyleChange(PassRefPtr<Node> passedStart, Pas
             if (styleChange.applyFontSize())
                 setNodeAttribute(fontContainer, sizeAttr, styleChange.fontSize());
         } else {
-            RefPtr<Element> fontElement = createFontElement(document());
+            RefPtr<Element> fontElement = createFontElement(&document());
             if (styleChange.applyFontColor())
                 fontElement->setAttribute(colorAttr, styleChange.fontColor());
             if (styleChange.applyFontFace())
@@ -1479,28 +1479,28 @@ void ApplyStyleCommand::applyInlineStyleChange(PassRefPtr<Node> passedStart, Pas
             } else
                 setNodeAttribute(styleContainer, styleAttr, styleChange.cssStyle());
         } else {
-            RefPtr<Element> styleElement = createStyleSpanElement(document());
+            RefPtr<Element> styleElement = createStyleSpanElement(&document());
             styleElement->setAttribute(styleAttr, styleChange.cssStyle());
             surroundNodeRangeWithElement(startNode, endNode, styleElement.release());
         }
     }
 
     if (styleChange.applyBold())
-        surroundNodeRangeWithElement(startNode, endNode, createHTMLElement(document(), bTag));
+        surroundNodeRangeWithElement(startNode, endNode, createHTMLElement(&document(), bTag));
 
     if (styleChange.applyItalic())
-        surroundNodeRangeWithElement(startNode, endNode, createHTMLElement(document(), iTag));
+        surroundNodeRangeWithElement(startNode, endNode, createHTMLElement(&document(), iTag));
 
     if (styleChange.applyUnderline())
-        surroundNodeRangeWithElement(startNode, endNode, createHTMLElement(document(), uTag));
+        surroundNodeRangeWithElement(startNode, endNode, createHTMLElement(&document(), uTag));
 
     if (styleChange.applyLineThrough())
-        surroundNodeRangeWithElement(startNode, endNode, createHTMLElement(document(), strikeTag));
+        surroundNodeRangeWithElement(startNode, endNode, createHTMLElement(&document(), strikeTag));
 
     if (styleChange.applySubscript())
-        surroundNodeRangeWithElement(startNode, endNode, createHTMLElement(document(), subTag));
+        surroundNodeRangeWithElement(startNode, endNode, createHTMLElement(&document(), subTag));
     else if (styleChange.applySuperscript())
-        surroundNodeRangeWithElement(startNode, endNode, createHTMLElement(document(), supTag));
+        surroundNodeRangeWithElement(startNode, endNode, createHTMLElement(&document(), supTag));
 
     if (m_styledInlineElement && addStyledElement == AddStyledElement)
         surroundNodeRangeWithElement(startNode, endNode, m_styledInlineElement->cloneElementWithoutChildren());

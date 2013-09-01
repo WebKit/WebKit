@@ -33,7 +33,7 @@
 namespace WebCore {
 
 WrapContentsInDummySpanCommand::WrapContentsInDummySpanCommand(PassRefPtr<Element> element)
-    : SimpleEditCommand(&element->document())
+    : SimpleEditCommand(element->document())
     , m_element(element)
 {
     ASSERT(m_element);
@@ -54,7 +54,7 @@ void WrapContentsInDummySpanCommand::executeApply()
 
 void WrapContentsInDummySpanCommand::doApply()
 {
-    m_dummySpan = createStyleSpanElement(document());
+    m_dummySpan = createStyleSpanElement(&document());
     
     executeApply();
 }

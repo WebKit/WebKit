@@ -34,8 +34,10 @@
 
 namespace WebCore {
 
-SimplifyMarkupCommand::SimplifyMarkupCommand(Document* document, Node* firstNode, Node* nodeAfterLast) 
-    : CompositeEditCommand(document), m_firstNode(firstNode), m_nodeAfterLast(nodeAfterLast)
+SimplifyMarkupCommand::SimplifyMarkupCommand(Document& document, Node* firstNode, Node* nodeAfterLast)
+    : CompositeEditCommand(document)
+    , m_firstNode(firstNode)
+    , m_nodeAfterLast(nodeAfterLast)
 {
 }
     
@@ -44,7 +46,7 @@ void SimplifyMarkupCommand::doApply()
     Node* rootNode = m_firstNode->parentNode();
     Vector<RefPtr<Node> > nodesToRemove;
     
-    document()->updateLayoutIgnorePendingStylesheets();
+    document().updateLayoutIgnorePendingStylesheets();
 
     // Walk through the inserted nodes, to see if there are elements that could be removed
     // without affecting the style. The goal is to produce leaner markup even when starting

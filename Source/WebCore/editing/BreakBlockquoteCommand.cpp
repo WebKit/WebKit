@@ -38,7 +38,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-BreakBlockquoteCommand::BreakBlockquoteCommand(Document *document)
+BreakBlockquoteCommand::BreakBlockquoteCommand(Document& document)
     : CompositeEditCommand(document)
 {
 }
@@ -71,7 +71,7 @@ void BreakBlockquoteCommand::doApply()
     if (!topBlockquote || !topBlockquote->parentNode() || !topBlockquote->isElementNode())
         return;
     
-    RefPtr<Element> breakNode = createBreakElement(document());
+    RefPtr<Element> breakNode = createBreakElement(&document());
 
     bool isLastVisPosInNode = isLastVisiblePositionInNode(visiblePos, topBlockquote);
 

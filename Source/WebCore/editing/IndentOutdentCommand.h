@@ -34,7 +34,7 @@ namespace WebCore {
 class IndentOutdentCommand : public ApplyBlockElementCommand {
 public:
     enum EIndentType { Indent, Outdent };
-    static PassRefPtr<IndentOutdentCommand> create(Document* document, EIndentType type, int marginInPixels = 0)
+    static PassRefPtr<IndentOutdentCommand> create(Document& document, EIndentType type, int marginInPixels = 0)
     {
         return adoptRef(new IndentOutdentCommand(document, type, marginInPixels));
     }
@@ -42,7 +42,7 @@ public:
     virtual bool preservesTypingStyle() const { return true; }
 
 private:
-    IndentOutdentCommand(Document*, EIndentType, int marginInPixels);
+    IndentOutdentCommand(Document&, EIndentType, int marginInPixels);
 
     virtual EditAction editingAction() const { return m_typeOfAction == Indent ? EditActionIndent : EditActionOutdent; }
 

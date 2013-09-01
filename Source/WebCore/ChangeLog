@@ -1,5 +1,18 @@
 2013-08-31  Andreas Kling  <akling@apple.com>
 
+        EditCommand constructors should take Document&.
+        <https://webkit.org/b/120566>
+
+        Reviewed by Darin Adler.
+
+        Let EditCommand's and all subclass constructors take Document& instead of Document*.
+        EditCommand::document() now returns a Document&.
+
+        Added Editor::document() which returns Editor::frame().document() after asserting
+        that it's non-null, to make passing a Document& from Editor functions easier.
+
+2013-08-31  Andreas Kling  <akling@apple.com>
+
         Make more use of toRenderFoo(RenderObject&) cast helpers.
         <https://webkit.org/b/120565>
 

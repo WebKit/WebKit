@@ -32,13 +32,13 @@ namespace WebCore {
 
 class RemoveFormatCommand : public CompositeEditCommand {
 public:
-    static PassRefPtr<RemoveFormatCommand> create(Document* document)
+    static PassRefPtr<RemoveFormatCommand> create(Document& document)
     {
         return adoptRef(new RemoveFormatCommand(document));
     }
 
 private:
-    explicit RemoveFormatCommand(Document*);
+    explicit RemoveFormatCommand(Document&);
 
     virtual void doApply();
     virtual EditAction editingAction() const { return EditActionUnspecified; }

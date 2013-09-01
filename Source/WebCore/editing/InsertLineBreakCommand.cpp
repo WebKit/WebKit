@@ -44,7 +44,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-InsertLineBreakCommand::InsertLineBreakCommand(Document* document) 
+InsertLineBreakCommand::InsertLineBreakCommand(Document& document)
     : CompositeEditCommand(document)
 {
 }
@@ -109,9 +109,9 @@ void InsertLineBreakCommand::doApply()
 
     RefPtr<Node> nodeToInsert;
     if (shouldUseBreakElement(pos))
-        nodeToInsert = createBreakElement(document());
+        nodeToInsert = createBreakElement(&document());
     else
-        nodeToInsert = document()->createTextNode("\n");
+        nodeToInsert = document().createTextNode("\n");
     
     // FIXME: Need to merge text nodes when inserting just after or before text.
     
@@ -146,7 +146,7 @@ void InsertLineBreakCommand::doApply()
         Position endingPosition = firstPositionInNode(textNode);
         
         // Handle whitespace that occurs after the split
-        document()->updateLayoutIgnorePendingStylesheets();
+        document().updateLayoutIgnorePendingStylesheets();
         if (!endingPosition.isRenderedCharacter()) {
             Position positionBeforeTextNode(positionInParentBeforeNode(textNode));
             // Clear out all whitespace and insert one non-breaking space
@@ -156,7 +156,7 @@ void InsertLineBreakCommand::doApply()
             if (textNode->inDocument())
                 insertTextIntoNode(textNode, 0, nonBreakingSpaceString());
             else {
-                RefPtr<Text> nbspNode = document()->createTextNode(nonBreakingSpaceString());
+                RefPtr<Text> nbspNode = document().createTextNode(nonBreakingSpaceString());
                 insertNodeAt(nbspNode.get(), positionBeforeTextNode);
                 endingPosition = firstPositionInNode(nbspNode.get());
             }
@@ -167,7 +167,7 @@ void InsertLineBreakCommand::doApply()
 
     // Handle the case where there is a typing style.
 
-    RefPtr<EditingStyle> typingStyle = document()->frame()->selection().typingStyle();
+    RefPtr<EditingStyle> typingStyle = document().frame()->selection().typingStyle();
 
     if (typingStyle && !typingStyle->isEmpty()) {
         // Apply the typing style to the inserted line break, so that if the selection

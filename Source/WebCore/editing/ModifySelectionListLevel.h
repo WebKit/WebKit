@@ -35,7 +35,7 @@ namespace WebCore {
 // It is not used on its own.
 class ModifySelectionListLevelCommand : public CompositeEditCommand {
 protected:
-    explicit ModifySelectionListLevelCommand(Document*);
+    explicit ModifySelectionListLevelCommand(Document&);
     
     void appendSiblingNodeRange(Node* startNode, Node* endNode, Element* newParent);
     void insertSiblingNodeRangeBefore(Node* startNode, Node* endNode, Node* refNode);
@@ -57,12 +57,12 @@ private:
     enum Type { InheritedListType, OrderedList, UnorderedList };
     static PassRefPtr<Node> increaseSelectionListLevel(Document*, Type);
 
-    static PassRefPtr<IncreaseSelectionListLevelCommand> create(Document* document, Type type)
+    static PassRefPtr<IncreaseSelectionListLevelCommand> create(Document& document, Type type)
     {
         return adoptRef(new IncreaseSelectionListLevelCommand(document, type));
     }
     
-    IncreaseSelectionListLevelCommand(Document*, Type);
+    IncreaseSelectionListLevelCommand(Document&, Type);
 
     virtual void doApply();
 
@@ -77,12 +77,12 @@ public:
     static void decreaseSelectionListLevel(Document*);
 
 private:
-    static PassRefPtr<DecreaseSelectionListLevelCommand> create(Document* document)
+    static PassRefPtr<DecreaseSelectionListLevelCommand> create(Document& document)
     {
         return adoptRef(new DecreaseSelectionListLevelCommand(document));
     }
 
-    explicit DecreaseSelectionListLevelCommand(Document*);
+    explicit DecreaseSelectionListLevelCommand(Document&);
 
     virtual void doApply();
 };

@@ -952,11 +952,9 @@ void EditingStyle::prepareToApplyAt(const Position& position, ShouldPreserveWrit
     }
 }
 
-void EditingStyle::mergeTypingStyle(Document* document)
+void EditingStyle::mergeTypingStyle(Document& document)
 {
-    ASSERT(document);
-
-    RefPtr<EditingStyle> typingStyle = document->frame()->selection().typingStyle();
+    RefPtr<EditingStyle> typingStyle = document.frame()->selection().typingStyle();
     if (!typingStyle || typingStyle == this)
         return;
 
@@ -1245,7 +1243,7 @@ PassRefPtr<EditingStyle> EditingStyle::styleAtSelectionStart(const VisibleSelect
         return 0;
 
     RefPtr<EditingStyle> style = EditingStyle::create(element, EditingStyle::AllProperties);
-    style->mergeTypingStyle(&element->document());
+    style->mergeTypingStyle(element->document());
 
     // If background color is transparent, traverse parent nodes until we hit a different value or document root
     // Also, if the selection is a range, ignore the background color at the start of selection,
