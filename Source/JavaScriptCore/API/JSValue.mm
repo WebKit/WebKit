@@ -746,7 +746,7 @@ id valueToString(JSGlobalContextRef context, JSValueRef value, JSValueRef* excep
         return nil;
     }
 
-    NSString *stringNS = HardAutorelease(JSStringCopyCFString(kCFAllocatorDefault, jsstring));
+    NSString *stringNS = CFBridgingRelease(JSStringCopyCFString(kCFAllocatorDefault, jsstring));
     JSStringRelease(jsstring);
     return stringNS;
 }

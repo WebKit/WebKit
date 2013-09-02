@@ -33,9 +33,9 @@
 
 namespace WebKit {
 
-NSString* nsStringFromWebCoreString(const String& string)
+NSString *nsStringFromWebCoreString(const String& string)
 {
-    return string.impl() ? HardAutorelease(WKStringCopyCFString(0, toAPI(string.impl()))) : @"";
+    return string.isEmpty() ? @"" : CFBridgingRelease(WKStringCopyCFString(0, toAPI(string.impl())));
 }
 
 }

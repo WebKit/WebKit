@@ -1,3 +1,13 @@
+2013-09-02  Darin Adler  <darin@apple.com>
+
+        [Mac] No need for HardAutorelease, which is same as CFBridgingRelease
+        https://bugs.webkit.org/show_bug.cgi?id=120569
+
+        Reviewed by Andy Estes.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (dump): Use CFBridgingRelease.
+
 2013-09-02  Anton Obzhirov  <a.obzhirov@samsung.com>
 
         <https://webkit.org/b/98350> [GTK] accessibility/aria-invalid.html times out

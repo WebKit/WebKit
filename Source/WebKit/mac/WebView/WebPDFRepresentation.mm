@@ -107,7 +107,7 @@
     CFRelease(provider);
     CFRelease(consumer);
 
-    return HardAutorelease(result);
+    return CFBridgingRelease(result);
 }
 
 - (void)finishedLoadingWithDataSource:(WebDataSource *)dataSource

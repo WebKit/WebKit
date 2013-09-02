@@ -208,7 +208,7 @@ using namespace WebKit;
         return nil;
     
     if (toImpl(result.get())->type() == WKStringGetTypeID())
-        return HardAutorelease(WKStringCopyCFString(kCFAllocatorDefault, (WKStringRef)result.get()));
+        return CFBridgingRelease(WKStringCopyCFString(kCFAllocatorDefault, (WKStringRef)result.get()));
     else if (toImpl(result.get())->type() == WKBooleanGetTypeID())
         return [NSNumber numberWithBool:WKBooleanGetValue(static_cast<WKBooleanRef>(result.get()))];
 

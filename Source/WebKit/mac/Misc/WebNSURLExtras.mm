@@ -214,8 +214,8 @@ using namespace WTF;
     }
     
     NSURL *result = changed
-        ? (NSURL *)HardAutorelease(CFURLCreateAbsoluteURLWithBytes(NULL, buffer, bytesFilled, kCFStringEncodingUTF8, nil, YES))
-        : (NSURL *)self;
+        ? CFBridgingRelease(CFURLCreateAbsoluteURLWithBytes(NULL, buffer, bytesFilled, kCFStringEncodingUTF8, nil, YES))
+        : self;
 
     if (buffer != static_buffer) {
         free(buffer);

@@ -25,38 +25,25 @@
 #ifndef WTF_ObjcRuntimeExtras_h
 #define WTF_ObjcRuntimeExtras_h
 
+// FIXME: This file's name and function names refer to Objective-C as Objc with a lowercase C,
+// but it should be ObjC with an uppercase C.
+
 #include <objc/message.h>
 
 #ifdef __cplusplus
-template<typename RetType, typename... ArgTypes>
-inline RetType wtfObjcMsgSend(id target, SEL selector, ArgTypes... args)
+
+template<typename ReturnType, typename... ArgumentTypes>
+inline ReturnType wtfObjcMsgSend(id target, SEL selector, ArgumentTypes... arguments)
 {
-    return reinterpret_cast<RetType (*)(id, SEL, ArgTypes...)>(objc_msgSend)(target, selector, args...);
+    return reinterpret_cast<ReturnType (*)(id, SEL, ArgumentTypes...)>(objc_msgSend)(target, selector, arguments...);
 }
 
-template<typename RetType, typename... ArgTypes>
-inline RetType wtfCallIMP(IMP implementation, id target, SEL selector, ArgTypes... args)
+template<typename ReturnType, typename... ArgumentTypes>
+inline ReturnType wtfCallIMP(IMP implementation, id target, SEL selector, ArgumentTypes... arguments)
 {
-    return reinterpret_cast<RetType (*)(id, SEL, ArgTypes...)>(implementation)(target, selector, args...);
+    return reinterpret_cast<ReturnType (*)(id, SEL, ArgumentTypes...)>(implementation)(target, selector, arguments...);
 }
+
 #endif // __cplusplus
-
-#ifdef __OBJC__
-// Use HardAutorelease to return an object made by a Core Foundation
-// "create" or "copy" function as an autoreleased and garbage collected
-// object. CF objects need to be "made collectable" for autorelease to work
-// properly under GC.
-inline id HardAutorelease(CFTypeRef object)
-{
-#ifndef OBJC_NO_GC
-    if (object)
-        CFMakeCollectable(object);
-#endif
-#if !__has_feature(objc_arc)
-    [(id)object autorelease];
-#endif
-    return (id)object;
-}
-#endif // __OBJC__
 
 #endif // WTF_ObjcRuntimeExtras_h

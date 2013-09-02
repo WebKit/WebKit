@@ -28,7 +28,7 @@ namespace WTF {
 
 StringImpl::operator NSString *()
 {
-    return HardAutorelease(createCFString().leakRef());
+    return CFBridgingRelease(createCFString().leakRef());
 }
 
 }

@@ -1,3 +1,28 @@
+2013-09-02  Darin Adler  <darin@apple.com>
+
+        [Mac] No need for HardAutorelease, which is same as CFBridgingRelease
+        https://bugs.webkit.org/show_bug.cgi?id=120569
+
+        Reviewed by Andy Estes.
+
+        * Misc/WebNSFileManagerExtras.mm:
+        (-[NSFileManager _webkit_startupVolumeName]): Removed some unneeded locals.
+        Got rid of the pointless ref/leakRef/HardAutorelease dance, and replaced it
+        with a [[x copy] autorelease].
+
+        * Misc/WebNSURLExtras.mm:
+        (-[NSURL _web_URLWithLowercasedScheme]): Use CFBridgingRelease, and got rid
+        of unneeded type casts.
+
+        * Plugins/WebBasePluginPackage.mm:
+        (+[WebBasePluginPackage preferredLocalizationName]): Use CFBridgingRelease.
+        * WebView/WebPDFRepresentation.mm:
+        (-[WebPDFRepresentation convertPostScriptDataSourceToPDF:]): Ditto.
+
+        * WebView/WebView.mm:
+        (+[WebView _setCacheModel:]): Use CFBridgingRelease and got rid of unneeded
+        type cast.
+
 2013-08-30  Antti Koivisto  <antti@apple.com>
 
         Remove code behind ENABLE(DIALOG_ELEMENT)

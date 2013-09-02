@@ -90,7 +90,7 @@ using namespace WebCore;
 
 + (NSString *)preferredLocalizationName
 {
-    return HardAutorelease(WKCopyCFLocalizationPreferredName(NULL));
+    return CFBridgingRelease(WKCopyCFLocalizationPreferredName(NULL));
 }
 
 #if COMPILER(CLANG)

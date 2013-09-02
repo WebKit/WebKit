@@ -49,7 +49,7 @@ KURL::operator NSURL *() const
 {
     // Creating a toll-free bridged CFURL, because a real NSURL would not preserve the original string.
     // We'll need fidelity when round-tripping via CFURLGetBytes().
-    return HardAutorelease(createCFURL().leakRef());
+    return CFBridgingRelease(createCFURL().leakRef());
 }
 
 RetainPtr<CFURLRef> KURL::createCFURL() const
@@ -58,10 +58,8 @@ RetainPtr<CFURLRef> KURL::createCFURL() const
         return 0;
 
     if (isEmpty()) {
-        // We use the toll-free bridge between NSURL and CFURL to
-        // create a CFURLRef supporting both empty and null values.
-        RetainPtr<NSURL> emptyNSURL = adoptNS([[NSURL alloc] initWithString:@""]);
-        return reinterpret_cast<CFURLRef>(emptyNSURL.get());
+        // We use the toll-free bridge between NSURL and CFURL to create a CFURLRef supporting both empty and null values.
+        return reinterpret_cast<CFURLRef>(adoptNS([[NSURL alloc] initWithString:@""]).get());
     }
 
     URLCharBuffer buffer;

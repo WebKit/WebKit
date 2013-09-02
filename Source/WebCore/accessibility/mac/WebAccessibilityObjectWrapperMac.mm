@@ -420,21 +420,21 @@ static id AXTextMarkerRange(id startMarker, id endMarker)
     ASSERT(endMarker != nil);
     ASSERT(CFGetTypeID(startMarker) == wkGetAXTextMarkerTypeID());
     ASSERT(CFGetTypeID(endMarker) == wkGetAXTextMarkerTypeID());
-    return HardAutorelease(wkCreateAXTextMarkerRange((CFTypeRef)startMarker, (CFTypeRef)endMarker));
+    return CFBridgingRelease(wkCreateAXTextMarkerRange((CFTypeRef)startMarker, (CFTypeRef)endMarker));
 }
 
 static id AXTextMarkerRangeStart(id range)
 {
     ASSERT(range != nil);
     ASSERT(CFGetTypeID(range) == wkGetAXTextMarkerRangeTypeID());
-    return HardAutorelease(wkCopyAXTextMarkerRangeStart(range));
+    return CFBridgingRelease(wkCopyAXTextMarkerRangeStart(range));
 }
 
 static id AXTextMarkerRangeEnd(id range)
 {
     ASSERT(range != nil);
     ASSERT(CFGetTypeID(range) == wkGetAXTextMarkerRangeTypeID());
-    return HardAutorelease(wkCopyAXTextMarkerRangeEnd(range));
+    return CFBridgingRelease(wkCopyAXTextMarkerRangeEnd(range));
 }
 
 #pragma mark Search helpers
@@ -519,7 +519,7 @@ static id textMarkerForVisiblePosition(AXObjectCache* cache, const VisiblePositi
     if (!textMarkerData.axID)
         return nil;
     
-    return HardAutorelease(wkCreateAXTextMarker(&textMarkerData, sizeof(textMarkerData)));
+    return CFBridgingRelease(wkCreateAXTextMarker(&textMarkerData, sizeof(textMarkerData)));
 }
 
 - (id)textMarkerForVisiblePosition:(const VisiblePosition &)visiblePos

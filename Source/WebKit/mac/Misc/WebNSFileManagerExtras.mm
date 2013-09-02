@@ -96,9 +96,7 @@ static void *setMetaData(void* context)
 {
     RetainPtr<DASessionRef> session = adoptCF(DASessionCreate(kCFAllocatorDefault));
     RetainPtr<DADiskRef> disk = adoptCF(DADiskCreateFromVolumePath(kCFAllocatorDefault, session.get(), (CFURLRef)[NSURL fileURLWithPath:@"/"]));
-    RetainPtr<CFDictionaryRef> diskDescription = adoptCF(DADiskCopyDescription(disk.get()));
-    RetainPtr<NSString> diskName = (NSString *)CFDictionaryGetValue(diskDescription.get(), kDADiskDescriptionVolumeNameKey);
-    return HardAutorelease(diskName.leakRef());
+    return [[(NSString *)CFDictionaryGetValue(adoptCF(DADiskCopyDescription(disk.get())).get(), kDADiskDescriptionVolumeNameKey) copy] autorelease];
 }
 
 // -[NSFileManager fileExistsAtPath:] returns NO if there is a broken symlink at the path.

@@ -248,7 +248,7 @@ static NSString *mapHostNameWithRange(NSString *string, NSRange range, BOOL enco
     
     if (encode && [string rangeOfString:@"%" options:NSLiteralSearch range:range].location != NSNotFound) {
         NSString *substring = [string substringWithRange:range];
-        substring = HardAutorelease(CFURLCreateStringByReplacingPercentEscapes(NULL, (CFStringRef)substring, CFSTR("")));
+        substring = CFBridgingRelease(CFURLCreateStringByReplacingPercentEscapes(NULL, (CFStringRef)substring, CFSTR("")));
         if (substring) {
             string = substring;
             range = NSMakeRange(0, [string length]);
@@ -564,9 +564,9 @@ NSURL *URLWithData(NSData *data, NSURL *baseURL)
         // (e.g calls to NSURL -path). However, this function is not tolerant of illegal UTF-8 sequences, which
         // could either be a malformed string or bytes in a different encoding, like shift-jis, so we fall back
         // onto using ISO Latin 1 in those cases.
-        result = HardAutorelease(CFURLCreateAbsoluteURLWithBytes(NULL, bytes, length, kCFStringEncodingUTF8, (CFURLRef)baseURL, YES));
+        result = CFBridgingRelease(CFURLCreateAbsoluteURLWithBytes(NULL, bytes, length, kCFStringEncodingUTF8, (CFURLRef)baseURL, YES));
         if (!result)
-            result = HardAutorelease(CFURLCreateAbsoluteURLWithBytes(NULL, bytes, length, kCFStringEncodingISOLatin1, (CFURLRef)baseURL, YES));
+            result = CFBridgingRelease(CFURLCreateAbsoluteURLWithBytes(NULL, bytes, length, kCFStringEncodingISOLatin1, (CFURLRef)baseURL, YES));
     } else
             result = [NSURL URLWithString:@""];
                 
@@ -838,7 +838,7 @@ NSString *userVisibleString(NSURL *URL)
     
     result = mapHostNames(result, !needsHostNameDecoding);
     result = [result precomposedStringWithCanonicalMapping];
-    return HardAutorelease(createStringWithEscapedUnsafeCharacters((CFStringRef)result));
+    return CFBridgingRelease(createStringWithEscapedUnsafeCharacters((CFStringRef)result));
 }
 
 BOOL isUserVisibleURL(NSString *string)
