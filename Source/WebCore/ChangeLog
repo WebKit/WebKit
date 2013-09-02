@@ -1,3 +1,45 @@
+2013-09-01  Dirk Schulze  <krit@webkit.org>
+
+        Add 'edgeMode' attribute to SVGFEGaussianBlur
+        https://bugs.webkit.org/show_bug.cgi?id=120582
+
+        Add 'edgeMode' attribute to the SVGFEGaussianBlur element. This attribute
+        allows users to define the behavior on edges with the values 'none' where
+        pixel values outside the input image are treated as transparent black. (The
+        current blurring behavior.) 'duplicate' which repeats the values on the
+        nearest edge and 'warp', which takes the pixel of the opposite site of
+        the input image.
+        Beside the attribute, this patch implements the behavior of 'duplicate'.
+
+        http://dev.w3.org/fxtf/filters/#feGaussianBlurEdgeModeAttribute
+
+        Reviewed by Rob Buis.
+
+        Tests: svg/dynamic-updates/SVGFEGaussianBlurElement-dom-edgeMode-attr.html
+               svg/dynamic-updates/SVGFEGaussianBlurElement-svgdom-edgeMode-prop.html
+               svg/filters/svg-gaussianblur-edgeMode-duplicate-expected.svg
+               svg/filters/svg-gaussianblur-edgeMode-duplicate.svg
+
+        * platform/graphics/filters/FEGaussianBlur.cpp:
+        (WebCore::FEGaussianBlur::FEGaussianBlur):
+        (WebCore::FEGaussianBlur::create):
+        (WebCore::FEGaussianBlur::edgeMode):
+        (WebCore::FEGaussianBlur::setEdgeMode):
+        (WebCore::boxBlur):
+        (WebCore::FEGaussianBlur::platformApplyGeneric):
+        (WebCore::FEGaussianBlur::determineAbsolutePaintRect):
+        * platform/graphics/filters/FEGaussianBlur.h:
+        * rendering/FilterEffectRenderer.cpp:
+        (WebCore::FilterEffectRenderer::build):
+        * svg/SVGFEGaussianBlurElement.cpp:
+        (WebCore::SVGFEGaussianBlurElement::SVGFEGaussianBlurElement):
+        (WebCore::SVGFEGaussianBlurElement::isSupportedAttribute):
+        (WebCore::SVGFEGaussianBlurElement::parseAttribute):
+        (WebCore::SVGFEGaussianBlurElement::svgAttributeChanged):
+        (WebCore::SVGFEGaussianBlurElement::build):
+        * svg/SVGFEGaussianBlurElement.h:
+        * svg/SVGFEGaussianBlurElement.idl:
+
 2013-09-01  Andreas Kling  <akling@apple.com>
 
         EventHandler::m_frame should be a Frame&.

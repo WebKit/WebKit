@@ -326,7 +326,7 @@ bool FilterEffectRenderer::build(RenderObject* renderer, const FilterOperations&
         case FilterOperation::BLUR: {
             BlurFilterOperation* blurOperation = static_cast<BlurFilterOperation*>(filterOperation);
             float stdDeviation = floatValueForLength(blurOperation->stdDeviation(), 0);
-            effect = FEGaussianBlur::create(this, stdDeviation, stdDeviation);
+            effect = FEGaussianBlur::create(this, stdDeviation, stdDeviation, EDGEMODE_NONE);
             break;
         }
         case FilterOperation::DROP_SHADOW: {

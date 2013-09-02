@@ -1,3 +1,27 @@
+2013-09-01  Dirk Schulze  <krit@webkit.org>
+
+        Add edgeMode attribtue.
+
+        Add 'edgeMode' attribute to SVGFEGaussianBlur
+        https://bugs.webkit.org/show_bug.cgi?id=120582
+
+        Added DOM and SVGDOM tests for the attribute 'edgeMode'.
+        Also added a reftest to test edgeMode='duplicate'.
+
+        Reviewed by Rob Buis.
+
+        * platform/mac/svg/dynamic-updates/SVGFEGaussianBlurElement-svgdom-edgeMode-prop-expected.png: Added.
+        * svg/dynamic-updates/SVGFEGaussianBlurElement-dom-edgeMode-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGFEGaussianBlurElement-dom-edgeMode-attr.html: Added.
+        * svg/dynamic-updates/SVGFEGaussianBlurElement-svgdom-edgeMode-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGFEGaussianBlurElement-svgdom-edgeMode-prop.html: Added.
+        * svg/dynamic-updates/script-tests/SVGFEGaussianBlurElement-dom-edgeMode-attr.js: Added.
+        (repaintTest):
+        * svg/dynamic-updates/script-tests/SVGFEGaussianBlurElement-svgdom-edgeMode-prop.js: Added.
+        (repaintTest):
+        * svg/filters/svg-gaussianblur-edgeMode-duplicate-expected.svg: Added.
+        * svg/filters/svg-gaussianblur-edgeMode-duplicate.svg: Added.
+
 2013-09-01  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         Volume slider value should be 0 when audio is muted

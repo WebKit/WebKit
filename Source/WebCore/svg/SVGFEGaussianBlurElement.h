@@ -23,7 +23,9 @@
 
 #if ENABLE(SVG) && ENABLE(FILTERS)
 #include "FEGaussianBlur.h"
+#include "SVGAnimatedEnumeration.h"
 #include "SVGAnimatedNumber.h"
+#include "SVGFEConvolveMatrixElement.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 
 namespace WebCore {
@@ -49,6 +51,7 @@ private:
         DECLARE_ANIMATED_STRING(In1, in1)
         DECLARE_ANIMATED_NUMBER(StdDeviationX, stdDeviationX)
         DECLARE_ANIMATED_NUMBER(StdDeviationY, stdDeviationY)
+        DECLARE_ANIMATED_ENUMERATION(EdgeMode, edgeMode, EdgeModeType)
     END_DECLARE_ANIMATED_PROPERTIES
 };
 

@@ -24,11 +24,19 @@
  */
 
 [
-    Conditional=SVG&FILTERS
+    Conditional=SVG&FILTERS,
+    DoNotCheckConstants
 ] interface SVGFEGaussianBlurElement : SVGElement {
+    // Edge Mode Values
+    const unsigned short SVG_EDGEMODE_UNKNOWN   = 0;
+    const unsigned short SVG_EDGEMODE_DUPLICATE = 1;
+    const unsigned short SVG_EDGEMODE_WRAP      = 2;
+    const unsigned short SVG_EDGEMODE_NONE      = 3;
+
     readonly attribute SVGAnimatedString in1;
     readonly attribute SVGAnimatedNumber stdDeviationX;
     readonly attribute SVGAnimatedNumber stdDeviationY;
+    readonly attribute SVGAnimatedEnumeration edgeMode;
 
     void setStdDeviation([Default=Undefined] optional float stdDeviationX, 
                          [Default=Undefined] optional float stdDeviationY);

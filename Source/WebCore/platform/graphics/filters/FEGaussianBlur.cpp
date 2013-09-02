@@ -50,16 +50,17 @@ static const unsigned gMaxKernelSize = 1000;
 
 namespace WebCore {
 
-FEGaussianBlur::FEGaussianBlur(Filter* filter, float x, float y)
+FEGaussianBlur::FEGaussianBlur(Filter* filter, float x, float y, EdgeModeType edgeMode)
     : FilterEffect(filter)
     , m_stdX(x)
     , m_stdY(y)
+    , m_edgeMode(edgeMode)
 {
 }
 
-PassRefPtr<FEGaussianBlur> FEGaussianBlur::create(Filter* filter, float x, float y)
+PassRefPtr<FEGaussianBlur> FEGaussianBlur::create(Filter* filter, float x, float y, EdgeModeType edgeMode)
 {
-    return adoptRef(new FEGaussianBlur(filter, x, y));
+    return adoptRef(new FEGaussianBlur(filter, x, y, edgeMode));
 }
 
 float FEGaussianBlur::stdDeviationX() const
@@ -82,26 +83,69 @@ void FEGaussianBlur::setStdDeviationY(float y)
     m_stdY = y;
 }
 
+EdgeModeType FEGaussianBlur::edgeMode() const
+{
+    return m_edgeMode;
+}
+
+void FEGaussianBlur::setEdgeMode(EdgeModeType edgeMode)
+{
+    m_edgeMode = edgeMode;
+}
+
 inline void boxBlur(Uint8ClampedArray* srcPixelArray, Uint8ClampedArray* dstPixelArray,
-                    unsigned dx, int dxLeft, int dxRight, int stride, int strideLine, int effectWidth, int effectHeight, bool alphaImage)
+    unsigned dx, int dxLeft, int dxRight, int stride, int strideLine, int effectWidth, int effectHeight, bool alphaImage, EdgeModeType edgeMode)
 {
     for (int y = 0; y < effectHeight; ++y) {
         int line = y * strideLine;
         for (int channel = 3; channel >= 0; --channel) {
             int sum = 0;
-            // Fill the kernel
-            int maxKernelSize = min(dxRight, effectWidth);
-            for (int i = 0; i < maxKernelSize; ++i)
-                sum += srcPixelArray->item(line + i * stride + channel);
+            // The code for edgeMode='none' is the common case and highly optimized.
+            // Furthermore, this code path affects more than just the input area.
+            if (edgeMode == EDGEMODE_NONE) {
+                // Fill the kernel
+                int maxKernelSize = min(dxRight, effectWidth);
+                for (int i = 0; i < maxKernelSize; ++i)
+                    sum += srcPixelArray->item(line + i * stride + channel);
 
-            // Blurring
-            for (int x = 0; x < effectWidth; ++x) {
-                int pixelByteOffset = line + x * stride + channel;
-                dstPixelArray->set(pixelByteOffset, static_cast<unsigned char>(sum / dx));
-                if (x >= dxLeft)
-                    sum -= srcPixelArray->item(pixelByteOffset - dxLeft * stride);
-                if (x + dxRight < effectWidth)
-                    sum += srcPixelArray->item(pixelByteOffset + dxRight * stride);
+                // Blurring
+                for (int x = 0; x < effectWidth; ++x) {
+                    int pixelByteOffset = line + x * stride + channel;
+                    dstPixelArray->set(pixelByteOffset, static_cast<unsigned char>(sum / dx));
+                    // Shift kernel.
+                    if (x >= dxLeft)
+                        sum -= srcPixelArray->item(pixelByteOffset - dxLeft * stride);
+                    if (x + dxRight < effectWidth)
+                        sum += srcPixelArray->item(pixelByteOffset + dxRight * stride);
+                }
+            } else {
+                // FIXME: Add support for 'wrap' here.
+                // Get edge values for edgeMode 'duplicate'.
+                int edgeValueLeft = srcPixelArray->item(line + channel);
+                int edgeValueRight = srcPixelArray->item(line + (effectWidth - 1) * stride + channel);
+                // Fill the kernel
+                for (int i = dxLeft * -1; i < dxRight; ++i) {
+                    if (i < 0)
+                        sum += edgeValueLeft;
+                    else if (i >= effectWidth)
+                        sum += edgeValueRight;
+                    else
+                        sum += srcPixelArray->item(line + i * stride + channel);
+                }
+                // Blurring
+                for (int x = 0; x < effectWidth; ++x) {
+                    int pixelByteOffset = line + x * stride + channel;
+                    dstPixelArray->set(pixelByteOffset, static_cast<unsigned char>(sum / dx));
+                    // Shift kernel.
+                    if (x < dxLeft)
+                        sum -= edgeValueLeft;
+                    else
+                        sum -= srcPixelArray->item(pixelByteOffset - dxLeft * stride);
+                    if (x + dxRight >= effectWidth)
+                        sum += edgeValueRight;
+                    else
+                        sum += srcPixelArray->item(pixelByteOffset + dxRight * stride);
+                }
             }
             if (alphaImage) // Source image is black, it just has different alpha values
                 break;
@@ -126,9 +170,9 @@ inline void FEGaussianBlur::platformApplyGeneric(Uint8ClampedArray* srcPixelArra
             if (!isAlphaImage())
                 boxBlurNEON(src, dst, kernelSizeX, dxLeft, dxRight, 4, stride, paintSize.width(), paintSize.height());
             else
-                boxBlur(src, dst, kernelSizeX, dxLeft, dxRight, 4, stride, paintSize.width(), paintSize.height(), true);
+                boxBlur(src, dst, kernelSizeX, dxLeft, dxRight, 4, stride, paintSize.width(), paintSize.height(), true, m_edgeMode);
 #else
-            boxBlur(src, dst, kernelSizeX, dxLeft, dxRight, 4, stride, paintSize.width(), paintSize.height(), isAlphaImage());
+            boxBlur(src, dst, kernelSizeX, dxLeft, dxRight, 4, stride, paintSize.width(), paintSize.height(), isAlphaImage(), m_edgeMode);
 #endif
             swap(src, dst);
         }
@@ -139,9 +183,9 @@ inline void FEGaussianBlur::platformApplyGeneric(Uint8ClampedArray* srcPixelArra
             if (!isAlphaImage())
                 boxBlurNEON(src, dst, kernelSizeY, dyLeft, dyRight, stride, 4, paintSize.height(), paintSize.width());
             else
-                boxBlur(src, dst, kernelSizeY, dyLeft, dyRight, stride, 4, paintSize.height(), paintSize.width(), true);
+                boxBlur(src, dst, kernelSizeY, dyLeft, dyRight, stride, 4, paintSize.height(), paintSize.width(), true, m_edgeMode);
 #else
-            boxBlur(src, dst, kernelSizeY, dyLeft, dyRight, stride, 4, paintSize.height(), paintSize.width(), isAlphaImage());
+            boxBlur(src, dst, kernelSizeY, dyLeft, dyRight, stride, 4, paintSize.height(), paintSize.width(), isAlphaImage(), m_edgeMode);
 #endif
             swap(src, dst);
         }
@@ -264,6 +308,11 @@ void FEGaussianBlur::determineAbsolutePaintRect()
     calculateKernelSize(filter(), kernelSizeX, kernelSizeY, m_stdX, m_stdY);
 
     FloatRect absolutePaintRect = inputEffect(0)->absolutePaintRect();
+    // Edge modes other than 'none' do not inflate the affected paint rect.
+    if (m_edgeMode != EDGEMODE_NONE) {
+        setAbsolutePaintRect(enclosingIntRect(absolutePaintRect));
+        return;
+    }
 
     // We take the half kernel size and multiply it with three, because we run box blur three times.
     absolutePaintRect.inflateX(3 * kernelSizeX * 0.5f);
