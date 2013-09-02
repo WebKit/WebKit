@@ -1564,16 +1564,6 @@
             "bulach@chromium.org"
          ]
       },
-      "Mario Sanchez Prada" : {
-         "emails" : [
-            "mario@webkit.org",
-            "mario.prada@samsung.com"
-         ],
-         "expertise" : "WebKitGTK+, a11y, Epiphany/WebKit Contributor",
-         "nicks" : [
-            "msanchez"
-         ]
-      },
       "Mark Lam" : {
          "emails" : [
             "mark.lam@apple.com"
@@ -3897,6 +3887,16 @@
          "expertise" : "JavaScript/ECMAScript, Performance, Security, Basic types and data structures, FastMalloc, DOM Bindings for JavaScript, Core DOM, HTML DOM, JavaScript DOM Bindings, WebKit API (Mac, Win), HTML Editing, Networking, Tools, New Features / Standards Support, General (probably a good backup on most topics even if not specifically an expert)",
          "nicks" : [
             "othermaciej"
+         ]
+      },
+      "Mario Sanchez Prada" : {
+         "emails" : [
+            "mario@webkit.org",
+            "mario.prada@samsung.com"
+         ],
+         "expertise" : "WebKitGTK+, Accessibility, WebKit2, Epiphany/WebKit Contributor",
+         "nicks" : [
+            "msanchez"
          ]
       },
       "Mark Hahnenberg" : {

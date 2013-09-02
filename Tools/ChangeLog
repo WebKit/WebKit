@@ -1,3 +1,9 @@
+2013-09-02  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        Unreviewed. Move myself to the reviewers list.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2013-09-01  Alexey Proskuryakov  <ap@apple.com>
 
         [WK2][Mac] Drag and drop tests interfere with user's UI
