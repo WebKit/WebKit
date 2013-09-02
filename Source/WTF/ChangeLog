@@ -1,3 +1,15 @@
+2013-09-02  David Kilzer  <ddkilzer@apple.com>
+
+        Remove duplicate entries found by Xcode in WTF project
+
+        Platform.h was duplicated in r111778 after being added in
+        r111504.
+
+        A dangling reference to Ref.h was added in r154962.
+
+        * WTF.xcodeproj/project.pbxproj: Remove duplicate entries for
+        Platform.h and Ref.h.
+
 2013-09-02  Andreas Kling  <akling@apple.com>
 
         Actually add Ref.h
