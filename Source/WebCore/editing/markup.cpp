@@ -926,11 +926,11 @@ PassRefPtr<DocumentFragment> createFragmentFromNodes(Document *document, const V
 
 String documentTypeString(const Document& document)
 {
-    DocumentType* documentType = document.doctype();
+    RefPtr<DocumentType> documentType = document.doctype();
     if (!documentType)
         return String();
 
-    return createMarkup(documentType);
+    return createMarkup(documentType.get());
 }
 
 String createFullMarkup(const Node* node)

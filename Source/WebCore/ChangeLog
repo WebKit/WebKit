@@ -1,3 +1,33 @@
+2013-09-02  Andreas Kling  <akling@apple.com>
+
+        Simplify DocumentType handling.
+        <https://webkit.org/b/120529>
+
+        Reviewed by Antti Koivisto.
+
+        Removed the insertedInto()/removedFrom() handlers from DocumentType.
+
+        Document no longer keeps a pointer to its doctype node, it was only used for the
+        document.doctype DOM API, which now just looks through the list of (<=2) children.
+
+        The ENABLE(LEGACY_VIEWPORT_ADAPTION) hunk from Document::setDocType() was moved
+        into Document::childrenChanged().
+
+        We no longer clear the style resolver on doctype insertion/removal since it
+        doesn't actually affect style anyway.
+
+        Also made doctype() return a PassRefPtr<DocumentType> instead of a raw pointer.
+
+        * dom/Document.cpp:
+        (WebCore::Document::dispose):
+        (WebCore::Document::doctype):
+        (WebCore::Document::childrenChanged):
+        * dom/Document.h:
+        * dom/DocumentType.cpp:
+        * dom/DocumentType.h:
+        * editing/markup.cpp:
+        (WebCore::documentTypeString):
+
 2013-09-02  Anton Obzhirov  <a.obzhirov@samsung.com>
 
         <https://webkit.org/b/98350> [GTK] accessibility/aria-invalid.html times out

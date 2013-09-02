@@ -623,7 +623,6 @@ void Document::dispose()
     ASSERT(!m_deletionHasBegun);
     // We must make sure not to be retaining any of our children through
     // these extra pointers or we will create a reference cycle.
-    m_docType = 0;
     m_focusedElement = 0;
     m_hoveredElement = 0;
     m_activeElement = 0;
@@ -744,22 +743,6 @@ void Document::resetActiveLinkColor()
     m_activeLinkColor.setNamedColor("red");
 }
 
-void Document::setDocType(PassRefPtr<DocumentType> docType)
-{
-    // This should never be called more than once.
-    ASSERT(!m_docType || !docType);
-    m_docType = docType;
-    if (m_docType) {
-        this->adoptIfNeeded(m_docType.get());
-#if ENABLE(LEGACY_VIEWPORT_ADAPTION)
-        if (m_docType->publicId().startsWith("-//wapforum//dtd xhtml mobile 1.", /* caseSensitive */ false))
-            processViewport("width=device-width, height=device-height", ViewportArguments::XHTMLMobileProfile);
-#endif
-    }
-    // Doctype affects the interpretation of the stylesheets.
-    clearStyleResolver();
-}
-
 DOMImplementation* Document::implementation()
 {
     if (!m_implementation)
@@ -772,9 +755,27 @@ bool Document::hasManifest() const
     return documentElement() && documentElement()->hasTagName(htmlTag) && documentElement()->hasAttribute(manifestAttr);
 }
 
+PassRefPtr<DocumentType> Document::doctype() const
+{
+    for (Node* node = firstChild(); node; node = node->nextSibling()) {
+        if (node->isDocumentTypeNode())
+            return static_cast<DocumentType*>(node);
+    }
+    return 0;
+}
+
 void Document::childrenChanged(const ChildChange& change)
 {
     ContainerNode::childrenChanged(change);
+
+    // NOTE: Per DOM, dynamically inserting/removing doctype nodes doesn't affect compatibility mode.
+
+#if ENABLE(LEGACY_VIEWPORT_ADAPTION)
+    if (RefPtr<DocumentType> documentType = doctype()) {
+        if (documentType->publicId().startsWith("-//wapforum//dtd xhtml mobile 1.", /* caseSensitive */ false))
+            processViewport("width=device-width, height=device-height", ViewportArguments::XHTMLMobileProfile);
+    }
+#endif
 
     Element* newDocumentElement = 0;
     auto firstElementChild = elementChildren(this).begin();
