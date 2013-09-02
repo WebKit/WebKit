@@ -63,6 +63,8 @@ public:
     PlatformWebView* mainWebView() { return m_mainWebView.get(); }
     WKContextRef context() { return m_context.get(); }
 
+    EventSenderProxy* eventSenderProxy() { return m_eventSenderProxy.get(); }
+
     void ensureViewSupportsOptions(WKDictionaryRef options);
     
     // Runs the run loop until `done` is true or the timeout elapses.

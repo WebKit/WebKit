@@ -27,15 +27,15 @@
 #ifndef EventSenderProxy_h
 #define EventSenderProxy_h
 
+#include <wtf/Deque.h>
+
 #if PLATFORM(QT)
 #include <QEvent>
 #include <QTouchEvent>
 #elif PLATFORM(GTK)
 #include <gdk/gdk.h>
-#include <wtf/Deque.h>
 #elif PLATFORM(EFL)
 #include <WebKit2/EWebKit2.h>
-#include <wtf/Deque.h>
 #endif
 
 namespace WTR {
@@ -52,6 +52,8 @@ class EventSenderProxy {
 public:
     explicit EventSenderProxy(TestController*);
     ~EventSenderProxy();
+
+    WKPoint position() const { return m_position; }
 
     void mouseDown(unsigned button, WKEventModifiers);
     void mouseUp(unsigned button, WKEventModifiers);

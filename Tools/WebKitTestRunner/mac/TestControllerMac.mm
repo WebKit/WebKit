@@ -41,6 +41,7 @@ void TestController::notifyDone()
 void TestController::platformInitialize()
 {
     poseAsClass("WebKitTestRunnerPasteboard", "NSPasteboard");
+    poseAsClass("WebKitTestRunnerEvent", "NSEvent");
 }
 
 void TestController::platformDestroy()

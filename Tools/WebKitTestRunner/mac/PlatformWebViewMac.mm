@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,19 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "PlatformWebView.h"
-#include "TestController.h"
+#import "config.h"
+#import "PlatformWebView.h"
 
+#import "TestController.h"
+#import "WebKitTestRunnerDraggingInfo.h"
 #import <WebKit2/WKImageCG.h>
 #import <WebKit2/WKViewPrivate.h>
 #import <wtf/RetainPtr.h>
 
+using namespace WTR;
+
 @interface WebKitTestRunnerWindow : NSWindow {
-    WTR::PlatformWebView* _platformWebView;
+    PlatformWebView* _platformWebView;
     NSPoint _fakeOrigin;
 }
-@property (nonatomic, assign) WTR::PlatformWebView* platformWebView;
+@property (nonatomic, assign) PlatformWebView* platformWebView;
 @end
 
 @interface TestRunnerWKView : WKView {
@@ -60,6 +63,12 @@
 - (BOOL)_shouldUseTiledDrawingArea
 {
     return _useTiledDrawing;
+}
+
+- (void)dragImage:(NSImage *)anImage at:(NSPoint)viewLocation offset:(NSSize)initialOffset event:(NSEvent *)event pasteboard:(NSPasteboard *)pboard source:(id)sourceObj slideBack:(BOOL)slideFlag
+{
+    RetainPtr<WebKitTestRunnerDraggingInfo> draggingInfo = adoptNS([[WebKitTestRunnerDraggingInfo alloc] initWithImage:anImage offset:initialOffset pasteboard:pboard source:sourceObj]);
+    [self draggingUpdated:draggingInfo.get()];
 }
 
 @end

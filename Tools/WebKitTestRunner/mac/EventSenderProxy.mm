@@ -30,9 +30,9 @@
 #import "PlatformWebView.h"
 #import "StringFunctions.h"
 #import "TestController.h"
-#import <wtf/RetainPtr.h>
 #import <Carbon/Carbon.h>
 #import <WebKit2/WKString.h>
+#import <wtf/RetainPtr.h>
 
 namespace WTR {
 
@@ -179,8 +179,11 @@ void EventSenderProxy::mouseUp(unsigned buttonNumber, WKEventModifiers modifiers
                                         pressure:0.0];
 
     NSView *targetView = [m_testController->mainWebView()->platformView() hitTest:[event locationInWindow]];
+    // FIXME: Silly hack to teach WKTR to respect capturing mouse events outside the WKView.
+    // The right solution is just to use NSApplication's built-in event sending methods, 
+    // instead of rolling our own algorithm for selecting an event target.
     targetView = targetView ? targetView : m_testController->mainWebView()->platformView();
-    assert(targetView);
+    ASSERT(targetView);
     [targetView mouseUp:event];
     if (buttonNumber == LeftMouseButton)
         m_leftMouseButtonDown = false;

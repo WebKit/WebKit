@@ -1,3 +1,41 @@
+2013-09-01  Alexey Proskuryakov  <ap@apple.com>
+
+        [WK2][Mac] Drag and drop tests interfere with user's UI
+        https://bugs.webkit.org/show_bug.cgi?id=120538
+
+        Reviewed by Dan Bernstein.
+
+        This makes running WebKit2 regression tests locally more viable. The patch doesn't
+        fix drag and drop tests to work as expected, I posted some thought about that in
+        <https://bugs.webkit.org/show_bug.cgi?id=68552>.
+
+        * WebKitTestRunner/EventSenderProxy.h:
+        (WTR::EventSenderProxy::position):
+        * WebKitTestRunner/TestController.h:
+        (WTR::TestController::eventSenderProxy):
+        Expose a way to get current mouse position from anywhere in WKTR code.
+
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj: Added new files.
+
+        * WebKitTestRunner/mac/EventSenderProxy.mm: (WTR::EventSenderProxy::mouseUp):
+        Copied a FIXME comment from DumpRenderTree.
+
+        * WebKitTestRunner/mac/PlatformWebViewMac.mm:
+        (-[TestRunnerWKView dragImage:at:offset:event:pasteboard:source:slideBack:]):
+        Override drag initiation, using a custom NSDraggingInfo implementation.
+
+        * WebKitTestRunner/mac/TestControllerMac.mm: (WTR::TestController::platformInitialize):
+        Replace NSEvent with a custom class.
+
+        * WebKitTestRunner/mac/WebKitTestRunnerDraggingInfo.h: Added.
+        * WebKitTestRunner/mac/WebKitTestRunnerDraggingInfo.mm: Added.
+        * WebKitTestRunner/mac/WebKitTestRunnerEvent.h: Added.
+        * WebKitTestRunner/mac/WebKitTestRunnerEvent.mm: Added.
+        Largely a copy of DumpRenderTree classes, modified to not use global variables.
+        We should consider making these variables static in EventSenderProxy though, as
+        it's strange that mouse state in WKTR is reset between tests without WebKit ever
+        being told about that.
+
 2013-08-30  Brent Fulgham  <bfulgham@apple.com>
 
         [Windows] Unreviewed build fix.

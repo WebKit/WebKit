@@ -1,3 +1,16 @@
+2013-09-01  Alexey Proskuryakov  <ap@apple.com>
+
+        [WK2][Mac] Drag and drop tests interfere with user's UI
+        https://bugs.webkit.org/show_bug.cgi?id=120538
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/mac/WKView.mm: (-[WKView _setDragImage:at:linkDrag:]): Make it possible
+        to override drag initiation in subclasses. It is a bit unfortunate that this exposes
+        a deprecated API that we call, but probably not unfortunate enough to invent a new
+        scary looking name for the same function, and conditionally call that if implemented
+        by subclass.
+
 2013-08-31  Santosh Mahto  <santosh.ma@samsung.com>
 
         warning: unused parameter point and area in EwkView.cpp:1390

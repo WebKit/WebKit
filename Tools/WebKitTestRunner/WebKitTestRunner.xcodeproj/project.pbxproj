@@ -85,6 +85,8 @@
 		BCD7D2F811921278006DB7EE /* TestInvocation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCD7D2F711921278006DB7EE /* TestInvocation.cpp */; };
 		BCDA2B9A1191051F00C3BC47 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BCDA2B991191051F00C3BC47 /* JavaScriptCore.framework */; };
 		C0CE720B1247C93300BC0EC4 /* TestRunnerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = C0CE720A1247C93300BC0EC4 /* TestRunnerMac.mm */; };
+		E132AA3A17CD5F1000611DF0 /* WebKitTestRunnerDraggingInfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = E132AA3817CD5F1000611DF0 /* WebKitTestRunnerDraggingInfo.mm */; };
+		E132AA3D17CE776F00611DF0 /* WebKitTestRunnerEvent.mm in Sources */ = {isa = PBXBuildFile; fileRef = E132AA3B17CE776F00611DF0 /* WebKitTestRunnerEvent.mm */; };
 		E1BA671E1742DA6A00C20251 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E1BA671D1742DA5A00C20251 /* Carbon.framework */; };
 		E1C642C317CBCC7300D66A3C /* PoseAsClass.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1C642C117CBCC7300D66A3C /* PoseAsClass.mm */; };
 		E1C642C617CBCD4C00D66A3C /* WebKitTestRunnerPasteboard.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1C642C417CBCD4C00D66A3C /* WebKitTestRunnerPasteboard.mm */; };
@@ -221,6 +223,10 @@
 		BCD7D2F711921278006DB7EE /* TestInvocation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TestInvocation.cpp; sourceTree = "<group>"; };
 		BCDA2B991191051F00C3BC47 /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JavaScriptCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C0CE720A1247C93300BC0EC4 /* TestRunnerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TestRunnerMac.mm; path = mac/TestRunnerMac.mm; sourceTree = "<group>"; };
+		E132AA3817CD5F1000611DF0 /* WebKitTestRunnerDraggingInfo.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebKitTestRunnerDraggingInfo.mm; sourceTree = "<group>"; };
+		E132AA3917CD5F1000611DF0 /* WebKitTestRunnerDraggingInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitTestRunnerDraggingInfo.h; sourceTree = "<group>"; };
+		E132AA3B17CE776F00611DF0 /* WebKitTestRunnerEvent.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebKitTestRunnerEvent.mm; sourceTree = "<group>"; };
+		E132AA3C17CE776F00611DF0 /* WebKitTestRunnerEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitTestRunnerEvent.h; sourceTree = "<group>"; };
 		E1BA671D1742DA5A00C20251 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
 		E1C642C117CBCC7300D66A3C /* PoseAsClass.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PoseAsClass.mm; sourceTree = "<group>"; };
 		E1C642C217CBCC7300D66A3C /* PoseAsClass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PoseAsClass.h; sourceTree = "<group>"; };
@@ -422,11 +428,15 @@
 				5670B8271386FCA5002EB355 /* EventSenderProxy.mm */,
 				BC7933FF118F7C84005EA8E2 /* main.mm */,
 				BC7934E711906846005EA8E2 /* PlatformWebViewMac.mm */,
-				E1C642C117CBCC7300D66A3C /* PoseAsClass.mm */,
 				E1C642C217CBCC7300D66A3C /* PoseAsClass.h */,
+				E1C642C117CBCC7300D66A3C /* PoseAsClass.mm */,
 				BC8C795B11D2785D004535A1 /* TestControllerMac.mm */,
-				E1C642C417CBCD4C00D66A3C /* WebKitTestRunnerPasteboard.mm */,
+				E132AA3917CD5F1000611DF0 /* WebKitTestRunnerDraggingInfo.h */,
+				E132AA3817CD5F1000611DF0 /* WebKitTestRunnerDraggingInfo.mm */,
+				E132AA3C17CE776F00611DF0 /* WebKitTestRunnerEvent.h */,
+				E132AA3B17CE776F00611DF0 /* WebKitTestRunnerEvent.mm */,
 				E1C642C517CBCD4C00D66A3C /* WebKitTestRunnerPasteboard.h */,
+				E1C642C417CBCD4C00D66A3C /* WebKitTestRunnerPasteboard.mm */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -545,8 +555,6 @@
 /* Begin PBXProject section */
 		08FB7793FE84155DC02AAC07 /* Project object */ = {
 			isa = PBXProject;
-			attributes = {
-			};
 			buildConfigurationList = 1DEB927808733DD40010E9CD /* Build configuration list for PBXProject "WebKitTestRunner" */;
 			compatibilityVersion = "Xcode 3.1";
 			developmentRegion = English;
@@ -613,6 +621,7 @@
 			files = (
 				5322FB4313FDA0CD0041ABCC /* CyclicRedundancyCheck.cpp in Sources */,
 				E1C642C317CBCC7300D66A3C /* PoseAsClass.mm in Sources */,
+				E132AA3D17CE776F00611DF0 /* WebKitTestRunnerEvent.mm in Sources */,
 				5670B8281386FCA5002EB355 /* EventSenderProxy.mm in Sources */,
 				26D758E7160BECDD00268472 /* GeolocationProviderMock.cpp in Sources */,
 				BC793400118F7C84005EA8E2 /* main.mm in Sources */,
@@ -623,6 +632,7 @@
 				BC8C795C11D2785D004535A1 /* TestControllerMac.mm in Sources */,
 				BCD7D2F811921278006DB7EE /* TestInvocation.cpp in Sources */,
 				BC9192051333E4F8003011DC /* TestInvocationCG.cpp in Sources */,
+				E132AA3A17CD5F1000611DF0 /* WebKitTestRunnerDraggingInfo.mm in Sources */,
 				3164C8F015D1ADA100EF1FE0 /* WebNotificationProvider.cpp in Sources */,
 				4429FC5F1627089600F66D8B /* WorkQueueManager.cpp in Sources */,
 			);
