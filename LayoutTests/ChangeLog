@@ -1,3 +1,14 @@
+2013-09-02  Anton Obzhirov  <a.obzhirov@samsung.com>
+
+        <https://webkit.org/b/98350> [GTK] accessibility/aria-invalid.html times out
+
+        Reviewed by Mario Sanchez Prada.
+
+        Unskipped accessibility/aria-invalid.html which is passing now.
+
+        * platform/gtk/TestExpectations: Removed passing test.
+        * platform/gtk-wk2/TestExpectations: Added test timing out in WK2 only.
+
 2013-09-02  Ádám Kallai  <kadam@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening. Skip some failing tests.

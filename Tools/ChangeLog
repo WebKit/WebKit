@@ -1,3 +1,22 @@
+2013-09-02  Anton Obzhirov  <a.obzhirov@samsung.com>
+
+        <https://webkit.org/b/98350> [GTK] accessibility/aria-invalid.html times out
+
+        Reviewed by Mario Sanchez Prada.
+
+        Added few mappings in DumpRenderTree and WebKitTestRunner for aria-invalid in order to get the tests run properly.
+
+        * DumpRenderTree/atk/AccessibilityCallbacksAtk.cpp:
+        (axObjectEventListener):
+        Added mapping for invalid-entry event parameter.
+        * DumpRenderTree/atk/AccessibilityUIElementAtk.cpp:
+        (coreAttributeToAtkAttribute):
+        Added mapping to aria-invalid.
+        (AccessibilityUIElement::stringAttributeValue):
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        (WTR::coreAttributeToAtkAttribute):
+        Added mapping to aria-invalid.
+
 2013-09-02  Nick Diego Yamane  <nick.yamane@openbossa.org>
 
         Save md5 correctly when jhbuildPath doesn't exist yet

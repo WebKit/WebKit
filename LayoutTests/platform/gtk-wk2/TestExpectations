@@ -497,6 +497,9 @@ Bug(GTK) animations/combo-transform-translate+scale.html [ Failure ]
 Bug(GTK) animations/play-state-suspend.html [ Failure ]
 Bug(GTK) animations/suspend-resume-animation.html [ Failure ]
 
+# [GTK] Missing WTR AccessibilityUIElement::addNotificationListener implementation
+webkit.org/b/120421 accessibility/aria-invalid.html [ Timeout ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
 #////////////////////////////////////////////////////////////////////////////////////////

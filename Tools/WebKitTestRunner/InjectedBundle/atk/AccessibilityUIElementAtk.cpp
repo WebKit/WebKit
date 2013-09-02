@@ -52,7 +52,13 @@ static String coreAttributeToAtkAttribute(JSStringRef attribute)
     JSStringGetUTF8CString(attribute, buffer.get(), bufferSize);
 
     String attributeString = String::fromUTF8(buffer.get());
-    return attributeString == "AXPlaceholderValue" ? "placeholder-text" : String();
+    if (attributeString == "AXInvalid")
+        return "aria-invalid";
+
+    if (attributeString == "AXPlaceholderValue")
+        return "placeholder-text";
+
+    return String();
 }
 
 static String getAttributeSetValueForId(AtkObject* accessible, const char* id)

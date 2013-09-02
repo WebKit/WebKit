@@ -1,3 +1,18 @@
+2013-09-02  Anton Obzhirov  <a.obzhirov@samsung.com>
+
+        <https://webkit.org/b/98350> [GTK] accessibility/aria-invalid.html times out
+
+        Reviewed by Mario Sanchez Prada.
+
+        The patch exposes aria-invalid attribute to ATK.
+
+        * accessibility/atk/AXObjectCacheAtk.cpp:
+        (WebCore::AXObjectCache::postPlatformNotification):
+        Added emitting state-change signal for aria-invalid event.
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (webkitAccessibleGetAttributes):
+        Added aria-invalid attribute.
+
 2013-09-02  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r154955.

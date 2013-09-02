@@ -498,6 +498,10 @@ static AtkAttributeSet* webkitAccessibleGetAttributes(AtkObject* object)
     if (coreObject->ariaHasPopup())
         attributeSet = addToAtkAttributeSet(attributeSet, "aria-haspopup", "true");
 
+    String invalidStatus = coreObject->invalidStatus().string();
+    if (!invalidStatus.isEmpty() && invalidStatus != "false")
+        attributeSet = addToAtkAttributeSet(attributeSet, "aria-invalid", coreObject->invalidStatus().string().utf8().data());
+
     return attributeSet;
 }
 

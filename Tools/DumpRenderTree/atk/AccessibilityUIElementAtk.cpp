@@ -48,10 +48,13 @@ static String coreAttributeToAtkAttribute(JSStringRef attribute)
     JSStringGetUTF8CString(attribute, buffer.get(), bufferSize);
 
     String attributeString = String::fromUTF8(buffer.get());
+    if (attributeString == "AXInvalid")
+        return "aria-invalid";
+
     if (attributeString == "AXPlaceholderValue")
         return "placeholder-text";
 
-    return "";
+    return String();
 }
 
 static String getAttributeSetValueForId(AtkObject* accessible, const char* id)
@@ -887,6 +890,13 @@ JSStringRef AccessibilityUIElement::stringAttributeValue(JSStringRef attribute)
         return JSStringCreateWithCharacters(0, 0);
 
     String attributeValue = getAttributeSetValueForId(ATK_OBJECT(m_element), atkAttributeName.utf8().data());
+
+    // In case of 'aria-invalid' when the attribute empty or has "false" for ATK
+    // according to http://www.w3.org/WAI/PF/aria-implementation/#mapping attribute
+    // is not mapped but layout tests will expect 'false'.
+    if (attributeValue.isEmpty() && atkAttributeName == "aria-invalid")
+        return JSStringCreateWithUTF8CString("false");
+
     return JSStringCreateWithUTF8CString(attributeValue.utf8().data());
 }
 
