@@ -344,14 +344,14 @@ void HTMLObjectElement::removedFrom(ContainerNode* insertionPoint)
     FormAssociatedElement::removedFrom(insertionPoint);
 }
 
-void HTMLObjectElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
+void HTMLObjectElement::childrenChanged(const ChildChange& change)
 {
     updateDocNamedItem();
     if (inDocument() && !useFallbackContent()) {
         setNeedsWidgetUpdate(true);
         setNeedsStyleRecalc();
     }
-    HTMLPlugInImageElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
+    HTMLPlugInImageElement::childrenChanged(change);
 }
 
 bool HTMLObjectElement::isURLAttribute(const Attribute& attribute) const

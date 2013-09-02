@@ -1056,13 +1056,13 @@ void SVGElement::buildPendingResourcesIfNeeded()
     }
 }
 
-void SVGElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
+void SVGElement::childrenChanged(const ChildChange& change)
 {
-    StyledElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
+    StyledElement::childrenChanged(change);
 
-    // Invalidate all SVGElementInstances associated with us
-    if (!changedByParser)
-        SVGElementInstance::invalidateAllInstancesOfElement(this);
+    if (change.source == ChildChangeSourceParser)
+        return;
+    SVGElementInstance::invalidateAllInstancesOfElement(this);
 }
 
 PassRefPtr<CSSValue> SVGElement::getPresentationAttribute(const String& name)

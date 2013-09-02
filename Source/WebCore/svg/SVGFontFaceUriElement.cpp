@@ -70,9 +70,9 @@ void SVGFontFaceUriElement::parseAttribute(const QualifiedName& name, const Atom
         SVGElement::parseAttribute(name, value);
 }
 
-void SVGFontFaceUriElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
+void SVGFontFaceUriElement::childrenChanged(const ChildChange& change)
 {
-    SVGElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
+    SVGElement::childrenChanged(change);
 
     if (!parentNode() || !parentNode()->hasTagName(font_face_srcTag))
         return;

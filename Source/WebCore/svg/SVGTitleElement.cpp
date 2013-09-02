@@ -56,9 +56,9 @@ void SVGTitleElement::removedFrom(ContainerNode* rootParent)
         document().removeTitle(this);
 }
 
-void SVGTitleElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
+void SVGTitleElement::childrenChanged(const ChildChange& change)
 {
-    SVGElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
+    SVGElement::childrenChanged(change);
     if (inDocument())
         // FIXME: does SVG have title text direction?
         document().setTitleElement(StringWithDirection(textContent(), LTR), this);

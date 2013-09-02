@@ -80,11 +80,11 @@ void HTMLOutputElement::setFor(const String& value)
     m_tokens->setValue(value);
 }
 
-void HTMLOutputElement::childrenChanged(bool createdByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
+void HTMLOutputElement::childrenChanged(const ChildChange& change)
 {
-    HTMLFormControlElement::childrenChanged(createdByParser, beforeChange, afterChange, childCountDelta);
+    HTMLFormControlElement::childrenChanged(change);
 
-    if (createdByParser || m_isSetTextContentInProgress) {
+    if (change.source == ChildChangeSourceParser || m_isSetTextContentInProgress) {
         m_isSetTextContentInProgress = false;
         return;
     }

@@ -66,10 +66,10 @@ const AtomicString& HTMLOptGroupElement::formControlType() const
     return optgroup;
 }
 
-void HTMLOptGroupElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
+void HTMLOptGroupElement::childrenChanged(const ChildChange& change)
 {
     recalcSelectOptions();
-    HTMLElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
+    HTMLElement::childrenChanged(change);
 }
 
 void HTMLOptGroupElement::parseAttribute(const QualifiedName& name, const AtomicString& value)

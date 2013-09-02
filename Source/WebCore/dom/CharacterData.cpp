@@ -23,6 +23,7 @@
 #include "CharacterData.h"
 
 #include "Document.h"
+#include "ElementTraversal.h"
 #include "EventNames.h"
 #include "ExceptionCode.h"
 #include "FrameSelection.h"
@@ -96,8 +97,15 @@ unsigned CharacterData::parserAppendData(const String& string, unsigned offset, 
     document().incDOMTreeVersion();
     // We don't call dispatchModifiedEvent here because we don't want the
     // parser to dispatch DOM mutation events.
-    if (parentNode())
-        parentNode()->childrenChanged();
+    if (parentNode()) {
+        ContainerNode::ChildChange change = {
+            ContainerNode::TextChanged,
+            ElementTraversal::previousSibling(this),
+            ElementTraversal::nextSibling(this),
+            ContainerNode::ChildChangeSourceParser
+        };
+        parentNode()->childrenChanged(change);
+    }
 
     return characterLengthLimit;
 }
@@ -205,8 +213,15 @@ void CharacterData::dispatchModifiedEvent(const String& oldData)
     if (OwnPtr<MutationObserverInterestGroup> mutationRecipients = MutationObserverInterestGroup::createForCharacterDataMutation(this))
         mutationRecipients->enqueueMutationRecord(MutationRecord::createCharacterData(this, oldData));
     if (!isInShadowTree()) {
-        if (parentNode())
-            parentNode()->childrenChanged();
+        if (parentNode()) {
+            ContainerNode::ChildChange change = {
+                ContainerNode::TextChanged,
+                ElementTraversal::previousSibling(this),
+                ElementTraversal::nextSibling(this),
+                ContainerNode::ChildChangeSourceAPI
+            };
+            parentNode()->childrenChanged(change);
+        }
         if (document().hasListenerType(Document::DOMCHARACTERDATAMODIFIED_LISTENER))
             dispatchScopedEvent(MutationEvent::create(eventNames().DOMCharacterDataModifiedEvent, true, 0, oldData, m_data));
         dispatchSubtreeModifiedEvent();

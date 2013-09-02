@@ -29,6 +29,7 @@
 #include "ChromeClient.h"
 #include "ContainerNodeAlgorithms.h"
 #include "Editor.h"
+#include "ElementTraversal.h"
 #include "EventNames.h"
 #include "ExceptionCode.h"
 #include "FloatRect.h"
@@ -66,7 +67,6 @@ namespace WebCore {
 
 static void dispatchChildInsertionEvents(Node*);
 static void dispatchChildRemovalEvents(Node*);
-static void updateTreeAfterInsertion(ContainerNode*, Node*, AttachBehavior);
 
 typedef pair<RefPtr<Node>, unsigned> CallbackParameters;
 typedef pair<NodeCallback, CallbackParameters> CallbackInfo;
@@ -315,7 +315,7 @@ bool ContainerNode::insertBefore(PassRefPtr<Node> newChild, Node* refChild, Exce
 
         insertBeforeCommon(next.get(), child);
 
-        updateTreeAfterInsertion(this, child, attachBehavior);
+        updateTreeAfterInsertion(child, attachBehavior);
     }
 
     dispatchSubtreeModifiedEvent();
@@ -348,6 +348,28 @@ void ContainerNode::insertBeforeCommon(Node* nextChild, Node* newChild)
     newChild->setNextSibling(nextChild);
 }
 
+void ContainerNode::notifyChildInserted(Node* child, ChildChangeSource source)
+{
+    ChildChange change;
+    change.type = child->isElementNode() ? ElementInserted : child->isTextNode() ? TextInserted : NonContentsChildChanged;
+    change.previousSiblingElement =  ElementTraversal::previousSibling(child);
+    change.nextSiblingElement = ElementTraversal::nextSibling(child);
+    change.source = source;
+
+    childrenChanged(change);
+}
+
+void ContainerNode::notifyChildRemoved(Node* child, Node* previousSibling, Node* nextSibling, ChildChangeSource source)
+{
+    ChildChange change;
+    change.type = child->isElementNode() ? ElementRemoved : child->isTextNode() ? TextRemoved : NonContentsChildChanged;
+    change.previousSiblingElement = (!previousSibling || previousSibling->isElementNode()) ? toElement(previousSibling) : ElementTraversal::previousSibling(previousSibling);
+    change.nextSiblingElement = (!nextSibling || nextSibling->isElementNode()) ? toElement(nextSibling) : ElementTraversal::nextSibling(nextSibling);
+    change.source = source;
+
+    childrenChanged(change);
+}
+
 void ContainerNode::parserInsertBefore(PassRefPtr<Node> newChild, Node* nextChild)
 {
     ASSERT(newChild);
@@ -370,7 +392,8 @@ void ContainerNode::parserInsertBefore(PassRefPtr<Node> newChild, Node* nextChil
 
     ChildListMutationScope(this).childAdded(newChild.get());
 
-    childrenChanged(true, newChild->previousSibling(), nextChild, 1);
+    notifyChildInserted(newChild.get(), ChildChangeSourceParser);
+
     ChildNodeInsertionNotifier(this).notify(newChild.get());
 }
 
@@ -454,7 +477,7 @@ bool ContainerNode::replaceChild(PassRefPtr<Node> newChild, Node* oldChild, Exce
                 appendChildToContainer(child, this);
         }
 
-        updateTreeAfterInsertion(this, child, attachBehavior);
+        updateTreeAfterInsertion(child, attachBehavior);
     }
 
     dispatchSubtreeModifiedEvent();
@@ -548,7 +571,9 @@ bool ContainerNode::removeChild(Node* oldChild, ExceptionCode& ec)
         Node* prev = child->previousSibling();
         Node* next = child->nextSibling();
         removeBetween(prev, next, child.get());
-        childrenChanged(false, prev, next, -1);
+
+        notifyChildRemoved(child.get(), prev, next, ChildChangeSourceAPI);
+
         ChildNodeRemovalNotifier(this).notify(child.get());
     }
     dispatchSubtreeModifiedEvent();
@@ -599,7 +624,8 @@ void ContainerNode::parserRemoveChild(Node* oldChild)
 
     removeBetween(prev, next, oldChild);
 
-    childrenChanged(true, prev, next, -1);
+    notifyChildRemoved(oldChild, prev, next, ChildChangeSourceParser);
+
     ChildNodeRemovalNotifier(this).notify(oldChild);
 }
 
@@ -636,7 +662,8 @@ void ContainerNode::removeChildren()
             }
         }
 
-        childrenChanged(false, 0, 0, -static_cast<int>(removedChildren.size()));
+        ChildChange change = { AllChildrenRemoved, nullptr, nullptr, ChildChangeSourceAPI };
+        childrenChanged(change);
         
         for (size_t i = 0; i < removedChildren.size(); ++i)
             ChildNodeRemovalNotifier(this).notify(removedChildren[i].get());
@@ -695,7 +722,7 @@ bool ContainerNode::appendChild(PassRefPtr<Node> newChild, ExceptionCode& ec, At
             appendChildToContainer(child, this);
         }
 
-        updateTreeAfterInsertion(this, child, attachBehavior);
+        updateTreeAfterInsertion(child, attachBehavior);
     }
 
     dispatchSubtreeModifiedEvent();
@@ -714,7 +741,6 @@ void ContainerNode::parserAppendChild(PassRefPtr<Node> newChild)
     if (&document() != &newChild->document())
         document().adoptNode(newChild.get(), ASSERT_NO_EXCEPTION);
 
-    Node* last = m_lastChild;
     {
         NoEventDispatchAssertion assertNoEventDispatch;
         // FIXME: This method should take a PassRefPtr.
@@ -726,7 +752,8 @@ void ContainerNode::parserAppendChild(PassRefPtr<Node> newChild)
 
     ChildListMutationScope(this).childAdded(newChild.get());
 
-    childrenChanged(true, last, 0, 1);
+    notifyChildInserted(newChild.get(), ChildChangeSourceParser);
+
     ChildNodeInsertionNotifier(this).notify(newChild.get());
 }
 
@@ -804,10 +831,10 @@ void ContainerNode::scheduleSetNeedsStyleRecalc(StyleChangeType changeType)
         setNeedsStyleRecalc(changeType);
 }
 
-void ContainerNode::childrenChanged(bool changedByParser, Node*, Node*, int childCountDelta)
+void ContainerNode::childrenChanged(const ChildChange& change)
 {
     document().incDOMTreeVersion();
-    if (!changedByParser && childCountDelta)
+    if (change.source == ChildChangeSourceAPI && change.type != TextChanged)
         document().updateRangesAfterChildrenChanged(this);
     invalidateNodeListCachesInAncestors();
 }
@@ -1036,20 +1063,19 @@ static void dispatchChildRemovalEvents(Node* child)
     }
 }
 
-static void updateTreeAfterInsertion(ContainerNode* parent, Node* child, AttachBehavior attachBehavior)
+void ContainerNode::updateTreeAfterInsertion(Node* child, AttachBehavior attachBehavior)
 {
-    ASSERT(parent->refCount());
     ASSERT(child->refCount());
 
-    ChildListMutationScope(parent).childAdded(child);
+    ChildListMutationScope(this).childAdded(child);
 
-    parent->childrenChanged(false, child->previousSibling(), child->nextSibling(), 1);
+    notifyChildInserted(child, ChildChangeSourceAPI);
 
-    ChildNodeInsertionNotifier(parent).notify(child);
+    ChildNodeInsertionNotifier(this).notify(child);
 
     // FIXME: Attachment should be the first operation in this function, but some code
     // (for example, HTMLFormControlElement's autofocus support) requires this ordering.
-    if (parent->attached() && !child->attached() && child->parentNode() == parent) {
+    if (attached() && !child->attached() && child->parentNode() == this) {
         if (attachBehavior == AttachLazily) {
             if (child->isElementNode())
                 toElement(child)->lazyAttach();

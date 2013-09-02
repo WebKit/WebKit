@@ -61,9 +61,9 @@ void HTMLTitleElement::removedFrom(ContainerNode* insertionPoint)
         document().removeTitle(this);
 }
 
-void HTMLTitleElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
+void HTMLTitleElement::childrenChanged(const ChildChange& change)
 {
-    HTMLElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
+    HTMLElement::childrenChanged(change);
     m_title = textWithDirection();
     if (inDocument()) {
         if (!isInShadowTree())

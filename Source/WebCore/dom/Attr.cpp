@@ -159,7 +159,7 @@ bool Attr::childTypeAllowed(NodeType type) const
     }
 }
 
-void Attr::childrenChanged(bool, Node*, Node*, int)
+void Attr::childrenChanged(const ChildChange&)
 {
     if (m_ignoreChildrenChanged > 0)
         return;

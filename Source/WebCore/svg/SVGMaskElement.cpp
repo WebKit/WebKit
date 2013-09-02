@@ -146,11 +146,11 @@ void SVGMaskElement::svgAttributeChanged(const QualifiedName& attrName)
         object->setNeedsLayout(true);
 }
 
-void SVGMaskElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
+void SVGMaskElement::childrenChanged(const ChildChange& change)
 {
-    SVGElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
+    SVGElement::childrenChanged(change);
 
-    if (changedByParser)
+    if (change.source == ChildChangeSourceParser)
         return;
 
     if (RenderObject* object = renderer())

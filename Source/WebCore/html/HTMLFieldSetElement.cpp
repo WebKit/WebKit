@@ -63,9 +63,9 @@ void HTMLFieldSetElement::disabledAttributeChanged()
     invalidateDisabledStateUnder(this);
 }
 
-void HTMLFieldSetElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
+void HTMLFieldSetElement::childrenChanged(const ChildChange& change)
 {
-    HTMLFormControlElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
+    HTMLFormControlElement::childrenChanged(change);
 
     auto legendChildren = childrenOfType<HTMLLegendElement>(this);
     for (auto legend = legendChildren.begin(), end = legendChildren.end(); legend != end; ++legend)

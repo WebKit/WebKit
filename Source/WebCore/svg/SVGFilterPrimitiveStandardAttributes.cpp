@@ -117,12 +117,13 @@ void SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(const QualifiedNa
     invalidate();
 }
 
-void SVGFilterPrimitiveStandardAttributes::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
+void SVGFilterPrimitiveStandardAttributes::childrenChanged(const ChildChange& change)
 {
-    SVGElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
+    SVGElement::childrenChanged(change);
 
-    if (!changedByParser)
-        invalidate();
+    if (change.source == ChildChangeSourceParser)
+        return;
+    invalidate();
 }
 
 void SVGFilterPrimitiveStandardAttributes::setStandardAttributes(FilterEffect* filterEffect) const

@@ -1,3 +1,142 @@
+2013-09-02  Antti Koivisto  <antti@apple.com>
+
+        Clean up ContainerNode::childrenChanged
+        https://bugs.webkit.org/show_bug.cgi?id=120599
+
+        Reviewed by Andreas Kling.
+
+        - Make childrenChanged take a single struct argument instead of a long list of arguments.
+        - Use enum instead of childCountDelta. It was always -1, 0, 1 or the total number of children (in case of removing them all).
+        - Remove use of Node*, give the change range as Elements.
+        - Related cleanups.
+
+        * dom/Attr.cpp:
+        (WebCore::Attr::childrenChanged):
+        * dom/Attr.h:
+        * dom/CharacterData.cpp:
+        (WebCore::CharacterData::parserAppendData):
+        (WebCore::CharacterData::dispatchModifiedEvent):
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::insertBefore):
+        (WebCore::ContainerNode::notifyChildInserted):
+        (WebCore::ContainerNode::notifyChildRemoved):
+        
+            Add private helpers for setting up the struct.
+
+        (WebCore::ContainerNode::parserInsertBefore):
+        (WebCore::ContainerNode::replaceChild):
+        (WebCore::ContainerNode::removeChild):
+        (WebCore::ContainerNode::parserRemoveChild):
+        (WebCore::ContainerNode::removeChildren):
+        (WebCore::ContainerNode::appendChild):
+        (WebCore::ContainerNode::parserAppendChild):
+        (WebCore::ContainerNode::childrenChanged):
+        (WebCore::ContainerNode::updateTreeAfterInsertion):
+        * dom/ContainerNode.h:
+        * dom/Document.cpp:
+        (WebCore::Document::childrenChanged):
+        * dom/Document.h:
+        * dom/Element.cpp:
+        (WebCore::checkForSiblingStyleChanges):
+        
+            Clean up and simplify. Since we now get element range automatically we don't need to compute it.
+
+        (WebCore::Element::childrenChanged):
+        (WebCore::Element::finishParsingChildren):
+        * dom/Element.h:
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::childrenChanged):
+        * dom/ShadowRoot.h:
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::childrenChanged):
+        (WebCore::HTMLElement::adjustDirectionalityIfNeededAfterChildrenChanged):
+        
+            Try to keep the existing behavior. This code needs  more cleanup to be sane. It shouldn't operate on Nodes
+            as it only really cares about Elements.
+
+        * html/HTMLElement.h:
+        * html/HTMLFieldSetElement.cpp:
+        (WebCore::HTMLFieldSetElement::childrenChanged):
+        * html/HTMLFieldSetElement.h:
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::childrenChanged):
+        * html/HTMLObjectElement.h:
+        * html/HTMLOptGroupElement.cpp:
+        (WebCore::HTMLOptGroupElement::childrenChanged):
+        * html/HTMLOptGroupElement.h:
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::childrenChanged):
+        * html/HTMLOptionElement.h:
+        * html/HTMLOutputElement.cpp:
+        (WebCore::HTMLOutputElement::childrenChanged):
+        * html/HTMLOutputElement.h:
+        * html/HTMLScriptElement.cpp:
+        (WebCore::HTMLScriptElement::childrenChanged):
+        * html/HTMLScriptElement.h:
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::childrenChanged):
+        * html/HTMLSelectElement.h:
+        * html/HTMLStyleElement.cpp:
+        (WebCore::HTMLStyleElement::childrenChanged):
+        * html/HTMLStyleElement.h:
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::childrenChanged):
+        * html/HTMLTextAreaElement.h:
+        * html/HTMLTitleElement.cpp:
+        (WebCore::HTMLTitleElement::childrenChanged):
+        * html/HTMLTitleElement.h:
+        * html/shadow/InsertionPoint.cpp:
+        (WebCore::InsertionPoint::childrenChanged):
+        * html/shadow/InsertionPoint.h:
+        * svg/SVGClipPathElement.cpp:
+        (WebCore::SVGClipPathElement::childrenChanged):
+        * svg/SVGClipPathElement.h:
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::childrenChanged):
+        * svg/SVGElement.h:
+        * svg/SVGFELightElement.cpp:
+        (WebCore::SVGFELightElement::childrenChanged):
+        * svg/SVGFELightElement.h:
+        * svg/SVGFilterElement.cpp:
+        (WebCore::SVGFilterElement::childrenChanged):
+        * svg/SVGFilterElement.h:
+        * svg/SVGFilterPrimitiveStandardAttributes.cpp:
+        (WebCore::SVGFilterPrimitiveStandardAttributes::childrenChanged):
+        * svg/SVGFilterPrimitiveStandardAttributes.h:
+        * svg/SVGFontFaceElement.cpp:
+        (WebCore::SVGFontFaceElement::childrenChanged):
+        * svg/SVGFontFaceElement.h:
+        * svg/SVGFontFaceFormatElement.cpp:
+        (WebCore::SVGFontFaceFormatElement::childrenChanged):
+        * svg/SVGFontFaceFormatElement.h:
+        * svg/SVGFontFaceSrcElement.cpp:
+        (WebCore::SVGFontFaceSrcElement::childrenChanged):
+        * svg/SVGFontFaceSrcElement.h:
+        * svg/SVGFontFaceUriElement.cpp:
+        (WebCore::SVGFontFaceUriElement::childrenChanged):
+        * svg/SVGFontFaceUriElement.h:
+        * svg/SVGGradientElement.cpp:
+        (WebCore::SVGGradientElement::childrenChanged):
+        * svg/SVGGradientElement.h:
+        * svg/SVGMarkerElement.cpp:
+        (WebCore::SVGMarkerElement::childrenChanged):
+        * svg/SVGMarkerElement.h:
+        * svg/SVGMaskElement.cpp:
+        (WebCore::SVGMaskElement::childrenChanged):
+        * svg/SVGMaskElement.h:
+        * svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::childrenChanged):
+        * svg/SVGPatternElement.h:
+        * svg/SVGScriptElement.cpp:
+        (WebCore::SVGScriptElement::childrenChanged):
+        * svg/SVGScriptElement.h:
+        * svg/SVGStyleElement.cpp:
+        (WebCore::SVGStyleElement::childrenChanged):
+        * svg/SVGStyleElement.h:
+        * svg/SVGTitleElement.cpp:
+        (WebCore::SVGTitleElement::childrenChanged):
+        * svg/SVGTitleElement.h:
+
 2013-09-02  Andreas Kling  <akling@apple.com>
 
         Generate isFooElement() functions from tagname data.

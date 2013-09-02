@@ -103,11 +103,11 @@ void SVGClipPathElement::svgAttributeChanged(const QualifiedName& attrName)
         object->setNeedsLayout(true);
 }
 
-void SVGClipPathElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
+void SVGClipPathElement::childrenChanged(const ChildChange& change)
 {
-    SVGGraphicsElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
+    SVGGraphicsElement::childrenChanged(change);
 
-    if (changedByParser)
+    if (change.source == ChildChangeSourceParser)
         return;
 
     if (RenderObject* object = renderer())

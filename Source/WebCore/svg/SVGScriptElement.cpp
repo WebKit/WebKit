@@ -127,9 +127,9 @@ Node::InsertionNotificationRequest SVGScriptElement::insertedInto(ContainerNode*
     return InsertionDone;
 }
 
-void SVGScriptElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
+void SVGScriptElement::childrenChanged(const ChildChange& change)
 {
-    SVGElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
+    SVGElement::childrenChanged(change);
     ScriptElement::childrenChanged();
 }
 

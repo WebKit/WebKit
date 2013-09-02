@@ -109,7 +109,7 @@ protected:
     virtual void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStylePropertySet*) OVERRIDE;
     unsigned parseBorderWidthAttribute(const AtomicString&) const;
 
-    virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);
+    virtual void childrenChanged(const ChildChange&) OVERRIDE;
     void calculateAndAdjustDirectionality();
 
     virtual bool isURLAttribute(const Attribute&) const OVERRIDE;
@@ -126,7 +126,7 @@ private:
 
     void dirAttributeChanged(const AtomicString&);
     void adjustDirectionalityIfNeededAfterChildAttributeChanged(Element* child);
-    void adjustDirectionalityIfNeededAfterChildrenChanged(Node* beforeChange, int childCountDelta);
+    void adjustDirectionalityIfNeededAfterChildrenChanged(Element* beforeChange, ChildChangeType);
     TextDirection directionality(Node** strongDirectionalityTextNode= 0) const;
 
     TranslateAttributeMode translateAttributeMode() const;

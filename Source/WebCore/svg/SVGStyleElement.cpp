@@ -155,9 +155,9 @@ void SVGStyleElement::removedFrom(ContainerNode* rootParent)
         m_styleSheetOwner.removedFromDocument(&document(), this);
 }
 
-void SVGStyleElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
+void SVGStyleElement::childrenChanged(const ChildChange& change)
 {
-    SVGElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
+    SVGElement::childrenChanged(change);
     m_styleSheetOwner.childrenChanged(this);
 }
 

@@ -128,9 +128,9 @@ void HTMLTextAreaElement::restoreFormControlState(const FormControlState& state)
     setValue(state[0]);
 }
 
-void HTMLTextAreaElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
+void HTMLTextAreaElement::childrenChanged(const ChildChange& change)
 {
-    HTMLElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
+    HTMLElement::childrenChanged(change);
     setLastChangeWasNotUserEdit();
     if (m_isDirty)
         setInnerTextValue(value());

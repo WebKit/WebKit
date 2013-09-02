@@ -206,9 +206,9 @@ void HTMLStyleElement::removedFrom(ContainerNode* insertionPoint)
         m_styleSheetOwner.removedFromDocument(&document(), this);
 }
 
-void HTMLStyleElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
+void HTMLStyleElement::childrenChanged(const ChildChange& change)
 {
-    HTMLElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
+    HTMLElement::childrenChanged(change);
     m_styleSheetOwner.childrenChanged(this);
 }
 

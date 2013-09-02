@@ -296,9 +296,9 @@ void SVGFontFaceElement::removedFrom(ContainerNode* rootParent)
         ASSERT(!m_fontElement);
 }
 
-void SVGFontFaceElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
+void SVGFontFaceElement::childrenChanged(const ChildChange& change)
 {
-    SVGElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
+    SVGElement::childrenChanged(change);
     rebuildFontFace();
 }
 

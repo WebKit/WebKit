@@ -52,9 +52,9 @@ bool HTMLScriptElement::isURLAttribute(const Attribute& attribute) const
     return attribute.name() == srcAttr || HTMLElement::isURLAttribute(attribute);
 }
 
-void HTMLScriptElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
+void HTMLScriptElement::childrenChanged(const ChildChange& change)
 {
-    HTMLElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
+    HTMLElement::childrenChanged(change);
     ScriptElement::childrenChanged();
 }
 

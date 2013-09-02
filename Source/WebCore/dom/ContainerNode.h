@@ -109,12 +109,15 @@ public:
     virtual LayoutRect boundingBox() const OVERRIDE;
     virtual void scheduleSetNeedsStyleRecalc(StyleChangeType = FullStyleChange) OVERRIDE FINAL;
 
-    // -----------------------------------------------------------------------------
-    // Notification of document structure changes (see Node.h for more notification methods)
-
-    // Notifies the node that it's list of children have changed (either by adding or removing child nodes), or a child
-    // node that is of the type CDATA_SECTION_NODE, TEXT_NODE or COMMENT_NODE has changed its value.
-    virtual void childrenChanged(bool createdByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);
+    enum ChildChangeType { ElementInserted, ElementRemoved, TextInserted, TextRemoved, TextChanged, AllChildrenRemoved, NonContentsChildChanged };
+    enum ChildChangeSource { ChildChangeSourceParser, ChildChangeSourceAPI };
+    struct ChildChange {
+        ChildChangeType type;
+        Element* previousSiblingElement;
+        Element* nextSiblingElement;
+        ChildChangeSource source;
+    };
+    virtual void childrenChanged(const ChildChange&);
 
     void disconnectDescendantFrames();
 
@@ -146,6 +149,11 @@ private:
 
     bool getUpperLeftCorner(FloatPoint&) const;
     bool getLowerRightCorner(FloatPoint&) const;
+
+    void notifyChildInserted(Node* child, ChildChangeSource);
+    void notifyChildRemoved(Node* child, Node* previousSibling, Node* nextSibling, ChildChangeSource);
+
+    void updateTreeAfterInsertion(Node* child, AttachBehavior);
 
     bool isContainerNode() const WTF_DELETED_FUNCTION;
 

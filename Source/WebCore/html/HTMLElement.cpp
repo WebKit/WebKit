@@ -805,10 +805,10 @@ static void setHasDirAutoFlagRecursively(Node* firstNode, bool flag, Node* lastN
     }
 }
 
-void HTMLElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
+void HTMLElement::childrenChanged(const ChildChange& change)
 {
-    StyledElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
-    adjustDirectionalityIfNeededAfterChildrenChanged(beforeChange, childCountDelta);
+    StyledElement::childrenChanged(change);
+    adjustDirectionalityIfNeededAfterChildrenChanged(change.previousSiblingElement, change.type);
 }
 
 bool HTMLElement::hasDirectionAuto() const
@@ -910,11 +910,12 @@ void HTMLElement::calculateAndAdjustDirectionality()
         setNeedsStyleRecalc();
 }
 
-void HTMLElement::adjustDirectionalityIfNeededAfterChildrenChanged(Node* beforeChange, int childCountDelta)
+void HTMLElement::adjustDirectionalityIfNeededAfterChildrenChanged(Element* beforeChange, ChildChangeType changeType)
 {
-    if (document().renderer() && childCountDelta < 0) {
-        Node* node = beforeChange ? NodeTraversal::nextSkippingChildren(beforeChange) : 0;
-        for (int counter = 0; node && counter < childCountDelta; counter++, node = NodeTraversal::nextSkippingChildren(node)) {
+    // FIXME: This function looks suspicious.
+    if (document().renderer() && (changeType == ElementRemoved || changeType == TextRemoved)) {
+        Node* node = beforeChange ? beforeChange->nextSibling() : 0;
+        for (; node; node = node->nextSibling()) {
             if (elementAffectsDirectionality(node))
                 continue;
 
@@ -925,9 +926,12 @@ void HTMLElement::adjustDirectionalityIfNeededAfterChildrenChanged(Node* beforeC
     if (!selfOrAncestorHasDirAutoAttribute())
         return;
 
-    Node* oldMarkedNode = beforeChange ? NodeTraversal::nextSkippingChildren(beforeChange) : 0;
+    Node* oldMarkedNode = 0;
+    if (beforeChange)
+        oldMarkedNode = changeType == ElementInserted ? ElementTraversal::nextSibling(beforeChange) : beforeChange->nextSibling();
+
     while (oldMarkedNode && elementAffectsDirectionality(oldMarkedNode))
-        oldMarkedNode = NodeTraversal::nextSkippingChildren(oldMarkedNode, this);
+        oldMarkedNode = oldMarkedNode->nextSibling();
     if (oldMarkedNode)
         setHasDirAutoFlagRecursively(oldMarkedNode, false);
 

@@ -253,7 +253,7 @@ void HTMLOptionElement::setSelectedState(bool selected)
         select->invalidateSelectedItems();
 }
 
-void HTMLOptionElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
+void HTMLOptionElement::childrenChanged(const ChildChange& change)
 {
 #if ENABLE(DATALIST_ELEMENT)
     if (HTMLDataListElement* dataList = ownerDataListElement())
@@ -262,7 +262,7 @@ void HTMLOptionElement::childrenChanged(bool changedByParser, Node* beforeChange
 #endif
     if (HTMLSelectElement* select = ownerSelectElement())
         select->optionElementChildrenChanged();
-    HTMLElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
+    HTMLElement::childrenChanged(change);
 }
 
 #if ENABLE(DATALIST_ELEMENT)

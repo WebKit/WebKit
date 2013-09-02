@@ -177,11 +177,11 @@ void SVGFilterElement::svgAttributeChanged(const QualifiedName& attrName)
         object->setNeedsLayout(true);
 }
 
-void SVGFilterElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
+void SVGFilterElement::childrenChanged(const ChildChange& change)
 {
-    SVGElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
+    SVGElement::childrenChanged(change);
 
-    if (changedByParser)
+    if (change.source == ChildChangeSourceParser)
         return;
 
     if (RenderObject* object = renderer())

@@ -86,7 +86,7 @@ private:
 
     virtual void dispose() OVERRIDE;
     virtual bool childTypeAllowed(NodeType) const OVERRIDE;
-    virtual void childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta) OVERRIDE;
+    virtual void childrenChanged(const ChildChange&) OVERRIDE;
 
     // ShadowRoots should never be cloned.
     virtual PassRefPtr<Node> cloneNode(bool) OVERRIDE { return 0; }

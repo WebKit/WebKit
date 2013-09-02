@@ -148,12 +148,12 @@ void ShadowRoot::setResetStyleInheritance(bool value)
     }
 }
 
-void ShadowRoot::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
+void ShadowRoot::childrenChanged(const ChildChange& change)
 {
     if (isOrphan())
         return;
 
-    ContainerNode::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
+    ContainerNode::childrenChanged(change);
     invalidateDistribution();
 }
 

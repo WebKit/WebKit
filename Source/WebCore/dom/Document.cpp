@@ -772,9 +772,9 @@ bool Document::hasManifest() const
     return documentElement() && documentElement()->hasTagName(htmlTag) && documentElement()->hasAttribute(manifestAttr);
 }
 
-void Document::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
+void Document::childrenChanged(const ChildChange& change)
 {
-    ContainerNode::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
+    ContainerNode::childrenChanged(change);
 
     Element* newDocumentElement = 0;
     auto firstElementChild = elementChildren(this).begin();

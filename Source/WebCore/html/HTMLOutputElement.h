@@ -59,7 +59,7 @@ private:
     virtual bool isEnumeratable() const { return true; }
     virtual bool supportLabels() const OVERRIDE { return true; }
     virtual bool supportsFocus() const OVERRIDE;
-    virtual void childrenChanged(bool createdByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);
+    virtual void childrenChanged(const ChildChange&) OVERRIDE;
     virtual void reset();
 
     void setTextContentInternal(const String&);

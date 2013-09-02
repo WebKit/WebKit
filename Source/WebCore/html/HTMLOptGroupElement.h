@@ -49,7 +49,7 @@ private:
     virtual void didAttachRenderers() OVERRIDE;
     virtual void willDetachRenderers() OVERRIDE;
 
-    virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);
+    virtual void childrenChanged(const ChildChange&) OVERRIDE;
 
     virtual void accessKeyAction(bool sendMouseEvents);
 

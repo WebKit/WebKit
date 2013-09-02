@@ -97,7 +97,7 @@ protected:
 private:
     virtual bool needsPendingResourceHandling() const { return false; }
 
-    virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);
+    virtual void childrenChanged(const ChildChange&) OVERRIDE;
 
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGGradientElement)
         DECLARE_ANIMATED_ENUMERATION(SpreadMethod, spreadMethod, SVGSpreadMethodType)
