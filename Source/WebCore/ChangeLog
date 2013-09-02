@@ -1,3 +1,33 @@
+2013-09-02  Dirk Schulze  <krit@webkit.org>
+
+        Use edgeMode=duplicate for blurring on filter() function
+        https://bugs.webkit.org/show_bug.cgi?id=120590
+
+        Reviewed by Antti Koivisto.
+
+        Filters on the CSS Image function filter() are not allowed to extend the
+        dimension of the input image. This causes weird results on blurring an image,
+        where the fading on the edges is clipped at the half of the fading.
+        We shouldn't fade edges at all and use the edgeMode=duplicate instead.
+        This will duplicate the pixel value on the nearest edge of the input image
+        instead of taking transparent black and results in nice blurred images with
+        sharp edges.
+
+        Spec: http://dev.w3.org/fxtf/filters/#blurEquivalent
+
+        Test: fast/filter-image/filter-image-blur.html
+
+        * css/CSSFilterImageValue.cpp: Pass consumer information to the renderer.
+        (WebCore::CSSFilterImageValue::image):
+        * rendering/FilterEffectRenderer.cpp: Set edgeMode for feGaussianBlur to
+            'duplicate' or 'none' depending on the consumer.
+        (WebCore::FilterEffectRenderer::build):
+        * rendering/FilterEffectRenderer.h: Add enumeration to differ between the 
+            different consumers of the renderer.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateOrRemoveFilterEffectRenderer):  Pass consumer
+            information to the renderer.
+
 2013-09-01  Dirk Schulze  <krit@webkit.org>
 
         Add 'edgeMode' attribute to SVGFEGaussianBlur

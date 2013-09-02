@@ -179,7 +179,7 @@ PassRefPtr<FilterEffect> FilterEffectRenderer::buildReferenceFilter(RenderObject
 #endif
 }
 
-bool FilterEffectRenderer::build(RenderObject* renderer, const FilterOperations& operations, bool clipsToBounds)
+bool FilterEffectRenderer::build(RenderObject* renderer, const FilterOperations& operations, FilterConsumer consumer)
 {
 #if ENABLE(CSS_SHADERS)
     m_hasCustomShaderFilter = false;
@@ -326,7 +326,7 @@ bool FilterEffectRenderer::build(RenderObject* renderer, const FilterOperations&
         case FilterOperation::BLUR: {
             BlurFilterOperation* blurOperation = static_cast<BlurFilterOperation*>(filterOperation);
             float stdDeviation = floatValueForLength(blurOperation->stdDeviation(), 0);
-            effect = FEGaussianBlur::create(this, stdDeviation, stdDeviation, EDGEMODE_NONE);
+            effect = FEGaussianBlur::create(this, stdDeviation, stdDeviation, consumer == FilterProperty ? EDGEMODE_NONE : EDGEMODE_DUPLICATE);
             break;
         }
         case FilterOperation::DROP_SHADOW: {
@@ -357,7 +357,7 @@ bool FilterEffectRenderer::build(RenderObject* renderer, const FilterOperations&
         if (effect) {
             // Unlike SVG Filters and CSSFilterImages, filter functions on the filter
             // property applied here should not clip to their primitive subregions.
-            effect->setClipsToBounds(clipsToBounds);
+            effect->setClipsToBounds(consumer == FilterFunction);
             effect->setOperatingColorSpace(ColorSpaceDeviceRGB);
             
             if (filterOperation->getOperationType() != FilterOperation::REFERENCE) {

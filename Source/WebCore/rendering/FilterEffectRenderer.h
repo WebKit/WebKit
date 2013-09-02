@@ -53,6 +53,11 @@ class GraphicsContext;
 class RenderLayer;
 class RenderObject;
 
+enum FilterConsumer {
+    FilterProperty,
+    FilterFunction
+};
+
 class FilterEffectRendererHelper {
 public:
     FilterEffectRendererHelper(bool haveFilterEffect)
@@ -104,7 +109,7 @@ public:
     GraphicsContext* inputContext();
     ImageBuffer* output() const { return lastEffect()->asImageBuffer(); }
 
-    bool build(RenderObject* renderer, const FilterOperations&, bool clipsToBounds = false);
+    bool build(RenderObject* renderer, const FilterOperations&, FilterConsumer);
     PassRefPtr<FilterEffect> buildReferenceFilter(RenderObject* renderer, PassRefPtr<FilterEffect> previousEffect, ReferenceFilterOperation*);
     bool updateBackingStoreRect(const FloatRect& filterRect);
     void allocateBackingStoreIfNeeded();

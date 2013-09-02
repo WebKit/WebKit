@@ -1,3 +1,18 @@
+2013-09-02  Dirk Schulze  <krit@webkit.org>
+
+        Use edgeMode=duplicate for blurring on filter() function
+        https://bugs.webkit.org/show_bug.cgi?id=120590
+
+        Reviewed by Antti Koivisto.
+
+        Added test to check that filter(<image>, blur(<value>)) takes
+        the edgeMode 'duplicate' instead of none.
+
+        * fast/filter-image/filter-image-blur-expected.html: Added.
+        * fast/filter-image/filter-image-blur.html: Added.
+        * fast/filter-image/resources/svg-blur.svg: Added.
+        * fast/filter-image/resources/svg-noblur.svg: Added.
+
 2013-09-02  Gabor Abraham <abrhm@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening.
