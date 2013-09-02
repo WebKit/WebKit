@@ -166,16 +166,6 @@ private:
     bool m_wasDemoted;
 };
 
-inline bool isHTMLFormElement(Node* node)
-{
-    return node->hasTagName(HTMLNames::formTag);
-}
-
-inline bool isHTMLFormElement(Element* element)
-{
-    return element->hasTagName(HTMLNames::formTag);
-}
-
 inline HTMLFormElement* toHTMLFormElement(Node* node)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(!node || isHTMLFormElement(node));

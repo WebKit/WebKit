@@ -82,11 +82,6 @@ private:
     RefPtr<MeterValueElement> m_value;
 };
 
-inline bool isHTMLMeterElement(Node* node)
-{
-    return node->hasTagName(HTMLNames::meterTag);
-}
-
 inline HTMLMeterElement* toHTMLMeterElement(Node* node)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(!node || isHTMLMeterElement(node));

@@ -45,18 +45,6 @@ private:
     virtual HTMLFormElement* virtualForm() const OVERRIDE;
 };
 
-inline bool isHTMLLegendElement(const Node* node)
-{
-    return node->hasTagName(HTMLNames::legendTag);
-}
-
-inline bool isHTMLLegendElement(const Element* element)
-{
-    return element->hasTagName(HTMLNames::legendTag);
-}
-
-template <> inline bool isElementOfType<HTMLLegendElement>(const Element* element) { return isHTMLLegendElement(element); }
-
 } //namespace
 
 #endif

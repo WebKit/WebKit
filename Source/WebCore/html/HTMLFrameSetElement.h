@@ -100,16 +100,6 @@ private:
     bool m_noresize;
 };
 
-inline bool isHTMLFrameSetElement(const Node* node)
-{
-    return node->hasTagName(HTMLNames::framesetTag);
-}
-
-inline bool isHTMLFrameSetElement(const Element* element)
-{
-    return element->hasTagName(HTMLNames::framesetTag);
-}
-
 inline HTMLFrameSetElement* toHTMLFrameSetElement(Node* node)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(!node || isHTMLFrameSetElement(node));
@@ -121,8 +111,6 @@ inline const HTMLFrameSetElement* toHTMLFrameSetElement(const Node* node)
     ASSERT_WITH_SECURITY_IMPLICATION(!node || isHTMLFrameSetElement(node));
     return static_cast<const HTMLFrameSetElement*>(node);
 }
-
-template <> inline bool isElementOfType<HTMLFrameSetElement>(const Element* element) { return isHTMLFrameSetElement(element); }
 
 } // namespace WebCore
 

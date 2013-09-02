@@ -53,21 +53,21 @@ feTurbulence
 filter
 #endif
 #if ENABLE_SVG_FONTS
-font
-font_face
+font generateTypeChecks
+font_face generateTypeChecks
 font_face_format
 font_face_name
 font_face_src
 font_face_uri
 #endif
-foreignObject
+foreignObject generateTypeChecks
 g
 #if ENABLE_SVG_FONTS
 glyph
 glyphRef
 hkern interfaceName=SVGHKernElement
 #endif
-image
+image generateTypeChecks
 line
 linearGradient
 marker
@@ -83,7 +83,7 @@ polygon
 polyline
 radialGradient
 rect
-script constructorNeedsCreatedByParser
+script constructorNeedsCreatedByParser, generateTypeChecks
 stop
 style constructorNeedsCreatedByParser
 svg interfaceName=SVGSVGElement

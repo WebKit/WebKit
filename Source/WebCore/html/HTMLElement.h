@@ -24,6 +24,7 @@
 #define HTMLElement_h
 
 #include "StyledElement.h"
+#include "HTMLElementTypeChecks.h"
 
 namespace WebCore {
 

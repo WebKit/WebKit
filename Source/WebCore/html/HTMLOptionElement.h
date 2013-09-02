@@ -95,16 +95,6 @@ private:
     RefPtr<RenderStyle> m_style;
 };
 
-inline bool isHTMLOptionElement(const Node* node)
-{
-    return node->hasTagName(HTMLNames::optionTag);
-}
-
-inline bool isHTMLOptionElement(const Element* element)
-{
-    return element->hasTagName(HTMLNames::optionTag);
-}
-
 inline HTMLOptionElement* toHTMLOptionElement(Node* node)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(!node || isHTMLOptionElement(node));

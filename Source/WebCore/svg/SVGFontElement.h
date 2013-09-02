@@ -89,11 +89,6 @@ private:
     bool m_isGlyphCacheValid;
 };
 
-inline bool isSVGFontElement(const Node* node)
-{
-    return node->hasTagName(SVGNames::fontTag);
-}
-
 inline SVGFontElement* toSVGFontElement(Node* node)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(!node || isSVGFontElement(node));

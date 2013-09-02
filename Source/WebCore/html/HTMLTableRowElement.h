@@ -51,18 +51,6 @@ private:
     HTMLTableRowElement(const QualifiedName&, Document*);
 };
 
-inline bool isHTMLTableRowElement(const Node* node)
-{
-    return node->hasTagName(HTMLNames::trTag);
-}
-
-inline bool isHTMLTableRowElement(const Element* element)
-{
-    return element->hasTagName(HTMLNames::trTag);
-}
-
-template<> inline bool isElementOfType<HTMLTableRowElement>(const Element* element) { return isHTMLTableRowElement(element); }
-
 inline HTMLTableRowElement* toHTMLTableRowElement(Node* node)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(!node || isHTMLTableRowElement(node));
