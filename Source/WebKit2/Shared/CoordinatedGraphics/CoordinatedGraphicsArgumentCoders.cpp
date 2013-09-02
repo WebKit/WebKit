@@ -727,7 +727,7 @@ bool ArgumentCoder<GraphicsLayerAnimation>::decode(ArgumentDecoder& decoder, Gra
     if (!decoder.decode(keyframesSize))
         return false;
     for (unsigned i = 0; i < keyframesSize; ++i) {
-        float keyTime;
+        double keyTime;
         RefPtr<TimingFunction> timingFunction;
         if (!decoder.decode(keyTime))
             return false;

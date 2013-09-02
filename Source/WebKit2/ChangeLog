@@ -1,3 +1,13 @@
+2013-09-02  Csaba Osztrogonác  <ossy@webkit.org>
+
+        REGRESSION(r154909): caused many crashes on Qt WK2, EFL WK2
+        https://bugs.webkit.org/show_bug.cgi?id=120600
+
+        Reviewed by Andreas Kling.
+
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsArgumentCoders.cpp:
+        (CoreIPC::::decode): keyTime should be double here too.
+
 2013-09-01  Alexey Proskuryakov  <ap@apple.com>
 
         [WK2][Mac] Drag and drop tests interfere with user's UI
