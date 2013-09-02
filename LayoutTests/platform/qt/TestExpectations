@@ -114,6 +114,9 @@ fast/events/constructors/composition-event-constructor.html
 fast/events/constructors/wheel-event-constructor.html
 fast/events/constructors/keyboard-event-constructor.html
 fast/events/constructors/focus-event-constructor.html
+fast/events/wheelevent-basic.html
+fast/events/wheelevent-constructor.html
+fast/events/wheelevent-mousewheel-interaction.html
 
 # ENABLE(INDEXED_DATABASE) is disabled.
 storage/indexeddb
@@ -322,6 +325,13 @@ webkit.org/b/58491 fast/css3-text/css3-text-decoration
 webkit.org/b/76173 fast/css3-text/css3-text-align-last
 webkit.org/b/99945 fast/css3-text/css3-text-justify [ Failure ]
 webkit.org/b/112755 fast/css3-text/css3-text-indent [ Failure ImageOnlyFailure ]
+
+# Backgroung spacing implementation is missing.
+webkit.org/b/120596 css3/background/background-repeat-space-border.html [ Skip ]
+webkit.org/b/120596 css3/background/background-repeat-space-content.html [ Skip ]
+webkit.org/b/120596 css3/background/background-repeat-space-padding.html [ Skip ]
+webkit.org/b/120596 css3/masking/mask-repeat-space-content.html [ Skip ]
+webkit.org/b/120596 css3/masking/mask-repeat-space-padding.html [ Skip ]
 
 # Web Inspector: Implement support for InspectorClient::overrideDeviceMetrics() in platforms other than Chromium
 # https://bugs.webkit.org/show_bug.cgi?id=82886

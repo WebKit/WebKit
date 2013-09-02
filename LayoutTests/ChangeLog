@@ -1,3 +1,9 @@
+2013-09-02  Ádám Kallai  <kadam@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening. Skip some failing tests.
+
+        * platform/qt/TestExpectations:
+
 2013-09-02  Dirk Schulze  <krit@webkit.org>
 
         Use edgeMode=duplicate for blurring on filter() function
