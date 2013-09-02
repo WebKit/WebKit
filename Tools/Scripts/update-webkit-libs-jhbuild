@@ -82,9 +82,11 @@ sub jhbuildConfigurationChanged()
 
 sub saveJhbuildMd5() {
     # Save md5sum for jhbuild-related files.saveJhbuildMd5();
+    my $jhbuildPath = getJhbuildPath();
+    (-d $jhbuildPath) || mkpath $jhbuildPath;
     foreach my $file (qw(jhbuildrc jhbuild.modules)) {
         my $source = join('/', sourceDir(), "Tools", $platform, $file);
-        my $destination = join('/', getJhbuildPath(), $file);
+        my $destination = join('/', $jhbuildPath, $file);
         open(SUM, ">$destination" . ".md5sum");
         print SUM getMD5HashForFile($source);
         close(SUM);

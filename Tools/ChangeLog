@@ -1,3 +1,21 @@
+2013-09-02  Nick Diego Yamane  <nick.yamane@openbossa.org>
+
+        Save md5 correctly when jhbuildPath doesn't exist yet
+        https://bugs.webkit.org/show_bug.cgi?id=120548
+
+        Reviewed by Gustavo Noronha Silva.
+
+        After r152605, Md5 for jhbuild files are saved before the update
+        process, this prevents the script to restart update from scratch
+        when initial checkouts fail. However it causes an issue when builddir
+        (or builddir/Dependencies) doesn't exist yet. In that case the
+        saveJhbuildMd5 function fails to create md5 files.
+        This patch adds a checking for the jhbuildPath and creates it if
+        necessary before trying to open the md5 files.
+
+        * Scripts/update-webkit-libs-jhbuild:
+        (saveJhbuildMd5):
+
 2013-09-02  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         Unreviewed. Move myself to the reviewers list.
